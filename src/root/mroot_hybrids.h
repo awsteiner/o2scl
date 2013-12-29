@@ -70,7 +70,7 @@ namespace o2scl {
 
   /** \brief Base functions for \ref mroot_hybrids
    */
-  class hybrids_base {
+  class mroot_hybrids_base {
 
   public:
     
@@ -515,14 +515,14 @@ namespace o2scl {
     class vec_t=boost::numeric::ublas::vector<double>, 
     class mat_t=boost::numeric::ublas::matrix<double>,
     class jfunc_t=jac_funct<vec_t,mat_t> > class mroot_hybrids : 
-    public mroot<func_t,vec_t,jfunc_t>, hybrids_base
+    public mroot<func_t,vec_t,jfunc_t>, mroot_hybrids_base
 #else
     template<
     class func_t=mm_funct11,
     class vec_t=boost::numeric::ublas::vector<double>, 
     class mat_t=boost::numeric::ublas::matrix<double>,
     class jfunc_t=jac_funct11 > class mroot_hybrids : 
-    public mroot<func_t,vec_t,jfunc_t>, hybrids_base
+    public mroot<func_t,vec_t,jfunc_t>, mroot_hybrids_base
 #endif
  {
     

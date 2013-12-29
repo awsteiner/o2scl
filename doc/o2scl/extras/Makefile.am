@@ -16,8 +16,6 @@ help:
 	@echo "desc.png: Description for HTML front page"
 	@echo "dl.png: Download button for HTML front page"
 	@echo "doc.png: Documentation button for HTML front page"
-	@echo "ex_cnstr.cpp: ?"
-	@echo "ex_cnstr.out: ?"
 	@echo "fdl_license.txt: GNU Doc license"
 	@echo "fptr_doc.cpp: Docs for function pointers used in main.h"
 	@echo "gpl_license.txt: GNU GPL"

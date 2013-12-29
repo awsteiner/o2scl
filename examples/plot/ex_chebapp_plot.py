@@ -2,17 +2,17 @@
 Plot data from ex_chebapp
 """
 
-# In order to find o2mpl.py
+# In order to find o2py.py
 import sys
 sys.path.append('../../src/other')
 
 import numpy as np
 import matplotlib.pyplot as plot
-import o2mpl
+import o2py
 
 data=np.loadtxt('../ex_chebapp.out')
 
-axes=o2mpl.default_plot()
+axes=o2py.default_plot()
 
 plot.plot(data[:,0],data[:,1],color='black')
 plot.plot([0.8,0.95],[-0.5,-0.5],color='black')
@@ -51,6 +51,6 @@ for label in axes.get_yticklabels():
 
 plot.savefig('ex_chebapp_plot.png')
 plot.savefig('ex_chebapp_plot.eps')
-plot.show()
+#plot.show()
 
 

@@ -40,7 +40,7 @@ int tfun(size_t nv, const ubvector &x, ubvector &y) {
 
 int main(void) {
 
-  exact_jacobian<mm_funct_fptr<> > ej;
+  jacobian_exact<mm_funct_fptr<> > ej;
   jacobian_gsl<mm_funct_fptr<> > sj;
 
   test_mgr t;

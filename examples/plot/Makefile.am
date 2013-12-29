@@ -1,23 +1,12 @@
 # --------------------------------------------------------------------
 # Over the long term, I'd like to make sure that all figures can be
-# automatically generated (using Imagemagick). As of 4/11/12, the
-# following figures were successfully automatically generated:
+# automatically generated with python
 #  
-# complex.dox: 
-#   ex_mandel_plot.png
-#   ex_mandel_plot.pdf
+# Working as of 12/28/13:
+# ex_fptr*, ex_chebapp*, ex_ode_bessel, ex_ode_airy, ex_ode_bessel2
 #
-# Others to fix
-# funct.dox:
-#   ex_fptr_plot.png
-#   ex_fptr_plot.eps
-# anneal.dox:
 #   ex_anneal_plot.png
 #   ex_anneal_plot.eps
-# cheb.dox:
-#   ex_chebapp_plot.png
-#   ex_chebapp_plot.eps
-# tintp.dox:
 #   ex_planar_intp.png
 #   ex_planar_intp.pdf
 #   ex_contour_plot1.png
@@ -26,15 +15,8 @@
 #   ex_contour_plot2.eps
 #   ex_contour_plot3.png
 #   ex_contour_plot3.eps
-# ode.dox:
-#   ex_ode_bessel.png
-#   ex_ode_bessel.eps
-#   ex_ode_bessel2.png
-#   ex_ode_bessel2.eps
 #   ex_ode_bessel3.png
 #   ex_ode_bessel3.eps
-#   ex_ode_airy.png
-#   ex_ode_airy.eps
 #   ex_ode_stiff.png
 #   ex_ode_stiff.eps
 # -------------------------------------------------------------------- 
@@ -53,10 +35,6 @@ help:
 # necessary to generate the documentation.
 # -------------------------------------------------------------------- 
 
-test:
-	echo $(CXX) 
-	echo $(CPPFLAGS)
-
 EXTRA_DIST = 
 
 ROOT_LIB = ../../src/other/graph.o \
@@ -68,8 +46,7 @@ ROOT_LIB = ../../src/other/graph.o \
 ../../src/other/graph.o:
 	cd ../../src/other; $(CXX) $(CPPFLAGS) -o graph.o -c graph.cpp
 
-doc-extras: ex_fptr_plot.png ex_fptr_plot.eps \
-	ex_mandel_plot_all ex_mandel_plot.eps 
+plot-all: ex_fptr_plot.eps ex_chebapp_plot.eps ex_ode_bessel.eps
 
 # -------------------------------------------------------------------- 
 
@@ -82,18 +59,8 @@ ex_anneal_plot: ex_anneal_plot.o  ../../src/other/graph.o
 	$(CXX) -o ex_anneal_plot ex_anneal_plot.o \
 		$(ROOT_LIB) $(CPPFLAGS) $(LDFLAGS) -lo2scl -lo2scl_hdf
 
-ex_chebapp_plot.o: ex_chebapp_plot.cpp
-	$(CXX) -o ex_chebapp_plot.o -c ex_chebapp_plot.cpp
-
-ex_chebapp_plot: ex_chebapp_plot.o  ../../src/other/graph.o
-	$(CXX) -o ex_chebapp_plot ex_chebapp_plot.o \
-		$(ROOT_LIB) $(CPPFLAGS) $(LDFLAGS) -lo2scl
-
-ex_chebapp_plot.eps: ex_chebapp_plot
-	./ex_chebapp_plot
-
-ex_chebapp_plot.png: ex_chebapp_plot
-	./ex_chebapp_plot
+ex_chebapp_plot.eps: ex_chebapp_plot.py
+	python ex_chebapp_plot.py
 
 ex_contour_plot.o: ex_contour_plot.cpp
 	$(CXX) $(CPPFLAGS) -o ex_contour_plot.o -c ex_contour_plot.cpp
@@ -102,18 +69,8 @@ ex_contour_plot: ex_contour_plot.o ../../src/other/graph.o
 	$(CXX) $(CPPFLAGS) -o ex_contour_plot ex_contour_plot.o \
 		-lo2scl_hdf -lo2scl $(ROOT_LIB) $(LDFLAGS) 
 
-ex_fptr_plot.o: ex_fptr_plot.cpp
-	$(CXX) -o ex_fptr_plot.o -c ex_fptr_plot.cpp
-
-ex_fptr_plot: ex_fptr_plot.o  ../../src/other/graph.o
-	$(CXX) -o ex_fptr_plot ex_fptr_plot.o \
-		$(ROOT_LIB) $(LDFLAGS) -lo2scl
-
-ex_fptr_plot.eps: ex_fptr_plot
-	./ex_fptr_plot
-
-ex_fptr_plot.png: ex_fptr_plot
-	./ex_fptr_plot
+ex_fptr_plot.eps: ex_fptr_plot.py
+	python ex_fptr_plot.py
 
 ex_mandel_plot.o: ex_mandel_plot.cpp
 	$(CXX) $(CPPFLAGS) -o ex_mandel_plot.o -c ex_mandel_plot.cpp
@@ -147,13 +104,8 @@ ex_nuc_plot: ex_nuc_plot.o  ../../src/other/graph.o
 	$(CXX) -o ex_nuc_plot ex_nuc_plot.o \
 		$(ROOT_LIB) $(CPPFLAGS) $(LDFLAGS) -lo2scl -lo2scl_hdf
 
-ex_ode_plot.o: ex_ode_plot.cpp
-	$(CXX) $(CPPFLAGS) -o ex_ode_plot.o -c ex_ode_plot.cpp
-
-ex_ode_plot: ex_ode_plot.o  ../../src/other/graph.o
-	$(CXX) -o ex_ode_plot ex_ode_plot.o \
-		$(ROOT_LIB) $(CPPFLAGS) $(LDFLAGS) -lo2scl \
-		-lo2scl_hdf
+ex_ode_bessel.eps: ex_ode_plot.py
+	python ex_ode_plot.py
 
 ex_planar_plot.o: ex_planar_plot.cpp
 	$(CXX) $(CPPFLAGS) -o ex_planar_plot.o -c ex_planar_plot.cpp

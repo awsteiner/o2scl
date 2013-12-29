@@ -418,7 +418,7 @@ namespace o2scl {
       and testing purposes.
 
       By default, the stepsize, \ref deriv_gsl::h is set to \f$
-      10^{-4} \f$ in the \ref exact_jacobian constructor.
+      10^{-4} \f$ in the \ref jacobian_exact constructor.
 
       Default template arguments
       - \c func_t - \ref mm_funct\<\>
@@ -427,12 +427,12 @@ namespace o2scl {
   */
   template<class func_t=mm_funct<>, 
     class vec_t=boost::numeric::ublas::vector<double>, 
-    class mat_t=boost::numeric::ublas::matrix<double> > class exact_jacobian : 
+    class mat_t=boost::numeric::ublas::matrix<double> > class jacobian_exact : 
   public jacobian<func_t,vec_t,mat_t> {
     
   public:
     
-  exact_jacobian() {
+  jacobian_exact() {
     def_deriv.h=1.0e-4;
     dptr=&def_deriv;
   }
@@ -485,8 +485,8 @@ namespace o2scl {
     ejp.x=&x;
     ejp.y=&y;
     
-    funct_mfptr_param<exact_jacobian,ej_parms> 
-    dfnp(this,&exact_jacobian::dfn,ejp);
+    funct_mfptr_param<jacobian_exact,ej_parms> 
+    dfnp(this,&jacobian_exact::dfn,ejp);
       
     for (size_t j=0;j<nx;j++) {
       ejp.xj=j;

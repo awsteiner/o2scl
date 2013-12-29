@@ -56,7 +56,7 @@ def hdf5_is_object_type(name,obj):
 #         clist.append(column)
 #     return clist
 
-def read_first_type(fname,loc_type):
+def h5read_first_type(fname,loc_type):
     del list_of_dsets[:]
     global search_type
     search_type=loc_type
@@ -67,13 +67,14 @@ def read_first_type(fname,loc_type):
         raise RuntimeError(str)
     return file[list_of_dsets[0]]
 
-def read_name(fname,name):
+def h5read_name(fname,name):
+    file=h5py.File(fname,'r')
     obj=file[name]
     o2scl_type_dset=obj['o2scl_type']
     loc_type=o2scl_type_dset.__getitem__(0)
     return (obj,type)
 
-def read_type_named(fname,loc_type,name):
+def h5read_type_named(fname,loc_type,name):
     del list_of_dsets[:]
     global search_type
     search_type=loc_type
@@ -371,17 +372,17 @@ class plotter:
         return
 
     def read(self,filename):
-        self.dset=read_first_type(filename,'table')
+        self.dset=h5read_first_type(filename,'table')
         self.dtype='table'
         return
 
     def read_type(self,filename,loc_type):
-        self.dset=read_first_type(filename,loc_type)
+        self.dset=h5read_first_type(filename,loc_type)
         self.dtype=loc_type
         return
 
     def read_name(self,filename,name):
-        atuple=read_name(filename,name)
+        atuple=h5read_name(filename,name)
         self.dset=atuple[0]
         self.dtype=atuple[1]
         return
