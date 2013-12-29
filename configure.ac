@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([o2scl],[0.914],[awsteiner@sourceforge.net])
+AC_INIT([o2scl],[0.915],[awsteiner@sourceforge.net])
 AC_CONFIG_SRCDIR(config.h.in)
 AC_CONFIG_HEADER(config.h)
 AC_CONFIG_MACRO_DIR([m4])
@@ -41,9 +41,9 @@ AC_CHECK_FUNC([popen],[AC_DEFINE([HAVE_POPEN],[1],
 # Take care of library version numbers
 # ----------------------------------------------
 
-OLIB_CURRENT=4
+OLIB_CURRENT=5
 OLIB_REVISION=0
-OLIB_AGE=4
+OLIB_AGE=5
 
 OLIB_LT_VERSION="${OLIB_CURRENT}:${OLIB_REVISION}:${OLIB_AGE}"
 AC_SUBST(OLIB_LT_VERSION)
