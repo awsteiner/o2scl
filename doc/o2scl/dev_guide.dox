@@ -1,0 +1,108 @@
+/** \page dev_page Developer Guidelines
+
+    \htmlonly
+    <h1>Developer guidelines</h1>
+    \endhtmlonly
+    
+    \comment
+    This page is primarily designed as an internal section for
+    developers only, while related sections in the User's guide are
+    aimed at advanced end-users.
+    \endcomment
+
+    This set of guidelines is intended for \o2 developers.
+
+    <b>General coding guidelines:</b>
+    - Comment code liberally. 
+    - Avoid goto statements.
+    - Avoid hard-coded numerical values which are not either:
+    (i) well-commented, or (ii) parameters modifiable by a class-user.
+    - Match the existing coding style when possible.
+    - Make sure all lines fit in 78 columns.
+    - Because this is a library (and not a end-user executable),
+    it is generally better to call the error handler when an input is 
+    incorrectly specified instead of assuming some alternative
+    correct value.
+    - All new classes deserve new documentation and new testing code.
+    - Documentation and code should be in standard American English.
+    - All code must be released in GPLv3.
+    - Global variables and static member data should be avoided.
+    - When reasonable, put input parameters first and output
+    parameters last. 
+    - When possible, templated vector parameters with size_t arguments
+    should appear similar to <tt>size_t &n, vec_t &v</tt>, and in that 
+    order.
+    - All code should be ANSI-compatible, and, inasmuch as is 
+    possible, operating system and platform independent.
+    - Exception messages should be as informative as possible.
+    - Exception messages should end with the full class and function name
+    from where they are thrown.
+    - Functions which deallocate memory should never fail and should
+    never be required to call the error handler. Also, class
+    destructors should never be required to call the error handler.
+    - Avoid passing pointers. Pass either bare objects (which then
+    require copy constructors), shared pointers, or const references.
+    - For numeric parameters to functions, if not all values
+    are permissible, then the error handler should be called
+    when a non-permissible value is given by the user and the
+    function documentation should clearly explain why.
+    - Wherever possible, objects should be usable by default.
+    Avoid zombie objects which are instantiated but unusable.
+    - Objects should thread-safe in the weak sense, that is, 
+    different processes should be able to safely access and modify
+    different instances of the same class at any time. Functions 
+    which read (but not modify) class data should be thread-safe
+    in the strong sense, that is, different processes should be
+    able to read the same instance of a class at any time.
+    - Whereever possible, ensure your code compiles without
+    warnings using flags analogous to the gcc string
+    \verbatim
+    -ansi -pedantic -Wno-long-long -Wall -Wno-unused -Wextra 
+    -Wconversion -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings
+    \endverbatim
+    - Avoid 'try' blocks, as a goal is that \o2 should compile
+    with -fno-exceptions.
+    - Functions which return \c void should end with <tt>return;</tt>.
+    - All functions which are called by the constructor should be
+    documented as doing so 
+
+    <b>Documentation guidelines:</b>
+    - Refer to other classes with \\ref if necessary. Refer
+    to function parameters with \\c or embed them in html
+    TT (text-type) commands.
+    - Bibliographic references should be used. When possible,
+    include the DOI link which begins with the prefix 
+    http://dx.doi.org (not the vendor-specific DOI link). 
+    - Comment Doxygen documentation with \\comment and \\endcomment.
+    (Yes, sometimes comments in comments are useful.)
+
+    <b>Patches:</b>
+    - For those who are uncomfortable with Subversion, patches are
+    always accepted.
+    - Prepare patches based on the most recent version of the
+    trunk or the appropriate branch.
+    
+    <b>SVN:</b>
+    - Editing the trunk directly should be avoided. Most development
+    should occur on branches, to be merged with the trunk at the
+    appropriate time. 
+    - Ideally the trunk should always compile and all the tests should
+    pass.
+    - Communicate with the lead developer before, during, and after any
+    non-trivial development. Communicate your ideas before development,
+    so that you don't write many lines of code only to find that your new
+    code will be rejected. Communicate your ideas during development to
+    avoid conflicting changes. Communicate your ideas after development
+    to ensure they have a chance of being implmented. Subversion is 
+    not a replacement for real communication.
+    - Commit often.
+    - Merge carefully. If you fail to merge correctly, code added
+    by other developers will be (at least temporarily) lost.
+    - Branches will be merged into the trunk by the lead developer
+    at whatever time they deem appropriate.
+    - Developer-specific files which are not platform-independent
+    should not be added to the repository. Sometimes svn:ignore can
+    be used to ignore these files, but this should be done 
+    sparingly.
+    
+*/

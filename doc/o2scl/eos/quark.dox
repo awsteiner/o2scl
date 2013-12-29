@@ -1,0 +1,10 @@
+/** \page quark_matter Equations of State of Quark Matter
+
+    The equations of state of \quark matter are all inherited from
+    \ref o2scl::quark_eos : \ref o2scl::bag_eos is a simple bag
+    model, \ref o2scl::nambujl_eos is the Nambu-Jona-Lasinio
+    model. The CFL and 2SC phases are described by \ref
+    o2scl::cfl_njl_eos, and \ref o2scl::cfl6_eos adds the
+    color-superconducting 't Hooft interaction.
+
+*/

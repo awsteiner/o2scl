@@ -1,0 +1,383 @@
+/** \page ref_section Bibliography
+
+    Some of the references which contain links should direct you to
+    the work referred to directly through <tt>dx.doi.org</tt> for journal
+    articles or <tt>worldcat.org</tt> for books.
+
+    \comment
+
+    Internal template for articles
+
+    \htmlonly
+    <a href="http://dx.doi.org/">
+    </a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/}{
+    },
+    \endlatexonly
+    <b></b> () .
+
+    Internal template for books
+
+    \htmlonly
+    "<a href="http://www.worldcat.org/isbn/">
+    </a>",
+    \endhtmlonly
+    \latexonly
+    "\href{http://www.worldcat.org/isbn/}
+    {}",
+    \endlatexonly
+    () .
+
+    \endcomment
+
+    \anchor Bader83 Bader83:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1007/BF01418331">
+    G. Bader and P. Deuflhard</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1007/BF01418331}{
+    G. Bader and P. Deuflhard},
+    \endlatexonly
+    Numer. Math. \b 41 (1983) 373.
+
+    \anchor Birgin00 Birgin00:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1137/S1052623497330963">
+    E.G. Birgin, J.M. Martinez, and M. Raydan</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1137/S1052623497330963}{
+    E.G. Birgin, J.M. Martinez, and M. Raydan},
+    \endlatexonly
+    \comment
+    Nonmonotone Spectral Projected Gradient Methods on Convex Sets, 
+    \endcomment
+    SIAM J. Optim <b>10</b> (2000) 1196.
+
+    \anchor Brest06 Brest06:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1109/TEVC.2006.872133">
+    J. Brest, S. Greiner, B. Boskovic, M. Mernik, and V. Zumer</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1109/TEVC.2006.872133}
+    {J. Brest, S. Greiner, B. Boskovic, M. Mernik, and V. Zumer},
+    \endlatexonly
+    \comment
+    Self-Adapting Control Parameters in Differential
+    Evolution: A Comparative Study on Numerical Benchmark Problems.
+    \endcomment
+    IEEE Trans. on Evol. Comp. <b>10</b> (2006) 646.
+
+    \anchor Broyden65 Broyden65:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1090/S0025-5718-1965-0198670-6">
+    C.G. Broyen</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1090/S0025-5718-1965-0198670-6 }{
+    C.~G. Broyden},
+    \endlatexonly
+    \comment
+    A Class of Methods for Solving Nonlinear
+    Simultaneous Equations
+    \endcomment
+    Math. Comp. <b>19</b> (1965) 577.
+
+    \anchor Bus75 Bus75:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1145/355656.355659">
+    J. C. P. Bus and T. J. Dekker</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1145/355656.355659}{
+    J.~C.~P. Bus and T.~J. Dekker},
+    \endlatexonly
+    ACM Trans. Math. Soft. \b 1 (1975) 330.
+
+    \anchor Cash90 Cash90:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1145/79505.79507">
+    J. R. Cash and A. H. Karp</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1145/79505.79507}{
+    J.~R. Cash and A.~H. Karp},
+    \endlatexonly
+    ACM Trans. Math. Soft. \b 16 (1990) 201.
+
+    \anchor EngelnMullges96 EngelnMullges96:
+    \htmlonly
+    G. Engeln-M&uuml;llges and F. Uhlig,
+    "<a href="http://www.worldcat.org/isbn/9783540605300">Numerical 
+    Algorithms in C</a>",
+    \endhtmlonly
+    \latexonly
+    G. Engeln-M\"{u}llges and F. Uhlig,
+    "\href{http://www.worldcat.org/isbn/978-3540605300}
+    {Numerical Algorithms in C}",
+    \endlatexonly
+    (1996) Springer, p. 96.
+
+    \anchor Fletcher87 Fletcher87:
+    \htmlonly
+    R. Fletcher,
+    "<a href="http://www.worldcat.org/isbn/9780471915478">Practical 
+    Methods of Optimization</a>",
+    \endhtmlonly
+    \latexonly
+    R. Fletcher,
+    "\href{http://www.worldcat.org/isbn/9780471494638}
+    {Practical Methods of Optimization
+    }",
+    \endlatexonly
+    (1987) John Wiley & Sons, Chichester, p. 39.
+
+    \anchor Fritsch80 Fritsch80:
+    \htmlonly
+    <a href="http://dx.doi.org/">
+    F. N. Fritsch and R. E. Carlson</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/}{
+    F.~N. Fritsch and R.~E. Carlson},
+    \endlatexonly
+    SIAM J. Numer. Anal. <b>17</b> (1980) 238.
+
+    \anchor Garbow80 Garbow80:
+    B. S. Garbow, K. E. Hillstrom, and J. J. More, MINPACK project,
+    Argonne Nat'l Lab, March 1980.
+
+    \anchor Galassi09 Galassi09:
+    \htmlonly
+    M. Galassi, J. Davies, J. Theiler, B. Gough, G. Jungman, 
+    P. Alken, M. Booth, and F. Rossi, 
+    "<a href="http://www.worldcat.org/isbn/9780954612078">GNU 
+    Scientific Library Reference Manual - Third Edition</a>",
+    \endhtmlonly
+    \latexonly
+    M. Galassi, J. Davies, J. Theiler, B. Gough, G. Jungman, 
+    P. Alken, M. Booth, and F. Rossi, 
+    "\href{http://www.worldcat.org/isbn/9780954612078}{GNU 
+    Scientific Library Reference Manual - Third Edition}",
+    \endlatexonly
+    (2009) Network Theory, Bristol.
+
+    \anchor GolubXX Golub:
+    Golub & Van Loan, "Matrix Computations" (3rd ed)
+
+    \anchor Hairer00 Hairer00:
+    \htmlonly
+    E. Hairer, S.P. Norsett and G. Wanner,
+    "<a href="http://www.worldcat.org/isbn/9783540537755">Solving 
+    ordinary differential equations I, Nonstiff Problems</a>",
+    \endhtmlonly
+    \latexonly
+    E> Hairer, S.~P. Norsett and G. Wanner,
+    "\href{http://www.worldcat.org/isbn/9783540537755}
+    {Solving ordinary differential equations I, Nonstiff Problems}",
+    \endlatexonly
+    (2000) Springer, 2nd revised edition.
+    \comment
+    This ISBN might not be right. Check also 
+    9780387171456, 9780387537757, and 9783540171454
+    \endcomment
+    
+    \anchor Kelley99 Kelley99:
+    \htmlonly
+    C.T. Kelley, 
+    "<a href="http://www.worldcat.org/isbn/9780898714333">Iterative
+    methods for optimization</a>",
+    \endhtmlonly
+    \latexonly
+    C.~T. Kelley,
+    "\href{http://www.worldcat.org/isbn/9780898714333}{Iterative
+    methods for optimization}",
+    \endlatexonly
+    (1999) SIAM, Philadelphia.
+
+    \anchor Krabs83 Krabs83:
+    \htmlonly
+    W. Krabs, "<a href="http://www.worldcat.org/isbn/9783519029526">
+    Einf&uuml;hrung in die lineare und nichtlineare Optimierung 
+    f&uuml;r Ingenieure</a>",
+    \endhtmlonly
+    \latexonly
+    W. Krabs, "\href{http://www.worldcat.org/isbn/9783519029526}
+    {Einf\"{u}hrung in die lineare und nichtlineare Optimierung 
+    f\"{u}r Ingenieure}",
+    \endlatexonly
+    (1983) Teubner, Stuttgart, p. 84.
+
+    \anchor Lepage78 Lepage78:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/0021-9991(78)90004-9">
+    G. P. Lepage</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/0021-9991(78)90004-9}{
+    G.~P. Lepage},
+    \endlatexonly
+    J. Comp. Phys. \b 27 (1978) 192.
+
+    \anchor Lewin83 Lewin83:
+    \htmlonly
+    L. Lewin, "<a href="http://www.worldcat.org/isbn/9780444005502">
+    Polylogarithms and Associated Functions</a>",
+    \endhtmlonly
+    \latexonly
+    L. Lewin, "\href{http://www.worldcat.org/isbn/9780444005502}
+    {Polylogarithms and Associated Functions}",
+    \endlatexonly
+    (1983) North Holland, New York.
+    \comment
+    Might be 1981?
+    \endcomment
+    
+    \anchor Longman58 Longman58:
+    \htmlonly
+    <a href="http://dx.doi.org/10.2307/2002022">
+    I.M. Longman</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.2307/2002022}{
+    I.~M. Longman},
+    \endlatexonly
+    Math. Tables Other Aids Comput. (later renamed Math. Comp.) 
+    \b 12 (1958) 205.
+
+    \anchor Luzum09 Luzum09:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1007/s10569-011-9352-4">
+    B. Luzum, et al.</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1007/s10569-011-9352-4}{
+    B. Luzum, et al.},
+    \endlatexonly
+    Celest. Mech. and Dyn. Astron. <b>110</b> (2009) 293.
+    (See also http://maia.usno.navy.mil/NSFA/IAU2009_consts.html .)
+
+    \anchor Mohr12 Mohr12:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1103/RevModPhys.84.1527">
+    P.J. Mohr, B.N. Taylor, and D.B. Newell</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1103/RevModPhys.84.1527}{
+    P.~J. Mohr, B.~N. Taylor, and D.~B. Newell},
+    \endlatexonly
+    Rev. Mod. Phys. <b>84</b> (2012) 1527.
+
+    \anchor More79 More79:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1145/355815.355820">
+    J. Mor&eacute; and M. Cosnard</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1145/355815.355820}{
+    J. Mor\'{e} and M. Cosnard},
+    \endlatexonly
+    ACM Trans. Math. Software, <b>5</b> (1979) 64.
+
+    \anchor More80 More80:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1145/355887.355898">
+    J. Mor&eacute; and M. Cosnard</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1145/355887.355898}{
+    J. Mor\'{e} and M. Cosnard},
+    \endlatexonly
+    ACM Trans. Math. Software, <b>6</b> (1980) 240.
+
+    \anchor Nelder65 Nelder65:
+    J.A. Nelder and R. Mead, Computer Journal 7 (1965) pp. 308-313.
+
+    \anchor Piessens83 Piessens83: 
+    \htmlonly
+    R. Piessens, E. de Doncker-Kapenga, C. Uberhuber and D. Kahaner,
+    "<a href="http://www.worldcat.org/isbn/9783540125532">QUADPACK,
+    A Subroutine Package for Automatic Integration</a>",
+    \endhtmlonly
+    \latexonly
+    R. Piessens, E. de Doncker-Kapenga, C. Uberhuber and D. Kahaner,
+    "\href{http://www.worldcat.org/isbn/9783540125532}{QUADPACK,
+    A Subroutine Package for Automatic Integration}",
+    \endlatexonly
+    (1983) Springer-Verlag, Berlin.
+    
+    \anchor Press90 Press90:
+    W.H. Press and G.R. Farrar, "Recursive Stratified Sampling for
+    Multidimensional Monte Carlo Integration", Computers in Physics,
+    v4 (1990), pp. 190-195.
+
+    \anchor Prince81 Prince81:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/0771-050X(81)90010-3">
+    P.J. Prince and J.R. Dormand</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/0771-050X(81)90010-3}{
+    P.J. Prince and J.R. Dormand},
+    \endlatexonly
+    J. Comp. Appl. Math. <b>7</b> (1981) 67.
+
+    \anchor Rutishauser63 Rutishauser63:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1007/BF01385877">
+    H. Rutishauser</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1007/BF01385877}{
+    H. Rutishauser},
+    \endlatexonly
+    Numer. Math. \b 5 (1963) 48.
+    \comment Ausdehnung des Rombergschen Prinzips
+    (Extension of Romberg's Principle), \endcomment
+
+    \anchor Storn97 Storn97:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1023/A:1008202821328">
+    R. Storn and K. Price</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1023/A:1008202821328}{
+    R. Storn and K. Price},
+    \endlatexonly
+    \comment
+    "Differential evolution - a simple and efficient heuristic for
+    global optimization over continuous spaces"
+    \endcomment
+    Jour. of Global Optim. <b>11</b> (1997) 341.
+
+    \anchor Tolstov62 Tolstov62:
+    G.P. Tolstov, "Fourier Series" (1962) Prentice
+    Hall, Englewood Cliffs, N.J. \n
+    (I don't have a link for the 1962 version, but a 1976 reprinting
+    is available \htmlonly
+    <a href="http://www.worldcat.org/isbn/9780486633176">here</a>
+    \endhtmlonly \latexonly
+    \href{http://www.worldcat.org/isbn/9780486633176}
+    {here} \endlatexonly )
+    
+    \anchor Wynn56 Wynn56:
+    \htmlonly
+    <a href="http://dx.doi.org/10.2307/2002183">
+    P Wynn</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.2307/2002183}{
+    P. Wynn},
+    \endlatexonly
+    Math. Tables Other Aids Comput. (later renamed Math. Comp.) 
+    <b>10 </b> (1956) 91.
+    \comment
+    On a device for computing the e<sub>m</sub>(S<sub>n</sub>) 
+    transformation
+    \endcomment
+*/
+

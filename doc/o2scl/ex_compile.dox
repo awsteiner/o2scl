@@ -1,0 +1,19 @@
+/** \page examples_section Compiling Examples
+    
+    The example programs are in the \c examples directory. After
+    installation, they can be compiled and executed by running \c make
+    \c o2scl-examples in that directory. This will also test the
+    output of the examples to make sure it is correct. If all the
+    examples succeed, the message <tt>All O2scl tests passed.</tt>
+    will appear at the end. The output for each example is placed in
+    the corresponding file with a <tt>.scr</tt> extension.
+
+    Alternatively, you can make the executable for each example in the
+    \c examples directory individually using, e.g. <tt>make
+    ex_mroot</tt>.
+
+    \note All of these examples are provided under the GPLv3 license,
+    although to save space the licenses are not reproduced in the
+    documentation for each example. See \ref license_section for more
+    information.
+*/

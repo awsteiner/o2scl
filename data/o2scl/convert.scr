@@ -1,0 +1,24 @@
+rm *.o2
+echo apr.eos
+acol_old -file apr.eos -internal apr.o2
+echo bbp.eos
+acol_old -file bbp.eos -internal bbp.o2
+echo bps.eos
+acol_old -file bps.eos -internal bps.o2
+echo dh.eos
+acol_old -file dh.eos dh_crust -internal dh.o2
+echo hdh.eos
+acol_old -file dh.eos dh_core -internal dh.o2
+echo fmt.eos
+acol_old -file fmt.eos -internal fmt.o2
+echo fp.eos
+acol_old -file fp.eos fp_neutron -internal fp.o2
+echo fp.eos
+acol_old -file fp.eos fp_nuclear -internal fp.o2
+echo hz90.eos
+acol_old -file hz90.eos -internal hz90.o2
+echo hzd.eos
+acol_old -file hzd.eos -internal hzd.o2
+echo nvbps.eos
+acol_old -file nvbps.eos -internal nvbps.o2
+echo done

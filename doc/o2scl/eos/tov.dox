@@ -1,0 +1,165 @@
+/** \page tovtoc Solution of the Tolman-Oppenheimer-Volkov equations
+
+    The class \ref o2scl::tov_solve provides a solution to the
+    Tolman-Oppenheimer-Volkov (TOV) equations given an equation of
+    state, provided as an object of type \ref o2scl::tov_eos. These classes
+    are particularly useful for static neutron star structure: given
+    any equation of state one can calculate the mass vs. radius curve
+    and the properties of any star of a given mass.
+
+    <b>Mathematical background:</b>
+
+    In units where \f$ c=1 \f$, the most general static and 
+    spherically symmetric metric is of the form
+    \f[
+    ds^2 = - e^{2 \Phi(r)} d t^2 + e^{2 \Lambda(r)} d r^2 + 
+    r^2 d \theta^2 + r^2 \sin^2 \theta~d \phi^2
+    \f]
+    where \f$ \theta \f$ is the polar angle and \f$ \phi \f$
+    is the azimuthal angle. Often we will not write explicitly
+    the radial dependence for many of the quantities defined
+    below, i.e. \f$ \Phi \equiv \Phi(r) \f$.
+
+    This leads to the TOV equation (i.e. Einstein's
+    equations for a static spherically symmetric object)
+    \f[
+    \frac{d P}{d r} = - \frac{G \varepsilon m}{r^2}
+    \left( 1+\frac{P}{\varepsilon}\right)
+    \left( 1+\frac{4 \pi P r^3}{m} \right)
+    \left( 1-\frac{2 G m}{r}\right)^{-1}
+    \f]
+    where \f$r\f$ is the radial coordinate, \f$m(r)\f$ is the
+    gravitational mass enclosed within a radius \f$r\f$, and
+    \f$\varepsilon(r)\f$ and \f$P(r)\f$ are the energy density and
+    pressure at \f$r\f$, and \f$G\f$ is the gravitational constant.
+    The mass enclosed is related to the energy density through
+    \f[
+    \frac{d m}{d r} = 4 \pi r^2 \varepsilon
+    \f]
+    and these two differential equations can be solved simultaneously
+    given an equation of state, \f$ P(\varepsilon) \f$.
+    The total gravitational mass is given by
+    \f[
+    M = \int_0^R 4 \pi r^2 \varepsilon d r
+    \f]
+    The boundary conditions are \f$m(r=0)=0\f$ and the condition
+    \f$P(r=R)=0\f$ for some fixed radius \f$R\f$. These boundary
+    conditions give a one-dimensional family solutions to the TOV
+    equations as a function of the central pressure. Each central
+    pressure implies a gravitational mass, \f$ M \f$ and radius
+    \f$ R \f$ and thus defines a mass-radius curve.
+
+    The metric function \f$ \Lambda \f$ is
+    \f[
+    e^{2 \Lambda} = \left( 1-\frac{2 G m}{r}\right)^{-1}
+    \f]
+    The other metric function, \f$\Phi(r)\f$ is sometimes referred
+    to as the gravitational potential. In vacuum above the star, it is
+    \f[
+    e^{2 \Phi} = \left( 1-\frac{2 G M}{r}\right)
+    \f]
+    and inside the star it is determined by
+    \f[
+    \frac{d \Phi}{d r} = - \frac{1}{\varepsilon}
+    \frac{ d P}{d r} \left(1+\frac{P}{\varepsilon}\right)^{-1} =
+    \frac{G m}{r^2} \left( 1+\frac{4 \pi P r^3}{m} \right)
+    \left( 1-\frac{2 G m}{r}\right)^{-1}
+    \f]
+    Note that this can be rewritten as
+    \f[
+    -d \Phi = \frac{d P}{P+\varepsilon} \, .
+    \f]
+    If the neutron star is at zero temperature and there is
+    only one conserved charge, (i.e. baryon number), then
+    \f[
+    -d \Phi = \frac{d P}{\mu n} = \frac{d \mu}{\mu}
+    \f]
+    and this implies that \f$ \mu e^{\Phi} \f$ is everywhere
+    constant in the star. Alternatively,
+    \f[
+    -d \Phi = \frac{d P}{h}
+    \f]
+    where \f$ h \f$ is the enthalpy density. Since
+    \f$ d h = T d s + d P \f$, then if the entropy is everywhere
+    a constant we also have
+    \f[
+    -d \Phi = \frac{d h}{h}
+    \f]
+    and \f$ h e^{\Phi} \f$ is everywhere
+    constant (even if there is more than one conserved charge). 
+
+    The proper boundary condition for the gravitational potential
+    is 
+    \f[
+    \Phi(r=R) = \frac{1}{2} \ln \left(1-\frac{2 G M}{R} \right)
+    \f]
+    which ensures that \f$ \Phi(r) \f$ matches the metric
+    above in vacuum. Since the expression for \f$ d\Phi/dr \f$
+    is independent of \f$ \Phi \f$, the differential equation
+    can be solved for an arbitrary value of \f$ \Phi(r=0) \f$
+    and then shifted afterwards to obtain the correct
+    boundary condition at \f$ r=R \f$ .
+
+    The surface gravity is defined to be
+    \f[
+    g = \frac{G m}{r^2}\left(1-\frac{2 G m}{r}\right)^{-1/2}
+    \f]
+    which is computed in units of inverse
+    kilometers, and the redshift is defined to be
+    \f[
+    z = \left(1-\frac{2 G m}{r}\right)^{-1/2} - 1
+    \f]
+    which is unitless.
+
+    The baryonic mass is typically defined by
+    \f[
+    M_B = \int_0^R 4 \pi r^2 n_B m_B 
+    \left(1-\frac{2 G m}{r}\right)^{-1/2} d r
+    \f]
+    where \f$ n_B(r) \f$ is the baryon number density at radius \f$ r
+    \f$ and \f$ m_B \f$ is the mass one baryon (taken to be the mass
+    of the proton by default and stored in \ref
+    o2scl::tov_solve::baryon_mass). If the EOS specifies the baryon density
+    (i.e. if \ref o2scl::tov_eos::baryon_column is true), then this
+    class will compute the associated baryonic mass for you.
+
+    In the case of slow rigid rotation with angular velocity
+    \f$ \Omega \f$, the moment of inertia is
+    \f[
+    I = \frac{8 \pi}{3} \int_0^R dr~r^4\left(\varepsilon+P\right)
+    \left(\frac{\bar{\omega}}{\Omega}\right)
+    e^{\Lambda-\Phi}
+    = \frac{8 \pi}{3} \int_0^R dr~r^4\left(\varepsilon+P\right)
+    \left(\frac{\bar{\omega}}{\Omega}\right)
+    \left(1-\frac{2 G m}{r}\right)^{-1/2} e^{-\Phi} 
+    \f]
+    where \f$ \omega(r) \f$ is the rotation rate of the inertial
+    frame, \f$ \Omega \f$ is the angular velocity in the fluid
+    frame, and \f$ \bar{\omega}(r) \equiv \Omega - \omega(r) \f$ 
+    is the angular velocity of a fluid element at infinity.
+    The function \f$ \bar{\omega}(r) \f$ is the solution of 
+    \f[
+    \frac{d}{dr} \left( r^4 j \frac{d \bar{\omega}}{dr}\right)
+    + 4 r^3 \frac{d j}{dr} \bar{\omega} = 0
+    \f]
+    where the function \f$ j(r) \f$ is defined by 
+    \f[
+    j = e^{-\Lambda-\Phi} =
+    \left( 1-\frac{2 G m}{r} \right)^{1/2} e^{-\Phi} \, .
+    \f]
+    Note that \f$ j(r=R) = 1 \f$. 
+    The boundary conditions for \f$ \bar{\omega} \f$ are
+    \f$ d \bar{\omega}/dr = 0 \f$ at \f$ r=0 \f$ and 
+    \f[
+    \bar{\omega}(R) = \Omega - \left(\frac{R}{3}\right)
+    \left(\frac{d \bar{\omega}}{dr}\right)_{r=R} \, .
+    \f]
+    One can use the TOV equation to rewrite the moment of 
+    inertia as 
+    \f[
+    I= \left(\frac{d \bar{\omega}}{dr}\right)_{r=R} 
+    \frac{R^4}{6 G \Omega} \, .
+    \f]
+    The star's angular momentum is just \f$ J = I \Omega \f$.
+
+*/

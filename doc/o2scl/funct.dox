@@ -1,0 +1,123 @@
+/** \page funct_section Function Objects
+
+    We describe the \o2 function objects first here. Users who wish to
+    use boost, <tt>std::mem_fn</tt>, or lambda function objects should
+    see \ref lambda_fun_sect. These function objects will eventually
+    be removed in favor of the C++11 objects using
+    <tt>std::function</tt>. The new C++11 versions are used in \o2 if
+    <tt>O2SCL_CPP11</tt> is defined.
+
+    Functions are passed to numerical routines using template-based
+    function classes, sometimes called "functors". There are several
+    basic kinds of function
+    objects:
+    - \ref o2scl::funct : One function of one variable (used in 
+    one-dimensional solver and minimizer classes, derivative classes,
+    integration classes, etc.)
+    - \ref o2scl::multi_funct : One function of several variables (used
+    in minimizer and integration classes)
+    - \ref o2scl::mm_funct : \c n functions of \c n variables (used in 
+    solver classes)
+    - \ref o2scl::fit_funct : One function of one variable with \c n 
+    fitting parameters
+    - \ref o2scl::gen_fit_funct : Compute deviations and Jacobian given 
+    a parameter set for least-squared fitting
+    - \ref o2scl::ode_funct : \c n derivatives as a function of \c n function
+    values and the value of the independent variable
+    - \ref o2scl::jac_funct : Jacobian function for solver and fitting classes
+    - \ref o2scl::ool_hfunct : Hessian product for constrained minimization
+
+    The class name suffixes denote children of a generic function type
+    which are created using different kinds of inputs:
+    - _fptr: function pointer for a static or global function
+    - _gsl: GSL-like function pointer 
+    - _mfptr: function pointer template for a class member function
+    - _cmfptr: function pointer template for a class member function which
+    is const
+    - _strings: functions specified using strings, e.g. "x^2-2"
+
+    See the \ref ex_fptr_sect and the \ref ex_mroot_sect which
+    provide detailed examples of how functions can be specified 
+    to classes through these function objects.
+
+    \warning The \o2 function objects store pointers to functions, and
+    thus become invalid if the object they were pointing to is
+    destroyed.
+
+    \section fptr_details_sect Function object details
+
+    There is a small overhead associated with the indirection: a "user
+    class" accesses the function class which then calls function which
+    was specified in the constructor of the function class. In many
+    problems, the overhead associated with the indirection is small.
+    Some of this overhead can always be avoided by inheriting directly
+    from the function class and thus the user class will make a direct
+    virtual function call. To eliminate the overhead entirely, one can
+    specify a new type for the template parameter in the user class.
+
+    Virtual functions can be specified through this mechanism as well.
+    For example, if \ref o2scl::mroot_cern is used to solve a set of
+    equations specified as
+    \include fptr_doc.cpp
+    Then the solver will solve the member function in the derived
+    type, not the parent type. 
+
+    Note that providing a user access to a function object
+    instantiatied with a protected or private member function is
+    (basically) the same as providing them access to that function.
+
+    \comment
+    \section fptr_boost_sect Connection to STL and Boost
+
+    The \o2 function types are very closely related to similar types
+    in the Standard Template Library (STL) and in Boost. In the
+    language of the STL, \ref o2scl::funct implements the concept of a <a
+    href="http://www.sgi.com/tech/stl/UnaryFunction.html"> Unary
+    Function</a> where the argument and return types are both \c
+    double. In turn, most \o2 classes which have a template parameter
+    \c func_t will accept all classes which implement this same
+    concept. Note that in the STL, Unary Functions also implement the
+    Assignable concept, and \o2 classes often do not require this for
+    objects of type \c func_t. The Boost library handles things in a
+    very similar way, except that STL concepts are referred to as
+    "traits", and there is a much more complete list of "type traits".
+    \endcomment
+
+    \section ex_fptr_sect Function object example
+
+    This example shows how to provide functions to \o2
+    classes by solving the equation
+    \f[
+    \left\{ 1+\frac{1}{p_2} 
+    \sin \left[ 50 \left( x-p_1 \right) \right] \right\}
+    \tan^{-1} \left[ 4 \left( x-p_1 \right) \right] = 0
+    \f]
+    Where \f$ p_1 = 0.01 \f$ and \f$ p_2 = 1.1 \f$. The parameter 
+    \f$ p_1 \f$ is stored as member data for the class, and the 
+    parameter \f$ p_2 \f$ is an argument to the member function.
+    
+    The image below shows how the solver progresses to the 
+    solution of the example function.
+    \image html ex_fptr_plot.png "Function object example plot"
+    \image latex ex_fptr_plot.eps "Function object example plot" width=9cm
+
+    \dontinclude ex_fptr.cpp
+    \skip Example:
+    \until End of example
+
+    \section lambda_fun_sect Lambda functions and std::mem_fn
+
+    Newer C++ compilers now include internal mechanisms to perform the
+    same mapping of functions to function objects which the \o2
+    <tt>funct</tt> class templates perform. \o2 classes which expect
+    function object types as template types can accept
+    <tt>std::function</tt> types and thus operate on almost all c++
+    function objects. The example below demonstrates how this can be
+    done with the \ref o2scl::root_brent_gsl solver. Boost function
+    objects can be used in a similar way.
+
+    \dontinclude ex_lambda.cpp
+    \skip Example:
+    \until End of example
+
+*/

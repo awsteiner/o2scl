@@ -1,0 +1,7797 @@
+%!PS-Adobe-2.0
+%%Title: aprtemp2.mws - [Server 13]
+%%Creator: Maple 6 IBM INTEL LINUX22
+%%DocumentFonts: Times-Roman Courier Times-Italic Symbol Times-Bold 
+%%Pages: 4
+%%EndComments
+% /sc { setrgbcolor } def % color
+% /stc { setrgbcolor } def % color
+/sc { 11 mul exch 59 mul add exch 30 mul add 100 div setgray } def % b&w
+/stc { pop pop pop 0 setgray } def % b&w
+/fsf    %% stk: size font 
+{ findfont exch scalefont setfont } def 
+/line   %% stk: width x1 y1 x2 y2 
+{ gsave newpath 4 2 roll moveto lineto setlinewidth 
+  stroke grestore } def 
+/underline   %% stk: string ulOffset ulThickness 
+{ gsave setlinewidth 0 exch rmoveto  %% stk: string 
+  dup stringwidth pop 0 rlineto stroke       %% stk: string 
+  grestore show } def 
+/pagenum   %% stk: x y string 
+{ gsave 10 /Times-Roman fsf 
+  3 1 roll moveto 
+  dup stringwidth pop       %% stk: string wx 
+  2 div neg -14 rmoveto     %% stk: string 
+  show grestore 
+} def 
+/solid { [] 0 setdash } def 
+/dot { [1 3] 0 setdash } def 
+/dash { [5 5] 0 setdash } def 
+/dashdot { [5 3 1 3] 0 setdash } def 
+% ReEncodeSmall is copied from the Postscript Tutorial and Cookbook 
+% Adobe Systems Inc., Addison-Wesley, page 211-212 
+/reencsmalldict 12 dict def 
+/ReEncodeSmall 
+{ reencsmalldict begin 
+  /newcodesandnames exch def 
+  /newfontname exch def 
+  /basefontname exch def 
+  /basefontdict basefontname findfont def 
+  /newfont basefontdict maxlength dict def 
+  basefontdict 
+  { exch dup /FID ne 
+    { dup /Encoding eq 
+      { exch dup length array copy newfont 3 1 roll put } 
+      { exch newfont 3 1 roll put } 
+      ifelse 
+    } 
+    {pop pop} 
+    ifelse 
+  } forall 
+  newfont /FontName newfontname put 
+  newcodesandnames aload pop 
+  newcodesandnames length 2 idiv 
+  { newfont /Encoding get 3 1 roll put } repeat 
+  newfontname newfont definefont pop 
+  end 
+} def 
+/ExtraChars [ 
+] def
+/Times-Roman /Times-Roman-Maple ExtraChars ReEncodeSmall
+/Courier /Courier-Maple ExtraChars ReEncodeSmall
+/Times-Italic /Times-Italic-Maple ExtraChars ReEncodeSmall
+/Times-Bold /Times-Bold-Maple ExtraChars ReEncodeSmall
+%%EndProlog
+%%Page: 1 4
+ gsave  newpath
+54 720 moveto
+504 0 rlineto
+0 -648 rlineto
+-504 0 rlineto
+0 648 rlineto
+closepath clip
+gsave
+0 setgray
+0 setlinewidth
+solid
+12 /Times-Roman-Maple fsf
+gsave
+0 setgray
+64 710 moveto
+(Degenerate and non-degenerate expansions for the number density, energy density,) show
+grestore
+gsave
+0 setgray
+64 697 moveto
+( and entropy of a non-relativistic fermi gas. The substitions u=p^2/2/m^{*}/T and y=-mu/T) show
+grestore
+gsave
+0 setgray
+64 684 moveto
+(have been used to simplify the notation. The degenerate expansions are Sommerfeld ) show
+grestore
+gsave
+0 setgray
+64 671 moveto
+(expansions which results in an asymptotic \(not convergent\) series. ) show
+grestore
+newpath
+59 718 moveto
+56 718 lineto
+56 671 lineto
+59 671 lineto
+stroke
+12 /Courier-Maple fsf
+gsave
+0 setgray
+64 659 moveto
+(> ) show
+grestore
+12 /Courier-Maple fsf
+gsave
+1 0 0 stc
+78 659 moveto
+(restart; ) show
+grestore
+newpath
+59 666 moveto
+56 666 lineto
+56 658 lineto
+59 658 lineto
+stroke
+12 /Times-Roman-Maple fsf
+gsave
+0 setgray
+64 645 moveto
+(Number density ) show
+grestore
+newpath
+59 653 moveto
+56 653 lineto
+56 645 lineto
+59 645 lineto
+stroke
+12 /Courier-Maple fsf
+gsave
+0 setgray
+64 633 moveto
+(> ) show
+grestore
+12 /Courier-Maple fsf
+gsave
+1 0 0 stc
+78 633 moveto
+(n:=Int\(u^\(1/2\)/\(1+exp\(u+y\)\),u=0..infinity\);) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+267 591 moveto
+( := ) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+261 591 moveto
+(n) show
+grestore
+gsave
+0 0 1 stc
+348 591 moveto
+(d) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+283 611 moveto
+(\363) show
+grestore
+gsave
+0 0 1 stc
+283 571 moveto
+(\365) show
+grestore
+gsave
+0 0 1 stc
+283 604 moveto
+(\364) show
+grestore
+gsave
+0 0 1 stc
+283 597 moveto
+(\364) show
+grestore
+gsave
+0 0 1 stc
+283 590 moveto
+(\364) show
+grestore
+gsave
+0 0 1 stc
+283 583 moveto
+(\364) show
+grestore
+gsave
+0 0 1 stc
+283 578 moveto
+(\364) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+289 564 moveto
+(0) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+292 620 moveto
+(\245) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 297 597 345 597 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+328 615 moveto
+319 615 lineto
+316 599 lineto
+314 606 lineto
+313 605 lineto
+stroke
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+321 601 moveto
+(u) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+307 578 moveto
+(+) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+298 578 moveto
+(1) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+316 578 moveto
+(e) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+322 587 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+341 587 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+331 587 moveto
+(+) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+325 587 moveto
+(u) show
+grestore
+gsave
+0 0 1 stc
+337 587 moveto
+(y) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+354 591 moveto
+(u) show
+grestore
+newpath
+59 640 moveto
+56 640 lineto
+56 564 lineto
+59 564 lineto
+stroke
+12 /Times-Roman-Maple fsf
+gsave
+0 setgray
+64 551 moveto
+(Degenerate expansion \(y->-\\infty\):) show
+grestore
+newpath
+59 559 moveto
+56 559 lineto
+56 551 lineto
+59 551 lineto
+stroke
+12 /Courier-Maple fsf
+gsave
+0 setgray
+64 539 moveto
+(> ) show
+grestore
+12 /Courier-Maple fsf
+gsave
+1 0 0 stc
+78 539 moveto
+(f:=sqrt\(u\);) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+297 520 moveto
+( := ) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+294 520 moveto
+(f) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+328 534 moveto
+319 534 lineto
+316 518 lineto
+314 525 lineto
+313 524 lineto
+stroke
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+321 520 moveto
+(u) show
+grestore
+newpath
+59 546 moveto
+56 546 lineto
+56 519 lineto
+59 519 lineto
+stroke
+12 /Courier-Maple fsf
+gsave
+0 setgray
+64 507 moveto
+(> ) show
+grestore
+12 /Courier-Maple fsf
+gsave
+1 0 0 stc
+78 507 moveto
+(b:=int\(f,u=0..-y\)+Pi^2/6*subs\(u=-y,diff\(f,u\)\);) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+261 462 moveto
+( := ) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+255 462 moveto
+(b) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+329 462 moveto
+(+) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 277 468 283 468 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+277 472 moveto
+(2) show
+grestore
+gsave
+0 0 1 stc
+277 454 moveto
+(3) show
+grestore
+gsave
+0 0 1 stc
+286 462 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+302 462 moveto
+(\)) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+290 462 moveto
+(-) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+296 462 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+306 471 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+324 471 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+315 471 moveto
+(/) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+309 471 moveto
+(3) show
+grestore
+gsave
+0 0 1 stc
+319 471 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 338 468 367 468 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 339 486 351 486 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+342 490 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+339 472 moveto
+(12) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+354 480 moveto
+(p) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+361 486 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+362 466 moveto
+348 466 lineto
+345 450 lineto
+343 457 lineto
+342 456 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+350 452 moveto
+(-) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+356 452 moveto
+(y) show
+grestore
+newpath
+59 514 moveto
+56 514 lineto
+56 451 lineto
+59 451 lineto
+stroke
+12 /Courier-Maple fsf
+gsave
+0 setgray
+64 439 moveto
+(> ) show
+grestore
+12 /Courier-Maple fsf
+gsave
+1 0 0 stc
+78 439 moveto
+(c:=int\(f,u=0..-y\)+Pi^2/6*subs\(u=-y,diff\(f,u\)\)+7*Pi^4/360*subs\(u=-y) show
+grestore
+gsave
+1 0 0 stc
+78 426 moveto
+(,diff\(f,u$3\)\);) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+233 381 moveto
+( := ) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+228 381 moveto
+(c) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+301 381 moveto
+(+) show
+grestore
+gsave
+0 0 1 stc
+342 381 moveto
+(+) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 249 387 255 387 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+249 391 moveto
+(2) show
+grestore
+gsave
+0 0 1 stc
+249 373 moveto
+(3) show
+grestore
+gsave
+0 0 1 stc
+258 381 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+274 381 moveto
+(\)) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+262 381 moveto
+(-) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+268 381 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+278 390 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+296 390 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+287 390 moveto
+(/) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+281 390 moveto
+(3) show
+grestore
+gsave
+0 0 1 stc
+291 390 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 310 387 339 387 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 311 405 323 405 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+314 409 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+311 391 moveto
+(12) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+326 399 moveto
+(p) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+333 405 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+334 385 moveto
+320 385 lineto
+317 369 lineto
+315 376 lineto
+314 375 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+322 371 moveto
+(-) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+328 371 moveto
+(y) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 351 387 394 387 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 356 405 374 405 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+362 409 moveto
+(7) show
+grestore
+gsave
+0 0 1 stc
+356 391 moveto
+(960) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+377 399 moveto
+(p) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+384 405 moveto
+(4) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+352 368 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+368 368 moveto
+(\)) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+356 368 moveto
+(-) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+362 368 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+372 377 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+390 377 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+381 377 moveto
+(/) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+375 377 moveto
+(5) show
+grestore
+gsave
+0 0 1 stc
+385 377 moveto
+(2) show
+grestore
+newpath
+59 446 moveto
+56 446 lineto
+56 367 lineto
+59 367 lineto
+stroke
+12 /Courier-Maple fsf
+gsave
+0 setgray
+64 355 moveto
+(> ) show
+grestore
+12 /Courier-Maple fsf
+gsave
+1 0 0 stc
+78 355 moveto
+(evalf\(subs\(y=-30,[log10\(abs\(n-b\)\),log10\(abs\(n-c\)\)]\)\);) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+238 338 moveto
+([) show
+grestore
+gsave
+0 0 1 stc
+381 338 moveto
+(]) show
+grestore
+gsave
+0 0 1 stc
+308 338 moveto
+(,) show
+grestore
+gsave
+0 0 1 stc
+242 338 moveto
+(-3.836985105) show
+grestore
+gsave
+0 0 1 stc
+314 338 moveto
+(-5.834327409) show
+grestore
+newpath
+59 362 moveto
+56 362 lineto
+56 337 lineto
+59 337 lineto
+stroke
+12 /Times-Roman-Maple fsf
+gsave
+0 setgray
+64 324 moveto
+(Non-degenerate expansion \(y->\\infty\):) show
+grestore
+newpath
+59 332 moveto
+56 332 lineto
+56 324 lineto
+59 324 lineto
+stroke
+12 /Courier-Maple fsf
+gsave
+0 setgray
+64 312 moveto
+(> ) show
+grestore
+12 /Courier-Maple fsf
+gsave
+1 0 0 stc
+78 312 moveto
+(ff:=convert\(subs\(zz=exp\(y\),series\(1/\(a+zz\),zz=infinity\)\),polynom\);) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+226 283 moveto
+( := ) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+220 283 moveto
+(ff) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+257 283 moveto
+(-) show
+grestore
+gsave
+0 0 1 stc
+294 283 moveto
+(+) show
+grestore
+gsave
+0 0 1 stc
+331 283 moveto
+(-) show
+grestore
+gsave
+0 0 1 stc
+368 283 moveto
+(+) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 242 289 254 289 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+244 293 moveto
+(1) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+243 273 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+249 279 moveto
+(y) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 266 289 291 289 line
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+275 293 moveto
+(a) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+267 268 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+281 268 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+271 268 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+277 274 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+285 279 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 303 289 328 289 line
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+309 293 moveto
+(a) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+316 299 moveto
+(2) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+304 268 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+318 268 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+308 268 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+314 274 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+322 279 moveto
+(3) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 340 289 365 289 line
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+346 293 moveto
+(a) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+353 299 moveto
+(3) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+341 268 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+355 268 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+345 268 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+351 274 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+359 279 moveto
+(4) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 377 289 402 289 line
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+383 293 moveto
+(a) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+390 299 moveto
+(4) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+378 268 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+392 268 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+382 268 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+388 274 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+396 279 moveto
+(5) show
+grestore
+newpath
+59 319 moveto
+56 319 lineto
+56 267 lineto
+59 267 lineto
+stroke
+12 /Courier-Maple fsf
+gsave
+0 setgray
+64 255 moveto
+(> ) show
+grestore
+12 /Courier-Maple fsf
+gsave
+1 0 0 stc
+78 255 moveto
+(d:=expand\(int\(sqrt\(u\)*exp\(-u\)*subs\(a=exp\(-u\),ff\),u=0..infinity\)\);) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+175 210 moveto
+( := ) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+169 210 moveto
+(d) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+245 210 moveto
+(+) show
+grestore
+gsave
+0 0 1 stc
+284 210 moveto
+(-) show
+grestore
+gsave
+0 0 1 stc
+336 210 moveto
+(+) show
+grestore
+gsave
+0 0 1 stc
+399 210 moveto
+(-) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 191 216 203 216 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+194 220 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+191 202 moveto
+(50) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 206 216 242 216 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+222 234 moveto
+213 234 lineto
+210 218 lineto
+208 225 lineto
+207 224 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+215 220 moveto
+(p) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+240 234 moveto
+231 234 lineto
+228 218 lineto
+226 225 lineto
+225 224 lineto
+stroke
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+233 220 moveto
+(5) show
+grestore
+gsave
+0 0 1 stc
+212 195 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+226 195 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+216 195 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+222 201 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+230 206 moveto
+(5) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 254 216 281 216 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 255 234 261 234 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+255 238 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+255 220 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+279 242 moveto
+270 242 lineto
+267 226 lineto
+265 233 lineto
+264 232 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+272 228 moveto
+(p) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+262 200 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+268 206 moveto
+(y) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 293 216 305 216 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+296 220 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+293 202 moveto
+(16) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 308 216 333 216 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+327 234 moveto
+318 234 lineto
+315 218 lineto
+313 225 lineto
+312 224 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+320 220 moveto
+(p) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+309 195 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+323 195 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+313 195 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+319 201 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+327 206 moveto
+(4) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 345 216 396 216 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 346 234 358 234 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+349 238 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+346 220 moveto
+(18) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+376 242 moveto
+367 242 lineto
+364 226 lineto
+362 233 lineto
+361 232 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+369 228 moveto
+(p) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+394 242 moveto
+385 242 lineto
+382 226 lineto
+380 233 lineto
+379 232 lineto
+stroke
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+387 228 moveto
+(3) show
+grestore
+gsave
+0 0 1 stc
+359 195 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+373 195 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+363 195 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+369 201 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+377 206 moveto
+(3) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 408 216 414 216 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+408 220 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+408 202 moveto
+(8) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 417 216 453 216 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+433 234 moveto
+424 234 lineto
+421 218 lineto
+419 225 lineto
+418 224 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+426 220 moveto
+(p) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+451 234 moveto
+442 234 lineto
+439 218 lineto
+437 225 lineto
+436 224 lineto
+stroke
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+444 220 moveto
+(2) show
+grestore
+gsave
+0 0 1 stc
+423 195 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+437 195 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+427 195 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+433 201 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+441 206 moveto
+(2) show
+grestore
+newpath
+59 262 moveto
+56 262 lineto
+56 194 lineto
+59 194 lineto
+stroke
+12 /Courier-Maple fsf
+gsave
+0 setgray
+64 182 moveto
+(> ) show
+grestore
+12 /Courier-Maple fsf
+gsave
+1 0 0 stc
+78 182 moveto
+(evalf\(subs\(y=4,log10\(abs\(n-d\)\)\)\);) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+278 165 moveto
+(-11.55284197) show
+grestore
+newpath
+59 189 moveto
+56 189 lineto
+56 164 lineto
+59 164 lineto
+stroke
+12 /Times-Roman-Maple fsf
+gsave
+0 setgray
+64 151 moveto
+(Energy density) show
+grestore
+newpath
+59 159 moveto
+56 159 lineto
+56 151 lineto
+59 151 lineto
+stroke
+12 /Courier-Maple fsf
+gsave
+0 setgray
+64 139 moveto
+(> ) show
+grestore
+12 /Courier-Maple fsf
+gsave
+1 0 0 stc
+78 139 moveto
+(epsilon:=Int\(u^\(3/2\)/\(1+exp\(u+y\)\),u=0..infinity\);) show
+grestore
+newpath
+59 146 moveto
+56 146 lineto
+56 67 lineto
+59 67 lineto
+stroke
+grestore
+ grestore showpage
+%%Page: 2 4
+ gsave  newpath
+54 720 moveto
+504 0 rlineto
+0 -648 rlineto
+-504 0 rlineto
+0 648 rlineto
+closepath clip
+gsave
+0 setgray
+0 setlinewidth
+solid
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+267 681 moveto
+( := ) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+262 681 moveto
+(e) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+348 681 moveto
+(d) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+283 703 moveto
+(\363) show
+grestore
+gsave
+0 0 1 stc
+283 660 moveto
+(\365) show
+grestore
+gsave
+0 0 1 stc
+283 696 moveto
+(\364) show
+grestore
+gsave
+0 0 1 stc
+283 689 moveto
+(\364) show
+grestore
+gsave
+0 0 1 stc
+283 682 moveto
+(\364) show
+grestore
+gsave
+0 0 1 stc
+283 675 moveto
+(\364) show
+grestore
+gsave
+0 0 1 stc
+283 668 moveto
+(\364) show
+grestore
+gsave
+0 0 1 stc
+283 667 moveto
+(\364) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+289 653 moveto
+(0) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+292 712 moveto
+(\245) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 297 687 345 687 line
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+307 691 moveto
+(u) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+314 700 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+332 700 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+323 700 moveto
+(/) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+317 700 moveto
+(3) show
+grestore
+gsave
+0 0 1 stc
+327 700 moveto
+(2) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+307 668 moveto
+(+) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+298 668 moveto
+(1) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+316 668 moveto
+(e) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+322 677 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+341 677 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+331 677 moveto
+(+) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+325 677 moveto
+(u) show
+grestore
+gsave
+0 0 1 stc
+337 677 moveto
+(y) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+354 681 moveto
+(u) show
+grestore
+newpath
+59 732 moveto
+56 732 lineto
+56 653 lineto
+59 653 lineto
+stroke
+12 /Times-Roman-Maple fsf
+gsave
+0 setgray
+64 640 moveto
+(Degenerate:) show
+grestore
+newpath
+59 648 moveto
+56 648 lineto
+56 640 lineto
+59 640 lineto
+stroke
+12 /Courier-Maple fsf
+gsave
+0 setgray
+64 627 moveto
+(> ) show
+grestore
+12 /Courier-Maple fsf
+gsave
+1 0 0 stc
+78 627 moveto
+(f:=u^\(3/2\);) show
+grestore
+12 /Times-Roman-Maple fsf
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+291 605 moveto
+( := ) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+288 605 moveto
+(f) show
+grestore
+gsave
+0 0 1 stc
+307 605 moveto
+(u) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+314 614 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+332 614 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+323 614 moveto
+(/) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+317 614 moveto
+(3) show
+grestore
+gsave
+0 0 1 stc
+327 614 moveto
+(2) show
+grestore
+newpath
+59 635 moveto
+56 635 lineto
+56 604 lineto
+59 604 lineto
+stroke
+12 /Courier-Maple fsf
+gsave
+0 setgray
+64 592 moveto
+(> ) show
+grestore
+12 /Courier-Maple fsf
+gsave
+1 0 0 stc
+78 592 moveto
+(b:=int\(f,u=0..-y\)+Pi^2/6*subs\(u=-y,diff\(f,u\)\);) show
+grestore
+12 /Times-Roman-Maple fsf
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+254 550 moveto
+( := ) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+248 550 moveto
+(b) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+322 550 moveto
+(+) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 270 556 276 556 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+270 560 moveto
+(2) show
+grestore
+gsave
+0 0 1 stc
+270 542 moveto
+(5) show
+grestore
+gsave
+0 0 1 stc
+279 550 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+295 550 moveto
+(\)) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+283 550 moveto
+(-) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+289 550 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+299 559 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+317 559 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+308 559 moveto
+(/) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+302 559 moveto
+(5) show
+grestore
+gsave
+0 0 1 stc
+312 559 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 331 556 337 556 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+331 560 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+331 542 moveto
+(4) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+340 550 moveto
+(p) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+347 556 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+374 564 moveto
+360 564 lineto
+357 548 lineto
+355 555 lineto
+354 554 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+362 550 moveto
+(-) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+368 550 moveto
+(y) show
+grestore
+newpath
+59 599 moveto
+56 599 lineto
+56 541 lineto
+59 541 lineto
+stroke
+12 /Courier-Maple fsf
+gsave
+0 setgray
+64 529 moveto
+(> ) show
+grestore
+12 /Courier-Maple fsf
+gsave
+1 0 0 stc
+78 529 moveto
+(c:=int\(f,u=0..-y\)+Pi^2/6*subs\(u=-y,diff\(f,u\)\)+7*Pi^4/360*subs\(u=-y) show
+grestore
+gsave
+1 0 0 stc
+78 516 moveto
+(,diff\(f,u$3\)\);) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+215 487 moveto
+( := ) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+210 487 moveto
+(c) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+283 487 moveto
+(+) show
+grestore
+gsave
+0 0 1 stc
+338 487 moveto
+(-) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 231 493 237 493 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+231 497 moveto
+(2) show
+grestore
+gsave
+0 0 1 stc
+231 479 moveto
+(5) show
+grestore
+gsave
+0 0 1 stc
+240 487 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+256 487 moveto
+(\)) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+244 487 moveto
+(-) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+250 487 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+260 496 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+278 496 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+269 496 moveto
+(/) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+263 496 moveto
+(5) show
+grestore
+gsave
+0 0 1 stc
+273 496 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 292 493 298 493 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+292 497 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+292 479 moveto
+(4) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+301 487 moveto
+(p) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+308 493 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+335 501 moveto
+321 501 lineto
+318 485 lineto
+316 492 lineto
+315 491 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+323 487 moveto
+(-) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+329 487 moveto
+(y) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 347 493 365 493 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+353 497 moveto
+(7) show
+grestore
+gsave
+0 0 1 stc
+347 479 moveto
+(960) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 368 493 411 493 line
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+383 497 moveto
+(p) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+390 503 moveto
+(4) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+369 474 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+385 474 moveto
+(\)) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+373 474 moveto
+(-) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+379 474 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+389 483 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+407 483 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+398 483 moveto
+(/) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+392 483 moveto
+(3) show
+grestore
+gsave
+0 0 1 stc
+402 483 moveto
+(2) show
+grestore
+newpath
+59 536 moveto
+56 536 lineto
+56 473 lineto
+59 473 lineto
+stroke
+12 /Courier-Maple fsf
+gsave
+0 setgray
+64 461 moveto
+(> ) show
+grestore
+12 /Courier-Maple fsf
+gsave
+1 0 0 stc
+78 461 moveto
+(evalf\(subs\(y=-40,[log10\(abs\(epsilon-b\)\),log10\(abs\(epsilon-c\)\)]\)\);) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+238 444 moveto
+([) show
+grestore
+gsave
+0 0 1 stc
+381 444 moveto
+(]) show
+grestore
+gsave
+0 0 1 stc
+308 444 moveto
+(,) show
+grestore
+gsave
+0 0 1 stc
+242 444 moveto
+(-2.550558629) show
+grestore
+gsave
+0 0 1 stc
+314 444 moveto
+(-5.145509591) show
+grestore
+newpath
+59 468 moveto
+56 468 lineto
+56 443 lineto
+59 443 lineto
+stroke
+12 /Times-Roman-Maple fsf
+gsave
+0 setgray
+64 430 moveto
+(Non-degenerate:) show
+grestore
+newpath
+59 438 moveto
+56 438 lineto
+56 430 lineto
+59 430 lineto
+stroke
+12 /Courier-Maple fsf
+gsave
+0 setgray
+64 418 moveto
+(> ) show
+grestore
+12 /Courier-Maple fsf
+gsave
+1 0 0 stc
+78 418 moveto
+(d:=expand\(int\(u^\(3/2\)*exp\(-u\)*subs\(a=exp\(-u\),ff\),u=0..infinity\)\);) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+161 373 moveto
+( := ) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+155 373 moveto
+(d) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+177 373 moveto
+(-) show
+grestore
+gsave
+0 0 1 stc
+235 373 moveto
+(+) show
+grestore
+gsave
+0 0 1 stc
+274 373 moveto
+(+) show
+grestore
+gsave
+0 0 1 stc
+343 373 moveto
+(-) show
+grestore
+gsave
+0 0 1 stc
+406 373 moveto
+(+) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 186 379 204 379 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+192 383 moveto
+(3) show
+grestore
+gsave
+0 0 1 stc
+186 365 moveto
+(128) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 207 379 232 379 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+226 397 moveto
+217 397 lineto
+214 381 lineto
+212 388 lineto
+211 387 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+219 383 moveto
+(p) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+208 358 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+222 358 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+212 358 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+218 364 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+226 369 moveto
+(4) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 244 379 271 379 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 245 397 251 397 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+245 401 moveto
+(3) show
+grestore
+gsave
+0 0 1 stc
+245 383 moveto
+(4) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+269 405 moveto
+260 405 lineto
+257 389 lineto
+255 396 lineto
+254 395 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+262 391 moveto
+(p) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+252 363 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+258 369 moveto
+(y) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 283 379 340 379 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 284 397 302 397 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+290 401 moveto
+(3) show
+grestore
+gsave
+0 0 1 stc
+284 383 moveto
+(500) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+320 405 moveto
+311 405 lineto
+308 389 lineto
+306 396 lineto
+305 395 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+313 391 moveto
+(p) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+338 405 moveto
+329 405 lineto
+326 389 lineto
+324 396 lineto
+323 395 lineto
+stroke
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+331 391 moveto
+(5) show
+grestore
+gsave
+0 0 1 stc
+300 358 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+314 358 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+304 358 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+310 364 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+318 369 moveto
+(5) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 352 379 364 379 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+355 383 moveto
+(3) show
+grestore
+gsave
+0 0 1 stc
+352 365 moveto
+(32) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 367 379 403 379 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+383 397 moveto
+374 397 lineto
+371 381 lineto
+369 388 lineto
+368 387 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+376 383 moveto
+(p) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+401 397 moveto
+392 397 lineto
+389 381 lineto
+387 388 lineto
+386 387 lineto
+stroke
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+394 383 moveto
+(2) show
+grestore
+gsave
+0 0 1 stc
+373 358 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+387 358 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+377 358 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+383 364 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+391 369 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 415 379 466 379 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 416 397 428 397 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+419 401 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+416 383 moveto
+(36) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+446 405 moveto
+437 405 lineto
+434 389 lineto
+432 396 lineto
+431 395 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+439 391 moveto
+(p) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+464 405 moveto
+455 405 lineto
+452 389 lineto
+450 396 lineto
+449 395 lineto
+stroke
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+457 391 moveto
+(3) show
+grestore
+gsave
+0 0 1 stc
+429 358 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+443 358 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+433 358 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+439 364 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+447 369 moveto
+(3) show
+grestore
+newpath
+59 425 moveto
+56 425 lineto
+56 357 lineto
+59 357 lineto
+stroke
+12 /Courier-Maple fsf
+gsave
+0 setgray
+64 345 moveto
+(> ) show
+grestore
+12 /Courier-Maple fsf
+gsave
+1 0 0 stc
+78 345 moveto
+(evalf\(subs\(y=4,log10\(abs\(epsilon-d\)\)\)\);) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+278 328 moveto
+(-10.98827312) show
+grestore
+newpath
+59 352 moveto
+56 352 lineto
+56 327 lineto
+59 327 lineto
+stroke
+12 /Times-Roman-Maple fsf
+gsave
+0 setgray
+64 314 moveto
+(Entropy) show
+grestore
+newpath
+59 322 moveto
+56 322 lineto
+56 314 lineto
+59 314 lineto
+stroke
+12 /Courier-Maple fsf
+gsave
+0 setgray
+64 302 moveto
+(> ) show
+grestore
+12 /Courier-Maple fsf
+gsave
+1 0 0 stc
+78 302 moveto
+(s:=Int\(sqrt\(u\)*\(ln\(1+exp\(u+y\)\)/\(1+exp\(u+y\)\)+ ) show
+grestore
+gsave
+1 0 0 stc
+78 289 moveto
+(ln\(1+exp\(-u-y\)\)/\(1+exp\(-u-y\)\)\),u=0..infinity\);) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+203 245 moveto
+( := ) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+199 245 moveto
+(s) show
+grestore
+gsave
+0 0 1 stc
+410 245 moveto
+(d) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+219 267 moveto
+(\363) show
+grestore
+gsave
+0 0 1 stc
+219 224 moveto
+(\365) show
+grestore
+gsave
+0 0 1 stc
+219 260 moveto
+(\364) show
+grestore
+gsave
+0 0 1 stc
+219 253 moveto
+(\364) show
+grestore
+gsave
+0 0 1 stc
+219 246 moveto
+(\364) show
+grestore
+gsave
+0 0 1 stc
+219 239 moveto
+(\364) show
+grestore
+gsave
+0 0 1 stc
+219 232 moveto
+(\364) show
+grestore
+gsave
+0 0 1 stc
+219 231 moveto
+(\364) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+225 217 moveto
+(0) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+228 276 moveto
+(\245) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+248 259 moveto
+239 259 lineto
+236 243 lineto
+234 250 lineto
+233 249 lineto
+stroke
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+241 245 moveto
+(u) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+251 260 moveto
+(\346) show
+grestore
+gsave
+0 0 1 stc
+251 232 moveto
+(\350) show
+grestore
+gsave
+0 0 1 stc
+251 253 moveto
+(\347) show
+grestore
+gsave
+0 0 1 stc
+251 246 moveto
+(\347) show
+grestore
+gsave
+0 0 1 stc
+251 239 moveto
+(\347) show
+grestore
+gsave
+0 0 1 stc
+403 260 moveto
+(\366) show
+grestore
+gsave
+0 0 1 stc
+403 232 moveto
+(\370) show
+grestore
+gsave
+0 0 1 stc
+403 253 moveto
+(\367) show
+grestore
+gsave
+0 0 1 stc
+403 246 moveto
+(\367) show
+grestore
+gsave
+0 0 1 stc
+403 239 moveto
+(\367) show
+grestore
+gsave
+0 0 1 stc
+324 245 moveto
+(+) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 256 251 321 251 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+266 255 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+316 255 moveto
+(\)) show
+grestore
+gsave
+0 0 1 stc
+257 255 moveto
+(ln) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+279 255 moveto
+(+) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+270 255 moveto
+(1) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+288 255 moveto
+(e) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+294 264 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+313 264 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+303 264 moveto
+(+) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+297 264 moveto
+(u) show
+grestore
+gsave
+0 0 1 stc
+309 264 moveto
+(y) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+274 232 moveto
+(+) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+265 232 moveto
+(1) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+283 232 moveto
+(e) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+289 241 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+308 241 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+298 241 moveto
+(+) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+292 241 moveto
+(u) show
+grestore
+gsave
+0 0 1 stc
+304 241 moveto
+(y) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 333 251 402 251 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+343 255 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+397 255 moveto
+(\)) show
+grestore
+gsave
+0 0 1 stc
+334 255 moveto
+(ln) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+356 255 moveto
+(+) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+347 255 moveto
+(1) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+365 255 moveto
+(e) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+371 264 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+394 264 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+374 264 moveto
+(-) show
+grestore
+gsave
+0 0 1 stc
+384 264 moveto
+(-) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+378 264 moveto
+(u) show
+grestore
+gsave
+0 0 1 stc
+390 264 moveto
+(y) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+351 232 moveto
+(+) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+342 232 moveto
+(1) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+360 232 moveto
+(e) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+366 241 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+389 241 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+369 241 moveto
+(-) show
+grestore
+gsave
+0 0 1 stc
+379 241 moveto
+(-) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+373 241 moveto
+(u) show
+grestore
+gsave
+0 0 1 stc
+385 241 moveto
+(y) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+416 245 moveto
+(u) show
+grestore
+newpath
+59 309 moveto
+56 309 lineto
+56 217 lineto
+59 217 lineto
+stroke
+12 /Times-Roman-Maple fsf
+gsave
+0 setgray
+64 204 moveto
+(An alternate expression for the entropy is:) show
+grestore
+newpath
+59 212 moveto
+56 212 lineto
+56 204 lineto
+59 204 lineto
+stroke
+12 /Courier-Maple fsf
+gsave
+0 setgray
+64 192 moveto
+(> ) show
+grestore
+12 /Courier-Maple fsf
+gsave
+1 0 0 stc
+78 192 moveto
+(salt:=Int\(sqrt\(u\)*\(log\(1+exp\(-y-u\)\)+\(u+y\)/\(1+exp\(u+y\)\)\),u=0..infin) show
+grestore
+gsave
+1 0 0 stc
+78 179 moveto
+(ity\);) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+220 138 moveto
+( := ) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+203 138 moveto
+(salt) show
+grestore
+gsave
+0 0 1 stc
+407 138 moveto
+(d) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+236 157 moveto
+(\363) show
+grestore
+gsave
+0 0 1 stc
+236 119 moveto
+(\365) show
+grestore
+gsave
+0 0 1 stc
+236 150 moveto
+(\364) show
+grestore
+gsave
+0 0 1 stc
+236 143 moveto
+(\364) show
+grestore
+gsave
+0 0 1 stc
+236 136 moveto
+(\364) show
+grestore
+gsave
+0 0 1 stc
+236 129 moveto
+(\364) show
+grestore
+gsave
+0 0 1 stc
+236 126 moveto
+(\364) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+242 112 moveto
+(0) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+245 166 moveto
+(\245) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+265 152 moveto
+256 152 lineto
+253 136 lineto
+251 143 lineto
+250 142 lineto
+stroke
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+258 138 moveto
+(u) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+268 148 moveto
+(\346) show
+grestore
+gsave
+0 0 1 stc
+268 125 moveto
+(\350) show
+grestore
+gsave
+0 0 1 stc
+268 141 moveto
+(\347) show
+grestore
+gsave
+0 0 1 stc
+268 134 moveto
+(\347) show
+grestore
+gsave
+0 0 1 stc
+268 132 moveto
+(\347) show
+grestore
+gsave
+0 0 1 stc
+400 148 moveto
+(\366) show
+grestore
+gsave
+0 0 1 stc
+400 125 moveto
+(\370) show
+grestore
+gsave
+0 0 1 stc
+400 141 moveto
+(\367) show
+grestore
+gsave
+0 0 1 stc
+400 134 moveto
+(\367) show
+grestore
+gsave
+0 0 1 stc
+400 132 moveto
+(\367) show
+grestore
+gsave
+0 0 1 stc
+342 138 moveto
+(+) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+282 138 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+336 138 moveto
+(\)) show
+grestore
+gsave
+0 0 1 stc
+273 138 moveto
+(ln) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+295 138 moveto
+(+) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+286 138 moveto
+(1) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+304 138 moveto
+(e) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+310 147 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+333 147 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+313 147 moveto
+(-) show
+grestore
+gsave
+0 0 1 stc
+323 147 moveto
+(-) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+317 147 moveto
+(u) show
+grestore
+gsave
+0 0 1 stc
+329 147 moveto
+(y) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 351 144 399 144 line
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+372 148 moveto
+(+) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+363 148 moveto
+(u) show
+grestore
+gsave
+0 0 1 stc
+381 148 moveto
+(y) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+361 125 moveto
+(+) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+352 125 moveto
+(1) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+370 125 moveto
+(e) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+376 134 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+395 134 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+385 134 moveto
+(+) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+379 134 moveto
+(u) show
+grestore
+gsave
+0 0 1 stc
+391 134 moveto
+(y) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+413 138 moveto
+(u) show
+grestore
+newpath
+59 199 moveto
+56 199 lineto
+56 112 lineto
+59 112 lineto
+stroke
+12 /Times-Roman-Maple fsf
+gsave
+0 setgray
+64 99 moveto
+(Degenerate:) show
+grestore
+newpath
+59 107 moveto
+56 107 lineto
+56 99 lineto
+59 99 lineto
+stroke
+12 /Courier-Maple fsf
+gsave
+0 setgray
+64 87 moveto
+(> ) show
+grestore
+12 /Courier-Maple fsf
+gsave
+1 0 0 stc
+78 87 moveto
+(f1:=sqrt\(u\);) show
+grestore
+newpath
+59 94 moveto
+56 94 lineto
+56 67 lineto
+59 67 lineto
+stroke
+grestore
+ grestore showpage
+%%Page: 3 4
+ gsave  newpath
+54 720 moveto
+504 0 rlineto
+0 -648 rlineto
+-504 0 rlineto
+0 648 rlineto
+closepath clip
+gsave
+0 setgray
+0 setlinewidth
+solid
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+300 706 moveto
+( := ) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+291 706 moveto
+(f1) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+331 720 moveto
+322 720 lineto
+319 704 lineto
+317 711 lineto
+316 710 lineto
+stroke
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+324 706 moveto
+(u) show
+grestore
+newpath
+59 732 moveto
+56 732 lineto
+56 705 lineto
+59 705 lineto
+stroke
+12 /Courier-Maple fsf
+gsave
+0 setgray
+64 693 moveto
+(> ) show
+grestore
+12 /Courier-Maple fsf
+gsave
+1 0 0 stc
+78 693 moveto
+(c:=int\(f1,u=0..-y\)+Pi^2/6*subs\(u=-y,diff\(f1,u\)\)+7*Pi^4/360*subs\(u=) show
+grestore
+gsave
+1 0 0 stc
+78 680 moveto
+(-y,diff\(f1,u$3\)\);) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+233 635 moveto
+( := ) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+228 635 moveto
+(c) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+301 635 moveto
+(+) show
+grestore
+gsave
+0 0 1 stc
+342 635 moveto
+(+) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 249 641 255 641 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+249 645 moveto
+(2) show
+grestore
+gsave
+0 0 1 stc
+249 627 moveto
+(3) show
+grestore
+gsave
+0 0 1 stc
+258 635 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+274 635 moveto
+(\)) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+262 635 moveto
+(-) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+268 635 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+278 644 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+296 644 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+287 644 moveto
+(/) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+281 644 moveto
+(3) show
+grestore
+gsave
+0 0 1 stc
+291 644 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 310 641 339 641 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 311 659 323 659 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+314 663 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+311 645 moveto
+(12) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+326 653 moveto
+(p) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+333 659 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+334 639 moveto
+320 639 lineto
+317 623 lineto
+315 630 lineto
+314 629 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+322 625 moveto
+(-) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+328 625 moveto
+(y) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 351 641 394 641 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 356 659 374 659 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+362 663 moveto
+(7) show
+grestore
+gsave
+0 0 1 stc
+356 645 moveto
+(960) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+377 653 moveto
+(p) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+384 659 moveto
+(4) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+352 622 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+368 622 moveto
+(\)) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+356 622 moveto
+(-) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+362 622 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+372 631 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+390 631 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+381 631 moveto
+(/) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+375 631 moveto
+(5) show
+grestore
+gsave
+0 0 1 stc
+385 631 moveto
+(2) show
+grestore
+newpath
+59 700 moveto
+56 700 lineto
+56 621 lineto
+59 621 lineto
+stroke
+12 /Courier-Maple fsf
+gsave
+0 setgray
+64 609 moveto
+(> ) show
+grestore
+12 /Courier-Maple fsf
+gsave
+1 0 0 stc
+78 609 moveto
+(s1:=-int\(c,y\);) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+212 580 moveto
+( := ) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+202 580 moveto
+(s1) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+286 580 moveto
+(+) show
+grestore
+gsave
+0 0 1 stc
+341 580 moveto
+(-) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 228 586 240 586 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+231 590 moveto
+(4) show
+grestore
+gsave
+0 0 1 stc
+228 572 moveto
+(15) show
+grestore
+gsave
+0 0 1 stc
+243 580 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+259 580 moveto
+(\)) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+247 580 moveto
+(-) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+253 580 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+263 589 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+281 589 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+272 589 moveto
+(/) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+266 589 moveto
+(5) show
+grestore
+gsave
+0 0 1 stc
+276 589 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 295 586 301 586 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+295 590 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+295 572 moveto
+(6) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+304 580 moveto
+(p) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+311 586 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+338 594 moveto
+324 594 lineto
+321 578 lineto
+319 585 lineto
+318 584 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+326 580 moveto
+(-) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+332 580 moveto
+(y) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 350 586 374 586 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+359 590 moveto
+(7) show
+grestore
+gsave
+0 0 1 stc
+350 572 moveto
+(1440) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 377 586 420 586 line
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+392 590 moveto
+(p) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+399 596 moveto
+(4) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+378 567 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+394 567 moveto
+(\)) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+382 567 moveto
+(-) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+388 567 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+398 576 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+416 576 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+407 576 moveto
+(/) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+401 576 moveto
+(3) show
+grestore
+gsave
+0 0 1 stc
+411 576 moveto
+(2) show
+grestore
+newpath
+59 616 moveto
+56 616 lineto
+56 566 lineto
+59 566 lineto
+stroke
+12 /Courier-Maple fsf
+gsave
+0 setgray
+64 554 moveto
+(> ) show
+grestore
+12 /Courier-Maple fsf
+gsave
+1 0 0 stc
+78 554 moveto
+(f2:=sqrt\(u\)*\(u+y\);) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+283 535 moveto
+( := ) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+274 535 moveto
+(f2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+314 549 moveto
+305 549 lineto
+302 533 lineto
+300 540 lineto
+299 539 lineto
+stroke
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+307 535 moveto
+(u) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+317 535 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+345 535 moveto
+(\)) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+330 535 moveto
+(+) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+321 535 moveto
+(u) show
+grestore
+gsave
+0 0 1 stc
+339 535 moveto
+(y) show
+grestore
+newpath
+59 561 moveto
+56 561 lineto
+56 534 lineto
+59 534 lineto
+stroke
+12 /Courier-Maple fsf
+gsave
+0 setgray
+64 522 moveto
+(> ) show
+grestore
+12 /Courier-Maple fsf
+gsave
+1 0 0 stc
+78 522 moveto
+(s2:=int\(f2,u=0..-y\)+Pi^2/6*subs\(u=-y,diff\(f2,u\)\)+7*Pi^4/360*subs\(u) show
+grestore
+gsave
+1 0 0 stc
+78 509 moveto
+(=-y,diff\(f2,u$3\)\);) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+214 480 moveto
+( := ) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+204 480 moveto
+(s2) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+230 480 moveto
+(-) show
+grestore
+gsave
+0 0 1 stc
+290 480 moveto
+(+) show
+grestore
+gsave
+0 0 1 stc
+345 480 moveto
+(-) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 239 486 251 486 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+242 490 moveto
+(4) show
+grestore
+gsave
+0 0 1 stc
+239 472 moveto
+(15) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+274 494 moveto
+260 494 lineto
+257 478 lineto
+255 485 lineto
+254 484 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+262 480 moveto
+(-) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+268 480 moveto
+(y) show
+grestore
+gsave
+0 0 1 stc
+277 480 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+283 486 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 299 486 305 486 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+299 490 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+299 472 moveto
+(6) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+308 480 moveto
+(p) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+315 486 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+342 494 moveto
+328 494 lineto
+325 478 lineto
+323 485 lineto
+322 484 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+330 480 moveto
+(-) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+336 480 moveto
+(y) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 354 486 372 486 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+360 490 moveto
+(7) show
+grestore
+gsave
+0 0 1 stc
+354 472 moveto
+(480) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 375 486 418 486 line
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+390 490 moveto
+(p) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+397 496 moveto
+(4) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+376 467 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+392 467 moveto
+(\)) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+380 467 moveto
+(-) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+386 467 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+396 476 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+414 476 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+405 476 moveto
+(/) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+399 476 moveto
+(3) show
+grestore
+gsave
+0 0 1 stc
+409 476 moveto
+(2) show
+grestore
+newpath
+59 529 moveto
+56 529 lineto
+56 466 lineto
+59 466 lineto
+stroke
+12 /Courier-Maple fsf
+gsave
+0 setgray
+64 454 moveto
+(> ) show
+grestore
+12 /Courier-Maple fsf
+gsave
+1 0 0 stc
+78 454 moveto
+(snew:=s1+s2;) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+192 425 moveto
+( := ) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+168 425 moveto
+(snew) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+266 425 moveto
+(+) show
+grestore
+gsave
+0 0 1 stc
+321 425 moveto
+(-) show
+grestore
+gsave
+0 0 1 stc
+397 425 moveto
+(-) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 208 431 220 431 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+211 435 moveto
+(4) show
+grestore
+gsave
+0 0 1 stc
+208 417 moveto
+(15) show
+grestore
+gsave
+0 0 1 stc
+223 425 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+239 425 moveto
+(\)) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+227 425 moveto
+(-) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+233 425 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+243 434 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+261 434 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+252 434 moveto
+(/) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+246 434 moveto
+(5) show
+grestore
+gsave
+0 0 1 stc
+256 434 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 275 431 281 431 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+275 435 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+275 417 moveto
+(3) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+284 425 moveto
+(p) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+291 431 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+318 439 moveto
+304 439 lineto
+301 423 lineto
+299 430 lineto
+298 429 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+306 425 moveto
+(-) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+312 425 moveto
+(y) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 330 431 348 431 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+336 435 moveto
+(7) show
+grestore
+gsave
+0 0 1 stc
+330 417 moveto
+(360) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 351 431 394 431 line
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+366 435 moveto
+(p) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+373 441 moveto
+(4) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+352 412 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+368 412 moveto
+(\)) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+356 412 moveto
+(-) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+362 412 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+372 421 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+390 421 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+381 421 moveto
+(/) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+375 421 moveto
+(3) show
+grestore
+gsave
+0 0 1 stc
+385 421 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 406 431 418 431 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+409 435 moveto
+(4) show
+grestore
+gsave
+0 0 1 stc
+406 417 moveto
+(15) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+441 439 moveto
+427 439 lineto
+424 423 lineto
+422 430 lineto
+421 429 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+429 425 moveto
+(-) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+435 425 moveto
+(y) show
+grestore
+gsave
+0 0 1 stc
+444 425 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+450 431 moveto
+(2) show
+grestore
+newpath
+59 461 moveto
+56 461 lineto
+56 411 lineto
+59 411 lineto
+stroke
+12 /Courier-Maple fsf
+gsave
+0 setgray
+64 399 moveto
+(> ) show
+grestore
+12 /Courier-Maple fsf
+gsave
+1 0 0 stc
+78 399 moveto
+(snew2:=4/15*\(-y\)^\(5/2\)+1/3*Pi^2*sqrt\(-y\)-4/15*sqrt\(-y\)*y^2;) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+233 372 moveto
+( := ) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+203 372 moveto
+(snew2) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+307 372 moveto
+(+) show
+grestore
+gsave
+0 0 1 stc
+362 372 moveto
+(-) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 249 378 261 378 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+252 382 moveto
+(4) show
+grestore
+gsave
+0 0 1 stc
+249 364 moveto
+(15) show
+grestore
+gsave
+0 0 1 stc
+264 372 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+280 372 moveto
+(\)) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+268 372 moveto
+(-) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+274 372 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+284 381 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+302 381 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+293 381 moveto
+(/) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+287 381 moveto
+(5) show
+grestore
+gsave
+0 0 1 stc
+297 381 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 316 378 322 378 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+316 382 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+316 364 moveto
+(3) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+325 372 moveto
+(p) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+332 378 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+359 386 moveto
+345 386 lineto
+342 370 lineto
+340 377 lineto
+339 376 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+347 372 moveto
+(-) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+353 372 moveto
+(y) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 371 378 383 378 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+374 382 moveto
+(4) show
+grestore
+gsave
+0 0 1 stc
+371 364 moveto
+(15) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+406 386 moveto
+392 386 lineto
+389 370 lineto
+387 377 lineto
+386 376 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+394 372 moveto
+(-) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+400 372 moveto
+(y) show
+grestore
+gsave
+0 0 1 stc
+409 372 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+415 378 moveto
+(2) show
+grestore
+newpath
+59 406 moveto
+56 406 lineto
+56 363 lineto
+59 363 lineto
+stroke
+12 /Courier-Maple fsf
+gsave
+0 setgray
+64 351 moveto
+(> ) show
+grestore
+12 /Courier-Maple fsf
+gsave
+1 0 0 stc
+78 351 moveto
+(evalf\(subs\(y=-40,[log10\(abs\(s-snew\)\),log10\(abs\(s-snew2\)\)]\)\);) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+238 334 moveto
+([) show
+grestore
+gsave
+0 0 1 stc
+381 334 moveto
+(]) show
+grestore
+gsave
+0 0 1 stc
+308 334 moveto
+(,) show
+grestore
+gsave
+0 0 1 stc
+242 334 moveto
+(-4.556610343) show
+grestore
+gsave
+0 0 1 stc
+314 334 moveto
+(-2.124087775) show
+grestore
+newpath
+59 358 moveto
+56 358 lineto
+56 333 lineto
+59 333 lineto
+stroke
+12 /Times-Roman-Maple fsf
+gsave
+0 setgray
+64 320 moveto
+(Non-degenerate:) show
+grestore
+newpath
+59 328 moveto
+56 328 lineto
+56 320 lineto
+59 320 lineto
+stroke
+12 /Courier-Maple fsf
+gsave
+0 setgray
+64 308 moveto
+(> ) show
+grestore
+12 /Courier-Maple fsf
+gsave
+1 0 0 stc
+78 308 moveto
+(d:=expand\(int\(sqrt\(u\)*exp\(-u\)*\(u+y\)*subs\(a=exp\(-u\),ff\),u=0..infini) show
+grestore
+gsave
+1 0 0 stc
+78 295 moveto
+(ty\)\);) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+64 250 moveto
+(d) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 86 256 104 256 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+92 260 moveto
+(3) show
+grestore
+gsave
+0 0 1 stc
+86 242 moveto
+(500) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 107 256 143 256 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+123 274 moveto
+114 274 lineto
+111 258 lineto
+109 265 lineto
+108 264 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+116 260 moveto
+(p) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+141 274 moveto
+132 274 lineto
+129 258 lineto
+127 265 lineto
+126 264 lineto
+stroke
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+134 260 moveto
+(5) show
+grestore
+gsave
+0 0 1 stc
+113 235 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+127 235 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+117 235 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+123 241 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+131 246 moveto
+(5) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 155 256 161 256 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+155 260 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+155 242 moveto
+(8) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 164 256 208 256 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+180 274 moveto
+171 274 lineto
+168 258 lineto
+166 265 lineto
+165 264 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+173 260 moveto
+(p) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+183 260 moveto
+(y) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+206 274 moveto
+197 274 lineto
+194 258 lineto
+192 265 lineto
+191 264 lineto
+stroke
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+199 260 moveto
+(2) show
+grestore
+gsave
+0 0 1 stc
+174 235 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+188 235 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+178 235 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+184 241 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+192 246 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 220 256 232 256 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+223 260 moveto
+(3) show
+grestore
+gsave
+0 0 1 stc
+220 242 moveto
+(32) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 235 256 271 256 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+251 274 moveto
+242 274 lineto
+239 258 lineto
+237 265 lineto
+236 264 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+244 260 moveto
+(p) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+269 274 moveto
+260 274 lineto
+257 258 lineto
+255 265 lineto
+254 264 lineto
+stroke
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+262 260 moveto
+(2) show
+grestore
+gsave
+0 0 1 stc
+241 235 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+255 235 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+245 235 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+251 241 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+259 246 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 283 256 295 256 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+286 260 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+283 242 moveto
+(16) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 298 256 324 256 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+314 274 moveto
+305 274 lineto
+302 258 lineto
+300 265 lineto
+299 264 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+307 260 moveto
+(p) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+317 260 moveto
+(y) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+299 235 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+313 235 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+303 235 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+309 241 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+317 246 moveto
+(4) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 336 256 395 256 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 337 274 349 274 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+340 278 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+337 260 moveto
+(50) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+367 282 moveto
+358 282 lineto
+355 266 lineto
+353 273 lineto
+352 272 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+360 268 moveto
+(p) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+385 282 moveto
+376 282 lineto
+373 266 lineto
+371 273 lineto
+370 272 lineto
+stroke
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+378 268 moveto
+(5) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+388 268 moveto
+(y) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+354 235 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+368 235 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+358 235 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+364 241 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+372 246 moveto
+(5) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 407 256 442 256 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 408 274 414 274 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+408 278 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+408 260 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+432 282 moveto
+423 282 lineto
+420 266 lineto
+418 273 lineto
+417 272 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+425 268 moveto
+(p) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+435 268 moveto
+(y) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+419 240 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+425 246 moveto
+(y) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 454 256 481 256 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 455 274 461 274 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+455 278 moveto
+(3) show
+grestore
+gsave
+0 0 1 stc
+455 260 moveto
+(4) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+479 282 moveto
+470 282 lineto
+467 266 lineto
+465 273 lineto
+464 272 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+472 268 moveto
+(p) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+462 240 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+468 246 moveto
+(y) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+146 250 moveto
+(-) show
+grestore
+gsave
+0 0 1 stc
+211 250 moveto
+(-) show
+grestore
+gsave
+0 0 1 stc
+274 250 moveto
+(-) show
+grestore
+gsave
+0 0 1 stc
+327 250 moveto
+(+) show
+grestore
+gsave
+0 0 1 stc
+398 250 moveto
+(+) show
+grestore
+gsave
+0 0 1 stc
+445 250 moveto
+(+) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+70 250 moveto
+( := ) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 96 195 147 195 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 97 213 109 213 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+100 217 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+97 199 moveto
+(36) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+127 221 moveto
+118 221 lineto
+115 205 lineto
+113 212 lineto
+112 211 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+120 207 moveto
+(p) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+145 221 moveto
+136 221 lineto
+133 205 lineto
+131 212 lineto
+130 211 lineto
+stroke
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+138 207 moveto
+(3) show
+grestore
+gsave
+0 0 1 stc
+110 174 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+124 174 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+114 174 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+120 180 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+128 185 moveto
+(3) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 159 195 218 195 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 160 213 172 213 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+163 217 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+160 199 moveto
+(18) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+190 221 moveto
+181 221 lineto
+178 205 lineto
+176 212 lineto
+175 211 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+183 207 moveto
+(p) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+193 207 moveto
+(y) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+216 221 moveto
+207 221 lineto
+204 205 lineto
+202 212 lineto
+201 211 lineto
+stroke
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+209 207 moveto
+(3) show
+grestore
+gsave
+0 0 1 stc
+177 174 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+191 174 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+181 174 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+187 180 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+195 185 moveto
+(3) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 230 195 248 195 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+236 199 moveto
+(3) show
+grestore
+gsave
+0 0 1 stc
+230 181 moveto
+(128) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 251 195 276 195 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+270 213 moveto
+261 213 lineto
+258 197 lineto
+256 204 lineto
+255 203 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+263 199 moveto
+(p) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+252 174 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+266 174 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+256 174 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+262 180 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+270 185 moveto
+(4) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+87 189 moveto
+(+) show
+grestore
+gsave
+0 0 1 stc
+150 189 moveto
+(+) show
+grestore
+gsave
+0 0 1 stc
+221 189 moveto
+(-) show
+grestore
+newpath
+59 315 moveto
+56 315 lineto
+56 173 lineto
+59 173 lineto
+stroke
+12 /Courier-Maple fsf
+gsave
+0 setgray
+64 161 moveto
+(> ) show
+grestore
+12 /Courier-Maple fsf
+gsave
+1 0 0 stc
+78 161 moveto
+(d2:=subs\(eps=exp\(-y\),convert\(series\(Int\(sqrt\(u\)*log\(1+eps*exp\(-u\)\)) show
+grestore
+gsave
+1 0 0 stc
+78 148 moveto
+(,u=0..infinity\),eps\),polynom\)\);) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+90 121 moveto
+( := ) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+78 121 moveto
+(d2) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+155 121 moveto
+(-) show
+grestore
+gsave
+0 0 1 stc
+250 121 moveto
+(+) show
+grestore
+gsave
+0 0 1 stc
+345 121 moveto
+(-) show
+grestore
+gsave
+0 0 1 stc
+446 121 moveto
+(+) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 106 127 112 127 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+106 131 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+106 113 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+130 135 moveto
+121 135 lineto
+118 119 lineto
+116 126 lineto
+115 125 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+123 121 moveto
+(p) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+133 121 moveto
+(e) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+139 130 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+150 130 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+142 130 moveto
+(-) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+146 130 moveto
+(y) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 164 127 176 127 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+167 131 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+164 113 moveto
+(16) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+194 135 moveto
+185 135 lineto
+182 119 lineto
+180 126 lineto
+179 125 lineto
+stroke
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+187 121 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+212 135 moveto
+203 135 lineto
+200 119 lineto
+198 126 lineto
+197 125 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+205 121 moveto
+(p) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+215 121 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+239 121 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+219 121 moveto
+(e) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+225 130 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+236 130 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+228 130 moveto
+(-) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+232 130 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+243 135 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 259 127 271 127 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+262 131 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+259 113 moveto
+(54) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+289 135 moveto
+280 135 lineto
+277 119 lineto
+275 126 lineto
+274 125 lineto
+stroke
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+282 121 moveto
+(3) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+307 135 moveto
+298 135 lineto
+295 119 lineto
+293 126 lineto
+292 125 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+300 121 moveto
+(p) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+310 121 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+334 121 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+314 121 moveto
+(e) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+320 130 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+331 130 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+323 130 moveto
+(-) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+327 130 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+338 135 moveto
+(3) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 354 127 372 127 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+360 131 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+354 113 moveto
+(128) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+390 135 moveto
+381 135 lineto
+378 119 lineto
+376 126 lineto
+375 125 lineto
+stroke
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+383 121 moveto
+(4) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+408 135 moveto
+399 135 lineto
+396 119 lineto
+394 126 lineto
+393 125 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+401 121 moveto
+(p) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+411 121 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+435 121 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+415 121 moveto
+(e) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+421 130 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+432 130 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+424 130 moveto
+(-) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+428 130 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+439 135 moveto
+(4) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 455 127 473 127 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+461 131 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+455 113 moveto
+(250) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+491 135 moveto
+482 135 lineto
+479 119 lineto
+477 126 lineto
+476 125 lineto
+stroke
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+484 121 moveto
+(5) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+509 135 moveto
+500 135 lineto
+497 119 lineto
+495 126 lineto
+494 125 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+502 121 moveto
+(p) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+512 121 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+536 121 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+516 121 moveto
+(e) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+522 130 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+533 130 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+525 130 moveto
+(-) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+529 130 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+540 135 moveto
+(5) show
+grestore
+newpath
+59 168 moveto
+56 168 lineto
+56 112 lineto
+59 112 lineto
+stroke
+12 /Courier-Maple fsf
+gsave
+0 setgray
+64 100 moveto
+(> ) show
+grestore
+12 /Courier-Maple fsf
+gsave
+1 0 0 stc
+78 100 moveto
+(dtot:=d+d2;) show
+grestore
+newpath
+59 107 moveto
+56 107 lineto
+56 -58 lineto
+59 -58 lineto
+stroke
+grestore
+ grestore showpage
+%%Page: 4 4
+ gsave  newpath
+54 720 moveto
+504 0 rlineto
+0 -648 rlineto
+-504 0 rlineto
+0 648 rlineto
+closepath clip
+gsave
+0 setgray
+0 setlinewidth
+solid
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+64 680 moveto
+(dtot) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 98 686 116 686 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+104 690 moveto
+(3) show
+grestore
+gsave
+0 0 1 stc
+98 672 moveto
+(500) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 119 686 155 686 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+135 704 moveto
+126 704 lineto
+123 688 lineto
+121 695 lineto
+120 694 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+128 690 moveto
+(p) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+153 704 moveto
+144 704 lineto
+141 688 lineto
+139 695 lineto
+138 694 lineto
+stroke
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+146 690 moveto
+(5) show
+grestore
+gsave
+0 0 1 stc
+125 665 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+139 665 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+129 665 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+135 671 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+143 676 moveto
+(5) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 167 686 173 686 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+167 690 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+167 672 moveto
+(8) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 176 686 220 686 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+192 704 moveto
+183 704 lineto
+180 688 lineto
+178 695 lineto
+177 694 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+185 690 moveto
+(p) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+195 690 moveto
+(y) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+218 704 moveto
+209 704 lineto
+206 688 lineto
+204 695 lineto
+203 694 lineto
+stroke
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+211 690 moveto
+(2) show
+grestore
+gsave
+0 0 1 stc
+186 665 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+200 665 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+190 665 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+196 671 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+204 676 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 232 686 244 686 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+235 690 moveto
+(3) show
+grestore
+gsave
+0 0 1 stc
+232 672 moveto
+(32) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 247 686 283 686 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+263 704 moveto
+254 704 lineto
+251 688 lineto
+249 695 lineto
+248 694 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+256 690 moveto
+(p) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+281 704 moveto
+272 704 lineto
+269 688 lineto
+267 695 lineto
+266 694 lineto
+stroke
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+274 690 moveto
+(2) show
+grestore
+gsave
+0 0 1 stc
+253 665 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+267 665 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+257 665 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+263 671 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+271 676 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 295 686 307 686 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+298 690 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+295 672 moveto
+(16) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 310 686 336 686 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+326 704 moveto
+317 704 lineto
+314 688 lineto
+312 695 lineto
+311 694 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+319 690 moveto
+(p) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+329 690 moveto
+(y) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+311 665 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+325 665 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+315 665 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+321 671 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+329 676 moveto
+(4) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 348 686 407 686 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 349 704 361 704 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+352 708 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+349 690 moveto
+(50) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+379 712 moveto
+370 712 lineto
+367 696 lineto
+365 703 lineto
+364 702 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+372 698 moveto
+(p) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+397 712 moveto
+388 712 lineto
+385 696 lineto
+383 703 lineto
+382 702 lineto
+stroke
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+390 698 moveto
+(5) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+400 698 moveto
+(y) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+366 665 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+380 665 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+370 665 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+376 671 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+384 676 moveto
+(5) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 419 686 454 686 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 420 704 426 704 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+420 708 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+420 690 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+444 712 moveto
+435 712 lineto
+432 696 lineto
+430 703 lineto
+429 702 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+437 698 moveto
+(p) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+447 698 moveto
+(y) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+431 670 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+437 676 moveto
+(y) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 466 686 493 686 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 467 704 473 704 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+467 708 moveto
+(3) show
+grestore
+gsave
+0 0 1 stc
+467 690 moveto
+(4) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+491 712 moveto
+482 712 lineto
+479 696 lineto
+477 703 lineto
+476 702 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+484 698 moveto
+(p) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+474 670 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+480 676 moveto
+(y) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+158 680 moveto
+(-) show
+grestore
+gsave
+0 0 1 stc
+223 680 moveto
+(-) show
+grestore
+gsave
+0 0 1 stc
+286 680 moveto
+(-) show
+grestore
+gsave
+0 0 1 stc
+339 680 moveto
+(+) show
+grestore
+gsave
+0 0 1 stc
+410 680 moveto
+(+) show
+grestore
+gsave
+0 0 1 stc
+457 680 moveto
+(+) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+82 680 moveto
+( := ) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 96 625 147 625 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 97 643 109 643 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+100 647 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+97 629 moveto
+(36) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+127 651 moveto
+118 651 lineto
+115 635 lineto
+113 642 lineto
+112 641 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+120 637 moveto
+(p) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+145 651 moveto
+136 651 lineto
+133 635 lineto
+131 642 lineto
+130 641 lineto
+stroke
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+138 637 moveto
+(3) show
+grestore
+gsave
+0 0 1 stc
+110 604 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+124 604 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+114 604 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+120 610 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+128 615 moveto
+(3) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 159 625 218 625 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 160 643 172 643 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+163 647 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+160 629 moveto
+(18) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+190 651 moveto
+181 651 lineto
+178 635 lineto
+176 642 lineto
+175 641 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+183 637 moveto
+(p) show
+grestore
+12 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+193 637 moveto
+(y) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+216 651 moveto
+207 651 lineto
+204 635 lineto
+202 642 lineto
+201 641 lineto
+stroke
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+209 637 moveto
+(3) show
+grestore
+gsave
+0 0 1 stc
+177 604 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+191 604 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+181 604 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+187 610 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+195 615 moveto
+(3) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 230 625 248 625 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+236 629 moveto
+(3) show
+grestore
+gsave
+0 0 1 stc
+230 611 moveto
+(128) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 251 625 276 625 line
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+270 643 moveto
+261 643 lineto
+258 627 lineto
+256 634 lineto
+255 633 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+263 629 moveto
+(p) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+252 604 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+266 604 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+256 604 moveto
+(e) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+262 610 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+270 615 moveto
+(4) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 288 625 294 625 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+288 629 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+288 611 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+312 633 moveto
+303 633 lineto
+300 617 lineto
+298 624 lineto
+297 623 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+305 619 moveto
+(p) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+315 619 moveto
+(e) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+321 628 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+332 628 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+324 628 moveto
+(-) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+328 628 moveto
+(y) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 346 625 358 625 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+349 629 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+346 611 moveto
+(16) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+376 633 moveto
+367 633 lineto
+364 617 lineto
+362 624 lineto
+361 623 lineto
+stroke
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+369 619 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+394 633 moveto
+385 633 lineto
+382 617 lineto
+380 624 lineto
+379 623 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+387 619 moveto
+(p) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+397 619 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+421 619 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+401 619 moveto
+(e) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+407 628 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+418 628 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+410 628 moveto
+(-) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+414 628 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+425 633 moveto
+(2) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 441 625 453 625 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+444 629 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+441 611 moveto
+(54) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+471 633 moveto
+462 633 lineto
+459 617 lineto
+457 624 lineto
+456 623 lineto
+stroke
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+464 619 moveto
+(3) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+489 633 moveto
+480 633 lineto
+477 617 lineto
+475 624 lineto
+474 623 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+482 619 moveto
+(p) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+492 619 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+516 619 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+496 619 moveto
+(e) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+502 628 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+513 628 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+505 628 moveto
+(-) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+509 628 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+520 633 moveto
+(3) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+87 619 moveto
+(+) show
+grestore
+gsave
+0 0 1 stc
+150 619 moveto
+(+) show
+grestore
+gsave
+0 0 1 stc
+221 619 moveto
+(-) show
+grestore
+gsave
+0 0 1 stc
+279 619 moveto
+(+) show
+grestore
+gsave
+0 0 1 stc
+337 619 moveto
+(-) show
+grestore
+gsave
+0 0 1 stc
+432 619 moveto
+(+) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 96 582 114 582 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+102 586 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+96 568 moveto
+(128) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+132 590 moveto
+123 590 lineto
+120 574 lineto
+118 581 lineto
+117 580 lineto
+stroke
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+125 576 moveto
+(4) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+150 590 moveto
+141 590 lineto
+138 574 lineto
+136 581 lineto
+135 580 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+143 576 moveto
+(p) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+153 576 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+177 576 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+157 576 moveto
+(e) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+163 585 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+174 585 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+166 585 moveto
+(-) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+170 585 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+181 590 moveto
+(4) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+1 197 582 215 582 line
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+203 586 moveto
+(1) show
+grestore
+gsave
+0 0 1 stc
+197 568 moveto
+(250) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+233 590 moveto
+224 590 lineto
+221 574 lineto
+219 581 lineto
+218 580 lineto
+stroke
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+226 576 moveto
+(5) show
+grestore
+gsave
+0 0 1 sc
+1 setlinewidth
+solid
+newpath
+251 590 moveto
+242 590 lineto
+239 574 lineto
+237 581 lineto
+236 580 lineto
+stroke
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+244 576 moveto
+(p) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+254 576 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+278 576 moveto
+(\)) show
+grestore
+12 /Times-Bold-Maple fsf
+gsave
+0 0 1 stc
+258 576 moveto
+(e) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+264 585 moveto
+(\() show
+grestore
+gsave
+0 0 1 stc
+275 585 moveto
+(\)) show
+grestore
+8 /Symbol fsf
+gsave
+0 0 1 stc
+267 585 moveto
+(-) show
+grestore
+8 /Times-Italic-Maple fsf
+gsave
+0 0 1 stc
+271 585 moveto
+(y) show
+grestore
+8 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+282 590 moveto
+(5) show
+grestore
+12 /Symbol fsf
+gsave
+0 0 1 stc
+87 576 moveto
+(-) show
+grestore
+gsave
+0 0 1 stc
+188 576 moveto
+(+) show
+grestore
+newpath
+59 732 moveto
+56 732 lineto
+56 567 lineto
+59 567 lineto
+stroke
+12 /Courier-Maple fsf
+gsave
+0 setgray
+64 555 moveto
+(> ) show
+grestore
+12 /Courier-Maple fsf
+gsave
+1 0 0 stc
+78 555 moveto
+(evalf\(subs\(y=4,log10\(abs\(s-dtot\)\)\)\);) show
+grestore
+12 /Times-Roman-Maple fsf
+gsave
+0 0 1 stc
+278 538 moveto
+(-10.63637897) show
+grestore
+newpath
+59 562 moveto
+56 562 lineto
+56 537 lineto
+59 537 lineto
+stroke
+12 /Courier-Maple fsf
+gsave
+0 setgray
+64 525 moveto
+(> ) show
+grestore
+12 /Courier-Maple fsf
+newpath
+59 532 moveto
+56 532 lineto
+56 524 lineto
+59 524 lineto
+stroke
+grestore
+ grestore showpage
+%%Trailer
+%% END of Maple Session Output

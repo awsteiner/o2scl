@@ -1,0 +1,153 @@
+/*
+  -------------------------------------------------------------------
+  
+  Copyright (C) 2006, 2007, 2008, 2009, 2010, Andrew W. Steiner
+  
+  This file is part of O2scl.
+  
+  O2scl is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 3 of the License, or
+  (at your option) any later version.
+  
+  O2scl is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with O2scl. If not, see <http://www.gnu.org/licenses/>.
+
+  -------------------------------------------------------------------
+*/
+/** 
+    \mainpage O2scl User's Guide
+
+    \htmlonly
+    <table width="100%"><tr><td align="left">
+    <a href="../latex/refman.pdf">PDF documentation</a>
+    </td><td align="right"><a href="dl_page.html">
+    <b>Download
+    O<span style='position: relative; top: 0.3em; 
+    font-size: 0.8em'>2</span>scl</b></a></td></tr></table>
+    \endhtmlonly
+
+    \hline
+    \section feat_section Feature Overview
+
+    \o2 is a C++ library for object-oriented numerical programming. It
+    includes interpolation, differentiation, integration, roots of
+    polynomials, equation solving, minimization, constrained
+    minimization, Monte Carlo integration, simulated annealing,
+    least-squares fitting, solution of ordinary
+    differential equations, two-dimensional interpolation, Chebyshev
+    approximation, unit conversions, and file I/O with HDF5. Also,
+    - \o2 includes classes based on numerical routines from GSL and
+    CERNLIB which are completely rewritten in C++, 
+    - classes use templated vector and function types, which 
+    provide maximum flexibility 
+    - \o2 is highly compatible - recent versions have been tested on 
+    Linux (32- and 64-bit systems, with Intel and AMD chips), 
+    Windows XP with Cygwin, and MacOSX, and 
+    - Free! \o2 is provided under Version 3 of the GNU 
+    Public License (see \ref license_section for more).
+    - There are also two sub-libraries
+    <ul>
+    <li>Thermodynamics of ideal and nearly-ideal particles with
+    quantum statistics</li>
+    <li>Equations of state for finite density relevant for 
+    neutron stars</li>
+    </ul>
+
+    This is a beta version. The library should install and 
+    test successfully, and most of the classes are ready
+    for production use. Some of the interfaces may change
+    slightly in future versions. There are a few classes
+    which are more experimental, and this is clearly stated
+    at the top of the documentation for these classes. 
+
+    \hline
+    \section toc_section Quick Reference to User's Guide
+    
+    - \subpage install_section
+    - \subpage usage_section
+    - \subpage examples_section
+    - \subpage related_section
+    \comment
+    - \subpage cplxnum_section
+    \endcomment
+    - \subpage vecmat_section
+    - \subpage linalg_section
+    - \subpage intp_section
+    - \subpage const_section
+    - \subpage funct_section
+    - \subpage table_section
+    - \subpage string_section
+    - \subpage diff_section
+    - \subpage inte_section
+    - \subpage mcarlo_section
+    - \subpage poly_section
+    - \subpage solve_section
+    - \subpage min_section
+    - \subpage conmin_section
+    - \subpage anneal_section
+    - \subpage hist_section
+    - \subpage fit_section
+    - \subpage ode_section
+    - \subpage rng_section
+    - \subpage tintp_section
+    - \subpage algebraic_section
+    - \subpage gslcheb_section
+    - \subpage unitconv_section
+    - \subpage hdf_section
+    - \subpage acol_section
+    - \subpage other_section
+    - \subpage lset_section
+    - \subpage team_section
+    - \subpage design_section
+    - \subpage license_section
+    - \subpage ack_section
+    - \subpage ref_section
+    - <b><a href="todo.html">Todo List</a></b>
+    - \subpage dev_page
+    - \ref future
+    - \subpage dl_page
+    \comment
+    - \ref bug
+    \endcomment
+
+    \htmlonly
+    <UL><LI>Sub-libraries
+    <UL>
+    <LI><B><a href="../part/html/index.html">Particles and Nuclei : 
+    O<span style='position: relative; top: 0.3em; font-size: 0.8em'>2</span>scl_part</a></b>
+    <LI><B><a href="../eos/html/index.html">Equations of State :
+    O<span style='position: relative; top: 0.3em; font-size: 0.8em'>2</span>scl_eos</a></b>
+    </UL>
+    </LI>
+    </UL>
+    \endhtmlonly
+
+*/
+namespace o2scl {
+  /** \brief An empty class to add some items to the todo and bug lists
+   
+      \todo 
+      - Make sure an error message is printed to ensure users 
+      do 'make o2scl-test' and not 'make check'
+      - Make sure cstdlib is included wherever exit() is used 
+      [5/22/11 - Most of these are taken care of now.]
+
+      \future Currently, I believe the testing code requires the
+      shared libraries and may not work if the static libraries
+      only are installed. It would be nice to ensure the tests
+      could be complied in either case.
+   
+  */
+  class other_todos_and_bugs {
+  }
+}
+
+/*
+
+ */

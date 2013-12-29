@@ -1,0 +1,72 @@
+2008-05-07  Andrew W. Steiner  <awsteiner@users.sourceforge.net>
+
+	* Version 0.805
+	* Updates and better documentation of the examples
+	* Fixed several classes so they are properly purely virtual
+	* Updated linear algebra routines to allow either
+	operator[] or operator().
+	* Created a new file src/base/vector.h to make the class
+	organization a little more transparent.
+	* Updated to autoconf v. 2.61
+	* Updated the adaptive ODE steppers to provide error information
+	* Updated nuclear masses
+	* Added a sort_unique() function for ovector and uvector classes.
+
+2008-03-08  Andrew W. Steiner  <awsteiner@users.sourceforge.net>
+
+	* Version 0.804
+	* Created directory src/linalg which includes several linear
+	algebra routines including LU, QR, householder, and tridiagonal 
+	solvers for generic vector and matrix types. 
+	* Fixes to rel_boson, eff_boson, cern_adapt, and cern_gauss56,
+	tov_eos, eff_fermion, ode_iv_solve, and tov_solve
+	* Fixed adding ./ in examples makefile
+	* Updated some of the constants based on the new NIST info
+	* Added << operator for permutation class
+	* Several documentation updates
+	* Updated gsl_mroot_hybrids
+	* Reworked o2scl-test to use libtool
+
+2008-01-01  Andrew W. Steiner  <awsteiner@users.sourceforge.net>
+
+	* Version 0.803
+	* Created permutation class (as with the vector and matrix
+	classes, it is compatible with the gsl_permutation struct)
+	* Updated gsl_miser to properly generalize vector types
+	* Created new classes based on the Open Optimization Library (OOL)
+	which perfom constrained minimization.
+	* Several documentation updates
+
+2007-12-07  Andrew W. Steiner  <awsteiner@users.sourceforge.net>
+
+	* Version 0.802
+	* Several documentation additions and changes
+	* Updated gsl_monte, gsl_vegas and gsl_anneal to 
+	properly generalize vector types.
+	* Added statistics functions for generic vector types analogous
+	to the corresponding GSL stat functions
+	* Small fixes in gsl_rkck and gsl_rk8pd
+	* Improvements in tensor, more documentation, and made a fix
+	in the interpolation
+	* Updated range checking
+	* Improved compilation on Cygwin
+
+2007-10-26  Andrew W. Steiner  <awsteiner@users.sourceforge.net>
+
+	* Version 0.801
+	* Several documentation additions and changes
+	* Updated twod_intp, ode_iv_solve, gsl_astep
+	* Added a n-dimensional tensor class, and the class tensor_grid,
+	which allows naive n-dimesional interpolation
+	* Added pointer_2d_alloc and updated the vector/matrix allocation 
+	objects
+	* Added last_iter to some of the integrators to keep track of 
+	the number of iterations last used
+	* Removed snprintf and mkstemp for more compatibility
+
+2007-10-03  Andrew W. Steiner  <awsteiner@users.sourceforge.net>
+
+	* Version 0.8 released on SourceForge
+
+
+

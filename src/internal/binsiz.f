@@ -1,0 +1,101 @@
+      SUBROUTINE BINSIZ(A1,A2,NAA,BL,BH,NB,BWID)
+C         SUBROUTINE TO DETERMINE REASONABLE HISTOGRAM INTERVALS
+C         GIVEN ABSOLUTE UPPER AND LOWER BOUNDS  A1 AND A2
+C         AND DESIRED MAXIMUM NUMBER OF BINS NAA
+C         PROGRAM MAKES REASONABLE BINNING FROM BL TO BH OF WIDTH BWID
+C         F. JAMES,   AUGUST, 1974
+      AL = MIN(A1,A2)
+      AH = MAX(A1,A2)
+      IF (AL.EQ.AH)  AH = AL + 1.
+C         IF NAA .EQ. -1 , PROGRAM USES BWID INPUT FROM CALLING ROUTINE
+      IF (NAA .EQ. -1)  GO TO 150
+   10 NA = NAA - 1
+      IF (NA .LT. 1)  NA = 1
+C          GET NOMINAL BIN WIDTH IN EXPON FORM
+   20 AWID = (AH-AL)/NA
+      LOG = LOG10(AWID)
+      IF (AWID .LE. 1.0)  LOG=LOG-1
+      SIGFIG = AWID * (10.00 **(-LOG))
+C         ROUND MANTISSA UP TO 2, 2.5, 5, OR 10
+      IF(SIGFIG .GT. 2.0)  GO TO 40
+      SIGRND = 2.0
+      GO TO 100
+   40 IF (SIGFIG .GT. 2.5)  GO TO 50
+      SIGRND = 2.5
+      GO TO 100
+   50 IF(SIGFIG .GT. 5.0)  GO TO 60
+      SIGRND =5.0
+      GO TO 100
+   60 SIGRND = 1.0
+      LOG = LOG + 1
+  100 CONTINUE
+      BWID = SIGRND*10.0**LOG
+      GO TO 200
+C         GET NEW BOUNDS FROM NEW WIDTH BWID
+  150 IF (BWID .LE. 0.)  GO TO 10
+  200 CONTINUE
+      ALB = AL/BWID
+      LWID=ALB
+      IF (ALB .LT. 0.0)  LWID=LWID-1
+      BL = BWID*LWID
+      ALB = AH/BWID + 1.0
+      KWID = ALB
+      IF (ALB .LT. 0.0)  KWID=KWID-1
+      BH = BWID*KWID
+      NB = KWID-LWID
+      IF (NAA .GT. 5)  GO TO 240
+      IF (NAA .EQ. -1)  RETURN
+C          REQUEST FOR ONE BIN IS DIFFICULT CASE
+      IF (NAA .GT. 1 .OR. NB .EQ. 1)  RETURN
+      BWID =  BWID*2.0
+       NB  = 1
+       RETURN
+  240 IF (2*NB .NE. NAA)  RETURN
+      NA = NA + 1
+      GO TO 20
+      END
+
+      PROGRAM BTEST
+
+      A1=1.D0
+      A2=2.D0
+      NAA=3
+      BL=1.D0
+      BH=2.D0
+      NB=0
+      BWID=0.D0
+
+      CALL BINSIZ(A1,A2,NAA,BL,BH,NB,BWID)
+      WRITE (6,*) BL, BH, NB, BWID
+
+      NAA=10
+      NB=0
+      BWID=0
+
+      CALL BINSIZ(A1,A2,NAA,BL,BH,NB,BWID)
+      WRITE (6,*) BL, BH, NB, BWID
+
+      NAA=11
+      NB=0
+      BWID=0
+
+      CALL BINSIZ(A1,A2,NAA,BL,BH,NB,BWID)
+      WRITE (6,*) BL, BH, NB, BWID
+
+      A1=0.0143D0
+      A2=0.9931D0
+      NAA=10
+      NB=0
+      BWID=0
+
+      CALL BINSIZ(A1,A2,NAA,BL,BH,NB,BWID)
+      WRITE (6,*) BL, BH, NB, BWID
+
+      NAA=11
+      NB=0
+      BWID=0
+
+      CALL BINSIZ(A1,A2,NAA,BL,BH,NB,BWID)
+      WRITE (6,*) BL, BH, NB, BWID
+
+      END

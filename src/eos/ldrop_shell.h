@@ -1,0 +1,99 @@
+/*
+  -------------------------------------------------------------------
+  
+  Copyright (C) 2006-2013, Andrew W. Steiner
+  
+  This file is part of O2scl.
+  
+  O2scl is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 3 of the License, or
+  (at your option) any later version.
+  
+  O2scl is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with O2scl. If not, see <http://www.gnu.org/licenses/>.
+  
+  -------------------------------------------------------------------
+*/
+#ifndef LDROP_SHELL_H
+#define LDROP_SHELL_H
+
+#include <cmath>
+#include <string>
+#include <map>
+#include <o2scl/nucleus.h>
+#include <o2scl/nuclear_mass.h>
+#include <o2scl/constants.h>
+#include <o2scl/hadronic_eos.h>
+#include <o2scl/apr_eos.h>
+#include <o2scl/rmf_eos.h>
+#include <o2scl/eff_fermion.h>
+#include <o2scl/mmin_conp.h>
+#include <o2scl/mmin_simp2.h>
+#include <o2scl/ldrop_mass.h>
+#include <o2scl/frdm_mass.h>
+
+#ifndef DOXYGEN_NO_O2NS
+namespace o2scl {
+#endif
+
+  /** \brief Liquid drop model with shell effects
+  */
+  class ldrop_shell : public ldrop_mass_pair, public ibm_shell_energy {
+
+  public:
+
+    ldrop_shell();
+
+    virtual ~ldrop_shell() {}
+
+    /// If true, include shell effects (default true)
+    bool inc_shell;
+
+    /** \brief Return the free binding energy of a \nucleus in a many-body 
+	environment
+    */
+    virtual double drip_binding_energy_d
+      (double Z, double N, double npout, double nnout,
+       double chi, double T);
+
+    /// Fix parameters from an array for fitting
+    virtual int fit_fun(size_t nv, const ubvector &x);
+    
+    /// Fill array with guess from present values for fitting
+    virtual int guess_fun(size_t nv, ubvector &x);
+
+  };
+
+  /** \brief Mass formula adding simple shell effects to the 
+      finite-range liquid droplet model
+   */
+  class frdm_shell : public frdm_mass, public ibm_shell_energy {
+    
+  public:
+
+    frdm_shell();
+
+    virtual ~frdm_shell() {}
+
+    /// Compute the mass excess
+    double mass_excess_d(double Z, double N);
+
+    /// Fix parameters from an array for fitting
+    virtual int fit_fun(size_t nv, const ubvector &x);
+    
+    /// Fill array with guess from present values for fitting
+    virtual int guess_fun(size_t nv, ubvector &x);
+
+  };
+
+#ifndef DOXYGEN_NO_O2NS
+}
+#endif
+
+#endif

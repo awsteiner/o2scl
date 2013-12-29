@@ -1,0 +1,50 @@
+/** \page algebraic_section Algebraic Function Evaluation
+
+    The \ref FunctionParser library
+    (http://warp.povusers.org/FunctionParser/) is used in \o2 to
+    provide evaluation of functions specified as strings. The
+    source code for this library is included in the \o2 
+    distribution and automatically compiled and installed
+    with \o2 .
+
+    The most basic usage is 
+    \code
+    FunctionParser fp;
+    // Parse the function 'x+y-1' with variables 'x' and 'y'
+    int ret = fp.Parse("x+y-1", "x,y");
+    double vals[] = { 4, 8 };
+    // Replace 'x' with 4, 'y' with 8, and evaluate
+    std::cout << fp.Eval(vals) << std::endl;
+    \endcode
+    
+    This will print out the result, 11 to \c std::cout. 
+
+    Constants may also be provided, which are replaced with 
+    numerical values in future formulas to be evaluated.
+
+    \code
+    FunctionParser fp;
+    fp.AddConstant("a",1);
+    int ret = fp.Parse("x+y-a", "x,y");
+    double vals[] = { 4, 8 };
+    std::cout << fp.Eval(vals) << std::endl;
+    \endcode
+
+    This example will also print 11 to \c std::cout.
+
+    \comment
+
+    The function FunctionParser::Eval() has been modified to 
+    be a template member function and will accept any vector
+    type, e.g. the following also works:
+    \code
+    FunctionParser fp;
+    int ret = fp.Parse("x+y-1", "x,y");
+    ovector vals(2);
+    vals[0]=4.0; 
+    vals[1]=8.0;
+    std::cout << fp.Eval(vals) << std::endl;
+    \endcode
+
+    \endcomment
+*/

@@ -1,0 +1,121 @@
+\documentclass{article}
+\usepackage[letterpaper,top=2.5cm,bottom=2.5cm,left=2.5cm,right=2.5cm]{geometry}
+
+%AWS: Added this package to help made the 
+%description environment wrap long item names
+\usepackage{mdwlist}
+
+\usepackage{makeidx}
+\usepackage{natbib}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{ifthen}
+\usepackage[table]{xcolor}
+\usepackage{textcomp}
+\usepackage{alltt}
+\usepackage{ifpdf}
+\ifpdf
+\usepackage[pdftex,
+            pagebackref=true,
+            colorlinks=true,
+            linkcolor=blue,
+            unicode
+           ]{hyperref}
+\else
+\usepackage[ps2pdf,
+            pagebackref=true,
+            colorlinks=true,
+            linkcolor=blue,
+            unicode
+           ]{hyperref}
+\usepackage{pspicture}
+\fi
+\usepackage[utf8]{inputenc}
+\usepackage{mathptmx}
+\usepackage[scaled=.90]{helvet}
+\usepackage{courier}
+\usepackage{sectsty}
+\usepackage{amssymb}
+\usepackage[titles]{tocloft}
+\usepackage{doxygen}
+
+% AWS - blank footer
+\rfoot[\fancyplain{}{}]{}
+\lfoot[]{\fancyplain{}{}}
+
+% AWS - compact lists
+\renewenvironment{DoxyCompactList}
+{
+  \begin{list}{}{
+  \setlength{\leftmargin}{0.5cm}
+  \setlength{\itemsep}{-5pt}
+  \setlength{\parsep}{-5pt}
+  \setlength{\topsep}{-5pt}
+  \renewcommand{\makelabel}{}}
+}
+{\end{list}}
+\renewenvironment{DoxyCompactItemize}
+{
+  \begin{itemize}
+  \setlength{\itemsep}{-5pt}
+  \setlength{\parsep}{-5pt}
+  \setlength{\topsep}{-5pt}
+  \setlength{\partopsep}{-5pt}
+}
+{\end{itemize}}
+
+%AWS: Added this redefinition of the description environment to wrap
+%long item names
+\renewenvironment{description}
+{\begin{basedescript}{
+\desclabelstyle{\nextlinelabel}
+\renewcommand{\makelabel}[1]{\parbox[b]{\textwidth}{\bfseries##1}}
+\desclabelwidth{2em}}}
+{\end{basedescript}
+}
+
+\lstset{language=C++,inputencoding=utf8,basicstyle=\footnotesize,breaklines=true
+,breakatwhitespace=true,tabsize=4,numbers=left }
+\makeindex
+
+% AWS: Modified from the Doyxgen default of 3 to get shorter TOC
+\setcounter{tocdepth}{2}
+
+% AWS: Make the TOC look a little better by making space for the
+% section numbers
+\setlength{\cftsubsecnumwidth}{0.45in}
+
+\renewcommand{\footrulewidth}{0.4pt}
+\renewcommand{\familydefault}{\sfdefault}
+\hfuzz=15pt
+\setlength{\emergencystretch}{15pt}
+\hbadness=750
+\tolerance=750
+\begin{document}
+\hypersetup{pageanchor=false,citecolor=blue}
+
+% AWS: Modified title page
+\begin{titlepage}
+\vspace*{7cm}
+\begin{center}
+{\huge O$_2$scl - An Object-Oriented Scientific Computing Library\\
+[1ex]\large Version 0.914}\\
+\end{center}
+\vfill
+Copyright~{\copyright}~2006-2013,
+Andrew W. Steiner \\
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.2 or
+any later version published by the Free Software Foundation; with no
+Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.  A
+copy of the license is included in the section entitled ``License
+Information''.
+\end{titlepage}
+
+\pagenumbering{roman}
+\tableofcontents
+\pagenumbering{arabic}
+\hypersetup{pageanchor=true,citecolor=blue}

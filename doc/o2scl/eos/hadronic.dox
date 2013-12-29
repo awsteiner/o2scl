@@ -1,0 +1,48 @@
+/** \page hadronic Equations of State of Hadronic Matter
+
+    The hadronic equations of state are all inherited from \ref
+    o2scl::hadronic_eos : \ref o2scl::schematic_eos, \ref
+    o2scl::skyrme_eos, \ref o2scl::rmf_eos, \ref o2scl::apr_eos, and
+    \ref o2scl::gen_potential_eos.
+
+    The hadronic_eos class includes several methods that can be used
+    to calculate the saturation properties of nuclear matter. These
+    methods are sometimes overloaded in descendants when exact
+    formulas are available.
+
+    There is also a set of classes to modify the quartic term
+    of the symmetry energy: rmf4_eos, apr4_eos, skyrme4_eos, and 
+    mdi4_eos all based on sym4_eos_base which can be used
+    in sym4_eos.
+
+    \section ex_apr_eos_sect Akmal-Pandharipande-Ravenhall EOS example
+    
+    The <tt>ex_apr_eos</tt> example computes the APR EOS with \ref
+    o2scl::apr_eos. It computes nuclear and neutron matter and then matter in
+    beta-equilibrium with both a Maxwell construction (as done in the
+    \ref Akmal98) and a Gibbs construction to match the low- and
+    high-density phases. Afterwards it computes the properties of
+    neutron stars from the EOS. Most of the data is stored in
+    \ref o2scl::table_units objects and then written to HDF files in the 
+    examples directory.
+
+    This example is rather lengthy and the full source code is
+    not duplicated here. The class created in that example
+    is documented at \ref ex_apr_eos .
+
+    Typical output:
+    \verbinclude ex_apr_eos.scr
+
+    \section ex_skyrme_eos_sect Skyrme EOS example
+    
+    The <tt>ex_skyrme_eos</tt> computes EOS and neutron star 
+    properties using \ref o2scl::skyrme_eos from a Skyrme model.
+
+    This example is rather lengthy and the full source code is
+    not duplicated here. The class created in that example
+    is documented at \ref ex_skyrme_eos .
+
+    Typical output:
+    \verbinclude ex_skyrme_eos.scr
+
+*/

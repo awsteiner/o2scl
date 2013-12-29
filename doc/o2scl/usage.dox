@@ -1,0 +1,238 @@
+/** \page usage_section General Usage
+
+    \section namespace_subsect Namespaces
+    
+    Most of the classes reside in the namespace \c o2scl . Numerical
+    constants (many of them based on the GSL constants) are placed in
+    separate namespaces (o2scl_cgs, o2scl_cgsm, o2scl_mks, o2scl_mksa,
+    and o2scl_const). The \o2 functions and classes for HDF5 output
+    are in the \ref o2scl_hdf namespace. There are also two namespaces
+    which hold integration coefficients, o2scl_inte_gk_coeffs and
+    o2scl_inte_qng_coeffs. There are also some namespaces for the
+    linear algebra functions, see \ref linalg_section for more
+    information on these.
+
+    \section docconv_subsect Documentation conventions
+
+    In the following documentation, function parameters are denoted by
+    \c parameter, except when used in mathematical formulas as in \f$
+    \mathrm{variable} \f$ .
+    
+    \section errorhand_subsect Basic error handling
+
+    Error handling is a hybrid approach combining GSL with C++
+    exceptions. An abstract type has been defined which operates as a
+    GSL-like error hander. The default error handler is a
+    implementation of this abstract type which throws a C++ exception
+    when an error is encountered. The various exceptions, and their
+    correspondence with the GSL error codes, are given in the \ref
+    exc_types_subsect section. By default in \o2, the default GSL
+    error handler is replaced with the \o2 default error handler, i.e.
+    GSL functions will throw C++ exceptions.
+
+    Errors can be set by the user through the macros \ref O2SCL_ERR,
+    which sets an error, and \ref O2SCL_ERR_RET, which sets an error
+    and returns the error number.
+
+    The error handler, \ref o2scl::err_hnd is a global pointer to an
+    object of type \ref o2scl::err_hnd_type. There is a global default
+    error handler, \ref o2scl::def_err_hnd, of type \ref
+    o2scl::err_hnd_cpp, which throws C++ exceptions, and an alternate
+    default error handler, \ref o2scl::alt_err_hnd, of type \ref
+    o2scl::err_hnd_gsl, which outputs an error message and aborts
+    execution. The global error handler can be replaced by simply
+    assigning the address of a descendant of \ref o2scl::err_hnd_type
+    to \ref o2scl::err_hnd.
+
+    \o2 does not support any execution beyond the point at which the
+    error handler is called. Many functions which would have had
+    integer return values in GSL, now return <tt>void</tt> in \o2.
+    Object destructors almost never call the error handler.
+    Internally, \o2 does not use <tt>try</tt> blocks, but these can
+    easily be effectively employed by an \o2 user.
+
+    The C++ exception classes are also mapped to the list of GSL error
+    codes (including a few extra ones for \o2), which is given in the
+    documentation for the file \ref err_hnd.h and in \ref
+    exc_types_subsect below.
+
+    \comment
+    Functionality similar to assert() is provided with the macro
+    \ref O2SCL_ASSERT, which exits if its argument is non-zero, and 
+    \ref O2SCL_BOOL_ASSERT which exits if its argument is false.
+    \endcomment
+    
+    One can instruct the library to use the GSL-like \o2 error
+    handler \ref o2scl::alt_err_hnd by default, by defining the 
+    constant <tt>O2SCL_USE_GSL_HANDLER</tt>. This is also useful
+    if one wants to compile without C++ exceptions (which does
+    have a small overhead). 
+
+    \section errorhand2_subsect What is an error?
+
+    \o2 assumes that errors are events which should happen
+    infrequently. Error handling strategies are often time-consuming
+    and they are not a replacement for normal code flow. However, even
+    with this in mind, one can still distinguish a large spectrum of
+    posibillities from "fatal" errors, those likely to corrupt the
+    stack and/or cause a dreaded "segmentation fault" and "non-fatal"
+    errors, those errors which might cause incorrect results, but
+    might be somehow recoverable. One of the purposes of error
+    handling is to decide if and how these different types of errors
+    should be handled differently.
+
+    Sometimes, it is undesirable to abort execution upon a failure to
+    reach numerical convergence. While these failures are treated as
+    errors (and by default an exception is thrown), some of the
+    classes which attempt to reach numerical convergence have an
+    option (e.g. mroot::err_nonconv) to turn this default behavior off
+    for these convergence errors. To set these "convergence" errors in
+    code provided by the user, the macros \ref O2SCL_CONV and \ref
+    O2SCL_CONV_RET can be used. Functions which may have convergence
+    errors sometimes return <tt>int</tt>, to indicate which
+    convergence error was returned when the value of
+    <tt>err_nonconv</tt> has been set to false.
+
+    Of course, the standard \c try, \c catch mechanism of error
+    handling may also be used for finer-grained control. 
+
+    Another related issue is that \o2 often calls functions which are
+    supplied by the user, these user-designed functions may create
+    errors, and the library needs to decide how to deal with them,
+    even though it knows little about what is actually happening
+    inside these user-defined functions. For this reason, \o2 does not
+    typically try to handle any exceptions or errors occuring in
+    user-specified functions.
+
+    \section exc_types_subsect GSL error codes and C++ exception types
+
+    See also the description of the error codes in \ref err_hnd.h .
+
+    \ref o2scl::success=0, (no error thrown) \n
+    \ref o2scl::gsl_failure=-1, \ref o2scl::exc_exception \n
+    \ref o2scl::gsl_continue=-2, (no error thrown) \n
+    \ref o2scl::exc_edom=1, \ref o2scl::exc_range_error \n
+    \ref o2scl::exc_erange=2, \ref o2scl::exc_range_error \n
+    \ref o2scl::exc_efault=3, \ref o2scl::exc_runtime_error \n
+    \ref o2scl::exc_einval=4, \ref o2scl::exc_invalid_argument \n
+    \ref o2scl::exc_efailed=5, \ref o2scl::exc_exception \n
+    \ref o2scl::exc_efactor=6, \ref o2scl::exc_runtime_error \n
+    \ref o2scl::exc_esanity=7, \ref o2scl::exc_exception \n
+    \ref o2scl::exc_enomem=8, \ref o2scl::exc_runtime_error \n
+    \ref o2scl::exc_ebadfunc=9, \ref o2scl::exc_runtime_error \n
+    \ref o2scl::exc_erunaway=10, \ref o2scl::exc_runtime_error \n
+    \ref o2scl::exc_emaxiter=11, \ref o2scl::exc_runtime_error \n
+    \ref o2scl::exc_ezerodiv=12, \ref o2scl::exc_overflow_error \n
+    \ref o2scl::exc_ebadtol=13, \ref o2scl::exc_invalid_argument \n
+    \ref o2scl::exc_etol=14, \ref o2scl::exc_runtime_error \n
+    \ref o2scl::exc_eundrflw=15, \ref o2scl::exc_range_error \n
+    \ref o2scl::exc_eovrflw=16, \ref o2scl::exc_overflow_error \n
+    \ref o2scl::exc_eloss=17, \ref o2scl::exc_runtime_error \n
+    \ref o2scl::exc_eround=18, \ref o2scl::exc_runtime_error \n
+    \ref o2scl::exc_ebadlen=19, \ref o2scl::exc_invalid_argument \n
+    \ref o2scl::exc_enotsqr=20, \ref o2scl::exc_invalid_argument \n
+    \ref o2scl::exc_esing=21, \ref o2scl::exc_runtime_error \n
+    \ref o2scl::exc_ediverge=22, \ref o2scl::exc_runtime_error \n
+    \ref o2scl::exc_eunsup=23, \ref o2scl::exc_exception \n
+    \ref o2scl::exc_eunimpl=24, \ref o2scl::exc_exception \n
+    \ref o2scl::exc_ecache=25, \ref o2scl::exc_runtime_error \n
+    \ref o2scl::exc_etable=26, \ref o2scl::exc_runtime_error \n
+    \ref o2scl::exc_enoprog=27, \ref o2scl::exc_runtime_error \n
+    \ref o2scl::exc_enoprogj=28, \ref o2scl::exc_runtime_error \n
+    \ref o2scl::exc_etolf=29, \ref o2scl::exc_runtime_error \n
+    \ref o2scl::exc_etolx=30, \ref o2scl::exc_runtime_error \n
+    \ref o2scl::exc_etolg=31, \ref o2scl::exc_runtime_error \n
+    \ref o2scl::exc_eof=32, \ref o2scl::exc_ios_failure \n
+    \ref o2scl::exc_enotfound=33, \ref o2scl::exc_runtime_error \n
+    \ref o2scl::exc_ememtype=34, \ref o2scl::exc_logic_error \n
+    \ref o2scl::exc_efilenotfound=35, \ref o2scl::exc_ios_failure \n
+    \ref o2scl::exc_eindex=36, \ref o2scl::exc_invalid_argument \n
+    \ref o2scl::exc_outsidecons=37, \ref o2scl::exc_runtime_error \n
+
+    \section objscope_subsect Objects and scope
+    
+    \o2 objects frequently take inputs which are of the form of a
+    reference to a smaller object. This is particularly convenient
+    because it allows a lot of flexibility, while providing a certain
+    degree of safety. In many cases, the user retains the
+    responsibility of ensuring that input objects do not go out of
+    scope before they are utilized by objects which require them. This
+    is actually no different than the requirements on the user imposed
+    by GSL, for example.
+
+    Member functions which store pointers to user-specified objects
+    warn that they are doing so in the documentation for the class.
+
+    A simple example of this is provided by the multi-dimensional
+    integrator \ref o2scl::inte_multi_comp. It works by combining several
+    one-dimensional integrators to integrate over a multi-dimensional
+    hybercube. If the specified one-dimensional integrator goes
+    out of scope an integration is attempted, the integration will
+    fail, for example,
+    \include scope_doc.cpp
+
+    This will fail because the one-dimensional integration objects go
+    out of scope (it's a local variable in the function and its
+    destructor is called before the <tt>set_integrator()</tt> function
+    exits) before the <tt>minteg_err()</tt> function is called.
+
+    This difficulty can be solved by using shared pointers, which
+    ensure that an object is deleted only when it has no more
+    references which are pointing to it. While shared pointer objects
+    are part of the new TR1 standard, not all compilers implement this
+    standard yet. If TR1 is not available, then the user can define
+    the constant O2SCL_NO_TR1_MEMROY and the boost shared pointer type
+    will be used. See the documentation for \ref o2scl::o2_shared_ptr
+    for more details.
+
+    \section refparm_subsect Reference parameters
+
+    When a \o2 function contains two reference parameters for objects,
+    it is not typically possible to provide the same object to both
+    parameters or to provide two objects which share the same memory.
+    This is particularly an issue when the associated types are
+    template types, since then the \o2 library has no way of knowing
+    how memory is organized in these unspecified types. Thread safety
+    is also an issue, as care must be taken if two functions which are
+    running simultaneously access the same instance of any class.
+
+    \section defconst_subsect Define constants
+
+    Various define constants used in \o2 :
+
+    - O2SCL_CBLAS_NAMESPACE - Internally used by some of the headers
+    in the \c src/linalg directory to select between \ref o2scl_cblas
+    and \ref o2scl_cblas_bracket
+
+    - O2SCL_DATA_DIR - Used by \o2 classes during installation to refer
+    to the directory where data is stored. After installation, this
+    is accessible through the global object named 
+    \ref o2scl::o2scl_settings.
+
+    - O2SCL_NEVER_DEFINED - Used internally to comment out large 
+    sections of code. This should not be used by the end-user. 
+
+    - O2SCL_NO_EXCEPTIONS - If this is defined, then the error handler
+    calls \ref o2scl::err_hnd_gsl::set() instead of throwing a C++ exception.
+    Used in <tt>src/base/exception.cpp</tt>. This is useful, for
+    example, with the <tt>g++</tt> flag <tt>-fno-exceptions</tt>.
+
+    - O2SCL_NO_SYSTEM_FUNC - If this is defined, then the \ref o2scl::cli
+    class will never allow shell commands, independent of the 
+    setting of \ref o2scl::cli::shell_cmd_allowed .
+
+    - O2SCL_NO_RANGE_CHECK - If this is defined, range checking is
+    turned off where it is used in \ref o2scl::table, \ref
+    o2scl::tensor, \ref o2scl::permutation and the functions in \ref
+    o2scl_cblas. Some \o2 header files use this define constant and so
+    range checking can be turned off or on separate from what was done
+    at installation.
+
+    - O2SCL_USE_GSL_HANDLER - If this is defined, then an object
+    of type \ref o2scl::err_hnd_gsl is the default error handler. Used in
+    <tt>src/base/exception.cpp</tt>.
+
+    - O2SCL_NO_TR1_MEMORY - If this is defined then boost 
+    shared pointers are used. (used in <tt>src/base/shared_ptr.h</tt>).
+
+*/

@@ -1,0 +1,25 @@
+/** \page sneos_section Equations of State for Core-Collapse Supernovae
+
+    There are several classes designed to provide a consistent
+    interface to several supernova EOS tables. The abstract base
+    class is \ref o2scl::gen_sn_eos. The child classes correspond to
+    different EOS table formats: 
+    - \ref o2scl::ls_eos - The Lattimer-Swesty EOS tables from Jim's
+    webpage (\ref Lattimer91)
+    - \ref o2scl::stos_eos - The H. Shen et al. EOS tables
+    (\ref Shen98 and \ref Shen98b)
+    - \ref o2scl::sht_eos - The G. Shen et al. EOS tables 
+    (\ref Shen10a, \ref Shen10b, \ref Shen11)
+    - \ref o2scl::hfsl_eos - The M. Hempel et al. EOS tables
+    (\ref Hempel10 and Hempel11)
+    - \ref o2scl::oo_eos - The Lattimer-Swesty and H. Shen et al. tables
+    reformatted by O'Connor and Ott (\ref OConnor10)
+
+    The \o2 distribution does not contain the tables themselves,
+    as they are quite large and most are freely available.
+    \o2 includes code which parses these tables and puts them in 
+    \ref o2scl::tensor_grid3 objects for analysis by the user. 
+
+    All of these classes are experimental.
+    
+*/

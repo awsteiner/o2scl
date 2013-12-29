@@ -1,0 +1,65 @@
+/** 
+    \page dl_page Download O2scl
+
+    The current version is 0.914. The source distribution can 
+    be obtained from \n
+    - \c http://sourceforge.net/projects/o2scl/files/o2scl/
+
+    You may also download \o2 from version from the Subversion
+    repository. To obtain the most recent stable version, use
+    something like
+    \verbatim
+    svn co svn://svn.code.sf.net/p/o2scl/code/trunk o2scl
+    \endverbatim
+    The checkout process is a bit more time consuming than directly
+    downloading the source distribution.
+
+    Version 0.914 corresponds with version 951 in the svn repository.
+
+    Version 0.913 corresponds with version 787 in the svn repository.
+
+    Version 0.912 corresponds with version 588 in the svn repository.
+
+    Version 0.911 corresponds with version 481 in the svn repository.
+
+    Version 0.910 corresponds with version 376 in the svn repository.
+
+    Version 0.909 corresponds with version 317 in the svn repository.
+
+    Version 0.908 corresponds with version 200 in the svn repository.
+
+    Version 0.907 corresponds with version 107 in the svn repository.
+
+    Version 0.906 corresponds with version 54 in the svn repository.
+
+    Version 0.905 corresponds with version 48 in the svn repository.
+
+    Version 0.904 corresponds with version 40 in the svn repository.
+
+    Version 0.903 does not exist (this number was skipped)
+
+    Version 0.902 corresponds with version 37 in the svn respository.
+
+    Version 0.901 corresponds with version 31 in the svn respository.
+
+    Version 0.9 corresponds with version 26 in the svn respository.
+
+    Version 0.806 was a quick release to fix some issues with
+    compilations in Mac OS X and does not correspond exactly 
+    with a version in the repository. 
+
+    Version 0.805 corresponds with version 16 in the svn respository.
+    
+*/
+/*
+  \htmlonly
+  <table border=0>
+  <tr><td>Release version number</td><td>SVN repository number</td></tr>
+  <tr><td>0.901</td><td>31</td></tr>
+  <tr><td>0.9</td><td>26</td></tr>
+  <tr><td>0.806</td><td>none</td></tr>
+  <tr><td>0.805</td><td>16</td></tr>
+  </table>
+  \endhtmlonly
+  
+*/

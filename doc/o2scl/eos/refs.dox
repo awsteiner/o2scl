@@ -1,0 +1,783 @@
+/** \page eosref_section Bibliography
+
+    Some of the references which contain links should direct you to
+    the work referred to directly through <tt>dx.doi.org</tt> for journal
+    articles or <tt>worldcat.org</tt> for books.
+
+    \anchor Akmal98 Akmal98:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1103/PhysRevC.58.1805">
+    A. Akmal, V.R. Pandharipande, and D.G. Ravenhall</a>, 
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1103/PhysRevC.58.1805}{
+    A. Akmal, V.~R. Pandharipande, and D.~G. Ravenhall},
+    \endlatexonly
+    Phys. Rev. C \b 58, (1998) 1804.
+
+    \anchor Bartel79 Bartel79:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/0375-9474(82)90403-1">
+    J. Bartel, P. Quentin, M. Brack, C. Guet, and H&aring;kansson</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/0375-9474(82)90403-1}{
+    J. Bartel, P. Quentin, M. Brack, C. Guet, and H{\aa}kansson},
+    \endlatexonly
+    Nucl. Phys. A \b 386 (1982) 79.
+
+    \anchor Baym71 Baym71:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1086/151216">
+    G. Baym, C. Pethick, and P. Sutherland</a>,
+    \endhtmlonly
+    \latexonly
+    \href={http://dx.doi.org/10.1086/151216}{
+    G. Baym, C. Pethick, and P. Sutherland},
+    \endlatexonly
+    Astrophys. J. \b 170 (1971) 299.
+    
+    \anchor Beiner75 Beiner75:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/0375-9474(75)90338-3">
+    M. Beiner, H. Flocard, Nguyen van Giai, and P. Quentin</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/0375-9474(75)90338-3}{
+    M. Beiner, H. Flocard, Nguyen van Giai, and P. Quentin}, 
+    \endlatexonly
+    Nucl. Phys. A \b 238 (1975) 29.
+
+    \anchor Bernard88 Bernard88:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/0550-3213(88)90127-7">
+    V. Bernard, R.L. Jaffe, and U.-G. Meissner</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/0550-3213(88)90127-7}{
+    V. Bernard, R.~L. Jaffe, and U.-G. Meissner},
+    \endlatexonly
+    Nucl. Phys. B \b 308 (1988) 753.
+
+    \anchor Bombaci01 Bombaci01:
+    I. Bombaci, <em>"Equation of State for Dense Isospin Asymmetric 
+    Nuclear Matter for Astrophysical Applications"</em>, in  
+    \htmlonly
+    <a href="http://www.worldcat.org/isbn/1560728884">
+    "Isospin physics in heavy-ion collisions at
+    intermediate energies"</a>
+    ed. by B-A. Li 
+    and W. U. Schr&ouml;der (2001) Nova Science, New York. 
+    \endhtmlonly
+    \latexonly
+    \href{http://www.worldcat.org/isbn/1560728884}{
+    "Isospin physics in heavy-ion collisions at
+    intermediate energies"}
+    ed. by B-A. 
+    Li and W. U. Schr\"{o}der (2001) Nova Science, New York. 
+    \endlatexonly
+    
+    \anchor Brack85 Brack85:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/0370-1573(86)90078-5">
+    M. Brack, C. Guet, and H.-B. H&aring;kansson</a>
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/0370-1573(86)90078-5}{
+    M. Brack, C. Guet, and H.-B. H{\aa}kansson},
+    \endlatexonly
+    Phys. Rep. \b 123 (1985) 275.
+
+    \anchor Buballa99 Buballa99:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/S0370-2693(99)00533-X">
+    M. Buballa and M. Oertel</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/S0370-2693(99)00533-X}{
+    M. Buballa and M. Oertel}, 
+    \endlatexonly
+    Phys. Lett. B \b 457 (1999) 261.
+
+    \anchor Buballa04 Buballa04:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/j.physrep.2004.11.004">
+    M. Buballa</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/j.physrep.2004.11.004}{
+    M. Buballa}, 
+    \endlatexonly
+    Phys. Rep. \b 407 (2005) 205-376.
+    
+    \anchor Chabanat95 Chabanat95:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1088/0031-8949/1995/T56/034">
+    E. Chabanat, P. Bonche, P. Haensel, J. Meyer, and R. Schaeffer</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1088/0031-8949/1995/T56/034}{
+    E. Chabanat, P. Bonche, P. Haensel, J. Meyer, and R. Schaeffer},
+    \endlatexonly
+    Phys. Scr. \b T56 (1995) 231.
+
+    \anchor Chabanat97 Chabanat97:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/S0375-9474(97)00596-4">
+    E. Chabanat, J. Meyer, P. Bonche, R. Schaeffer, and P. Haensel</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/S0375-9474(97)00596-4}{
+    E. Chabanat, J. Meyer, P. Bonche, R. Schaeffer, and P. Haensel}, 
+    \endlatexonly
+    Nucl. Phys. A \b 627 (1997) 710.
+
+    \anchor Chappert08 Chappert08:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/j.physletb.2008.09.017">
+    F. Chappert, M. Girod, and S. Hilaire</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/j.physletb.2008.09.017}{
+    F. Chappert, M. Girod, and S. Hilaire},
+    \endlatexonly
+    Phys. Lett. B \b 668 (2008) 420.
+
+    \anchor Danielewicz08 Danielewicz08:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/j.nuclphysa.2008.11.007">
+    P. Danielewicz, J. Lee</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/j.nuclphysa.2008.11.007}{
+    P. Danielewicz, J. Lee},
+    \endlatexonly
+    Nucl. Phys. A \b 818 (2009) 36.
+
+    \anchor Das03 Das03:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1103/PhysRevC.67.034611">
+    C.B. Das, S. Das Gupta, C. Gale, and B.-A. Li</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1103/PhysRevC.67.034611}{
+    C.B. Das, S. Das Gupta, C. Gale, and B.-A. Li},
+    \endlatexonly
+    Phys. Rev. C \b 67 (2003) 034611.
+
+    \anchor Dieperink09 Dieperink09:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1140/epja/i2009-10869-3">
+    A.E.L. Dieperink and P. van Isacker</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1140/epja/i2009-10869-3}{
+    A.E.L. Dieperink and P. van Isacker},
+    \endlatexonly
+    Eur. Phys. Jour. A 42 (2009) 269.
+
+    \anchor Dobaczewski94 Dobaczewski94:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/0375-9474(84)90433-0">
+    J. Dobaczewski, H. Flocard, and J. Treiner</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/0375-9474(84)90433-0}{
+    J. Dobaczewski, H. Flocard, and J. Treiner}, 
+    \endlatexonly
+    Nucl. Phys. A \b 422 (1984) 103.
+
+    \anchor Dutta86 Dutta86:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/0375-9474(86)90283-6">
+    A.K.Dutta, J.-P.Arcoragi, J.M.Pearson, R.Behrman, F.Tondeur</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/0375-9474(86)90283-6}{
+    A.K.Dutta, J.-P.Arcoragi, J.M.Pearson, R.Behrman, F.Tondeur},
+    \endlatexonly
+    Nucl. Phys. A \b 458 (1986) 77.
+
+    \anchor Friedrich86 Friedrich86:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1103/PhysRevC.33.335">
+    J. Friedrich, and P.-G. Reinhard</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1103/PhysRevC.33.335}{
+    J. Friedrich, and P.-G. Reinhard}, 
+    \endlatexonly
+    Phys. Rev. C \b 33 (1986) 335.
+
+    \anchor Gaitanos04 Gaitanos04:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/j.nuclphysa.2003.12.001">
+    T. Gaitanos, M. Di Toro, S. Typel, V. Barana, C. Fuchs, 
+    V. Greco, and H. H. Wolter</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/j.nuclphysa.2003.12.001}{
+    T. Gaitanos, M. Di Toro, S. Typel, V. Barana, C. Fuchs, 
+    V. Greco, and H. H. Wolter},
+    \endlatexonly
+    Nucl. Phys. A \b 732 (2004) 24.
+
+    \anchor Gale87 Gale87:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1103/PhysRevC.35.1666">
+    C. Gale, G. Bertsch, and S. Das Gupta</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1103/PhysRevC.35.1666}{
+    C. Gale, G. Bertsch, and S. Das Gupta},
+    \endlatexonly
+    Phys. Rev. C \b 35 (1986) 1666.
+
+    \anchor Goriely10 Goriely10:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1103/PhysRevC.82.035804">
+    S. Goriely, N. Chamel, and J.M. Pearson</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1103/PhysRevC.82.035804}{
+    S. Goriely, N. Chamel, and J.~M. Pearson},
+    \endlatexonly
+    Phys. Rev. C \b 82 (2010) 035804.
+
+    \anchor Hatsuda94 Hatsuda94:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/0370-1573(94)90022-1">
+    T. Hatsuda and T. Kunihiro</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/0370-1573(94)90022-1}{
+    T. Hatsuda and T. Kunihiro}, 
+    \endlatexonly
+    Phys. Rep. \b 247 (1994) 221.
+
+    \anchor Heide94 Heide94:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/0375-9474(94)90717-X">
+    E.K. Heide, S. Rudaz, and P.J. Ellis</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/0375-9474(94)90717-X}{
+    E.K. Heide, S. Rudaz, and P.J. Ellis},
+    \endlatexonly
+    Nucl. Phys. A \b 571 (1994) 713.
+
+    \anchor Hempel10 Hempel10:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/j.nuclphysa.2010.02.010">
+    M. Hempel and J. Schaffner-Bielich</a>, 
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/j.nuclphysa.2010.02.010}{
+    M. Hempel and J. Schaffner-Bielich},
+    \endlatexonly
+    Nucl. Phys. A \b 837 (2010) 210.
+    
+    \anchor Hempel11 Hempel11: 
+    \htmlonly
+    <a href="http://dx.doi.org/10.1088/0004-637X/748/1/70">
+    M. Hempel, T. Fischer, J. Schaffner-Bielich, and M. Liebendorfer</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1088/0004-637X/748/1/70}{
+    M. Hempel, T. Fischer, J. Schaffner-Bielich, and M. Liebendorfer},
+    \endlatexonly
+    Astrophys. J. \b 748 (2012) 70. 
+
+    \anchor Horowitz81 Horowitz81:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/0375-9474(81)90770-3">
+    C.J. Horowitz and B.D. Serot</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/0375-9474(81)90770-3}{
+    C.J. Horowitz and B.D. Serot},
+    \endlatexonly
+    Nucl. Phys. A \b 368 (1981) 503.
+
+    \anchor Horowitz01 Horowitz01: 
+    \htmlonly
+    <a href="http://dx.doi.org/10.1103/PhysRevLett.86.5647">
+    C.J. Horowitz and J. Piekarewicz</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1103/PhysRevLett.86.5647}{
+    C.~J. Horowitz and J. Piekarewicz},
+    \endlatexonly
+    Phys. Rev. Lett. \b 86 (2001) 5647.
+
+    \anchor Horowitz05 Horowitz05: 
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/j.nuclphysa.2006.05.009">
+    C.J. Horowitz and A. Schweank</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/j.nuclphysa.2006.05.009}{
+    C.~J. Horowitz and J. Piekarewicz},
+    \endlatexonly
+    Nucl. Phys. A \b 776 (2006) 55.
+
+    \anchor Kubis97 Kubis97: 
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/S0370-2693(97)00306-7">
+    S. Kubis and M. Kutschera</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/S0370-2693(97)00306-7}{
+    S. Kubis and M. Kutschera},
+    \endlatexonly
+    Phys. Lett. B \b 399 (1997) 191.
+
+    \anchor Lattimer85 Lattimer85:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/0375-9474(85)90006-5">
+    J.M. Lattimer, C.J. Pethick, D.G. Ravenhall, and 
+    D.Q. Lamb</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/0375-9474(85)90006-5}{
+    J.~M. Lattimer, C.~J. Pethick, D.~G. Ravenhall, and 
+    D.~Q. Lamb},
+    \endlatexonly
+    Nucl. Phys. A, \b 432 (1985) 646.
+
+    \anchor Lattimer91 Lattimer91:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/0375-9474(91)90452-C">
+    J.M. Lattimer and F.D. Swesty</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/0375-9474(91)90452-C}
+    {J.M. Lattimer and F.D. Swesty},
+    \endlatexonly
+    Nucl. Phys. A, \b 535 (1991) 331.
+
+    \anchor Lattimer01 Lattimer01:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1086/319702">
+    J. M. Lattimer and M. Prakash</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1086/319702}{
+    J. M. Lattimer and M. Prakash},
+    \endlatexonly
+    Astrophys. J. \b 550 (2001) 426.
+    
+    \anchor Margueron02 Margueron02:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1103/PhysRevC.66.014303">
+    J. Margueron, J. Navarro, and N.V. Giai</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1103/PhysRevC.66.014303}{
+    J. Margueron, J. Navarro, and N.~V. Giai},
+    \endlatexonly
+    Phys. Rev. C \b 66 (2002) 014303.
+
+    \anchor Muller96 Muller96: 
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/0375-9474(96)00187-X">
+    H. Muller and B. D. Serot</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/0375-9474(96)00187-X}{
+    H. Muller and B.~D. Serot}, 
+    \endlatexonly
+    Nucl. Phys. A \b 606 (1996), 508.
+
+    \anchor Negele73 Negele73:
+    J.W. Negele and D. Vautherin, Nucl. Phys. A \b 207 (1973) 298.
+    
+    \anchor Newton13 Newton13:
+    W.G. Newton, M. Gearheart, B.-A. Li, arXiv:1110.4043.
+
+    \anchor OConnor10 OConnor10:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1088/0264-9381/27/11/114103">
+    E. O'Connor and C.D. Ott</a>
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1088/0264-9381/27/11/114103}{
+    E. O'Connor and C.D. Ott},
+    \endlatexonly
+    Class. Quant. Grav., \b 27 (2010) 114103.
+
+    \anchor Onsi94 Onsi94:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1103/PhysRevC.50.460">
+    M. Onsi, H. Przysiezniak, J.M. Pearson</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1103/PhysRevC.50.460}{
+    M. Onsi, H. Przysiezniak, J.M. Pearson},
+    \endlatexonly
+    Phys. Rev. C \b 50 (1994) 460.
+
+    \anchor Pearson11 Pearson11:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1103/PhysRevC.83.065810">
+    J. M. Pearson, S. Goriely, and N. Chamel</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1103/PhysRevC.83.065810}{
+    J.~M. Pearson, S. Goriely, and N. Chamel},
+    \endlatexonly
+    Phys. Rev. C \b 83 (2011) 065810.
+
+    \anchor Pearson12 Pearson12:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1103/PhysRevC.85.065803">
+    J. M. Pearson, N. Chamel, S. Goriely, and C. Ducoin</a>,
+    \endhtmlonly
+    \latexonly
+    \href{J.~M. Pearson, N. Chamel, S. Goriely, and C. Ducoin}{
+    http://dx.doi.org/10.1103/PhysRevC.85.065803},
+    \endlatexonly
+    Phys. Rev. C \b 85 (2012) 065803.
+
+    \anchor Pethick95 Pethick95:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/0375-9474(94)00506-I">
+    C.J. Pethick, D.G. Ravenhall, and C.P. Lorenz</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/0375-9474(94)00506-I}{
+    C.~J. Pethick, D.~G. Ravenhall, and C.~P. Lorenz}, 
+    \endlatexonly
+    Nucl. Phys. A \b 584 (1995) 675.
+
+    \anchor Piekarewicz09 Piekarewicz09:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1103/PhysRevC.79.054311">
+    J. Piekarewicz and M. Centelles</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1103/PhysRevC.79.054311}{
+    J. Piekarewicz and M. Centelles},
+    \endlatexonly
+    Phys. Rev. C \b 79 (2009) 054311.
+
+    \anchor Prakash87 Prakash87:
+    \htmlonly
+    M. Prakash, T.L. Ainsworth, J.P. Blaizot, and H. Wolter,
+    in Windsurfing the Fermi Sea, Volume II
+    edited by T.T.S. Kuo and J. Speth, Elsevier 1987, pg. 357.
+    \endhtmlonly
+    \latexonly
+    M. Prakash, T.~L. Ainsworth, J.~P. Blaizot, and H. Wolter,
+    in Windsurfing the Fermi Sea, Volume II
+    edited by T.~T.~S. Kuo and J. Speth, Elsevier 1987, pg. 357.
+    \endlatexonly
+
+    \anchor Prakash88 Prakash88:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1103/PhysRevLett.61.2518">
+    M. Prakash, T. L. Ainsworth, and J. M. Lattimer</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1103/PhysRevLett.61.2518}{
+    M. Prakash, T.~L. Ainsworth, and J.~M. Lattimer},
+    \endlatexonly
+    Phys. Rev. Lett. \b 61 (1988) 2518.
+
+    \anchor Prakash94 Prakash94:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/0375-9474(94)90376-X">
+    M. Prakash, P.J. Ellis, E.K. Heide and S. Rudaz</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/0375-9474(94)90376-X}{
+    M. Prakash, P.~J. Ellis, E.~K. Heide and S. Rudaz},
+    \endlatexonly
+    Nucl. Phys. A \b 575 (1994) 583.
+
+    \anchor Prakash97 Prakash97:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/S0370-1573(96)00023-3">
+    Madappa Prakash, I. Bombaci, Manju Prakash, P.J. Ellis, J.M. Lattimer,
+    and R. Knorren</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/S0370-1573(96)00023-3}{
+    Madappa Prakash, I. Bombaci, Manju Prakash, P.~J. Ellis, J.~M. Lattimer,
+    and R. Knorren}, 
+    \endlatexonly
+    Phys. Rep. \b 280 (1997) 1.
+
+    \anchor Ravenhall83 Ravenhall83:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1103/PhysRevLett.50.2066">
+    D.G. Ravenhall, C.J. Pethick, J.R. Wilson</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1103/PhysRevLett.50.2066}{
+    D.~G. Ravenhall, C.~J. Pethick, J.~R. Wilson},
+    \endlatexonly
+    Phys. Rev. Lett., \b 50 (1983) 2066.
+
+    \anchor Reinhard95 Reinhard95:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/0375-9474(94)00770-N">
+    P.-G. Reinhard and H. Flocard</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/0375-9474(94)00770-N}{
+    P.-G. Reinhard and H. Flocard}, 
+    \endlatexonly
+    Nucl. Phys. A \b 584 (1995) 467.
+
+    \anchor Reinhard99 Reinhard99: 
+    \htmlonly
+    <a href="http://dx.doi.org/10.1103/PhysRevC.60.014316">
+    P.-G. Reinhard, D.J. Dean, W. Nazarewicz, J. Dobaczewski, 
+    J.A. Maruhn, M.R. Strayer</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1103/PhysRevC.60.014316}{
+    P.-G. Reinhard, D.J. Dean, W. Nazarewicz, J. Dobaczewski, 
+    J.A. Maruhn, M.R. Strayer},
+    \endlatexonly
+    Phys. Rev. C \b 60, (1999) 014316.
+    
+    \anchor Shapiro83 Shapiro83:
+    \htmlonly
+    <a href="http://www.worldcat.org/isbn/0471873179">
+    S.L. Shapiro and S.A. Teukolsky</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://www.worldcat.org/isbn/0471873179}{
+    S.~L. Shapiro and S.~A. Teukolsky},
+    \endlatexonly
+    <em>"Black Holes, White Dwarfs, and Neutron Stars: The Physics of 
+    Compact Objects"</em>, John Wiley and Sons, New York, 1983.
+
+    \anchor Shen98 Shen98:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/S0375-9474(98)00236-X">
+    H. Shen, H. Toki, K. Oyamatsu and K. Sumiyoshi</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/S0375-9474(98)00236-X}{
+    H. Shen, H. Toki, K. Oyamatsu and K. Sumiyoshi},
+    \endlatexonly
+    Nucl. Phys. A \b 637 (1998) 435.
+
+    \anchor Shen98b Shen98b:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1143/PTP.100.1013">
+    H. Shen, H. Toki, K. Oyamatsu and K. Sumiyoshi</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1143/PTP.100.1013}{
+    H. Shen, H. Toki, K. Oyamatsu and K. Sumiyoshi},
+    \endlatexonly
+    Prog. Theor. Phys. \b 100 (1998) 1013.
+    
+    \anchor Shen10a Shen10a:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1103/PhysRevC.82.015806">
+    G. Shen, C. J. Horowitz, and S. Teige</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1103/PhysRevC.82.015806}{
+    G. Shen, C. J. Horowitz, and S. Teige},
+    \endlatexonly
+    Phys. Rev. C \b 82, 015806 (2010).
+
+    \anchor Shen10b Shen10b:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1103/PhysRevC.82.045802">
+    G. Shen, C. J. Horowitz, and S. Teige</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1103/PhysRevC.82.045802}{
+    G. Shen, C. J. Horowitz, and S. Teige},
+    \endlatexonly
+    Phys. Rev. C \b 82, 045802 (2010).
+
+    \anchor Shen11 Shen11:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1103/PhysRevC.83.035802">
+    G. Shen, C. J. Horowitz, S. Teige</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1103/PhysRevC.83.035802}{
+    G. Shen, C. J. Horowitz, S. Teige},
+    \endlatexonly
+    Phys. Rev. C \b 83, 035802 (2011).
+
+    \anchor Shen11b Shen11b:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1103/PhysRevC.83.065808">
+    G. Shen, C. J. Horowitz, E. O'Connor</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1103/PhysRevC.83.065808}{
+    G. Shen, C. J. Horowitz, E. O'Connor},
+    \endlatexonly
+    Phys. Rev. C \b 83, 065808 (2011).
+
+    \anchor Skyrme59 Skyrme59:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/0029-5582(58)90345-6">
+    T.H.R. Skyrme</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/0029-5582(58)90345-6}{
+    T.~H.~R. Skyrme},
+    \endlatexonly
+    Nucl. Phys. \b 9 (1959) 615.
+
+    \anchor Steiner00 Steiner00:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/S0370-2693(00)00780-2">
+    A.W. Steiner, M. Prakash, and J.M. Lattimer</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/S0370-2693(00)00780-2}{
+    A.W. Steiner, M. Prakash, and J.~M. Lattimer},
+    \endlatexonly
+    Phys. Lett. B, \b 486 (2000) 239.
+
+    \anchor Steiner02 Steiner02:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1103/PhysRevD.66.094007">
+    A.W. Steiner, S. Reddy, and M. Prakash</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1103/PhysRevD.66.094007}{
+    A.~W. Steiner, S. Reddy, and M. Prakash},
+    \endlatexonly
+    Phys. Rev. D, \b 66 (2002) 094007.
+
+    \anchor Steiner05 Steiner05:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1103/PhysRevD.72.054024">
+    A.W. Steiner</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1103/PhysRevD.72.054024}{
+    A.~W. Steiner},
+    \endlatexonly
+    Phys. Rev. D, \b 72 (2005) 054024.
+
+    \anchor Steiner05b Steiner05b:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/j.physrep.2005.02.004">
+    A.W. Steiner, M. Prakash, J.M. Lattimer, and P.J. Ellis</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/j.physrep.2005.02.004}{
+    A.~W. Steiner, M. Prakash, J.~M. Lattimer, and P.~J. Ellis},
+    \endlatexonly
+    Phys. Rep. \b 411 (2005) 325.
+
+    \anchor Steiner06 Steiner06:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1103/PhysRevC.74.045808">
+    A.W. Steiner</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1103/PhysRevC.74.045808}{
+    A.W. Steiner},
+    \endlatexonly
+    Phys. Rev. C, \b 74 (2006) 045808.
+
+    \anchor Steiner08 Steiner08:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1103/PhysRevC.77.035805">
+    A.W. Steiner</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1103/PhysRevC.77.035805}{
+    A.W. Steiner},
+    \endlatexonly
+    Phys. Rev. C, \b 77 (2008) 035805.
+
+    \anchor Steiner12 Steiner12:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1103/PhysRevC.85.055804">
+    A.W. Steiner</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1103/PhysRevC.85.055804}{
+    A.W. Steiner},
+    \endlatexonly
+    Phys. Rev. C, \b 85 (2008) 055804.
+
+    \anchor Souza09 Souza09:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1088/0004-637X/707/2/1495">
+    S.R. Souza, A.W. Steiner, W.G. Lynch, R. Donangelo, and
+    M.A. Famiano</a>, 
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1088/0004-637X/707/2/1495}{
+    S.~R. Souza, A.~W. Steiner, W.~G. Lynch, R. Donangelo, and
+    M.~A. Famiano}, 
+    \endlatexonly
+    Astrophys. J, \b 707 (2009) 1495.
+    
+    \anchor Tondeur84 Tondeur84:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/0375-9474(84)90444-5">
+    F. Tondeur, M. Brack, M. Farine, and J.M. Pearson</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/0375-9474(84)90444-5}{
+    F. Tondeur, M. Brack, M. Farine, and J.~M. Pearson}, 
+    \endlatexonly
+    Nucl. Phys. A \b 420 (1984) 297.
+
+    \anchor Typel99 Typel99:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/S0375-9474(99)00310-3">
+    S. Typel and H. H. Wolter</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/S0375-9474(99)00310-3}
+    {S. Typel and H. H. Wolter},
+    \endlatexonly
+    Nucl. Phys. A \b 656 (1999) 331.
+    
+    \anchor VanGiai81 VanGiai81:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1016/0370-2693(81)90646-8">
+    Nguyen van Giai and H. Sagawa</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1016/0370-2693(81)90646-8}{
+    Nguyen van Giai and H. Sagawa}, 
+    \endlatexonly
+    Phys. Lett. B \b 106 (1981) 379.
+
+    \anchor Zimanyi90 Zimanyi90:
+    \htmlonly
+    <a href="http://dx.doi.org/10.1103/PhysRevC.42.1416">
+    Zimanyi and Moszkowski</a>,
+    \endhtmlonly
+    \latexonly
+    \href{http://dx.doi.org/10.1103/PhysRevC.42.1416}{
+    Zimanyi and Moszkowski}, 
+    \endlatexonly
+    Phys. Rev. C \b 42 (1990) 1416.
+
+    \comment
+    A blank reference
+
+    \anchor :
+    \htmlonly
+    <a href="">
+    </a>,
+    \endhtmlonly
+    \latexonly
+    \href{}{
+    },
+    \endlatexonly
+
+    \endcomment
+*/

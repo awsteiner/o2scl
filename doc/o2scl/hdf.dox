@@ -1,0 +1,44 @@
+/** \page hdf_section File I/O with HDF5
+
+    The class hdf_file facilitates I/O of data to hdf files. This
+    class implements a simple way to I/O basic data types and \o2 data
+    types. All files created by the \ref o2scl_hdf::hdf_file class are
+    normal HDF5 files, and can be manipulated in the usual way, for
+    example with <tt>h5dump</tt> command-line tool. Users can easily
+    mix code which performs I/O with \ref o2scl_hdf::hdf_file and
+    other \o2 functions with their own HDF code. The sole caveat is
+    that \o2 cannot parse generic HDF5 files, so that HDF files which
+    contain data not output through \o2 cannot always be read by \o2.
+
+    Objects are stored by refering to their dataset name. I/O for
+    basic objects is provided directly in the \ref o2scl_hdf::hdf_file
+    class. Some classes also provide their own I/O functions named
+    <tt>hdf_output</tt> and <tt>hdf_input</tt> based on the \ref
+    o2scl_hdf::hdf_file class. Some of the current classes which
+    provide I/O are \ref o2scl::table, \ref o2scl::table_units, \ref
+    o2scl::table3d, \ref o2scl::hist, and \ref o2scl::hist_2d.
+    
+    \o2 formats complicated data types for HDF I/O by combining basic
+    data into groups. For that reason, one cannot use \o2 to read or
+    write HDF files where groups have the same name as a dataset in
+    the current HDF id. All \o2 groups in HDF files come with a
+    fixed-length string named <tt>o2scl_type</tt>, which refers to the
+    type of object which has been written to the HDF file as a group.
+
+    \note Vector I/O from HDF5 files can be done directly only if the
+    vector object provides a pointer to a contiguous chunk of memory.
+    This works for <tt>std::vector</tt> objects, because the C++
+    standard guarantees this. It is not necessarily possible for uBlas
+    vector objects (nor desirable for vectors built upon slices of
+    matrices or tensors), and thus HDF5 I/O with uBlas vectors or
+    matrices requires an extra copy. See also the discussion \ref
+    vec_io_cont_subsect in the User's guide.
+
+    \note There are some current limitations regarding the matching of
+    error handling policies between \o2 and the HDF library. HDF
+    functions do not always call the \o2 error handler and thus do not
+    always throw \o2 exceptions.
+
+    \future Create an HDF file I/O example.
+
+*/

@@ -1,0 +1,61 @@
+X-Mozilla-Status: 0011
+X-Mozilla-Status2: 00000000
+X-Mozilla-Keys:                                                                                 
+Return-Path: <evanoc@tapir.caltech.edu>
+Received: via tmail-2007b.22 (invoked by user steiner3) for steiner3; Thu, 22 Mar 2012 07:19:48 -0700 (PDT)
+Received: from mxe13.u.washington.edu (mxe13.u.washington.edu [140.142.32.198])
+	by cg52.u.washington.edu (8.14.4+UW11.03/8.14.4+UW12.02) with ESMTP id q2MEJlte012141
+	for <steiner3@cg52.u.washington.edu>; Thu, 22 Mar 2012 07:19:47 -0700
+Received: from outgoing-mail.its.caltech.edu (outgoing-mail.its.caltech.edu [131.215.239.19])
+	by mxe13.u.washington.edu (8.14.4+UW11.03/8.14.4+UW12.02) with ESMTP id q2MEJfaL028572
+	for <steiner3@uw.edu>; Thu, 22 Mar 2012 07:19:41 -0700
+Received: from fire-doxen.imss.caltech.edu (localhost [127.0.0.1])
+	by fire-doxen-postvirus (Postfix) with ESMTP id 8E2FE2E50C54
+	for <steiner3@uw.edu>; Thu, 22 Mar 2012 07:19:41 -0700 (PDT)
+X-Spam-Scanned: at Caltech-IMSS on fire-doxen by amavisd-new
+Received: from [192.168.0.101] (dsl-rb-64-118-23-91.wtccommunications.ca [64.118.23.91])
+	(Authenticated sender: evanoc)
+	by fire-doxen-submit (Postfix) with ESMTP id 3DD0A2E50DE4
+	for <steiner3@uw.edu>; Thu, 22 Mar 2012 07:19:36 -0700 (PDT)
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Apple Message framework v1084)
+Subject: Re: stellar collapse EOS tables
+From: "Evan O'Connor" <evanoc@tapir.caltech.edu>
+In-Reply-To: <4F6A4EF3.2040106@uw.edu>
+Date: Thu, 22 Mar 2012 10:19:50 -0400
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <E415EFAA-9617-4DD9-9C13-0B3BDE1E0EE6@tapir.caltech.edu>
+References: <CAO-0AX9=-7Buo7Gm69WJwVfcLihrbxkWuqERa3jJ9V_AezYX7g@mail.gmail.com> <4ED8106D.6080900@uw.edu> <4ED91C48.9070705@uw.edu> <0A942198-61AD-4D96-944D-A035FDB6E3ED@tapir.caltech.edu> <4ED921E5.20806@uw.edu> <A612CE65-C3F9-4568-A63D-32DEE6AB910B@tapir.caltech.edu> <4ED94130.5010003@uw.edu> <8B532AFD-238F-415E-ADCC-C53AD70EA580@tapir.caltech.edu> <4F6A4EF3.2040106@uw.edu>
+To: "Andrew W. Steiner" <steiner3@uw.edu>
+X-Mailer: Apple Mail (2.1084)
+X-PMX-Version: 5.5.9.388399, Antispam-Engine: 2.7.2.376379, Antispam-Data: 2011.10.12.230315
+X-PMX-Server: mxe13.u.washington.edu
+X-Uwash-Spam: Gauge=IIIIIIII, Probability=8%, Report='
+ HTML_00_01 0.05, HTML_00_10 0.05, MIME_LOWER_CASE 0.05, SUPERLONG_LINE 0.05, BODYTEXTP_SIZE_3000_LESS 0, BODY_SIZE_1000_LESS 0, BODY_SIZE_2000_LESS 0, BODY_SIZE_5000_LESS 0, BODY_SIZE_7000_LESS 0, BODY_SIZE_900_999 0, DATE_TZ_NA 0, SPF_NONE 0, __ANY_URI 0, __BOUNCE_CHALLENGE_SUBJ 0, __BOUNCE_NDR_SUBJ_EXEMPT 0, __CP_URI_IN_BODY 0, __CT 0, __CTE 0, __CT_TEXT_PLAIN 0, __HAS_MSGID 0, __HAS_X_MAILER 0, __MIME_TEXT_ONLY 0, __MIME_VERSION 0, __MIME_VERSION_APPLEMAIL 0, __MSGID_APPLEMAIL 0, __SANE_MSGID 0, __SUBJ_ALPHA_END 0, __TO_MALFORMED_2 0, __URI_NO_MAILTO 0, __URI_NO_PATH 0, __URI_NO_WWW 0, __URI_NS , __USER_AGENT_APPLEMAIL 0, __X_MAILER_APPLEMAIL 0'
+
+Hi Andrew,
+
+This is fine, please just document any changes you make
+to the code and include our original README in your release.
+
+Evan
+
+On Mar 21, 2012, at 5:58 PM, Andrew W. Steiner wrote:
+
+> Evan,
+>=20
+>     I hope you're doing well. I am thinking about using your HDF5 EOS =
+tables on the website, and I have a quick licensing question. I work
+> in C++ rather than Fortran, but I typically work using a library which
+> I had earlier released using GPLv3 (http://o2scl.sourceforge.net), =
+which isn't quite the same as the creative commons license. What I'd =
+like to do is release my C++ code which reads your tables using GPLv3, =
+cite your webpage and the associated paper, but not redistribute the =
+tables themselves. I'm not a lawyer, but I'm pretty sure this is ok, so =
+long as I have your blessing to do so. Let me know if this might be ok =
+with you, and if not, don't worry, I'll find another solution.
+>=20
+> Take care,
+> Andrew
+
+

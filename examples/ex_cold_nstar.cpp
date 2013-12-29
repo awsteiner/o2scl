@@ -1,0 +1,135 @@
+/*
+  -------------------------------------------------------------------
+  
+  Copyright (C) 2006-2012, Andrew W. Steiner
+  
+  This file is part of O2scl.
+  
+  O2scl is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 3 of the License, or
+  (at your option) any later version.
+  
+  O2scl is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with O2scl. If not, see <http://www.gnu.org/licenses/>.
+
+  -------------------------------------------------------------------
+*/
+/* Example: ex_cold_nstar.cpp
+   -------------------------------------------------------------------
+   This example solves the TOV equations using class cold_nstar using a
+   relativistic mean-field EOS from class rmf_eos.
+*/
+
+#include <o2scl/cold_nstar.h>
+#include <o2scl/rmf_eos.h>
+#include <o2scl/hdf_file.h>
+#include <o2scl/hdf_io.h>
+#include <o2scl/test_mgr.h>
+
+using namespace std;
+using namespace o2scl;
+using namespace o2scl_hdf;
+
+// For hc_mev_fm
+using namespace o2scl_const;
+
+// A simple function to load the NL3 model
+int load_nl3(rmf_eos &rmf);
+
+int main(void) {
+
+  cout.setf(ios::scientific);
+
+  test_mgr t;
+  t.set_output_level(1);
+
+  cold_nstar nst;
+
+  // Initialize EOS
+  rmf_eos rmf;
+  load_nl3(rmf);
+  
+  rmf.saturation();
+  cout << "Saturation density: " << rmf.n0 << endl;
+  cout << "Binding energy: " << rmf.eoa*hc_mev_fm << endl;
+  cout << "Effective mass: " << rmf.msom << endl;
+  cout << "Symmetry energy: " << rmf.esym*hc_mev_fm << endl;
+  cout << "Compressibility: " << rmf.comp*hc_mev_fm << endl;
+  
+  // Compute EOS, include muons
+  nst.include_muons=true;
+  nst.set_eos(rmf);
+  cout << "Here1." << endl;
+  nst.verbose=1;
+  nst.calc_eos();
+  cout << "Here2." << endl;
+  o2_shared_ptr<table_units<> >::type te=nst.get_eos_results();
+  cout << "Here3." << endl;
+
+  // Compute mass vs. radius
+  nst.calc_nstar();
+  o2_shared_ptr<table_units<> >::type tr=nst.get_tov_results();
+  cout << "Maximum mass: " << tr->max("gm") << endl;
+  cout << "Radius of maximum mass star: " 
+       << tr->get("r",tr->lookup("gm",tr->max("gm"))) << endl;
+  cout << "Central baryon density of maximum mass star: ";
+  cout << tr->get("nb",tr->lookup("gm",tr->max("gm"))) << endl;
+
+  // Output EOS and TOV results to files
+  hdf_file hf;
+  hf.open_or_create("ex_cold_nstar_eos.o2");
+  hdf_output(hf,*te,"eos");
+  hf.close();
+  hf.open_or_create("ex_cold_nstar_tov.o2");
+  hdf_output(hf,*tr,"tov");
+  hf.close();
+
+  t.report();
+  return 0;
+}
+// End of example
+
+int load_nl3(rmf_eos &rmf) {
+
+  rmf.ms=508.194;
+  rmf.mw=782.501;
+  rmf.mr=763.0;
+  rmf.mnuc=939.0;
+  rmf.ms/=hc_mev_fm; 
+  rmf.mw/=hc_mev_fm; 
+  rmf.mr/=hc_mev_fm; 
+  rmf.mnuc/=hc_mev_fm;
+    
+  double gs, gw, gr;
+  gs=10.217;
+  gw=12.868;
+  gr=4.474;
+  rmf.b=-10.431;
+  rmf.c=-28.885;
+  rmf.b/=-rmf.mnuc*pow(fabs(gs),3.0);
+  rmf.c/=pow(gs,4.0);
+  gr*=2.0;
+  rmf.cs=gs/rmf.ms;
+  rmf.cw=gw/rmf.mw;
+  rmf.cr=gr/rmf.mr;
+    
+  rmf.xi=0.0; 
+  rmf.zeta=0.0;
+  rmf.a1=0.0;
+  rmf.a2=0.0;
+  rmf.a3=0.0;
+  rmf.a4=0.0;
+  rmf.a5=0.0;
+  rmf.a6=0.0;
+  rmf.b1=0.0;
+  rmf.b2=0.0;
+  rmf.b3=0.0;
+    
+  return 0;
+}

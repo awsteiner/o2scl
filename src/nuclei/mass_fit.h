@@ -1,0 +1,169 @@
+/*
+  -------------------------------------------------------------------
+  
+  Copyright (C) 2006-2013, Andrew W. Steiner
+  
+  This file is part of O2scl.
+  
+  O2scl is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 3 of the License, or
+  (at your option) any later version.
+  
+  O2scl is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with O2scl. If not, see <http://www.gnu.org/licenses/>.
+
+  -------------------------------------------------------------------
+*/
+#ifndef MASS_FIT_H
+#define MASS_FIT_H
+
+#include <boost/numeric/ublas/vector.hpp>
+
+#include <o2scl/constants.h>
+#include <o2scl/multi_funct.h>
+#include <o2scl/mmin.h>
+#include <o2scl/mmin_simp2.h>
+#include <o2scl/nuclear_mass.h>
+#include <o2scl/ame_mass.h>
+#include <o2scl/nuclear_dist.h>
+
+#ifndef DOXYGEN_NO_O2NS
+namespace o2scl {
+#endif
+
+  /** \brief Fit a nuclear mass formula
+
+      There is an example of the usage of this class given in 
+      \ref ex_mass_fit_sect.
+
+      \future Convert to a real fit with errors and covariance, etc.
+   */
+  class mass_fit {
+
+  public:
+  
+    typedef boost::numeric::ublas::vector<double> ubvector;
+    typedef boost::numeric::ublas::vector<int> ubvector_int;
+    typedef boost::numeric::ublas::vector<size_t> ubvector_size_t;
+
+    mass_fit();
+    
+    virtual ~mass_fit() {};
+
+    /// \name Fitting method
+    //@{
+    /// Current fitting method
+    int fit_method;
+    /// RMS deviation in mass excess
+    static const int rms_mass_excess=0;
+    /// RMS deviation in binding_energy
+    static const int rms_binding_energy=1;
+    /// Chi-squared for mass excess using specified uncertainties
+    static const int chi_squared_me=2;
+    /// Chi-squared for binding energy using specified uncertainties
+    static const int chi_squared_be=3;
+    //@}
+    
+    /// If true, then only fit doubly-even nuclei (default false)
+    bool even_even;
+   
+    /// Minimum proton number to fit (default 8)
+    int minZ;
+    
+    /// Minimum neutron number to fit (default 8)
+    int minN;
+
+    /// Fit the nuclear mass formula
+    virtual void fit(nuclear_mass_fit &n, double &res);
+    
+    /** \brief Evaluate quality without fitting
+     */
+    virtual void eval(nuclear_mass &n, double &res);
+
+    /** \brief The default minimizer
+
+	The value of def_mmin::ntrial is automatically multiplied by
+	10 in the constructor because the minimization frequently
+	requires more trials than the default.
+    */
+    mmin_simp2<> def_mmin;
+    
+    /// Change the minimizer for use in the fit
+    void set_mmin(mmin_base<> &umm) {
+      mm=&umm;
+      return;
+    }
+    
+    /** \brief The default distribution of nuclei to fit
+    */
+    full_dist def_dist;
+
+    /// Set the distribution of nuclei to fit
+    void set_dist(nuclear_dist &uexp) {
+      exp=&uexp;
+      return;
+    }
+
+    /// Set the fit uncertainties (in MeV)
+    template<class vec_t>
+      void set_uncerts(size_t nv, vec_t &u) {
+      if (nv==0) {
+	O2SCL_ERR2("Tried to give zero uncertainties in mass_fit::",
+		   "set_uncerts().",exc_efailed);
+      }
+      if (uncs.size()>0) uncs.clear();
+      uncs.resize(nv);
+      vector_copy(nv,u,uncs);
+      return;
+    }
+    
+    /// Set the experimental masses for use in the default distribution
+    void set_exp_mass(nuclear_mass &nm, int maxA=400, 
+		     bool include_neutron=false);
+
+    /// Desc
+    void eval_isospin_beta(nuclear_mass &n, ubvector_int &n_qual,
+			   ubvector &qual, int max_iso=20);
+    
+    /// Desc
+    void eval_isospin(nuclear_mass &n, ubvector_int &n_qual,
+		      ubvector &qual, int min_iso=-8, int max_iso=60);
+
+    /** \brief The function to minimize
+     */
+    virtual double min_fun(size_t nv, const ubvector &x);
+
+  protected:
+
+#ifndef DOXYGEN_NO_O2NS
+
+    /// Uncertainties
+    ubvector uncs;
+    
+    /// The pointer to the minimizer
+    mmin_base<> *mm;
+    
+    /** \brief The nuclear mass formula to fit to
+
+	This pointer is set by fit() and eval().
+     */
+    nuclear_mass_fit *nmf;
+    
+    /// A pointer to the nuclear distribution (defaults to \ref def_dist)
+    nuclear_dist *exp;
+
+#endif
+
+  };
+
+#ifndef DOXYGEN_NO_O2NS
+}
+#endif
+
+#endif

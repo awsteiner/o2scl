@@ -1,0 +1,138 @@
+/*
+  -------------------------------------------------------------------
+  
+  Copyright (C) 2006-2013, Andrew W. Steiner
+  
+  This file is part of O2scl.
+  
+  O2scl is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 3 of the License, or
+  (at your option) any later version.
+  
+  O2scl is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with O2scl. If not, see <http://www.gnu.org/licenses/>.
+
+  -------------------------------------------------------------------
+*/
+#ifndef O2SCL_ANNEAL_H
+#define O2SCL_ANNEAL_H
+
+/** \file anneal.h
+    \brief File for \ref o2scl::anneal_base
+*/
+
+#include <iostream>
+#ifdef O2SCL_CPP11
+#include <random>
+#endif
+
+#include <boost/numeric/ublas/vector.hpp>
+#include <boost/numeric/ublas/matrix.hpp>
+
+#include <o2scl/multi_funct.h>
+#include <o2scl/mmin.h>
+#include <o2scl/rng_gsl.h>
+
+#ifndef DOXYGEN_NO_O2NS
+namespace o2scl {
+#endif
+
+  /** \brief Simulated annealing base
+
+      The seed of the generator is not fixed initially by calls to
+      mmin(), so if successive calls should reproduce the same
+      results, then the random seed should be set by the user before
+      each call.
+      
+      For the algorithms here, it is important that all of the inputs
+      x[i] to the function are scaled similarly relative 
+      to the temperature. For example, if the inputs x[i] are all
+      of order 1, one might consider a temperature schedule which begins
+      with \f$ T=1 \f$ . 
+
+      The number of iterations at each temperature is controlled by
+      multi_min::ntrial which defaults to 100.
+
+  */
+#ifdef O2SCL_CPP11
+  template<class func_t=multi_funct11,
+    class vec_t=boost::numeric::ublas::vector<double>,
+    class rng_t=std::mt19937,
+    class rng_dist_t=std::uniform_real_distribution<double> > 
+    class anneal_base : public mmin_base<func_t,func_t,vec_t>
+#else
+    template<class func_t=multi_funct<>, 
+    class vec_t=boost::numeric::ublas::vector<double>,
+    class rng_t=int,
+    class rng_dist_t=rng_gsl > class anneal_base :
+    public mmin_base<func_t,func_t,vec_t>
+#endif
+ {
+    
+    public:
+  
+    anneal_base() {
+      this->ntrial=100;
+    }
+
+    virtual ~anneal_base() {}
+
+    /** \brief Calculate the minimum \c fmin of \c func w.r.t the 
+	array \c x of size \c nvar.
+    */
+    virtual int mmin(size_t nvar, vec_t &x, double &fmin, 
+		     func_t &func)=0;
+    
+    /** \brief Print out iteration information.
+
+	Depending on the value of the variable verbose, this prints out
+	the iteration information. If verbose=0, then no information is
+	printed, while if verbose>1, then after each iteration, the
+	present values of x and y are output to std::cout along with the
+	iteration number. If verbose>=2 then each iteration waits for a
+	character.  
+    */
+    virtual int print_iter(size_t nv, vec_t &x, double y, int iter,
+			   double tptr, std::string comment) 
+    {
+      if (this->verbose<=0) return 0;
+	
+      size_t i;
+      char ch;
+      
+      (*this->outs) << comment << " Iteration: " << iter << std::endl;
+      std::cout << "x: ";
+      for(i=0;i<nv;i++) std::cout << x[i] << " ";
+      std::cout << std::endl;
+      (*this->outs) << "y: " << y << " Tptr: " << tptr << std::endl;
+      if (this->verbose>1) {
+	(*this->outs) << "Press a key and type enter to continue. ";
+	(*this->ins) >> ch;
+      }
+	
+      return 0;
+    }
+
+    /// The default random number distribution
+    rng_dist_t rng_dist;
+      
+    /// The default random number generator
+    rng_t rng;
+
+    /// Return string denoting type, \c "anneal".
+    virtual const char *type() { return "anneal"; }
+
+  };
+
+#ifndef DOXYGEN_NO_O2NS
+}
+#endif
+
+#endif
+

@@ -1,0 +1,85 @@
+/** \page tintp_section Two-dimensional Interpolation
+
+    There are two types of two-dimensional interpolation classes, the
+    first is based on a function defined on a two-dimensional grid
+    (though the spacings between grid points need not be equal). The
+    class \ref o2scl::interp2_direct implements bilinear or bicubic
+    interpolation, and is based on D. Zaslavsky's routines at
+    https://github.com/diazona/interp2d (licensed under GPLv3).
+    A slightly slower (but a bit more flexible alternative) is 
+    successive use of \ref o2scl::interp_base objects, implemented
+    in \ref o2scl::interp2_seq . 
+
+    If data is arranged without a grid, then \ref o2scl::interp2_neigh
+    performs nearest-neighbor interpolation and \ref
+    o2scl::interp2_planar performs interpolation using planes. At
+    present, the only way to compute \contour lines on data which is
+    not defined on a grid is to use one of these two classes to recast
+    the data on a grid and then use \ref o2scl::contour afterwards.
+
+    Higher-dimensional interpolation is possible with \ref
+    o2scl::tensor_grid.
+
+    \section ex_interp2_sect Interpolation on a rectangular grid
+
+    \dontinclude ex_interp2.cpp
+    \skip Example:
+    \until End of example
+
+    This example creates a sample 3 by 3 grid of data with the 
+    function \f$ \left[ \sin \left( x/10 + 3 y/10 \right) \right]^2 \f$
+    and performs some interpolations and compares them with the 
+    exact result.
+    \include ex_interp2.scr
+
+    \section ex_interp2_planar_sect Interpolation of randomly spaced points
+    
+    For example, with 10 random points in the x-y plane with \f$
+    -1<x<1 \f$ and \f$ -1<y<1 \f$, the figure contains several
+    polygonal regions, each of which represents the set of all points
+    in the domain which will be mapped to the same plane in order to
+    to approximate the original function.
+
+    \image html ex_planar_plot.png "Planes from interp2_planar class"
+    \image latex ex_planar_plot.pdf "Planes from interp2_planar class" width=9cm
+
+    \section ex_contour_sect Contour lines
+
+    This example generates contour lines of the function
+    \f[
+    z = f(x,y) = 15 \exp \left[ - \frac{1}{20^2}\left( x-20 \right)^2 
+    - \frac{1}{5^2}\left(y-5\right)^2\right] + 
+    40 \exp \left[ - \frac{1}{500}\left( x-70 \right)^2 
+    - \frac{1}{2^2}\left(y-2\right)^2\right] 
+    \f]
+
+    \dontinclude ex_contour.cpp
+    \skip Example:
+    \until End of example
+
+    The figure below shows contour lines in the region \f$
+    x\in(0,121), y\in(0,9) \f$. The data grid is represented by plus
+    signs, and the associated generated contours. The figure clearly
+    shows the peaks at \f$ (20,5) \f$ and \f$ (70,2) \f$ .
+
+    \image html ex_contour_plot1.png "Contour example plot"
+    \image latex ex_contour_plot1.eps "Contour example plot" width=9cm
+
+    The next figure below shows the edge crossings constructed by the
+    contour class which are used to obtain the two \f$ z=10 \f$
+    contour lines. The edge crossings are connected to their
+    respective data grid points with line segments. Endpoints are in
+    red and internal contour points are in blue.
+
+    \image html ex_contour_plot3.png "Contour edge crossings"
+    \image latex ex_contour_plot3.eps "Contour edge crossings" width=9cm
+
+    The \ref o2scl::contour class can also use interpolation to 
+    attempt to refine the data grid. The new contours after a 
+    refinement of a factor of 5 is given in the figure below.
+    
+    \image html ex_contour_plot2.png "Contours after regrid_data()"
+    \image latex ex_contour_plot2.eps "Contour after regrid_data()" width=9cm
+
+
+*/

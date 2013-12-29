@@ -1,0 +1,496 @@
+#ifdef DOXYGENP
+namespace o2scl {
+
+/** \brief Function parsing class (derived from the FunctionParser by Warp)
+
+    The original documentation is reformatted here. See the file
+    fparser.txt for the original documentation.
+  
+    \note 
+    - SUPPORT_OPTIMIZER is defined and DISABLE_EVAL and NO_ASINH
+    are not defined in the O2scl_ext installation of this class.
+    - There are several 'FIXME' entries in the fparser code. These
+    are suggestions for internal improvements to the code and
+    will not adversely affect execution.
+    - This class is slightly different from the original version.
+    FunctionParser::Eval() is now a template member function.
+
+    \todo 
+    - Upgrade to more recent version of fparser
+
+    Often people need to ask some mathematical expression from the
+    user and then evaluate values for that expression. The simplest
+    example is a program which draws the graphic of a user-defined
+    function on screen.
+    
+    This library adds C-style function string parsing to the
+    program. This means that you can evaluate the string
+    "sqrt(1-x^2+y^2)" with given values of 'x' and 'y'.
+    
+    The library is intended to be very fast. It byte-compiles the
+    function string at parse time and interpretes this byte-code at
+    evaluation time.  The evaluation is straightforward and no
+    recursions are done (uses stack arithmetic).  Empirical tests show
+    that it indeed is very fast (specially compared to libraries which
+    evaluate functions by just interpreting the raw function string).
+  
+    The library is made in ISO C++ and requires a standard-conforming
+    C++ compiler.
+  
+    \b Copying \b and \b assignment:
+  
+    The class implements a safe copy constructor and assignment
+    operator.
+    
+    It uses the copy-on-write technique for efficiency. This means that
+    when copying or assigning a FunctionParser instance, the internal
+    data (which in some cases can be quite lengthy) is not immediately
+    copied but only when the contents of the copy (or the original) are
+    changed.  This means that copying/assigning is a very fast
+    operation, and if the copies are never modified then actual data
+    copying never happens either.
+    
+    The Eval() and EvalError() methods of the copy can be called
+    without the internal data being copied. Calling Parse(),
+    Optimize() or the user-defined constant/function adding methods
+    will cause a deep-copy.
+    
+    \b Example \b program:
+    
+    \verbatim
+    
+    #include "fparser.hh"
+    #include <iostream>
+    
+    int main()
+    {
+      FunctionParser fp;
+    
+      int ret = fp.Parse("x+y-1", "x,y");
+      if(ret >= 0)
+      {
+        std::cerr << "At col " << ret << ": " << fp.ErrorMsg() << std::endl;
+        return 1;
+      }
+    
+      double vals[] = { 4, 8 };
+    
+      std::cout << fp.Eval(vals) << std::endl;
+    }
+
+    \endverbatim
+
+    \b The \b function \b string
+  
+    The function string understood by the class is very similar to the
+    C-syntax.  Arithmetic float expressions can be created from float
+    literals, variables or functions using the following operators in
+    this order of precedence:
+
+    - ()             expressions in parentheses first
+    - -A             unary minus
+    - A^B            exponentiation (A raised to the power B)
+    - A*B  A/B  A%B  multiplication, division and modulo
+    - A+B  A-B       addition and subtraction
+    - A=B  A<B  A>B  comparison between A and B (result is either 0 or 1)
+    - A&B            result is 1 if int(A) and int(B) differ from 0, else 0.
+    - A|B            result is 1 if int(A) or int(B) differ from 0, else 0.
+
+    Since the unary minus has higher precedence than any other
+    operator, for example the following expression is valid: x*-y Note
+    that the '=' comparison can be inaccurate due to floating point
+    precision problems (eg. "sqrt(100)=10" probably returns 0, not 1).
+
+    The class supports these functions:
+
+    - abs(A) : Absolute value of A. If A is negative, returns -A otherwise
+    returns A.
+    - acos(A) : Arc-cosine of A. Returns the angle, measured in radians,
+    whose cosine is A.
+    - acosh(A) : Same as acos() but for hyperbolic cosine.
+    - asin(A) : Arc-sine of A. Returns the angle, measured in radians, whose
+    sine is A.
+    - asinh(A) : Same as asin() but for hyperbolic sine.
+    - atan(A) : Arc-tangent of (A). Returns the angle, measured in radians,
+    whose tangent is (A).
+    - atan2(A,B): Arc-tangent of A/B. The two main differences to atan() is
+    that it will return the right angle depending on the signs of
+    A and B (atan() can only return values betwen -pi/2 and pi/2),
+    and that the return value of pi/2 and -pi/2 are possible.
+    - atanh(A) : Same as atan() but for hyperbolic tangent.
+    - ceil(A) : Ceiling of A. Returns the smallest integer greater than A.
+    Rounds up to the next higher integer.
+    - cos(A) : Cosine of A. Returns the cosine of the angle A, where A is
+    measured in radians.
+    - cosh(A) : Same as cos() but for hyperbolic cosine.
+    - cot(A) : Cotangent of A (equivalent to 1/tan(A)).
+    - csc(A) : Cosecant of A (equivalent to 1/sin(A)).
+    - eval(...) : This a recursive call to the function to be evaluated. The
+    number of parameters must be the same as the number of parameters
+    taken by the function. Usually called inside if() to avoid
+    infinite recursion.
+    - exp(A) : Exponential of A. Returns the value of e raised to the power
+    A where e is the base of the natural logarithm, i.e. the
+    non-repeating value approximately equal to 2.71828182846.
+    - floor(A) : Floor of A. Returns the largest integer less than A. Rounds
+    down to the next lower integer.
+    - if(A,B,C) : If int(A) differs from 0, the return value of this 
+    function is B, else C. Only the parameter which needs to be evaluated is
+    evaluated, the other parameter is skipped; this makes it safe to
+    use eval() in them.
+    - int(A) : Rounds A to the closest integer. 0.5 is rounded to 1.
+    - log(A) : Natural (base e) logarithm of A.
+    - log10(A) : Base 10 logarithm of A.
+    - max(A,B) : If A>B, the result is A, else B.
+    - min(A,B) : If A<B, the result is A, else B.
+    - sec(A) : Secant of A (equivalent to 1/cos(A)).
+    - sin(A) : Sine of A. Returns the sine of the angle A, where A is
+    measured in radians.
+    - sinh(A) : Same as sin() but for hyperbolic sine.
+    - sqrt(A) : Square root of A. Returns the value whose square is A.
+    - tan(A) : Tangent of A. Returns the tangent of the angle A, where A
+    is measured in radians.
+    - tanh(A) : Same as tan() but for hyperbolic tangent.
+    
+    Examples of function string understood by the class:
+    
+    "1+2"
+    "x-1"
+    "-sin(sqrt(x^2+y^2))"
+    "sqrt(XCoord*XCoord + YCoord*YCoord)"
+    
+    An example of a recursive function is the factorial function:
+    
+    "if(n>1, n*eval(n-1), 1)"
+    
+    Note that a recursive call has some overhead, which makes it a bit
+    slower than any other operation. It may be a good idea to avoid
+    recursive functions in very time-critical applications. Recursion
+    also takes some memory, so extremely deep recursions should be
+    avoided (eg. millions of nested recursive calls).
+    
+    Also note that the if() function is the only place where making a
+    recursive call is safe. In any other place it will cause an
+    infinite recursion (which will make the program eventually run out
+    of memory). If this is something which should be avoided, it may
+    be a good idea to disable the eval() function completely.  The
+    eval() function can be disabled with the DISABLE_EVAL precompiler
+    constant (see the beginning of fparser.cc). 
+    
+ */
+class FunctionParser {
+ public:
+  
+  /** \brief Possible errors returned by Parse()
+   */
+  enum ParseErrorType
+    {
+      SYNTAX_ERROR=0, MISM_PARENTH, MISSING_PARENTH, EMPTY_PARENTH,
+      EXPECT_OPERATOR, OUT_OF_MEMORY, UNEXPECTED_ERROR, INVALID_VARS,
+      ILL_PARAMS_AMOUNT, PREMATURE_EOS, EXPECT_PARENTH_FUNC,
+      FP_NO_ERROR
+    };
+  
+
+  /** \brief Parses the given function and compiles it to internal format.
+      Return value is -1 if successful, else the index value to the location
+      of the error.
+      
+      Parses the given function (and compiles it to internal format).
+      Destroys previous function. Following calls to Eval() will evaluate
+      the given function.
+      The strings given as parameters are not needed anymore after parsing.
+  
+      Parameters:
+      Function  : String containing the function to parse.
+      Vars      : String containing the variable names, separated by commas.
+      Eg. "x,y", "VarX,VarY,VarZ,n" or "x1,x2,x3,x4,__VAR__".
+      useDegrees: (Optional.) Whether to use degrees or radians in
+      trigonometric functions. (Default: radians)
+
+      Variables can have any size and they are case sensitive (ie. "var",
+      "VAR" and "Var" are *different* variable names). Letters, digits and
+      underscores can be used in variable names, but the name of a variable
+      can't begin with a digit. Each variable name can appear only once in
+      the string. Function names are not legal variable names.
+  
+      Using longer variable names causes no overhead whatsoever to the Eval()
+      method, so it's completely safe to use variable names of any size.
+  
+      The third, optional parameter specifies whether angles should be
+      interpreted as radians or degrees in trigonometrical functions.
+      If not specified, the default value is radians.
+  
+      Return values:
+      -On success the function returns -1.
+      -On error the function returns an index to where the error was found
+      (0 is the first character, 1 the second, etc). If the error was not
+      a parsing error returns an index to the end of the string + 1.
+  
+      Example: parser.Parse("3*x+y", "x,y");
+  
+  */
+  int Parse(const std::string& Function, const std::string& Vars,
+	    bool useDegrees = false);
+
+  
+  /** \brief Returns an error message corresponding to the error 
+      in Parse(), or 0 if no such error occurred.
+
+      Returns a pointer to an error message string corresponding to the error
+      caused by Parse() (you can use this to print the proper error message to
+      the user). If no such error has occurred, returns 0.
+  
+  */
+  const char* ErrorMsg() const;
+
+  /** \brief Returns the type of parsing error which occurred.
+
+      Returns the type of parse error which occurred.
+  
+      This method can be used to get the error type if ErrorMsg() is not
+      enough for printing the error message. In other words, this can be
+      used for printing customized error messages (eg. in another language).
+      If the default error messages suffice, then this method doesn't need
+      to be called.
+      
+      FunctionParser::ParseErrorType is an enumerated type inside the class
+      (ie. its values are accessed like "FunctionParser::SYNTAX_ERROR").
+      
+      The possible values for FunctionParser::ParseErrorType are listed below,
+      along with their equivalent error message returned by the ErrorMsg()
+      method:
+  
+      FP_NO_ERROR        : If no error occurred in the previous call to 
+                           Parse().
+      SYNTAX_ERROR       : "Syntax error"
+      MISM_PARENTH       : "Mismatched parenthesis"
+      MISSING_PARENTH    : "Missing ')'"
+      EMPTY_PARENTH      : "Empty parentheses"
+      EXPECT_OPERATOR    : "Syntax error: Operator expected"
+      OUT_OF_MEMORY      : "Not enough memory"
+      UNEXPECTED_ERROR   : "An unexpected error ocurred. Please make a 
+                           full bug report to warp@iki.fi"
+      INVALID_VARS       : "Syntax error in parameter 'Vars' given to "
+                           "FunctionParser::Parse()"
+      ILL_PARAMS_AMOUNT  : "Illegal number of parameters to function"
+      PREMATURE_EOS      : "Syntax error: Premature end of string"
+      EXPECT_PARENTH_FUNC: "Syntax error: Expecting ( after function"
+      
+  */
+  inline ParseErrorType GetParseErrorType() const { 
+    return parseErrorType; }
+  
+  /** \brief Evaluates the function given to Parse().
+      
+      Evaluates the function given to Parse().
+      The array given as parameter must contain the same amount of values as
+      the amount of variables given to Parse(). Each value corresponds to each
+      variable, in the same order.
+      
+      Return values:
+      -On success returns the evaluated value of the function given to
+      Parse().
+      -On error (such as division by 0) the return value is unspecified,
+      probably 0.
+  
+      This function has been modified from the original version of 
+      FunctionParser. It is now a template member function, operating
+      on any kind of vector class \c vec_t.
+    
+      Example:
+      
+      double Vars[] = {1, -2.5};
+      double result = parser.Eval(Vars);
+      
+  */
+  template<class vec_t> double Eval(const vec_t &Vars);
+  
+  /** \brief Returns 0 if no error happened in the previous call to 
+      Eval(), else an error code >0.
+
+      Used to test if the call to Eval() succeeded.
+      
+      Return values:
+      If there was no error in the previous call to Eval(), returns 0,
+      else returns a positive value as follows:
+      1: division by zero
+      2: sqrt error (sqrt of a negative value)
+      3: log error (logarithm of a negative value)
+      4: trigonometric error (asin or acos of illegal value)
+
+  */
+  inline int EvalError() const { return evalErrorType; }
+
+  /** \brief Add a constant to the parser. 
+      Returns false if the name of the constant is invalid, else true.
+
+      This method can be used to add constants to the parser. Syntactically
+      constants are identical to variables (ie. they follow the same naming
+      rules and they can be used in the function string in the same way as
+      variables), but internally constants are directly replaced with their
+      value at parse time.
+  
+      Constants used by a function must be added before calling Parse()
+      for that function. Constants are preserved between Parse() calls in
+      the current FunctionParser instance, so they don't need to be added
+      but once. (If you use the same constant in several instances of
+      FunctionParser, you will need to add it to all the instances separately.)
+
+      Constants can be added at any time and the value of old constants can
+      be changed, but new additions and changes will only have effect the next
+      time Parse() is called. (That is, changing the value of a constant
+      after calling Parse() and before calling Eval() will have no effect.)
+  
+      The return value will be false if the 'name' of the constant was
+      illegal, else true. If the name was illegal, the method does nothing.
+  
+      Example: parser.AddConstant("pi", 3.14159265);
+  
+      Now for example parser.Parse("x*pi", "x"); will be identical to the
+      call parser.Parse("x*3.14159265", "x");
+  */
+  bool AddConstant(const std::string& name, double value);
+  
+  /// The type for functions that can be added via AddFunction()
+  typedef double (*FunctionPtr)(const double*);
+  
+  /** \brief Add a user-defined function to the parser (as a function pointer).
+      Returns false if the name of the function is invalid, else true.
+
+      This method can be used to add new functions to the parser. For example,
+      if you would like to add a function "sqr(A)" which squares the value
+      of A, you can do it with this method (so that you don't need to touch
+      the source code of the parser).
+  
+      The method takes three parameters:
+  
+      - The name of the function. The name follows the same naming conventions
+      as variable names.
+  
+      - A C++ function, which will be called when evaluating the function
+      string (if the user-given function is called there). The C++ function
+      must have the form:
+      double functionName(const double* params);
+  
+      - The number of parameters the function takes. NOTE: Currently this
+      value must be at least 1; the parser does not support functions which
+      take no parameters (this problem may be fixed in the future).
+  
+      The return value will be false if the given name was invalid (either it
+      did not follow the variable naming conventions, or the name was already
+      reserved), else true. If the return value is false, nothing is added.
+  
+      Example:
+      Suppose we have a C++ function like this:
+
+      double Square(const double* p) {
+        return p[0]*p[0];
+      }
+
+      Now we can add this function to the parser like this:
+
+      parser.AddFunction("sqr", Square, 1);
+
+      parser.Parse("2*sqr(x)", "x");
+
+      IMPORTANT NOTE: If you use the Optimize() method, it will assume that
+      the user-given function has no side-effects, that is, it always
+      returns the same value for the same parameters. The optimizer will
+      optimize the function call away in some cases, making this assumption.
+  
+  */
+  bool AddFunction(const std::string& name,
+		   FunctionPtr, unsigned paramsAmount);
+
+  /** \brief Add a user-defined function to the parser 
+      (as a FunctionParser instance). Returns false if the name of 
+      the function is invalid, else true.
+
+      This method is almost identical to the previous AddFunction(), but
+      instead of taking a C++ function, it takes another FunctionParser
+      instance.
+  
+      There are some important restrictions on making a FunctionParser instance
+      call another:
+  
+      - The FunctionParser instance given as parameter must be initialized
+      with a Parse() call before giving it as parameter. That is, if you
+      want to use the parser A in the parser B, you must call A.Parse()
+      before you can call B.AddFunction("name", A).
+  
+      - The amount of parameters in the FunctionParser instance given as
+      parameter must not change after it has been given to the AddFunction()
+      of another instance. Changing the number of parameters will result in
+      malfunction.
+  
+      - AddFunction() will fail (ie. return false) if a recursive loop is
+      formed. The method specifically checks that no such loop is built.
+  
+      - As with the other AddFunction(), the number of parameters taken by
+      the user-defined function must be at least 1 (this may be fixed in
+      the future).
+  
+      Example:
+
+      FunctionParser f1, f2;
+      f1.Parse("x*x", "x");
+      f2.AddFunction("sqr", f1);
+
+  */
+  bool AddFunction(const std::string& name, FunctionParser&);
+  
+  /** \brief Tries to optimize the bytecode for faster evaluation.
+
+      This method can be called after calling the Parse() method. It will try
+      to simplify the internal bytecode so that it will evaluate faster (it
+      tries to reduce the amount of opcodes in the bytecode).
+      
+      For example, the bytecode for the function "5+x*y-25*4/8" will
+      be reduced to a bytecode equivalent to the function "x*y-7.5"
+      (the original 11 opcodes will be reduced to 5). Besides
+      calculating constant expressions (like in the example), it also
+      performs other types of simplifications with variable and
+      function expressions.
+      
+      This method is quite slow and the decision of whether to use it
+      or not should depend on the type of application. If a function
+      is parsed once and evaluated millions of times, then calling
+      Optimize() may speed-up noticeably. However, if there are tons
+      of functions to parse and each one is evaluated once or just a
+      few times, then calling Optimize() will only slow down the
+      program.  Also, if the original function is expected to be
+      optimal, then calling Optimize() would be useless.
+      
+      Note: Currently this method does not make any checks (like
+      Eval() does) and thus things like "1/0" will cause undefined
+      behaviour. (On the other hand, if such expression is given to
+      the parser, Eval() will always give an error code, no matter
+      what the parameters.) If caching this type of errors is
+      important, a work-around is to call Eval() once before calling
+      Optimize() and checking EvalError().
+      
+      If the destination application is not going to use this method,
+      the compiler constant SUPPORT_OPTIMIZER can be undefined at the
+      beginning of fparser.cc to make the library smaller (Optimize()
+      can still be called, but it will not do anything).
+      
+      (If you are interested in seeing how this method optimizes the
+      opcode, you can call the PrintByteCode() method before and after
+      the call to Optimize() to see the difference.)
+
+      (N.B. PrintByteCode() is not included by default in this
+      compilation. To include this, compile with
+      -DFUNCTIONPARSER_SUPPORT_DEBUG_OUTPUT)
+
+  */
+  void Optimize();
+  
+  FunctionParser();
+  ~FunctionParser();
+};
+
+}
+
+#endif
+

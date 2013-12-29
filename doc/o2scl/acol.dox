@@ -1,0 +1,16 @@
+/** \page acol_section The 'acol' Command-line Utility
+
+    \o2 contains a command-line utility, \c acol, designed to
+    facilitate the manipulation of two-dimensional data tables, either
+    stored in a generic text-file, or \ref o2scl::table objects stored
+    using the I/O facilities in \o2.
+
+    \c acol has a command, \c run, which allows you to run
+    a set of commands which are given in a separate file. An example
+    script in the \c extras directory of the documentation is 
+    named \c acol.scr. The associated output is a useful demonstration
+    of the capabilities of \c acol.
+
+    \verbinclude acol.out
+
+*/

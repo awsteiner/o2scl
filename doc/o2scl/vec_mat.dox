@@ -1,0 +1,195 @@
+/** \page vecmat_section Arrays, Vectors, Matrices and Tensors
+
+    \section vmintro_subsect Introduction
+
+    Because many such vector and matrix objects are defined elsewhere,
+    \o2 no longer includes native vector and matrix classes.
+    Internally, \o2 most often uses Boost uBLAS vector and matrix
+    objects: <tt>boost::numeric::ublas::vector&lt;&gt;</tt>,
+    <tt>boost::numeric::ublas::matrix&lt;&gt;</tt>, and other related
+    class templates. Many \o2 routines are templates which are
+    compatible with a wide range of vector and matrix types. See the
+    \ref ex_mroot_sect which shows how an \o2 class can be used with
+    Boost, Eigen, or Armadillo objects.
+
+    The \o2 library uses a standard nomenclature to distinguish
+    a couple different concepts. The word "array" is always used to
+    refer to C-style arrays, i.e. \c double[]. If there are two
+    dimensions in the array, it is a "two-dimensional array", i.e. \c
+    double[][] . The word "vector" is reserved generic objects with
+    array-like semantics.
+
+    In general, there are many vector types (STL, Boost, etc.) and
+    they can be characterized by whether or not they satisfy certain
+    "concepts" like <tt>DefaultConstructible</tt>. \o2 classes which
+    operate on vector types are designed to be as flexible as
+    possible, so that they can be used with almost any vector type.
+    Eventually, all \o2 classes with template vector and matrix types
+    will specify exactly which concepts are required to be satisified,
+    but this is still in progress.
+
+    The word "matrix" is reserved for the a generic object which has
+    matrix-like semantics and can be accessed using
+    operator(,). The word "tensor" is used for a generic object which
+    has rank \c n and then has \c n associated indices. A vector is
+    just a \tensor of rank 1 and a matrix is just a \tensor of rank 2.
+    Tensors are implemented in \o2 by \ref o2scl::tensor .
+
+    \section vectype_subsect Template classes for vector objects
+
+    <b>Type A: Array semantics</b>
+
+    A class with a type A template parameter works with any vector
+    type which has 
+    - access to its elements through <tt>operator[]</tt> 
+
+    Almost any vector object is of type A, including
+    std::vector, C-style arrays, raw pointers, and almost all of the
+    relevant uBLAS, Eigen and Armadillo types.
+
+    <b>Type B: Array semantics with a size method</b>
+
+    A class with a type C template parameter should work with 
+    any vector type which has:
+    - access to its elements through <tt>operator[]</tt>
+    - a <tt>size()</tt> function which specifies the vector size
+
+    Most vector objects are of type B, including std::vector,
+    and almost all of the relevant uBLAS, Eigen and Armadillo types.
+
+    <b>Type C: Full object-oriented vector type</b>
+
+    A class with a type C template parameter should work with 
+    any type which has:
+    - access to its elements through operator[]
+    - a <tt>size()</tt> function which specifies the vector size
+    - a constructor with a size_t argument which specifies the 
+    vector size.
+    - a destructor which decallocates memory without 
+    throwing exceptions,
+    - a <tt>resize</tt> method (possibly destructive), and
+    - the usual copy constructors.
+
+    Types std::vector, ublas::vector, arma::rowvec, arma::colvec,
+    and Eigen::VectorXd are all vector objects of type C. Eigen's
+    fixed-size vectorizable types are not immediately of type C,
+    but can often be used in \o2 classes with some additional
+    modifications. 
+
+    \section mattype_subsect Template classes for matrix objects
+
+    <b>Type A: Matrix semantics</b>
+
+    A class with a type A template parameter works with any matrix
+    type which has 
+    - access to its elements through <tt>operator(,)</tt> 
+
+    Almost any matrix object is of type A, including almost all of the
+    relevant uBLAS, Eigen and Armadillo types.
+
+    <b>Type C: Full object-oriented matrix type</b>
+
+    A class with a type C template parameter should work with 
+    any type which has:
+    - access to its elements through <tt>operator(,)</tt> 
+    - a constructor with two size_t arguments which specifies the 
+    matrix size.
+    - a destructor which decallocates memory without 
+    throwing exceptions,
+    - a <tt>resize</tt> method (possibly destructive), and
+    - the usual copy constructors.
+
+    \section rowcol_subsect Rows and columns vs. x and y
+
+    The most common convention is that the first index
+    of a matrix is the row index, i.e. to print a matrix
+    to the screen one uses something like
+    \code
+    for(size_t row=0;row<n_rows;row++) {
+      for(size_t col=0;col<n_cols;col++) {
+        cout << M(row,col) << " ";
+      }
+      cout << endl;
+    }
+    \endcode
+    This is the form used in \ref o2scl::matrix_out() and \ref
+    o2scl::array_2d_out(). To reverse the rows and columns use \ref
+    o2scl::matrix_trans_out() and \ref o2scl::array_2d_trans_out().
+
+    A related issue is how matrices are stored. In C, two-dimensional
+    arrays are stored in row-major order, and the distance from the
+    first element to the element at <tt>(row,col)</tt> is given by
+    <tt>row*n_cols+col</tt>. In row-major order storage, the matrix
+    elements are stored in the same order in which they are output by
+    the functions \ref o2scl::matrix_out() and \ref
+    o2scl::array_2d_out(). The alternative is column-major order where
+    the distance from the first element to the element at
+    <tt>(row,col)</tt> is given by <tt>row*n_rows+col</tt>. The \ref
+    o2scl::tensor class uses a simple generalization of row-major
+    order.
+
+    Sometimes its useful to think about the rows and columns in a
+    matrix as referring to a elements of a grid, and the matrix
+    indices refer to points in a grid in \f$ (x,y) \f$. It might seem
+    intuitive to think of a matrix as \c A[ix][iy] where \c ix and \c
+    iy are the \f$ x \f$ and \f$ y \f$ indices because the ordering of
+    the indices is alphabetical. However, it is useful to note that
+    because functions like \ref o2scl::matrix_out() print the first
+    "row" first rather than the first column, a matrix constructed as
+    \c A[ix][iy] will be printed out with x on the "vertical axis" and
+    y on the "horizontal axis", which is backwards from the usual
+    convention when plotting data.
+
+    \o2 classes which interpret matrix data on a grid (\ref
+    o2scl::table3d, \ref o2scl::contour, \ref o2scl::interp2_seq and
+    \ref o2scl::interp2_direct) use 'x' to denote the row index and
+    'y' to denote the column index by convention.
+
+    \section genvec_subsection Generic vector functions
+    
+    There are a couple functions which operate on generic vectors of
+    any type in \ref vector.h . They perform sorting, summing,
+    rotating, copying, and computations of minima and maxima. For
+    more statistically-oriented operations, see also \ref vec_stats.h .
+    
+    \section vmout_subsect Vector and matrix output
+
+    For writing generic vectors to a stream, you can use \ref
+    vector_out() which is defined in \ref vector.h . Pretty matrix
+    output is performed by global template functions \ref
+    o2scl::matrix_out() which is defined in \ref columnify.h since it
+    internally uses a \ref o2scl::columnify object to format the output.
+
+    \section tensor_subsect Tensors
+
+    Some preliminary support is provided for tensors of arbitrary rank
+    and size in the class \ref o2scl::tensor. Classes \ref
+    o2scl::tensor1, \ref o2scl::tensor2, \ref o2scl::tensor3, and \ref
+    o2scl::tensor4 are rank-specific versions for 1-, 2-, 3- and
+    4-rank tensors. For n-dimsional data defined on a grid, \ref
+    o2scl::tensor_grid provides a space to define a hyper-cubic grid
+    in addition to the the tensor data. This class \ref
+    o2scl::tensor_grid also provides simple n-dimensional
+    interpolation of the data defined on the specified grid.
+
+    \section vec_io_cont_subsect I/O and contiguous storage
+
+    \o2 uses HDF5 for file I/O, and in order to perform I/O of
+    vector-like data, HDF5 works with bare pointers. In order to
+    efficiently read and write vectors and other objects to HDF5
+    files, it is thus important to ensure that these objects are
+    stored contiguously in memory. The standard template library
+    objects, e.g. <tt>std::vector</tt> have this property as part of
+    the recent C++ standard. The ublas objects, so far as I know, do
+    not necessarily have this property. For this reason,
+    <tt>o2scl::hdf_file::getd_vec</tt> and
+    <tt>o2scl::hdf_file::setd_vec</tt> are efficient when working with
+    <tt>std::vector</tt> objects, but otherwise require an extra copy
+    upon reading from and writing to an HDF5 file. The same holds for
+    matrix and tensor I/O. It is the efficiency of this I/O which
+    motivated the default choice of <tt>std::vector</tt> objects as
+    the default vector type in \ref o2scl::table and \ref
+    o2scl::tensor .
+
+
+*/
