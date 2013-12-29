@@ -6,6 +6,9 @@
     - License for HDF5, \ref hdf5_lic_section
     - License for the \o2 documentation, \ref gnu_doc_lic_section
 
+    Some \o2 classes are based on GSL and CERNLIB, both licensed under
+    GPLv3 (see http://cernlib.web.cern.ch/cernlib/conditions.html).
+
     \section gplv3_section GNU General Public License Version 3
 
     \o2 (as well as CERNLIB and the Gnu Scientific Library (GSL)) is

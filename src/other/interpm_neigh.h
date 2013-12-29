@@ -33,9 +33,8 @@
 namespace o2scl {
 #endif
 
-  /** \brief Nearest-neighbor interpolation in arbitrary number of dimensions
-
-      \note This class is unfinished.
+  /** \brief Nearest-neighbor interpolation in arbitrary number of 
+      dimensions
   */
   template<class vec_t> class interpm_neigh {
 
@@ -43,14 +42,15 @@ namespace o2scl {
 
     typedef boost::numeric::ublas::vector<double> ubvector;
     typedef boost::numeric::ublas::vector<size_t> ubvector_size_t;
-    
+
     interpm_neigh() {
       data_set=false;
-      x_scale=-1.0;
-      y_scale=-1.0;
-      dx=0.0;
-      dy=0.0;
+      scales.resize(1);
+      scales[0]=1.0;
     }
+
+    /// Distance scales for each coordinate
+    ubvector scales;
 
     /** \brief Initialize the data for the neigh interpolation
      */
@@ -58,8 +58,8 @@ namespace o2scl {
       void set_data(size_t dim, size_t n_points, vec_vec_t &vecs) {
 
       if (n_points<1) {
-	O2SCL_ERR2_RET("Must provide at least one point in ",
-		       "interpm_neigh::set_data()",exc_efailed);
+	O2SCL_ERR2("Must provide at least one point in ",
+		   "interpm_neigh::set_data()",exc_efailed);
       }
 
       np=n_points;
@@ -81,28 +81,32 @@ namespace o2scl {
 	O2SCL_ERR("Data not set in interp_planar::eval_points().",
 		  exc_einval);
       }
+      
+      // Check that some scales have been given
+      size_t nscales=scales.size();
+      if (nscales==0) {
+	O2SCL_ERR("No scales in interpm_neigh::eval().",exc_einval);
+      }
 
       // Exhaustively search the data
-      i1=0;
-      double dist=0.0;
+      size_t index_min=0;
+      double dist_min=0.0;
       for(size_t i=0;i<nd;i++) {
-	dist+=pow((x[i]-(*(ptrs[i]))[i1])/dx,2.0);
+	dist_min+=pow((x[i]-(*(ptrs[i]))[index_min])/scales[i%nscales],2.0);
       }
-      for(size_t j=1;j<np;j++) {
-	double c2=0.0;
+      for(size_t index=1;index<np;index++) {
+	double dist=0.0;
 	for(size_t i=0;i<nd;i++) {
-	  c2+=pow((x[i]-(*(ptrs[i]))[j])/dx,2.0);
+	  dist+=pow((x[i]-(*(ptrs[i]))[index])/scales[i%nscales],2.0);
 	}
-	if (c2<dist) {
-	  swap(j,c2,i1,dist);
+	if (dist<dist_min) {
+	  dist_min=dist;
+	  index_min=index;
 	}
       }
-
+      
       // Return the function value
-
-      f=(*uf)[i1];
-
-      return;
+      return (*(ptrs[nd]))[index_min];
     }
     
 #ifndef DOXYGEN_INTERNAL
@@ -113,26 +117,10 @@ namespace o2scl {
     size_t np;
     /// The number of dimensions
     size_t nd;
-    /// Scales
-    ubvector scales;
     /// Desc
     std::vector<vec_t *> ptrs;
     /// True if the data has been specified
     bool data_set;
-    
-    /// Swap points 1 and 2.
-    int swap(size_t &index_1, double &dist_1, size_t &index_2, 
-	     double &dist_2) const {
-
-      size_t index_temp;
-      double dist_temp;
-      
-      index_temp=index_1; dist_temp=dist_1;
-      index_1=index_2; dist_1=dist_2;
-      index_2=index_temp; dist_2=dist_temp;
-      
-      return 0;
-    }
     
 #endif
 
