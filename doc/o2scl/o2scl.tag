@@ -2,7 +2,7 @@
 <tagfile>
   <compound kind="file">
     <name>acolm.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/</path>
     <filename>acolm_8h</filename>
     <class kind="class">o2scl_acol::acol_manager</class>
     <class kind="struct">o2scl_acol::acol_manager::iter_parms</class>
@@ -10,28 +10,28 @@
   </compound>
   <compound kind="file">
     <name>anneal.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/anneal/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/anneal/</path>
     <filename>anneal_8h</filename>
     <class kind="class">o2scl::anneal_base</class>
     <namespace>o2scl</namespace>
   </compound>
   <compound kind="file">
     <name>anneal_gsl.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/anneal/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/anneal/</path>
     <filename>anneal__gsl_8h</filename>
     <class kind="class">o2scl::anneal_gsl</class>
     <namespace>o2scl</namespace>
   </compound>
   <compound kind="file">
     <name>astep.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/ode/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/ode/</path>
     <filename>astep_8h</filename>
     <class kind="class">o2scl::astep_base</class>
     <namespace>o2scl</namespace>
   </compound>
   <compound kind="file">
     <name>astep_gsl.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/ode/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/ode/</path>
     <filename>astep__gsl_8h</filename>
     <class kind="class">o2scl::ode_control_gsl</class>
     <class kind="class">o2scl::astep_gsl</class>
@@ -39,14 +39,14 @@
   </compound>
   <compound kind="file">
     <name>astep_nonadapt.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/ode/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/ode/</path>
     <filename>astep__nonadapt_8h</filename>
     <class kind="class">o2scl::astep_nonadapt</class>
     <namespace>o2scl</namespace>
   </compound>
   <compound kind="file">
     <name>bidiag.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/linalg/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/linalg/</path>
     <filename>bidiag_8h</filename>
     <includes id="bidiag__base_8h" name="bidiag_base.h" local="yes" imported="no">bidiag_base.h</includes>
     <namespace>o2scl_linalg</namespace>
@@ -54,7 +54,7 @@
   </compound>
   <compound kind="file">
     <name>bidiag_base.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/linalg/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/linalg/</path>
     <filename>bidiag__base_8h</filename>
     <namespace>o2scl_linalg</namespace>
     <member kind="function">
@@ -88,14 +88,14 @@
   </compound>
   <compound kind="file">
     <name>cblas.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/linalg/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/linalg/</path>
     <filename>cblas_8h</filename>
     <namespace>o2scl_cblas</namespace>
     <namespace>o2scl_cblas_bracket</namespace>
   </compound>
   <compound kind="file">
     <name>cblas_base.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/linalg/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/linalg/</path>
     <filename>cblas__base_8h</filename>
     <namespace>o2scl_cblas</namespace>
     <member kind="enumeration">
@@ -356,21 +356,21 @@
   </compound>
   <compound kind="file">
     <name>cheb_approx.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/other/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/other/</path>
     <filename>cheb__approx_8h</filename>
     <class kind="class">o2scl::cheb_approx</class>
     <namespace>o2scl</namespace>
   </compound>
   <compound kind="file">
     <name>cholesky.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/linalg/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/linalg/</path>
     <filename>cholesky_8h</filename>
     <namespace>o2scl_linalg</namespace>
     <namespace>o2scl_linalg_bracket</namespace>
   </compound>
   <compound kind="file">
     <name>cholesky_base.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/linalg/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/linalg/</path>
     <filename>cholesky__base_8h</filename>
     <member kind="function">
       <type>void</type>
@@ -403,7 +403,7 @@
   </compound>
   <compound kind="file">
     <name>cli.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/base/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/base/</path>
     <filename>cli_8h</filename>
     <class kind="class">o2scl::comm_option_funct</class>
     <class kind="class">o2scl::comm_option_fptr</class>
@@ -420,14 +420,14 @@
   </compound>
   <compound kind="file">
     <name>cli_readline.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/base/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/base/</path>
     <filename>cli__readline_8h</filename>
     <class kind="class">o2scl::cli_readline</class>
     <namespace>o2scl</namespace>
   </compound>
   <compound kind="file">
     <name>columnify.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/base/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/base/</path>
     <filename>columnify_8h</filename>
     <class kind="class">o2scl::columnify</class>
     <namespace>o2scl</namespace>
@@ -476,7 +476,7 @@
   </compound>
   <compound kind="file">
     <name>constants.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/base/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/base/</path>
     <filename>constants_8h</filename>
     <namespace>o2scl_const</namespace>
     <namespace>o2scl_cgs</namespace>
@@ -3384,7 +3384,7 @@
   </compound>
   <compound kind="file">
     <name>contour.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/other/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/other/</path>
     <filename>contour_8h</filename>
     <class kind="class">o2scl::contour_line</class>
     <class kind="class">o2scl::edge_crossings</class>
@@ -3393,7 +3393,7 @@
   </compound>
   <compound kind="file">
     <name>convert_units.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/base/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/base/</path>
     <filename>convert__units_8h</filename>
     <class kind="class">o2scl::convert_units</class>
     <class kind="struct">o2scl::convert_units::unit_t</class>
@@ -3401,7 +3401,7 @@
   </compound>
   <compound kind="file">
     <name>deriv.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/deriv/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/deriv/</path>
     <filename>deriv_8h</filename>
     <class kind="class">o2scl::deriv_base</class>
     <class kind="struct">o2scl::deriv_base::dpars</class>
@@ -3409,21 +3409,21 @@
   </compound>
   <compound kind="file">
     <name>deriv_cern.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/deriv/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/deriv/</path>
     <filename>deriv__cern_8h</filename>
     <class kind="class">o2scl::deriv_cern</class>
     <namespace>o2scl</namespace>
   </compound>
   <compound kind="file">
     <name>deriv_gsl.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/deriv/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/deriv/</path>
     <filename>deriv__gsl_8h</filename>
     <class kind="class">o2scl::deriv_gsl</class>
     <namespace>o2scl</namespace>
   </compound>
   <compound kind="file">
     <name>err_hnd.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/base/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/base/</path>
     <filename>err__hnd_8h</filename>
     <class kind="class">o2scl::err_hnd_type</class>
     <class kind="class">o2scl::err_hnd_gsl</class>
@@ -3795,7 +3795,7 @@
   </compound>
   <compound kind="file">
     <name>exception.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/base/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/base/</path>
     <filename>exception_8h</filename>
     <class kind="class">o2scl::exc_exception</class>
     <class kind="class">o2scl::exc_logic_error</class>
@@ -3816,7 +3816,7 @@
   </compound>
   <compound kind="file">
     <name>fit_bayes.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/fit/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/fit/</path>
     <filename>fit__bayes_8h</filename>
     <class kind="class">o2scl::uniform_prior</class>
     <class kind="class">o2scl::fit_bayes</class>
@@ -3824,7 +3824,7 @@
   </compound>
   <compound kind="file">
     <name>funct.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/base/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/base/</path>
     <filename>funct_8h</filename>
     <class kind="class">o2scl::funct</class>
     <class kind="class">o2scl::funct_fptr</class>
@@ -3846,7 +3846,7 @@
   </compound>
   <compound kind="file">
     <name>givens.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/linalg/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/linalg/</path>
     <filename>givens_8h</filename>
     <namespace>o2scl_linalg_bracket</namespace>
     <namespace>o2scl_linalg</namespace>
@@ -3860,7 +3860,7 @@
   </compound>
   <compound kind="file">
     <name>givens_base.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/linalg/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/linalg/</path>
     <filename>givens__base_8h</filename>
     <namespace>o2scl_linalg</namespace>
     <member kind="function">
@@ -3887,7 +3887,7 @@
   </compound>
   <compound kind="file">
     <name>graph.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/other/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/other/</path>
     <filename>graph_8h</filename>
     <class kind="class">o2scl_graph::root_color_manager</class>
     <class kind="class">o2scl_graph::html_colors</class>
@@ -3968,7 +3968,7 @@
   </compound>
   <compound kind="file">
     <name>hh_base.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/linalg/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/linalg/</path>
     <filename>hh__base_8h</filename>
     <namespace>o2scl_linalg</namespace>
     <member kind="function">
@@ -3988,7 +3988,7 @@
   </compound>
   <compound kind="file">
     <name>householder_base.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/linalg/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/linalg/</path>
     <filename>householder__base_8h</filename>
     <namespace>o2scl_linalg</namespace>
     <member kind="function">
@@ -4078,35 +4078,35 @@
   </compound>
   <compound kind="file">
     <name>inte_adapt_cern.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/inte/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/inte/</path>
     <filename>inte__adapt__cern_8h</filename>
     <class kind="class">o2scl::inte_adapt_cern</class>
     <namespace>o2scl</namespace>
   </compound>
   <compound kind="file">
     <name>inte_cauchy_cern.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/inte/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/inte/</path>
     <filename>inte__cauchy__cern_8h</filename>
     <class kind="class">o2scl::inte_cauchy_cern</class>
     <namespace>o2scl</namespace>
   </compound>
   <compound kind="file">
     <name>inte_gauss56_cern.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/inte/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/inte/</path>
     <filename>inte__gauss56__cern_8h</filename>
     <class kind="class">o2scl::inte_gauss56_cern</class>
     <namespace>o2scl</namespace>
   </compound>
   <compound kind="file">
     <name>inte_gauss_cern.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/inte/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/inte/</path>
     <filename>inte__gauss__cern_8h</filename>
     <class kind="class">o2scl::inte_gauss_cern</class>
     <namespace>o2scl</namespace>
   </compound>
   <compound kind="file">
     <name>interp.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/base/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/base/</path>
     <filename>interp_8h</filename>
     <class kind="class">o2scl::interp_base</class>
     <class kind="class">o2scl::interp_linear</class>
@@ -4207,21 +4207,28 @@
   </compound>
   <compound kind="file">
     <name>interp2_direct.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/other/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/other/</path>
     <filename>interp2__direct_8h</filename>
     <class kind="class">o2scl::interp2_direct</class>
     <namespace>o2scl</namespace>
   </compound>
   <compound kind="file">
+    <name>interp2_planar.h</name>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/other/</path>
+    <filename>interp2__planar_8h</filename>
+    <class kind="class">o2scl::interp2_planar</class>
+    <namespace>o2scl</namespace>
+  </compound>
+  <compound kind="file">
     <name>interp2_seq.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/other/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/other/</path>
     <filename>interp2__seq_8h</filename>
     <class kind="class">o2scl::interp2_seq</class>
     <namespace>o2scl</namespace>
   </compound>
   <compound kind="file">
     <name>jacobian.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/root/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/root/</path>
     <filename>jacobian_8h</filename>
     <class kind="class">o2scl::jac_funct</class>
     <class kind="class">o2scl::jac_funct_fptr</class>
@@ -4229,8 +4236,8 @@
     <class kind="class">o2scl::jac_funct_cmfptr</class>
     <class kind="class">o2scl::jacobian</class>
     <class kind="class">o2scl::jacobian_gsl</class>
-    <class kind="class">o2scl::exact_jacobian</class>
-    <class kind="struct">o2scl::exact_jacobian::ej_parms</class>
+    <class kind="class">o2scl::jacobian_exact</class>
+    <class kind="struct">o2scl::jacobian_exact::ej_parms</class>
     <namespace>o2scl</namespace>
     <member kind="typedef">
       <type>std::function&lt; int(size_t, boost::numeric::ublas::vector&lt; double &gt; &amp;, size_t, boost::numeric::ublas::vector&lt; double &gt; &amp;, boost::numeric::ublas::matrix&lt; double &gt; &amp;) &gt;</type>
@@ -4242,7 +4249,7 @@
   </compound>
   <compound kind="file">
     <name>lib_settings.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/base/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/base/</path>
     <filename>lib__settings_8h</filename>
     <class kind="class">o2scl::lib_settings_class</class>
     <namespace>o2scl</namespace>
@@ -4258,7 +4265,7 @@
   </compound>
   <compound kind="file">
     <name>linear_solver.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/linalg/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/linalg/</path>
     <filename>linear__solver_8h</filename>
     <class kind="class">o2scl_linalg::linear_solver</class>
     <class kind="class">o2scl_linalg::linear_solver_LU</class>
@@ -4276,7 +4283,7 @@
   </compound>
   <compound kind="file">
     <name>lu.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/linalg/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/linalg/</path>
     <filename>lu_8h</filename>
     <namespace>o2scl_linalg</namespace>
     <namespace>o2scl_linalg_bracket</namespace>
@@ -4290,7 +4297,7 @@
   </compound>
   <compound kind="file">
     <name>lu_base.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/linalg/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/linalg/</path>
     <filename>lu__base_8h</filename>
     <namespace>o2scl_linalg</namespace>
     <member kind="function">
@@ -4366,7 +4373,7 @@
   </compound>
   <compound kind="file">
     <name>min.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/min/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/min/</path>
     <filename>min_8h</filename>
     <class kind="class">o2scl::min_base</class>
     <class kind="class">o2scl::min_bkt_base</class>
@@ -4403,14 +4410,14 @@
   </compound>
   <compound kind="file">
     <name>min_cern.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/min/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/min/</path>
     <filename>min__cern_8h</filename>
     <class kind="class">o2scl::min_cern</class>
     <namespace>o2scl</namespace>
   </compound>
   <compound kind="file">
     <name>misc.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/base/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/base/</path>
     <filename>misc_8h</filename>
     <class kind="struct">o2scl::string_comp</class>
     <class kind="class">o2scl::gen_test_number</class>
@@ -4516,7 +4523,7 @@
   </compound>
   <compound kind="file">
     <name>mm_funct.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/base/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/base/</path>
     <filename>mm__funct_8h</filename>
     <class kind="class">o2scl::mm_funct</class>
     <class kind="class">o2scl::mm_funct_fptr</class>
@@ -4537,7 +4544,7 @@
   </compound>
   <compound kind="file">
     <name>mmin.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/min/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/min/</path>
     <filename>mmin_8h</filename>
     <class kind="class">o2scl::grad_funct</class>
     <class kind="class">o2scl::grad_funct_fptr</class>
@@ -4559,23 +4566,23 @@
   </compound>
   <compound kind="file">
     <name>mroot.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/root/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/root/</path>
     <filename>mroot_8h</filename>
     <class kind="class">o2scl::mroot</class>
     <namespace>o2scl</namespace>
   </compound>
   <compound kind="file">
     <name>mroot_cern.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/root/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/root/</path>
     <filename>mroot__cern_8h</filename>
     <class kind="class">o2scl::mroot_cern</class>
     <namespace>o2scl</namespace>
   </compound>
   <compound kind="file">
     <name>mroot_hybrids.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/root/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/root/</path>
     <filename>mroot__hybrids_8h</filename>
-    <class kind="class">o2scl::hybrids_base</class>
+    <class kind="class">o2scl::mroot_hybrids_base</class>
     <class kind="class">o2scl::mroot_hybrids</class>
     <class kind="class">o2scl::mroot_hybrids_arma_qr_econ</class>
     <class kind="class">o2scl::mroot_hybrids_eigen</class>
@@ -4583,7 +4590,7 @@
   </compound>
   <compound kind="file">
     <name>multi_funct.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/base/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/base/</path>
     <filename>multi__funct_8h</filename>
     <class kind="class">o2scl::multi_funct</class>
     <class kind="class">o2scl::multi_funct_fptr</class>
@@ -4604,7 +4611,7 @@
   </compound>
   <compound kind="file">
     <name>ode_funct.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/ode/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/ode/</path>
     <filename>ode__funct_8h</filename>
     <class kind="class">o2scl::ode_funct</class>
     <class kind="class">o2scl::ode_funct_fptr</class>
@@ -4624,7 +4631,7 @@
   </compound>
   <compound kind="file">
     <name>permutation.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/linalg/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/linalg/</path>
     <filename>permutation_8h</filename>
     <class kind="class">o2scl::permutation</class>
     <namespace>o2scl</namespace>
@@ -4638,7 +4645,7 @@
   </compound>
   <compound kind="file">
     <name>poly.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/other/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/other/</path>
     <filename>poly_8h</filename>
     <class kind="class">o2scl::quadratic_real</class>
     <class kind="class">o2scl::quadratic_real_coeff</class>
@@ -4666,14 +4673,14 @@
   </compound>
   <compound kind="file">
     <name>polylog.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/other/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/other/</path>
     <filename>polylog_8h</filename>
     <class kind="class">o2scl::polylog</class>
     <namespace>o2scl</namespace>
   </compound>
   <compound kind="file">
     <name>prob_dens_func.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/other/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/other/</path>
     <filename>prob__dens__func_8h</filename>
     <class kind="class">o2scl::prob_dens_func</class>
     <class kind="class">o2scl::prob_dens_gaussian</class>
@@ -4686,7 +4693,7 @@
   </compound>
   <compound kind="file">
     <name>qr.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/linalg/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/linalg/</path>
     <filename>qr_8h</filename>
     <namespace>o2scl_linalg</namespace>
     <namespace>o2scl_linalg_bracket</namespace>
@@ -4707,7 +4714,7 @@
   </compound>
   <compound kind="file">
     <name>qr_base.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/linalg/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/linalg/</path>
     <filename>qr__base_8h</filename>
     <namespace>o2scl_linalg</namespace>
     <member kind="function">
@@ -4762,7 +4769,7 @@
   </compound>
   <compound kind="file">
     <name>qrpt_base.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/linalg/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/linalg/</path>
     <filename>qrpt__base_8h</filename>
     <namespace>o2scl_linalg</namespace>
     <member kind="function">
@@ -4775,14 +4782,14 @@
   </compound>
   <compound kind="file">
     <name>rng_gsl.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/mcarlo/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/mcarlo/</path>
     <filename>rng__gsl_8h</filename>
     <class kind="class">o2scl::rng_gsl</class>
     <namespace>o2scl</namespace>
   </compound>
   <compound kind="file">
     <name>root.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/root/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/root/</path>
     <filename>root_8h</filename>
     <class kind="class">o2scl::root</class>
     <class kind="class">o2scl::root_bkt</class>
@@ -4791,28 +4798,28 @@
   </compound>
   <compound kind="file">
     <name>root_bkt_cern.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/root/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/root/</path>
     <filename>root__bkt__cern_8h</filename>
     <class kind="class">o2scl::root_bkt_cern</class>
     <namespace>o2scl</namespace>
   </compound>
   <compound kind="file">
     <name>root_cern.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/root/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/root/</path>
     <filename>root__cern_8h</filename>
     <class kind="class">o2scl::root_cern</class>
     <namespace>o2scl</namespace>
   </compound>
   <compound kind="file">
     <name>root_toms748.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/root/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/root/</path>
     <filename>root__toms748_8h</filename>
     <class kind="class">o2scl::root_toms748</class>
     <namespace>o2scl</namespace>
   </compound>
   <compound kind="file">
     <name>string_conv.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/base/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/base/</path>
     <filename>string__conv_8h</filename>
     <namespace>o2scl</namespace>
     <member kind="function">
@@ -4930,14 +4937,14 @@
   </compound>
   <compound kind="file">
     <name>svd.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/linalg/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/linalg/</path>
     <filename>svd_8h</filename>
     <namespace>o2scl_linalg</namespace>
     <namespace>o2scl_linalg_bracket</namespace>
   </compound>
   <compound kind="file">
     <name>svd_base.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/linalg/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/linalg/</path>
     <filename>svd__base_8h</filename>
     <namespace>o2scl_linalg</namespace>
     <member kind="function">
@@ -4978,7 +4985,7 @@
   </compound>
   <compound kind="file">
     <name>svdstep_base.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/linalg/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/linalg/</path>
     <filename>svdstep__base_8h</filename>
     <namespace>o2scl_linalg</namespace>
     <member kind="function">
@@ -5054,7 +5061,7 @@
   </compound>
   <compound kind="file">
     <name>tensor.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/base/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/base/</path>
     <filename>tensor_8h</filename>
     <class kind="class">o2scl::tensor</class>
     <class kind="class">o2scl::tensor1</class>
@@ -5065,7 +5072,7 @@
   </compound>
   <compound kind="file">
     <name>tridiag_base.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/linalg/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/linalg/</path>
     <filename>tridiag__base_8h</filename>
     <class kind="class">o2scl_linalg::ubvector_2_mem</class>
     <class kind="class">o2scl_linalg::ubvector_4_mem</class>
@@ -5130,7 +5137,7 @@
   </compound>
   <compound kind="file">
     <name>vec_stats.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/other/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/other/</path>
     <filename>vec__stats_8h</filename>
     <namespace>o2scl</namespace>
     <member kind="function">
@@ -5416,7 +5423,7 @@
   </compound>
   <compound kind="file">
     <name>vector.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/base/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/base/</path>
     <filename>vector_8h</filename>
     <class kind="class">boost::numeric::ublas::vector</class>
     <class kind="class">boost::numeric::ublas::matrix</class>
@@ -5903,7 +5910,7 @@
   </compound>
   <compound kind="file">
     <name>vector_derint.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/deriv/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/deriv/</path>
     <filename>vector__derint_8h</filename>
     <namespace>o2scl</namespace>
     <member kind="function">
@@ -6565,11 +6572,11 @@
     <class kind="class">o2scl::jac_funct_cmfptr</class>
     <class kind="class">o2scl::jacobian</class>
     <class kind="class">o2scl::jacobian_gsl</class>
-    <class kind="class">o2scl::exact_jacobian</class>
+    <class kind="class">o2scl::jacobian_exact</class>
     <class kind="class">o2scl::mroot</class>
     <class kind="class">o2scl::mroot_broyden</class>
     <class kind="class">o2scl::mroot_cern</class>
-    <class kind="class">o2scl::hybrids_base</class>
+    <class kind="class">o2scl::mroot_hybrids_base</class>
     <class kind="class">o2scl::mroot_hybrids</class>
     <class kind="class">o2scl::mroot_hybrids_arma_qr_econ</class>
     <class kind="class">o2scl::mroot_hybrids_eigen</class>
@@ -24860,6 +24867,13 @@
     <templarg></templarg>
     <member kind="function">
       <type>void</type>
+      <name>compute_scale</name>
+      <anchorfile>classo2scl_1_1interp2__neigh.html</anchorfile>
+      <anchor>ad551cf69f3dd4df277709ec538c1c97d</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
       <name>set_data</name>
       <anchorfile>classo2scl_1_1interp2__neigh.html</anchorfile>
       <anchor>ab08c331e0283188fec0ca07265c4f21e</anchor>
@@ -24878,6 +24892,13 @@
       <anchorfile>classo2scl_1_1interp2__neigh.html</anchorfile>
       <anchor>a9a395aa5ef3ebb9be004c296740dcc06</anchor>
       <arglist>(double x, double y) const </arglist>
+    </member>
+    <member kind="function">
+      <type>double</type>
+      <name>operator()</name>
+      <anchorfile>classo2scl_1_1interp2__neigh.html</anchorfile>
+      <anchor>a21196c2c715db13d28eb0a1d4f15efae</anchor>
+      <arglist>(vec2_t &amp;v) const </arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -24899,13 +24920,6 @@
       <anchorfile>classo2scl_1_1interp2__neigh.html</anchorfile>
       <anchor>afd595fa188a696cf0fc06ff920d0e5ea</anchor>
       <arglist></arglist>
-    </member>
-    <member kind="function" protection="protected">
-      <type>int</type>
-      <name>swap</name>
-      <anchorfile>classo2scl_1_1interp2__neigh.html</anchorfile>
-      <anchor>a3f9534b0a894b3e94a28cb1f1b9759be</anchor>
-      <arglist>(size_t &amp;i1, double &amp;c1, size_t &amp;i2, double &amp;c2) const </arglist>
     </member>
     <member kind="variable" protection="protected">
       <type>double</type>
@@ -24969,6 +24983,13 @@
       <arglist>(size_t n_points, vec_t &amp;x, vec_t &amp;y, vec_t &amp;f)</arglist>
     </member>
     <member kind="function">
+      <type>void</type>
+      <name>compute_scale</name>
+      <anchorfile>classo2scl_1_1interp2__planar.html</anchorfile>
+      <anchor>a153ec3340b6d569ce2d5bb2dfb913219</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
       <type>double</type>
       <name>eval</name>
       <anchorfile>classo2scl_1_1interp2__planar.html</anchorfile>
@@ -24981,6 +25002,13 @@
       <anchorfile>classo2scl_1_1interp2__planar.html</anchorfile>
       <anchor>ab7f78be0df3bbdf64c709eaef60159b4</anchor>
       <arglist>(double x, double y) const </arglist>
+    </member>
+    <member kind="function">
+      <type>double</type>
+      <name>operator()</name>
+      <anchorfile>classo2scl_1_1interp2__planar.html</anchorfile>
+      <anchor>a9521716b4e74b0732b839b9f85e9c8b2</anchor>
+      <arglist>(vec2_t &amp;v) const </arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -25014,8 +25042,8 @@
       <type>int</type>
       <name>swap</name>
       <anchorfile>classo2scl_1_1interp2__planar.html</anchorfile>
-      <anchor>a4a0e897ba66fcd3fd4995b9cdf510bb5</anchor>
-      <arglist>(size_t &amp;i1, double &amp;c1, size_t &amp;i2, double &amp;c2) const </arglist>
+      <anchor>aa2da5140b98c5632d8d03cb6f62a0bbb</anchor>
+      <arglist>(size_t &amp;index_1, double &amp;dist_1, size_t &amp;index_2, double &amp;dist_2) const </arglist>
     </member>
     <member kind="variable" protection="protected">
       <type>double</type>
@@ -25247,8 +25275,8 @@
       <type>int</type>
       <name>swap</name>
       <anchorfile>classo2scl_1_1interpm__neigh.html</anchorfile>
-      <anchor>a30ffc83448b5a7c8971be4939f45337b</anchor>
-      <arglist>(size_t &amp;i1, double &amp;c1, size_t &amp;i2, double &amp;c2) const </arglist>
+      <anchor>a43e50ed3a201c139af9f9ef5a1c1307e</anchor>
+      <arglist>(size_t &amp;index_1, double &amp;dist_1, size_t &amp;index_2, double &amp;dist_2) const </arglist>
     </member>
     <member kind="variable" protection="protected">
       <type>size_t</type>
@@ -26974,92 +27002,92 @@
     </member>
   </compound>
   <compound kind="class">
-    <name>o2scl::exact_jacobian</name>
-    <filename>classo2scl_1_1exact__jacobian.html</filename>
+    <name>o2scl::jacobian_exact</name>
+    <filename>classo2scl_1_1jacobian__exact.html</filename>
     <templarg></templarg>
     <templarg></templarg>
     <templarg></templarg>
     <base>o2scl::jacobian</base>
-    <class kind="struct">o2scl::exact_jacobian::ej_parms</class>
+    <class kind="struct">o2scl::jacobian_exact::ej_parms</class>
     <member kind="function">
       <type>int</type>
       <name>set_deriv</name>
-      <anchorfile>classo2scl_1_1exact__jacobian.html</anchorfile>
-      <anchor>ac39ef6bdb6aba449d00ed4a78ae3055b</anchor>
+      <anchorfile>classo2scl_1_1jacobian__exact.html</anchorfile>
+      <anchor>a7dfaa70a60252c1bffef8dadce8c35df</anchor>
       <arglist>(deriv_base&lt; funct &gt; &amp;de)</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual int</type>
       <name>operator()</name>
-      <anchorfile>classo2scl_1_1exact__jacobian.html</anchorfile>
-      <anchor>a6f45368854539ce171ec17c091867f5e</anchor>
+      <anchorfile>classo2scl_1_1jacobian__exact.html</anchorfile>
+      <anchor>a50405dd9c70db06cbc9111656741d35b</anchor>
       <arglist>(size_t nx, vec_t &amp;x, size_t ny, vec_t &amp;y, mat_t &amp;jac)</arglist>
     </member>
     <member kind="variable">
       <type>deriv_gsl&lt; funct &gt;</type>
       <name>def_deriv</name>
-      <anchorfile>classo2scl_1_1exact__jacobian.html</anchorfile>
-      <anchor>a977930b59084e0d6654dd7378a3a005c</anchor>
+      <anchorfile>classo2scl_1_1jacobian__exact.html</anchorfile>
+      <anchor>a53d33560be583a6a5022d38027528292</anchor>
       <arglist></arglist>
     </member>
     <member kind="function" protection="protected">
       <type>double</type>
       <name>dfn</name>
-      <anchorfile>classo2scl_1_1exact__jacobian.html</anchorfile>
-      <anchor>aa9b274b8530d988c9029501677eb8556</anchor>
+      <anchorfile>classo2scl_1_1jacobian__exact.html</anchorfile>
+      <anchor>a1de7021ffb8f272442c3cdd8875c2cac</anchor>
       <arglist>(double x, ej_parms &amp;ejp)</arglist>
     </member>
     <member kind="variable" protection="protected">
       <type>deriv_base&lt; funct &gt; *</type>
       <name>dptr</name>
-      <anchorfile>classo2scl_1_1exact__jacobian.html</anchorfile>
-      <anchor>a25947c530f5a0bba634486fcb1ce5565</anchor>
+      <anchorfile>classo2scl_1_1jacobian__exact.html</anchorfile>
+      <anchor>a634abac857c0b336920b4bd7028a5ce8</anchor>
       <arglist></arglist>
     </member>
   </compound>
   <compound kind="struct">
-    <name>o2scl::exact_jacobian::ej_parms</name>
-    <filename>structo2scl_1_1exact__jacobian_1_1ej__parms.html</filename>
+    <name>o2scl::jacobian_exact::ej_parms</name>
+    <filename>structo2scl_1_1jacobian__exact_1_1ej__parms.html</filename>
     <member kind="variable">
       <type>size_t</type>
       <name>nx</name>
-      <anchorfile>structo2scl_1_1exact__jacobian_1_1ej__parms.html</anchorfile>
-      <anchor>a5fbd9ecc9e470a7aad791795a0d8b04d</anchor>
+      <anchorfile>structo2scl_1_1jacobian__exact_1_1ej__parms.html</anchorfile>
+      <anchor>a0dad9f74c41012f6d399163109fdce46</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>size_t</type>
       <name>ny</name>
-      <anchorfile>structo2scl_1_1exact__jacobian_1_1ej__parms.html</anchorfile>
-      <anchor>a0f0550dd359a21c98be9ddf9692ff0d0</anchor>
+      <anchorfile>structo2scl_1_1jacobian__exact_1_1ej__parms.html</anchorfile>
+      <anchor>a4049acbd71cb7b57119ad6c0da851cc2</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>size_t</type>
       <name>xj</name>
-      <anchorfile>structo2scl_1_1exact__jacobian_1_1ej__parms.html</anchorfile>
-      <anchor>aaceae69bdb21e6a65f896b45f0d53ca5</anchor>
+      <anchorfile>structo2scl_1_1jacobian__exact_1_1ej__parms.html</anchorfile>
+      <anchor>a2722e7c48bde929f2567c5b79b8c2bc2</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>size_t</type>
       <name>yi</name>
-      <anchorfile>structo2scl_1_1exact__jacobian_1_1ej__parms.html</anchorfile>
-      <anchor>a83af4e9280b101c3f6cd390b20c6c948</anchor>
+      <anchorfile>structo2scl_1_1jacobian__exact_1_1ej__parms.html</anchorfile>
+      <anchor>a6709b0e089a81ae0daee8487cda4c3f9</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>vec_t *</type>
       <name>x</name>
-      <anchorfile>structo2scl_1_1exact__jacobian_1_1ej__parms.html</anchorfile>
-      <anchor>aae5b6706f88e41ddd9ea3fb77edbb431</anchor>
+      <anchorfile>structo2scl_1_1jacobian__exact_1_1ej__parms.html</anchorfile>
+      <anchor>abe1a5532e830d38bf5d4d4bd68b05da3</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>vec_t *</type>
       <name>y</name>
-      <anchorfile>structo2scl_1_1exact__jacobian_1_1ej__parms.html</anchorfile>
-      <anchor>a560fd792f5519b33f9df71084b3ec51a</anchor>
+      <anchorfile>structo2scl_1_1jacobian__exact_1_1ej__parms.html</anchorfile>
+      <anchor>afaa0efafed0c56c9cd0f7bc14e3e8ec8</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -27410,139 +27438,139 @@
     </member>
   </compound>
   <compound kind="class">
-    <name>o2scl::hybrids_base</name>
-    <filename>classo2scl_1_1hybrids__base.html</filename>
+    <name>o2scl::mroot_hybrids_base</name>
+    <filename>classo2scl_1_1mroot__hybrids__base.html</filename>
     <member kind="function">
       <type>double</type>
       <name>compute_actual_reduction</name>
-      <anchorfile>classo2scl_1_1hybrids__base.html</anchorfile>
-      <anchor>a19f53e5094cafedf62e031bc62309de4</anchor>
+      <anchorfile>classo2scl_1_1mroot__hybrids__base.html</anchorfile>
+      <anchor>a50b65330a14a8c09dfeaecc041085008</anchor>
       <arglist>(double fnorm0, double fnorm1)</arglist>
     </member>
     <member kind="function">
       <type>double</type>
       <name>compute_predicted_reduction</name>
-      <anchorfile>classo2scl_1_1hybrids__base.html</anchorfile>
-      <anchor>a4f22f90e43cb87ce45d557292a64ff4f</anchor>
+      <anchorfile>classo2scl_1_1mroot__hybrids__base.html</anchorfile>
+      <anchor>a0a0ffb2e039d42589f6f32fc7a471343</anchor>
       <arglist>(double fnorm0, double fnorm1)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>compute_Rg</name>
-      <anchorfile>classo2scl_1_1hybrids__base.html</anchorfile>
-      <anchor>a1f5e294e452e3bbbf3648296316f3767</anchor>
+      <anchorfile>classo2scl_1_1mroot__hybrids__base.html</anchorfile>
+      <anchor>ad6f621aa6048696e65c47e68e8cbe628</anchor>
       <arglist>(size_t N, const mat_t &amp;r2, const ubvector &amp;gradient2, vec2_t &amp;Rg)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>compute_wv</name>
-      <anchorfile>classo2scl_1_1hybrids__base.html</anchorfile>
-      <anchor>aaf15dfaa66c1c92ec0ae149739fba803</anchor>
+      <anchorfile>classo2scl_1_1mroot__hybrids__base.html</anchorfile>
+      <anchor>aaac2976acfc69db909b92224926410de</anchor>
       <arglist>(size_t n, const ubvector &amp;qtdf2, const ubvector &amp;rdx2, const vec2_t &amp;dx2, const ubvector &amp;diag2, double pnorm, ubvector &amp;w2, ubvector &amp;v2)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>compute_rdx</name>
-      <anchorfile>classo2scl_1_1hybrids__base.html</anchorfile>
-      <anchor>a60e9bb810a3dc06cadbe26dfb7d8f3e2</anchor>
+      <anchorfile>classo2scl_1_1mroot__hybrids__base.html</anchorfile>
+      <anchor>ad50077d764690c0d4ef79522e2ecb1b3</anchor>
       <arglist>(size_t N, const mat_t &amp;r2, const vec2_t &amp;dx2, ubvector &amp;rdx2)</arglist>
     </member>
     <member kind="function">
       <type>double</type>
       <name>scaled_enorm</name>
-      <anchorfile>classo2scl_1_1hybrids__base.html</anchorfile>
-      <anchor>a201c82ed0e205bcddc485c1a06d156a3</anchor>
+      <anchorfile>classo2scl_1_1mroot__hybrids__base.html</anchorfile>
+      <anchor>a3f24c16e2c90777199b66ab8e64e3906</anchor>
       <arglist>(size_t n, const vec2_t &amp;d, const vec3_t &amp;ff)</arglist>
     </member>
     <member kind="function">
       <type>double</type>
       <name>compute_delta</name>
-      <anchorfile>classo2scl_1_1hybrids__base.html</anchorfile>
-      <anchor>a2870f37c55c3838e3fedfd6efb0284c2</anchor>
+      <anchorfile>classo2scl_1_1mroot__hybrids__base.html</anchorfile>
+      <anchor>aa477433fbf48b75690b56189f0d0905e</anchor>
       <arglist>(size_t n, ubvector &amp;diag2, vec2_t &amp;x2)</arglist>
     </member>
     <member kind="function">
       <type>double</type>
       <name>enorm</name>
-      <anchorfile>classo2scl_1_1hybrids__base.html</anchorfile>
-      <anchor>a49718da4286814946a7df8547f094ec2</anchor>
+      <anchorfile>classo2scl_1_1mroot__hybrids__base.html</anchorfile>
+      <anchor>a8f25042eb5ea3f9ba11d2e8e0bf8f62b</anchor>
       <arglist>(size_t N, const vec2_t &amp;ff)</arglist>
     </member>
     <member kind="function">
       <type>double</type>
       <name>enorm_sum</name>
-      <anchorfile>classo2scl_1_1hybrids__base.html</anchorfile>
-      <anchor>a43e605fb54a0c61e6493ef8f53ef714c</anchor>
+      <anchorfile>classo2scl_1_1mroot__hybrids__base.html</anchorfile>
+      <anchor>a7a23ad236178070d6709b0849f72a62b</anchor>
       <arglist>(size_t n, const ubvector &amp;a, const ubvector &amp;b)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
       <name>compute_trial_step</name>
-      <anchorfile>classo2scl_1_1hybrids__base.html</anchorfile>
-      <anchor>a0c0d9459e2fcee21acf8be27df448727</anchor>
+      <anchorfile>classo2scl_1_1mroot__hybrids__base.html</anchorfile>
+      <anchor>a3bfd56a7552d350c0e6c4c232956b0fc</anchor>
       <arglist>(size_t N, vec2_t &amp;xl, vec2_t &amp;dxl, vec2_t &amp;xx_trial)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
       <name>compute_df</name>
-      <anchorfile>classo2scl_1_1hybrids__base.html</anchorfile>
-      <anchor>adcd51ac42e92e80fe2d637e697cb8182</anchor>
+      <anchorfile>classo2scl_1_1mroot__hybrids__base.html</anchorfile>
+      <anchor>a5ff6ce7db1e644662a22ed2e22971c9b</anchor>
       <arglist>(size_t n, const vec2_t &amp;ff_trial, const vec2_t &amp;fl, ubvector &amp;dfl)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>compute_diag</name>
-      <anchorfile>classo2scl_1_1hybrids__base.html</anchorfile>
-      <anchor>aff82c2abf4f13752f292606d4c31b5f2</anchor>
+      <anchorfile>classo2scl_1_1mroot__hybrids__base.html</anchorfile>
+      <anchor>a54d4f2e3e6c982622ca672bfdb52f3e0</anchor>
       <arglist>(size_t n, const mat2_t &amp;J2, ubvector &amp;diag2)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>compute_qtf</name>
-      <anchorfile>classo2scl_1_1hybrids__base.html</anchorfile>
-      <anchor>a757db12b822fcd38d0971aca5462e879</anchor>
+      <anchorfile>classo2scl_1_1mroot__hybrids__base.html</anchorfile>
+      <anchor>a785c89ca3541413f17dd43598c24cd4b</anchor>
       <arglist>(size_t N, const vec2_t &amp;q2, const vec3_t &amp;f2, vec4_t &amp;qtf2)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>update_diag</name>
-      <anchorfile>classo2scl_1_1hybrids__base.html</anchorfile>
-      <anchor>ae19fafad4cfa5d63586aa91ab5480c99</anchor>
+      <anchorfile>classo2scl_1_1mroot__hybrids__base.html</anchorfile>
+      <anchor>a65ae11d2921812cdd9b43ef9cdb16677</anchor>
       <arglist>(size_t n, const mat2_t &amp;J2, ubvector &amp;diag2)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>scaled_addition</name>
-      <anchorfile>classo2scl_1_1hybrids__base.html</anchorfile>
-      <anchor>a1ad426a0b182677ae4ce47f762fa8d9e</anchor>
+      <anchorfile>classo2scl_1_1mroot__hybrids__base.html</anchorfile>
+      <anchor>aa9e6ffb992d805e0dacbb3066ef239bf</anchor>
       <arglist>(size_t N, double alpha, ubvector &amp;newton2, double beta, ubvector &amp;gradient2, vec2_t &amp;pp)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
       <name>newton_direction</name>
-      <anchorfile>classo2scl_1_1hybrids__base.html</anchorfile>
-      <anchor>a33375f3385f28fb0f209699ce2e753f0</anchor>
+      <anchorfile>classo2scl_1_1mroot__hybrids__base.html</anchorfile>
+      <anchor>ac15459baef89d449b2e3cab928e65b38</anchor>
       <arglist>(const size_t N, const mat_t &amp;r2, const ubvector &amp;qtf2, ubvector &amp;p)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>gradient_direction</name>
-      <anchorfile>classo2scl_1_1hybrids__base.html</anchorfile>
-      <anchor>a949a607605f7d3491fa08eea35f247f9</anchor>
+      <anchorfile>classo2scl_1_1mroot__hybrids__base.html</anchorfile>
+      <anchor>a7f36e6e80c59a3e0ea3f87aaec55e124</anchor>
       <arglist>(const size_t M, const size_t N, const mat_t &amp;r2, const ubvector &amp;qtf2, const ubvector &amp;diag2, ubvector &amp;g)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>minimum_step</name>
-      <anchorfile>classo2scl_1_1hybrids__base.html</anchorfile>
-      <anchor>aa98860f6ec2a06b46611cc76aca4a3d7</anchor>
+      <anchorfile>classo2scl_1_1mroot__hybrids__base.html</anchorfile>
+      <anchor>aa3c382f57fb447c16a204ae8d6cf3fb8</anchor>
       <arglist>(const size_t N, double gnorm, const ubvector &amp;diag2, ubvector &amp;g)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
       <name>dogleg</name>
-      <anchorfile>classo2scl_1_1hybrids__base.html</anchorfile>
-      <anchor>a7acdb3966ba756fa2e23ec049dfcaf22</anchor>
+      <anchorfile>classo2scl_1_1mroot__hybrids__base.html</anchorfile>
+      <anchor>ab51c14e861e79257da488b3deb3167b2</anchor>
       <arglist>(size_t n, const mat_t &amp;r2, const ubvector &amp;qtf2, const ubvector &amp;diag2, double delta2, ubvector &amp;newton2, ubvector &amp;gradient2, vec2_t &amp;p)</arglist>
     </member>
   </compound>
@@ -27554,7 +27582,7 @@
     <templarg>mat_t</templarg>
     <templarg>jfunc_t</templarg>
     <base>o2scl::mroot</base>
-    <base protection="private">o2scl::hybrids_base</base>
+    <base protection="private">o2scl::mroot_hybrids_base</base>
     <member kind="function" virtualness="virtual">
       <type>virtual int</type>
       <name>set_jacobian</name>
@@ -30863,14 +30891,14 @@
   </compound>
   <compound kind="dir">
     <name>anneal</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/anneal/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/anneal/</path>
     <filename>dir_259ff5f2139404a034724aedc59cd0b1.html</filename>
     <file>anneal.h</file>
     <file>anneal_gsl.h</file>
   </compound>
   <compound kind="dir">
     <name>base</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/base/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/base/</path>
     <filename>dir_0af1587c8378955de40f48b4bd1869f0.html</filename>
     <file>cli.h</file>
     <file>cli_readline.h</file>
@@ -30900,13 +30928,13 @@
   </compound>
   <compound kind="dir">
     <name>boost</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/boost/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/boost/</path>
     <filename>dir_19fb17248988127652c464ccb49015e4.html</filename>
     <file>anneal_mt.h</file>
   </compound>
   <compound kind="dir">
     <name>deriv</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/deriv/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/deriv/</path>
     <filename>dir_5e7592509e2498cb063003071d52351f.html</filename>
     <file>deriv.h</file>
     <file>deriv_cern.h</file>
@@ -30916,7 +30944,7 @@
   </compound>
   <compound kind="dir">
     <name>fit</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/fit/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/fit/</path>
     <filename>dir_c552acc666f620ef359e2f2abe60b585.html</filename>
     <file>fit_base.h</file>
     <file>fit_bayes.h</file>
@@ -30927,7 +30955,7 @@
   </compound>
   <compound kind="dir">
     <name>fparser</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/fparser/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/fparser/</path>
     <filename>dir_2f61629518634f3d2145e7ff29e5acdc.html</filename>
     <file>fparser.h</file>
     <file>fpaux.h</file>
@@ -30936,14 +30964,14 @@
   </compound>
   <compound kind="dir">
     <name>hdf</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/hdf/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/hdf/</path>
     <filename>dir_ce36797ae3685b974a9761d82b6d7d4a.html</filename>
     <file>hdf_file.h</file>
     <file>hdf_io.h</file>
   </compound>
   <compound kind="dir">
     <name>inte</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/inte/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/inte/</path>
     <filename>dir_a72e2b85c48301e97ae1ed3bd9d75e51.html</filename>
     <file>inte.h</file>
     <file>inte_adapt_cern.h</file>
@@ -30970,7 +30998,7 @@
   </compound>
   <compound kind="dir">
     <name>internal</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/internal/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/internal/</path>
     <filename>dir_3756d50f4003bc63fa3fe49460f9c79d.html</filename>
     <file>agraph.cpp</file>
     <file>agraphm.cpp</file>
@@ -30978,7 +31006,7 @@
   </compound>
   <compound kind="dir">
     <name>linalg</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/linalg/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/linalg/</path>
     <filename>dir_5dff776341474e546195e534ccdc31ab.html</filename>
     <file>bidiag.h</file>
     <file>bidiag_base.h</file>
@@ -31011,7 +31039,7 @@
   </compound>
   <compound kind="dir">
     <name>mcarlo</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/mcarlo/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/mcarlo/</path>
     <filename>dir_9370870337541e522657785e359c8dba.html</filename>
     <file>expval.h</file>
     <file>mcarlo.h</file>
@@ -31022,7 +31050,7 @@
   </compound>
   <compound kind="dir">
     <name>min</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/min/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/min/</path>
     <filename>dir_b3d403d2ea9f2602c43d476dcfec1840.html</filename>
     <file>diff_evo.h</file>
     <file>diff_evo_adapt.h</file>
@@ -31045,7 +31073,7 @@
   </compound>
   <compound kind="dir">
     <name>ode</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/ode/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/ode/</path>
     <filename>dir_ace10da5953b6222f3a49f55a0fccbf0.html</filename>
     <file>astep.h</file>
     <file>astep_gsl.h</file>
@@ -31066,7 +31094,7 @@
   </compound>
   <compound kind="dir">
     <name>other</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/other/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/other/</path>
     <filename>dir_d429893c1feff46fb6570f8eac336791.html</filename>
     <file>bin_size.h</file>
     <file>cheb_approx.h</file>
@@ -31091,7 +31119,7 @@
   </compound>
   <compound kind="dir">
     <name>root</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/root/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/root/</path>
     <filename>dir_d0e0ccfc4ecd86719b4ff0ce52e55104.html</filename>
     <file>jacobian.h</file>
     <file>mroot.h</file>
@@ -31107,7 +31135,7 @@
   </compound>
   <compound kind="dir">
     <name>src</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/</path>
     <filename>dir_68267d1309a1af8e8297ef4c3efbcdba.html</filename>
     <dir>anneal</dir>
     <dir>base</dir>

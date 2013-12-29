@@ -84,17 +84,17 @@ namespace o2scl {
 
       // Exhaustively search the data
       i1=0;
-      double c1=0.0;
+      double dist=0.0;
       for(size_t i=0;i<nd;i++) {
-	c1+=pow((x[i]-(*(ptrs[i]))[i1])/dx,2.0);
+	dist+=pow((x[i]-(*(ptrs[i]))[i1])/dx,2.0);
       }
       for(size_t j=1;j<np;j++) {
 	double c2=0.0;
 	for(size_t i=0;i<nd;i++) {
 	  c2+=pow((x[i]-(*(ptrs[i]))[j])/dx,2.0);
 	}
-	if (c2<c1) {
-	  swap(j,c2,i1,c1);
+	if (c2<dist) {
+	  swap(j,c2,i1,dist);
 	}
       }
 
@@ -121,13 +121,15 @@ namespace o2scl {
     bool data_set;
     
     /// Swap points 1 and 2.
-    int swap(size_t &i1, double &c1, size_t &i2, double &c2) const {
-      int t;
-      double tc;
+    int swap(size_t &index_1, double &dist_1, size_t &index_2, 
+	     double &dist_2) const {
+
+      size_t index_temp;
+      double dist_temp;
       
-      t=i1; tc=c1;
-      i1=i2; c1=c2;
-      i2=t; c2=tc;
+      index_temp=index_1; dist_temp=dist_1;
+      index_1=index_2; dist_1=dist_2;
+      index_2=index_temp; dist_2=dist_temp;
       
       return 0;
     }

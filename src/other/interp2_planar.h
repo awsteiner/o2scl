@@ -23,6 +23,10 @@
 #ifndef O2SCL_INTERP2_PLANAR_H
 #define O2SCL_INTERP2_PLANAR_H
 
+/** \file interp2_planar.h
+    \brief File defining \ref o2scl::interp2_planar
+*/
+
 #include <iostream>
 #include <string>
 #include <cmath>
@@ -38,17 +42,12 @@ namespace o2scl {
 
   /** \brief Interpolate among two independent variables with planes
 
-      This class is experimental.
-
-      This is an analog of 1-d linear interpolation for two
-      dimensions, which is particularly useful with the data points
-      are not arranged in a specified order (i.e. on a grid). For a
-      set of data \f$ {x_i,y_i,f_i} \f$, the value of \f$ f \f$ is
-      predicted given a new value of x and y. In contrast to \ref
-      o2scl::interp2_seq, the data need not be presented in a grid.
-      This interpolation is performed by finding the plane that goes
-      through three closest points in the data set. Distances are
-      determined with
+      This class performs planar interpolation when the data points
+      are not arranged in a specified order (i.e. not on a grid). For
+      a set of data \f$ {x_i,y_i,f_i} \f$, the value of \f$ f \f$ is
+      predicted given a new value of x and y. This interpolation is
+      performed by finding the plane that goes through three closest
+      points in the data set. Distances are determined with
       \f[
       d_{ij} = \sqrt{\left(\frac{x_i-x_j}{\Delta x}\right)^2 +
       \left(\frac{y_i-y_j}{\Delta y}\right)^2}
@@ -62,25 +61,34 @@ namespace o2scl {
       If the x- and y-values of the entire data set lie on a line,
       then the interpolation will fail and the error handler will be
       called. Colinearity is defined by a threshold, \ref thresh
-      which defaults to \f$ 10^{-12} \f$.
+      which defaults to \f$ 10^{-12} \f$. If the denominator,
+      \f[
+      \sum_{k=1}^{3}\varepsilon_{ijk} x_i y_j < \mathrm{thresh}
+      \f]
+      where \f$ \varepsilon_{ijk} \f$ is an anti-symmetric Levi-Cevita
+      tensor, then the points are colinear. The value of \ref thresh
+      can be zero, but if it is negative then it will be reset
+      to the default value for the next interpolation.
 
-      \comment
-      (The following isn't true any more because of the scale
-      computation)
+      This class stores pointers to the data, not a copy. The
+      data can be changed between interpolations without an
+      additional call to \ref set_data(), but the scales may
+      need to be recomputed with \ref compute_scale().
 
-      There is no caching so the numeric values of the data may be
-      freely changed between calls to interp()
-      \endcomment
+      The vector type can be any type with a suitably defined \c
+      operator[].
 
-      The vector type can be any type with a
-      suitably defined function \c operator[]. 
-
+      The interpolation requires at least three points and
+      \ref set_data() will call the error handler if the
+      first argument is less than three.
+      
       \note This class operates by performing a \f$ {\cal O}(N) \f$
-      brute-force search to find the three closest points to the
-      user-specified location which are not colinear.
+      brute-force search to find the three closest points. If the
+      three closest points are colinear, then the data are sorted
+      by distance [ \f$ {\cal O}(N \log N) \f$ ], and the closest
+      triplets are enumerated until a non-colinear triplet is found.
 
-      \future The generalization to more dimensions might be 
-      straightforward.
+      \future Make a parent class for this and \ref o2scl::interp2_neigh.
   */
   template<class vec_t> class interp2_planar {
 
@@ -115,7 +123,8 @@ namespace o2scl {
     /// The user-specified y scale (default -1)
     double y_scale;
 
-    /** \brief Initialize the data for the planar interpolation
+    /** \brief Initialize the data for the planar interpolation and 
+	compute the scaling factors
      */
     void set_data(size_t n_points, vec_t &x, vec_t &y, vec_t &f) {
       if (n_points<3) {
@@ -128,7 +137,13 @@ namespace o2scl {
       uf=&f;
       data_set=true;
 
-      // Find scaling
+      compute_scale();
+
+      return;
+    }
+
+    /// Find scaling
+    void compute_scale() {
       if (x_scale<0.0) {
 	double minx=(*ux)[0], maxx=(*ux)[0];
 	for(size_t i=1;i<np;i++) {
@@ -170,6 +185,13 @@ namespace o2scl {
     */
     double operator()(double x, double y) const {
       return eval(x,y);
+    }
+
+    /** \brief Perform the planar interpolation using the first two
+	elements of \c v as input
+    */
+    template<class vec2_t> double operator()(vec2_t &v) const {
+      return eval(v[0],v[1]);
     }
 
     /** \brief Planar interpolation returning the closest points 
@@ -334,13 +356,15 @@ namespace o2scl {
     bool data_set;
     
     /// Swap points 1 and 2.
-    int swap(size_t &i1, double &c1, size_t &i2, double &c2) const {
-      int t;
-      double tc;
+    int swap(size_t &index_1, double &dist_1, size_t &index_2, 
+	     double &dist_2) const {
+
+      size_t index_temp;
+      double dist_temp;
       
-      t=i1; tc=c1;
-      i1=i2; c1=c2;
-      i2=t; c2=tc;
+      index_temp=index_1; dist_temp=dist_1;
+      index_1=index_2; dist_1=dist_2;
+      index_2=index_temp; dist_2=dist_temp;
       
       return 0;
     }

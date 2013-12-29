@@ -35,22 +35,33 @@ namespace o2scl {
 
   /** \brief Nearest-neighbor interpolation in two dimensions
 
-      This class is experimental.
-
-      This class performs two-dimensional interpolation
-      for a 
-      set of data \f$ {x_i,y_i,f_i} \f$, the values of \f$ f \f$ is
-      predicted given a new value of x and y. Distances are
+      This class performs nearest-neighbor interpolation when the data
+      points are not arranged in a specified order (i.e. not on a
+      grid). For a set of data \f$ {x_i,y_i,f_i} \f$, the value of \f$
+      f \f$ is predicted given a new value of x and y. Distances are
       determined with
       \f[
-      d_{ij} = \left(\frac{x_i-x_j}{\Delta x}\right)^2 +
-      \left(\frac{y_i-y_j}{\Delta y}\right)^2
+      d_{ij} = \sqrt{\left(\frac{x_i-x_j}{\Delta x}\right)^2 +
+      \left(\frac{y_i-y_j}{\Delta y}\right)^2}
       \f]
       The values \f$ \Delta_x \f$ and \f$ \Delta_y \f$ are specified
       in \ref x_scale and \ref y_scale, respectively. If these values
       are negative (the default) then they are computed with \f$
       \Delta x = x_{\mathrm{max}}-x_{\mathrm{min}} \f$ and \f$ \Delta
       y = y_{\mathrm{max}}-y_{\mathrm{min}} \f$ .
+
+      This class stores pointers to the data, not a copy. The data can
+      be changed between interpolations without an additional call to
+      \ref set_data(), but the scales may need to be recomputed with
+      \ref compute_scale().
+
+      The vector type can be any type with a suitably defined \c
+      operator[].
+      
+      \note This class operates by performing a \f$ {\cal O}(N) \f$
+      brute-force search to find the closest points. 
+
+      \future Make a parent class for this and \ref o2scl::interp2_planar.
   */
   template<class vec_t> class interp2_neigh {
 
@@ -81,20 +92,8 @@ namespace o2scl {
     /// The user-specified y scale (default -1)
     double y_scale;
 
-    /** \brief Initialize the data for the neigh interpolation
-     */
-    void set_data(size_t n_points, vec_t &x, vec_t &y, vec_t &f) {
-      if (n_points<1) {
-	O2SCL_ERR2_RET("Must provide at least one point in ",
-		       "interp2_neigh::set_data()",exc_efailed);
-      }
-      np=n_points;
-      ux=&x;
-      uy=&y;
-      uf=&f;
-      data_set=true;
-
-      // Find scaling
+    /// Find scaling
+    void compute_scale() {
       if (x_scale<0.0) {
 	double minx=(*ux)[0], maxx=(*ux)[0];
 	for(size_t i=1;i<np;i++) {
@@ -117,18 +116,39 @@ namespace o2scl {
       }
 
       if (dx<=0.0 || dy<=0.0) {
-	O2SCL_ERR("No scale in interp2_neigh::set_data().",exc_einval);
+	O2SCL_ERR("No scale in interp2_planar::set_data().",exc_einval);
       }
+
+      return;
+    }
+
+    /** \brief Initialize the data for the neigh interpolation
+
+	This function will call the error handler if \c n_points
+	is zero.
+     */
+    void set_data(size_t n_points, vec_t &x, vec_t &y, vec_t &f) {
+      if (n_points<1) {
+	O2SCL_ERR2("Must provide at least one point in ",
+		   "interp2_neigh::set_data()",exc_efailed);
+      }
+      np=n_points;
+      ux=&x;
+      uy=&y;
+      uf=&f;
+      data_set=true;
+
+      compute_scale();
 
       return;
     }
     
     /** \brief Perform the interpolation 
-    */
+     */
     double eval(double x, double y) const {
       double x1, y1, f;
       size_t i1;
-      eval_points(x,y,f,i1,x1,y1);
+      eval_point(x,y,f,i1,x1,y1);
       return f;
     }
 
@@ -138,11 +158,18 @@ namespace o2scl {
       return eval(x,y);
     }
 
-    /** \brief Interpolation returning the closest points 
+    /** \brief Perform the planar interpolation using the first two
+	elements of \c v as input
+    */
+    template<class vec2_t> double operator()(vec2_t &v) const {
+      return eval(v[0],v[1]);
+    }
+
+    /** \brief Interpolation returning the closest point 
 
 	This function interpolates \c x and \c y into the data
-	returning \c f. It also returns the three closest x- and
-	y-values used for computing the plane.
+	returning \c f. It also returns the closest x- and y-values
+	found.
     */
     void eval_point(double x, double y, double &f,
 		    size_t &i1, double &x1, double &y1) const {
@@ -154,12 +181,12 @@ namespace o2scl {
 
       // Exhaustively search the data
       i1=0;
-      double c1=pow((x-(*ux)[i1])/dx,2.0)+pow((y-(*uy)[i1])/dy,2.0);
-      for(size_t j=1;j<np;j++) {
-	size_t i2=j;
-	double c2=pow((x-(*ux)[i2])/dx,2.0)+pow((y-(*uy)[i2])/dy,2.0);
-	if (c2<c1) {
-	  swap(i2,c2,i1,c1);
+      double dist_min=pow((x-(*ux)[i1])/dx,2.0)+pow((y-(*uy)[i1])/dy,2.0);
+      for(size_t index=1;index<np;index++) {
+	double dist=pow((x-(*ux)[index])/dx,2.0)+pow((y-(*uy)[index])/dy,2.0);
+	if (dist<dist_min) {
+	  i1=index;
+	  dist_min=dist;
 	}
       }
 
@@ -184,18 +211,6 @@ namespace o2scl {
     vec_t *uf;
     /// True if the data has been specified
     bool data_set;
-    
-    /// Swap points 1 and 2.
-    int swap(size_t &i1, double &c1, size_t &i2, double &c2) const {
-      int t;
-      double tc;
-      
-      t=i1; tc=c1;
-      i1=i2; c1=c2;
-      i2=t; c2=tc;
-      
-      return 0;
-    }
     
 #endif
 

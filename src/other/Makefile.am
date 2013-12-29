@@ -16,7 +16,7 @@ HEADER_VAR = contour.h cheb_approx.h gsl_fft.h \
 TEST_VAR = gsl_fft.scr series_acc.scr interp2_planar.scr contour.scr \
 	poly.scr polylog.scr cheb_approx.scr vec_stats.scr smooth_gsl.scr \
 	hist.scr hist_2d.scr prob_dens_func.scr interp2_direct.scr \
-	pinside.scr interp2_seq.scr
+	pinside.scr interp2_seq.scr interp2_neigh.scr
 
 # ------------------------------------------------------------
 # Includes
@@ -122,7 +122,7 @@ check_PROGRAMS = gsl_fft_ts series_acc_ts interp2_planar_ts \
 	contour_ts poly_ts polylog_ts pinside_ts \
 	interp2_direct_ts vec_stats_ts cheb_approx_ts \
 	smooth_gsl_ts hist_ts hist_2d_ts interp2_seq_ts \
-	prob_dens_func_ts
+	prob_dens_func_ts interp2_neigh_ts
 
 if O2SCL_HDF
 VCHECK_LIBS = $(libdir)/libo2scl.la $(libdir)/libo2scl_hdf.la
@@ -134,6 +134,7 @@ gsl_fft_ts_LDADD = $(VCHECK_LIBS)
 smooth_gsl_ts_LDADD = $(VCHECK_LIBS)
 series_acc_ts_LDADD = $(VCHECK_LIBS)
 interp2_planar_ts_LDADD = $(VCHECK_LIBS)
+interp2_neigh_ts_LDADD = $(VCHECK_LIBS)
 contour_ts_LDADD = $(VCHECK_LIBS)
 poly_ts_LDADD = $(VCHECK_LIBS)
 polylog_ts_LDADD = $(VCHECK_LIBS)
@@ -154,6 +155,8 @@ series_acc.scr: series_acc_ts$(EXEEXT)
 	./series_acc_ts$(EXEEXT) > series_acc.scr
 interp2_planar.scr: interp2_planar_ts$(EXEEXT) 
 	./interp2_planar_ts$(EXEEXT) > interp2_planar.scr
+interp2_neigh.scr: interp2_neigh_ts$(EXEEXT) 
+	./interp2_neigh_ts$(EXEEXT) > interp2_neigh.scr
 contour.scr: contour_ts$(EXEEXT) 
 	./contour_ts$(EXEEXT) > contour.scr
 poly.scr: poly_ts$(EXEEXT) 
@@ -183,6 +186,7 @@ gsl_fft_ts_SOURCES = gsl_fft_ts.cpp
 series_acc_ts_SOURCES = series_acc_ts.cpp
 hist_ts_SOURCES = hist_ts.cpp
 hist_2d_ts_SOURCES = hist_2d_ts.cpp
+interp2_neigh_ts_SOURCES = interp2_neigh_ts.cpp
 interp2_planar_ts_SOURCES = interp2_planar_ts.cpp
 interp2_seq_ts_SOURCES = interp2_seq_ts.cpp
 interp2_direct_ts_SOURCES = interp2_direct_ts.cpp
