@@ -44,3 +44,4 @@ stamp-h1
 *.libs
 *~
 compile
+*.svn
