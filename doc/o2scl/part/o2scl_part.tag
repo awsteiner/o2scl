@@ -2,12 +2,12 @@
 <tagfile>
   <compound kind="file">
     <name>hdf_nucmass_io.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/nuclei/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/nuclei/</path>
     <filename>hdf__nucmass__io_8h</filename>
   </compound>
   <compound kind="file">
     <name>part.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/part/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/part/</path>
     <filename>part_8h</filename>
     <class kind="class">o2scl::thermo</class>
     <class kind="class">o2scl::part</class>
@@ -4913,7 +4913,7 @@
   </compound>
   <compound kind="dir">
     <name>nuclei</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/nuclei/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/nuclei/</path>
     <filename>dir_0ea211a22ec1925bcd4ff15e6ee002ab.html</filename>
     <file>ame_mass.h</file>
     <file>arb_dist.h</file>
@@ -4930,7 +4930,7 @@
   </compound>
   <compound kind="dir">
     <name>part</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/part/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/part/</path>
     <filename>dir_6cf79716bc08cf8402a4485dbab34a0b.html</filename>
     <file>boson.h</file>
     <file>classical.h</file>
@@ -4950,7 +4950,7 @@
   </compound>
   <compound kind="dir">
     <name>src</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/</path>
     <filename>dir_68267d1309a1af8e8297ef4c3efbcdba.html</filename>
     <dir>nuclei</dir>
     <dir>part</dir>

@@ -2,7 +2,7 @@
 <tagfile>
   <compound kind="file">
     <name>hdf_eos_io.h</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/eos/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/eos/</path>
     <filename>hdf__eos__io_8h</filename>
   </compound>
   <compound kind="page">
@@ -6757,7 +6757,7 @@
   </compound>
   <compound kind="dir">
     <name>eos</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/eos/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/eos/</path>
     <filename>dir_689df5374f46a72a7f1c8390720533bf.html</filename>
     <file>apr_eos.h</file>
     <file>bag_eos.h</file>
@@ -6790,14 +6790,14 @@
   </compound>
   <compound kind="dir">
     <name>examples</name>
-    <path>/Users/awsteiner/svn/osf/trunk/examples/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/examples/</path>
     <filename>dir_d28a4824dc47e487b107a5db32ef43c4.html</filename>
     <file>ex_apr_eos.cpp</file>
     <file>ex_skyrme_eos.cpp</file>
   </compound>
   <compound kind="dir">
     <name>src</name>
-    <path>/Users/awsteiner/svn/osf/trunk/src/</path>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/</path>
     <filename>dir_68267d1309a1af8e8297ef4c3efbcdba.html</filename>
     <dir>eos</dir>
   </compound>

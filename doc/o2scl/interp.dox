@@ -94,9 +94,8 @@
 
     \section highdintp_subsect Two and higher-dimensional interpolation
 
-    Support for two-dimensional interpolation is documented in
-    \ref tintp_section), and a simple version of n-dimensional
-    interpolation in \ref o2scl::tensor_grid.
+    Support for multi-dimensional interpolation is documented in
+    \ref tintp_section.
 
     \section invintp_subsect Inverse interpolation and other related functions
 

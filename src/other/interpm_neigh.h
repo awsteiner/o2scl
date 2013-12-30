@@ -75,6 +75,12 @@ namespace o2scl {
     
     /** \brief Perform the interpolation 
     */
+    template<class vec2_t> double operator()(vec2_t &x) const {
+      return eval(x);
+    }
+
+    /** \brief Perform the interpolation 
+    */
     template<class vec2_t> double eval(vec2_t &x) const {
       
       if (data_set==false) {

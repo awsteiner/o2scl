@@ -1,4 +1,6 @@
-/** \page tintp_section Two-dimensional Interpolation
+/** \page tintp_section Higher-dimensional Interpolation
+
+    \section tintp_subsect Two-dimensional interpolation
 
     There are two types of two-dimensional interpolation classes, the
     first is based on a function defined on a two-dimensional grid
@@ -17,8 +19,14 @@
     not defined on a grid is to use one of these two classes to recast
     the data on a grid and then use \ref o2scl::contour afterwards.
 
-    Higher-dimensional interpolation is possible with \ref
-    o2scl::tensor_grid.
+    \section mintp_subsect Multi-dimensional interpolation
+
+    Multi-dimensional interpolation for table defined on a grid 
+    is possible with \ref o2scl::tensor_grid.
+
+    If the data is not on a grid, then nearest-neighbor interpolation
+    is provided by \ref o2scl::interpm_neigh and inverse distance
+    weighted interpolation is performed by \ref o2scl::interpm_idw.
 
     \section ex_interp2_sect Interpolation on a rectangular grid
 

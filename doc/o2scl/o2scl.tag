@@ -4227,6 +4227,13 @@
     <namespace>o2scl</namespace>
   </compound>
   <compound kind="file">
+    <name>interpm_idw.h</name>
+    <path>/Users/awsteiner/svn/osf/branches/dev/src/other/</path>
+    <filename>interpm__idw_8h</filename>
+    <class kind="class">o2scl::interpm_idw</class>
+    <namespace>o2scl</namespace>
+  </compound>
+  <compound kind="file">
     <name>jacobian.h</name>
     <path>/Users/awsteiner/svn/osf/branches/dev/src/root/</path>
     <filename>jacobian_8h</filename>
@@ -6148,8 +6155,10 @@
   </compound>
   <compound kind="page">
     <name>tintp_section</name>
-    <title>Two-dimensional Interpolation</title>
+    <title>Higher-dimensional Interpolation</title>
     <filename>tintp_section</filename>
+    <docanchor file="tintp_section" title="Two-dimensional interpolation">tintp_subsect</docanchor>
+    <docanchor file="tintp_section" title="Multi-dimensional interpolation">mintp_subsect</docanchor>
     <docanchor file="tintp_section" title="Interpolation on a rectangular grid">ex_interp2_sect</docanchor>
     <docanchor file="tintp_section" title="Interpolation of randomly spaced points">ex_interp2_planar_sect</docanchor>
     <docanchor file="tintp_section" title="Contour lines">ex_contour_sect</docanchor>
@@ -6532,6 +6541,7 @@
     <class kind="class">o2scl::interp2_neigh</class>
     <class kind="class">o2scl::interp2_planar</class>
     <class kind="class">o2scl::interp2_seq</class>
+    <class kind="class">o2scl::interpm_idw</class>
     <class kind="class">o2scl::interpm_neigh</class>
     <class kind="class">o2scl::pinside</class>
     <class kind="class">o2scl::quadratic_real</class>
@@ -25254,6 +25264,81 @@
     </member>
   </compound>
   <compound kind="class">
+    <name>o2scl::interpm_idw</name>
+    <filename>classo2scl_1_1interpm__idw.html</filename>
+    <templarg></templarg>
+    <member kind="function">
+      <type>void</type>
+      <name>set_data</name>
+      <anchorfile>classo2scl_1_1interpm__idw.html</anchorfile>
+      <anchor>a5db2461340afb0bb91cec7de10448979</anchor>
+      <arglist>(size_t dim, size_t n_points, vec_vec_t &amp;vecs)</arglist>
+    </member>
+    <member kind="function">
+      <type>double</type>
+      <name>operator()</name>
+      <anchorfile>classo2scl_1_1interpm__idw.html</anchorfile>
+      <anchor>a6a8c1877c1a2c0fe52f974386b334658</anchor>
+      <arglist>(vec2_t &amp;x) const </arglist>
+    </member>
+    <member kind="function">
+      <type>double</type>
+      <name>eval</name>
+      <anchorfile>classo2scl_1_1interpm__idw.html</anchorfile>
+      <anchor>a3754b3182646b5bdb312d8fd6ccfc85e</anchor>
+      <arglist>(vec2_t &amp;x) const </arglist>
+    </member>
+    <member kind="variable">
+      <type>ubvector</type>
+      <name>scales</name>
+      <anchorfile>classo2scl_1_1interpm__idw.html</anchorfile>
+      <anchor>ae8169610d571ba44b089df340ee71c53</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function" protection="protected">
+      <type>double</type>
+      <name>dist</name>
+      <anchorfile>classo2scl_1_1interpm__idw.html</anchorfile>
+      <anchor>ad0b859eed3d87f836f85b84a395fe7ee</anchor>
+      <arglist>(size_t index, vec2_t &amp;x) const </arglist>
+    </member>
+    <member kind="function" protection="protected">
+      <type>int</type>
+      <name>swap</name>
+      <anchorfile>classo2scl_1_1interpm__idw.html</anchorfile>
+      <anchor>a4007f5ec2e76df3e3b79aba779d37282</anchor>
+      <arglist>(size_t &amp;index_1, double &amp;dist_1, size_t &amp;index_2, double &amp;dist_2) const </arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>size_t</type>
+      <name>np</name>
+      <anchorfile>classo2scl_1_1interpm__idw.html</anchorfile>
+      <anchor>a1f732e0387a8bddd5b70531b41ab822e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>size_t</type>
+      <name>nd</name>
+      <anchorfile>classo2scl_1_1interpm__idw.html</anchorfile>
+      <anchor>a1df0fb81678d525ed735f4b837d67311</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>std::vector&lt; vec_t * &gt;</type>
+      <name>ptrs</name>
+      <anchorfile>classo2scl_1_1interpm__idw.html</anchorfile>
+      <anchor>a53651a58ba6d6fce82688f8419e38e2c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>bool</type>
+      <name>data_set</name>
+      <anchorfile>classo2scl_1_1interpm__idw.html</anchorfile>
+      <anchor>a8cda1472f6d6b63591975958cd854a30</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
     <name>o2scl::interpm_neigh</name>
     <filename>classo2scl_1_1interpm__neigh.html</filename>
     <templarg></templarg>
@@ -25266,17 +25351,24 @@
     </member>
     <member kind="function">
       <type>double</type>
+      <name>operator()</name>
+      <anchorfile>classo2scl_1_1interpm__neigh.html</anchorfile>
+      <anchor>a8b0ebe97093422c3411328b6959e56d8</anchor>
+      <arglist>(vec2_t &amp;x) const </arglist>
+    </member>
+    <member kind="function">
+      <type>double</type>
       <name>eval</name>
       <anchorfile>classo2scl_1_1interpm__neigh.html</anchorfile>
       <anchor>a537838baf9a5dc98aad6933e4e65bb06</anchor>
       <arglist>(vec2_t &amp;x) const </arglist>
     </member>
-    <member kind="function" protection="protected">
-      <type>int</type>
-      <name>swap</name>
+    <member kind="variable">
+      <type>ubvector</type>
+      <name>scales</name>
       <anchorfile>classo2scl_1_1interpm__neigh.html</anchorfile>
-      <anchor>a43e50ed3a201c139af9f9ef5a1c1307e</anchor>
-      <arglist>(size_t &amp;index_1, double &amp;dist_1, size_t &amp;index_2, double &amp;dist_2) const </arglist>
+      <anchor>a3107cebe4d0819eee2eb75dcb8595a7f</anchor>
+      <arglist></arglist>
     </member>
     <member kind="variable" protection="protected">
       <type>size_t</type>
@@ -25290,13 +25382,6 @@
       <name>nd</name>
       <anchorfile>classo2scl_1_1interpm__neigh.html</anchorfile>
       <anchor>afde01dd031e754017dd2e52081a4091d</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" protection="protected">
-      <type>ubvector</type>
-      <name>scales</name>
-      <anchorfile>classo2scl_1_1interpm__neigh.html</anchorfile>
-      <anchor>a3107cebe4d0819eee2eb75dcb8595a7f</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable" protection="protected">
@@ -31108,6 +31193,7 @@
     <file>interp2_neigh.h</file>
     <file>interp2_planar.h</file>
     <file>interp2_seq.h</file>
+    <file>interpm_idw.h</file>
     <file>interpm_neigh.h</file>
     <file>pinside.h</file>
     <file>poly.h</file>
