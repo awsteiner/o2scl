@@ -12,12 +12,12 @@
     \ref ex_mroot_sect which shows how an \o2 class can be used with
     Boost, Eigen, or Armadillo objects.
 
-    The \o2 library uses a standard nomenclature to distinguish
-    a couple different concepts. The word "array" is always used to
-    refer to C-style arrays, i.e. \c double[]. If there are two
-    dimensions in the array, it is a "two-dimensional array", i.e. \c
-    double[][] . The word "vector" is reserved generic objects with
-    array-like semantics.
+    The \o2 library uses a standard nomenclature to distinguish a
+    couple different concepts. The word "array" is always used to
+    refer to C-style arrays, i.e. <tt>double[]</tt>. If there are two
+    dimensions in the array, it is a "two-dimensional array", i.e.
+    <tt>double[][]</tt> . The word "vector" is reserved generic
+    objects with array-like semantics.
 
     In general, there are many vector types (STL, Boost, etc.) and
     they can be characterized by whether or not they satisfy certain
@@ -30,10 +30,34 @@
 
     The word "matrix" is reserved for the a generic object which has
     matrix-like semantics and can be accessed using
-    operator(,). The word "tensor" is used for a generic object which
-    has rank \c n and then has \c n associated indices. A vector is
-    just a \tensor of rank 1 and a matrix is just a \tensor of rank 2.
-    Tensors are implemented in \o2 by \ref o2scl::tensor .
+    <tt>operator(,)</tt>. C++ matrix types typically prefer
+    <tt>operator(,)</tt> over <tt>operator[][]</tt>. This is because
+    <tt>operator[][]</tt> implies the creation of a temporary row
+    object, and it is thus difficult to implement <tt>operator[]</tt>
+    without incurring an overhead. Nevertheless, some \o2 classes have
+    separate versions which operate on matrix types which are only
+    accessible with <tt>operator[][]</tt> (like two-dimensional
+    arrays). See the \ref linalg_section section of the User's guide
+    for examples of this.
+
+    A matrix type is distinct from a "vector of vectors" or a "list of
+    vectors", such as that implied by
+    <tt>std::vector<std::vector<double> ></tt>. In some cases, There
+    are places where a vector of vectors is preferable to a matrix,
+    and \o2 expects that elements in a vector of vectors can be
+    accessed by <tt>operator[][]</tt>. A \ref o2scl::table object can
+    be thought of as a vector of vectors in this sense. A vector of
+    vectors can also be used to specify a scattered list of points in
+    a multi-dimensional space. Thus a vector of vectors is what is
+    used for the argument of \ref o2scl::interpm_neigh and \ref
+    o2scl::interpm_idw.
+
+    The word "tensor" is used for a generic object which has rank \c n
+    and then has \c n associated indices. A vector is just a \tensor
+    of rank 1 and a matrix is just a \tensor of rank 2. Tensors are
+    implemented in \o2 by \ref o2scl::tensor . A multivariate
+    funciton specified on a grid can be implemented in \o2 with
+    \ref o2scl::tensor_grid .
 
     \section vectype_subsect Template classes for vector objects
 
@@ -131,14 +155,14 @@
     Sometimes its useful to think about the rows and columns in a
     matrix as referring to a elements of a grid, and the matrix
     indices refer to points in a grid in \f$ (x,y) \f$. It might seem
-    intuitive to think of a matrix as \c A[ix][iy] where \c ix and \c
-    iy are the \f$ x \f$ and \f$ y \f$ indices because the ordering of
-    the indices is alphabetical. However, it is useful to note that
-    because functions like \ref o2scl::matrix_out() print the first
-    "row" first rather than the first column, a matrix constructed as
-    \c A[ix][iy] will be printed out with x on the "vertical axis" and
-    y on the "horizontal axis", which is backwards from the usual
-    convention when plotting data.
+    intuitive to think of a matrix as <tt>A[ix][iy]</tt> where \c ix
+    and \c iy are the \f$ x \f$ and \f$ y \f$ indices because the
+    ordering of the indices is alphabetical. However, it is useful to
+    note that because functions like \ref o2scl::matrix_out() print
+    the first "row" first rather than the first column, a matrix
+    constructed as <tt>A[ix][iy]</tt> will be printed out with x on
+    the "vertical axis" and y on the "horizontal axis", which is
+    backwards from the usual convention when plotting data.
 
     \o2 classes which interpret matrix data on a grid (\ref
     o2scl::table3d, \ref o2scl::contour, \ref o2scl::interp2_seq and

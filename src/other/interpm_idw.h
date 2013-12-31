@@ -40,7 +40,16 @@
 namespace o2scl {
 #endif
 
-  /** \brief Multi-dimensional interpolation by inverse-distance weighting
+  /** \brief Multi-dimensional interpolation by inverse distance
+      weighting
+
+      This class performs interpolation on a multi-dimensional data
+      set specified as a series of scattered points using the inverse
+      distance-weighted average of the nearest three points. The
+      function \ref set_data() takes as input: the number of
+      dimensions, the number of points which specify the data, and a
+      "vector of vectors", e.g. <tt>std::vector<std::vector<double>
+      ></tt> which contains the data for all the points.
   */
   template<class vec_t> class interpm_idw {
 
@@ -58,8 +67,12 @@ namespace o2scl {
     /// Distance scales for each coordinate
     ubvector scales;
 
-    /** \brief Initialize the data for the planar interpolation and 
-	compute the scaling factors
+    /** \brief Initialize the data for the interpolation
+
+	The object \c vecs should be a vector (of size <tt>dim+1</tt>)
+	of vectors (all of size <tt>n_points</tt>). It may have any
+	type for which the data can be accessed through 
+	<tt>operator[][]</tt>. 
      */
     template<class vec_vec_t>
       void set_data(size_t dim, size_t n_points, vec_vec_t &vecs) {

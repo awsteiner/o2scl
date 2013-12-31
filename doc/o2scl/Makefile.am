@@ -24,12 +24,11 @@ help:
 
 docdir = $(prefix)/doc/o2scl
 
-# 12/3/08 - I removed doxygen.log here as it's generated but added
-# doxygen.css so the user can generated the documentation if they like
-
+# These are the files installed by 'make install'
 dist_doc_DATA = doxyfile Makefile.am Makefile.in \
 	*.html *.tex
 
+# These are the files included in the distribution
 EXTRA_DIST = *.dox
 
 SUBDOC_DIRS = eos part 
@@ -76,20 +75,6 @@ sf-sync-doc:
 		awsteiner,o2scl@web.sourceforge.net:htdocs/o2scl/part
 	rsync -Cavzu --exclude=.svn part/latex/refman.pdf \
 	awsteiner,o2scl@web.sourceforge.net:htdocs/o2scl/part/latex/refman.pdf
-
-#tharkad-sync-doc:
-#	rsync -Cavzu --exclude=.svn html \
-#		/home/asteiner/public_html/o2scl/o2scl
-#	rsync -Cavzu --exclude=.svn latex/refman.pdf \
-#		/home/asteiner/public_html/o2scl/o2scl/latex
-#	rsync -Cavzu --exclude=.svn eos/html \
-#		/home/asteiner/public_html/o2scl/o2scl/eos
-#	rsync -Cavzu --exclude=.svn eos/latex/refman.pdf \
-#		/home/asteiner/public_html/o2scl/o2scl/eos/latex
-#	rsync -Cavzu --exclude=.svn part/html \
-#		/home/asteiner/public_html/o2scl/o2scl/part
-#	rsync -Cavzu --exclude=.svn part/latex/refman.pdf \
-#		/home/asteiner/public_html/o2scl/o2scl/part/latex
 
 sf-test-doc:
 	rsync -Cavzun --exclude=.svn html \
@@ -161,8 +146,4 @@ pngfix-recursive:
 	cd eos/html; $(MAKE) pngfix
 	cd part/html; $(MAKE) pngfix
 
-# Old changelog to doxygen conversion commands
-# echo "/** \page clog_page Change Log " > clog.h
-# cat ../../../ChangeLog | awk '{if ($$1=="*") { $$1="-"; print $$0 } else if ($$2=="Andrew") { print "\n\\b " $$1 " " $$2 " " $$3 " " $$4 " \\e " $$5} else if (length>4) { print $$0 } }' >> clog.h
-# echo "*/" >> clog.h
 
