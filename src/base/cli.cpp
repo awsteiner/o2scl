@@ -741,6 +741,10 @@ int cli::call_args(vector<cmd_line_arg> &ca) {
       for(size_t j=0;j<ca[i].parms.size();j++) {
 	sv.push_back(ca[i].parms[j]);
       }
+      if (ca[i].arg=="-quit" || ca[i].arg=="-exit" ||
+	  ca[i].arg=="--quit" || ca[i].arg=="--exit") {
+	return 0;
+      }
       (*(ca[i].cop->func))(sv,false);
     }
   }
@@ -1206,7 +1210,7 @@ int cli::comm_option_run(vector<string> &sv, bool itive_com) {
     }
 
   }
-  
+
   return 0;
 }
 
@@ -1407,6 +1411,7 @@ int cli::set_comm_option(comm_option_s &ic) {
 }
 
 int cli::run_auto(int argc, char *argv[], int debug) {
+
   int ret;
   
   std::vector<cmd_line_arg> ca;
@@ -1437,6 +1442,7 @@ int cli::run_auto(int argc, char *argv[], int debug) {
     }
     
   }
+
   return success;
 }
 

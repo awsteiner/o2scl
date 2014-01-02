@@ -27,6 +27,7 @@
 
 import matplotlib.pyplot as plot
 import h5py 
+import math
 from matplotlib.colors import LinearSegmentedColormap
 
 list_of_dsets=[]
@@ -438,6 +439,12 @@ class plotter:
             if self.canvas_flag==0:
                 self.canvas()
                 self.canvas_flag=1
+            if self.logx==1:
+                for i in range(0,len(xgrid)):
+                    xgrid[i]=math.log(xgrid[i],10)
+            if self.logy==1:
+                for i in range(0,len(ygrid)):
+                    ygrid[i]=math.log(ygrid[i],10)
             plot.imshow(sl,cmap=self.cmap,interpolation='nearest',
                         origin='lower',
                         extent=[xgrid[0],xgrid[len(xgrid)-1],ygrid[0],

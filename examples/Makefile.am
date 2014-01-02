@@ -1,6 +1,10 @@
 snt:
-	ex_gen_sn_eos -set directory ../../../../../pkgs/ls_eos2/ \
-		-ls ls -slices
+	ex_gen_sn_eos -set directory ../../../../../pkgs/oo_eos/ \
+		-oo ls220 -slices
+
+snt2:
+	ex_gen_sn_eos -set directory ../../../../../pkgs/sht_eos/ \
+		-sht fsu17 -slices
 
 # -------------------------------------------------------------
 # Help
@@ -123,8 +127,6 @@ o2scl-examples-doc:
 
 if O2SCL_EOSLIB
 
-#	ex_gen_sn_eos 
-
 EXTRA_PROGRAMS = \
 	ex_fptr \
 	ex_diff \
@@ -142,6 +144,7 @@ EXTRA_PROGRAMS = \
 	ex_mcarlo \
 	ex_minte \
 	ex_string \
+	ex_gen_sn_eos \
 	ex_contour \
 	ex_bps_eos \
 	ex_apr_eos \
@@ -226,10 +229,10 @@ ex_lambda_SOURCES = ex_lambda.cpp
 ex_lambda.scr: ex_lambda
 	./ex_lambda > ex_lambda.scr
 
-#ex_gen_sn_eos_LDADD = $(OOLIBS) $(OOLIBSTWO)
-#ex_gen_sn_eos_SOURCES = ex_gen_sn_eos.cpp
-#ex_gen_sn_eos.scr: ex_gen_sn_eos
-#	./ex_gen_sn_eos -help > ex_gen_sn_eos.scr
+ex_gen_sn_eos_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_gen_sn_eos_SOURCES = ex_gen_sn_eos.cpp
+ex_gen_sn_eos.scr: ex_gen_sn_eos
+	./ex_gen_sn_eos -help > ex_gen_sn_eos.scr
 
 ex_hydrogen_LDADD = $(OOLIBS) $(OOLIBSTWO)
 ex_hydrogen_SOURCES = ex_hydrogen.cpp

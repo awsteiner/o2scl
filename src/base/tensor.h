@@ -319,7 +319,7 @@ namespace o2scl {
       \code
       tensor t;
       size_t dim[3]={3,4,5};
-      t.allocate(3,dim);
+      t.resize(3,dim);
       \endcode
       the following code
       \code
@@ -499,7 +499,8 @@ namespace o2scl {
 
   /** \brief Rank 1 tensor
    */
-  template<class vec_t, class vec_size_t_int> class tensor1 : 
+  template<class vec_t=std::vector<double>, 
+    class vec_size_t_int=std::vector<size_t> > class tensor1 : 
   public tensor<vec_t,vec_size_t_int> {
 
   public:
@@ -511,7 +512,7 @@ namespace o2scl {
   tensor1(size_t sz) : tensor<vec_t,vec_size_t_int>() {
       vec_size_t_int sizex(1);
       sizex[0]=sz;
-      allocate(1,sizex);
+      this->resize(1,sizex);
     }
 	
     /// Get the element indexed by \c ix
@@ -553,7 +554,8 @@ namespace o2scl {
 
   /** \brief Rank 2 tensor
    */
-  template<class vec_t, class vec_size_t_int> class tensor2 : 
+  template<class vec_t=std::vector<double>, 
+    class vec_size_t_int=std::vector<size_t> > class tensor2 : 
   public tensor<vec_t,vec_size_t_int> {
 
   public:
@@ -667,7 +669,8 @@ namespace o2scl {
   
   /** \brief Rank 4 tensor
    */
-  template<class vec_t, class vec_size_t_int> class tensor4 : 
+  template<class vec_t=std::vector<double>, 
+    class vec_size_t_int=std::vector<size_t> > class tensor4 : 
   public tensor<vec_t,vec_size_t_int> {
 
   public:

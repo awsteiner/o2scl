@@ -953,7 +953,8 @@ void stos_eos::load(std::string fname, size_t mode) {
 
 void sht_eos::load(std::string fname, size_t mode) {
   
-  if (loaded) free();
+  // Commenting this out so we can load both 17 and 17b
+  //if (loaded) free();
   
   std::ifstream fin;
   fin.open(fname.c_str());
@@ -975,7 +976,7 @@ void sht_eos::load(std::string fname, size_t mode) {
   }
 
   tensor_grid3 *Eptr, *Fptr, *Sptr, *Pptr;
-  if (mode==mode_17b || mode==mode_21b) {
+  if (mode==mode_17b || mode==mode_21b || mode==mode_NL3b) {
     Eptr=&Eint;
     Pptr=&Pint;
     Sptr=&Sint;

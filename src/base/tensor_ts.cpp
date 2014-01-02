@@ -226,6 +226,12 @@ int main(void) {
       }
     }
 
+    // Just instantiate these for now for a simple test
+    tensor1<> t1t(2);
+    tensor2<> t2t(2,2);
+    tensor3<> t3t(2,2,2);
+    tensor4<> t4t(2,2,2,2);
+
 #if O2SCL_HDF_SVAR
 
     hdf_file hf;

@@ -261,17 +261,24 @@ namespace o2scl {
     */
     template<class size_vec_t>
       void resize(size_t rank, const size_vec_t &dim) {
-      for(size_t i=0;i<rk;i++) {
+      // Double check that none of the sizes that the user
+      // specified are zero
+      for(size_t i=0;i<rank;i++) {
 	if (dim[i]==0) {
 	  O2SCL_ERR((((std::string)"Requested zero size with non-zero ")+
 		     "rank for index "+szttos(i)+" in tensor_grid::"+
 		     "resize().").c_str(),exc_einval);
 	}
       }
+      // Set the new rank
       rk=rank;
+      // Resize the size vector
       size.resize(rk);
+      // Reset the grid
       grid_set=false;
       grid.resize(0);
+      // If the new rank is zero, reset the data, otherwise,
+      // update the size vector and reset the data vector
       if (rank==0) {
 	data.resize(0);
 	return;
@@ -366,7 +373,7 @@ namespace o2scl {
       }
       size_t istart=0;
       for(size_t j=0;j<i;j++) istart+=size[j];
-      size_t best=0;
+      size_t best=istart;
       double min=fabs(grid[istart]-val);
       for(size_t j=istart;j<istart+size[i];j++) {
 	if (fabs(grid[j]-val)<min) {
@@ -390,8 +397,11 @@ namespace o2scl {
 		  exc_einval);
       }
       size_t istart=0;
-      for(size_t j=0;j<i;j++) istart+=size[j];
-      size_t best=0;
+      
+      for(size_t j=0;j<i;j++) {
+	istart+=size[j];
+      }
+      size_t best=istart;
       double min=fabs(grid[istart]-val);
       for(size_t j=istart;j<istart+size[i];j++) {
 	if (fabs(grid[j]-val)<min) {
@@ -490,8 +500,8 @@ namespace o2scl {
      */
     template<class size_vec_t> 
       void copy_slice_align(size_t ix_x, size_t ix_y, size_vec_t &index, 
-				table3d &tab, std::string slice_name) {
-
+			    table3d &tab, std::string slice_name) {
+      
       if (ix_x>=rk || ix_y>=rk || ix_x==ix_y) {
 	O2SCL_ERR2("Either indices greater than rank or x and y ind",
 		   "ices equal in tensor_grid::copy_slice_align().",
@@ -501,8 +511,6 @@ namespace o2scl {
       // Get current table3d grid
       size_t nx, ny;
       tab.get_size(nx,ny);
-
-      std::cout << "1. nx: " << nx << " ny: " << ny << std::endl;
 
       if (nx==0 && ny==0) {
 
@@ -517,10 +525,7 @@ namespace o2scl {
 	nx=gx.size();
 	ny=gy.size();
 	tab.set_xy("x",nx,gx,"y",ny,gy);
-	std::cout << "2. nx: " << nx << " ny: " << ny << std::endl;
       }
-
-      std::cout << "3. nx: " << nx << " ny: " << ny << std::endl;
 
       // Check that the grids are commensurate
       if (nx!=size[ix_x] || ny!=size[ix_y]) {
@@ -537,9 +542,6 @@ namespace o2scl {
 	for(size_t j=0;j<ny;j++) {
 	  index[ix_x]=i;
 	  index[ix_y]=j;
-	  std::cout << "i,j: " << i << " " << j << " " << index[0] << " "
-		    << index[1] << " " << index[2] << " " << size[0] << " "
-		    << size[1] << " " << size[2] << std::endl;
 	  double val=this->get(index);
 	  tab.set(i,j,slice_name,val);
 	}
