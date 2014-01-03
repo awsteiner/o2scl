@@ -101,32 +101,21 @@ namespace o2scl {
       \future Implement copies to and from vector
       and matrices 
 
+      \future Write a set_all() function.
+
       \future Implement tensor contractions, i.e. tensor
       = tensor * tensor 
 
       \future Consider making a template type to replace double,
-      e.g. <tt>value_t</tt>, but this might require fixing 
-      the norm function for ubvector objects which doesn't
-      work for all types. 
+      e.g. <tt>value_t</tt>.
 
       \future Could be interesting to write an iterator for this class.
 
       \future Create an is_valid() function which checks sizes
-
-      \future We could rewrite the tensor object to be built on a
-      generic vector type as is the o2scl table class. However, the
-      o2scl tensor object might best be replaced with a more
-      sophisticated external tensor class with iterators and such.
-
       \comment
       A tensor is defined to be empty if it's rank is zero. A tensor's
       rank should be zero if and only if no memory has been allocated
       for it.
-
-      I could have chosen to make set() functions virtual functions
-      instead of templates. However, many of these functions may be
-      templates anyway when I generalize this class to hold floats or
-      ints rather than just doubles. 
       \endcomment
 
   */
@@ -142,7 +131,7 @@ namespace o2scl {
   /// The data
   vec_t data;
   
-  /// A rank-sized array of the sizes of each dimension
+  /// A rank-sized vector of the sizes of each dimension
   vec_size_t_int size;
   
   /// Rank
@@ -159,10 +148,10 @@ namespace o2scl {
 
   /** \brief Create a tensor of rank \c rank with sizes given in \c dim
 	
-      The parameter \c dim must be a pointer to an array of sizes
-      with length \c rank. If the user requests any of the sizes to
-      be zero, this constructor will call the error handler, create
-      an empty tensor, and will allocate no memory.
+      The parameter \c dim must be a pointer to a vector of sizes with
+      length \c rank. If the user requests any of the sizes to be
+      zero, this constructor will call the error handler, create an
+      empty tensor, and will allocate no memory.
   */
   template<class size_vec_t> 
   tensor(size_t rank, const size_vec_t &dim) {
@@ -418,12 +407,12 @@ namespace o2scl {
     return size[i]; 
   }
     
-  /// Return the full array of sizes
+  /// Return the full vector of sizes
   const vec_size_t_int &get_size_arr() const {
     return size;
   }
 
-  /// Return the full data array
+  /// Return the full data vector
   const vec_t &get_data() const {
     return data;
   }
@@ -441,7 +430,7 @@ namespace o2scl {
 
   /// \name Index manipulation
   //@{
-  /// Pack the indices into a single array index
+  /// Pack the indices into a single vector index
   template<class size_vec_t> 
   size_t pack_indices(const size_vec_t &index) {
     if (rk==0) {
@@ -468,7 +457,7 @@ namespace o2scl {
     return ix;
   }
     
-  /// Unpack the single array index into indices
+  /// Unpack the single vector index into indices
   template<class size_vec_t> 
   void unpack_indices(size_t ix, size_vec_t &index) {
     if (ix>=total_size()) {

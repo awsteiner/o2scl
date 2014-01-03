@@ -269,6 +269,18 @@ namespace o2scl {
        double &P_beta, double &Ye_beta, double &Z_beta, double &A_beta,
        double &T_beta);
 
+    bool is_loaded() {
+      return loaded;
+    }
+
+    bool data_with_leptons() {
+      return with_leptons_loaded;
+    }
+    
+    bool data_baryons_only() {
+      return baryons_only_loaded;
+    }
+
   protected:
 
     /** \brief Unit conversion object (set automatically in constructor)
@@ -805,7 +817,11 @@ namespace o2scl {
       nB(other[2]),
       mue(other[3]),
       M_star(other[4]) {
+	check_grid=true;
     }
+      
+      /// If true, check the grid after load() (default true)
+      bool check_grid;
 
     /// Load table from filename \c fname
     virtual void load(std::string fname, size_t mode);
@@ -896,7 +912,7 @@ namespace o2scl {
     tensor_grid3 &Z_light;
     //@}
 
-    /// If true, check the grid after load()
+      /// If true, check the grid after load() (default true)
     bool check_grid;
 
     hfsl_eos() :

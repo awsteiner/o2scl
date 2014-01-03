@@ -59,10 +59,10 @@ namespace o2scl {
 
   /** \brief Tensor class with arbitrary dimensions with a grid
 
-      This tensor class allows one to assign the indexes to 
-      numerical scales, so that n-dimensional interpolation can
-      be performed. To set the grid, use set_grid_packed() and then
-      interpolation can be done using interpolate().
+      This tensor class allows one to assign the indexes to numerical
+      scales, so that n-dimensional interpolation can be performed. To
+      set the grid, use \ref set_grid() or \ref set_grid_packed() and
+      then interpolation can be done using \ref interpolate().
       
       By convention, member functions ending in the _val 
       suffix return the closest grid-point to some user-specified
@@ -79,11 +79,15 @@ namespace o2scl {
       \endcomment
 
       \todo Make this a template like the \ref o2scl::tensor class?
+
+      \todo It is possible for the user to create a tensor_grid
+      object, upcast it to a tensor object, and then use
+      tensor::resize() to resize the tensor, failing to resize the
+      grid. This probably needs fixing.
+
       \future Only allocate space for grid if it is set
-      \future Could implement arithmetic operators + and - and some
-      different products.
-      \future Consider creating a set_grid_packed() function which
-      takes grids from an object like hist_grid. Maybe make a 
+      \future Consider creating a new set_grid() function which
+      takes grids from an object like uniform_grid. Maybe make a 
       constructor for a tensor_grid object which just takes 
       as input a set of grids?
   */
@@ -138,6 +142,7 @@ namespace o2scl {
       tensor_grid(size_t rank, const size_vec_t &dim) : 
     tensor<ubvector,ubvector_size_t>(rank,dim) {
       grid_set=false;
+      itype=itp_linear;
       for(size_t i=0;i<rk;i++) {
 	if (dim[i]==0) {
 	  O2SCL_ERR((((std::string)"Requested zero size with non-zero ")+
@@ -159,7 +164,9 @@ namespace o2scl {
 
       // Find indices
       ubvector_size_t index(rk);
-      for(size_t i=0;i<rk;i++) index[i]=lookup_grid_packed(i,grdp[i]);
+      for(size_t i=0;i<rk;i++) {
+	index[i]=lookup_grid(i,grdp[i]);
+      }
       
       // Pack
       size_t ix=index[0];
@@ -212,7 +219,9 @@ namespace o2scl {
       
       // Find indices
       ubvector_size_t index(rk);
-      for(size_t i=0;i<rk;i++) index[i]=lookup_grid_packed(i,grdp[i]);
+      for(size_t i=0;i<rk;i++) {
+	index[i]=lookup_grid(i,grdp[i]);
+      }
 
       // Pack
       size_t ix=index[0];
@@ -225,9 +234,14 @@ namespace o2scl {
       return data[ix];
     }
 
-    /// Get the element closest to grid point \c grdp to value \c val
+    /** \brief Get the element closest to grid point \c grdp to 
+	value \c val
+
+	The parameters \c grdp and \c closest may refer to the
+	same object. 
+    */
     template<class vec_t, class vec2_t> 
-      double get_val(const vec_t &grdp, const vec2_t &closest) {
+      double get_val(const vec_t &grdp, vec2_t &closest) {
       
       // Find indices
       ubvector_size_t index(rk);
@@ -359,29 +373,39 @@ namespace o2scl {
       return;
     }
 
-    /// Lookup index for grid closest to \c val
-    size_t lookup_grid_packed(size_t i, double val) {
+    /// Lookup jth value on the ith grid
+    double get_grid(size_t i, size_t j) const {
       if (!grid_set) {
-	O2SCL_ERR("Grid not set in tensor_grid::lookup_grid_packed().",
+	O2SCL_ERR("Grid not set in tensor_grid::get_grid().",
 		  exc_einval);
       }
       if (i>=rk) {
-	O2SCL_ERR((((std::string)"Index ")+szttos(i)+" greater than rank, "+
-		   szttos(rk)+
-		   ", in tensor_grid::lookup_grid_packed().").c_str(),
+	O2SCL_ERR((((std::string)"Index ")+szttos(i)+
+		   " greater than or equal to rank, "+szttos(rk)+
+		   ", in tensor_grid::get_grid().").c_str(),
 		  exc_einval);
       }
       size_t istart=0;
-      for(size_t j=0;j<i;j++) istart+=size[j];
-      size_t best=istart;
-      double min=fabs(grid[istart]-val);
-      for(size_t j=istart;j<istart+size[i];j++) {
-	if (fabs(grid[j]-val)<min) {
-	  best=j;
-	  min=fabs(grid[j]-val);
-	}
+      for(size_t k=0;k<i;k++) istart+=size[k];
+      return grid[istart+j];
+    }
+
+    /// Set the jth value on the ith grid
+    void set_grid(size_t i, size_t j, double val) {
+      if (!grid_set) {
+	O2SCL_ERR("Grid not set in tensor_grid::get_grid().",
+		  exc_einval);
       }
-      return best;
+      if (i>=rk) {
+	O2SCL_ERR((((std::string)"Index ")+szttos(i)+
+		   " greater than or equal to rank, "+szttos(rk)+
+		   ", in tensor_grid::get_grid().").c_str(),
+		  exc_einval);
+      }
+      size_t istart=0;
+      for(size_t k=0;k<i;k++) istart+=size[k];
+      grid[istart+j]=val;
+      return;
     }
 
     /// Lookup index for grid closest to \c val
@@ -412,23 +436,6 @@ namespace o2scl {
       return best-istart;
     }
 
-    /// Lookup jth value on the ith grid
-    double get_grid(size_t i, size_t j) const {
-      if (!grid_set) {
-	O2SCL_ERR("Grid not set in tensor_grid::get_grid().",
-		  exc_einval);
-      }
-      if (i>=rk) {
-	O2SCL_ERR((((std::string)"Index ")+szttos(i)+
-		   " greater than or equal to rank, "+szttos(rk)+
-		   ", in tensor_grid::get_grid().").c_str(),
-		  exc_einval);
-      }
-      size_t istart=0;
-      for(size_t k=0;k<i;k++) istart+=size[k];
-      return grid[istart+j];
-    }
-
     /** \brief Lookup indices for grid closest point to \c vals
 
         The values in \c vals are not modified by this function.
@@ -447,8 +454,13 @@ namespace o2scl {
       return;
     }
 
-    /// Lookup index for grid closest to \c val, returning the grid point
-    size_t lookup_grid_val(size_t i, double &val, double &val2) {
+    /** \brief Lookup index for grid closest to \c val, returning the 
+	grid point
+
+	The parameters \c val and \c val2 may refer to the
+	same object. 
+    */
+    size_t lookup_grid_val(size_t i, const double &val, double &val2) {
       if (i>=rk) {
 	O2SCL_ERR((((std::string)"Index ")+szttos(i)+
 		   " greater than or equal to rank, "+szttos(rk)+
@@ -461,7 +473,59 @@ namespace o2scl {
       }
       size_t istart=0;
       for(size_t j=0;j<i;j++) istart+=size[j];
-      size_t best=0;
+      size_t best=istart;
+      double min=fabs(grid[istart]-val);
+      val2=grid[istart];
+      for(size_t j=istart;j<istart+size[i];j++) {
+	if (fabs(grid[j]-val)<min) {
+	  best=j;
+	  min=fabs(grid[j]-val);
+	  val2=grid[j];
+	}
+      }
+      return best-istart;
+    }
+
+    /// Lookup index for grid closest to \c val
+    size_t lookup_grid_packed(size_t i, double val) {
+      if (!grid_set) {
+	O2SCL_ERR("Grid not set in tensor_grid::lookup_grid_packed().",
+		  exc_einval);
+      }
+      if (i>=rk) {
+	O2SCL_ERR((((std::string)"Index ")+szttos(i)+" greater than rank, "+
+		   szttos(rk)+
+		   ", in tensor_grid::lookup_grid_packed().").c_str(),
+		  exc_einval);
+      }
+      size_t istart=0;
+      for(size_t j=0;j<i;j++) istart+=size[j];
+      size_t best=istart;
+      double min=fabs(grid[istart]-val);
+      for(size_t j=istart;j<istart+size[i];j++) {
+	if (fabs(grid[j]-val)<min) {
+	  best=j;
+	  min=fabs(grid[j]-val);
+	}
+      }
+      return best;
+    }
+
+    /// Lookup index for grid closest to \c val
+    size_t lookup_grid_packed_val(size_t i, double val, double &val2) {
+      if (!grid_set) {
+	O2SCL_ERR("Grid not set in tensor_grid::lookup_grid_packed().",
+		  exc_einval);
+      }
+      if (i>=rk) {
+	O2SCL_ERR((((std::string)"Index ")+szttos(i)+" greater than rank, "+
+		   szttos(rk)+
+		   ", in tensor_grid::lookup_grid_packed().").c_str(),
+		  exc_einval);
+      }
+      size_t istart=0;
+      for(size_t j=0;j<i;j++) istart+=size[j];
+      size_t best=istart;
       double min=fabs(grid[istart]-val);
       val2=grid[istart];
       for(size_t j=istart;j<istart+size[i];j++) {
@@ -473,13 +537,10 @@ namespace o2scl {
       }
       return best;
     }
-  
-    /// Set interpolation type
-    void set_interp_type(size_t interp_type) {
-      itype=interp_type;
-      return;
-    }
+    //@}
 
+    /// \name Slicing
+    //@{
     /** \brief Create a slice in a table3d object with an aligned
 	grid
 
@@ -601,6 +662,15 @@ namespace o2scl {
 
       return;
     }
+    //@}
+
+    /// \name Interpolation
+    //@{
+    /// Set interpolation type
+    void set_interp_type(size_t interp_type) {
+      itype=interp_type;
+      return;
+    }
 
     /** \brief Interpolate values \c vals into the tensor, 
 	returning the result
@@ -710,6 +780,8 @@ namespace o2scl {
   };
 
   /** \brief Rank 1 tensor with a grid
+      
+      \future Make rank-specific get_val and set_val functions?
    */
   class tensor_grid1 : public tensor_grid {
      

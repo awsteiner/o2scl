@@ -46,11 +46,13 @@
     are places where a vector of vectors is preferable to a matrix,
     and \o2 expects that elements in a vector of vectors can be
     accessed by <tt>operator[][]</tt>. A \ref o2scl::table object can
-    be thought of as a vector of vectors in this sense. A vector of
-    vectors can also be used to specify a scattered list of points in
-    a multi-dimensional space. Thus a vector of vectors is what is
-    used for the argument of \ref o2scl::interpm_neigh and \ref
-    o2scl::interpm_idw.
+    be thought of as a vector of vectors in this sense. The function
+    \ref o2scl::tensor_grid::set_grid() also accepts a vector of
+    vectors, and for this function, none of the vectors needs to have
+    the same size. A vector of vectors can also be used to specify a
+    scattered list of points in a multi-dimensional space. Thus, a
+    vector of vectors is what is used for the argument of \ref
+    o2scl::interpm_neigh and \ref o2scl::interpm_idw.
 
     The word "tensor" is used for a generic object which has rank \c n
     and then has \c n associated indices. A vector is just a \tensor

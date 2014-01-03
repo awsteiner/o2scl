@@ -952,23 +952,25 @@ void stos_eos::load(std::string fname, size_t mode) {
 }
 
 void sht_eos::load(std::string fname, size_t mode) {
-  
+
+  if (verbose>0) {
+    cout << "In sht_eos::load(), loading EOS from file\n\t'" 
+	 << fname << "'." << endl;
+  }
+
   // Commenting this out so we can load both 17 and 17b
   //if (loaded) free();
   
   std::ifstream fin;
   fin.open(fname.c_str());
       
-  if (verbose>0) {
-    cout << "Loading EOS from file '" << fname << "'." << endl;
-  }
-
   if (mode==mode_17 || mode==mode_17b) {
     n_nB=336;
     n_T=109;
     n_Ye=53;
     n_oth=5;
   } else {
+    // This works for both FSU2.1 and NL3
     n_nB=328;
     n_T=109;
     n_Ye=53;
@@ -1012,8 +1014,8 @@ void sht_eos::load(std::string fname, size_t mode) {
     temp[i]=pow(10.0,-0.8+((double)(i-1))*0.025);
     grid.push_back(temp[i]);
   }
-  for(size_t ik=0;ik<16;ik++) {
-    arr[ik]->set_grid_packed(grid);
+  for(size_t k=0;k<n_base+n_oth;k++) {
+    arr[k]->set_grid_packed(grid);
   }
   
   string stmp;
@@ -1089,10 +1091,10 @@ void sht_eos::load(std::string fname, size_t mode) {
       
   fin.close();
 
-  {
+  if (check_grid) {
     // Double check the grid 
     if (verbose>0) {
-      cout << "Checking grid." << endl;
+      cout << "Checking grid in sht_eos::load()." << endl;
     }
 
     int i=10, j=10, k=10;
@@ -1123,13 +1125,9 @@ void sht_eos::load(std::string fname, size_t mode) {
     }
 
     if (tm.report()==false) {
-      O2SCL_ERR("Function sht_eos::load() failed.",exc_efailed);
+      O2SCL_ERR("Grid check in sht_eos::load() failed.",exc_efailed);
     }
 
-  }
-
-  if (verbose>0) {
-    std::cout << "Done." << std::endl;
   }
 
   loaded=true;
@@ -1139,6 +1137,10 @@ void sht_eos::load(std::string fname, size_t mode) {
   } else {
     with_leptons_loaded=true;
     baryons_only_loaded=false;
+  }
+
+  if (verbose>0) {
+    std::cout << "Done in sht_eos::load()." << std::endl;
   }
 
   return;
