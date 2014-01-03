@@ -1,8 +1,6 @@
 snt:
 	ex_gen_sn_eos -set directory ../../../../../pkgs/oo_eos/ \
-		-oo ls220 -slices
-
-snt2:
+		-oo fsu17 -slices
 	ex_gen_sn_eos -set directory ../../../../../pkgs/sht_eos/ \
 		-sht fsu17 -slices
 
