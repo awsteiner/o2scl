@@ -101,8 +101,6 @@ namespace o2scl {
       \future Implement copies to and from vector
       and matrices 
 
-      \future Write a set_all() function.
-
       \future Implement tensor contractions, i.e. tensor
       = tensor * tensor 
 

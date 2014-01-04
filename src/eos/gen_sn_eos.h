@@ -59,9 +59,10 @@ namespace o2scl {
       data after loading the EOS table, use \ref
       gen_sn_eos::compute_eg().
 
-      The function \ref load() loads the entire EOS into memory.
-      Memory allocation is automatically performed by \ref load(),
-      but not deallocated until free() or the destructor is called.
+      The functions named <tt>load()</tt> in the children classes load
+      the entire EOS into memory. Memory allocation is automatically
+      performed, but not deallocated until free() or the destructor is
+      called.
 
       After loading, you can interpolate the EOS by using 
       \ref tensor_grid3::interp directly. For example,
@@ -74,15 +75,20 @@ namespace o2scl {
       double nb=0.01, Ye=0.2, T=10.0;
       cout << A.interp(nb,Ye,T) << endl;
       \endverbatim
-      Interpolation for all EOSs is linear by default (even though
-      some of the grids are logarithmic). 
+      Interpolation for all EOSs is linear by default, however, some
+      of the grids are logarithmic, so linear interpolation on a
+      logarithmic grid leads to power-laws in between grid points.
 
-      \todo Ensure all chemical potentials are based on the
-      same rest masses?
-      \todo Allow logarithmic grids for any of nb, Ye, or T. 
+      \todo Ensure all energies and chemical potentials are based on
+      the same rest masses, and document the shifts accordingly.
+
       \comment 
+      \todo Allow logarithmic grids for any of nb, Ye, or T. 
       12/10/13: The member variables are in the parent class, but no 
       code is written to use them yet. What really are these for?
+      1/3/14: In fact, the linear vs. logarithmic distinction isn't
+      necessarily useful, because some of the grids (e.g. T for sht)
+      aren't either purely linear or purely logarithmic.
       \endcomment
 
       \future Create a \ref o2scl::table object, possibly using 
@@ -90,7 +96,7 @@ namespace o2scl {
       \future Show how matrix_slice and vector_slice can be used
       with this object.
       \future Add option to load and store a separate lepton/photon EOS
-      \future Add muons and/or pions
+      \future Add pions?
       \future Create a standard output format? Output to
       stellarcollapse.org HDF5 format?
 
@@ -112,9 +118,6 @@ namespace o2scl {
     
     virtual ~gen_sn_eos();
 
-    /// Load table from filename \c fname
-    virtual void load(std::string fname)=0;
-
     /// \name Grid and data sizes
     //@{
     /// Size of baryon density grid
@@ -129,19 +132,11 @@ namespace o2scl {
     static const size_t n_base=16;
     //@}
 
-    /// \name Logarithmic interpolation
-    //@{
-    /// If true, make the density grid logarithmic (default true)
-    bool log_nB;
-    /// If true, make the electron fraction grid logarithmic (default false)
-    bool log_Ye;
-    /// If true, make the temperature grid logarithmic (default true)
-    bool log_T;
-    //@}
-
     /// \name Data
     //@{
-    /// Total free energy per baryon in MeV
+    /** \brief Total free energy per baryon in MeV (without 
+	baryon rest masses but including electron rest mass)
+    */
     tensor_grid3 F;
     /** \brief Free energy per baryon without lepton and photon 
 	contributions in MeV
@@ -158,7 +153,7 @@ namespace o2scl {
     /// Total pressure in \f$ \mathrm{MeV}/\mathrm{fm}^3 \f$
     tensor_grid3 P;
     /** \brief Pressure without lepton and photon contributions
-	 in \f$ \mathrm{MeV}/\mathrm{fm}^3 \f$
+	in \f$ \mathrm{MeV}/\mathrm{fm}^3 \f$
     */
     tensor_grid3 Pint;
     /// Total entropy per baryon
@@ -189,8 +184,12 @@ namespace o2scl {
 
     /// \name Interpolation
     //@{
-    /** \brief Set interpolation managers
-     */
+    /** \brief Set the interpolation type of all the 
+	\ref o2scl::tensor_grid3 objects to type \c interp_type .
+
+	\note This is used by the constructor to set all tensors
+	to linear interpolation.
+    */
     void set_interp_type(size_t interp_type);
     //@}
 
@@ -230,7 +229,7 @@ namespace o2scl {
 	in \c Eint and \c Sint (if \ref baryons_only_loaded is true)
 	and that \c F is consistent with that in \c E and \c S (if
 	\ref with_leptons_loaded is true).
-     */
+    */
     void check_free_energy();
     
     /** \brief Verbosity parameter (default 1)
@@ -269,14 +268,20 @@ namespace o2scl {
        double &P_beta, double &Ye_beta, double &Z_beta, double &A_beta,
        double &T_beta);
 
+    /// Return true if data has been loaded
     bool is_loaded() {
       return loaded;
     }
 
+    /// Free allocated memory
+    void free();
+
+    /// Return true if data with lepton information has been loaded
     bool data_with_leptons() {
       return with_leptons_loaded;
     }
     
+    /// Return true if data with only baryon information has been loaded
     bool data_baryons_only() {
       return baryons_only_loaded;
     }
@@ -297,9 +302,6 @@ namespace o2scl {
     //@{
     /// Allocate memory
     void alloc();
-
-    /// Free allocated memory
-    void free();
     //@}
 
 
@@ -404,7 +406,7 @@ namespace o2scl {
 	generated by \o2 is consistent with the data in 
 	\c E, \c Eint, \c F, \c Fint, \c P, \c Pint, \c S,
 	and \c Sint.
-     */
+    */
     int check_eg(test_mgr &tm);
 
     /** \brief Compute properties of matter in beta equilibrium
@@ -486,16 +488,8 @@ namespace o2scl {
 
       \future Loading an EOS currently requires loading the HDF5 file
       and then copying it. This wouldn't be necessary if the \o2
-      tensor object was built on a <tt>double *</tt> or a
-      <tt>std::vector<double></tt> object instead of a
-      <tt>ubvector</tt> object and the ordering of the indices was the
-      same in this class and the HDF5 file.
-      \comment
-      AWS, 12/10/13: It's not clear to me how complicated it would be
-      to rewrite the tensor object to be built on a generic vector
-      type as is the o2scl table class. See the tensor class documentation
-      for more.
-      \endcomment
+      tensor had the same ordering as the indices in the original
+      HDF5 file.
   */
   class oo_eos : public gen_sn_eos {
 
@@ -540,7 +534,7 @@ namespace o2scl {
     /// Triton fraction
     tensor_grid3 &Xt;
     /// The original mass density grid from the table in g/cm^3
-    ubvector rho;
+    std::vector<double> rho;
     /// Energy shift for table storage in erg/g
     double energy_shift;
     //@}
@@ -555,15 +549,9 @@ namespace o2scl {
     static const size_t hfsl_mode=2;
     //@}
     
-    /// Load table from filename \c fname
+    /// Load table from filename \c fname with mode \c mode
     virtual void load(std::string fname, size_t mode);
 
-    /// Load table from filename \c fname
-    virtual void load(std::string fname) {
-      load(fname,0);
-      return;
-    }
-    
     /** \brief Compute properties of matter in beta equilibrium
 	at zero temperature at a baryon density grid point
 	
@@ -653,10 +641,10 @@ namespace o2scl {
       \note Thanks to Matthias Hempel for providing the correct
       temperature grid.
 
-      \future Add the T=0 and Ye=0 data to this class. Separate
+      \todo Add the T=0 and Ye=0 data to this class. Separate
       tables for these cases have been released, but I don't think
       this class can read them yet. 
-   */
+  */
   class stos_eos : public gen_sn_eos {
 
   public:
@@ -686,17 +674,16 @@ namespace o2scl {
       Yp(other[3]),
       M_star(other[4]),
       quark_frac(other[5]) {
+      check_grid=true;
     }
 
     static const size_t orig_mode=0;
     static const size_t quark_mode=1;
 
-    /// Load table from filename \c fname
-    virtual void load(std::string fname) {
-      load(fname,0);
-    }
-    
-    /// Load table from filename \c fname
+    /// If true, check the grid after load() (default true)
+    bool check_grid;
+
+    /// Load table from filename \c fname with mode \c mode
     virtual void load(std::string fname, size_t mode);
 
     /** \brief Compute properties of matter in beta equilibrium
@@ -776,14 +763,29 @@ namespace o2scl {
       See also the documentation at \ref gen_sn_eos and the
       \ref sneos_section section of the User's guide.
 
+      The proton fraction is assumed to be equal to the electron
+      fraction. The free energy in the original table is relative to a
+      mass of 939 MeV, and is shifted to be relative to a rest mass of
+      \f$ m_p Y_e + m_n (1-Y_e) \f$ by \ref load(). The neutron and
+      proton chemical potentials are also shifted to be relative to
+      \f$ m_n \f$ and \f$ m_p \f$ respectively. The electron chemical
+      potential still includes its rest mass. All other quantites are
+      stored as in the original table, except that the values in \ref
+      o2scl::gen_sn_eos::E or \ref o2scl::gen_sn_eos::Eint are
+      computed directly from the thermodynamic identity.
+
       See \ref Shen11.
 
-      \todo More documentation
+      \warning The NL3 model is probably ruled out by nuclear mass
+      data, neutron matter calculations, and neutron star mass and
+      radius observations.
   */
   class sht_eos : public gen_sn_eos {
 
   public:
 
+    /// \name Table modes
+    //@{
     /// 1.7 solar masses with leptons and photons
     static const size_t mode_17=0;
     /// 2.1 solar masses with leptons and photons
@@ -796,6 +798,7 @@ namespace o2scl {
     static const size_t mode_NL3=4;
     /// NL3 model with leptons and photons
     static const size_t mode_NL3b=5;
+    //@}
 
     /// \name Additional data included in this EOS
     //@{
@@ -811,25 +814,20 @@ namespace o2scl {
     tensor_grid3 &M_star;
     //@}
     
-    sht_eos() :
-      T(other[0]),
+  sht_eos() :
+    T(other[0]),
       Yp(other[1]),
       nB(other[2]),
       mue(other[3]),
       M_star(other[4]) {
-	check_grid=true;
+      check_grid=true;
     }
       
-      /// If true, check the grid after load() (default true)
-      bool check_grid;
+    /// If true, check the grid after load() (default true)
+    bool check_grid;
 
-    /// Load table from filename \c fname
+    /// Load table from filename \c fname with mode \c mode
     virtual void load(std::string fname, size_t mode);
-
-    /// Load table from filename \c fname
-    virtual void load(std::string fname) {
-      load(fname,0);
-    }
 
     /** \brief Compute properties of matter in beta equilibrium
 	at zero temperature at a baryon density grid point
@@ -887,7 +885,7 @@ namespace o2scl {
       \ref sneos_section section of the User's guide.
 
       See \ref Hempel10 and \ref Hempel11.
-   */
+  */
   class hfsl_eos : public gen_sn_eos {
 
   public:
@@ -912,18 +910,18 @@ namespace o2scl {
     tensor_grid3 &Z_light;
     //@}
 
-      /// If true, check the grid after load() (default true)
+    /// If true, check the grid after load() (default true)
     bool check_grid;
 
-    hfsl_eos() :
-      log_rho(other[0]),
+  hfsl_eos() :
+    log_rho(other[0]),
       nB(other[1]),
       log_Y(other[2]),
       Yp(other[3]),
       M_star(other[4]),
       A_light(other[5]),
       Z_light(other[6]) {
-	check_grid=true;
+      check_grid=true;
     }
     
     /// Load table from filename \c fname
