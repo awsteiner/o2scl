@@ -23,6 +23,10 @@
 #ifndef EXPVAL_H
 #define EXPVAL_H
 
+/** \file expval.h
+    \brief File defining 'expectation value' objects
+*/
+
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/vector_proxy.hpp>
 #include <boost/numeric/ublas/matrix.hpp>

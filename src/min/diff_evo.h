@@ -23,6 +23,10 @@
 #ifndef O2SCL_DIFF_EVO_H
 #define O2SCL_DIFF_EVO_H
 
+/** \file diff_evo.h
+    \brief File defining \ref o2scl::diff_evo
+*/
+
 #include <vector>
 #include <algorithm>
 

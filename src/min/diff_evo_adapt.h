@@ -22,6 +22,11 @@
 */
 #ifndef O2SCL_DIFF_EVO_ADAPT_H
 #define O2SCL_DIFF_EVO_ADAPT_H
+
+/** \file diff_evo_adapt.h
+    \brief File defining \ref o2scl::diff_evo_adapt
+*/
+
 #include <vector>
 #include <algorithm>
 

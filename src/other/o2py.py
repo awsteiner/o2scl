@@ -73,7 +73,7 @@ def h5read_name(fname,name):
     obj=file[name]
     o2scl_type_dset=obj['o2scl_type']
     loc_type=o2scl_type_dset.__getitem__(0)
-    return (obj,type)
+    return (obj,loc_type)
 
 def h5read_type_named(fname,loc_type,name):
     del list_of_dsets[:]

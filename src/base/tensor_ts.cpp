@@ -36,6 +36,8 @@ typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
 int main(void) {
 
+  cout.setf(ios::scientific);
+
   test_mgr t;
   t.set_output_level(2);
 
@@ -201,15 +203,15 @@ int main(void) {
 
   double vals[3]={2.5,2.5,1.5};
   cout << "Int: " << (2.0*2.5*2.5-2.5-3.0*1.5*1.5) << " "
-       << m3.interpolate(vals) << endl;
+       << m3.interpolate(vals) << " " << m3.interp_linear(vals) << endl;
   
   double vals2[3]={2.0,2.0,1.0};
   cout << "Int: " << (2.0*2.0*2.0-2.0-3.0*1.0*1.0) << " "
-       << m3.interpolate(vals2) << endl;
+       << m3.interpolate(vals2) << " " << m3.interp_linear(vals2) << endl;
     
   double vals3[3]={2.0,2.0,1.0};
   cout << "Int: " << (2.0*2.0*2.0-2.0-3.0*1.0*1.0) << " "
-       << m3.interpolate(vals3) << endl;
+       << m3.interpolate(vals3) << " " << m3.interp_linear(vals3) << endl;
 
   m3.resize(0,i3);
 

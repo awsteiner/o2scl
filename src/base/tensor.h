@@ -154,8 +154,9 @@ namespace o2scl {
   template<class size_vec_t> 
   tensor(size_t rank, const size_vec_t &dim) {
     if (rank==0) {
-      size=0;
+      rk=0;
     } else {
+      rk=rank;
       for(size_t i=0;i<rk;i++) {
 	if (dim[i]==0) {	  
 	  rk=0;
@@ -165,7 +166,6 @@ namespace o2scl {
 		    exc_einval);
 	}
       }
-      rk=rank;
       size.resize(rk);
       size_t tot=1;
       for(size_t i=0;i<rk;i++) {

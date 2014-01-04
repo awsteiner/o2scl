@@ -143,6 +143,7 @@ namespace o2scl {
     tensor<ubvector,ubvector_size_t>(rank,dim) {
       grid_set=false;
       itype=itp_linear;
+      // Note that the parent method sets rk to be equal to rank
       for(size_t i=0;i<rk;i++) {
 	if (dim[i]==0) {
 	  O2SCL_ERR((((std::string)"Requested zero size with non-zero ")+
@@ -614,12 +615,12 @@ namespace o2scl {
     /** \brief Copy to a slice in a table3d object using interpolation
 
 	This function uses the grid associated with indices \c ix_x
-	and \c ix_y, and the tensor interpolation function to
-	copy the tensor information to the slice named \c
-	slice_name in the table3d object \c tab .
+	and \c ix_y, and the tensor interpolation function to copy the
+	tensor information to the slice named \c slice_name in the
+	table3d object \c tab .
 	
-	\note This function uses the tensor interpolation type, not
-	the table3d interpolation type.
+	\note This function uses the \ref tensor_grid::interp_linear() 
+	for the interpolation.
      */
     template<class size_vec_t> 
       void copy_slice_interp(size_t ix_x, size_t ix_y, size_vec_t &index, 
@@ -654,9 +655,8 @@ namespace o2scl {
       for(size_t i=0;i<nx;i++) {
 	for(size_t j=0;j<ny;j++) {
 	  vals[ix_x]=tab.get_grid_x(i);
-	  vals[ix_y]=tab.get_grid_y(i);
-	  double *valsp=&(vals[0]);
-	  tab.set(i,j,slice_name,this->interpolate(valsp));
+	  vals[ix_y]=tab.get_grid_y(j);
+	  tab.set(i,j,slice_name,this->interp_linear(vals));
 	}
       }
 
@@ -697,7 +697,7 @@ namespace o2scl {
       
       if (rk==1) {
 	
-	interp_t si(size[0],grid,data);
+	interp_t si(size[0],grid,data,itype);
 	return si.eval(vals[0]);
 
       } else {
@@ -768,6 +768,79 @@ namespace o2scl {
 
 	return res;
       }
+    }
+
+    /** \brief Desc
+     */
+    template<class vec2_t> double interp_linear(vec2_t &v) {
+
+      // Find the the corner of the hypercube containing v
+      size_t rgs=0;
+      std::vector<size_t> loc(rk);
+      std::vector<double> gnew;
+      for(size_t i=0;i<rk;i++) {
+	std::vector<double> grid_unpacked(size[i]);
+	for(size_t j=0;j<size[i];j++) {
+	  grid_unpacked[j]=grid[j+rgs];
+	}
+	search_vec<std::vector<double> > sv(size[i],grid_unpacked);
+	loc[i]=sv.find(v[i]);
+	gnew.push_back(grid_unpacked[loc[i]]);
+	gnew.push_back(grid_unpacked[loc[i]+1]);
+	rgs+=size[i];
+      }
+
+      // Now construct a 2^{rk}-sized tensor containing only that 
+      // hypercube
+      std::vector<size_t> snew(rk);
+      for(size_t i=0;i<rk;i++) {
+	snew[i]=2;
+      }
+      tensor_grid tnew(rk,snew);
+      tnew.set_grid_packed(gnew);
+      
+      // Copy over the relevant data
+      for(size_t i=0;i<tnew.total_size();i++) {
+	std::vector<size_t> index_new(rk), index_old(rk);
+	tnew.unpack_indices(i,index_new);
+	for(size_t j=0;j<rk;j++) index_old[j]=index_new[j]+loc[j];
+	tnew.set(index_new,get(index_old));
+      }
+      
+      // Now use interp_power_two()
+      return tnew.interp_linear_power_two(v);
+    }
+    
+    /** \brief Desc
+     */
+    template<class vec2_t> double interp_linear_power_two(vec2_t &v) {
+
+      if (rk==1) {
+	return data[0]+(data[1]-data[0])/(grid[1]-grid[0])*(v[0]-grid[0]);
+      }
+
+      size_t last=rk-1;
+      double frac=(v[last]-get_grid(last,0))/
+	(get_grid(last,1)-get_grid(last,0));
+
+      // Create new size vector and grid
+      tensor_grid tnew(rk-1,size);
+      tnew.set_grid_packed(grid);
+
+      // Create data in new tensor, removing the last index through
+      // linear interpolation
+      for(size_t i=0;i<tnew.total_size();i++) {
+	std::vector<size_t> index(rk);
+	tnew.unpack_indices(i,index);
+	index[rk-1]=0;
+	double val_lo=get(index);
+	index[rk-1]=1;
+	double val_hi=get(index);
+	tnew.set(index,val_lo+frac*(val_hi-val_lo));
+      }
+      
+      // Recursive interpolate the smaller tensor
+      return tnew.interp_linear_power_two(v);
     }
     //@}
 

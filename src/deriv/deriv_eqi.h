@@ -23,6 +23,10 @@
 #ifndef O2SCL_DERIV_EQI_H
 #define O2SCL_DERIV_EQI_H
 
+/** \file deriv_eqi.h
+    \brief File defining \ref o2scl::deriv_eqi
+*/
+
 #include <cmath>
 
 #include <boost/numeric/ublas/vector.hpp>
