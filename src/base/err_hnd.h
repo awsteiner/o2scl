@@ -24,7 +24,8 @@
 #define O2SCL_ERR_HND_H
 
 /** \file err_hnd.h
-    \brief Error handling classes, err_hnd_type and err_hnd_gsl
+    \brief Error handling classes, \ref o2scl::err_hnd_type and 
+    \ref o2scl::err_hnd_gsl
 
     See also \ref exception.h .
 */

@@ -42,6 +42,10 @@
 #ifndef O2SCL_SERIES_ACC_H
 #define O2SCL_SERIES_ACC_H
 
+/** \file series_acc.h
+    \brief File defining \ref o2scl::series_acc
+*/
+
 #include <iostream>
 #include <cmath>
 #include <gsl/gsl_sum.h>

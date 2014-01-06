@@ -23,6 +23,10 @@
 #ifndef O2SCL_MMIN_FIX_H
 #define O2SCL_MMIN_FIX_H
 
+/** \file mmin_fix.h
+    \brief File defining \ref o2scl::mmin_fix_params
+*/
+
 #include <vector>
 
 #include <o2scl/mmin.h>

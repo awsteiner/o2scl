@@ -44,6 +44,10 @@
 #ifndef O2SCL_ROOT_STEF_H
 #define O2SCL_ROOT_STEF_H
 
+/** \file root_stef.h
+    \brief File defining \ref o2scl::root_stef 
+*/
+
 #include <string>
 
 #include <o2scl/misc.h>

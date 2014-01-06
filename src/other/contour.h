@@ -21,7 +21,7 @@
   -------------------------------------------------------------------
 */
 /** \file contour.h
-    \brief File for definition of \ref o2scl::contour
+    \brief File defining \ref o2scl::contour
 */
 #ifndef O2SCL_CONTOUR_H
 #define O2SCL_CONTOUR_H

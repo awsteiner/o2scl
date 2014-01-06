@@ -21,7 +21,7 @@
   -------------------------------------------------------------------
 */
 /** \file acolm.h
-    \brief The acol_manager class header
+    \brief The \ref o2scl_acol::acol_manager class header
 */
 #ifdef HAVE_CONFIG_H
 #include <config.h>

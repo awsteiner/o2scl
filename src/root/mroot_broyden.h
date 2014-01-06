@@ -24,6 +24,10 @@
 #ifndef MROOT_BROYDEN_H
 #define MROOT_BROYDEN_H
 
+/** \file mroot_broyden.h
+    \brief File defining \ref o2scl::mroot_broyden 
+*/
+
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/vector_proxy.hpp>
 #include <boost/numeric/ublas/matrix.hpp>

@@ -23,6 +23,10 @@
 #ifndef O2SCL_PINSIDE_H
 #define O2SCL_PINSIDE_H
 
+/** \file pinside.h
+    \brief File defining \ref o2scl::pinside 
+*/
+
 #include <boost/numeric/ublas/vector.hpp>
 
 #include <o2scl/test_mgr.h>

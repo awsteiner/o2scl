@@ -44,6 +44,10 @@
 #ifndef O2SCL_ROOT_BRENT_GSL_H
 #define O2SCL_ROOT_BRENT_GSL_H
 
+/** \file root_brent_gsl.h
+    \brief File defining \ref o2scl::root_brent_gsl 
+*/
+
 #include <limits>
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_roots.h>

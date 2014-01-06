@@ -23,6 +23,10 @@
 #ifndef SMOOTH_GSL_H
 #define SMOOTH_GSL_H
 
+/** \file smooth_gsl.h
+    \brief File defining \ref o2scl::smooth_gsl 
+*/
+
 #include <iostream>
 #include <fstream>
 #include <string>

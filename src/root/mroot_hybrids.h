@@ -41,7 +41,7 @@
  * 02110-1301, USA.
  */
 /** \file mroot_hybrids.h
-    \brief File for definition of \ref o2scl::mroot_hybrids and 
+    \brief File defining \ref o2scl::mroot_hybrids and 
     specializations
 */
 #ifndef O2SCL_MROOT_HYBRIDS_H

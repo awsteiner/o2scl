@@ -49,6 +49,10 @@
 #ifndef O2SCL_OOL_MMIN_GENCAN_H
 #define O2SCL_OOL_MMIN_GENCAN_H
 
+/** \file mmin_constr_gencan.h
+    \brief File defining \ref o2scl::mmin_constr_gencan 
+*/
+
 #include <o2scl/text_file.h>
 #include <o2scl/multi_funct.h>
 #include <o2scl/ool_constr_min.h>

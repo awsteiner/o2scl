@@ -47,6 +47,10 @@
 #ifndef O2SCL_OOL_MMIN_PGRAD_H
 #define O2SCL_OOL_MMIN_PGRAD_H
 
+/** \file mmin_constr_pgrad.h
+    \brief File defining \ref o2scl::mmin_constr_pgrad 
+*/
+
 #include <gsl/gsl_math.h>
 
 #include <o2scl/multi_funct.h>

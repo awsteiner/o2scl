@@ -23,6 +23,10 @@
 #ifndef O2SCL_TABLE_UNITS_H
 #define O2SCL_TABLE_UNITS_H
 
+/** \file table_units.h
+    \brief File defining \ref o2scl::table_units 
+*/
+
 #include <o2scl/table.h>
 #include <o2scl/lib_settings.h>
 #include <o2scl/convert_units.h>

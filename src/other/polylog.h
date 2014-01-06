@@ -21,7 +21,7 @@
   -------------------------------------------------------------------
 */
 /** \file polylog.h
-    \brief File for definition of \ref o2scl::polylog
+    \brief File defining \ref o2scl::polylog
 */
 #ifndef O2SCL_POLYLOG_H
 #define O2SCL_POLYLOG_H

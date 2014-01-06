@@ -23,6 +23,10 @@
 #ifndef O2SCL_SEARCH_VEC_H
 #define O2SCL_SEARCH_VEC_H
 
+/** \file search_vec.h
+    \brief File defining \ref o2scl::search_vec and \ref o2scl::search_vec_ext 
+*/
+
 #include <iostream>
 #include <string>
 #include <o2scl/err_hnd.h>

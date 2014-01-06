@@ -47,6 +47,10 @@
 #ifndef O2SCL_OOL_MMIN_SPG_H
 #define O2SCL_OOL_MMIN_SPG_H
 
+/** \file mmin_constr_spg.h
+    \brief File defining \ref o2scl::mmin_constr_spg 
+*/
+
 #include <o2scl/multi_funct.h>
 #include <o2scl/mmin_constr.h>
 #include <gsl/gsl_math.h>
