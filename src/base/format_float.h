@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
 
-  Copyright (C) 2006-2013, Andrew W. Steiner
+  Copyright (C) 2006-2014, Andrew W. Steiner
 
   This file is part of O2scl.
   
@@ -23,6 +23,9 @@
 #ifndef O2SCL_FORMAT_FLOAT_H
 #define O2SCL_FORMAT_FLOAT_H
 
+/** \file format_float.h
+    \brief File defining \ref o2scl::format_float
+*/
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>

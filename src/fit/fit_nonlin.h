@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2013, Andrew W. Steiner
+  Copyright (C) 2006-2014, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -41,6 +41,10 @@
  */
 #ifndef O2SCL_FIT_NONLIN_H
 #define O2SCL_FIT_NONLIN_H
+
+/** \file fit_nonlin.h
+    \brief File defining \ref o2scl::fit_nonlin
+*/
 
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>

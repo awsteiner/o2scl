@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2013, Andrew W. Steiner
+  Copyright (C) 2006-2014, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -42,6 +42,9 @@
 #ifndef O2SCL_MIN_BRENT_GSL_H
 #define O2SCL_MIN_BRENT_GSL_H
 
+/** \file min_brent_gsl.h
+    \brief File defining \ref o2scl::min_brent_gsl
+*/
 #include <limits>
 
 // For gsl_min_test_interval()

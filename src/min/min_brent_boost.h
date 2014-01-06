@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2013, Andrew W. Steiner
+  Copyright (C) 2013-2014, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -22,6 +22,10 @@
 */
 #ifndef O2SCL_MIN_BRENT_BOOST_H
 #define O2SCL_MIN_BRENT_BOOST_H
+
+/** \file min_brent_boost.h
+    \brief File defining \ref o2scl::min_brent_boost
+*/
 
 #include <boost/math/tools/minima.hpp>
 

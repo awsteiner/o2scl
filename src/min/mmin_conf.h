@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
 
-  Copyright (C) 2006-2013, Andrew W. Steiner
+  Copyright (C) 2006-2014, Andrew W. Steiner
 
   This file is part of O2scl.
 
@@ -22,6 +22,10 @@
 */
 #ifndef O2SCL_GSL_MMIN_CONF_H
 #define O2SCL_GSL_MMIN_CONF_H
+
+/** \file mmin_conf.h
+    \brief File defining \ref o2scl::mmin_conf
+*/
 
 #include <gsl/gsl_blas.h>
 #include <gsl/gsl_multimin.h>

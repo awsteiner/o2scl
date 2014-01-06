@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2011-2013, Andrew W. Steiner
+  Copyright (C) 2011-2014, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -23,6 +23,9 @@
 #ifndef O2SCL_UNIFORM_GRID_H
 #define O2SCL_UNIFORM_GRID_H
 
+/** \file uniform_grid.h
+    \brief File defining \ref o2scl::uniform_grid and its children
+*/
 #include <boost/numeric/ublas/vector.hpp>
 
 #include <o2scl/err_hnd.h>

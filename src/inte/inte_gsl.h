@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2013, Andrew W. Steiner
+  Copyright (C) 2006-2014, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -40,6 +40,10 @@
  */
 #ifndef O2SCL_INTE_GSL_H
 #define O2SCL_INTE_GSL_H
+
+/** \file inte_gsl.h
+    \brief File defining \ref o2scl::inte_gsl
+*/
 
 #include <limits>
 

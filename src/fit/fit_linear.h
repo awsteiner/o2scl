@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2013, Andrew W. Steiner
+  Copyright (C) 2013-2014, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -41,6 +41,10 @@
  */
 #ifndef O2SCL_FIT_LINEAR_H
 #define O2SCL_FIT_LINEAR_H
+
+/** \file fit_linear.h
+    \brief File defining \ref o2scl::fit_linear
+*/
 
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>

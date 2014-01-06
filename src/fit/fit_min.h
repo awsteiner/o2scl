@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2013, Andrew W. Steiner
+  Copyright (C) 2006-2014, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -22,6 +22,10 @@
 */
 #ifndef O2SCL_FIT_MIN_H
 #define O2SCL_FIT_MIN_H
+
+/** \file fit_min.h
+    \brief File defining \ref o2scl::fit_min
+*/
 
 #include <o2scl/mmin.h>
 #include <o2scl/multi_funct.h>

@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2013, Jerry Gagelman
+  Copyright (C) 2006-2014, Jerry Gagelman
   and Andrew W. Steiner
   
   This file is part of O2scl.
@@ -23,6 +23,11 @@
 */
 #ifndef O2SCL_INTE_GSL_KRONROD_H
 #define O2SCL_INTE_GSL_KRONROD_H
+
+/** \file inte_kronrod_gsl.h
+    \brief File defining GSL-based integration coefficients, workspace, 
+    and \ref o2scl::inte_kronrod_gsl
+*/
 
 #include <cmath>
 #include <gsl/gsl_integration.h>

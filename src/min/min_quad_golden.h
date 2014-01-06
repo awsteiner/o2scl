@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2013, Andrew W. Steiner
+  Copyright (C) 2006-2014, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -44,6 +44,10 @@
 /*--------------------------------------------------------------------------*/
 #ifndef O2SCL_MIN_QUAD_GOLDEN_H
 #define O2SCL_MIN_QUAD_GOLDEN_H
+
+/** \file min_quad_golden.h
+    \brief File defining \ref o2scl::min_quad_golden
+*/
 
 #include <limits>
 #include <gsl/gsl_min.h>

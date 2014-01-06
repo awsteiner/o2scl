@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2013, Andrew W. Steiner
+  Copyright (C) 2006-2014, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -23,8 +23,8 @@
 #ifndef O2SCL_TENSOR_GRID_H
 #define O2SCL_TENSOR_GRID_H
 
-/** \file tensor.h
-    \brief File for definitions of tensors
+/** \file tensor_grid.h
+    \brief File defining \ref o2scl::tensor_grid and rank-specific children
 */
 
 #include <iostream>
@@ -62,7 +62,8 @@ namespace o2scl {
       This tensor class allows one to assign the indexes to numerical
       scales, so that n-dimensional interpolation can be performed. To
       set the grid, use \ref set_grid() or \ref set_grid_packed() and
-      then interpolation can be done using \ref interpolate().
+      then interpolation can be done using \ref interp_linear() or 
+      \ref interpolate().
       
       By convention, member functions ending in the _val 
       suffix return the closest grid-point to some user-specified

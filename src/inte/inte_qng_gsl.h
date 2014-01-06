@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2013, Andrew W. Steiner and Jerry Gagelman
+  Copyright (C) 2006-2014, Andrew W. Steiner and Jerry Gagelman
   
   This file is part of O2scl.
   
@@ -22,6 +22,10 @@
 */
 #ifndef O2SCL_INTE_QNG_GSL_H
 #define O2SCL_INTE_QNG_GSL_H
+
+/** \file inte_qng_gsl.h
+    \brief File defining \ref o2scl::inte_qng_gsl
+*/
 
 #include <o2scl/string_conv.h>
 #include <o2scl/inte.h>

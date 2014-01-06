@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2013, Andrew W. Steiner
+  Copyright (C) 2006-2014, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -22,6 +22,10 @@
 */
 #ifndef O2SCL_TABLE3D_H
 #define O2SCL_TABLE3D_H
+
+/** \file table3d.h
+    \brief File defining \ref o2scl::table3d
+*/
 
 #include <iostream>
 #include <fstream>

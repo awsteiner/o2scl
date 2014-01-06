@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2013, Andrew W. Steiner
+  Copyright (C) 2006-2014, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -22,6 +22,11 @@
 */
 #ifndef O2SCL_TEST_MGR_H
 #define O2SCL_TEST_MGR_H
+
+/** \file test_mgr.h
+    \brief File defining \ref o2scl::test_mgr
+*/
+
 #include <string>
 
 #include <o2scl/string_conv.h>

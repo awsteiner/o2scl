@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
 
-  Copyright (C) 2006-2013, Andrew W. Steiner
+  Copyright (C) 2006-2014, Andrew W. Steiner
 
   This file is part of O2scl.
   
@@ -23,6 +23,9 @@
 #ifndef O2SCL_HDF_IO_H
 #define O2SCL_HDF_IO_H
 
+/** \file hdf_io.h
+    \brief File defining HDF I/O for selected \o2 objects
+*/
 #include <boost/numeric/ublas/vector.hpp>
 
 #include <o2scl/hdf_file.h>

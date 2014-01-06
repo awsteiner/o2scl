@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2013, Andrew W. Steiner
+  Copyright (C) 2006-2014, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -25,7 +25,7 @@
 #define O2SCL_ASTEP_NONADAPT_H
 
 /** \file astep_nonadapt.h
-    \brief File for \ref o2scl::astep_nonadapt
+    \brief File defining \ref o2scl::astep_nonadapt
 */
 
 #include <gsl/gsl_math.h>

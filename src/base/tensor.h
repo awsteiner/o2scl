@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2013, Andrew W. Steiner
+  Copyright (C) 2006-2014, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -24,7 +24,7 @@
 #define O2SCL_TENSOR_H
 
 /** \file tensor.h
-    \brief Tensor classes
+    \brief File defining \ref o2scl::tensor and rank-specific children
 */
 #include <iostream>
 #include <cstdlib>

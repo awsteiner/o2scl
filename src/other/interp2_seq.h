@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2013, Andrew W. Steiner
+  Copyright (C) 2006-2014, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -21,7 +21,7 @@
   -------------------------------------------------------------------
 */
 /** \file interp2_seq.h
-    \brief File for definition of \ref o2scl::interp2_seq
+    \brief File defining \ref o2scl::interp2_seq
 */
 #ifndef O2SCL_INTERP2_SEQ_H
 #define O2SCL_INTERP2_SEQ_H

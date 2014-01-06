@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2013, Andrew W. Steiner
+  Copyright (C) 2006-2014, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -42,6 +42,9 @@
 #ifndef O2SCL_MCARLO_MISER_H
 #define O2SCL_MCARLO_MISER_H
 
+/** \file mcarlo_miser.h
+    \brief File defining \ref o2scl::mcarlo_miser
+*/
 #include <iostream>
 
 #include <boost/numeric/ublas/vector.hpp>

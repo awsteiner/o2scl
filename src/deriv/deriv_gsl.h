@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2013, Andrew W. Steiner
+  Copyright (C) 2006-2014, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -44,7 +44,7 @@
 #define O2SCL_DERIV_GSL_H
 
 /** \file deriv_gsl.h
-    \brief File for \ref o2scl::deriv_gsl
+    \brief File defining \ref o2scl::deriv_gsl
 */
 
 #include <iostream>

@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2010-2013, Andrew W. Steiner
+  Copyright (C) 2010-2014, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -23,6 +23,9 @@
 #ifndef O2SCL_HIST_H
 #define O2SCL_HIST_H
 
+/** \file hist.h
+    \brief File defining \ref o2scl::hist
+*/
 #include <iostream>
 
 #include <boost/numeric/ublas/vector.hpp>

@@ -1,7 +1,7 @@
 /* 
    -------------------------------------------------------------------
    
-   Copyright (C) 2010-2013, Edwin van Leeuwen
+   Copyright (C) 2010-2014, Edwin van Leeuwen
    
    This file is part of O2scl.
    

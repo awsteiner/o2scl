@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2013, Jerry Gagelman
+  Copyright (C) 2006-2014, Jerry Gagelman
   and Andrew W. Steiner
   
   This file is part of O2scl.
@@ -24,6 +24,9 @@
 #ifndef O2SCL_GSL_INTE_QAGIL_H
 #define O2SCL_GSL_INTE_QAGIL_H
 
+/** \file int_qagil_gsl.h
+    \brief File defining \ref o2scl::int_qagil_gsl
+*/
 #include <o2scl/inte.h>
 #include <o2scl/inte_qags_gsl.h>
 

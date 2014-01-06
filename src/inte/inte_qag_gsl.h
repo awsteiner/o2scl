@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2013, Jerry Gagelman
+  Copyright (C) 2006-2014, Jerry Gagelman
   and Andrew W. Steiner
   
   This file is part of O2scl.
@@ -42,6 +42,9 @@
 #ifndef O2SCL_GSL_INTE_QAG_H
 #define O2SCL_GSL_INTE_QAG_H
 
+/** \file inte_qag_gsl.h
+    \brief File defining \ref o2scl::inte_qag_gsl
+*/
 #include <o2scl/inte.h>
 #include <o2scl/inte_kronrod_gsl.h>
 #include <o2scl/funct.h>

@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2008-2013, Andrew W. Steiner
+  Copyright (C) 2008-2014, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -24,7 +24,7 @@
 #define O2SCL_CONVERT_UNITS_H
 
 /** \file convert_units.h
-    \brief File for \ref o2scl::convert_units
+    \brief File defining \ref o2scl::convert_units
 */
 
 #include <cstdio>

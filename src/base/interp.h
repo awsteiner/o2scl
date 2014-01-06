@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2013, Andrew W. Steiner
+  Copyright (C) 2006-2014, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -24,7 +24,7 @@
 #define O2SCL_INTERP_H
 
 /** \file interp.h
-    \brief Interpolation classes and interpolation types
+    \brief One-dimensional interpolation classes and interpolation types
 */
 
 #include <iostream>

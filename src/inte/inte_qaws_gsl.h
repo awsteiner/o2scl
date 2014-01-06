@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
  
-  Copyright (C) 2006-2013, Jerry Gagelman
+  Copyright (C) 2006-2014, Jerry Gagelman
   and Andrew W. Steiner
   
   This file is part of O2scl.
@@ -41,6 +41,10 @@
  */
 #ifndef GSL_INTE_QAWS_H
 #define GSL_INTE_QAWS_H
+
+/** \file inte_qaws_gsl.h
+    \brief File defining \ref o2scl::inte_qaws_gsl
+*/
 
 #include <o2scl/inte_qawc_gsl.h>
 

@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2011-2013, Andrew W. Steiner
+  Copyright (C) 2011-2014, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -22,6 +22,10 @@
 */
 #ifndef O2SCL_SHARED_PTR_H
 #define O2SCL_SHARED_PTR_H
+
+/** \file shared_ptr.h
+    \brief File defining \ref o2scl::o2_shared_ptr
+*/
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {

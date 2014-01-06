@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2013, Jerry Gagelman
+  Copyright (C) 2006-2014, Jerry Gagelman
   and Andrew W. Steiner
   
   This file is part of O2scl.
@@ -23,6 +23,10 @@
 */
 #ifndef O2SCL_GSL_INTE_QAWC_H
 #define O2SCL_GSL_INTE_QAWC_H
+
+/** \file inte_qawc_gsl.h
+    \brief File defining \ref o2scl::inte_qawc_gsl
+*/
 
 #include <o2scl/err_hnd.h>
 #include <o2scl/inte.h>
