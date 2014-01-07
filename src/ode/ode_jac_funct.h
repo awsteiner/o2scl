@@ -23,6 +23,10 @@
 #ifndef O2SCL_ODE_JAC_FUNCT_H
 #define O2SCL_ODE_JAC_FUNCT_H
 
+/** \file ode_jac_funct.h
+    \brief File defining ODE Jacobian function objects
+*/
+
 #include <string>
 
 #ifndef DOXYGEN_NO_O2NS

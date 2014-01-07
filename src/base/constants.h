@@ -82,7 +82,7 @@ namespace o2scl_const {
 /** \brief Constants in CGS units 
     
     CODATA 2010 values are in \ref Mohr12. IAU 2009 values
-    are from \ref Luzum09 . Solar mass from 
+    are from \ref Luzum11 . Solar mass from 
     http://asa.usno.navy.mil/SecK/2013/Astronomical_Constants_2013.pdf
 */
 namespace o2scl_cgs {
@@ -281,7 +281,7 @@ namespace o2scl_cgs {
 /** \brief Constants in CGSM units
     
     CODATA 2010 values are in \ref Mohr12. IAU 2009 values
-    are from \ref Luzum09 . Solar mass from 
+    are from \ref Luzum11 . Solar mass from 
     http://asa.usno.navy.mil/SecK/2013/Astronomical_Constants_2013.pdf
 */
 namespace o2scl_cgsm {
@@ -492,7 +492,7 @@ namespace o2scl_cgsm {
 /** \brief Constants in MKS units
     
     CODATA 2010 values are in \ref Mohr12. IAU 2009 values
-    are from \ref Luzum09 . Solar mass from 
+    are from \ref Luzum11 . Solar mass from 
     http://asa.usno.navy.mil/SecK/2013/Astronomical_Constants_2013.pdf
 */
 namespace o2scl_mks {
@@ -709,7 +709,7 @@ namespace o2scl_mks {
 /** \brief Constants in MKSA units
     
     CODATA 2010 values are in \ref Mohr12. IAU 2009 values
-    are from \ref Luzum09 . Solar mass from 
+    are from \ref Luzum11 . Solar mass from 
     http://asa.usno.navy.mil/SecK/2013/Astronomical_Constants_2013.pdf
 */
 namespace o2scl_mksa {

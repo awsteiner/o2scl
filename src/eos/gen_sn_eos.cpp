@@ -65,6 +65,13 @@ gen_sn_eos::gen_sn_eos() : cu(o2scl_settings.get_convert_units()) {
   loaded=false;
   with_leptons_loaded=false;
   baryons_only_loaded=false;
+
+  m_neut=o2scl_mks::mass_neutron*
+    o2scl_settings.get_convert_units().convert("kg","1/fm",1.0)*
+    o2scl_const::hc_mev_fm;
+  m_prot=o2scl_mks::mass_proton*
+    o2scl_settings.get_convert_units().convert("kg","1/fm",1.0)*
+    o2scl_const::hc_mev_fm;
 }
 
 gen_sn_eos::~gen_sn_eos() {
@@ -1002,6 +1009,9 @@ void sht_eos::load(std::string fname, size_t mode) {
   
   string stmp;
 
+  m_neut=939.0;
+  m_prot=939.0;
+
   for(size_t j=0;j<n_T;j++) {
     if (verbose>0) {
       cout << "Loading section for temperature=" << A.get_grid(2,j) 
@@ -1023,11 +1033,11 @@ void sht_eos::load(std::string fname, size_t mode) {
 	    other[2].set(i,k,j,dtemp);
 	  } else if (ell==3) {
 	    // Rescale it relative to Ye*mp+(1-Ye)*mn
-	    double Ye_tmp=Fptr->get_grid(1,k);
-	    double dtemp2=dtemp+939.0-o2scl_const::hc_mev_fm*
-	      (Ye_tmp*cu.convert("kg","1/fm",o2scl_mks::mass_proton)+
-	       (1.0-Ye_tmp)*cu.convert("kg","1/fm",o2scl_mks::mass_neutron));
-	    Fptr->set(i,k,j,dtemp2);
+	    //double Ye_tmp=Fptr->get_grid(1,k);
+	    //double dtemp2=dtemp+939.0-o2scl_const::hc_mev_fm*
+	    //(Ye_tmp*cu.convert("kg","1/fm",o2scl_mks::mass_proton)+
+	    //(1.0-Ye_tmp)*cu.convert("kg","1/fm",o2scl_mks::mass_neutron));
+	    Fptr->set(i,k,j,dtemp);
 	  } else if (ell==4) {
 	    Pptr->set(i,k,j,dtemp);
 	  } else if (ell==5) {
@@ -1035,13 +1045,13 @@ void sht_eos::load(std::string fname, size_t mode) {
 	    Eptr->set(i,k,j,Fptr->get(i,k,j)+Eptr->get_grid(2,j)*
 		      Sptr->get(i,k,j));
 	  } else if (ell==6) {
-	    mun.set(i,k,j,dtemp+939-
-		    cu.convert("kg","1/fm",o2scl_mks::mass_neutron)*
-		    hc_mev_fm);
+	    mun.set(i,k,j,dtemp);
+	    //+939-cu.convert("kg","1/fm",o2scl_mks::mass_neutron)*
+	    //hc_mev_fm);
 	  } else if (ell==7) {
-	    mup.set(i,k,j,dtemp+939-
-		    cu.convert("kg","1/fm",o2scl_mks::mass_proton)*
-		    hc_mev_fm);
+	    mup.set(i,k,j,dtemp);
+	    //+939-cu.convert("kg","1/fm",o2scl_mks::mass_neutron)*
+	    //hc_mev_fm);
 	  } else if (ell==8) {
 	    // Electron chemical potential (this already includes
 	    // the electron mass)

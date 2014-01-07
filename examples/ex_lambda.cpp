@@ -33,7 +33,7 @@
 */
 #include <iostream>
 #include <functional>
-#include <o2scl/gsl_root_brent.h>
+#include <o2scl/root_brent_gsl.h>
 #include <o2scl/test_mgr.h>
 
 using namespace std;
@@ -63,7 +63,7 @@ int main(void) {
   cout.setf(ios::scientific);
 
   // The O2scl solver
-  gsl_root_brent<std::function<double(double)> > grb;
+  root_brent_gsl<std::function<double(double)> > grb;
   // For the initial bracket 
   double a, b;
 

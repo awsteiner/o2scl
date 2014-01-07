@@ -42,6 +42,10 @@
 #ifndef O2SCL_GSL_RK8PD_H
 #define O2SCL_GSL_RK8PD_H
 
+/** \file ode_rk8pd_gsl.h
+    \brief File defining \ref o2scl::ode_rk8pd_gsl 
+*/
+
 #include <o2scl/ode_step.h>
 #include <o2scl/err_hnd.h>
 

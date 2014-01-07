@@ -23,6 +23,10 @@
 #ifndef O2SCL_ODE_IT_SOLVE_H
 #define O2SCL_ODE_IT_SOLVE_H
 
+/** \file ode_it_solve.h
+    \brief File defining \ref o2scl::ode_it_solve 
+*/
+
 #include <iostream>
 
 #include <boost/numeric/ublas/vector.hpp>

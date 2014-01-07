@@ -23,6 +23,10 @@
 #ifndef O2SCL_ODE_IV_TABLE_H
 #define O2SCL_ODE_IV_TABLE_H
 
+/** \file ode_iv_table.h
+    \brief File defining \ref o2scl::ode_iv_table 
+*/
+
 #include <o2scl/astep.h>
 #include <o2scl/astep_gsl.h>
 #include <o2scl/ode_iv_solve.h>

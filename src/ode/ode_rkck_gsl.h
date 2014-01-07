@@ -42,6 +42,10 @@
 #ifndef O2SCL_GSL_RKCK_H
 #define O2SCL_GSL_RKCK_H
 
+/** \file ode_rkck_gsl.h
+    \brief File defining \ref o2scl::ode_rkck_gsl 
+*/
+
 #include <o2scl/err_hnd.h>
 #include <o2scl/ode_funct.h>
 #include <o2scl/ode_step.h>

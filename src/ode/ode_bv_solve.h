@@ -23,6 +23,10 @@
 #ifndef O2SCL_ODE_BV_SOLVE_H
 #define O2SCL_ODE_BV_SOLVE_H
 
+/** \file ode_bv_solve.h
+    \brief File defining \ref o2scl::ode_bv_solve 
+*/
+
 #include <string>
 #include <o2scl/astep.h>
 #include <o2scl/astep_gsl.h>

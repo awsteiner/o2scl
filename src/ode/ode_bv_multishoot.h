@@ -24,6 +24,10 @@
 #ifndef O2SCL_ODE_BV_MULTISHOOT_H
 #define O2SCL_ODE_BV_MULTISHOOT_H
 
+/** \file ode_bv_multishoot.h
+    \brief File defining \ref o2scl::ode_bv_multishoot 
+*/
+
 #include <string>
 #include <o2scl/astep.h>
 #include <o2scl/astep_gsl.h>

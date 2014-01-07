@@ -91,11 +91,14 @@ namespace o2scl {
       aren't either purely linear or purely logarithmic.
       \endcomment
 
+      \future Add option to rescale energies and chemical 
+      potentials to different masses.
       \future Create a \ref o2scl::table object, possibly using 
       tensor_grid::vector_slice. 
       \future Show how matrix_slice and vector_slice can be used
       with this object.
-      \future Add option to load and store a separate lepton/photon EOS
+      \future Add option to load and store a separate lepton/photon
+      EOS
       \future Add pions?
       \future Create a standard output format? Output to
       stellarcollapse.org HDF5 format?
@@ -136,18 +139,46 @@ namespace o2scl {
     //@{
     /** \brief Total free energy per baryon in MeV (without 
 	baryon rest masses but including electron rest mass)
+
+	By default, this energy is relative to 
+	\f[
+	m_n (1-Y_e) + m_p Y_e
+	\f]
+	where \f$ m_n \f$ is stored in \ref m_neut and \f$ m_p \f$
+	is stored in \ref m_prot .
     */
     tensor_grid3 F;
     /** \brief Free energy per baryon without lepton and photon 
 	contributions in MeV
+
+	By default, this energy is relative to 
+	\f[
+	m_n (1-Y_e) + m_p Y_e
+	\f]
+	where \f$ m_n \f$ is stored in \ref m_neut and \f$ m_p \f$
+	is stored in \ref m_prot .
     */
     tensor_grid3 Fint;
     /** \brief Total internal energy per baryon in MeV (without 
 	baryon rest masses but including electron rest mass)
+
+	By default, this energy is relative to 
+	\f[
+	m_n (1-Y_e) + m_p Y_e
+	\f]
+	where \f$ m_n \f$ is stored in \ref m_neut and \f$ m_p \f$
+	is stored in \ref m_prot .
     */
     tensor_grid3 E;
     /** \brief Internal energy per baryon without lepton and photon 
 	contributions in MeV
+
+	By default, this energy is relative to 
+	\f[
+	m_n (1-Y_e) + m_p Y_e
+	\f]
+	where \f$ m_n \f$ is stored in \ref m_neut and \f$ m_p \f$
+	is stored in \ref m_prot .
     */
     tensor_grid3 Eint;
     /// Total pressure in \f$ \mathrm{MeV}/\mathrm{fm}^3 \f$
@@ -160,9 +191,17 @@ namespace o2scl {
     tensor_grid3 S;
     /// Entry per baryon without lepton and photon contributions
     tensor_grid3 Sint;
-    /// Neutron chemical potential in MeV
+    /** \brief Neutron chemical potential in MeV
+
+	By default this is relative to the neutron mass in
+	\ref m_neut .
+     */
     tensor_grid3 mun;
-    /// Proton chemical potential in MeV
+    /** \brief Proton chemical potential in MeV
+
+	By default this is relative to the proton mass in
+	\ref m_prot .
+    */
     tensor_grid3 mup;
     /// Proton number
     tensor_grid3 Z;
@@ -191,6 +230,19 @@ namespace o2scl {
 	to linear interpolation.
     */
     void set_interp_type(size_t interp_type);
+    //@}
+
+    /// \name Nucleon masses
+    //@{
+    /** \brief Neutron mass in \f$ \mathrm{MeV} \f$ 
+	(defaults to o2scl_mks::mass_neutron times o2scl_const::hc_mev_fm)
+    */
+    double m_neut;
+    
+    /** \brief Proton mass in \f$ \mathrm{MeV} \f$ 
+	(defaults to o2scl_mks::mass_proton times o2scl_const::hc_mev_fm)
+    */
+    double m_prot;
     //@}
 
     /// \name Electron and photon contribution

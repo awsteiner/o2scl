@@ -24,6 +24,10 @@
 #ifndef O2SCL_ODE_STEP_H
 #define O2SCL_ODE_STEP_H
 
+/** \file ode_step.h
+    \brief File defining \ref o2scl::ode_step 
+*/
+
 #include <o2scl/ode_funct.h>
 
 #ifndef DOXYGEN_NO_O2NS

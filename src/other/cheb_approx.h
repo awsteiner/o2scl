@@ -41,9 +41,9 @@ namespace o2scl {
       
       Approximate a function on a finite interval using a Chebyshev series:
       \f[
-      f(x) = \sum_n c_n T_n(x) \qquad \mathrm{where}
-      \qquad T_n(x)=\cos(n \arccos x)
+      f(x) = \sum_n c_n T_n(x)
       \f]
+      where \f$ T_n(x)=\cos(n \arccos x) \f$
 
       See also the \ref ex_cheb_sect .
 
@@ -116,7 +116,7 @@ namespace o2scl {
 	a and b are swapped if this is not the case.
     */
     template<class func_t> 
-      int init(func_t &func, size_t ord, double a1, double b1) {
+      void init(func_t &func, size_t ord, double a1, double b1) {
       size_t k, j;
 
       if(a1>=b1) {
@@ -150,11 +150,11 @@ namespace o2scl {
 
       init_called=true;
 
-      return 0;
+      return;
     }
 
     /// Create an approximation from a vector of coefficients
-    template<class vec_t> int init(double a1, double b1, 
+    template<class vec_t> void init(double a1, double b1, 
 				   size_t ord, vec_t &v) {
       order=ord;
       order_sp=order;
@@ -165,11 +165,11 @@ namespace o2scl {
 
       init_called=true;
 
-      return 0;
+      return;
     }
 
     /// Create an approximation from a vector of function values
-    template<class vec_t> int init_func_values(double a1, double b1, 
+    template<class vec_t> void init_func_values(double a1, double b1, 
 					       size_t ord, vec_t &fval) {
       size_t k, j;
       
@@ -199,7 +199,7 @@ namespace o2scl {
 
       init_called=true;
 
-      return 0;
+      return;
     }
     //@}
 
@@ -263,7 +263,7 @@ namespace o2scl {
     
     /** \brief Evaluate the approximation and give the uncertainty
      */
-    int eval_err(double x, double &result, double &abserr) {
+    void eval_err(double x, double &result, double &abserr) {
 
       size_t i;
       double d1 = 0.0;
@@ -298,13 +298,13 @@ namespace o2scl {
 
       abserr = fabs (c[order]) + absc*dbl_eps;
       
-      return o2scl::success;
+      return;
     }
 
     /** \brief Evaluate the approximation to a specified order
 	and give the uncertainty
      */
-    int eval_n_err(size_t n, double x, double &result, double &abserr) {
+    void eval_n_err(size_t n, double x, double &result, double &abserr) {
       size_t i;
       double d1 = 0.0;
       double d2 = 0.0;
@@ -341,7 +341,7 @@ namespace o2scl {
       /* Combine truncation error and numerical error */
       abserr = fabs(c[eval_order])+absc*dbl_eps;
 
-      return o2scl::success;
+      return;
     }
     //@}
 
@@ -365,46 +365,47 @@ namespace o2scl {
 
 	Legal values of the argument are 0 to \c order (inclusive)
     */
-    int set_coefficient(size_t ix, double co) {
+    void set_coefficient(size_t ix, double co) {
       if (ix<order+1) {
 	c[ix]=co;
-	return 0;
+	return;
       }
-      O2SCL_ERR_RET
+      O2SCL_ERR
 	("Requested invalid coefficient in cheb_approx::get_coefficient()",
 	 o2scl::exc_einval);
+      return;
     }
 
     /// Return the endpoints of the approximation
-    int get_endpoints(double &la, double &lb) {
+    void get_endpoints(double &la, double &lb) {
       la=a;
       lb=b;
-      return 0;
+      return;
     }
     
     /** \brief Get the coefficients
     */
-    template<class vec_t> int get_coefficients(size_t n, vec_t &v) const {
+    template<class vec_t> void get_coefficients(size_t n, vec_t &v) const {
       for(size_t i=0;i<order+1 && i<n;i++) {
 	v[i]=c[i];
       }
-      return 0;
+      return;
     }
 
     /** \brief Set the coefficients
     */
-    template<class vec_t> int set_coefficients(size_t n, const vec_t &v) {
+    template<class vec_t> void set_coefficients(size_t n, const vec_t &v) {
       for(size_t i=0;i<order+1 && i<n;i++) {
 	c[i]=v[i];
       }
-      return 0;
+      return;
     }
     //@}
 
     /// \name Derivatives and integrals
     //@{
     /// Make \c gc an approximation to the derivative
-    int deriv(cheb_approx &gc) const {
+    void deriv(cheb_approx &gc) const {
 
       size_t n=order+1;
       
@@ -434,11 +435,11 @@ namespace o2scl {
 	}
       }
       
-      return 0;
+      return;
     }
 
     /// Make \c gc an approximation to the integral
-    int integ(cheb_approx &gc) const {
+    void integ(cheb_approx &gc) const {
 
       size_t n=order+1;
       
@@ -476,7 +477,7 @@ namespace o2scl {
 	gc.c[0]=2.0*sum;
       }
 
-      return 0;
+      return;
     }
     //@}
     

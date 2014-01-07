@@ -24,6 +24,10 @@
 #ifndef O2SCL_ODE_BV_MSHOOT_H
 #define O2SCL_ODE_BV_MSHOOT_H
 
+/** \file ode_bv_mshoot.h
+    \brief File defining \ref o2scl::ode_bv_mshoot 
+*/
+
 #include <o2scl/ode_bv_solve.h>
 
 #ifndef DOXYGEN_NO_O2NS

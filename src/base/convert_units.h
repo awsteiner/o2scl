@@ -141,13 +141,13 @@ namespace o2scl {
     virtual double convert(std::string from, std::string to, double val);
 
     /// Manually insert a unit conversion into the cache
-    int insert_cache(std::string from, std::string to, double conv);
+    void insert_cache(std::string from, std::string to, double conv);
 
     /// Manually remove a unit conversion into the cache
-    int remove_cache(std::string from, std::string to);
+    void remove_cache(std::string from, std::string to);
     
     /// Print the present unit cache to std::cout
-    int print_cache();
+    void print_cache();
 
     /** \brief Make a GNU \c units.dat file from the GSL constants
 
@@ -159,7 +159,7 @@ namespace o2scl {
 	\note Not all of the GSL constants or the canonical GNU units 
 	conversions are given here.
     */
-    int make_units_dat(std::string fname, bool c_1=false, 
+    void make_units_dat(std::string fname, bool c_1=false, 
 		       bool hbar_1=false, bool K_1=false);
     
   };

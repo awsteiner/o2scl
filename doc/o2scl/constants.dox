@@ -10,9 +10,8 @@
     released data. Electron, neutron, proton, and atomic mass have
     been updated with CODATA 2010 values. Also electron charge,
     gravitational constant, plancks_constant_hbar, are updated. The
-    astronomical unit has been updated with the result from Luzum et
-    al., Celest. Mech. Dyn. Astron. 110 (2011) 293 (and possibly other
-    values need updating as well).
+    astronomical unit has been updated with the result from \ref
+    Luzum11 (and possibly other values need updating as well).
 
     These physical constants are often used to create unit conversion
     factors, described in \ref unitconv_section. 

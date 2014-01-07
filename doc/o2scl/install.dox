@@ -19,10 +19,10 @@
     make \c o2scl-test in the individual subdirectories of the src
     directory to individually test the classes and functions in that
     part of \o2. Note that <tt>make check</tt> will not work. The
-    testing code in src/base/lib_settings_ts.cpp can be useful in
-    finding out how \o2 was compiled. After <tt>make o2scl-test</tt>,
-    running <tt>src/base/lib_settings_ts</tt> will output several of
-    the installation settings.
+    testing code in <tt>src/base/lib_settings_ts.cpp</tt> can be
+    useful in finding out how \o2 was compiled. After <tt>make
+    o2scl-test</tt>, running <tt>src/base/lib_settings_ts</tt> will
+    output several of the installation settings.
 
     \comment 
     This ensures that the URLs fit in the PDF documentation

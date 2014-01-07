@@ -997,6 +997,12 @@ namespace o2scl {
       double arr[3]={x,y,z};
       return interpolate(arr);
     }
+
+    /// Interpolate \c (x,y,z) and return the results
+    double interp_linear(double x, double y, double z) {
+      double arr[3]={x,y,z};
+      return tensor_grid::interp_linear(arr);
+    }
   };
   
   /** \brief Rank 4 tensor with a grid

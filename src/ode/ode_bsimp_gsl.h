@@ -43,6 +43,10 @@
 #ifndef O2SCL_GSL_BSIMP_H
 #define O2SCL_GSL_BSIMP_H
 
+/** \file ode_bsimp_gsl.h
+    \brief File defining \ref o2scl::ode_bsimp_gsl 
+*/
+
 #include <gsl/gsl_math.h>
 
 #include <o2scl/err_hnd.h>

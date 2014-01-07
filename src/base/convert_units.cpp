@@ -197,7 +197,7 @@ double convert_units::convert(std::string from, std::string to, double val) {
   return 0.0;
 }
 
-int convert_units::remove_cache(std::string from, std::string to) {
+void convert_units::remove_cache(std::string from, std::string to) {
 
   // Remove whitespace
   remove_whitespace(from);
@@ -207,7 +207,7 @@ int convert_units::remove_cache(std::string from, std::string to) {
   miter m3=mcache.find(both);
   if (m3!=mcache.end()) {
     mcache.erase(m3);
-    return success;
+    return;
   }
   
   if (err_on_fail) {
@@ -216,10 +216,10 @@ int convert_units::remove_cache(std::string from, std::string to) {
 	      exc_enotfound);
   }
 
-  return exc_enotfound;
+  return;
 }
 
-int convert_units::insert_cache
+void convert_units::insert_cache
 (std::string from, std::string to, double conv) {
 
   // Remove whitespace
@@ -229,8 +229,8 @@ int convert_units::insert_cache
   if (err_on_fail && 
       (from.find(',')!=std::string::npos || 
        to.find(',')!=std::string::npos)) {
-    O2SCL_ERR_RET("Units cannot contain comma in insert_cache()",
-		  exc_efailed);
+    O2SCL_ERR("Units cannot contain comma in insert_cache()",
+	      exc_efailed);
   }
 
   unit_t ut;
@@ -247,10 +247,10 @@ int convert_units::insert_cache
   }
 
   mcache.insert(make_pair(both,ut));
-  return 0;
+  return;
 }
     
-int convert_units::print_cache() {
+void convert_units::print_cache() {
   miter m;
   if (mcache.size()==0) {
     cout << "No units in cache." << endl;
@@ -267,10 +267,10 @@ int convert_units::print_cache() {
       std::cout << m->second.c << std::endl;
     }
   }
-  return 0;
+  return;
 }
 
-int convert_units::make_units_dat(std::string fname, bool c_1, 
+void convert_units::make_units_dat(std::string fname, bool c_1, 
 				  bool hbar_1, bool K_1) {
   
   std::ofstream fout(fname.c_str());
@@ -715,6 +715,6 @@ int convert_units::make_units_dat(std::string fname, bool c_1,
        << " kg m / A^2 s^2" << std::endl;
   fout.close();
       
-  return 0;
+  return;
 }
 
