@@ -11,7 +11,7 @@
     - \ref o2scl::sht_eos - The G. Shen et al. EOS tables 
     (\ref Shen10a, \ref Shen10b, \ref Shen11)
     - \ref o2scl::hfsl_eos - The M. Hempel et al. EOS tables
-    (\ref Hempel10 and Hempel11)
+    (\ref Hempel10 and \ref Hempel11)
     - \ref o2scl::oo_eos - The Lattimer-Swesty and H. Shen et al. tables
     reformatted by O'Connor and Ott (\ref OConnor10)
 
