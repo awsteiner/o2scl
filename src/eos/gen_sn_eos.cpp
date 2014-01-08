@@ -577,6 +577,21 @@ void oo_eos::load(std::string fname, size_t mode) {
     m_prot=939.0;
   }
 
+  if (sht_mode) {
+    m_neut=939.0;
+    m_prot=939.0;
+  } else if (stos_mode) {
+    m_neut=938.0;
+    m_prot=938.0;
+  } else if (hfsl_mode) {
+    m_neut=939.565346;
+    m_prot=938.272013;
+  } else {
+    // (ls_mode)
+    m_neut=939.0;
+    m_prot=939.0;
+  }
+
   alloc();
 
   std::vector<double> ye_grid, t_grid, grid;
