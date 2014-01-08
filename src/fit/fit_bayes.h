@@ -146,7 +146,7 @@ namespace o2scl {
     lydat=&ydat;
     lyerr=&yerr;
     pri=&prior_fun;
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
     multi_funct11 mfm=
       std::bind(std::mem_fn<double(size_t,const ubvector &)>
 		(&fit_bayes::integrand),

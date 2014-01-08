@@ -47,7 +47,7 @@ namespace o2scl {
 
       See \ref Broyden65.
   */
-#ifndef O2SCL_CPP11 
+#ifdef O2SCL_NO_CPP11 
   template<class func_t=mm_funct<>, 
     class vec_t=boost::numeric::ublas::vector<double>, 
     class mat_t=boost::numeric::ublas::matrix<double>, 
@@ -161,7 +161,7 @@ namespace o2scl {
     mroot_broyden() {
       mem_size=0;
       ajac=&def_jac;
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
       double sqrt_dbl_eps=sqrt(std::numeric_limits<double>::epsilon());
 #else 
       double sqrt_dbl_eps=GSL_SQRT_DBL_EPSILON;

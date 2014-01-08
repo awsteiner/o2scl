@@ -44,7 +44,7 @@ namespace o2scl {
       See an example for the usage of this class in 
       \ref ex_mmin_sect .
   */
-#ifndef O2SCL_CPP11
+#ifdef O2SCL_NO_CPP11
   template<class func_t=multi_funct<>, 
     class vec_t=boost::numeric::ublas::vector<double>, 
     class dfunc_t=grad_funct<boost::numeric::ublas::vector<double> >, 

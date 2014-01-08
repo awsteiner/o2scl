@@ -216,7 +216,7 @@ namespace o2scl {
       
     double fm1, fp1, fmh, fph;
 
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
     double eps=std::numeric_limits<double>::epsilon();
 #else
     double eps=GSL_DBL_EPSILON;

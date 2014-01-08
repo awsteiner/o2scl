@@ -46,7 +46,7 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
 
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
 
   double x, min;
   funct11 f=minfun;

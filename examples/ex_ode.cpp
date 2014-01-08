@@ -39,14 +39,14 @@
 #include <o2scl/astep_gsl.h>
 #include <o2scl/ode_iv_solve.h>
 #include <o2scl/table.h>
-#ifdef O2SCL_HDF_IN_EXAMPLES
+#ifdef O2SCL_HDF
 #include <o2scl/hdf_file.h>
 #include <o2scl/hdf_io.h>
 #endif
 
 using namespace std;
 using namespace o2scl;
-#ifdef O2SCL_HDF_IN_EXAMPLES
+#ifdef O2SCL_HDF
 using namespace o2scl_hdf;
 #endif
 
@@ -449,7 +449,7 @@ int main(void) {
   // ------------------------------------------------------------
   // Output results to a file
 
-#ifdef O2SCL_HDF_IN_EXAMPLES
+#ifdef O2SCL_HDF
   hdf_file hf;
   hf.open_or_create("ex_ode.o2");
   for(size_t i=0;i<8;i++) {

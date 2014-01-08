@@ -117,7 +117,7 @@ namespace o2scl {
       here, and also add support for the nmsimplex2rand algorithm
       in GSL.
   */
-#ifndef O2SCL_CPP11
+#ifdef O2SCL_NO_CPP11
   template<class func_t=multi_funct<>,
     class vec_t=boost::numeric::ublas::vector<double> > class mmin_simp2 :
     public mmin_base<func_t,func_t,vec_t>

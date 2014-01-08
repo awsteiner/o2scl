@@ -109,7 +109,7 @@ namespace o2scl {
       1980. The GSL code follows most closely the C version by D. R.
       Yennie, coded in 1984.
   */
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
   template<class func_t=multi_funct11, 
     class vec_t=boost::numeric::ublas::vector<double>,
     class rng_t=std::mt19937, 

@@ -113,7 +113,7 @@ int main(void) {
     t.test_rel(res1,res2,1.0e-9,"O2SCL vs. GSL");
   }
 
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
 
   // O2SCL version with CPP11 RNG
   {

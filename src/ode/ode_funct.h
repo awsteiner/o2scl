@@ -37,13 +37,18 @@
 namespace o2scl {
 #endif
 
-#if defined (O2SCL_CPP11) || defined (DOXYGENP)
+#if !defined (O2SCL_NO_CPP11) || defined (DOXYGENP)
+
+  //template<class vec_y_t, class vec_dydt_t> using ode_funct11 = 
+  //std::function<int(double,size_t,const vec_y_t &,vec_dydt_t &)>;
 
   /** \brief Ordinary differential equation function (C++11 version)
    */
-  template<class vec_y_t, class vec_dydt_t> using ode_funct11 = 
-    std::function<int(double,size_t,const vec_y_t &,vec_dydt_t &)>;
-
+  typedef std::function<int(double,size_t,
+			    const boost::numeric::ublas::vector<double> &,
+			    boost::numeric::ublas::vector<double> &)> 
+    ode_funct11;
+  
 #endif
 
   /** \brief Ordinary differential equation function [abstract base]

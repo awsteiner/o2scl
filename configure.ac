@@ -53,7 +53,7 @@ AC_SUBST(OLIB_LT_VERSION)
 # ----------------------------------------------
 
 AC_ARG_ENABLE(partlib,
-[  --enable-partlib        Include particle library [default=yes]],
+[  --enable-partlib        Include particle library @<:@default=yes@:>@],
 [case "${enableval}" in
 yes) partlib=true ;;
 no)  partlib=false ;;
@@ -67,7 +67,7 @@ AM_CONDITIONAL(O2SCL_PARTLIB, test x$partlib = xtrue)
 # ----------------------------------------------
 
 AC_ARG_ENABLE(eoslib,
-[  --enable-eoslib         Include equation of state library [default=yes]],
+[  --enable-eoslib         Include equation of state library @<:@default=yes@:>@],
 [case "${enableval}" in
 yes) eoslib=true ;;
 no)  eoslib=false ;;
@@ -130,7 +130,7 @@ AC_CHECK_LIB([gsl], [gsl_vector_get], [],
 # ----------------------------------------------
 
 AC_ARG_ENABLE(readline,
-[  --enable-readline       Include readline support [default=yes]],
+[  --enable-readline       Include readline support @<:@default=yes@:>@],
 [case "${enableval}" in
 yes) readline=true ;;
 no)  readline=false ;;
@@ -144,7 +144,7 @@ AM_CONDITIONAL(O2SCL_READLINE, test x$readline = xtrue)
 # ----------------------------------------------
 
 AC_ARG_ENABLE(hdf,
-[  --enable-hdf            Include HDF5 support [default=yes]],
+[  --enable-hdf            Include HDF5 support @<:@default=yes@:>@],
 [case "${enableval}" in
 yes) hdf=true ;;
 no)  hdf=false ;;
@@ -191,7 +191,7 @@ AC_CHECK_LIB([hdf5_hl], [H5TBread_table], [],
 # ----------------------------------------------
 
 AC_ARG_ENABLE(acol,
-[  --enable-acol           Include command-line utility 'acol' [default=yes]],
+[  --enable-acol           Include command-line utility 'acol' @<:@default=yes@:>@],
 [case "${enableval}" in
 yes) acol=true ;;
 no)  acol=false ;;
@@ -205,7 +205,7 @@ AM_CONDITIONAL(O2SCL_ENABLE_ACOL, test x$acol = xtrue)
 # ----------------------------------------------
 
 AC_ARG_ENABLE(armadillo,
-[  --enable-armadillo      Include Armadillo support [default=no]],
+[  --enable-armadillo      Include Armadillo support @<:@default=no@:>@],
 [case "${enableval}" in
 yes) armadillo=true ;;
 no)  armadillo=false ;;
@@ -233,11 +233,25 @@ AM_CONDITIONAL(O2SCL_ARMA, test x$armadillo = xtrue)
 #])
 
 # ----------------------------------------------
+# Enable or disable Cpp11 support
+# ----------------------------------------------
+
+AC_ARG_ENABLE(cpp11,
+[  --enable-cpp11          Include C++11 support @<:@default=yes@:>@],
+[case "${enableval}" in
+yes) cpp11=true ;;
+no)  cpp11=false ;;
+*) AC_MSG_ERROR(bad value ${enableval} for --enable-cpp11) ;;
+esac],[cpp11=true])
+
+AM_CONDITIONAL(O2SCL_CPP11, test x$cpp11 = xtrue)
+
+# ----------------------------------------------
 # Enable or disable Eigen support
 # ----------------------------------------------
 
 AC_ARG_ENABLE(eigen,
-[  --enable-eigen          Include Eigen support [default=no]],
+[  --enable-eigen          Include Eigen support @<:@default=no@:>@],
 [case "${enableval}" in
 yes) eigen=true ;;
 no)  eigen=false ;;
@@ -251,7 +265,7 @@ AM_CONDITIONAL(O2SCL_EIGEN, test x$eigen = xtrue)
 # ----------------------------------------------
 
 AC_ARG_ENABLE(openmp,
-[  --enable-openmp         Include OpenMP support [default=no]],
+[  --enable-openmp         Include OpenMP support @<:@default=no@:>@],
 [case "${enableval}" in
 yes) openmp=true ;;
 no)  openmp=false ;;

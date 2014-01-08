@@ -265,7 +265,7 @@ int main(void) {
 
 #endif
   
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
   
   // 1a - Member function with new C++11 extensions
   mm_funct11 f_new=

@@ -459,7 +459,7 @@ namespace o2scl {
       O2SCL_ERR_RET(estr.c_str(),exc_einval);			
     }
 		
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
       double dbl_eps=std::numeric_limits<double>::epsilon();
 #else 
       double dbl_eps=GSL_DBL_EPSILON;

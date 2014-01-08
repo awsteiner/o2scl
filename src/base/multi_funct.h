@@ -39,7 +39,7 @@
 namespace o2scl {
 #endif
 
-#if defined (O2SCL_CPP11) || defined (DOXYGENP)
+#if !defined (O2SCL_NO_CPP11) || defined (DOXYGENP)
   
   /// Multi-dimensional function typedef (C++11 version)
   typedef std::function<
@@ -440,7 +440,7 @@ namespace o2scl {
 
   };
 
-#if defined (O2SCL_CPP11) || defined (DOXYGENP)
+#if !defined (O2SCL_NO_CPP11) || defined (DOXYGENP)
 
   /** \brief A multi-dimensional function from a string
   */

@@ -510,7 +510,7 @@ namespace o2scl {
       could have control over, for example, the <tt>nslow2</tt>
       threshold which indicates failure.
   */
-#ifndef O2SCL_CPP11 
+#ifdef O2SCL_NO_CPP11 
   template<class func_t=mm_funct<>, 
     class vec_t=boost::numeric::ublas::vector<double>, 
     class mat_t=boost::numeric::ublas::matrix<double>,
@@ -654,7 +654,7 @@ namespace o2scl {
     shrink_step=true;
     dim=0;
     ajac=&def_jac;
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
     double sqrt_dbl_eps=sqrt(std::numeric_limits<double>::epsilon());
 #else 
     double sqrt_dbl_eps=GSL_SQRT_DBL_EPSILON;

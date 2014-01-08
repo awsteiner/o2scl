@@ -29,7 +29,7 @@
 */
 #include <o2scl/rmf_nucleus.h>
 #include <o2scl/test_mgr.h>
-#ifdef O2SCL_HDF_IN_EXAMPLES
+#ifdef O2SCL_HDF
 #include <o2scl/hdf_io.h>
 #include <o2scl/hdf_eos_io.h>
 #endif
@@ -37,7 +37,7 @@
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
-#ifdef O2SCL_HDF_IN_EXAMPLES
+#ifdef O2SCL_HDF
 using namespace o2scl_hdf;
 #endif
 
@@ -105,7 +105,7 @@ int main(int argv, char *argc[]) {
   
   t.test_rel(-7.842551,rn.etot,1.0e-5,"Lead binding energy");
 
-#ifdef O2SCL_HDF_IN_EXAMPLES
+#ifdef O2SCL_HDF
 
   hdf_file hf;
   hdf_file hf2;

@@ -71,7 +71,7 @@ void mass_fit::fit(nuclear_mass_fit &n, double &fmin) {
   ubvector mx(nv);
   nmf->guess_fun(nv,mx);
   
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
   multi_funct11 mfm=
     std::bind(std::mem_fn<double(size_t,const ubvector &)>(&mass_fit::min_fun),
 	      this,std::placeholders::_1,std::placeholders::_2);

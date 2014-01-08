@@ -37,7 +37,7 @@
 namespace o2scl {
 #endif
 
-#if defined (O2SCL_CPP11) || defined (DOXYGENP)
+#if !defined (O2SCL_NO_CPP11) || defined (DOXYGENP)
   
   /// Array of multi-dimensional functions typedef (C++11 version)
   typedef std::function<
@@ -505,7 +505,7 @@ namespace o2scl {
     
   };
   
-#if defined (O2SCL_CPP11) || defined (DOXYGENP)
+#if !defined (O2SCL_NO_CPP11) || defined (DOXYGENP)
 
   /** \brief Array of multi-dimensional functions in an array of strings
    */

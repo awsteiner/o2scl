@@ -100,7 +100,7 @@ int main(void) {
   
   cout.setf(ios::scientific);
 
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
   multi_funct11 mf=minfun;
   grad_funct11 mfd=minfund;
 #else  
@@ -131,7 +131,7 @@ int main(void) {
   cout << endl;
   
   // Show that we can use a user-specified automatic gradient object
-#ifndef O2SCL_CPP11
+#ifdef O2SCL_NO_CPP11
   mmin_conf<multi_funct<>,ubvector,grad_funct<ubvector>,
 	    gradient<multi_funct<>,ubvector>,
 	    gradient_gsl_new<multi_funct<>,ubvector> > g3;

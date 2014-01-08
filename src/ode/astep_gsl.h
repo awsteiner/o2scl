@@ -263,7 +263,7 @@ namespace o2scl {
       - \c func_t - \ref ode_funct
       - \c vec_t - \ref boost::numeric::ublas::vector \< double \>
   */
-#ifndef O2SCL_CPP11
+#ifdef O2SCL_NO_CPP11
   template<class vec_y_t=boost::numeric::ublas::vector<double>,
     class vec_dydx_t=vec_y_t, class vec_yerr_t=vec_y_t, 
     class func_t=ode_funct<vec_y_t,vec_dydx_t> > class astep_gsl : 
@@ -271,7 +271,7 @@ namespace o2scl {
 #else
   template<class vec_y_t=boost::numeric::ublas::vector<double>,
     class vec_dydx_t=vec_y_t, class vec_yerr_t=vec_y_t, 
-    class func_t=ode_funct11<vec_y_t,vec_dydx_t> > class astep_gsl : 
+    class func_t=ode_funct11 > class astep_gsl : 
     public astep_base<vec_y_t,vec_dydx_t,vec_yerr_t,func_t> 
 #endif
 {

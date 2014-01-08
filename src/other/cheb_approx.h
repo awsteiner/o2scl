@@ -290,7 +290,7 @@ namespace o2scl {
       
       /* Combine truncation error and numerical error */
       
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
       double dbl_eps=std::numeric_limits<double>::epsilon();
 #else 
       double dbl_eps=GSL_DBL_EPSILON;
@@ -332,7 +332,7 @@ namespace o2scl {
 	absc += fabs(c[i]);
       }
 
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
       double dbl_eps=std::numeric_limits<double>::epsilon();
 #else 
       double dbl_eps=GSL_DBL_EPSILON;

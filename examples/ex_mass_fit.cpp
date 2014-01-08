@@ -28,7 +28,7 @@
 #include <iostream>
 #include <o2scl/test_mgr.h>
 #include <o2scl/mass_fit.h>
-#ifdef O2SCL_HDF_IN_EXAMPLES
+#ifdef O2SCL_HDF
 #include <o2scl/hdf_file.h>
 #include <o2scl/hdf_nucmass_io.h>
 #endif
@@ -43,7 +43,7 @@ int main(void) {
   
   cout.setf(ios::scientific);
 
-#ifdef O2SCL_HDF_IN_EXAMPLES
+#ifdef O2SCL_HDF
 
   // The RMS deviation of the fit
   double res;

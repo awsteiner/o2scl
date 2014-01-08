@@ -44,14 +44,14 @@ namespace o2scl {
       the ODE stepper which is used, use the member function
       \ref set_step() documented below.
   */
-#ifndef O2SCL_CPP11
+#ifdef O2SCL_NO_CPP11
   template<class vec_y_t=boost::numeric::ublas::vector<double>,
     class vec_dydx_t=vec_y_t, class vec_yerr_t=vec_y_t, 
     class func_t=ode_funct<vec_y_t,vec_dydx_t> > class astep_base 
 #else
   template<class vec_y_t=boost::numeric::ublas::vector<double>,
     class vec_dydx_t=vec_y_t, class vec_yerr_t=vec_y_t, 
-    class func_t=ode_funct11<vec_y_t,vec_dydx_t> > class astep_base 
+    class func_t=ode_funct11 > class astep_base 
 #endif
 {
     

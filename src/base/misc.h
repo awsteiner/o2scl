@@ -44,21 +44,22 @@ namespace o2scl {
   /** \brief Return false if x is infinite or not a number
 
       This uses the C++ functions <tt>isinf</tt> and <tt>isnan</tt> if
-      <tt>O2SCL_CPP11</tt> is defined and the GSL function otherwise.
+      <tt>O2SCL_NO_CPP11</tt> is not defined and the GSL function
+      otherwise.
    */
   bool is_finite(double x);
 
   /** \brief Return true if x is not a number
 
       This uses the C++ function <tt>isnan</tt> <tt>O2SCL_CPP11</tt>
-      is defined and the GSL function otherwise.
+      is not defined and the GSL function otherwise.
    */
   bool is_nan(double x);
 
   /** \brief Return true if x is infinite
 
       This uses the C++ function <tt>isinf</tt> <tt>O2SCL_CPP11</tt>
-      is defined and the GSL function otherwise.
+      is not defined and the GSL function otherwise.
    */
   bool is_inf(double x);
 

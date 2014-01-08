@@ -83,7 +83,7 @@ double cfl_njl_eos::rescale_error(double err, double result_abs,
     }
   }
   
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
       double dbl_eps=std::numeric_limits<double>::epsilon();
 #else 
       double dbl_eps=GSL_DBL_EPSILON;
@@ -146,7 +146,7 @@ int cfl_njl_eos::integ_err(double a, double b, const size_t nr,
     
   int k;
   
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
       double dbl_eps=std::numeric_limits<double>::epsilon();
 #else 
       double dbl_eps=GSL_DBL_EPSILON;

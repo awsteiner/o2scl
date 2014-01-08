@@ -61,7 +61,7 @@ namespace o2scl {
 
       \future Change ntrial to size_t?
   */
-#ifndef O2SCL_CPP11 
+#ifdef O2SCL_NO_CPP11 
   template<class func_t, class vec_t=boost::numeric::ublas::vector<double>,
     class jfunc_t=jac_funct<vec_t,boost::numeric::ublas::matrix<double> > > 
     class mroot

@@ -1,16 +1,55 @@
 /** \page funct_section Function Objects
 
-    We describe the \o2 function objects first here. Users who wish to
-    use boost, <tt>std::mem_fn</tt>, or lambda function objects should
-    see \ref lambda_fun_sect. These function objects will eventually
-    be removed in favor of the C++11 objects using
-    <tt>std::function</tt>. The new C++11 versions are used in \o2 if
-    <tt>O2SCL_CPP11</tt> is defined.
+    \section lambda_fun_sect Lambda functions and std::mem_fn
 
     Functions are passed to numerical routines using template-based
-    function classes, sometimes called "functors". There are several
-    basic kinds of function
-    objects:
+    function classes, sometimes called "functors". Newer C++ compilers
+    (with the C++11 standard) now allow for much easier manipulation
+    of function objects. By default, C++11 support is included and \o2
+    classes which accept functions as parameters generally default to
+    types built upon <tt>std::function</tt>. If If the flag
+    <tt>--disable-cpp11</tt> is sent to the <tt>configure</tt> script,
+    then the old \o2 function objects will be used instead. If the
+    user would like to use Boost function objects instead, these may
+    also be used, simply by specifying the Boost function type in the
+    template parameter. 
+
+    The function \ref o2scl::lib_settings_class::cpp11_support() will
+    let you know if \o2 was compiled with C++11 support (the default).
+    Some template aliases are defined to save typing of the function
+    types, e.g.
+    - \ref o2scl::funct11 : One function of one variable (used in 
+    one-dimensional solver and minimizer classes, derivative classes,
+    integration classes, etc.)
+    - \ref o2scl::multi_funct11 : One function of several variables (used
+    in minimizer and integration classes)
+    - \ref o2scl::mm_funct11 : \c n functions of \c n variables (used in 
+    solver classes)
+    - \ref o2scl::grad_funct11 : gradient function for minimizer classes
+    - \ref o2scl::ode_funct11 : \c n derivatives as a function of \c n
+    function values and the value of the independent variable
+    - \ref o2scl::ode_jac_funct11
+    - \ref o2scl::jac_funct11 : Jacobian function for solver and
+      fitting classes
+
+    \note \o2, by default, assumes that inline function specifications
+    and template typedefs (as supported by gcc in versions 4.5 and
+    later) are not supported.
+
+    \section ex_lambda_sect Function object example
+
+    The example below demonstrates how C++11
+    function objects can be used with the \ref o2scl::root_brent_gsl
+    solver.
+
+    \dontinclude ex_lambda.cpp
+    \skip Example:
+    \until End of example
+    
+    \section old_funct_sect Function objects for compilers without C++ support
+
+    \o2 includes several classes which allow the user to pass functions
+    as arguments to classes based on numerical routines:
     - \ref o2scl::funct : One function of one variable (used in 
     one-dimensional solver and minimizer classes, derivative classes,
     integration classes, etc.)
@@ -44,9 +83,11 @@
     thus become invalid if the object they were pointing to is
     destroyed.
 
-    \section fptr_details_sect Function object details
+    \section fptr_details_sect General comments about function objects
 
-    There is a small overhead associated with the indirection: a "user
+    There is a small overhead associated with the indirection,
+    either in the case of the C++11 lambda functions and also
+    with the \o2 function objects: a "user
     class" accesses the function class which then calls function which
     was specified in the constructor of the function class. In many
     problems, the overhead associated with the indirection is small.
@@ -55,7 +96,7 @@
     virtual function call. To eliminate the overhead entirely, one can
     specify a new type for the template parameter in the user class.
 
-    Virtual functions can be specified through this mechanism as well.
+    Virtual functions can be specified using function objects as well.
     For example, if \ref o2scl::mroot_cern is used to solve a set of
     equations specified as
     \include fptr_doc.cpp
@@ -65,23 +106,6 @@
     Note that providing a user access to a function object
     instantiatied with a protected or private member function is
     (basically) the same as providing them access to that function.
-
-    \comment
-    \section fptr_boost_sect Connection to STL and Boost
-
-    The \o2 function types are very closely related to similar types
-    in the Standard Template Library (STL) and in Boost. In the
-    language of the STL, \ref o2scl::funct implements the concept of a <a
-    href="http://www.sgi.com/tech/stl/UnaryFunction.html"> Unary
-    Function</a> where the argument and return types are both \c
-    double. In turn, most \o2 classes which have a template parameter
-    \c func_t will accept all classes which implement this same
-    concept. Note that in the STL, Unary Functions also implement the
-    Assignable concept, and \o2 classes often do not require this for
-    objects of type \c func_t. The Boost library handles things in a
-    very similar way, except that STL concepts are referred to as
-    "traits", and there is a much more complete list of "type traits".
-    \endcomment
 
     \section ex_fptr_sect Function object example
 
@@ -102,21 +126,6 @@
     \image latex ex_fptr_plot.eps "Function object example plot" width=9cm
 
     \dontinclude ex_fptr.cpp
-    \skip Example:
-    \until End of example
-
-    \section lambda_fun_sect Lambda functions and std::mem_fn
-
-    Newer C++ compilers now include internal mechanisms to perform the
-    same mapping of functions to function objects which the \o2
-    <tt>funct</tt> class templates perform. \o2 classes which expect
-    function object types as template types can accept
-    <tt>std::function</tt> types and thus operate on almost all c++
-    function objects. The example below demonstrates how this can be
-    done with the \ref o2scl::root_brent_gsl solver. Boost function
-    objects can be used in a similar way.
-
-    \dontinclude ex_lambda.cpp
     \skip Example:
     \until End of example
 

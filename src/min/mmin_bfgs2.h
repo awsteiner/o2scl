@@ -59,7 +59,7 @@ namespace o2scl {
       This is a reimplmentation of the internal GSL wrapper for
       function calls in the BFGS minimizer
   */
-#ifndef O2SCL_CPP11
+#ifdef O2SCL_NO_CPP11
   template<class func_t, class vec_t=boost::numeric::ublas::vector<double> , 
     class dfunc_t=grad_funct<boost::numeric::ublas::vector<double> >, 
     class auto_grad_t=gradient<func_t,boost::numeric::ublas::vector<double> > > 
@@ -381,7 +381,7 @@ namespace o2scl {
       versions too. I need to examine this more closely with some code
       designed to clearly show this.
   */
-#ifndef O2SCL_CPP11
+#ifdef O2SCL_NO_CPP11
   template<class func_t=multi_funct<>, 
     class vec_t=boost::numeric::ublas::vector<double> , 
     class dfunc_t=grad_funct<boost::numeric::ublas::vector<double> >, 
@@ -483,7 +483,7 @@ namespace o2scl {
       return exc_enoprog;
     }
       
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
       double dbl_eps=std::numeric_limits<double>::epsilon();
 #else 
       double dbl_eps=GSL_DBL_EPSILON;

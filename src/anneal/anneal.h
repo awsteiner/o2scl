@@ -28,7 +28,7 @@
 */
 
 #include <iostream>
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
 #include <random>
 #endif
 
@@ -60,11 +60,12 @@ namespace o2scl {
       multi_min::ntrial which defaults to 100.
 
   */
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
   template<class func_t=multi_funct11,
     class vec_t=boost::numeric::ublas::vector<double>,
     class rng_t=std::mt19937,
-    class rng_dist_t=std::uniform_real_distribution<double> > 
+    class rng_dist_t=rng_gsl >
+    //std::uniform_real_distribution<double> > 
     class anneal_base : public mmin_base<func_t,func_t,vec_t>
 #else
     template<class func_t=multi_funct<>, 

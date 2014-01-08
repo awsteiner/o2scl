@@ -101,7 +101,7 @@ namespace o2scl {
 
       Based on \ref Nelder65 .
   */
-#ifndef O2SCL_CPP11
+#ifdef O2SCL_NO_CPP11
   template<class func_t=multi_funct<>,
     class vec_t=boost::numeric::ublas::vector<double> > class mmin_simp :
     public mmin_base<func_t,func_t,vec_t>

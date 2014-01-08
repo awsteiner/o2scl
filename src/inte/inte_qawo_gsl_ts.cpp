@@ -172,7 +172,7 @@ int main(void) {
       Qcos.omega=n;
       Qcos.integ_err(f_even,-M_PI,M_PI,o2scl_res,o2scl_err);
 			
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
       double dbl_eps=std::numeric_limits<double>::epsilon();
 #else 
       double dbl_eps=GSL_DBL_EPSILON;

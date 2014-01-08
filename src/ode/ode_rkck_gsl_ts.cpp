@@ -179,7 +179,7 @@ int main(void) {
       cout << dydx[0] << endl;
     }
 
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
     
     ode_rkck_gsl<vec1_t,vec2_t,vec3_t,ode_funct11<vec1_t,vec2_t> > rk11;
     ode_funct11<vec1_t,vec2_t> f11=exponx;

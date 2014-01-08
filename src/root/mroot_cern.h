@@ -90,7 +90,7 @@ namespace o2scl {
       based on \ref More79 and \ref More80 and is documented at
       http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/c201/top.html
   */
-#ifndef O2SCL_CPP11 
+#ifdef O2SCL_NO_CPP11 
   template<class func_t=mm_funct<boost::numeric::ublas::vector<double> >, 
     class vec_t=boost::numeric::ublas::vector<double>, 
     class jfunc_t=jac_funct<vec_t,boost::numeric::ublas::matrix<double> > > 

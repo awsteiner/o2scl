@@ -96,18 +96,27 @@ std::string lib_settings_class::o2scl_tarname() {
 }
 
 bool lib_settings_class::eos_installed() {
-  if (O2SCL_EOS_SVAR==1) return true;
+#ifdef O2SCL_EOS
+  return true;
+#else
   return false;
+#endif
 }
 
 bool lib_settings_class::part_installed() {
-  if (O2SCL_PART_SVAR==1) return true;
+#ifdef O2SCL_PART
+  return true;
+#else
   return false;
+#endif
 }
 
 bool lib_settings_class::hdf_support() {
-  if (O2SCL_HDF_SVAR==1) return true;
+#ifdef O2SCL_HDF
+  return true;
+#else
   return false;
+#endif
 }
 
 bool lib_settings_class::armadillo_support() {
@@ -126,9 +135,20 @@ bool lib_settings_class::eigen_support() {
 #endif
 }
 
-bool lib_settings_class::openmp_support() {
-  if (O2SCL_OPENMP_SVAR==1) return true;
+bool lib_settings_class::cpp11_support() {
+#ifndef O2SCL_NO_CPP11
+  return true;
+#else
   return false;
+#endif
+}
+
+bool lib_settings_class::openmp_support() {
+#ifdef O2SCL_OPENMP
+  return true;
+#else
+  return false;
+#endif
 }
 
 void lib_settings_class::config_h_report() {

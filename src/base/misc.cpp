@@ -33,7 +33,7 @@ using namespace std;
 using namespace o2scl;
 
 bool o2scl::is_finite(double x) {
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
   if (std::isfinite(x)) return true;
   return false;
 #else
@@ -42,7 +42,7 @@ bool o2scl::is_finite(double x) {
 }
 
 bool o2scl::is_nan(double x) {
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
   if (std::isnan(x)) return true;
   return false;
 #else
@@ -51,7 +51,7 @@ bool o2scl::is_nan(double x) {
 }
 
 bool o2scl::is_inf(double x) {
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
   if (std::isinf(x)) return true;
   return false;
 #else

@@ -62,10 +62,44 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
-  // The O2scl solver
+  // The O2scl solver. Note that we use the same solver for 
+  // all the examples below.
   root_brent_gsl<std::function<double(double)> > grb;
+
   // For the initial bracket 
   double a, b;
+
+  // With a global function
+  {
+    a=-0.9, b=0.9;
+    std::function<double(double)> f=gfn;
+    grb.solve_bkt(a,b,f);
+    t.test_rel(a,asin(0.1),1.0e-12,"Global function");
+  }
+
+  // With a member function
+  {
+    a=-0.9, b=0.9;
+    a_class ac;
+    std::function<double(double)> f=
+      std::bind(std::mem_fn<double(double)>(&a_class::mfn),
+		ac,std::placeholders::_1);
+    grb.solve_bkt(a,b,f);
+    t.test_rel(a,asin(0.1),1.0e-12,"Member function");
+  }
+
+  // With a member function which has a fixed parameter
+  {
+    a=-0.9, b=0.9;
+    a_class ac;
+    std::function<double(double)> f=
+      std::bind(std::mem_fn<double(double,double)>(&a_class::mfn_param),
+		ac,std::placeholders::_1,0.1);
+    grb.solve_bkt(a,b,f);
+    t.test_rel(a,asin(0.1),1.0e-12,"Member function with parameter");
+  }
+
+#ifdef O2SCL_LAMBDA_INLINE
 
   // Inline specification of the function (this doesn't compile
   // on versions of gcc earlier than 4.5)
@@ -76,6 +110,7 @@ int main(void) {
     grb.solve_bkt(a,b,f);
     t.test_rel(a,asin(0.1),1.0e-12,"Inline 1");
   }
+
   // A bit of a shorter notation (this doesn't compile on versions of
   // gcc earlier than 4.5)
   {
@@ -89,33 +124,8 @@ int main(void) {
     grb.solve_bkt(a,b,f2);
     t.test_rel(a,asin(0.1),1.0e-12,"Inline 3");
   }
-  // With a global function
-  {
-    a=-0.9, b=0.9;
-    std::function<double(double)> f=gfn;
-    grb.solve_bkt(a,b,f);
-    t.test_rel(a,asin(0.1),1.0e-12,"Global function");
-  }
-  // With a member function
-  {
-    a=-0.9, b=0.9;
-    a_class ac;
-    std::function<double(double)> f=
-      std::bind(std::mem_fn<double(double)>(&a_class::mfn),
-		ac,std::placeholders::_1);
-    grb.solve_bkt(a,b,f);
-    t.test_rel(a,asin(0.1),1.0e-12,"Member function");
-  }
-  // With a member function which has a parameter
-  {
-    a=-0.9, b=0.9;
-    a_class ac;
-    std::function<double(double)> f=
-      std::bind(std::mem_fn<double(double,double)>(&a_class::mfn_param),
-		ac,std::placeholders::_1,0.1);
-    grb.solve_bkt(a,b,f);
-    t.test_rel(a,asin(0.1),1.0e-12,"Member function with parameter");
-  }
+
+#endif
 
   t.report();
   return 0;

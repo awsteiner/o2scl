@@ -224,7 +224,7 @@ double inte_workspace_gsl::sum_results() {
 int inte_workspace_gsl::subinterval_too_small(double a1, double a2, 
 					      double b2) {
 
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
   const double e=std::numeric_limits<double>::epsilon();
   const double u=std::numeric_limits<double>::min();
 #else 

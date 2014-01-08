@@ -74,7 +74,7 @@ int main(void) {
     if (x>5.0-1.0e-4) i=50;
   }
 
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
 
   ode_funct11<ubvector,ubvector> od11=derivs;
   astep_gsl<> ga11;

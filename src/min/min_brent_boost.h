@@ -37,7 +37,7 @@ namespace o2scl {
    
   /** \brief One-dimensional minimization using Brent's method (GSL)
    */
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
   template<class func_t=funct11> class min_brent_boost : 
   public min_bkt_base<func_t>
 #else

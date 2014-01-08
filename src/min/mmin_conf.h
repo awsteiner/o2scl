@@ -59,7 +59,7 @@ namespace o2scl {
       simplified it slightly for the documentation below.
       \endcomment
   */
-#ifndef O2SCL_CPP11
+#ifdef O2SCL_NO_CPP11
   template<class func_t = multi_funct<>, 
     class vec_t = boost::numeric::ublas::vector<double>, 
     class dfunc_t = grad_funct<boost::numeric::ublas::vector<double> >,
@@ -410,7 +410,7 @@ namespace o2scl {
       here, because it was not really used in the original GSL code
       for these minimizers.
   */
-#ifndef O2SCL_CPP11
+#ifdef O2SCL_NO_CPP11
   template<class func_t=multi_funct<>, 
     class vec_t=boost::numeric::ublas::vector<double>, 
     class dfunc_t=grad_funct<boost::numeric::ublas::vector<double> >, 

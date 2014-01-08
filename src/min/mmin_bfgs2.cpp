@@ -219,7 +219,7 @@ int mmin_linmin_gsl::minimize(mmin_wrap_gsl &wrap, double rho,
 	
     falpha=wrap.wrap_f(alpha);
 	
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
       double dbl_eps=std::numeric_limits<double>::epsilon();
 #else 
       double dbl_eps=GSL_DBL_EPSILON;

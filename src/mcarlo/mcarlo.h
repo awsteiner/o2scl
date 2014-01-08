@@ -28,7 +28,7 @@
 */
 
 #include <iostream>
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
 #include <random>
 #endif
 
@@ -47,7 +47,7 @@ namespace o2scl {
       random number generator. The default type for the random number
       generator is a \ref rng_gsl object. 
   */
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
   template<class func_t, 
     class vec_t=boost::numeric::ublas::vector<double>,
     class rng_t=std::mt19937, 

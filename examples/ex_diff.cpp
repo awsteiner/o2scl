@@ -30,7 +30,7 @@
 #include <o2scl/deriv_eqi.h>
 #include <o2scl/interp.h>
 #include <o2scl/test_mgr.h>
-#ifdef O2SCL_HDF_IN_EXAMPLES
+#ifdef O2SCL_HDF
 #include <o2scl/hdf_file.h>
 #include <o2scl/hdf_io.h>
 #endif
@@ -44,7 +44,7 @@
 
 using namespace std;
 using namespace o2scl;
-#ifdef O2SCL_HDF_IN_EXAMPLES
+#ifdef O2SCL_HDF
 using namespace o2scl_hdf;
 #endif
 
@@ -92,7 +92,7 @@ int main(void) {
     ta.line_of_data(6,line);
   }
   
-#ifdef O2SCL_HDF_IN_EXAMPLES
+#ifdef O2SCL_HDF
   hdf_file hf;
   hf.open_or_create("ex_diff.o2");
   o2scl_hdf::hdf_output(hf,ta,"table");

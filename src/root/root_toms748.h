@@ -39,7 +39,7 @@ namespace o2scl {
       This class does not work with \ref funct objects, only with
       functions of type <tt>std::function<double(double)></tt>.
    */
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
   template<class func_t=funct11> class root_toms748 : public root_bkt<func_t>
 #else
     template<class func_t> class root_toms748 : public root_bkt<func_t>

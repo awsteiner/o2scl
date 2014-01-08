@@ -68,7 +68,7 @@ int main(void) {
 	 << fabs(y[0]-exp(x-1.0))/exp(x-1.0) << endl;
   }
 
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
 
   ode_funct11<ubvector,ubvector> od11=derivs;
   astep_nonadapt<> na11;

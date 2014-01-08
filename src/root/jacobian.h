@@ -37,7 +37,7 @@
 namespace o2scl {
 #endif
 
-#if defined (O2SCL_CPP11) || defined (DOXYGENP)
+#if !defined (O2SCL_NO_CPP11) || defined (DOXYGENP)
   
   /// Jacobian function (not necessarily square) (C++11 version)
   typedef std::function<

@@ -29,6 +29,9 @@ help:
 SUBDIRS = plot
 
 if O2SCL_EOSLIB
+BENCHMARK_PRGS = bm_poly.scr bm_array.scr bm_mmin.scr 
+	bm_array2.scr bm_mroot.scr bm_rkck.scr bm_mroot2.scr bm_lu.scr \
+	bm_part.scr bm_part2.scr bm_root.scr bm_min.scr
 EXAMPLE_PRGS = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 	ex_cold_nstar.scr ex_mroot.scr ex_mmin.scr ex_apr_eos.scr \
 	ex_inte.scr ex_deriv.scr ex_part.scr ex_ode.scr ex_anneal.scr \
@@ -40,9 +43,11 @@ EXAMPLE_PRGS = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 
 # ex_ode_it.scr ex_gen_sn_eos.scr 
 
-# Remove ex_lambda from this list since it requires -std=c++0x
-# ex_lambda.scr
 else
+
+BENCHMARK_PRGS = bm_poly.scr bm_array.scr bm_mmin.scr \
+	bm_array2.scr bm_mroot.scr bm_rkck.scr bm_mroot2.scr bm_lu.scr \
+	bm_root.scr bm_min.scr
 EXAMPLE_PRGS = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 	ex_mroot.scr ex_mmin.scr ex_inte.scr ex_deriv.scr \
 	ex_ode.scr ex_anneal.scr ex_mcarlo.scr ex_string.scr ex_mmin_fix.scr \
@@ -52,24 +57,7 @@ EXAMPLE_PRGS = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 
 # ex_ode_it.scr 
 
-# Remove ex_lambda from this list since it requires -std=c++0x
-# ex_lambda.scr
 endif
-
-if O2SCL_EOSLIB
-BENCHMARK_PRGS = bm_poly.scr bm_array.scr bm_mmin.scr 
-	bm_array2.scr bm_mroot.scr bm_rkck.scr bm_mroot2.scr bm_lu.scr \
-	bm_part.scr bm_part2.scr bm_root.scr bm_min.scr
-else
-BENCHMARK_PRGS = bm_poly.scr bm_array.scr bm_mmin.scr \
-	bm_array2.scr bm_mroot.scr bm_rkck.scr bm_mroot2.scr bm_lu.scr \
-	bm_root.scr bm_min.scr
-endif
-
-OOLIBS = 
-# -L../src/base -L../src/other -L../src/minimize
-# these directories are no longer needed since the o2scl library was
-# combined into the big libo2scl library in ../src
 
 if O2SCL_EOSLIB
 if O2SCL_HDF
@@ -87,13 +75,20 @@ OOLIBSTWO = -lo2scl -L../src
 endif
 endif
 
-if O2SCL_HDF
-AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
-	-DO2SCL_HDF_IN_EXAMPLES -DO2SCL_HDF_SVAR -DO2SCL_COND_FLAG
+if O2SCL_CPP11
+O2SCL_CPP11_MVAR = -DO2SCL_CPP11 -std=c++0x
 else
-AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
-	-DO2SCL_COND_FLAG
+O2SCL_CPP11_MVAR =
 endif
+
+if O2SCL_HDF
+O2SCL_HDF_MVAR = -DO2SCL_HDF
+else
+O2SCL_HDF_MVAR =
+endif
+
+AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
+	$(O2SCL_HDF_MVAR) $(O2SCL_CPP11_MVAR) -DO2SCL_COND_FLAG
 
 # -------------------------------------------------------------
 # Distribution files

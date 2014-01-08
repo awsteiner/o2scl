@@ -28,7 +28,7 @@
 */
 
 #include <string>
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
 #include <functional>
 #endif
 
@@ -38,7 +38,7 @@
 namespace o2scl {
 #endif
 
-#if defined (O2SCL_CPP11) || defined (DOXYGENP)
+#if !defined (O2SCL_NO_CPP11) || defined (DOXYGENP)
   
   /// One-dimensional function typedef (C++11 version)
   typedef std::function<double(double)> funct11;
@@ -511,7 +511,7 @@ namespace o2scl {
 
   };
 
-#if defined (O2SCL_CPP11) || defined (DOXYGENP)
+#if !defined (O2SCL_NO_CPP11) || defined (DOXYGENP)
 
   /** \brief One-dimensional function from a string (C++11 version)
       
