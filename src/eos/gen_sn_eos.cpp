@@ -560,7 +560,22 @@ void oo_eos::load(std::string fname, size_t mode) {
   }
 
   n_oth=8;
-  if (hfsl_mode) n_oth+=3;
+  if (mode==hfsl_mode) n_oth+=3;
+
+  if (mode==sht_mode) {
+    m_neut=939.0;
+    m_prot=939.0;
+  } else if (mode==stos_mode) {
+    m_neut=938.0;
+    m_prot=938.0;
+  } else if (mode==hfsl_mode) {
+    m_neut=939.565346;
+    m_prot=938.272013;
+  } else {
+    // (ls_mode)
+    m_neut=939.0;
+    m_prot=939.0;
+  }
 
   alloc();
 
@@ -665,25 +680,28 @@ void oo_eos::load(std::string fname, size_t mode) {
 	    arr[indices[i]]->set(j,k,m,press);
 	  } else if (i==15) {
 	    // Neutron chemical potential
-	    if (mode==ls_mode) {
-	      arr[indices[i]]->set(j,k,m,dat.get(k,m,j));
-	    } else {
-	      arr[indices[i]]->set
-		(j,k,m,dat.get(k,m,j)+938.0-cu.convert
-		 ("kg","MeV",o2scl_mks::mass_neutron));
-	    }
+	    arr[indices[i]]->set(j,k,m,dat.get(k,m,j));
+
+	    //if (mode==ls_mode) {
+	    //} else {
+	    //arr[indices[i]]->set
+	    //(j,k,m,dat.get(k,m,j)+938.0-cu.convert
+	    //("kg","MeV",o2scl_mks::mass_neutron));
+	    //}
 	  } else if (i==16) {
 	    // Proton chemical potential
-	    if (mode==ls_mode) {
-	      arr[indices[i]]->
-		set(j,k,m,dat.get(k,m,j)+
-		    cu.convert("kg","MeV",o2scl_mks::mass_neutron)-
-		    cu.convert("kg","MeV",o2scl_mks::mass_proton));
-	    } else {
-	      arr[indices[i]]->set
-		(j,k,m,dat.get(k,m,j)+938.0-
-		 cu.convert("kg","MeV",o2scl_mks::mass_proton));
-	    }
+	    arr[indices[i]]->set(j,k,m,dat.get(k,m,j));
+
+	    //if (mode==ls_mode) {
+	    //arr[indices[i]]->
+	    //set(j,k,m,dat.get(k,m,j)+
+	    //cu.convert("kg","MeV",o2scl_mks::mass_neutron)-
+	    //cu.convert("kg","MeV",o2scl_mks::mass_proton));
+	    //} else {
+	    //arr[indices[i]]->set
+	    //(j,k,m,dat.get(k,m,j)+938.0-
+	    //cu.convert("kg","MeV",o2scl_mks::mass_proton));
+	    //}
 	  } else {
 	    arr[indices[i]]->set(j,k,m,dat.get(k,m,j));
 	  }
@@ -1009,9 +1027,6 @@ void sht_eos::load(std::string fname, size_t mode) {
   
   string stmp;
 
-  m_neut=939.0;
-  m_prot=939.0;
-
   for(size_t j=0;j<n_T;j++) {
     if (verbose>0) {
       cout << "Loading section for temperature=" << A.get_grid(2,j) 
@@ -1032,26 +1047,22 @@ void sht_eos::load(std::string fname, size_t mode) {
 	  } else if (ell==2) {
 	    other[2].set(i,k,j,dtemp);
 	  } else if (ell==3) {
-	    // Rescale it relative to Ye*mp+(1-Ye)*mn
-	    //double Ye_tmp=Fptr->get_grid(1,k);
-	    //double dtemp2=dtemp+939.0-o2scl_const::hc_mev_fm*
-	    //(Ye_tmp*cu.convert("kg","1/fm",o2scl_mks::mass_proton)+
-	    //(1.0-Ye_tmp)*cu.convert("kg","1/fm",o2scl_mks::mass_neutron));
+	    // Free energy per baryon
 	    Fptr->set(i,k,j,dtemp);
 	  } else if (ell==4) {
 	    Pptr->set(i,k,j,dtemp);
 	  } else if (ell==5) {
+	    // Entropy per baryon
 	    Sptr->set(i,k,j,dtemp);
-	    Eptr->set(i,k,j,Fptr->get(i,k,j)+Eptr->get_grid(2,j)*
-		      Sptr->get(i,k,j));
+	    // Also compute energy per baryon
+	    double T=Eptr->get_grid(2,j);
+	    Eptr->set(i,k,j,Fptr->get(i,k,j)+T*Sptr->get(i,k,j));
 	  } else if (ell==6) {
+	    // Neutron chemical potential
 	    mun.set(i,k,j,dtemp);
-	    //+939-cu.convert("kg","1/fm",o2scl_mks::mass_neutron)*
-	    //hc_mev_fm);
 	  } else if (ell==7) {
+	    // Proton chemical potential
 	    mup.set(i,k,j,dtemp);
-	    //+939-cu.convert("kg","1/fm",o2scl_mks::mass_neutron)*
-	    //hc_mev_fm);
 	  } else if (ell==8) {
 	    // Electron chemical potential (this already includes
 	    // the electron mass)
@@ -1209,22 +1220,16 @@ void hfsl_eos::load(std::string fname) {
 	  } else if (ell==3) {
 	    other[3].set(k,j,i,dtemp);
 	  } else if (ell==4) {
-	    // The free energy in the table is stored with respect
+	    // The free energy in the Shen '98 format is stored with respect
 	    // to the proton mass, so we rescale it
 	    double Ye_tmp=Fint.get_grid(1,j);
-	    double dtemp2=dtemp+o2scl_const::hc_mev_fm*
-	      (cu.convert("kg","1/fm",o2scl_mks::mass_proton)-
-	       Ye_tmp*cu.convert("kg","1/fm",o2scl_mks::mass_proton)-
-	       (1.0-Ye_tmp)*cu.convert("kg","1/fm",o2scl_mks::mass_neutron));
+	    double dtemp2=dtemp+938.0-Ye_tmp*m_prot-(1.0-Ye_tmp)*m_neut;
 	    Fint.set(k,j,i,dtemp2);
 	  } else if (ell==5) {
 	    // The internal energy in the table is stored with respect
 	    // to the atomic mass, so we rescale it
 	    double Ye_tmp=Eint.get_grid(1,j);
-	    double dtemp2=dtemp+o2scl_const::hc_mev_fm*
-	      (cu.convert("kg","1/fm",o2scl_mks::unified_atomic_mass)-
-	       Ye_tmp*cu.convert("kg","1/fm",o2scl_mks::mass_proton)-
-	       (1.0-Ye_tmp)*cu.convert("kg","1/fm",o2scl_mks::mass_neutron));
+	    double dtemp2=dtemp+m_amu-Ye_tmp*m_prot-(1.0-Ye_tmp)*m_neut;
 	    Eint.set(k,j,i,dtemp2);
 	  } else if (ell==6) {
 	    Sint.set(k,j,i,dtemp);
@@ -1282,7 +1287,7 @@ void hfsl_eos::load(std::string fname) {
     int i=10, j=10, k=10;
 
     test_mgr tm;
-    tm.set_output_level(2);
+    tm.set_output_level(0);
 
     for(size_t ell=0;ell<400;ell++) {
       if (ell%3==0) {

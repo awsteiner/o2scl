@@ -675,6 +675,9 @@ namespace o2scl {
 
     /** \brief Interpolate values \c vals into the tensor, 
 	returning the result
+
+	\warning This is being deprecated and may be removed
+	or completely rewritten in later versions. 
       
 	This is a quick and dirty implementation of n-dimensional
 	interpolation by recursive application of the 1-dimensional
@@ -771,8 +774,17 @@ namespace o2scl {
       }
     }
 
-    /** \brief Desc
-     */
+    /** \brief Perform a linear interpolation of \c v into the 
+	function implied by the tensor and grid
+	
+	This performs multi-dimensional linear interpolation (or
+	extrapolation) It works by first using \ref o2scl::search_vec
+	to find the interval containing (or closest to) the specified
+	point in each direction and constructing the corresponding
+	hypercube of size \f$ 2^{\mathrm{rank}} \f$ containing \c v.
+	It then calls \ref interp_linear_power_two() to perform the
+	interpolation in that hypercube.
+    */
     template<class vec2_t> double interp_linear(vec2_t &v) {
 
       // Find the the corner of the hypercube containing v
@@ -812,8 +824,14 @@ namespace o2scl {
       return tnew.interp_linear_power_two(v);
     }
     
-    /** \brief Desc
-     */
+    /** \brief Perform linear interpolation assuming that all
+	indices can take only two values
+
+	This function works by recursively slicing the hypercube of
+	size \f$ 2^{\mathrm{rank}} \f$ into a hypercube of size \f$
+	2^{\mathrm{rank-1}} \f$ performing linear interpolation for
+	each pair of points.
+    */
     template<class vec2_t> double interp_linear_power_two(vec2_t &v) {
 
       if (rk==1) {
@@ -840,7 +858,7 @@ namespace o2scl {
 	tnew.set(index,val_lo+frac*(val_hi-val_lo));
       }
       
-      // Recursive interpolate the smaller tensor
+      // Recursively interpolate the smaller tensor
       return tnew.interp_linear_power_two(v);
     }
     //@}
@@ -898,6 +916,12 @@ namespace o2scl {
     double interp(double x) {
       return interpolate(&x);
     }
+
+    /// Interpolate \c x and return the results
+    double interp_linear(double x) {
+      double arr[1]={x};
+      return tensor_grid::interp_linear(arr);
+    }
   };
   
   /** \brief Rank 2 tensor with a grid
@@ -946,6 +970,12 @@ namespace o2scl {
     double interp(double x, double y) {
       double arr[2]={x,y};
       return interpolate(arr);
+    }
+
+    /// Interpolate \c (x,y) and return the results
+    double interp_linear(double x, double y) {
+      double arr[2]={x,y};
+      return tensor_grid::interp_linear(arr);
     }
   };
   
@@ -1056,6 +1086,12 @@ namespace o2scl {
     double interp(double x, double y, double z, double a) {
       double arr[4]={x,y,z,a};
       return interpolate(arr);
+    }
+
+    /// Interpolate \c (x,y,z,a) and return the results
+    double interp_linear(double x, double y, double z, double a) {
+      double arr[4]={x,y,z,a};
+      return tensor_grid::interp_linear(arr);
     }
   };
   

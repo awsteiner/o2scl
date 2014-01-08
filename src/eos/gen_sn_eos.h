@@ -65,7 +65,7 @@ namespace o2scl {
       called.
 
       After loading, you can interpolate the EOS by using 
-      \ref tensor_grid3::interp directly. For example,
+      \ref tensor_grid3::interp_linear() directly. For example,
       the following returns the mass number at an arbitrary
       baryon density, electron fraction, and temperature
       assuming the table is stored in <tt>skm.dat</tt>:
@@ -73,7 +73,7 @@ namespace o2scl {
       ls_eos ls;
       ls.load("skm.dat");
       double nb=0.01, Ye=0.2, T=10.0;
-      cout << A.interp(nb,Ye,T) << endl;
+      cout << ls.A.interp_linear(nb,Ye,T) << endl;
       \endverbatim
       Interpolation for all EOSs is linear by default, however, some
       of the grids are logarithmic, so linear interpolation on a
@@ -599,6 +599,8 @@ namespace o2scl {
     static const size_t stos_mode=1;
     /// Set for a Hempel et al. table with light nuclei 
     static const size_t hfsl_mode=2;
+    /// Set for a G. Shen et al. table
+    static const size_t sht_mode=3;
     //@}
     
     /// Load table from filename \c fname with mode \c mode
@@ -727,6 +729,8 @@ namespace o2scl {
       M_star(other[4]),
       quark_frac(other[5]) {
       check_grid=true;
+      m_neut=938.0;
+      m_prot=938.0;
     }
 
     static const size_t orig_mode=0;
@@ -816,15 +820,15 @@ namespace o2scl {
       \ref sneos_section section of the User's guide.
 
       The proton fraction is assumed to be equal to the electron
-      fraction. The free energy in the original table is relative to a
-      mass of 939 MeV, and is shifted to be relative to a rest mass of
-      \f$ m_p Y_e + m_n (1-Y_e) \f$ by \ref load(). The neutron and
-      proton chemical potentials are also shifted to be relative to
-      \f$ m_n \f$ and \f$ m_p \f$ respectively. The electron chemical
-      potential still includes its rest mass. All other quantites are
-      stored as in the original table, except that the values in \ref
-      o2scl::gen_sn_eos::E or \ref o2scl::gen_sn_eos::Eint are
-      computed directly from the thermodynamic identity.
+      fraction. The free energy per baryon neutron and proton chemical
+      potentials are relative to a nucleon mass of 939 MeV. The values
+      of \ref o2scl::gen_sn_eos::m_neut and \ref
+      o2scl::gen_sn_eos::m_prot are set to 939 MeV accordingly. The
+      electron chemical potential still includes its rest mass. All
+      quantites are stored as in the original table, except that
+      the values in \ref o2scl::gen_sn_eos::E or \ref
+      o2scl::gen_sn_eos::Eint are computed directly from the
+      thermodynamic identity.
 
       See \ref Shen11.
 
@@ -873,6 +877,8 @@ namespace o2scl {
       mue(other[3]),
       M_star(other[4]) {
       check_grid=true;
+      m_neut=939.0;
+      m_prot=939.0;
     }
       
     /// If true, check the grid after load() (default true)
@@ -942,6 +948,9 @@ namespace o2scl {
 
   public:
 
+    /// The atomic mass unit
+    double m_amu;
+
     /// \name Additional data included in this EOS
     //@{
     /** \brief Logarithm of baryon number density in 
@@ -974,6 +983,9 @@ namespace o2scl {
       A_light(other[5]),
       Z_light(other[6]) {
       check_grid=true;
+      m_neut=939.565346;
+      m_prot=938.272013;
+      m_amu=931.49432;
     }
     
     /// Load table from filename \c fname
