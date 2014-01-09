@@ -269,8 +269,9 @@ namespace o2scl {
       \c v1. 
   */
   template<class mat_t>
-    void matrix_swap_double(mat_t &m, size_t i, size_t j) {
-    return matrix_swap<mat_t,double>(m,i,j);
+    void matrix_swap_double(mat_t &m, size_t i1, size_t j1, 
+			    size_t i2, size_t j2) {
+    return matrix_swap<mat_t,double>(m,i1,j1,i2,j2);
   }
   
   /** \brief Generic swap two columns in a matrix

@@ -61,10 +61,11 @@
     this library is usually in the same location as the base hdf5
     library.
 
-    \o2 assumes some c++11 support, and if this is not available,
-    then the user should give the --disable-cpp11 flag to the
-    configure script and -DO2SCL_NO_CPP11 should be defined
-    when using \o2 header files.
+    \o2 assumes some c++11 support, and if this is not available, then
+    the user should give the --disable-cpp11 flag to the configure
+    script and -DO2SCL_NO_CPP11 should be defined when using \o2
+    header files. You may have to add a flag to compile with c++11
+    support to your compiler, e.g. <tt>-std=c++0x</tt>.
 
     Range-checking for vectors and matrices is turned on by default.
     You can disable range-checking by defining -DO2SCL_NO_RANGE_CHECK,

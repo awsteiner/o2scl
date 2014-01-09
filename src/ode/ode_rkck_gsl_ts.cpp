@@ -180,9 +180,12 @@ int main(void) {
     }
 
 #ifndef O2SCL_NO_CPP11
+
+    typedef std::function<int(double,size_t,const vec1_t &,vec2_t &)> 
+      ode_funct11b;
     
-    ode_rkck_gsl<vec1_t,vec2_t,vec3_t,ode_funct11<vec1_t,vec2_t> > rk11;
-    ode_funct11<vec1_t,vec2_t> f11=exponx;
+    ode_rkck_gsl<vec1_t,vec2_t,vec3_t,ode_funct11b > rk11;
+    ode_funct11b f11=exponx;
 
     x=1.0;
     y[0]=1.0;

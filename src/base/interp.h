@@ -1034,8 +1034,7 @@ namespace o2scl {
 
   /** \brief Monotonicity-preserving interpolation
 
-      This class is experimental. Second derivatives and integrals
-      don't work yet.
+      This class is experimental. Integrals don't work yet.
 
       This class uses a method based on cubic Hermite interpolation,
       modifying the slopes to guarantee monotonicity. In the
@@ -1218,8 +1217,8 @@ namespace o2scl {
       double ddh10=6.0*t-4.0;
       double ddh01=-12.0*t+6.0;
       double ddh11=6.0*t-2.0;
-      double deriv2=-(y_lo*ddh00+h*m[index]*ddh10+y_hi*ddh01+
-		      h*m[index+1]*ddh11)/h/h;
+      double deriv2=(y_lo*ddh00+h*m[index]*ddh10+y_hi*ddh01+
+		     h*m[index+1]*ddh11)/h/h;
 
       return deriv2;
     }
@@ -1254,6 +1253,11 @@ namespace o2scl {
 	
 	if (h != 0.0) {
 	  
+	  if (i == index_a || i == index_b) {
+	    x_lo=(i == index_a) ? a : x_lo;
+	    x_hi=(i == index_b) ? b : x_hi;
+	  }
+
 	  double t=(x_hi-x_lo)/h;
 	  double t2=t*t, t3=t2*t, t4=t3*t;
 	  

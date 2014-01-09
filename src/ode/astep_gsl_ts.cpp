@@ -76,7 +76,7 @@ int main(void) {
 
 #ifndef O2SCL_NO_CPP11
 
-  ode_funct11<ubvector,ubvector> od11=derivs;
+  ode_funct11 od11=derivs;
   astep_gsl<> ga11;
 
   // Test astep(). No need to compute the initial derivative

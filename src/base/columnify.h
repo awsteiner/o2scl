@@ -243,7 +243,7 @@ namespace o2scl {
       using columnify::align_dp, i.e. the numbers are aligned by
       their decimal points. If the numbers have no decimal points,
       then the decimal point is assumed to be to the right of the
-      last character in the string represetation of the number.
+      last character in the string representation of the number.
 
       This function outputs the matrix assuming the first index is the
       row index and the second index is the column index. For the
@@ -283,7 +283,7 @@ namespace o2scl {
       using columnify::align_dp, i.e. the numbers are aligned by
       their decimal points. If the numbers have no decimal points,
       then the decimal point is assumed to be to the right of the
-      last character in the string represetation of the number.
+      last character in the string representation of the number.
 
       This function outputs the matrix assuming the first index is the
       row index and the second index is the column index. For the
@@ -323,7 +323,7 @@ namespace o2scl {
       using columnify::align_dp, i.e. the numbers are aligned by
       their decimal points. If the numbers have no decimal points,
       then the decimal point is assumed to be to the right of the
-      last character in the string represetation of the number.
+      last character in the string representation of the number.
 
       This function outputs the matrix assuming the first index is the
       column index and the second index is the row index. For the
@@ -363,7 +363,7 @@ namespace o2scl {
       using columnify::align_dp, i.e. the numbers are aligned by
       their decimal points. If the numbers have no decimal points,
       then the decimal point is assumed to be to the right of the
-      last character in the string represetation of the number.
+      last character in the string representation of the number.
 
       This function outputs the matrix assuming the first index is the
       column index and the second index is the row index. For the
@@ -403,7 +403,7 @@ namespace o2scl {
       using columnify::align_dp, i.e. the numbers are aligned by
       their decimal points. If the numbers have no decimal points,
       then the decimal point is assumed to be to the right of the
-      last character in the string represetation of the number.
+      last character in the string representation of the number.
 
       This function outputs the matrix assuming the first index is the
       row index and the second index is the column index. For the
@@ -447,7 +447,7 @@ namespace o2scl {
       using columnify::align_dp, i.e. the numbers are aligned by
       their decimal points. If the numbers have no decimal points,
       then the decimal point is assumed to be to the right of the
-      last character in the string represetation of the number.
+      last character in the string representation of the number.
 
       \future If all of the matrix elements are positive integers 
       and scientific mode is not set, then we can avoid printing

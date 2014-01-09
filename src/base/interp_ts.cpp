@@ -411,7 +411,7 @@ int main(void) {
     for(double x=0.0;x<=7.0;x+=0.02) {
       double exact=sin(x/2.0)+x/a;
       double deriv=cos(x/2.0)/2.0+1.0/a;
-      double deriv2=sin(x/2.0)/4.0;
+      double deriv2=-sin(x/2.0)/4.0;
       double interpa=io.eval(x,N,vx,vy);
       double interpb=iov.eval(x);
       double deriva=io.deriv(x,N,vx,vy);
@@ -454,7 +454,7 @@ int main(void) {
     for(double x=0.0;x<=7.0;x+=0.005) {
       double exact=sin(x/2.0)+x/a;
       double deriv=cos(x/2.0)/2.0+1.0/a;
-      double deriv2=sin(x/2.0)/4.0;
+      double deriv2=-sin(x/2.0)/4.0;
       double interpa=io.eval(x,N,vx,vy);
       double interpb=iov.eval(x);
       double deriva=io.deriv(x,N,vx,vy);
@@ -501,7 +501,7 @@ int main(void) {
     for(double x=0.0;x<=7.0;x+=0.005) {
       double exact=sin(x/2.0)+x/a;
       double deriv=cos(x/2.0)/2.0+1.0/a;
-      double deriv2=sin(x/2.0)/4.0;
+      double deriv2=-sin(x/2.0)/4.0;
       double interpa=io.eval(x,N,vx,vy);
       double interpb=iov.eval(x);
       double deriva=io.deriv(x,N,vx,vy);
@@ -546,7 +546,7 @@ int main(void) {
     for(double x=0.0;x<=7.0;x+=0.005) {
       double exact=sin(x/2.0);
       double deriv=cos(x/2.0)/2.0;
-      double deriv2=sin(x/2.0)/4.0;
+      double deriv2=-sin(x/2.0)/4.0;
       double interpa=io.eval(x,N,vx,vy);
       double interpb=iov.eval(x);
       double deriva=io.deriv(x,N,vx,vy);
