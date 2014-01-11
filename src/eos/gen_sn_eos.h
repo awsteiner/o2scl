@@ -221,6 +221,8 @@ namespace o2scl {
     tensor_grid3 *arr[n_base+20];
     //@}
 
+    void check_composition(double &max1, double &max2);
+
     /// \name Interpolation
     //@{
     /** \brief Set the interpolation type of all the 
@@ -282,7 +284,7 @@ namespace o2scl {
 	and that \c F is consistent with that in \c E and \c S (if
 	\ref with_leptons_loaded is true).
     */
-    void check_free_energy();
+    void check_free_energy(double &avg);
     
     /** \brief Verbosity parameter (default 1)
      */
@@ -337,6 +339,41 @@ namespace o2scl {
     bool data_baryons_only() {
       return baryons_only_loaded;
     }
+
+#ifdef O2SCL_NEVER_DEFINED
+
+    /*
+      This is an interesting idea, but e.g. interp2_direct doesn't yet
+      handle generic vector and matrix types
+    */
+    template<class interp2_t> class slice {
+      
+    public:
+
+      typedef std::function<double(size_t,size_t)> data_t;
+
+      data_t data;
+
+      ubvector grid_x, grid_y;
+
+      interp2_t it;
+
+      void fixed_Ye(tensor_grid3 &tg3, size_t iYe) {
+	data=std::bind(std::mem_fn<double &(size_t,size_t,size_t)>
+		       (&tensor_grid3::get),tg3,std::placeholders::_1,iYe,
+		       std::placeholders::_2);
+	size_t nx=tg3.get_size(0);
+	grid_x.resize(nx);
+	for(size_t i=0;i<nx;i++) grid_x[i]=tg3.get_grid(0,i);
+	size_t ny=tg3.get_size(2);
+	grid_y.resize(ny);
+	for(size_t i=0;i<ny;i++) grid_y[i]=tg3.get_grid(2,i);
+	it.set_data(nx,ny,grid_x,grid_y,data);
+	return;
+      }
+      
+    };
+#endif
 
   protected:
 
@@ -558,7 +595,8 @@ namespace o2scl {
       munu(other[7]),
       XHe3(other[8]),
       XLi4(other[9]),
-      Xt(other[10]) {
+      Xt(other[10]), 
+      Xd(other[11]) {
     }
     
     /// \name Additional data included in this EOS
@@ -585,6 +623,8 @@ namespace o2scl {
     tensor_grid3 &XLi4;
     /// Triton fraction
     tensor_grid3 &Xt;
+    /// Deuteron fraction
+    tensor_grid3 &Xd;
     /// The original mass density grid from the table in g/cm^3
     std::vector<double> rho;
     /// Energy shift for table storage in erg/g

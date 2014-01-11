@@ -187,14 +187,16 @@ int gen_sn_eos::compute_eg() {
   return 0;
 }
 
-void gen_sn_eos::check_free_energy() {
+void gen_sn_eos::check_free_energy(double &avg) {
   
   if (loaded==false) {
     O2SCL_ERR2("No data loaded (loaded=false) in ",
 	       "gen_sn_eos::check_free_energy().",exc_einval);
   }
 
-  std::cout << "Checking free energy. " << std::endl;
+  if (verbose>0) {
+    std::cout << "Checking free energy. " << std::endl;
+  }
   
   int i=10, j=10, k=10;
   
@@ -202,7 +204,9 @@ void gen_sn_eos::check_free_energy() {
   int count=0;
   
   for(size_t ell=0;ell<400;ell++) {
-    if (ell%10==0) cout << ell << "/400" << endl;
+    if (verbose>0) {
+      if (ell%10==0) cout << ell << "/400" << endl;
+    }
     if (ell%3==0) {
       i+=49;
       i=i%n_nB;
@@ -230,11 +234,72 @@ void gen_sn_eos::check_free_energy() {
     count++;
   }
   
-  cout << "loaded: " << loaded << endl;
-  cout << "baryons_only_loaded: " << baryons_only_loaded << endl;
-  cout << "with_leptons_loaded: " << with_leptons_loaded << endl;
-  cout << "sum/count: " << sum/count << endl;
-  cout << endl;
+  avg=sum/count;
+
+  if (verbose>0) {
+    cout << "loaded: " << loaded << endl;
+    cout << "baryons_only_loaded: " << baryons_only_loaded << endl;
+    cout << "with_leptons_loaded: " << with_leptons_loaded << endl;
+    cout << "sum/count: " << sum/count << endl;
+    cout << endl;
+  }
+  
+  return;
+}
+
+void gen_sn_eos::check_composition(double &max1, double &max2) {
+  
+  if (loaded==false) {
+    O2SCL_ERR2("No data loaded (loaded=false) in ",
+	       "gen_sn_eos::check_composition().",exc_einval);
+  }
+
+  if (verbose>0) {
+    std::cout << "Checking composition. " << std::endl;
+  }
+  
+  int i=10, j=10, k=10;
+  
+  max1=0.0;
+  max2=0.0;
+  
+  for(size_t ell=0;ell<400;ell++) {
+    if (verbose>0) {
+      if (ell%10==0) cout << ell << "/400" << endl;
+    }
+    if (ell%3==0) {
+      i+=49;
+      i=i%n_nB;
+    }
+    if (ell%3==1) {
+      j+=49;
+      j=j%n_Ye;
+    }
+    if (ell%3==2) {
+      k+=49;
+      k=k%n_T;
+    }
+    double nb1, ye1, T1;
+    nb1=E.get_grid(0,i);
+    ye1=E.get_grid(1,j);
+    
+    double tot=Xp.get(i,j,k)+Xnuclei.get(i,j,k)+
+      Xn.get(i,j,k)+Xalpha.get(i,j,k);
+    if (fabs(tot-1.0)>max1) max1=fabs(tot-1.0);
+    
+    double np=nb1*Xp.get(i,j,k);
+    double nh=nb1*Xnuclei.get(i,j,k)/A.get(i,j,k);
+    double na=nb1*Xalpha.get(i,j,k)/4.0;
+    double Ych=(np+Z.get(i,j,k)*nh+2.0*na)/nb1;
+    if (fabs(Ych-ye1)>max2) max2=fabs(Ych-ye1);
+  }
+
+  if (verbose>0) {
+    cout << "Maximum deviation for sum of mass fractions: " 
+	 << max1 << endl;
+    cout << "Maximum deviation for charge fraction relative to Y_e: " 
+	 << max2 << endl;
+  }
   
   return;
 }
@@ -560,7 +625,7 @@ void oo_eos::load(std::string fname, size_t mode) {
   }
 
   n_oth=8;
-  if (mode==hfsl_mode) n_oth+=3;
+  if (mode==hfsl_mode) n_oth+=4;
 
   if (mode==sht_mode) {
     m_neut=939.0;
@@ -659,13 +724,15 @@ void oo_eos::load(std::string fname, size_t mode) {
   indices.push_back(23);
   
   if (mode==hfsl_mode) {
-    ndat+=3;
+    ndat+=4;
     names.push_back("X3he");
     names.push_back("X4li");
     names.push_back("Xt");
+    names.push_back("Xd");
     indices.push_back(24);
     indices.push_back(25);
     indices.push_back(26);
+    indices.push_back(27);
   }
 		  
   for(size_t i=0;i<ndat;i++) {
@@ -1340,7 +1407,7 @@ void hfsl_eos::load(std::string fname) {
   }
 
   if (verbose>0) {
-    std::cout << "Done." << std::endl;
+    std::cout << "Done in hfsl_eos::load()." << std::endl;
   }
 
   return;

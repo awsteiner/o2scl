@@ -40,6 +40,14 @@
     arrays). See the \ref linalg_section section of the User's guide
     for examples of this.
 
+    With <tt>std::function<></tt> and the new lambda function support
+    in C++11, it is also important to notice that
+    <tt>std::function<double(size_t)></tt> is also a vector type, and
+    <tt>std::function<double(size_t,size_t)></tt> is also a matrix
+    type. This means that some vector, matrix, and tensor slicing
+    operations can be trivially constructed from <tt>std::bind</tt>
+    and <tt>std::mem_fn</tt>.
+
     A matrix type is distinct from a "vector of vectors" or a "list of
     vectors", such as that implied by
     <tt>std::vector<std::vector<double> ></tt>. In some cases, There

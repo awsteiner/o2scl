@@ -27,6 +27,7 @@
 #include <o2scl/interp2_seq.h>
 #include <o2scl/columnify.h>
 #include <o2scl/test_mgr.h>
+#include <o2scl/tensor_grid.h>
 
 using namespace std;
 using namespace o2scl;
@@ -303,6 +304,25 @@ int main(void) {
     }
 
   }
+
+  {
+    // Show how to slice a tensor
+    tensor_grid3 tg(3,2,1);
+    double grid[6]={4,5,6,7,8,9};
+    tg.set_grid_packed(grid);
+    for(size_t j=0;j<3;j++) {
+      for(size_t k=0;k<2;k++) {
+	for(size_t ell=0;ell<1;ell++) {
+	  tg.set(j,k,ell,((double)(j+k+ell)));
+	}
+      }
+    }
+    std::function<double &(size_t,size_t)> slice=
+      std::bind(std::mem_fn<double &(size_t,size_t,size_t)>(&tensor_grid3::get),
+		tg,std::placeholders::_1,0,std::placeholders::_2);
+    
+  }
+
 
   t.report();
   return 0;
