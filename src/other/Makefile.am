@@ -5,7 +5,9 @@
 OTHER_SRCS = gsl_fft.cpp series_acc.cpp poly.cpp polylog.cpp \
 	interp2_eqi.cpp pinside.cpp bin_size.cpp \
 	contour.cpp smooth_gsl.cpp hist.cpp \
-	hist_2d.cpp prob_dens_func.cpp interp2_direct.cpp interp2_seq.cpp
+	hist_2d.cpp prob_dens_func.cpp
+
+#interp2_seq.cpp  interp2_direct.cpp 
 
 HEADER_VAR = contour.h cheb_approx.h gsl_fft.h \
 	series_acc.h interp2_planar.h poly.h polylog.h \

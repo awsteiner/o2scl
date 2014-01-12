@@ -1399,8 +1399,9 @@ namespace o2scl {
 
       \note When calling this function with ublas objects, the
       namespace prefix <tt>"o2scl::"</tt> must often be specified,
-      otherwise some compiler versions will use argument dependent
-      lookup and get confused with matrix_row in the ublas namespace.
+      otherwise some compilers will use argument dependent lookup and
+      get (justifiably) confused with matrix_row in the ublas
+      namespace.
 
       \note The template parameters must be explicitly specified
       when calling this template function. 
@@ -1409,6 +1410,17 @@ namespace o2scl {
     mat_row_t matrix_row(mat_t &M, size_t row) {
     return mat_row_t(M,row);
   }
+
+  template<class mat_t> class gen_matrix_row {
+  public:
+    mat_t &m_;
+    size_t row_;
+  gen_matrix_row(mat_t &m, size_t row) : m_(m), row_(row) {
+    }
+    double &operator[](size_t i) {
+      return m_(row_,i);
+    }
+  };
 
   /** \brief Construct a column of a matrix
 
@@ -1419,8 +1431,8 @@ namespace o2scl {
 
       \note When calling this function with ublas objects, the
       namespace prefix <tt>"o2scl::"</tt> must often be specified,
-      otherwise some compiler versions will use argument dependent
-      lookup and get confused with matrix_column in the ublas
+      otherwise some compilers will use argument dependent lookup and
+      get (justifiably) confused with matrix_column in the ublas
       namespace.
 
       \note The template parameters must be explicitly specified
@@ -1430,6 +1442,17 @@ namespace o2scl {
     mat_column_t matrix_column(mat_t &M, size_t column) {
     return mat_column_t(M,column);
   }
+
+  template<class mat_t> class gen_matrix_column {
+  public:
+    mat_t &m_;
+    size_t column_;
+  gen_matrix_column(mat_t &m, size_t column) : m_(m), column_(column) {
+    }
+    double &operator[](size_t i) {
+      return m_(i,column_);
+    }
+  };
 
   /** \brief Output a vector to a stream
       

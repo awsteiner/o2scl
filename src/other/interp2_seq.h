@@ -86,18 +86,31 @@ namespace o2scl {
       \endcomment
 
   */
-  class interp2_seq {
+  template<class vec_t=boost::numeric::ublas::vector<double>,
+    class mat_t=boost::numeric::ublas::matrix<double>,
+    class mat_row_t=boost::numeric::ublas::matrix_row<mat_t> >
+    class interp2_seq {
 
+#ifdef O2SCL_NEVER_DEFINED
+  }{
+#endif
+    
   public:
-
+    
     typedef boost::numeric::ublas::vector<double> ubvector;
-    typedef boost::numeric::ublas::matrix<double> ubmatrix;
-    typedef boost::numeric::ublas::matrix_row<ubmatrix> ubmatrix_row;
-    typedef boost::numeric::ublas::matrix_column<ubmatrix> ubmatrix_column;
-
-    interp2_seq();
-
-    virtual ~interp2_seq();
+    
+    interp2_seq() {
+      data_set=false;
+      itype=itp_cspline;
+    }
+    
+    virtual ~interp2_seq() {
+      for(size_t i=0;i<itps.size();i++) {
+	delete itps[i];
+	delete vecs[i];
+      }
+      itps.clear();
+    }
     
     /** \brief Initialize the data for the 2-dimensional interpolation
 	
@@ -109,55 +122,214 @@ namespace o2scl {
 	x_first is false, the opposite strategy is employed. These two
 	options may give slightly different results.
     */
-    void set_data(size_t n_x, size_t n_y, ubvector &x_grid,
-		 ubvector &y_grid, ubmatrix &data, 
-		 size_t interp_type=itp_cspline, bool x_first=true);
+    void set_data(size_t n_x, size_t n_y, vec_t &x_grid,
+		  vec_t &y_grid, mat_t &data, 
+		  size_t interp_type=itp_cspline) {
+      
+      // Set new data
+      itype=interp_type;
+      nx=n_x;
+      ny=n_y;
+      xfun=&x_grid;
+      yfun=&y_grid;
+      datap=&data;
+      
+      // Set interpolation objects
+      
+      for(size_t i=0;i<itps.size();i++) {
+	delete itps[i];
+	delete vecs[i];
+      }
+      itps.clear();
+      
+      // If we interpolate along the x-axis first, then we want to fix the
+      // first index, to get nx rows of size ny
+      vecs.resize(nx);
+      itps.resize(nx);
+      for(size_t i=0;i<nx;i++) {
+	vecs[i]=new mat_row_t
+	  (o2scl::matrix_row<mat_t,mat_row_t>(*datap,i));
+	itps[i]=new interp_vec<vec_t,mat_row_t>(ny,*yfun,*vecs[i],itype);
+      }
+      data_set=true;
+      
+      return;
+    }
     
     /** \brief Reset the stored interpolation since the data has changed
 	
         This will throw an exception if the set_data() has not been
         called.
     */
-    void reset_interp();
-
+    void reset_interp() {
+      if (data_set) {
+	
+	for(size_t i=0;i<itps.size();i++) {
+	  delete itps[i];
+	  delete vecs[i];
+	}
+	itps.clear();
+	
+	// Set interpolation objects
+	vecs.resize(nx);
+	itps.resize(nx);
+	for(size_t i=0;i<nx;i++) {
+	  vecs[i]=new mat_row_t
+	    (o2scl::matrix_row<mat_t,mat_row_t>(*datap,i));
+	  itps[i]=new interp_vec<vec_t,mat_row_t>(ny,*yfun,*vecs[i],itype);
+	}
+	
+      } else {
+	O2SCL_ERR("Data not set in interp2_seq::reset_interp().",exc_einval);
+      }
+      
+      return;
+    }
+    
     /** \brief Perform the 2-d interpolation 
      */
-    double eval(double x, double y) const;
-
+    double eval(double x, double y) const {
+      if (data_set==false) {
+	O2SCL_ERR("Data not set in interp2_seq::eval().",exc_efailed);
+      }
+      double result;
+      ubvector icol(nx);
+      for(size_t i=0;i<nx;i++) {
+	icol[i]=itps[i]->eval(y);
+      }
+      interp_vec<vec_t,ubvector> six(nx,*xfun,icol,itype);
+      result=six.eval(x);
+      return result;
+    }
+    
     /** \brief Perform the 2-d interpolation 
      */
-    double operator()(double x, double y) const;
-
+    double operator()(double x, double y) const {
+      return eval(x,y);
+    }
+    
     /** \brief Compute the partial derivative in the x-direction
      */
-    double deriv_x(double x, double y) const;
+    double deriv_x(double x, double y) const {
+      if (data_set==false) {
+	O2SCL_ERR("Data not set in interp2_seq::eval().",exc_efailed);
+	return 0.0;
+      }
+      double result;
+      ubvector icol(nx);
+      for(size_t i=0;i<nx;i++) {
+	icol[i]=itps[i]->eval(y);
+      }
+      interp_vec<vec_t,ubvector> six(nx,*xfun,icol,itype);
+      result=six.deriv(x);
+      return result;
+    }
 
     /** \brief Compute the partial second derivative in the x-direction
      */
-    double deriv_xx(double x, double y) const;
+    double deriv_xx(double x, double y) const {
+      if (data_set==false) {
+	O2SCL_ERR("Data not set in interp2_seq::deriv_xx().",exc_efailed);
+	return 0.0;
+      }
+      double result;
+      ubvector icol(nx);
+      for(size_t i=0;i<nx;i++) {
+	icol[i]=itps[i]->eval(y);
+      }
+      interp_vec<ubvector> six(nx,*xfun,icol,itype);
+      result=six.deriv2(x);
+      return result;
+    }
 
     /** \brief Compute the integral in the x-direction between x=x0
 	and x=x1
     */
-    double integ_x(double x0, double x1, double y) const;
+    double integ_x(double x0, double x1, double y) const {
+      if (data_set==false) {
+	O2SCL_ERR("Data not set in interp2_seq::integ_x().",exc_efailed);
+	return 0.0;
+      }
+      double result;
+      ubvector icol(nx);
+      for(size_t i=0;i<nx;i++) {
+	icol[i]=itps[i]->eval(y);
+      }
+      interp_vec<ubvector> six(nx,*xfun,icol,itype);
+      result=six.integ(x0,x1);
+      return result;
+
+    }
 
     /** \brief Compute the partial derivative in the y-direction
      */
-    double deriv_y(double x, double y) const;
+    double deriv_y(double x, double y) const {
+      if (data_set==false) {
+	O2SCL_ERR("Data not set in interp2_seq::deriv_y().",exc_efailed);
+	return 0.0;
+      }
+      double result;
+      ubvector icol(nx);
+      for(size_t i=0;i<nx;i++) {
+	icol[i]=itps[i]->deriv(y);
+      }
+      interp_vec<ubvector> six(nx,*xfun,icol,itype);
+      result=six.eval(x);
+      return result;
+    }
 
     /** \brief Compute the partial second derivative in the y-direction
      */
-    double deriv_yy(double x, double y) const;
+    double deriv_yy(double x, double y) const {
+      if (data_set==false) {
+	O2SCL_ERR("Data not set in interp2_seq::deriv_yy().",exc_efailed);
+	return 0.0;
+      }
+      double result;
+      ubvector icol(nx);
+      for(size_t i=0;i<nx;i++) {
+	icol[i]=itps[i]->deriv2(y);
+      }
+      interp_vec<ubvector> six(nx,*xfun,icol,itype);
+      result=six.eval(x);
+      return result;
+    }
 
     /** \brief Compute the integral in the y-direction between y=y0
 	and y=y1
     */
-    double integ_y(double x, double y0, double y1) const;
+    double integ_y(double x, double y0, double y1) const {
+      if (data_set==false) {
+	O2SCL_ERR("Data not set in interp2_seq::integ_y().",exc_efailed);
+	return 0.0;
+      }
+      double result;
+      ubvector icol(nx);
+      for(size_t i=0;i<nx;i++) {
+	icol[i]=itps[i]->integ(y0,y1);
+      }
+      interp_vec<ubvector> six(nx,*xfun,icol,itype);
+      result=six.eval(x);
+      return result;
+    }
 
     /** \brief Compute the mixed partial derivative 
 	\f$ \frac{\partial^2 f}{\partial x \partial y} \f$
     */
-    double deriv_xy(double x, double y) const;
+    double deriv_xy(double x, double y) const {
+      if (data_set==false) {
+	O2SCL_ERR("Data not set in interp2_seq::eval().",exc_efailed);
+	return 0.0;
+      }
+      double result;
+      ubvector icol(nx);
+      for(size_t i=0;i<nx;i++) {
+	icol[i]=itps[i]->deriv(y);
+      }
+      interp_vec<ubvector> six(nx,*xfun,icol,itype);
+      result=six.deriv(x);
+      return result;
+    }
 
     /** \brief Compute a general interpolation result
 
@@ -182,18 +354,53 @@ namespace o2scl {
 	and the value of \f$ y_1 \f$ is ignored when \f$ n \geq 0 \f$.
 
     */
-    double eval_gen(int m, int n, double x0, double x1, 
-		    double y0, double y1) const;
+    double eval_gen(int ix, int iy, double x0, double x1, 
+		    double y0, double y1) const {
+      if (data_set==false) {
+	O2SCL_ERR("Data not set in interp2_seq::interp_gen().",exc_efailed);
+	return 0.0;
+      }
+      double result;
+      ubvector icol(nx);
+      for(size_t i=0;i<nx;i++) {
+	if (iy==-1) {
+	  icol[i]=itps[i]->integ(y0,y1);
+	} else if (iy==0) {
+	  icol[i]=itps[i]->eval(y0);
+	} else if (iy==1) {
+	  icol[i]=itps[i]->deriv(y0);
+	} else if (iy==2) {
+	  icol[i]=itps[i]->deriv2(y0);
+	} else {
+	  O2SCL_ERR2("Invalid value of 'iy' for interp2_seq::",
+		     "interp_gen(). (xfirst=true)",exc_einval);
+	}
+      }
+      interp_vec<ubvector> six(nx,*xfun,icol,itype);
+      if (ix==-1) {
+	result=six.integ(x0,x1);
+      } else if (ix==0) {
+	result=six.eval(x0);
+      } else if (ix==1) {
+	result=six.deriv(x0);
+      } else if (ix==2) {
+	result=six.deriv2(x0);
+      } else {
+	O2SCL_ERR2("Invalid value of 'ix' for interp2_seq::",
+		   "interp_gen(). (xfirst=true)",exc_einval);
+      }
+      return result;
+    }
 
 #ifndef DOXYGEN_NO_O2NS
     
   protected:
 
     /// The array of interpolation objects
-    std::vector<interp_vec<ubvector> *> itps;
+    std::vector<interp_vec<vec_t,mat_row_t> *> itps;
 
     /// An array of rows or columns
-    std::vector<ubvector> vecs;
+    std::vector<mat_row_t *> vecs;
 
     /// The number of x grid points
     size_t nx;
@@ -201,20 +408,17 @@ namespace o2scl {
     /// The number of y grid points
     size_t ny;
 
-    /// True if the x interpolation should be done first
-    bool xfirst;
-
     /// True if the data has been specified by the user
     bool data_set;
 
     /// The x grid
-    ubvector *xfun;
+    vec_t *xfun;
 
     /// The y grid
-    ubvector *yfun;
+    vec_t *yfun;
 
     /// The data
-    ubmatrix *datap;
+    mat_t *datap;
     
     /// Interpolation type
     size_t itype;

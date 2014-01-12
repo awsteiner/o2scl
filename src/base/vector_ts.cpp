@@ -41,7 +41,43 @@ typedef boost::numeric::ublas::matrix_column<ubmatrix> ubmatrix_column;
 int main(void) {
   test_mgr t;
   t.set_output_level(1);
-  
+
+  {
+    ubmatrix ub1(3,3);
+    ub1(0,0)=0.0;
+    ub1(0,1)=1.0;
+    ub1(0,2)=2.0;
+    ub1(1,0)=1.0;
+    ub1(1,1)=2.0;
+    ub1(1,2)=3.0;
+    ub1(2,0)=2.0;
+    ub1(2,1)=3.0;
+    ub1(2,2)=4.0;
+    gen_matrix_row<ubmatrix> r1=
+      o2scl::matrix_row<ubmatrix,gen_matrix_row<ubmatrix> >(ub1,2);
+    t.test_rel(r1[0],2.0,1.0e-12,"matrix row 1");
+    t.test_rel(r1[1],3.0,1.0e-12,"matrix row 2");
+    t.test_rel(r1[2],4.0,1.0e-12,"matrix row 3");
+    cout << r1[0] << " " << r1[1] << " " << r1[2] << endl;
+    r1[0]=-1.0;
+    r1[1]=-2.0;
+    r1[2]=-3.0;
+    cout << ub1(2,0) << " " << ub1(2,1) << " " << ub1(2,2) << endl;
+    t.test_rel(ub1(2,0),-1.0,1.0e-12,"matrix row 4");
+    t.test_rel(ub1(2,1),-2.0,1.0e-12,"matrix row 5");
+    t.test_rel(ub1(2,2),-3.0,1.0e-12,"matrix row 6");
+    ub1(2,0)=4.0;
+    cout << r1[0] << " " << r1[1] << " " << r1[2] << endl;
+    t.test_rel(r1[0],4.0,1.0e-12,"matrix row 7");
+    gen_matrix_column<ubmatrix> r2=
+      o2scl::matrix_column<ubmatrix,gen_matrix_column<ubmatrix>>(ub1,2);
+    t.test_rel(r2[0],2.0,1.0e-12,"matrix col 1");
+    t.test_rel(r2[1],3.0,1.0e-12,"matrix col 2");
+    t.test_rel(r2[2],-3.0,1.0e-12,"matrix col 3");
+    r2[0]=1.0;
+    t.test_rel(ub1(0,2),1.0,1.0e-12,"matrix col 4");
+  }
+
   {
     ubmatrix ub1(3,3);
     ub1(0,0)=0.0;

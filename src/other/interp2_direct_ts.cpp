@@ -34,6 +34,8 @@ using namespace o2scl;
 
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
+typedef boost::numeric::ublas::matrix_row<ubmatrix> ubmatrix_row;
+typedef boost::numeric::ublas::matrix_column<ubmatrix> ubmatrix_column;
 
 double f(double x, double y) {
   return pow(sin(0.1*x+0.3*y),2.0);
@@ -68,8 +70,8 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
   
-  interp2_seq it;
-  interp2_direct it2;
+  interp2_seq<ubvector,ubmatrix,ubmatrix_row> it;
+  interp2_direct<ubvector,ubmatrix,ubmatrix_row,ubmatrix_column> it2;
   double x0, x1, y0, y1;
   double tol=0.05;
   double tol2=0.4;

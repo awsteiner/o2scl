@@ -33,15 +33,9 @@ using namespace std;
 using namespace o2scl;
 
 interp2_seq::interp2_seq() {
-  data_set=false;
-  itype=itp_cspline;
 }
 
 interp2_seq::~interp2_seq() {
-  for(size_t i=0;i<itps.size();i++) {
-    delete itps[i];
-  }
-  itps.clear();
 }
 
 void interp2_seq::set_data(size_t n_x, size_t n_y, ubvector &x_grid,
@@ -60,28 +54,32 @@ void interp2_seq::set_data(size_t n_x, size_t n_y, ubvector &x_grid,
 
   for(size_t i=0;i<itps.size();i++) {
     delete itps[i];
+    delete vecs[i];
   }
   itps.clear();
 
-  if (x_first==true) {
-    // If we interpolate along the x-axis first, then we want to fix the
-    // first index, to get nx rows of size ny
-    vecs.resize(nx);
-    itps.resize(nx);
-    for(size_t i=0;i<nx;i++) {
-      vecs[i]=ubmatrix_row(*datap,i);
-      itps[i]=new interp_vec<ubvector>(ny,*yfun,vecs[i],itype);
-    }
-  } else {
+  //if (x_first==true) {
+  // If we interpolate along the x-axis first, then we want to fix the
+  // first index, to get nx rows of size ny
+  vecs.resize(nx);
+  itps.resize(nx);
+  for(size_t i=0;i<nx;i++) {
+    vecs[i]=new ubmatrix_row
+      (o2scl::matrix_row<ubmatrix,ubmatrix_row>(*datap,i));
+    itps[i]=new interp_vec<ubvector,ubmatrix_row>(ny,*yfun,*vecs[i],itype);
+  }
+  /*
+    } else {
     // If we interpolate along the y-axis first, then we want to fix the
     // first index, to get ny columns of size nx
     vecs.resize(ny);
     itps.resize(ny);
     for(size_t i=0;i<ny;i++) {
-      vecs[i]=ubmatrix_column(*datap,i);
-      itps[i]=new interp_vec<ubvector>(nx,*xfun,vecs[i],itype);
+    vecs[i]=ubmatrix_column(*datap,i);
+    itps[i]=new interp_vec<ubvector>(nx,*xfun,vecs[i],itype);
     }
-  }
+    }
+  */
 
   data_set=true;
 
@@ -94,25 +92,29 @@ void interp2_seq::reset_interp() {
 
     for(size_t i=0;i<itps.size();i++) {
       delete itps[i];
+      delete vecs[i];
     }
     itps.clear();
 
     // Set interpolation objects
-    if (xfirst==true) {
-      vecs.resize(nx);
-      itps.resize(nx);
-      for(size_t i=0;i<nx;i++) {
-	vecs[i]=ubmatrix_row(*datap,i);
-	itps[i]=new interp_vec<ubvector>(ny,*yfun,vecs[i],itype);
-      }
-    } else {
+    //if (xfirst==true) {
+    vecs.resize(nx);
+    itps.resize(nx);
+    for(size_t i=0;i<nx;i++) {
+      vecs[i]=new ubmatrix_row
+	(o2scl::matrix_row<ubmatrix,ubmatrix_row>(*datap,i));
+      itps[i]=new interp_vec<ubvector,ubmatrix_row>(ny,*yfun,*vecs[i],itype);
+    }
+    /*
+      } else {
       vecs.resize(ny);
       itps.resize(ny);
       for(size_t i=0;i<ny;i++) {
-	vecs[i]=ubmatrix_column(*datap,i);
-	itps[i]=new interp_vec<ubvector>(nx,*xfun,vecs[i],itype);
+      vecs[i]=ubmatrix_column(*datap,i);
+      itps[i]=new interp_vec<ubvector>(nx,*xfun,vecs[i],itype);
       }
-    }
+      }
+    */
     
   } else {
     O2SCL_ERR("Data not set in interp2_seq::reset_interp().",exc_einval);

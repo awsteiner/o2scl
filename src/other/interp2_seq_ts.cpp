@@ -31,6 +31,7 @@ using namespace o2scl;
 
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
+typedef boost::numeric::ublas::matrix_row<ubmatrix> ubmatrix_row;
 
 double f(double x, double y) {
   return pow(sin(0.1*x+0.3*y),2.0);
@@ -120,7 +121,7 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
   
-  interp2_seq it;
+  interp2_seq<ubvector,ubmatrix,ubmatrix_row> it;
   double x0, x1, y0, y1;
   double tol=0.05;
   double tol2=0.4;
@@ -189,7 +190,8 @@ int main(void) {
     y0=1.41;
     y1=0.62;
 
-    it.set_data(M,N,x2,y2,data2,itp_cspline,false);
+    //it.set_data(M,N,x2,y2,data2,itp_cspline,false);
+    it.set_data(M,N,x2,y2,data2,itp_cspline);
 
     for(size_t im=0;im<10;im++) {
       x0*=sqrt(5.0);
@@ -285,7 +287,8 @@ int main(void) {
     y0=1.41;
     y1=0.62;
 
-    it.set_data(M,N,x2,y2,data2,itp_cspline,false);
+    //it.set_data(M,N,x2,y2,data2,itp_cspline,false);
+    it.set_data(M,N,x2,y2,data2,itp_cspline);
 
     for(size_t im=0;im<10;im++) {
       x0*=sqrt(5.0);
@@ -379,7 +382,8 @@ int main(void) {
     y0=1.41;
     y1=0.62;
 
-    it.set_data(M,N,x2,y2,data2,itp_cspline,false);
+    //it.set_data(M,N,x2,y2,data2,itp_cspline,false);
+    it.set_data(M,N,x2,y2,data2,itp_cspline);
 
     for(size_t im=0;im<10;im++) {
       x0*=sqrt(5.0);
@@ -471,7 +475,8 @@ int main(void) {
     y0=1.41;
     y1=0.62;
 
-    it.set_data(M,N,x2,y2,data2,itp_linear,false);
+    //it.set_data(M,N,x2,y2,data2,itp_linear,false);
+    it.set_data(M,N,x2,y2,data2,itp_linear);
 
     for(size_t im=0;im<10;im++) {
       x0*=sqrt(5.0);
