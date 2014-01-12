@@ -505,6 +505,72 @@ int main(void) {
 
   }
 
+#ifdef O2SCL_ARMA
+
+  {
+    // N=M
+    
+    interp2_seq<arma::rowvec,arma::mat,arma::subview_row<double> > ait;
+    
+    size_t M=40;
+    size_t N=40;
+    arma::rowvec ax2(M), ay2(N);
+    ubvector x2(M), y2(N);
+    arma::mat adata2(M,N);
+    ubmatrix data2(M,N);
+    for(size_t ii=0;ii<M;ii++) {
+      x2[ii]=((double)ii)/10.0;
+      ax2[ii]=((double)ii)/10.0;
+    }
+    for(size_t jj=0;jj<N;jj++) {
+      y2[jj]=((double)jj)/20.0;
+      ay2[jj]=((double)jj)/20.0;
+    }
+    for(size_t ii=0;ii<M;ii++) {
+      for(size_t jj=0;jj<N;jj++) {
+	data2(ii,jj)=f(x2[ii],y2[jj]);
+	adata2(ii,jj)=f(x2[ii],y2[jj]);
+      }
+    }
+  
+    // x-first
+
+    x0=2.42;
+    x1=3.22;
+    y0=1.41;
+    y1=0.62;
+
+    it.set_data(M,N,x2,y2,data2);
+    ait.set_data(M,N,ax2,ay2,adata2);
+
+    for(size_t im=0;im<10;im++) {
+      x0*=sqrt(5.0);
+      x1*=sqrt(5.0);
+      y0*=sqrt(7.0);
+      y1*=sqrt(7.0);
+      while (x0>x2[M-1]) x0/=2.0;
+      while (x1>x2[M-1]) x1/=2.0;
+      while (y0>y2[N-1]) y0/=2.0;
+      while (y1>y2[N-1]) y1/=2.0;
+      t.test_rel(it.eval(x0,y0),ait.eval(x0,y0),
+		 1.0e-12,"arma i");
+      t.test_rel(it.deriv_x(x0,y0),ait.deriv_x(x0,y0),
+		 1.0e-12,"arma dx");
+      t.test_rel(it.deriv_y(x0,y0),ait.deriv_y(x0,y0),
+		 1.0e-12,"arma dy");
+      t.test_rel(it.deriv_xy(x0,y0),ait.deriv_xy(x0,y0),
+		 1.0e-12,"arma dyx");
+      t.test_abs(it.deriv_xx(x0,y0),ait.deriv_xx(x0,y0),
+		 1.0e-12,"arma d2x");
+      t.test_abs(it.deriv_yy(x0,y0),ait.deriv_yy(x0,y0),
+		 1.0e-12,"arma d2y");
+      t.test_rel(it.eval_gen(2,1,x0,x1,y0,y1),ait.eval_gen(2,1,x0,x1,y0,y1),
+		 1.0e-12,"arma gen");
+    }
+  }
+
+#endif
+
   t.report();
   return 0;
 }

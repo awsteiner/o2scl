@@ -1411,13 +1411,16 @@ namespace o2scl {
     return mat_row_t(M,row);
   }
 
-  template<class mat_t> class gen_matrix_row {
+  template<class mat_t> class matrix_row_gen {
   public:
     mat_t &m_;
     size_t row_;
-  gen_matrix_row(mat_t &m, size_t row) : m_(m), row_(row) {
+  matrix_row_gen(mat_t &m, size_t row) : m_(m), row_(row) {
     }
     double &operator[](size_t i) {
+      return m_(row_,i);
+    }
+    const double &operator[](size_t i) const {
       return m_(row_,i);
     }
   };
@@ -1443,13 +1446,16 @@ namespace o2scl {
     return mat_column_t(M,column);
   }
 
-  template<class mat_t> class gen_matrix_column {
+  template<class mat_t> class matrix_column_gen {
   public:
     mat_t &m_;
     size_t column_;
-  gen_matrix_column(mat_t &m, size_t column) : m_(m), column_(column) {
+  matrix_column_gen(mat_t &m, size_t column) : m_(m), column_(column) {
     }
     double &operator[](size_t i) {
+      return m_(i,column_);
+    }
+    const double &operator[](size_t i) const {
       return m_(i,column_);
     }
   };

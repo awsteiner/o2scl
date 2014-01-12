@@ -34,6 +34,7 @@
 #include <o2scl/eff_fermion.h>
 #include <o2scl/test_mgr.h>
 #include <o2scl/convert_units.h>
+#include <o2scl/interp2_direct.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -45,42 +46,6 @@ namespace o2scl {
 
       See also the general description in the \ref sneos_section 
       section of the User's guide.
-
-      The EOSs are stored in a set of \ref tensor_grid3 objects on
-      grids with baryon density in \f$ \mathrm{fm}^{-3} \f$, electron
-      fraction (unitless) and temperature in \f$ \mathrm{MeV} \f$.
-
-      Not all tabulated EOSs contain all columns, in which case the
-      associated tensor_grid3 object may be empty. For example, EOSs
-      which do not contain the leptonic contributions do not provide
-      \ref gen_sn_eos::E, \ref gen_sn_eos::F, \ref gen_sn_eos::S, and
-      \ref gen_sn_eos::P. In these case, the grid is set for these
-      objects but the data is set to zero. To compute these from the
-      data after loading the EOS table, use \ref
-      gen_sn_eos::compute_eg().
-
-      The functions named <tt>load()</tt> in the children classes load
-      the entire EOS into memory. Memory allocation is automatically
-      performed, but not deallocated until free() or the destructor is
-      called.
-
-      After loading, you can interpolate the EOS by using 
-      \ref tensor_grid3::interp_linear() directly. For example,
-      the following returns the mass number at an arbitrary
-      baryon density, electron fraction, and temperature
-      assuming the table is stored in <tt>skm.dat</tt>:
-      \verbatim
-      ls_eos ls;
-      ls.load("skm.dat");
-      double nb=0.01, Ye=0.2, T=10.0;
-      cout << ls.A.interp_linear(nb,Ye,T) << endl;
-      \endverbatim
-      Interpolation for all EOSs is linear by default, however, some
-      of the grids are logarithmic, so linear interpolation on a
-      logarithmic grid leads to power-laws in between grid points.
-
-      \todo Ensure all energies and chemical potentials are based on
-      the same rest masses, and document the shifts accordingly.
 
       \comment 
       \todo Allow logarithmic grids for any of nb, Ye, or T. 
@@ -207,13 +172,13 @@ namespace o2scl {
     tensor_grid3 Z;
     /// Mass number
     tensor_grid3 A;
-    /// Neutron fraction
+    /// Neutron baryon fraction
     tensor_grid3 Xn;
-    /// Proton fraction
+    /// Proton baryon fraction
     tensor_grid3 Xp;
-    /// Alpha particle fraction
+    /// Alpha particle baryon fraction
     tensor_grid3 Xalpha;
-    /// Fraction of heavy nuclei
+    /// Heavy nuclei baryon fraction
     tensor_grid3 Xnuclei;
     /// Other data sets
     tensor_grid3 other[20];
@@ -221,6 +186,8 @@ namespace o2scl {
     tensor_grid3 *arr[n_base+20];
     //@}
 
+    /** \brief Check the table composition entries
+     */
     void check_composition(double &max1, double &max2);
 
     /// \name Interpolation
@@ -341,24 +308,34 @@ namespace o2scl {
     }
 
 #ifdef O2SCL_NEVER_DEFINED
-
-    /*
-      This is an interesting idea, but e.g. interp2_direct doesn't yet
-      handle generic vector and matrix types
+    
+    /** \brief Desc
+	
+	This doesn't work yet.
     */
-    template<class interp2_t> class slice {
+    class slice {
       
     public:
-
+      
+      /// 
       typedef std::function<double(size_t,size_t)> data_t;
 
+      ///
       data_t data;
 
+      /// \name
+      //@{
       ubvector grid_x, grid_y;
+      //@}
 
-      interp2_t it;
-
-      void fixed_Ye(tensor_grid3 &tg3, size_t iYe) {
+      /** \brief Desc
+       */
+      interp2_direct<ubvector,data_t,gen_matrix_row<data_t>,
+	gen_matrix_column<data_t> > it;
+      
+      /** \brief Desc
+       */
+      void set_nB_T(tensor_grid3 &tg3, size_t iYe) {
 	data=std::bind(std::mem_fn<double &(size_t,size_t,size_t)>
 		       (&tensor_grid3::get),tg3,std::placeholders::_1,iYe,
 		       std::placeholders::_2);
@@ -372,7 +349,40 @@ namespace o2scl {
 	return;
       }
       
+      /** \brief Desc
+       */
+      void set_nB_Ye(tensor_grid3 &tg3, size_t iT) {
+	data=std::bind(std::mem_fn<double &(size_t,size_t,size_t)>
+		       (&tensor_grid3::get),tg3,std::placeholders::_1,
+		       std::placeholders::_2,iT);
+	size_t nx=tg3.get_size(0);
+	grid_x.resize(nx);
+	for(size_t i=0;i<nx;i++) grid_x[i]=tg3.get_grid(0,i);
+	size_t ny=tg3.get_size(1);
+	grid_y.resize(ny);
+	for(size_t i=0;i<ny;i++) grid_y[i]=tg3.get_grid(1,i);
+	it.set_data(nx,ny,grid_x,grid_y,data);
+	return;
+      }
+      
+      /** \brief Desc
+       */
+      void set_T_Ye(tensor_grid3 &tg3, size_t inB) {
+	data=std::bind(std::mem_fn<double &(size_t,size_t,size_t)>
+		       (&tensor_grid3::get),tg3,inB,std::placeholders::_2,
+		       std::placeholders::_1);
+	size_t nx=tg3.get_size(2);
+	grid_x.resize(nx);
+	for(size_t i=0;i<nx;i++) grid_x[i]=tg3.get_grid(2,i);
+	size_t ny=tg3.get_size(1);
+	grid_y.resize(ny);
+	for(size_t i=0;i<ny;i++) grid_y[i]=tg3.get_grid(1,i);
+	it.set_data(nx,ny,grid_x,grid_y,data);
+	return;
+      }
+      
     };
+
 #endif
 
   protected:
@@ -718,11 +728,6 @@ namespace o2scl {
       section in the table with T=0.1 MeV and \f$ Y_p = 0.1 \f$ for
       all temperature and proton fraction points.
 
-      Also, the original EOS is tabulated for constant proton
-      fraction, and this \o2 interface assumes that the electron
-      fraction is equal to the proton fraction. Currently, this is a
-      problem only at higher densities where muons might appear.
-      
       The data for \ref gen_sn_eos::E, \ref gen_sn_eos::F, \ref
       gen_sn_eos::S, and \ref gen_sn_eos::P is not stored in the table
       but can be computed with \ref gen_sn_eos::compute_eg().
@@ -859,8 +864,7 @@ namespace o2scl {
       See also the documentation at \ref gen_sn_eos and the
       \ref sneos_section section of the User's guide.
 
-      The proton fraction is assumed to be equal to the electron
-      fraction. The free energy per baryon neutron and proton chemical
+      The free energy per baryon neutron and proton chemical
       potentials are relative to a nucleon mass of 939 MeV. The values
       of \ref o2scl::gen_sn_eos::m_neut and \ref
       o2scl::gen_sn_eos::m_prot are set to 939 MeV accordingly. The

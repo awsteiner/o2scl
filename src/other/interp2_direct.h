@@ -20,6 +20,30 @@
 
   -------------------------------------------------------------------
 */
+/*
+ * Some of the code in this file was originally part of interp2d, a
+ * GSL-compatible two-dimensional interpolation library.
+ * <http://www.ellipsix.net/interp2d.html>
+ *
+ * Copyright 2012 Thomas Beutlich, David Zaslavsky
+ * Portions based on alglib 3.6 interpolation code,
+ *  copyright Sergey Bochkanov
+ * Portions based on GNU GSL interpolation code,
+ *  copyright 1996, 1997, 1998, 1999, 2000, 2004 Gerard Jungman
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 /** \file interp2_direct.h
     \brief File defining \ref o2scl::interp2_direct
 */
@@ -80,10 +104,8 @@ namespace o2scl {
     
   public:
     
-    typedef boost::numeric::ublas::vector<double> ubvector;
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
-    typedef boost::numeric::ublas::matrix_row<ubmatrix> ubmatrix_row;
-    typedef boost::numeric::ublas::matrix_column<ubmatrix> ubmatrix_column;
+    typedef boost::numeric::ublas::matrix_column<ubmatrix> ubmatrix_col;
 
     interp2_direct() {
       data_set=false;
@@ -140,9 +162,9 @@ namespace o2scl {
 
 	// Mixed partial derivative
 	for(size_t j=0;j<n_y;j++) {
-	  mat_column_t col=
-	    o2scl::matrix_column<mat_t,mat_column_t>(zy,j);
-	  interp_vec<vec_t,mat_column_t> itp(n_x,x_grid,col,interp_type);
+	  ubmatrix_col col=
+	    o2scl::matrix_column<ubmatrix,ubmatrix_col>(zy,j);
+	  interp_vec<vec_t,ubmatrix_col> itp(n_x,x_grid,col,interp_type);
 	  for(size_t i=0;i<n_x;i++) {
 	    zxy(i,j)=itp.deriv(x_grid[i]);
 	  }

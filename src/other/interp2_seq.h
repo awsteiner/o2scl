@@ -46,7 +46,7 @@ namespace o2scl {
       This class implements two-dimensional interpolation by iterating
       the \o2 one-dimensional interpolation routines. Derivatives and
       integrals along both x- and y-directions can be computed. This
-      class is likely a bit slower than \ref interp2_seq but more
+      class is likely a bit slower than \ref interp2_direct but more
       flexible.
 
       The convention used by this class is that the first (row) index
@@ -67,24 +67,10 @@ namespace o2scl {
 
       There is an example for the usage of this class given
       in <tt>examples/ex_interp2_seq.cpp</tt>.
-
+      
       \future Implement an improved caching system in case, for example
       \c xfirst is true and the last interpolation used the same
       value of \c x.
-
-      \comment
-
-      1. One could generalize the matrix and vector types. This would
-      demand adding template types for the row and column objects.
-
-      2. One could copy the user data instead of storing pointers to
-      it.
-
-      3. One could include get() and set() methods, but one would
-      have to be careful about when to reset the interpolation.
-
-      \endcomment
-
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
     class mat_t=boost::numeric::ublas::matrix<double>,
@@ -237,7 +223,7 @@ namespace o2scl {
       for(size_t i=0;i<nx;i++) {
 	icol[i]=itps[i]->eval(y);
       }
-      interp_vec<ubvector> six(nx,*xfun,icol,itype);
+      interp_vec<vec_t,ubvector> six(nx,*xfun,icol,itype);
       result=six.deriv2(x);
       return result;
     }
@@ -255,7 +241,7 @@ namespace o2scl {
       for(size_t i=0;i<nx;i++) {
 	icol[i]=itps[i]->eval(y);
       }
-      interp_vec<ubvector> six(nx,*xfun,icol,itype);
+      interp_vec<vec_t,ubvector> six(nx,*xfun,icol,itype);
       result=six.integ(x0,x1);
       return result;
 
@@ -273,7 +259,7 @@ namespace o2scl {
       for(size_t i=0;i<nx;i++) {
 	icol[i]=itps[i]->deriv(y);
       }
-      interp_vec<ubvector> six(nx,*xfun,icol,itype);
+      interp_vec<vec_t,ubvector> six(nx,*xfun,icol,itype);
       result=six.eval(x);
       return result;
     }
@@ -290,7 +276,7 @@ namespace o2scl {
       for(size_t i=0;i<nx;i++) {
 	icol[i]=itps[i]->deriv2(y);
       }
-      interp_vec<ubvector> six(nx,*xfun,icol,itype);
+      interp_vec<vec_t,ubvector> six(nx,*xfun,icol,itype);
       result=six.eval(x);
       return result;
     }
@@ -308,7 +294,7 @@ namespace o2scl {
       for(size_t i=0;i<nx;i++) {
 	icol[i]=itps[i]->integ(y0,y1);
       }
-      interp_vec<ubvector> six(nx,*xfun,icol,itype);
+      interp_vec<vec_t,ubvector> six(nx,*xfun,icol,itype);
       result=six.eval(x);
       return result;
     }
@@ -326,7 +312,7 @@ namespace o2scl {
       for(size_t i=0;i<nx;i++) {
 	icol[i]=itps[i]->deriv(y);
       }
-      interp_vec<ubvector> six(nx,*xfun,icol,itype);
+      interp_vec<vec_t,ubvector> six(nx,*xfun,icol,itype);
       result=six.deriv(x);
       return result;
     }
@@ -376,7 +362,7 @@ namespace o2scl {
 		     "interp_gen(). (xfirst=true)",exc_einval);
 	}
       }
-      interp_vec<ubvector> six(nx,*xfun,icol,itype);
+      interp_vec<vec_t,ubvector> six(nx,*xfun,icol,itype);
       if (ix==-1) {
 	result=six.integ(x0,x1);
       } else if (ix==0) {
@@ -399,7 +385,7 @@ namespace o2scl {
     /// The array of interpolation objects
     std::vector<interp_vec<vec_t,mat_row_t> *> itps;
 
-    /// An array of rows or columns
+    /// An array of rows
     std::vector<mat_row_t *> vecs;
 
     /// The number of x grid points
