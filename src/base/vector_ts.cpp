@@ -29,6 +29,7 @@
 #include <o2scl/columnify.h>
 #include <o2scl/test_mgr.h>
 #include <o2scl/permutation.h>
+#include <o2scl/tensor_grid.h>
 
 using namespace std;
 using namespace o2scl;
@@ -53,8 +54,8 @@ int main(void) {
     ub1(2,0)=2.0;
     ub1(2,1)=3.0;
     ub1(2,2)=4.0;
-    gen_matrix_row<ubmatrix> r1=
-      o2scl::matrix_row<ubmatrix,gen_matrix_row<ubmatrix> >(ub1,2);
+    matrix_row_gen<ubmatrix> r1=
+      o2scl::matrix_row<ubmatrix,matrix_row_gen<ubmatrix> >(ub1,2);
     t.test_rel(r1[0],2.0,1.0e-12,"matrix row 1");
     t.test_rel(r1[1],3.0,1.0e-12,"matrix row 2");
     t.test_rel(r1[2],4.0,1.0e-12,"matrix row 3");
@@ -69,15 +70,16 @@ int main(void) {
     ub1(2,0)=4.0;
     cout << r1[0] << " " << r1[1] << " " << r1[2] << endl;
     t.test_rel(r1[0],4.0,1.0e-12,"matrix row 7");
-    gen_matrix_column<ubmatrix> r2=
-      o2scl::matrix_column<ubmatrix,gen_matrix_column<ubmatrix>>(ub1,2);
+    matrix_column_gen<ubmatrix> r2=
+      o2scl::matrix_column<ubmatrix,matrix_column_gen<ubmatrix> >(ub1,2);
     t.test_rel(r2[0],2.0,1.0e-12,"matrix col 1");
     t.test_rel(r2[1],3.0,1.0e-12,"matrix col 2");
     t.test_rel(r2[2],-3.0,1.0e-12,"matrix col 3");
     r2[0]=1.0;
     t.test_rel(ub1(0,2),1.0,1.0e-12,"matrix col 4");
-  }
 
+  }
+  
   {
     ubmatrix ub1(3,3);
     ub1(0,0)=0.0;

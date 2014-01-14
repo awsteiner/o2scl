@@ -260,6 +260,33 @@ int main(void) {
     
   }
 
+  {
+    tensor3<> temp;
+    size_t sz[3]={2,2,2};
+    temp.resize(3,sz);
+    temp.set(0,0,0,1.0);
+    temp.set(0,0,1,4.0);
+    temp.set(0,1,0,9.0);
+    temp.set(0,1,1,16.0);
+    temp.set(1,0,0,25.0);
+    temp.set(1,0,1,36.0);
+    temp.set(1,1,0,49.0);
+    temp.set(1,1,1,64.0);
+
+    // First fix first index to one and output the corresponding matrix
+    typedef std::function<double &(size_t,size_t)> data_t;
+    data_t temp2=std::bind(std::mem_fn<double &(size_t,size_t,size_t)>
+			   (&tensor3<>::get),temp,
+			   1,std::placeholders::_1,std::placeholders::_2);
+    cout << temp2(0,0) << " " << temp2(0,1) << endl;
+    cout << temp2(1,0) << " " << temp2(1,1) << endl;
+
+    // Then fix last index to 1 (i.e. the second column), giving 36 and 64
+    matrix_column_gen<data_t> column=
+      o2scl::matrix_column<data_t,matrix_column_gen<data_t> >(temp2,1);
+    cout << column[0] << " " << column[1] << endl;
+  }
+
   t.report();
 
   return 0;

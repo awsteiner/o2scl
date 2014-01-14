@@ -307,33 +307,35 @@ namespace o2scl {
       return baryons_only_loaded;
     }
 
-#ifdef O2SCL_NEVER_DEFINED
-    
-    /** \brief Desc
+    /** \brief A slice of data from \ref gen_sn_eos for one index fixed
 	
-	This doesn't work yet.
+	This class allows one to easily construct a \ref
+	o2scl::interp2_direct object automatically by fixing one index
+	from one of the \ref o2scl::tensor_grid3 objects in a child of
+	\ref o2scl::gen_sn_eos .
     */
     class slice {
       
     public:
       
-      /// 
-      typedef std::function<double(size_t,size_t)> data_t;
+      /// Typedef for the matrix type
+      typedef std::function<double &(size_t,size_t)> data_t;
 
-      ///
+      /// Data object in the form of a matrix
       data_t data;
 
-      /// \name
+      /// \name Grid vectors
       //@{
       ubvector grid_x, grid_y;
       //@}
 
-      /** \brief Desc
+      /** \brief The interpolation object
        */
-      interp2_direct<ubvector,data_t,gen_matrix_row<data_t>,
-	gen_matrix_column<data_t> > it;
+      interp2_direct<ubvector,data_t,matrix_row_gen<data_t>,
+	matrix_column_gen<data_t> > it;
       
-      /** \brief Desc
+      /** \brief Set the slice to correspond to a matrix 
+	  in the form \f$ (n_B,T) \f$
        */
       void set_nB_T(tensor_grid3 &tg3, size_t iYe) {
 	data=std::bind(std::mem_fn<double &(size_t,size_t,size_t)>
@@ -349,7 +351,8 @@ namespace o2scl {
 	return;
       }
       
-      /** \brief Desc
+      /** \brief Set the slice to correspond to a matrix 
+	  in the form \f$ (n_B,Y_e) \f$
        */
       void set_nB_Ye(tensor_grid3 &tg3, size_t iT) {
 	data=std::bind(std::mem_fn<double &(size_t,size_t,size_t)>
@@ -365,7 +368,8 @@ namespace o2scl {
 	return;
       }
       
-      /** \brief Desc
+      /** \brief Set the slice to correspond to a matrix 
+	  in the form \f$ (T,Y_e) \f$
        */
       void set_T_Ye(tensor_grid3 &tg3, size_t inB) {
 	data=std::bind(std::mem_fn<double &(size_t,size_t,size_t)>
@@ -382,8 +386,6 @@ namespace o2scl {
       }
       
     };
-
-#endif
 
   protected:
 
