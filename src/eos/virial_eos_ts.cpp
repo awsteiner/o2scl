@@ -25,8 +25,8 @@
 #endif
 
 #include <o2scl/test_mgr.h>
-
-#include "virial_eos.h"
+#include <o2scl/virial_eos.h>
+#include <o2scl/rel_fermion.h>
 
 using namespace std;
 using namespace o2scl;
@@ -37,7 +37,7 @@ int main(void) {
   cout.setf(ios::scientific);
 
   test_mgr t;
-  t.set_output_level(1);
+  t.set_output_level(2);
   
   double hc=hc_mev_fm;
 
@@ -46,37 +46,51 @@ int main(void) {
   
   fermion n(o2scl_settings.get_convert_units().convert
 	    ("kg","1/fm",o2scl_mks::mass_neutron),2.0);
+  n.inc_rest_mass=false;
   fermion p(o2scl_settings.get_convert_units().convert
 	    ("kg","1/fm",o2scl_mks::mass_proton),2.0);
-  n.inc_rest_mass=false;
   p.inc_rest_mass=false;
+  fermion e(o2scl_settings.get_convert_units().convert
+	    ("kg","1/fm",o2scl_mks::mass_electron),2.0);
 
   thermo th;
   double T;
   virial_eos ve;
+  rel_fermion rf;
 
+  vector<double> nba, pra, soaa;
+  interp<vector<double> > it(itp_cspline);
+
+  /* 
+     This reproduces the pressure at n_B=0.05 fm^{-3} in 
+     Figure 10 in Horowitz et al. (2005)
+  */
   T=10.0/hc;
-  cout << "mu nn_np n_B P" << endl;
-  for(double mu=-50.0;mu<-10.0;mu/=1.2) {
+  for(double mu=-50.0;mu<-10.0;mu/=1.03) {
     n.mu=mu/hc;
     p.mu=mu/hc;
     ve.calc_temp_p(n,p,T,th);
-    cout << mu << " " << n.n+p.n << " " 
-	 << n.n+p.n+4.0*ve.alpha.n << " " << th.pr*hc << endl;
+    nba.push_back(n.n+p.n+4.0*ve.alpha.n);
+    pra.push_back(th.pr*hc);
   }
-  cout << endl;
+  t.test_rel(it.eval(0.05,nba.size(),nba,pra),0.162,0.01,"Fig 10.");
+  nba.clear();
+  pra.clear();
 
-  cout << "mu nn_np n_B P xa SoA" << endl;
+  T=4.0/hc;
   for(double mu=-50.0;mu<-5.0;mu/=1.03) {
     n.mu=mu/hc;
     p.mu=mu/hc;
     ve.calc_temp_p(n,p,T,th);
-    cout << mu << " " << n.n+p.n << " " 
-	 << n.n+p.n+4.0*ve.alpha.n << " " << th.pr*hc << " "
-	 << 4.0*ve.alpha.n/(n.n+p.n+4.0*ve.alpha.n) << " " 
-	 << th.en/(n.n+p.n+4.0*ve.alpha.n) << endl;
+    e.n=p.n+2.0*ve.alpha.n;
+    rf.calc_density(e,T);
+    nba.push_back(n.n+p.n+4.0*ve.alpha.n);
+    pra.push_back((th.pr+e.pr)*hc);
+    soaa.push_back((th.en+e.en)/(n.n+p.n+4.0*ve.alpha.n));
   }
-  cout << endl;
+  t.test_rel(it.eval(0.0016,nba.size(),nba,pra),0.015,5.0e-2,"Fig 11 right.");
+  t.test_rel(it.eval(0.05,nba.size(),nba,soaa),1.35,1.0e-1,"Fig 13 right.");
+  t.test_rel(it.eval(1.0e-4,nba.size(),nba,soaa),7.5,2.0e-2,"Fig 13 left.");
   
   t.report();
   

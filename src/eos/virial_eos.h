@@ -35,8 +35,13 @@ namespace o2scl {
 #endif
 
   /** \brief Virial EOS
-      
+
       Virial EOS from \ref Horowitz05.
+
+      \todo This doesn't quite work right as a hadronic_eos object
+      because of the alpha particles. I need to rewrite the functions
+      from the parent to compute matter without alpha particles and
+      then make new functions for matter with alpha particles.
   */
   class virial_eos : public hadronic_eos_temp_pres {
 
@@ -49,7 +54,8 @@ namespace o2scl {
 
     /// \name Interpolation for virial coefficients
     //@{
-    std::vector<double> Tv, bnv, Tbnpv, bpnv, Tbpnpv, banv, Tbanpv, bav, Tbapv;
+    std::vector<double> Tv, bnv, Tbnpv, bpnv, Tbpnpv;
+    std::vector<double> banv, Tbanpv, bav, Tbapv;
     interp_vec<std::vector<double> > ibn, iTbnp, ibpn, iTbpnp, 
       iban, iTbanp, iba, iTbap;
     //@}
@@ -64,7 +70,9 @@ namespace o2scl {
 	("kg","1/fm",o2scl_mks::mass_proton);
       alpha.init(2.0*mn+2.0*mp-Ealpha,1.0);
 
-      // Data from the Tables in Horowitz05
+      // Data from the tables in Horowitz05. The rows for T<=10 MeV
+      // are from Table 1 and Table 2 and the rows for T>10 MeV are
+      // from Table 3.
       double arr[16][9]={
 	{0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0},
 	{1,0.288,0.032,19.4,-43.8,1.51,1.21,2.55,1.59},
@@ -116,6 +124,11 @@ namespace o2scl {
       return 0;
     }
 
+    /** \name The virial coefficients and their temperature derivatives
+
+	These functions assume that the temperature is specified in MeV
+     */
+    //@{
     virtual double bn(double T) {
       return ibn.eval(T);
     }
@@ -147,6 +160,7 @@ namespace o2scl {
     virtual double Tbpn_prime(double T) {
       return iTbpnp.eval(T);
     }
+    //@}
 
     /** \brief Equation of state as a function of the chemical potentials
 	at finite temperature
@@ -162,9 +176,11 @@ namespace o2scl {
     */
     virtual int calc_temp_p_alpha(fermion &n, fermion &p, boson &a, 
 				  double T, thermo &th) {
+
+      double TMeV=T*o2scl_const::hc_mev_fm;
       
       a.mu=2.0*p.mu+2.0*n.mu;
-      
+
       double zn, zp, za;
       if (n.inc_rest_mass) {
 	zn=exp((n.mu-n.m)/T);
@@ -183,27 +199,42 @@ namespace o2scl {
       double lambda3=pow(lambda,3.0);
       double lambdaa3=pow(lambdaa,3.0);
 
-      th.pr=T*(2.0/lambda3*(zn+zp+(zn*zn+zp*zp)*bn(T)+2.0*zp*zn*bpn(T))
-	       +1.0/lambdaa3*(za+za*za*ba(T)+2.0*za*(zn+zp)*ban(T)));
+      th.pr=T*(2.0/lambda3*(zn+zp+(zn*zn+zp*zp)*bn(TMeV)+2.0*zp*zn*bpn(TMeV))
+	       +1.0/lambdaa3*(za+za*za*ba(TMeV)+2.0*za*(zn+zp)*ban(TMeV)));
       
-      n.n=2.0/lambda3*(zn+2.0*zn*zn*bn(T)+2.0*zp*zn*bpn(T)+
-		       8.0*za*zn*ban(T));
-      p.n=2.0/lambda3*(zp+2.0*zp*zp*bn(T)+2.0*zp*zn*bpn(T)+
-		       8.0*za*zp*ban(T));
-      a.n=1.0/lambdaa3*(za+2.0*za*za*ba(T)+2.0*za*(zn+zp)*ban(T));
+      n.n=2.0/lambda3*(zn+2.0*zn*zn*bn(TMeV)+2.0*zp*zn*bpn(TMeV)+
+		       8.0*za*zn*ban(TMeV));
+      p.n=2.0/lambda3*(zp+2.0*zp*zp*bn(TMeV)+2.0*zp*zn*bpn(TMeV)+
+		       8.0*za*zp*ban(TMeV));
+      a.n=1.0/lambdaa3*(za+2.0*za*za*ba(TMeV)+2.0*za*(zn+zp)*ban(TMeV));
       
       th.en=5.0*th.pr/2.0/T-n.n*log(zn)-p.n*log(zp)-a.n*log(za)+
-	2.0/lambda3*((zn*zn+zp*zp)*Tbn_prime(T)+
-		     2.0*zp*zn*Tbpn_prime(T))+
-	1.0/lambdaa3*(za*za*Tba_prime(T)+2.0*za*(zn+zp)*Tban_prime(T));
-      
-      th.ed=-th.pr+T*th.en+n.n*n.mu+p.n*p.mu+a.n*a.mu;
+	2.0/lambda3*((zn*zn+zp*zp)*Tbn_prime(TMeV)+
+		     2.0*zp*zn*Tbpn_prime(TMeV))+
+	1.0/lambdaa3*(za*za*Tba_prime(TMeV)+2.0*za*(zn+zp)*Tban_prime(TMeV));
+
+      th.ed=-th.pr+T*th.en;
+      if (n.inc_rest_mass) {
+	th.ed+=n.n*n.mu;
+      } else {
+	th.ed+=n.n*n.mu+n.n*n.m;
+      }
+      if (p.inc_rest_mass) {
+	th.ed+=p.n*p.mu;
+      } else {
+	th.ed+=p.n*p.mu+p.n*p.m;
+      }
+      if (a.inc_rest_mass) {
+	th.ed+=a.n*a.mu;
+      } else {
+	th.ed+=a.n*a.mu+a.n*a.m;
+      }
       /*
 	Alternate expression for the energy density
 
 	double ed2=th.pr*1.5-a.n*Ealpha+2.0*T/lambda3*
-	((zn*zn+zp*zp)*Tbn_prime(T)+2.0*zn*zp*Tbpn_prime(T))+
-	T/lambdaa3*(za*za*Tba_prime(T)+2.0*za*(zn+zp)*Tban_prime(T));
+	((zn*zn+zp*zp)*Tbn_prime(TMeV)+2.0*zn*zp*Tbpn_prime(TMeV))+
+	T/lambdaa3*(za*za*Tba_prime(TMeV)+2.0*za*(zn+zp)*Tban_prime(TMeV));
       */
 
       return 0;
