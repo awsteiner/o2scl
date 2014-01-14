@@ -65,12 +65,9 @@ int main(void) {
   // Compute EOS, include muons
   nst.include_muons=true;
   nst.set_eos(rmf);
-  cout << "Here1." << endl;
   nst.verbose=1;
   nst.calc_eos();
-  cout << "Here2." << endl;
   o2_shared_ptr<table_units<> >::type te=nst.get_eos_results();
-  cout << "Here3." << endl;
 
   // Compute mass vs. radius
   nst.calc_nstar();

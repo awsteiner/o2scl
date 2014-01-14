@@ -56,13 +56,17 @@ typedef boost::numeric::ublas::matrix<double> ubmatrix;
     <tt>o2scl/constants.h</tt> here, but APR appears to have been
     designed to be used with neutron and protons masses equal
     to 939 MeV. 
-
+    
     \future Remove nd2 and just use nd?
 */
 class ex_apr_eos {
   
 protected:
-  
+
+  /// \name Fermions
+  //@{
+  /// Compute zero-temperature thermodynamics
+  fermion_zerot fzt;
   /// Neutron for low-density phase
   fermion n;
   /// Proton for low-density phase
@@ -71,8 +75,6 @@ protected:
   fermion n2;
   /// Proton for high-density phase
   fermion p2;
-  /// Compute zero-temperature thermodynamics
-  fermion_zerot fzt;
   /// Electron for low-density phase
   fermion e;
   /// Muon for low-density phase
@@ -81,6 +83,10 @@ protected:
   fermion e2;
   /// Muon for high-density phase
   fermion mu2;
+  //@}
+  
+  /// \name 'Thermo' objects
+  //@{
   /// Baryon thermodynamics for low-density phase
   thermo hb;
   /// Leptonic thermodynamics for low-density phase
@@ -91,6 +97,9 @@ protected:
   thermo tot;
   /// Leptonic thermodynamics for high-density phase
   thermo l2;
+  //@}
+
+  /// \name Numerical methods
   /// Solver
   mroot_hybrids<mm_funct<>,boost::numeric::ublas::vector<double>,
 		boost::numeric::ublas::matrix<double> > solver;
@@ -100,6 +109,10 @@ protected:
   /// Solver for saturation properties
   mroot_hybrids<mm_funct<>,boost::numeric::ublas::vector<double>,
 		boost::numeric::ublas::matrix<double>,jac_funct<> > sat_solver;
+  /// Derivative object
+  deriv_cern<> cd;
+  //@}
+
   /// Baryon density
   double nb;
   /// Volume fraction of low-density phase
@@ -119,12 +132,12 @@ protected:
   static const int mixed_phase=2;
   static const int high_phase=3;
   //@}
+
   /// Base APR EOS
   apr_eos ap;
+  
   /// Table for output
   table_units<> at;
-  /// Derivative object
-  deriv_cern<> cd;
   /// HDF file for output
   hdf_file hf;
 

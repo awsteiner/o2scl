@@ -43,11 +43,7 @@ namespace o2scl {
       b \left(\frac{n}{n0}\right)^{\gamma} \right] \right\}
       \f]
 
-      Symmetry energy at nuclear matter density is a+b. 
-
-      Note that it doesn't really matter what kind of particle
-      object is used, since the calc_e() function doesn't use
-      any of the particle thermodynamics functions. 
+      Symmetry energy at nuclear matter density is \f$ a+b \f$. 
   */
   class schematic_eos : public hadronic_eos_eden {
 

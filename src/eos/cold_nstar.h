@@ -46,13 +46,13 @@ namespace o2scl {
 
       The electron and muon are given masses \ref
       o2scl_mks::mass_electron and \ref o2scl_mks::mass_muon,
-      respectively.
+      after a conversion to units of \f$ 1/\mathrm{fm} \f$.
 
       There is an example for the usage of this class given
-      in <tt>examples/ex_cold_nstar.cpp</tt>.
+      in the \ref ex_cold_nstar_sect.
 
       \hline
-      \b EOS Output
+      \b EOS \b Output
 
       The function calc_eos() generates an object of type
       \ref table_units, which contains the following columns
@@ -144,7 +144,7 @@ namespace o2scl {
       the EOS is not well-formed then this column is set to zero.
 
       \hline
-      \b TOV Output
+      \b TOV \b Output
 
       The TOV table contains all the columns typically 
       generated for mass versus radius tables in \ref tov_solve,

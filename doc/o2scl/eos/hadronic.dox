@@ -10,20 +10,20 @@
     methods are sometimes overloaded in descendants when exact
     formulas are available.
 
-    There is also a set of classes to modify the quartic term
-    of the symmetry energy: rmf4_eos, apr4_eos, skyrme4_eos, and 
-    mdi4_eos all based on sym4_eos_base which can be used
-    in sym4_eos.
+    There is also a set of classes to modify the quartic term of the
+    symmetry energy: \ref o2scl::rmf4_eos, \ref o2scl::apr4_eos, \ref
+    o2scl::skyrme4_eos, and \ref o2scl::mdi4_eos all based on \ref
+    o2scl::sym4_eos_base which can be used in \ref o2scl::sym4_eos.
 
     \section ex_apr_eos_sect Akmal-Pandharipande-Ravenhall EOS example
     
-    The <tt>ex_apr_eos</tt> example computes the APR EOS with \ref
-    o2scl::apr_eos. It computes nuclear and neutron matter and then matter in
+    This example computes the APR EOS with \ref o2scl::apr_eos. It
+    computes nuclear and neutron matter and then matter in
     beta-equilibrium with both a Maxwell construction (as done in the
     \ref Akmal98) and a Gibbs construction to match the low- and
     high-density phases. Afterwards it computes the properties of
-    neutron stars from the EOS. Most of the data is stored in
-    \ref o2scl::table_units objects and then written to HDF files in the 
+    neutron stars from the EOS. Most of the data is stored in \ref
+    o2scl::table_units objects and then written to HDF files in the
     examples directory.
 
     This example is rather lengthy and the full source code is
@@ -35,7 +35,7 @@
 
     \section ex_skyrme_eos_sect Skyrme EOS example
     
-    The <tt>ex_skyrme_eos</tt> computes EOS and neutron star 
+    This example computes the EOS and neutron star 
     properties using \ref o2scl::skyrme_eos from a Skyrme model.
 
     This example is rather lengthy and the full source code is

@@ -616,6 +616,8 @@ namespace o2scl {
     /// Return the type, \c "interp_cspline_peri".
     virtual const char *type() const { return "interp_cspline_peri"; }
 
+    /** \brief Initialize interpolation routine
+     */
     virtual void set(size_t size, const vec_t &xa, const vec2_t &ya) {
 
       if (size<this->min_size) {
@@ -1737,12 +1739,12 @@ namespace o2scl {
       Assuming vectors \c y and \c x define a function \f$ y(x) \f$
       then this computes 
       \f[
-      \int_{x_0}^{x^{n-1}}
+      \int_{x_0}^{x^{n-1}} y(x)~dx
       \f]
       using the trapezoidal rule implied by linear interpolation.
 
       \future It might be faster to compute the sum directly rather
-      than going through an \ref o2scl::interp object?
+      than going through an \ref o2scl::interp object .
   */
   template<class vec_t, class vec2_t> 
     double vector_integ_linear(size_t n, vec_t &x, vec2_t &y) {

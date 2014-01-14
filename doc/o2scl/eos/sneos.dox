@@ -44,10 +44,10 @@
     the number fraction of free protons.
 
     Not all tabulated EOSs contain all of the data, in which case the
-    associated tensor_grid3 object may be empty. For example, EOSs
-    which do not contain the leptonic contributions do not provide
-    \ref o2scl::gen_sn_eos::E, \ref o2scl::gen_sn_eos::F, \ref
-    o2scl::gen_sn_eos::S, and \ref o2scl::gen_sn_eos::P. In these
+    associated \ref o2scl::tensor_grid3 object may be empty. For
+    example, EOSs which do not contain the leptonic contributions do
+    not provide \ref o2scl::gen_sn_eos::E, \ref o2scl::gen_sn_eos::F,
+    \ref o2scl::gen_sn_eos::S, and \ref o2scl::gen_sn_eos::P. In these
     case, the grid is set for these objects but the data is set to
     zero. To compute these from the data after loading the EOS table,
     use \ref o2scl::gen_sn_eos::compute_eg().
