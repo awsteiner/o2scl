@@ -115,6 +115,16 @@ namespace o2scl_cgs {
   const double mass_proton=1.672621777e-24;
   /// Neutron mass in g (CODATA 2010 value)
   const double mass_neutron=1.674927351e-24;
+
+  /// Deuteron mass in kg (CODATA 2010 value)
+  const double mass_deuteron=3.34358348e-24;
+  /// Triton mass in kg (CODATA 2010 value)
+  const double mass_triton=5.00735630e-24;
+  /// Helion mass in kg (CODATA 2010 value)
+  const double mass_helion=5.00641234e-24;
+  /// Alpha particle mass in kg (CODATA 2010 value)
+  const double mass_alpha=6.64465675e-24;
+
   /// Rydberg constant in g cm^2 / s^2 (CODATA 2010 value)
   const double rydberg=2.179872171e-11;
   /// Boltzmann constant in g cm^2 / K s^2 (CODATA 2010 value)
@@ -314,6 +324,16 @@ namespace o2scl_cgsm {
   const double mass_proton=1.672621777e-24;
   /// Neutron mass in g (CODATA 2010 value)
   const double mass_neutron=1.674927351e-24;
+
+  /// Deuteron mass in kg (CODATA 2010 value)
+  const double mass_deuteron=3.34358348e-24;
+  /// Triton mass in kg (CODATA 2010 value)
+  const double mass_triton=5.00735630e-24;
+  /// Helion mass in kg (CODATA 2010 value)
+  const double mass_helion=5.00641234e-24;
+  /// Alpha particle mass in kg (CODATA 2010 value)
+  const double mass_alpha=6.64465675e-24;
+
   /// Rydberg constant in g cm^2 / s^2 (CODATA 2010 value)
   const double rydberg=2.179872171e-11;
   /// Boltzmann constant in g cm^2 / K s^2 (CODATA 2010 value)
@@ -525,6 +545,16 @@ namespace o2scl_mks {
   const double mass_proton=1.672621777e-27;
   /// Neutron mass in kg (CODATA 2010 value)
   const double mass_neutron=1.674927351e-27;
+
+  /// Deuteron mass in kg (CODATA 2010 value)
+  const double mass_deuteron=3.34358348e-27;
+  /// Triton mass in kg (CODATA 2010 value)
+  const double mass_triton=5.00735630e-27;
+  /// Helion mass in kg (CODATA 2010 value)
+  const double mass_helion=5.00641234e-27;
+  /// Alpha particle mass in kg (CODATA 2010 value)
+  const double mass_alpha=6.64465675e-27;
+
   /// Rydberg constant in kg m^2 / s^2 (CODATA 2010 value)
   const double rydberg=2.179872171e-18;
   /// Boltzmann constant in kg m^2 / K s^2 (CODATA 2010 value)
@@ -742,6 +772,16 @@ namespace o2scl_mksa {
   const double mass_proton=1.672621777e-27;
   /// Neutron mass in kg (CODATA 2010 value)
   const double mass_neutron=1.674927351e-27;
+
+  /// Deuteron mass in kg (CODATA 2010 value)
+  const double mass_deuteron=3.34358348e-27;
+  /// Triton mass in kg (CODATA 2010 value)
+  const double mass_triton=5.00735630e-27;
+  /// Helion mass in kg (CODATA 2010 value)
+  const double mass_helion=5.00641234e-27;
+  /// Alpha particle mass in kg (CODATA 2010 value)
+  const double mass_alpha=6.64465675e-27;
+
   /// Rydberg constant in kg m^2 / s^2 (CODATA 2010 value)
   const double rydberg=2.179872171e-18;
   /// Boltzmann constant in kg m^2 / K s^2 (CODATA 2010 value)

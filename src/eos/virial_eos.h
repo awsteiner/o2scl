@@ -34,23 +34,21 @@
 namespace o2scl {
 #endif
 
-  /** \brief Virial EOS
-
+  /** \brief Virial EOS for neutrons, protons, deuterons, and alpha 
+      particles
+      
       Virial EOS from \ref Horowitz05.
-
-      \todo This doesn't quite work right as a hadronic_eos object
-      because of the alpha particles. I need to rewrite the functions
-      from the parent to compute matter without alpha particles and
-      then make new functions for matter with alpha particles.
+      
+      \warning This class is implemented as a hadronic_eos object
+      because it might be helpful to be able to use \ref
+      o2scl::hadronic_eos_temp::calc_temp_e(), but because of the
+      alpha particles and deuterons, some of the other \ref
+      o2scl::hadronic_eos methods don't have the correct
+      interpretation.
   */
   class virial_eos : public hadronic_eos_temp_pres {
 
   protected:
-
-    /** \brief Binding energy of internal alpha particle 
-	(default \f$ 28.3/(\hbar c) \f$ )
-     */
-    double Ealpha;
 
     /// \name Interpolation for virial coefficients
     //@{
@@ -63,12 +61,11 @@ namespace o2scl {
   public:
 
     virial_eos() {
-      Ealpha=28.3/o2scl_const::hc_mev_fm;
-      double mn=o2scl_settings.get_convert_units().convert
-	("kg","1/fm",o2scl_mks::mass_neutron);
-      double mp=o2scl_settings.get_convert_units().convert
-	("kg","1/fm",o2scl_mks::mass_proton);
-      alpha.init(2.0*mn+2.0*mp-Ealpha,1.0);
+
+      alpha.init(o2scl_settings.get_convert_units().convert
+		 ("kg","1/fm",o2scl_mks::mass_alpha),1.0);
+      deuteron.init(o2scl_settings.get_convert_units().convert
+		 ("kg","1/fm",o2scl_mks::mass_deuteron),1.0);
 
       // Data from the tables in Horowitz05. The rows for T<=10 MeV
       // are from Table 1 and Table 2 and the rows for T>10 MeV are
@@ -116,6 +113,9 @@ namespace o2scl {
 
     /// Internal alpha particle
     boson alpha;
+
+    /// Internal deuteron
+    boson deuteron;
 
     /** \brief Equation of state as a function of the chemical potentials
     */
@@ -168,20 +168,22 @@ namespace o2scl {
     virtual int calc_temp_p(fermion &n, fermion &p, double T, 
 			    thermo &th) {
       
-      return calc_temp_p_alpha(n,p,alpha,T,th);
+      return calc_temp_p_alpha(n,p,deuteron,alpha,T,th);
     }
 
-    /** \brief Equation of state as a function of the chemical potentials
-	at finite temperature with explicit alpha particles
+    /** \brief Equation of state as a function of the chemical
+	potentials at finite temperature with alpha particles and
+	deuterons
     */
-    virtual int calc_temp_p_alpha(fermion &n, fermion &p, boson &a, 
+    virtual int calc_temp_p_alpha(fermion &n, fermion &p, boson &d, boson &a, 
 				  double T, thermo &th) {
 
       double TMeV=T*o2scl_const::hc_mev_fm;
       
       a.mu=2.0*p.mu+2.0*n.mu;
+      d.mu=p.mu+n.mu;
 
-      double zn, zp, za;
+      double zn, zp, za, zd;
       if (n.inc_rest_mass) {
 	zn=exp((n.mu-n.m)/T);
       } else {
@@ -193,11 +195,14 @@ namespace o2scl {
 	zp=exp(p.mu/T);
       }
       za=zp*zp*zn*zn*exp(-(a.m-2.0*n.m-2.0*p.m)/T);
+      zd=zp*zn*exp(-(d.m-n.m-p.m)/T);
       
       double lambda=sqrt(4.0*o2scl_const::pi/(n.m+p.m)/T);
       double lambdaa=sqrt(2.0*o2scl_const::pi/a.m/T);
       double lambda3=pow(lambda,3.0);
       double lambdaa3=pow(lambdaa,3.0);
+      double lambdad=sqrt(2.0*o2scl_const::pi/d.m/T);
+      double lambdad3=pow(lambdad,3.0);
 
       th.pr=T*(2.0/lambda3*(zn+zp+(zn*zn+zp*zp)*bn(TMeV)+2.0*zp*zn*bpn(TMeV))
 	       +1.0/lambdaa3*(za+za*za*ba(TMeV)+2.0*za*(zn+zp)*ban(TMeV)));
@@ -207,6 +212,7 @@ namespace o2scl {
       p.n=2.0/lambda3*(zp+2.0*zp*zp*bn(TMeV)+2.0*zp*zn*bpn(TMeV)+
 		       8.0*za*zp*ban(TMeV));
       a.n=1.0/lambdaa3*(za+2.0*za*za*ba(TMeV)+2.0*za*(zn+zp)*ban(TMeV));
+      d.n=1.0/lambdad3*zd;
       
       th.en=5.0*th.pr/2.0/T-n.n*log(zn)-p.n*log(zp)-a.n*log(za)+
 	2.0/lambda3*((zn*zn+zp*zp)*Tbn_prime(TMeV)+
