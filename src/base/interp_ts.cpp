@@ -392,7 +392,8 @@ int main(void) {
     static const size_t N=21;
     double a=2.01;
 
-    cout.precision(4);
+    bool debug=false;
+    if (debug) cout.precision(4);
     
     // Test data 
     ubvector vx(N), vy(N);
@@ -400,9 +401,9 @@ int main(void) {
       vx[i]=((double)i);
       vy[i]=(sin(vx[i]/2.0)+vx[i]/a);
       if (i>0) t.test_gen(vy[i]>vy[i-1],"monotonic 1");
-      //cout << i << " " << vx[i] << " " << vy[i] << endl;
+      if (debug) cout << i << " " << vx[i] << " " << vy[i] << endl;
     }
-    //cout << endl;
+    if (debug) cout << endl;
 
     interp<> io(itp_monotonic);
     interp_vec<> iov(N,vx,vy,itp_monotonic);
@@ -418,15 +419,17 @@ int main(void) {
       double derivb=iov.deriv(x);
       double deriv2a=io.deriv2(x,N,vx,vy);
       double deriv2b=iov.deriv2(x);
-      //cout << x << " " << exact << " " << interpa << " " 
-      //<< deriv << " " << deriva << " "
-      //<< deriv2 << " " << deriv2a << endl;
+      if (debug) {
+	cout << x << " " << exact << " " << interpa << " " 
+	     << deriv << " " << deriva << " "
+	     << deriv2 << " " << deriv2a << endl;
+      }
       t.test_gen(interpa>last,"monotonic 2");
       t.test_rel(interpa,exact,4.0e-2,"interp");
       last=interpa;
     }
 
-    cout.precision(6);
+    if (debug) cout.precision(6);
   }
 
   // Second with a dense data set to show that the values are correct.
@@ -435,7 +438,8 @@ int main(void) {
     static const size_t N=201;
     double a=1.99;
 
-    cout.precision(4);
+    bool debug=false;
+    if (debug) cout.precision(4);
     
     // Test data 
     ubvector vx(N), vy(N);
@@ -443,9 +447,9 @@ int main(void) {
       vx[i]=((double)i)/10.0;
       vy[i]=(sin(vx[i]/2.0)+vx[i]/a);
       if (i>0) t.test_gen(vy[i]>vy[i-1],"monotonic 1");
-      //cout << i << " " << vx[i] << " " << vy[i] << endl;
+      if (debug) cout << i << " " << vx[i] << " " << vy[i] << endl;
     }
-    //cout << endl;
+    if (debug) cout << endl;
 
     interp<> io(itp_monotonic);
     interp_vec<> iov(N,vx,vy,itp_monotonic);
@@ -461,9 +465,11 @@ int main(void) {
       double derivb=iov.deriv(x);
       double deriv2a=io.deriv2(x,N,vx,vy);
       double deriv2b=iov.deriv2(x);
-      //cout << x << " " << exact << " " << interpa << " " 
-      //<< deriv << " " << deriva << " "
-      //<< deriv2 << " " << deriv2a << endl;
+      if (debug) {
+	cout << x << " " << exact << " " << interpa << " " 
+	     << deriv << " " << deriva << " "
+	     << deriv2 << " " << deriv2a << endl;
+      }
       t.test_gen(interpa>last,"monotonic 2");
       t.test_gen(interpa==interpb,"types");
       t.test_rel(interpa,exact,3.0e-4,"interp");
@@ -471,10 +477,19 @@ int main(void) {
       t.test_rel(deriva,deriv,1.0e-1,"deriv");
       t.test_gen(deriv2a==deriv2b,"types d2");
       t.test_rel(deriv2a,deriv2,2.0e2,"deriv2");
+      for(double x2=0.0;x2<=7.0001;x2+=1.0) {
+	if (fabs(x-x2)>1.0e-5) {
+	  double intega=io.integ(x,x2,N,vx,vy);
+	  double integb=iov.integ(x,x2);
+	  double integ=(-x*x+x2*x2+4.0*a*cos(x/2.0)-4.0*a*cos(x2/2.0))/2.0/a;
+	  t.test_gen(intega==integb,"types integ");
+	  t.test_rel(intega,integ,2.0e-1,"integ");
+	}
+      }
       last=interpa;
     }
 
-    cout.precision(6);
+    if (debug) cout.precision(6);
   }
 
   // Third, same dense data but now decreasing
@@ -518,6 +533,17 @@ int main(void) {
       t.test_rel(deriva,deriv,1.0e-1,"deriv");
       t.test_gen(deriv2a==deriv2b,"types d2");
       t.test_rel(deriv2a,deriv2,2.0e2,"deriv2");
+      /*
+	for(double x2=0.0;x2<=7.0001;x2+=1.0) {
+	if (fabs(x-x2)>1.0e-5) {
+	double intega=io.integ(x,x2,N,vx,vy);
+	double integb=iov.integ(x,x2);
+	double integ=(-x*x+x2*x2+4.0*a*cos(x/2.0)-4.0*a*cos(x2/2.0))/2.0/a;
+	t.test_gen(intega==integb,"types integ pass2");
+	t.test_rel(intega,integ,2.0e-1,"integ pass2");
+	}
+	}
+      */
       last=interpa;
     }
 
@@ -562,6 +588,15 @@ int main(void) {
       t.test_rel(deriva,deriv,7.0,"deriv");
       t.test_gen(deriv2a==deriv2b,"types d2");
       t.test_rel(deriv2a,deriv2,2.0e2,"deriv2");
+      for(double x2=0.0;x2<=7.0001;x2+=1.0) {
+	if (fabs(x-x2)>1.0e-5) {
+	  double intega=io.integ(x,x2,N,vx,vy);
+	  double integb=iov.integ(x,x2);
+	  double integ=2.0*(cos(x/2.0)-cos(x2/2.0));
+	  t.test_gen(intega==integb,"types integ pass3");
+	  t.test_rel(intega,integ,5.0,"integ pass3");
+	}
+      }
       last=interpa;
     }
 
