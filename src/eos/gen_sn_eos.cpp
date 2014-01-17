@@ -463,19 +463,31 @@ void ls_eos::load(std::string fname) {
 	       cu.convert("kg","1/fm",o2scl_mks::mass_proton))*hc_mev_fm;
 	    Eint.set(i,k,j,dtemp2);
 	  }
+	  // filling factor
 	  else if (l==13) other[0].set(i,k,j,dtemp);
+	  // baryon density inside nuclei
 	  else if (l==14) other[1].set(i,k,j,dtemp);
+	  // dPdn
 	  else if (l==15) other[2].set(i,k,j,dtemp);
+	  // dPdT
 	  else if (l==16) other[3].set(i,k,j,dtemp);
+	  // dPdY
 	  else if (l==17) other[4].set(i,k,j,dtemp);
+	  // dsdT
 	  else if (l==18) other[5].set(i,k,j,dtemp);
+	  // dsdY
 	  else if (l==19) other[6].set(i,k,j,dtemp);
 	  else if (l==20) A.set(i,k,j,dtemp);
 	  else if (l==21) {
 	    Z.set(i,k,j,dtemp*A.get(i,k,j));
-	  } else if (l==22) other[7].set(i,k,j,dtemp);
+	  } 
+	  // Number of neutrons in skin
+	  else if (l==22) other[7].set(i,k,j,dtemp);
+	  // baryon density outside nuclei
 	  else if (l==23) other[8].set(i,k,j,dtemp);
+	  // x_out
 	  else if (l==24) other[9].set(i,k,j,dtemp);
+	  // mu
 	  else if (l==25) other[10].set(i,k,j,dtemp);
 	  if (i>=n_nB || k>=n_Ye || j>=n_T) {
 	    loaded=false;
@@ -486,7 +498,6 @@ void ls_eos::load(std::string fname) {
       }
     }
   }
-      
   fin.close();
 
   // Loaded must be set to true before calling set_interp()
@@ -681,57 +692,65 @@ void oo_eos::load(std::string fname, size_t mode) {
   }
   
   size_t ndat=19;
+  // Names of sections in the HDF5 file
   vector<string> names;
   vector<size_t> indices;
 
+  // 0-4
   names.push_back("Abar");
-  names.push_back("Xa");
-  names.push_back("Xh");
-  names.push_back("Xn");
-  names.push_back("Xp");
-  names.push_back("Zbar");
-  names.push_back("cs2");
-  names.push_back("dedt");
-  names.push_back("dpderho");
-  names.push_back("dpdrhoe");
-  names.push_back("entropy");
-  names.push_back("gamma");
-  names.push_back("logenergy");
-  names.push_back("logpress");
-  names.push_back("mu_e");
-  names.push_back("mu_n");
-  names.push_back("mu_p");
-  names.push_back("muhat");
-  names.push_back("munu");
   indices.push_back(11);
+  names.push_back("Xa");
   indices.push_back(14);
+  names.push_back("Xh");
   indices.push_back(15);
+  names.push_back("Xn");
   indices.push_back(12);
+  names.push_back("Xp");
   indices.push_back(13);
+
+  // 5-9
+  names.push_back("Zbar");
   indices.push_back(10);
+  names.push_back("cs2");
   indices.push_back(16);
+  names.push_back("dedt");
   indices.push_back(17);
+  names.push_back("dpderho");
   indices.push_back(18);
+  names.push_back("dpdrhoe");
   indices.push_back(19);
+
+  // 10-14
+  names.push_back("entropy");
   indices.push_back(6);
+  names.push_back("gamma");
   indices.push_back(20);
+  names.push_back("logenergy");
   indices.push_back(2);
+  names.push_back("logpress");
   indices.push_back(4);
+  names.push_back("mu_e");
   indices.push_back(21);
+
+  // 15-18
+  names.push_back("mu_n");
   indices.push_back(8);
+  names.push_back("mu_p");
   indices.push_back(9);
+  names.push_back("muhat");
   indices.push_back(22);
+  names.push_back("munu");
   indices.push_back(23);
   
   if (mode==hfsl_mode) {
     ndat+=4;
     names.push_back("X3he");
-    names.push_back("X4li");
-    names.push_back("Xt");
-    names.push_back("Xd");
     indices.push_back(24);
+    names.push_back("X4li");
     indices.push_back(25);
+    names.push_back("Xt");
     indices.push_back(26);
+    names.push_back("Xd");
     indices.push_back(27);
   }
 		  
@@ -786,6 +805,12 @@ void oo_eos::load(std::string fname, size_t mode) {
 	    //}
 	  } else {
 	    arr[indices[i]]->set(j,k,m,dat.get(k,m,j));
+	  }
+	  // Set the free energy per baryon from the energy per 
+	  // baryon and entropy per baryon
+	  if (i==ndat-1) {
+	    double T=F.get_grid(2,m);
+	    F.set(j,k,m,E.get(j,k,m)-T*S.get(j,k,m));
 	  }
 	}
       }
