@@ -257,11 +257,10 @@ namespace o2scl {
 
       size_t i, index_a, index_b;
       
-      double tmp;
       bool flip=false;
       if (((*this->px)[0]<(*this->px)[this->sz-1] && a>b) ||
 	  ((*this->px)[0]>(*this->px)[this->sz-1] && a<b)) {
-	tmp=a;
+	double tmp=a;
 	a=b;
 	b=tmp;
 	flip=true;
@@ -270,15 +269,11 @@ namespace o2scl {
       index_a=this->svx->find(a);
       index_b=this->svx->find(b);
       
-      /* endpoints span more than one interval */
-      
       double result=0.0;
-      
-      /* interior intervals */
       for(i=index_a; i<=index_b; i++) {
 
-	double x_hi=(*this->px)[i+1];
 	double x_lo=(*this->px)[i];
+	double x_hi=(*this->px)[i+1];
 	double y_lo=(*this->py)[i];
 	double y_hi=(*this->py)[i+1];
 	double dx=x_hi-x_lo;
@@ -454,8 +449,8 @@ namespace o2scl {
       
       size_t index=this->svx->find(x0);
 
-      double x_hi=(*this->px)[index+1];
       double x_lo=(*this->px)[index];
+      double x_hi=(*this->px)[index+1];
       double dx=x_hi-x_lo;
 
       double y_lo=(*this->py)[index];
@@ -474,8 +469,8 @@ namespace o2scl {
 
       size_t index=this->svx->find(x0);
   
-      double x_hi=(*this->px)[index+1];
       double x_lo=(*this->px)[index];
+      double x_hi=(*this->px)[index+1];
       double dx=x_hi-x_lo;
 
       double y_lo=(*this->py)[index];
@@ -496,8 +491,8 @@ namespace o2scl {
 
       size_t index=this->svx->find(x0);
   
-      double x_hi=(*this->px)[index+1];
       double x_lo=(*this->px)[index];
+      double x_hi=(*this->px)[index+1];
       double dx=x_hi-x_lo;
 
       double y_lo=(*this->py)[index];
@@ -516,11 +511,10 @@ namespace o2scl {
 
       size_t i, index_a, index_b;
   
-      double tmp;
       bool flip=false;
       if (((*this->px)[0]<(*this->px)[this->sz-1] && a>b) ||
 	  ((*this->px)[0]>(*this->px)[this->sz-1] && a<b)) {
-	tmp=a;
+	double tmp=a;
 	a=b;
 	b=tmp;
 	flip=true;
@@ -533,8 +527,8 @@ namespace o2scl {
   
       for(i=index_a; i<=index_b; i++) {
 
-	double x_hi=(*this->px)[i+1];
 	double x_lo=(*this->px)[i];
+	double x_hi=(*this->px)[i+1];
 	double y_lo=(*this->py)[i];
 	double y_hi=(*this->py)[i+1];
 	double dx=x_hi-x_lo;
@@ -892,11 +886,10 @@ namespace o2scl {
 
       size_t i, index_a, index_b;
   
-      double tmp;
       bool flip=false;
       if (((*this->px)[0]<(*this->px)[this->sz-1] && aa>bb) ||
 	  ((*this->px)[0]>(*this->px)[this->sz-1] && aa<bb)) {
-	tmp=aa;
+	double tmp=aa;
 	aa=bb;
 	bb=tmp;
 	flip=true;
@@ -1036,7 +1029,7 @@ namespace o2scl {
 
   /** \brief Monotonicity-preserving interpolation
 
-      This class is experimental. Integrals don't work yet.
+      \warning This class is experimental. Integrals don't work yet.
 
       This class uses a method based on cubic Hermite interpolation,
       modifying the slopes to guarantee monotonicity. In the
@@ -1230,11 +1223,10 @@ namespace o2scl {
       
       size_t i, index_a, index_b;
       
-      double tmp;
       bool flip=false;
       if (((*this->px)[0]<(*this->px)[this->sz-1] && a>b) ||
 	  ((*this->px)[0]>(*this->px)[this->sz-1] && a<b)) {
-	tmp=a;
+	double tmp=a;
 	a=b;
 	b=tmp;
 	flip=true;
@@ -1255,9 +1247,11 @@ namespace o2scl {
 	
 	if (h != 0.0) {
 	  
-	  if (i == index_a || i == index_b) {
-	    x_lo=(i == index_a) ? a : x_lo;
-	    x_hi=(i == index_b) ? b : x_hi;
+	  if (i == index_a) {
+	    x_lo=a;
+	  }
+	  if (i == index_b) {
+	    x_hi=b;
 	  }
 
 	  double t=(x_hi-x_lo)/h;
@@ -1535,6 +1529,16 @@ namespace o2scl {
     itype=interp_type;
 
     itp->set(n,x,y);
+  }
+
+  /** \brief Manually clear the pointer to the user-specified vector
+   */
+  void clear() {
+    if (itp!=0) {
+      delete itp;
+      itp=0;
+    }
+    return;
   }
       
   /// Give the value of the function \f$ y(x=x_0) \f$ .

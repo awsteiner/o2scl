@@ -59,6 +59,7 @@
 #include <boost/numeric/ublas/matrix_proxy.hpp>
 
 #include <o2scl/interp.h>
+#include <o2scl/interp2.h>
 #include <o2scl/search_vec.h>
 
 #ifndef DOXYGEN_NO_O2NS
@@ -66,7 +67,7 @@ namespace o2scl {
 #endif
 
   /** \brief Bilinear or bicubic two-dimensional interpolation
-
+      
       This class implements two-dimensional interpolation. First and
       second derivatives along both x- and y-directions can be
       computed. This class is likely a bit faster than \ref
@@ -96,7 +97,7 @@ namespace o2scl {
     class mat_t=boost::numeric::ublas::matrix<double>,
     class mat_row_t=boost::numeric::ublas::matrix_row<mat_t>,
     class mat_column_t=boost::numeric::ublas::matrix_column<mat_t> >
-    class interp2_direct {
+    class interp2_direct : public interp2_base<vec_t,mat_t> {
     
 #ifdef O2SCL_NEVER_DEFINED
   }{
@@ -124,11 +125,11 @@ namespace o2scl {
 		   "interp2_direct::set_data().",exc_eunimpl);
       }
   
-      nx=n_x;
-      ny=n_y;
-      xfun=&x_grid;
-      yfun=&y_grid;
-      datap=&data;
+      this->nx=n_x;
+      this->ny=n_y;
+      this->xfun=&x_grid;
+      this->yfun=&y_grid;
+      this->datap=&data;
       itype=interp_type;
 
       svx.set_vec(n_x,x_grid);
@@ -179,7 +180,7 @@ namespace o2scl {
     
     /** \brief Perform the 2-d interpolation 
      */
-    double eval(double x, double y) {
+    virtual double eval(double x, double y) const {
 
       if (!data_set) {
 	O2SCL_ERR("Data not set in interp2_direct::eval().",exc_einval);
@@ -188,15 +189,15 @@ namespace o2scl {
       size_t xi=svx.find(x);
       size_t yi=svy.find(y);
 
-      double xmin=(*xfun)[xi];
-      double xmax=(*xfun)[xi+1];
-      double ymin=(*yfun)[yi];
-      double ymax=(*yfun)[yi+1];
+      double xmin=(*this->xfun)[xi];
+      double xmax=(*this->xfun)[xi+1];
+      double ymin=(*this->yfun)[yi];
+      double ymax=(*this->yfun)[yi+1];
 
-      double zminmin=(*datap)(xi,yi);
-      double zminmax=(*datap)(xi,yi+1);
-      double zmaxmin=(*datap)(xi+1,yi);
-      double zmaxmax=(*datap)(xi+1,yi+1);
+      double zminmin=(*this->datap)(xi,yi);
+      double zminmax=(*this->datap)(xi,yi+1);
+      double zmaxmin=(*this->datap)(xi+1,yi);
+      double zmaxmax=(*this->datap)(xi+1,yi+1);
 
       double dx=xmax-xmin;
       double dy=ymax-ymin;
@@ -282,7 +283,7 @@ namespace o2scl {
 
     /** \brief Compute the partial derivative in the x-direction
      */
-    double deriv_x(double x, double y) {
+    virtual double deriv_x(double x, double y) const {
   
       if (!data_set) {
 	O2SCL_ERR("Data not set in interp2_direct::deriv_x().",exc_einval);
@@ -291,15 +292,15 @@ namespace o2scl {
       size_t xi=svx.find(x);
       size_t yi=svy.find(y);
 
-      double xmin=(*xfun)[xi];
-      double xmax=(*xfun)[xi+1];
-      double ymin=(*yfun)[yi];
-      double ymax=(*yfun)[yi+1];
+      double xmin=(*this->xfun)[xi];
+      double xmax=(*this->xfun)[xi+1];
+      double ymin=(*this->yfun)[yi];
+      double ymax=(*this->yfun)[yi+1];
 
-      double zminmin=(*datap)(xi,yi);
-      double zminmax=(*datap)(xi,yi+1);
-      double zmaxmin=(*datap)(xi+1,yi);
-      double zmaxmax=(*datap)(xi+1,yi+1);
+      double zminmin=(*this->datap)(xi,yi);
+      double zminmax=(*this->datap)(xi,yi+1);
+      double zmaxmin=(*this->datap)(xi+1,yi);
+      double zmaxmax=(*this->datap)(xi+1,yi+1);
 
       double dx=xmax-xmin;
       double dy=ymax-ymin;
@@ -377,7 +378,7 @@ namespace o2scl {
 
     /** \brief Compute the partial second derivative in the x-direction
      */
-    double deriv_xx(double x, double y) {
+    virtual double deriv_xx(double x, double y) const {
 
       if (!data_set) {
 	O2SCL_ERR("Data not set in interp2_direct::deriv_xx().",exc_einval);
@@ -390,15 +391,15 @@ namespace o2scl {
       size_t xi=svx.find(x);
       size_t yi=svy.find(y);
 
-      double xmin=(*xfun)[xi];
-      double xmax=(*xfun)[xi+1];
-      double ymin=(*yfun)[yi];
-      double ymax=(*yfun)[yi+1];
+      double xmin=(*this->xfun)[xi];
+      double xmax=(*this->xfun)[xi+1];
+      double ymin=(*this->yfun)[yi];
+      double ymax=(*this->yfun)[yi+1];
 
-      double zminmin=(*datap)(xi,yi);
-      double zminmax=(*datap)(xi,yi+1);
-      double zmaxmin=(*datap)(xi+1,yi);
-      double zmaxmax=(*datap)(xi+1,yi+1);
+      double zminmin=(*this->datap)(xi,yi);
+      double zminmax=(*this->datap)(xi,yi+1);
+      double zmaxmin=(*this->datap)(xi+1,yi);
+      double zmaxmax=(*this->datap)(xi+1,yi+1);
 
       double dx=xmax-xmin;
       double dy=ymax-ymin;
@@ -464,7 +465,7 @@ namespace o2scl {
 
     /** \brief Compute the partial derivative in the y-direction
      */
-    double deriv_y(double x, double y) {
+    virtual double deriv_y(double x, double y) const {
   
       if (!data_set) {
 	O2SCL_ERR("Data not set in interp2_direct::deriv_y().",exc_einval);
@@ -473,15 +474,15 @@ namespace o2scl {
       size_t xi=svx.find(x);
       size_t yi=svy.find(y);
 
-      double xmin=(*xfun)[xi];
-      double xmax=(*xfun)[xi+1];
-      double ymin=(*yfun)[yi];
-      double ymax=(*yfun)[yi+1];
+      double xmin=(*this->xfun)[xi];
+      double xmax=(*this->xfun)[xi+1];
+      double ymin=(*this->yfun)[yi];
+      double ymax=(*this->yfun)[yi+1];
 
-      double zminmin=(*datap)(xi,yi);
-      double zminmax=(*datap)(xi,yi+1);
-      double zmaxmin=(*datap)(xi+1,yi);
-      double zmaxmax=(*datap)(xi+1,yi+1);
+      double zminmin=(*this->datap)(xi,yi);
+      double zminmax=(*this->datap)(xi,yi+1);
+      double zmaxmin=(*this->datap)(xi+1,yi);
+      double zmaxmax=(*this->datap)(xi+1,yi+1);
 
       double dx=xmax-xmin;
       double dy=ymax-ymin;
@@ -559,7 +560,7 @@ namespace o2scl {
 
     /** \brief Compute the partial second derivative in the y-direction
      */
-    double deriv_yy(double x, double y) {
+    virtual double deriv_yy(double x, double y) const {
   
       if (!data_set) {
 	O2SCL_ERR("Data not set in interp2_direct::deriv_yy().",exc_einval);
@@ -572,15 +573,15 @@ namespace o2scl {
       size_t xi=svx.find(x);
       size_t yi=svy.find(y);
 
-      double xmin=(*xfun)[xi];
-      double xmax=(*xfun)[xi+1];
-      double ymin=(*yfun)[yi];
-      double ymax=(*yfun)[yi+1];
+      double xmin=(*this->xfun)[xi];
+      double xmax=(*this->xfun)[xi+1];
+      double ymin=(*this->yfun)[yi];
+      double ymax=(*this->yfun)[yi+1];
 
-      double zminmin=(*datap)(xi,yi);
-      double zminmax=(*datap)(xi,yi+1);
-      double zmaxmin=(*datap)(xi+1,yi);
-      double zmaxmax=(*datap)(xi+1,yi+1);
+      double zminmin=(*this->datap)(xi,yi);
+      double zminmax=(*this->datap)(xi,yi+1);
+      double zmaxmin=(*this->datap)(xi+1,yi);
+      double zmaxmax=(*this->datap)(xi+1,yi+1);
 
       double dx=xmax-xmin;
       double dy=ymax-ymin;
@@ -647,7 +648,7 @@ namespace o2scl {
     /** \brief Compute the mixed partial derivative 
 	\f$ \frac{\partial^2 f}{\partial x \partial y} \f$
     */
-    double deriv_xy(double x, double y) {
+    virtual double deriv_xy(double x, double y) const {
   
       if (!data_set) {
 	O2SCL_ERR("Data not set in interp2_direct::deriv_xy().",exc_einval);
@@ -656,15 +657,15 @@ namespace o2scl {
       size_t xi=svx.find(x);
       size_t yi=svy.find(y);
 
-      double xmin=(*xfun)[xi];
-      double xmax=(*xfun)[xi+1];
-      double ymin=(*yfun)[yi];
-      double ymax=(*yfun)[yi+1];
+      double xmin=(*this->xfun)[xi];
+      double xmax=(*this->xfun)[xi+1];
+      double ymin=(*this->yfun)[yi];
+      double ymax=(*this->yfun)[yi+1];
 
-      double zminmin=(*datap)(xi,yi);
-      double zminmax=(*datap)(xi,yi+1);
-      double zmaxmin=(*datap)(xi+1,yi);
-      double zmaxmax=(*datap)(xi+1,yi+1);
+      double zminmin=(*this->datap)(xi,yi);
+      double zminmax=(*this->datap)(xi,yi+1);
+      double zmaxmin=(*this->datap)(xi+1,yi);
+      double zmaxmax=(*this->datap)(xi+1,yi+1);
 
       double dx=xmax-xmin;
       double dy=ymax-ymin;
@@ -734,27 +735,32 @@ namespace o2scl {
       return z_pp;
     }
 
+    virtual double integ_x(double x0, double x1, double y) const {
+      O2SCL_ERR("Integration unimplemented in interp2_direct.",
+		exc_eunimpl);
+      return 0.0;
+    }
+
+    virtual double integ_y(double x, double y0, double y1) const {
+      O2SCL_ERR("Integration unimplemented in interp2_direct.",
+		exc_eunimpl);
+      return 0.0;
+    }
+
+    virtual double eval_gen(int ix, int iy, double x0, double x1, 
+			    double y0, double y1) const {
+      O2SCL_ERR("Function eval_gen() unimplemented in interp2_direct.",
+		exc_eunimpl);
+      return 0.0;
+    }
+
+
 #ifndef DOXYGEN_NO_O2NS
     
   protected:
 
-    /// The number of x grid points
-    size_t nx;
-
-    /// The number of y grid points
-    size_t ny;
-
     /// True if the data has been specified by the user
     bool data_set;
-
-    /// The x grid
-    vec_t *xfun;
-
-    /// The y grid
-    vec_t *yfun;
-
-    /// The data
-    mat_t *datap;
 
     /// Interpolation type
     size_t itype;

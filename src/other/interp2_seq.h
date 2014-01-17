@@ -35,6 +35,7 @@
 #include <boost/numeric/ublas/matrix_proxy.hpp>
 
 #include <o2scl/interp.h>
+#include <o2scl/interp2.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -75,7 +76,7 @@ namespace o2scl {
   template<class vec_t=boost::numeric::ublas::vector<double>,
     class mat_t=boost::numeric::ublas::matrix<double>,
     class mat_row_t=boost::numeric::ublas::matrix_row<mat_t> >
-    class interp2_seq {
+    class interp2_seq : public interp2_base<vec_t,mat_t> {
 
 #ifdef O2SCL_NEVER_DEFINED
   }{
