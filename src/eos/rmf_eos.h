@@ -285,6 +285,8 @@ namespace o2scl {
       - The number of couplings is getting large, maybe new
       organization is required.
       - Overload hadronic_eos::fcomp() with an exact version
+      - It would be nice to analytically compute the Jacobian
+      of the field equations for the solver
 
   */
   class rmf_eos : public hadronic_eos_temp_pres {

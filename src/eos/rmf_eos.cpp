@@ -264,7 +264,7 @@ int rmf_eos::calc_p(fermion &ne, fermion &pr, thermo &lth) {
 
 int rmf_eos::calc_temp_p(fermion &ne, fermion &pr, const double T,
 			 thermo &lth) {
-  int ret;
+  int ret=0;
   ubvector x(3), y(3);
 
   if (!o2scl::is_finite(ne.mu) || !o2scl::is_finite(ne.mu)) {
@@ -292,7 +292,7 @@ int rmf_eos::calc_temp_p(fermion &ne, fermion &pr, const double T,
   
   mm_funct_mfptr<rmf_eos> fmf(this,&rmf_eos::field_eqsT);
   ret=eos_mroot->msolve(3,x,fmf);
-
+  
   sigma=x[0];
   omega=x[1];
   rho=x[2];
@@ -530,8 +530,9 @@ int rmf_eos::calc_temp_e(fermion &ne, fermion &pr, const double T,
     
     if (verbose>0) {
       cout << "Solving in rmf_eos::calc_temp_e()." << endl;
-      cout << "alpha      n_B        n_ch       mu_n       "
-	   << "mu_p       sigma       omega      rho         ret" << endl;
+      cout << " alpha       n_B         n_ch        mu_n       "
+	   << " mu_p        sigma       omega       rho        ret" << endl;
+      cout.setf(ios::showpos);
       cout.precision(4);
     }
     for(double alpha=0.0;alpha<=1.0+1.0e-10;
@@ -547,6 +548,7 @@ int rmf_eos::calc_temp_e(fermion &ne, fermion &pr, const double T,
       }
     }
     if (verbose>0) {
+      cout.unsetf(ios::showpos);
       cout.precision(6);
       cout << endl;
     }

@@ -20,7 +20,7 @@
 	  <h1>Why O<sub>2</sub>scl?
 	  </h1>
 	  <p>
-	  A brief discussion of the context and my goals for an
+	  A brief discussion of the context and future direction for an
 	  object-oriented scientific computing library.
 	  </p>
 	</div>
@@ -105,8 +105,8 @@ solver.solve(a,b,f);
 cout &lt;&lt; a &lt;&lt; endl;
 </pre>
                (adapted from
-                 O<sub>2</sub>scl's <a href="">ex_lambda.cpp 
-                 example</a>)
+                 O<sub>2</sub>scl's <tt>ex_lambda.cpp</tt>
+                 example)
 	    </p>
 	    <p>
 	      <li><em>Template-based classes can operate on functions
@@ -137,16 +137,18 @@ cout &lt;&lt; a &lt;&lt; endl;
 	  <ul>
 	  <p>
 	    <li>
-	    For example, Hopper at NERSC is based on <tt>gcc
-	    4.4.7</tt> which does not support all of the C++11
-	    features.
+	      For example, some compilers on
+	      some <a href="http://www.nersc.gov">NERSC</a> machines
+	      do not support all of the C++11 features.
 	    </li>
 	  </p>
 	  <p>
-	    The next version of O<sub>2</sub>scl will have 
+	    O<sub>2</sub>scl has been successfully used on all 
+	    of NERSC's largest machines. The next version of will have 
 	    a <tt>configure</tt> flag,
 	    <tt>--disable-cpp11</tt>, which ensures compilation with
-	    earlier compilers.
+	    earlier compilers and will use the Boost configuration
+	    macros to ensure C++11 is used only when it is supported.
 	  </p>
 	  </ul>
 	  
@@ -164,44 +166,53 @@ cout &lt;&lt; a &lt;&lt; endl;
 	      own distinct vector and matrix types. 
 	    </h4>
 	  </p>
-	  <p>
-	    Among these options
-	    are <a href="http://www.boost.org/doc/libs/release/libs/numeric/ublas/doc/index.htm">uBlas</a>,
-	    <a href="http://eigen.tuxfamily.org">Eigen</a>, <a href="http://arma.sourceforge.net">Armadillo</a>,
-	    and more. However, none of them seem to agree
-	    on the basics of how these objects should be
-	    written. For example, consider the basic 
-	    reallocation method, <tt>resize()</tt>. In 
-	    the C++11 standard, this is written 
-	    <pre>void <a href="http://www.cplusplus.com/reference/vector/vector/resize/">std::vector::resize</a>(size_type n)</pre> 
-	    <p>
-              and it is assumed that the action of <tt>resize()</tt>
-              is destructive. On the other hand, in uBlas,
-              resizes are non-destructive by default
-	    </p>
-	    <pre>void ublas::vector::resize(size_type n, bool preserve=true)</pre> 
-	    <p>
-	      Armadillo vectors follow the same behavior of 
-	      <tt>std::vector</tt> for destructive resizes, but
-	      introduce a new notation for non-destructive ones
-	    </p>
-	    <pre>void arma::row::set_size(size_t n)</pre> 
-	    Eigen operates similarly, but uses the name
-	    <tt>conservativeResize()</tt> for non-destructive resizes. 
-	    O<sub>2</sub>scl, for the time being, presumes that all
-	    resizes are destructive, and uses a notation similar
-	    to the C++11 standard for its resize methods.
-	  </p>
-	  <p>
-	    Obtaining rows and columns of matrices (without a copy) is
-	    also not trivial. In uBlas, the row of a matrix is
-	    obtained by using the constructor of a <tt>matrix_row</tt>
-	    object. In Armadillo and Eigen, this is performed by using
-	    the <tt>.row()</tt> method, resulting in a vector object
-	    of an unusual type. O<sub>2</sub>scl subsumes some of this
-	    complexity into a function <tt>o2scl::matrix_row</tt>,
-	    which can be used with any of these linear algebra
-	    libraries
+	  <ul>
+	    <li>
+	      <p>
+		Among these options
+		are <a href="http://www.boost.org/doc/libs/release/libs/numeric/ublas/doc/index.htm">uBlas</a>,
+		<a href="http://eigen.tuxfamily.org">Eigen</a>, <a href="http://arma.sourceforge.net">Armadillo</a>,
+		and more. However, none of them seem to agree
+		on the basics of how these objects should be
+		written. For example, consider the basic 
+		reallocation method, <tt>resize()</tt>. In 
+		the C++11 standard, this is written 
+		<pre>void <a href="http://www.cplusplus.com/reference/vector/vector/resize/">std::vector::resize</a>(size_type n)</pre> 
+	      <p>
+		and it is assumed that the action of <tt>resize()</tt>
+		is destructive. On the other hand, in uBlas,
+		resizes are <em>non-destructive</em> by default
+	      </p>
+	      <pre>void ublas::vector::resize(size_type n, bool preserve=true)</pre> 
+	      <p>
+		Armadillo vectors follow the same behavior of 
+		<tt>std::vector</tt> for destructive resizes, but
+		introduce a new notation for non-destructive ones
+	      </p>
+	      <pre>void arma::row::set_size(size_t n)</pre> 
+	      Eigen operates similarly, but uses the name
+	      <tt>conservativeResize()</tt> for non-destructive resizes. 
+	      O<sub>2</sub>scl, for the time being, presumes that all
+	      resizes are destructive, and uses a notation similar
+	      to the C++11 standard for its resize methods.
+	      </p>
+	      <p>
+		(Eventually, a set of linear algebra type traits is
+		necessary to describe how linear algebra types 
+		behave and how they interact with each other. )
+	      </p>
+	    </li>
+	    <li>
+	      <p>
+		Obtaining rows and columns of matrices (without a copy) is
+		also not trivial. In uBlas, the row of a matrix is
+		obtained by using the constructor of a <tt>matrix_row</tt>
+		object. In Armadillo and Eigen, this is performed by using
+		the <tt>.row()</tt> method, resulting in a vector object
+		of an unusual type. O<sub>2</sub>scl subsumes some of this
+		complexity into a function <tt>o2scl::matrix_row</tt>,
+		which can be used with any of these linear algebra
+		libraries
 <pre>
 <span style="color: #990000">// With uBlas</span>
 typedef <a href="http://www.boost.org/doc/libs/1_54_0/libs/numeric/ublas/doc/matrix.htm">boost::numeric::ublas::matrix&lt;double&gt;</a> matrix;
@@ -214,22 +225,26 @@ matrix_row r1=<a href="http://o2scl.sourceforge.net/o2scl/html/namespaceo2scl.ht
 <a href="http://arma.sourceforge.net/docs.html#submat">arma::subview_row</a>&lt;double&gt; m1=
 <a href="http://o2scl.sourceforge.net/o2scl/html/namespaceo2scl.html#abcb2c0f0e2963e3016d8856e51d3af9c">o2scl::matrix_row</a>&lt;<a href="http://arma.sourceforge.net/docs.html#Mat">arma::mat</a>,arma::subview_row&lt;double&gt; &gt;(m3,2);
 </pre>
-	  </p>
-	  <p>
-	      Heterogeneous architechtures also naturally lead to 
-	      more data types to help contain and manipulate 
-	      data on them.
-	  </p>
-	  <p>
-	    At the same time, C++ offers quite a bit of syntactic
-	    simplicitly, with relatively little cost in speed.
-	  </p>
-	  <p>
-	    <h4>
-	      These options are not interchangable.
-	    </h4>
-	  </p>
-
+	      </p>
+	    </li>
+	    <li>
+	      <p>
+		Heterogeneous architectures also naturally lead to 
+		more data types to help contain and manipulate 
+		data on them. The issues described above will likely
+		become more commonplace.
+	      </p>
+	    </li>
+	    <li>
+	      <p>
+		At the same time, C++ offers quite a bit of syntactic
+		simplicitly, with relatively little cost in speed.
+		Even though linear algebra libraries do not agree,
+		one cannot deny that they can be lifesavers.
+	      </p>
+	    </li>
+	  </ul>
+	  
 	  <div class="alert alert-success">
 	    <h2>There are gems out there
 	    in scientific computing which are not written in C++.
@@ -239,9 +254,15 @@ matrix_row r1=<a href="http://o2scl.sourceforge.net/o2scl/html/namespaceo2scl.ht
 
 	  <p>
 	    <h4>
-	      GSL solvers are faster than Boost.
+	      Some CERNLIB and GSL code has been easily rewritten
+	      in C++ and is faster than Boost
 	    </h4>
 	  </p>
+	  <ul>
+	    <li>
+	      <p>For GSL solver
+	    </li>
+	  </ul>
 
 	  <div class="alert alert-success">
 	    <h2>O<sub>2</sub>scl is a work-in-progress.
@@ -256,9 +277,15 @@ matrix_row r1=<a href="http://o2scl.sourceforge.net/o2scl/html/namespaceo2scl.ht
 	      faster development.
 	    </h4>
 	  </p>
-	  <p>
-	    Text here.
-	  </p>
+	  <ul>
+	    <li>
+	      <p>
+		O<sub>2</sub>scl is still in beta, so this is a
+		perfect time to let me know if it is useful to you (or
+		not), and feel free to make comments or suggestions.
+	      </p>
+	    </li>
+	  </ul>
 	  <!-- End of "col-sm-9" -->
 	</div>
 	

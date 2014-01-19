@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
 
-  Copyright (C) 2006-2012, Andrew W. Steiner
+  Copyright (C) 2006-2014, Andrew W. Steiner
 
   This file is part of O2scl.
   
@@ -34,7 +34,8 @@
 #include <o2scl/root_brent_gsl.h>
 #include <o2scl/root_stef.h>
 #include <o2scl/rng_gsl.h>
-#include <o2scl/hist_ev.h>
+#include <o2scl/hist.h>
+#include <o2scl/expval.h>
 
 #include <boost/math/tools/roots.hpp>
 
