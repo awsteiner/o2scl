@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
 
-  Copyright (C) 2006-2012, Andrew W. Steiner
+  Copyright (C) 2006-2014, Andrew W. Steiner
 
   This file is part of O2scl.
   
@@ -26,7 +26,6 @@
 #include <o2scl/test_mgr.h>
 #include <o2scl/poly.h>
 #include <o2scl/misc.h>
-#include <o2scl/uvector_tlate.h>
 
 /*
   This program evaluates the performance and accuracy of the O2scl
@@ -41,7 +40,7 @@ int wid=21;
 class stats {
 public:
   std::string type;
-  ufvector<6> w;
+  std::vector<double> w;
   double s1, s2;
   double m1, m2;
   size_t nok;
@@ -51,7 +50,7 @@ public:
 
   int out() {
     cout << type << endl;
-    cout << "   Avgerage quality: " 
+    cout << "   Average quality: " 
 	 << s1 << " " << s2 << " " << m1 << " " << m2 << endl;
     cout << "   Worst case coefficients: " << endl;
     cout << "   " << w[0] << " " << w[1] << " " << w[2] << " " 
@@ -630,7 +629,7 @@ void test_quartic_complex(quartic_complex *po, string str,
 		      abs(ce-cep)*abs(ce-cep));
 	      q2=sqrt(abs(czo1)*abs(czo1)+abs(czo2)*abs(czo2)+
 		      abs(czo3)*abs(czo3)+abs(czo4)*abs(czo4));
-	      if (!finite(q1)) {
+	      if (!o2scl::is_finite(q1)) {
 		cout << cr1 << " " << cr2 << " " << cr3 << " " << cr4 << endl;
 		exit(-1);
 	      }
@@ -679,87 +678,90 @@ int main(void) {
   cout.precision(4);
 
   // Generic polynomial solvers
-  gsl_poly_real_coeff p3;
+  poly_real_coeff_gsl p3;
   
   // quadratic solvers
-  gsl_quadratic_real_coeff t1;
-  quadratic_std_complex t2;
+  quadratic_real_coeff_gsl t1;
+  quadratic_complex_std t2;
   
   // cubic solvers
-  cern_cubic_real_coeff c1;
-  gsl_cubic_real_coeff c2;
-  cubic_std_complex c3;
+  cubic_real_coeff_cern c1;
+  cubic_real_coeff_gsl c2;
+  cubic_complex_std c3;
   
   // quartic solvers
-  cern_quartic_real_coeff q1;
-  gsl_quartic_real q2;
-  gsl_quartic_real2 q3;
-  simple_quartic_real q4;
-  simple_quartic_complex q5;
+  quartic_real_coeff_cern q1;
+  quartic_real_gsl q2;
+  quartic_real_gsl2 q3;
+  quartic_real_simple q4;
+  quartic_complex_simple q5;
 
   double tt;
 
   std::vector<stats> slist(32);
+  for(size_t i=0;i<32;i++) slist[i].w.resize(6);
 
   cout << "----------------------------------------"
        << "---------------------------------------" << endl;
-  test_quadratic_real_coeff(&t1,"gsl_quad_real_coeff quadratic",1.0,slist[0]);
+  test_quadratic_real_coeff(&t1,"quadratic_real_coeff_gsl quadratic",
+			    1.0,slist[0]);
   slist[0].out();
   test_quadratic_real_coeff
-    (&t2,"quadratic_std_complex quadratic",1.0,slist[1]);
+    (&t2,"quadratic_complex_std quadratic",1.0,slist[1]);
   slist[1].out();
-  test_quadratic_real_coeff(&p3,"gsl_poly_real_coeff quadratic",1.0,slist[2]);
+  test_quadratic_real_coeff(&p3,"poly_real_coeff_gsl quadratic",1.0,slist[2]);
   slist[2].out();
 
   cout << "----------------------------------------"
        << "---------------------------------------" << endl;
   test_quadratic_real_coeff
-    (&t1,"gsl_quad_real_coeff quadratic (small odd coeffs.)",1.0e-5,slist[3]);
+    (&t1,"quadratic_real_coeff_gsl quadratic (small odd coeffs.)",
+     1.0e-5,slist[3]);
   slist[3].out();
   test_quadratic_real_coeff
-    (&t2,"quadratic_std_complex quadratic (small odd coeffs.)",
+    (&t2,"quadratic_complex_std quadratic (small odd coeffs.)",
      1.0e-5,slist[4]);
   slist[4].out();
   test_quadratic_real_coeff
-    (&p3,"gsl_poly_real_coeff quadratic (small odd coeffs.)",1.0e-5,slist[5]);
+    (&p3,"poly_real_coeff_gsl quadratic (small odd coeffs.)",1.0e-5,slist[5]);
   slist[5].out();
 
   cout << "----------------------------------------"
        << "---------------------------------------" << endl;
   test_quadratic_complex
-    (&t2,"quadratic_std_complex quadratic (complex coeffs.)",slist[6]);
+    (&t2,"quadratic_complex_std quadratic (complex coeffs.)",slist[6]);
   slist[6].out();
 
   cout << "----------------------------------------"
        << "---------------------------------------" << endl;
-  test_cubic_real_coeff(&c1,"cern_real_coeff cubic",1.0,slist[7]);
+  test_cubic_real_coeff(&c1,"real_coeff_cern cubic",1.0,slist[7]);
   slist[7].out();
-  test_cubic_real_coeff(&c2,"gsl_cubic_real_coeff cubic",1.0,slist[8]);
+  test_cubic_real_coeff(&c2,"cubic_real_coeff_gsl cubic",1.0,slist[8]);
   slist[8].out();
-  test_cubic_real_coeff(&c3,"cubic_std_complex cubic",1.0,slist[9]);
+  test_cubic_real_coeff(&c3,"cubic_complex_std cubic",1.0,slist[9]);
   slist[9].out();
-  test_cubic_real_coeff(&p3,"gsl_poly_real_coeff cubic",1.0,slist[10]);
+  test_cubic_real_coeff(&p3,"poly_real_coeff_gsl cubic",1.0,slist[10]);
   slist[10].out();
 
   cout << "----------------------------------------"
        << "---------------------------------------" << endl;
   test_cubic_real_coeff
-    (&c1,"cern_real_coeff cubic (small odd coeffs.)",1.0e-5,slist[11]);
+    (&c1,"real_coeff_cern cubic (small odd coeffs.)",1.0e-5,slist[11]);
   slist[11].out();
   test_cubic_real_coeff
-    (&c2,"gsl_cubic_real_coeff cubic (small odd coeffs.)",1.0e-5,slist[12]);
+    (&c2,"cubic_real_coeff_gsl cubic (small odd coeffs.)",1.0e-5,slist[12]);
   slist[12].out();
   test_cubic_real_coeff
-    (&c3,"cubic_std_complex cubic (small odd coeffs.)",1.0e-5,slist[13]);
+    (&c3,"cubic_complex_std cubic (small odd coeffs.)",1.0e-5,slist[13]);
   slist[13].out();
   test_cubic_real_coeff
-    (&p3,"gsl_poly_real_coeff cubic (small odd coeffs.)",1.0e-5,slist[14]);
+    (&p3,"poly_real_coeff_gsl cubic (small odd coeffs.)",1.0e-5,slist[14]);
   slist[14].out();
 
   cout << "----------------------------------------"
        << "---------------------------------------" << endl;
   test_cubic_complex
-    (&c3,"cubic_std_complex cubic (complex coeffs.)",slist[15]);
+    (&c3,"cubic_complex_std cubic (complex coeffs.)",slist[15]);
   slist[15].out();
 
   cout << "----------------------------------------"
@@ -768,64 +770,64 @@ int main(void) {
     (&q1,"cern_real_coeff quartic (real roots)",1.0,slist[16]);
   slist[16].out();
   test_quartic_real
-    (&q2,"gsl_quartic_real quartic (real roots)",1.0,slist[17]);
+    (&q2,"quartic_real_gsl quartic (real roots)",1.0,slist[17]);
   slist[17].out();
   test_quartic_real
-    (&q3,"gsl_quartic_real2 quartic (real roots)",1.0,slist[18]);
+    (&q3,"quartic_real_gsl2 quartic (real roots)",1.0,slist[18]);
   slist[18].out();
   test_quartic_real
-    (&q4,"simple_quartic_real quartic (real roots)",1.0,slist[19]);
+    (&q4,"quartic_real_simple quartic (real roots)",1.0,slist[19]);
   slist[19].out();
   test_quartic_real
-    (&q5,"simple_quartic_complex quartic (real roots)",1.0,slist[20]);
+    (&q5,"quartic_complex_simple quartic (real roots)",1.0,slist[20]);
   slist[20].out();
   test_quartic_real
-    (&p3,"gsl_poly_real_coeff quartic (real roots)",1.0,slist[21]);
+    (&p3,"poly_real_coeff_gsl quartic (real roots)",1.0,slist[21]);
   slist[21].out();
 
   cout << "----------------------------------------"
        << "---------------------------------------" << endl;
   test_quartic_real
-    (&q1,"cern_real_coeff quartic (real roots, small odd coeffs.)",
+    (&q1,"real_coeff_cern quartic (real roots, small odd coeffs.)",
      1.0e-5,slist[22]);
   slist[22].out();
   test_quartic_real
-    (&q2,"gsl_quartic_real quartic (real roots, small odd coeffs.)",
+    (&q2,"quartic_real_gsl quartic (real roots, small odd coeffs.)",
      1.0e-5,slist[23]);
   slist[23].out();
   test_quartic_real
-    (&q3,"gsl_quartic_real2 quartic (real roots, small odd coeffs.)",
+    (&q3,"quartic_real_gsl2 quartic (real roots, small odd coeffs.)",
      1.0e-5,slist[24]);
   slist[24].out();
   test_quartic_real
-    (&q4,"simple_quartic_real quartic (real roots, small odd coeffs.)",
+    (&q4,"quartic_real_simple quartic (real roots, small odd coeffs.)",
      1.0e-5,slist[25]);
   slist[25].out();
   test_quartic_real
-    (&q5,"simple_quartic_complex quartic (real roots, small odd coeffs.)",
+    (&q5,"quartic_complex_simple quartic (real roots, small odd coeffs.)",
      1.0e-5,slist[26]);
   slist[26].out();
   test_quartic_real
-    (&p3,"gsl_poly_real_coeff quartic (real roots, small odd coeffs.)",
+    (&p3,"poly_real_coeff_gsl quartic (real roots, small odd coeffs.)",
      1.0e-5,slist[27]);
   slist[27].out();
 
   cout << "----------------------------------------"
        << "---------------------------------------" << endl;
   test_quartic_real_coeff
-    (&q1,"cern_real_coeff quartic (complex roots)",slist[28]);
+    (&q1,"real_coeff_cern quartic (complex roots)",slist[28]);
   slist[28].out();
   test_quartic_real_coeff
-    (&q5,"simple_quartic_complex quartic (complex roots)",slist[29]);
+    (&q5,"quartic_complex_simple quartic (complex roots)",slist[29]);
   slist[29].out();
   test_quartic_real_coeff
-    (&p3,"gsl_poly_real_coeff quartic (complex roots)",slist[30]);
+    (&p3,"poly_real_coeff_gsl quartic (complex roots)",slist[30]);
   slist[30].out();
 
   cout << "----------------------------------------"
        << "---------------------------------------" << endl;
   test_quartic_complex
-    (&q5,"simple_quartic_complex quartic (complex coeffs.)",slist[31]);
+    (&q5,"quartic_complex_simple quartic (complex coeffs.)",slist[31]);
   slist[31].out();
 
   return 0;

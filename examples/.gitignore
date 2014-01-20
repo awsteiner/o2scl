@@ -2,6 +2,7 @@
 *.out
 *.dat
 *.scr
+bm_poly
 bm_min
 bm_mroot2
 bm_root
