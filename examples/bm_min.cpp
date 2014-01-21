@@ -56,13 +56,13 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
-  const size_t N=300;
+  const size_t N=500;
 
   rng_gsl gr;
 
   // Choose a logarithmic grid
   hist h;
-  h.set_bin_edges(uniform_grid_log_end_width<>(1.0e-16,1.0e-4,10.0));
+  h.set_bin_edges(uniform_grid_log_end_width<>(1.0e-16,1.0e-2,10.0));
   
   // Store timing data in expect_val objects with 10 blocks
   vector<expval_scalar> time_mbg(h.size());
@@ -114,7 +114,7 @@ int main(void) {
       }
       
       double acc=sqrt(pow(x1-0.5,2.0)+pow(min+1.0,2.0));
-      if (acc>1.0e-16 && acc<1.0e-4) {
+      if (acc>1.0e-16 && acc<1.0e-2) {
 	double t1=(clock()-tmp)/10000.0;
 	size_t ix=h.get_bin_index(acc);
 	time_mbg[ix].add(t1);
@@ -132,6 +132,9 @@ int main(void) {
   for(size_t j=0;j<60;j++) {
     cout << "." << flush;
     
+    mcn.tol_abs=pow(10.0,-4-((double)j)/18.0);
+    mcn.tol_rel=pow(10.0,-4-((double)j)/18.0);
+
     for(size_t k=0;k<N;k++) {
       size_t tmp=clock();
       
@@ -147,7 +150,7 @@ int main(void) {
       }
       
       double acc=sqrt(pow(x1-0.5,2.0)+pow(min+1.0,2.0));
-      if (acc<1.0e-4 && acc>1.0e-16) {
+      if (acc<1.0e-2 && acc>1.0e-16) {
 	double t1=(clock()-tmp)/10000.0;
 	size_t ix=h.get_bin_index(acc);
 	time_mcn[ix].add(t1);
@@ -165,8 +168,8 @@ int main(void) {
   for(size_t j=0;j<60;j++) {
     cout << "." << flush;
     
-    mbb.tol_abs=pow(10.0,-4-((double)j)/18.0);
-    mbb.tol_rel=pow(10.0,-4-((double)j)/18.0);
+    mbb.tol_abs=pow(10.0,-6-((double)j)/18.0);
+    mbb.tol_rel=pow(10.0,-6-((double)j)/18.0);
     
     for(size_t k=0;k<N;k++) {
       size_t tmp=clock();
@@ -183,7 +186,7 @@ int main(void) {
       }
       
       double acc=sqrt(pow(x1-0.5,2.0)+pow(min+1.0,2.0));
-      if (acc>1.0e-16 && acc<1.0e-4) {
+      if (acc>1.0e-16 && acc<1.0e-2) {
 	double t1=(clock()-tmp)/10000.0;
 	size_t ix=h.get_bin_index(acc);
 	time_mbb[ix].add(t1);

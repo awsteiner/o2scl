@@ -26,6 +26,8 @@
 /** \file uniform_grid.h
     \brief File defining \ref o2scl::uniform_grid and its children
 */
+#include <iostream>
+
 #include <boost/numeric/ublas/vector.hpp>
 
 #include <o2scl/err_hnd.h>
@@ -173,42 +175,12 @@ namespace o2scl {
       if (v.size()<g_n_bins+1) {
 	v.resize(g_n_bins+1);
       }
-      
-      if (!g_log) {
-	// Linear case
-	if (g_start<g_end) {
-	  // Increasing
-	  v[0]=g_start;
-	  for(size_t i=1;i<g_n_bins;i++) {
-	    v[i]=g_start+((double)i)*g_width;
-	  }
-	  v[g_n_bins]=g_end;
-	} else {
-	  // Decreasing
-	  v[0]=g_start;
-	  for(size_t i=1;i<g_n_bins;i++) {
-	    v[i]=g_start-((double)i)*g_width;
-	  }
-	  v[g_n_bins]=g_end;
-	}
-      } else {
-	// Logarithmic case
-	if (g_start<g_end) {
-	  // Increasing
-	  v[0]=g_start;
-	  for(size_t i=1;i<g_n_bins;i++) {
-	    v[i]=g_start*std::pow(g_width,((data_t)i));
-	  }
-	  v[g_n_bins]=g_end;
-	} else {
-	  // Decreasing
-	  v[0]=g_start;
-	  for(size_t i=1;i<g_n_bins;i++) {
-	    v[i]=g_start/std::pow(g_width,((data_t)i));
-	  }
-	  v[g_n_bins]=g_end;
-	}
+
+      for(size_t i=0;i<g_n_bins+1;i++) {
+	v[i]=(*this)[i];
       }
+      
+      return;
     }
 
     /** \brief Get the grid point with index \c i 
