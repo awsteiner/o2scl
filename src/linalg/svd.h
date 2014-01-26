@@ -20,8 +20,8 @@
 
   -------------------------------------------------------------------
 */
-/** \file svd.h 
-    \brief File for SV decomposition and associated solver
+/** \file svd.h
+    \brief Header wrapper for \ref svd_base.h
 */
 #ifndef O2SCL_SVD_H
 #define O2SCL_SVD_H

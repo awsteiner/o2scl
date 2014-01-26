@@ -23,6 +23,10 @@
 #ifndef O2SCL_LANCZOS2_H
 #define O2SCL_LANCZOS2_H
 
+/** \file lanczos.h
+    \brief Header wrapper for \ref lanczos_base.h
+*/
+
 #include <o2scl/err_hnd.h>
 #include <o2scl/permutation.h>
 #include <o2scl/cblas.h>

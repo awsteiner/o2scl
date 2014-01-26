@@ -39,34 +39,9 @@ using namespace o2scl_const;
 eff_boson::eff_boson() {
   
   density_mroot=&def_density_mroot;
-  meth2_root=&def_meth2_root;
   psi_root=&def_psi_root;
   
-  parma=0.42;
-  Pmnb.resize(4,5);
-  Pmnb(0,0)=1.68134;
-  Pmnb(0,1)=6.85070;
-  Pmnb(0,2)=10.8537;
-  Pmnb(0,3)=7.81843;
-  Pmnb(0,4)=2.16461;
-  Pmnb(1,0)=6.72536;
-  Pmnb(1,1)=27.4028;
-  Pmnb(1,2)=43.4148;
-  Pmnb(1,3)=31.2737;
-  Pmnb(1,4)=8.65844;
-  Pmnb(2,0)=8.49651;
-  Pmnb(2,1)=35.6058;
-  Pmnb(2,2)=57.7134;
-  Pmnb(2,3)=42.3593;
-  Pmnb(2,4)=11.8199;
-  Pmnb(3,0)=3.45614;
-  Pmnb(3,1)=15.1152;
-  Pmnb(3,2)=25.5254;
-  Pmnb(3,3)=19.2745;
-  Pmnb(3,4)=5.51757;
-  sizem=3;
-  sizen=4;
-
+  load_coefficients(cf_bosejel34);
 }
 
 eff_boson::~eff_boson() {
@@ -74,23 +49,47 @@ eff_boson::~eff_boson() {
 
 // Load coefficients for finite-temperature approximations
 int eff_boson::load_coefficients(int ctype) {
-
-  if (ctype==cf_boselat3) {
-    sizem=3;
-    Pmnb.resize(sizem,sizen);
-  } else if (ctype==cf_bosejel21) {
+  
+  if (ctype==cf_bosejel21) {
+    parma=0.978;
+    sizem=2;
+    sizen=1;
+    Pmnb.resize(sizem+1,sizen+1);
+    Pmnb(0,0)=1.63146;
+    Pmnb(0,1)=2.11571;
+    Pmnb(1,0)=3.0*Pmnb(0,0);
+    Pmnb(1,1)=3.0*Pmnb(0,1);
+    Pmnb(2,0)=3.31275;
+    Pmnb(2,1)=5.15372;
   } else if (ctype==cf_bosejel22) {
+    parma=0.914;
+    sizem=2;
+    sizen=2;
+    Pmnb.resize(sizem+1,sizen+1);
+    Pmnb(0,0)=1.68131;
+    Pmnb(0,1)=3.47558;
+    Pmnb(0,2)=2.16582;
+    Pmnb(1,0)=3.0*Pmnb(0,0);
+    Pmnb(1,1)=3.0*Pmnb(0,1);
+    Pmnb(1,2)=3.0*Pmnb(0,2);
+    Pmnb(2,0)=3.25053;
+    Pmnb(2,1)=7.82859;
+    Pmnb(2,1)=5.19126;
   } else if (ctype==cf_bosejel34) {
+    parma=1.029;
+    sizem=3;
+    sizen=4;
+    Pmnb.resize(sizem+1,sizen+1);
     Pmnb(0,0)=1.68134;
     Pmnb(0,1)=6.85070;
     Pmnb(0,2)=10.8537;
     Pmnb(0,3)=7.81843;
     Pmnb(0,4)=2.16461;
-    Pmnb(1,0)=6.72536;
-    Pmnb(1,1)=27.4028;
-    Pmnb(1,2)=43.4148;
-    Pmnb(1,3)=31.2737;
-    Pmnb(1,4)=8.65844;
+    Pmnb(1,0)=4.0*Pmnb(0,0);
+    Pmnb(1,1)=4.0*Pmnb(0,1);
+    Pmnb(1,2)=4.0*Pmnb(0,2);
+    Pmnb(1,3)=4.0*Pmnb(0,3);
+    Pmnb(1,4)=4.0*Pmnb(0,4);
     Pmnb(2,0)=8.49651;
     Pmnb(2,1)=35.6058;
     Pmnb(2,2)=57.7134;
@@ -101,9 +100,31 @@ int eff_boson::load_coefficients(int ctype) {
     Pmnb(3,2)=25.5254;
     Pmnb(3,3)=19.2745;
     Pmnb(3,4)=5.51757;
+  } else if (ctype==cf_bosejel34cons) {
+    parma=1.040;
     sizem=3;
     sizen=4;
-  } else if (ctype==cf_bosejel34cons) {
+    Pmnb.resize(sizem+1,sizen+1);
+    Pmnb(0,0)=1.68130;
+    Pmnb(0,1)=6.85060;
+    Pmnb(0,2)=10.8539;
+    Pmnb(0,3)=7.81762;
+    Pmnb(0,4)=2.16465;
+    Pmnb(1,0)=4.0*Pmnb(0,0);
+    Pmnb(1,1)=4.0*Pmnb(0,1);
+    Pmnb(1,2)=4.0*Pmnb(0,2);
+    Pmnb(1,3)=4.0*Pmnb(0,3);
+    Pmnb(1,4)=4.0*Pmnb(0,4);
+    Pmnb(2,0)=8.51373;
+    Pmnb(2,1)=35.6576;
+    Pmnb(2,2)=57.7975;
+    Pmnb(2,3)=42.4049;
+    Pmnb(2,4)=11.8321;
+    Pmnb(3,0)=3.47433;
+    Pmnb(3,1)=15.1995;
+    Pmnb(3,2)=25.6536;
+    Pmnb(3,3)=19.3811;
+    Pmnb(3,4)=5.54423;
   } else {
     O2SCL_ERR_RET("Invalid type in eff_boson::load_coefficients().",
 		  exc_efailed);
@@ -145,7 +166,6 @@ void eff_boson::calc_mu(boson &b, double temper) {
     int psi_root_err=psi_root->solve(xx[0],mfs);
     if (psi_root_err!=0) {
       O2SCL_ERR("psi_root failed in nepn_mroot().",psi_root_err);
-      // We continue execution anyway
     }
     h=xx[0];
   }
@@ -291,7 +311,6 @@ int eff_boson::density_fun(size_t nv, const ubvector &x,
   int mm, nn;
 
   h=x[0];
-  cout << h << endl;
 
   oph=1.0+h;
   gg=T/bp->ms;
@@ -309,8 +328,6 @@ int eff_boson::density_fun(size_t nv, const ubvector &x,
   }
 
   y[0]=bp->g/2.0*pren*sumn*nc/fix_density-1.0;
-  cout << h << " " << bp->g << " " << y[0] << endl;
-  cout << pren << " " << sumn << " " << nc << " " << fix_density << endl;
   if (!o2scl::is_finite(y[0])) {
     O2SCL_ERR("Not finite in eff_boson::density_fun().",
 	      exc_efailed);

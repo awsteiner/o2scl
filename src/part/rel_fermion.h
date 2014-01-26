@@ -221,11 +221,13 @@ namespace o2scl {
 
   public:
 
-    /// (default true)
-    bool err_nonconv;
-
     /// \name Numerical parameters
     //@{
+    /** \brief If true, call the error handler when convergence 
+	fails (default true)
+    */
+    bool err_nonconv;
+
     /** \brief The smallest value of \f$ (\mu-m)/T \f$ for which 
 	integration is used
      */

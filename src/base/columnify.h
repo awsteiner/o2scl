@@ -233,6 +233,8 @@ namespace o2scl {
   
   };
 
+  /// \name Matrix output functions from columnify.h
+  //@{
   /** \brief A operator for simple matrix output using \c operator()
       
       The type \c mat_t can be any matrix type which allows 
@@ -480,6 +482,7 @@ namespace o2scl {
 
     return 0;
   }
+  //@}
 
 #ifndef DOXYGEN_NO_O2NS
 }

@@ -20,8 +20,8 @@
 
   -------------------------------------------------------------------
 */
-/** \file interp2_seq.h
-    \brief File defining \ref o2scl::interp2_seq
+/** \file interp2.h
+    \brief File defining \ref o2scl::interp2_base
 */
 #ifndef O2SCL_INTERP2_H
 #define O2SCL_INTERP2_H

@@ -29,7 +29,7 @@ dist_doc_DATA = doxyfile Makefile.am Makefile.in \
 	*.html *.tex
 
 # These are the files included in the distribution
-EXTRA_DIST = *.dox
+EXTRA_DIST = *.dox o2scl.tag
 
 SUBDOC_DIRS = eos part 
 

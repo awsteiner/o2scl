@@ -23,6 +23,10 @@
 #ifndef O2SCL_HH_H
 #define O2SCL_HH_H
 
+/** \file hh.h
+    \brief Header wrapper for \ref hh_base.h
+*/
+
 #include <o2scl/err_hnd.h>
 #include <o2scl/permutation.h>
 #include <o2scl/cblas.h>

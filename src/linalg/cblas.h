@@ -24,7 +24,9 @@
 #define O2SCL_CBLAS_H
 
 /** \file cblas.h
-    \brief Header wrapper for \ref cblas_base.h
+    \brief Header wrapper for \ref cblas_base.h and documentation of
+    \ref o2scl_cblas, \ref o2scl_cblas_bracket, \ref o2scl_linalg
+    and \ref o2scl_linalg_bracket namespaces
 */
 
 #include <cmath>
@@ -165,5 +167,34 @@ namespace o2scl_cblas_bracket {
 #undef O2SCL_IX2
 
 }
+
+/** \brief The namespace for linear algebra classes and functions
+
+    See \ref linalg_section for more complete information
+    about linear algebra in \o2. 
+
+    This namespace documentation is in the file 
+    <tt>src/base/cblas.h</tt>
+*/
+namespace o2scl_linalg {
+}
+
+/** \brief The namespace for linear algebra classes and functions 
+    with operator()
+
+    This namespace contains an identical copy of all the functions given 
+    in the \ref o2scl_cblas namespace, but perform matrix indexing
+    with <tt>[][]</tt> rather than <tt>(,)</tt>. See \ref o2scl_linalg
+    for the function listing and documentation.
+
+    See \ref linalg_section for more complete information
+    about linear algebra in \o2. 
+
+    This namespace documentation is in the file 
+    <tt>src/base/cblas.h</tt>
+*/
+namespace o2scl_linalg_bracket {
+}
+
 
 #endif

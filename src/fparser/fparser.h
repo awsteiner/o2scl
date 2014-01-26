@@ -10,6 +10,9 @@
   
   -------------------------------------------------------------------
 */
+/** \file fparser.h
+    \brief Main header for the \ref FunctionParser class
+*/
 
 #ifdef DOXYGENP
 

@@ -20,8 +20,11 @@
 
   -------------------------------------------------------------------
 */
-#ifndef O2SCL_COMPOSITE_INTE_H
-#define O2SCL_COMPOSITE_INTE_H
+/** \file inte_multi_comp.h
+    \brief File defining \ref o2scl::inte_multi_comp
+*/
+#ifndef O2SCL_INTE_MULTI_COMP_H
+#define O2SCL_INTE_MULTI_COMP_H
 
 #include <iostream>
 

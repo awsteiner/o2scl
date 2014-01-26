@@ -36,7 +36,6 @@ int main(void) {
   cout.setf(ios::scientific);
 
   double T, t1, t2, t3, t4, t5;
-  int ret;
 
   boson b3(1.0,2.0);
   boson b(1.0,2.0);
@@ -49,9 +48,6 @@ int main(void) {
   b.non_interacting=true;
   b3.non_interacting=true;
 
-  // -----------------------------------------------------------------
-  // rel_boson tests
-  
   cout << "----------------------------------------------------" << endl;
   cout << "rel_boson tests:" << endl;
   cout << "----------------------------------------------------" << endl;
@@ -70,12 +66,11 @@ int main(void) {
   eb.calc_density(b,T);
   cout << b.n << " " << b.mu << " " << b.ed << " " 
        << b.pr << " " << b.en << endl;
-  //t.test_gen(ret==0,"solver success");
-  t.test_rel(b.n,t1,1.0e-4,"density");
-  t.test_rel(b.mu,t2,1.0e-4,"chem. pot.");
-  t.test_rel(b.ed,t3,1.0e-4,"energy");
-  t.test_rel(b.pr,t4,1.0e-4,"pressure");
-  t.test_rel(b.en,t5,1.0e-4,"entropy");
+  t.test_rel(b.n,t1,1.0e-10,"deg eb calc_mu vs calc_density density");
+  t.test_rel(b.mu,t2,1.0e-10,"deg eb calc_mu vs calc_density chem. pot.");
+  t.test_rel(b.ed,t3,1.0e-10,"deg eb calc_mu vs calc_density energy");
+  t.test_rel(b.pr,t4,1.0e-10,"deg eb calc_mu vs calc_density pressure");
+  t.test_rel(b.en,t5,1.0e-10,"deg eb calc_mu vs calc_density entropy");
   b3.m=1.1;
   b3.mu=1.0;
   T=0.1;
@@ -83,24 +78,22 @@ int main(void) {
   rb.calc_mu(b3,T);
   cout << b3.n << " " << b3.mu << " " << b3.ed << " " 
        << b3.pr << " " << b3.en << endl; 
-  //t.test_gen(ret==0,"solver success");
-  t.test_rel(b.n,t1,1.0e-4,"density");
-  t.test_rel(b.mu,t2,2.0e-4,"chem. pot.");
-  t.test_rel(b.ed,t3,1.0e-4,"energy");
-  t.test_rel(b.pr,t4,1.0e-4,"pressure");
-  t.test_rel(b.en,t5,1.0e-4,"entropy");
+  t.test_rel(b.n,t1,1.0e-10,"deg rb calc_mu vs calc_density density");
+  t.test_rel(b.mu,t2,2.0e-10,"deg rb calc_mu vs calc_density chem. pot.");
+  t.test_rel(b.ed,t3,1.0e-10,"deg rb calc_mu vs calc_density energy");
+  t.test_rel(b.pr,t4,1.0e-10,"deg rb calc_mu vs calc_density pressure");
+  t.test_rel(b.en,t5,1.0e-10,"deg rb calc_mu vs calc_density entropy");
   rb.calc_density(b3,T);
   cout << b3.n << " " << b3.mu << " " << b3.ed << " " 
        << b3.pr << " " << b3.en << endl;
-  //t.test_gen(ret==0,"solver success");
-  t.test_rel(b.n,t1,1.0e-4,"density");
-  t.test_rel(b.mu,t2,2.0e-4,"chem. pot.");
-  t.test_rel(b.ed,t3,1.0e-4,"energy");
-  t.test_rel(b.pr,t4,1.0e-4,"pressure");
-  t.test_rel(b.en,t5,1.0e-4,"entropy");
+  t.test_rel(b.n,t1,1.0e-10,"deg eb vs. rb density");
+  t.test_rel(b.mu,t2,2.0e-10,"deg eb vs. rb chem. pot.");
+  t.test_rel(b.ed,t3,1.0e-10,"deg eb vs. rb energy");
+  t.test_rel(b.pr,t4,1.0e-10,"deg eb vs. rb pressure");
+  t.test_rel(b.en,t5,1.0e-10,"deg eb vs. rb entropy");
   cout << endl;
 
-  cout << "Non-degenerate: " << endl;
+  cout << "Non-degenerate (large mass): " << endl;
   b.m=1.0;
   b.mu=0.11;
   T=1.0;
@@ -113,12 +106,11 @@ int main(void) {
   eb.calc_density(b,T);
   cout << b.n << " " << b.mu << " " << b.ed << " " 
        << b.pr << " " << b.en << endl;
-  //  t.test_gen(ret==0,"solver success");
-  t.test_rel(b.n,t1,1.0e-4,"density");
-  t.test_rel(b.mu,t2,2.0e-4,"chem. pot.");
-  t.test_rel(b.ed,t3,1.0e-4,"energy");
-  t.test_rel(b.pr,t4,1.0e-4,"pressure");
-  t.test_rel(b.en,t5,1.0e-4,"entropy");
+  t.test_rel(b.n,t1,1.0e-10,"ndeg lm eb calc_mu vs calc_density density");
+  t.test_rel(b.mu,t2,2.0e-10,"ndeg lm eb calc_mu vs calc_density chem. pot.");
+  t.test_rel(b.ed,t3,1.0e-10,"ndeg lm eb calc_mu vs calc_density energy");
+  t.test_rel(b.pr,t4,1.0e-10,"ndeg lm eb calc_mu vs calc_density pressure");
+  t.test_rel(b.en,t5,1.0e-10,"ndeg lm eb calc_mu vs calc_density entropy");
   b3.m=1.0;
   b3.mu=0.11;
   T=1.0;
@@ -126,24 +118,22 @@ int main(void) {
   rb.calc_mu(b3,T);
   cout << b3.n << " " << b3.mu << " " << b3.ed << " " 
        << b3.pr << " " << b3.en << endl; 
-  //  t.test_gen(ret==0,"solver success");
-  t.test_rel(b.n,t1,1.0e-4,"density");
-  t.test_rel(b.mu,t2,2.0e-4,"chem. pot.");
-  t.test_rel(b.ed,t3,1.0e-4,"energy");
-  t.test_rel(b.pr,t4,1.0e-4,"pressure");
-  t.test_rel(b.en,t5,1.0e-4,"entropy");
+  t.test_rel(b.n,t1,1.0e-10,"ndeg lm rb calc_mu vs calc_density density");
+  t.test_rel(b.mu,t2,2.0e-10,"ndeg lm rb calc_mu vs calc_density chem. pot.");
+  t.test_rel(b.ed,t3,1.0e-10,"ndeg lm rb calc_mu vs calc_density energy");
+  t.test_rel(b.pr,t4,1.0e-10,"ndeg lm rb calc_mu vs calc_density pressure");
+  t.test_rel(b.en,t5,1.0e-10,"ndeg lm rb calc_mu vs calc_density entropy");
   rb.calc_density(b3,T);
   cout << b3.n << " " << b3.mu << " " << b3.ed << " " 
        << b3.pr << " " << b3.en << endl;
-  //t.test_gen(ret==0,"solver success");
-  t.test_rel(b.n,t1,1.0e-4,"density");
-  t.test_rel(b.mu,t2,2.0e-4,"chem. pot.");
-  t.test_rel(b.ed,t3,1.0e-4,"energy");
-  t.test_rel(b.pr,t4,1.0e-4,"pressure");
-  t.test_rel(b.en,t5,1.0e-4,"entropy");
+  t.test_rel(b.n,t1,1.0e-10,"ndeg lm rb vs. eb density");
+  t.test_rel(b.mu,t2,2.0e-10,"ndeg lm rb vs. eb chem. pot.");
+  t.test_rel(b.ed,t3,1.0e-10,"ndeg lm rb vs. eb energy");
+  t.test_rel(b.pr,t4,1.0e-10,"ndeg lm rb vs. eb pressure");
+  t.test_rel(b.en,t5,1.0e-10,"ndeg lm rb vs. eb entropy");
   cout << endl;
 
-  cout << "Non-degenerate: " << endl;
+  cout << "Non-degenerate (small mass): " << endl;
   b.m=0.11;
   b.mu=0.1;
   T=1.0;
@@ -156,12 +146,11 @@ int main(void) {
   eb.pair_density(b,T);
   cout << b.n << " " << b.mu << " " << b.ed << " " 
        << b.pr << " " << b.en << endl;
-  //  t.test_gen(ret==0,"solver success");
-  //  t.test_rel(b.n,t1,1.0e-4,"density");
-  //  t.test_rel(b.mu,t2,1.0e-4,"chem. pot.");
-  //  t.test_rel(b.ed,t3,1.0e-4,"energy");
-  //  t.test_rel(b.pr,t4,1.0e-4,"pressure");
-  //  t.test_rel(b.en,t5,1.0e-4,"entropy");
+  //  t.test_rel(b.n,t1,1.0e-10,"calc_mu vs calc_density density");
+  //  t.test_rel(b.mu,t2,1.0e-10,"calc_mu vs calc_density chem. pot.");
+  //  t.test_rel(b.ed,t3,1.0e-10,"calc_mu vs calc_density energy");
+  //  t.test_rel(b.pr,t4,1.0e-10,"calc_mu vs calc_density pressure");
+  //  t.test_rel(b.en,t5,1.0e-10,"calc_mu vs calc_density entropy");
   b.m=0.11;
   b.mu=0.1;
   T=1.0;
@@ -174,12 +163,11 @@ int main(void) {
     ret=b3.pair_density(T);
     cout << b3.n << " " << b3.mu << " " << b3.ed << " " 
     << b3.pr << " " << b3.en << endl;
-    t.test_gen(ret==0,"solver success");
-    t.test_rel(b.n,t1,1.0e-4,"density");
-    t.test_rel(b.mu,t2,1.0e-4,"chem. pot.");
-    t.test_rel(b.ed,t3,1.0e-4,"energy");
-    t.test_rel(b.pr,t4,1.0e-4,"pressure");
-    t.test_rel(b.en,t5,1.0e-4,"entropy");
+    t.test_rel(b.n,t1,1.0e-10,"density");
+    t.test_rel(b.mu,t2,1.0e-10,"chem. pot.");
+    t.test_rel(b.ed,t3,1.0e-10,"energy");
+    t.test_rel(b.pr,t4,1.0e-10,"pressure");
+    t.test_rel(b.en,t5,1.0e-10,"entropy");
     cout << endl;
   */
   

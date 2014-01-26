@@ -20,6 +20,9 @@
 
   -------------------------------------------------------------------
 */
+/** \file lanczos_base.h
+    \brief File defining \ref o2scl_linalg::lanczos
+*/
 
 #ifdef DOXYGENP
 namespace o2scl_linalg {

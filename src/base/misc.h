@@ -41,6 +41,21 @@
 namespace o2scl {
 #endif
 
+  /** \brief Simple string comparison 
+      
+      This struct is used internally by \o2 for the STL routines which
+      require a way to compare strings in the class \ref table and in
+      the I/O classes.
+  */
+  typedef struct {
+    /// Return \c s1<s2
+    bool operator()(const std::string s1, const std::string s2) const {
+      return s1<s2;
+    }
+  } string_comp;
+  
+  /// \name Functions from misc.h
+  //@{
   /** \brief Return false if x is infinite or not a number
 
       This uses the C++ functions <tt>isinf</tt> and <tt>isnan</tt> if
@@ -181,19 +196,6 @@ namespace o2scl {
    */
   void remove_whitespace(std::string &s);
 
-  /** \brief Simple string comparison 
-      
-      This struct is used internally by \o2 for the STL routines which
-      require a way to compare strings in the class \ref table and in
-      the I/O classes.
-  */
-  typedef struct {
-    /// Return \c s1<s2
-    bool operator()(const std::string s1, const std::string s2) const {
-      return s1<s2;
-    }
-  } string_comp;
-  
   /** \brief Take a string of binary quads and compress them to 
       hexadecimal digits
 
@@ -229,6 +231,7 @@ namespace o2scl {
   */
   void HSVtoRGB(double h, double s, double v, 
 		double &r, double &g, double &b);
+  //@}
   
   /** \brief Generate number sequence for testing
       

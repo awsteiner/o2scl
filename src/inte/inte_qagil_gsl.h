@@ -24,8 +24,8 @@
 #ifndef O2SCL_GSL_INTE_QAGIL_H
 #define O2SCL_GSL_INTE_QAGIL_H
 
-/** \file int_qagil_gsl.h
-    \brief File defining \ref o2scl::int_qagil_gsl
+/** \file inte_qagil_gsl.h
+    \brief File defining \ref o2scl::inte_qagil_gsl
 */
 #include <o2scl/inte.h>
 #include <o2scl/inte_qags_gsl.h>

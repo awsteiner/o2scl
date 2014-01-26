@@ -1,7 +1,7 @@
 docdir = $(prefix)/doc/o2scl/part
 dist_doc_DATA = doxyfile Makefile.am Makefile.in *.html *.tex
 
-EXTRA_DIST = *.dox
+EXTRA_DIST = *.dox o2scl_part.tag
 
 SUBDIRS = html latex extras
 

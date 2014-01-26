@@ -59,7 +59,7 @@
 
 namespace o2scl {
 
-  /// \name Copying functions
+  /// \name Copying vectors and matrices
   //@{
   /** \brief Simple generic vector copy
 
@@ -156,7 +156,7 @@ namespace o2scl {
   }
   //@}
 
-  /// \name Swap functions
+  /// \name Swapping parts of vectors and matrices
   //@{
   /** \brief Generic swap of two vectors
 
@@ -327,7 +327,7 @@ namespace o2scl {
   }
   //@}
 
-  /// \name Sorting functions
+  /// \name Sorting vectors
   //@{
   /** \brief Provide a downheap() function for vector_sort()
   */
@@ -535,7 +535,7 @@ namespace o2scl {
   }
   //@}
   
-  /// \name Smallest and largest functions
+  /// \name Smallest or largest subset functions
   //@{
   /** \brief Find the k smallest entries of a vector
 
@@ -827,7 +827,7 @@ namespace o2scl {
   }
   //@}
   
-  /// \name Minima and maxima through quadratic fit
+  /// \name Minima and maxima of vectors through quadratic fit
   //@{
   /** \brief Maximum of vector by quadratic fit
    */
@@ -1066,7 +1066,7 @@ namespace o2scl {
   }
   //@}
 
-  /// \name Searching functions
+  /// \name Searching vectors and matrices
   //@{
   /** \brief Lookup element \c x0 in vector \c x of length \c n
 
@@ -1327,7 +1327,7 @@ namespace o2scl {
   }
   //@}
 
-  /// \name Other functions
+  /// \name Other vector and matrix functions
   //@{
   /** \brief "Rotate" a vector so that the kth element is now the beginning
 
@@ -1411,6 +1411,10 @@ namespace o2scl {
     return mat_row_t(M,row);
   }
 
+  /** \brief Generic object which represents a row of a matrix
+
+      \note This class is experimental.
+   */
   template<class mat_t> class matrix_row_gen {
   public:
     mat_t &m_;
@@ -1446,6 +1450,10 @@ namespace o2scl {
     return mat_column_t(M,column);
   }
 
+  /** \brief Generic object which represents a column of a matrix
+
+      \note This class is experimental.
+   */
   template<class mat_t> class matrix_column_gen {
   public:
     mat_t &m_;

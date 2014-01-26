@@ -64,7 +64,7 @@ void rel_fermion::calc_mu(fermion &f, double temper) {
     psi=(f.nu+(f.m-f.ms))/temper;
   }
   if (psi<deg_limit) deg=false;
-
+  
   // Try the non-degenerate expansion if psi is small enough
   if (psi<min_psi) {
     bool acc=calc_mu_ndeg(f,temper,1.0e-14);

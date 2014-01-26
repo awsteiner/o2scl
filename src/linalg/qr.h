@@ -21,7 +21,7 @@
   -------------------------------------------------------------------
 */
 /** \file qr.h
-    \brief File for QR specializations
+    \brief Header wrapper for \ref qr_base.h
 */
 #ifndef O2SCL_QR_H
 #define O2SCL_QR_H

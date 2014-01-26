@@ -43,278 +43,286 @@
     \brief File defining Cholesky decomposition
 */
 
-/** \brief Compute the in-place Cholesky decomposition of a symmetric
-    positive-definite square matrix
-    
-    On input, the upper triangular part of A is ignored (only the 
-    lower triangular part and diagonal are used). On output,
-    the diagonal and lower triangular part contain the matrix L
-    and the upper triangular part contains L^T. 
-    
-    If the matrix is not positive-definite, the error handler 
-    will be called. 
-*/
-template<class mat_t> void cholesky_decomp(const size_t M, mat_t &A) {
-  
-  size_t i,j,k;
+#ifdef DOXYGENP
+namespace o2scl_linalg {
+#endif
 
-  /* [GSL] Do the first 2 rows explicitly. It is simple, and faster.
-     And one can return if the matrix has only 1 or 2 rows.
+  /** \brief Compute the in-place Cholesky decomposition of a symmetric
+      positive-definite square matrix
+    
+      On input, the upper triangular part of A is ignored (only the 
+      lower triangular part and diagonal are used). On output,
+      the diagonal and lower triangular part contain the matrix L
+      and the upper triangular part contains L^T. 
+    
+      If the matrix is not positive-definite, the error handler 
+      will be called. 
   */
+  template<class mat_t> void cholesky_decomp(const size_t M, mat_t &A) {
+  
+    size_t i,j,k;
 
-  double A_00=O2SCL_IX2(A,0,0);
-  
-  // AWS: The GSL version stores GSL_NAN in L_00 and then throws
-  // an error if A_00 <= 0. We throw the error first and then
-  // the square root should always be safe?
+    /* [GSL] Do the first 2 rows explicitly. It is simple, and faster.
+       And one can return if the matrix has only 1 or 2 rows.
+    */
 
-  if (A_00<=0) {
-    O2SCL_ERR2("Matrix not positive definite (A[0][0]<=0) in ",
-	       "cholesky_decomp().",o2scl::exc_einval);
-  }
+    double A_00=O2SCL_IX2(A,0,0);
   
-  double L_00=sqrt(A_00);
-  O2SCL_IX2(A,0,0)=L_00;
-  
-  if (M>1) {
-    double A_10=O2SCL_IX2(A,1,0);
-    double A_11=O2SCL_IX2(A,1,1);
-          
-    double L_10=A_10/L_00;
-    double diag=A_11-L_10*L_10;
-    
-    if (diag<=0) {
-      O2SCL_ERR2("Matrix not positive definite (diag<=0 for 2x2) in ",
+    // AWS: The GSL version stores GSL_NAN in L_00 and then throws
+    // an error if A_00 <= 0. We throw the error first and then
+    // the square root should always be safe?
+
+    if (A_00<=0) {
+      O2SCL_ERR2("Matrix not positive definite (A[0][0]<=0) in ",
 		 "cholesky_decomp().",o2scl::exc_einval);
     }
-    double L_11=sqrt(diag);
-
-    O2SCL_IX2(A,1,0)=L_10;
-    O2SCL_IX2(A,1,1)=L_11;
-  }
-      
-  for (k=2;k<M;k++) {
-    double A_kk=O2SCL_IX2(A,k,k);
+  
+    double L_00=sqrt(A_00);
+    O2SCL_IX2(A,0,0)=L_00;
+  
+    if (M>1) {
+      double A_10=O2SCL_IX2(A,1,0);
+      double A_11=O2SCL_IX2(A,1,1);
           
-    for (i=0;i<k;i++) {
-      double sum=0.0;
-
-      double A_ki=O2SCL_IX2(A,k,i);
-      double A_ii=O2SCL_IX2(A,i,i);
-
-      // AWS: Should change to use a form of ddot() here
-      if (i>0) {
-	sum=0.0;
-	for(j=0;j<i;j++) {
-	  sum+=O2SCL_IX2(A,i,j)*O2SCL_IX2(A,k,j);
-	}
-      }
-
-      A_ki=(A_ki-sum)/A_ii;
-      O2SCL_IX2(A,k,i)=A_ki;
-    } 
-
-    {
-      double sum=dnrm2_subrow(A,k,0,k);
-      double diag=A_kk-sum*sum;
-
-      if(diag<=0) {
-	O2SCL_ERR2("Matrix not positive definite (diag<=0) in ",
+      double L_10=A_10/L_00;
+      double diag=A_11-L_10*L_10;
+    
+      if (diag<=0) {
+	O2SCL_ERR2("Matrix not positive definite (diag<=0 for 2x2) in ",
 		   "cholesky_decomp().",o2scl::exc_einval);
       }
+      double L_11=sqrt(diag);
 
-      double L_kk=sqrt(diag);
-      
-      O2SCL_IX2(A,k,k)=L_kk;
+      O2SCL_IX2(A,1,0)=L_10;
+      O2SCL_IX2(A,1,1)=L_11;
     }
-  }
-
-  /* [GSL] Now copy the transposed lower triangle to the upper
-     triangle, the diagonal is common.
-  */
       
-  for (i=1;i<M;i++) {
-    for (j=0;j<i;j++) {
-      double A_ij=O2SCL_IX2(A,i,j);
-      O2SCL_IX2(A,j,i)=A_ij;
-    }
-  } 
-  
-  return;
-}
+    for (k=2;k<M;k++) {
+      double A_kk=O2SCL_IX2(A,k,k);
+          
+      for (i=0;i<k;i++) {
+	double sum=0.0;
 
-/** \brief Solve a symmetric positive-definite linear system after a 
-    Cholesky decomposition
+	double A_ki=O2SCL_IX2(A,k,i);
+	double A_ii=O2SCL_IX2(A,i,i);
 
-    Given the Cholesky decomposition of a matrix A in \c LLT, 
-    this function solves the system <tt>A*x=b</tt>. 
-*/
-template<class mat_t, class vec_t, class vec2_t>
-  void cholesky_solve(const size_t N, const mat_t &LLT, 
-		      const vec_t &b, vec2_t &x) {
-  
-  // [GSL] Copy x <- b 
-  o2scl::vector_copy(N,b,x);
-  
-  // [GSL] Solve for c using forward-substitution, L c=b 
-  o2scl_cblas::dtrsv(o2scl_cblas::o2cblas_RowMajor,
-		     o2scl_cblas::o2cblas_Lower, 
-		     o2scl_cblas::o2cblas_NoTrans,
-		     o2scl_cblas::o2cblas_NonUnit,N,N,LLT,x);
-  
-  // [GSL] Perform back-substitution,U x=c 
-  o2scl_cblas::dtrsv(o2scl_cblas::o2cblas_RowMajor,
-		     o2scl_cblas::o2cblas_Upper,
-		     o2scl_cblas::o2cblas_NoTrans,
-		     o2scl_cblas::o2cblas_NonUnit,N,N,LLT,x);
-  
-  return;
-}
-
-/** \brief Solve a linear system in place using a Cholesky decomposition
- */
-template<class mat_t, class vec_t> 
-  void cholesky_svx(const size_t N, const mat_t &LLT, vec_t &x) {
-  
-  // [GSL] Solve for c using forward-substitution, L c=b 
-  o2scl_cblas::dtrsv(o2scl_cblas::o2cblas_RowMajor,
-		     o2scl_cblas::o2cblas_Lower,
-		     o2scl_cblas::o2cblas_NoTrans,
-		     o2scl_cblas::o2cblas_NonUnit,N,N,LLT,x);
-  
-  // [GSL] Perform back-substitution, U x=c 
-  o2scl_cblas::dtrsv(o2scl_cblas::o2cblas_RowMajor,
-		     o2scl_cblas::o2cblas_Upper,
-		     o2scl_cblas::o2cblas_NoTrans,
-		     o2scl_cblas::o2cblas_NonUnit,N,N,LLT,x);
-  
-  return;
-}
-
-/** \brief Compute the inverse of a symmetric positive definite matrix
-    given the Cholesky decomposition
-
-    Given a Cholesky decomposition produced by \ref cholesky_decomp(),
-    this function returns the inverse of that matrix in \c LLT.
-*/
-template<class mat_t> void cholesky_invert(const size_t N, mat_t &LLT) {
-  
-  size_t i, j;
-  double sum;
-
-  // [GSL] invert the lower triangle of LLT
-  for (i=0;i<N;++i) {
-    
-    j=N-i-1;
-    
-    O2SCL_IX2(LLT,j,j)=1.0/O2SCL_IX2(LLT,j,j);
-    double ajj=-O2SCL_IX2(LLT,j,j);
-    
-    if (j<N-1) {
-
-      // This section is just the equivalent of dtrmv() for a part of
-      // the matrix LLT.
-      {
-	
-	size_t ix=N-j-2;
-	for (size_t ii=N-j-1;ii>0 && ii--;) {
-	  double temp=0.0;
-	  const size_t j_min=0;
-	  const size_t j_max=ii;
-	  size_t jx=j_min;
-	  for (size_t jj=j_min;jj<j_max;jj++) {
-	    temp+=O2SCL_IX2(LLT,jx+j+1,j)*O2SCL_IX2(LLT,ii+j+1,jj+j+1);
-	    jx++;
+	// AWS: Should change to use a form of ddot() here
+	if (i>0) {
+	  sum=0.0;
+	  for(j=0;j<i;j++) {
+	    sum+=O2SCL_IX2(A,i,j)*O2SCL_IX2(A,k,j);
 	  }
-	  O2SCL_IX2(LLT,ix+j+1,j)=temp+O2SCL_IX2(LLT,ix+j+1,j)*
-	    O2SCL_IX2(LLT,ii+j+1,ii+j+1);
-	  ix--;
 	}
 
+	A_ki=(A_ki-sum)/A_ii;
+	O2SCL_IX2(A,k,i)=A_ki;
+      } 
+
+      {
+	double sum=dnrm2_subrow(A,k,0,k);
+	double diag=A_kk-sum*sum;
+
+	if(diag<=0) {
+	  O2SCL_ERR2("Matrix not positive definite (diag<=0) in ",
+		     "cholesky_decomp().",o2scl::exc_einval);
+	}
+
+	double L_kk=sqrt(diag);
+      
+	O2SCL_IX2(A,k,k)=L_kk;
       }
-
-      o2scl_cblas::dscal_subcol(LLT,j+1,j,N,ajj);
-
     }
+
+    /* [GSL] Now copy the transposed lower triangle to the upper
+       triangle, the diagonal is common.
+    */
+      
+    for (i=1;i<M;i++) {
+      for (j=0;j<i;j++) {
+	double A_ij=O2SCL_IX2(A,i,j);
+	O2SCL_IX2(A,j,i)=A_ij;
+      }
+    } 
+  
+    return;
   }
-  
-  /*
-    [GSL] The lower triangle of LLT now contains L^{-1}. Now compute
-    A^{-1}=L^{-t} L^{-1}
-    
-    The (ij) element of A^{-1} is column i of L^{-1} dotted into
-    column j of L^{-1}
+
+  /** \brief Solve a symmetric positive-definite linear system after a 
+      Cholesky decomposition
+
+      Given the Cholesky decomposition of a matrix A in \c LLT, 
+      this function solves the system <tt>A*x=b</tt>. 
   */
+  template<class mat_t, class vec_t, class vec2_t>
+    void cholesky_solve(const size_t N, const mat_t &LLT, 
+			const vec_t &b, vec2_t &x) {
   
-  for (i=0;i<N;++i) {
+    // [GSL] Copy x <- b 
+    o2scl::vector_copy(N,b,x);
+  
+    // [GSL] Solve for c using forward-substitution, L c=b 
+    o2scl_cblas::dtrsv(o2scl_cblas::o2cblas_RowMajor,
+		       o2scl_cblas::o2cblas_Lower, 
+		       o2scl_cblas::o2cblas_NoTrans,
+		       o2scl_cblas::o2cblas_NonUnit,N,N,LLT,x);
+  
+    // [GSL] Perform back-substitution,U x=c 
+    o2scl_cblas::dtrsv(o2scl_cblas::o2cblas_RowMajor,
+		       o2scl_cblas::o2cblas_Upper,
+		       o2scl_cblas::o2cblas_NoTrans,
+		       o2scl_cblas::o2cblas_NonUnit,N,N,LLT,x);
+  
+    return;
+  }
 
-    for (j=i+1;j<N;++j) {
+  /** \brief Solve a linear system in place using a Cholesky decomposition
+   */
+  template<class mat_t, class vec_t> 
+    void cholesky_svx(const size_t N, const mat_t &LLT, vec_t &x) {
+  
+    // [GSL] Solve for c using forward-substitution, L c=b 
+    o2scl_cblas::dtrsv(o2scl_cblas::o2cblas_RowMajor,
+		       o2scl_cblas::o2cblas_Lower,
+		       o2scl_cblas::o2cblas_NoTrans,
+		       o2scl_cblas::o2cblas_NonUnit,N,N,LLT,x);
+  
+    // [GSL] Perform back-substitution, U x=c 
+    o2scl_cblas::dtrsv(o2scl_cblas::o2cblas_RowMajor,
+		       o2scl_cblas::o2cblas_Upper,
+		       o2scl_cblas::o2cblas_NoTrans,
+		       o2scl_cblas::o2cblas_NonUnit,N,N,LLT,x);
+  
+    return;
+  }
 
-      // [GSL] Compute Ainv_{ij}=sum_k Linv_{ki} Linv_{kj}.
+  /** \brief Compute the inverse of a symmetric positive definite matrix
+      given the Cholesky decomposition
 
+      Given a Cholesky decomposition produced by \ref cholesky_decomp(),
+      this function returns the inverse of that matrix in \c LLT.
+  */
+  template<class mat_t> void cholesky_invert(const size_t N, mat_t &LLT) {
+  
+    size_t i, j;
+    double sum;
+
+    // [GSL] invert the lower triangle of LLT
+    for (i=0;i<N;++i) {
+    
+      j=N-i-1;
+    
+      O2SCL_IX2(LLT,j,j)=1.0/O2SCL_IX2(LLT,j,j);
+      double ajj=-O2SCL_IX2(LLT,j,j);
+    
+      if (j<N-1) {
+
+	// This section is just the equivalent of dtrmv() for a part of
+	// the matrix LLT.
+	{
+	
+	  size_t ix=N-j-2;
+	  for (size_t ii=N-j-1;ii>0 && ii--;) {
+	    double temp=0.0;
+	    const size_t j_min=0;
+	    const size_t j_max=ii;
+	    size_t jx=j_min;
+	    for (size_t jj=j_min;jj<j_max;jj++) {
+	      temp+=O2SCL_IX2(LLT,jx+j+1,j)*O2SCL_IX2(LLT,ii+j+1,jj+j+1);
+	      jx++;
+	    }
+	    O2SCL_IX2(LLT,ix+j+1,j)=temp+O2SCL_IX2(LLT,ix+j+1,j)*
+	      O2SCL_IX2(LLT,ii+j+1,ii+j+1);
+	    ix--;
+	  }
+
+	}
+
+	o2scl_cblas::dscal_subcol(LLT,j+1,j,N,ajj);
+
+      }
+    }
+  
+    /*
+      [GSL] The lower triangle of LLT now contains L^{-1}. Now compute
+      A^{-1}=L^{-t} L^{-1}
+    
+      The (ij) element of A^{-1} is column i of L^{-1} dotted into
+      column j of L^{-1}
+    */
+  
+    for (i=0;i<N;++i) {
+
+      for (j=i+1;j<N;++j) {
+
+	// [GSL] Compute Ainv_{ij}=sum_k Linv_{ki} Linv_{kj}.
+
+	// AWS: Should change to use a form of ddot() here
+	sum=0.0;
+	for(size_t k=j;k<N;k++) {
+	  sum+=O2SCL_IX2(LLT,k,i)*O2SCL_IX2(LLT,k,j);
+	}
+      
+	// [GSL] Store in upper triangle
+	O2SCL_IX2(LLT,i,j)=sum;
+      }
+    
+      // [GSL] now compute the diagonal element
+    
       // AWS: Should change to use a form of ddot() here
       sum=0.0;
-      for(size_t k=j;k<N;k++) {
-	sum+=O2SCL_IX2(LLT,k,i)*O2SCL_IX2(LLT,k,j);
+      for(size_t k=i;k<N;k++) {
+	sum+=O2SCL_IX2(LLT,k,i)*O2SCL_IX2(LLT,k,i);
       }
-      
-      // [GSL] Store in upper triangle
-      O2SCL_IX2(LLT,i,j)=sum;
-    }
-    
-    // [GSL] now compute the diagonal element
-    
-    // AWS: Should change to use a form of ddot() here
-    sum=0.0;
-    for(size_t k=i;k<N;k++) {
-      sum+=O2SCL_IX2(LLT,k,i)*O2SCL_IX2(LLT,k,i);
-    }
 
-    O2SCL_IX2(LLT,i,i)=sum;
+      O2SCL_IX2(LLT,i,i)=sum;
+    }
+  
+    // [GSL] Copy the transposed upper triangle to the lower triangle 
+
+    for (j=1;j<N;j++) {
+      for (i=0;i<j;i++) {
+	O2SCL_IX2(LLT,j,i)=O2SCL_IX2(LLT,i,j);
+      }
+    } 
+  
+    return;
   }
-  
-  // [GSL] Copy the transposed upper triangle to the lower triangle 
 
-  for (j=1;j<N;j++) {
-    for (i=0;i<j;i++) {
-      O2SCL_IX2(LLT,j,i)=O2SCL_IX2(LLT,i,j);
-    }
-  } 
+  template<class mat_t, class vec_t>
+    int cholesky_decomp_unit(const size_t N, mat_t &A, vec_t &D) {
   
-  return;
+    size_t i, j;
+  
+    // [GSL] Initial Cholesky decomposition
+    int stat_chol=cholesky_decomp(N,A);
+  
+    // [GSL] Calculate D from diagonal part of initial Cholesky
+    for(i=0;i<N;++i) {
+      const double C_ii=O2SCL_IX2(A,i,i);
+      O2SCL_IX(D,i)=C_ii*C_ii;
+    }
+  
+    // [GSL] Multiply initial Cholesky by 1/sqrt(D) on the right 
+    for(i=0;i<N;++i) {
+      for(j=0;j<N;++j) {
+	O2SCL_IX2(A,i,j)=O2SCL_IX2(A,i,j)/sqrt(O2SCL_IX(D,j));
+      }
+    }
+  
+    /* [GSL] Because the initial Cholesky contained both L and
+       transpose(L), the result of the multiplication is not symmetric
+       anymore; but the lower triangle _is_ correct. Therefore we
+       reflect it to the upper triangle and declare victory.
+    */
+    for(i=0;i<N;++i) {
+      for(j=i+1;j<N;++j) {
+	O2SCL_IX2(A,i,j)=O2SCL_IX2(A,j,i);
+      }
+    }
+  
+    return stat_chol;
+  }
+
+#ifdef DOXYGENP
 }
-
-template<class mat_t, class vec_t>
-  int cholesky_decomp_unit(const size_t N, mat_t &A, vec_t &D) {
-  
-  size_t i, j;
-  
-  // [GSL] Initial Cholesky decomposition
-  int stat_chol=cholesky_decomp(N,A);
-  
-  // [GSL] Calculate D from diagonal part of initial Cholesky
-  for(i=0;i<N;++i) {
-    const double C_ii=O2SCL_IX2(A,i,i);
-    O2SCL_IX(D,i)=C_ii*C_ii;
-  }
-  
-  // [GSL] Multiply initial Cholesky by 1/sqrt(D) on the right 
-  for(i=0;i<N;++i) {
-    for(j=0;j<N;++j) {
-      O2SCL_IX2(A,i,j)=O2SCL_IX2(A,i,j)/sqrt(O2SCL_IX(D,j));
-    }
-  }
-  
-  /* [GSL] Because the initial Cholesky contained both L and
-     transpose(L), the result of the multiplication is not symmetric
-     anymore; but the lower triangle _is_ correct. Therefore we
-     reflect it to the upper triangle and declare victory.
-  */
-  for(i=0;i<N;++i) {
-    for(j=i+1;j<N;++j) {
-      O2SCL_IX2(A,i,j)=O2SCL_IX2(A,j,i);
-    }
-  }
-  
-  return stat_chol;
-}
+#endif

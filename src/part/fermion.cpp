@@ -772,11 +772,11 @@ bool fermion_eval_thermo::calc_mu_ndeg(fermion &f, double temper,
       double novert4=novert2*novert2;
       double novert5=novert3*novert2;
       double novert6=novert3*novert3;
-      double novert7=novert3*novert4;
+      double novert7=novert4*novert3;
       double novert8=novert4*novert4;
-      double novert9=novert4*novert5;
+      double novert9=novert5*novert4;
       double novert10=novert5*novert5;
-      double novert11=novert5*novert6;
+      double novert11=novert6*novert5;
       double novert12=novert6*novert6;
       pterm=exp(dj*psi)/novert/novert*sqrt(o2scl_const::pi/2.0/novert);
       pterm*=(1.0+15.0/8.0/novert+105.0/128.0/novert2-

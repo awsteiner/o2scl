@@ -20,6 +20,9 @@
 
   -------------------------------------------------------------------
 */
+/** \file tridiag.h
+    \brief Header wrapper for \ref tridiag_base.h
+*/
 #ifndef O2SCL_TRIDIAG_H
 #define O2SCL_TRIDIAG_H
 

@@ -48,10 +48,36 @@ namespace o2scl {
 
   /** \brief Boson class from fitting method
      
-     \todo Better documentation (see eff_fermion)
-     \todo Remove the 'meth2' stuff
-     \todo Remove static variables fix_density and stat_temper
-     \todo Remove exit() calls
+      Based on the fitting method of \ref Johns96 which is an update
+      of the method from \ref Eggleton73 . This method is approximate,
+      but very fast. For a more accurate (but slower) method, use
+      \ref o2scl::rel_boson.
+      
+      Given the chemical potential and the temperature the functions
+      \ref calc_mu() and \ref pair_mu() work by solving the equation
+      (c.f. Eq. 26 in \ref Johns96)
+      \f[
+      \psi = \frac{h}{(h+\sqrt{a})} - \ln \left( 
+      \frac{h+\sqrt{a}}{\sqrt{a}}\right)
+      \f]
+      for \f$ h \f$ given \f$ \psi=(\mu-m)/T \f$. The pressure, energy
+      density, and entropy, are determined as polynomials in \f$ h \f$
+      with a set of precomputed coefficients as done in \ref Johns96 .
+
+      When the density and temperature is given instead (\ref
+      calc_density() and \ref pair_density()), then there are two ways
+      to proceed:
+      - use the density to solve for \f$ f \f$ , or
+      - use the density to solve for the chemical potential.
+
+      Because the density is a complicated polynomial in \f$ f \f$,
+      the former procedure does not work very well (the polynomial
+      produces spurious solutions) even though it might be less time
+      consuming. In this class, the density is solved for the
+      effective chemical potential instead. The initial guess is just
+      taken from the present value of part::nu .
+      
+      \todo Improve documentation
   */
   class eff_boson {
 
@@ -67,18 +93,16 @@ namespace o2scl {
   
     /** \brief Load coefficients for finite-temperature approximation
 	
-	Presently acceptable values of \c fn are: \c boselat3 from
-	Lattimer's notes \c bosejel21, \c bosejel22, \c bosejel34, and
+	Presently acceptable values of \c fn are: 
+	\c bosejel21, \c bosejel22, \c bosejel34, and
 	\c bosejel34cons from \ref Johns96.
     */
     int load_coefficients(int ctype);
-    /// A set of coefficients from Jim Lattimer 
-    static const int cf_boselat3=1;
     /// A set of coefficients from \ref Johns96
     static const int cf_bosejel21=2;
     /// A set of coefficients from \ref Johns96
     static const int cf_bosejel22=3;
-    /// A set of coefficients from \ref Johns96
+    /// A set of coefficients from \ref Johns96 (default)
     static const int cf_bosejel34=4;
     /** \brief The set of coefficients from \ref Johns96 which retains 
 	better thermodynamic consistency
@@ -122,14 +146,6 @@ namespace o2scl {
       return;
     }
 
-    /** \brief Set the solver for use in calculating the chemical
-	potential from the density (meth2=true) 
-    */
-    void set_meth2_root(root<funct> &rp) {
-      meth2_root=&rp;
-      return;
-    }
-
     /** \brief The default solver for calc_density() and pair_density()
      */
     mroot_hybrids<mm_funct<>,
@@ -140,10 +156,6 @@ namespace o2scl {
     /** \brief The default solver for \f$ \psi \f$
      */
     root_cern<funct> def_psi_root;
-
-    /** \brief The default solver for calc_density() and pair_density()
-     */
-    root_cern<funct> def_meth2_root;
 
     virtual const char *type() { return "eff_boson"; }
 
@@ -162,10 +174,10 @@ namespace o2scl {
     /// Temporary storage
     double fix_density;
 
-    /// Desc
+    /// The pointer to the current particle being computed
     boson *bp;
 
-    /// Desc
+    /// Temporary storage for the temperature
     double T;
     
     /// The solver for calc_density()
@@ -175,16 +187,13 @@ namespace o2scl {
     /// The solver to compute \f$ h \f$ from \f$ \psi \f$.
     root<funct> *psi_root;
 
-    /// The solver for calc_density()
-    root<funct> *meth2_root;
-
     /// The function which solves for \f$ h \f$ from \f$ \psi \f$.
     double solve_fun(double x, double &psi);
 
-    /// Fix density for calc_density()
+    /// Fix density for \ref calc_density()
     int density_fun(size_t nv, const ubvector &x, ubvector &y);
 
-    /// Fix density for pair_density()
+    /// Fix density for \ref pair_density()
     int pair_density_fun(size_t nv, const ubvector &x, ubvector &y);
 
 #endif

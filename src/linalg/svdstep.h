@@ -20,6 +20,9 @@
 
   -------------------------------------------------------------------
 */
+/** \file svdstep.h
+    \brief Header wrapper for \ref svdstep_base.h
+*/
 #ifndef O2SCL_SVDSTEP_H
 #define O2SCL_SVDSTEP_H
 

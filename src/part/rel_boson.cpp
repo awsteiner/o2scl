@@ -54,7 +54,8 @@ void rel_boson::calc_mu(boson &b, double temper) {
   bp=&b;
 
   if (temper<=0.0) {
-    O2SCL_ERR("T <= 0 in rel_boson::calc_density",exc_einval);
+    O2SCL_ERR2("Temperature less than or equal to zero in ",
+	       "rel_boson::calc_mu().",exc_einval);
   }
   if (b.non_interacting==true) { b.nu=b.mu; b.ms=b.m; }
 
@@ -94,7 +95,8 @@ void rel_boson::calc_density(boson &b, double temper) {
   bp=&b;
 
   if (temper<=0.0) {
-    O2SCL_ERR("T <= 0 in rel_boson::calc_density",exc_einval);
+    O2SCL_ERR2("Temperature less than or equal to zero in ",
+	       "rel_boson::calc_density().",exc_einval);
   }
   if (b.non_interacting==true) { b.nu=b.mu; b.ms=b.m; }
 
@@ -182,8 +184,6 @@ double rel_boson::solve_fun(double x) {
   
   bp->nu=T*x;
   nden=dit->integ(fd,0.0,sqrt(pow(20.0*T+bp->nu,2.0)-bp->ms*bp->ms));
-  inte_err=err_hnd->get_errno();
-  if (inte_err!=0) return inte_err;
   nden*=bp->g/2.0/pi2;
   yy=nden/bp->n-1.0;
 

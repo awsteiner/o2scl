@@ -21,7 +21,7 @@
   -------------------------------------------------------------------
 */
 /** \file root.h
-    \brief File for one-dimensional solver base class
+    \brief File for one-dimensional solver base class \ref o2scl::root
 */
 #ifndef O2SCL_ROOT_H
 #define O2SCL_ROOT_H

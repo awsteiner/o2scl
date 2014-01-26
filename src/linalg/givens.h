@@ -20,6 +20,9 @@
 
   -------------------------------------------------------------------
 */
+/** \file givens.h
+    \brief Header wrapper for \ref givens_base.h
+*/
 #ifndef O2SCL_GIVENS_H
 #define O2SCL_GIVENS_H
 
@@ -28,10 +31,6 @@
 #include <o2scl/err_hnd.h>
 #include <o2scl/permutation.h>
 #include <o2scl/cblas.h>
-
-/** \file givens.h
-    \brief File for Givens rotations
-*/
 
 namespace o2scl_linalg_bracket {
   

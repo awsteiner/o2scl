@@ -20,6 +20,9 @@
 
   -------------------------------------------------------------------
 */
+/** \file qrpt.h
+    \brief Header wrapper for \ref qrpt_base.h
+*/
 #ifndef O2SCL_QRPT_H
 #define O2SCL_QRPT_H
 

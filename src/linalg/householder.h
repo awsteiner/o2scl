@@ -23,6 +23,10 @@
 #ifndef O2SCL_HOUSEHOLDER_H
 #define O2SCL_HOUSEHOLDER_H
 
+/** \file householder.h
+    \brief Header wrapper for \ref householder_base.h
+*/
+
 #include <o2scl/err_hnd.h>
 #include <o2scl/permutation.h>
 #include <o2scl/cblas.h>

@@ -24,7 +24,8 @@
 #define O2SCL_EXCEPTION_H
 
 /** \file exception.h
-    \brief Error handler class err_hnd_cpp and the \o2 exception objects
+    \brief Error handler class \ref o2scl::err_hnd_cpp and 
+    the \o2 exception objects
 
     See also \ref err_hnd.h .
 */

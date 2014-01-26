@@ -53,19 +53,13 @@ namespace o2scl {
     rel_boson();
 
     virtual ~rel_boson();
-
-    /// The error value from mroot
-    int mroot_err;
-
-    /// The error value from inte
-    int inte_err;
     
     /** \brief Calculate properties as function of chemical potential
-    */
+     */
     virtual void calc_mu(boson &b, double temper);
     
     /** \brief Calculate properties as function of density
-    */
+     */
     virtual void calc_density(boson &b, double temper);
     
     /** \brief Calculate properties with antiparticles as function of
@@ -84,7 +78,7 @@ namespace o2scl {
     /// Calculate effective chemical potential from density
     virtual void nu_from_n(boson &b, double temper);
 
-    /// Set inte object
+    /// Set degenerate and nondegenerate integrators
     void set_inte(inte<funct> &l_nit, inte<funct> &l_dit);
 
     /** \brief Set the solver for use in calculating the chemical
@@ -117,10 +111,10 @@ namespace o2scl {
     /// The solver for calc_density()
     root<funct> *density_root;
 
-    /// Desc
+    /// The pointer to the current particle being computed
     boson *bp;
-
-    /// Desc
+    
+    /// Temporary storage for the temperature
     double T;
     
     /// Non-degenerate density integral

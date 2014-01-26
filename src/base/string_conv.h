@@ -37,6 +37,8 @@
 namespace o2scl {
 #endif
 
+  /// \name Functions in string_conv.h
+  //@{
   /** \brief Convert a pointer to a string 
 
       This uses an \c ostringstream to convert a pointer to a string
@@ -163,6 +165,7 @@ namespace o2scl {
       - Use this function in acol
   */
   void split_string(std::string str, std::vector<std::string> &sv);
+  //@}
 
 #ifndef DOXYGEN_NO_O2NS
 }

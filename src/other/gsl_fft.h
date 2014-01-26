@@ -20,6 +20,9 @@
 
   -------------------------------------------------------------------
 */
+/** \file gsl_fft.h
+    \brief File defining \ref o2scl::gsl_fft
+*/
 #ifndef O2SCL_GSL_FFT_H
 #define O2SCL_GSL_FFT_H
 

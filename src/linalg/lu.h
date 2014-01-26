@@ -20,8 +20,8 @@
 
   -------------------------------------------------------------------
 */
-/** \file lu.h 
-    \brief Functions related to LU decomposition
+/** \file lu.h
+    \brief Header wrapper for \ref lu_base.h
 */
 #ifndef O2SCL_LU_H
 #define O2SCL_LU_H

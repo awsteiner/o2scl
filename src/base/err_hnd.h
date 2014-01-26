@@ -311,13 +311,16 @@ namespace o2scl {
       o2scl::set_err_fn((std::string(d)+d2).c_str(),			\
 			__FILE__,__LINE__,n); return n; } } while (0)
   
-  /** \brief Set an error
+  /// \name The error handler function 
+  //@{
+  /** \brief Call the error handler
    */
   inline void set_err_fn(const char *desc, const char *file, int line,
 			 int errnum) {
     err_hnd->set(desc,file,line,errnum);
     return;
   }
+  //@}
   
   /** \brief Update an error value \c err with the value in \c ret
 
