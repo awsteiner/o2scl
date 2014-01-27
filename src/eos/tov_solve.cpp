@@ -345,6 +345,10 @@ void tov_solve::column_setup(size_t &naux, vector<string> &ext_names,
       iunits.push_back("km");
       inames.push_back(((string)"gm")+szttos(i));
       iunits.push_back("Msun");
+      if (te->baryon_column) {
+	inames.push_back(((string)"bm")+szttos(i));
+	iunits.push_back("Msun");
+      }
     }
   }
   for(size_t il=0;il<inames.size();il++) {
@@ -915,10 +919,18 @@ int tov_solve::mvsr() {
     // Radius interpolation
     if (pr_list.size()>0) {
       iop.set_type(itp_linear);
-      ubvector lpr_col(rky.size()), gm_col(rky.size());
+      ubvector lpr_col(rky.size()), gm_col(rky.size()), bm_col(rky.size());
       for(size_t ii=0;ii<rky.size();ii++) {
 	lpr_col[ii]=rky[ii][1];
 	gm_col[ii]=rky[ii][0];
+	if (te->baryon_column) {
+	  size_t index=2;
+	  if (calc_gpot) {
+	    index++;
+	    if (ang_vel) index+=2;
+	  }
+	  bm_col[ii]=rky[ii][index];
+	}
       }
       for(size_t ii=0;ii<pr_list.size();ii++) {
 	double thisr=iop.eval(log(pr_list[ii]*pfactor),
@@ -939,6 +951,17 @@ int tov_solve::mvsr() {
 	  O2SCL_ERR(str.c_str(),exc_efailed);
 	}
 	line.push_back(thisgm);
+	if (te->baryon_column) {
+	  double thisbm=iop.eval(log(pr_list[ii]*pfactor),
+				 ix_last-1,lpr_col,bm_col);
+	  if (!o2scl::is_finite(thisbm)) {
+	    string str=((string)"Obtained non-finite value when ")+
+	      "interpolating baryon mass for pressure "+dtos(pr_list[ii])+
+	      " in tov_solve::mvsr().";
+	    O2SCL_ERR(str.c_str(),exc_efailed);
+	  }
+	  line.push_back(thisbm);
+	}
       }
     }
 
