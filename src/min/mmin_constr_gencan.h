@@ -903,7 +903,7 @@ namespace o2scl {
 
 #endif
 
-    /// Restart the minr
+    /// Restart the minimizer
     virtual int restart() {
 
       /*

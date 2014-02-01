@@ -294,11 +294,11 @@ namespace o2scl {
 
   /** \brief One-dimensional minimization using derivatives [abstract base]
 
-      At the moment there are no minrs of this type implemented in
+      At the moment there are no minimizers of this type implemented in
       \o2. 
 
       \future Create a version of \ref o2scl::mmin_conf which
-      implements a minr with this interface.
+      implements a minimizer with this interface.
   */
   template<class func_t, class dfunc_t=func_t> 
     class min_de_base : public min_base<func_t,dfunc_t> {
@@ -354,7 +354,7 @@ namespace o2scl {
       It is important to note that, for large distances of \c x 
       from \c center, this only scales linearly. If you are trying to
       constrain a function which decreases more than linearly by
-      making \c x far from \c center, then a minr may
+      making \c x far from \c center, then a minimizer may
       ignore this constraint.
   */
   inline double constraint(double x, double center, double width, 
@@ -391,7 +391,7 @@ namespace o2scl {
       It is important to note that, for large distances of \c x from
       \c center, this scales quadratically. If you are trying to
       constrain a function which decreases faster than quadratically
-      by making \c x far from \c center, then a minr may ignore
+      by making \c x far from \c center, then a minimizer may ignore
       this constraint.
       
       In the limit \f$ t \rightarrow \infty \f$, this function
@@ -422,7 +422,7 @@ namespace o2scl {
       It is important to note that, for large distances of \c x from
       \c center, this only scales linearly. If you are trying to
       constrain a function which decreases more than linearly by
-      making \c x far from \c center, then a minr may ignore this
+      making \c x far from \c center, then a minimizer may ignore this
       constraint.
   */
   inline double lower_bound(double x, double center, double width, 
@@ -452,7 +452,7 @@ namespace o2scl {
       It is important to note that, for large distances of \c x 
       from \c center, this only scales linearly. If you are trying to
       constrain a function which decreases more than linearly by
-      making \c x far from \c center, then a minr may
+      making \c x far from \c center, then a minimizer may
       ingore this constraint.
 
       In the limit \f$ t \rightarrow \infty \f$, this function

@@ -41,10 +41,10 @@ namespace o2scl {
   /** \brief Multidimensional minimization by the differential
       evolution method
       
-      This class mins a function using differential evolution.
+      This class minimizes a function using differential evolution.
       This method is a genetic algorithm and as such works well for
-      non continuous problems, since it does not rely on a gradient
-      of the function that is being mind.
+      non continuous problems, since it does not rely on a gradient of
+      the function that is being mind.
       
       The method starts by initializing a random population of
       candidate parameters. To do this the user needs to define a
@@ -80,12 +80,9 @@ namespace o2scl {
     */
     size_t pop_size;
 
-    /**
-     * \brief The number of generations without a better fit before we
-     * assume that the algorithm has converged.
-     *
-     * Default 25
-     */
+    /** \brief The number of generations without a better fit before we
+	assume that the algorithm has converged (default 25)
+    */
     size_t nconv;
 
     /** \brief Differential weight (default 0.75)
@@ -113,18 +110,18 @@ namespace o2scl {
     virtual ~diff_evo() {
     }
 
-    /**
-     * \brief Set the function that is used to produce random init variables
-     *
-     * REQUIRED
-     *
-     * The init function is called in the beginning to fill 
-     * the population with random individuals, so it is best 
-     * to make this cover the part of the parameter space you 
-     * are interested in. The method will find solutions outside 
-     * this parameter space, but choosing a good init function will 
-     * help finding solutions faster.
-     */
+    /** \brief Set the function that is used to produce random 
+	init variables
+	
+	REQUIRED
+	
+	The init function is called in the beginning to fill 
+	the population with random individuals, so it is best 
+	to make this cover the part of the parameter space you 
+	are interested in. The method will find solutions outside 
+	this parameter space, but choosing a good init function will 
+	help finding solutions faster.
+    */
     virtual void set_init_function( init_funct_t &function ) {
       rand_init_funct = &function;
     }
@@ -214,7 +211,7 @@ namespace o2scl {
 	  // from agent x
 	  others = pick_unique_agents( 3, x );
 
-	  // Pick a random index R ¿ {1, ..., n}, where the highest 
+	  // Pick a random index R in {1, ..., n}, where the highest 
 	  // possible value n is the dimensionality of the problem 
 	  // to be optimized.
 	  size_t r = floor(gr.random()*nvar);
@@ -298,28 +295,25 @@ namespace o2scl {
 
     protected:
 
-    /**
-     * \brief Vector containing the population.
-     *
-     * For now using one long vector with all agents after each other
-     */
+    /** \brief Vector containing the population.
+	
+	For now using one long vector with all agents after each other
+    */
     vec_t population;
 
     /// Vector that keeps track of fmins values
     ubvector fmins;
 
-    /**
-     * \brief Function that is used to produce random init variables
-     *
-     * This function is used to fill the population with random agents
-     */
+    /** \brief Function that is used to produce random init variables
+	
+	This function is used to fill the population with random agents
+    */
     init_funct_t *rand_init_funct;
 
     /// Random number generator
     rng_gsl gr;
 
-    /**
-     * \brief Initialize a population of random agents
+    /** \brief Initialize a population of random agents
      */
     virtual int initialize_population( size_t nvar, vec_t &x0 ) {
       if (rand_init_funct==0) {
@@ -339,14 +333,13 @@ namespace o2scl {
       return 0;
     }
 
-    /**
-     * \brief Pick number of unique agent id's
-     *
-     * Unique from x and each other
-     *
-     * Using Fisher Yates algorithm.  
-     * 
-     */
+    /** \brief Pick number of unique agent id's
+	
+	Unique from x and each other
+	
+	Uses the Fisher-Yates algorithm.  
+	
+    */
     virtual std::vector<int> pick_unique_agents( int nr, size_t x ) {
       std::vector<int> ids;
       std::vector<int> agents;

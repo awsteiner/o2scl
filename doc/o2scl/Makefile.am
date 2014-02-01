@@ -53,14 +53,14 @@ emacs-clean:
 sf-sync-index:
 	rsync -Cavzu extras/index.html \
 		awsteiner,o2scl@web.sourceforge.net:htdocs/index.html
-	rsync -Cavzu extras/otitle.png \
-		awsteiner,o2scl@web.sourceforge.net:htdocs/otitle.png
-	rsync -Cavzu extras/doc.png \
-		awsteiner,o2scl@web.sourceforge.net:htdocs/doc.png
-	rsync -Cavzu extras/dl.png \
-		awsteiner,o2scl@web.sourceforge.net:htdocs/dl.png
-	rsync -Cavzu extras/desc.png \
-		awsteiner,o2scl@web.sourceforge.net:htdocs/desc.png
+	rsync -Cavzu extras/bootstrap-responsive.css \
+		awsteiner,o2scl@web.sourceforge.net:htdocs/boostrap-responsive.css
+	rsync -Cavzu extras/bootstrap.css \
+		awsteiner,o2scl@web.sourceforge.net:htdocs/bootstrap.css
+	rsync -Cavzu extras/bootstrap.js \
+		awsteiner,o2scl@web.sourceforge.net:htdocs/bootstrap.js
+	rsync -Cavzu extras/jquery-2.0.3.min.js \
+		awsteiner,o2scl@web.sourceforge.net:htdocs/jquery-2.0.3.min.js
 
 sf-sync-doc:
 	rsync -Cavzu --exclude=.svn html \

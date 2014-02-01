@@ -333,7 +333,7 @@ namespace o2scl {
       return 0;
     }
 
-    /// Restart the minr
+    /// Restart the minimizer
     virtual int restart() {
 
       proj(this->x);

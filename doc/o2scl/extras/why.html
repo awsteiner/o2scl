@@ -239,29 +239,37 @@ matrix_row r1=<a href="http://o2scl.sourceforge.net/o2scl/html/namespaceo2scl.ht
 	      <p>
 		At the same time, C++ offers quite a bit of syntactic
 		simplicitly, with relatively little cost in speed.
-		Even though linear algebra libraries do not agree,
-		one cannot deny that they can be lifesavers.
+		Even though linear algebra libraries do not agree on
+		the details of the interface, they can speed up
+		development time considerably.
 	      </p>
 	    </li>
 	  </ul>
 	  
 	  <div class="alert alert-success">
-	    <h2>There are gems out there
-	    in scientific computing which are not written in C++.
-	    <small>(Not all of them should be rewritten, but some 
-	      should.)</small></h2>
+	    <h2>There is no &ldquo;one-stop shopping&rdquo; solution for 
+	      scientific computing.
+	    <small>(No single library will solve all your probllems.)
+	      </small></h2>
 	  </div>
 
 	  <p>
-	    <h4>
-	      Some CERNLIB and GSL code has been easily rewritten
-	      in C++ and is faster than Boost
+	    <h4>Boost, while well-developed, doesn't provide direct
+	      solutions for some basic problems, such as numerical
+	      differentiation and nonlinear solving.
 	    </h4>
 	  </p>
+
 	  <ul>
 	    <li>
-	      <p>For GSL solver
+	      <p>GSL does, of course, but is more difficult to use
+		with C++ member functions. Two-dimensional
+		interpolation has only recently found its way into the
+		GSL repository yet has been in O<sub>2</sub>scl for
+		many years. In fact, some GSL improvements were guided
+		by O<sub>2</sub>scl development.</p>
 	    </li>
+	    
 	  </ul>
 
 	  <div class="alert alert-success">
@@ -273,8 +281,7 @@ matrix_row r1=<a href="http://o2scl.sourceforge.net/o2scl/html/namespaceo2scl.ht
 	    <h4>
 	      O<sub>2</sub>scl attempts to be a path towards a
 	      general-purpose C++ scientific computing library which
-	      puts the all of these pieces together to enable easier and
-	      faster development.
+	      enables easier and faster development.
 	    </h4>
 	  </p>
 	  <ul>

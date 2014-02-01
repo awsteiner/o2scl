@@ -52,7 +52,7 @@ namespace o2scl {
 
       This class is one of a large number of function object classes
       in \o2 designed to provide a mechanism for the user to 
-      supply functions to solvers, minrs, integrators, etc.
+      supply functions to solvers, minimizers, integrators, etc.
       See \ref funct_section for a general description.
 
       \note This class is different from \ref mm_funct in that

@@ -35,7 +35,7 @@ typedef boost::numeric::ublas::vector<double> ubvector;
 using namespace std;
 using namespace o2scl;
 
-// A simple function with many local minima. A "greedy" minr
+// A simple function with many local minima. A "greedy" minimizer
 // would likely fail to find the correct minimum.
 double func(size_t nvar, const ubvector &x) {
   double a, b;
@@ -65,8 +65,8 @@ int main(int argc, char *argv[]) {
   
   multi_funct_fptr<> fx(func);
   mm_funct_fptr<ubvector> init_f( init_function );
-
-  de.set_init_function( init_f );
+  
+  de.set_init_function(init_f);
   de.verbose = 1;
   de.ntrial=1000;
   

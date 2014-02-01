@@ -42,7 +42,7 @@ namespace o2scl {
   /** \brief Multidimensional minimization by the differential
       evolution method
        
-      This class mins a function using differential evolution.
+      This class minimizes a function using differential evolution.
       This method is a genetic algorithm and as such works well for
       non continuous problems, since it does not rely on a gradient of
       the function that is being mind.

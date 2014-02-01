@@ -35,7 +35,7 @@ using namespace o2scl;
 
 typedef boost::numeric::ublas::vector<double> ubvector;
 
-// A simple function with many local minima. A "greedy" minr
+// A simple function with many local minima. A "greedy" minimizer
 // would likely fail to find the correct minimum.
 double func(size_t nvar, const ubvector &x) {
   double a, b;

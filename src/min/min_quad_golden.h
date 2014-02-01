@@ -100,7 +100,7 @@ namespace o2scl {
       \endverbatim
 
       \future Take common elements of this and min_brent and
-      move to a generic GSL minr type? 
+      move to a generic GSL minimizer type? 
   */
   template<class func_t=funct> class min_quad_golden : 
   public min_bkt_base<func_t> {

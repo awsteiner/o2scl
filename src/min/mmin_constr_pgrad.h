@@ -223,7 +223,7 @@ namespace o2scl {
       return 0;
     }
 
-    /// Restart the minr
+    /// Restart the minimizer
     virtual int restart() {
       // Turn x into a feasible point
       proj(this->x);

@@ -484,9 +484,16 @@ namespace o2scl {
     double prend;
     /// Increment factor for pressure (default 1.1)
     double princ;
-    /** \brief List of pressures at which radii should be recorded 
-	(in the user-specified unit system)
-     */
+    /** \brief List of pressures at which more information should be
+	recorded
+	
+	If pressures (in the user-specified units) are added to this
+	vector, then in mvsr(), the radial location, enclosed
+	gravitational mass, and (if \ref o2scl::tov_eos::baryon_column
+	is true) enclosed baryon mass are stored in the table for each
+	central pressure. The associated columns are named 
+	<tt>r0, gm0, bm0, r1, gm1, bm1,</tt> etc.
+    */
     std::vector<double> pr_list;
     //@}
 
