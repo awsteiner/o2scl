@@ -194,10 +194,8 @@ class plotter:
             self.canvas()
             self.canvas_flag=1
         n_lines=self.dset['n_lines'][0]
-        print n_lines,'lines.'
         for i in range(0,n_lines):
             line_level=self.dset['line_'+str(i)+'/level'][0]
-            print 'level for line',i,' is ',line_level
             if abs(level-line_level) < 1.0e-10:
                 if self.logx==1:
                     if self.logy==1:
