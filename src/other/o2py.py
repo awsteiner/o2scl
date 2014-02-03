@@ -189,13 +189,13 @@ class plotter:
             print 'Wrong type for contour_plot.'
             return
         if self.verbose>2:
-            print 'contour_plot',colx,coly,kwargs
+            print 'contour_plot',level,kwargs
         if self.canvas_flag==0:
             self.canvas()
             self.canvas_flag=1
         n_lines=self.dset['n_lines'][0]
         print n_lines,'lines.'
-        for i in range(0,n_nlines):
+        for i in range(0,n_lines):
             line_level=self.dset['line_'+str(i)+'/level'][0]
             print 'level for line',i,' is ',line_level
             if abs(level-line_level) < 1.0e-10:
@@ -214,7 +214,7 @@ class plotter:
                         plot.plot(self.dset['line_'+str(i)+'/x'],
                                   self.dset['line_'+str(i)+'/y'],**kwargs)
         return
-
+ 
     def hist_plot(self,**kwargs):
         if self.dtype!='hist':
             print 'Wrong type for hist_plot.'
