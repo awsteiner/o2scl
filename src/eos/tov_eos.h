@@ -114,21 +114,26 @@ namespace o2scl {
       of \ref trans_pres times \ref trans_width) and then in between
       uses
       \f[
-      \varepsilon(P) = [1-\chi(P)] \varepsilon_{\mathrm{crust}} + 
-      \chi(P) \varepsilon_{\mathrm{core}}
+      \varepsilon(P) = [1-\chi(P)] \varepsilon_{\mathrm{crust}}(P) + 
+      \chi(P) \varepsilon_{\mathrm{core}}(P)
       \f]
       where the value \f$ \chi(P) \f$ is determined by
       \f[
       \chi(P) = (P-P_1)/(P_2-P_1) \, .
       \f]
-      
-      Alternatively the <tt>match_line</tt> method uses
-      \f$ \varepsilon_1=\varepsilon(P_1) \f$ and 
-      \f$ \varepsilon_2=\varepsilon(P_2) \f$ and
+      This method is a bit more faithful to the original EOS tables,
+      but the matching can result in pressures which decrease with
+      increasing energy density. Alternatively the <tt>match_line</tt>
+      method uses
+      \f$ \varepsilon_1=\varepsilon_{\mathrm{crust}}(P_1) \f$ and 
+      \f$ \varepsilon_2=\varepsilon_{\mathrm{core}}(P_2) \f$ and
       \f[
       \varepsilon(P) = (\varepsilon_2 - \varepsilon_1) \chi 
       + \varepsilon_1 \, .
       \f]
+      (using the same expression for \f$ \chi \f$ ). This method less
+      frequently results in decreasing pressures, but can deviate
+      further from the original tables.
 
       Internally, energy and pressure are stored in units of \f$
       \mathrm{M}_{\odot}/\mathrm{km}^3 \f$ and baryon density is
@@ -179,13 +184,6 @@ namespace o2scl {
     
     /// \name Crust EOS functions
     //@{
-
-#ifdef O2SCL_NEVER_DEFINED
-    /** \brief Set the crust EOS
-     */
-    void set_low_density_eos(std::string s_nvpath,
-			    int s_nvcole=0, int s_nvcolp=1, int s_nvcolnb=2);
-#endif
 
     /// Default crust EOS from \ref Negele73 and \ref Baym71
     void default_low_dens_eos();
@@ -530,6 +528,266 @@ namespace o2scl {
       return;
     }
     
+  };
+
+  /** \brief An EOS for the TOV solver using simple linear
+      interpolation and an optional crust EOS
+
+      The simplest usage of this class is simply to use \ref
+      read_table() to read a tabulated EOS stored in a \ref
+      table_units object and optionally specify a separate crust EOS.
+
+      \note This stores a pointer to the user-specified table,
+      so if that pointer becomes invalid, the interpolation will
+      fail.
+
+      Alternatively, the user can simply specify objects
+      of type <tt>std::vector<double></tt> which store the energy
+      density, pressure, and baryon density. 
+
+      There are two methods to handle the crust-core interface. The
+      default, <tt>smooth_trans</tt> uses the crust below pressure \f$
+      P_1 \f$ (equal to the value of \ref trans_pres divided by \ref
+      trans_width) and the core above pressure \f$ P_2 \f$ (the value
+      of \ref trans_pres times \ref trans_width) and then in between
+      uses
+      \f[
+      \varepsilon(P) = [1-\chi(P)] \varepsilon_{\mathrm{crust}}(P) + 
+      \chi(P) \varepsilon_{\mathrm{core}}(P)
+      \f]
+      where the value \f$ \chi(P) \f$ is determined by
+      \f[
+      \chi(P) = (P-P_1)/(P_2-P_1) \, .
+      \f]
+      This method is a bit more faithful to the original EOS tables,
+      but the matching can result in pressures which decrease with
+      increasing energy density. Alternatively the <tt>match_line</tt>
+      method uses
+      \f$ \varepsilon_1=\varepsilon_{\mathrm{crust}}(P_1) \f$ and 
+      \f$ \varepsilon_2=\varepsilon_{\mathrm{core}}(P_2) \f$ and
+      \f[
+      \varepsilon(P) = (\varepsilon_2 - \varepsilon_1) \chi 
+      + \varepsilon_1 \, .
+      \f]
+      (using the same expression for \f$ \chi \f$ ). This method less
+      frequently results in decreasing pressures, but can deviate
+      further from the original tables.
+
+      Internally, energy and pressure are stored in units of \f$
+      \mathrm{M}_{\odot}/\mathrm{km}^3 \f$ and baryon density is
+      stored in units of \f$ \mathrm{fm}^{-3} \f$ . The user-specified
+      EOS table is left as is, and unit conversion is performed as
+      needed in get_eden() and other functions from the units
+      specified in the input \ref table_units object.
+
+      \todo It might be useful to exit more gracefully when non-finite
+      values are obtained in interpolation, analogous to the
+      err_nonconv mechanism elsewhere.
+     
+  */
+  class tov_new_eos : public tov_eos {
+    
+  public:
+    
+    tov_new_eos();
+
+    virtual ~tov_new_eos();
+
+    /// \name Mode of transitioning between crust and core EOS
+    //@{
+    int transition_mode;
+    static const int smooth_trans=0;
+    static const int match_line=1;
+    //@}
+
+    /// \name Basic usage
+    //@{
+    /// Specify the EOS through a table
+    void read_table(table_units<> &eosat, std::string s_cole, 
+		    std::string s_colp, std::string s_colnb="");
+    
+    /** \brief Read the EOS from a set of equal length
+	vectors for energy density, pressure, and baryon density
+     */
+    void read_vectors(size_t n_core, std::vector<double> &core_ed, 
+		      std::vector<double> &core_pr, 
+		      std::vector<double> &core_nb);
+    
+    /** \brief Read the EOS from a pair of equal length
+	vectors for energy density and pressure
+    */
+    void read_vectors(size_t n_core, std::vector<double> &core_ed, 
+		      std::vector<double> &core_pr);
+    //@}
+    
+    /// \name Crust EOS functions
+    //@{
+    /// Default crust EOS from \ref Negele73 and \ref Baym71
+    void default_low_dens_eos();
+
+    /// Crust EOS from \ref Shen11b
+    void sho11_low_dens_eos();
+
+    /** \brief Crust EOS from \ref Steiner12
+
+	Current acceptable values for \c model are <tt>APR</tt>,
+	<tt>Gs</tt>, <tt>Rs</tt> and <tt>SLy4</tt>.
+    */
+    void s12_low_dens_eos(std::string model="SLy4",
+			      bool external=false);
+
+    /** \brief Crust EOS from Goriely, Chamel, and Pearson
+	
+	From \ref Goriely10, \ref Pearson11, and \ref Pearson12 .
+     */
+    void gcp10_low_dens_eos(std::string model="BSk20",
+			  bool external=false);
+
+    /** \brief Crust EOS from \ref Newton13 given L in MeV
+
+	Current acceptable values for \c model are <tt>PNM</tt>
+	and <tt>J35</tt>. 
+     */
+    void ngl13_low_dens_eos(double L, std::string model="PNM",
+			     bool external=false);
+    
+    /** \brief Crust EOS from \ref Newton13 given S and L in MeV
+	and a transition density
+    */
+    void ngl13_low_dens_eos2(double S, double L, double nt,
+			     std::string fname="");
+    
+    /// Compute with no crust EOS
+    void no_low_dens_eos() {
+      use_crust=false;
+      return;
+    }
+    //@}
+
+    /// \name Functions used by the tov_solve class
+    //@{
+    /** \brief Given the pressure, produce the energy and number densities
+
+	The arguments \c P and \c e should always be in \f$
+	M_{\odot}/\mathrm{km}^3 \f$ . The argument for \c nb should be
+	in \f$ \mathrm{fm}^{-3} \f$ .
+	
+	If the baryon density is not specified, it should be set to
+	zero or \ref baryon_column should be set to false
+    */
+    virtual void get_eden(double pres, double &ed, double &nb);
+
+    /// Desc
+    virtual void get_eden_user(double pres, double &ed, double &nb);
+
+    /** \brief Given the pressure, produce all the remaining quantities 
+	
+	The argument \c P should always be in
+	\f$ M_{\odot}/\mathrm{km}^3 \f$ .
+    */
+    virtual void get_aux(double P, size_t &nv, std::vector<double> &auxp);
+    
+    /** \brief Fill a list with strings for the names of the remaining 
+	quanities
+    */
+    virtual void get_names_units(size_t &np, 
+				 std::vector<std::string> &pnames,
+				 std::vector<std::string> &punits);
+    //@}
+
+    /// \name Other functions
+    //@{
+    /** \brief Desc
+    */
+    void get_transition(double &ptrans, double &pw);
+    
+    /** \brief Set the transition pressure and "width"
+
+	Sets the transition pressure and the width (specified as a
+	number greater than unity in \c pw) of the transition between
+	the two EOSs. The transition should be in the same units of
+	the user-specified EOS. The transition is done smoothly using
+	linear interpolation between \f$ P=\mathrm{ptrans}/pmathrm{pw}
+	\f$ and \f$ P=\mathrm{ptrans} \times pmathrm{pw} \f$.
+     */
+    void set_transition(double ptrans, double pw);
+    //@}
+
+    /// \name User EOS
+    //@{
+    /// Energy densities from full EOS
+    std::vector<double> full_vece;
+    /// Pressures from full EOS
+    std::vector<double> full_vecp;
+    /// Baryon densities from full EOS
+    std::vector<double> full_vecnb;
+    /// Number of lines in full EOS
+    size_t full_nlines;
+    //@}
+
+#ifndef DOXYGEN_INTERNAL
+
+  protected:
+
+    /// \name Crust EOS variables
+    //@{
+    /// Set to true if we are using a crust EOS (default false)
+    bool use_crust;
+
+    /// Energy densities
+    std::vector<double> crust_vece;
+    /// Pressures
+    std::vector<double> crust_vecp;
+    /// Baryon densities
+    std::vector<double> crust_vecnb;
+    /// Number of EOS entries
+    size_t crust_nlines;
+    //@}
+    
+    /// \name User EOS
+    //@{
+    /// Full user EOS table
+    table_units<> *core_table;
+    /// Column for energy density in EOS file
+    size_t cole;
+    /// Column for pressure in EOS file
+    size_t colp;
+    /// Column for baryon density in EOS file
+    size_t colnb;
+    /// True if an EOS has been specified
+    bool eos_read;
+    /// Number of additional columns in the core EOS
+    size_t core_auxp;
+    //@}
+
+    /// \name Interpolation objects
+    //@{
+    interp_vec<std::vector<double> > pe_int;
+    interp_vec<std::vector<double> > pnb_int;
+    interp<std::vector<double> > gen_int;
+    //@}
+
+    /// \name Unit conversion factors for core EOS
+    //@{
+    /// Unit conversion factor for energy density (default 1.0)
+    double efactor;
+    /// Unit conversion factor for pressure (default 1.0)
+    double pfactor;
+    /// Unit conversion factor for baryon density (default 1.0)
+    double nfactor;
+    //@}
+
+    /// \name Properties of transition
+    //@{
+    /** \brief Transition pressure (in \f$ M_{\odot}/\mathrm{km}^3 \f$)
+     */
+    double trans_pres;
+    /// Transition width (unitless)
+    double trans_width;
+    //@}
+
+#endif
+
   };
 
 #ifndef DOXYGEN_NO_O2NS

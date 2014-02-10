@@ -1066,7 +1066,7 @@ public:
     cout << "--------- TOV solver, M vs. R. ---------------------\n" << endl;
 
     tov_solve atov;
-    tov_interp_eos teos;
+    tov_new_eos teos;
     atov.verbose=0;
     teos.verbose=0;
     atov.set_units("1/fm^4","1/fm^4","1/fm^3");

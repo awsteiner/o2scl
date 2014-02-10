@@ -345,7 +345,7 @@ namespace o2scl {
     root_cern<funct> def_root;
 
     /// Default EOS object for the TOV solver
-    tov_interp_eos def_tov_eos;
+    tov_new_eos def_tov_eos;
     //@}
 
 #ifndef DOXYGEN_INTERNAL

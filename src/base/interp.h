@@ -1449,7 +1449,7 @@ namespace o2scl {
   /// Blank interpolator
   interp_vec() {
     itp=0;
-    itype=0;
+    itype=itp_cspline;
   }
     
   /// Create with base interpolation object \c it

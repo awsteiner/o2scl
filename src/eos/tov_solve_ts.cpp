@@ -132,8 +132,8 @@ int main(void) {
     eos.line_of_data(4,line);
   }
   
-  tov_interp_eos te;
-  te.verbose=2;
+  tov_new_eos te;
+  //  te.verbose=2;
   te.default_low_dens_eos();
   te.read_table(eos,"ed","pr","nb");
   
@@ -233,9 +233,9 @@ int main(void) {
     "*exp(-gp)*omega_rat/sqrt(1-schwarz*gm/r)";
   tab->functions_columns(sfunc);
   double mom=tab->integ("r",0.0,at.rad,"iand");
-  t.test_rel(mom,67.7,1.0e-2,"I method 1");
+  t.test_rel(mom,67.7,1.5e-2,"I method 1");
   double mom2=at.domega_rat*pow(at.rad,4.0)/3.0/schwarz_km;
-  t.test_rel(mom2,67.7,1.0e-2,"I method 2");
+  t.test_rel(mom2,67.7,1.5e-2,"I method 2");
   // Crustal fraction of the moment of inertia
   double r08=tab->interp("nb",0.08,"r");
   double mom_crust=tab->integ("r",r08,at.rad,"iand");
