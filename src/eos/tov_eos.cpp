@@ -1347,6 +1347,7 @@ void tov_new_eos::read_table(table_units<> &eosat, string s_cole,
       
       }
     
+      full_vecp.push_back(pr);
       full_vece.push_back(ed);
       if (baryon_column) {
 	full_vecnb.push_back(nb);
@@ -1372,22 +1373,24 @@ void tov_new_eos::read_table(table_units<> &eosat, string s_cole,
     cout << "Core: " << endl;
   }
   for(size_t i=0;i<core_nlines;i++) {
-    if (((*core_table)[colp])[i]*pfactor>pr_hi) {
-      full_vece.push_back(((*core_table)[cole])[i]*efactor);
-      full_vecp.push_back(((*core_table)[colp])[i]*pfactor);
+    double pt=((*core_table)[colp])[i]*pfactor;
+    double et=((*core_table)[cole])[i]*efactor;
+    double nt=((*core_table)[colnb])[i]*nfactor;
+    if (pt>pr_hi) {
+      full_vece.push_back(et);
+      full_vecp.push_back(pt);
       if (baryon_column) {
-	full_vecnb.push_back(((*core_table)[colnb])[i]*nfactor);
+	full_vecnb.push_back(nt);
       }
       if (verbose>1) {
-	cout << ((*core_table)[cole])[i]*efactor << " ";
-	cout << ((*core_table)[colp])[i]*pfactor << " ";
+	cout << et << " " << pt << " ";
 	if (baryon_column) {
-	  cout << ((*core_table)[colnb])[i]*nfactor << " ";
+	  cout << nt << " ";
 	}
 	cout << ((*core_table)[cole])[i] << " ";
-	cout << ((*core_table)[colp])[i] << " ";
+	cout << ((*core_table)[colp])[i];
 	if (baryon_column) {
-	  cout << ((*core_table)[colnb])[i] << " ";
+	  cout << " " << ((*core_table)[colnb])[i];
 	}
 	cout << endl;
       }
@@ -1405,12 +1408,11 @@ void tov_new_eos::read_table(table_units<> &eosat, string s_cole,
 
   eos_read=true;
 
-  
   return;
 }
 
 void tov_new_eos::get_transition(double &p, double &w) {
-  p=trans_pres;
+  p=trans_pres/pfactor;
   w=trans_width;
   return;
 }

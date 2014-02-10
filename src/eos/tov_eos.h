@@ -677,9 +677,6 @@ namespace o2scl {
     */
     virtual void get_eden(double pres, double &ed, double &nb);
 
-    /// Desc
-    virtual void get_eden_user(double pres, double &ed, double &nb);
-
     /** \brief Given the pressure, produce all the remaining quantities 
 	
 	The argument \c P should always be in
@@ -697,9 +694,15 @@ namespace o2scl {
 
     /// \name Other functions
     //@{
-    /** \brief Desc
+    /** \brief Get the energy density from the pressure in the 
+	user-specified unit system
     */
-    void get_transition(double &ptrans, double &pw);
+    virtual void get_eden_user(double pres, double &ed, double &nb);
+
+    /** \brief Get the transition pressure (in the user-specified
+	unit system) and width
+    */
+    void get_transition(double &ptrans, double &pwidth);
     
     /** \brief Set the transition pressure and "width"
 
