@@ -147,13 +147,13 @@ namespace o2scl {
       err_nonconv mechanism elsewhere.
      
   */
-  class tov_interp_eos : public tov_eos {
+  class tov_interp_eos_old : public tov_eos {
     
   public:
     
-    tov_interp_eos();
+    tov_interp_eos_old();
 
-    virtual ~tov_interp_eos();
+    virtual ~tov_interp_eos_old();
 
     /// \name Mode of transitioning between crust and core EOS
     //@{
@@ -583,7 +583,15 @@ namespace o2scl {
       \todo It might be useful to exit more gracefully when non-finite
       values are obtained in interpolation, analogous to the
       err_nonconv mechanism elsewhere.
-     
+
+      \todo Create a sanity check where core_auxp is nonzero only if
+      core_table is also nonzero. Alternatively, this complication is
+      due to the fact that this class works in two ways: one where it
+      reads a table (and adds a crust), and one where it reads in
+      vectors (with no crust). Maybe these two modes of operation
+      should be separated into two classes.
+
+      \todo Read different vector types than just std::vector<>. 
   */
   class tov_new_eos : public tov_eos {
     
@@ -647,12 +655,21 @@ namespace o2scl {
 
 	Current acceptable values for \c model are <tt>PNM</tt>
 	and <tt>J35</tt>. 
+
      */
     void ngl13_low_dens_eos(double L, std::string model="PNM",
 			     bool external=false);
     
     /** \brief Crust EOS from \ref Newton13 given S and L in MeV
 	and a transition density
+
+	Note that this function works only if \f$ 28 < S < 38 \f$ MeV,
+	\f$ 25 < L < 115 \f$ MeV, \f$ 0.01 < n_t < 0.15 \f$, 
+	and \f$ L > 5 S-65~\mathrm{MeV} \f$
+	. If \c fname is a string of length 0 (the default),
+	then this function looks for a file named \c newton_SL.o2
+	in the \o2 data directory specified by
+	\ref o2scl::lib_settings_class::get_data_dir() .
     */
     void ngl13_low_dens_eos2(double S, double L, double nt,
 			     std::string fname="");
