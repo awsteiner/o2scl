@@ -367,6 +367,12 @@ namespace o2scl {
       in doxygen.
       \endcomment
 
+      The default method for numerically computing the Jacobian is
+      from \ref jacobian_gsl. This default is identical to the GSL
+      approach, except that the default value of \ref
+      jacobian_gsl::epsmin is non-zero. See \ref jacobian_gsl for more
+      details.
+
       Default template arguments
       - \c vec_t - \ref boost::numeric::ublas::vector \< double \>
       - \c mat_t - \ref boost::numeric::ublas::matrix \< double \>
@@ -396,6 +402,12 @@ namespace o2scl {
     
     mfm.set_function(this,&chi_fit_funct::jac_mm_funct);
     auto_jac.set_function(mfm);
+#ifndef O2SCL_NO_CPP11
+    double sqrt_dbl_eps=sqrt(std::numeric_limits<double>::epsilon());
+#else 
+    double sqrt_dbl_eps=GSL_SQRT_DBL_EPSILON;
+#endif
+    auto_jac.epsrel=sqrt_dbl_eps;
   }
 
   /** \brief Set the data to be fit 
@@ -444,6 +456,9 @@ namespace o2scl {
     return ndat_;
   }
 
+  /// Automatic Jacobian object
+  jacobian_gsl<mm_funct<vec_t>,vec_t,mat_t> auto_jac;
+
 #ifndef DOXYGEN_INTERNAL
   
   protected:
@@ -457,9 +472,6 @@ namespace o2scl {
   /// Function object for Jacobian object
   mm_funct_mfptr<chi_fit_funct<vec_t,mat_t,fit_func_t>,vec_t> mfm;
   
-  /// Automatic Jacobian object
-  jacobian_gsl<mm_funct<vec_t>,vec_t,mat_t> auto_jac;
-
   /// \name Data and uncertainties
   //@{
   size_t ndat_;

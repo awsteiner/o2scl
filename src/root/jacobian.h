@@ -188,8 +188,8 @@ namespace o2scl {
   /** \brief Const member function pointer to a Jacobian
    */
   template <class tclass, class vec_t=boost::numeric::ublas::vector<double>, 
-    class mat_t=boost::numeric::ublas::matrix<double> > class jac_funct_cmfptr : 
-  public jac_funct<vec_t,mat_t> {
+    class mat_t=boost::numeric::ublas::matrix<double> > 
+    class jac_funct_cmfptr : public jac_funct<vec_t,mat_t> {
 
   public:
   
@@ -293,15 +293,16 @@ namespace o2scl {
 
       This class computes a numerical Jacobian by finite differencing.
       The stepsize is chosen to be \f$ h_j = \mathrm{epsrel}~x_j \f$ or
-      \f$ h_j = \mathrm{epsmin} \f$ if \f$ \mathrm{epsrel}~x_j <
+      \f$ h_j = \mathrm{epsmin} \f$ if \f$ \mathrm{epsrel}\times x_j <
       \mathrm{epsmin} \f$.
       
       This is nearly equivalent to the GSL method for computing
       Jacobians as in \c multiroots/fdjac.c. To obtain the GSL
       behavior, set \ref epsrel to \c GSL_SQRT_DBL_EPSILON and set
-      \ref epsmin to zero. The \ref mroot_hybrids class sets \ref
-      epsrel to \c GSL_SQRT_DBL_EPSILON in its constructor,
-      but does not set \ref epsmin to zero.
+      \ref epsmin to zero. The \ref mroot_hybrids and \ref
+      chi_fit_funct classes set \ref epsrel to \c GSL_SQRT_DBL_EPSILON
+      in their constructor in order to partially mimic the GSL
+      behavior, but but do not set \ref epsmin to zero.
       
       This class does not separately check the vector and matrix sizes
       to ensure they are commensurate. 

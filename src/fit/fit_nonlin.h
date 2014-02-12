@@ -56,6 +56,13 @@
 #include <o2scl/qr.h>
 #include <o2scl/qrpt.h>
 
+#include <gsl/gsl_multifit_nlin.h>
+#include <gsl/gsl_rng.h>
+#include <gsl/gsl_randist.h>
+
+// For gsl_blas_dnrm2
+#include <gsl/gsl_blas.h>
+
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
 #endif
@@ -1155,7 +1162,7 @@ namespace o2scl {
     // Evaluate function and Jacobian at x
     (*cff)(nparm,*x_,ndata,f_);
     cff->jac(nparm,*x_,ndata,f_,J_);
-      
+
     par=0;
     iter=1;
     fnorm=o2scl_cblas::dnrm2(ndata,f_);
@@ -1413,7 +1420,26 @@ namespace o2scl {
     // Create covariance matrix
     this->covariance(fitfun.get_ndata(),npar,J_,covar,work1,
 		     r,tau,perm,this->tol_rel);
-  
+    std::cout << covar(0,0) << std::endl;
+    
+    gsl_matrix *J2=gsl_matrix_alloc(fitfun.get_ndata(),npar);
+    gsl_matrix *covar_gsl=gsl_matrix_alloc(npar,npar);
+    for(size_t ii=0;ii<fitfun.get_ndata();ii++) {
+      for(size_t jj=0;jj<npar;jj++) {
+	gsl_matrix_set(J2,ii,jj,J_(ii,jj));
+      }
+    }
+    gsl_multifit_covar(J2,0.0,covar_gsl);
+    for(size_t ii=0;ii<npar;ii++) {
+      for(size_t jj=0;jj<npar;jj++) {
+	covar(ii,jj)=gsl_matrix_get(covar_gsl,ii,jj);
+      }
+    }
+    gsl_matrix_free(J2);
+    gsl_matrix_free(covar_gsl);
+    std::cout << covar(0,0) << std::endl;
+    exit(-1);
+
     // Compute chi squared
     chi2=o2scl_cblas::dnrm2(fitfun.get_ndata(),f_);
     chi2*=chi2;
