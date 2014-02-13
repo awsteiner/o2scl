@@ -56,18 +56,11 @@
 #include <o2scl/qr.h>
 #include <o2scl/qrpt.h>
 
-#include <gsl/gsl_multifit_nlin.h>
-#include <gsl/gsl_rng.h>
-#include <gsl/gsl_randist.h>
-
-// For gsl_blas_dnrm2
-#include <gsl/gsl_blas.h>
-
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
 #endif
 
-  /** \brief More base routines for \ref fit_nonlin
+  /** \brief Base routines for the nonlinear fitting classes
    */
   template<class vec_t=boost::numeric::ublas::vector<double>,
     class mat_t=boost::numeric::ublas::matrix<double> > class fit_nonlin_b {
@@ -719,6 +712,14 @@ namespace o2scl {
       vector and matrix types.
 
       The workspace \c work1 is used here.
+
+      \comment
+      Note that in the GSL example for non-linear fitting, the value
+      of \c epsrel is set to zero, so this class sets \ref
+      tol_rel_covar to zero by default. We could remove the \c epsrel
+      parameter in this function, but it may be one day useful to
+      separate this function so we leave \c epsrel as a parameter.
+      \endcomment
   */
   int covariance(size_t m, size_t n, const mat_t &J, 
 		 mat_t &covar, vec_t &norm, mat_t &r, 
@@ -834,7 +835,16 @@ namespace o2scl {
   }
   
   public:
+
+  fit_nonlin_b() {
+    tol_rel_covar=0.0;
+  }
   
+  /** \brief The relative tolerance for the computation of 
+      the covariance matrix (default 0)
+  */
+  double tol_rel_covar;
+
   /// Test if converged
   int test_delta_f(size_t nparm, vec_t &dx, vec_t &x, 
 		   double l_epsabs, double l_epsrel) {
@@ -1417,28 +1427,9 @@ namespace o2scl {
 		      exc_emaxiter,err_nonconv);
     }
 
-    // Create covariance matrix
+    // Compute covariance matrix
     this->covariance(fitfun.get_ndata(),npar,J_,covar,work1,
-		     r,tau,perm,this->tol_rel);
-    std::cout << covar(0,0) << std::endl;
-    
-    gsl_matrix *J2=gsl_matrix_alloc(fitfun.get_ndata(),npar);
-    gsl_matrix *covar_gsl=gsl_matrix_alloc(npar,npar);
-    for(size_t ii=0;ii<fitfun.get_ndata();ii++) {
-      for(size_t jj=0;jj<npar;jj++) {
-	gsl_matrix_set(J2,ii,jj,J_(ii,jj));
-      }
-    }
-    gsl_multifit_covar(J2,0.0,covar_gsl);
-    for(size_t ii=0;ii<npar;ii++) {
-      for(size_t jj=0;jj<npar;jj++) {
-	covar(ii,jj)=gsl_matrix_get(covar_gsl,ii,jj);
-      }
-    }
-    gsl_matrix_free(J2);
-    gsl_matrix_free(covar_gsl);
-    std::cout << covar(0,0) << std::endl;
-    exit(-1);
+		     r,tau,perm,this->tol_rel_covar);
 
     // Compute chi squared
     chi2=o2scl_cblas::dnrm2(fitfun.get_ndata(),f_);

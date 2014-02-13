@@ -132,7 +132,8 @@ namespace o2scl {
       // Compute the covariance matrix
       // ---------------------------------------------------
 
-      this->covariance(ndata,npar,J,covar,norm,r,tau,perm,this->tol_rel);
+      this->covariance(ndata,npar,J,covar,norm,r,tau,perm,
+		       this->tol_rel_covar);
 
       chi2=fnorm*fnorm;
 
