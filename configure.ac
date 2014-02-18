@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([o2scl],[0.915],[awsteiner@sourceforge.net])
+AC_INIT([o2scl],[0.915],[awsteiner@users.sourceforge.net])
 AC_CONFIG_SRCDIR(config.h.in)
 AC_CONFIG_HEADER(config.h)
 AC_CONFIG_MACRO_DIR([m4])
