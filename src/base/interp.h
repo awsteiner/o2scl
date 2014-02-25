@@ -77,7 +77,8 @@ namespace o2scl {
 
       \comment
       AWS, 12/27/13: Copy constructors might be ill-advised for
-      this class since we store pointers?
+      this class since we store pointers. For now, we don't 
+      allow the user to use them.
       \endcomment
   */
   template<class vec_t, class vec2_t=vec_t> class interp_base : 

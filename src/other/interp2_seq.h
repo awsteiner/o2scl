@@ -68,6 +68,9 @@ namespace o2scl {
 
       There is an example for the usage of this class given
       in <tt>examples/ex_interp2_seq.cpp</tt>.
+
+      Because of the way this class creates pointers to the
+      data, copy construction is not currently allowed. 
       
       \future Implement an improved caching system in case, for example
       \c xfirst is true and the last interpolation used the same
@@ -379,7 +382,7 @@ namespace o2scl {
       return result;
     }
 
-#ifndef DOXYGEN_NO_O2NS
+#ifndef DOXYGEN_INTERNAL
     
   protected:
 
@@ -409,6 +412,13 @@ namespace o2scl {
     
     /// Interpolation type
     size_t itype;
+
+  private:
+
+    interp2_seq<vec_t,mat_t,mat_row_t>
+      (const interp2_seq<vec_t,mat_t,mat_row_t> &);
+    interp2_seq<vec_t,mat_t,mat_row_t>& operator=
+      (const interp2_seq<vec_t,mat_t,mat_row_t>&);
 
 #endif
 
