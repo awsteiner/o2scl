@@ -780,6 +780,13 @@ namespace o2scl {
     /// Searching object for y-direction
     search_vec<vec_t> svy;
     
+  private:
+
+    interp2_direct<vec_t,mat_t,mat_row_t,mat_column_t>
+      (const interp2_direct<vec_t,mat_t,mat_row_t,mat_column_t> &);
+    interp2_direct<vec_t,mat_t,mat_row_t,mat_column_t>& operator=
+      (const interp2_direct<vec_t,mat_t,mat_row_t,mat_column_t>&);
+
 #endif
 
   };

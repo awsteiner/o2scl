@@ -151,6 +151,9 @@ string o2scl::dtos(double x, int prec, bool auto_prec) {
 }
 
 int o2scl::stoi(string s, bool err_on_fail) {
+#ifndef O2SCL_NO_CPP11
+  return std::stoi(s);
+#else
   int ret;
   istringstream ins(s);
   if (ins >> ret) {
@@ -161,16 +164,17 @@ int o2scl::stoi(string s, bool err_on_fail) {
 	      exc_einval);
   }
   return 0;
+#endif
 }
 
-size_t o2scl::stoui(string s, bool err_on_fail) {
+size_t o2scl::stoszt(string s, bool err_on_fail) {
   size_t ret;
   istringstream ins(s);
   if (ins >> ret) {
     return ret;
   }
   if (err_on_fail) {
-    O2SCL_ERR("Conversion from string to size_t failed in stoui().",
+    O2SCL_ERR("Conversion from string to size_t failed in stoszt().",
 	      exc_einval);
   }
   return 0;
@@ -197,6 +201,9 @@ bool o2scl::stob(string s, bool err_on_fail) {
 }
 
 double o2scl::stod(string s, bool err_on_fail) {
+#ifndef O2SCL_NO_CPP11
+  return std::stod(s);
+#else
   double ret;
   istringstream ins(s);
   if (ins >> ret) {
@@ -207,6 +214,7 @@ double o2scl::stod(string s, bool err_on_fail) {
 	      exc_efailed);
   }
   return 0.0;
+#endif
 }
 
 

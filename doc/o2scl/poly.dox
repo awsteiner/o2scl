@@ -4,16 +4,18 @@
     equations as well as general polynomials. There is a standard
     nomenclature: classes which handle polynomials with real
     coefficients and real roots end with the suffix <tt>_real</tt>
-    (quadratic_real, cubic_real and quartic_real), classes which
-    handle real coefficients and complex roots end with the suffix
-    <tt>_real_coeff</tt> (quadratic_real_coeff, cubic_real_coeff,
-    quartic_real_coeff, and poly_real_coeff), and classes which handle
-    complex polynomials with complex coefficients end with the suffix
-    <tt>_complex</tt> (quadratic_complex, cubic_complex,
-    quartic_complex, and poly_complex). As a reminder, complex roots
-    may not occur in conjugate pairs if the coefficients are not
-    real. Most of these routines will return an error if the leading
-    coefficient is zero.
+    (\ref o2scl::quadratic_real, \ref o2scl::cubic_real and \ref
+    o2scl::quartic_real), classes which handle real coefficients and
+    complex roots end with the suffix <tt>_real_coeff</tt> (\ref
+    o2scl::quadratic_real_coeff, \ref o2scl::cubic_real_coeff, \ref
+    o2scl::quartic_real_coeff, and \ref o2scl::poly_real_coeff), and
+    classes which handle complex polynomials with complex coefficients
+    end with the suffix <tt>_complex</tt> (\ref o2scl::quadratic_complex,
+    \ref o2scl::cubic_complex, \ref o2scl::quartic_complex, and 
+    \ref o2scl::poly_complex). As a reminder,
+    complex roots may not occur in conjugate pairs if the coefficients
+    are not real. Most of these routines will return an error if the
+    leading coefficient is zero.
 
     In the public interfaces to the polynomial solvers, the
     complex type <tt>std::complex<double></tt> is used. 

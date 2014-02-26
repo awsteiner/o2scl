@@ -5,11 +5,15 @@
     objects are given in \ref string_conv.h and include
     - \ref o2scl::ptos() - pointer to string
     - \ref o2scl::itos() - integer to string
+    - \ref o2scl::szttos() - <tt>size_t</tt> to string
+    - \ref o2scl::btos() - boolean value to string
     - \ref o2scl::dtos() - double to string
-    - \ref o2scl::stoi() - string to integer
-    - \ref o2scl::stod() - string to double
-
-    See also \ref o2scl::size_of_exponent() .
+    - \ref o2scl::stoi() - string to integer 
+    (uses C++11 <tt>std::stoi()</tt> when C++11 support is enabled)
+    - \ref o2scl::stoszt() - string to <tt>size_t</tt>
+    - \ref o2scl::stob() - string to boolean value
+    - \ref o2scl::stod() - string to double 
+    (uses C++11 <tt>std::stod()</tt> when C++11 support is enabled)
 
     The \ref o2scl::columnify class converts a set of
     strings into nicely formatted columns by padding with the
@@ -29,4 +33,13 @@
     
     The function \ref o2scl::count_words() counts the number of "words"
     in a string, which are delimited by whitespace.
+
+    The function \ref o2scl::function_to_double() converts strings
+    like <tt>"1.0/3.0"</tt> and <tt>"exp(cos(-1.0e-2))"</tt> to
+    floating point numbers using \ref FunctionParser .
+
+    The function \ref o2scl::size_of_exponent() returns 2 or 3,
+    depending on the number of characters in the exponent when a
+    floating point number is output to the screen.
+
 */

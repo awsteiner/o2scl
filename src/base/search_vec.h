@@ -64,18 +64,16 @@ namespace o2scl {
 
       \note Because results are cached, this class is not thread-safe
       and cannot be used simultaneously by different threads. (This
-      holds even for member functions marked const, since the cache is
-      marked at mutable.)
+      holds even for member functions marked const, because the cache 
+      data member is marked as mutable.)
 
       \note This class does not store a copy of the data, but only a
       pointer to it. This means that one can safely modify the data
       after the constructor is called, so long as one does not make
       the vector smaller (as the cache might then point to a value
       outside the new vector) and so long as the new vector is still
-      monotonic.
-
-      \future Consider a sanity check to ensure that the cache is
-      never larger than the vector length.
+      monotonic. Copy constructors are also private to prevent 
+      confusing situations which arise when bit-copying pointers. 
   */
   template<class vec_t> class search_vec {
 
@@ -136,6 +134,12 @@ namespace o2scl {
 	increasing, and find_dec() if the data is decreasing. 
     */
     size_t find(const double x0) const {
+#if !O2SCL_NO_RANGE_CHECK
+      if (cache>=n) {
+	O2SCL_ERR("Cache mis-alignment in search_vec::find().",
+		  exc_esanity);
+      }
+#endif
       if ((*v)[0]<(*v)[n-1]) return find_inc(x0);
       return find_dec(x0);
     }
@@ -155,6 +159,12 @@ namespace o2scl {
       } else if (x0>=(*v)[cache+1]) {
 	cache=vector_bsearch_inc<vec_t,double>(x0,*v,cache,n-1);
       }
+#if !O2SCL_NO_RANGE_CHECK
+      if (cache>=n) {
+	O2SCL_ERR("Cache mis-alignment in search_vec::find_inc().",
+		  exc_esanity);
+      }
+#endif
       return cache;
     }
     
@@ -172,6 +182,12 @@ namespace o2scl {
       } else if (x0<=(*v)[cache+1]) {
 	cache=vector_bsearch_dec<vec_t,double>(x0,*v,cache,n-1);
       }
+#if !O2SCL_NO_RANGE_CHECK
+      if (cache>=n) {
+	O2SCL_ERR("Cache mis-alignment in search_vec::find_dec().",
+		  exc_esanity);
+      }
+#endif
       return cache;
     }
 
@@ -227,6 +243,15 @@ namespace o2scl {
       return row;
     }
 
+#ifndef DOXYGEN_INTERNAL
+
+  private:
+
+    search_vec<vec_t>(const search_vec<vec_t> &);
+    search_vec<vec_t>& operator=(const search_vec<vec_t>&);
+
+#endif
+
   };
 
   /** \brief An extended search_vec which is allowed to return 
@@ -264,6 +289,12 @@ namespace o2scl {
 	containing <tt>x0</tt>
     */
     size_t find(const double x0) const {
+#if !O2SCL_NO_RANGE_CHECK
+      if (this->cache>=this->n) {
+	O2SCL_ERR("Cache mis-alignment in search_vec_ext::find().",
+		  exc_esanity);
+      }
+#endif
       if ((*this->v)[0]<(*this->v)[this->n-1]) return find_inc(x0);
       return find_dec(x0);
     }
@@ -279,6 +310,12 @@ namespace o2scl {
 	this->cache=vector_bsearch_inc<vec_t,double>
 	  (x0,*this->v,this->cache,this->n);
       }
+#if !O2SCL_NO_RANGE_CHECK
+      if (this->cache>=this->n) {
+	O2SCL_ERR("Cache mis-alignment in search_vec_ext::find_inc().",
+		  exc_esanity);
+      }
+#endif
       return this->cache;
     }
     
@@ -293,8 +330,23 @@ namespace o2scl {
 	this->cache=vector_bsearch_dec<vec_t,double>
 	  (x0,*this->v,this->cache,this->n);
       }
+#if !O2SCL_NO_RANGE_CHECK
+      if (this->cache>=this->n) {
+	O2SCL_ERR("Cache mis-alignment in search_vec_ext::find_dec().",
+		  exc_esanity);
+      }
+#endif
       return this->cache;
     }
+
+#ifndef DOXYGEN_INTERNAL
+
+  private:
+
+    search_vec_ext<vec_t>(const search_vec_ext<vec_t> &);
+    search_vec_ext<vec_t>& operator=(const search_vec_ext<vec_t>&);
+
+#endif
 
   };
 

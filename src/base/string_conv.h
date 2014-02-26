@@ -93,8 +93,11 @@ namespace o2scl {
       function calls the error handler, otherwise this function just
       returns zero.
 
-      \warning Note that this is currently different than
-      <tt>std::stoi()</tt> so you may have to explicitly provide the
+      If \o2 is compiled with C++11 support, this function is
+      just a wrapper for <tt>std::stoi</tt>. 
+
+      \warning Because of the presence of <tt>std::stoi()</tt> in 
+      C++11, you may have to explicitly provide the
       namespace, i.e. <tt>o2scl::stoi()</tt> in your code.
   */
   int stoi(std::string s, bool err_on_fail=true);
@@ -105,7 +108,7 @@ namespace o2scl {
       function calls the error handler, otherwise this function just
       returns zero.
   */
-  size_t stoui(std::string s, bool err_on_fail=true);
+  size_t stoszt(std::string s, bool err_on_fail=true);
 
   /** \brief Convert a string to a boolean value
       
@@ -125,8 +128,11 @@ namespace o2scl {
       function calls the error handler, otherwise this function just
       returns 0.0.
 
-      \warning Note that this is currently different than
-      <tt>std::stod()</tt> so you may have to explicitly provide the
+      If \o2 is compiled with C++11 support, this function is
+      just a wrapper for <tt>std::stod</tt>. 
+
+      \warning Because of the presence of <tt>std::stod()</tt> in 
+      C++11, you may have to explicitly provide the
       namespace, i.e. <tt>o2scl::stod()</tt> in your code.
   */
   double stod(std::string s, bool err_on_fail=true);

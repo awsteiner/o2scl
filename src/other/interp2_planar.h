@@ -369,6 +369,12 @@ namespace o2scl {
       return 0;
     }
     
+  private:
+    
+    interp2_planar<vec_t,vec2_t>(const interp2_planar<vec_t,vec2_t> &);
+    interp2_planar<vec_t,vec2_t>& operator=
+      (const interp2_planar<vec_t,vec2_t>&);
+
 #endif
 
   };

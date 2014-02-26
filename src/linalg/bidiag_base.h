@@ -40,7 +40,7 @@
  * 02110-1301, USA.
  */
 /** \file bidiag_base.h
-    \brief File defining bidiagonlization functions
+    \brief File defining bidiagonalization functions
 */
 #ifdef DOXYGENP
 namespace o2scl_linalg {

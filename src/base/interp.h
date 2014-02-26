@@ -72,9 +72,6 @@ namespace o2scl {
       without a new call to \ref interp_base::set(), the behavior of
       the interpolation functions is undefined.
 
-      \future Create standards for checking if object is valid,
-      i.e. sv=0 iff svx=0?
-
       \comment
       AWS, 12/27/13: Copy constructors might be ill-advised for
       this class since we store pointers. For now, we don't 
@@ -97,7 +94,7 @@ namespace o2scl {
 	This pointer is set to zero in the constructor and should be
 	non-zero only if it has been allocated with \c new.
     */
-    search_vec<const vec_t> *svx;
+    search_vec<const vec_t> svx;
     
     /// Independent vector
     const vec_t *px;
@@ -129,12 +126,10 @@ namespace o2scl {
   public:
     
     interp_base() {
-      svx=0;
       sz=0;
     }
     
     virtual ~interp_base() {
-      if (svx!=0) delete svx;
     }
 
     /** \brief The minimum size of the vectors to interpolate between
@@ -209,8 +204,7 @@ namespace o2scl {
 		   " than "+szttos(this->min_size)+" in interp_linear::"+
 		   "set().").c_str(),exc_einval);
       }
-      if (this->svx!=0) delete this->svx;
-      this->svx=new search_vec<const vec_t>(size,x);
+      this->svx.set_vec(size,x);
       this->px=&x;
       this->py=&y;
       this->sz=size;
@@ -220,7 +214,7 @@ namespace o2scl {
     /// Give the value of the function \f$ y(x=x_0) \f$ .
     virtual double eval(double x0) const {
 
-      size_t index=this->svx->find(x0);
+      size_t index=this->svx.find(x0);
       
       double x_lo=(*this->px)[index];
       double x_hi=(*this->px)[index+1];
@@ -234,7 +228,7 @@ namespace o2scl {
     /// Give the value of the derivative \f$ y^{\prime}(x=x_0) \f$ .
     virtual double deriv(double x0) const {
       
-      size_t index=this->svx->find(x0);
+      size_t index=this->svx.find(x0);
       
       double x_lo=(*this->px)[index];
       double x_hi=(*this->px)[index+1];
@@ -267,8 +261,8 @@ namespace o2scl {
 	flip=true;
       }
 
-      index_a=this->svx->find(a);
-      index_b=this->svx->find(b);
+      index_a=this->svx.find(a);
+      index_b=this->svx.find(b);
       
       double result=0.0;
       for(i=index_a; i<=index_b; i++) {
@@ -405,8 +399,7 @@ namespace o2scl {
       this->py=&ya;
       this->sz=size;
 
-      if (this->svx!=0) delete this->svx;
-      this->svx=new search_vec<const vec_t>(size,xa);
+      this->svx.set_vec(size,xa);
 
       /// Natural boundary conditions
 
@@ -448,7 +441,7 @@ namespace o2scl {
     /// Give the value of the function \f$ y(x=x_0) \f$ .
     virtual double eval(double x0) const {
       
-      size_t index=this->svx->find(x0);
+      size_t index=this->svx.find(x0);
 
       double x_lo=(*this->px)[index];
       double x_hi=(*this->px)[index+1];
@@ -468,7 +461,7 @@ namespace o2scl {
     /// Give the value of the derivative \f$ y^{\prime}(x=x_0) \f$ .
     virtual double deriv(double x0) const {
 
-      size_t index=this->svx->find(x0);
+      size_t index=this->svx.find(x0);
   
       double x_lo=(*this->px)[index];
       double x_hi=(*this->px)[index+1];
@@ -490,7 +483,7 @@ namespace o2scl {
     */
     virtual double deriv2(double x0) const {
 
-      size_t index=this->svx->find(x0);
+      size_t index=this->svx.find(x0);
   
       double x_lo=(*this->px)[index];
       double x_hi=(*this->px)[index+1];
@@ -521,8 +514,8 @@ namespace o2scl {
 	flip=true;
       }
 
-      index_a=this->svx->find(a);
-      index_b=this->svx->find(b);
+      index_a=this->svx.find(a);
+      index_b=this->svx.find(b);
 
       double result=0.0;
   
@@ -633,8 +626,7 @@ namespace o2scl {
       this->py=&ya;
       this->sz=size;
 
-      if (this->svx!=0) delete this->svx;
-      this->svx=new search_vec<const vec_t>(size,xa);
+      this->svx.set_vec(size,xa);
 
       /// Periodic boundary conditions
 	 
@@ -818,8 +810,7 @@ namespace o2scl {
       this->py=&ya;
       this->sz=size;
 
-      if (this->svx!=0) delete this->svx;
-      this->svx=new search_vec<const vec_t>(size,xa);
+      this->svx.set_vec(size,xa);
 
       // Non-periodic boundary conditions
 
@@ -842,7 +833,7 @@ namespace o2scl {
     /// Give the value of the function \f$ y(x=x_0) \f$ .
     virtual double eval(double x0) const {
       
-      size_t index=this->svx->find(x0);
+      size_t index=this->svx.find(x0);
   
       double x_lo=(*this->px)[index];
       double delx=x0-x_lo;
@@ -856,7 +847,7 @@ namespace o2scl {
     /// Give the value of the derivative \f$ y^{\prime}(x=x_0) \f$ .
     virtual double deriv(double x0) const {
 
-      size_t index=this->svx->find(x0);
+      size_t index=this->svx.find(x0);
 
       double x_lo=(*this->px)[index];
       double delx=x0-x_lo;
@@ -872,7 +863,7 @@ namespace o2scl {
     */
     virtual double deriv2(double x0) const {
 
-      size_t index=this->svx->find(x0);
+      size_t index=this->svx.find(x0);
   
       double x_lo=(*this->px)[index];
       double delx=x0-x_lo;
@@ -896,8 +887,8 @@ namespace o2scl {
 	flip=true;
       }
 
-      index_a=this->svx->find(aa);
-      index_b=this->svx->find(bb);
+      index_a=this->svx.find(aa);
+      index_b=this->svx.find(bb);
 
       double result=0.0;
   
@@ -994,8 +985,7 @@ namespace o2scl {
       this->py=&ya;
       this->sz=size;
 
-      if (this->svx!=0) delete this->svx;
-      this->svx=new search_vec<const vec_t>(size,xa);
+      this->svx.set_vec(size,xa);
 
       // Periodic boundary conditions
       
@@ -1094,8 +1084,7 @@ namespace o2scl {
       }
       
       // Setup search_vec object
-      if (this->svx!=0) delete this->svx;
-      this->svx=new search_vec<const vec_t>(size,x);
+      this->svx.set_vec(size,x);
 
       // Resize internal vectors
       if (this->sz!=size) {
@@ -1152,7 +1141,7 @@ namespace o2scl {
     /// Give the value of the function \f$ y(x=x_0) \f$ .
     virtual double eval(double x0) const {
 
-      size_t index=this->svx->find(x0);
+      size_t index=this->svx.find(x0);
       
       double x_lo=(*this->px)[index];
       double x_hi=(*this->px)[index+1];
@@ -1174,7 +1163,7 @@ namespace o2scl {
     /// Give the value of the derivative \f$ y^{\prime}(x=x_0) \f$ .
     virtual double deriv(double x0) const {
 
-      size_t index=this->svx->find(x0);
+      size_t index=this->svx.find(x0);
       
       double x_lo=(*this->px)[index];
       double x_hi=(*this->px)[index+1];
@@ -1199,7 +1188,7 @@ namespace o2scl {
     */
     virtual double deriv2(double x0) const {
 
-      size_t index=this->svx->find(x0);
+      size_t index=this->svx.find(x0);
       
       double x_lo=(*this->px)[index];
       double x_hi=(*this->px)[index+1];
@@ -1233,8 +1222,8 @@ namespace o2scl {
 	flip=true;
       }
 
-      index_a=this->svx->find(a);
-      index_b=this->svx->find(b);
+      index_a=this->svx.find(a);
+      index_b=this->svx.find(b);
 
       double result=0.0;
   
