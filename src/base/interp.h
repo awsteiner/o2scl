@@ -1171,7 +1171,7 @@ namespace o2scl {
       double y_hi=(*this->py)[index+1];
       double h=x_hi-x_lo;
       double t=(x0-x_lo)/h;
-      double t2=t*t, t3=t2*t;
+      double t2=t*t;
 
       double dh00=6.0*t2-6.0*t;
       double dh10=3.0*t2-4.0*t+1.0;
@@ -1196,7 +1196,6 @@ namespace o2scl {
       double y_hi=(*this->py)[index+1];
       double h=x_hi-x_lo;
       double t=(x0-x_lo)/h;
-      double t2=t*t, t3=t2*t;
 
       double ddh00=12.0*t-6.0;
       double ddh10=6.0*t-4.0;
