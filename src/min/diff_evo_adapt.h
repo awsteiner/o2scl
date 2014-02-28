@@ -267,6 +267,13 @@ namespace o2scl {
       return 0;
     }
 
+  private:
+
+  diff_evo_adapt<func_t,vec_t,init_funct_t>
+    (const diff_evo_adapt<func_t,vec_t,init_funct_t> &);
+  diff_evo_adapt<func_t,vec_t,init_funct_t> &operator=
+    (const diff_evo_adapt<func_t,vec_t,init_funct_t>&);
+
 #endif
 
     };

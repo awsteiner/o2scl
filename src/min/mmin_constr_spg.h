@@ -410,6 +410,17 @@ namespace o2scl {
 
     /// Return string denoting type ("mmin_constr_spg")
     const char *type() { return "mmin_constr_spg"; }
+
+#ifndef DOXYGEN_INTERNAL
+
+  private:
+  
+  mmin_constr_spg<func_t,dfunc_t,vec_t>
+  (const mmin_constr_spg<func_t,dfunc_t,vec_t> &);
+  mmin_constr_spg<func_t,dfunc_t,vec_t>& operator=
+  (const mmin_constr_spg<func_t,dfunc_t,vec_t>&);
+
+#endif
       
   };
   

@@ -1098,8 +1098,19 @@ namespace o2scl {
     
     return;
   }
+
+#ifndef DOXYGEN_INTERNAL
+
+ private:
   
-  };
+  mroot_hybrids<func_t,vec_t,mat_t,jfunc_t>
+  (const mroot_hybrids<func_t,vec_t,mat_t,jfunc_t> &);
+  mroot_hybrids<func_t,vec_t,mat_t,jfunc_t>& operator=
+  (const mroot_hybrids<func_t,vec_t,mat_t,jfunc_t>&);
+
+#endif
+
+ };
 
 #ifndef DOXYGEN_NO_O2NS
 }

@@ -20,8 +20,8 @@
 
   -------------------------------------------------------------------
 */
-#ifndef O2SCL_GSL_MMIN_CONP_H
-#define O2SCL_GSL_MMIN_CONP_H
+#ifndef O2SCL_MMIN_CONP_H
+#define O2SCL_MMIN_CONP_H
 
 /** \file mmin_conp.h
     \brief File defining \ref o2scl::mmin_conp
@@ -64,10 +64,14 @@ namespace o2scl {
     class mmin_conp : 
     public mmin_conf<func_t,vec_t,dfunc_t,auto_grad_t,def_auto_grad_t>
 #endif
-{
+    {
     
     public:
-    
+ 
+    mmin_conp() : mmin_conf<func_t,vec_t,dfunc_t,auto_grad_t,
+    def_auto_grad_t>() {
+      }
+ 
     /// Perform an iteration
     virtual int iterate() {
       
@@ -90,7 +94,7 @@ namespace o2scl {
 	for(size_t i=0;i<this->dim;i++) dx[i]=0.0;
 	O2SCL_CONV2_RET("Either pnorm or g0norm vanished in ",
 			"in mmin_conp::iterate().",
-			  exc_enoprog,this->err_nonconv);
+			exc_enoprog,this->err_nonconv);
 	return 0;
       }
       
@@ -141,8 +145,8 @@ namespace o2scl {
       }
       
       this->min(x,this->p,dir / this->pnorm,stepa,stepb,stepc, fa, 
-		     fb, fc, this->tol, this->x1, this->dx1, this->x2, 
-		     dx, gradient, &(this->step), &(this->it_min), &g1norm);
+		fb, fc, this->tol, this->x1, this->dx1, this->x2, 
+		dx, gradient, &(this->step), &(this->it_min), &g1norm);
       
       for(size_t i=0;i<this->dim;i++) x[i]=this->x2[i];
       
@@ -179,8 +183,19 @@ namespace o2scl {
     
     /// Return string denoting type("mmin_conp")
     virtual const char *type() { return "mmin_conp";}
+
+#ifndef DOXYGEN_INTERNAL
+
+    private:
+
+    mmin_conp<func_t,vec_t,dfunc_t,auto_grad_t,def_auto_grad_t>
+    (const mmin_conp<func_t,vec_t,dfunc_t,auto_grad_t,def_auto_grad_t> &);
+    mmin_conp<func_t,vec_t,dfunc_t,auto_grad_t,def_auto_grad_t>& operator=
+    (const mmin_conp<func_t,vec_t,dfunc_t,auto_grad_t,def_auto_grad_t>&);
+
+#endif
     
-  };
+    };
 
 #ifndef DOXYGEN_NO_O2NS
 }

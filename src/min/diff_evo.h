@@ -364,6 +364,17 @@ namespace o2scl {
 
 #endif
 
+#ifndef DOXYGEN_INTERNAL
+
+  private:
+
+    diff_evo<func_t,vec_t,init_funct_t>
+    (const diff_evo<func_t,vec_t,init_funct_t> &);
+    diff_evo<func_t,vec_t,init_funct_t> &operator=
+    (const diff_evo<func_t,vec_t,init_funct_t>&);
+
+#endif
+
     }; 
 
 #ifndef DOXYGEN_NO_O2NS

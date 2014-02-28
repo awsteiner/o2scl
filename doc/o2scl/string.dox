@@ -15,6 +15,10 @@
     - \ref o2scl::stod() - string to double 
     (uses C++11 <tt>std::stod()</tt> when C++11 support is enabled)
 
+    (While \ref o2scl::dtos() and similar functions have been
+    implemented in <tt>std::to_string</tt>, these functions do not
+    allow as much flexbility so the C++11 version is not used.)
+
     The \ref o2scl::columnify class converts a set of
     strings into nicely formatted columns by padding with the
     necessary amount of spaces. This class operates on string objects
@@ -31,15 +35,15 @@
     command \c ls organizes files and directories in multiple columns
     in order to save screen space.
     
-    The function \ref o2scl::count_words() counts the number of "words"
-    in a string, which are delimited by whitespace.
-
     The function \ref o2scl::function_to_double() converts strings
     like <tt>"1.0/3.0"</tt> and <tt>"exp(cos(-1.0e-2))"</tt> to
-    floating point numbers using \ref FunctionParser .
+    double-precision floating point numbers using \ref FunctionParser
+    .
 
     The function \ref o2scl::size_of_exponent() returns 2 or 3,
     depending on the number of characters in the exponent when a
     floating point number is output to the screen.
 
+    Finally, the function \ref o2scl::count_words() counts the number
+    of "words" in a string, which are delimited by whitespace.
 */

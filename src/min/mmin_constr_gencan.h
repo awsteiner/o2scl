@@ -949,6 +949,17 @@ namespace o2scl {
 
     /// Return string denoting type ("mmin_constr_gencan")
     const char *type() { return "mmin_constr_gencan"; }
+
+#ifndef DOXYGEN_INTERNAL
+
+  private:
+  
+  mmin_constr_gencan<func_t,dfunc_t,hfunc_t,vec_t>
+  (const mmin_constr_gencan<func_t,dfunc_t,hfunc_t,vec_t> &);
+  mmin_constr_gencan<func_t,dfunc_t,hfunc_t,vec_t>& operator=
+  (const mmin_constr_gencan<func_t,dfunc_t,hfunc_t,vec_t>&);
+
+#endif
       
   };
   

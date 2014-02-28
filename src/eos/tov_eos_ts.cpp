@@ -83,9 +83,10 @@ public:
   
 };
 
-void test_crust(tov_interp_eos &te, convert_units &cu, double pr_low,
+/*
+void test_crust(tov_new_eos &te, convert_units &cu, double pr_low,
 		double pr_high, bool new_units, test_mgr &t) {
-
+  
   double ed_old;
   vector<double> ed_bench;
   double ed, nb;
@@ -146,6 +147,7 @@ void test_crust(tov_interp_eos &te, convert_units &cu, double pr_low,
 
   return;
 }
+*/
 
 int main(void) {
 
@@ -185,7 +187,7 @@ int main(void) {
   }
   
   // Read APR EOS 
-  tov_interp_eos te;
+  tov_new_eos te;
   te.verbose=2;
   te.default_low_dens_eos();
   te.read_table(eos,"ed","pr","nb");
@@ -212,7 +214,7 @@ int main(void) {
   cout << "Show interpolation results near transition" << endl;
   cout << endl;
 
-  test_crust(te,cu,pr_low,pr_high,false,t);
+  //test_crust(te,cu,pr_low,pr_high,false,t);
   cout << endl;
 
   cout << "-------------------------------------------------------------- "
@@ -228,30 +230,32 @@ int main(void) {
   pr_high=cu.convert("Msun/km^3","1/fm^4",pr_high);
   cout << endl;
   
-  test_crust(te,cu,pr_low,pr_high,true,t);
+  //test_crust(te,cu,pr_low,pr_high,true,t);
 
   cout << "-------------------------------------------------------------- "
        << endl;
   cout << "Now try with new transition density and width" << endl;
   cout << endl;
 
-  double prt_low, prt, prt_high;
-  te.get_transition(prt_low,prt,prt_high);
-  cout << "Pressures near transition: " << endl;
-  cout << prt_low << " " << prt << " " << prt_high << endl;
-  te.set_transition(2.0e-3,1.2);
-  cout << endl;
+  /*
+    double prt_low, prt, prt_high;
+    te.get_transition(prt_low,prt,prt_high);
+    cout << "Pressures near transition: " << endl;
+    cout << prt_low << " " << prt << " " << prt_high << endl;
+    te.set_transition(2.0e-3,1.2);
+    cout << endl;
+  */
 
-  test_crust(te,cu,pr_low,pr_high,true,t);
+  //test_crust(te,cu,pr_low,pr_high,true,t);
 
   cout << "-------------------------------------------------------------- "
        << endl;
   cout << "Now try with different transition method" << endl;
   cout << endl;
 
-  te.transition_mode=tov_interp_eos::match_line;
+  te.transition_mode=tov_new_eos::match_line;
 
-  test_crust(te,cu,pr_low,pr_high,true,t);
+  //test_crust(te,cu,pr_low,pr_high,true,t);
 
 #ifdef O2SCL_NEVER_DEFINED
 

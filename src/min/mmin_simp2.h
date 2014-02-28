@@ -40,8 +40,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 
  * 02110-1301, USA.
  */
-#ifndef O2SCL_GSL_MMIN_SIMP2_H
-#define O2SCL_GSL_MMIN_SIMP2_H
+#ifndef O2SCL_MMIN_SIMP2_H
+#define O2SCL_MMIN_SIMP2_H
 
 /** \file mmin_simp2.h
     \brief File defining \ref o2scl::mmin_simp2
@@ -844,6 +844,17 @@ namespace o2scl {
 
   /// Return string denoting type("mmin_simp2")
   virtual const char *type() { return "mmin_simp2";}
+
+#ifndef DOXYGEN_INTERNAL
+
+ private:
+  
+  mmin_simp2<func_t,vec_t>
+  (const mmin_simp2<func_t,vec_t> &);
+  mmin_simp2<func_t,vec_t>& operator=
+  (const mmin_simp2<func_t,vec_t>&);
+
+#endif
 
   };
   

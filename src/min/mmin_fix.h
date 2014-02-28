@@ -226,12 +226,9 @@ namespace o2scl {
     
   /// The user-specified initial vector
   vec_t *xp;
-
-#ifndef DOXYGEN_NO_O2NS
-#endif
-
+  
   private:
- 
+  
   mmin_fix_params(const mmin_fix_params &);
   mmin_fix_params& operator=(const mmin_fix_params&);
 

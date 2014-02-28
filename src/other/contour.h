@@ -194,6 +194,8 @@ namespace o2scl {
       \todo Convert distances in find_next_point functions to 
       be scaled by grid spacing. 
 
+      \todo Copy constructor
+
       \future Rewrite the code which adjusts the contour levels 
       to ensure contours don't go through the data to adjust the
       internal copy of the data instead? This should be more 
@@ -499,6 +501,11 @@ namespace o2scl {
 
     /// Check to ensure the x- and y-arrays are monotonic
     void check_data();
+
+  private:
+
+    contour(const contour &);
+    contour& operator=(const contour&);
 
 #endif
 

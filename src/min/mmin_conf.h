@@ -819,6 +819,17 @@ namespace o2scl {
     /// Return string denoting type("mmin_conf")
     virtual const char *type() { return "mmin_conf";}
 
+#ifndef DOXYGEN_INTERNAL
+
+ private:
+
+  mmin_conf<func_t,vec_t,dfunc_t,auto_grad_t,def_auto_grad_t>
+  (const mmin_conf<func_t,vec_t,dfunc_t,auto_grad_t,def_auto_grad_t> &);
+  mmin_conf<func_t,vec_t,dfunc_t,auto_grad_t,def_auto_grad_t>& operator=
+  (const mmin_conf<func_t,vec_t,dfunc_t,auto_grad_t,def_auto_grad_t>&);
+
+#endif
+
     };
 
 #ifndef DOXYGEN_NO_O2NS

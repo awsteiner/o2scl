@@ -5,12 +5,12 @@
 MIN_SRCS = mmin_bfgs2.cpp
 
 HEADER_VAR = min.h min_cern.h min_brent_gsl.h min_brent_boost.h mmin_fix.h \
-	mmin_simp.h mmin.h mmin_conf.h mmin_simp2.h \
+	mmin.h mmin_conf.h mmin_simp2.h \
 	mmin_conp.h mmin_bfgs2.h mmin_constr.h mmin_constr_pgrad.h \
 	mmin_constr_spg.h mmin_constr_gencan.h min_quad_golden.h diff_evo.h \
 	diff_evo_adapt.h
 
-TEST_VAR = min_cern.scr min_brent_gsl.scr min_brent_boost.scr mmin_simp.scr \
+TEST_VAR = min_cern.scr min_brent_gsl.scr min_brent_boost.scr \
 	mmin_conf.scr mmin_conp.scr mmin_bfgs2.scr \
 	mmin_fix.scr mmin_constr_pgrad.scr mmin_constr_spg.scr \
 	min.scr mmin_simp2.scr min_quad_golden.scr diff_evo.scr \
@@ -79,7 +79,7 @@ pkginclude_HEADERS = $(HEADER_VAR)
 # libtool testing targets
 # ------------------------------------------------------------
 
-check_PROGRAMS = min_cern_ts min_brent_gsl_ts mmin_simp_ts \
+check_PROGRAMS = min_cern_ts min_brent_gsl_ts \
 	mmin_conf_ts mmin_conp_ts mmin_bfgs2_ts \
 	mmin_fix_ts mmin_constr_pgrad_ts mmin_constr_spg_ts \
 	min_ts mmin_simp2_ts min_quad_golden_ts diff_evo_ts \
@@ -95,7 +95,6 @@ min_cern_ts_LDADD = $(VCHECK_LIBS)
 min_brent_gsl_ts_LDADD = $(VCHECK_LIBS)
 min_brent_boost_ts_LDADD = $(VCHECK_LIBS)
 min_quad_golden_ts_LDADD = $(VCHECK_LIBS)
-mmin_simp_ts_LDADD = $(VCHECK_LIBS)
 mmin_simp2_ts_LDADD = $(VCHECK_LIBS)
 mmin_conf_ts_LDADD = $(VCHECK_LIBS)
 mmin_conp_ts_LDADD = $(VCHECK_LIBS)
@@ -115,8 +114,6 @@ min_brent_boost.scr: min_brent_boost_ts$(EXEEXT)
 	./min_brent_boost_ts$(EXEEXT) > min_brent_boost.scr
 min_quad_golden.scr: min_quad_golden_ts$(EXEEXT) 
 	./min_quad_golden_ts$(EXEEXT) > min_quad_golden.scr
-mmin_simp.scr: mmin_simp_ts$(EXEEXT) 
-	./mmin_simp_ts$(EXEEXT) > mmin_simp.scr
 mmin_simp2.scr: mmin_simp2_ts$(EXEEXT) 
 	./mmin_simp2_ts$(EXEEXT) > mmin_simp2.scr
 mmin_conf.scr: mmin_conf_ts$(EXEEXT) 
@@ -142,7 +139,6 @@ min_cern_ts_SOURCES = min_cern_ts.cpp
 min_brent_gsl_ts_SOURCES = min_brent_gsl_ts.cpp
 min_brent_boost_ts_SOURCES = min_brent_boost_ts.cpp
 min_quad_golden_ts_SOURCES = min_quad_golden_ts.cpp
-mmin_simp_ts_SOURCES = mmin_simp_ts.cpp
 mmin_simp2_ts_SOURCES = mmin_simp2_ts.cpp
 mmin_conf_ts_SOURCES = mmin_conf_ts.cpp
 mmin_conp_ts_SOURCES = mmin_conp_ts.cpp

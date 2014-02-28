@@ -515,6 +515,17 @@ namespace o2scl {
       
     /// Return string denoting type ("mmin_constr")
     const char *type() { return "mmin_constr"; }
+
+#ifndef DOXYGEN_INTERNAL
+
+  private:
+  
+  mmin_constr<func_t,dfunc_t,hfunc_t,vec_t>
+  (const mmin_constr<func_t,dfunc_t,hfunc_t,vec_t> &);
+  mmin_constr<func_t,dfunc_t,hfunc_t,vec_t>& operator=
+  (const mmin_constr<func_t,dfunc_t,hfunc_t,vec_t>&);
+
+#endif
       
   };
   
