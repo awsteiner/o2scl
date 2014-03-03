@@ -165,7 +165,7 @@ namespace o2scl {
 
   virtual ~anneal_gsl() {
   }
-      
+  
   /** \brief Calculate the minimum \c fmin of \c func w.r.t the 
       array \c x0 of size \c nvar.
   */
@@ -279,6 +279,45 @@ namespace o2scl {
   /// Ratio between minimum step size and \ref tol_abs (default 100.0)
   double min_step_ratio;
 
+  /** \brief Copy constructor
+   */
+  anneal_gsl<func_t,vec_t,rng_t,rng_dist_t>
+  (const anneal_gsl<func_t,vec_t,rng_t,rng_dist_t> &ag) :
+  anneal_base<func_t,vec_t,rng_t,rng_dist_t>() {
+    
+    boltz=ag.boltz;
+    T_start=ag.T_start;
+    T_dec=ag.T_dec;
+    step_dec=ag.step_dec;
+    min_step_ratio=ag.min_step_ratio;
+    step_vec=ag.step_vec;
+    x=ag.x;
+    new_x=ag.new_x;
+    best_x=ag.best_x;
+    old_x=ag.old_x;
+
+  }
+  
+  /** \brief Copy constructor from operator=
+   */
+  anneal_gsl<func_t,vec_t,rng_t,rng_dist_t>& operator=
+  (const anneal_gsl<func_t,vec_t,rng_t,rng_dist_t> &ag) {
+    if (this != &ag) {
+      anneal_base<func_t,vec_t,rng_t,rng_dist_t>::operator=(ag);
+      boltz=ag.boltz;
+      T_start=ag.T_start;
+      T_dec=ag.T_dec;
+      step_dec=ag.step_dec;
+      min_step_ratio=ag.min_step_ratio;
+      step_vec=ag.step_vec;
+      x=ag.x;
+      new_x=ag.new_x;
+      best_x=ag.best_x;
+      old_x=ag.old_x;
+    }
+    return *this;
+  }
+      
 #ifndef DOXYGEN_INTERNAL
       
   protected:

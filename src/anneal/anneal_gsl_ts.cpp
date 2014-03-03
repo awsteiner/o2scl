@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
   anneal_gsl<multi_funct<>,ubvector,int,rng_gsl> ga;
   double result;
   ubvector init(2);
-  
+
   multi_funct_fptr<ubvector> fx(funx);
 
   /// 1d to vectors

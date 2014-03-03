@@ -651,8 +651,16 @@ namespace o2scl_hdf {
 
 #ifndef DOXYGEN_INTERNAL
 
-  protected:
-    
+  private:
+
+    /*
+      In principle, one might be able to copy the IDs, but then we'd
+      have to worry about the possibility that the file would be
+      closed twice.
+    */
+    hdf_file(const hdf_file &);
+    hdf_file& operator=(const hdf_file&);
+
 #endif
 
   };

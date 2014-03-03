@@ -34,8 +34,7 @@
     the Nelder-Mead simplex algorithm and does not require any
     information about the gradient. It is based on GSL and
     has been updated with the new "simplex2" method
-    from GSL-1.12. The older "simplex" method is also available in
-    \ref o2scl::mmin_simp .) 
+    from GSL-1.12. 
 
     Restarts of the simplex minimizer are sometimes required to find
     the correct minimum, and \ref o2scl::mmin_simp2 can get caught in

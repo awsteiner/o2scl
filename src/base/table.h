@@ -255,48 +255,52 @@ namespace o2scl {
 
   /// Copy constructor
   table &operator=(const table &t) {
-      
-    clear_table();
-    constants.clear();
-      
-    // Copy constants 
-    size_t nc=t.get_nconsts();
-    for(size_t i=0;i<nc;i++) {
-      std::string name;
-      double val;
-      t.get_constant(i,name,val);
-      constants.insert(make_pair(name,val));
-    }
-      
-    // Copy the columns and data
-    nlines=t.get_nlines();
-    maxlines=nlines;
 
-    for(size_t i=0;i<t.get_ncolumns();i++) {
-	
-      // Column name
-      std::string cname=t.get_column_name(i);
-	
-      // Insert column into tree
-      col s;
-      s.dat.resize(nlines);
-      s.index=atree.size();
-      atree.insert(make_pair(cname,s));
-	
-      // Insert in iterator index
-      aiter it=atree.find(cname);
-      alist.push_back(it);
-	
-      // Fill the data
-      for(size_t j=0;j<t.get_nlines();j++) {
-	it->second.dat[j]=t.get(cname,j);
+    if (this!=&t) {
+      
+      clear_table();
+      constants.clear();
+      
+      // Copy constants 
+      size_t nc=t.get_nconsts();
+      for(size_t i=0;i<nc;i++) {
+	std::string name;
+	double val;
+	t.get_constant(i,name,val);
+	constants.insert(make_pair(name,val));
       }
+      
+      // Copy the columns and data
+      nlines=t.get_nlines();
+      maxlines=nlines;
+      
+      for(size_t i=0;i<t.get_ncolumns();i++) {
 	
-    }
-
-    if (intp_set) {
-      intp_set=false;
-      delete si;
+	// Column name
+	std::string cname=t.get_column_name(i);
+	
+	// Insert column into tree
+	col s;
+	s.dat.resize(nlines);
+	s.index=atree.size();
+	atree.insert(make_pair(cname,s));
+	
+	// Insert in iterator index
+	aiter it=atree.find(cname);
+	alist.push_back(it);
+	
+	// Fill the data
+	for(size_t j=0;j<t.get_nlines();j++) {
+	  it->second.dat[j]=t.get(cname,j);
+	}
+	
+      }
+      
+      if (intp_set) {
+	intp_set=false;
+	delete si;
+      }
+      
     }
 
     return *this;

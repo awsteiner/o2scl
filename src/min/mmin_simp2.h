@@ -69,8 +69,6 @@ namespace o2scl {
       simplex points until the simplex is sufficiently small and thus
       the minimum is known with sufficient accuracy.
 
-      For the earlier method used in GSL, see \ref mmin_simp .
-
       This class has a high-level interface using mmin(),
       mmin_twovec() or mmin_simplex() which automatically performs the
       memory allocation and minimization, or a GSL-like interface

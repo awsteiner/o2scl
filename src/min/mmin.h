@@ -60,6 +60,7 @@ namespace o2scl {
   */
   template<class vec_t=boost::numeric::ublas::vector<double> > 
     class grad_funct {
+
     public:  
 
     grad_funct() {}
@@ -71,7 +72,7 @@ namespace o2scl {
     */
     virtual int operator()(size_t nv, vec_t &x, vec_t &y)=0;
     
-#ifndef DOXYGEN_NO_O2NS
+#ifndef DOXYGEN_INTERNAL
 
     private:
 
@@ -400,13 +401,21 @@ namespace o2scl {
 
   /// A pointer to the user-specified function
   func_t *func;
-
+  
+  private:
+  
+  gradient(const gradient &);
+  gradient& operator=(const gradient&);
+  
 #endif
 
   };
 
   /** \brief Simple automatic computation of gradient by finite 
       differencing
+
+      \comment
+      \endcomment
   */
   template<class func_t, class vec_t> class gradient_gsl :
   public gradient<func_t,vec_t> {
@@ -470,7 +479,10 @@ namespace o2scl {
 
       Verbose I/O is sent through \c std::cout and \c std::cin by
       default, but this can be modified using \ref
-      set_verbose_stream().
+      set_verbose_stream(). Note that this function
+      stores pointers to the user-specified output streams,
+      and these pointers are not copied in child copy
+      constructors. 
   */
 #ifdef O2SCL_NO_CPP11
   template<class func_t=multi_funct<>, class dfunc_t=func_t, 
@@ -526,7 +538,12 @@ namespace o2scl {
   /// If true, call the error handler if the routine does not "converge"
   bool err_nonconv;
       
-  /// Set streams for verbose I/O
+  /** \brief Set streams for verbose I/O
+      
+      Note that this function stores pointers to the user-specified
+      output streams, and these pointers are not copied in child copy
+      constructors.
+  */
   int set_verbose_stream(std::ostream &out, std::istream &in) {
     outs=&out;
     ins=&in;
@@ -586,6 +603,35 @@ namespace o2scl {
       
   /// Return string denoting type ("mmin_base")
   const char *type() { return "mmin_base"; }
+
+  /** \brief Copy constructor
+   */
+  mmin_base<func_t,dfunc_t,vec_t>
+  (const mmin_base<func_t,dfunc_t,vec_t> &mb) {
+    this->verbose=mb.verbose;
+    this->ntrial=mb.ntrial;
+    this->tol_rel=mb.tol_rel;
+    this->tol_abs=mb.tol_abs;
+    this->last_ntrial=mb.last_ntrial;
+    this->err_nonconv=mb.err_nonconv;
+  }
+  
+  /** \brief Copy constructor from operator=
+   */
+  mmin_base<func_t,dfunc_t,vec_t>& operator=
+  (const mmin_base<func_t,dfunc_t,vec_t> &mb) {
+
+    if (this != &mb) {
+      this->verbose=mb.verbose;
+      this->ntrial=mb.ntrial;
+      this->tol_rel=mb.tol_rel;
+      this->tol_abs=mb.tol_abs;
+      this->last_ntrial=mb.last_ntrial;
+      this->err_nonconv=mb.err_nonconv;
+    }
+
+    return *this;
+  }
       
   };
   

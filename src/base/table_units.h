@@ -185,96 +185,104 @@ namespace o2scl {
     /// Copy with <tt>operator=</tt> from \ref table_units
     table_units &operator=(const table_units &t) {
   
-      this->clear_table();
-      this->constants.clear();
-      utree.clear();
+      if (this!=&t) {
 
-      // Copy constants 
-      this->constants=t.constants;
+	this->clear_table();
+	this->constants.clear();
+	utree.clear();
+
+	// Copy constants 
+	this->constants=t.constants;
   
-      // Copy the columns and data
-      this->nlines=t.get_nlines();
-      for(size_t i=0;i<t.get_ncolumns();i++) {
+	// Copy the columns and data
+	this->nlines=t.get_nlines();
+	for(size_t i=0;i<t.get_ncolumns();i++) {
 
-	// Column name
-	std::string cname=t.get_column_name(i);
+	  // Column name
+	  std::string cname=t.get_column_name(i);
 
-	// Insert column into tree
-	typename table<vec_t>::col s;
-	s.dat.resize(this->nlines);
-	s.index=this->atree.size();
-	this->atree.insert(make_pair(cname,s));
+	  // Insert column into tree
+	  typename table<vec_t>::col s;
+	  s.dat.resize(this->nlines);
+	  s.index=this->atree.size();
+	  this->atree.insert(make_pair(cname,s));
 
-	// Insert in iterator index
-	typename table<vec_t>::aiter it=this->atree.find(cname);
-	this->alist.push_back(it);
+	  // Insert in iterator index
+	  typename table<vec_t>::aiter it=this->atree.find(cname);
+	  this->alist.push_back(it);
     
-	// Insert in unit list
-	utree.insert(make_pair(cname,t.get_unit(cname)));
+	  // Insert in unit list
+	  utree.insert(make_pair(cname,t.get_unit(cname)));
     
-	// Fill the data
-	for(size_t j=0;j<t.get_nlines();j++) {
-	  it->second.dat[j]=t.get(cname,j);
+	  // Fill the data
+	  for(size_t j=0;j<t.get_nlines();j++) {
+	    it->second.dat[j]=t.get(cname,j);
+	  }
+    
 	}
-    
-      }
 
-      if (this->intp_set) {
-	this->intp_set=false;
-	delete this->si;
-      }
+	if (this->intp_set) {
+	  this->intp_set=false;
+	  delete this->si;
+	}
 
-      cup=&o2scl_settings.get_convert_units();
+	cup=&o2scl_settings.get_convert_units();
+
+      }
 
       return *this;
     }
 
     /// Copy with <tt>operator=</tt> from \ref table
     table_units &operator=(const table<vec_t> &t) {
+
+      if (this!=&t) {
   
-      this->clear_table();
-      this->constants.clear();
-      utree.clear();
+	this->clear_table();
+	this->constants.clear();
+	utree.clear();
 
-      // Copy constants 
-      size_t nc=t.get_nconsts();
-      for(size_t i=0;i<nc;i++) {
-	std::string name;
-	double val;
-	t.get_constant(i,name,val);
-	this->constants.insert(make_pair(name,val));
-      }
-  
-      // Copy the columns and data
-      this->nlines=t.get_nlines();
-      for(size_t i=0;i<t.get_ncolumns();i++) {
-
-	// Column name
-	std::string cname=t.get_column_name(i);
-
-	// Insert column into tree
-	typename table<vec_t>::col s;
-	s.dat=new vec_t(this->nlines);
-	s.index=this->atree.size();
-	this->atree.insert(make_pair(cname,s));
-
-	// Insert in iterator index
-	typename table<vec_t>::aiter it=this->atree.find(cname);
-	this->alist.push_back(it);
-    
-	// Fill the data
-	for(size_t j=0;j<t.get_nlines();j++) {
-	  (*it->second.dat)[j]=t.get(cname,j);
+	// Copy constants 
+	size_t nc=t.get_nconsts();
+	for(size_t i=0;i<nc;i++) {
+	  std::string name;
+	  double val;
+	  t.get_constant(i,name,val);
+	  this->constants.insert(make_pair(name,val));
 	}
+  
+	// Copy the columns and data
+	this->nlines=t.get_nlines();
+	for(size_t i=0;i<t.get_ncolumns();i++) {
+
+	  // Column name
+	  std::string cname=t.get_column_name(i);
+
+	  // Insert column into tree
+	  typename table<vec_t>::col s;
+	  s.dat=new vec_t(this->nlines);
+	  s.index=this->atree.size();
+	  this->atree.insert(make_pair(cname,s));
+
+	  // Insert in iterator index
+	  typename table<vec_t>::aiter it=this->atree.find(cname);
+	  this->alist.push_back(it);
     
-      }
+	  // Fill the data
+	  for(size_t j=0;j<t.get_nlines();j++) {
+	    (*it->second.dat)[j]=t.get(cname,j);
+	  }
+    
+	}
 
-      if (this->intp_set) {
-	this->intp_set=false;
-	delete this->si;
-      }
+	if (this->intp_set) {
+	  this->intp_set=false;
+	  delete this->si;
+	}
 
-      cup=&o2scl_settings.get_convert_units();
+	cup=&o2scl_settings.get_convert_units();
+
+      }
 
       return *this;
     }

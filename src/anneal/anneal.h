@@ -132,9 +132,33 @@ namespace o2scl {
     /// The default random number generator
     rng_t rng;
 
-    /// Return string denoting type, \c "anneal".
-    virtual const char *type() { return "anneal"; }
+    /// Return string denoting type, \c "anneal_base".
+    virtual const char *type() { return "anneal_base"; }
 
+    /** \brief Copy constructor
+     */
+    anneal_base<func_t,vec_t,rng_t,rng_dist_t>
+      (const anneal_base<func_t,vec_t,rng_t,rng_dist_t> &ab) : 
+    mmin_base<func_t,func_t,vec_t>() {
+      
+      this->rng=ab.rng;
+      this->rng_dist=ab.rng_dist;
+      
+    }
+    
+    /** \brief Copy constructor from operator=
+     */
+    anneal_base<func_t,vec_t,rng_t,rng_dist_t>& operator=
+      (const anneal_base<func_t,vec_t,rng_t,rng_dist_t> &ab) {
+
+      if (this != &ab) {
+	mmin_base<func_t,func_t,vec_t>::operator=(ab);
+	this->rng=ab.rng;
+	this->rng_dist=ab.rng_dist;
+      }
+      return *this;
+    }
+    
   };
 
 #ifndef DOXYGEN_NO_O2NS

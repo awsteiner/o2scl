@@ -24,16 +24,11 @@
     \mainpage O2scl User's Guide
 
     \htmlonly
-    <table width="100%"><tr><td align="left">
-    <a href="../latex/refman.pdf">PDF documentation</a>
-    </td><td align="right"><a href="dl_page.html">
+    <p><a href="dl_page.html">
     <b>Download
     O<span style='position: relative; top: 0.3em; 
-    font-size: 0.8em'>2</span>scl</b></a></td></tr></table>
+    font-size: 0.8em'>2</span>scl</b></a></p>
     \endhtmlonly
-
-    \hline
-    \section feat_section Feature Overview
 
     \o2 is a C++ library for object-oriented numerical programming. It
     includes interpolation, differentiation, integration, roots of
@@ -41,23 +36,7 @@
     minimization, Monte Carlo integration, simulated annealing,
     least-squares fitting, solution of ordinary
     differential equations, two-dimensional interpolation, Chebyshev
-    approximation, unit conversions, and file I/O with HDF5. Also,
-    - \o2 includes classes based on numerical routines from GSL and
-    CERNLIB which are completely rewritten in C++, 
-    - classes use templated vector and function types, which 
-    provide maximum flexibility 
-    - \o2 is highly compatible - recent versions have been tested on 
-    Linux (32- and 64-bit systems, with Intel and AMD chips), 
-    Windows XP with Cygwin, and MacOSX, and 
-    - Free! \o2 is provided under Version 3 of the GNU 
-    Public License (see \ref license_section for more).
-    - There are also two sub-libraries
-    <ul>
-    <li>Thermodynamics of ideal and nearly-ideal particles with
-    quantum statistics</li>
-    <li>Equations of state for finite density relevant for 
-    neutron stars</li>
-    </ul>
+    approximation, unit conversions, and file I/O with HDF5. 
 
     This is a beta version. The library should install and 
     test successfully, and most of the classes are ready
@@ -66,9 +45,6 @@
     which are more experimental, and this is clearly stated
     at the top of the documentation for these classes. 
 
-    \hline
-    \section toc_section Quick Reference to User's Guide
-    
     - \subpage install_section
     - \subpage usage_section
     - \subpage examples_section

@@ -37,8 +37,7 @@
     
     The function \ref o2scl::function_to_double() converts strings
     like <tt>"1.0/3.0"</tt> and <tt>"exp(cos(-1.0e-2))"</tt> to
-    double-precision floating point numbers using \ref FunctionParser
-    .
+    double-precision floating point numbers using \ref FunctionParser .
 
     The function \ref o2scl::size_of_exponent() returns 2 or 3,
     depending on the number of characters in the exponent when a

@@ -104,15 +104,14 @@ namespace o2scl {
       gsl_rng_set(gr,seed);
     }
 
-  protected:
-
-#ifndef DOXYGEN_NO_O2NS
-
+#ifndef DOXYGEN_INTERNAL
+    
+  private:
+    
     rng_gsl(const rng_gsl &);
     rng_gsl& operator=(const rng_gsl&);
 
-#endif
-#ifndef DOXYGEN_INTERNAL
+  protected:
 
     /// The seed
     unsigned long int seed;
