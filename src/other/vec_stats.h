@@ -36,7 +36,6 @@
     \future Consider generalizing to other data types.
 */
 
-#include <gsl/gsl_sort.h>
 #include <o2scl/err_hnd.h>
 #include <o2scl/vector.h>
 
@@ -51,15 +50,25 @@ namespace o2scl {
       This function produces the same results
       as <tt>gsl_stats_mean()</tt>.
 
-      If \c n is zero, this will return zero.
+      If \c n is zero, this function will return zero.
   */
   template<class vec_t> double vector_mean(size_t n, const vec_t &data) {
-    
     long double mean=0.0;
     for(size_t i=0;i<n;i++) {
       mean+=(data[i]-mean)/(i+1);
     }
     return mean;
+  }
+
+  /** \brief Compute the mean of the first \c n elements of a vector
+
+      This function produces the same results
+      as <tt>gsl_stats_mean()</tt>.
+
+      If the vector size is zero, this function will return zero.
+  */
+  template<class vec_t> double vector_mean(const vec_t &data) {
+    return vector_mean(data.size(),data);
   }
 
   /** \brief Compute variance with specified mean known in advance
@@ -81,6 +90,22 @@ namespace o2scl {
       var+=(delta*delta-var)/(i+1);
     }
     return var;
+  }
+
+  /** \brief Compute variance with specified mean known in advance
+      
+      This function computes
+      \f[
+      \frac{1}{N} \sum_{i} \left( x_i - \mu \right)^2
+      \f]
+      where the value of \f$ \mu \f$ is given in \c mean. 
+
+      This function produces the same results
+      as <tt>gsl_stats_variance_with_fixed_mean()</tt>.
+  */
+  template<class vec_t>
+    double vector_variance_fmean(const vec_t &data, double mean) {
+    return vector_variance_fmean(data.size(),data,mean);
   }
 
   /** \brief Compute the variance with specified mean
@@ -109,11 +134,30 @@ namespace o2scl {
     return var*n/(n-1);
   }
 
+  /** \brief Compute the variance with specified mean
+
+      This function computes
+      \f[
+      \frac{1}{N-1} \sum_{i} \left( x_i - \mu \right)^2
+      \f]
+      where the value of \f$ \mu \f$ is given in \c mean.
+      
+      This function produces the same results
+      as <tt>gsl_stats_variance_m</tt>.
+
+      If \c n is 0 or 1, this function will call the error
+      handler.
+  */
+  template<class vec_t>
+    double vector_variance(const vec_t &data, double mean) {
+    return vector_variance(data.size(),data,mean);
+  }
+
   /** \brief Compute the variance 
 
       This function computes
       \f[
-      \frac{1}{N-1} \sum_{i} \left( x_i - \mu \right)n^2
+      \frac{1}{N-1} \sum_{i} \left( x_i - \mu \right)^2
       \f]
       where \f$ \mu \f$ is the mean computed with \ref vector_mean().
       
@@ -132,6 +176,23 @@ namespace o2scl {
     double mean=vector_mean<vec_t>(n,data);
     double var=vector_variance_fmean<vec_t>(n,data,mean);
     return var*n/(n-1);
+  }
+
+  /** \brief Compute the variance 
+
+      This function computes
+      \f[
+      \frac{1}{N-1} \sum_{i} \left( x_i - \mu \right)^2
+      \f]
+      where \f$ \mu \f$ is the mean computed with \ref vector_mean().
+      
+      This function produces the same results
+      as <tt>gsl_stats_variance</tt>.
+
+      If \c n is 0 or 1, this function will call the error handler.
+  */
+  template<class vec_t> double vector_variance(const vec_t &data) {
+    return vector_variance(data.size(),data);
   }
 
   /** \brief Standard deviation with specified mean known in advance
@@ -153,6 +214,25 @@ namespace o2scl {
 			       double mean) {
     double sd=vector_variance_fmean<vec_t>(n,data,mean);
     return std::sqrt(sd);
+  }
+
+  /** \brief Standard deviation with specified mean known in advance
+
+      This function computes
+      \f[
+      \sqrt{\frac{1}{N} \sum_{i} \left( x_i - \mu \right)^2}
+      \f]
+      where the value of \f$ \mu \f$ is given in \c mean. 
+
+      This function produces the same results
+      as <tt>gsl_stats_sd_with_fixed_mean()</tt>.
+
+      If \c n is zero, this function will return zero without calling
+      the error handler.
+  */
+  template<class vec_t>
+    double vector_stddev_fmean(const vec_t &data, double mean) {
+    return vector_stddev_fmean(data.size(),data,mean);
   }
 
   /** \brief Standard deviation with specified mean
@@ -186,6 +266,23 @@ namespace o2scl {
       \f[
       \sqrt{\frac{1}{N-1} \sum_{i} \left( x_i - \mu \right)^2}
       \f]
+      where \f$ \mu \f$ is the mean computed with \ref vector_mean().
+
+      This function produces the same results
+      as <tt>gsl_stats_sd()</tt>.
+
+      If \c n is 0 or 1, this function will call the error handler.
+  */
+  template<class vec_t> double vector_stddev(const vec_t &data) {
+    return vector_stddev(data.size(),data);
+  }
+
+  /** \brief Standard deviation with specified mean
+
+      This function computes
+      \f[
+      \sqrt{\frac{1}{N-1} \sum_{i} \left( x_i - \mu \right)^2}
+      \f]
       where the value of \f$ \mu \f$ is given in \c mean. 
 
       This function produces the same results
@@ -204,6 +301,24 @@ namespace o2scl {
     
     double sd=vector_variance_fmean<vec_t>(n,data,mean);
     return std::sqrt(sd*n/(n-1));
+  }
+
+  /** \brief Standard deviation with specified mean
+
+      This function computes
+      \f[
+      \sqrt{\frac{1}{N-1} \sum_{i} \left( x_i - \mu \right)^2}
+      \f]
+      where the value of \f$ \mu \f$ is given in \c mean. 
+
+      This function produces the same results
+      as <tt>gsl_stats_sd_m()</tt>.
+
+      If \c n is 0 or 1, this function will call the error
+      handler.
+  */
+  template<class vec_t> double vector_stddev(const vec_t &data, double mean) {
+    return vector_stddev(data.size(),data,mean);
   }
   
   /** \brief Absolute deviation from the specified mean
@@ -231,6 +346,25 @@ namespace o2scl {
     }
     return sum/n;
   }
+
+  /** \brief Absolute deviation from the specified mean
+
+      This function computes
+      \f[
+      \sum_i | x_i - \mu |
+      \f]
+      where the value of \f$ \mu \f$ is given in \c mean. 
+
+      This function produces the same results
+      as <tt>gsl_stats_absdev_m()</tt>.
+
+      If \c n is zero, this function will return zero
+      without calling the error handler.
+  */
+  template<class vec_t> double vector_absdev(const vec_t &data, 
+					     double mean) {
+    return vector_absdev(data.size(),data,mean);
+  }
   
   /** \brief Absolute deviation from the computed mean
 
@@ -251,6 +385,26 @@ namespace o2scl {
     double vector_absdev(size_t n, const vec_t &data) {
     double mean=vector_mean<vec_t>(n,data);
     return vector_absdev(n,data,mean);
+  }
+
+  /** \brief Absolute deviation from the computed mean
+
+      This function computes
+      \f[
+      \sum_i | x_i - \mu |
+      \f]
+      where the value of \f$ \mu \f$ is mean as computed
+      from \ref vector_mean().
+
+      This function produces the same results
+      as <tt>gsl_stats_absdev()</tt>.
+
+      If \c n is zero, this function will return zero
+      without calling the error handler.
+  */
+  template<class vec_t>
+    double vector_absdev(const vec_t &data) {
+    return vector_absdev(data.size(),data);
   }
 
   /** \brief Skewness with specified mean and standard deviation
@@ -279,6 +433,27 @@ namespace o2scl {
     return skew;
   }
 
+  /** \brief Skewness with specified mean and standard deviation
+
+      This function computes 
+      \f[
+      \frac{1}{N} \sum_i \left[ 
+      \frac{ \left(x_i - \mu \right)}{ \sigma }\right]^3
+      \f]
+      where the values of \f$ \mu \f$ and \f$ \sigma \f$ 
+      are given in \c mean and \c stddev.
+
+      This function produces the same results
+      as <tt>gsl_stats_skew_m_sd()</tt>.
+
+      If \c n is zero, this function will return zero
+      without calling the error handler.
+  */
+  template<class vec_t> double vector_skew(const vec_t &data, 
+					   double mean, double stddev) {
+    return vector_skew(data.size(),data,mean,stddev);
+  }
+
   /** \brief Skewness with computed mean and standard deviation
 
       This function computes 
@@ -299,6 +474,26 @@ namespace o2scl {
     double mean=vector_mean<vec_t>(n,data);
     double sd=vector_stddev<vec_t>(n,data,mean);
     return vector_skew(n,data,mean,sd);
+  }
+
+  /** \brief Skewness with computed mean and standard deviation
+
+      This function computes 
+      \f[
+      \frac{1}{N} \sum_i \left[ 
+      \frac{ \left(x_i - \mu \right)}{ \sigma }\right]^3
+      \f]
+      where the values of \f$ \mu \f$ and \f$ \sigma \f$ 
+      are computed using \ref vector_mean() and \ref vector_stddev().
+
+      This function produces the same results
+      as <tt>gsl_stats_skew()</tt>.
+
+      If \c n is zero, this function will return zero
+      without calling the error handler.
+  */
+  template<class vec_t> double vector_skew(const vec_t &data) {
+    return vector_skew(data.size(),data);
   }
 
   /** \brief Kurtosis with specified mean and standard deviation
@@ -328,6 +523,28 @@ namespace o2scl {
     return avg-3.0;
   }
 
+  /** \brief Kurtosis with specified mean and standard deviation
+
+      This function computes 
+      \f[
+      -3 + \frac{1}{N} \sum_i \left[ 
+      \frac{ \left(x_i - \mu \right)}{ \sigma }\right]^4
+      \f]
+      where the values of \f$ \mu \f$ and \f$ \sigma \f$ 
+      are given in \c mean and \c stddev.
+
+      This function produces the same results
+      as <tt>gsl_stats_kurtosis_m_sd()</tt>.
+
+      If \c n is zero, this function will return zero
+      without calling the error handler.
+  */
+  template<class vec_t>
+    double vector_kurtosis(const vec_t &data, double mean,
+			   double stddev) {
+    return vector_kurtosis(data.size(),data,mean,stddev);
+  }
+
   /** \brief Kurtosis with computed mean and standard deviation
 
       This function computes 
@@ -348,6 +565,26 @@ namespace o2scl {
     double mean=vector_mean<vec_t>(n,data);
     double sd=vector_stddev<vec_t>(n,data,mean);
     return vector_kurtosis(n,data,mean,sd);
+  }
+
+  /** \brief Kurtosis with computed mean and standard deviation
+
+      This function computes 
+      \f[
+      -3 + \frac{1}{N} \sum_i \left[ 
+      \frac{ \left(x_i - \mu \right)}{ \sigma }\right]^4
+      \f]
+      where the values of \f$ \mu \f$ and \f$ \sigma \f$ 
+      are computed using \ref vector_mean() and \ref vector_stddev().
+
+      This function produces the same results
+      as <tt>gsl_stats_kurtosis()</tt>.
+
+      If \c n is zero, this function will return zero
+      without calling the error handler.
+  */
+  template<class vec_t> double vector_kurtosis(const vec_t &data) {
+    return vector_kurtosis(data.size(),data);
   }
 
   /** \brief Lag-1 autocorrelation
@@ -396,6 +633,27 @@ namespace o2scl {
       \sum_i \left(x_i - \mu\right)^2 
       \right]^{-1}
       \f]
+
+      This function produces the same results
+      as <tt>gsl_stats_lag1_autocorrelation_m()</tt>.
+
+      If \c n is less than 2, this function will call the error handler.
+  */
+  template<class vec_t>
+    double vector_lag1_autocorr(const vec_t &data, double mean) {
+    return vector_lag1_autocorr(data.size(),data,mean);
+  }
+
+  /** \brief Lag-1 autocorrelation
+
+      This function computes
+      \f[
+      \left[
+      \sum_i \left(x_i - \mu\right) \left(x_{i-1} - \mu \right)
+      \right] \left[ 
+      \sum_i \left(x_i - \mu\right)^2 
+      \right]^{-1}
+      \f]
       
       This function produces the same results
       as <tt>gsl_stats_lag1_autocorrelation()</tt>.
@@ -406,6 +664,26 @@ namespace o2scl {
     (size_t n, const vec_t &data) {
     double mean=vector_mean<vec_t>(n,data);
     return vector_lag1_autocorr(n,data,mean);
+  }
+
+  /** \brief Lag-1 autocorrelation
+
+      This function computes
+      \f[
+      \left[
+      \sum_i \left(x_i - \mu\right) \left(x_{i-1} - \mu \right)
+      \right] \left[ 
+      \sum_i \left(x_i - \mu\right)^2 
+      \right]^{-1}
+      \f]
+      
+      This function produces the same results
+      as <tt>gsl_stats_lag1_autocorrelation()</tt>.
+
+      If \c n is less than 2, this function will call the error handler.
+  */
+  template<class vec_t> double vector_lag1_autocorr(const vec_t &data) {
+    return vector_lag1_autocorr(data.size(),data);
   }
 
   /** \brief Lag-k autocorrelation
@@ -457,10 +735,47 @@ namespace o2scl {
 
       If <tt>n<=k</tt>, this function will call the error handler.
   */
+  template<class vec_t>
+    double vector_lagk_autocorr(const vec_t &data, size_t k,
+				double mean) {
+    return vector_lagk_autocorr(data.size(),k,mean);
+  }
+
+  /** \brief Lag-k autocorrelation
+
+      This function computes
+      \f[
+      \left[
+      \sum_i \left(x_i - \mu\right) \left(x_{i-k} - \mu \right)
+      \right] \left[ 
+      \sum_i \left(x_i - \mu\right)^2 
+      \right]^{-1}
+      \f]
+
+      If <tt>n<=k</tt>, this function will call the error handler.
+  */
   template<class vec_t> double vector_lagk_autocorr
     (size_t n, const vec_t &data, size_t k) {
     double mean=vector_mean<vec_t>(n,data);
     return vector_lagk_autocorr(n,data,k,mean);
+  }
+
+  /** \brief Lag-k autocorrelation
+
+      This function computes
+      \f[
+      \left[
+      \sum_i \left(x_i - \mu\right) \left(x_{i-k} - \mu \right)
+      \right] \left[ 
+      \sum_i \left(x_i - \mu\right)^2 
+      \right]^{-1}
+      \f]
+
+      If <tt>n<=k</tt>, this function will call the error handler.
+  */
+  template<class vec_t> double vector_lagk_autocorr
+    (const vec_t &data, size_t k) {
+    return vector_lagk_autocorr(data.size(),data,k);
   }
 
   /** \brief Compute the covariance of two vectors
@@ -498,6 +813,28 @@ namespace o2scl {
       \frac{1}{n-1} \sum_i \left(x_i - {\bar{x}}\right)
       \left(y_i - {\bar{y}}\right)
       \f]
+      where \f$ {\bar{x}} \f$ and \f$ {\bar{y}} \f$ are specified
+      in \c mean1 and \c mean2, respectively.
+
+      This function produces the same results
+      as <tt>gsl_stats_covariance_m()</tt>.
+
+      If \c n is zero, this function will return zero
+      without calling the error handler.
+  */
+  template<class vec_t, class vec2_t>
+    double vector_covariance(const vec_t &data1, const vec2_t &data2,
+			     double mean1, double mean2) {
+    return vector_covariance(data1.size(),data1,data2,mean1,mean2);
+  }
+
+  /** \brief Compute the covariance of two vectors
+
+      This function computes
+      \f[
+      \frac{1}{n-1} \sum_i \left(x_i - {\bar{x}}\right)
+      \left(y_i - {\bar{y}}\right)
+      \f]
       where \f$ {\bar{x}} \f$ and \f$ {\bar{y}} \f$ are 
       the averages of \c data1 and \c data2 and are computed
       automatically using \ref vector_mean().
@@ -520,6 +857,29 @@ namespace o2scl {
       covar+=(delta1*delta2-covar)/(i+1);
     }
     return covar*n/(n-1);
+  }
+  
+  /** \brief Compute the covariance of two vectors
+
+      This function computes
+      \f[
+      \frac{1}{n-1} \sum_i \left(x_i - {\bar{x}}\right)
+      \left(y_i - {\bar{y}}\right)
+      \f]
+      where \f$ {\bar{x}} \f$ and \f$ {\bar{y}} \f$ are 
+      the averages of \c data1 and \c data2 and are computed
+      automatically using \ref vector_mean().
+
+      This function produces the same
+      results as <tt>gsl_stats_covariance()</tt>.
+
+      If \c n is zero, this function will return zero
+      without calling the error handler.
+  */
+  template<class vec_t, class vec2_t>
+    double vector_covariance(const vec_t &data1, 
+			     const vec2_t &data2) {
+    return vector_covariance(data1.size(),data1,data2);
   }
   
   /** \brief Pearson's correlation
@@ -586,6 +946,31 @@ namespace o2scl {
     return r;
   }
 
+  /** \brief Pearson's correlation
+
+      This function computes the Pearson correlation coefficient 
+      between \c data1 and \c data2 .
+      
+      This function produces the same
+      results as <tt>gsl_stats_correlation()</tt>.
+
+      \comment
+      r = cov(x, y) / (\Hat\sigma_x \Hat\sigma_y)
+      = {1/(n-1) \sum (x_i - \Hat x) (y_i - \Hat y)
+      \over
+      \sqrt{1/(n-1) \sum (x_i - \Hat x)^2} \sqrt{1/(n-1) 
+      \sum (y_i - \Hat y)^2}
+      }
+      \endcomment
+
+      If \c n is zero, this function will call the error handler.
+  */
+  template<class vec_t, class vec2_t>
+    double vector_correlation(const vec_t &data1, 
+			      const vec2_t &data2) {
+    return vector_correlation(data1.size(),data1,data2);
+  }
+
   /** \brief Pooled variance
 
       \todo Document this
@@ -602,6 +987,22 @@ namespace o2scl {
     double var1=vector_variance<vec_t>(n1,data1);
     double var2=vector_variance<vec2_t>(n2,data2);
     return (((n1-1)*var1)+((n2-1)*var2))/(n1+n2-2);
+  }
+
+  /** \brief Pooled variance
+
+      \todo Document this
+
+      This function produces the same
+      results as <tt>gsl_stats_pvariance()</tt>.
+      
+      If \c n is zero, this function will return zero without calling
+      the error handler.
+  */
+  template<class vec_t, class vec2_t>
+    double vector_pvariance(const vec_t &data1, 
+			    const vec2_t &data2) {
+    return vector_pvariance(data1.size(),data1,data2.size(),data2);
   }
 
   /** \brief Quantile from sorted data (ascending only)

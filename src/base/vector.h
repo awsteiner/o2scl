@@ -1551,6 +1551,8 @@ namespace o2scl {
 #include <armadillo>
 namespace o2scl {
 
+  /// \name Armadillo specializations
+  //@{
   /// Armadillo version of \ref matrix_max()
   double matrix_max(const arma::mat &data);
 
@@ -1563,6 +1565,7 @@ namespace o2scl {
   template<> arma::subview_col<double>  
     matrix_column<arma::mat,arma::subview_col<double> >
     (arma::mat &M, size_t column);
+  //@}
 
 }
 
@@ -1573,6 +1576,8 @@ namespace o2scl {
 
 namespace o2scl {
 
+  /// \name Eigen specializations
+  //@{
   /// Eigen version of \ref matrix_max()
   double matrix_max(const Eigen::MatrixXd &data);
   
@@ -1585,6 +1590,7 @@ namespace o2scl {
   template<> Eigen::MatrixXd::ColXpr 
     matrix_column<Eigen::MatrixXd,Eigen::MatrixXd::ColXpr>
     (Eigen::MatrixXd &M, size_t column);
+  //@}
 
 }
 
