@@ -87,7 +87,7 @@ namespace o2scl {
     return;
   }
 
-  /** \brief Simple generic vector copy
+  /** \brief Simple generic vector copy of the first N elements
 
       Copy the first \c N elements of \c src to \c dest.
       It is assumed that the memory allocation for \c dest
@@ -134,7 +134,8 @@ namespace o2scl {
     }
   }
 
-  /** \brief Simple generic matrix copy
+  /** \brief Simple generic matrix copy of the first \f$ (M,N) \f$ 
+      matrix elements
 
       Copy the first <tt>(M,N)</tt> elements of \c src to \c dest. It
       is assumed that the memory allocation for \c dest has already
@@ -158,7 +159,7 @@ namespace o2scl {
 
   /// \name Swapping parts of vectors and matrices
   //@{
-  /** \brief Generic swap of two vectors
+  /** \brief Swap the first N elements of two vectors
 
       This function swaps the elements of \c v1 and \c v2, one element
       at a time.
@@ -189,7 +190,8 @@ namespace o2scl {
     return;
   }
 
-  /** \brief Generic swap of two vectors
+  /** \brief Generic swap of of the first N elements of two
+      double-precision vectors
 
       This function swaps the elements of \c v1 and \c v2, one element
       at a time.

@@ -60,10 +60,10 @@ namespace o2scl {
     return mean;
   }
 
-  /** \brief Compute the mean of the first \c n elements of a vector
+  /** \brief Compute the mean of all of the vector elements
 
-      This function produces the same results
-      as <tt>gsl_stats_mean()</tt>.
+      This function uses <tt>size()</tt> to determine the vector size
+      and produces the same results as <tt>gsl_stats_mean()</tt>.
 
       If the vector size is zero, this function will return zero.
   */
@@ -911,9 +911,9 @@ namespace o2scl {
 		     " in vector_correlation().",exc_einval);
     }
 
-    double sum_xsq = 0.0;
-    double sum_ysq = 0.0;
-    double sum_cross = 0.0;
+    double sum_xsq=0.0;
+    double sum_ysq=0.0;
+    double sum_cross=0.0;
     double ratio;
     double delta_x, delta_y;
     double mean_x, mean_y;
@@ -927,13 +927,13 @@ namespace o2scl {
      * using the above relation from Welford's paper
      */
 
-    mean_x = data1[0];
-    mean_y = data2[0];
+    mean_x=data1[0];
+    mean_y=data2[0];
 
-    for (i = 1; i < n; ++i) {
-      ratio = i / (i + 1.0);
-      delta_x = data1[i] - mean_x;
-      delta_y = data2[i] - mean_y;
+    for (i=1; i < n; ++i) {
+      ratio=i / (i + 1.0);
+      delta_x=data1[i] - mean_x;
+      delta_y=data2[i] - mean_y;
       sum_xsq += delta_x * delta_x * ratio;
       sum_ysq += delta_y * delta_y * ratio;
       sum_cross += delta_x * delta_y * ratio;
@@ -941,7 +941,7 @@ namespace o2scl {
       mean_y += delta_y / (i + 1.0);
     }
     
-    r = sum_cross / (std::sqrt(sum_xsq) * std::sqrt(sum_ysq));
+    r=sum_cross / (std::sqrt(sum_xsq) * std::sqrt(sum_ysq));
     
     return r;
   }
@@ -971,15 +971,22 @@ namespace o2scl {
     return vector_correlation(data1.size(),data1,data2);
   }
 
-  /** \brief Pooled variance
+  /** \brief The pooled variance of two vectors
 
-      \todo Document this
+      This function computes
+      \f[
+      s_{p}^2 = \frac{(n_1-1)s_1^2+(n_2-1)s_2^2}{n_1+n_2-2}
+      \f]
+      where \f$ n_i \f$ is the number of elements in vector \f$ i \f$
+      and \f$ s_i^2 \f$ is the variance of vector \f$ i \f$. 
+
+      From http://en.wikipedia.org/wiki/Pooled_variance, "Under the
+      assumption of equal population variances, the pooled sample
+      variance provides a higher precision estimate of variance than
+      the individual sample variances."
 
       This function produces the same
       results as <tt>gsl_stats_pvariance()</tt>.
-      
-      If \c n is zero, this function will return zero without calling
-      the error handler.
   */
   template<class vec_t, class vec2_t>
     double vector_pvariance(size_t n1, const vec_t &data1, 
@@ -989,15 +996,22 @@ namespace o2scl {
     return (((n1-1)*var1)+((n2-1)*var2))/(n1+n2-2);
   }
 
-  /** \brief Pooled variance
+  /** \brief The pooled variance of two vectors
 
-      \todo Document this
+      This function computes
+      \f[
+      s_{p}^2 = \frac{(n_1-1)s_1^2+(n_2-1)s_2^2}{n_1+n_2-2}
+      \f]
+      where \f$ n_i \f$ is the number of elements in vector \f$ i \f$
+      and \f$ s_i^2 \f$ is the variance of vector \f$ i \f$. 
+
+      From http://en.wikipedia.org/wiki/Pooled_variance, "Under the
+      assumption of equal population variances, the pooled sample
+      variance provides a higher precision estimate of variance than
+      the individual sample variances."
 
       This function produces the same
       results as <tt>gsl_stats_pvariance()</tt>.
-      
-      If \c n is zero, this function will return zero without calling
-      the error handler.
   */
   template<class vec_t, class vec2_t>
     double vector_pvariance(const vec_t &data1, 
