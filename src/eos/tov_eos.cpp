@@ -342,7 +342,7 @@ void tov_new_eos::set_transition(double p, double wid) {
 
 void tov_new_eos::default_low_dens_eos() {
 
-  // Read default EOS
+  // Read default EOS. 
   static const size_t nlines=73;
   double ed_arr[nlines]=
     {3.89999984e-18,3.93000002e-18,3.95000001e-18,4.07499982e-18,
@@ -418,6 +418,12 @@ void tov_new_eos::default_low_dens_eos() {
     crust_vecnb[i]=nb_arr[i];
   }
   trans_pres=crust_vecp[crust_nlines-1];
+
+  // The energy density and pressure are already in Msun/km^3 and the
+  // baryon density is in fm^{-3}
+  efactor=1.0;
+  pfactor=1.0;
+  nfactor=1.0;
     
   if (verbose>1) {
     cout << "Transition pressure: " << trans_pres << endl;
@@ -523,6 +529,12 @@ void tov_new_eos::sho11_low_dens_eos() {
     crust_vecnb[i]=nb_arr[i];
   }
     
+  // The energy density and pressure are already in Msun/km^3 and the
+  // baryon density is in fm^{-3}
+  efactor=1.0;
+  pfactor=1.0;
+  nfactor=1.0;
+
   trans_pres=crust_vecp[crust_nlines-1];
     
   if (verbose>1) {
@@ -622,6 +634,12 @@ void tov_new_eos::ngl13_low_dens_eos(double L, string model,
   o2scl::interp<std::vector<double> > itp(itp_linear);
   double nt=itp.eval(L,19,Lv,ntv);
   trans_pres=itp.eval(nt,crust_nlines,crust_vecnb,crust_vecp);
+
+  // The energy density and pressure are already in Msun/km^3 and the
+  // baryon density is in fm^{-3}
+  efactor=1.0;
+  pfactor=1.0;
+  nfactor=1.0;
 
   // --------------------------------------------------------------
   // Set columns and limiting values
@@ -736,6 +754,16 @@ void tov_new_eos::ngl13_low_dens_eos2(double S, double L, double nt,
   o2scl::interp<std::vector<double> > itp(itp_linear);
   trans_pres=itp.eval(nt,crust_nlines,crust_vecnb,crust_vecp);
   
+  // --------------------------------------------------------------
+  // Unit system
+
+  // The energy density and pressure are already in Msun/km^3 and the
+  // baryon density is in fm^{-3}
+
+  efactor=1.0;
+  pfactor=1.0;
+  nfactor=1.0;
+
   // --------------------------------------------------------------
   // Set columns and limiting values
 
