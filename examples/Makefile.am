@@ -29,8 +29,8 @@ help:
 SUBDIRS = plot
 
 if O2SCL_EOSLIB
-BENCHMARK_PRGS = bm_poly.scr bm_array.scr bm_mmin.scr 
-	bm_array2.scr bm_mroot.scr bm_rkck.scr bm_mroot2.scr bm_lu.scr \
+BENCHMARK_PRGS = bm_poly.scr bm_mmin.scr 
+	bm_mroot.scr bm_rkck.scr bm_mroot2.scr bm_lu.scr \
 	bm_part.scr bm_part2.scr bm_root.scr bm_min.scr
 EXAMPLE_PRGS = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 	ex_cold_nstar.scr ex_mroot.scr ex_mmin.scr ex_apr_eos.scr \
@@ -45,8 +45,8 @@ EXAMPLE_PRGS = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 
 else
 
-BENCHMARK_PRGS = bm_poly.scr bm_array.scr bm_mmin.scr \
-	bm_array2.scr bm_mroot.scr bm_rkck.scr bm_mroot2.scr bm_lu.scr \
+BENCHMARK_PRGS = bm_poly.scr bm_mmin.scr \
+	bm_mroot.scr bm_rkck.scr bm_mroot2.scr bm_lu.scr \
 	bm_root.scr bm_min.scr
 EXAMPLE_PRGS = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 	ex_mroot.scr ex_mmin.scr ex_inte.scr ex_deriv.scr \
@@ -156,8 +156,6 @@ EXTRA_PROGRAMS = \
 	ex_rmf_nuc \
 	ex_lambda \
 	bm_lu \
-	bm_array2 \
-	bm_array \
 	bm_deriv \
 	bm_mmin \
 	bm_mroot2 \
@@ -198,8 +196,6 @@ EXTRA_PROGRAMS = ex_fptr \
 	ex_conmin \
 	ex_lambda \
 	bm_lu \
-	bm_array2 \
-	bm_array \
 	bm_deriv \
 	bm_mmin \
 	bm_mroot2 \
@@ -385,16 +381,6 @@ ex_rmf_nuc.scr: ex_rmf_nuc
 # -------------------------------------------------------------
 # benchmark rule
 # -------------------------------------------------------------
-
-bm_array2_LDADD = $(OOLIBS) $(OOLIBSTWO)
-bm_array2_SOURCES = bm_array2.cpp
-bm_array2.scr: bm_array2 bm_array2.cpp
-	./bm_array2 > bm_array2.scr
-
-bm_array_LDADD = $(OOLIBS) $(OOLIBSTWO)
-bm_array_SOURCES = bm_array.cpp
-bm_array.scr: bm_array bm_array.cpp
-	./bm_array > bm_array.scr
 
 bm_deriv_LDADD = $(OOLIBS) $(OOLIBSTWO)
 bm_deriv_SOURCES = bm_deriv.cpp
