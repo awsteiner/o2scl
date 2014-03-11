@@ -79,8 +79,9 @@ namespace o2scl {
       \f]
       where the value of \f$ \mu \f$ is given in \c mean. 
 
-      This function produces the same results
-      as <tt>gsl_stats_variance_with_fixed_mean()</tt>.
+      This function produces the same results as
+      <tt>gsl_stats_variance_with_fixed_mean()</tt>. IF \c n is zero,
+      this function returns zero.
   */
   template<class vec_t>
     double vector_variance_fmean(size_t n, const vec_t &data, double mean) {
@@ -100,8 +101,9 @@ namespace o2scl {
       \f]
       where the value of \f$ \mu \f$ is given in \c mean. 
 
-      This function produces the same results
-      as <tt>gsl_stats_variance_with_fixed_mean()</tt>.
+      This function produces the same results as
+      <tt>gsl_stats_variance_with_fixed_mean()</tt>. If the vector
+      size is zero, this function will return zero.
   */
   template<class vec_t>
     double vector_variance_fmean(const vec_t &data, double mean) {
