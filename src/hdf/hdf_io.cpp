@@ -910,8 +910,6 @@ void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, expval_matrix &mev,
   return;
 }
 
-#ifdef O2SCL_NEVER_DEFINED    
-
 void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf, uniform_grid<double> &ug, 
 			   std::string hdf_name) {
 
@@ -927,8 +925,12 @@ void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf, uniform_grid<double> &ug,
   hf.setd("start",ug.g_start);
   hf.setd("end",ug.g_end);
   hf.setd("width",ug.g_width);
-  hf.set_szt("n_bins",ug.n_g_bins);
-  hf.setb("log",ug.g_log);
+  hf.set_szt("n_bins",ug.g_n_bins);
+  if (ug.g_log) {
+    hf.seti("log",1);
+  } else {
+    hf.seti("log",0);
+  }
 
   // Close group
   hf.close_group(group);
@@ -960,8 +962,14 @@ void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, uniform_grid<double> &ug,
   hf.getd("start",ug.g_start);
   hf.getd("end",ug.g_end);
   hf.getd("width",ug.g_width);
-  hf.get_szt("n_bins",ug.n_g_bins);
-  hf.getb("log",ug.g_log);
+  hf.get_szt("n_bins",ug.g_n_bins);
+  int tmp;
+  hf.geti("log",tmp);
+  if (tmp<=0) {
+    ug.g_log=false;
+  } else {
+    ug.g_log=true;
+  }
 
   // Close group
   hf.close_group(group);
@@ -971,8 +979,6 @@ void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, uniform_grid<double> &ug,
 
   return;
 }
-
-#endif
 
 void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf, vector<contour_line> &cl, 
 			   std::string hdf_name) {

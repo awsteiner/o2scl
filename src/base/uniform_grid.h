@@ -33,6 +33,20 @@
 #include <o2scl/err_hnd.h>
 #include <o2scl/string_conv.h>
 
+// Forward definition of the uniform_grid class for HDF I/O
+namespace o2scl {
+  template<class data_t> class uniform_grid;
+}
+
+// Forward definition of HDF I/O to extend friendship
+namespace o2scl_hdf { 
+  class hdf_file; 
+  void hdf_input(hdf_file &hf, o2scl::uniform_grid<double> &t, 
+		 std::string name);
+  void hdf_output(hdf_file &hf, o2scl::uniform_grid<double> &t, 
+		  std::string name);
+}
+
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
 #endif
@@ -77,8 +91,6 @@ namespace o2scl {
   */
   template<class data_t=double> class uniform_grid {
 
-#ifdef O2SCL_NEVER_DEFINED    
-
   public:
   
   friend void o2scl_hdf::hdf_output
@@ -86,8 +98,6 @@ namespace o2scl {
   
   friend void o2scl_hdf::hdf_input
   (o2scl_hdf::hdf_file &hf, uniform_grid<double> &ug, std::string name);
-
-#endif
 
     protected:
   
