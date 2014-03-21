@@ -37,6 +37,7 @@
 #include <o2scl/tensor_grid.h>
 #include <o2scl/expval.h>
 #include <o2scl/contour.h>
+//#include <o2scl/uniform_grid.h>
 
 /** \brief The \o2 namespace for I/O with HDF
  */
@@ -258,6 +259,14 @@ namespace o2scl_hdf {
   void hdf_output(hdf_file &hf, o2scl::expval_matrix &h, std::string name);
   /// Input a \ref o2scl::expval_matrix object from a \ref hdf_file
   void hdf_input(hdf_file &hf, o2scl::expval_matrix &h, std::string name="");
+#ifdef O2SCL_NEVER_DEFINED
+  /// Output a \ref o2scl::uniform_grid object to a \ref hdf_file
+  void hdf_output(hdf_file &hf, o2scl::uniform_grid<double> &h, 
+		  std::string name);
+  /// Input a \ref o2scl::uniform_grid object from a \ref hdf_file
+  void hdf_input(hdf_file &hf, o2scl::uniform_grid<double> &h, 
+		 std::string name="");
+#endif
   /// Output a vector of \ref o2scl::contour_line objects to a \ref hdf_file
   void hdf_output(hdf_file &hf, std::vector<o2scl::contour_line> &cl, 
 		  std::string name);

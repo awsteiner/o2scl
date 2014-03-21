@@ -35,7 +35,7 @@
 #include <o2scl/vec_stats.h>
 #include <o2scl/tensor.h>
 
-// Forward definition of the tensor_grid class for HDF I/O
+// Forward definition of the expval classes for HDF I/O
 namespace o2scl {
   class expval_scalar;
   class expval_vector;

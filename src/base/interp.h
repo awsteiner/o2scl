@@ -33,7 +33,6 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/vector_proxy.hpp>
 
-#include <o2scl/err_hnd.h>
 #include <o2scl/search_vec.h>
 #include <o2scl/tridiag.h>
 #include <o2scl/funct.h>

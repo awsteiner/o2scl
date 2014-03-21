@@ -26,9 +26,6 @@
 #ifndef O2SCL_TRIDIAG_H
 #define O2SCL_TRIDIAG_H
 
-#include <o2scl/err_hnd.h>
-#include <o2scl/permutation.h>
-#include <o2scl/cblas.h>
 #include <o2scl/householder.h>
 #include <o2scl/givens.h>
 

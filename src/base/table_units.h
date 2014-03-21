@@ -29,7 +29,6 @@
 
 #include <o2scl/table.h>
 #include <o2scl/lib_settings.h>
-#include <o2scl/convert_units.h>
 
 #ifndef DOXYGEN_NO_O2NS
 

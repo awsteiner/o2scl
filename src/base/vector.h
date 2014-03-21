@@ -53,7 +53,6 @@
 #include <fstream>
 #include <sstream>
 
-#include <o2scl/err_hnd.h>
 #include <o2scl/misc.h>
 #include <o2scl/uniform_grid.h>
 

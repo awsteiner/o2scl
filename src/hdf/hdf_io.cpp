@@ -910,6 +910,70 @@ void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, expval_matrix &mev,
   return;
 }
 
+#ifdef O2SCL_NEVER_DEFINED    
+
+void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf, uniform_grid<double> &ug, 
+			   std::string hdf_name) {
+
+  // Start group
+  hid_t top=hf.get_current_id();
+  hid_t group=hf.open_group(hdf_name);
+  hf.set_current_id(group);
+
+  // Add typename
+  hf.sets_fixed("o2scl_type","uniform_grid<double>");
+
+  // Set data
+  hf.setd("start",ug.g_start);
+  hf.setd("end",ug.g_end);
+  hf.setd("width",ug.g_width);
+  hf.set_szt("n_bins",ug.n_g_bins);
+  hf.setb("log",ug.g_log);
+
+  // Close group
+  hf.close_group(group);
+
+  // Return location to previous value
+  hf.set_current_id(top);
+
+  return;
+}
+
+void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, uniform_grid<double> &ug,
+			  std::string hdf_name) {
+  
+  // If no name specified, find name of first group of specified type
+  if (hdf_name.length()==0) {
+    hf.find_group_by_type(hf,"uniform_grid<double>",hdf_name);
+    if (hdf_name.length()==0) {
+      O2SCL_ERR2("No object of type uniform_grid<double> found in ",
+		 "o2scl_hdf::hdf_input().",exc_efailed);
+    }
+  }
+
+  // Open main group
+  hid_t top=hf.get_current_id();
+  hid_t group=hf.open_group(hdf_name);
+  hf.set_current_id(group);
+
+  // Get data
+  hf.getd("start",ug.g_start);
+  hf.getd("end",ug.g_end);
+  hf.getd("width",ug.g_width);
+  hf.get_szt("n_bins",ug.n_g_bins);
+  hf.getb("log",ug.g_log);
+
+  // Close group
+  hf.close_group(group);
+
+  // Return location to previous value
+  hf.set_current_id(top);
+
+  return;
+}
+
+#endif
+
 void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf, vector<contour_line> &cl, 
 			   std::string hdf_name) {
 

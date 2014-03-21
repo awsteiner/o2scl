@@ -32,7 +32,6 @@
 #include <iostream>
 #include <map>
 
-#include <o2scl/err_hnd.h>
 #include <o2scl/misc.h>
 #include <o2scl/constants.h>
 #include <o2scl/string_conv.h>

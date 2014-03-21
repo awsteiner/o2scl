@@ -38,11 +38,8 @@
 #include <boost/numeric/ublas/matrix.hpp>
 
 #include <o2scl/misc.h>
-#include <o2scl/err_hnd.h>
 #include <o2scl/multi_funct.h>
-#include <o2scl/search_vec.h>
 #include <o2scl/interp.h>
-#include <o2scl/fparser.h>
 
 #ifndef DOXYGEN_NO_O2NS
 

@@ -37,8 +37,24 @@
 namespace o2scl {
 #endif
 
+#ifdef O2SCL_NEVER_DEFINED
+  // Forward definition of the uniform_grid class for HDF I/O
+  namespace o2scl {
+    template<class data_t> class uniform_grid;
+  }
+  
+  // Forward definition of HDF I/O to extend friendship
+  namespace o2scl_hdf { 
+    class hdf_file; 
+    void hdf_input(hdf_file &hf, o2scl::uniform_grid<double> &t, 
+		   std::string name);
+    void hdf_output(hdf_file &hf, o2scl::uniform_grid<double> &t, 
+		    std::string name);
+  }
+#endif
+  
   /** \brief A class representing a uniform linear or logarithmic grid
-
+      
       \note This class has no public constructors and is to be
       instantiated through its children.
 
@@ -60,7 +76,19 @@ namespace o2scl {
       \comment
   */
   template<class data_t=double> class uniform_grid {
-    
+
+#ifdef O2SCL_NEVER_DEFINED    
+
+  public:
+  
+  friend void o2scl_hdf::hdf_output
+  (o2scl_hdf::hdf_file &hf, uniform_grid<double> &ug, std::string name);
+  
+  friend void o2scl_hdf::hdf_input
+  (o2scl_hdf::hdf_file &hf, uniform_grid<double> &ug, std::string name);
+
+#endif
+
     protected:
   
     /// The low-side of the first bin
