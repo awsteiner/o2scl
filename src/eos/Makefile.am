@@ -14,7 +14,7 @@ EOS_SRCS = apr_eos.cpp bag_eos.cpp \
 	skyrme_eos.cpp tov_solve.cpp nse_eos.cpp hdf_eos_io.cpp \
 	rmf_delta_eos.cpp tov_eos.cpp sym4_eos.cpp hadronic_eos.cpp \
 	rmf_nucleus.cpp gen_sn_eos.cpp \
-	ldrop_shell.cpp cfl_njl_eos.cpp cfl6_eos.cpp 
+	ldrop_shell.cpp cfl_njl_eos.cpp cfl6_eos.cpp hlps_eos.cpp
 
 HEADER_VAR = apr_eos.h bag_eos.h bps_eos.h ddc_eos.h \
 	cold_nstar.h eos.h gen_potential_eos.h ldrop_mass.h \
@@ -22,7 +22,7 @@ HEADER_VAR = apr_eos.h bag_eos.h bps_eos.h ddc_eos.h \
 	schematic_eos.h skyrme_eos.h tabulated_eos.h nse_eos.h \
 	tov_solve.h rmf_delta_eos.h sym4_eos.h tov_eos.h hadronic_eos.h \
 	hdf_eos_io.h rmf_nucleus.h gen_sn_eos.h \
-	ldrop_shell.h gogny_eos.h virial_eos.h
+	ldrop_shell.h gogny_eos.h virial_eos.h hlps_eos.h
 
 TEST_VAR = apr_eos.scr bag_eos.scr \
 	cold_nstar.scr eos.scr gen_potential_eos.scr sym4_eos.scr \
@@ -43,14 +43,14 @@ EOS_SRCS = apr_eos.cpp bag_eos.cpp cfl_njl_eos.cpp cfl6_eos.cpp \
 	quark_eos.cpp rmf_eos.cpp schematic_eos.cpp \
 	skyrme_eos.cpp tov_solve.cpp nse_eos.cpp \
 	rmf_delta_eos.cpp tov_eos.cpp sym4_eos.cpp hadronic_eos.cpp \
-	gen_sn_eos.cpp ldrop_shell.cpp
+	gen_sn_eos.cpp ldrop_shell.cpp hlps_eos.cpp
 
 HEADER_VAR = apr_eos.h bag_eos.h bps_eos.h ddc_eos.h \
 	cold_nstar.h eos.h gen_potential_eos.h ldrop_mass.h \
 	nambujl_eos.h quark_eos.h rmf_eos.h cfl_njl_eos.h cfl6_eos.h \
 	schematic_eos.h skyrme_eos.h tabulated_eos.h nse_eos.h \
 	tov_solve.h rmf_delta_eos.h sym4_eos.h tov_eos.h hadronic_eos.h \
-	gen_sn_eos.h ldrop_shell.h gogny_eos.h virial_eos.h
+	gen_sn_eos.h ldrop_shell.h gogny_eos.h virial_eos.h hlps_eos.h
 
 TEST_VAR = apr_eos.scr bag_eos.scr virial_eos.scr \
 	cold_nstar.scr eos.scr gen_potential_eos.scr sym4_eos.scr \

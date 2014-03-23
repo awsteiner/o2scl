@@ -13,7 +13,7 @@ HEADER_VAR = contour.h cheb_approx.h gsl_fft.h \
 	series_acc.h interp2_planar.h poly.h polylog.h \
 	interp2_direct.h interp2_eqi.h pinside.h bin_size.h \
 	vec_stats.h smooth_gsl.h hist.h interpm_neigh.h \
-	hist_2d.h graph.h prob_dens_func.h interp2_seq.h interp2_neigh.h \
+	hist_2d.h prob_dens_func.h interp2_seq.h interp2_neigh.h \
 	interpm_idw.h interp2.h
 
 TEST_VAR = gsl_fft.scr series_acc.scr interp2_planar.scr contour.scr \

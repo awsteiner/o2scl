@@ -1,17 +1,37 @@
-#ifndef MODELS_HLPS_H
-#define MODELS_HLPS_H
+/*
+  -------------------------------------------------------------------
+  
+  Copyright (C) 2014, Andrew W. Steiner
+  
+  This file is part of O2scl.
+  
+  O2scl is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 3 of the License, or
+  (at your option) any later version.
+  
+  O2scl is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with O2scl. If not, see <http://www.gnu.org/licenses/>.
+
+  -------------------------------------------------------------------
+*/
+#ifndef O2SCL_HLPS_EOS_H
+#define O2SCL_HLPS_EOS_H
 
 #include <iostream>
 
-#include <mpi.h>
-
 #include <o2scl/poly.h>
+#include <o2scl/fermion.h>
+#include <o2scl/hadronic_eos.h>
 
-#include "misc.h"
-#include "entry.h"
-#include "models.h"
-
+#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
+#endif
 
   /** \brief Schematic EOS from Hebeler et al.
 
@@ -31,13 +51,13 @@ namespace o2scl {
       the pressure. The \f$ 2/5 \f$ factor in front should be 
       \f$ 1/5 \f$ .
   */
-  class hlps_eos : public o2scl::hadronic_eos_eden {
+  class hlps_eos : public hadronic_eos_eden {
 
   protected:
 
     /// To solve quadratic equation for 'gamma'
-    o2scl::quadratic_real_coeff_gsl quad;
-
+    quadratic_real_coeff_gsl quad;
+    
   public:
 
     /// \name Constants (all unitless)
@@ -70,14 +90,16 @@ namespace o2scl {
 
     /** \brief Equation of state as a function of density
     */
-    virtual int calc_e(o2scl::fermion &ln, o2scl::fermion &lp, 
-		       o2scl::thermo &lth);
+    virtual int calc_e(fermion &ln, fermion &lp, 
+		       thermo &lth);
 
     /// Return string denoting type ("hlps_eos")
     virtual const char *type() { return "hlps_eos"; }
 
   };
 
+#ifndef DOXYGEN_NO_O2NS
 }
+#endif
 
 #endif
