@@ -302,7 +302,7 @@ namespace o2scl {
       \ref epsmin to zero. The \ref mroot_hybrids and \ref
       chi_fit_funct classes set \ref epsrel to \c GSL_SQRT_DBL_EPSILON
       in their constructor in order to partially mimic the GSL
-      behavior, but but do not set \ref epsmin to zero.
+      behavior, but do not set \ref epsmin to zero.
       
       This class does not separately check the vector and matrix sizes
       to ensure they are commensurate. 
