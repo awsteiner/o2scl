@@ -150,11 +150,11 @@ namespace o2scl {
 	}
       }
       
-      process_test(ret,((std::string)"relative array, max=")+o2scl::dtos(max),
-		   description);
-      
+      description=((std::string)"max=")+o2scl::dtos(max)+
+	"\n "+description;
+      process_test(ret,"relative array",description);
+
       return ret;
-      
     }
 
     /** \brief Test for \f$|\mathrm{result}-\mathrm{expected}|/
@@ -196,8 +196,9 @@ namespace o2scl {
 	}
       }
       
-      process_test(ret,((std::string)"relative array, max=")+dtos(max),
-		   description);
+      description=((std::string)"max=")+o2scl::dtos(max)+
+	"\n "+description;
+      process_test(ret,"relative array",description);
       
       return ret;
       
@@ -238,8 +239,9 @@ namespace o2scl {
 	}
       }
       
-      process_test(ret,((std::string)"relative array, max=")+dtos(max),
-		   description);
+      description=((std::string)"max=")+o2scl::dtos(max)+
+	"\n "+description;
+      process_test(ret,"relative array",description);
       
       return ret;
       
@@ -288,8 +290,9 @@ namespace o2scl {
 	}
       }
       
-      process_test(ret,((std::string)"relative matrix, max=")+dtos(max),
-		   description);
+      description=((std::string)"max=")+o2scl::dtos(max)+
+	"\n "+description;
+      process_test(ret,"relative matrix",description);
       
       return ret;
       
@@ -334,8 +337,9 @@ namespace o2scl {
 	}
       }
       
-      process_test(ret,((std::string)"relative matrix, max=")+o2scl::dtos(max),
-		   description);
+      description=((std::string)"max=")+o2scl::dtos(max)+
+	"\n "+description;
+      process_test(ret,"relative matrix",description);
       
       return ret;
       
@@ -371,8 +375,9 @@ namespace o2scl {
 	}
       }
       
-      process_test(ret,((std::string)"relative matrix, max=")+o2scl::dtos(max),
-		   description);
+      description=((std::string)"max=")+o2scl::dtos(max)+
+	"\n "+description;
+      process_test(ret,"relative matrix",description);
       
       return ret;
       
@@ -393,9 +398,11 @@ namespace o2scl {
       for(i=0;i<nr;i++) {
 	for(j=0;j<nc;j++) {
 	  if (o2scl::is_nan(expected(i,j))) {
-	    ret=(ret && (o2scl::is_nan(expected(i,j))==o2scl::is_nan(result(i,j))));
+	    ret=(ret && (o2scl::is_nan(expected(i,j))==
+			 o2scl::is_nan(result(i,j))));
 	  } else if (o2scl::is_inf(expected(i,j))) {
-	    ret=(ret && (o2scl::is_inf(expected(i,j))==o2scl::is_inf(result(i,j))));
+	    ret=(ret && (o2scl::is_inf(expected(i,j))==
+			 o2scl::is_inf(result(i,j))));
 	  } else if (expected(i,j)==0.0) {
 	    ret=(ret && test_abs(result(i,j),expected(i,j),rel_error,
 				 description));
@@ -412,8 +419,9 @@ namespace o2scl {
 	}
       }
       
-      process_test(ret,((std::string)"relative matrix, max=")+o2scl::dtos(max),
-		   description);
+      description=((std::string)"max=")+o2scl::dtos(max)+
+	"\n "+description;
+      process_test(ret,"relative matrix",description);
       
       return ret;
       
@@ -439,6 +447,7 @@ namespace o2scl {
 	}
       }
   
+      description="\n "+description;
       process_test(ret,"absolute array",description);
   
       return ret;
@@ -465,6 +474,7 @@ namespace o2scl {
 	}
       }
   
+      description="\n "+description;
       process_test(ret,"factor array",description);
   
       return ret;
@@ -481,6 +491,7 @@ namespace o2scl {
 	ret=(ret && (result[i]==expected[i]));
       }
       
+      description="\n "+description;
       process_test(ret,"generic array",description);
       
       return ret;

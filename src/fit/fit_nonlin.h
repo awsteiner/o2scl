@@ -55,6 +55,7 @@
 #include <o2scl/cblas.h>
 #include <o2scl/qr.h>
 #include <o2scl/qrpt.h>
+#include <o2scl/columnify.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -1209,7 +1210,7 @@ namespace o2scl {
     for(size_t ii=0;ii<rptdx.size();ii++) rptdx[ii]=0.0;
     for(size_t ii=0;ii<w.size();ii++) w[ii]=0.0;
       
-    // [GSL] Zero the trial vector,as in the alloc function 
+    // [GSL] Zero the trial vector, as in the alloc function 
       
     for(size_t i=0;i<ndata;i++) f_trial[i]=0.0;
 

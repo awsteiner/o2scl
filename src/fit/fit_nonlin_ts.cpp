@@ -91,14 +91,15 @@ int expb_df2(const gsl_vector *x, void *params, gsl_matrix *J) {
   double *sigma=((struct data *) params)->sigma;
 
   gsl_vector *f=gsl_vector_alloc(n);
-    
+  
   double eps=1.0e-4;
+  //double eps=GSL_SQRT_DBL_EPSILON;
 
   for(size_t j=0;j<3;j++) {
 
     double xtemp=gsl_vector_get(x,j);
     double step=fabs(xtemp)*eps;
-    if (step<1.0e-15) step=1.0e-4;
+    if (step<1.0e-15) step=eps;
 
     for(size_t i=0;i<n;i++) {
 
@@ -119,15 +120,15 @@ int expb_df2(const gsl_vector *x, void *params, gsl_matrix *J) {
   return success;
 }
 
-int expb_fdf(const gsl_vector *x, void *params,
-	     gsl_vector *f, gsl_matrix *J) {
+int expb_fdf(const gsl_vector *x, void *params, gsl_vector *f, 
+	     gsl_matrix *J) {
   expb_f(x,params,f);
   expb_df(x,params,J);
   return success;
 }
 
-int expb_fdf2(const gsl_vector *x, void *params,
-	      gsl_vector *f, gsl_matrix *J) {
+int expb_fdf2(const gsl_vector *x, void *params, gsl_vector *f, 
+	      gsl_matrix *J) {
   expb_f(x,params,f);
   expb_df2(x,params,J);
   return success;
@@ -170,6 +171,8 @@ int main(void) {
 
   fit_funct_fptr<> fff(func);
   chi_fit_funct<> cff(40,axdat,ay,asigma,fff);
+  //cff.auto_jac.epsrel=GSL_SQRT_DBL_EPSILON;
+  cff.auto_jac.epsrel=1.0e-4;
 
   // Copy of GSL covariance matrix for testing
   gsl_matrix *covar1=gsl_matrix_alloc(3,3);
@@ -229,7 +232,7 @@ int main(void) {
     x1_s.push_back(gsl_vector_get(s->x,1));
     x2_s.push_back(gsl_vector_get(s->x,2));
 
-    gsl_multifit_covar (s->J, 0.0, covar1);
+    gsl_multifit_covar(s->J,0.0,covar1);
 
     double chi=gsl_blas_dnrm2(s->f);
     chi2red_s=chi*chi/(n-p);
@@ -312,9 +315,9 @@ int main(void) {
   if (true) {
 
     cout << "O2scl scaled fit()." << endl;
-
+    
     fit_nonlin<> gf;
-  
+    
     fit_funct_fptr<ubvector> ff(func);
 
     double chi2;

@@ -72,8 +72,6 @@
     - Root - CERN's new C++ analysis package (http://root.cern.ch) \n
     A gargantuan library for data analysis, focused mostly on
     high-energy physics. Their histograms, graphics, file I/O and
-    support for large data sets is particuarly good. See 
-    \ref graph.h for some functions which provide some plotting
-    functions for use with Root.
+    support for large data sets is particularly good. 
 
 */

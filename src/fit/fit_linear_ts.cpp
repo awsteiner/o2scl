@@ -123,7 +123,7 @@ protected:
   
 int main(void) {
   test_mgr tm;
-  tm.set_output_level(1);
+  tm.set_output_level(2);
 
   cout.setf(ios::scientific);
 
@@ -220,12 +220,15 @@ int main(void) {
     cout << acovar(1,0) << "  ";
     cout << acovar(1,1) << endl;
     cout << "Chi-squared: " << chi2 << endl;
+
+    tm.test_rel_arr(2,parms_bench,aparms,4.0e-11,
+		    "Armadillo linear parms vs. O2scl linear parms");
+    tm.test_rel(chi2_bench,chi2,4.0e-11,
+		"Armadillo linear chi2 vs. O2scl linear chi2");
+    tm.test_rel_mat(2,2,covar_bench,acovar,4.0e-11,
+		    "Armadillo linear covar vs. O2scl linear covar");
+
     cout << endl;
-
-    tm.test_rel_arr(2,parms_bench,aparms,4.0e-11,"Armadillo linear parms");
-    tm.test_rel(chi2_bench,chi2,4.0e-11,"Armadillo linear chi2");
-    tm.test_rel_mat(2,2,covar_bench,acovar,4.0e-11,"Armadillo linear covar");
-
   }
 
 #endif
@@ -257,12 +260,15 @@ int main(void) {
     cout << ecovar(1,0) << "  ";
     cout << ecovar(1,1) << endl;
     cout << "Chi-squared: " << chi2 << endl;
+
+    tm.test_rel_arr(2,parms_bench,eparms,4.0e-11,
+		    "Eigen linear parms vs. O2scl linear parms");
+    tm.test_rel(chi2_bench,chi2,4.0e-11,
+		"Eigen linear chi2 vs. O2scl linear chi2");
+    tm.test_rel_mat(2,2,covar_bench,ecovar,4.0e-11,
+		    "Eigen linear covar vs. O2scl linear covar");
+
     cout << endl;
-
-    tm.test_rel_arr(2,parms_bench,eparms,4.0e-11,"Eigen linear parms");
-    tm.test_rel(chi2_bench,chi2,4.0e-11,"Eigen linear chi2");
-    tm.test_rel_mat(2,2,covar_bench,ecovar,4.0e-11,"Eigen linear covar");
-
   }
 
 #endif
@@ -284,21 +290,26 @@ int main(void) {
     cout << gsl_matrix_get(covar_gsl,1,0) << "  ";
     cout << gsl_matrix_get(covar_gsl,1,1) << endl;
     cout << "Chi-squared: " << chi2 << endl;
-    cout << endl;
 
-    tm.test_rel_arrgsl(2,parms_bench,p_gsl2,1.0e-12,"gsl linear parms");
-    tm.test_rel(chi2,chi2_bench,1.0e-12,"gsl linear chi2");
-    tm.test_rel_matgsl(2,2,covar_bench,covar_gsl,1.0e-12,"gsl linear covar");
+    tm.test_rel_arrgsl(2,parms_bench,p_gsl2,1.0e-12,
+		       "gsl linear parms vs. O2scl linear parms");
+    tm.test_rel(chi2,chi2_bench,1.0e-12,
+		"gsl linear chi2 vs. O2scl linear chi2");
+    tm.test_rel_matgsl(2,2,covar_bench,covar_gsl,1.0e-12,
+		       "gsl linear covar vs. O2scl linear covar");
+
+    cout << endl;
 
     gsl_multifit_linear_free(work);
   }
   
   // O2scl nonlinear version
   {
-    cout << "O2scl nonlinear fit" << endl;
+    cout << "O2scl nonlinear fit:" << endl;
     fit_nonlin<> gf;
     fit_funct_strings<> ffs("a*exp(x)+b*sqrt(x)","a,b","x");
     chi_fit_funct<> cff(ndat,xdat,ydat,yerr,ffs);
+    cff.auto_jac.epsrel=1.0e-4;
 
     parms[0]=2.0;
     parms[1]=-0.5;
@@ -316,11 +327,15 @@ int main(void) {
     cout << "Covariance matrix: " << endl;
     matrix_out(cout,npar,npar,covar);
     cout << "Chi-squared: " << chi2 << endl;
-    cout << endl;
     
-    tm.test_rel_arr(2,parms_bench,parms,4.0e-11,"o2scl nonlinear parms");
-    tm.test_rel(chi2,chi2_bench,4.0e-11,"o2scl nonlinear chi2");
-    tm.test_rel_mat(2,2,covar_bench,covar,4.0e-11,"o2scl nonlinear covar");
+    tm.test_rel_arr(2,parms_bench,parms,4.0e-11,
+		    "O2scl nonlinear parms vs. O2scl linear parms");
+    tm.test_rel(chi2,chi2_bench,4.0e-11,
+		"O2scl nonlinear chi2 vs. O2scl linear chi2");
+    tm.test_rel_mat(2,2,covar_bench,covar,4.0e-11,
+		    "O2scl nonlinear covar vs. O2scl nonlinear covar");
+
+    cout << endl;
   }
   
   // GSL nonlinear version 
@@ -383,11 +398,15 @@ int main(void) {
     cout << gsl_matrix_get(covar_gsl,1,0) << "  ";
     cout << gsl_matrix_get(covar_gsl,1,1) << endl;
     cout << "Chi-squared: " << chi2 << endl;
-    cout << endl;
 
-    tm.test_rel_arrgsl(2,parms_bench,p_gsl2,1.0e-12,"gsl nonlinear parms");
-    tm.test_rel(chi2,chi2_bench,1.0e-12,"gsl nonlinear chi2");
-    tm.test_rel_matgsl(2,2,covar_bench,covar_gsl,1.0e-12,"gsl nonlinear covar");
+    tm.test_rel_arrgsl(2,parms_bench,p_gsl2,1.0e-12,
+		       "gsl nonlinear parms vs. O2scl linear parms");
+    tm.test_rel(chi2,chi2_bench,1.0e-12,
+		"gsl nonlinear chi2 vs. O2scl linear chi2");
+    tm.test_rel_matgsl(2,2,covar_bench,covar_gsl,1.0e-12,
+		       "gsl nonlinear covar vs. O2scl linear covar");
+
+    cout << endl;
 
     gsl_multifit_fdfsolver_free(s);
 
@@ -423,7 +442,7 @@ int main(void) {
     }
     cout << endl;
   }
-
+  
   // GSL linear fit without scaling
   {
     cout << "GSL unbalanced linear fit: " << endl;
@@ -444,14 +463,15 @@ int main(void) {
     cout << gsl_matrix_get(covar_gsl,1,0) << " ";
     cout << gsl_matrix_get(covar_gsl,1,1) << endl;
     cout << "Chi-squared: " << chi2 << " rank: " << rank << endl;
-    cout << endl;
 
     tm.test_rel_arrgsl(2,parms_bench,p_gsl2,1.0e-12,
-		       "gsl unbalanced linear parms");
+		       "gsl unbalanced linear parms vs. O2scl unbalanced");
     tm.test_rel(chi2,chi2_bench,1.0e-12,
-		"gsl unbalanced linear chi2");
+		"gsl unbalanced linear chi2 vs. O2scl unbalanced");
     tm.test_rel_matgsl(2,2,covar_bench,covar_gsl,1.0e-12,
-		       "gsl unbalanced linear covar");
+		       "gsl unbalanced linear covar vs. O2scl unbalanced");
+
+    cout << endl;
 
     gsl_multifit_linear_free(work);
   }
