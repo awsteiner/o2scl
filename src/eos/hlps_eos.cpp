@@ -22,6 +22,7 @@
 */
 #include <o2scl/hlps_eos.h>
 #include <o2scl/hdf_file.h>
+#include <o2scl/constants.h>
 
 using namespace std;
 using namespace o2scl;

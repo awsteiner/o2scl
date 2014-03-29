@@ -383,6 +383,10 @@ namespace o2scl {
     
   public:
 
+  // (Need to have empty default constructor since we
+  // have private copy constructor)
+  gradient() {}
+
   virtual ~gradient() {}
 
   /// Set the function to compute the gradient of
