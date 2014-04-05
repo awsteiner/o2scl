@@ -413,8 +413,8 @@ namespace o2scl {
 			       data_t &x, data_t &y) {
     
     if (x1==x2 || x2==x3 || x1==x3) {
-      O2SCL_ERR2_RET("Two abscissae cannot be equal in function ",
-		     "quadratic_extremum_xy().",exc_einval);
+      O2SCL_ERR2("Two abscissae cannot be equal in function ",
+		 "quadratic_extremum_xy().",exc_einval);
     }
     
     data_t a,b,c,den=(x1*x1-x2*x2)*(x3-x2)-(x3*x3-x2*x2)*(x1-x2);
@@ -447,8 +447,8 @@ namespace o2scl {
 				   data_t &a, data_t &b, data_t &c) {
     
     if (x1==x2 || x2==x3 || x1==x3) {
-      O2SCL_ERR2_RET("Two abscissae cannot be equal in function ",
-		     "quadratic_extremum_coeffs().",exc_einval);
+      O2SCL_ERR2("Two abscissae cannot be equal in function ",
+		 "quadratic_extremum_coeffs().",exc_einval);
     }
     
     data_t den=(x1*x1-x2*x2)*(x3-x2)-(x3*x3-x2*x2)*(x1-x2);

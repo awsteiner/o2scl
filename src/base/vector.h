@@ -427,7 +427,7 @@ namespace o2scl {
 	j++;
       }
       
-      // avoid infinite loop if nan
+      // [GSL] Avoid infinite loop if nan
       if (!(data[pki] < data[order[j]])) {
 	break;
       }
@@ -485,34 +485,33 @@ namespace o2scl {
     
     if (n == 0) return;
 
-    // set permutation to identity
+    // [GSL] Set permutation to identity
 
     for (i = 0 ; i < n ; i++) {
-      order[i] = i ;
+      order[i] = i;
     }
     
-    /* We have n_data elements, last element is at 'n_data-1', first
-       at '0' Set N to the last element number.
+    /* [GSL] We have n_data elements, last element is at 'n_data-1',
+       first at '0' Set N to the last element number.
     */
     N = n - 1;
     
     k = N / 2;
-    // Compensate the first use of 'k--'
+    // [GSL] Compensate the first use of 'k--'
     k++;                          
     do {
       k--;
       sort_index_downheap<vec_t,vec_size_t>(N,data,order,k);
     } while (k > 0);
     
-    
     while (N > 0) {
       
-      // first swap the elements 
+      // [GSL] First swap the elements 
       size_t tmp = order[0];
       order[0] = order[N];
       order[N] = tmp;
       
-      // then process the heap
+      // [GSL] Then process the heap
       N--;
       
       sort_index_downheap<vec_t,vec_size_t>(N,data,order,0);
@@ -556,10 +555,13 @@ namespace o2scl {
   template<class vec_t, class data_t>
     void vector_smallest(size_t n, vec_t &data, size_t k, vec_t &smallest) {
     if (k>n) {
-      O2SCL_ERR2_RET("Subset length greater than size in ",
-		     "function vector_smallest().",exc_einval);
+      O2SCL_ERR2("Subset length greater than size in ",
+		 "function vector_smallest().",exc_einval);
     }
-    if (k==0 || n==0) return success;
+    if (k==0 || n==0) {
+      O2SCL_ERR2("Vector size zero or k zero in ",
+		 "function vector_smallest().",exc_einval);
+    }
 
     // Take the first element
     size_t j=1;
@@ -603,10 +605,13 @@ namespace o2scl {
   template<class vec_t, class data_t>
     void vector_largest(size_t n, vec_t &data, size_t k, vec_t &largest) {
     if (k>n) {
-      O2SCL_ERR2_RET("Subset length greater than size in ",
-		     "function vector_largest().",exc_einval);
+      O2SCL_ERR2("Subset length greater than size in ",
+		 "function vector_largest().",exc_einval);
     }
-    if (k==0 || n==0) return success;
+    if (k==0 || n==0) {
+      O2SCL_ERR2("Vector size zero or k zero in ",
+		 "function vector_largest().",exc_einval);
+    }
 
     // Take the first element
     size_t j=1;
@@ -1042,7 +1047,8 @@ namespace o2scl {
 			     size_t &i_max, size_t &j_max, data_t &max) {
     
     if (n==0 || m==0) {
-      O2SCL_ERR("Sent size=0 to matrix_min().",exc_efailed);
+      O2SCL_ERR2("Sent size=0 to function ",
+		 "matrix_minmax_index().",exc_efailed);
     }
     min=data(0,0);
     i_min=0;
@@ -1084,7 +1090,7 @@ namespace o2scl {
   template<class vec_t>
     size_t vector_lookup(size_t n, const vec_t &x, double x0) {
     if (n==0) {
-      O2SCL_ERR("Empty vector in vector_lookup().",
+      O2SCL_ERR("Empty vector in function vector_lookup().",
 		exc_einval);
       return 0;
     }
@@ -1092,7 +1098,7 @@ namespace o2scl {
     while(!o2scl::is_finite(x[i]) && i<n-1) i++;
     if (i==n-1) {
       O2SCL_ERR2("Entire vector not finite in ",
-		 "vector_lookup()",exc_einval);
+		 "function vector_lookup()",exc_einval);
       return 0;
     }
     double best=x[i], bdiff=fabs(x[i]-x0);
@@ -1117,14 +1123,13 @@ namespace o2scl {
     if (m==0 || n==0) {
       O2SCL_ERR("Empty matrix in matrix_lookup().",
 		exc_einval);
-      return 0;
     }
     double dist=0.0;
     bool found_one=false;
     for(size_t i2=0;i2<m;i2++) {
       for(size_t j2=0;j2<n;j2++) {
 	if (o2scl::is_finite(A(i,j))) {
-	  if (found_one=false) {
+	  if (found_one==false) {
 	    dist=fabs(A(i,j)-x0);
 	    found_one=true;
 	    i=i2;
@@ -1141,7 +1146,7 @@ namespace o2scl {
     }
     if (found_one==false) {
       O2SCL_ERR2("Entire matrix not finite in ",
-		 "matrix_lookup()",exc_einval);
+		 "function matrix_lookup()",exc_einval);
     }
     return;
   }
@@ -1184,7 +1189,7 @@ namespace o2scl {
 			      size_t lo, size_t hi) {
     if (lo>hi) {
       O2SCL_ERR2("Low and high indexes backwards in ",
-		 "vector_bsearch_inc().",exc_einval);
+		 "function vector_bsearch_inc().",exc_einval);
     }
     while (hi>lo+1) {
       size_t i=(hi+lo)/2;
@@ -1229,7 +1234,7 @@ namespace o2scl {
 			      size_t lo, size_t hi) {
     if (lo>hi) {
       O2SCL_ERR2("Low and high indexes backwards in ",
-		 "vector_bsearch_dec().",exc_einval);
+		 "function vector_bsearch_dec().",exc_einval);
     }
     while (hi>lo+1) {
       size_t i=(hi+lo)/2;
