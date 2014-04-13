@@ -55,7 +55,6 @@ namespace o2scl_hdf {
     void hdf_input(hdf_file &hf, o2scl::table<vec_t> &t, std::string name) {
       
     // If no name specified, find name of first group of specified type
-    std::cout << "In hit1." << std::endl;
     if (name.length()==0) {
       hf.find_group_by_type(hf,"table",name);
       if (name.length()==0) {
@@ -63,7 +62,6 @@ namespace o2scl_hdf {
 		   "o2scl_hdf::hdf_input().",o2scl::exc_efailed);
       }
     }
-    std::cout << "In hit2." << std::endl;
 
     // Open main group
     hid_t top=hf.get_current_id();
@@ -71,13 +69,10 @@ namespace o2scl_hdf {
     hf.set_current_id(group);
 
     // Input the table data
-    std::cout << "In hit3." << std::endl;
     hdf_input_data(hf,t);
-    std::cout << "In hit4." << std::endl;
 
     // Close group
     hf.close_group(group);
-    std::cout << "In hit5." << std::endl;
 
     // Return location to previous value
     hf.set_current_id(top);
@@ -96,19 +91,16 @@ namespace o2scl_hdf {
     hid_t group=hf.get_current_id();
 
     // Clear previous data
-    std::cout << "In hitd1." << std::endl;
     t.clear_table();
     t.clear_constants();
 
     // Check typename
-    std::cout << "In hitd2." << std::endl;
     std::string type2;
     hf.gets_fixed("o2scl_type",type2);
     if (type2!="table") {
       O2SCL_ERR2("Typename in HDF group does not match ",
 		 "class in o2scl_hdf::hdf_input().",o2scl::exc_einval);
     }
-    std::cout << "In hitd3." << std::endl;
 
     // Storage
     std::vector<std::string> cnames, cols;
@@ -132,7 +124,6 @@ namespace o2scl_hdf {
       t.new_column(cols[i]);
     }
 
-    std::cout << "In hitd4." << std::endl;
     // Get number of lines
     int nlines2;
     hf.geti("nlines",nlines2);
@@ -143,9 +134,7 @@ namespace o2scl_hdf {
 
     // Open data group
     hid_t group2=hf.open_group("data");
-    std::cout << "In hitd4b: " << group2 << std::endl;
     hf.set_current_id(group2);
-    std::cout << "In hitd4c: " << group2 << std::endl;
 
     if (nlines2>0) {
     
@@ -160,15 +149,12 @@ namespace o2scl_hdf {
 
     }
 
-    std::cout << "In hitd5: " << group2 << std::endl;
     // Close groups
     hf.close_group(group2);
-    std::cout << "In hitd6." << std::endl;
 
     hf.set_current_id(group);
 
     // Check that input created a valid table
-    std::cout << "In hitd7." << std::endl;
     t.check_synchro();
 
     return;
@@ -187,7 +173,6 @@ namespace o2scl_hdf {
     void hdf_input(hdf_file &hf, o2scl::table_units<vec_t> &t, 
 		   std::string name) {
       
-    std::cout << "In hitu1." << std::endl;
     // If no name specified, find name of first group of specified type
     if (name.length()==0) {
       hf.find_group_by_type(hf,"table",name);
@@ -196,22 +181,17 @@ namespace o2scl_hdf {
 		   "o2scl_hdf::hdf_input().",o2scl::exc_efailed);
       }
     }
-    std::cout << "In hitu2." << std::endl;
 
     // Open main group
     hid_t top=hf.get_current_id();
-    std::cout << "In hitu3." << std::endl;
     hid_t group=hf.open_group(name);
-    std::cout << "In hitu4." << std::endl;
     hf.set_current_id(group);
 
     // Input the table_units data
     hdf_input_data(hf,t);
 
     // Close group
-    std::cout << "In hitu5." << std::endl;
     hf.close_group(group);
-    std::cout << "In hitu6." << std::endl;
 
     // Return location to previous value
     hf.set_current_id(top);
@@ -233,16 +213,13 @@ namespace o2scl_hdf {
       O2SCL_ERR2("Cast failed in hdf_output_data",
 		 "(hdf_file &, table_units &).",o2scl::exc_efailed);
     }
-    std::cout << "In hidtu1." << std::endl;
     hdf_input_data(hf,*tbase);
-    std::cout << "In hidtu2." << std::endl;
   
     // Get unit flag
     int uf;
     hf.geti("unit_flag",uf);
 
     // If present, get units
-    std::cout << "In hidtu3." << std::endl;
     if (uf>0) {
       std::vector<std::string> units;
       hf.gets_vec("units",units);
@@ -250,7 +227,6 @@ namespace o2scl_hdf {
 	t.set_unit(t.get_column_name(i),units[i]);
       }
     }
-    std::cout << "In hidtu4." << std::endl;
 
     return;
   }
