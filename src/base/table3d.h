@@ -272,7 +272,7 @@ namespace o2scl {
 	<tt>x,y</tt>
     */
     template<class vec_t>
-      int get_slices(double x, double y, size_t nv, vec_t &v) {
+      void get_slices(double x, double y, size_t nv, vec_t &v) {
 
       size_t ix, iy;
 
@@ -376,7 +376,8 @@ namespace o2scl {
 	nearest location to <tt>x,y</tt> to value \c val
     */
     template<class vec_t> 
-      int get_slices_ret(double &x, double &y, size_t nv, vec_t &vals) {
+      void get_slices_ret(double &x, double &y, size_t nv, vec_t &vals) {
+
       size_t ix, iy;
       lookup_x(x,ix);
       lookup_y(y,iy);
