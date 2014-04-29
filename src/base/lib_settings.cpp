@@ -95,6 +95,14 @@ std::string lib_settings_class::o2scl_tarname() {
   return PACKAGE_TARNAME;
 }
 
+std::string lib_settings_class::date_compiled() {
+  return __DATE__;
+}
+
+std::string lib_settings_class::time_compiled() {
+  return __TIME__;
+}
+
 bool lib_settings_class::eos_installed() {
 #ifdef O2SCL_EOS
   return true;

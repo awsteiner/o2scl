@@ -118,6 +118,12 @@ namespace o2scl {
     */
     bool range_check();
 
+    /// Return the time \o2 was compiled
+    std::string time_compiled();
+
+    /// Return the date \o2 was compiled
+    std::string date_compiled();
+
     /// Return the library version
     std::string o2scl_version();
 

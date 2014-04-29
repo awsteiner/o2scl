@@ -52,6 +52,8 @@ int main(void) {
   cout << "Bug-report: " << o2scl_settings.o2scl_bugreport() << endl;
   cout << "String: " << o2scl_settings.o2scl_string() << endl;
   cout << "Tarname: " << o2scl_settings.o2scl_tarname() << endl;
+  cout << "Compile date: " << o2scl_settings.date_compiled() << endl;
+  cout << "Compile time: " << o2scl_settings.time_compiled() << endl;
   cout << endl;
   cout << "config.h: " << endl;
   o2scl_settings.config_h_report();
