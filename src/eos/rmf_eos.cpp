@@ -535,10 +535,20 @@ int rmf_eos::calc_temp_e(fermion &ne, fermion &pr, const double T,
       cout.setf(ios::showpos);
       cout.precision(4);
     }
-    for(double alpha=0.0;alpha<=1.0+1.0e-10;
-	alpha+=1.0/((double)calc_e_steps)) {
-      n_baryon=0.16*(1.0-alpha)+(nn+np)*alpha;
-      n_charge=0.08*(1.0-alpha)+np*alpha;
+
+    for(size_t i=0;i<calc_e_steps;i++) {
+
+      double alpha=((double)i)/((double)(calc_e_steps-1));
+
+      // At the last point, there are finite precision problems when 
+      // alpha=1, so we handle the last point separately
+      if (i==calc_e_steps-1) {
+	n_baryon=nn+np;
+	n_charge=np;
+      } else {
+	n_baryon=0.16*(1.0-alpha)+(nn+np)*alpha;
+	n_charge=0.08*(1.0-alpha)+np*alpha;
+      }
       
       ret=eos_mroot->msolve(5,x,fmf);
       if (verbose>0) {
@@ -553,7 +563,12 @@ int rmf_eos::calc_temp_e(fermion &ne, fermion &pr, const double T,
       cout << endl;
     }
     calc_temp_e_solve_fun(5,x,y);
-    
+    if (verbose>0) {
+      cout << "x: ";
+      vector_out(cout,x,true);
+      cout << "y: ";
+      vector_out(cout,y,true);
+    }
   }
   
   sigma=x[2];
@@ -983,7 +998,7 @@ int rmf_eos::calc_temp_e_solve_fun(size_t nv, const ubvector &ex,
   }
 #endif
 
-  double  gs=ms*cs;
+  double gs=ms*cs;
   if (zm_mode) {
     neutron->ms=neutron->m/(1.0+gs*sig/neutron->m);
     proton->ms=proton->m/(1.0+gs*sig/proton->m);
