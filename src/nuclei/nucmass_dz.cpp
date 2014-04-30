@@ -20,7 +20,7 @@
 
   -------------------------------------------------------------------
 */
-#include <o2scl/dz_mass.h>
+#include <o2scl/nucmass_dz.h>
 #include <o2scl/hdf_nucmass_io.h>
 #include <o2scl/hdf_io.h>
 
@@ -28,7 +28,7 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-bool dz_mass_table::is_included(int l_Z, int l_N) {
+bool nucmass_dz_table::is_included(int l_Z, int l_N) {
   int lo=0, hi=0, mid=last;
   int l_A=l_Z+l_N;
 
@@ -78,7 +78,7 @@ bool dz_mass_table::is_included(int l_Z, int l_N) {
   return false;
 }
 
-double dz_mass_table::mass_excess(int l_Z, int l_N) {
+double nucmass_dz_table::mass_excess(int l_Z, int l_N) {
   int lo=0, hi=0, mid=last;
   int l_A=l_Z+l_N;
   
@@ -103,7 +103,7 @@ double dz_mass_table::mass_excess(int l_Z, int l_N) {
     if (data.get("A",mid)!=l_A) mid=hi;
     if (data.get("A",mid)!=l_A) {
       O2SCL_ERR((((string)"Nucleus with Z=")+itos(l_Z)+" and N="+itos(l_N)+
-		 " not found in dz_mass_table::mass_excess().").c_str(),
+		 " not found in nucmass_dz_table::mass_excess().").c_str(),
 		exc_enotfound);
     }
   }
@@ -121,14 +121,14 @@ double dz_mass_table::mass_excess(int l_Z, int l_N) {
     } else if (data.get("Z",mid)>l_Z) {
       if (mid==0) {
 	O2SCL_ERR((((string)"Nucleus with Z=")+itos(l_Z)+" and N="+itos(l_N)+
-		   " not found in dz_mass_table::mass_excess().").c_str(),
+		   " not found in nucmass_dz_table::mass_excess().").c_str(),
 		  exc_enotfound);
       }
       mid--;
     } else {
       if (mid==n-1) {
 	O2SCL_ERR((((string)"Nucleus with Z=")+itos(l_Z)+" and N="+itos(l_N)+
-		   " not found in dz_mass_table::mass_excess().").c_str(),
+		   " not found in nucmass_dz_table::mass_excess().").c_str(),
 		  exc_enotfound);
       }
       mid++;
@@ -136,13 +136,13 @@ double dz_mass_table::mass_excess(int l_Z, int l_N) {
   }
   
   O2SCL_ERR((((string)"Nucleus with Z=")+itos(l_Z)+" and N="+itos(l_N)+
-	     " not found in dz_mass_table::mass_excess().").c_str(),
+	     " not found in nucmass_dz_table::mass_excess().").c_str(),
 	    exc_enotfound);
   
   return 0.0;
 }
 
-dz_mass_table::dz_mass_table(std::string model, bool external) {
+nucmass_dz_table::nucmass_dz_table(std::string model, bool external) {
   n=0;
   
   std::string fname;
@@ -167,10 +167,10 @@ dz_mass_table::dz_mass_table(std::string model, bool external) {
   last=n/2;
 }
 
-dz_mass_table::~dz_mass_table() {
+nucmass_dz_table::~nucmass_dz_table() {
 }
   
-dz_mass_fit::dz_mass_fit() {
+nucmass_dz_fit::nucmass_dz_fit() {
   
   b.resize(10);
   
@@ -206,25 +206,25 @@ dz_mass_fit::dz_mass_fit() {
   m_prot=7.28903+m_amu-m_elec;
 }
 
-dz_mass_fit::~dz_mass_fit() {
+nucmass_dz_fit::~nucmass_dz_fit() {
 }
 
-bool dz_mass_fit::is_included(int Z, int N) {
+bool nucmass_dz_fit::is_included(int Z, int N) {
   if (Z<=0 || N<=0 || N>240 || Z>240) return false;
   return true;
 }
 
-int dz_mass_fit::fit_fun(size_t nv, const ubvector &x) {
+int nucmass_dz_fit::fit_fun(size_t nv, const ubvector &x) {
   for(size_t i=0;i<10;i++) b[i]=x[i];
   return 0;
 }
 
-int dz_mass_fit::guess_fun(size_t nv, ubvector &x) {
+int nucmass_dz_fit::guess_fun(size_t nv, ubvector &x) {
   for(size_t i=0;i<10;i++) x[i]=b[i];
   return 0;
 }
 
-double dz_mass_fit::binding_energy(int Z, int N) {
+double nucmass_dz_fit::binding_energy(int Z, int N) {
 
   // In the code below, comments with begin with "DZ:"
   // are comments from the original Fortran
@@ -357,7 +357,7 @@ double dz_mass_fit::binding_energy(int Z, int N) {
       // DZ: Amplitudes
       for(i=1;i<=imax;i++) {
 	if (i<1) {
-	  O2SCL_ERR("Bad arithmetic 3 in dz_mass.",exc_efailed);
+	  O2SCL_ERR("Bad arithmetic 3 in nucmass_dz.",exc_efailed);
 	}
 	ip=(i-1)/2;
 	// DZ: For FM term
@@ -437,19 +437,19 @@ double dz_mass_fit::binding_energy(int Z, int N) {
   return -E;
 }
 
-double dz_mass_fit::binding_energy_d(double Z, double N) {
+double nucmass_dz_fit::binding_energy_d(double Z, double N) {
   return binding_energy(((int)(Z+1.0e-8)),((int)(N+1.0e-8)));
 }
 
-double dz_mass_fit::mass_excess(int Z, int N) {
+double nucmass_dz_fit::mass_excess(int Z, int N) {
   return (binding_energy(Z,N)-((Z+N)*m_amu-Z*m_elec-N*m_neut-Z*m_prot));
 }
 
-double dz_mass_fit::mass_excess_d(double Z, double N) {
+double nucmass_dz_fit::mass_excess_d(double Z, double N) {
   return (binding_energy_d(Z,N)-((Z+N)*m_amu-Z*m_elec-N*m_neut-Z*m_prot));
 }
 
-dz_mass_fit_33::dz_mass_fit_33() {
+nucmass_dz_fit_33::nucmass_dz_fit_33() {
 
   // The values 8.07132 and 7.28897 are those given in
   // the original Fortran.
@@ -558,25 +558,25 @@ dz_mass_fit_33::dz_mass_fit_33() {
   nfit=33;
 }
 
-dz_mass_fit_33::~dz_mass_fit_33() {
+nucmass_dz_fit_33::~nucmass_dz_fit_33() {
 }
 
-int dz_mass_fit_33::fit_fun(size_t nv, const ubvector &x) {
+int nucmass_dz_fit_33::fit_fun(size_t nv, const ubvector &x) {
   for(size_t i=0;i<33;i++) a[i]=x[i];
   return 0;
 }
     
-int dz_mass_fit_33::guess_fun(size_t nv, ubvector &x) {
+int nucmass_dz_fit_33::guess_fun(size_t nv, ubvector &x) {
   for(size_t i=0;i<33;i++) x[i]=a[i];
   return 0;
 }
 
-bool dz_mass_fit_33::is_included(int Z, int N) {
+bool nucmass_dz_fit_33::is_included(int Z, int N) {
   if (Z<6 || N<6 || N>240 || Z>240) return false;
   return true;
 }
 
-double dz_mass_fit_33::binding_energy(int Z, int N) {
+double nucmass_dz_fit_33::binding_energy(int Z, int N) {
 
   // In the code below, comments with begin with "DZ:"
   // are comments from the original Fortran
@@ -857,15 +857,15 @@ double dz_mass_fit_33::binding_energy(int Z, int N) {
   return -y;
 }
 
-double dz_mass_fit_33::binding_energy_d(double Z, double N) {
+double nucmass_dz_fit_33::binding_energy_d(double Z, double N) {
   return binding_energy(((int)(Z+1.0e-8)),((int)(N+1.0e-8)));
 }
 
-double dz_mass_fit_33::mass_excess(int Z, int N) {
+double nucmass_dz_fit_33::mass_excess(int Z, int N) {
   return (binding_energy(Z,N)-((Z+N)*m_amu-Z*m_elec-
 			       N*m_neut-Z*m_prot));
 }
     
-double dz_mass_fit_33::mass_excess_d(double Z, double N) {
+double nucmass_dz_fit_33::mass_excess_d(double Z, double N) {
   return (binding_energy_d(Z,N)-((Z+N)*m_amu-Z*m_elec-N*m_neut-Z*m_prot));
 }

@@ -21,29 +21,29 @@
   -------------------------------------------------------------------
 */
 
-#include <o2scl/hfb_mass.h>
+#include <o2scl/nucmass_hfb.h>
 
 using namespace std;
 using namespace o2scl;
 
-hfb_mass::hfb_mass() {
+nucmass_hfb::nucmass_hfb() {
   n=0;
 }
 
-hfb_mass::~hfb_mass() {
+nucmass_hfb::~nucmass_hfb() {
   if (n>0) {
     delete[] mass;
   }
 }
 
-double hfb_mass::mass_excess(int Z, int N) {
-  hfb_mass_entry ret;
+double nucmass_hfb::mass_excess(int Z, int N) {
+  nucmass_hfb_entry ret;
   ret=get_ZN(Z,N);
   if (ret.Z==0 && ret.N==0) return 0.0;
   return ret.Mcal;
 }
 
-int hfb_mass::set_data(int n_mass, hfb_mass_entry *m, std::string ref) {
+int nucmass_hfb::set_data(int n_mass, nucmass_hfb_entry *m, std::string ref) {
   n=n_mass;
   mass=m;
   reference=ref;
@@ -51,7 +51,7 @@ int hfb_mass::set_data(int n_mass, hfb_mass_entry *m, std::string ref) {
   return 0;
 }
 
-bool hfb_mass::is_included(int l_Z, int l_N) {
+bool nucmass_hfb::is_included(int l_Z, int l_N) {
   int lo=0, hi=0, mid=last;
 
   // binary search for the correct Z first
@@ -110,10 +110,10 @@ bool hfb_mass::is_included(int l_Z, int l_N) {
   return false;
 }
 
-hfb_mass_entry hfb_mass::get_ZN(int l_Z, int l_N) {
+nucmass_hfb_entry nucmass_hfb::get_ZN(int l_Z, int l_N) {
   int lo=0, hi=0, mid=last;
 
-  hfb_mass_entry ret;
+  nucmass_hfb_entry ret;
   ret.Z=0;
   ret.A=0;
   ret.N=0;
@@ -139,7 +139,7 @@ hfb_mass_entry hfb_mass::get_ZN(int l_Z, int l_N) {
     if (mass[mid].Z!=l_Z) mid=hi;
     if (mass[mid].Z!=l_Z) {
       O2SCL_ERR((((string)"Nuclei with Z=")+itos(l_Z) 
-		 +" not found in hfb_mass::get_ZN().").c_str(),
+		 +" not found in nucmass_hfb::get_ZN().").c_str(),
 		exc_enotfound);
     }
   }
@@ -165,7 +165,7 @@ hfb_mass_entry hfb_mass::get_ZN(int l_Z, int l_N) {
   }
   
   O2SCL_ERR((((string)"Nucleus with Z=")+itos(l_Z)+" and N="+itos(l_N)
-	     +" not found in hfb_mass::get_ZN().").c_str(),exc_enotfound);
+	     +" not found in nucmass_hfb::get_ZN().").c_str(),exc_enotfound);
   return ret;
 }
 
@@ -282,7 +282,7 @@ hfb_sp_mass_entry hfb_sp_mass::get_ZN(int l_Z, int l_N) {
     if (mass[mid].Z!=l_Z) mid=hi;
     if (mass[mid].Z!=l_Z) {
       O2SCL_ERR((((string)"Nuclei with Z=")+itos(l_Z) 
-		 +" not found in hfb_mass::get_ZN().").c_str(),
+		 +" not found in nucmass_hfb::get_ZN().").c_str(),
 		exc_enotfound);
     }
   }
@@ -308,6 +308,6 @@ hfb_sp_mass_entry hfb_sp_mass::get_ZN(int l_Z, int l_N) {
   }
   
   O2SCL_ERR((((string)"Nucleus with Z=")+itos(l_Z)+" and N="+itos(l_N)
-	     +" not found in hfb_mass::get_ZN().").c_str(),exc_enotfound);
+	     +" not found in nucmass_hfb::get_ZN().").c_str(),exc_enotfound);
   return ret;
 }

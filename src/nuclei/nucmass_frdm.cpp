@@ -21,14 +21,14 @@
   -------------------------------------------------------------------
 */
 
-#include <o2scl/frdm_mass.h>
+#include <o2scl/nucmass_frdm.h>
 // For unit conversions
 #include <o2scl/lib_settings.h>
 
 using namespace std;
 using namespace o2scl;
 
-frdm_mass::frdm_mass() {
+nucmass_frdm::nucmass_frdm() {
   MH=7.289034;
   Mn=8.071431;
   e2=1.4399764;
@@ -59,7 +59,7 @@ frdm_mass::frdm_mass() {
 
 }
 
-double frdm_mass::mass_excess_d(double Z, double N) {
+double nucmass_frdm::mass_excess_d(double Z, double N) {
   double ret;
       
   double A=Z+N;
@@ -146,7 +146,7 @@ double frdm_mass::mass_excess_d(double Z, double N) {
   return ret;
 }
 
-int frdm_mass::fit_fun(size_t nv, const ubvector &x) {
+int nucmass_frdm::fit_fun(size_t nv, const ubvector &x) {
   K=x[0]*200.0;
   r0=x[1];
   W=x[2];
@@ -163,7 +163,7 @@ int frdm_mass::fit_fun(size_t nv, const ubvector &x) {
 
 }
 
-int frdm_mass::guess_fun(size_t nv, ubvector &x) {
+int nucmass_frdm::guess_fun(size_t nv, ubvector &x) {
   x[0]=K/200.0;
   x[1]=r0;
   x[2]=W;
@@ -180,7 +180,7 @@ int frdm_mass::guess_fun(size_t nv, ubvector &x) {
 
 }
 
-double frdm_mass::drip_binding_energy_d
+double nucmass_frdm::drip_binding_energy_d
 (double Z, double N, double npout, double nnout, double chi) {
   
   double ret=(mass_excess_d(Z,N)+
@@ -190,7 +190,7 @@ double frdm_mass::drip_binding_energy_d
   return ret;
 }
 
-double frdm_mass::drip_mass_excess_d(double Z, double N,
+double nucmass_frdm::drip_mass_excess_d(double Z, double N,
 				     double np_out, double nn_out,
 				     double chi) {
   double ret;

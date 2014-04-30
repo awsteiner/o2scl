@@ -22,13 +22,13 @@
 */
 #include <iostream>
 #include <o2scl/test_mgr.h>
-#include <o2scl/nuclear_mass.h>
+#include <o2scl/nucmass.h>
 #include <o2scl/ldrop_mass.h>
 #include <o2scl/ldrop_shell.h>
 #include <o2scl/apr_eos.h>
 #include <o2scl/skyrme_eos.h>
 #include <o2scl/fermion_nonrel.h>
-#include <o2scl/mass_fit.h>
+#include <o2scl/nucmass_fit.h>
 #include <o2scl/hdf_nucmass_io.h>
 #include <o2scl/hdf_eos_io.h>
 
@@ -47,7 +47,7 @@ int main(void) {
   cout.setf(ios::scientific);
 
   double d1, d2, qual;
-  ame_mass au;
+  nucmass_ame au;
   ame_load(au,"03");
   ldrop_mass_pair ld;
   ldrop_shell ld2;
@@ -98,7 +98,7 @@ int main(void) {
   // fit APR
 
   cout << "ldrop_mass_pair fit:" << endl;
-  mass_fit mf;
+  nucmass_fit mf;
   mf.set_exp_mass(au);
   mf.even_even=false;
   mf.def_mmin.ntrial*=10;
@@ -181,7 +181,7 @@ int main(void) {
     dvi_mass dm;
     dm.guess_fun(10,xdm);
     
-    ame_mass_exp ame13;
+    nucmass_ame_exp ame13;
     ame_load(ame13);
     mf.set_exp_mass(ame13);
     mf.eval(dm,qual);

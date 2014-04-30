@@ -26,7 +26,7 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 
-#include <o2scl/nuclear_mass.h>
+#include <o2scl/nucmass.h>
 #include <o2scl/tensor.h>
 
 #ifndef DOXYGEN_NO_O2NS
@@ -41,7 +41,7 @@ namespace o2scl {
       data files have been reformatted for \o2 into HDF files
       with names <tt>du_zu_95.o2</tt> and <tt>du_zu_96.o2</tt>.
   */
-  class dz_mass_table : public nuclear_mass_table {
+  class nucmass_dz_table : public nucmass_table {
     
   public:
     
@@ -50,9 +50,9 @@ namespace o2scl {
 	The string \c model is either <tt>"95"</tt>
 	or <tt>"96"</tt>. 
     */
-    dz_mass_table(std::string model="96", bool external=false);
+    nucmass_dz_table(std::string model="96", bool external=false);
 
-    virtual ~dz_mass_table();
+    virtual ~nucmass_dz_table();
 
     /** \brief Return false if the mass formula does not include 
 	specified nucleus
@@ -65,8 +65,8 @@ namespace o2scl {
     /// Verify that the constructor properly loaded the table
     bool is_loaded() { return (n>0); }
     
-    /// Return the type, \c "dz_mass_table".
-    virtual const char *type() { return "dz_mass_table"; }
+    /// Return the type, \c "nucmass_dz_table".
+    virtual const char *type() { return "nucmass_dz_table"; }
 
     /// Return number of entries
     int get_nentries() { return n; }
@@ -99,8 +99,8 @@ namespace o2scl {
       
       http://amdc.in2p3.fr/theory/du_zu_10.feb96fort
 
-      The default values of \ref nuclear_mass::m_neut and \ref
-      nuclear_mass::m_prot are adjusted to make sure that the mass
+      The default values of \ref nucmass::m_neut and \ref
+      nucmass::m_prot are adjusted to make sure that the mass
       excesses match the values given in the original.
       
       \todo This appears to be limited for large nuclei because 'i'
@@ -111,7 +111,7 @@ namespace o2scl {
       and Z.
       \todo Document each field.
   */
-  class dz_mass_fit : public nuclear_mass_fit {
+  class nucmass_dz_fit : public nucmass_fit_base {
     
   public:
     
@@ -173,9 +173,9 @@ namespace o2scl {
 
   public:
     
-    dz_mass_fit();
+    nucmass_dz_fit();
 
-    virtual ~dz_mass_fit();
+    virtual ~nucmass_dz_fit();
 
     /// Coefficients
     ubvector b;
@@ -185,8 +185,8 @@ namespace o2scl {
     */
     virtual bool is_included(int Z, int N);
 
-    /// Return the type, \c "dz_mass_fit".
-    virtual const char *type() { return "dz_mass_fit"; }
+    /// Return the type, \c "nucmass_dz_fit".
+    virtual const char *type() { return "nucmass_dz_fit"; }
     
     /// Fix parameters from an array for fitting
     virtual int fit_fun(size_t nv, const ubvector &x);
@@ -229,8 +229,8 @@ namespace o2scl {
       the original 31-parameter code, and still referred to as
       <tt>dz31.f</tt>.)
 
-      The default values of \ref nuclear_mass::m_neut and \ref
-      nuclear_mass::m_prot are adjusted to make sure that the mass
+      The default values of \ref nucmass::m_neut and \ref
+      nucmass::m_prot are adjusted to make sure that the mass
       excesses match the values given in the original.
       
       \todo Document each field.
@@ -269,7 +269,7 @@ namespace o2scl {
       Note that the original code states that, <tt>"for i even
       a(i,program) =a(i-1,paper)*a(i,paper)"</tt>.
   */
-  class dz_mass_fit_33 : public nuclear_mass_fit {
+  class nucmass_dz_fit_33 : public nucmass_fit_base {
 
   public:
 
@@ -298,15 +298,15 @@ namespace o2scl {
 
   public:
     
-    dz_mass_fit_33();
+    nucmass_dz_fit_33();
 
-    virtual ~dz_mass_fit_33();
+    virtual ~nucmass_dz_fit_33();
 
     /// Coefficients
     ubvector a;
     
-    /// Return the type, \c "dz_mass_fit_33".
-    virtual const char *type() { return "dz_mass_fit_33"; }
+    /// Return the type, \c "nucmass_dz_fit_33".
+    virtual const char *type() { return "nucmass_dz_fit_33"; }
     
     /// Fix parameters from an array for fitting
     virtual int fit_fun(size_t nv, const ubvector &x);

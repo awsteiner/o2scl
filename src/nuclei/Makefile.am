@@ -2,32 +2,32 @@
 # Basic variables
 # ------------------------------------------------------------
 
-# The files nuclear_mass, nuclear_dist, mass_fit, reaction_lib, and
+# The files nucmass, nucdist, nucmass_fit, reaction_lib, and
 # hdf_nucmass_io can only be tested if HDF is enabled
 
 if O2SCL_HDF
 
-NUCLEI_SRCS = nuclear_mass.cpp nuclear_dist.cpp nucleus.cpp mass_fit.cpp \
-	reaction_lib.cpp hdf_nucmass_io.cpp frdm_mass.cpp dz_mass.cpp \
-	ame_mass.cpp hfb_mass.cpp ktuy_mass.cpp
+NUCLEI_SRCS = nucmass.cpp nucdist.cpp nucleus.cpp nucmass_fit.cpp \
+	reaction_lib.cpp hdf_nucmass_io.cpp nucmass_frdm.cpp nucmass_dz.cpp \
+	nucmass_ame.cpp nucmass_hfb.cpp nucmass_ktuy.cpp
 
-HEADER_VAR = nuclear_mass.h nuclear_dist.h nucleus.h mass_fit.h \
-	reaction_lib.h hdf_nucmass_io.h frdm_mass.h arb_dist.h dz_mass.h \
-	ame_mass.h hfb_mass.h ktuy_mass.h
+HEADER_VAR = nucmass.h nucdist.h nucleus.h nucmass_fit.h \
+	reaction_lib.h hdf_nucmass_io.h nucmass_frdm.h nucdist_arb.h nucmass_dz.h \
+	nucmass_ame.h nucmass_hfb.h nucmass_ktuy.h
 
-TEST_VAR = nuclear_mass.scr nuclear_dist.scr nucleus.scr mass_fit.scr \
-	reaction_lib.scr hdf_nucmass_io.scr frdm_mass.scr arb_dist.scr \
-	dz_mass.scr
+TEST_VAR = nucmass.scr nucdist.scr nucleus.scr nucmass_fit.scr \
+	reaction_lib.scr hdf_nucmass_io.scr nucmass_frdm.scr nucdist_arb.scr \
+	nucmass_dz.scr
 
 else
 
-NUCLEI_SRCS = nuclear_mass.cpp nuclear_dist.cpp nucleus.cpp mass_fit.cpp \
-	reaction_lib.cpp frdm_mass.cpp dz_mass.cpp ame_mass.cpp \
-	hfb_mass.cpp ktuy_mass.cpp
+NUCLEI_SRCS = nucmass.cpp nucdist.cpp nucleus.cpp nucmass_fit.cpp \
+	reaction_lib.cpp nucmass_frdm.cpp nucmass_dz.cpp nucmass_ame.cpp \
+	nucmass_hfb.cpp nucmass_ktuy.cpp
 
-HEADER_VAR = nuclear_mass.h nuclear_dist.h nucleus.h mass_fit.h \
-	reaction_lib.h frdm_mass.h arb_dist.h dz_mass.h ame_mass.h \
-	hfb_mass.h ktuy_mass.h
+HEADER_VAR = nucmass.h nucdist.h nucleus.h nucmass_fit.h \
+	reaction_lib.h nucmass_frdm.h nucdist_arb.h nucmass_dz.h nucmass_ame.h \
+	nucmass_hfb.h nucmass_ktuy.h
 
 TEST_VAR = nucleus.scr
 
@@ -96,9 +96,9 @@ pkginclude_HEADERS = $(HEADER_VAR)
 # libtool testing targets
 # ------------------------------------------------------------
 
-check_PROGRAMS = nuclear_mass_ts nuclear_dist_ts nucleus_ts \
-	mass_fit_ts reaction_lib_ts hdf_nucmass_io_ts frdm_mass_ts \
-	arb_dist_ts dz_mass_ts
+check_PROGRAMS = nucmass_ts nucdist_ts nucleus_ts \
+	nucmass_fit_ts reaction_lib_ts hdf_nucmass_io_ts nucmass_frdm_ts \
+	nucdist_arb_ts nucmass_dz_ts
 
 if O2SCL_HDF
 VCHECK_LIBS = $(libdir)/libo2scl_part.la $(libdir)/libo2scl.la \
@@ -107,44 +107,44 @@ else
 VCHECK_LIBS = $(libdir)/libo2scl_part.la $(libdir)/libo2scl.la 
 endif
 
-nuclear_mass_ts_LDADD = $(VCHECK_LIBS)
+nucmass_ts_LDADD = $(VCHECK_LIBS)
 reaction_lib_ts_LDADD = $(VCHECK_LIBS)
 hdf_nucmass_io_ts_LDADD = $(VCHECK_LIBS)
-nuclear_dist_ts_LDADD = $(VCHECK_LIBS)
+nucdist_ts_LDADD = $(VCHECK_LIBS)
 nucleus_ts_LDADD = $(VCHECK_LIBS)
-mass_fit_ts_LDADD = $(VCHECK_LIBS)
-frdm_mass_ts_LDADD = $(VCHECK_LIBS)
-arb_dist_ts_LDADD = $(VCHECK_LIBS)
-dz_mass_ts_LDADD = $(VCHECK_LIBS)
+nucmass_fit_ts_LDADD = $(VCHECK_LIBS)
+nucmass_frdm_ts_LDADD = $(VCHECK_LIBS)
+nucdist_arb_ts_LDADD = $(VCHECK_LIBS)
+nucmass_dz_ts_LDADD = $(VCHECK_LIBS)
 
-nuclear_mass.scr: nuclear_mass_ts$(EXEEXT)
-	./nuclear_mass_ts$(EXEEXT) > nuclear_mass.scr
+nucmass.scr: nucmass_ts$(EXEEXT)
+	./nucmass_ts$(EXEEXT) > nucmass.scr
 reaction_lib.scr: reaction_lib_ts$(EXEEXT)
 	./reaction_lib_ts$(EXEEXT) > reaction_lib.scr
 hdf_nucmass_io.scr: hdf_nucmass_io_ts$(EXEEXT)
 	./hdf_nucmass_io_ts$(EXEEXT) > hdf_nucmass_io.scr
-nuclear_dist.scr: nuclear_dist_ts$(EXEEXT)
-	./nuclear_dist_ts$(EXEEXT) > nuclear_dist.scr
+nucdist.scr: nucdist_ts$(EXEEXT)
+	./nucdist_ts$(EXEEXT) > nucdist.scr
 nucleus.scr: nucleus_ts$(EXEEXT)
 	./nucleus_ts$(EXEEXT) > nucleus.scr
-mass_fit.scr: mass_fit_ts$(EXEEXT)
-	./mass_fit_ts$(EXEEXT) > mass_fit.scr
-frdm_mass.scr: frdm_mass_ts$(EXEEXT)
-	./frdm_mass_ts$(EXEEXT) > frdm_mass.scr
-arb_dist.scr: arb_dist_ts$(EXEEXT)
-	./arb_dist_ts$(EXEEXT) > arb_dist.scr
-dz_mass.scr: dz_mass_ts$(EXEEXT)
-	./dz_mass_ts$(EXEEXT) > dz_mass.scr
+nucmass_fit.scr: nucmass_fit_ts$(EXEEXT)
+	./nucmass_fit_ts$(EXEEXT) > nucmass_fit.scr
+nucmass_frdm.scr: nucmass_frdm_ts$(EXEEXT)
+	./nucmass_frdm_ts$(EXEEXT) > nucmass_frdm.scr
+nucdist_arb.scr: nucdist_arb_ts$(EXEEXT)
+	./nucdist_arb_ts$(EXEEXT) > nucdist_arb.scr
+nucmass_dz.scr: nucmass_dz_ts$(EXEEXT)
+	./nucmass_dz_ts$(EXEEXT) > nucmass_dz.scr
 
-nuclear_mass_ts_SOURCES = nuclear_mass_ts.cpp
+nucmass_ts_SOURCES = nucmass_ts.cpp
 reaction_lib_ts_SOURCES = reaction_lib_ts.cpp
 hdf_nucmass_io_ts_SOURCES = hdf_nucmass_io_ts.cpp
-nuclear_dist_ts_SOURCES = nuclear_dist_ts.cpp
+nucdist_ts_SOURCES = nucdist_ts.cpp
 nucleus_ts_SOURCES = nucleus_ts.cpp
-mass_fit_ts_SOURCES = mass_fit_ts.cpp
-frdm_mass_ts_SOURCES = frdm_mass_ts.cpp
-arb_dist_ts_SOURCES = arb_dist_ts.cpp
-dz_mass_ts_SOURCES = dz_mass_ts.cpp
+nucmass_fit_ts_SOURCES = nucmass_fit_ts.cpp
+nucmass_frdm_ts_SOURCES = nucmass_frdm_ts.cpp
+nucdist_arb_ts_SOURCES = nucdist_arb_ts.cpp
+nucmass_dz_ts_SOURCES = nucmass_dz_ts.cpp
 
 # ------------------------------------------------------------
 # Library o2scl_nuclei

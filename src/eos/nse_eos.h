@@ -25,7 +25,7 @@
 
 #include <o2scl/classical.h>
 #include <o2scl/constants.h>
-#include <o2scl/nuclear_dist.h>
+#include <o2scl/nucdist.h>
 #include <o2scl/mm_funct.h>
 #include <o2scl/mroot_hybrids.h>
 
@@ -73,7 +73,7 @@ namespace o2scl {
     /// Parameter structure
     typedef struct {
       double nb, Ye, T;
-      nuclear_dist *ndp;
+      nucdist *ndp;
     } solve_parms;
     
     /// Function to solve for baryon and charge conservation
@@ -108,7 +108,7 @@ namespace o2scl {
 	This function does not use the solver.
     */
     void calc_mu(double mun, double mup, double T,
-		 double &nb, double &Ye, thermo &th, nuclear_dist &nd);
+		 double &nb, double &Ye, thermo &th, nucdist &nd);
     
     /** \brief Calculate the equation of state as a function of the densities
 
@@ -122,7 +122,7 @@ namespace o2scl {
 	the chemical potentials. 
      */
     int calc_density(double nb, double Ye, double T, 
-		     double &mun, double &mup, thermo &th, nuclear_dist &nd);
+		     double &mun, double &mup, thermo &th, nucdist &nd);
     
     /// Default solver 
     mroot_hybrids<mm_funct<>,ubvector,ubmatrix,jac_funct<> > def_root;

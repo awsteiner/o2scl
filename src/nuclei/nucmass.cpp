@@ -20,7 +20,7 @@
 
   -------------------------------------------------------------------
 */
-#include <o2scl/nuclear_mass.h>
+#include <o2scl/nucmass.h>
 #include <o2scl/hdf_nucmass_io.h>
 #include <o2scl/hdf_io.h>
 
@@ -28,7 +28,7 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-nuclear_mass_info::nuclear_mass_info() {
+nucmass_info::nucmass_info() {
   
   std::string tlist[119]=
   // 0-10
@@ -104,7 +104,7 @@ nuclear_mass_info::nuclear_mass_info() {
 
 }
 
-int nuclear_mass_info::parse_elstring(std::string ela, int &Z, int &N, 
+int nucmass_info::parse_elstring(std::string ela, int &Z, int &N, 
 				      int &A) {
 
   bool removed=true;
@@ -175,7 +175,7 @@ int nuclear_mass_info::parse_elstring(std::string ela, int &Z, int &N,
   }
   if (ela.length()<2) {
     O2SCL_ERR2_RET("Element name too short in ",
-		   "nuclear_mass::parse_elstring().",exc_efailed);
+		   "nucmass::parse_elstring().",exc_efailed);
   }
   if (ela.length()>3 && isalpha(ela[2])) {
     std::string el=ela.substr(0,3);
@@ -198,42 +198,42 @@ int nuclear_mass_info::parse_elstring(std::string ela, int &Z, int &N,
   return 0;
 }
 
-int nuclear_mass_info::eltoZ(std::string el) {
+int nucmass_info::eltoZ(std::string el) {
   std::map<std::string,int,string_comp>::iterator 
     eti=element_table.find(el);
   if (eti==element_table.end()) {
     O2SCL_ERR2_RET("Failed to find element in ",
-		   "nuclear_mass_info::eltoZ().",-1);
+		   "nucmass_info::eltoZ().",-1);
   }
   return eti->second;
 }
 
-std::string nuclear_mass_info::Ztoel(size_t Z) {
+std::string nucmass_info::Ztoel(size_t Z) {
   if (((int)Z)>=nelements) {
     O2SCL_ERR2("Invalid element in ",
-	       "nuclear_mass_info::Ztoel().",exc_einval);
+	       "nucmass_info::Ztoel().",exc_einval);
     return "";
   }
   return element_list[Z];
 }
 
-std::string nuclear_mass_info::tostring(size_t Z, size_t N) {
+std::string nucmass_info::tostring(size_t Z, size_t N) {
   if (((int)Z)>=nelements) {
     O2SCL_ERR2("Invalid element in ",
-	       "nuclear_mass_info::tostring().",exc_einval);
+	       "nucmass_info::tostring().",exc_einval);
     return "";
   }
   return element_list[Z]+itos(N+Z);
 }
 
-nuclear_mass::nuclear_mass() {
+nucmass::nucmass() {
   m_neut=o2scl_mks::mass_neutron*o2scl_settings.get_convert_units().convert("kg","1/fm",1.0)*o2scl_const::hc_mev_fm;
   m_prot=o2scl_mks::mass_proton*o2scl_settings.get_convert_units().convert("kg","1/fm",1.0)*o2scl_const::hc_mev_fm;
   m_elec=o2scl_mks::mass_electron*o2scl_settings.get_convert_units().convert("kg","1/fm",1.0)*o2scl_const::hc_mev_fm;
   m_amu=o2scl_mks::unified_atomic_mass*o2scl_settings.get_convert_units().convert("kg","1/fm",1.0)*o2scl_const::hc_mev_fm;
 }
 
-int nuclear_mass::get_nucleus(int Z, int N, nucleus &n) {
+int nucmass::get_nucleus(int Z, int N, nucleus &n) {
   n.Z=Z;
   n.N=N;
   n.A=Z+N;
@@ -246,7 +246,7 @@ int nuclear_mass::get_nucleus(int Z, int N, nucleus &n) {
   return 0;
 }
 
-double nuclear_mass_table::mass_excess_d(double Z, double N) {
+double nucmass_table::mass_excess_d(double Z, double N) {
   int Z1=(int)Z;
   int N1=(int)N;
   double mz1n1=mass_excess(Z1,N1);
@@ -258,7 +258,7 @@ double nuclear_mass_table::mass_excess_d(double Z, double N) {
   return mz1+(Z-Z1)*(mz2-mz1);
 }
 
-semi_empirical_mass::semi_empirical_mass() {
+nucmass_semi_empirical::nucmass_semi_empirical() {
   B=-16.0;
   Ss=18.0;
   Ec=0.7;
@@ -267,7 +267,7 @@ semi_empirical_mass::semi_empirical_mass() {
   nfit=5;
 }
 
-double semi_empirical_mass::mass_excess_d(double Z, double N) {
+double nucmass_semi_empirical::mass_excess_d(double Z, double N) {
   double A=Z+N, cA=cbrt(A);
   double EoA=B+Ss/cA+Ec*Z*Z/cA/A+Sv*pow(1.0-2.0*Z/A,2.0);
   
@@ -278,17 +278,17 @@ double semi_empirical_mass::mass_excess_d(double Z, double N) {
   return ret;
 }
 
-int semi_empirical_mass::fit_fun(size_t nv, const ubvector &x) {
+int nucmass_semi_empirical::fit_fun(size_t nv, const ubvector &x) {
   B=-x[0]; Sv=x[1]; Ss=x[2]; Ec=x[3]; Epair=x[4];
   return 0;
 }
 
-int semi_empirical_mass::guess_fun(size_t nv, ubvector &x) {
+int nucmass_semi_empirical::guess_fun(size_t nv, ubvector &x) {
   x[0]=-B; x[1]=Sv; x[2]=Ss; x[3]=Ec; x[4]=Epair;
   return 0;
 }
 
-dvi_mass::dvi_mass() {
+nucmass_dvi::nucmass_dvi() {
   av=15.78;
   as=18.56;
   sv=31.51;
@@ -298,7 +298,7 @@ dvi_mass::dvi_mass() {
   nfit=10;
 }
 
-double dvi_mass::mass_excess_d(double Z, double N) {
+double nucmass_dvi::mass_excess_d(double Z, double N) {
   double A=Z+N, cA=cbrt(A);
   double T=fabs(N-Z)/2.0;
 
@@ -319,7 +319,7 @@ double dvi_mass::mass_excess_d(double Z, double N) {
   return ret;
 }
 
-int dvi_mass::fit_fun(size_t nv, const ubvector &x) {
+int nucmass_dvi::fit_fun(size_t nv, const ubvector &x) {
   av=x[0];
   as=x[1];
   sv=x[2];
@@ -333,7 +333,7 @@ int dvi_mass::fit_fun(size_t nv, const ubvector &x) {
   return 0;
 }
 
-int dvi_mass::guess_fun(size_t nv, ubvector &x) {
+int nucmass_dvi::guess_fun(size_t nv, ubvector &x) {
   x[0]=av;
   x[1]=as;
   x[2]=sv;
@@ -347,7 +347,7 @@ int dvi_mass::guess_fun(size_t nv, ubvector &x) {
   return 0;
 }
 
-ibm_shell_energy::ibm_shell_energy() {
+nucmass_ibm_shell::nucmass_ibm_shell() {
   s_a1=-1.39;
   s_a2=0.02;
   s_a3=0.003;
@@ -365,7 +365,7 @@ ibm_shell_energy::ibm_shell_energy() {
   shells[10]=406;
 }
 
-double ibm_shell_energy::shell_energy(int Z, int N) {
+double nucmass_ibm_shell::shell_energy(int Z, int N) {
 
   int Dn=0, Dz=0, nv=0, zv=0;
 
@@ -426,13 +426,13 @@ double ibm_shell_energy::shell_energy(int Z, int N) {
 
   if (!o2scl::is_finite(ret)) {
     cout << S2 << " " << S3 << " " << Snp << " " << ret << endl;
-    O2SCL_ERR("Not finite in ibm_shell_energy.",exc_efailed);
+    O2SCL_ERR("Not finite in nucmass_ibm_shell.",exc_efailed);
   }
 
   return ret;
 }
 
-double ibm_shell_energy::shell_energy_interp(double Z, double N) {
+double nucmass_ibm_shell::shell_energy_interp(double Z, double N) {
 
   // Two-dimensional linear interpolation of the four
   // surrounding points
@@ -463,24 +463,24 @@ double ibm_shell_energy::shell_energy_interp(double Z, double N) {
   return shell0+dZ*(shell1-shell0);
 }
 
-double rms_radius::iand(double r) {
+double nucmass_radius::iand(double r) {
   return urho0*4.0*o2scl_const::pi*pow(r,4.0)/(1+exp((r-uRfermi)/ud));
 }
 
-double rms_radius::iand2(double r) {
+double nucmass_radius::iand2(double r) {
   return urho0*4.0*o2scl_const::pi*r*r/(1+exp((r-uRfermi)/ud));
 }
 
-double rms_radius::solve(double x) {
+double nucmass_radius::solve(double x) {
   uRfermi=x;
-  funct_mfptr<rms_radius> it_fun2(this,&rms_radius::iand2);
+  funct_mfptr<nucmass_radius> it_fun2(this,&nucmass_radius::iand2);
   return it.integ(it_fun2,0.0,0.0)-uN;
 }
 
-rms_radius::rms_radius() {
+nucmass_radius::nucmass_radius() {
 }
 
-int rms_radius::eval_rms_rho(double rho0, double N, double d,
+int nucmass_radius::eval_rms_rho(double rho0, double N, double d,
 			     double &Rcd, double &Rfermi, double &Rrms) {
   
   urho0=rho0;
@@ -490,16 +490,16 @@ int rms_radius::eval_rms_rho(double rho0, double N, double d,
   Rcd=cbrt(3.0*N/4.0/o2scl_const::pi/rho0);
       
   uRfermi=Rcd;
-  funct_mfptr<rms_radius> solve_fun(this,&rms_radius::solve);
+  funct_mfptr<nucmass_radius> solve_fun(this,&nucmass_radius::solve);
   cr.solve(uRfermi,solve_fun);
   Rfermi=uRfermi;
 
-  funct_mfptr<rms_radius> it_fun(this,&rms_radius::iand);
+  funct_mfptr<nucmass_radius> it_fun(this,&nucmass_radius::iand);
   Rrms=sqrt(it.integ(it_fun,0.0,0.0)/N);
   return 0;
 }
 
-int rms_radius::eval_rms_rsq(double Rfermi, double N, double d,
+int nucmass_radius::eval_rms_rsq(double Rfermi, double N, double d,
 			     double &rho0, double &Rcd, double &Rrms) {
   
   ud=d;
@@ -507,13 +507,13 @@ int rms_radius::eval_rms_rsq(double Rfermi, double N, double d,
   
   uRfermi=Rfermi;
   urho0=1.0;
-  funct_mfptr<rms_radius> it_fun2(this,&rms_radius::iand2);
+  funct_mfptr<nucmass_radius> it_fun2(this,&nucmass_radius::iand2);
   rho0=N/it.integ(it_fun2,0.0,0.0);
   urho0=rho0;
 
   Rcd=cbrt(3.0*N/4.0/o2scl_const::pi/rho0);
 
-  funct_mfptr<rms_radius> it_fun(this,&rms_radius::iand);
+  funct_mfptr<nucmass_radius> it_fun(this,&nucmass_radius::iand);
   Rrms=sqrt(it.integ(it_fun,0.0,0.0)/N);
   return 0;
 }

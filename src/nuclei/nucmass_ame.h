@@ -29,19 +29,19 @@
 #include <o2scl/nucleus.h>
 #include <o2scl/constants.h>
 #include <o2scl/table.h>
-#include <o2scl/nuclear_mass.h>
+#include <o2scl/nucmass.h>
 
-// Forward definition of the ame_mass class for HDF I/O
+// Forward definition of the nucmass_ame class for HDF I/O
 namespace o2scl {
-  class ame_mass;
+  class nucmass_ame;
 }
 
 // Forward definition of HDF I/O to extend friendship
 namespace o2scl_hdf { 
   class hdf_file; 
-  void ame_load(o2scl::ame_mass &ame, std::string file_name, 
+  void ame_load(o2scl::nucmass_ame &ame, std::string file_name, 
 		std::string table_name);
-  void ame_load(o2scl::ame_mass &ame, std::string name);
+  void ame_load(o2scl::nucmass_ame &ame, std::string name);
 }
   
 #ifndef DOXYGEN_NO_O2NS
@@ -59,26 +59,26 @@ namespace o2scl {
       <tt>o2scl_hdf::ame_load()</tt> .
       
       The 1995 data provided the binding energy (stored in
-      ame_mass::entry::be and ame_mass::entry::dbe), while the 2003
+      nucmass_ame::entry::be and nucmass_ame::entry::dbe), while the 2003
       data provided the binding energy divided by the mass number
-      (stored in ame_mass::entry::beoa and ame_mass::entry::dbeoa).
-      When the 1995 data is used, ame_mass::entry::beoa and
-      ame_mass::entry::dbeoa are calculated automatically, and when
-      the 2003 data is used ame_mass::entry::be and
-      ame_mass::entry::dbe are calculated automatically. To indicate
+      (stored in nucmass_ame::entry::beoa and nucmass_ame::entry::dbeoa).
+      When the 1995 data is used, nucmass_ame::entry::beoa and
+      nucmass_ame::entry::dbeoa are calculated automatically, and when
+      the 2003 data is used nucmass_ame::entry::be and
+      nucmass_ame::entry::dbe are calculated automatically. To indicate
       that \o2 has automatically calculated a value in this way, the
       associated accuracy field is set to \ref
-      o2scl::ame_mass::intl_computed.
+      o2scl::nucmass_ame::intl_computed.
       
       Note that all uncertainties are 1 sigma uncertainties.
 
       The functions \ref mass_excess() and \ref
-      o2scl::nuclear_mass::mass_excess_d() directly return the value from the
+      o2scl::nucmass::mass_excess_d() directly return the value from the
       data. For consistency, the functions \ref
-      o2scl::nuclear_mass::binding_energy(), \ref
-      o2scl::nuclear_mass::binding_energy_d(), \ref
-      o2scl::nuclear_mass::total_mass(), and \ref
-      o2scl::nuclear_mass::total_mass_d() return values which are
+      o2scl::nucmass::binding_energy(), \ref
+      o2scl::nucmass::binding_energy_d(), \ref
+      o2scl::nucmass::total_mass(), and \ref
+      o2scl::nucmass::total_mass_d() return values which are
       automatically computed from the mass excess with the neutron and
       proton mass in \ref m_neut and \ref m_prot. In order to obtain
       the value of the binding energy as reported in the original data
@@ -88,24 +88,24 @@ namespace o2scl {
 
       In cases where the decimal point in the original table was
       replaced with a <tt>#</tt>, the associated accuracy field is set
-      to \ref o2scl::ame_mass::estimated. In cases where the original
+      to \ref o2scl::nucmass_ame::estimated. In cases where the original
       table contained a asterisk to indicate a value was not
       calculable, the accuracy field is set to \ref
-      o2scl::ame_mass::not_calculable and the value is set to zero. If
+      o2scl::nucmass_ame::not_calculable and the value is set to zero. If
       \o2 internally computed the value because it was not present in
       the original table, the accuracy field is set to \ref
-      o2scl::ame_mass::intl_computed. In cases where either \ref
-      o2scl::ame_mass::entry::orig or \ref
-      o2scl::ame_mass::entry::bdmode in the original table was blank,
+      o2scl::nucmass_ame::intl_computed. In cases where either \ref
+      o2scl::nucmass_ame::entry::orig or \ref
+      o2scl::nucmass_ame::entry::bdmode in the original table was blank,
       the string is set to <tt>"blank"</tt>.
 
       In the original table, binding energies are defined with a
       positive sign, so that lead has a binding energy of +8 MeV and
-      this is what is stored in \ref o2scl::ame_mass::entry::be.
+      this is what is stored in \ref o2scl::nucmass_ame::entry::be.
       However, for consistency with the other mass formulas, \ref
-      o2scl::ame_mass::binding_energy() gives -8 MeV for lead. See
+      o2scl::nucmass_ame::binding_energy() gives -8 MeV for lead. See
       also the documentation for the class structure for each table
-      entry in \ref o2scl::ame_mass::entry.
+      entry in \ref o2scl::nucmass_ame::entry.
       
       \future Create a caching and more intelligent search system for
       the table. The table is sorted by A and then N, so we could
@@ -115,18 +115,18 @@ namespace o2scl {
       \future Should m_neut and m_prot be set to the neutron and
       proton masses from the table by default?
   */
-  class ame_mass : public nuclear_mass_table {
+  class nucmass_ame : public nucmass_table {
     
   public:
 
-    friend void o2scl_hdf::ame_load(ame_mass &ame, std::string file_name, 
+    friend void o2scl_hdf::ame_load(nucmass_ame &ame, std::string file_name, 
 				    std::string table_name);
-    friend void o2scl_hdf::ame_load(ame_mass &ame, std::string name);
+    friend void o2scl_hdf::ame_load(nucmass_ame &ame, std::string name);
 
     /// Create an AME mass object
-    ame_mass();
+    nucmass_ame();
 
-    ~ame_mass();
+    ~nucmass_ame();
     
     /// \name Accuracy modes
     //@{
@@ -142,7 +142,7 @@ namespace o2scl {
     
     /** \brief Atomic mass entry structure
 
-	Atomic mass entry data object for \ref o2scl::ame_mass.
+	Atomic mass entry data object for \ref o2scl::nucmass_ame.
 
 	This has to be a struct, not a class, so that it can
 	be processed by the HDF5 make table functions.
@@ -222,8 +222,8 @@ namespace o2scl {
 
     };
   
-    /// Return the type, \c "ame_mass".
-    virtual const char *type() { return "ame_mass"; }
+    /// Return the type, \c "nucmass_ame".
+    virtual const char *type() { return "nucmass_ame"; }
 
     /** \brief Return false if the mass formula does not include 
 	specified nucleus
@@ -287,10 +287,10 @@ namespace o2scl {
       \note This class requires data stored in an HDF file and
       thus requires HDF support for normal usage.
 
-      \todo The function ame_mass::get_nentries() doesn't work
+      \todo The function nucmass_ame::get_nentries() doesn't work
       for this child class. 
   */
-  class ame_mass_exp : public ame_mass {
+  class nucmass_ame_exp : public nucmass_ame {
 
   public:
 

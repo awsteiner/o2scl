@@ -22,10 +22,10 @@
 */
 #include <iostream>
 #include <o2scl/test_mgr.h>
-#include <o2scl/nuclear_mass.h>
+#include <o2scl/nucmass.h>
 #include <o2scl/apr_eos.h>
 #include <o2scl/fermion_nonrel.h>
-#include <o2scl/mass_fit.h>
+#include <o2scl/nucmass_fit.h>
 #include <o2scl/mmin_simp2.h>
 #include <o2scl/ldrop_mass.h>
 #include <o2scl/hdf_nucmass_io.h>
@@ -46,7 +46,7 @@ int main(void) {
   gms.err_nonconv=false;
   
   double d1, d2, qual;
-  ame_mass au;
+  nucmass_ame au;
   o2scl_hdf::ame_load(au);
 
   semi_empirical_mass sm;
@@ -136,9 +136,9 @@ int main(void) {
 
   // fit RMF
 
-  mass_fit mf3;
+  nucmass_fit mf3;
   mf3.even_even=false;
-  ame_mass ame;
+  nucmass_ame ame;
   o2scl_hdf::ame_load(ame,"");
   mf3.set_exp_mass(ame);
 
@@ -200,7 +200,7 @@ int main(void) {
 
 #ifdef O2SCL_NEVER_DEFINED
 
-  mass_fit mf2;
+  nucmass_fit mf2;
   mf2.even_even=false;
 
   ld.n0=0.16;
@@ -316,7 +316,7 @@ int main(void) {
   
   cout << "Fit with skin: " << endl;
 
-  mass_fit mf;
+  nucmass_fit mf;
 
 #ifdef O2SCL_NEVER_DEFINED
 

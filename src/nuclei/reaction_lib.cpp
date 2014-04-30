@@ -38,7 +38,7 @@ int reaction_lib::find_in_chap(std::vector<nuclear_reaction> &nrl,
 			       std::string nuc3, std::string nuc4, 
 			       std::string nuc5, std::string nuc6) {
   
-  nuclear_mass_info nmi;
+  nucmass_info nmi;
   size_t nspec=1;
   nmi.parse_elstring(nuc1,fZ[0],fN[0],fA[0]);
   if (nuc2.length()>0) {
@@ -1069,7 +1069,7 @@ int reaction_lib::read_file_reaclib2(std::string fname) {
   nuclear_reaction r;
   ifstream ins(fname.c_str());
   // for parse_elstring()
-  nuclear_mass_info nm;
+  nucmass_info nm;
   
   bool eof=false;
 

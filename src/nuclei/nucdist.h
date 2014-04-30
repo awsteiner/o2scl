@@ -25,7 +25,7 @@
 
 #include <iostream>
 #include <o2scl/nucleus.h>
-#include <o2scl/nuclear_mass.h>
+#include <o2scl/nucmass.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -34,7 +34,7 @@ namespace o2scl {
   /** \brief A distribution of nuclei [abstract base]
       
       The virtual base class for a collection of objects of type \ref
-      nucleus . See \ref full_dist and \ref arb_dist
+      nucleus . See \ref full_dist and \ref nucdist_arb
       for implementations of this base class.
 
       Generally, children need only specify an implementation of
@@ -46,7 +46,7 @@ namespace o2scl {
       maybe this class should be replaced with something like
       either vector<nucleus> or map<nucleus>?
    */
-  class nuclear_dist {
+  class nucdist {
 
 #ifndef DOXYGEN_INTERNAL
 
@@ -59,7 +59,7 @@ namespace o2scl {
     
   public:
 
-    virtual ~nuclear_dist() {}
+    virtual ~nucdist() {}
     
     /** \brief An iterator for the nuclear distribution
 	
@@ -68,7 +68,7 @@ namespace o2scl {
 	\code
 	mnmsk_mass mth;
 	simple_dist sd(5,6,10,12,&mth);
-	for(nuclear_dist::iterator ndi=sd.begin();ndi!=sd.end();ndi++) {
+	for(nucdist::iterator ndi=sd.begin();ndi!=sd.end();ndi++) {
 	// do something here for each nucleus
 	}
 	\endcode
@@ -87,7 +87,7 @@ namespace o2scl {
       nucleus *np;
 
       /// A pointer to the distribution
-      nuclear_dist *ndp;
+      nucdist *ndp;
 
 #endif
 
@@ -96,7 +96,7 @@ namespace o2scl {
       /** \brief Create an iterator from the given distribution using the
 	  nucleus specified in \c npp.
       */
-      iterator(nuclear_dist *ndpp, nucleus *npp) {
+      iterator(nucdist *ndpp, nucleus *npp) {
 	ndp=ndpp;
 	np=npp;
       }
@@ -125,12 +125,12 @@ namespace o2scl {
       }
 
       /// Give access to the == operator
-      friend bool operator==(const nuclear_dist::iterator &i1,
-			     const nuclear_dist::iterator &i2);
+      friend bool operator==(const nucdist::iterator &i1,
+			     const nucdist::iterator &i2);
       
       /// Give access to the != operator
-      friend bool operator!=(const nuclear_dist::iterator &i1,
-			    const nuclear_dist::iterator &i2);
+      friend bool operator!=(const nucdist::iterator &i1,
+			    const nucdist::iterator &i2);
     };
 
     /// The beginning of the distribution
@@ -144,12 +144,12 @@ namespace o2scl {
   };
 
   /// Compare two nuclei
-  bool operator==(const nuclear_dist::iterator &i1,
-		  const nuclear_dist::iterator &i2);
+  bool operator==(const nucdist::iterator &i1,
+		  const nucdist::iterator &i2);
 
   /// Compare two nuclei
-  bool operator!=(const nuclear_dist::iterator &i1,
-		  const nuclear_dist::iterator &i2);
+  bool operator!=(const nucdist::iterator &i1,
+		  const nucdist::iterator &i2);
   
   /** \brief Full distribution including all nuclei from a
       discrete mass formula
@@ -158,30 +158,30 @@ namespace o2scl {
       recent (2012) Atomic Mass Evaluation, and then output all the
       nuclei in the collection
       \code
-      ame_mass ame;
-      full_dist fd(&ame);
-      for(nuclear_dist::iterator ndi=fd.begin();ndi!=fd.end();ndi++) {
+      nucmass_ame ame;
+      nucdist_full fd(&ame);
+      for(nucdist::iterator ndi=fd.begin();ndi!=fd.end();ndi++) {
         cout << ndi->Z << " " << ndi->A << " " << ndi->m << endl;
       }
       \endcode
       
   */
-  class full_dist : public nuclear_dist {
+  class nucdist_full : public nucdist {
 
   public:
     
-    full_dist() {
+    nucdist_full() {
       list_size=0;
     }
 
-    virtual ~full_dist() {
+    virtual ~nucdist_full() {
       if (list_size>0) delete[] list;
     }
     
     /** \brief Create a distribution including all nuclei with atomic
 	numbers less than \c maxA from the mass formula \c nm
     */
-    full_dist(nuclear_mass &nm, int maxA=400, bool include_neutron=false);
+    nucdist_full(nucmass &nm, int maxA=400, bool include_neutron=false);
     
     /** \brief Set the distribution to all nuclei with atomic
 	numbers less than \c maxA from the mass formula \c nm
@@ -189,7 +189,7 @@ namespace o2scl {
 	The information for the previous distribution is cleared 
 	before a new distribution is set. 
     */
-    int set_dist(nuclear_mass &nm, int maxA=400, bool include_neutron=false);
+    int set_dist(nucmass &nm, int maxA=400, bool include_neutron=false);
   
     /// The beginning of the distribution
     virtual iterator begin() {

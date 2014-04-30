@@ -27,7 +27,7 @@
 #include <string>
 #include <map>
 #include <o2scl/nucleus.h>
-#include <o2scl/nuclear_mass.h>
+#include <o2scl/nucmass.h>
 #include <o2scl/constants.h>
 #include <o2scl/hadronic_eos.h>
 #include <o2scl/rmf_eos.h>
@@ -154,7 +154,7 @@ namespace o2scl {
 
       \hline
   */
-  class ldrop_mass : public nuclear_mass_fit {
+  class ldrop_mass : public nucmass_fit_base {
 
   public:
     
@@ -205,7 +205,7 @@ namespace o2scl {
  
         \comment
         We don't need to implement mass_excess() for integers because
-        that's done in the parent nuclear_mass_cont. 
+        that's done in the parent nucmass_cont. 
         \endcomment
     */
     virtual double mass_excess_d(double Z, double N);

@@ -26,8 +26,8 @@
 #include <iostream>
 #include <o2scl/err_hnd.h>
 #include <o2scl/nucleus.h>
-#include <o2scl/nuclear_mass.h>
-#include <o2scl/nuclear_dist.h>
+#include <o2scl/nucmass.h>
+#include <o2scl/nucdist.h>
 #include <o2scl/fparser.h>
 
 #ifndef DOXYGEN_NO_O2NS
@@ -37,16 +37,16 @@ namespace o2scl {
   /** \brief Arbitrary distribution of nuclei chosen either with a 
       function or a list
   */
-  class arb_dist : public nuclear_dist {
+  class nucdist_arb : public nucdist {
 
   public:
 
     /// Create an empty distribution
-    arb_dist() {
+    nucdist_arb() {
       list_size=0;
     }
 
-    virtual ~arb_dist() {
+    virtual ~nucdist_arb() {
       if (list_size>0) delete[] list;
     }
     
@@ -54,7 +54,7 @@ namespace o2scl {
 	for Z and N
     */
     template<class int_vec_t, class int_vec2_t>
-      void set_dist(nuclear_mass &nm, size_t sz, 
+      void set_dist(nucmass &nm, size_t sz, 
 		    int_vec_t &Zvec, int_vec2_t &Nvec) {
       
       // Delete old list if present
@@ -78,14 +78,14 @@ namespace o2scl {
 	distribution first, then create a new pointer and copy all of
 	the old nuclei over.
      */
-    void add_dist(nuclear_dist &nd) {
+    void add_dist(nucdist &nd) {
       
       // First, count nuclei in the new distribution which
       // are not already included in the old one
       size_t new_nuclei=0;
-      for(nuclear_dist::iterator ndi=nd.begin();ndi!=nd.end();ndi++) {
+      for(nucdist::iterator ndi=nd.begin();ndi!=nd.end();ndi++) {
 	bool found=false;
-	for(nuclear_dist::iterator ndi2=this->begin();ndi2!=this->end();
+	for(nucdist::iterator ndi2=this->begin();ndi2!=this->end();
 	    ndi2++) {
 	  if (ndi->Z==ndi2->Z && ndi->N == ndi2->N) {
 	    found=true;
@@ -104,9 +104,9 @@ namespace o2scl {
       }
       // Copy new nuclei not in the old distribution
       size_t j=list_size;
-      for(nuclear_dist::iterator ndi=nd.begin();ndi!=nd.end();ndi++) {
+      for(nucdist::iterator ndi=nd.begin();ndi!=nd.end();ndi++) {
 	bool found=false;
-	for(nuclear_dist::iterator ndi2=this->begin();ndi2!=this->end();
+	for(nucdist::iterator ndi2=this->begin();ndi2!=this->end();
 	    ndi2++) {
 	  if (ndi->Z==ndi2->Z && ndi->N == ndi2->N) {
 	    found=true;
@@ -137,7 +137,7 @@ namespace o2scl {
 	<=20"</tt> for a square distribution, or "(Z%2=0) & (N%2=0)"
 	for all even-even nuclei.
     */
-    void set_dist(nuclear_mass &nm, std::string expr, int maxA=400,
+    void set_dist(nucmass &nm, std::string expr, int maxA=400,
 		  bool include_neutron=false) {
   
       if (list_size>0) delete[] list;
@@ -149,12 +149,12 @@ namespace o2scl {
       // Parse the formula
       int ret=fp.Parse(expr,"Z,N");
       if (ret!=-1) {
-	O2SCL_ERR("Failed to parse in arb_dist::arb_dist().",exc_einval);
+	O2SCL_ERR("Failed to parse in nucdist_arb::nucdist_arb().",exc_einval);
       }
 
       // Count up nuclei
       list_size=0;
-      for(nuclear_dist::iterator ndi=fd.begin();ndi!=fd.end();ndi++) {
+      for(nucdist::iterator ndi=fd.begin();ndi!=fd.end();ndi++) {
 	vals[0]=ndi->Z;
 	vals[1]=ndi->N;
 	if (fp.Eval(vals)>0.5) {
@@ -167,7 +167,7 @@ namespace o2scl {
 
       // Copy selected nuclei over
       int ix=0;
-      for(nuclear_dist::iterator ndi=fd.begin();ndi!=fd.end();ndi++) {
+      for(nucdist::iterator ndi=fd.begin();ndi!=fd.end();ndi++) {
 	vals[0]=ndi->Z;
 	vals[1]=ndi->N;
 	if (fp.Eval(vals)>0.5) {

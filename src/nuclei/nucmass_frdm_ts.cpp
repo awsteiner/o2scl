@@ -23,10 +23,10 @@
 #include <iostream>
 
 #include <o2scl/test_mgr.h>
-#include <o2scl/nuclear_mass.h>
-#include <o2scl/mass_fit.h>
+#include <o2scl/nucmass.h>
+#include <o2scl/nucmass_fit.h>
 #include <o2scl/hdf_nucmass_io.h>
-#include <o2scl/frdm_mass.h>
+#include <o2scl/nucmass_frdm.h>
 
 using namespace std;
 using namespace o2scl;
@@ -37,13 +37,13 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
-  frdm_mass mo;
-  ame_mass au;
+  nucmass_frdm mo;
+  nucmass_ame au;
   semi_empirical_mass sm;
 
   o2scl_hdf::ame_load(au,"");
 
-  // Show that the frdm_mass gives reasonable (but not great)
+  // Show that the nucmass_frdm gives reasonable (but not great)
   // values for the binding energy of Lead 208
   cout << "AME2003 : ";
   cout << au.mass_excess(82,126) << " ";
@@ -73,7 +73,7 @@ int main(void) {
   // and compare with the theoretical value quoted in that table
   t.test_rel(mo.mass_excess(82,126)-12.84,-21.15,5.0e-4,"Lead 208");
 
-  // Compare frdm_mass with the macroscopic parts from
+  // Compare nucmass_frdm with the macroscopic parts from
   // mnmsk_mass table and show that they're almost the same
   mnmsk_mass mm;
   o2scl_hdf::mnmsk_load(mm);
@@ -81,7 +81,7 @@ int main(void) {
   double comp=0.0;
   size_t nnuc=0;
   full_dist fd(mm);
-  for(nuclear_dist::iterator ndi=fd.begin();ndi!=fd.end();ndi++) {
+  for(nucdist::iterator ndi=fd.begin();ndi!=fd.end();ndi++) {
     if (ndi->N>=8 && ndi->Z>=8) {
       mme=mm.get_ZN(ndi->Z,ndi->N);
       comp+=pow(mo.mass_excess(ndi->Z,ndi->N)-(mme.Mth-mme.Emic),2.0);
@@ -94,7 +94,7 @@ int main(void) {
   cout << nnuc << " " << comp << endl;
 
   // Fit the macroscopic part to experiment
-  mass_fit mf;
+  nucmass_fit mf;
   mf.set_exp_mass(au);
   double qual;
   mf.eval(mo,qual);

@@ -28,7 +28,7 @@
 #include <o2scl/eos.h>
 #include <o2scl/mroot_hybrids.h>
 #include <o2scl/fermion.h>
-#include <o2scl/nuclear_mass.h>
+#include <o2scl/nucmass.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -129,10 +129,10 @@ namespace o2scl {
     virtual const char *type() { return "bps_eos"; }
     
     /// Default mass formula
-    semi_empirical_mass def_mass;
+    nucmass_semi_empirical def_mass;
 
     /// Set the nuclear mass formula to be used
-    int set_mass_formula(nuclear_mass &nm) {
+    int set_mass_formula(nucmass &nm) {
       nmp=&nm;
       return 0;
     }
@@ -168,7 +168,7 @@ namespace o2scl {
     mroot_hybrids<mm_funct<> > gs;
 
     /// The nuclear mass formula
-    nuclear_mass *nmp;
+    nucmass *nmp;
     
 #endif
 

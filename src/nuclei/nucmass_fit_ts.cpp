@@ -22,7 +22,7 @@
 */
 #include <iostream>
 #include <o2scl/test_mgr.h>
-#include <o2scl/mass_fit.h>
+#include <o2scl/nucmass_fit.h>
 #include <o2scl/hdf_nucmass_io.h>
 
 using namespace std;
@@ -38,11 +38,11 @@ int main(void) {
 
   double res;
   semi_empirical_mass sem;
-  mass_fit mf;
+  nucmass_fit mf;
 
-  ame_mass ame;
+  nucmass_ame ame;
   o2scl_hdf::ame_load(ame,"");
-  ame_mass_exp amex;
+  nucmass_ame_exp amex;
   o2scl_hdf::ame_load(amex,"");
   mnmsk_mass_exp mexp;
   o2scl_hdf::mnmsk_load(mexp);
@@ -58,7 +58,7 @@ int main(void) {
 
   double unc[1]={3.0};
   mf.set_uncerts(1,unc);
-  mf.fit_method=mass_fit::chi_squared_me;
+  mf.fit_method=nucmass_fit::chi_squared_me;
   mf.fit(sem,res);
   cout << sem.B << " " << sem.Sv << " " << sem.Ss << " " 
        << sem.Ec << " " << sem.Epair << endl;
@@ -77,7 +77,7 @@ int main(void) {
     }
   */
 
-  mf.fit_method=mass_fit::rms_mass_excess;
+  mf.fit_method=nucmass_fit::rms_mass_excess;
   mf.set_exp_mass(mexp);
   mf.eval(mm,res);
   cout << res << endl;

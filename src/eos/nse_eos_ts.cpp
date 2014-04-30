@@ -22,8 +22,8 @@
 */
 #include <o2scl/test_mgr.h>
 #include <o2scl/nse_eos.h>
-#include <o2scl/frdm_mass.h>
-#include <o2scl/arb_dist.h>
+#include <o2scl/nucmass_frdm.h>
+#include <o2scl/nucdist_arb.h>
 #include <o2scl/hdf_nucmass_io.h>
 
 using namespace std;
@@ -44,7 +44,7 @@ int main(void) {
 
   mnmsk_mass mm;
   o2scl_hdf::mnmsk_load(mm);
-  arb_dist ad;
+  nucdist_arb ad;
   ad.set_dist(mm,"Z>=24 & Z<=32 & N>=55 & N<=58");
   nse_eos ne;
 
@@ -62,7 +62,7 @@ int main(void) {
   // reproduced
   double nbnew=0.0;
   double Yenew=0.0;
-  for(nuclear_dist::iterator ndi=ad.begin();ndi!=ad.end();ndi++) {
+  for(nucdist::iterator ndi=ad.begin();ndi!=ad.end();ndi++) {
     cout << ndi->Z << " " << mm.Ztoel(ndi->Z) << " " 
 	 << ndi->A << " " << ndi->n << endl;
     nbnew+=ndi->n*ndi->A;

@@ -27,7 +27,7 @@
 #include <string>
 #include <map>
 #include <o2scl/nucleus.h>
-#include <o2scl/nuclear_mass.h>
+#include <o2scl/nucmass.h>
 #include <o2scl/constants.h>
 #include <o2scl/hadronic_eos.h>
 #include <o2scl/apr_eos.h>
@@ -36,7 +36,7 @@
 #include <o2scl/mmin_conp.h>
 #include <o2scl/mmin_simp2.h>
 #include <o2scl/ldrop_mass.h>
-#include <o2scl/frdm_mass.h>
+#include <o2scl/nucmass_frdm.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -44,7 +44,7 @@ namespace o2scl {
 
   /** \brief Liquid drop model with shell effects
   */
-  class ldrop_shell : public ldrop_mass_pair, public ibm_shell_energy {
+  class ldrop_shell : public ldrop_mass_pair, public nucmass_ibm_shell {
 
   public:
 
@@ -73,7 +73,7 @@ namespace o2scl {
   /** \brief Mass formula adding simple shell effects to the 
       finite-range liquid droplet model
    */
-  class frdm_shell : public frdm_mass, public ibm_shell_energy {
+  class frdm_shell : public nucmass_frdm, public nucmass_ibm_shell {
     
   public:
 

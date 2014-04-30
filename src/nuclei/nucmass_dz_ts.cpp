@@ -22,8 +22,8 @@
 */
 #include <iostream>
 #include <o2scl/test_mgr.h>
-#include <o2scl/dz_mass.h>
-#include <o2scl/mass_fit.h>
+#include <o2scl/nucmass_dz.h>
+#include <o2scl/nucmass_fit.h>
 #include <o2scl/hdf_nucmass_io.h>
 
 using namespace std;
@@ -38,15 +38,15 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
-  ame_mass ame;
+  nucmass_ame ame;
   o2scl_hdf::ame_load(ame,"");
-  ame_mass_exp amex;
+  nucmass_ame_exp amex;
   o2scl_hdf::ame_load(amex,"");
 
-  dz_mass_fit dmf;
-  dz_mass_fit_33 dmf33;
-  dz_mass_table dz("96");
-  dz_mass_table dz2("95");
+  nucmass_dz_fit dmf;
+  nucmass_dz_fit_33 dmf33;
+  nucmass_dz_table dz("96");
+  nucmass_dz_table dz2("95");
 
   // Compare the fits with numerical values from the original Fortran
   // code
@@ -74,7 +74,7 @@ int main(void) {
   t.test_rel(dmf.mass_excess(37,53),-78.98053,1.0e-4,"me6");
 
   // Fit masses to Audi et al.
-  mass_fit mf;
+  nucmass_fit mf;
   mf.set_exp_mass(ame);
 
   double res;

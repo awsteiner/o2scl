@@ -20,8 +20,8 @@
 
   -------------------------------------------------------------------
 */
-#include <o2scl/nuclear_mass.h>
-#include <o2scl/ktuy_mass.h>
+#include <o2scl/nucmass.h>
+#include <o2scl/nucmass_ktuy.h>
 #include <o2scl/hdf_nucmass_io.h>
 #include <o2scl/hdf_io.h>
 
@@ -29,7 +29,7 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-bool ktuy_mass::is_included(int l_Z, int l_N) {
+bool nucmass_ktuy::is_included(int l_Z, int l_N) {
   int lo=0, hi=0, mid=last;
 
   // binary search for the correct Z first
@@ -88,10 +88,10 @@ bool ktuy_mass::is_included(int l_Z, int l_N) {
   return false;
 }
 
-ktuy_mass_entry ktuy_mass::get_ZN(int l_Z, int l_N) {
+nucmass_ktuy_entry nucmass_ktuy::get_ZN(int l_Z, int l_N) {
   int lo=0, hi=0, mid=last;
 
-  ktuy_mass_entry ret;
+  nucmass_ktuy_entry ret;
   ret.Z=0;
   ret.A=0;
   ret.N=0;
@@ -117,7 +117,7 @@ ktuy_mass_entry ktuy_mass::get_ZN(int l_Z, int l_N) {
     if (mass[mid].Z!=l_Z) mid=hi;
     if (mass[mid].Z!=l_Z) {
       O2SCL_ERR((((string)"Nuclei with Z=")+itos(l_Z) 
-		 +" not found in ktuy_mass::get_ZN().").c_str(),
+		 +" not found in nucmass_ktuy::get_ZN().").c_str(),
 		exc_enotfound);
     }
   }
@@ -143,11 +143,11 @@ ktuy_mass_entry ktuy_mass::get_ZN(int l_Z, int l_N) {
   }
   
   O2SCL_ERR((((string)"Nucleus with Z=")+itos(l_Z)+" and N="+itos(l_N)
-	     +" not found in ktuy_mass::get_ZN().").c_str(),exc_enotfound);
+	     +" not found in nucmass_ktuy::get_ZN().").c_str(),exc_enotfound);
   return ret;
 }
 
-ktuy_mass::ktuy_mass(std::string model, bool external) {
+nucmass_ktuy::nucmass_ktuy(std::string model, bool external) {
   
   n=0;
   
@@ -172,9 +172,9 @@ ktuy_mass::ktuy_mass(std::string model, bool external) {
   
   n=data.get_nlines();
 
-  mass=new ktuy_mass_entry[n];
+  mass=new nucmass_ktuy_entry[n];
   for(int i=0;i<n;i++) {
-    ktuy_mass_entry kme={((int)(data.get("NN",i)+1.0e-6)),
+    nucmass_ktuy_entry kme={((int)(data.get("NN",i)+1.0e-6)),
 			 ((int)(data.get("ZZ",i)+1.0e-6)),
 			 ((int)(data.get("NN",i)+data.get("ZZ",i)+1.0e-6)),
 			 data.get("Mcal",i),data.get("Esh",i),
@@ -186,14 +186,14 @@ ktuy_mass::ktuy_mass(std::string model, bool external) {
   last=n/2;
 }
 
-ktuy_mass::~ktuy_mass() {
+nucmass_ktuy::~nucmass_ktuy() {
   if (n>0) {
     delete[] mass;
   }
 }
 
-double ktuy_mass::mass_excess(int Z, int N) {
-  ktuy_mass_entry ret;
+double nucmass_ktuy::mass_excess(int Z, int N) {
+  nucmass_ktuy_entry ret;
   ret=get_ZN(Z,N);
   if (ret.Z==0 && ret.N==0) return 0.0;
   return ret.Mcal;

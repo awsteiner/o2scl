@@ -43,21 +43,21 @@ namespace o2scl {
 
       This class exists to provide some basic information on 
       nuclei to nuclear mass classes which are children of
-      \ref nuclear_mass. 
+      \ref nucmass. 
       
       Elements 113, 115, 117 and 118 are named "Uut", "Uup", "Uus",
       and "Uuo", respectively, until the IUPAC decides on their names.
       Note that some of the nuclear mass tables use older or
       alternative names for the heavier elements, so \ref Ztoel() may
       return something different than is stored in, e.g., \ref
-      ame_mass::entry::el.
+      nucmass_ame::entry::el.
 
       \future Add the full names for each element.
   */
-  class nuclear_mass_info {
+  class nucmass_info {
   public:
     
-    nuclear_mass_info();
+    nucmass_info();
     
     /** \brief Parse a string representing an element
 
@@ -193,16 +193,16 @@ namespace o2scl {
       \endcomment
 
   */
-  class nuclear_mass : public nuclear_mass_info {
+  class nucmass : public nucmass_info {
 
   public:
 
-    nuclear_mass();
+    nucmass();
     
-    virtual ~nuclear_mass() {};
+    virtual ~nucmass() {};
 
-    /// Return the type, \c "nuclear_mass".
-    virtual const char *type() { return "nuclear_mass"; }
+    /// Return the type, \c "nucmass".
+    virtual const char *type() { return "nucmass"; }
 
     /** \brief Return false if the mass formula does not include 
 	specified nucleus
@@ -314,10 +314,10 @@ namespace o2scl {
 
       Generally, descendants of this class only need to provide an
       implementation of \ref mass_excess() and possibly a version
-      of \ref nuclear_mass::is_included()
+      of \ref nucmass::is_included()
 
   */
-  class nuclear_mass_table : public nuclear_mass {
+  class nucmass_table : public nucmass {
 
   public:
     
@@ -329,20 +329,20 @@ namespace o2scl {
   /** \brief Fittable mass formula [abstract base]
 
       Nuclear mass formulas which are descendants of this class
-      can be fit to experiment using \ref mass_fit.
+      can be fit to experiment using \ref nucmass_fit.
 
       Within \o2p, this class has only two children,
-      \ref frdm_mass and \ref semi_empirical_mass. There
+      \ref nucmass_frdm and \ref nucmass_semi_empirical. There
       is also a child \ref ldrop_mass in \o2e.
   */
-  class nuclear_mass_fit : public nuclear_mass {
+  class nucmass_fit_base : public nucmass {
     
   public:
     
     typedef boost::numeric::ublas::vector<double> ubvector;
 
-    /// Return the type, \c "nuclear_mass_fit".
-    virtual const char *type() { return "nuclear_mass_fit"; }
+    /// Return the type, \c "nucmass_fit_base".
+    virtual const char *type() { return "nucmass_fit_base"; }
 
     /// Number of fitting parameters
     size_t nfit;
@@ -385,9 +385,9 @@ namespace o2scl {
       determined from a fit.
 
       There is an example of the usage of this class given in 
-      \ref ex_mass_fit_sect.
+      \ref ex_nucmass_fit_sect.
   */
-  class semi_empirical_mass : public nuclear_mass_fit {
+  class nucmass_semi_empirical : public nucmass_fit_base {
 
   public:
 
@@ -408,10 +408,10 @@ namespace o2scl {
     /// Pairing energy (MeV, default 13.0)
     double Epair;
     
-    /// Return the type, \c "semi_empirical_mass".
-    virtual const char *type() { return "semi_empirical_mass"; }
+    /// Return the type, \c "nucmass_semi_empirical".
+    virtual const char *type() { return "nucmass_semi_empirical"; }
 
-    semi_empirical_mass();
+    nucmass_semi_empirical();
 
     /// Given \c Z and \c N, return the mass excess in MeV
     virtual double mass_excess_d(double Z, double N);
@@ -435,13 +435,13 @@ namespace o2scl {
       Shell effects from \ref Dieperink09 based on the interacting
       boson model, with corrections as suggested by \ref Duflo95. 
   */
-  class ibm_shell_energy {
+  class nucmass_ibm_shell {
 
   public:
 
-    ibm_shell_energy();
+    nucmass_ibm_shell();
 
-    virtual ~ibm_shell_energy() {}
+    virtual ~nucmass_ibm_shell() {}
 
     /** \name Shell correction coefficients in MeV (defaults are 
 	-1.39, 0.02, 0.03, and 0.075, respectively)
@@ -474,7 +474,7 @@ namespace o2scl {
 
   /** \brief Nuclear mass formula from Dieperink and van Isacker (2009)
    */
-  class dvi_mass : public nuclear_mass_fit, public ibm_shell_energy {
+  class nucmass_dvi : public nucmass_fit_base, public nucmass_ibm_shell {
 
   public:
 
@@ -493,10 +493,10 @@ namespace o2scl {
     /// Surface symmetry energy coefficient
     double y;
     
-    /// Return the type, \c "dvi_mass".
-    virtual const char *type() { return "dvi_mass"; }
+    /// Return the type, \c "nucmass_dvi".
+    virtual const char *type() { return "nucmass_dvi"; }
 
-    dvi_mass();
+    nucmass_dvi();
 
     /// Given \c Z and \c N, return the mass excess in MeV
     virtual double mass_excess_d(double Z, double N);
@@ -533,7 +533,7 @@ namespace o2scl {
       \f]
       is also given.
   */
-  class rms_radius {
+  class nucmass_radius {
 
   protected:
 
@@ -566,7 +566,7 @@ namespace o2scl {
 
   public:
 
-    rms_radius();
+    nucmass_radius();
     
     /** \brief Compute the RMS radius from the central density
 

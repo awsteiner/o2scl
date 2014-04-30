@@ -31,7 +31,7 @@
 #include <o2scl/err_hnd.h>
 #include <o2scl/string_conv.h>
 #include <o2scl/nucleus.h>
-#include <o2scl/nuclear_mass.h>
+#include <o2scl/nucmass.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -75,7 +75,7 @@ namespace o2scl {
       std::ostringstream outs;
       outs.width(2);
       outs << chap << ": ";
-      nuclear_mass_info nmi;
+      nucmass_info nmi;
       for(size_t i=0;i<6;i++) {
 	if (name[i].length()>0 && A[i]>0) {
 	  if (Z[i]==0 && A[i]==1) outs << "n ";

@@ -21,7 +21,7 @@
   -------------------------------------------------------------------
 */
 #include <o2scl/constants.h>
-#include <o2scl/nuclear_dist.h>
+#include <o2scl/nucdist.h>
 #include <o2scl/hdf_nucmass_io.h>
 #include <o2scl/test_mgr.h>
 
@@ -38,10 +38,10 @@ int main(void) {
 
   // Load several mass formulae to make distributions out of
   
-  ame_mass ame12;
+  nucmass_ame ame12;
   o2scl_hdf::ame_load(ame12,"");
 
-  ame_mass_exp amex12;
+  nucmass_ame_exp amex12;
   o2scl_hdf::ame_load(amex12,"");
 
   mnmsk_mass mth;
@@ -50,17 +50,17 @@ int main(void) {
   mnmsk_mass_exp mexp;
   o2scl_hdf::mnmsk_load(mexp,"");
 
-  ame_mass ame03;
+  nucmass_ame ame03;
   o2scl_hdf::ame_load(ame03,"03");
   
-  ame_mass_exp amex03;
+  nucmass_ame_exp amex03;
   o2scl_hdf::ame_load(amex03,"03");
 
   // Test the size of the distributions
 
   full_dist fd(mth);
   size_t cnt=0;
-  for(nuclear_dist::iterator ndi=fd.begin();ndi!=fd.end();ndi++) {
+  for(nucdist::iterator ndi=fd.begin();ndi!=fd.end();ndi++) {
     cnt++;
   }
   cout << "fd size: " << fd.size() << endl;

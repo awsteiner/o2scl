@@ -26,7 +26,7 @@
 #include <cmath>
 
 #include <o2scl/nucleus.h>
-#include <o2scl/nuclear_mass.h>
+#include <o2scl/nucmass.h>
 #include <o2scl/constants.h>
 
 #ifndef DOXYGEN_NO_O2NS
@@ -73,11 +73,11 @@ namespace o2scl {
     /// Error between experimental and calculated mass excess
     double Err;
     
-  } hfb_mass_entry;
+  } nucmass_hfb_entry;
 
-  /** \brief Version of \ref hfb_mass_entry with spin and parity
+  /** \brief Version of \ref nucmass_hfb_entry with spin and parity
 
-      \note This cannot be a child of hfb_mass_entry in order
+      \note This cannot be a child of nucmass_hfb_entry in order
       for the HDF I/O preprocessor macros, like HOFFSET, to work
   */
   typedef struct {
@@ -141,15 +141,15 @@ namespace o2scl {
 
       \todo Update to include hfb17. 
    */
-  class hfb_mass : public nuclear_mass_table {
+  class nucmass_hfb : public nucmass_table {
     
   public:
     
     /** \brief Create a new mass formula object 
      */
-    hfb_mass();
+    nucmass_hfb();
 
-    virtual ~hfb_mass();
+    virtual ~nucmass_hfb();
 
     /** \brief Return false if the mass formula does not include 
 	specified nucleus
@@ -165,7 +165,7 @@ namespace o2scl {
 	algorithm. It is assumed that the table is sorted first by
 	proton number and then by neutron number.
     */
-    hfb_mass_entry get_ZN(int l_Z, int l_N);
+    nucmass_hfb_entry get_ZN(int l_Z, int l_N);
     
     /// Verify that the constructor properly loaded the table
     bool is_loaded() { return (n>0); }
@@ -173,14 +173,14 @@ namespace o2scl {
     /// The value which corresponds to a blank entry
     double blank() { return 1.0e99; };
 
-    /// Return the type, \c "hfb_mass".
-    virtual const char *type() { return "hfb_mass"; }
+    /// Return the type, \c "nucmass_hfb".
+    virtual const char *type() { return "nucmass_hfb"; }
 
     /** \brief Set data
 	
 	This function is used by the HDF I/O routines.
     */
-    int set_data(int n_mass, hfb_mass_entry *m, std::string ref);
+    int set_data(int n_mass, nucmass_hfb_entry *m, std::string ref);
 
     /// Return number of entries
     int get_nentries() { return n; }
@@ -196,7 +196,7 @@ namespace o2scl {
     std::string reference;
     
     /// The array containing the mass data of length ame::n
-    hfb_mass_entry *mass;
+    nucmass_hfb_entry *mass;
     
     /// The last table index for caching
     int last;
@@ -207,7 +207,7 @@ namespace o2scl {
 
   /** \brief HFB Mass formula with spin and parity information
    */
-  class hfb_sp_mass : public nuclear_mass_table {
+  class hfb_sp_mass : public nucmass_table {
     
   public:
     
@@ -233,7 +233,7 @@ namespace o2scl {
     */
     hfb_sp_mass_entry get_ZN(int l_Z, int l_N);
     
-    /// Return the type, \c "hfb_mass".
+    /// Return the type, \c "nucmass_hfb".
     virtual const char *type() { return "hfb_sp_mass"; }
 
     /** \brief Set data

@@ -22,7 +22,7 @@
 */
 #include <iostream>
 #include <o2scl/test_mgr.h>
-#include <o2scl/arb_dist.h>
+#include <o2scl/nucdist_arb.h>
 #include <o2scl/hdf_nucmass_io.h>
 
 using namespace std;
@@ -37,21 +37,21 @@ int main(void) {
   t.set_output_level(1);
 
   /// Load Audi et al. masses
-  ame_mass ame;
+  nucmass_ame ame;
   o2scl_hdf::ame_load(ame,"");
 
   /// Select only nuclei with N=21 and N=22
-  arb_dist ad;
+  nucdist_arb ad;
   ad.set_dist(ame,"(N>20) & (N<23)");
 
   size_t cnt=0;
-  for(nuclear_dist::iterator ndi=ad.begin();ndi!=ad.end();ndi++) {
+  for(nucdist::iterator ndi=ad.begin();ndi!=ad.end();ndi++) {
     cout << ndi->Z << " " << ndi->N << endl;
     cnt++;
   }
   cout << cnt << " total nuclei." << endl;
 
-  t.test_gen(cnt==40,"arb_dist count");
+  t.test_gen(cnt==40,"nucdist_arb count");
 
   t.report();
   return 0;

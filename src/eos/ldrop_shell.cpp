@@ -80,7 +80,7 @@ frdm_shell::frdm_shell() {
 
 double frdm_shell::mass_excess_d(double Z, double N) {
   
-  double ret=frdm_mass::mass_excess_d(Z,N);
+  double ret=nucmass_frdm::mass_excess_d(Z,N);
   ret-=shell_energy_interp(Z,N);
       
   return ret;

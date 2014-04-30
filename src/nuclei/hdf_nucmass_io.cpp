@@ -27,33 +27,33 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-void o2scl_hdf::ame_load(o2scl::ame_mass &ame, std::string file_name, 
+void o2scl_hdf::ame_load(o2scl::nucmass_ame &ame, std::string file_name, 
 			 std::string table_name) {
 
-  size_t offset[23]={HOFFSET(o2scl::ame_mass::entry,NMZ),
-		     HOFFSET(o2scl::ame_mass::entry,N),
-		     HOFFSET(o2scl::ame_mass::entry,Z),
-		     HOFFSET(o2scl::ame_mass::entry,A),
-		     HOFFSET(o2scl::ame_mass::entry,el),
-		     HOFFSET(o2scl::ame_mass::entry,orig),
-		     HOFFSET(o2scl::ame_mass::entry,mass),
-		     HOFFSET(o2scl::ame_mass::entry,dmass),
-		     HOFFSET(o2scl::ame_mass::entry,mass_acc),
-		     HOFFSET(o2scl::ame_mass::entry,be),
-		     HOFFSET(o2scl::ame_mass::entry,dbe),
-		     HOFFSET(o2scl::ame_mass::entry,be_acc),
-		     HOFFSET(o2scl::ame_mass::entry,beoa),
-		     HOFFSET(o2scl::ame_mass::entry,dbeoa),
-		     HOFFSET(o2scl::ame_mass::entry,beoa_acc),
-		     HOFFSET(o2scl::ame_mass::entry,bdmode),
-		     HOFFSET(o2scl::ame_mass::entry,bde),
-		     HOFFSET(o2scl::ame_mass::entry,dbde),
-		     HOFFSET(o2scl::ame_mass::entry,bde_acc),
-		     HOFFSET(o2scl::ame_mass::entry,A2),
-		     HOFFSET(o2scl::ame_mass::entry,amass),
-		     HOFFSET(o2scl::ame_mass::entry,damass),
-		     HOFFSET(o2scl::ame_mass::entry,amass_acc)};
-  o2scl::ame_mass::entry ae;
+  size_t offset[23]={HOFFSET(o2scl::nucmass_ame::entry,NMZ),
+		     HOFFSET(o2scl::nucmass_ame::entry,N),
+		     HOFFSET(o2scl::nucmass_ame::entry,Z),
+		     HOFFSET(o2scl::nucmass_ame::entry,A),
+		     HOFFSET(o2scl::nucmass_ame::entry,el),
+		     HOFFSET(o2scl::nucmass_ame::entry,orig),
+		     HOFFSET(o2scl::nucmass_ame::entry,mass),
+		     HOFFSET(o2scl::nucmass_ame::entry,dmass),
+		     HOFFSET(o2scl::nucmass_ame::entry,mass_acc),
+		     HOFFSET(o2scl::nucmass_ame::entry,be),
+		     HOFFSET(o2scl::nucmass_ame::entry,dbe),
+		     HOFFSET(o2scl::nucmass_ame::entry,be_acc),
+		     HOFFSET(o2scl::nucmass_ame::entry,beoa),
+		     HOFFSET(o2scl::nucmass_ame::entry,dbeoa),
+		     HOFFSET(o2scl::nucmass_ame::entry,beoa_acc),
+		     HOFFSET(o2scl::nucmass_ame::entry,bdmode),
+		     HOFFSET(o2scl::nucmass_ame::entry,bde),
+		     HOFFSET(o2scl::nucmass_ame::entry,dbde),
+		     HOFFSET(o2scl::nucmass_ame::entry,bde_acc),
+		     HOFFSET(o2scl::nucmass_ame::entry,A2),
+		     HOFFSET(o2scl::nucmass_ame::entry,amass),
+		     HOFFSET(o2scl::nucmass_ame::entry,damass),
+		     HOFFSET(o2scl::nucmass_ame::entry,amass_acc)};
+  o2scl::nucmass_ame::entry ae;
   size_t sizes[23]={sizeof(ae.NMZ),
 		    sizeof(ae.N),
 		    sizeof(ae.Z),
@@ -90,9 +90,9 @@ void o2scl_hdf::ame_load(o2scl::ame_mass &ame, std::string file_name,
   }
   hf.gets_fixed("reference",reference);
     
-  o2scl::ame_mass::entry *m=new o2scl::ame_mass::entry[nrecords];
+  o2scl::nucmass_ame::entry *m=new o2scl::nucmass_ame::entry[nrecords];
   herr_t status=H5TBread_table(file,table_name.c_str(),
-			       sizeof(o2scl::ame_mass::entry),
+			       sizeof(o2scl::nucmass_ame::entry),
 			       offset,sizes,m);
   ame.n=nrecords;
   ame.mass=m;
@@ -104,7 +104,7 @@ void o2scl_hdf::ame_load(o2scl::ame_mass &ame, std::string file_name,
   return;
 }
 
-void o2scl_hdf::ame_load(o2scl::ame_mass &ame, std::string name) {
+void o2scl_hdf::ame_load(o2scl::nucmass_ame &ame, std::string name) {
   
   std::string file_name, table_name;
   file_name=o2scl::o2scl_settings.get_data_dir()+"/nucmass";
@@ -232,7 +232,7 @@ void o2scl_hdf::mnmsk_load(o2scl::mnmsk_mass &mnmsk, string dir) {
   return;
 }
 
-void o2scl_hdf::hfb_load(o2scl::hfb_mass &hfb, size_t model, 
+void o2scl_hdf::hfb_load(o2scl::nucmass_hfb &hfb, size_t model, 
 			string dir) {
     
   if (dir.size()==0) {
@@ -249,20 +249,20 @@ void o2scl_hdf::hfb_load(o2scl::hfb_mass &hfb, size_t model,
   }
   fname=dir+tname;
   
-  size_t offset[12]={HOFFSET(o2scl::hfb_mass_entry,N),
-		     HOFFSET(o2scl::hfb_mass_entry,Z),
-		     HOFFSET(o2scl::hfb_mass_entry,A),
-		     HOFFSET(o2scl::hfb_mass_entry,bet2),
-		     HOFFSET(o2scl::hfb_mass_entry,bet4),
-		     HOFFSET(o2scl::hfb_mass_entry,Rch),
-		     HOFFSET(o2scl::hfb_mass_entry,def_wig),
-		     HOFFSET(o2scl::hfb_mass_entry,Sn),
-		     HOFFSET(o2scl::hfb_mass_entry,Sp),
-		     HOFFSET(o2scl::hfb_mass_entry,Qbet),
-		     HOFFSET(o2scl::hfb_mass_entry,Mcal),
-		     HOFFSET(o2scl::hfb_mass_entry,Err)};
+  size_t offset[12]={HOFFSET(o2scl::nucmass_hfb_entry,N),
+		     HOFFSET(o2scl::nucmass_hfb_entry,Z),
+		     HOFFSET(o2scl::nucmass_hfb_entry,A),
+		     HOFFSET(o2scl::nucmass_hfb_entry,bet2),
+		     HOFFSET(o2scl::nucmass_hfb_entry,bet4),
+		     HOFFSET(o2scl::nucmass_hfb_entry,Rch),
+		     HOFFSET(o2scl::nucmass_hfb_entry,def_wig),
+		     HOFFSET(o2scl::nucmass_hfb_entry,Sn),
+		     HOFFSET(o2scl::nucmass_hfb_entry,Sp),
+		     HOFFSET(o2scl::nucmass_hfb_entry,Qbet),
+		     HOFFSET(o2scl::nucmass_hfb_entry,Mcal),
+		     HOFFSET(o2scl::nucmass_hfb_entry,Err)};
     
-  o2scl::hfb_mass_entry he;
+  o2scl::nucmass_hfb_entry he;
 
   size_t sizes[12]={sizeof(he.N),
 		    sizeof(he.Z),
@@ -289,9 +289,9 @@ void o2scl_hdf::hfb_load(o2scl::hfb_mass &hfb, size_t model,
   }
   hf.gets("reference",reference);
 
-  o2scl::hfb_mass_entry *m=new o2scl::hfb_mass_entry[nrecords];
+  o2scl::nucmass_hfb_entry *m=new o2scl::nucmass_hfb_entry[nrecords];
   herr_t status=H5TBread_table
-    (file,tname.c_str(),sizeof(o2scl::hfb_mass_entry),offset,sizes,m);
+    (file,tname.c_str(),sizeof(o2scl::nucmass_hfb_entry),offset,sizes,m);
     
   hfb.set_data(nrecords,m,reference);
     

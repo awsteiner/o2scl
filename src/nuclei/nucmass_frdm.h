@@ -26,7 +26,7 @@
 #include <cmath>
 
 #include <o2scl/nucleus.h>
-#include <o2scl/nuclear_mass.h>
+#include <o2scl/nucmass.h>
 #include <o2scl/constants.h>
 
 #ifndef DOXYGEN_NO_O2NS
@@ -100,11 +100,11 @@ namespace o2scl {
 
       \future Add microscopic part.
   */
-  class frdm_mass : public nuclear_mass_fit {
+  class nucmass_frdm : public nucmass_fit_base {
 
   public:
 
-    frdm_mass();
+    nucmass_frdm();
 
     /// Volume-energy constant in MeV (default 16.247)
     double a1;
@@ -388,7 +388,7 @@ namespace o2scl {
       \note This class requires data stored in an HDF file and
       thus requires HDF support for normal usage.
   */
-  class mnmsk_mass : public nuclear_mass_table {
+  class mnmsk_mass : public nucmass_table {
 
   public:
     

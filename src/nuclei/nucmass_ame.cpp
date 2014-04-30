@@ -20,7 +20,7 @@
 
   -------------------------------------------------------------------
 */
-#include <o2scl/nuclear_mass.h>
+#include <o2scl/nucmass.h>
 #include <o2scl/hdf_nucmass_io.h>
 #include <o2scl/hdf_io.h>
 
@@ -28,30 +28,30 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-ame_mass::ame_mass() {
+nucmass_ame::nucmass_ame() {
   n=0;
   reference="";
   mass=0;
   last=0;
 }
 
-ame_mass::~ame_mass() {
+nucmass_ame::~nucmass_ame() {
   if (n>0) {
     delete[] mass;
   }
 }
 
-double ame_mass::mass_excess(int Z, int N) {
+double nucmass_ame::mass_excess(int Z, int N) {
   entry ret;
   ret=get_ZN(Z,N);
   if (ret.Z==0 && ret.N==0) return 0.0;
   return ret.mass/1.0e3;
 }
 
-bool ame_mass::is_included(int l_Z, int l_N) {
+bool nucmass_ame::is_included(int l_Z, int l_N) {
 
   if (n==0) {
-    O2SCL_ERR_RET("No masses loaded in ame_mass::is_included().",
+    O2SCL_ERR_RET("No masses loaded in nucmass_ame::is_included().",
 		  exc_einval);
   }
 
@@ -124,9 +124,9 @@ bool ame_mass::is_included(int l_Z, int l_N) {
   return false;
 }
 
-bool ame_mass_exp::is_included(int l_Z, int l_N) {
+bool nucmass_ame_exp::is_included(int l_Z, int l_N) {
   if (n==0) {
-    O2SCL_ERR_RET("No masses loaded in ame_mass_exp::is_included().",
+    O2SCL_ERR_RET("No masses loaded in nucmass_ame_exp::is_included().",
 		  exc_einval);
   }
   for(int i=0;i<n;i++) {
@@ -137,13 +137,13 @@ bool ame_mass_exp::is_included(int l_Z, int l_N) {
   return false;
 }
 
-ame_mass::entry ame_mass::get_ZN(int l_Z, int l_N) {
-  ame_mass::entry ret;
+nucmass_ame::entry nucmass_ame::get_ZN(int l_Z, int l_N) {
+  nucmass_ame::entry ret;
   ret.Z=0;
   ret.A=0;
   ret.N=0;
   if (n==0) {
-    O2SCL_ERR("No masses loaded in ame_mass::get_ZN().",
+    O2SCL_ERR("No masses loaded in nucmass_ame::get_ZN().",
 	      exc_einval);
     return ret;
   }
@@ -155,13 +155,13 @@ ame_mass::entry ame_mass::get_ZN(int l_Z, int l_N) {
   return ret;
 }
 
-ame_mass::entry ame_mass::get_ZA(int l_Z, int l_A) {
-  ame_mass::entry ret;
+nucmass_ame::entry nucmass_ame::get_ZA(int l_Z, int l_A) {
+  nucmass_ame::entry ret;
   ret.Z=0;
   ret.A=0;
   ret.N=0;
   if (n==0) {
-    O2SCL_ERR("No masses loaded in ame_mass::get_ZA().",
+    O2SCL_ERR("No masses loaded in nucmass_ame::get_ZA().",
 	      exc_einval);
     return ret;
   }
@@ -173,13 +173,13 @@ ame_mass::entry ame_mass::get_ZA(int l_Z, int l_A) {
   return ret;
 }
 
-ame_mass::entry ame_mass::get_elA(string l_el, int l_A) {
-  ame_mass::entry ret;
+nucmass_ame::entry nucmass_ame::get_elA(string l_el, int l_A) {
+  nucmass_ame::entry ret;
   ret.Z=0;
   ret.A=0;
   ret.N=0;
   if (n==0) {
-    O2SCL_ERR("No masses loaded in ame_mass::get_elA().",
+    O2SCL_ERR("No masses loaded in nucmass_ame::get_elA().",
 	      exc_einval);
     return ret;
   }
@@ -191,11 +191,11 @@ ame_mass::entry ame_mass::get_elA(string l_el, int l_A) {
   return ret;
 }
 
-ame_mass::entry ame_mass::get(string nucleus) {
+nucmass_ame::entry nucmass_ame::get(string nucleus) {
   if (n==0) {
-    O2SCL_ERR("No masses loaded in ame_mass::get().",
+    O2SCL_ERR("No masses loaded in nucmass_ame::get().",
 	      exc_einval);
-    ame_mass::entry ret;
+    nucmass_ame::entry ret;
     ret.Z=0;
     ret.A=0;
     ret.N=0;

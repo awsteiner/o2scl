@@ -29,9 +29,9 @@
 #include <o2scl/multi_funct.h>
 #include <o2scl/mmin.h>
 #include <o2scl/mmin_simp2.h>
-#include <o2scl/nuclear_mass.h>
-#include <o2scl/ame_mass.h>
-#include <o2scl/nuclear_dist.h>
+#include <o2scl/nucmass.h>
+#include <o2scl/nucmass_ame.h>
+#include <o2scl/nucdist.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -40,11 +40,11 @@ namespace o2scl {
   /** \brief Fit a nuclear mass formula
 
       There is an example of the usage of this class given in 
-      \ref ex_mass_fit_sect.
+      \ref ex_nucmass_fit_sect.
 
       \future Convert to a real fit with errors and covariance, etc.
    */
-  class mass_fit {
+  class nucmass_fit {
 
   public:
   
@@ -52,9 +52,9 @@ namespace o2scl {
     typedef boost::numeric::ublas::vector<int> ubvector_int;
     typedef boost::numeric::ublas::vector<size_t> ubvector_size_t;
 
-    mass_fit();
+    nucmass_fit();
     
-    virtual ~mass_fit() {};
+    virtual ~nucmass_fit() {};
 
     /// \name Fitting method
     //@{
@@ -80,11 +80,11 @@ namespace o2scl {
     int minN;
 
     /// Fit the nuclear mass formula
-    virtual void fit(nuclear_mass_fit &n, double &res);
+    virtual void fit(nucmass_fit_base &n, double &res);
     
     /** \brief Evaluate quality without fitting
      */
-    virtual void eval(nuclear_mass &n, double &res);
+    virtual void eval(nucmass &n, double &res);
 
     /** \brief The default minimizer
 
@@ -102,10 +102,10 @@ namespace o2scl {
     
     /** \brief The default distribution of nuclei to fit
     */
-    full_dist def_dist;
+    nucdist_full def_dist;
 
     /// Set the distribution of nuclei to fit
-    void set_dist(nuclear_dist &uexp) {
+    void set_dist(nucdist &uexp) {
       exp=&uexp;
       return;
     }
@@ -114,7 +114,7 @@ namespace o2scl {
     template<class vec_t>
       void set_uncerts(size_t nv, vec_t &u) {
       if (nv==0) {
-	O2SCL_ERR2("Tried to give zero uncertainties in mass_fit::",
+	O2SCL_ERR2("Tried to give zero uncertainties in nucmass_fit::",
 		   "set_uncerts().",exc_efailed);
       }
       if (uncs.size()>0) uncs.clear();
@@ -124,15 +124,15 @@ namespace o2scl {
     }
     
     /// Set the experimental masses for use in the default distribution
-    void set_exp_mass(nuclear_mass &nm, int maxA=400, 
+    void set_exp_mass(nucmass &nm, int maxA=400, 
 		     bool include_neutron=false);
 
     /// Desc
-    void eval_isospin_beta(nuclear_mass &n, ubvector_int &n_qual,
+    void eval_isospin_beta(nucmass &n, ubvector_int &n_qual,
 			   ubvector &qual, int max_iso=20);
     
     /// Desc
-    void eval_isospin(nuclear_mass &n, ubvector_int &n_qual,
+    void eval_isospin(nucmass &n, ubvector_int &n_qual,
 		      ubvector &qual, int min_iso=-8, int max_iso=60);
 
     /** \brief The function to minimize
@@ -153,10 +153,10 @@ namespace o2scl {
 
 	This pointer is set by fit() and eval().
      */
-    nuclear_mass_fit *nmf;
+    nucmass_fit_base *nmf;
     
     /// A pointer to the nuclear distribution (defaults to \ref def_dist)
-    nuclear_dist *exp;
+    nucdist *exp;
 
 #endif
 

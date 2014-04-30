@@ -23,7 +23,7 @@
 #ifndef O2SCL_KTUY_MASS_H
 #define O2SCL_KTUY_MASS_H
 
-#include <o2scl/nuclear_mass.h>
+#include <o2scl/nucmass.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -62,20 +62,20 @@ namespace o2scl {
     /// Alpha 6 deformation
     double alpha6;
 
-  } ktuy_mass_entry;
+  } nucmass_ktuy_entry;
 
   /** \brief KTUY Mass formula 
    */
-  class ktuy_mass : public nuclear_mass_table {
+  class nucmass_ktuy : public nucmass_table {
     
   public:
     
     /** \brief Create a new mass formula object using the specified model
 	number
     */
-    ktuy_mass(std::string model="05", bool external=false);
+    nucmass_ktuy(std::string model="05", bool external=false);
 
-    virtual ~ktuy_mass();
+    virtual ~nucmass_ktuy();
 
     /** \brief Return false if the mass formula does not include 
 	specified nucleus
@@ -91,13 +91,13 @@ namespace o2scl {
 	algorithm. It is assumed that the table is sorted first by
 	proton number and then by neutron number.
     */
-    ktuy_mass_entry get_ZN(int l_Z, int l_N);
+    nucmass_ktuy_entry get_ZN(int l_Z, int l_N);
     
     /// Verify that the constructor properly loaded the table
     bool is_loaded() { return (n>0); }
     
-    /// Return the type, \c "ktuy_mass".
-    virtual const char *type() { return "ktuy_mass"; }
+    /// Return the type, \c "nucmass_ktuy".
+    virtual const char *type() { return "nucmass_ktuy"; }
 
     /// Return number of entries
     int get_nentries() { return n; }
@@ -113,7 +113,7 @@ namespace o2scl {
     std::string reference;
     
     /// The array containing the mass data of length ame::n
-    ktuy_mass_entry *mass;
+    nucmass_ktuy_entry *mass;
     
     /// The last table index for caching
     int last;

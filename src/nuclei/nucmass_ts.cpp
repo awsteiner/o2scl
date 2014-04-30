@@ -22,12 +22,12 @@
 */
 #include <iostream>
 #include <o2scl/test_mgr.h>
-#include <o2scl/nuclear_mass.h>
-#include <o2scl/hfb_mass.h>
-#include <o2scl/ame_mass.h>
+#include <o2scl/nucmass.h>
+#include <o2scl/nucmass_hfb.h>
+#include <o2scl/nucmass_ame.h>
 #include <o2scl/hdf_nucmass_io.h>
-#include <o2scl/frdm_mass.h>
-#include <o2scl/ktuy_mass.h>
+#include <o2scl/nucmass_frdm.h>
+#include <o2scl/nucmass_ktuy.h>
 
 using namespace std;
 using namespace o2scl;
@@ -43,7 +43,7 @@ int main(void) {
 
   // Test parse_elstring()
   {
-    nuclear_mass_info nmi;
+    nucmass_info nmi;
     int tN, tZ, tA; 
     nmi.parse_elstring("Uuo300",tZ,tN,tA);
     t.test_gen(tZ==118,"parse1");
@@ -124,15 +124,15 @@ int main(void) {
 
   // Create an instance of all the various mass formulae
 
-  ame_mass ame;
+  nucmass_ame ame;
   o2scl_hdf::ame_load(ame,"03");
-  ame_mass ame95rmd;
+  nucmass_ame ame95rmd;
   o2scl_hdf::ame_load(ame95rmd,"95rmd");
-  ame_mass ame03round;
+  nucmass_ame ame03round;
   o2scl_hdf::ame_load(ame03round,"03round");
-  ame_mass ame95exp;
+  nucmass_ame ame95exp;
   o2scl_hdf::ame_load(ame95exp,"95exp");
-  ame_mass ame12;
+  nucmass_ame ame12;
   o2scl_hdf::ame_load(ame12,"12");
 
   // Output the references
@@ -148,18 +148,18 @@ int main(void) {
   mnmsk_mass m95;
   o2scl_hdf::mnmsk_load(m95);
   
-  ktuy_mass kt("04");
-  ktuy_mass kt2("05");
+  nucmass_ktuy kt("04");
+  nucmass_ktuy kt2("05");
   
-  hfb_mass hfb2;
+  nucmass_hfb hfb2;
   o2scl_hdf::hfb_load(hfb2,2);
-  hfb_mass hfb8;
+  nucmass_hfb hfb8;
   o2scl_hdf::hfb_load(hfb8,8);
-  hfb_mass hfb14;
+  nucmass_hfb hfb14;
   o2scl_hdf::hfb_load(hfb14,14);
 
   // Set up generic pointers for testing
-  nuclear_mass_table *nmd[10]={&ame,&ame95rmd,&ame03round,&ame95exp,
+  nucmass_table *nmd[10]={&ame,&ame95rmd,&ame03round,&ame95exp,
 			      &m95,&kt,&kt2,&hfb2,&hfb8,
 			      &hfb14};
 

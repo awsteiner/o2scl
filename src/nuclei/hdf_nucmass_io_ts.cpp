@@ -22,7 +22,7 @@
 */
 #include <iostream>
 #include <o2scl/test_mgr.h>
-#include <o2scl/nuclear_mass.h>
+#include <o2scl/nucmass.h>
 #include <o2scl/hdf_nucmass_io.h>
 
 using namespace std;

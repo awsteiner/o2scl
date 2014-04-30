@@ -20,22 +20,22 @@
 
   -------------------------------------------------------------------
 */
-#include <o2scl/nuclear_dist.h>
+#include <o2scl/nucdist.h>
 
 using namespace std;
 using namespace o2scl;
 
-bool o2scl::operator==(const nuclear_dist::iterator &i1,
-		      const nuclear_dist::iterator &i2) {
+bool o2scl::operator==(const nucdist::iterator &i1,
+		      const nucdist::iterator &i2) {
   return i1.np==i2.np;
 }
 
-bool o2scl::operator!=(const nuclear_dist::iterator &i1,
-	       const nuclear_dist::iterator &i2) {
+bool o2scl::operator!=(const nucdist::iterator &i1,
+	       const nucdist::iterator &i2) {
   return i1.np!=i2.np;
 }
 
-full_dist::full_dist(nuclear_mass &nm, int maxA, 
+nucdist_full::nucdist_full(nucmass &nm, int maxA, 
 		     bool include_neutron) {
   nucleus n;
   list_size=0;
@@ -74,7 +74,7 @@ full_dist::full_dist(nuclear_mass &nm, int maxA,
   }
 }
 
-int full_dist::set_dist(nuclear_mass &nm, int maxA, 
+int nucdist_full::set_dist(nucmass &nm, int maxA, 
 			bool include_neutron) {
   
   if (list_size>0) delete[] list;
