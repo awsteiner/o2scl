@@ -24,21 +24,21 @@
 #include <config.h>
 #endif
 
-#include <o2scl/eos.h>
+#include <o2scl/eos_base.h>
 
 using namespace std;
 using namespace o2scl;
 
-eos::eos() {
+eos_base::eos_base() {
   eos_thermo=&def_thermo;
 }
 
-int eos::get_thermo(thermo *&th) {
+int eos_base::get_thermo(thermo *&th) {
   th=eos_thermo; 
   return success; 
 }
 
-int eos::set_thermo(thermo &th) {
+int eos_base::set_thermo(thermo &th) {
   eos_thermo=&th;
   return success;
 }

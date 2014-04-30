@@ -20,85 +20,154 @@
 
   -------------------------------------------------------------------
 */
-#include <o2scl/constants.h>
-#include <o2scl/fermion.h>
-#include <o2scl/eos_had_rmf_delta.h>
-#include <o2scl/test_mgr.h>
+#ifndef O2SCL_RMF_DELTA_EOS_H
+#define O2SCL_RMF_DELTA_EOS_H
 
-using namespace std;
-using namespace o2scl;
-using namespace o2scl_const;
+#include <o2scl/eos_had_rmf.h>
 
-int main(void) {
-  eos_had_rmf_delta red;
-  double gs;
-  test_mgr t;
-  t.set_output_level(1);
+#ifndef DOXYGEN_NO_O2NS
+namespace o2scl {
+#endif
   
-  cout.setf(ios::scientific);
+  /** \brief Field-theoretical EOS with scalar-isovector meson, 
+      \f$ \delta \f$.
 
-  fermion n(939.0/hc_mev_fm,2.0), p(939.0/hc_mev_fm,2.0);
-  n.non_interacting=false;
-  p.non_interacting=false;
-  red.set_n_and_p(n,p);
+      This essentially follows the notation in \ref Kubis97, except
+      that our definitions of \c b and \c c follow their \f$ \bar{b}
+      \f$ and \f$ \bar{c} \f$, respectively.
+
+      Also discussed in \ref Gaitanos04, where they take
+      \f$ m_{\delta}=980 \f$ MeV.
+
+      The full Lagragian is:
+
+      \f[
+      {\cal L} = {\cal L}_{Dirac} + {\cal L}_{\sigma} + 
+      {\cal L}_{\omega} + {\cal L}_{\rho} + {\cal L}_{\delta}
+      \f]
+    
+      \f{eqnarray*}
+      {\cal L}_{Dirac} &=& 
+      \bar{\Psi} \left[ i {{\partial}\!\!\!{\slash}} - 
+      g_{\omega} {{\omega}\!\!\!{\slash}} - \frac{g_{\rho}}{2} 
+      {{\vec{\rho}}\!\!\!{\slash}}~
+      \vec{\tau} - M + g_{\sigma} \sigma - \frac{e}{2} 
+      \left( 1 + \tau_3 \right) A_{\mu} \right] \Psi \nonumber \\
+      {\cal L}_{\sigma} &=& 
+      {\textstyle \frac{1}{2}} \left( \partial_{\mu} \sigma \right)^2 
+      - {\textstyle \frac{1}{2}} m^2_{\sigma} \sigma^2 
+      - \frac{b M}{3} \left( g_{\sigma} \sigma\right)^3 
+      - \frac{c}{4} \left( g_{\sigma} \sigma\right)^4  \nonumber \\
+      {\cal L}_{\omega} &=& 
+      - {\textstyle \frac{1}{4}} f_{\mu \nu} f^{\mu \nu} 
+      + {\textstyle \frac{1}{2}} m^2_{\omega}\omega^{\mu}\omega_{\mu} 
+      + \frac{\zeta}{24} g_{\omega}^4 \left(\omega^\mu \omega_\mu\right)^2
+      \nonumber \\
+      {\cal L}_{\rho} &=& 
+      - {\textstyle \frac{1}{4}} \vec{B}_{\mu \nu} \cdot \vec{B}^{\mu \nu}
+      + {\textstyle \frac{1}{2}} m^2_{\rho} \vec{\rho}^{~\mu} \cdot 
+      \vec{\rho}_{~\mu} 
+      + \frac{\xi}{24} g_{\rho}^4 \left(\vec{\rho}^{~\mu}\right) \cdot 
+      \vec{\rho}_{~\mu} 
+      + g_{\rho}^2 f (\sigma, \omega) \vec{\rho}^{~\mu} \cdot 
+      \vec{\rho}_{~\mu} \nonumber \\
+      \f}
+      where the additional terms are
+
+      \f[
+      {\cal L}_{\delta} = \bar{\Psi} \left( g_{\delta} \vec{\delta} \cdot 
+      \vec{\tau} \right) \Psi 
+      + \frac{1}{2} (\partial_{\mu} \vec{\delta})^2 - 
+      \frac{1}{2} m_{\delta}^2 \vec{\delta}^{~2}
+      \f]
+
+      The new field equation for the delta meson is
+      \f[
+      m_{\delta}^2 \delta = g_{\delta} (n_{s,p} - n_{s,n})
+      \f]
+
+      \future Finish the finite temperature EOS 
+
+   */
+  class eos_had_rmf_delta : public eos_had_rmf {
+  public:
+
+    /// The mass of the scalar-isovector field
+    double md;
+
+    /// The coupling of the scalar-isovector field to the nucleons
+    double cd;
+
+    /// The value of the scalar-isovector field
+    double del;
+    
+    /** \brief Equation of state as a function of density
+    */
+    virtual int calc_e(fermion &ne, fermion &pr, thermo &lth);
+
+    /** \brief Equation of state as a function of chemical potentials
+    */
+    virtual int calc_p(fermion &neu, fermion &p, 
+		       double sig, double ome, double rho, double delta,
+		       double &f1, double &f2, double &f3, double &f4,
+		       thermo& th);
+    
+    /** \brief Finite temperature (unfinished)
+     */
+    int calc_temp_p(fermion &ne, fermion &pr, double temper,
+		    double sig, double ome, double lrho, 
+		    double delta, double &f1, double &f2, 
+		    double &f3, double &f4, thermo& lth);
+      
+    /** \brief Set a guess for the fields for the next call to calc_e(), 
+	calc_p(), or saturation()
+    */
+    virtual int set_fields(double sig, double ome, double lrho, 
+			   double delta) {
+      sigma=sig;
+      omega=ome;
+      rho=lrho;
+      del=delta;
+      guess_set=true;
+      return 0;
+    }
+    
+    /** \brief Calculate saturation properties for nuclear matter 
+	at the saturation density
+	
+	This requires initial guesses to the chemical 
+	potentials, etc.
+    */
+    virtual void saturation();
+
+#ifndef DOXYGEN_INTERNAL
+
+  protected:
+
+    /// The function for calc_e()
+    virtual int calc_e_solve_fun(size_t nv, const ubvector &ex, 
+				 ubvector &ey);
+    
+    /// Compute matter at zero pressure (for saturation())
+    virtual int zero_pressure(size_t nv, const ubvector &ex, 
+			      ubvector &ey);
+    
+    
+  private:
+    
+    /** \brief Forbid setting the guesses to the fields unless all four
+	fields are specified
+    */
+    virtual int set_fields(double sig, double ome, double lrho) {
+      return 0;
+    }
+
+#endif
+    
+  };
   
-  cout << "Test Set I and Set II from PRC 65, 045201:" << endl;
-
-  red.mnuc=939.0/hc_mev_fm;
-  red.ms=550.0/hc_mev_fm;
-  red.mr=770.0/hc_mev_fm;
-  red.mw=783.0/hc_mev_fm;
-  red.md=980.0/hc_mev_fm;
-
-  red.n0=0.16;
-  red.comp=240.0/hc_mev_fm;
-  red.eoa=-16.0/hc_mev_fm;
-  red.esym=30.5/hc_mev_fm;
-  red.msom=0.75;
-  n.mu=4.8;
-  p.mu=4.8;
-  red.set_fields(0.1,0.07,-0.001,0.0);
-  red.fix_saturation();
-  t.test_rel(red.cs*red.cs,10.33,1.0e-3,"1");
-  t.test_rel(red.cw*red.cw,5.42,1.0e-3,"2");
-  t.test_rel(red.cr*red.cr/4.0,0.95,4.0e-2,"3");
-  t.test_rel(red.b*red.mnuc,0.033,1.0e-3,"4");
-  t.test_rel(red.c,-0.0048,1.0e-2,"5");
-  
-  red.cr=sqrt(3.15*4.0);
-  red.cd=sqrt(2.50);
-   
-  n.mu=4.8;
-  p.mu=4.8;
-  red.set_n_and_p(n,p);
-  red.set_fields(0.1,0.07,-0.001,0.0);
-  red.saturation();
-  t.test_rel(red.fesym(red.n0)*hc_mev_fm,30.5,1.0e-2,"6");
-
-  t.report();
-  cout << endl;
-  
-  cout << "Test \"stiff\" model from PLB 388 191." << endl;
-
-  red.cs=sqrt(11.25);
-  red.cw=sqrt(6.483);
-  red.cr=sqrt(10.0);
-  gs=red.cs*red.ms;
-  red.cd=sqrt(1.3);
-  red.b=0.003825;
-  red.c=3.5e-6;
-
-  n.mu=4.8;
-  p.mu=4.8;
-  red.set_n_and_p(n,p);
-  red.set_fields(0.1,0.07,-0.001,0.0);
-  red.saturation();
-
-  t.test_rel(red.n0,0.145,4.0e-3,"7");
-  t.test_rel(red.fesym(red.n0)*hc_mev_fm,34.0,1.0e-1,"8");
-
-  t.report();
-
-  return 0;
+#ifndef DOXYGEN_NO_O2NS
 }
-
+#endif
+  
+#endif

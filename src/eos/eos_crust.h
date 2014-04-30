@@ -25,7 +25,7 @@
 
 #include <o2scl/part.h>
 #include <o2scl/mroot.h>
-#include <o2scl/eos.h>
+#include <o2scl/eos_base.h>
 #include <o2scl/mroot_hybrids.h>
 #include <o2scl/fermion.h>
 #include <o2scl/nucmass.h>
@@ -78,7 +78,7 @@ namespace o2scl {
       associated interface?
 
   */
-  class eos_crust : public eos {
+  class eos_crust : public eos_base {
 
   public:
 

@@ -24,7 +24,7 @@
 #define O2SCL_QUARK_EOS_H
 
 #include <iostream>
-#include <o2scl/eos.h>
+#include <o2scl/eos_base.h>
 #include <o2scl/quark.h>
 #include <o2scl/fermion_eff.h>
 #include <o2scl/deriv.h>
@@ -36,7 +36,8 @@ namespace o2scl {
 
   /** \brief Quark matter equation of state base
   */
-  class eos_quark : public eos {
+  class eos_quark : public eos_base {
+
   public:
 
     eos_quark();

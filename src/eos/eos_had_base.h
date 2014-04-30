@@ -32,7 +32,7 @@
 #include <o2scl/mroot.h>
 #include <o2scl/mroot_hybrids.h>
 #include <o2scl/mm_funct.h>
-#include <o2scl/eos.h>
+#include <o2scl/eos_base.h>
 #include <o2scl/fermion_eff.h>
 #include <o2scl/part.h>
 
@@ -272,7 +272,7 @@ namespace o2scl {
       \future Could write a function to compute the "symmetry free energy"
       or the "symmetry entropy"
   */
-  class eos_had_base : public eos {
+  class eos_had_base : public eos_base {
 
   public:
     

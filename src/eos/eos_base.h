@@ -33,13 +33,13 @@ namespace o2scl {
     
       A base class for an equation of state
   */
-  class eos {
+  class eos_base {
 
   public:
 
-    eos();
+    eos_base();
 
-    virtual ~eos() {};
+    virtual ~eos_base() {};
 
     /// Set class thermo object
     virtual int set_thermo(thermo &th);
@@ -50,8 +50,8 @@ namespace o2scl {
     /// The default thermo object
     thermo def_thermo;
 
-    /// Return string denoting type ("eos")
-    virtual const char *type() { return "eos"; }
+    /// Return string denoting type ("eos_base")
+    virtual const char *type() { return "eos_base"; }
 
   protected:
 
