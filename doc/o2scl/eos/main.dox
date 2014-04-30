@@ -51,7 +51,7 @@
     - \subpage tovtoc
     - \subpage cnstar
     - \subpage bps_section
-    - \subpage rmf_nuc_section
+    - \subpage nucleus_rmf_section
     - \subpage sneos_section
     - \subpage eosref_section
     - \ref bug

@@ -89,16 +89,16 @@
     At finite temperature, there are different classes corresponding
     to different approaches to computing the integrals over the
     distribution functions. The approximation scheme from \ref Johns96
-    is used in eff_boson and eff_fermion. An exact method employing
+    is used in boson_eff and fermion_eff. An exact method employing
     direct integration of the distribution functions is used in
-    rel_boson and rel_fermion, but these are necessarily quite a bit
+    rel_boson and fermion_rel, but these are necessarily quite a bit
     slower.
 
-    The class \ref o2scl::eff_fermion usually works to within about 1 part in
+    The class \ref o2scl::fermion_eff usually works to within about 1 part in
     \f$ 10^4 \f$, but can be as bad as 1 part in \f$ 10^2 \f$ in some
-    more extreme cases. The default settings for \ref o2scl::rel_fermion give
+    more extreme cases. The default settings for \ref o2scl::fermion_rel give
     an accuracy of at least 1 part in \f$ 10^6 \f$ (and frequently
-    better than this). For \ref o2scl::rel_fermion, some additional accuracy
+    better than this). For \ref o2scl::fermion_rel, some additional accuracy
     may be obtained by decreasing the integration tolerances.
     \comment
     7/6/09 - These tolerances were determined from bm_part2.cpp using
@@ -106,10 +106,10 @@
     testing in bm_part.cpp is really that useful. 
     \endcomment
 
-    The class nonrel_fermion assumes a non-relativistic dispersion
+    The class fermion_nonrel assumes a non-relativistic dispersion
     relation for fermions. It includes zero-temperature methods and an
     exact method for finite temperatures. The non-relativistic
-    integrands are much simpler and \ref o2scl::nonrel_fermion uses the
+    integrands are much simpler and \ref o2scl::fermion_nonrel uses the
     appropriate GSL functions (which are nearly exact) to compute
     them.
 
@@ -120,9 +120,9 @@
     addition to the energy and pressure. The new data classes are
     children of \ref o2scl::part_deriv . The three classes which
     compute these derivatives for fermions and classical particles.
-    The class \ref o2scl::sn_classical handles the nondegenerate
-    limit, \ref o2scl::sn_fermion handles fermions and \ref
-    o2scl::sn_nr_fermion handles nonrelativistic fermions. These
+    The class \ref o2scl::classical_deriv handles the nondegenerate
+    limit, \ref o2scl::fermion_deriv_rel handles fermions and \ref
+    o2scl::fermion_deriv_nr handles nonrelativistic fermions. These
     classes compute the derivatives
     \f[
     \left(\frac{d n}{d \mu}\right)_{T}, \quad

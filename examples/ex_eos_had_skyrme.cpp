@@ -21,7 +21,7 @@
   -------------------------------------------------------------------
 */
 
-/* Example: ex_skyrme_eos.cpp
+/* Example: ex_eos_had_skyrme.cpp
    -------------------------------------------------------------------
 */
 #include <o2scl/test_mgr.h>
@@ -99,7 +99,7 @@ public:
 /** \brief Class to analyze Skyrme EOSs and output the results
     [Example class]
  */
-class ex_skyrme_eos {
+class ex_eos_had_skyrme {
 
 protected:
 
@@ -168,7 +168,7 @@ public:
   /// Prefix for output files
   string file_prefix;
 
-  ex_skyrme_eos() {
+  ex_eos_had_skyrme() {
 
     // Ensure that this works without GNU units
     o2scl_settings.get_convert_units().use_gnu_units=false;
@@ -792,13 +792,13 @@ int main(int argv, char *argc[]) {
 
   cout.setf(ios::scientific);
   
-  ex_skyrme_eos se;
+  ex_eos_had_skyrme se;
 
   // ---------------------------------------
   // Specify command-line option object
 
   cli cl;
-  cl.prompt="ex_skyrme_eos> ";
+  cl.prompt="ex_eos_had_skyrme> ";
 
   int comm_option_cl_param=1;
   int comm_option_both=2;
@@ -806,25 +806,25 @@ int main(int argv, char *argc[]) {
   static const int narr=5;
   comm_option_s options_arr[narr]={
     {0,"run-all","Run all internally stored Skyrme models",0,0,"","",
-     new comm_option_mfptr<ex_skyrme_eos>(&se,&ex_skyrme_eos::run_all),
+     new comm_option_mfptr<ex_eos_had_skyrme>(&se,&ex_eos_had_skyrme::run_all),
      comm_option_both},
     {'s',"store","Store current model",1,1,"","",
-     new comm_option_mfptr<ex_skyrme_eos>(&se,&ex_skyrme_eos::store),
+     new comm_option_mfptr<ex_eos_had_skyrme>(&se,&ex_eos_had_skyrme::store),
      comm_option_both},
     {'l',"load","Load internally stored model",1,1,"","",
-     new comm_option_mfptr<ex_skyrme_eos>(&se,&ex_skyrme_eos::load),
+     new comm_option_mfptr<ex_eos_had_skyrme>(&se,&ex_eos_had_skyrme::load),
      comm_option_both},
-    {'t',"test","Test ex_skyrme_eos",0,0,"","",
-     new comm_option_mfptr<ex_skyrme_eos>(&se,&ex_skyrme_eos::test),
+    {'t',"test","Test ex_eos_had_skyrme",0,0,"","",
+     new comm_option_mfptr<ex_eos_had_skyrme>(&se,&ex_eos_had_skyrme::test),
      comm_option_both},
     {'u',"summary","Summarize the properties of a Skyrme model",
      1,1,"<model>","",
-     new comm_option_mfptr<ex_skyrme_eos>(&se,&ex_skyrme_eos::summary),
+     new comm_option_mfptr<ex_eos_had_skyrme>(&se,&ex_eos_had_skyrme::summary),
      comm_option_both}
   };
 
   cl.set_comm_option_vec(narr,options_arr);
-  cl.cmd_name="ex_skyrme_eos";
+  cl.cmd_name="ex_eos_had_skyrme";
 
   // ---------------------------------------
   // Set the parameters

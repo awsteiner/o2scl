@@ -49,12 +49,12 @@ int main(void) {
   nucmass_ame au;
   o2scl_hdf::ame_load(au);
 
-  semi_empirical_mass sm;
+  nucmass_semi_empirical sm;
   nucmass_ldrop ld;
   eos_had_apr apr;
 
   cout << "\nTest rms_radius: " << endl;
-  rms_radius rr;
+  nucmass_radius rr;
   double r1, r2, r3;
   // First compute the radii assuming the central density is 0.092
   rr.eval_rms_rho(0.092,126,0.3,r1,r2,r3);

@@ -1,16 +1,16 @@
-/** \page rmf_nuc_section Nuclear structure in the Hartree approximation
+/** \page nucleus_rmf_section Nuclear structure in the Hartree approximation
 
-    See class \ref o2scl::rmf_nucleus .
+    See class \ref o2scl::nucleus_rmf .
 
-    \section ex_rmf_nuc_sect Nucleus in the Hartree approximation example
+    \section ex_nucleus_rmf_sect Nucleus in the Hartree approximation example
 
-    This example uses the NL3 EOS as implemented in \ref o2scl::rmf_eos and
+    This example uses the NL3 EOS as implemented in \ref o2scl::eos_had_rmf and
     computes the structure of \f$ ^{208}\mathrm{Pb} \f$ using \ref
-    o2scl::rmf_nucleus. The results are stored in \ref o2scl::table_units objects
+    o2scl::nucleus_rmf. The results are stored in \ref o2scl::table_units objects
     and output to HDF files. It also computes the energy of
     three unoccupied neutron and proton levels. 
     
-    \dontinclude ex_rmf_nuc.cpp
+    \dontinclude ex_nucleus_rmf.cpp
     \skip Example:
     \until End of example
 
@@ -18,6 +18,6 @@
     \image latex ex_nuc_prof.eps "Nucleon density distributions in Pb-208" width=9cm
 
     Typical output:
-    \verbinclude ex_rmf_nuc.scr
+    \verbinclude ex_nucleus_rmf.scr
 
 */

@@ -58,34 +58,34 @@ int main(void) {
 
   // Test the size of the distributions
 
-  full_dist fd(mth);
+  nucdist_full fd(mth);
   size_t cnt=0;
   for(nucdist::iterator ndi=fd.begin();ndi!=fd.end();ndi++) {
     cnt++;
   }
   cout << "fd size: " << fd.size() << endl;
-  t.test_gen(fd.size()==8979,"full_dist size 1");
-  t.test_gen(cnt==8979,"full_dist size 1b");
+  t.test_gen(fd.size()==8979,"nucdist_full size 1");
+  t.test_gen(cnt==8979,"nucdist_full size 1b");
 
-  full_dist fd2(ame03);
+  nucdist_full fd2(ame03);
   cout << "fd2 size: " << fd2.size() << endl;
-  t.test_gen(fd2.size()==3178,"full_dist size 2");
+  t.test_gen(fd2.size()==3178,"nucdist_full size 2");
 
-  full_dist fd3(amex03);
+  nucdist_full fd3(amex03);
   cout << "fd3 size: " << fd3.size() << endl;
-  t.test_gen(fd3.size()==2227,"full_dist size 3");
+  t.test_gen(fd3.size()==2227,"nucdist_full size 3");
 
-  full_dist fd4(mexp);
+  nucdist_full fd4(mexp);
   cout << "fd4 size: " << fd4.size() << endl;
-  t.test_gen(fd4.size()==1654,"full_dist size 4");
+  t.test_gen(fd4.size()==1654,"nucdist_full size 4");
 
-  full_dist fd5(ame12);
+  nucdist_full fd5(ame12);
   cout << "fd5 size: " << fd5.size() << endl;
-  t.test_gen(fd5.size()==3352,"full_dist size 5");
+  t.test_gen(fd5.size()==3352,"nucdist_full size 5");
 
-  full_dist fd6(amex12);
+  nucdist_full fd6(amex12);
   cout << "fd6 size: " << fd6.size() << endl;
-  t.test_gen(fd6.size()==2437,"full_dist size 6");
+  t.test_gen(fd6.size()==2437,"nucdist_full size 6");
 
   t.report();
   return 0;

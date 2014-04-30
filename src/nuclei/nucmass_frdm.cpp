@@ -298,17 +298,17 @@ double nucmass_frdm::drip_mass_excess_d(double Z, double N,
   return ret;
 }
 
-mnmsk_mass::mnmsk_mass() {
+nucmass_mnmsk::nucmass_mnmsk() {
   n=0;
 }
 
-mnmsk_mass::~mnmsk_mass() {
+nucmass_mnmsk::~nucmass_mnmsk() {
   if (n>0) {
     delete[] mass;
   }
 }
 
-int mnmsk_mass::set_data(int n_mass, mnmsk_mass_entry *m, std::string ref) {
+int nucmass_mnmsk::set_data(int n_mass, nucmass_mnmsk_entry *m, std::string ref) {
   n=n_mass;
   mass=m;
   reference=ref;
@@ -316,14 +316,14 @@ int mnmsk_mass::set_data(int n_mass, mnmsk_mass_entry *m, std::string ref) {
   return 0;
 }
 
-double mnmsk_mass::mass_excess(int Z, int N) {
-  mnmsk_mass_entry ret;
+double nucmass_mnmsk::mass_excess(int Z, int N) {
+  nucmass_mnmsk_entry ret;
   ret=get_ZN(Z,N);
   if (ret.Z==0 && ret.N==0) return 0.0;
   return ret.Mth;
 }
 
-bool mnmsk_mass::is_included(int l_Z, int l_N) {
+bool nucmass_mnmsk::is_included(int l_Z, int l_N) {
   int lo=0, hi=0, mid=last;
 
   // binary search for the correct Z first
@@ -372,7 +372,7 @@ bool mnmsk_mass::is_included(int l_Z, int l_N) {
   return false;
 }
 
-bool mnmsk_mass_exp::is_included(int l_Z, int l_N) {
+bool nucmass_mnmsk_exp::is_included(int l_Z, int l_N) {
   int lo=0, hi=0, mid=last;
 
   // binary search for the correct Z first
@@ -430,17 +430,17 @@ bool mnmsk_mass_exp::is_included(int l_Z, int l_N) {
   return false;
 }
 
-double mnmsk_mass_exp::mass_excess(int Z, int N) {
-  mnmsk_mass_entry ret;
+double nucmass_mnmsk_exp::mass_excess(int Z, int N) {
+  nucmass_mnmsk_entry ret;
   ret=get_ZN(Z,N);
   if (ret.Z==0 && ret.N==0) return 0.0;
   return ret.Mexp;
 }
 
-mnmsk_mass_entry mnmsk_mass::get_ZN(int l_Z, int l_N) {
+nucmass_mnmsk_entry nucmass_mnmsk::get_ZN(int l_Z, int l_N) {
   int lo=0, hi=0, mid=last;
   
-  mnmsk_mass_entry ret;
+  nucmass_mnmsk_entry ret;
   ret.Z=0;
   ret.A=0;
   ret.N=0;
@@ -466,7 +466,7 @@ mnmsk_mass_entry mnmsk_mass::get_ZN(int l_Z, int l_N) {
     if (mass[mid].Z!=l_Z) mid=hi;
     if (mass[mid].Z!=l_Z) {
       O2SCL_ERR((((string)"Nuclei with Z=")+itos(l_Z) 
-		 +" not found in mnmsk_mass::get_ZN().").c_str(),
+		 +" not found in nucmass_mnmsk::get_ZN().").c_str(),
 		exc_enotfound);
     }
   }
@@ -492,7 +492,7 @@ mnmsk_mass_entry mnmsk_mass::get_ZN(int l_Z, int l_N) {
   }
   
   O2SCL_ERR((((string)"Nucleus with Z=")+itos(l_Z)+" and N="+itos(l_N)
-	     +" not found in mnmsk_mass::get_ZN().").c_str(),exc_enotfound);
+	     +" not found in nucmass_mnmsk::get_ZN().").c_str(),exc_enotfound);
   return ret;
 }
 

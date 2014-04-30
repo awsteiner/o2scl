@@ -36,7 +36,7 @@ EXAMPLE_PRGS = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 	ex_cold_nstar.scr ex_mroot.scr ex_mmin.scr ex_apr_eos.scr \
 	ex_inte.scr ex_deriv.scr ex_part.scr ex_ode.scr ex_anneal.scr \
 	ex_mcarlo.scr ex_string.scr ex_contour.scr ex_bps_eos.scr \
-	ex_mmin_fix.scr ex_mass_fit.scr \
+	ex_mmin_fix.scr ex_nucmass_fit.scr \
 	ex_stiff.scr ex_markov.scr ex_chebapp.scr ex_poly.scr ex_conmin.scr \
 	ex_rmf_nuc.scr ex_methast.scr ex_skyrme_eos.scr ex_nucmass.scr \
 	ex_minte.scr
@@ -146,7 +146,7 @@ EXTRA_PROGRAMS = \
 	ex_hydrogen \
 	ex_mmin_fix \
 	ex_stiff \
-	ex_mass_fit \
+	ex_nucmass_fit \
 	ex_const_vec \
 	ex_methast \
 	ex_markov \
@@ -278,10 +278,10 @@ ex_part_SOURCES = ex_part.cpp
 ex_part.scr: ex_part
 	./ex_part > ex_part.scr
 
-ex_mass_fit_LDADD = $(OOLIBS) $(OOLIBSTWO)
-ex_mass_fit_SOURCES = ex_mass_fit.cpp
-ex_mass_fit.scr: ex_mass_fit
-	./ex_mass_fit > ex_mass_fit.scr
+ex_nucmass_fit_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_nucmass_fit_SOURCES = ex_nucmass_fit.cpp
+ex_nucmass_fit.scr: ex_nucmass_fit
+	./ex_nucmass_fit > ex_nucmass_fit.scr
 
 ex_ode_LDADD = $(OOLIBS) $(OOLIBSTWO)
 ex_ode_SOURCES = ex_ode.cpp

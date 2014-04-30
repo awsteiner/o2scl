@@ -25,7 +25,7 @@
 
 /** \file hdf_nucmass_io.h
     \brief File for HDF input of the \o2 \ref o2scl::nucmass_ame and 
-    \ref o2scl::mnmsk_mass data files
+    \ref o2scl::nucmass_mnmsk data files
 */
 
 #include <hdf5.h>
@@ -74,14 +74,14 @@ namespace o2scl_hdf {
    */
   void ame_load(o2scl::nucmass_ame &ame, std::string name="");
   
-  /** \brief Read data for \ref o2scl::mnmsk_mass from an HDF table
+  /** \brief Read data for \ref o2scl::nucmass_mnmsk from an HDF table
 
       \note This function is in the \ref o2scl_hdf namespace.
 
       \todo Switch to the same 'external' file mechanism used in 
       hdf_eos_io.h. 
    */
-  void mnmsk_load(o2scl::mnmsk_mass &mnmsk, std::string dir="");
+  void mnmsk_load(o2scl::nucmass_mnmsk &mnmsk, std::string dir="");
   
   /** \brief Read data for \ref o2scl::nucmass_hfb from an HDF table
       

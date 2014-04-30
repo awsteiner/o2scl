@@ -1,11 +1,11 @@
 /** \page hadronic Equations of State of Hadronic Matter
 
     The hadronic equations of state are all inherited from \ref
-    o2scl::hadronic_eos : \ref o2scl::schematic_eos, \ref
-    o2scl::skyrme_eos, \ref o2scl::rmf_eos, \ref o2scl::apr_eos, and
-    \ref o2scl::gen_potential_eos.
+    o2scl::eos_had_base : \ref o2scl::eos_had_schematic, \ref
+    o2scl::eos_had_skyrme, \ref o2scl::eos_had_rmf, \ref o2scl::eos_had_apr, and
+    \ref o2scl::eos_had_potential.
 
-    The hadronic_eos class includes several methods that can be used
+    The eos_had_base class includes several methods that can be used
     to calculate the saturation properties of nuclear matter. These
     methods are sometimes overloaded in descendants when exact
     formulas are available.
@@ -13,11 +13,11 @@
     There is also a set of classes to modify the quartic term of the
     symmetry energy: \ref o2scl::rmf4_eos, \ref o2scl::apr4_eos, \ref
     o2scl::skyrme4_eos, and \ref o2scl::mdi4_eos all based on \ref
-    o2scl::sym4_eos_base which can be used in \ref o2scl::sym4_eos.
+    o2scl::eos_had_sym4_base which can be used in \ref o2scl::eos_had_sym4_base.
 
-    \section ex_apr_eos_sect Akmal-Pandharipande-Ravenhall EOS example
+    \section ex_eos_had_apr_sect Akmal-Pandharipande-Ravenhall EOS example
     
-    This example computes the APR EOS with \ref o2scl::apr_eos. It
+    This example computes the APR EOS with \ref o2scl::eos_had_apr. It
     computes nuclear and neutron matter and then matter in
     beta-equilibrium with both a Maxwell construction (as done in the
     \ref Akmal98) and a Gibbs construction to match the low- and
@@ -28,21 +28,21 @@
 
     This example is rather lengthy and the full source code is
     not duplicated here. The class created in that example
-    is documented at \ref ex_apr_eos .
+    is documented at \ref ex_eos_had_apr .
 
     Typical output:
-    \verbinclude ex_apr_eos.scr
+    \verbinclude ex_eos_had_apr.scr
 
-    \section ex_skyrme_eos_sect Skyrme EOS example
+    \section ex_eos_had_skyrme_sect Skyrme EOS example
     
     This example computes the EOS and neutron star 
-    properties using \ref o2scl::skyrme_eos from a Skyrme model.
+    properties using \ref o2scl::eos_had_skyrme from a Skyrme model.
 
     This example is rather lengthy and the full source code is
     not duplicated here. The class created in that example
-    is documented at \ref ex_skyrme_eos .
+    is documented at \ref ex_eos_had_skyrme .
 
     Typical output:
-    \verbinclude ex_skyrme_eos.scr
+    \verbinclude ex_eos_had_skyrme.scr
 
 */

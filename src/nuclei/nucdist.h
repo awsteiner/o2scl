@@ -20,8 +20,8 @@
 
   -------------------------------------------------------------------
 */
-#ifndef O2SCL_NUCLEAR_DIST_H
-#define O2SCL_NUCLEAR_DIST_H
+#ifndef O2SCL_NUCDIST_H
+#define O2SCL_NUCDIST_H
 
 #include <iostream>
 #include <o2scl/nucleus.h>
@@ -34,7 +34,7 @@ namespace o2scl {
   /** \brief A distribution of nuclei [abstract base]
       
       The virtual base class for a collection of objects of type \ref
-      nucleus . See \ref full_dist and \ref nucdist_arb
+      nucleus . See \ref nucdist_full and \ref nucdist_arb
       for implementations of this base class.
 
       Generally, children need only specify an implementation of

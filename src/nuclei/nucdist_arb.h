@@ -143,7 +143,7 @@ namespace o2scl {
       if (list_size>0) delete[] list;
       
       nucleus n;
-      full_dist fd(nm,maxA,include_neutron);
+      nucdist_full fd(nm,maxA,include_neutron);
       double vals[2];
 
       // Parse the formula

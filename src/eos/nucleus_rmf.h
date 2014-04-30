@@ -223,7 +223,7 @@ namespace o2scl {
       \future Convert to zero-indexed arrays (mostly done)
       \future Warn when the level ordering is wrong, and unoccupied levels
       are lower energy than occupied levels
-      \future Connect with \ref o2scl::nuclear_mass ?
+      \future Connect with \ref o2scl::nucmass ?
   */
   class nucleus_rmf {
 

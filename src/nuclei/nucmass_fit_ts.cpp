@@ -37,7 +37,7 @@ int main(void) {
   cout.setf(ios::scientific);
 
   double res;
-  semi_empirical_mass sem;
+  nucmass_semi_empirical sem;
   nucmass_fit mf;
 
   nucmass_ame ame;

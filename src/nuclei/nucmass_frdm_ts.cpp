@@ -39,7 +39,7 @@ int main(void) {
 
   nucmass_frdm mo;
   nucmass_ame au;
-  semi_empirical_mass sm;
+  nucmass_semi_empirical sm;
 
   o2scl_hdf::ame_load(au,"");
 
@@ -74,13 +74,13 @@ int main(void) {
   t.test_rel(mo.mass_excess(82,126)-12.84,-21.15,5.0e-4,"Lead 208");
 
   // Compare nucmass_frdm with the macroscopic parts from
-  // mnmsk_mass table and show that they're almost the same
-  mnmsk_mass mm;
+  // nucmass_mnmsk table and show that they're almost the same
+  nucmass_mnmsk mm;
   o2scl_hdf::mnmsk_load(mm);
-  mnmsk_mass_entry mme;
+  nucmass_mnmsk_entry mme;
   double comp=0.0;
   size_t nnuc=0;
-  full_dist fd(mm);
+  nucdist_full fd(mm);
   for(nucdist::iterator ndi=fd.begin();ndi!=fd.end();ndi++) {
     if (ndi->N>=8 && ndi->Z>=8) {
       mme=mm.get_ZN(ndi->Z,ndi->N);

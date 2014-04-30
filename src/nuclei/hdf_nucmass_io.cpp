@@ -129,7 +129,7 @@ void o2scl_hdf::ame_load(o2scl::nucmass_ame &ame, std::string name) {
   return;
 }
 
-void o2scl_hdf::mnmsk_load(o2scl::mnmsk_mass &mnmsk, string dir) {
+void o2scl_hdf::mnmsk_load(o2scl::nucmass_mnmsk &mnmsk, string dir) {
     
   if (dir.size()==0) {
     dir=o2scl::o2scl_settings.get_data_dir()+"/nucmass";
@@ -138,42 +138,42 @@ void o2scl_hdf::mnmsk_load(o2scl::mnmsk_mass &mnmsk, string dir) {
   std::string fname, tname="/mnmsk.o2";
   fname=dir+tname;
   
-  size_t offset[34]={HOFFSET(o2scl::mnmsk_mass_entry,N),
-		     HOFFSET(o2scl::mnmsk_mass_entry,Z),
-		     HOFFSET(o2scl::mnmsk_mass_entry,A),
-		     HOFFSET(o2scl::mnmsk_mass_entry,eps2),
-		     HOFFSET(o2scl::mnmsk_mass_entry,eps3),
-		     HOFFSET(o2scl::mnmsk_mass_entry,eps4),
-		     HOFFSET(o2scl::mnmsk_mass_entry,eps6),
-		     HOFFSET(o2scl::mnmsk_mass_entry,eps6sym),
-		     HOFFSET(o2scl::mnmsk_mass_entry,beta2),
-		     HOFFSET(o2scl::mnmsk_mass_entry,beta3),
-		     HOFFSET(o2scl::mnmsk_mass_entry,beta4),
-		     HOFFSET(o2scl::mnmsk_mass_entry,beta6),
-		     HOFFSET(o2scl::mnmsk_mass_entry,Emic),
-		     HOFFSET(o2scl::mnmsk_mass_entry,Mth),
-		     HOFFSET(o2scl::mnmsk_mass_entry,Mexp),
-		     HOFFSET(o2scl::mnmsk_mass_entry,sigmaexp),
-		     HOFFSET(o2scl::mnmsk_mass_entry,EmicFL),
-		     HOFFSET(o2scl::mnmsk_mass_entry,MthFL),
-		     HOFFSET(o2scl::mnmsk_mass_entry,spinp),
-		     HOFFSET(o2scl::mnmsk_mass_entry,spinn),
-		     HOFFSET(o2scl::mnmsk_mass_entry,gapp),
-		     HOFFSET(o2scl::mnmsk_mass_entry,gapn),
-		     HOFFSET(o2scl::mnmsk_mass_entry,be),
-		     HOFFSET(o2scl::mnmsk_mass_entry,S1n),
-		     HOFFSET(o2scl::mnmsk_mass_entry,S2n),
-		     HOFFSET(o2scl::mnmsk_mass_entry,PA),
-		     HOFFSET(o2scl::mnmsk_mass_entry,PAm1),
-		     HOFFSET(o2scl::mnmsk_mass_entry,PAm2),
-		     HOFFSET(o2scl::mnmsk_mass_entry,Qbeta),
-		     HOFFSET(o2scl::mnmsk_mass_entry,Tbeta),
-		     HOFFSET(o2scl::mnmsk_mass_entry,S1p),
-		     HOFFSET(o2scl::mnmsk_mass_entry,S2p),
-		     HOFFSET(o2scl::mnmsk_mass_entry,Qalpha),
-		     HOFFSET(o2scl::mnmsk_mass_entry,Talpha)};
+  size_t offset[34]={HOFFSET(o2scl::nucmass_mnmsk_entry,N),
+		     HOFFSET(o2scl::nucmass_mnmsk_entry,Z),
+		     HOFFSET(o2scl::nucmass_mnmsk_entry,A),
+		     HOFFSET(o2scl::nucmass_mnmsk_entry,eps2),
+		     HOFFSET(o2scl::nucmass_mnmsk_entry,eps3),
+		     HOFFSET(o2scl::nucmass_mnmsk_entry,eps4),
+		     HOFFSET(o2scl::nucmass_mnmsk_entry,eps6),
+		     HOFFSET(o2scl::nucmass_mnmsk_entry,eps6sym),
+		     HOFFSET(o2scl::nucmass_mnmsk_entry,beta2),
+		     HOFFSET(o2scl::nucmass_mnmsk_entry,beta3),
+		     HOFFSET(o2scl::nucmass_mnmsk_entry,beta4),
+		     HOFFSET(o2scl::nucmass_mnmsk_entry,beta6),
+		     HOFFSET(o2scl::nucmass_mnmsk_entry,Emic),
+		     HOFFSET(o2scl::nucmass_mnmsk_entry,Mth),
+		     HOFFSET(o2scl::nucmass_mnmsk_entry,Mexp),
+		     HOFFSET(o2scl::nucmass_mnmsk_entry,sigmaexp),
+		     HOFFSET(o2scl::nucmass_mnmsk_entry,EmicFL),
+		     HOFFSET(o2scl::nucmass_mnmsk_entry,MthFL),
+		     HOFFSET(o2scl::nucmass_mnmsk_entry,spinp),
+		     HOFFSET(o2scl::nucmass_mnmsk_entry,spinn),
+		     HOFFSET(o2scl::nucmass_mnmsk_entry,gapp),
+		     HOFFSET(o2scl::nucmass_mnmsk_entry,gapn),
+		     HOFFSET(o2scl::nucmass_mnmsk_entry,be),
+		     HOFFSET(o2scl::nucmass_mnmsk_entry,S1n),
+		     HOFFSET(o2scl::nucmass_mnmsk_entry,S2n),
+		     HOFFSET(o2scl::nucmass_mnmsk_entry,PA),
+		     HOFFSET(o2scl::nucmass_mnmsk_entry,PAm1),
+		     HOFFSET(o2scl::nucmass_mnmsk_entry,PAm2),
+		     HOFFSET(o2scl::nucmass_mnmsk_entry,Qbeta),
+		     HOFFSET(o2scl::nucmass_mnmsk_entry,Tbeta),
+		     HOFFSET(o2scl::nucmass_mnmsk_entry,S1p),
+		     HOFFSET(o2scl::nucmass_mnmsk_entry,S2p),
+		     HOFFSET(o2scl::nucmass_mnmsk_entry,Qalpha),
+		     HOFFSET(o2scl::nucmass_mnmsk_entry,Talpha)};
 
-  o2scl::mnmsk_mass_entry me;
+  o2scl::nucmass_mnmsk_entry me;
   size_t sizes[34]={sizeof(me.N),
 		    sizeof(me.Z),
 		    sizeof(me.A),
@@ -221,9 +221,9 @@ void o2scl_hdf::mnmsk_load(o2scl::mnmsk_mass &mnmsk, string dir) {
   }
   hf.gets("reference",reference);
 
-  o2scl::mnmsk_mass_entry *m=new o2scl::mnmsk_mass_entry[nrecords];
+  o2scl::nucmass_mnmsk_entry *m=new o2scl::nucmass_mnmsk_entry[nrecords];
   herr_t status=H5TBread_table
-    (file,tname.c_str(),sizeof(o2scl::mnmsk_mass_entry),offset,sizes,m);
+    (file,tname.c_str(),sizeof(o2scl::nucmass_mnmsk_entry),offset,sizes,m);
     
   mnmsk.set_data(nrecords,m,reference);
     

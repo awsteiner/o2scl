@@ -2,7 +2,7 @@
 
     The class \ref o2scl::tov_solve provides a solution to the
     Tolman-Oppenheimer-Volkov (TOV) equations given an equation of
-    state, provided as an object of type \ref o2scl::tov_eos. These classes
+    state, provided as an object of type \ref o2scl::eos_tov. These classes
     are particularly useful for static neutron star structure: given
     any equation of state one can calculate the mass vs. radius curve
     and the properties of any star of a given mass.
@@ -120,7 +120,7 @@
     \f$ and \f$ m_B \f$ is the mass one baryon (taken to be the mass
     of the proton by default and stored in \ref
     o2scl::tov_solve::baryon_mass). If the EOS specifies the baryon density
-    (i.e. if \ref o2scl::tov_eos::baryon_column is true), then this
+    (i.e. if \ref o2scl::eos_tov::baryon_column is true), then this
     class will compute the associated baryonic mass for you.
 
     In the case of slow rigid rotation with angular velocity

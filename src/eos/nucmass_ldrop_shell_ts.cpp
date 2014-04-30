@@ -178,7 +178,7 @@ int main(void) {
 
   if (false) {
     ubvector xdm(10);
-    dvi_mass dm;
+    nucmass_dvi dm;
     dm.guess_fun(10,xdm);
     
     nucmass_ame_exp ame13;

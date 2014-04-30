@@ -3,32 +3,32 @@
     A basic data structure for nuclei, class \ref o2scl::nucleus, is
     implemented as a child of of \ref o2scl::part. 
 
-    Nuclear masses are given as children of \ref o2scl::nuclear_mass
+    Nuclear masses are given as children of \ref o2scl::nucmass
     and are generally of two types: tables of masses (children
-    of \ref o2scl::nuclear_mass_table) or formulas which generate masses
+    of \ref o2scl::nucmass_table) or formulas which generate masses
     from a set of parameters and can be fit to data 
-    (\ref o2scl::nuclear_mass_fit). 
+    (\ref o2scl::nucmass_fit). 
 
     There are five mass table types currently included.
-    - \ref o2scl::ame_mass and \ref o2scl::ame_mass_exp : data from 
+    - \ref o2scl::nucmass_ame and \ref o2scl::nucmass_ame_exp : data from 
     \ref Audi95, \ref Audi03, or \ref Audi12 and \ref Wang12.
-    - \ref o2scl::mnmsk_mass and \ref o2scl::mnmsk_mass_exp : masses from \ref Moller95
-    - \ref o2scl::hfb_mass and \ref o2scl::hfb_sp_mass : masses from
+    - \ref o2scl::nucmass_mnmsk and \ref o2scl::nucmass_mnmsk_exp : masses from \ref Moller95
+    - \ref o2scl::nucmass_hfb and \ref o2scl::hfb_sp_mass : masses from
     \ref Goriely02, \ref Samyn04, or \ref Goriely07  
-    - \ref o2scl::dz_mass_table : masses from \ref Duflo95 
-    - \ref o2scl::ktuy_mass : masses from \ref Koura00 and \ref Koura05
+    - \ref o2scl::nucmass_dz_table : masses from \ref Duflo95 
+    - \ref o2scl::nucmass_ktuy : masses from \ref Koura00 and \ref Koura05
 
     The mass formulas which can be fit to data are
-    - \ref o2scl::semi_empirical_mass : simple 5 parameter semi-empirical method
-    - \ref o2scl::frdm_mass : macroscopic part of FRDM from \ref Moller95
-    - \ref o2scl::dz_mass_fit and \ref o2scl::dz_mass_fit_33 : 10- and 33-parameter
+    - \ref o2scl::nucmass_semi_empirical : simple 5 parameter semi-empirical method
+    - \ref o2scl::nucmass_frdm : macroscopic part of FRDM from \ref Moller95
+    - \ref o2scl::nucmass_dz_fit and \ref o2scl::nucmass_dz_fit_33 : 10- and 33-parameter
     mass formulas from \ref Duflo95.
     
-    The class \ref o2scl::nuclear_dist provides an generic base class
+    The class \ref o2scl::nucdist provides an generic base class
     for a collection of several nuclei with an STL-like iterator.
     There are two implementations of this base class, \ref
-    o2scl::full_dist which enumerates all the nuclei for a given mass
-    formula, and \ref o2scl::arb_dist which allows one to specify a
+    o2scl::nucdist_full which enumerates all the nuclei for a given mass
+    formula, and \ref o2scl::nucdist_arb which allows one to specify a
     generic set of nuclei from any function specified as a string.
 
     \section ex_nucmass_sect Nuclear mass example
@@ -53,9 +53,9 @@
     \image html ex_nucmass_sm.png ""
     \image latex ex_nucmass_sm.eps "" width=9cm
 
-    \section ex_mass_fit_sect Nuclear mass fit example
+    \section ex_nucmass_fit_sect Nuclear mass fit example
     
-    \dontinclude ex_mass_fit.cpp
+    \dontinclude ex_nucmass_fit.cpp
     \skip Example:
     \until End of example
 

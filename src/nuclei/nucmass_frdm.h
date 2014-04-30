@@ -365,7 +365,7 @@ namespace o2scl {
     /// Half-life w.r.t. alpha-decay
     double Talpha;
     
-  } mnmsk_mass_entry;
+  } nucmass_mnmsk_entry;
   
   /** \brief Mass formula from Moller, Nix, Myers, Swiatecki and Kratz
 
@@ -388,13 +388,13 @@ namespace o2scl {
       \note This class requires data stored in an HDF file and
       thus requires HDF support for normal usage.
   */
-  class mnmsk_mass : public nucmass_table {
+  class nucmass_mnmsk : public nucmass_table {
 
   public:
     
-    mnmsk_mass();
+    nucmass_mnmsk();
 
-    virtual ~mnmsk_mass();
+    virtual ~nucmass_mnmsk();
 
     /** \brief Return false if the mass formula does not include 
 	specified nucleus
@@ -410,7 +410,7 @@ namespace o2scl {
 	algorithm. It is assumed that the table is sorted first by
 	proton number and then by neutron number.
     */
-    mnmsk_mass_entry get_ZN(int l_Z, int l_N);
+    nucmass_mnmsk_entry get_ZN(int l_Z, int l_N);
     
     /// The value which corresponds to a blank entry
     double blank() { return 1.0e99; };
@@ -430,14 +430,14 @@ namespace o2scl {
     /// The value is greater than \f$ 10^{20} \f$
     double very_large() { return 1.0e94; };
 
-    /// Return the type, \c "mnmsk_mass".
-    virtual const char *type() { return "mnmsk_mass"; }
+    /// Return the type, \c "nucmass_mnmsk".
+    virtual const char *type() { return "nucmass_mnmsk"; }
     
     /** \brief Set data
 
 	This function is used by the HDF I/O routines.
     */
-    int set_data(int n_mass, mnmsk_mass_entry *m, std::string ref);
+    int set_data(int n_mass, nucmass_mnmsk_entry *m, std::string ref);
 
 #ifndef DOXYGEN_INTERNAL
 
@@ -450,7 +450,7 @@ namespace o2scl {
     std::string reference;
     
     /// The array containing the mass data of length ame::n
-    mnmsk_mass_entry *mass;
+    nucmass_mnmsk_entry *mass;
     
     /// The last table index for caching
     int last;
@@ -467,7 +467,7 @@ namespace o2scl {
       \note This class requires data stored in an HDF file and
       thus requires HDF support for normal usage.
   */
-  class mnmsk_mass_exp : public mnmsk_mass {
+  class nucmass_mnmsk_exp : public nucmass_mnmsk {
 
   public:
 

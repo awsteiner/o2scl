@@ -143,7 +143,7 @@ int main(void) {
   cout << ame95exp.get_reference() << endl;
   cout << ame12.get_reference() << endl;
 
-  semi_empirical_mass sm;
+  nucmass_semi_empirical sm;
   
   mnmsk_mass m95;
   o2scl_hdf::mnmsk_load(m95);

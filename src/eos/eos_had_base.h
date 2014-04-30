@@ -537,7 +537,7 @@ namespace o2scl {
     /** \brief Compute the difference between neutron and proton chemical
 	potentials as a function of the isospin asymmetry
 
-	This uses \ref neutron, \ref proton, \ref eos::eos_thermo,
+	This uses \ref neutron, \ref proton, \ref eos_base::eos_thermo,
 	and \ref calc_e() .
     */
     double calc_dmu_alpha(double alpha, const double &nb);
@@ -545,7 +545,7 @@ namespace o2scl {
     /** \brief Compute the sum of the neutron and proton chemical
 	potentials as a function of the isospin asymmetry
 
-	This uses \ref neutron, \ref proton, \ref eos::eos_thermo,
+	This uses \ref neutron, \ref proton, \ref eos_base::eos_thermo,
 	and \ref calc_e() .
     */
     double calc_musum_alpha(double alpha, const double &nb);
@@ -560,7 +560,7 @@ namespace o2scl {
     /** \brief Compute the energy density as a function of baryon density
 	at fixed isospin asymmetry
 
-	This uses \ref neutron, \ref proton, \ref eos::eos_thermo,
+	This uses \ref neutron, \ref proton, \ref eos_base::eos_thermo,
 	and \ref calc_e() .
     */
     double calc_edensity_nb(double nb, const double &alpha=0.0);
@@ -575,7 +575,7 @@ namespace o2scl {
 	
 	Used by fkprime().
 
-	This uses \ref neutron, \ref proton, \ref eos::eos_thermo,
+	This uses \ref neutron, \ref proton, \ref eos_base::eos_thermo,
 	and \ref calc_e() .
     */
     double calc_press_over_den2(double nb, const double &alpha=0.0);

@@ -21,7 +21,7 @@
   -------------------------------------------------------------------
 */
 
-/* Example: ex_apr_eos.cpp
+/* Example: ex_eos_had_apr.cpp
    -------------------------------------------------------------------
 */
 #include <iostream>
@@ -59,7 +59,7 @@ typedef boost::numeric::ublas::matrix<double> ubmatrix;
     
     \future Remove nd2 and just use nd?
 */
-class ex_apr_eos {
+class ex_eos_had_apr {
   
 protected:
 
@@ -582,7 +582,7 @@ protected:
 
 public:
 
-  ex_apr_eos() {
+  ex_eos_had_apr() {
 
     n.init(939.0/hc_mev_fm,2.0);
     p.init(939.0/hc_mev_fm,2.0);
@@ -638,14 +638,14 @@ public:
     ubvector x(7), y(7), xx(3), yy(3);
   
     // Function objects
-    mm_funct_mfptr<ex_apr_eos> f_nucmixed(this,&ex_apr_eos::nucmixed);
-    mm_funct_mfptr<ex_apr_eos> f_neutmixed(this,&ex_apr_eos::neutmixed);
-    mm_funct_mfptr<ex_apr_eos> f_nstar_mixed(this,&ex_apr_eos::nstar_mixed);
-    mm_funct_mfptr<ex_apr_eos> f_nstar_low(this,&ex_apr_eos::nstar_low);
-    mm_funct_mfptr<ex_apr_eos> f_nstar_high(this,&ex_apr_eos::nstar_high);
-    mm_funct_mfptr<ex_apr_eos> f_fig7fun(this,&ex_apr_eos::fig7fun);
-    mm_funct_mfptr<ex_apr_eos> f_maxwell_fig7(this,&ex_apr_eos::maxwell_fig7);
-    mm_funct_mfptr<ex_apr_eos> f_mixedmaxwell(this,&ex_apr_eos::mixedmaxwell);
+    mm_funct_mfptr<ex_eos_had_apr> f_nucmixed(this,&ex_eos_had_apr::nucmixed);
+    mm_funct_mfptr<ex_eos_had_apr> f_neutmixed(this,&ex_eos_had_apr::neutmixed);
+    mm_funct_mfptr<ex_eos_had_apr> f_nstar_mixed(this,&ex_eos_had_apr::nstar_mixed);
+    mm_funct_mfptr<ex_eos_had_apr> f_nstar_low(this,&ex_eos_had_apr::nstar_low);
+    mm_funct_mfptr<ex_eos_had_apr> f_nstar_high(this,&ex_eos_had_apr::nstar_high);
+    mm_funct_mfptr<ex_eos_had_apr> f_fig7fun(this,&ex_eos_had_apr::fig7fun);
+    mm_funct_mfptr<ex_eos_had_apr> f_maxwell_fig7(this,&ex_eos_had_apr::maxwell_fig7);
+    mm_funct_mfptr<ex_eos_had_apr> f_mixedmaxwell(this,&ex_eos_had_apr::mixedmaxwell);
 
     // Init density grid
     nbstart=0.005;
@@ -999,8 +999,8 @@ public:
     cout << "\nEstimate of transition density:" << endl;
   
     ubvector newx(12), newy(12);
-    mm_funct_mfptr<ex_apr_eos> nuclei_f(this,&ex_apr_eos::nucleimat);
-    mm_funct_mfptr<ex_apr_eos> nucleip_f(this,&ex_apr_eos::nucleimat_pdrip);
+    mm_funct_mfptr<ex_eos_had_apr> nuclei_f(this,&ex_eos_had_apr::nucleimat);
+    mm_funct_mfptr<ex_eos_had_apr> nucleip_f(this,&ex_eos_had_apr::nucleimat_pdrip);
     solver_trans_density.tol_abs/=1.0e4;
     solver_trans_density.tol_rel/=1.0e4;
   
@@ -1119,7 +1119,7 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
-  ex_apr_eos ac;
+  ex_eos_had_apr ac;
   ac.run();
 
   return 0;

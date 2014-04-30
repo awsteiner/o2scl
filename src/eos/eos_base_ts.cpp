@@ -24,7 +24,7 @@
 #include <config.h>
 #endif
 
-#include <o2scl/eos.h>
+#include <o2scl/eos_base.h>
 #include <o2scl/test_mgr.h>
 #include <o2scl/deriv_gsl.h>
 
@@ -32,8 +32,8 @@ using namespace std;
 using namespace o2scl;
 
 int main(void) {
-  eos eo, eo2, eo3;
-  eos *eo4, *eo5, *eo6;
+  eos_base eo, eo2, eo3;
+  eos_base *eo4, *eo5, *eo6;
   test_mgr t;
   t.set_output_level(2);
 
