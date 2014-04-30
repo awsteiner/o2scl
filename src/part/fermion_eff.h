@@ -51,7 +51,7 @@ namespace o2scl {
       Based on the fitting method of \ref Johns96 which is an update
       of the method from \ref Eggleton73 . This method is approximate,
       but very fast. For a more accurate (but slower) method, use
-      rel_fermion.
+      fermion_rel.
 
       If the temperature is less than or equal to \ref tlimit (which 
       defaults to zero), the zero-temperature expressions
@@ -94,11 +94,11 @@ namespace o2scl {
       solved for the effective chemical potential instead. The initial
       guess is just taken from the present value of part::nu .
 
-      \todo Fix higher densities in eff_fermion_ts.cpp.
+      \todo Fix higher densities in fermion_eff_ts.cpp.
 
       \future Use bracketing to speed up one-dimensional root finding.
   */
-  class eff_fermion : public fermion_eval_thermo {
+  class fermion_eff : public fermion_eval_thermo {
 
   public:
     
@@ -106,9 +106,9 @@ namespace o2scl {
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
     /// Create a fermion with mass \c mass and degeneracy \c dof 
-    eff_fermion();
+    fermion_eff();
     
-    virtual ~eff_fermion();
+    virtual ~fermion_eff();
     
     /** \name Coefficients for finite-temperature approximation
      */
@@ -195,8 +195,8 @@ namespace o2scl {
      */
     root_cern<funct> def_density_root;
     
-    /// Return string denoting type ("eff_fermion")
-    virtual const char *type() { return "eff_fermion"; }
+    /// Return string denoting type ("fermion_eff")
+    virtual const char *type() { return "fermion_eff"; }
 
     /// The minimum value of \f$ \psi \f$ (default -200)
     double min_psi;
@@ -224,42 +224,42 @@ namespace o2scl {
     
     /** \brief Define the function which solves for the chemical 
 	potential given the density [protected subclass of \ref 
-	eff_fermion]
+	fermion_eff]
     */
     class density_fun : public funct {
 
     protected:
 
-      eff_fermion &ef_;
+      fermion_eff &ef_;
       fermion &f_;
       double T_;
 
     public:
 
-      density_fun(eff_fermion &ef, fermion &f, double T);
+      density_fun(fermion_eff &ef, fermion &f, double T);
       
-      /// Fix density for \ref eff_fermion::calc_density()
+      /// Fix density for \ref fermion_eff::calc_density()
       double operator()(double x) const;
 
     };
 
     /** \brief Define the function which solves for the chemical 
 	potential given the density of particles and antiparticles
-	[protected subclass of \ref eff_fermion]
+	[protected subclass of \ref fermion_eff]
     */
     class pair_density_fun : public funct {
 
     protected:
 
-      eff_fermion &ef_;
+      fermion_eff &ef_;
       fermion &f_;
       double T_;
 
     public:
 
-      pair_density_fun(eff_fermion &ef, fermion &f, double T);
+      pair_density_fun(fermion_eff &ef, fermion &f, double T);
       
-      /// Fix density for \ref eff_fermion::pair_density()
+      /// Fix density for \ref fermion_eff::pair_density()
       double operator()(double x) const;
 
     };

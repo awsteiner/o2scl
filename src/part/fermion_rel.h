@@ -33,7 +33,7 @@
 #include <o2scl/root_cern.h>
 #include <o2scl/inte_qagiu_gsl.h>
 #include <o2scl/inte_qag_gsl.h>
-#include <o2scl/eff_fermion.h>
+#include <o2scl/fermion_eff.h>
 #include <o2scl/shared_ptr.h>
 
 #ifndef DOXYGEN_NO_O2NS
@@ -82,7 +82,7 @@ namespace o2scl {
       \mathrm{upper~limit} = \sqrt{{\cal L}^2-m^{*,2}}
       \f]
       where \f$ {\cal L}\equiv u T+\nu \f$ and \f$ u \f$ is \ref
-      rel_fermion::upper_limit_fac . In the case where \ref
+      fermion_rel::upper_limit_fac . In the case where \ref
       part::inc_rest_mass is false, the result is
       \f[
       \mathrm{upper~limit} = \sqrt{(m+{\cal L})^2-m^{*2}}
@@ -179,7 +179,7 @@ namespace o2scl {
       decrease the tolerances on the default integration objects. This 
       can be done, using, for example
       \code
-      rel_fermion rf(1.0,2.0);
+      fermion_rel rf(1.0,2.0);
       rf.def_dit.tol_abs/=1.0e2;
       rf.def_dit.tol_rel/=1.0e2;
       rf.def_nit.tol_abs/=1.0e2;
@@ -215,9 +215,9 @@ namespace o2scl {
       in <tt>ll</tt>) makes bm_part2.cpp worse.
 
       \future pair_mu() should set the antiparticle integrators
-      as done in sn_fermion.
+      as done in fermion_deriv_rel.
   */
-  class rel_fermion : public fermion_eval_thermo {
+  class fermion_rel : public fermion_eval_thermo {
 
   public:
 
@@ -254,9 +254,9 @@ namespace o2scl {
     fermion unc;
 
     /// Create a fermion with mass \c m and degeneracy \c g
-    rel_fermion();
+    fermion_rel();
 
-    virtual ~rel_fermion();
+    virtual ~fermion_rel();
     
     /** \brief Calculate properties as function of chemical potential
     */
@@ -293,8 +293,8 @@ namespace o2scl {
     /// The solver for calc_density()
     o2_shared_ptr<root<funct> >::type density_root;
     
-    /// Return string denoting type ("rel_fermion")
-    virtual const char *type() { return "rel_fermion"; }
+    /// Return string denoting type ("fermion_rel")
+    virtual const char *type() { return "fermion_rel"; }
 
   protected:
     

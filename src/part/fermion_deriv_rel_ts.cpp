@@ -20,9 +20,9 @@
 
   -------------------------------------------------------------------
 */
-#include <o2scl/sn_fermion.h>
-#include <o2scl/eff_fermion.h>
-#include <o2scl/rel_fermion.h>
+#include <o2scl/fermion_deriv_rel.h>
+#include <o2scl/fermion_eff.h>
+#include <o2scl/fermion_rel.h>
 #include <o2scl/test_mgr.h>
 // For access to global convert_units object
 #include <o2scl/lib_settings.h>
@@ -43,15 +43,15 @@ int main(void) {
 
   sf.inc_rest_mass=false;
 
-  sn_fermion snf;
-  eff_fermion eff;
+  fermion_deriv_rel snf;
+  fermion_eff eff;
   
   t.test_rel(sf.m,5.0,1.0e-5,"mass_inheritance");
   
   // -----------------------------------------------------------------
   
   cout << "----------------------------------------------------" << endl;
-  cout << "Compare sn_fermion to eff_fermion" << endl;
+  cout << "Compare fermion_deriv_rel to fermion_eff" << endl;
   cout << "----------------------------------------------------" << endl;
   cout << endl;
 
@@ -101,7 +101,7 @@ int main(void) {
 
   {
     cout << "Test derivatives (\"non-degenerate\", direct): " << endl;
-    snf.method=sn_fermion::direct;
+    snf.method=fermion_deriv_rel::direct;
     double d1, d2, eps=1.0e-4;
     double dndmu, dndT, dsdT, dndm;
   
@@ -192,7 +192,7 @@ int main(void) {
     cout << endl;
 
     cout << "Test derivatives (\"non-degenerate\", byparts): " << endl;
-    snf.method=sn_fermion::byparts;
+    snf.method=fermion_deriv_rel::byparts;
 
     sf.nu=1.0*T-sf.m+sf.ms+eps;
     snf.calc_mu(sf,T);
@@ -287,7 +287,7 @@ int main(void) {
 
   if (false) {
     cout << "Test derivatives (pair, \"non-degenerate\", direct): " << endl;
-    snf.method=sn_fermion::direct;
+    snf.method=fermion_deriv_rel::direct;
     double d1, d2, eps=1.0e-4;
     double dndmu, dndT, dsdT, dndm;
   
@@ -378,7 +378,7 @@ int main(void) {
     cout << endl;
 
     cout << "Test derivatives (pair, \"non-degenerate\", byparts): " << endl;
-    snf.method=sn_fermion::byparts;
+    snf.method=fermion_deriv_rel::byparts;
 
     sf.nu=1.0*T-sf.m+sf.ms+eps;
     snf.pair_mu(sf,T);
@@ -698,7 +698,7 @@ int main(void) {
   cout << "----------------------------------------------------" << endl;
   cout << endl;
   
-  snf.method=sn_fermion::direct;
+  snf.method=fermion_deriv_rel::direct;
   double val2=snf.deriv_calibrate(sfx,1);
   cout << "Deriv_Calibrate: " << val2 << endl;
 
@@ -707,7 +707,7 @@ int main(void) {
   cout << "----------------------------------------------------" << endl;
   cout << endl;
 
-  snf.method=sn_fermion::byparts;
+  snf.method=fermion_deriv_rel::byparts;
   double val3=snf.deriv_calibrate(sfx,1);
   cout << "Deriv_Calibrate: " << val3 << endl;
   cout << endl;

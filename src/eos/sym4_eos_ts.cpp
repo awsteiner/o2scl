@@ -26,7 +26,7 @@
 
 #include <o2scl/test_mgr.h>
 #include <o2scl/sym4_eos.h>
-#include <o2scl/nonrel_fermion.h>
+#include <o2scl/fermion_nonrel.h>
 #include <o2scl/cold_nstar.h>
 
 using namespace std;
@@ -44,8 +44,8 @@ int main(void) {
 
   thermo th;
 
-  eff_fermion n, p;
-  nonrel_fermion nrn, nrp;
+  fermion_eff n, p;
+  fermion_nonrel nrn, nrp;
 
   bool optv;
 

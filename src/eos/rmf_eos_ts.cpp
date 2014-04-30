@@ -89,7 +89,7 @@ namespace rmf_eos_ts_ns {
 
   fermion nue(0.0,1.0), numu(0.0,1.0);
   rmf_eos rmf;
-  eff_fermion eff;
+  fermion_eff eff;
   thermo thx;
   double nb;
 
@@ -406,7 +406,7 @@ int main(void) {
        << "lamv=0.0, lam4=0.0" << endl << endl;
   nferm.n=re.n0/2.0;
   p.n=re.n0/2.0;
-  eff_fermion eff;
+  fermion_eff eff;
   eff.kf_from_density(nferm);
   eff.kf_from_density(p);
   sig=re.mnuc*(1.0-re.msom)/re.ms/re.cs;

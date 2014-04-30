@@ -29,9 +29,9 @@
 #include <o2scl/constants.h>
 #include <o2scl/tensor_grid.h>
 #include <o2scl/table.h>
-#include <o2scl/eff_boson.h>
-#include <o2scl/rel_fermion.h>
-#include <o2scl/eff_fermion.h>
+#include <o2scl/boson_eff.h>
+#include <o2scl/fermion_rel.h>
+#include <o2scl/fermion_eff.h>
 #include <o2scl/test_mgr.h>
 #include <o2scl/convert_units.h>
 #include <o2scl/interp2_direct.h>
@@ -225,7 +225,7 @@ namespace o2scl {
     /// If true, include muons
     bool include_muons;
     /// Relativistic fermion thermodynamics
-    rel_fermion relf;
+    fermion_rel relf;
     /** \brief Compute the electron and photon contribution for the full
 	grid
 

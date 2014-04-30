@@ -20,8 +20,8 @@
 
   -------------------------------------------------------------------
 */
-#include <o2scl/eff_fermion.h>
-#include <o2scl/rel_fermion.h>
+#include <o2scl/fermion_eff.h>
+#include <o2scl/fermion_rel.h>
 #include <o2scl/classical.h>
 #include <o2scl/test_mgr.h>
 
@@ -35,11 +35,11 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
-  eff_fermion ef2;
+  fermion_eff ef2;
 
   for(size_t ik=0;ik<2;ik++) {
     
-    if (ik==1) ef2.load_coefficients(eff_fermion::cf_fermilat3);
+    if (ik==1) ef2.load_coefficients(fermion_eff::cf_fermilat3);
   
     double tmp1, tmp2, tmp3, tmp4, tmp5, T;
 
@@ -233,7 +233,7 @@ int main(void) {
     }
 
     cout << "----------------------------------------------------" << endl;
-    cout << "eff_fermion tests:" << endl;
+    cout << "fermion_eff tests:" << endl;
     cout << "----------------------------------------------------" << endl;
     cout << endl;
 
@@ -254,11 +254,11 @@ int main(void) {
     ef2.massless_calc_mu(e,T);
     cout << e.n << " " << e.mu << " " << e.ed << " " 
 	 << e.pr << " " << e.en << endl;
-    t.test_rel(tmp1,e.n,5.0e-4,"eff_fermion density 1");
-    t.test_rel(tmp2,e.mu,5.0e-4,"eff_fermion chem. pot. 1");
-    t.test_rel(tmp3,e.ed,5.0e-4,"eff_fermion energy 1");
-    t.test_rel(tmp4,e.pr,5.0e-4,"eff_fermion pressure 1");
-    t.test_rel(tmp5,e.en,5.0e-4,"eff_fermion entropy 1");
+    t.test_rel(tmp1,e.n,5.0e-4,"fermion_eff density 1");
+    t.test_rel(tmp2,e.mu,5.0e-4,"fermion_eff chem. pot. 1");
+    t.test_rel(tmp3,e.ed,5.0e-4,"fermion_eff energy 1");
+    t.test_rel(tmp4,e.pr,5.0e-4,"fermion_eff pressure 1");
+    t.test_rel(tmp5,e.en,5.0e-4,"fermion_eff entropy 1");
 
     cout << "calc_density(e,T) vs. massless_calc_density(e,T)" << endl;
     e.m=0.01;
@@ -276,12 +276,12 @@ int main(void) {
     cout << e.n << " " << e.mu << " " << e.ed << " " 
 	 << e.pr << " " << e.en << endl;
 
-    t.test_rel(tmp1,e.n,5.0e-4,"eff_fermion density 2");
-    t.test_rel(tmp2,e.mu,5.0e-4,"eff_fermion chem. pot. 2");
-    t.test_rel(tmp3,e.ed,5.0e-4,"eff_fermion energy 2");
+    t.test_rel(tmp1,e.n,5.0e-4,"fermion_eff density 2");
+    t.test_rel(tmp2,e.mu,5.0e-4,"fermion_eff chem. pot. 2");
+    t.test_rel(tmp3,e.ed,5.0e-4,"fermion_eff energy 2");
     t.report();
-    t.test_rel(tmp4,e.pr,5.0e-4,"eff_fermion pressure 2");
-    t.test_rel(tmp5,e.en,5.0e-4,"eff_fermion entropy 2");
+    t.test_rel(tmp4,e.pr,5.0e-4,"fermion_eff pressure 2");
+    t.test_rel(tmp5,e.en,5.0e-4,"fermion_eff entropy 2");
     cout << endl;
 
     cout << "extremely degenerate relativistic (mu>m, mu>>T) "
@@ -301,11 +301,11 @@ int main(void) {
     ef2.calc_mu_zerot(e);
     cout << e.n << " " << e.mu << " " << e.ed << " " 
 	 << e.pr << " " << e.en << endl;
-    t.test_rel(tmp1,e.n,5.0e-3,"eff_fermion density 3");
-    t.test_rel(tmp2,e.mu,5.0e-3,"eff_fermion chem. pot. 3");
-    t.test_rel(tmp3,e.ed,5.0e-3,"eff_fermion energy 3");
-    t.test_rel(tmp4,e.pr,5.0e-3,"eff_fermion pressure 3");
-    t.test_rel(tmp5,e.en,5.0e-3,"eff_fermion entropy 3");
+    t.test_rel(tmp1,e.n,5.0e-3,"fermion_eff density 3");
+    t.test_rel(tmp2,e.mu,5.0e-3,"fermion_eff chem. pot. 3");
+    t.test_rel(tmp3,e.ed,5.0e-3,"fermion_eff energy 3");
+    t.test_rel(tmp4,e.pr,5.0e-3,"fermion_eff pressure 3");
+    t.test_rel(tmp5,e.en,5.0e-3,"fermion_eff entropy 3");
 
     cout << "calc_density(e,T) vs. calc_density(T=0)" << endl;
     e.m=0.1;
@@ -323,11 +323,11 @@ int main(void) {
     ef2.calc_density_zerot(e);
     cout << e.n << " " << e.mu << " " << e.ed << " " 
 	 << e.pr << " " << e.en << endl;
-    t.test_rel(tmp1,e.n,5.0e-3,"eff_fermion density 4");
-    t.test_rel(tmp2,e.mu,5.0e-3,"eff_fermion chem. pot. 4");
-    t.test_rel(tmp3,e.ed,5.0e-3,"eff_fermion energy 4");
-    t.test_rel(tmp4,e.pr,5.0e-3,"eff_fermion pressure 4");
-    t.test_rel(tmp5,e.en,5.0e-3,"eff_fermion entropy 4");
+    t.test_rel(tmp1,e.n,5.0e-3,"fermion_eff density 4");
+    t.test_rel(tmp2,e.mu,5.0e-3,"fermion_eff chem. pot. 4");
+    t.test_rel(tmp3,e.ed,5.0e-3,"fermion_eff energy 4");
+    t.test_rel(tmp4,e.pr,5.0e-3,"fermion_eff pressure 4");
+    t.test_rel(tmp5,e.en,5.0e-3,"fermion_eff entropy 4");
     cout << endl;
 
     cout << "degenerate non-relativistic ((mu-m=kf^2/2/m)<<m, T<<mu) "
@@ -347,11 +347,11 @@ int main(void) {
     ef2.calc_mu_zerot(e);
     cout << e.n << " " << e.mu << " " << e.ed << " " 
 	 << e.pr << " " << e.en << endl;
-    t.test_rel(tmp1,e.n,3.0e-2,"eff_fermion density 5");
-    t.test_rel(tmp2,e.mu,3.0e-2,"eff_fermion chem. pot. 5");
-    t.test_rel(tmp3,e.ed,3.0e-2,"eff_fermion energy 5");
-    t.test_rel(tmp4,e.pr,8.0e-2,"eff_fermion pressure 5");
-    t.test_rel(tmp5,e.en,3.0e-2,"eff_fermion entropy 5");
+    t.test_rel(tmp1,e.n,3.0e-2,"fermion_eff density 5");
+    t.test_rel(tmp2,e.mu,3.0e-2,"fermion_eff chem. pot. 5");
+    t.test_rel(tmp3,e.ed,3.0e-2,"fermion_eff energy 5");
+    t.test_rel(tmp4,e.pr,8.0e-2,"fermion_eff pressure 5");
+    t.test_rel(tmp5,e.en,3.0e-2,"fermion_eff entropy 5");
 
     cout << "calc_density(e,T) vs. calc_density(T=0)" << endl;
     e.m=1.0;
@@ -369,11 +369,11 @@ int main(void) {
     ef2.calc_density_zerot(e);
     cout << e.n << " " << e.mu << " " << e.ed << " " 
 	 << e.pr << " " << e.en << endl;
-    t.test_rel(tmp1,e.n,5.0e-3,"eff_fermion density 6");
-    t.test_rel(tmp2,e.mu,5.0e-3,"eff_fermion chem. pot. 6");
-    t.test_rel(tmp3,e.ed,5.0e-3,"eff_fermion energy 6");
-    t.test_rel(tmp4,e.pr,5.0e-2,"eff_fermion pressure 6");
-    t.test_rel(tmp5,e.en,5.0e-3,"eff_fermion entropy 6");
+    t.test_rel(tmp1,e.n,5.0e-3,"fermion_eff density 6");
+    t.test_rel(tmp2,e.mu,5.0e-3,"fermion_eff chem. pot. 6");
+    t.test_rel(tmp3,e.ed,5.0e-3,"fermion_eff energy 6");
+    t.test_rel(tmp4,e.pr,5.0e-2,"fermion_eff pressure 6");
+    t.test_rel(tmp5,e.en,5.0e-3,"fermion_eff entropy 6");
     cout << endl;
 
     cout << "non-degenerate extremely relativistic (m<<mu<<T) "
@@ -394,11 +394,11 @@ int main(void) {
     ef2.calc_density(e,T);
     cout << e.n << " " << e.mu << " " << e.ed << " " 
 	 << e.pr << " " << e.en << endl;
-    t.test_rel(tmp1,e.n,5.0e-3,"eff_fermion density 7");
-    t.test_rel(tmp2,e.mu,5.0e-3,"eff_fermion chem. pot. 7");
-    t.test_rel(tmp3,e.ed,5.0e-3,"eff_fermion energy 7");
-    t.test_rel(tmp4,e.pr,5.0e-3,"eff_fermion pressure 7");
-    t.test_rel(tmp5,e.en,5.0e-3,"eff_fermion entropy 7");
+    t.test_rel(tmp1,e.n,5.0e-3,"fermion_eff density 7");
+    t.test_rel(tmp2,e.mu,5.0e-3,"fermion_eff chem. pot. 7");
+    t.test_rel(tmp3,e.ed,5.0e-3,"fermion_eff energy 7");
+    t.test_rel(tmp4,e.pr,5.0e-3,"fermion_eff pressure 7");
+    t.test_rel(tmp5,e.en,5.0e-3,"fermion_eff entropy 7");
 
     cout << "pair_mu(e,T) vs. massless_pair_mu(e,T) vs. pair_density(e,T) vs. " 
 	 << endl;
@@ -417,11 +417,11 @@ int main(void) {
     ef2.massless_pair_mu(e,T);
     cout << e.n << " " << e.mu << " " << e.ed << " " 
 	 << e.pr << " " << e.en << endl;
-    t.test_rel(tmp1,e.n,1.0e-2,"eff_fermion density 8");
-    t.test_rel(tmp2,e.mu,1.0e-2,"eff_fermion chem. pot. 8");
-    t.test_rel(tmp3,e.ed,1.0e-2,"eff_fermion energy 8");
-    t.test_rel(tmp4,e.pr,1.0e-2,"eff_fermion pressure 8");
-    t.test_rel(tmp5,e.en,1.0e-2,"eff_fermion entropy 8");
+    t.test_rel(tmp1,e.n,1.0e-2,"fermion_eff density 8");
+    t.test_rel(tmp2,e.mu,1.0e-2,"fermion_eff chem. pot. 8");
+    t.test_rel(tmp3,e.ed,1.0e-2,"fermion_eff energy 8");
+    t.test_rel(tmp4,e.pr,1.0e-2,"fermion_eff pressure 8");
+    t.test_rel(tmp5,e.en,1.0e-2,"fermion_eff entropy 8");
 
     e.m=0.01;
     e.mu=0.1;
@@ -429,11 +429,11 @@ int main(void) {
     ef2.pair_density(e,T);
     cout << e.n << " " << e.mu << " " << e.ed << " " 
 	 << e.pr << " " << e.en << endl;
-    t.test_rel(tmp1,e.n,5.0e-4,"eff_fermion density 9c");
-    t.test_rel(tmp2,e.mu,5.0e-4,"eff_fermion chem. pot. 9c");
-    t.test_rel(tmp3,e.ed,5.0e-4,"eff_fermion energy 9c");
-    t.test_rel(tmp4,e.pr,5.0e-4,"eff_fermion pressure 9c");
-    t.test_rel(tmp5,e.en,5.0e-4,"eff_fermion entropy 9c");
+    t.test_rel(tmp1,e.n,5.0e-4,"fermion_eff density 9c");
+    t.test_rel(tmp2,e.mu,5.0e-4,"fermion_eff chem. pot. 9c");
+    t.test_rel(tmp3,e.ed,5.0e-4,"fermion_eff energy 9c");
+    t.test_rel(tmp4,e.pr,5.0e-4,"fermion_eff pressure 9c");
+    t.test_rel(tmp5,e.en,5.0e-4,"fermion_eff entropy 9c");
     tmp1=e.n;
     tmp2=e.mu;
     tmp3=e.ed;
@@ -442,11 +442,11 @@ int main(void) {
     ef2.massless_pair_density(e,T);
     cout << e.n << " " << e.mu << " " << e.ed << " " 
 	 << e.pr << " " << e.en << endl;
-    t.test_rel(tmp1,e.n,1.0e-2,"eff_fermion density 9");
-    t.test_rel(tmp2,e.mu,1.0e-2,"eff_fermion chem. pot. 9");
-    t.test_rel(tmp3,e.ed,1.0e-2,"eff_fermion energy 9");
-    t.test_rel(tmp4,e.pr,1.0e-2,"eff_fermion pressure 9");
-    t.test_rel(tmp5,e.en,1.0e-2,"eff_fermion entropy 9");
+    t.test_rel(tmp1,e.n,1.0e-2,"fermion_eff density 9");
+    t.test_rel(tmp2,e.mu,1.0e-2,"fermion_eff chem. pot. 9");
+    t.test_rel(tmp3,e.ed,1.0e-2,"fermion_eff energy 9");
+    t.test_rel(tmp4,e.pr,1.0e-2,"fermion_eff pressure 9");
+    t.test_rel(tmp5,e.en,1.0e-2,"fermion_eff entropy 9");
     cout << endl;
 
     cout << "non-degenerate non-relativistic (mu<<m, mu<<T) "
@@ -467,11 +467,11 @@ int main(void) {
     ef2.calc_density(e,T);
     cout << e.n << " " << e.mu << " " << e.ed << " " 
 	 << e.pr << " " << e.en << endl;
-    t.test_rel(tmp1,e.n,5.0e-3,"eff_fermion density 10");
-    t.test_rel(tmp2,e.mu,5.0e-3,"eff_fermion chem. pot. 10");
-    t.test_rel(tmp3,e.ed,5.0e-3,"eff_fermion energy 10");
-    t.test_rel(tmp4,e.pr,5.0e-3,"eff_fermion pressure 10");
-    t.test_rel(tmp5,e.en,5.0e-3,"eff_fermion entropy 10");
+    t.test_rel(tmp1,e.n,5.0e-3,"fermion_eff density 10");
+    t.test_rel(tmp2,e.mu,5.0e-3,"fermion_eff chem. pot. 10");
+    t.test_rel(tmp3,e.ed,5.0e-3,"fermion_eff energy 10");
+    t.test_rel(tmp4,e.pr,5.0e-3,"fermion_eff pressure 10");
+    t.test_rel(tmp5,e.en,5.0e-3,"fermion_eff entropy 10");
 
     cout << "pair_mu(e,T) vs. pair_density(e,T)" << endl;
     e.m=0.1;
@@ -489,25 +489,25 @@ int main(void) {
     ef2.pair_density(e,T);
     cout << e.n << " " << e.mu << " " << e.ed << " " 
 	 << e.pr << " " << e.en << endl;
-    t.test_rel(tmp1,e.n,5.0e-3,"eff_fermion density 11");
-    t.test_rel(tmp2,e.mu,5.0e-3,"eff_fermion chem. pot. 11");
-    t.test_rel(tmp3,e.ed,5.0e-3,"eff_fermion energy 11");
-    t.test_rel(tmp4,e.pr,5.0e-3,"eff_fermion pressure 11");
-    t.test_rel(tmp5,e.en,5.0e-3,"eff_fermion entropy 11");
+    t.test_rel(tmp1,e.n,5.0e-3,"fermion_eff density 11");
+    t.test_rel(tmp2,e.mu,5.0e-3,"fermion_eff chem. pot. 11");
+    t.test_rel(tmp3,e.ed,5.0e-3,"fermion_eff energy 11");
+    t.test_rel(tmp4,e.pr,5.0e-3,"fermion_eff pressure 11");
+    t.test_rel(tmp5,e.en,5.0e-3,"fermion_eff entropy 11");
     cout << endl;
   
     // -----------------------------------------------------------------
-    // This tests the results of eff_fermion at the fitting points used
+    // This tests the results of fermion_eff at the fitting points used
     // in Johns, Ellis, and Lattimer and compares them to the results
-    // from the rel_fermion class.
+    // from the fermion_rel class.
   
     cout << "----------------------------------------------------" << endl;
-    cout << "eff_fermion vs. rel_fermion:" << endl;
+    cout << "fermion_eff vs. fermion_rel:" << endl;
     cout << "----------------------------------------------------" << endl;
     cout << endl;
 
     fermion e3(1.0,2.0);
-    rel_fermion rf;
+    fermion_rel rf;
 
     cout.precision(4);
     double logf, logg, psi, sqt, a=0.42, f, g;

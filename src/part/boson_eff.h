@@ -51,7 +51,7 @@ namespace o2scl {
       Based on the fitting method of \ref Johns96 which is an update
       of the method from \ref Eggleton73 . This method is approximate,
       but very fast. For a more accurate (but slower) method, use
-      \ref o2scl::rel_boson.
+      \ref o2scl::boson_rel.
       
       Given the chemical potential and the temperature the functions
       \ref calc_mu() and \ref pair_mu() work by solving the equation
@@ -79,7 +79,7 @@ namespace o2scl {
       
       \todo Improve documentation
   */
-  class eff_boson {
+  class boson_eff {
 
   public:
     
@@ -87,9 +87,9 @@ namespace o2scl {
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
     /// Create a boson with mass \c m and degeneracy \c g 
-    eff_boson();
+    boson_eff();
     
-    virtual ~eff_boson();
+    virtual ~boson_eff();
   
     /** \brief Load coefficients for finite-temperature approximation
 	
@@ -157,7 +157,7 @@ namespace o2scl {
      */
     root_cern<funct> def_psi_root;
 
-    virtual const char *type() { return "eff_boson"; }
+    virtual const char *type() { return "boson_eff"; }
 
 #ifndef DOXYGEN_INTERNAL
 

@@ -22,9 +22,9 @@
 */
 #include <o2scl/test_mgr.h>
 
-#include <o2scl/sn_classical.h>
+#include <o2scl/classical_deriv.h>
 #include <o2scl/classical.h>
-#include <o2scl/nonrel_fermion.h>
+#include <o2scl/fermion_nonrel.h>
 
 using namespace std;
 using namespace o2scl;
@@ -36,7 +36,7 @@ int main(void) {
   
   cout.setf(ios::scientific);
   
-  sn_classical snc;
+  classical_deriv snc;
   classical cla;
 
   part_deriv sf(5.0,2.0);

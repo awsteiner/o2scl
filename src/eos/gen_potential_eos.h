@@ -31,7 +31,7 @@
 #include <o2scl/hadronic_eos.h>
 #include <o2scl/part.h>
 #include <o2scl/deriv_gsl.h>
-#include <o2scl/nonrel_fermion.h>
+#include <o2scl/fermion_nonrel.h>
 #include <cstdlib>
 
 #ifndef DOXYGEN_NO_O2NS
@@ -209,7 +209,7 @@ namespace o2scl {
 #ifndef DOXYGEN_INTERNAL
 
     /// Non-relativistic fermion thermodyanmics
-    nonrel_fermion nrf;
+    fermion_nonrel nrf;
 
     /// True of the derivative object has been set
     bool mu_deriv_set;

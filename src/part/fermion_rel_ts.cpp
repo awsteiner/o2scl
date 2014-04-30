@@ -21,8 +21,8 @@
   -------------------------------------------------------------------
 */
 
-#include <o2scl/rel_fermion.h>
-#include <o2scl/eff_fermion.h>
+#include <o2scl/fermion_rel.h>
+#include <o2scl/fermion_eff.h>
 #include <o2scl/test_mgr.h>
 
 using namespace std;
@@ -35,8 +35,8 @@ int main(void) {
 
   fermion e(1.0,2.0);
   fermion e3(1.0,2.0);
-  eff_fermion ef;
-  rel_fermion rf;
+  fermion_eff ef;
+  fermion_rel rf;
   t.test_rel(e3.m,1.0,1.0e-6,"mass inheritance");
   e.non_interacting=true;
   e3.non_interacting=true;
@@ -47,10 +47,10 @@ int main(void) {
   cout.setf(ios::scientific);
 
   // -----------------------------------------------------------------
-  // rel_fermion tests
+  // fermion_rel tests
   
   cout << "----------------------------------------------------" << endl;
-  cout << "rel_fermion tests:" << endl;
+  cout << "fermion_rel tests:" << endl;
   cout << "----------------------------------------------------" << endl;
   cout << endl;
 
@@ -79,7 +79,7 @@ int main(void) {
   e.mu=1.0;
   T=0.1;
   cout << "(m=" << e.m << ", mu=" << e.mu << ", T=" << T << ")" << endl;
-  cout << "eff_fermion: calc_mu(T) vs. calc_density(T)" << endl;
+  cout << "fermion_eff: calc_mu(T) vs. calc_density(T)" << endl;
   ef.calc_mu(e,T);
   cout << e.n << " " << e.mu << " " << e.ed << " " 
        << e.pr << " " << e.en << endl; 
@@ -102,7 +102,7 @@ int main(void) {
   e3.mu=1.0;
   T=0.1;
 
-  cout << "rel_fermion: calc_mu(T) vs. calc_density(T)" << endl;
+  cout << "fermion_rel: calc_mu(T) vs. calc_density(T)" << endl;
   rf.calc_mu(e3,T);
   cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
        << e3.pr << " " << e3.en << endl; 
@@ -127,7 +127,7 @@ int main(void) {
   e.mu=0.11;
   T=1.0;
   cout << "(m=" << e.m << ", mu=" << e.mu << ", T=" << T << ")" << endl;
-  cout << "eff_fermion: calc_mu(T) vs. calc_density(T)" << endl;
+  cout << "fermion_eff: calc_mu(T) vs. calc_density(T)" << endl;
   ef.calc_mu(e,T);
   cout << e.n << " " << e.mu << " " << e.ed << " " 
        << e.pr << " " << e.en << endl; 
@@ -149,7 +149,7 @@ int main(void) {
   e3.m=0.1;
   e3.mu=0.11;
   T=1.0;
-  cout << "rel_fermion: calc_mu(T) vs. calc_density(T)" << endl;
+  cout << "fermion_rel: calc_mu(T) vs. calc_density(T)" << endl;
   rf.calc_mu(e3,T);
   cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
        << e3.pr << " " << e3.en << endl; 
@@ -174,7 +174,7 @@ int main(void) {
   e3.mu=0.11;
   T=0.001;
   cout << "(m=" << e3.m << ", mu=" << e3.mu << ", T=" << T << ")" << endl;
-  cout << "rel_fermion: calc_mu(T) vs. calc_density(T)" << endl;
+  cout << "fermion_rel: calc_mu(T) vs. calc_density(T)" << endl;
   rf.calc_mu(e3,T);
   cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
        << e3.pr << " " << e3.en << endl; 
@@ -193,7 +193,7 @@ int main(void) {
   t.test_rel(t4,e3.pr,1.0e-10,"pressure 5");
   t.test_rel(t5,e3.en,1.0e-10,"entropy 5");
 
-  cout << "rel_fermion: calc_mu(T=0) vs. calc_density(T=0)" << endl;
+  cout << "fermion_rel: calc_mu(T=0) vs. calc_density(T=0)" << endl;
   ef.calc_mu_zerot(e3);
   cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
        << e3.pr << " " << e3.en << endl; 
@@ -218,7 +218,7 @@ int main(void) {
   e.mu=0.11;
   T=1.0;
   cout << "(m=" << e.m << ", mu=" << e.mu << ", T=" << T << ")" << endl;
-  cout << "eff_fermion: pair_mu(T) vs. pair_density(T)" << endl;
+  cout << "fermion_eff: pair_mu(T) vs. pair_density(T)" << endl;
   ef.pair_mu(e,T);
   cout << endl;
   cout << e.n << " " << e.mu << " " << e.ed << " " 
@@ -242,7 +242,7 @@ int main(void) {
   e3.m=0.1;
   e3.mu=0.11;
   T=1.0;
-  cout << "rel_fermion: pair_mu(T) vs. pair_density(T)" << endl;
+  cout << "fermion_rel: pair_mu(T) vs. pair_density(T)" << endl;
   rf.pair_mu(e3,T);
   cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
        << e3.pr << " " << e3.en << endl; 
@@ -270,7 +270,7 @@ int main(void) {
   T=1.0;
   e3.mu=(rf.deg_limit+1.0e-4)*T+e3.m;
   cout << "(m=" << e3.m << ", mu=" << e3.mu << ", T=" << T << ")" << endl;
-  cout << "eff_fermion: pair_mu(T) vs. pair_density(T)" << endl;
+  cout << "fermion_eff: pair_mu(T) vs. pair_density(T)" << endl;
   ef.pair_mu(e,T);
   cout << e.n << " " << e.mu << " " << e.ed << " " 
        << e.pr << " " << e.en << endl; 
@@ -289,7 +289,7 @@ int main(void) {
   t.test_rel(t4,e.pr,1.0e-9,"pressure 9");
   t.test_rel(t5,e.en,1.0e-9,"entropy 9");
 
-  cout << "rel_fermion: pair_mu(T) vs. pair_density(T)" << endl;
+  cout << "fermion_rel: pair_mu(T) vs. pair_density(T)" << endl;
   rf.pair_mu(e3,T);
   cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
        << e3.pr << " " << e3.en << endl; 
@@ -315,7 +315,7 @@ int main(void) {
   T=1.0;
   e3.mu=(rf.deg_limit-1.0e-4)*T+e3.m;
   cout << "(m=" << e3.m << ", mu=" << e3.mu << ", T=" << T << ")" << endl;
-  cout << "eff_fermion: pair_mu(T) vs. pair_density(T)" << endl;
+  cout << "fermion_eff: pair_mu(T) vs. pair_density(T)" << endl;
   ef.pair_mu(e,T);
   cout << e.n << " " << e.mu << " " << e.ed << " " 
        << e.pr << " " << e.en << endl; 
@@ -334,7 +334,7 @@ int main(void) {
   t.test_rel(t4,e.pr,1.0e-9,"pressure 11");
   t.test_rel(t5,e.en,1.0e-9,"entropy 11");
 
-  cout << "rel_fermion: pair_mu(T) vs. pair_density(T)" << endl;
+  cout << "fermion_rel: pair_mu(T) vs. pair_density(T)" << endl;
   rf.pair_mu(e3,T);
   cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
        << e3.pr << " " << e3.en << endl; 
@@ -356,10 +356,10 @@ int main(void) {
 
 
   // -----------------------------------------------------------------
-  // rel_fermion tests (with errors)
+  // fermion_rel tests (with errors)
 
   cout << "----------------------------------------------------" << endl;
-  cout << "rel_fermion tests (with errors):" << endl;
+  cout << "fermion_rel tests (with errors):" << endl;
   cout << "----------------------------------------------------" << endl;
   cout << endl;
     
@@ -368,7 +368,7 @@ int main(void) {
   e.mu=1.0;
   T=0.1;
   cout << "(m=" << e.m << ", mu=" << e.mu << ", T=" << T << ")" << endl;
-  cout << "eff_fermion: calc_mu(T) vs. calc_density(T)" << endl;
+  cout << "fermion_eff: calc_mu(T) vs. calc_density(T)" << endl;
   ef.calc_mu(e,T);
   cout << e.n << " " << e.mu << " " << e.ed << " " 
        << e.pr << " " << e.en << endl; 
@@ -390,7 +390,7 @@ int main(void) {
   e3.m=0.1;
   e3.mu=1.0;
   T=0.1;
-  cout << "rel_fermion: calc_mu(T) vs. calc_density(T)" << endl;
+  cout << "fermion_rel: calc_mu(T) vs. calc_density(T)" << endl;
   rf.calc_mu(e3,T);
   cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
        << e3.pr << " " << e3.en << endl; 
@@ -419,7 +419,7 @@ int main(void) {
   e.mu=0.11;
   T=1.0;
   cout << "(m=" << e.m << ", mu=" << e.mu << ", T=" << T << ")" << endl;
-  cout << "eff_fermion: calc_mu(T) vs. calc_density(T)" << endl;
+  cout << "fermion_eff: calc_mu(T) vs. calc_density(T)" << endl;
   ef.calc_mu(e,T);
   cout << e.n << " " << e.mu << " " << e.ed << " " 
        << e.pr << " " << e.en << endl; 
@@ -441,7 +441,7 @@ int main(void) {
   e3.m=0.1;
   e3.mu=0.11;
   T=1.0;
-  cout << "rel_fermion: calc_mu(T) vs. calc_density(T)" << endl;
+  cout << "fermion_rel: calc_mu(T) vs. calc_density(T)" << endl;
   rf.calc_mu(e3,T);
   cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
        << e3.pr << " " << e3.en << endl; 
@@ -470,7 +470,7 @@ int main(void) {
   e3.mu=0.11;
   T=0.001;
   cout << "(m=" << e3.m << ", mu=" << e3.mu << ", T=" << T << ")" << endl;
-  cout << "rel_fermion: calc_mu(T) vs. calc_density(T)" << endl;
+  cout << "fermion_rel: calc_mu(T) vs. calc_density(T)" << endl;
   rf.calc_mu(e3,T);
   cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
        << e3.pr << " " << e3.en << endl; 
@@ -493,7 +493,7 @@ int main(void) {
   t.test_rel(t4,e3.pr,1.0e-10,"pressure 17");
   t.test_rel(t5,e3.en,1.0e-10,"entropy 17");
 
-  cout << "rel_fermion: calc_mu(T=0) vs. calc_density(T=0)" << endl;
+  cout << "fermion_rel: calc_mu(T=0) vs. calc_density(T=0)" << endl;
   ef.calc_mu_zerot(e3);
   cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
        << e3.pr << " " << e3.en << endl; 
@@ -518,7 +518,7 @@ int main(void) {
   e.mu=0.11;
   T=1.0;
   cout << "(m=" << e.m << ", mu=" << e.mu << ", T=" << T << ")" << endl;
-  cout << "eff_fermion: pair_mu(T) vs. pair_density(T)" << endl;
+  cout << "fermion_eff: pair_mu(T) vs. pair_density(T)" << endl;
   ef.pair_mu(e,T);
   cout << e.n << " " << e.mu << " " << e.ed << " " 
        << e.pr << " " << e.en << endl; 
@@ -540,7 +540,7 @@ int main(void) {
   e3.m=0.1;
   e3.mu=0.11;
   T=1.0;
-  cout << "rel_fermion: pair_mu(T) vs. pair_density(T)" << endl;
+  cout << "fermion_rel: pair_mu(T) vs. pair_density(T)" << endl;
   rf.pair_mu(e3,T);
   cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
        << e3.pr << " " << e3.en << endl; 

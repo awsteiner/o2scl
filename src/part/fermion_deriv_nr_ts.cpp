@@ -20,8 +20,8 @@
 
   -------------------------------------------------------------------
 */
-#include <o2scl/sn_nr_fermion.h>
-#include <o2scl/nonrel_fermion.h>
+#include <o2scl/fermion_deriv_nr.h>
+#include <o2scl/fermion_nonrel.h>
 #include <o2scl/test_mgr.h>
 
 using namespace std;
@@ -34,8 +34,8 @@ int main(void) {
   
   cout.setf(ios::scientific);
 
-  sn_nr_fermion snf;
-  nonrel_fermion nrf;
+  fermion_deriv_nr snf;
+  fermion_nonrel nrf;
 
   fermion_deriv sf(5.0,2.0);
   fermion ef(5.0,2.0);

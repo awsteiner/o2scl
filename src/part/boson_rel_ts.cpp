@@ -20,8 +20,8 @@
 
   -------------------------------------------------------------------
 */
-#include <o2scl/rel_boson.h>
-#include <o2scl/eff_boson.h>
+#include <o2scl/boson_rel.h>
+#include <o2scl/boson_eff.h>
 #include <o2scl/test_mgr.h>
 
 using namespace std;
@@ -42,14 +42,14 @@ int main(void) {
 
   t.test_rel(b3.m,1.0,1.0e-6,"mass inheritance");
 
-  rel_boson rb;
-  eff_boson eb;
+  boson_rel rb;
+  boson_eff eb;
 
   b.non_interacting=true;
   b3.non_interacting=true;
 
   cout << "----------------------------------------------------" << endl;
-  cout << "rel_boson tests:" << endl;
+  cout << "boson_rel tests:" << endl;
   cout << "----------------------------------------------------" << endl;
   cout << endl;
     
@@ -58,7 +58,7 @@ int main(void) {
   b.mu=1.0;
   T=0.1;
   cout << "(m=" << b.m << ", mu=" << b.mu << ", T=" << T << ")" << endl;
-  cout << "eff_boson: calc_mu(T) vs. calc_density(T)" << endl;
+  cout << "boson_eff: calc_mu(T) vs. calc_density(T)" << endl;
   eb.calc_mu(b,T);
   cout << b.n << " " << b.mu << " " << b.ed << " " 
        << b.pr << " " << b.en << endl; 
@@ -74,7 +74,7 @@ int main(void) {
   b3.m=1.1;
   b3.mu=1.0;
   T=0.1;
-  cout << "rel_boson: calc_mu(T) vs. calc_density(T)" << endl;
+  cout << "boson_rel: calc_mu(T) vs. calc_density(T)" << endl;
   rb.calc_mu(b3,T);
   cout << b3.n << " " << b3.mu << " " << b3.ed << " " 
        << b3.pr << " " << b3.en << endl; 
@@ -98,7 +98,7 @@ int main(void) {
   b.mu=0.11;
   T=1.0;
   cout << "(m=" << b.m << ", mu=" << b.mu << ", T=" << T << ")" << endl;
-  cout << "eff_boson: calc_mu(T) vs. calc_density(T)" << endl;
+  cout << "boson_eff: calc_mu(T) vs. calc_density(T)" << endl;
   eb.calc_mu(b,T);
   cout << b.n << " " << b.mu << " " << b.ed << " " 
        << b.pr << " " << b.en << endl; 
@@ -114,7 +114,7 @@ int main(void) {
   b3.m=1.0;
   b3.mu=0.11;
   T=1.0;
-  cout << "rel_boson: calc_mu(T) vs. calc_density(T)" << endl;
+  cout << "boson_rel: calc_mu(T) vs. calc_density(T)" << endl;
   rb.calc_mu(b3,T);
   cout << b3.n << " " << b3.mu << " " << b3.ed << " " 
        << b3.pr << " " << b3.en << endl; 
@@ -138,7 +138,7 @@ int main(void) {
   b.mu=0.1;
   T=1.0;
   cout << "(m=" << b.m << ", mu=" << b.mu << ", T=" << T << ")" << endl;
-  cout << "eff_boson: pair_mu(T) vs. pair_density(T)" << endl;
+  cout << "boson_eff: pair_mu(T) vs. pair_density(T)" << endl;
   eb.pair_mu(b,T);
   cout << b.n << " " << b.mu << " " << b.ed << " " 
        << b.pr << " " << b.en << endl; 
@@ -155,7 +155,7 @@ int main(void) {
   b.mu=0.1;
   T=1.0;
   /*
-    cout << "rel_boson: pair_mu(T) vs. pair_density(T)" << endl;
+    cout << "boson_rel: pair_mu(T) vs. pair_density(T)" << endl;
     ret=rb.pair_mu(b3,T);
     cout << b3.n << " " << b3.mu << " " << b3.ed << " " 
     << b3.pr << " " << b3.en << endl; 

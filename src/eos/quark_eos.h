@@ -26,7 +26,7 @@
 #include <iostream>
 #include <o2scl/eos.h>
 #include <o2scl/quark.h>
-#include <o2scl/eff_fermion.h>
+#include <o2scl/fermion_eff.h>
 #include <o2scl/deriv.h>
 #include <o2scl/mroot.h>
 
@@ -64,7 +64,7 @@ namespace o2scl {
     fermion_eval_thermo *fet;
 
     /// Default fermion thermodynamics
-    eff_fermion def_fet;
+    fermion_eff def_fet;
   };
 
 #ifndef DOXYGEN_NO_O2NS

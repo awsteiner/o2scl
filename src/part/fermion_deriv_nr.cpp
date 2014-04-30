@@ -24,16 +24,16 @@
 #include <config.h>
 #endif
 
-#include <o2scl/sn_nr_fermion.h>
+#include <o2scl/fermion_deriv_nr.h>
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
 //--------------------------------------------
-// sn_nr_fermion class
+// fermion_deriv_nr class
 
-sn_nr_fermion::sn_nr_fermion() {
+fermion_deriv_nr::fermion_deriv_nr() {
   
   flimit=20.0;
   guess_from_nu=true;
@@ -41,16 +41,16 @@ sn_nr_fermion::sn_nr_fermion() {
   density_root=&def_density_root;
 }
 
-sn_nr_fermion::~sn_nr_fermion() {
+fermion_deriv_nr::~fermion_deriv_nr() {
 }
 
-void sn_nr_fermion::calc_mu(fermion_deriv &f, double temper) {
+void fermion_deriv_nr::calc_mu(fermion_deriv &f, double temper) {
   
   T=temper;
   fp=&f;
 
   if (temper<=0.0) {
-    O2SCL_ERR("T=0 not implemented in sn_nr_fermion().",exc_eunimpl);
+    O2SCL_ERR("T=0 not implemented in fermion_deriv_nr().",exc_eunimpl);
   }
   if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
   
@@ -101,7 +101,7 @@ void sn_nr_fermion::calc_mu(fermion_deriv &f, double temper) {
   return;
 }
 
-void sn_nr_fermion::nu_from_n(fermion_deriv &f, double temper) {
+void fermion_deriv_nr::nu_from_n(fermion_deriv &f, double temper) {
   double nex;
   
   T=temper;
@@ -110,10 +110,10 @@ void sn_nr_fermion::nu_from_n(fermion_deriv &f, double temper) {
   if (guess_from_nu) {
     nex=f.nu/temper;
   } else {
-    O2SCL_ERR("guess_from_nu==false not implemented in sn_nr_fermion.",
+    O2SCL_ERR("guess_from_nu==false not implemented in fermion_deriv_nr.",
 	      exc_eunimpl);
   }
-  funct_mfptr<sn_nr_fermion> mf(this,&sn_nr_fermion::solve_fun);
+  funct_mfptr<fermion_deriv_nr> mf(this,&fermion_deriv_nr::solve_fun);
     
   density_root->solve(nex,mf);
   f.nu=nex*temper;
@@ -121,7 +121,7 @@ void sn_nr_fermion::nu_from_n(fermion_deriv &f, double temper) {
   return;
 }
 
-void sn_nr_fermion::calc_density(fermion_deriv &f, double temper) {
+void fermion_deriv_nr::calc_density(fermion_deriv &f, double temper) {
 
   T=temper;
   fp=&f;
@@ -137,7 +137,7 @@ void sn_nr_fermion::calc_density(fermion_deriv &f, double temper) {
   return;
 }
 
-double sn_nr_fermion::solve_fun(double x) {
+double fermion_deriv_nr::solve_fun(double x) {
   double nden, y, yy;
   
   fp->nu=T*x;
@@ -159,7 +159,7 @@ double sn_nr_fermion::solve_fun(double x) {
   return yy;
 }
 
-void sn_nr_fermion::pair_mu(fermion_deriv &f, double temper) {
+void fermion_deriv_nr::pair_mu(fermion_deriv &f, double temper) {
   
   if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
 
@@ -177,11 +177,11 @@ void sn_nr_fermion::pair_mu(fermion_deriv &f, double temper) {
   return;
 }
 
-void sn_nr_fermion::pair_density(fermion_deriv &f, double temper) {
+void fermion_deriv_nr::pair_density(fermion_deriv &f, double temper) {
   double nex;
   
   if (temper<=0.0) {
-    O2SCL_ERR("T=0 not implemented in sn_nr_fermion().",exc_eunimpl);
+    O2SCL_ERR("T=0 not implemented in fermion_deriv_nr().",exc_eunimpl);
   }
   if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
   
@@ -189,7 +189,7 @@ void sn_nr_fermion::pair_density(fermion_deriv &f, double temper) {
   fp=&f;
 
   nex=f.nu/temper;
-  funct_mfptr<sn_nr_fermion> mf(this,&sn_nr_fermion::pair_fun);
+  funct_mfptr<fermion_deriv_nr> mf(this,&fermion_deriv_nr::pair_fun);
 
   density_root->solve(nex,mf);
   f.nu=nex*temper;
@@ -201,7 +201,7 @@ void sn_nr_fermion::pair_density(fermion_deriv &f, double temper) {
   return;
 }
 
-double sn_nr_fermion::pair_fun(double x) {
+double fermion_deriv_nr::pair_fun(double x) {
   double nden, y, yy;
 
   fp->nu=T*x;

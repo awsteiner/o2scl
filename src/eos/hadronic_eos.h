@@ -33,7 +33,7 @@
 #include <o2scl/mroot_hybrids.h>
 #include <o2scl/mm_funct.h>
 #include <o2scl/eos.h>
-#include <o2scl/eff_fermion.h>
+#include <o2scl/fermion_eff.h>
 #include <o2scl/part.h>
 
 #ifndef DOXYGEN_NO_O2NS
@@ -823,7 +823,7 @@ namespace o2scl {
     }
 
     /// Default fermion thermodynamics object
-    eff_fermion def_fet;
+    fermion_eff def_fet;
 
     /** \brief Equation of state as a function of density
     */

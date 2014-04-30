@@ -2,18 +2,18 @@
 # Basic variables
 # ------------------------------------------------------------
 
-PART_SRCS = boson.cpp classical.cpp eff_boson.cpp eff_fermion.cpp \
-	fermion.cpp nonrel_fermion.cpp part.cpp quark.cpp \
-	rel_fermion.cpp sn_fermion.cpp sn_nr_fermion.cpp \
-	sn_classical.cpp rel_boson.cpp mag_fermion_zerot.cpp
-HEADER_VAR = boson.h classical.h eff_boson.h eff_fermion.h \
-	fermion.h nonrel_fermion.h part.h quark.h rel_fermion.h \
-	part_deriv.h sn_fermion.h sn_nr_fermion.h sn_classical.h \
-	rel_boson.h mag_fermion_zerot.h
-TEST_VAR = classical.scr eff_fermion.scr rel_fermion.scr boson.scr \
-	fermion.scr nonrel_fermion.scr part.scr quark.scr \
-	eff_boson.scr sn_fermion.scr sn_nr_fermion.scr \
-	sn_classical.scr rel_boson.scr mag_fermion_zerot.scr
+PART_SRCS = boson.cpp classical.cpp boson_eff.cpp fermion_eff.cpp \
+	fermion.cpp fermion_nonrel.cpp part.cpp quark.cpp \
+	fermion_rel.cpp fermion_deriv_rel.cpp fermion_deriv_nr.cpp \
+	classical_deriv.cpp boson_rel.cpp fermion_mag_zerot.cpp
+HEADER_VAR = boson.h classical.h boson_eff.h fermion_eff.h \
+	fermion.h fermion_nonrel.h part.h quark.h fermion_rel.h \
+	part_deriv.h fermion_deriv_rel.h fermion_deriv_nr.h classical_deriv.h \
+	boson_rel.h fermion_mag_zerot.h
+TEST_VAR = classical.scr fermion_eff.scr fermion_rel.scr boson.scr \
+	fermion.scr fermion_nonrel.scr part.scr quark.scr \
+	boson_eff.scr fermion_deriv_rel.scr fermion_deriv_nr.scr \
+	classical_deriv.scr boson_rel.scr fermion_mag_zerot.scr
 
 # ------------------------------------------------------------
 # Includes
@@ -78,35 +78,35 @@ pkginclude_HEADERS = $(HEADER_VAR)
 # libtool testing targets
 # ------------------------------------------------------------
 
-check_PROGRAMS = classical_ts eff_fermion_ts rel_fermion_ts \
-	boson_ts fermion_ts nonrel_fermion_ts \
-	part_ts quark_ts sn_fermion_ts mag_fermion_zerot_ts \
-	sn_classical_ts sn_nr_fermion_ts rel_boson_ts eff_boson_ts
+check_PROGRAMS = classical_ts fermion_eff_ts fermion_rel_ts \
+	boson_ts fermion_ts fermion_nonrel_ts \
+	part_ts quark_ts fermion_deriv_rel_ts fermion_mag_zerot_ts \
+	classical_deriv_ts fermion_deriv_nr_ts boson_rel_ts boson_eff_ts
 
 VCHECK_LIBS = $(libdir)/libo2scl_part.la $(libdir)/libo2scl.la \
 	$(libdir)/libo2scl_hdf.la 
 
 classical_ts_LDADD = $(VCHECK_LIBS)
-eff_fermion_ts_LDADD = $(VCHECK_LIBS)
-rel_fermion_ts_LDADD = $(VCHECK_LIBS)
+fermion_eff_ts_LDADD = $(VCHECK_LIBS)
+fermion_rel_ts_LDADD = $(VCHECK_LIBS)
 boson_ts_LDADD = $(VCHECK_LIBS)
 fermion_ts_LDADD = $(VCHECK_LIBS)
 part_ts_LDADD = $(VCHECK_LIBS)
 quark_ts_LDADD = $(VCHECK_LIBS)
-sn_classical_ts_LDADD = $(VCHECK_LIBS)
-nonrel_fermion_ts_LDADD = $(VCHECK_LIBS)
-sn_fermion_ts_LDADD = $(VCHECK_LIBS)
-sn_nr_fermion_ts_LDADD = $(VCHECK_LIBS)
-rel_boson_ts_LDADD = $(VCHECK_LIBS)
-eff_boson_ts_LDADD = $(VCHECK_LIBS)
-mag_fermion_zerot_ts_LDADD = $(VCHECK_LIBS)
+classical_deriv_ts_LDADD = $(VCHECK_LIBS)
+fermion_nonrel_ts_LDADD = $(VCHECK_LIBS)
+fermion_deriv_rel_ts_LDADD = $(VCHECK_LIBS)
+fermion_deriv_nr_ts_LDADD = $(VCHECK_LIBS)
+boson_rel_ts_LDADD = $(VCHECK_LIBS)
+boson_eff_ts_LDADD = $(VCHECK_LIBS)
+fermion_mag_zerot_ts_LDADD = $(VCHECK_LIBS)
 
 classical.scr: classical_ts$(EXEEXT) 
 	./classical_ts$(EXEEXT) > classical.scr
-eff_fermion.scr: eff_fermion_ts$(EXEEXT) 
-	./eff_fermion_ts$(EXEEXT) > eff_fermion.scr
-rel_fermion.scr: rel_fermion_ts$(EXEEXT) 
-	./rel_fermion_ts$(EXEEXT) > rel_fermion.scr
+fermion_eff.scr: fermion_eff_ts$(EXEEXT) 
+	./fermion_eff_ts$(EXEEXT) > fermion_eff.scr
+fermion_rel.scr: fermion_rel_ts$(EXEEXT) 
+	./fermion_rel_ts$(EXEEXT) > fermion_rel.scr
 boson.scr: boson_ts$(EXEEXT) 
 	./boson_ts$(EXEEXT) > boson.scr
 fermion.scr: fermion_ts$(EXEEXT) 
@@ -115,35 +115,35 @@ part.scr: part_ts$(EXEEXT)
 	./part_ts$(EXEEXT) > part.scr
 quark.scr: quark_ts$(EXEEXT) 
 	./quark_ts$(EXEEXT) > quark.scr
-sn_classical.scr: sn_classical_ts$(EXEEXT) 
-	./sn_classical_ts$(EXEEXT) > sn_classical.scr
-nonrel_fermion.scr: nonrel_fermion_ts$(EXEEXT) 
-	./nonrel_fermion_ts$(EXEEXT) > nonrel_fermion.scr
-sn_fermion.scr: sn_fermion_ts$(EXEEXT) 
-	./sn_fermion_ts$(EXEEXT) > sn_fermion.scr
-sn_nr_fermion.scr: sn_nr_fermion_ts$(EXEEXT) 
-	./sn_nr_fermion_ts$(EXEEXT) > sn_nr_fermion.scr
-rel_boson.scr: rel_boson_ts$(EXEEXT) 
-	./rel_boson_ts$(EXEEXT) > rel_boson.scr
-eff_boson.scr: eff_boson_ts$(EXEEXT) 
-	./eff_boson_ts$(EXEEXT) > eff_boson.scr
-mag_fermion_zerot.scr: mag_fermion_zerot_ts$(EXEEXT) 
-	./mag_fermion_zerot_ts$(EXEEXT) > mag_fermion_zerot.scr
+classical_deriv.scr: classical_deriv_ts$(EXEEXT) 
+	./classical_deriv_ts$(EXEEXT) > classical_deriv.scr
+fermion_nonrel.scr: fermion_nonrel_ts$(EXEEXT) 
+	./fermion_nonrel_ts$(EXEEXT) > fermion_nonrel.scr
+fermion_deriv_rel.scr: fermion_deriv_rel_ts$(EXEEXT) 
+	./fermion_deriv_rel_ts$(EXEEXT) > fermion_deriv_rel.scr
+fermion_deriv_nr.scr: fermion_deriv_nr_ts$(EXEEXT) 
+	./fermion_deriv_nr_ts$(EXEEXT) > fermion_deriv_nr.scr
+boson_rel.scr: boson_rel_ts$(EXEEXT) 
+	./boson_rel_ts$(EXEEXT) > boson_rel.scr
+boson_eff.scr: boson_eff_ts$(EXEEXT) 
+	./boson_eff_ts$(EXEEXT) > boson_eff.scr
+fermion_mag_zerot.scr: fermion_mag_zerot_ts$(EXEEXT) 
+	./fermion_mag_zerot_ts$(EXEEXT) > fermion_mag_zerot.scr
 
 classical_ts_SOURCES = classical_ts.cpp
-eff_fermion_ts_SOURCES = eff_fermion_ts.cpp
-rel_fermion_ts_SOURCES = rel_fermion_ts.cpp
+fermion_eff_ts_SOURCES = fermion_eff_ts.cpp
+fermion_rel_ts_SOURCES = fermion_rel_ts.cpp
 boson_ts_SOURCES = boson_ts.cpp
 fermion_ts_SOURCES = fermion_ts.cpp
 part_ts_SOURCES = part_ts.cpp
 quark_ts_SOURCES = quark_ts.cpp
-sn_classical_ts_SOURCES = sn_classical_ts.cpp
-nonrel_fermion_ts_SOURCES = nonrel_fermion_ts.cpp
-sn_fermion_ts_SOURCES = sn_fermion_ts.cpp
-sn_nr_fermion_ts_SOURCES = sn_nr_fermion_ts.cpp
-rel_boson_ts_SOURCES = rel_boson_ts.cpp
-eff_boson_ts_SOURCES = eff_boson_ts.cpp
-mag_fermion_zerot_ts_SOURCES = mag_fermion_zerot_ts.cpp
+classical_deriv_ts_SOURCES = classical_deriv_ts.cpp
+fermion_nonrel_ts_SOURCES = fermion_nonrel_ts.cpp
+fermion_deriv_rel_ts_SOURCES = fermion_deriv_rel_ts.cpp
+fermion_deriv_nr_ts_SOURCES = fermion_deriv_nr_ts.cpp
+boson_rel_ts_SOURCES = boson_rel_ts.cpp
+boson_eff_ts_SOURCES = boson_eff_ts.cpp
+fermion_mag_zerot_ts_SOURCES = fermion_mag_zerot_ts.cpp
 
 # ------------------------------------------------------------
 # Library o2scl_basepart

@@ -22,7 +22,7 @@
 */
 #include <o2scl/test_mgr.h>
 #include <o2scl/fermion.h>
-#include <o2scl/eff_fermion.h>
+#include <o2scl/fermion_eff.h>
 
 using namespace std;
 using namespace o2scl;
@@ -36,7 +36,7 @@ int main(void) {
   cout.setf(ios::scientific);
   
   fermion e(1.0,2.0);
-  eff_fermion fet;
+  fermion_eff fet;
   e.non_interacting=true;
 
   double alpha, two13, alpha16, cbt, alpha2, temper;

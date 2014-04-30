@@ -32,7 +32,7 @@
 #include <o2scl/hadronic_eos.h>
 #include <o2scl/apr_eos.h>
 #include <o2scl/rmf_eos.h>
-#include <o2scl/eff_fermion.h>
+#include <o2scl/fermion_eff.h>
 #include <o2scl/mmin_conp.h>
 #include <o2scl/mmin_simp2.h>
 #include <o2scl/ldrop_mass.h>

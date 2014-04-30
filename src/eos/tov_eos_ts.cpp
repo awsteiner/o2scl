@@ -26,7 +26,7 @@
 
 #include <o2scl/tov_eos.h>
 #include <o2scl/test_mgr.h>
-#include <o2scl/nonrel_fermion.h>
+#include <o2scl/fermion_nonrel.h>
 #include <o2scl/apr_eos.h>
 #include <o2scl/mroot_hybrids.h>
 #include <o2scl/mroot_cern.h>

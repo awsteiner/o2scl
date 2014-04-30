@@ -26,17 +26,17 @@
 
 #include <cstdlib>
 
-#include <o2scl/eff_boson.h>
+#include <o2scl/boson_eff.h>
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
 //--------------------------------------------
-// eff_boson class
+// boson_eff class
 
 // Constructor, Destructor
-eff_boson::eff_boson() {
+boson_eff::boson_eff() {
   
   density_mroot=&def_density_mroot;
   psi_root=&def_psi_root;
@@ -44,11 +44,11 @@ eff_boson::eff_boson() {
   load_coefficients(cf_bosejel34);
 }
 
-eff_boson::~eff_boson() {
+boson_eff::~boson_eff() {
 }
 
 // Load coefficients for finite-temperature approximations
-int eff_boson::load_coefficients(int ctype) {
+int boson_eff::load_coefficients(int ctype) {
   
   if (ctype==cf_bosejel21) {
     parma=0.978;
@@ -126,14 +126,14 @@ int eff_boson::load_coefficients(int ctype) {
     Pmnb(3,3)=19.3811;
     Pmnb(3,4)=5.54423;
   } else {
-    O2SCL_ERR_RET("Invalid type in eff_boson::load_coefficients().",
+    O2SCL_ERR_RET("Invalid type in boson_eff::load_coefficients().",
 		  exc_efailed);
   }
   
   return success;
 }
 
-void eff_boson::calc_mu(boson &b, double temper) {
+void boson_eff::calc_mu(boson &b, double temper) {
   int nn, mm, nvar=1, ret=0;
   double xx[2], pren, preu, prep, sumn, sumu, sump;
   double gg, opg, nc, h, oph, psi;
@@ -143,7 +143,7 @@ void eff_boson::calc_mu(boson &b, double temper) {
 
   if (b.non_interacting) { b.nu=b.mu; b.ms=b.m; }
 
-  // Massless eff_bosons
+  // Massless boson_effs
   if (b.ms==0.0) {
     b.massless_calc(temper);
     return;
@@ -161,7 +161,7 @@ void eff_boson::calc_mu(boson &b, double temper) {
       xx[0]=sqrt(parma)*exp(1.0-psi);
     }
     
-    funct_mfptr_param<eff_boson,double> mfs(this,&eff_boson::solve_fun,psi);
+    funct_mfptr_param<boson_eff,double> mfs(this,&boson_eff::solve_fun,psi);
 
     int psi_root_err=psi_root->solve(xx[0],mfs);
     if (psi_root_err!=0) {
@@ -208,7 +208,7 @@ void eff_boson::calc_mu(boson &b, double temper) {
   return;
 }
 
-double eff_boson::solve_fun(double x, double &psi) {
+double boson_eff::solve_fun(double x, double &psi) {
   double h, sqt, y;
 
   h=x;
@@ -218,7 +218,7 @@ double eff_boson::solve_fun(double x, double &psi) {
   return y;
 }
 
-void eff_boson::calc_density(boson &b, double temper) {
+void boson_eff::calc_density(boson &b, double temper) {
   double h, oph, gg, opg, nc, preu, prep, pren;
   double sumn, sumu, sump, sqt, psi;
   int ret=0, mm, nn;
@@ -238,7 +238,7 @@ void eff_boson::calc_density(boson &b, double temper) {
   // that -20 isn't large enough. This should be examined.
   if (psi<-20.0) psi=-20.0;
   
-  mm_funct_mfptr<eff_boson> mfd(this,&eff_boson::density_fun);
+  mm_funct_mfptr<boson_eff> mfd(this,&boson_eff::density_fun);
 
   if (psi>=0.0) {
     h=0.0;
@@ -252,7 +252,7 @@ void eff_boson::calc_density(boson &b, double temper) {
     }
     ret=density_mroot->msolve(1,xx,mfd);
     if (ret!=0) {
-      O2SCL_ERR("Solver failed in eff_boson::calc_density().",
+      O2SCL_ERR("Solver failed in boson_eff::calc_density().",
 		exc_efailed);
     }
     h=xx[0];
@@ -305,7 +305,7 @@ void eff_boson::calc_density(boson &b, double temper) {
   return;
 }
 
-int eff_boson::density_fun(size_t nv, const ubvector &x, 
+int boson_eff::density_fun(size_t nv, const ubvector &x, 
 			   ubvector &y) {
   double h,gg,opg,nc,oph,sumn,pren;
   int mm, nn;
@@ -329,14 +329,14 @@ int eff_boson::density_fun(size_t nv, const ubvector &x,
 
   y[0]=bp->g/2.0*pren*sumn*nc/fix_density-1.0;
   if (!o2scl::is_finite(y[0])) {
-    O2SCL_ERR("Not finite in eff_boson::density_fun().",
+    O2SCL_ERR("Not finite in boson_eff::density_fun().",
 	      exc_efailed);
   }
 
   return success;
 }
 
-void eff_boson::pair_mu(boson &b, double temper) {
+void boson_eff::pair_mu(boson &b, double temper) {
 
   T=temper;
   bp=&b;
@@ -357,7 +357,7 @@ void eff_boson::pair_mu(boson &b, double temper) {
   return;
 }
 
-void eff_boson::pair_density(boson &b, double temper) {
+void boson_eff::pair_density(boson &b, double temper) {
   double oph, opg, gg, h, pren, preu, prep, sumn;
   double sumu, sump, nc, sqt, psi;
   int mm, nn;
@@ -382,7 +382,7 @@ void eff_boson::pair_density(boson &b, double temper) {
   }
   psi=(-b.nu-b.ms)/temper;
 
-  mm_funct_mfptr<eff_boson> mfd(this,&eff_boson::pair_density_fun);
+  mm_funct_mfptr<boson_eff> mfd(this,&boson_eff::pair_density_fun);
 
   if (psi>-0.05) {
     xx[1]=sqrt(-2.0*parma*psi);
@@ -465,7 +465,7 @@ void eff_boson::pair_density(boson &b, double temper) {
   return;
 }
 
-int eff_boson::pair_density_fun(size_t nv, const ubvector &x, 
+int boson_eff::pair_density_fun(size_t nv, const ubvector &x, 
 				ubvector &y) {
 
   double h,gg,opg,nc,oph,sumn,pren,sqt,psi;

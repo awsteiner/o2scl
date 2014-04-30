@@ -26,7 +26,7 @@
 
 #include <o2scl/test_mgr.h>
 #include <o2scl/virial_eos.h>
-#include <o2scl/rel_fermion.h>
+#include <o2scl/fermion_rel.h>
 
 using namespace std;
 using namespace o2scl;
@@ -56,7 +56,7 @@ int main(void) {
   thermo th;
   double T;
   virial_eos ve;
-  rel_fermion rf;
+  fermion_rel rf;
 
   vector<double> nba, pra, soaa;
   interp<vector<double> > it(itp_cspline);

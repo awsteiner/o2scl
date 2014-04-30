@@ -45,14 +45,14 @@ namespace o2scl {
 
       \todo Testing not completely finished.
   */
-  class rel_boson {
+  class boson_rel {
 
   public:
 
     /// Create a boson with mass \c m and degeneracy \c g
-    rel_boson();
+    boson_rel();
 
-    virtual ~rel_boson();
+    virtual ~boson_rel();
     
     /** \brief Calculate properties as function of chemical potential
      */
@@ -71,7 +71,7 @@ namespace o2scl {
 	density
     */
     virtual void pair_density(boson &b, double temper) {
-      O2SCL_ERR("Function rel_boson::pair_density() unimplemented.",
+      O2SCL_ERR("Function boson_rel::pair_density() unimplemented.",
 		exc_eunimpl);
     }
 
@@ -97,8 +97,8 @@ namespace o2scl {
     /// Default degenerate integrator
     inte_qag_gsl<funct > def_dit;
 
-    /// Return string denoting type ("rel_boson")
-    virtual const char *type() { return "rel_boson"; }
+    /// Return string denoting type ("boson_rel")
+    virtual const char *type() { return "boson_rel"; }
 
   protected:
 

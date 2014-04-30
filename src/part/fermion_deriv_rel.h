@@ -240,14 +240,14 @@ namespace o2scl {
       \future Create a more intelligent method for dealing with bad 
       initial guesses for the chemical potential in calc_density().
   */
-  class sn_fermion : public fermion_deriv_thermo {
+  class fermion_deriv_rel : public fermion_deriv_thermo {
     
   public:
 
     /// Create a fermion with mass \c m and degeneracy \c g
-    sn_fermion();
+    fermion_deriv_rel();
 
-    virtual ~sn_fermion();
+    virtual ~fermion_deriv_rel();
     
     /** \brief Limit of arguments of exponentials for Fermi functions 
 	(default 200.0)
@@ -261,7 +261,7 @@ namespace o2scl {
     
     /** \brief The limit for the Fermi functions (default 20.0)
 	
-	sn_fermion will ignore corrections smaller than about
+	fermion_deriv_rel will ignore corrections smaller than about
 	\f$ \exp(-\mathrm{f{l}imit}) \f$ . 
     */
     double upper_limit_fac;
@@ -326,8 +326,8 @@ namespace o2scl {
     /// The default solver for npen_density() and pair_density()
     root_cern<funct> def_density_root;
     
-    /// Return string denoting type ("sn_fermion")
-    virtual const char *type() { return "sn_fermion"; };
+    /// Return string denoting type ("fermion_deriv_rel")
+    virtual const char *type() { return "fermion_deriv_rel"; };
 
     /// Calibrate with more accurate tabulated results
     double deriv_calibrate(fermion_deriv &f, int verbose, 

@@ -20,13 +20,13 @@
 
   -------------------------------------------------------------------
 */
-#include <o2scl/mag_fermion_zerot.h>
+#include <o2scl/fermion_mag_zerot.h>
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-void mag_fermion_zerot::calc_mu_zerot_mag(fermion &f, double qB, 
+void fermion_mag_zerot::calc_mu_zerot_mag(fermion &f, double qB, 
 					  double kappa) {
 
   if (qB==0.0) {
@@ -35,7 +35,7 @@ void mag_fermion_zerot::calc_mu_zerot_mag(fermion &f, double qB,
   }
 
   if (f.g!=2.0) {
-    O2SCL_ERR("Class mag_fermion_zerot only works for g=2.",
+    O2SCL_ERR("Class fermion_mag_zerot only works for g=2.",
 	      exc_eunimpl);
   }
 
@@ -186,7 +186,7 @@ void mag_fermion_zerot::calc_mu_zerot_mag(fermion &f, double qB,
   return;
 }
 
-void mag_fermion_zerot::calc_density_zerot_mag
+void fermion_mag_zerot::calc_density_zerot_mag
 (fermion &f, double qB, double kappa) {
 
   if (qB==0.0) {
@@ -195,7 +195,7 @@ void mag_fermion_zerot::calc_density_zerot_mag
   }
 
   if (f.g!=2.0) {
-    O2SCL_ERR("Class mag_fermion_zerot only works for g=2.",
+    O2SCL_ERR("Class fermion_mag_zerot only works for g=2.",
 	      exc_eunimpl);
   }
 
@@ -249,7 +249,7 @@ void mag_fermion_zerot::calc_density_zerot_mag
 
   if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
 
-  mm_funct_mfptr<mag_fermion_zerot> mf(this,&mag_fermion_zerot::solve_fun);
+  mm_funct_mfptr<fermion_mag_zerot> mf(this,&fermion_mag_zerot::solve_fun);
   int pa=0;
 
   // Construct an initial guess from the B=0 result
@@ -283,7 +283,7 @@ void mag_fermion_zerot::calc_density_zerot_mag
   return;
 }
 
-int mag_fermion_zerot::solve_fun(size_t nv, const ubvector &x,
+int fermion_mag_zerot::solve_fun(size_t nv, const ubvector &x,
 				 ubvector &y) {
   
   if (!o2scl::is_finite(x[0])) {

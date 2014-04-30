@@ -31,7 +31,7 @@
 #include <o2scl/constants.h>
 #include <o2scl/hadronic_eos.h>
 #include <o2scl/rmf_eos.h>
-#include <o2scl/eff_fermion.h>
+#include <o2scl/fermion_eff.h>
 #include <o2scl/inte_qagiu_gsl.h>
 
 #ifndef DOXYGEN_NO_O2NS

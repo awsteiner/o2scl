@@ -39,13 +39,13 @@ namespace o2scl {
 
       \todo This does not work with inc_rest_mass=true
   */
-  class sn_classical {
+  class classical_deriv {
 
   public:
 
-    sn_classical();
+    classical_deriv();
 
-    virtual ~sn_classical();
+    virtual ~classical_deriv();
     
     /** \brief Compute the properties of particle \c p at temperature 
 	\c temper from its chemical potential
@@ -57,8 +57,8 @@ namespace o2scl {
     */
     virtual void calc_density(part_deriv &p, double temper);
 
-    /// Return string denoting type ("sn_classical")
-    virtual const char *type() { return "sn_classical"; };
+    /// Return string denoting type ("classical_deriv")
+    virtual const char *type() { return "classical_deriv"; };
 
   };
 

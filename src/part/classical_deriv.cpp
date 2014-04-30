@@ -24,22 +24,22 @@
 #include <config.h>
 #endif
 
-#include <o2scl/sn_classical.h>
+#include <o2scl/classical_deriv.h>
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
 //--------------------------------------------
-// sn_classical class
+// classical_deriv class
 
-sn_classical::sn_classical() {
+classical_deriv::classical_deriv() {
 }
 
-sn_classical::~sn_classical() {
+classical_deriv::~classical_deriv() {
 }
 
-void sn_classical::calc_mu(part_deriv &p, double temper) {
+void classical_deriv::calc_mu(part_deriv &p, double temper) {
   if (p.non_interacting==true) {p.nu=p.mu; p.ms=p.m;}
   if (p.nu/temper<-500.0) p.n=0.0;
   else p.n=exp(p.nu/temper)*p.g*pow(p.ms*temper/pi/2.0,1.5);
@@ -53,7 +53,7 @@ void sn_classical::calc_mu(part_deriv &p, double temper) {
   return;
 }
 
-void sn_classical::calc_density(part_deriv &p, double temper) {
+void classical_deriv::calc_density(part_deriv &p, double temper) {
   if (p.non_interacting==true) {p.ms=p.m;}
   if (p.n<=0.0) {
     p.nu=p.ms;

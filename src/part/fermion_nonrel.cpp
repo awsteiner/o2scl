@@ -24,21 +24,21 @@
 #include <config.h>
 #endif
 
-#include <o2scl/nonrel_fermion.h>
+#include <o2scl/fermion_nonrel.h>
 #include <o2scl/classical.h>
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-nonrel_fermion::nonrel_fermion() {
+fermion_nonrel::fermion_nonrel() {
   density_root=&def_density_root;
 }
 
-nonrel_fermion::~nonrel_fermion() {
+fermion_nonrel::~fermion_nonrel() {
 }
 
-void nonrel_fermion::calc_mu_zerot(fermion &f) {
+void fermion_nonrel::calc_mu_zerot(fermion &f) {
   if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
   if (f.inc_rest_mass) {
     f.kf=sqrt(2.0*f.ms*(f.nu-f.m));
@@ -53,7 +53,7 @@ void nonrel_fermion::calc_mu_zerot(fermion &f) {
   return;
 }
 
-void nonrel_fermion::calc_density_zerot(fermion &f) {
+void fermion_nonrel::calc_density_zerot(fermion &f) {
   if (f.non_interacting) { f.ms=f.m; }
   kf_from_density(f);
   f.nu=f.kf*f.kf/2.0/f.ms;
@@ -69,7 +69,7 @@ void nonrel_fermion::calc_density_zerot(fermion &f) {
   return;
 }
 
-void nonrel_fermion::calc_mu(fermion &f, double temper) {
+void fermion_nonrel::calc_mu(fermion &f, double temper) {
   double y, sy, spi, ey, int1, int2;
 
   fp=&f;
@@ -121,13 +121,13 @@ void nonrel_fermion::calc_mu(fermion &f, double temper) {
 
   if (!o2scl::is_finite(f.nu) || !o2scl::is_finite(f.n)) {
     O2SCL_ERR2("Chemical potential or density in ",
-		   "nonrel_fermion::calc_mu().",exc_efailed);
+		   "fermion_nonrel::calc_mu().",exc_efailed);
   }
   
   return;
 }
 
-void nonrel_fermion::nu_from_n(fermion &f, double temper) {
+void fermion_nonrel::nu_from_n(fermion &f, double temper) {
 
   fp=&f;
   T=temper;
@@ -144,7 +144,7 @@ void nonrel_fermion::nu_from_n(fermion &f, double temper) {
   // (Note GSL_LOG_DBL_MIN is about -708)
   if (nex>-GSL_LOG_DBL_MIN*0.9) nex=-GSL_LOG_DBL_MIN/2.0;
   
-  funct_mfptr<nonrel_fermion> mf(this,&nonrel_fermion::solve_fun);
+  funct_mfptr<fermion_nonrel> mf(this,&fermion_nonrel::solve_fun);
   
   // Turn off convergence errors temporarily, since we'll
   // try again if it fails
@@ -168,7 +168,7 @@ void nonrel_fermion::nu_from_n(fermion &f, double temper) {
     
     // If it failed again, add error information
     if (ret!=0) {
-      O2SCL_ERR("Solver failed in nonrel_fermion::nu_from_n().",ret);
+      O2SCL_ERR("Solver failed in fermion_nonrel::nu_from_n().",ret);
     }
   }
 
@@ -181,7 +181,7 @@ void nonrel_fermion::nu_from_n(fermion &f, double temper) {
   return;
 }
 
-void nonrel_fermion::calc_density(fermion &f, double temper) {
+void fermion_nonrel::calc_density(fermion &f, double temper) {
   double y, spi, ey, sy;
 
   if (f.n<=0.0) {
@@ -243,7 +243,7 @@ void nonrel_fermion::calc_density(fermion &f, double temper) {
 
 }
 
-double nonrel_fermion::solve_fun(double x) {
+double fermion_nonrel::solve_fun(double x) {
   double nden;
   
   // If the argument to gsl_sf_fermi_dirac_half() is less

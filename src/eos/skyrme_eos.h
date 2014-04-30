@@ -31,7 +31,7 @@
 #include <o2scl/mroot.h>
 #include <o2scl/hadronic_eos.h>
 #include <o2scl/part.h>
-#include <o2scl/nonrel_fermion.h>
+#include <o2scl/fermion_nonrel.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -439,7 +439,7 @@ namespace o2scl {
   protected:
 
     /// Thermodynamics of non-relativistic fermions
-    nonrel_fermion nrf;
+    fermion_nonrel nrf;
     
     /// \name Functions and parameters for calpar()
     //@{

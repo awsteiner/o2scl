@@ -59,8 +59,8 @@ namespace o2scl {
       been implemented. 
 
       \todo Check behaviour of calc_density() at zero density, and
-      compare with that from \ref o2scl::eff_fermion, \ref
-      o2scl::rel_fermion, and \ref o2scl::classical.
+      compare with that from \ref o2scl::fermion_eff, \ref
+      o2scl::fermion_rel, and \ref o2scl::classical.
 
       \todo Implement pair_density() and pair_mu().
 
@@ -72,14 +72,14 @@ namespace o2scl {
       approximation (for example) to invert the density integral so
       that we don't need to use a solver.
   */
-  class nonrel_fermion : public fermion_eval_thermo {
+  class fermion_nonrel : public fermion_eval_thermo {
 
   public:
 
     /// Create a nonrelativistic fermion with mass 'm' and degeneracy 'g'
-    nonrel_fermion();
+    fermion_nonrel();
     
-    virtual ~nonrel_fermion();
+    virtual ~fermion_nonrel();
     
     /** \brief Zero temperature fermions
     */
@@ -104,13 +104,13 @@ namespace o2scl {
     virtual void calc_density(fermion &f, double temper);
 
     virtual void pair_mu(fermion &f, double temper) {
-      O2SCL_ERR2("Function nonrel_fermion::pair_mu() not ",
+      O2SCL_ERR2("Function fermion_nonrel::pair_mu() not ",
 		 "implemented.",exc_eunimpl);
       return;
     }
 
     virtual void pair_density(fermion &f, double temper) {
-      O2SCL_ERR2("Function nonrel_fermion::pair_density() not ",
+      O2SCL_ERR2("Function fermion_nonrel::pair_density() not ",
 		 "implemented.",exc_eunimpl);
       return;
     }
@@ -129,8 +129,8 @@ namespace o2scl {
     /// The default solver for calc_density().
     root_cern<funct> def_density_root;
 
-    /// Return string denoting type ("nonrel_fermion")
-    virtual const char *type() { return "nonrel_fermion"; }
+    /// Return string denoting type ("fermion_nonrel")
+    virtual const char *type() { return "fermion_nonrel"; }
 
   protected:
 
@@ -147,8 +147,8 @@ namespace o2scl {
 
   private:
 
-    nonrel_fermion(const nonrel_fermion &);
-    nonrel_fermion& operator=(const nonrel_fermion&);
+    fermion_nonrel(const fermion_nonrel &);
+    fermion_nonrel& operator=(const fermion_nonrel&);
 
 #endif
 

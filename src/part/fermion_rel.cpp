@@ -24,13 +24,13 @@
 #include <config.h>
 #endif
 
-#include <o2scl/rel_fermion.h>
+#include <o2scl/fermion_rel.h>
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-rel_fermion::rel_fermion() : nit(new inte_qagiu_gsl<>), 
+fermion_rel::fermion_rel() : nit(new inte_qagiu_gsl<>), 
 			     dit(new inte_qag_gsl<>), 
 			     density_root(new root_cern<>) {
   deg_limit=2.0;
@@ -42,10 +42,10 @@ rel_fermion::rel_fermion() : nit(new inte_qagiu_gsl<>),
   err_nonconv=true;
 }
 
-rel_fermion::~rel_fermion() {
+fermion_rel::~fermion_rel() {
 }
 
-void rel_fermion::calc_mu(fermion &f, double temper) {
+void fermion_rel::calc_mu(fermion &f, double temper) {
 
   if (temper<=0.0) {
     calc_mu_zerot(f);
@@ -96,9 +96,9 @@ void rel_fermion::calc_mu(fermion &f, double temper) {
     
     // If the temperature is large enough, perform the full integral
     
-    funct_mfptr<rel_fermion> mfd(this,&rel_fermion::density_fun);
-    funct_mfptr<rel_fermion> mfe(this,&rel_fermion::energy_fun);
-    funct_mfptr<rel_fermion> mfs(this,&rel_fermion::entropy_fun);
+    funct_mfptr<fermion_rel> mfd(this,&fermion_rel::density_fun);
+    funct_mfptr<fermion_rel> mfe(this,&fermion_rel::energy_fun);
+    funct_mfptr<fermion_rel> mfs(this,&fermion_rel::entropy_fun);
 
     double prefac=f.g*pow(temper,3.0)/2.0/pi2;
 
@@ -126,9 +126,9 @@ void rel_fermion::calc_mu(fermion &f, double temper) {
     // Otherwise, apply a degenerate approximation, by making the
     // upper integration limit finite
     
-    funct_mfptr<rel_fermion> mfd(this,&rel_fermion::deg_density_fun);
-    funct_mfptr<rel_fermion> mfe(this,&rel_fermion::deg_energy_fun);
-    funct_mfptr<rel_fermion> mfs(this,&rel_fermion::deg_entropy_fun);
+    funct_mfptr<fermion_rel> mfd(this,&fermion_rel::deg_density_fun);
+    funct_mfptr<fermion_rel> mfe(this,&fermion_rel::deg_energy_fun);
+    funct_mfptr<fermion_rel> mfs(this,&fermion_rel::deg_entropy_fun);
 
     double prefac=f.g/2.0/pi2;
     
@@ -152,7 +152,7 @@ void rel_fermion::calc_mu(fermion &f, double temper) {
       unc.ed=0.0;
       unc.pr=0.0;
       unc.en=0.0;
-      O2SCL_ERR2("Zero density in degenerate limit in rel_fermion::",
+      O2SCL_ERR2("Zero density in degenerate limit in fermion_rel::",
 		 "calc_mu(). Variable deg_limit set improperly?",
 		 exc_efailed);
       return;
@@ -210,7 +210,7 @@ void rel_fermion::calc_mu(fermion &f, double temper) {
   return;
 }
 
-int rel_fermion::nu_from_n(fermion &f, double temper) {
+int fermion_rel::nu_from_n(fermion &f, double temper) {
   double nex;
 
   T=temper;
@@ -235,22 +235,22 @@ int rel_fermion::nu_from_n(fermion &f, double temper) {
   // If neither worked, call the error handler
   if (y==1.0 || !o2scl::is_finite(y)) {
     O2SCL_CONV2_RET("Couldn't find reasonable initial guess in ",
-		    "rel_fermion::nu_from_n().",exc_einval,this->err_nonconv);
+		    "fermion_rel::nu_from_n().",exc_einval,this->err_nonconv);
   }
   
   // Perform full solution
-  funct_mfptr<rel_fermion> mf(this,&rel_fermion::solve_fun);
+  funct_mfptr<fermion_rel> mf(this,&fermion_rel::solve_fun);
   int ret=density_root->solve(nex,mf);
   if (ret!=0) {
     O2SCL_CONV2_RET("Density solver failed in ",
-		    "rel_fermion::nu_from_n().",exc_efailed,this->err_nonconv);
+		    "fermion_rel::nu_from_n().",exc_efailed,this->err_nonconv);
   }
   f.nu=nex*temper;
   
   return success;
 }
 
-void rel_fermion::calc_density(fermion &f, double temper) {
+void fermion_rel::calc_density(fermion &f, double temper) {
 
 #if !O2SCL_NO_RANGE_CHECK
   // This may not be strictly necessary, because it should be clear
@@ -259,7 +259,7 @@ void rel_fermion::calc_density(fermion &f, double temper) {
   // for debugging.
   if (!o2scl::is_finite(f.n)) {
     O2SCL_ERR2("Density not finite in ",
-	       "rel_fermion::calc_density().",exc_einval);
+	       "fermion_rel::calc_density().",exc_einval);
   }
 #endif
 
@@ -304,8 +304,8 @@ void rel_fermion::calc_density(fermion &f, double temper) {
   }
   if (!deg) {
     
-    funct_mfptr<rel_fermion> mfe(this,&rel_fermion::energy_fun);
-    funct_mfptr<rel_fermion> mfs(this,&rel_fermion::entropy_fun);
+    funct_mfptr<fermion_rel> mfe(this,&fermion_rel::energy_fun);
+    funct_mfptr<fermion_rel> mfs(this,&fermion_rel::entropy_fun);
     
     f.ed=nit->integ(mfe,0.0,0.0);
     f.ed*=f.g*pow(temper,4.0)/2.0/pi2;
@@ -318,8 +318,8 @@ void rel_fermion::calc_density(fermion &f, double temper) {
 
   } else {
 
-    funct_mfptr<rel_fermion> mfe(this,&rel_fermion::deg_energy_fun);
-    funct_mfptr<rel_fermion> mfs(this,&rel_fermion::deg_entropy_fun);
+    funct_mfptr<fermion_rel> mfe(this,&fermion_rel::deg_energy_fun);
+    funct_mfptr<fermion_rel> mfs(this,&fermion_rel::deg_entropy_fun);
       
     double arg;
     if (f.inc_rest_mass) {
@@ -367,7 +367,7 @@ void rel_fermion::calc_density(fermion &f, double temper) {
       f.en=0.0;
       unc.ed=0.0;
       unc.en=0.0;
-      O2SCL_ERR2("Zero density in degenerate limit in rel_fermion::",
+      O2SCL_ERR2("Zero density in degenerate limit in fermion_rel::",
 		 "calc_mu(). Variable deg_limit set improperly?",exc_efailed);
       
     }
@@ -380,7 +380,7 @@ void rel_fermion::calc_density(fermion &f, double temper) {
   return;
 }
 
-double rel_fermion::deg_density_fun(double k) {
+double fermion_rel::deg_density_fun(double k) {
 
   double E=gsl_hypot(k,fp->ms), ret;
   if (!fp->inc_rest_mass) E-=fp->m;
@@ -390,7 +390,7 @@ double rel_fermion::deg_density_fun(double k) {
   return ret;
 }
 
-double rel_fermion::deg_energy_fun(double k) {
+double fermion_rel::deg_energy_fun(double k) {
 
   double E=gsl_hypot(k,fp->ms), ret;
   if (!fp->inc_rest_mass) E-=fp->m;
@@ -400,7 +400,7 @@ double rel_fermion::deg_energy_fun(double k) {
   return ret;
 }
   
-double rel_fermion::deg_entropy_fun(double k) {
+double fermion_rel::deg_entropy_fun(double k) {
   
   double E=gsl_hypot(k,fp->ms), ret;
   if (!fp->inc_rest_mass) E-=fp->m;
@@ -423,7 +423,7 @@ double rel_fermion::deg_entropy_fun(double k) {
   return ret;
 }
   
-double rel_fermion::density_fun(double u) {
+double fermion_rel::density_fun(double u) {
   double ret, y, mx;
 
   if (fp->inc_rest_mass) {
@@ -448,7 +448,7 @@ double rel_fermion::density_fun(double u) {
   return ret;
 }
 
-double rel_fermion::energy_fun(double u) {
+double fermion_rel::energy_fun(double u) {
   double ret, y, mx;
 
   mx=fp->ms/T;
@@ -471,7 +471,7 @@ double rel_fermion::energy_fun(double u) {
   return ret;
 }
 
-double rel_fermion::entropy_fun(double u) {
+double fermion_rel::entropy_fun(double u) {
   double ret, y, mx, term1, term2;
 
   if (fp->inc_rest_mass) {
@@ -492,7 +492,7 @@ double rel_fermion::entropy_fun(double u) {
   return ret;
 }
 
-double rel_fermion::solve_fun(double x) {
+double fermion_rel::solve_fun(double x) {
   double nden, yy;
   
   fp->nu=T*x;
@@ -536,7 +536,7 @@ double rel_fermion::solve_fun(double x) {
 
   if (!deg) {
 
-    funct_mfptr<rel_fermion> mfe(this,&rel_fermion::density_fun);
+    funct_mfptr<fermion_rel> mfe(this,&fermion_rel::density_fun);
     
     nden=nit->integ(mfe,0.0,0.0);
     nden*=fp->g*pow(T,3.0)/2.0/pi2;
@@ -546,7 +546,7 @@ double rel_fermion::solve_fun(double x) {
 
   } else {
     
-    funct_mfptr<rel_fermion> mfe(this,&rel_fermion::deg_density_fun);
+    funct_mfptr<fermion_rel> mfe(this,&fermion_rel::deg_density_fun);
     
     double arg;
     if (fp->inc_rest_mass) {
@@ -577,7 +577,7 @@ double rel_fermion::solve_fun(double x) {
   return yy;
 }
 
-void rel_fermion::pair_mu(fermion &f, double temper) {
+void fermion_rel::pair_mu(fermion &f, double temper) {
 
   if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
 
@@ -609,7 +609,7 @@ void rel_fermion::pair_mu(fermion &f, double temper) {
   return;
 }
 
-void rel_fermion::pair_density(fermion &f, double temper) {
+void fermion_rel::pair_density(fermion &f, double temper) {
   double nex;
 
   T=temper;
@@ -622,7 +622,7 @@ void rel_fermion::pair_density(fermion &f, double temper) {
   if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
   
   nex=f.nu/temper;
-  funct_mfptr<rel_fermion> mf(this,&rel_fermion::pair_fun);
+  funct_mfptr<fermion_rel> mf(this,&fermion_rel::pair_fun);
   density_root->solve(nex,mf);
   f.nu=nex*temper;
   
@@ -633,7 +633,7 @@ void rel_fermion::pair_density(fermion &f, double temper) {
   return;
 }
 
-double rel_fermion::pair_fun(double x) { 
+double fermion_rel::pair_fun(double x) { 
 
   double nden, yy;
 
@@ -656,7 +656,7 @@ double rel_fermion::pair_fun(double x) {
     
     // Nondegenerate case
 
-    funct_mfptr<rel_fermion> mfe(this,&rel_fermion::density_fun);
+    funct_mfptr<fermion_rel> mfe(this,&fermion_rel::density_fun);
 
     nden=nit->integ(mfe,0.0,0.0);
     nden*=fp->g*pow(T,3.0)/2.0/pi2;
@@ -666,7 +666,7 @@ double rel_fermion::pair_fun(double x) {
 
     // Degenerate case
 
-    funct_mfptr<rel_fermion> mfe(this,&rel_fermion::deg_density_fun);
+    funct_mfptr<fermion_rel> mfe(this,&fermion_rel::deg_density_fun);
 
     double arg;
     if (fp->inc_rest_mass) {
@@ -705,7 +705,7 @@ double rel_fermion::pair_fun(double x) {
     
     // Nondegenerate case
 
-    funct_mfptr<rel_fermion> mf(this,&rel_fermion::density_fun);
+    funct_mfptr<fermion_rel> mf(this,&fermion_rel::density_fun);
     
     nden=nit->integ(mf,0.0,0.0);
     nden*=fp->g*pow(T,3.0)/2.0/pi2;
@@ -715,7 +715,7 @@ double rel_fermion::pair_fun(double x) {
 
     // Degenerate case
 
-    funct_mfptr<rel_fermion> mf(this,&rel_fermion::deg_density_fun);
+    funct_mfptr<fermion_rel> mf(this,&fermion_rel::deg_density_fun);
     
     double arg;
     if (fp->inc_rest_mass) {

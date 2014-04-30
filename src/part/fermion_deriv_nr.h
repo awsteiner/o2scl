@@ -218,18 +218,18 @@ namespace o2scl {
       \f]
 
   */
-  class sn_nr_fermion : public fermion_deriv_thermo {
+  class fermion_deriv_nr : public fermion_deriv_thermo {
 
   public:
 
     /// Create a fermion with mass \c m and degeneracy \c g
-    sn_nr_fermion();
+    fermion_deriv_nr();
 
-    virtual ~sn_nr_fermion();
+    virtual ~fermion_deriv_nr();
     
     /** \brief The limit for the Fermi functions (default 20.0)
     
-	sn_nr_fermion will ignore corrections smaller than about
+	fermion_deriv_nr will ignore corrections smaller than about
 	 \f$ \exp(-\mathrm{f{l}imit}) \f$ . 
      */
     double flimit;
@@ -273,8 +273,8 @@ namespace o2scl {
     /// The default solver for npen_density() and pair_density()
     root_cern<funct> def_density_root;
 
-    /// Return string denoting type ("sn_nr_fermion")
-    virtual const char *type() { return "sn_nr_fermion"; };
+    /// Return string denoting type ("fermion_deriv_nr")
+    virtual const char *type() { return "fermion_deriv_nr"; };
 
   protected:
 

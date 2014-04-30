@@ -22,7 +22,7 @@
 */
 #include <o2scl/test_mgr.h>
 
-#include <o2scl/nonrel_fermion.h>
+#include <o2scl/fermion_nonrel.h>
 
 using namespace std;
 using namespace o2scl;
@@ -35,7 +35,7 @@ int main(void) {
   
   double t1, t2, t3, t4, T;
 
-  nonrel_fermion nrf;
+  fermion_nonrel nrf;
   fermion e2(5.0,2.0);
   t.test_rel(e2.m,5.0,1.0e-6,"mass inheritance");
   e2.non_interacting=true;
@@ -43,10 +43,10 @@ int main(void) {
   cout.setf(ios::scientific);
 
   // -----------------------------------------------------------------
-  // nonrel_fermion tests
+  // fermion_nonrel tests
 
   cout << "----------------------------------------------------" << endl;
-  cout << "nonrel_fermion tests:" << endl;
+  cout << "fermion_nonrel tests:" << endl;
   cout << "----------------------------------------------------" << endl;
   cout << endl;
     

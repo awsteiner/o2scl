@@ -20,7 +20,7 @@
 
   -------------------------------------------------------------------
 */
-#include <o2scl/mag_fermion_zerot.h>
+#include <o2scl/fermion_mag_zerot.h>
 #include <o2scl/test_mgr.h>
 
 using namespace std;
@@ -38,7 +38,7 @@ int main(void) {
   cout << pow(4.414e13*o2scl_const::ec_gauss_fm2,2.0)*hc_mev_fm/8.0/pi/
     o2scl_const::fine_structure << endl;
 
-  mag_fermion_zerot mfz;
+  fermion_mag_zerot mfz;
   fermion e(0.5,2.0);
   e.mu=1.0;
   e.m=0.5;
@@ -76,7 +76,7 @@ int main(void) {
   mfz.calc_density_zerot_mag(e,-mag_field*o2scl_const::ec_gauss_fm2,0.0);
   cout << mfz.nmax_up << " " << mfz.nmax_dn << endl;
   // This point doesn't work unless err_nonconv is set to false in
-  // the mag_fermion_zerot class. I don't know why.
+  // the fermion_mag_zerot class. I don't know why.
   e.n=pow(0.011,1.5)*sqrt(2.0)/2.0/pi2*(1.0+0.0001);
   cout << e.n << endl;
   mfz.calc_density_zerot_mag(e,-mag_field*o2scl_const::ec_gauss_fm2,0.0);

@@ -20,10 +20,10 @@
 
   -------------------------------------------------------------------
 */
-#include <o2scl/eff_boson.h>
+#include <o2scl/boson_eff.h>
 #include <o2scl/inte_qag_gsl.h>
 #include <o2scl/inte_qagiu_gsl.h>
-#include <o2scl/rel_boson.h>
+#include <o2scl/boson_rel.h>
 #include <o2scl/mroot_hybrids.h>
 #include <o2scl/test_mgr.h>
 
@@ -38,7 +38,7 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
 
-  eff_boson eb;
+  boson_eff eb;
   boson b(1.0,2.0);
   t.test_rel(b.m,1.0,1.0e-6,"mass inheritance");
   b.non_interacting=true;
@@ -46,7 +46,7 @@ int main(void) {
   double T;
 
   cout << "----------------------------------------------------" << endl;
-  cout << "eff_boson tests:" << endl;
+  cout << "boson_eff tests:" << endl;
   cout << "----------------------------------------------------" << endl;
   cout << endl;
 

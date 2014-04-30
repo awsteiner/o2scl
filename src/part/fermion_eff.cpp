@@ -24,7 +24,7 @@
 #include <config.h>
 #endif
 
-#include <o2scl/eff_fermion.h>
+#include <o2scl/fermion_eff.h>
 
 #include <o2scl/hdf_file.h>
 
@@ -33,7 +33,7 @@ using namespace o2scl;
 using namespace o2scl_hdf;
 using namespace o2scl_const;
 
-eff_fermion::eff_fermion() {
+fermion_eff::fermion_eff() {
 
   tlimit=0.0;
 
@@ -63,10 +63,10 @@ eff_fermion::eff_fermion() {
   min_psi=-4.0;
 }
 
-eff_fermion::~eff_fermion() {
+fermion_eff::~fermion_eff() {
 }
 
-void eff_fermion::load_coefficients(int ctype) {
+void fermion_eff::load_coefficients(int ctype) {
   
   if (ctype==cf_fermilat3) {
     sizem=3;
@@ -146,14 +146,14 @@ void eff_fermion::load_coefficients(int ctype) {
     Pmnf(3,3)=7.11153;
     parma=0.433;
   } else {
-    O2SCL_ERR("Invalid type in eff_fermion::load_coefficients().",
+    O2SCL_ERR("Invalid type in fermion_eff::load_coefficients().",
 		  exc_efailed);
   }
 
   return;
 }
 
-void eff_fermion::calc_mu(fermion &f, double temper) {
+void fermion_eff::calc_mu(fermion &f, double temper) {
   int nn, mm;
   double xx, pren, preu, prep, sumn, sumu, sump;
   double ff, gg, opf, opg, nc;
@@ -162,7 +162,7 @@ void eff_fermion::calc_mu(fermion &f, double temper) {
   
   if (f.ms<0.0) {
     O2SCL_ERR2("Effective mass less than zero ",
-	       "in eff_fermion::calc_mu().",exc_einval);
+	       "in fermion_eff::calc_mu().",exc_einval);
   }
 
   // Use zero temperature results if necessary
@@ -206,12 +206,12 @@ void eff_fermion::calc_mu(fermion &f, double temper) {
   }
 
   if (!o2scl::is_finite(psi) || !o2scl::is_finite(xx)) {
-    O2SCL_ERR("Psi or xx not finite in eff_fermion::calc_density().",
+    O2SCL_ERR("Psi or xx not finite in fermion_eff::calc_density().",
 	      exc_efailed);
   }
 
   // Perform the solution
-  funct_mfptr_param<eff_fermion,double> mfs(this,&eff_fermion::solve_fun,psi);
+  funct_mfptr_param<fermion_eff,double> mfs(this,&fermion_eff::solve_fun,psi);
   psi_root->solve(xx,mfs);
   ff=xx;
 
@@ -260,7 +260,7 @@ void eff_fermion::calc_mu(fermion &f, double temper) {
   return;
 }
 
-void eff_fermion::calc_density(fermion &f, double temper) {
+void fermion_eff::calc_density(fermion &f, double temper) {
 
   double T=temper;
 
@@ -304,14 +304,14 @@ void eff_fermion::calc_density(fermion &f, double temper) {
   return;
 }
 
-double eff_fermion::solve_fun(double x, double &psi) {
+double fermion_eff::solve_fun(double x, double &psi) {
   double ff, sqt, aarg, y;
 
   ff=x;
 
   if (ff<=0.0) {
     string str="Variable 'f' is less than or equal to zero ("+dtos(ff)+
-      ") in eff_fermion::solve_fun().";
+      ") in fermion_eff::solve_fun().";
     O2SCL_ERR_RET(str.c_str(),exc_efailed);
   }
 
@@ -333,17 +333,17 @@ double eff_fermion::solve_fun(double x, double &psi) {
   
   if (!o2scl::is_finite(y)) {
     O2SCL_ERR2_RET("Variable 'y' not finite in ",
-		   "eff_fermion::solve_fun().",exc_efailed);
+		   "fermion_eff::solve_fun().",exc_efailed);
   }
 
   return y;
 }
 
-eff_fermion::density_fun::density_fun
-(eff_fermion &ef, fermion &f, double T) : ef_(ef), f_(f), T_(T) {
+fermion_eff::density_fun::density_fun
+(fermion_eff &ef, fermion &f, double T) : ef_(ef), f_(f), T_(T) {
 }
 
-double eff_fermion::density_fun::operator()(double x) const {
+double fermion_eff::density_fun::operator()(double x) const {
   double nold, nnew, y;
 
   if (f_.non_interacting) f_.mu=x;
@@ -357,7 +357,7 @@ double eff_fermion::density_fun::operator()(double x) const {
   return y;
 }
 
-void eff_fermion::pair_mu(fermion &f, double temper) {
+void fermion_eff::pair_mu(fermion &f, double temper) {
   if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
 
   if (f.ms==0.0) {
@@ -386,7 +386,7 @@ void eff_fermion::pair_mu(fermion &f, double temper) {
   return;
 }
 
-void eff_fermion::pair_density(fermion &f, double temper) {
+void fermion_eff::pair_density(fermion &f, double temper) {
 
   if (f.non_interacting) { f.ms=f.m; f.nu=f.mu; }
   if (f.ms==0.0) {
@@ -403,11 +403,11 @@ void eff_fermion::pair_density(fermion &f, double temper) {
   return;
 }
 
-eff_fermion::pair_density_fun::pair_density_fun
-(eff_fermion &ef, fermion &f, double T) : ef_(ef), f_(f), T_(T) {
+fermion_eff::pair_density_fun::pair_density_fun
+(fermion_eff &ef, fermion &f, double T) : ef_(ef), f_(f), T_(T) {
 }
 
-double eff_fermion::pair_density_fun::operator()(double x) const {
+double fermion_eff::pair_density_fun::operator()(double x) const {
   double nold, nnew, y;
 
   if (f_.non_interacting) f_.mu=x;

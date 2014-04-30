@@ -134,7 +134,7 @@ namespace o2scl {
 
       This is an abstract base for the computation of
       finite-temperature fermionic statistics. Different children
-      (e.g. \ref eff_fermion and \ref rel_fermion) use different
+      (e.g. \ref fermion_eff and \ref fermion_rel) use different
       techniques to computing the momentum integrations.
 
       Because massless fermions at finite temperature are much

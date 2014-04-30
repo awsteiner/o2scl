@@ -24,7 +24,7 @@
 #include <o2scl/test_mgr.h>
 #include <o2scl/nuclear_mass.h>
 #include <o2scl/apr_eos.h>
-#include <o2scl/nonrel_fermion.h>
+#include <o2scl/fermion_nonrel.h>
 #include <o2scl/mass_fit.h>
 #include <o2scl/mmin_simp2.h>
 #include <o2scl/ldrop_mass.h>

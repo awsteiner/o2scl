@@ -27,7 +27,7 @@
 #include <o2scl/ldrop_shell.h>
 #include <o2scl/apr_eos.h>
 #include <o2scl/skyrme_eos.h>
-#include <o2scl/nonrel_fermion.h>
+#include <o2scl/fermion_nonrel.h>
 #include <o2scl/mass_fit.h>
 #include <o2scl/hdf_nucmass_io.h>
 #include <o2scl/hdf_eos_io.h>

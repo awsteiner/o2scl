@@ -91,7 +91,7 @@ namespace o2scl {
       \todo Comment on Gaussian vs. Heaviside-Lorentz units.
 
   */
-  class mag_fermion_zerot : public fermion_zerot {
+  class fermion_mag_zerot : public fermion_zerot {
 
   public:
 
@@ -131,7 +131,7 @@ namespace o2scl {
     int sum_limit;
     
     /// Create a fermion with mass \c mass and degeneracy \c dof.
-    mag_fermion_zerot() {
+    fermion_mag_zerot() {
       nmax_up=0;
       nmax_dn=0;
       sum_limit=1000000;
@@ -139,7 +139,7 @@ namespace o2scl {
       def_density_root.tol_abs/=1.0e4;
     }
     
-    virtual ~mag_fermion_zerot() {
+    virtual ~fermion_mag_zerot() {
     }
     
     /**	\brief Thermodynamics in a magnetic field using the chemical 
@@ -173,8 +173,8 @@ namespace o2scl {
       boost::numeric::ublas::matrix<double>,
       jac_funct<> > def_density_root;
 
-    /// Return string denoting type ("mag_fermion_zerot")
-    virtual const char *type() { return "mag_fermion_zerot"; }
+    /// Return string denoting type ("fermion_mag_zerot")
+    virtual const char *type() { return "fermion_mag_zerot"; }
     
   };
   

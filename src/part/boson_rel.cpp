@@ -24,44 +24,44 @@
 #include <config.h>
 #endif
 
-#include <o2scl/rel_boson.h>
+#include <o2scl/boson_rel.h>
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
 //--------------------------------------------
-// rel_boson class
+// boson_rel class
 
-rel_boson::rel_boson() {
+boson_rel::boson_rel() {
   density_root=&def_density_root;
   nit=&def_nit;
   dit=&def_dit;
 }
 
-rel_boson::~rel_boson() {
+boson_rel::~boson_rel() {
 }
 
-void rel_boson::set_inte(inte<funct > &l_nit, inte<funct > &l_dit) {
+void boson_rel::set_inte(inte<funct > &l_nit, inte<funct > &l_dit) {
   nit=&l_nit;
   dit=&l_dit;
   return;
 }
 
-void rel_boson::calc_mu(boson &b, double temper) {
+void boson_rel::calc_mu(boson &b, double temper) {
 
   T=temper;
   bp=&b;
 
   if (temper<=0.0) {
     O2SCL_ERR2("Temperature less than or equal to zero in ",
-	       "rel_boson::calc_mu().",exc_einval);
+	       "boson_rel::calc_mu().",exc_einval);
   }
   if (b.non_interacting==true) { b.nu=b.mu; b.ms=b.m; }
 
-  funct_mfptr<rel_boson> fd(this,&rel_boson::deg_density_fun);
-  funct_mfptr<rel_boson> fe(this,&rel_boson::deg_energy_fun);
-  funct_mfptr<rel_boson> fs(this,&rel_boson::deg_entropy_fun);
+  funct_mfptr<boson_rel> fd(this,&boson_rel::deg_density_fun);
+  funct_mfptr<boson_rel> fe(this,&boson_rel::deg_energy_fun);
+  funct_mfptr<boson_rel> fs(this,&boson_rel::deg_entropy_fun);
 
   b.n=dit->integ(fd,0.0,sqrt(pow(15.0*temper+b.nu,2.0)-b.ms*b.ms));
   b.n*=b.g/2.0/pi2;
@@ -75,35 +75,35 @@ void rel_boson::calc_mu(boson &b, double temper) {
   return;
 }
 
-void rel_boson::nu_from_n(boson &b, double temper) {
+void boson_rel::nu_from_n(boson &b, double temper) {
   double nex;
 
   T=temper;
   bp=&b;
 
   nex=b.nu/temper;
-  funct_mfptr<rel_boson> mf(this,&rel_boson::solve_fun);
+  funct_mfptr<boson_rel> mf(this,&boson_rel::solve_fun);
   density_root->solve(nex,mf);
   b.nu=nex*temper;
   
   return;
 }
 
-void rel_boson::calc_density(boson &b, double temper) {
+void boson_rel::calc_density(boson &b, double temper) {
 
   T=temper;
   bp=&b;
 
   if (temper<=0.0) {
     O2SCL_ERR2("Temperature less than or equal to zero in ",
-	       "rel_boson::calc_density().",exc_einval);
+	       "boson_rel::calc_density().",exc_einval);
   }
   if (b.non_interacting==true) { b.nu=b.mu; b.ms=b.m; }
 
   nu_from_n(b,temper);
 
-  funct_mfptr<rel_boson> fe(this,&rel_boson::deg_energy_fun);
-  funct_mfptr<rel_boson> fs(this,&rel_boson::deg_entropy_fun);
+  funct_mfptr<boson_rel> fe(this,&boson_rel::deg_energy_fun);
+  funct_mfptr<boson_rel> fs(this,&boson_rel::deg_entropy_fun);
 
   b.ed=dit->integ(fe,0.0,sqrt(pow(20.0*temper+b.nu,2.0)-b.ms*b.ms));
   b.ed*=b.g/2.0/pi2;
@@ -115,7 +115,7 @@ void rel_boson::calc_density(boson &b, double temper) {
   return;
 }
 
-double rel_boson::deg_density_fun(double k) {
+double boson_rel::deg_density_fun(double k) {
 
   double E=sqrt(k*k+bp->ms*bp->ms), ret;
 
@@ -124,7 +124,7 @@ double rel_boson::deg_density_fun(double k) {
   return ret;
 }
   
-double rel_boson::deg_energy_fun(double k) {
+double boson_rel::deg_energy_fun(double k) {
 
   double E=sqrt(k*k+bp->ms*bp->ms), ret;
 
@@ -133,7 +133,7 @@ double rel_boson::deg_energy_fun(double k) {
   return ret;
 }
   
-double rel_boson::deg_entropy_fun(double k) {
+double boson_rel::deg_entropy_fun(double k) {
 
   double E=sqrt(k*k+bp->ms*bp->ms), nx, ret;
   nx=1.0/(exp(E/T-bp->nu/T)-1.0);
@@ -142,7 +142,7 @@ double rel_boson::deg_entropy_fun(double k) {
   return ret;
 }
   
-double rel_boson::density_fun(double u) {
+double boson_rel::density_fun(double u) {
   double ret, y, mx;
 
   y=bp->nu/T;
@@ -153,7 +153,7 @@ double rel_boson::density_fun(double u) {
   return ret;
 }
 
-double rel_boson::energy_fun(double u) {
+double boson_rel::energy_fun(double u) {
   double ret, y, mx;
 
   y=bp->nu/T;
@@ -164,7 +164,7 @@ double rel_boson::energy_fun(double u) {
   return ret;
 }
 
-double rel_boson::entropy_fun(double u) {
+double boson_rel::entropy_fun(double u) {
   double ret, y, mx, term1, term2;
 
   y=bp->mu/T;
@@ -177,10 +177,10 @@ double rel_boson::entropy_fun(double u) {
   return ret;
 }
 
-double rel_boson::solve_fun(double x) {
+double boson_rel::solve_fun(double x) {
   double nden, yy;
 
-  funct_mfptr<rel_boson> fd(this,&rel_boson::deg_density_fun);
+  funct_mfptr<boson_rel> fd(this,&boson_rel::deg_density_fun);
   
   bp->nu=T*x;
   nden=dit->integ(fd,0.0,sqrt(pow(20.0*T+bp->nu,2.0)-bp->ms*bp->ms));
@@ -190,7 +190,7 @@ double rel_boson::solve_fun(double x) {
   return yy;
 }
 
-void rel_boson::pair_mu(boson &b, double temper) {
+void boson_rel::pair_mu(boson &b, double temper) {
   
   T=temper;
   bp=&b;

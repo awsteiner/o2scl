@@ -21,7 +21,7 @@
   -------------------------------------------------------------------
 */
 #include <o2scl/test_mgr.h>
-#include <o2scl/nonrel_fermion.h>
+#include <o2scl/fermion_nonrel.h>
 #include <o2scl/cold_nstar.h>
 #include <o2scl/tabulated_eos.h>
 #include <o2scl/schematic_eos.h>
