@@ -24,13 +24,13 @@
 #include <config.h>
 #endif
 
-#include <o2scl/apr_eos.h>
+#include <o2scl/eos_had_apr.h>
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-apr_eos::apr_eos() {
+eos_had_apr::eos_had_apr() {
   par=new double[22];
   pion=best; 
 
@@ -83,11 +83,11 @@ apr_eos::apr_eos() {
   fet=&nrf;
 }
 
-apr_eos::~apr_eos() {
+eos_had_apr::~eos_had_apr() {
   delete[] par;
 }
 
-int apr_eos::gradient_qij2(double nn, double np, 
+int eos_had_apr::gradient_qij2(double nn, double np, 
 			   double &qnn, double &qnp, double &qpp, 
 			   double &dqnndnn, double &dqnndnp,
 			   double &dqnpdnn, double &dqnpdnp,
@@ -110,7 +110,7 @@ int apr_eos::gradient_qij2(double nn, double np,
   return 0;
 }
 
-int apr_eos::calc_e(fermion &ne, fermion &pr, thermo &lth) {
+int eos_had_apr::calc_e(fermion &ne, fermion &pr, thermo &lth) {
 
   double barn, xp, t1, t2, t3, t4, t5, t6, t7, t8, t9;
   double dt4, nb2, kin, low, high, gl1, gl2;
@@ -118,7 +118,7 @@ int apr_eos::calc_e(fermion &ne, fermion &pr, thermo &lth) {
   double gh1, gh2, dgl1, dgl2, dgh1, dgh2;
 
   if (!o2scl::is_finite(ne.n) || !o2scl::is_finite(pr.n)) {
-    O2SCL_ERR_RET("Densities not finite in apr_eos::calc_e().",exc_einval);
+    O2SCL_ERR_RET("Densities not finite in eos_had_apr::calc_e().",exc_einval);
   }
   
   //---------------------------------------
@@ -256,13 +256,13 @@ int apr_eos::calc_e(fermion &ne, fermion &pr, thermo &lth) {
   return 0;
 }
 
-double apr_eos::fesym_diff(double nb) {
+double eos_had_apr::fesym_diff(double nb) {
 
   double ret, t1, t2_neut, t2_nuc, nb2, t4, t5, t6;
   double gl1, gl2, gh1, gh2;
   
   if (parent_method) {
-    return hadronic_eos::fesym_diff(nb);
+    return eos_had_base::fesym_diff(nb);
   }
 
   // Landau effective masses
@@ -309,10 +309,10 @@ double apr_eos::fesym_diff(double nb) {
   return ret;
 }
 
-double apr_eos::fcomp(double nb) {
+double eos_had_apr::fcomp(double nb) {
 
   if (parent_method) {
-    return hadronic_eos::fcomp(nb);
+    return eos_had_base::fcomp(nb);
   }
   
   /// Compute the compressibility directly with 9*nb*d^2(epsilon)/d(nb^2)
@@ -418,7 +418,7 @@ double apr_eos::fcomp(double nb) {
   return ret;
 }
 
-void apr_eos::select(int model_index) {
+void eos_had_apr::select(int model_index) {
   
   choice=model_index;
   par[3]=89.8/hc_mev_fm;
@@ -524,7 +524,7 @@ void apr_eos::select(int model_index) {
   return;
 }
 
-int apr_eos::calc_temp_e(fermion &ne, fermion &pr, const double temper, 
+int eos_had_apr::calc_temp_e(fermion &ne, fermion &pr, const double temper, 
 			 thermo &lth) {
   double barn, xp, t1, t2, t3, t4, t5, t6, t7, t8, t9;
   double dt4, nb2, kin, low, high, gl1, gl2;

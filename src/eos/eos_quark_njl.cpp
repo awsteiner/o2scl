@@ -24,13 +24,13 @@
 #include <config.h>
 #endif
 
-#include <o2scl/nambujl_eos.h>
+#include <o2scl/eos_quark_njl.h>
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-nambujl_eos::nambujl_eos() {
+eos_quark_njl::eos_quark_njl() {
 
   def_up.non_interacting=true;
   def_down.non_interacting=true;
@@ -65,7 +65,7 @@ nambujl_eos::nambujl_eos() {
 
 }
 
-int nambujl_eos::set_quarks(quark &u, quark &d, quark &s) {
+int eos_quark_njl::set_quarks(quark &u, quark &d, quark &s) {
   up=&u;
   down=&d;
   strange=&s;
@@ -73,7 +73,7 @@ int nambujl_eos::set_quarks(quark &u, quark &d, quark &s) {
   return 0;
 }
 
-int nambujl_eos::set_parameters(double lambda, double fourferm, 
+int eos_quark_njl::set_parameters(double lambda, double fourferm, 
 				double sixferm) {
   
   if (lambda!=0.0) L=lambda;
@@ -92,7 +92,7 @@ int nambujl_eos::set_parameters(double lambda, double fourferm,
   bx[1]=1.0;
   bx[2]=2.0;
 
-  mm_funct_mfptr<nambujl_eos> fmf(this,&nambujl_eos::B0fun);
+  mm_funct_mfptr<eos_quark_njl> fmf(this,&eos_quark_njl::B0fun);
   solver->msolve(3,bx,fmf);
   
   // Make the appropriate correction
@@ -103,7 +103,7 @@ int nambujl_eos::set_parameters(double lambda, double fourferm,
   return 0;
 }
 
-int nambujl_eos::calc_p(quark &u, quark &d, quark &s, thermo &th) {
+int eos_quark_njl::calc_p(quark &u, quark &d, quark &s, thermo &th) {
   ubvector x(3);
   int ret;
 
@@ -117,7 +117,7 @@ int nambujl_eos::calc_p(quark &u, quark &d, quark &s, thermo &th) {
     x[0]=u.qq;
     x[1]=d.qq;
     x[2]=s.qq;
-    mm_funct_mfptr<nambujl_eos> fmf(this,&nambujl_eos::gapfunqq);
+    mm_funct_mfptr<eos_quark_njl> fmf(this,&eos_quark_njl::gapfunqq);
     ret=solver->msolve(3,x,fmf);
     
   } else {
@@ -125,7 +125,7 @@ int nambujl_eos::calc_p(quark &u, quark &d, quark &s, thermo &th) {
     x[0]=u.ms;
     x[1]=d.ms;
     x[2]=s.ms;
-    mm_funct_mfptr<nambujl_eos> fmf(this,&nambujl_eos::gapfunms);
+    mm_funct_mfptr<eos_quark_njl> fmf(this,&eos_quark_njl::gapfunms);
     ret=solver->msolve(3,x,fmf);
 
   }
@@ -135,7 +135,7 @@ int nambujl_eos::calc_p(quark &u, quark &d, quark &s, thermo &th) {
   return ret;
 }
 
-int nambujl_eos::calc_temp_p(quark &u, quark &d, quark &s, 
+int eos_quark_njl::calc_temp_p(quark &u, quark &d, quark &s, 
 			     double T, thermo &th) {
   ubvector x(3);
   int vp=0;
@@ -152,7 +152,7 @@ int nambujl_eos::calc_temp_p(quark &u, quark &d, quark &s,
     x[0]=u.qq;
     x[1]=d.qq;
     x[2]=s.qq;
-    mm_funct_mfptr<nambujl_eos> fmf(this,&nambujl_eos::gapfunqqT);
+    mm_funct_mfptr<eos_quark_njl> fmf(this,&eos_quark_njl::gapfunqqT);
     ret=solver->msolve(3,x,fmf);
     
   } else {
@@ -160,7 +160,7 @@ int nambujl_eos::calc_temp_p(quark &u, quark &d, quark &s,
     x[0]=u.ms;
     x[1]=d.ms;
     x[2]=s.ms;
-    mm_funct_mfptr<nambujl_eos> fmf(this,&nambujl_eos::gapfunmsT);
+    mm_funct_mfptr<eos_quark_njl> fmf(this,&eos_quark_njl::gapfunmsT);
     ret=solver->msolve(3,x,fmf);
 
   }
@@ -170,7 +170,7 @@ int nambujl_eos::calc_temp_p(quark &u, quark &d, quark &s,
   return ret;
 }
 
-int nambujl_eos::calc_eq_p(quark &u, quark &d, quark &s, double &gap1,
+int eos_quark_njl::calc_eq_p(quark &u, quark &d, quark &s, double &gap1,
 			   double &gap2, double &gap3, thermo &th) {
   if (fromqq==true) {
     
@@ -278,7 +278,7 @@ int nambujl_eos::calc_eq_p(quark &u, quark &d, quark &s, double &gap1,
   return 0;
 }
 
-int nambujl_eos::calc_eq_e(quark &u, quark &d, quark &s, double &gap1,
+int eos_quark_njl::calc_eq_e(quark &u, quark &d, quark &s, double &gap1,
 			   double &gap2, double &gap3, thermo &th) {
 
   if (fromqq==true) {
@@ -378,7 +378,7 @@ int nambujl_eos::calc_eq_e(quark &u, quark &d, quark &s, double &gap1,
   return 0;
 }
 
-void nambujl_eos::njbag(quark &pp) {
+void eos_quark_njl::njbag(quark &pp) {
 
   if (fabs(pp.ms)<1.0e-6) {
     pp.B=0.0;
@@ -399,7 +399,7 @@ void nambujl_eos::njbag(quark &pp) {
   return;
 }
 
-int nambujl_eos::gapfunqq(size_t nv, const ubvector &x, ubvector &y) {
+int eos_quark_njl::gapfunqq(size_t nv, const ubvector &x, ubvector &y) {
 
   double gap1,gap2,gap3;
   
@@ -420,7 +420,7 @@ int nambujl_eos::gapfunqq(size_t nv, const ubvector &x, ubvector &y) {
   return 0;
 }
 
-int nambujl_eos::gapfunms(size_t nv, const ubvector &x, ubvector &y) {
+int eos_quark_njl::gapfunms(size_t nv, const ubvector &x, ubvector &y) {
 
   double gap1,gap2,gap3;
 
@@ -440,7 +440,7 @@ int nambujl_eos::gapfunms(size_t nv, const ubvector &x, ubvector &y) {
 
   return 0;
 }
-int nambujl_eos::gapfunqqT(size_t nv, const ubvector &x, ubvector &y) {
+int eos_quark_njl::gapfunqqT(size_t nv, const ubvector &x, ubvector &y) {
 
   double gap1,gap2,gap3;
   
@@ -461,7 +461,7 @@ int nambujl_eos::gapfunqqT(size_t nv, const ubvector &x, ubvector &y) {
   return 0;
 }
 
-int nambujl_eos::gapfunmsT(size_t nv, const ubvector &x, ubvector &y) {
+int eos_quark_njl::gapfunmsT(size_t nv, const ubvector &x, ubvector &y) {
 
   double gap1,gap2,gap3;
 
@@ -482,7 +482,7 @@ int nambujl_eos::gapfunmsT(size_t nv, const ubvector &x, ubvector &y) {
   return 0;
 }
 
-int nambujl_eos::B0fun(size_t nv, const ubvector &x, ubvector &y) {
+int eos_quark_njl::B0fun(size_t nv, const ubvector &x, ubvector &y) {
 		      
   double gap1,gap2,gap3;
   
@@ -507,7 +507,7 @@ int nambujl_eos::B0fun(size_t nv, const ubvector &x, ubvector &y) {
   return 0;
 }
 
-int nambujl_eos::calc_eq_temp_p(quark &u, quark &d, quark &s, 
+int eos_quark_njl::calc_eq_temp_p(quark &u, quark &d, quark &s, 
 				double &gap1, double &gap2, double &gap3, 
 				thermo &qb, double temper) {
   double ierr;
@@ -526,10 +526,10 @@ int nambujl_eos::calc_eq_temp_p(quark &u, quark &d, quark &s,
   pa.temper=temper;
   pa.limit=limit;
 
-  funct_mfptr_param<nambujl_eos,const njtp> fqq(this,&nambujl_eos::iqq,pa);
-  funct_mfptr_param<nambujl_eos,const njtp> fde(this,&nambujl_eos::ide,pa);
-  funct_mfptr_param<nambujl_eos,const njtp> fed(this,&nambujl_eos::ied,pa);
-  funct_mfptr_param<nambujl_eos,const njtp> fpr(this,&nambujl_eos::ipr,pa);
+  funct_mfptr_param<eos_quark_njl,const njtp> fqq(this,&eos_quark_njl::iqq,pa);
+  funct_mfptr_param<eos_quark_njl,const njtp> fde(this,&eos_quark_njl::ide,pa);
+  funct_mfptr_param<eos_quark_njl,const njtp> fed(this,&eos_quark_njl::ied,pa);
+  funct_mfptr_param<eos_quark_njl,const njtp> fpr(this,&eos_quark_njl::ipr,pa);
 
   // -----------------------------------------------------------------
   // Some of these integrals (iqq, and ide) converge better when they
@@ -556,7 +556,7 @@ int nambujl_eos::calc_eq_temp_p(quark &u, quark &d, quark &s,
   iret3=it->integ_err(fpr,0.0,L,u.pr,ierr);
   iret4=it->integ_err(fed,0.0,L,u.ed,ierr);
   if (iret1!=0 || iret2!=0 || iret3!=0 || iret4!=0) {
-    O2SCL_ERR("Up quark failed in nambujl_eos::calc_eq_temp_p().",
+    O2SCL_ERR("Up quark failed in eos_quark_njl::calc_eq_temp_p().",
 	    exc_efailed);
   }
   
@@ -579,7 +579,7 @@ int nambujl_eos::calc_eq_temp_p(quark &u, quark &d, quark &s,
   iret3=it->integ_err(fpr,0.0,L,d.pr,ierr);
   iret4=it->integ_err(fed,0.0,L,d.ed,ierr);
   if (iret1!=0 || iret2!=0 || iret3!=0 || iret4!=0) {
-    O2SCL_ERR("Down quark failed in nambujl_eos::calc_eq_temp_p().",
+    O2SCL_ERR("Down quark failed in eos_quark_njl::calc_eq_temp_p().",
 	    exc_efailed);
   }
   
@@ -602,7 +602,7 @@ int nambujl_eos::calc_eq_temp_p(quark &u, quark &d, quark &s,
   iret3=it->integ_err(fpr,0.0,L,s.pr,ierr);
   iret4=it->integ_err(fed,0.0,L,s.ed,ierr);
   if (iret1!=0 || iret2!=0 || iret3!=0 || iret4!=0) {
-    O2SCL_ERR("Strange quark failed in nambujl_eos::calc_eq_temp_p().",
+    O2SCL_ERR("Strange quark failed in eos_quark_njl::calc_eq_temp_p().",
 	    exc_efailed);
   }
 
@@ -635,7 +635,7 @@ int nambujl_eos::calc_eq_temp_p(quark &u, quark &d, quark &s,
     gap3=-s.qq+qqt-L;
 
     if (iret1!=0 || iret2!=0 || iret3!=0) {
-      O2SCL_ERR("Strange quark failed in nambujl_eos::calc_eq_temp_p().",
+      O2SCL_ERR("Strange quark failed in eos_quark_njl::calc_eq_temp_p().",
 	      exc_efailed);
     }
   } else {
@@ -647,7 +647,7 @@ int nambujl_eos::calc_eq_temp_p(quark &u, quark &d, quark &s,
   return 0;
 }
 
-double nambujl_eos::iqq(double x, const njtp &p) {
+double eos_quark_njl::iqq(double x, const njtp &p) {
   double en, ret;
 
   en=sqrt(x*x+p.ms*p.ms);
@@ -659,7 +659,7 @@ double nambujl_eos::iqq(double x, const njtp &p) {
   return ret;
 }
 
-double nambujl_eos::ide(double x, const njtp &p) {
+double eos_quark_njl::ide(double x, const njtp &p) {
   double en, ret;
 
 
@@ -671,7 +671,7 @@ double nambujl_eos::ide(double x, const njtp &p) {
   return ret;
 }
 
-double nambujl_eos::ied(double x, const njtp &p) {
+double eos_quark_njl::ied(double x, const njtp &p) {
   double en, ret;
 
   en=sqrt(x*x+p.ms*p.ms);
@@ -682,7 +682,7 @@ double nambujl_eos::ied(double x, const njtp &p) {
   return ret;
 }
 
-double nambujl_eos::ipr(double x, const njtp &p) {
+double eos_quark_njl::ipr(double x, const njtp &p) {
   double en, ret;
 
   en=sqrt(x*x+p.ms*p.ms);

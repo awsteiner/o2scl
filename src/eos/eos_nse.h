@@ -59,7 +59,7 @@ namespace o2scl {
       could be fixed, probably by solving for the log(mu/T) instead 
       of mu. 
   */
-  class nse_eos {
+  class eos_nse {
 
   public:
 
@@ -90,7 +90,7 @@ namespace o2scl {
 
   public:
 
-    nse_eos();
+    eos_nse();
     
     /** \brief If true, call the error handler if calc_density() does
 	not converge (default true)

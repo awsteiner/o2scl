@@ -20,17 +20,17 @@
 
   -------------------------------------------------------------------
 */
-#include <o2scl/nse_eos.h>
+#include <o2scl/eos_nse.h>
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-nse_eos::nse_eos() {
+eos_nse::eos_nse() {
   root=&def_root;
 }
 
-void nse_eos::calc_mu(double mun, double mup, double T,
+void eos_nse::calc_mu(double mun, double mup, double T,
 		     double &nb, double &Ye, thermo &th, nucdist &nd) {
 
   nb=0.0;
@@ -53,7 +53,7 @@ void nse_eos::calc_mu(double mun, double mup, double T,
   return;
 }
 
-int nse_eos::calc_density(double nb, double Ye, double T, 
+int eos_nse::calc_density(double nb, double Ye, double T, 
 			  double &mun, double &mup, thermo &th, 
 			  nucdist &nd) {
 
@@ -62,7 +62,7 @@ int nse_eos::calc_density(double nb, double Ye, double T,
   x[1]=mup/T;
 
   solve_parms sp={nb,Ye,T,&nd};
-  mm_funct_mfptr_param<nse_eos,solve_parms> mfm(this,&nse_eos::solve_fun,sp);
+  mm_funct_mfptr_param<eos_nse,solve_parms> mfm(this,&eos_nse::solve_fun,sp);
 
   int ret=root->msolve(2,x,mfm);
   // If the solver doesn't throw an exception because err_nonconv is
@@ -77,7 +77,7 @@ int nse_eos::calc_density(double nb, double Ye, double T,
   return success;
 }
 
-int nse_eos::solve_fun(size_t nv, const ubvector &x, ubvector &y, 
+int eos_nse::solve_fun(size_t nv, const ubvector &x, ubvector &y, 
 		       solve_parms &sp) {
 
   double mun=x[0]*sp.T;
@@ -95,7 +95,7 @@ int nse_eos::solve_fun(size_t nv, const ubvector &x, ubvector &y,
     return exc_ebadfunc;
   }
   if (!o2scl::is_finite(y[0]) || !o2scl::is_finite(y[1])) {
-    O2SCL_ERR("Function values not finite in nse_eos::solve_fun().",
+    O2SCL_ERR("Function values not finite in eos_nse::solve_fun().",
 	      exc_efailed);
   }
 

@@ -25,7 +25,7 @@
 
 #include <cmath>
 #include <o2scl/constants.h>
-#include <o2scl/quark_eos.h>
+#include <o2scl/eos_quark.h>
 #include <o2scl/quark.h>
 #include <o2scl/mm_funct.h>
 #include <o2scl/mroot_hybrids.h>
@@ -125,7 +125,7 @@ namespace o2scl {
       \ref Hatsuda94. 
   */
 
-  class nambujl_eos : public quark_eos {
+  class eos_quark_njl : public eos_quark {
 
   public:
 
@@ -164,7 +164,7 @@ namespace o2scl {
      */
     bool fromqq;
 
-    nambujl_eos();
+    eos_quark_njl();
 
     /** \brief Equation of state as a function of chemical potentials
 	
@@ -279,8 +279,8 @@ namespace o2scl {
     quark def_strange;
     //@}
 
-    /// Return string denoting type ("nambujl_eos")
-    virtual const char *type() { return "nambujl_eos"; }
+    /// Return string denoting type ("eos_quark_njl")
+    virtual const char *type() { return "eos_quark_njl"; }
 
     /// Set solver to use in set_parameters()
     virtual int set_solver

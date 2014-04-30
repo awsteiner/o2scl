@@ -32,9 +32,9 @@
 #include <o2scl/constants.h>
 #include <o2scl/hdf_file.h>
 #include <o2scl/lib_settings.h>
-#include <o2scl/skyrme_eos.h>
-#include <o2scl/rmf_eos.h>
-#include <o2scl/gogny_eos.h>
+#include <o2scl/eos_had_skyrme.h>
+#include <o2scl/eos_had_rmf.h>
+#include <o2scl/eos_had_gogny.h>
 
 /** \brief Additional functions to read and write EOS data to HDF5 files
  */
@@ -42,10 +42,10 @@ namespace o2scl_hdf {
 
   /** \brief Read the Gogny EOS from a data file
    */
-  void gogny_load(o2scl::gogny_eos &ge, std::string model, 
+  void gogny_load(o2scl::eos_had_gogny &ge, std::string model, 
 		  bool external=false);
   
-  /** \brief Input a \ref o2scl::rmf_eos object from an HDF file
+  /** \brief Input a \ref o2scl::eos_had_rmf object from an HDF file
 
       If \ref external is <tt>false</tt> (the default), then the model
       is loaded from the \o2 data directory <tt>rmfdata</tt> with the
@@ -53,9 +53,9 @@ namespace o2scl_hdf {
       taken to be the full pathname of the HDF5 file containing 
       the model to be loaded.
   */
-  void rmf_load(o2scl::rmf_eos &rmf, std::string model, bool external=false);
+  void rmf_load(o2scl::eos_had_rmf &rmf, std::string model, bool external=false);
   
-  /** \brief Input a \ref o2scl::skyrme_eos object from an HDF file
+  /** \brief Input a \ref o2scl::eos_had_skyrme object from an HDF file
 
       If \ref external is <tt>false</tt> (the default), then the model
       is loaded from the \o2 data directory <tt>skdata</tt> with the
@@ -63,17 +63,17 @@ namespace o2scl_hdf {
       taken to be the full pathname of the HDF5 file containing 
       the model to be loaded.
   */
-  void skyrme_load(o2scl::skyrme_eos &sk, std::string model, 
+  void skyrme_load(o2scl::eos_had_skyrme &sk, std::string model, 
 		   bool external=false);
   
-  /** \brief Write a \ref o2scl::skyrme_eos object to an HDF file
+  /** \brief Write a \ref o2scl::eos_had_skyrme object to an HDF file
    */
-  void skyrme_write(hdf_file &hf, o2scl::skyrme_eos &sk, std::string name);
+  void skyrme_write(hdf_file &hf, o2scl::eos_had_skyrme &sk, std::string name);
   
-  /** \brief Write a \ref o2scl::skyrme_eos object to an HDF file in the \o2
+  /** \brief Write a \ref o2scl::eos_had_skyrme object to an HDF file in the \o2
       data directory
   */
-  void skyrme_write(o2scl::skyrme_eos &sk, std::string model);
+  void skyrme_write(o2scl::eos_had_skyrme &sk, std::string model);
   
 }
 

@@ -26,8 +26,8 @@
 
 #include <o2scl/test_mgr.h>
 #include <o2scl/mroot_hybrids.h>
-#include <o2scl/gen_potential_eos.h>
-#include <o2scl/cold_nstar.h>
+#include <o2scl/eos_had_potential.h>
+#include <o2scl/nstar_cold.h>
 
 using namespace std;
 using namespace o2scl;
@@ -40,7 +40,7 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
-  gen_potential_eos go;
+  eos_had_potential go;
   go.B=106.35/hc_mev_fm;
   go.sigma=4.0/3.0;
   go.rho0=0.16;
@@ -54,7 +54,7 @@ int main(void) {
   go.Au=-95.98/hc_mev_fm-2.0*go.B*go.x/(go.sigma+1.0);
   go.Al=-120.75/hc_mev_fm+2.0*go.B*go.x/(go.sigma+1.0);
 
-  cold_nstar nst;
+  nstar_cold nst;
   nst.set_eos(go);
   nst.calc_eos();
   nst.calc_nstar();

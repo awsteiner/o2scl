@@ -24,13 +24,13 @@
 #include <config.h>
 #endif
 
-#include <o2scl/gen_potential_eos.h>
+#include <o2scl/eos_had_potential.h>
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-gen_potential_eos::gen_potential_eos() {
+eos_had_potential::eos_had_potential() {
   def_mu_deriv.h=0.01;
   mu_deriv_set=false;
   mu_deriv_ptr=&def_mu_deriv;
@@ -41,7 +41,7 @@ gen_potential_eos::gen_potential_eos() {
   bpal_esym=30.0/hc_mev_fm;
 }
 
-double gen_potential_eos::mom_integral(double pft, double pftp) {
+double eos_had_potential::mom_integral(double pft, double pftp) {
   double qf=(pft+pftp)/2.0, result;
   double K=16.0/3.0/pow(2.0*pi,6.0)*pi2*Lambda*Lambda;
   double tx=1.0+4.0*qf*qf/Lambda/Lambda;
@@ -54,7 +54,7 @@ double gen_potential_eos::mom_integral(double pft, double pftp) {
   return result;
 }
 
-double gen_potential_eos::energy(double var) {
+double eos_had_potential::energy(double var) {
   double n, hamk, ham, ham1, ham2, ham3=0.0, xp;
 
   //---------------------------------------
@@ -193,7 +193,7 @@ double gen_potential_eos::energy(double var) {
   return ham;
 }
 
-int gen_potential_eos::calc_e(fermion &ne, fermion &pr, 
+int eos_had_potential::calc_e(fermion &ne, fermion &pr, 
 			      thermo &locth) {
   double xp, n, hamk, ham, ham1, ham2, ham3;
   double dhdnn, dhdnp, na, npa, nna, term, term2, gn, gp;
@@ -225,7 +225,7 @@ int gen_potential_eos::calc_e(fermion &ne, fermion &pr,
   set_n_and_p(ne,pr);
   
   double tmp;
-  funct_mfptr<gen_potential_eos> df(this,&gen_potential_eos::energy);
+  funct_mfptr<eos_had_potential> df(this,&eos_had_potential::energy);
 
   mode=nmode;
   tmp=ne.n;

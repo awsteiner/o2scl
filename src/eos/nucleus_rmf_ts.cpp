@@ -23,7 +23,7 @@
 #include <o2scl/test_mgr.h>
 #include <o2scl/hdf_file.h>
 #include <o2scl/hdf_eos_io.h>
-#include <o2scl/rmf_nucleus.h>
+#include <o2scl/nucleus_rmf.h>
 
 using namespace std;
 using namespace o2scl;
@@ -199,9 +199,9 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
-  rmf_nucleus el;
+  nucleus_rmf el;
 
-  rmf_eos rmf;
+  eos_had_rmf rmf;
   rmf_load(rmf,"NL4");
   el.set_eos(rmf);
 

@@ -25,9 +25,9 @@
 
 #include <cmath>
 #include <o2scl/constants.h>
-#include <o2scl/hadronic_eos.h>
+#include <o2scl/eos_had_base.h>
 #include <o2scl/fermion.h>
-#include <o2scl/apr_eos.h>
+#include <o2scl/eos_had_apr.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -49,7 +49,7 @@ namespace o2scl {
       precision on a grid at least as small as 0.002 
       \f$ \mathrm{fm}^{-3} \f$.
   */
-  class tabulated_eos : public hadronic_eos_eden {
+  class eos_had_tabulated : public eos_had_base_eden {
     
   protected:
 
@@ -82,12 +82,12 @@ namespace o2scl {
     
   public:
 
-    tabulated_eos() {
+    eos_had_tabulated() {
       table_alloc=false;
       one_table=false;
     }
 
-    virtual ~tabulated_eos() {
+    virtual ~eos_had_tabulated() {
       if (table_alloc) {
 	delete tnuc;
 	if (!one_table) delete tneut;
@@ -99,7 +99,7 @@ namespace o2scl {
     virtual int calc_e(fermion &ne, fermion &pr, thermo &th) {
       
       if (table_alloc==false) {
-	O2SCL_ERR_RET("No EOS specified in tabulated_eos::calc_e().",
+	O2SCL_ERR_RET("No EOS specified in eos_had_tabulated::calc_e().",
 		    exc_einval);
       }
       double barn=ne.n+pr.n;

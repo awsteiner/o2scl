@@ -23,7 +23,7 @@
 #include <iostream>
 #include <o2scl/test_mgr.h>
 #include <o2scl/constants.h>
-#include <o2scl/gen_sn_eos.h>
+#include <o2scl/eos_sn_gen.h>
 #include <o2scl/cli.h>
 #include <o2scl/hdf_file.h>
 #include <o2scl/hdf_io.h>
@@ -44,7 +44,7 @@ public:
   int verbose;
 
   /// Desc
-  gen_sn_eos *genp;
+  eos_sn_gen *genp;
 
   /// Desc
   string name;
@@ -171,7 +171,7 @@ public:
       sht.load(fname,imode);
       sht2.load(fname2,imode+2);
 
-      //gen_sn_eos_ts sht $(HOME)/pkgs/sht_eos/FSU2.1eos1.01.dat 
+      //eos_sn_gen_ts sht $(HOME)/pkgs/sht_eos/FSU2.1eos1.01.dat 
       //$(HOME)/pkgs/sht_eos/FSU2.1eosb1.01.dat 1		 
       //>> gen_sn_test.scr
 
@@ -304,7 +304,7 @@ public:
     // Specify command-line option object
     
     cli cl;
-    cl.prompt="gen_sn_eos_ts> ";
+    cl.prompt="eos_sn_gen_ts> ";
     cl.gnu_intro=false;
     
     // ---------------------------------------

@@ -21,13 +21,13 @@
   -------------------------------------------------------------------
 */
 
-#include <o2scl/rmf_nucleus.h>
+#include <o2scl/nucleus_rmf.h>
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-rmf_nucleus::rmf_nucleus() : 
+nucleus_rmf::nucleus_rmf() : 
   profiles(new table_units<>),chden_table(new table_units<>)  {
 
   verbose=1;
@@ -301,7 +301,7 @@ rmf_nucleus::rmf_nucleus() :
   a_proton=sqrt(0.71)*1.0e3/o2scl_const::hc_mev_fm;
 }
 
-int rmf_nucleus::load_nl3(rmf_eos &r) {
+int nucleus_rmf::load_nl3(eos_had_rmf &r) {
 
   r.ms=508.194;
   r.mw=782.501;
@@ -340,7 +340,7 @@ int rmf_nucleus::load_nl3(rmf_eos &r) {
   return 0;
 }
 
-rmf_nucleus::~rmf_nucleus() {
+nucleus_rmf::~nucleus_rmf() {
   fields.clear();
   xrho.clear();
   xrhosp.clear();
@@ -359,7 +359,7 @@ rmf_nucleus::~rmf_nucleus() {
   unocc_levels.clear();
 }
 
-int rmf_nucleus::run_nucleus(int nucleus_Z, int nucleus_N,
+int nucleus_rmf::run_nucleus(int nucleus_Z, int nucleus_N,
 			      int unocc_Z, int unocc_N) {
   
   init_run(nucleus_Z,nucleus_N,unocc_Z,unocc_N);
@@ -385,7 +385,7 @@ int rmf_nucleus::run_nucleus(int nucleus_Z, int nucleus_N,
   return success;
 }
 
-void rmf_nucleus::init_run(int nucleus_Z, int nucleus_N,
+void nucleus_rmf::init_run(int nucleus_Z, int nucleus_N,
 			   int unocc_Z, int unocc_N) {
 
   int i, iteration;
@@ -429,7 +429,7 @@ void rmf_nucleus::init_run(int nucleus_Z, int nucleus_N,
 
   if (ineut!=nneutrons || iprot!=nprotons) {
     O2SCL_ERR2("Not a closed-shell nucleus or too many nucleons in ",
-	       "rmf_nucleus::init_run().",exc_einval);
+	       "nucleus_rmf::init_run().",exc_einval);
   }
   
   //--------------------------------------------
@@ -438,14 +438,14 @@ void rmf_nucleus::init_run(int nucleus_Z, int nucleus_N,
   for(int ile=0;ile<unocc_Z;ile++) {
     if (ile+pistate>=n_internal_levels) {
       O2SCL_ERR2("Requested too many unoccupied protons in ",
-		 "rmf_nucleus::init_run().",exc_einval);
+		 "nucleus_rmf::init_run().",exc_einval);
     }
     unocc_levels[ile]=proton_shells[ile+pistate];
   }
   for(int ile=unocc_Z;ile<unocc_Z+unocc_N;ile++) {
     if (ile+nistate>=n_internal_levels) {
       O2SCL_ERR2("Requested too many unoccupied neutrons in ",
-		 "rmf_nucleus::init_run().",exc_einval);
+		 "nucleus_rmf::init_run().",exc_einval);
     }
     unocc_levels[ile]=neutron_shells[ile-unocc_Z+nistate];
   }
@@ -489,14 +489,14 @@ void rmf_nucleus::init_run(int nucleus_Z, int nucleus_N,
   return;
 }
 
-void rmf_nucleus::iterate(int nucleus_Z, int nucleus_N,
+void nucleus_rmf::iterate(int nucleus_Z, int nucleus_N,
 			  int unocc_Z, int unocc_N, int &iconverged) {
 
   iconverged=0;
   
   if (init_called==false) {
     O2SCL_ERR2("Function init_run() has not been called in ",
-	       "rmf_nucleus::iterate().",exc_efailed);
+	       "nucleus_rmf::iterate().",exc_efailed);
   }
   
   //--------------------------------------------
@@ -593,7 +593,7 @@ void rmf_nucleus::iterate(int nucleus_Z, int nucleus_N,
   return;
 }
 
-int rmf_nucleus::post_converge(int nucleus_Z, int nucleus_N, int unocc_Z, 
+int nucleus_rmf::post_converge(int nucleus_Z, int nucleus_N, int unocc_Z, 
 			       int unocc_N) {
 
   //--------------------------------------------
@@ -651,7 +651,7 @@ int rmf_nucleus::post_converge(int nucleus_Z, int nucleus_N, int unocc_Z,
   return 0;
 }
 
-void rmf_nucleus::meson_solve() {
+void nucleus_rmf::meson_solve() {
   int i;
 
   meson_iter(4);
@@ -706,7 +706,7 @@ void rmf_nucleus::meson_solve() {
     mesonfieldcount++;
     if (mesonfieldcount>meson_itmax) {
       O2SCL_CONV2("Failed to solve meson field equations in ",
-		  "rmf_nucleus::meson_solve().",exc_efailed,err_nonconv);
+		  "nucleus_rmf::meson_solve().",exc_efailed,err_nonconv);
       return;
     }
 
@@ -715,7 +715,7 @@ void rmf_nucleus::meson_solve() {
   return;
 }
 
-void rmf_nucleus::energies(double xpro, double xnu, double e) {
+void nucleus_rmf::energies(double xpro, double xnu, double e) {
 
   rprms=0.0;
   rnrms=0.0;
@@ -743,7 +743,7 @@ void rmf_nucleus::energies(double xpro, double xnu, double e) {
       // to converge, so we don't designate this as a fatal
       // error and only throw if err_nonconv is true.
       O2SCL_CONV2("Energy contribution is not finite in ",
-		  "rmf_nucleus::energies().",exc_efailed,err_nonconv);
+		  "nucleus_rmf::energies().",exc_efailed,err_nonconv);
       return;
     }
     rprms=rprms+x*x*xrho(i,3);
@@ -765,7 +765,7 @@ void rmf_nucleus::energies(double xpro, double xnu, double e) {
   return;
 }
 
-void rmf_nucleus::center_mass_corr(double atot) {
+void nucleus_rmf::center_mass_corr(double atot) {
   int nn,i,j;
   double xqmax, hw, b, factor, x;
   double charge=0.0;
@@ -840,7 +840,7 @@ void rmf_nucleus::center_mass_corr(double atot) {
   return;
 }
 
-void rmf_nucleus::init_meson_density() {
+void nucleus_rmf::init_meson_density() {
 
   for (int i=0;i<grid_size;i++) {
     
@@ -866,7 +866,7 @@ void rmf_nucleus::init_meson_density() {
   return;
 }
 
-double rmf_nucleus::sigma_rhs(double sig, double ome, double rho) {
+double nucleus_rmf::sigma_rhs(double sig, double ome, double rho) {
   double xm, ret, sig2, gs, dfdphi;
 
   //--------------------------------------------
@@ -888,7 +888,7 @@ double rmf_nucleus::sigma_rhs(double sig, double ome, double rho) {
   return ret;
 }
 
-double rmf_nucleus::omega_rhs(double sig, double ome, double rho) {
+double nucleus_rmf::omega_rhs(double sig, double ome, double rho) {
   double ret, gw, omet, dfdome;
 
   //--------------------------------------------
@@ -906,7 +906,7 @@ double rmf_nucleus::omega_rhs(double sig, double ome, double rho) {
   return ret;
 }
 
-double rmf_nucleus::rho_rhs(double sig, double ome, double rho) {
+double nucleus_rmf::rho_rhs(double sig, double ome, double rho) {
   double ret, f, sigt, omet, gs, gw;
 
   //--------------------------------------------
@@ -925,7 +925,7 @@ double rmf_nucleus::rho_rhs(double sig, double ome, double rho) {
   return ret;
 }
 
-void rmf_nucleus::dirac(int ilevel) {
+void nucleus_rmf::dirac(int ilevel) {
   int iturn, i, j, jmatch, jtop, no=0;
   double deltae, x, yfs, ygs, alpha, xk, v0, e;
   double scale, xnorm=0.0, factor, x1, x2, yf1, yf2, yg1, yg2;
@@ -1061,7 +1061,7 @@ void rmf_nucleus::dirac(int ilevel) {
 	   << deltae << endl;
     }
     O2SCL_CONV2("Dirac failed to converge in ",
-		"rmf_nucleus::dirac().",exc_efailed,err_nonconv);
+		"nucleus_rmf::dirac().",exc_efailed,err_nonconv);
     return;
   }
 
@@ -1088,7 +1088,7 @@ void rmf_nucleus::dirac(int ilevel) {
   return;
 }
 
-double rmf_nucleus::dirac_rk4(double x, double g1, double f1, double &funt, 
+double nucleus_rmf::dirac_rk4(double x, double g1, double f1, double &funt, 
 			 double eigent, double kappat, ubvector &varr) {
   double ret,v,s;
   field(x,s,v,varr);
@@ -1097,7 +1097,7 @@ double rmf_nucleus::dirac_rk4(double x, double g1, double f1, double &funt,
   return ret;
 }
 
-void rmf_nucleus::dirac_step(double &x, double ht, 
+void nucleus_rmf::dirac_step(double &x, double ht, 
 			     double eigent, double kappat, ubvector &varr) {
 
   if (generic_ode) {
@@ -1105,8 +1105,8 @@ void rmf_nucleus::dirac_step(double &x, double ht,
     odparms op={eigent,kappat,&fields,&varr};
     odefun(x,2,ode_y,ode_dydx,op);
 
-    ode_funct_mfptr_param<rmf_nucleus,odparms,ubvector> 
-      ofm(this,&rmf_nucleus::odefun,op);
+    ode_funct_mfptr_param<nucleus_rmf,odparms,ubvector> 
+      ofm(this,&nucleus_rmf::odefun,op);
     ostep->step(x,ht,2,ode_y,ode_dydx,ode_y,ode_yerr,ode_dydx,ofm);
 
     x+=ht;
@@ -1139,7 +1139,7 @@ void rmf_nucleus::dirac_step(double &x, double ht,
 
 }
 
-int rmf_nucleus::odefun(double x, size_t nv, const ubvector &y,
+int nucleus_rmf::odefun(double x, size_t nv, const ubvector &y,
 			ubvector &dydx, odparms &op) {
   double s, v;
   
@@ -1151,7 +1151,7 @@ int rmf_nucleus::odefun(double x, size_t nv, const ubvector &y,
   return 0;
 }
 
-void rmf_nucleus::field(double x, double &s, double &v1, ubvector &v) {
+void nucleus_rmf::field(double x, double &s, double &v1, ubvector &v) {
 
   int i=(int)(x*25.0+0.1+1.0e-6);
   s=fields(i-1,0)*hc_mev_fm;
@@ -1162,7 +1162,7 @@ void rmf_nucleus::field(double x, double &s, double &v1, ubvector &v) {
   return;
 }
 
-void rmf_nucleus::meson_init() {
+void nucleus_rmf::meson_init() {
 
   for (size_t i=0;i<3;i++) {
     double mass;
@@ -1182,7 +1182,7 @@ void rmf_nucleus::meson_init() {
   return;
 }
 
-void rmf_nucleus::meson_iter(double ic) {
+void nucleus_rmf::meson_iter(double ic) {
   double xi20, xx, xmin, xmax, x;
 
   ubvector xi1(grid_size), xi2(grid_size), xf(4);
@@ -1272,7 +1272,7 @@ void rmf_nucleus::meson_iter(double ic) {
   return;
 }
 
-void rmf_nucleus::pfold(double x, double &xrhof) {
+void nucleus_rmf::pfold(double x, double &xrhof) {
 
   double xmin, xmax, xi, xi1;
 
@@ -1288,7 +1288,7 @@ void rmf_nucleus::pfold(double x, double &xrhof) {
   return;
 }
 
-double rmf_nucleus::xpform(double x, double xp, double a) {
+double nucleus_rmf::xpform(double x, double xp, double a) {
   double xra, ret, xr;
 
   // Need to document 65.0
@@ -1309,7 +1309,7 @@ double rmf_nucleus::xpform(double x, double xp, double a) {
   return ret;
 }
 
-void rmf_nucleus::gauss(double xmin, double xmax, double x, double &xi) {
+void nucleus_rmf::gauss(double xmin, double xmax, double x, double &xi) {
   double xdelta, x1, x2;
   
   ubvector xpnew(12), wnew(12);
@@ -1345,7 +1345,7 @@ void rmf_nucleus::gauss(double xmin, double xmax, double x, double &xi) {
   return;
 }
 
-double rmf_nucleus::xrhop(double x1) {
+double nucleus_rmf::xrhop(double x1) {
   
   double xrhopret;
   

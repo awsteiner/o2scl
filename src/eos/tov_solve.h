@@ -23,7 +23,7 @@
 #ifndef O2SCL_TOV_SOLVE_H
 #define O2SCL_TOV_SOLVE_H
 
-#include <o2scl/tov_eos.h>
+#include <o2scl/eos_tov.h>
 #include <o2scl/interp.h>
 #include <o2scl/table_units.h>
 #include <o2scl/shared_ptr.h>
@@ -44,7 +44,7 @@ namespace o2scl {
       gravitational mass, the radius, the baryonic mass (if the EOS
       supplies the baryon density), and the gravitational potential
       (if requested). The equation of state may be changed at any
-      time, by specifying the appropriate \ref tov_eos object
+      time, by specifying the appropriate \ref eos_tov object
 
       <b>Basic Usage</b>
 
@@ -95,11 +95,11 @@ namespace o2scl {
       - \c gp, the gravitational potential (unitless) when
       \ref calc_gpot is true
       - \c bm, the baryonic mass in \f$ \mathrm{M}_{\odot} \f$ (when 
-      \ref tov_eos::baryon_column is true). 
+      \ref eos_tov::baryon_column is true). 
       - \c pr, the pressure in user-specified units
       - \c ed, the energy density in user-specified units
       - \c nb, the baryon density in user-specified units 
-      (if \ref tov_eos::baryon_column is true)
+      (if \ref eos_tov::baryon_column is true)
       - \c sg, the local surface gravity 
       (in \f$ \mathrm{g}/\mathrm{cm}^{2} \f$ )
       - \c rs, the local redshift (unitless),
@@ -110,11 +110,11 @@ namespace o2scl {
       - \c dgpdr, the derivative of the gravitational potential
       in \f$ 1/\mathrm{km} \f$ (if \ref calc_gpot is true)
       - \c dbmdr, the derivative of the enclosed baryonic mass
-      (if \ref tov_eos::baryon_column is true). \n
+      (if \ref eos_tov::baryon_column is true). \n
 
       The remaining columns are given by the user-defined columns from
-      the equation of state as determined by \ref tov_eos::get_names_units()
-      and \ref tov_eos::get_aux().
+      the equation of state as determined by \ref eos_tov::get_names_units()
+      and \ref eos_tov::get_aux().
 
       The function \ref tov_solve::mvsr() produces a different kind of
       output table corresponding to the mass versus radius curve. Some
@@ -124,11 +124,11 @@ namespace o2scl {
       - \c gp, the gravitational potential in the center (unitless) when
       \ref calc_gpot is true
       - \c bm, total the baryonic mass in \f$ \mathrm{M}_{\odot} \f$ (when 
-      \ref tov_eos::baryon_column is true). 
+      \ref eos_tov::baryon_column is true). 
       - \c pr, the central pressure in user-specified units 
       - \c ed, the central energy density in user-specified units 
       - \c nb, the central baryon density in user-specified units 
-      (if \ref tov_eos::baryon_column is true)
+      (if \ref eos_tov::baryon_column is true)
       - \c sg, the surface gravity 
       (in \f$ \mathrm{g}/\mathrm{cm}^{2} \f$ )
       - \c rs, the redshift at the surface,
@@ -138,13 +138,13 @@ namespace o2scl {
       - \c dgpdr, the derivative of the gravitational potential
       in \f$ 1/\mathrm{km} \f$ (if \ref calc_gpot is true)
       - \c dbmdr, the derivative of the enclosed baryonic mass
-      (if \ref tov_eos::baryon_column is true). \n
+      (if \ref eos_tov::baryon_column is true). \n
 
       The remaining columns are given by the user-defined columns from
-      the equation of state as determined by \ref tov_eos::get_names_units()
-      and \ref tov_eos::get_aux().
+      the equation of state as determined by \ref eos_tov::get_names_units()
+      and \ref eos_tov::get_aux().
 
-      If the user-specified \ref tov_eos object contains columns which
+      If the user-specified \ref eos_tov object contains columns which
       are the same as the native columns created by \ref tov_solve as
       listed above, then the user-specified columns in the output
       table are renamed by appending underscores to the original name.
@@ -178,7 +178,7 @@ namespace o2scl {
       GNU <tt>units</tt> (see documentation in \ref convert_units).
       Note that the choice of what units the tables are produced in
       is independent of the unit system specified in the associated 
-      \ref tov_eos object, i.e. the input EOS and output EOS units
+      \ref eos_tov object, i.e. the input EOS and output EOS units
       need not be the same. 
 
       Alternatively, using \ref set_units(double,double,double) 
@@ -309,7 +309,7 @@ namespace o2scl {
     /// \name User EOS
     //@{
     /// The EOS
-    tov_eos *te;
+    eos_tov *te;
 
     /// True if the EOS has been set
     bool eos_set;
@@ -351,7 +351,7 @@ namespace o2scl {
 	column is the natural logarithm of the pressure in \f$
 	\mathrm{M}_{\odot}/km^3 \f$ . When \ref calc_gpot is true, the
 	next column is the gravitational potential (which is
-	unitless), and when \ref tov_eos::baryon_column is true, the
+	unitless), and when \ref eos_tov::baryon_column is true, the
 	next column is the baryonic mass in \f$ \mathrm{M}_{\odot}
 	\f$.
     */
@@ -489,7 +489,7 @@ namespace o2scl {
 	
 	If pressures (in the user-specified units) are added to this
 	vector, then in mvsr(), the radial location, enclosed
-	gravitational mass, and (if \ref o2scl::tov_eos::baryon_column
+	gravitational mass, and (if \ref o2scl::eos_tov::baryon_column
 	is true) enclosed baryon mass are stored in the table for each
 	central pressure. The associated columns are named 
 	<tt>r0, gm0, bm0, r1, gm1, bm1,</tt> etc.
@@ -521,7 +521,7 @@ namespace o2scl {
     /// \name Basic operation
     //@{
     /// Set the EOS to use
-    void set_eos(tov_eos &ter) {
+    void set_eos(eos_tov &ter) {
       te=&ter;
       eos_set=true;
       return;

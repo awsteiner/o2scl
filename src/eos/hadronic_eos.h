@@ -211,7 +211,7 @@ namespace o2scl {
       \f]
       and this function is computed in \ref fesym_skew(). Note that
       the numerical evaluation of higher derivatives can make \ref
-      hadronic_eos::fesym_curve() and \ref hadronic_eos::fesym_skew()
+      eos_had_base::fesym_curve() and \ref eos_had_base::fesym_skew()
       inaccurate.
 
       Note that assuming terms of order \f$ \epsilon^3 \f$ and higher
@@ -266,13 +266,13 @@ namespace o2scl {
       (Note that \f$ S_4 \f$ is referred to as \f$ Q \f$ in 
       \ref Steiner06). Sometimes it is useful to separate out
       the kinetic and potential parts of the energy density when
-      computing \f$ \eta(n_B) \f$, and the class \ref sym4_eos_base
+      computing \f$ \eta(n_B) \f$, and the class \ref eos_had_sym4_base_base
       is useful for this purpose. 
 
       \future Could write a function to compute the "symmetry free energy"
       or the "symmetry entropy"
   */
-  class hadronic_eos : public eos {
+  class eos_had_base : public eos {
 
   public:
     
@@ -281,9 +281,9 @@ namespace o2scl {
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
     typedef boost::numeric::ublas::matrix<int> ubmatrix_int;
 
-    hadronic_eos();
+    eos_had_base();
 
-    virtual ~hadronic_eos() {};
+    virtual ~eos_had_base() {};
 
     /// Binding energy
     double eoa;
@@ -585,7 +585,7 @@ namespace o2scl {
 
         Used by fesym().
 
-	This function calls \ref hadronic_eos::calc_e() with the
+	This function calls \ref eos_had_base::calc_e() with the
 	internally stored neutron and proton objects.
     */
     double calc_edensity_alpha(double alpha, const double &nb);
@@ -604,7 +604,7 @@ namespace o2scl {
 	it returns \ref exc_efailed without calling the error 
 	handler if the densities are not finite.
 
-	This function is used by \ref hadronic_eos_pres::calc_e().
+	This function is used by \ref eos_had_base_pres::calc_e().
     */
     int nuc_matter_p(size_t nv, const ubvector &x, ubvector &y, 
 		     double *&pa);
@@ -620,7 +620,7 @@ namespace o2scl {
 	it returns \ref exc_efailed without calling the error 
 	handler if the chemical potentials are not finite.
 
-	This function is used by \ref hadronic_eos_eden::calc_p().
+	This function is used by \ref eos_had_base_eden::calc_p().
     */
     int nuc_matter_e(size_t nv, const ubvector &x, ubvector &y, 
 		     double *&pa);
@@ -688,14 +688,14 @@ namespace o2scl {
     /** \brief The default object for derivatives
 	
 	The value of deriv_gsl::h is set to \f$ 10^{-3} \f$ in 
-	the hadronic_eos constructor.
+	the eos_had_base constructor.
     */
     deriv_gsl<funct > def_deriv;
     
     /** \brief The second default object for derivatives
 	
 	The value of deriv_gsl::h is set to \f$ 10^{-3} \f$ in 
-	the hadronic_eos constructor.
+	the eos_had_base constructor.
     */
     deriv_gsl<funct> def_deriv2;
 
@@ -718,8 +718,8 @@ namespace o2scl {
     root_cern<funct > def_sat_root;
     //@}
     
-    /// Return string denoting type ("hadronic_eos")
-    virtual const char *type() { return "hadronic_eos"; }
+    /// Return string denoting type ("eos_had_base")
+    virtual const char *type() { return "eos_had_base"; }
 
 #ifndef DOXYGEN_INTERNAL
 
@@ -755,7 +755,7 @@ namespace o2scl {
   };
 
   /// A hadronic EOS based on a function of the densities [abstract base]
-  class hadronic_eos_eden : public hadronic_eos {
+  class eos_had_base_eden : public eos_had_base {
   public:
 
     /** \brief Equation of state as a function of density
@@ -771,7 +771,7 @@ namespace o2scl {
   /** \brief A hadronic EOS based on a function of the chemical 
       potentials [abstract base]
   */
-  class hadronic_eos_pres : public hadronic_eos {
+  class eos_had_base_pres : public eos_had_base {
   public:
 
     /** \brief Equation of state as a function of the chemical potentials
@@ -785,7 +785,7 @@ namespace o2scl {
   };
 
   /// A finite temperature hadronic EOS
-  class hadronic_eos_temp : public hadronic_eos {
+  class eos_had_base_temp : public eos_had_base {
 
 #ifndef DOXYGEN_INTERNAL
     
@@ -809,11 +809,11 @@ namespace o2scl {
 
   public:
 
-    hadronic_eos_temp() {
+    eos_had_base_temp() {
       fet=&def_fet;
     }
 
-    virtual ~hadronic_eos_temp() {}
+    virtual ~eos_had_base_temp() {}
 
     /** \brief Set the object for computing finite-temperature fermions
 	(default is \ref def_fet)
@@ -850,7 +850,7 @@ namespace o2scl {
   /** \brief A hadronic EOS at finite temperature
       based on a function of the densities [abstract base]
   */
-  class hadronic_eos_temp_eden : public hadronic_eos_temp {
+  class eos_had_base_temp_eden : public eos_had_base_temp {
   public:
 
     /** \brief Equation of state as a function of density
@@ -878,7 +878,7 @@ namespace o2scl {
   /** \brief A hadronic EOS at finite temperature based on a function
       of the chemical potentials [abstract base]
   */
-  class hadronic_eos_temp_pres : public hadronic_eos_temp {
+  class eos_had_base_temp_pres : public eos_had_base_temp {
   public:
 
     /** \brief Equation of state as a function of the chemical potentials

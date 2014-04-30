@@ -28,7 +28,7 @@
 #include <o2scl/lib_settings.h>
 #include <o2scl/interp.h>
 #include <o2scl/boson.h>
-#include <o2scl/hadronic_eos.h>
+#include <o2scl/eos_had_base.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -39,14 +39,14 @@ namespace o2scl {
       
       Virial EOS from \ref Horowitz05.
       
-      \warning This class is implemented as a hadronic_eos object
+      \warning This class is implemented as a eos_had_base object
       because it might be helpful to be able to use \ref
-      o2scl::hadronic_eos_temp::calc_temp_e(), but because of the
+      o2scl::eos_had_base_temp::calc_temp_e(), but because of the
       alpha particles and deuterons, some of the other \ref
-      o2scl::hadronic_eos methods don't have the correct
+      o2scl::eos_had_base methods don't have the correct
       interpretation.
   */
-  class virial_eos : public hadronic_eos_temp_pres {
+  class eos_crust_virial : public eos_had_base_temp_pres {
 
   protected:
 
@@ -60,7 +60,7 @@ namespace o2scl {
 
   public:
 
-    virial_eos() {
+    eos_crust_virial() {
 
       alpha.init(o2scl_settings.get_convert_units().convert
 		 ("kg","1/fm",o2scl_mks::mass_alpha),1.0);
@@ -108,7 +108,7 @@ namespace o2scl {
       iTbap.set(16,Tv,Tbapv,itp_linear);
     }
 
-    virtual ~virial_eos() {
+    virtual ~eos_crust_virial() {
     }
 
     /// Internal alpha particle

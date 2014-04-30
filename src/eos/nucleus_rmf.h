@@ -30,7 +30,7 @@
 #include <o2scl/interp.h>
 #include <o2scl/constants.h>
 #include <o2scl/part.h>
-#include <o2scl/rmf_eos.h>
+#include <o2scl/eos_had_rmf.h>
 #include <o2scl/table_units.h>
 #include <o2scl/ode_rkck_gsl.h>
 #include <o2scl/ode_funct.h>
@@ -49,12 +49,12 @@ namespace o2scl {
       B.D. Serot, and used in \ref Horowitz81 which was then adapted
       by P.J. Ellis and used in \ref Heide94 and \ref Prakash94. Ellis
       and A.W. Steiner adapted it for the parameterization in in \ref
-      rmf_eos for \ref Steiner05b, and then converted to C++ by
+      eos_had_rmf for \ref Steiner05b, and then converted to C++ by
       Steiner afterwards.
 
       The standard usage is something like:
       \code
-      rmf_nucleus rn;
+      nucleus_rmf rn;
       o2scl_hdf::rmf_load(rn.rmf,"NL4");
       rn.run_nucleus(82,208,0,0);
       cout << rn.rnrp << endl;
@@ -200,7 +200,7 @@ namespace o2scl {
       \todo Better documentation
       \todo Convert energies() to use EOS and possibly
       replace sigma_rhs() and related functions by the associated
-      field equation method of rmf_eos.
+      field equation method of eos_had_rmf.
 
       \todo Document hw=3.923+23.265/cbrt(atot);
 
@@ -225,7 +225,7 @@ namespace o2scl {
       are lower energy than occupied levels
       \future Connect with \ref o2scl::nuclear_mass ?
   */
-  class rmf_nucleus {
+  class nucleus_rmf {
 
     typedef boost::numeric::ublas::vector<double> ubvector;
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
@@ -253,14 +253,14 @@ namespace o2scl {
 
   public:
     
-    rmf_nucleus();
+    nucleus_rmf();
 
-    ~rmf_nucleus();
+    ~nucleus_rmf();
 
     /** \name Basic operation
      */
     //@{
-    /// A shell of nucleons for \ref rmf_nucleus
+    /// A shell of nucleons for \ref nucleus_rmf
     typedef struct {
       /// Degeneracy \f$ 2 j+1 \f$ .
       int twojp1;
@@ -399,14 +399,14 @@ namespace o2scl {
 	This is set in the constructor to be the default
 	model, NL3, using the function \ref load_nl3().
     */
-    rmf_eos def_rmf;
+    eos_had_rmf def_rmf;
     
     /** \brief Set the base EOS to be used
 	
 	The equation of state must be set before run_nucleus() or
-	init_fun() are called, including the value of rmf_eos::mnuc.
+	init_fun() are called, including the value of eos_had_rmf::mnuc.
     */
-    int set_eos(rmf_eos &r) {
+    int set_eos(eos_had_rmf &r) {
       rmf=&r;
       return 0;
     }
@@ -420,14 +420,14 @@ namespace o2scl {
     /** \brief The neutron 
 
 	The mass of the neutron is ignored and set by init_run() 
-	to be rmf_eos::mnuc from \ref rmf.
+	to be eos_had_rmf::mnuc from \ref rmf.
     */
     fermion n;
 
     /** \brief The proton
 
 	The mass of the proton is ignored and set by init_run() 
-	to be rmf_eos::mnuc from \ref rmf.
+	to be eos_had_rmf::mnuc from \ref rmf.
     */
     fermion p;
     //@}
@@ -516,11 +516,11 @@ namespace o2scl {
     */
     double a_proton;
 
-    /// Load the default model NL3 into the given \ref rmf_eos object
-    int load_nl3(rmf_eos &r);
+    /// Load the default model NL3 into the given \ref eos_had_rmf object
+    int load_nl3(eos_had_rmf &r);
     
     /// The base EOS
-    rmf_eos *rmf;
+    eos_had_rmf *rmf;
 
     /** \brief The radial profiles
      */

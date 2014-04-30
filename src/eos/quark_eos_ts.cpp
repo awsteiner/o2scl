@@ -24,14 +24,14 @@
 #include <config.h>
 #endif
 
-#include <o2scl/quark_eos.h>
+#include <o2scl/eos_quark.h>
 #include <o2scl/test_mgr.h>
 
 using namespace std;
 using namespace o2scl;
 
 int main(void) {
-  quark_eos qe, *qe2;
+  eos_quark qe, *qe2;
   int vp;
   test_mgr t;
   t.set_output_level(2);

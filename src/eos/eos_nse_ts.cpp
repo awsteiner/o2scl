@@ -21,7 +21,7 @@
   -------------------------------------------------------------------
 */
 #include <o2scl/test_mgr.h>
-#include <o2scl/nse_eos.h>
+#include <o2scl/eos_nse.h>
 #include <o2scl/nucmass_frdm.h>
 #include <o2scl/nucdist_arb.h>
 #include <o2scl/hdf_nucmass_io.h>
@@ -46,7 +46,7 @@ int main(void) {
   o2scl_hdf::mnmsk_load(mm);
   nucdist_arb ad;
   ad.set_dist(mm,"Z>=24 & Z<=32 & N>=55 & N<=58");
-  nse_eos ne;
+  eos_nse ne;
 
   nb=0.028;
   Ye=0.364;

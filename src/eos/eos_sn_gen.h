@@ -69,22 +69,22 @@ namespace o2scl {
       stellarcollapse.org HDF5 format?
 
       \comment
-      \future Could this be a child of hadronic_eos_temp and
-      then directly used in cold_nstar()? Actually no, this doesn't
+      \future Could this be a child of eos_had_base_temp and
+      then directly used in nstar_cold()? Actually no, this doesn't
       work because of the nuclei. 
       \endcomment
 
   */
-  class gen_sn_eos {
+  class eos_sn_gen {
 
   public:
 
     typedef boost::numeric::ublas::vector<double> ubvector;
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
-    gen_sn_eos();
+    eos_sn_gen();
     
-    virtual ~gen_sn_eos();
+    virtual ~eos_sn_gen();
 
     /// \name Grid and data sizes
     //@{
@@ -308,12 +308,12 @@ namespace o2scl {
     }
 
 #ifndef O2SCL_NO_CPP11
-    /** \brief A slice of data from \ref gen_sn_eos for one index fixed
+    /** \brief A slice of data from \ref eos_sn_gen for one index fixed
 	
 	This class allows one to easily construct a \ref
 	o2scl::interp2_direct object automatically by fixing one index
 	from one of the \ref o2scl::tensor_grid3 objects in a child of
-	\ref o2scl::gen_sn_eos .
+	\ref o2scl::eos_sn_gen .
     */
     class slice {
       
@@ -442,10 +442,10 @@ namespace o2scl {
       where \f$ E_{\mathrm{eg}} \f$ is the energy per baryon of
       electrons and photons. In order to keep things consistent with
       the other EOS tables, when the EOS table is loaded, \ref
-      gen_sn_eos::Eint is rescaled to a rest mass of \f$ Y_e m_p +
+      eos_sn_gen::Eint is rescaled to a rest mass of \f$ Y_e m_p +
       (1-Y_e) m_n \f$ .
 
-      See also the documentation at \ref gen_sn_eos and the
+      See also the documentation at \ref eos_sn_gen and the
       \ref sneos_section section of the User's guide.
 
       See \ref Lattimer91 and \ref Lattimer85.
@@ -454,7 +454,7 @@ namespace o2scl {
       EOS seems to be off, but this may be the result of small
       inaccuracies from finite-differencing the LS table.
   */
-  class ls_eos : public gen_sn_eos {
+  class ls_eos : public eos_sn_gen {
 
   public:
     
@@ -586,7 +586,7 @@ namespace o2scl {
 
       \verbinclude scollapse_README
 
-      See also the documentation at \ref gen_sn_eos and the
+      See also the documentation at \ref eos_sn_gen and the
       \ref sneos_section section of the User's guide.
 
       \future Loading an EOS currently requires loading the HDF5 file
@@ -594,7 +594,7 @@ namespace o2scl {
       tensor had the same ordering as the indices in the original
       HDF5 file.
   */
-  class oo_eos : public gen_sn_eos {
+  class oo_eos : public eos_sn_gen {
 
   public:
     
@@ -732,11 +732,11 @@ namespace o2scl {
       section in the table with T=0.1 MeV and \f$ Y_p = 0.1 \f$ for
       all temperature and proton fraction points.
 
-      The data for \ref gen_sn_eos::E, \ref gen_sn_eos::F, \ref
-      gen_sn_eos::S, and \ref gen_sn_eos::P is not stored in the table
-      but can be computed with \ref gen_sn_eos::compute_eg().
+      The data for \ref eos_sn_gen::E, \ref eos_sn_gen::F, \ref
+      eos_sn_gen::S, and \ref eos_sn_gen::P is not stored in the table
+      but can be computed with \ref eos_sn_gen::compute_eg().
 
-      See also the documentation at \ref gen_sn_eos and the
+      See also the documentation at \ref eos_sn_gen and the
       \ref sneos_section section of the User's guide.
 
       See \ref Shen98 and \ref Shen98b .
@@ -748,7 +748,7 @@ namespace o2scl {
       tables for these cases have been released, but I don't think
       this class can read them yet. 
   */
-  class stos_eos : public gen_sn_eos {
+  class stos_eos : public eos_sn_gen {
 
   public:
 
@@ -865,17 +865,17 @@ namespace o2scl {
       - <tt>"NL3eos1.03.dat"</tt> (\ref mode_NL3)
       - <tt>"NL3eosb1.03.dat"</tt> (\ref mode_NL3b)
 
-      See also the documentation at \ref gen_sn_eos and the
+      See also the documentation at \ref eos_sn_gen and the
       \ref sneos_section section of the User's guide.
 
       The free energy per baryon neutron and proton chemical
       potentials are relative to a nucleon mass of 939 MeV. The values
-      of \ref o2scl::gen_sn_eos::m_neut and \ref
-      o2scl::gen_sn_eos::m_prot are set to 939 MeV accordingly. The
+      of \ref o2scl::eos_sn_gen::m_neut and \ref
+      o2scl::eos_sn_gen::m_prot are set to 939 MeV accordingly. The
       electron chemical potential still includes its rest mass. All
       quantites are stored as in the original table, except that
-      the values in \ref o2scl::gen_sn_eos::E or \ref
-      o2scl::gen_sn_eos::Eint are computed directly from the
+      the values in \ref o2scl::eos_sn_gen::E or \ref
+      o2scl::eos_sn_gen::Eint are computed directly from the
       thermodynamic identity.
 
       See \ref Shen11.
@@ -884,7 +884,7 @@ namespace o2scl {
       data, neutron matter calculations, and neutron star mass and
       radius observations.
   */
-  class sht_eos : public gen_sn_eos {
+  class sht_eos : public eos_sn_gen {
 
   public:
 
@@ -987,12 +987,12 @@ namespace o2scl {
       <tt>nl3_lala_eos_shen98format_v1.0.tab</tt> as obtained from
       http://phys-merger.physik.unibas.ch/~hempel/eos.html.
 
-      See also the documentation at \ref gen_sn_eos and the
+      See also the documentation at \ref eos_sn_gen and the
       \ref sneos_section section of the User's guide.
 
       See \ref Hempel10 and \ref Hempel11.
   */
-  class hfsl_eos : public gen_sn_eos {
+  class hfsl_eos : public eos_sn_gen {
 
   public:
 

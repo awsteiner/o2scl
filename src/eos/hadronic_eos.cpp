@@ -24,14 +24,14 @@
 #include <config.h>
 #endif
 
-#include <o2scl/hadronic_eos.h>
+#include <o2scl/eos_had_base.h>
 // For unit conversions
 #include <o2scl/lib_settings.h>
 
 using namespace std;
 using namespace o2scl;
 
-hadronic_eos::hadronic_eos() {
+eos_had_base::eos_had_base() {
 
   sat_deriv=&def_deriv;
   sat_deriv2=&def_deriv2;
@@ -51,21 +51,21 @@ hadronic_eos::hadronic_eos() {
   sat_root=&def_sat_root;
 }
 
-double hadronic_eos::fcomp(double nb, const double &alpha) {
+double eos_had_base::fcomp(double nb, const double &alpha) {
   double lcomp, err;
   
-  funct_mfptr_param<hadronic_eos,const double> 
-    fmn(this,&hadronic_eos::calc_pressure_nb,alpha);
+  funct_mfptr_param<eos_had_base,const double> 
+    fmn(this,&eos_had_base::calc_pressure_nb,alpha);
   lcomp=9.0*sat_deriv->deriv(nb,fmn);
 
   return lcomp;
 }
 
-double hadronic_eos::fcomp_err(double nb, double alpha, double &unc) {
+double eos_had_base::fcomp_err(double nb, double alpha, double &unc) {
   double lcomp;
   
-  funct_mfptr_param<hadronic_eos,const double> 
-    fmn(this,&hadronic_eos::calc_pressure_nb,alpha);
+  funct_mfptr_param<eos_had_base,const double> 
+    fmn(this,&eos_had_base::calc_pressure_nb,alpha);
   sat_deriv->deriv_err(nb,fmn,lcomp,unc);
 
   lcomp*=9.0;
@@ -73,7 +73,7 @@ double hadronic_eos::fcomp_err(double nb, double alpha, double &unc) {
   return lcomp;
 }
 
-double hadronic_eos::feoa(double nb, const double &alpha) {
+double eos_had_base::feoa(double nb, const double &alpha) {
   double leoa;
 
   neutron->n=(1.0+alpha)*nb/2.0;
@@ -87,22 +87,22 @@ double hadronic_eos::feoa(double nb, const double &alpha) {
   return leoa;
 }
 
-double hadronic_eos::fesym(double nb, const double &alpha) {
+double eos_had_base::fesym(double nb, const double &alpha) {
 
-  funct_mfptr_param<hadronic_eos,const double> 
-    fmn(this,&hadronic_eos::calc_dmu_alpha,nb);
+  funct_mfptr_param<eos_had_base,const double> 
+    fmn(this,&eos_had_base::calc_dmu_alpha,nb);
   return sat_deriv->deriv(alpha,fmn)/4.0;
 
   // * Old method using second derivative *
-  //funct_mfptr_param<hadronic_eos,const double> 
-  //fmn(this,&hadronic_eos::calc_edensity_alpha,nb);
+  //funct_mfptr_param<eos_had_base,const double> 
+  //fmn(this,&eos_had_base::calc_edensity_alpha,nb);
   //return sat_deriv->calc2(alpha,fmn)/2.0/nb;
 }
 
-double hadronic_eos::fesym_err(double nb, double alpha, 
+double eos_had_base::fesym_err(double nb, double alpha, 
 			       double &unc) {
-  funct_mfptr_param<hadronic_eos,const double> 
-    fmn(this,&hadronic_eos::calc_dmu_alpha,nb);
+  funct_mfptr_param<eos_had_base,const double> 
+    fmn(this,&eos_had_base::calc_dmu_alpha,nb);
   double val, err;
   sat_deriv->deriv_err(alpha,fmn,val,err);
   val/=4.0; 
@@ -110,7 +110,7 @@ double hadronic_eos::fesym_err(double nb, double alpha,
   return val;
 }
 
-double hadronic_eos::fesym_slope(double nb, const double &alpha) {
+double eos_had_base::fesym_slope(double nb, const double &alpha) {
   
   if (false) {
     // The form below is effectively a second derivative since it must
@@ -118,31 +118,31 @@ double hadronic_eos::fesym_slope(double nb, const double &alpha) {
     // derivative, and may or may not be less accurate. It might be
     // good to make this a separate function, to allow the user to
     // choose which way to evaluate L.
-    funct_mfptr_param<hadronic_eos,const double> 
-      fmn(this,&hadronic_eos::calc_musum_alpha,nb);
+    funct_mfptr_param<eos_had_base,const double> 
+      fmn(this,&eos_had_base::calc_musum_alpha,nb);
     return sat_deriv->deriv2(alpha,fmn)*0.75-3.0*fesym(nb,alpha);
   }
 
-  funct_mfptr_param<hadronic_eos,const double> 
-    fmn(this,&hadronic_eos::fesym,alpha);
+  funct_mfptr_param<eos_had_base,const double> 
+    fmn(this,&eos_had_base::fesym,alpha);
   return sat_deriv2->deriv(nb,fmn)*3.0*nb;
 }
 
-double hadronic_eos::fesym_curve(double nb, const double &alpha) {
+double eos_had_base::fesym_curve(double nb, const double &alpha) {
 
-  funct_mfptr_param<hadronic_eos,const double> 
-    fmn(this,&hadronic_eos::fesym,alpha);
+  funct_mfptr_param<eos_had_base,const double> 
+    fmn(this,&eos_had_base::fesym,alpha);
   return sat_deriv2->deriv2(nb,fmn)*9.0*nb*nb;
 }
 
-double hadronic_eos::fesym_skew(double nb, const double &alpha) {
+double eos_had_base::fesym_skew(double nb, const double &alpha) {
 
-  funct_mfptr_param<hadronic_eos,const double> 
-    fmn(this,&hadronic_eos::fesym,alpha);
+  funct_mfptr_param<eos_had_base,const double> 
+    fmn(this,&eos_had_base::fesym,alpha);
   return sat_deriv2->deriv3(nb,fmn)*27.0*nb*nb*nb;
 }
 
-double hadronic_eos::fesym_diff(double nb) {
+double eos_had_base::fesym_diff(double nb) {
   double eoa_neut, eoa_nuc;
 
   neutron->n=nb;
@@ -158,7 +158,7 @@ double hadronic_eos::fesym_diff(double nb) {
   return eoa_neut-eoa_nuc;
 }
 
-double hadronic_eos::feta(double nb) {
+double eos_had_base::feta(double nb) {
   double eoa_neut, eoa_nuc, eoa_mixed;
 
   neutron->n=nb;
@@ -179,19 +179,19 @@ double hadronic_eos::feta(double nb) {
   return (eoa_neut-eoa_mixed)/3.0/(eoa_mixed-eoa_nuc);
 }
 
-double hadronic_eos::fkprime(double nb, const double &alpha) {
+double eos_had_base::fkprime(double nb, const double &alpha) {
   double lkprime, err;
   int ret=0;
   
-  funct_mfptr_param<hadronic_eos,const double> 
-    fmn(this,&hadronic_eos::calc_press_over_den2,alpha);
+  funct_mfptr_param<eos_had_base,const double> 
+    fmn(this,&eos_had_base::calc_press_over_den2,alpha);
   sat_deriv->deriv2_err(nb,fmn,lkprime,err);
   lkprime*=27.0*nb*nb*nb;
   
   return lkprime;
 }
 
-double hadronic_eos::fmsom(double nb, const double &alpha) {
+double eos_had_base::fmsom(double nb, const double &alpha) {
 
   neutron->n=(1.0+alpha)*nb/2.0;
   proton->n=(1.0-alpha)*nb/2.0;
@@ -201,15 +201,15 @@ double hadronic_eos::fmsom(double nb, const double &alpha) {
   return neutron->ms/neutron->m;
 }
 
-double hadronic_eos::fn0(double alpha, double &leoa) {
+double eos_had_base::fn0(double alpha, double &leoa) {
   double nb;
   int ret=0;
   
   // Initial guess
   nb=0.16;
   
-  funct_mfptr_param<hadronic_eos,const double> 
-    fmf(this,&hadronic_eos::calc_pressure_nb,alpha);
+  funct_mfptr_param<eos_had_base,const double> 
+    fmf(this,&eos_had_base::calc_pressure_nb,alpha);
   
   sat_root->solve(nb,fmf);
   calc_pressure_nb(nb);
@@ -218,7 +218,7 @@ double hadronic_eos::fn0(double alpha, double &leoa) {
   return nb;
 }
 
-void hadronic_eos::saturation() {
+void eos_had_base::saturation() {
   n0=fn0(0.0,eoa);
   comp=fcomp(n0);
   esym=fesym(n0);
@@ -228,7 +228,7 @@ void hadronic_eos::saturation() {
   return;
 }
 
-void hadronic_eos::gradient_qij(fermion &n, fermion &p, thermo &th,
+void eos_had_base::gradient_qij(fermion &n, fermion &p, thermo &th,
 			       double &qnn, double &qnp, double &qpp, 
 			       double &dqnndnn, double &dqnndnp,
 			       double &dqnpdnn, double &dqnpdnp,
@@ -240,8 +240,8 @@ void hadronic_eos::gradient_qij(fermion &n, fermion &p, thermo &th,
   t1=t1_fun(barn);
   t2=t2_fun(barn);
     
-  funct_mfptr<hadronic_eos> t1fun(this,&hadronic_eos::t1_fun);
-  funct_mfptr<hadronic_eos> t2fun(this,&hadronic_eos::t2_fun);
+  funct_mfptr<eos_had_base> t1fun(this,&eos_had_base::t1_fun);
+  funct_mfptr<eos_had_base> t2fun(this,&eos_had_base::t2_fun);
 
   set_n_and_p(n,p);
   set_thermo(th);
@@ -263,7 +263,7 @@ void hadronic_eos::gradient_qij(fermion &n, fermion &p, thermo &th,
   return;
 }
 
-double hadronic_eos::t1_fun(double barn) {
+double eos_had_base::t1_fun(double barn) {
   double xp=proton->n/(neutron->n+proton->n);
   neutron->n=(1.0-xp)*barn;
   proton->n=xp*barn;
@@ -275,7 +275,7 @@ double hadronic_eos::t1_fun(double barn) {
 	  (proton->n+2*barn))/den;
 }
 
-double hadronic_eos::t2_fun(double barn) {
+double eos_had_base::t2_fun(double barn) {
   double xp=proton->n/(neutron->n+proton->n);
   neutron->n=(1.0-xp)*barn;
   proton->n=xp*barn;
@@ -287,7 +287,7 @@ double hadronic_eos::t2_fun(double barn) {
 	  (2*barn-proton->n))/den;
 }
 
-double hadronic_eos::calc_pressure_nb(double nb, const double &alpha) {
+double eos_had_base::calc_pressure_nb(double nb, const double &alpha) {
   
   neutron->n=(1.0+alpha)*nb/2.0;
   proton->n=(1.0-alpha)*nb/2.0;
@@ -297,21 +297,21 @@ double hadronic_eos::calc_pressure_nb(double nb, const double &alpha) {
   return eos_thermo->pr;
 }
 
-void hadronic_eos::const_pf_derivs(double nb, double pf, 
+void eos_had_base::const_pf_derivs(double nb, double pf, 
 				   double &dednb_pf, double &dPdnb_pf) {
 
   // Take derivatives w.r.t. alpha and then multiply by -2 to get
   // derivatives w.r.t. x
-  funct_mfptr_param<hadronic_eos,const double> 
-    fmpp(this,&hadronic_eos::calc_pressure_nb,1.0-2.0*pf);
-  funct_mfptr_param<hadronic_eos,const double> 
-    fmpe(this,&hadronic_eos::calc_edensity_nb,1.0-2.0*pf);
+  funct_mfptr_param<eos_had_base,const double> 
+    fmpp(this,&eos_had_base::calc_pressure_nb,1.0-2.0*pf);
+  funct_mfptr_param<eos_had_base,const double> 
+    fmpe(this,&eos_had_base::calc_edensity_nb,1.0-2.0*pf);
   dPdnb_pf=-2.0*sat_deriv->deriv(nb,fmpp);
   dednb_pf=-2.0*sat_deriv->deriv(nb,fmpe);
   return;
 }
 
-double hadronic_eos::calc_press_over_den2(double nb, const double &alpha) {
+double eos_had_base::calc_press_over_den2(double nb, const double &alpha) {
   
   neutron->n=nb/2.0;
   proton->n=nb/2.0;
@@ -321,7 +321,7 @@ double hadronic_eos::calc_press_over_den2(double nb, const double &alpha) {
   return eos_thermo->pr/nb/nb;
 }
 
-double hadronic_eos::calc_edensity_alpha(double alpha, const double &nb) {
+double eos_had_base::calc_edensity_alpha(double alpha, const double &nb) {
   
   neutron->n=(1.0+alpha)*nb/2.0;
   proton->n=(1.0-alpha)*nb/2.0;
@@ -331,7 +331,7 @@ double hadronic_eos::calc_edensity_alpha(double alpha, const double &nb) {
   return eos_thermo->ed;
 }
 
-double hadronic_eos::calc_dmu_alpha(double alpha, const double &nb) {
+double eos_had_base::calc_dmu_alpha(double alpha, const double &nb) {
   
   neutron->n=(1.0+alpha)*nb/2.0;
   proton->n=(1.0-alpha)*nb/2.0;
@@ -341,7 +341,7 @@ double hadronic_eos::calc_dmu_alpha(double alpha, const double &nb) {
   return neutron->mu-proton->mu;
 }
 
-double hadronic_eos::calc_musum_alpha(double alpha, const double &nb) {
+double eos_had_base::calc_musum_alpha(double alpha, const double &nb) {
   
   neutron->n=(1.0+alpha)*nb/2.0;
   proton->n=(1.0-alpha)*nb/2.0;
@@ -351,7 +351,7 @@ double hadronic_eos::calc_musum_alpha(double alpha, const double &nb) {
   return neutron->mu+proton->mu;
 }
 
-double hadronic_eos::calc_edensity_nb(double nb, const double &alpha) {
+double eos_had_base::calc_edensity_nb(double nb, const double &alpha) {
   
   neutron->n=(1.0+alpha)*nb/2.0;
   proton->n=(1.0-alpha)*nb/2.0;
@@ -361,7 +361,7 @@ double hadronic_eos::calc_edensity_nb(double nb, const double &alpha) {
   return eos_thermo->ed;
 }
 
-int hadronic_eos::nuc_matter_e(size_t nv, const ubvector &x, 
+int eos_had_base::nuc_matter_e(size_t nv, const ubvector &x, 
 			       ubvector &y, double *&pa) {
   double mun=pa[0];
   double mup=pa[1];
@@ -381,7 +381,7 @@ int hadronic_eos::nuc_matter_e(size_t nv, const ubvector &x,
   return 0;
 }
 
-int hadronic_eos::nuc_matter_p(size_t nv, const ubvector &x, 
+int eos_had_base::nuc_matter_p(size_t nv, const ubvector &x, 
 			       ubvector &y, double *&pa) {
   
   double nn=pa[0];
@@ -402,35 +402,35 @@ int hadronic_eos::nuc_matter_p(size_t nv, const ubvector &x,
   return 0;
 }
 
-void hadronic_eos::set_n_and_p(fermion &n, fermion &p) {
+void eos_had_base::set_n_and_p(fermion &n, fermion &p) {
   neutron=&n;
   proton=&p;
   return;
 }
 
-void hadronic_eos::set_mroot(mroot<mm_funct<>,
+void eos_had_base::set_mroot(mroot<mm_funct<>,
 				  boost::numeric::ublas::vector<double>, 
 				  jac_funct<> > &mr) {
   eos_mroot=&mr;
   return;
 }
 
-void hadronic_eos::set_sat_root(root<funct > &mr) {
+void eos_had_base::set_sat_root(root<funct > &mr) {
   sat_root=&mr;
   return;
 }
 
-void hadronic_eos::set_sat_deriv(deriv_base<funct > &de) {
+void eos_had_base::set_sat_deriv(deriv_base<funct > &de) {
   sat_deriv=&de;
   return;
 }
 
-void hadronic_eos::set_sat_deriv2(deriv_base<funct > &de) {
+void eos_had_base::set_sat_deriv2(deriv_base<funct > &de) {
   sat_deriv2=&de;
   return;
 }
 
-int hadronic_eos_eden::calc_p(fermion &n, fermion &p, thermo &th) {
+int eos_had_base_eden::calc_p(fermion &n, fermion &p, thermo &th) {
   int ret;
   
   set_n_and_p(n,p);
@@ -442,8 +442,8 @@ int hadronic_eos_eden::calc_p(fermion &n, fermion &p, thermo &th) {
     
   double pa[2]={n.mu,p.mu};
   double *pap=&(pa[0]);
-  mm_funct_mfptr_param<hadronic_eos_eden,double *> 
-    fmf(this,&hadronic_eos_eden::nuc_matter_e,pap);
+  mm_funct_mfptr_param<eos_had_base_eden,double *> 
+    fmf(this,&eos_had_base_eden::nuc_matter_e,pap);
   eos_mroot->msolve(2,x,fmf);
     
   th=*eos_thermo;
@@ -451,7 +451,7 @@ int hadronic_eos_eden::calc_p(fermion &n, fermion &p, thermo &th) {
   return 0;
 }
 
-int hadronic_eos_pres::calc_e(fermion &n, fermion &p, thermo &th) {
+int eos_had_base_pres::calc_e(fermion &n, fermion &p, thermo &th) {
   int ret;
   
   set_n_and_p(n,p);
@@ -466,8 +466,8 @@ int hadronic_eos_pres::calc_e(fermion &n, fermion &p, thermo &th) {
     
   double pa[2]={n.n,p.n};
   double *pap=&(pa[0]);
-  mm_funct_mfptr_param<hadronic_eos_pres,double *> 
-    fmf(this,&hadronic_eos_pres::nuc_matter_p,pap);
+  mm_funct_mfptr_param<eos_had_base_pres,double *> 
+    fmf(this,&eos_had_base_pres::nuc_matter_p,pap);
   eos_mroot->msolve(2,mu,fmf);
     
   th=*eos_thermo;
@@ -475,19 +475,19 @@ int hadronic_eos_pres::calc_e(fermion &n, fermion &p, thermo &th) {
   return 0;
 }
 
-int hadronic_eos_temp::nuc_matter_temp_e(size_t nv, const ubvector &x, 
+int eos_had_base_temp::nuc_matter_temp_e(size_t nv, const ubvector &x, 
 					 ubvector &y, double *&pa) {
   neutron->n=x[0];
   proton->n=x[1];
   
   if (!o2scl::is_finite(neutron->n) || !o2scl::is_finite(proton->n)) {
     O2SCL_ERR2_RET("Density problem in ",
-		   "hadronic_eos_temp::nuc_matter_e().",exc_esanity);
+		   "eos_had_base_temp::nuc_matter_e().",exc_esanity);
   }
   int ret=calc_temp_e(*neutron,*proton,lT,*eos_thermo);
   if (ret!=0) {
     O2SCL_ERR2("Function calc_e() failed in ",
-	       "hadronic_eos_temp::nuc_matter_e().",exc_efailed);
+	       "eos_had_base_temp::nuc_matter_e().",exc_efailed);
   }
 
   y[0]=neutron->mu-pa[0];
@@ -495,13 +495,13 @@ int hadronic_eos_temp::nuc_matter_temp_e(size_t nv, const ubvector &x,
   
   if (!o2scl::is_finite(neutron->mu) || !o2scl::is_finite(proton->mu)) {
     O2SCL_ERR2_RET("Chemical potential problem in ",
-		   "hadronic_eos_temp::nuc_matter_e().",exc_esanity);
+		   "eos_had_base_temp::nuc_matter_e().",exc_esanity);
   }
 
   return ret;
 }
 
-int hadronic_eos_temp::nuc_matter_temp_p(size_t nv, const ubvector &x, 
+int eos_had_base_temp::nuc_matter_temp_p(size_t nv, const ubvector &x, 
 					 ubvector &y, double *&pa) {
   
   neutron->mu=x[0];
@@ -509,7 +509,7 @@ int hadronic_eos_temp::nuc_matter_temp_p(size_t nv, const ubvector &x,
 
   int ret=calc_temp_p(*neutron,*proton,lT,*eos_thermo);
   if (ret!=0) {
-    O2SCL_ERR("calc_p() failed in hadronic_eos_temp::nuc_matter_p().",ret);
+    O2SCL_ERR("calc_p() failed in eos_had_base_temp::nuc_matter_p().",ret);
   }
 
   y[0]=neutron->n-pa[0];
@@ -519,7 +519,7 @@ int hadronic_eos_temp::nuc_matter_temp_p(size_t nv, const ubvector &x,
 }
 
 
-int hadronic_eos_temp_eden::calc_p(fermion &n, fermion &p, thermo &th) {
+int eos_had_base_temp_eden::calc_p(fermion &n, fermion &p, thermo &th) {
   int ret;
   
   set_n_and_p(n,p);
@@ -531,11 +531,11 @@ int hadronic_eos_temp_eden::calc_p(fermion &n, fermion &p, thermo &th) {
 
   double pa[2]={n.mu,p.mu};
   double *pap=&(pa[0]);
-  mm_funct_mfptr_param<hadronic_eos_temp_eden,double *> 
-    fmf(this,&hadronic_eos_temp_eden::nuc_matter_e,pap);
+  mm_funct_mfptr_param<eos_had_base_temp_eden,double *> 
+    fmf(this,&eos_had_base_temp_eden::nuc_matter_e,pap);
   ret=eos_mroot->msolve(2,x,fmf);
   if (ret!=0) {
-    O2SCL_ERR_RET("Solver failed in hadronic_eos_temp_eden::calc_p().",ret);
+    O2SCL_ERR_RET("Solver failed in eos_had_base_temp_eden::calc_p().",ret);
   }
     
   th=*eos_thermo;
@@ -543,7 +543,7 @@ int hadronic_eos_temp_eden::calc_p(fermion &n, fermion &p, thermo &th) {
   return 0;
 }
 
-int hadronic_eos_temp_eden::calc_temp_p(fermion &n, fermion &p, 
+int eos_had_base_temp_eden::calc_temp_p(fermion &n, fermion &p, 
 					double T, thermo &th) {
   int ret;
 
@@ -558,13 +558,13 @@ int hadronic_eos_temp_eden::calc_temp_p(fermion &n, fermion &p,
 
   double pa[2]={n.mu,p.mu};
   double *pap=&(pa[0]);
-  mm_funct_mfptr_param<hadronic_eos_temp_eden,double *>
-    fmf(this,&hadronic_eos_temp_eden::nuc_matter_temp_e,pap);
+  mm_funct_mfptr_param<eos_had_base_temp_eden,double *>
+    fmf(this,&eos_had_base_temp_eden::nuc_matter_temp_e,pap);
   ret=eos_mroot->msolve(2,den,fmf);
   
   if (ret!=0) {
     O2SCL_ERR2_RET("Solver failed in ",
-		   "hadronic_eos_temp_eden::calc_temp_p().",ret);
+		   "eos_had_base_temp_eden::calc_temp_p().",ret);
   }
   
   th=*eos_thermo;
@@ -572,7 +572,7 @@ int hadronic_eos_temp_eden::calc_temp_p(fermion &n, fermion &p,
   return 0;
 }
 
-int hadronic_eos_temp_pres::calc_e(fermion &n, fermion &p, thermo &th) {
+int eos_had_base_temp_pres::calc_e(fermion &n, fermion &p, thermo &th) {
   int ret;
   
   set_n_and_p(n,p);
@@ -587,12 +587,12 @@ int hadronic_eos_temp_pres::calc_e(fermion &n, fermion &p, thermo &th) {
     
   double pa[2]={n.n,p.n};
   double *pap=&(pa[0]);
-  mm_funct_mfptr_param<hadronic_eos_temp_pres,double *> 
-    fmf(this,&hadronic_eos_temp_pres::nuc_matter_p,pap);
+  mm_funct_mfptr_param<eos_had_base_temp_pres,double *> 
+    fmf(this,&eos_had_base_temp_pres::nuc_matter_p,pap);
   ret=eos_mroot->msolve(2,mu,fmf);
     
   if (ret!=0) {
-    O2SCL_ERR_RET("Solver failed in hadronic_eos_temp_pres::calc_p().",ret);
+    O2SCL_ERR_RET("Solver failed in eos_had_base_temp_pres::calc_p().",ret);
   }
     
   th=*eos_thermo;
@@ -600,7 +600,7 @@ int hadronic_eos_temp_pres::calc_e(fermion &n, fermion &p, thermo &th) {
   return 0;
 }
 
-int hadronic_eos_temp_pres::calc_temp_e(fermion &n, fermion &p, 
+int eos_had_base_temp_pres::calc_temp_e(fermion &n, fermion &p, 
 					double T, thermo &th) {
   int ret;
 
@@ -615,13 +615,13 @@ int hadronic_eos_temp_pres::calc_temp_e(fermion &n, fermion &p,
 
   double pa[2]={n.n,p.n};
   double *pap=&(pa[0]);
-  mm_funct_mfptr_param<hadronic_eos_temp_pres,double *>
-    fmf(this,&hadronic_eos_temp_pres::nuc_matter_temp_p,pap);
+  mm_funct_mfptr_param<eos_had_base_temp_pres,double *>
+    fmf(this,&eos_had_base_temp_pres::nuc_matter_temp_p,pap);
   ret=eos_mroot->msolve(2,mu,fmf);
   
   if (ret!=0) {
     O2SCL_ERR2_RET("Solver failed in ",
-		   "hadronic_eos_temp_pres::calc_temp_e().",ret);
+		   "eos_had_base_temp_pres::calc_temp_e().",ret);
   }
   
   th=*eos_thermo;

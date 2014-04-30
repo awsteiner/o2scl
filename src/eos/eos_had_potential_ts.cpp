@@ -24,7 +24,7 @@
 #include <config.h>
 #endif
 
-#include <o2scl/gen_potential_eos.h>
+#include <o2scl/eos_had_potential.h>
 #include <o2scl/test_mgr.h>
 #include <o2scl/fermion_nonrel.h>
 #include <o2scl/deriv_gsl.h>
@@ -34,7 +34,7 @@ using namespace o2scl;
 using namespace o2scl_const;
 
 int main(void) {
-  gen_potential_eos go;
+  eos_had_potential go;
   thermo &th=go.def_thermo;
   test_mgr t;
   t.set_output_level(1);

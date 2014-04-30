@@ -25,13 +25,13 @@
 
 #include <iostream>
 #include <o2scl/test_mgr.h>
-#include <o2scl/cfl_njl_eos.h>
+#include <o2scl/eos_quark_cfl.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
 #endif
 
-  /** \brief An EOS like \ref cfl_njl_eos but 
+  /** \brief An EOS like \ref eos_quark_cfl but 
       with a color-superconducting 't Hooft interaction
 
       Beginning with the Lagrangian:
@@ -184,12 +184,12 @@ namespace o2scl {
 
       Created for \ref Steiner05.
   */
-  class cfl6_eos : public cfl_njl_eos {
+  class eos_quark_cfl6 : public eos_quark_cfl {
   public:
   
-    cfl6_eos();
+    eos_quark_cfl6();
 
-    virtual ~cfl6_eos();
+    virtual ~eos_quark_cfl6();
   
     /** \brief Calculate the EOS
 	\nothing
@@ -198,7 +198,7 @@ namespace o2scl {
 	gap equations in \c qq1, \c qq2, \c qq3, and the normal gap
 	equations in \c gap1, \c gap2, and \c gap3.
 	
-	Using \c fromqq=true as in nambujl_eos and nambujl_temp_eos
+	Using \c fromqq=true as in eos_quark_njl and nambujl_temp_eos
 	does not work here and will return an error.
 	
 	If all of the gaps are less than gap_limit, then the
@@ -229,7 +229,7 @@ namespace o2scl {
 	this computes the eigenvalues of the inverse propagator and
 	the assocated derivatives.
 	
-	Note that this is not the same as cfl_njl_eos::eigenvalues()
+	Note that this is not the same as eos_quark_cfl::eigenvalues()
 	which returns \c dedmu rather \c dedqqu.
     */
     virtual int eigenvalues6(double lmom, double mu3, double mu8, 
@@ -258,8 +258,8 @@ namespace o2scl {
     /// The color superconducting 't Hooft coupling (default 0)
     double KD;
 
-    /// Return string denoting type ("cfl6_eos")
-    virtual const char *type() { return "cfl6_eos"; };
+    /// Return string denoting type ("eos_quark_cfl6")
+    virtual const char *type() { return "eos_quark_cfl6"; };
 
     /** \brief The absolute value below which the CSC 't Hooft coupling 
 	is ignored(default \f$ 10^{-6} \f$)
@@ -313,8 +313,8 @@ namespace o2scl {
 
   private:
 
-    cfl6_eos(const cfl6_eos &);
-    cfl6_eos& operator=(const cfl6_eos&);
+    eos_quark_cfl6(const eos_quark_cfl6 &);
+    eos_quark_cfl6& operator=(const eos_quark_cfl6&);
 
 #endif
 

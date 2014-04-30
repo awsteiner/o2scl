@@ -24,13 +24,13 @@
 #include <config.h>
 #endif
 
-#include <o2scl/schematic_eos.h>
+#include <o2scl/eos_had_schematic.h>
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-schematic_eos::schematic_eos() {
+eos_had_schematic::eos_had_schematic() {
   kprime=0.0;
   n0=0.16;
   eoa=-16.0/hc_mev_fm;
@@ -41,7 +41,7 @@ schematic_eos::schematic_eos() {
   gamma=1.0;
 }
 
-int schematic_eos::calc_e(fermion &ln, fermion &lp, thermo &lth) {
+int eos_had_schematic::calc_e(fermion &ln, fermion &lp, thermo &lth) {
   double xp, barn, sym, symp;
   
   barn=ln.n+lp.n;

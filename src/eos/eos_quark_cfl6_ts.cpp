@@ -21,8 +21,8 @@
   -------------------------------------------------------------------
 */
 
-#include <o2scl/bag_eos.h>
-#include <o2scl/cfl6_eos.h>
+#include <o2scl/eos_quark_bag.h>
+#include <o2scl/eos_quark_cfl6.h>
 #include <o2scl/mroot_hybrids.h>
 #include <o2scl/inte_qng_gsl.h>
 #include <o2scl/mroot_cern.h>
@@ -41,7 +41,7 @@ int main(void) {
 
     double ss1,ss2,ss3,gap1,gap2,gap3,n3,n8;
     double ss12,ss22,ss32,gap12,gap22,gap32,n32,n82;
-    cfl6_eos cfl2;
+    eos_quark_cfl6 cfl2;
     thermo th, th2;
     quark u2(cfl2.up_default_mass,6.0);
     quark d2(cfl2.down_default_mass,6.0);
@@ -89,7 +89,7 @@ int main(void) {
 
     /*  
 	We can't test everything here, because the densities in the old
-	version of cfl6_eos only correspond to the deriative of the
+	version of eos_quark_cfl6 only correspond to the deriative of the
 	pressure with respect to the chemical potential when the gap
 	equations have been properly solved.
       

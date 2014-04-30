@@ -22,7 +22,7 @@
 */
 #include <o2scl/test_mgr.h>
 #include <o2scl/mroot_hybrids.h>
-#include <o2scl/apr_eos.h>
+#include <o2scl/eos_had_apr.h>
 
 using namespace std;
 using namespace o2scl;
@@ -33,7 +33,7 @@ int main(void) {
   t.set_output_level(2);
 
   {
-    apr_eos ap;
+    eos_had_apr ap;
     fermion n(939.0/hc_mev_fm,2.0), pr(939.0/hc_mev_fm,2.0);
     thermo hb;
     double barn, dtemp;
@@ -177,7 +177,7 @@ int main(void) {
     cout << endl;
   
     cout << "Check compressibility." << endl;
-    ap.pion=apr_eos::ldp;
+    ap.pion=eos_had_apr::ldp;
     for(double nb=0.08;nb<=0.32001;nb+=0.08) {
       ap.parent_method=true;
       double tx1=ap.fcomp(nb);
@@ -185,7 +185,7 @@ int main(void) {
       double tx2=ap.fcomp(nb);
       t.test_rel(tx1,tx2,1.0e-8,"comp ldp");
     }
-    ap.pion=apr_eos::hdp;
+    ap.pion=eos_had_apr::hdp;
     for(double nb=0.17;nb<=0.60001;nb+=0.08) {
       ap.parent_method=true;
       double tx1=ap.fcomp(nb);
@@ -196,7 +196,7 @@ int main(void) {
     cout << endl;
 
     cout << "Check symmetry energy." << endl;
-    ap.pion=apr_eos::ldp;
+    ap.pion=eos_had_apr::ldp;
     for(double nb=0.16;nb<=0.32001;nb+=0.08) {
       ap.parent_method=true;
       double tx1=ap.fesym_diff(nb);
@@ -204,7 +204,7 @@ int main(void) {
       double tx2=ap.fesym_diff(nb);
       t.test_rel(tx1,tx2,1.0e-8,"esym_diff ldp");
     }
-    ap.pion=apr_eos::hdp;
+    ap.pion=eos_had_apr::hdp;
     for(double nb=0.17;nb<=0.60001;nb+=0.08) {
       ap.parent_method=true;
       double tx1=ap.fesym_diff(nb);
@@ -227,7 +227,7 @@ int main(void) {
     double tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7, tmp8, tmp9;
     double tmp10, tmp11, tmp12;
     double thc=1.0, tsubf;
-    apr_eos at;
+    eos_had_apr at;
   
     n.non_interacting=false;
     pr.non_interacting=false;

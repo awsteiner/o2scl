@@ -48,7 +48,7 @@
 #include <o2scl/columnify.h>
 
 #include <o2scl/part.h>
-#include <o2scl/nambujl_eos.h>
+#include <o2scl/eos_quark_njl.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -188,7 +188,7 @@ namespace o2scl {
       gaps to zero when \c gap_limit is less than zero will reproduce
       an analog of the bag model with a momentum cutoff.
       
-      The variable nambujl_eos::fromqq is automatically set to true in
+      The variable eos_quark_njl::fromqq is automatically set to true in
       the constructor, as computations with \c fromqq=false are not
       implemented.
 
@@ -203,12 +203,12 @@ namespace o2scl {
 
       Created for \ref Steiner02.
   */
-  class cfl_njl_eos : public nambujl_eos {
+  class eos_quark_cfl : public eos_quark_njl {
   public:
     
-    cfl_njl_eos();
+    eos_quark_cfl();
     
-    virtual ~cfl_njl_eos();
+    virtual ~eos_quark_cfl();
     
     /** \brief Set the parameters and the bag constant 'B0'
 	
@@ -224,7 +224,7 @@ namespace o2scl {
 	specified, it is automatically set to 3/4 G, which is the
 	value obtained from the Fierz transformation.
 	
-	The value of the shift in the bag constant nambujl_eos::B0 is
+	The value of the shift in the bag constant eos_quark_njl::B0 is
 	automatically calculated to ensure that the vacuum has zero
 	energy density and zero pressure. The functions set_quarks()
 	and set_thermo() must be used before hand to specify the \ref
@@ -241,12 +241,12 @@ namespace o2scl {
 	qq2, \c qq3, and the normal gap equations in \c gap1, \c gap2,
 	and \c gap3.
 	
-	Using \c fromqq=false as in nambujl_eos and nambujl_eos does not
+	Using \c fromqq=false as in eos_quark_njl and eos_quark_njl does not
 	work here and will return an error. Also, the quarks must be
-	set through quark_eos::quark_set() before use.
+	set through eos_quark::quark_set() before use.
 	
 	If all of the gaps are less than gap_limit, then the
-	nambujl_eos::calc_temp_p() is used, and \c gap1, \c gap2, and
+	eos_quark_njl::calc_temp_p() is used, and \c gap1, \c gap2, and
 	\c gap3 are set to equal \c u.del, \c d.del, and \c s.del,
 	respectively.
 
@@ -304,7 +304,7 @@ namespace o2scl {
 	roots of the quartics. For example
 
 	\code
-	cfl_njl_eos cfl;
+	eos_quark_cfl cfl;
 	poly_real_coeff_gsl gp;
 	cfl.set_quartic(gp);
 	\endcode
@@ -327,7 +327,7 @@ namespace o2scl {
 	If any of the gaps are below this value, then it is assumed
 	that they are zero and the equation of state is simplified
 	accordingly. If all of the gaps are less than gap_limit, then
-	the results from nambujl_eos are used in
+	the results from eos_quark_njl are used in
 	calc_eq_temp_p(), calc_temp_p() and thd_potential().
     */
     double gap_limit;
@@ -379,8 +379,8 @@ namespace o2scl {
     */
     size_t inte_npoints;
 
-    /// Return string denoting type ("cfl_njl_eos")
-    virtual const char *type() { return "cfl_njl_eos"; };
+    /// Return string denoting type ("eos_quark_cfl")
+    virtual const char *type() { return "eos_quark_cfl"; };
     
 #ifndef DOXYGEN_INTERNAL
     
@@ -491,8 +491,8 @@ namespace o2scl {
 
   private:
     
-    cfl_njl_eos(const cfl_njl_eos &);
-    cfl_njl_eos& operator=(const cfl_njl_eos&);
+    eos_quark_cfl(const eos_quark_cfl &);
+    eos_quark_cfl& operator=(const eos_quark_cfl&);
     
 #endif
     

@@ -20,13 +20,13 @@
 
   -------------------------------------------------------------------
 */
-#include <o2scl/ddc_eos.h>
+#include <o2scl/eos_had_ddc.h>
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-ddc_eos::ddc_eos() {
+eos_had_ddc::eos_had_ddc() {
   mnuc=939.0/hc_mev_fm;
   ms=550.0/197.33;
   mw=783.0/197.33;
@@ -47,7 +47,7 @@ ddc_eos::ddc_eos() {
 
 }
 
-int ddc_eos::calc_eq_e(fermion &ne, fermion &pr, double sig, double ome, 
+int eos_had_ddc::calc_eq_e(fermion &ne, fermion &pr, double sig, double ome, 
 		       double lrho, double &f1, double &f2, double &f3, 
 		       thermo &lth) {
 

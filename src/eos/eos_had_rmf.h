@@ -31,7 +31,7 @@
 #include <o2scl/mm_funct.h>
 
 #include <o2scl/part.h>
-#include <o2scl/hadronic_eos.h>
+#include <o2scl/eos_had_base.h>
 #include <o2scl/fermion.h>
 
 #ifndef DOXYGEN_NO_O2NS
@@ -56,16 +56,16 @@ namespace o2scl {
 
       \note Matter at two different densities can have the same
       chemical potentials, so the behavior of the function \ref
-      o2scl::rmf_eos::calc_temp_p() is ambiguous. This arises because
+      o2scl::eos_had_rmf::calc_temp_p() is ambiguous. This arises because
       the field equations have more than one solution for a specified
       chemical potential. Internally, \ref
-      o2scl::rmf_eos::calc_temp_p() either uses the initial guess
-      specified by a call to \ref o2scl::rmf_eos::set_fields(), or
+      o2scl::eos_had_rmf::calc_temp_p() either uses the initial guess
+      specified by a call to \ref o2scl::eos_had_rmf::set_fields(), or
       uses hard-coded initial guess values typical for saturation
       densities. In order to ensure that the user gets the desired
       solution to the field equations, it may be necessary to specify
       a sufficiently accurate initial guess. There is no ambiguity in
-      the behavior of \ref o2scl::rmf_eos::calc_eq_temp_p(), however.
+      the behavior of \ref o2scl::eos_had_rmf::calc_eq_temp_p(), however.
 
       \note This class can fail to solve the meson field equations or
       fail to solve for the nucleon densities. By default the error
@@ -73,19 +73,19 @@ namespace o2scl {
       false, then functions which don't converge (which also return
       <tt>int</tt>) will return a non-zero value. Note that the
       solvers (in \ref def_sat_mroot and \ref
-      o2scl::hadronic_eos::def_mroot) also has its own data member
+      o2scl::eos_had_base::def_mroot) also has its own data member
       indicating how to handle nonconvergence \ref
       o2scl::mroot::err_nonconv which is separate.
 
       \comment
       AWS, 11/17/13: It is not clear that this is entirely necessary
-      as almost all the CONV_ERR calls in rmf_eos.cpp are due to calls
+      as almost all the CONV_ERR calls in eos_had_rmf.cpp are due to calls
       to solvers. It could be that then err_nonconv can be removed and
-      all the rmf_eos functions just always directly return any
+      all the eos_had_rmf functions just always directly return any
       nonzero values they get from solvers. One nice thing about the
-      explicit CONV_ERR calls in rmf_eos.cpp is that it makes the code
+      explicit CONV_ERR calls in eos_had_rmf.cpp is that it makes the code
       easier to read. In any case err_nonconv should probably be
-      pushed up to hadronic_eos.
+      pushed up to eos_had_base.
       \endcomment
 
       \hline
@@ -122,7 +122,7 @@ namespace o2scl {
       <tt>part::m</tt> and \f$ q_i \f$ just represents the charge (1
       for protons and 0 for neutrons). The Coulomb field, \f$ A_{\mu}
       \f$, is ignored in this class, but used in \ref
-      o2scl::rmf_nucleus.
+      o2scl::nucleus_rmf.
 
       The part for the \f$ \sigma \f$ field is
       \f[
@@ -191,7 +191,7 @@ namespace o2scl {
       not used in this code since they are only applicable in infinite
       matter where the field equations hold, and are not suitable for
       use in applications (such as to finite nuclei in \ref
-      o2scl::rmf_nucleus) where the spatial derivatives of the fields
+      o2scl::nucleus_rmf) where the spatial derivatives of the fields
       are non-zero. Notice that in the proper expressions for the
       energy density the similarity between terms in the pressure up
       to a sign. This procedure allows one to verify the thermodynamic
@@ -284,12 +284,12 @@ namespace o2scl {
       - Fix calc_p() to be better at guessing
       - The number of couplings is getting large, maybe new
       organization is required.
-      - Overload hadronic_eos::fcomp() with an exact version
+      - Overload eos_had_base::fcomp() with an exact version
       - It would be nice to analytically compute the Jacobian
       of the field equations for the solver
 
   */
-  class rmf_eos : public hadronic_eos_temp_pres {
+  class eos_had_rmf : public eos_had_base_temp_pres {
 
   public:
 
@@ -366,7 +366,7 @@ namespace o2scl {
     double a1, a2, a3, a4, a5, a6, b1, b2, b3;
     //@}
 
-    rmf_eos();
+    eos_had_rmf();
 
     /* \brief Load parameters for model named 'model'
 	
@@ -400,7 +400,7 @@ namespace o2scl {
 	can be accessed through get_fields(). 
 
 	This is a little more robust than the standard version
-	in the parent \ref hadronic_eos.
+	in the parent \ref eos_had_base.
 	
 	\future Improve the operation of this function when the
 	proton density is zero.
@@ -485,14 +485,14 @@ namespace o2scl {
 	This function first constructs an initial guess, increasing
 	the chemical potentials if required to ensure the neutron and
 	proton densities are finite, and then uses \ref
-	rmf_eos::sat_mroot to solve the field equations and ensure
+	eos_had_rmf::sat_mroot to solve the field equations and ensure
 	that the neutron and proton densities are equal and the
-	pressure is zero. The quantities \ref hadronic_eos::n0, \ref
-	hadronic_eos::eoa, and \ref hadronic_eos::msom can be computed
+	pressure is zero. The quantities \ref eos_had_base::n0, \ref
+	eos_had_base::eoa, and \ref eos_had_base::msom can be computed
 	directly, and the compressibility, the skewness, and the
 	symmetry energy are computed using the functions
 	fkprime_fields() and fesym_fields(). This function overrides
-	the generic version in \ref hadronic_eos.
+	the generic version in \ref eos_had_base.
 
 	If \ref verbose is greater than zero, then then this function
 	reports details on the initial iterations to get the initial
@@ -522,7 +522,7 @@ namespace o2scl {
 	This may only work at saturation density and may assume
 	equal neutron and proton masses.
 	
-	\todo This function, \ref o2scl::rmf_eos::fkprime_fields() is
+	\todo This function, \ref o2scl::eos_had_rmf::fkprime_fields() is
 	currently untested.
     */
     void fkprime_fields(double sig, double ome, double nb,
@@ -577,8 +577,8 @@ namespace o2scl {
     }
     //@}
 
-    /// Return string denoting type ("rmf_eos")
-    virtual const char *type() { return "rmf_eos"; }
+    /// Return string denoting type ("eos_had_rmf")
+    virtual const char *type() { return "eos_had_rmf"; }
 
     /// \name Solver
     //@{
@@ -602,7 +602,7 @@ namespace o2scl {
 
     /// \name Functions dealing with naturalness
     //@{
-        /** \brief Set the coefficients of a rmf_eos object to their 
+        /** \brief Set the coefficients of a eos_had_rmf object to their 
 	limits from naturalness
 
 	As given in \ref Muller96 .
@@ -687,7 +687,7 @@ namespace o2scl {
 	\f}
 
 	These values are stored in the variables cs, cw, cr, b, c,
-	zeta, xi, b1, etc. in the specified \ref rmf_eos object. All
+	zeta, xi, b1, etc. in the specified \ref eos_had_rmf object. All
 	of the numbers should be around 0.001 or 0.002.
 
 	For the scale \f$ M \f$, \ref mnuc is used.
@@ -697,7 +697,7 @@ namespace o2scl {
 	them for posterity.
 
     */
-    void check_naturalness(rmf_eos &re) {
+    void check_naturalness(eos_had_rmf &re) {
       
       double gs=cs*ms;
       double gw=cw*mw;
@@ -734,7 +734,7 @@ namespace o2scl {
 	and \c xi which are independent of the masses because of the
 	way that these four couplings are defined.
     */
-    void naturalness_limits(double value, rmf_eos &re) {
+    void naturalness_limits(double value, eos_had_rmf &re) {
       
       double gs=cs*ms;
       double gw=cw*mw;
@@ -774,7 +774,7 @@ namespace o2scl {
     
     /** \brief Temporary charge density 
 
-	\future Should use hadronic_eos::proton_frac instead?
+	\future Should use eos_had_base::proton_frac instead?
     */
     double n_charge;
 

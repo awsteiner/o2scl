@@ -29,17 +29,17 @@
 #include <o2scl/deriv_gsl.h>
 #include <o2scl/mroot_hybrids.h>
 
-#include <o2scl/hadronic_eos.h>
+#include <o2scl/eos_had_base.h>
 #include <o2scl/fermion.h>
-#include <o2scl/hadronic_eos.h>
-#include <o2scl/rmf_eos.h>
+#include <o2scl/eos_had_base.h>
+#include <o2scl/eos_had_rmf.h>
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
 int main(void) {
-  rmf_eos he, *he2;
+  eos_had_rmf he, *he2;
   test_mgr t;
   t.set_output_level(2);
   int vp=0;

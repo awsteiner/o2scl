@@ -24,13 +24,13 @@
 #include <config.h>
 #endif
 
-#include <o2scl/cfl_njl_eos.h>
+#include <o2scl/eos_quark_cfl.h>
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-cfl_njl_eos::cfl_njl_eos() {
+eos_quark_cfl::eos_quark_cfl() {
 
   // Allocate storage for the eigenproblem
   
@@ -61,14 +61,14 @@ cfl_njl_eos::cfl_njl_eos() {
   inte_npoints=0;
 }
 
-cfl_njl_eos::~cfl_njl_eos() {
+eos_quark_cfl::~eos_quark_cfl() {
   gsl_matrix_complex_free(iprop);
   gsl_matrix_complex_free(eivec);
   gsl_vector_free(eval);
   gsl_eigen_hermv_free(w);
 }
 
-double cfl_njl_eos::rescale_error(double err, double result_abs, 
+double eos_quark_cfl::rescale_error(double err, double result_abs, 
 				  double result_asc) {
   err = fabs(err);
   
@@ -101,7 +101,7 @@ double cfl_njl_eos::rescale_error(double err, double result_abs,
   return err;
 }
 
-int cfl_njl_eos::test_integration(test_mgr &t) {
+int eos_quark_cfl::test_integration(test_mgr &t) {
   integ_test=true;
   ubvector res(3);
   double err;
@@ -113,7 +113,7 @@ int cfl_njl_eos::test_integration(test_mgr &t) {
   return 0;
 }
 
-int cfl_njl_eos::integ_err(double a, double b, const size_t nr,
+int eos_quark_cfl::integ_err(double a, double b, const size_t nr,
 			    ubvector &res, double &err2) {
 
   //double fval1[nr], fval2[nr], fval[nr];
@@ -157,7 +157,7 @@ int cfl_njl_eos::integ_err(double a, double b, const size_t nr,
     for(size_t j=0;j<res.size();j++) res[j]=0.0;
     err2=0;
     O2SCL_ERR2_RET("Tolerance cannot be acheived with given epsabs and epsrel",
-		   " in cfl_njl_eos::integ_err().",exc_ebadtol);
+		   " in eos_quark_cfl::integ_err().",exc_ebadtol);
   };
   
   for (size_t j=0;j<nr;j++) {
@@ -333,7 +333,7 @@ int cfl_njl_eos::integ_err(double a, double b, const size_t nr,
 		exc_etol);
 }
   
-int cfl_njl_eos::set_parameters(double lambda, double fourferm, 
+int eos_quark_cfl::set_parameters(double lambda, double fourferm, 
 				 double sixferm, double fourgap) {
   int ret;
 
@@ -347,7 +347,7 @@ int cfl_njl_eos::set_parameters(double lambda, double fourferm,
   } else {
 
     // Run the parent method first
-    ret=nambujl_eos::set_parameters(lambda,fourferm,sixferm);
+    ret=eos_quark_njl::set_parameters(lambda,fourferm,sixferm);
 
     if (fourgap==0.0) {
       GD=3.0*G/4.0;
@@ -359,7 +359,7 @@ int cfl_njl_eos::set_parameters(double lambda, double fourferm,
   return 0;
 }
 
-int cfl_njl_eos::calc_eq_temp_p(quark &u, quark &d, quark &s,
+int eos_quark_cfl::calc_eq_temp_p(quark &u, quark &d, quark &s,
 				double &qq1, double &qq2, double &qq3, 
 				double &gap1, double &gap2, double &gap3, 
 				double mu3, double mu8, 
@@ -367,7 +367,7 @@ int cfl_njl_eos::calc_eq_temp_p(quark &u, quark &d, quark &s,
 				thermo &qb, const double ltemper) {
 
   if (fromqq==false) {
-    O2SCL_ERR_RET("fromqq=false in cfl_njl_eos::calc_eq_temp_p()",exc_efailed);
+    O2SCL_ERR_RET("fromqq=false in eos_quark_cfl::calc_eq_temp_p()",exc_efailed);
   }
   
   up=&u;
@@ -383,7 +383,7 @@ int cfl_njl_eos::calc_eq_temp_p(quark &u, quark &d, quark &s,
   
   if ((u.del)<gap_limit && (d.del)<gap_limit && (s.del)<gap_limit) {
     int ret;
-    ret=nambujl_eos::calc_eq_temp_p(u,d,s,qq1,qq2,qq3,qb,temper);
+    ret=eos_quark_njl::calc_eq_temp_p(u,d,s,qq1,qq2,qq3,qb,temper);
     gap1=u.del;
     gap2=d.del;
     gap3=s.del;
@@ -466,7 +466,7 @@ int cfl_njl_eos::calc_eq_temp_p(quark &u, quark &d, quark &s,
 
 }
 
-int cfl_njl_eos::integrands(double p, double res[]) {
+int eos_quark_cfl::integrands(double p, double res[]) {
 
   if (integ_test) {
     res[0]=sin(p);
@@ -592,7 +592,7 @@ int cfl_njl_eos::integrands(double p, double res[]) {
   return 0;
 }
 
-int cfl_njl_eos::test_normal_eigenvalues(test_mgr &t) {
+int eos_quark_cfl::test_normal_eigenvalues(test_mgr &t) {
 
   double h=1.0e-7;
   double lam[2], dldmu[2], dldm[2];
@@ -618,7 +618,7 @@ int cfl_njl_eos::test_normal_eigenvalues(test_mgr &t) {
   return 0;
 }
 
-int cfl_njl_eos::normal_eigenvalues(double ms, double lmom, double mu, 
+int eos_quark_cfl::normal_eigenvalues(double ms, double lmom, double mu, 
 				     double lam[2], double dldmu[2], 
 				     double dldm[2]) {
   double E;
@@ -641,7 +641,7 @@ int cfl_njl_eos::normal_eigenvalues(double ms, double lmom, double mu,
   return 0;
 }
 
-int cfl_njl_eos::test_gapped_eigenvalues(test_mgr &t) {
+int eos_quark_cfl::test_gapped_eigenvalues(test_mgr &t) {
 
   double h=1.0e-7;
   double lam[4], dldmu1[4], dldm1[4], dldmu2[4], dldm2[4], dldg[4];
@@ -774,7 +774,7 @@ int cfl_njl_eos::test_gapped_eigenvalues(test_mgr &t) {
 
 
 /// Treat the simply gapped quarks in all cases gracefully
-int cfl_njl_eos::gapped_eigenvalues(double ms1, double ms2, double lmom,
+int eos_quark_cfl::gapped_eigenvalues(double ms1, double ms2, double lmom,
 				     double mu1, double mu2, double tdelta,
 				     double lam[4], double dldmu1[4], 
 				     double dldmu2[4], double dldm1[4],
@@ -929,7 +929,7 @@ int cfl_njl_eos::gapped_eigenvalues(double ms1, double ms2, double lmom,
   return 0;
 }
 
-int cfl_njl_eos::test_derivatives(double lmom, double mu3, double mu8,
+int eos_quark_cfl::test_derivatives(double lmom, double mu3, double mu8,
 				    test_mgr &t) {
   double egv[36];
   double dedmuu[36], dedmud[36], dedmus[36];
@@ -1095,7 +1095,7 @@ int cfl_njl_eos::test_derivatives(double lmom, double mu3, double mu8,
 }
 
 
-int cfl_njl_eos::eigenvalues(double lmom, double mu3, 
+int eos_quark_cfl::eigenvalues(double lmom, double mu3, 
 			      double mu8, double egv[36],
 			      double dedmuu[36], double dedmud[36],
 			      double dedmus[36], double dedmu[36], 

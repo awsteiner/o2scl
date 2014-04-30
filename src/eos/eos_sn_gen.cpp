@@ -20,7 +20,7 @@
 
   -------------------------------------------------------------------
 */
-#include <o2scl/gen_sn_eos.h>
+#include <o2scl/eos_sn_gen.h>
 #include <o2scl/test_mgr.h>
 #include <o2scl/hdf_file.h>
 #include <o2scl/lib_settings.h>
@@ -30,7 +30,7 @@ using namespace o2scl;
 using namespace o2scl_hdf;
 using namespace o2scl_const;
 
-gen_sn_eos::gen_sn_eos() : cu(o2scl_settings.get_convert_units()) {
+eos_sn_gen::eos_sn_gen() : cu(o2scl_settings.get_convert_units()) {
   n_nB=0;
   n_Ye=0;
   n_T=0;
@@ -74,11 +74,11 @@ gen_sn_eos::gen_sn_eos() : cu(o2scl_settings.get_convert_units()) {
     o2scl_const::hc_mev_fm;
 }
 
-gen_sn_eos::~gen_sn_eos() {
+eos_sn_gen::~eos_sn_gen() {
   if (loaded) free();
 }
 
-void gen_sn_eos::alloc() {
+void eos_sn_gen::alloc() {
   size_t dim[3]={n_nB,n_Ye,n_T};
   for(size_t i=0;i<n_base+n_oth;i++) {
     arr[i]->resize(3,dim);
@@ -86,7 +86,7 @@ void gen_sn_eos::alloc() {
   return;
 }
 
-void gen_sn_eos::free() {
+void eos_sn_gen::free() {
   if (loaded) {
     std::vector<size_t> tmp;
     for(size_t i=0;i<n_base+n_oth;i++) {
@@ -99,9 +99,9 @@ void gen_sn_eos::free() {
   return;
 }
 
-void gen_sn_eos::set_interp_type(size_t interp_type) {
+void eos_sn_gen::set_interp_type(size_t interp_type) {
   if (!loaded) {
-    O2SCL_ERR("File not loaded in gen_sn_eos::set_interp().",
+    O2SCL_ERR("File not loaded in eos_sn_gen::set_interp().",
 		  exc_einval);
   }
   for(size_t i=0;i<n_base+n_oth;i++) {
@@ -110,7 +110,7 @@ void gen_sn_eos::set_interp_type(size_t interp_type) {
   return;
 }
 
-int gen_sn_eos::compute_eg() {
+int eos_sn_gen::compute_eg() {
 
   if (verbose>0) {
     cout << "Adding automatically computed electrons and photons." << endl;
@@ -118,7 +118,7 @@ int gen_sn_eos::compute_eg() {
   
   if (loaded==false) {
     O2SCL_ERR2("No data loaded (loaded=false) in ",
-	       "gen_sn_eos::compute_eg().",exc_einval);
+	       "eos_sn_gen::compute_eg().",exc_einval);
   }
 
   for(size_t i=0;i<n_nB;i++) {
@@ -187,11 +187,11 @@ int gen_sn_eos::compute_eg() {
   return 0;
 }
 
-void gen_sn_eos::check_free_energy(double &avg) {
+void eos_sn_gen::check_free_energy(double &avg) {
   
   if (loaded==false) {
     O2SCL_ERR2("No data loaded (loaded=false) in ",
-	       "gen_sn_eos::check_free_energy().",exc_einval);
+	       "eos_sn_gen::check_free_energy().",exc_einval);
   }
 
   if (verbose>0) {
@@ -247,11 +247,11 @@ void gen_sn_eos::check_free_energy(double &avg) {
   return;
 }
 
-void gen_sn_eos::check_composition(double &max1, double &max2) {
+void eos_sn_gen::check_composition(double &max1, double &max2) {
   
   if (loaded==false) {
     O2SCL_ERR2("No data loaded (loaded=false) in ",
-	       "gen_sn_eos::check_composition().",exc_einval);
+	       "eos_sn_gen::check_composition().",exc_einval);
   }
 
   if (verbose>0) {
@@ -304,7 +304,7 @@ void gen_sn_eos::check_composition(double &max1, double &max2) {
   return;
 }
 
-void gen_sn_eos::beta_eq_sfixed(size_t i, double entr,
+void eos_sn_gen::beta_eq_sfixed(size_t i, double entr,
 				double &nb, double &E_beta, 
 				double &P_beta, double &Ye_beta,
 				double &Z_beta, double &A_beta,
@@ -312,11 +312,11 @@ void gen_sn_eos::beta_eq_sfixed(size_t i, double entr,
   
   if (loaded==false) {
     O2SCL_ERR2("No data loaded in ",
-	       "gen_sn_eos::beta_eq_s4().",exc_einval);
+	       "eos_sn_gen::beta_eq_s4().",exc_einval);
   }
   if (i>=n_nB) {
     O2SCL_ERR2("Too high for baryon grid in ",
-	       "gen_sn_eos::beta_eq_s4().",exc_einval);
+	       "eos_sn_gen::beta_eq_s4().",exc_einval);
   }
   if (with_leptons_loaded==false) {
     compute_eg();

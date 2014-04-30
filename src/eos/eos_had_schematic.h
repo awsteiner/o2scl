@@ -25,7 +25,7 @@
 
 #include <iostream>
 #include <cmath>
-#include <o2scl/hadronic_eos.h>
+#include <o2scl/eos_had_base.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -45,7 +45,7 @@ namespace o2scl {
 
       Symmetry energy at nuclear matter density is \f$ a+b \f$. 
   */
-  class schematic_eos : public hadronic_eos_eden {
+  class eos_had_schematic : public eos_had_base_eden {
 
   public:
 
@@ -72,9 +72,9 @@ namespace o2scl {
     */
     double gamma;
     
-    schematic_eos();
+    eos_had_schematic();
 
-    virtual ~schematic_eos() {};
+    virtual ~eos_had_schematic() {};
 
     /** \brief Equation of state as a function of density
     */
@@ -125,8 +125,8 @@ namespace o2scl {
       return eoa+comp/18.0-kprime/162.0+kpp/1944.0;
     }
 
-    /// Return string denoting type ("schematic_eos")
-    virtual const char *type() { return "schematic_eos"; }
+    /// Return string denoting type ("eos_had_schematic")
+    virtual const char *type() { return "eos_had_schematic"; }
 
   };
 

@@ -24,7 +24,7 @@
 #include <config.h>
 #endif
 
-#include <o2scl/bps_eos.h>
+#include <o2scl/eos_crust.h>
 #include <o2scl/test_mgr.h>
 #include <o2scl/table_units.h>
 

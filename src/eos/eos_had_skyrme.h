@@ -29,7 +29,7 @@
 
 #include <o2scl/constants.h>
 #include <o2scl/mroot.h>
-#include <o2scl/hadronic_eos.h>
+#include <o2scl/eos_had_base.h>
 #include <o2scl/part.h>
 #include <o2scl/fermion_nonrel.h>
 
@@ -240,17 +240,17 @@ namespace o2scl {
       \hline
       
   */
-  class skyrme_eos : public hadronic_eos_temp_eden {
+  class eos_had_skyrme : public eos_had_base_temp_eden {
 
   public:
 
     /// \name Basic usage
     //@{
     /// Create a blank Skyrme EOS
-    skyrme_eos();
+    eos_had_skyrme();
 
     /// Destructor
-    virtual ~skyrme_eos() {};
+    virtual ~eos_had_skyrme() {};
 
     /** \brief Equation of state as a function of densities
 
@@ -324,7 +324,7 @@ namespace o2scl {
     /** \brief Calculate symmetry energy
 
 	If pf=0.5, then the exact expression below is used.
-	Otherwise, the method from class hadronic_eos is used.
+	Otherwise, the method from class eos_had_base is used.
 
 	\f[
 	E_{sym} = \frac{5}{9} C n^{2/3} + \frac{10 C m}{3}
@@ -370,8 +370,8 @@ namespace o2scl {
 	set before the function call.
       
 	The arguments \c gt0, \c gt3, \c galpha, \c gt1, and \c gt2
-	are used as initial guesses for skyme_eos::t0, skyrme_eos::t3,
-	skyrme_eos::alpha, skyrme_eos::t1, and skyrme_eos::t2
+	are used as initial guesses for skyme_eos::t0, eos_had_skyrme::t3,
+	eos_had_skyrme::alpha, eos_had_skyrme::t1, and eos_had_skyrme::t2
 	respectively.
       
 	\todo Does this work for both 'a' and 'b' non-zero?
@@ -388,11 +388,11 @@ namespace o2scl {
     */
     //  int calpar_new(double m);
 
-    /** \brief Use hadronic_eos methods for saturation properties
+    /** \brief Use eos_had_base methods for saturation properties
       
 	This can be set to true to check the difference between
 	the exact expressions and the numerical values from
-	class hadronic_eos.
+	class eos_had_base.
     */
     bool parent_method;
   
@@ -428,8 +428,8 @@ namespace o2scl {
     int landau_neutron(double n0, double m, double &f0, double &g0, 
 		       double &f1, double &g1);
 
-    /// Return string denoting type ("skyrme_eos")
-    virtual const char *type() { return "skyrme_eos"; }
+    /// Return string denoting type ("eos_had_skyrme")
+    virtual const char *type() { return "eos_had_skyrme"; }
 
     /// If true, compute the chemical potentials even at zero density
     bool mu_at_zero_density;

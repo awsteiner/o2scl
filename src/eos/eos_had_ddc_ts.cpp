@@ -23,7 +23,7 @@
 #include <iostream>
 #include <o2scl/test_mgr.h>
 #include <o2scl/fermion.h>
-#include <o2scl/ddc_eos.h>
+#include <o2scl/eos_had_ddc.h>
 
 using namespace std;
 using namespace o2scl;
@@ -38,7 +38,7 @@ int main(void) {
   n.non_interacting=false;
   p.non_interacting=false;
 
-  ddc_eos ddc;
+  eos_had_ddc ddc;
 
   n.n=0.153/2.0;
   p.n=0.153/2.0;

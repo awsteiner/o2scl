@@ -24,13 +24,13 @@
 #include <config.h>
 #endif
 
-#include <o2scl/rmf_eos.h>
+#include <o2scl/eos_had_rmf.h>
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-rmf_eos::rmf_eos() {
+eos_had_rmf::eos_had_rmf() {
 
   // FIXME: should document here which model this is
   mnuc=939.0/hc_mev_fm;
@@ -66,7 +66,7 @@ rmf_eos::rmf_eos() {
   calc_e_steps=20;
 }
 
-int rmf_eos::calc_eq_temp_p(fermion &ne, fermion &pr, double temper,
+int eos_had_rmf::calc_eq_temp_p(fermion &ne, fermion &pr, double temper,
 			    double sig, double ome, double lrho, double &f1, 
 			    double &f2, double &f3, thermo &lth) {
   
@@ -80,7 +80,7 @@ int rmf_eos::calc_eq_temp_p(fermion &ne, fermion &pr, double temper,
   // the inputs useful for debugging.
   if (!o2scl::is_finite(ne.mu) || !o2scl::is_finite(ne.mu)) {
     O2SCL_ERR2("Chemical potentials not finite in ",
-	       "rmf_eos::calc_eq_temp_p().",exc_efailed);
+	       "eos_had_rmf::calc_eq_temp_p().",exc_efailed);
   }
 #endif
 
@@ -110,7 +110,7 @@ int rmf_eos::calc_eq_temp_p(fermion &ne, fermion &pr, double temper,
 
   if (ne.ms<0.0 || pr.ms<0.0) {
     O2SCL_ERR2("Neutron or proton mass negative in ",
-	       "rmf_eos::calc_eq_temp_p().",exc_efailed);
+	       "eos_had_rmf::calc_eq_temp_p().",exc_efailed);
   }
   
   ne.non_interacting=false;
@@ -168,7 +168,7 @@ int rmf_eos::calc_eq_temp_p(fermion &ne, fermion &pr, double temper,
   return success;
 }
 
-int rmf_eos::field_eqs(size_t nv, const ubvector &x, ubvector &y) {
+int eos_had_rmf::field_eqs(size_t nv, const ubvector &x, ubvector &y) {
 #if !O2SCL_NO_RANGE_CHECK
   // This may not be strictly necessary, because it should be clear
   // that this function will produce gibberish if the 
@@ -177,7 +177,7 @@ int rmf_eos::field_eqs(size_t nv, const ubvector &x, ubvector &y) {
 
   if (!o2scl::is_finite(x[0]) || !o2scl::is_finite(x[1]) ||
       !o2scl::is_finite(x[2])) {
-    O2SCL_ERR("Fields not finite in rmf_eos::field_eqs().",
+    O2SCL_ERR("Fields not finite in eos_had_rmf::field_eqs().",
 	      exc_efailed);
   }
 #endif
@@ -192,7 +192,7 @@ int rmf_eos::field_eqs(size_t nv, const ubvector &x, ubvector &y) {
   return 0;
 }
 
-int rmf_eos::field_eqsT(size_t nv, const ubvector &x, ubvector &y) {
+int eos_had_rmf::field_eqsT(size_t nv, const ubvector &x, ubvector &y) {
 #if !O2SCL_NO_RANGE_CHECK
   // This may not be strictly necessary, because it should be clear
   // that this function will produce gibberish if the 
@@ -200,7 +200,7 @@ int rmf_eos::field_eqsT(size_t nv, const ubvector &x, ubvector &y) {
   // the inputs useful for debugging.
   if (!o2scl::is_finite(x[0]) || !o2scl::is_finite(x[1]) ||
       !o2scl::is_finite(x[2])) {
-    O2SCL_ERR("Fields not finite in rmf_eos::field_eqsT().",
+    O2SCL_ERR("Fields not finite in eos_had_rmf::field_eqsT().",
 	      exc_efailed);
   }
 #endif
@@ -226,7 +226,7 @@ int rmf_eos::field_eqsT(size_t nv, const ubvector &x, ubvector &y) {
   return 0;
 }
 
-int rmf_eos::calc_p(fermion &ne, fermion &pr, thermo &lth) {
+int eos_had_rmf::calc_p(fermion &ne, fermion &pr, thermo &lth) {
   int ret;
   ubvector x(3);
 
@@ -247,7 +247,7 @@ int rmf_eos::calc_p(fermion &ne, fermion &pr, thermo &lth) {
     x[2]=-0.05;
   }
   
-  mm_funct_mfptr<rmf_eos> fmf(this,&rmf_eos::field_eqs);
+  mm_funct_mfptr<eos_had_rmf> fmf(this,&eos_had_rmf::field_eqs);
   ret=eos_mroot->msolve(3,x,fmf);
 
   sigma=x[0];
@@ -255,21 +255,21 @@ int rmf_eos::calc_p(fermion &ne, fermion &pr, thermo &lth) {
   rho=x[2];
 
   if (ret!=0) {
-    O2SCL_CONV_RET("Solver failed in rmf_eos::calc_p().",
+    O2SCL_CONV_RET("Solver failed in eos_had_rmf::calc_p().",
 		   exc_efailed,err_nonconv);
   }
 
   return 0;
 }
 
-int rmf_eos::calc_temp_p(fermion &ne, fermion &pr, const double T,
+int eos_had_rmf::calc_temp_p(fermion &ne, fermion &pr, const double T,
 			 thermo &lth) {
   int ret=0;
   ubvector x(3), y(3);
 
   if (!o2scl::is_finite(ne.mu) || !o2scl::is_finite(ne.mu)) {
     O2SCL_ERR2("Chemical potentials not finite in ",
-	       "rmf_eos::calc_temp_p().",exc_efailed);
+	       "eos_had_rmf::calc_temp_p().",exc_efailed);
   }
 
   ne.non_interacting=false;
@@ -290,7 +290,7 @@ int rmf_eos::calc_temp_p(fermion &ne, fermion &pr, const double T,
     x[2]=-0.05;
   }
   
-  mm_funct_mfptr<rmf_eos> fmf(this,&rmf_eos::field_eqsT);
+  mm_funct_mfptr<eos_had_rmf> fmf(this,&eos_had_rmf::field_eqsT);
   ret=eos_mroot->msolve(3,x,fmf);
   
   sigma=x[0];
@@ -298,14 +298,14 @@ int rmf_eos::calc_temp_p(fermion &ne, fermion &pr, const double T,
   rho=x[2];
 
   if (ret!=0) {
-    O2SCL_CONV_RET("Solver failed in rmf_eos::calc_p().",
+    O2SCL_CONV_RET("Solver failed in eos_had_rmf::calc_p().",
 		  exc_efailed,err_nonconv);
   }
   
   return 0;
 }
 
-int rmf_eos::calc_e(fermion &ne, fermion &pr, thermo &lth) {
+int eos_had_rmf::calc_e(fermion &ne, fermion &pr, thermo &lth) {
   ubvector x(5), y(5);
   int ret;
 
@@ -345,7 +345,7 @@ int rmf_eos::calc_e(fermion &ne, fermion &pr, thermo &lth) {
   n_baryon=ne.n+pr.n;
   n_charge=pr.n;
   
-  mm_funct_mfptr<rmf_eos> fmf(this,&rmf_eos::calc_e_solve_fun);
+  mm_funct_mfptr<eos_had_rmf> fmf(this,&eos_had_rmf::calc_e_solve_fun);
   
   if (guess_set) {
     
@@ -364,7 +364,7 @@ int rmf_eos::calc_e(fermion &ne, fermion &pr, thermo &lth) {
     int rt=calc_e_solve_fun(5,x,y);
     if (rt!=0) {
       O2SCL_CONV2_RET("Final solution failed (user guess) in ",
-		      "rmf_eos::calc_e().",exc_efailed,err_nonconv);
+		      "eos_had_rmf::calc_e().",exc_efailed,err_nonconv);
     }
     
   } else {
@@ -382,7 +382,7 @@ int rmf_eos::calc_e(fermion &ne, fermion &pr, thermo &lth) {
     x[4]=-0.001;
     
     if (verbose>0) {
-      cout << "Solving in rmf_eos::calc_e()." << endl;
+      cout << "Solving in eos_had_rmf::calc_e()." << endl;
       cout << "alpha      n_B        n_ch       mu_n       "
 	   << "mu_p       sigma       omega      rho         ret" << endl;
       cout.precision(4);
@@ -422,7 +422,7 @@ int rmf_eos::calc_e(fermion &ne, fermion &pr, thermo &lth) {
       if (rt!=0) {
 	string s=((string)"Initial guess failed at (nn=")+
 	  dtos(neutron->n)+" and np="+dtos(proton->n)+") in "+
-	  "rmf_eos::calc_e().";
+	  "eos_had_rmf::calc_e().";
 	O2SCL_CONV_RET(s.c_str(),exc_efailed,err_nonconv);
       }
       ret=eos_mroot->msolve(5,x,fmf);
@@ -439,7 +439,7 @@ int rmf_eos::calc_e(fermion &ne, fermion &pr, thermo &lth) {
     
     int rt2=calc_e_solve_fun(5,x,y);
     if (rt2!=0) {
-      O2SCL_CONV_RET("Final solution failed in rmf_eos::calc_e().",
+      O2SCL_CONV_RET("Final solution failed in eos_had_rmf::calc_e().",
 		     exc_efailed,err_nonconv);
     }
     
@@ -454,14 +454,14 @@ int rmf_eos::calc_e(fermion &ne, fermion &pr, thermo &lth) {
   pr.n=n_charge;
   
   if (ret!=0) {
-    O2SCL_CONV2_RET("Solver failed in rmf_eos::calc_e",
+    O2SCL_CONV2_RET("Solver failed in eos_had_rmf::calc_e",
 		    "(fermion,fermion,thermo).",exc_efailed,err_nonconv);
   }
   
   return 0;
 }
 
-int rmf_eos::calc_temp_e(fermion &ne, fermion &pr, const double T, 
+int eos_had_rmf::calc_temp_e(fermion &ne, fermion &pr, const double T, 
 			 thermo &lth) {
 
   if (T<=0.0) return calc_e(ne,pr,lth);
@@ -497,7 +497,7 @@ int rmf_eos::calc_temp_e(fermion &ne, fermion &pr, const double T,
   n_baryon=ne.n+pr.n;
   n_charge=pr.n;
   
-  mm_funct_mfptr<rmf_eos> fmf(this,&rmf_eos::calc_temp_e_solve_fun);
+  mm_funct_mfptr<eos_had_rmf> fmf(this,&eos_had_rmf::calc_temp_e_solve_fun);
   
   if (guess_set) {
     
@@ -529,7 +529,7 @@ int rmf_eos::calc_temp_e(fermion &ne, fermion &pr, const double T,
     x[4]=-0.001;
     
     if (verbose>0) {
-      cout << "Solving in rmf_eos::calc_temp_e()." << endl;
+      cout << "Solving in eos_had_rmf::calc_temp_e()." << endl;
       cout << " alpha       n_B         n_ch        mu_n       "
 	   << " mu_p        sigma       omega       rho        ret" << endl;
       cout.setf(ios::showpos);
@@ -576,14 +576,14 @@ int rmf_eos::calc_temp_e(fermion &ne, fermion &pr, const double T,
   rho=x[4];
   
   if (ret!=0) {
-    O2SCL_CONV2_RET("Solver failed in rmf_eos::calc_temp_e (fermion,",
+    O2SCL_CONV2_RET("Solver failed in eos_had_rmf::calc_temp_e (fermion,",
 		    "fermion,double,thermo).",exc_efailed,err_nonconv);
   }
   
   return 0;
 }
 
-int rmf_eos::calc_eq_p(fermion &ne, fermion &pr, double sig, double ome, 
+int eos_had_rmf::calc_eq_p(fermion &ne, fermion &pr, double sig, double ome, 
 		       double lrho, double &f1, double &f2, double &f3, 
 		       thermo &lth) {
 
@@ -612,7 +612,7 @@ int rmf_eos::calc_eq_p(fermion &ne, fermion &pr, double sig, double ome,
   
   if (ne.ms<0.0 || pr.ms<0.0) {
     O2SCL_ERR2("Neutron or proton mass negative in ",
-	       "rmf_eos::calc_eq_p().",exc_efailed);
+	       "eos_had_rmf::calc_eq_p().",exc_efailed);
   }
 
   ne.nu=ne.mu-gw*ome+0.5*gr*lrho;
@@ -681,7 +681,7 @@ int rmf_eos::calc_eq_p(fermion &ne, fermion &pr, double sig, double ome,
   return success;
 }
 
-int rmf_eos::fix_saturation_fun(size_t nv, const ubvector &x, 
+int eos_had_rmf::fix_saturation_fun(size_t nv, const ubvector &x, 
 				ubvector &y) {
   
   double phi,power,ome,dome,one,two,tri;
@@ -767,12 +767,12 @@ int rmf_eos::fix_saturation_fun(size_t nv, const ubvector &x,
   if (!o2scl::is_finite(y[1]) || !o2scl::is_finite(y[2]) || 
       !o2scl::is_finite(y[3]) || !o2scl::is_finite(y[0])) {
     O2SCL_ERR2_RET("Equation not finite in ",
-		   "rmf_eos::fix_saturation_fun().",exc_efailed);
+		   "eos_had_rmf::fix_saturation_fun().",exc_efailed);
   }
   return 0;
 }
 
-int rmf_eos::fix_saturation(double gcs, double gcw, double gb, double gc) {
+int eos_had_rmf::fix_saturation(double gcs, double gcw, double gb, double gc) {
   int nvar, test;
   ubvector x(4);
   double power,kf,kf2,kf3,efs;
@@ -791,7 +791,7 @@ int rmf_eos::fix_saturation(double gcs, double gcw, double gb, double gc) {
   x[2]=gb;
   x[3]=gc;
 
-  mm_funct_mfptr<rmf_eos> fmf(this,&rmf_eos::fix_saturation_fun);
+  mm_funct_mfptr<eos_had_rmf> fmf(this,&eos_had_rmf::fix_saturation_fun);
   test=sat_mroot->msolve(4,x,fmf);
   if (test!=0) {
     O2SCL_ERR_RET("Solve failed in fix_saturation().",exc_efailed);
@@ -838,11 +838,11 @@ int rmf_eos::fix_saturation(double gcs, double gcw, double gb, double gc) {
   return exc_efailed;
 }
 
-void rmf_eos::saturation() {
+void eos_had_rmf::saturation() {
 
   ubvector x(5), y(5);
   int test;
-  mm_funct_mfptr<rmf_eos> fmf(this,&rmf_eos::zero_pressure);
+  mm_funct_mfptr<eos_had_rmf> fmf(this,&eos_had_rmf::zero_pressure);
 
   if (guess_set) {
     x[0]=neutron->mu;
@@ -871,7 +871,7 @@ void rmf_eos::saturation() {
     zero_pressure(5,x,y);
     it++;
     if (verbose>0) {
-      cout << "rmf_eos::saturation() fixing density: " << it 
+      cout << "eos_had_rmf::saturation() fixing density: " << it 
 	   << "\n\t" << x[0] << " " << x[1] << " " << x[2] << " "
 	   << x[3] << " " << x[4] << "\n\t" << y[0] << " "
 	   << y[1] << " " << y[2] << " " << y[3] << " " << y[4] << endl;
@@ -883,7 +883,7 @@ void rmf_eos::saturation() {
   }
   
   if (verbose>0) {
-    cout << "rmf_eos::saturation() initial guess: \n\t" << x[0] << " "
+    cout << "eos_had_rmf::saturation() initial guess: \n\t" << x[0] << " "
 	 << x[1] << " " << x[2] << " " << x[3] << " " << x[4] << endl;
   }
   
@@ -894,12 +894,12 @@ void rmf_eos::saturation() {
   rho=x[4];
 
   if (test!=0) {
-    O2SCL_CONV("Solver failed in rmf_eos::saturation().",
+    O2SCL_CONV("Solver failed in eos_had_rmf::saturation().",
 	       exc_efailed,err_nonconv);
   }
   
   if (verbose>0) {
-    cout << "rmf_eos::saturation() final value:\n\t" << x[0] << " "
+    cout << "eos_had_rmf::saturation() final value:\n\t" << x[0] << " "
 	 << x[1] << " " << x[2] << " " << x[3] << " " << x[4] << endl;
   }
   
@@ -907,9 +907,9 @@ void rmf_eos::saturation() {
   msom=neutron->ms/neutron->m;
   eoa=(eos_thermo->ed/n0-(neutron->m+proton->m)/2.0);
 
-  comp=hadronic_eos::fcomp(n0);
-  kprime=hadronic_eos::fkprime(n0);
-  esym=hadronic_eos::fesym(n0);
+  comp=eos_had_base::fcomp(n0);
+  kprime=eos_had_base::fkprime(n0);
+  esym=eos_had_base::fesym(n0);
 
   // These can't be used because they don't work with unequal
   // neutron and proton masses. 
@@ -919,7 +919,7 @@ void rmf_eos::saturation() {
   return;
 }
 
-int rmf_eos::calc_e_solve_fun(size_t nv, const ubvector &ex, 
+int eos_had_rmf::calc_e_solve_fun(size_t nv, const ubvector &ex, 
 			      ubvector &ey) {
   double f1,f2,f3,sig,ome,lrho;
   
@@ -971,7 +971,7 @@ int rmf_eos::calc_e_solve_fun(size_t nv, const ubvector &ex,
   return 0;
 }
 
-int rmf_eos::calc_temp_e_solve_fun(size_t nv, const ubvector &ex, 
+int eos_had_rmf::calc_temp_e_solve_fun(size_t nv, const ubvector &ex, 
 				   ubvector &ey) {
   double f1,f2,f3,sig,ome,lrho;
 
@@ -989,12 +989,12 @@ int rmf_eos::calc_temp_e_solve_fun(size_t nv, const ubvector &ex,
 
   if (!o2scl::is_finite(ex[0]) || !o2scl::is_finite(ex[1])) {
     O2SCL_ERR2("Chemical potentials not finite in ",
-	       "rmf_eos::calc_temp_e_solve_fun().",exc_efailed);
+	       "eos_had_rmf::calc_temp_e_solve_fun().",exc_efailed);
   }
   if (!o2scl::is_finite(ex[2]) || !o2scl::is_finite(ex[3]) ||
       !o2scl::is_finite(ex[4])) {
     O2SCL_ERR2("Fields not finite in ",
-	       "rmf_eos::calc_temp_e_solve_fun().",exc_efailed);
+	       "eos_had_rmf::calc_temp_e_solve_fun().",exc_efailed);
   }
 #endif
 
@@ -1033,7 +1033,7 @@ int rmf_eos::calc_temp_e_solve_fun(size_t nv, const ubvector &ex,
     if (!o2scl::is_finite(ex[i]) || !o2scl::is_finite(ey[i])) {
       O2SCL_ERR_RET
 	((((string)"Eq. ")+itos(i)+
-	  " not finite in rmf_eos::calc_temp_e_solve_fun().").c_str(),
+	  " not finite in eos_had_rmf::calc_temp_e_solve_fun().").c_str(),
 	 exc_efailed);
     }
   }
@@ -1041,7 +1041,7 @@ int rmf_eos::calc_temp_e_solve_fun(size_t nv, const ubvector &ex,
   return 0;
 }
 
-int rmf_eos::zero_pressure(size_t nv, const ubvector &ex, 
+int eos_had_rmf::zero_pressure(size_t nv, const ubvector &ex, 
 			   ubvector &ey) {
 
   double f1,f2,f3,sig,ome,lrho;
@@ -1085,7 +1085,7 @@ int rmf_eos::zero_pressure(size_t nv, const ubvector &ex,
   return 0;
 }
 
-double rmf_eos::fesym_fields(double sig, double ome, double l_nb) {
+double eos_had_rmf::fesym_fields(double sig, double ome, double l_nb) {
   double kf, efs, mstar, ret, fun;
   
   kf=pow(1.5*l_nb*pi2,1.0/3.0);
@@ -1101,7 +1101,7 @@ double rmf_eos::fesym_fields(double sig, double ome, double l_nb) {
   return ret;
 }
 
-int rmf_eos::calc_cr(double sig, double ome, double l_nb) {
+int eos_had_rmf::calc_cr(double sig, double ome, double l_nb) {
   double kf, efs, mstar, up, dn, fun;
 
   kf=pow(1.5*l_nb*pi2,1.0/3.0);
@@ -1118,13 +1118,13 @@ int rmf_eos::calc_cr(double sig, double ome, double l_nb) {
   cr=sqrt(up/dn);
 
   if (!o2scl::is_finite(cr)) {
-    O2SCL_ERR_RET("Coupling not finite in rmf_eos::calc_cr()",exc_efailed);
+    O2SCL_ERR_RET("Coupling not finite in eos_had_rmf::calc_cr()",exc_efailed);
   }
 
   return 0;
 }
 
-double rmf_eos::fcomp_fields(double sig, double ome, double l_nb) {
+double eos_had_rmf::fcomp_fields(double sig, double ome, double l_nb) {
   double gs, gw, mstar, efs, d2u;
   double alpha, dsdn, dwdn, ret, rhos, kf;
 
@@ -1150,7 +1150,7 @@ double rmf_eos::fcomp_fields(double sig, double ome, double l_nb) {
   return ret;
 }
   
-void rmf_eos::fkprime_fields(double sig, double ome, double l_nb,
+void eos_had_rmf::fkprime_fields(double sig, double ome, double l_nb,
 			    double &k, double &l_kprime) {
   double gs, gw, mstar, efs, d2u;
   double alpha, dsdn, dwdn, rhos, kf, lterm;

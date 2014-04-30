@@ -24,13 +24,13 @@
 #include <config.h>
 #endif
 
-#include <o2scl/cfl6_eos.h>
+#include <o2scl/eos_quark_cfl6.h>
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-cfl6_eos::cfl6_eos() {
+eos_quark_cfl6::eos_quark_cfl6() {
   KD=0.0;
   
   iprop6=gsl_matrix_complex_alloc(mat_size,mat_size);
@@ -47,7 +47,7 @@ cfl6_eos::cfl6_eos() {
   kdlimit=1.0e-6;
 }
 
-cfl6_eos::~cfl6_eos() {
+eos_quark_cfl6::~eos_quark_cfl6() {
   gsl_matrix_complex_free(iprop6);
   gsl_matrix_complex_free(eivec6);
   gsl_vector_free(eval6);
@@ -55,7 +55,7 @@ cfl6_eos::~cfl6_eos() {
 
 }
 
-int cfl6_eos::set_masses() {
+int eos_quark_cfl6::set_masses() {
   if (fixed_mass) {
     up->ms=up->m+KD/4.0/GD/GD*up->del*up->del;
     down->ms=down->m+KD/4.0/GD/GD*down->del*down->del;
@@ -74,7 +74,7 @@ int cfl6_eos::set_masses() {
   return 0;
 }
 
-int cfl6_eos::calc_eq_temp_p(quark &u, quark &d, quark &s,
+int eos_quark_cfl6::calc_eq_temp_p(quark &u, quark &d, quark &s,
 			      double &qq1, double &qq2, double &qq3, 
 			      double &gap1, double &gap2, double &gap3, 
 			      double mu3, double mu8, 
@@ -82,7 +82,7 @@ int cfl6_eos::calc_eq_temp_p(quark &u, quark &d, quark &s,
 			      thermo &qb, const double ltemper) {
   
   if (fabs(KD)<kdlimit) {
-    return cfl_njl_eos::calc_eq_temp_p(u,d,s,qq1,qq2,qq3,gap1,gap2,gap3,
+    return eos_quark_cfl::calc_eq_temp_p(u,d,s,qq1,qq2,qq3,gap1,gap2,gap3,
 					mu3,mu8,n3,n8,qb,ltemper);
   }
   
@@ -92,7 +92,7 @@ int cfl6_eos::calc_eq_temp_p(quark &u, quark &d, quark &s,
   
   if (fromqq==false) {
     O2SCL_ERR2_RET("Does not work with fromqq=false ",
-		   "in cfl6_eos::calc_eq_temp_p().",exc_efailed);
+		   "in eos_quark_cfl6::calc_eq_temp_p().",exc_efailed);
   }
 
   set_masses();
@@ -156,10 +156,10 @@ int cfl6_eos::calc_eq_temp_p(quark &u, quark &d, quark &s,
   return 0;
 }
 
-int cfl6_eos::integrands(double p, double res[]) {
+int eos_quark_cfl6::integrands(double p, double res[]) {
   
   if (fabs(KD)<kdlimit) {
-    return cfl_njl_eos::integrands(p,res);
+    return eos_quark_cfl::integrands(p,res);
   }
 
   if (integ_test) {
@@ -286,7 +286,7 @@ int cfl6_eos::integrands(double p, double res[]) {
   return 0;
 }
 
-int cfl6_eos::test_derivatives(double lmom, double mu3, double mu8,
+int eos_quark_cfl6::test_derivatives(double lmom, double mu3, double mu8,
 				test_mgr &t) {
   double egv[36];
   double dedmuu[36], dedmud[36], dedmus[36];
@@ -300,7 +300,7 @@ int cfl6_eos::test_derivatives(double lmom, double mu3, double mu8,
   // We have to do a lot of sorting here since the ordering of the
   // eigenvalues is not necessarily the same for subsequent calls to
   // the function eigenvalues6(). The same sorting should probably
-  // be added to cfl_njl_eos::test_derivatives().
+  // be added to eos_quark_cfl::test_derivatives().
 
   // Check muu
   {
@@ -702,7 +702,7 @@ int cfl6_eos::test_derivatives(double lmom, double mu3, double mu8,
   return 0;
 }
 
-int cfl6_eos::eigenvalues6(double lmom, double mu3, 
+int eos_quark_cfl6::eigenvalues6(double lmom, double mu3, 
 			    double mu8, double egv[36],
 			    double dedmuu[36], double dedmud[36],
 			    double dedmus[36], double dedqqu[36], 
@@ -1942,7 +1942,7 @@ int cfl6_eos::eigenvalues6(double lmom, double mu3,
   return 0;
 }
 
-int cfl6_eos::make_matrices(double lmom, double mu3, 
+int eos_quark_cfl6::make_matrices(double lmom, double mu3, 
 			     double mu8, double egv[36],
 			     double dedmuu[36], double dedmud[36],
 			     double dedmus[36], double dedqqu[36], 

@@ -20,13 +20,13 @@
 
   -------------------------------------------------------------------
 */
-#include <o2scl/ldrop_mass.h>
+#include <o2scl/nucmass_ldrop.h>
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-ldrop_mass::ldrop_mass() {
+nucmass_ldrop::nucmass_ldrop() {
 
   def_neutron.init(o2scl_settings.get_convert_units().convert
 		   ("kg","1/fm",o2scl_mks::mass_neutron),2.0);
@@ -86,7 +86,7 @@ ldrop_mass::ldrop_mass() {
   nfit=4;
 }
 
-double ldrop_mass::mass_excess_d(double Z, double N) {
+double nucmass_ldrop::mass_excess_d(double Z, double N) {
   double ret=0.0;
   
   ret=drip_binding_energy_d(Z,N,0.0,0.0,0.0,0.0);
@@ -100,7 +100,7 @@ double ldrop_mass::mass_excess_d(double Z, double N) {
       
 }
 
-double ldrop_mass::drip_binding_energy_d
+double nucmass_ldrop::drip_binding_energy_d
 (double Z, double N, double npout, double nnout, double chi, double T) {
 
   double ret=0.0, A=Z+N, nL;
@@ -131,7 +131,7 @@ double ldrop_mass::drip_binding_energy_d
   int err=heos->calc_e(*n,*p,th);
   if (err!=0) {
     O2SCL_ERR2("Hadronic EOS failed in ",
-	       "ldrop_mass::drip_binding_energy_d().",exc_efailed);
+	       "nucmass_ldrop::drip_binding_energy_d().",exc_efailed);
   }
   bulk=(th.ed-nn*n->m-np*p->m)/nL*o2scl_const::hc_mev_fm;
   ret+=bulk;
@@ -151,7 +151,7 @@ double ldrop_mass::drip_binding_energy_d
   return ret;
 }
 
-int ldrop_mass::fit_fun(size_t nv, const ubvector &x) {
+int nucmass_ldrop::fit_fun(size_t nv, const ubvector &x) {
   surften=x[0];
   n1=x[1];
   n0=x[2];
@@ -159,7 +159,7 @@ int ldrop_mass::fit_fun(size_t nv, const ubvector &x) {
   return 0;
 }
 
-int ldrop_mass::guess_fun(size_t nv, ubvector &x) {
+int nucmass_ldrop::guess_fun(size_t nv, ubvector &x) {
   x[0]=surften;
   x[1]=n1;
   x[2]=n0;
@@ -167,7 +167,7 @@ int ldrop_mass::guess_fun(size_t nv, ubvector &x) {
   return 0;
 }
 
-ldrop_mass_skin::ldrop_mass_skin() {
+nucmass_ldrop_skin::nucmass_ldrop_skin() {
   doi=0.8;
   ss=0.5;
   nfit=6;
@@ -182,7 +182,7 @@ ldrop_mass_skin::ldrop_mass_skin() {
   Tchalf=20.085/o2scl_const::hc_mev_fm;
 }
 
-int ldrop_mass_skin::fit_fun(size_t nv, const ubvector &x) {
+int nucmass_ldrop_skin::fit_fun(size_t nv, const ubvector &x) {
   doi=x[0];
   surften=x[1];
   ss=x[2];
@@ -192,7 +192,7 @@ int ldrop_mass_skin::fit_fun(size_t nv, const ubvector &x) {
   return 0;
 }
 
-int ldrop_mass_skin::guess_fun(size_t nv, ubvector &x) {
+int nucmass_ldrop_skin::guess_fun(size_t nv, ubvector &x) {
   x[0]=doi;
   x[1]=surften;
   x[2]=ss;
@@ -202,7 +202,7 @@ int ldrop_mass_skin::guess_fun(size_t nv, ubvector &x) {
   return 0;
 }
 
-double ldrop_mass_skin::drip_binding_energy_d
+double nucmass_ldrop_skin::drip_binding_energy_d
 (double Z, double N, double npout, double nnout, double chi, double T) {
   
   int err;
@@ -223,7 +223,7 @@ double ldrop_mass_skin::drip_binding_energy_d
 
   if (!o2scl::is_finite(nn) || !o2scl::is_finite(np)) {
     O2SCL_ERR2("Neutron or proton density not finite in ",
-	       "ldrop_mass::drip_binding_energy_d().",exc_efailed);
+	       "nucmass_ldrop::drip_binding_energy_d().",exc_efailed);
     return 0.0;
   }
 
@@ -251,7 +251,7 @@ double ldrop_mass_skin::drip_binding_energy_d
     }
     if (err!=0) {
       O2SCL_ERR2("Hadronic eos failed in ",
-		 "ldrop_mass_skin::drip_binding_energy_d().",
+		 "nucmass_ldrop_skin::drip_binding_energy_d().",
 		 exc_efailed);
     }
     ret+=bulk;
@@ -291,7 +291,7 @@ double ldrop_mass_skin::drip_binding_energy_d
     }
     if (err!=0) {
       O2SCL_ERR2("Hadronic eos failed in ",
-		 "ldrop_mass_skin::drip_binding_energy_d().",
+		 "nucmass_ldrop_skin::drip_binding_energy_d().",
 		 exc_efailed);
     }
 
@@ -313,7 +313,7 @@ double ldrop_mass_skin::drip_binding_energy_d
       }
       if (err!=0) {
 	O2SCL_ERR2("Hadronic eos failed in ",
-		   "ldrop_mass_skin::drip_binding_energy_d().",
+		   "nucmass_ldrop_skin::drip_binding_energy_d().",
 		   exc_efailed);
       }
 
@@ -334,7 +334,7 @@ double ldrop_mass_skin::drip_binding_energy_d
       }
       if (err!=0) {
 	O2SCL_ERR2("Hadronic eos failed in ",
-		   "ldrop_mass_skin::drip_binding_energy_d().",
+		   "nucmass_ldrop_skin::drip_binding_energy_d().",
 		   exc_efailed);
       }
     }
@@ -423,7 +423,7 @@ double ldrop_mass_skin::drip_binding_energy_d
   return ret;
 }
 
-int ldrop_mass_pair::fit_fun(size_t nv, const ubvector &x) {
+int nucmass_ldrop_pair::fit_fun(size_t nv, const ubvector &x) {
   doi=x[0];
   surften=x[1];
   ss=x[2];
@@ -434,7 +434,7 @@ int ldrop_mass_pair::fit_fun(size_t nv, const ubvector &x) {
   return 0;
 }
 
-int ldrop_mass_pair::guess_fun(size_t nv, ubvector &x) {
+int nucmass_ldrop_pair::guess_fun(size_t nv, ubvector &x) {
   x[0]=doi;
   x[1]=surften;
   x[2]=ss;
@@ -445,7 +445,7 @@ int ldrop_mass_pair::guess_fun(size_t nv, ubvector &x) {
   return 0;
 }
 
-double ldrop_mass_pair::drip_binding_energy_d
+double nucmass_ldrop_pair::drip_binding_energy_d
 (double Z, double N, double npout, double nnout, double chi, double T) {
   
   double A=(Z+N);
@@ -453,6 +453,6 @@ double ldrop_mass_pair::drip_binding_energy_d
   pair=-Epair*(cos(Z*o2scl_const::pi)+cos(N*o2scl_const::pi))/
     2.0/pow(A,1.5);
   
-  return A*pair+ldrop_mass_skin::drip_binding_energy_d
+  return A*pair+nucmass_ldrop_skin::drip_binding_energy_d
     (Z,N,npout,nnout,chi,T);
 }

@@ -27,7 +27,7 @@
 #include <o2scl/test_mgr.h>
 #include <o2scl/mroot_hybrids.h>
 #include <o2scl/deriv_gsl.h>
-#include <o2scl/rmf_eos.h>
+#include <o2scl/eos_had_rmf.h>
 
 using namespace std;
 using namespace o2scl;
@@ -39,9 +39,9 @@ typedef boost::numeric::ublas::matrix<double> ubmatrix;
 // Create a namespace to avoid warnings about shadowing
 // global variables
 
-namespace rmf_eos_ts_ns {
+namespace eos_had_rmf_ts_ns {
 
-  int load_nl3(rmf_eos &rmf) {
+  int load_nl3(eos_had_rmf &rmf) {
 
     rmf.ms=508.194;
     rmf.mw=782.501;
@@ -88,7 +88,7 @@ namespace rmf_eos_ts_ns {
 	      ("kg","1/fm",o2scl_mks::mass_muon),2.0);
 
   fermion nue(0.0,1.0), numu(0.0,1.0);
-  rmf_eos rmf;
+  eos_had_rmf rmf;
   fermion_eff eff;
   thermo thx;
   double nb;
@@ -127,11 +127,11 @@ namespace rmf_eos_ts_ns {
 
 }
 
-using namespace rmf_eos_ts_ns;
+using namespace eos_had_rmf_ts_ns;
 
 int main(void) {
   cout.setf(ios::scientific);
-  rmf_eos re;
+  eos_had_rmf re;
   mroot_hybrids<mm_funct<> > mrp;
   test_mgr t;
   t.set_output_level(1);
@@ -569,7 +569,7 @@ int main(void) {
   
   rmf.zeta=0.06;
   rmf.xi=1.5;
-  rmf_eos cn;
+  eos_had_rmf cn;
   rmf.check_naturalness(cn);
   cout << cn.cs << " " << cn.cw << " " << cn.cr << " " << cn.b << "\n"
        << cn.c << " " << cn.zeta << " " << cn.xi << endl;

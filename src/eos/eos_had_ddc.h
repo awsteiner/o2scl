@@ -29,7 +29,7 @@
 #include <o2scl/lib_settings.h>
 #include <o2scl/constants.h>
 #include <o2scl/part.h>
-#include <o2scl/hadronic_eos.h>
+#include <o2scl/eos_had_base.h>
 #include <o2scl/fermion.h>
 #include <o2scl/mm_funct.h>
 
@@ -43,7 +43,7 @@ namespace o2scl {
 
       \future Implement the finite temperature EOS properly.
   */
-  class ddc_eos : public hadronic_eos_eden {
+  class eos_had_ddc : public eos_had_base_eden {
   public:
 
     /// \name Masses
@@ -89,7 +89,7 @@ namespace o2scl {
     // The saturation density
     double rho0;
 
-    ddc_eos();
+    eos_had_ddc();
 
     /// Equation of state as a function of the densities
     virtual int calc_e(fermion &n, fermion &p, thermo &th) {
@@ -112,8 +112,8 @@ namespace o2scl {
 			  double &f2, double &f3, thermo &th);
     
 
-    /// Return string denoting type ("ddc_eos")
-    virtual const char *type() { return "ddc_eos"; }
+    /// Return string denoting type ("eos_had_ddc")
+    virtual const char *type() { return "eos_had_ddc"; }
 
 #ifndef DOXYGEN_INTERNAL
 

@@ -25,13 +25,13 @@
 #endif
 
 #include <o2scl/test_mgr.h>
-#include <o2scl/skyrme_eos.h>
+#include <o2scl/eos_had_skyrme.h>
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-int load_sly4(skyrme_eos &sk) {
+int load_sly4(eos_had_skyrme &sk) {
   sk.t0=-2488.913/hc_mev_fm;
   sk.t1=486.818/hc_mev_fm;
   sk.t2=-546.395/hc_mev_fm;
@@ -47,7 +47,7 @@ int load_sly4(skyrme_eos &sk) {
   return 0;
 }
 
-int load_skms(skyrme_eos &sk) {
+int load_skms(eos_had_skyrme &sk) {
   sk.t0=-2645.0/hc_mev_fm;
   sk.t1=410.0/hc_mev_fm;
   sk.t2=-135.0/hc_mev_fm;
@@ -68,7 +68,7 @@ int main(void) {
   t.set_output_level(1);
   
   double n0, eoa2;
-  skyrme_eos sk;
+  eos_had_skyrme sk;
 
   fermion n(939.0/197.33,2.0), p(939.0/197.33,2.0);
   n.non_interacting=false;
@@ -132,7 +132,7 @@ int main(void) {
   t.test_rel(sk.alpha,1.0/6.0,1.0e-12,"frac. alpha");
   cout << endl;
 
-  cout << "Compare with results from hadronic_eos():" << endl;
+  cout << "Compare with results from eos_had_base():" << endl;
   cout << "With a non-zero value of a" << endl;
   sk.a=0.1;
 

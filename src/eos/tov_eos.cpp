@@ -24,7 +24,7 @@
 #include <config.h>
 #endif
 
-#include <o2scl/tov_eos.h>
+#include <o2scl/eos_tov.h>
 #include <o2scl/table3d.h>
 #include <o2scl/hdf_file.h>
 #include <o2scl/hdf_io.h>

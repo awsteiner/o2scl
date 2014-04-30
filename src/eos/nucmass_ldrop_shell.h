@@ -29,13 +29,13 @@
 #include <o2scl/nucleus.h>
 #include <o2scl/nucmass.h>
 #include <o2scl/constants.h>
-#include <o2scl/hadronic_eos.h>
-#include <o2scl/apr_eos.h>
-#include <o2scl/rmf_eos.h>
+#include <o2scl/eos_had_base.h>
+#include <o2scl/eos_had_apr.h>
+#include <o2scl/eos_had_rmf.h>
 #include <o2scl/fermion_eff.h>
 #include <o2scl/mmin_conp.h>
 #include <o2scl/mmin_simp2.h>
-#include <o2scl/ldrop_mass.h>
+#include <o2scl/nucmass_ldrop.h>
 #include <o2scl/nucmass_frdm.h>
 
 #ifndef DOXYGEN_NO_O2NS
@@ -44,13 +44,13 @@ namespace o2scl {
 
   /** \brief Liquid drop model with shell effects
   */
-  class ldrop_shell : public ldrop_mass_pair, public nucmass_ibm_shell {
+  class nucmass_ldrop_shell : public nucmass_ldrop_pair, public nucmass_ibm_shell {
 
   public:
 
-    ldrop_shell();
+    nucmass_ldrop_shell();
 
-    virtual ~ldrop_shell() {}
+    virtual ~nucmass_ldrop_shell() {}
 
     /// If true, include shell effects (default true)
     bool inc_shell;

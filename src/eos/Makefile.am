@@ -7,58 +7,58 @@
 # the EOS library will allow one to disable HDF support
 if O2SCL_HDF
 
-EOS_SRCS = apr_eos.cpp bag_eos.cpp \
-	bps_eos.cpp cold_nstar.cpp eos.cpp gen_potential_eos.cpp \
-	nambujl_eos.cpp ddc_eos.cpp ldrop_mass.cpp \
-	quark_eos.cpp rmf_eos.cpp schematic_eos.cpp \
-	skyrme_eos.cpp tov_solve.cpp nse_eos.cpp hdf_eos_io.cpp \
-	rmf_delta_eos.cpp tov_eos.cpp sym4_eos.cpp hadronic_eos.cpp \
-	rmf_nucleus.cpp gen_sn_eos.cpp \
-	ldrop_shell.cpp cfl_njl_eos.cpp cfl6_eos.cpp hlps_eos.cpp
+EOS_SRCS = eos_had_apr.cpp eos_quark_bag.cpp \
+	eos_crust.cpp nstar_cold.cpp eos.cpp eos_had_potential.cpp \
+	eos_quark_njl.cpp eos_had_ddc.cpp nucmass_ldrop.cpp \
+	eos_quark.cpp eos_had_rmf.cpp eos_had_schematic.cpp \
+	eos_had_skyrme.cpp tov_solve.cpp eos_nse.cpp hdf_eos_io.cpp \
+	eos_had_rmf_delta.cpp eos_tov.cpp eos_had_sym4_base.cpp eos_had_base.cpp \
+	nucleus_rmf.cpp eos_sn_gen.cpp \
+	nucmass_ldrop_shell.cpp eos_quark_cfl.cpp eos_quark_cfl6.cpp eos_had_hlps.cpp
 
-HEADER_VAR = apr_eos.h bag_eos.h bps_eos.h ddc_eos.h \
-	cold_nstar.h eos.h gen_potential_eos.h ldrop_mass.h \
-	nambujl_eos.h quark_eos.h rmf_eos.h cfl_njl_eos.h cfl6_eos.h \
-	schematic_eos.h skyrme_eos.h tabulated_eos.h nse_eos.h \
-	tov_solve.h rmf_delta_eos.h sym4_eos.h tov_eos.h hadronic_eos.h \
-	hdf_eos_io.h rmf_nucleus.h gen_sn_eos.h \
-	ldrop_shell.h gogny_eos.h virial_eos.h hlps_eos.h
+HEADER_VAR = eos_had_apr.h eos_quark_bag.h eos_crust.h eos_had_ddc.h \
+	nstar_cold.h eos.h eos_had_potential.h nucmass_ldrop.h \
+	eos_quark_njl.h eos_quark.h eos_had_rmf.h eos_quark_cfl.h eos_quark_cfl6.h \
+	eos_had_schematic.h eos_had_skyrme.h eos_had_tabulated.h eos_nse.h \
+	tov_solve.h eos_had_rmf_delta.h eos_had_sym4_base.h eos_tov.h eos_had_base.h \
+	hdf_eos_io.h nucleus_rmf.h eos_sn_gen.h \
+	nucmass_ldrop_shell.h eos_had_gogny.h eos_crust_virial.h eos_had_hlps.h
 
-TEST_VAR = apr_eos.scr bag_eos.scr \
-	cold_nstar.scr eos.scr gen_potential_eos.scr sym4_eos.scr \
-	nambujl_eos.scr quark_eos.scr ldrop_mass.scr \
-	rmf_eos.scr schematic_eos.scr skyrme_eos.scr tov_eos.scr \
-	tabulated_eos.scr nse_eos.scr \
-	rmf_delta_eos.scr bps_eos.scr ddc_eos.scr \
-	hadronic_eos.scr rmf_nucleus.scr \
-	virial_eos.scr gogny_eos.scr tov_solve.scr cfl6_eos.scr \
-	cfl_njl_eos.scr ldrop_shell.scr 
-# gen_sn_eos.scr 
+TEST_VAR = eos_had_apr.scr eos_quark_bag.scr \
+	nstar_cold.scr eos.scr eos_had_potential.scr eos_had_sym4_base.scr \
+	eos_quark_njl.scr eos_quark.scr nucmass_ldrop.scr \
+	eos_had_rmf.scr eos_had_schematic.scr eos_had_skyrme.scr eos_tov.scr \
+	eos_had_tabulated.scr eos_nse.scr \
+	eos_had_rmf_delta.scr eos_crust.scr eos_had_ddc.scr \
+	eos_had_base.scr nucleus_rmf.scr \
+	eos_crust_virial.scr eos_had_gogny.scr tov_solve.scr eos_quark_cfl6.scr \
+	eos_quark_cfl.scr nucmass_ldrop_shell.scr 
+# eos_sn_gen.scr 
 
 else
 
-EOS_SRCS = apr_eos.cpp bag_eos.cpp cfl_njl_eos.cpp cfl6_eos.cpp \
-	bps_eos.cpp cold_nstar.cpp eos.cpp gen_potential_eos.cpp \
-	nambujl_eos.cpp ddc_eos.cpp ldrop_mass.cpp \
-	quark_eos.cpp rmf_eos.cpp schematic_eos.cpp \
-	skyrme_eos.cpp tov_solve.cpp nse_eos.cpp \
-	rmf_delta_eos.cpp tov_eos.cpp sym4_eos.cpp hadronic_eos.cpp \
-	gen_sn_eos.cpp ldrop_shell.cpp hlps_eos.cpp
+EOS_SRCS = eos_had_apr.cpp eos_quark_bag.cpp eos_quark_cfl.cpp eos_quark_cfl6.cpp \
+	eos_crust.cpp nstar_cold.cpp eos.cpp eos_had_potential.cpp \
+	eos_quark_njl.cpp eos_had_ddc.cpp nucmass_ldrop.cpp \
+	eos_quark.cpp eos_had_rmf.cpp eos_had_schematic.cpp \
+	eos_had_skyrme.cpp tov_solve.cpp eos_nse.cpp \
+	eos_had_rmf_delta.cpp eos_tov.cpp eos_had_sym4_base.cpp eos_had_base.cpp \
+	eos_sn_gen.cpp nucmass_ldrop_shell.cpp eos_had_hlps.cpp
 
-HEADER_VAR = apr_eos.h bag_eos.h bps_eos.h ddc_eos.h \
-	cold_nstar.h eos.h gen_potential_eos.h ldrop_mass.h \
-	nambujl_eos.h quark_eos.h rmf_eos.h cfl_njl_eos.h cfl6_eos.h \
-	schematic_eos.h skyrme_eos.h tabulated_eos.h nse_eos.h \
-	tov_solve.h rmf_delta_eos.h sym4_eos.h tov_eos.h hadronic_eos.h \
-	gen_sn_eos.h ldrop_shell.h gogny_eos.h virial_eos.h hlps_eos.h
+HEADER_VAR = eos_had_apr.h eos_quark_bag.h eos_crust.h eos_had_ddc.h \
+	nstar_cold.h eos.h eos_had_potential.h nucmass_ldrop.h \
+	eos_quark_njl.h eos_quark.h eos_had_rmf.h eos_quark_cfl.h eos_quark_cfl6.h \
+	eos_had_schematic.h eos_had_skyrme.h eos_had_tabulated.h eos_nse.h \
+	tov_solve.h eos_had_rmf_delta.h eos_had_sym4_base.h eos_tov.h eos_had_base.h \
+	eos_sn_gen.h nucmass_ldrop_shell.h eos_had_gogny.h eos_crust_virial.h eos_had_hlps.h
 
-TEST_VAR = apr_eos.scr bag_eos.scr virial_eos.scr \
-	cold_nstar.scr eos.scr gen_potential_eos.scr sym4_eos.scr \
-	nambujl_eos.scr quark_eos.scr gogny_eos.scr \
-	rmf_eos.scr schematic_eos.scr skyrme_eos.scr tov_eos.scr \
-	tov_solve.scr cfl6_eos.scr tabulated_eos.scr nse_eos.scr \
-	rmf_delta_eos.scr bps_eos.scr ddc_eos.scr cfl_njl_eos.scr \
-	hadronic_eos.scr gen_sn_eos.scr ldrop_shell.scr 
+TEST_VAR = eos_had_apr.scr eos_quark_bag.scr eos_crust_virial.scr \
+	nstar_cold.scr eos.scr eos_had_potential.scr eos_had_sym4_base.scr \
+	eos_quark_njl.scr eos_quark.scr eos_had_gogny.scr \
+	eos_had_rmf.scr eos_had_schematic.scr eos_had_skyrme.scr eos_tov.scr \
+	tov_solve.scr eos_quark_cfl6.scr eos_had_tabulated.scr eos_nse.scr \
+	eos_had_rmf_delta.scr eos_crust.scr eos_had_ddc.scr eos_quark_cfl.scr \
+	eos_had_base.scr eos_sn_gen.scr nucmass_ldrop_shell.scr 
 
 endif
 
@@ -125,15 +125,15 @@ pkginclude_HEADERS = $(HEADER_VAR)
 # libtool testing targets
 # ------------------------------------------------------------
 
-check_PROGRAMS = apr_eos_ts bag_eos_ts ldrop_mass_ts \
-	cold_nstar_ts eos_ts gen_potential_eos_ts sym4_eos_ts \
-	hadronic_eos_ts nambujl_eos_ts quark_eos_ts \
-	rmf_eos_ts schematic_eos_ts skyrme_eos_ts tov_eos_ts \
-	tov_solve_ts cfl6_eos_ts tabulated_eos_ts nse_eos_ts \
-	rmf_delta_eos_ts bps_eos_ts ddc_eos_ts cfl_njl_eos_ts \
-	rmf_nucleus_ts \
-	ldrop_shell_ts gogny_eos_ts virial_eos_ts
-# gen_sn_eos_ts 
+check_PROGRAMS = eos_had_apr_ts eos_quark_bag_ts nucmass_ldrop_ts \
+	nstar_cold_ts eos_ts eos_had_potential_ts eos_had_sym4_base_ts \
+	eos_had_base_ts eos_quark_njl_ts eos_quark_ts \
+	eos_had_rmf_ts eos_had_schematic_ts eos_had_skyrme_ts eos_tov_ts \
+	tov_solve_ts eos_quark_cfl6_ts eos_had_tabulated_ts eos_nse_ts \
+	eos_had_rmf_delta_ts eos_crust_ts eos_had_ddc_ts eos_quark_cfl_ts \
+	nucleus_rmf_ts \
+	nucmass_ldrop_shell_ts eos_had_gogny_ts eos_crust_virial_ts
+# eos_sn_gen_ts 
 
 if O2SCL_HDF
 VCHECK_LIBS = $(libdir)/libo2scl_eos.la $(libdir)/libo2scl_part.la \
@@ -143,175 +143,175 @@ VCHECK_LIBS = $(libdir)/libo2scl_eos.la $(libdir)/libo2scl_part.la \
 	$(libdir)/libo2scl.la 
 endif
 
-apr_eos_ts_LDADD = $(VCHECK_LIBS)
-bag_eos_ts_LDADD = $(VCHECK_LIBS)
-cold_nstar_ts_LDADD = $(VCHECK_LIBS)
-ldrop_mass_ts_LDADD = $(VCHECK_LIBS)
-ldrop_shell_ts_LDADD = $(VCHECK_LIBS)
+eos_had_apr_ts_LDADD = $(VCHECK_LIBS)
+eos_quark_bag_ts_LDADD = $(VCHECK_LIBS)
+nstar_cold_ts_LDADD = $(VCHECK_LIBS)
+nucmass_ldrop_ts_LDADD = $(VCHECK_LIBS)
+nucmass_ldrop_shell_ts_LDADD = $(VCHECK_LIBS)
 eos_ts_LDADD = $(VCHECK_LIBS)
-gen_potential_eos_ts_LDADD = $(VCHECK_LIBS)
-sym4_eos_ts_LDADD = $(VCHECK_LIBS)
-hadronic_eos_ts_LDADD = $(VCHECK_LIBS)
-nambujl_eos_ts_LDADD = $(VCHECK_LIBS)
-quark_eos_ts_LDADD = $(VCHECK_LIBS)
-rmf_eos_ts_LDADD = $(VCHECK_LIBS)
-schematic_eos_ts_LDADD = $(VCHECK_LIBS)
-skyrme_eos_ts_LDADD = $(VCHECK_LIBS)
-tov_eos_ts_LDADD = $(VCHECK_LIBS)
+eos_had_potential_ts_LDADD = $(VCHECK_LIBS)
+eos_had_sym4_base_ts_LDADD = $(VCHECK_LIBS)
+eos_had_base_ts_LDADD = $(VCHECK_LIBS)
+eos_quark_njl_ts_LDADD = $(VCHECK_LIBS)
+eos_quark_ts_LDADD = $(VCHECK_LIBS)
+eos_had_rmf_ts_LDADD = $(VCHECK_LIBS)
+eos_had_schematic_ts_LDADD = $(VCHECK_LIBS)
+eos_had_skyrme_ts_LDADD = $(VCHECK_LIBS)
+eos_tov_ts_LDADD = $(VCHECK_LIBS)
 tov_solve_ts_LDADD = $(VCHECK_LIBS)
-cfl6_eos_ts_LDADD = $(VCHECK_LIBS)
-tabulated_eos_ts_LDADD = $(VCHECK_LIBS)
-rmf_delta_eos_ts_LDADD = $(VCHECK_LIBS)
-bps_eos_ts_LDADD = $(VCHECK_LIBS)
-ddc_eos_ts_LDADD = $(VCHECK_LIBS)
-cfl_njl_eos_ts_LDADD = $(VCHECK_LIBS)
-nse_eos_ts_LDADD = $(VCHECK_LIBS)
-# gen_sn_eos_ts_LDADD = $(VCHECK_LIBS)
-rmf_nucleus_ts_LDADD = $(VCHECK_LIBS)
-gogny_eos_ts_LDADD = $(VCHECK_LIBS)
-virial_eos_ts_LDADD = $(VCHECK_LIBS)
+eos_quark_cfl6_ts_LDADD = $(VCHECK_LIBS)
+eos_had_tabulated_ts_LDADD = $(VCHECK_LIBS)
+eos_had_rmf_delta_ts_LDADD = $(VCHECK_LIBS)
+eos_crust_ts_LDADD = $(VCHECK_LIBS)
+eos_had_ddc_ts_LDADD = $(VCHECK_LIBS)
+eos_quark_cfl_ts_LDADD = $(VCHECK_LIBS)
+eos_nse_ts_LDADD = $(VCHECK_LIBS)
+# eos_sn_gen_ts_LDADD = $(VCHECK_LIBS)
+nucleus_rmf_ts_LDADD = $(VCHECK_LIBS)
+eos_had_gogny_ts_LDADD = $(VCHECK_LIBS)
+eos_crust_virial_ts_LDADD = $(VCHECK_LIBS)
 
-apr_eos.scr: apr_eos_ts$(EXEEXT) 
-	./apr_eos_ts$(EXEEXT) > apr_eos.scr
-bag_eos.scr: bag_eos_ts$(EXEEXT) 
-	./bag_eos_ts$(EXEEXT) > bag_eos.scr
-cold_nstar.scr: cold_nstar_ts$(EXEEXT) 
-	./cold_nstar_ts$(EXEEXT) > cold_nstar.scr
-ldrop_mass.scr: ldrop_mass_ts$(EXEEXT) 
-	./ldrop_mass_ts$(EXEEXT) > ldrop_mass.scr
-ldrop_shell.scr: ldrop_shell_ts$(EXEEXT) 
-	./ldrop_shell_ts$(EXEEXT) > ldrop_shell.scr
+eos_had_apr.scr: eos_had_apr_ts$(EXEEXT) 
+	./eos_had_apr_ts$(EXEEXT) > eos_had_apr.scr
+eos_quark_bag.scr: eos_quark_bag_ts$(EXEEXT) 
+	./eos_quark_bag_ts$(EXEEXT) > eos_quark_bag.scr
+nstar_cold.scr: nstar_cold_ts$(EXEEXT) 
+	./nstar_cold_ts$(EXEEXT) > nstar_cold.scr
+nucmass_ldrop.scr: nucmass_ldrop_ts$(EXEEXT) 
+	./nucmass_ldrop_ts$(EXEEXT) > nucmass_ldrop.scr
+nucmass_ldrop_shell.scr: nucmass_ldrop_shell_ts$(EXEEXT) 
+	./nucmass_ldrop_shell_ts$(EXEEXT) > nucmass_ldrop_shell.scr
 eos.scr: eos_ts$(EXEEXT) 
 	./eos_ts$(EXEEXT) > eos.scr
-gen_potential_eos.scr: gen_potential_eos_ts$(EXEEXT) 
-	./gen_potential_eos_ts$(EXEEXT) > gen_potential_eos.scr
-sym4_eos.scr: sym4_eos_ts$(EXEEXT) 
-	./sym4_eos_ts$(EXEEXT) > sym4_eos.scr
-hadronic_eos.scr: hadronic_eos_ts$(EXEEXT) 
-	./hadronic_eos_ts$(EXEEXT) > hadronic_eos.scr
-nambujl_eos.scr: nambujl_eos_ts$(EXEEXT) 
-	./nambujl_eos_ts$(EXEEXT) > nambujl_eos.scr
-quark_eos.scr: quark_eos_ts$(EXEEXT) 
-	./quark_eos_ts$(EXEEXT) > quark_eos.scr
-rmf_eos.scr: rmf_eos_ts$(EXEEXT) 
-	./rmf_eos_ts$(EXEEXT) > rmf_eos.scr
-schematic_eos.scr: schematic_eos_ts$(EXEEXT) 
-	./schematic_eos_ts$(EXEEXT) > schematic_eos.scr
-skyrme_eos.scr: skyrme_eos_ts$(EXEEXT) 
-	./skyrme_eos_ts$(EXEEXT) > skyrme_eos.scr
-tov_eos.scr: tov_eos_ts$(EXEEXT) 
-	./tov_eos_ts$(EXEEXT) > tov_eos.scr
+eos_had_potential.scr: eos_had_potential_ts$(EXEEXT) 
+	./eos_had_potential_ts$(EXEEXT) > eos_had_potential.scr
+eos_had_sym4_base.scr: eos_had_sym4_base_ts$(EXEEXT) 
+	./eos_had_sym4_base_ts$(EXEEXT) > eos_had_sym4_base.scr
+eos_had_base.scr: eos_had_base_ts$(EXEEXT) 
+	./eos_had_base_ts$(EXEEXT) > eos_had_base.scr
+eos_quark_njl.scr: eos_quark_njl_ts$(EXEEXT) 
+	./eos_quark_njl_ts$(EXEEXT) > eos_quark_njl.scr
+eos_quark.scr: eos_quark_ts$(EXEEXT) 
+	./eos_quark_ts$(EXEEXT) > eos_quark.scr
+eos_had_rmf.scr: eos_had_rmf_ts$(EXEEXT) 
+	./eos_had_rmf_ts$(EXEEXT) > eos_had_rmf.scr
+eos_had_schematic.scr: eos_had_schematic_ts$(EXEEXT) 
+	./eos_had_schematic_ts$(EXEEXT) > eos_had_schematic.scr
+eos_had_skyrme.scr: eos_had_skyrme_ts$(EXEEXT) 
+	./eos_had_skyrme_ts$(EXEEXT) > eos_had_skyrme.scr
+eos_tov.scr: eos_tov_ts$(EXEEXT) 
+	./eos_tov_ts$(EXEEXT) > eos_tov.scr
 tov_solve.scr: tov_solve_ts$(EXEEXT) 
 	./tov_solve_ts$(EXEEXT) > tov_solve.scr
-cfl6_eos.scr: cfl6_eos_ts$(EXEEXT) 
-	./cfl6_eos_ts$(EXEEXT) > cfl6_eos.scr
-tabulated_eos.scr: tabulated_eos_ts$(EXEEXT) 
-	./tabulated_eos_ts$(EXEEXT) > tabulated_eos.scr
-rmf_delta_eos.scr: rmf_delta_eos_ts$(EXEEXT) 
-	./rmf_delta_eos_ts$(EXEEXT) > rmf_delta_eos.scr
-bps_eos.scr: bps_eos_ts$(EXEEXT) 
-	./bps_eos_ts$(EXEEXT) > bps_eos.scr
-ddc_eos.scr: ddc_eos_ts$(EXEEXT) 
-	./ddc_eos_ts$(EXEEXT) > ddc_eos.scr
-cfl_njl_eos.scr: cfl_njl_eos_ts$(EXEEXT) 
-	./cfl_njl_eos_ts$(EXEEXT) > cfl_njl_eos.scr
-nse_eos.scr: nse_eos_ts$(EXEEXT) 
-	./nse_eos_ts$(EXEEXT) > nse_eos.scr
-# gen_sn_eos.scr: gen_sn_eos_ts$(EXEEXT) 
-# 	./gen_sn_eos_ts$(EXEEXT) > gen_sn_eos.scr
-rmf_nucleus.scr: rmf_nucleus_ts$(EXEEXT) 
-	./rmf_nucleus_ts$(EXEEXT) > rmf_nucleus.scr
-gogny_eos.scr: gogny_eos_ts$(EXEEXT) 
-	./gogny_eos_ts$(EXEEXT) > gogny_eos.scr
-virial_eos.scr: virial_eos_ts$(EXEEXT) 
-	./virial_eos_ts$(EXEEXT) > virial_eos.scr
+eos_quark_cfl6.scr: eos_quark_cfl6_ts$(EXEEXT) 
+	./eos_quark_cfl6_ts$(EXEEXT) > eos_quark_cfl6.scr
+eos_had_tabulated.scr: eos_had_tabulated_ts$(EXEEXT) 
+	./eos_had_tabulated_ts$(EXEEXT) > eos_had_tabulated.scr
+eos_had_rmf_delta.scr: eos_had_rmf_delta_ts$(EXEEXT) 
+	./eos_had_rmf_delta_ts$(EXEEXT) > eos_had_rmf_delta.scr
+eos_crust.scr: eos_crust_ts$(EXEEXT) 
+	./eos_crust_ts$(EXEEXT) > eos_crust.scr
+eos_had_ddc.scr: eos_had_ddc_ts$(EXEEXT) 
+	./eos_had_ddc_ts$(EXEEXT) > eos_had_ddc.scr
+eos_quark_cfl.scr: eos_quark_cfl_ts$(EXEEXT) 
+	./eos_quark_cfl_ts$(EXEEXT) > eos_quark_cfl.scr
+eos_nse.scr: eos_nse_ts$(EXEEXT) 
+	./eos_nse_ts$(EXEEXT) > eos_nse.scr
+# eos_sn_gen.scr: eos_sn_gen_ts$(EXEEXT) 
+# 	./eos_sn_gen_ts$(EXEEXT) > eos_sn_gen.scr
+nucleus_rmf.scr: nucleus_rmf_ts$(EXEEXT) 
+	./nucleus_rmf_ts$(EXEEXT) > nucleus_rmf.scr
+eos_had_gogny.scr: eos_had_gogny_ts$(EXEEXT) 
+	./eos_had_gogny_ts$(EXEEXT) > eos_had_gogny.scr
+eos_crust_virial.scr: eos_crust_virial_ts$(EXEEXT) 
+	./eos_crust_virial_ts$(EXEEXT) > eos_crust_virial.scr
 
-apr_eos_ts_SOURCES = apr_eos_ts.cpp
-bag_eos_ts_SOURCES = bag_eos_ts.cpp
-cold_nstar_ts_SOURCES = cold_nstar_ts.cpp
-ldrop_mass_ts_SOURCES = ldrop_mass_ts.cpp
-ldrop_shell_ts_SOURCES = ldrop_shell_ts.cpp
+eos_had_apr_ts_SOURCES = eos_had_apr_ts.cpp
+eos_quark_bag_ts_SOURCES = eos_quark_bag_ts.cpp
+nstar_cold_ts_SOURCES = nstar_cold_ts.cpp
+nucmass_ldrop_ts_SOURCES = nucmass_ldrop_ts.cpp
+nucmass_ldrop_shell_ts_SOURCES = nucmass_ldrop_shell_ts.cpp
 eos_ts_SOURCES = eos_ts.cpp
-gen_potential_eos_ts_SOURCES = gen_potential_eos_ts.cpp
-sym4_eos_ts_SOURCES = sym4_eos_ts.cpp
-hadronic_eos_ts_SOURCES = hadronic_eos_ts.cpp
-nambujl_eos_ts_SOURCES = nambujl_eos_ts.cpp
-quark_eos_ts_SOURCES = quark_eos_ts.cpp
-rmf_eos_ts_SOURCES = rmf_eos_ts.cpp
-schematic_eos_ts_SOURCES = schematic_eos_ts.cpp
-skyrme_eos_ts_SOURCES = skyrme_eos_ts.cpp
-tov_eos_ts_SOURCES = tov_eos_ts.cpp
+eos_had_potential_ts_SOURCES = eos_had_potential_ts.cpp
+eos_had_sym4_base_ts_SOURCES = eos_had_sym4_base_ts.cpp
+eos_had_base_ts_SOURCES = eos_had_base_ts.cpp
+eos_quark_njl_ts_SOURCES = eos_quark_njl_ts.cpp
+eos_quark_ts_SOURCES = eos_quark_ts.cpp
+eos_had_rmf_ts_SOURCES = eos_had_rmf_ts.cpp
+eos_had_schematic_ts_SOURCES = eos_had_schematic_ts.cpp
+eos_had_skyrme_ts_SOURCES = eos_had_skyrme_ts.cpp
+eos_tov_ts_SOURCES = eos_tov_ts.cpp
 tov_solve_ts_SOURCES = tov_solve_ts.cpp
-cfl6_eos_ts_SOURCES = cfl6_eos_ts.cpp
-tabulated_eos_ts_SOURCES = tabulated_eos_ts.cpp
-rmf_delta_eos_ts_SOURCES = rmf_delta_eos_ts.cpp
-bps_eos_ts_SOURCES = bps_eos_ts.cpp
-ddc_eos_ts_SOURCES = ddc_eos_ts.cpp
-cfl_njl_eos_ts_SOURCES = cfl_njl_eos_ts.cpp
-nse_eos_ts_SOURCES = nse_eos_ts.cpp
-# gen_sn_eos_ts_SOURCES = gen_sn_eos_ts.cpp
-rmf_nucleus_ts_SOURCES = rmf_nucleus_ts.cpp
-gogny_eos_ts_SOURCES = gogny_eos_ts.cpp
-virial_eos_ts_SOURCES = virial_eos_ts.cpp
+eos_quark_cfl6_ts_SOURCES = eos_quark_cfl6_ts.cpp
+eos_had_tabulated_ts_SOURCES = eos_had_tabulated_ts.cpp
+eos_had_rmf_delta_ts_SOURCES = eos_had_rmf_delta_ts.cpp
+eos_crust_ts_SOURCES = eos_crust_ts.cpp
+eos_had_ddc_ts_SOURCES = eos_had_ddc_ts.cpp
+eos_quark_cfl_ts_SOURCES = eos_quark_cfl_ts.cpp
+eos_nse_ts_SOURCES = eos_nse_ts.cpp
+# eos_sn_gen_ts_SOURCES = eos_sn_gen_ts.cpp
+nucleus_rmf_ts_SOURCES = nucleus_rmf_ts.cpp
+eos_had_gogny_ts_SOURCES = eos_had_gogny_ts.cpp
+eos_crust_virial_ts_SOURCES = eos_crust_virial_ts.cpp
 
 ls_test: ls_ls_test ls_skm_test ls_ska_test ls_sk1_test
 
 ls_ls_test:
-	gen_sn_eos_ts ls $(HOME)/pkgs/ls_eos2/ls.dat
+	eos_sn_gen_ts ls $(HOME)/pkgs/ls_eos2/ls.dat
 
 ls_skm_test:
-	gen_sn_eos_ts ls $(HOME)/pkgs/ls_eos2/skm.dat
+	eos_sn_gen_ts ls $(HOME)/pkgs/ls_eos2/skm.dat
 
 ls_ska_test:
-	gen_sn_eos_ts ls $(HOME)/pkgs/ls_eos2/ska.dat
+	eos_sn_gen_ts ls $(HOME)/pkgs/ls_eos2/ska.dat
 
 ls_sk1_test:
-	gen_sn_eos_ts ls $(HOME)/pkgs/ls_eos2/sk1.dat
+	eos_sn_gen_ts ls $(HOME)/pkgs/ls_eos2/sk1.dat
 
 stos_test: stos_eos1_test stos_eos2_test stos_eos3_test
 
 stos_eos1_test:
-	gen_sn_eos_ts stos $(HOME)/pkgs/stos_eos/eos1
+	eos_sn_gen_ts stos $(HOME)/pkgs/stos_eos/eos1
 
 stos_eos2_test:
-	gen_sn_eos_ts stos $(HOME)/pkgs/stos_eos/eos2
+	eos_sn_gen_ts stos $(HOME)/pkgs/stos_eos/eos2
 
 stos_eos3_test:
-	gen_sn_eos_ts stos $(HOME)/pkgs/stos_eos/eos3
+	eos_sn_gen_ts stos $(HOME)/pkgs/stos_eos/eos3
 
 oo_test: oo_ls180_test oo_ls220_test oo_ls375_test
 
 oo_ls180_test:
-	gen_sn_eos_ts oo \
+	eos_sn_gen_ts oo \
 	$(HOME)/pkgs/oo_eos/LS180_234r_136t_50y_analmu_20091212_SVNr26.h5 ls
 
 oo_ls220_test:
-	gen_sn_eos_ts oo \
+	eos_sn_gen_ts oo \
 	$(HOME)/pkgs/oo_eos/LS220_234r_136t_50y_analmu_20091212_SVNr26.h5 ls
 
 oo_ls375_test:
-	gen_sn_eos_ts oo \
+	eos_sn_gen_ts oo \
 	$(HOME)/pkgs/oo_eos/LS375_234r_136t_50y_analmu_20091212_SVNr26.h5 ls
 
 oo_stos_test:
-	gen_sn_eos_ts oo \
+	eos_sn_gen_ts oo \
 	$(HOME)/pkgs/oo_eos/HShenEOS_rho220_temp180_ye65_version1.1_20120817.h5 \
 	stos
 
 oo_stos_hyp_test:
-	gen_sn_eos_ts oo \
+	eos_sn_gen_ts oo \
 	$(HOME)/pkgs/oo_eos/HShen_HyperonEOS_rho220_temp180_ye65_version1.1_20131007.h5 \
 	stos
 
 
 x:
-	gen_sn_eos_ts hfsl \
+	eos_sn_gen_ts hfsl \
 		$(HOME)/pkgs/hfsl_eos/dd2_frdm_eos_shen98format_v1.02.tab \
 		 >> gen_sn_test.scr
-	gen_sn_eos_ts hfsl \
+	eos_sn_gen_ts hfsl \
 		$(HOME)/pkgs/hfsl_eos/fsg_roca_eos_shen98format_v1.0.tab \
 		 >> gen_sn_test.scr
-	gen_sn_eos_ts hfsl \
+	eos_sn_gen_ts hfsl \
 		$(HOME)/pkgs/hfsl_eos/nl3_lala_eos_shen98format_v1.0.tab \
 		 >> gen_sn_test.scr
 

@@ -28,7 +28,7 @@
 #include <cmath>
 #include <o2scl/constants.h>
 #include <o2scl/mroot.h>
-#include <o2scl/hadronic_eos.h>
+#include <o2scl/eos_had_base.h>
 #include <o2scl/part.h>
 #include <o2scl/deriv_gsl.h>
 #include <o2scl/fermion_nonrel.h>
@@ -152,7 +152,7 @@ namespace o2scl {
       \future Calculate the chemical potentials analytically 
       
   */
-  class gen_potential_eos : public hadronic_eos_eden {
+  class eos_had_potential : public eos_had_base_eden {
 
   public:
     
@@ -163,7 +163,7 @@ namespace o2scl {
     int sym_index;
     //@}
     
-    gen_potential_eos();
+    eos_had_potential();
     
     /// Equation of state as a function of density.
     virtual int calc_e(fermion &ne, fermion &pr, thermo &lt);
@@ -201,8 +201,8 @@ namespace o2scl {
     /// The default derivative object for calculating chemical potentials
     deriv_gsl<funct> def_mu_deriv;
 
-    /// Return string denoting type ("gen_potential_eos")
-    virtual const char *type() { return "gen_potential_eos"; }
+    /// Return string denoting type ("eos_had_potential")
+    virtual const char *type() { return "eos_had_potential"; }
 
   protected:
     

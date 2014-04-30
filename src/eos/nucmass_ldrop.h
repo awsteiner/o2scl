@@ -29,8 +29,8 @@
 #include <o2scl/nucleus.h>
 #include <o2scl/nucmass.h>
 #include <o2scl/constants.h>
-#include <o2scl/hadronic_eos.h>
-#include <o2scl/rmf_eos.h>
+#include <o2scl/eos_had_base.h>
+#include <o2scl/eos_had_rmf.h>
 #include <o2scl/fermion_eff.h>
 #include <o2scl/inte_qagiu_gsl.h>
 
@@ -83,7 +83,7 @@ namespace o2scl {
       The bulk binding energy contribution ( \f$ \sim -16 \f$
       MeV per nucleon) and the symmetry energy are computing using the
       hadronic EOS (either \ref def_had_eos or the EOS specified in
-      the most recent call to set_hadronic_eos_temp() ). The bulk
+      the most recent call to set_eos_had_base_temp() ). The bulk
       energy per baryon is
       \f[
       E_{\mathrm{bulk}}/A = \frac{\hbar c}{n_{L} }
@@ -154,11 +154,11 @@ namespace o2scl {
 
       \hline
   */
-  class ldrop_mass : public nucmass_fit_base {
+  class nucmass_ldrop : public nucmass_fit_base {
 
   public:
     
-    ldrop_mass();
+    nucmass_ldrop();
 
     /// \name Input parameters
     //@{ 
@@ -227,13 +227,13 @@ namespace o2scl {
     /// \name EOS and particle parameters
     //@{
     /// Change the base hadronic EOS
-    int set_hadronic_eos_temp(hadronic_eos_temp &uhe) {
+    int set_eos_had_base_temp(eos_had_base_temp &uhe) {
       heos=&uhe;
       return 0;
     }
 
     /// The default hadronic EOS
-    rmf_eos def_had_eos;
+    eos_had_rmf def_had_eos;
 
     /// Change neutron and proton objects
     void set_n_and_p(fermion &un, fermion &up) {
@@ -258,8 +258,8 @@ namespace o2scl {
     virtual int guess_fun(size_t nv, ubvector &x);
     //@}
     
-    /// Return the type, \c "ldrop_mass".
-    virtual const char *type() { return "ldrop_mass"; }
+    /// Return the type, \c "nucmass_ldrop".
+    virtual const char *type() { return "nucmass_ldrop"; }
       
     /// Energy and pressure
     thermo th;
@@ -273,7 +273,7 @@ namespace o2scl {
     /// Pointer to proton
     fermion *p;
     /// The base EOS for bulk matter
-    hadronic_eos_temp *heos;
+    eos_had_base_temp *heos;
 
 #endif
     
@@ -281,7 +281,7 @@ namespace o2scl {
 
   /** \brief More advanced liquid drop model
 
-      In addition to the physics in \ref ldrop_mass, this includes
+      In addition to the physics in \ref nucmass_ldrop, this includes
       corrections for
       - finite temperature
       - neutron skin
@@ -295,13 +295,13 @@ namespace o2scl {
       <b>Bulk energy</b>
 
       The central densities and radii, \f$ n_n, n_p, R_n, R_p \f$
-      are all determined in the same way as \ref ldrop_mass, 
+      are all determined in the same way as \ref nucmass_ldrop, 
       except that now \f$ \delta \equiv I \zeta \f$, where
       \f$ \zeta \f$ is stored in \ref doi . Note that this
       means \f$ N > Z~\mathrm{iff}~R_n>R_p \f$. 
 
       If \ref new_skin_mode is false, then the bulk energy is 
-      also computed as in \ref ldrop_mass. Otherwise, the
+      also computed as in \ref nucmass_ldrop. Otherwise, the
       number of nucleons in the core is computed with
       \f{eqnarray*}
       A_{\mathrm{core}} = Z (n_n+n_p)/n_p~\mathrm{for}~N\geq Z \\
@@ -330,7 +330,7 @@ namespace o2scl {
       <b>Surface energy</b>
 
       If \ref full_surface is false, then the surface energy is 
-      just that from \ref ldrop_mass , with an extra factor
+      just that from \ref nucmass_ldrop , with an extra factor
       for the surface symmetry energy
       \f[
       E_{\mathrm{surf}} = \frac{\sigma}{n_L}
@@ -417,14 +417,14 @@ namespace o2scl {
 
       \hline
   */
-  class ldrop_mass_skin : public ldrop_mass {
+  class nucmass_ldrop_skin : public nucmass_ldrop {
     
   public:
 
-    ldrop_mass_skin();
+    nucmass_ldrop_skin();
 
-    /// Return the type, \c "ldrop_mass_skin".
-    virtual const char *type() { return "ldrop_mass_skin"; }
+    /// Return the type, \c "nucmass_ldrop_skin".
+    virtual const char *type() { return "nucmass_ldrop_skin"; }
 
     /// Fix parameters from an array for fitting
     virtual int fit_fun(size_t nv, const ubvector &x);
@@ -494,14 +494,14 @@ namespace o2scl {
       functions give the expected result for integer values of 
       N and Z.
   */
-  class ldrop_mass_pair : public ldrop_mass_skin {
+  class nucmass_ldrop_pair : public nucmass_ldrop_skin {
     
   public:
 
-    /// Return the type, \c "ldrop_mass_pair".
-    virtual const char *type() { return "ldrop_mass_pair"; }
+    /// Return the type, \c "nucmass_ldrop_pair".
+    virtual const char *type() { return "nucmass_ldrop_pair"; }
 
-    ldrop_mass_pair() {
+    nucmass_ldrop_pair() {
       nfit=7;
       Epair=13.0;
     }

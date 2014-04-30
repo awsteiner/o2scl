@@ -25,9 +25,9 @@
 #endif
 
 #include <o2scl/test_mgr.h>
-#include <o2scl/sym4_eos.h>
+#include <o2scl/eos_had_sym4_base.h>
 #include <o2scl/fermion_nonrel.h>
-#include <o2scl/cold_nstar.h>
+#include <o2scl/nstar_cold.h>
 
 using namespace std;
 using namespace o2scl;
@@ -49,24 +49,24 @@ int main(void) {
 
   bool optv;
 
-  apr_eos apr;
+  eos_had_apr apr;
   apr4_eos apr4;
-  sym4_eos s4e;
-  rmf_eos rmf;
-  rmf_eos rmf_b;
-  rmf_eos rmf_c;
+  eos_had_sym4_base s4e;
+  eos_had_rmf rmf;
+  eos_had_rmf rmf_b;
+  eos_had_rmf rmf_c;
   rmf4_eos rmf4;
   rmf4_eos rmf4_b;
   rmf4_eos rmf4_c;
   rmf4_eos rnew;
   rmf4_eos rhi;
   rmf4_eos rlo;
-  skyrme_eos sk;
+  eos_had_skyrme sk;
   skyrme4_eos sk4;
-  gen_potential_eos mdi;
+  eos_had_potential mdi;
   mdi4_eos mdi4;
 
-  cold_nstar cnx;
+  nstar_cold cnx;
   
   /// ----------------------------------------------------------------
   /// Initialize particles

@@ -24,7 +24,7 @@
 #include <config.h>
 #endif
 
-#include <o2scl/bag_eos.h>
+#include <o2scl/eos_quark_bag.h>
 #include <o2scl/test_mgr.h>
 
 using namespace std;

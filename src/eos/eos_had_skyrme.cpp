@@ -24,13 +24,13 @@
 #include <config.h>
 #endif
 
-#include <o2scl/skyrme_eos.h>
+#include <o2scl/eos_had_skyrme.h>
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-skyrme_eos::skyrme_eos() {
+eos_had_skyrme::eos_had_skyrme() {
 
   parent_method=false;
   mu_at_zero_density=false;
@@ -41,7 +41,7 @@ skyrme_eos::skyrme_eos() {
   fet=&nrf;
 }
 
-int skyrme_eos::calc_temp_e(fermion &ne, fermion &pr, 
+int eos_had_skyrme::calc_temp_e(fermion &ne, fermion &pr, 
 			    double ltemper, thermo &locth) {
   
   double n, x, hamk, ham, ham1, ham2, ham3, ham4, ham5, ham6;
@@ -156,7 +156,7 @@ int skyrme_eos::calc_temp_e(fermion &ne, fermion &pr,
   return success;
 }
 
-int skyrme_eos::calc_e(fermion &ne, fermion &pr, thermo &locth) {
+int eos_had_skyrme::calc_e(fermion &ne, fermion &pr, thermo &locth) {
 
   double x, n, hamk, ham, ham1, ham2, ham3, ham4, ham5, ham6;
   double dhdnn, dhdnp, na, npa, nna, term, term2, common, gn, gp;
@@ -266,11 +266,11 @@ int skyrme_eos::calc_e(fermion &ne, fermion &pr, thermo &locth) {
   return success;
 }
 
-double skyrme_eos::feoa(double nb) {
+double eos_had_skyrme::feoa(double nb) {
   double ret, kr23, beta, t3p;
 
   if (parent_method) {
-    return hadronic_eos::feoa(nb);
+    return eos_had_base::feoa(nb);
   }
   t3p=(a+b)*t3;
   kr23=0.6/(neutron->m+proton->m)*pow(1.5*pi2*nb,2.0/3.0);
@@ -280,11 +280,11 @@ double skyrme_eos::feoa(double nb) {
   return ret;
 }
 
-double skyrme_eos::fmsom(double nb) {
+double eos_had_skyrme::fmsom(double nb) {
   double ret, beta;
 
   if (parent_method) {
-    return hadronic_eos::fmsom(nb);
+    return eos_had_base::fmsom(nb);
   }
   beta=(neutron->m+proton->m)/4.0*(0.25*(3.0*t1+5.0*t2)+t2*x2);
   ret=1.0/(1.0+beta*nb);
@@ -292,11 +292,11 @@ double skyrme_eos::fmsom(double nb) {
   return ret;
 }
 
-double skyrme_eos::fcomp(double nb) {
+double eos_had_skyrme::fcomp(double nb) {
   double ret, kr23, beta, t3p;
 
   if (parent_method) {
-    return hadronic_eos::fcomp(nb);
+    return eos_had_base::fcomp(nb);
   }
   t3p=(a+b)*t3;
   kr23=0.6/(neutron->m+proton->m)*pow(1.5*pi2*nb,2.0/3.0);
@@ -313,11 +313,11 @@ double skyrme_eos::fcomp(double nb) {
   return ret;
 }
 
-double skyrme_eos::fesym(double nb, double pf) {
+double eos_had_skyrme::fesym(double nb, double pf) {
   double ret, kr23;
 
   if (pf!=0.5 || parent_method) {
-    return hadronic_eos::fesym(nb,pf);
+    return eos_had_base::fesym(nb,pf);
   }
   kr23=0.6/(neutron->m+proton->m)*pow(1.5*pi2*nb,2.0/3.0);
   ret=5.0/9.0*kr23+10.0/6.0*(neutron->m+proton->m)*kr23*nb*
@@ -329,11 +329,11 @@ double skyrme_eos::fesym(double nb, double pf) {
   return ret;
 }
 
-double skyrme_eos::fkprime(double nb) {
+double eos_had_skyrme::fkprime(double nb) {
   double ret, kr23, t3p, beta, lmsom;
 
   if (parent_method) {
-    return hadronic_eos::fkprime(nb);
+    return eos_had_base::fkprime(nb);
   }
   t3p=(a+b)*t3;
   kr23=0.6/(neutron->m+proton->m)*pow(1.5*pi2*nb,2.0/3.0);
@@ -345,7 +345,7 @@ double skyrme_eos::fkprime(double nb) {
   return ret;
 }
 
-int skyrme_eos::calpar(double gt0, double gt3, double galpha,
+int eos_had_skyrme::calpar(double gt0, double gt3, double galpha,
 		       double gt1, double gt2) {
 
   ubvector x(3);
@@ -360,8 +360,8 @@ int skyrme_eos::calpar(double gt0, double gt3, double galpha,
   x[1]=gt3;
   x[2]=galpha;
 
-  mm_funct_mfptr<skyrme_eos> fmf(this,&skyrme_eos::calparfun);
-  mm_funct_mfptr<skyrme_eos> fmf2(this,&skyrme_eos::calparfun2);
+  mm_funct_mfptr<eos_had_skyrme> fmf(this,&eos_had_skyrme::calparfun);
+  mm_funct_mfptr<eos_had_skyrme> fmf2(this,&eos_had_skyrme::calparfun2);
   double *vp=0;
 
   if (eos_mroot->msolve(3,x,fmf)!=0) {
@@ -382,7 +382,7 @@ int skyrme_eos::calpar(double gt0, double gt3, double galpha,
   return success;
 }
 
-int skyrme_eos::calparfun(size_t nv, const ubvector &x, ubvector &y) {
+int eos_had_skyrme::calparfun(size_t nv, const ubvector &x, ubvector &y) {
   double t3p, kr23;
   double pres, beta, mnuc=(neutron->m+proton->m)/2.0;
 
@@ -406,7 +406,7 @@ int skyrme_eos::calparfun(size_t nv, const ubvector &x, ubvector &y) {
   return 0;
 }
 
-int skyrme_eos::calparfun2(size_t nv, const ubvector &x, 
+int eos_had_skyrme::calparfun2(size_t nv, const ubvector &x, 
 			   ubvector &y) {
   double kr23, beta;
   double mnuc=(neutron->m+proton->m)/2.0;
@@ -429,7 +429,7 @@ int skyrme_eos::calparfun2(size_t nv, const ubvector &x,
   return 0;
 }
 
-int skyrme_eos::check_landau(double nb, double m) {
+int eos_had_skyrme::check_landau(double nb, double m) {
   double f0, g0, f0p, g0p, f1, g1, f1p, g1p;
   
   landau_nuclear(nb,m,f0,g0,f0p,g0p,f1,g1,f1p,g1p);
@@ -450,7 +450,7 @@ int skyrme_eos::check_landau(double nb, double m) {
   return 0;
 }
 
-int skyrme_eos::landau_nuclear(double nb, double m,
+int eos_had_skyrme::landau_nuclear(double nb, double m,
 			       double &f0, double &g0, double &f0p,
 			       double &g0p, double &f1, double &g1,
 			       double &f1p, double &g1p) {
@@ -482,7 +482,7 @@ int skyrme_eos::landau_nuclear(double nb, double m,
   return 0;
 }
 
-int skyrme_eos::landau_neutron(double nb, double m,
+int eos_had_skyrme::landau_neutron(double nb, double m,
 			       double &f0, double &g0, 
 			       double &f1, double &g1) {
   
@@ -509,7 +509,7 @@ int skyrme_eos::landau_neutron(double nb, double m,
 }
 
 /*
-  int skyrme_eos::calpar_new(double m) {
+  int eos_had_skyrme::calpar_new(double m) {
   double T0=(1.0/msom/m-1.0/m)*n0;
   double kf=pow(3.0*pi2*n0/2.0,1.0/3.0);
   alpha=(comp/9.0+eoa+(0.1/m-2.0/15.0/msom/m)*kf*kf)/

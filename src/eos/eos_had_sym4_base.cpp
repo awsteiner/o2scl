@@ -24,18 +24,18 @@
 #include <config.h>
 #endif
 
-#include <o2scl/sym4_eos.h>
+#include <o2scl/eos_had_sym4_base.h>
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-sym4_eos_base::sym4_eos_base() {
+eos_had_sym4_base_base::eos_had_sym4_base_base() {
   e.init(o2scl_settings.get_convert_units().convert
 	 ("kg","1/fm",o2scl_mks::mass_electron),2.0);
 }
   
-int sym4_eos_base::calc_e_alpha(fermion &ne, fermion &pr, thermo &lth,
+int eos_had_sym4_base_base::calc_e_alpha(fermion &ne, fermion &pr, thermo &lth,
 				double &alphak, double &alphap, double &alphat,
 				double &diff_kin, double &diff_pot,
 				double &ed_kin_nuc, double &ed_pot_nuc) {
@@ -96,7 +96,7 @@ int sym4_eos_base::calc_e_alpha(fermion &ne, fermion &pr, thermo &lth,
   return 0;
 }
     
-double sym4_eos_base::calc_muhat(fermion &ne, fermion &pr) {
+double eos_had_sym4_base_base::calc_muhat(fermion &ne, fermion &pr) {
   double ed_kin, ed_pot, munk, mupk, munp, mupp;
 
   calc_e_sep(ne,pr,ed_kin,ed_pot,munk,mupk,munp,mupp);
@@ -115,7 +115,7 @@ int rmf4_eos::calc_e_sep(fermion &ne, fermion &pr, double &ed_kin,
 			 double &mu_n_pot, double &mu_p_pot) {
   thermo lth;
     
-  int ret=rmf_eos::calc_e(ne,pr,lth);
+  int ret=eos_had_rmf::calc_e(ne,pr,lth);
 
   ed_kin=ne.ed+pr.ed;
   ed_pot=lth.ed-ed_kin;
@@ -132,7 +132,7 @@ int apr4_eos::calc_e_sep(fermion &ne, fermion &pr, double &ed_kin,
 			 double &mu_n_pot, double &mu_p_pot) {
   thermo lth;
 
-  int ret=apr_eos::calc_e(ne,pr,lth);
+  int ret=eos_had_apr::calc_e(ne,pr,lth);
     
   double barn=ne.n+pr.n;
   double xp=pr.n/barn;
@@ -169,7 +169,7 @@ int skyrme4_eos::calc_e_sep(fermion &ne, fermion &pr, double &ed_kin,
 			    double &mu_n_pot, double &mu_p_pot) {
   thermo lth;
     
-  int ret=skyrme_eos::calc_e(ne,pr,lth);
+  int ret=eos_had_skyrme::calc_e(ne,pr,lth);
 
   ed_kin=ne.ed+pr.ed;
   ed_pot=lth.ed-ed_kin;
@@ -336,7 +336,7 @@ int mdi4_eos::calc_e_sep(fermion &ne, fermion &pr, double &ed_kin,
     
   /// Run the normal version to get the effective masses right
   thermo lth;
-  int ret=gen_potential_eos::calc_e(ne,pr,lth);
+  int ret=eos_had_potential::calc_e(ne,pr,lth);
 
   return ret;
 }
@@ -370,7 +370,7 @@ int mdi4_eos::test_separation(fermion &ne, fermion &pr, test_mgr &t) {
     
   /// Run the normal version to get the effective masses right
   thermo lth;
-  gen_potential_eos::calc_e(ne,pr,lth);
+  eos_had_potential::calc_e(ne,pr,lth);
 
   cout << ne.mu << " " << mu_n_kin+mu_n_pot << endl;
   cout << pr.mu << " " << mu_p_kin+mu_p_pot << endl;
@@ -382,12 +382,12 @@ int mdi4_eos::test_separation(fermion &ne, fermion &pr, test_mgr &t) {
   return 0;
 }
 
-int sym4_eos::set_base_eos(sym4_eos_base &seb) {
+int eos_had_sym4_base::set_base_eos(eos_had_sym4_base_base &seb) {
   sp=&seb;
   return 0;
 }
   
-int sym4_eos::test_eos(fermion &ne, fermion &pr, thermo &lth) {
+int eos_had_sym4_base::test_eos(fermion &ne, fermion &pr, thermo &lth) {
   double nn=ne.n, np=pr.n;
   double eden, pres, mun, mup;
     
@@ -419,7 +419,7 @@ int sym4_eos::test_eos(fermion &ne, fermion &pr, thermo &lth) {
   return 0;
 }
 
-int sym4_eos::calc_e(fermion &ne, fermion &pr, thermo &lth) {
+int eos_had_sym4_base::calc_e(fermion &ne, fermion &pr, thermo &lth) {
   double nn=ne.n, np=pr.n;
   double eden, mun, mup;
 

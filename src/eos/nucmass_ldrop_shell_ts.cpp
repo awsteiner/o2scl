@@ -23,10 +23,10 @@
 #include <iostream>
 #include <o2scl/test_mgr.h>
 #include <o2scl/nucmass.h>
-#include <o2scl/ldrop_mass.h>
-#include <o2scl/ldrop_shell.h>
-#include <o2scl/apr_eos.h>
-#include <o2scl/skyrme_eos.h>
+#include <o2scl/nucmass_ldrop.h>
+#include <o2scl/nucmass_ldrop_shell.h>
+#include <o2scl/eos_had_apr.h>
+#include <o2scl/eos_had_skyrme.h>
 #include <o2scl/fermion_nonrel.h>
 #include <o2scl/nucmass_fit.h>
 #include <o2scl/hdf_nucmass_io.h>
@@ -49,9 +49,9 @@ int main(void) {
   double d1, d2, qual;
   nucmass_ame au;
   ame_load(au,"03");
-  ldrop_mass_pair ld;
-  ldrop_shell ld2;
-  apr_eos apr;
+  nucmass_ldrop_pair ld;
+  nucmass_ldrop_shell ld2;
+  eos_had_apr apr;
 
   fermion nrn(o2scl_settings.get_convert_units().convert
 	      ("kg","1/fm",o2scl_mks::mass_neutron),2.0);
@@ -63,18 +63,18 @@ int main(void) {
   nrn.inc_rest_mass=true;
   nrp.inc_rest_mass=true;
 
-  skyrme_eos sk;
+  eos_had_skyrme sk;
   skyrme_load(sk,"SLy4");
 
   cout << "-------------------------------------------------\n" << endl;
 
   // APR
 
-  ld.set_hadronic_eos_temp(sk);
+  ld.set_eos_had_base_temp(sk);
   ld.set_n_and_p(nrn,nrp);
   ld.n0=0.16;
   ld.n1=0.0;
-  cout << "Lead from APR with ldrop_mass_pair: " << endl;
+  cout << "Lead from APR with nucmass_ldrop_pair: " << endl;
   cout << "Mass excess:\t\t " <<  ld.mass_excess(82,126) << endl;
   cout << "Binding energy:\t\t " << ld.binding_energy(82,126)/208.0 << endl;
   cout << "Total mass:\t\t " << ld.total_mass(82,126) << endl;
@@ -83,11 +83,11 @@ int main(void) {
   t.test_rel(au.total_mass(82,126),ld.total_mass(82,126),1.0e-3,
 	     "ame vs ld2");
 
-  ld2.set_hadronic_eos_temp(sk);
+  ld2.set_eos_had_base_temp(sk);
   ld2.set_n_and_p(nrn,nrp);
   ld2.n0=0.16;
   ld2.n1=0.0;
-  cout << "Lead from APR with ldrop_shell: " << endl;
+  cout << "Lead from APR with nucmass_ldrop_shell: " << endl;
   cout << "Mass excess:\t\t " <<  ld2.mass_excess(82,126) << endl;
   cout << "Binding energy:\t\t " << ld2.binding_energy(82,126)/208.0 << endl;
   cout << "Total mass:\t\t " << ld2.total_mass(82,126) << endl;
@@ -97,7 +97,7 @@ int main(void) {
 
   // fit APR
 
-  cout << "ldrop_mass_pair fit:" << endl;
+  cout << "nucmass_ldrop_pair fit:" << endl;
   nucmass_fit mf;
   mf.set_exp_mass(au);
   mf.even_even=false;
@@ -134,7 +134,7 @@ int main(void) {
   ld2.ss=ld.ss;
   ld2.Epair=ld.Epair;
 
-  cout << "ldrop_mass_shell2 fit:" << endl;
+  cout << "nucmass_nucmass_ldrop_shell2 fit:" << endl;
 
   cout << "Before: " << endl;
   cout << ld2.n1 << " " << ld2.n0 << " " << ld2.surften << " " 
@@ -159,7 +159,7 @@ int main(void) {
     cout << "Quality: " << qual << endl;
 
   }
-  t.test_rel(qual,1.1189,1.0e-3,"ldrop_shell qual");
+  t.test_rel(qual,1.1189,1.0e-3,"nucmass_ldrop_shell qual");
   cout << endl;
 
   cout << "-------------------------------------------------\n" << endl;

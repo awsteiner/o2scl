@@ -28,7 +28,7 @@ using namespace o2scl;
 using namespace o2scl;
 using namespace o2scl_hdf;
 
-void o2scl_hdf::gogny_load(o2scl::gogny_eos &ge, std::string model, 
+void o2scl_hdf::gogny_load(o2scl::eos_had_gogny &ge, std::string model, 
 			   bool external) {
   
   std::string fname;
@@ -54,7 +54,7 @@ void o2scl_hdf::gogny_load(o2scl::gogny_eos &ge, std::string model,
   return;
 }
 
-void o2scl_hdf::rmf_load(o2scl::rmf_eos &rmf, std::string model, 
+void o2scl_hdf::rmf_load(o2scl::eos_had_rmf &rmf, std::string model, 
 			bool external) {
   
   std::string fname;
@@ -138,7 +138,7 @@ void o2scl_hdf::rmf_load(o2scl::rmf_eos &rmf, std::string model,
   return;
 }
   
-void o2scl_hdf::skyrme_load(o2scl::skyrme_eos &sk, std::string model, 
+void o2scl_hdf::skyrme_load(o2scl::eos_had_skyrme &sk, std::string model, 
 			   bool external) {
 
   std::string fname;
@@ -203,7 +203,7 @@ void o2scl_hdf::skyrme_load(o2scl::skyrme_eos &sk, std::string model,
 
 #ifdef O2SCL_NEVER_DEFINED
 
-void o2scl_hdf::skyrme_load(hdf_file &hf, o2scl::skyrme_eos &sk, 
+void o2scl_hdf::skyrme_load(hdf_file &hf, o2scl::eos_had_skyrme &sk, 
 			    std::string name) {
 
   hf.getd("t0_hc",sk.t0);
@@ -241,7 +241,7 @@ void o2scl_hdf::skyrme_load(hdf_file &hf, o2scl::skyrme_eos &sk,
 
 #endif
 
-void o2scl_hdf::skyrme_write(o2scl::skyrme_eos &sk, std::string model) {
+void o2scl_hdf::skyrme_write(o2scl::eos_had_skyrme &sk, std::string model) {
   
   std::string fname;
   std::string dir=o2scl::o2scl_settings.get_data_dir();
@@ -255,7 +255,7 @@ void o2scl_hdf::skyrme_write(o2scl::skyrme_eos &sk, std::string model) {
   return;
 }
   
-void o2scl_hdf::skyrme_write(hdf_file &hf, o2scl::skyrme_eos &sk, 
+void o2scl_hdf::skyrme_write(hdf_file &hf, o2scl::eos_had_skyrme &sk, 
 			    std::string name) {
   
   // Start group
@@ -264,7 +264,7 @@ void o2scl_hdf::skyrme_write(hdf_file &hf, o2scl::skyrme_eos &sk,
   hf.set_current_id(group);
       
   // Add typename
-  hf.sets_fixed("o2scl_type","skyrme_eos");
+  hf.sets_fixed("o2scl_type","eos_had_skyrme");
 
   // Write data
   hf.setd("t0_hc",sk.t0*o2scl_const::hc_mev_fm);
@@ -284,7 +284,7 @@ void o2scl_hdf::skyrme_write(hdf_file &hf, o2scl::skyrme_eos &sk,
   hf.setd("b4p_hc",sk.b4p*o2scl_const::hc_mev_fm);
   hf.sets("reference",sk.reference);
 
-  // Close skyrme_eos group
+  // Close eos_had_skyrme group
   hf.close_group(group);
       
   // Return location to previous value

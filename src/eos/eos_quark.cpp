@@ -24,34 +24,34 @@
 #include <config.h>
 #endif
 
-#include <o2scl/quark_eos.h>
+#include <o2scl/eos_quark.h>
 
 using namespace std;
 using namespace o2scl;
 
-quark_eos::quark_eos() {
+eos_quark::eos_quark() {
   fet=&def_fet;
 }
 
-int quark_eos::calc_p(quark &u, quark &d, quark &s, thermo &th) {
-  O2SCL_ERR("Tried to run missing function quark_eos::calc_p().",-1);
+int eos_quark::calc_p(quark &u, quark &d, quark &s, thermo &th) {
+  O2SCL_ERR("Tried to run missing function eos_quark::calc_p().",-1);
   return -1;
 }
 
-int quark_eos::calc_e(quark &u, quark &d, quark &s, thermo &th) {
-  O2SCL_ERR("Tried to run missing function quark_eos::calc_e().",-1);
+int eos_quark::calc_e(quark &u, quark &d, quark &s, thermo &th) {
+  O2SCL_ERR("Tried to run missing function eos_quark::calc_e().",-1);
   return -1;
 }
 
-int quark_eos::calc_temp_p(quark &u, quark &d, quark &s,
+int eos_quark::calc_temp_p(quark &u, quark &d, quark &s,
 			  double temper, thermo &th) {
-  O2SCL_ERR("Tried to run missing function quark_eos::calc_temp_p().",-1);
+  O2SCL_ERR("Tried to run missing function eos_quark::calc_temp_p().",-1);
   return -1;
 }
 
-int quark_eos::calc_temp_e(quark &u, quark &d, quark &s, 
+int eos_quark::calc_temp_e(quark &u, quark &d, quark &s, 
 			  double temper, thermo &th) {
-  O2SCL_ERR("Tried to run missing function quark_eos::calc_temp_e().",-1);
+  O2SCL_ERR("Tried to run missing function eos_quark::calc_temp_e().",-1);
   return -1;
 }
 

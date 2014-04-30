@@ -25,7 +25,7 @@
 
 #include <cmath>
 #include <o2scl/constants.h>
-#include <o2scl/hadronic_eos.h>
+#include <o2scl/eos_had_base.h>
 #include <o2scl/table3d.h>
 
 #ifndef DOXYGEN_NO_O2NS
@@ -41,17 +41,17 @@ namespace o2scl {
       accurately compute derivatives, including compressibility and
       symmetry energy.
   */
-  class gogny_eos : public hadronic_eos_eden {
+  class eos_had_gogny : public eos_had_base_eden {
     
   public:
 
     /// The original EOS data 
     table3d t3d;
     
-    gogny_eos() {
+    eos_had_gogny() {
     }
 
-    virtual ~gogny_eos() {
+    virtual ~eos_had_gogny() {
     }
 
     /** \brief Equation of state as a function of density
@@ -59,7 +59,7 @@ namespace o2scl {
     virtual int calc_e(fermion &ne, fermion &pr, thermo &th) {
       
       if (t3d.get_nx()==0) {
-	O2SCL_ERR_RET("No data loaded in gogny_eos::calc_e().",
+	O2SCL_ERR_RET("No data loaded in eos_had_gogny::calc_e().",
 		      exc_einval);
       }
 

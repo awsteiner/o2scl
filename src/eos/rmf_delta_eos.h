@@ -23,7 +23,7 @@
 #ifndef O2SCL_RMF_DELTA_EOS_H
 #define O2SCL_RMF_DELTA_EOS_H
 
-#include <o2scl/rmf_eos.h>
+#include <o2scl/eos_had_rmf.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -89,7 +89,7 @@ namespace o2scl {
       \future Finish the finite temperature EOS 
 
    */
-  class rmf_delta_eos : public rmf_eos {
+  class eos_had_rmf_delta : public eos_had_rmf {
   public:
 
     /// The mass of the scalar-isovector field

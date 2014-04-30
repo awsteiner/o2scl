@@ -24,7 +24,7 @@
 #include <config.h>
 #endif
 
-#include <o2scl/bps_eos.h>
+#include <o2scl/eos_crust.h>
 // For unit conversions
 #include <o2scl/lib_settings.h>
 
@@ -32,7 +32,7 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-bps_eos::bps_eos() {
+eos_crust::eos_crust() {
   e.init(o2scl_settings.get_convert_units().convert
 	 ("kg","1/fm",o2scl_mks::mass_electron),2.0);
   // Put an initial guess for the electron density - Is this necessary?
@@ -46,15 +46,15 @@ bps_eos::bps_eos() {
   nmp=&def_mass;
 }
 
-double bps_eos::lattice_energy(int Z) {
+double eos_crust::lattice_energy(int Z) {
   return -1.444*pow(Z,2.0/3.0)*o2scl_const::fine_structure*pow(e.n,4.0/3.0);
 }
 
-double bps_eos::mass_formula(int Z, int A) {
+double eos_crust::mass_formula(int Z, int A) {
   return nmp->total_mass(Z,A-Z)/hc_mev_fm;
 }
 
-int bps_eos::eq274(size_t nv, const ubvector &nx, ubvector &ny, 
+int eos_crust::eq274(size_t nv, const ubvector &nx, ubvector &ny, 
 		   int &Zt) {
 
   // Lattice energy density and pressure
@@ -81,12 +81,12 @@ int bps_eos::eq274(size_t nv, const ubvector &nx, ubvector &ny,
   return 0;
 }
 
-double bps_eos::gibbs(int Z, int A) {
+double eos_crust::gibbs(int Z, int A) {
   double g;
   ubvector nx(1);
   
   nx[0]=e.n;
-  mm_funct_mfptr_param<bps_eos,int> mff(this,&bps_eos::eq274,Z);
+  mm_funct_mfptr_param<eos_crust,int> mff(this,&eos_crust::eq274,Z);
   gs.msolve(1,nx,mff);
   e.n=nx[0];
   fzt.kf_from_density(e);
@@ -99,7 +99,7 @@ double bps_eos::gibbs(int Z, int A) {
   return g;
 }
 
-double bps_eos::energy(double barn, int Z, int A) {
+double eos_crust::energy(double barn, int Z, int A) {
   double ed;
 
   fzt.calc_density_zerot(e);
@@ -110,7 +110,7 @@ double bps_eos::energy(double barn, int Z, int A) {
   return ed;
 }
 
-int bps_eos::calc_pressure(thermo &th, double &barn, int &minz, 
+int eos_crust::calc_pressure(thermo &th, double &barn, int &minz, 
 			   int &mina) {
   double gb, mingb=10.0, MAZ, epsL, ne=0.0;
   int ret;
@@ -153,7 +153,7 @@ int bps_eos::calc_pressure(thermo &th, double &barn, int &minz,
   return 0;
 }
 
-int bps_eos::calc_density(double barn, thermo &th, int &Z, int &A) {
+int eos_crust::calc_density(double barn, thermo &th, int &Z, int &A) {
   double ed, mined=10.0;
   int mina=0, minz=0;
 
@@ -190,7 +190,7 @@ int bps_eos::calc_density(double barn, thermo &th, int &Z, int &A) {
   return 0;
 }
 
-int bps_eos::calc_density_fixedA(double barn, thermo &th, int &Z, int A) {
+int eos_crust::calc_density_fixedA(double barn, thermo &th, int &Z, int A) {
   double ed, mined=10.0;
   int mina=0, minz=0;
 

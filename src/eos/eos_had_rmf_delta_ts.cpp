@@ -22,7 +22,7 @@
 */
 #include <o2scl/constants.h>
 #include <o2scl/fermion.h>
-#include <o2scl/rmf_delta_eos.h>
+#include <o2scl/eos_had_rmf_delta.h>
 #include <o2scl/test_mgr.h>
 
 using namespace std;
@@ -30,7 +30,7 @@ using namespace o2scl;
 using namespace o2scl_const;
 
 int main(void) {
-  rmf_delta_eos red;
+  eos_had_rmf_delta red;
   double gs;
   test_mgr t;
   t.set_output_level(1);

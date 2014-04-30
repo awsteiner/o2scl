@@ -20,7 +20,7 @@
 
   -------------------------------------------------------------------
 */
-#include <o2scl/hlps_eos.h>
+#include <o2scl/eos_had_hlps.h>
 #include <o2scl/hdf_file.h>
 #include <o2scl/constants.h>
 
@@ -31,7 +31,7 @@ using namespace o2scl_const;
 
 // --------------------------------------------------------------
 
-hlps_eos::hlps_eos() {
+eos_had_hlps::eos_had_hlps() {
 
 #ifdef O2SCL_NEVER_DEFINED
   
@@ -122,7 +122,7 @@ hlps_eos::hlps_eos() {
   etaL=0.86;
 }
 
-void hlps_eos::fix_coeffs(double M, double B, double K) {
+void eos_had_hlps::fix_coeffs(double M, double B, double K) {
 
   double lastg;
   for(size_t i=0;i<100;i++) {
@@ -160,7 +160,7 @@ void hlps_eos::fix_coeffs(double M, double B, double K) {
   return;
 }
 
-void hlps_eos::fix_neutron_matter(double M, double Eneut, 
+void eos_had_hlps::fix_neutron_matter(double M, double Eneut, 
 				  double dEneut) {
   double C=cbrt(4.0/n0/n0/pi2/pi2)/5.0/(gamma-1.0);
   etaL=C*(-10.0*Eneut*M+10.0*dEneut*M*n0+cbrt(9.0*n0*n0*pi2*pi2))/cbrt(9.0);
@@ -169,7 +169,7 @@ void hlps_eos::fix_neutron_matter(double M, double Eneut,
   return;
 }
 
-int hlps_eos::calc_e(fermion &ln, fermion &lp, thermo &lth) {
+int eos_had_hlps::calc_e(fermion &ln, fermion &lp, thermo &lth) {
   double xp, barn;
   
   barn=ln.n+lp.n;

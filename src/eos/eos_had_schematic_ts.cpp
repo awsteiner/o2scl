@@ -24,10 +24,10 @@
 #include <config.h>
 #endif
 
-#include <o2scl/schematic_eos.h>
-#include <o2scl/skyrme_eos.h>
-#include <o2scl/cold_nstar.h>
-#include <o2scl/apr_eos.h>
+#include <o2scl/eos_had_schematic.h>
+#include <o2scl/eos_had_skyrme.h>
+#include <o2scl/nstar_cold.h>
+#include <o2scl/eos_had_apr.h>
 #include <o2scl/test_mgr.h>
 #include <o2scl/mroot_hybrids.h>
 #include <o2scl/deriv_gsl.h>
@@ -38,7 +38,7 @@ using namespace o2scl;
 using namespace o2scl_const;
 
 int main(void) {
-  schematic_eos se, *se2;
+  eos_had_schematic se, *se2;
   double dtemp, n0, nb;
   test_mgr t;
   t.set_output_level(1);
@@ -127,7 +127,7 @@ int main(void) {
     t.test_rel(mup,(der3-der1)/h,1.0e-5,"mup");
   }
 
-  // See how calc_p() works with an object of type schematic_eos
+  // See how calc_p() works with an object of type eos_had_schematic
   n.n=0.16;
   p.n=0.16;
   for(double mu=4.52;mu<=4.68;mu+=0.01) {

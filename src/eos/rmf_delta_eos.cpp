@@ -20,12 +20,12 @@
 
   -------------------------------------------------------------------
 */
-#include <o2scl/rmf_delta_eos.h>
+#include <o2scl/eos_had_rmf_delta.h>
 
 using namespace std;
 using namespace o2scl;
 
-int rmf_delta_eos::calc_e(fermion &ne, fermion &pr, thermo &lth) {
+int eos_had_rmf_delta::calc_e(fermion &ne, fermion &pr, thermo &lth) {
   ubvector x(6), y(6);
   int ret;
   
@@ -62,8 +62,8 @@ int rmf_delta_eos::calc_e(fermion &ne, fermion &pr, thermo &lth) {
   n_baryon=ne.n+pr.n;
   n_charge=pr.n;
   
-  mm_funct_mfptr<rmf_delta_eos> 
-    fmf(this,&rmf_delta_eos::calc_e_solve_fun);
+  mm_funct_mfptr<eos_had_rmf_delta> 
+    fmf(this,&eos_had_rmf_delta::calc_e_solve_fun);
   
   if (guess_set) {
     
@@ -136,14 +136,14 @@ int rmf_delta_eos::calc_e(fermion &ne, fermion &pr, thermo &lth) {
   del=x[5];
   
   if (ret!=0) {
-    O2SCL_ERR_RET("msolve failed in rmf_eos::calc_e(fermion,fermion,thermo).",
+    O2SCL_ERR_RET("msolve failed in eos_had_rmf::calc_e(fermion,fermion,thermo).",
 		exc_efailed);
   }
 
   return 0;
 }
 
-int rmf_delta_eos::calc_temp_p(fermion& ne, fermion& pr, double temper,
+int eos_had_rmf_delta::calc_temp_p(fermion& ne, fermion& pr, double temper,
 			       double sig, double ome, double lrho, 
 			       double delta, double &f1, double &f2, 
 			       double &f3, double &f4, thermo& lth) {
@@ -219,7 +219,7 @@ int rmf_delta_eos::calc_temp_p(fermion& ne, fermion& pr, double temper,
   return success;
 }
 
-int rmf_delta_eos::calc_p(fermion &ne, fermion &pr, 
+int eos_had_rmf_delta::calc_p(fermion &ne, fermion &pr, 
 			  double sig, double ome, double rhof, double delta,
 			  double &f1, double &f2, double &f3, double &f4,
 			  thermo &th) {
@@ -290,13 +290,13 @@ int rmf_delta_eos::calc_p(fermion &ne, fermion &pr,
   
   if (!o2scl::is_finite(th.pr) || !o2scl::is_finite(th.ed)) {
     O2SCL_ERR2_RET("Pressure or energy not finite in ",
-		   "rmf_delta_eos::calc_p().",exc_efailed);
+		   "eos_had_rmf_delta::calc_p().",exc_efailed);
   }
   
   return success;
 }
 
-int rmf_delta_eos::zero_pressure(size_t nv, const ubvector &ex, 
+int eos_had_rmf_delta::zero_pressure(size_t nv, const ubvector &ex, 
 				 ubvector &ey) {
   double f1,f2,f3,f4,sig,ome,lrho,delta;
   fermion *n=neutron, *p=proton;
@@ -333,7 +333,7 @@ int rmf_delta_eos::zero_pressure(size_t nv, const ubvector &ex,
   return 0;
 }
 
-int rmf_delta_eos::calc_e_solve_fun(size_t nv, const ubvector &ex, 
+int eos_had_rmf_delta::calc_e_solve_fun(size_t nv, const ubvector &ex, 
 				    ubvector &ey) {
   double f1,f2,f3,f4,sig,ome,lrho,delta;
 
@@ -347,10 +347,10 @@ int rmf_delta_eos::calc_e_solve_fun(size_t nv, const ubvector &ex,
   calc_p(*neutron,*proton,sig,ome,lrho,delta,f1,f2,f3,f4,*eos_thermo);
   
   if (!ce_prot_matter && neutron->nu<neutron->ms) {
-    O2SCL_ERR_RET("ne.nu<ne.ms in rmf_eos::calc_e_solve_fun().",exc_efailed);
+    O2SCL_ERR_RET("ne.nu<ne.ms in eos_had_rmf::calc_e_solve_fun().",exc_efailed);
   }
   if (!ce_neut_matter && proton->nu<proton->ms) {
-    O2SCL_ERR_RET("pr.nu<pr.ms in rmf_eos::calc_e_solve_fun().",exc_efailed);
+    O2SCL_ERR_RET("pr.nu<pr.ms in eos_had_rmf::calc_e_solve_fun().",exc_efailed);
   }
 
   if (ce_neut_matter) {
@@ -371,7 +371,7 @@ int rmf_delta_eos::calc_e_solve_fun(size_t nv, const ubvector &ex,
   for(int i=0;i<6;i++) {
     if (!o2scl::is_finite(ex[i]) || !o2scl::is_finite(ey[i])) {
       O2SCL_ERR_RET((((string)"Eq. ")+itos(i)+
-		  " not finite in rmf_eos::calc_e_solve_fun().").c_str(),
+		  " not finite in eos_had_rmf::calc_e_solve_fun().").c_str(),
 		  exc_efailed);
     }
   }
@@ -379,7 +379,7 @@ int rmf_delta_eos::calc_e_solve_fun(size_t nv, const ubvector &ex,
   return 0;
 }
 
-void rmf_delta_eos::saturation() {
+void eos_had_rmf_delta::saturation() {
   cout << "In saturation: " << endl;
   ubvector x(6);
   int test;
@@ -398,8 +398,8 @@ void rmf_delta_eos::saturation() {
     x[5]=0.0;
   }
   
-  mm_funct_mfptr<rmf_delta_eos> 
-    fmf(this,&rmf_delta_eos::zero_pressure);
+  mm_funct_mfptr<eos_had_rmf_delta> 
+    fmf(this,&eos_had_rmf_delta::zero_pressure);
   int vpx=0;
   test=sat_mroot->msolve(6,x,fmf);
   
@@ -409,7 +409,7 @@ void rmf_delta_eos::saturation() {
   del=x[5];
 
   if (test!=0) {
-    O2SCL_ERR("Solver failed in rmf_eos::saturation().",exc_efailed);
+    O2SCL_ERR("Solver failed in eos_had_rmf::saturation().",exc_efailed);
   }
   
   n0=neutron->n+proton->n;

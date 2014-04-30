@@ -40,16 +40,16 @@ namespace o2scl {
 
   /** \brief A EOS base class for the TOV solver
   */
-  class tov_eos {
+  class eos_tov {
     
   public:
     
-    tov_eos() {
+    eos_tov() {
       baryon_column=false;
       verbose=1;
     }
 
-    virtual ~tov_eos() {}
+    virtual ~eos_tov() {}
     
     /// Control for output (default 1)
     int verbose;
@@ -119,7 +119,7 @@ namespace o2scl {
 
       \future Figure out what to do with the buchfun() function
   */
-  class tov_buchdahl_eos : public tov_eos {
+  class tov_buchdahl_eos : public eos_tov {
     
   public:
 
@@ -181,7 +181,7 @@ namespace o2scl {
       The quantity \f$ K \f$ must be in units of 
       \f$ \left(M_{\odot}/km^3\right)^{-1/n} \f$ .
   */
-  class tov_polytrope_eos : public tov_eos {
+  class tov_polytrope_eos : public eos_tov {
     
   public:
 
@@ -289,7 +289,7 @@ namespace o2scl {
 
       \todo Read different vector types than just std::vector<>. 
   */
-  class tov_new_eos : public tov_eos {
+  class tov_new_eos : public eos_tov {
     
   public:
     

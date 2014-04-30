@@ -24,13 +24,13 @@
 #include <config.h>
 #endif
 
-#include <o2scl/cold_nstar.h>
+#include <o2scl/nstar_cold.h>
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-cold_nstar::cold_nstar() : eost(new table_units<>) {
+nstar_cold::nstar_cold() : eost(new table_units<>) {
 
   def_n.init(o2scl_settings.get_convert_units().convert
 	     ("kg","1/fm",o2scl_mks::mass_neutron),2.0);
@@ -49,10 +49,10 @@ cold_nstar::cold_nstar() : eost(new table_units<>) {
   eost->inc_maxlines(1000);
   
   def_tov.verbose=1;
-  def_tov_eos.verbose=1;
+  def_eos_tov.verbose=1;
 
   def_tov.set_units("1/fm^4","1/fm^4","1/fm^3");
-  def_tov_eos.default_low_dens_eos();
+  def_eos_tov.default_low_dens_eos();
   tp=&def_tov;
 
   acausal=0.0;
@@ -78,7 +78,7 @@ cold_nstar::cold_nstar() : eost(new table_units<>) {
   well_formed=true;
 }
 
-double cold_nstar::solve_fun(double x) {
+double nstar_cold::solve_fun(double x) {
   double y;
   
   np->n=x;
@@ -99,7 +99,7 @@ double cold_nstar::solve_fun(double x) {
   return y;
 }
 
-void cold_nstar::calc_eos(double np_0) {
+void nstar_cold::calc_eos(double np_0) {
 
   if (verbose>0) {
     cout << "Starting calc_eos()." << endl;
@@ -139,7 +139,7 @@ void cold_nstar::calc_eos(double np_0) {
   double oldpr=0.0;
   pressure_flat=0.0;
   
-  funct_mfptr<cold_nstar> sf(this,&cold_nstar::solve_fun);
+  funct_mfptr<nstar_cold> sf(this,&nstar_cold::solve_fun);
   
   if (verbose>0) {
     cout << "baryon dens neutrons    protons     electrons   " 
@@ -159,7 +159,7 @@ void cold_nstar::calc_eos(double np_0) {
       // We don't use the CONV macro here because we
       // want to return only if err_nonconv is true
       if (err_nonconv) {
-	O2SCL_ERR("Solver failed in cold_nstar::calc_eos().",
+	O2SCL_ERR("Solver failed in nstar_cold::calc_eos().",
 		      exc_efailed);
       }
     }
@@ -250,7 +250,7 @@ void cold_nstar::calc_eos(double np_0) {
     // We don't use the CONV macro here because we
     // want to return only if err_nonconv is true
     if (err_nonconv) {
-      O2SCL_ERR("EOS not well-formed in cold_nstar::calc_eos().",
+      O2SCL_ERR("EOS not well-formed in nstar_cold::calc_eos().",
 		    exc_efailed);
     }
   }
@@ -362,7 +362,7 @@ void cold_nstar::calc_eos(double np_0) {
   return;
 }
 
-double cold_nstar::calc_urca(double np_0) {
+double nstar_cold::calc_urca(double np_0) {
   int ret;
   double old_urca=0.0, urca;
   
@@ -370,7 +370,7 @@ double cold_nstar::calc_urca(double np_0) {
   if (fabs(np_0)<1.0e-12) x=nb_start/3.0;
   else x=np_0;
 
-  funct_mfptr<cold_nstar> sf(this,&cold_nstar::solve_fun);
+  funct_mfptr<nstar_cold> sf(this,&nstar_cold::solve_fun);
   
   bool success=true;
   for(barn=nb_start;barn<=nb_end+dnb/10.0;barn+=dnb) {
@@ -401,22 +401,22 @@ double cold_nstar::calc_urca(double np_0) {
   return 0.0;
 }
 
-void cold_nstar::calc_nstar() {
-  def_tov_eos.read_table(*eost,"ed","pr","nb");
+void nstar_cold::calc_nstar() {
+  def_eos_tov.read_table(*eost,"ed","pr","nb");
   
   tp->set_units("1/fm^4","1/fm^4","1/fm^3");
-  tp->set_eos(def_tov_eos);
+  tp->set_eos(def_eos_tov);
   
   tp->mvsr();
   
   return;
 }
 
-void cold_nstar::fixed(double target_mass) {
-  def_tov_eos.read_table(*eost,"ed","pr","nb");
+void nstar_cold::fixed(double target_mass) {
+  def_eos_tov.read_table(*eost,"ed","pr","nb");
   
   tp->set_units("1/fm^4","1/fm^4","1/fm^3");
-  tp->set_eos(def_tov_eos);
+  tp->set_eos(def_eos_tov);
   
   tp->fixed(target_mass);
   

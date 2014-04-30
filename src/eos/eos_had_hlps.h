@@ -27,7 +27,7 @@
 
 #include <o2scl/poly.h>
 #include <o2scl/fermion.h>
-#include <o2scl/hadronic_eos.h>
+#include <o2scl/eos_had_base.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -51,7 +51,7 @@ namespace o2scl {
       the pressure. The \f$ 2/5 \f$ factor in front should be 
       \f$ 1/5 \f$ .
   */
-  class hlps_eos : public hadronic_eos_eden {
+  class eos_had_hlps : public eos_had_base_eden {
 
   protected:
 
@@ -69,9 +69,9 @@ namespace o2scl {
     double etaL;
     //@}
 
-    hlps_eos();
+    eos_had_hlps();
 
-    virtual ~hlps_eos() {};
+    virtual ~eos_had_hlps() {};
 
     /** \brief Fix 'alpha', 'eta' and 'gamma' from saturation properties
 
@@ -93,8 +93,8 @@ namespace o2scl {
     virtual int calc_e(fermion &ln, fermion &lp, 
 		       thermo &lth);
 
-    /// Return string denoting type ("hlps_eos")
-    virtual const char *type() { return "hlps_eos"; }
+    /// Return string denoting type ("eos_had_hlps")
+    virtual const char *type() { return "eos_had_hlps"; }
 
   };
 

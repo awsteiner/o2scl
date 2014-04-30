@@ -36,12 +36,12 @@ namespace o2scl {
 
   /** \brief Quark matter equation of state base
   */
-  class quark_eos : public eos {
+  class eos_quark : public eos {
   public:
 
-    quark_eos();
+    eos_quark();
 
-    virtual ~quark_eos() {};
+    virtual ~eos_quark() {};
 
     /// Calculate equation of state as a function of chemical potentials
     virtual int calc_p(quark &u, quark &d, quark &s, thermo &th);
@@ -57,8 +57,8 @@ namespace o2scl {
     virtual int calc_temp_e(quark &u, quark &d, quark &s, 
 			    double temper, thermo &th);
   
-    /// Return string denoting type ("quark_eos")
-    virtual const char *type() { return "quark_eos"; }
+    /// Return string denoting type ("eos_quark")
+    virtual const char *type() { return "eos_quark"; }
 
     /// Object for computing fermion thermodynamics
     fermion_eval_thermo *fet;

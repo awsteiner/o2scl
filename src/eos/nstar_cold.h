@@ -23,7 +23,7 @@
 #ifndef O2SCL_COLD_NSTAR_H
 #define O2SCL_COLD_NSTAR_H
 
-#include <o2scl/hadronic_eos.h>
+#include <o2scl/eos_had_base.h>
 #include <o2scl/tov_solve.h>
 #include <o2scl/tov_solve.h>
 #include <o2scl/table.h>
@@ -31,7 +31,7 @@
 #include <o2scl/root_cern.h>
 #include <o2scl/mroot_cern.h>
 #include <o2scl/mroot_hybrids.h>
-#include <o2scl/tov_eos.h>
+#include <o2scl/eos_tov.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -39,7 +39,7 @@ namespace o2scl {
 
   /** \brief Naive static cold neutron star
 
-      This uses hadronic_eos::calc_e() to compute the equation of 
+      This uses eos_had_base::calc_e() to compute the equation of 
       state of zero-temperature beta-equilibrated neutron star
       matter and tov_solve::mvsr() to compute the mass versus
       radius curve.
@@ -49,7 +49,7 @@ namespace o2scl {
       after a conversion to units of \f$ 1/\mathrm{fm} \f$.
 
       There is an example for the usage of this class given
-      in the \ref ex_cold_nstar_sect.
+      in the \ref ex_nstar_cold_sect.
 
       \hline
       \b EOS \b Output
@@ -157,11 +157,11 @@ namespace o2scl {
       \future Warn if the EOS becomes pure neutron matter.
   */
 
-  class cold_nstar {
+  class nstar_cold {
 
   public:
 
-    cold_nstar();
+    nstar_cold();
 
     /// \name Basic operation
     //@{
@@ -169,7 +169,7 @@ namespace o2scl {
 	
         This should be set before calling calc_eos().
     */
-    void set_eos(hadronic_eos &he) {
+    void set_eos(eos_had_base &he) {
       hep=&he;
       eos_set=true;
       return;
@@ -345,7 +345,7 @@ namespace o2scl {
     root_cern<funct> def_root;
 
     /// Default EOS object for the TOV solver
-    tov_new_eos def_tov_eos;
+    tov_new_eos def_eos_tov;
     //@}
 
 #ifndef DOXYGEN_INTERNAL
@@ -370,7 +370,7 @@ namespace o2scl {
     fermion mu;
 
     /// A pointer to the equation of state
-    hadronic_eos *hep;
+    eos_had_base *hep;
 
     /// A pointer to the neutron
     fermion *np;

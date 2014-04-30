@@ -74,19 +74,19 @@ namespace o2scl {
       pressure (for a fixed baryon number density).
 
       \future Can the pressure be made to match more closely?
-      \future Convert to a \ref o2scl::hadronic_eos object and offer an
+      \future Convert to a \ref o2scl::eos_had_base object and offer an
       associated interface?
 
   */
-  class bps_eos : public eos {
+  class eos_crust : public eos {
 
   public:
 
     typedef boost::numeric::ublas::vector<double> ubvector;
 
-    bps_eos();
+    eos_crust();
     
-    virtual ~bps_eos() {};
+    virtual ~eos_crust() {};
     
     /** \brief Calculate the equation of state as a function of
 	the baryon number density \c barn
@@ -125,8 +125,8 @@ namespace o2scl {
      */
     virtual double mass_formula(int Z, int A);
     
-    /// Return string denoting type ("bps_eos")
-    virtual const char *type() { return "bps_eos"; }
+    /// Return string denoting type ("eos_crust")
+    virtual const char *type() { return "eos_crust"; }
     
     /// Default mass formula
     nucmass_semi_empirical def_mass;

@@ -25,7 +25,7 @@
 
 #include <o2scl/constants.h>
 #include <o2scl/part.h>
-#include <o2scl/quark_eos.h>
+#include <o2scl/eos_quark.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -42,13 +42,13 @@ namespace o2scl {
       if the temperature is less than or equal to 0.
   */
 
-  class bag_eos : public quark_eos {
+  class eos_quark_bag : public eos_quark {
 
   public:
 
-    bag_eos();
+    eos_quark_bag();
 
-    virtual ~bag_eos() {};
+    virtual ~eos_quark_bag() {};
 
     virtual int calc_p(quark &u, quark &d, quark &s, thermo &th);
 
@@ -75,8 +75,8 @@ namespace o2scl {
     /// The bag constant in \f$ fm^{-4}\f$ (default \f$200/(\hbar c) \f$).
     double bag_constant;
 
-    /// Return string denoting type ("bag_eos")
-    virtual const char *type() { return "bag_eos"; }
+    /// Return string denoting type ("eos_quark_bag")
+    virtual const char *type() { return "eos_quark_bag"; }
   };
 
 #ifndef DOXYGEN_NO_O2NS

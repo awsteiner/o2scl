@@ -24,7 +24,7 @@
 #include <config.h>
 #endif
 
-#include <o2scl/gogny_eos.h>
+#include <o2scl/eos_had_gogny.h>
 #include <o2scl/hdf_eos_io.h>
 #include <o2scl/fermion.h>
 #include <o2scl/test_mgr.h>
@@ -50,7 +50,7 @@ int main(void) {
 	    ("kg","1/fm",o2scl_mks::mass_proton),2.0);
   thermo th;
     
-  gogny_eos ge;
+  eos_had_gogny ge;
 
   cout.setf(ios::showpos);
 

@@ -25,7 +25,7 @@
 
 #include <cmath>
 #include <o2scl/constants.h>
-#include <o2scl/hadronic_eos.h>
+#include <o2scl/eos_had_base.h>
 #include <o2scl/fermion.h>
 #include <o2scl/fermion_nonrel.h>
 
@@ -120,7 +120,7 @@ namespace o2scl {
       \future There is some repetition between calc_e() and calc_temp_e() 
       that possibly could be removed.
   */
-  class apr_eos : public hadronic_eos_temp_eden {
+  class eos_had_apr : public eos_had_base_temp_eden {
 
 #ifndef DOXYGEN_INTERNAL
 
@@ -139,9 +139,9 @@ namespace o2scl {
     /** \brief Create an EOS object with the default parameter 
 	set (\f$ A18 + UIX^{*}+\delta v \f$).
     */
-    apr_eos();
+    eos_had_apr();
 
-    virtual ~apr_eos();
+    virtual ~eos_had_apr();
 
     /** 
 	\name Choice of phase
@@ -172,10 +172,10 @@ namespace o2scl {
     
     /** \brief Compute the compressibility
 
-	See general notes at hadronic_eos::fcomp(). This computes the
+	See general notes at eos_had_base::fcomp(). This computes the
 	compressibility (at fixed proton fraction = 0.5) exactly,
 	unless \ref parent_method is true in which case the derivative
-	is taken numerically in hadronic_eos::fcomp().
+	is taken numerically in eos_had_base::fcomp().
      */
     double fcomp(double nb);
 
@@ -205,7 +205,7 @@ namespace o2scl {
 
     /** \brief Calculate Q's for semi-infinite nuclear matter
     
-	For general discussion, see the documentation to hadronic_eos::qs().
+	For general discussion, see the documentation to eos_had_base::qs().
 
 	For APR, we set \f$ x_1=x_2=0 \f$ so that \f$ Q_i=P_i/2 \f$ and then
 	\f{eqnarray*}
@@ -246,20 +246,20 @@ namespace o2scl {
       return 0;
     }
 
-    /// Return string denoting type ("apr_eos")
-    virtual const char *type() { return "apr_eos"; }
+    /// Return string denoting type ("eos_had_apr")
+    virtual const char *type() { return "eos_had_apr"; }
 
-    /** \brief If true, use the methods from hadronic_eos for fcomp()
+    /** \brief If true, use the methods from eos_had_base for fcomp()
 
 	This can be set to true to check the difference in the
 	compressibility wbetween the exact expressions and the
-	numerical values from class hadronic_eos.
+	numerical values from class eos_had_base.
 
 	\future This function is probably unnecessary, as the
 	syntax
 	\code
-	apr_eos apr;
-	ccout << apr.hadronic_eos::fcomp(0.16) << endl;
+	eos_had_apr apr;
+	ccout << apr.eos_had_base::fcomp(0.16) << endl;
 	\endcode
 	works just as well.
     */

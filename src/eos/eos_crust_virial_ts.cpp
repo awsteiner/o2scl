@@ -25,7 +25,7 @@
 #endif
 
 #include <o2scl/test_mgr.h>
-#include <o2scl/virial_eos.h>
+#include <o2scl/eos_crust_virial.h>
 #include <o2scl/fermion_rel.h>
 
 using namespace std;
@@ -55,7 +55,7 @@ int main(void) {
 
   thermo th;
   double T;
-  virial_eos ve;
+  eos_crust_virial ve;
   fermion_rel rf;
 
   vector<double> nba, pra, soaa;

@@ -24,7 +24,7 @@
 #include <config.h>
 #endif
 
-#include <o2scl/nambujl_eos.h>
+#include <o2scl/eos_quark_njl.h>
 #include <o2scl/test_mgr.h>
 #include <o2scl/deriv_gsl.h>
 #include <o2scl/mroot_hybrids.h>
@@ -38,11 +38,11 @@ typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
 // Prevent warnings about global variables by creating a namespace
-namespace nambujl_eos_ts_ns {
+namespace eos_quark_njl_ts_ns {
 
-  nambujl_eos njx;
-  nambujl_eos njt;
-  nambujl_eos nj;
+  eos_quark_njl njx;
+  eos_quark_njl njt;
+  eos_quark_njl nj;
 
   quark u(njx.up_default_mass,6.0);
   quark d(njx.down_default_mass,6.0);
@@ -90,7 +90,7 @@ namespace nambujl_eos_ts_ns {
 
 }
 
-using namespace nambujl_eos_ts_ns;
+using namespace eos_quark_njl_ts_ns;
 
 int main(void) {
 
@@ -112,8 +112,8 @@ int main(void) {
   
   u.mu=2.5; d.mu=2.5; s.mu=2.5;
   
-  mm_funct_mfptr<nambujl_eos> fqq(&nj,&nambujl_eos::gapfunqq);
-  mm_funct_mfptr<nambujl_eos> fms(&nj,&nambujl_eos::gapfunms);
+  mm_funct_mfptr<eos_quark_njl> fqq(&nj,&eos_quark_njl::gapfunqq);
+  mm_funct_mfptr<eos_quark_njl> fms(&nj,&eos_quark_njl::gapfunms);
   funct_fptr fderiv(omfun);
   
   cout << "Feynman-Hellman theorem" << endl;
@@ -158,7 +158,7 @@ int main(void) {
   njt.set_thermo(th);
   njt.set_parameters();
   
-  mm_funct_mfptr<nambujl_eos> fqq2(&nj,&nambujl_eos::gapfunqq);
+  mm_funct_mfptr<eos_quark_njl> fqq2(&nj,&eos_quark_njl::gapfunqq);
   mm_funct_fptr<> fts(ftsolve);
 
   u.mu=2.5;

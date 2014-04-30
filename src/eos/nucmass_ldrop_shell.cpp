@@ -21,20 +21,20 @@
   -------------------------------------------------------------------
 */
 
-#include <o2scl/ldrop_shell.h>
+#include <o2scl/nucmass_ldrop_shell.h>
 
 using namespace std;
 using namespace o2scl;
 
-ldrop_shell::ldrop_shell() {
+nucmass_ldrop_shell::nucmass_ldrop_shell() {
   nfit=11;
   inc_shell=true;
 }
 
-double ldrop_shell::drip_binding_energy_d
+double nucmass_ldrop_shell::drip_binding_energy_d
 (double Z, double N, double npout, double nnout, double chi, double T) {
  
-  double ret=ldrop_mass_pair::drip_binding_energy_d
+  double ret=nucmass_ldrop_pair::drip_binding_energy_d
     (Z,N,npout,nnout,chi,T);
 
   if (inc_shell==false) return ret;
@@ -44,7 +44,7 @@ double ldrop_shell::drip_binding_energy_d
   return ret-shell;
 }
 
-int ldrop_shell::fit_fun(size_t nv, const ubvector &x) {
+int nucmass_ldrop_shell::fit_fun(size_t nv, const ubvector &x) {
   doi=x[0];
   surften=x[1];
   ss=x[2];
@@ -59,7 +59,7 @@ int ldrop_shell::fit_fun(size_t nv, const ubvector &x) {
   return 0;
 }
     
-int ldrop_shell::guess_fun(size_t nv, ubvector &x) {
+int nucmass_ldrop_shell::guess_fun(size_t nv, ubvector &x) {
   x[0]=doi;
   x[1]=surften;
   x[2]=ss;

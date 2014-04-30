@@ -22,9 +22,9 @@
 */
 #include <o2scl/test_mgr.h>
 #include <o2scl/fermion_nonrel.h>
-#include <o2scl/cold_nstar.h>
-#include <o2scl/tabulated_eos.h>
-#include <o2scl/schematic_eos.h>
+#include <o2scl/nstar_cold.h>
+#include <o2scl/eos_had_tabulated.h>
+#include <o2scl/eos_had_schematic.h>
 
 using namespace std;
 using namespace o2scl;
@@ -38,8 +38,8 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
-  tabulated_eos te;
-  schematic_eos se;
+  eos_had_tabulated te;
+  eos_had_schematic se;
 
   se.eoa=-16.0/hc_mev_fm;
   se.comp=200.0/hc_mev_fm;

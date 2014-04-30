@@ -22,8 +22,8 @@
 */
 #include <boost/numeric/ublas/vector.hpp>
 
-#include <o2scl/cfl_njl_eos.h>
-#include <o2scl/bag_eos.h>
+#include <o2scl/eos_quark_cfl.h>
+#include <o2scl/eos_quark_bag.h>
 
 using namespace std;
 using namespace o2scl;
@@ -45,9 +45,9 @@ int main(void) {
 
     cout.setf(ios::scientific);
 
-    nambujl_eos nj;
-    nambujl_eos njt;
-    cfl_njl_eos cfl;
+    eos_quark_njl nj;
+    eos_quark_njl njt;
+    eos_quark_cfl cfl;
 
     quark u(nj.up_default_mass,6.0);
     quark d(nj.down_default_mass,6.0);
@@ -82,9 +82,9 @@ int main(void) {
 
     cfl.set_inte(ngnew);
 
-    mm_funct_mfptr<nambujl_eos> fqq(&nj,&nambujl_eos::gapfunqq);
-    mm_funct_mfptr<nambujl_eos> fqq2(&njt,&nambujl_eos::gapfunqq);
-    mm_funct_mfptr<nambujl_eos> fqq3(&cfl,&nambujl_eos::gapfunqq);
+    mm_funct_mfptr<eos_quark_njl> fqq(&nj,&eos_quark_njl::gapfunqq);
+    mm_funct_mfptr<eos_quark_njl> fqq2(&njt,&eos_quark_njl::gapfunqq);
+    mm_funct_mfptr<eos_quark_njl> fqq3(&cfl,&eos_quark_njl::gapfunqq);
   
     // Set the quark chemical potentials
 
@@ -123,7 +123,7 @@ int main(void) {
   
     nj.calc_eq_p(u,d,s,qq1,qq2,qq3,th);
 
-    cout << "Comparing nambujl_eos, nambujl_eos, and cfl_njl_eos:" 
+    cout << "Comparing eos_quark_njl, eos_quark_njl, and eos_quark_cfl:" 
 	 << endl;
     cout << "qq: " << u.qq << " " << d.qq << " " << s.qq << endl;
     cout << "sol: " << qq1 << " " << qq2 << " " << qq3 << endl;
@@ -339,7 +339,7 @@ int main(void) {
     */
 
     cout << "\nCompare fixed mass and zero gaps with bag model:" << endl;
-    bag_eos bag;
+    eos_quark_bag bag;
     bag.bag_constant=0.0;
 
     u3.del=0.0;
@@ -372,7 +372,7 @@ int main(void) {
   
     double ss1,ss2,ss3,gap1,gap2,gap3,n3,n8;
     double ss12,ss22,ss32,gap12,gap22,gap32,n32,n82;
-    cfl_njl_eos cfl2;
+    eos_quark_cfl cfl2;
     thermo th, th2;
     quark u2(cfl2.up_default_mass,6.0);
     quark d2(cfl2.down_default_mass,6.0);

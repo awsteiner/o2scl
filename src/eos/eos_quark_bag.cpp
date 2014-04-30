@@ -24,17 +24,17 @@
 #include <config.h>
 #endif
 
-#include <o2scl/bag_eos.h>
+#include <o2scl/eos_quark_bag.h>
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-bag_eos::bag_eos() {
+eos_quark_bag::eos_quark_bag() {
   bag_constant=200.0/hc_mev_fm;
 }
 
-int bag_eos::calc_p(quark &u, quark &d, quark &s, thermo &th) {
+int eos_quark_bag::calc_p(quark &u, quark &d, quark &s, thermo &th) {
 
   if (u.mu>u.m) u.kf=sqrt(u.mu*u.mu-u.m*u.m);
   else u.kf=0.0;
@@ -58,7 +58,7 @@ int bag_eos::calc_p(quark &u, quark &d, quark &s, thermo &th) {
   return 0;
 }
 
-int bag_eos::calc_e(quark &u, quark &d, quark &s, thermo &th) {
+int eos_quark_bag::calc_e(quark &u, quark &d, quark &s, thermo &th) {
 
   fet->kf_from_density(u);
   fet->kf_from_density(d);
@@ -83,7 +83,7 @@ int bag_eos::calc_e(quark &u, quark &d, quark &s, thermo &th) {
   return 0;
 }
 
-int bag_eos::calc_temp_p(quark& u, quark& d, quark& s, 
+int eos_quark_bag::calc_temp_p(quark& u, quark& d, quark& s, 
 			      const double temper, thermo &th) {
 
   if (temper<=0.0) {
@@ -112,7 +112,7 @@ int bag_eos::calc_temp_p(quark& u, quark& d, quark& s,
   return 0;
 }
 
-int bag_eos::calc_temp_e(quark& u, quark& d, quark& s, 
+int eos_quark_bag::calc_temp_e(quark& u, quark& d, quark& s, 
 			      const double temper, thermo &th) {
 
   u.ms=u.m;
