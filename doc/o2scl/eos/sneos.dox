@@ -2,17 +2,17 @@
 
     There are several classes designed to provide a consistent
     interface to several supernova EOS tables. The abstract base
-    class is \ref o2scl::eos_sn_gen. The child classes correspond to
+    class is \ref o2scl::eos_sn_base. The child classes correspond to
     different EOS table formats: 
-    - \ref o2scl::ls_eos - The Lattimer-Swesty EOS tables from Jim's
+    - \ref o2scl::eos_sn_ls - The Lattimer-Swesty EOS tables from Jim's
     webpage (\ref Lattimer91)
-    - \ref o2scl::stos_eos - The H. Shen et al. EOS tables
+    - \ref o2scl::eos_sn_stos - The H. Shen et al. EOS tables
     (\ref Shen98 and \ref Shen98b)
-    - \ref o2scl::sht_eos - The G. Shen et al. EOS tables 
+    - \ref o2scl::eos_sn_sht - The G. Shen et al. EOS tables 
     (\ref Shen10a, \ref Shen10b, \ref Shen11)
-    - \ref o2scl::hfsl_eos - The M. Hempel et al. EOS tables
+    - \ref o2scl::eos_sn_hfsl - The M. Hempel et al. EOS tables
     (\ref Hempel10 and \ref Hempel11)
-    - \ref o2scl::oo_eos - The Lattimer-Swesty and H. Shen et al. tables
+    - \ref o2scl::eos_sn_oo - The Lattimer-Swesty and H. Shen et al. tables
     reformatted by O'Connor and Ott (\ref OConnor10)
 
     The \o2 distribution does not contain the tables themselves,
@@ -46,11 +46,11 @@
     Not all tabulated EOSs contain all of the data, in which case the
     associated \ref o2scl::tensor_grid3 object may be empty. For
     example, EOSs which do not contain the leptonic contributions do
-    not provide \ref o2scl::eos_sn_gen::E, \ref o2scl::eos_sn_gen::F,
-    \ref o2scl::eos_sn_gen::S, and \ref o2scl::eos_sn_gen::P. In these
+    not provide \ref o2scl::eos_sn_base::E, \ref o2scl::eos_sn_base::F,
+    \ref o2scl::eos_sn_base::S, and \ref o2scl::eos_sn_base::P. In these
     case, the grid is set for these objects but the data is set to
     zero. To compute these from the data after loading the EOS table,
-    use \ref o2scl::eos_sn_gen::compute_eg().
+    use \ref o2scl::eos_sn_base::compute_eg().
 
     Also, some EOS tables tabulate the 'mass fraction' of the 
     various particles, but this is a slight misnomer. What is
@@ -65,7 +65,7 @@
     In the case of the representative heavy nucleus, the 
     baryon number fraction is \f$ X_h = A n_h n_B^{-1} \f$ where
     \f$ A \f$ is the baryon number of the representative heavy
-    nucleus in \ref o2scl::eos_sn_gen::A .
+    nucleus in \ref o2scl::eos_sn_base::A .
 
     The functions named <tt>load()</tt> in the children classes load
     the entire EOS into memory. Memory allocation is automatically

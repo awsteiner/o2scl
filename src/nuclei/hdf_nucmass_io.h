@@ -109,7 +109,7 @@ namespace o2scl_hdf {
       \todo Switch to the same 'external' file mechanism used in 
       hdf_eos_io.h. 
   */
-  void hfb_sp_load(o2scl::hfb_sp_mass &hfb, size_t model=21, 
+  void hfb_sp_load(o2scl::nucmass_hfb_sp &hfb, size_t model=21, 
 		   std::string dir="");
 
 #ifndef DOXYGEN_NO_O2NS

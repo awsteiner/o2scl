@@ -34,7 +34,7 @@ using namespace o2scl;
 using namespace o2scl_hdf;
 using namespace o2scl_const;
 
-tov_new_eos::tov_new_eos() {
+eos_tov_interp::eos_tov_interp() {
 
   eos_read=false;
   use_crust=false;
@@ -58,10 +58,10 @@ tov_new_eos::tov_new_eos() {
   gen_int.set_type(itp_linear);
 }
 
-tov_new_eos::~tov_new_eos() {
+eos_tov_interp::~eos_tov_interp() {
 }
 
-void tov_new_eos::get_names_units(size_t &np, 
+void eos_tov_interp::get_names_units(size_t &np, 
 				  std::vector<std::string> &pnames,
 				  std::vector<std::string> &vs_units) {
   np=0;
@@ -78,7 +78,7 @@ void tov_new_eos::get_names_units(size_t &np,
   return;
 }
 
-void tov_new_eos::read_vectors(size_t n_core, std::vector<double> &core_ed, 
+void eos_tov_interp::read_vectors(size_t n_core, std::vector<double> &core_ed, 
 			       std::vector<double> &core_pr) {
 
   core_table=0;
@@ -96,7 +96,7 @@ void tov_new_eos::read_vectors(size_t n_core, std::vector<double> &core_ed,
   return;
 }
 
-void tov_new_eos::read_vectors(size_t n_core, std::vector<double> &core_ed, 
+void eos_tov_interp::read_vectors(size_t n_core, std::vector<double> &core_ed, 
 			       std::vector<double> &core_pr, 
 			       std::vector<double> &core_nb) {
   read_vectors(n_core,core_ed,core_pr);
@@ -110,7 +110,7 @@ void tov_new_eos::read_vectors(size_t n_core, std::vector<double> &core_ed,
   return;
 }
 
-void tov_new_eos::read_table(table_units<> &eosat, string s_cole, 
+void eos_tov_interp::read_table(table_units<> &eosat, string s_cole, 
 			     string s_colp, string s_colnb) {
 			       
   core_table=&eosat;
@@ -324,23 +324,23 @@ void tov_new_eos::read_table(table_units<> &eosat, string s_cole,
   return;
 }
 
-void tov_new_eos::get_transition(double &p, double &w) {
+void eos_tov_interp::get_transition(double &p, double &w) {
   p=trans_pres/pfactor;
   w=trans_width;
   return;
 }
 
-void tov_new_eos::set_transition(double p, double wid) {
+void eos_tov_interp::set_transition(double p, double wid) {
   trans_pres=p*pfactor;
   trans_width=wid;
   if (trans_width<1.0) {
-    O2SCL_ERR("Width less than 1 in tov_new_eos::set_transition().",
+    O2SCL_ERR("Width less than 1 in eos_tov_interp::set_transition().",
 	      exc_einval);
   }
   return;
 }
 
-void tov_new_eos::default_low_dens_eos() {
+void eos_tov_interp::default_low_dens_eos() {
 
   // Read default EOS. 
   static const size_t nlines=73;
@@ -434,7 +434,7 @@ void tov_new_eos::default_low_dens_eos() {
   return;
 }
     
-void tov_new_eos::sho11_low_dens_eos() {
+void eos_tov_interp::sho11_low_dens_eos() {
 
   static const size_t nlines=98;
 
@@ -547,7 +547,7 @@ void tov_new_eos::sho11_low_dens_eos() {
   return;
 }
 
-void tov_new_eos::ngl13_low_dens_eos(double L, string model,
+void eos_tov_interp::ngl13_low_dens_eos(double L, string model,
 				     bool external) {
 
   std::string fname;
@@ -664,7 +664,7 @@ void tov_new_eos::ngl13_low_dens_eos(double L, string model,
   If S=29+e, L=80-e, then interpolate between (28,30) and (75,85)
   If S=30-e, L=85-e, then interpolate between (28,30) and (75,85)
 */
-void tov_new_eos::ngl13_low_dens_eos2(double S, double L, double nt,
+void eos_tov_interp::ngl13_low_dens_eos2(double S, double L, double nt,
 				     string fname) {
 
   if (S<28.0 || S>38.0) {
@@ -779,7 +779,7 @@ void tov_new_eos::ngl13_low_dens_eos2(double S, double L, double nt,
   return;
 }
 
-void tov_new_eos::s12_low_dens_eos(string model, bool external) {
+void eos_tov_interp::s12_low_dens_eos(string model, bool external) {
 
   std::string fname;
   std::string dir=o2scl::o2scl_settings.get_data_dir();
@@ -837,7 +837,7 @@ void tov_new_eos::s12_low_dens_eos(string model, bool external) {
   return;
 }
 
-void tov_new_eos::gcp10_low_dens_eos(string model, bool external) {
+void eos_tov_interp::gcp10_low_dens_eos(string model, bool external) {
 
   std::string fname;
   std::string dir=o2scl::o2scl_settings.get_data_dir();
@@ -872,7 +872,7 @@ void tov_new_eos::gcp10_low_dens_eos(string model, bool external) {
   */
   if (tab.get_nlines()!=tab.get_maxlines()) {
     O2SCL_ERR2("Misalignment sanity check for GCP10 crust in ",
-	       "tov_new_eos::gcp10_low_dens_eos().",exc_esanity);
+	       "eos_tov_interp::gcp10_low_dens_eos().",exc_esanity);
   }
 
   tab.convert_to_unit("rho","Msun/km^3");
@@ -916,10 +916,10 @@ void tov_new_eos::gcp10_low_dens_eos(string model, bool external) {
   return;
 }
 
-void tov_new_eos::get_eden(double pres, double &ed, double &nb) {
+void eos_tov_interp::get_eden(double pres, double &ed, double &nb) {
   
   if (!o2scl::is_finite(pres)) {
-    O2SCL_ERR("Pressure not finite in tov_new_eos::get_eden().",
+    O2SCL_ERR("Pressure not finite in eos_tov_interp::get_eden().",
 	      exc_efailed);
   }
   
@@ -930,14 +930,14 @@ void tov_new_eos::get_eden(double pres, double &ed, double &nb) {
 
   if (!o2scl::is_finite(ed) || (baryon_column && !o2scl::is_finite(nb))) {
     string s="Energy density or baryon density not finite at pressure ";
-    s+=dtos(pres)+" in tov_new_eos::get_eden().";
+    s+=dtos(pres)+" in eos_tov_interp::get_eden().";
     O2SCL_ERR(s.c_str(),exc_efailed);
   }
   
   return;
 }
 
-void tov_new_eos::get_eden_user(double pres, double &ed, double &nb) {
+void eos_tov_interp::get_eden_user(double pres, double &ed, double &nb) {
   ed=pe_int.eval(pres*pfactor)/efactor;
   if (baryon_column) {
     nb=pnb_int.eval(pres*pfactor)/nfactor;
@@ -945,7 +945,7 @@ void tov_new_eos::get_eden_user(double pres, double &ed, double &nb) {
   return;
 }
 
-void tov_new_eos::get_aux(double P, size_t &np, std::vector<double> &auxp) {
+void eos_tov_interp::get_aux(double P, size_t &np, std::vector<double> &auxp) {
   np=0;
   if (core_auxp>0) {
     double first_pres=(*core_table)[colp][0]/pfactor;

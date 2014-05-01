@@ -24,18 +24,18 @@
 #include <config.h>
 #endif
 
-#include <o2scl/eos_had_sym4_base.h>
+#include <o2scl/eos_had_sym4.h>
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-eos_had_sym4_base_base::eos_had_sym4_base_base() {
+eos_had_sym4_base::eos_had_sym4_base() {
   e.init(o2scl_settings.get_convert_units().convert
 	 ("kg","1/fm",o2scl_mks::mass_electron),2.0);
 }
   
-int eos_had_sym4_base_base::calc_e_alpha(fermion &ne, fermion &pr, thermo &lth,
+int eos_had_sym4_base::calc_e_alpha(fermion &ne, fermion &pr, thermo &lth,
 				double &alphak, double &alphap, double &alphat,
 				double &diff_kin, double &diff_pot,
 				double &ed_kin_nuc, double &ed_pot_nuc) {
@@ -96,7 +96,7 @@ int eos_had_sym4_base_base::calc_e_alpha(fermion &ne, fermion &pr, thermo &lth,
   return 0;
 }
     
-double eos_had_sym4_base_base::calc_muhat(fermion &ne, fermion &pr) {
+double eos_had_sym4_base::calc_muhat(fermion &ne, fermion &pr) {
   double ed_kin, ed_pot, munk, mupk, munp, mupp;
 
   calc_e_sep(ne,pr,ed_kin,ed_pot,munk,mupk,munp,mupp);
@@ -107,12 +107,11 @@ double eos_had_sym4_base_base::calc_muhat(fermion &ne, fermion &pr) {
   return munk+munp-mupk-mupp-e.mu;
 }
 
-rmf4_eos::rmf4_eos() {
-}
-  
-int rmf4_eos::calc_e_sep(fermion &ne, fermion &pr, double &ed_kin, 
-			 double &ed_pot, double &mu_n_kin, double &mu_p_kin, 
-			 double &mu_n_pot, double &mu_p_pot) {
+int eos_had_sym4_rmf::calc_e_sep
+(fermion &ne, fermion &pr, double &ed_kin, 
+ double &ed_pot, double &mu_n_kin, double &mu_p_kin, 
+ double &mu_n_pot, double &mu_p_pot) {
+
   thermo lth;
     
   int ret=eos_had_rmf::calc_e(ne,pr,lth);
@@ -127,9 +126,11 @@ int rmf4_eos::calc_e_sep(fermion &ne, fermion &pr, double &ed_kin,
   return ret;
 }
 
-int apr4_eos::calc_e_sep(fermion &ne, fermion &pr, double &ed_kin, 
-			 double &ed_pot, double &mu_n_kin, double &mu_p_kin, 
-			 double &mu_n_pot, double &mu_p_pot) {
+int eos_had_sym4_apr::calc_e_sep
+(fermion &ne, fermion &pr, double &ed_kin, 
+ double &ed_pot, double &mu_n_kin, double &mu_p_kin, 
+ double &mu_n_pot, double &mu_p_pot) {
+
   thermo lth;
 
   int ret=eos_had_apr::calc_e(ne,pr,lth);
@@ -163,10 +164,11 @@ int apr4_eos::calc_e_sep(fermion &ne, fermion &pr, double &ed_kin,
   return ret;
 }
   
-int skyrme4_eos::calc_e_sep(fermion &ne, fermion &pr, double &ed_kin, 
-			    double &ed_pot, double &mu_n_kin, 
-			    double &mu_p_kin, 
-			    double &mu_n_pot, double &mu_p_pot) {
+int eos_had_sym4_skyrme::calc_e_sep
+(fermion &ne, fermion &pr, double &ed_kin, 
+ double &ed_pot, double &mu_n_kin, double &mu_p_kin, 
+ double &mu_n_pot, double &mu_p_pot) {
+
   thermo lth;
     
   int ret=eos_had_skyrme::calc_e(ne,pr,lth);
@@ -187,8 +189,8 @@ int skyrme4_eos::calc_e_sep(fermion &ne, fermion &pr, double &ed_kin,
 
   return ret;
 }
-  
-double mdi4_eos::energy_kin(double var) {
+
+double eos_had_sym4_mdi::energy_kin(double var) {
   double n, hamk, ham, ham1, ham2, ham3=0.0, xp;
 
   if (mode==nmode) neutron->n=var;
@@ -212,7 +214,7 @@ double mdi4_eos::energy_kin(double var) {
   return hamk;
 }
 
-double mdi4_eos::energy_pot(double var) {
+double eos_had_sym4_mdi::energy_pot(double var) {
   double n, hamk, ham, ham1, ham2, ham3=0.0, xp;
     
   if (mode==nmode) neutron->n=var;
@@ -309,14 +311,14 @@ double mdi4_eos::energy_pot(double var) {
   return ham;
 }
 
-int mdi4_eos::calc_e_sep(fermion &ne, fermion &pr, double &ed_kin, 
+int eos_had_sym4_mdi::calc_e_sep(fermion &ne, fermion &pr, double &ed_kin, 
 			 double &ed_pot, double &mu_n_kin, double &mu_p_kin, 
 			 double &mu_n_pot, double &mu_p_pot) {
   set_n_and_p(ne,pr);
     
   double tmp;
-  funct_mfptr<mdi4_eos> dfk(this,&mdi4_eos::energy_kin);
-  funct_mfptr<mdi4_eos> dfp(this,&mdi4_eos::energy_pot);
+  funct_mfptr<eos_had_sym4_mdi> dfk(this,&eos_had_sym4_mdi::energy_kin);
+  funct_mfptr<eos_had_sym4_mdi> dfp(this,&eos_had_sym4_mdi::energy_pot);
     
   mode=nmode;
   tmp=ne.n;
@@ -341,15 +343,15 @@ int mdi4_eos::calc_e_sep(fermion &ne, fermion &pr, double &ed_kin,
   return ret;
 }
 
-int mdi4_eos::test_separation(fermion &ne, fermion &pr, test_mgr &t) {
+int eos_had_sym4_mdi::test_separation(fermion &ne, fermion &pr, test_mgr &t) {
   double ed_kin, ed_pot, mu_n_kin, mu_p_kin, 
     mu_n_pot, mu_p_pot;
     
   set_n_and_p(ne,pr);
     
   double tmp;
-  funct_mfptr<mdi4_eos> dfk(this,&mdi4_eos::energy_kin);
-  funct_mfptr<mdi4_eos> dfp(this,&mdi4_eos::energy_pot);
+  funct_mfptr<eos_had_sym4_mdi> dfk(this,&eos_had_sym4_mdi::energy_kin);
+  funct_mfptr<eos_had_sym4_mdi> dfp(this,&eos_had_sym4_mdi::energy_pot);
   int vpx=0;
     
   mode=nmode;
@@ -382,12 +384,12 @@ int mdi4_eos::test_separation(fermion &ne, fermion &pr, test_mgr &t) {
   return 0;
 }
 
-int eos_had_sym4_base::set_base_eos(eos_had_sym4_base_base &seb) {
+int eos_had_sym4::set_base_eos(eos_had_sym4_base &seb) {
   sp=&seb;
   return 0;
 }
   
-int eos_had_sym4_base::test_eos(fermion &ne, fermion &pr, thermo &lth) {
+int eos_had_sym4::test_eos(fermion &ne, fermion &pr, thermo &lth) {
   double nn=ne.n, np=pr.n;
   double eden, pres, mun, mup;
     
@@ -419,7 +421,7 @@ int eos_had_sym4_base::test_eos(fermion &ne, fermion &pr, thermo &lth) {
   return 0;
 }
 
-int eos_had_sym4_base::calc_e(fermion &ne, fermion &pr, thermo &lth) {
+int eos_had_sym4::calc_e(fermion &ne, fermion &pr, thermo &lth) {
   double nn=ne.n, np=pr.n;
   double eden, mun, mup;
 

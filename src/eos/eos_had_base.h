@@ -266,7 +266,7 @@ namespace o2scl {
       (Note that \f$ S_4 \f$ is referred to as \f$ Q \f$ in 
       \ref Steiner06). Sometimes it is useful to separate out
       the kinetic and potential parts of the energy density when
-      computing \f$ \eta(n_B) \f$, and the class \ref eos_had_sym4_base_base
+      computing \f$ \eta(n_B) \f$, and the class \ref eos_had_sym4_base
       is useful for this purpose. 
 
       \future Could write a function to compute the "symmetry free energy"

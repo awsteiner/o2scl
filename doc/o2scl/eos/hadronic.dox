@@ -11,9 +11,10 @@
     formulas are available.
 
     There is also a set of classes to modify the quartic term of the
-    symmetry energy: \ref o2scl::rmf4_eos, \ref o2scl::apr4_eos, \ref
-    o2scl::skyrme4_eos, and \ref o2scl::mdi4_eos all based on \ref
-    o2scl::eos_had_sym4_base which can be used in \ref o2scl::eos_had_sym4_base.
+    symmetry energy: \ref o2scl::eos_had_sym4_rmf, \ref
+    o2scl::eos_had_sym4_apr, \ref o2scl::eos_had_sym4_skyrme, and \ref
+    o2scl::eos_had_sym4_mdi all based on \ref o2scl::eos_had_sym4_base
+    which can be used in \ref o2scl::eos_had_sym4.
 
     \section ex_eos_had_apr_sect Akmal-Pandharipande-Ravenhall EOS example
     

@@ -20,7 +20,7 @@
 
   -------------------------------------------------------------------
 */
-#include <o2scl/eos_sn_gen.h>
+#include <o2scl/eos_sn.h>
 #include <o2scl/test_mgr.h>
 #include <o2scl/hdf_file.h>
 #include <o2scl/lib_settings.h>
@@ -30,7 +30,7 @@ using namespace o2scl;
 using namespace o2scl_hdf;
 using namespace o2scl_const;
 
-eos_sn_gen::eos_sn_gen() : cu(o2scl_settings.get_convert_units()) {
+eos_sn_base::eos_sn_base() : cu(o2scl_settings.get_convert_units()) {
   n_nB=0;
   n_Ye=0;
   n_T=0;
@@ -74,11 +74,11 @@ eos_sn_gen::eos_sn_gen() : cu(o2scl_settings.get_convert_units()) {
     o2scl_const::hc_mev_fm;
 }
 
-eos_sn_gen::~eos_sn_gen() {
+eos_sn_base::~eos_sn_base() {
   if (loaded) free();
 }
 
-void eos_sn_gen::alloc() {
+void eos_sn_base::alloc() {
   size_t dim[3]={n_nB,n_Ye,n_T};
   for(size_t i=0;i<n_base+n_oth;i++) {
     arr[i]->resize(3,dim);
@@ -86,7 +86,7 @@ void eos_sn_gen::alloc() {
   return;
 }
 
-void eos_sn_gen::free() {
+void eos_sn_base::free() {
   if (loaded) {
     std::vector<size_t> tmp;
     for(size_t i=0;i<n_base+n_oth;i++) {
@@ -99,9 +99,9 @@ void eos_sn_gen::free() {
   return;
 }
 
-void eos_sn_gen::set_interp_type(size_t interp_type) {
+void eos_sn_base::set_interp_type(size_t interp_type) {
   if (!loaded) {
-    O2SCL_ERR("File not loaded in eos_sn_gen::set_interp().",
+    O2SCL_ERR("File not loaded in eos_sn_base::set_interp().",
 		  exc_einval);
   }
   for(size_t i=0;i<n_base+n_oth;i++) {
@@ -110,7 +110,7 @@ void eos_sn_gen::set_interp_type(size_t interp_type) {
   return;
 }
 
-int eos_sn_gen::compute_eg() {
+int eos_sn_base::compute_eg() {
 
   if (verbose>0) {
     cout << "Adding automatically computed electrons and photons." << endl;
@@ -118,7 +118,7 @@ int eos_sn_gen::compute_eg() {
   
   if (loaded==false) {
     O2SCL_ERR2("No data loaded (loaded=false) in ",
-	       "eos_sn_gen::compute_eg().",exc_einval);
+	       "eos_sn_base::compute_eg().",exc_einval);
   }
 
   for(size_t i=0;i<n_nB;i++) {
@@ -187,11 +187,11 @@ int eos_sn_gen::compute_eg() {
   return 0;
 }
 
-void eos_sn_gen::check_free_energy(double &avg) {
+void eos_sn_base::check_free_energy(double &avg) {
   
   if (loaded==false) {
     O2SCL_ERR2("No data loaded (loaded=false) in ",
-	       "eos_sn_gen::check_free_energy().",exc_einval);
+	       "eos_sn_base::check_free_energy().",exc_einval);
   }
 
   if (verbose>0) {
@@ -247,11 +247,11 @@ void eos_sn_gen::check_free_energy(double &avg) {
   return;
 }
 
-void eos_sn_gen::check_composition(double &max1, double &max2) {
+void eos_sn_base::check_composition(double &max1, double &max2) {
   
   if (loaded==false) {
     O2SCL_ERR2("No data loaded (loaded=false) in ",
-	       "eos_sn_gen::check_composition().",exc_einval);
+	       "eos_sn_base::check_composition().",exc_einval);
   }
 
   if (verbose>0) {
@@ -304,7 +304,7 @@ void eos_sn_gen::check_composition(double &max1, double &max2) {
   return;
 }
 
-void eos_sn_gen::beta_eq_sfixed(size_t i, double entr,
+void eos_sn_base::beta_eq_sfixed(size_t i, double entr,
 				double &nb, double &E_beta, 
 				double &P_beta, double &Ye_beta,
 				double &Z_beta, double &A_beta,
@@ -312,11 +312,11 @@ void eos_sn_gen::beta_eq_sfixed(size_t i, double entr,
   
   if (loaded==false) {
     O2SCL_ERR2("No data loaded in ",
-	       "eos_sn_gen::beta_eq_s4().",exc_einval);
+	       "eos_sn_base::beta_eq_s4().",exc_einval);
   }
   if (i>=n_nB) {
     O2SCL_ERR2("Too high for baryon grid in ",
-	       "eos_sn_gen::beta_eq_s4().",exc_einval);
+	       "eos_sn_base::beta_eq_s4().",exc_einval);
   }
   if (with_leptons_loaded==false) {
     compute_eg();
@@ -385,10 +385,10 @@ void eos_sn_gen::beta_eq_sfixed(size_t i, double entr,
   return;
 }
 
-void ls_eos::load(std::string fname) {
+void eos_sn_ls::load(std::string fname) {
   
   if (verbose>0) {
-    cout << "In ls_eos::load(), loading EOS from file\n\t'" 
+    cout << "In eos_sn_ls::load(), loading EOS from file\n\t'" 
 	 << fname << "'." << endl;
   }
 
@@ -492,7 +492,7 @@ void ls_eos::load(std::string fname) {
 	  if (i>=n_nB || k>=n_Ye || j>=n_T) {
 	    loaded=false;
 	    O2SCL_ERR2("Index problem in ",
-		       "ls_eos::load().",exc_einval);
+		       "eos_sn_ls::load().",exc_einval);
 	  }
 	}
       }
@@ -508,13 +508,13 @@ void ls_eos::load(std::string fname) {
   set_interp_type(itp_linear);
 
   if (verbose>0) {
-    std::cout << "Done in ls_eos::load()." << std::endl;
+    std::cout << "Done in eos_sn_ls::load()." << std::endl;
   }
 
   return;
 }
 
-int ls_eos::check_eg(test_mgr &tm) {
+int eos_sn_ls::check_eg(test_mgr &tm) {
   
   if (!baryons_only_loaded || !with_leptons_loaded) {
     O2SCL_ERR("Not enough data loaded in check_eg().",exc_efailed);
@@ -602,10 +602,10 @@ int ls_eos::check_eg(test_mgr &tm) {
   return 0;
 }
 
-void oo_eos::load(std::string fname, size_t mode) {
+void eos_sn_oo::load(std::string fname, size_t mode) {
   
   if (verbose>0) {
-    cout << "In oo_eos::load(), loading EOS from file\n\t'" 
+    cout << "In eos_sn_oo::load(), loading EOS from file\n\t'" 
 	 << fname << "'." << endl;
   }
 
@@ -827,16 +827,16 @@ void oo_eos::load(std::string fname, size_t mode) {
   set_interp_type(itp_linear);
 
   if (verbose>0) {
-    std::cout << "Done in oo_eos::load()." << std::endl;
+    std::cout << "Done in eos_sn_oo::load()." << std::endl;
   }
 
   return;
 }
 
-void stos_eos::load(std::string fname, size_t mode) {
+void eos_sn_stos::load(std::string fname, size_t mode) {
 
   if (verbose>0) {
-    cout << "In stos_eos::load(), loading EOS from file\n\t'" 
+    cout << "In eos_sn_stos::load(), loading EOS from file\n\t'" 
 	 << fname << "'." << endl;
   }
 
@@ -1004,7 +1004,7 @@ void stos_eos::load(std::string fname, size_t mode) {
 	  if (k>=n_nB || j>=n_Ye || i>=n_T) {
 	    loaded=false;
 	    O2SCL_ERR2("Index problem in ",
-		       "stos_eos::load().",exc_einval);
+		       "eos_sn_stos::load().",exc_einval);
 	  }
 	}
       }
@@ -1026,7 +1026,7 @@ void stos_eos::load(std::string fname, size_t mode) {
   // Double check the grid 
   if (check_grid) {
     if (verbose>0) {
-      std::cout << "Checking grid in stos_eos::load(). " << std::endl;
+      std::cout << "Checking grid in eos_sn_stos::load(). " << std::endl;
     }
 
     int i=10, j=10, k=10;
@@ -1055,22 +1055,22 @@ void stos_eos::load(std::string fname, size_t mode) {
     }
 
     if (tm.report()==false) {
-      O2SCL_ERR("Check grid failed in stos_eos::load().",exc_efailed);
+      O2SCL_ERR("Check grid failed in eos_sn_stos::load().",exc_efailed);
     }
 
   }
 
   if (verbose>0) {
-    std::cout << "Done in stos_eos::load()." << std::endl;
+    std::cout << "Done in eos_sn_stos::load()." << std::endl;
   }
 
   return;
 }
 
-void sht_eos::load(std::string fname, size_t mode) {
+void eos_sn_sht::load(std::string fname, size_t mode) {
 
   if (verbose>0) {
-    cout << "In sht_eos::load(), loading EOS from file\n\t'" 
+    cout << "In eos_sn_sht::load(), loading EOS from file\n\t'" 
 	 << fname << "'." << endl;
   }
 
@@ -1193,7 +1193,7 @@ void sht_eos::load(std::string fname, size_t mode) {
 	  if (i>=n_nB || j>=n_T || k>=n_Ye) {
 	    loaded=false;
 	    O2SCL_ERR2("Index problem in ",
-		       "sht_eos::load().",exc_einval);
+		       "eos_sn_sht::load().",exc_einval);
 	  }
 	}
       }
@@ -1206,7 +1206,7 @@ void sht_eos::load(std::string fname, size_t mode) {
   if (check_grid) {
     // Double check the grid 
     if (verbose>0) {
-      cout << "Checking grid in sht_eos::load()." << endl;
+      cout << "Checking grid in eos_sn_sht::load()." << endl;
     }
 
     int i=10, j=10, k=10;
@@ -1237,7 +1237,7 @@ void sht_eos::load(std::string fname, size_t mode) {
     }
 
     if (tm.report()==false) {
-      O2SCL_ERR("Grid check in sht_eos::load() failed.",exc_efailed);
+      O2SCL_ERR("Grid check in eos_sn_sht::load() failed.",exc_efailed);
     }
 
   }
@@ -1252,16 +1252,16 @@ void sht_eos::load(std::string fname, size_t mode) {
   }
 
   if (verbose>0) {
-    std::cout << "Done in sht_eos::load()." << std::endl;
+    std::cout << "Done in eos_sn_sht::load()." << std::endl;
   }
 
   return;
 }
 
-void hfsl_eos::load(std::string fname) {
+void eos_sn_hfsl::load(std::string fname) {
 
   if (verbose>0) {
-    cout << "In hfsl_eos::load(), loading EOS from file\n\t'" 
+    cout << "In eos_sn_hfsl::load(), loading EOS from file\n\t'" 
 	 << fname << "'." << endl;
   }
 
@@ -1367,7 +1367,7 @@ void hfsl_eos::load(std::string fname) {
 	  } 
           if (k>=n_nB || j>=n_Ye || i>=n_T) {
             loaded=false;
-            O2SCL_ERR("Index problem in hfsl_eos::load().",exc_einval);
+            O2SCL_ERR("Index problem in eos_sn_hfsl::load().",exc_einval);
           }
         }
       }
@@ -1426,13 +1426,13 @@ void hfsl_eos::load(std::string fname) {
     }
 
     if (tm.report()==false) {
-      O2SCL_ERR("Function hfsl_eos::load() failed.",exc_efailed);
+      O2SCL_ERR("Function eos_sn_hfsl::load() failed.",exc_efailed);
     }
 
   }
 
   if (verbose>0) {
-    std::cout << "Done in hfsl_eos::load()." << std::endl;
+    std::cout << "Done in eos_sn_hfsl::load()." << std::endl;
   }
 
   return;

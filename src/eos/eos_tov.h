@@ -119,15 +119,15 @@ namespace o2scl {
 
       \future Figure out what to do with the buchfun() function
   */
-  class tov_buchdahl_eos : public eos_tov {
+  class eos_tov_buchdahl : public eos_tov {
     
   public:
 
-    tov_buchdahl_eos() {
+    eos_tov_buchdahl() {
       Pstar=3.2e-5;
     }
 
-    virtual ~tov_buchdahl_eos() {}
+    virtual ~eos_tov_buchdahl() {}
 
     /** \brief The parameter with units of pressure in units of solar
 	masses per km cubed (default value \f$ 3.2 \times 10^{-5} \f$
@@ -181,16 +181,16 @@ namespace o2scl {
       The quantity \f$ K \f$ must be in units of 
       \f$ \left(M_{\odot}/km^3\right)^{-1/n} \f$ .
   */
-  class tov_polytrope_eos : public eos_tov {
+  class eos_tov_polytrope : public eos_tov {
     
   public:
 
-    tov_polytrope_eos() {
+    eos_tov_polytrope() {
       K=1.0;
       n=3.0;
     }
 
-    virtual ~tov_polytrope_eos() {}
+    virtual ~eos_tov_polytrope() {}
 
     /** \brief Coefficient (default 1.0)
     */
@@ -289,13 +289,13 @@ namespace o2scl {
 
       \todo Read different vector types than just std::vector<>. 
   */
-  class tov_new_eos : public eos_tov {
+  class eos_tov_interp : public eos_tov {
     
   public:
     
-    tov_new_eos();
+    eos_tov_interp();
 
-    virtual ~tov_new_eos();
+    virtual ~eos_tov_interp();
 
     /// \name Mode of transitioning between crust and core EOS
     //@{

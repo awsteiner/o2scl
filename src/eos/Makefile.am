@@ -12,8 +12,8 @@ EOS_SRCS = eos_had_apr.cpp eos_quark_bag.cpp \
 	eos_quark_njl.cpp eos_had_ddc.cpp nucmass_ldrop.cpp \
 	eos_quark.cpp eos_had_rmf.cpp eos_had_schematic.cpp \
 	eos_had_skyrme.cpp tov_solve.cpp eos_nse.cpp hdf_eos_io.cpp \
-	eos_had_rmf_delta.cpp eos_tov.cpp eos_had_sym4_base.cpp \
-	eos_had_base.cpp nucleus_rmf.cpp eos_sn_gen.cpp \
+	eos_had_rmf_delta.cpp eos_tov.cpp eos_had_sym4.cpp \
+	eos_had_base.cpp nucleus_rmf.cpp eos_sn.cpp \
 	nucmass_ldrop_shell.cpp eos_quark_cfl.cpp eos_quark_cfl6.cpp \
 	eos_had_hlps.cpp
 
@@ -22,12 +22,12 @@ HEADER_VAR = eos_had_apr.h eos_quark_bag.h eos_crust.h eos_had_ddc.h \
 	eos_quark_njl.h eos_quark.h eos_had_rmf.h eos_quark_cfl.h \
 	eos_quark_cfl6.h eos_had_schematic.h eos_had_skyrme.h \
 	eos_had_tabulated.h eos_nse.h tov_solve.h eos_had_rmf_delta.h \
-	eos_had_sym4_base.h eos_tov.h eos_had_base.h \
-	hdf_eos_io.h nucleus_rmf.h eos_sn_gen.h nucmass_ldrop_shell.h \
+	eos_had_sym4.h eos_tov.h eos_had_base.h \
+	hdf_eos_io.h nucleus_rmf.h eos_sn.h nucmass_ldrop_shell.h \
 	eos_had_gogny.h eos_crust_virial.h eos_had_hlps.h
 
 TEST_VAR = eos_had_apr.scr eos_quark_bag.scr nstar_cold.scr \
-	eos_base.scr eos_had_potential.scr eos_had_sym4_base.scr \
+	eos_base.scr eos_had_potential.scr eos_had_sym4.scr \
 	eos_quark_njl.scr eos_quark.scr nucmass_ldrop.scr \
 	eos_had_rmf.scr eos_had_schematic.scr eos_had_skyrme.scr eos_tov.scr \
 	eos_had_tabulated.scr eos_nse.scr eos_had_rmf_delta.scr \
@@ -43,27 +43,27 @@ EOS_SRCS = eos_had_apr.cpp eos_quark_bag.cpp eos_quark_cfl.cpp \
 	eos_quark_njl.cpp eos_had_ddc.cpp nucmass_ldrop.cpp \
 	eos_quark.cpp eos_had_rmf.cpp eos_had_schematic.cpp \
 	eos_had_skyrme.cpp tov_solve.cpp eos_nse.cpp \
-	eos_had_rmf_delta.cpp eos_tov.cpp eos_had_sym4_base.cpp \
+	eos_had_rmf_delta.cpp eos_tov.cpp eos_had_sym4.cpp \
 	eos_had_base.cpp \
-	eos_sn_gen.cpp nucmass_ldrop_shell.cpp eos_had_hlps.cpp
+	eos_sn.cpp nucmass_ldrop_shell.cpp eos_had_hlps.cpp
 
 HEADER_VAR = eos_had_apr.h eos_quark_bag.h eos_crust.h eos_had_ddc.h \
 	nstar_cold.h eos_base.h eos_had_potential.h nucmass_ldrop.h \
 	eos_quark_njl.h eos_quark.h eos_had_rmf.h eos_quark_cfl.h \
 	eos_quark_cfl6.h eos_had_schematic.h eos_had_skyrme.h \
 	eos_had_tabulated.h eos_nse.h tov_solve.h eos_had_rmf_delta.h \
-	eos_had_sym4_base.h eos_tov.h eos_had_base.h \
-	eos_sn_gen.h nucmass_ldrop_shell.h eos_had_gogny.h \
+	eos_had_sym4.h eos_tov.h eos_had_base.h \
+	eos_sn.h nucmass_ldrop_shell.h eos_had_gogny.h \
 	eos_crust_virial.h eos_had_hlps.h
 
 TEST_VAR = eos_had_apr.scr eos_quark_bag.scr eos_crust_virial.scr \
 	nstar_cold.scr eos_base.scr eos_had_potential.scr \
-	eos_had_sym4_base.scr \
+	eos_had_sym4.scr \
 	eos_quark_njl.scr eos_quark.scr eos_had_gogny.scr \
 	eos_had_rmf.scr eos_had_schematic.scr eos_had_skyrme.scr eos_tov.scr \
 	tov_solve.scr eos_quark_cfl6.scr eos_had_tabulated.scr eos_nse.scr \
 	eos_had_rmf_delta.scr eos_crust.scr eos_had_ddc.scr eos_quark_cfl.scr \
-	eos_had_base.scr eos_sn_gen.scr nucmass_ldrop_shell.scr 
+	eos_had_base.scr eos_sn.scr nucmass_ldrop_shell.scr 
 
 endif
 
@@ -131,14 +131,14 @@ pkginclude_HEADERS = $(HEADER_VAR)
 # ------------------------------------------------------------
 
 check_PROGRAMS = eos_had_apr_ts eos_quark_bag_ts nucmass_ldrop_ts \
-	nstar_cold_ts eos_base_ts eos_had_potential_ts eos_had_sym4_base_ts \
+	nstar_cold_ts eos_base_ts eos_had_potential_ts eos_had_sym4_ts \
 	eos_had_base_ts eos_quark_njl_ts eos_quark_ts \
 	eos_had_rmf_ts eos_had_schematic_ts eos_had_skyrme_ts eos_tov_ts \
 	tov_solve_ts eos_quark_cfl6_ts eos_had_tabulated_ts eos_nse_ts \
 	eos_had_rmf_delta_ts eos_crust_ts eos_had_ddc_ts eos_quark_cfl_ts \
 	nucleus_rmf_ts \
 	nucmass_ldrop_shell_ts eos_had_gogny_ts eos_crust_virial_ts
-# eos_sn_gen_ts 
+# eos_sn_ts 
 
 if O2SCL_HDF
 VCHECK_LIBS = $(libdir)/libo2scl_eos.la $(libdir)/libo2scl_part.la \
@@ -155,7 +155,7 @@ nucmass_ldrop_ts_LDADD = $(VCHECK_LIBS)
 nucmass_ldrop_shell_ts_LDADD = $(VCHECK_LIBS)
 eos_base_ts_LDADD = $(VCHECK_LIBS)
 eos_had_potential_ts_LDADD = $(VCHECK_LIBS)
-eos_had_sym4_base_ts_LDADD = $(VCHECK_LIBS)
+eos_had_sym4_ts_LDADD = $(VCHECK_LIBS)
 eos_had_base_ts_LDADD = $(VCHECK_LIBS)
 eos_quark_njl_ts_LDADD = $(VCHECK_LIBS)
 eos_quark_ts_LDADD = $(VCHECK_LIBS)
@@ -171,7 +171,7 @@ eos_crust_ts_LDADD = $(VCHECK_LIBS)
 eos_had_ddc_ts_LDADD = $(VCHECK_LIBS)
 eos_quark_cfl_ts_LDADD = $(VCHECK_LIBS)
 eos_nse_ts_LDADD = $(VCHECK_LIBS)
-# eos_sn_gen_ts_LDADD = $(VCHECK_LIBS)
+# eos_sn_ts_LDADD = $(VCHECK_LIBS)
 nucleus_rmf_ts_LDADD = $(VCHECK_LIBS)
 eos_had_gogny_ts_LDADD = $(VCHECK_LIBS)
 eos_crust_virial_ts_LDADD = $(VCHECK_LIBS)
@@ -190,8 +190,8 @@ eos_base.scr: eos_base_ts$(EXEEXT)
 	./eos_base_ts$(EXEEXT) > eos_base.scr
 eos_had_potential.scr: eos_had_potential_ts$(EXEEXT) 
 	./eos_had_potential_ts$(EXEEXT) > eos_had_potential.scr
-eos_had_sym4_base.scr: eos_had_sym4_base_ts$(EXEEXT) 
-	./eos_had_sym4_base_ts$(EXEEXT) > eos_had_sym4_base.scr
+eos_had_sym4.scr: eos_had_sym4_ts$(EXEEXT) 
+	./eos_had_sym4_ts$(EXEEXT) > eos_had_sym4.scr
 eos_had_base.scr: eos_had_base_ts$(EXEEXT) 
 	./eos_had_base_ts$(EXEEXT) > eos_had_base.scr
 eos_quark_njl.scr: eos_quark_njl_ts$(EXEEXT) 
@@ -222,8 +222,8 @@ eos_quark_cfl.scr: eos_quark_cfl_ts$(EXEEXT)
 	./eos_quark_cfl_ts$(EXEEXT) > eos_quark_cfl.scr
 eos_nse.scr: eos_nse_ts$(EXEEXT) 
 	./eos_nse_ts$(EXEEXT) > eos_nse.scr
-# eos_sn_gen.scr: eos_sn_gen_ts$(EXEEXT) 
-# 	./eos_sn_gen_ts$(EXEEXT) > eos_sn_gen.scr
+# eos_sn.scr: eos_sn_ts$(EXEEXT) 
+# 	./eos_sn_ts$(EXEEXT) > eos_sn.scr
 nucleus_rmf.scr: nucleus_rmf_ts$(EXEEXT) 
 	./nucleus_rmf_ts$(EXEEXT) > nucleus_rmf.scr
 eos_had_gogny.scr: eos_had_gogny_ts$(EXEEXT) 
@@ -238,7 +238,7 @@ nucmass_ldrop_ts_SOURCES = nucmass_ldrop_ts.cpp
 nucmass_ldrop_shell_ts_SOURCES = nucmass_ldrop_shell_ts.cpp
 eos_base_ts_SOURCES = eos_base_ts.cpp
 eos_had_potential_ts_SOURCES = eos_had_potential_ts.cpp
-eos_had_sym4_base_ts_SOURCES = eos_had_sym4_base_ts.cpp
+eos_had_sym4_ts_SOURCES = eos_had_sym4_ts.cpp
 eos_had_base_ts_SOURCES = eos_had_base_ts.cpp
 eos_quark_njl_ts_SOURCES = eos_quark_njl_ts.cpp
 eos_quark_ts_SOURCES = eos_quark_ts.cpp
@@ -254,7 +254,7 @@ eos_crust_ts_SOURCES = eos_crust_ts.cpp
 eos_had_ddc_ts_SOURCES = eos_had_ddc_ts.cpp
 eos_quark_cfl_ts_SOURCES = eos_quark_cfl_ts.cpp
 eos_nse_ts_SOURCES = eos_nse_ts.cpp
-# eos_sn_gen_ts_SOURCES = eos_sn_gen_ts.cpp
+# eos_sn_ts_SOURCES = eos_sn_ts.cpp
 nucleus_rmf_ts_SOURCES = nucleus_rmf_ts.cpp
 eos_had_gogny_ts_SOURCES = eos_had_gogny_ts.cpp
 eos_crust_virial_ts_SOURCES = eos_crust_virial_ts.cpp
@@ -262,61 +262,61 @@ eos_crust_virial_ts_SOURCES = eos_crust_virial_ts.cpp
 ls_test: ls_ls_test ls_skm_test ls_ska_test ls_sk1_test
 
 ls_ls_test:
-	eos_sn_gen_ts ls $(HOME)/pkgs/ls_eos2/ls.dat
+	eos_sn_ts ls $(HOME)/pkgs/ls_eos2/ls.dat
 
 ls_skm_test:
-	eos_sn_gen_ts ls $(HOME)/pkgs/ls_eos2/skm.dat
+	eos_sn_ts ls $(HOME)/pkgs/ls_eos2/skm.dat
 
 ls_ska_test:
-	eos_sn_gen_ts ls $(HOME)/pkgs/ls_eos2/ska.dat
+	eos_sn_ts ls $(HOME)/pkgs/ls_eos2/ska.dat
 
 ls_sk1_test:
-	eos_sn_gen_ts ls $(HOME)/pkgs/ls_eos2/sk1.dat
+	eos_sn_ts ls $(HOME)/pkgs/ls_eos2/sk1.dat
 
 stos_test: stos_eos1_test stos_eos2_test stos_eos3_test
 
 stos_eos1_test:
-	eos_sn_gen_ts stos $(HOME)/pkgs/stos_eos/eos1
+	eos_sn_ts stos $(HOME)/pkgs/stos_eos/eos1
 
 stos_eos2_test:
-	eos_sn_gen_ts stos $(HOME)/pkgs/stos_eos/eos2
+	eos_sn_ts stos $(HOME)/pkgs/stos_eos/eos2
 
 stos_eos3_test:
-	eos_sn_gen_ts stos $(HOME)/pkgs/stos_eos/eos3
+	eos_sn_ts stos $(HOME)/pkgs/stos_eos/eos3
 
 oo_test: oo_ls180_test oo_ls220_test oo_ls375_test
 
 oo_ls180_test:
-	eos_sn_gen_ts oo \
+	eos_sn_ts oo \
 	$(HOME)/pkgs/oo_eos/LS180_234r_136t_50y_analmu_20091212_SVNr26.h5 ls
 
 oo_ls220_test:
-	eos_sn_gen_ts oo \
+	eos_sn_ts oo \
 	$(HOME)/pkgs/oo_eos/LS220_234r_136t_50y_analmu_20091212_SVNr26.h5 ls
 
 oo_ls375_test:
-	eos_sn_gen_ts oo \
+	eos_sn_ts oo \
 	$(HOME)/pkgs/oo_eos/LS375_234r_136t_50y_analmu_20091212_SVNr26.h5 ls
 
 oo_stos_test:
-	eos_sn_gen_ts oo \
+	eos_sn_ts oo \
 	$(HOME)/pkgs/oo_eos/HShenEOS_rho220_temp180_ye65_version1.1_20120817.h5 \
 	stos
 
 oo_stos_hyp_test:
-	eos_sn_gen_ts oo \
+	eos_sn_ts oo \
 	$(HOME)/pkgs/oo_eos/HShen_HyperonEOS_rho220_temp180_ye65_version1.1_20131007.h5 \
 	stos
 
 
 x:
-	eos_sn_gen_ts hfsl \
+	eos_sn_ts hfsl \
 		$(HOME)/pkgs/hfsl_eos/dd2_frdm_eos_shen98format_v1.02.tab \
 		 >> gen_sn_test.scr
-	eos_sn_gen_ts hfsl \
+	eos_sn_ts hfsl \
 		$(HOME)/pkgs/hfsl_eos/fsg_roca_eos_shen98format_v1.0.tab \
 		 >> gen_sn_test.scr
-	eos_sn_gen_ts hfsl \
+	eos_sn_ts hfsl \
 		$(HOME)/pkgs/hfsl_eos/nl3_lala_eos_shen98format_v1.0.tab \
 		 >> gen_sn_test.scr
 

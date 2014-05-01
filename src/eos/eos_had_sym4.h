@@ -40,7 +40,7 @@ namespace o2scl {
 
       The standard usage is that a child class implements the virtual
       function calc_e_sep() which is then used by calc_e_alpha()
-      and calc_muhat(). These functions are employed by \ref eos_had_sym4_base
+      and calc_muhat(). These functions are employed by \ref eos_had_sym4
       to compute the EOS for an arbitrary dependence of the 
       symmetry energy on the isospin.
 
@@ -51,7 +51,7 @@ namespace o2scl {
 
       \bug Testing was disabled in HDF conversion. Fix this.
    */
-  class eos_had_sym4_base_base {
+  class eos_had_sym4_base {
 
 #ifndef DOXYGEN_INTERNAL
 
@@ -67,9 +67,9 @@ namespace o2scl {
 
   public:
 
-    eos_had_sym4_base_base();
+    eos_had_sym4_base();
   
-    virtual ~eos_had_sym4_base_base() {}
+    virtual ~eos_had_sym4_base() {}
 
     /** \brief Compute alpha at the specified density
      */
@@ -99,11 +99,9 @@ namespace o2scl {
 
       Created for \ref Steiner06.
    */
-  class rmf4_eos : public eos_had_rmf, public eos_had_sym4_base_base {
+  class eos_had_sym4_rmf : public eos_had_rmf, public eos_had_sym4_base {
 
   public:
-  
-    rmf4_eos();
   
     /** \brief Compute the potential and kinetic parts separately
      */
@@ -120,9 +118,9 @@ namespace o2scl {
       <b>References:</b>
 
       Created for \ref Steiner06.
-   */
-  class apr4_eos : public eos_had_apr, public eos_had_sym4_base_base {
-
+  */
+  class eos_had_sym4_apr : public eos_had_apr, public eos_had_sym4_base {
+    
   public:
 
     /** \brief Compute the potential and kinetic parts separately
@@ -139,9 +137,9 @@ namespace o2scl {
       <b>References:</b>
 
       Created for \ref Steiner06.
-   */
-  class skyrme4_eos : public eos_had_skyrme, public eos_had_sym4_base_base {
-
+  */
+  class eos_had_sym4_skyrme : public eos_had_skyrme, public eos_had_sym4_base {
+    
   public:
 
     /** \brief Compute the potential and kinetic parts separately
@@ -158,9 +156,10 @@ namespace o2scl {
       <b>References:</b>
 
       Created for \ref Steiner06.
-   */
-  class mdi4_eos : public eos_had_potential, public eos_had_sym4_base_base {
-
+  */
+  class eos_had_sym4_mdi : public eos_had_potential, 
+    public eos_had_sym4_base {
+    
 #ifndef DOXYGEN_INTERNAL
 
   protected:
@@ -194,14 +193,14 @@ namespace o2scl {
 
       Created for \ref Steiner06.
   */
-  class eos_had_sym4_base : public eos_had_base_eden {
+  class eos_had_sym4 : public eos_had_base_eden {
 
 #ifndef DOXYGEN_INTERNAL
 
   protected:
 
     /// The base equation of state to use
-    eos_had_sym4_base_base *sp;
+    eos_had_sym4_base *sp;
 
 #endif
 
@@ -211,7 +210,7 @@ namespace o2scl {
     double alpha;
 
     /// Set the base equation of state
-    int set_base_eos(eos_had_sym4_base_base &seb);
+    int set_base_eos(eos_had_sym4_base &seb);
   
     /** \brief Test the equation of state 
     

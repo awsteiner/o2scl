@@ -74,11 +74,11 @@ int nucmass_ldrop_shell::guess_fun(size_t nv, ubvector &x) {
   return 0;
 }
 
-frdm_shell::frdm_shell() {
+nucmass_frdm_shell::nucmass_frdm_shell() {
   nfit=14;
 }
 
-double frdm_shell::mass_excess_d(double Z, double N) {
+double nucmass_frdm_shell::mass_excess_d(double Z, double N) {
   
   double ret=nucmass_frdm::mass_excess_d(Z,N);
   ret-=shell_energy_interp(Z,N);
@@ -86,7 +86,7 @@ double frdm_shell::mass_excess_d(double Z, double N) {
   return ret;
 }
 
-int frdm_shell::fit_fun(size_t nv, const ubvector &x) {
+int nucmass_frdm_shell::fit_fun(size_t nv, const ubvector &x) {
   K=x[0]*200.0;
   r0=x[1];
   W=x[2];
@@ -105,7 +105,7 @@ int frdm_shell::fit_fun(size_t nv, const ubvector &x) {
   return 0;
 }
     
-int frdm_shell::guess_fun(size_t nv, ubvector &x) {
+int nucmass_frdm_shell::guess_fun(size_t nv, ubvector &x) {
   x[0]=K/200.0;
   x[1]=r0;
   x[2]=W;

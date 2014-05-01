@@ -44,7 +44,8 @@ namespace o2scl {
 
   /** \brief Liquid drop model with shell effects
   */
-  class nucmass_ldrop_shell : public nucmass_ldrop_pair, public nucmass_ibm_shell {
+  class nucmass_ldrop_shell : public nucmass_ldrop_pair, 
+    public nucmass_ibm_shell {
 
   public:
 
@@ -73,13 +74,13 @@ namespace o2scl {
   /** \brief Mass formula adding simple shell effects to the 
       finite-range liquid droplet model
    */
-  class frdm_shell : public nucmass_frdm, public nucmass_ibm_shell {
+  class nucmass_frdm_shell : public nucmass_frdm, public nucmass_ibm_shell {
     
   public:
 
-    frdm_shell();
+    nucmass_frdm_shell();
 
-    virtual ~frdm_shell() {}
+    virtual ~nucmass_frdm_shell() {}
 
     /// Compute the mass excess
     double mass_excess_d(double Z, double N);

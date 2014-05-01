@@ -169,24 +169,24 @@ nucmass_hfb_entry nucmass_hfb::get_ZN(int l_Z, int l_N) {
   return ret;
 }
 
-hfb_sp_mass::hfb_sp_mass() {
+nucmass_hfb_sp::nucmass_hfb_sp() {
   n=0;
 }
 
-hfb_sp_mass::~hfb_sp_mass() {
+nucmass_hfb_sp::~nucmass_hfb_sp() {
   if (n>0) {
     delete[] mass;
   }
 }
 
-double hfb_sp_mass::mass_excess(int Z, int N) {
-  hfb_sp_mass_entry ret;
+double nucmass_hfb_sp::mass_excess(int Z, int N) {
+  nucmass_hfb_sp_entry ret;
   ret=get_ZN(Z,N);
   if (ret.Z==0 && ret.N==0) return 0.0;
   return ret.Mcal;
 }
 
-int hfb_sp_mass::set_data(int n_mass, hfb_sp_mass_entry *m, std::string ref) {
+int nucmass_hfb_sp::set_data(int n_mass, nucmass_hfb_sp_entry *m, std::string ref) {
   n=n_mass;
   mass=m;
   reference=ref;
@@ -194,7 +194,7 @@ int hfb_sp_mass::set_data(int n_mass, hfb_sp_mass_entry *m, std::string ref) {
   return 0;
 }
 
-bool hfb_sp_mass::is_included(int l_Z, int l_N) {
+bool nucmass_hfb_sp::is_included(int l_Z, int l_N) {
   int lo=0, hi=0, mid=last;
 
   // binary search for the correct Z first
@@ -253,10 +253,10 @@ bool hfb_sp_mass::is_included(int l_Z, int l_N) {
   return false;
 }
 
-hfb_sp_mass_entry hfb_sp_mass::get_ZN(int l_Z, int l_N) {
+nucmass_hfb_sp_entry nucmass_hfb_sp::get_ZN(int l_Z, int l_N) {
   int lo=0, hi=0, mid=last;
 
-  hfb_sp_mass_entry ret;
+  nucmass_hfb_sp_entry ret;
   ret.Z=0;
   ret.A=0;
   ret.N=0;

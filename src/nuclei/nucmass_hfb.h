@@ -130,7 +130,7 @@ namespace o2scl {
     /// Theoretical parity
     int Pth;
 
-  } hfb_sp_mass_entry;
+  } nucmass_hfb_sp_entry;
   
   /** \brief HFB Mass formula 
 
@@ -207,15 +207,15 @@ namespace o2scl {
 
   /** \brief HFB Mass formula with spin and parity information
    */
-  class hfb_sp_mass : public nucmass_table {
+  class nucmass_hfb_sp : public nucmass_table {
     
   public:
     
     /** \brief Create a new mass formula object
      */
-    hfb_sp_mass();
+    nucmass_hfb_sp();
 
-    virtual ~hfb_sp_mass();
+    virtual ~nucmass_hfb_sp();
 
     /** \brief Return false if the mass formula does not include 
 	specified nucleus
@@ -231,23 +231,23 @@ namespace o2scl {
 	algorithm. It is assumed that the table is sorted first by
 	proton number and then by neutron number.
     */
-    hfb_sp_mass_entry get_ZN(int l_Z, int l_N);
+    nucmass_hfb_sp_entry get_ZN(int l_Z, int l_N);
     
     /// Return the type, \c "nucmass_hfb".
-    virtual const char *type() { return "hfb_sp_mass"; }
+    virtual const char *type() { return "nucmass_hfb_sp"; }
 
     /** \brief Set data
 	
 	This function is used by the HDF I/O routines.
     */
-    int set_data(int n_mass, hfb_sp_mass_entry *m, std::string ref);
+    int set_data(int n_mass, nucmass_hfb_sp_entry *m, std::string ref);
 
 #ifndef DOXYGEN_INTERNAL
 
   protected:
     
     /// The array containing the mass data of length ame::n
-    hfb_sp_mass_entry *mass;
+    nucmass_hfb_sp_entry *mass;
 
     /// The number of entries (about 3000).
     int n;

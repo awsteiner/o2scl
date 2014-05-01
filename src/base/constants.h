@@ -1059,6 +1059,13 @@ namespace o2scl_const {
    */
   const double gauss2_fm4=ec_gauss_fm2*ec_gauss_fm2/
     o2scl_const::fine_structure;
+
+
+  /** \brief \f$ \Lambda \f$ hyperon mass in \f$ \mathrm{MeV} \f$
+      
+      Value from PDG live (5/1/14).
+   */
+  const double mass_lambda_MeV=1115.683;
 }
 
 
