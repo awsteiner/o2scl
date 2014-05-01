@@ -75,8 +75,8 @@ int main(void) {
   cout.precision(3);
 
   // Specification of the differential equations and the Jacobian
-#ifdef O2SCL_CPP11
-  ode_funct11<ubvector,ubvector> od11=derivs;
+#ifndef O2SCL_NO_CPP11
+  ode_funct11 od11=derivs;
 #endif
   ode_funct_fptr<ubvector> od(derivs);
   ode_jac_funct_fptr<ubvector> oj(jac);
@@ -141,7 +141,7 @@ int main(void) {
   size_t j=0;
   while (x2<4.0) {
 
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
     ga.astep(x2,4.0,dx,2,y2,dydx2,yerr2,od11);
 #else
     ga.astep(x2,4.0,dx,2,y2,dydx2,yerr2,od);

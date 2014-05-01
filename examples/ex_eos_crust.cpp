@@ -21,14 +21,14 @@
   -------------------------------------------------------------------
 */
 
-/* Example: ex_bps_eos.cpp
+/* Example: ex_eos_crust.cpp
    -------------------------------------------------------------------
    Compute the Baym-Pethick-Sutherland equation of state
 */
 
 #include <fstream>
 
-#include <o2scl/bps_eos.h>
+#include <o2scl/eos_crust.h>
 #include <o2scl/test_mgr.h>
 #include <o2scl/table_units.h>
 #include <o2scl/lib_settings.h>
@@ -47,7 +47,7 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
-  bps_eos be;
+  eos_crust be;
   // Energy, pressure, etc.
   thermo th;
   // Proton and mass numbers
@@ -71,7 +71,7 @@ int main(void) {
   // linear interpolation to interpolate the BPS table
   bps.set_interp_type(itp_linear);
 
-  // Tabulate the o2scl results using bps_eos::calc_pressure() and 
+  // Tabulate the o2scl results using eos_crust::calc_pressure() and 
   // compare them to the original table. The energy density
   // and pressure are output in MeV/fm^3, the baryon number density
   // is given in fm^{-3}. The last two columns are the fractional
@@ -110,7 +110,7 @@ int main(void) {
   }
   cout << endl;
 
-  // Tabulate the o2scl results using bps_eos::calc_density() and 
+  // Tabulate the o2scl results using eos_crust::calc_density() and 
   // compare them to the original table
 
   cout << "Default mass formula, using calc_density()." << endl;

@@ -91,10 +91,10 @@ int main(void) {
   
   // Specify the differential equations to solve
 #ifndef O2SCL_NO_CPP11
-  ode_funct11<ubvector,ubvector> od=
+  ode_funct11 od=
     std::bind(derivs,std::placeholders::_1,std::placeholders::_2,
 	      std::placeholders::_3,std::placeholders::_4,alpha);
-  ode_funct11<ubvector,ubvector> od2=derivs2;
+  ode_funct11 od2=derivs2;
 #else
   ode_funct_fptr_param<double,ubvector> od(derivs,alpha);
   ode_funct_fptr<ubvector> od2(derivs2);

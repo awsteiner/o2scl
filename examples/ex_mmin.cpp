@@ -109,7 +109,7 @@ int main(void) {
   cout.setf(ios::scientific);
 
   // Using a member function
-#ifndef O2SCL_CPP11
+#ifdef O2SCL_NO_CPP11
   multi_funct_mfptr<cl> f1(&acl,&cl::spring_two);
   grad_funct_mfptr<cl> f1g(&acl,&cl::sgrad);
 #else

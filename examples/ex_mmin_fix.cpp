@@ -62,7 +62,7 @@ int main(void) {
     Perform the minimization the standard way, with the 
     simplex2 minimizer
   */
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
   multi_funct11 f1c11=
     std::bind(std::mem_fn<double(size_t,const ubvector &)>(&cl::mfn),
               acl,std::placeholders::_1,std::placeholders::_2);
@@ -73,7 +73,7 @@ int main(void) {
   x[0]=0.5;
   x[1]=0.5;
   x[2]=0.5;
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
   gm1.mmin(3,x,fmin,f1c11);
 #else 
   gm1.mmin(3,x,fmin,f1);

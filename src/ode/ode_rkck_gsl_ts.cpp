@@ -40,15 +40,13 @@ int expon(double x, size_t nv, const ubvector &y, ubvector &dydx) {
   return 0;
 }
 
-int exponx(double x, size_t nv, 
-	   const std::vector<double> &y,
+int exponx(double x, size_t nv, const std::vector<double> &y,
 	   boost::numeric::ublas::vector<double> &dydx) {
   dydx[0]=y[0];
   return 0;
 }
 
-int expon_gsl(double x, const double y[], double dydx[], 
-	      void *params) {
+int expon_gsl(double x, const double y[], double dydx[], void *params) {
   dydx[0]=y[0];
   return 0;
 }
@@ -69,7 +67,6 @@ int main(void) {
   t.set_output_level(1);
 
   {
-
     double x, dx=1.0e-1, x_gsl;
 
     ubvector y(2), dydx(2), yout(2), yerr(2), dydx_out(2);
@@ -77,7 +74,7 @@ int main(void) {
 
     // We have to keep the full type specification to specify
     // that we want ode_funct_fptr and not ode_funct11 independent
-    // of whether or not O2SCL_CPP11 is defined
+    // of whether or not O2SCL_NO_CPP11 is defined
     ode_rkck_gsl<ubvector,ubvector,ubvector,
 		 ode_funct<ubvector,ubvector> > rk;
 
@@ -153,7 +150,7 @@ int main(void) {
 
     // We have to keep the full type specification to specify
     // that we want ode_funct and not ode_funct11 independent
-    // of whether or not O2SCL_CPP11 is defined
+    // of whether or not O2SCL_NO_CPP11 is defined
     ode_rkck_gsl<vec1_t,vec2_t,vec3_t,ode_funct<vec1_t,vec2_t> > rk;
 
 #ifdef O2SCL_NEVER_DEFINED

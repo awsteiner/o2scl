@@ -62,7 +62,7 @@ int main(void) {
   static const size_t nv=2;
   
   // Specify the function to minimize and its gradient
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
   multi_funct11 mff11=func;
 #endif
   multi_funct_fptr<> mff(func);
@@ -85,7 +85,7 @@ int main(void) {
   }
 
   // Minimize
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
   gm1.mmin(nv,x,fmin,mff11);
 #else
   gm1.mmin(nv,x,fmin,mff);

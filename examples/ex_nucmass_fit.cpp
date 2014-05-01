@@ -21,13 +21,13 @@
   -------------------------------------------------------------------
 */
 
-/* Example: ex_mass_fit.cpp
+/* Example: ex_nucmass_fit.cpp
    -------------------------------------------------------------------
 */
 
 #include <iostream>
 #include <o2scl/test_mgr.h>
-#include <o2scl/mass_fit.h>
+#include <o2scl/nucmass_fit.h>
 #ifdef O2SCL_HDF
 #include <o2scl/hdf_file.h>
 #include <o2scl/hdf_nucmass_io.h>
@@ -48,12 +48,12 @@ int main(void) {
   // The RMS deviation of the fit
   double res;
   // The mass formula to be fitted
-  semi_empirical_mass sem;
+  nucmass_semi_empirical sem;
   // The fitting class
-  mass_fit mf;
+  nucmass_fit mf;
 
   // Load the experimental data
-  ame_mass ame;
+  nucmass_ame ame;
   o2scl_hdf::ame_load(ame,"");
   mf.set_exp_mass(ame);
 
