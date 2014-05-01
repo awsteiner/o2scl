@@ -33,12 +33,12 @@ BENCHMARK_PRGS = bm_poly.scr bm_mmin.scr
 	bm_mroot.scr bm_rkck.scr bm_mroot2.scr bm_lu.scr \
 	bm_part.scr bm_part2.scr bm_root.scr bm_min.scr
 EXAMPLE_PRGS = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
-	ex_cold_nstar.scr ex_mroot.scr ex_mmin.scr ex_apr_eos.scr \
+	ex_nstar_cold.scr ex_mroot.scr ex_mmin.scr ex_eos_had_apr.scr \
 	ex_inte.scr ex_deriv.scr ex_part.scr ex_ode.scr ex_anneal.scr \
-	ex_mcarlo.scr ex_string.scr ex_contour.scr ex_bps_eos.scr \
+	ex_mcarlo.scr ex_string.scr ex_contour.scr ex_eos_crust.scr \
 	ex_mmin_fix.scr ex_nucmass_fit.scr \
 	ex_stiff.scr ex_markov.scr ex_chebapp.scr ex_poly.scr ex_conmin.scr \
-	ex_rmf_nuc.scr ex_methast.scr ex_skyrme_eos.scr ex_nucmass.scr \
+	ex_nucleus_rmf.scr ex_methast.scr ex_eos_had_skyrme.scr ex_nucmass.scr \
 	ex_minte.scr
 
 # ex_ode_it.scr ex_gen_sn_eos.scr 
@@ -76,9 +76,9 @@ endif
 endif
 
 if O2SCL_CPP11
-O2SCL_CPP11_MVAR = -DO2SCL_CPP11 -std=c++0x
+O2SCL_CPP11_MVAR = 
 else
-O2SCL_CPP11_MVAR =
+O2SCL_CPP11_MVAR = -DO2SCL_NO_CPP11
 endif
 
 if O2SCL_HDF
@@ -125,7 +125,7 @@ EXTRA_PROGRAMS = \
 	ex_diff \
 	ex_interp2 \
 	ex_table \
-	ex_cold_nstar \
+	ex_nstar_cold \
 	ex_mroot \
 	ex_mmin \
 	ex_inte \
@@ -139,9 +139,9 @@ EXTRA_PROGRAMS = \
 	ex_string \
 	ex_gen_sn_eos \
 	ex_contour \
-	ex_bps_eos \
-	ex_apr_eos \
-	ex_skyrme_eos \
+	ex_eos_crust \
+	ex_eos_had_apr \
+	ex_eos_had_skyrme \
 	ex_nucmass \
 	ex_hydrogen \
 	ex_mmin_fix \
@@ -153,7 +153,7 @@ EXTRA_PROGRAMS = \
 	ex_chebapp \
 	ex_poly \
 	ex_conmin \
-	ex_rmf_nuc \
+	ex_nucleus_rmf \
 	ex_lambda \
 	bm_lu \
 	bm_deriv \
@@ -243,10 +243,10 @@ ex_table_SOURCES = ex_table.cpp
 ex_table.scr: ex_table
 	./ex_table > ex_table.scr
 
-ex_cold_nstar_LDADD = $(OOLIBS) $(OOLIBSTWO)
-ex_cold_nstar_SOURCES = ex_cold_nstar.cpp
-ex_cold_nstar.scr: ex_cold_nstar
-	./ex_cold_nstar > ex_cold_nstar.scr
+ex_nstar_cold_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_nstar_cold_SOURCES = ex_nstar_cold.cpp
+ex_nstar_cold.scr: ex_nstar_cold
+	./ex_nstar_cold > ex_nstar_cold.scr
 
 ex_mroot_LDADD = $(OOLIBS) $(OOLIBSTWO)
 ex_mroot_SOURCES = ex_mroot.cpp
@@ -313,20 +313,20 @@ ex_contour_SOURCES = ex_contour.cpp
 ex_contour.scr: ex_contour
 	./ex_contour > ex_contour.scr
 
-ex_bps_eos_LDADD = $(OOLIBS) $(OOLIBSTWO)
-ex_bps_eos_SOURCES = ex_bps_eos.cpp
-ex_bps_eos.scr: ex_bps_eos
-	./ex_bps_eos > ex_bps_eos.scr
+ex_eos_crust_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_eos_crust_SOURCES = ex_eos_crust.cpp
+ex_eos_crust.scr: ex_eos_crust
+	./ex_eos_crust > ex_eos_crust.scr
 
-ex_apr_eos_LDADD = $(OOLIBS) $(OOLIBSTWO)
-ex_apr_eos_SOURCES = ex_apr_eos.cpp
-ex_apr_eos.scr: ex_apr_eos
-	./ex_apr_eos > ex_apr_eos.scr
+ex_eos_had_apr_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_eos_had_apr_SOURCES = ex_eos_had_apr.cpp
+ex_eos_had_apr.scr: ex_eos_had_apr
+	./ex_eos_had_apr > ex_eos_had_apr.scr
 
-ex_skyrme_eos_LDADD = $(OOLIBS) $(OOLIBSTWO)
-ex_skyrme_eos_SOURCES = ex_skyrme_eos.cpp
-ex_skyrme_eos.scr: ex_skyrme_eos
-	./ex_skyrme_eos -test > ex_skyrme_eos.scr
+ex_eos_had_skyrme_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_eos_had_skyrme_SOURCES = ex_eos_had_skyrme.cpp
+ex_eos_had_skyrme.scr: ex_eos_had_skyrme
+	./ex_eos_had_skyrme -test > ex_eos_had_skyrme.scr
 
 ex_nucmass_LDADD = $(OOLIBS) $(OOLIBSTWO)
 ex_nucmass_SOURCES = ex_nucmass.cpp
@@ -373,10 +373,10 @@ ex_ode_it_SOURCES = ex_ode_it.cpp
 ex_ode_it.scr: ex_ode_it
 	./ex_ode_it > ex_ode_it.scr
 
-ex_rmf_nuc_LDADD = $(OOLIBS) $(OOLIBSTWO)
-ex_rmf_nuc_SOURCES = ex_rmf_nuc.cpp
-ex_rmf_nuc.scr: ex_rmf_nuc
-	./ex_rmf_nuc > ex_rmf_nuc.scr
+ex_nucleus_rmf_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_nucleus_rmf_SOURCES = ex_nucleus_rmf.cpp
+ex_nucleus_rmf.scr: ex_nucleus_rmf
+	./ex_nucleus_rmf > ex_nucleus_rmf.scr
 
 # -------------------------------------------------------------
 # benchmark rule

@@ -44,9 +44,9 @@ int main(void) {
   o2scl_hdf::ame_load(ame,"");
   nucmass_ame_exp amex;
   o2scl_hdf::ame_load(amex,"");
-  mnmsk_mass_exp mexp;
+  nucmass_mnmsk_exp mexp;
   o2scl_hdf::mnmsk_load(mexp);
-  mnmsk_mass mm;
+  nucmass_mnmsk mm;
   o2scl_hdf::mnmsk_load(mm);
 
   mf.set_exp_mass(ame);

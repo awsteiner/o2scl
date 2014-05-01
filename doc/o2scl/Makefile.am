@@ -25,8 +25,7 @@ help:
 docdir = $(prefix)/doc/o2scl
 
 # These are the files installed by 'make install'
-dist_doc_DATA = doxyfile Makefile.am Makefile.in \
-	*.html *.tex
+dist_doc_DATA = doxyfile Makefile.am Makefile.in *.html
 
 # These are the files included in the distribution
 EXTRA_DIST = *.dox o2scl.tag

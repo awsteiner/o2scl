@@ -25,9 +25,9 @@
    -------------------------------------------------------------------
 */
 #include <o2scl/test_mgr.h>
-#include <o2scl/skyrme_eos.h>
-#include <o2scl/nonrel_fermion.h>
-#include <o2scl/cold_nstar.h>
+#include <o2scl/eos_had_skyrme.h>
+#include <o2scl/fermion_nonrel.h>
+#include <o2scl/nstar_cold.h>
 #include <o2scl/format_float.h>
 #include <o2scl/hdf_file.h>
 #include <o2scl/hdf_io.h>
@@ -104,7 +104,7 @@ class ex_eos_had_skyrme {
 protected:
 
   /// To compute neutron stars
-  cold_nstar nst;
+  nstar_cold nst;
 
   /// Neutron
   fermion n;
@@ -133,7 +133,7 @@ protected:
 public:
 
   /// Base EOS model
-  skyrme_eos sk;
+  eos_had_skyrme sk;
 
   /// Model name
   string name;
@@ -181,7 +181,7 @@ public:
     p.non_interacting=false;
     nst.set_n_and_p(n,p);
     nst.set_eos(sk);
-    nst.def_tov_eos.verbose=0;
+    nst.def_eos_tov.verbose=0;
     nst.def_tov.verbose=0;
     nst.include_muons=true;
     verbose=1;

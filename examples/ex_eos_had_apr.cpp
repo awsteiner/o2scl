@@ -27,10 +27,10 @@
 #include <iostream>
 #include <cmath>
 #include <boost/numeric/ublas/vector.hpp>
-#include <o2scl/apr_eos.h>
+#include <o2scl/eos_had_apr.h>
 #include <o2scl/table.h>
 #include <o2scl/constants.h>
-#include <o2scl/nonrel_fermion.h>
+#include <o2scl/fermion_nonrel.h>
 #include <o2scl/tov_solve.h>
 #include <o2scl/deriv_cern.h>
 #include <o2scl/mroot_cern.h>
@@ -134,7 +134,7 @@ protected:
   //@}
 
   /// Base APR EOS
-  apr_eos ap;
+  eos_had_apr ap;
   
   /// Table for output
   table_units<> at;

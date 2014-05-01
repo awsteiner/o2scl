@@ -28,8 +28,8 @@
 #include <cmath>
 #include <o2scl/test_mgr.h>
 #include <o2scl/constants.h>
-#include <o2scl/eff_fermion.h>
-#include <o2scl/rel_fermion.h>
+#include <o2scl/fermion_eff.h>
+#include <o2scl/fermion_rel.h>
 #include <o2scl/classical.h>
 #include <o2scl/lib_settings.h>
 
@@ -41,12 +41,12 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
-  // Compare the method from rel_fermion to the more approximate
-  // scheme used in eff_fermion. We work in units of inverse Fermis,
+  // Compare the method from fermion_rel to the more approximate
+  // scheme used in fermion_eff. We work in units of inverse Fermis,
   // so that energy density is fm^{-4}. We also use a classical
   // particle, to compare to the nondegenerate approximation.
-  eff_fermion eff;
-  rel_fermion relf;
+  fermion_eff eff;
+  fermion_rel relf;
   classical cla;
   
   // Ensure that this example works without GNU units in case O2scl

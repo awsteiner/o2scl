@@ -116,7 +116,8 @@ o2scl-doc:
 
 # Create .pdf file from doxygen latex files
 o2scl-docp:
-	cd doc/o2scl && $(MAKE) o2scl-docp-recursive
+	echo "Disabled."
+#	cd doc/o2scl && $(MAKE) o2scl-docp-recursive
 
 # Create .pdf file from doxygen latex files verbosely
 o2scl-docp-verbose:

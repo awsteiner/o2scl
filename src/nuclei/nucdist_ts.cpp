@@ -44,10 +44,10 @@ int main(void) {
   nucmass_ame_exp amex12;
   o2scl_hdf::ame_load(amex12,"");
 
-  mnmsk_mass mth;
+  nucmass_mnmsk mth;
   o2scl_hdf::mnmsk_load(mth,"");
 
-  mnmsk_mass_exp mexp;
+  nucmass_mnmsk_exp mexp;
   o2scl_hdf::mnmsk_load(mexp,"");
 
   nucmass_ame ame03;

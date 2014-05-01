@@ -51,6 +51,7 @@ int main(void) {
 
   typedef boost::numeric::ublas::vector<double> ubvector;
   typedef boost::numeric::ublas::matrix<double> ubmatrix;
+  typedef boost::numeric::ublas::matrix_row<ubmatrix> ubmatrix_row;
 
   // Create the sample data
 
@@ -89,13 +90,13 @@ int main(void) {
 
   cout << "x            y            Calc.        Exact" << endl;
 
-  interp2_seq ti;
+  interp2_seq<ubvector,ubmatrix,ubmatrix_row> ti;
 
   // Interpolation, x-first
   double tol=0.05;
   double tol2=0.4;
 
-  ti.set_data(3,3,x,y,data,itp_cspline,true);
+  ti.set_data(3,3,x,y,data,itp_cspline);
 
   double x0, y0, x1, y1;
 
@@ -115,7 +116,7 @@ int main(void) {
 
   // Interpolation, y-first
 
-  ti.set_data(3,3,x,y,data,itp_cspline,false);
+  ti.set_data(3,3,x,y,data,itp_cspline);
 
   x0=0.5; y0=1.5;
   cout << x0 << " " << y0 << " "

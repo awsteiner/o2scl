@@ -90,7 +90,7 @@ int main(void) {
   double alpha=1.0;
   
   // Specify the differential equations to solve
-#ifdef O2SCL_CPP11
+#ifndef O2SCL_NO_CPP11
   ode_funct11<ubvector,ubvector> od=
     std::bind(derivs,std::placeholders::_1,std::placeholders::_2,
 	      std::placeholders::_3,std::placeholders::_4,alpha);

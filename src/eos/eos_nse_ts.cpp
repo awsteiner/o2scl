@@ -42,7 +42,7 @@ int main(void) {
   double T=5.0/hc_mev_fm;
   thermo th;
 
-  mnmsk_mass mm;
+  nucmass_mnmsk mm;
   o2scl_hdf::mnmsk_load(mm);
   nucdist_arb ad;
   ad.set_dist(mm,"Z>=24 & Z<=32 & N>=55 & N<=58");

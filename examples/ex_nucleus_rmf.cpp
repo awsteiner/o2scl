@@ -21,13 +21,13 @@
   -------------------------------------------------------------------
 */
 
-/* Example: ex_rmf_nuc.cpp
+/* Example: ex_nucleus_rmf.cpp
    -------------------------------------------------------------------
 
    This example uses the NL3 interaction to compute the structure
    of Lead-208
 */
-#include <o2scl/rmf_nucleus.h>
+#include <o2scl/nucleus_rmf.h>
 #include <o2scl/test_mgr.h>
 #ifdef O2SCL_HDF
 #include <o2scl/hdf_io.h>
@@ -48,7 +48,7 @@ int main(int argv, char *argc[]) {
   test_mgr t;
   t.set_output_level(1);
 
-  rmf_nucleus rn;
+  nucleus_rmf rn;
   rn.set_verbose(0);
 
   rmf_load(rn.def_rmf,"NL3");
@@ -109,8 +109,8 @@ int main(int argv, char *argc[]) {
 
   hdf_file hf;
   hdf_file hf2;
-  hf.open_or_create("ex_rmf_nuc_prof.o2");
-  hf2.open_or_create("ex_rmf_nuc_chden.o2");
+  hf.open_or_create("ex_nucleus_rmf_prof.o2");
+  hf2.open_or_create("ex_nucleus_rmf_chden.o2");
   o2_shared_ptr<table_units<> >::type profiles=rn.get_profiles();
   o2_shared_ptr<table_units<> >::type charge_dens=rn.get_chden();
   hdf_output(hf,*profiles,"profiles");

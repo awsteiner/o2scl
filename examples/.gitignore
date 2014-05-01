@@ -7,12 +7,12 @@ bm_min
 bm_mroot2
 bm_root
 ex_anneal
-ex_apr_eos
+ex_eos_had_apr
 ex_apr_fig7.1.txt
 ex_apr_fig7.2.txt
-ex_bps_eos
+ex_eos_crust
 ex_chebapp
-ex_cold_nstar
+ex_nstar_cold
 ex_conmin
 ex_contour
 ex_deriv
@@ -36,9 +36,8 @@ ex_ode
 ex_ode_it
 ex_part
 ex_poly
-ex_rmf_nuc
-ex_skryme_eos
-ex_skyrme_eos
+ex_nucleus_rmf
+ex_eos_had_skyrme
 ex_stiff
 ex_string
 ex_table

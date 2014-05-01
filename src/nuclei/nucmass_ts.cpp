@@ -145,7 +145,7 @@ int main(void) {
 
   nucmass_semi_empirical sm;
   
-  mnmsk_mass m95;
+  nucmass_mnmsk m95;
   o2scl_hdf::mnmsk_load(m95);
   
   nucmass_ktuy kt("04");
@@ -165,7 +165,7 @@ int main(void) {
 
   // Test the spins obtained from mnmsk
 
-  mnmsk_mass_entry mmk;
+  nucmass_mnmsk_entry mmk;
   mmk=m95.get_ZN(83,125);
   t.test_gen(mmk.spinp==((string)"9/2-"),"spinp");
   t.test_gen(mmk.spinn==((string)"1/2-"),"spinn");

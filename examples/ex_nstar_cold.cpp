@@ -20,14 +20,14 @@
 
   -------------------------------------------------------------------
 */
-/* Example: ex_cold_nstar.cpp
+/* Example: ex_nstar_cold.cpp
    -------------------------------------------------------------------
-   This example solves the TOV equations using class cold_nstar using a
-   relativistic mean-field EOS from class rmf_eos.
+   This example solves the TOV equations using class nstar_cold using a
+   relativistic mean-field EOS from class eos_had_rmf.
 */
 
-#include <o2scl/cold_nstar.h>
-#include <o2scl/rmf_eos.h>
+#include <o2scl/nstar_cold.h>
+#include <o2scl/eos_had_rmf.h>
 #include <o2scl/hdf_file.h>
 #include <o2scl/hdf_io.h>
 #include <o2scl/test_mgr.h>
@@ -40,7 +40,7 @@ using namespace o2scl_hdf;
 using namespace o2scl_const;
 
 // A simple function to load the NL3 model
-int load_nl3(rmf_eos &rmf);
+int load_nl3(eos_had_rmf &rmf);
 
 int main(void) {
 
@@ -49,10 +49,10 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
-  cold_nstar nst;
+  nstar_cold nst;
 
   // Initialize EOS
-  rmf_eos rmf;
+  eos_had_rmf rmf;
   load_nl3(rmf);
   
   rmf.saturation();
@@ -80,10 +80,10 @@ int main(void) {
 
   // Output EOS and TOV results to files
   hdf_file hf;
-  hf.open_or_create("ex_cold_nstar_eos.o2");
+  hf.open_or_create("ex_nstar_cold_eos.o2");
   hdf_output(hf,*te,"eos");
   hf.close();
-  hf.open_or_create("ex_cold_nstar_tov.o2");
+  hf.open_or_create("ex_nstar_cold_tov.o2");
   hdf_output(hf,*tr,"tov");
   hf.close();
 
@@ -92,7 +92,7 @@ int main(void) {
 }
 // End of example
 
-int load_nl3(rmf_eos &rmf) {
+int load_nl3(eos_had_rmf &rmf) {
 
   rmf.ms=508.194;
   rmf.mw=782.501;
