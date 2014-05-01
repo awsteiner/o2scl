@@ -33,11 +33,11 @@
 #include <o2scl/hdf_file.h>
 #include <o2scl/hdf_io.h>
 #include <o2scl/hdf_nucmass_io.h>
-#include <o2scl/nuclear_mass.h>
-#include <o2scl/nuclear_dist.h>
-#include <o2scl/mass_fit.h>
-#include <o2scl/dz_mass.h>
-#include <o2scl/ktuy_mass.h>
+#include <o2scl/nucmass.h>
+#include <o2scl/nucdist.h>
+#include <o2scl/nucmass_fit.h>
+#include <o2scl/nucmass_dz.h>
+#include <o2scl/nucmass_ktuy.h>
 
 using namespace std;
 using namespace o2scl;
@@ -51,13 +51,13 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
-  ame_mass_exp ame;
+  nucmass_ame_exp ame;
   o2scl_hdf::ame_load(ame,"12");
 
-  full_dist ame_fd(ame);
+  nucdist_full ame_fd(ame);
   
-  semi_empirical_mass sm;
-  mass_fit mf;
+  nucmass_semi_empirical sm;
+  nucmass_fit mf;
   double res;
   mf.set_exp_mass(ame);
   mf.fit(sm,res);
@@ -65,30 +65,30 @@ int main(void) {
   cout.width(15);
   cout << "Semi-empir:" << " " << res << endl;
   
-  mnmsk_mass mn;
+  nucmass_mnmsk mn;
   o2scl_hdf::mnmsk_load(mn);
   mf.eval(mn,res);
   cout.width(15);
   cout << "FRDM:" << " " << res << endl;
 
-  hfb_mass hfb;
+  nucmass_hfb hfb;
   o2scl_hdf::hfb_load(hfb,14);
   mf.eval(hfb,res);
   cout.width(15);
   cout << "HFB:" << " " << res << endl;
 
-  ame_mass_exp ame03;
+  nucmass_ame_exp ame03;
   o2scl_hdf::ame_load(ame03,"03");
   mf.eval(ame03,res);
   cout.width(15);
   cout << "AME '03:" << " " << res << endl;
 
-  dz_mass_table dz;
+  nucmass_dz_table dz;
   mf.eval(dz,res);
   cout.width(15);
   cout << "Duf-zuk:" << " " << res << endl;
 
-  ktuy_mass ktuy;
+  nucmass_ktuy ktuy;
   mf.eval(ktuy,res);
   cout.width(15);
   cout << "Koura:" << " " << res << endl;
@@ -96,7 +96,7 @@ int main(void) {
   table_units<> tu;
   tu.line_of_names("Z N ame sm mn hfb ame03 dz ktuy");
 
-  typedef nuclear_dist::iterator iter;
+  typedef nucdist::iterator iter;
 
   iter ame_it=ame_fd.begin();
   for(iter it=ame_fd.begin();it!=ame_fd.end();it++) {
