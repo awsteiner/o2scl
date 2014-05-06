@@ -427,6 +427,17 @@ namespace o2scl {
     fun_=&fun;
     return;
   }
+
+  /** \brief Return \f$ \chi^2 \f$
+   */
+  virtual double chi2(size_t np, const vec_t &p) {
+    double ret=0.0;
+    for(size_t i=0;i<ndat_;i++) {
+      double yi=((*fun_)(np,p,(*xdat_)[i])-(*ydat_)[i])/((*yerr_)[i]);
+      ret+=yi*yi;
+    }
+    return ret;
+  }
   
   /** \brief Using parameters in \c p, compute the 
       relative deviations in \c f
