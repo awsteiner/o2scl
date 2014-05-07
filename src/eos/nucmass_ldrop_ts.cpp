@@ -69,7 +69,7 @@ int main(void) {
   if (false) {
     nucmass_ldrop_skin tst;
     tst.new_skin_mode=true;
-    tst.set_eos_had_base_temp(apr);
+    tst.set_eos_had_temp_base(apr);
     tst.set_n_and_p(nrn,nrp);
     tst.n0=0.17;
     tst.n1=-0.05;
@@ -181,7 +181,7 @@ int main(void) {
 
   // APR
 
-  ld.set_eos_had_base_temp(apr);
+  ld.set_eos_had_temp_base(apr);
   ld.n0=0.16;
   ld.n1=0.0;
   cout << "Lead from APR: " << endl;
@@ -253,8 +253,8 @@ int main(void) {
   ld.n0=0.16;
   ldf.n1=-0.11;
   ldf.n0=0.16;
-  ld.set_eos_had_base_temp(apr);
-  ldf.set_eos_had_base_temp(apr);
+  ld.set_eos_had_temp_base(apr);
+  ldf.set_eos_had_temp_base(apr);
 
   ldf.doi=1.0;
   ld.surften=1.1;
@@ -298,7 +298,7 @@ int main(void) {
 
   // With neutron skin
   
-  ldf.set_eos_had_base_temp(apr);
+  ldf.set_eos_had_temp_base(apr);
 
   cout << "APR (with skin): " << endl;
   cout  << "Saturation density:\t " << ldf.n0 << endl;
@@ -375,7 +375,7 @@ int main(void) {
 
   cout << "Finite temperature: " << endl;
 
-  ldf.set_eos_had_base_temp(apr);
+  ldf.set_eos_had_temp_base(apr);
   ldf.n0=0.184;
   ldf.n1=-0.05;
   ldf.doi=0.9;

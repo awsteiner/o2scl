@@ -69,7 +69,7 @@ namespace o2scl {
       stellarcollapse.org HDF5 format?
 
       \comment
-      \future Could this be a child of eos_had_base_temp and
+      \future Could this be a child of eos_had_temp_base and
       then directly used in nstar_cold()? Actually no, this doesn't
       work because of the nuclei. 
       \endcomment

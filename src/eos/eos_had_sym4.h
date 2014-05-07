@@ -193,7 +193,7 @@ namespace o2scl {
 
       Created for \ref Steiner06.
   */
-  class eos_had_sym4 : public eos_had_base_eden {
+  class eos_had_sym4 : public eos_had_eden_base {
 
 #ifndef DOXYGEN_INTERNAL
 

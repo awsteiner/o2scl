@@ -430,7 +430,7 @@ void eos_had_base::set_sat_deriv2(deriv_base<funct > &de) {
   return;
 }
 
-int eos_had_base_eden::calc_p(fermion &n, fermion &p, thermo &th) {
+int eos_had_eden_base::calc_p(fermion &n, fermion &p, thermo &th) {
   int ret;
   
   set_n_and_p(n,p);
@@ -442,8 +442,8 @@ int eos_had_base_eden::calc_p(fermion &n, fermion &p, thermo &th) {
     
   double pa[2]={n.mu,p.mu};
   double *pap=&(pa[0]);
-  mm_funct_mfptr_param<eos_had_base_eden,double *> 
-    fmf(this,&eos_had_base_eden::nuc_matter_e,pap);
+  mm_funct_mfptr_param<eos_had_eden_base,double *> 
+    fmf(this,&eos_had_eden_base::nuc_matter_e,pap);
   eos_mroot->msolve(2,x,fmf);
     
   th=*eos_thermo;
@@ -451,7 +451,7 @@ int eos_had_base_eden::calc_p(fermion &n, fermion &p, thermo &th) {
   return 0;
 }
 
-int eos_had_base_pres::calc_e(fermion &n, fermion &p, thermo &th) {
+int eos_had_pres_base::calc_e(fermion &n, fermion &p, thermo &th) {
   int ret;
   
   set_n_and_p(n,p);
@@ -466,8 +466,8 @@ int eos_had_base_pres::calc_e(fermion &n, fermion &p, thermo &th) {
     
   double pa[2]={n.n,p.n};
   double *pap=&(pa[0]);
-  mm_funct_mfptr_param<eos_had_base_pres,double *> 
-    fmf(this,&eos_had_base_pres::nuc_matter_p,pap);
+  mm_funct_mfptr_param<eos_had_pres_base,double *> 
+    fmf(this,&eos_had_pres_base::nuc_matter_p,pap);
   eos_mroot->msolve(2,mu,fmf);
     
   th=*eos_thermo;
@@ -475,19 +475,19 @@ int eos_had_base_pres::calc_e(fermion &n, fermion &p, thermo &th) {
   return 0;
 }
 
-int eos_had_base_temp::nuc_matter_temp_e(size_t nv, const ubvector &x, 
+int eos_had_temp_base::nuc_matter_temp_e(size_t nv, const ubvector &x, 
 					 ubvector &y, double *&pa) {
   neutron->n=x[0];
   proton->n=x[1];
   
   if (!o2scl::is_finite(neutron->n) || !o2scl::is_finite(proton->n)) {
     O2SCL_ERR2_RET("Density problem in ",
-		   "eos_had_base_temp::nuc_matter_e().",exc_esanity);
+		   "eos_had_temp_base::nuc_matter_e().",exc_esanity);
   }
   int ret=calc_temp_e(*neutron,*proton,lT,*eos_thermo);
   if (ret!=0) {
     O2SCL_ERR2("Function calc_e() failed in ",
-	       "eos_had_base_temp::nuc_matter_e().",exc_efailed);
+	       "eos_had_temp_base::nuc_matter_e().",exc_efailed);
   }
 
   y[0]=neutron->mu-pa[0];
@@ -495,13 +495,13 @@ int eos_had_base_temp::nuc_matter_temp_e(size_t nv, const ubvector &x,
   
   if (!o2scl::is_finite(neutron->mu) || !o2scl::is_finite(proton->mu)) {
     O2SCL_ERR2_RET("Chemical potential problem in ",
-		   "eos_had_base_temp::nuc_matter_e().",exc_esanity);
+		   "eos_had_temp_base::nuc_matter_e().",exc_esanity);
   }
 
   return ret;
 }
 
-int eos_had_base_temp::nuc_matter_temp_p(size_t nv, const ubvector &x, 
+int eos_had_temp_base::nuc_matter_temp_p(size_t nv, const ubvector &x, 
 					 ubvector &y, double *&pa) {
   
   neutron->mu=x[0];
@@ -509,7 +509,7 @@ int eos_had_base_temp::nuc_matter_temp_p(size_t nv, const ubvector &x,
 
   int ret=calc_temp_p(*neutron,*proton,lT,*eos_thermo);
   if (ret!=0) {
-    O2SCL_ERR("calc_p() failed in eos_had_base_temp::nuc_matter_p().",ret);
+    O2SCL_ERR("calc_p() failed in eos_had_temp_base::nuc_matter_p().",ret);
   }
 
   y[0]=neutron->n-pa[0];
@@ -519,7 +519,7 @@ int eos_had_base_temp::nuc_matter_temp_p(size_t nv, const ubvector &x,
 }
 
 
-int eos_had_base_temp_eden::calc_p(fermion &n, fermion &p, thermo &th) {
+int eos_had_temp_eden_base::calc_p(fermion &n, fermion &p, thermo &th) {
   int ret;
   
   set_n_and_p(n,p);
@@ -531,11 +531,11 @@ int eos_had_base_temp_eden::calc_p(fermion &n, fermion &p, thermo &th) {
 
   double pa[2]={n.mu,p.mu};
   double *pap=&(pa[0]);
-  mm_funct_mfptr_param<eos_had_base_temp_eden,double *> 
-    fmf(this,&eos_had_base_temp_eden::nuc_matter_e,pap);
+  mm_funct_mfptr_param<eos_had_temp_eden_base,double *> 
+    fmf(this,&eos_had_temp_eden_base::nuc_matter_e,pap);
   ret=eos_mroot->msolve(2,x,fmf);
   if (ret!=0) {
-    O2SCL_ERR_RET("Solver failed in eos_had_base_temp_eden::calc_p().",ret);
+    O2SCL_ERR_RET("Solver failed in eos_had_temp_eden_base::calc_p().",ret);
   }
     
   th=*eos_thermo;
@@ -543,7 +543,7 @@ int eos_had_base_temp_eden::calc_p(fermion &n, fermion &p, thermo &th) {
   return 0;
 }
 
-int eos_had_base_temp_eden::calc_temp_p(fermion &n, fermion &p, 
+int eos_had_temp_eden_base::calc_temp_p(fermion &n, fermion &p, 
 					double T, thermo &th) {
   int ret;
 
@@ -558,13 +558,13 @@ int eos_had_base_temp_eden::calc_temp_p(fermion &n, fermion &p,
 
   double pa[2]={n.mu,p.mu};
   double *pap=&(pa[0]);
-  mm_funct_mfptr_param<eos_had_base_temp_eden,double *>
-    fmf(this,&eos_had_base_temp_eden::nuc_matter_temp_e,pap);
+  mm_funct_mfptr_param<eos_had_temp_eden_base,double *>
+    fmf(this,&eos_had_temp_eden_base::nuc_matter_temp_e,pap);
   ret=eos_mroot->msolve(2,den,fmf);
   
   if (ret!=0) {
     O2SCL_ERR2_RET("Solver failed in ",
-		   "eos_had_base_temp_eden::calc_temp_p().",ret);
+		   "eos_had_temp_eden_base::calc_temp_p().",ret);
   }
   
   th=*eos_thermo;
@@ -572,7 +572,7 @@ int eos_had_base_temp_eden::calc_temp_p(fermion &n, fermion &p,
   return 0;
 }
 
-int eos_had_base_temp_pres::calc_e(fermion &n, fermion &p, thermo &th) {
+int eos_had_temp_pres_base::calc_e(fermion &n, fermion &p, thermo &th) {
   int ret;
   
   set_n_and_p(n,p);
@@ -587,12 +587,12 @@ int eos_had_base_temp_pres::calc_e(fermion &n, fermion &p, thermo &th) {
     
   double pa[2]={n.n,p.n};
   double *pap=&(pa[0]);
-  mm_funct_mfptr_param<eos_had_base_temp_pres,double *> 
-    fmf(this,&eos_had_base_temp_pres::nuc_matter_p,pap);
+  mm_funct_mfptr_param<eos_had_temp_pres_base,double *> 
+    fmf(this,&eos_had_temp_pres_base::nuc_matter_p,pap);
   ret=eos_mroot->msolve(2,mu,fmf);
     
   if (ret!=0) {
-    O2SCL_ERR_RET("Solver failed in eos_had_base_temp_pres::calc_p().",ret);
+    O2SCL_ERR_RET("Solver failed in eos_had_temp_pres_base::calc_p().",ret);
   }
     
   th=*eos_thermo;
@@ -600,7 +600,7 @@ int eos_had_base_temp_pres::calc_e(fermion &n, fermion &p, thermo &th) {
   return 0;
 }
 
-int eos_had_base_temp_pres::calc_temp_e(fermion &n, fermion &p, 
+int eos_had_temp_pres_base::calc_temp_e(fermion &n, fermion &p, 
 					double T, thermo &th) {
   int ret;
 
@@ -615,13 +615,13 @@ int eos_had_base_temp_pres::calc_temp_e(fermion &n, fermion &p,
 
   double pa[2]={n.n,p.n};
   double *pap=&(pa[0]);
-  mm_funct_mfptr_param<eos_had_base_temp_pres,double *>
-    fmf(this,&eos_had_base_temp_pres::nuc_matter_temp_p,pap);
+  mm_funct_mfptr_param<eos_had_temp_pres_base,double *>
+    fmf(this,&eos_had_temp_pres_base::nuc_matter_temp_p,pap);
   ret=eos_mroot->msolve(2,mu,fmf);
   
   if (ret!=0) {
     O2SCL_ERR2_RET("Solver failed in ",
-		   "eos_had_base_temp_pres::calc_temp_e().",ret);
+		   "eos_had_temp_pres_base::calc_temp_e().",ret);
   }
   
   th=*eos_thermo;

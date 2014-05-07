@@ -43,7 +43,7 @@ namespace o2scl {
 
       \future Implement the finite temperature EOS properly.
   */
-  class eos_had_ddc : public eos_had_base_eden {
+  class eos_had_ddc : public eos_had_eden_base {
   public:
 
     /// \name Masses

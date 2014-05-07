@@ -240,7 +240,7 @@ namespace o2scl {
       \hline
       
   */
-  class eos_had_skyrme : public eos_had_base_temp_eden {
+  class eos_had_skyrme : public eos_had_temp_eden_base {
 
   public:
 

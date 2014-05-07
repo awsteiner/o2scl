@@ -51,7 +51,7 @@ namespace o2scl {
       the pressure. The \f$ 2/5 \f$ factor in front should be 
       \f$ 1/5 \f$ .
   */
-  class eos_had_hlps : public eos_had_base_eden {
+  class eos_had_hlps : public eos_had_eden_base {
 
   protected:
 

@@ -120,7 +120,7 @@ namespace o2scl {
       \future There is some repetition between calc_e() and calc_temp_e() 
       that possibly could be removed.
   */
-  class eos_had_apr : public eos_had_base_temp_eden {
+  class eos_had_apr : public eos_had_temp_eden_base {
 
 #ifndef DOXYGEN_INTERNAL
 

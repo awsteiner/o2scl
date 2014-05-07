@@ -41,12 +41,12 @@ namespace o2scl {
       
       \warning This class is implemented as a eos_had_base object
       because it might be helpful to be able to use \ref
-      o2scl::eos_had_base_temp::calc_temp_e(), but because of the
+      o2scl::eos_had_temp_base::calc_temp_e(), but because of the
       alpha particles and deuterons, some of the other \ref
       o2scl::eos_had_base methods don't have the correct
       interpretation.
   */
-  class eos_crust_virial : public eos_had_base_temp_pres {
+  class eos_crust_virial : public eos_had_temp_pres_base {
 
   protected:
 

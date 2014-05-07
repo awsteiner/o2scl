@@ -70,7 +70,7 @@ int main(void) {
 
   // APR
 
-  ld.set_eos_had_base_temp(sk);
+  ld.set_eos_had_temp_base(sk);
   ld.set_n_and_p(nrn,nrp);
   ld.n0=0.16;
   ld.n1=0.0;
@@ -83,7 +83,7 @@ int main(void) {
   t.test_rel(au.total_mass(82,126),ld.total_mass(82,126),1.0e-3,
 	     "ame vs ld2");
 
-  ld2.set_eos_had_base_temp(sk);
+  ld2.set_eos_had_temp_base(sk);
   ld2.set_n_and_p(nrn,nrp);
   ld2.n0=0.16;
   ld2.n1=0.0;

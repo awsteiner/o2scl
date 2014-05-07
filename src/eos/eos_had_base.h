@@ -604,7 +604,7 @@ namespace o2scl {
 	it returns \ref exc_efailed without calling the error 
 	handler if the densities are not finite.
 
-	This function is used by \ref eos_had_base_pres::calc_e().
+	This function is used by \ref eos_had_pres_base::calc_e().
     */
     int nuc_matter_p(size_t nv, const ubvector &x, ubvector &y, 
 		     double *&pa);
@@ -620,7 +620,7 @@ namespace o2scl {
 	it returns \ref exc_efailed without calling the error 
 	handler if the chemical potentials are not finite.
 
-	This function is used by \ref eos_had_base_eden::calc_p().
+	This function is used by \ref eos_had_eden_base::calc_p().
     */
     int nuc_matter_e(size_t nv, const ubvector &x, ubvector &y, 
 		     double *&pa);
@@ -755,7 +755,7 @@ namespace o2scl {
   };
 
   /// A hadronic EOS based on a function of the densities [abstract base]
-  class eos_had_base_eden : public eos_had_base {
+  class eos_had_eden_base : public eos_had_base {
   public:
 
     /** \brief Equation of state as a function of density
@@ -771,7 +771,7 @@ namespace o2scl {
   /** \brief A hadronic EOS based on a function of the chemical 
       potentials [abstract base]
   */
-  class eos_had_base_pres : public eos_had_base {
+  class eos_had_pres_base : public eos_had_base {
   public:
 
     /** \brief Equation of state as a function of the chemical potentials
@@ -784,8 +784,8 @@ namespace o2scl {
 
   };
 
-  /// A finite temperature hadronic EOS
-  class eos_had_base_temp : public eos_had_base {
+  /// A finite temperature hadronic EOS [abstract base]
+  class eos_had_temp_base : public eos_had_base {
 
 #ifndef DOXYGEN_INTERNAL
     
@@ -809,11 +809,11 @@ namespace o2scl {
 
   public:
 
-    eos_had_base_temp() {
+    eos_had_temp_base() {
       fet=&def_fet;
     }
 
-    virtual ~eos_had_base_temp() {}
+    virtual ~eos_had_temp_base() {}
 
     /** \brief Set the object for computing finite-temperature fermions
 	(default is \ref def_fet)
@@ -850,7 +850,7 @@ namespace o2scl {
   /** \brief A hadronic EOS at finite temperature
       based on a function of the densities [abstract base]
   */
-  class eos_had_base_temp_eden : public eos_had_base_temp {
+  class eos_had_temp_eden_base : public eos_had_temp_base {
   public:
 
     /** \brief Equation of state as a function of density
@@ -878,7 +878,7 @@ namespace o2scl {
   /** \brief A hadronic EOS at finite temperature based on a function
       of the chemical potentials [abstract base]
   */
-  class eos_had_base_temp_pres : public eos_had_base_temp {
+  class eos_had_temp_pres_base : public eos_had_temp_base {
   public:
 
     /** \brief Equation of state as a function of the chemical potentials

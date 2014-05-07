@@ -289,7 +289,7 @@ namespace o2scl {
       of the field equations for the solver
 
   */
-  class eos_had_rmf : public eos_had_base_temp_pres {
+  class eos_had_rmf : public eos_had_temp_pres_base {
 
   public:
 

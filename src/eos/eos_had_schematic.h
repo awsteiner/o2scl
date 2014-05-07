@@ -45,7 +45,7 @@ namespace o2scl {
 
       Symmetry energy at nuclear matter density is \f$ a+b \f$. 
   */
-  class eos_had_schematic : public eos_had_base_eden {
+  class eos_had_schematic : public eos_had_eden_base {
 
   public:
 

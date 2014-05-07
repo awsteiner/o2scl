@@ -49,7 +49,7 @@ namespace o2scl {
       precision on a grid at least as small as 0.002 
       \f$ \mathrm{fm}^{-3} \f$.
   */
-  class eos_had_tabulated : public eos_had_base_eden {
+  class eos_had_tabulated : public eos_had_eden_base {
     
   protected:
 

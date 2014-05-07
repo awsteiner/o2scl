@@ -83,7 +83,7 @@ namespace o2scl {
       The bulk binding energy contribution ( \f$ \sim -16 \f$
       MeV per nucleon) and the symmetry energy are computing using the
       hadronic EOS (either \ref def_had_eos or the EOS specified in
-      the most recent call to set_eos_had_base_temp() ). The bulk
+      the most recent call to set_eos_had_temp_base() ). The bulk
       energy per baryon is
       \f[
       E_{\mathrm{bulk}}/A = \frac{\hbar c}{n_{L} }
@@ -227,7 +227,7 @@ namespace o2scl {
     /// \name EOS and particle parameters
     //@{
     /// Change the base hadronic EOS
-    int set_eos_had_base_temp(eos_had_base_temp &uhe) {
+    int set_eos_had_temp_base(eos_had_temp_base &uhe) {
       heos=&uhe;
       return 0;
     }
@@ -273,7 +273,7 @@ namespace o2scl {
     /// Pointer to proton
     fermion *p;
     /// The base EOS for bulk matter
-    eos_had_base_temp *heos;
+    eos_had_temp_base *heos;
 
 #endif
     

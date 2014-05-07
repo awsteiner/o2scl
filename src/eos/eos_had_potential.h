@@ -152,7 +152,7 @@ namespace o2scl {
       \future Calculate the chemical potentials analytically 
       
   */
-  class eos_had_potential : public eos_had_base_eden {
+  class eos_had_potential : public eos_had_eden_base {
 
   public:
     

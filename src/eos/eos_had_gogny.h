@@ -41,7 +41,7 @@ namespace o2scl {
       accurately compute derivatives, including compressibility and
       symmetry energy.
   */
-  class eos_had_gogny : public eos_had_base_eden {
+  class eos_had_gogny : public eos_had_eden_base {
     
   public:
 
