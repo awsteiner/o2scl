@@ -400,7 +400,7 @@ namespace o2scl {
 
 
     }
-      
+    
     if (success==false) {
       O2SCL_CONV2_RET("At least one row of the Jacobian is zero ",
 		      "in jacobian_gsl::operator().",exc_esing,

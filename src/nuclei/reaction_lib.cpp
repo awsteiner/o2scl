@@ -78,7 +78,7 @@ int reaction_lib::find_in_chap(std::vector<nuclear_reaction> &nrl,
 	}
       }
     } else {
-      O2SCL_ERR2_RET("Too many nuclei specified for chapter in ",
+      O2SCL_ERR2("Too many nuclei specified for chapter in ",
 		     "reaction_lib::find_in_chap().",exc_efailed);
     }
 
@@ -108,7 +108,7 @@ int reaction_lib::find_in_chap(std::vector<nuclear_reaction> &nrl,
 	}
       }
     } else {
-      O2SCL_ERR2_RET("Too many nuclei specified for chapter in ",
+      O2SCL_ERR2("Too many nuclei specified for chapter in ",
 		     "reaction_lib::find_in_chap().",exc_efailed);
     }
 
@@ -161,7 +161,7 @@ int reaction_lib::find_in_chap(std::vector<nuclear_reaction> &nrl,
 	}
       }
     } else {
-      O2SCL_ERR2_RET("Too many nuclei specified for chapter in ",
+      O2SCL_ERR2("Too many nuclei specified for chapter in ",
 		     "reaction_lib::find_in_chap().",exc_efailed);
     }
 
@@ -191,7 +191,7 @@ int reaction_lib::find_in_chap(std::vector<nuclear_reaction> &nrl,
 	}
       }
     } else {
-      O2SCL_ERR2_RET("Too many nuclei specified for chapter in ",
+      O2SCL_ERR2("Too many nuclei specified for chapter in ",
 		     "reaction_lib::find_in_chap().",exc_efailed);
     }
 
@@ -237,7 +237,7 @@ int reaction_lib::find_in_chap(std::vector<nuclear_reaction> &nrl,
 	}
       }
     } else {
-      O2SCL_ERR2_RET("Too many nuclei specified for chapter in ",
+      O2SCL_ERR2("Too many nuclei specified for chapter in ",
 		     "reaction_lib::find_in_chap().",exc_efailed);
     }
 
@@ -302,7 +302,7 @@ int reaction_lib::find_in_chap(std::vector<nuclear_reaction> &nrl,
 	}
       }
     } else {
-      O2SCL_ERR2_RET("Too many nuclei specified for chapter in ",
+      O2SCL_ERR2("Too many nuclei specified for chapter in ",
 		     "reaction_lib::find_in_chap().",exc_efailed);
     }
 
@@ -480,7 +480,7 @@ int reaction_lib::find_in_chap(std::vector<nuclear_reaction> &nrl,
 	}
       }
     } else {
-      O2SCL_ERR2_RET("Too many nuclei specified for chapter in ",
+      O2SCL_ERR2("Too many nuclei specified for chapter in ",
 		     "reaction_lib::find_in_chap().",exc_efailed);
     }
     
@@ -533,7 +533,7 @@ int reaction_lib::find_in_chap(std::vector<nuclear_reaction> &nrl,
 	}
       }
     } else {
-      O2SCL_ERR2_RET("Too many nuclei specified for chapter in ",
+      O2SCL_ERR2("Too many nuclei specified for chapter in ",
 		     "reaction_lib::find_in_chap().",exc_efailed);
     }
 
@@ -604,7 +604,7 @@ int reaction_lib::find_in_chap(std::vector<nuclear_reaction> &nrl,
 	}
       }
     } else {
-      O2SCL_ERR2_RET("Too many nuclei specified for chapter in ",
+      O2SCL_ERR2("Too many nuclei specified for chapter in ",
 		     "reaction_lib::find_in_chap().",exc_efailed);
     }
 
@@ -905,7 +905,7 @@ int reaction_lib::find_in_chap(std::vector<nuclear_reaction> &nrl,
 	}
       }
     } else {
-      O2SCL_ERR2_RET("Too many nuclei specified for chapter in ",
+      O2SCL_ERR2("Too many nuclei specified for chapter in ",
 		     "reaction_lib::find_in_chap().",exc_efailed);
     }
 
@@ -1051,12 +1051,12 @@ int reaction_lib::find_in_chap(std::vector<nuclear_reaction> &nrl,
 	}
       }
     } else {
-      O2SCL_ERR2_RET("Too many nuclei specified for chapter in ",
+      O2SCL_ERR2("Too many nuclei specified for chapter in ",
 		     "reaction_lib::find_in_chap().",exc_efailed);
     }
     
   } else {
-    O2SCL_ERR_RET("Invalid chapter in reaction_lib::find_in_chap().",
+    O2SCL_ERR("Invalid chapter in reaction_lib::find_in_chap().",
 		  exc_efailed);
   }
 
@@ -1090,7 +1090,7 @@ int reaction_lib::read_file_reaclib2(std::string fname) {
   
       r.chap=chap;
       if (s1.substr(0,5)!="     ") {
-	O2SCL_ERR_RET("Failed first five spaces.",exc_efailed);
+	O2SCL_ERR("Failed first five spaces.",exc_efailed);
       }
       for(size_t i=0;i<6;i++) {
 	r.name[i]=s1.substr(5+i*5,5);
@@ -1113,7 +1113,7 @@ int reaction_lib::read_file_reaclib2(std::string fname) {
 	    int N, Z, A;
 	    int ret=nm.parse_elstring(r.name[i],Z,N,A);
 	    if (ret!=0) {
-	      O2SCL_ERR_RET("Failed to parse.",exc_efailed);
+	      O2SCL_ERR("Failed to parse.",exc_efailed);
 	    }
 	    r.Z[i]=(size_t)Z;
 	    r.A[i]=(size_t)A;
@@ -1122,29 +1122,29 @@ int reaction_lib::read_file_reaclib2(std::string fname) {
 	}
       }
       if (s1.substr(35,8)!="        ") {
-	O2SCL_ERR_RET("Failed eight spaces.",exc_efailed);
+	O2SCL_ERR("Failed eight spaces.",exc_efailed);
       }
       r.ref=s1.substr(43,4);
       r.type=s1[47];
       r.rev=s1[48];
       if (s1.substr(49,3)!="   ") {
-	O2SCL_ERR_RET("Failed three spaces.",exc_efailed);
+	O2SCL_ERR("Failed three spaces.",exc_efailed);
       }
       if (s1.substr(52,12)[8]!='e') {
-	O2SCL_ERR_RET("Number failed.",exc_efailed);
+	O2SCL_ERR("Number failed.",exc_efailed);
       }
       r.Q=o2scl::stod(s1.substr(52,12));
   
       for(size_t i=0;i<4;i++) {
 	if (s2.substr(i*13,13)[9]!='e') {
-	  O2SCL_ERR_RET("Number failed.",exc_efailed);
+	  O2SCL_ERR("Number failed.",exc_efailed);
 	}
 	r.a[i]=o2scl::stod(s2.substr(i*13,13));
       }
 
       for(size_t i=0;i<3;i++) {
 	if (s3.substr(i*13,13)[9]!='e') {
-	  O2SCL_ERR_RET("Number failed.",exc_efailed);
+	  O2SCL_ERR("Number failed.",exc_efailed);
 	}
 	r.a[i+4]=o2scl::stod(s3.substr(i*13,13));
       }

@@ -329,7 +329,7 @@ namespace o2scl {
 				const data_t y2, const data_t y3) {
 
     if (x1==x2 || x2==x3 || x1==x3) {
-      O2SCL_ERR2_RET("Two abscissae cannot be equal in function ",
+      O2SCL_ERR2("Two abscissae cannot be equal in function ",
 		     "quadratic_extremum_x().",exc_einval);
     }
     
@@ -382,7 +382,7 @@ namespace o2scl {
 				const data_t y2, const data_t y3) {
 
     if (x1==x2 || x2==x3 || x1==x3) {
-      O2SCL_ERR2_RET("Two abscissae cannot be equal in function ",
+      O2SCL_ERR2("Two abscissae cannot be equal in function ",
 		     "quadratic_extremum_y().",exc_einval);
     }
     

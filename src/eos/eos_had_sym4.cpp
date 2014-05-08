@@ -84,13 +84,13 @@ int eos_had_sym4_base::calc_e_alpha(fermion &ne, fermion &pr, thermo &lth,
   diff_pot=ed_pot_neut-ed_pot_nuc;
 
   if (r1!=0) {
-    O2SCL_ERR_RET("Neutron matter failed in calc_e_alpha().",exc_efailed);
+    O2SCL_ERR("Neutron matter failed in calc_e_alpha().",exc_efailed);
   }
   if (r2!=0) {
-    O2SCL_ERR_RET("Neutron matter failed in calc_e_alpha().",exc_efailed);
+    O2SCL_ERR("Neutron matter failed in calc_e_alpha().",exc_efailed);
   }
   if (r3!=0) {
-    O2SCL_ERR_RET("Neutron matter failed in calc_e_alpha().",exc_efailed);
+    O2SCL_ERR("Neutron matter failed in calc_e_alpha().",exc_efailed);
   }
 
   return 0;
@@ -494,13 +494,13 @@ int eos_had_sym4::calc_e(fermion &ne, fermion &pr, thermo &lth) {
   pr.kf=kf_p;
     
   if (r1!=0) {
-    O2SCL_ERR_RET("Neutron matter failed in calc_e_alpha().",exc_efailed);
+    O2SCL_ERR("Neutron matter failed in calc_e_alpha().",exc_efailed);
   }
   if (r2!=0) {
-    O2SCL_ERR_RET("Neutron matter failed in calc_e_alpha().",exc_efailed);
+    O2SCL_ERR("Neutron matter failed in calc_e_alpha().",exc_efailed);
   }
   if (r3!=0) {
-    O2SCL_ERR_RET("Neutron matter failed in calc_e_alpha().",exc_efailed);
+    O2SCL_ERR("Neutron matter failed in calc_e_alpha().",exc_efailed);
   }
   return 0;
 }

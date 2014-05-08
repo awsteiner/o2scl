@@ -324,7 +324,7 @@ namespace o2scl {
       std::string str="Interval direction (t1-t0="+o2scl::dtos(dt)+
 	") does not match step direction (h="+o2scl::dtos(h)+
 	" in astep_gsl::evolve_apply().";
-      O2SCL_ERR_RET(str.c_str(),exc_einval);
+      O2SCL_ERR(str.c_str(),exc_einval);
     }
 
     // Copy the initial point from y to yout. The stepper won't modify

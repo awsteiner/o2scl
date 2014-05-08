@@ -190,7 +190,7 @@ namespace o2scl {
 	  std::string str="Calculation of derivative failed (is="+
 	    itos(is)+" and del*dx[9]="+dtos(del*dx[9])+
 	    ") in deriv_cern::deriv_tlate().";
-	  O2SCL_ERR_RET(str.c_str(),exc_efailed);
+	  O2SCL_ERR(str.c_str(),exc_efailed);
 	}
     
 	for(k=0;k<=9;k++) {

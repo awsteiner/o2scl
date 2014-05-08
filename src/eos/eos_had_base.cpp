@@ -481,7 +481,7 @@ int eos_had_temp_base::nuc_matter_temp_e(size_t nv, const ubvector &x,
   proton->n=x[1];
   
   if (!o2scl::is_finite(neutron->n) || !o2scl::is_finite(proton->n)) {
-    O2SCL_ERR2_RET("Density problem in ",
+    O2SCL_ERR2("Density problem in ",
 		   "eos_had_temp_base::nuc_matter_e().",exc_esanity);
   }
   int ret=calc_temp_e(*neutron,*proton,lT,*eos_thermo);
@@ -494,7 +494,7 @@ int eos_had_temp_base::nuc_matter_temp_e(size_t nv, const ubvector &x,
   y[1]=proton->mu-pa[1];
   
   if (!o2scl::is_finite(neutron->mu) || !o2scl::is_finite(proton->mu)) {
-    O2SCL_ERR2_RET("Chemical potential problem in ",
+    O2SCL_ERR2("Chemical potential problem in ",
 		   "eos_had_temp_base::nuc_matter_e().",exc_esanity);
   }
 
@@ -535,7 +535,7 @@ int eos_had_temp_eden_base::calc_p(fermion &n, fermion &p, thermo &th) {
     fmf(this,&eos_had_temp_eden_base::nuc_matter_e,pap);
   ret=eos_mroot->msolve(2,x,fmf);
   if (ret!=0) {
-    O2SCL_ERR_RET("Solver failed in eos_had_temp_eden_base::calc_p().",ret);
+    O2SCL_ERR("Solver failed in eos_had_temp_eden_base::calc_p().",ret);
   }
     
   th=*eos_thermo;
@@ -563,7 +563,7 @@ int eos_had_temp_eden_base::calc_temp_p(fermion &n, fermion &p,
   ret=eos_mroot->msolve(2,den,fmf);
   
   if (ret!=0) {
-    O2SCL_ERR2_RET("Solver failed in ",
+    O2SCL_ERR2("Solver failed in ",
 		   "eos_had_temp_eden_base::calc_temp_p().",ret);
   }
   
@@ -592,7 +592,7 @@ int eos_had_temp_pres_base::calc_e(fermion &n, fermion &p, thermo &th) {
   ret=eos_mroot->msolve(2,mu,fmf);
     
   if (ret!=0) {
-    O2SCL_ERR_RET("Solver failed in eos_had_temp_pres_base::calc_p().",ret);
+    O2SCL_ERR("Solver failed in eos_had_temp_pres_base::calc_p().",ret);
   }
     
   th=*eos_thermo;
@@ -620,7 +620,7 @@ int eos_had_temp_pres_base::calc_temp_e(fermion &n, fermion &p,
   ret=eos_mroot->msolve(2,mu,fmf);
   
   if (ret!=0) {
-    O2SCL_ERR2_RET("Solver failed in ",
+    O2SCL_ERR2("Solver failed in ",
 		   "eos_had_temp_pres_base::calc_temp_e().",ret);
   }
   

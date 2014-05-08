@@ -743,7 +743,7 @@ namespace o2scl {
 		   func_t &ufunc) {
 
     if (nn==0) {
-      O2SCL_ERR2_RET("Tried to min over zero variables ",
+      O2SCL_ERR2("Tried to min over zero variables ",
 		     " in mmin_bfgs2::mmin().",exc_einval);
     }
 
@@ -801,7 +801,7 @@ namespace o2scl {
 		      func_t &ufunc, dfunc_t &udfunc) {
 
     if (nn==0) {
-      O2SCL_ERR2_RET("Tried to min over zero variables ",
+      O2SCL_ERR2("Tried to min over zero variables ",
 		     "in mmin_bfgs2::mmin().",exc_einval);
     }
 

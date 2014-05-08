@@ -295,7 +295,7 @@ double fermion_eval_thermo::calibrate
   if (tab.get_nlines()==0) {
     string str="Failed to load data from file '"+fname+
       "' in fermion_T::calibrate(). Bad filename?";
-    O2SCL_ERR_RET(str.c_str(),exc_efilenotfound);
+    O2SCL_ERR(str.c_str(),exc_efilenotfound);
   }
   
   // ----------------------------------------------------------------

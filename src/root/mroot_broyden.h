@@ -448,7 +448,7 @@ namespace o2scl {
       }
       
       if (status!=0) {
-	O2SCL_ERR2_RET("Function iterate() failed in ",
+	O2SCL_ERR2("Function iterate() failed in ",
 		       "mroot_broyden::solve_set().",exc_efailed);
       }
 

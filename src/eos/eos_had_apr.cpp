@@ -118,7 +118,7 @@ int eos_had_apr::calc_e(fermion &ne, fermion &pr, thermo &lth) {
   double gh1, gh2, dgl1, dgl2, dgh1, dgh2;
 
   if (!o2scl::is_finite(ne.n) || !o2scl::is_finite(pr.n)) {
-    O2SCL_ERR_RET("Densities not finite in eos_had_apr::calc_e().",exc_einval);
+    O2SCL_ERR("Densities not finite in eos_had_apr::calc_e().",exc_einval);
   }
   
   //---------------------------------------
@@ -651,7 +651,7 @@ int eos_had_apr::calc_temp_e(fermion &ne, fermion &pr, const double temper,
       pr.mu=dkindnp+dgh1*t7+dgh2*t8+dxdnp*4.0*t9*(gh1-gh2);
       
     } else {
-      O2SCL_ERR_RET("Bad value for pion in calc_temp_e",exc_efailed);
+      O2SCL_ERR("Bad value for pion in calc_temp_e",exc_efailed);
     }
   }
   
@@ -660,7 +660,7 @@ int eos_had_apr::calc_temp_e(fermion &ne, fermion &pr, const double temper,
   lth.pr=-lth.ed+ne.mu*ne.n+pr.mu*pr.n+temper*lth.en;
   
   if (!o2scl::is_finite(lth.pr)) {
-    O2SCL_ERR_RET("Pressure not finite in calc_e().",exc_efailed);
+    O2SCL_ERR("Pressure not finite in calc_e().",exc_efailed);
   }
 
   return success;

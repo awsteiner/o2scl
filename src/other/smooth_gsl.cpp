@@ -121,7 +121,7 @@ int smooth_gsl::smooth_data(const gsl_vector *y,
   
   
   if (!x_set) {
-    O2SCL_ERR_RET("X values not set in smooth_gsl::smooth_data().",
+    O2SCL_ERR("X values not set in smooth_gsl::smooth_data().",
 		  exc_einval);
   }
 

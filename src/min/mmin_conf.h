@@ -496,7 +496,7 @@ namespace o2scl {
     virtual int iterate() {
 	
       if (this->dim==0) {
-	O2SCL_ERR2_RET("Memory not allocated in ",
+	O2SCL_ERR2("Memory not allocated in ",
 		       "mmin_conf::iterate().",exc_efailed);
       }
 	
@@ -632,7 +632,7 @@ namespace o2scl {
 		    func_t &ufunc) {
 
       if (this->dim==0) {
-	O2SCL_ERR2_RET("Memory not allocated in ",
+	O2SCL_ERR2("Memory not allocated in ",
 		       "mmin_conf::set().",exc_efailed);
       }
     
@@ -668,7 +668,7 @@ namespace o2scl {
 		       func_t &ufunc, dfunc_t &udfunc) {
 
       if (this->dim==0) {
-	O2SCL_ERR2_RET("Memory not allocated in ",
+	O2SCL_ERR2("Memory not allocated in ",
 		       "mmin_conf::set_de().",exc_efailed);
       }
 	
@@ -708,7 +708,7 @@ namespace o2scl {
 		     func_t &ufunc) {
 
       if (nn==0) {
-	O2SCL_ERR2_RET("Tried to min over zero variables ",
+	O2SCL_ERR2("Tried to min over zero variables ",
 		       "in mmin_conf::mmin().",exc_einval);
       }
 
@@ -765,7 +765,7 @@ namespace o2scl {
 			func_t &ufunc, dfunc_t &udfunc) {
 
       if (nn==0) {
-	O2SCL_ERR2_RET("Tried to min over zero variables ",
+	O2SCL_ERR2("Tried to min over zero variables ",
 		       "in mmin_conf::mmin_de().",exc_einval);
       }
 

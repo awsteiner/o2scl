@@ -59,7 +59,7 @@ namespace o2scl {
     virtual int calc_e(fermion &ne, fermion &pr, thermo &th) {
       
       if (t3d.get_nx()==0) {
-	O2SCL_ERR_RET("No data loaded in eos_had_gogny::calc_e().",
+	O2SCL_ERR("No data loaded in eos_had_gogny::calc_e().",
 		      exc_einval);
       }
 

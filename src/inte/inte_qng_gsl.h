@@ -324,7 +324,7 @@ namespace o2scl {
 	"with given value of tol_abs, "+o2scl::dtos(this->tol_abs)+
 	", and tol_rel, "+o2scl::dtos(this->tol_rel)+
 	", in inte_qng_gsl::integ_err().";
-      O2SCL_ERR_RET(estr.c_str(),exc_ebadtol);
+      O2SCL_ERR(estr.c_str(),exc_ebadtol);
     };
       
     // Compute the integral using the 10- and 21-point formula. 

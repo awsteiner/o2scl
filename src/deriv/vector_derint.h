@@ -185,7 +185,7 @@ namespace o2scl {
    */
   template<class vec_t> double vector_integ_trap(size_t n, vec_t &v) {
     if (n==0) {
-      O2SCL_ERR2_RET("Tried to integrate zero-length vector in ",
+      O2SCL_ERR2("Tried to integrate zero-length vector in ",
 		     "vector_integ_trap",exc_einval);
     } else if (n==1) {
       return v[0];
@@ -202,7 +202,7 @@ namespace o2scl {
   */
   template<class vec_t> double vector_integ_threept(size_t n, vec_t &v) {
     if (n==0) {
-      O2SCL_ERR2_RET("Tried to integrate zero-length vector in ",
+      O2SCL_ERR2("Tried to integrate zero-length vector in ",
 		     "vector_integ_threept",exc_einval);
     } else if (n==1) {
       return v[0];
@@ -234,7 +234,7 @@ namespace o2scl {
   */
   template<class vec_t> double vector_integ_extended4(size_t n, vec_t &v) {
     if (n==0) {
-      O2SCL_ERR2_RET("Tried to integrate zero-length vector in ",
+      O2SCL_ERR2("Tried to integrate zero-length vector in ",
 		     "vector_integ_extended4",exc_einval);
     } else if (n==1) {
       return v[0];
@@ -257,7 +257,7 @@ namespace o2scl {
   */
   template<class vec_t> double vector_integ_durand(size_t n, vec_t &v) {
     if (n==0) {
-      O2SCL_ERR2_RET("Tried to integrate zero-length vector in ",
+      O2SCL_ERR2("Tried to integrate zero-length vector in ",
 		     "vector_integ_durand",exc_einval);
     } else if (n==1) {
       return v[0];

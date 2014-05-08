@@ -59,8 +59,8 @@ inte_workspace_gsl::~inte_workspace_gsl() {
 int inte_workspace_gsl::allocate(size_t sz) {
 
   if (sz==0) {
-    O2SCL_ERR2_RET("Tried to allocate with zero size in ",
-		   "inte_workspace_gsl::allocate().",exc_einval);
+    O2SCL_ERR2("Tried to allocate with zero size in ",
+	       "inte_workspace_gsl::allocate().",exc_einval);
   }
   if (limit>0) free();
 

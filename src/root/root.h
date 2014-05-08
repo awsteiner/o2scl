@@ -201,7 +201,7 @@ namespace o2scl {
       i++;
     }
     if (done==false) {
-      O2SCL_ERR_RET("Failed to bracket function in root_bkt::solve().",
+      O2SCL_ERR("Failed to bracket function in root_bkt::solve().",
 		    o2scl::exc_emaxiter);
     }
     return solve_bkt(x,x2,func);
@@ -237,7 +237,7 @@ namespace o2scl {
     }
 	
     if (done==false) {
-      O2SCL_ERR_RET("Failed to bracket function in root_bkt::solve_de().",
+      O2SCL_ERR("Failed to bracket function in root_bkt::solve_de().",
 		    o2scl::exc_efailed);
     }
     
@@ -269,13 +269,15 @@ namespace o2scl {
       returning \f$ x_1 \f$ .
   */
   virtual int solve_bkt(double &x1, double x2, func_t &func) {
-    O2SCL_ERR_RET("Function solve_bkt() not implemented.",exc_eunimpl);
+    O2SCL_ERR("Function solve_bkt() not implemented.",exc_eunimpl);
+    return 0;
   }
 
   /** \brief Solve \c func using \c x as an initial guess
   */
   virtual int solve(double &x, func_t &func) {
-    O2SCL_ERR_RET("Function solve() not implemented.",exc_eunimpl);
+    O2SCL_ERR("Function solve() not implemented.",exc_eunimpl);
+    return 0;
   }
 
   /** \brief Solve \c func using \c x as an initial

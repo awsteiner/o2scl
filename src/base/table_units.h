@@ -354,7 +354,7 @@ namespace o2scl {
       uiter it=utree.find(scol);
       if (it==utree.end()) {
 	if (err_on_fail) {
-	  O2SCL_ERR_RET((((std::string)"Column '")+scol+"' not found in "+
+	  O2SCL_ERR((((std::string)"Column '")+scol+"' not found in "+
 			 "table_units::convert_to_unit().").c_str(),
 			exc_enotfound);
 	} else {
@@ -369,7 +369,7 @@ namespace o2scl {
       typename table<vec_t>::aiter at=this->atree.find(scol);
       if (at==this->atree.end()) {
 	if (err_on_fail) {
-	  O2SCL_ERR_RET((((std::string)"Column '")+scol+"' not found in "+
+	  O2SCL_ERR((((std::string)"Column '")+scol+"' not found in "+
 			 "table_units::convert_to_unit().").c_str(),
 			exc_enotfound);
 	} else {

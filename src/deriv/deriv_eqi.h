@@ -178,7 +178,7 @@ namespace o2scl {
 	cp=&deriv_eqi::derivp5;
       }
       if (npoints<=1 || npoints>5) {
-	O2SCL_ERR_RET("Invalid # of points in set_npoints(). Using default",
+	O2SCL_ERR("Invalid # of points in set_npoints(). Using default",
 		      exc_einval);
       }
       return 0;
@@ -198,7 +198,7 @@ namespace o2scl {
 	c2p=&deriv_eqi::deriv2p5;
       }
       if (npoints<=2 || npoints>5) {
-	O2SCL_ERR_RET("Invalid # of points in set_npoints2(). Using default",
+	O2SCL_ERR("Invalid # of points in set_npoints2(). Using default",
 		      exc_einval);
       }
       return 0;

@@ -380,7 +380,7 @@ namespace o2scl {
     virtual int allocate(size_t ldim) {
 
       if (ldim==0) {
-	O2SCL_ERR2_RET("Can't allocate zero memory in ",
+	O2SCL_ERR2("Can't allocate zero memory in ",
 		       "mcarlo_miser::allocate().",exc_efailed);
       }
 
@@ -421,7 +421,7 @@ namespace o2scl {
 				 double &res, double &err) {
 
       if (min_calls==0 || min_calls_per_bisection==0) {
-	O2SCL_ERR2_RET("Variables min_calls or min_calls_per_bisection ",
+	O2SCL_ERR2("Variables min_calls or min_calls_per_bisection ",
 		       "are zero in mcarlo_miser::miser_minteg_err().",
 		       exc_einval);
       }
@@ -443,10 +443,10 @@ namespace o2scl {
 	  std::string str="Upper limit, "+dtos(xu[i])+", must be greater "+
 	    "than lower limit, "+dtos(xl[i])+", in mcarlo_miser::"+
 	    "miser_minteg_err().";
-	  O2SCL_ERR_RET(str.c_str(),exc_einval);
+	  O2SCL_ERR(str.c_str(),exc_einval);
 	}
 	if (xu[i]-xl[i]>GSL_DBL_MAX) {
-	  O2SCL_ERR2_RET("Range of integration is too large ",
+	  O2SCL_ERR2("Range of integration is too large ",
 			 "in mcarlo_miser::miser_minteg_err().",exc_einval);
 	}
       }
@@ -454,7 +454,7 @@ namespace o2scl {
       if (alpha<0) {
 	std::string str="Parameter alpha, "+dtos(alpha)+", must be non-"+
 	"negative in mcarlo_miser::mister_minteg_err().";
-	O2SCL_ERR_RET(str.c_str(),exc_einval);
+	O2SCL_ERR(str.c_str(),exc_einval);
       }
 
       /* [GSL] Compute volume */
@@ -469,7 +469,7 @@ namespace o2scl {
 	double m=0.0, q=0.0;
 
 	if (calls<2) {
-	  O2SCL_ERR2_RET("Insufficient calls for subvolume ", 
+	  O2SCL_ERR2("Insufficient calls for subvolume ", 
 			 "in mcarlo_miser::miser_minteg_err().",exc_einval);
 	}
 
@@ -512,7 +512,7 @@ namespace o2scl {
       estimate_calls=(min_calls > prod ? min_calls : prod);
       
       if (estimate_calls<4*dim) {
-	O2SCL_ERR2_RET("Insufficient calls to sample all halfspaces ", 
+	O2SCL_ERR2("Insufficient calls to sample all halfspaces ", 
 		       "in mcarlo_miser::miser_minteg_err().",exc_esanity);
       }
 
@@ -564,12 +564,12 @@ namespace o2scl {
 	    }
 	  } else {
 	    if (sigma_l[i]<0) {
-	      O2SCL_ERR2_RET("No points in left-half space ", 
+	      O2SCL_ERR2("No points in left-half space ", 
 			     "in mcarlo_miser::miser_minteg_err().",
 			     exc_esanity);
 	    }
 	    if (sigma_r[i]<0) {
-	      O2SCL_ERR2_RET("No points in right-half space ", 
+	      O2SCL_ERR2("No points in right-half space ", 
 			     "in mcarlo_miser::miser_minteg_err().",
 			     exc_esanity);
 	    }

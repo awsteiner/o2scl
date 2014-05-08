@@ -392,7 +392,7 @@ namespace o2scl {
 	std::string estr="Tolerance cannot be achieved with given ";
 	estr+="value of tol_abs, "+dtos(l_epsabs)+", and tol_rel, "+
 	  dtos(l_epsrel)+", in inte_singular_gsl::qags().";
-	O2SCL_ERR_RET(estr.c_str(),exc_ebadtol);
+	O2SCL_ERR(estr.c_str(),exc_ebadtol);
       }
       
       /* Perform the first integration */

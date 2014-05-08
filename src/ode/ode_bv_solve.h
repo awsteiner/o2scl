@@ -149,7 +149,7 @@ namespace o2scl {
 
       // Make sure that the boundary conditions make sense
       if (lhs_unks!=rhs_conts) {
-	O2SCL_ERR2_RET("Incorrect boundary conditions in ",
+	O2SCL_ERR2("Incorrect boundary conditions in ",
 		       "ode_bv_shoot::solve()",gsl_einval);
       } 
 
@@ -389,7 +389,7 @@ namespace o2scl {
 
       // Make sure that the boundary conditions make sense
       if (lhs_unks!=rhs_conts) {
-	O2SCL_ERR2_RET("Incorrect boundary conditions in ",
+	O2SCL_ERR2("Incorrect boundary conditions in ",
 		       "ode_bv_shoot_grid::solve_grid()",gsl_einval);
       } 
 

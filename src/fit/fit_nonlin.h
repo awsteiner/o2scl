@@ -727,7 +727,7 @@ namespace o2scl {
 		 vec_t &tau, permutation &perm, double epsrel) {
       
     if (m<n) {
-      O2SCL_ERR2_RET("Jacobian must have m>=n in ",
+      O2SCL_ERR2("Jacobian must have m>=n in ",
 		     "fit_nonlin_b::covariance().",exc_efailed);
     }
       
@@ -851,7 +851,7 @@ namespace o2scl {
 		   double l_epsabs, double l_epsrel) {
     
     if (l_epsrel<0.0) {
-      O2SCL_ERR2_RET("Relative tolerance less than zero ",
+      O2SCL_ERR2("Relative tolerance less than zero ",
 		     "in fit_nonlin_b::test_delta_f().",exc_einval);
     } 
     
@@ -870,7 +870,7 @@ namespace o2scl {
     double residual=0.0;
     
     if (l_epsabs<0.0) {
-      O2SCL_ERR2_RET("Absolute tolerance less than zero ",
+      O2SCL_ERR2("Absolute tolerance less than zero ",
 		     "in fit_nonlin_b::test_gradient_f().",exc_einval);
     } 
     

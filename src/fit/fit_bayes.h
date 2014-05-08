@@ -201,7 +201,7 @@ namespace o2scl {
     weight_old=weight_fun(ndat,xdat,ydat,yerr,npar,par_old)*
     (*pri)(npar,par_old);
     if (weight_old==0.0) {
-      O2SCL_ERR2_RET("Initial weight zero in ",
+      O2SCL_ERR2("Initial weight zero in ",
 		     "fit_bayes::fit().",exc_einval);
     }
 
@@ -320,7 +320,7 @@ namespace o2scl {
 
     for(size_t i=0;i<npar;i++) {
       if (((double)nonzero_bins[i])<((double)nmeas)*2.5) {
-	O2SCL_ERR2_RET("Not enough data for accurate parameter ",
+	O2SCL_ERR2("Not enough data for accurate parameter ",
 		       "estimation in fit_bayes::fit().",exc_efailed);
       }
     }
@@ -357,7 +357,7 @@ namespace o2scl {
     weight_old=weight_fun(ndat,xdat,ydat,yerr,npar,par_old)*
     (*pri)(npar,par_old);
     if (weight_old==0.0) {
-      O2SCL_ERR2_RET("Initial weight zero in ",
+      O2SCL_ERR2("Initial weight zero in ",
 		     "fit_bayes::fit().",exc_einval);
     }
 

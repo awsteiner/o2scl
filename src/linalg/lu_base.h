@@ -149,7 +149,7 @@ namespace o2scl_linalg {
 	       const o2scl::permutation &p, vec_t &x) {
   
     if (diagonal_has_zero(N,LU)) {
-      O2SCL_ERR_RET("LU matrix is singlar in LU_svx().",
+      O2SCL_ERR("LU matrix is singlar in LU_svx().",
 		    o2scl::exc_edom);
     }
 
@@ -249,7 +249,7 @@ namespace o2scl_linalg {
 		 const vec_t &b, vec2_t &x) {
     
     if (diagonal_has_zero(N,LU)) {
-      O2SCL_ERR_RET("LU matrix is singlar in LU_solve().",
+      O2SCL_ERR("LU matrix is singlar in LU_solve().",
 		    o2scl::exc_edom);
     }
 
@@ -273,7 +273,7 @@ namespace o2scl_linalg {
 		  vec3_t &residual) {
   
     if (diagonal_has_zero(N,LU)) {
-      O2SCL_ERR_RET("LU matrix is singlar in LU_refine().",
+      O2SCL_ERR("LU matrix is singlar in LU_refine().",
 		    o2scl::exc_edom);
     }
 
@@ -310,7 +310,7 @@ namespace o2scl_linalg {
 		  const o2scl::permutation &p, mat2_t &inverse) {
 
     if (diagonal_has_zero(N,LU)) {
-      O2SCL_ERR_RET("LU matrix is singlar in LU_invert().",
+      O2SCL_ERR("LU matrix is singlar in LU_invert().",
 		    o2scl::exc_edom);
     }
 

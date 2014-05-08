@@ -142,7 +142,7 @@ namespace o2scl_linalg {
 	}
 	O2SCL_IX(eigen,size-1)=O2SCL_IX(diag,size-1);
 	if (eigen_tdiag(j,eigen,b3)!=0) {
-	  O2SCL_ERR2_RET("Call to eigen_tdiag() in lanczos::",
+	  O2SCL_ERR2("Call to eigen_tdiag() in lanczos::",
 			 "eigenvalues() failed.",o2scl::exc_efailed);
 	}
       }
@@ -206,7 +206,7 @@ namespace o2scl_linalg {
 	  
 	// Set error. No convergence after td_iter iterations
 	td_lasteval=l;
-	O2SCL_ERR_RET("No convergence in lanczos::eigen_tdiag()",
+	O2SCL_ERR("No convergence in lanczos::eigen_tdiag()",
 		      o2scl::exc_efailed);
       }
 

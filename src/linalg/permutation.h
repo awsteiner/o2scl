@@ -188,7 +188,7 @@ namespace o2scl {
     int set(size_t i, size_t val) {
 #if !O2SCL_NO_RANGE_CHECK
       if (i>=size_) {
-	O2SCL_ERR_RET((((std::string)"Permutation index ")+szttos(i)+
+	O2SCL_ERR((((std::string)"Permutation index ")+szttos(i)+
 		     " out of bounds"+" in permutation::set(). Size: "+
 		     szttos(size_)+
 		     " (index should be less than size).").c_str(),

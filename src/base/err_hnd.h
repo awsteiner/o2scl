@@ -287,22 +287,11 @@ namespace o2scl {
       o2scl::set_err_fn((std::string(d)+d2).c_str(),			\
 			__FILE__,__LINE__,n);}
   
-  /** \brief Set an error and return the error value
-   */
-#define O2SCL_ERR_RET(d,n)						\
-  do { o2scl::set_err_fn(d,__FILE__,__LINE__,n); return n; } while (0)
-  
   /** \brief Set a "convergence" error and return the error value
    */
 #define O2SCL_CONV_RET(d,n,b)						\
   do { if (!b) { return n; } else {					\
       o2scl::set_err_fn(d,__FILE__,__LINE__,n); return n; } } while (0)
-  
-  /** \brief Set an error and return the error value, two-string version
-   */
-#define O2SCL_ERR2_RET(d,d2,n)						\
-  do { o2scl::set_err_fn((std::string(d)+d2).c_str(),			\
-			 __FILE__,__LINE__,n); return n; } while (0)
   
   /** \brief Set an error and return the error value, two-string version
    */

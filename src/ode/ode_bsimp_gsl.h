@@ -522,7 +522,7 @@ namespace o2scl {
       // This section is labeled with a "FIXME" comment in the
       // original GSL code. I'm not sure why, but an error is
       // sensible here.
-      O2SCL_ERR_RET("Stepsize underflow in ode_bsimp_gsl::step().",
+      O2SCL_ERR("Stepsize underflow in ode_bsimp_gsl::step().",
 		    exc_eundrflw);
     }
 

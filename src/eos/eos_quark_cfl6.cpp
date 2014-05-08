@@ -91,7 +91,7 @@ int eos_quark_cfl6::calc_eq_temp_p(quark &u, quark &d, quark &s,
   strange=&s;
   
   if (fromqq==false) {
-    O2SCL_ERR2_RET("Does not work with fromqq=false ",
+    O2SCL_ERR2("Does not work with fromqq=false ",
 		   "in eos_quark_cfl6::calc_eq_temp_p().",exc_efailed);
   }
 

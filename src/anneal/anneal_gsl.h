@@ -173,7 +173,7 @@ namespace o2scl {
 		   func_t &func) {
     
     if (nvar==0) {
-      O2SCL_ERR2_RET("Tried to minimize over zero variables ",
+      O2SCL_ERR2("Tried to minimize over zero variables ",
 		     " in anneal_gsl::mmin().",exc_einval);
     }
     

@@ -533,11 +533,11 @@ namespace o2scl {
 	    std::string err="Option ";
 	    err+=option_list[k].shrt;
 	    err+=((std::string)" , ")+option_list[k].lng+" already present.";
-	    O2SCL_ERR_RET(err.c_str(),exc_einval);
+	    O2SCL_ERR(err.c_str(),exc_einval);
 	  } else {
 	    std::string err="Option ";
 	    err+=option_list[k].lng+" already present.";
-	    O2SCL_ERR_RET(err.c_str(),exc_einval);
+	    O2SCL_ERR(err.c_str(),exc_einval);
 	  }
 	}
 	// Add the option to the option list

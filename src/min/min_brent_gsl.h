@@ -162,17 +162,17 @@ namespace o2scl {
       if (lower > upper) {
 	std::string tmp=((std::string)"Invalid interval (lower > upper) ")+
 	"in min_brent_gsl::set_with_values().";
-	O2SCL_ERR_RET(tmp.c_str(),exc_einval);
+	O2SCL_ERR(tmp.c_str(),exc_einval);
       }
       if (xmin>=upper || xmin<=lower) {
 	std::string tmp=((std::string)"'xmin' was not inside interval ")+
 	"in min_brent_gsl::set_with_values().";
-	O2SCL_ERR_RET(tmp.c_str(),exc_einval);
+	O2SCL_ERR(tmp.c_str(),exc_einval);
       }
       if (fmin>=fl || fmin>=fu) {
 	std::string tmp=((std::string)"Endpoints don't enclose minimum ")+
 	"in min_brent_gsl::set_with_values().";
-	O2SCL_ERR_RET(tmp.c_str(),exc_einval);
+	O2SCL_ERR(tmp.c_str(),exc_einval);
       }
     
       x_lower=lower;
@@ -350,7 +350,7 @@ namespace o2scl {
     
       int rx=set(func,x2,x1,x3);
       if (rx!=0) {
-	O2SCL_ERR2_RET("Function set() failed in ",
+	O2SCL_ERR2("Function set() failed in ",
 		       "min_brent_gsl::min_bkt().",rx);
       }
 	

@@ -719,9 +719,9 @@ namespace o2scl {
   int iterate() {
 	
     if (!set_called) {
-      O2SCL_ERR2_RET("Function set() not called or most recent call ",
-		     "failed in mroot_hybrids::iterate().",
-		     exc_efailed);
+      O2SCL_ERR2("Function set() not called or most recent call ",
+		 "failed in mroot_hybrids::iterate().",
+		 exc_efailed);
     }
 
     double prered,actred;
@@ -998,7 +998,11 @@ namespace o2scl {
   virtual int msolve_de(size_t nn, vec_t &xx, func_t &ufunc,
 			jfunc_t &dfunc) {
 
-    set_de(nn,xx,ufunc,dfunc);
+    int ret=set_de(nn,xx,ufunc,dfunc);
+    if (ret!=success) {
+      O2SCL_CONV2_RET("Function set_de() failed in mroot_hybrids::",
+		      "msolve_de().",exc_efailed,this->err_nonconv);
+    }
       
     return solve_set(nn,xx,ufunc);
   }
@@ -1006,7 +1010,11 @@ namespace o2scl {
   /// Solve \c ufunc using \c xx as an initial guess, returning \c xx.
   virtual int msolve(size_t nn, vec_t &xx, func_t &ufunc) {
       
-    set(nn,xx,ufunc);
+    int ret=set(nn,xx,ufunc);
+    if (ret!=success) {
+      O2SCL_CONV2_RET("Function set() failed in mroot_hybrids::",
+		      "msolve().",exc_efailed,this->err_nonconv);
+    }
     int status=solve_set(nn,xx,ufunc);
     for(size_t i=0;i<nn;i++) xx[i]=x[i];
 
@@ -1015,7 +1023,7 @@ namespace o2scl {
       
   /** \brief Set the function, the parameters, and the initial guess 
    */
-  void set(size_t nn, vec_t &ax, func_t &ufunc) {
+  int set(size_t nn, vec_t &ax, func_t &ufunc) {
 
     int status;
   
@@ -1046,8 +1054,8 @@ namespace o2scl {
     else status=(*ajac)(dim,ax,dim,f,J);
 
     if (status!=0) {
-      O2SCL_ERR2("Jacobian failed in ",
-		 "mroot_hybrids::set().",exc_efailed);
+      O2SCL_CONV2_RET("Jacobian failed in ",
+		      "mroot_hybrids::set().",exc_efailed,this->err_nonconv);
     }
 
     iter=1;
@@ -1076,13 +1084,13 @@ namespace o2scl {
     set_called=true;
     jac_given=false;
 
-    return;
+    return 0;
   }
 
   /** \brief Set the function, the Jacobian, the parameters,
       and the initial guess 
   */
-  void set_de(size_t nn, vec_t &ax, func_t &ufunc, jfunc_t &dfunc) {
+  int set_de(size_t nn, vec_t &ax, func_t &ufunc, jfunc_t &dfunc) {
 
     fnewp=&ufunc;
     jac=&dfunc;
@@ -1090,13 +1098,13 @@ namespace o2scl {
     // Make sure set() uses the right Jacobian
     jac_given=true;
     
-    set(nn,ax,ufunc);
+    int ret=set(nn,ax,ufunc);
     
     // Reset jac_given since set() will set it back to false
     jac_given=true;
     set_called=true;
     
-    return;
+    return ret;
   }
 
 #ifndef DOXYGEN_INTERNAL

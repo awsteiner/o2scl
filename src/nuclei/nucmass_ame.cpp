@@ -51,7 +51,7 @@ double nucmass_ame::mass_excess(int Z, int N) {
 bool nucmass_ame::is_included(int l_Z, int l_N) {
 
   if (n==0) {
-    O2SCL_ERR_RET("No masses loaded in nucmass_ame::is_included().",
+    O2SCL_ERR("No masses loaded in nucmass_ame::is_included().",
 		  exc_einval);
   }
 
@@ -126,7 +126,7 @@ bool nucmass_ame::is_included(int l_Z, int l_N) {
 
 bool nucmass_ame_exp::is_included(int l_Z, int l_N) {
   if (n==0) {
-    O2SCL_ERR_RET("No masses loaded in nucmass_ame_exp::is_included().",
+    O2SCL_ERR("No masses loaded in nucmass_ame_exp::is_included().",
 		  exc_einval);
   }
   for(int i=0;i<n;i++) {

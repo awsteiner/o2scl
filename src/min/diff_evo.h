@@ -317,7 +317,7 @@ namespace o2scl {
      */
     virtual int initialize_population( size_t nvar, vec_t &x0 ) {
       if (rand_init_funct==0) {
-	O2SCL_ERR_RET("No initialization function provided.",
+	O2SCL_ERR("No initialization function provided.",
 		      exc_ebadfunc);
 
       }

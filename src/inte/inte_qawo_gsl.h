@@ -152,7 +152,7 @@ namespace o2scl {
 	std::string estr="Tolerance cannot be achieved with given ";
 	estr+="value of tol_abs, "+dtos(epsabs)+", and tol_rel, "+
 	  dtos(epsrel)+", in inte_qawo_gsl_sin::qawo().";
-	O2SCL_ERR_RET(estr.c_str(),exc_ebadtol);
+	O2SCL_ERR(estr.c_str(),exc_ebadtol);
       }
       
       /* Perform the first integration */
@@ -529,11 +529,11 @@ namespace o2scl {
       } else if (error_type == -1) {
 	std::string estr="Exceeded limit of trigonometric table ";
 	estr+="inte_qawo_gsl_sin::qawo()";
-	O2SCL_ERR_RET(estr.c_str(),exc_etable);
+	O2SCL_ERR(estr.c_str(),exc_etable);
       } else {
 	std::string estr="Could not integrate function in inte_qawo_gsl";
 	estr+="::qawo() (it may have returned a non-finite result).";
-	O2SCL_ERR_RET(estr.c_str(),exc_efailed);
+	O2SCL_ERR(estr.c_str(),exc_efailed);
       }
       
     }

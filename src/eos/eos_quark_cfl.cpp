@@ -156,7 +156,7 @@ int eos_quark_cfl::integ_err(double a, double b, const size_t nr,
 			 inte_epsrel<0.5e-28)) {
     for(size_t j=0;j<res.size();j++) res[j]=0.0;
     err2=0;
-    O2SCL_ERR2_RET("Tolerance cannot be acheived with given epsabs and epsrel",
+    O2SCL_ERR2("Tolerance cannot be acheived with given epsabs and epsrel",
 		   " in eos_quark_cfl::integ_err().",exc_ebadtol);
   };
   
@@ -329,7 +329,7 @@ int eos_quark_cfl::integ_err(double a, double b, const size_t nr,
     delete[] f_center;
   }
   inte_npoints=88;
-  O2SCL_ERR_RET("failed to reach tolerance with highest-order rule",
+  O2SCL_ERR("failed to reach tolerance with highest-order rule",
 		exc_etol);
 }
   
@@ -367,7 +367,7 @@ int eos_quark_cfl::calc_eq_temp_p(quark &u, quark &d, quark &s,
 				thermo &qb, const double ltemper) {
 
   if (fromqq==false) {
-    O2SCL_ERR_RET("fromqq=false in eos_quark_cfl::calc_eq_temp_p()",exc_efailed);
+    O2SCL_ERR("fromqq=false in eos_quark_cfl::calc_eq_temp_p()",exc_efailed);
   }
   
   up=&u;

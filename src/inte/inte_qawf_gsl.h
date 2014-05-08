@@ -164,7 +164,7 @@ namespace o2scl {
 	if (limit > this->w->limit) {
 	std::string estr="Iteration limit exceeds workspace ";
 	estr+="in inte_qawf_gsl::qawf().";
-	O2SCL_ERR_RET(estr.c_str(),exc_einval);
+	O2SCL_ERR(estr.c_str(),exc_einval);
 	}
       */
 
@@ -173,7 +173,7 @@ namespace o2scl {
       if (epsabs <= 0) {
 	std::string estr="The absolute tolerance must be positive ";
 	estr+="in inte_qawf_gsl::qawf().";
-	O2SCL_ERR_RET(estr.c_str(),exc_ebadtol);
+	O2SCL_ERR(estr.c_str(),exc_ebadtol);
       }
 
       if (this->omega == 0.0) {
@@ -342,27 +342,27 @@ namespace o2scl {
       } else if (error_type == 1) {
 	std::string estr="Number of iterations was insufficient ";
 	estr+=" in inte_qawf_gsl::qawf().";
-	O2SCL_ERR_RET(estr.c_str(),exc_emaxiter);
+	O2SCL_ERR(estr.c_str(),exc_emaxiter);
       } else if (error_type == 2) {
 	std::string estr="Roundoff error prevents tolerance ";
 	estr+="from being achieved in inte_qawf_gsl::qawf().";
-	O2SCL_ERR_RET(estr.c_str(),exc_eround);
+	O2SCL_ERR(estr.c_str(),exc_eround);
       } else if (error_type == 3) {
 	std::string estr="Bad integrand behavior ";
 	estr+=" in inte_qawf_gsl::qawf().";
-	O2SCL_ERR_RET(estr.c_str(),exc_esing);
+	O2SCL_ERR(estr.c_str(),exc_esing);
       } else if (error_type == 4) {
 	std::string estr="Roundoff error detected in extrapolation table ";
 	estr+="in inte_qawf_gsl::qawf().";
-	O2SCL_ERR_RET(estr.c_str(),exc_eround);
+	O2SCL_ERR(estr.c_str(),exc_eround);
       } else if (error_type == 5) {
 	std::string estr="Integral is divergent or slowly convergent ";
 	estr+="in inte_qawf_gsl::qawf().";
-	O2SCL_ERR_RET(estr.c_str(),exc_ediverge);
+	O2SCL_ERR(estr.c_str(),exc_ediverge);
       } else {
 	std::string estr="Could not integrate function in inte_qawf_gsl";
 	estr+="::qawf() (it may have returned a non-finite result).";
-	O2SCL_ERR_RET(estr.c_str(),exc_efailed);
+	O2SCL_ERR(estr.c_str(),exc_efailed);
       }
     }
 

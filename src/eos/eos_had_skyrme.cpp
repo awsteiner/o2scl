@@ -260,7 +260,7 @@ int eos_had_skyrme::calc_e(fermion &ne, fermion &pr, thermo &locth) {
   locth.en=0.0;
 
   if (!o2scl::is_finite(locth.pr)) {
-    O2SCL_ERR_RET("Pressure not finite in calc_e()",exc_efailed);
+    O2SCL_ERR("Pressure not finite in calc_e()",exc_efailed);
   }
 
   return success;
@@ -365,7 +365,7 @@ int eos_had_skyrme::calpar(double gt0, double gt3, double galpha,
   double *vp=0;
 
   if (eos_mroot->msolve(3,x,fmf)!=0) {
-    O2SCL_ERR_RET("Solution failed in calparfun().",exc_efailed);
+    O2SCL_ERR("Solution failed in calparfun().",exc_efailed);
   }
   t0=x[0];
   t3=x[1];
@@ -374,7 +374,7 @@ int eos_had_skyrme::calpar(double gt0, double gt3, double galpha,
   x[0]=gt1;
   x[1]=gt2;
   if (eos_mroot->msolve(2,x,fmf2)!=0) {
-    O2SCL_ERR_RET("Solution failed in calparfun2().",exc_efailed);
+    O2SCL_ERR("Solution failed in calparfun2().",exc_efailed);
   }
   t1=x[0];
   t2=x[1];

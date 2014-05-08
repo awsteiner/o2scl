@@ -174,7 +174,7 @@ int nucmass_info::parse_elstring(std::string ela, int &Z, int &N,
     ela[0]='A'+(ela[0]-'a');
   }
   if (ela.length()<2) {
-    O2SCL_ERR2_RET("Element name too short in ",
+    O2SCL_ERR2("Element name too short in ",
 		   "nucmass::parse_elstring().",exc_efailed);
   }
   if (ela.length()>3 && isalpha(ela[2])) {
@@ -202,7 +202,7 @@ int nucmass_info::eltoZ(std::string el) {
   std::map<std::string,int,string_comp>::iterator 
     eti=element_table.find(el);
   if (eti==element_table.end()) {
-    O2SCL_ERR2_RET("Failed to find element in ",
+    O2SCL_ERR2("Failed to find element in ",
 		   "nucmass_info::eltoZ().",-1);
   }
   return eti->second;
@@ -388,7 +388,7 @@ double nucmass_ibm_shell::shell_energy(int Z, int N) {
       done=true;
     }
     if (done==false) {
-      O2SCL_ERR2_RET("Failed to do shell model correction ",
+      O2SCL_ERR2("Failed to do shell model correction ",
 		     "in ldrop_shell::shell_energy().",exc_esanity);
     }
   }
@@ -412,7 +412,7 @@ double nucmass_ibm_shell::shell_energy(int Z, int N) {
       done=true;
     }
     if (done==false) {
-      O2SCL_ERR2_RET("Failed to do shell model correction ",
+      O2SCL_ERR2("Failed to do shell model correction ",
 		     "in ldrop_shell::shell_energy().",exc_esanity);
     }
   }

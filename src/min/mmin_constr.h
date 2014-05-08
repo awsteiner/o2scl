@@ -459,7 +459,7 @@ namespace o2scl {
     virtual int mmin(size_t nvar, vec_t &xx, double &fmin, 
 		     func_t &ff) 
     {
-      O2SCL_ERR_RET("Not yet implemented mmin_constr::mmin().",
+      O2SCL_ERR("Not yet implemented mmin_constr::mmin().",
 		    exc_eunimpl);
     }
 

@@ -629,11 +629,11 @@ namespace o2scl {
 	  std::string serr="Upper limit, "+dtos(xu[i])+", must be greater "+
 	    "than lower limit, "+dtos(xl[i])+", in mcarlo_vegas::"+
 	    "vegas_minteg_err().";
-	  O2SCL_ERR_RET(serr.c_str(),exc_einval);
+	  O2SCL_ERR(serr.c_str(),exc_einval);
 	}
 
 	if (xu[i]-xl[i] > GSL_DBL_MAX) {
-	  O2SCL_ERR2_RET("Range of integration is too large, please rescale ",
+	  O2SCL_ERR2("Range of integration is too large, please rescale ",
 			 "in mcarlo_vegas::vegas_minteg_err().",exc_einval);
 	}
       }

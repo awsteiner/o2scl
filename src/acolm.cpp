@@ -762,7 +762,7 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
 	if (pretty==true) {
 	  int nsp=col_wids[i]-tabp->get_column_name(i).size();
 	  if (nsp<0) {
-	    O2SCL_ERR_RET("Column size anomaly (col names).",exc_efailed);
+	    O2SCL_ERR("Column size anomaly (col names).",exc_efailed);
 	  }
 	  for(int j=0;j<nsp;j++) (*fout) << ' ';
 	}
@@ -790,7 +790,7 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
 	  int nsp=col_wids[i]-
 	    tabp->get_unit(tabp->get_column_name(i)).size()-2;
 	  if (nsp<0) {
-	    O2SCL_ERR_RET("Column size anomaly (units).",exc_efailed);
+	    O2SCL_ERR("Column size anomaly (units).",exc_efailed);
 	  }
 	  for(int j=0;j<nsp;j++) (*fout) << ' ';
 	}

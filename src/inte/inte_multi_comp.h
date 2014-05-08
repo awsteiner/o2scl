@@ -111,7 +111,7 @@ namespace o2scl {
   int set_oned_inte(inte<funct> &it, size_t i) {
 
     if (i>=max_dim) {
-      O2SCL_ERR_RET("Index >= max_dim in inte_multi_comp::set_oned_inte().",
+      O2SCL_ERR("Index >= max_dim in inte_multi_comp::set_oned_inte().",
 		  exc_einval);
     }
 
@@ -169,7 +169,7 @@ namespace o2scl {
     }
       
     if (enough_oned==false) {
-      O2SCL_ERR_RET("Too few objects specified with set_ptrs() in minteg().",
+      O2SCL_ERR("Too few objects specified with set_ptrs() in minteg().",
 		    exc_einval);
     }
 

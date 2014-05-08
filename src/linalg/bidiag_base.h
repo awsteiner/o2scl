@@ -66,7 +66,7 @@ namespace o2scl_linalg {
 		      vec_t &tau_U, vec2_t &tau_V) {
     
     if (M<N) {
-      O2SCL_ERR2_RET("Bidiagonal decomposition requires M>=N in ",
+      O2SCL_ERR2("Bidiagonal decomposition requires M>=N in ",
 		     "bidiag_comp().",o2scl::exc_ebadlen);
     }
     
@@ -115,7 +115,7 @@ namespace o2scl_linalg {
 		      mat3_t &V, vec3_t &diag, vec4_t &superdiag) {
     
     if (M<N) {
-      O2SCL_ERR2_RET("Matrix A must have M >= N in ",
+      O2SCL_ERR2("Matrix A must have M >= N in ",
 		     "bidiag_unpack().",o2scl::exc_ebadlen);
     }
       
@@ -171,7 +171,7 @@ namespace o2scl_linalg {
 		       vec2_t &tau_V, mat2_t &V) {
 
     if (M<N) {
-      O2SCL_ERR2_RET("Matrix A must have M >= N in ",
+      O2SCL_ERR2("Matrix A must have M >= N in ",
 		     "bidiag_unpack2().",o2scl::exc_ebadlen);
     }
 

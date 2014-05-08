@@ -78,7 +78,7 @@ namespace o2scl_linalg {
 
       if (r == 0.0) {
 	/* Rank of matrix is less than size1. */
-	O2SCL_ERR_RET("Matrix is rank deficient in HH_svx().",
+	O2SCL_ERR("Matrix is rank deficient in HH_svx().",
 		      o2scl::exc_esing);
       }
 
@@ -117,7 +117,7 @@ namespace o2scl_linalg {
       
       if (fabs (alpha) < 2.0*dbl_eps*sqrt(max_norm)) {
 	/* Apparent singularity. */
-	O2SCL_ERR_RET("Apparent singularity in HH_svx().",o2scl::exc_esing);
+	O2SCL_ERR("Apparent singularity in HH_svx().",o2scl::exc_esing);
       }
 
       /* Perform update of RHS. */

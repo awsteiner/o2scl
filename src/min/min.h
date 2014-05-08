@@ -213,7 +213,7 @@ namespace o2scl {
     }
     
     if (done==false) {
-      O2SCL_ERR_RET("Too many iterations in min::bracket().",
+      O2SCL_ERR("Too many iterations in min::bracket().",
 		    exc_emaxiter);
     }
     

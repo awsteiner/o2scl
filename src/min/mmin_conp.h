@@ -76,7 +76,7 @@ namespace o2scl {
     virtual int iterate() {
       
       if (this->dim==0) {
-	O2SCL_ERR_RET("Memory not allocated in iterate().",exc_efailed);
+	O2SCL_ERR("Memory not allocated in iterate().",exc_efailed);
       }
       
       vec_t &x=this->ugx;

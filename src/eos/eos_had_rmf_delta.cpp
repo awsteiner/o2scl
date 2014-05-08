@@ -136,7 +136,7 @@ int eos_had_rmf_delta::calc_e(fermion &ne, fermion &pr, thermo &lth) {
   del=x[5];
   
   if (ret!=0) {
-    O2SCL_ERR_RET("msolve failed in eos_had_rmf::calc_e(fermion,fermion,thermo).",
+    O2SCL_ERR("msolve failed in eos_had_rmf::calc_e(fermion,fermion,thermo).",
 		exc_efailed);
   }
 
@@ -289,7 +289,7 @@ int eos_had_rmf_delta::calc_p(fermion &ne, fermion &pr,
   th.ed=-th.pr+ne.mu*ne.n+pr.mu*pr.n;
   
   if (!o2scl::is_finite(th.pr) || !o2scl::is_finite(th.ed)) {
-    O2SCL_ERR2_RET("Pressure or energy not finite in ",
+    O2SCL_ERR2("Pressure or energy not finite in ",
 		   "eos_had_rmf_delta::calc_p().",exc_efailed);
   }
   
@@ -311,7 +311,7 @@ int eos_had_rmf_delta::zero_pressure(size_t nv, const ubvector &ex,
 
   for(i=0;i<6;i++) {
     if (ex[i]!=0.0 && !o2scl::is_finite(ex[i])) {
-      O2SCL_ERR_RET("Variable not finite in zero_pressure()",exc_efailed);
+      O2SCL_ERR("Variable not finite in zero_pressure()",exc_efailed);
     }
   }
   
@@ -326,7 +326,7 @@ int eos_had_rmf_delta::zero_pressure(size_t nv, const ubvector &ex,
   
   for(i=0;i<6;i++) {
     if (!o2scl::is_finite(ex[i]) || !o2scl::is_finite(ey[i])) {
-      O2SCL_ERR_RET((((string)"Eq. ")+itos(i)+
+      O2SCL_ERR((((string)"Eq. ")+itos(i)+
 		   " not finite in zero_pressure()").c_str(),exc_efailed);
     }
   }
@@ -347,10 +347,10 @@ int eos_had_rmf_delta::calc_e_solve_fun(size_t nv, const ubvector &ex,
   calc_p(*neutron,*proton,sig,ome,lrho,delta,f1,f2,f3,f4,*eos_thermo);
   
   if (!ce_prot_matter && neutron->nu<neutron->ms) {
-    O2SCL_ERR_RET("ne.nu<ne.ms in eos_had_rmf::calc_e_solve_fun().",exc_efailed);
+    O2SCL_ERR("ne.nu<ne.ms in eos_had_rmf::calc_e_solve_fun().",exc_efailed);
   }
   if (!ce_neut_matter && proton->nu<proton->ms) {
-    O2SCL_ERR_RET("pr.nu<pr.ms in eos_had_rmf::calc_e_solve_fun().",exc_efailed);
+    O2SCL_ERR("pr.nu<pr.ms in eos_had_rmf::calc_e_solve_fun().",exc_efailed);
   }
 
   if (ce_neut_matter) {
@@ -370,7 +370,7 @@ int eos_had_rmf_delta::calc_e_solve_fun(size_t nv, const ubvector &ex,
 
   for(int i=0;i<6;i++) {
     if (!o2scl::is_finite(ex[i]) || !o2scl::is_finite(ey[i])) {
-      O2SCL_ERR_RET((((string)"Eq. ")+itos(i)+
+      O2SCL_ERR((((string)"Eq. ")+itos(i)+
 		  " not finite in eos_had_rmf::calc_e_solve_fun().").c_str(),
 		  exc_efailed);
     }

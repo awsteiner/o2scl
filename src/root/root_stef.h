@@ -184,7 +184,7 @@ namespace o2scl {
       if (!o2scl::is_finite(f_new)) {
 	std::string str="Function not finite (returned "+dtos(f_new)+
 	  ") in root_stef::iterate().";
-	O2SCL_ERR_RET(str.c_str(),o2scl::exc_ebadfunc);
+	O2SCL_ERR(str.c_str(),o2scl::exc_ebadfunc);
       }
       
       if (count<3) {
@@ -209,7 +209,7 @@ namespace o2scl {
       if (!o2scl::is_finite(df_new)) {
 	std::string str="Derivative not finite (returned "+dtos(df_new)+
 	  ") in root_stef::iterate().";
-	O2SCL_ERR_RET(str.c_str(),o2scl::exc_ebadfunc);
+	O2SCL_ERR(str.c_str(),o2scl::exc_ebadfunc);
       }
       
       return o2scl::success;

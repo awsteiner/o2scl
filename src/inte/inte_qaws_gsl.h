@@ -394,22 +394,22 @@ namespace o2scl {
     if (u_alpha < -1.0) {
       std::string estr=((std::string)"Variable alpha must be ")+
       "greater than -1.0 in inte_qaws_gsl().";
-      O2SCL_ERR_RET(estr.c_str(),exc_einval);
+      O2SCL_ERR(estr.c_str(),exc_einval);
     }
     if (u_beta < -1.0) {
       std::string estr=((std::string)"Variable beta must be ")+
       "greater than -1.0 in inte_qaws_gsl().";
-      O2SCL_ERR_RET(estr.c_str(),exc_einval);
+      O2SCL_ERR(estr.c_str(),exc_einval);
     }
     if (u_mu != 0 && u_mu != 1) {
       std::string estr=((std::string)"Variable mu must be 0 or 1 ")+
       "in inte_qaws_gsl().";
-      O2SCL_ERR_RET(estr.c_str(),exc_einval);
+      O2SCL_ERR(estr.c_str(),exc_einval);
     }
     if (u_nu != 0 && u_nu != 1) {
       std::string estr=((std::string)"Variable nu must be 0 or 1 ")+
       "in inte_qaws_gsl().";
-      O2SCL_ERR_RET(estr.c_str(),exc_einval);
+      O2SCL_ERR(estr.c_str(),exc_einval);
     }
     
     this->alpha = u_alpha;
@@ -456,7 +456,7 @@ namespace o2scl {
       std::string estr="Integration limits, a="+dtos(a);
       estr+=" and b="+dtos(b)+", must satisfy a < b";
       estr+=" in inte_qaws_gsl::gsl_qaws().";
-      O2SCL_ERR_RET(estr.c_str(),exc_einval);			
+      O2SCL_ERR(estr.c_str(),exc_einval);			
     }
 		
 #ifndef O2SCL_NO_CPP11
@@ -471,7 +471,7 @@ namespace o2scl {
       std::string estr="Tolerance cannot be achieved with given ";
       estr+="value of tol_abs, "+dtos(this->tol_abs)+", and tol_rel, "+
       dtos(this->tol_rel)+", in inte_qaws_gsl::integ_err().";
-      O2SCL_ERR_RET(estr.c_str(),exc_ebadtol);
+      O2SCL_ERR(estr.c_str(),exc_ebadtol);
     }
 		
     /* perform the first integration */
@@ -605,7 +605,7 @@ namespace o2scl {
     } else {
       std::string estr="Could not integrate function in ";
       estr+="inte_qaws_gsl::gsl_qaws().";
-      O2SCL_ERR_RET(estr.c_str(),exc_efailed);
+      O2SCL_ERR(estr.c_str(),exc_efailed);
     }
 		
     // No return statement needed since the above if statement

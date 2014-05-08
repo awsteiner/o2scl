@@ -462,8 +462,8 @@ int eos_had_rmf::calc_e(fermion &ne, fermion &pr, thermo &lth) {
 }
 
 int eos_had_rmf::calc_temp_e(fermion &ne, fermion &pr, const double T, 
-			 thermo &lth) {
-
+			     thermo &lth) {
+  
   if (T<=0.0) return calc_e(ne,pr,lth);
 
   ubvector x(5), y(5);
@@ -549,7 +549,7 @@ int eos_had_rmf::calc_temp_e(fermion &ne, fermion &pr, const double T,
 	n_baryon=0.16*(1.0-alpha)+(nn+np)*alpha;
 	n_charge=0.08*(1.0-alpha)+np*alpha;
       }
-      
+
       ret=eos_mroot->msolve(5,x,fmf);
       if (verbose>0) {
 	cout << alpha << " " << n_baryon << " " << n_charge << " "
@@ -766,7 +766,7 @@ int eos_had_rmf::fix_saturation_fun(size_t nv, const ubvector &x,
 
   if (!o2scl::is_finite(y[1]) || !o2scl::is_finite(y[2]) || 
       !o2scl::is_finite(y[3]) || !o2scl::is_finite(y[0])) {
-    O2SCL_ERR2_RET("Equation not finite in ",
+    O2SCL_ERR2("Equation not finite in ",
 		   "eos_had_rmf::fix_saturation_fun().",exc_efailed);
   }
   return 0;
@@ -794,7 +794,7 @@ int eos_had_rmf::fix_saturation(double gcs, double gcw, double gb, double gc) {
   mm_funct_mfptr<eos_had_rmf> fmf(this,&eos_had_rmf::fix_saturation_fun);
   test=sat_mroot->msolve(4,x,fmf);
   if (test!=0) {
-    O2SCL_ERR_RET("Solve failed in fix_saturation().",exc_efailed);
+    O2SCL_ERR("Solve failed in fix_saturation().",exc_efailed);
   }
 
   cs=x[0];
@@ -826,7 +826,7 @@ int eos_had_rmf::fix_saturation(double gcs, double gcw, double gb, double gc) {
   gs=ms*cs;
   sig=mnuc*(1.0-msom)/gs;
   if (zm_mode) {
-    O2SCL_ERR_RET("Function fix_saturation() does not work with zm_mode=true.",
+    O2SCL_ERR("Function fix_saturation() does not work with zm_mode=true.",
 		  exc_efailed);
   }
 
@@ -1031,7 +1031,7 @@ int eos_had_rmf::calc_temp_e_solve_fun(size_t nv, const ubvector &ex,
 
   for(int i=0;i<5;i++) {
     if (!o2scl::is_finite(ex[i]) || !o2scl::is_finite(ey[i])) {
-      O2SCL_ERR_RET
+      O2SCL_ERR
 	((((string)"Eq. ")+itos(i)+
 	  " not finite in eos_had_rmf::calc_temp_e_solve_fun().").c_str(),
 	 exc_efailed);
@@ -1056,7 +1056,7 @@ int eos_had_rmf::zero_pressure(size_t nv, const ubvector &ex,
 
   for(i=0;i<5;i++) {
     if (!o2scl::is_finite(ex[i])) {
-      O2SCL_ERR_RET("Variable not finite in zero_pressure()",exc_efailed);
+      O2SCL_ERR("Variable not finite in zero_pressure()",exc_efailed);
     }
   }
   
@@ -1118,7 +1118,7 @@ int eos_had_rmf::calc_cr(double sig, double ome, double l_nb) {
   cr=sqrt(up/dn);
 
   if (!o2scl::is_finite(cr)) {
-    O2SCL_ERR_RET("Coupling not finite in eos_had_rmf::calc_cr()",exc_efailed);
+    O2SCL_ERR("Coupling not finite in eos_had_rmf::calc_cr()",exc_efailed);
   }
 
   return 0;

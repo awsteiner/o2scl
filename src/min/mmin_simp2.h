@@ -305,7 +305,7 @@ namespace o2scl {
 	if (!o2scl::is_finite(y1[i])) {
 	  std::string err=((std::string)"Function not finite (returned ")+
 	    dtos(y1[i])+" in mmin_simp2::contract_by_best().";
-	  O2SCL_ERR_RET(err.c_str(),exc_ebadfunc);
+	  O2SCL_ERR(err.c_str(),exc_ebadfunc);
 	}
 
 	/*
@@ -414,7 +414,7 @@ namespace o2scl {
 		   func_t &ufunc) {
 
     if (nn==0) {
-      O2SCL_ERR2_RET("Tried to min over zero variables ",
+      O2SCL_ERR2("Tried to min over zero variables ",
 		     " in mmin_simp2::mmin().",exc_einval);
     }
 
@@ -589,7 +589,7 @@ namespace o2scl {
     if (!o2scl::is_finite(y1[0])) {
       std::string err=((std::string)"Function not finite (returned ")+
 	dtos(y1[0])+" in mmin_simp2::set().";
-      O2SCL_ERR_RET(err.c_str(),exc_ebadfunc);
+      O2SCL_ERR(err.c_str(),exc_ebadfunc);
     }
     for(i=0;i<dim;i++) x1[0][i]=ax[i];
   
@@ -616,7 +616,7 @@ namespace o2scl {
   int set_simplex(func_t &ufunc, mat_t &sx) {
 
     if(dim==0) {
-      O2SCL_ERR2_RET("Memory not allocated in ",
+      O2SCL_ERR2("Memory not allocated in ",
 		     "mmin_simp2::set_simplex().",exc_ebadlen);
     }
 	
@@ -630,7 +630,7 @@ namespace o2scl {
       if (!o2scl::is_finite(y1[i])) {
 	std::string err=((std::string)"Function not finite (returned ")+
 	  dtos(y1[i])+" in mmin_simp2::set_simplex().";
-	O2SCL_ERR_RET(err.c_str(),exc_ebadfunc);
+	O2SCL_ERR(err.c_str(),exc_ebadfunc);
       }
     }
 	
@@ -689,7 +689,7 @@ namespace o2scl {
 	std::cout << "it,ret: " << it << " " << ret1 << std::endl;
       }
       if (ret1!=0) {
-	O2SCL_ERR2_RET("Failed to move corner (1) in ",
+	O2SCL_ERR2("Failed to move corner (1) in ",
 		       "mmin_simp2::iterate().",exc_efailed);
       }
     }
@@ -708,7 +708,7 @@ namespace o2scl {
 	  std::cout << "it,ret: " << it << " " << ret2 << std::endl;
 	}
 	if (ret2!=0) {
-	  O2SCL_ERR2_RET("Failed to move corner (2) in ",
+	  O2SCL_ERR2("Failed to move corner (2) in ",
 			 "mmin_simp2::iterate().",exc_efailed);
 	}
       }
@@ -743,7 +743,7 @@ namespace o2scl {
 	  std::cout << "it,ret: " << it << " " << ret3 << std::endl;
 	}
 	if (ret3!=0) {
-	  O2SCL_ERR2_RET("Failed to move corner (2) in ",
+	  O2SCL_ERR2("Failed to move corner (2) in ",
 			 "mmin_simp2::iterate().",exc_efailed);
 	}
       }

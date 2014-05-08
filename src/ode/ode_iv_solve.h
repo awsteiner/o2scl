@@ -244,10 +244,10 @@ namespace o2scl {
       std::string str="Interval direction (x1-x0="+o2scl::dtos(x1-x0)+
       ") does not match step direction (h="+o2scl::dtos(h)+
       " in ode_iv_solve::solve_final_value().";
-      O2SCL_ERR_RET(str.c_str(),exc_einval);
+      O2SCL_ERR(str.c_str(),exc_einval);
     }
     if (x0==x1) {
-      O2SCL_ERR2_RET("Starting and final endpoints identical in ",
+      O2SCL_ERR2("Starting and final endpoints identical in ",
 		     "ode_iv_solve::solve_final_value().",exc_einval);
     }
 
@@ -298,7 +298,7 @@ namespace o2scl {
       
       if (ret!=0) {
 	if (exit_on_fail) {
-	  O2SCL_ERR2_RET("Adaptive stepper failed in ",
+	  O2SCL_ERR2("Adaptive stepper failed in ",
 			 "ode_iv_solve::solve_final_value()",ret);
 	} else if (first_ret!=0) {
 	  first_ret=ret;
@@ -320,7 +320,7 @@ namespace o2scl {
       if (nsteps>ntrial) {
 	std::string str="Too many steps required (ntrial="+itos(ntrial)+
 	  ", x="+o2scl::dtos(x)+") in ode_iv_solve::solve_final_value().";
-	O2SCL_ERR_RET(str.c_str(),exc_emaxiter);
+	O2SCL_ERR(str.c_str(),exc_emaxiter);
       }
 
       if (ret!=0) {
@@ -341,7 +341,7 @@ namespace o2scl {
 	
 	if (ret!=0) {
 	  if (exit_on_fail) {
-	    O2SCL_ERR2_RET("Adaptive stepper failed in ",
+	    O2SCL_ERR2("Adaptive stepper failed in ",
 			   "ode_iv_solve::solve_final_value()",ret);
 	  } else if (first_ret!=0) {
 	    first_ret=ret;
@@ -363,7 +363,7 @@ namespace o2scl {
 	if (nsteps>ntrial) {
 	  std::string str="Too many steps required (ntrial="+itos(ntrial)+
 	    ", x="+o2scl::dtos(x)+") in ode_iv_solve::solve_final_value().";
-	  O2SCL_ERR_RET(str.c_str(),exc_emaxiter);
+	  O2SCL_ERR(str.c_str(),exc_emaxiter);
 	}
 
 	if (ret!=0) {
@@ -509,7 +509,7 @@ namespace o2scl {
 	if (exit_on_fail) {
 	  n_sol=icurr+1;
 	  // call error handler
-	  O2SCL_ERR2_RET("Adaptive stepper returned non-zero in ",
+	  O2SCL_ERR2("Adaptive stepper returned non-zero in ",
 			 "ode_iv_solve::solve_store().",exc_efailed);
 	} else if (first_ret==0) {
 	  first_ret=ret;
@@ -521,7 +521,7 @@ namespace o2scl {
       if (nsteps>ntrial) {
 	std::string str="Too many steps required (ntrial="+itos(ntrial)+
 	  ", x="+o2scl::dtos(x0)+") in ode_iv_solve::solve_store().";
-	O2SCL_ERR_RET(str.c_str(),exc_emaxiter);
+	O2SCL_ERR(str.c_str(),exc_emaxiter);
       }
       
       // If we've made enough progress, do verbose output
@@ -666,7 +666,7 @@ namespace o2scl {
 	nsteps++;
 	if (ret!=0) {
 	  if (exit_on_fail) {
-	    O2SCL_ERR2_RET("Adaptive stepper failed in ",
+	    O2SCL_ERR2("Adaptive stepper failed in ",
 			   "ode_iv_solve::solve_grid()",ret);
 	  } else if (first_ret!=0) {
 	    first_ret=ret;
@@ -676,7 +676,7 @@ namespace o2scl {
 	if (nsteps>ntrial) {
 	  std::string str="Too many steps required (ntrial="+itos(ntrial)+
 	    ", x="+o2scl::dtos(x)+") in ode_iv_solve::solve_grid().";
-	  O2SCL_ERR_RET(str.c_str(),exc_emaxiter);
+	  O2SCL_ERR(str.c_str(),exc_emaxiter);
 	}
 
 	// Copy the results of the last step to the starting

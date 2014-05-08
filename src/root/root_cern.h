@@ -163,7 +163,7 @@ namespace o2scl {
 	info=9;
 	std::string str="Invalid value of tol_rel ("+dtos(this->tol_rel)+
 	  ") or tol_abs ("+dtos(this->tol_abs)+") in root_cern::solve().";
-	O2SCL_ERR_RET(str.c_str(),exc_einval);
+	O2SCL_ERR(str.c_str(),exc_einval);
       }
   
       int iflag=0, numf=0, nfcall=0, nier6=-1, nier7=-1, nier8=0;

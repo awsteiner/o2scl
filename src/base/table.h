@@ -692,7 +692,7 @@ namespace o2scl {
 				       size_t sz, vec2_t &v) {
     
     if (sz==0) {
-      O2SCL_ERR2_RET("Sent column of zero size in ",
+      O2SCL_ERR2("Sent column of zero size in ",
 		     "table::new_column(string,size_t,vec2_t)",
 		     exc_einval);
     }
@@ -2047,7 +2047,7 @@ namespace o2scl {
     if (err_on_notfound) {
       std::string err=((std::string)"No constant with name '")+name+
       "' in table::set_constant().";
-      O2SCL_ERR_RET(err.c_str(),exc_einval);
+      O2SCL_ERR(err.c_str(),exc_einval);
     }
     return exc_enotfound;
   }

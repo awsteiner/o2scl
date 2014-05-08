@@ -117,7 +117,7 @@ namespace o2scl {
     virtual int integ_err(func_t &func, double a, double b, 
 			  double &res, double &err) {
       if (s==a || s==b) {
-	O2SCL_ERR_RET("Singularity on boundary in inte_cauchy_cern::integ().",
+	O2SCL_ERR("Singularity on boundary in inte_cauchy_cern::integ().",
 		      exc_einval);
       }
       res=integ(func,a,b);

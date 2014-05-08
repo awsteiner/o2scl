@@ -231,7 +231,7 @@ namespace o2scl {
     int status, iter=0;
 	
     if (set(f,x1,x2)!=0) {
-      O2SCL_ERR2_RET("Function set() failed in",
+      O2SCL_ERR2("Function set() failed in",
 		     "root_brent_gsl::solve_bkt().",exc_einval);
     }
   
@@ -367,7 +367,7 @@ namespace o2scl {
 	
     if ((f_lower<0.0 && f_upper<0.0) || 
 	(f_lower>0.0 && f_upper>0.0)) {
-      O2SCL_ERR2_RET("Endpoints don't straddle y=0 in ",
+      O2SCL_ERR2("Endpoints don't straddle y=0 in ",
 		     "root_brent_gsl::set().",o2scl::exc_einval);
     }
 	

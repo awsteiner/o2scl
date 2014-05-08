@@ -1404,7 +1404,7 @@ int cli::set_comm_option(comm_option_s &ic) {
     string err="Option ";
     err+=ic.shrt;
     err+=((string)", ")+ic.lng+" already present in cli::set_comm_option().";
-    O2SCL_ERR_RET(err.c_str(),exc_einval);
+    O2SCL_ERR(err.c_str(),exc_einval);
   }
   clist.push_back(ic);
   return 0;
@@ -1421,7 +1421,7 @@ int cli::run_auto(int argc, char *argv[], int debug) {
   
   ret=process_args(argc,argv,ca,debug);
   if (ret!=0) {
-    O2SCL_ERR_RET("Failed to process command-line in cli::run_auto().",
+    O2SCL_ERR("Failed to process command-line in cli::run_auto().",
 		  exc_efailed);
   }
   
@@ -1429,15 +1429,15 @@ int cli::run_auto(int argc, char *argv[], int debug) {
     
     ret=run_interactive();
     if (ret!=0) {
-      O2SCL_ERR2_RET("Interactive mode failed in ",
-		     "cli::run_auto().",exc_efailed);
+      O2SCL_ERR2("Interactive mode failed in ",
+		 "cli::run_auto().",exc_efailed);
     }
     
   } else {
     
     ret=call_args(ca);
     if (ret!=0) {
-      O2SCL_ERR_RET("Function call_args() failed in cli::run_auto().",
+      O2SCL_ERR("Function call_args() failed in cli::run_auto().",
 		    exc_efailed);
     }
     
@@ -1472,7 +1472,7 @@ std::string cli::get_alias(std::string alias) {
   }
   }
   if (found==false) {
-  O2SCL_ERR_RET((((string)"Option ")+ic.shrt+" , "+ic.lng+
+  O2SCL_ERR((((string)"Option ")+ic.shrt+" , "+ic.lng+
   " not present.").c_str(),exc_einval);
   }
   return 0;

@@ -118,7 +118,7 @@ namespace o2scl {
 	
 	int n=-1;
 	if (this->tol_abs==0.0) {
-	  O2SCL_ERR_RET("Tolerance zero in min_cern::min_bkt().",
+	  O2SCL_ERR("Tolerance zero in min_cern::min_bkt().",
 			exc_einval);
 	} else {
 	  if (a!=b) n=nint(2.0*log(fabs((a-b)/this->tol_abs)));

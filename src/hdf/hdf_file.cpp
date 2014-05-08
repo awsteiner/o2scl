@@ -98,7 +98,7 @@ void hdf_file::close() {
     
 hid_t hdf_file::get_file_id() {
   if (!file_open) {
-    O2SCL_ERR_RET("No file open in hdf_file::get_file_id().",-1);
+    O2SCL_ERR("No file open in hdf_file::get_file_id().",-1);
   }
   return file;
 }
@@ -447,7 +447,7 @@ int hdf_file::gets_fixed(std::string name, std::string &s) {
       
   // If it doesn't exist, create it
   if (dset<0) {
-    O2SCL_ERR_RET((((string)"Dataspace named '")+name+
+    O2SCL_ERR((((string)"Dataspace named '")+name+
                    "' not found in hdf_file::gets_fixed().").c_str(),
 		  exc_einval);
   }
@@ -459,7 +459,7 @@ int hdf_file::gets_fixed(std::string name, std::string &s) {
   space=H5Dget_space(dset);
   int ndims=H5Sget_simple_extent_dims(space,dims,0);
   if (ndims!=1 || dims[0]!=1) {
-    O2SCL_ERR2_RET("Incorrect dimensions in hdf_file::gets_fixed().",
+    O2SCL_ERR2("Incorrect dimensions in hdf_file::gets_fixed().",
 		   "",exc_einval);
   }
   
@@ -516,7 +516,7 @@ int hdf_file::gets_def_fixed(std::string name, std::string def,
   space=H5Dget_space(dset);
   int ndims=H5Sget_simple_extent_dims(space,dims,0);
   if (ndims!=1 || dims[0]!=1) {
-    O2SCL_ERR2_RET("Incorrect dimensions in gets_def_fixed().",
+    O2SCL_ERR2("Incorrect dimensions in gets_def_fixed().",
 		   "",exc_einval);
   }
   
@@ -549,7 +549,7 @@ int hdf_file::getc(std::string name, char &c) {
   // Open the data space
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
   if (dset<0) {
-    O2SCL_ERR_RET((((string)"Dataspace named '")+name+
+    O2SCL_ERR((((string)"Dataspace named '")+name+
 		   "' not found in hdf_file::getc().").c_str(),exc_einval);
   }
 
@@ -557,7 +557,7 @@ int hdf_file::getc(std::string name, char &c) {
   int status=H5Dread(dset,H5T_NATIVE_CHAR,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,&c);
   if (status<0) {
-    O2SCL_ERR_RET("Could not read dataspace in hdf_file::getc().",
+    O2SCL_ERR("Could not read dataspace in hdf_file::getc().",
 		  exc_einval);
   }
 
@@ -571,7 +571,7 @@ int hdf_file::getd(std::string name, double &d) {
   // Open the data space
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
   if (dset<0) {
-    O2SCL_ERR_RET((((string)"Dataspace named '")+name+
+    O2SCL_ERR((((string)"Dataspace named '")+name+
 		   "' not found in hdf_file::getd().").c_str(),exc_einval);
   }
 
@@ -579,7 +579,7 @@ int hdf_file::getd(std::string name, double &d) {
   int status=H5Dread(dset,H5T_NATIVE_DOUBLE,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,&d);
   if (status<0) {
-    O2SCL_ERR_RET("Could not read dataspace in hdf_file::getd().",
+    O2SCL_ERR("Could not read dataspace in hdf_file::getd().",
 		  exc_einval);
   }
 
@@ -593,7 +593,7 @@ int hdf_file::getf(std::string name, float &f) {
   // Open the data space
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
   if (dset<0) {
-    O2SCL_ERR_RET((((string)"Dataspace named '")+name+
+    O2SCL_ERR((((string)"Dataspace named '")+name+
 		   "' not found in hdf_file::getf().").c_str(),exc_einval);
   }
 
@@ -601,7 +601,7 @@ int hdf_file::getf(std::string name, float &f) {
   int status=H5Dread(dset,H5T_NATIVE_FLOAT,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,&f);
   if (status<0) {
-    O2SCL_ERR_RET("Could not read dataspace in hdf_file::getf().",
+    O2SCL_ERR("Could not read dataspace in hdf_file::getf().",
 		  exc_einval);
   }
 
@@ -615,7 +615,7 @@ int hdf_file::geti(std::string name, int &i) {
   // Open the data space
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
   if (dset<0) {
-    O2SCL_ERR_RET((((string)"Dataspace named '")+name+
+    O2SCL_ERR((((string)"Dataspace named '")+name+
 		   "' not found in hdf_file::geti().").c_str(),exc_einval);
   }
 
@@ -623,7 +623,7 @@ int hdf_file::geti(std::string name, int &i) {
   int status=H5Dread(dset,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,&i);
   if (status<0) {
-    O2SCL_ERR_RET("Could not read dataspace in hdf_file::geti().",
+    O2SCL_ERR("Could not read dataspace in hdf_file::geti().",
 		  exc_einval);
   }
 
@@ -637,7 +637,7 @@ int hdf_file::get_szt(std::string name, size_t &u) {
   // Open the data space
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
   if (dset<0) {
-    O2SCL_ERR_RET((((string)"Dataspace named '")+name+
+    O2SCL_ERR((((string)"Dataspace named '")+name+
 		   "' not found in hdf_file::get_szt().").c_str(),exc_einval);
   }
 
@@ -658,7 +658,7 @@ int hdf_file::get_szt(std::string name, size_t &u) {
   }
 
   if (status<0) {
-    O2SCL_ERR_RET("Could not read dataspace in hdf_file::get_szt().",
+    O2SCL_ERR("Could not read dataspace in hdf_file::get_szt().",
 		  exc_einval);
   }
 
@@ -672,7 +672,7 @@ int hdf_file::gets(std::string name, std::string &s) {
   // Open the data space
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
   if (dset<0) {
-    O2SCL_ERR_RET((((string)"Dataspace named '")+name+
+    O2SCL_ERR((((string)"Dataspace named '")+name+
 		   "' not found in hdf_file::gets().").c_str(),exc_einval);
   }
 
@@ -682,7 +682,7 @@ int hdf_file::gets(std::string name, std::string &s) {
   hsize_t dims[1];
   int ndims=H5Sget_simple_extent_dims(space,dims,0);
   if (ndims!=1) {
-    O2SCL_ERR2_RET("Dataspace has incorrect number of dimensions ",
+    O2SCL_ERR2("Dataspace has incorrect number of dimensions ",
 		   "in hdf_file::gets().",exc_einval);
   }
 
@@ -693,7 +693,7 @@ int hdf_file::gets(std::string name, std::string &s) {
   int status=H5Dread(dset,H5T_NATIVE_CHAR,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,c);
   if (status<0) {
-    O2SCL_ERR_RET("Could not read dataspace in hdf_file::gets().",
+    O2SCL_ERR("Could not read dataspace in hdf_file::gets().",
 		  exc_einval);
   }
 
@@ -734,7 +734,7 @@ int hdf_file::getc_def(std::string name, char def, char &c) {
   int status=H5Dread(dset,H5T_NATIVE_CHAR,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,&c);
   if (status<0) {
-    O2SCL_ERR_RET("Could not read dataspace in hdf_file::getc_def().",
+    O2SCL_ERR("Could not read dataspace in hdf_file::getc_def().",
 		  exc_einval);
   }
 
@@ -767,7 +767,7 @@ int hdf_file::getd_def(std::string name, double def, double &d) {
   int status=H5Dread(dset,H5T_NATIVE_DOUBLE,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,&d);
   if (status<0) {
-    O2SCL_ERR_RET("Could not read dataspace in hdf_file::getd_def().",
+    O2SCL_ERR("Could not read dataspace in hdf_file::getd_def().",
 		  exc_einval);
   }
 
@@ -800,7 +800,7 @@ int hdf_file::getf_def(std::string name, float def, float &f) {
   int status=H5Dread(dset,H5T_NATIVE_FLOAT,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,&f);
   if (status<0) {
-    O2SCL_ERR_RET("Could not read dataspace in hdf_file::getf_def().",
+    O2SCL_ERR("Could not read dataspace in hdf_file::getf_def().",
 		  exc_einval);
   }
 
@@ -846,7 +846,7 @@ int hdf_file::get_szt_def(std::string name, size_t def, size_t &u) {
   }
   
   if (status<0) {
-    O2SCL_ERR_RET("Could not read dataspace in hdf_file::get_szt_def().",
+    O2SCL_ERR("Could not read dataspace in hdf_file::get_szt_def().",
 		  exc_einval);
   }
 
@@ -879,7 +879,7 @@ int hdf_file::geti_def(std::string name, int def, int &i) {
   int status=H5Dread(dset,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,&i);
   if (status<0) {
-    O2SCL_ERR_RET("Could not read dataspace in hdf_file::geti_def().",
+    O2SCL_ERR("Could not read dataspace in hdf_file::geti_def().",
 		  exc_einval);
   }
 
@@ -913,7 +913,7 @@ int hdf_file::gets_def(std::string name, std::string def, std::string &s) {
   hsize_t dims[1];
   int ndims=H5Sget_simple_extent_dims(space,dims,0);
   if (ndims!=1) {
-    O2SCL_ERR2_RET("Dataspace has incorrect number of dimensions ",
+    O2SCL_ERR2("Dataspace has incorrect number of dimensions ",
 		   "in hdf_file::gets_def().",exc_einval);
   }
 
@@ -924,7 +924,7 @@ int hdf_file::gets_def(std::string name, std::string def, std::string &s) {
   int status=H5Dread(dset,H5T_NATIVE_CHAR,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,c);
   if (status<0) {
-    O2SCL_ERR_RET("Could not read dataspace in hdf_file::gets_def().",
+    O2SCL_ERR("Could not read dataspace in hdf_file::gets_def().",
 		  exc_einval);
   }
 
@@ -981,7 +981,7 @@ int hdf_file::setc_arr_fixed(std::string name, size_t n, const char *c) {
     hsize_t dims[1];
     int ndims=H5Sget_simple_extent_dims(space,dims,0);
     if (ndims!=1 || dims[0]!=n) {
-      O2SCL_ERR2_RET("Incompatible dataspace size or dimensions ",
+      O2SCL_ERR2("Incompatible dataspace size or dimensions ",
 		     "in hdf_file::setc_arr_fixed().",exc_einval);
     }
     
@@ -1037,7 +1037,7 @@ int hdf_file::setd_arr_fixed(std::string name, size_t n, const double *d) {
     hsize_t dims[1];
     int ndims=H5Sget_simple_extent_dims(space,dims,0);
     if (ndims!=1 || dims[0]!=n) {
-      O2SCL_ERR2_RET("Incompatible dataspace size or dimensions ",
+      O2SCL_ERR2("Incompatible dataspace size or dimensions ",
 		     "in hdf_file::setd_arr_fixed().",exc_einval);
     }
 
@@ -1093,7 +1093,7 @@ int hdf_file::setf_arr_fixed(std::string name, size_t n, const float *f) {
     hsize_t dims[1];
     int ndims=H5Sget_simple_extent_dims(space,dims,0);
     if (ndims!=1 || dims[0]!=n) {
-      O2SCL_ERR2_RET("Incompatible dataspace size or dimensions ",
+      O2SCL_ERR2("Incompatible dataspace size or dimensions ",
 		     "in hdf_file::setf_arr_fixed().",exc_einval);
     }
     
@@ -1149,7 +1149,7 @@ int hdf_file::seti_arr_fixed(std::string name, size_t n, const int *i) {
     hsize_t dims[1];
     int ndims=H5Sget_simple_extent_dims(space,dims,0);
     if (ndims!=1 || dims[0]!=n) {
-      O2SCL_ERR2_RET("Incompatible dataspace size or dimensions ",
+      O2SCL_ERR2("Incompatible dataspace size or dimensions ",
 		     "in hdf_file::seti_arr_fixed().",exc_einval);
     }
     
@@ -1208,7 +1208,7 @@ int hdf_file::setc_arr(std::string name, size_t n, const char *c) {
 
     // Set error if this dataset is more than 1-dimensional
     if (ndims!=1) {
-      O2SCL_ERR2_RET("Tried to set a multidimensional dataset with an ",
+      O2SCL_ERR2("Tried to set a multidimensional dataset with an ",
 		     "array in hdf_file::setc_arr().",exc_einval);
     }
 
@@ -1285,7 +1285,7 @@ int hdf_file::setd_arr(std::string name, size_t n, const double *d) {
 
     // Set error if this dataset is more than 1-dimensional
     if (ndims!=1) {
-      O2SCL_ERR2_RET("Tried to set a multidimensional dataset with an ",
+      O2SCL_ERR2("Tried to set a multidimensional dataset with an ",
 		     "array in hdf_file::setd_arr().",exc_einval);
     }
 
@@ -1360,7 +1360,7 @@ int hdf_file::setf_arr(std::string name, size_t n, const float *f) {
 
     // Set error if this dataset is more than 1-dimensional
     if (ndims!=1) {
-      O2SCL_ERR2_RET("Tried to set a multidimensional dataset with an ",
+      O2SCL_ERR2("Tried to set a multidimensional dataset with an ",
 		     "array in hdf_file::setf_arr().",exc_einval);
     }
 
@@ -1435,7 +1435,7 @@ int hdf_file::seti_arr(std::string name, size_t n, const int *i) {
 
     // Set error if this dataset is more than 1-dimensional
     if (ndims!=1) {
-      O2SCL_ERR2_RET("Tried to set a multidimensional dataset with an ",
+      O2SCL_ERR2("Tried to set a multidimensional dataset with an ",
 		     "array in hdf_file::seti_arr().",exc_einval);
     }
 
@@ -1510,7 +1510,7 @@ int hdf_file::set_szt_arr(std::string name, size_t n, const size_t *u) {
 
     // Set error if this dataset is more than 1-dimensional
     if (ndims!=1) {
-      O2SCL_ERR2_RET("Tried to set a multidimensional dataset with an ",
+      O2SCL_ERR2("Tried to set a multidimensional dataset with an ",
 		     "array in hdf_file::set_szt_arr().",exc_einval);
     }
 
@@ -1565,7 +1565,7 @@ int hdf_file::getc_arr(std::string name, size_t n, char *c) {
   int ndims=H5Sget_simple_extent_dims(space,dims,0);
   
   if (dims[0]!=n) {
-    O2SCL_ERR_RET("Incompatible size in hdf_file::getc_arr().",
+    O2SCL_ERR("Incompatible size in hdf_file::getc_arr().",
 		  exc_einval);
   }
 
@@ -1592,7 +1592,7 @@ int hdf_file::getd_arr(std::string name, size_t n, double *d) {
   if (dims[0]!=n) {
     string str="Asked for size "+itos(n)+" but file has size "+
       itos(dims[0])+" in hdf_file::getd_arr().";
-    O2SCL_ERR_RET(str.c_str(),exc_einval);
+    O2SCL_ERR(str.c_str(),exc_einval);
   }
 
   // Read the data
@@ -1616,7 +1616,7 @@ int hdf_file::getf_arr(std::string name, size_t n, float *f) {
   int ndims=H5Sget_simple_extent_dims(space,dims,0);
   
   if (dims[0]!=n) {
-    O2SCL_ERR_RET("Incompatible size in hdf_file::getd_arr().",
+    O2SCL_ERR("Incompatible size in hdf_file::getd_arr().",
 		  exc_einval);
   }
 
@@ -1641,7 +1641,7 @@ int hdf_file::geti_arr(std::string name, size_t n, int *i) {
   int ndims=H5Sget_simple_extent_dims(space,dims,0);
   
   if (dims[0]!=n) {
-    O2SCL_ERR_RET("Incompatible size in hdf_file::geti_arr().",
+    O2SCL_ERR("Incompatible size in hdf_file::geti_arr().",
 		  exc_einval);
   }
 
@@ -1744,11 +1744,11 @@ int hdf_file::geti_arr_alloc(std::string name, size_t &n, int *i) {
 
 hid_t hdf_file::open_group(std::string path) {
   if (!file_open) {
-    O2SCL_ERR_RET("File not opened in hdf_file::open_group().",
+    O2SCL_ERR("File not opened in hdf_file::open_group().",
 		  exc_einval);
   }
   if (current<=0) {
-    O2SCL_ERR_RET("Invalid current HDF5 id in hdf_file::open_group().",
+    O2SCL_ERR("Invalid current HDF5 id in hdf_file::open_group().",
 		  exc_einval);
   }
   hid_t group;
@@ -1762,7 +1762,7 @@ hid_t hdf_file::open_group(std::string path) {
 		      H5P_DEFAULT,H5P_DEFAULT);
     }
   if (group<0) {
-    O2SCL_ERR2_RET("Failed to open or create group in ",
+    O2SCL_ERR2("Failed to open or create group in ",
 		   "hdf_file::open_group().",exc_einval);
   }
   return group;
@@ -1780,7 +1780,7 @@ hid_t hdf_file::open_group(hid_t init_id, std::string path) {
 		      H5P_DEFAULT,H5P_DEFAULT);
     }
   if (group<0) {
-    O2SCL_ERR2_RET("Failed to open or create group in ",
+    O2SCL_ERR2("Failed to open or create group in ",
 		   "hdf_file::open_group().",exc_einval);
   }
   return group;
@@ -1920,7 +1920,7 @@ int hdf_file::gets_vec(std::string name, std::vector<std::string> &s) {
   gets_fixed("o2scl_type",o2t);
   if (o2t!="string[]") {
     set_current_id(top);
-    O2SCL_ERR2_RET("The specified name does not refer to data which ",
+    O2SCL_ERR2("The specified name does not refer to data which ",
 		   "can be read by O2scl in hdf_file::gets_vec().",
 		   exc_efailed);
   }
@@ -2077,7 +2077,7 @@ int hdf_file::setd_mat_copy(std::string name, const ubmatrix &m) {
 
     // Set error if this dataset is more than 1-dimensional
     if (ndims!=2) {
-      O2SCL_ERR2_RET("Tried to set a non-matrix dataset with a ",
+      O2SCL_ERR2("Tried to set a non-matrix dataset with a ",
 		     "matrix in hdf_file::setd_mat().",exc_einval);
     }
 
@@ -2118,7 +2118,7 @@ int hdf_file::getd_mat_copy(std::string name, ubmatrix &m) {
   int ndims=H5Sget_simple_extent_dims(space,dims,0);
 
   if (ndims!=2) {
-    O2SCL_ERR2_RET("Dimensions of dataspace do not match ",
+    O2SCL_ERR2("Dimensions of dataspace do not match ",
 		   "a matrix in hdf_file::getd_mat().",exc_efailed);
   }
   
@@ -2191,7 +2191,7 @@ int hdf_file::seti_mat_copy(std::string name, const ubmatrix_int &m) {
 
     // Set error if this dataset is more than 1-dimensional
     if (ndims!=2) {
-      O2SCL_ERR2_RET("Tried to set a non-matrix dataset with a ",
+      O2SCL_ERR2("Tried to set a non-matrix dataset with a ",
 		     "matrix in hdf_file::setd_mat().",exc_einval);
     }
 
@@ -2231,7 +2231,7 @@ int hdf_file::geti_mat_copy(std::string name, ubmatrix_int &m) {
   int ndims=H5Sget_simple_extent_dims(space,dims,0);
 
   if (ndims!=2) {
-    O2SCL_ERR2_RET("Dimensions of dataspace do not match ",
+    O2SCL_ERR2("Dimensions of dataspace do not match ",
 		   "a matrix in hdf_file::getd_mat().",exc_efailed);
   }
   
@@ -2310,7 +2310,7 @@ int hdf_file::setd_ten(std::string name,
     hsize_t dims2[100];
     int ndims2=H5Sget_simple_extent_dims(space,dims2,0);
     if (ndims2!=((int)ndims)) {
-      O2SCL_ERR2_RET("Tried to set a tensor on top of a tensor of ",
+      O2SCL_ERR2("Tried to set a tensor on top of a tensor of ",
 		    "different rank in hdf_file::setd_ten().",exc_efailed);
     }
 
@@ -2350,7 +2350,7 @@ int hdf_file::getd_ten(std::string name,
   hsize_t dims[100];
   int ndims=H5Sget_simple_extent_dims(space,dims,0);
   if (ndims<1 || ndims>100) {
-    O2SCL_ERR2_RET("Dimensions less than 1 or greater than 100 ",
+    O2SCL_ERR2("Dimensions less than 1 or greater than 100 ",
 		   "in hdf_file::getd_ten().",exc_efailed);
   }
   
@@ -2384,7 +2384,7 @@ int hdf_file::getd_vec_prealloc(std::string name, size_t n, double *d) {
 
   // Make sure sizes match
   if (dims[0]!=n) {
-    O2SCL_ERR2_RET("Vector size in file doesn't match allocated ",
+    O2SCL_ERR2("Vector size in file doesn't match allocated ",
 		   "size in hdf_file::getd_vec_prealloc().",
 		   exc_einval);
   }
@@ -2411,7 +2411,7 @@ int hdf_file::geti_vec_prealloc(std::string name, size_t n, int *i) {
 
   // Make sure sizes match
   if (dims[0]!=n) {
-    O2SCL_ERR2_RET("Vector size in file doesn't match allocated ",
+    O2SCL_ERR2("Vector size in file doesn't match allocated ",
 		   "size in hdf_file::geti_vec_prealloc().",
 		   exc_einval);
   }
@@ -2439,7 +2439,7 @@ int hdf_file::getd_mat_prealloc(std::string name, size_t n,
 
   // Make sure sizes match
   if (dims[0]!=n || dims[1]!=m) {
-    O2SCL_ERR2_RET("Matrix size in file doesn't match allocated ",
+    O2SCL_ERR2("Matrix size in file doesn't match allocated ",
 		   "size in hdf_file::getd_mat_prealloc().",
 		   exc_einval);
   }
@@ -2467,7 +2467,7 @@ int hdf_file::geti_mat_prealloc(std::string name, size_t n,
 
   // Make sure sizes match
   if (dims[0]!=n || dims[1]!=m) {
-    O2SCL_ERR2_RET("Matrix size in file doesn't match allocated ",
+    O2SCL_ERR2("Matrix size in file doesn't match allocated ",
 		   "size in hdf_file::getd_mat_prealloc().",
 		   exc_einval);
   }

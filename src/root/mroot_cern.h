@@ -254,7 +254,7 @@ namespace o2scl {
 	std::string str="Invalid value of tol_rel ("+dtos(this->tol_rel)+
 	  "), tol_abs ("+dtos(this->tol_abs)+"), or nvar ("+itos(nvar)+
 	  " in mroot_cern::msolve().";
-	O2SCL_ERR_RET(str.c_str(),exc_einval);
+	O2SCL_ERR(str.c_str(),exc_einval);
       }
   
       // Find optimal value of mopt for iterative refinement
@@ -458,7 +458,7 @@ namespace o2scl {
 	// Exit if necessary
 
 	if (info!=0) {
-	  O2SCL_ERR_RET("Unspecified error in mroot_cern::msolve().",
+	  O2SCL_ERR("Unspecified error in mroot_cern::msolve().",
 			exc_efailed);
 	}
 

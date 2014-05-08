@@ -312,7 +312,7 @@ double fermion_eff::solve_fun(double x, double &psi) {
   if (ff<=0.0) {
     string str="Variable 'f' is less than or equal to zero ("+dtos(ff)+
       ") in fermion_eff::solve_fun().";
-    O2SCL_ERR_RET(str.c_str(),exc_efailed);
+    O2SCL_ERR(str.c_str(),exc_efailed);
   }
 
   // For small f, we lose too much precision using
@@ -332,7 +332,7 @@ double fermion_eff::solve_fun(double x, double &psi) {
   }
   
   if (!o2scl::is_finite(y)) {
-    O2SCL_ERR2_RET("Variable 'y' not finite in ",
+    O2SCL_ERR2("Variable 'y' not finite in ",
 		   "fermion_eff::solve_fun().",exc_efailed);
   }
 

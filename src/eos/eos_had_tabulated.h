@@ -99,7 +99,7 @@ namespace o2scl {
     virtual int calc_e(fermion &ne, fermion &pr, thermo &th) {
       
       if (table_alloc==false) {
-	O2SCL_ERR_RET("No EOS specified in eos_had_tabulated::calc_e().",
+	O2SCL_ERR("No EOS specified in eos_had_tabulated::calc_e().",
 		    exc_einval);
       }
       double barn=ne.n+pr.n;

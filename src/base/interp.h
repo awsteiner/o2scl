@@ -1651,7 +1651,7 @@ namespace o2scl {
     (double level, size_t n, vec_t &x, vec2_t &y) {
 
     if (n<=1) {
-      O2SCL_ERR2_RET("Need at least two data points in ",
+      O2SCL_ERR2("Need at least two data points in ",
 		     "vector_find_count().",exc_einval);
     }
 

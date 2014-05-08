@@ -92,7 +92,7 @@ namespace o2scl {
 
       // Make sure that the boundary conditions make sense
       if (lhs_unks!=rhs_conts) {
-	O2SCL_ERR2_RET("Incorrect boundary conditions in ",
+	O2SCL_ERR2("Incorrect boundary conditions in ",
 		       "ode_bv_mshoot::solve()",gsl_einval);
       } 
 
@@ -150,11 +150,11 @@ namespace o2scl {
 		    mat_t &yerr_sol, func_t &derivs) {
 
       if (n_bound<2) {
-	O2SCL_ERR2_RET("Not enough boundaries (must be at least two) in ",
+	O2SCL_ERR2("Not enough boundaries (must be at least two) in ",
 		       "ode_bv_mshoot::solve_store().",gsl_einval);
       }
       if (n_sol<n_bound) {
-	O2SCL_ERR2_RET("Not enough room to store boundaries in ",
+	O2SCL_ERR2("Not enough room to store boundaries in ",
 		       "ode_bv_mshoot::solve_store().",gsl_einval);
       }
 
@@ -171,7 +171,7 @@ namespace o2scl {
       // Double check that each interval has some space 
       for(size_t k=1;k<n_bound-1;k++) {
 	if (inxs[k]==inxs[k-1] || inxs[k]==inxs[k+1]) {
-	  O2SCL_ERR2_RET("Not enough room to store boundaries in ",
+	  O2SCL_ERR2("Not enough room to store boundaries in ",
 			 "ode_bv_mshoot::solve_store().",gsl_einval);
 	}
       }

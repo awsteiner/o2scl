@@ -339,7 +339,7 @@ namespace o2scl {
     }
 
     if (done==false) {
-      O2SCL_ERR_RET("Exceeded number of iterations in solve().",
+      O2SCL_ERR("Exceeded number of iterations in solve().",
 		    o2scl::exc_emaxiter);
     }
 

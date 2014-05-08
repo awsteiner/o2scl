@@ -104,11 +104,11 @@ namespace o2scl {
 		   func_t &func, size_t np, param_vec_t &pars) {
     
     if (nv==0) {
-      O2SCL_ERR2_RET("Tried to minimize over zero variables ",
+      O2SCL_ERR2("Tried to minimize over zero variables ",
 		     " in anneal_mt::mmin().",gsl_einval);
     }
     if (np==0) {
-      O2SCL_ERR2_RET("Tried to use zero threads in ",
+      O2SCL_ERR2("Tried to use zero threads in ",
 		     "anneal_mt::mmin().",gsl_einval);
     }
 

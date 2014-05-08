@@ -418,14 +418,14 @@ namespace o2scl {
 	std::string estr="Tolerance cannot be achieved with given ";
 	estr+="value of tol_abs, "+dtos(epsabs)+", and tol_rel, "+
 	  dtos(epsrel)+", in inte_qawc_gsl::qawc().";
-	O2SCL_ERR_RET(estr.c_str(),exc_ebadtol);
+	O2SCL_ERR(estr.c_str(),exc_ebadtol);
       }
 
       if (c == a || c == b) {
 	this->last_iter=0;
 	std::string estr="Cannot integrate with singularity on endpoint ";
 	estr+="in inte_qawc_gsl::qawc().";
-	O2SCL_ERR_RET(estr.c_str(),exc_einval);
+	O2SCL_ERR(estr.c_str(),exc_einval);
       }      
 
       /* perform the first integration */
@@ -566,7 +566,7 @@ namespace o2scl {
       } else {
 	std::string estr="Could not integrate function in inte_qawc_gsl::";
 	estr+="qawc() (it may have returned a non-finite result).";
-	O2SCL_ERR_RET(estr.c_str(),exc_efailed);
+	O2SCL_ERR(estr.c_str(),exc_efailed);
       }
 
       // No return statement needed since the above if statement

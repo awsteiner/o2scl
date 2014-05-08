@@ -128,7 +128,7 @@ namespace o2scl {
     double vector_variance(size_t n, const vec_t &data, double mean) {
 
     if (n<2) {
-      O2SCL_ERR2_RET("Cannot compute variance with less than 2 elements",
+      O2SCL_ERR2("Cannot compute variance with less than 2 elements",
 		     " in vector_variance().",exc_einval);
     }
 
@@ -171,7 +171,7 @@ namespace o2scl {
   template<class vec_t> double vector_variance(size_t n, const vec_t &data) {
 
     if (n<2) {
-      O2SCL_ERR2_RET("Cannot compute variance with less than 2 elements",
+      O2SCL_ERR2("Cannot compute variance with less than 2 elements",
 		     " in vector_variance().",exc_einval);
     }
     
@@ -253,7 +253,7 @@ namespace o2scl {
   template<class vec_t> double vector_stddev(size_t n, const vec_t &data) {
     
     if (n<2) {
-      O2SCL_ERR2_RET("Cannot compute std. dev. with less than 2 elements",
+      O2SCL_ERR2("Cannot compute std. dev. with less than 2 elements",
 		     " in vector_stddev().",exc_einval);
     }
     
@@ -297,7 +297,7 @@ namespace o2scl {
 					     double mean) {
 
     if (n<2) {
-      O2SCL_ERR2_RET("Cannot compute std. dev. with less than 2 elements",
+      O2SCL_ERR2("Cannot compute std. dev. with less than 2 elements",
 		     " in vector_stddev().",exc_einval);
     }
     
@@ -609,7 +609,7 @@ namespace o2scl {
     double vector_lag1_autocorr(size_t n, const vec_t &data, double mean) {
     
     if (n<2) {
-      O2SCL_ERR2_RET("Cannot compute lag1 with less than 2 elements",
+      O2SCL_ERR2("Cannot compute lag1 with less than 2 elements",
 		     " in vector_lag1_autocorr().",exc_einval);
     }
 
@@ -706,7 +706,7 @@ namespace o2scl {
 				double mean) {
     
     if (n<=k) {
-      O2SCL_ERR2_RET("Not enough elements ",
+      O2SCL_ERR2("Not enough elements ",
 		     " in vector_lagk_autocorr().",exc_einval);
     }
 
@@ -909,7 +909,7 @@ namespace o2scl {
     size_t i;
 
     if (n<1) {
-      O2SCL_ERR2_RET("Cannot compute correlation with no elements",
+      O2SCL_ERR2("Cannot compute correlation with no elements",
 		     " in vector_correlation().",exc_einval);
     }
 

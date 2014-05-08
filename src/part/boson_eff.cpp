@@ -126,7 +126,7 @@ int boson_eff::load_coefficients(int ctype) {
     Pmnb(3,3)=19.3811;
     Pmnb(3,4)=5.54423;
   } else {
-    O2SCL_ERR_RET("Invalid type in boson_eff::load_coefficients().",
+    O2SCL_ERR("Invalid type in boson_eff::load_coefficients().",
 		  exc_efailed);
   }
   

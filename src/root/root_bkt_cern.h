@@ -114,7 +114,7 @@ namespace o2scl {
   */
   int set_mode(int m) {
     if (m!=1 && m!=2) {
-      O2SCL_ERR_RET("Invalid mode in root_bkt_cern::set_mode().",
+      O2SCL_ERR("Invalid mode in root_bkt_cern::set_mode().",
 		    o2scl::exc_einval);
     }
     mode=m-1;
@@ -140,7 +140,7 @@ namespace o2scl {
     fa=func(x2);
 	
     if (fa*fb>0.0) {
-      O2SCL_ERR2_RET("Endpoints don't bracket function in ",
+      O2SCL_ERR2("Endpoints don't bracket function in ",
 		     "root_bkt_cern::solve_bkt().",exc_einval);
     }
 	

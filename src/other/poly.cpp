@@ -58,7 +58,7 @@ int quadratic_complex_std::solve_c
  complex<double> &x1, complex<double> &x2) { 
   
   if (a2==0.0) {
-    O2SCL_ERR_RET
+    O2SCL_ERR
       ("Leading coefficient zero in quadratic_complex_std::solve_c().",
        exc_einval);
   }
@@ -118,7 +118,7 @@ int poly_real_coeff_gsl::solve_rc(const double a2, const double b2,
 				  complex<double> &r2) {
   
   if (a2==0.0) {
-    O2SCL_ERR2_RET("Leading coefficient zero in ",
+    O2SCL_ERR2("Leading coefficient zero in ",
 		   "poly_real_coeff_gsl::solve_rc().",
 		   exc_einval);
   }
@@ -141,7 +141,7 @@ int poly_real_coeff_gsl::solve_rc(const double a3, const double b3,
 				  complex<double> &r2, complex<double> &r3) {
   
   if (a3==0.0) {
-    O2SCL_ERR2_RET("Leading coefficient zero in ",
+    O2SCL_ERR2("Leading coefficient zero in ",
 		   "poly_real_coeff_gsl::solve_rc().",
 		   exc_einval);
   }
@@ -178,7 +178,7 @@ int poly_real_coeff_gsl::solve_rc
  complex<double> &r3, complex<double> &r4) {
   
   if (a4==0.0) {
-    O2SCL_ERR2_RET("Leading coefficient zero in ",
+    O2SCL_ERR2("Leading coefficient zero in ",
 		  "poly_real_coeff_gsl::solve_rc().",
 		  exc_einval);
   }
@@ -215,9 +215,9 @@ int poly_real_coeff_gsl::solve_rc(int n, const double co[],
     gen_size=n;
   }
   if (a[n]==0.0) {
-    O2SCL_ERR2_RET("Leading coefficient zero in ",
-		   "poly_real_coeff_gsl::solve_rc().",
-		   exc_einval);
+    O2SCL_ERR2("Leading coefficient zero in ",
+	       "poly_real_coeff_gsl::solve_rc().",
+	       exc_einval);
   }
   gsl_poly_complex_solve(&a[0],n+1,wgen,&z[0]);
   
@@ -234,7 +234,7 @@ int quartic_real_coeff_cern::solve_rc
  std::complex<double> &x3, std::complex<double> &x4) {
 
   if (a4==0.0) {
-    O2SCL_ERR_RET
+    O2SCL_ERR
       ("Leading coefficient zero in quartic_real_coeff_cern::solve_rc().",
        exc_einval);
   }
@@ -516,7 +516,7 @@ int cubic_real_coeff_cern::solve_rc
  double &r1, complex<double> &r2, complex<double> &r3) {
 
   if (a3==0.0) {
-    O2SCL_ERR_RET
+    O2SCL_ERR
       ("Leading coefficient zero in cubic_real_coeff_cern::solve_rc().",
        exc_einval);
   }
@@ -673,7 +673,7 @@ int cubic_complex_std::solve_c
  std::complex<double> &x3) {
 
   if (a3==0.0) {
-    O2SCL_ERR_RET
+    O2SCL_ERR
       ("Leading coefficient zero in cubic_std::complex::solve_c().",
        exc_einval);
   }
@@ -753,7 +753,7 @@ int cubic_real_coeff_gsl::solve_rc
   complex<double> i(0.0,1.0);
 
   if (a3==0.0) {
-    O2SCL_ERR_RET
+    O2SCL_ERR
       ("Leading coefficient zero in cubic_real_coeff_gsl::solve_rc().",
        exc_einval);
   }
@@ -789,7 +789,7 @@ int quartic_complex_simple::solve_c
   complex<double> u4, u41, u42;
   
   if (a4==0.0) {
-    O2SCL_ERR_RET
+    O2SCL_ERR
       ("Leading coefficient zero in quartic_complex_simple::solve_c().",
        exc_einval);
   }
@@ -838,7 +838,7 @@ int quartic_real_simple::solve_r
  const double e4, double &x1, double &x2, double &x3, double &x4) {
 
   if (a4==0.0) {
-    O2SCL_ERR_RET
+    O2SCL_ERR
       ("Leading coefficient zero in quartic_real_simple::solve_r().",
        exc_einval);
   }
@@ -921,7 +921,7 @@ int quartic_real_gsl::solve_r
   gsl_complex b2a, b2b, c2a, c2b;
   
   if (a4==0.0) {
-    O2SCL_ERR_RET
+    O2SCL_ERR
       ("Leading coefficient zero in quartic_real_gsl::solve_r().",
        exc_einval);
   }
@@ -996,7 +996,7 @@ int quartic_real_gsl2::solve_r
   gsl_complex s1, s2, z1;
     
   if (a4==0.0) {
-    O2SCL_ERR_RET
+    O2SCL_ERR
       ("Leading coefficient zero in quartic_real_gsl2::solve_r().",
        exc_einval);
   }
@@ -1090,7 +1090,7 @@ int quadratic_real_coeff::solve_r
  double &x1, double &x2) {
 
   if (a3==0.0) {
-    O2SCL_ERR_RET
+    O2SCL_ERR
       ("Leading coefficient zero in quadratic_real_coeff::solve_r().",
        exc_einval);
   }
@@ -1107,7 +1107,7 @@ int quadratic_complex::solve_r
  double &x1, double &x2) {
 
   if (a3==0.0) {
-    O2SCL_ERR_RET
+    O2SCL_ERR
       ("Leading coefficient zero in quadratic_complex::solve_r().",
        exc_einval);
   }
@@ -1124,7 +1124,7 @@ int quadratic_complex::solve_rc
  complex<double> &x1, complex<double> &x2) {
 
   if (a3==0.0) {
-    O2SCL_ERR_RET
+    O2SCL_ERR
       ("Leading coefficient zero in quadratic_complex::solve_rc().",
        exc_einval);
   }
@@ -1139,7 +1139,7 @@ int cubic_real_coeff::solve_r
   complex<double> r2,r3;
 
   if (a3==0.0) {
-    O2SCL_ERR_RET
+    O2SCL_ERR
       ("Leading coefficient zero in cubic_real_coeff::solve_r().",
        exc_einval);
   }
@@ -1155,7 +1155,7 @@ int cubic_complex::solve_r
  const double d3, double &x1, double &x2, double &x3) {
 
   if (a3==0.0) {
-    O2SCL_ERR_RET
+    O2SCL_ERR
       ("Leading coefficient zero in cubic_complex::solve_r().",
        exc_einval);
   }
@@ -1174,7 +1174,7 @@ int cubic_complex::solve_rc
  complex<double> &x3) {
 
   if (a3==0.0) {
-    O2SCL_ERR_RET
+    O2SCL_ERR
       ("Leading coefficient zero in cubic_complex::solve_rc().",
        exc_einval);
   }
@@ -1207,7 +1207,7 @@ int quartic_real_coeff::solve_r
  double &x4) {
 
   if (a3==0.0) {
-    O2SCL_ERR_RET
+    O2SCL_ERR
       ("Leading coefficient zero in quartic_real_coeff::solve_r().",
        exc_einval);
   }
@@ -1228,7 +1228,7 @@ int quartic_complex::solve_rc
  std::complex<double> &x3, std::complex<double> &x4) {
 
   if (a4==0.0) {
-    O2SCL_ERR_RET
+    O2SCL_ERR
       ("Leading coefficient zero in std::complex<double> &x4) {().",
        exc_einval);
   }
@@ -1242,7 +1242,7 @@ int quartic_complex::solve_r
  double &x4) {
 
   if (a3==0.0) {
-    O2SCL_ERR_RET
+    O2SCL_ERR
       ("Leading coefficient zero in quartic_complex::solve_r().",
        exc_einval);
   }

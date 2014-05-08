@@ -27,12 +27,12 @@ using namespace std;
 using namespace o2scl;
 
 int function1() {
-  O2SCL_ERR_RET("This is the third error.",2);
+  O2SCL_ERR("This is the third error.",2);
   return 0;
 }
 
 int function2() {
-  O2SCL_ERR_RET("This is the fourth error.",3);
+  O2SCL_ERR("This is the fourth error.",3);
   return 0;
 }
 
