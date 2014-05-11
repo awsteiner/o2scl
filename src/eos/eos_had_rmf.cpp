@@ -528,14 +528,17 @@ int eos_had_rmf::calc_temp_e(fermion &ne, fermion &pr, const double T,
     x[3]=0.07;
     x[4]=-0.001;
     
+    bool log_mode=false;
+    if (fabs(log10(0.16/n_baryon))>6.0) log_mode=true;
+    
     if (verbose>0) {
       cout << "Solving in eos_had_rmf::calc_temp_e()." << endl;
-      cout << " alpha       n_B         n_ch        mu_n       "
-	   << " mu_p        sigma       omega       rho        ret" << endl;
+      cout << " alpha       n_B         n_ch        mu_n        "
+	   << "mu_p        sigma       omega       rho         ret" << endl;
       cout.setf(ios::showpos);
       cout.precision(4);
     }
-
+    
     for(size_t i=0;i<calc_e_steps;i++) {
 
       double alpha=((double)i)/((double)(calc_e_steps-1));
@@ -546,8 +549,17 @@ int eos_had_rmf::calc_temp_e(fermion &ne, fermion &pr, const double T,
 	n_baryon=nn+np;
 	n_charge=np;
       } else {
-	n_baryon=0.16*(1.0-alpha)+(nn+np)*alpha;
-	n_charge=0.08*(1.0-alpha)+np*alpha;
+	if (log_mode) {
+	  n_baryon=0.16*pow((nn+np)/0.16,alpha);
+	  if (np>0.0) {
+	    n_charge=0.08*pow(np/0.08,alpha);
+	  } else {
+	    n_charge=0.08*(1.0-alpha)+np*alpha;
+	  }
+	} else {
+	  n_baryon=0.16*(1.0-alpha)+(nn+np)*alpha;
+	  n_charge=0.08*(1.0-alpha)+np*alpha;
+	}
       }
 
       ret=eos_mroot->msolve(5,x,fmf);

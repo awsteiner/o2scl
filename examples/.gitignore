@@ -1,3 +1,4 @@
+*.txt
 *.o2
 *.out
 *.dat
@@ -8,8 +9,6 @@ bm_mroot2
 bm_root
 ex_anneal
 ex_eos_had_apr
-ex_apr_fig7.1.txt
-ex_apr_fig7.2.txt
 ex_eos_crust
 ex_chebapp
 ex_nstar_cold

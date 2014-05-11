@@ -189,7 +189,7 @@ public:
     fd.html_mode();
 
     output_files=false;
-    file_prefix="ex_skyrme_";
+    file_prefix="ex_eos_had_skyrme_";
   }
 
   /** \brief Generate a table comparing neutron matter and neutron 
@@ -530,6 +530,9 @@ public:
     test_mgr t;
     t.set_output_level(1);
 
+    bool of_old=output_files;
+    output_files=true;
+
     // Just summarize SLy4
     vector<string> args;
     args.push_back("summary");
@@ -542,6 +545,8 @@ public:
     t.test_rel(res.r_14,11.72476,4.0e-3,"R_1.4");
 
     t.report();
+
+    output_files=of_old;
 
     return 0;
   }
@@ -805,19 +810,19 @@ int main(int argv, char *argc[]) {
 
   static const int narr=5;
   comm_option_s options_arr[narr]={
-    {0,"run-all","Run all internally stored Skyrme models",0,0,"","",
+    {0,"run-all","Run all internally stored Skyrme models.",0,0,"","",
      new comm_option_mfptr<ex_eos_had_skyrme>(&se,&ex_eos_had_skyrme::run_all),
      comm_option_both},
-    {'s',"store","Store current model",1,1,"","",
+    {'s',"store","Store current model.",1,1,"","",
      new comm_option_mfptr<ex_eos_had_skyrme>(&se,&ex_eos_had_skyrme::store),
      comm_option_both},
-    {'l',"load","Load internally stored model",1,1,"","",
+    {'l',"load","Load internally stored model.",1,1,"","",
      new comm_option_mfptr<ex_eos_had_skyrme>(&se,&ex_eos_had_skyrme::load),
      comm_option_both},
-    {'t',"test","Test ex_eos_had_skyrme",0,0,"","",
+    {'t',"test","Test ex_eos_had_skyrme.",0,0,"","",
      new comm_option_mfptr<ex_eos_had_skyrme>(&se,&ex_eos_had_skyrme::test),
      comm_option_both},
-    {'u',"summary","Summarize the properties of a Skyrme model",
+    {'u',"summary","Summarize the properties of a Skyrme model.",
      1,1,"<model>","",
      new comm_option_mfptr<ex_eos_had_skyrme>(&se,&ex_eos_had_skyrme::summary),
      comm_option_both}

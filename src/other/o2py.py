@@ -1,7 +1,7 @@
 """
   -------------------------------------------------------------------
 
-  Copyright (C) 2006-2013, Andrew W. Steiner
+  Copyright (C) 2006-2014, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -87,14 +87,14 @@ def h5read_type_named(fname,loc_type,name):
     raise RuntimeError(str)
     return
 
-def default_plot(lmar=0.14,bmar=0.12,rmar=0.05,tmar=0.05):
+def default_plot(lmar=0.14,bmar=0.12,rmar=0.04,tmar=0.04):
     """
     Works on mac, but not on riddler...
     plot.rc('text',usetex=True)
     """
     plot.rc('font',family='serif')
     plot.rcParams['lines.linewidth']=0.5
-    fig=plot.figure(1,figsize=(6.4,6.4))
+    fig=plot.figure(1,figsize=(6.0,6.0))
     fig.set_facecolor('white')
     ax=plot.axes([lmar,bmar,1.0-lmar-rmar,1.0-tmar-bmar])
     ax.minorticks_on()

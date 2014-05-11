@@ -637,8 +637,8 @@ namespace o2scl {
 	where the equations are undefined.
     */
     virtual void set_mroot(mroot<mm_funct<>,
-			  boost::numeric::ublas::vector<double>, 
-			  jac_funct<> > &mr);
+			   boost::numeric::ublas::vector<double>, 
+			   jac_funct<> > &mr);
     
     /** \brief Set class mroot object for use calculating saturation density
 

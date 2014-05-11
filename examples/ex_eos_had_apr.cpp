@@ -46,18 +46,16 @@ using namespace o2scl_cgs;
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
-/** \brief Compute the APR EOS with a Gibbs construction and
-    the mass versus radius curve [Example class]
+/** \brief Compute the APR EOS with a Gibbs construction and the mass
+    versus radius curve [Example class]
     
-    In succession, calculates nuclear matter, neutron matter, and
-    then neutron star matter with Maxwell and Gibbs constructions.
+    In succession, calculates nuclear matter, neutron matter, and then
+    neutron star matter with Maxwell and Gibbs constructions.
     
     We could use the more accurate masses in
     <tt>o2scl/constants.h</tt> here, but APR appears to have been
     designed to be used with neutron and protons masses equal
     to 939 MeV. 
-    
-    \future Remove nd2 and just use nd?
 */
 class ex_eos_had_apr {
   
@@ -100,15 +98,13 @@ protected:
   //@}
 
   /// \name Numerical methods
-  /// Solver
+  //@{
+  /// General solver
   mroot_hybrids<mm_funct<>,boost::numeric::ublas::vector<double>,
-		boost::numeric::ublas::matrix<double> > solver;
+		boost::numeric::ublas::matrix<double>,jac_funct<> > solver;
   /// Solver for transition densities (lower tolerances)
   mroot_hybrids<mm_funct<>,boost::numeric::ublas::vector<double>,
 		boost::numeric::ublas::matrix<double> > solver_trans_density;
-  /// Solver for saturation properties
-  mroot_hybrids<mm_funct<>,boost::numeric::ublas::vector<double>,
-		boost::numeric::ublas::matrix<double>,jac_funct<> > sat_solver;
   /// Derivative object
   deriv_cern<> cd;
   //@}
@@ -615,7 +611,7 @@ public:
     t.set_output_level(1);
 
     // Output directory
-    std::string prefix="ex_apr_";
+    std::string prefix="ex_eos_had_apr_";
     cout << "Set output prefix to '" << prefix << "' ." << endl;
     cout << endl;
 
@@ -638,14 +634,22 @@ public:
     ubvector x(7), y(7), xx(3), yy(3);
   
     // Function objects
-    mm_funct_mfptr<ex_eos_had_apr> f_nucmixed(this,&ex_eos_had_apr::nucmixed);
-    mm_funct_mfptr<ex_eos_had_apr> f_neutmixed(this,&ex_eos_had_apr::neutmixed);
-    mm_funct_mfptr<ex_eos_had_apr> f_nstar_mixed(this,&ex_eos_had_apr::nstar_mixed);
-    mm_funct_mfptr<ex_eos_had_apr> f_nstar_low(this,&ex_eos_had_apr::nstar_low);
-    mm_funct_mfptr<ex_eos_had_apr> f_nstar_high(this,&ex_eos_had_apr::nstar_high);
-    mm_funct_mfptr<ex_eos_had_apr> f_fig7fun(this,&ex_eos_had_apr::fig7fun);
-    mm_funct_mfptr<ex_eos_had_apr> f_maxwell_fig7(this,&ex_eos_had_apr::maxwell_fig7);
-    mm_funct_mfptr<ex_eos_had_apr> f_mixedmaxwell(this,&ex_eos_had_apr::mixedmaxwell);
+    mm_funct_mfptr<ex_eos_had_apr> 
+      f_nucmixed(this,&ex_eos_had_apr::nucmixed);
+    mm_funct_mfptr<ex_eos_had_apr> 
+      f_neutmixed(this,&ex_eos_had_apr::neutmixed);
+    mm_funct_mfptr<ex_eos_had_apr> 
+      f_nstar_mixed(this,&ex_eos_had_apr::nstar_mixed);
+    mm_funct_mfptr<ex_eos_had_apr> 
+      f_nstar_low(this,&ex_eos_had_apr::nstar_low);
+    mm_funct_mfptr<ex_eos_had_apr> 
+      f_nstar_high(this,&ex_eos_had_apr::nstar_high);
+    mm_funct_mfptr<ex_eos_had_apr> 
+      f_fig7fun(this,&ex_eos_had_apr::fig7fun);
+    mm_funct_mfptr<ex_eos_had_apr> 
+      f_maxwell_fig7(this,&ex_eos_had_apr::maxwell_fig7);
+    mm_funct_mfptr<ex_eos_had_apr> 
+      f_mixedmaxwell(this,&ex_eos_had_apr::mixedmaxwell);
 
     // Init density grid
     nbstart=0.005;
@@ -661,8 +665,6 @@ public:
     solver.tol_rel=1.0e-12;
     solver_trans_density.tol_abs=1.0e-10;
     solver_trans_density.tol_rel=1.0e-12;
-    sat_solver.tol_abs=1.0e-10;
-    sat_solver.tol_rel=1.0e-12;
 
     // Initialize table
     at.line_of_names(((string)("ed pr nb "))+
@@ -699,7 +701,7 @@ public:
     // Saturation properties
 
     ap.set_thermo(hb);
-    ap.set_mroot(sat_solver);
+    ap.set_mroot(solver);
     ap.set_n_and_p(n,p);
     ap.saturation();
 
@@ -756,13 +758,13 @@ public:
       }
     
       if (hb.pr<hb2.pr && phase==low_phase) {
-	cout << "Mixed phase begins near nb=" << nb << "." << endl;
+	cout << "Mixed phase begins near nb=" << nb << " fm^{-3}." << endl;
 	phase=mixed_phase;
 	// Pick a value of chi close to, but less than, one
 	x[2]=0.90;
 	nb-=dnb;
       } else if (phase==mixed_phase && x[2]<0.0) {
-	cout << "Mixed phase ends near nb=" << nb << "." << endl;
+	cout << "Mixed phase ends near nb=" << nb << " fm^{-3}." << endl;
 	phase=high_phase;
 	nb-=dnb;
       } else {
@@ -827,13 +829,13 @@ public:
       }
 
       if (hb.pr<hb2.pr && phase==low_phase) {
-	cout << "Mixed phase begins near nb=" << nb << "." << endl;
+	cout << "Mixed phase begins near nb=" << nb << " fm^{-3}." << endl;
 	phase=mixed_phase;
 	// Pick a value of chi close to, but less than, one
 	x[2]=0.90;
 	nb-=dnb;
       } else if (phase==mixed_phase && x[2]<0.0) {
-	cout << "Mixed phase ends near nb=" << nb << "." << endl;
+	cout << "Mixed phase ends near nb=" << nb << " fm^{-3}." << endl;
 	phase=high_phase;
 	nb-=dnb;
       } else {
@@ -854,7 +856,7 @@ public:
 
     cout << "--------- Neutron star matter ----------------------\n" << endl;
 
-    cout << "Maxwell construction:" << endl;
+    cout << "Maxwell construction." << endl;
   
     // Verify Figure 7
 
@@ -883,8 +885,8 @@ public:
     solver.msolve(4,x,f_maxwell_fig7);
 
     double nb_low=x[0]+x[1], nb_high=x[2]+x[3];
-    cout << "Mixed phase begins at nb=" << nb_low << "." << endl;
-    cout << "Mixed phase ends at nb=" << nb_high << "." << endl;
+    cout << "Mixed phase begins at nb=" << nb_low << " fm^{-3}." << endl;
+    cout << "Mixed phase ends at nb=" << nb_high << " fm^{-3}." << endl;
     x[0]=nbstart/1.1;
 
     filenm=prefix; 
@@ -980,12 +982,12 @@ public:
       }
     
       if (hb.pr<hb2.pr && phase==low_phase) {
-	cout << "Mixed phase begins at nb=" << nb << "." << endl;
+	cout << "Mixed phase begins at nb=" << nb << " fm^{-3}." << endl;
 	phase=mixed_phase;
 	x[5]=0.90;
 	nb-=dnb;
       } else if (phase==mixed_phase && x[5]<0.0) {
-	cout << "Mixed phase ends at nb=" << nb << "." << endl;
+	cout << "Mixed phase ends at nb=" << nb << " fm^{-3}." << endl;
 	phase=high_phase;
 	nb-=dnb;
       } else {
@@ -996,11 +998,14 @@ public:
     //--------------------------------------------------------------------
     // Estimate transition density 
     
-    cout << "\nEstimate of transition density:" << endl;
+    cout << "\nEstimate of transition density." << endl;
   
     ubvector newx(12), newy(12);
-    mm_funct_mfptr<ex_eos_had_apr> nuclei_f(this,&ex_eos_had_apr::nucleimat);
-    mm_funct_mfptr<ex_eos_had_apr> nucleip_f(this,&ex_eos_had_apr::nucleimat_pdrip);
+    mm_funct_mfptr<ex_eos_had_apr> 
+      nuclei_f(this,&ex_eos_had_apr::nucleimat);
+    mm_funct_mfptr<ex_eos_had_apr> 
+      nucleip_f(this,&ex_eos_had_apr::nucleimat_pdrip);
+
     solver_trans_density.tol_abs/=1.0e4;
     solver_trans_density.tol_rel/=1.0e4;
   
@@ -1021,8 +1026,9 @@ public:
 	cout << endl;
       }
     }
-    cout << "Without proton drip, density: " << newx[0]+newx[1] 
-	 << " pressure: " << at.interp("nb",newx[0]+newx[1],"pr") << endl;
+    cout << "Without proton drip: density: " << newx[0]+newx[1] 
+	 << " fm^{-3},\n  pressure: " 
+	 << at.interp("nb",newx[0]+newx[1],"pr") << " fm^{-4}." << endl;
 
     solver_trans_density.tol_abs=5.0e-8;
     solver_trans_density.tol_rel=5.0e-8;
@@ -1043,8 +1049,9 @@ public:
 	cout << endl;
       }
     }
-    cout << "With proton drip, density: " << newx[0]+newx[1] 
-	 << " pressure: " << at.interp("nb",newx[0]+newx[1],"pr") << endl;
+    cout << "With proton drip: density: " << newx[0]+newx[1] 
+	 << " fm^{-3},\n  pressure: " 
+	 << at.interp("nb",newx[0]+newx[1],"pr") << " fm^{-4}." << endl;
     cout << endl;
   
     solver_trans_density.tol_abs=1.0e-16;
@@ -1066,7 +1073,7 @@ public:
     cout << "--------- TOV solver, M vs. R. ---------------------\n" << endl;
 
     tov_solve atov;
-    tov_new_eos teos;
+    eos_tov_interp teos;
     atov.verbose=0;
     teos.verbose=0;
     atov.set_units("1/fm^4","1/fm^4","1/fm^3");

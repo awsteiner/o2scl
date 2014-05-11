@@ -2255,7 +2255,7 @@ namespace o2scl {
     }
 
     double *vals=new double[get_ncolumns()+funcs.size()];
-  
+    
     FunctionParser fp;
     set_fp_consts(fp);
   
