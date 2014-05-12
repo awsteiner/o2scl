@@ -189,7 +189,7 @@ public:
     fd.html_mode();
 
     output_files=false;
-    file_prefix="ex_eos_had_skyrme_";
+    file_prefix="skyrme_";
   }
 
   /** \brief Generate a table comparing neutron matter and neutron 

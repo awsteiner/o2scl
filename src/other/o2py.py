@@ -88,10 +88,7 @@ def h5read_type_named(fname,loc_type,name):
     return
 
 def default_plot(lmar=0.14,bmar=0.12,rmar=0.04,tmar=0.04):
-    """
-    Works on mac, but not on riddler...
     plot.rc('text',usetex=True)
-    """
     plot.rc('font',family='serif')
     plot.rcParams['lines.linewidth']=0.5
     fig=plot.figure(1,figsize=(6.0,6.0))

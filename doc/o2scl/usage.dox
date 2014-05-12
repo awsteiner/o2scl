@@ -30,19 +30,16 @@
     error handler is replaced with the \o2 default error handler, i.e.
     GSL functions will throw C++ exceptions.
 
-    Errors can be set by the user through the macros \ref O2SCL_ERR,
-    which sets an error, and \ref O2SCL_ERR_RET, which sets an error
-    and returns the error number.
-
-    The error handler, \ref o2scl::err_hnd is a global pointer to an
-    object of type \ref o2scl::err_hnd_type. There is a global default
-    error handler, \ref o2scl::def_err_hnd, of type \ref
-    o2scl::err_hnd_cpp, which throws C++ exceptions, and an alternate
-    default error handler, \ref o2scl::alt_err_hnd, of type \ref
-    o2scl::err_hnd_gsl, which outputs an error message and aborts
-    execution. The global error handler can be replaced by simply
-    assigning the address of a descendant of \ref o2scl::err_hnd_type
-    to \ref o2scl::err_hnd.
+    Errors can be set by the user through the macros \ref O2SCL_ERR
+    which calls the \o2 error handler. The error handler, \ref
+    o2scl::err_hnd is a global pointer to an object of type \ref
+    o2scl::err_hnd_type. There is a global default error handler, \ref
+    o2scl::def_err_hnd, of type \ref o2scl::err_hnd_cpp, which throws
+    C++ exceptions, and an alternate default error handler, \ref
+    o2scl::alt_err_hnd, of type \ref o2scl::err_hnd_gsl, which outputs
+    an error message and aborts execution. The global error handler
+    can be replaced by simply assigning the address of a descendant of
+    \ref o2scl::err_hnd_type to \ref o2scl::err_hnd.
 
     \o2 does not support any execution beyond the point at which the
     error handler is called. Many functions which would have had

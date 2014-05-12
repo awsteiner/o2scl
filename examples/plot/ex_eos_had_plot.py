@@ -50,7 +50,7 @@ if len(sys.argv)<2 or sys.argv[1]=='eos':
     plot.semilogy(ed,pr,color='black',ls='-')
     
     # Read SLy4 EOS data
-    dset=o2py.h5read_first_type('../ex_eos_had_skyrme_SLy4_eos.o2','table')
+    dset=o2py.h5read_first_type('../skyrme_SLy4_eos.o2','table')
 
     # Multiply both columns by hbar*c
     ed=dset['data/ed'].value
@@ -146,7 +146,7 @@ if len(sys.argv)>1 and sys.argv[1]=='mvsr':
     plot.plot(r,gm,color='black',ls='-')
 
     # Read SLy4 M-R data
-    dset=o2py.h5read_first_type('../ex_eos_had_skyrme_SLy4_mvsr.o2','table')
+    dset=o2py.h5read_first_type('../skyrme_SLy4_mvsr.o2','table')
     
     gm=dset['data/gm'].value
     r=dset['data/r'].value
