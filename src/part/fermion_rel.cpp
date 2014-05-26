@@ -216,28 +216,38 @@ int fermion_rel::nu_from_n(fermion &f, double temper) {
   T=temper;
   fp=&f;
 
-  // Check that initial guess is close enough
+  // Try to ensure a good initial guess
 
   nex=f.nu/temper;
   double y=solve_fun(nex);
 
+  if (y>1.0-1.0e-6) {
+    double scale=f.ms;
+    if (temper>scale) scale=temper;
+    for(size_t i=0;i<10;i++) {
+      if (nex<0.0) nex+=scale*1.0e5;
+      else nex*=10.0;
+      y=solve_fun(nex);
+      if (y<1.0-1.0e-6) i=10;
+    }
+  }
+
   // If that didn't work, try a different guess
-  if (y==1.0) {
+  if (y>1.0-1.0e-6) {
     if (f.inc_rest_mass) {
       nex=f.ms/temper;
     } else {
       nex=(f.ms-f.m)/temper;
     }
+    y=solve_fun(nex);
   }
-
-  y=solve_fun(nex);
-
+  
   // If neither worked, call the error handler
   if (y==1.0 || !o2scl::is_finite(y)) {
     O2SCL_CONV2_RET("Couldn't find reasonable initial guess in ",
 		    "fermion_rel::nu_from_n().",exc_einval,this->err_nonconv);
   }
-  
+
   // Perform full solution
   funct_mfptr<fermion_rel> mf(this,&fermion_rel::solve_fun);
   int ret=density_root->solve(nex,mf);
@@ -246,7 +256,7 @@ int fermion_rel::nu_from_n(fermion &f, double temper) {
 		    "fermion_rel::nu_from_n().",exc_efailed,this->err_nonconv);
   }
   f.nu=nex*temper;
-  
+
   return success;
 }
 

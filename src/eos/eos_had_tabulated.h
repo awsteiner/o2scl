@@ -33,7 +33,7 @@
 namespace o2scl {
 #endif
 
-  /** \brief EOS from a table
+  /** \brief Zero-temperature EOS from a table
 
       This assumes a symmetry energy which depends quadratically on
       the isospin asymmetry in order to construct an EOS from 

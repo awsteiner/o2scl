@@ -127,12 +127,14 @@ namespace o2scl {
     
     /** \brief Return the baryon number susceptibility, \f$ \partial \mu_B /
 	\partial n_B \f$ in \f$ \mathrm{fm}^{2} \f$. 
+
+	\todo This function is untested.
     */
     virtual double baryon_suscep(double n, double x) {
       double alpha=n*(1.0-2.0*x);
       double ret=(kpp*n*(5.0-2.0*n0)*(n-n0)*(n-n0)+
-		  18.0*n0*(3.0*K*n*(3.0*n-2.0*n0)*n0)+
-		  kp*n*(2.0*n*n-3.0*n*n0+n0*n0)+3.0*pow(n0,3.0)*alpha*
+		  18.0*n0*(3.0*comp*n*(3.0*n-2.0*n0)*n0)+
+		  kprime*n*(2.0*n*n-3.0*n*n0+n0*n0)+3.0*pow(n0,3.0)*alpha*
 		  (-1.0*a*pow(n/n0,2.0/3.0)*(-6.0+alpha)+
 		   9*b*pow(n/n0,gamma)*(2.0+alpha*(-1.0+gamma))))/
 	(486.0*n*pow(n0,4.0));
