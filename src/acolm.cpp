@@ -2557,6 +2557,8 @@ int acol_manager::comm_stats(std::vector<std::string> &sv, bool itive_com) {
 
   const vector<double> &cref=tabp->get_column(i1);
   cout << "N        : " << tabp->get_nlines() << endl;
+  cout << "Sum      : " << vector_mean(tabp->get_nlines(),cref)*
+    tabp->get_nlines() << endl;
   cout << "Mean     : " << vector_mean(tabp->get_nlines(),cref) << endl;
   cout << "Std. dev.: " << vector_stddev(tabp->get_nlines(),cref) << endl;
   size_t ix;
