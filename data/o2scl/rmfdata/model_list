@@ -1,8 +1,7 @@
-word[] models 46
 BMPI BMPII FPWC FSUGold L-BF L-HS L-W L-Z L1 L2 L3 NL-06 NL-065 NL-07 
 NL-075 NL-B1 NL-B2 NL-SH NL-Z NL1 NL2 NL3 NL4 PL-40 PL-Z RAPR RAPRhdp 
 S271 SR1 SR2 SR3 TM1 TM2 Z271 es25 es25n15 es275 es275n15 es30 es30n15 
-es325 es325n15 es35 es35n15 es25small es25new es275new es30new
+es325 es325n15 es35 es35n15 es25small es25new es275new es30new SFHo SFHx
 #
 # Comments:
 # PL-40 and PL-Z have a special m_infinity parameter that is
