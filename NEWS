@@ -1,3 +1,43 @@
+Notes for 0.915 release:
+
+O2scl now assumes some C++11 support by default. This can be disabled
+by ./configure --disable-cpp11. C++11 support may be required in
+future versions as supporting earlier versions is becoming intrusive.
+
+The sourceforge svn repository for the development branch is now
+synchronized to github.
+
+The EOS, particle and nuclei classes have been renamed to be more
+consistent everywhere. Documentation has improved in several places.
+
+The two-dimensional and multi-dimensional interpolation classes have
+been reworked. Preliminary work on monotonicity-preserving
+interpolation has been done.
+
+Latex documentation is being phased out and may not appear in
+future releases. 
+
+Some return values were incorrect in functions in vector.h. These are
+fixed. Calls to finite() have been replaced with the O2scl version,
+which is a compatibility wrapper.
+
+Linear interpolation was improved in the tensor_grid classes. 
+
+Some copy constructors were missing and have been properly added.
+
+Some of the example plots have been converted to python.
+
+HDF5 I/O for uniform grid classes was implemented.
+
+Convergence has been improved in fermion_rel and
+eos_had_rmf::calc_temp_e(). A new eos_had_hlps class was added. The
+TOV EOS class, eos_tov, has been updated to do interpolation a bit
+better. The TOV solver now computes enclosed baryon masses for
+pressures in pr_list. The eos_crust_virial and eos_sn_base classes
+have been updated.
+
+------------------------------------------------------------------------
+
 Notes for 0.914 release:
 
 Several classes have been renamed to make the nomenclature

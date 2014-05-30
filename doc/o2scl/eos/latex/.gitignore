@@ -1,9 +1,0 @@
-*.png
-*.eps
-*.tex
-*.pdf
-refman.*
-doxygen.sty
-Makefile.dox
-makepdf.err
-makepdf.scr

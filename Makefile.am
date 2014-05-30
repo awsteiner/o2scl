@@ -32,7 +32,7 @@ help:
 	@echo "Developer targets"
 	@echo "-------------------------------------------------------------"
 	@echo "o2scl-doc:        Make HTML documentation"
-	@echo "o2scl-docp:       Make LaTeX documentation"
+#	@echo "o2scl-docp:       Make LaTeX documentation"
 	@echo "clean-doc:        Remove generated doc files"
 	@echo "dist-nodoc:       Make a distribution w/o the documentation"
 	@echo "sf-sync-doc:      Upload current documentation to SourceForge"
@@ -120,7 +120,8 @@ o2scl-docp:
 #	cd doc/o2scl && $(MAKE) o2scl-docp-recursive
 
 # Create .pdf file from doxygen latex files verbosely
-o2scl-docp-verbose:
+#o2scl-docp-verbose:
+	echo "Disabled."
 	cd doc/o2scl && $(MAKE) o2scl-docp-verbose-recursive
 
 # Clean all generated documentation

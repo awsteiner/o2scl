@@ -319,17 +319,14 @@ AC_CONFIG_FILES([Makefile
 		 examples/plot/Makefile
                  doc/Makefile
                  doc/o2scl/Makefile
-                 doc/o2scl/latex/Makefile
                  doc/o2scl/html/Makefile
                  doc/o2scl/html/search/Makefile
 		 doc/o2scl/extras/Makefile
                  doc/o2scl/eos/Makefile
-                 doc/o2scl/eos/latex/Makefile
                  doc/o2scl/eos/html/Makefile
                  doc/o2scl/eos/html/search/Makefile
                  doc/o2scl/eos/extras/Makefile
                  doc/o2scl/part/Makefile
-                 doc/o2scl/part/latex/Makefile
                  doc/o2scl/part/html/Makefile
                  doc/o2scl/part/html/search/Makefile
 		 doc/o2scl/part/extras/Makefile])

@@ -3,13 +3,14 @@ dist_doc_DATA = doxyfile Makefile.am Makefile.in *.html
 
 EXTRA_DIST = *.dox o2scl_part.tag
 
-SUBDIRS = html latex extras
+SUBDIRS = html extras
+# latex 
 
 clean-doc:
 	cd html; rm -f *.html *.png formula.repository doxygen.css \
 		_formulas* installdox tab*.gif tabs.css
-	cd latex; rm -f *.tex *.eps *.pdf doxygen.sty *.ttf makepdf.* \
-		refman.*
+#	cd latex; rm -f *.tex *.eps *.pdf doxygen.sty *.ttf makepdf.* \
+#		refman.*
 	rm -f o2scl_part.tag
 
 # We have to move the Makefile out of the way because
@@ -23,11 +24,11 @@ o2scl-doc:
 #	mv temp.css html/search/search.css
 	cat doxygen.log
 
-o2scl-docp:
-	cd latex; make -f Makefile.dox refman.pdf > makepdf.scr 2> makepdf.err
+#o2scl-docp:
+#	cd latex; make -f Makefile.dox refman.pdf > makepdf.scr 2> makepdf.err
 
-o2scl-docp-verbose:
-	cd latex; make -f Makefile.dox refman.pdf
+#o2scl-docp-verbose:
+#	cd latex; make -f Makefile.dox refman.pdf
 
 pngfix:
 	cd html; $(MAKE) pngfix
