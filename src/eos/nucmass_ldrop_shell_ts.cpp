@@ -164,7 +164,7 @@ int main(void) {
 
   cout << "-------------------------------------------------\n" << endl;
 
-  frdm_shell fs;
+  nucmass_frdm_shell fs;
 
   mf.eval(fs,qual);
   t.test_rel(qual,10.671,1.0e-3,"fs pre-fit");

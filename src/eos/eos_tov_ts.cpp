@@ -84,7 +84,7 @@ public:
 };
 
 /*
-void test_crust(tov_new_eos &te, convert_units &cu, double pr_low,
+void test_crust(eos_tov_interp &te, convert_units &cu, double pr_low,
 		double pr_high, bool new_units, test_mgr &t) {
   
   double ed_old;
@@ -187,7 +187,7 @@ int main(void) {
   }
   
   // Read APR EOS 
-  tov_new_eos te;
+  eos_tov_interp te;
   te.verbose=2;
   te.default_low_dens_eos();
   te.read_table(eos,"ed","pr","nb");
@@ -253,7 +253,7 @@ int main(void) {
   cout << "Now try with different transition method" << endl;
   cout << endl;
 
-  te.transition_mode=tov_new_eos::match_line;
+  te.transition_mode=eos_tov_interp::match_line;
 
   //test_crust(te,cu,pr_low,pr_high,true,t);
 

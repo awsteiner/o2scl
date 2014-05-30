@@ -25,7 +25,7 @@
 #endif
 
 #include <o2scl/test_mgr.h>
-#include <o2scl/eos_had_sym4_base.h>
+#include <o2scl/eos_had_sym4.h>
 #include <o2scl/fermion_nonrel.h>
 #include <o2scl/nstar_cold.h>
 

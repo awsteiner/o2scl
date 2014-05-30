@@ -3,7 +3,8 @@ dist_doc_DATA = doxyfile Makefile.am Makefile.in *.html
 
 EXTRA_DIST = *.dox o2scl_eos.tag
 
-SUBDIRS = html latex extras
+SUBDIRS = html extras
+# latex
 
 clean-doc:
 	cd html; rm -f *.html *.png formula.repository doxygen.css \

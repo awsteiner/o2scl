@@ -212,7 +212,6 @@ std::string nucmass_info::Ztoel(size_t Z) {
   if (((int)Z)>=nelements) {
     O2SCL_ERR2("Invalid element in ",
 	       "nucmass_info::Ztoel().",exc_einval);
-    return "";
   }
   return element_list[Z];
 }
@@ -221,7 +220,6 @@ std::string nucmass_info::tostring(size_t Z, size_t N) {
   if (((int)Z)>=nelements) {
     O2SCL_ERR2("Invalid element in ",
 	       "nucmass_info::tostring().",exc_einval);
-    return "";
   }
   return element_list[Z]+itos(N+Z);
 }

@@ -94,8 +94,8 @@ namespace o2scl {
     /** \brief Return the element name abbreviation given Z
        
         \note This function returns \c "n" indicating the neutron for
-        Z=0, and if the argument \c Z is greater than 118, an empty
-        string is returned after calling the error handler.
+        Z=0, and if the argument \c Z is greater than 118, then
+	the error handler is called.
     */
     std::string Ztoel(size_t Z);
 
@@ -103,8 +103,8 @@ namespace o2scl {
 
         Note that if \c Z is zero, then and \c 'n' is 
         used to indicate the a nucleus composed entirely of neutrons 
-        and if the argument \c Z is greater than 118, an
-        empty string is returned (independ.
+        and if the argument \c Z is greater than 118, the
+	error handler is called.
     */
     std::string tostring(size_t Z, size_t N);
 
@@ -434,6 +434,9 @@ namespace o2scl {
 
       Shell effects from \ref Dieperink09 based on the interacting
       boson model, with corrections as suggested by \ref Duflo95. 
+
+      The default shell correction coefficients -1.39, 0.02, 0.03, and
+      0.075 (all in MeV), respectively.
   */
   class nucmass_ibm_shell {
 
@@ -443,8 +446,10 @@ namespace o2scl {
 
     virtual ~nucmass_ibm_shell() {}
 
-    /** \name Shell correction coefficients in MeV (defaults are 
-	-1.39, 0.02, 0.03, and 0.075, respectively)
+    /** \name Shell correction coefficients in MeV 
+	\comment
+	Remember that name documentation can only be one line
+	\endcomment
     */
     //@{
     double s_a1;

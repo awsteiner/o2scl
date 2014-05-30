@@ -132,7 +132,7 @@ int main(void) {
     eos.line_of_data(4,line);
   }
   
-  tov_new_eos te;
+  eos_tov_interp te;
   //  te.verbose=2;
   te.default_low_dens_eos();
   te.read_table(eos,"ed","pr","nb");
@@ -329,7 +329,7 @@ int main(void) {
   // Return tolerances to normal values
   at.def_solver.tol_rel/=10.0;
   at.def_solver.tol_abs/=10.0;
-  tov_buchdahl_eos buch;
+  eos_tov_buchdahl buch;
   at.set_eos(buch);
 
   // 1.4 solar mass star
