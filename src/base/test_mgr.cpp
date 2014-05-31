@@ -62,10 +62,10 @@ void test_mgr::process_test(bool ret, string d2, string description) {
 bool test_mgr::test_rel(double result, double expected, double rel_error,
 			std::string description) {
   bool ret;
-  if (isnan(expected)) {
-    ret=(isnan(expected)==isnan(result));
-  } else if (isinf(expected)) {
-    ret=(isinf(expected)==isinf(result));
+  if (std::isnan(expected)) {
+    ret=(std::isnan(expected)==std::isnan(result));
+  } else if (std::isinf(expected)) {
+    ret=(std::isinf(expected)==std::isinf(result));
   } else if (expected==0.0) {
     ret=test_abs(result,expected,rel_error,description);
     return ret;
@@ -84,12 +84,12 @@ bool test_mgr::test_rel(double result, double expected, double rel_error,
 bool test_mgr::test_abs(double result, double expected, double abs_error,
 			std::string description) {
   bool ret;
-  if (isnan(expected)) {
-    ret=(isnan(expected)==isnan(result));
+  if (std::isnan(expected)) {
+    ret=(std::isnan(expected)==std::isnan(result));
     description=dtos(result)+" vs. "+ dtos(expected)+
       "\n "+description;
-  } else if (isinf(expected)) {
-    ret=(isinf(expected)==isinf(result));
+  } else if (std::isinf(expected)) {
+    ret=(std::isinf(expected)==std::isinf(result));
     description=dtos(result)+" vs. "+ dtos(expected)+
       "\n "+description;
   } else {
@@ -107,10 +107,10 @@ bool test_mgr::test_fact(double result, double expected, double factor,
 			 std::string description) {
   bool ret;
   double ratio;
-  if (isnan(expected)) {
-    ret=(isnan(expected)==isnan(result));
-  } else if (isinf(expected)) {
-    ret=(isinf(expected)==isinf(result));
+  if (std::isnan(expected)) {
+    ret=(std::isnan(expected)==std::isnan(result));
+  } else if (std::isinf(expected)) {
+    ret=(std::isinf(expected)==std::isinf(result));
   } else {
     ratio=expected/result;
     ret=(ratio<factor && ratio>1.0/factor);

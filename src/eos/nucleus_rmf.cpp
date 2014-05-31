@@ -738,7 +738,7 @@ void nucleus_rmf::energies(double xpro, double xnu, double e) {
 	    fields(i,2)*fields(i,2)*pefac-
 	    rmf->b*rmf->mnuc/3.0*pow(fields(i,0),3.0)-
 	    rmf->c/2.0*pow(fields(i,0),4.0))*x*x;
-    if (isnan(etemp)) {
+    if (std::isnan(etemp)) {
       // This quantity can become NaN if the computation fails
       // to converge, so we don't designate this as a fatal
       // error and only throw if err_nonconv is true.

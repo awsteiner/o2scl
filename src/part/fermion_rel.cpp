@@ -573,7 +573,7 @@ double fermion_rel::solve_fun(double x) {
       
       nden=dit->integ(mfe,0.0,ul);
       nden*=fp->g/2.0/pi2;
-      unc.n=err_hnd->get_errno()*fp->g/2.0/pi2;
+      unc.n=dit->get_error()*fp->g/2.0/pi2;
       
     } else {
 
