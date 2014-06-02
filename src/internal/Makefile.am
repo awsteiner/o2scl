@@ -76,20 +76,28 @@ bm_lublas: bm_lublas.o
 		-lo2scl -lgsl -lgslcblas 
 
 ame_parse.o: ame_parse.cpp
-	$(CXX) $(CPPFLAGS) -o ame_parse.o -c ame_parse.cpp
+	$(CXX) $(CPPFLAGS) -I$(includedir) -o ame_parse.o -c ame_parse.cpp
 
 ame_parse: ame_parse.o 
-	$(CXX) $(CPPFLAGS) -o ame_parse ame_parse.o $(LDFLAGS) \
+	$(CXX) $(CPPFLAGS) -o ame_parse ame_parse.o $(LDFLAGS) -L$(libdir) \
 		-lo2scl_part -lo2scl -lgsl -lgslcblas -lo2scl_hdf -lhdf5 \
 		-lhdf5_hl
 
 hfb_parse.o: hfb_parse.cpp
-	$(CXX) $(CPPFLAGS) -o hfb_parse.o -c hfb_parse.cpp
+	$(CXX) $(CPPFLAGS) -I$(includedir) -o hfb_parse.o -c hfb_parse.cpp
 
 hfb_parse: hfb_parse.o 
-	$(CXX) $(CPPFLAGS) -o hfb_parse hfb_parse.o $(LDFLAGS) \
+	$(CXX) $(CPPFLAGS) -o hfb_parse hfb_parse.o $(LDFLAGS) -L$(libdir) \
 		-lo2scl_part -lo2scl -lgsl -lgslcblas -lo2scl_hdf -lhdf5 \
 		-lhdf5_hl
+
+hfb_all:
+	hfb_parse ../../../../data/nucmass hfb2.o2
+	hfb_parse ../../../../data/nucmass hfb8.o2
+	hfb_parse ../../../../data/nucmass hfb14.o2
+	hfb_parse ../../../../data/nucmass hfb14_v0.o2
+	hfb_parse ../../../../data/nucmass hfb17.o2
+	hfb_parse ../../../../data/nucmass hfb21.o2
 
 mnk_parse.o: mnk_parse.cpp
 	$(CXX) -O3 -DGSL_RANGE_CHECK=0 -DO2SCL_NO_RANGE_CHECK \

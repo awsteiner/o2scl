@@ -60,6 +60,7 @@ int main(int argc, char *argv[]) {
   
   string dir=argv[1];
   string out_fname=argv[2];
+  string orig_file;
   size_t jmax;
   string stemp;
   bool inc_spin_parity=false;
@@ -67,7 +68,8 @@ int main(int argc, char *argv[]) {
   ifstream fin;
 
   if ((string)(argv[2])=="hfb2.o2") {
-    string in_fname=dir+"/hfb2-plain";
+    orig_file="hfb2-plain";
+    string in_fname=dir+"/"+orig_file;
     cout << "Opening file '" << in_fname << "'." << endl;
     fin.open(in_fname.c_str());
     for(size_t j=0;j<4;j++) {
@@ -76,41 +78,60 @@ int main(int argc, char *argv[]) {
     }
     jmax=9203;
   } else if ((string)(argv[2])=="hfb8.o2") {
-    //for(size_t j=0;j<6;j++) {
-    //getline(fin,stemp);
-    //cout << stemp << endl;
-    //}
-    jmax=9197;
     orig_file="hfb8-plain";
+    string in_fname=dir+"/"+orig_file;
+    cout << "Opening file '" << in_fname << "'." << endl;
+    fin.open(in_fname.c_str());
+    for(size_t j=0;j<3;j++) {
+      getline(fin,stemp);
+      cout << stemp << endl;
+    }
+    jmax=9197;
   } else if ((string)(argv[2])=="hfb14.o2") {
-    //for(size_t j=0;j<9;j++) {
-    //getline(fin,stemp);
-    //cout << stemp << endl;
-    //}
-    jmax=8388;
     orig_file="hfb14-plain";
+    string in_fname=dir+"/"+orig_file;
+    cout << "Opening file '" << in_fname << "'." << endl;
+    fin.open(in_fname.c_str());
+    for(size_t j=0;j<3;j++) {
+      getline(fin,stemp);
+      cout << stemp << endl;
+    }
+    jmax=8388;
+  } else if ((string)(argv[2])=="hfb14_v0.o2") {
+    orig_file="hfb14-plain_v0";
+    string in_fname=dir+"/"+orig_file;
+    cout << "Opening file '" << in_fname << "'." << endl;
+    fin.open(in_fname.c_str());
+    for(size_t j=0;j<3;j++) {
+      getline(fin,stemp);
+      cout << stemp << endl;
+    }
+    jmax=8382;
   } else if ((string)(argv[2])=="hfb17.o2") {
-    //for(size_t j=0;j<9;j++) {
-    //getline(fin,stemp);
-    //cout << stemp << endl;
-    //}
-    jmax=8389;
     orig_file="hfb17-plain";
+    string in_fname=dir+"/"+orig_file;
+    cout << "Opening file '" << in_fname << "'." << endl;
+    fin.open(in_fname.c_str());
+    for(size_t j=0;j<3;j++) {
+      getline(fin,stemp);
+      cout << stemp << endl;
+    }
+    jmax=8389;
+    inc_spin_parity=true;
+  } else if ((string)(argv[2])=="hfb17.o2") {
+    orig_file="hfb21-dat";
+    string in_fname=dir+"/"+orig_file;
+    cout << "Opening file '" << in_fname << "'." << endl;
+    fin.open(in_fname.c_str());
+    for(size_t j=0;j<3;j++) {
+      getline(fin,stemp);
+      cout << stemp << endl;
+    }
+    jmax=8387;
     inc_spin_parity=true;
   } else {
-    //for(size_t j=0;j<9;j++) {
-    //getline(fin,stemp);
-    //cout << stemp << endl;
-    //}
-    jmax=8389;
-    orig_file="hfb21-dat";
-    inc_spin_parity=true;
+    O2SCL_ERR("Bad argument 2.",exc_efailed);
   }
-
-  /*
-    01234567890123456789012345678901234567890123456789012345678901234567890123456789
-    xx10  23  0.34 -0.03 2.934  2.07     6.48    14.91     4.14    -5.43     0.28
-   */
 
   if (inc_spin_parity) {
 
@@ -125,56 +146,86 @@ int main(int argc, char *argv[]) {
       if (o2scl::count_words(stemp.substr(8,6))==0) {
 	he.bet2=1.0e99;
       } else {
-	he.bet2=o2scl::stod(stemp.substr(8,6))
+	he.bet2=o2scl::stod(stemp.substr(8,6));
       }
-      if (o2scl::count_words(stemp.substr(8,6))==0) {
+      if (o2scl::count_words(stemp.substr(14,6))==0) {
 	he.bet4=1.0e99;
       } else {
-	he.bet4=o2scl::stod(stemp.substr(8,6))
+	he.bet4=o2scl::stod(stemp.substr(14,6));
       }
-      if (o2scl::count_words(stemp.substr(8,6))==0) {
+      if (o2scl::count_words(stemp.substr(20,6))==0) {
 	he.Rch=1.0e99;
       } else {
-	he.Rch=o2scl::stod(stemp.substr(8,6))
+	he.Rch=o2scl::stod(stemp.substr(20,6));
       }
-      if (o2scl::count_words(stemp.substr(8,6))==0) {
-	he.Edef=1.0e99;
+      if (o2scl::count_words(stemp.substr(26,6))==0) {
+	he.def_wig=1.0e99;
       } else {
-	he.Edef=o2scl::stod(stemp.substr(8,6))
+	he.def_wig=o2scl::stod(stemp.substr(26,6));
       }
-      if (o2scl::count_words(stemp.substr(8,6))==0) {
+      if (o2scl::count_words(stemp.substr(32,9))==0) {
 	he.Sn=1.0e99;
       } else {
-	he.Sn=o2scl::stod(stemp.substr(8,6))
+	he.Sn=o2scl::stod(stemp.substr(32,9));
       }
-      if (o2scl::count_words(stemp.substr(8,6))==0) {
+      if (o2scl::count_words(stemp.substr(41,9))==0) {
 	he.Sp=1.0e99;
       } else {
-	he.Sp=o2scl::stod(stemp.substr(8,6))
+	he.Sp=o2scl::stod(stemp.substr(41,9));
       }
-      if (o2scl::count_words(stemp.substr(8,6))==0) {
+      if (o2scl::count_words(stemp.substr(50,9))==0) {
 	he.Qbet=1.0e99;
       } else {
-	he.Qbet=o2scl::stod(stemp.substr(8,6))
+	he.Qbet=o2scl::stod(stemp.substr(50,9));
       }
-      if (o2scl::count_words(stemp.substr(8,6))==0) {
+      if (o2scl::count_words(stemp.substr(59,9))==0) {
 	he.Mcal=1.0e99;
       } else {
-	he.Mcal=o2scl::stod(stemp.substr(8,6))
+	he.Mcal=o2scl::stod(stemp.substr(59,9));
       }
-      if (o2scl::count_words(stemp.substr(8,6))==0) {
+      if (o2scl::count_words(stemp.substr(68,9))==0) {
 	he.Err=1.0e99;
       } else {
-	he.Err=o2scl::stod(stemp.substr(8,6))
+	he.Err=o2scl::stod(stemp.substr(68,9));
+      }
+      if (o2scl::count_words(stemp.substr(80,5))==0) {
+	he.Jexp=1.0e99;
+      } else {
+	he.Jexp=o2scl::stod(stemp.substr(80,5));
+      }
+      if (o2scl::count_words(stemp.substr(85,5))==0) {
+	he.Jth=1.0e99;
+      } else {
+	he.Jth=o2scl::stod(stemp.substr(85,5));
+      }
+      if (o2scl::count_words(stemp.substr(90,5))==0) {
+	he.Pexp=99;
+      } else {
+	he.Pexp=o2scl::stoi(stemp.substr(90,5));
+      }
+      if (o2scl::count_words(stemp.substr(95,5))==0) {
+	he.Pth=99;
+      } else {
+	he.Pth=o2scl::stoi(stemp.substr(95,5));
       }
       if (j==0 || j==jmax-1) {
+	if (j==0) {
+	  cout << "First line: " << endl;
+	} else {
+	  cout << "Last line: " << endl;
+	}
 	cout << j << " " << he.Z << " " << he.A << " " << he.N << endl;
+	cout << "\t" << he.bet2 << " " << he.bet4 << " " << he.Rch << endl;
+	cout << "\t" << he.def_wig << " " << he.Sn << " " << he.Sp << endl;
+	cout << "\t" << he.Qbet << " " << he.Mcal << " " << he.Err << endl;
+	cout << "\t" << he.Jexp << " " << he.Jth << " " 
+	     << he.Pexp << " " << he.Pth << endl;
       }
       list_sp.push_back(he);
     }
-
+    
     cout << list_sp.size() << endl;
-
+    
     // Make HDF table
     size_t offset[16]={HOFFSET(nucmass_hfb_sp_entry,N),
 		       HOFFSET(nucmass_hfb_sp_entry,Z),
@@ -264,7 +315,7 @@ int main(int argc, char *argv[]) {
 
   } else {
     
-    nucmass_hfb_sp_entry he;
+    nucmass_hfb_entry he;
     string ssp, ssn;
     int N2, A2;
     for(size_t j=0;j<jmax;j++) {
@@ -272,59 +323,121 @@ int main(int argc, char *argv[]) {
       he.Z=o2scl::stoi(stemp.substr(0,4));
       he.A=o2scl::stoi(stemp.substr(4,4));
       he.N=he.A-he.Z;
-      if (o2scl::count_words(stemp.substr(8,6))==0) {
-	he.bet2=1.0e99;
+      if (orig_file!=((string)"hfb14-plain_v0")) {
+	if (o2scl::count_words(stemp.substr(8,6))==0) {
+	  he.bet2=1.0e99;
+	} else {
+	  he.bet2=o2scl::stod(stemp.substr(8,6));
+	}
+	if (o2scl::count_words(stemp.substr(14,6))==0) {
+	  he.bet4=1.0e99;
+	} else {
+	  he.bet4=o2scl::stod(stemp.substr(14,6));
+	}
+	if (o2scl::count_words(stemp.substr(20,6))==0) {
+	  he.Rch=1.0e99;
+	} else {
+	  he.Rch=o2scl::stod(stemp.substr(20,6));
+	}
+	if (o2scl::count_words(stemp.substr(26,6))==0) {
+	  he.def_wig=1.0e99;
+	} else {
+	  he.def_wig=o2scl::stod(stemp.substr(26,6));
+	}
+	if (o2scl::count_words(stemp.substr(32,9))==0) {
+	  he.Sn=1.0e99;
+	} else {
+	  he.Sn=o2scl::stod(stemp.substr(32,9));
+	}
+	if (o2scl::count_words(stemp.substr(41,9))==0) {
+	  he.Sp=1.0e99;
+	} else {
+	  he.Sp=o2scl::stod(stemp.substr(41,9));
+	}
+	if (o2scl::count_words(stemp.substr(50,9))==0) {
+	  he.Qbet=1.0e99;
+	} else {
+	  he.Qbet=o2scl::stod(stemp.substr(50,9));
+	}
+	if (o2scl::count_words(stemp.substr(59,9))==0) {
+	  he.Mcal=1.0e99;
+	} else {
+	  he.Mcal=o2scl::stod(stemp.substr(59,9));
+	}
+	if (o2scl::count_words(stemp.substr(68,9))==0) {
+	  he.Err=1.0e99;
+	} else {
+	  he.Err=o2scl::stod(stemp.substr(68,9));
+	}
       } else {
-	he.bet2=o2scl::stod(stemp.substr(8,6))
-      }
-      if (o2scl::count_words(stemp.substr(8,6))==0) {
-	he.bet4=1.0e99;
-      } else {
-	he.bet4=o2scl::stod(stemp.substr(8,6))
-      }
-      if (o2scl::count_words(stemp.substr(8,6))==0) {
-	he.Rch=1.0e99;
-      } else {
-	he.Rch=o2scl::stod(stemp.substr(8,6))
-      }
-      if (o2scl::count_words(stemp.substr(8,6))==0) {
-	he.Edef=1.0e99;
-      } else {
-	he.Edef=o2scl::stod(stemp.substr(8,6))
-      }
-      if (o2scl::count_words(stemp.substr(8,6))==0) {
-	he.Sn=1.0e99;
-      } else {
-	he.Sn=o2scl::stod(stemp.substr(8,6))
-      }
-      if (o2scl::count_words(stemp.substr(8,6))==0) {
-	he.Sp=1.0e99;
-      } else {
-	he.Sp=o2scl::stod(stemp.substr(8,6))
-      }
-      if (o2scl::count_words(stemp.substr(8,6))==0) {
-	he.Qbet=1.0e99;
-      } else {
-	he.Qbet=o2scl::stod(stemp.substr(8,6))
-      }
-      if (o2scl::count_words(stemp.substr(8,6))==0) {
-	he.Mcal=1.0e99;
-      } else {
-	he.Mcal=o2scl::stod(stemp.substr(8,6))
-      }
-      if (o2scl::count_words(stemp.substr(8,6))==0) {
-	he.Err=1.0e99;
-      } else {
-	he.Err=o2scl::stod(stemp.substr(8,6))
+	/*
+	  ------------------------------------------------------------------------------
+	  xxZ   A      bet2   bet4    Rch     Edef    Sn     Sp      Qbet     Mcal    Err
+	  ------------------------------------------------------------------------------
+	  x         1         2         3         4         5         6         7     
+	  01234567890123456789012345678901234567890123456789012345678901234567890123456789
+	  xx9  22     0.35    0.13   2.895    2.26    4.03   12.64    9.79    3.46   -0.67
+	 */
+	if (o2scl::count_words(stemp.substr(8,6))==0) {
+	  he.bet2=1.0e99;
+	} else {
+	  he.bet2=o2scl::stod(stemp.substr(8,6));
+	}
+	if (o2scl::count_words(stemp.substr(14,6))==0) {
+	  he.bet4=1.0e99;
+	} else {
+	  he.bet4=o2scl::stod(stemp.substr(14,6));
+	}
+	if (o2scl::count_words(stemp.substr(20,6))==0) {
+	  he.Rch=1.0e99;
+	} else {
+	  he.Rch=o2scl::stod(stemp.substr(20,6));
+	}
+	if (o2scl::count_words(stemp.substr(26,6))==0) {
+	  he.def_wig=1.0e99;
+	} else {
+	  he.def_wig=o2scl::stod(stemp.substr(26,6));
+	}
+	if (o2scl::count_words(stemp.substr(32,9))==0) {
+	  he.Sn=1.0e99;
+	} else {
+	  he.Sn=o2scl::stod(stemp.substr(32,9));
+	}
+	if (o2scl::count_words(stemp.substr(41,9))==0) {
+	  he.Sp=1.0e99;
+	} else {
+	  he.Sp=o2scl::stod(stemp.substr(41,9));
+	}
+	if (o2scl::count_words(stemp.substr(50,9))==0) {
+	  he.Qbet=1.0e99;
+	} else {
+	  he.Qbet=o2scl::stod(stemp.substr(50,9));
+	}
+	if (o2scl::count_words(stemp.substr(59,9))==0) {
+	  he.Mcal=1.0e99;
+	} else {
+	  he.Mcal=o2scl::stod(stemp.substr(59,9));
+	}
+	if (o2scl::count_words(stemp.substr(68,9))==0) {
+	  he.Err=1.0e99;
+	} else {
+	  he.Err=o2scl::stod(stemp.substr(68,9));
+	}
       }
       if (j==0 || j==jmax-1) {
+	if (j==0) {
+	  cout << "First line: " << endl;
+	} else {
+	  cout << "Last line: " << endl;
+	}
 	cout << j << " " << he.Z << " " << he.A << " " << he.N << endl;
+	cout << "\t" << he.bet2 << " " << he.bet4 << " " << he.Rch << endl;
+	cout << "\t" << he.def_wig << " " << he.Sn << " " << he.Sp << endl;
+	cout << "\t" << he.Qbet << " " << he.Mcal << " " << he.Err << endl;
       }
-      list_sp.push_back(he);
+      list.push_back(he);
     }
-
-    cout << list_sp.size() << endl;
-
+    
     // Make HDF table
     size_t offset[12]={HOFFSET(nucmass_hfb_entry,N),
 		       HOFFSET(nucmass_hfb_entry,Z),
