@@ -56,6 +56,9 @@ namespace o2scl {
       aren't either purely linear or purely logarithmic.
       \endcomment
 
+      \future Currently, tensor_grid objects are based on 
+      ublas vectors and thus require a copy for HDF5 output. 
+      Can tensor_grid objects be based on std::vector instead?
       \future Add option to rescale energies and chemical 
       potentials to different masses.
       \future Create a \ref o2scl::table object, possibly using 

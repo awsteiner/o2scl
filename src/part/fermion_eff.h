@@ -151,7 +151,7 @@ namespace o2scl {
 	potential, and will fail if that guess is not sufficiently
 	accurate.
     */
-    virtual void calc_density(fermion &f, double temper);
+    virtual int calc_density(fermion &f, double temper);
 
     /** \brief Calculate thermodynamic properties with antiparticles
 	as function of chemical potential
@@ -187,6 +187,11 @@ namespace o2scl {
     */
     double tlimit;
     
+    /** \brief If true, call the error handler when convergence 
+	fails (default true)
+    */
+    bool err_nonconv;
+
     /** \brief The default solver for \f$ \psi \f$
      */
     root_cern<funct> def_psi_root;

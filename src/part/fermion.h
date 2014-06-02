@@ -258,7 +258,7 @@ namespace o2scl {
 
     /** \brief Calculate properties as function of density
      */
-    virtual void calc_density(fermion &f, double temper)=0;
+    virtual int calc_density(fermion &f, double temper)=0;
 
     /** \brief Calculate properties with antiparticles as function of
 	chemical potential

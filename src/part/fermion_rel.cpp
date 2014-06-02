@@ -260,7 +260,7 @@ int fermion_rel::nu_from_n(fermion &f, double temper) {
   return success;
 }
 
-void fermion_rel::calc_density(fermion &f, double temper) {
+int fermion_rel::calc_density(fermion &f, double temper) {
 
 #if !O2SCL_NO_RANGE_CHECK
   // This may not be strictly necessary, because it should be clear
@@ -278,7 +278,11 @@ void fermion_rel::calc_density(fermion &f, double temper) {
 
   if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
   
-  nu_from_n(f,temper);
+  int ret=nu_from_n(f,temper);
+  if (ret!=0) {
+    O2SCL_CONV2_RET("Function calc_density() failed in fermion_rel::",
+		    "calc_density().",exc_efailed,this->err_nonconv);
+  }
 
   if (f.non_interacting) { f.mu=f.nu; }
 
@@ -297,7 +301,7 @@ void fermion_rel::calc_density(fermion &f, double temper) {
       unc.ed=f.ed*1.0e-14;
       unc.pr=f.pr*1.0e-14;
       unc.en=f.en*1.0e-14;
-      return;
+      return 0;
     }
   }
   
@@ -309,7 +313,7 @@ void fermion_rel::calc_density(fermion &f, double temper) {
       unc.ed=f.ed*1.0e-14;
       unc.pr=f.pr*1.0e-14;
       unc.en=f.en*1.0e-14;
-      return;
+      return 0;
     }
   }
   if (!deg) {
@@ -387,7 +391,7 @@ void fermion_rel::calc_density(fermion &f, double temper) {
   unc.pr=sqrt(unc.ed*unc.ed+temper*unc.en*temper*unc.en+
 	      f.mu*unc.n*f.mu*unc.n);
   
-  return;
+  return 0;
 }
 
 double fermion_rel::deg_density_fun(double k) {

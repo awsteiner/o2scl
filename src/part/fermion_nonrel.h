@@ -101,7 +101,7 @@ namespace o2scl {
 	zero density and finite	temperature, the chemical potentials
 	formally are equal to \f$ -\infty \f$). 
      */
-    virtual void calc_density(fermion &f, double temper);
+    virtual int calc_density(fermion &f, double temper);
 
     virtual void pair_mu(fermion &f, double temper) {
       O2SCL_ERR2("Function fermion_nonrel::pair_mu() not ",

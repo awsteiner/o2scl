@@ -181,7 +181,7 @@ void fermion_nonrel::nu_from_n(fermion &f, double temper) {
   return;
 }
 
-void fermion_nonrel::calc_density(fermion &f, double temper) {
+int fermion_nonrel::calc_density(fermion &f, double temper) {
   double y, spi, ey, sy;
 
   if (f.n<=0.0) {
@@ -190,12 +190,13 @@ void fermion_nonrel::calc_density(fermion &f, double temper) {
     f.ed=0.0;
     f.en=0.0;
     f.pr=0.0;
-    return;
+    return 0;
   }
   
   if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
   if (temper<=0.0) {
-    return calc_density_zerot(f);
+    calc_density_zerot(f);
+    return 0;
   }
 
   double guess=f.nu;
@@ -239,8 +240,7 @@ void fermion_nonrel::calc_density(fermion &f, double temper) {
   
   if (f.non_interacting==true) { f.mu=f.nu; }
   
-  return;
-
+  return 0;
 }
 
 double fermion_nonrel::solve_fun(double x) {

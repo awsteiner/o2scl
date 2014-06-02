@@ -269,7 +269,7 @@ namespace o2scl {
 	the chemical potential. If this guess is too small, then this
 	function may fail.
      */
-    virtual void calc_density(fermion &f, double temper);
+    virtual int calc_density(fermion &f, double temper);
 
     /** \brief Calculate properties with antiparticles as function of
 	chemical potential

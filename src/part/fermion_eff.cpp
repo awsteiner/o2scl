@@ -35,6 +35,8 @@ using namespace o2scl_const;
 
 fermion_eff::fermion_eff() {
 
+  err_nonconv=true;
+
   tlimit=0.0;
 
   parma=0.42;
@@ -260,7 +262,7 @@ void fermion_eff::calc_mu(fermion &f, double temper) {
   return;
 }
 
-void fermion_eff::calc_density(fermion &f, double temper) {
+int fermion_eff::calc_density(fermion &f, double temper) {
 
   double T=temper;
 
@@ -268,6 +270,7 @@ void fermion_eff::calc_density(fermion &f, double temper) {
 
   if (temper<=tlimit) {
     calc_density_zerot(f);
+    return 0;
   }
 
   if (f.non_interacting) { f.ms=f.m; f.nu=f.mu;}
@@ -279,7 +282,7 @@ void fermion_eff::calc_density(fermion &f, double temper) {
     f.pr=0.0;
     f.en=0.0;
     if (f.non_interacting) { f.mu=f.nu; }
-    return;
+    return 0;
   }
   
   // If the initial guess leads to a zero density, change the initial
@@ -296,12 +299,16 @@ void fermion_eff::calc_density(fermion &f, double temper) {
   
   // Perform the solution
   density_fun df(*this,f,T);
-  density_root->solve(f.nu,df);
+  int ret=density_root->solve(f.nu,df);
+  if (ret!=0) {
+    O2SCL_CONV2_RET("Function calc_density() failed in fermion_eff::",
+		    "calc_density().",exc_efailed,this->err_nonconv);
+  }
   df(f.nu);
 
   if (f.non_interacting) f.mu=f.nu;
 
-  return;
+  return 0;
 }
 
 double fermion_eff::solve_fun(double x, double &psi) {
