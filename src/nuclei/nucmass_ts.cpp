@@ -157,11 +157,30 @@ int main(void) {
   o2scl_hdf::hfb_load(hfb8,8);
   nucmass_hfb hfb14;
   o2scl_hdf::hfb_load(hfb14,14);
+  nucmass_hfb hfb14_v0;
+  o2scl_hdf::hfb_load(hfb14_v0,15);
+  nucmass_hfb_sp hfb17;
+  o2scl_hdf::hfb_sp_load(hfb17,17);
+  nucmass_hfb_sp hfb21;
+  o2scl_hdf::hfb_sp_load(hfb21,21);
+  nucmass_hfb_sp hfb22;
+  o2scl_hdf::hfb_sp_load(hfb22,22);
+  nucmass_hfb_sp hfb23;
+  o2scl_hdf::hfb_sp_load(hfb23,23);
+  nucmass_hfb_sp hfb24;
+  o2scl_hdf::hfb_sp_load(hfb24,24);
+  nucmass_hfb_sp hfb25;
+  o2scl_hdf::hfb_sp_load(hfb25,25);
+  nucmass_hfb_sp hfb26;
+  o2scl_hdf::hfb_sp_load(hfb26,26);
+  nucmass_hfb_sp hfb27;
+  o2scl_hdf::hfb_sp_load(hfb27,27);
 
   // Set up generic pointers for testing
-  nucmass_table *nmd[10]={&ame,&ame95rmd,&ame03round,&ame95exp,
-			      &m95,&kt,&kt2,&hfb2,&hfb8,
-			      &hfb14};
+  nucmass_table *nmd[18]={&ame,&ame95rmd,&ame03round,&ame95exp,
+			  &m95,&kt,&kt2,&hfb2,&hfb8,
+			  &hfb14,&hfb17,&hfb21,&hfb22,&hfb23,&hfb24,&hfb25,
+			  &hfb26,&hfb27};
 
   // Test the spins obtained from mnmsk
 
@@ -192,7 +211,7 @@ int main(void) {
   double mass_amu=o2scl_mks::unified_atomic_mass*
     o2scl_settings.get_convert_units().convert("kg","1/fm",1.0);
 
-  for(size_t i=0;i<10;i++) {
+  for(size_t i=0;i<18;i++) {
     nucleus n;
     nmd[i]->get_nucleus(82,126,n);
     t.test_rel(n.be*o2scl_const::hc_mev_fm/208.0,-7.867,4.0e-3,"ptr be");

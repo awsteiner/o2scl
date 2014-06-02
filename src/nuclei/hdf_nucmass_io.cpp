@@ -244,8 +244,10 @@ void o2scl_hdf::hfb_load(o2scl::nucmass_hfb &hfb, size_t model,
     tname="/hfb2.o2";
   } else if (model==8) {
     tname="/hfb8.o2";
-  } else {
+  } else if (model==14) {
     tname="/hfb14.o2";
+  } else {
+    tname="/hfb14_v0.o2";
   }
   fname=dir+tname;
   
@@ -309,8 +311,20 @@ void o2scl_hdf::hfb_sp_load(nucmass_hfb_sp &hfb, size_t model, string dir) {
   std::string fname, tname;
   if (model==17) {
     tname="/hfb17.o2";
-  } else {
+  } else if (model==21) {
     tname="/hfb21.o2";
+  } else if (model==22) {
+    tname="/hfb22.o2";
+  } else if (model==23) {
+    tname="/hfb23.o2";
+  } else if (model==24) {
+    tname="/hfb24.o2";
+  } else if (model==25) {
+    tname="/hfb25.o2";
+  } else if (model==26) {
+    tname="/hfb26.o2";
+  } else if (model==27) {
+    tname="/hfb27.o2";
   }
   fname=dir+tname;
   

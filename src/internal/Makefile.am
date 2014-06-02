@@ -91,6 +91,9 @@ hfb_parse: hfb_parse.o
 		-lo2scl_part -lo2scl -lgsl -lgslcblas -lo2scl_hdf -lhdf5 \
 		-lhdf5_hl
 
+v0test:
+	hfb_parse ../../../../data/nucmass hfb14_v0.o2
+
 hfb_all:
 	hfb_parse ../../../../data/nucmass hfb2.o2
 	hfb_parse ../../../../data/nucmass hfb8.o2
@@ -98,6 +101,12 @@ hfb_all:
 	hfb_parse ../../../../data/nucmass hfb14_v0.o2
 	hfb_parse ../../../../data/nucmass hfb17.o2
 	hfb_parse ../../../../data/nucmass hfb21.o2
+	hfb_parse ../../../../data/nucmass hfb22.o2
+	hfb_parse ../../../../data/nucmass hfb23.o2
+	hfb_parse ../../../../data/nucmass hfb24.o2
+	hfb_parse ../../../../data/nucmass hfb25.o2
+	hfb_parse ../../../../data/nucmass hfb26.o2
+	hfb_parse ../../../../data/nucmass hfb27.o2
 
 mnk_parse.o: mnk_parse.cpp
 	$(CXX) -O3 -DGSL_RANGE_CHECK=0 -DO2SCL_NO_RANGE_CHECK \
