@@ -111,7 +111,7 @@ namespace o2scl {
       and Z.
       \todo Document each field.
   */
-  class nucmass_dz_fit : public nucmass_fit_base {
+  class nucmass_dz_fit : public nucmass_densmat {
     
   public:
     
@@ -269,7 +269,7 @@ namespace o2scl {
       Note that the original code states that, <tt>"for i even
       a(i,program) =a(i-1,paper)*a(i,paper)"</tt>.
   */
-  class nucmass_dz_fit_33 : public nucmass_fit_base {
+  class nucmass_dz_fit_33 : public nucmass_densmat {
 
   public:
 

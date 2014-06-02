@@ -355,6 +355,30 @@ namespace o2scl {
 
   };
 
+  /** \brief A nuclear mass formula for dense matter
+   */
+  class nucmass_densmat : public nucmass_fit_base {
+
+  public:
+
+    /** \brief The binding energy in a nucleus in dense matter
+     */
+    virtual double binding_energy_densmat_d
+      (double Z, double N, double npout, double nnout, 
+       double chi, double T) {
+      return (mass_excess_d(Z,N)+((Z+N)*m_amu-Z*m_elec-N*m_neut-Z*m_prot));
+    }
+
+    /** \brief The binding energy in a nucleus in dense matter
+     */
+    virtual double binding_energy_densmat
+      (int Z, int N, double npout, double nnout, 
+       double chi, double T) {
+      return (mass_excess(Z,N)+((Z+N)*m_amu-Z*m_elec-N*m_neut-Z*m_prot));
+    }
+
+  };
+
   /** \brief Semi-empirical mass formula
 
       A simple semi-empirical mass formula of the form
@@ -387,7 +411,7 @@ namespace o2scl {
       There is an example of the usage of this class given in 
       \ref ex_nucmass_fit_sect.
   */
-  class nucmass_semi_empirical : public nucmass_fit_base {
+  class nucmass_semi_empirical : public nucmass_densmat {
 
   public:
 
@@ -479,7 +503,7 @@ namespace o2scl {
 
   /** \brief Nuclear mass formula from Dieperink and van Isacker (2009)
    */
-  class nucmass_dvi : public nucmass_fit_base, public nucmass_ibm_shell {
+  class nucmass_dvi : public nucmass_densmat, public nucmass_ibm_shell {
 
   public:
 

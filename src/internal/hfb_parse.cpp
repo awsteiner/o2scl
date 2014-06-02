@@ -33,7 +33,8 @@
 #include <cstdlib>
 
 #include <o2scl/string_conv.h>
-#include <o2scl/nuclear_mass.h>
+#include <o2scl/nucmass.h>
+#include <o2scl/nucmass_hfb.h>
 #include <o2scl/hdf_file.h>
 
 #include <hdf5_hl.h>
@@ -49,31 +50,32 @@ int main(int argc, char *argv[]) {
   ofstream fout;
 
   if (argc<3) {
-    cout << "Usage: hfb_parse <dir> <file>." << endl;
+    cout << "Usage: hfb_parse <dir> <out file>." << endl;
     exit(-1);
   }
   string outname=argv[2];
 
-  vector<hfb_mass_entry> list;
-  vector<hfb_sp_mass_entry> list_sp;
+  vector<nucmass_hfb_entry> list;
+  vector<nucmass_hfb_sp_entry> list_sp;
   
   string dir=argv[1];
-  string fname=dir+argv[2];
-  ifstream fin(fname.c_str());
+  string out_fname=argv[2];
   size_t jmax;
-  string stemp, orig_file;
+  string stemp;
   bool inc_spin_parity=false;
   
+  ifstream fin;
+
   if ((string)(argv[2])=="hfb2.o2") {
-    cout << fname << endl;
-    //for(size_t j=0;j<6;j++) {
-    //getline(fin,stemp);
-    //cout << stemp << endl;
-    //}
+    string in_fname=dir+"/hfb2-plain";
+    cout << "Opening file '" << in_fname << "'." << endl;
+    fin.open(in_fname.c_str());
+    for(size_t j=0;j<4;j++) {
+      getline(fin,stemp);
+      cout << stemp << endl;
+    }
     jmax=9203;
-    orig_file="hfb2-plain";
   } else if ((string)(argv[2])=="hfb8.o2") {
-    cout << fname << endl;
     //for(size_t j=0;j<6;j++) {
     //getline(fin,stemp);
     //cout << stemp << endl;
@@ -81,7 +83,6 @@ int main(int argc, char *argv[]) {
     jmax=9197;
     orig_file="hfb8-plain";
   } else if ((string)(argv[2])=="hfb14.o2") {
-    cout << fname << endl;
     //for(size_t j=0;j<9;j++) {
     //getline(fin,stemp);
     //cout << stemp << endl;
@@ -89,7 +90,6 @@ int main(int argc, char *argv[]) {
     jmax=8388;
     orig_file="hfb14-plain";
   } else if ((string)(argv[2])=="hfb17.o2") {
-    cout << fname << endl;
     //for(size_t j=0;j<9;j++) {
     //getline(fin,stemp);
     //cout << stemp << endl;
@@ -98,7 +98,6 @@ int main(int argc, char *argv[]) {
     orig_file="hfb17-plain";
     inc_spin_parity=true;
   } else {
-    cout << fname << endl;
     //for(size_t j=0;j<9;j++) {
     //getline(fin,stemp);
     //cout << stemp << endl;
@@ -107,56 +106,92 @@ int main(int argc, char *argv[]) {
     orig_file="hfb21-dat";
     inc_spin_parity=true;
   }
-  
+
+  /*
+    01234567890123456789012345678901234567890123456789012345678901234567890123456789
+    xx10  23  0.34 -0.03 2.934  2.07     6.48    14.91     4.14    -5.43     0.28
+   */
+
   if (inc_spin_parity) {
 
-  hfb_sp_mass_entry he;
-  string ssp, ssn;
-  int N2, A2;
-  for(size_t j=0;j<jmax;j++) {
-    double dtemp;
-    fin >> dtemp;
-    he.Z=((int)(dtemp+1.0e-4));
-    fin >> dtemp;
-    he.A=((int)(dtemp+1.0e-4));
-    he.N=he.A-he.Z;
-    fin >> he.bet2;
-    fin >> he.bet4;
-    fin >> he.Rch;
-    fin >> he.def_wig;
-    fin >> he.Sn;
-    fin >> he.Sp;
-    fin >> he.Qbet;
-    fin >> he.Mcal;
-    fin >> he.Err;
-    fin >> he.Jexp;
-    fin >> he.Jth;
-    fin >> he.Pexp;
-    fin >> he.Pth;
-    if (j==0 || j==jmax-1) {
-      cout << j << " " << he.Z << " " << he.A << " " << he.N << endl;
+    nucmass_hfb_sp_entry he;
+    string ssp, ssn;
+    int N2, A2;
+    for(size_t j=0;j<jmax;j++) {
+      getline(fin,stemp);
+      he.Z=o2scl::stoi(stemp.substr(0,4));
+      he.A=o2scl::stoi(stemp.substr(4,4));
+      he.N=he.A-he.Z;
+      if (o2scl::count_words(stemp.substr(8,6))==0) {
+	he.bet2=1.0e99;
+      } else {
+	he.bet2=o2scl::stod(stemp.substr(8,6))
+      }
+      if (o2scl::count_words(stemp.substr(8,6))==0) {
+	he.bet4=1.0e99;
+      } else {
+	he.bet4=o2scl::stod(stemp.substr(8,6))
+      }
+      if (o2scl::count_words(stemp.substr(8,6))==0) {
+	he.Rch=1.0e99;
+      } else {
+	he.Rch=o2scl::stod(stemp.substr(8,6))
+      }
+      if (o2scl::count_words(stemp.substr(8,6))==0) {
+	he.Edef=1.0e99;
+      } else {
+	he.Edef=o2scl::stod(stemp.substr(8,6))
+      }
+      if (o2scl::count_words(stemp.substr(8,6))==0) {
+	he.Sn=1.0e99;
+      } else {
+	he.Sn=o2scl::stod(stemp.substr(8,6))
+      }
+      if (o2scl::count_words(stemp.substr(8,6))==0) {
+	he.Sp=1.0e99;
+      } else {
+	he.Sp=o2scl::stod(stemp.substr(8,6))
+      }
+      if (o2scl::count_words(stemp.substr(8,6))==0) {
+	he.Qbet=1.0e99;
+      } else {
+	he.Qbet=o2scl::stod(stemp.substr(8,6))
+      }
+      if (o2scl::count_words(stemp.substr(8,6))==0) {
+	he.Mcal=1.0e99;
+      } else {
+	he.Mcal=o2scl::stod(stemp.substr(8,6))
+      }
+      if (o2scl::count_words(stemp.substr(8,6))==0) {
+	he.Err=1.0e99;
+      } else {
+	he.Err=o2scl::stod(stemp.substr(8,6))
+      }
+      if (j==0 || j==jmax-1) {
+	cout << j << " " << he.Z << " " << he.A << " " << he.N << endl;
+      }
+      list_sp.push_back(he);
     }
-    list.push_back(he);
-  }
 
+    cout << list_sp.size() << endl;
 
     // Make HDF table
-    size_t offset[16]={HOFFSET(hfb_mass_entry,N),
-		       HOFFSET(hfb_mass_entry,Z),
-		       HOFFSET(hfb_mass_entry,A),
-		       HOFFSET(hfb_mass_entry,bet2),
-		       HOFFSET(hfb_mass_entry,bet4),
-		       HOFFSET(hfb_mass_entry,Rch),
-		       HOFFSET(hfb_mass_entry,def_wig),
-		       HOFFSET(hfb_mass_entry,Sn),
-		       HOFFSET(hfb_mass_entry,Sp),
-		       HOFFSET(hfb_mass_entry,Qbet),
-		       HOFFSET(hfb_mass_entry,Mcal),
-		       HOFFSET(hfb_mass_entry,Err),
-		       HOFFSET(hfb_mass_entry,Jexp),
-		       HOFFSET(hfb_mass_entry,Jth),
-		       HOFFSET(hfb_mass_entry,Pexp),
-		       HOFFSET(hfb_mass_entry,Pth)};
+    size_t offset[16]={HOFFSET(nucmass_hfb_sp_entry,N),
+		       HOFFSET(nucmass_hfb_sp_entry,Z),
+		       HOFFSET(nucmass_hfb_sp_entry,A),
+		       HOFFSET(nucmass_hfb_sp_entry,bet2),
+		       HOFFSET(nucmass_hfb_sp_entry,bet4),
+		       HOFFSET(nucmass_hfb_sp_entry,Rch),
+		       HOFFSET(nucmass_hfb_sp_entry,def_wig),
+		       HOFFSET(nucmass_hfb_sp_entry,Sn),
+		       HOFFSET(nucmass_hfb_sp_entry,Sp),
+		       HOFFSET(nucmass_hfb_sp_entry,Qbet),
+		       HOFFSET(nucmass_hfb_sp_entry,Mcal),
+		       HOFFSET(nucmass_hfb_sp_entry,Err),
+		       HOFFSET(nucmass_hfb_sp_entry,Jexp),
+		       HOFFSET(nucmass_hfb_sp_entry,Jth),
+		       HOFFSET(nucmass_hfb_sp_entry,Pexp),
+		       HOFFSET(nucmass_hfb_sp_entry,Pth)};
     
     size_t sizes[16]={sizeof(he.N),
 		      sizeof(he.Z),
@@ -204,16 +239,16 @@ int main(int argc, char *argv[]) {
       
     hdf_file hf;
     hf.set_current_id(file);
-    hf.seti("nrecords",list.size());
-    cout << "nrecords: " << list.size() << endl;
+    hf.seti("nrecords",list_sp.size());
+    cout << "nrecords: " << list_sp.size() << endl;
     hf.sets_fixed("comment",
 		  ((string)"HDF5 version of HFB ")+
 		  "mass data created for O2scl. "
 		  "See http://o2scl.sourceforge.net for details.");
     
     herr_t status=H5TBmake_table(orig_file.c_str(),file,outname.c_str(),
-				 16,list.size(),sizeof(hfb_mass_entry),
-				 names,offset,field_type,100,0,0,&list[0]);
+				 16,list_sp.size(),sizeof(nucmass_hfb_entry),
+				 names,offset,field_type,100,0,0,&list_sp[0]);
 
     hf.sets("orig_file",orig_file);
     if ((string)(argv[2])=="hfb17.o2") {
@@ -229,44 +264,80 @@ int main(int argc, char *argv[]) {
 
   } else {
     
-    hfb_mass_entry he;
+    nucmass_hfb_sp_entry he;
     string ssp, ssn;
     int N2, A2;
     for(size_t j=0;j<jmax;j++) {
-      double dtemp;
-      fin >> dtemp;
-      he.Z=((int)(dtemp+1.0e-4));
-      fin >> dtemp;
-      he.A=((int)(dtemp+1.0e-4));
+      getline(fin,stemp);
+      he.Z=o2scl::stoi(stemp.substr(0,4));
+      he.A=o2scl::stoi(stemp.substr(4,4));
       he.N=he.A-he.Z;
-      fin >> he.bet2;
-      fin >> he.bet4;
-      fin >> he.Rch;
-      fin >> he.def_wig;
-      fin >> he.Sn;
-      fin >> he.Sp;
-      fin >> he.Qbet;
-      fin >> he.Mcal;
-      fin >> he.Err;
+      if (o2scl::count_words(stemp.substr(8,6))==0) {
+	he.bet2=1.0e99;
+      } else {
+	he.bet2=o2scl::stod(stemp.substr(8,6))
+      }
+      if (o2scl::count_words(stemp.substr(8,6))==0) {
+	he.bet4=1.0e99;
+      } else {
+	he.bet4=o2scl::stod(stemp.substr(8,6))
+      }
+      if (o2scl::count_words(stemp.substr(8,6))==0) {
+	he.Rch=1.0e99;
+      } else {
+	he.Rch=o2scl::stod(stemp.substr(8,6))
+      }
+      if (o2scl::count_words(stemp.substr(8,6))==0) {
+	he.Edef=1.0e99;
+      } else {
+	he.Edef=o2scl::stod(stemp.substr(8,6))
+      }
+      if (o2scl::count_words(stemp.substr(8,6))==0) {
+	he.Sn=1.0e99;
+      } else {
+	he.Sn=o2scl::stod(stemp.substr(8,6))
+      }
+      if (o2scl::count_words(stemp.substr(8,6))==0) {
+	he.Sp=1.0e99;
+      } else {
+	he.Sp=o2scl::stod(stemp.substr(8,6))
+      }
+      if (o2scl::count_words(stemp.substr(8,6))==0) {
+	he.Qbet=1.0e99;
+      } else {
+	he.Qbet=o2scl::stod(stemp.substr(8,6))
+      }
+      if (o2scl::count_words(stemp.substr(8,6))==0) {
+	he.Mcal=1.0e99;
+      } else {
+	he.Mcal=o2scl::stod(stemp.substr(8,6))
+      }
+      if (o2scl::count_words(stemp.substr(8,6))==0) {
+	he.Err=1.0e99;
+      } else {
+	he.Err=o2scl::stod(stemp.substr(8,6))
+      }
       if (j==0 || j==jmax-1) {
 	cout << j << " " << he.Z << " " << he.A << " " << he.N << endl;
       }
-      list.push_back(he);
+      list_sp.push_back(he);
     }
 
+    cout << list_sp.size() << endl;
+
     // Make HDF table
-    size_t offset[12]={HOFFSET(hfb_mass_entry,N),
-		       HOFFSET(hfb_mass_entry,Z),
-		       HOFFSET(hfb_mass_entry,A),
-		       HOFFSET(hfb_mass_entry,bet2),
-		       HOFFSET(hfb_mass_entry,bet4),
-		       HOFFSET(hfb_mass_entry,Rch),
-		       HOFFSET(hfb_mass_entry,def_wig),
-		       HOFFSET(hfb_mass_entry,Sn),
-		       HOFFSET(hfb_mass_entry,Sp),
-		       HOFFSET(hfb_mass_entry,Qbet),
-		       HOFFSET(hfb_mass_entry,Mcal),
-		       HOFFSET(hfb_mass_entry,Err)};
+    size_t offset[12]={HOFFSET(nucmass_hfb_entry,N),
+		       HOFFSET(nucmass_hfb_entry,Z),
+		       HOFFSET(nucmass_hfb_entry,A),
+		       HOFFSET(nucmass_hfb_entry,bet2),
+		       HOFFSET(nucmass_hfb_entry,bet4),
+		       HOFFSET(nucmass_hfb_entry,Rch),
+		       HOFFSET(nucmass_hfb_entry,def_wig),
+		       HOFFSET(nucmass_hfb_entry,Sn),
+		       HOFFSET(nucmass_hfb_entry,Sp),
+		       HOFFSET(nucmass_hfb_entry,Qbet),
+		       HOFFSET(nucmass_hfb_entry,Mcal),
+		       HOFFSET(nucmass_hfb_entry,Err)};
     
     size_t sizes[12]={sizeof(he.N),
 		      sizeof(he.Z),
@@ -315,7 +386,7 @@ int main(int argc, char *argv[]) {
 		  "See http://o2scl.sourceforge.net for details.");
     
     herr_t status=H5TBmake_table(orig_file.c_str(),file,outname.c_str(),
-				 12,list.size(),sizeof(hfb_mass_entry),
+				 12,list.size(),sizeof(nucmass_hfb_entry),
 				 names,offset,field_type,100,0,0,&list[0]);
 
     hf.sets("orig_file",orig_file);

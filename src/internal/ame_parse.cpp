@@ -56,8 +56,8 @@
 #include <cstdlib>
 
 #include <o2scl/string_conv.h>
-#include <o2scl/ame_mass.h>
-#include <o2scl/nuclear_mass.h>
+#include <o2scl/nucmass_ame.h>
+#include <o2scl/nucmass.h>
 #include <o2scl/hdf_file.h>
 
 #include <hdf5_hl.h>
@@ -66,19 +66,19 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_hdf;
 
-ame_mass::entry ae;
+nucmass_ame::entry ae;
 
 int parse(string s1, string s2, double &d1, double &d2, int &acc) {
   if (s1.find('*')!=string::npos) {
     d1=0.0;
     d2=0.0;
-    acc=ame_mass::not_calculable;
+    acc=nucmass_ame::not_calculable;
     return 0;
   } 
   if (s1.find('#')!=string::npos) {
-    acc=ame_mass::estimated;
+    acc=nucmass_ame::estimated;
   } else {
-    acc=ame_mass::measured;
+    acc=nucmass_ame::measured;
   }
   d1=stod(s1,false);
   d2=stod(s2,false);
@@ -102,7 +102,7 @@ int main(int argc, char *argv[]) {
   string outnames[5]={"ame95exp.o2","ame95rmd.o2","ame03.o2",
 		      "ame03round.o2","ame12.o2"};
 
-  nuclear_mass_info nmi;
+  nucmass_info nmi;
   
   int count=0;
   const size_t output=1000;
@@ -114,7 +114,7 @@ int main(int argc, char *argv[]) {
     string fname=dir+"/"+fnames[ik], tmp, tmp2;
     ifstream fin(fname.c_str());
 
-    vector<ame_mass::entry> list;
+    vector<nucmass_ame::entry> list;
   
     for(size_t i=0;i<39;i++) getline(fin,tmp);
     cout << "Filename: " << fname << endl;
@@ -303,29 +303,29 @@ int main(int argc, char *argv[]) {
 
     // Make HDF table
     {
-      size_t offset[23]={HOFFSET(ame_mass::entry,NMZ),
-			 HOFFSET(ame_mass::entry,N),
-			 HOFFSET(ame_mass::entry,Z),
-			 HOFFSET(ame_mass::entry,A),
-			 HOFFSET(ame_mass::entry,el),
-			 HOFFSET(ame_mass::entry,orig),
-			 HOFFSET(ame_mass::entry,mass),
-			 HOFFSET(ame_mass::entry,dmass),
-			 HOFFSET(ame_mass::entry,mass_acc),
-			 HOFFSET(ame_mass::entry,be),
-			 HOFFSET(ame_mass::entry,dbe),
-			 HOFFSET(ame_mass::entry,be_acc),
-			 HOFFSET(ame_mass::entry,beoa),
-			 HOFFSET(ame_mass::entry,dbeoa),
-			 HOFFSET(ame_mass::entry,beoa_acc),
-			 HOFFSET(ame_mass::entry,bdmode),
-			 HOFFSET(ame_mass::entry,bde),
-			 HOFFSET(ame_mass::entry,dbde),
-			 HOFFSET(ame_mass::entry,bde_acc),
-			 HOFFSET(ame_mass::entry,A2),
-			 HOFFSET(ame_mass::entry,amass),
-			 HOFFSET(ame_mass::entry,damass),
-			 HOFFSET(ame_mass::entry,amass_acc)};
+      size_t offset[23]={HOFFSET(nucmass_ame::entry,NMZ),
+			 HOFFSET(nucmass_ame::entry,N),
+			 HOFFSET(nucmass_ame::entry,Z),
+			 HOFFSET(nucmass_ame::entry,A),
+			 HOFFSET(nucmass_ame::entry,el),
+			 HOFFSET(nucmass_ame::entry,orig),
+			 HOFFSET(nucmass_ame::entry,mass),
+			 HOFFSET(nucmass_ame::entry,dmass),
+			 HOFFSET(nucmass_ame::entry,mass_acc),
+			 HOFFSET(nucmass_ame::entry,be),
+			 HOFFSET(nucmass_ame::entry,dbe),
+			 HOFFSET(nucmass_ame::entry,be_acc),
+			 HOFFSET(nucmass_ame::entry,beoa),
+			 HOFFSET(nucmass_ame::entry,dbeoa),
+			 HOFFSET(nucmass_ame::entry,beoa_acc),
+			 HOFFSET(nucmass_ame::entry,bdmode),
+			 HOFFSET(nucmass_ame::entry,bde),
+			 HOFFSET(nucmass_ame::entry,dbde),
+			 HOFFSET(nucmass_ame::entry,bde_acc),
+			 HOFFSET(nucmass_ame::entry,A2),
+			 HOFFSET(nucmass_ame::entry,amass),
+			 HOFFSET(nucmass_ame::entry,damass),
+			 HOFFSET(nucmass_ame::entry,amass_acc)};
       size_t sizes[23]={sizeof(ae.NMZ),
 			sizeof(ae.N),
 			sizeof(ae.Z),
@@ -410,7 +410,7 @@ int main(int argc, char *argv[]) {
       herr_t status;
       status=H5TBmake_table(fnames[ik].c_str(),file,
 			    outnames[ik].c_str(),
-			    23,list.size(),sizeof(ame_mass::entry),
+			    23,list.size(),sizeof(nucmass_ame::entry),
 			    names,offset,field_type,100,0,1,&list[0]);
 
       if (ik==0) {

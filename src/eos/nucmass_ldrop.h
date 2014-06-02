@@ -154,7 +154,7 @@ namespace o2scl {
 
       \hline
   */
-  class nucmass_ldrop : public nucmass_fit_base {
+  class nucmass_ldrop : public nucmass_densmat {
 
   public:
     

@@ -84,15 +84,10 @@ ame_parse: ame_parse.o
 		-lhdf5_hl
 
 hfb_parse.o: hfb_parse.cpp
-	$(CXX) -O3 -DGSL_RANGE_CHECK=0 -DO2SCL_NO_RANGE_CHECK \
-		-I$(HOME)/install/include/hdf5 \
-		-I$(HOME)/install/include $(INCLUDES) \
-		-o hfb_parse.o -c hfb_parse.cpp
+	$(CXX) $(CPPFLAGS) -o hfb_parse.o -c hfb_parse.cpp
 
 hfb_parse: hfb_parse.o 
-	$(CXX) -O3 -I$(HOME)/install/include \
-		-I$(HOME)/install/include/hdf5 \
-		-L$(HOME)/install/lib -o hfb_parse hfb_parse.o \
+	$(CXX) $(CPPFLAGS) -o hfb_parse hfb_parse.o $(LDFLAGS) \
 		-lo2scl_part -lo2scl -lgsl -lgslcblas -lo2scl_hdf -lhdf5 \
 		-lhdf5_hl
 
