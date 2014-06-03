@@ -225,10 +225,14 @@ std::string nucmass_info::tostring(size_t Z, size_t N) {
 }
 
 nucmass::nucmass() {
-  m_neut=o2scl_mks::mass_neutron*o2scl_settings.get_convert_units().convert("kg","1/fm",1.0)*o2scl_const::hc_mev_fm;
-  m_prot=o2scl_mks::mass_proton*o2scl_settings.get_convert_units().convert("kg","1/fm",1.0)*o2scl_const::hc_mev_fm;
-  m_elec=o2scl_mks::mass_electron*o2scl_settings.get_convert_units().convert("kg","1/fm",1.0)*o2scl_const::hc_mev_fm;
-  m_amu=o2scl_mks::unified_atomic_mass*o2scl_settings.get_convert_units().convert("kg","1/fm",1.0)*o2scl_const::hc_mev_fm;
+  m_neut=o2scl_mks::mass_neutron*
+    o2scl_settings.get_convert_units().convert("kg","MeV",1.0);
+  m_prot=o2scl_mks::mass_proton*
+    o2scl_settings.get_convert_units().convert("kg","MeV",1.0);
+  m_elec=o2scl_mks::mass_electron*
+    o2scl_settings.get_convert_units().convert("kg","MeV",1.0);
+  m_amu=o2scl_mks::unified_atomic_mass*
+    o2scl_settings.get_convert_units().convert("kg","MeV",1.0);
 }
 
 int nucmass::get_nucleus(int Z, int N, nucleus &n) {

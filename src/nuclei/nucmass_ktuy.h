@@ -29,6 +29,19 @@
 namespace o2scl {
 #endif
 
+  /** \brief KTUY Mass formula 
+   */
+  class nucmass_ktuy : public nucmass_table {
+    
+  public:
+    
+    /** \brief Create a new mass formula object using the specified model
+	number
+    */
+    nucmass_ktuy(std::string model="05", bool external=false);
+
+    virtual ~nucmass_ktuy();
+
   /** \brief Mass formula entry structure for KTUY mass formula
 
       Nuclear masses from \ref Koura00 and \ref Koura05
@@ -36,7 +49,7 @@ namespace o2scl {
       and <tt>KTUY05_m246.dat</tt> obtained from
       http://wwwndc.jaea.go.jp/nucldata/mass/KTUY04_E.html
    */
-  typedef struct {
+    struct entry {
     
     /// Neutron number
     int N;
@@ -62,20 +75,7 @@ namespace o2scl {
     /// Alpha 6 deformation
     double alpha6;
 
-  } nucmass_ktuy_entry;
-
-  /** \brief KTUY Mass formula 
-   */
-  class nucmass_ktuy : public nucmass_table {
-    
-  public:
-    
-    /** \brief Create a new mass formula object using the specified model
-	number
-    */
-    nucmass_ktuy(std::string model="05", bool external=false);
-
-    virtual ~nucmass_ktuy();
+    };
 
     /** \brief Return false if the mass formula does not include 
 	specified nucleus
@@ -91,7 +91,7 @@ namespace o2scl {
 	algorithm. It is assumed that the table is sorted first by
 	proton number and then by neutron number.
     */
-    nucmass_ktuy_entry get_ZN(int l_Z, int l_N);
+    nucmass_ktuy::entry get_ZN(int l_Z, int l_N);
     
     /// Verify that the constructor properly loaded the table
     bool is_loaded() { return (n>0); }
@@ -113,7 +113,7 @@ namespace o2scl {
     std::string reference;
     
     /// The array containing the mass data of length ame::n
-    nucmass_ktuy_entry *mass;
+    nucmass_ktuy::entry *mass;
     
     /// The last table index for caching
     int last;

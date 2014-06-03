@@ -50,6 +50,7 @@ namespace o2scl_hdf {
 #endif
 
   /** \brief Read data for \ref o2scl::nucmass_ame from an HDF table
+      specified in a file
 
       There are five data sets, selected by the specification of the
       \c version string
@@ -57,22 +58,36 @@ namespace o2scl_hdf {
       - "95exp" - "Experimental" data from \ref Audi95 (ame95exp.o2)
       - "03round" - "Rounded" data from \ref Audi03 (ame03round.o2)
       - "03" - Data from \ref Audi03 (ame03.o2)
-      - "12" - Data from \ref Audi12 (default) (ame12.o2)
+      - "12" - Data from \ref Audi12 (ame12.o2)
       
-      If any string other than these five is used, the default data is
-      loaded. If the constructor cannot find the data file (e.g.
+      If any string other than these five is used, the error handler
+      is called. If the constructor cannot find the data file (e.g.
       because of a broken installation), then nucmass_ame::is_loaded()
       returns false.
       
       \note This function is in the \ref o2scl_hdf namespace.
-
   */
   void ame_load(o2scl::nucmass_ame &ame, std::string file_name, 
 		std::string table_name);
 
-  /** \brief Read an AME mass table from an external file
+  /** \brief Read an AME mass table from the \o2 internal data files
+
+      There are five data sets, selected by the specification of the
+      \c version string
+      - "95rmd" - "Recommended" data from \ref Audi95 (ame95rmd.o2)
+      - "95exp" - "Experimental" data from \ref Audi95 (ame95exp.o2)
+      - "03round" - "Rounded" data from \ref Audi03 (ame03round.o2)
+      - "03" - Data from \ref Audi03 (ame03.o2)
+      - "12" - Data from \ref Audi12 (ame12.o2)
+      
+      If any string other than these five is used, the error handler
+      is called. If the constructor cannot find the data file (e.g.
+      because of a broken installation), then nucmass_ame::is_loaded()
+      returns false.
+      
+      \note This function is in the \ref o2scl_hdf namespace.
    */
-  void ame_load(o2scl::nucmass_ame &ame, std::string name="");
+  void ame_load(o2scl::nucmass_ame &ame, std::string name="12");
   
   /** \brief Read data for \ref o2scl::nucmass_mnmsk from an HDF table
 

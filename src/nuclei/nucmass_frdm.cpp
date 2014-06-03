@@ -308,7 +308,8 @@ nucmass_mnmsk::~nucmass_mnmsk() {
   }
 }
 
-int nucmass_mnmsk::set_data(int n_mass, nucmass_mnmsk_entry *m, std::string ref) {
+int nucmass_mnmsk::set_data(int n_mass, nucmass_mnmsk::entry *m, 
+			    std::string ref) {
   n=n_mass;
   mass=m;
   reference=ref;
@@ -317,7 +318,7 @@ int nucmass_mnmsk::set_data(int n_mass, nucmass_mnmsk_entry *m, std::string ref)
 }
 
 double nucmass_mnmsk::mass_excess(int Z, int N) {
-  nucmass_mnmsk_entry ret;
+  nucmass_mnmsk::entry ret;
   ret=get_ZN(Z,N);
   if (ret.Z==0 && ret.N==0) return 0.0;
   return ret.Mth;
@@ -431,16 +432,16 @@ bool nucmass_mnmsk_exp::is_included(int l_Z, int l_N) {
 }
 
 double nucmass_mnmsk_exp::mass_excess(int Z, int N) {
-  nucmass_mnmsk_entry ret;
+  nucmass_mnmsk::entry ret;
   ret=get_ZN(Z,N);
   if (ret.Z==0 && ret.N==0) return 0.0;
   return ret.Mexp;
 }
 
-nucmass_mnmsk_entry nucmass_mnmsk::get_ZN(int l_Z, int l_N) {
+nucmass_mnmsk::entry nucmass_mnmsk::get_ZN(int l_Z, int l_N) {
   int lo=0, hi=0, mid=last;
   
-  nucmass_mnmsk_entry ret;
+  nucmass_mnmsk::entry ret;
   ret.Z=0;
   ret.A=0;
   ret.N=0;

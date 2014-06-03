@@ -37,13 +37,13 @@ nucmass_hfb::~nucmass_hfb() {
 }
 
 double nucmass_hfb::mass_excess(int Z, int N) {
-  nucmass_hfb_entry ret;
+  nucmass_hfb::entry ret;
   ret=get_ZN(Z,N);
   if (ret.Z==0 && ret.N==0) return 0.0;
   return ret.Mcal;
 }
 
-int nucmass_hfb::set_data(int n_mass, nucmass_hfb_entry *m, std::string ref) {
+int nucmass_hfb::set_data(int n_mass, nucmass_hfb::entry *m, std::string ref) {
   n=n_mass;
   mass=m;
   reference=ref;
@@ -110,10 +110,10 @@ bool nucmass_hfb::is_included(int l_Z, int l_N) {
   return false;
 }
 
-nucmass_hfb_entry nucmass_hfb::get_ZN(int l_Z, int l_N) {
+nucmass_hfb::entry nucmass_hfb::get_ZN(int l_Z, int l_N) {
   int lo=0, hi=0, mid=last;
 
-  nucmass_hfb_entry ret;
+  nucmass_hfb::entry ret;
   ret.Z=0;
   ret.A=0;
   ret.N=0;
@@ -180,13 +180,13 @@ nucmass_hfb_sp::~nucmass_hfb_sp() {
 }
 
 double nucmass_hfb_sp::mass_excess(int Z, int N) {
-  nucmass_hfb_sp_entry ret;
+  nucmass_hfb_sp::entry ret;
   ret=get_ZN(Z,N);
   if (ret.Z==0 && ret.N==0) return 0.0;
   return ret.Mcal;
 }
 
-int nucmass_hfb_sp::set_data(int n_mass, nucmass_hfb_sp_entry *m, std::string ref) {
+int nucmass_hfb_sp::set_data(int n_mass, nucmass_hfb_sp::entry *m, std::string ref) {
   n=n_mass;
   mass=m;
   reference=ref;
@@ -253,10 +253,10 @@ bool nucmass_hfb_sp::is_included(int l_Z, int l_N) {
   return false;
 }
 
-nucmass_hfb_sp_entry nucmass_hfb_sp::get_ZN(int l_Z, int l_N) {
+nucmass_hfb_sp::entry nucmass_hfb_sp::get_ZN(int l_Z, int l_N) {
   int lo=0, hi=0, mid=last;
 
-  nucmass_hfb_sp_entry ret;
+  nucmass_hfb_sp::entry ret;
   ret.Z=0;
   ret.A=0;
   ret.N=0;

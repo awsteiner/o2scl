@@ -20,8 +20,8 @@
 
   -------------------------------------------------------------------
 */
-#ifndef FRDM_MASS_H
-#define FRDM_MASS_H
+#ifndef NUCMASS_FRDM_H
+#define NUCMASS_FRDM_H
 
 #include <cmath>
 
@@ -195,7 +195,7 @@ namespace o2scl {
 	the surface. This function probably doesn't work at the
 	moment. It's not currently used by \ref
 	drip_binding_energy_d().
-     */
+    */
     virtual double drip_mass_excess_d(double Z, double N,
 				      double np_out, double nn_out,
 				      double chi);
@@ -256,124 +256,13 @@ namespace o2scl {
 
   };
   
-  /** \brief Entry structure for Moller, et al. masses
-   */
-  typedef struct {
-    
-    /// Neutron number
-    int N;
-    
-    /// Proton number
-    int Z;
-    
-    /// Atomic number
-    int A;
-    
-    /** \name Ground state deformations (perturbed-spheroid parameterization)
-     */
-    //@{
-    /// Quadrupole
-    double eps2;
-    /// Octupole
-    double eps3;
-    /// Hexadecapole
-    double eps4;
-    /// Hexacontatetrapole
-    double eps6;
-    /// Hexacontatetrapole without mass asymmetry
-    double eps6sym;
-    //@}
-    
-    /** \name Ground state deformations in the spherical-harmonics expansion
-     */
-    //@{
-    /// Quadrupole
-    double beta2;
-    /// Octupole
-    double beta3;
-    /// Hexadecapole
-    double beta4;
-    /// Hexacontatetrapole
-    double beta6;
-    //@}
-    
-    /// The ground-state microscopic energy
-    double Emic;
-    
-    /// The theoretical mass excess (in MeV)
-    double Mth;
-    
-    /// The experimental mass excess (in MeV)
-    double Mexp;
-    
-    /// Experimental mass excess error
-    double sigmaexp;
-    
-    /// The ground-state microscopic energy in the FRLDM
-    double EmicFL;
-    
-    /// The theoretical mass excess in the FRLDM
-    double MthFL;
-    
-    /// Spin and pairity of odd proton 
-    char spinp[6];
-    
-    /// Spin and pairity of odd neutron
-    char spinn[6];
-
-    /// Lipkin-Nogami proton gap
-    double gapp;
-    
-    /// Lipkin-Nogami neutron gap
-    double gapn;
-
-    /// Total binding energy
-    double be;
-
-    /// One neutron separation energy
-    double S1n;
-    
-    /// Two neutron separation energy
-    double S2n;
-
-    /** \brief Percentage of daughters generated in beta decay after
-	beta-delayed neutron emission
-    */
-    double PA;
-
-    /// Desc
-    double PAm1;
-
-    /// Desc
-    double PAm2;
-
-    /// Energy released in beta-decay
-    double Qbeta;
-
-    /// Half-life w.r.t. GT beta-decay
-    double Tbeta;
-
-    /// One proton separation energy
-    double S1p;
-
-    /// Two proton separation energy
-    double S2p;
-
-    /// Energy released in alpha-decay
-    double Qalpha;
-
-    /// Half-life w.r.t. alpha-decay
-    double Talpha;
-    
-  } nucmass_mnmsk_entry;
-  
   /** \brief Mass formula from Moller, Nix, Myers, Swiatecki and Kratz
 
       This is based on the tables given in \ref Moller95 and \ref
       Moller97. To load data from the \o2 HDF5 data files, use 
       <tt>o2scl_hdf::mnmsk_load()</tt>.
 
-      The data containing an object of type moller_mass_entry for 8979
+      The data containing an object of type \ref entry for 8979
       nuclei is automatically loaded by the constructor. If the file
       (nucmass/mnmsk.o2) is not found, then is_loaded() will return
       <tt>false</tt> and all calls to get_ZN() will return an object
@@ -395,7 +284,118 @@ namespace o2scl {
     nucmass_mnmsk();
 
     virtual ~nucmass_mnmsk();
+    
+    /** \brief Entry structure for Moller, et al. masses
+     */
+    struct entry {
+      
+      /// Neutron number
+      int N;
+    
+      /// Proton number
+      int Z;
+    
+      /// Atomic number
+      int A;
+    
+      /** \name Ground state deformations (perturbed-spheroid parameterization)
+       */
+      //@{
+      /// Quadrupole
+      double eps2;
+      /// Octupole
+      double eps3;
+      /// Hexadecapole
+      double eps4;
+      /// Hexacontatetrapole
+      double eps6;
+      /// Hexacontatetrapole without mass asymmetry
+      double eps6sym;
+      //@}
+    
+      /** \name Ground state deformations in the spherical-harmonics expansion
+       */
+      //@{
+      /// Quadrupole
+      double beta2;
+      /// Octupole
+      double beta3;
+      /// Hexadecapole
+      double beta4;
+      /// Hexacontatetrapole
+      double beta6;
+      //@}
+    
+      /// The ground-state microscopic energy
+      double Emic;
+    
+      /// The theoretical mass excess (in MeV)
+      double Mth;
+    
+      /// The experimental mass excess (in MeV)
+      double Mexp;
+    
+      /// Experimental mass excess error
+      double sigmaexp;
+    
+      /// The ground-state microscopic energy in the FRLDM
+      double EmicFL;
+    
+      /// The theoretical mass excess in the FRLDM
+      double MthFL;
+    
+      /// Spin and pairity of odd proton 
+      char spinp[6];
+    
+      /// Spin and pairity of odd neutron
+      char spinn[6];
 
+      /// Lipkin-Nogami proton gap
+      double gapp;
+    
+      /// Lipkin-Nogami neutron gap
+      double gapn;
+
+      /// Total binding energy
+      double be;
+
+      /// One neutron separation energy
+      double S1n;
+    
+      /// Two neutron separation energy
+      double S2n;
+
+      /** \brief Percentage of daughters generated in beta decay after
+	  beta-delayed neutron emission
+      */
+      double PA;
+
+      /// Desc
+      double PAm1;
+
+      /// Desc
+      double PAm2;
+
+      /// Energy released in beta-decay
+      double Qbeta;
+
+      /// Half-life w.r.t. GT beta-decay
+      double Tbeta;
+
+      /// One proton separation energy
+      double S1p;
+
+      /// Two proton separation energy
+      double S2p;
+
+      /// Energy released in alpha-decay
+      double Qalpha;
+
+      /// Half-life w.r.t. alpha-decay
+      double Talpha;
+    
+    };
+  
     /** \brief Return false if the mass formula does not include 
 	specified nucleus
     */
@@ -410,7 +410,7 @@ namespace o2scl {
 	algorithm. It is assumed that the table is sorted first by
 	proton number and then by neutron number.
     */
-    nucmass_mnmsk_entry get_ZN(int l_Z, int l_N);
+    nucmass_mnmsk::entry get_ZN(int l_Z, int l_N);
     
     /// The value which corresponds to a blank entry
     double blank() { return 1.0e99; };
@@ -437,7 +437,7 @@ namespace o2scl {
 
 	This function is used by the HDF I/O routines.
     */
-    int set_data(int n_mass, nucmass_mnmsk_entry *m, std::string ref);
+    int set_data(int n_mass, nucmass_mnmsk::entry *m, std::string ref);
 
 #ifndef DOXYGEN_INTERNAL
 
@@ -450,7 +450,7 @@ namespace o2scl {
     std::string reference;
     
     /// The array containing the mass data of length ame::n
-    nucmass_mnmsk_entry *mass;
+    nucmass_mnmsk::entry *mass;
     
     /// The last table index for caching
     int last;

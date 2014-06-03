@@ -301,6 +301,95 @@ int main(int argc, char *argv[]) {
     }
     cout << "count: " << count << endl;
 
+    if (true) {
+      cout << "Checking: " << endl;
+      nucmass_ame ame12;
+      string stmp2="12";
+      if (ik==0) stmp2="95rmd";
+      else if (ik==1) stmp2="95exp";
+      else if (ik==2) stmp2="03";
+      else if (ik==3) stmp2="03round";
+      ame_load(ame12,stmp2);
+      for(size_t i=0;i<list.size();i++) {
+	if (i%100==0) {
+	  cout << "Checking " << i << endl;
+	}
+	int Z=list[i].Z;
+	int N=list[i].N;
+	nucmass_ame::entry e=ame12.get_ZN(Z,N);
+	if (e.NMZ!=list[i].NMZ || e.N!=list[i].N ||
+	    e.Z!=list[i].Z || e.A!=list[i].A ||
+	    ((string)e.el)!=((string)list[i].el) ||
+	    ((string)e.orig)!=((string)list[i].orig) ||
+	    fabs(e.mass-list[i].mass)/fabs(e.mass)>1.0e-14 ||
+	    fabs(e.dmass-list[i].dmass)/fabs(e.dmass)>1.0e-14 ||
+	    e.mass_acc!=list[i].mass_acc ||
+	    fabs(e.be-list[i].be)/fabs(e.be)>1.0e-14 ||
+	    fabs(e.dbe-list[i].dbe)/fabs(e.dbe)>1.0e-14 ||
+	    e.be_acc!=list[i].be_acc ||
+	    fabs(e.beoa-list[i].beoa)/fabs(e.beoa)>1.0e-14 ||
+	    fabs(e.dbeoa-list[i].dbeoa)/fabs(e.dbeoa)>1.0e-14 ||
+	    e.beoa_acc!=list[i].beoa_acc ||
+	    ((string)e.bdmode)!=((string)list[i].bdmode) ||
+	    fabs(e.bde-list[i].bde)/fabs(e.bde)>1.0e-14 ||
+	    fabs(e.dbde-list[i].dbde)/fabs(e.dbde)>1.0e-14 ||
+	    e.bde_acc!=list[i].bde_acc ||
+	    fabs(e.A2-list[i].A2)/fabs(e.A2)>1.0e-14 ||
+	    fabs(e.amass-list[i].amass)/fabs(e.amass)>1.0e-14 ||
+	    fabs(e.damass-list[i].damass)/fabs(e.damass)>1.0e-14 ||
+	    e.amass_acc!=list[i].amass_acc) {
+	  cout << "Problem: " << i << " " << Z << " " << N << endl;
+	  cout << e.NMZ << " "
+	       << e.N << " "
+	       << e.Z << " "
+	       << e.A << " "
+	       << e.el << " "
+	       << e.orig << " "
+	       << e.mass << " "
+	       << e.dmass << " "
+	       << e.mass_acc << " "
+	       << e.be << " "
+	       << e.dbe << " "
+	       << e.be_acc << " "
+	       << e.beoa << " "
+	       << e.dbeoa << " "
+	       << e.beoa_acc << " "
+	       << e.bdmode << " "
+	       << e.bde << " "
+	       << e.dbde << " "
+	       << e.bde_acc << " "
+	       << e.A2 << " "
+	       << e.amass << " "
+	       << e.damass << " "
+	       << e.amass_acc << endl;
+	  cout << list[i].NMZ << " "
+	       << list[i].N << " "
+	       << list[i].Z << " "
+	       << list[i].A << " "
+	       << list[i].el << " "
+	       << list[i].orig << " "
+	       << list[i].mass << " "
+	       << list[i].dmass << " "
+	       << list[i].mass_acc << " "
+	       << list[i].be << " "
+	       << list[i].dbe << " "
+	       << list[i].be_acc << " "
+	       << list[i].beoa << " "
+	       << list[i].dbeoa << " "
+	       << list[i].beoa_acc << " "
+	       << list[i].bdmode << " "
+	       << list[i].bde << " "
+	       << list[i].dbde << " "
+	       << list[i].bde_acc << " "
+	       << list[i].A2 << " "
+	       << list[i].amass << " "
+	       << list[i].damass << " "
+	       << list[i].amass_acc << endl;
+	}
+      }
+      
+    }
+
     // Make HDF table
     {
       size_t offset[23]={HOFFSET(nucmass_ame::entry,NMZ),

@@ -285,22 +285,22 @@ namespace o2scl {
     /// \name Base masses
     //@{
     /** \brief Neutron mass in \f$ \mathrm{MeV} \f$ 
-	(defaults to o2scl_mks::mass_neutron times o2scl_const::hc_mev_fm)
+	(defaults to o2scl_mks::mass_neutron converted into MeV)
     */
     double m_neut;
     
     /** \brief Proton mass in \f$ \mathrm{MeV} \f$ 
-	(defaults to o2scl_mks::mass_proton times o2scl_const::hc_mev_fm)
+	(defaults to o2scl_mks::mass_proton converted into MeV)
     */
     double m_prot;
     
     /** \brief Electron mass in \f$ \mathrm{MeV} \f$ 
-	(defaults to o2scl_mks::mass_electron times o2scl_const::hc_mev_fm)
+	(defaults to o2scl_mks::mass_electron converted into MeV)
     */
     double m_elec;
 
     /** \brief Atomic mass unit in \f$ \mathrm{MeV} \f$ 
-	(defaults to o2scl_mks::mass_amu times o2scl_const::hc_mev_fm)
+	(defaults to o2scl_mks::unified_atomic_mass converted into MeV)
     */
     double m_amu;
     //@}

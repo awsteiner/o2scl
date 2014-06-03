@@ -284,8 +284,9 @@ namespace o2scl {
     /** \brief Calculate effective chemical potential from density
 
 	\future This function might be improved by generating a
-	bracket for a bracketing solver, rather than \ref root_cern
-	which is the default for \ref density_root.
+	bracket for a bracketing solver, rather than \ref
+	o2scl::root_cern which is the default for \ref
+	o2scl::fermion_rel::density_root.
      */
     virtual int nu_from_n(fermion &f, double temper);
     

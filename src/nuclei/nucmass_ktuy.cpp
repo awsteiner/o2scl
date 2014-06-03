@@ -88,10 +88,10 @@ bool nucmass_ktuy::is_included(int l_Z, int l_N) {
   return false;
 }
 
-nucmass_ktuy_entry nucmass_ktuy::get_ZN(int l_Z, int l_N) {
+nucmass_ktuy::entry nucmass_ktuy::get_ZN(int l_Z, int l_N) {
   int lo=0, hi=0, mid=last;
 
-  nucmass_ktuy_entry ret;
+  nucmass_ktuy::entry ret;
   ret.Z=0;
   ret.A=0;
   ret.N=0;
@@ -172,9 +172,9 @@ nucmass_ktuy::nucmass_ktuy(std::string model, bool external) {
   
   n=data.get_nlines();
 
-  mass=new nucmass_ktuy_entry[n];
+  mass=new nucmass_ktuy::entry[n];
   for(int i=0;i<n;i++) {
-    nucmass_ktuy_entry kme={((int)(data.get("NN",i)+1.0e-6)),
+    nucmass_ktuy::entry kme={((int)(data.get("NN",i)+1.0e-6)),
 			 ((int)(data.get("ZZ",i)+1.0e-6)),
 			 ((int)(data.get("NN",i)+data.get("ZZ",i)+1.0e-6)),
 			 data.get("Mcal",i),data.get("Esh",i),
@@ -193,7 +193,7 @@ nucmass_ktuy::~nucmass_ktuy() {
 }
 
 double nucmass_ktuy::mass_excess(int Z, int N) {
-  nucmass_ktuy_entry ret;
+  nucmass_ktuy::entry ret;
   ret=get_ZN(Z,N);
   if (ret.Z==0 && ret.N==0) return 0.0;
   return ret.Mcal;

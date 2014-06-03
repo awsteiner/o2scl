@@ -32,106 +32,7 @@
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
 #endif
-  
-  /** \brief Entry structure for HFB mass formula
-   */
-  typedef struct {
     
-    /// Neutron number
-    int N;
-    
-    /// Proton number
-    int Z;
-    
-    /// Atomic number
-    int A;
-    
-    /// Beta 2 deformation
-    double bet2;
-
-    /// Beta 4 deformation
-    double bet4;
-
-    /// RMS charge radius
-    double Rch;
-
-    /// Deformation and Wigner energies
-    double def_wig;
-
-    /// Neutron separation energy
-    double Sn;
-
-    /// Proton separation energy
-    double Sp;
-
-    /// Beta-decay energy
-    double Qbet;
-
-    /// Calculated mass excess
-    double Mcal;
-
-    /// Error between experimental and calculated mass excess
-    double Err;
-    
-  } nucmass_hfb_entry;
-
-  /** \brief Version of \ref nucmass_hfb_entry with spin and parity
-
-      \note This cannot be a child of nucmass_hfb_entry in order
-      for the HDF I/O preprocessor macros, like HOFFSET, to work
-  */
-  typedef struct {
-    
-    /// Neutron number
-    int N;
-    
-    /// Proton number
-    int Z;
-    
-    /// Atomic number
-    int A;
-    
-    /// Beta 2 deformation
-    double bet2;
-
-    /// Beta 4 deformation
-    double bet4;
-
-    /// RMS charge radius
-    double Rch;
-
-    /// Deformation and Wigner energies
-    double def_wig;
-
-    /// Neutron separation energy
-    double Sn;
-
-    /// Proton separation energy
-    double Sp;
-
-    /// Beta-decay energy
-    double Qbet;
-
-    /// Calculated mass excess
-    double Mcal;
-
-    /// Error between experimental and calculated mass excess
-    double Err;
-
-    /// Experimental spin
-    double Jexp;
-    
-    /// Theoretical spin
-    double Jth;
-    
-    /// Experimental parity
-    int Pexp;
-
-    /// Theoretical parity
-    int Pth;
-
-  } nucmass_hfb_sp_entry;
-  
   /** \brief HFB Mass formula 
 
       \todo Mg40 is present in some tables but not others. Compare
@@ -140,10 +41,52 @@ namespace o2scl {
       the 2003 and 2013 Audi et al. tables?
 
       \todo Update to include hfb17. 
-   */
+  */
   class nucmass_hfb : public nucmass_table {
     
   public:
+
+    /** \brief Entry structure for HFB mass formula
+     */
+    struct entry {
+    
+      /// Neutron number
+      int N;
+    
+      /// Proton number
+      int Z;
+    
+      /// Atomic number
+      int A;
+    
+      /// Beta 2 deformation
+      double bet2;
+
+      /// Beta 4 deformation
+      double bet4;
+
+      /// RMS charge radius
+      double Rch;
+
+      /// Deformation and Wigner energies
+      double def_wig;
+
+      /// Neutron separation energy
+      double Sn;
+
+      /// Proton separation energy
+      double Sp;
+
+      /// Beta-decay energy
+      double Qbet;
+
+      /// Calculated mass excess
+      double Mcal;
+
+      /// Error between experimental and calculated mass excess
+      double Err;
+    
+    };
     
     /** \brief Create a new mass formula object 
      */
@@ -165,7 +108,7 @@ namespace o2scl {
 	algorithm. It is assumed that the table is sorted first by
 	proton number and then by neutron number.
     */
-    nucmass_hfb_entry get_ZN(int l_Z, int l_N);
+    nucmass_hfb::entry get_ZN(int l_Z, int l_N);
     
     /// Verify that the constructor properly loaded the table
     bool is_loaded() { return (n>0); }
@@ -180,7 +123,7 @@ namespace o2scl {
 	
 	This function is used by the HDF I/O routines.
     */
-    int set_data(int n_mass, nucmass_hfb_entry *m, std::string ref);
+    int set_data(int n_mass, nucmass_hfb::entry *m, std::string ref);
 
     /// Return number of entries
     int get_nentries() { return n; }
@@ -196,7 +139,7 @@ namespace o2scl {
     std::string reference;
     
     /// The array containing the mass data of length ame::n
-    nucmass_hfb_entry *mass;
+    nucmass_hfb::entry *mass;
     
     /// The last table index for caching
     int last;
@@ -217,6 +160,63 @@ namespace o2scl {
 
     virtual ~nucmass_hfb_sp();
 
+    /** \brief Version of \ref nucmass_hfb::entry with spin and parity
+
+	\note This cannot be a child of nucmass_hfb::entry in order
+	for the HDF I/O preprocessor macros, like HOFFSET, to work
+    */
+    struct entry {
+    
+      /// Neutron number
+      int N;
+    
+      /// Proton number
+      int Z;
+    
+      /// Atomic number
+      int A;
+    
+      /// Beta 2 deformation
+      double bet2;
+
+      /// Beta 4 deformation
+      double bet4;
+
+      /// RMS charge radius
+      double Rch;
+
+      /// Deformation and Wigner energies
+      double def_wig;
+
+      /// Neutron separation energy
+      double Sn;
+
+      /// Proton separation energy
+      double Sp;
+
+      /// Beta-decay energy
+      double Qbet;
+
+      /// Calculated mass excess
+      double Mcal;
+
+      /// Error between experimental and calculated mass excess
+      double Err;
+
+      /// Experimental spin
+      double Jexp;
+    
+      /// Theoretical spin
+      double Jth;
+    
+      /// Experimental parity
+      int Pexp;
+
+      /// Theoretical parity
+      int Pth;
+
+    };
+
     /** \brief Return false if the mass formula does not include 
 	specified nucleus
     */
@@ -231,7 +231,7 @@ namespace o2scl {
 	algorithm. It is assumed that the table is sorted first by
 	proton number and then by neutron number.
     */
-    nucmass_hfb_sp_entry get_ZN(int l_Z, int l_N);
+    nucmass_hfb_sp::entry get_ZN(int l_Z, int l_N);
     
     /// Return the type, \c "nucmass_hfb".
     virtual const char *type() { return "nucmass_hfb_sp"; }
@@ -240,14 +240,14 @@ namespace o2scl {
 	
 	This function is used by the HDF I/O routines.
     */
-    int set_data(int n_mass, nucmass_hfb_sp_entry *m, std::string ref);
+    int set_data(int n_mass, nucmass_hfb_sp::entry *m, std::string ref);
 
 #ifndef DOXYGEN_INTERNAL
 
   protected:
     
     /// The array containing the mass data of length ame::n
-    nucmass_hfb_sp_entry *mass;
+    nucmass_hfb_sp::entry *mass;
 
     /// The number of entries (about 3000).
     int n;
