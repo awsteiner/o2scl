@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2012, Andrew W. Steiner
+  Copyright (C) 2014, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -60,12 +60,30 @@ nucmass_wlw::nucmass_wlw(std::string model, bool external) {
   n=data.get_nlines();
   
   mass=new nucmass_wlw::entry[n];
-  for(int i=0;i<n;i++) {
-    nucmass_wlw::entry nde={((int)(data.get("A",i)+1.0e-6))-
-			    ((int)(data.get("N",i))),
-			    ((int)(data.get("N",i)+1.0e-6)),
-			    data.get("Mth",i)};
-    mass[i]=nde;
+  if (model=="WS3_RBF") {
+    for(int i=0;i<n;i++) {
+      nucmass_wlw::entry nde={((int)(data.get("Z",i)+1.0e-6)),
+			      ((int)(data.get("A",i)+1.0e-6))-
+			      ((int)(data.get("Z",i))),
+			      data.get("WS3_RBF",i)};
+      mass[i]=nde;
+    }
+  } else if (model=="WS4_RBF") {
+    for(int i=0;i<n;i++) {
+      nucmass_wlw::entry nde={((int)(data.get("Z",i)+1.0e-6)),
+			      ((int)(data.get("A",i)+1.0e-6))-
+			      ((int)(data.get("Z",i))),
+			      data.get("WS4_RBF",i)};
+      mass[i]=nde;
+    }
+  } else {
+    for(int i=0;i<n;i++) {
+      nucmass_wlw::entry nde={((int)(data.get("Z",i)+1.0e-6)),
+			      ((int)(data.get("A",i)+1.0e-6))-
+			      ((int)(data.get("Z",i))),
+			      data.get("Mth",i)};
+      mass[i]=nde;
+    }
   }
 
   last=n/2;
