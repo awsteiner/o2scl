@@ -50,6 +50,8 @@ namespace o2scl {
       Note that the original reference appears to have a typo in 
       the pressure. The \f$ 2/5 \f$ factor in front should be 
       \f$ 1/5 \f$ .
+
+      See Ref. \ref Hebeler13 .
   */
   class eos_had_hlps : public eos_had_eden_base {
 
