@@ -28,6 +28,7 @@
 #include <o2scl/hdf_nucmass_io.h>
 #include <o2scl/nucmass_frdm.h>
 #include <o2scl/nucmass_ktuy.h>
+#include <o2scl/nucmass_dglg.h>
 
 using namespace std;
 using namespace o2scl;
@@ -175,16 +176,17 @@ int main(void) {
   o2scl_hdf::hfb_sp_load(hfb26,26);
   nucmass_hfb_sp hfb27;
   o2scl_hdf::hfb_sp_load(hfb27,27);
+  nucmass_dglg dglg;
 
   // Set up generic pointers for testing
-  nucmass_table *nmd[18]={&ame,&ame95rmd,&ame03round,&ame95exp,
+  nucmass_table *nmd[19]={&ame,&ame95rmd,&ame03round,&ame95exp,
 			  &m95,&kt,&kt2,&hfb2,&hfb8,
 			  &hfb14,&hfb17,&hfb21,&hfb22,&hfb23,&hfb24,&hfb25,
-			  &hfb26,&hfb27};
+			  &hfb26,&hfb27,&dglg};
 
   // Test the spins obtained from mnmsk
 
-  nucmass_mnmsk_entry mmk;
+  nucmass_mnmsk::entry mmk;
   mmk=m95.get_ZN(83,125);
   t.test_gen(mmk.spinp==((string)"9/2-"),"spinp");
   t.test_gen(mmk.spinn==((string)"1/2-"),"spinn");
@@ -211,7 +213,7 @@ int main(void) {
   double mass_amu=o2scl_mks::unified_atomic_mass*
     o2scl_settings.get_convert_units().convert("kg","1/fm",1.0);
 
-  for(size_t i=0;i<18;i++) {
+  for(size_t i=0;i<19;i++) {
     nucleus n;
     nmd[i]->get_nucleus(82,126,n);
     t.test_rel(n.be*o2scl_const::hc_mev_fm/208.0,-7.867,4.0e-3,"ptr be");

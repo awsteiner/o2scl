@@ -113,7 +113,7 @@ namespace o2scl {
     std::string reference;
     
     /// The array containing the mass data of length ame::n
-    nucmass_ktuy::entry *mass;
+    entry *mass;
     
     /// The last table index for caching
     int last;

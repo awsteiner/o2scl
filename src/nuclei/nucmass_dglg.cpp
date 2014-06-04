@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2014, Andrew W. Steiner
+  Copyright (C) 2012, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -20,17 +20,14 @@
 
   -------------------------------------------------------------------
 */
-#include <o2scl/nucmass.h>
-#include <o2scl/nucmass_ktuy.h>
+#include <o2scl/nucmass_dglg.h>
 #include <o2scl/hdf_nucmass_io.h>
-#include <o2scl/hdf_io.h>
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-nucmass_ktuy::nucmass_ktuy(std::string model, bool external) {
-  
+nucmass_dglg::nucmass_dglg(std::string model, bool external) {
   n=0;
   
   std::string fname;
@@ -38,11 +35,7 @@ nucmass_ktuy::nucmass_ktuy(std::string model, bool external) {
   if (external) {
     fname=model;
   } else {
-    if (model=="04") {
-      fname=dir+"/nucmass/ktuy04.o2";
-    } else {
-      fname=dir+"/nucmass/ktuy05.o2";
-    }
+    fname=dir+"/nucmass/dglg10.o2";
   }
   
   table<> data;
@@ -53,28 +46,41 @@ nucmass_ktuy::nucmass_ktuy(std::string model, bool external) {
   hf.close();
   
   n=data.get_nlines();
-
-  mass=new nucmass_ktuy::entry[n];
+  
+  mass=new nucmass_dglg::entry[n];
   for(int i=0;i<n;i++) {
-    nucmass_ktuy::entry kme={((int)(data.get("NN",i)+1.0e-6)),
-			 ((int)(data.get("ZZ",i)+1.0e-6)),
-			 ((int)(data.get("NN",i)+data.get("ZZ",i)+1.0e-6)),
-			 data.get("Mcal",i),data.get("Esh",i),
-			 data.get("alpha2",i),data.get("alpha4",i),
-			 data.get("alpha6",i)};
-    mass[i]=kme;
+    nucmass_dglg::entry nde={((int)(data.get("Z",i)+1.0e-6)),
+			     ((int)(data.get("N",i)+1.0e-6)),
+			     data.get("EHFB",i),data.get("BMIN",i),
+			     data.get("GMIN",i),data.get("RCHFB",i),
+			     data.get("RPHFB",i),data.get("RNHFB",i),
+			     data.get("EABS",i),data.get("ECORR",i),
+			     data.get("BET01",i),data.get("GAM01",i),
+			     data.get("DELB01",i),data.get("DELG01",i),
+			     data.get("E21",i),data.get("E41",i),
+			     data.get("E61",i),data.get("E02",i),
+			     data.get("E22",i),data.get("E23",i),
+			     data.get("PK0_2_1",i),data.get("PK2_2_2",i),
+			     data.get("PK2_2_3",i),data.get("BE2_2_1_0_1",i),
+			     data.get("BE2_2_3_0_1",i),
+			     data.get("BE2_2_1_0_2",i),
+			     data.get("BE2_4_1_2_1",i),
+			     data.get("BE2_2_3_2_1",i),
+			     data.get("BE2_2_3_0_2",i),
+			     data.get("RC5DCH",i),data.get("RP5DCH",i),
+			     data.get("RN5DCH",i),data.get("ROE0TH",i),
+			     ((int)(data.get("NMIN",i)+1.0e-6)),
+			     ((int)(data.get("NMAX",i)+1.0e-6))};
+    mass[i]=nde;
   }
 
   last=n/2;
 }
 
-nucmass_ktuy::~nucmass_ktuy() {
-  if (n>0) {
-    delete[] mass;
-  }
+nucmass_dglg::~nucmass_dglg() {
 }
 
-bool nucmass_ktuy::is_included(int l_Z, int l_N) {
+bool nucmass_dglg::is_included(int l_Z, int l_N) {
   int lo=0, hi=0, mid=last;
 
   // binary search for the correct Z first
@@ -106,17 +112,9 @@ bool nucmass_ktuy::is_included(int l_Z, int l_N) {
     return true;
   }
 
-  int it=0;
-
-  // Now look for the right N among all the Z's
+  // Now look for the right N among all the N's
   while (mass[mid].Z==l_Z) {
 
-    // This hack is necessary because some nuclei are missing from
-    // some of the KTUY tables
-    if (it>14 && mid!=0 && mass[mid].Z==mass[mid-1].Z && 
-	mass[mid].N!=mass[mid-1].N+1) {
-      return false;
-    }
     if (mass[mid].N==l_N) {
       return true;
     } else if (mass[mid].N>l_N) {
@@ -126,20 +124,13 @@ bool nucmass_ktuy::is_included(int l_Z, int l_N) {
       if (mid==n-1) return false;
       mid++;
     }
-
-    it++;
   }
   
   return false;
 }
 
-nucmass_ktuy::entry nucmass_ktuy::get_ZN(int l_Z, int l_N) {
+double nucmass_dglg::mass_excess(int l_Z, int l_N) {
   int lo=0, hi=0, mid=last;
-
-  nucmass_ktuy::entry ret;
-  ret.Z=0;
-  ret.A=0;
-  ret.N=0;
   
   // binary search for the correct Z first
   if (mass[mid].Z!=l_Z) {
@@ -161,41 +152,44 @@ nucmass_ktuy::entry nucmass_ktuy::get_ZN(int l_Z, int l_N) {
     mid=lo;
     if (mass[mid].Z!=l_Z) mid=hi;
     if (mass[mid].Z!=l_Z) {
-      O2SCL_ERR((((string)"Nuclei with Z=")+itos(l_Z) 
-		 +" not found in nucmass_ktuy::get_ZN().").c_str(),
+      O2SCL_ERR((((string)"Nucleus with Z=")+itos(l_Z)+" and N="+itos(l_N)+
+		 " not found in nucmass_dglg::mass_excess().").c_str(),
 		exc_enotfound);
     }
   }
-
+  
   // The cached point was the right one, so we're done
   if (mass[mid].N==l_N) {
-    ret=mass[mid];
-    last=mid;
-    return ret;
+    int A=l_Z+l_N;
+    return mass[mid].EHFB-A*m_amu+l_Z*(m_prot+m_elec)+l_N*m_neut;
   }
-
-  // Now look for the right N among all the Z's
+  
+  // Now look for the right N among all the N's
   while (mass[mid].Z==l_Z) {
+    
     if (mass[mid].N==l_N) {
-      ret=mass[mid];
-      last=mid;
-      return ret;
+      int A=l_Z+l_N;
+      return mass[mid].EHFB-A*m_amu+l_Z*(m_prot+m_elec)+l_N*m_neut;
     } else if (mass[mid].N>l_N) {
+      if (mid==0) {
+	O2SCL_ERR((((string)"Nucleus with Z=")+itos(l_Z)+" and N="+itos(l_N)+
+		   " not found in nucmass_dglg::mass_excess().").c_str(),
+		  exc_enotfound);
+      }
       mid--;
     } else {
+      if (mid==n-1) {
+	O2SCL_ERR((((string)"Nucleus with Z=")+itos(l_Z)+" and N="+itos(l_N)+
+		   " not found in nucmass_dglg::mass_excess().").c_str(),
+		  exc_enotfound);
+      }
       mid++;
     }
   }
   
-  O2SCL_ERR((((string)"Nucleus with Z=")+itos(l_Z)+" and N="+itos(l_N)
-	     +" not found in nucmass_ktuy::get_ZN().").c_str(),exc_enotfound);
-  return ret;
+  O2SCL_ERR((((string)"Nucleus with Z=")+itos(l_Z)+" and N="+itos(l_N)+
+	     " not found in nucmass_dglg::mass_excess().").c_str(),
+	    exc_enotfound);
+  
+  return 0.0;
 }
-
-double nucmass_ktuy::mass_excess(int Z, int N) {
-  nucmass_ktuy::entry ret;
-  ret=get_ZN(Z,N);
-  if (ret.Z==0 && ret.N==0) return 0.0;
-  return ret.Mcal;
-}
-
