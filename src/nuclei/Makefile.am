@@ -8,25 +8,25 @@
 if O2SCL_HDF
 
 NUCLEI_SRCS = nucmass.cpp nucdist.cpp nucleus.cpp nucmass_fit.cpp \
-	reaction_lib.cpp hdf_nucmass_io.cpp nucmass_frdm.cpp nucmass_dz.cpp \
-	nucmass_ame.cpp nucmass_hfb.cpp nucmass_ktuy.cpp
+	reaction_lib.cpp hdf_nucmass_io.cpp nucmass_frdm.cpp \
+	nucmass_dz.cpp nucmass_ame.cpp nucmass_hfb.cpp nucmass_ktuy.cpp
 
 HEADER_VAR = nucmass.h nucdist.h nucleus.h nucmass_fit.h \
-	reaction_lib.h hdf_nucmass_io.h nucmass_frdm.h nucdist_arb.h nucmass_dz.h \
-	nucmass_ame.h nucmass_hfb.h nucmass_ktuy.h
+	reaction_lib.h hdf_nucmass_io.h nucmass_frdm.h nucdist_arb.h \
+	nucmass_dz.h nucmass_ame.h nucmass_hfb.h nucmass_ktuy.h
 
 TEST_VAR = nucmass.scr nucdist.scr nucleus.scr nucmass_fit.scr \
-	reaction_lib.scr hdf_nucmass_io.scr nucmass_frdm.scr nucdist_arb.scr \
-	nucmass_dz.scr
+	reaction_lib.scr hdf_nucmass_io.scr nucmass_frdm.scr \
+	nucdist_arb.scr nucmass_dz.scr
 
 else
 
 NUCLEI_SRCS = nucmass.cpp nucdist.cpp nucleus.cpp nucmass_fit.cpp \
-	reaction_lib.cpp nucmass_frdm.cpp nucmass_dz.cpp nucmass_ame.cpp \
-	nucmass_hfb.cpp nucmass_ktuy.cpp
+	reaction_lib.cpp nucmass_frdm.cpp nucmass_dz.cpp \
+	nucmass_ame.cpp nucmass_hfb.cpp nucmass_ktuy.cpp
 
-HEADER_VAR = nucmass.h nucdist.h nucleus.h nucmass_fit.h \
-	reaction_lib.h nucmass_frdm.h nucdist_arb.h nucmass_dz.h nucmass_ame.h \
+HEADER_VAR = nucmass.h nucdist.h nucleus.h nucmass_fit.h reaction_lib.h \
+	nucmass_frdm.h nucdist_arb.h nucmass_dz.h nucmass_ame.h \
 	nucmass_hfb.h nucmass_ktuy.h
 
 TEST_VAR = nucleus.scr

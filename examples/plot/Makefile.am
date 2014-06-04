@@ -37,12 +37,6 @@ help:
 
 EXTRA_DIST = 
 
-ROOT_LIB = ../../src/other/graph.o \
-	-lgsl -lgslcblas -lreadline -lncurses \
-	-lCore -lCint -lRIO -lNet -lHist -lGraf -lGraf3d \
-	-lGpad -lTree -lRint -lPostscript -lMatrix -lPhysics \
-	-lMathCore -lThread -lz -pthread -lm -ldl
-
 ../../src/other/graph.o:
 	cd ../../src/other; $(CXX) $(CPPFLAGS) -o graph.o -c graph.cpp
 

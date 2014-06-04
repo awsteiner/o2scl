@@ -6,34 +6,12 @@ help:
 	@echo "File descriptions:"
 	@echo "--------------------------------------------------------"
 
-agraph.o: agraph.cpp
-	$(CXX) $(CPPFLAGS) \
-		-DO2SCL_COND_FLAG \
-		-I../../include -o agraph.o -c agraph.cpp
-
-agraphm.o: agraphm.cpp
-	$(CXX) $(CPPFLAGS) \
-		-DO2SCL_COND_FLAG \
-	-I../../include -o agraphm.o -c agraphm.cpp
-
-# Most dependent libraries first: ROOT, O2scl, then readline
-AGRAPH_LIB = -lCore -lCint -lRIO -lNet -lHist -lGraf -lGraf3d \
-        -lGpad -lTree -lRint -lPostscript -lMatrix -lPhysics \
-        -lMathCore -lThread -lz -pthread -ldl -lo2scl_hdf \
-	-lo2scl -lreadline -lncurses
-
-agraph: agraph.o agraphm.o
-	$(CXX) $(CPPFLAGS) $(LDFLAGS) -L@libdir@ -I../../include \
-		-DO2SCL_COND_FLAG \
-		-o agraph agraph.o agraphm.o ../acolm.o \
-		../other/graph.o $(LIBS) $(AGRAPH_LIB) 
-
 update_lic: update_lic.cpp
 	g++ -o update_lic update_lic.cpp
 
-EXTRA_DIST = binsiz.f agraph.cpp agraphm.cpp agraphm.h \
+EXTRA_DIST = binsiz.f \
 	gesvd.cpp zheev.cpp ame_parse.cpp hfb_parse.cpp mnk_parse.cpp \
-	o2comm.cpp osni88.cpp reparse.cpp make_units.cpp
+	o2comm.cpp osni88.cpp make_units.cpp
 
 # contour3.pdf contour4.pdf contour_gr.cpp
 # update_lic.cpp verup.cpp
@@ -121,18 +99,6 @@ mnk_parse: mnk_parse.o
 		-lo2scl_part -lo2scl -lgsl -lgslcblas -lo2scl_hdf -lhdf5 \
 		-lhdf5_hl
 
-reparse.o: reparse.cpp
-	$(CXX) -O3 -DGSL_RANGE_CHECK=0 -DO2SCL_NO_RANGE_CHECK \
-		-I$(HOME)/install/include/hdf5 \
-		-I$(HOME)/install/include $(INCLUDES) \
-		-o reparse.o -c reparse.cpp
-
-reparse: reparse.o 
-	$(CXX) -O3 -I$(HOME)/install/include \
-		-I$(HOME)/install/include/hdf5 \
-		-L$(HOME)/install/lib -o reparse reparse.o \
-		-lo2scl_part -lo2scl -lgsl -lgslcblas -lhdf5
-
 o2comm.o: o2comm.cpp
 	$(CXX) $(CPPFLAGS) -I../../include -DO2SCL_COND_FLAG \
 		-o o2comm.o -c o2comm.cpp
@@ -181,58 +147,4 @@ o2scl-test-rec: tsumm
 # 	g++ -o partmath -I$(HOME)/install/include \
 # 		-L$(HOME)/install/lib \
 # 		partmath.cpp -lo2scl
-
-# contour_gr.o: contour_gr.cpp
-# 	$(CXX) -I$(HOME)/install/include \
-# 		-I$(HOME)/root/include \
-# 		-o contour_gr.o -c contour_gr.cpp
-
-# contour_gr: contour_gr.o $(HOME)/svn/o2int/trunk/src/other/graph.o
-# 	$(CXX) -I$(HOME)/install/include \
-# 		-I$(HOME)/root/include -L$(HOME)/root/lib \
-# 		-L$(HOME)/install/lib \
-# 		-o contour_gr contour_gr.o \
-# 		$(HOME)/svn/o2int/trunk/src/other/graph.o \
-# 		$(ROOT_LIB) -lo2scl_base  \
-# 		-lo2scl_other -lo2scl_rnga 
-
-# contour_gr2.o: contour_gr2.cpp
-# 	$(CXX) -I$(HOME)/install/include \
-# 		-I$(HOME)/root/include \
-# 		-o contour_gr2.o -c contour_gr2.cpp
-
-# contour_gr2: contour_gr2.o $(HOME)/svn/o2int/trunk/src/other/graph.o
-# 	$(CXX) -I$(HOME)/install/include \
-# 		-I$(HOME)/root/include -L$(HOME)/root/lib \
-# 		-L$(HOME)/install/lib \
-# 		-o contour_gr2 contour_gr2.o \
-# 		$(HOME)/svn/o2int/trunk/src/other/graph.o \
-# 		$(ROOT_LIB) -lo2scl_base  \
-# 		-lo2scl_other -lo2scl_rnga 
-
-# mplot.o: mplot.cpp
-# 	$(CXX) -I$(HOME)/install/include \
-# 		-I$(HOME)/root/include \
-# 		-o mplot.o -c mplot.cpp
-
-# mplot: mplot.o $(HOME)/svn/o2int/trunk/src/other/graph.o
-# 	$(CXX) -I$(HOME)/install/include \
-# 		-I$(HOME)/root/include -L$(HOME)/root/lib \
-# 		-L$(HOME)/install/lib \
-# 		-o mplot mplot.o \
-# 		$(HOME)/svn/o2int/trunk/src/other/graph.o \
-# 		$(ROOT_LIB) -lo2scl  
-
-# in_planar_intp.o: in_planar_intp.cpp
-# 	$(CXX) -I$(HOME)/install/include \
-# 		-I$(HOME)/root/include \
-# 		-o in_planar_intp.o -c in_planar_intp.cpp
-
-# in_planar_intp: in_planar_intp.o 
-# 	$(CXX) -I$(HOME)/install/include \
-# 		-L$(HOME)/install/lib -o in_planar_intp \
-# 		in_planar_intp.o -L$(HOME)/root/lib \
-# 		$(HOME)/svn/o2int/trunk/src/other/graph.o \
-# 		-lo2scl_base -lo2scl_other -lo2scl_rnga  \
-# 		$(ROOT_LIB)
 
