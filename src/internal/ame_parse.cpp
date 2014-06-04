@@ -24,6 +24,9 @@
   This code generates the O2scl HDF files original Audi et al. data
   tables.
 
+  6/3/14 - This code produces the HDF .o2 tables and compares
+  the results to the internal .o2 files and found no differences.
+
   Columns in AME '03 and '12 (not indexed by zero)
   1 unused
   2-4 N-Z (3)
@@ -305,8 +308,8 @@ int main(int argc, char *argv[]) {
       cout << "Checking: " << endl;
       nucmass_ame ame12;
       string stmp2="12";
-      if (ik==0) stmp2="95rmd";
-      else if (ik==1) stmp2="95exp";
+      if (ik==0) stmp2="95exp";
+      else if (ik==1) stmp2="95rmd";
       else if (ik==2) stmp2="03";
       else if (ik==3) stmp2="03round";
       ame_load(ame12,stmp2);
