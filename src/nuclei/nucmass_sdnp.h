@@ -28,12 +28,22 @@
 #include <map>
 #include <o2scl/nucmass.h>
 
-#ifndef DOXYGENP
+#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
 #endif
 
   /** \brief Nuclear structure from Stoitsov et al.
-   */
+      
+      \todo Unfinished.
+      
+      Models
+      - "sdnp03" - from Skyrme model SkM*
+      - "sd_skp_04" - from Skyrme model SkP
+      - "sd_sly4_04" - from Skyrme model SLy4
+
+      See \ref Stoitsov03 and \ref Dobaczewski04 and
+      http://www.fuw.edu.pl/~dobaczew/thodri/thodri.html .
+  */
   class nucmass_sdnp : public nucmass_table {
     
   public:
@@ -55,6 +65,37 @@ namespace o2scl {
       int N;
       /// HFB energy minimum (MeV) 
       double ENERGY;
+      /*
+	///
+	double ACCURACY;
+	///
+	double S_2N;
+	///
+	double S_2P;
+	///
+	double LAM_N;
+	///
+	double LAM_P;
+	///
+	double LA2_N;
+	///
+	double LA2_P;
+	///
+	double DEL_N;
+	///
+	double DEL_P;
+	///
+	double RAD_N;
+	///
+	double RAD_P;
+	///
+	double BETA;
+	///
+	double Q20_N;
+	///
+	double Q20_P;
+       */
+
     };
   
     /// Return the type, \c "nucmass_sdnp".
@@ -94,7 +135,7 @@ namespace o2scl {
 
   };
   
-#ifndef DOXYGENP
+#ifndef DOXYGEN_NO_O2NS
 }
 #endif
 

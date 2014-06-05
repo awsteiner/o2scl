@@ -28,11 +28,20 @@
 #include <map>
 #include <o2scl/nucmass.h>
 
-#ifndef DOXYGENP
+#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
 #endif
 
   /** \brief Nuclear structure from Wang et al.
+
+      \todo Unfinished.
+
+      Models
+      - "WS3.2" in file "wlw10.o2" from \ref Wang10 
+      - "WS3.3" in file "wllw10.o2" from \ref Wang10b
+      - "WS3.6" in file "lwdw11.o2" from \ref Liu11
+      - "WS3_RBF" in file "wl11.o2" from \ref Wang11
+      - "WS4_RBF" in file "wlwm14.o2" from \ref Wang14 
   */
   class nucmass_wlw : public nucmass_table {
     
@@ -43,8 +52,7 @@ namespace o2scl {
     ~nucmass_wlw();
     
     /** \brief Entry structure
-	
-    */
+     */
     class entry {
 
     public:
@@ -53,7 +61,24 @@ namespace o2scl {
       int Z;
       /// Neutron number
       int N;
-      /// Desc
+      /*
+	/// Deformation
+	double Beta2;
+	/// Deformation
+	double Beta4;
+	/// Deformation
+	double Beta6;
+	/// Shell correction energy
+	double Esh;
+	double Dres;
+	/// Experimental binding energy (MeV)
+	double Eexp;
+	/// Theoretical binding energy (MeV)
+	double Eth;
+	/// Experimental mass excess (MeV)
+	double Mexp;
+       */
+      /// Theoretical mass excess (MeV)
       double Mth;
     };
   
@@ -94,7 +119,7 @@ namespace o2scl {
 
   };
   
-#ifndef DOXYGENP
+#ifndef DOXYGEN_NO_O2NS
 }
 #endif
 

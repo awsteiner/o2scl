@@ -28,15 +28,13 @@
 #include <map>
 #include <o2scl/nucmass.h>
 
-#ifndef DOXYGENP
+#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
 #endif
 
   /** \brief Nuclear structure from Delaroche et al. 
 
-      From J.-P. Delaroche, M. Girod, J. Libert, H. Goutte, S. Hilaire, 
-      S. P\'{e}ru, N. Pillet, and G.F. Bertsch, Phys. Rev. C 81
-      (2010) 014303.
+      See \ref Delaroche10 .
   */
   class nucmass_dglg : public nucmass_table {
     
@@ -163,7 +161,7 @@ namespace o2scl {
 
   };
   
-#ifndef DOXYGENP
+#ifndef DOXYGEN_NO_O2NS
 }
 #endif
 

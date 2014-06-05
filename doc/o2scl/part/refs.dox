@@ -30,10 +30,15 @@
     Thermostatistics.", 2nd edition.
 
     \anchor Delaroche10 Delaroche10:
-    <a href="">
+    <a href="http://dx.doi.org/10.1103/PhysRevC.81.014303">
     J.P. Delaroche, M. Girod, J. Libert, H. Goutte, S. Hilaire, 
-    S. Peru, N. Pillet, and G.F. Bertsch, </a>
+    S. Peru, N. Pillet, and G.F. Bertsch,</a>
     Phys. Rev. C \b 81 (2010) 014303.
+
+    \anchor Dobaczewski04 Dobaczewski04:
+    <a href="http://dx.doi.org/10.1063/1.1805914">
+    J. Dobaczewski, M.V. Stoitsov, W. Nazarewicz</a>,
+    AIP Conf. Proc. \b 726 (2004) 51.
 
     \anchor Duflo95 Duflo95:
     <a href="http://dx.doi.org/10.1103/PhysRevC.52.R23">
@@ -104,6 +109,12 @@
     M. Samyn, S. Goriely, M. Bender and J. M. Pearson</a>,
     Phys. Rev. C \b 70 (2004) 044309.
 
+    \anchor Stoitsov03 Stoitsov03:
+    <a href="http://dx.doi.org/10.1103/PhysRevC.68.054312">
+    M.V. Stoitsov, J. Dobaczewski, W. Nazarewicz, S. Pittel, and 
+    D.J. Dean</a>,
+    Phys. Rev. C \b 68 (2003) 054312.
+      
     \anchor Wang10 Wang10:
     N. Wang, M. Liu, X. Wu, 
     Phys. Rev. C 81 (2010) 044322.
@@ -112,7 +123,7 @@
     N. Wang, Z. Liang, M. Liu, X. Wu, 
     Phys. Rev. C 82 (2010) 044304.
 
-    \ancnor Wang11 Wang11:
+    \anchor Wang11 Wang11:
     N. Wang and M. Liu,
     Phys. Rev. C 84 (2011) 051303(R).
     
