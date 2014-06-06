@@ -47,9 +47,8 @@ namespace o2scl {
       by the requirement that the pressure is zero at saturation and
       by fixing the binding energy and incompressibility.
 
-      Note that the original reference appears to have a typo in 
-      the pressure. The \f$ 2/5 \f$ factor in front should be 
-      \f$ 1/5 \f$ .
+      Note that the original reference has a typo in the pressure in
+      Eq. 3. The \f$ 2/5 \f$ factor in front should be \f$ 1/5 \f$ .
 
       See Ref. \ref Hebeler13 .
   */
@@ -75,9 +74,11 @@ namespace o2scl {
 
     virtual ~eos_had_hlps() {};
 
-    /** \brief Fix 'alpha', 'eta' and 'gamma' from saturation properties
+    /** \brief Fix 'alpha', 'eta' and 'gamma' from saturation
+	properties
 
-	All inputs must be in \f$ \mathrm{fm}^{-1} \f$.
+	All inputs must be in \f$ \mathrm{fm}^{-1} \f$. This employs a
+	simple iterative method that may not always converge.
     */
     void fix_coeffs(double M, double B, double K);
 
