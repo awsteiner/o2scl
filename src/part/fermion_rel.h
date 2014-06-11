@@ -291,13 +291,13 @@ namespace o2scl {
     virtual int nu_from_n(fermion &f, double temper);
     
     /// The non-degenerate integrator
-    o2_shared_ptr<inte<funct> >::type nit;
+    o2_shared_ptr<inte<funct11> >::type nit;
 
     /// The degenerate integrator
-    o2_shared_ptr<inte<funct> >::type dit;
+    o2_shared_ptr<inte<funct11> >::type dit;
 
     /// The solver for calc_density()
-    o2_shared_ptr<root<funct> >::type density_root;
+    o2_shared_ptr<root<funct11> >::type density_root;
     
     /// Return string denoting type ("fermion_rel")
     virtual const char *type() { return "fermion_rel"; }

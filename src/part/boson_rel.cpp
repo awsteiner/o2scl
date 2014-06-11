@@ -42,7 +42,7 @@ boson_rel::boson_rel() {
 boson_rel::~boson_rel() {
 }
 
-void boson_rel::set_inte(inte<funct > &l_nit, inte<funct > &l_dit) {
+void boson_rel::set_inte(inte<funct11 > &l_nit, inte<funct11 > &l_dit) {
   nit=&l_nit;
   dit=&l_dit;
   return;
@@ -59,9 +59,18 @@ void boson_rel::calc_mu(boson &b, double temper) {
   }
   if (b.non_interacting==true) { b.nu=b.mu; b.ms=b.m; }
 
-  funct_mfptr<boson_rel> fd(this,&boson_rel::deg_density_fun);
-  funct_mfptr<boson_rel> fe(this,&boson_rel::deg_energy_fun);
-  funct_mfptr<boson_rel> fs(this,&boson_rel::deg_entropy_fun);
+  //funct_mfptr<boson_rel> fd(this,&boson_rel::deg_density_fun);
+  funct11 fd=std::bind(std::mem_fn<double(double)>
+		       (&boson_rel::deg_density_fun),
+		       this,std::placeholders::_1);
+  //funct_mfptr<boson_rel> fe(this,&boson_rel::deg_energy_fun);
+  funct11 fe=std::bind(std::mem_fn<double(double)>
+		       (&boson_rel::deg_energy_fun),
+		       this,std::placeholders::_1);
+  //funct_mfptr<boson_rel> fs(this,&boson_rel::deg_entropy_fun);
+  funct11 fs=std::bind(std::mem_fn<double(double)>
+		       (&boson_rel::deg_entropy_fun),
+		       this,std::placeholders::_1);
 
   b.n=dit->integ(fd,0.0,sqrt(pow(15.0*temper+b.nu,2.0)-b.ms*b.ms));
   b.n*=b.g/2.0/pi2;
@@ -82,7 +91,10 @@ void boson_rel::nu_from_n(boson &b, double temper) {
   bp=&b;
 
   nex=b.nu/temper;
-  funct_mfptr<boson_rel> mf(this,&boson_rel::solve_fun);
+  //  funct_mfptr<boson_rel> mf(this,&boson_rel::solve_fun);
+  funct11 mf=std::bind(std::mem_fn<double(double)>
+		       (&boson_rel::solve_fun),
+		       this,std::placeholders::_1);
   density_root->solve(nex,mf);
   b.nu=nex*temper;
   
@@ -102,8 +114,14 @@ void boson_rel::calc_density(boson &b, double temper) {
 
   nu_from_n(b,temper);
 
-  funct_mfptr<boson_rel> fe(this,&boson_rel::deg_energy_fun);
-  funct_mfptr<boson_rel> fs(this,&boson_rel::deg_entropy_fun);
+  //funct_mfptr<boson_rel> fe(this,&boson_rel::deg_energy_fun);
+  funct11 fe=std::bind(std::mem_fn<double(double)>
+		       (&boson_rel::deg_energy_fun),
+		       this,std::placeholders::_1);
+  //funct_mfptr<boson_rel> fs(this,&boson_rel::deg_entropy_fun);
+  funct11 fs=std::bind(std::mem_fn<double(double)>
+		       (&boson_rel::deg_entropy_fun),
+		       this,std::placeholders::_1);
 
   b.ed=dit->integ(fe,0.0,sqrt(pow(20.0*temper+b.nu,2.0)-b.ms*b.ms));
   b.ed*=b.g/2.0/pi2;
@@ -180,7 +198,10 @@ double boson_rel::entropy_fun(double u) {
 double boson_rel::solve_fun(double x) {
   double nden, yy;
 
-  funct_mfptr<boson_rel> fd(this,&boson_rel::deg_density_fun);
+  //funct_mfptr<boson_rel> fd(this,&boson_rel::deg_de//nsity_fun);
+  funct11 fd=std::bind(std::mem_fn<double(double)>
+		       (&boson_rel::deg_density_fun),
+		       this,std::placeholders::_1);
   
   bp->nu=T*x;
   nden=dit->integ(fd,0.0,sqrt(pow(20.0*T+bp->nu,2.0)-bp->ms*bp->ms));

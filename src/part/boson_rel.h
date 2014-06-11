@@ -79,23 +79,23 @@ namespace o2scl {
     virtual void nu_from_n(boson &b, double temper);
 
     /// Set degenerate and nondegenerate integrators
-    void set_inte(inte<funct> &l_nit, inte<funct> &l_dit);
+    void set_inte(inte<funct11> &l_nit, inte<funct11> &l_dit);
 
     /** \brief Set the solver for use in calculating the chemical
 	potential from the density */
-    void set_density_root(root<funct > &rp) {
+    void set_density_root(root<funct11 > &rp) {
       density_root=&rp;
       return;
     }
 
     /// The default solver for calc_density().
-    root_cern<funct > def_density_root;
+    root_cern<funct11 > def_density_root;
 
     /// Default nondegenerate integrator
-    inte_qagiu_gsl<funct > def_nit;
+    inte_qagiu_gsl<funct11 > def_nit;
 
     /// Default degenerate integrator
-    inte_qag_gsl<funct > def_dit;
+    inte_qag_gsl<funct11 > def_dit;
 
     /// Return string denoting type ("boson_rel")
     virtual const char *type() { return "boson_rel"; }
@@ -105,11 +105,11 @@ namespace o2scl {
 #ifndef DOXYGEN_NO_O2NS
 
     /// The non-degenerate integrator
-    inte<funct> *nit;
+    inte<funct11> *nit;
     /// The degenerate integrator
-    inte<funct> *dit;
+    inte<funct11> *dit;
     /// The solver for calc_density()
-    root<funct> *density_root;
+    root<funct11> *density_root;
 
     /// The pointer to the current particle being computed
     boson *bp;

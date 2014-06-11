@@ -580,9 +580,9 @@ namespace o2scl {
     double uN;
 
     /// The integrator
-    inte_qagiu_gsl<funct> it;
+    inte_qagiu_gsl<funct11> it;
     /// The solver
-    root_cern<funct> cr;
+    root_cern<funct11> cr;
     
     /// The function \f$ 4 \pi r^4 \rho(r) \f$
     double iand(double r);

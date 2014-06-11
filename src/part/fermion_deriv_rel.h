@@ -308,23 +308,23 @@ namespace o2scl {
 	inte_qagiu_gsl). The second integrator is for the degenerate
 	case, and should integrate between two finite values.
     */
-    void set_inte(inte<funct> &unit, inte<funct> &udit);
+    void set_inte(inte<funct11> &unit, inte<funct11> &udit);
 
     /** \brief Set the solver for use in calculating the chemical
 	potential from the density */
-    void set_density_root(root<funct> &rp) {
+    void set_density_root(root<funct11> &rp) {
       density_root=&rp;
       return;
     }
 
     /// The default integrator for the non-degenerate regime
-    inte_qagiu_gsl<funct> def_nit;
+    inte_qagiu_gsl<funct11> def_nit;
 
     /// The default integrator for the degenerate regime
-    inte_qag_gsl<funct> def_dit;
+    inte_qag_gsl<funct11> def_dit;
 
     /// The default solver for npen_density() and pair_density()
-    root_cern<funct> def_density_root;
+    root_cern<funct11> def_density_root;
     
     /// Return string denoting type ("fermion_deriv_rel")
     virtual const char *type() { return "fermion_deriv_rel"; };
@@ -344,13 +344,13 @@ namespace o2scl {
     double T;
 
     /// The integrator for non-degenerate fermions
-    inte<funct> *nit;
+    inte<funct11> *nit;
 
     /// The integrator for degenerate fermions
-    inte<funct> *dit;
+    inte<funct11> *dit;
 
     /// The solver for calc_density() and pair_density()
-    root<funct> *density_root;
+    root<funct11> *density_root;
 
     /** \name The integrands, as a function of \f$ u=k/T \f$, for 
 	non-degenerate integrals
