@@ -37,10 +37,9 @@ double testfun(double x) {
 int main(void) {
   test_mgr t;
   t.set_output_level(2);
-  int vp=0;
   
-  funct_fptr tf(testfun);
-  deriv_cern<funct> de;
+  funct11 tf=testfun;
+  deriv_cern<> de;
   
   cout.setf(ios::scientific);
   cout.precision(10);

@@ -110,7 +110,7 @@ namespace o2scl {
   /** \brief Set the one-dimensional integration object with 
       index \c i.
   */
-  int set_oned_inte(inte<funct> &it, size_t i) {
+  int set_oned_inte(inte<funct11> &it, size_t i) {
 
     if (i>=max_dim) {
       O2SCL_ERR("Index >= max_dim in inte_multi_comp::set_oned_inte().",
@@ -121,7 +121,7 @@ namespace o2scl {
 
       // Create new space
       nint=i+1;
-      iptrs=new inte<funct> *[nint];
+      iptrs=new inte<funct11> *[nint];
       tptrs=new bool[nint];
 
     } else if (i>nint-1) {
@@ -129,8 +129,8 @@ namespace o2scl {
       // Create new space and copy old info over
       size_t nint_new=i+1;
 
-      inte<funct> **iptrs_new=
-	new inte<funct> *[nint_new];
+      inte<funct11> **iptrs_new=
+	new inte<funct11> *[nint_new];
       bool *tptrs_new=new bool[nint_new];
 
       for(size_t j=0;j<nint;j++) {
@@ -183,8 +183,12 @@ namespace o2scl {
     ndim=n;
     size_t ix=0;
       
-    funct_mfptr_param<inte_gen_comp<func_t,lfunc_t,ufunc_t,vec_t>,size_t> 
-    fmn(this,&inte_gen_comp<func_t,lfunc_t,ufunc_t,vec_t>::odfunc,ix);
+    funct11 fmn=
+    std::bind(std::mem_fn<double(double,size_t &)>
+	      (&inte_gen_comp<func_t,lfunc_t,ufunc_t,vec_t>::odfunc),
+	      this,std::placeholders::_1,ix);
+    //funct_mfptr_param<inte_gen_comp<func_t,lfunc_t,ufunc_t,vec_t>,size_t> 
+    //fmn(this,&inte_gen_comp<func_t,lfunc_t,ufunc_t,vec_t>::odfunc,ix);
     double res=iptrs[0]->integ(fmn,lower(0,c),upper(0,c));
       
     return res;
@@ -211,8 +215,14 @@ namespace o2scl {
     } else {
       size_t ix_next=ix+1;
       res=(*mf)(ix_next,*cx);
-      funct_mfptr_param<inte_gen_comp<func_t,lfunc_t,ufunc_t,vec_t>,size_t> 
-	fmn(this,&inte_gen_comp::odfunc,ix_next);
+      
+      funct11 fmn=
+	std::bind(std::mem_fn<double(double,size_t &)>
+		  (&inte_gen_comp<func_t,lfunc_t,ufunc_t,vec_t>::odfunc),
+		  this,std::placeholders::_1,ix_next);
+      //funct_mfptr_param<inte_gen_comp<func_t,lfunc_t,ufunc_t,vec_t>,size_t> 
+      //fmn(this,&inte_gen_comp::odfunc,ix_next);
+
       res*=iptrs[ix]->integ(fmn,(*lowerp)(ix_next,*cx),
 			    (*upperp)(ix_next,*cx));
     }
@@ -223,7 +233,7 @@ namespace o2scl {
   size_t nint;
 
   /// Pointers to the integration objects
-  inte<funct> **iptrs;
+  inte<funct11> **iptrs;
 
   /// Flag indicating if integration object has been set
   bool *tptrs;

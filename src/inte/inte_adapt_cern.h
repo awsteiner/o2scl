@@ -70,7 +70,7 @@ namespace o2scl {
       - There is a fixme entry in the code which could be resolved.
       - Output the point where most subdividing was required?
   */
-  template<class func_t=funct, size_t nsub=100> 
+  template<class func_t=funct11, size_t nsub=100> 
     class inte_adapt_cern : public inte<func_t> {
 
 #ifndef DOXYGEN_INTERNAL

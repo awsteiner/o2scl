@@ -65,9 +65,9 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
 
-  inte_qagil_gsl<funct> it;
-  funct_fptr tf(&sin_recip);
-  funct_fptr tf2(&exponential);
+  inte_qagil_gsl<funct11> it;
+  funct11 tf=sin_recip;
+  funct11 tf2=exponential;
   
   double ans, exact;
 
@@ -136,8 +136,8 @@ int main(void) {
   size_t limit=512;
   double alpha=1.0;
 	
-  inte_qagil_gsl<funct> Q;
-  funct_fptr_param<double> f(defn_gamma,alpha);
+  inte_qagil_gsl<funct11> Q;
+  funct11 f=std::bind(defn_gamma,std::placeholders::_1,alpha);
 	
   // setup GSL data
   gsl_integration_workspace *work=gsl_integration_workspace_alloc(limit);

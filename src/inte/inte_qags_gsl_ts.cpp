@@ -55,7 +55,7 @@ double log_recip_exact(double alpha) {
 int main(void) {
   test_mgr t;
   t.set_output_level(2);
-  inte_qags_gsl<funct> it;
+  inte_qags_gsl<funct11> it;
 
   double ans,exact;
 
@@ -65,8 +65,8 @@ int main(void) {
   cout << "inte_qags_gsl:" << endl;
   cout << endl;
 
-  double alf=1.0,herr;
-  funct_fptr_param<double> tf3(log_over_sqrt,alf);
+  double alf=1.0, herr;
+  funct11 tf3=std::bind(log_over_sqrt,std::placeholders::_1,alf);
 
   exact=-4.0;
   it.verbose=1;

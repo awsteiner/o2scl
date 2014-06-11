@@ -36,11 +36,11 @@ double testfun(double tx, double &a) {
 
 int main(void) {
   double a=3.0, calc, exact, diff;
-  inte_gauss_cern<funct> cg;
+  inte_gauss_cern<funct11> cg;
   test_mgr t;
   t.set_output_level(2);
 
-  funct_fptr_param<double> tf(testfun,a);
+  funct11 tf=std::bind(testfun,std::placeholders::_1,a);
 
   cout.setf(ios::scientific);
   cout.precision(10);

@@ -84,9 +84,10 @@ int main(void) {
   cout << "inte_qagil_gsl:" << endl;
   cout << endl;
 
-  funct_fptr tf(&gaussian), tf2(&sin_recip);
+  funct11 tf=gaussian;
+  funct11 tf2=sin_recip;
   
-  inte_qagiu_gsl<funct> it;
+  inte_qagiu_gsl<funct11> it;
 
   double ans, exact;
 
@@ -142,8 +143,8 @@ int main(void) {
   size_t limit=512;
   double alpha=1.0;
 	
-  inte_qagiu_gsl<funct> Q;
-  funct_fptr_param<double> f(defn_laguerre,alpha);
+  inte_qagiu_gsl<funct11> Q;
+  funct11 f=std::bind(defn_laguerre,std::placeholders::_1,alpha);
 	
   // setup GSL data
   gsl_integration_workspace*

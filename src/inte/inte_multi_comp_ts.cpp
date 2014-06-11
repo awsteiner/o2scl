@@ -49,10 +49,10 @@ int main(void) {
   inte_multi_comp<multi_funct<> > ci4;
   
   /// The individual integration objects
-  inte_qag_gsl<funct> gl4a;
-  inte_qag_gsl<funct> gl4b;
-  inte_qag_gsl<funct> gl4c;
-  inte_qag_gsl<funct> gl4d;
+  inte_qag_gsl<funct11> gl4a;
+  inte_qag_gsl<funct11> gl4b;
+  inte_qag_gsl<funct11> gl4c;
+  inte_qag_gsl<funct11> gl4d;
 
   /// Set the 1-d objects in the integrator
   ci4.set_oned_inte(gl4a,0);

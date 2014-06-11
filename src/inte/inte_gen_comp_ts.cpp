@@ -68,13 +68,13 @@ int main(void) {
   typedef inte_gen_comp<multi_funct<>,
     multi_funct<>,multi_funct<>,ubvector> ior_type;
 
-  inte_qag_gsl<funct > gl1;
-  inte_qag_gsl<funct > gl2;
-  inte_qag_gsl<funct > gl3;
-  inte_qag_gsl<funct > gl4;
+  inte_qag_gsl<funct11 > gl1;
+  inte_qag_gsl<funct11 > gl2;
+  inte_qag_gsl<funct11 > gl3;
+  inte_qag_gsl<funct11 > gl4;
   
   int vp=0;
-  inte<funct > **ip;
+  inte<funct11 > **ip;
   double res;
   test_mgr t;
   t.set_output_level(2);

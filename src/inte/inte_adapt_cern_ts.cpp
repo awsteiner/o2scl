@@ -38,12 +38,12 @@ double testfun(double tx, double &a) {
 
 int main(void) {
   double a, calc, exact, diff, ei;
-  inte_adapt_cern<funct> cg;
+  inte_adapt_cern<funct11> cg;
   test_mgr t;
   t.set_output_level(2);
   
   a=0.01;
-  funct_fptr_param<double> tf(testfun,a);
+  funct11 tf=std::bind(testfun,std::placeholders::_1,a);
 
   cout.setf(ios::scientific);
   cout.precision(10);

@@ -53,7 +53,7 @@ namespace o2scl {
       while other children of inte_singular_gsl do not.
       \endcomment
   */
-  template<class func_t=funct> class inte_qags_gsl : 
+  template<class func_t=funct11> class inte_qags_gsl : 
   public inte_singular_gsl<func_t> {
     
   public:

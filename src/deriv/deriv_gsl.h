@@ -107,7 +107,7 @@ namespace o2scl {
 
       \future Include the forward and backward GSL derivatives?
   */
-  template<class func_t=funct> class deriv_gsl : 
+  template<class func_t=funct11> class deriv_gsl : 
   public deriv_base<func_t> {
     
   public:
@@ -195,8 +195,8 @@ namespace o2scl {
       and third derivatives
   */
   virtual int deriv_err_int
-  (double x, funct &func, double &dfdx, double &err) {
-    return deriv_tlate<funct>(x,func,dfdx,err);
+  (double x, funct11 &func, double &dfdx, double &err) {
+    return deriv_tlate<funct11>(x,func,dfdx,err);
   }
     
   /** \brief Compute derivative using 5-point rule

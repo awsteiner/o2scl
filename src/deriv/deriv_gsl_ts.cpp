@@ -50,13 +50,13 @@ int main(void) {
   cout.setf(ios::scientific);
   cout.precision(10);
   
-  deriv_gsl<funct> de;
+  deriv_gsl<funct11> de;
   
   // Demonstrate that one can instantiate the class with
   // a user-defined type as well
   deriv_gsl<tempc> de2;
-  
-  funct_fptr tf(testfun);
+
+  funct11 tf=testfun;
 
   de.h=1.0e-4;
 

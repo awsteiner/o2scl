@@ -32,10 +32,6 @@ double testfun(double tx);
 double testfun2(double tx);
 double testfun3(double tx);
 
-funct_fptr tf(testfun);
-funct_fptr tf2(testfun2);
-funct_fptr tf3(testfun3);
-
 double testfun(double tx) {
   return exp(-tx)/(tx-2.0);
 }
@@ -50,10 +46,13 @@ double testfun3(double tx) {
 
 int main(void) {
   double a=3.0, calc, exact, diff;
-  inte_cauchy_cern<funct> cc;
+  inte_cauchy_cern<funct11> cc;
   test_mgr t;
   t.set_output_level(2);
 
+  funct11 tf=testfun;
+  funct11 tf2=testfun2;
+  funct11 tf3=testfun3;
 
   cout.setf(ios::scientific);
   cout.precision(10);

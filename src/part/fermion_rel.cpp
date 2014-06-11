@@ -30,9 +30,9 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-fermion_rel::fermion_rel() : nit(new inte_qagiu_gsl<>), 
-			     dit(new inte_qag_gsl<>), 
-			     density_root(new root_cern<>) {
+fermion_rel::fermion_rel() : nit(new inte_qagiu_gsl<funct>), 
+			     dit(new inte_qag_gsl<funct>), 
+			     density_root(new root_cern<funct>) {
   deg_limit=2.0;
   
   exp_limit=200.0;

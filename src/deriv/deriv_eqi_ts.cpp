@@ -36,7 +36,7 @@ double testfun(double x) {
 }
 
 int main(void) {
-  deriv_eqi<funct> de;
+  deriv_eqi<funct11> de;
   test_mgr t;
   t.set_output_level(2);
   int i;
@@ -45,7 +45,7 @@ int main(void) {
   cout.setf(ios::scientific);
   cout.precision(12);
   
-  funct_fptr tf(testfun);
+  funct11 tf=testfun;
   
   de.xoff=0.0;
 

@@ -59,10 +59,10 @@ int main(void) {
   t.set_output_level(2);
   
   double a=3.0, calc;
-  inte_qawc_gsl<funct> cc;
+  inte_qawc_gsl<funct11> cc;
 
-  funct_fptr tf(exponential);
-  funct_fptr tf2(logp1_fun);
+  funct11 tf=exponential;
+  funct11 tf2=logp1_fun;
 
   cout << "inte_qawc_gsl: " << endl;
   cout << endl;
@@ -94,8 +94,8 @@ int main(void) {
 
   size_t limit=512;
 	
-  inte_qawc_gsl<funct> Q;
-  funct_fptr f(recip_x3);
+  inte_qawc_gsl<funct11> Q;
+  funct11 f=recip_x3;
 	
   double aa=-1, b=5, c=0;
   Q.s=c;

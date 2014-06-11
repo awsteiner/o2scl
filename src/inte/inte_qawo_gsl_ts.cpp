@@ -72,11 +72,11 @@ int main(void) {
   cout << "inte_qawo_gsl:\n" << endl;
 
   double a=3.0, calc, exact, diff;
-  inte_qawo_gsl_sin<funct> cs;
-  inte_qawo_gsl_cos<funct> cc;
+  inte_qawo_gsl_sin<funct11> cs;
+  inte_qawo_gsl_cos<funct11> cc;
   
-  funct_fptr f_odd(defn_odd);
-  funct_fptr f_even(defn_even);
+  funct11 f_odd=defn_odd;
+  funct11 f_even=defn_even;
 
   calc=cs.integ(f_odd,0.0,1.0);
   t.test_rel(calc,0.301169,1.0e-5,"inte_qawo_gsl 2");
@@ -110,8 +110,8 @@ int main(void) {
 
   size_t limit=512, levels=10;
   
-  inte_qawo_gsl_cos<funct> Qcos;
-  inte_qawo_gsl_sin<funct> Qsin;
+  inte_qawo_gsl_cos<funct11> Qcos;
+  inte_qawo_gsl_sin<funct11> Qsin;
 	
   // setup GSL data
   gsl_integration_workspace *work=gsl_integration_workspace_alloc(limit);
