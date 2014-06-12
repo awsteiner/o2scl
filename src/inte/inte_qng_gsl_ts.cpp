@@ -63,7 +63,7 @@ int main(void) {
   // order parameter
   int n;	
 
-  inte_qng_gsl<funct> Q;
+  inte_qng_gsl<funct11> Q;
 
   // setup GSL data
   size_t neval;
@@ -88,7 +88,8 @@ int main(void) {
     
     for(size_t i=0;i<7;i++) {
       
-      funct_fptr_param<int> f(legendre,n);
+      funct11 f=std::bind(legendre,std::placeholders::_1,n);
+      //funct_fptr_param<int> f(legendre,n);
       
       Q.integ_err(f,-1.0,1.0,o2scl_res,o2scl_err);
     

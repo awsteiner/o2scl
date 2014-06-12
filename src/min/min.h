@@ -38,10 +38,8 @@ namespace o2scl {
 #endif
   
   /** \brief One-dimensional minimization [abstract base]
-
-      \future Add a class for the quad_golden algorithm from GSL.
-  */
-  template<class func_t=funct, class dfunc_t=func_t> class min_base {
+   */
+  template<class func_t=funct11, class dfunc_t=func_t> class min_base {
     
   public:
   

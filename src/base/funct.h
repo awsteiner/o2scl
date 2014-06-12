@@ -38,12 +38,10 @@
 namespace o2scl {
 #endif
 
-#if !defined (O2SCL_NO_CPP11) || defined (DOXYGENP)
-  
   /// One-dimensional function typedef (C++11 version)
   typedef std::function<double(double)> funct11;
-  
-#endif
+
+#ifdef O2SCL_NEVER_DEFINED
   
   /** \brief One-dimensional function [abstract base]
       
@@ -511,7 +509,7 @@ namespace o2scl {
 
   };
 
-#if !defined (O2SCL_NO_CPP11) || defined (DOXYGENP)
+#endif
 
   /** \brief One-dimensional function from a string (C++11 version)
       
@@ -637,8 +635,6 @@ namespace o2scl {
 #endif
 
   };
-
-#endif
 
 #ifndef DOXYGEN_NO_O2NS
 }

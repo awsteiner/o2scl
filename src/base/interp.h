@@ -77,8 +77,8 @@ namespace o2scl {
       allow the user to use them.
       \endcomment
   */
-  template<class vec_t, class vec2_t=vec_t> class interp_base : 
-  public funct {
+  template<class vec_t, class vec2_t=vec_t> class interp_base {
+    //public funct {
 
 #ifdef O2SCL_NEVER_DEFINED
   }{

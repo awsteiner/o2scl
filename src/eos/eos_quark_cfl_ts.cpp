@@ -32,18 +32,16 @@ using namespace o2scl_const;
 typedef boost::numeric::ublas::vector<double> ubvector;
 
 int main(void) {
+  cout.setf(ios::scientific);
+
   test_mgr t;
   t.set_output_level(1);
-
-  cout.setf(ios::scientific);
 
   {
     // Various initializations
 
     double qq1, qq2, qq3, y[3], rr1, rr2, rr3, ss1, ss2, ss3;
     int i;
-
-    cout.setf(ios::scientific);
 
     eos_quark_njl nj;
     eos_quark_njl njt;
@@ -60,7 +58,7 @@ int main(void) {
     quark s3(nj.strange_default_mass,6.0);
   
     mroot_hybrids<mm_funct<> > nd;
-    inte_qng_gsl<funct> gl, gl2;
+    inte_qng_gsl<funct11> gl, gl2;
     thermo th, th2, th3;
   
     nd.tol_rel/=100.0;
@@ -78,7 +76,7 @@ int main(void) {
     cfl.set_thermo(th3);
     cfl.set_parameters();
     
-    inte_qng_gsl<funct> ngnew;
+    inte_qng_gsl<funct11> ngnew;
 
     cfl.set_inte(ngnew);
 

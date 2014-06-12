@@ -159,7 +159,7 @@ void fermion_eval_thermo::massless_calc_mu(fermion &f, double temper) {
   return;
 }
 
-double fermion_eval_thermo::massless_fun::operator()(double x) const {
+double fermion_eval_thermo::massless_fun::operator()(double x) {
   double fm2;
   
   fm2=gsl_sf_fermi_dirac_int(2,x/(temper_));
@@ -172,7 +172,10 @@ void fermion_eval_thermo::massless_calc_density(fermion &f, double temper) {
   
   x=f.ms+temper;
   massless_fun mf(f,temper);
-  massless_root->solve(x,mf);
+  funct11 mf2=std::bind(std::mem_fn<double(double)>
+			(&massless_fun::operator()),
+			&mf,std::placeholders::_1);
+  massless_root->solve(x,mf2);
   f.nu=x;
 
   massless_calc_mu(f,temper);

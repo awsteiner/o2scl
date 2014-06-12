@@ -465,10 +465,10 @@ namespace o2scl {
   } ej_parms;
 
   /// The default derivative object
-  deriv_gsl<funct> def_deriv;
+  deriv_gsl<funct11> def_deriv;
   
   /// Set the derivative object
-  int set_deriv(deriv_base<funct> &de) {
+  int set_deriv(deriv_base<funct11> &de) {
     dptr=&de;
     return 0;
   }
@@ -486,8 +486,11 @@ namespace o2scl {
     ejp.x=&x;
     ejp.y=&y;
     
-    funct_mfptr_param<jacobian_exact,ej_parms> 
-    dfnp(this,&jacobian_exact::dfn,ejp);
+    funct11 dfnp=std::bind(std::mem_fn<double(double,ej_parms &)>
+			   (&jacobian_exact::dfn),
+			   this,std::placeholders::_1,ejp);
+    //funct_mfptr_param<jacobian_exact,ej_parms> 
+    //dfnp(this,&jacobian_exact::dfn,ejp);
       
     for (size_t j=0;j<nx;j++) {
       ejp.xj=j;
@@ -507,7 +510,7 @@ namespace o2scl {
   protected:
 
   /// Pointer to the derivative object
-  deriv_base<funct> *dptr;
+  deriv_base<funct11> *dptr;
     
   /// Function for the derivative object
   double dfn(double x, ej_parms &ejp) {

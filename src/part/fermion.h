@@ -336,7 +336,7 @@ namespace o2scl {
     //@}
     
     /** \brief Set the solver for use in massless_calc_density() */ 
-    void set_massless_root(root<funct> &rp) {
+    void set_massless_root(root<funct11> &rp) {
       massless_root=&rp;
       return;
     }
@@ -346,7 +346,7 @@ namespace o2scl {
 	We default to a solver of type root_cern here since we
 	don't have a bracket or a derivative.
     */
-    root_cern<funct> def_massless_root;
+    root_cern<funct11> def_massless_root;
 
     /// Return string denoting type ("fermion_eval_thermo")
     virtual const char *type() { return "fermion_eval_thermo"; }
@@ -376,10 +376,10 @@ namespace o2scl {
   protected:
     
     /// A pointer to the solver for massless fermions
-    root<funct> *massless_root;
+    root<funct11> *massless_root;
     
     /// The function to solve for massless fermions
-    class massless_fun : public funct {
+    class massless_fun {
       
     protected:
       
@@ -397,7 +397,7 @@ namespace o2scl {
       /** \brief Solve for the density for 
 	  \ref fermion_eval_thermo::massless_calc_density()
       */
-      double operator()(double x) const;
+      double operator()(double x);
 
     };
 

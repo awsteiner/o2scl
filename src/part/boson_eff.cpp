@@ -161,10 +161,10 @@ void boson_eff::calc_mu(boson &b, double temper) {
       xx[0]=sqrt(parma)*exp(1.0-psi);
     }
     
-    funct11 mfs=std::bind(std::mem_fn<double(double,double)>
+    funct11 mfs=std::bind(std::mem_fn<double(double,double &)>
 			  (&boson_eff::solve_fun),
 			  this,std::placeholders::_1,psi);
-
+    
     int psi_root_err=psi_root->solve(xx[0],mfs);
     if (psi_root_err!=0) {
       O2SCL_ERR("psi_root failed in nepn_mroot().",psi_root_err);

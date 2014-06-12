@@ -46,7 +46,8 @@ namespace o2scl {
 
       \future Give functions for mean, median, mode, variance, etc?
    */
-  class prob_dens_func : public funct {
+  class prob_dens_func {
+    //: public funct {
     
   public:
     

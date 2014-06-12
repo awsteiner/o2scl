@@ -114,8 +114,9 @@ int main(void) {
   size_t limit=512;
   double alpha=-0.5;
 	
-  inte_qags_gsl<funct> Q;
-  funct_fptr_param<double> f(log_recip,alpha);
+  inte_qags_gsl<funct11> Q;
+  //funct_fptr_param<double> f(log_recip,alpha);
+  funct11 f=std::bind(log_recip,std::placeholders::_1,alpha);
 	
   // setup GSL data
   gsl_integration_workspace*

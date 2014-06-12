@@ -50,7 +50,7 @@ namespace eos_quark_njl_ts_ns {
   thermo th;
   int dtype;
   
-  inte_qag_gsl<funct> gl;
+  inte_qag_gsl<funct11> gl;
   
   double temper=0.01;
 
@@ -100,7 +100,7 @@ int main(void) {
   int ret=0;
   
   mroot_hybrids<mm_funct<> > nd;
-  deriv_gsl<funct> df;
+  deriv_gsl<funct11> df;
   int vpx=0;
 
   cout.setf(ios::scientific);
@@ -114,7 +114,7 @@ int main(void) {
   
   mm_funct_mfptr<eos_quark_njl> fqq(&nj,&eos_quark_njl::gapfunqq);
   mm_funct_mfptr<eos_quark_njl> fms(&nj,&eos_quark_njl::gapfunms);
-  funct_fptr fderiv(omfun);
+  funct11 fderiv=omfun;
   
   cout << "Feynman-Hellman theorem" << endl;
   cout << "Verify that (partial Omega)/(Partial qqu) = 0" << endl;

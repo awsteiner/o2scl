@@ -45,9 +45,8 @@ int main(void) {
   
   cout.setf(ios::scientific);
   
-  min_cern<funct> mb;
-  
-  funct_fptr mf(minfun);
+  min_cern<funct11> mb;
+  funct11 mf=minfun;
 
   x=0.2;
   mb.min_bkt(x,-1.0,1.0,min,mf);

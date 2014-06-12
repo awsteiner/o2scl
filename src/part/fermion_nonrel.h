@@ -137,7 +137,7 @@ namespace o2scl {
 #ifndef DOXYGEN_NO_O2NS
 
     /// Solver to compute chemical potential from density
-    root<funct > *density_root;
+    root<funct11> *density_root;
     
     /// Function to compute chemical potential from density
     double solve_fun(double x);

@@ -62,9 +62,9 @@ int main(void) {
   t.set_output_level(2);
 
   double x, min;
-  funct_fptr mf(minfun);
-  funct_fptr mf2(minfun2);
-  min_brent_gsl<funct> mb;
+  funct11 mf=minfun;
+  funct11 mf2=minfun2;
+  min_brent_gsl<funct11> mb;
   
   for(size_t k=0;k<2;k++) {
 

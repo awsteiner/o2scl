@@ -49,7 +49,8 @@ namespace o2scl {
 
       \future Move non-template functions to .cpp file.
   */
-  class cheb_approx : public funct {
+  class cheb_approx {
+    //: public funct {
 
   public:
 
@@ -74,12 +75,12 @@ namespace o2scl {
 
   public:
     
-  cheb_approx() : funct() {
+    cheb_approx() {
       init_called=false;
     }
     
     /// Copy constructor
-  cheb_approx(const cheb_approx &gc) : funct() {
+    cheb_approx(const cheb_approx &gc) {
       order=gc.order;
       init_called=gc.init_called;
       c=gc.c;

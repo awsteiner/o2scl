@@ -76,7 +76,11 @@ int main(void) {
 
   // Show how to use the eval() function to represent
   // the Chebyshev approximation as a funct object
-  funct_cmfptr<cheb_approx> fmn(&gc,&cheb_approx::eval);
+  //funct_cmfptr<cheb_approx> fmn(&gc,&cheb_approx::eval);
+  funct11 fmn=std::bind(std::mem_fn<double(double) const>
+			(&cheb_approx::eval),&gc,
+			std::placeholders::_1);
+  
   double y;
   for(double x=0.0;x<1.01;x+=0.2) {
     y=fmn(x);

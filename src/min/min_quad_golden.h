@@ -102,7 +102,7 @@ namespace o2scl {
       \future Take common elements of this and min_brent and
       move to a generic GSL minimizer type? 
   */
-  template<class func_t=funct> class min_quad_golden : 
+  template<class func_t=funct11> class min_quad_golden : 
   public min_bkt_base<func_t> {
 	
 #ifndef DOXYGEN_INTERNAL
