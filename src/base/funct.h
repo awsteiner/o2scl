@@ -28,9 +28,9 @@
 */
 
 #include <string>
-#ifndef O2SCL_NO_CPP11
 #include <functional>
-#endif
+
+#include <boost/numeric/ublas/vector.hpp>
 
 #include <o2scl/fparser.h>
 
@@ -38,7 +38,7 @@
 namespace o2scl {
 #endif
 
-  /// One-dimensional function typedef (C++11 version)
+  /// One-dimensional function typedef
   typedef std::function<double(double)> funct11;
 
 #ifdef O2SCL_NEVER_DEFINED
@@ -393,7 +393,7 @@ namespace o2scl {
       par[0]=o2scl_const::pi;
       f.set_parms(par);
       for(double r=1.0;r<=2.0;r+=0.1) {
-        cout << f(x) << endl;
+        cout << f(r) << endl;
       }
       \endcode
       will print out the area of circles having radii between 1 and 2.
@@ -511,7 +511,7 @@ namespace o2scl {
 
 #endif
 
-  /** \brief One-dimensional function from a string (C++11 version)
+  /** \brief One-dimensional function from a string
       
       For example,
       \code
@@ -529,6 +529,8 @@ namespace o2scl {
     
   public:
     
+    typedef boost::numeric::ublas::vector<double> ubvector;
+
     /** \brief Specify the string and the parameters
      */
     funct11_string(std::string formula, std::string var, 
@@ -542,16 +544,13 @@ namespace o2scl {
 	fpw.Parse(formula,all);
 	st_np=np;
 	st_parms=parms;
-	arr=new double[np];
+	arr.resize(np);
       }
       st_form=formula;
       st_var=var;
     }
 
     virtual ~funct11_string() {
-      if (st_np>0) {
-	delete[] arr;
-      }
     };
 
   
@@ -568,7 +567,7 @@ namespace o2scl {
 	fpw.Parse(formula,all);
 	st_np=np;
 	st_parms=parms;
-	arr=new double[np];
+	arr.resize(np);
       }
       st_form=formula;
       st_var=var;
@@ -610,10 +609,10 @@ namespace o2scl {
     mutable FunctionParser fpw;
 
     /// The number of parameters
-    int st_np;
+    size_t st_np;
 
     /// Storage for the \ref fpw call.
-    double *arr;
+    ubvector arr;
 
     /// The formula
     std::string st_form;

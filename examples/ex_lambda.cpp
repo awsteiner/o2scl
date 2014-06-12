@@ -25,10 +25,6 @@
    -------------------------------------------------------------------
    Demonstrate how to use standard library and lambda function objects
    with O2scl.
-
-   Note that this requires careful usage of gcc flags. For example,
-   on my version, I have to use '-std=c++0x' and one can't use
-   '-ansi'.
  
 */
 #include <iostream>
@@ -99,10 +95,7 @@ int main(void) {
     t.test_rel(a,asin(0.1),1.0e-12,"Member function with parameter");
   }
 
-#ifdef O2SCL_LAMBDA_INLINE
-
-  // Inline specification of the function (this doesn't compile
-  // on versions of gcc earlier than 4.5)
+  // Inline specification of the function
   {
     a=-0.9, b=0.9;
     std::function<double(double)> f=
@@ -111,8 +104,7 @@ int main(void) {
     t.test_rel(a,asin(0.1),1.0e-12,"Inline 1");
   }
 
-  // A bit of a shorter notation (this doesn't compile on versions of
-  // gcc earlier than 4.5)
+  // A bit of a shorter notation 
   {
     a=-0.9, b=0.9;
     std::function<double(double)> f=[](double x){ return sin(x)-0.1; };
@@ -124,8 +116,6 @@ int main(void) {
     grb.solve_bkt(a,b,f2);
     t.test_rel(a,asin(0.1),1.0e-12,"Inline 3");
   }
-
-#endif
 
   t.report();
   return 0;

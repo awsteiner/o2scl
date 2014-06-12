@@ -3,19 +3,13 @@
     \section lambda_fun_sect Lambda functions and std::mem_fn
 
     Functions are passed to numerical routines using template-based
-    function classes, sometimes called "functors". Newer C++ compilers
-    (with the C++11 standard) now allow for much easier manipulation
-    of function objects. By default, C++11 support is included and \o2
+    function classes, sometimes called "functors". \o2
     classes which accept functions as parameters generally default to
-    types built upon <tt>std::function</tt>. If If the flag
-    <tt>--disable-cpp11</tt> is sent to the <tt>configure</tt> script,
-    then the old \o2 function objects will be used instead. If the
+    types built upon <tt>std::function</tt>. If the
     user would like to use Boost function objects instead, these may
     also be used, simply by specifying the Boost function type in the
     template parameter. 
 
-    The function \ref o2scl::lib_settings_class::cpp11_support() will
-    let you know if \o2 was compiled with C++11 support (the default).
     Some template aliases are defined to save typing of the function
     types, e.g.
     - \ref o2scl::funct11 : One function of one variable (used in 
@@ -32,10 +26,6 @@
     - \ref o2scl::jac_funct11 : Jacobian function for solver and
       fitting classes
 
-    \note \o2, by default, assumes that inline function specifications
-    and template typedefs (as supported by gcc in versions 4.5 and
-    later) are not supported.
-
     \section ex_lambda_sect Function object example
 
     The example below demonstrates how C++11
@@ -46,48 +36,9 @@
     \skip Example:
     \until End of example
     
-    \section old_funct_sect Function objects for compilers without C++ support
-
-    \o2 includes several classes which allow the user to pass functions
-    as arguments to classes based on numerical routines:
-    - \ref o2scl::funct : One function of one variable (used in 
-    one-dimensional solver and minimizer classes, derivative classes,
-    integration classes, etc.)
-    - \ref o2scl::multi_funct : One function of several variables (used
-    in minimizer and integration classes)
-    - \ref o2scl::mm_funct : \c n functions of \c n variables (used in 
-    solver classes)
-    - \ref o2scl::fit_funct : One function of one variable with \c n 
-    fitting parameters
-    - \ref o2scl::gen_fit_funct : Compute deviations and Jacobian given 
-    a parameter set for least-squared fitting
-    - \ref o2scl::ode_funct : \c n derivatives as a function of \c n function
-    values and the value of the independent variable
-    - \ref o2scl::jac_funct : Jacobian function for solver and fitting classes
-    - \ref o2scl::ool_hfunct : Hessian product for constrained minimization
-
-    The class name suffixes denote children of a generic function type
-    which are created using different kinds of inputs:
-    - _fptr: function pointer for a static or global function
-    - _gsl: GSL-like function pointer 
-    - _mfptr: function pointer template for a class member function
-    - _cmfptr: function pointer template for a class member function which
-    is const
-    - _strings: functions specified using strings, e.g. "x^2-2"
-
-    See the \ref ex_fptr_sect and the \ref ex_mroot_sect which
-    provide detailed examples of how functions can be specified 
-    to classes through these function objects.
-
-    \warning The \o2 function objects store pointers to functions, and
-    thus become invalid if the object they were pointing to is
-    destroyed.
-
     \section fptr_details_sect General comments about function objects
 
-    There is a small overhead associated with the indirection,
-    either in the case of the C++11 lambda functions and also
-    with the \o2 function objects: a "user
+    There is a small overhead associated with the indirection: a "user
     class" accesses the function class which then calls function which
     was specified in the constructor of the function class. In many
     problems, the overhead associated with the indirection is small.
@@ -95,17 +46,6 @@
     from the function class and thus the user class will make a direct
     virtual function call. To eliminate the overhead entirely, one can
     specify a new type for the template parameter in the user class.
-
-    Virtual functions can be specified using function objects as well.
-    For example, if \ref o2scl::mroot_cern is used to solve a set of
-    equations specified as
-    \include fptr_doc.cpp
-    Then the solver will solve the member function in the derived
-    type, not the parent type. 
-
-    Note that providing a user access to a function object
-    instantiatied with a protected or private member function is
-    (basically) the same as providing them access to that function.
 
     \section ex_fptr_sect Function object example
 
