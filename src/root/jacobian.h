@@ -486,22 +486,19 @@ namespace o2scl {
     ejp.x=&x;
     ejp.y=&y;
     
-    funct11 dfnp=std::bind(std::mem_fn<double(double,ej_parms &)>
-			   (&jacobian_exact::dfn),
-			   this,std::placeholders::_1,ejp);
-    //funct_mfptr_param<jacobian_exact,ej_parms> 
-    //dfnp(this,&jacobian_exact::dfn,ejp);
-      
     for (size_t j=0;j<nx;j++) {
       ejp.xj=j;
       for (size_t i=0;i<ny;i++) {
 	ejp.yi=i;
 	double tmp=(*ejp.x)[j];
+	funct11 dfnp=std::bind(std::mem_fn<double(double,ej_parms &)>
+			       (&jacobian_exact::dfn),
+			       this,std::placeholders::_1,ejp);
 	jac(i,j)=dptr->deriv(tmp,dfnp);
 	(*ejp.x)[j]=tmp;
       }
     }
-
+    
     return 0;
   }
 

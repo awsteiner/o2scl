@@ -587,14 +587,13 @@ namespace o2scl {
     /** \brief Compute the function at point \c x and return the result
      */
     virtual double operator()(double x) const {
-      int i;
       double y;
       if(st_np<1) {
 	y=fpw.Eval(&x);
       } else {
 	double *all=new double[st_np+1];
 	all[0]=x;
-	for(i=1;i<=st_np;i++) all[i]=arr[i-1];
+	for(size_t i=1;i<=st_np;i++) all[i]=arr[i-1];
 	y=fpw.Eval(all);
 	delete[] all;
       }

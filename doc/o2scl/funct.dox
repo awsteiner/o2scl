@@ -38,6 +38,12 @@
     
     \section fptr_details_sect General comments about function objects
 
+    The C++ standard library functors employ copy construction at
+    various types, so one must be careful about the types involved in
+    creating the functor. Generally, all classes should have
+    constructors and structs should be avoided because they can cause
+    difficulties with default copy construction.
+
     There is a small overhead associated with the indirection: a "user
     class" accesses the function class which then calls function which
     was specified in the constructor of the function class. In many
