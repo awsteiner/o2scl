@@ -121,13 +121,13 @@ namespace o2scl {
     /** \brief Set the solver for use in calculating the chemical
 	potential from the density 
     */
-    int set_density_root(root<funct> &rp) {
+    int set_density_root(root<funct11> &rp) {
       density_root=&rp;
       return 0;
     }
 
     /// The default solver for calc_density().
-    root_cern<funct> def_density_root;
+    root_cern<funct11> def_density_root;
 
     /// Return string denoting type ("fermion_nonrel")
     virtual const char *type() { return "fermion_nonrel"; }

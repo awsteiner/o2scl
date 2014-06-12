@@ -56,7 +56,8 @@ int main(void) {
   for(int kk=0;kk<1;kk++) {
     
     // 1 - Non-templated access through a funct object 
-    funct_mfptr<cl> fmf(&acl,&cl::mfn);
+    funct11 fmf=std::bind(std::mem_fn<double(double)>
+			  (&cl::mfn),&acl,std::placeholders::_1);
     root_cern<> cr1;
 
     tmp=clock();

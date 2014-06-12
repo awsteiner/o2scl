@@ -144,7 +144,9 @@ void fermion_nonrel::nu_from_n(fermion &f, double temper) {
   // (Note GSL_LOG_DBL_MIN is about -708)
   if (nex>-GSL_LOG_DBL_MIN*0.9) nex=-GSL_LOG_DBL_MIN/2.0;
   
-  funct_mfptr<fermion_nonrel> mf(this,&fermion_nonrel::solve_fun);
+  funct11 mf=std::bind(std::mem_fn<double(double)>
+		       (&fermion_nonrel::solve_fun),
+		       this,std::placeholders::_1);
   
   // Turn off convergence errors temporarily, since we'll
   // try again if it fails

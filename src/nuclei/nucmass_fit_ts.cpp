@@ -41,9 +41,9 @@ int main(void) {
   nucmass_fit mf;
 
   nucmass_ame ame;
-  o2scl_hdf::ame_load(ame,"");
+  o2scl_hdf::ame_load(ame,"12");
   nucmass_ame_exp amex;
-  o2scl_hdf::ame_load(amex,"");
+  o2scl_hdf::ame_load(amex,"12");
   nucmass_mnmsk_exp mexp;
   o2scl_hdf::mnmsk_load(mexp);
   nucmass_mnmsk mm;

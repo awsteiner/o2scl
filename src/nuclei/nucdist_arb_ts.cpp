@@ -38,7 +38,7 @@ int main(void) {
 
   /// Load Audi et al. masses
   nucmass_ame ame;
-  o2scl_hdf::ame_load(ame,"");
+  o2scl_hdf::ame_load(ame,"12");
 
   /// Select only nuclei with N=21 and N=22
   nucdist_arb ad;

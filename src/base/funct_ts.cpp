@@ -41,19 +41,21 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
 
-  double a=2.0;
-  funct_fptr_param<double> f1(func,a);
-  double x=3.2, y;
-
-  y=0.0;
-  y=f1(x);
-  t.test_rel(y,5.2,1.0e-6,"fptr");
-
-  y=0.0;
-  ac c1;
-  funct_mfptr_param<ac,double> f3(&c1,&ac::mfunc,a);
-  y=f3(x);
-  t.test_rel(y,5.2,1.0e-6,"mfptr");
+  /*
+    double a=2.0;
+    funct_fptr_param<double> f1(func,a);
+    double x=3.2, y;
+    
+    y=0.0;
+    y=f1(x);
+    t.test_rel(y,5.2,1.0e-6,"fptr");
+    
+    y=0.0;
+    ac c1;
+    funct_mfptr_param<ac,double> f3(&c1,&ac::mfunc,a);
+    y=f3(x);
+    t.test_rel(y,5.2,1.0e-6,"mfptr");
+  */
   
   t.report();
   return 0;

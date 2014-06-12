@@ -105,11 +105,6 @@ void fermion_rel::calc_mu(fermion &f, double temper) {
     funct11 mfs=std::bind(std::mem_fn<double(double)>
 			  (&fermion_rel::entropy_fun),
 			  this,std::placeholders::_1);
-    /*
-      funct_mfptr<fermion_rel> mfd(this,&fermion_rel::density_fun);
-      funct_mfptr<fermion_rel> mfe(this,&fermion_rel::energy_fun);
-      funct_mfptr<fermion_rel> mfs(this,&fermion_rel::entropy_fun);
-    */
       
     double prefac=f.g*pow(temper,3.0)/2.0/pi2;
 
@@ -146,11 +141,6 @@ void fermion_rel::calc_mu(fermion &f, double temper) {
     funct11 mfs=std::bind(std::mem_fn<double(double)>
 			  (&fermion_rel::deg_entropy_fun),
 			  this,std::placeholders::_1);
-    /*
-      funct_mfptr<fermion_rel> mfd(this,&fermion_rel::deg_density_fun);
-      funct_mfptr<fermion_rel> mfe(this,&fermion_rel::deg_energy_fun);
-      funct_mfptr<fermion_rel> mfs(this,&fermion_rel::deg_entropy_fun);
-    */
 
     double prefac=f.g/2.0/pi2;
     
@@ -274,7 +264,6 @@ int fermion_rel::nu_from_n(fermion &f, double temper) {
   funct11 mf=std::bind(std::mem_fn<double(double)>
 		       (&fermion_rel::solve_fun),
 		       this,std::placeholders::_1);
-  //funct_mfptr<fermion_rel> mf(this,&fermion_rel::solve_fun);
   int ret=density_root->solve(nex,mf);
   if (ret!=0) {
     O2SCL_CONV2_RET("Density solver failed in ",
@@ -343,8 +332,6 @@ int fermion_rel::calc_density(fermion &f, double temper) {
   }
   if (!deg) {
     
-    //funct_mfptr<fermion_rel> mfe(this,&fermion_rel::energy_fun);
-    //funct_mfptr<fermion_rel> mfs(this,&fermion_rel::entropy_fun);
     funct11 mfe=std::bind(std::mem_fn<double(double)>
 			  (&fermion_rel::energy_fun),
 			  this,std::placeholders::_1);
@@ -369,8 +356,6 @@ int fermion_rel::calc_density(fermion &f, double temper) {
     funct11 mfs=std::bind(std::mem_fn<double(double)>
 			  (&fermion_rel::deg_entropy_fun),
 			  this,std::placeholders::_1);
-    //funct_mfptr<fermion_rel> mfe(this,&fermion_rel::deg_energy_fun);
-    //funct_mfptr<fermion_rel> mfs(this,&fermion_rel::deg_entropy_fun);
       
     double arg;
     if (f.inc_rest_mass) {
@@ -587,7 +572,6 @@ double fermion_rel::solve_fun(double x) {
 
   if (!deg) {
 
-    //funct_mfptr<fermion_rel> mfe(this,&fermion_rel::density_fun);
     funct11 mfe=std::bind(std::mem_fn<double(double)>
 			  (&fermion_rel::density_fun),
 			  this,std::placeholders::_1);
@@ -600,7 +584,6 @@ double fermion_rel::solve_fun(double x) {
 
   } else {
     
-    //funct_mfptr<fermion_rel> mfe(this,&fermion_rel::deg_density_fun);
     funct11 mfe=std::bind(std::mem_fn<double(double)>
 			  (&fermion_rel::deg_density_fun),
 			  this,std::placeholders::_1);
@@ -679,7 +662,6 @@ void fermion_rel::pair_density(fermion &f, double temper) {
   if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
   
   nex=f.nu/temper;
-  //funct_mfptr<fermion_rel> mf(this,&fermion_rel::pair_fun);
   funct11 mf=std::bind(std::mem_fn<double(double)>
 			(&fermion_rel::pair_fun),
 			this,std::placeholders::_1);
@@ -716,7 +698,6 @@ double fermion_rel::pair_fun(double x) {
     
     // Nondegenerate case
 
-    //funct_mfptr<fermion_rel> mfe(this,&fermion_rel::density_fun);
     funct11 mfe=std::bind(std::mem_fn<double(double)>
 			  (&fermion_rel::density_fun),
 			  this,std::placeholders::_1);
@@ -729,7 +710,6 @@ double fermion_rel::pair_fun(double x) {
     
     // Degenerate case
     
-    //funct_mfptr<fermion_rel> mfe(this,&fermion_rel::deg_density_fun);
     funct11 mfe=std::bind(std::mem_fn<double(double)>
 			  (&fermion_rel::deg_density_fun),
 			  this,std::placeholders::_1);
@@ -771,7 +751,6 @@ double fermion_rel::pair_fun(double x) {
     
     // Nondegenerate case
 
-    //funct_mfptr<fermion_rel> mf(this,&fermion_rel::density_fun);
     funct11 mf=std::bind(std::mem_fn<double(double)>
 			  (&fermion_rel::density_fun),
 			  this,std::placeholders::_1);
@@ -784,7 +763,6 @@ double fermion_rel::pair_fun(double x) {
 
     // Degenerate case
 
-    //funct_mfptr<fermion_rel> mf(this,&fermion_rel::deg_density_fun);
     funct11 mf=std::bind(std::mem_fn<double(double)>
 			  (&fermion_rel::deg_density_fun),
 			  this,std::placeholders::_1);

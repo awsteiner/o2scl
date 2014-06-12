@@ -1041,8 +1041,10 @@ int tov_solve::max() {
 
   // --------------------------------------------------------------
   // Full minimization
-  
-  funct_mfptr<tov_solve> mm(this,&tov_solve::max_fun);
+
+  funct11 mm=std::bind(std::mem_fn<double(double)>
+		       (&tov_solve::max_fun),
+		       this,std::placeholders::_1);
   if (min_ptr->min(x[0],y[0],mm)!=0) {
     info+=max_minimizer_failed;
   }

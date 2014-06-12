@@ -139,7 +139,7 @@ int main(void) {
   nucmass_fit mf3;
   mf3.even_even=false;
   nucmass_ame ame;
-  o2scl_hdf::ame_load(ame,"");
+  o2scl_hdf::ame_load(ame,"12");
   mf3.set_exp_mass(ame);
 
   cout << "RMF: " << endl;

@@ -100,6 +100,29 @@ namespace o2scl {
   */
   class fermion_eff : public fermion_eval_thermo {
 
+  protected:
+
+    /** \brief Define the function which solves for the chemical 
+	potential given the density [protected subclass of \ref 
+	fermion_eff]
+    */
+    class density_fun {
+
+    protected:
+
+      fermion_eff &ef_;
+      fermion &f_;
+      double T_;
+
+    public:
+
+      density_fun(fermion_eff &ef, fermion &f, double T);
+      
+      /// Fix density for \ref fermion_eff::calc_density()
+      double operator()(double x);
+
+    };
+
   public:
     
     typedef boost::numeric::ublas::vector<double> ubvector;
@@ -169,7 +192,7 @@ namespace o2scl {
 
     /** \brief Set the solver for use in calculating \f$ \psi \f$ 
      */
-    int set_psi_root(root<funct> &rp) {
+    int set_psi_root(root<funct11> &rp) {
       psi_root=&rp;
       return 0;
     }
@@ -177,7 +200,7 @@ namespace o2scl {
     /** \brief Set the solver for use in calculating the chemical
 	potential from the density
     */
-    int set_density_root(root<funct> &rp) {
+    int set_density_root(root<funct11> &rp) {
       density_root=&rp;
       return 0;
     }
@@ -194,11 +217,11 @@ namespace o2scl {
 
     /** \brief The default solver for \f$ \psi \f$
      */
-    root_cern<funct> def_psi_root;
+    root_cern<funct11> def_psi_root;
     
     /** \brief The default solver for calc_density() and pair_density()
      */
-    root_cern<funct> def_density_root;
+    root_cern<funct11> def_density_root;
     
     /// Return string denoting type ("fermion_eff")
     virtual const char *type() { return "fermion_eff"; }
@@ -220,39 +243,18 @@ namespace o2scl {
     int sizen;
     
     /// The solver for \f$ \psi \f$
-    root<funct> *psi_root;
+    root<funct11> *psi_root;
     /// The other solver for calc_density()
-    root<funct> *density_root;
+    root<funct11> *density_root;
     
     /// The function which solves for \f$ f \f$ from \f$ \psi \f$.
     double solve_fun(double x, double &psi);
     
     /** \brief Define the function which solves for the chemical 
-	potential given the density [protected subclass of \ref 
-	fermion_eff]
-    */
-    class density_fun : public funct {
-
-    protected:
-
-      fermion_eff &ef_;
-      fermion &f_;
-      double T_;
-
-    public:
-
-      density_fun(fermion_eff &ef, fermion &f, double T);
-      
-      /// Fix density for \ref fermion_eff::calc_density()
-      double operator()(double x) const;
-
-    };
-
-    /** \brief Define the function which solves for the chemical 
 	potential given the density of particles and antiparticles
 	[protected subclass of \ref fermion_eff]
     */
-    class pair_density_fun : public funct {
+    class pair_density_fun {
 
     protected:
 
@@ -265,7 +267,7 @@ namespace o2scl {
       pair_density_fun(fermion_eff &ef, fermion &f, double T);
       
       /// Fix density for \ref fermion_eff::pair_density()
-      double operator()(double x) const;
+      double operator()(double x);
 
     };
     

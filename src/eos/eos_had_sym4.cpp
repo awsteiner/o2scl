@@ -317,8 +317,12 @@ int eos_had_sym4_mdi::calc_e_sep(fermion &ne, fermion &pr, double &ed_kin,
   set_n_and_p(ne,pr);
     
   double tmp;
-  funct_mfptr<eos_had_sym4_mdi> dfk(this,&eos_had_sym4_mdi::energy_kin);
-  funct_mfptr<eos_had_sym4_mdi> dfp(this,&eos_had_sym4_mdi::energy_pot);
+  funct11 dfk=std::bind(std::mem_fn<double(double)>
+		       (&eos_had_sym4_mdi::energy_kin),
+		       this,std::placeholders::_1);
+  funct11 dfp=std::bind(std::mem_fn<double(double)>
+		       (&eos_had_sym4_mdi::energy_pot),
+		       this,std::placeholders::_1);
     
   mode=nmode;
   tmp=ne.n;
@@ -350,9 +354,12 @@ int eos_had_sym4_mdi::test_separation(fermion &ne, fermion &pr, test_mgr &t) {
   set_n_and_p(ne,pr);
     
   double tmp;
-  funct_mfptr<eos_had_sym4_mdi> dfk(this,&eos_had_sym4_mdi::energy_kin);
-  funct_mfptr<eos_had_sym4_mdi> dfp(this,&eos_had_sym4_mdi::energy_pot);
-  int vpx=0;
+  funct11 dfk=std::bind(std::mem_fn<double(double)>
+		       (&eos_had_sym4_mdi::energy_kin),
+		       this,std::placeholders::_1);
+  funct11 dfp=std::bind(std::mem_fn<double(double)>
+		       (&eos_had_sym4_mdi::energy_pot),
+		       this,std::placeholders::_1);
     
   mode=nmode;
   tmp=ne.n;

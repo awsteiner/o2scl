@@ -139,7 +139,9 @@ void nstar_cold::calc_eos(double np_0) {
   double oldpr=0.0;
   pressure_flat=0.0;
   
-  funct_mfptr<nstar_cold> sf(this,&nstar_cold::solve_fun);
+  funct11 sf=std::bind(std::mem_fn<double(double)>
+		       (&nstar_cold::solve_fun),
+		       this,std::placeholders::_1);
   
   if (verbose>0) {
     cout << "baryon dens neutrons    protons     electrons   " 
@@ -370,7 +372,9 @@ double nstar_cold::calc_urca(double np_0) {
   if (fabs(np_0)<1.0e-12) x=nb_start/3.0;
   else x=np_0;
 
-  funct_mfptr<nstar_cold> sf(this,&nstar_cold::solve_fun);
+  funct11 sf=std::bind(std::mem_fn<double(double)>
+		       (&nstar_cold::solve_fun),
+		       this,std::placeholders::_1);
   
   bool success=true;
   for(barn=nb_start;barn<=nb_end+dnb/10.0;barn+=dnb) {

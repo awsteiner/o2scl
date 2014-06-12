@@ -308,7 +308,7 @@ namespace o2scl {
 
     /** \brief Set the equation solver for the EOS
      */
-    int set_root(root<funct> &rf) {
+    int set_root(root<funct11> &rf) {
       rp=&rf;
       return 0;
     }
@@ -342,7 +342,7 @@ namespace o2scl {
 
     /** \brief The default equation solver for the EOS
     */
-    root_cern<funct> def_root;
+    root_cern<funct11> def_root;
 
     /// Default EOS object for the TOV solver
     eos_tov_interp def_eos_tov;
@@ -382,7 +382,7 @@ namespace o2scl {
     tov_solve *tp;
     
     /// A pointer to the solver
-    root<funct> *rp;
+    root<funct11> *rp;
 
     /// Storage for the EOS table
     o2_shared_ptr<table_units<> >::type eost;

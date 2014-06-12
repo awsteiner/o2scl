@@ -67,9 +67,9 @@ namespace o2scl {
       while returning 0 for success.
   */
 #ifdef DOXYGEN_NO_O2NS
-  template<class func_t=funct> class root_cern : public root
+  template<class func_t=funct11> class root_cern : public root
 #else
-    template<class func_t=funct> class root_cern : 
+    template<class func_t=funct11> class root_cern : 
   public root<func_t> 
 #endif
   {

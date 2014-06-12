@@ -39,10 +39,10 @@ int main(void) {
   // Load several mass formulae to make distributions out of
   
   nucmass_ame ame12;
-  o2scl_hdf::ame_load(ame12,"");
+  o2scl_hdf::ame_load(ame12,"12");
 
   nucmass_ame_exp amex12;
-  o2scl_hdf::ame_load(amex12,"");
+  o2scl_hdf::ame_load(amex12,"12");
 
   nucmass_mnmsk mth;
   o2scl_hdf::mnmsk_load(mth,"");

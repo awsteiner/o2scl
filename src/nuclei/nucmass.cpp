@@ -497,11 +497,9 @@ int nucmass_radius::eval_rms_rho(double rho0, double N, double d,
   funct11 solve_fun=std::bind(std::mem_fn<double(double)>
 			      (&nucmass_radius::solve),
 			      this,std::placeholders::_1);
-  //funct_mfptr<nucmass_radius> solve_fun(this,&nucmass_radius::solve);
   cr.solve(uRfermi,solve_fun);
   Rfermi=uRfermi;
 
-  //funct_mfptr<nucmass_radius> it_fun(this,&nucmass_radius::iand);
   funct11 it_fun=std::bind(std::mem_fn<double(double)>
 			    (&nucmass_radius::iand),
 			    this,std::placeholders::_1);
@@ -520,13 +518,11 @@ int nucmass_radius::eval_rms_rsq(double Rfermi, double N, double d,
   funct11 it_fun2=std::bind(std::mem_fn<double(double)>
 			    (&nucmass_radius::iand2),
 			    this,std::placeholders::_1);
-  //funct_mfptr<nucmass_radius> it_fun2(this,&nucmass_radius::iand2);
   rho0=N/it.integ(it_fun2,0.0,0.0);
   urho0=rho0;
 
   Rcd=cbrt(3.0*N/4.0/o2scl_const::pi/rho0);
 
-  //funct_mfptr<nucmass_radius> it_fun(this,&nucmass_radius::iand);
   funct11 it_fun=std::bind(std::mem_fn<double(double)>
 			   (&nucmass_radius::iand),
 			   this,std::placeholders::_1);

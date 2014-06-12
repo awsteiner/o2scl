@@ -192,14 +192,14 @@ namespace o2scl {
     /** \brief Set the derivative object to calculate the 
 	chemical potentials
     */
-    int set_mu_deriv(deriv_base<funct> &de) {
+    int set_mu_deriv(deriv_base<funct11> &de) {
       mu_deriv_set=true;
       mu_deriv_ptr=&de;
       return 0;
     }
 
     /// The default derivative object for calculating chemical potentials
-    deriv_gsl<funct> def_mu_deriv;
+    deriv_gsl<funct11> def_mu_deriv;
 
     /// Return string denoting type ("eos_had_potential")
     virtual const char *type() { return "eos_had_potential"; }
@@ -215,7 +215,7 @@ namespace o2scl {
     bool mu_deriv_set;
 
     /// The derivative object
-    deriv_base<funct> *mu_deriv_ptr;
+    deriv_base<funct11> *mu_deriv_ptr;
     
     /// Compute the momentum integral for \ref mdi_form
     double mom_integral(double pft, double pftp);

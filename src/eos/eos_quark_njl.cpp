@@ -91,7 +91,7 @@ int eos_quark_njl::set_parameters(double lambda, double fourferm,
   bx[0]=1.0;
   bx[1]=1.0;
   bx[2]=2.0;
-
+  
   mm_funct_mfptr<eos_quark_njl> fmf(this,&eos_quark_njl::B0fun);
   solver->msolve(3,bx,fmf);
   
@@ -526,10 +526,18 @@ int eos_quark_njl::calc_eq_temp_p(quark &u, quark &d, quark &s,
   pa.temper=temper;
   pa.limit=limit;
 
-  funct_mfptr_param<eos_quark_njl,const njtp> fqq(this,&eos_quark_njl::iqq,pa);
-  funct_mfptr_param<eos_quark_njl,const njtp> fde(this,&eos_quark_njl::ide,pa);
-  funct_mfptr_param<eos_quark_njl,const njtp> fed(this,&eos_quark_njl::ied,pa);
-  funct_mfptr_param<eos_quark_njl,const njtp> fpr(this,&eos_quark_njl::ipr,pa);
+  funct11 fqq=std::bind(std::mem_fn<double(double,const njtp &)>
+			(&eos_quark_njl::iqq),
+			this,std::placeholders::_1,pa);
+  funct11 fde=std::bind(std::mem_fn<double(double,const njtp &)>
+			(&eos_quark_njl::ide),
+			this,std::placeholders::_1,pa);
+  funct11 fed=std::bind(std::mem_fn<double(double,const njtp &)>
+			(&eos_quark_njl::ied),
+			this,std::placeholders::_1,pa);
+  funct11 fpr=std::bind(std::mem_fn<double(double,const njtp &)>
+			(&eos_quark_njl::ipr),
+			this,std::placeholders::_1,pa);
 
   // -----------------------------------------------------------------
   // Some of these integrals (iqq, and ide) converge better when they

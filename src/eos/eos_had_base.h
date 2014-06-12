@@ -647,10 +647,10 @@ namespace o2scl {
 	mroot_hybrids because it automatically avoids regions
 	where the equations are undefined.
      */
-    virtual void set_sat_root(root<funct > &mr);
+    virtual void set_sat_root(root<funct11 > &mr);
     
     /// Set \ref deriv_base object to use to find saturation properties
-    virtual void set_sat_deriv(deriv_base<funct > &de);
+    virtual void set_sat_deriv(deriv_base<funct11 > &de);
 
     /** \brief Set the second \ref deriv_base object to use to find
 	saturation properties
@@ -661,7 +661,7 @@ namespace o2scl {
 	second \ref deriv_base object is used in the function
 	fesym_slope().
     */
-    virtual void set_sat_deriv2(deriv_base<funct> &de);
+    virtual void set_sat_deriv2(deriv_base<funct11> &de);
     
     /// Set neutron and proton 
     virtual void set_n_and_p(fermion &n, fermion &p);
@@ -690,14 +690,14 @@ namespace o2scl {
 	The value of deriv_gsl::h is set to \f$ 10^{-3} \f$ in 
 	the eos_had_base constructor.
     */
-    deriv_gsl<funct > def_deriv;
+    deriv_gsl<funct11 > def_deriv;
     
     /** \brief The second default object for derivatives
 	
 	The value of deriv_gsl::h is set to \f$ 10^{-3} \f$ in 
 	the eos_had_base constructor.
     */
-    deriv_gsl<funct> def_deriv2;
+    deriv_gsl<funct11> def_deriv2;
 
     /** \brief The default solver
 
@@ -715,7 +715,7 @@ namespace o2scl {
 	Used by fn0() (which is called by saturation()) to solve
 	saturation_matter_e() (1 variable).
     */
-    root_cern<funct > def_sat_root;
+    root_cern<funct11 > def_sat_root;
     //@}
     
     /// Return string denoting type ("eos_had_base")
@@ -736,13 +736,13 @@ namespace o2scl {
       jac_funct<> > *eos_mroot;
     
     /// The solver to compute saturation properties
-    root<funct> *sat_root;
+    root<funct11> *sat_root;
 
     /// The derivative object for saturation properties
-    deriv_base<funct> *sat_deriv;
+    deriv_base<funct11> *sat_deriv;
     
     /// The second derivative object for saturation properties
-    deriv_base<funct> *sat_deriv2;
+    deriv_base<funct11> *sat_deriv2;
 
     /// The neutron object
     fermion *neutron;

@@ -39,9 +39,9 @@ int main(void) {
   cout.setf(ios::scientific);
 
   nucmass_ame ame;
-  o2scl_hdf::ame_load(ame,"");
+  o2scl_hdf::ame_load(ame,"12");
   nucmass_ame_exp amex;
-  o2scl_hdf::ame_load(amex,"");
+  o2scl_hdf::ame_load(amex,"12");
 
   nucmass_dz_fit dmf;
   nucmass_dz_fit_33 dmf33;
@@ -119,10 +119,14 @@ int main(void) {
   t.test_rel(dz2.binding_energy(82,126)/208.0,-7.867,1.0e-3,"dz2 be");
 
   // Test the binding energy and mass excess from get_nucleus()
-  double mass_neutron=o2scl_mks::mass_neutron*o2scl_settings.get_convert_units().convert("kg","1/fm",1.0);
-  double mass_proton=o2scl_mks::mass_proton*o2scl_settings.get_convert_units().convert("kg","1/fm",1.0);
-  double mass_electron=o2scl_mks::mass_electron*o2scl_settings.get_convert_units().convert("kg","1/fm",1.0);
-  double mass_amu=o2scl_mks::unified_atomic_mass*o2scl_settings.get_convert_units().convert("kg","1/fm",1.0);
+  double mass_neutron=o2scl_mks::mass_neutron*
+    o2scl_settings.get_convert_units().convert("kg","1/fm",1.0);
+  double mass_proton=o2scl_mks::mass_proton*
+    o2scl_settings.get_convert_units().convert("kg","1/fm",1.0);
+  double mass_electron=o2scl_mks::mass_electron*
+    o2scl_settings.get_convert_units().convert("kg","1/fm",1.0);
+  double mass_amu=o2scl_mks::unified_atomic_mass*
+    o2scl_settings.get_convert_units().convert("kg","1/fm",1.0);
 
   nucleus n;
   dz.get_nucleus(82,126,n);

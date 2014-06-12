@@ -51,58 +51,35 @@ using namespace std;
 using namespace o2scl;
 
 int main(void) {
+
+  cout.setf(ios::scientific);
+  
+  test_mgr t;
+
   cl acl;
   double a;
-  int i;
-  size_t tmp;
-  int N=1;
-  int t1=0, t2=0, t3=0, t4=0;
-  test_mgr t;
-  
-  cout.setf(ios::scientific);
-  cout.precision(14);
   
   t.set_output_level(2);
 
-  for(int kk=0;kk<1;kk++) {
-
-    // 1 - Non-templated access through a funct object 
-    funct_mfptr<cl> fmf(&acl,&cl::mfn);
-    funct_mfptr<cl> fmfd(&acl,&cl::mfnd);
-    root_stef<funct_mfptr<cl>,funct_mfptr<cl> > 
-      cr1;
-    tmp=clock();
-    for(int j=0;j<N;j++) {
-      for(int k=0;k<N;k++) {
-	a=1.0e-5;
-	//cr1.solve_de(a,fmf,fmfd);
-      }
-    }
-    t1+=(clock()-tmp)/10000;
-    cout << (clock()-tmp)/10000 << " " << a << endl;
-    //t.test_rel(a,0.2,1.0e-6,"1");
-
-    // 4 - Templated access through a global function pointer
-    typedef double (*gfnt)(double);
-    root_stef<gfnt,gfnt> cr4;
-    gfnt gfnv=&gfn;
-    gfnt gfnvd=&gfnd;
-    tmp=clock();
-    for(int j=0;j<N;j++) {
-      for(int k=0;k<N;k++) {
-	a=1.0e-5;
-	cr4.verbose=1;
-	cr4.solve_de(a,gfnv,gfnvd);
-      }
-    }
-    t4+=(clock()-tmp)/10000;
-    cout << (clock()-tmp)/10000 << " " << a << endl;
-    t.test_rel(a,0.2,1.0e-6,"6");
-    cout << endl;
-  }
-
-  cout << t1 << endl;
-  cout << t4 << endl;
+  // 1 - Non-templated access through a funct object 
+  funct11 fmf=std::bind(std::mem_fn<double(double)>
+			(&cl::mfn),&acl,std::placeholders::_1);
+  funct11 fmfd=std::bind(std::mem_fn<double(double)>
+			 (&cl::mfnd),&acl,std::placeholders::_1);
+  root_stef<funct11,funct11> cr1;
+  a=1.0e-5;
+  cr1.solve_de(a,fmf,fmfd);
+  t.test_rel(a,0.2,1.0e-6,"1");
+    
+  // 4 - Templated access through a global function pointer
+  typedef double (*gfnt)(double);
+  root_stef<gfnt,gfnt> cr4;
+  gfnt gfnv=&gfn;
+  gfnt gfnvd=&gfnd;
+  a=1.0e-5;
+  cr4.verbose=1;
+  cr4.solve_de(a,gfnv,gfnvd);
+  t.test_rel(a,0.2,1.0e-6,"6");
 
   t.report();
   return 0;

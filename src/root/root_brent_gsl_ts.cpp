@@ -137,8 +137,9 @@ int main(void) {
   }
 
   // Using a funct object and the solve_bkt() interface
-  funct_mfptr<cl> fmf(&acl,&cl::mfn);
-  root_brent_gsl<funct> grb2;
+  funct11 fmf=std::bind(std::mem_fn<double(double)>
+			(&cl::mfn),&acl,std::placeholders::_1);
+  root_brent_gsl<> grb2;
   a=-1.0;
   b=1.0;
   grb2.solve_bkt(a,b,fmf);

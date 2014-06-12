@@ -54,8 +54,10 @@ eos_had_base::eos_had_base() {
 double eos_had_base::fcomp(double nb, const double &alpha) {
   double lcomp, err;
   
-  funct_mfptr_param<eos_had_base,const double> 
-    fmn(this,&eos_had_base::calc_pressure_nb,alpha);
+  funct11 fmn=std::bind(std::mem_fn<double(double,const double &)>
+		       (&eos_had_base::calc_pressure_nb),
+		       this,std::placeholders::_1,alpha);
+
   lcomp=9.0*sat_deriv->deriv(nb,fmn);
 
   return lcomp;
@@ -64,8 +66,10 @@ double eos_had_base::fcomp(double nb, const double &alpha) {
 double eos_had_base::fcomp_err(double nb, double alpha, double &unc) {
   double lcomp;
   
-  funct_mfptr_param<eos_had_base,const double> 
-    fmn(this,&eos_had_base::calc_pressure_nb,alpha);
+  funct11 fmn=std::bind(std::mem_fn<double(double,const double &)>
+		       (&eos_had_base::calc_pressure_nb),
+		       this,std::placeholders::_1,alpha);
+
   sat_deriv->deriv_err(nb,fmn,lcomp,unc);
 
   lcomp*=9.0;
@@ -88,9 +92,11 @@ double eos_had_base::feoa(double nb, const double &alpha) {
 }
 
 double eos_had_base::fesym(double nb, const double &alpha) {
+  
+  funct11 fmn=std::bind(std::mem_fn<double(double,const double &)>
+			(&eos_had_base::calc_dmu_alpha),
+			this,std::placeholders::_1,nb);
 
-  funct_mfptr_param<eos_had_base,const double> 
-    fmn(this,&eos_had_base::calc_dmu_alpha,nb);
   return sat_deriv->deriv(alpha,fmn)/4.0;
 
   // * Old method using second derivative *
@@ -101,8 +107,11 @@ double eos_had_base::fesym(double nb, const double &alpha) {
 
 double eos_had_base::fesym_err(double nb, double alpha, 
 			       double &unc) {
-  funct_mfptr_param<eos_had_base,const double> 
-    fmn(this,&eos_had_base::calc_dmu_alpha,nb);
+
+  funct11 fmn=std::bind(std::mem_fn<double(double,const double &)>
+			(&eos_had_base::calc_dmu_alpha),
+			this,std::placeholders::_1,nb);
+
   double val, err;
   sat_deriv->deriv_err(alpha,fmn,val,err);
   val/=4.0; 
@@ -118,27 +127,34 @@ double eos_had_base::fesym_slope(double nb, const double &alpha) {
     // derivative, and may or may not be less accurate. It might be
     // good to make this a separate function, to allow the user to
     // choose which way to evaluate L.
-    funct_mfptr_param<eos_had_base,const double> 
-      fmn(this,&eos_had_base::calc_musum_alpha,nb);
+    funct11 fmn=std::bind(std::mem_fn<double(double,const double &)>
+			  (&eos_had_base::calc_musum_alpha),
+			  this,std::placeholders::_1,nb);
+    
     return sat_deriv->deriv2(alpha,fmn)*0.75-3.0*fesym(nb,alpha);
   }
-
-  funct_mfptr_param<eos_had_base,const double> 
-    fmn(this,&eos_had_base::fesym,alpha);
+  
+  funct11 fmn=std::bind(std::mem_fn<double(double,const double &)>
+			(&eos_had_base::fesym),
+			this,std::placeholders::_1,alpha);
   return sat_deriv2->deriv(nb,fmn)*3.0*nb;
 }
 
 double eos_had_base::fesym_curve(double nb, const double &alpha) {
-
-  funct_mfptr_param<eos_had_base,const double> 
-    fmn(this,&eos_had_base::fesym,alpha);
+  
+  funct11 fmn=std::bind(std::mem_fn<double(double,const double &)>
+			(&eos_had_base::fesym),
+			this,std::placeholders::_1,alpha);
+  
   return sat_deriv2->deriv2(nb,fmn)*9.0*nb*nb;
 }
 
 double eos_had_base::fesym_skew(double nb, const double &alpha) {
 
-  funct_mfptr_param<eos_had_base,const double> 
-    fmn(this,&eos_had_base::fesym,alpha);
+  funct11 fmn=std::bind(std::mem_fn<double(double,const double &)>
+			(&eos_had_base::fesym),
+			this,std::placeholders::_1,alpha);
+
   return sat_deriv2->deriv3(nb,fmn)*27.0*nb*nb*nb;
 }
 
@@ -183,8 +199,10 @@ double eos_had_base::fkprime(double nb, const double &alpha) {
   double lkprime, err;
   int ret=0;
   
-  funct_mfptr_param<eos_had_base,const double> 
-    fmn(this,&eos_had_base::calc_press_over_den2,alpha);
+  funct11 fmn=std::bind(std::mem_fn<double(double,const double &)>
+			(&eos_had_base::calc_press_over_den2),
+			this,std::placeholders::_1,alpha);
+  
   sat_deriv->deriv2_err(nb,fmn,lkprime,err);
   lkprime*=27.0*nb*nb*nb;
   
@@ -208,8 +226,9 @@ double eos_had_base::fn0(double alpha, double &leoa) {
   // Initial guess
   nb=0.16;
   
-  funct_mfptr_param<eos_had_base,const double> 
-    fmf(this,&eos_had_base::calc_pressure_nb,alpha);
+  funct11 fmf=std::bind(std::mem_fn<double(double,const double &)>
+			(&eos_had_base::calc_pressure_nb),
+			this,std::placeholders::_1,alpha);
   
   sat_root->solve(nb,fmf);
   calc_pressure_nb(nb);
@@ -240,8 +259,12 @@ void eos_had_base::gradient_qij(fermion &n, fermion &p, thermo &th,
   t1=t1_fun(barn);
   t2=t2_fun(barn);
     
-  funct_mfptr<eos_had_base> t1fun(this,&eos_had_base::t1_fun);
-  funct_mfptr<eos_had_base> t2fun(this,&eos_had_base::t2_fun);
+  funct11 t1fun=std::bind(std::mem_fn<double(double)>
+			  (&eos_had_base::t1_fun),
+			  this,std::placeholders::_1);
+  funct11 t2fun=std::bind(std::mem_fn<double(double)>
+			  (&eos_had_base::t2_fun),
+			  this,std::placeholders::_1);
 
   set_n_and_p(n,p);
   set_thermo(th);
@@ -302,10 +325,13 @@ void eos_had_base::const_pf_derivs(double nb, double pf,
 
   // Take derivatives w.r.t. alpha and then multiply by -2 to get
   // derivatives w.r.t. x
-  funct_mfptr_param<eos_had_base,const double> 
-    fmpp(this,&eos_had_base::calc_pressure_nb,1.0-2.0*pf);
-  funct_mfptr_param<eos_had_base,const double> 
-    fmpe(this,&eos_had_base::calc_edensity_nb,1.0-2.0*pf);
+  funct11 fmpp=std::bind(std::mem_fn<double(double,const double &)>
+			 (&eos_had_base::calc_pressure_nb),
+			 this,std::placeholders::_1,1.0-2.0*pf);
+  funct11 fmpe=std::bind(std::mem_fn<double(double,const double &)>
+			 (&eos_had_base::calc_edensity_nb),
+			 this,std::placeholders::_1,1.0-2.0*pf);
+
   dPdnb_pf=-2.0*sat_deriv->deriv(nb,fmpp);
   dednb_pf=-2.0*sat_deriv->deriv(nb,fmpe);
   return;
@@ -415,17 +441,17 @@ void eos_had_base::set_mroot(mroot<mm_funct<>,
   return;
 }
 
-void eos_had_base::set_sat_root(root<funct > &mr) {
+void eos_had_base::set_sat_root(root<funct11> &mr) {
   sat_root=&mr;
   return;
 }
 
-void eos_had_base::set_sat_deriv(deriv_base<funct > &de) {
+void eos_had_base::set_sat_deriv(deriv_base<funct11> &de) {
   sat_deriv=&de;
   return;
 }
 
-void eos_had_base::set_sat_deriv2(deriv_base<funct > &de) {
+void eos_had_base::set_sat_deriv2(deriv_base<funct11> &de) {
   sat_deriv2=&de;
   return;
 }
@@ -442,6 +468,7 @@ int eos_had_eden_base::calc_p(fermion &n, fermion &p, thermo &th) {
     
   double pa[2]={n.mu,p.mu};
   double *pap=&(pa[0]);
+  
   mm_funct_mfptr_param<eos_had_eden_base,double *> 
     fmf(this,&eos_had_eden_base::nuc_matter_e,pap);
   eos_mroot->msolve(2,x,fmf);

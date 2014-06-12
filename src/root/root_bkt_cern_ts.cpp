@@ -52,8 +52,9 @@ int main(void) {
   t.set_output_level(1);
 
   // 1 - Non-templated access through a funct object 
-  funct_mfptr<cl> fmf(&acl,&cl::mfn);
-  root_bkt_cern<funct_mfptr<cl> > cr1;
+  funct11 fmf=std::bind(std::mem_fn<double(double)>
+			(&cl::mfn),&acl,std::placeholders::_1);
+  root_bkt_cern<> cr1;
   tmp=clock();
   a=1.0e-5;
   b=1.0;
