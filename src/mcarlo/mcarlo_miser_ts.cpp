@@ -87,7 +87,7 @@ int main(void) {
   {
     double err;
 
-    mcarlo_miser<multi_funct<>,ubvector,int,rng_gsl> gm;
+    mcarlo_miser<multi_funct11,ubvector,int,rng_gsl> gm;
     ubvector a(3), b(3);
     a[0]=0.0;
     a[1]=0.0;
@@ -96,7 +96,7 @@ int main(void) {
     b[1]=M_PI;
     b[2]=M_PI;
 
-    multi_funct_fptr<> tf(test_fun);
+    multi_funct11 tf=test_fun;
 
     gm.n_points=100000;
     gm.verbose=2;

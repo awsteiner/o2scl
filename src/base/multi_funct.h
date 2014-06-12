@@ -39,15 +39,11 @@
 namespace o2scl {
 #endif
 
-#if !defined (O2SCL_NO_CPP11) || defined (DOXYGENP)
-  
   /// Multi-dimensional function typedef (C++11 version)
   typedef std::function<
     double(size_t,const boost::numeric::ublas::vector<double> &)>
     multi_funct11;
   
-#endif
-
   /** \brief Multi-dimensional function [abstract base]
 
       This class generalizes one function of several variables,

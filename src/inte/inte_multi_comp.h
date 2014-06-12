@@ -69,10 +69,9 @@ namespace o2scl {
       one-dimensional integration objects at once?
       \future Convert the inte<funct> ** to a std::vector<inte<funct> *>
   */
-  template<class func_t=multi_funct<>, 
-    class vec_t=boost::numeric::ublas::vector<double> 
-    > class inte_multi_comp : 
-    public inte_multi<func_t,vec_t> {
+  template<class func_t=multi_funct11, 
+    class vec_t=boost::numeric::ublas::vector<double> >
+    class inte_multi_comp : public inte_multi<func_t,vec_t> {
     
 #ifndef DOXYGEN_INTERNAL
 
@@ -188,8 +187,6 @@ namespace o2scl {
     std::bind(std::mem_fn<double(double,size_t &)>
 	      (&inte_multi_comp<func_t,vec_t>::odfunc),
 	      this,std::placeholders::_1,ix);
-    //funct_mfptr_param<inte_multi_comp<func_t,vec_t>,size_t>
-    //fmn(this,&inte_multi_comp<func_t,vec_t>::odfunc,ix);
     
     res=iptrs[0]->integ(fmn,a[0],b[0]);
     
@@ -223,8 +220,6 @@ namespace o2scl {
 	std::bind(std::mem_fn<double(double,size_t &)>
 		  (&inte_multi_comp<func_t,vec_t>::odfunc),
 		  this,std::placeholders::_1,ix_next);
-      //funct_mfptr_param<inte_multi_comp<func_t,vec_t>,size_t> 
-      //fmn(this,&inte_multi_comp<func_t,vec_t>::odfunc,ix_next);
       
       res=iptrs[ix]->integ(fmn,(*ax)[ix+1],(*bx)[ix+1]);
     }

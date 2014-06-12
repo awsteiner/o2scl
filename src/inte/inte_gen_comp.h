@@ -187,8 +187,6 @@ namespace o2scl {
     std::bind(std::mem_fn<double(double,size_t &)>
 	      (&inte_gen_comp<func_t,lfunc_t,ufunc_t,vec_t>::odfunc),
 	      this,std::placeholders::_1,ix);
-    //funct_mfptr_param<inte_gen_comp<func_t,lfunc_t,ufunc_t,vec_t>,size_t> 
-    //fmn(this,&inte_gen_comp<func_t,lfunc_t,ufunc_t,vec_t>::odfunc,ix);
     double res=iptrs[0]->integ(fmn,lower(0,c),upper(0,c));
       
     return res;
@@ -220,8 +218,6 @@ namespace o2scl {
 	std::bind(std::mem_fn<double(double,size_t &)>
 		  (&inte_gen_comp<func_t,lfunc_t,ufunc_t,vec_t>::odfunc),
 		  this,std::placeholders::_1,ix_next);
-      //funct_mfptr_param<inte_gen_comp<func_t,lfunc_t,ufunc_t,vec_t>,size_t> 
-      //fmn(this,&inte_gen_comp::odfunc,ix_next);
 
       res*=iptrs[ix]->integ(fmn,(*lowerp)(ix_next,*cx),
 			    (*upperp)(ix_next,*cx));

@@ -62,30 +62,29 @@ double test_fun2(size_t nv, const ubvector &x) {
 }
 
 int main(void) {
-  inte_gen_comp<multi_funct<> > ci;
+  inte_gen_comp<multi_funct11> ci;
 
   /// The integrator
-  typedef inte_gen_comp<multi_funct<>,
+  typedef inte_gen_comp<multi_funct11,
     multi_funct<>,multi_funct<>,ubvector> ior_type;
 
-  inte_qag_gsl<funct11 > gl1;
-  inte_qag_gsl<funct11 > gl2;
-  inte_qag_gsl<funct11 > gl3;
-  inte_qag_gsl<funct11 > gl4;
+  inte_qag_gsl<funct11> gl1;
+  inte_qag_gsl<funct11> gl2;
+  inte_qag_gsl<funct11> gl3;
+  inte_qag_gsl<funct11> gl4;
   
-  int vp=0;
-  inte<funct11 > **ip;
+  inte<funct11> **ip;
   double res;
   test_mgr t;
   t.set_output_level(2);
 
   cout.setf(ios::scientific);
  
-  multi_funct_fptr<> l(lower_limit);
-  multi_funct_fptr<> u(upper_limit);
-  multi_funct_fptr<> tf(test_fun);
-  multi_funct_fptr<> tf2(test_fun2);
-
+  multi_funct11 l=lower_limit;
+  multi_funct11 u=upper_limit;
+  multi_funct11 tf=test_fun;
+  multi_funct11 tf2=test_fun2;
+  
   ci.set_oned_inte(gl1,0);
   ci.set_oned_inte(gl2,1);
   ci.set_oned_inte(gl3,2);

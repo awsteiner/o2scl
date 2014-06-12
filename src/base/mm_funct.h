@@ -37,14 +37,10 @@
 namespace o2scl {
 #endif
 
-#if !defined (O2SCL_NO_CPP11) || defined (DOXYGENP)
-  
   /// Array of multi-dimensional functions typedef (C++11 version)
   typedef std::function<
     int(size_t,const boost::numeric::ublas::vector<double> &,
 	boost::numeric::ublas::vector<double> &) > mm_funct11;
-
-#endif
 
   /** \brief Array of multi-dimensional functions [abstract base]
       

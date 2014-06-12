@@ -46,7 +46,7 @@ int main(void) {
   t.set_output_level(2);
 
   /// The integrator
-  inte_multi_comp<multi_funct<> > ci4;
+  inte_multi_comp<multi_funct11> ci4;
   
   /// The individual integration objects
   inte_qag_gsl<funct11> gl4a;
@@ -67,7 +67,7 @@ int main(void) {
 
   cout.setf(ios::scientific);
   
-  multi_funct_fptr<> ffn(test_fun);
+  multi_funct11 ffn=test_fun;
 
   // Calculate the volume of a 'ndim'-dimensional hypercube with
   // sides of length 2.

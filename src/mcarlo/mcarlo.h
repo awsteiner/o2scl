@@ -28,14 +28,9 @@
 */
 
 #include <iostream>
-
-#include <boost/config.hpp>
-#include <boost/numeric/ublas/vector.hpp>
-
-// This must be after #include <boost/config.hpp>
-#if !defined (O2SCL_NO_CPP11) && !defined(BOOST_NO_CXX11_HDR_RANDOM)
 #include <random>
-#endif
+
+#include <boost/numeric/ublas/vector.hpp>
 
 #include <o2scl/inte_multi.h>
 #include <o2scl/rng_gsl.h>
@@ -50,24 +45,11 @@ namespace o2scl {
       random number generator. The default type for the random number
       generator is a \ref rng_gsl object. 
   */
-#if defined (O2SCL_NO_CPP11) || defined (BOOST_NO_CXX11_HDR_RANDOM)
-  template<class func_t, 
-    class vec_t=boost::numeric::ublas::vector<double>,
-    class rng_t=int, 
-    class rng_dist_t=rng_gsl >
-    class mcarlo : public inte_multi<func_t,vec_t>
-#else
-  template<class func_t, 
+  template<class func_t=multi_funct11, 
     class vec_t=boost::numeric::ublas::vector<double>,
     class rng_t=std::mt19937, 
     class rng_dist_t=std::uniform_real_distribution<double> > 
-    class mcarlo : public inte_multi<func_t,vec_t>
-#endif
-    {
-
-#ifdef O2SCL_NEVER_DEFINED
-    } {
-#endif
+    class mcarlo : public inte_multi<func_t,vec_t> {
 
   public:
   

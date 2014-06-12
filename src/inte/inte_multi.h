@@ -29,6 +29,7 @@
 #include <boost/numeric/ublas/vector.hpp>
 
 #include <o2scl/inte.h>
+#include <o2scl/multi_funct.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -41,7 +42,7 @@ namespace o2scl {
       limits. For more general regions of integration, use children of
       the class \ref inte_gen.
   */
-  template<class func_t, 
+  template<class func_t=multi_funct11, 
     class vec_t=boost::numeric::ublas::vector<double> > class inte_multi {
       
       public:

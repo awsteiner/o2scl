@@ -115,7 +115,6 @@ int main(void) {
   double alpha=-0.5;
 	
   inte_qags_gsl<funct11> Q;
-  //funct_fptr_param<double> f(log_recip,alpha);
   funct11 f=std::bind(log_recip,std::placeholders::_1,alpha);
 	
   // setup GSL data

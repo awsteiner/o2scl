@@ -107,12 +107,10 @@ int main(void) {
     }
 
     // O2SCL version
-    //cout << "Fixme. Doesn't work atm on riddler." << endl;
-    //exit(-1);
     {
       double err;
       
-      mcarlo_vegas<multi_funct<>,ubvector,int,rng_gsl> gm;
+      mcarlo_vegas<multi_funct11,ubvector,int,rng_gsl> gm;
       ubvector a(3), b(3);
       a[0]=0.0;
       a[1]=0.0;
@@ -123,7 +121,7 @@ int main(void) {
 
       gm.mode=k;
 
-      multi_funct_fptr<> tf(test_fun);
+      multi_funct11 tf=test_fun;
 
       //gm.verbose=2;
 
@@ -156,9 +154,9 @@ int main(void) {
       b[1]=M_PI;
       b[2]=M_PI;
     
-    multi_funct_fptr<> tf(test_fun);
+    multi_funct11 tf=test_fun;
     
-    mcarlo_vegas<multi_funct<>,ubvector,int,rng_gsl> gm;
+    mcarlo_vegas<multi_funct11,ubvector,int,rng_gsl> gm;
     gm.verbose=v;
     gm.n_points=100000;
     gm.minteg_err(tf,3,a,b,res,err);

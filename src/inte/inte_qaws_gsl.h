@@ -239,8 +239,6 @@ namespace o2scl {
     std::bind(std::mem_fn<double(double,func_t &)>
 	      (&inte_transform_gsl<func_t>::transform),
 	      this,std::placeholders::_1,func);
-    //funct_mfptr_param<inte_transform_gsl<func_t>,func_t> 
-    //fmp(this,&inte_transform_gsl<func_t>::transform,func);
 
     this->left_endpoint = a;
     this->right_endpoint = b;

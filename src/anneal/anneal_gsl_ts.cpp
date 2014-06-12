@@ -50,15 +50,13 @@ int main(int argc, char *argv[]) {
 
   cout.setf(ios::scientific);
   
-  anneal_gsl<multi_funct<>,ubvector,int,rng_gsl> ga;
+  anneal_gsl<multi_funct11,ubvector,int,rng_gsl> ga;
   double result;
   ubvector init(2);
 
-  multi_funct_fptr<ubvector> fx(funx);
+  multi_funct11 fx=funx;
 
   /// 1d to vectors
-
-  int vpx=0;
 
   init[0]=0.1;
   init[1]=0.2;

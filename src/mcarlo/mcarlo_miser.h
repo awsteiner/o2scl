@@ -88,21 +88,12 @@ namespace o2scl {
 
       Based on \ref Press90 .
   */
-#if defined (O2SCL_NO_CPP11) || defined (BOOST_NO_CXX11_HDR_RANDOM)
-  template<class func_t=multi_funct<>, 
-    class vec_t=boost::numeric::ublas::vector<double>,
-    class rng_t=int, 
-    class rng_dist_t=rng_gsl >
-    class mcarlo_miser : public mcarlo<func_t,vec_t,rng_t,rng_dist_t>
-#else
   template<class func_t=multi_funct11, 
     class vec_t=boost::numeric::ublas::vector<double>,
     class rng_t=std::mt19937, 
     class rng_dist_t=std::uniform_real_distribution<double> > 
-    class mcarlo_miser : public mcarlo<func_t,vec_t,rng_t,rng_dist_t>
-#endif
-    {
-      
+    class mcarlo_miser : public mcarlo<func_t,vec_t,rng_t,rng_dist_t> {
+    
     public:
   
     typedef boost::numeric::ublas::vector<double> ubvector;

@@ -85,46 +85,12 @@ int main(void) {
     gsl_monte_plain_free(s);
   }
 
-  // O2SCL version with GSL RNG
-  {
-    double err;
-
-    mcarlo_plain<multi_funct<>,ubvector,int,rng_gsl> gm;
-    ubvector a(3), b(3);
-    a[0]=0.0;
-    a[1]=0.0;
-    a[2]=0.0;
-    b[0]=M_PI;
-    b[1]=M_PI;
-    b[2]=M_PI;
-
-    multi_funct_fptr<ubvector> tf(test_fun);
-
-    //    gm.verbose=0;
-
-    gm.n_points=100000;
-    gm.minteg_err(tf,3,a,b,res2,err);
-
-    cout << "O2scl res,exact,err,rel: " 
-	 << res2 << " " << exact << " " << err << " " 
-	 << fabs(res2-exact)/err << endl;
-    t.test_rel(res2,exact,err*10.0,"O2SCL");
-    cout << "O2scl-GSL: " << res2-res1 << endl;
-    t.test_rel(res1,res2,1.0e-9,"O2SCL vs. GSL");
-  }
-
-#if !defined (O2SCL_NO_CPP11) && !defined (BOOST_NO_CXX11_HDR_RANDOM)
-
   // O2SCL version with CPP11 RNG
   {
     double err;
 
-    mcarlo_plain<multi_funct<>,ubvector,std::mt19937,
+    mcarlo_plain<multi_funct11,ubvector,std::mt19937,
 		 std::uniform_real_distribution<double> > gm;
-
-#ifdef O2SCL_NEVER_DEFINED
-}{
-#endif
 
     ubvector a(3), b(3);
     a[0]=0.0;
@@ -134,7 +100,7 @@ int main(void) {
     b[1]=M_PI;
     b[2]=M_PI;
 
-    multi_funct_fptr<ubvector> tf(test_fun);
+    multi_funct11 tf=test_fun;
 
     //    gm.verbose=0;
 
@@ -146,12 +112,10 @@ int main(void) {
 	 << fabs(res2-exact)/err << endl;
     t.test_rel(res2,exact,err*10.0,"O2SCL2");
   }
-
-#endif
-
-t.report();
- 
-return 0;
+  
+  t.report();
+  
+  return 0;
 }
 
 
