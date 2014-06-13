@@ -77,8 +77,7 @@ int main(void) {
        (&cl::mfn),&acl,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);
 
-    mroot_cern<mm_funct11,ubvector,
-      jac_funct_mfptr<cl,ubvector,ubmatrix> > cr1;
+    mroot_cern<mm_funct11,ubvector,jac_funct11> cr1;
     tmp=clock();
     for(int j=0;j<N;j++) {
       for(int k=0;k<N;k++) {
@@ -93,7 +92,11 @@ int main(void) {
     t.test_rel(x[1],0.2,1.0e-6,"1b");
 
     // Show that msolve_de() works
-    jac_funct_mfptr<cl,ubvector,ubmatrix> fmfd(&acl,&cl::mfnd);
+    jac_funct11 fmfd=std::bind
+      (std::mem_fn<int(size_t,ubvector &,size_t,ubvector &,ubmatrix &)>
+       (&cl::mfnd),&acl,std::placeholders::_1,std::placeholders::_2,
+       std::placeholders::_3,std::placeholders::_4,std::placeholders::_5);
+
     x[0]=0.5;
     x[1]=0.5;
     cr1.msolve_de(2,x,fmf,fmfd);

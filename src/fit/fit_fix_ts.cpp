@@ -63,13 +63,13 @@ int main(void) {
     yerr[i]=0.01;
   }
 
-  fit_funct_fptr<> mf(fitfun);
+  fit_funct11 mf(fitfun);
   chi_fit_funct<> cff(40,xdat,ydat,yerr,mf);
-  fit_funct_fptr<> mf0(fitfun0);
+  fit_funct11 mf0(fitfun0);
   chi_fit_funct<> cff0(40,xdat,ydat,yerr,mf0);
-  fit_funct_fptr<> mf1(fitfun1);
+  fit_funct11 mf1(fitfun1);
   chi_fit_funct<> cff1(40,xdat,ydat,yerr,mf1);
-  fit_funct_fptr<> mf2(fitfun2);
+  fit_funct11 mf2(fitfun2);
   chi_fit_funct<> cff2(40,xdat,ydat,yerr,mf2);
   int ret;
 

@@ -372,8 +372,7 @@ namespace o2scl {
     min_base<funct11> *min_ptr;
     
     /// The adaptive stepper
-    astep_base<ubvector,ubvector,ubvector,
-      ode_funct<ubvector,ubvector> > *as_ptr;
+    astep_base<ubvector,ubvector,ubvector,ode_funct11> *as_ptr;
     //@}
 
     /// The ODE step function
@@ -623,8 +622,7 @@ namespace o2scl {
 
     /** \brief Set the adaptive stepper
      */
-    void set_stepper(astep_base<ubvector,ubvector,ubvector,
-      ode_funct<ubvector,ubvector> > &sap) {
+    void set_stepper(astep_base<ubvector,ubvector,ubvector,ode_funct11> &sap) {
       as_ptr=&sap; 
       return;
     };
@@ -639,8 +637,7 @@ namespace o2scl {
     mroot_hybrids<mm_funct11,ubvector,ubmatrix,jac_funct11> def_solver;
 
     /// The default adaptive stepper
-    astep_gsl<ubvector,ubvector,ubvector,
-      ode_funct<ubvector,ubvector> > def_stepper;
+    astep_gsl<ubvector,ubvector,ubvector,ode_funct11> def_stepper;
     //@}
 
   };

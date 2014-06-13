@@ -37,173 +37,10 @@
 namespace o2scl {
 #endif
 
-  /** \brief Fitting function [abstract base]
-
-      Default template arguments
-      - \c vec_t - \ref boost::numeric::ublas::vector \< double \>
-  */
-  template<class vec_t=boost::numeric::ublas::vector<double> >
-    class fit_funct {
-
-    public:  
-    
-    fit_funct() {}
-    
-    virtual ~fit_funct() {}
-    
-    /** \brief Using parameters in \c p, predict \c y given \c x
-     */
-    virtual double operator()(size_t np, const vec_t &p, double x)=0;
-   
-#ifndef DOXYGEN_INTERNAL
-    
-    private:
-    
-    fit_funct(const fit_funct &);
-    fit_funct& operator=(const fit_funct&);
-    
-#endif
-
-  };
-  
-  /** \brief Function pointer fitting function
-
-      Default template arguments
-      - \c vec_t - \ref boost::numeric::ublas::vector \< double \>
-  */
-  template<class vec_t=boost::numeric::ublas::vector<double> >
-    class fit_funct_fptr : public fit_funct<vec_t> {
-    
-    public:
-
-    /** \brief Create an empy function pointer fitting object
-     */
-    fit_funct_fptr() {
-    }
-    
-    /** \brief Specify a fitting function by a function pointer
-     */
-    fit_funct_fptr(double (*fp)(size_t np, const vec_t &p, double x)) { 
-      set_function(fp);
-    }
-    
-    virtual ~fit_funct_fptr() {}
-
-    /// Set the function pointer
-    void set_function(double (*fp)(size_t np, const vec_t &p, double x)) { 
-      fptr=fp;
-    }
-
-    /** \brief Using parameters in \c p, predict \c y given \c x
-     */
-    virtual double operator()(size_t np, const vec_t &p, double x) {
-      return fptr(np,p,x);
-    }
-
-#ifndef DOXYGEN_INTERNAL
-
-    protected:
-  
-    /// Storage for the user-specified function pointer
-    double (*fptr)(size_t np, const vec_t &p, double x);
-
-    fit_funct_fptr(const fit_funct_fptr &);
-    fit_funct_fptr& operator=(const fit_funct_fptr&);
-
-#endif
-
-  };
-
-  /** \brief Member function pointer fitting function
-
-      Default template arguments
-      - \c vec_t - \ref boost::numeric::ublas::vector \< double \>
-  */
-  template <class tclass, class vec_t=boost::numeric::ublas::vector<double> >
-    class fit_funct_mfptr : public fit_funct<vec_t> {
-
-    public:
-    
-    /** \brief Specify the member function pointer
-     */
-    fit_funct_mfptr
-    (tclass *tp, double (tclass::*fp)(size_t np, const vec_t &p, double x)) {
-      
-      tptr=tp;
-      fptr=fp;
-    }
-  
-    virtual ~fit_funct_mfptr() {};
-  
-    /** \brief Using parameters in \c p, predict \c y given \c x
-     */
-    virtual double operator()(size_t np, const vec_t &p, double x) {
-      return (*tptr.*fptr)(np,p,x);
-    }
-  
-#ifndef DOXYGEN_INTERNAL
-
-    protected:
-  
-    /// Storage for the user-specified function pointer
-    double (tclass::*fptr)(size_t np, const vec_t &p, double x);
-
-    /// Storage for the class pointer
-    tclass *tptr;
-  
-    private:
-
-    fit_funct_mfptr(const fit_funct_mfptr &);
-    fit_funct_mfptr& operator=(const fit_funct_mfptr&);
-
-#endif
-
-  };
-
-  /** \brief Const member function pointer fitting function
-
-      Default template arguments
-      - \c vec_t - \ref boost::numeric::ublas::vector \< double \>
-  */
-  template <class tclass, class vec_t=boost::numeric::ublas::vector<double> >
-    class fit_funct_cmfptr : public fit_funct<vec_t> {
-    public:
-    
-    /** \brief Specify the member function pointer
-     */
-    fit_funct_cmfptr(tclass *tp, 
-		     double (tclass::*fp)(size_t np, const vec_t &p, 
-					  double x) const) {
-      tptr=tp;
-      fptr=fp;
-    }
-  
-    virtual ~fit_funct_cmfptr() {};
-  
-    /** \brief Using parameters in \c p, predict \c y given \c x
-     */
-    virtual double operator()(size_t np, const vec_t &p, double x) {
-      return (*tptr.*fptr)(np,p,x);
-    }
-  
-#ifndef DOXYGEN_INTERNAL
-
-    protected:
-  
-    /// Storage for the user-specified function pointer
-    double (tclass::*fptr)(size_t np, const vec_t &p, double x) const;
-
-    /// Storage for the class pointer
-    tclass *tptr;
-  
-    private:
-
-    fit_funct_cmfptr(const fit_funct_cmfptr &);
-    fit_funct_cmfptr& operator=(const fit_funct_cmfptr&);
-
-#endif
-
-  };
+  /// Array of multi-dimensional functions typedef (C++11 version)
+  typedef std::function<
+    int(size_t,const boost::numeric::ublas::vector<double> &, 
+	double)> fit_funct11;
 
   /** \brief String fitting function
       
@@ -211,13 +48,13 @@ namespace o2scl {
       - \c vec_t - \ref boost::numeric::ublas::vector \< double \>
   */
   template<class vec_t=boost::numeric::ublas::vector<double> >
-    class fit_funct_strings : public fit_funct<vec_t> {
+    class fit_funct11_strings {
 
     public:
 
     /** \brief Specify a fitting function through a string
      */
-    fit_funct_strings(std::string formula, std::string parms, 
+    fit_funct11_strings(std::string formula, std::string parms, 
 			 std::string var, int nauxp=0, 
 			 std::string auxp="") {
       if(nauxp<1) {
@@ -237,7 +74,7 @@ namespace o2scl {
       st_var=var;
     }
 
-    virtual ~fit_funct_strings() {
+    virtual ~fit_funct11_strings() {
       if (naux>0) {
 	delete[] aux;
       }
@@ -297,7 +134,7 @@ namespace o2scl {
     /// The variables
     std::string st_var; 
 
-    fit_funct_strings() {};
+    fit_funct11_strings() {};
 
     /// Specify the strings which define the fitting function
     int set_function(std::string formula, std::string parms, 
@@ -305,8 +142,8 @@ namespace o2scl {
 
     private:
     
-    fit_funct_strings(const fit_funct_strings &);
-    fit_funct_strings& operator=(const fit_funct_strings&);
+    fit_funct11_strings(const fit_funct11_strings &);
+    fit_funct11_strings& operator=(const fit_funct11_strings&);
 
 #endif
 
@@ -376,7 +213,7 @@ namespace o2scl {
       Default template arguments
       - \c vec_t - \ref boost::numeric::ublas::vector \< double \>
       - \c mat_t - \ref boost::numeric::ublas::matrix \< double \>
-      - \c func_t - \ref fit_funct\<vec_t\>
+      - \c func_t - \ref fit_funct11
 
       \future Allow a user-specified Jacobian or make that into
       a separate class?
@@ -384,7 +221,7 @@ namespace o2scl {
   */
   template<class vec_t=boost::numeric::ublas::vector<double>, 
     class mat_t=boost::numeric::ublas::matrix<double>, 
-    class fit_func_t=fit_funct<vec_t> > class chi_fit_funct : 
+    class fit_func_t=fit_funct11> class chi_fit_funct : 
     public gen_fit_funct<vec_t,mat_t> {
     
   public:
@@ -409,11 +246,7 @@ namespace o2scl {
 
     //mfm.set_function(this,&chi_fit_funct::jac_mm_funct);
     auto_jac.set_function(mfm);
-#ifndef O2SCL_NO_CPP11
     double sqrt_dbl_eps=sqrt(std::numeric_limits<double>::epsilon());
-#else 
-    double sqrt_dbl_eps=GSL_SQRT_DBL_EPSILON;
-#endif
     auto_jac.epsrel=sqrt_dbl_eps;
   }
 
@@ -517,7 +350,7 @@ namespace o2scl {
 
   /** \brief Non-linear least-squares fitting [abstract base]
    */
-  template<class func_t=fit_funct<>, 
+  template<class func_t=fit_funct11,
     class vec_t=boost::numeric::ublas::vector<double>, 
     class mat_t=boost::numeric::ublas::matrix<double> > class fit_base {
 

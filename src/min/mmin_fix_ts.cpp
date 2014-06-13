@@ -95,9 +95,9 @@ int main(void) {
   fix[1]=false;
   
   // Test using a different minimizer
-  mmin_conf<mmin_fix_params<>,ubvector,grad_funct<ubvector>,
-	    gradient<mmin_fix_params<>,ubvector>,
-	    gradient_gsl<mmin_fix_params<>,ubvector> > gmc;
+  mmin_conf<mmin_fix_params<>,ubvector,grad_funct11,
+    gradient<mmin_fix_params<>,ubvector>,
+    gradient_gsl<mmin_fix_params<>,ubvector> > gmc;
 g.set_mmin(gmc);
 
 #ifdef O2SCL_NEVER_DEFINED

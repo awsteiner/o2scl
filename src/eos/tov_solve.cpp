@@ -606,8 +606,12 @@ int tov_solve::integ_star(size_t ndvar, const ubvector &ndx,
   
   // ---------------------------------------------------------------
   
-  ode_funct_mfptr<tov_solve,ubvector> ofm(this,&tov_solve::derivs);
-
+  ode_funct11 ofm=std::bind
+    (std::mem_fn<int(double,size_t,const ubvector &,ubvector &)>
+     (&tov_solve::derivs),
+     this,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3,std::placeholders::_4);
+  
   double outrad=0.0;
   if (verbose>=2) {
     cout << "Central pressure: " << ndx[0] << endl;

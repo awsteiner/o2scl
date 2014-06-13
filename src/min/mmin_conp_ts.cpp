@@ -93,13 +93,8 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
-#ifndef O2SCL_NO_CPP11
   multi_funct11 mf=minfun;
   grad_funct11 mfd=minfund;
-#else
-  multi_funct_fptr<> mf(minfun);
-  grad_funct_fptr<> mfd(minfund);
-#endif
 
   // Normal version without gradient
   
@@ -114,15 +109,9 @@ int main(void) {
   cout << endl;
 
   // Show that we can use a user-specified automatic gradient object
-#ifdef O2SCL_NO_CPP11
-  mmin_conp<multi_funct<>,ubvector,grad_funct<ubvector>,
-	    gradient<multi_funct<>,ubvector>,
-	    gradient_gsl_new<multi_funct<>,ubvector> > g3;
-#else
-mmin_conp<multi_funct11,ubvector,grad_funct<ubvector>,
-	  gradient<multi_funct11,ubvector>,
-	  gradient_gsl_new<multi_funct11,ubvector> > g3;
-#endif
+  mmin_conp<multi_funct11,ubvector,grad_funct11,
+    gradient<multi_funct11,ubvector>,
+    gradient_gsl_new<multi_funct11,ubvector> > g3;
 
   // Emacs has trouble with tabification
 #ifdef O2SCL_NEVER_DEFINED

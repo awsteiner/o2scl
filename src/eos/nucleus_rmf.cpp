@@ -1105,8 +1105,14 @@ void nucleus_rmf::dirac_step(double &x, double ht,
     odparms op={eigent,kappat,&fields,&varr};
     odefun(x,2,ode_y,ode_dydx,op);
 
-    ode_funct_mfptr_param<nucleus_rmf,odparms,ubvector> 
-      ofm(this,&nucleus_rmf::odefun,op);
+    ode_funct11 ofm=std::bind
+      (std::mem_fn<int(double,size_t,const ubvector &,ubvector &,odparms &)>
+       (&nucleus_rmf::odefun),
+       this,std::placeholders::_1,std::placeholders::_2,
+       std::placeholders::_3,std::placeholders::_4,std::ref(op));
+
+    //ode_funct_mfptr_param<nucleus_rmf,odparms,ubvector> 
+    //ofm(this,&nucleus_rmf::odefun,op);
     ostep->step(x,ht,2,ode_y,ode_dydx,ode_y,ode_yerr,ode_dydx,ofm);
 
     x+=ht;
