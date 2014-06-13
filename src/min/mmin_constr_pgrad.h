@@ -81,7 +81,7 @@ namespace o2scl {
       \future Replace the generic variable 'tol' with 'tolf'
       or 'tolx' from \ref o2scl::mmin_base.
   */
-  template<class func_t=multi_funct<>, class dfunc_t = grad_funct<>, 
+  template<class func_t=multi_funct11, class dfunc_t = grad_funct<>, 
     class vec_t=boost::numeric::ublas::vector<double> > 
     class mmin_constr_pgrad : 
     public mmin_constr<func_t,dfunc_t,ool_hfunct<int>,vec_t> {

@@ -66,7 +66,7 @@ int main(void) {
 
   /// The integrator
   typedef inte_gen_comp<multi_funct11,
-    multi_funct<>,multi_funct<>,ubvector> ior_type;
+    multi_funct11,multi_funct11,ubvector> ior_type;
 
   inte_qag_gsl<funct11> gl1;
   inte_qag_gsl<funct11> gl2;

@@ -61,6 +61,8 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
 
+#ifdef O2SCL_NEVER_DEFINED
+
   // --------------------------------------------------------------------
   // test ubvector versions
   // --------------------------------------------------------------------
@@ -99,6 +101,8 @@ int main(void) {
   
   y=f52(2,x2);
   t.test_rel(y,-0.3,1.0e-6,"mfptr");
+
+#endif
 
   t.report();
   return 0;

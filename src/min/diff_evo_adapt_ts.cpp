@@ -59,11 +59,11 @@ int main(int argc, char *argv[]) {
 
   cout.setf(ios::scientific);
 
-  diff_evo_adapt<multi_funct<> > de;
+  diff_evo_adapt<multi_funct11> de;
   double result;
   ubvector init(2);
   
-  multi_funct_fptr<> fx(func);
+  multi_funct11 fx=func;
   mm_funct_fptr<ubvector> init_f( init_function );
   
   de.set_init_function( init_f );

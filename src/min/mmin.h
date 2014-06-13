@@ -488,14 +488,8 @@ namespace o2scl {
       and these pointers are not copied in child copy
       constructors. 
   */
-#ifdef O2SCL_NO_CPP11
-  template<class func_t=multi_funct<>, class dfunc_t=func_t, 
-    class vec_t=boost::numeric::ublas::vector<double> > class mmin_base
-#else
-    template<class func_t=multi_funct11, class dfunc_t=func_t,
-    class vec_t=boost::numeric::ublas::vector<double> > class mmin_base
-#endif
-    {
+  template<class func_t=multi_funct11, class dfunc_t=func_t,
+    class vec_t=boost::numeric::ublas::vector<double> > class mmin_base {
 
 #ifndef DOXYGEN_INTERNAL
 

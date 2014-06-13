@@ -40,7 +40,6 @@
 
 #include <o2scl/constants.h> 
 #include <o2scl/err_hnd.h>
-#include <o2scl/multi_funct.h>
 #include <o2scl/mm_funct.h>
 #include <o2scl/inte_qng_gsl.h>
 #include <o2scl/poly.h>

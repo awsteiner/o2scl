@@ -56,10 +56,10 @@ int main(void) {
 
   size_t nv=100;
 
-  multi_funct_fptr<> mff(quadratic);
+  multi_funct11 mff=quadratic;
   grad_funct_fptr<> gff(quadratic_df);
   
-  mmin_constr_pgrad<multi_funct_fptr<>, grad_funct_fptr<>,ubvector> omp;
+  mmin_constr_pgrad<multi_funct11, grad_funct_fptr<>,ubvector> omp;
 
   ubvector c1(nv), c2(nv), x(nv);
 

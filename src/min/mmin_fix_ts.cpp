@@ -51,7 +51,7 @@ int main(void) {
   mmin_fix_params<> g;
   g.tol_abs/=1.0e2;
 
-  multi_funct_fptr<> mf(minfun);
+  multi_funct11 mf=minfun;
   
   // Test mmin() which doesn't fix any parameters
   x[0]=1.0;

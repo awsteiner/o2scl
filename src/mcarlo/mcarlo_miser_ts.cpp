@@ -86,8 +86,8 @@ int main(void) {
   // O2SCL version
   {
     double err;
-
-    mcarlo_miser<multi_funct11,ubvector,int,rng_gsl> gm;
+    
+    mcarlo_miser<> gm;
     ubvector a(3), b(3);
     a[0]=0.0;
     a[1]=0.0;

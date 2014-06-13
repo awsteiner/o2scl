@@ -59,20 +59,12 @@ namespace o2scl {
       This is a reimplmentation of the internal GSL wrapper for
       function calls in the BFGS minimizer
   */
-#ifdef O2SCL_NO_CPP11
-  template<class func_t, class vec_t=boost::numeric::ublas::vector<double> , 
-    class dfunc_t=grad_funct<boost::numeric::ublas::vector<double> >, 
-    class auto_grad_t=gradient<func_t,boost::numeric::ublas::vector<double> > > 
-    class mmin_wrapper_gsl : public mmin_wrap_gsl
-#else
   template<class func_t=multi_funct11, 
     class vec_t=boost::numeric::ublas::vector<double> , 
     class dfunc_t=grad_funct11,
     class auto_grad_t=
     gradient<multi_funct11,boost::numeric::ublas::vector<double> > > 
-    class mmin_wrapper_gsl : public mmin_wrap_gsl
-#endif
- {
+    class mmin_wrapper_gsl : public mmin_wrap_gsl {
     
 #ifndef DOXYGEN_INTERNAL
     
@@ -364,8 +356,7 @@ namespace o2scl {
       vector_bfgs2.
 
       Default template arguments
-      - \c func_t - \ref multi_funct \< 
-      \ref boost::numeric::ublas::vector \< double \> \>
+      - \c func_t - \ref multi_funct11
       - \c vec_t - \ref boost::numeric::ublas::vector \<double \> 
       - \c dfunc_t - \ref mm_funct\< 
       \ref boost::numeric::ublas::vector \<double \> \>
@@ -381,15 +372,6 @@ namespace o2scl {
       versions too. I need to examine this more closely with some code
       designed to clearly show this.
   */
-#ifdef O2SCL_NO_CPP11
-  template<class func_t=multi_funct<>, 
-    class vec_t=boost::numeric::ublas::vector<double> , 
-    class dfunc_t=grad_funct<boost::numeric::ublas::vector<double> >, 
-    class auto_grad_t=gradient<func_t,boost::numeric::ublas::vector<double> >,
-    class def_auto_grad_t=
-    gradient_gsl<func_t,boost::numeric::ublas::vector<double> > > 
-    class mmin_bfgs2 : public mmin_base<func_t,func_t,vec_t>
-#else
   template<class func_t=multi_funct11, 
     class vec_t=boost::numeric::ublas::vector<double> , 
     class dfunc_t=grad_funct11,
@@ -397,9 +379,7 @@ namespace o2scl {
     gradient<multi_funct11,boost::numeric::ublas::vector<double> >,
     class def_auto_grad_t=
     gradient_gsl<multi_funct11,boost::numeric::ublas::vector<double> > > 
-    class mmin_bfgs2 : public mmin_base<func_t,func_t,vec_t>
-#endif
- {
+    class mmin_bfgs2 : public mmin_base<func_t,func_t,vec_t> {
     
 #ifndef DOXYGEN_INTERNAL
     

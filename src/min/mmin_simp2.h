@@ -103,7 +103,7 @@ namespace o2scl {
 
       Default template arguments
       - \c param_t - no default
-      - \c func_t - \ref multi_funct\<param_t\>
+      - \c func_t - \ref multi_funct11
       - \c vec_t - \ref boost::numeric::ublas::vector \< double \>
 
       Based on \ref Nelder65 .
@@ -115,16 +115,9 @@ namespace o2scl {
       here, and also add support for the nmsimplex2rand algorithm
       in GSL.
   */
-#ifdef O2SCL_NO_CPP11
-  template<class func_t=multi_funct<>,
+  template<class func_t=multi_funct11,
     class vec_t=boost::numeric::ublas::vector<double> > class mmin_simp2 :
-    public mmin_base<func_t,func_t,vec_t>
-#else
-    template<class func_t=multi_funct11,
-    class vec_t=boost::numeric::ublas::vector<double> > class mmin_simp2 :
-    public mmin_base<func_t,func_t,vec_t>
-#endif
-    {
+    public mmin_base<func_t,func_t,vec_t> {
       
   public:
 

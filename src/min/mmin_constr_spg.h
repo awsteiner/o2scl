@@ -80,7 +80,7 @@ namespace o2scl {
       deallocated until the destructor, and should be handled
       a bit more elegantly.
   */
-  template<class func_t=multi_funct<>, class dfunc_t=grad_funct<>, 
+  template<class func_t=multi_funct11, class dfunc_t=grad_funct<>, 
     class vec_t=boost::numeric::ublas::vector<double> > class mmin_constr_spg : 
     public mmin_constr<func_t,dfunc_t,ool_hfunct<int>,vec_t> {
 

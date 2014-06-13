@@ -41,7 +41,6 @@
 
 #include <o2scl/misc.h>
 #include <o2scl/err_hnd.h>
-#include <o2scl/multi_funct.h>
 #include <o2scl/search_vec.h>
 #include <o2scl/uniform_grid.h>
 #include <o2scl/interp.h>

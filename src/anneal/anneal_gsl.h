@@ -46,11 +46,13 @@
 /** \file anneal_gsl.h
     \brief File defining \ref o2scl::anneal_gsl
 */
+#include <random>
 
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 
 #include <o2scl/anneal.h>
+#include <o2scl/multi_funct.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -134,21 +136,11 @@ namespace o2scl {
       \endcomment
       
   */
-#if defined (O2SCL_NO_CPP11) || defined (BOOST_NO_CXX11_HDR_RANDOM)
-  template<class func_t=multi_funct<>, 
+  template<class func_t=multi_funct11,
     class vec_t=boost::numeric::ublas::vector<double>,
-    class rng_t=int,
-    class rng_dist_t=rng_gsl > class anneal_gsl :
-    public anneal_base<func_t,vec_t,rng_t,rng_dist_t>
-#else
-    template<class func_t=multi_funct11,
-    class vec_t=boost::numeric::ublas::vector<double>,
-    class rng_t=std::mt19937,
-    class rng_dist_t=std::uniform_real_distribution<double> > 
-    class anneal_gsl : public anneal_base<func_t,vec_t,rng_t,rng_dist_t>
-#endif
-    {
-      
+    class rng_t=int, class rng_dist_t=rng_gsl>
+    class anneal_gsl : public anneal_base<func_t,vec_t,rng_t,rng_dist_t> {
+    
   public:
   
   typedef boost::numeric::ublas::vector<double> ubvector;

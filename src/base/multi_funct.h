@@ -44,6 +44,8 @@ namespace o2scl {
     double(size_t,const boost::numeric::ublas::vector<double> &)>
     multi_funct11;
   
+#ifdef O2SCL_NEVER_DEFINED
+
   /** \brief Multi-dimensional function [abstract base]
 
       This class generalizes one function of several variables,
@@ -436,7 +438,7 @@ namespace o2scl {
 
   };
 
-#if !defined (O2SCL_NO_CPP11) || defined (DOXYGENP)
+#endif
 
   /** \brief A multi-dimensional function from a string
   */
@@ -559,8 +561,6 @@ namespace o2scl {
 #endif
 
   };
-
-#endif
 
 #ifndef DOXYGEN_NO_O2NS
 }

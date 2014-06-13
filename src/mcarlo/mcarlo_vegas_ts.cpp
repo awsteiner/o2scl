@@ -110,7 +110,7 @@ int main(void) {
     {
       double err;
       
-      mcarlo_vegas<multi_funct11,ubvector,int,rng_gsl> gm;
+      mcarlo_vegas<> gm;
       ubvector a(3), b(3);
       a[0]=0.0;
       a[1]=0.0;
@@ -156,7 +156,7 @@ int main(void) {
     
     multi_funct11 tf=test_fun;
     
-    mcarlo_vegas<multi_funct11,ubvector,int,rng_gsl> gm;
+    mcarlo_vegas<> gm;
     gm.verbose=v;
     gm.n_points=100000;
     gm.minteg_err(tf,3,a,b,res,err);

@@ -48,7 +48,7 @@ namespace o2scl {
       direction. It is not intended for a casual end-user.
       
       Default template arguments
-      - \c func_t - \ref multi_funct \< \>
+      - \c func_t - \ref multi_funct11
       - \c vec_t - \ref boost::numeric::ublas::vector \<double \>
       - \c dfunc_t - \ref mm_funct \< \>
       - \c auto_grad_t - \ref gradient \< func_t \>
@@ -59,25 +59,14 @@ namespace o2scl {
       simplified it slightly for the documentation below.
       \endcomment
   */
-#ifdef O2SCL_NO_CPP11
-  template<class func_t = multi_funct<>, 
-    class vec_t = boost::numeric::ublas::vector<double>, 
-    class dfunc_t = grad_funct<boost::numeric::ublas::vector<double> >,
-    class auto_grad_t = gradient<func_t,boost::numeric::ublas::vector<double> >,
-    class def_auto_grad_t = 
-    gradient_gsl<func_t,boost::numeric::ublas::vector<double> > > 
-    class mmin_gsl_base : public mmin_base<func_t,func_t,vec_t>
-#else
-    template<class func_t = multi_funct11, 
+  template<class func_t = multi_funct11, 
     class vec_t = boost::numeric::ublas::vector<double>, 
     class dfunc_t = grad_funct11,
     class auto_grad_t = gradient<multi_funct11,
     boost::numeric::ublas::vector<double> >,
     class def_auto_grad_t = 
     gradient_gsl<multi_funct11,boost::numeric::ublas::vector<double> > > 
-    class mmin_gsl_base : public mmin_base<func_t,func_t,vec_t>
-#endif
-    {
+    class mmin_gsl_base : public mmin_base<func_t,func_t,vec_t> {
     
 #ifndef DOXYGEN_INTERNAL
     
@@ -400,7 +389,7 @@ namespace o2scl {
       in \ref ex_mmin_sect .
       
       Default template arguments
-      - \c func_t - \ref multi_funct \< \>
+      - \c func_t - \ref multi_funct11
       - \c vec_t - \ref boost::numeric::ublas::vector \< double \>
       - \c dfunc_t - \ref grad_funct \< \>
       - \c auto_grad_t - \ref gradient \< func_t \>
@@ -410,17 +399,7 @@ namespace o2scl {
       here, because it was not really used in the original GSL code
       for these minimizers.
   */
-#ifdef O2SCL_NO_CPP11
-  template<class func_t=multi_funct<>, 
-    class vec_t=boost::numeric::ublas::vector<double>, 
-    class dfunc_t=grad_funct<boost::numeric::ublas::vector<double> >, 
-    class auto_grad_t=gradient<func_t,boost::numeric::ublas::vector<double> >,
-    class def_auto_grad_t=
-    gradient_gsl<func_t,boost::numeric::ublas::vector<double> > > 
-    class mmin_conf : 
-    public mmin_gsl_base<func_t,vec_t,dfunc_t,auto_grad_t,def_auto_grad_t>
-#else
-    template<class func_t = multi_funct11, 
+  template<class func_t = multi_funct11, 
     class vec_t = boost::numeric::ublas::vector<double>, 
     class dfunc_t = grad_funct11,
     class auto_grad_t = gradient<multi_funct11,
@@ -428,9 +407,7 @@ namespace o2scl {
     class def_auto_grad_t = 
     gradient_gsl<multi_funct11,boost::numeric::ublas::vector<double> > > 
     class mmin_conf : 
-    public mmin_gsl_base<func_t,vec_t,dfunc_t,auto_grad_t,def_auto_grad_t>
-#endif
-    {
+    public mmin_gsl_base<func_t,vec_t,dfunc_t,auto_grad_t,def_auto_grad_t> {
       
 #ifndef DOXYGEN_INTERNAL
       

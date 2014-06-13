@@ -85,12 +85,11 @@ int main(void) {
     gsl_monte_plain_free(s);
   }
 
-  // O2SCL version with CPP11 RNG
+  // O2SCL version
   {
     double err;
-
-    mcarlo_plain<multi_funct11,ubvector,std::mt19937,
-		 std::uniform_real_distribution<double> > gm;
+    
+    mcarlo_plain<> gm;
 
     ubvector a(3), b(3);
     a[0]=0.0;
