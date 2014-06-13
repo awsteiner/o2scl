@@ -61,6 +61,8 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
 
+#ifdef O2SCL_NEVER_DEFINED
+
   double a=2.0;
   mm_funct<ubvector> *basep;
   mm_funct_fptr_param<double,ubvector> f1(func,a);
@@ -112,8 +114,6 @@ int main(void) {
   f3a(2,xa,ya);
   t.test_rel(ya[0],-0.3,1.0e-6,"mfptra");
   t.test_rel(ya[1],6.7,1.0e-6,"mfptra");
-
-#ifdef O2SCL_NEVER_DEFINED
 
   // ---------------------------------------------------------
   // double[] section

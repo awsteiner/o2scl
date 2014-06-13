@@ -1123,8 +1123,13 @@ int tov_solve::fixed(double target_mass, double pmax) {
 
   ubvector x(1), y(1);
   x[0]=fixed_pr_guess;
+  
+  mm_funct11 fmf=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+     (&tov_solve::integ_star),
+     this,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3);
 
-  mm_funct_mfptr<tov_solve> fmf(this,&tov_solve::integ_star);
   if (err_nonconv==false) mroot_ptr->err_nonconv=false;
   integ_star_final=false;
   int ret=mroot_ptr->msolve(1,x,fmf);

@@ -360,9 +360,16 @@ int eos_had_skyrme::calpar(double gt0, double gt3, double galpha,
   x[1]=gt3;
   x[2]=galpha;
 
-  mm_funct_mfptr<eos_had_skyrme> fmf(this,&eos_had_skyrme::calparfun);
-  mm_funct_mfptr<eos_had_skyrme> fmf2(this,&eos_had_skyrme::calparfun2);
-  double *vp=0;
+  mm_funct11 fmf=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+     (&eos_had_skyrme::calparfun),
+     this,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3);
+  mm_funct11 fmf2=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+     (&eos_had_skyrme::calparfun2),
+     this,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3);
 
   if (eos_mroot->msolve(3,x,fmf)!=0) {
     O2SCL_ERR("Solution failed in calparfun().",exc_efailed);

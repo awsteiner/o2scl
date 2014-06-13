@@ -165,7 +165,7 @@ namespace o2scl {
     double energy(double barn, int Z, int A);
 
     /// A solver to solve Eq. 2.7.4
-    mroot_hybrids<mm_funct<> > gs;
+    mroot_hybrids<mm_funct11> gs;
 
     /// The nuclear mass formula
     nucmass *nmp;

@@ -249,8 +249,11 @@ void fermion_mag_zerot::calc_density_zerot_mag
 
   if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
 
-  mm_funct_mfptr<fermion_mag_zerot> mf(this,&fermion_mag_zerot::solve_fun);
-  int pa=0;
+  mm_funct11 mf=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+     (&fermion_mag_zerot::solve_fun),
+     this,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3);
 
   // Construct an initial guess from the B=0 result
   calc_density_zerot(f);

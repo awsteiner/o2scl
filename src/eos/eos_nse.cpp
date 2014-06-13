@@ -62,7 +62,11 @@ int eos_nse::calc_density(double nb, double Ye, double T,
   x[1]=mup/T;
 
   solve_parms sp={nb,Ye,T,&nd};
-  mm_funct_mfptr_param<eos_nse,solve_parms> mfm(this,&eos_nse::solve_fun,sp);
+  mm_funct11 mfm=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &,solve_parms &)>
+     (&eos_nse::solve_fun),
+     this,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3,std::ref(sp));
 
   int ret=root->msolve(2,x,mfm);
   // If the solver doesn't throw an exception because err_nonconv is

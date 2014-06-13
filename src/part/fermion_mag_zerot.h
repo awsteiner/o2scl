@@ -100,7 +100,7 @@ namespace o2scl {
   protected:
 
     /// Solver to compute chemical potential from density
-    mroot<mm_funct<>,boost::numeric::ublas::vector<double>, 
+    mroot<mm_funct11,boost::numeric::ublas::vector<double>, 
       jac_funct<> > *density_root;
     
     /// The charge times the magnetic field in \f$ \mathrm{fm}^{-2} \f$
@@ -160,7 +160,7 @@ namespace o2scl {
         potential from the density 
     */
     int set_density_root
-      (mroot<mm_funct<>,boost::numeric::ublas::vector<double>,
+      (mroot<mm_funct11,boost::numeric::ublas::vector<double>,
        jac_funct<> > &rp) {
       density_root=&rp;
       return 0;
@@ -168,7 +168,7 @@ namespace o2scl {
 
     /** \brief The default solver for calc_density().
      */
-    mroot_hybrids<mm_funct<>,
+    mroot_hybrids<mm_funct11,
       boost::numeric::ublas::vector<double>, 
       boost::numeric::ublas::matrix<double>,
       jac_funct<> > def_density_root;

@@ -36,16 +36,12 @@
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
 #endif
-
-#if !defined (O2SCL_NO_CPP11) || defined (DOXYGENP)
   
   /// Jacobian function (not necessarily square) (C++11 version)
   typedef std::function<
     int(size_t,boost::numeric::ublas::vector<double> &,
 	size_t,boost::numeric::ublas::vector<double> &,
 	boost::numeric::ublas::matrix<double> &) > jac_funct11;
-
-#endif
 
   /** \brief Base for a Jacobian (not necessarily square) where J is
       computed at x given y=f(x) [abstract base]
@@ -250,7 +246,7 @@ namespace o2scl {
       - \c vec_t - boost::numeric::ublas::vector<double>
       - \c mat_t - boost::numeric::ublas::matrix<double>
   */
-  template<class func_t=mm_funct<>, 
+  template<class func_t=mm_funct11, 
     class vec_t=boost::numeric::ublas::vector<double>, 
     class mat_t=boost::numeric::ublas::matrix<double> > class jacobian : 
   public jac_funct<vec_t,mat_t> {
@@ -312,7 +308,7 @@ namespace o2scl {
       - \c vec_t - boost::numeric::ublas::vector<double>
       - \c mat_t - boost::numeric::ublas::matrix<double>
   */
-  template<class func_t=mm_funct<>, 
+  template<class func_t=mm_funct11, 
     class vec_t=boost::numeric::ublas::vector<double>, 
     class mat_t=boost::numeric::ublas::matrix<double> > 
     class jacobian_gsl :
@@ -426,7 +422,7 @@ namespace o2scl {
       - \c vec_t - boost::numeric::ublas::vector<double>
       - \c mat_t - boost::numeric::ublas::matrix<double>
   */
-  template<class func_t=mm_funct<>, 
+  template<class func_t=mm_funct11, 
     class vec_t=boost::numeric::ublas::vector<double>, 
     class mat_t=boost::numeric::ublas::matrix<double> > class jacobian_exact : 
   public jacobian<func_t,vec_t,mat_t> {

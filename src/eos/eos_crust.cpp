@@ -86,13 +86,17 @@ double eos_crust::gibbs(int Z, int A) {
   ubvector nx(1);
   
   nx[0]=e.n;
-  mm_funct_mfptr_param<eos_crust,int> mff(this,&eos_crust::eq274,Z);
+  mm_funct11 mff=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,
+		     ubvector &, int &)>(&eos_crust::eq274),
+    this,std::placeholders::_1,std::placeholders::_2,
+    std::placeholders::_3,Z);
   gs.msolve(1,nx,mff);
   e.n=nx[0];
   fzt.kf_from_density(e);
   e.mu=sqrt(e.kf*e.kf+e.m*e.m);
   fzt.calc_mu_zerot(e);
-  
+
   // Equation 2.7.7:
   g=(mass_formula(Z,A)+Z*e.mu+4.0/3.0*Z*lattice_energy(Z)/e.n)/A;
 

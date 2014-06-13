@@ -92,7 +92,12 @@ int eos_quark_njl::set_parameters(double lambda, double fourferm,
   bx[1]=1.0;
   bx[2]=2.0;
   
-  mm_funct_mfptr<eos_quark_njl> fmf(this,&eos_quark_njl::B0fun);
+  mm_funct11 fmf=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+     (&eos_quark_njl::B0fun),
+     this,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3);
+
   solver->msolve(3,bx,fmf);
   
   // Make the appropriate correction
@@ -117,7 +122,13 @@ int eos_quark_njl::calc_p(quark &u, quark &d, quark &s, thermo &th) {
     x[0]=u.qq;
     x[1]=d.qq;
     x[2]=s.qq;
-    mm_funct_mfptr<eos_quark_njl> fmf(this,&eos_quark_njl::gapfunqq);
+
+    mm_funct11 fmf=std::bind
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+       (&eos_quark_njl::gapfunqq),
+       this,std::placeholders::_1,std::placeholders::_2,
+       std::placeholders::_3);
+
     ret=solver->msolve(3,x,fmf);
     
   } else {
@@ -125,7 +136,13 @@ int eos_quark_njl::calc_p(quark &u, quark &d, quark &s, thermo &th) {
     x[0]=u.ms;
     x[1]=d.ms;
     x[2]=s.ms;
-    mm_funct_mfptr<eos_quark_njl> fmf(this,&eos_quark_njl::gapfunms);
+
+    mm_funct11 fmf=std::bind
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+       (&eos_quark_njl::gapfunms),
+       this,std::placeholders::_1,std::placeholders::_2,
+       std::placeholders::_3);
+
     ret=solver->msolve(3,x,fmf);
 
   }
@@ -152,7 +169,13 @@ int eos_quark_njl::calc_temp_p(quark &u, quark &d, quark &s,
     x[0]=u.qq;
     x[1]=d.qq;
     x[2]=s.qq;
-    mm_funct_mfptr<eos_quark_njl> fmf(this,&eos_quark_njl::gapfunqqT);
+
+    mm_funct11 fmf=std::bind
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+       (&eos_quark_njl::gapfunqqT),
+       this,std::placeholders::_1,std::placeholders::_2,
+       std::placeholders::_3);
+
     ret=solver->msolve(3,x,fmf);
     
   } else {
@@ -160,7 +183,13 @@ int eos_quark_njl::calc_temp_p(quark &u, quark &d, quark &s,
     x[0]=u.ms;
     x[1]=d.ms;
     x[2]=s.ms;
-    mm_funct_mfptr<eos_quark_njl> fmf(this,&eos_quark_njl::gapfunmsT);
+
+    mm_funct11 fmf=std::bind
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+       (&eos_quark_njl::gapfunmsT),
+       this,std::placeholders::_1,std::placeholders::_2,
+       std::placeholders::_3);
+
     ret=solver->msolve(3,x,fmf);
 
   }

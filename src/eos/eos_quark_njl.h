@@ -284,7 +284,7 @@ namespace o2scl {
 
     /// Set solver to use in set_parameters()
     virtual int set_solver
-      (mroot<mm_funct<>,boost::numeric::ublas::vector<double>,
+      (mroot<mm_funct11,boost::numeric::ublas::vector<double>,
        jac_funct<> > &s) {
       solver=&s;
       return 0;
@@ -302,7 +302,7 @@ namespace o2scl {
     }
 
     /// The default solver
-    mroot_hybrids<mm_funct<>,boost::numeric::ublas::vector<double>, 
+    mroot_hybrids<mm_funct11,boost::numeric::ublas::vector<double>, 
       boost::numeric::ublas::matrix<double>,jac_funct<> > def_solver;
     
     /// The default integrator
@@ -316,7 +316,7 @@ namespace o2scl {
     inte<funct11> *it;
     
     /// The solver to use for set_parameters()
-    mroot<mm_funct<>,boost::numeric::ublas::vector<double>, 
+    mroot<mm_funct11,boost::numeric::ublas::vector<double>, 
       jac_funct<> > *solver;
     
     /// Used by calc_B0() to compute the bag constant

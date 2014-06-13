@@ -139,7 +139,7 @@ namespace o2scl {
     /** \brief Set the solver for use in calculating the chemical
 	potential from the density 
     */
-    void set_density_mroot(mroot<mm_funct<>,
+    void set_density_mroot(mroot<mm_funct11,
 			   boost::numeric::ublas::vector<double>, 
 			   jac_funct<> > &rp) {
       density_mroot=&rp;
@@ -148,7 +148,7 @@ namespace o2scl {
 
     /** \brief The default solver for calc_density() and pair_density()
      */
-    mroot_hybrids<mm_funct<>,
+    mroot_hybrids<mm_funct11,
       boost::numeric::ublas::vector<double>, 
       boost::numeric::ublas::matrix<double>,
       jac_funct<> > def_density_mroot;
@@ -181,7 +181,7 @@ namespace o2scl {
     double T;
     
     /// The solver for calc_density()
-    mroot<mm_funct<>,boost::numeric::ublas::vector<double>, 
+    mroot<mm_funct11,boost::numeric::ublas::vector<double>, 
       jac_funct<> > *density_mroot;
 
     /// The solver to compute \f$ h \f$ from \f$ \psi \f$.

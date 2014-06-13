@@ -400,7 +400,14 @@ namespace o2scl {
     yerr_=&yerr;
     fun_=&fun;
     
-    mfm.set_function(this,&chi_fit_funct::jac_mm_funct);
+    //std::function<int(size_t,const vec_t &,vec_t &)> mfm;
+    //int jac_mm_funct(size_t np, const vec_t &p, vec_t &f) {
+    mfm=std::bind(std::mem_fn<int(size_t,const vec_t &,vec_t &)>
+		  (&chi_fit_funct::jac_mm_funct),this,
+		  std::placeholders::_1,std::placeholders::_2,
+		  std::placeholders::_3);
+
+    //mfm.set_function(this,&chi_fit_funct::jac_mm_funct);
     auto_jac.set_function(mfm);
 #ifndef O2SCL_NO_CPP11
     double sqrt_dbl_eps=sqrt(std::numeric_limits<double>::epsilon());
@@ -468,7 +475,8 @@ namespace o2scl {
   }
 
   /// Automatic Jacobian object
-  jacobian_gsl<mm_funct<vec_t>,vec_t,mat_t> auto_jac;
+  jacobian_gsl<std::function<int(size_t,const vec_t &,vec_t &)>,
+  vec_t,mat_t> auto_jac;
 
 #ifndef DOXYGEN_INTERNAL
   
@@ -481,7 +489,7 @@ namespace o2scl {
   }
   
   /// Function object for Jacobian object
-  mm_funct_mfptr<chi_fit_funct<vec_t,mat_t,fit_func_t>,vec_t> mfm;
+  std::function<int(size_t,const vec_t &,vec_t &)> mfm;
   
   /// \name Data and uncertainties
   //@{

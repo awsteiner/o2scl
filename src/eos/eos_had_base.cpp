@@ -434,7 +434,7 @@ void eos_had_base::set_n_and_p(fermion &n, fermion &p) {
   return;
 }
 
-void eos_had_base::set_mroot(mroot<mm_funct<>,
+void eos_had_base::set_mroot(mroot<mm_funct11,
 				  boost::numeric::ublas::vector<double>, 
 				  jac_funct<> > &mr) {
   eos_mroot=&mr;
@@ -469,8 +469,11 @@ int eos_had_eden_base::calc_p(fermion &n, fermion &p, thermo &th) {
   double pa[2]={n.mu,p.mu};
   double *pap=&(pa[0]);
   
-  mm_funct_mfptr_param<eos_had_eden_base,double *> 
-    fmf(this,&eos_had_eden_base::nuc_matter_e,pap);
+  mm_funct11 fmf=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,
+		     ubvector &, double *&)>(&eos_had_eden_base::nuc_matter_e),
+    this,std::placeholders::_1,std::placeholders::_2,
+    std::placeholders::_3,pap);
   eos_mroot->msolve(2,x,fmf);
     
   th=*eos_thermo;
@@ -493,8 +496,12 @@ int eos_had_pres_base::calc_e(fermion &n, fermion &p, thermo &th) {
     
   double pa[2]={n.n,p.n};
   double *pap=&(pa[0]);
-  mm_funct_mfptr_param<eos_had_pres_base,double *> 
-    fmf(this,&eos_had_pres_base::nuc_matter_p,pap);
+
+  mm_funct11 fmf=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,
+		     ubvector &, double *&)>(&eos_had_eden_base::nuc_matter_p),
+    this,std::placeholders::_1,std::placeholders::_2,
+    std::placeholders::_3,pap);
   eos_mroot->msolve(2,mu,fmf);
     
   th=*eos_thermo;
@@ -558,8 +565,13 @@ int eos_had_temp_eden_base::calc_p(fermion &n, fermion &p, thermo &th) {
 
   double pa[2]={n.mu,p.mu};
   double *pap=&(pa[0]);
-  mm_funct_mfptr_param<eos_had_temp_eden_base,double *> 
-    fmf(this,&eos_had_temp_eden_base::nuc_matter_e,pap);
+
+  mm_funct11 fmf=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,
+		     ubvector &, double *&)>(&eos_had_eden_base::nuc_matter_e),
+    this,std::placeholders::_1,std::placeholders::_2,
+    std::placeholders::_3,pap);
+
   ret=eos_mroot->msolve(2,x,fmf);
   if (ret!=0) {
     O2SCL_ERR("Solver failed in eos_had_temp_eden_base::calc_p().",ret);
@@ -585,8 +597,13 @@ int eos_had_temp_eden_base::calc_temp_p(fermion &n, fermion &p,
 
   double pa[2]={n.mu,p.mu};
   double *pap=&(pa[0]);
-  mm_funct_mfptr_param<eos_had_temp_eden_base,double *>
-    fmf(this,&eos_had_temp_eden_base::nuc_matter_temp_e,pap);
+  mm_funct11 fmf=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,
+		     ubvector &, double *&)>
+    (&eos_had_temp_eden_base::nuc_matter_temp_e),
+    this,std::placeholders::_1,std::placeholders::_2,
+    std::placeholders::_3,pap);
+
   ret=eos_mroot->msolve(2,den,fmf);
   
   if (ret!=0) {
@@ -614,8 +631,14 @@ int eos_had_temp_pres_base::calc_e(fermion &n, fermion &p, thermo &th) {
     
   double pa[2]={n.n,p.n};
   double *pap=&(pa[0]);
-  mm_funct_mfptr_param<eos_had_temp_pres_base,double *> 
-    fmf(this,&eos_had_temp_pres_base::nuc_matter_p,pap);
+
+  mm_funct11 fmf=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,
+		     ubvector &, double *&)>
+    (&eos_had_eden_base::nuc_matter_p),
+    this,std::placeholders::_1,std::placeholders::_2,
+    std::placeholders::_3,pap);
+
   ret=eos_mroot->msolve(2,mu,fmf);
     
   if (ret!=0) {
@@ -642,8 +665,14 @@ int eos_had_temp_pres_base::calc_temp_e(fermion &n, fermion &p,
 
   double pa[2]={n.n,p.n};
   double *pap=&(pa[0]);
-  mm_funct_mfptr_param<eos_had_temp_pres_base,double *>
-    fmf(this,&eos_had_temp_pres_base::nuc_matter_temp_p,pap);
+
+  mm_funct11 fmf=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,
+		     ubvector &, double *&)>
+    (&eos_had_temp_pres_base::nuc_matter_temp_p),
+    this,std::placeholders::_1,std::placeholders::_2,
+    std::placeholders::_3,pap);
+
   ret=eos_mroot->msolve(2,mu,fmf);
   
   if (ret!=0) {

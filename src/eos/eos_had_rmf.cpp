@@ -247,7 +247,12 @@ int eos_had_rmf::calc_p(fermion &ne, fermion &pr, thermo &lth) {
     x[2]=-0.05;
   }
   
-  mm_funct_mfptr<eos_had_rmf> fmf(this,&eos_had_rmf::field_eqs);
+  mm_funct11 fmf=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+     (&eos_had_rmf::field_eqs),
+     this,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3);
+  
   ret=eos_mroot->msolve(3,x,fmf);
 
   sigma=x[0];
@@ -290,7 +295,12 @@ int eos_had_rmf::calc_temp_p(fermion &ne, fermion &pr, const double T,
     x[2]=-0.05;
   }
   
-  mm_funct_mfptr<eos_had_rmf> fmf(this,&eos_had_rmf::field_eqsT);
+  mm_funct11 fmf=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+     (&eos_had_rmf::field_eqsT),
+     this,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3);
+
   ret=eos_mroot->msolve(3,x,fmf);
   
   sigma=x[0];
@@ -345,8 +355,12 @@ int eos_had_rmf::calc_e(fermion &ne, fermion &pr, thermo &lth) {
   n_baryon=ne.n+pr.n;
   n_charge=pr.n;
   
-  mm_funct_mfptr<eos_had_rmf> fmf(this,&eos_had_rmf::calc_e_solve_fun);
-  
+  mm_funct11 fmf=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+     (&eos_had_rmf::calc_e_solve_fun),
+     this,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3);
+
   if (guess_set) {
     
     // If an initial guess is given, then use it to directly compute
@@ -497,8 +511,12 @@ int eos_had_rmf::calc_temp_e(fermion &ne, fermion &pr, const double T,
   n_baryon=ne.n+pr.n;
   n_charge=pr.n;
   
-  mm_funct_mfptr<eos_had_rmf> fmf(this,&eos_had_rmf::calc_temp_e_solve_fun);
-  
+  mm_funct11 fmf=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+     (&eos_had_rmf::calc_temp_e_solve_fun),
+     this,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3);
+
   if (guess_set) {
     
     // If an initial guess is given, then use it to directly compute
@@ -803,7 +821,12 @@ int eos_had_rmf::fix_saturation(double gcs, double gcw, double gb, double gc) {
   x[2]=gb;
   x[3]=gc;
 
-  mm_funct_mfptr<eos_had_rmf> fmf(this,&eos_had_rmf::fix_saturation_fun);
+  mm_funct11 fmf=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+     (&eos_had_rmf::fix_saturation_fun),
+     this,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3);
+
   test=sat_mroot->msolve(4,x,fmf);
   if (test!=0) {
     O2SCL_ERR("Solve failed in fix_saturation().",exc_efailed);
@@ -854,7 +877,12 @@ void eos_had_rmf::saturation() {
 
   ubvector x(5), y(5);
   int test;
-  mm_funct_mfptr<eos_had_rmf> fmf(this,&eos_had_rmf::zero_pressure);
+
+  mm_funct11 fmf=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+     (&eos_had_rmf::zero_pressure),
+     this,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3);
 
   if (guess_set) {
     x[0]=neutron->mu;

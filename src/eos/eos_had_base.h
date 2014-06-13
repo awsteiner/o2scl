@@ -636,7 +636,7 @@ namespace o2scl {
 	mroot_hybrids because it automatically avoids regions
 	where the equations are undefined.
     */
-    virtual void set_mroot(mroot<mm_funct<>,
+    virtual void set_mroot(mroot<mm_funct11,
 			   boost::numeric::ublas::vector<double>, 
 			   jac_funct<> > &mr);
     
@@ -704,7 +704,7 @@ namespace o2scl {
 	Used by calc_e() to solve nuc_matter_p() (2 variables) and by
 	calc_p() to solve nuc_matter_e() (2 variables).
     */
-    mroot_hybrids<mm_funct<>,
+    mroot_hybrids<mm_funct11,
       boost::numeric::ublas::vector<double>, 
       boost::numeric::ublas::matrix<double>,
       jac_funct<> > def_mroot;
@@ -732,7 +732,7 @@ namespace o2scl {
     double t2_fun(double barn);
     
     /// The EOS solver
-    mroot<mm_funct<>,boost::numeric::ublas::vector<double>, 
+    mroot<mm_funct11,boost::numeric::ublas::vector<double>, 
       jac_funct<> > *eos_mroot;
     
     /// The solver to compute saturation properties

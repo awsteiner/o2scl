@@ -57,7 +57,7 @@ int main(void) {
     quark d3(nj.down_default_mass,6.0);
     quark s3(nj.strange_default_mass,6.0);
   
-    mroot_hybrids<mm_funct<> > nd;
+    mroot_hybrids<mm_funct11> nd;
     inte_qng_gsl<funct11> gl, gl2;
     thermo th, th2, th3;
   
@@ -80,9 +80,25 @@ int main(void) {
 
     cfl.set_inte(ngnew);
 
-    mm_funct_mfptr<eos_quark_njl> fqq(&nj,&eos_quark_njl::gapfunqq);
-    mm_funct_mfptr<eos_quark_njl> fqq2(&njt,&eos_quark_njl::gapfunqq);
-    mm_funct_mfptr<eos_quark_njl> fqq3(&cfl,&eos_quark_njl::gapfunqq);
+    mm_funct11 fqq=std::bind
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+       (&eos_quark_njl::eos_quark_njl::gapfunqq),
+       &nj,std::placeholders::_1,std::placeholders::_2,
+       std::placeholders::_3);
+    mm_funct11 fqq2=std::bind
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+       (&eos_quark_njl::eos_quark_njl::gapfunqq),
+       &njt,std::placeholders::_1,std::placeholders::_2,
+       std::placeholders::_3);
+    mm_funct11 fqq3=std::bind
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+       (&eos_quark_njl::eos_quark_njl::gapfunqq),
+       &cfl,std::placeholders::_1,std::placeholders::_2,
+       std::placeholders::_3);
+
+    //mm_funct_mfptr<eos_quark_njl> fqq(&nj,&eos_quark_njl::gapfunqq);
+    //mm_funct_mfptr<eos_quark_njl> fqq2(&njt,&eos_quark_njl::gapfunqq);
+    //   mm_funct_mfptr<eos_quark_njl> fqq3(&cfl,&eos_quark_njl::gapfunqq);
   
     // Set the quark chemical potentials
 
