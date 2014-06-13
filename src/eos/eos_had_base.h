@@ -638,7 +638,7 @@ namespace o2scl {
     */
     virtual void set_mroot(mroot<mm_funct11,
 			   boost::numeric::ublas::vector<double>, 
-			   jac_funct<> > &mr);
+			   jac_funct11> &mr);
     
     /** \brief Set class mroot object for use calculating saturation density
 
@@ -707,7 +707,7 @@ namespace o2scl {
     mroot_hybrids<mm_funct11,
       boost::numeric::ublas::vector<double>, 
       boost::numeric::ublas::matrix<double>,
-      jac_funct<> > def_mroot;
+      jac_funct11> def_mroot;
     
     /** \brief The default solver for calculating the saturation 
 	density
@@ -733,7 +733,7 @@ namespace o2scl {
     
     /// The EOS solver
     mroot<mm_funct11,boost::numeric::ublas::vector<double>, 
-      jac_funct<> > *eos_mroot;
+      jac_funct11> *eos_mroot;
     
     /// The solver to compute saturation properties
     root<funct11> *sat_root;

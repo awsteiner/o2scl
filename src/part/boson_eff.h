@@ -141,7 +141,7 @@ namespace o2scl {
     */
     void set_density_mroot(mroot<mm_funct11,
 			   boost::numeric::ublas::vector<double>, 
-			   jac_funct<> > &rp) {
+			   jac_funct11> &rp) {
       density_mroot=&rp;
       return;
     }
@@ -151,7 +151,7 @@ namespace o2scl {
     mroot_hybrids<mm_funct11,
       boost::numeric::ublas::vector<double>, 
       boost::numeric::ublas::matrix<double>,
-      jac_funct<> > def_density_mroot;
+      jac_funct11> def_density_mroot;
 
     /** \brief The default solver for \f$ \psi \f$
      */
@@ -182,7 +182,7 @@ namespace o2scl {
     
     /// The solver for calc_density()
     mroot<mm_funct11,boost::numeric::ublas::vector<double>, 
-      jac_funct<> > *density_mroot;
+      jac_funct11> *density_mroot;
 
     /// The solver to compute \f$ h \f$ from \f$ \psi \f$.
     root<funct11> *psi_root;

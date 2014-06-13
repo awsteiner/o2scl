@@ -75,8 +75,7 @@ int main(void) {
     // We have to keep the full type specification to specify
     // that we want ode_funct_fptr and not ode_funct11 independent
     // of whether or not O2SCL_NO_CPP11 is defined
-    ode_rkck_gsl<ubvector,ubvector,ubvector,
-		 ode_funct<ubvector,ubvector> > rk;
+    ode_rkck_gsl<ubvector,ubvector,ubvector,ode_funct11> rk;
 
     // GSL setup
     const gsl_odeiv_step_type *T=gsl_odeiv_step_rkck;
@@ -84,7 +83,7 @@ int main(void) {
     gsl_odeiv_system sys={expon_gsl,0,1,0};
 
     // O2scl function setup
-    ode_funct_fptr<ubvector> od(expon);
+    ode_funct11 od=expon;
 
     x=1.0;
     y[0]=1.0;
@@ -151,14 +150,15 @@ int main(void) {
     // We have to keep the full type specification to specify
     // that we want ode_funct and not ode_funct11 independent
     // of whether or not O2SCL_NO_CPP11 is defined
-    ode_rkck_gsl<vec1_t,vec2_t,vec3_t,ode_funct<vec1_t,vec2_t> > rk;
+    ode_rkck_gsl<vec1_t,vec2_t,vec3_t,
+      std::function<int(double,size_t,const vec1_t &,vec2_t &)> > rk;
 
 #ifdef O2SCL_NEVER_DEFINED
   }{
 #endif
     
-    ode_funct_fptr<vec1_t,vec2_t> od(exponx);
-
+    std::function<int(double,size_t,const vec1_t &,vec2_t &)> od=exponx;
+    
     x=1.0;
     y[0]=1.0;
     cout << "x            y(calc)      y(exact)     diff         yerr"
@@ -176,12 +176,10 @@ int main(void) {
       cout << dydx[0] << endl;
     }
 
-#ifndef O2SCL_NO_CPP11
-
     typedef std::function<int(double,size_t,const vec1_t &,vec2_t &)> 
       ode_funct11b;
     
-    ode_rkck_gsl<vec1_t,vec2_t,vec3_t,ode_funct11b > rk11;
+    ode_rkck_gsl<vec1_t,vec2_t,vec3_t,ode_funct11b> rk11;
     ode_funct11b f11=exponx;
 
     x=1.0;
@@ -201,8 +199,6 @@ int main(void) {
       cout << dydx[0] << endl;
     }
     
-#endif
-
   }
 
   t.report();

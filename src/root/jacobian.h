@@ -37,198 +37,11 @@
 namespace o2scl {
 #endif
   
-  /// Jacobian function (not necessarily square) (C++11 version)
+  /// Jacobian function (not necessarily square)
   typedef std::function<
     int(size_t,boost::numeric::ublas::vector<double> &,
 	size_t,boost::numeric::ublas::vector<double> &,
 	boost::numeric::ublas::matrix<double> &) > jac_funct11;
-
-  /** \brief Base for a Jacobian (not necessarily square) where J is
-      computed at x given y=f(x) [abstract base]
-
-      Compute
-      \f[
-      J_{ij} = \frac{\partial f_i}{\partial x_j}
-      \f]
-
-      The \c vec_t objects in operator() could have been written to be
-      \c const, but they are not \c const so that they can be used as
-      temporary workspace. They are typically restored to their
-      original values before operator() exits. The Jacobian is stored
-      in the order <tt>J[i][j]</tt> where the rows have index \c i
-      which runs from 0 to <tt>ny-1</tt> and the columns have index \c
-      j with runs from 0 to <tt>nx-1</tt>.
-
-      Default template arguments
-      - \c vec_t - boost::numeric::ublas::vector<double>
-      - \c mat_t - boost::numeric::ublas::matrix<double>
-  */
-  template<class vec_t=boost::numeric::ublas::vector<double>, 
-    class mat_t=boost::numeric::ublas::matrix<double> > 
-    class jac_funct {
-
-  public:  
-
-  jac_funct() {}
-
-  virtual ~jac_funct() {}
-    
-  /** \brief The operator()
-   */
-  virtual int operator()(size_t nx, vec_t &x, size_t ny, vec_t &y, 
-			 mat_t &j)=0;
-    
-#ifndef DOXYGEN_NO_O2NS
-
-  private:
-
-  jac_funct(const jac_funct &);
-  jac_funct& operator=(const jac_funct&);
-
-#endif
-
-  };
-
-  /** \brief Function pointer to jacobian
-
-      Default template arguments
-      - \c vec_t - boost::numeric::ublas::vector<double>
-      - \c mat_t - boost::numeric::ublas::matrix<double>
-   */
-  template<class vec_t=boost::numeric::ublas::vector<double>, 
-    class mat_t=boost::numeric::ublas::matrix<double> >
-    class jac_funct_fptr : public jac_funct<vec_t,mat_t> {
-    
-  public:
-    
-  /** \brief Specify the function pointer
-   */
-  jac_funct_fptr(int (*fp)(size_t nx, vec_t &x, size_t ny, vec_t &y, 
-			   mat_t &j)) {
-    fptr=fp;
-  }
-    
-  virtual ~jac_funct_fptr();
-    
-  /** \brief The operator()
-   */
-  virtual int operator()(size_t nx, vec_t &x, size_t ny, vec_t &y, mat_t &j) {
-    return fptr(nx,x,ny,y,j);
-  }
-
-#ifndef DOXYGEN_NO_O2NS
-
-  protected:
-  
-  jac_funct_fptr() {};
-    
-  /// Function pointer
-  int (*fptr)(size_t nx, vec_t &x, size_t ny, vec_t &y, mat_t &j);
-    
-  private:
-
-  jac_funct_fptr(const jac_funct_fptr &);
-  jac_funct_fptr& operator=(const jac_funct_fptr&);
-
-#endif
-
-  };
-
-  /** \brief Member function pointer to a Jacobian
-   */
-  template <class tclass, class vec_t=boost::numeric::ublas::vector<double>, 
-    class mat_t=boost::numeric::ublas::matrix<double> > class jac_funct_mfptr : 
-  public jac_funct<vec_t,mat_t> {
-
-  public:
-  
-  /** \brief Specify the member function pointer
-   */
-  jac_funct_mfptr(tclass *tp, int (tclass::*fp)
-		  (size_t nx, vec_t &x, size_t ny, vec_t &y, mat_t &j)) {
-    tptr=tp;
-    fptr=fp;
-  }
-  
-  virtual ~jac_funct_mfptr() {};
-  
-  /** \brief The operator()
-   */
-  virtual int operator()(size_t nx, vec_t &x, size_t ny, vec_t &y, mat_t &j) {
-    return (*tptr.*fptr)(nx,x,ny,y,j);
-  }
-  
-#ifndef DOXYGEN_INTERNAL
-
-  protected:
-  
-  /// Member function pointer
-  int (tclass::*fptr)(size_t nx, vec_t &x, size_t ny, vec_t &y, mat_t &j);
-
-  /// Class pointer
-  tclass *tptr;
-
-#endif
-
-#ifndef DOXYGEN_NO_O2NS
-  
-  private:
-
-  jac_funct_mfptr(const jac_funct_mfptr &);
-  jac_funct_mfptr& operator=(const jac_funct_mfptr&);
-
-#endif
-
-  };
-
-  /** \brief Const member function pointer to a Jacobian
-   */
-  template <class tclass, class vec_t=boost::numeric::ublas::vector<double>, 
-    class mat_t=boost::numeric::ublas::matrix<double> > 
-    class jac_funct_cmfptr : public jac_funct<vec_t,mat_t> {
-
-  public:
-  
-  /** \brief Specify the member function pointer
-   */
-  jac_funct_cmfptr(tclass *tp, int (tclass::*fp)
-		   (size_t nx, vec_t &x, size_t ny, vec_t &y,
-		    mat_t &j) const) {
-    tptr=tp;
-    fptr=fp;
-  }
-  
-  virtual ~jac_funct_cmfptr() {};
-  
-  /** \brief The operator()
-   */
-  virtual int operator()(size_t nx, vec_t &x, size_t ny, vec_t &y, mat_t &j) {
-    return (*tptr.*fptr)(nx,x,ny,y,j);
-  }
-  
-#ifndef DOXYGEN_INTERNAL
-
-  protected:
-  
-  /// Member function pointer
-  int (tclass::*fptr)(size_t nx, vec_t &x, size_t ny, vec_t &y, 
-		      mat_t &j) const;
-
-  /// Class pointer
-  tclass *tptr;
-
-#endif
-
-#ifndef DOXYGEN_NO_O2NS
-  
-  private:
-
-  jac_funct_cmfptr(const jac_funct_cmfptr &);
-  jac_funct_cmfptr& operator=(const jac_funct_cmfptr&);
-
-#endif
-
-  };
 
   /** \brief Base for providing a numerical jacobian [abstract base]
       
@@ -248,8 +61,7 @@ namespace o2scl {
   */
   template<class func_t=mm_funct11, 
     class vec_t=boost::numeric::ublas::vector<double>, 
-    class mat_t=boost::numeric::ublas::matrix<double> > class jacobian : 
-  public jac_funct<vec_t,mat_t> {
+    class mat_t=boost::numeric::ublas::matrix<double> > class jacobian {
     
   public:
     
@@ -311,8 +123,7 @@ namespace o2scl {
   template<class func_t=mm_funct11, 
     class vec_t=boost::numeric::ublas::vector<double>, 
     class mat_t=boost::numeric::ublas::matrix<double> > 
-    class jacobian_gsl :
-    public jacobian<func_t,vec_t,mat_t> {
+    class jacobian_gsl : public jacobian<func_t,vec_t,mat_t> {
     
 #ifndef DOXYGEN_INTERNAL
     
@@ -404,6 +215,7 @@ namespace o2scl {
     }
     return 0;
   }
+
   };
   
   /** \brief A direct calculation of the jacobian using a \ref

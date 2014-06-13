@@ -61,20 +61,11 @@ namespace o2scl {
       <tt>examples/ex_ode.cpp</tt> documented in the \ref ex_ode_sect
       section.
   */
-#ifdef O2SCL_NO_CPP11
-  template<class vec_y_t=boost::numeric::ublas::vector<double>,
-    class vec_dydx_t=vec_y_t, class vec_yerr_t=vec_y_t, 
-    class func_t=ode_funct<vec_y_t,vec_dydx_t> >
-    class ode_rk8pd_gsl : public ode_step<vec_y_t,
-    vec_dydx_t,vec_yerr_t,func_t>
-#else
   template<class vec_y_t=boost::numeric::ublas::vector<double>,
     class vec_dydx_t=vec_y_t, class vec_yerr_t=vec_y_t, 
     class func_t=ode_funct11>
     class ode_rk8pd_gsl : public ode_step<vec_y_t,
-    vec_dydx_t,vec_yerr_t,func_t>
-#endif
- {
+    vec_dydx_t,vec_yerr_t,func_t> {
 
   protected:
 

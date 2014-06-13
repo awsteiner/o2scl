@@ -48,10 +48,9 @@ int main(void) {
   // We have to keep the full type specification to specify
   // that we want ode_funct_fptr and not ode_funct11 independent
   // of whether or not O2SCL_CPP11 is defined
-  astep_nonadapt<ubvector,ubvector,ubvector,
-		 ode_funct<ubvector,ubvector> > na;
+  astep_nonadapt<ubvector,ubvector,ubvector,ode_funct11> na;
 
-  ode_funct_fptr<ubvector> od(derivs);
+  ode_funct11 od=derivs;
   
   // Test astep()
   x=1.0;

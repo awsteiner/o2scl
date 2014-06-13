@@ -53,10 +53,9 @@ int main(void) {
   // We have to keep the full type specification to specify
   // that we want ode_funct_fptr and not ode_funct11 independent
   // of whether or not O2SCL_CPP11 is defined
-  astep_gsl<ubvector,ubvector,ubvector,
-	       ode_funct<ubvector,ubvector> > ga;
+  astep_gsl<ubvector,ubvector,ubvector,ode_funct11> ga;
 
-  ode_funct_fptr<ubvector> od(derivs);
+  ode_funct11 od=derivs;
 
   // Test astep(). No need to compute the initial derivative
   x=1.0;

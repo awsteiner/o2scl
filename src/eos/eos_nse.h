@@ -81,7 +81,7 @@ namespace o2scl {
 		  solve_parms &pa);
     
     /// Solver
-    mroot<mm_funct11,ubvector,jac_funct<> > *root;
+    mroot<mm_funct11,ubvector,jac_funct11> *root;
 
     /// Compute particle properties assuming classical thermodynamics
     classical cla;
@@ -125,11 +125,11 @@ namespace o2scl {
 		     double &mun, double &mup, thermo &th, nucdist &nd);
     
     /// Default solver 
-    mroot_hybrids<mm_funct11,ubvector,ubmatrix,jac_funct<> > def_root;
+    mroot_hybrids<mm_funct11,ubvector,ubmatrix,jac_funct11> def_root;
 
     /** \brief Set the solver for use in computing the chemical potentials
      */
-    void set_mroot(mroot<mm_funct11,ubvector,jac_funct<> > &rp) {
+    void set_mroot(mroot<mm_funct11,ubvector,jac_funct11> &rp) {
       root=&rp;
       return;
     }

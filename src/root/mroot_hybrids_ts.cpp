@@ -150,7 +150,6 @@ int main(void) {
     &acl,std::placeholders::_1,std::placeholders::_2,
     std::placeholders::_3,std::placeholders::_4,
     std::placeholders::_5);
-  //jac_funct_mfptr<cl,ubvector,ubmatrix> fmfd(&acl,&cl::mfnd);
     
   x[0]=0.5;
   x[1]=0.5;
@@ -241,17 +240,25 @@ int main(void) {
   // 8 - Using Eigen
   typedef std::function<int(size_t,const Eigen::VectorXd &,
 			    Eigen::VectorXd &) > mm_funct_Eigen;
+  typedef std::function<int(size_t,Eigen::VectorXd &,
+			    size_t,Eigen::VectorXd &,
+			    Eigen::MatrixXd &) > jac_funct_Eigen;
 
   mm_funct_Eigen fmf_Eigen=std::bind
     (std::mem_fn<int(size_t,const Eigen::VectorXd &,Eigen::VectorXd &)>
      (&cl::mfn_Eigen),&acl,std::placeholders::_1,std::placeholders::_2,
      std::placeholders::_3);
   
-  jac_funct_mfptr<cl,Eigen::VectorXd,Eigen::MatrixXd> 
-    fmfd_Eigen(&acl,&cl::mfnd_Eigen);
+  jac_funct_Eigen fmfd_Eigen=
+    std::bind(std::mem_fn<int(size_t,Eigen::VectorXd &,size_t,
+			      Eigen::VectorXd &,Eigen::MatrixXd &)>
+    (&cl::mfnd_Eigen),
+    &acl,std::placeholders::_1,std::placeholders::_2,
+    std::placeholders::_3,std::placeholders::_4,
+    std::placeholders::_5);
+
   mroot_hybrids<mm_funct_Eigen,Eigen::VectorXd,
-    Eigen::MatrixXd,jac_funct<Eigen::VectorXd,
-    Eigen::MatrixXd> > cr8;
+		Eigen::MatrixXd,jac_funct_Eigen> cr8;
   
   Eigen::VectorXd xE(2);
   xE[0]=0.5;

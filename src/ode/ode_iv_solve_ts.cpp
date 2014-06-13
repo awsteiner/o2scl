@@ -54,7 +54,7 @@ int main(void) {
 
   ode_iv_solve<> ivs;
 
-  ode_funct_fptr<> od(derivs);
+  ode_funct11 od=derivs;
 
   ubvector y(2), dydx(2), yout(2), yerr(2), yend(2);
 

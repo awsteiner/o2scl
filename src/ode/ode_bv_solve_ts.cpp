@@ -62,7 +62,7 @@ int main(void) {
   ode_bv_shoot<> obs;
   ode_bv_shoot_grid<> obsg;
   
-  ode_funct_fptr<> off(derivs);
+  ode_funct11 off=derivs;
   double x0=0.0, x1=1.0, h=(x1-x0)/20.0;
   ubvector ystart(2), yend(2), yerr(2), dydx_out(2);
   ubvector_int index(2);

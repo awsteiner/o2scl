@@ -77,7 +77,7 @@ namespace o2scl {
       section.
 
       Documentation links for default template arguments
-      - \c func_t - \ref ode_funct
+      - \c func_t - \ref ode_funct11
       - \c vec_t - \ref boost::numeric::ublas::vector \< double \>
       
       The default adaptive stepper is an object of type \ref astep_gsl.
@@ -86,7 +86,7 @@ namespace o2scl {
       of astep_base::astep_full(), but not quite the same. Maybe
       should probably be made to be consistent with each other?
   */
-  template<class func_t=ode_funct<>, 
+  template<class func_t=ode_funct11, 
     class vec_t=boost::numeric::ublas::vector<double> > 
     class ode_iv_solve {
 

@@ -260,21 +260,13 @@ namespace o2scl {
       \future Compare more directly to GSL
 
       Default template arguments
-      - \c func_t - \ref ode_funct
+      - \c func_t - \ref ode_funct11
       - \c vec_t - \ref boost::numeric::ublas::vector \< double \>
   */
-#ifdef O2SCL_NO_CPP11
-  template<class vec_y_t=boost::numeric::ublas::vector<double>,
-    class vec_dydx_t=vec_y_t, class vec_yerr_t=vec_y_t, 
-    class func_t=ode_funct<vec_y_t,vec_dydx_t> > class astep_gsl : 
-    public astep_base<vec_y_t,vec_dydx_t,vec_yerr_t,func_t> 
-#else
   template<class vec_y_t=boost::numeric::ublas::vector<double>,
     class vec_dydx_t=vec_y_t, class vec_yerr_t=vec_y_t, 
     class func_t=ode_funct11 > class astep_gsl : 
-    public astep_base<vec_y_t,vec_dydx_t,vec_yerr_t,func_t> 
-#endif
-{
+    public astep_base<vec_y_t,vec_dydx_t,vec_yerr_t,func_t> {
     
   public:
     

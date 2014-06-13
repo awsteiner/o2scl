@@ -57,10 +57,9 @@ int main(void) {
   double x, dx=1.0e-1;
   ubvector y(2), dydx(2), yout(2), yerr(2), dydx_out(2);
 
-  ode_rkf45_gsl<ubvector,ubvector,ubvector,
-	       ode_funct<ubvector,ubvector> > rk;
+  ode_rkf45_gsl<ubvector,ubvector,ubvector,ode_funct11> rk;
 
-  ode_funct_fptr<ubvector> od(derivs);
+  ode_funct11 od=derivs;
 
   x=1.0;
   y[0]=1.0;

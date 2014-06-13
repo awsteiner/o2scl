@@ -435,8 +435,8 @@ void eos_had_base::set_n_and_p(fermion &n, fermion &p) {
 }
 
 void eos_had_base::set_mroot(mroot<mm_funct11,
-				  boost::numeric::ublas::vector<double>, 
-				  jac_funct<> > &mr) {
+			     boost::numeric::ublas::vector<double>, 
+			     jac_funct11> &mr) {
   eos_mroot=&mr;
   return;
 }
