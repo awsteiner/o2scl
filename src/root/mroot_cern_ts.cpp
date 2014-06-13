@@ -72,9 +72,13 @@ int main(void) {
   for(int kk=0;kk<1;kk++) {
 
     // 1 - Non-templated access through a funct object 
-    mm_funct_mfptr<cl,ubvector> fmf(&acl,&cl::mfn);
-    mroot_cern<mm_funct_mfptr<cl,ubvector>,
-	       ubvector,jac_funct_mfptr<cl,ubvector,ubmatrix> > cr1;
+    mm_funct11 fmf=std::bind
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+       (&cl::mfn),&acl,std::placeholders::_1,std::placeholders::_2,
+       std::placeholders::_3);
+
+    mroot_cern<mm_funct11,ubvector,
+      jac_funct_mfptr<cl,ubvector,ubmatrix> > cr1;
     tmp=clock();
     for(int j=0;j<N;j++) {
       for(int k=0;k<N;k++) {

@@ -99,7 +99,7 @@ int main(void) {
   t.set_output_level(2);
   int ret=0;
   
-  mroot_hybrids<mm_funct<> > nd;
+  mroot_hybrids<mm_funct11> nd;
   deriv_gsl<funct11> df;
   int vpx=0;
 
@@ -112,8 +112,16 @@ int main(void) {
   
   u.mu=2.5; d.mu=2.5; s.mu=2.5;
   
-  mm_funct_mfptr<eos_quark_njl> fqq(&nj,&eos_quark_njl::gapfunqq);
-  mm_funct_mfptr<eos_quark_njl> fms(&nj,&eos_quark_njl::gapfunms);
+  mm_funct11 fqq=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+     (&eos_quark_njl::gapfunqq),
+     &nj,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3);
+  mm_funct11 fms=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+     (&eos_quark_njl::gapfunms),
+     &nj,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3);
   funct11 fderiv=omfun;
   
   cout << "Feynman-Hellman theorem" << endl;
@@ -158,8 +166,12 @@ int main(void) {
   njt.set_thermo(th);
   njt.set_parameters();
   
-  mm_funct_mfptr<eos_quark_njl> fqq2(&nj,&eos_quark_njl::gapfunqq);
-  mm_funct_fptr<> fts(ftsolve);
+  mm_funct11 fqq2=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+     (&eos_quark_njl::gapfunqq),
+     &nj,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3);
+  mm_funct11 fts=ftsolve;
 
   u.mu=2.5;
   d.mu=2.5;

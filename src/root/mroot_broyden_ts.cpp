@@ -61,8 +61,8 @@ int main(void) {
 
   t.set_output_level(2);
 
-  mroot_broyden<mm_funct<> > gmb1;
-  mm_funct_fptr<ubvector> fmf(gfn);
+  mroot_broyden<mm_funct11> gmb1;
+  mm_funct11 fmf=gfn;
 
   // 1 - Normal execution using a member function
   x[0]=0.5;
@@ -129,7 +129,11 @@ int main(void) {
 #ifdef NEVER_DEFINED
 
   // 1 - Normal execution using a member function
-  mm_funct_mfptr<cl,ubvector> fmf(&acl,&cl::mfn);
+  mm_funct11 fmf=std::bind
+    (std::mem_fn<int(size_t,const Eigen::VectorXd &,Eigen::VectorXd &)>
+     (&cl::mfn),&acl,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3);
+
   mroot_broyden<> cr1;
   
   x[0]=0.5;
@@ -167,8 +171,13 @@ int main(void) {
   cr1c.free();
 
   // 5 - Using arrays instead of ubvectors
-  mm_funct_mfptr<cl,arr_t> fmf2(&acl,&cl::mfna);
-  mroot_broyden<mm_funct_mfptr<cl,arr_t>,arr_t,
+  std::function<int(size_t,const arr_t &,arr_t &)> fmf2=std::bind
+    (std::mem_fn<int(size_t,const arr_t &,arr_t &)>
+     (&cl::mfna),&acl,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3);
+
+  //mm_funct_mfptr<cl,arr_t> fmf2(&acl,&cl::mfna);
+  mroot_broyden<std::function<int(size_t,const arr_t &,arr_t &)>,arr_t,
     arr_t,array_alloc<arr_t> > cr2;
 
 // Emacs had trouble with tabifying the following lines
@@ -186,7 +195,7 @@ int main(void) {
   
   // using arrays with jacobian
   jac_funct_mfptr<cl,arr_t,mat_t> fmfd2(&acl,&cl::mfnda);
-  mroot_broyden<mm_funct_mfptr<cl,arr_t>,arr_t,
+  mroot_broyden<std::function<int(size_t,const arr_t &,arr_t &)>,arr_t,
     arr_t,array_alloc<arr_t>,mat_t,mat_t,
     array_2d_alloc<mat_t>,jac_funct<arr_t,mat_t> > crx;
 

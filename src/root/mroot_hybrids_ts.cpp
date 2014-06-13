@@ -115,8 +115,11 @@ int main(void) {
   std::vector<double> resid_test, resid_test2;
 
   // 1 - Normal execution using a member function
-  mm_funct_mfptr<cl,ubvector> fmf(&acl,&cl::mfn);
-  mroot_hybrids<mm_funct<>,ubvector,ubmatrix,jac_funct<> > cr1;
+  mm_funct11 fmf=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+     (&cl::mfn),&acl,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3);
+  mroot_hybrids<mm_funct11,ubvector,ubmatrix,jac_funct11> cr1;
   
   x[0]=0.5;
   x[1]=0.5;
@@ -125,7 +128,7 @@ int main(void) {
   t.test_rel(x[1],0.2,1.0e-6,"normal b");
 
   // 2 - Using the set(), iterate() interface
-  mroot_hybrids<mm_funct<>,ubvector,ubmatrix,jac_funct<> > cr2;
+  mroot_hybrids<mm_funct11,ubvector,ubmatrix,jac_funct11> cr2;
   
   x[0]=0.5;
   x[1]=0.5;
@@ -141,7 +144,13 @@ int main(void) {
   t.test_rel(cr2.x[1],0.2,1.0e-6,"set/iterate b");
 
   // 3 - Having specified the Jacobian
-  jac_funct_mfptr<cl,ubvector,ubmatrix> fmfd(&acl,&cl::mfnd);
+  jac_funct11 fmfd=
+    std::bind(std::mem_fn<int(size_t,ubvector &,size_t,
+			      ubvector &,ubmatrix &)>(&cl::mfnd),
+    &acl,std::placeholders::_1,std::placeholders::_2,
+    std::placeholders::_3,std::placeholders::_4,
+    std::placeholders::_5);
+  //jac_funct_mfptr<cl,ubvector,ubmatrix> fmfd(&acl,&cl::mfnd);
     
   x[0]=0.5;
   x[1]=0.5;
@@ -150,7 +159,7 @@ int main(void) {
   t.test_rel(x[1],0.2,1.0e-6,"jac b");
 
   // 4 - Using the set_de(), iterate() interface
-  mroot_hybrids<mm_funct<>,ubvector,ubmatrix,jac_funct<> > cr4;
+  mroot_hybrids<mm_funct11,ubvector,ubmatrix,jac_funct11> cr4;
 
   x[0]=0.5;
   x[1]=0.5;
@@ -176,7 +185,7 @@ int main(void) {
 
   // 6 - Using a global function pointer directly
   typedef int (*gfnt)(size_t, const ubvector &, ubvector &);
-  mroot_hybrids<gfnt,ubvector,ubmatrix,jac_funct<> > cr6;
+  mroot_hybrids<gfnt,ubvector,ubmatrix,jac_funct11> cr6;
   gfnt gfnv=&gfn;
 
   x[0]=0.5;
@@ -230,13 +239,20 @@ int main(void) {
 #ifdef O2SCL_EIGEN
 
   // 8 - Using Eigen
-  mm_funct_mfptr<cl,Eigen::VectorXd> fmf_Eigen(&acl,&cl::mfn_Eigen);
+  typedef std::function<int(size_t,const Eigen::VectorXd &,
+			    Eigen::VectorXd &) > mm_funct_Eigen;
+
+  mm_funct_Eigen fmf_Eigen=std::bind
+    (std::mem_fn<int(size_t,const Eigen::VectorXd &,Eigen::VectorXd &)>
+     (&cl::mfn_Eigen),&acl,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3);
+  
   jac_funct_mfptr<cl,Eigen::VectorXd,Eigen::MatrixXd> 
     fmfd_Eigen(&acl,&cl::mfnd_Eigen);
-  mroot_hybrids<mm_funct<Eigen::VectorXd>,Eigen::VectorXd,
-		    Eigen::MatrixXd,jac_funct<Eigen::VectorXd,
-					      Eigen::MatrixXd> > cr8;
-
+  mroot_hybrids<mm_funct_Eigen,Eigen::VectorXd,
+    Eigen::MatrixXd,jac_funct<Eigen::VectorXd,
+    Eigen::MatrixXd> > cr8;
+  
   Eigen::VectorXd xE(2);
   xE[0]=0.5;
   xE[1]=0.5;

@@ -510,21 +510,12 @@ namespace o2scl {
       could have control over, for example, the <tt>nslow2</tt>
       threshold which indicates failure.
   */
-#ifdef O2SCL_NO_CPP11 
-  template<class func_t=mm_funct<>, 
-    class vec_t=boost::numeric::ublas::vector<double>, 
-    class mat_t=boost::numeric::ublas::matrix<double>,
-    class jfunc_t=jac_funct<vec_t,mat_t> > class mroot_hybrids : 
-    public mroot<func_t,vec_t,jfunc_t>, mroot_hybrids_base
-#else
-    template<
+  template<
     class func_t=mm_funct11,
     class vec_t=boost::numeric::ublas::vector<double>, 
     class mat_t=boost::numeric::ublas::matrix<double>,
     class jfunc_t=jac_funct11 > class mroot_hybrids : 
-    public mroot<func_t,vec_t,jfunc_t>, mroot_hybrids_base
-#endif
- {
+    public mroot<func_t,vec_t,jfunc_t>, mroot_hybrids_base {
     
 #ifndef DOXYGEN_INTERNAL
     

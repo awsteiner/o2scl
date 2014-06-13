@@ -47,20 +47,11 @@ namespace o2scl {
 
       See \ref Broyden65.
   */
-#ifdef O2SCL_NO_CPP11 
-  template<class func_t=mm_funct<>, 
-    class vec_t=boost::numeric::ublas::vector<double>, 
-    class mat_t=boost::numeric::ublas::matrix<double>, 
-    class jfunc_t=jac_funct<vec_t,mat_t> > 
-    class mroot_broyden : public mroot<func_t,vec_t,jfunc_t>
-#else
   template<class func_t=mm_funct11, 
     class vec_t=boost::numeric::ublas::vector<double>, 
     class mat_t=boost::numeric::ublas::matrix<double>, 
     class jfunc_t=jac_funct11> 
-    class mroot_broyden : public mroot<func_t,vec_t,jfunc_t>
-#endif
- {
+    class mroot_broyden : public mroot<func_t,vec_t,jfunc_t> {
 
   public:
 

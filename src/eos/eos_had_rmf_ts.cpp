@@ -123,7 +123,7 @@ namespace eos_had_rmf_ts_ns {
     return 0;
   }
   
-  mm_funct_fptr<> mff(nstar_mat);
+  mm_funct11 mff(nstar_mat);
 
 }
 
@@ -132,7 +132,7 @@ using namespace eos_had_rmf_ts_ns;
 int main(void) {
   cout.setf(ios::scientific);
   eos_had_rmf re;
-  mroot_hybrids<mm_funct<> > mrp;
+  mroot_hybrids<mm_funct11> mrp;
   test_mgr t;
   t.set_output_level(1);
 

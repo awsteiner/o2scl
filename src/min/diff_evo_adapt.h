@@ -52,7 +52,7 @@ namespace o2scl {
   */
     template<class func_t=multi_funct11, 
       class vec_t=boost::numeric::ublas::vector<double>, 
-      class init_funct_t=mm_funct_fptr<vec_t > >
+      class init_funct_t=mm_funct11> 
       class diff_evo_adapt :  public diff_evo<func_t, vec_t, init_funct_t> 
       {
 

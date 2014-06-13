@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
   ubvector init(2);
   
   multi_funct11 fx=func;
-  mm_funct_fptr<ubvector> init_f( init_function );
+  mm_funct11 init_f=init_function;
   
   de.set_init_function( init_f );
   de.verbose = 1;
