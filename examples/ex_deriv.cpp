@@ -53,8 +53,9 @@ int main(void) {
 
   // The class and associated function
   cl acl;
-  funct_mfptr<cl> f1(&acl,&cl::function);
-
+  funct11 f1=std::bind(std::mem_fn<double(double)>(&cl::function),
+		       &acl,std::placeholders::_1);
+  
   deriv_gsl<> gd;
   // Note that the GSL derivative routine requires an initial stepsize
   gd.h=1.0e-3;

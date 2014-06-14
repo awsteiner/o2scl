@@ -62,11 +62,11 @@ int main(int argc, char *argv[]) {
   test_mgr t;
   t.set_output_level(1);
 
-  anneal_gsl<multi_funct<>,ubvector,int,rng_gsl> ga;
+  anneal_gsl<> ga;
   double result;
   ubvector init(2);
   
-  multi_funct_fptr<> fx(bessel_fun);
+  multi_funct11 fx=bessel_fun;
   
   ga.ntrial=4000;
   ga.verbose=1;

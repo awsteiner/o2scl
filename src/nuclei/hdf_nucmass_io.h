@@ -61,9 +61,8 @@ namespace o2scl_hdf {
       - "12" - Data from \ref Audi12 (ame12.o2)
       
       If any string other than these five is used, the error handler
-      is called. If the constructor cannot find the data file (e.g.
-      because of a broken installation), then nucmass_ame::is_loaded()
-      returns false.
+      is called. If a data file has not been loaded, then
+      nucmass_ame::is_loaded() returns false.
       
       \note This function is in the \ref o2scl_hdf namespace.
   */
@@ -78,12 +77,11 @@ namespace o2scl_hdf {
       - "95exp" - "Experimental" data from \ref Audi95 (ame95exp.o2)
       - "03round" - "Rounded" data from \ref Audi03 (ame03round.o2)
       - "03" - Data from \ref Audi03 (ame03.o2)
-      - "12" - Data from \ref Audi12 (ame12.o2)
+      - "12" - Data from \ref Audi12 (ame12.o2, default)
       
       If any string other than these five is used, the error handler
-      is called. If the constructor cannot find the data file (e.g.
-      because of a broken installation), then nucmass_ame::is_loaded()
-      returns false.
+      is called. If a data file has not been loaded, then
+      nucmass_ame::is_loaded() returns false.
       
       \note This function is in the \ref o2scl_hdf namespace.
    */

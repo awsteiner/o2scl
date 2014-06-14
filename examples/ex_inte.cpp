@@ -67,8 +67,10 @@ int main(void) {
 
   t.set_output_level(1);
 
-  funct_mfptr<cl> f1(&acl,&cl::integrand);
-  funct_mfptr<cl> f2(&acl,&cl::integrand2);
+  funct11 f1=std::bind(std::mem_fn<double(double)>
+		       (&cl::integrand),&acl,std::placeholders::_1);
+  funct11 f2=std::bind(std::mem_fn<double(double)>
+		       (&cl::integrand2),&acl,std::placeholders::_1);
 
   // We don't need to specify the function type in the integration
   // objects, because we're using the default function type (type

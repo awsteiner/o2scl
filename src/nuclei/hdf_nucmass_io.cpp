@@ -124,7 +124,9 @@ void o2scl_hdf::ame_load(o2scl::nucmass_ame &ame, std::string name) {
     file_name+="/ame12.o2";
     table_name="ame12.o2";
   } else {
-    O2SCL_ERR("Invalid name in ame_load().",exc_einval);
+    std::string s=((std::string)"Invalid name '")+name+
+      "' in o2scl_hdf::ame_load().";
+    O2SCL_ERR(s.c_str(),exc_einval);
   }
   
   ame_load(ame,file_name,table_name);

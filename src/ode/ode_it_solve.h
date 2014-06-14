@@ -43,6 +43,7 @@
 namespace o2scl {
 #endif
   
+  /// Function for iterative solving of ODEs
   typedef std::function<double
     (size_t,double,boost::numeric::ublas::matrix_row
      <boost::numeric::ublas::matrix<double> > &)> ode_it_funct11;

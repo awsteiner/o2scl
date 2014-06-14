@@ -85,8 +85,7 @@ double eos_had_base::feoa(double nb, const double &alpha) {
 
   calc_e(*neutron,*proton,*eos_thermo);
   
-  leoa=(eos_thermo->ed-neutron->n*neutron->m-
-	proton->n*proton->m)/nb;
+  leoa=(eos_thermo->ed-neutron->n*neutron->m-proton->n*proton->m)/nb;
   
   return leoa;
 }

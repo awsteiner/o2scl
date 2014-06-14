@@ -56,14 +56,14 @@ int main(void) {
   double res;
 
   double err;
-
-  mcarlo_vegas<multi_funct<>,ubvector,int,rng_gsl> gm;
+  
+  mcarlo_vegas<> gm;
   ubvector a(3), b(3);
   a[0]=0.0; b[0]=M_PI;
   a[1]=0.0; b[1]=M_PI;
   a[2]=0.0; b[2]=M_PI;
 
-  multi_funct_fptr<> tf(test_fun);
+  multi_funct11 tf=test_fun;
 
   gm.n_points=100000;
   gm.minteg_err(tf,3,a,b,res,err);

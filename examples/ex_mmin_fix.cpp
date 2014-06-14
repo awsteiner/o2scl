@@ -62,22 +62,15 @@ int main(void) {
     Perform the minimization the standard way, with the 
     simplex2 minimizer
   */
-#ifndef O2SCL_NO_CPP11
   multi_funct11 f1c11=
     std::bind(std::mem_fn<double(size_t,const ubvector &)>(&cl::mfn),
               acl,std::placeholders::_1,std::placeholders::_2);
-#endif
-  multi_funct_mfptr<cl> f1(&acl,&cl::mfn);
   mmin_simp2<> gm1;
     
   x[0]=0.5;
   x[1]=0.5;
   x[2]=0.5;
-#ifndef O2SCL_NO_CPP11
   gm1.mmin(3,x,fmin,f1c11);
-#else 
-  gm1.mmin(3,x,fmin,f1);
-#endif
   cout << gm1.last_ntrial << " iterations." << endl;
   cout << "Found minimum at: " 
        << x[0] << " " << x[1] << " " << x[2] << endl;
@@ -103,7 +96,7 @@ int main(void) {
   x[0]=0.5;
   x[1]=0.5;
   x[2]=0.5;
-  gmf.mmin(3,x,fmin,f1);
+  gmf.mmin(3,x,fmin,f1c11);
   cout << gmf.last_ntrial << " iterations." << endl;
   cout << "Found minimum at: " 
        << x[0] << " " << x[1] << " " << x[2] << endl;
@@ -118,7 +111,7 @@ int main(void) {
   x[0]=0.5;
   x[1]=0.5;
   x[2]=0.5;
-  gmf.mmin_fix(3,x,fmin,fix,f1);
+  gmf.mmin_fix(3,x,fmin,fix,f1c11);
   cout << gmf.last_ntrial << " iterations." << endl;
   cout << "Found minimum at: " 
        << x[0] << " " << x[1] << " " << x[2] << endl;

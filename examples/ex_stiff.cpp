@@ -75,11 +75,8 @@ int main(void) {
   cout.precision(3);
 
   // Specification of the differential equations and the Jacobian
-#ifndef O2SCL_NO_CPP11
   ode_funct11 od11=derivs;
-#endif
-  ode_funct_fptr<ubvector> od(derivs);
-  ode_jac_funct_fptr<ubvector> oj(jac);
+  ode_jac_funct11 oj=jac;
   
   table<> tab[2];
   tab[0].line_of_names("x calc exact rel_err rel_diff");
@@ -88,7 +85,7 @@ int main(void) {
   // ------------------------------------------------------------
   // First solve with ode_bsimp_gsl, designed to handle stiff ODEs
 
-  ode_bsimp_gsl<ode_funct_fptr<>,ode_jac_funct_fptr<> > gb;
+  ode_bsimp_gsl<> gb;
 
   double x1, dx=1.0e-1;
   ubvector y1(2), dydx1(2), yout1(2), yerr1(2), dydx_out1(2);
@@ -101,7 +98,7 @@ int main(void) {
 
   for(size_t i=1;i<=40;i++) {
     
-    gb.step(x1,dx,2,y1,dydx1,y1,yerr1,dydx1,od,oj);
+    gb.step(x1,dx,2,y1,dydx1,y1,yerr1,dydx1,od11,oj);
     x1+=dx;
 
     double exact[2]={-exp(-500.0*x1)+2.0*exp(-10.0*x1),
@@ -141,11 +138,7 @@ int main(void) {
   size_t j=0;
   while (x2<4.0) {
 
-#ifndef O2SCL_NO_CPP11
     ga.astep(x2,4.0,dx,2,y2,dydx2,yerr2,od11);
-#else
-    ga.astep(x2,4.0,dx,2,y2,dydx2,yerr2,od);
-#endif
 
     double exact[2]={-exp(-500.0*x1)+2.0*exp(-10.0*x1),
 		     exp(-500.0*x1)-exp(-10.0*x1)};
@@ -167,7 +160,7 @@ int main(void) {
 
   cout << endl;
 
- // ------------------------------------------------------------
+  // ------------------------------------------------------------
   // Output results to a file
 
 #ifdef O2SCL_HDF

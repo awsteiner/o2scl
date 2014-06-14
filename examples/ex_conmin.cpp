@@ -62,11 +62,8 @@ int main(void) {
   static const size_t nv=2;
   
   // Specify the function to minimize and its gradient
-#ifndef O2SCL_NO_CPP11
   multi_funct11 mff11=func;
-#endif
-  multi_funct_fptr<> mff(func);
-  grad_funct_fptr<> gff(dfunc);
+  grad_funct11 gff=dfunc;
   
   // The unconstrained minimizer
   mmin_simp2<> gm1;
@@ -85,11 +82,7 @@ int main(void) {
   }
 
   // Minimize
-#ifndef O2SCL_NO_CPP11
   gm1.mmin(nv,x,fmin,mff11);
-#else
-  gm1.mmin(nv,x,fmin,mff);
-#endif
   cout << endl;
 
   cout << "Constrained minimizer: " << endl;
@@ -107,7 +100,7 @@ int main(void) {
   omp.set_constraints(nv,c1,c2);
     
   // Minimize
-  omp.mmin_de(nv,x,fmin,mff,gff);
+  omp.mmin_de(nv,x,fmin,mff11,gff);
 
   // Output results
   cout << x[0] << " " << x[1] << " " << fmin << endl;

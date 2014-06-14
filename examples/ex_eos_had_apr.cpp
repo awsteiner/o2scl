@@ -100,11 +100,9 @@ protected:
   /// \name Numerical methods
   //@{
   /// General solver
-  mroot_hybrids<mm_funct<>,boost::numeric::ublas::vector<double>,
-		boost::numeric::ublas::matrix<double>,jac_funct<> > solver;
+  mroot_hybrids<> solver;
   /// Solver for transition densities (lower tolerances)
-  mroot_hybrids<mm_funct<>,boost::numeric::ublas::vector<double>,
-		boost::numeric::ublas::matrix<double> > solver_trans_density;
+  mroot_hybrids<> solver_trans_density;
   /// Derivative object
   deriv_cern<> cd;
   //@}
@@ -634,22 +632,38 @@ public:
     ubvector x(7), y(7), xx(3), yy(3);
   
     // Function objects
-    mm_funct_mfptr<ex_eos_had_apr> 
-      f_nucmixed(this,&ex_eos_had_apr::nucmixed);
-    mm_funct_mfptr<ex_eos_had_apr> 
-      f_neutmixed(this,&ex_eos_had_apr::neutmixed);
-    mm_funct_mfptr<ex_eos_had_apr> 
-      f_nstar_mixed(this,&ex_eos_had_apr::nstar_mixed);
-    mm_funct_mfptr<ex_eos_had_apr> 
-      f_nstar_low(this,&ex_eos_had_apr::nstar_low);
-    mm_funct_mfptr<ex_eos_had_apr> 
-      f_nstar_high(this,&ex_eos_had_apr::nstar_high);
-    mm_funct_mfptr<ex_eos_had_apr> 
-      f_fig7fun(this,&ex_eos_had_apr::fig7fun);
-    mm_funct_mfptr<ex_eos_had_apr> 
-      f_maxwell_fig7(this,&ex_eos_had_apr::maxwell_fig7);
-    mm_funct_mfptr<ex_eos_had_apr> 
-      f_mixedmaxwell(this,&ex_eos_had_apr::mixedmaxwell);
+    mm_funct11 f_nucmixed=std::bind
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+       (&ex_eos_had_apr::nucmixed),this,
+       std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
+    mm_funct11 f_neutmixed=std::bind
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+       (&ex_eos_had_apr::neutmixed),this,
+       std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
+    mm_funct11 f_nstar_mixed=std::bind
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+       (&ex_eos_had_apr::nstar_mixed),this,
+       std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
+    mm_funct11 f_nstar_low=std::bind
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+       (&ex_eos_had_apr::nstar_low),this,
+       std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
+    mm_funct11 f_nstar_high=std::bind
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+       (&ex_eos_had_apr::nstar_high),this,
+       std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
+    mm_funct11 f_fig7fun=std::bind
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+       (&ex_eos_had_apr::fig7fun),this,
+       std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
+    mm_funct11 f_maxwell_fig7=std::bind
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+       (&ex_eos_had_apr::maxwell_fig7),this,
+       std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
+    mm_funct11 f_mixedmaxwell=std::bind
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+       (&ex_eos_had_apr::mixedmaxwell),this,
+       std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
 
     // Init density grid
     nbstart=0.005;
@@ -1001,10 +1015,14 @@ public:
     cout << "\nEstimate of transition density." << endl;
   
     ubvector newx(12), newy(12);
-    mm_funct_mfptr<ex_eos_had_apr> 
-      nuclei_f(this,&ex_eos_had_apr::nucleimat);
-    mm_funct_mfptr<ex_eos_had_apr> 
-      nucleip_f(this,&ex_eos_had_apr::nucleimat_pdrip);
+    mm_funct11 nuclei_f=std::bind
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+       (&ex_eos_had_apr::nucleimat),this,
+       std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
+    mm_funct11 nucleip_f=std::bind
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+       (&ex_eos_had_apr::nucleimat_pdrip),this,
+       std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
 
     solver_trans_density.tol_abs/=1.0e4;
     solver_trans_density.tol_rel/=1.0e4;

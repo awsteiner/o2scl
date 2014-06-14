@@ -71,7 +71,7 @@ int main(void) {
   ci.set_oned_inte(gl[2],2);
 
   // Specify the function to integrate
-  multi_funct_fptr<> tf(test_fun);
+  multi_funct11 tf=test_fun;
 
   // Integrate with inte_multi_comp and test result
   res=ci.minteg(tf,3,a,b);
@@ -79,7 +79,7 @@ int main(void) {
   t.test_rel(res,exact,1.0e-9,"inte_multi_comp");
 
   // Compare to Monte Carlo integration
-  mcarlo_vegas<multi_funct<>,ubvector,int,rng_gsl> gv;
+  mcarlo_vegas<> gv;
   gv.n_points=100000;
   gv.minteg_err(tf,3,a,b,res,err);
   cout << res << " " << err << " " << fabs(res-exact)/exact << endl;

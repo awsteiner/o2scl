@@ -52,7 +52,7 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
-  funct_fptr tf(func);
+  funct11 tf=func;
 
   cheb_approx gc;
   deriv_cern<> cd;

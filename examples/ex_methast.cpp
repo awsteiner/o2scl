@@ -181,8 +181,8 @@ int main(int argc, char *argv[]) {
     cout << endl;
 
     // Result from direct integration
-    funct_fptr ff(expsin_fun);
-    funct_fptr ff2(expsin_fun2);
+    funct11 ff=expsin_fun;
+    funct11 ff2=expsin_fun2;
     inte_qag_gsl<> qag;
     double exact=qag.integ(ff2,-5.0,5.0)/qag.integ(ff,-5.0,5.0);
     cout << "Exact: " << exact << endl;

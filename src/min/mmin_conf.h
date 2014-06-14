@@ -391,7 +391,7 @@ namespace o2scl {
       Default template arguments
       - \c func_t - \ref multi_funct11
       - \c vec_t - \ref boost::numeric::ublas::vector \< double \>
-      - \c dfunc_t - \ref grad_funct \< \>
+      - \c dfunc_t - \ref grad_funct11
       - \c auto_grad_t - \ref gradient \< func_t \>
       - \c def_auto_grad_t - \ref gradient_gsl \< func_t \>
 

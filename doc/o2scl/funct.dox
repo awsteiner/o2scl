@@ -22,9 +22,13 @@
     - \ref o2scl::grad_funct11 : gradient function for minimizer classes
     - \ref o2scl::ode_funct11 : \c n derivatives as a function of \c n
     function values and the value of the independent variable
-    - \ref o2scl::ode_jac_funct11
+    - \ref o2scl::ode_jac_funct11 : Jacobian function for ODE classes
+    - \ref o2scl::ode_it_funct11 : Function to specify ODEs for
+      iterative solution
     - \ref o2scl::jac_funct11 : Jacobian function for solver and
       fitting classes
+    - \ref o2scl::ool_hfunct11 : Hessian matrix function for constrained
+      minimization
 
     \section ex_lambda_sect Function object example
 

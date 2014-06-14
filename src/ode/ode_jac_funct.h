@@ -33,7 +33,7 @@
 namespace o2scl {
 #endif
 
-  /// Array of multi-dimensional functions for C++11
+  /// Functor for ODE Jacobians
   typedef std::function<
     int(double,size_t,const boost::numeric::ublas::vector<double> &,
 	boost::numeric::ublas::matrix<double> &,

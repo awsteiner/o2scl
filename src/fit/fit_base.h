@@ -39,8 +39,8 @@ namespace o2scl {
 
   /// Array of multi-dimensional functions typedef (C++11 version)
   typedef std::function<
-    int(size_t,const boost::numeric::ublas::vector<double> &, 
-	double)> fit_funct11;
+    double(size_t,const boost::numeric::ublas::vector<double> &, 
+	   double)> fit_funct11;
 
   /** \brief String fitting function
       

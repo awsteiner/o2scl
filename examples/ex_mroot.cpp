@@ -112,8 +112,10 @@ int main(void) {
   /*
     Using a member function with ublas vectors
   */
-  mm_funct_mfptr<cl> f1(&acl,&cl::mfn);
-  mroot_hybrids<mm_funct<>,ubvector,ubmatrix,jac_funct<> > cr1;
+  mm_funct11 f1=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &)>(&cl::mfn),
+     &acl,std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
+  mroot_hybrids<> cr1;
     
   x[0]=0.5;
   x[1]=0.5;
@@ -130,7 +132,7 @@ int main(void) {
   /*
     Using the CERNLIB solver
   */
-  mroot_cern<mm_funct<> > cr2;
+  mroot_cern<> cr2;
     
   x[0]=0.5;
   x[1]=0.5;
@@ -148,7 +150,7 @@ int main(void) {
     Using a member function with \ref ovector objects, but
     using the GSL-like interface with set() and iterate().
   */
-  mroot_hybrids<mm_funct<> > cr3;
+  mroot_hybrids<> cr3;
 
   x[0]=0.5;
   x[1]=0.5;
@@ -167,7 +169,10 @@ int main(void) {
     Now instead of using the automatic Jacobian, using 
     a user-specified Jacobian.
   */
-  jac_funct_mfptr<cl,ubvector,ubmatrix> j4(&acl,&cl::mfnd);
+  jac_funct11 j4=std::bind
+    (std::mem_fn<int(size_t,ubvector &,size_t,ubvector &,ubmatrix &)>
+     (&cl::mfnd),&acl,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3,std::placeholders::_4,std::placeholders::_5);
     
   x[0]=0.5;
   x[1]=0.5;
@@ -186,7 +191,7 @@ int main(void) {
   /*
     Using a user-specified Jacobian and the GSL-like interface
   */
-  mroot_hybrids<mm_funct<>,ubvector,ubmatrix,jac_funct<> > cr5;
+  mroot_hybrids<> cr5;
 
   x[0]=0.5;
   x[1]=0.5;
@@ -225,56 +230,93 @@ int main(void) {
   cr10.msolve(2,x,f10);
   t.test_rel(x[0],0.25,1.0e-6,"10a");
   t.test_rel(x[1],0.2,1.0e-6,"10b");
-
+  
   /* 
-     Using different vector types: std::vector<double>, 
-     ublas::unbounded_array<double>, and
-     ublas::bounded_array<double>
+     Using std::vector<double>
   */
   std::vector<double> svx(2);
   svx[0]=0.5;
   svx[1]=0.5;
-  mm_funct_mfptr<cl,std::vector<double> > 
-    f11(&acl,&cl::mfn_tlate<std::vector<double> >);
-  mroot_hybrids<mm_funct<std::vector<double> >,std::vector<double>,
-		    ubmatrix,jac_funct<std::vector<double>,
-				       ubmatrix> > cr11;
+  
+  typedef std::function<int(size_t,const std::vector<double> &,
+			    std::vector<double> &) > mm_funct_sv;
+  typedef std::function<
+    int(size_t,std::vector<double> &,size_t,std::vector<double> &,
+	ubmatrix &) > jac_funct_sv;
+
+  mm_funct_sv f11=std::bind
+	  (std::mem_fn<int(size_t,const std::vector<double> &,
+		     std::vector<double> &)>
+     (&cl::mfn_tlate<std::vector<double> >),
+    &acl,std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
+  
+  mroot_hybrids<mm_funct_sv,std::vector<double>,
+		ubmatrix,jac_funct_sv> cr11;
   cr11.msolve(2,svx,f11);
   t.test_rel(x[0],0.25,1.0e-6,"11a");
   t.test_rel(x[1],0.2,1.0e-6,"11b");
 
+  /*
+    Using ublas::unbounded_array<double>
+  */
   typedef boost::numeric::ublas::unbounded_array<double> uarr;
+  typedef std::function<int(size_t,const uarr &,uarr &)> mm_funct_ua;
+  typedef std::function<int(size_t,uarr &,size_t,uarr &,
+			    ubmatrix &) > jac_funct_ua;
+  
   uarr uad(2);
   uad[0]=0.5;
   uad[1]=0.5;
-  mm_funct_mfptr<cl,uarr> f12(&acl,&cl::mfn_tlate<uarr>);
-  mroot_hybrids<mm_funct<uarr >,uarr,ubmatrix,
-		    jac_funct<uarr,ubmatrix> > cr12;
+  mm_funct_ua f12=std::bind(std::mem_fn<int(size_t,const uarr &,uarr &)>
+			    (&cl::mfn_tlate<uarr>),
+			    &acl,std::placeholders::_1,
+			    std::placeholders::_2,std::placeholders::_3);
+  mroot_hybrids<mm_funct_ua,uarr,ubmatrix,jac_funct_ua> cr12;
   cr12.msolve(2,uad,f12);
   t.test_rel(x[0],0.25,1.0e-6,"12a");
   t.test_rel(x[1],0.2,1.0e-6,"12b");
 
+  /*
+    Using ublas::bounded_array<double>
+  */
   typedef boost::numeric::ublas::bounded_array<double,2> barr;
+  typedef std::function<int(size_t,const barr &,barr &)> mm_funct_ba;
+  typedef std::function<int(size_t,barr &,size_t,barr &,
+			    ubmatrix &) > jac_funct_ba;
   barr bad(2);
   bad[0]=0.5;
   bad[1]=0.5;
-  mm_funct_mfptr<cl,barr> f13(&acl,&cl::mfn_tlate<barr>);
-  mroot_hybrids<mm_funct<barr >,barr,ubmatrix,
-		    jac_funct<barr,ubmatrix> > cr13;
+  mm_funct_ba f13=std::bind(std::mem_fn<int(size_t,const barr &,barr &)>
+			    (&cl::mfn_tlate<barr>),
+			    &acl,std::placeholders::_1,
+			    std::placeholders::_2,std::placeholders::_3);
+  mroot_hybrids<mm_funct_ba,barr,ubmatrix,jac_funct_ba> cr13;
   cr13.msolve(2,bad,f13);
   t.test_rel(x[0],0.25,1.0e-6,"13a");
   t.test_rel(x[1],0.2,1.0e-6,"13b");
 
 #ifdef O2SCL_EIGEN
 
+  typedef std::function<int(size_t, const Eigen::VectorXd &,
+			    Eigen::VectorXd &)> mm_funct_eigen;
+  typedef std::function<int(size_t,Eigen::VectorXd &,size_t,Eigen::VectorXd &,
+    			  ubmatrix &) > jac_funct_eigen;
+
   // Using Eigen with an analytic Jacobian
-  mm_funct_mfptr<cl,Eigen::VectorXd> f14
-    (&acl,&cl::mfn_tlate<Eigen::VectorXd>);
-  jac_funct_mfptr<cl,Eigen::VectorXd,Eigen::MatrixXd> 
-    fd14(&acl,&cl::mfnd_tlate<Eigen::VectorXd>);
-  mroot_hybrids<mm_funct<Eigen::VectorXd>,Eigen::VectorXd,
-		    Eigen::MatrixXd,jac_funct<Eigen::VectorXd,
-					      Eigen::MatrixXd> > cr14;
+  mm_funct_eigen f14=std::bind
+    (std::mem_fn<int(size_t,const Eigen::VectorXd &,Eigen::VectorXd &)>
+     (&cl::mfn_tlate<Eigen::VectorXd>),
+     &acl,std::placeholders::_1,
+     std::placeholders::_2,std::placeholders::_3);
+  jac_funct_eigen fd14=std::bind
+    (std::mem_fn<int(size_t,Eigen::VectorXd &,size_t,
+		     Eigen::VectorXd &,Eigen::MatrixXd &)>
+    (&cl::mfnd_tlate<Eigen::VectorXd>),&acl,
+     std::placeholders::_1,std::placeholders::_2,
+    std::placeholders::_3,std::placeholders::_4,std::placeholders::_5);
+
+  mroot_hybrids<mm_funct_eigen,Eigen::VectorXd,
+	      Eigen::MatrixXd,jac_funct_eigen> cr14;
 
   Eigen::VectorXd xE(2);
   xE[0]=0.5;

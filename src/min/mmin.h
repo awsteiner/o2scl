@@ -36,9 +36,9 @@ namespace o2scl {
 #endif
 
   /// Array of multi-dimensional functions typedef
-  typedef std::function<
-    int(size_t,boost::numeric::ublas::vector<double> &,
-	   boost::numeric::ublas::vector<double> &)> grad_funct11;
+  typedef std::function<int(size_t,boost::numeric::ublas::vector<double> &,
+			    boost::numeric::ublas::vector<double> &)> 
+    grad_funct11;
   
   /** \brief Class for automatically computing gradients [abstract base]
 
