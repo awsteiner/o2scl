@@ -72,8 +72,8 @@ namespace o2scl {
       because it has low memory requirements.
 
       Default template arguments
-      - \c func_t - \ref multi_funct\<\>
-      - \c dfunc_t - \ref grad_funct\<\>
+      - \c func_t - \ref multi_funct11
+      - \c dfunc_t - \ref grad_funct11
       - \c vec_t - \ref boost::numeric::ublas::vector \< double \>
 
       \future There is some memory allocation which isn't
@@ -82,14 +82,14 @@ namespace o2scl {
   */
   template<class func_t=multi_funct11, class dfunc_t=grad_funct11, 
     class vec_t=boost::numeric::ublas::vector<double> > class mmin_constr_spg : 
-    public mmin_constr<func_t,dfunc_t,ool_hfunct<int>,vec_t> {
+    public mmin_constr<func_t,dfunc_t,ool_hfunct11,vec_t> {
 
 #ifndef DOXYGEN_INTERNAL
 
     protected:
 
     /// A convenient typedef for the unused Hessian product type
-    typedef ool_hfunct<int> hfunc_t;
+    typedef ool_hfunct11 hfunc_t;
 
     /// Armijo parameter
     double alpha;

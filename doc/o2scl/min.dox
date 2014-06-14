@@ -43,14 +43,14 @@
 
     <b>Traditional minimizers with gradient information</b>
 
-    Classes \ref o2scl::mmin_conp, \ref o2scl::mmin_conf, and
-    \ref o2scl::mmin_bfgs2 are intended for use when the \gradient
-    of the function is available, but they can also automaticallly
-    compute the \gradient numerically. The standard way to provide the
-    \gradient is to use a child of \ref o2scl::mm_funct . The user may
-    specify the automatic gradient object of type \ref o2scl::gradient
-    which is used by the minimizer to compute the gradient numerically
-    when a function is not specified.
+    Classes \ref o2scl::mmin_conp, \ref o2scl::mmin_conf, and \ref
+    o2scl::mmin_bfgs2 are intended for use when the \gradient of the
+    function is available, but they can also automaticallly compute
+    the \gradient numerically. The standard way to provide the
+    \gradient is to use an object of type \ref grad_funct11 . The user
+    may specify the automatic gradient object of type \ref
+    o2scl::gradient which is used by the minimizer to compute the
+    gradient numerically when a function is not specified.
 
     Generally, when a closed expression is available for the gradient,
     \ref o2scl::mmin_bfgs2 is likely the best choice. However, the

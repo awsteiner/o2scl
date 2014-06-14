@@ -58,124 +58,12 @@
 namespace o2scl {
 #endif
 
-  /** \brief Hessian product function for mmin_constr [abstract base]
+  /** \brief Hessian product function for \ref o2scl::mmin_constr
    */
-  template<class vec_t=boost::numeric::ublas::vector<double> > 
-    class ool_hfunct {
-    
-    public:  
-
-    ool_hfunct() {}
-
-    virtual ~ool_hfunct() {}
-
-    /** \brief Evaluate \f$ H(x) \cdot v \f$
-     */
-    virtual int operator()(size_t nv, const vec_t &x, const vec_t &v, 
-			   vec_t &hv)=0;
-
-#ifndef DOXYGEN_NO_O2NS
-
-    private:
-
-    ool_hfunct(const ool_hfunct &);
-    ool_hfunct& operator=(const ool_hfunct&);
-
-#endif
-
-  };
-
-  /** \brief A hessian product supplied by a function pointer
-   */
-  template<class vec_t=boost::numeric::ublas::vector<double> >
-    class ool_hfunct_fptr : public ool_hfunct<vec_t> {
-    
-    public:
-
-    /** \brief Specify the function pointer
-     */
-    ool_hfunct_fptr(int (*fp)(size_t nv, const vec_t &x, const vec_t &v, 
-			      vec_t &hv)) {
-      fptr=fp;
-    }
-    
-    
-    virtual ~ool_hfunct_fptr() {};
-
-    /** \brief Evaluate \f$ H(x) \cdot v \f$
-     */
-    virtual int operator()(size_t nv, const vec_t &x, const vec_t &v, 
-			   vec_t &hv) {
-      return fptr(nv,x,v,hv);
-    }
-    
-#ifndef DOXYGEN_INTERNAL
-
-    protected:
-    
-    /// Store the function pointer
-    int (*fptr)(size_t nv, const vec_t &x, const vec_t &v, vec_t &hv);
-    
-    ool_hfunct_fptr() {}
-
-#ifndef DOXYGEN_NO_O2NS
-#endif
-
-    private:
-
-    ool_hfunct_fptr(const ool_hfunct_fptr &);
-    ool_hfunct_fptr& operator=(const ool_hfunct_fptr&);
-
-#endif
-
-  };
-
-  /** \brief A hessian product supplied by a member function pointer
-   */
-  template<class tclass, class vec_t=boost::numeric::ublas::vector<double> >
-    class ool_hfunct_mfptr : public ool_hfunct<vec_t> {
-    public:
-  
-    /** \brief Specify the class instance and member function pointer
-     */
-    ool_hfunct_mfptr(tclass *tp, int (tclass::*fp)
-		     (size_t nv, const vec_t &x, const vec_t &v, 
-		      vec_t &hv)) {
-      tptr=tp;
-      fptr=fp;
-    }
-    
-    virtual ~ool_hfunct_mfptr() {}
-    
-    /** \brief Evaluate \f$ H(x) \cdot v \f$
-     */
-    virtual int operator()(size_t nv, const vec_t &x, const vec_t &v, 
-			   vec_t &hv) {
-      return (*tptr.*fptr)(nv,x,v,hv);
-    }
-
-#ifndef DOXYGEN_INTERNAL
-  
-    protected:
-  
-    /// Store the function pointer
-    int (tclass::*fptr)(size_t nv, const vec_t &x, const vec_t &v, 
-			vec_t &hv);
-
-    /// Store a pointer to the class instance
-    tclass *tptr;
-  
-#ifndef DOXYGEN_NO_O2NS
-#endif
-
-    private:
-
-    ool_hfunct_mfptr(const ool_hfunct_mfptr &);
-    ool_hfunct_mfptr& operator=(const ool_hfunct_mfptr&);
-
-#endif
-    
-  };
+  typedef std::function<int
+    (size_t, const boost::numeric::ublas::vector<double> &,
+     const boost::numeric::ublas::vector<double> &,
+     boost::numeric::ublas::vector<double> &)> ool_hfunct11;
   
   /** \brief Constrained multidimensional minimization (OOL) [abstract base]
 

@@ -66,7 +66,7 @@ int main(void) {
 
   multi_funct11 mff=quadratic;
   grad_funct11 gff=quadratic_df;
-  ool_hfunct_fptr<> ohf(quadratic_Hv);
+  ool_hfunct11 ohf=quadratic_Hv;
   
   mmin_constr_spg<multi_funct11,grad_funct11,ubvector> omp;
   

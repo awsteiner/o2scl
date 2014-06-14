@@ -47,7 +47,7 @@ namespace o2scl {
       
       This is provides a Jacobian which is numerically determined
       by differentiating a user-specified function (typically 
-      of the form of \ref mm_funct). 
+      of the form of \ref mm_funct11). 
 
       By convention, the Jacobian is stored in the order
       <tt>J[i][j]</tt> (or <tt>J(i,j)</tt>) where the rows have index
@@ -55,7 +55,7 @@ namespace o2scl {
       index \c j with runs from 0 to <tt>nx-1</tt>.
 
       Default template arguments
-      - \c func_t - \ref mm_funct\<\>
+      - \c func_t - \ref mm_funct11
       - \c vec_t - boost::numeric::ublas::vector<double>
       - \c mat_t - boost::numeric::ublas::matrix<double>
   */
@@ -72,7 +72,7 @@ namespace o2scl {
     
   /// Set the function to compute the Jacobian of
   virtual int set_function(func_t &f) {
-    func=&f;
+    func=f;
     return 0;
   }
     
@@ -86,7 +86,7 @@ namespace o2scl {
   protected:
     
   /// A pointer to the user-specified function
-  func_t *func;
+  func_t func;
     
   private:
     
@@ -116,7 +116,7 @@ namespace o2scl {
       to ensure they are commensurate. 
 
       Default template arguments
-      - \c func_t - \ref mm_funct\<\>
+      - \c func_t - \ref mm_funct11
       - \c vec_t - boost::numeric::ublas::vector<double>
       - \c mat_t - boost::numeric::ublas::matrix<double>
   */
@@ -191,7 +191,7 @@ namespace o2scl {
       if (fabs(h)<=epsmin) h=epsrel;
       
       xx[j]=x[j]+h;
-      (*this->func)(nx,xx,f);
+      (this->func)(nx,xx,f);
       xx[j]=x[j];
 
       // This is the equivalent of GSL's test of
@@ -230,7 +230,7 @@ namespace o2scl {
       10^{-4} \f$ in the \ref jacobian_exact constructor.
 
       Default template arguments
-      - \c func_t - \ref mm_funct\<\>
+      - \c func_t - \ref mm_funct11
       - \c vec_t - boost::numeric::ublas::vector<double>
       - \c mat_t - boost::numeric::ublas::matrix<double>
   */
@@ -294,14 +294,15 @@ namespace o2scl {
     ejp.x=&x;
     ejp.y=&y;
     
+    funct11 dfnp=std::bind(std::mem_fn<double(double,ej_parms &)>
+			   (&jacobian_exact::dfn),
+			   this,std::placeholders::_1,std::ref(ejp));
+
     for (size_t j=0;j<nx;j++) {
       ejp.xj=j;
       for (size_t i=0;i<ny;i++) {
 	ejp.yi=i;
 	double tmp=(*ejp.x)[j];
-	funct11 dfnp=std::bind(std::mem_fn<double(double,ej_parms &)>
-			       (&jacobian_exact::dfn),
-			       this,std::placeholders::_1,ejp);
 	jac(i,j)=dptr->deriv(tmp,dfnp);
 	(*ejp.x)[j]=tmp;
       }
@@ -320,7 +321,7 @@ namespace o2scl {
   /// Function for the derivative object
   double dfn(double x, ej_parms &ejp) {
     (*ejp.x)[ejp.xj]=x;
-    (*this->func)(ejp.nx,*ejp.x,*ejp.y);
+    (this->func)(ejp.nx,*ejp.x,*ejp.y);
     return (*ejp.y)[ejp.yi];
   }
 

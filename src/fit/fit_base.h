@@ -198,7 +198,7 @@ namespace o2scl {
       Jacobian (in \ref jac()) for a fitting class like \ref fit_nonlin.
       It assumes a one-dimensional data set with no uncertainty in the
       abcissae and a fitting function specified in a form similar to
-      \ref fit_funct.
+      \ref fit_funct11.
       \comment
       For some reason the reference to operator() above doesn't work
       in doxygen.
@@ -237,8 +237,6 @@ namespace o2scl {
     yerr_=&yerr;
     fun_=&fun;
     
-    //std::function<int(size_t,const vec_t &,vec_t &)> mfm;
-    //int jac_mm_funct(size_t np, const vec_t &p, vec_t &f) {
     mfm=std::bind(std::mem_fn<int(size_t,const vec_t &,vec_t &)>
 		  (&chi_fit_funct::jac_mm_funct),this,
 		  std::placeholders::_1,std::placeholders::_2,
@@ -315,7 +313,7 @@ namespace o2scl {
   
   protected:
 
-  /// Reformulate <tt>operator()</tt> into a \ref mm_funct object
+  /// Reformulate <tt>operator()</tt> into a \ref mm_funct11 object
   int jac_mm_funct(size_t np, const vec_t &p, vec_t &f) {
     operator()(np,p,ndat_,f);
     return 0;

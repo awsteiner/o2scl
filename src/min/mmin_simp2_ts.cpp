@@ -25,13 +25,13 @@
 #include <o2scl/multi_funct.h>
 #include <o2scl/mmin_simp2.h>
 #include <o2scl/test_mgr.h>
-#ifdef O2SCL_HAVE_EIGEN
+#ifdef O2SCL_EIGEN
 #include <Eigen/Dense>
 #endif
 
 using namespace std;
 using namespace o2scl;
-#ifdef O2SCL_HAVE_EIGEN
+#ifdef O2SCL_EIGEN
 using namespace Eigen;
 #endif
 
@@ -44,7 +44,7 @@ double minfun(size_t n, const ubvector &x) {
   return ret;
 }
 
-#ifdef O2SCL_HAVE_EIGEN
+#ifdef O2SCL_EIGEN
 double minfun_Eigen(size_t n, const VectorXd &x) {
   double ret;
   ret=x[0]*x[0]+(x[1]-2.0)*(x[1]-2.0)+3.0;
@@ -107,12 +107,15 @@ int main(void) {
   t.test_abs(simp(0,0),0.0,1.0e-4,"mmin_simp2 full simplex 1");
   t.test_rel(simp(0,1),2.0,2.0e-4,"mmin_simp2 full simplex 2");
 
-#ifdef O2SCL_HAVE_EIGEN
+#ifdef O2SCL_EIGEN
 
   // Test with Eigen
 
-  mmin_simp2<multi_funct<VectorXd>,VectorXd> g_Eigen;
-  multi_funct_fptr<VectorXd> mf_Eigen(minfun_Eigen);
+  typedef std::function<double(size_t,const Eigen::VectorXd &) > 
+    multi_funct_Eigen;
+
+  mmin_simp2<multi_funct_Eigen,VectorXd> g_Eigen;
+  multi_funct_Eigen mf_Eigen=minfun_Eigen;
 
   VectorXd x_Eigen(2);
   x_Eigen[0]=1.1;

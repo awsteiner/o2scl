@@ -103,7 +103,7 @@ namespace o2scl {
       <tt>examples/ex_anneal.cpp</tt> and in the \ref ex_anneal_sect .
 
       The form of the user-specified function is as in \ref
-      multi_funct has a "function value" which is the value of the
+      multi_funct11 has a "function value" which is the value of the
       function (given in the third argument as a number of type \c
       double), and a "return value" (the integer return value). The
       initial function evaluation which is performed at the

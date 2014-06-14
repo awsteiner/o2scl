@@ -346,7 +346,7 @@ namespace o2scl {
       This class is experimental.
 
       Default template arguments
-      - \c func_t - \ref ode_funct 
+      - \c func_t - \ref ode_funct11
       - \c vec_t - \ref boost::numeric::ublas::vector \< double \>
       - \c vec_int_t - \ref boost::numeric::ublas::vector \< int \>
   */

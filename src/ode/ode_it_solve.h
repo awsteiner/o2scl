@@ -42,84 +42,11 @@
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
 #endif
-
-  /// Function class for ode_it_solve
-  template<class vec_t=boost::numeric::ublas::vector<double> > 
-    class ode_it_funct {
   
-  public:
+  typedef std::function<double
+    (size_t,double,boost::numeric::ublas::matrix_row
+     <boost::numeric::ublas::matrix<double> > &)> ode_it_funct11;
   
-  ode_it_funct() {
-  }
-  
-  virtual ~ode_it_funct() {}
-  
-  /// Using \c x and \c y, return the value of function number \c ieq 
-  virtual double operator()(size_t ieq, double x, vec_t &y) {
-    return 0.0;
-  }
-
-  };
-
-  /// Function pointer for ode_it_solve
-  template<class vec_t=boost::numeric::ublas::vector<double> > 
-    class ode_it_funct_fptr : public ode_it_funct<vec_t> {
-
-  public:
-
-  virtual ~ode_it_funct_fptr() {}
-
-  /// Create using a function pointer
-  ode_it_funct_fptr(double (*fp)(size_t, double, vec_t &)) {
-    fptr=fp;
-  }
-
-  /// Using \c x and \c y, return the value of function number \c ieq 
-  virtual double operator()(size_t ieq, double x, vec_t &y) {
-    return fptr(ieq,x,y);
-  }
-
-  protected:
-
-  ode_it_funct_fptr() {}
-
-  /// The function pointer
-  double (*fptr)(size_t ieq, double x, vec_t &y);
-
-  };
-
-  /// Member function pointer for ode_it_solve
-  template<class tclass, class vec_t=boost::numeric::ublas::vector<double> >
-    class ode_it_funct_mfptr : public ode_it_funct<vec_t> {
-
-  public:
-
-  virtual ~ode_it_funct_mfptr() {}
-
-  /// Create using a class instance and member function
-  ode_it_funct_mfptr(tclass *tp, 
-		     double (tclass::*fp)(size_t, double, vec_t &)) {
-    tptr=tp;
-    fptr=fp;
-  }
-
-  /// Using \c x and \c y, return the value of function number \c ieq 
-  virtual double operator()(size_t ieq, double x, vec_t &y) {
-    return (*tptr.*fptr)(ieq,x,y);
-  }
-  
-  protected:
-  
-  ode_it_funct_mfptr() {}
-
-  /// The class pointer
-  tclass *tptr;
-
-  /// The member function pointer
-  double (tclass::*fptr)(size_t ieq, double x, vec_t &y);
-
-  };
-
   /** \brief ODE solver using a generic linear solver to solve 
       finite-difference equations
 
@@ -127,8 +54,7 @@ namespace o2scl {
       \future Implement as a child of ode_bv_solve ?
       \future Max and average tolerance?
   */
-  template <class func_t=ode_it_funct<boost::numeric::ublas::matrix_row
-    <boost::numeric::ublas::matrix<double> > >, 
+  template <class func_t=ode_it_funct11,
     class vec_t=boost::numeric::ublas::vector<double>, 
     class mat_t=boost::numeric::ublas::matrix<double>, 
     class matrix_row_t=boost::numeric::ublas::matrix_row
@@ -353,7 +279,7 @@ namespace o2scl {
   
   /// \name Storage for functions
   //@{
-  ode_it_funct<matrix_row_t> *fl, *fr, *fd;
+  ode_it_funct11 *fl, *fr, *fd;
   //@}
 
   /// Solver

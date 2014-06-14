@@ -72,8 +72,8 @@ namespace o2scl {
       Based on implementation of \ref Kelley99 in OOL. 
 
       Default template arguments
-      - \c func_t - \ref multi_funct\<\>
-      - \c dfunc_t - \ref grad_funct\<\>
+      - \c func_t - \ref multi_funct11
+      - \c dfunc_t - \ref grad_funct11
       - \c vec_t - \ref boost::numeric::ublas::vector \< double \>
 
       \future Replace the explicit norm computation below with 
@@ -81,17 +81,17 @@ namespace o2scl {
       \future Replace the generic variable 'tol' with 'tolf'
       or 'tolx' from \ref o2scl::mmin_base.
   */
-  template<class func_t=multi_funct11, class dfunc_t = grad_funct11,
+  template<class func_t=multi_funct11, class dfunc_t=grad_funct11,
     class vec_t=boost::numeric::ublas::vector<double> > 
     class mmin_constr_pgrad : 
-    public mmin_constr<func_t,dfunc_t,ool_hfunct<int>,vec_t> {
+    public mmin_constr<func_t,dfunc_t,ool_hfunct11,vec_t> {
     
 #ifndef DOXYGEN_INTERNAL
 
     protected:
 
     /// A convenient typedef for the unused Hessian product type
-    typedef ool_hfunct<int> hfunc_t;
+    typedef ool_hfunct11 hfunc_t;
 
     /// Temporary vector
     vec_t xx;

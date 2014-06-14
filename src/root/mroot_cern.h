@@ -50,7 +50,7 @@ namespace o2scl {
       \mathrm{tol\_abs} \times \mathrm{max} | x_i |
       \f]
 
-      This routine treats the functions specified as a \ref mm_funct
+      This routine treats the functions specified as a \ref mm_funct11
       object slightly differently than \ref o2scl::mroot_hybrids. First
       the equations should be numbered (as much as is possible) in
       order of increasing nonlinearity. Also, instead of calculating
