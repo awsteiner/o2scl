@@ -102,26 +102,9 @@ namespace o2scl {
 
   protected:
 
-    /** \brief Define the function which solves for the chemical 
-	potential given the density [protected subclass of \ref 
-	fermion_eff]
-    */
-    class density_fun {
-
-    protected:
-
-      fermion_eff &ef_;
-      fermion &f_;
-      double T_;
-
-    public:
-
-      density_fun(fermion_eff &ef, fermion &f, double T);
-      
-      /// Fix density for \ref fermion_eff::calc_density()
-      double operator()(double x);
-
-    };
+    /** \brief Desc
+     */
+    double density_fun(double x, fermion &f, double temper);
 
   public:
     

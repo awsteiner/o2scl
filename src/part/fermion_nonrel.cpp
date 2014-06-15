@@ -72,9 +72,6 @@ void fermion_nonrel::calc_density_zerot(fermion &f) {
 void fermion_nonrel::calc_mu(fermion &f, double temper) {
   double y, sy, spi, ey, int1, int2;
 
-  fp=&f;
-  T=temper;
-
   if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
   if (temper<=0.0) {
     calc_mu_zerot(f);
@@ -129,9 +126,6 @@ void fermion_nonrel::calc_mu(fermion &f, double temper) {
 
 void fermion_nonrel::nu_from_n(fermion &f, double temper) {
 
-  fp=&f;
-  T=temper;
-
   // Use initial value of nu for initial guess
   double nex;
   if (f.inc_rest_mass) {
@@ -144,9 +138,9 @@ void fermion_nonrel::nu_from_n(fermion &f, double temper) {
   // (Note GSL_LOG_DBL_MIN is about -708)
   if (nex>-GSL_LOG_DBL_MIN*0.9) nex=-GSL_LOG_DBL_MIN/2.0;
   
-  funct11 mf=std::bind(std::mem_fn<double(double)>
+  funct11 mf=std::bind(std::mem_fn<double(double,double,double)>
 		       (&fermion_nonrel::solve_fun),
-		       this,std::placeholders::_1);
+		       this,std::placeholders::_1,f.n/f.g,f.ms*temper);
   
   // Turn off convergence errors temporarily, since we'll
   // try again if it fails
@@ -245,7 +239,8 @@ int fermion_nonrel::calc_density(fermion &f, double temper) {
   return 0;
 }
 
-double fermion_nonrel::solve_fun(double x) {
+double fermion_nonrel::solve_fun(double x, double nog, double msT) {
+
   double nden;
   
   // If the argument to gsl_sf_fermi_dirac_half() is less
@@ -255,8 +250,8 @@ double fermion_nonrel::solve_fun(double x) {
   
   if (x>fabs(GSL_LOG_DBL_MIN)) nden=0.0;
   else nden=gsl_sf_fermi_dirac_half(-x)*sqrt(pi)/2.0;
-
-  nden*=fp->g*pow(2.0*fp->ms*T,1.5)/4.0/pi2;
-  return nden/fp->n-1.0;
+  
+  nden*=pow(2.0*msT,1.5)/4.0/pi2;
+  return nden/nog-1.0;
 }
 

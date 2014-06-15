@@ -139,11 +139,13 @@ namespace o2scl {
     /// Solver to compute chemical potential from density
     root<funct11> *density_root;
     
-    /// Function to compute chemical potential from density
-    double solve_fun(double x);
+    /** \brief Function to compute chemical potential from density
 
-    fermion *fp;
-    double T;
+	Variable \c nog is the target baryon density divided by
+	the spin degeneracy, and \c msT is the effective mass
+	times the temperature.
+     */
+    double solve_fun(double x, double nog, double msT);
 
   private:
 

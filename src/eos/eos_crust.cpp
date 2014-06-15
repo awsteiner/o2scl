@@ -87,10 +87,9 @@ double eos_crust::gibbs(int Z, int A) {
   
   nx[0]=e.n;
   mm_funct11 mff=std::bind
-    (std::mem_fn<int(size_t,const ubvector &,
-		     ubvector &, int &)>(&eos_crust::eq274),
-    this,std::placeholders::_1,std::placeholders::_2,
-    std::placeholders::_3,Z);
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &, int &)>
+     (&eos_crust::eq274),this,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3,Z);
   gs.msolve(1,nx,mff);
   e.n=nx[0];
   fzt.kf_from_density(e);
@@ -115,7 +114,7 @@ double eos_crust::energy(double barn, int Z, int A) {
 }
 
 int eos_crust::calc_pressure(thermo &th, double &barn, int &minz, 
-			   int &mina) {
+			     int &mina) {
   double gb, mingb=10.0, MAZ, epsL, ne=0.0;
   int ret;
 
@@ -160,7 +159,7 @@ int eos_crust::calc_pressure(thermo &th, double &barn, int &minz,
 int eos_crust::calc_density(double barn, thermo &th, int &Z, int &A) {
   double ed, mined=10.0;
   int mina=0, minz=0;
-
+  
   set_thermo(th);
 
   mined=10.0;
