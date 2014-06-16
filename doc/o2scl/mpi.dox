@@ -1,0 +1,29 @@
+/** \page para_section Parallel programming with O2scl
+
+    Generally, \o2 objects are thread-safe in the same way that 
+    classes like <tt>std::vector&lt;double&gt;</tt> are 
+    thread-safe: reads are safe and writes are unsafe. It may
+    be useful to make objects \c const to ensure that one
+    is reading data in a thread-safe way. 
+
+    MPI programming with \o2 is also straightforward. The sole
+    exception is \o2 has two global objects, the library settings
+    object and the error handler object, which may need to be
+    separately instantiated by the user on each thread. 
+    
+    For example, on some systems, the following may be required
+    to ensure that the error handler is valid on each thread.
+    \code
+    int main(int argc, char *argv[]) {
+      cout.setf(ios::scientific);
+      MPI_Init(&argc,&argv);
+      // Create a new error handler for this thread
+      o2scl::err_hnd_cpp ee;
+      o2scl::err_hnd=&ee;
+      // Do stuff here
+      MPI_Finalize();
+      return 0;
+    }
+    \endcode
+
+*/
