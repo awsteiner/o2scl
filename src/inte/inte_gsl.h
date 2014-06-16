@@ -119,13 +119,10 @@ namespace o2scl {
 	}
       }
 
-#ifndef O2SCL_NO_CPP11
       double dbl_eps=std::numeric_limits<double>::epsilon();
       double dbl_min=std::numeric_limits<double>::min();
-#else 
-      double dbl_eps=GSL_DBL_EPSILON;
-      double dbl_min=GSL_DBL_MIN;
-#endif
+      //double dbl_eps=GSL_DBL_EPSILON;
+      //double dbl_min=GSL_DBL_MIN;
 
       if (result_abs > dbl_min/(50*dbl_eps)) {
 

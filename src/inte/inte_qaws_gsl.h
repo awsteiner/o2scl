@@ -461,11 +461,11 @@ namespace o2scl {
       O2SCL_ERR(estr.c_str(),exc_einval);			
     }
 		
-#ifndef O2SCL_NO_CPP11
+    //#ifndef O2SCL_NO_CPP11
       double dbl_eps=std::numeric_limits<double>::epsilon();
-#else 
-      double dbl_eps=GSL_DBL_EPSILON;
-#endif
+    //#else 
+    //double dbl_eps=GSL_DBL_EPSILON;
+    //#endif
 
     if (this->tol_abs <= 0 && (this->tol_rel < 50 * dbl_eps || 
 			       this->tol_rel < 0.5e-28)) {

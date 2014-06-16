@@ -102,10 +102,16 @@ namespace o2scl {
 
   protected:
 
-    /** \brief Desc
+    /** \brief The function which solves for the chemical potential
+	given the density
      */
     double density_fun(double x, fermion &f, double temper);
 
+    /** \brief The function which solves for the chemical potential
+	given the density (including antiparticles)
+     */
+    double pair_density_fun(double x, fermion &f, double temper);
+    
   public:
     
     typedef boost::numeric::ublas::vector<double> ubvector;
@@ -232,27 +238,6 @@ namespace o2scl {
     
     /// The function which solves for \f$ f \f$ from \f$ \psi \f$.
     double solve_fun(double x, double &psi);
-    
-    /** \brief Define the function which solves for the chemical 
-	potential given the density of particles and antiparticles
-	[protected subclass of \ref fermion_eff]
-    */
-    class pair_density_fun {
-
-    protected:
-
-      fermion_eff &ef_;
-      fermion &f_;
-      double T_;
-
-    public:
-
-      pair_density_fun(fermion_eff &ef, fermion &f, double T);
-      
-      /// Fix density for \ref fermion_eff::pair_density()
-      double operator()(double x);
-
-    };
     
 #endif
 

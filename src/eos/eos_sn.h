@@ -310,7 +310,6 @@ namespace o2scl {
       return baryons_only_loaded;
     }
 
-#ifndef O2SCL_NO_CPP11
     /** \brief A slice of data from \ref eos_sn_base for one index fixed
 	
 	This class allows one to easily construct a \ref
@@ -390,7 +389,6 @@ namespace o2scl {
       }
       
     };
-#endif
 
   protected:
 

@@ -82,6 +82,7 @@
     - \subpage unitconv_section
     - \subpage hdf_section
     - \subpage acol_section
+    - \subpage mpi_section
     - \subpage other_section
     - \subpage lset_section
     - \subpage team_section

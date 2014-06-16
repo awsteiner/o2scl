@@ -33,30 +33,30 @@ using namespace std;
 using namespace o2scl;
 
 bool o2scl::is_finite(double x) {
-#ifndef O2SCL_NO_CPP11
+  //#ifndef O2SCL_NO_CPP11
   if (std::isfinite(x)) return true;
   return false;
-#else
-  return gsl_finite(x);
-#endif
+  //#else
+  //return gsl_finite(x);
+  //#endif
 }
 
 bool o2scl::is_nan(double x) {
-#ifndef O2SCL_NO_CPP11
+  //#ifndef O2SCL_NO_CPP11
   if (std::isnan(x)) return true;
   return false;
-#else
-  return gsl_isnan(x);
-#endif
+  //#else
+  //return gsl_isnan(x);
+  //#endif
 }
 
 bool o2scl::is_inf(double x) {
-#ifndef O2SCL_NO_CPP11
+  //#ifndef O2SCL_NO_CPP11
   if (std::isinf(x)) return true;
   return false;
-#else
-  return gsl_isinf(x);
-#endif
+  //#else
+  //return gsl_isinf(x);
+  //#endif
 }
 
 std::string o2scl::binary_to_hex(std::string s) {

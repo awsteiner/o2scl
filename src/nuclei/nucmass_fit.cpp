@@ -43,7 +43,7 @@ nucmass_fit::nucmass_fit() {
 }
 
 void nucmass_fit::set_exp_mass(nucmass &nm, int maxA, 
-			    bool include_neutron) {
+			       bool include_neutron) {
   def_dist.set_dist(nm,maxA,include_neutron);
   return;
 }
@@ -71,13 +71,10 @@ void nucmass_fit::fit(nucmass_fit_base &n, double &fmin) {
   ubvector mx(nv);
   nmf->guess_fun(nv,mx);
   
-#ifndef O2SCL_NO_CPP11
   multi_funct11 mfm=
-    std::bind(std::mem_fn<double(size_t,const ubvector &)>(&nucmass_fit::min_fun),
+    std::bind(std::mem_fn<double(size_t,const ubvector &)>
+	      (&nucmass_fit::min_fun),
 	      this,std::placeholders::_1,std::placeholders::_2);
-#else
-  multi_funct_mfptr<nucmass_fit> mfm(this,&nucmass_fit::min_fun);
-#endif
   
   mm->mmin(nv,mx,fmin,mfm);
   fmin=mfm(nv,mx);
@@ -137,7 +134,7 @@ void nucmass_fit::eval(nucmass &n, double &fmin) {
       int Z=ndi->Z;
       int N=ndi->N;
       if (N>=minN && Z>=minZ && (even_even==false || (N%2==0 && Z%2==0))) {
-	if (unc_ix>uncs.size()) unc_ix=0;
+	if (unc_ix>=uncs.size()) unc_ix=0;
 	fmin+=pow((ndi->mex*hc_mev_fm-n.mass_excess(Z,N))/
 		  (uncs[unc_ix]),2.0);
 	if (!o2scl::is_finite(fmin)) {
@@ -145,17 +142,18 @@ void nucmass_fit::eval(nucmass &n, double &fmin) {
 	    itos(Z)+" and N="+itos(N)+" in nucmass_fit::eval() (3).";
 	  O2SCL_ERR(s.c_str(),exc_efailed);
 	}
+	unc_ix++;
       }
     }
 
-  } else {
+  } else if (fit_method==chi_squared_be) {
 
     size_t unc_ix=0;
     for(nucdist::iterator ndi=exp->begin();ndi!=exp->end();ndi++) {
       int Z=ndi->Z;
       int N=ndi->N;
       if (N>=minN && Z>=minZ && (even_even==false || (N%2==0 && Z%2==0))) {
-	if (unc_ix>uncs.size()) unc_ix=0;
+	if (unc_ix>=uncs.size()) unc_ix=0;
 	fmin+=pow((ndi->be*hc_mev_fm-n.binding_energy(Z,N))/
 		  (uncs[unc_ix]),2.0);
 	if (!o2scl::is_finite(fmin)) {
@@ -163,17 +161,20 @@ void nucmass_fit::eval(nucmass &n, double &fmin) {
 	    itos(Z)+" and N="+itos(N)+" in nucmass_fit::eval() (4).";
 	  O2SCL_ERR(s.c_str(),exc_efailed);
 	}
+	unc_ix++;
       }
     }
 
+  } else {
+    O2SCL_ERR("Unknown fit method in nucmass_fit::eval().",exc_einval);
   }
     
   return;
 }
 
 void nucmass_fit::eval_isospin_beta(nucmass &n, ubvector_int &n_qual,
-				ubvector &qual, int max_iso) {
-
+				    ubvector &qual, int max_iso) {
+  
   ubvector_size_t cnt(200);
   ubvector_int opt(200);
   ubvector min(200);
@@ -226,7 +227,7 @@ void nucmass_fit::eval_isospin_beta(nucmass &n, ubvector_int &n_qual,
 }
 
 void nucmass_fit::eval_isospin(nucmass &n, ubvector_int &n_qual,
-			    ubvector &qual, int min_iso, int max_iso) {
+			       ubvector &qual, int min_iso, int max_iso) {
   
   if (max_iso<min_iso) {
     O2SCL_ERR("Max must be less than min in eval_isospin().",exc_einval);

@@ -300,15 +300,15 @@ int fermion_eff::calc_density(fermion &f, double temper) {
   f.n=nstore;
   
   // Perform the solution
-  funct11 df2b=std::bind(std::mem_fn<double(double,fermion &,double)>
-			 (&fermion_eff::density_fun2),
-			 this,std::placeholders::_1,std::ref(f),temper);
-  int ret=density_root->solve(f.nu,df2b);
+  funct11 df2=std::bind(std::mem_fn<double(double,fermion &,double)>
+			(&fermion_eff::density_fun),
+			this,std::placeholders::_1,std::ref(f),temper);
+  int ret=density_root->solve(f.nu,df2);
   if (ret!=0) {
     O2SCL_CONV2_RET("Function calc_density() failed in fermion_eff::",
 		    "calc_density().",exc_efailed,this->err_nonconv);
   }
-  df(f.nu);
+  df2(f.nu);
 
   if (f.non_interacting) f.mu=f.nu;
 
@@ -401,32 +401,28 @@ void fermion_eff::pair_density(fermion &f, double temper) {
     return;
   }
   
-  pair_density_fun pdf(*this,f,temper);
-  funct11 pdf2=std::bind(std::mem_fn<double(double)>
-			 (&pair_density_fun::operator()),
-			 &pdf,std::placeholders::_1);
+  funct11 pdf2=std::bind(std::mem_fn<double(double,fermion &,double)>
+			 (&fermion_eff::pair_density_fun),
+			 this,std::placeholders::_1,std::ref(f),temper);
+
   density_root->solve(f.nu,pdf2);
-  pdf(f.nu);
+  pdf2(f.nu);
   
   if (f.non_interacting) { f.mu=f.nu; }
 
   return;
 }
 
-fermion_eff::pair_density_fun::pair_density_fun
-(fermion_eff &ef, fermion &f, double T) : ef_(ef), f_(f), T_(T) {
-}
-
-double fermion_eff::pair_density_fun::operator()(double x) {
+double fermion_eff::pair_density_fun(double x, fermion &f, double temper) {
   double nold, nnew, y;
 
-  if (f_.non_interacting) f_.mu=x;
-  else f_.nu=x;
-  nold=f_.n;
-  ef_.pair_mu(f_,T_);
-  nnew=f_.n;
+  if (f.non_interacting) f.mu=x;
+  else f.nu=x;
+  nold=f.n;
+  pair_mu(f,temper);
+  nnew=f.n;
   y=nnew/nold-1.0;
-  f_.n=nold;
+  f.n=nold;
 
   return y;
 }
