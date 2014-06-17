@@ -58,10 +58,7 @@ int main(void) {
   
   ubvector y(2), dydx(2), yerr(2);
   
-  // We have to keep the full type specification to specify
-  // that we want ode_funct_fptr and not ode_funct11 independent
-  // of whether or not O2SCL_CPP11 is defined
-  ode_rk8pd_gsl<ubvector,ubvector,ubvector,ode_funct11> rk;
+  ode_rk8pd_gsl<> rk;
 
   ode_funct11 od=derivs;
 

@@ -32,7 +32,7 @@
 namespace o2scl {
 #endif
 
-  /** \brief Nuclear structure from Delaroche et al. 
+  /** \brief Nuclear properties from Delaroche et al. 
 
       See \ref Delaroche10 .
   */

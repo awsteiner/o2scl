@@ -128,12 +128,8 @@ namespace o2scl {
       fb=fc;
       fc=fa;
     }
-  
-#ifndef O2SCL_NO_CPP11
+    
     tol=0.5*fabs(b)*std::numeric_limits<double>::epsilon();
-#else
-    tol=0.5*GSL_DBL_EPSILON*fabs(b);
-#endif
     m=0.5*(c-b);
   
     if (fb == 0) {

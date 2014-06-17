@@ -100,19 +100,14 @@ namespace o2scl {
       return;
     }
     
-    /** \brief The default distribution of nuclei to fit
-    */
-    nucdist_full def_dist;
+    /** \brief Select the experimental nuclei to fit
+     */
+    std::vector<nucleus> dist;
 
-    /// Set the distribution of nuclei to fit
-    void set_dist(nucdist &uexp) {
-      exp=&uexp;
-      return;
-    }
-
-    /// Set the fit uncertainties (in MeV)
-    template<class vec_t>
-      void set_uncerts(size_t nv, vec_t &u) {
+    /** \brief Set the fit uncertainties (in MeV)
+     */
+    template<class vec_t> void set_uncerts(vec_t &u) {
+      size_t nv=u.size();
       if (nv==0) {
 	O2SCL_ERR2("Tried to give zero uncertainties in nucmass_fit::",
 		   "set_uncerts().",exc_efailed);
@@ -123,15 +118,20 @@ namespace o2scl {
       return;
     }
     
-    /// Set the experimental masses for use in the default distribution
+    /** \brief Set the experimental masses for use in the default distribution
+     */
     void set_exp_mass(nucmass &nm, int maxA=400, 
 		     bool include_neutron=false);
 
-    /// Desc
+    /** \brief Evaluate isospin dependence of fit quality
+
+	\todo More documentation and compute uncertainty
+     */
     void eval_isospin_beta(nucmass &n, ubvector_int &n_qual,
 			   ubvector &qual, int max_iso=20);
     
-    /// Desc
+    /** \brief Evaluate isospin dependence of fit quality
+     */
     void eval_isospin(nucmass &n, ubvector_int &n_qual,
 		      ubvector &qual, int min_iso=-8, int max_iso=60);
 
@@ -155,9 +155,6 @@ namespace o2scl {
      */
     nucmass_fit_base *nmf;
     
-    /// A pointer to the nuclear distribution (defaults to \ref def_dist)
-    nucdist *exp;
-
 #endif
 
   };

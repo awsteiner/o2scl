@@ -238,11 +238,7 @@ namespace o2scl {
       double x_midpoint=0.5*(x_l+x_u);
       double tol=rel_err_val*fabs(x_m)+abs_err_val; 
 
-#ifndef O2SCL_NO_CPP11
       double dbl_eps=std::numeric_limits<double>::epsilon();
-#else 
-      double dbl_eps=GSL_DBL_EPSILON;
-#endif
 
       if (fabs(stored_step)-tol>-2.0*dbl_eps) {
 	

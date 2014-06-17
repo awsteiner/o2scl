@@ -30,6 +30,8 @@ using namespace o2scl;
 using namespace o2scl_const;
 using namespace o2scl_hdf;
 
+typedef boost::numeric::ublas::vector<double> ubvector;
+
 int main(void) {
   test_mgr t;
   t.set_output_level(1);
@@ -49,20 +51,20 @@ int main(void) {
   nucmass_mnmsk mm;
   o2scl_hdf::mnmsk_load(mm);
 
-  mf.set_exp_mass(ame);
+  nucdist_set(mf.dist,ame);
   mf.fit(sem,res);
   cout << sem.B << " " << sem.Sv << " " << sem.Ss << " " 
        << sem.Ec << " " << sem.Epair << endl;
   cout << res << endl;
   t.test_gen(res<4.0,"Successful fit.");
-
-  double unc[1]={3.0};
-  mf.set_uncerts(1,unc);
+  
+  ubvector unc(1);
+  unc[0]=3.0;
+  mf.set_uncerts(unc);
   mf.fit_method=nucmass_fit::chi_squared_me;
   mf.fit(sem,res);
   cout << sem.B << " " << sem.Sv << " " << sem.Ss << " " 
        << sem.Ec << " " << sem.Epair << endl;
-  cout << res/(mf.def_dist.size()-sem.nfit) << endl;
 
   /*
     int max_iso=30;
@@ -78,17 +80,17 @@ int main(void) {
   */
 
   mf.fit_method=nucmass_fit::rms_mass_excess;
-  mf.set_exp_mass(mexp);
+  nucdist_set(mf.dist,mexp);
   mf.eval(mm,res);
   cout << res << endl;
   t.test_rel(res,0.6806,1.0e-4,"Moller fit 1");
 
-  mf.set_exp_mass(amex);
+  nucdist_set(mf.dist,amex);
   mf.eval(mm,res);
   cout << res << endl;
   t.test_rel(res,0.6540311,1.0e-4,"Moller fit 2");
 
-  mf.set_exp_mass(ame);
+  nucdist_set(mf.dist,ame);
   mf.eval(mm,res);
   cout << res << endl;
   t.test_rel(res,0.894578,1.0e-4,"Moller fit 3");

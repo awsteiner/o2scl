@@ -31,7 +31,6 @@ using namespace o2scl;
 using namespace o2scl_const;
 
 nucmass_fit::nucmass_fit() {
-  exp=&def_dist;
   mm=&def_mmin;
   def_mmin.ntrial*=10;
   even_even=false;
@@ -40,12 +39,6 @@ nucmass_fit::nucmass_fit() {
   fit_method=rms_mass_excess;
   uncs.resize(1);
   uncs[0]=1.0;
-}
-
-void nucmass_fit::set_exp_mass(nucmass &nm, int maxA, 
-			       bool include_neutron) {
-  def_dist.set_dist(nm,maxA,include_neutron);
-  return;
 }
 
 double nucmass_fit::min_fun(size_t nv, const ubvector &x) {
@@ -61,7 +54,7 @@ double nucmass_fit::min_fun(size_t nv, const ubvector &x) {
 
 void nucmass_fit::fit(nucmass_fit_base &n, double &fmin) {
   
-  if (exp->size()==0) {
+  if (dist.size()==0) {
     O2SCL_ERR("No experimental masses to fit to in nucmass_fit::fit().",
 	      exc_efailed);
   }
@@ -86,7 +79,7 @@ void nucmass_fit::eval(nucmass &n, double &fmin) {
 
   fmin=0.0;
 
-  if (exp->size()==0) {
+  if (dist.size()==0) {
     O2SCL_ERR("No experimental masses to fit to in nucmass_fit::eval().",
 	      exc_efailed);
   }
@@ -94,7 +87,7 @@ void nucmass_fit::eval(nucmass &n, double &fmin) {
   if (fit_method==rms_mass_excess) {
 
     size_t nn=0;
-    for(nucdist::iterator ndi=exp->begin();ndi!=exp->end();ndi++) {
+    for(vector<nucleus>::iterator ndi=dist.begin();ndi!=dist.end();ndi++) {
       int Z=ndi->Z;
       int N=ndi->N;
       if (N>=minN && Z>=minZ && (even_even==false || (N%2==0 && Z%2==0))) {
@@ -112,7 +105,7 @@ void nucmass_fit::eval(nucmass &n, double &fmin) {
   } else if (fit_method==rms_binding_energy) {
 
     size_t nn=0;
-    for(nucdist::iterator ndi=exp->begin();ndi!=exp->end();ndi++) {
+    for(vector<nucleus>::iterator ndi=dist.begin();ndi!=dist.end();ndi++) {
       int Z=ndi->Z;
       int N=ndi->N;
       if (N>=minN && Z>=minZ && (even_even==false || (N%2==0 && Z%2==0))) {
@@ -130,7 +123,7 @@ void nucmass_fit::eval(nucmass &n, double &fmin) {
   } else if (fit_method==chi_squared_me) {
 
     size_t unc_ix=0;
-    for(nucdist::iterator ndi=exp->begin();ndi!=exp->end();ndi++) {
+    for(vector<nucleus>::iterator ndi=dist.begin();ndi!=dist.end();ndi++) {
       int Z=ndi->Z;
       int N=ndi->N;
       if (N>=minN && Z>=minZ && (even_even==false || (N%2==0 && Z%2==0))) {
@@ -149,7 +142,7 @@ void nucmass_fit::eval(nucmass &n, double &fmin) {
   } else if (fit_method==chi_squared_be) {
 
     size_t unc_ix=0;
-    for(nucdist::iterator ndi=exp->begin();ndi!=exp->end();ndi++) {
+    for(vector<nucleus>::iterator ndi=dist.begin();ndi!=dist.end();ndi++) {
       int Z=ndi->Z;
       int N=ndi->N;
       if (N>=minN && Z>=minZ && (even_even==false || (N%2==0 && Z%2==0))) {
@@ -181,7 +174,7 @@ void nucmass_fit::eval_isospin_beta(nucmass &n, ubvector_int &n_qual,
   for(size_t i=0;i<200;i++) cnt[i]=0;
 
   // First pass, count and find minimum for each isotopic chain
-  for(nucdist::iterator ndi=exp->begin();ndi!=exp->end();ndi++) {
+  for(vector<nucleus>::iterator ndi=dist.begin();ndi!=dist.end();ndi++) {
     int Z=ndi->Z;
     int N=ndi->N;
     if (Z>=minZ) {
@@ -206,7 +199,7 @@ void nucmass_fit::eval_isospin_beta(nucmass &n, ubvector_int &n_qual,
     qual[i]=0.0;
   }
 
-  for(nucdist::iterator ndi=exp->begin();ndi!=exp->end();ndi++) {
+  for(vector<nucleus>::iterator ndi=dist.begin();ndi!=dist.end();ndi++) {
     int Z=ndi->Z;
     int N=ndi->N;
     if (Z>=minZ && n.is_included(Z,N)) {
@@ -242,7 +235,7 @@ void nucmass_fit::eval_isospin(nucmass &n, ubvector_int &n_qual,
   }
 
   // First pass, count and find minimum for each isotopic chain
-  for(nucdist::iterator ndi=exp->begin();ndi!=exp->end();ndi++) {
+  for(vector<nucleus>::iterator ndi=dist.begin();ndi!=dist.end();ndi++) {
     int Z=ndi->Z;
     int N=ndi->N;
     int A=N-Z;

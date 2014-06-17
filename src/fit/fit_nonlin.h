@@ -553,11 +553,7 @@ namespace o2scl {
       double mint;
       if (delta2<0.1) mint=delta2;
       else mint=0.1;
-#ifndef O2SCL_NO_CPP11
       double dbl_min=std::numeric_limits<double>::min();
-#else
-      double dbl_min=GSL_DBL_MIN;
-#endif
       par_upper=dbl_min/mint;
     }
       
@@ -1336,11 +1332,7 @@ namespace o2scl {
 
       lm_iteration=false;
 
-#ifndef O2SCL_NO_CPP11
       double dbl_eps=std::numeric_limits<double>::epsilon();
-#else
-      double dbl_eps=GSL_DBL_EPSILON;
-#endif
 
       if (ratio >= p0001) {
 

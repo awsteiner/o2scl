@@ -31,6 +31,13 @@
 namespace o2scl {
 #endif
 
+  /** \brief Set a distribution of nuclei from a mass formula
+      and a function string
+  */
+  void nucdist_set(std::vector<nucleus> &dist, nucmass &nm, 
+		   std::string expr="1", int maxA=400,
+		   bool include_neutron=false);
+
   /** \brief A distribution of nuclei [abstract base]
       
       The virtual base class for a collection of objects of type \ref
@@ -66,15 +73,12 @@ namespace o2scl {
 	\comment
 	The standard usage of this iterator is something of the form:
 	\code
-	mnmsk_mass mth;
-	simple_dist sd(5,6,10,12,&mth);
+	nucmass_mnmsk mth;
+	nucdist_full sd(mth);
 	for(nucdist::iterator ndi=sd.begin();ndi!=sd.end();ndi++) {
 	// do something here for each nucleus
 	}
 	\endcode
-	which would create a list consisting of three isotopes (A=10,
-	11, and 12) of boron and three isotopes carbon for a total
-	of six nuclei.
 	\endcomment
     */
     class iterator {
@@ -189,7 +193,7 @@ namespace o2scl {
 	The information for the previous distribution is cleared 
 	before a new distribution is set. 
     */
-    int set_dist(nucmass &nm, int maxA=400, bool include_neutron=false);
+    void set_dist(nucmass &nm, int maxA=400, bool include_neutron=false);
   
     /// The beginning of the distribution
     virtual iterator begin() {

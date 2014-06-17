@@ -645,12 +645,7 @@ namespace o2scl {
     shrink_step=true;
     dim=0;
     ajac=&def_jac;
-#ifndef O2SCL_NO_CPP11
-    double sqrt_dbl_eps=sqrt(std::numeric_limits<double>::epsilon());
-#else 
-    double sqrt_dbl_eps=GSL_SQRT_DBL_EPSILON;
-#endif
-    def_jac.epsrel=sqrt_dbl_eps;
+    def_jac.epsrel=sqrt(std::numeric_limits<double>::epsilon());
     int_scaling=true;
     jac_given=false;
     set_called=false;

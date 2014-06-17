@@ -99,11 +99,7 @@ namespace o2scl_linalg {
 	      y=x*sqrt(1.0-temp*temp);
 	    }
 	    
-#ifndef O2SCL_NO_CPP11
 	    double sqrt_dbl_eps=sqrt(std::numeric_limits<double>::epsilon());
-#else 
-	    double sqrt_dbl_eps=GSL_SQRT_DBL_EPSILON;
-#endif
 	    
 	    if (fabs(y/x)<sqrt(20.0)*sqrt_dbl_eps) {
 	      y=O2SCL_CBLAS_NAMESPACE::dnrm2_subcol(A,i+1,j,M);

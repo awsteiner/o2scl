@@ -143,14 +143,6 @@ bool lib_settings_class::eigen_support() {
 #endif
 }
 
-bool lib_settings_class::cpp11_support() {
-#ifndef O2SCL_NO_CPP11
-  return true;
-#else
-  return false;
-#endif
-}
-
 bool lib_settings_class::openmp_support() {
 #ifdef O2SCL_OPENMP
   return true;

@@ -291,11 +291,7 @@ namespace o2scl {
       
       /* Combine truncation error and numerical error */
       
-#ifndef O2SCL_NO_CPP11
       double dbl_eps=std::numeric_limits<double>::epsilon();
-#else 
-      double dbl_eps=GSL_DBL_EPSILON;
-#endif
 
       abserr = fabs (c[order]) + absc*dbl_eps;
       
@@ -333,11 +329,7 @@ namespace o2scl {
 	absc += fabs(c[i]);
       }
 
-#ifndef O2SCL_NO_CPP11
       double dbl_eps=std::numeric_limits<double>::epsilon();
-#else 
-      double dbl_eps=GSL_DBL_EPSILON;
-#endif
 
       /* Combine truncation error and numerical error */
       abserr = fabs(c[eval_order])+absc*dbl_eps;

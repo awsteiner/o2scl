@@ -46,8 +46,6 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
 
-#ifndef O2SCL_NO_CPP11
-
   double x, min;
   funct11 f=minfun;
   funct11 f2=minfun2;
@@ -62,8 +60,6 @@ int main(void) {
   t.test_rel(x,0.0,1.0e-4,"val");
   t.test_rel(min,-1.0,1.0,"min");
 
-#endif
-  
   t.report();
   return 0;
 }

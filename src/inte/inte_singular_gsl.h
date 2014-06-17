@@ -92,11 +92,7 @@ namespace o2scl {
     /** \brief Test if the integrand satisfies \f$ f = |f| \f$
      */
     inline int test_positivity(double result, double resabs) {
-#ifndef O2SCL_NO_CPP11
       double dbl_eps=std::numeric_limits<double>::epsilon();
-#else 
-      double dbl_eps=GSL_DBL_EPSILON;
-#endif
       int status=(fabs(result) >= (1-50*dbl_eps)*resabs);
       return status;
     }

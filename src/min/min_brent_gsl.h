@@ -218,11 +218,7 @@ namespace o2scl {
       const double w_lower=(z-x_left);
       const double w_upper=(x_right-z);
     
-#ifndef O2SCL_NO_CPP11
       double sqrt_dbl_eps=sqrt(std::numeric_limits<double>::epsilon());
-#else 
-      double sqrt_dbl_eps=GSL_SQRT_DBL_EPSILON;
-#endif
 
       const double tolerance=sqrt_dbl_eps*fabs(z);
     

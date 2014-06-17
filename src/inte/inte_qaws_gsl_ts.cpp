@@ -129,11 +129,8 @@ int main(void) {
 
       Q.set_weight(alpha,beta,mu,nu);
       Q.integ_err(f,0,1,o2scl_res,o2scl_err);
-#ifndef O2SCL_NO_CPP11
+
       double dbl_eps=std::numeric_limits<double>::epsilon();
-#else 
-      double dbl_eps=GSL_DBL_EPSILON;
-#endif
       t.test_abs(gsl_res,o2scl_res,dbl_eps,"QAWS: O2scl vs GSL");
 			
       cout.width(15); cout << o2scl_err;

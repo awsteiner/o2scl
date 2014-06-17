@@ -80,8 +80,9 @@ int main(void) {
   nucmass_mnmsk::entry mme;
   double comp=0.0;
   size_t nnuc=0;
-  nucdist_full fd(mm);
-  for(nucdist::iterator ndi=fd.begin();ndi!=fd.end();ndi++) {
+  vector<nucleus> fd;
+  nucdist_set(fd,mm);
+  for(vector<nucleus>::iterator ndi=fd.begin();ndi!=fd.end();ndi++) {
     if (ndi->N>=8 && ndi->Z>=8) {
       mme=mm.get_ZN(ndi->Z,ndi->N);
       comp+=pow(mo.mass_excess(ndi->Z,ndi->N)-(mme.Mth-mme.Emic),2.0);
@@ -95,7 +96,8 @@ int main(void) {
 
   // Fit the macroscopic part to experiment
   nucmass_fit mf;
-  mf.set_exp_mass(au);
+  nucdist_set(mf.dist,au);
+  //mf.set_exp_mass(au);
   double qual;
   mf.eval(mo,qual);
   cout << "Before fit: " << qual << endl;

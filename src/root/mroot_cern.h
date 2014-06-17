@@ -90,19 +90,11 @@ namespace o2scl {
       based on \ref More79 and \ref More80 and is documented at
       http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/c201/top.html
   */
-#ifdef O2SCL_NO_CPP11 
-  template<class func_t=mm_funct<boost::numeric::ublas::vector<double> >, 
-    class vec_t=boost::numeric::ublas::vector<double>, 
-    class jfunc_t=jac_funct<vec_t,boost::numeric::ublas::matrix<double> > > 
-    class mroot_cern : public mroot<func_t,vec_t,jfunc_t>
-#else
     template<class func_t=mm_funct11,
-    class vec_t=boost::numeric::ublas::vector<double>, 
-    class jfunc_t=jac_funct11> class mroot_cern : 
-    public mroot<func_t,vec_t,jfunc_t>
-#endif
-    {
-      
+      class vec_t=boost::numeric::ublas::vector<double>, 
+      class jfunc_t=jac_funct11> class mroot_cern : 
+      public mroot<func_t,vec_t,jfunc_t> {
+
 #ifndef DOXYGEN_INTERNAL
       
     protected:

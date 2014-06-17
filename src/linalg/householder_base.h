@@ -86,13 +86,8 @@ namespace o2scl_linalg {
       beta=-(alpha >= 0.0 ? +1.0 : -1.0)*hypot(alpha,xnorm);
       tau=(beta-alpha)/beta;
     
-#ifndef O2SCL_NO_CPP11
       double dbl_eps=std::numeric_limits<double>::epsilon();
       double dbl_min=std::numeric_limits<double>::min();
-#else 
-      double dbl_eps=GSL_DBL_EPSILON;
-      double dbl_min=GSL_DBL_MIN;
-#endif
 
       double s=(alpha-beta);
       if (fabs(s)>dbl_min) {
@@ -140,13 +135,8 @@ namespace o2scl_linalg {
       beta=-(alpha >= 0.0 ? +1.0 : -1.0)*hypot(alpha,xnorm);
       tau=(beta-alpha)/beta;
       
-#ifndef O2SCL_NO_CPP11
       double dbl_eps=std::numeric_limits<double>::epsilon();
       double dbl_min=std::numeric_limits<double>::min();
-#else 
-      double dbl_eps=GSL_DBL_EPSILON;
-      double dbl_min=GSL_DBL_MIN;
-#endif
 
       double s=(alpha-beta);
       if (fabs(s)>dbl_min) {
@@ -192,13 +182,8 @@ namespace o2scl_linalg {
       beta=-(alpha >= 0.0 ? +1.0 : -1.0)*hypot(alpha,xnorm);
       tau=(beta-alpha)/beta;
       
-#ifndef O2SCL_NO_CPP11
       double dbl_eps=std::numeric_limits<double>::epsilon();
       double dbl_min=std::numeric_limits<double>::min();
-#else 
-      double dbl_eps=GSL_DBL_EPSILON;
-      double dbl_min=GSL_DBL_MIN;
-#endif
 
       double s=(alpha-beta);
       if (fabs(s)>dbl_min) {

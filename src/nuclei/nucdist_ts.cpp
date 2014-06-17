@@ -37,7 +37,7 @@ int main(void) {
   cout.setf(ios::scientific);
 
   // Load several mass formulae to make distributions out of
-  
+
   nucmass_ame ame12;
   o2scl_hdf::ame_load(ame12,"12");
 
@@ -56,36 +56,8 @@ int main(void) {
   nucmass_ame_exp amex03;
   o2scl_hdf::ame_load(amex03,"03");
 
-  // Test the size of the distributions
-
-  nucdist_full fd(mth);
-  size_t cnt=0;
-  for(nucdist::iterator ndi=fd.begin();ndi!=fd.end();ndi++) {
-    cnt++;
-  }
-  cout << "fd size: " << fd.size() << endl;
-  t.test_gen(fd.size()==8979,"nucdist_full size 1");
-  t.test_gen(cnt==8979,"nucdist_full size 1b");
-
-  nucdist_full fd2(ame03);
-  cout << "fd2 size: " << fd2.size() << endl;
-  t.test_gen(fd2.size()==3178,"nucdist_full size 2");
-
-  nucdist_full fd3(amex03);
-  cout << "fd3 size: " << fd3.size() << endl;
-  t.test_gen(fd3.size()==2227,"nucdist_full size 3");
-
-  nucdist_full fd4(mexp);
-  cout << "fd4 size: " << fd4.size() << endl;
-  t.test_gen(fd4.size()==1654,"nucdist_full size 4");
-
-  nucdist_full fd5(ame12);
-  cout << "fd5 size: " << fd5.size() << endl;
-  t.test_gen(fd5.size()==3352,"nucdist_full size 5");
-
-  nucdist_full fd6(amex12);
-  cout << "fd6 size: " << fd6.size() << endl;
-  t.test_gen(fd6.size()==2437,"nucdist_full size 6");
+  vector<nucleus> fdx;
+  nucdist_set(fdx,mth,"1",400,true);
 
   t.report();
   return 0;

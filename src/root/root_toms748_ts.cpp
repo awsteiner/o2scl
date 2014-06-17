@@ -37,8 +37,6 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
-#ifndef O2SCL_NO_CPP11
-
   double a, b;
   funct11 f=gfn;
 
@@ -47,8 +45,6 @@ int main(void) {
   b=1.0;
   rt.solve_bkt(a,b,f);
   t.test_rel(a,0.2,1.0e-6,"1");
-
-#endif
 
   t.report();
   return 0;

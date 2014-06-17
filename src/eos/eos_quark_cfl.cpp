@@ -83,11 +83,7 @@ double eos_quark_cfl::rescale_error(double err, double result_abs,
     }
   }
   
-#ifndef O2SCL_NO_CPP11
-      double dbl_eps=std::numeric_limits<double>::epsilon();
-#else 
-      double dbl_eps=GSL_DBL_EPSILON;
-#endif
+  double dbl_eps=std::numeric_limits<double>::epsilon();
 
   if (result_abs > GSL_DBL_MIN / (50 * dbl_eps)) {
     
@@ -146,11 +142,7 @@ int eos_quark_cfl::integ_err(double a, double b, const size_t nr,
     
   int k;
   
-#ifndef O2SCL_NO_CPP11
       double dbl_eps=std::numeric_limits<double>::epsilon();
-#else 
-      double dbl_eps=GSL_DBL_EPSILON;
-#endif
 
   if (inte_epsabs<=0 && (inte_epsrel<50*dbl_eps || 
 			 inte_epsrel<0.5e-28)) {

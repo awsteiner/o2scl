@@ -224,13 +224,8 @@ double inte_workspace_gsl::sum_results() {
 int inte_workspace_gsl::subinterval_too_small(double a1, double a2, 
 					      double b2) {
 
-#ifndef O2SCL_NO_CPP11
   const double e=std::numeric_limits<double>::epsilon();
   const double u=std::numeric_limits<double>::min();
-#else 
-  const double e=GSL_DBL_EPSILON;
-  const double u=GSL_DBL_MIN;
-#endif
   
   double tmp=(1 + 100 *e) *(fabs (a2) + 1000 *u);
 	

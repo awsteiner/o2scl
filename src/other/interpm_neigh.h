@@ -139,7 +139,7 @@ namespace o2scl {
     size_t np;
     /// The number of dimensions
     size_t nd;
-    /// Desc
+    /// A vector of pointers holding the data
     std::vector<vec_t *> ptrs;
     /// True if the data has been specified
     bool data_set;

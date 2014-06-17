@@ -75,7 +75,7 @@ int main(void) {
 
   // Fit masses to Audi et al.
   nucmass_fit mf;
-  mf.set_exp_mass(ame);
+  nucdist_set(mf.dist,ame);
 
   double res;
   mf.eval(dmf,res);
@@ -86,7 +86,7 @@ int main(void) {
   cout << "DZ 33-parameter fit: " << res << endl;
   t.test_rel(res,0.94796338,1.0e-5,"dmf33");
 
-  mf.set_exp_mass(amex);
+  nucdist_set(mf.dist,amex);
 
   mf.eval(dmf,res);
   cout << "DZ 10-parameter fit: " << res << endl;

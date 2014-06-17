@@ -109,11 +109,7 @@ namespace o2scl_linalg {
 	}
       }
 
-#ifndef O2SCL_NO_CPP11
       double dbl_eps=std::numeric_limits<double>::epsilon();
-#else 
-      double dbl_eps=GSL_DBL_EPSILON;
-#endif
       
       if (fabs (alpha) < 2.0*dbl_eps*sqrt(max_norm)) {
 	/* Apparent singularity. */

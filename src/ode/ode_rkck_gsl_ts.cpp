@@ -72,10 +72,7 @@ int main(void) {
     ubvector y(2), dydx(2), yout(2), yerr(2), dydx_out(2);
     double y_gsl[1], yerr_gsl[1], dydx_gsl[1], dydx_out_gsl[1];
 
-    // We have to keep the full type specification to specify
-    // that we want ode_funct_fptr and not ode_funct11 independent
-    // of whether or not O2SCL_NO_CPP11 is defined
-    ode_rkck_gsl<ubvector,ubvector,ubvector,ode_funct11> rk;
+    ode_rkck_gsl<> rk;
 
     // GSL setup
     const gsl_odeiv_step_type *T=gsl_odeiv_step_rkck;
@@ -147,9 +144,6 @@ int main(void) {
     vec3_t yerr(1);
     vec2_t dydx_out(1);
 
-    // We have to keep the full type specification to specify
-    // that we want ode_funct and not ode_funct11 independent
-    // of whether or not O2SCL_NO_CPP11 is defined
     ode_rkck_gsl<vec1_t,vec2_t,vec3_t,
       std::function<int(double,size_t,const vec1_t &,vec2_t &)> > rk;
 

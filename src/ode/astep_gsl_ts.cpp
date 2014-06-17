@@ -50,10 +50,7 @@ int main(void) {
   ubvector y(1),dydx(1),yerr(1),yout(1),dydx_out(1);
   int i;
   
-  // We have to keep the full type specification to specify
-  // that we want ode_funct_fptr and not ode_funct11 independent
-  // of whether or not O2SCL_CPP11 is defined
-  astep_gsl<ubvector,ubvector,ubvector,ode_funct11> ga;
+  astep_gsl<> ga;
 
   ode_funct11 od=derivs;
 
@@ -73,8 +70,6 @@ int main(void) {
     if (x>5.0-1.0e-4) i=50;
   }
 
-#ifndef O2SCL_NO_CPP11
-
   ode_funct11 od11=derivs;
   astep_gsl<> ga11;
 
@@ -93,8 +88,6 @@ int main(void) {
     }
     if (x>5.0-1.0e-4) i=50;
   }
-
-#endif
 
   // Test astep_derivs()
   x=1.0;

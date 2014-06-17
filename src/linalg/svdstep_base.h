@@ -64,11 +64,7 @@ namespace o2scl_linalg {
       double f_i=O2SCL_IX(f,i);
       double d_ip1=O2SCL_IX(d,i+1);
       
-#ifndef O2SCL_NO_CPP11
       double dbl_eps=std::numeric_limits<double>::epsilon();
-#else 
-      double dbl_eps=GSL_DBL_EPSILON;
-#endif
 
       if (fabs (f_i)<dbl_eps*(fabs(d_i)+fabs(d_ip1))) {
 	O2SCL_IX(f,i)=0.0;

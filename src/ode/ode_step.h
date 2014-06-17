@@ -36,16 +36,9 @@ namespace o2scl {
   
   /** \brief ODE stepper base [abstract base]
    */
-#ifdef O2SCL_NO_CPP11
   template<class vec_y_t=boost::numeric::ublas::vector<double>,
     class vec_dydx_t=vec_y_t, class vec_yerr_t=vec_y_t,
-    class func_t=ode_funct<vec_y_t,vec_dydx_t> > class ode_step
-#else
-  template<class vec_y_t=boost::numeric::ublas::vector<double>,
-    class vec_dydx_t=vec_y_t, class vec_yerr_t=vec_y_t,
-    class func_t=ode_funct11> class ode_step
-#endif
-    {
+    class func_t=ode_funct11> class ode_step {
 
 #ifndef DOXGYENP
 

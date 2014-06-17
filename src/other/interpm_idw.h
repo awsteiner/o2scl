@@ -186,7 +186,7 @@ namespace o2scl {
     size_t np;
     /// The number of dimensions
     size_t nd;
-    /// Desc
+    /// A vector of pointers holding the data
     std::vector<vec_t *> ptrs;
     /// True if the data has been specified
     bool data_set;
@@ -201,7 +201,7 @@ namespace o2scl {
       return sqrt(ret);
     }
 
-    /// Swap points 1 and 2.
+    /// Swap points 1 and 2
     int swap(size_t &index_1, double &dist_1, size_t &index_2, 
 	     double &dist_2) const {
 

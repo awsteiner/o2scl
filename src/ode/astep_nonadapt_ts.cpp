@@ -45,10 +45,7 @@ int main(void) {
   ubvector y(1), yerr(1), dydx(1), yout(1), dydx_out(1);
   int i;
   
-  // We have to keep the full type specification to specify
-  // that we want ode_funct_fptr and not ode_funct11 independent
-  // of whether or not O2SCL_CPP11 is defined
-  astep_nonadapt<ubvector,ubvector,ubvector,ode_funct11> na;
+  astep_nonadapt<> na;
 
   ode_funct11 od=derivs;
   
@@ -67,8 +64,6 @@ int main(void) {
 	 << fabs(y[0]-exp(x-1.0))/exp(x-1.0) << endl;
   }
 
-#ifndef O2SCL_NO_CPP11
-
   ode_funct11 od11=derivs;
   astep_nonadapt<> na11;
 
@@ -86,8 +81,6 @@ int main(void) {
     cout << x << " " << y[0] << " " << exp(x-1.0) << " " 
 	 << fabs(y[0]-exp(x-1.0))/exp(x-1.0) << endl;
   }
-
-#endif
 
   // Test astep_full()
   x=1.0;

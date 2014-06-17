@@ -110,9 +110,6 @@ namespace o2scl {
     /// Return true if \o2 was installed with Eigen support
     bool eigen_support();
 
-    /// Return true if \o2 was installed with C++11 support
-    bool cpp11_support();
-    
     /** \brief Return true if range checking was turned on during 
 	installation (default true)
     */
