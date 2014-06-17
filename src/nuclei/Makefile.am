@@ -13,13 +13,13 @@ NUCLEI_SRCS = nucmass.cpp nucdist.cpp nucleus.cpp nucmass_fit.cpp \
 	nucmass_dglg.cpp nucmass_wlw.cpp nucmass_sdnp.cpp
 
 HEADER_VAR = nucmass.h nucdist.h nucleus.h nucmass_fit.h \
-	reaction_lib.h hdf_nucmass_io.h nucmass_frdm.h nucdist_arb.h \
+	reaction_lib.h hdf_nucmass_io.h nucmass_frdm.h \
 	nucmass_dz.h nucmass_ame.h nucmass_hfb.h nucmass_ktuy.h \
 	nucmass_dglg.h nucmass_wlw.h nucmass_sdnp.h
 
 TEST_VAR = nucmass.scr nucdist.scr nucleus.scr nucmass_fit.scr \
 	reaction_lib.scr hdf_nucmass_io.scr nucmass_frdm.scr \
-	nucdist_arb.scr nucmass_dz.scr
+	nucmass_dz.scr
 
 else
 
@@ -29,7 +29,7 @@ NUCLEI_SRCS = nucmass.cpp nucdist.cpp nucleus.cpp nucmass_fit.cpp \
 	nucmass_dglg.cpp nucmass_wlw.cpp nucmass_sdnp.cpp
 
 HEADER_VAR = nucmass.h nucdist.h nucleus.h nucmass_fit.h reaction_lib.h \
-	nucmass_frdm.h nucdist_arb.h nucmass_dz.h nucmass_ame.h \
+	nucmass_frdm.h nucmass_dz.h nucmass_ame.h \
 	nucmass_hfb.h nucmass_ktuy.h nucmass_dglg.h \
 	nucmass_wlw.h nucmass_sdnp.h
 
@@ -102,7 +102,7 @@ pkginclude_HEADERS = $(HEADER_VAR)
 
 check_PROGRAMS = nucmass_ts nucdist_ts nucleus_ts \
 	nucmass_fit_ts reaction_lib_ts hdf_nucmass_io_ts nucmass_frdm_ts \
-	nucdist_arb_ts nucmass_dz_ts
+	nucmass_dz_ts
 
 if O2SCL_HDF
 VCHECK_LIBS = $(libdir)/libo2scl_part.la $(libdir)/libo2scl.la \
@@ -118,7 +118,6 @@ nucdist_ts_LDADD = $(VCHECK_LIBS)
 nucleus_ts_LDADD = $(VCHECK_LIBS)
 nucmass_fit_ts_LDADD = $(VCHECK_LIBS)
 nucmass_frdm_ts_LDADD = $(VCHECK_LIBS)
-nucdist_arb_ts_LDADD = $(VCHECK_LIBS)
 nucmass_dz_ts_LDADD = $(VCHECK_LIBS)
 
 nucmass.scr: nucmass_ts$(EXEEXT)
@@ -135,8 +134,6 @@ nucmass_fit.scr: nucmass_fit_ts$(EXEEXT)
 	./nucmass_fit_ts$(EXEEXT) > nucmass_fit.scr
 nucmass_frdm.scr: nucmass_frdm_ts$(EXEEXT)
 	./nucmass_frdm_ts$(EXEEXT) > nucmass_frdm.scr
-nucdist_arb.scr: nucdist_arb_ts$(EXEEXT)
-	./nucdist_arb_ts$(EXEEXT) > nucdist_arb.scr
 nucmass_dz.scr: nucmass_dz_ts$(EXEEXT)
 	./nucmass_dz_ts$(EXEEXT) > nucmass_dz.scr
 
@@ -147,7 +144,6 @@ nucdist_ts_SOURCES = nucdist_ts.cpp
 nucleus_ts_SOURCES = nucleus_ts.cpp
 nucmass_fit_ts_SOURCES = nucmass_fit_ts.cpp
 nucmass_frdm_ts_SOURCES = nucmass_frdm_ts.cpp
-nucdist_arb_ts_SOURCES = nucdist_arb_ts.cpp
 nucmass_dz_ts_SOURCES = nucmass_dz_ts.cpp
 
 # ------------------------------------------------------------

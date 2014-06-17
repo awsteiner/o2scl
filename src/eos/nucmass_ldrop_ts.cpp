@@ -140,7 +140,8 @@ int main(void) {
   mf3.even_even=false;
   nucmass_ame ame;
   o2scl_hdf::ame_load(ame,"12");
-  mf3.set_exp_mass(ame);
+  nucdist_set(mf3.dist,ame);
+  //mf3.set_exp_mass(ame);
 
   cout << "RMF: " << endl;
   ld.n1=0.02;

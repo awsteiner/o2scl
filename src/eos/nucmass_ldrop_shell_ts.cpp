@@ -99,7 +99,8 @@ int main(void) {
 
   cout << "nucmass_ldrop_pair fit:" << endl;
   nucmass_fit mf;
-  mf.set_exp_mass(au);
+  nucdist_set(mf.dist,au);
+  //mf.set_exp_mass(au);
   mf.even_even=false;
   mf.def_mmin.ntrial*=10;
 
@@ -183,7 +184,8 @@ int main(void) {
     
     nucmass_ame_exp ame13;
     ame_load(ame13);
-    mf.set_exp_mass(ame13);
+    nucdist_set(mf.dist,ame13);
+    //mf.set_exp_mass(ame13);
     mf.eval(dm,qual);
     vector_out(cout,10,xdm);
     cout << endl;

@@ -73,7 +73,7 @@ namespace o2scl {
     /// Parameter structure
     typedef struct {
       double nb, Ye, T;
-      nucdist *ndp;
+      std::vector<nucleus> *ndp;
     } solve_parms;
     
     /// Function to solve for baryon and charge conservation
@@ -108,7 +108,7 @@ namespace o2scl {
 	This function does not use the solver.
     */
     void calc_mu(double mun, double mup, double T,
-		 double &nb, double &Ye, thermo &th, nucdist &nd);
+		 double &nb, double &Ye, thermo &th, std::vector<nucleus> &nd);
     
     /** \brief Calculate the equation of state as a function of the densities
 
@@ -121,8 +121,8 @@ namespace o2scl {
 	This function uses the solver to self-consistently compute
 	the chemical potentials. 
      */
-    int calc_density(double nb, double Ye, double T, 
-		     double &mun, double &mup, thermo &th, nucdist &nd);
+    int calc_density(double nb, double Ye, double T, double &mun, 
+		     double &mup, thermo &th, std::vector<nucleus> &nd);
     
     /// Default solver 
     mroot_hybrids<mm_funct11,ubvector,ubmatrix,jac_funct11> def_root;

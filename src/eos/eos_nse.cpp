@@ -31,12 +31,12 @@ eos_nse::eos_nse() {
 }
 
 void eos_nse::calc_mu(double mun, double mup, double T,
-		     double &nb, double &Ye, thermo &th, nucdist &nd) {
+		     double &nb, double &Ye, thermo &th, vector<nucleus> &nd) {
 
   nb=0.0;
   Ye=0.0;
 
-  for (nucdist::iterator ndi=nd.begin();ndi!=nd.end();ndi++) {
+  for (vector<nucleus>::iterator ndi=nd.begin();ndi!=nd.end();ndi++) {
     ndi->mu=mun*ndi->N+mup*ndi->Z-ndi->be;
     ndi->non_interacting=true;
     ndi->inc_rest_mass=false;
@@ -55,7 +55,7 @@ void eos_nse::calc_mu(double mun, double mup, double T,
 
 int eos_nse::calc_density(double nb, double Ye, double T, 
 			  double &mun, double &mup, thermo &th, 
-			  nucdist &nd) {
+			  vector<nucleus> &nd) {
 
   ubvector x(2);
   x[0]=mun/T;

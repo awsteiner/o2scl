@@ -42,7 +42,6 @@ int main(void) {
   cout << "EOS library: " << o2scl_settings.eos_installed() << endl;
   cout << "Particle library: " << o2scl_settings.part_installed() << endl;
   cout << "HDF support: " << o2scl_settings.hdf_support() << endl;
-  cout << "C++11 support: " << o2scl_settings.cpp11_support() << endl;
   cout << "Armadillo support: " << o2scl_settings.armadillo_support() << endl;
   cout << "Eigen support: " << o2scl_settings.eigen_support() << endl;
   cout << "OpenMP support: " << o2scl_settings.openmp_support() << endl;
