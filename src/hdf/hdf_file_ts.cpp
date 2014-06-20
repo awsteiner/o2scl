@@ -412,6 +412,25 @@ int main(void) {
   }
   cout << endl;
 
+  {
+    double arr[100];
+    for(size_t i=0;i<100;i++) arr[i]=sin(((double)i));
+    hdf_file hf;
+    hf.open_or_create("hdf_comp1.o2");
+    hf.setd_arr_comp("comp1",100,arr);
+    hf.close();
+    hf.compr_type=1;
+    hf.open_or_create("hdf_comp2.o2");
+    hf.setd_arr_comp("comp1",100,arr);
+    hf.close();
+    /*
+      hf.compr_type=2;
+      hf.open_or_create("hdf_comp3.o2");
+      hf.setd_arr_comp("comp1",100,arr);
+      hf.close();
+    */
+  }
+
   t.report();
 
   return 0;

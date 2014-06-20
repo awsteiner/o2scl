@@ -38,6 +38,7 @@ hdf_file::hdf_file() {
   file=0;
   current=0;
   file_open=false;
+  compr_type=0;
 }
 
 hdf_file::~hdf_file() {
@@ -1317,6 +1318,91 @@ int hdf_file::setd_arr(std::string name, size_t n, const double *d) {
   return 0;
 }
 
+int hdf_file::setd_arr_comp(std::string name, size_t n, const double *d) {
+  
+  hid_t dset, space, dcpl=0;
+  bool chunk_alloc=false;
+
+  H5E_BEGIN_TRY
+    {
+      // See if the dataspace already exists first
+      dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+    } 
+  H5E_END_TRY 
+#ifdef O2SCL_NEVER_DEFINED
+    {
+    }
+#endif
+      
+  // If it doesn't exist, create it
+  if (dset<0) {
+    
+    // Create the dataspace
+    hsize_t dims=n;
+    hsize_t max=H5S_UNLIMITED;
+    space=H5Screate_simple(1,&dims,&max);
+
+    // Set chunk with size determined by def_chunk()
+    dcpl=H5Pcreate(H5P_DATASET_CREATE);
+    hsize_t chunk=def_chunk(n);
+    int status2=H5Pset_chunk(dcpl,1,&chunk);
+
+    // Compression part
+    if (compr_type==1) {
+      int status3=H5Pset_deflate(dcpl,6);
+    } else if (compr_type==2) {
+      int status3=H5Pset_szip(dcpl,H5_SZIP_NN_OPTION_MASK,16);
+    } else if (compr_type!=0) {
+      O2SCL_ERR2("Invalid compression type in ",
+		"hdf_file::setd_arr_comp().",exc_einval);
+    }
+
+    // Create the dataset
+    dset=H5Dcreate(current,name.c_str(),H5T_IEEE_F64LE,space,H5P_DEFAULT,
+		   dcpl,H5P_DEFAULT);
+    chunk_alloc=true;
+
+  } else {
+    
+    // Get current dimensions
+    space=H5Dget_space(dset);  
+    hsize_t dims;
+    int ndims=H5Sget_simple_extent_dims(space,&dims,0);
+
+    // Set error if this dataset is more than 1-dimensional
+    if (ndims!=1) {
+      O2SCL_ERR2("Tried to set a multidimensional dataset with an ",
+		     "array in hdf_file::setd_arr().",exc_einval);
+    }
+
+    // If necessary, extend the dataset
+    if (n!=dims) {
+      hsize_t new_dims=n;
+      int status3=H5Dset_extent(dset,&new_dims);
+    }
+    
+  }
+
+  // Write the data 
+  int status;
+  if (n==0) {
+    double d2[1]={0.0};
+    status=H5Dwrite(dset,H5T_NATIVE_DOUBLE,H5S_ALL,
+		    H5S_ALL,H5P_DEFAULT,d2);
+  } else {
+    status=H5Dwrite(dset,H5T_NATIVE_DOUBLE,H5S_ALL,
+		    H5S_ALL,H5P_DEFAULT,d);
+  }
+  
+  status=H5Dclose(dset);
+  status=H5Sclose(space);
+  if (chunk_alloc) {
+    status=H5Pclose(dcpl);
+  }
+      
+  return 0;
+}
+
 int hdf_file::setf_arr(std::string name, size_t n, const float *f) { 
   
   hid_t dset, space, dcpl=0;
@@ -1582,6 +1668,23 @@ int hdf_file::getd_arr(std::string name, size_t n, double *d) {
       
   // See if the dataspace already exists first
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+
+  // Get filter information
+  hid_t plist_id=H5Dget_create_plist(dset);
+  int num_filters=H5Pget_nfilters(plist_id);
+  for(int i=0;i<num_filters;i++) {
+    size_t n_elements=0;
+    unsigned flags, filter_info;
+    H5Z_filter_t filter_type=H5Pget_filter2
+      (plist_id,0,&flags,&n_elements,NULL,0,NULL,&filter_info);
+    if (filter_type==H5Z_FILTER_DEFLATE) {
+      cout << "deflate." << endl;
+    } else if (filter_type==H5Z_FILTER_SZIP) {
+      cout << "szip." << endl;
+    } else {
+      cout << "unknown." << endl;
+    }
+  }
 
   // Get space requirements, to make sure they coincide
   // with the size specified by the user
