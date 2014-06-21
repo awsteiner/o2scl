@@ -3,7 +3,7 @@ ndatadir=$(datadir)/o2scl/nucmass
 dist_ndata_DATA = ame03.o2 ame03round.o2 ame95exp.o2 hfb*.o2 \
 			ame95rmd.o2 Makefile.am mnmsk.o2 \
 			du_zu_95.o2 du_zu_96.o2 ktuy04.o2 ktuy05.o2 \
-			ame13.o2 ame12.o2 wl11.o2 wllw10.o2 wlw10.o2 \
+			ame12.o2 wl11.o2 wllw10.o2 wlw10.o2 \
 			wlwm14.o2 lwdw11.o2 sd*.o2
 
 WSall: WS3.2.o2 WS3.3.o2 WS3.6.o2 WS3_RBF.o2 WS4_RBF.o2
