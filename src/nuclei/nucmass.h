@@ -551,10 +551,11 @@ namespace o2scl {
       the density distribution function is of the form
       \f[
       N = 4 \pi \rho_0 \int r^2~dr~\left\{1+\exp
-      \left[\left(r-R_{\mathrm{fermi}}\right)\right]\right\}^{-1}
+      \left[\left(r-R_{\mathrm{fermi}}\right)/d\right]\right\}^{-1}
       \f]
-      where \f$ N \f$ is the total number of particles, and 
-      \f$ \rho_0 \f$ is the central density.
+      where \f$ N \f$ is the total number of particles, \f$ d \f$ is
+      the diffusiveness, \f$ R_{\mathrm{fermi}} \f$ is the half-height
+      radius, and \f$ \rho_0 \f$ is the central density.
       
       The radius assuming constant density,
       \f[
@@ -580,9 +581,9 @@ namespace o2scl {
     double uN;
 
     /// The integrator
-    inte_qagiu_gsl<funct11> it;
+    inte_qagiu_gsl<> it;
     /// The solver
-    root_cern<funct11> cr;
+    root_cern<> cr;
     
     /// The function \f$ 4 \pi r^4 \rho(r) \f$
     double iand(double r);
@@ -618,7 +619,19 @@ namespace o2scl {
     */
     int eval_rms_rsq(double Rfermi, double N, double d,
 		     double &rho0, double &Rcd, double &Rrms);
+    
+    /** \brief Desc
+     */
+    double density(double r, double Rfermi, double d, double rho0);
 
+    /** \brief Desc
+     */
+    double eval_N(double Rfermi, double d, double rho0);
+
+    /** \brief Desc
+     */
+    void solve_cent_dens(double Rfermi, double d, double N, double &rho0);
+			 
   };
 
 #ifndef DOXYGEN_NO_O2NS

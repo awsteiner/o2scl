@@ -465,6 +465,27 @@ double nucmass_ibm_shell::shell_energy_interp(double Z, double N) {
   return shell0+dZ*(shell1-shell0);
 }
 
+double nucmass_radius::density(double r, double Rfermi, double d, 
+			       double rho0) {
+  return rho0*4.0*o2scl_const::pi*pow(r,4.0)/(1+exp((r-Rfermi)/d));
+}
+
+double nucmass_radius::eval_N(double Rfermi, double d, double rho0) {
+  funct11 f=std::bind(std::mem_fn<double(double,double,double,double)>
+		      (&nucmass_radius::density),
+		      this,std::placeholders::_1,Rfermi,d,rho0);
+  return it.integ(f,0.0,0.0);
+}
+
+void nucmass_radius::solve_cent_dens(double Rfermi, double d, double N,
+				     double &rho0) {
+  funct11 f=std::bind(std::mem_fn<double(double,double,double)>
+		      (&nucmass_radius::eval_N),
+		      this,Rfermi,d,std::placeholders::_1);
+  cr.solve(rho0,f);
+  return;
+}
+
 double nucmass_radius::iand(double r) {
   return urho0*4.0*o2scl_const::pi*pow(r,4.0)/(1+exp((r-uRfermi)/ud));
 }
