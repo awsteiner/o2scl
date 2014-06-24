@@ -239,6 +239,13 @@ int main(void) {
   
   t.test_gen(ame95rmd.get_nentries()==2931,"ame.n");
 
+  // Test nucmass_radius
+  nucmass_radius nr;
+  double rho0, N, N_err;
+  nr.eval_N_err(6.0,0.5,0.08,N,N_err);
+  cout << N << " " << N_err << endl;
+  t.test_rel(N,77.3433,1.0e-8,"nucmass_radius");
+
   t.report();
   return 0;
 }

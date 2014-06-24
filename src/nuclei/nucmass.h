@@ -606,32 +606,38 @@ namespace o2scl {
 	distribution function, \c Rfermi and the radius assuming
 	constant density, \c Rcd.
     */
-    int eval_rms_rho(double rho0, double N, double d,
-		     double &Rcd, double &Rfermi, double &Rrms);
+    void eval_rms_rho(double rho0, double N, double d,
+		      double &Rcd, double &Rfermi, double &Rrms);
     
     /** \brief Compute the RMS radius from the Fermi distribution radius
-
+	
 	Computes the RMS radius \c Rrms from the radius \c Rfermi in
 	the Fermi distribution assuming a total number of particles \c
 	N, a diffusiveness paramter \c d. This function also produces
 	the central density \c rho0, and the radius assuming constant
 	density, \c Rcd.
     */
-    int eval_rms_rsq(double Rfermi, double N, double d,
+    void eval_rms_rsq(double Rfermi, double N, double d,
 		     double &rho0, double &Rcd, double &Rrms);
     
-    /** \brief Desc
+    /** \brief The radial density distribution
      */
     double density(double r, double Rfermi, double d, double rho0);
 
-    /** \brief Desc
+    /** \brief The radial density distribution times radius squared
+     */
+    double iand2_new(double r, double Rfermi, double d, double rho0);
+
+    /** \brief Compute the total number of particles with 
+	numerical uncertainty
+     */
+    void eval_N_err(double Rfermi, double d, double rho0,
+		    double &N, double &N_err);
+
+    /** \brief Compute the total number of particles
      */
     double eval_N(double Rfermi, double d, double rho0);
 
-    /** \brief Desc
-     */
-    void solve_cent_dens(double Rfermi, double d, double N, double &rho0);
-			 
   };
 
 #ifndef DOXYGEN_NO_O2NS

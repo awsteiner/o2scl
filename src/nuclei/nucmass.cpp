@@ -467,22 +467,29 @@ double nucmass_ibm_shell::shell_energy_interp(double Z, double N) {
 
 double nucmass_radius::density(double r, double Rfermi, double d, 
 			       double rho0) {
-  return rho0*4.0*o2scl_const::pi*pow(r,4.0)/(1+exp((r-Rfermi)/d));
+  return rho0/(1+exp((r-Rfermi)/d));
+}
+
+double nucmass_radius::iand2_new(double r, double Rfermi, double d, 
+				 double rho0) {
+  return r*r*density(r,Rfermi,d,rho0);
 }
 
 double nucmass_radius::eval_N(double Rfermi, double d, double rho0) {
-  funct11 f=std::bind(std::mem_fn<double(double,double,double,double)>
-		      (&nucmass_radius::density),
-		      this,std::placeholders::_1,Rfermi,d,rho0);
-  return it.integ(f,0.0,0.0);
+			      
+  double N, N_err;
+  eval_N_err(Rfermi,d,rho0,N,N_err);
+  return N;
 }
 
-void nucmass_radius::solve_cent_dens(double Rfermi, double d, double N,
-				     double &rho0) {
-  funct11 f=std::bind(std::mem_fn<double(double,double,double)>
-		      (&nucmass_radius::eval_N),
-		      this,Rfermi,d,std::placeholders::_1);
-  cr.solve(rho0,f);
+void nucmass_radius::eval_N_err(double Rfermi, double d, double rho0,
+				double &N, double &N_err) {
+  funct11 f=std::bind(std::mem_fn<double(double,double,double,double)>
+		      (&nucmass_radius::iand2_new),
+		      this,std::placeholders::_1,Rfermi,d,rho0);
+  it.integ_err(f,0.0,0.0,N,N_err);
+  N*=4.0*o2scl_const::pi;
+  N_err*=4.0*o2scl_const::pi;
   return;
 }
 
@@ -505,7 +512,7 @@ double nucmass_radius::solve(double x) {
 nucmass_radius::nucmass_radius() {
 }
 
-int nucmass_radius::eval_rms_rho(double rho0, double N, double d,
+void nucmass_radius::eval_rms_rho(double rho0, double N, double d,
 			     double &Rcd, double &Rfermi, double &Rrms) {
   
   urho0=rho0;
@@ -525,10 +532,11 @@ int nucmass_radius::eval_rms_rho(double rho0, double N, double d,
 			    (&nucmass_radius::iand),
 			    this,std::placeholders::_1);
   Rrms=sqrt(it.integ(it_fun,0.0,0.0)/N);
-  return 0;
+
+  return;
 }
 
-int nucmass_radius::eval_rms_rsq(double Rfermi, double N, double d,
+void nucmass_radius::eval_rms_rsq(double Rfermi, double N, double d,
 			     double &rho0, double &Rcd, double &Rrms) {
   
   ud=d;
@@ -548,6 +556,7 @@ int nucmass_radius::eval_rms_rsq(double Rfermi, double N, double d,
 			   (&nucmass_radius::iand),
 			   this,std::placeholders::_1);
   Rrms=sqrt(it.integ(it_fun,0.0,0.0)/N);
-  return 0;
+
+  return;
 }
 
