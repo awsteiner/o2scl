@@ -1189,6 +1189,30 @@ namespace o2scl {
     return wvariance;
   }
 
+  /** \brief Desc
+
+      \note Experimental
+  */
+  template<class vec_t, class vec2_t, class vec3_t>
+    double wvector_covariance(size_t n, const vec_t &data1, const vec2_t &data2,
+			      const vec3_t &weights) {
+    double mean1=wvector_mean(n,data1,weights);
+    double mean2=wvector_mean(n,data2,weights);
+    double covar=0.0;
+    double W=0.0;
+    for(size_t i=0;i<n;i++) {
+      double wi=weights[i];
+      if (wi>0.0) {
+	W+=wi;
+	double delta1=(data1[i]-mean1);
+	double delta2=(data2[i]-mean2);
+	covar+=(wi/W)*(delta1*delta2-covar);
+      }
+    }
+    double scale=wvector_factor(n,weights);
+    return covar*scale;
+  }
+
   /** \brief Compute the variance of a weighted vector with
       specified mean
 

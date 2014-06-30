@@ -341,8 +341,8 @@ namespace o2scl {
   /** \brief Linear grid with fixed endpoint and fixed bin size
    */
   template<class data_t=double> class uniform_grid_end_width : 
-  public uniform_grid<data_t> {
-    public:
+    public uniform_grid<data_t> {
+  public:
 
     /** \brief Create a grid with bins of size \c width starting
 	at \c start and ending at \c end
