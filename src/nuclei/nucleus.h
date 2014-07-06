@@ -23,6 +23,10 @@
 #ifndef O2SCL_NUCLEUS_H
 #define O2SCL_NUCLEUS_H
 
+/** \file nucleus.h
+    \brief File defining \ref o2scl::nucleus
+*/
+
 #include <o2scl/part.h>
 
 #ifndef DOXYGEN_NO_O2NS

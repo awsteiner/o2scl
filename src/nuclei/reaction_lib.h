@@ -23,6 +23,10 @@
 #ifndef REACTION_LIB_H
 #define REACTION_LIB_H
 
+/** \file reaction_lib.h
+    \brief File defining \ref o2scl::nuclear_reaction
+*/
+
 #include <iostream>
 #include <fstream>
 #include <string>

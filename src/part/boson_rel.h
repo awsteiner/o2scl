@@ -20,8 +20,12 @@
 
   -------------------------------------------------------------------
 */
-#ifndef O2SCL_REL_BOSON_H
-#define O2SCL_REL_BOSON_H
+#ifndef O2SCL_BOSON_REL_H
+#define O2SCL_BOSON_REL_H
+
+/** \file boson_rel.h
+    \brief File defining \ref o2scl::boson_rel
+*/
 
 #include <string>
 #include <iostream>

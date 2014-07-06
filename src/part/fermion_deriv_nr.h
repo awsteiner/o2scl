@@ -23,6 +23,10 @@
 #ifndef O2SCL_SN_NR_FERMION_H
 #define O2SCL_SN_NR_FERMION_H
 
+/** \file fermion_deriv_nr.h
+    \brief File defining \ref o2scl::fermion_deriv_nr
+*/
+
 #include <string>
 #include <iostream>
 #include <fstream>

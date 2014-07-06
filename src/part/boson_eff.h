@@ -20,8 +20,12 @@
 
   -------------------------------------------------------------------
 */
-#ifndef O2SCL_EFF_BOSON_H
-#define O2SCL_EFF_BOSON_H
+#ifndef O2SCL_BOSON_EFF_H
+#define O2SCL_BOSON_EFF_H
+
+/** \file boson_eff.h
+    \brief File defining \ref o2scl::boson_eff
+*/
 
 #include <string>
 #include <iostream>

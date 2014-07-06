@@ -23,6 +23,10 @@
 #ifndef O2SCL_NUCMASS_SDNP_H
 #define O2SCL_NUCMASS_SDNP_H
 
+/** \file nucmass_sdnp.h
+    \brief File defining \ref o2scl::nucmass_sdnp
+*/
+
 #include <cmath>
 #include <string>
 #include <map>

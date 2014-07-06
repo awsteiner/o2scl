@@ -23,6 +23,10 @@
 #ifndef NUCMASS_FRDM_H
 #define NUCMASS_FRDM_H
 
+/** \file nucmass_frdm.h
+    \brief File defining \ref o2scl::nucmass_frdm
+*/
+
 #include <cmath>
 
 #include <o2scl/nucleus.h>

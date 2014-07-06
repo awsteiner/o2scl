@@ -1052,6 +1052,30 @@ namespace o2scl {
     return (1-delta)*data[lhs]+delta*data[lhs+1];
   }
   
+  /** \brief Quantile from sorted data (ascending only)
+
+      This function returns the quantile \c f of data which
+      has already been sorted in ascending order. The quantile,
+      \f$ q \f$ , is
+      found by interpolation using 
+      \f[
+      q = \left(1-\delta\right) x_i \delta x_{i+1}
+      \f]
+      where \f$ i = \mathrm{floor}[ (n-1)f ] \f$ and 
+      \f$ \delta = (n-1)f -i \f$ .
+
+      This function produces the same
+      results as <tt>gsl_stats_quantile_from_sorted_data()</tt>.
+
+      No checks are made to ensure the data is sorted, or to ensure
+      that \f$ 0 \leq 0 \leq 1 \f$. If \c n is zero, this function
+      will return zero without calling the error handler.
+  */
+  template<class vec_t>
+    double vector_quantile_sorted(const vec_t &data, const double f) {
+    return vector_quantile_sorted<vec_t>(data.size(),data,f);
+  }
+  
   /** \brief Return the median of sorted (ascending or descending) data
 
       This function returns the median of sorted data (either
@@ -1081,6 +1105,27 @@ namespace o2scl {
     return (data[lhs]+data[rhs])/2.0;
   }
 
+  /** \brief Return the median of sorted (ascending or descending) data
+
+      This function returns the median of sorted data (either
+      ascending or descending), assuming the data has already been
+      sorted. When the data set has an odd number of elements, the
+      median is the value of the element at index \f$ (n-1)/2 \f$,
+      otherwise, the median is taken to be the average of the elements
+      at indices \f$ (n-1)/2 \f$ and \f$ n/2 \f$ .
+
+      This function produces the same
+      results as <tt>gsl_stats_median_from_sorted_data()</tt>.
+
+      No checks are made to ensure the data is sorted. If \c n is
+      zero, this function will return zero without calling the error
+      handler.
+  */
+  template<class vec_t>
+    double vector_median_sorted(const vec_t &data) {
+    return vector_median_sorted<vec_t>(data.size(),data);
+  }
+
   /** \brief Compute the chi-squared statistic
 
       This function computes
@@ -1100,6 +1145,23 @@ namespace o2scl {
       chi2+=pow((obs[i]-exp[i])/err[i],2.0);
     }
     return chi2;
+  }
+
+  /** \brief Compute the chi-squared statistic
+
+      This function computes
+      \f[
+      \sum_i \left( \frac{\mathrm{obs}_i - \mathrm{exp}_i}
+      {\mathrm{err}_i}\right)^2
+      \f]
+      where \f$ \mathrm{obs} \f$ are the observed values,
+      \f$ \mathrm{exp} \f$ are the expected values, and 
+      \f$ \mathrm{err} \f$ are the errors.
+   */
+  template<class vec_t, class vec2_t, class vec3_t>
+    double vector_chi_squared(const vec_t &obs, const vec2_t &exp,
+			      const vec3_t &err) {
+    return vector_chi_squared<vec_t,vec2_t,vec3_t>(obs,exp,err);
   }
   //@}
 
@@ -1136,6 +1198,26 @@ namespace o2scl {
     return wmean;
   }
 
+  /** \brief Compute the mean of weighted data
+
+      This function computes 
+      \f[
+      \left( \sum_i w_i x_i \right) \left( \sum_i w_i \right)^{-1}
+      \f]
+
+      This function produces the same results
+      as <tt>gsl_stats_wmean()</tt>.
+
+      \comment
+      M(n) = M(n-1) + (data[n] - M(n-1)) (w(n)/(W(n-1) + w(n)))
+      W(n) = W(n-1) + w(n)
+      \endcomment
+  */
+  template<class vec_t, class vec2_t>
+    double wvector_mean(const vec_t &data, const vec2_t &weights) {
+    return wvector_mean<vec_t,vec2_t>(data.size(),data,weights);
+  }
+
   /** \brief Compute a normalization factor for weighted data
 
       This function is used internally in \ref wvector_variance(size_t
@@ -1157,6 +1239,17 @@ namespace o2scl {
     }
     factor=a*a/(a*a-b);
     return factor;
+  }
+
+  /** \brief Compute a normalization factor for weighted data
+
+      This function is used internally in \ref wvector_variance(size_t
+      n, vec_t &data, const vec2_t &weights, double wmean) and \ref
+      wvector_stddev(size_t n, vec_t &data, const vec2_t &weights, double
+      wmean) .
+  */
+  template<class vec_t> double wvector_factor(const vec_t &weights) {
+    return wvector_factor<vec_t>(weights.size(),weights);
   }
   
   /** \brief Compute the variance of a weighted vector with a mean
@@ -1189,7 +1282,80 @@ namespace o2scl {
     return wvariance;
   }
 
-  /** \brief Desc
+  /** \brief Compute the variance of a weighted vector with a mean
+      known in advance
+
+      This function computes
+      \f[
+      \left[ \sum_i w_i \left(x_i-\mu\right)^2 \right] 
+      \left[ \sum_i w_i \right]^{-1}
+      \f]
+
+      This function produces the same results
+      as <tt>gsl_stats_wvariance_with_fixed_mean()</tt>.
+
+  */
+  template<class vec_t, class vec2_t>
+    double wvector_variance_fmean(const vec_t &data,
+				  const vec2_t &weights, double wmean) {
+    return wvector_variance_fmean(data.size(),data,weights,wmean);
+  }
+
+  /** \brief Compute the variance of a weighted vector with
+      specified mean
+
+      This function produces the same results
+      as <tt>gsl_stats_wvariance_m()</tt>.
+  */
+  template<class vec_t, class vec2_t>
+    double wvector_variance(size_t n, const vec_t &data,
+			    const vec2_t &weights, double wmean) {
+
+    const double variance=wvector_variance_fmean
+      (n,data,weights,wmean);
+    const double scale=wvector_factor(n,weights);
+    const double wvar=scale*variance;
+    return wvar;
+  }
+
+  /** \brief Compute the variance of a weighted vector with
+      specified mean
+
+      This function produces the same results
+      as <tt>gsl_stats_wvariance_m()</tt>.
+  */
+  template<class vec_t, class vec2_t>
+    double wvector_variance(const vec_t &data,
+			    const vec2_t &weights, double wmean) {
+    return wvector_variance<vec_t,vec2_t>(data.size(),data,weights,wmean);
+  }
+
+  /** \brief Compute the variance of a weighted vector where mean
+      is computed automatically
+
+      This function produces the same results
+      as <tt>gsl_stats_wvariance()</tt>.
+   */
+  template<class vec_t, class vec2_t>
+    double wvector_variance(size_t n, const vec_t &data,
+			    const vec2_t &weights) {
+
+    double wmean=wvector_mean(n,data,weights);
+    return wvector_variance<vec_t,vec2_t>(n,data,weights,wmean);
+  }
+
+  /** \brief Compute the variance of a weighted vector where mean
+      is computed automatically
+
+      This function produces the same results
+      as <tt>gsl_stats_wvariance()</tt>.
+   */
+  template<class vec_t, class vec2_t>
+    double wvector_variance(const vec_t &data, const vec2_t &weights) {
+    return wvector_variance(data.size(),data,weights);
+  }
+
+  /** \brief The weighted covariance of two vectors
 
       \note Experimental
   */
@@ -1213,35 +1379,15 @@ namespace o2scl {
     return covar*scale;
   }
 
-  /** \brief Compute the variance of a weighted vector with
-      specified mean
+  /** \brief The weighted covariance of two vectors
 
-      This function produces the same results
-      as <tt>gsl_stats_wvariance_m()</tt>.
+      \note Experimental
   */
-  template<class vec_t, class vec2_t>
-    double wvector_variance(size_t n, const vec_t &data,
-			    const vec2_t &weights, double wmean) {
-
-    const double variance=wvector_variance_fmean
-      (n,data,weights,wmean);
-    const double scale=wvector_factor(n,weights);
-    const double wvar=scale*variance;
-    return wvar;
-  }
-
-  /** \brief Compute the variance of a weighted vector where mean
-      is computed automatically
-
-      This function produces the same results
-      as <tt>gsl_stats_wvariance()</tt>.
-   */
-  template<class vec_t, class vec2_t>
-    double wvector_variance(size_t n, const vec_t &data,
-			    const vec2_t &weights) {
-
-    double wmean=wvector_mean(n,data,weights);
-    return wvector_variance<vec_t,vec2_t>(n,data,weights,wmean);
+  template<class vec_t, class vec2_t, class vec3_t>
+    double wvector_covariance(const vec_t &data1, const vec2_t &data2,
+			      const vec3_t &weights) {
+    return wvector_covariance<vec_t,vec2_t,vec3_t>
+      (data1.size(),data1,data2,weights);
   }
 
   /** \brief Compute the standard deviation of a weighted vector 
@@ -1256,6 +1402,19 @@ namespace o2scl {
     return sqrt(wvector_variance_fmean(n,data,weights,wmean));
   }
 
+  /** \brief Compute the standard deviation of a weighted vector 
+      with a mean known in advance
+
+      This function produces the same results
+      as <tt>gsl_stats_wsd_with_fixed_mean()</tt>.
+  */
+  template<class vec_t, class vec2_t>
+    double wvector_stddev_fmean(const vec_t &data,
+				const vec2_t &weights, double wmean) {
+    return wvector_stddev_fmean<vec_t,vec2_t>
+      (data.size(),data,weights,wmean);
+  }
+
   /** \brief Compute the standard deviation of a weighted vector where mean
       is computed automatically
 
@@ -1267,6 +1426,17 @@ namespace o2scl {
 			  const vec2_t &weights) {
     double wmean=wvector_mean(n,data,weights);
     return sqrt(wvector_variance(n,data,weights,wmean));
+  }
+
+  /** \brief Compute the standard deviation of a weighted vector where mean
+      is computed automatically
+
+      This function produces the same results
+      as <tt>gsl_stats_wsd()</tt>.
+   */
+  template<class vec_t, class vec2_t>
+    double wvector_stddev(const vec_t &data, const vec2_t &weights) {
+    return wvector_stddev(data.size(),data,weights);
   }
 
   /** \brief Compute the standard deviation of a weighted vector with
@@ -1283,6 +1453,18 @@ namespace o2scl {
     const double scale=wvector_factor(n,weights);
     double wvar=scale*variance;
     return sqrt(wvar);
+  }
+
+  /** \brief Compute the standard deviation of a weighted vector with
+      specified mean
+
+      This function produces the same results
+      as <tt>gsl_stats_wsd_m()</tt>.
+  */
+  template<class vec_t, class vec2_t>
+    double wvector_stddev(const vec_t &data,
+			  const vec2_t &weights, double wmean) {
+    return wvector_stddev<vec_t,vec2_t>(data.size(),data,weights,wmean);
   }
 
   /** \brief Compute the weighted sum of squares of data about the 
@@ -1307,6 +1489,18 @@ namespace o2scl {
   }
 
   /** \brief Compute the weighted sum of squares of data about the 
+      specified weighted mean
+
+      This function produces the same results
+      as <tt>gsl_stats_wtss_m()</tt>.
+   */
+  template<class vec_t, class vec2_t>
+    double wvector_sumsq(const vec_t &data,
+			 const vec2_t &weights, double wmean) {
+    return wvector_sumsq<vec_t,vec2_t>(data.size(),data,weights,wmean);
+  }
+
+  /** \brief Compute the weighted sum of squares of data about the 
       weighted mean
 
       This function produces the same results
@@ -1318,6 +1512,17 @@ namespace o2scl {
     
     double wmean=wvector_mean(n,data,weights);
     return wvector_sumsq(n,data,weights,wmean);
+  }
+
+  /** \brief Compute the weighted sum of squares of data about the 
+      weighted mean
+
+      This function produces the same results
+      as <tt>gsl_stats_wtss()</tt>.
+  */
+  template<class vec_t, class vec2_t>
+    double wvector_sumsq(const vec_t &data, const vec2_t &weights) {
+    return wvector_sumsq<vec_t,vec2_t>(data.size(),data,weights);
   }
 
   /** \brief Compute the absolute deviation of data about a specified mean
@@ -1342,6 +1547,17 @@ namespace o2scl {
   }
 
   /** \brief Compute the absolute deviation of data about a specified mean
+
+      This function produces the same results
+      as <tt>gsl_stats_wabsdev_m()</tt>.
+   */
+  template<class vec_t, class vec2_t> 
+    double wvector_absdev(const vec_t &data, const vec2_t &weights, 
+			  double wmean) {
+    return wvector_absdev<vec_t,vec2_t>(data.size(),data,weights,wmean);
+  }
+
+  /** \brief Compute the absolute deviation of data about a specified mean
       
       This function produces the same results
       as <tt>gsl_stats_wabsdev()</tt>.
@@ -1352,6 +1568,16 @@ namespace o2scl {
     
     double wmean=wvector_mean(n,data,weights);
     return wvector_absdev(n,data,weights,wmean);
+  }
+
+  /** \brief Compute the absolute deviation of data about a specified mean
+      
+      This function produces the same results
+      as <tt>gsl_stats_wabsdev()</tt>.
+  */
+  template<class vec_t, class vec2_t>
+    double wvector_absdev(const vec_t &data, const vec2_t &weights) {
+    return wvector_absdev<vec_t,vec2_t>(data.size(),data,weights);
   }
 
   /** \brief Compute the skewness of data with specified mean
@@ -1378,6 +1604,18 @@ namespace o2scl {
   
   /** \brief Compute the skewness of data with specified mean
       and standard deviation
+
+      This function produces the same results
+      as <tt>gsl_stats_wskew_m_sd()</tt>.
+  */
+  template<class vec_t, class vec2_t>
+    double wvector_skew(const vec_t &data, const vec2_t &weights,
+			double wmean, double wsd) {
+    return wvector_skew<vec_t,vec2_t>(data.size(),data,weights,wmean,wsd);
+  }
+  
+  /** \brief Compute the skewness of data with specified mean
+      and standard deviation
       
       This function produces the same results
       as <tt>gsl_stats_wskew()</tt>.
@@ -1387,6 +1625,17 @@ namespace o2scl {
     double wmean=wvector_mean(n,data,weights);
     double wsd=wvector_stddev(n,data,weights,wmean);
     return wvector_skew(n,data,weights,wmean,wsd);
+  }
+
+  /** \brief Compute the skewness of data with specified mean
+      and standard deviation
+      
+      This function produces the same results
+      as <tt>gsl_stats_wskew()</tt>.
+  */
+  template<class vec_t, class vec2_t>
+    double wvector_skew(const vec_t &data, const vec2_t &weights) {
+    return wvector_skew<vec_t,vec2_t>(data.size(),data,weights);
   }
 
   /** \brief Compute the kurtosis of data with specified mean
@@ -1413,6 +1662,19 @@ namespace o2scl {
 
   /** \brief Compute the kurtosis of data with specified mean
       and standard deviation
+
+      This function produces the same results
+      as <tt>gsl_stats_wkurtosis_m_sd()</tt>.
+  */
+  template<class vec_t, class vec2_t>
+    double wvector_kurtosis(const vec_t &data, const vec2_t &weights,
+			    double wmean, double wsd) {
+    return wvector_kurtosis<vec_t,vec2_t>
+      (data.size(),data,weights,wmean,wsd);
+  }
+
+  /** \brief Compute the kurtosis of data with specified mean
+      and standard deviation
       
       This function produces the same results
       as <tt>gsl_stats_wkurtosis()</tt>.
@@ -1423,6 +1685,17 @@ namespace o2scl {
     double wmean=wvector_mean(n,data,weights);
     double wsd=wvector_stddev(n,data,weights,wmean);
     return wvector_kurtosis(n,data,weights,wmean,wsd);
+  }
+
+  /** \brief Compute the kurtosis of data with specified mean
+      and standard deviation
+      
+      This function produces the same results
+      as <tt>gsl_stats_wkurtosis()</tt>.
+  */
+  template<class vec_t, class vec2_t>
+    double wvector_kurtosis(const vec_t &data, const vec2_t &weights) {
+    return wvector_kurtosis<vec_t,vec2_t>(data,weights);
   }
   //@}
 

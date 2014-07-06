@@ -23,6 +23,10 @@
 #ifndef O2SCL_QUARK_H
 #define O2SCL_QUARK_H
 
+/** \file quark.h
+    \brief File defining \ref o2scl::quark
+*/
+
 #include <string>
 #include <iostream>
 #include <fstream>

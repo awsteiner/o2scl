@@ -23,6 +23,10 @@
 #ifndef O2SCL_NUCLEAR_MASS_H
 #define O2SCL_NUCLEAR_MASS_H
 
+/** \file nucmass.h
+    \brief File defining \ref o2scl::nucmass and related classes
+*/
+
 #include <cmath>
 #include <string>
 #include <map>

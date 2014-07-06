@@ -23,6 +23,10 @@
 #ifndef O2SCL_EFF_FERMION_H
 #define O2SCL_EFF_FERMION_H
 
+/** \file fermion_eff.h
+    \brief File defining \ref o2scl::fermion_eff
+*/
+
 #include <string>
 #include <iostream>
 #include <fstream>

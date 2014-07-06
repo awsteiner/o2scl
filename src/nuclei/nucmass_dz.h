@@ -23,6 +23,10 @@
 #ifndef O2SCL_DZ_MASS_H
 #define O2SCL_DZ_MASS_H
 
+/** \file nucmass_dz.h
+    \brief File defining \ref o2scl::nucmass_dz_table and other classes
+*/
+
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 

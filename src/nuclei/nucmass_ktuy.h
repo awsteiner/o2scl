@@ -23,6 +23,10 @@
 #ifndef O2SCL_KTUY_MASS_H
 #define O2SCL_KTUY_MASS_H
 
+/** \file nucmass_ktuy.h
+    \brief File defining \ref o2scl::nucmass_ktuy
+*/
+
 #include <o2scl/nucmass.h>
 
 #ifndef DOXYGEN_NO_O2NS

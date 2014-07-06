@@ -23,6 +23,10 @@
 #ifndef O2SCL_NUCDIST_H
 #define O2SCL_NUCDIST_H
 
+/** \file nucdist.h
+    \brief File defining \ref o2scl::nucdist_set().
+*/
+
 #include <iostream>
 #include <o2scl/nucleus.h>
 #include <o2scl/nucmass.h>
@@ -33,6 +37,11 @@ namespace o2scl {
 
   /** \brief Set a distribution of nuclei from a mass formula
       and a function string
+
+      Given a nuclear mass formula \c nm, this adds nuclei to a
+      <tt>std::vector</tt> object. The function \c expr, a function of
+      \c Z and \z N, determines which nuclei will be added to the
+      distribution.
   */
   void nucdist_set(std::vector<nucleus> &dist, nucmass &nm, 
 		   std::string expr="1", int maxA=400,

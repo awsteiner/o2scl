@@ -23,6 +23,10 @@
 #ifndef O2SCL_NONREL_FERMION_H
 #define O2SCL_NONREL_FERMION_H
 
+/** \file fermion_nonrel.h
+    \brief File defining \ref o2scl::fermion_nonrel
+*/
+
 #include <string>
 #include <iostream>
 #include <fstream>

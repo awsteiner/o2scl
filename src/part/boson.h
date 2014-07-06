@@ -23,6 +23,10 @@
 #ifndef O2SCL_BOSON_H
 #define O2SCL_BOSON_H
 
+/** \file boson.h
+    \brief File defining \ref o2scl::boson
+*/
+
 #include <string>
 #include <iostream>
 #include <fstream>

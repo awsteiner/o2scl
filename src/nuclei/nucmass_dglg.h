@@ -23,6 +23,10 @@
 #ifndef O2SCL_NUCMASS_DGLG_H
 #define O2SCL_NUCMASS_DGLG_H
 
+/** \file nucmass_dglg.h
+    \brief File defining \ref o2scl::nucmass_dglg
+*/
+
 #include <cmath>
 #include <string>
 #include <map>

@@ -12,24 +12,22 @@
     There are five mass table types currently included.
     - \ref o2scl::nucmass_ame and \ref o2scl::nucmass_ame_exp : data from 
     \ref Audi95, \ref Audi03, or \ref Audi12 and \ref Wang12.
-    - \ref o2scl::nucmass_mnmsk and \ref o2scl::nucmass_mnmsk_exp : masses from \ref Moller95
+    - \ref o2scl::nucmass_mnmsk and \ref o2scl::nucmass_mnmsk_exp : 
+    masses from \ref Moller95
     - \ref o2scl::nucmass_hfb and \ref o2scl::nucmass_hfb_sp : masses from
     \ref Goriely02, \ref Samyn04, or \ref Goriely07  
     - \ref o2scl::nucmass_dz_table : masses from \ref Duflo95 
     - \ref o2scl::nucmass_ktuy : masses from \ref Koura00 and \ref Koura05
 
     The mass formulas which can be fit to data are
-    - \ref o2scl::nucmass_semi_empirical : simple 5 parameter semi-empirical method
+    - \ref o2scl::nucmass_semi_empirical : simple 5 parameter 
+    semi-empirical method
     - \ref o2scl::nucmass_frdm : macroscopic part of FRDM from \ref Moller95
-    - \ref o2scl::nucmass_dz_fit and \ref o2scl::nucmass_dz_fit_33 : 10- and 33-parameter
-    mass formulas from \ref Duflo95.
+    - \ref o2scl::nucmass_dz_fit and \ref o2scl::nucmass_dz_fit_33 : 
+    10- and 33-parameter mass formulas from \ref Duflo95.
     
-    The class \ref o2scl::nucdist provides an generic base class
-    for a collection of several nuclei with an STL-like iterator.
-    There are two implementations of this base class, \ref
-    o2scl::nucdist_full which enumerates all the nuclei for a given mass
-    formula, and \ref o2scl::nucdist_arb which allows one to specify a
-    generic set of nuclei from any function specified as a string.
+    In order to create a set of nuclei stored in a <tt>std::vector</tt>
+    object, one can use \ref o2scl::nucdist_set().
 
     \section ex_nucmass_sect Nuclear mass example
 

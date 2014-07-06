@@ -23,6 +23,10 @@
 #ifndef HFB_MASS_H
 #define HFB_MASS_H
 
+/** \file nucmass_hfb.h
+    \brief File defining \ref o2scl::nucmass_hfb
+*/
+
 #include <cmath>
 
 #include <o2scl/nucleus.h>

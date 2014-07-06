@@ -23,6 +23,10 @@
 #ifndef O2SCL_PART_DERIV_H
 #define O2SCL_PART_DERIV_H
 
+/** \file part_deriv.h
+    \brief File defining \ref o2scl::part_deriv
+*/
+
 #include <string>
 #include <iostream>
 #include <fstream>

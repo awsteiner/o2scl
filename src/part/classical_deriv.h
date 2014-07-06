@@ -23,6 +23,10 @@
 #ifndef O2SCL_SN_CLASSICAL_H
 #define O2SCL_SN_CLASSICAL_H
 
+/** \file classical_deriv.h
+    \brief File defining \ref o2scl::classical_deriv
+*/
+
 #include <string>
 #include <iostream>
 #include <fstream>

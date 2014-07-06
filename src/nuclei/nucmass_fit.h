@@ -20,8 +20,12 @@
 
   -------------------------------------------------------------------
 */
-#ifndef MASS_FIT_H
-#define MASS_FIT_H
+#ifndef NUCMASS_FIT_H
+#define NUCMASS_FIT_H
+
+/** \file nucmass_fit.h
+    \brief File defining \ref o2scl::nucmass_fit
+*/
 
 #include <boost/numeric/ublas/vector.hpp>
 

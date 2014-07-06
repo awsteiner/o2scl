@@ -23,6 +23,10 @@
 #ifndef O2SCL_MAG_FERMION_ZEROT_H
 #define O2SCL_MAG_FERMION_ZEROT_H
 
+/** \file fermion_mag_zerot.h
+    \brief File defining \ref o2scl::fermion_mag_zerot
+*/
+
 #include <boost/numeric/ublas/vector.hpp>
 
 #include <o2scl/fermion.h>

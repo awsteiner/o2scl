@@ -23,6 +23,10 @@
 #ifndef O2SCL_NUCMASS_WLW_H
 #define O2SCL_NUCMASS_WLW_H
 
+/** \file nucmass_wlw.h
+    \brief File defining \ref o2scl::nucmass_wlw
+*/
+
 #include <cmath>
 #include <string>
 #include <map>
