@@ -112,6 +112,14 @@ namespace o2scl {
      */
     template<class vec_t> void set_uncerts(vec_t &u) {
       size_t nv=u.size();
+      set_uncerts(nv,u);
+      return;
+    }
+
+    /** \brief Set the fit uncertainties (in MeV) from the first \c nv
+	elements of \c u
+     */
+    template<class vec_t> void set_uncerts(size_t nv, vec_t &u) {
       if (nv==0) {
 	O2SCL_ERR2("Tried to give zero uncertainties in nucmass_fit::",
 		   "set_uncerts().",exc_efailed);
@@ -122,11 +130,6 @@ namespace o2scl {
       return;
     }
     
-    /** \brief Set the experimental masses for use in the default distribution
-     */
-    void set_exp_mass(nucmass &nm, int maxA=400, 
-		     bool include_neutron=false);
-
     /** \brief Evaluate isospin dependence of fit quality
 
 	\todo More documentation and compute uncertainty
