@@ -30,6 +30,8 @@
 #include <string>
 #include <functional>
 
+#include <gsl/gsl_math.h>
+
 #include <boost/numeric/ublas/vector.hpp>
 
 #include <o2scl/fparser.h>
@@ -163,6 +165,29 @@ namespace o2scl {
 #endif
 
   };
+
+  /** \brief Desc
+   */
+  class funct_gsl : public gsl_function {
+
+  protected:
+    
+    /// Desc
+    static double funct_wrap(double x, void *params) {
+      funct11 *fp=(funct11 *)params;
+      return (*fp)(x);
+    }
+
+  public:
+
+    /// Desc
+    funct_gsl(funct11 &f) {
+      function=&funct_wrap;
+      params=&f;
+    }
+    
+  };
+
 
 #ifndef DOXYGEN_NO_O2NS
 }

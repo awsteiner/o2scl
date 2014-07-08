@@ -20,24 +20,18 @@
 
   -------------------------------------------------------------------
 */
-
-#include <o2scl/test_mgr.h>
 #include <o2scl/funct.h>
 #include <o2scl/root_brent_gsl.h>
+#include <o2scl/test_mgr.h>
+
+using namespace std;
+using namespace o2scl;
 
 double gfn(double x) {
   return atan((x-0.2)*4)*(1.0+sin((x-0.2)*50.0)/1.1);
 }
 
-double gfn_gsl(double x, void *p) {
-  return atan((x-0.2)*4)*(1.0+sin((x-0.2)*50.0)/1.1);
-}
-
 double gfn2(double x) {
-  return tanh(100.0*(x-0.2));
-}
-
-double gfn_gsl2(double x, void *p) {
   return tanh(100.0*(x-0.2));
 }
 
@@ -48,18 +42,20 @@ public:
   }
 };
 
-using namespace std;
-using namespace o2scl;
-
 int main(void) {
 
   cout.setf(ios::scientific);
   
+  test_mgr t;
+  t.set_output_level(2);
+
   cl acl;
   double a, b, r;
-  test_mgr t;
 
-  t.set_output_level(2);
+  funct11 fmg1=gfn;
+  funct11 fmg2=gfn2;
+  funct_gsl fg1(fmg1);
+  funct_gsl fg2(fmg2);
 
   for(size_t k=0;k<2;k++) {
 
@@ -71,17 +67,11 @@ int main(void) {
       a=-1.0;
       b=1.0;
     
-      gsl_function F;
-      if (k==0) {
-	F.function=&gfn_gsl;
-      } else {
-	F.function=&gfn_gsl2;
-      }
-      F.params=0;
-     
       const gsl_root_fsolver_type *T=gsl_root_fsolver_brent;
       gsl_root_fsolver *s=gsl_root_fsolver_alloc (T);
-      gsl_root_fsolver_set(s,&F,a,b);
+      
+      if (k==0) gsl_root_fsolver_set(s,&fg1,a,b);
+      else gsl_root_fsolver_set(s,&fg2,a,b);
      
       do {
 
