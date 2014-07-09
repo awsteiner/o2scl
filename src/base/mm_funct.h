@@ -180,6 +180,41 @@ namespace o2scl {
     
   };
 
+#ifdef O2SCL_NEVER_DEFINED
+  /** \brief A wrapper to specify \ref o2scl::mm_funct11-like objects 
+      to GSL
+   */
+  template<class vec_t>
+    class mm_funct_gsl : public gsl_multiroot_function {
+    
+  public:
+    
+    typedef std::function<int(size_t,const vec_t &, vec_t &)> func_t;
+
+  protected:
+    
+    /// The function wrapper
+    static int funct_wrap(const gsl_vector *x, void *params,
+			  gsl_vector *f) {
+      func_t *fp=(func_t *)params;
+      vec_t x2(x->size), f2(x->size);
+      o2scl::vector_copy<double *,vec_t>(x->size,x.data,x2);
+      int ret=(*fp)(x->size,x2,f2);
+      o2scl::vector_copy<vec_t,double *>(x->size,f2,f.data);
+      return ret;
+    }
+
+  public:
+
+    /// Create an object based on the specified function, \c f
+    funct_gsl(func_t &f) {
+      function=&funct_wrap;
+      params=&f;
+    }
+    
+  };
+#endif
+
 #ifndef DOXYGEN_NO_O2NS
 }
 #endif

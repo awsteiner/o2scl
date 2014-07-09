@@ -1161,7 +1161,7 @@ namespace o2scl {
   template<class vec_t, class vec2_t, class vec3_t>
     double vector_chi_squared(const vec_t &obs, const vec2_t &exp,
 			      const vec3_t &err) {
-    return vector_chi_squared<vec_t,vec2_t,vec3_t>(obs,exp,err);
+    return vector_chi_squared<vec_t,vec2_t,vec3_t>(obs.size(),obs,exp,err);
   }
   //@}
 

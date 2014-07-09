@@ -166,13 +166,14 @@ namespace o2scl {
 
   };
 
-  /** \brief Desc
+  /** \brief A wrapper to specify \ref o2scl::funct11 objects 
+      to GSL
    */
   class funct_gsl : public gsl_function {
 
   protected:
     
-    /// Desc
+    /// The function wrapper
     static double funct_wrap(double x, void *params) {
       funct11 *fp=(funct11 *)params;
       return (*fp)(x);
@@ -180,7 +181,7 @@ namespace o2scl {
 
   public:
 
-    /// Desc
+    /// Create an object based on the specified function, \c f
     funct_gsl(funct11 &f) {
       function=&funct_wrap;
       params=&f;

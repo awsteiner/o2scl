@@ -96,12 +96,12 @@ namespace o2scl {
     gsl_rng *r;
     
   public:
-
-    /** \brief Create a blank lognormal distribution
+    
+    /** \brief Create a standard normal distribution
      */
     prob_dens_gaussian() {
       cent_=0.0;
-      sigma_=-1.0;
+      sigma_=1.0;
       r=gsl_rng_alloc(gsl_rng_mt19937);
     }
 
