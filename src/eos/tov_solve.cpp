@@ -721,6 +721,7 @@ int tov_solve::integ_star(size_t ndvar, const ubvector &ndx,
   if (verbose>=3) {
     cout << "Final surface interpolation: " << endl;
     cout.setf(ios::showpos);
+    cout << max_radius << endl;
     cout << "r, m(r), log(P): " 
 	 << rkx[ix] << " " << rky[ix][0] << " " << rky[ix][1] << endl;
     cout << "r, m(r), log(P): " 

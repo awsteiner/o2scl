@@ -457,10 +457,9 @@ int eos_had_skyrme::check_landau(double nb, double m) {
   return 0;
 }
 
-int eos_had_skyrme::landau_nuclear(double nb, double m,
-			       double &f0, double &g0, double &f0p,
-			       double &g0p, double &f1, double &g1,
-			       double &f1p, double &g1p) {
+void eos_had_skyrme::landau_nuclear
+(double nb, double m, double &f0, double &g0, double &f0p,
+ double &g0p, double &f1, double &g1, double &f1p, double &g1p) {
   
   double T0, T1, T2, T3, x, y, z, kf, mstar;
   
@@ -486,12 +485,11 @@ int eos_had_skyrme::landau_nuclear(double nb, double m,
     2.0*mstar*kf/pi2-f1p;
   g0p=(-0.25*t0-1.0/24.0*t3*pow(nb,alpha))*2.0*mstar*kf/pi2-g1p;
   
-  return 0;
+  return;
 }
 
-int eos_had_skyrme::landau_neutron(double nb, double m,
-			       double &f0, double &g0, 
-			       double &f1, double &g1) {
+void eos_had_skyrme::landau_neutron
+(double nb, double m, double &f0, double &g0, double &f1, double &g1) {
   
   double T0, T1, T2, T3, x, y, z, kf, mstar;
   
@@ -512,7 +510,46 @@ int eos_had_skyrme::landau_neutron(double nb, double m,
       (1.0-x3))*mstar*kf/pi2-f1;
   g0=(0.5*t0*(x0-1.0)+1.0/12.0*t3*pow(nb,alpha)*(x3-1.0))*mstar*kf/pi2-g1;
   
-  return 0;
+  return;
+}
+
+void eos_had_skyrme::alt_params_set
+(double Crr00, double Crr10, double Crr0D, double Crr1D, double Crt0,
+ double Crt1, double CrDr0, double CrDr1, double CrnJ0, double CrnJ1,
+ double alpha2) {
+  a=0.0;
+  b=1.0;
+  t0=8.0/3.0*Crr00;
+  x0=(-Crr00-3.0*Crr10)/2.0/Crr00;
+  t3=16.0*Crr0D;
+  x3=(-Crr0D-3.0*Crr1D)/2.0/Crr0D;
+  t1=-4.0/3.0*(4.0*CrDr0-Crt0);
+  x1=(3.0*Crt1+Crt0-4.0*CrDr0-12.0*CrDr1)/2.0/(4.0*CrDr0-Crt0);
+  t2=4.0/3.0*(4.0*CrDr0-8.0*CrDr1+3.0*Crt0-6.0*Crt1);
+  x2=(20.0*CrDr1+15.0*Crt1-3.0*Crt0-4.0*CrDr0)/2.0/
+    (4.0*CrDr0-8.0*CrDr1+3.0*Crt0-6.0*Crt1);
+  b4=-CrnJ0+CrnJ1;
+  b4p=-2.0*CrnJ1;
+  alpha=alpha2;
+  return;
+}
+
+void eos_had_skyrme::alt_params_get
+(double &Crr00, double &Crr10, double &Crr0D, double &Crr1D, double &Crt0,
+ double &Crt1, double &CrDr0, double &CrDr1, double &CrnJ0, double &CrnJ1,
+ double &alpha2) {
+  Crr00=0.375*t0;
+  Crr10=-0.25*t0*(0.5+x0);
+  Crr0D=0.0625*t3;
+  Crr1D=-t3/24.0*(0.5+x3);
+  Crt0=0.1875*t1+0.25*t2*(1.25+x2);
+  Crt1=-0.125*t1*(0.5+x1)+0.125*t2*(0.5+x2);
+  CrDr0=-0.140625*t1+0.0625*t2*(1.25+x2);
+  CrDr1=0.09375*t1*(0.5+x1)+0.03125*(0.5+x2);
+  CrnJ0=-b4-b4p/2.0;
+  CrnJ1=-b4p/2.0;
+  alpha2=alpha;
+  return;
 }
 
 /*

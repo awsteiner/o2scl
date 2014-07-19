@@ -183,6 +183,27 @@ namespace o2scl {
   */
   class eos_tov_polytrope : public eos_tov {
     
+  protected:
+
+    /** \brief The baryon density at \c ed1
+     */
+    double nb1;
+
+    /** \brief The energy density for which the baryon density is known
+     */
+    double ed1;
+
+    /** \brief The pressure at \c ed1
+     */
+    double pr1;
+
+    /** \brief Coefficient (default 1.0)
+    */
+    double K;
+
+    /// Index (default 3.0)
+    double n;
+
   public:
 
     eos_tov_polytrope() {
@@ -192,21 +213,116 @@ namespace o2scl {
 
     virtual ~eos_tov_polytrope() {}
 
-    /** \brief Coefficient (default 1.0)
-    */
-    double K;
-
-    /// Index (default 3.0)
-    double n;
+    /** \brief Desc
+     */
+    void set_coeff_index(double coeff, double index) {
+      if (coeff<0.0 || index<0.0) {
+	O2SCL_ERR2("Negative coefficients and indices not supported in ",
+		   "eos_tov_polytrope::set_coeff_index().",exc_einval);
+      }
+      K=coeff;
+      n=index;
+      if (baryon_column) {
+	pr1=K*pow(ed1,1.0+1.0/n);
+      }
+    }
+    
+    /** \brief Set the baryon density
+     */
+    void set_baryon_density(double nb, double ed) {
+      if (nb<0.0 || ed<0.0) {
+	O2SCL_ERR2("Negative densities not supported in ",
+		   "eos_tov_polytrope::set_coeff_index().",exc_einval);
+      }
+      baryon_column=true;
+      nb1=nb;
+      ed1=ed;
+      pr1=K*pow(ed1,1.0+1.0/n);
+      return;
+    }
 
     /** \brief Given the pressure, produce the energy and number densities
-	
-	If the baryon density is not specified, it should be set to
-	zero or \ref baryon_column should be set to false
+     */
+    virtual void get_eden(double P, double &e, double &nb) {
+      e=pow(P/K,n/(1.0+n));
+      if (baryon_column) {
+	nb=nb1*pow(e/ed1,1.0+n)/pow((e+P)/(ed1+pr1),n);
+      } else {
+	nb=0.0;
+      }
+      return;
+    }
+    
+  };
+
+  /** \brief Linear EOS \f$ P = c_s^2 (\varepsilon-\varepsilon_0) \f$
+
+      \note Experimental
+   */
+  class eos_tov_linear : public eos_tov {
+
+  protected:
+
+    /** \brief The baryon density at \c ed1
+     */
+    double nb1;
+
+    /** \brief The energy density for which the baryon density is known
+     */
+    double ed1;
+
+    /** \brief The pressure at \c ed1
+     */
+    double pr1;
+
+    /** \brief Coefficient (default 1.0)
+    */
+    double cs2;
+
+    /// Index (default 0.0)
+    double eps0;
+
+  public:
+
+    eos_tov_linear() {
+      cs2=1.0;
+      eps0=0.0;
+    }
+
+    virtual ~eos_tov_linear() {}
+
+    /** \brief Desc
+     */
+    void set_cs2_eps0(double cs2_, double eps0_) {
+      eps0=eps0_;
+      cs2=cs2_;
+      return;
+    }
+
+    /** \brief Set the baryon density
+     */
+    void set_baryon_density(double nb, double ed) {
+      if (nb<0.0 || ed<0.0) {
+	O2SCL_ERR2("Negative densities not supported in ",
+		   "eos_tov_polytrope::set_coeff_index().",exc_einval);
+      }
+      baryon_column=true;
+      nb1=nb;
+      ed1=ed;
+      pr1=cs2*(ed-eps0);
+      return;
+    }
+
+    /** \brief Given the pressure, produce the energy and number densities
     */
     virtual void get_eden(double P, double &e, double &nb) {
-      e=pow(P/K,1.0/(1.0+1.0/n));
-      nb=0.0;
+      e=P/cs2+eps0;
+      if (baryon_column) {
+	nb=nb1*pow(e+cs2*e-cs2*eps0,1.0/(1.0+cs2))*
+	  pow(ed1+cs2*(-eps0+ed1),-1.0/(1.0+cs2));
+      } else {
+	nb=0.0;
+      }
       return;
     }
     

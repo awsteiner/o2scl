@@ -571,9 +571,53 @@ public:
     return 0;
   }
 
+  /// Desc
+  int unedf(vector<string> &sv, bool itive_com) {
+    
+    double coups[13][3]={
+      {-706.382928878428856,-779.3730087208653,-650.796319465688839},
+      {240.049520427681131,287.722131583286796,291.664014339185485},
+      {868.871771539645351,891.47789044234969,768.32770588203357},
+      {-69.0518957481631617,-200.587774317884879,-283.187292227492492},
+      {-12.9172408208016112,-0.989915057807676746,9.78520558824309639},
+      {-45.1894169426759476,-33.6320970701835549,-23.3573612977035339},
+      {0.321955989588264435,0.2700180115027076,0.351455132555483607},
+      {-55.2606,-45.135131022237303,-46.8314091470605973},
+      {-55.6226,-145.382167908057,-113.163790795259004},
+      {-79.5308,-74.0263331764599,-64.3088624157838069},
+      {45.6302,-35.6582611147917,-38.6501946851355029},
+      {0.0,0.0,-54.4333635973721002},
+      {0.0,0.0,-65.9030310445938028}
+    };
+
+    // Why is this necessary?
+    skyrme_load(sk,"SLy4");
+    
+    for(size_t i=0;i<3;i++) {
+      // Convert to O2scl units
+      for(size_t j=0;j<13;j++) {
+	if (j!=6) {
+	  coups[j][i]/=hc_mev_fm;
+	}
+      }
+      sk.alt_params_set(coups[0][i],coups[1][i],coups[2][i],coups[3][i],
+			coups[4][i],coups[5][i],coups[7][i],coups[8][i],
+			coups[9][i],coups[10][i],coups[6][i]);
+      sk.saturation();
+      cout << "n0: " << sk.n0 << endl;
+      cout << "L: " << sk.fesym_slope(sk.n0)*hc_mev_fm << endl;
+      
+      hf.open_or_create(((string)"UNEDF")+szttos(i)+".o2");
+      skyrme_write(hf,sk,((string)"UNEDF")+szttos(i));
+      hf.close();
+    }
+
+    return 0;
+  }
+  
   /// Load internally stored model
   int load(vector<string> &sv, bool itive_com) {
-
+    
     if (sv.size()<2) {
       cout << "No model specified in 'load'." << endl;
       return exc_efailed;
@@ -808,7 +852,7 @@ int main(int argv, char *argc[]) {
   int comm_option_cl_param=1;
   int comm_option_both=2;
 
-  static const int narr=5;
+  static const int narr=6;
   comm_option_s options_arr[narr]={
     {0,"run-all","Run all internally stored Skyrme models.",0,0,"","",
      new comm_option_mfptr<ex_eos_had_skyrme>(&se,&ex_eos_had_skyrme::run_all),
@@ -818,6 +862,9 @@ int main(int argv, char *argc[]) {
      comm_option_both},
     {'l',"load","Load internally stored model.",1,1,"","",
      new comm_option_mfptr<ex_eos_had_skyrme>(&se,&ex_eos_had_skyrme::load),
+     comm_option_both},
+    {0,"unedf","Desc.",0,0,"","",
+     new comm_option_mfptr<ex_eos_had_skyrme>(&se,&ex_eos_had_skyrme::unedf),
      comm_option_both},
     {'t',"test","Test ex_eos_had_skyrme.",0,0,"","",
      new comm_option_mfptr<ex_eos_had_skyrme>(&se,&ex_eos_had_skyrme::test),

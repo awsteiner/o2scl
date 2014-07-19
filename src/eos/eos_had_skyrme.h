@@ -199,28 +199,6 @@ namespace o2scl {
 
       \hline
       
-      In the notation of arXiv:1211.6292, adapted from the relations
-      in RMP 75 (2003) 121.
-      \f{eqnarray*}
-      C^{\rho \rho}_{00} &=& 3 t_0/8 \nonumber \\
-      C^{\rho \rho}_{10} &=& -t_0/4 \left(\frac{1}{2}+x_0 \right) \nonumber \\
-      C^{\rho \rho}_{0D} &=& 3 t_3/48 \nonumber \\
-      C^{\rho \rho}_{1D} &=& -t_3/24 \left(\frac{1}{2}+x_3\right)
-      \nonumber \\
-      C^{\rho \tau}_{0} &=& 3 t_1/16+t_2/4\left(\frac{5}{4}+x_2\right)
-      \nonumber \\
-      C^{\rho \tau}_{1} &=& -t_1/8 \left(\frac{1}{2}+x_1\right) +
-      t_2/8 \left(\frac{1}{2}+x_2\right) \nonumber \\
-      C^{\rho \delta \rho}_{0} &=& -9/64 t_1+t_2/16 
-      \left(\frac{5}{4}+x_2\right)\nonumber \\
-      C^{\rho \delta \rho}_{1} &=& 3/32 t_1 \left(\frac{1}{2}+x_1\right) +
-      t_2/32 \left(\frac{1}{2}+x_2\right) \nonumber \\
-      C^{\rho \nabla J}_{0} &=& -b_4 -b_4^{\prime}/2\nonumber \\
-      C^{\rho \nabla J}_{1} &=& -b_4^{\prime}/2
-      \f}
-
-      \hline
-
       \todo
       - Convert W0 to b4 and b4p everywhere
       - Make sure that this class properly handles particles for which 
@@ -411,7 +389,7 @@ namespace o2scl {
 	
 	(Checked once on 11/05/03)
     */
-    int landau_nuclear(double n0, double m,
+    void landau_nuclear(double n0, double m,
 		       double &f0, double &g0, double &f0p,
 		       double &g0p, double &f1, double &g1,
 		       double &f1p, double &g1p);
@@ -425,8 +403,8 @@ namespace o2scl {
 	
 	(Checked once on 11/05/03)
     */
-    int landau_neutron(double n0, double m, double &f0, double &g0, 
-		       double &f1, double &g1);
+    void landau_neutron(double n0, double m, double &f0, double &g0, 
+			double &f1, double &g1);
 
     /// Return string denoting type ("eos_had_skyrme")
     virtual const char *type() { return "eos_had_skyrme"; }
@@ -434,6 +412,42 @@ namespace o2scl {
     /// If true, compute the chemical potentials even at zero density
     bool mu_at_zero_density;
 
+    /** \brief Set using alternate parameterization
+
+      From \ref Bender03 as in, e.g. \ref Kortelainen14
+      \f{eqnarray*}
+      C^{\rho \rho}_{00} &=& 3 t_0/8 \nonumber \\
+      C^{\rho \rho}_{10} &=& -t_0/4 \left(\frac{1}{2}+x_0 \right) \nonumber \\
+      C^{\rho \rho}_{0D} &=& t_3/16 \nonumber \\
+      C^{\rho \rho}_{1D} &=& -t_3/24 \left(\frac{1}{2}+x_3\right)
+      \nonumber \\
+      C^{\rho \tau}_{0} &=& 3 t_1/16+t_2/4\left(\frac{5}{4}+x_2\right)
+      \nonumber \\
+      C^{\rho \tau}_{1} &=& -t_1/8 \left(\frac{1}{2}+x_1\right) +
+      t_2/8 \left(\frac{1}{2}+x_2\right) \nonumber \\
+      C^{\rho \Delta \rho}_{0} &=& -9/64 t_1+t_2/16 
+      \left(\frac{5}{4}+x_2\right)\nonumber \\
+      C^{\rho \Delta \rho}_{1} &=& 3/32 t_1 \left(\frac{1}{2}+x_1\right) +
+      t_2/32 \left(\frac{1}{2}+x_2\right) \nonumber \\
+      C^{\rho \nabla J}_{0} &=& -b_4 -b_4^{\prime}/2\nonumber \\
+      C^{\rho \nabla J}_{1} &=& -b_4^{\prime}/2
+      \f}
+
+    */
+    void alt_params_set
+      (double Crr00, double Crr10, double Crr0D, double Crr1D, 
+       double Crt0, double Crt1, double CrDr0, double CrDr1, 
+       double CrnJ0, double CrnJ1, double alpha2);
+
+    /** \brief Get alternate parameterization
+	
+	See \ref eos_had_skyrme::alt_params_set().
+    */
+    void alt_params_get
+      (double &Crr00, double &Crr10, double &Crr0D, double &Crr1D, 
+       double &Crt0, double &Crt1, double &CrDr0, double &CrDr1, 
+       double &CrnJ0, double &CrnJ1, double &alpha2);
+ 
 #ifndef DOXYGEN_NO_O2NS
     
   protected:

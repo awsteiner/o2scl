@@ -342,7 +342,35 @@ int main(void) {
   t.test_rel(72.0*buch.Pstar*beta*(1.0-2.5*beta),
 	     tab->get("ed",0),1.0e-8,"Buch rho_c");
   cout << endl;
+
+  // --------------------------------------------------------------
+  // Test the linear EOS 
+
+  cout << "----------------------------------------------------" << endl;
+  cout << "Linear EOS: " << endl;
+
+  eos_tov_linear lin;
+  at.set_eos(lin);
+
+  // 1.4 solar mass star
+  at.mvsr();
+  cout << tab->max("gm") << endl;
+
+#ifdef O2SCL_NEVER_DEFINED
+
+  lin.set_cs2_eps0(1.0/3.0,0.0);
+  at.mvsr();
+  cout << tab->max("gm") << endl;
+
+  at.max_radius=200.0;
+  for(double eps0=1.0e-2;eps0>0.9e-7;eps0/=sqrt(10.0)) {
+    lin.set_cs2_eps0(1.0/3.0,eps0);
+    info=at.mvsr();
+    cout << info << " " << tab->max("gm") << " " << tab->max("r") << endl;
+  }
   
+#endif
+
   t.report();
 
   return 0;
