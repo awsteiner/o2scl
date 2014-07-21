@@ -184,10 +184,11 @@ int main(void) {
 
   tab->summary(&cout);
   cout << endl;
-  cout << tab->interp("nb",0.08,"ed") << " " 
-       << tab->interp("nb",0.08,"pr") << endl;
-  cout << tab->interp("r",at.rad,"gm") << " "
-       << tab->interp("r",at.rad,"bm") << endl;
+  //cout << tab->interp("nb",0.08,"ed") << " " 
+  //<< tab->interp("nb",0.08,"pr") << endl;
+  //cout << tab->interp("r",at.rad,"gm") << " "
+  //<< tab->interp("r",at.rad,"bm") << endl;
+
   t.test_rel(tab->interp("r",at.rad,"gm"),1.4,1.0e-4,"grav. mass.");
   t.test_rel(tab->interp("nb",0.08,"ed"),6.79e-5,5.0e-3,"trans. ed");
   t.test_rel(tab->interp("nb",0.08,"pr"),3.64e-7,2.0e-1,"trans. pr");
@@ -204,8 +205,8 @@ int main(void) {
   double r_pr2=tab->interp("pr",pr2,"r");
   double gm_pr1=tab->interp("pr",pr1,"gm");
   double gm_pr2=tab->interp("pr",pr2,"gm");
-  cout << r_pr1 << " " << r_pr2 << " "
-       << gm_pr1 << " " << gm_pr2 << endl;
+  //cout << r_pr1 << " " << r_pr2 << " "
+  //<< gm_pr1 << " " << gm_pr2 << endl;
 
   // --------------------------------------------------------------
   // With rotation
@@ -322,6 +323,7 @@ int main(void) {
   }
 
   t.test_gen(tab->get_unit("mun")==((string)"MeV"),"Aux unit.");
+  cout << endl;
 
   // --------------------------------------------------------------
   // Test the Buchdahl EOS 
@@ -344,7 +346,8 @@ int main(void) {
   cout << endl;
 
   // --------------------------------------------------------------
-  // Test the linear EOS 
+  // Test that the maximum mass in the linear EOS goes inversely
+  // with the square root of eps0
 
   cout << "----------------------------------------------------" << endl;
   cout << "Linear EOS: " << endl;
@@ -352,24 +355,16 @@ int main(void) {
   eos_tov_linear lin;
   at.set_eos(lin);
 
-  // 1.4 solar mass star
-  at.mvsr();
-  cout << tab->max("gm") << endl;
-
-#ifdef O2SCL_NEVER_DEFINED
-
-  lin.set_cs2_eps0(1.0/3.0,0.0);
-  at.mvsr();
-  cout << tab->max("gm") << endl;
-
-  at.max_radius=200.0;
-  for(double eps0=1.0e-2;eps0>0.9e-7;eps0/=sqrt(10.0)) {
+  for(double eps0=1.0e-3;eps0>0.9e-6;eps0/=sqrt(10.0)) {
     lin.set_cs2_eps0(1.0/3.0,eps0);
     info=at.mvsr();
-    cout << info << " " << tab->max("gm") << " " << tab->max("r") << endl;
+    cout << info << " " << tab->max("gm") << " ";
+    cout << 2.880345e-2/sqrt(eps0) << " ";
+    cout << tab->get("r",tab->lookup("gm",tab->max("gm"))) << endl;
+    t.test_rel(tab->max("gm"),2.880345e-2/sqrt(eps0),
+	       4.0e-4,"linear eos");
   }
-  
-#endif
+  cout << endl;
 
   t.report();
 

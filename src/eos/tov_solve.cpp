@@ -53,9 +53,6 @@ tov_solve::tov_solve() : out_table(new table_units<>) {
   // Minimum log(pressure)
   min_log_pres=-1.0e2;
 
-  // Maximum radius
-  max_radius=60.0;
-
   // Allocation sizes
   buffer_size=1e5;
   max_table_size=400;
@@ -115,12 +112,20 @@ tov_solve::tov_solve() : out_table(new table_units<>) {
   // Initial value for target mass
   tmass=0.0;
 
+  max_integ_steps=100000;
   pmax_default=1.0e20;
   pcent_max=pmax_default;
   reformat_results=true;
   
   // Mass of a proton in kg
   baryon_mass=o2scl_mks::mass_proton;
+
+  ofm=std::bind
+    (std::mem_fn<int(double,size_t,const ubvector &,ubvector &)>
+     (&tov_solve::derivs),
+     this,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3,std::placeholders::_4);
+
 }
 
 tov_solve::~tov_solve() {
@@ -275,6 +280,7 @@ int tov_solve::derivs(double r, size_t nv, const ubvector &y,
 void tov_solve::make_unique_name(string &col, std::vector<string> &cnames) {
   bool done;
   do {
+    // Exhaustively go through 'cnames' looking for 'col'
     done=true;
     for(size_t i=0;i<cnames.size();i++) {
       if (col==cnames[i]) {
@@ -282,6 +288,7 @@ void tov_solve::make_unique_name(string &col, std::vector<string> &cnames) {
 	i=cnames.size();
       }
     }
+    // If found, append an underscore
     if (done==false) {
       col+='_';
     }
@@ -357,7 +364,7 @@ void tov_solve::column_setup(size_t &naux, vector<string> &ext_names,
   }
 
   // ---------------------------------------------------------------
-  // Add external column names
+  // Add external column names and units
 
   vector<string> ext_units;
   te->get_names_units(naux,ext_names,ext_units);
@@ -503,24 +510,15 @@ void tov_solve::make_table() {
     for(size_t ik=0;ik<naux;ik++) {
       out_table->set(ext_names[ik],tix,0.0);
     }
-
-    /*
-    // Check for not finite values
-    for(size_t ik=0;ik<line.size();ik++) {
-    if (!o2scl::is_finite(line[ik])) {
-    O2SCL_ERR("Non-finite values in tov_solve::make_table().",
-    exc_efailed);
-    }
-    }
     
-    if (line.size()!=out_table->get_ncolumns()) {
-    O2SCL_ERR("Table synchronization in tov_solve::make_table().",
-    exc_esanity);
+    // Check for non-finite values
+    for(size_t ik=0;ik<out_table->get_ncolumns();ik++) {
+      if (!o2scl::is_finite(out_table->get(ik,tix))) {
+	O2SCL_ERR((((string)"Non-finite value for column '")+
+		   out_table->get_column_name(ik)+
+		   "' in tov_solve::make_table().").c_str(),exc_efailed);
+      }
     }
-    
-    // Copy vector to table
-    out_table->line_of_data(line.size(),&(line[0]));
-    */
       
   }
 
@@ -548,14 +546,14 @@ int tov_solve::integ_star(size_t ndvar, const ubvector &ndx,
   // Initial failure conditions
   
   if (ndx[0]>pcent_max) {
-    return exc_efailed;
+    return cent_press_large;
   }
 
   if (ndx[0]<0.0) {
     // We don't call the error handler here, because the default
     // solver might be able to recover from a negative pressure. See
     // the documentation in tov_solve.h for a discussion of this.
-    return exc_efailed;
+    return cent_press_neg;
   }
 
   // ---------------------------------------------------------------
@@ -569,7 +567,7 @@ int tov_solve::integ_star(size_t ndvar, const ubvector &ndx,
   if (te->baryon_column) nvar++;
 
   // ---------------------------------------------------------------
-  // Resize and allocate memory
+  // Resize and allocate memory if necessary
 
   if (rkx.size()!=buffer_size || rky.size()==0 || rky[0].size()!=nvar) {
     rkx.resize(buffer_size);
@@ -605,13 +603,7 @@ int tov_solve::integ_star(size_t ndvar, const ubvector &ndx,
   }
   
   // ---------------------------------------------------------------
-  
-  ode_funct11 ofm=std::bind
-    (std::mem_fn<int(double,size_t,const ubvector &,ubvector &)>
-     (&tov_solve::derivs),
-     this,std::placeholders::_1,std::placeholders::_2,
-     std::placeholders::_3,std::placeholders::_4);
-  
+    
   double outrad=0.0;
   if (verbose>=2) {
     cout << "Central pressure: " << ndx[0] << endl;
@@ -627,7 +619,7 @@ int tov_solve::integ_star(size_t ndvar, const ubvector &ndx,
 
   bool done=false;
   size_t it;
-  for(it=0;it<10000 && done==false;it++) {
+  for(it=0;it<max_integ_steps && done==false;it++) {
     
     // ---------------------------------------------------------------
     // Fix step size if too large or too small
@@ -635,7 +627,6 @@ int tov_solve::integ_star(size_t ndvar, const ubvector &ndx,
     double h=step_start;
     if (h>step_max) h=step_max;
     if (h<step_min) h=step_min;
-    if (rkx[ix]+h>max_radius) h=max_radius-rkx[ix];
 
     // ---------------------------------------------------------------
     // Take an adaptive step 
@@ -669,6 +660,7 @@ int tov_solve::integ_star(size_t ndvar, const ubvector &ndx,
       // of mass and radius done outside of the loop below. 
     
       if (ix_next>=buffer_size-1) {
+
 	//cout << "Rearrangement. ix=" << ix << " ix_next=" << ix_next 
 	//<< " buffer_size=" << buffer_size << endl;
 
@@ -704,11 +696,13 @@ int tov_solve::integ_star(size_t ndvar, const ubvector &ndx,
     // End of main loop
   }
 
-  if (false && it>=10000) {
-    O2SCL_CONV((((string)"Integration of star with central pressure ")
-		+dtos(ndx[0])+
-		" exceeded 10000 iterations in integ_star().").c_str(),
+  if (it>=max_integ_steps) {
+    O2SCL_CONV((((string)"Integration of star with central pressure ")+
+		o2scl::dtos(ndx[0])+" exceeded "+
+		o2scl::szttos(max_integ_steps)+
+		" steps in integ_star().").c_str(),
 	       exc_efailed,err_nonconv);
+    return over_max_steps;
   }
   
   // --------------------------------------------------------------
@@ -718,10 +712,19 @@ int tov_solve::integ_star(size_t ndvar, const ubvector &ndx,
 
   rad=-1.0/rkdydx[ix][1]+rkx[ix];
   mass=rky[ix][0]-rkdydx[ix][0]*(rkx[ix]-rad);
+
+  // If extrapolation to zero pressure is more than 10 percent,
+  // then register as a failure
+  if (rad>1.1*rkx[ix]) {
+    O2SCL_CONV("Last radial step too large in integ_star().",
+	       exc_efailed,err_nonconv);
+    return last_step_large;
+  }
+
+  // Verbose output
   if (verbose>=3) {
     cout << "Final surface interpolation: " << endl;
     cout.setf(ios::showpos);
-    cout << max_radius << endl;
     cout << "r, m(r), log(P): " 
 	 << rkx[ix] << " " << rky[ix][0] << " " << rky[ix][1] << endl;
     cout << "r, m(r), log(P): " 
@@ -730,6 +733,8 @@ int tov_solve::integ_star(size_t ndvar, const ubvector &ndx,
 	 << rkx[ix] << " " << rkdydx[ix][0] << " " << rkdydx[ix][1] << endl;
     cout.unsetf(ios::showpos);
   }
+
+  // Extrapolate final gravitational potential and baryon mass
   iv=2;
   double lastgpot=0.0;
   if (calc_gpot) {
@@ -858,11 +863,11 @@ int tov_solve::mvsr() {
     
     integ_star_final=true;
     int ret=integ_star(1,x,y);
-    if (ret!=0) {
+    if (ret!=0 && info==0) {
       O2SCL_CONV((((string)"Integration of star with central pressure ")
 		  +dtos(x[0])+" failed in mvsr().").c_str(),exc_efailed,
 		 err_nonconv);
-      info+=mvsr_integ_star_failed;
+      info+=mvsr_integ_star_failed+ret;
     }
       
     // --------------------------------------------------------------
@@ -1062,7 +1067,7 @@ int tov_solve::max() {
   if (ret!=0) {
     O2SCL_CONV("Last call to integ_star() failed in max().",exc_efailed,
 	       err_nonconv);
-    info+=max_integ_star_failed;
+    info+=max_integ_star_failed+ret;
   }
   
   // --------------------------------------------------------------
@@ -1144,7 +1149,12 @@ int tov_solve::fixed(double target_mass, double pmax) {
   
   // Calculate gravitational potential and enclosed baryon mass
   integ_star_final=true;
-  integ_star(1,x,y);
+  ret=integ_star(1,x,y);
+  if (ret!=0) {
+    info+=fixed_integ_star_failed+ret;
+    O2SCL_CONV("Failed to integrate star in tov_solve::fixed().",
+	       exc_efailed,err_nonconv);
+  }
 
   if (verbose>0) {
     cout << "Gravitational mass is: " << mass << endl;

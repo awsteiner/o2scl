@@ -710,7 +710,7 @@ namespace o2scl {
 		 exc_efailed);
     }
 
-    double prered,actred;
+    double prered, actred;
     double pnorm, fnorm1, fnorm1p;
     double ratio;
     double p1=0.1, p5=0.5, p001=0.001, p0001=0.0001;

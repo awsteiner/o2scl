@@ -270,6 +270,9 @@ namespace o2scl {
 
   protected:
 
+    /// ODE function object
+    ode_funct11 ofm;
+
     /// Interpolation object for listed radii in \ref mvsr()
     interp<ubvector> iop;
 
@@ -458,8 +461,8 @@ namespace o2scl {
     double step_start;
     /// control for output (default 1)
     int verbose;
-    /// maximum radius for integration in \f$ \mathrm{km} \f$ (default 60)
-    double max_radius;
+    /// Maximum number of integration steps (default 100000)
+    size_t max_integ_steps;
     /** \brief If true, call the error handler if the solution does 
 	not converge (default true)
     */
@@ -586,6 +589,10 @@ namespace o2scl {
     static const int max_integ_star_failed=2048;
     static const int mvsr_integ_star_failed=4096;
     static const int ang_vel_failed=8192;
+    static const int cent_press_large=16384;
+    static const int cent_press_neg=32768;
+    static const int over_max_steps=65536;
+    static const int last_step_large=131072;
     //@}
 
     /// \name Get internally formatted results (in internal unit system)
