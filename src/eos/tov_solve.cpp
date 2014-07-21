@@ -540,7 +540,7 @@ double tov_solve::max_fun(double maxx) {
 }
 
 int tov_solve::integ_star(size_t ndvar, const ubvector &ndx, 
-			   ubvector &ndy) {
+			  ubvector &ndy) {
   
   // ---------------------------------------------------------------
   // Initial failure conditions

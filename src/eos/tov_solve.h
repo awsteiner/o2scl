@@ -234,6 +234,15 @@ namespace o2scl {
       One can compute the baryonic mass by integration or by adding
       one additional differential equation, bringing the total to six.
       
+      <b>Convergence details</b>
+
+      By default, if the TOV solver fails to converge, the error
+      handler is called and an exception is thrown. If \ref
+      o2scl::tov_solve::err_nonconv is false, then \ref
+      o2scl::tov_solve::mvsr(), \ref o2scl::tov_solve::fixed(), and
+      \ref o2scl::tov_solve::max(), return an integer which gives some
+      information about why the solver failed to converge.
+
       <b>Other details</b>
 
       The ODE solution is stored in a buffer which can be directly
@@ -253,9 +262,10 @@ namespace o2scl {
       table may be smaller than this, as it cannot be larger than the
       number of steps stored in the buffer.
 
-      \note The function star_fun() returns <tt>gsl_efailed</tt>
-      without calling the error handler in the case that the solver
-      can recover gracefully from, for example, a negative pressure.
+      \note The function \ref o2scl::tov_solve::integ_star() returns
+      <tt>gsl_efailed</tt> without calling the error handler in the
+      case that the solver can recover gracefully from, for example, a
+      negative pressure.
   */
   class tov_solve {
 
@@ -439,7 +449,7 @@ namespace o2scl {
 	output table independent of the value of this variable.
     */
     bool reformat_results;
-    /** \brief Baryon mass
+    /** \brief The mass of one baryon
 	
 	The mass of one baryon in kg for the total baryon mass
 	calculation (defaults to the proton mass).
@@ -580,7 +590,7 @@ namespace o2scl {
     }
     //@}
     
-    /// \name Info flags
+    /// \name Convergence information flags
     //@{
     static const int fixed_solver_failed=128;
     static const int fixed_integ_star_failed=256;
