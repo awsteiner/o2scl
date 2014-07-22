@@ -258,6 +258,10 @@ namespace o2scl {
       \frac{5 S_4(n_B,0) + 4 S(n_B,0)}
       {S_4(n_B,0) + 4 S(n_B,0)} 
       \f]
+      Alternatively, \f$ S_4 \f$ can be written
+      \f[
+      4 S(n_B) \left[ \frac{1-\eta(n_B)}{\eta(n_B)-5} \right] \, .
+      \f]
 
       Evaluating this function at the saturation density gives
       \f[
@@ -266,8 +270,22 @@ namespace o2scl {
       (Note that \f$ S_4 \f$ is referred to as \f$ Q \f$ in 
       \ref Steiner06). Sometimes it is useful to separate out
       the kinetic and potential parts of the energy density when
-      computing \f$ \eta(n_B) \f$, and the class \ref eos_had_sym4_base
+      computing \f$ \eta  \f$, and the class \ref eos_had_sym4_base
       is useful for this purpose. 
+
+      The function \f$ L_4 \f$ can also be rewritten in 
+      \f$ \eta^{\prime} \f$ (now suppressing the dependence
+      on \f$ n_B \f$),
+      \f[
+      \eta^{\prime}  = \frac{16 \left( L_4 S - L S_4 \right)}
+      {3 n_B \left(4 S +S_4 \right)^2} 
+      \f]
+      then using the expression for \f$ S_4 \f$,
+      \f[
+      \eta^{\prime} = \frac{\left(\eta -5\right)}{48 n_B S }
+      \left[ L_4 \left(\eta -5\right) + 4 L 
+      \left(\eta -1\right)\right]
+      \f]
 
       \future Could write a function to compute the "symmetry free energy"
       or the "symmetry entropy"
