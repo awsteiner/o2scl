@@ -54,12 +54,10 @@ int main(void) {
   nucmass_ame_exp ame;
   o2scl_hdf::ame_load(ame,"12");
 
-  nucdist_full ame_fd(ame);
-  
   nucmass_semi_empirical sm;
   nucmass_fit mf;
   double res;
-  mf.set_exp_mass(ame);
+  nucdist_set(mf.dist,ame);
   mf.fit(sm,res);
   mf.eval(sm,res);
   cout.width(15);
@@ -96,36 +94,35 @@ int main(void) {
   table_units<> tu;
   tu.line_of_names("Z N ame sm mn hfb ame03 dz ktuy");
 
-  typedef nucdist::iterator iter;
-
-  iter ame_it=ame_fd.begin();
-  for(iter it=ame_fd.begin();it!=ame_fd.end();it++) {
-    double m_ame=ame.mass_excess(it->Z,it->N);
+  vector<nucleus> ame_dist;
+  nucdist_set(ame_dist,ame);
+  for(size_t i=0;i<ame_dist.size();i++) {
+    double m_ame=ame.mass_excess(ame_dist[i].Z,ame_dist[i].N);
     double m_sm=0.0;
-    if (it->Z>=8 && it->N>=8) {
-      m_sm=sm.mass_excess(it->Z,it->N);
+    if (ame_dist[i].Z>=8 && ame_dist[i].N>=8) {
+      m_sm=sm.mass_excess(ame_dist[i].Z,ame_dist[i].N);
     }
     double m_mn=0.0;
-    if (mn.is_included(it->Z,it->N)) {
-      m_mn=mn.mass_excess(it->Z,it->N);
+    if (mn.is_included(ame_dist[i].Z,ame_dist[i].N)) {
+      m_mn=mn.mass_excess(ame_dist[i].Z,ame_dist[i].N);
     }
     double m_hfb=0.0;
-    if (hfb.is_included(it->Z,it->N)) {
-      m_hfb=hfb.mass_excess(it->Z,it->N);
+    if (hfb.is_included(ame_dist[i].Z,ame_dist[i].N)) {
+      m_hfb=hfb.mass_excess(ame_dist[i].Z,ame_dist[i].N);
     }
     double m_ame03=0.0;
-    if (ame03.is_included(it->Z,it->N)) {
-      m_ame03=ame03.mass_excess(it->Z,it->N);
+    if (ame03.is_included(ame_dist[i].Z,ame_dist[i].N)) {
+      m_ame03=ame03.mass_excess(ame_dist[i].Z,ame_dist[i].N);
     }
     double m_dz=0.0;
-    if (dz.is_included(it->Z,it->N)) {
-      m_dz=dz.mass_excess(it->Z,it->N);
+    if (dz.is_included(ame_dist[i].Z,ame_dist[i].N)) {
+      m_dz=dz.mass_excess(ame_dist[i].Z,ame_dist[i].N);
     }
     double m_ktuy=0.0;
-    if (ktuy.is_included(it->Z,it->N)) {
-      m_ktuy=ktuy.mass_excess(it->Z,it->N);
+    if (ktuy.is_included(ame_dist[i].Z,ame_dist[i].N)) {
+      m_ktuy=ktuy.mass_excess(ame_dist[i].Z,ame_dist[i].N);
     }
-    double line[9]={((double)it->Z),((double)it->N),m_ame,m_sm,
+    double line[9]={((double)ame_dist[i].Z),((double)ame_dist[i].N),m_ame,m_sm,
 		    m_mn,m_hfb,m_ame03,m_dz,m_ktuy};
     tu.line_of_data(9,line);
   }
