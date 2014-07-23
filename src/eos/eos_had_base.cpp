@@ -173,6 +173,14 @@ double eos_had_base::fesym_diff(double nb) {
   return eoa_neut-eoa_nuc;
 }
 
+double eos_had_base::feta_prime(double nb) {
+  funct11 fmn=std::bind(std::mem_fn<double(double)>
+			(&eos_had_base::feta),
+			this,std::placeholders::_1);
+  
+  return sat_deriv->deriv(nb,fmn);
+}
+
 double eos_had_base::feta(double nb) {
   double eoa_neut, eoa_nuc, eoa_mixed;
 

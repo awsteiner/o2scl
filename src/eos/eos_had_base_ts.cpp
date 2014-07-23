@@ -39,10 +39,10 @@ using namespace o2scl;
 using namespace o2scl_const;
 
 int main(void) {
-  eos_had_rmf he, *he2;
   test_mgr t;
   t.set_output_level(2);
-  int vp=0;
+
+  eos_had_rmf he;
 
   fermion n(939.0/hc_mev_fm,2.0), p(939.0/hc_mev_fm,2.0);
 

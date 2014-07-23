@@ -136,9 +136,10 @@ namespace o2scl {
       univariate function of the baryon density. It is sometimes also
       evaluated at the point \f$ (n_B=n_0, \alpha=0) \f$, and this
       value is denoted by \f$ S \f$ above and is typically stored in
-      \ref esym. Alternatively, one can define the symmetry energy by
+      \ref esym. 
+      Alternatively, one can define the symmetry energy by
       \f[
-      \tilde{S}(n_B) \approx E(n_B,\alpha=1)-E(n_B,\alpha=0)
+      \tilde{S}(n_B) = E(n_B,\alpha=1)-E(n_B,\alpha=0)
       \f]
       which is computed by function \ref fesym_diff() . The
       functions \f$ S(n_B,\alpha=0) \f$ and \f$ \tilde{S}(n_B) \f$
@@ -148,6 +149,16 @@ namespace o2scl {
       \f[
       S(n_B) = \tilde{S}(n_B) = \frac{1}{4} 
       \frac{(\mu_n-\mu_p)}{\alpha} \, .
+      \f]
+      
+      These functions can also be generalized to finite temperature
+      \f[
+      S(n_B,\alpha,T) = \frac{1}{4} \frac{\partial}{\partial \alpha}
+      \left[\mu_n(n_B,\alpha,T) - \mu_p(n_B,\alpha,T)\right] \, ,
+      \f]
+      and 
+      \f[
+      \tilde{S}(n_B) = F(n_B,\alpha=1,T)-F(n_B,\alpha=0,T) \, .
       \f]
       
       The symmetry energy slope parameter \f$ L \f$, can be defined
@@ -289,6 +300,8 @@ namespace o2scl {
 
       \future Could write a function to compute the "symmetry free energy"
       or the "symmetry entropy"
+      \future Compute the speed of sound or the number susceptibilities?
+      \future Compute isoscalar and isovector effective masses
   */
   class eos_had_base : public eos_base {
 
@@ -419,6 +432,11 @@ namespace o2scl {
 	symmetry energy
     */
     virtual double feta(double nb);
+
+    /** \brief The derivative of the strength parameter for quartic
+	terms in the symmetry energy
+    */
+    virtual double feta_prime(double nb);
 
     /** \brief Calculate skewness of nuclear matter using calc_e()
 
@@ -857,6 +875,31 @@ namespace o2scl {
     */
     virtual int calc_temp_p(fermion &n, fermion &p, double T, 
 			    thermo &th)=0;
+
+    /** \brief Desc
+     */
+    double calc_dmu_alpha_T(double alpha, const double &nb,
+			    const double &T) {
+      
+      neutron->n=(1.0+alpha)*nb/2.0;
+      proton->n=(1.0-alpha)*nb/2.0;
+      
+      calc_temp_e(*neutron,*proton,T,*eos_thermo);
+      
+      return neutron->mu-proton->mu;
+    }
+
+    /** \brief Desc
+     */
+    virtual double fesym_T(double nb, double T, const double &alpha=0.0) {
+
+      funct11 fmn=std::bind
+	(std::mem_fn<double(double,const double &,const double &)>
+	 (&eos_had_temp_base::calc_dmu_alpha_T),this,std::placeholders::_1,
+	 nb,T);
+      
+      return sat_deriv->deriv(alpha,fmn)/4.0;
+    }
     
   };
 

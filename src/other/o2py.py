@@ -163,7 +163,7 @@ class plotter:
                'blue': ((0.0,1.0,1.0),(1.0,0.0,0.0))}
         myreds=LinearSegmentedColormap('MyReds',cdict)
         plot.register_cmap(cmap=myreds)
-        cmap='MyReds'
+        self.cmap='MyReds'
 
     def mygreens(self):
         cdict={'red': ((0.0,1.0,1.0),(1.0,0.0,0.0)),
@@ -171,7 +171,7 @@ class plotter:
                'blue': ((0.0,1.0,1.0),(1.0,0.0,0.0))}
         mygreens=LinearSegmentedColormap('MyGreens',cdict)
         plot.register_cmap(cmap=mygreens)
-        cmap='MyGreens'
+        self.cmap='MyGreens'
 
     def myblues(self):
         cdict={'red': ((0.0,1.0,1.0),(1.0,0.0,0.0)),
@@ -179,7 +179,7 @@ class plotter:
                'blue': ((0.0,1.0,1.0),(1.0,1.0,1.0))}
         myblues=LinearSegmentedColormap('MyBlues',cdict)
         plot.register_cmap(cmap=myblues)
-        cmap='MyBlues'
+        self.cmap='MyBlues'
         
     def contour_plot(self,level,**kwargs):
         if self.dtype!='vector<contour_line>':
@@ -581,7 +581,7 @@ class plotter:
             self.canvas()
             self.canvas_flag=1
         self.axes.text(tx,ty,str,transform=self.axes.transAxes,
-                       fontsize=16,verticalalignment='top',**kwargs)
+                       fontsize=16,va='center',ha='center',**kwargs)
         return
 
     def get(self,name):

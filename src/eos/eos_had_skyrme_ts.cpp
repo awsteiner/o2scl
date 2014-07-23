@@ -427,6 +427,10 @@ int main(void) {
   t.test_rel(nuni1-n.m,n.nu,1.0e-6,"inc_rest_mass=false mun");
   t.test_rel(nupi1-p.m,p.nu,1.0e-6,"inc_rest_mass=false mup");
 
+  cout << sk.fesym(0.16)*hc_mev_fm << endl;
+  cout << sk.fesym_T(0.16,0.5/hc_mev_fm)*hc_mev_fm << endl;
+  cout << sk.fesym_T(0.16,1.0/hc_mev_fm)*hc_mev_fm << endl;
+
   t.report();
 
   return 0;
