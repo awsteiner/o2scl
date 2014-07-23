@@ -2425,7 +2425,7 @@ namespace o2scl {
   */
   template<class vec2_t>
   void function_vector(std::string function, vec2_t &vec,
-			 bool throw_on_err=true) {
+		       bool throw_on_err=true) {
     
     // Parse function
     aciter it=atree.begin();
@@ -2442,7 +2442,8 @@ namespace o2scl {
     if (ret!=0) {
       if (throw_on_err) {
 	std::string s=((std::string)"Failed to parse function '")+function+
-	  "'\n   in table::function_ubvector().\n  Error '"+itos(ret)+
+	  "' with variable list '"+vlist+
+	  "' in table::function_ubvector().\n  Error '"+itos(ret)+
 	  "' from FunctionParser: "+fp.ErrorMsg()+".";
 	O2SCL_ERR(s.c_str(),exc_einval);
       }
