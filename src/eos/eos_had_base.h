@@ -44,37 +44,37 @@ namespace o2scl {
 
       Denote the number density of neutrons as \f$ n_n \f$, the number
       density of protons as \f$ n_p \f$, the total baryon density \f$
-      n_B = n_n + n_p \f$, the asymmetry \f$ \alpha \equiv
+      n_B = n_n + n_p \f$, the asymmetry \f$ \delta \equiv
       (n_n-n_p)/n_B \f$, the nuclear saturation density as \f$ n_0
       \approx 0.16~\mathrm{fm}^{-3} \f$, and the quantity \f$ \epsilon
       \equiv (n_B-n_0)/3n_0 \f$. (Note that some authors define
-      \f$ \alpha \f$ as \f$ n_n - n_p \f$, which is not the same as
+      \f$ \delta \f$ as \f$ n_n - n_p \f$, which is not the same as
       the definition above.) Then the energy per baryon of nucleonic
       matter can be written as an expansion around 
-      \f$ \epsilon =\alpha = 0 \f$
+      \f$ \epsilon =\delta = 0 \f$
       \f[
-      E(n_B,\alpha) = -B + \frac{\tilde{K}}{2!} {\epsilon}^2 + 
-      \frac{Q}{3!} {\epsilon}^3 + \alpha^2 \left(S + L \epsilon + 
+      E(n_B,\delta) = -B + \frac{\tilde{K}}{2!} {\epsilon}^2 + 
+      \frac{Q}{3!} {\epsilon}^3 + \delta^2 \left(S + L \epsilon + 
       \frac{K_{\mathrm{sym}}}{2!} {\epsilon}^2
       + \frac{Q_{\mathrm{sym}}}{3!} \epsilon^3 \right) + 
-      E_4(n_B,\alpha) + {\cal O}(\alpha^6)
+      E_4(n_B,\delta) + {\cal O}(\delta^6)
       \qquad \left(\mathrm{Eq.}~1\right)
       \f]
       where \f$ E_4 \f$ represents the quartic terms
       \f[
-      E_4(n_B,\alpha) 
-      = \alpha^4 \left(S_4 + L_4 \epsilon + \frac{K_4}{2!} {\epsilon}^2
+      E_4(n_B,\delta) 
+      = \delta^4 \left(S_4 + L_4 \epsilon + \frac{K_4}{2!} {\epsilon}^2
       + \frac{Q_4}{3!} \epsilon^3 \right) \qquad
       \left(\mathrm{Eq.}~2\right)
       \f]
       (Adapted slightly from \ref Piekarewicz09). From this, one can
       compute the energy density of nuclear matter \f$
-      \varepsilon(n_B,\alpha) = n_B E(n_B,\alpha) \f$, the chemical
+      \varepsilon(n_B,\delta) = n_B E(n_B,\delta) \f$, the chemical
       potentials \f$ \mu_i \equiv (\partial \varepsilon) / (\partial
       n_i ) \f$ and the pressure \f$ P = -\varepsilon + \mu_n n_n +
       \mu_p n_p \f$. This expansion motivates the definition of
       several separate terms. The binding energy \f$ B \f$ of
-      symmetric nuclear matter (\f$ \alpha = 0 \f$) is around 16 MeV.
+      symmetric nuclear matter (\f$ \delta = 0 \f$) is around 16 MeV.
 
       The compression modulus is usually defined by \f$ \chi = -1/V
       (dV/dP) = 1/n (dP/dn)^{-1} \f$ . In nuclear physics it has
@@ -84,7 +84,7 @@ namespace o2scl {
       refer to \f$ K \f$ simply as the incompressibility. Here, we
       define the function
       \f[
-      K(n_B,\alpha) \equiv 9 \left( \frac{\partial P}{\partial n_B} 
+      K(n_B,\delta) \equiv 9 \left( \frac{\partial P}{\partial n_B} 
       \right) = 9 n_B \left(\frac{\partial^2 \varepsilon}
       {\partial n_B^2}\right)
       \f]
@@ -93,112 +93,112 @@ namespace o2scl {
       numerically stable than the second derivative of the energy
       density (since most \o2 EOSs compute the pressure exactly). This
       function is typically evaluated at the point \f$
-      (n_B=n_0,\alpha=0) \f$ and is stored in \ref comp by the
+      (n_B=n_0,\delta=0) \f$ and is stored in \ref comp by the
       function \ref saturation(). This quantity is not always the same
       as \f$ \tilde{K} \f$, defined here as
       \f[
-      \tilde{K}(n_B,\alpha) = 9 n_B^2 \left(\frac{\partial^2 E}{\partial 
-      n_B^2}\right) = K(n_B,\alpha) - \frac{1}{n_B} 18 P(n_B,\alpha)
+      \tilde{K}(n_B,\delta) = 9 n_B^2 \left(\frac{\partial^2 E}{\partial 
+      n_B^2}\right) = K(n_B,\delta) - \frac{1}{n_B} 18 P(n_B,\delta)
       \f]
-      We denote \f$ K \equiv K(n_B=n_0,\alpha=0) \f$ and similarly for
+      We denote \f$ K \equiv K(n_B=n_0,\delta=0) \f$ and similarly for
       \f$ \tilde{K} \f$, the quantity in Eq. 1 above. In nuclear
       matter at saturation, the pressure is zero and \f$ K = \tilde{K}
       \f$. See \ref Chabanat97 for further discussion of the distinction
       between \f$ K \f$ and \f$ \tilde{K} \f$.
 
-      The symmetry energy, \f$ S(n_B,\alpha), \f$ can be defined as
+      The symmetry energy, \f$ S(n_B,\delta), \f$ can be defined as
       \f[
-      S(n_B,\alpha) \equiv \frac{1}{2 n_B}\frac{\partial^2 \varepsilon}
-      {\partial \alpha^2}
+      S(n_B,\delta) \equiv \frac{1}{2 n_B}\frac{\partial^2 \varepsilon}
+      {\partial \delta^2}
       \f]
       and the parameter \f$ S \f$ in Eq. 1 is just \f$ S(n_0,0) \f$. 
       Using
       \f[
-      \left(\frac{\partial \varepsilon}{\partial \alpha}\right)_{n_B} = 
+      \left(\frac{\partial \varepsilon}{\partial \delta}\right)_{n_B} = 
       \frac{\partial \varepsilon}{\partial n_n} 
-      \left(\frac{\partial n_n}{\partial \alpha}\right)_{n_B} +
+      \left(\frac{\partial n_n}{\partial \delta}\right)_{n_B} +
       \frac{\partial \varepsilon}{\partial n_p} 
-      \left(\frac{\partial n_p}{\partial \alpha}\right)_{n_B} 
+      \left(\frac{\partial n_p}{\partial \delta}\right)_{n_B} 
       = \frac{n_B}{2} \left(\mu_n - \mu_p \right)
       \f]
       this can be rewritten 
       \f[
-      S(n_B,\alpha) = \frac{1}{4} \frac{\partial}{\partial \alpha}
+      S(n_B,\delta) = \frac{1}{4} \frac{\partial}{\partial \delta}
       \left(\mu_n - \mu_p\right)
       \f]
       where the dependence of the chemical potentials on \f$ n_B \f$
-      and \f$ \alpha \f$ is not written explicitly. This quantity is
+      and \f$ \delta \f$ is not written explicitly. This quantity is
       computed by function \ref fesym(). Note that many of the
       functions in this class are written in terms of the proton
-      fraction \f$ x_p = (1-\alpha)/2 \f$ denoted as <tt>'pf'</tt>
-      instead of as functions of \f$ \alpha \f$. Frequently, \f$
-      S(n_B,\alpha) \f$ is evaluated at \f$ \alpha=0 \f$ to give a
+      fraction \f$ x_p = (1-\delta)/2 \f$ denoted as <tt>'pf'</tt>
+      instead of as functions of \f$ \delta \f$. Frequently, \f$
+      S(n_B,\delta) \f$ is evaluated at \f$ \delta=0 \f$ to give a
       univariate function of the baryon density. It is sometimes also
-      evaluated at the point \f$ (n_B=n_0, \alpha=0) \f$, and this
+      evaluated at the point \f$ (n_B=n_0, \delta=0) \f$, and this
       value is denoted by \f$ S \f$ above and is typically stored in
       \ref esym. 
       Alternatively, one can define the symmetry energy by
       \f[
-      \tilde{S}(n_B) = E(n_B,\alpha=1)-E(n_B,\alpha=0)
+      \tilde{S}(n_B) = E(n_B,\delta=1)-E(n_B,\delta=0)
       \f]
       which is computed by function \ref fesym_diff() . The
-      functions \f$ S(n_B,\alpha=0) \f$ and \f$ \tilde{S}(n_B) \f$
-      are equal when \f$ {\cal O}(\alpha^4) \f$ terms are zero. 
+      functions \f$ S(n_B,\delta=0) \f$ and \f$ \tilde{S}(n_B) \f$
+      are equal when \f$ {\cal O}(\delta^4) \f$ terms are zero. 
       In this case, \f$ \mu_n - \mu_p \f$ is proportional to 
-      \f$ \alpha \f$ and so 
+      \f$ \delta \f$ and so 
       \f[
       S(n_B) = \tilde{S}(n_B) = \frac{1}{4} 
-      \frac{(\mu_n-\mu_p)}{\alpha} \, .
+      \frac{(\mu_n-\mu_p)}{\delta} \, .
       \f]
       
       These functions can also be generalized to finite temperature
       \f[
-      S(n_B,\alpha,T) = \frac{1}{4} \frac{\partial}{\partial \alpha}
-      \left[\mu_n(n_B,\alpha,T) - \mu_p(n_B,\alpha,T)\right] \, ,
+      S(n_B,\delta,T) = \frac{1}{4} \frac{\partial}{\partial \delta}
+      \left[\mu_n(n_B,\delta,T) - \mu_p(n_B,\delta,T)\right] \, ,
       \f]
       and 
       \f[
-      \tilde{S}(n_B) = F(n_B,\alpha=1,T)-F(n_B,\alpha=0,T) \, .
+      \tilde{S}(n_B,T) = F(n_B,\delta=1,T)-F(n_B,\delta=0,T) \, .
       \f]
       
       The symmetry energy slope parameter \f$ L \f$, can be defined
       by 
       \f[
-      L(n_B,\alpha) \equiv 3 n_B \frac{\partial S(n_B,\alpha)}
+      L(n_B,\delta) \equiv 3 n_B \frac{\partial S(n_B,\delta)}
       {\partial n_B} = 3 n_B \frac{\partial}{\partial n_B} \left[ 
-      \frac{1}{2 n_B} \frac{\partial^2 \varepsilon}{\partial \alpha^2}
+      \frac{1}{2 n_B} \frac{\partial^2 \varepsilon}{\partial \delta^2}
       \right]
       \f]
       This can be rewritten as 
       \f[
-      L(n_B,\alpha) = \frac{3 n_B}{4} \frac{\partial}{\partial n_B}
-      \frac{\partial}{\partial \alpha} \left(\mu_n - \mu_p\right)
+      L(n_B,\delta) = \frac{3 n_B}{4} \frac{\partial}{\partial n_B}
+      \frac{\partial}{\partial \delta} \left(\mu_n - \mu_p\right)
       \f]
       (where the derivatives can be evaluated in either order) 
       and this is the method used to compute this function 
       in \ref fesym_slope(). Alternatively, using 
       \f[
-      \left(\frac{\partial \varepsilon}{\partial n_B}\right)_{\alpha} = 
+      \left(\frac{\partial \varepsilon}{\partial n_B}\right)_{\delta} = 
       \frac{\partial \varepsilon}{\partial n_n} 
-      \left(\frac{\partial n_n}{\partial n_B}\right)_{\alpha} +
+      \left(\frac{\partial n_n}{\partial n_B}\right)_{\delta} +
       \frac{\partial \varepsilon}{\partial n_p} 
-      \left(\frac{\partial n_p}{\partial n_B}\right)_{\alpha} 
+      \left(\frac{\partial n_p}{\partial n_B}\right)_{\delta} 
       = \frac{1}{2} \left(\mu_n + \mu_p \right)
       \f]
       \f$ L \f$ can be rewritten
       \f{eqnarray*}
-      L(n_B,\alpha) &=& 3 n_B \left[\frac{-1}{2 n_B^2} 
-      \frac{\partial^2 \varepsilon}{\partial \alpha^2} + 
-      \frac{1}{4 n_B} \frac{\partial^2}{\partial \alpha^2} 
+      L(n_B,\delta) &=& 3 n_B \left[\frac{-1}{2 n_B^2} 
+      \frac{\partial^2 \varepsilon}{\partial \delta^2} + 
+      \frac{1}{4 n_B} \frac{\partial^2}{\partial \delta^2} 
       \left(\mu_n + \mu_p\right)\right] \\
-      &=& \frac{3}{4}\frac{\partial^2}{\partial \alpha^2} 
-      \left(\mu_n + \mu_p\right) - 3 S(n_B,\alpha) \, .
+      &=& \frac{3}{4}\frac{\partial^2}{\partial \delta^2} 
+      \left(\mu_n + \mu_p\right) - 3 S(n_B,\delta) \, .
       \f}
 
       The third derivative with respect to the baryon density is
       sometimes called the skewness. Here, we define
       \f[
-      Q(n_B,\alpha) = 27 n_B^3 \frac{\partial^3}{\partial n_B^3} 
+      Q(n_B,\delta) = 27 n_B^3 \frac{\partial^3}{\partial n_B^3} 
       \left(\frac{\varepsilon}{n_B}\right) = 
       27 n_B^3 \frac{\partial^2}{\partial n_B^2} 
       \left(\frac{P}{n_B^2}\right)
@@ -209,16 +209,16 @@ namespace o2scl {
       The second derivative of the symmetry energy with respect
       to the baryon density is
       \f[
-      K_{\mathrm{sym}}(n_B,\alpha) = 9 n_B^2 
-      \frac{\partial^2}{\partial n_B^2} S(n_B,\alpha)
+      K_{\mathrm{sym}}(n_B,\delta) = 9 n_B^2 
+      \frac{\partial^2}{\partial n_B^2} S(n_B,\delta)
       \f]
       and this function is computed in \ref fesym_curve(). 
 
       The third derivative of the symmetry energy with respect
       to the baryon density is
       \f[
-      Q_{\mathrm{sym}}(n_B,\alpha) = 27 n_B^3 
-      \frac{\partial^3}{\partial n_B^3} S(n_B,\alpha)
+      Q_{\mathrm{sym}}(n_B,\delta) = 27 n_B^3 
+      \frac{\partial^3}{\partial n_B^3} S(n_B,\delta)
       \f]
       and this function is computed in \ref fesym_skew(). Note that
       the numerical evaluation of higher derivatives can make \ref
@@ -227,35 +227,35 @@ namespace o2scl {
 
       Note that assuming terms of order \f$ \epsilon^3 \f$ and higher
       are zero and solving for the baryon density for which \f$ P=0 \f$
-      gives, to order \f$ \alpha^2 \f$ (\ref Piekarewicz09),
+      gives, to order \f$ \delta^2 \f$ (\ref Piekarewicz09),
       \f[
-      n_{B,\mathrm{sat}} = n_0 \left[ 1 - \frac{3 L \alpha^2}{K} \right]
+      n_{B,\mathrm{sat}} = n_0 \left[ 1 - \frac{3 L \delta^2}{K} \right]
       \f]
       this implies a new 'incompressibility' around the saturation
       point, i.e. 
       \f[
-      K(n_B=n_{B,\mathrm{sat}},\alpha)=
-      K+\alpha^2 \left( K_{\mathrm{sym}}-6 L- \frac{L Q}{K} \right)
-      + {\cal O}\left(\alpha^4\right)
+      K(n_B=n_{B,\mathrm{sat}},\delta)=
+      K+\delta^2 \left( K_{\mathrm{sym}}-6 L- \frac{L Q}{K} \right)
+      + {\cal O}\left(\delta^4\right)
       \f]
       The quantity in parenthesis is referred to by some authors as
       \f$ K_{\tau} \f$. Note that, because one is evaluating this at
       \f$ n_B=n_{B,\mathrm{sat}} \f$, this is distinct from
       \f[
-      \tilde{K}_{\tau} \equiv \frac{1}{2} \frac{\partial^2 K(n_B,\alpha)}
-      {\partial \alpha^2}
+      \tilde{K}_{\tau} \equiv \frac{1}{2} \frac{\partial^2 K(n_B,\delta)}
+      {\partial \delta^2}
       \f]
       which is equal to \f$ K_{\mathrm{sym}} + 6 L \f$ to lowest order
-      in \f$ \alpha \f$ at \f$ n_B = n_0 \f$.
+      in \f$ \delta \f$ at \f$ n_B = n_0 \f$.
 
-      The quartic symmetry energy \f$ S_4(n_B,\alpha) \f$ can be defined as
+      The quartic symmetry energy \f$ S_4(n_B,\delta) \f$ can be defined as
       \f[
-      S_4(n_B,\alpha) \equiv \frac{1}{24 n_B}\frac{\partial^4 \varepsilon}
-      {\partial \alpha^4}
+      S_4(n_B,\delta) \equiv \frac{1}{24 n_B}\frac{\partial^4 \varepsilon}
+      {\partial \delta^4}
       \f]
       However, fourth derivatives are difficult numerically, and so an
       alternative quantity is preferable. Instead, one can evaluate
-      the extent to which \f$ {\cal O}(\alpha^4) \f$ terms are
+      the extent to which \f$ {\cal O}(\delta^4) \f$ terms are
       important from
       \f[
       \eta(n_B) \equiv \frac{E(n_B,1)-E(n_B,1/2)}
@@ -350,45 +350,45 @@ namespace o2scl {
     /** \brief Calculate the incompressibility in \f$ \mathrm{fm}^{-1} \f$ 
 	using calc_e()
 
-	This function computes \f$ K (n_B,\alpha) = 9 n_B \partial^2
+	This function computes \f$ K (n_B,\delta) = 9 n_B \partial^2
 	\varepsilon /(\partial n_B^2) = 9 \partial P / (\partial n_B)
 	\f$ . The value of \f$ K(n_0,0) \f$, often referred to as the
 	"compressibility", is stored in \ref comp by \ref saturation() 
 	and is about 240 MeV at saturation density.
     */
-    virtual double fcomp(double nb, const double &alpha=0.0);
+    virtual double fcomp(double nb, const double &delta=0.0);
 
     /** \brief Compute the incompressibility and its uncertainty
 
 	This function works like \ref fcomp(), except that it also
 	returns the uncertainty in \c unc. 
      */
-    virtual double fcomp_err(double nb, double alpha, double &unc);
+    virtual double fcomp_err(double nb, double delta, double &unc);
 
     /** \brief Calculate the energy per baryon in \f$ \mathrm{fm}^{-1} \f$ 
 	using calc_e()
 
 	This function computes the energy per baryon of matter 
 	without the nucleon rest masses at the specified baryon
-	density, \c nb, and isospin asymmetry \c alpha. 
+	density, \c nb, and isospin asymmetry \c delta. 
     */
-    virtual double feoa(double nb, const double &alpha=0.0);
+    virtual double feoa(double nb, const double &delta=0.0);
 
     /** \brief Calculate symmetry energy of matter in 
-	\f$ \mathrm{fm}^{-1} \f$ using \ref calc_dmu_alpha() .
+	\f$ \mathrm{fm}^{-1} \f$ using \ref calc_dmu_delta() .
 
 	This function computes the symmetry energy,
 	\f[
-	\left(\frac{1}{2 n_B}\frac{d^2 \varepsilon}{d \alpha^2}
-	\right) = \frac{1}{4} \frac{\partial}{\partial \alpha}
+	\left(\frac{1}{2 n_B}\frac{d^2 \varepsilon}{d \delta^2}
+	\right) = \frac{1}{4} \frac{\partial}{\partial \delta}
 	\left(\mu_n - \mu_p \right)
 	\f]
-	at the value of \f$ n_B \f$ given in \c nb and \f$ \alpha \f$
-	given in \c alpha. The symmetry energy at \f$ \alpha=0 \f$ at
+	at the value of \f$ n_B \f$ given in \c nb and \f$ \delta \f$
+	given in \c delta. The symmetry energy at \f$ \delta=0 \f$ at
 	the saturation density and is stored in \ref esym by 
 	\ref saturation().
     */
-    virtual double fesym(double nb, const double &alpha=0.0);
+    virtual double fesym(double nb, const double &delta=0.0);
 
     /** \brief Calculate symmetry energy of matter and its
 	uncertainty
@@ -396,26 +396,26 @@ namespace o2scl {
 	This estimates the uncertainty due to the numerical
 	differentiation, assuming that difference betwen the neutron
 	and proton chemical potentials is computed exactly by \ref
-	calc_dmu_alpha() .
+	calc_dmu_delta() .
     */
-    virtual double fesym_err(double nb, double alpha, double &unc);
+    virtual double fesym_err(double nb, double delta, double &unc);
     
     /** \brief The symmetry energy slope parameter
 	
 	This returns the value of the "slope parameter" of the
 	symmetry energy as a function of baryon density \c nb and
-	isospin asymmetry \c alpha. This ranges between about zero and
+	isospin asymmetry \c delta. This ranges between about zero and
 	200 MeV for most equations of state.
     */
-    virtual double fesym_slope(double nb, const double &alpha=0.0);
+    virtual double fesym_slope(double nb, const double &delta=0.0);
 
     /** \brief The curvature of the symmetry energy
      */
-    virtual double fesym_curve(double nb, const double &alpha=0.0);
+    virtual double fesym_curve(double nb, const double &delta=0.0);
 
     /** \brief The skewness of the symmetry energy
      */
-    virtual double fesym_skew(double nb, const double &alpha=0.0);
+    virtual double fesym_skew(double nb, const double &delta=0.0);
 
     /** \brief Calculate symmetry energy of matter as energy of 
 	neutron matter minus the energy of nuclear matter
@@ -447,7 +447,7 @@ namespace o2scl {
 	for densities other than the saturation density and is not
 	quite analogous to the compression modulus.
     */
-    virtual double fkprime(double nb, const double &alpha=0.0);
+    virtual double fkprime(double nb, const double &delta=0.0);
 
     /** \brief Calculate reduced neutron effective mass using calc_e()
 
@@ -459,14 +459,48 @@ namespace o2scl {
 	context. Note that this may not be equal to the reduced proton
 	effective mass.
     */
-    virtual double fmsom(double nb, const double &alpha=0.0);
+    virtual double fmsom(double nb, const double &delta=0.0);
+
+    /** \brief Neutron effective mass
+     */
+    virtual double f_effm_neut(double nb, const double &delta=0.0);
+    /** \brief Proton effective mass
+     */
+    virtual double f_effm_prot(double nb, const double &delta=0.0);
+    /** \brief Scalar effective mass
+
+	The scalar and vector effective masses are defined by
+	\f[
+	\frac{1}{m^{*}_n} = (1+\delta) \frac{1}{m^{*}_s} - 
+	\delta \frac{1}{m^{*}_v}
+	\f]
+	\f[
+	\frac{1}{m^{*}_p} = (1-\delta) \frac{1}{m^{*}_s} + 
+	\delta \frac{1}{m^{*}_v}
+	\f]
+	this implies
+	\f[
+	\frac{1}{m^{*}_s} = \frac{1}{2} \frac{1}{m^{*}_n}+
+	\frac{1}{2} \frac{1}{m^{*}_p}
+	\f]
+	\f[
+	\frac{1}{m^{*}_v} = \frac{\delta-1}{2 \delta} \frac{1}{m^{*}_n}+
+	\frac{1+\delta}{2 \delta} \frac{1}{m^{*}_p}
+	\f]
+    */
+    virtual double f_effm_scalar(double nb, const double &delta=0.0);
+    /** \brief Vector effective mass
+	
+	See documentation for \ref eos_had_base::f_effm_scalar().
+     */
+    virtual double f_effm_vector(double nb, const double &delta=0.0);
 
     /** \brief Calculate saturation density using calc_e()
 
 	This function finds the baryon density for which the pressure 
 	vanishes. 
     */
-    virtual double fn0(double alpha, double &leoa);
+    virtual double fn0(double delta, double &leoa);
 
     /** \brief Calculates some of the EOS properties at the saturation 
 	density
@@ -575,7 +609,7 @@ namespace o2scl {
 	This uses \ref neutron, \ref proton, \ref eos_base::eos_thermo,
 	and \ref calc_e() .
     */
-    double calc_dmu_alpha(double alpha, const double &nb);
+    double calc_dmu_delta(double delta, const double &nb);
     
     /** \brief Compute the sum of the neutron and proton chemical
 	potentials as a function of the isospin asymmetry
@@ -583,14 +617,14 @@ namespace o2scl {
 	This uses \ref neutron, \ref proton, \ref eos_base::eos_thermo,
 	and \ref calc_e() .
     */
-    double calc_musum_alpha(double alpha, const double &nb);
+    double calc_musum_delta(double delta, const double &nb);
 
     /** \brief Compute the pressure as a function of baryon density
 	at fixed isospin asymmetry
 
         Used by fcomp().
     */
-    double calc_pressure_nb(double nb, const double &alpha=0.0);
+    double calc_pressure_nb(double nb, const double &delta=0.0);
 
     /** \brief Compute the energy density as a function of baryon density
 	at fixed isospin asymmetry
@@ -598,7 +632,7 @@ namespace o2scl {
 	This uses \ref neutron, \ref proton, \ref eos_base::eos_thermo,
 	and \ref calc_e() .
     */
-    double calc_edensity_nb(double nb, const double &alpha=0.0);
+    double calc_edensity_nb(double nb, const double &delta=0.0);
 
     /** \brief Compute derivatives at constant proton fraction
      */
@@ -613,7 +647,7 @@ namespace o2scl {
 	This uses \ref neutron, \ref proton, \ref eos_base::eos_thermo,
 	and \ref calc_e() .
     */
-    double calc_press_over_den2(double nb, const double &alpha=0.0);
+    double calc_press_over_den2(double nb, const double &delta=0.0);
 
     /** \brief Calculate energy density as a function of the
 	isospin asymmetry at fixed baryon density
@@ -623,7 +657,7 @@ namespace o2scl {
 	This function calls \ref eos_had_base::calc_e() with the
 	internally stored neutron and proton objects.
     */
-    double calc_edensity_alpha(double alpha, const double &nb);
+    double calc_edensity_delta(double delta, const double &nb);
     //@}
 
     /// \name Other functions
@@ -878,11 +912,11 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    double calc_dmu_alpha_T(double alpha, const double &nb,
+    double calc_dmu_delta_T(double delta, const double &nb,
 			    const double &T) {
       
-      neutron->n=(1.0+alpha)*nb/2.0;
-      proton->n=(1.0-alpha)*nb/2.0;
+      neutron->n=(1.0+delta)*nb/2.0;
+      proton->n=(1.0-delta)*nb/2.0;
       
       calc_temp_e(*neutron,*proton,T,*eos_thermo);
       
@@ -891,16 +925,40 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    virtual double fesym_T(double nb, double T, const double &alpha=0.0) {
+    virtual double fesym_T(double nb, double T, const double &delta=0.0) {
 
       funct11 fmn=std::bind
 	(std::mem_fn<double(double,const double &,const double &)>
-	 (&eos_had_temp_base::calc_dmu_alpha_T),this,std::placeholders::_1,
+	 (&eos_had_temp_base::calc_dmu_delta_T),this,std::placeholders::_1,
 	 nb,T);
       
-      return sat_deriv->deriv(alpha,fmn)/4.0;
+      return sat_deriv->deriv(delta,fmn)/4.0;
     }
-    
+
+    /** \brief Desc
+     */
+    double calc_entropy_delta(double delta, const double &nb, const double &T) {
+      
+      neutron->n=(1.0+delta)*nb/2.0;
+      proton->n=(1.0-delta)*nb/2.0;
+      
+      calc_temp_e(*neutron,*proton,T,*eos_thermo);
+      
+      return eos_thermo->en;
+    }    
+
+    /** \brief Desc
+     */
+    virtual double fsyment_T(double nb, double T, const double &delta=0.0) {
+      
+      funct11 fmn=std::bind
+	(std::mem_fn<double(double,const double &,const double &)>
+	 (&eos_had_temp_base::calc_entropy_delta),this,std::placeholders::_1,
+	 nb,T);
+      
+      return sat_deriv->deriv2(delta,fmn)/2.0/nb;
+    }
+
   };
 
   /** \brief A hadronic EOS at finite temperature

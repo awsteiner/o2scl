@@ -435,7 +435,15 @@ int main(void) {
     t.test_rel((edn-ed0)/1.0e-4,mun,1.0e-4,"mun T=0");
     t.test_rel((edp-ed0)/1.0e-4,mup,1.0e-4,"mup T=0");
 
+    /*
+      cout << at.fesym(0.16)*hc_mev_fm << endl;
+      cout << at.fesym_T(0.16,0.3/hc_mev_fm)*hc_mev_fm << endl;
+      cout << at.fesym_T(0.16,1.0/hc_mev_fm)*hc_mev_fm << endl;
+      cout << at.fesym_T(0.16,3.0/hc_mev_fm)*hc_mev_fm << endl;
+      cout << at.fesym_T(0.16,10.0/hc_mev_fm)*hc_mev_fm << endl;
+    */
   }
+  
 
   t.report();
   return 0;

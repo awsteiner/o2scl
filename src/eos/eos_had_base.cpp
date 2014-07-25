@@ -51,24 +51,24 @@ eos_had_base::eos_had_base() {
   sat_root=&def_sat_root;
 }
 
-double eos_had_base::fcomp(double nb, const double &alpha) {
+double eos_had_base::fcomp(double nb, const double &delta) {
   double lcomp, err;
   
   funct11 fmn=std::bind(std::mem_fn<double(double,const double &)>
 		       (&eos_had_base::calc_pressure_nb),
-		       this,std::placeholders::_1,alpha);
+		       this,std::placeholders::_1,delta);
 
   lcomp=9.0*sat_deriv->deriv(nb,fmn);
 
   return lcomp;
 }
 
-double eos_had_base::fcomp_err(double nb, double alpha, double &unc) {
+double eos_had_base::fcomp_err(double nb, double delta, double &unc) {
   double lcomp;
   
   funct11 fmn=std::bind(std::mem_fn<double(double,const double &)>
 		       (&eos_had_base::calc_pressure_nb),
-		       this,std::placeholders::_1,alpha);
+		       this,std::placeholders::_1,delta);
 
   sat_deriv->deriv_err(nb,fmn,lcomp,unc);
 
@@ -77,11 +77,11 @@ double eos_had_base::fcomp_err(double nb, double alpha, double &unc) {
   return lcomp;
 }
 
-double eos_had_base::feoa(double nb, const double &alpha) {
+double eos_had_base::feoa(double nb, const double &delta) {
   double leoa;
 
-  neutron->n=(1.0+alpha)*nb/2.0;
-  proton->n=(1.0-alpha)*nb/2.0;
+  neutron->n=(1.0+delta)*nb/2.0;
+  proton->n=(1.0-delta)*nb/2.0;
 
   calc_e(*neutron,*proton,*eos_thermo);
   
@@ -90,35 +90,35 @@ double eos_had_base::feoa(double nb, const double &alpha) {
   return leoa;
 }
 
-double eos_had_base::fesym(double nb, const double &alpha) {
+double eos_had_base::fesym(double nb, const double &delta) {
   
   funct11 fmn=std::bind(std::mem_fn<double(double,const double &)>
-			(&eos_had_base::calc_dmu_alpha),
+			(&eos_had_base::calc_dmu_delta),
 			this,std::placeholders::_1,nb);
 
-  return sat_deriv->deriv(alpha,fmn)/4.0;
+  return sat_deriv->deriv(delta,fmn)/4.0;
 
   // * Old method using second derivative *
   //funct_mfptr_param<eos_had_base,const double> 
-  //fmn(this,&eos_had_base::calc_edensity_alpha,nb);
-  //return sat_deriv->calc2(alpha,fmn)/2.0/nb;
+  //fmn(this,&eos_had_base::calc_edensity_delta,nb);
+  //return sat_deriv->calc2(delta,fmn)/2.0/nb;
 }
 
-double eos_had_base::fesym_err(double nb, double alpha, 
+double eos_had_base::fesym_err(double nb, double delta, 
 			       double &unc) {
 
   funct11 fmn=std::bind(std::mem_fn<double(double,const double &)>
-			(&eos_had_base::calc_dmu_alpha),
+			(&eos_had_base::calc_dmu_delta),
 			this,std::placeholders::_1,nb);
 
   double val, err;
-  sat_deriv->deriv_err(alpha,fmn,val,err);
+  sat_deriv->deriv_err(delta,fmn,val,err);
   val/=4.0; 
   err/=4.0;
   return val;
 }
 
-double eos_had_base::fesym_slope(double nb, const double &alpha) {
+double eos_had_base::fesym_slope(double nb, const double &delta) {
   
   if (false) {
     // The form below is effectively a second derivative since it must
@@ -127,32 +127,32 @@ double eos_had_base::fesym_slope(double nb, const double &alpha) {
     // good to make this a separate function, to allow the user to
     // choose which way to evaluate L.
     funct11 fmn=std::bind(std::mem_fn<double(double,const double &)>
-			  (&eos_had_base::calc_musum_alpha),
+			  (&eos_had_base::calc_musum_delta),
 			  this,std::placeholders::_1,nb);
     
-    return sat_deriv->deriv2(alpha,fmn)*0.75-3.0*fesym(nb,alpha);
+    return sat_deriv->deriv2(delta,fmn)*0.75-3.0*fesym(nb,delta);
   }
   
   funct11 fmn=std::bind(std::mem_fn<double(double,const double &)>
 			(&eos_had_base::fesym),
-			this,std::placeholders::_1,alpha);
+			this,std::placeholders::_1,delta);
   return sat_deriv2->deriv(nb,fmn)*3.0*nb;
 }
 
-double eos_had_base::fesym_curve(double nb, const double &alpha) {
+double eos_had_base::fesym_curve(double nb, const double &delta) {
   
   funct11 fmn=std::bind(std::mem_fn<double(double,const double &)>
 			(&eos_had_base::fesym),
-			this,std::placeholders::_1,alpha);
+			this,std::placeholders::_1,delta);
   
   return sat_deriv2->deriv2(nb,fmn)*9.0*nb*nb;
 }
 
-double eos_had_base::fesym_skew(double nb, const double &alpha) {
+double eos_had_base::fesym_skew(double nb, const double &delta) {
 
   funct11 fmn=std::bind(std::mem_fn<double(double,const double &)>
 			(&eos_had_base::fesym),
-			this,std::placeholders::_1,alpha);
+			this,std::placeholders::_1,delta);
 
   return sat_deriv2->deriv3(nb,fmn)*27.0*nb*nb*nb;
 }
@@ -202,13 +202,13 @@ double eos_had_base::feta(double nb) {
   return (eoa_neut-eoa_mixed)/3.0/(eoa_mixed-eoa_nuc);
 }
 
-double eos_had_base::fkprime(double nb, const double &alpha) {
+double eos_had_base::fkprime(double nb, const double &delta) {
   double lkprime, err;
   int ret=0;
   
   funct11 fmn=std::bind(std::mem_fn<double(double,const double &)>
 			(&eos_had_base::calc_press_over_den2),
-			this,std::placeholders::_1,alpha);
+			this,std::placeholders::_1,delta);
   
   sat_deriv->deriv2_err(nb,fmn,lkprime,err);
   lkprime*=27.0*nb*nb*nb;
@@ -216,17 +216,63 @@ double eos_had_base::fkprime(double nb, const double &alpha) {
   return lkprime;
 }
 
-double eos_had_base::fmsom(double nb, const double &alpha) {
+double eos_had_base::fmsom(double nb, const double &delta) {
 
-  neutron->n=(1.0+alpha)*nb/2.0;
-  proton->n=(1.0-alpha)*nb/2.0;
+  neutron->n=(1.0+delta)*nb/2.0;
+  proton->n=(1.0-delta)*nb/2.0;
 
   calc_e(*neutron,*proton,*eos_thermo);
 
   return neutron->ms/neutron->m;
 }
 
-double eos_had_base::fn0(double alpha, double &leoa) {
+double eos_had_base::f_effm_neut(double nb, const double &delta) {
+
+  neutron->n=(1.0+delta)*nb/2.0;
+  proton->n=(1.0-delta)*nb/2.0;
+
+  calc_e(*neutron,*proton,*eos_thermo);
+
+  return neutron->ms;
+}
+
+double eos_had_base::f_effm_prot(double nb, const double &delta) {
+
+  neutron->n=(1.0+delta)*nb/2.0;
+  proton->n=(1.0-delta)*nb/2.0;
+
+  calc_e(*neutron,*proton,*eos_thermo);
+
+  return proton->ms;
+}
+
+double eos_had_base::f_effm_scalar(double nb, const double &delta) {
+
+  neutron->n=(1.0+delta)*nb/2.0;
+  proton->n=(1.0-delta)*nb/2.0;
+
+  calc_e(*neutron,*proton,*eos_thermo);
+
+  double imn=1.0/neutron->ms;
+  double imp=1.0/proton->ms;
+
+  return 2.0/(imn+imp);
+}
+
+double eos_had_base::f_effm_vector(double nb, const double &delta) {
+
+  neutron->n=(1.0+delta)*nb/2.0;
+  proton->n=(1.0-delta)*nb/2.0;
+
+  calc_e(*neutron,*proton,*eos_thermo);
+
+  double imn=1.0/neutron->ms;
+  double imp=1.0/proton->ms;
+  
+  return 2.0*delta/((delta-1.0)*imn+(delta+1.0)*imp);
+}
+
+double eos_had_base::fn0(double delta, double &leoa) {
   double nb;
   int ret=0;
   
@@ -235,7 +281,7 @@ double eos_had_base::fn0(double alpha, double &leoa) {
   
   funct11 fmf=std::bind(std::mem_fn<double(double,const double &)>
 			(&eos_had_base::calc_pressure_nb),
-			this,std::placeholders::_1,alpha);
+			this,std::placeholders::_1,delta);
   
   sat_root->solve(nb,fmf);
   calc_pressure_nb(nb);
@@ -317,10 +363,10 @@ double eos_had_base::t2_fun(double barn) {
 	  (2*barn-proton->n))/den;
 }
 
-double eos_had_base::calc_pressure_nb(double nb, const double &alpha) {
+double eos_had_base::calc_pressure_nb(double nb, const double &delta) {
   
-  neutron->n=(1.0+alpha)*nb/2.0;
-  proton->n=(1.0-alpha)*nb/2.0;
+  neutron->n=(1.0+delta)*nb/2.0;
+  proton->n=(1.0-delta)*nb/2.0;
   
   calc_e(*neutron,*proton,*eos_thermo);
   
@@ -330,7 +376,7 @@ double eos_had_base::calc_pressure_nb(double nb, const double &alpha) {
 void eos_had_base::const_pf_derivs(double nb, double pf, 
 				   double &dednb_pf, double &dPdnb_pf) {
 
-  // Take derivatives w.r.t. alpha and then multiply by -2 to get
+  // Take derivatives w.r.t. delta and then multiply by -2 to get
   // derivatives w.r.t. x
   funct11 fmpp=std::bind(std::mem_fn<double(double,const double &)>
 			 (&eos_had_base::calc_pressure_nb),
@@ -344,7 +390,7 @@ void eos_had_base::const_pf_derivs(double nb, double pf,
   return;
 }
 
-double eos_had_base::calc_press_over_den2(double nb, const double &alpha) {
+double eos_had_base::calc_press_over_den2(double nb, const double &delta) {
   
   neutron->n=nb/2.0;
   proton->n=nb/2.0;
@@ -354,40 +400,40 @@ double eos_had_base::calc_press_over_den2(double nb, const double &alpha) {
   return eos_thermo->pr/nb/nb;
 }
 
-double eos_had_base::calc_edensity_alpha(double alpha, const double &nb) {
+double eos_had_base::calc_edensity_delta(double delta, const double &nb) {
   
-  neutron->n=(1.0+alpha)*nb/2.0;
-  proton->n=(1.0-alpha)*nb/2.0;
+  neutron->n=(1.0+delta)*nb/2.0;
+  proton->n=(1.0-delta)*nb/2.0;
   
   calc_e(*neutron,*proton,*eos_thermo);
 
   return eos_thermo->ed;
 }
 
-double eos_had_base::calc_dmu_alpha(double alpha, const double &nb) {
+double eos_had_base::calc_dmu_delta(double delta, const double &nb) {
   
-  neutron->n=(1.0+alpha)*nb/2.0;
-  proton->n=(1.0-alpha)*nb/2.0;
+  neutron->n=(1.0+delta)*nb/2.0;
+  proton->n=(1.0-delta)*nb/2.0;
   
   calc_e(*neutron,*proton,*eos_thermo);
 
   return neutron->mu-proton->mu;
 }
 
-double eos_had_base::calc_musum_alpha(double alpha, const double &nb) {
+double eos_had_base::calc_musum_delta(double delta, const double &nb) {
   
-  neutron->n=(1.0+alpha)*nb/2.0;
-  proton->n=(1.0-alpha)*nb/2.0;
+  neutron->n=(1.0+delta)*nb/2.0;
+  proton->n=(1.0-delta)*nb/2.0;
   
   calc_e(*neutron,*proton,*eos_thermo);
 
   return neutron->mu+proton->mu;
 }
 
-double eos_had_base::calc_edensity_nb(double nb, const double &alpha) {
+double eos_had_base::calc_edensity_nb(double nb, const double &delta) {
   
-  neutron->n=(1.0+alpha)*nb/2.0;
-  proton->n=(1.0-alpha)*nb/2.0;
+  neutron->n=(1.0+delta)*nb/2.0;
+  proton->n=(1.0-delta)*nb/2.0;
 
   calc_e(*neutron,*proton,*eos_thermo);
   

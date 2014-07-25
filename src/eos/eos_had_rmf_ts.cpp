@@ -608,7 +608,7 @@ int main(void) {
 
 #endif
 
-    load_nl3(rmf);
+  load_nl3(rmf);
   double nsig=0.1;
   double nome=0.07;
   double nrho=0.0;
@@ -627,6 +627,12 @@ int main(void) {
        << cn.c << " " << cn.zeta << " " << cn.xi << endl;
 
   t.report();
+
+  cout << rmf.fesym(0.16)*hc_mev_fm << endl;
+  cout << rmf.fesym_T(0.16,0.3/hc_mev_fm)*hc_mev_fm << endl;
+  cout << rmf.fesym_T(0.16,1.0/hc_mev_fm)*hc_mev_fm << endl;
+  cout << rmf.fesym_T(0.16,3.0/hc_mev_fm)*hc_mev_fm << endl;
+  cout << rmf.fesym_T(0.16,10.0/hc_mev_fm)*hc_mev_fm << endl;
 
   return 0;
 }
