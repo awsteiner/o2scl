@@ -188,6 +188,28 @@ int main(void) {
 		    cu.convert("1/fm^4","Msun/km^3",sa.ht.pr),sa.barn};
     eos.line_of_data(3,line);
   }
+
+  // 
+
+  {
+    eos_tov_linear lin;
+    lin.set_baryon_density(0.16,0.75);
+    double c1, c2;
+    lin.check_nb(c1,c2);
+    cout << c1 << " " << c2 << endl;
+    t.test_rel(c1,0.0,4.0e-4,"check_nb linear c1");
+    t.test_rel(c2,0.0,4.0e-4,"check_nb linear c2");
+  }
+
+  {
+    eos_tov_polytrope pt;
+    pt.set_baryon_density(0.16,0.75);
+    double c1, c2;
+    pt.check_nb(c1,c2);
+    cout << c1 << " " << c2 << endl;
+    t.test_rel(c1,0.0,4.0e-4,"check_nb polytrope c1");
+    t.test_rel(c2,0.0,4.0e-4,"check_nb polytrope c2");
+  }
   
   // Read APR EOS 
   eos_tov_interp te;
@@ -197,7 +219,7 @@ int main(void) {
   cout << endl;
 
   // Make sure baryon_column is set correctly
-  t.test_gen(te.baryon_column==true,"baryon column");
+  //t.test_gen(te.baryon_column==true,"baryon column");
 
   // Double check that get_names_units() correctly reports 0
   vector<string> auxp, auxu;
@@ -259,149 +281,6 @@ int main(void) {
   te.transition_mode=eos_tov_interp::match_line;
 
   //test_crust(te,cu,pr_low,pr_high,true,t);
-
-#ifdef O2SCL_NEVER_DEFINED
-
-  cout << "GCP10: " << endl;
-  te.gcp10_low_dens_eos("BSk19");
-  te.get_transition(prt_low,prt,prt_high);
-  cout << "Pressures near transition: " << endl;
-  cout << prt_low << " " << prt << " " << prt_high << endl;
-  te.gcp10_low_dens_eos("BSk20");
-  te.get_transition(prt_low,prt,prt_high);
-  cout << "Pressures near transition: " << endl;
-  cout << prt_low << " " << prt << " " << prt_high << endl;
-  te.gcp10_low_dens_eos("BSk21");
-  te.get_transition(prt_low,prt,prt_high);
-  cout << "Pressures near transition: " << endl;
-  cout << prt_low << " " << prt << " " << prt_high << endl;
-
-  tov_solve tsn;
-  tsn.verbose=0;
-  tsn.set_eos(te);
-  tsn.fixed(1.4);
-  cout << tsn.rad << endl;
-
-  // ---------------------------------------------------------
-  // Create a table comparing the crust EOSs
-  
-  size_t ngrid=200;
-  uniform_grid_log_end<double> pr_grid(2.0e-14,4.0e-3,ngrid-1);
-  cout << pr_grid.get_npoints() << endl;
-
-  table_units<> crust_comp;
-  crust_comp.line_of_names("pr ed_NVBPS ed_SHO ed_PNM_L40 ed_PNM_L100");
-  crust_comp.line_of_names("ed_J35_L40 ed_J35_L100 ed_SLy4 ed_APR ed_Gs");
-  crust_comp.line_of_names("ed_Rs nb_NVBPS nb_SHO nb_PNM_L40 nb_PNM_L100");
-  crust_comp.line_of_names("nb_J35_L40 nb_J35_L100 nb_SLy4 nb_APR nb_Gs");
-  crust_comp.line_of_names("nb_Rs");
-
-  crust_comp.set_unit("pr","1/fm^4");
-
-  crust_comp.set_unit("ed_NVBPS","1/fm^4");
-  crust_comp.set_unit("ed_SHO","1/fm^4");
-  crust_comp.set_unit("ed_PNM_L40","1/fm^4");
-  crust_comp.set_unit("ed_PNM_L100","1/fm^4");
-  crust_comp.set_unit("ed_J35_L40","1/fm^4");
-  crust_comp.set_unit("ed_J35_L100","1/fm^4");
-  crust_comp.set_unit("ed_APR","1/fm^4");
-  crust_comp.set_unit("ed_SLy4","1/fm^4");
-  crust_comp.set_unit("ed_Gs","1/fm^4");
-  crust_comp.set_unit("ed_Rs","1/fm^4");
-
-  crust_comp.set_unit("nb_NVBPS","1/fm^3");
-  crust_comp.set_unit("nb_SHO","1/fm^3");
-  crust_comp.set_unit("nb_PNM_L40","1/fm^3");
-  crust_comp.set_unit("nb_PNM_L100","1/fm^3");
-  crust_comp.set_unit("nb_J35_L40","1/fm^3");
-  crust_comp.set_unit("nb_J35_L100","1/fm^3");
-  crust_comp.set_unit("nb_APR","1/fm^3");
-  crust_comp.set_unit("nb_SLy4","1/fm^3");
-  crust_comp.set_unit("nb_Gs","1/fm^3");
-  crust_comp.set_unit("nb_Rs","1/fm^3");
-
-  // NVBPS
-  for(size_t i=0;i<200;i++) {
-    crust_comp.set("pr",i,pr_grid[i]);
-    te.get_eden_low(pr_grid[i],ed,nb);
-    crust_comp.set("ed_NVBPS",i,ed);
-    crust_comp.set("nb_NVBPS",i,nb);
-    cout << pr_grid[i] << " " << ed << " " << nb << endl;
-  }
-  
-  // SHO
-  te.sho11_low_dens_eos();
-  for(size_t i=0;i<200;i++) {
-    crust_comp.set("pr",i,pr_grid[i]);
-    te.get_eden_low(pr_grid[i],ed,nb);
-    crust_comp.set("ed_SHO",i,ed);
-    crust_comp.set("nb_SHO",i,nb);
-  }
-
-  te.ngl13_low_dens_eos(40.0);
-  for(size_t i=0;i<200;i++) {
-    crust_comp.set("pr",i,pr_grid[i]);
-    te.get_eden_low(pr_grid[i],ed,nb);
-    crust_comp.set("ed_PNM_L40",i,ed);
-    crust_comp.set("nb_PNM_L40",i,nb);
-  }
-
-  te.ngl13_low_dens_eos(100.0);
-  for(size_t i=0;i<200;i++) {
-    crust_comp.set("pr",i,pr_grid[i]);
-    te.get_eden_low(pr_grid[i],ed,nb);
-    crust_comp.set("ed_PNM_L100",i,ed);
-    crust_comp.set("nb_PNM_L100",i,nb);
-  }
-
-  te.ngl13_low_dens_eos(40.0,"J35");
-  for(size_t i=0;i<200;i++) {
-    crust_comp.set("pr",i,pr_grid[i]);
-    te.get_eden_low(pr_grid[i],ed,nb);
-    crust_comp.set("ed_J35_L40",i,ed);
-    crust_comp.set("nb_J35_L40",i,nb);
-  }
-
-  te.ngl13_low_dens_eos(100.0,"J35");
-  for(size_t i=0;i<200;i++) {
-    crust_comp.set("pr",i,pr_grid[i]);
-    te.get_eden_low(pr_grid[i],ed,nb);
-    crust_comp.set("ed_J35_L100",i,ed);
-    crust_comp.set("nb_J35_L100",i,nb);
-  }
-
-  te.s12_low_dens_eos("SLy4");
-  for(size_t i=0;i<200;i++) {
-    crust_comp.set("pr",i,pr_grid[i]);
-    te.get_eden_low(pr_grid[i],ed,nb);
-    crust_comp.set("ed_SLy4",i,ed);
-    crust_comp.set("nb_SLy4",i,nb);
-  }
-
-  te.s12_low_dens_eos("APR");
-  for(size_t i=0;i<200;i++) {
-    crust_comp.set("pr",i,pr_grid[i]);
-    te.get_eden_low(pr_grid[i],ed,nb);
-    crust_comp.set("ed_APR",i,ed);
-    crust_comp.set("nb_APR",i,nb);
-  }
-
-  te.s12_low_dens_eos("Rs");
-  for(size_t i=0;i<200;i++) {
-    crust_comp.set("pr",i,pr_grid[i]);
-    te.get_eden_low(pr_grid[i],ed,nb);
-    crust_comp.set("ed_Rs",i,ed);
-    crust_comp.set("nb_Rs",i,nb);
-  }
-
-  /*
-    hdf_file hf;
-    hf.open("crust_comp.o2");
-    hdf_output(hf,crust_comp,"crust_comp");
-    hf.close();
-  */
-
-#endif
   
   t.report();
 

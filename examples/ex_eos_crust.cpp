@@ -28,14 +28,17 @@
 
 #include <fstream>
 
-#include <o2scl/eos_crust.h>
 #include <o2scl/test_mgr.h>
-#include <o2scl/table_units.h>
 #include <o2scl/lib_settings.h>
+#include <o2scl/table_units.h>
+#include <o2scl/eos_crust.h>
+#include <o2scl/eos_tov.h>
+#include <o2scl/hdf_io.h>
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
+using namespace o2scl_hdf;
 
 // A simple function to load the BPS data without
 // HDF support, in case O2scl was compiled without it.
@@ -142,7 +145,144 @@ int main(void) {
   }
   cout << endl;
 
+  // ---------------------------------------------------------
+  // Create a table comparing the crust EOSs from eos_tov_interp
+
+  // Read the APR EOS table
+  table_units<> tab;
+  hdf_file hf;
+  string name;
+  hf.open("ex_eos_had_apr_nstar.o2");
+  hdf_input(hf,tab,name);
+  hf.close();
+  
+  // Send the EOS to the eos_tov_interp object
+  eos_tov_interp te;
+  te.read_table(tab,"ed","pr","nb");
+
+  // Define a grid of pressures over which to evaluate the EOS
+  size_t ngrid=200;
+  uniform_grid_log_end<double> pr_grid(2.0e-14,4.0e-3,ngrid-1);
+
+  // Create a table to store the data
+  table_units<> crust_comp;
+  crust_comp.line_of_names("pr ed_NVBPS ed_SHO ed_PNM_L40 ed_PNM_L100");
+  crust_comp.line_of_names("ed_J35_L40 ed_J35_L100 ed_SLy4 ed_APR ed_Rs");
+  crust_comp.line_of_names("nb_NVBPS nb_SHO nb_PNM_L40 nb_PNM_L100");
+  crust_comp.line_of_names("nb_J35_L40 nb_J35_L100 nb_SLy4 nb_APR nb_Rs");
+
+  crust_comp.set_unit("pr","1/fm^4");
+
+  crust_comp.set_unit("ed_NVBPS","1/fm^4");
+  crust_comp.set_unit("ed_SHO","1/fm^4");
+  crust_comp.set_unit("ed_PNM_L40","1/fm^4");
+  crust_comp.set_unit("ed_PNM_L100","1/fm^4");
+  crust_comp.set_unit("ed_J35_L40","1/fm^4");
+  crust_comp.set_unit("ed_J35_L100","1/fm^4");
+  crust_comp.set_unit("ed_APR","1/fm^4");
+  crust_comp.set_unit("ed_SLy4","1/fm^4");
+  crust_comp.set_unit("ed_Rs","1/fm^4");
+
+  crust_comp.set_unit("nb_NVBPS","1/fm^3");
+  crust_comp.set_unit("nb_SHO","1/fm^3");
+  crust_comp.set_unit("nb_PNM_L40","1/fm^3");
+  crust_comp.set_unit("nb_PNM_L100","1/fm^3");
+  crust_comp.set_unit("nb_J35_L40","1/fm^3");
+  crust_comp.set_unit("nb_J35_L100","1/fm^3");
+  crust_comp.set_unit("nb_APR","1/fm^3");
+  crust_comp.set_unit("nb_SLy4","1/fm^3");
+  crust_comp.set_unit("nb_Rs","1/fm^3");
+
+  // Energy density and baryon density
+  double ed, nb;
+
+  cout << "NVBPS crust." << endl;
+  for(size_t i=0;i<200;i++) {
+    crust_comp.set("pr",i,pr_grid[i]);
+    te.get_eden(pr_grid[i],ed,nb);
+    crust_comp.set("ed_NVBPS",i,ed);
+    crust_comp.set("nb_NVBPS",i,nb);
+  }
+  
+  cout << "SHO crust." << endl;
+  te.sho11_low_dens_eos();
+  for(size_t i=0;i<200;i++) {
+    crust_comp.set("pr",i,pr_grid[i]);
+    te.get_eden(pr_grid[i],ed,nb);
+    crust_comp.set("ed_SHO",i,ed);
+    crust_comp.set("nb_SHO",i,nb);
+  }
+
+  cout << "NGL13, L=40 crust." << endl;
+  te.ngl13_low_dens_eos(40.0);
+  for(size_t i=0;i<200;i++) {
+    crust_comp.set("pr",i,pr_grid[i]);
+    te.get_eden(pr_grid[i],ed,nb);
+    crust_comp.set("ed_PNM_L40",i,ed);
+    crust_comp.set("nb_PNM_L40",i,nb);
+  }
+
+  cout << "NGL13, L=100 crust." << endl;
+  te.ngl13_low_dens_eos(100.0);
+  for(size_t i=0;i<200;i++) {
+    crust_comp.set("pr",i,pr_grid[i]);
+    te.get_eden(pr_grid[i],ed,nb);
+    crust_comp.set("ed_PNM_L100",i,ed);
+    crust_comp.set("nb_PNM_L100",i,nb);
+  }
+
+  cout << "NGL13, L=40 crust." << endl;
+  te.ngl13_low_dens_eos(40.0,"J35");
+  for(size_t i=0;i<200;i++) {
+    crust_comp.set("pr",i,pr_grid[i]);
+    te.get_eden(pr_grid[i],ed,nb);
+    crust_comp.set("ed_J35_L40",i,ed);
+    crust_comp.set("nb_J35_L40",i,nb);
+  }
+
+  cout << "NGL13, L=100 crust." << endl;
+  te.ngl13_low_dens_eos(100.0,"J35");
+  for(size_t i=0;i<200;i++) {
+    crust_comp.set("pr",i,pr_grid[i]);
+    te.get_eden(pr_grid[i],ed,nb);
+    crust_comp.set("ed_J35_L100",i,ed);
+    crust_comp.set("nb_J35_L100",i,nb);
+  }
+
+  cout << "S12, SLy4 crust." << endl;
+  te.s12_low_dens_eos("SLy4");
+  for(size_t i=0;i<200;i++) {
+    crust_comp.set("pr",i,pr_grid[i]);
+    te.get_eden(pr_grid[i],ed,nb);
+    crust_comp.set("ed_SLy4",i,ed);
+    crust_comp.set("nb_SLy4",i,nb);
+  }
+
+  cout << "S12, APR crust." << endl;
+  te.s12_low_dens_eos("APR");
+  for(size_t i=0;i<200;i++) {
+    crust_comp.set("pr",i,pr_grid[i]);
+    te.get_eden(pr_grid[i],ed,nb);
+    crust_comp.set("ed_APR",i,ed);
+    crust_comp.set("nb_APR",i,nb);
+  }
+
+  cout << "S12, Rs crust." << endl;
+  te.s12_low_dens_eos("Rs");
+  for(size_t i=0;i<200;i++) {
+    crust_comp.set("pr",i,pr_grid[i]);
+    te.get_eden(pr_grid[i],ed,nb);
+    crust_comp.set("ed_Rs",i,ed);
+    crust_comp.set("nb_Rs",i,nb);
+  }
+  cout << endl;
+
+  hf.open_or_create("ex_crust_comp.o2");
+  hdf_output(hf,crust_comp,"crust_comp");
+  hf.close();
+
   t.report();
+
   return 0;
 }
 // End of example

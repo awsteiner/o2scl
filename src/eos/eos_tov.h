@@ -33,6 +33,7 @@
 #include <o2scl/lib_settings.h>
 #include <o2scl/interp.h>
 #include <o2scl/table_units.h>
+#include <o2scl/vector_derint.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -41,7 +42,16 @@ namespace o2scl {
   /** \brief A EOS base class for the TOV solver
   */
   class eos_tov {
+
+  protected:
     
+    /** \brief Set to true if the baryon density is provided in the
+	EOS (default false)
+    */
+    bool baryon_column;
+
+    friend class tov_solve;
+
   public:
     
     eos_tov() {
@@ -84,10 +94,35 @@ namespace o2scl {
       return;
     }
 
-    /** \brief Set to true if the baryon density is provided in the
-	EOS (default false)
-    */
-    bool baryon_column;
+    /** \brief Check that the baryon density is consistent 
+	with the EOS
+     */
+    void check_nb(double &avg_abs_dev, double &max_abs_dev) {
+      if (!baryon_column) {
+	O2SCL_ERR2("Variable 'baryon_column' false in",
+		   "eos_tov::check_nb().",exc_einval);
+      }
+      std::vector<double> edv, prv, nbv, dedn;
+      for (double pres=0.1;pres<3.0;pres*=1.001) {
+	double eps, nb;
+	get_eden(pres,eps,nb);
+	edv.push_back(eps);
+	prv.push_back(pres);
+	nbv.push_back(nb);
+      }
+      dedn.resize(edv.size());
+      vector_deriv_interp(edv.size(),nbv,edv,dedn,itp_linear);
+      avg_abs_dev=0.0;
+      max_abs_dev=0.0;
+      for(size_t i=0;i<edv.size();i++) {
+	double abs_dev=(fabs(edv[i]+prv[i]-dedn[i]*nbv[i])/
+		      fabs(dedn[i]*nbv[i]));
+	if (abs_dev>max_abs_dev) max_abs_dev=abs_dev;
+	avg_abs_dev+=abs_dev;
+      }
+      avg_abs_dev/=((double)edv.size());
+      return;
+    }
 
   };
 

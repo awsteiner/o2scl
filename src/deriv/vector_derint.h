@@ -158,13 +158,23 @@ namespace o2scl {
   
   /** \brief Derivative from interpolation object
    */
-  template<class ovec_t>
-    void vector_deriv_interp(size_t n, ovec_t &v, ovec_t &dv, 
-			     size_t interp_type=1) {
+  template<class ovec_t, class vec2_t>
+    void vector_deriv_interp(size_t n, ovec_t &v, vec2_t &dv, 
+			     size_t interp_type=itp_cspline) {
     ovec_t grid(n);
     for(size_t i=0;i<n;i++) grid[i]=((double)i);
-    interp_vec<ovec_t> oi(n,grid,v,interp_type);
+    interp_vec<ovec_t,ovec_t> oi(n,grid,v,interp_type);
     for(size_t i=0;i<n;i++) dv[i]=oi.deriv(((double)i));
+    return;
+  }
+
+  /** \brief Derivative from interpolation object
+   */
+  template<class vec_t, class vec2_t, class vec3_t>
+    void vector_deriv_interp(size_t n, vec_t &vx, vec2_t &vy, vec3_t &dv, 
+			     size_t interp_type=itp_cspline) {
+    interp_vec<vec_t,vec2_t> oi(n,vx,vy,interp_type);
+    for(size_t i=0;i<n;i++) dv[i]=oi.deriv(vx[i]);
     return;
   }
   //@}
