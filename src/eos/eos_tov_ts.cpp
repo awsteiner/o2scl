@@ -210,6 +210,16 @@ int main(void) {
     t.test_rel(c1,0.0,4.0e-4,"check_nb polytrope c1");
     t.test_rel(c2,0.0,4.0e-4,"check_nb polytrope c2");
   }
+
+  {
+    eos_tov_buchdahl pt;
+    pt.set_baryon_density(0.16,0.75);
+    double c1, c2;
+    pt.check_nb(c1,c2);
+    cout << c1 << " " << c2 << endl;
+    t.test_rel(c1,0.0,4.0e-4,"check_nb polytrope c1");
+    t.test_rel(c2,0.0,4.0e-4,"check_nb polytrope c2");
+  }
   
   // Read APR EOS 
   eos_tov_interp te;

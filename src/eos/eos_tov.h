@@ -156,6 +156,20 @@ namespace o2scl {
   */
   class eos_tov_buchdahl : public eos_tov {
     
+  protected:
+
+    /** \brief The baryon density at \c ed1
+     */
+    double nb1;
+
+    /** \brief The energy density for which the baryon density is known
+     */
+    double ed1;
+
+    /** \brief The pressure at \c ed1
+     */
+    double pr1;
+
   public:
 
     eos_tov_buchdahl() {
@@ -170,6 +184,21 @@ namespace o2scl {
     */
     double Pstar;
     
+    /** \brief Set the baryon density
+     */
+    void set_baryon_density(double nb, double ed) {
+      if (nb<0.0 || ed<0.0) {
+	O2SCL_ERR2("Negative densities not supported in ",
+		   "eos_tov_polytrope::set_coeff_index().",exc_einval);
+      }
+      baryon_column=true;
+      nb1=nb;
+      ed1=ed;
+      pr1=0.04*(72.0*Pstar-5.0*ed+
+		12.0*sqrt(36.0*Pstar*Pstar-5.0*Pstar*ed));
+      return;
+    }
+
     /** \brief Given the pressure, produce the energy and number densities
 	
 	If the baryon density is not specified, it should be set to
@@ -177,7 +206,16 @@ namespace o2scl {
     */
     virtual void get_eden(double P, double &e, double &nb) {
       e=12.0*sqrt(Pstar*P)-5.0*P;
-      nb=0.0;
+      if (baryon_column) {
+	double mu1=(pr1+ed1)/nb1;
+	double t1=P/sqrt(P*Pstar);
+	double t2=pr1/sqrt(pr1*Pstar);
+	double mu=(pow((pr1-9.0*Pstar)*(3.0+t1)*(3.0-t2),0.25)*mu1)/
+	  pow((P-9.0*Pstar)*(3.0-t1)*(3.0+t2),0.25);
+	nb=(P+e)/mu;
+      } else {
+	nb=0.0;
+      }
       return;
     }
     
