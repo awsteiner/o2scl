@@ -194,6 +194,10 @@ namespace o2scl {
       baryon_column=true;
       nb1=nb;
       ed1=ed;
+      if (36.0*Pstar*Pstar-5.0*Pstar*ed<0.0) {
+	O2SCL_ERR2("Values of 'Pstar' and 'ed' incommensurate in ",
+		   "eos_tov_buchdahl::set_baryon_density().",exc_einval);
+      }
       pr1=0.04*(72.0*Pstar-5.0*ed+
 		12.0*sqrt(36.0*Pstar*Pstar-5.0*Pstar*ed));
       return;
@@ -210,8 +214,8 @@ namespace o2scl {
 	double mu1=(pr1+ed1)/nb1;
 	double t1=P/sqrt(P*Pstar);
 	double t2=pr1/sqrt(pr1*Pstar);
-	double mu=(pow((pr1-9.0*Pstar)*(3.0+t1)*(3.0-t2),0.25)*mu1)/
-	  pow((P-9.0*Pstar)*(3.0-t1)*(3.0+t2),0.25);
+	double mu=mu1*pow((-pr1+9.0*Pstar)*(3.0+t1)*(3.0-t2)/
+			  (-P+9.0*Pstar)/(3.0-t1)/(3.0+t2),0.25);
 	nb=(P+e)/mu;
       } else {
 	nb=0.0;
@@ -634,6 +638,8 @@ namespace o2scl {
 
   protected:
 
+    void internal_read();
+
     /// \name Crust EOS variables
     //@{
     /// Set to true if we are using a crust EOS (default false)
@@ -651,6 +657,8 @@ namespace o2scl {
     
     /// \name User EOS
     //@{
+    /// True if core table has been specified
+    bool core_set;
     /// Full user EOS table
     table_units<> *core_table;
     /// Column for energy density in EOS file

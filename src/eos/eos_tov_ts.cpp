@@ -213,7 +213,7 @@ int main(void) {
 
   {
     eos_tov_buchdahl pt;
-    pt.set_baryon_density(0.16,0.75);
+    pt.set_baryon_density(0.16,1.0e-6);
     double c1, c2;
     pt.check_nb(c1,c2);
     cout << c1 << " " << c2 << endl;

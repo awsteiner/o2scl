@@ -140,7 +140,6 @@ int main(void) {
   te.default_low_dens_eos();
   te.read_table(eos,"ed","pr","nb");
   
-  t.test_gen(te.baryon_column==true,"baryon column");
   vector<string> auxp, auxu;
   size_t np;
   te.get_names_units(np,auxp,auxu);

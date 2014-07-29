@@ -52,6 +52,7 @@ eos_tov_interp::eos_tov_interp() {
   
   trans_width=1.0;
   core_table=0;
+  core_set=false;
 
   transition_mode=smooth_trans;
 
@@ -99,6 +100,7 @@ void eos_tov_interp::read_vectors(size_t n_core, std::vector<double> &core_ed,
 void eos_tov_interp::read_vectors(size_t n_core, std::vector<double> &core_ed, 
 			       std::vector<double> &core_pr, 
 			       std::vector<double> &core_nb) {
+
   read_vectors(n_core,core_ed,core_pr);
   efactor=1.0;
   nfactor=1.0;
@@ -111,8 +113,8 @@ void eos_tov_interp::read_vectors(size_t n_core, std::vector<double> &core_ed,
 }
 
 void eos_tov_interp::read_table(table_units<> &eosat, string s_cole, 
-			     string s_colp, string s_colnb) {
-			       
+				string s_colp, string s_colnb) {
+  
   core_table=&eosat;
   size_t core_nlines=core_table->get_nlines();
 
@@ -137,7 +139,7 @@ void eos_tov_interp::read_table(table_units<> &eosat, string s_cole,
   else core_auxp=core_table->get_ncolumns()-2;
 
   // ---------------------------------------------------------------
-  // Take care of units
+  // Determine conversion factors from units
  
   string eunits=core_table->get_unit(s_cole);
   string punits=core_table->get_unit(s_colp);
@@ -173,6 +175,22 @@ void eos_tov_interp::read_table(table_units<> &eosat, string s_cole,
 	(nunits,"1/fm^3",1.0);
     }
   }
+
+  core_set=true;
+
+  internal_read();
+
+  return;
+}
+
+void eos_tov_interp::internal_read() {
+
+  if (!core_set) {
+    O2SCL_ERR("Core table not set in eos_tov_interp::internal_read().",
+	      exc_esanity);
+  }
+
+  size_t core_nlines=core_table->get_nlines();
 
   // ---------------------------------------------------------------
   // Construct full vectors
@@ -430,6 +448,8 @@ void eos_tov_interp::default_low_dens_eos() {
   }
 
   use_crust=true;
+  
+  if (core_set) internal_read();
     
   return;
 }
@@ -544,6 +564,8 @@ void eos_tov_interp::sho11_low_dens_eos() {
 
   use_crust=true;
     
+  if (core_set) internal_read();
+    
   return;
 }
 
@@ -650,6 +672,8 @@ void eos_tov_interp::ngl13_low_dens_eos(double L, string model,
   }
 
   use_crust=true;
+    
+  if (core_set) internal_read();
     
   return;
 }
@@ -776,6 +800,8 @@ void eos_tov_interp::ngl13_low_dens_eos2(double S, double L, double nt,
 
   use_crust=true;
     
+  if (core_set) internal_read();
+    
   return;
 }
 
@@ -833,6 +859,8 @@ void eos_tov_interp::s12_low_dens_eos(string model, bool external) {
   }
 
   use_crust=true;
+    
+  if (core_set) internal_read();
     
   return;
 }
@@ -912,6 +940,8 @@ void eos_tov_interp::gcp10_low_dens_eos(string model, bool external) {
   }
 
   use_crust=true;
+    
+  if (core_set) internal_read();
     
   return;
 }
