@@ -626,13 +626,13 @@ int main(void) {
   cout << cn.cs << " " << cn.cw << " " << cn.cr << " " << cn.b << "\n"
        << cn.c << " " << cn.zeta << " " << cn.xi << endl;
 
-  t.report();
-
   cout << rmf.fesym(0.16)*hc_mev_fm << endl;
   cout << rmf.fesym_T(0.16,0.3/hc_mev_fm)*hc_mev_fm << endl;
   cout << rmf.fesym_T(0.16,1.0/hc_mev_fm)*hc_mev_fm << endl;
   cout << rmf.fesym_T(0.16,3.0/hc_mev_fm)*hc_mev_fm << endl;
   cout << rmf.fesym_T(0.16,10.0/hc_mev_fm)*hc_mev_fm << endl;
+
+  t.report();
 
   return 0;
 }

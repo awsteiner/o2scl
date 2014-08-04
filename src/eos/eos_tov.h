@@ -49,7 +49,7 @@ namespace o2scl {
 	EOS (default false)
     */
     bool baryon_column;
-
+    
     friend class tov_solve;
 
   public:
@@ -138,6 +138,23 @@ namespace o2scl {
       \f]
       where \f$ \beta = GM/R \f$.
 
+      The baryon chemical potential is
+      \f[
+      \mu = \mu_1 \left[ \frac{\left(9 p_{*}-P_1\right) \left(3+t_1\right)
+      \left(3-t_2\right)}{\left(9 p_{*}-P\right)\left(3-t_1\right)
+      \left(3+t_2\right)}\right]^{1/4}
+      \f]
+      where \f$ t_1 = \sqrt{P}/\sqrt{p_{*}} \f$ and \f$ t_2 =
+      \sqrt{P_1/p_{*}} \f$ . The baryon density can then be obtained
+      directly from the thermodynamic identity. In the case that one
+      assumes \f$ \mu_1 = m_n \f$ and \f$ P_1 = 0 \f$, the baryon
+      density can be simplified to
+      \f[
+      n m_n = 12 \sqrt{P p_{*}} \left( 1-\frac{1}{3} \sqrt{P/p_{*}} 
+      \right)^{3/2}
+      \f]
+      c.f. Eq. 10 in \ref Lattimer01. 
+
       The central pressure and energy density are
       \f[
       P_c = 36 p_{*} \beta^2 
@@ -212,8 +229,10 @@ namespace o2scl {
       e=12.0*sqrt(Pstar*P)-5.0*P;
       if (baryon_column) {
 	double mu1=(pr1+ed1)/nb1;
-	double t1=P/sqrt(P*Pstar);
-	double t2=pr1/sqrt(pr1*Pstar);
+	//double t1=P/sqrt(P*Pstar);
+	//double t2=pr1/sqrt(pr1*Pstar);
+	double t1=sqrt(P/Pstar);
+	double t2=sqrt(pr1/Pstar);
 	double mu=mu1*pow((-pr1+9.0*Pstar)*(3.0+t1)*(3.0-t2)/
 			  (-P+9.0*Pstar)/(3.0-t1)/(3.0+t2),0.25);
 	nb=(P+e)/mu;
@@ -237,10 +256,32 @@ namespace o2scl {
       return;
     }
     
-#ifdef O2SCL_NEVER_DEFINED
+  protected:
     
-    int buchfun(size_t bv, const std::vector<double> &bx, 
-		std::vector<double> &by, int &pa) {
+    /** \brief Solve to compute profiles
+
+	After solving the two equations
+	\f{eqnarray*}
+	r^{\prime} &=& r \left(1-\beta+u\right)^{-1} 
+	\left(1 - 2 \beta\right) \nonumber \\
+	A^2 &=& 288 \pi p_{*} G \left( 1 - 2 \beta \right)^{-1}
+	\f}
+	for \f$ u = \beta/(A r^{\prime}) \sin A r^{\prime} \f$ 
+	and \f$ r^{\prime} \f$,
+	one can compute the pressure and energy density 
+	profiles
+	\f{eqnarray*}
+	8 \pi P &=& A^2 u^2 \left(1 - 2 \beta \right)
+	\left(1 - \beta + u \right)^{-2}
+	\nonumber \\
+	8 \pi \varepsilon &=& 2 A^2 u \left(1 - 2 \beta\right)
+	\left(1 - \beta - 3 u/2\right) \left(1 - \beta + u \right)^{-2}
+	\nonumber \\
+	\f}
+	
+    */
+    int solve_u_rp_fun(size_t bv, const std::vector<double> &bx, 
+		       std::vector<double> &by) {
       double u, rp;
       u=bx[0];
       rp=bx[1];
@@ -248,8 +289,6 @@ namespace o2scl {
       by[1]=beta/biga/rp*sin(biga*rp);
       return gsl_success;
     }
-
-#endif
 
   };
 
