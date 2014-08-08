@@ -312,11 +312,11 @@ void eos_sn_base::beta_eq_sfixed(size_t i, double entr,
   
   if (loaded==false) {
     O2SCL_ERR2("No data loaded in ",
-	       "eos_sn_base::beta_eq_s4().",exc_einval);
+	       "eos_sn_base::beta_eq_sfixed().",exc_einval);
   }
   if (i>=n_nB) {
     O2SCL_ERR2("Too high for baryon grid in ",
-	       "eos_sn_base::beta_eq_s4().",exc_einval);
+	       "eos_sn_base::beta_eq_sfixed().",exc_einval);
   }
   if (with_leptons_loaded==false) {
     compute_eg();
@@ -381,6 +381,68 @@ void eos_sn_base::beta_eq_sfixed(size_t i, double entr,
     (E.get_grid(2,k_min_j+1)-E.get_grid(2,k_min_j))*
     (entr-S.get(i,j_found,k_min_j))/
     (S.get(i,j_found,k_min_j+1)-S.get(i,j_found,k_min_j));
+	
+  return;
+}
+
+void eos_sn_base::beta_eq_Tfixed
+(size_t i, size_t k, double &nb, double &T, double &E_beta, double &P_beta,
+ double &Ye_beta, double &Z_beta, double &A_beta, double &s_beta) {
+  
+  if (loaded==false) {
+    O2SCL_ERR2("No data loaded in ",
+	       "eos_sn_base::beta_eq_Tfixed().",exc_einval);
+  }
+  if (i>=n_nB) {
+    O2SCL_ERR2("Too high for baryon grid in ",
+	       "eos_sn_base::beta_eq_Tfixed().",exc_einval);
+  }
+  if (k>=n_T) {
+    O2SCL_ERR2("Too high for temperature grid in ",
+	       "eos_sn_base::beta_eq_Tfixed().",exc_einval);
+  }
+  if (with_leptons_loaded==false) {
+    compute_eg();
+  }
+  // Get baryon density from grid
+  nb=E.get_grid(0,i);
+  T=E.get_grid(2,k);
+
+  // The electron fraction grid point corresponding to the minimum
+  size_t j_found=0;
+
+  // Desc
+  double Emin=0.0;
+
+  // Find the proper value of j
+  for(size_t j=0;j<n_Ye;j++) {
+    if (j==0) {
+      Emin=E.get(i,j,k)+(E.get(i,j,k+1)-E.get(i,j,k))*
+	(entr-S.get(i,j,k))/(S.get(i,j,k+1)-S.get(i,j,k));
+    } else {
+      double Ethis=E.get(i,j,k)+(E.get(i,j,k+1)-E.get(i,j,k))*
+	(entr-S.get(i,j,k))/(S.get(i,j,k+1)-S.get(i,j,k));
+      if (Ethis<Emin) {
+	j_found=j;
+	Emin=Ethis;
+      }
+    }
+  }
+
+  // Interpolate final results
+  double fact=(entr-S.get(i,j_found,k_j))/
+    (S.get(i,j_found,k_j+1)-S.get(i,j_found,k_j));
+
+  E_beta=Emin;
+  P_beta=P.get(i,j_found,k_j)+
+    (P.get(i,j_found,k_j+1)-P.get(i,j_found,k_j))*fact;
+  Z_beta=Z.get(i,j_found,k_j)+
+    (Z.get(i,j_found,k_j+1)-Z.get(i,j_found,k_j))*fact;
+  A_beta=A.get(i,j_found,k_j)+
+    (A.get(i,j_found,k_j+1)-A.get(i,j_found,k_j))*fact;
+  Ye_beta=E.get_grid(1,j_found);
+  s_beta=S.get(i,j_found,k_j)+
+    (S.get(i,j_found,k_j+1)-S.get(i,j_found,k_j))*fact;
 	
   return;
 }

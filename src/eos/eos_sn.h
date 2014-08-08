@@ -292,6 +292,12 @@ namespace o2scl {
        double &P_beta, double &Ye_beta, double &Z_beta, double &A_beta,
        double &T_beta);
 
+    /// Desc
+    virtual void beta_eq_Tfixed
+      (size_t i, double T, double &nb, double &E_beta, 
+       double &P_beta, double &Ye_beta, double &Z_beta, double &A_beta,
+       double &s_beta);
+
     /// Return true if data has been loaded
     bool is_loaded() {
       return loaded;
