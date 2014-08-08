@@ -285,9 +285,9 @@ namespace o2scl {
       double u, rp;
       u=bx[0];
       rp=bx[1];
-      by[0]=rp*(1.0-beta+u)/(1.0-2.0*beta)-buchrad;
-      by[1]=beta/biga/rp*sin(biga*rp);
-      return gsl_success;
+      //by[0]=rp*(1.0-beta+u)/(1.0-2.0*beta)-buchrad;
+      //by[1]=beta/biga/rp*sin(biga*rp);
+      return 0;
     }
 
   };

@@ -282,7 +282,7 @@ namespace o2scl {
 			    double &Z_beta, double &A_beta)=0;
 
     /** \brief Compute properties of matter in beta equilibrium
-	at s=4
+	at fixed entropy per baryon
 
 	This function just does a simple hard-coded linear
 	interpolation.
@@ -292,11 +292,16 @@ namespace o2scl {
        double &P_beta, double &Ye_beta, double &Z_beta, double &A_beta,
        double &T_beta);
 
-    /// Desc
+    /** \brief Compute properties of matter in beta equilibrium
+	at fixed temperature
+
+	This function just does a simple hard-coded linear
+	interpolation.
+    */
     virtual void beta_eq_Tfixed
-      (size_t i, double T, double &nb, double &E_beta, 
+      (size_t i, size_t k, double &nb, double &T, double &E_beta, 
        double &P_beta, double &Ye_beta, double &Z_beta, double &A_beta,
-       double &s_beta);
+       double &S_beta);
 
     /// Return true if data has been loaded
     bool is_loaded() {
