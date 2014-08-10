@@ -304,132 +304,89 @@ void eos_sn_base::check_composition(double &max1, double &max2) {
   return;
 }
 
-void eos_sn_base::beta_eq_sfixed
-(size_t i, double entr, double &nb, double &E_beta, double &P_beta, 
- double &Ye_beta, double &Z_beta, double &A_beta, double &T_beta) {
+void eos_sn_base::beta_eq_sfixed(double nB, double entr,
+				 double &Ye, double &T) {
   
   if (loaded==false) {
     O2SCL_ERR2("No data loaded in ",
 	       "eos_sn_base::beta_eq_sfixed().",exc_einval);
   }
-  if (i>=n_nB) {
-    O2SCL_ERR2("Too high for baryon grid in ",
-	       "eos_sn_base::beta_eq_sfixed().",exc_einval);
-  }
   if (with_leptons_loaded==false) {
     compute_eg();
   }
-  // Get baryon density from grid
-  nb=E.get_grid(0,i);
-  // Minimum energy
-  double Emin=0.0;
-  // The electron fraction grid point corresponding to the minimum
-  size_t j_found=0;
-  // The temperature grid point for specified S at the Ye grid 
-  // point j_found
-  size_t k_min_j=0;
-  for(size_t j=0;j<n_Ye;j++) {
-    // For each electron fraction, we need to find the 
-    // grid point surrounding the fixed value of S
-    bool found=false;
-    size_t k_found=0;
-    for(size_t k=0;k<n_T-1;k++) {
-      if (S.get(i,j,k)<entr && S.get(i,j,k+1)>=entr) {
-	k_found=k; 
-	k=n_T;
-	found=true;
-      }
-    }
-    if (found==false) {
-      if (S.get(i,j,0)<entr) {
-	k_found=n_T-2;
-      }
-    }
-    if (j==0) {
-      Emin=E.get(i,j,k_found)+(E.get(i,j,k_found+1)-E.get(i,j,k_found))*
-	(entr-S.get(i,j,k_found))/(S.get(i,j,k_found+1)-
-				   S.get(i,j,k_found));
-    } else {
-      double Ethis=E.get(i,j,k_found)+
-	(E.get(i,j,k_found+1)-E.get(i,j,k_found))*
-	(entr-S.get(i,j,k_found))/(S.get(i,j,k_found+1)-
-				   S.get(i,j,k_found));
-      if (Ethis<Emin) {
-	j_found=j;
-	Emin=Ethis;
-	k_min_j=k_found;
-      }
-    }
+
+  // Linear interpolation for the temperature
+  interp<> it(itp_linear);
+
+  // Create a vector for the temperature and entropy
+  ubvector Tvec(n_T), Svec(n_T);
+  for(size_t k=0;k<n_T;k++) {
+    Tvec[k]=S.get_grid(2,k);
   }
 
-  // Interpolate final results
-  double fact=(entr-S.get(i,j_found,k_min_j))/
-    (S.get(i,j_found,k_min_j+1)-S.get(i,j_found,k_min_j));
-  E_beta=Emin;
-  P_beta=P.get(i,j_found,k_min_j)+
-    (P.get(i,j_found,k_min_j+1)-P.get(i,j_found,k_min_j))*fact;
-  Z_beta=Z.get(i,j_found,k_min_j)+
-    (Z.get(i,j_found,k_min_j+1)-Z.get(i,j_found,k_min_j))*fact;
-  A_beta=A.get(i,j_found,k_min_j)+
-    (A.get(i,j_found,k_min_j+1)-A.get(i,j_found,k_min_j))*fact;
-  Ye_beta=E.get_grid(1,j_found);
-  T_beta=E.get_grid(2,k_min_j)+
-    (E.get_grid(2,k_min_j+1)-E.get_grid(2,k_min_j))*fact;
+  // Create vectors to interpolate for the minimum free energy
+  vector<double> Yevec, Fvec;
+  for(size_t j=0;j<n_Ye;j++) {
+    double Ye=F.get_grid(1,j);
+    Yevec.push_back(Ye);
+
+    // Create vectors to find the temperature corresponding to the
+    // specified entropy
+    for(size_t k=0;k<n_T;k++) {
+      Svec[k]=S.interp_linear(nB,Ye,Tvec[k]);
+    }
+    T=it.eval(entr,n_T,Svec,Tvec);
+
+    // Add the free energy at this temperature for this electron 
+    // fraction
+    Fvec.push_back(F.interp_linear(nB,Ye,T));
+  }
+  
+  // Use those vectors to get Ye
+  size_t ix=vector_min_index<vector<double>,double>(n_Ye,Fvec);
+  if (ix==0 || ix==n_Ye-1) {
+    Ye=Yevec[ix];
+    return;
+  }
+  Ye=quadratic_extremum_x(Yevec[ix-1],Yevec[ix],Yevec[ix+1],
+			  Fvec[ix-1],Fvec[ix],Fvec[ix+1]);
+  
+  // Now compute the temperature for this particular Ye
+  for(size_t k=0;k<n_T;k++) {
+    Svec[k]=S.interp_linear(nB,Ye,Tvec[k]);
+  }
+  T=it.eval(entr,n_T,Svec,Tvec);
 
   return;
 }
 
-void eos_sn_base::beta_eq_Tfixed
-(size_t i, size_t k, double &nb, double &T, double &E_beta, double &P_beta,
- double &Ye_beta, double &Z_beta, double &A_beta, double &S_beta) {
+void eos_sn_base::beta_eq_Tfixed(double nB, double T, double &Ye) {
   
   if (loaded==false) {
     O2SCL_ERR2("No data loaded in ",
 	       "eos_sn_base::beta_eq_Tfixed().",exc_einval);
   }
-  if (i>=n_nB) {
-    O2SCL_ERR2("Too high for baryon grid in ",
-	       "eos_sn_base::beta_eq_Tfixed().",exc_einval);
-  }
-  if (k>=n_T) {
-    O2SCL_ERR2("Too high for temperature grid in ",
-	       "eos_sn_base::beta_eq_Tfixed().",exc_einval);
-  }
   if (with_leptons_loaded==false) {
     compute_eg();
   }
-  // Get baryon density from grid
-  nb=E.get_grid(0,i);
-  T=E.get_grid(2,k);
 
-  // The electron fraction grid point corresponding to the minimum
-  size_t j_found=0;
-
-  // Desc
-  double Emin=0.0;
-
-  // Find the proper value of j
+  // Create vectors to interpolate for the minimum free energy
+  vector<double> Yevec, Fvec;
   for(size_t j=0;j<n_Ye;j++) {
-    if (j==0) {
-      Emin=E.get(i,j,k);
-    } else {
-      double Ethis=E.get(i,j,k);
-      if (Ethis<Emin) {
-	j_found=j;
-	Emin=Ethis;
-      }
-    }
+    double Ye=F.get_grid(1,j);
+    Yevec.push_back(Ye);
+    Fvec.push_back(F.interp_linear(nB,Ye,T));
   }
-
-  // Interpolate final results
-
-  E_beta=Emin;
-  P_beta=P.get(i,j_found,k);
-  Z_beta=Z.get(i,j_found,k);
-  A_beta=A.get(i,j_found,k);
-  Ye_beta=E.get_grid(1,j_found);
-  S_beta=S.get(i,j_found,k);
-	
+  
+  // Use those vectors to get Ye
+  size_t ix=vector_min_index<vector<double>,double>(n_Ye,Fvec);
+  if (ix==0 || ix==n_Ye-1) {
+    Ye=Yevec[ix];
+    return;
+  }
+  Ye=quadratic_extremum_x(Yevec[ix-1],Yevec[ix],Yevec[ix+1],
+			  Fvec[ix-1],Fvec[ix],Fvec[ix+1]);
+  
   return;
 }
 

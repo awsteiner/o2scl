@@ -29,6 +29,9 @@ using namespace o2scl;
 using namespace o2scl_const;
 
 int main(void) {
+
+  cout.setf(ios::scientific);
+
   test_mgr t;
   t.set_output_level(2);
 
@@ -38,12 +41,33 @@ int main(void) {
     thermo hb;
     double barn, dtemp;
 
-    cout.setf(ios::scientific);
-  
     ap.select(1);
 
     n.non_interacting=false;
     pr.non_interacting=false;
+
+    {
+      // Test the liquid-gas phase transition
+      fermion n2(939.0/197.33,2.0), p2(939.0/197.33,2.0);
+      thermo th2, th;
+      n.n=0.09;
+      pr.n=n.n;
+      n2.n=1.0e-2;
+      p2.n=1.0e-2;
+      ap.def_mroot.ntrial=1000;
+      ap.calc_liqgas_dens_temp_e(n,pr,n2,p2,2.0/197.33,th,th2);
+      t.test_rel(n.mu,n2.mu,1.0e-8,"mun");
+      t.test_rel(pr.mu,p2.mu,1.0e-8,"mup");
+      cout << n.n << " " << pr.n << " " << n2.n << " " << p2.n << endl;
+
+      double chi=0.1;
+      double nB=(n.n+pr.n)*chi+(n2.n+p2.n)*(1.0-chi)+1.0e-4;
+      double Ye=(pr.n*chi+p2.n*(1.0-chi))/nB;
+      ap.calc_liqgas_temp_e(n,pr,n2,p2,nB,Ye,2.0/197.33,th,th2,chi);
+      t.test_rel(n.mu,n2.mu,1.0e-8,"mun");
+      t.test_rel(pr.mu,p2.mu,1.0e-8,"mup");
+      cout << n.n << " " << pr.n << " " << n2.n << " " << p2.n << endl;
+    }
 
     n.n=0.08;
     pr.n=0.08;

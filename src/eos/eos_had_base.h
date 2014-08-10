@@ -870,6 +870,81 @@ namespace o2scl {
     int nuc_matter_temp_p(size_t nv, const ubvector &x, 
 			  ubvector &y, double *&pa);
     
+    /** \brief Desc
+     */
+    virtual int liqgas_dens_solve(size_t nv, const ubvector &x, 
+				  ubvector &y, fermion &n1, fermion &p1,
+				  fermion &n2, fermion &p2, double T,
+				  thermo &th1, thermo &th2) {
+      
+      p1.n=x[0];
+      calc_temp_e(n1,p1,T,th1);
+
+      n2.n=x[1];
+      p2.n=x[2];
+      calc_temp_e(n2,p2,T,th2);
+
+      y[0]=n1.mu-n2.mu;
+      y[1]=p1.mu-p2.mu;
+      y[2]=th1.pr-th2.pr;
+
+      return 0;
+    }
+
+    /** \brief Desc
+     */
+    virtual int liqgas_solve(size_t nv, const ubvector &x, 
+			     ubvector &y, fermion &n1, fermion &p1,
+			     fermion &n2, fermion &p2, double nB0,
+			     double Ye0, double T, 
+			     thermo &th1, thermo &th2) {
+      
+      n1.n=x[0];
+      p1.n=x[1];
+      calc_temp_e(n1,p1,T,th1);
+
+      n2.n=x[2];
+      p2.n=x[3];
+      calc_temp_e(n2,p2,T,th2);
+
+      double chi=x[4];
+
+      y[0]=n1.mu-n2.mu;
+      y[1]=p1.mu-p2.mu;
+      y[2]=th1.pr-th2.pr;
+      y[3]=(n1.n+p1.n)*chi+(n2.n+p2.n)*(1.0-chi)-nB0;
+      y[4]=p1.n*chi+p2.n*(1.0-chi)-Ye0*nB0;
+
+      return 0;
+    }
+
+    /** \brief Desc
+     */
+    virtual int liqgas_beta_solve(size_t nv, const ubvector &x, 
+				  ubvector &y, fermion &n1, fermion &p1,
+				  fermion &n2, fermion &p2, 
+				  double nB0, double mue, double T,
+				  thermo &th1, thermo &th2) {
+      
+      n1.n=x[0];
+      p1.n=x[1];
+      calc_temp_e(n1,p1,T,th1);
+
+      n2.n=x[2];
+      p2.n=x[3];
+      calc_temp_e(n2,p2,T,th2);
+
+      double chi=x[4];
+
+      y[0]=n1.mu-n2.mu;
+      y[1]=p1.mu-p2.mu;
+      y[2]=th1.pr-th2.pr;
+      y[3]=(n1.n+p1.n)*chi+(n2.n+p2.n)*(1.0-chi)-nB0;
+      y[4]=n1.mu-p1.mu-mue;
+
+      return 0;
+    }
+
 #endif
 
   public:
@@ -890,8 +965,111 @@ namespace o2scl {
     /// Default fermion thermodynamics object
     fermion_eff def_fet;
 
-    /** \brief Equation of state as a function of density
+    /** \brief Compute liquid-gas phase transition densities using
+	\ref eos_had_temp_base::calc_temp_e() .
+
+	At fixed baryon number density for \c n1, this determines the
+	baryon number densities for \c p1, \c n2, and \c p2 which give
+	chemical and mechanical equilibrium at a fixed temperature 
+	\c T. The thermodynamic quantities assuming bulk matter for
+	each set is stored in \c th1 and \c th2.
     */
+    virtual int calc_liqgas_dens_temp_e
+      (fermion &n1, fermion &p1, fermion &n2, fermion &p2,
+       double T, thermo &th1, thermo &th2) {
+
+      ubvector x(3);
+      x[0]=p1.n;
+      x[1]=n2.n;
+      x[2]=p2.n;
+
+      mm_funct11 fmf=std::bind
+	(std::mem_fn<int(size_t, const ubvector &, ubvector &, fermion &,
+			 fermion &, fermion &, fermion &, 
+			 double, thermo &, thermo &)>
+	 (&eos_had_temp_base::liqgas_dens_solve),
+	 this,std::placeholders::_1,std::placeholders::_2,
+	 std::placeholders::_3,std::ref(n1),std::ref(p1),
+	 std::ref(n2),std::ref(p2),T,std::ref(th1),std::ref(th2));
+      int ret=eos_mroot->msolve(3,x,fmf);
+
+      p1.n=x[0];
+      n2.n=x[1];
+      p2.n=x[2];
+      
+      return ret;
+    }
+
+    /** \brief Compute the liquid-gas phase transition using
+	\ref eos_had_temp_base::calc_temp_e() .
+    */
+    virtual int calc_liqgas_temp_e
+      (fermion &n1, fermion &p1, fermion &n2, fermion &p2,
+       double nB, double Ye, double T, thermo &th1, thermo &th2,
+       double &chi) {
+
+      ubvector x(5);
+      x[0]=n1.n;
+      x[1]=p1.n;
+      x[2]=n2.n;
+      x[3]=p2.n;
+      x[4]=chi;
+
+      mm_funct11 fmf=std::bind
+	(std::mem_fn<int(size_t, const ubvector &, ubvector &, fermion &,
+			 fermion &, fermion &, fermion &, 
+			 double, double, double, thermo &, thermo &)>
+	 (&eos_had_temp_base::liqgas_solve),
+	 this,std::placeholders::_1,std::placeholders::_2,
+	 std::placeholders::_3,std::ref(n1),std::ref(p1),
+	 std::ref(n2),std::ref(p2),nB,Ye,T,std::ref(th1),std::ref(th2));
+      int ret=eos_mroot->msolve(5,x,fmf);
+
+      n1.n=x[0];
+      p1.n=x[1];
+      n2.n=x[2];
+      p2.n=x[3];
+      chi=x[4];
+      
+      return ret;
+    }
+
+    /** \brief Compute the liquid-gas phase transition in
+	beta-equilibrium using \ref eos_had_temp_base::calc_temp_e() .
+    */
+    virtual int calc_liqgas_beta_temp_e
+      (fermion &n1, fermion &p1, fermion &n2, fermion &p2,
+       double nB, double mue, double T, thermo &th1, thermo &th2,
+       double &Ye, double &chi) {
+
+      ubvector x(5);
+      x[0]=n1.n;
+      x[1]=p1.n;
+      x[2]=n2.n;
+      x[3]=p2.n;
+      x[4]=chi;
+
+      mm_funct11 fmf=std::bind
+	(std::mem_fn<int(size_t, const ubvector &, ubvector &, fermion &,
+			 fermion &, fermion &, fermion &, 
+			 double, double, double, thermo &, thermo &)>
+	 (&eos_had_temp_base::liqgas_solve),
+	 this,std::placeholders::_1,std::placeholders::_2,
+	 std::placeholders::_3,std::ref(n1),std::ref(p1),
+	 std::ref(n2),std::ref(p2),nB,Ye,T,std::ref(th1),std::ref(th2));
+      int ret=eos_mroot->msolve(5,x,fmf);
+
+      n1.n=x[0];
+      p1.n=x[1];
+      n2.n=x[2];
+      p2.n=x[3];
+      chi=x[4];
+      
+      return ret;
+    }
+
+    /** \brief Equation of state as a function of density
+     */
     virtual int calc_e(fermion &n, fermion &p, thermo &th)=0;
     
     /** \brief Equation of state as a function of densities at 

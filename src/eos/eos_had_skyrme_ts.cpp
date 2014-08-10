@@ -84,7 +84,6 @@ int main(void) {
   n.n=0.02;
   p.n=0.02;
   load_sly4(sk);
-  //sk.load("SLy4");
 
   sk.calc_e(n,p,th);
   cout << n.mu << " " << p.mu << endl;

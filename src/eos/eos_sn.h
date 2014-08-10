@@ -260,27 +260,6 @@ namespace o2scl {
      */
     int verbose;
 
-    /** \brief Compute energy per baryon of matter in beta equilibrium
-	at zero temperature at a fixed grid point [abstract]
-
-	Given an index \c i for the baryon grid, between 0 and \ref
-	n_nB (inclusive), this computes the properties of matter in
-	beta equilibrium at zero temperature by finding the electron
-	fraction grid point which minimizes \ref E. The baryon density
-	is returned in \c nb, the energy per baryon in \c E_beta, the
-	pressure in \c P_beta, the electron fraction in \c Ye_beta,
-	the proton number in \c Z_beta and the mass number of the
-	nucleus in \c A_beta.
-
-	Some tables explicitly contain zero-temperature data which is
-	used when it is available. Otherwise, linear interpolation is
-	used to extrapolate down to zero from the lowest temperature 
-	grid points.
-    */
-    virtual void beta_eq_T0(size_t i, double &nb, double &E_beta, 
-			    double &P_beta, double &Ye_beta,
-			    double &Z_beta, double &A_beta)=0;
-
     /** \brief Compute properties of matter in beta equilibrium
 	at fixed entropy per baryon
 
@@ -288,20 +267,20 @@ namespace o2scl {
 	interpolation.
     */
     virtual void beta_eq_sfixed
-      (size_t i, double entr, double &nb, double &E_beta, 
-       double &P_beta, double &Ye_beta, double &Z_beta, double &A_beta,
-       double &T_beta);
+      (double nB, double entr, double &Ye, double &T);
 
-    /** \brief Compute properties of matter in beta equilibrium
-	at fixed temperature
+    /** \brief Compute the electron fraction for beta-equilibrium
+	at fixed density and temperature temperature
+	
+	This function just uses linear interpolation to 
+	interpolate in baryon density and temperature and 
+	the uses a quadratic to determine the minimum of the
+	free energy.
 
-	This function just does a simple hard-coded linear
-	interpolation.
+	If \ref data_with_leptons() is \tt false, then 
+	\ref compute_eg() is used to compute the leptons. 
     */
-    virtual void beta_eq_Tfixed
-      (size_t i, size_t k, double &nb, double &T, double &E_beta, 
-       double &P_beta, double &Ye_beta, double &Z_beta, double &A_beta,
-       double &S_beta);
+    virtual void beta_eq_Tfixed(double nB, double T, double &Ye);
 
     /// Return true if data has been loaded
     bool is_loaded() {
@@ -524,59 +503,6 @@ namespace o2scl {
     */
     int check_eg(test_mgr &tm);
 
-    /** \brief Compute properties of matter in beta equilibrium
-	at zero temperature at a baryon density grid point
-	
-	This EOS table doesn't have T=0 results, so we extrapolate
-	from the two low-temperature grid points.
-    */
-    virtual void beta_eq_T0(size_t i, double &nb, double &E_beta, 
-			    double &P_beta, double &Ye_beta,
-			    double &Z_beta, double &A_beta) {
-
-      if (loaded==false || with_leptons_loaded==false) {
-	O2SCL_ERR2("No data loaded in ",
-		   "eos_sn_ls::beta_eq_T0().",exc_einval);
-      }
-      if (i>=n_nB) {
-	O2SCL_ERR2("Too high for baryon grid in ",
-		   "eos_sn_ls::beta_eq_T0().",exc_einval);
-      }
-      // Get baryon density from grid
-      nb=E.get_grid(0,i);
-      // Find the minima for the two low-temperature grid points
-      double ET1=E.get(i,0,0), PT1=P.get(i,0,0);
-      double ET2=E.get(i,0,1), PT2=P.get(i,0,1);
-      double ZT1=Z.get(i,0,0), ZT2=Z.get(i,0,1);
-      double AT1=A.get(i,0,0), AT2=A.get(i,0,1);
-      Ye_beta=E.get_grid(1,0);
-      for(size_t j=1;j<n_Ye;j++) {
-	double Enew=E.get(i,j,0);
-	if (Enew<ET1) {
-	  ET1=Enew;
-	  ET2=E.get(i,j,1);
-	  PT1=P.get(i,j,0);
-	  PT2=P.get(i,j,1);
-	  ZT1=Z.get(i,j,0);
-	  ZT2=Z.get(i,j,1);
-	  AT1=A.get(i,j,0);
-	  AT2=A.get(i,j,1);
-	  Ye_beta=E.get_grid(1,j);
-	}
-      }
-      // Now extrapolate to T=0
-      E_beta=ET1-(ET2-ET1)*E.get_grid(2,0)/
-	(E.get_grid(2,1)-E.get_grid(2,0));
-      P_beta=PT1-(PT2-PT1)*P.get_grid(2,0)/
-	(P.get_grid(2,1)-P.get_grid(2,0));
-      Z_beta=ZT1-(ZT2-ZT1)*Z.get_grid(2,0)/
-	(Z.get_grid(2,1)-Z.get_grid(2,0));
-      A_beta=AT1-(AT2-AT1)*A.get_grid(2,0)/
-	(A.get_grid(2,1)-A.get_grid(2,0));
-	
-      return;
-    }
-
   };
 
   /** \brief The EOS tables from O'Connor and Ott
@@ -672,62 +598,8 @@ namespace o2scl {
     /// Load table from filename \c fname with mode \c mode
     virtual void load(std::string fname, size_t mode);
 
-    /** \brief Compute properties of matter in beta equilibrium
-	at zero temperature at a baryon density grid point
-	
-	This EOS table doesn't have T=0 results, so we extrapolate
-	from the two low-temperature grid points.
-    */
-    virtual void beta_eq_T0(size_t i, double &nb, double &E_beta, 
-			    double &P_beta, double &Ye_beta,
-			    double &Z_beta, double &A_beta) {
-
-      if (loaded==false || with_leptons_loaded==false) {
-	O2SCL_ERR2("No data loaded in ",
-		   "eos_sn_oo::beta_eq_T0().",exc_einval);
-      }
-      if (i>=n_nB) {
-	O2SCL_ERR2("Too high for baryon grid in ",
-		   "eos_sn_oo::beta_eq_T0().",exc_einval);
-      }
-      // Get baryon density from grid
-      nb=E.get_grid(0,i);
-      // Find the minima for the two low-temperature grid points
-      double ET1=E.get(i,0,0), PT1=P.get(i,0,0);
-      double ET2=E.get(i,0,1), PT2=P.get(i,0,1);
-      double ZT1=Z.get(i,0,0), ZT2=Z.get(i,0,1);
-      double AT1=A.get(i,0,0), AT2=A.get(i,0,1);
-      Ye_beta=E.get_grid(1,0);
-      for(size_t j=1;j<n_Ye;j++) {
-	double Enew=E.get(i,j,0);
-	if (Enew<ET1) {
-	  ET1=Enew;
-	  ET2=E.get(i,j,1);
-	  PT1=P.get(i,j,0);
-	  PT2=P.get(i,j,1);
-	  ZT1=Z.get(i,j,0);
-	  ZT2=Z.get(i,j,1);
-	  AT1=A.get(i,j,0);
-	  AT2=A.get(i,j,1);
-	  Ye_beta=E.get_grid(1,j);
-	}
-      }
-
-      // Now extrapolate to T=0
-      E_beta=ET1-(ET2-ET1)*E.get_grid(2,0)/
-	(E.get_grid(2,1)-E.get_grid(2,0));
-      P_beta=PT1-(PT2-PT1)*P.get_grid(2,0)/
-	(P.get_grid(2,1)-P.get_grid(2,0));
-      Z_beta=ZT1-(ZT2-ZT1)*Z.get_grid(2,0)/
-	(Z.get_grid(2,1)-Z.get_grid(2,0));
-      A_beta=AT1-(AT2-AT1)*A.get_grid(2,0)/
-	(A.get_grid(2,1)-A.get_grid(2,0));
-	
-      return;
-    }
-
   };
-  
+
   /** \brief The Shen et al. supernova EOS
       
       This class is experimental.
@@ -803,63 +675,8 @@ namespace o2scl {
     /// Load table from filename \c fname with mode \c mode
     virtual void load(std::string fname, size_t mode);
 
-    /** \brief Compute properties of matter in beta equilibrium
-	at zero temperature at a baryon density grid point
-
-	This EOS table doesn't have T=0 results, so we extrapolate
-	from the two low-temperature grid points.
-    */
-    virtual void beta_eq_T0(size_t i, double &nb, double &E_beta, 
-			    double &P_beta, double &Ye_beta,
-			    double &Z_beta, double &A_beta) {
-      if (loaded==false || baryons_only_loaded==false) {
-	O2SCL_ERR2("No data loaded in ",
-		   "eos_sn_stos::beta_eq_T0().",exc_einval);
-      }
-      if (i>=n_nB) {
-	O2SCL_ERR2("Too high for baryon grid in ",
-		   "eos_sn_stos::beta_eq_T0().",exc_einval);
-      }
-      if (with_leptons_loaded==false) {
-	compute_eg();
-      }
-      // Get baryon density from grid
-      nb=E.get_grid(0,i);
-      // Find the minima for the two low-temperature grid points
-      double ET1=E.get(i,0,0), PT1=P.get(i,0,0);
-      double ET2=E.get(i,0,1), PT2=P.get(i,0,1);
-      double ZT1=Z.get(i,0,0), ZT2=Z.get(i,0,1);
-      double AT1=A.get(i,0,0), AT2=A.get(i,0,1);
-      Ye_beta=E.get_grid(1,0);
-      for(size_t j=1;j<n_Ye;j++) {
-	double Enew=E.get(i,j,0);
-	if (Enew<ET1) {
-	  ET1=Enew;
-	  ET2=E.get(i,j,1);
-	  PT1=P.get(i,j,0);
-	  PT2=P.get(i,j,1);
-	  ZT1=Z.get(i,j,0);
-	  ZT2=Z.get(i,j,1);
-	  AT1=A.get(i,j,0);
-	  AT2=A.get(i,j,1);
-	  Ye_beta=E.get_grid(1,j);
-	}
-      }
-      // Now extrapolate to T=0
-      E_beta=ET1-(ET2-ET1)*E.get_grid(2,0)/
-	(E.get_grid(2,1)-E.get_grid(2,0));
-      P_beta=PT1-(PT2-PT1)*P.get_grid(2,0)/
-	(P.get_grid(2,1)-P.get_grid(2,0));
-      Z_beta=ZT1-(ZT2-ZT1)*Z.get_grid(2,0)/
-	(Z.get_grid(2,1)-Z.get_grid(2,0));
-      A_beta=AT1-(AT2-AT1)*A.get_grid(2,0)/
-	(A.get_grid(2,1)-A.get_grid(2,0));
-	
-      return;
-    }
-    
   };
-  
+
   /** \brief A class to manipulate the G. Shen et al. EOS
 
       This class is experimental.
@@ -947,47 +764,8 @@ namespace o2scl {
     /// Load table from filename \c fname with mode \c mode
     virtual void load(std::string fname, size_t mode);
 
-    /** \brief Compute properties of matter in beta equilibrium
-	at zero temperature at a baryon density grid point
-    */
-    virtual void beta_eq_T0(size_t i, double &nb, double &E_beta, 
-			    double &P_beta, double &Ye_beta,
-			    double &Z_beta, double &A_beta) {
-      if (loaded==false || (with_leptons_loaded==false && 
-			    baryons_only_loaded==false)) {
-	O2SCL_ERR2("No data loaded in ",
-		   "eos_sn_sht::beta_eq_T0().",exc_einval);
-      }
-      if (i>=n_nB) {
-	O2SCL_ERR2("Too high for baryon grid in ",
-		   "eos_sn_sht::beta_eq_T0().",exc_einval);
-      }
-      if (with_leptons_loaded==false) {
-	compute_eg();
-      }
-      // Look up baryon density from grid
-      nb=E.get_grid(0,i);
-      // Minimize over all electron fractions
-      E_beta=E.get(i,0,0);
-      P_beta=P.get(i,0,0);
-      Ye_beta=E.get_grid(1,0);
-      Z_beta=Z.get(i,0,0);
-      A_beta=A.get(i,0,0);
-      for(size_t j=1;j<n_Ye;j++) {
-	double Enew=E.get(i,j,0);
-	if (Enew<E_beta) {
-	  E_beta=Enew;
-	  P_beta=P.get(i,j,0);
-	  Ye_beta=E.get_grid(1,j);
-	  Z_beta=Z.get(i,j,0);
-	  A_beta=A.get(i,j,0);
-	}
-      }
-      return;
-    }
-    
   };
-  
+
   /** \brief The Hempel et al. supernova EOSs
       
       This class is experimental.
@@ -1050,58 +828,6 @@ namespace o2scl {
     
     /// Load table from filename \c fname
     virtual void load(std::string fname);
-
-    /** \brief Compute properties of matter in beta equilibrium
-	at zero temperature at a baryon density grid point
-    */
-    virtual void beta_eq_T0(size_t i, double &nb, double &E_beta, 
-			    double &P_beta, double &Ye_beta,
-			    double &Z_beta, double &A_beta) {
-      if (loaded==false || baryons_only_loaded==false) {
-	O2SCL_ERR2("No data loaded in ",
-		   "eos_sn_hfsl::beta_eq_T0().",exc_einval);
-      }
-      if (i>=n_nB) {
-	O2SCL_ERR2("Too high for baryon grid in ",
-		   "eos_sn_hfsl::beta_eq_T0().",exc_einval);
-      }
-      if (with_leptons_loaded==false) {
-	compute_eg();
-      }
-      // Get baryon density from grid
-      nb=E.get_grid(0,i);
-      // Find the minima for the two low-temperature grid points
-      double ET1=E.get(i,0,0), PT1=P.get(i,0,0);
-      double ET2=E.get(i,0,1), PT2=P.get(i,0,1);
-      double ZT1=Z.get(i,0,0), ZT2=Z.get(i,0,1);
-      double AT1=A.get(i,0,0), AT2=A.get(i,0,1);
-      Ye_beta=E.get_grid(1,0);
-      for(size_t j=1;j<n_Ye;j++) {
-	double Enew=E.get(i,j,0);
-	if (Enew<ET1) {
-	  ET1=Enew;
-	  ET2=E.get(i,j,1);
-	  PT1=P.get(i,j,0);
-	  PT2=P.get(i,j,1);
-	  ZT1=Z.get(i,j,0);
-	  ZT2=Z.get(i,j,1);
-	  AT1=A.get(i,j,0);
-	  AT2=A.get(i,j,1);
-	  Ye_beta=E.get_grid(1,j);
-	}
-      }
-      // Now extrapolate to T=0
-      E_beta=ET1-(ET2-ET1)*E.get_grid(2,0)/
-	(E.get_grid(2,1)-E.get_grid(2,0));
-      P_beta=PT1-(PT2-PT1)*P.get_grid(2,0)/
-	(P.get_grid(2,1)-P.get_grid(2,0));
-      Z_beta=ZT1-(ZT2-ZT1)*Z.get_grid(2,0)/
-	(Z.get_grid(2,1)-Z.get_grid(2,0));
-      A_beta=AT1-(AT2-AT1)*A.get_grid(2,0)/
-	(A.get_grid(2,1)-A.get_grid(2,0));
-	
-      return;
-    }
     
   };
   

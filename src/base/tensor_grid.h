@@ -216,8 +216,7 @@ namespace o2scl {
     /// \name Get functions
     //@{
     /// Get the element closest to grid point \c grdp 
-    template<class vec_t> 
-      double get_val(const vec_t &grdp) {
+    template<class vec_t> double get_val(const vec_t &grdp) {
       
       // Find indices
       ubvector_size_t index(rk);

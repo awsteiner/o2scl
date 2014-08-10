@@ -146,7 +146,7 @@ protected:
     if (x[0]<0.0 || x[1]<0.0 || x[2]<0.0 || x[3]<0.0) return 1;
 
     // Low-density phase
-    ap.pion=1;
+    ap.pion=eos_had_apr::ldp;
     ap.calc_e(n,p,hb);
 
     e.mu=n.mu-p.mu;
@@ -158,7 +158,7 @@ protected:
     l.en=e.en+mu.en;
 
     // High-density phase
-    ap.pion=2;
+    ap.pion=eos_had_apr::hdp;
     ap.calc_e(n2,p2,hb2);
 
     e2.mu=n2.mu-p2.mu;
@@ -189,7 +189,7 @@ protected:
     p2.n=x[3];
     chi=x[4];
   
-    ap.pion=1;
+    ap.pion=eos_had_apr::ldp;
     ap.calc_e(n,p,hb);
 
     e.mu=n.mu-p.mu;
@@ -200,7 +200,7 @@ protected:
     l.pr=e.pr+mu.pr;
     l.en=e.en+mu.en;
 
-    ap.pion=2;
+    ap.pion=eos_had_apr::hdp;
     ap.calc_e(n2,p2,hb2);
 
     e2.mu=n2.mu-p2.mu;
@@ -230,10 +230,10 @@ protected:
     p2.n=f7x*nb;
     n2.n=nb-p2.n;
   
-    ap.pion=1;
+    ap.pion=eos_had_apr::ldp;
     ap.calc_e(n,p,hb);
 
-    ap.pion=2;
+    ap.pion=eos_had_apr::hdp;
     ap.calc_e(n2,p2,hb2);
 
     y[0]=hb.ed-hb2.ed;
@@ -251,7 +251,7 @@ protected:
       return 1;
     }
 
-    ap.pion=1;
+    ap.pion=eos_had_apr::ldp;
     ap.calc_e(n,p,hb);
 
     e.mu=n.mu-p.mu;
@@ -278,7 +278,7 @@ protected:
     
     if (n2.n<0.0 || p2.n<0.0) return 1;
 
-    ap.pion=2;
+    ap.pion=eos_had_apr::hdp;
     ap.calc_e(n2,p2,hb2);
 
     e.mu=n2.mu-p2.mu;
@@ -314,10 +314,10 @@ protected:
     if (n.n<0.0 || n2.n<0.0) return 1;
     if (p.n<0.0 || p2.n<0.0) return 1;
 
-    ap.pion=1;
+    ap.pion=eos_had_apr::ldp;
     ap.calc_e(n,p,hb);
   
-    ap.pion=2;
+    ap.pion=eos_had_apr::hdp;
     ap.calc_e(n2,p2,hb2);
 
     fzt.calc_mu_zerot(e);
@@ -401,10 +401,10 @@ protected:
     p.n=n.n;
     p2.n=n2.n;
 
-    ap.pion=1;
+    ap.pion=eos_had_apr::ldp;
     ap.calc_e(n,p,hb);
   
-    ap.pion=2;
+    ap.pion=eos_had_apr::hdp;
     ap.calc_e(n2,p2,hb2);
   
     y[0]=n.mu-n2.mu;
@@ -442,10 +442,10 @@ protected:
     p.n=0.0;
     p2.n=0.0;
 
-    ap.pion=1;
+    ap.pion=eos_had_apr::ldp;
     ap.calc_e(n,p,hb);
   
-    ap.pion=2;
+    ap.pion=eos_had_apr::hdp;
     ap.calc_e(n2,p2,hb2);
   
     y[0]=n.mu-n2.mu;
@@ -477,7 +477,7 @@ protected:
 
     n.n=ex[0];
     p.n=ex[1];
-    ap.pion=1;
+    ap.pion=eos_had_apr::ldp;
     ap.calc_e(n,p,th1);
     nn1=n.n;
     np1=p.n;
@@ -486,7 +486,7 @@ protected:
   
     n.n=ex[2];
     p.n=0.0;
-    ap.pion=1;
+    ap.pion=eos_had_apr::ldp;
     ap.calc_e(n,p,th2);
     nn2=n.n;
     np2=p.n;
@@ -512,7 +512,7 @@ protected:
 
     n.n=ex[0];
     p.n=ex[1];
-    ap.pion=1;
+    ap.pion=eos_had_apr::ldp;
     ap.calc_e(n,p,th1);
   
     return 0;
@@ -532,7 +532,7 @@ protected:
 
     n.n=ex[0];
     p.n=ex[1];
-    ap.pion=1;
+    ap.pion=eos_had_apr::ldp;
     ap.calc_e(n,p,th1);
     nn1=n.n;
     np1=p.n;
@@ -541,7 +541,7 @@ protected:
   
     n.n=ex[2];
     p.n=ex[3];
-    ap.pion=1;
+    ap.pion=eos_had_apr::ldp;
     ap.calc_e(n,p,th2);
     nn2=n.n;
     np2=p.n;
@@ -568,7 +568,7 @@ protected:
 
     n.n=ex[0];
     p.n=ex[1];
-    ap.pion=1;
+    ap.pion=eos_had_apr::ldp;
     ap.calc_e(n,p,th1);
   
     return 0;
@@ -737,7 +737,7 @@ public:
 
     nb_switch=0.19;
 
-    ap.pion=1;
+    ap.pion=eos_had_apr::ldp;
     chi=1.0;
     at.clear_data();
     for(nb=nbstart;nb<nb_switch;nb+=dnb) {
@@ -799,7 +799,7 @@ public:
 
     cout << "--------- Neutron matter ---------------------------\n" << endl;
 
-    ap.pion=1;
+    ap.pion=eos_had_apr::ldp;
     chi=1.0;
     at.clear_data();
 
@@ -960,7 +960,7 @@ public:
     cout << "\nGibbs construction." << endl;
   
     dnb=0.002;
-    ap.pion=1;
+    ap.pion=eos_had_apr::ldp;
     chi=1.0;
     at.clear_data();
 
@@ -1067,6 +1067,11 @@ public:
 	cout << endl;
       }
     }
+    nucleimat_pdrip(4,newx,newy);
+    cout << newx[0] << " " << newy[0] << endl;
+    cout << newx[1] << " " << newy[1] << endl;
+    cout << newx[2] << " " << newy[2] << endl;
+    cout << newx[3] << " " << newy[3] << endl;
     cout << "With proton drip: density: " << newx[0]+newx[1] 
 	 << " fm^{-3},\n  pressure: " 
 	 << at.interp("nb",newx[0]+newx[1],"pr") << " fm^{-4}." << endl;
