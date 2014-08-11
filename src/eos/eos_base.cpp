@@ -33,13 +33,11 @@ eos_base::eos_base() {
   eos_thermo=&def_thermo;
 }
 
-int eos_base::get_thermo(thermo *&th) {
-  th=eos_thermo; 
-  return success; 
+void eos_base::set_thermo(thermo &th) {
+  eos_thermo=&th;
 }
 
-int eos_base::set_thermo(thermo &th) {
-  eos_thermo=&th;
-  return success;
+const thermo &eos_base::get_thermo() {
+  return *eos_thermo;
 }
 

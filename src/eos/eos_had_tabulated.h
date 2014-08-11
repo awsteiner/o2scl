@@ -71,13 +71,13 @@ namespace o2scl {
     //@}
 
     /// Free the table memory
-    int free_table() {
+    void free_table() {
       if (table_alloc) {
 	delete tnuc;
 	if (!one_table) delete tneut;
 	table_alloc=false;
       }
-      return 0;
+      return;
     }
     
   public:

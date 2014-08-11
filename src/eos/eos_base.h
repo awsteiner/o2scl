@@ -42,10 +42,10 @@ namespace o2scl {
     virtual ~eos_base() {};
 
     /// Set class thermo object
-    virtual int set_thermo(thermo &th);
+    virtual void set_thermo(thermo &th);
 
     /// Get class thermo object
-    virtual int get_thermo(thermo *&th);
+    virtual const thermo &get_thermo();
 
     /// The default thermo object
     thermo def_thermo;

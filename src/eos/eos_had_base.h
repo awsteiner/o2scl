@@ -35,6 +35,7 @@
 #include <o2scl/eos_base.h>
 #include <o2scl/fermion_eff.h>
 #include <o2scl/part.h>
+#include <o2scl/lib_settings.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -308,10 +309,7 @@ namespace o2scl {
   public:
     
     typedef boost::numeric::ublas::vector<double> ubvector;
-    typedef boost::numeric::ublas::vector<int> ubvector_int;
-    typedef boost::numeric::ublas::matrix<double> ubmatrix;
-    typedef boost::numeric::ublas::matrix<int> ubmatrix_int;
-
+    
     eos_had_base();
 
     virtual ~eos_had_base() {};
@@ -356,7 +354,7 @@ namespace o2scl {
 	"compressibility", is stored in \ref comp by \ref saturation() 
 	and is about 240 MeV at saturation density.
     */
-    virtual double fcomp(double nb, const double &delta=0.0);
+    virtual double fcomp(double nb, double delta=0.0);
 
     /** \brief Compute the incompressibility and its uncertainty
 
@@ -372,7 +370,7 @@ namespace o2scl {
 	without the nucleon rest masses at the specified baryon
 	density, \c nb, and isospin asymmetry \c delta. 
     */
-    virtual double feoa(double nb, const double &delta=0.0);
+    virtual double feoa(double nb, double delta=0.0);
 
     /** \brief Calculate symmetry energy of matter in 
 	\f$ \mathrm{fm}^{-1} \f$ using \ref calc_dmu_delta() .
@@ -388,7 +386,7 @@ namespace o2scl {
 	the saturation density and is stored in \ref esym by 
 	\ref saturation().
     */
-    virtual double fesym(double nb, const double &delta=0.0);
+    virtual double fesym(double nb, double delta=0.0);
 
     /** \brief Calculate symmetry energy of matter and its
 	uncertainty
@@ -407,15 +405,15 @@ namespace o2scl {
 	isospin asymmetry \c delta. This ranges between about zero and
 	200 MeV for most equations of state.
     */
-    virtual double fesym_slope(double nb, const double &delta=0.0);
+    virtual double fesym_slope(double nb, double delta=0.0);
 
     /** \brief The curvature of the symmetry energy
      */
-    virtual double fesym_curve(double nb, const double &delta=0.0);
+    virtual double fesym_curve(double nb, double delta=0.0);
 
     /** \brief The skewness of the symmetry energy
      */
-    virtual double fesym_skew(double nb, const double &delta=0.0);
+    virtual double fesym_skew(double nb, double delta=0.0);
 
     /** \brief Calculate symmetry energy of matter as energy of 
 	neutron matter minus the energy of nuclear matter
@@ -447,7 +445,7 @@ namespace o2scl {
 	for densities other than the saturation density and is not
 	quite analogous to the compression modulus.
     */
-    virtual double fkprime(double nb, const double &delta=0.0);
+    virtual double fkprime(double nb, double delta=0.0);
 
     /** \brief Calculate reduced neutron effective mass using calc_e()
 
@@ -459,14 +457,14 @@ namespace o2scl {
 	context. Note that this may not be equal to the reduced proton
 	effective mass.
     */
-    virtual double fmsom(double nb, const double &delta=0.0);
+    virtual double fmsom(double nb, double delta=0.0);
 
     /** \brief Neutron effective mass
      */
-    virtual double f_effm_neut(double nb, const double &delta=0.0);
+    virtual double f_effm_neut(double nb, double delta=0.0);
     /** \brief Proton effective mass
      */
-    virtual double f_effm_prot(double nb, const double &delta=0.0);
+    virtual double f_effm_prot(double nb, double delta=0.0);
     /** \brief Scalar effective mass
 
 	The scalar and vector effective masses are defined by
@@ -488,12 +486,12 @@ namespace o2scl {
 	\frac{1+\delta}{2 \delta} \frac{1}{m^{*}_p}
 	\f]
     */
-    virtual double f_effm_scalar(double nb, const double &delta=0.0);
+    virtual double f_effm_scalar(double nb, double delta=0.0);
     /** \brief Vector effective mass
 	
 	See documentation for \ref eos_had_base::f_effm_scalar().
      */
-    virtual double f_effm_vector(double nb, const double &delta=0.0);
+    virtual double f_effm_vector(double nb, double delta=0.0);
 
     /** \brief Calculate saturation density using calc_e()
 
@@ -518,88 +516,6 @@ namespace o2scl {
     virtual void saturation();
     //@}
 
-    /** \brief Calculate coefficients for \gradient \part of Hamiltonian
-
-	\note This is still somewhat experimental.
-
-	We want the \gradient \part of the Hamiltonian in the form
-	\f[
-	{\cal H}_{\mathrm{grad}} = \frac{1}{2} \sum_{i=n,p}
-	\sum_{j=n,p} Q_{ij}
-	\vec{\nabla} n_i \cdot \vec{\nabla} n_j
-	\f]
-
-	The expression for the \gradient terms from \ref Pethick95 is 
-	\f{eqnarray*}
-	{\cal H}_{\mathrm{grad}}&=&-\frac{1}{4}
-	\left(2 P_1 + P_{1;f}-P_{2;f}\right) 
-	\nonumber \\
-	&& +\frac{1}{2} \left( Q_1+Q_2 \right) 
-	\left(n_n \nabla^2 n_n+n_p \nabla^2 n_p\right) \nonumber \\
-	&& + \frac{1}{4}\left( Q_1-Q_2 \right) 
-	\left[\left(\nabla n_n\right)^2+\left(\nabla n_p\right)^2
-	\right] \nonumber \\
-	&& + \frac{1}{2} \frac{d Q_2}{d n} 
-	\left( n_n \nabla n_n + n_p \nabla n_p \right) \cdot \nabla n
-	\f}
-	This can be rewritten
-	\f{eqnarray*}
-	{\cal H}_{\mathrm{grad}}&=&\frac{1}{2}\left(\nabla n\right)^2
-	\left[ \frac{3}{2} P_1+n \frac{d P_1}{d n}\right] \nonumber \\
-	&& - \frac{3}{4} \left[ \left( \nabla n_n\right)^2 + 
-	\left( \nabla n_p \right)^2 \right] \nonumber \\
-	&& -\frac{1}{2} \left[ \right] \cdot \nabla n \frac{d Q_1}{d n}
-	\nonumber \\ && - \frac{1}{4} \left( \nabla n\right)^2 P_2
-	- \frac{1}{4} \left[ \left( \nabla n_n\right)^2 +
-	\left( \nabla n_p \right)^2 \right] Q_2
-	\f}
-	or
-	\f{eqnarray*}
-	{\cal H}_{\mathrm{grad}}&=&\frac{1}{4} \left( \nabla n\right)^2
-	\left[3 P_1 + 2 n \frac{d P_1}{d n}-P_2\right] \nonumber \\
-	&& - \frac{1}{4} \left( 3 Q_1+Q_2 \right)
-	\left[ \left( \nabla n_n\right)^2 + 
-	\left( \nabla n_p \right)^2 \right] \nonumber \\
-	&& - \frac{1}{2} \frac{d Q_1}{d n}
-	\left[ n_n \nabla n_n + n_p \nabla n_p \right]
-	\cdot \nabla n 
-	\f}
-	or
-	\f{eqnarray*}
-	{\cal H}_{\mathrm{grad}}&=&\frac{1}{4} \left( \nabla n\right)^2
-	\left[3 P_1 + 2 n \frac{d P_1}{d n}-P_2\right] \nonumber \\
-	&& - \frac{1}{4} \left( 3 Q_1+Q_2 \right)
-	\left[ \left( \nabla n_n\right)^2 + 
-	\left( \nabla n_p \right)^2 \right] \nonumber \\
-	&& - \frac{1}{2} \frac{d Q_1}{d n}
-	\left[ n_n \left( \nabla n_n \right)^2 +
-	n_p \left( \nabla n_p \right)^2 + n \nabla n_n \cdot
-	\nabla n_p \right]
-	\f}
-
-	Generally, for Skyrme-like interactions
-	\f{eqnarray*}
-	P_i &=& \frac{1}{4} t_i \left(1+\frac{1}{2} x_i \right) \nonumber \\
-	Q_i &=& \frac{1}{4} t_i \left(\frac{1}{2} + x_i \right) \, .
-	\f}
-	for \f$ i=1,2 \f$ .
-
-	This function uses the assumption \f$ x_1=x_2=0 \f$ to 
-	calculate \f$ t_1 \f$ and \f$ t_2 \f$ from the neutron
-	and proton effective masses assuming the Skyrme form. The
-	values of \f$ Q_{ij} \f$ and their derivatives are then computed.
-
-	The functions set_n_and_p() and set_thermo() will be called by
-	gradient_qij(), to facilitate the use of the \c n, \c p, and
-	\c th parameters.
-       
-    */
-    void gradient_qij(fermion &n, fermion &p, thermo &th, 
-		     double &qnn, double &qnp, double &qpp, 
-		     double &dqnndnn, double &dqnndnp,
-		     double &dqnpdnn, double &dqnpdnp,
-		     double &dqppdnn, double &dqppdnp);
-    
     /// \name Functions for calculating physical properties
     //@{
 
@@ -609,7 +525,7 @@ namespace o2scl {
 	This uses \ref neutron, \ref proton, \ref eos_base::eos_thermo,
 	and \ref calc_e() .
     */
-    double calc_dmu_delta(double delta, const double &nb);
+    double calc_dmu_delta(double delta, double nb);
     
     /** \brief Compute the sum of the neutron and proton chemical
 	potentials as a function of the isospin asymmetry
@@ -617,14 +533,14 @@ namespace o2scl {
 	This uses \ref neutron, \ref proton, \ref eos_base::eos_thermo,
 	and \ref calc_e() .
     */
-    double calc_musum_delta(double delta, const double &nb);
+    double calc_musum_delta(double delta, double nb);
 
     /** \brief Compute the pressure as a function of baryon density
 	at fixed isospin asymmetry
 
         Used by fcomp().
     */
-    double calc_pressure_nb(double nb, const double &delta=0.0);
+    double calc_pressure_nb(double nb, double delta=0.0);
 
     /** \brief Compute the energy density as a function of baryon density
 	at fixed isospin asymmetry
@@ -632,7 +548,7 @@ namespace o2scl {
 	This uses \ref neutron, \ref proton, \ref eos_base::eos_thermo,
 	and \ref calc_e() .
     */
-    double calc_edensity_nb(double nb, const double &delta=0.0);
+    double calc_edensity_nb(double nb, double delta=0.0);
 
     /** \brief Compute derivatives at constant proton fraction
      */
@@ -647,7 +563,7 @@ namespace o2scl {
 	This uses \ref neutron, \ref proton, \ref eos_base::eos_thermo,
 	and \ref calc_e() .
     */
-    double calc_press_over_den2(double nb, const double &delta=0.0);
+    double calc_press_over_den2(double nb, double delta=0.0);
 
     /** \brief Calculate energy density as a function of the
 	isospin asymmetry at fixed baryon density
@@ -657,10 +573,10 @@ namespace o2scl {
 	This function calls \ref eos_had_base::calc_e() with the
 	internally stored neutron and proton objects.
     */
-    double calc_edensity_delta(double delta, const double &nb);
+    double calc_edensity_delta(double delta, double nb);
     //@}
 
-    /// \name Other functions
+    /// \name Nuclear matter functions
     //@{
     /** \brief Solve for the chemical potentials given the densities
 
@@ -676,7 +592,7 @@ namespace o2scl {
 	This function is used by \ref eos_had_pres_base::calc_e().
     */
     int nuc_matter_p(size_t nv, const ubvector &x, ubvector &y, 
-		     double *&pa);
+		     double nn0, double np0);
     
     /** \brief Solve for the densities given the chemical potentials
 
@@ -692,7 +608,7 @@ namespace o2scl {
 	This function is used by \ref eos_had_eden_base::calc_p().
     */
     int nuc_matter_e(size_t nv, const ubvector &x, ubvector &y, 
-		     double *&pa);
+		     double mun0, double mup0);
     //@}
 
     /// \name Set auxilliary objects
@@ -783,9 +699,94 @@ namespace o2scl {
     */
     root_cern<> def_sat_root;
     //@}
+
+    /// \name Other functions
+    //@{
+    /** \brief Calculate coefficients for \gradient \part of Hamiltonian
+
+	\note This is still somewhat experimental.
+
+	We want the \gradient \part of the Hamiltonian in the form
+	\f[
+	{\cal H}_{\mathrm{grad}} = \frac{1}{2} \sum_{i=n,p}
+	\sum_{j=n,p} Q_{ij}
+	\vec{\nabla} n_i \cdot \vec{\nabla} n_j
+	\f]
+
+	The expression for the \gradient terms from \ref Pethick95 is 
+	\f{eqnarray*}
+	{\cal H}_{\mathrm{grad}}&=&-\frac{1}{4}
+	\left(2 P_1 + P_{1;f}-P_{2;f}\right) 
+	\nonumber \\
+	&& +\frac{1}{2} \left( Q_1+Q_2 \right) 
+	\left(n_n \nabla^2 n_n+n_p \nabla^2 n_p\right) \nonumber \\
+	&& + \frac{1}{4}\left( Q_1-Q_2 \right) 
+	\left[\left(\nabla n_n\right)^2+\left(\nabla n_p\right)^2
+	\right] \nonumber \\
+	&& + \frac{1}{2} \frac{d Q_2}{d n} 
+	\left( n_n \nabla n_n + n_p \nabla n_p \right) \cdot \nabla n
+	\f}
+	This can be rewritten
+	\f{eqnarray*}
+	{\cal H}_{\mathrm{grad}}&=&\frac{1}{2}\left(\nabla n\right)^2
+	\left[ \frac{3}{2} P_1+n \frac{d P_1}{d n}\right] \nonumber \\
+	&& - \frac{3}{4} \left[ \left( \nabla n_n\right)^2 + 
+	\left( \nabla n_p \right)^2 \right] \nonumber \\
+	&& -\frac{1}{2} \left[ \right] \cdot \nabla n \frac{d Q_1}{d n}
+	\nonumber \\ && - \frac{1}{4} \left( \nabla n\right)^2 P_2
+	- \frac{1}{4} \left[ \left( \nabla n_n\right)^2 +
+	\left( \nabla n_p \right)^2 \right] Q_2
+	\f}
+	or
+	\f{eqnarray*}
+	{\cal H}_{\mathrm{grad}}&=&\frac{1}{4} \left( \nabla n\right)^2
+	\left[3 P_1 + 2 n \frac{d P_1}{d n}-P_2\right] \nonumber \\
+	&& - \frac{1}{4} \left( 3 Q_1+Q_2 \right)
+	\left[ \left( \nabla n_n\right)^2 + 
+	\left( \nabla n_p \right)^2 \right] \nonumber \\
+	&& - \frac{1}{2} \frac{d Q_1}{d n}
+	\left[ n_n \nabla n_n + n_p \nabla n_p \right]
+	\cdot \nabla n 
+	\f}
+	or
+	\f{eqnarray*}
+	{\cal H}_{\mathrm{grad}}&=&\frac{1}{4} \left( \nabla n\right)^2
+	\left[3 P_1 + 2 n \frac{d P_1}{d n}-P_2\right] \nonumber \\
+	&& - \frac{1}{4} \left( 3 Q_1+Q_2 \right)
+	\left[ \left( \nabla n_n\right)^2 + 
+	\left( \nabla n_p \right)^2 \right] \nonumber \\
+	&& - \frac{1}{2} \frac{d Q_1}{d n}
+	\left[ n_n \left( \nabla n_n \right)^2 +
+	n_p \left( \nabla n_p \right)^2 + n \nabla n_n \cdot
+	\nabla n_p \right]
+	\f}
+
+	Generally, for Skyrme-like interactions
+	\f{eqnarray*}
+	P_i &=& \frac{1}{4} t_i \left(1+\frac{1}{2} x_i \right) \nonumber \\
+	Q_i &=& \frac{1}{4} t_i \left(\frac{1}{2} + x_i \right) \, .
+	\f}
+	for \f$ i=1,2 \f$ .
+
+	This function uses the assumption \f$ x_1=x_2=0 \f$ to 
+	calculate \f$ t_1 \f$ and \f$ t_2 \f$ from the neutron
+	and proton effective masses assuming the Skyrme form. The
+	values of \f$ Q_{ij} \f$ and their derivatives are then computed.
+
+	The functions set_n_and_p() and set_thermo() will be called by
+	gradient_qij(), to facilitate the use of the \c n, \c p, and
+	\c th parameters.
+       
+    */
+    void gradient_qij(fermion &n, fermion &p, thermo &th, 
+		     double &qnn, double &qnp, double &qpp, 
+		     double &dqnndnn, double &dqnndnp,
+		     double &dqnpdnn, double &dqnpdnp,
+		     double &dqppdnn, double &dqppdnp);
     
     /// Return string denoting type ("eos_had_base")
     virtual const char *type() { return "eos_had_base"; }
+    //@}
 
 #ifndef DOXYGEN_INTERNAL
 
@@ -859,91 +860,48 @@ namespace o2scl {
     /// Fermion thermodynamics (default is \ref def_fet)
     fermion_eval_thermo *fet;
 
-    /// The temperature
-    double lT;
-
     /// Solve for nuclear matter at finite temperature given density
     int nuc_matter_temp_e(size_t nv, const ubvector &x, 
-			  ubvector &y, double *&pa);
+			  ubvector &y, double nn0, double np0, double T);
     
     /// Solve for nuclear matter at finite temperature given mu
     int nuc_matter_temp_p(size_t nv, const ubvector &x, 
-			  ubvector &y, double *&pa);
+			  ubvector &y, double mun0, double mup0, double T);
     
-    /** \brief Desc
-     */
-    virtual int liqgas_dens_solve(size_t nv, const ubvector &x, 
+    /** \brief Solve for the liquid gas phase transition as 
+	a function of the densities
+    */
+    int liqgas_dens_solve(size_t nv, const ubvector &x, 
 				  ubvector &y, fermion &n1, fermion &p1,
 				  fermion &n2, fermion &p2, double T,
-				  thermo &th1, thermo &th2) {
-      
-      p1.n=x[0];
-      calc_temp_e(n1,p1,T,th1);
+				  thermo &th1, thermo &th2);
 
-      n2.n=x[1];
-      p2.n=x[2];
-      calc_temp_e(n2,p2,T,th2);
-
-      y[0]=n1.mu-n2.mu;
-      y[1]=p1.mu-p2.mu;
-      y[2]=th1.pr-th2.pr;
-
-      return 0;
-    }
-
-    /** \brief Desc
+    /** \brief Solve for the liquid-gas phase transition at fixed
+	baryon density and electron fraction
      */
-    virtual int liqgas_solve(size_t nv, const ubvector &x, 
+    int liqgas_solve(size_t nv, const ubvector &x, 
 			     ubvector &y, fermion &n1, fermion &p1,
 			     fermion &n2, fermion &p2, double nB0,
 			     double Ye0, double T, 
-			     thermo &th1, thermo &th2) {
-      
-      n1.n=x[0];
-      p1.n=x[1];
-      calc_temp_e(n1,p1,T,th1);
+			     thermo &th1, thermo &th2);
 
-      n2.n=x[2];
-      p2.n=x[3];
-      calc_temp_e(n2,p2,T,th2);
-
-      double chi=x[4];
-
-      y[0]=n1.mu-n2.mu;
-      y[1]=p1.mu-p2.mu;
-      y[2]=th1.pr-th2.pr;
-      y[3]=(n1.n+p1.n)*chi+(n2.n+p2.n)*(1.0-chi)-nB0;
-      y[4]=p1.n*chi+p2.n*(1.0-chi)-Ye0*nB0;
-
-      return 0;
-    }
-
-    /** \brief Desc
-     */
-    virtual int liqgas_beta_solve(size_t nv, const ubvector &x, 
+    /** \brief Solve for the liquid-gas phase transition in 
+	beta-equilibrium
+    */
+    int liqgas_beta_solve(size_t nv, const ubvector &x, 
 				  ubvector &y, fermion &n1, fermion &p1,
 				  fermion &n2, fermion &p2, 
-				  double nB0, double mue, double T,
-				  thermo &th1, thermo &th2) {
-      
-      n1.n=x[0];
-      p1.n=x[1];
-      calc_temp_e(n1,p1,T,th1);
+				  double nB0, double T, 
+				  thermo &th1, thermo &th2, fermion &e);
 
-      n2.n=x[2];
-      p2.n=x[3];
-      calc_temp_e(n2,p2,T,th2);
+    /** \brief Compute the entropy
+     */
+    double calc_entropy_delta(double delta, double nb, double T);
 
-      double chi=x[4];
-
-      y[0]=n1.mu-n2.mu;
-      y[1]=p1.mu-p2.mu;
-      y[2]=th1.pr-th2.pr;
-      y[3]=(n1.n+p1.n)*chi+(n2.n+p2.n)*(1.0-chi)-nB0;
-      y[4]=n1.mu-p1.mu-mue;
-
-      return 0;
-    }
+    /** \brief Compute the difference between the neutron and 
+	proton chemical potentials
+     */
+    double calc_dmu_delta_T(double delta, double nb, double T);
 
 #endif
 
@@ -955,119 +913,8 @@ namespace o2scl {
 
     virtual ~eos_had_temp_base() {}
 
-    /** \brief Set the object for computing finite-temperature fermions
-	(default is \ref def_fet)
-     */
-    virtual void set_fermion_eval_thermo(fermion_eval_thermo &f) {
-      fet=&f;
-    }
-
-    /// Default fermion thermodynamics object
-    fermion_eff def_fet;
-
-    /** \brief Compute liquid-gas phase transition densities using
-	\ref eos_had_temp_base::calc_temp_e() .
-
-	At fixed baryon number density for \c n1, this determines the
-	baryon number densities for \c p1, \c n2, and \c p2 which give
-	chemical and mechanical equilibrium at a fixed temperature 
-	\c T. The thermodynamic quantities assuming bulk matter for
-	each set is stored in \c th1 and \c th2.
-    */
-    virtual int calc_liqgas_dens_temp_e
-      (fermion &n1, fermion &p1, fermion &n2, fermion &p2,
-       double T, thermo &th1, thermo &th2) {
-
-      ubvector x(3);
-      x[0]=p1.n;
-      x[1]=n2.n;
-      x[2]=p2.n;
-
-      mm_funct11 fmf=std::bind
-	(std::mem_fn<int(size_t, const ubvector &, ubvector &, fermion &,
-			 fermion &, fermion &, fermion &, 
-			 double, thermo &, thermo &)>
-	 (&eos_had_temp_base::liqgas_dens_solve),
-	 this,std::placeholders::_1,std::placeholders::_2,
-	 std::placeholders::_3,std::ref(n1),std::ref(p1),
-	 std::ref(n2),std::ref(p2),T,std::ref(th1),std::ref(th2));
-      int ret=eos_mroot->msolve(3,x,fmf);
-
-      p1.n=x[0];
-      n2.n=x[1];
-      p2.n=x[2];
-      
-      return ret;
-    }
-
-    /** \brief Compute the liquid-gas phase transition using
-	\ref eos_had_temp_base::calc_temp_e() .
-    */
-    virtual int calc_liqgas_temp_e
-      (fermion &n1, fermion &p1, fermion &n2, fermion &p2,
-       double nB, double Ye, double T, thermo &th1, thermo &th2,
-       double &chi) {
-
-      ubvector x(5);
-      x[0]=n1.n;
-      x[1]=p1.n;
-      x[2]=n2.n;
-      x[3]=p2.n;
-      x[4]=chi;
-
-      mm_funct11 fmf=std::bind
-	(std::mem_fn<int(size_t, const ubvector &, ubvector &, fermion &,
-			 fermion &, fermion &, fermion &, 
-			 double, double, double, thermo &, thermo &)>
-	 (&eos_had_temp_base::liqgas_solve),
-	 this,std::placeholders::_1,std::placeholders::_2,
-	 std::placeholders::_3,std::ref(n1),std::ref(p1),
-	 std::ref(n2),std::ref(p2),nB,Ye,T,std::ref(th1),std::ref(th2));
-      int ret=eos_mroot->msolve(5,x,fmf);
-
-      n1.n=x[0];
-      p1.n=x[1];
-      n2.n=x[2];
-      p2.n=x[3];
-      chi=x[4];
-      
-      return ret;
-    }
-
-    /** \brief Compute the liquid-gas phase transition in
-	beta-equilibrium using \ref eos_had_temp_base::calc_temp_e() .
-    */
-    virtual int calc_liqgas_beta_temp_e
-      (fermion &n1, fermion &p1, fermion &n2, fermion &p2,
-       double nB, double mue, double T, thermo &th1, thermo &th2,
-       double &Ye, double &chi) {
-
-      ubvector x(5);
-      x[0]=n1.n;
-      x[1]=p1.n;
-      x[2]=n2.n;
-      x[3]=p2.n;
-      x[4]=chi;
-
-      mm_funct11 fmf=std::bind
-	(std::mem_fn<int(size_t, const ubvector &, ubvector &, fermion &,
-			 fermion &, fermion &, fermion &, 
-			 double, double, double, thermo &, thermo &)>
-	 (&eos_had_temp_base::liqgas_solve),
-	 this,std::placeholders::_1,std::placeholders::_2,
-	 std::placeholders::_3,std::ref(n1),std::ref(p1),
-	 std::ref(n2),std::ref(p2),nB,Ye,T,std::ref(th1),std::ref(th2));
-      int ret=eos_mroot->msolve(5,x,fmf);
-
-      n1.n=x[0];
-      p1.n=x[1];
-      n2.n=x[2];
-      p2.n=x[3];
-      chi=x[4];
-      
-      return ret;
-    }
-
+    /// \name Basic usage
+    //@{
     /** \brief Equation of state as a function of density
      */
     virtual int calc_e(fermion &n, fermion &p, thermo &th)=0;
@@ -1087,60 +934,89 @@ namespace o2scl {
     */
     virtual int calc_temp_p(fermion &n, fermion &p, double T, 
 			    thermo &th)=0;
+    //@}
 
-    /** \brief Desc
+    /// Computing finite-temperature integrals
+    //@{
+    /** \brief Set the object for computing finite-temperature fermions
+	(default is \ref def_fet)
      */
-    double calc_dmu_delta_T(double delta, const double &nb,
-			    const double &T) {
-      
-      neutron->n=(1.0+delta)*nb/2.0;
-      proton->n=(1.0-delta)*nb/2.0;
-      
-      calc_temp_e(*neutron,*proton,T,*eos_thermo);
-      
-      return neutron->mu-proton->mu;
+    virtual void set_fermion_eval_thermo(fermion_eval_thermo &f) {
+      fet=&f;
     }
 
-    /** \brief Desc
-     */
-    virtual double fesym_T(double nb, double T, const double &delta=0.0) {
+    /// Default fermion thermodynamics object
+    fermion_eff def_fet;
+    //@}
 
-      funct11 fmn=std::bind
-	(std::mem_fn<double(double,const double &,const double &)>
-	 (&eos_had_temp_base::calc_dmu_delta_T),this,std::placeholders::_1,
-	 nb,T);
-      
-      return sat_deriv->deriv(delta,fmn)/4.0;
-    }
+    /// \name Liquid-gas transition functions
+    //@{
+    /** \brief Compute liquid-gas phase transition densities using
+	\ref eos_had_temp_base::calc_temp_e() .
 
-    /** \brief Desc
-     */
-    double calc_entropy_delta(double delta, const double &nb, const double &T) {
-      
-      neutron->n=(1.0+delta)*nb/2.0;
-      proton->n=(1.0-delta)*nb/2.0;
-      
-      calc_temp_e(*neutron,*proton,T,*eos_thermo);
-      
-      return eos_thermo->en;
-    }    
+	At fixed baryon number density for \c n1, this determines the
+	baryon number densities for \c p1, \c n2, and \c p2 which give
+	chemical and mechanical equilibrium at a fixed temperature 
+	\c T. The thermodynamic quantities assuming bulk matter for
+	each set is stored in \c th1 and \c th2.
+    */
+    virtual int calc_liqgas_dens_temp_e
+      (fermion &n1, fermion &p1, fermion &n2, fermion &p2,
+       double T, thermo &th1, thermo &th2);
 
-    /** \brief Desc
+    /** \brief Compute the liquid-gas phase transition using
+	\ref eos_had_temp_base::calc_temp_e() .
+
+	At fixed baryon number density, \c nB, fixed electron
+	fraction, \c Ye, and fixed temperature, \c T, this function
+	determines the baryon number densities for \c n1, \c p1, \c
+	n2, and \c p2 which give chemical and mechanical equilibrium.
+	The thermodynamic quantities assuming bulk matter for each set
+	is stored in \c th1 and \c th2, and the volume fraction of
+	phase 1 is stored in \c chi.
+    */
+    virtual int calc_liqgas_temp_e
+      (fermion &n1, fermion &p1, fermion &n2, fermion &p2,
+       double nB, double Ye, double T, thermo &th1, thermo &th2,
+       double &chi);
+
+    /** \brief Compute the liquid-gas phase transition in
+	beta-equilibrium using \ref eos_had_temp_base::calc_temp_e() .
+
+	At fixed baryon number density, \c nB, and fixed temperature,
+	\c T, this function determines the baryon number densities for
+	\c n1, \c p1, \c n2, and \c p2 which give chemical and
+	mechanical equilibrium assuming beta-equilibrium with
+	electrons. The thermodynamic quantities assuming bulk matter
+	for each set is stored in \c th1 and \c th2, the electron
+	fraction is stored in \c Ye, and the volume fraction of phase
+	1 is stored in \c chi.
+    */
+    virtual int calc_liqgas_beta_temp_e
+      (fermion &n1, fermion &p1, fermion &n2, fermion &p2,
+       double nB, double T, thermo &th1, thermo &th2,
+       double &Ye, double &chi);
+    //@}
+
+    /// \name Functions related to the symmetry energy
+    //@{
+    /** \brief Compute the symmetry energy at finite temperature
      */
-    virtual double fsyment_T(double nb, double T, const double &delta=0.0) {
-      
-      funct11 fmn=std::bind
-	(std::mem_fn<double(double,const double &,const double &)>
-	 (&eos_had_temp_base::calc_entropy_delta),this,std::placeholders::_1,
-	 nb,T);
-      
-      return sat_deriv->deriv2(delta,fmn)/2.0/nb;
-    }
+    virtual double fesym_T(double nb, double T, double delta=0.0);
+
+    /** \brief Compute the symmetry entropy at finite temperature
+     */
+    virtual double fsyment_T(double nb, double T, double delta=0.0);
+    //@}
 
   };
 
   /** \brief A hadronic EOS at finite temperature
       based on a function of the densities [abstract base]
+
+      This class provides automatic computation of \ref calc_e() and
+      \ref calc_temp_e() assuming that \ref calc_p() and \ref
+      calc_temp_p() are specified.
   */
   class eos_had_temp_eden_base : public eos_had_temp_base {
   public:
@@ -1169,6 +1045,10 @@ namespace o2scl {
 
   /** \brief A hadronic EOS at finite temperature based on a function
       of the chemical potentials [abstract base]
+
+      This class provides automatic computation of \ref calc_p() and
+      \ref calc_temp_p() assuming that \ref calc_e() and \ref
+      calc_temp_e() are specified.
   */
   class eos_had_temp_pres_base : public eos_had_temp_base {
   public:

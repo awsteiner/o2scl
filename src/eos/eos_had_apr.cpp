@@ -31,7 +31,6 @@ using namespace o2scl;
 using namespace o2scl_const;
 
 eos_had_apr::eos_had_apr() {
-  par=new double[22];
   pion=best; 
 
   choice=1;
@@ -84,7 +83,6 @@ eos_had_apr::eos_had_apr() {
 }
 
 eos_had_apr::~eos_had_apr() {
-  delete[] par;
 }
 
 int eos_had_apr::gradient_qij2(double nn, double np, 

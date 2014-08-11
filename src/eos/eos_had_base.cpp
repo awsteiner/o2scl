@@ -51,12 +51,12 @@ eos_had_base::eos_had_base() {
   sat_root=&def_sat_root;
 }
 
-double eos_had_base::fcomp(double nb, const double &delta) {
+double eos_had_base::fcomp(double nb, double delta) {
   double lcomp, err;
   
-  funct11 fmn=std::bind(std::mem_fn<double(double,const double &)>
-		       (&eos_had_base::calc_pressure_nb),
-		       this,std::placeholders::_1,delta);
+  funct11 fmn=std::bind(std::mem_fn<double(double,double)>
+			(&eos_had_base::calc_pressure_nb),
+			this,std::placeholders::_1,delta);
 
   lcomp=9.0*sat_deriv->deriv(nb,fmn);
 
@@ -66,9 +66,9 @@ double eos_had_base::fcomp(double nb, const double &delta) {
 double eos_had_base::fcomp_err(double nb, double delta, double &unc) {
   double lcomp;
   
-  funct11 fmn=std::bind(std::mem_fn<double(double,const double &)>
-		       (&eos_had_base::calc_pressure_nb),
-		       this,std::placeholders::_1,delta);
+  funct11 fmn=std::bind(std::mem_fn<double(double,double)>
+			(&eos_had_base::calc_pressure_nb),
+			this,std::placeholders::_1,delta);
 
   sat_deriv->deriv_err(nb,fmn,lcomp,unc);
 
@@ -77,7 +77,7 @@ double eos_had_base::fcomp_err(double nb, double delta, double &unc) {
   return lcomp;
 }
 
-double eos_had_base::feoa(double nb, const double &delta) {
+double eos_had_base::feoa(double nb, double delta) {
   double leoa;
 
   neutron->n=(1.0+delta)*nb/2.0;
@@ -90,9 +90,9 @@ double eos_had_base::feoa(double nb, const double &delta) {
   return leoa;
 }
 
-double eos_had_base::fesym(double nb, const double &delta) {
+double eos_had_base::fesym(double nb, double delta) {
   
-  funct11 fmn=std::bind(std::mem_fn<double(double,const double &)>
+  funct11 fmn=std::bind(std::mem_fn<double(double,double)>
 			(&eos_had_base::calc_dmu_delta),
 			this,std::placeholders::_1,nb);
 
@@ -107,7 +107,7 @@ double eos_had_base::fesym(double nb, const double &delta) {
 double eos_had_base::fesym_err(double nb, double delta, 
 			       double &unc) {
 
-  funct11 fmn=std::bind(std::mem_fn<double(double,const double &)>
+  funct11 fmn=std::bind(std::mem_fn<double(double,double)>
 			(&eos_had_base::calc_dmu_delta),
 			this,std::placeholders::_1,nb);
 
@@ -118,7 +118,7 @@ double eos_had_base::fesym_err(double nb, double delta,
   return val;
 }
 
-double eos_had_base::fesym_slope(double nb, const double &delta) {
+double eos_had_base::fesym_slope(double nb, double delta) {
   
   if (false) {
     // The form below is effectively a second derivative since it must
@@ -126,31 +126,31 @@ double eos_had_base::fesym_slope(double nb, const double &delta) {
     // derivative, and may or may not be less accurate. It might be
     // good to make this a separate function, to allow the user to
     // choose which way to evaluate L.
-    funct11 fmn=std::bind(std::mem_fn<double(double,const double &)>
+    funct11 fmn=std::bind(std::mem_fn<double(double,double)>
 			  (&eos_had_base::calc_musum_delta),
 			  this,std::placeholders::_1,nb);
     
     return sat_deriv->deriv2(delta,fmn)*0.75-3.0*fesym(nb,delta);
   }
   
-  funct11 fmn=std::bind(std::mem_fn<double(double,const double &)>
+  funct11 fmn=std::bind(std::mem_fn<double(double,double)>
 			(&eos_had_base::fesym),
 			this,std::placeholders::_1,delta);
   return sat_deriv2->deriv(nb,fmn)*3.0*nb;
 }
 
-double eos_had_base::fesym_curve(double nb, const double &delta) {
+double eos_had_base::fesym_curve(double nb, double delta) {
   
-  funct11 fmn=std::bind(std::mem_fn<double(double,const double &)>
+  funct11 fmn=std::bind(std::mem_fn<double(double,double)>
 			(&eos_had_base::fesym),
 			this,std::placeholders::_1,delta);
   
   return sat_deriv2->deriv2(nb,fmn)*9.0*nb*nb;
 }
 
-double eos_had_base::fesym_skew(double nb, const double &delta) {
+double eos_had_base::fesym_skew(double nb, double delta) {
 
-  funct11 fmn=std::bind(std::mem_fn<double(double,const double &)>
+  funct11 fmn=std::bind(std::mem_fn<double(double,double)>
 			(&eos_had_base::fesym),
 			this,std::placeholders::_1,delta);
 
@@ -202,11 +202,11 @@ double eos_had_base::feta(double nb) {
   return (eoa_neut-eoa_mixed)/3.0/(eoa_mixed-eoa_nuc);
 }
 
-double eos_had_base::fkprime(double nb, const double &delta) {
+double eos_had_base::fkprime(double nb, double delta) {
   double lkprime, err;
   int ret=0;
   
-  funct11 fmn=std::bind(std::mem_fn<double(double,const double &)>
+  funct11 fmn=std::bind(std::mem_fn<double(double,double)>
 			(&eos_had_base::calc_press_over_den2),
 			this,std::placeholders::_1,delta);
   
@@ -216,7 +216,7 @@ double eos_had_base::fkprime(double nb, const double &delta) {
   return lkprime;
 }
 
-double eos_had_base::fmsom(double nb, const double &delta) {
+double eos_had_base::fmsom(double nb, double delta) {
 
   neutron->n=(1.0+delta)*nb/2.0;
   proton->n=(1.0-delta)*nb/2.0;
@@ -226,7 +226,7 @@ double eos_had_base::fmsom(double nb, const double &delta) {
   return neutron->ms/neutron->m;
 }
 
-double eos_had_base::f_effm_neut(double nb, const double &delta) {
+double eos_had_base::f_effm_neut(double nb, double delta) {
 
   neutron->n=(1.0+delta)*nb/2.0;
   proton->n=(1.0-delta)*nb/2.0;
@@ -236,7 +236,7 @@ double eos_had_base::f_effm_neut(double nb, const double &delta) {
   return neutron->ms;
 }
 
-double eos_had_base::f_effm_prot(double nb, const double &delta) {
+double eos_had_base::f_effm_prot(double nb, double delta) {
 
   neutron->n=(1.0+delta)*nb/2.0;
   proton->n=(1.0-delta)*nb/2.0;
@@ -246,7 +246,7 @@ double eos_had_base::f_effm_prot(double nb, const double &delta) {
   return proton->ms;
 }
 
-double eos_had_base::f_effm_scalar(double nb, const double &delta) {
+double eos_had_base::f_effm_scalar(double nb, double delta) {
 
   neutron->n=(1.0+delta)*nb/2.0;
   proton->n=(1.0-delta)*nb/2.0;
@@ -259,7 +259,7 @@ double eos_had_base::f_effm_scalar(double nb, const double &delta) {
   return 2.0/(imn+imp);
 }
 
-double eos_had_base::f_effm_vector(double nb, const double &delta) {
+double eos_had_base::f_effm_vector(double nb, double delta) {
 
   neutron->n=(1.0+delta)*nb/2.0;
   proton->n=(1.0-delta)*nb/2.0;
@@ -279,7 +279,7 @@ double eos_had_base::fn0(double delta, double &leoa) {
   // Initial guess
   nb=0.16;
   
-  funct11 fmf=std::bind(std::mem_fn<double(double,const double &)>
+  funct11 fmf=std::bind(std::mem_fn<double(double,double)>
 			(&eos_had_base::calc_pressure_nb),
 			this,std::placeholders::_1,delta);
   
@@ -301,10 +301,10 @@ void eos_had_base::saturation() {
 }
 
 void eos_had_base::gradient_qij(fermion &n, fermion &p, thermo &th,
-			       double &qnn, double &qnp, double &qpp, 
-			       double &dqnndnn, double &dqnndnp,
-			       double &dqnpdnn, double &dqnpdnp,
-			       double &dqppdnn, double &dqppdnp) {
+				double &qnn, double &qnp, double &qpp, 
+				double &dqnndnn, double &dqnndnp,
+				double &dqnpdnn, double &dqnpdnp,
+				double &dqppdnn, double &dqppdnp) {
   double nn=n.n, np=p.n, t1=0.0, t2=0.0, barn=nn+np, den;
 
   int vpx=0;
@@ -363,7 +363,7 @@ double eos_had_base::t2_fun(double barn) {
 	  (2*barn-proton->n))/den;
 }
 
-double eos_had_base::calc_pressure_nb(double nb, const double &delta) {
+double eos_had_base::calc_pressure_nb(double nb, double delta) {
   
   neutron->n=(1.0+delta)*nb/2.0;
   proton->n=(1.0-delta)*nb/2.0;
@@ -378,10 +378,10 @@ void eos_had_base::const_pf_derivs(double nb, double pf,
 
   // Take derivatives w.r.t. delta and then multiply by -2 to get
   // derivatives w.r.t. x
-  funct11 fmpp=std::bind(std::mem_fn<double(double,const double &)>
+  funct11 fmpp=std::bind(std::mem_fn<double(double,double)>
 			 (&eos_had_base::calc_pressure_nb),
 			 this,std::placeholders::_1,1.0-2.0*pf);
-  funct11 fmpe=std::bind(std::mem_fn<double(double,const double &)>
+  funct11 fmpe=std::bind(std::mem_fn<double(double,double)>
 			 (&eos_had_base::calc_edensity_nb),
 			 this,std::placeholders::_1,1.0-2.0*pf);
 
@@ -390,7 +390,7 @@ void eos_had_base::const_pf_derivs(double nb, double pf,
   return;
 }
 
-double eos_had_base::calc_press_over_den2(double nb, const double &delta) {
+double eos_had_base::calc_press_over_den2(double nb, double delta) {
   
   neutron->n=nb/2.0;
   proton->n=nb/2.0;
@@ -400,7 +400,7 @@ double eos_had_base::calc_press_over_den2(double nb, const double &delta) {
   return eos_thermo->pr/nb/nb;
 }
 
-double eos_had_base::calc_edensity_delta(double delta, const double &nb) {
+double eos_had_base::calc_edensity_delta(double delta, double nb) {
   
   neutron->n=(1.0+delta)*nb/2.0;
   proton->n=(1.0-delta)*nb/2.0;
@@ -410,7 +410,7 @@ double eos_had_base::calc_edensity_delta(double delta, const double &nb) {
   return eos_thermo->ed;
 }
 
-double eos_had_base::calc_dmu_delta(double delta, const double &nb) {
+double eos_had_base::calc_dmu_delta(double delta, double nb) {
   
   neutron->n=(1.0+delta)*nb/2.0;
   proton->n=(1.0-delta)*nb/2.0;
@@ -420,7 +420,7 @@ double eos_had_base::calc_dmu_delta(double delta, const double &nb) {
   return neutron->mu-proton->mu;
 }
 
-double eos_had_base::calc_musum_delta(double delta, const double &nb) {
+double eos_had_base::calc_musum_delta(double delta, double nb) {
   
   neutron->n=(1.0+delta)*nb/2.0;
   proton->n=(1.0-delta)*nb/2.0;
@@ -430,7 +430,7 @@ double eos_had_base::calc_musum_delta(double delta, const double &nb) {
   return neutron->mu+proton->mu;
 }
 
-double eos_had_base::calc_edensity_nb(double nb, const double &delta) {
+double eos_had_base::calc_edensity_nb(double nb, double delta) {
   
   neutron->n=(1.0+delta)*nb/2.0;
   proton->n=(1.0-delta)*nb/2.0;
@@ -441,17 +441,15 @@ double eos_had_base::calc_edensity_nb(double nb, const double &delta) {
 }
 
 int eos_had_base::nuc_matter_e(size_t nv, const ubvector &x, 
-			       ubvector &y, double *&pa) {
-  double mun=pa[0];
-  double mup=pa[1];
-  
+			       ubvector &y, double mun0, double mup0) {
+
   neutron->n=x[0];
   proton->n=x[1];
   
   calc_e(*neutron,*proton,*eos_thermo);
 
-  y[0]=neutron->mu-mun;
-  y[1]=proton->mu-mup;
+  y[0]=neutron->mu-mun0;
+  y[1]=proton->mu-mup0;
   
   if (!o2scl::is_finite(neutron->mu) || !o2scl::is_finite(proton->mu)) {
     return exc_efailed;
@@ -461,18 +459,15 @@ int eos_had_base::nuc_matter_e(size_t nv, const ubvector &x,
 }
 
 int eos_had_base::nuc_matter_p(size_t nv, const ubvector &x, 
-			       ubvector &y, double *&pa) {
-  
-  double nn=pa[0];
-  double np=pa[1];
+			       ubvector &y, double nn0, double np0) {
   
   neutron->mu=x[0];
   proton->mu=x[1];
 
   calc_p(*neutron,*proton,*eos_thermo);
 
-  y[0]=neutron->n-nn;
-  y[1]=proton->n-np;
+  y[0]=neutron->n-nn0;
+  y[1]=proton->n-np0;
 
   if (!o2scl::is_finite(neutron->n) || !o2scl::is_finite(proton->n)) {
     return exc_efailed;
@@ -519,18 +514,19 @@ int eos_had_eden_base::calc_p(fermion &n, fermion &p, thermo &th) {
   x[0]=n.n;
   x[1]=p.n;
     
-  double pa[2]={n.mu,p.mu};
-  double *pap=&(pa[0]);
-  
   mm_funct11 fmf=std::bind
-    (std::mem_fn<int(size_t,const ubvector &,
-		     ubvector &, double *&)>(&eos_had_eden_base::nuc_matter_e),
+    (std::mem_fn<int(size_t,const ubvector &, ubvector &, double, double)>
+     (&eos_had_eden_base::nuc_matter_e),
+		     
     this,std::placeholders::_1,std::placeholders::_2,
-    std::placeholders::_3,pap);
+     std::placeholders::_3,n.mu,p.mu);
+#ifdef O2SCL_NEVER_DEFINED
+}{
+#endif
   eos_mroot->msolve(2,x,fmf);
-    
+  
   th=*eos_thermo;
-
+  
   return 0;
 }
 
@@ -547,64 +543,285 @@ int eos_had_pres_base::calc_e(fermion &n, fermion &p, thermo &th) {
   if (mu[1]<n.ms) mu[0]=n.ms+1.0e-4;
   if (mu[2]<p.ms) mu[1]=p.ms+1.0e-4;
     
-  double pa[2]={n.n,p.n};
-  double *pap=&(pa[0]);
-
   mm_funct11 fmf=std::bind
-    (std::mem_fn<int(size_t,const ubvector &,
-		     ubvector &, double *&)>(&eos_had_eden_base::nuc_matter_p),
-    this,std::placeholders::_1,std::placeholders::_2,
-    std::placeholders::_3,pap);
+    (std::mem_fn<int(size_t,const ubvector &, ubvector &, double, double)>
+     (&eos_had_eden_base::nuc_matter_p),
+     
+     this,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3,n.n,p.n);
+  
+#ifdef O2SCL_NEVER_DEFINED
+}{
+#endif
+  
   eos_mroot->msolve(2,mu,fmf);
-    
+
   th=*eos_thermo;
-    
+
   return 0;
 }
 
+int eos_had_temp_base::calc_liqgas_dens_temp_e
+(fermion &n1, fermion &p1, fermion &n2, fermion &p2,
+ double T, thermo &th1, thermo &th2) {
+  
+  ubvector x(3);
+  x[0]=p1.n;
+  x[1]=n2.n;
+  x[2]=p2.n;
+  
+  mm_funct11 fmf=std::bind
+    (std::mem_fn<int(size_t, const ubvector &, ubvector &, fermion &,
+		     fermion &, fermion &, fermion &, 
+		     double, thermo &, thermo &)>
+    (&eos_had_temp_base::liqgas_dens_solve),
+     this,std::placeholders::_1,std::placeholders::_2,
+    std::placeholders::_3,std::ref(n1),std::ref(p1),
+    std::ref(n2),std::ref(p2),T,std::ref(th1),std::ref(th2));
+#ifdef O2SCL_NEVER_DEFINED
+}{
+#endif
+  int ret=eos_mroot->msolve(3,x,fmf);
+
+  p1.n=x[0];
+  n2.n=x[1];
+  p2.n=x[2];
+      
+  return ret;
+}
+
+int eos_had_temp_base::liqgas_dens_solve(size_t nv, const ubvector &x, 
+					 ubvector &y, fermion &n1, fermion &p1,
+					 fermion &n2, fermion &p2, double T,
+					 thermo &th1, thermo &th2) {
+      
+  p1.n=x[0];
+  calc_temp_e(n1,p1,T,th1);
+
+  n2.n=x[1];
+  p2.n=x[2];
+  calc_temp_e(n2,p2,T,th2);
+
+  y[0]=n1.mu-n2.mu;
+  y[1]=p1.mu-p2.mu;
+  y[2]=th1.pr-th2.pr;
+
+  return 0;
+}
+
+int eos_had_temp_base::liqgas_solve(size_t nv, const ubvector &x, 
+				    ubvector &y, fermion &n1, fermion &p1,
+				    fermion &n2, fermion &p2, double nB0,
+				    double Ye0, double T, 
+				    thermo &th1, thermo &th2) {
+      
+  n1.n=x[0];
+  p1.n=x[1];
+  calc_temp_e(n1,p1,T,th1);
+
+  n2.n=x[2];
+  p2.n=x[3];
+  calc_temp_e(n2,p2,T,th2);
+
+  double chi=x[4];
+
+  y[0]=n1.mu-n2.mu;
+  y[1]=p1.mu-p2.mu;
+  y[2]=th1.pr-th2.pr;
+  y[3]=(n1.n+p1.n)*chi+(n2.n+p2.n)*(1.0-chi)-nB0;
+  y[4]=p1.n*chi+p2.n*(1.0-chi)-Ye0*nB0;
+
+  return 0;
+}
+
+int eos_had_temp_base::liqgas_beta_solve(size_t nv, const ubvector &x, 
+					 ubvector &y, fermion &n1, fermion &p1,
+					 fermion &n2, fermion &p2, 
+					 double nB0, double T, 
+					 thermo &th1, thermo &th2, fermion &e) {
+      
+  n1.n=x[0];
+  p1.n=x[1];
+  calc_temp_e(n1,p1,T,th1);
+
+  n2.n=x[2];
+  p2.n=x[3];
+  calc_temp_e(n2,p2,T,th2);
+
+  double chi=x[4];
+
+  e.n=p1.n*chi+p2.n*(1.0-chi);
+  fet->calc_density(e,T);
+      
+  y[0]=n1.mu-n2.mu;
+  y[1]=p1.mu-p2.mu;
+  y[2]=th1.pr-th2.pr;
+  y[3]=(n1.n+p1.n)*chi+(n2.n+p2.n)*(1.0-chi)-nB0;
+  y[4]=n1.mu-p1.mu-e.mu;
+
+  return 0;
+}
+
+int eos_had_temp_base::calc_liqgas_temp_e
+(fermion &n1, fermion &p1, fermion &n2, fermion &p2,
+ double nB, double Ye, double T, thermo &th1, thermo &th2,
+ double &chi) {
+
+  ubvector x(5);
+  x[0]=n1.n;
+  x[1]=p1.n;
+  x[2]=n2.n;
+  x[3]=p2.n;
+  x[4]=chi;
+
+  mm_funct11 fmf=std::bind
+    (std::mem_fn<int(size_t, const ubvector &, ubvector &, fermion &,
+		     fermion &, fermion &, fermion &, 
+		     double, double, double, thermo &, thermo &)>
+    (&eos_had_temp_base::liqgas_solve),
+     this,std::placeholders::_1,std::placeholders::_2,
+    std::placeholders::_3,std::ref(n1),std::ref(p1),
+    std::ref(n2),std::ref(p2),nB,Ye,T,std::ref(th1),std::ref(th2));
+#ifdef O2SCL_NEVER_DEFINED
+}{
+#endif
+  int ret=eos_mroot->msolve(5,x,fmf);
+
+  n1.n=x[0];
+  p1.n=x[1];
+  n2.n=x[2];
+  p2.n=x[3];
+  chi=x[4];
+      
+  return ret;
+}
+
+int eos_had_temp_base::calc_liqgas_beta_temp_e
+(fermion &n1, fermion &p1, fermion &n2, fermion &p2,
+ double nB, double T, thermo &th1, thermo &th2,
+ double &Ye, double &chi) {
+      
+  fermion electron(o2scl_settings.get_convert_units().convert
+		   ("kg","1/fm",o2scl_mks::mass_electron),2.0);
+
+  ubvector x(5);
+  x[0]=n1.n;
+  x[1]=p1.n;
+  x[2]=n2.n;
+  x[3]=p2.n;
+  x[4]=chi;
+
+  mm_funct11 fmf=std::bind
+    (std::mem_fn<int(size_t, const ubvector &, ubvector &, fermion &,
+		     fermion &, fermion &, fermion &, 
+		     double, double, thermo &, thermo &, fermion &)>
+    (&eos_had_temp_base::liqgas_beta_solve),
+     this,std::placeholders::_1,std::placeholders::_2,
+    std::placeholders::_3,std::ref(n1),std::ref(p1),
+    std::ref(n2),std::ref(p2),nB,T,std::ref(th1),std::ref(th2),
+    std::ref(electron));
+#ifdef O2SCL_NEVER_DEFINED
+}{
+#endif
+  int ret=eos_mroot->msolve(5,x,fmf);
+
+  n1.n=x[0];
+  p1.n=x[1];
+  n2.n=x[2];
+  p2.n=x[3];
+  chi=x[4];
+      
+  Ye=(p1.n*chi+p2.n*(1.0-chi))/nB;
+      
+  return ret;
+}
+
 int eos_had_temp_base::nuc_matter_temp_e(size_t nv, const ubvector &x, 
-					 ubvector &y, double *&pa) {
+					 ubvector &y, double mun0, double mup0,
+					 double T) {
   neutron->n=x[0];
   proton->n=x[1];
   
   if (!o2scl::is_finite(neutron->n) || !o2scl::is_finite(proton->n)) {
     O2SCL_ERR2("Density problem in ",
-		   "eos_had_temp_base::nuc_matter_e().",exc_esanity);
+	       "eos_had_temp_base::nuc_matter_e().",exc_esanity);
   }
-  int ret=calc_temp_e(*neutron,*proton,lT,*eos_thermo);
+  int ret=calc_temp_e(*neutron,*proton,T,*eos_thermo);
   if (ret!=0) {
     O2SCL_ERR2("Function calc_e() failed in ",
 	       "eos_had_temp_base::nuc_matter_e().",exc_efailed);
   }
 
-  y[0]=neutron->mu-pa[0];
-  y[1]=proton->mu-pa[1];
+  y[0]=neutron->mu-mun0;
+  y[1]=proton->mu-mup0;
   
   if (!o2scl::is_finite(neutron->mu) || !o2scl::is_finite(proton->mu)) {
     O2SCL_ERR2("Chemical potential problem in ",
-		   "eos_had_temp_base::nuc_matter_e().",exc_esanity);
+	       "eos_had_temp_base::nuc_matter_e().",exc_esanity);
   }
 
   return ret;
 }
 
 int eos_had_temp_base::nuc_matter_temp_p(size_t nv, const ubvector &x, 
-					 ubvector &y, double *&pa) {
+					 ubvector &y, double nn0,
+					 double np0, double T) {
   
   neutron->mu=x[0];
   proton->mu=x[1];
 
-  int ret=calc_temp_p(*neutron,*proton,lT,*eos_thermo);
+  int ret=calc_temp_p(*neutron,*proton,T,*eos_thermo);
   if (ret!=0) {
     O2SCL_ERR("calc_p() failed in eos_had_temp_base::nuc_matter_p().",ret);
   }
 
-  y[0]=neutron->n-pa[0];
-  y[1]=proton->n-pa[1];
+  y[0]=neutron->n-nn0;
+  y[1]=proton->n-np0;
   
   return ret;
 }
 
+double eos_had_temp_base::calc_entropy_delta(double delta, double nb, 
+					     double T) {
+  
+  neutron->n=(1.0+delta)*nb/2.0;
+  proton->n=(1.0-delta)*nb/2.0;
+  
+  calc_temp_e(*neutron,*proton,T,*eos_thermo);
+  
+  return eos_thermo->en;
+}    
+
+double eos_had_temp_base::calc_dmu_delta_T(double delta, double nb, 
+					   double T) {
+  
+  neutron->n=(1.0+delta)*nb/2.0;
+  proton->n=(1.0-delta)*nb/2.0;
+  
+  calc_temp_e(*neutron,*proton,T,*eos_thermo);
+  
+  return neutron->mu-proton->mu;
+}
+
+double eos_had_temp_base::fesym_T(double nb, double T, double delta) {
+  
+  funct11 fmn=std::bind
+    (std::mem_fn<double(double,double,double)>
+     (&eos_had_temp_base::calc_dmu_delta_T),this,std::placeholders::_1,
+     nb,T);
+  
+  return sat_deriv->deriv(delta,fmn)/4.0;
+}
+
+double eos_had_temp_base::fsyment_T(double nb, double T, double delta) {
+  
+  funct11 fmn=std::bind
+    (std::mem_fn<double(double,double,double)>
+     (&eos_had_temp_base::calc_entropy_delta),this,std::placeholders::_1,
+     nb,T);
+  
+  return sat_deriv->deriv2(delta,fmn)/2.0/nb;
+}
 
 int eos_had_temp_eden_base::calc_p(fermion &n, fermion &p, thermo &th) {
   int ret;
@@ -616,20 +833,18 @@ int eos_had_temp_eden_base::calc_p(fermion &n, fermion &p, thermo &th) {
   x[0]=n.n;
   x[1]=p.n;
 
-  double pa[2]={n.mu,p.mu};
-  double *pap=&(pa[0]);
-
   mm_funct11 fmf=std::bind
-    (std::mem_fn<int(size_t,const ubvector &,
-		     ubvector &, double *&)>(&eos_had_eden_base::nuc_matter_e),
-    this,std::placeholders::_1,std::placeholders::_2,
-    std::placeholders::_3,pap);
-
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &, double, double)>
+     (&eos_had_eden_base::nuc_matter_e),
+     
+     this,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3,n.mu,p.mu);
+  
   ret=eos_mroot->msolve(2,x,fmf);
   if (ret!=0) {
     O2SCL_ERR("Solver failed in eos_had_temp_eden_base::calc_p().",ret);
   }
-    
+  
   th=*eos_thermo;
   
   return 0;
@@ -642,31 +857,27 @@ int eos_had_temp_eden_base::calc_temp_p(fermion &n, fermion &p,
   set_n_and_p(n,p);
   set_thermo(th);
   
-  lT=T;
-  
   ubvector den(2);
   den[0]=n.n;
   den[1]=p.n;
 
-  double pa[2]={n.mu,p.mu};
-  double *pap=&(pa[0]);
   mm_funct11 fmf=std::bind
     (std::mem_fn<int(size_t,const ubvector &,
-		     ubvector &, double *&)>
+		     ubvector &, double, double, double)>
     (&eos_had_temp_eden_base::nuc_matter_temp_e),
-    this,std::placeholders::_1,std::placeholders::_2,
-    std::placeholders::_3,pap);
+     this,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3,n.mu,p.mu,T);
 
-  ret=eos_mroot->msolve(2,den,fmf);
+ret=eos_mroot->msolve(2,den,fmf);
   
-  if (ret!=0) {
-    O2SCL_ERR2("Solver failed in ",
-		   "eos_had_temp_eden_base::calc_temp_p().",ret);
-  }
+if (ret!=0) {
+  O2SCL_ERR2("Solver failed in ",
+	     "eos_had_temp_eden_base::calc_temp_p().",ret);
+ }
   
-  th=*eos_thermo;
+th=*eos_thermo;
 
-  return 0;
+return 0;
 }
 
 int eos_had_temp_pres_base::calc_e(fermion &n, fermion &p, thermo &th) {
@@ -681,25 +892,21 @@ int eos_had_temp_pres_base::calc_e(fermion &n, fermion &p, thermo &th) {
     
   if (mu[1]<n.ms) mu[0]=n.ms+1.0e-4;
   if (mu[2]<p.ms) mu[1]=p.ms+1.0e-4;
-    
-  double pa[2]={n.n,p.n};
-  double *pap=&(pa[0]);
-
+  
   mm_funct11 fmf=std::bind
-    (std::mem_fn<int(size_t,const ubvector &,
-		     ubvector &, double *&)>
-    (&eos_had_eden_base::nuc_matter_p),
-    this,std::placeholders::_1,std::placeholders::_2,
-    std::placeholders::_3,pap);
-
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &, double, double)>
+     (&eos_had_eden_base::nuc_matter_p),
+     this,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3,n.n,p.n);
+  
   ret=eos_mroot->msolve(2,mu,fmf);
-    
+  
   if (ret!=0) {
     O2SCL_ERR("Solver failed in eos_had_temp_pres_base::calc_p().",ret);
   }
-    
+  
   th=*eos_thermo;
-    
+  
   return 0;
 }
 
@@ -710,27 +917,26 @@ int eos_had_temp_pres_base::calc_temp_e(fermion &n, fermion &p,
   set_n_and_p(n,p);
   set_thermo(th);
   
-  lT=T;
-
   ubvector mu(2);
   mu[0]=n.mu;
   mu[1]=p.mu;
 
-  double pa[2]={n.n,p.n};
-  double *pap=&(pa[0]);
-
   mm_funct11 fmf=std::bind
     (std::mem_fn<int(size_t,const ubvector &,
-		     ubvector &, double *&)>
+		     ubvector &, double, double, double)>
     (&eos_had_temp_pres_base::nuc_matter_temp_p),
-    this,std::placeholders::_1,std::placeholders::_2,
-    std::placeholders::_3,pap);
+     this,std::placeholders::_1,std::placeholders::_2,
+    std::placeholders::_3,n.n,p.n,T);
+
+#ifdef O2SCL_NEVER_DEFINED
+}{
+#endif
 
   ret=eos_mroot->msolve(2,mu,fmf);
   
   if (ret!=0) {
     O2SCL_ERR2("Solver failed in ",
-		   "eos_had_temp_pres_base::calc_temp_e().",ret);
+	       "eos_had_temp_pres_base::calc_temp_e().",ret);
   }
   
   th=*eos_thermo;

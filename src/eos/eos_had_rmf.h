@@ -595,7 +595,7 @@ namespace o2scl {
 	Used by fn0() (which is called by saturation()) to solve
 	saturation_matter_e() (1 variable).
     */
-    mroot_hybrids<mm_funct11,ubvector,ubmatrix,jac_funct11> def_sat_mroot;
+    mroot_hybrids<> def_sat_mroot;
     //@}
 
     /// \name Functions dealing with naturalness

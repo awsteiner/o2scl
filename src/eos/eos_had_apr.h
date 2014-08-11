@@ -113,7 +113,8 @@ namespace o2scl {
       in many of the functions.
 
       \note The parameter array is unit indexed, so that 
-      <tt>par[0]</tt> is unused.
+      <tt>par[0]</tt> is unused. This choice makes the connection
+      between the code and the paper a bit more transparent.
       
       \future There might be room to improve the testing
       of the finite temperature \part a bit.
@@ -127,7 +128,7 @@ namespace o2scl {
   protected:
 
     /// Storage for the parameters
-    double *par;
+    double par[22];
 
     /// An integer to indicate which phase was used in calc_e()
     int lp;
@@ -143,9 +144,7 @@ namespace o2scl {
 
     virtual ~eos_had_apr();
 
-    /** 
-	\name Choice of phase
-    */
+    /// \name Choice of phase
     //@{
     /** \brief use LDP for densities less than 0.16 and for higher
 	densities, use the phase which minimizes energy (default)
@@ -158,6 +157,9 @@ namespace o2scl {
     /// Choice of phase (default \ref best)
     int pion;
     /** \brief Return the phase of the most recent call to calc_e()
+
+	This function always returns either \ref eos_had_apr::ldp or
+	\ref eos_had_apr::hdp .
      */
     int last_phase() { return lp; }
     //@}
@@ -234,16 +236,23 @@ namespace o2scl {
 
     /** \brief Get the value of one of the parameters
      */
-    double get_par(int n) {
-      if (n<23 && n>0) return par[n];
-      return 0.0;
+    double get_par(size_t n) {
+      if (n>=23 || n==0) {
+	O2SCL_ERR("Index out of range in eos_had_apr::set_par().",
+		  exc_einval);
+      }
+      return par[n];
     }
 
     /** \brief Set the value of one of the parameters
      */
-    int set_par(int n, double x) {
-      if (n<23 && n>0) par[n]=x;
-      return 0;
+    void set_par(size_t n, double x) {
+      if (n>=23 || n==0) {
+	O2SCL_ERR("Index out of range in eos_had_apr::set_par().",
+		  exc_einval);
+      }
+      par[n]=x;
+      return;
     }
 
     /// Return string denoting type ("eos_had_apr")
@@ -253,7 +262,7 @@ namespace o2scl {
 
 	This can be set to true to check the difference in the
 	compressibility wbetween the exact expressions and the
-	numerical values from class eos_had_base.
+	numerical values from class \ref o2scl::eos_had_base.
 
 	\future This function is probably unnecessary, as the
 	syntax
