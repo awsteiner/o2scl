@@ -20,6 +20,9 @@
 
   -------------------------------------------------------------------
 */
+/** \file eos_had_gogny.h
+    \brief File defining \ref o2scl::eos_had_gogny
+*/
 #ifndef O2SCL_GOGNY_EOS_H
 #define O2SCL_GOGNY_EOS_H
 

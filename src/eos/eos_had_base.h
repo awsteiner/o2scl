@@ -20,6 +20,9 @@
 
   -------------------------------------------------------------------
 */
+/** \file eos_had_base.h
+    \brief File defining \ref o2scl::eos_had_base
+*/
 #ifndef O2SCL_HADRONIC_EOS_H
 #define O2SCL_HADRONIC_EOS_H
 

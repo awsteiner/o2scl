@@ -20,6 +20,9 @@
 
   -------------------------------------------------------------------
 */
+/** \file eos_had_potential.h
+    \brief File defining \ref o2scl::eos_had_potential
+*/
 #ifndef O2SCL_GEN_POTENTIAL_EOS_H
 #define O2SCL_GEN_POTENTIAL_EOS_H
 
@@ -64,7 +67,7 @@ namespace o2scl {
       \rho_i = \frac{2}{(2 \pi)^3} \int d^3 k~f_i(k,T)
       \f]
 
-      When \ref form == \ref mdi_form or 
+      When \ref form is equal to \ref mdi_form or 
       \ref gbd_form, the potential energy
       density is given by \ref Das03 :
       \f[
@@ -74,7 +77,7 @@ namespace o2scl {
       \left(1-x \delta^2\right)+V_{mom}(\rho,\delta)
       \f]
       where \f$\delta=1-2 \rho_p/(\rho_n+\rho_p)\f$.
-      If \ref form == \ref mdi_form, then
+      If \ref form is equal to \ref mdi_form, then
       \f[
       V_{mom}(\rho,\delta)=
       \frac{1}{\rho_0} 
@@ -86,7 +89,7 @@ namespace o2scl {
       \f]
       where \f$C_{1/2,1/2}=C_{-1/2,-1/2}=C_{\ell}\f$ and
       \f$C_{1/2,-1/2}=C_{-1/2,1/2}=C_{u}\f$.
-      Otherwise if \ref form == \ref gbd_form, then
+      Otherwise if \ref form is equal to \ref gbd_form, then
       \f[
       V_{mom}(\rho,\delta)=
       \frac{1}{\rho_0}\left[
@@ -100,7 +103,7 @@ namespace o2scl {
       \mathrm{tan}^{-1} \left(k_{F,i}/\Lambda\right) \right]
       \f]
 
-      Otherwise, if \ref form == \ref bgbd_form, \ref bpalb_form
+      Otherwise, if \ref form is equal to \ref bgbd_form, \ref bpalb_form
       or \ref sl_form, then the potential energy density is
       given by \ref Bombaci01 :
       \f[
@@ -133,12 +136,12 @@ namespace o2scl {
       g_i(k)
       \f]
 
-      For \ref form == \ref bgbd_form or \ref form == \ref bpalb_form,
-      the form factor is given by
+      For \ref form is equal to \ref bgbd_form or \ref form 
+      is equal to \ref bpalb_form, the form factor is given by
       \f[
       g_i(k) = \left(1+\frac{k^2}{\Lambda_i^2}\right)^{-1}
       \f]
-      while for \ref form == \ref sl_form, the form factor
+      while for \ref form is equal to \ref sl_form, the form factor
       is given by
       \f[
       g_i(k) = 1-\frac{k^2}{\Lambda_i^2}
@@ -150,7 +153,6 @@ namespace o2scl {
       effective mass for the GBD EOS doesn't work
       
       \future Calculate the chemical potentials analytically 
-      
   */
   class eos_had_potential : public eos_had_eden_base {
 

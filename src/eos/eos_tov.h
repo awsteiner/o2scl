@@ -20,6 +20,9 @@
 
   -------------------------------------------------------------------
 */
+/** \file eos_tov.h
+    \brief File defining \ref o2scl::eos_tov
+*/
 #ifndef O2SCL_TOV_EOS_H
 #define O2SCL_TOV_EOS_H
 

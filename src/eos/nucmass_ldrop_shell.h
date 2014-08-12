@@ -20,6 +20,9 @@
   
   -------------------------------------------------------------------
 */
+/** \file nucmass_ldrop_shell.h
+    \brief File defining \ref o2scl::nucmass_ldrop_shell
+*/
 #ifndef LDROP_SHELL_H
 #define LDROP_SHELL_H
 

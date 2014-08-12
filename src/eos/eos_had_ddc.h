@@ -20,7 +20,9 @@
 
   -------------------------------------------------------------------
 */
-
+/** \file eos_had_ddc.h
+    \brief File defining \ref o2scl::eos_had_ddc
+*/
 #ifndef O2SCL_DDC_EOS_H
 #define O2SCL_DDC_EOS_H
 

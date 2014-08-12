@@ -20,6 +20,9 @@
 
   -------------------------------------------------------------------
 */
+/** \file eos_quark_cfl6.h
+    \brief File defining \ref o2scl::eos_quark_cfl6
+*/
 #ifndef CFL6_EOS_H
 #define CFL6_EOS_H
 

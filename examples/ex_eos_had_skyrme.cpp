@@ -20,7 +20,9 @@
 
   -------------------------------------------------------------------
 */
-
+/** \file ex_eos_had_skyrme.cpp
+    \brief File defining \ref ex_eos_had_skyrme class
+*/
 /* Example: ex_eos_had_skyrme.cpp
    -------------------------------------------------------------------
 */

@@ -20,6 +20,9 @@
 
   -------------------------------------------------------------------
 */
+/** \file eos_had_rmf_delta.h
+    \brief File defining \ref o2scl::eos_had_rmf_delta
+*/
 #ifndef O2SCL_RMF_DELTA_EOS_H
 #define O2SCL_RMF_DELTA_EOS_H
 

@@ -20,6 +20,9 @@
 
   -------------------------------------------------------------------
 */
+/** \file eos_had_tabulated.h
+    \brief File defining \ref o2scl::eos_had_tabulated
+*/
 #ifndef O2SCL_TABULATED_EOS_H
 #define O2SCL_TABULATED_EOS_H
 

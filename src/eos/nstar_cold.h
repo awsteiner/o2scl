@@ -20,6 +20,9 @@
 
   -------------------------------------------------------------------
 */
+/** \file nstar_cold.h
+    \brief File defining \ref o2scl::nstar_cold
+*/
 #ifndef O2SCL_COLD_NSTAR_H
 #define O2SCL_COLD_NSTAR_H
 

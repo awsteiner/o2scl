@@ -20,6 +20,9 @@
 
   -------------------------------------------------------------------
 */
+/** \file eos_base.h
+    \brief File defining \ref o2scl::eos_base
+*/
 #ifndef O2SCL_EOS_H
 #define O2SCL_EOS_H
 

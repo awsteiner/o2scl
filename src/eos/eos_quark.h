@@ -20,6 +20,9 @@
 
   -------------------------------------------------------------------
 */
+/** \file eos_quark.h
+    \brief File defining \ref o2scl::eos_quark
+*/
 #ifndef O2SCL_QUARK_EOS_H
 #define O2SCL_QUARK_EOS_H
 

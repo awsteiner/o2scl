@@ -20,7 +20,9 @@
 
   -------------------------------------------------------------------
 */
-
+/** \file eos_had_rmf.h
+    \brief File defining \ref o2scl::eos_had_rmf
+*/
 #ifndef O2SCL_RMF_EOS_H
 #define O2SCL_RMF_EOS_H
 

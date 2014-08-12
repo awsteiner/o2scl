@@ -20,6 +20,9 @@
 
   -------------------------------------------------------------------
 */
+/** \file eos_sn.h
+    \brief File defining \ref o2scl::eos_sn_base
+*/
 #ifndef GEN_SN_EOS_H
 #define GEN_SN_EOS_H
 
@@ -277,7 +280,7 @@ namespace o2scl {
 	the uses a quadratic to determine the minimum of the
 	free energy.
 
-	If \ref data_with_leptons() is \tt false, then 
+	If \ref data_with_leptons() is <tt>false</tt>, then 
 	\ref compute_eg() is used to compute the leptons. 
     */
     virtual void beta_eq_Tfixed(double nB, double T, double &Ye);

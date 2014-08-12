@@ -20,6 +20,9 @@
 
   -------------------------------------------------------------------
 */
+/** \file eos_had_apr.h
+    \brief File defining \ref o2scl::eos_had_apr
+*/
 #ifndef O2SCL_APR_EOS_H
 #define O2SCL_APR_EOS_H
 
@@ -44,16 +47,16 @@ namespace o2scl {
       \f]
 
       \f[
-      {\cal H}_{kin} = \left( \frac{\hbar^2}{2 m} + 
-      \left( p_3 + \left( 1 - x \right) 
-      p_5 \right) n e^{-p_4 n} \right) \tau_n + 
-      \left( \frac{\hbar^2}{2 m} + \left( p_3 + x 
-      p_5 \right) n e^{-p_4 n} \right) \tau_p
+      {\cal H}_{kin} = \left\{ \frac{\hbar^2}{2 m} + 
+      \left[ p_3 + \left( 1 - x \right) 
+      p_5 \right] n e^{-p_4 n} \right\} \tau_n + 
+      \left\{ \frac{\hbar^2}{2 m} + \left[ p_3 + x 
+      p_5 \right] n e^{-p_4 n} \right\} \tau_p
       \f]
 
       \f[
       {\cal H}_{pot} =
-      g_1 \left( 1 - \left( 1 - 2 x \right)^2 \right) +
+      g_1 \left[ 1 - \left( 1 - 2 x \right)^2 \right] +
       g_2 \left( 1 - 2 x \right)^2
       \f]
 
@@ -61,31 +64,27 @@ namespace o2scl {
       phase (LDP) or the high-density phase (HDP):
 
       \f[
-      g_{1,LDP} = -n^2 \left( p_1 + p_2 n + p_6 n^2 + 
-      \left( p_{10} + p_{11} n \right) e^{-p_9^2 n^2} \right) 
+      g_{1,LDP} = -n^2 \left[ p_1 + p_2 n + p_6 n^2 + 
+      \left( p_{10} + p_{11} n \right) e^{-p_9^2 n^2} \right] 
       \f]
 
       \f[
-      g_{2,LDP} = -n^2 \left( p_{12}/n + p_7 + p_8 n + 
-      p_{13} e^{-p_9^2 n^2} \right) 
+      g_{2,LDP} = -n^2 \left[ \frac{p_{12}}{n} + p_7 + p_8 n + 
+      p_{13} e^{-p_9^2 n^2} \right]
       \f]
 
       \f[
-      g_{1,HDP} = g_{1,LDP} -n^2 \left( p_{17} \left( n - p_{19} \right)
+      g_{1,HDP} = g_{1,LDP} -n^2 \left[ p_{17} \left( n - p_{19} \right)
       + p_{21} \left( n - p_{19} \right)^2 e^{p_{18} 
       \left( n - p_{19} \right) } 
-      \right)
+      \right]
       \f]
 
       \f[
-      g_{2,HDP} = g_{2,LDP} -n^2 \left( p_{15} \left( n - p_{20} \right)
+      g_{2,HDP} = g_{2,LDP} -n^2 \left[ p_{15} \left( n - p_{20} \right)
       + p_{14} \left( n - p_{20} \right)^2 e^{p_{16} 
-      \left( n - p_{20} \right)} 
-      \right)
+      \left( n - p_{20} \right)} \right]
       \f] 
-
-      The chemical potentials include the rest mass energy and the 
-      energy density includes the rest mass energy density.
 
       \note APR seems to have been designed to be used with
       non-relativistic neutrons and protons with equal masses of 939
@@ -99,10 +98,10 @@ namespace o2scl {
       constant). Equivalently, \f$ \nu_n\f$ is just \f$ -k_{F_n}^2/ 2
       m^{*} \f$.
       
-      The selection between the LDP and HDP is controlled by 
-      \ref pion. The default is to use the LDP at densities below 
-      0.16 \f$ \mathrm{fm}^{-3} \f$, and for larger densities 
-      to just use whichever minimizes the energy.
+      The selection between the LDP and HDP is controlled by the value
+      of \ref pion. The default is to use the LDP at densities below
+      0.16 \f$ \mathrm{fm}^{-3} \f$, and for larger densities to just
+      use whichever minimizes the energy.
 
       The finite temperature approximations from \ref Prakash97 
       are used in testing.
@@ -145,7 +144,7 @@ namespace o2scl {
   public:
 
     /** \brief Create an EOS object with the default parameter 
-	set (\f$ A18 + UIX^{*}+\delta v \f$).
+	set (\f$ A18 + \mathrm{UIX}^{*}+\delta v \f$).
     */
     eos_had_apr();
 
@@ -170,7 +169,9 @@ namespace o2scl {
      */
     int last_phase() { return lp; }
     //@}
-
+    
+    /// \name Basic usage
+    //@{
     /** \brief Equation of state as a function of density
      */
     virtual int calc_e(fermion &n, fermion &p, thermo &th);
@@ -198,6 +199,7 @@ namespace o2scl {
 	quadratic.
     */
     double fesym_diff(double nb);
+    //@}
 
     /// \name Model selection
     //@{
@@ -246,6 +248,8 @@ namespace o2scl {
     }
     //@}
 
+    /// \name Other functions
+    //@{
     /** \brief Calculate Q's for semi-infinite nuclear matter
     
 	For general discussion, see the documentation to eos_had_base::qs().
@@ -277,15 +281,17 @@ namespace o2scl {
 
     /// Return string denoting type ("eos_had_apr")
     virtual const char *type() { return "eos_had_apr"; }
+    //@}
 
-    /** \brief If true, use the methods from eos_had_base for fcomp()
-	(default true)
+    /** \brief If true, use the methods from eos_had_base for \ref
+	fcomp() and \ref fesym_diff() (default true)
 
 	This can be set to true to check the difference in the
-	compressibility wbetween the exact expressions and the
-	numerical values from class \ref o2scl::eos_had_base.
+	compressibility and symmety energy between the exact
+	expressions and the numerical values from class \ref
+	o2scl::eos_had_base.
 
-	\future This function is probably unnecessary, as the
+	\future This variable is probably unnecessary, as the
 	syntax
 	\code
 	eos_had_apr apr;

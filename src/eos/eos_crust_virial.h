@@ -20,6 +20,9 @@
 
   -------------------------------------------------------------------
 */
+/** \file eos_crust_virial.h
+    \brief File defining \ref o2scl::eos_crust_virial
+*/
 #ifndef O2SCL_VIRIAL_EOS_H
 #define O2SCL_VIRIAL_EOS_H
 

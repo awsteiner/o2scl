@@ -20,7 +20,9 @@
 
   -------------------------------------------------------------------
 */
-
+/** \file nucleus_rmf.h
+    \brief File defining \ref o2scl::nucleus_rmf
+*/
 #ifndef RMF_NUCLEUS_H
 #define RMF_NUCLEUS_H
 

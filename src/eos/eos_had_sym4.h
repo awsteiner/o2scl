@@ -20,7 +20,9 @@
 
   -------------------------------------------------------------------
 */
- 
+/** \file eos_had_sym4.h
+    \brief File defining \ref o2scl::eos_had_sym4
+*/
 #ifndef O2SCL_SYM4_EOS_H
 #define O2SCL_SYM4_EOS_H
 

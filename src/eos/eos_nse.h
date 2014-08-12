@@ -20,6 +20,9 @@
 
   -------------------------------------------------------------------
 */
+/** \file eos_nse.h
+    \brief File defining \ref o2scl::eos_nse
+*/
 #ifndef O2SCL_NSE_EOS_H
 #define O2SCL_NSE_EOS_H 
 

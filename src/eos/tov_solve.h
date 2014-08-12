@@ -20,6 +20,9 @@
 
   -------------------------------------------------------------------
 */
+/** \file tov_solve.h
+    \brief File defining \ref o2scl::tov_solve
+*/
 #ifndef O2SCL_TOV_SOLVE_H
 #define O2SCL_TOV_SOLVE_H
 

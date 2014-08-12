@@ -32,7 +32,7 @@
 #include <o2scl/mroot.h>
 
 /** \file part.h
-    \brief File for definitions for \ref o2scl::thermo and \ref o2scl::part 
+    \brief File defining \ref o2scl::thermo and \ref o2scl::part 
 */
 
 #ifndef DOXYGEN_NO_O2NS

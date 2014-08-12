@@ -20,6 +20,9 @@
 
   -------------------------------------------------------------------
 */
+/** \file eos_quark_bag.h
+    \brief File defining \ref o2scl::eos_quark_bag
+*/
 #ifndef O2SCL_BAG_EOS_H
 #define O2SCL_BAG_EOS_H
 

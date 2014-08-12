@@ -20,6 +20,9 @@
   
   -------------------------------------------------------------------
 */
+/** \file nucmass_ldrop.h
+    \brief File defining \ref o2scl::nucmass_ldrop
+*/
 #ifndef LDROP_MASS_H
 #define LDROP_MASS_H
 

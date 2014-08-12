@@ -20,6 +20,9 @@
 
   -------------------------------------------------------------------
 */
+/** \file eos_quark_njl.h
+    \brief File defining \ref o2scl::eos_quark_njl
+*/
 #ifndef O2SCL_NAMBUJL_EOS_H
 #define O2SCL_NAMBUJL_EOS_H
 
