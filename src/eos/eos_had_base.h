@@ -621,9 +621,7 @@ namespace o2scl {
 	mroot_hybrids because it automatically avoids regions
 	where the equations are undefined.
     */
-    virtual void set_mroot(mroot<mm_funct11,
-			   boost::numeric::ublas::vector<double>, 
-			   jac_funct11> &mr);
+    virtual void set_mroot(mroot<> &mr);
     
     /** \brief Set class mroot object for use calculating saturation density
 
@@ -632,10 +630,10 @@ namespace o2scl {
 	mroot_hybrids because it automatically avoids regions
 	where the equations are undefined.
      */
-    virtual void set_sat_root(root<funct11 > &mr);
+    virtual void set_sat_root(root<> &mr);
     
     /// Set \ref deriv_base object to use to find saturation properties
-    virtual void set_sat_deriv(deriv_base<funct11 > &de);
+    virtual void set_sat_deriv(deriv_base<> &de);
 
     /** \brief Set the second \ref deriv_base object to use to find
 	saturation properties
@@ -646,7 +644,7 @@ namespace o2scl {
 	second \ref deriv_base object is used in the function
 	fesym_slope().
     */
-    virtual void set_sat_deriv2(deriv_base<funct11> &de);
+    virtual void set_sat_deriv2(deriv_base<> &de);
     
     /// Set neutron and proton 
     virtual void set_n_and_p(fermion &n, fermion &p);
