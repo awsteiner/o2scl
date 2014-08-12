@@ -33,48 +33,11 @@ using namespace o2scl_const;
 eos_had_apr::eos_had_apr() {
   pion=best; 
 
-  choice=1;
+  select(a18_uix_deltav);
   
-  par[3]=89.8/hc_mev_fm;
-  par[4]=0.457;
-  par[5]=-59.0/hc_mev_fm;
-
-  par[1]=337.2;
-  par[2]=-382.0;
-  par[6]=-19.1;
-  par[7]=214.6;
-  par[8]=-384.0;
-  par[9]=6.4;
-  par[10]=69.0;
-  par[11]=-33.0;
-  par[12]=0.35;
-  par[13]=0.0;
-  par[14]=0.0;
-  par[15]=287.0;
-  par[16]=-1.54;
-  par[17]=175.0;
-  par[18]=-1.45;
-  par[19]=0.32;
-  par[20]=0.195;
-  par[21]=0.0;
-  
-  par[1]/=hc_mev_fm;
-  par[2]/=hc_mev_fm;
-  par[6]/=hc_mev_fm;
-  par[7]/=hc_mev_fm;
-  par[8]/=hc_mev_fm;
-  par[10]/=hc_mev_fm;
-  par[11]/=hc_mev_fm;
-  par[12]/=hc_mev_fm;
-  par[13]/=hc_mev_fm;
-  par[14]/=hc_mev_fm;
-  par[15]/=hc_mev_fm;
-  par[17]/=hc_mev_fm;
-  par[21]/=hc_mev_fm;
-
   neutron->init(939.0/hc_mev_fm,2.0);
   proton->init(939.0/hc_mev_fm,2.0);
-
+  
   lp=0;
 
   parent_method=false;
@@ -423,7 +386,7 @@ void eos_had_apr::select(int model_index) {
   par[4]=0.457;
   par[5]=-59.0/hc_mev_fm;
 
-  if (choice==2) {
+  if (choice==a18_uix) {
     /*A18+UIX*/
     par[1]=328.8;
     par[2]=-404.6;
@@ -443,7 +406,7 @@ void eos_had_apr::select(int model_index) {
     par[19]=0.32;
     par[20]=0.2;
     par[21]=-275;
-  } else if (choice==3) {
+  } else if (choice==a18_deltav) {
     /* A18+deltav */
     par[1]=281.0;
     par[2]=-151.1;
@@ -463,7 +426,7 @@ void eos_had_apr::select(int model_index) {
     par[19]=0.0;
     par[20]=0.0;
     par[21]=0.0;
-  } else if (choice==4) {
+  } else if (choice==a18) {
     /* A18 */
     par[1]=297.6;
     par[2]=-134.6;
@@ -483,7 +446,7 @@ void eos_had_apr::select(int model_index) {
     par[19]=0.0;
     par[20]=0.0;
     par[21]=0.0;
-  } else {
+  } else if (choice==a18_uix_deltav) {
     /* A18+UIX*+deltav */
     par[1]=337.2;
     par[2]=-382.0;
@@ -503,6 +466,8 @@ void eos_had_apr::select(int model_index) {
     par[19]=0.32;
     par[20]=0.195;
     par[21]=0.0;
+  } else {
+    O2SCL_ERR("Improper value in eos_had_apr::select().",exc_einval);
   }
   
   par[1]/=hc_mev_fm;

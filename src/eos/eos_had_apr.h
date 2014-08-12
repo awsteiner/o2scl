@@ -120,6 +120,7 @@ namespace o2scl {
       of the finite temperature \part a bit.
       \future There is some repetition between calc_e() and calc_temp_e() 
       that possibly could be removed.
+      \future Include the analytic relations from Constantinou et al. 
   */
   class eos_had_apr : public eos_had_temp_eden_base {
 
@@ -127,6 +128,12 @@ namespace o2scl {
 
   protected:
 
+    /// Non-relativistic fermion thermodyanmics
+    fermion_nonrel nrf;
+    
+    /// The variable indicating which parameter set is to be used
+    int choice;
+    
     /// Storage for the parameters
     double par[22];
 
@@ -192,6 +199,8 @@ namespace o2scl {
     */
     double fesym_diff(double nb);
 
+    /// \name Model selection
+    //@{
     /** \brief Select model
 
 	Valid values for \c model_index are: \n
@@ -201,9 +210,41 @@ namespace o2scl {
 	3 - A18+deltav \n
 	4 - A18 \n
 
-	If any other integer is given, A18+UIX*+deltav is assumed.
+	If any other integer is given, the error handler is called.
+
+	\note This cannot be virtual because it is called by the
+	constructor
     */
-    void select(int model_index);
+    void select(int model_index=1);
+    /// With three body forces and relativistic corrections
+    static const int a18_uix_deltav=1;
+    /// With three body forces
+    static const int a18_uix=2;
+    /// With relativistic corrections
+    static const int a18_deltav=3;
+    /// No three body forces or relativistic corrections
+    static const int a18=4;
+    /** \brief Get the value of one of the model parameters
+     */
+    double get_par(size_t n) {
+      if (n>=23 || n==0) {
+	O2SCL_ERR("Index out of range in eos_had_apr::set_par().",
+		  exc_einval);
+      }
+      return par[n];
+    }
+
+    /** \brief Set the value of one of the model parameters
+     */
+    void set_par(size_t n, double x) {
+      if (n>=23 || n==0) {
+	O2SCL_ERR("Index out of range in eos_had_apr::set_par().",
+		  exc_einval);
+      }
+      par[n]=x;
+      return;
+    }
+    //@}
 
     /** \brief Calculate Q's for semi-infinite nuclear matter
     
@@ -234,31 +275,11 @@ namespace o2scl {
 		      double &dqnpdnn, double &dqnpdnp,
 		      double &dqppdnn, double &dqppdnp);
 
-    /** \brief Get the value of one of the parameters
-     */
-    double get_par(size_t n) {
-      if (n>=23 || n==0) {
-	O2SCL_ERR("Index out of range in eos_had_apr::set_par().",
-		  exc_einval);
-      }
-      return par[n];
-    }
-
-    /** \brief Set the value of one of the parameters
-     */
-    void set_par(size_t n, double x) {
-      if (n>=23 || n==0) {
-	O2SCL_ERR("Index out of range in eos_had_apr::set_par().",
-		  exc_einval);
-      }
-      par[n]=x;
-      return;
-    }
-
     /// Return string denoting type ("eos_had_apr")
     virtual const char *type() { return "eos_had_apr"; }
 
     /** \brief If true, use the methods from eos_had_base for fcomp()
+	(default true)
 
 	This can be set to true to check the difference in the
 	compressibility wbetween the exact expressions and the
@@ -273,18 +294,6 @@ namespace o2scl {
 	works just as well.
     */
     bool parent_method;
-    
-#ifndef DOXYGEN_INTERNAL
-    
-  protected:
-
-    /// Non-relativistic fermion thermodyanmics
-    fermion_nonrel nrf;
-    
-    /// The variable indicating which parameter set is to be used
-    int choice;
-    
-#endif
     
   };
 

@@ -578,9 +578,11 @@ int eos_had_temp_base::calc_liqgas_dens_temp_e
      this,std::placeholders::_1,std::placeholders::_2,
     std::placeholders::_3,std::ref(n1),std::ref(p1),
     std::ref(n2),std::ref(p2),T,std::ref(th1),std::ref(th2));
+
 #ifdef O2SCL_NEVER_DEFINED
 }{
 #endif
+
   int ret=eos_mroot->msolve(3,x,fmf);
 
   p1.n=x[0];
