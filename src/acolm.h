@@ -98,21 +98,21 @@ namespace o2scl_acol {
 
   protected:
 
-#ifdef DOXYGENP
+#ifdef DOXYGEN
     /// A pointer to the table
     table_units<> *tabp;
 #else
     o2scl::table_units<> *tabp;
 #endif
 
-#ifdef DOXYGENP
+#ifdef DOXYGEN
     /// The number formatter for html output
     format_float ffl;
 #else
     o2scl::format_float ffl;
 #endif
 
-#ifdef DOXYGENP
+#ifdef DOXYGEN
     /// Pointer to the three dimensional table
     table3d *t3p;
 #else
@@ -172,7 +172,7 @@ namespace o2scl_acol {
     bool threed;
 
     /// Dummy cli object for cli::cli_gets()
-#ifdef DOXYGENP
+#ifdef DOXYGEN
     cli *cl;
 #else
     o2scl::cli *cl;

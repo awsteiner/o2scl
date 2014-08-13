@@ -31,23 +31,40 @@
 #include <o2scl/nucleus.h>
 #include <o2scl/nucmass.h>
 
-#ifndef DOXYGEN_NO_O2NS
-namespace o2scl {
+#ifdef DOXYGEN
+/** \brief Placeholder namespace for global functions in \o2p 
+
+    This namespace is created to help doxygen understand 
+    functions in \o2p that are in the \ref o2scl namespace.
+    Functions documented here should be called using, for example,
+    \verbatim
+    o2scl::nucdist_set(dist,nm);
+    \endverbatim
+ */
+namespace o2scl_part {
+#else
+  namespace o2scl {
 #endif
 
-  /** \brief Set a distribution of nuclei from a mass formula
-      and a function string
+    /** \brief Set a distribution of nuclei from a mass formula
+	and a function string
 
-      Given a nuclear mass formula \c nm, this adds nuclei to a
-      <tt>std::vector</tt> object. The function \c expr, a function of
-      \c Z and \z N, determines which nuclei will be added to the
-      distribution.
-  */
-  void nucdist_set(std::vector<nucleus> &dist, nucmass &nm, 
-		   std::string expr="1", int maxA=400,
-		   bool include_neutron=false);
+	Given a nuclear mass formula \c nm, this adds nuclei to a
+	<tt>std::vector</tt> object. The function \c expr, a function of
+	\c Z and \c N, determines which nuclei will be added to the
+	distribution.
 
-#ifndef DOXYGEN_NO_O2NS
+	\note This function is actually in the \ref o2scl namespace.
+	Unfortunately doxygen has difficulty extending namespaces
+	in separate doxyfile instances. 
+    */
+    void nucdist_set(std::vector<nucleus> &dist, nucmass &nm, 
+		     std::string expr="1", int maxA=400,
+		     bool include_neutron=false);
+
+#ifdef DOXYGEN
+  }
+#else
 }
 #endif
 

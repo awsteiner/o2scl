@@ -36,7 +36,7 @@ namespace o2scl_linalg {
   
 #define O2SCL_IX(V,i) V[i]
 #define O2SCL_IX2(M,i,j) M(i,j)
-#ifndef DOXYGENP
+#ifndef DOXYGEN
 #include <o2scl/qr_base.h>  
 #endif
 #undef O2SCL_IX
@@ -48,7 +48,7 @@ namespace o2scl_linalg_bracket {
   
 #define O2SCL_IX(V,i) V[i]
 #define O2SCL_IX2(M,i,j) M[i][j]
-#ifndef DOXYGENP
+#ifndef DOXYGEN
 #include <o2scl/qr_base.h>  
 #endif
 #undef O2SCL_IX
@@ -56,9 +56,9 @@ namespace o2scl_linalg_bracket {
 
 }
 
-#if defined (O2SCL_COND_FLAG) || defined (DOXYGENP)
+#if defined (O2SCL_COND_FLAG) || defined (DOXYGEN)
 
-#if defined (O2SCL_ARMA) || defined (DOXYGENP)
+#if defined (O2SCL_ARMA) || defined (DOXYGEN)
 #include <armadillo>
 namespace o2scl_linalg {
   
@@ -72,7 +72,7 @@ namespace o2scl_linalg {
 }
 #endif
 
-#if defined (O2SCL_EIGEN) || defined (DOXYGENP)
+#if defined (O2SCL_EIGEN) || defined (DOXYGEN)
 #include <Eigen/Dense>
 namespace o2scl_linalg {
   

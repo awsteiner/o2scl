@@ -42,7 +42,7 @@
 /** \file bidiag_base.h
     \brief File defining bidiagonalization functions
 */
-#ifdef DOXYGENP
+#ifdef DOXYGEN
 namespace o2scl_linalg {
 #endif
 
@@ -235,7 +235,7 @@ namespace o2scl_linalg {
     return o2scl::success;
   }
 
-#ifdef DOXYGENP
+#ifdef DOXYGEN
 }
 #endif
 

@@ -43,7 +43,7 @@
     \brief Functions related to LU decomposition
 */
 
-#ifdef DOXYGENP
+#ifdef DOXYGEN
 namespace o2scl_linalg {
 #endif
 
@@ -404,6 +404,6 @@ namespace o2scl_linalg {
     return s;
   }
 
-#ifdef DOXYGENP
+#ifdef DOXYGEN
 }
 #endif

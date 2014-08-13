@@ -1110,8 +1110,8 @@ namespace o2scl {
 }
 #endif
 
-#if defined (O2SCL_COND_FLAG) || defined (DOXYGENP)
-#if defined (O2SCL_ARMA) || defined (DOXYGENP)
+#if defined (O2SCL_COND_FLAG) || defined (DOXYGEN)
+#if defined (O2SCL_ARMA) || defined (DOXYGEN)
 #include <armadillo>
 namespace o2scl {
   /** \brief A version of \ref mroot_hybrids which uses 
@@ -1132,7 +1132,7 @@ namespace o2scl {
   };
 }
 #endif
-#if defined (O2SCL_HAVE_EIGEN) || defined (DOXYGENP)
+#if defined (O2SCL_HAVE_EIGEN) || defined (DOXYGEN)
 #include <Eigen/Dense>
 namespace o2scl {
   /** \brief A version of \ref mroot_hybrids

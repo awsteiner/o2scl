@@ -43,7 +43,7 @@
     \brief File defining Cholesky decomposition
 */
 
-#ifdef DOXYGENP
+#ifdef DOXYGEN
 namespace o2scl_linalg {
 #endif
 
@@ -323,6 +323,6 @@ namespace o2scl_linalg {
     return stat_chol;
   }
 
-#ifdef DOXYGENP
+#ifdef DOXYGEN
 }
 #endif

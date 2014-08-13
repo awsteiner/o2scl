@@ -54,7 +54,7 @@
 
 */
 
-#ifdef DOXYGENP
+#ifdef DOXYGEN
 namespace o2scl_cblas {
 #endif
   
@@ -1330,7 +1330,7 @@ namespace o2scl_cblas {
   }
   //@}
 
-#ifdef DOXYGENP
+#ifdef DOXYGEN
 }
 #endif
 

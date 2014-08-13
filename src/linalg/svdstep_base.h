@@ -43,7 +43,7 @@
     \brief File for SVD decomposition
 */
 
-#ifdef DOXYGENP
+#ifdef DOXYGEN
 namespace o2scl_linalg {
 #endif
 
@@ -926,6 +926,6 @@ namespace o2scl_linalg {
     return;
   }
   
-#ifdef DOXYGENP
+#ifdef DOXYGEN
 }
 #endif

@@ -24,7 +24,7 @@
     \brief File defining \ref o2scl_linalg::lanczos
 */
 
-#ifdef DOXYGENP
+#ifdef DOXYGEN
 namespace o2scl_linalg {
 #endif
 
@@ -317,6 +317,6 @@ namespace o2scl_linalg {
   
   };
 
-#ifdef DOXYGENP
+#ifdef DOXYGEN
 }
 #endif

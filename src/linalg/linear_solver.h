@@ -124,8 +124,8 @@ namespace o2scl_linalg {
   // End of namespace o2scl_linalg
 }
 
-#if defined (O2SCL_COND_FLAG) || defined (DOXYGENP)
-#if defined (O2SCL_ARMA) || defined (DOXYGENP)
+#if defined (O2SCL_COND_FLAG) || defined (DOXYGEN)
+#if defined (O2SCL_ARMA) || defined (DOXYGEN)
 #include <armadillo>
 namespace o2scl_linalg {
   /** \brief Armadillo linear solver 
@@ -144,7 +144,7 @@ namespace o2scl_linalg {
 }
 #endif
 
-#if defined (O2SCL_EIGEN) || defined (DOXYGENP)
+#if defined (O2SCL_EIGEN) || defined (DOXYGEN)
 #include <Eigen/Dense>
 namespace o2scl_linalg {
   /** \brief Eigen linear solver using QR decomposition with 

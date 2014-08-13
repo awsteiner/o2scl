@@ -31,7 +31,7 @@
 namespace o2scl {
 #endif
 
-#ifdef DOXYGENP
+#ifdef DOXYGEN
 
   /** \brief A struct to provide the shared_ptr type
 

@@ -52,7 +52,7 @@
 #include <o2scl/cblas.h>
 #include <o2scl/permutation.h>
 
-#ifdef DOXYGENP
+#ifdef DOXYGEN
 namespace o2scl_linalg {
 #endif
   
@@ -548,6 +548,6 @@ namespace o2scl_linalg {
     return;
   }
   
-#ifdef DOXYGENP
+#ifdef DOXYGEN
 }
 #endif

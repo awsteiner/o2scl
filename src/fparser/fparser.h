@@ -14,7 +14,7 @@
     \brief Main header for the \ref FunctionParser class
 */
 
-#ifdef DOXYGENP
+#ifdef DOXYGEN
 
 /** \brief Parse a mathematical function specified in a string
 

@@ -27,7 +27,7 @@
     10- and 33-parameter mass formulas from \ref Duflo95.
     
     In order to create a set of nuclei stored in a <tt>std::vector</tt>
-    object, one can use \ref o2scl::nucdist_set().
+    object, one can use \ref o2scl_part::nucdist_set().
 
     \section ex_nucmass_sect Nuclear mass example
 

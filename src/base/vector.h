@@ -1551,9 +1551,9 @@ namespace o2scl {
   
 }
 
-#if defined (O2SCL_COND_FLAG) || defined (DOXYGENP)
+#if defined (O2SCL_COND_FLAG) || defined (DOXYGEN)
 
-#if defined (O2SCL_ARMA) || defined (DOXYGENP)
+#if defined (O2SCL_ARMA) || defined (DOXYGEN)
 #include <armadillo>
 namespace o2scl {
 
@@ -1577,7 +1577,7 @@ namespace o2scl {
 
 #endif
 
-#if defined (O2SCL_EIGEN) || defined (DOXYGENP)
+#if defined (O2SCL_EIGEN) || defined (DOXYGEN)
 #include <Eigen/Dense>
 
 namespace o2scl {
@@ -1606,10 +1606,10 @@ namespace o2scl {
 
 #include <o2scl/vector_special.h>
 
-// End of "#if defined (O2SCL_COND_FLAG) || defined (DOXYGENP)"
+// End of "#if defined (O2SCL_COND_FLAG) || defined (DOXYGEN)"
 #endif
 
-#ifdef DOXYGENP
+#ifdef DOXYGEN
 /** \brief Placeholder documentation of some related Boost objects
 */
 namespace boost {
@@ -1656,7 +1656,7 @@ namespace boost {
     }
   }
 }
-// End of "#ifdef DOXYGENP"
+// End of "#ifdef DOXYGEN"
 #endif
 
 // End of "#ifndef O2SCL_VECTOR_H"
