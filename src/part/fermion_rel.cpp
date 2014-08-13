@@ -47,8 +47,12 @@ fermion_rel::~fermion_rel() {
 
 void fermion_rel::calc_mu(fermion &f, double temper) {
 
-  if (temper<=0.0) {
-    calc_mu_zerot(f);
+  if (temper<0.0) {
+    O2SCL_ERR("Temperature less than zero in fermion_rel::calc_density().",
+	      exc_einval);
+  }
+  if (temper==0.0) {
+    calc_density_zerot(f);
     return;
   }
 
@@ -275,6 +279,15 @@ int fermion_rel::nu_from_n(fermion &f, double temper) {
 }
 
 int fermion_rel::calc_density(fermion &f, double temper) {
+  
+  if (temper<0.0) {
+    O2SCL_ERR("Temperature less than zero in fermion_rel::calc_density().",
+	      exc_einval);
+  }
+  if (temper==0.0) {
+    calc_density_zerot(f);
+    return 0;
+  }
 
 #if !O2SCL_NO_RANGE_CHECK
   // This may not be strictly necessary, because it should be clear

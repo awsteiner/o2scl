@@ -70,6 +70,16 @@ void fermion_nonrel::calc_density_zerot(fermion &f) {
 }
 
 void fermion_nonrel::calc_mu(fermion &f, double temper) {
+
+  if (temper<0.0) {
+    O2SCL_ERR("Temperature less than zero in fermion_nonrel::calc_mu().",
+	      exc_einval);
+  }
+  if (temper==0.0) {
+    calc_mu_zerot(f);
+    return 0;
+  }
+
   double y, sy, spi, ey, int1, int2;
 
   if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
@@ -178,6 +188,16 @@ void fermion_nonrel::nu_from_n(fermion &f, double temper) {
 }
 
 int fermion_nonrel::calc_density(fermion &f, double temper) {
+
+  if (temper<0.0) {
+    O2SCL_ERR("Temperature less than zero in fermion_nonrel::calc_density().",
+	      exc_einval);
+  }
+  if (temper==0.0) {
+    calc_density_zerot(f);
+    return 0;
+  }
+
   double y, spi, ey, sy;
 
   if (f.n<=0.0) {
