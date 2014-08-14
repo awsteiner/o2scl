@@ -77,7 +77,7 @@ void fermion_nonrel::calc_mu(fermion &f, double temper) {
   }
   if (temper==0.0) {
     calc_mu_zerot(f);
-    return 0;
+    return;
   }
 
   double y, sy, spi, ey, int1, int2;
