@@ -576,7 +576,7 @@ class plotter:
             print 'ylimits(ylow,yhigh)'
         return
 
-    def text(self,str,tx,ty,**kwargs):
+    def text(self,tx,ty,str,**kwargs):
         if self.canvas_flag==0:
             self.canvas()
             self.canvas_flag=1

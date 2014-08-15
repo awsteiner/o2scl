@@ -307,6 +307,16 @@ namespace o2scl {
   
   /** \brief Compute properties of a fermion including derivatives
       [abstract base]
+
+      \future Include explicit zero-temperature calculation, maybe
+      by making this a child of fermion_zerot or by making a 
+      new fermion_deriv_zerot? 
+      \comment
+      dn/dmu is just g*mu*kf/2/pi^2
+      \endcomment
+      \future There is also a closed form for the derivatives
+      of massless fermions with pairs at finite temperature
+      in Constantiou et al. 2014 which could be implemented here.
    */
   class fermion_deriv_thermo {
 

@@ -26,7 +26,6 @@
 /** \file fermion.h
     \brief File defining \ref o2scl::fermion
 */
-
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -252,6 +251,9 @@ namespace o2scl {
 	to the requested precision, but the first term in the series
 	expansion for the entropy is zero, so the entropy is one order
 	lower in accuracy.
+
+	\future Make a function like this for dndm, dsdT, etc. 
+	for fermion_deriv .
     */
     virtual bool calc_mu_deg(fermion &f, double temper, 
 			     double prec=1.0e-18);
