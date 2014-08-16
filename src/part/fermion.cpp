@@ -626,6 +626,18 @@ double fermion_eval_thermo::calibrate
 bool fermion_eval_thermo::calc_mu_deg(fermion &f, double temper, 
 				      double prec) {
   
+  // Handle the zero-temperature limit
+  if (temper==0.0) {
+    calc_mu_zerot(f);
+    return true;
+  }
+
+  // Double check to ensure T and mass are positive
+  if (temper<0.0 || f.ms<0.0) {
+    O2SCL_ERR2("Temperature or mass negative in fermion_eval_thermo",
+	       "::calc_mu_deg().",exc_einval);
+  }
+  
   if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
   
   // Compute psi and tt
@@ -634,19 +646,14 @@ bool fermion_eval_thermo::calc_mu_deg(fermion &f, double temper,
   else psi=(f.nu+f.m-f.ms)/temper;
   double tt=temper/f.ms;
 
-  // Double check to ensure T and mass are positive
-  if (temper<0.0 || f.ms<0.0) {
-    O2SCL_ERR2("Temperature or mass negative in fermion_eval_thermo",
-	       "::calc_mu_deg().",exc_einval);
-  }
-  
   // Return false immediately psi<0 where the expressions below
   // don't work because of the square roots
   if (psi<0.0) return false;
   
   // Prefactor 'd' in Johns96
-  double prefac=f.g/2.0/o2scl_const::pi2*pow(f.ms,4.0);
+  double prefac=f.g/2.0/pi2*pow(f.ms,4.0);
   
+  // Define x = psi * t = (mu/m - 1) and related values
   double x=psi*tt;
   double sx=sqrt(x);
   double s2x=sqrt(2.0+x);
@@ -662,7 +669,7 @@ bool fermion_eval_thermo::calc_mu_deg(fermion &f, double temper,
   } else {
     pterm1=x2*sx*(29568.0+15840.0*x+1540.0*x2-105.0*x3)/55440.0/sqrt(2.0);
   }
-  double pterm4=-31.0*pow(o2scl_const::pi*tt,6.0)/1008.0*(1.0+x)*
+  double pterm4=-31.0*pow(pi*tt,6.0)/1008.0*(1.0+x)*
     sx*s2x/pow(x*(2.0+x),4.0);
 
   // Check if we're going to succeed
@@ -682,23 +689,23 @@ bool fermion_eval_thermo::calc_mu_deg(fermion &f, double temper,
   }
   
   // Second order terms
-  double pterm2=tt*tt*o2scl_const::pi2/6.0*(1.0+x)*sx*s2x;
-  double nterm2=tt*tt*o2scl_const::pi2/6.0*(1.0+4.0*x+2.0*x2)/
+  double pterm2=tt*tt*pi2/6.0*(1.0+x)*sx*s2x;
+  double nterm2=tt*tt*pi2/6.0*(1.0+4.0*x+2.0*x2)/
     f.ms/sx/s2x;
-  double enterm2=tt*o2scl_const::pi2/3.0*(1.0+x)*sx*s2x/f.ms;
+  double enterm2=tt*pi2/3.0*(1.0+x)*sx*s2x/f.ms;
 
   // Third order terms
-  double pterm3=7.0*pow(o2scl_const::pi*tt,4.0)/360.0*(1.0+x)*
+  double pterm3=7.0*pow(pi*tt,4.0)/360.0*(1.0+x)*
     (-1.0+4.0*x+2.0*x2)/pow(x*(2.0+x),1.5);
-  double nterm3=7.0*pow(o2scl_const::pi*tt,4.0)/120.0/sx/s2x/
+  double nterm3=7.0*pow(pi*tt,4.0)/120.0/sx/s2x/
     x2/(x+2.0)/(x+2.0)/f.ms;
-  double enterm3=7.0*pow(o2scl_const::pi*tt,4.0)/tt/90.0*(1.0+x)*
+  double enterm3=7.0*pow(pi*tt,4.0)/tt/90.0*(1.0+x)*
     (-1.0+4.0*x+2.0*x2)/f.ms/sx/s2x/x/(x+2.0);
 
   // Fourth order terms for density and entropy
-  double nterm4=31.0*pow(o2scl_const::pi*tt,6.0)/1008.0*sx*s2x*
+  double nterm4=31.0*pow(pi*tt,6.0)/1008.0*sx*s2x*
     (7.0+12.0*x+6.0*x2)/f.ms/pow(x*(2.0+x),5.0);
-  double enterm4=-31.0*pow(o2scl_const::pi*tt,6.0)/tt/168.0*sx*s2x*
+  double enterm4=-31.0*pow(pi*tt,6.0)/tt/168.0*sx*s2x*
     (1.0+x)/pow(x*(2.0+x),4.0);
 
   // Add up all the terms
@@ -725,7 +732,7 @@ bool fermion_eval_thermo::calc_mu_ndeg(fermion &f, double temper,
   if (psi>-1.0) return false;
 
   // Prefactor 'd' in Johns96
-  double prefac=f.g/2.0/o2scl_const::pi2*pow(f.ms,4.0);
+  double prefac=f.g/2.0/pi2*pow(f.ms,4.0);
 
   // One term is always used, so only values of max_term greater than
   // 0 are useful.
@@ -781,7 +788,7 @@ bool fermion_eval_thermo::calc_mu_ndeg(fermion &f, double temper,
       double novert10=novert5*novert5;
       double novert11=novert6*novert5;
       double novert12=novert6*novert6;
-      pterm=exp(dj*psi)/novert/novert*sqrt(o2scl_const::pi/2.0/novert);
+      pterm=exp(dj*psi)/novert/novert*sqrt(pi/2.0/novert);
       pterm*=(1.0+15.0/8.0/novert+105.0/128.0/novert2-
 	      315.0/1024.0/novert3+10395.0/32768.0/novert4-
 	      135135.0/262144.0/novert5+4729725.0/4194304.0/novert6-
@@ -811,11 +818,11 @@ bool fermion_eval_thermo::calc_mu_ndeg(fermion &f, double temper,
 	456017540384030625.0/70368744177664.0/novert12;
       if (j%2==0) {
 	enterm=(pterm*2.0/tt-pterm/tt/tt*dj-
-		exp(dj*psi)*sqrt(o2scl_const::pi/2.0/novert)*
+		exp(dj*psi)*sqrt(pi/2.0/novert)*
 		(ebk1+ebk3)/2.0/dj)/f.ms;
       } else {
 	enterm=(pterm*2.0/tt-pterm/tt/tt*dj+
-		exp(dj*psi)*sqrt(o2scl_const::pi/2.0/novert)*
+		exp(dj*psi)*sqrt(pi/2.0/novert)*
 		(ebk1+ebk3)/2.0/dj)/f.ms;
       }
     } else {
