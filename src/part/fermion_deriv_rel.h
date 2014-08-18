@@ -222,6 +222,16 @@ namespace o2scl {
       -\frac{g}{2 \pi^2} \int_0^{\infty} 
       m^{*} f dk
       \f]
+      \comment
+      This derivative may be written in terms of the 
+      others
+      \f[
+      \left(\frac{d n}{d m^{*}}\right)_{T,\mu} = \frac{3 n}{m^{*}}
+      - \frac{T}{m^{*}}\left[ \left(\frac{d n}{d T}\right)_{\mu}
+      +\frac{\mu}{T} \left(\frac{d n}{d \mu}\right)_{T}
+      \right] - \left(\frac{d n}{d \mu}\right)_{T}
+      \f]
+      \endcomment
 
       \note The dsdT integration may fail if the system is
       very degenerate. When method is byparts, the integral involves a

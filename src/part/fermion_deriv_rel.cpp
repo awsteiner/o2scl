@@ -334,6 +334,8 @@ void fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
     
     
   }
+
+  //f.dndm=3.0*f.n/f.ms-(f.dndT+f.nu/temper*f.dndmu)*temper/f.ms-f.dndmu;
   
   if (!o2scl::is_finite(f.en)) {
     O2SCL_ERR2("Entropy not finite in ",

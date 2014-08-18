@@ -676,17 +676,9 @@ bool fermion_eval_thermo::calc_mu_deg(fermion &f, double temper,
   if (fabs(pterm4)/fabs(pterm1)>prec) {
     return false;
   }
-
+  
   // First order density term (first order entropy term is zero)
-  double nterm1;
-  if (x>1.0e-5) {
-    nterm1=(sx*s2x*(-3.0*sx*s2x+32.0*x2*sx*s2x+
-		   32.0*x3*sx*s2x+8.0*x4*sx*s2x+
-		   3.0*sx*s2x))/24.0/f.ms/sx/s2x/x/(2.0+x);
-  } else {
-    nterm1=x*sx*(2048.0+1536.0*x+192.0*x2-16.0*x3+3.0*x4)/
-      1536.0/sqrt(2.0)/f.ms;
-  }
+  double nterm1=sx*s2x*x*(2.0+x)/3.0/f.ms;
   
   // Second order terms
   double pterm2=tt*tt*pi2/6.0*(1.0+x)*sx*s2x;
