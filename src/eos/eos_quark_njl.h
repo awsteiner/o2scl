@@ -299,7 +299,7 @@ namespace o2scl {
     } njtp;
 
     /// Set integration object
-    virtual int set_inte(inte<funct11> &i) {
+    virtual int set_inte(inte<> &i) {
       it=&i;
       return 0;
     }
@@ -309,14 +309,14 @@ namespace o2scl {
       boost::numeric::ublas::matrix<double>,jac_funct11> def_solver;
     
     /// The default integrator
-    inte_qag_gsl<funct11> def_it;
+    inte_qag_gsl<> def_it;
     
   protected:
 
 #ifndef DOXYGEN_INTERNAL
 
     /// The integrator for finite temperature integrals
-    inte<funct11> *it;
+    inte<> *it;
     
     /// The solver to use for set_parameters()
     mroot<mm_funct11,boost::numeric::ublas::vector<double>, 

@@ -326,25 +326,25 @@ namespace o2scl {
     }
 
     /** \brief Calculate properties as function of chemical potential
-    */
-    virtual void calc_mu(fermion_deriv &f, double temper)=0;
+     */
+    virtual int calc_mu(fermion_deriv &f, double temper)=0;
 
     /** \brief Calculate properties as function of density
      */
-    virtual void calc_density(fermion_deriv &f, double temper)=0;
+    virtual int calc_density(fermion_deriv &f, double temper)=0;
 
     /** \brief Calculate properties with antiparticles as function of
 	chemical potential
     */
-    virtual void pair_mu(fermion_deriv &f, double temper)=0;
+    virtual int pair_mu(fermion_deriv &f, double temper)=0;
 
     /** \brief Calculate properties with antiparticles as function of
 	density
      */
-    virtual void pair_density(fermion_deriv &f, double temper)=0;
+    virtual int pair_density(fermion_deriv &f, double temper)=0;
 
     /// Calculate effective chemical potential from density
-    virtual void nu_from_n(fermion_deriv &f, double temper)=0;
+    virtual int nu_from_n(fermion_deriv &f, double temper)=0;
 
   };
 

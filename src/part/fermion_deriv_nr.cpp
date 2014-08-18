@@ -44,7 +44,7 @@ fermion_deriv_nr::fermion_deriv_nr() {
 fermion_deriv_nr::~fermion_deriv_nr() {
 }
 
-void fermion_deriv_nr::calc_mu(fermion_deriv &f, double temper) {
+int fermion_deriv_nr::calc_mu(fermion_deriv &f, double temper) {
   
   T=temper;
   fp=&f;
@@ -98,10 +98,10 @@ void fermion_deriv_nr::calc_mu(fermion_deriv &f, double temper) {
   f.dsdT=pfac2*(3.75*thalf-3.0*y*half+y*y*mhalf);
   f.dndm=1.5*pfac2*temper/f.ms*half;
   
-  return;
+  return 0;
 }
 
-void fermion_deriv_nr::nu_from_n(fermion_deriv &f, double temper) {
+int fermion_deriv_nr::nu_from_n(fermion_deriv &f, double temper) {
   double nex;
   
   T=temper;
@@ -120,10 +120,10 @@ void fermion_deriv_nr::nu_from_n(fermion_deriv &f, double temper) {
   density_root->solve(nex,mf);
   f.nu=nex*temper;
 
-  return;
+  return 0;
 }
 
-void fermion_deriv_nr::calc_density(fermion_deriv &f, double temper) {
+int fermion_deriv_nr::calc_density(fermion_deriv &f, double temper) {
 
   T=temper;
   fp=&f;
@@ -136,7 +136,7 @@ void fermion_deriv_nr::calc_density(fermion_deriv &f, double temper) {
   
   calc_mu(f,temper);
   
-  return;
+  return 0;
 }
 
 double fermion_deriv_nr::solve_fun(double x) {
@@ -161,7 +161,7 @@ double fermion_deriv_nr::solve_fun(double x) {
   return yy;
 }
 
-void fermion_deriv_nr::pair_mu(fermion_deriv &f, double temper) {
+int fermion_deriv_nr::pair_mu(fermion_deriv &f, double temper) {
   
   if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
 
@@ -176,10 +176,10 @@ void fermion_deriv_nr::pair_mu(fermion_deriv &f, double temper) {
   f.ed+=antip.ed;
   f.en+=antip.en;
   
-  return;
+  return 0;
 }
 
-void fermion_deriv_nr::pair_density(fermion_deriv &f, double temper) {
+int fermion_deriv_nr::pair_density(fermion_deriv &f, double temper) {
   double nex;
   
   if (temper<=0.0) {
@@ -202,7 +202,7 @@ void fermion_deriv_nr::pair_density(fermion_deriv &f, double temper) {
   
   pair_mu(f,temper);
 
-  return;
+  return 0;
 }
 
 double fermion_deriv_nr::pair_fun(double x) {

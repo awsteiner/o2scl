@@ -468,6 +468,8 @@ int main(void) {
     cout << endl;
   }
 
+  snf.method=fermion_deriv_rel::automatic;
+
   // -----------------------------------------------------------------
 
   {
@@ -651,12 +653,15 @@ int main(void) {
   // i.e. in the extremely degenerate case. [12/20/09 - This now
   // works better]
 
+  snf.method=fermion_deriv_rel::automatic;
+
   cout << "Test degenerate specific heat:\n" << endl;
   cout << "err T(MeV)     pr           en           "
        << "C            C(deg appx)  C(next term)" << endl;
   sf.mu=0.0;
   t.set_output_level(0);
   for (T=3.0/hc_mev_fm;T>=0.001/hc_mev_fm;T/=3.0) {
+
     sf.init(o2scl_mks::mass_electron*
 	    o2scl_settings.get_convert_units().convert("kg","1/fm",1.0),2.0);
     sf.non_interacting=true;

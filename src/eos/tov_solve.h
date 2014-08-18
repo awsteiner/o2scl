@@ -385,7 +385,7 @@ namespace o2scl {
     mroot<mm_funct11,ubvector,jac_funct11> *mroot_ptr;
 
     /// The minimizer
-    min_base<funct11> *min_ptr;
+    min_base<> *min_ptr;
     
     /// The adaptive stepper
     astep_base<ubvector,ubvector,ubvector,ode_funct11> *as_ptr;
@@ -635,7 +635,7 @@ namespace o2scl {
     
     /** \brief Set minimizer
     */
-    void set_min(min_base<funct11> &s_mp) {
+    void set_min(min_base<> &s_mp) {
       min_ptr=&s_mp; 
       return;
     };
@@ -651,7 +651,7 @@ namespace o2scl {
     /// \name Default numerical classes
     //@{
     /// The default minimizer
-    min_brent_gsl<funct11> def_min;
+    min_brent_gsl<> def_min;
     
     /// The default solver
     mroot_hybrids<mm_funct11,ubvector,ubmatrix,jac_funct11> def_solver;

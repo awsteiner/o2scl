@@ -45,9 +45,8 @@ namespace o2scl {
 
   /** \brief Equation of state for a relativistic fermion
 
-      \note This class does not work with inc_rest_mass=true. For
-      example, the integration limits in calc_mu() need to be reworked
-      for this case.
+      \note This class does not yet work with inc_rest_mass=true
+      (calc_density and the pair functions don't work with it yet). 
 
       This implements an equation of state for a relativistic fermion
       using direct integration. After subtracting the rest mass from
@@ -89,9 +88,9 @@ namespace o2scl {
       exponential.
       \endcomment
 
-      In the non-degenerate regime, we make the substitution
-      \f$ u=k/T \f$ to ensure that the variable of integration
-      scales properly.
+      In the non-degenerate regime, we make the substitution \f$ u=k/T
+      \f$ to help ensure that the variable of integration scales
+      properly.
 
       Uncertainties are given in \ref unc.
 
@@ -137,7 +136,7 @@ namespace o2scl {
       The derivatives can be integrated directly (\ref method = \ref
       direct) or they may be converted to integrals over the
       distribution function through an integration by parts (\ref
-      method = \ref byparts)
+      method = \ref by_parts)
       \f[
       \int_a^b f(k) \frac{d g(k)}{dk} dk = \left.f(k) g(k)\right|_{k=a}^{k=b}
       - \int_a^b g(k) \frac{d f(k)}{dk} dk 
@@ -244,6 +243,8 @@ namespace o2scl {
       to perform the integration. The value of the integrand
       at k=0 also looks like it might be causing difficulties.
 
+      \todo err_nonconv=false not implemented yet.
+
       \future It might be worth coding up direct differentiation, or
       differentiating the eff results, as these may succeed more
       generally.
@@ -286,7 +287,7 @@ namespace o2scl {
     /** \name Method of computing derivatives
      */
     //@{
-    /// Method (default is \ref byparts)
+    /// Method (default is \ref automatic)
     int method;
     /// Automatically choose method
     static const int automatic=0;
@@ -296,51 +297,57 @@ namespace o2scl {
     static const int by_parts=2;
     //@}
 
+    /** \brief If true, call the error handler when convergence 
+	fails (default true)
+    */
+    bool err_nonconv;
+
     /** \brief Calculate properties as function of chemical potential
     */
-    virtual void calc_mu(fermion_deriv &f, double temper);
+    virtual int calc_mu(fermion_deriv &f, double temper);
 
     /** \brief Calculate properties as function of density
      */
-    virtual void calc_density(fermion_deriv &f, double temper);
+    virtual int calc_density(fermion_deriv &f, double temper);
 
     /** \brief Calculate properties with antiparticles as function of
 	chemical potential
     */
-    virtual void pair_mu(fermion_deriv &f, double temper);
+    virtual int pair_mu(fermion_deriv &f, double temper);
 
     /** \brief Calculate properties with antiparticles as function of
 	density
      */
-    virtual void pair_density(fermion_deriv &f, double temper);
+    virtual int pair_density(fermion_deriv &f, double temper);
 
     /// Calculate effective chemical potential from density
-    virtual void nu_from_n(fermion_deriv &f, double temper);
+    virtual int nu_from_n(fermion_deriv &f, double temper);
 
     /** \brief Set inte objects
 	
 	The first integrator is used for non-degenerate integration
 	and should integrate from 0 to \f$ \infty \f$ (like \ref
-	inte_qagiu_gsl). The second integrator is for the degenerate
-	case, and should integrate between two finite values.
+	o2scl::inte_qagiu_gsl). The second integrator is for the
+	degenerate case, and should integrate between two finite
+	values.
     */
-    void set_inte(inte<funct11> &unit, inte<funct11> &udit);
-
+    void set_inte(inte<> &unit, inte<> &udit);
+    
     /** \brief Set the solver for use in calculating the chemical
 	potential from the density */
-    void set_density_root(root<funct11> &rp) {
+    void set_density_root(root<> &rp) {
       density_root=&rp;
       return;
     }
 
     /// The default integrator for the non-degenerate regime
-    inte_qagiu_gsl<funct11> def_nit;
+    inte_qagiu_gsl<> def_nit;
 
     /// The default integrator for the degenerate regime
-    inte_qag_gsl<funct11> def_dit;
+    inte_qag_gsl<> def_dit;
 
     /// The default solver for npen_density() and pair_density()
-    root_cern<funct11> def_density_root;
+    root_cern<> def_density_root;
     
     /// Return string denoting type ("fermion_deriv_rel")
     virtual const char *type() { return "fermion_deriv_rel"; };
@@ -353,6 +360,9 @@ namespace o2scl {
 
 #ifndef DOXYGEN_NO_O2NS
 
+    /// The internal integration method
+    int intl_method;
+
     /// Pointer to the data object
     fermion_deriv *fp;
 
@@ -360,13 +370,13 @@ namespace o2scl {
     double T;
 
     /// The integrator for non-degenerate fermions
-    inte<funct11> *nit;
+    inte<> *nit;
 
     /// The integrator for degenerate fermions
-    inte<funct11> *dit;
+    inte<> *dit;
 
     /// The solver for calc_density() and pair_density()
-    root<funct11> *density_root;
+    root<> *density_root;
 
     /** \name The integrands, as a function of \f$ u=k/T \f$, for 
 	non-degenerate integrals

@@ -83,7 +83,7 @@ namespace o2scl {
     virtual void nu_from_n(boson &b, double temper);
 
     /// Set degenerate and nondegenerate integrators
-    void set_inte(inte<funct11> &l_nit, inte<funct11> &l_dit);
+    void set_inte(inte<> &l_nit, inte<> &l_dit);
 
     /** \brief Set the solver for use in calculating the chemical
 	potential from the density */
@@ -109,11 +109,11 @@ namespace o2scl {
 #ifndef DOXYGEN_NO_O2NS
 
     /// The non-degenerate integrator
-    inte<funct11> *nit;
+    inte<> *nit;
     /// The degenerate integrator
-    inte<funct11> *dit;
+    inte<> *dit;
     /// The solver for calc_density()
-    root<funct11> *density_root;
+    root<> *density_root;
 
     /// The pointer to the current particle being computed
     boson *bp;

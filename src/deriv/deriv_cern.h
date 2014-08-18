@@ -252,7 +252,7 @@ namespace o2scl {
      */
     virtual int deriv_err_int(double x, funct11 &func, double &dfdx, 
 			     double &err) {
-      return deriv_tlate<funct11>(x,func,dfdx,err);
+      return deriv_tlate<>(x,func,dfdx,err);
     }
  
     /// \name Storage for the fixed coefficients

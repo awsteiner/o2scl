@@ -135,7 +135,7 @@ namespace o2scl {
 
     /** \brief Set the solver for use in calculating \f$ \psi \f$ 
      */
-    void set_psi_root(root<funct11> &rp) {
+    void set_psi_root(root<> &rp) {
       psi_root=&rp;
       return;
     }
@@ -159,7 +159,7 @@ namespace o2scl {
 
     /** \brief The default solver for \f$ \psi \f$
      */
-    root_cern<funct11> def_psi_root;
+    root_cern<> def_psi_root;
 
     virtual const char *type() { return "boson_eff"; }
 
@@ -189,7 +189,7 @@ namespace o2scl {
       jac_funct11> *density_mroot;
 
     /// The solver to compute \f$ h \f$ from \f$ \psi \f$.
-    root<funct11> *psi_root;
+    root<> *psi_root;
 
     /// The function which solves for \f$ h \f$ from \f$ \psi \f$.
     double solve_fun(double x, double &psi);

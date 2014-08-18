@@ -185,7 +185,7 @@ namespace o2scl {
 
     /** \brief Set the solver for use in calculating \f$ \psi \f$ 
      */
-    int set_psi_root(root<funct11> &rp) {
+    int set_psi_root(root<> &rp) {
       psi_root=&rp;
       return 0;
     }
@@ -193,7 +193,7 @@ namespace o2scl {
     /** \brief Set the solver for use in calculating the chemical
 	potential from the density
     */
-    int set_density_root(root<funct11> &rp) {
+    int set_density_root(root<> &rp) {
       density_root=&rp;
       return 0;
     }
@@ -210,11 +210,11 @@ namespace o2scl {
 
     /** \brief The default solver for \f$ \psi \f$
      */
-    root_cern<funct11> def_psi_root;
+    root_cern<> def_psi_root;
     
     /** \brief The default solver for calc_density() and pair_density()
      */
-    root_cern<funct11> def_density_root;
+    root_cern<> def_density_root;
     
     /// Return string denoting type ("fermion_eff")
     virtual const char *type() { return "fermion_eff"; }
@@ -236,9 +236,9 @@ namespace o2scl {
     int sizen;
     
     /// The solver for \f$ \psi \f$
-    root<funct11> *psi_root;
+    root<> *psi_root;
     /// The other solver for calc_density()
-    root<funct11> *density_root;
+    root<> *density_root;
     
     /// The function which solves for \f$ f \f$ from \f$ \psi \f$.
     double solve_fun(double x, double &psi);

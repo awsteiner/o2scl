@@ -273,10 +273,10 @@ namespace o2scl {
   } ej_parms;
 
   /// The default derivative object
-  deriv_gsl<funct11> def_deriv;
+  deriv_gsl<> def_deriv;
   
   /// Set the derivative object
-  int set_deriv(deriv_base<funct11> &de) {
+  int set_deriv(deriv_base<> &de) {
     dptr=&de;
     return 0;
   }
@@ -316,7 +316,7 @@ namespace o2scl {
   protected:
 
   /// Pointer to the derivative object
-  deriv_base<funct11> *dptr;
+  deriv_base<> *dptr;
     
   /// Function for the derivative object
   double dfn(double x, ej_parms &ejp) {

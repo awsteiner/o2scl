@@ -107,7 +107,7 @@ namespace o2scl {
   /** \brief Set the one-dimensional integration object with 
       index \c i.
   */
-  int set_oned_inte(inte<funct11> &it, size_t i) {
+  int set_oned_inte(inte<> &it, size_t i) {
 
     if (i>=max_dim) {
       O2SCL_ERR("Index >= max_dim in inte_multi_comp::set_oned_inte().",
@@ -118,7 +118,7 @@ namespace o2scl {
 
       // Create new space
       nint=i+1;
-      iptrs=new inte<funct11> *[nint];
+      iptrs=new inte<> *[nint];
       tptrs=new bool[nint];
 
     } else if (i>nint-1) {
@@ -126,7 +126,7 @@ namespace o2scl {
       // Create new space and copy old info over
       size_t nint_new=i+1;
 
-      inte<funct11> **iptrs_new=new inte<funct11> *[nint_new];
+      inte<> **iptrs_new=new inte<> *[nint_new];
       bool *tptrs_new=new bool[nint_new];
 
       for(size_t j=0;j<nint;j++) {
@@ -230,7 +230,7 @@ namespace o2scl {
   size_t nint;
 
   /// Pointers to the integration objects
-  inte<funct11> **iptrs;
+  inte<> **iptrs;
 
   /// Flag indicating if integration object has been set
   bool *tptrs;

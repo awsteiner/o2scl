@@ -45,8 +45,11 @@ fermion_deriv_rel::fermion_deriv_rel() {
   dit=&def_dit;
   
   method=automatic;
+  intl_method=by_parts;
 
   exp_limit=200.0;
+
+  err_nonconv=true;
 }
 
 fermion_deriv_rel::~fermion_deriv_rel() {
@@ -58,8 +61,8 @@ void fermion_deriv_rel::set_inte(inte<funct11> &l_nit, inte<funct11> &l_dit) {
   return;
 }
 
-void fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
-  int ret=success, iret;
+int fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
+  int iret;
   
   if (temper<=0.0) {
     O2SCL_ERR("T=0 not implemented in fermion_deriv_rel().",exc_eunimpl);
@@ -80,6 +83,13 @@ void fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
 
   if (deg==false) {
     
+    // Set integration method
+    if (method==automatic) {
+      intl_method=by_parts;
+    } else {
+      intl_method=method;
+    }
+
     // The non-degenerate case
 
     funct11 density_fun_f=std::bind(std::mem_fn<double(double)>
@@ -89,7 +99,6 @@ void fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
     if (iret!=0) {
       O2SCL_ERR2("Density integration (ndeg) failed in ",
 		 "fermion_deriv_rel::calc_mu().",exc_efailed);
-      ret=exc_efailed;
     }
     f.n*=prefac;
     unc.n*=prefac;
@@ -102,7 +111,6 @@ void fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
       O2SCL_ERR2("dndT integration (ndeg) failed in ",
 		 "fermion_deriv_rel::calc_mu().",
 		 exc_efailed);
-      ret=exc_efailed;
     }
     f.dndT*=prefac;
     unc.dndT*=prefac;
@@ -115,7 +123,6 @@ void fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
       O2SCL_ERR2("dndmu integration (ndeg) failed in ",
 		 "fermion_deriv_rel::calc_mu().",
 		 exc_efailed);
-      ret=exc_efailed;
     }
     f.dndmu*=prefac;
     unc.dndmu*=prefac;
@@ -127,7 +134,6 @@ void fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
     if (iret!=0) {
       O2SCL_ERR2("Energy integration (ndeg) failed in ",
 		 "fermion_deriv_rel::calc_mu().",exc_efailed);
-      ret=exc_efailed;
     }
     f.ed*=prefac;
     f.ed*=pow(temper,4.0);
@@ -140,7 +146,6 @@ void fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
     if (iret!=0) {
       O2SCL_ERR2("Entropy integration (ndeg) failed in ",
 		 "fermion_deriv_rel::calc_mu().",exc_efailed);
-      ret=exc_efailed;
     }
     f.en*=prefac;
     unc.en*=prefac;
@@ -152,7 +157,6 @@ void fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
     if (iret!=0) {
       O2SCL_ERR2("dsdT integration (ndeg) failed in ",
 		 "fermion_deriv_rel::calc_mu().",exc_efailed);
-      ret=exc_efailed;
     }
     f.dsdT*=prefac;
     unc.dsdT*=prefac;
@@ -164,7 +168,6 @@ void fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
     if (iret!=0) {
       O2SCL_ERR2("dndm integration (ndeg) failed in ",
 		 "fermion_deriv_rel::calc_mu().",exc_efailed);
-      ret=exc_efailed;
     }
     f.dndm*=prefac;
     unc.dndm*=prefac;
@@ -194,7 +197,6 @@ void fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
       O2SCL_ERR2("Zero density in degenerate limit in fermion_deriv_rel::",
 		 "calc_mu(). Variable deg_limit set improperly?",
 		 exc_efailed);
-      return;
     }
     
     // Compute the lower limit
@@ -216,10 +218,16 @@ void fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
       }
     }
 
-    int old_meth=method;
-    if ((!f.inc_rest_mass && (f.nu+f.m-f.ms)/temper>1.0e3) ||
-	(f.inc_rest_mass && (f.nu-f.ms)/temper>1.0e3)) {
-      method=direct;
+    // Set integration method
+    if (method==automatic) {
+      if ((!f.inc_rest_mass && (f.nu+f.m-f.ms)/temper>1.0e3) ||
+	  (f.inc_rest_mass && (f.nu-f.ms)/temper>1.0e3)) {
+	intl_method=direct;
+      } else {
+	intl_method=by_parts;
+      }
+    } else {
+      intl_method=method;
     }
     
     funct11 deg_density_fun_f=std::bind
@@ -230,7 +238,6 @@ void fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
     if (iret!=0) {
       O2SCL_ERR2("Density integration (deg) failed in ",
 		 "fermion_deriv_rel::calc_mu().",exc_efailed);
-      ret=exc_efailed;
     }
     f.n*=prefac;
     unc.n*=prefac;
@@ -239,7 +246,7 @@ void fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
       std::bind(std::mem_fn<double(double)>
 		(&fermion_deriv_rel::deg_density_mu_fun),
 		this,std::placeholders::_1);
-    if (method==direct && ll>0.0) {
+    if (intl_method==direct && ll>0.0) {
       iret=dit->integ_err(deg_density_mu_fun_f,ll,ul,
 			  f.dndmu,unc.dndmu);
     } else {
@@ -249,7 +256,6 @@ void fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
     if (iret!=0) {
       O2SCL_ERR2("dndmu integration (deg) failed in ",
 		 "fermion_deriv_rel::calc_mu().",exc_efailed);
-      ret=exc_efailed;
     }
     f.dndmu*=prefac;
     unc.dndmu*=prefac;
@@ -258,7 +264,7 @@ void fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
       (std::mem_fn<double(double)>
        (&fermion_deriv_rel::deg_density_T_fun),
        this,std::placeholders::_1);
-    if (method==direct && ll>0.0) {
+    if (intl_method==direct && ll>0.0) {
       iret=dit->integ_err(deg_density_T_fun_f,ll,ul,f.dndT,unc.dndT);
     } else {
       iret=dit->integ_err(deg_density_T_fun_f,0.0,ul,f.dndT,unc.dndT);
@@ -266,7 +272,6 @@ void fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
     if (iret!=0) {
       O2SCL_ERR2("dndT integration (deg) failed in ",
 		 "fermion_deriv_rel::calc_mu().",exc_efailed);
-      ret=exc_efailed;
     }
     f.dndT*=prefac;
     unc.dndT*=prefac;
@@ -279,8 +284,6 @@ void fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
     if (iret!=0) {
       O2SCL_ERR2("Energy integration (deg) failed in ",
 		 "fermion_deriv_rel::calc_mu().",exc_efailed);
-		
-      ret=exc_efailed;
     }
     f.ed*=prefac;
     unc.ed*=prefac;
@@ -297,7 +300,6 @@ void fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
     if (iret!=0) {
       O2SCL_ERR2("Entropy integration (deg) failed in ",
 		 "fermion_deriv_rel::calc_mu().",exc_efailed);
-      ret=exc_efailed;
     }
     f.en*=prefac;
     unc.en*=prefac;
@@ -306,7 +308,7 @@ void fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
       (std::mem_fn<double(double)>
        (&fermion_deriv_rel::deg_entropy_T_fun),
        this,std::placeholders::_1);
-    if (method==direct && ll>0.0) {
+    if (intl_method==direct && ll>0.0) {
       iret=dit->integ_err(deg_entropy_T_fun_f,ll,ul,f.dsdT,unc.dsdT);
     } else {
       iret=dit->integ_err(deg_entropy_T_fun_f,0.0,ul,f.dsdT,unc.dsdT);
@@ -314,7 +316,6 @@ void fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
     if (iret!=0) {
       O2SCL_ERR2("dsdT integration (deg) failed in ",
 		 "fermion_deriv_rel::calc_mu().",exc_efailed);
-      ret=exc_efailed;
     }
     f.dsdT*=prefac;
     unc.dsdT*=prefac;
@@ -323,7 +324,7 @@ void fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
       (std::mem_fn<double(double)>
        (&fermion_deriv_rel::deg_density_ms_fun),
        this,std::placeholders::_1);
-    if (method==direct && ll>0.0) {
+    if (intl_method==direct && ll>0.0) {
       iret=dit->integ_err(deg_density_ms_fun_f,ll,ul,f.dndm,unc.dndm);
     } else {
       iret=dit->integ_err(deg_density_ms_fun_f,0.0,ul,f.dndm,unc.dndm);
@@ -331,16 +332,10 @@ void fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
     if (iret!=0) {
       O2SCL_ERR2("dndm integration (deg) failed in ",
 		 "fermion_deriv_rel::calc_mu().",exc_efailed);
-      ret=exc_efailed;
     }
     f.dndm*=prefac;
     unc.dndm*=prefac;
 
-    if ((f.nu+f.m-f.ms)/temper>1.0e3) {
-      method=old_meth;
-    }
-    
-    
   }
 
   //f.dndm=3.0*f.n/f.ms-(f.dndT+f.nu/temper*f.dndmu)*temper/f.ms-f.dndmu;
@@ -348,14 +343,13 @@ void fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
   if (!o2scl::is_finite(f.en)) {
     O2SCL_ERR2("Entropy not finite in ",
 	       "fermion_deriv_rel::calc_mu().",exc_efailed);
-    ret=exc_efailed;
   }
   f.pr=-f.ed+temper*f.en+f.nu*f.n;
   
-  return;
+  return 0;
 }
 
-void fermion_deriv_rel::nu_from_n(fermion_deriv &f, double temper) {
+int fermion_deriv_rel::nu_from_n(fermion_deriv &f, double temper) {
   double nex;
 
   T=temper;
@@ -376,28 +370,6 @@ void fermion_deriv_rel::nu_from_n(fermion_deriv &f, double temper) {
     y=solve_fun(nex);
   }
 
-#ifdef O2SCL_NEVER_DEFINED
-  if (y==1.0) {
-    /*
-      This section, which might be unnecessary, is to resolve a
-      strange heisenbug. The 'cout' statement below seems to help. If
-      someone gets an exception that throws here please let me know.
-    */
-    for(double nex2=1.0e-6;nex2<1.0e6;nex2*=100.0) {
-      y=solve_fun(nex2);
-      cout << f.ms << " " << f.m << " " << temper << endl;
-      cout << f.nu << " " << f.mu << " " << f.n << endl;
-      cout << nex2 << " " << y << endl;
-      O2SCL_ERR2("At location 'X' in ",
-		 "fermion_deriv_rel::nu_from_n().",exc_efailed);
-      if (y!=1.0) {
-	nex=nex2;
-	nex2=1.0e10;
-      }
-    }
-  }
-#endif
-
   // If nothing worked, call the error handler
   if (y==1.0) {
     O2SCL_ERR2("Couldn't find reasonable initial guess in ",
@@ -414,10 +386,10 @@ void fermion_deriv_rel::nu_from_n(fermion_deriv &f, double temper) {
     O2SCL_ERR("Solver failed in fermion_deriv_rel::nu_from_n().",exc_efailed);
   }
   
-  return;
+  return 0;
 }
 
-void fermion_deriv_rel::calc_density(fermion_deriv &f, double temper) {
+int fermion_deriv_rel::calc_density(fermion_deriv &f, double temper) {
 
   T=temper;
   fp=&f;
@@ -430,7 +402,7 @@ void fermion_deriv_rel::calc_density(fermion_deriv &f, double temper) {
   
   calc_mu(f,temper);
 
-  return;
+  return 0;
 }
 
 double fermion_deriv_rel::deg_density_fun(double k) {
@@ -448,7 +420,7 @@ double fermion_deriv_rel::deg_density_T_fun(double k) {
   double E, ret;
   if (fp->inc_rest_mass) {
     E=gsl_hypot(k,fp->ms);
-    if (method==direct) {
+    if (intl_method==direct) {
       E-=fp->m;
       ret=k*k*(E-fp->nu+fp->m)/T/T*
 	fermi_function(E,fp->nu-fp->m,T,exp_limit)*
@@ -459,7 +431,7 @@ double fermion_deriv_rel::deg_density_T_fun(double k) {
     }
   } else {
     E=gsl_hypot(k,fp->ms);
-    if (method==direct) {
+    if (intl_method==direct) {
       E-=fp->m;
       ret=k*k*(E-fp->nu)/T/T*
 	fermi_function(E,fp->nu,T,exp_limit)*
@@ -476,7 +448,7 @@ double fermion_deriv_rel::deg_density_mu_fun(double k) {
   double E, ret;
   if (fp->inc_rest_mass) {
     E=gsl_hypot(k,fp->ms);
-    if (method==direct) {
+    if (intl_method==direct) {
       E-=fp->m;
       ret=k*k/T*fermi_function(E,fp->nu-fp->m,T,exp_limit)*
 	(1.0-fermi_function(E,fp->nu-fp->m,T,exp_limit));
@@ -485,7 +457,7 @@ double fermion_deriv_rel::deg_density_mu_fun(double k) {
     }
   } else {
     E=gsl_hypot(k,fp->ms);
-    if (method==direct) {
+    if (intl_method==direct) {
       E-=fp->m;
       ret=k*k/T*fermi_function(E,fp->nu,T,exp_limit)*
 	(1.0-fermi_function(E,fp->nu,T,exp_limit));
@@ -545,7 +517,7 @@ double fermion_deriv_rel::deg_entropy_T_fun(double k) {
   double E, ret;
   if (fp->inc_rest_mass) {
     E=gsl_hypot(k,fp->ms);
-    if (method==direct) {
+    if (intl_method==direct) {
       E-=fp->m;
       ret=k*k*fermi_function(E,fp->nu-fp->m,T,exp_limit)*
 	(1.0-fermi_function(E,fp->nu-fp->m,T,exp_limit))*
@@ -557,7 +529,7 @@ double fermion_deriv_rel::deg_entropy_T_fun(double k) {
     }
   } else {
     E=gsl_hypot(k,fp->ms);
-    if (method==direct) {
+    if (intl_method==direct) {
       E-=fp->m;
       ret=k*k*fermi_function(E,fp->nu,T,exp_limit)*
 	(1.0-fermi_function(E,fp->nu,T,exp_limit))*
@@ -575,7 +547,7 @@ double fermion_deriv_rel::deg_density_ms_fun(double k) {
   double E, ret;
   if (fp->inc_rest_mass) {
     E=gsl_hypot(k,fp->ms);
-    if (method==direct) {
+    if (intl_method==direct) {
       E-=fp->m;
       ret=-k*k*fp->ms/(E+fp->m)/T*fermi_function(E,fp->nu-fp->m,T,exp_limit)*
 	(1.0-fermi_function(E,fp->nu-fp->m,T,exp_limit));
@@ -584,7 +556,7 @@ double fermion_deriv_rel::deg_density_ms_fun(double k) {
     }
   } else {
     E=gsl_hypot(k,fp->ms);
-    if (method==direct) {
+    if (intl_method==direct) {
       E-=fp->m;
       ret=-k*k*fp->ms/(E+fp->m)/T*fermi_function(E,fp->nu,T,exp_limit)*
 	(1.0-fermi_function(E,fp->nu,T,exp_limit));
@@ -610,7 +582,7 @@ double fermion_deriv_rel::density_T_fun(double u) {
   double k=u*(T), E, ret;
   if (fp->inc_rest_mass) {
     E=gsl_hypot(k,fp->ms);
-    if (method==direct) {
+    if (intl_method==direct) {
       E-=fp->m;
       ret=k*k*(E-fp->nu+fp->m)/T*
 	fermi_function(E,fp->nu-fp->m,T,exp_limit)*
@@ -621,7 +593,7 @@ double fermion_deriv_rel::density_T_fun(double u) {
     }
   } else {
     E=gsl_hypot(k,fp->ms);
-    if (method==direct) {
+    if (intl_method==direct) {
       E-=fp->m;
       ret=k*k*(E-fp->nu)/T*
 	fermi_function(E,fp->nu,T,exp_limit)*
@@ -638,7 +610,7 @@ double fermion_deriv_rel::density_mu_fun(double u) {
   double k=u*(T), E, ret;
   if (fp->inc_rest_mass) {
     E=gsl_hypot(k,fp->ms);
-    if (method==direct) {
+    if (intl_method==direct) {
       E-=fp->m;
       ret=k*k*fermi_function(E,fp->nu-fp->m,T,exp_limit)*
 	(1.0-fermi_function(E,fp->nu-fp->m,T,exp_limit));
@@ -647,7 +619,7 @@ double fermion_deriv_rel::density_mu_fun(double u) {
     }
   } else {
     E=gsl_hypot(k,fp->ms);
-    if (method==direct) {
+    if (intl_method==direct) {
       E-=fp->m;
       ret=k*k*fermi_function(E,fp->nu,T,exp_limit)*
 	(1.0-fermi_function(E,fp->nu,T,exp_limit));
@@ -700,7 +672,7 @@ double fermion_deriv_rel::entropy_T_fun(double u) {
   double k=u*T, E, ret;
   if (fp->inc_rest_mass) {
     E=gsl_hypot(k,fp->ms);
-    if (method==direct) {
+    if (intl_method==direct) {
       E-=fp->m;
       ret=T*k*k*fermi_function(E,fp->nu-fp->m,T,exp_limit)*
 	(1.0-fermi_function(E,fp->nu-fp->m,T,exp_limit))*
@@ -712,7 +684,7 @@ double fermion_deriv_rel::entropy_T_fun(double u) {
     }
   } else {
     E=gsl_hypot(k,fp->ms);
-    if (method==direct) {
+    if (intl_method==direct) {
       E-=fp->m;
       ret=T*k*k*fermi_function(E,fp->nu,T,exp_limit)*
 	(1.0-fermi_function(E,fp->nu,T,exp_limit))*
@@ -730,7 +702,7 @@ double fermion_deriv_rel::density_ms_fun(double u) {
   double k=u*T, E, ret;
   if (fp->inc_rest_mass) {
     E=gsl_hypot(k,fp->ms);
-    if (method==direct) {
+    if (intl_method==direct) {
       E-=fp->m;
       ret=-k*k*fp->ms/(E+fp->m)/T*fermi_function(E,fp->nu-fp->m,T,exp_limit)*
 	(1.0-fermi_function(E,fp->nu-fp->m,T,exp_limit));
@@ -739,7 +711,7 @@ double fermion_deriv_rel::density_ms_fun(double u) {
     }
   } else {
     E=gsl_hypot(k,fp->ms);
-    if (method==direct) {
+    if (intl_method==direct) {
       E-=fp->m;
       ret=-k*k*fp->ms/(E+fp->m)/T*fermi_function(E,fp->nu,T,exp_limit)*
 	(1.0-fermi_function(E,fp->nu,T,exp_limit));
@@ -766,6 +738,18 @@ double fermion_deriv_rel::solve_fun(double x) {
     if ((fp->nu+(fp->m-fp->ms))/T<deg_limit) deg=false;
   }
   
+  // Set integration method
+  if (method==automatic) {
+    if ((!fp->inc_rest_mass && (fp->nu+fp->m-fp->ms)/T>1.0e3) ||
+	(fp->inc_rest_mass && (fp->nu-fp->ms)/T>1.0e3)) {
+      intl_method=direct;
+    } else {
+      intl_method=by_parts;
+    }
+  } else {
+    intl_method=method;
+  }
+
   funct11 density_fun_f=std::bind(std::mem_fn<double(double)>
 				  (&fermion_deriv_rel::density_fun),
 				  this,std::placeholders::_1);
@@ -807,7 +791,7 @@ double fermion_deriv_rel::solve_fun(double x) {
   return yy;
 }
 
-void fermion_deriv_rel::pair_mu(fermion_deriv &f, double temper) {
+int fermion_deriv_rel::pair_mu(fermion_deriv &f, double temper) {
 
   T=temper;
   fp=&f;
@@ -828,10 +812,10 @@ void fermion_deriv_rel::pair_mu(fermion_deriv &f, double temper) {
   f.dndT+=antip.dndT;
   f.dndmu+=antip.dndmu;
   
-  return;
+  return 0;
 }
 
-void fermion_deriv_rel::pair_density(fermion_deriv &f, double temper) {
+int fermion_deriv_rel::pair_density(fermion_deriv &f, double temper) {
   double nex;
   int ret;
   
@@ -855,7 +839,7 @@ void fermion_deriv_rel::pair_density(fermion_deriv &f, double temper) {
   
   pair_mu(f,temper);
 
-  return;
+  return 0;
 }
 
 double fermion_deriv_rel::pair_fun(double x) {
@@ -865,6 +849,18 @@ double fermion_deriv_rel::pair_fun(double x) {
   
   if (fp->non_interacting) fp->mu=fp->nu;
   
+  // Set integration method
+  if (method==automatic) {
+    if ((!fp->inc_rest_mass && (fp->nu+fp->m-fp->ms)/T>1.0e3) ||
+	(fp->inc_rest_mass && (fp->nu-fp->ms)/T>1.0e3)) {
+      intl_method=direct;
+    } else {
+      intl_method=by_parts;
+    }
+  } else {
+    intl_method=method;
+  }
+
   funct11 density_fun_f=std::bind(std::mem_fn<double(double)>
 				  (&fermion_deriv_rel::density_fun),
 				  this,std::placeholders::_1);
