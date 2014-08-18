@@ -421,10 +421,8 @@ double fermion_deriv_rel::deg_density_T_fun(double k) {
   if (fp->inc_rest_mass) {
     E=gsl_hypot(k,fp->ms);
     if (intl_method==direct) {
-      E-=fp->m;
-      ret=k*k*(E-fp->nu+fp->m)/T/T*
-	fermi_function(E,fp->nu-fp->m,T,exp_limit)*
-	(1.0-fermi_function(E,fp->nu-fp->m,T,exp_limit));
+      double f=fermi_function(E,fp->nu,T,exp_limit);
+      ret=k*k*(E-fp->nu)/T/T*f*(1.0-f);
     } else {
       ret=(2.0*k*k/T+E*E/T-E*(fp->nu)/T-k*k*(fp->nu)/T/E)*
 	fermi_function(E,fp->nu,T,exp_limit);
@@ -433,9 +431,8 @@ double fermion_deriv_rel::deg_density_T_fun(double k) {
     E=gsl_hypot(k,fp->ms);
     if (intl_method==direct) {
       E-=fp->m;
-      ret=k*k*(E-fp->nu)/T/T*
-	fermi_function(E,fp->nu,T,exp_limit)*
-	(1.0-fermi_function(E,fp->nu,T,exp_limit));
+      double f=fermi_function(E,fp->nu,T,exp_limit);
+      ret=k*k*(E-fp->nu)/T/T*f*(1.0-f);
     } else {
       ret=(2.0*k*k/T+E*E/T-E*(fp->nu+fp->m)/T-k*k*(fp->nu+fp->m)/T/E)*
 	fermi_function(E-fp->m,fp->nu,T,exp_limit);
@@ -449,18 +446,17 @@ double fermion_deriv_rel::deg_density_mu_fun(double k) {
   if (fp->inc_rest_mass) {
     E=gsl_hypot(k,fp->ms);
     if (intl_method==direct) {
-      E-=fp->m;
-      ret=k*k/T*fermi_function(E,fp->nu-fp->m,T,exp_limit)*
-	(1.0-fermi_function(E,fp->nu-fp->m,T,exp_limit));
+      double f=fermi_function(E,fp->nu,T,exp_limit);
+      ret=k*k/T*f*(1.0-f);
     } else {
-      ret=(E*E+k*k)/E*fermi_function(E-fp->m,fp->nu-fp->m,T,exp_limit);
+      ret=(E*E+k*k)/E*fermi_function(E,fp->nu,T,exp_limit);
     }
   } else {
     E=gsl_hypot(k,fp->ms);
     if (intl_method==direct) {
       E-=fp->m;
-      ret=k*k/T*fermi_function(E,fp->nu,T,exp_limit)*
-	(1.0-fermi_function(E,fp->nu,T,exp_limit));
+      double f=fermi_function(E,fp->nu,T,exp_limit);
+      ret=k*k/T*f*(1.0-f);
     } else {
       ret=(E*E+k*k)/E*fermi_function(E-fp->m,fp->nu,T,exp_limit);
     }
@@ -518,10 +514,8 @@ double fermion_deriv_rel::deg_entropy_T_fun(double k) {
   if (fp->inc_rest_mass) {
     E=gsl_hypot(k,fp->ms);
     if (intl_method==direct) {
-      E-=fp->m;
-      ret=k*k*fermi_function(E,fp->nu-fp->m,T,exp_limit)*
-	(1.0-fermi_function(E,fp->nu-fp->m,T,exp_limit))*
-	pow(E-fp->nu+fp->m,2.0)/pow(T,3.0);
+      double f=fermi_function(E,fp->nu,T,exp_limit);
+      ret=k*k*f*(1.0-f)*pow(E-fp->nu,2.0)/pow(T,3.0);
     } else {
       ret=(E-fp->nu)/E/T/T*
 	(pow(E,3.0)+3.0*E*k*k-(E*E+k*k)*(fp->nu))*
@@ -531,9 +525,8 @@ double fermion_deriv_rel::deg_entropy_T_fun(double k) {
     E=gsl_hypot(k,fp->ms);
     if (intl_method==direct) {
       E-=fp->m;
-      ret=k*k*fermi_function(E,fp->nu,T,exp_limit)*
-	(1.0-fermi_function(E,fp->nu,T,exp_limit))*
-	pow(E-fp->nu,2.0)/pow(T,3.0);
+      double f=fermi_function(E,fp->nu,T,exp_limit);
+      ret=k*k*f*(1.0-f)*pow(E-fp->nu,2.0)/pow(T,3.0);
     } else {
       ret=(E-fp->m-fp->nu)/E/T/T*
 	(pow(E,3.0)+3.0*E*k*k-(E*E+k*k)*(fp->nu+fp->m))*
@@ -548,9 +541,8 @@ double fermion_deriv_rel::deg_density_ms_fun(double k) {
   if (fp->inc_rest_mass) {
     E=gsl_hypot(k,fp->ms);
     if (intl_method==direct) {
-      E-=fp->m;
-      ret=-k*k*fp->ms/(E+fp->m)/T*fermi_function(E,fp->nu-fp->m,T,exp_limit)*
-	(1.0-fermi_function(E,fp->nu-fp->m,T,exp_limit));
+      double f=fermi_function(E,fp->nu,T,exp_limit);
+      ret=-k*k*fp->ms/(E)/T*f*(1.0-f);
     } else {
       ret=-fp->ms*fermi_function(E,fp->nu,T,exp_limit);
     }
@@ -558,8 +550,8 @@ double fermion_deriv_rel::deg_density_ms_fun(double k) {
     E=gsl_hypot(k,fp->ms);
     if (intl_method==direct) {
       E-=fp->m;
-      ret=-k*k*fp->ms/(E+fp->m)/T*fermi_function(E,fp->nu,T,exp_limit)*
-	(1.0-fermi_function(E,fp->nu,T,exp_limit));
+      double f=fermi_function(E,fp->nu,T,exp_limit);
+      ret=-k*k*fp->ms/(E+fp->m)/T*f*(1.0-f);
     } else {
       ret=-fp->ms*fermi_function(E-fp->m,fp->nu,T,exp_limit);
     }
@@ -583,21 +575,18 @@ double fermion_deriv_rel::density_T_fun(double u) {
   if (fp->inc_rest_mass) {
     E=gsl_hypot(k,fp->ms);
     if (intl_method==direct) {
-      E-=fp->m;
-      ret=k*k*(E-fp->nu+fp->m)/T*
-	fermi_function(E,fp->nu-fp->m,T,exp_limit)*
-	(1.0-fermi_function(E,fp->nu-fp->m,T,exp_limit));
+      double f=fermi_function(E,fp->nu,T,exp_limit);
+      ret=k*k*(E-fp->nu)/T*f*(1.0-f);
     } else {
       ret=(2.0*k*k/T+E*E/T-E*(fp->nu)/T-k*k*(fp->nu)/T/E)*
-	T*fermi_function(E-fp->m,fp->nu-fp->m,T,exp_limit);
+	T*fermi_function(E,fp->nu,T,exp_limit);
     }
   } else {
     E=gsl_hypot(k,fp->ms);
     if (intl_method==direct) {
       E-=fp->m;
-      ret=k*k*(E-fp->nu)/T*
-	fermi_function(E,fp->nu,T,exp_limit)*
-	(1.0-fermi_function(E,fp->nu,T,exp_limit));
+      double f=fermi_function(E,fp->nu,T,exp_limit);
+      ret=k*k*(E-fp->nu)/T*f*(1.0-f);
     } else {
       ret=(2.0*k*k/T+E*E/T-E*(fp->nu+fp->m)/T-k*k*(fp->nu+fp->m)/T/E)*
 	T*fermi_function(E-fp->m,fp->nu,T,exp_limit);
@@ -611,18 +600,17 @@ double fermion_deriv_rel::density_mu_fun(double u) {
   if (fp->inc_rest_mass) {
     E=gsl_hypot(k,fp->ms);
     if (intl_method==direct) {
-      E-=fp->m;
-      ret=k*k*fermi_function(E,fp->nu-fp->m,T,exp_limit)*
-	(1.0-fermi_function(E,fp->nu-fp->m,T,exp_limit));
+      double f=fermi_function(E,fp->nu,T,exp_limit);
+      ret=k*k*f*(1.0-f);
     } else {
-      ret=T*(E*E+k*k)/E*fermi_function(E-fp->m,fp->nu-fp->m,T,exp_limit);
+      ret=T*(E*E+k*k)/E*fermi_function(E,fp->nu,T,exp_limit);
     }
   } else {
     E=gsl_hypot(k,fp->ms);
     if (intl_method==direct) {
       E-=fp->m;
-      ret=k*k*fermi_function(E,fp->nu,T,exp_limit)*
-	(1.0-fermi_function(E,fp->nu,T,exp_limit));
+      double f=fermi_function(E,fp->nu,T,exp_limit);
+      ret=k*k*f*(1.0-f);
     } else {
       ret=T*(E*E+k*k)/E*fermi_function(E-fp->m,fp->nu,T,exp_limit);
     }
@@ -673,22 +661,19 @@ double fermion_deriv_rel::entropy_T_fun(double u) {
   if (fp->inc_rest_mass) {
     E=gsl_hypot(k,fp->ms);
     if (intl_method==direct) {
-      E-=fp->m;
-      ret=T*k*k*fermi_function(E,fp->nu-fp->m,T,exp_limit)*
-	(1.0-fermi_function(E,fp->nu-fp->m,T,exp_limit))*
-	pow(E-fp->nu+fp->m,2.0)/pow(T,3.0);
+      double f=fermi_function(E,fp->nu,T,exp_limit);
+      ret=T*k*k*f*(1.0-f)*pow(E-fp->nu,2.0)/pow(T,3.0);
     } else {
       ret=(E-fp->nu)/E/T*
 	(pow(E,3.0)+3.0*E*k*k-(E*E+k*k)*(fp->nu))*
-	fermi_function(E-fp->m,fp->nu-fp->m,T,exp_limit);
+	fermi_function(E,fp->nu,T,exp_limit);
     }
   } else {
     E=gsl_hypot(k,fp->ms);
     if (intl_method==direct) {
       E-=fp->m;
-      ret=T*k*k*fermi_function(E,fp->nu,T,exp_limit)*
-	(1.0-fermi_function(E,fp->nu,T,exp_limit))*
-	pow(E-fp->nu,2.0)/pow(T,3.0);
+      double f=fermi_function(E,fp->nu,T,exp_limit);
+      ret=T*k*k*f*(1.0-f)*pow(E-fp->nu,2.0)/pow(T,3.0);
     } else {
       ret=(E-fp->m-fp->nu)/E/T*
 	(pow(E,3.0)+3.0*E*k*k-(E*E+k*k)*(fp->nu+fp->m))*
@@ -703,18 +688,17 @@ double fermion_deriv_rel::density_ms_fun(double u) {
   if (fp->inc_rest_mass) {
     E=gsl_hypot(k,fp->ms);
     if (intl_method==direct) {
-      E-=fp->m;
-      ret=-k*k*fp->ms/(E+fp->m)/T*fermi_function(E,fp->nu-fp->m,T,exp_limit)*
-	(1.0-fermi_function(E,fp->nu-fp->m,T,exp_limit));
+      double f=fermi_function(E,fp->nu,T,exp_limit);
+      ret=-k*k*fp->ms/(E)/T*f*(1.0-f);
     } else {
-      ret=-fp->ms*fermi_function(E-fp->m,fp->nu-fp->m,T,exp_limit);
+      ret=-fp->ms*fermi_function(E,fp->nu,T,exp_limit);
     }
   } else {
     E=gsl_hypot(k,fp->ms);
     if (intl_method==direct) {
       E-=fp->m;
-      ret=-k*k*fp->ms/(E+fp->m)/T*fermi_function(E,fp->nu,T,exp_limit)*
-	(1.0-fermi_function(E,fp->nu,T,exp_limit));
+      double f=fermi_function(E,fp->nu,T,exp_limit);
+      ret=-k*k*fp->ms/(E+fp->m)/T*f*(1.0-f);
     } else {
       ret=-fp->ms*fermi_function(E-fp->m,fp->nu,T,exp_limit);
     }
