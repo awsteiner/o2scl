@@ -104,8 +104,7 @@ namespace o2scl {
   protected:
 
     /// Solver to compute chemical potential from density
-    mroot<mm_funct11,boost::numeric::ublas::vector<double>, 
-      jac_funct11> *density_root;
+    mroot<> *density_root;
     
     /// The charge times the magnetic field in \f$ \mathrm{fm}^{-2} \f$
     double qBt;
@@ -163,19 +162,14 @@ namespace o2scl {
     /** \brief Set the solver for use in calculating the chemical
         potential from the density 
     */
-    int set_density_root
-      (mroot<mm_funct11,boost::numeric::ublas::vector<double>,
-       jac_funct11> &rp) {
+    void set_density_root(mroot<> &rp) {
       density_root=&rp;
-      return 0;
+      return;
     }
 
     /** \brief The default solver for calc_density().
      */
-    mroot_hybrids<mm_funct11,
-      boost::numeric::ublas::vector<double>, 
-      boost::numeric::ublas::matrix<double>,
-      jac_funct11> def_density_root;
+    mroot_hybrids<> def_density_root;
 
     /// Return string denoting type ("fermion_mag_zerot")
     virtual const char *type() { return "fermion_mag_zerot"; }

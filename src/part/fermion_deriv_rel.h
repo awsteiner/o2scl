@@ -45,8 +45,9 @@ namespace o2scl {
 
   /** \brief Equation of state for a relativistic fermion
 
-      \note This class does not yet work with inc_rest_mass=true
-      (calc_density and the pair functions don't work with it yet). 
+      \note This class only has preliminary support for
+      inc_rest_mass=true (more testing should be done, particularly
+      for the "pair" functions)
 
       This implements an equation of state for a relativistic fermion
       using direct integration. After subtracting the rest mass from

@@ -659,7 +659,6 @@ int main(void) {
   cout << "err T(MeV)     pr           en           "
        << "C            C(deg appx)  C(next term)" << endl;
   sf.mu=0.0;
-  t.set_output_level(0);
   for (T=3.0/hc_mev_fm;T>=0.001/hc_mev_fm;T/=3.0) {
 
     sf.init(o2scl_mks::mass_electron*
@@ -675,7 +674,6 @@ int main(void) {
       pow(o2scl_const::pi*T/sf.kf,3.0)*o2scl_const::pi/15.0*
       (5.0*pow(sf.m,4.0)+4.0*sf.m*sf.m*sf.mu*sf.mu+14.0*pow(sf.mu,4.0)) 
 	 << endl;
-    //cout << err_hnd->get_str() << endl;
     
     t.test_rel(T/sf.n*(sf.dsdT-sf.dndT*sf.dndT/sf.dndmu),
 	       o2scl_const::pi*o2scl_const::pi*T/sf.mu,1.0e-2,"sh1");
@@ -732,17 +730,31 @@ int main(void) {
 
   snf.method=fermion_deriv_rel::direct;
     
+  cout << "degenerate direct" << endl;
+
   snf.calc_mu(sf,0.01);
+  cout << sf.mu << " " << sf.m << " " << sf.ms << endl;
   cout << sf.n << " " << sf.ed+sf.n*sf.m << " " 
        << sf.pr << " " << sf.en << endl;
   cout << sf.dndT << " " << sf.dndmu << " " << sf.dsdT << " "
        << sf.dndm << endl;
     
   snf.calc_mu(sf2,0.01);
+  cout << sf2.mu << " " << sf2.m << " " << sf2.ms << endl;
   cout << sf2.n << " " << sf2.ed << " " << sf2.pr << " " << sf2.en << endl;
   cout << sf2.dndT << " " << sf2.dndmu << " " << sf2.dsdT << " "
        << sf2.dndm << endl;
-  cout << endl;
+
+  if (false) {
+    bool dt=snf.calc_mu_deg(sf,0.01,1.0e8);
+    cout << dt << endl;
+    cout << sf.mu << " " << sf.m << " " << sf.ms << endl;
+    cout << sf.n << " " << sf.ed+sf.n*sf.m << " " 
+	 << sf.pr << " " << sf.en << endl;
+    cout << sf.dndT << " " << sf.dndmu << " " << sf.dsdT << " "
+	 << sf.dndm << endl;
+    exit(-1);
+  }
 
   t.test_rel(sf.n,sf2.n,1.0e-8,"n direct deg");
   t.test_rel(sf.ed+sf.n*sf.m,sf2.ed,1.0e-8,"ed direct deg");
@@ -756,20 +768,24 @@ int main(void) {
   snf.calc_density(sf,0.01);
   snf.calc_density(sf2,0.01);
   t.test_rel(sf.mu+sf.m,sf2.mu,1.0e-8,"calc_density direct deg");
+
+  cout << endl;
+  cout << "degenerate by parts" << endl;
     
   snf.method=fermion_deriv_rel::by_parts;
     
   snf.calc_mu(sf,0.01);
+  cout << sf.mu << " " << sf.m << " " << sf.ms << endl;
   cout << sf.n << " " << sf.ed+sf.n*sf.m << " " 
        << sf.pr << " " << sf.en << endl;
   cout << sf.dndT << " " << sf.dndmu << " " << sf.dsdT << " "
        << sf.dndm << endl;
     
   snf.calc_mu(sf2,0.01);
+  cout << sf2.mu << " " << sf2.m << " " << sf2.ms << endl;
   cout << sf2.n << " " << sf2.ed << " " << sf2.pr << " " << sf2.en << endl;
   cout << sf2.dndT << " " << sf2.dndmu << " " << sf2.dsdT << " "
        << sf2.dndm << endl;
-  cout << endl;
 
   t.test_rel(sf.n,sf2.n,1.0e-8,"n by_parts deg");
   t.test_rel(sf.ed+sf.n*sf.m,sf2.ed,1.0e-8,"ed by_parts deg");
@@ -784,19 +800,23 @@ int main(void) {
   snf.calc_density(sf2,0.01);
   t.test_rel(sf.mu+sf.m,sf2.mu,1.0e-8,"calc_density by_parts deg");
 
+  cout << endl;
+  cout << "non-degenerate direct" << endl;
+
   snf.method=fermion_deriv_rel::direct;
     
   snf.calc_mu(sf,1.0);
+  cout << sf.mu << " " << sf.m << " " << sf.ms << endl;
   cout << sf.n << " " << sf.ed+sf.n*sf.m << " " 
        << sf.pr << " " << sf.en << endl;
   cout << sf.dndT << " " << sf.dndmu << " " << sf.dsdT << " "
        << sf.dndm << endl;
     
   snf.calc_mu(sf2,1.0);
+  cout << sf2.mu << " " << sf2.m << " " << sf2.ms << endl;
   cout << sf2.n << " " << sf2.ed << " " << sf2.pr << " " << sf2.en << endl;
   cout << sf2.dndT << " " << sf2.dndmu << " " << sf2.dsdT << " "
        << sf2.dndm << endl;
-  cout << endl;
 
   t.test_rel(sf.n,sf2.n,1.0e-8,"n direct ndeg");
   t.test_rel(sf.ed+sf.n*sf.m,sf2.ed,1.0e-8,"ed direct ndeg");
@@ -806,34 +826,28 @@ int main(void) {
   t.test_rel(sf.dndmu,sf2.dndmu,1.0e-8,"dndmu direct ndeg");
   t.test_rel(sf.dsdT,sf2.dsdT,1.0e-8,"dsdT direct ndeg");
   t.test_rel(sf.dndm,sf2.dndm,1.0e-8,"dndm direct ndeg");
+  
+  snf.calc_density(sf,1.0);
+  snf.calc_density(sf2,1.0);
+  t.test_rel(sf.mu+sf.m,sf2.mu,1.0e-8,"calc_density direct ndeg");
 
-  /*
-    snf.calc_density(sf,0.01);
-    snf.calc_density(sf2,0.01);
-    t.test_rel(sf.mu+sf.m,sf2.mu,1.0e-8,"calc_density direct ndeg");
-    cout << sf.n << " " << sf.ed+sf.n*sf.m << " " 
-    << sf.pr << " " << sf.en << endl;
-    cout << sf.dndT << " " << sf.dndmu << " " << sf.dsdT << " "
-    << sf.dndm << endl;
-    cout << sf2.n << " " << sf2.ed << " " << sf2.pr << " " << sf2.en << endl;
-    cout << sf2.dndT << " " << sf2.dndmu << " " << sf2.dsdT << " "
-    << sf2.dndm << endl;
-    cout << endl;
-  */
+  cout << endl;
+  cout << "non-degenerate by parts" << endl;
 
   snf.method=fermion_deriv_rel::by_parts;
     
   snf.calc_mu(sf,1.0);
+  cout << sf.mu << " " << sf.m << " " << sf.ms << endl;
   cout << sf.n << " " << sf.ed+sf.n*sf.m << " " 
        << sf.pr << " " << sf.en << endl;
   cout << sf.dndT << " " << sf.dndmu << " " << sf.dsdT << " "
        << sf.dndm << endl;
     
   snf.calc_mu(sf2,1.0);
+  cout << sf2.mu << " " << sf2.m << " " << sf2.ms << endl;
   cout << sf2.n << " " << sf2.ed << " " << sf2.pr << " " << sf2.en << endl;
   cout << sf2.dndT << " " << sf2.dndmu << " " << sf2.dsdT << " "
        << sf2.dndm << endl;
-  cout << endl;
 
   t.test_rel(sf.n,sf2.n,1.0e-8,"n by_parts ndeg");
   t.test_rel(sf.ed+sf.n*sf.m,sf2.ed,1.0e-8,"ed by_parts ndeg");
@@ -844,11 +858,73 @@ int main(void) {
   t.test_rel(sf.dsdT,sf2.dsdT,1.0e-8,"dsdT by_parts ndeg");
   t.test_rel(sf.dndm,sf2.dndm,1.0e-8,"dndm by_parts ndeg");
     
-  snf.calc_density(sf,0.01);
-  snf.calc_density(sf2,0.01);
+  snf.calc_density(sf,1.0);
+  snf.calc_density(sf2,1.0);
   t.test_rel(sf.mu+sf.m,sf2.mu,1.0e-8,"calc_density by_parts ndeg");
+  cout << endl;
 
-  t.set_output_level(2);
+  cout << "pair direct" << endl;
+
+  snf.method=fermion_deriv_rel::direct;
+    
+  snf.pair_mu(sf,1.0);
+  cout << sf.mu << " " << sf.m << " " << sf.ms << endl;
+  cout << sf.n << " " << sf.ed+sf.n*sf.m << " " 
+       << sf.pr << " " << sf.en << endl;
+  cout << sf.dndT << " " << sf.dndmu << " " << sf.dsdT << " "
+       << sf.dndm << endl;
+    
+  snf.pair_mu(sf2,1.0);
+  cout << sf2.mu << " " << sf2.m << " " << sf2.ms << endl;
+  cout << sf2.n << " " << sf2.ed << " " << sf2.pr << " " << sf2.en << endl;
+  cout << sf2.dndT << " " << sf2.dndmu << " " << sf2.dsdT << " "
+       << sf2.dndm << endl;
+
+  t.test_rel(sf.n,sf2.n,1.0e-8,"n direct pair");
+  t.test_rel(sf.ed+sf.n*sf.m,sf2.ed,1.0e-5,"ed direct pair");
+  t.test_rel(sf.en,sf2.en,1.0e-8,"en direct pair");
+  t.test_rel(sf.pr,sf2.pr,1.0e-8,"pr direct pair");
+  t.test_rel(sf.dndT,sf2.dndT,1.0e-8,"dndT direct pair");
+  t.test_rel(sf.dndmu,sf2.dndmu,1.0e-8,"dndmu direct pair");
+  t.test_rel(sf.dsdT,sf2.dsdT,1.0e-8,"dsdT direct pair");
+  t.test_rel(sf.dndm,sf2.dndm,1.0e-8,"dndm direct pair");
+  
+  snf.pair_density(sf,1.0);
+  snf.pair_density(sf2,1.0);
+  t.test_rel(sf.mu+sf.m,sf2.mu,1.0e-8,"pair_density direct pair");
+  cout << endl;
+
+  cout << "pair by parts" << endl;
+  snf.method=fermion_deriv_rel::by_parts;
+    
+  snf.pair_mu(sf,1.0);
+  cout << sf.mu << " " << sf.m << " " << sf.ms << endl;
+  cout << sf.n << " " << sf.ed+sf.n*sf.m << " " 
+       << sf.pr << " " << sf.en << endl;
+  cout << sf.dndT << " " << sf.dndmu << " " << sf.dsdT << " "
+       << sf.dndm << endl;
+    
+  snf.pair_mu(sf2,1.0);
+  cout << sf2.mu << " " << sf2.m << " " << sf2.ms << endl;
+  cout << sf2.n << " " << sf2.ed << " " << sf2.pr << " " << sf2.en << endl;
+  cout << sf2.dndT << " " << sf2.dndmu << " " << sf2.dsdT << " "
+       << sf2.dndm << endl;
+
+  t.test_rel(sf.n,sf2.n,1.0e-7,"n by_parts pair");
+  t.test_rel(sf.ed+sf.n*sf.m,sf2.ed,1.0e-5,"ed by_parts pair");
+  t.test_rel(sf.en,sf2.en,1.0e-7,"en by_parts pair");
+  t.test_rel(sf.pr,sf2.pr,1.0e-7,"pr by_parts pair");
+  t.test_rel(sf.dndT,sf2.dndT,1.0e-7,"dndT by_parts pair");
+  t.test_rel(sf.dndmu,sf2.dndmu,1.0e-7,"dndmu by_parts pair");
+  t.test_rel(sf.dsdT,sf2.dsdT,1.0e-7,"dsdT by_parts pair");
+  t.test_rel(sf.dndm,sf2.dndm,1.0e-7,"dndm by_parts pair");
+    
+  snf.pair_density(sf,1.0);
+  snf.pair_density(sf2,1.0);
+  t.test_rel(sf.mu+sf.m,sf2.mu,1.0e-7,"calc_density by_parts pair");
+  cout << endl;
+
   t.report();
+
   return 0;
 }

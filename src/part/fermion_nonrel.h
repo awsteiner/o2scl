@@ -125,9 +125,9 @@ namespace o2scl {
     /** \brief Set the solver for use in calculating the chemical
 	potential from the density 
     */
-    int set_density_root(root<> &rp) {
+    void set_density_root(root<> &rp) {
       density_root=&rp;
-      return 0;
+      return;
     }
 
     /// The default solver for calc_density().
