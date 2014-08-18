@@ -288,10 +288,12 @@ namespace o2scl {
     //@{
     /// Method (default is \ref byparts)
     int method;
+    /// Automatically choose method
+    static const int automatic=0;
     /// In the form containing \f$ f(1-f) \f$ .
     static const int direct=1;
     /// Integrate by parts
-    static const int byparts=2;
+    static const int by_parts=2;
     //@}
 
     /** \brief Calculate properties as function of chemical potential
