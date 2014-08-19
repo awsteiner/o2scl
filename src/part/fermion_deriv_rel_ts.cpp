@@ -105,7 +105,12 @@ int main(void) {
     snf.method=fermion_deriv_rel::direct;
     double d1, d2, eps=1.0e-4;
     double dndmu, dndT, dsdT, dndm;
-  
+
+    cout << "T: " << T << endl;
+    sf.m=5.0;
+    sf.ms=5.0;
+    sf.nu=1.0*T-sf.m+sf.ms;
+
     sf.nu=1.0*T-sf.m+sf.ms+eps;
     snf.calc_mu(sf,T);
     d1=sf.n;
@@ -114,7 +119,6 @@ int main(void) {
     d2=sf.n;
     dndmu=(d1-d2)/eps;
 
-    sf.nu=1.0*T-sf.m+sf.ms;
     snf.calc_mu(sf,T+eps);
     d1=sf.n;
     snf.calc_mu(sf,T);
@@ -130,6 +134,7 @@ int main(void) {
     sf.ms=5.0+eps;
     snf.calc_mu(sf,T);
     d1=sf.n;
+
     sf.ms=5.0;
     snf.calc_mu(sf,T);
     d2=sf.n;
@@ -922,6 +927,128 @@ int main(void) {
   snf.pair_density(sf2,1.0);
   t.test_rel(sf.mu+sf.m,sf2.mu,1.0e-7,"calc_density by_parts pair");
   cout << endl;
+
+  cout << "------------------------------------------------------" << endl;
+  {
+
+    cout << "dndm test" << endl;
+    snf.method=fermion_deriv_rel::direct;
+    double d1, d2, eps=1.0e-4;
+    double dndmu, dndT, dsdT, dndm;
+
+    sf.inc_rest_mass=false;
+    sf.non_interacting=true;
+
+    T=1.0;
+    sf.m=5.0;
+    sf.ms=5.0;
+    sf.mu=1.0*T-sf.m+sf.ms;
+
+    sf.mu=1.0*T-sf.m+sf.ms+eps;
+    snf.calc_mu(sf,T);
+    d1=sf.n;
+    sf.mu=1.0*T-sf.m+sf.ms;
+    snf.calc_mu(sf,T);
+    d2=sf.n;
+    dndmu=(d1-d2)/eps;
+
+    snf.calc_mu(sf,T+eps);
+    d1=sf.n;
+    snf.calc_mu(sf,T);
+    d2=sf.n;
+    dndT=(d1-d2)/eps;
+
+    snf.calc_mu(sf,T+eps);
+    d1=sf.en;
+    snf.calc_mu(sf,T);
+    d2=sf.en;
+    dsdT=(d1-d2)/eps;
+
+    sf.ms=5.0+eps;
+    sf.m=5.0+eps;
+    //sf.mu=1.0*T-sf.m+sf.ms-eps;
+    snf.calc_mu(sf,T);
+    d1=sf.n;
+
+    //sf.mu=1.0*T-sf.m+sf.ms;
+    sf.ms=5.0;
+    sf.m=5.0;
+    snf.calc_mu(sf,T);
+    d2=sf.n;
+    dndm=(d1-d2)/eps;
+
+    snf.calc_mu(sf,T);
+    cout << "sf: " << sf.dndmu << " " << sf.dndT << " " << sf.dsdT << " "
+	 << sf.dndm << endl;
+    cout << "un: " << snf.unc.dndmu << " " << snf.unc.dndT << " " 
+	 << snf.unc.dsdT << " " << snf.unc.dndm << endl;
+    cout << "nu: " << dndmu << " " << dndT << " " << dsdT << " "
+	 << dndm << endl;
+    double dndm2=3.0*sf.n/sf.m-(sf.dndT+sf.mu/T*sf.dndmu)*T/sf.m-sf.dndmu;
+    cout << dndm2 << endl;
+    cout << endl;
+
+  }
+
+  {
+
+    cout << "dndm test" << endl;
+    snf.method=fermion_deriv_rel::direct;
+    double d1, d2, eps=1.0e-4;
+    double dndmu, dndT, dsdT, dndm;
+
+    sf.inc_rest_mass=true;
+    sf.non_interacting=true;
+
+    T=1.0;
+    sf.m=5.0;
+    sf.ms=5.0;
+    sf.mu=1.0*T;
+
+    sf.mu=1.0*T+eps;
+    snf.calc_mu(sf,T);
+    d1=sf.n;
+    sf.mu=1.0*T;
+    snf.calc_mu(sf,T);
+    d2=sf.n;
+    dndmu=(d1-d2)/eps;
+
+    snf.calc_mu(sf,T+eps);
+    d1=sf.n;
+    snf.calc_mu(sf,T);
+    d2=sf.n;
+    dndT=(d1-d2)/eps;
+
+    snf.calc_mu(sf,T+eps);
+    d1=sf.en;
+    snf.calc_mu(sf,T);
+    d2=sf.en;
+    dsdT=(d1-d2)/eps;
+
+    sf.ms=5.0+eps;
+    sf.m=5.0+eps;
+    snf.calc_mu(sf,T);
+    d1=sf.n;
+
+    sf.ms=5.0;
+    sf.m=5.0;
+    snf.calc_mu(sf,T);
+    d2=sf.n;
+    dndm=(d1-d2)/eps;
+
+    snf.calc_mu(sf,T);
+    cout << "sf: " << sf.dndmu << " " << sf.dndT << " " << sf.dsdT << " "
+	 << sf.dndm << endl;
+    cout << "un: " << snf.unc.dndmu << " " << snf.unc.dndT << " " 
+	 << snf.unc.dsdT << " " << snf.unc.dndm << endl;
+    cout << "nu: " << dndmu << " " << dndT << " " << dsdT << " "
+	 << dndm << endl;
+    double dndm2=3.0*sf.n/sf.ms-
+      (sf.dndT+(sf.nu-sf.ms)/T*sf.dndmu)*T/sf.ms-sf.dndmu;
+    cout << dndm2 << endl;
+    cout << endl;
+
+  }
 
   t.report();
 

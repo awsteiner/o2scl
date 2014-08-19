@@ -619,6 +619,9 @@ double fermion_eval_thermo::calibrate
   f.g=orig.g;
   f.non_interacting=orig.non_interacting;
   f.inc_rest_mass=orig.inc_rest_mass;
+
+  cout << "Calibration result: " << ret << "\n" << endl;
+  cout << endl;
   
   return ret;
 }

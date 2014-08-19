@@ -94,17 +94,13 @@
     rel_boson and fermion_rel, but these are necessarily quite a bit
     slower.
 
-    The class \ref o2scl::fermion_eff usually works to within about 1 part in
-    \f$ 10^4 \f$, but can be as bad as 1 part in \f$ 10^2 \f$ in some
-    more extreme cases. The default settings for \ref o2scl::fermion_rel give
-    an accuracy of at least 1 part in \f$ 10^6 \f$ (and frequently
-    better than this). For \ref o2scl::fermion_rel, some additional accuracy
-    may be obtained by decreasing the integration tolerances.
-    \comment
-    7/6/09 - These tolerances were determined from bm_part2.cpp using
-    the mathematica numbers in internal/partmath.cpp. I'm not sure the
-    testing in bm_part.cpp is really that useful. 
-    \endcomment
+    The class \ref o2scl::fermion_eff usually works to within about 1
+    part in \f$ 10^4 \f$, but can be as bad as 1 part in \f$ 10^2 \f$
+    in some more extreme cases. The default settings for \ref
+    o2scl::fermion_rel give an accuracy of at least 1 part in \f$ 10^6
+    \f$ (and frequently better than this). For \ref
+    o2scl::fermion_rel, the accuracy can be improved to 1 part in \f$
+    10^{10} \f$ by decreasing the integration tolerances.
 
     The class fermion_nonrel assumes a non-relativistic dispersion
     relation for fermions. It includes zero-temperature methods and an

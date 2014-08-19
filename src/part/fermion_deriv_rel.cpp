@@ -351,12 +351,13 @@ int fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
     unc.dndm*=prefac;
 
   }
-  
+
   /*
     if (f.inc_rest_mass) {
-    f.dndm=3.0*f.n/f.ms-(f.dndT+f.nu/temper*f.dndmu)*temper/f.ms-f.dndmu;
+    f.dndm=3.0*f.n/f.ms-(f.dndT+(f.nu-f.ms)/temper*f.dndmu)*
+    temper/f.ms-f.dndmu;
     } else {
-    f.dndm=3.0*f.n/f.ms-(f.dndT+(f.nu+f.ms)/temper*f.dndmu)*temper/f.ms-f.dndmu;
+    f.dndm=3.0*f.n/f.ms-(f.dndT+f.nu/temper*f.dndmu)*temper/f.ms-f.dndmu;
     }
   */
   

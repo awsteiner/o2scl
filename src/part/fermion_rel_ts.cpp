@@ -693,8 +693,7 @@ int main(void) {
   rf.density_root->tol_rel=1.0e-10;
 
   double v2=rf.calibrate(e3,1);
-  t.test_rel(v2,0.0,1.0e-7,"calibrate 2");
-  cout << v1 << " " << v2 << endl;
+  t.test_rel(v2,0.0,1.0e-10,"calibrate 2");
 
   // -----------------------------------------------------------------
   // Downcast the shared_ptr to the default integration type 

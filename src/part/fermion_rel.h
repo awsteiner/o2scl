@@ -65,7 +65,8 @@ namespace o2scl {
       \f[
       \psi=(\nu-m^{*})/T 
       \f] 
-      where \f$ \nu \f$ is the effective chemical potential and \f$
+      where \f$ \nu \f$ is the effective chemical potential (including
+      the rest mass) and \f$
       m^{*} \f$ is the effective mass. For \f$ \psi \f$ smaller than
       \ref min_psi, the non-degenerate expansion in \ref
       fermion_eval_thermo::calc_mu_ndeg() is attempted first. If that
@@ -179,47 +180,42 @@ namespace o2scl {
       a relatively small inaccuracy due to the mathematical evaluation
       of the integrands which is not included in \ref unc.)
      
-      One way to improve the accuracy of the computation is just to 
-      decrease the tolerances on the default integration objects. This 
-      can be done, using, for example
+      One can improve the accuracy to within 1 part in \f$ 10^{10} \f$ 
+      using
       \code
       fermion_rel rf(1.0,2.0);
-      rf.def_dit.tol_abs/=1.0e2;
-      rf.def_dit.tol_rel/=1.0e2;
-      rf.def_nit.tol_abs/=1.0e2;
-      rf.def_nit.tol_rel/=1.0e2;
+      rf.upper_limit_fac=40.0;
+      rf.dit->tol_abs=1.0e-13;
+      rf.dit->tol_rel=1.0e-13;
+      rf.nit->tol_abs=1.0e-13;
+      rf.nit->tol_rel=1.0e-13;
+      rf.density_root->tol_rel=1.0e-10;
       \endcode
       which decreases the both the relative and absolute tolerances
-      for both the degenerate and non-degenerate integrators. If one
-      is using either the calc_density() or pair_density() functions,
-      one may also have to improve the accuracy of the solver which
-      determines the chemical potential from the density. For
-      the default solver, this could be done with
-      \code
-      rf.density_root->tol_abs/=1.0e2;
-      rf.density_root->tol_rel/=1.0e2;
-      \endcode
-      Of course if these tolerances are too small, the calculation
-      may fail.
+      for both the degenerate and non-degenerate integrators and
+      improves the accuracy of the solver which determines the
+      chemical potential from the density. Of course if these
+      tolerances are too small, the calculation may fail.
 
       \hline 
       <b>Todos:</b>
 
       \future The expressions which appear in in the integrand
       functions density_fun(), etc. could likely be improved,
-      especially in the case where inc_rest_mass=false. There should
-      not be a need to check if <tt>ret</tt> is finite.
+      especially in the case where \ref o2scl::part::inc_rest_mass is
+      <tt>false</tt>. There should not be a need to check if
+      <tt>ret</tt> is finite.
 
-      \future It appears this doesn't compute the uncertainty in the
-      chemical potential or density with calc_density(). This could
-      be fixed.
+      \future It appears this class doesn't compute the uncertainty in
+      the chemical potential or density with calc_density(). This
+      could be fixed.
 
       \future I'd like to change the lower limit on the entropy 
       integration, but the value in the code at the moment (stored
       in <tt>ll</tt>) makes bm_part2.cpp worse.
 
-      \future pair_mu() should set the antiparticle integrators
-      as done in fermion_deriv_rel.
+      \future The function pair_mu() should set the antiparticle
+      integrators as done in fermion_deriv_rel.
   */
   class fermion_rel : public fermion_eval_thermo {
 
