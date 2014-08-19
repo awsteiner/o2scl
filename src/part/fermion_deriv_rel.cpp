@@ -937,14 +937,14 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
 
   // ----------------------------------------------------------------
   // Read data file
-
+  
   if (fname=="") {
     fname=o2scl_settings.get_data_dir()+"fermion_cal.o2";
   }
 
   if (verbose>1) {
-    cout << "In fermion_T::calibrate(), loading file named\n\t" 
-	 << fname << "\n" << endl;
+    cout << "In fermion_deriv_rel::deriv_calibrate(), loading file named\n\t'" 
+	 << fname << "'.\n" << endl;
   }
   table<> tab;
   hdf_file hf;
@@ -967,7 +967,7 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
   fermion_deriv bad, dev, exact;
   double m_bad=0.0, mu_bad=0.0, T_bad=0.0, psi_bad=0.0, mot_bad=0.0;
   f.non_interacting=true;
-  
+
   // ----------------------------------------------------------------
   // First pass, test calc_mu() 
 
@@ -976,6 +976,7 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
 
     // Initialize storage
     dev.n=0.0; dev.ed=0.0; dev.pr=0.0; dev.en=0.0;
+    dev.dndT=0.0; dev.dndmu=0.0; dev.dsdT=0.0; dev.dndm=0.0;
     bad.n=0.0; bad.ed=0.0; bad.pr=0.0; bad.en=0.0;
     bad.dndT=0.0; bad.dndmu=0.0; bad.dsdT=0.0; bad.dndm=0.0;
     
@@ -985,15 +986,15 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
       // Loop over each point in the data file
       for(size_t i=0;i<tab.get_nlines();i++) {
 	
-	double mot=tab.get("c1",i);
-	double psi=tab.get("c2",i);
-	exact.n=tab.get("c3",i);
-	exact.ed=tab.get("c4",i);
-	exact.pr=tab.get("c5",i);
-	exact.en=tab.get("c6",i);
-	exact.dndT=tab.get("c7",i);
-	exact.dndmu=tab.get("c8",i);
-	exact.dsdT=tab.get("c9",i);
+	double mot=tab.get("mot",i);
+	double psi=tab.get("psi",i);
+	exact.n=tab.get("n",i);
+	exact.ed=tab.get("ed",i);
+	exact.pr=tab.get("pr",i);
+	exact.en=tab.get("en",i);
+	exact.dndT=tab.get("dndT",i);
+	exact.dndmu=tab.get("dndmu",i);
+	exact.dsdT=tab.get("dsdT",i);
 	exact.dndm=0.0;
       
 	if (k==0) {
@@ -1184,8 +1185,10 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
   for(size_t k=1;k<2;k++) {
 
     // Initialize storage
-    dev.mu=0.0; dev.ed=0.0; dev.pr=0.0; dev.en=0.0;
-    bad.mu=0.0; bad.ed=0.0; bad.pr=0.0; bad.en=0.0;
+    dev.n=0.0; dev.ed=0.0; dev.pr=0.0; dev.en=0.0;
+    dev.dndT=0.0; dev.dndmu=0.0; dev.dsdT=0.0; dev.dndm=0.0;
+    bad.n=0.0; bad.ed=0.0; bad.pr=0.0; bad.en=0.0;
+    bad.dndT=0.0; bad.dndmu=0.0; bad.dsdT=0.0; bad.dndm=0.0;
     
     // Temperature loop
     for(double T2=1.0e-2;T2<=1.001e2;T2*=1.0e2) {
@@ -1193,12 +1196,12 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
       // Loop over each point in the data file
       for(size_t i=0;i<tab.get_nlines();i++) {
 	
-	double mot=tab.get("c1",i);
-	double psi=tab.get("c2",i);
-	f.n=tab.get("c3",i);	
-	exact.ed=tab.get("c4",i);
-	exact.pr=tab.get("c5",i);
-	exact.en=tab.get("c6",i);
+	double mot=tab.get("mot",i);
+	double psi=tab.get("psi",i);
+	f.n=tab.get("n",i);	
+	exact.ed=tab.get("ed",i);
+	exact.pr=tab.get("pr",i);
+	exact.en=tab.get("en",i);
 	exact.dndT*=pow(T2,2.0);
 	exact.dndmu*=pow(T2,2.0);
 	exact.dsdT*=pow(T2,2.0);

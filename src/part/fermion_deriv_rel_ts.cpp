@@ -717,6 +717,16 @@ int main(void) {
   cout << endl;
 
   cout << "----------------------------------------------------" << endl;
+  cout << "Function calibrate() method=automatic." << endl;
+  cout << "----------------------------------------------------" << endl;
+  cout << endl;
+
+  snf.method=fermion_deriv_rel::automatic;
+  double val4=snf.deriv_calibrate(sfx,1);
+  cout << "Deriv_Calibrate: " << val4 << endl;
+  cout << endl;
+
+  cout << "----------------------------------------------------" << endl;
   cout << "Testing with inc_rest_mass=true" << endl;
   cout << "----------------------------------------------------" << endl;
   cout << endl;

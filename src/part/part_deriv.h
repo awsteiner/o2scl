@@ -267,6 +267,10 @@ namespace o2scl {
       \f]
 
       \hline
+
+      \future Right now the part fields (n, ed, etc.) are
+      initialized to zero but the derivatives aren't. This
+      should be more consistent. 
   */
   class part_deriv : public part {
     

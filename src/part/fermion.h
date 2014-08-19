@@ -370,7 +370,7 @@ namespace o2scl {
 
 	The <tt>verbose</tt> parameter controls the amount of
 	output, and \c fname is the filename for the file
-	<tt>fermion_cal.dat</tt>.
+	<tt>fermion_cal.o2</tt>.
 
 	\future Also calibrate massless fermions?
 	\future Convert into separate class?

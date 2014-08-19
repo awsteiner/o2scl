@@ -326,12 +326,12 @@ double fermion_eval_thermo::calibrate
       // Loop over each point in the data file
       for(size_t i=0;i<tab.get_nlines();i++) {
 	
-	double mot=tab.get("c1",i);
-	double psi=tab.get("c2",i);
-	exact.n=tab.get("c3",i);
-	exact.ed=tab.get("c4",i);
-	exact.pr=tab.get("c5",i);
-	exact.en=tab.get("c6",i);
+	double mot=tab.get("mot",i);
+	double psi=tab.get("psi",i);
+	exact.n=tab.get("n",i);
+	exact.ed=tab.get("ed",i);
+	exact.pr=tab.get("pr",i);
+	exact.en=tab.get("en",i);
       
 	if (k==0) {
 	  
@@ -478,12 +478,12 @@ double fermion_eval_thermo::calibrate
       // Loop over each point in the data file
       for(size_t i=0;i<tab.get_nlines();i++) {
 	
-	double mot=tab.get("c1",i);
-	double psi=tab.get("c2",i);
-	f.n=tab.get("c3",i);	
-	exact.ed=tab.get("c4",i);
-	exact.pr=tab.get("c5",i);
-	exact.en=tab.get("c6",i);
+	double mot=tab.get("mot",i);
+	double psi=tab.get("psi",i);
+	f.n=tab.get("n",i);	
+	exact.ed=tab.get("ed",i);
+	exact.pr=tab.get("pr",i);
+	exact.en=tab.get("en",i);
 
 	f.m=mot*T;
 	if (k==0) {
