@@ -68,18 +68,32 @@ int fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
     O2SCL_ERR("T=0 not implemented in fermion_deriv_rel().",exc_eunimpl);
   }
 
+  if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
+
   T=temper;
   fp=&f;
-
-  if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
 
   double prefac=f.g/2.0/pi2;
 
   // Compute the degeneracy parameter
 
   bool deg=false;
-  if (f.inc_rest_mass && (f.nu-f.ms)/temper>deg_limit) deg=true;
-  else if (!f.inc_rest_mass && (f.nu+f.m-f.ms)/temper>deg_limit) deg=true;
+  double psi;
+  if (f.inc_rest_mass) psi=(f.nu-f.ms)/temper;
+  else psi=(f.nu+f.m-f.ms)/temper;
+  if (psi>deg_limit) deg=true;
+
+  // Try the degenerate expansion if psi is large enough
+  if (psi>20.0) {
+    bool acc=calc_mu_deg(f,temper,1.0e-14);
+    if (acc) {
+      unc.n=f.n*1.0e-14;
+      unc.ed=f.ed*1.0e-14;
+      unc.pr=f.pr*1.0e-14;
+      unc.en=f.en*1.0e-14;
+      return 0;
+    }
+  }
 
   if (deg==false) {
     
@@ -337,8 +351,14 @@ int fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
     unc.dndm*=prefac;
 
   }
-
-  //f.dndm=3.0*f.n/f.ms-(f.dndT+f.nu/temper*f.dndmu)*temper/f.ms-f.dndmu;
+  
+  /*
+    if (f.inc_rest_mass) {
+    f.dndm=3.0*f.n/f.ms-(f.dndT+f.nu/temper*f.dndmu)*temper/f.ms-f.dndmu;
+    } else {
+    f.dndm=3.0*f.n/f.ms-(f.dndT+(f.nu+f.ms)/temper*f.dndmu)*temper/f.ms-f.dndmu;
+    }
+  */
   
   if (!o2scl::is_finite(f.en)) {
     O2SCL_ERR2("Entropy not finite in ",

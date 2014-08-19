@@ -5,7 +5,8 @@
 PART_SRCS = boson.cpp classical.cpp boson_eff.cpp fermion_eff.cpp \
 	fermion.cpp fermion_nonrel.cpp part.cpp quark.cpp \
 	fermion_rel.cpp fermion_deriv_rel.cpp fermion_deriv_nr.cpp \
-	classical_deriv.cpp boson_rel.cpp fermion_mag_zerot.cpp
+	classical_deriv.cpp boson_rel.cpp fermion_mag_zerot.cpp \
+	part_deriv.cpp
 HEADER_VAR = boson.h classical.h boson_eff.h fermion_eff.h \
 	fermion.h fermion_nonrel.h part.h quark.h fermion_rel.h \
 	part_deriv.h fermion_deriv_rel.h fermion_deriv_nr.h classical_deriv.h \

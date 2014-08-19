@@ -745,17 +745,6 @@ int main(void) {
   cout << sf2.dndT << " " << sf2.dndmu << " " << sf2.dsdT << " "
        << sf2.dndm << endl;
 
-  if (false) {
-    bool dt=snf.calc_mu_deg(sf,0.01,1.0e8);
-    cout << dt << endl;
-    cout << sf.mu << " " << sf.m << " " << sf.ms << endl;
-    cout << sf.n << " " << sf.ed+sf.n*sf.m << " " 
-	 << sf.pr << " " << sf.en << endl;
-    cout << sf.dndT << " " << sf.dndmu << " " << sf.dsdT << " "
-	 << sf.dndm << endl;
-    exit(-1);
-  }
-
   t.test_rel(sf.n,sf2.n,1.0e-8,"n direct deg");
   t.test_rel(sf.ed+sf.n*sf.m,sf2.ed,1.0e-8,"ed direct deg");
   t.test_rel(sf.en,sf2.en,1.0e-8,"en direct deg");
