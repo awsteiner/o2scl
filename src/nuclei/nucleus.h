@@ -64,14 +64,14 @@ namespace o2scl {
     /// Neutron number
     int N;
 
-    /// Atomic number
+    /// Baryon number
     int A;
 
-    /// Mass excess in \f$ \mathrm{fm}^{-1} \f$ 
+    /// Mass excess (typically in \f$ \mathrm{fm}^{-1} \f$)
     double mex;
 
-    /** \brief Binding energy in \f$ \mathrm{fm}^{-1} \f$ 
-	(with a minus sign for bound nuclei)
+    /** \brief Binding energy with a minus sign for bound nuclei
+	(typically in \f$ \mathrm{fm}^{-1} \f$)
     */
     double be;
 

@@ -39,7 +39,7 @@ classical::classical() {
 void classical::calc_mu(part &p, double temper) {
 
   if (temper<0.0) {
-    O2SCL_ERR2("Temperature less than or equal to zero in ",
+    O2SCL_ERR2("Temperature less than zero in ",
 	       "classical::calc_mu().",exc_einval);
   }
 
@@ -48,29 +48,30 @@ void classical::calc_mu(part &p, double temper) {
   // Handle zero temperature case
   if (temper==0.0) {
     if (p.inc_rest_mass) {
-      if (p.nu!=p.m) {
-	O2SCL_ERR2("Temperature is zero but chemical potential is not ",
-		   "equal to mass in classical::calc_mu().",exc_einval);
-      }
       p.n=0.0;
       p.ed=p.n*p.m;
     } else {
-      if (p.nu!=0.0) {
-	O2SCL_ERR2("Temperature is zero but chemical potential is not ",
-		   "equal to mass in classical::calc_mu().",exc_einval);
-      }
       p.n=0.0;
       p.ed=0.0;
     }
     p.pr=0.0;
     p.en=0.0;
+    return;
   }
 
   if (p.inc_rest_mass) {
-    p.n=exp((p.nu-p.m)/temper)*p.g*pow(p.ms*temper/pi/2.0,1.5);
+    if ((p.nu-p.m)/temper<-500.0) {
+      p.n=0.0;
+    } else {
+      p.n=exp((p.nu-p.m)/temper)*p.g*pow(p.ms*temper/pi/2.0,1.5);
+    }
     p.ed=1.5*temper*p.n+p.n*p.m;
   } else {
-    p.n=exp(p.nu/temper)*p.g*pow(p.ms*temper/pi/2.0,1.5);
+    if (p.nu/temper<-500.0) {
+      p.n=0.0;
+    } else {
+      p.n=exp(p.nu/temper)*p.g*pow(p.ms*temper/pi/2.0,1.5);
+    }
     p.ed=1.5*temper*p.n;
   }
   p.pr=p.n*temper;
@@ -101,7 +102,7 @@ void classical::calc_density(part &p, double temper) {
     return;
   }
 
-  // Then separately handle zero and finite temperature
+  // Handle the zero temperature case
   if (temper==0.0) {
     if (p.inc_rest_mass) {
       p.nu=p.m;
@@ -110,24 +111,24 @@ void classical::calc_density(part &p, double temper) {
       p.nu=0.0;
       p.ed=0.0;
     }
-  } else {
-    if (p.inc_rest_mass) {
-      p.nu=p.m+temper*log(p.n/p.g*pow(2.0*pi/p.ms/temper,1.5));
-      p.ed=1.5*temper*p.n+p.n*p.m;
-    } else {
-      p.nu=temper*log(p.n/p.g*pow(2.0*pi/p.ms/temper,1.5));
-      p.ed=1.5*temper*p.n;
-    }
+    p.pr=0.0;
+    p.en=0.0;
+    return;
   }
 
+  if (p.inc_rest_mass) {
+    p.nu=p.m+temper*log(p.n/p.g*pow(2.0*pi/p.ms/temper,1.5));
+    p.ed=1.5*temper*p.n+p.n*p.m;
+  } else {
+    p.nu=temper*log(p.n/p.g*pow(2.0*pi/p.ms/temper,1.5));
+    p.ed=1.5*temper*p.n;
+  }
+  
   if (p.non_interacting==true) { p.mu=p.nu; }
 
   p.pr=p.n*temper;
-  if (temper==0.0) {
-    p.en=0.0;
-  } else {
-    p.en=(p.ed+p.pr-p.n*p.nu)/temper;
-  }
+  p.en=(p.ed+p.pr-p.n*p.nu)/temper;
+
   return;
 }
 

@@ -112,7 +112,12 @@ namespace o2scl {
       noc[i][j]=moc-ju and noc[i+1][j]=ju become invalid. This needs
       to be more carefully understood and documented. For now,
       is_included() just arbitrarily chooses 240 as a maximum for N
-      and Z.
+      and Z. 
+      \comment
+      Are there any bound nuclei for which the arrays aren't 
+      sufficient? Maybe not, in which case there isn't really a
+      problem. 
+      \endcomment
       \todo Document each field.
   */
   class nucmass_dz_fit : public nucmass_densmat {

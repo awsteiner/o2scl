@@ -654,10 +654,10 @@ void fermion_rel::pair_mu(fermion &f, double temper) {
   f.en+=antip.en;
 
   // Add up uncertainties
-  unc.n=sqrt(unc.n*unc.n+unc_n*unc_n);
-  unc.ed=sqrt(unc.ed*unc.ed+unc_ed*unc_ed);
-  unc.pr=sqrt(unc.pr*unc.pr+unc_pr*unc_pr);
-  unc.en=sqrt(unc.en*unc.en+unc_en*unc_en);
+  unc.n=gsl_hypot(unc.n,unc_n);
+  unc.ed=gsl_hypot(unc.ed,unc_ed);
+  unc.pr=gsl_hypot(unc.pr,unc_pr);
+  unc.en=gsl_hypot(unc.ed,unc_en);
 
   return;
 }

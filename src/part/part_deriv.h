@@ -350,7 +350,9 @@ namespace o2scl {
     /// Calculate effective chemical potential from density
     virtual int nu_from_n(fermion_deriv &f, double temper)=0;
 
-    /// Desc
+    /** \brief Calculate properties as a function of chemical 
+	potential using a degenerate expansion
+    */
     virtual bool calc_mu_deg(fermion_deriv &f, double temper,
 			     double prec);
     

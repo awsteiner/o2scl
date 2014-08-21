@@ -383,29 +383,9 @@ namespace o2scl {
     
     /// A pointer to the solver for massless fermions
     root<> *massless_root;
-    
-    /// The function to solve for massless fermions
-    class massless_fun {
-      
-    protected:
-      
-      /// The fermion
-      fermion &f_;
 
-      /// Temperature
-      double temper_;
-      
-    public:
-      
-    massless_fun(fermion &f, double temper) : f_(f), temper_(temper) {
-      }
-      
-      /** \brief Solve for the density for 
-	  \ref fermion_eval_thermo::massless_calc_density()
-      */
-      double operator()(double x);
-
-    };
+    /// Desc
+    double massless_solve_fun(double x, fermion &f, double temper);
 
 #endif
     

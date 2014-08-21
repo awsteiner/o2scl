@@ -8,58 +8,66 @@
     \section part_data_sect Particle data classes
 
     The class \ref o2scl::part is the basic structure for a particle:
-    - part::m - mass
-    - part::g - degeneracy factor (e.g. \f$2j+1\f$)
-    - part::n - number density
-    - part::ed - energy density
-    - part::pr - pressure
-    - part::en - entropy density
-    - part::ms - effective mass, i.e. \f$ m^{*} \f$
-    - part::nu - effective chemical potential, i.e. \f$ \nu \f$
-    - part::inc_rest_mass - True if the rest mass is included
-    - part::non_interacting - False if the particle includes interactions
+    - \ref o2scl::part::m - mass (i.e. rest mass), \f$ m \f$
+    - \ref o2scl::part::g - degeneracy factor (e.g. \f$g=2j+1\f$)
+    - \ref o2scl::part::n - number density, \f$ n \f$
+    - \ref o2scl::part::ed - energy density, \f$ \varepsilon \f$
+    - \ref o2scl::part::pr - pressure, \f$ P \f$
+    - \ref o2scl::part::en - entropy density, \f$ s \f$
+    - \ref o2scl::part::ms - effective mass, \f$ m^{*} \f$
+    - \ref o2scl::part::mu - chemical potential, \f$ \mu \f$
+    - \ref o2scl::part::nu - effective chemical potential, \f$ \nu \f$
+    - \ref o2scl::part::inc_rest_mass - True if the rest mass is included
+    (default true)
+    - \ref o2scl::part::non_interacting - False if the particle 
+    includes interactions (default true)
 
-    The data members part::ms and part::nu allow one to specify
-    modifications to the mass and the chemical potential due to
-    interactions. This allows one to calculate the properties of
-    particle due to interactions so long as the basic form of the
-    free-particle dispersion relation is unchanged, i.e.
+    The data members \ref o2scl::part::ms and \ref o2scl::part::nu
+    allow one to specify modifications to the mass and the chemical
+    potential due to interactions. This allows one to calculate the
+    properties of particle due to interactions so long as the basic
+    form of the free-particle dispersion relation is unchanged, i.e.
     \f[
     \sqrt{k^2+m^2} - \mu \rightarrow \sqrt{k^2+m^{* 2}} - \nu 
     \f]
-    If the particle is non-interacting, then part::nu and part::ms are
-    sometimes used by \o2p functions for temporary storage.
+    If the particle is non-interacting, then \ref o2scl::part::nu and
+    \ref o2scl::part::ms are sometimes used by \o2p functions for
+    temporary storage.
 
-    If part::inc_rest_mass is \c true (as is the default in all of the
-    classes except \ref o2scl::nucleus), then all
-    functions include the rest mass energy density in the energy
-    density, the "mu" functions expect that the rest mass is included
-    in part::mu or part::nu as input and the "density" functions
-    output part::mu or part::nu including the rest mass.
+    If \ref o2scl::part::inc_rest_mass is \c true (as is the default
+    in all of the classes except \ref o2scl::nucleus), then all
+    functions include the rest mass (stored in \ref o2scl::part::m)
+    energy density in the energy density, the "mu" functions expect
+    that the rest mass is included in \ref o2scl::part::mu or \ref
+    o2scl::part::nu as input and the "density" functions output \ref
+    o2scl::part::mu or \ref o2scl::part::nu including the rest mass.
+    Note that it is assumed that \ref o2scl::part::m contains the rest
+    mass even if the particle is interacting and an effective mass is
+    stored in \ref o2scl::part::ms .
     
-    When part::inc_rest_mass is true, antiparticles are implemented by
-    choosing the antiparticle chemical potential to be \f$ - \mu \f$,
-    and when inc_rest_mass is false, antiparticles are implemented by
-    choosing the chemical potential of the antiparticles to be \f$ -
-    \mu - 2 m \f$.
+    When \ref o2scl::part::inc_rest_mass is true, antiparticles are
+    implemented by choosing the antiparticle chemical potential to be
+    \f$ - \mu \f$, and when inc_rest_mass is false, antiparticles are
+    implemented by choosing the chemical potential of the
+    antiparticles to be \f$ - \mu - 2 m \f$.
 
     The thermodynamic identity used to compute the pressure for
     interacting particles is
     \f[
     P = -\varepsilon + s T + \nu n
     \f]
-    where part::nu is used. This way, the particle class doesn't need to
-    know about the structure of the interactions to ensure that the
-    thermodynamic identity is satisfied. Note that in the \o2e
-    library, where in the equations of state the normal thermodynamic
-    identity is used
+    where \ref o2scl::part::nu is used. This way, the particle class
+    doesn't need to know about the structure of the interactions to
+    ensure that the thermodynamic identity is satisfied. Note that in
+    the \o2e library, where in the equations of state the normal
+    thermodynamic identity is used
     \f[
     P = -\varepsilon + s T + \mu n
     \f]
     Frequently, the interactions which create an effective chemical
-    potential which is different than part::mu thus create extra terms in
-    the pressure and the energy density for the given equation of
-    state.
+    potential which is different than \ref o2scl::part::mu thus create
+    extra terms in the pressure and the energy density for the given
+    equation of state.
 
     The \ref o2scl::fermion class is a child of \ref o2scl::part which
     contains data members for the Fermi momentum and energy gap. The
@@ -89,10 +97,12 @@
     At finite temperature, there are different classes corresponding
     to different approaches to computing the integrals over the
     distribution functions. The approximation scheme from \ref Johns96
-    is used in boson_eff and fermion_eff. An exact method employing
-    direct integration of the distribution functions is used in
-    rel_boson and fermion_rel, but these are necessarily quite a bit
-    slower.
+    is used in \ref o2scl::boson_eff and \ref o2scl::fermion_eff. An
+    exact method employing direct integration of the distribution
+    functions is used in \ref o2scl::boson_rel and \ref
+    o2scl::fermion_rel, but these are necessarily quite a bit slower.
+    All of these classes use expansions to give ensure comparably
+    accurate results in the degenerate and non-degenerate limits.
 
     The class \ref o2scl::fermion_eff usually works to within about 1
     part in \f$ 10^4 \f$, but can be as bad as 1 part in \f$ 10^2 \f$
@@ -102,12 +112,11 @@
     o2scl::fermion_rel, the accuracy can be improved to 1 part in \f$
     10^{10} \f$ by decreasing the integration tolerances.
 
-    The class fermion_nonrel assumes a non-relativistic dispersion
-    relation for fermions. It includes zero-temperature methods and an
-    exact method for finite temperatures. The non-relativistic
-    integrands are much simpler and \ref o2scl::fermion_nonrel uses the
-    appropriate GSL functions (which are nearly exact) to compute
-    them.
+    The class \ref o2scl::fermion_nonrel assumes a non-relativistic
+    dispersion relation for fermions. It uses an exact method for both
+    zero and finite temperatures. The non-relativistic integrands are
+    much simpler and \ref o2scl::fermion_nonrel uses the appropriate
+    GSL functions (which are nearly exact) to compute them.
 
     \hline
     \section part_deriv_sect Thermodynamics with derivatives

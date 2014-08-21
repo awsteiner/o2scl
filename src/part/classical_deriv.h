@@ -31,19 +31,23 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
-#include <o2scl/constants.h>
 
+#include <o2scl/constants.h>
 #include <o2scl/part_deriv.h>
+#include <o2scl/classical.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
 #endif
 
   /** \brief Equation of state for a classical particle with derivatives
-
-      \todo This does not work with inc_rest_mass=true
-  */
+   */
   class classical_deriv {
+
+  protected:
+    
+    /// For computing non-derivative properties
+    classical cl;
 
   public:
 
