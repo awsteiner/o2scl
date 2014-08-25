@@ -79,13 +79,13 @@ int main(void) {
   nucdist_set(ame_dist,ame,"N>7 & Z>7");
 
   // Fit to the experimental masses
-  size_t n_fits=2;
+  size_t n_fits=1;
   nucmass_fit mf;
-  mf.set_dist(ame_dist);
+  nucdist_set(mf.dist,ame);
   double res;
-  nucmass_fit_base *fitp[2]={&sm,&mn};
+  nucmass_fit_base *fitp[2]={&sm};
   for(size_t i=0;i<n_fits;i++) {
-    mf.fit(*fitp,res);
+    mf.fit(*(fitp[i]),res);
   }
 
   // Create a table to store the data
@@ -97,16 +97,17 @@ int main(void) {
     vector<double> line;
     line.push_back(ame_dist[i].Z);
     line.push_back(ame_dist[i].N);
-    double ame=ame.mass_excess(ame_dist[i].Z,ame_dist[i].N);
-    line.push_back(ame);
+    double ame_mass=ame.mass_excess(ame_dist[i].Z,ame_dist[i].N);
+    line.push_back(ame_mass);
     for(size_t j=0;j<n_tables;j++) {
-      if (massp->is_included(ame_dist[i].Z,ame_dist[i].N)) {
-	line.push_back(ame-massp->mass_excess(ame_dist[i].Z,ame_dist[i].N));
+      if (massp[j]->is_included(ame_dist[i].Z,ame_dist[i].N)) {
+	line.push_back
+	  (ame_mass-massp[j]->mass_excess(ame_dist[i].Z,ame_dist[i].N));
       } else {
 	line.push_back(0.0);
       }
     }
-    tu.line_of_data(line);
+    tu.line_of_data(line.size(),line);
   }
   
   // Output the table to a file
