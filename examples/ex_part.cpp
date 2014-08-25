@@ -58,6 +58,11 @@ int main(void) {
   fermion e2(e.m,2.0);
   fermion e3(e.m,2.0);
 
+  // We provide an initial guess to the chemical potential
+  e.mu=e.m;
+  e2.mu=e2.m;
+  e3.mu=e3.m;
+
   // Compute the pressure at a density of 0.0001 fm^{-3} and a
   // temperature of 10 MeV. At these temperatures, the electrons are
   // non-degenerate, and Boltzmann statistics nearly applies.
