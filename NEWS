@@ -1,3 +1,23 @@
+Notes for 0.916 release:
+
+Several updates for C++11 and function types. Created funct_gsl.
+
+Several improvements to the particle classes. 
+
+Some updates to EOS classes including: eos_had_base, eos_tov_buchdahl,
+eos_sn, eos_had_apr, eos_tov_interp, eos_tov, eos_had_hlps, and
+tov_solve.
+
+Updated vector stats functions and added wvector_covariance().
+
+Updates to the nuclear mass files, adding new nuclear mass tables,
+reorganizing nucmass entry structures, and recast nucdist as 
+vector<nucleus>. 
+
+Documentation improvements everywhere. 
+
+------------------------------------------------------------------------
+
 Notes for 0.915 release:
 
 O2scl now assumes some C++11 support by default. This can be disabled

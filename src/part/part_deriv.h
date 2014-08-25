@@ -268,19 +268,19 @@ namespace o2scl {
       In the case where the particle is interacting, the 
       derivative of the density with respect to the effective mass is
       \f[
-      \left(\frac{dn}{dm^{*}}\right)_{\mu,T} = 3 \frac{n}{m^{*}} - 
-      \frac{T}{m^{*}} \left(\frac{dn}{dT}\right) -
-      \frac{\nu}{m^{*}} \left(\frac{dn}{d\mu}\right) 
+      \left(\frac{dn}{dm^{*}}\right)_{\mu,T} = 
+      \left(\frac{3 n}{m^{*}}\right) - 
+      \frac{T}{m^{*}} \left(\frac{dn}{dT}\right)_{m^{*},\mu} -
+      \frac{\nu}{m^{*}} \left(\frac{dn}{d\mu}\right)_{m^{*},T} 
       \f]
       This relation holds whether or not the mass is included in the
       chemical potential \f$ \nu \f$, as the rest mass is held
-      constant even though the effective mass is varying. 
-
-      \hline
-
-      \future Right now the part fields (n, ed, etc.) are
-      initialized to zero but the derivatives aren't. This
-      should be more consistent. 
+      constant even though the effective mass is varying. This
+      relation also holds in the case where the particle is
+      non-interacting, so long as one does not allow the rest mass in
+      the chemical potential to vary. This derivative is useful, for
+      example, in models of quark matter where the quark mass is
+      dynamically generated.
   */
   class part_deriv : public part {
     
