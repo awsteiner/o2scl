@@ -279,7 +279,7 @@ namespace o2scl {
     /** \brief Calculate properties with antiparticles as function of
 	density
      */
-    virtual void pair_density(fermion &f, double temper);
+    virtual int pair_density(fermion &f, double temper);
 
     /** \brief Calculate effective chemical potential from density
 
@@ -306,35 +306,29 @@ namespace o2scl {
     
 #ifndef DOXYGEN_INTERNAL
     
-    /// Temperature
-    double T;
-
-    /// Current fermion pointer
-    fermion *fp;
-
     /// The integrand for the density for non-degenerate fermions
-    double density_fun(double u);
+    double density_fun(double u, fermion &f, double T);
 
     /// The integrand for the energy density for non-degenerate fermions
-    double energy_fun(double u);
+    double energy_fun(double u, fermion &f, double T);
 
     /// The integrand for the entropy density for non-degenerate fermions
-    double entropy_fun(double u);
+    double entropy_fun(double u, fermion &f, double T);
 
     /// The integrand for the density for degenerate fermions
-    double deg_density_fun(double u);
+    double deg_density_fun(double u, fermion &f, double T);
 
     /// The integrand for the energy density for degenerate fermions
-    double deg_energy_fun(double u);
+    double deg_energy_fun(double u, fermion &f, double T);
 
     /// The integrand for the entropy density for degenerate fermions
-    double deg_entropy_fun(double u);
+    double deg_entropy_fun(double u, fermion &f, double T);
 
     /// Solve for the chemical potential given the density
-    double solve_fun(double x);
+    double solve_fun(double x, fermion &f, double T);
 
     /// Solve for the chemical potential given the density with antiparticles
-    double pair_fun(double x);
+    double pair_fun(double x, fermion &f, double T);
     
 #endif
 

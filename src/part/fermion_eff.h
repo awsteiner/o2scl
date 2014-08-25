@@ -181,7 +181,7 @@ namespace o2scl {
     /** \brief Calculate thermodynamic properties with antiparticles
 	as function of density
     */
-    virtual void pair_density(fermion &f, double temper);
+    virtual int pair_density(fermion &f, double temper);
 
     /** \brief Set the solver for use in calculating \f$ \psi \f$ 
      */

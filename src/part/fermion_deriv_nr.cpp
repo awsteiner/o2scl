@@ -46,9 +46,6 @@ fermion_deriv_nr::~fermion_deriv_nr() {
 
 int fermion_deriv_nr::calc_mu(fermion_deriv &f, double temper) {
   
-  T=temper;
-  fp=&f;
-
   if (temper<=0.0) {
     O2SCL_ERR("T=0 not implemented in fermion_deriv_nr().",exc_eunimpl);
   }
@@ -96,7 +93,6 @@ int fermion_deriv_nr::calc_mu(fermion_deriv &f, double temper) {
   f.dndT=pfac2*(1.5*half-y*mhalf);
   f.dndmu=pfac2*mhalf;
   f.dsdT=pfac2*(3.75*thalf-3.0*y*half+y*y*mhalf);
-  f.dndm=1.5*pfac2*temper/f.ms*half;
   
   return 0;
 }
@@ -104,18 +100,15 @@ int fermion_deriv_nr::calc_mu(fermion_deriv &f, double temper) {
 int fermion_deriv_nr::nu_from_n(fermion_deriv &f, double temper) {
   double nex;
   
-  T=temper;
-  fp=&f;
-
   if (guess_from_nu) {
     nex=f.nu/temper;
   } else {
     O2SCL_ERR("guess_from_nu==false not implemented in fermion_deriv_nr.",
 	      exc_eunimpl);
   }
-  funct11 mf=std::bind(std::mem_fn<double(double)>
+  funct11 mf=std::bind(std::mem_fn<double(double,fermion_deriv &,double)>
 		       (&fermion_deriv_nr::solve_fun),
-		       this,std::placeholders::_1);
+		       this,std::placeholders::_1,std::ref(f),temper);
     
   density_root->solve(nex,mf);
   f.nu=nex*temper;
@@ -125,9 +118,6 @@ int fermion_deriv_nr::nu_from_n(fermion_deriv &f, double temper) {
 
 int fermion_deriv_nr::calc_density(fermion_deriv &f, double temper) {
 
-  T=temper;
-  fp=&f;
-  
   if (f.non_interacting==true) { f.ms=f.m; f.nu=f.mu; }
   
   nu_from_n(f,temper);
@@ -139,24 +129,24 @@ int fermion_deriv_nr::calc_density(fermion_deriv &f, double temper) {
   return 0;
 }
 
-double fermion_deriv_nr::solve_fun(double x) {
+double fermion_deriv_nr::solve_fun(double x, fermion_deriv &f, double T) {
   double nden, y, yy;
   
-  fp->nu=T*x;
+  f.nu=T*x;
   
   // 6/6/03 - I think this should this be included.
-  if (fp->non_interacting) fp->mu=fp->nu;
+  if (f.non_interacting) f.mu=f.nu;
 
-  if (fp->inc_rest_mass) {
-    y=(fp->nu-fp->m)/T;
+  if (f.inc_rest_mass) {
+    y=(f.nu-f.m)/T;
   } else {
-    y=fp->nu/T;
+    y=f.nu/T;
   }
 
   nden=gsl_sf_fermi_dirac_half(y)*sqrt(pi)/2.0;
-  nden*=fp->g*pow(2.0*fp->ms*T,1.5)/4.0/pi2;
+  nden*=f.g*pow(2.0*f.ms*T,1.5)/4.0/pi2;
 
-  yy=(fp->n-nden)/fp->n;
+  yy=(f.n-nden)/f.n;
   
   return yy;
 }
@@ -187,13 +177,10 @@ int fermion_deriv_nr::pair_density(fermion_deriv &f, double temper) {
   }
   if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
   
-  T=temper;
-  fp=&f;
-
   nex=f.nu/temper;
-  funct11 mf=std::bind(std::mem_fn<double(double)>
+  funct11 mf=std::bind(std::mem_fn<double(double,fermion_deriv &,double)>
 		       (&fermion_deriv_nr::pair_fun),
-		       this,std::placeholders::_1);
+		       this,std::placeholders::_1,std::ref(f),temper);
 
   density_root->solve(nex,mf);
   f.nu=nex*temper;
@@ -205,37 +192,37 @@ int fermion_deriv_nr::pair_density(fermion_deriv &f, double temper) {
   return 0;
 }
 
-double fermion_deriv_nr::pair_fun(double x) {
+double fermion_deriv_nr::pair_fun(double x, fermion_deriv &f, double T) {
   double nden, y, yy;
 
-  fp->nu=T*x;
+  f.nu=T*x;
 
   // 6/6/03 - Should this be included? I think yes!
-  if (fp->non_interacting) fp->mu=fp->nu;
+  if (f.non_interacting) f.mu=f.nu;
 
-  if (fp->inc_rest_mass) {
-    y=(fp->nu-fp->m)/T;
+  if (f.inc_rest_mass) {
+    y=(f.nu-f.m)/T;
   } else {
-    y=fp->nu/T;
+    y=f.nu/T;
   }
 
   nden=gsl_sf_fermi_dirac_half(y)*sqrt(pi)/2.0;
-  nden*=fp->g*pow(2.0*fp->ms*T,1.5)/4.0/pi2;
+  nden*=f.g*pow(2.0*f.ms*T,1.5)/4.0/pi2;
   
   yy=nden;
 
-  if (fp->inc_rest_mass) {
-    y=-(fp->nu-fp->m)/T;
+  if (f.inc_rest_mass) {
+    y=-(f.nu-f.m)/T;
   } else {
-    y=-fp->nu/T;
+    y=-f.nu/T;
   }
   
   nden=gsl_sf_fermi_dirac_half(y)*sqrt(pi)/2.0;
-  nden*=fp->g*pow(2.0*fp->ms*T,1.5)/4.0/pi2;
+  nden*=f.g*pow(2.0*f.ms*T,1.5)/4.0/pi2;
   
   yy-=nden;
   
-  yy=yy/fp->n-1.0;
+  yy=yy/f.n-1.0;
 
   return yy;
 }

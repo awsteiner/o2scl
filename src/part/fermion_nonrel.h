@@ -113,10 +113,10 @@ namespace o2scl {
       return;
     }
 
-    virtual void pair_density(fermion &f, double temper) {
+    virtual int pair_density(fermion &f, double temper) {
       O2SCL_ERR2("Function fermion_nonrel::pair_density() not ",
 		 "implemented.",exc_eunimpl);
-      return;
+      return 0;
     }
     
     /// Calculate effective chemical potential from density

@@ -83,6 +83,8 @@ int main(void) {
     p.mu=mu/hc;
     ve.calc_temp_p(n,p,T,th);
     e.n=p.n+2.0*ve.alpha.n;
+    // Need to provide an initial guess to electron chemical potential
+    e.mu=e.m;
     rf.calc_density(e,T);
     nba.push_back(n.n+p.n+4.0*ve.alpha.n);
     pra.push_back((th.pr+e.pr)*hc);

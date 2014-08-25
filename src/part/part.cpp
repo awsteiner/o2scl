@@ -70,12 +70,14 @@ part::part(double mass, double dof) {
   ms=mass; 
   g=dof;
 
-  mu=0.0;
-  nu=0.0;
-  n=0.0;
-  ed=0.0;
-  pr=0.0;
-  en=0.0;
+  /*
+    mu=0.0;
+    nu=0.0;
+    n=0.0;
+    ed=0.0;
+    pr=0.0;
+    en=0.0;
+  */
 
   non_interacting=true;
   inc_rest_mass=true;

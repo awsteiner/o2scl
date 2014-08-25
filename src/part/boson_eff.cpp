@@ -32,9 +32,6 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-//--------------------------------------------
-// boson_eff class
-
 // Constructor, Destructor
 boson_eff::boson_eff() {
   
@@ -138,9 +135,6 @@ void boson_eff::calc_mu(boson &b, double temper) {
   double xx[2], pren, preu, prep, sumn, sumu, sump;
   double gg, opg, nc, h, oph, psi;
 
-  T=temper;
-  bp=&b;
-
   if (b.non_interacting) { b.nu=b.mu; b.ms=b.m; }
 
   // Massless boson_effs
@@ -226,9 +220,6 @@ void boson_eff::calc_density(boson &b, double temper) {
   int ret=0, mm, nn;
   ubvector xx(2);
 
-  T=temper;
-  bp=&b;
-
   if (b.non_interacting) { b.ms=b.m; b.nu=b.mu; }
 
   fix_density=b.n;
@@ -241,10 +232,10 @@ void boson_eff::calc_density(boson &b, double temper) {
   if (psi<-20.0) psi=-20.0;
   
   mm_funct11 mfd=std::bind
-    (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &,boson &,double)>
      (&boson_eff::density_fun),
      this,std::placeholders::_1,std::placeholders::_2,
-     std::placeholders::_3);
+     std::placeholders::_3,std::ref(b),temper);
 
   if (psi>=0.0) {
     h=0.0;
@@ -312,16 +303,16 @@ void boson_eff::calc_density(boson &b, double temper) {
 }
 
 int boson_eff::density_fun(size_t nv, const ubvector &x, 
-			   ubvector &y) {
+			   ubvector &y, boson &b, double T) {
   double h,gg,opg,nc,oph,sumn,pren;
   int mm, nn;
 
   h=x[0];
 
   oph=1.0+h;
-  gg=T/bp->ms;
+  gg=T/b.ms;
   opg=1.0+gg;
-  nc=1.0/pi2*pow(bp->ms,3.0);
+  nc=1.0/pi2*pow(b.ms,3.0);
 
   pren=pow(sqrt(parma)+h,2.0)*
     pow(gg,1.5)/pow(oph,sizem+2.0)/pow(opg,sizen-1.5);
@@ -333,7 +324,7 @@ int boson_eff::density_fun(size_t nv, const ubvector &x,
     }
   }
 
-  y[0]=bp->g/2.0*pren*sumn*nc/fix_density-1.0;
+  y[0]=b.g/2.0*pren*sumn*nc/fix_density-1.0;
   if (!o2scl::is_finite(y[0])) {
     O2SCL_ERR("Not finite in boson_eff::density_fun().",
 	      exc_efailed);
@@ -343,9 +334,6 @@ int boson_eff::density_fun(size_t nv, const ubvector &x,
 }
 
 void boson_eff::pair_mu(boson &b, double temper) {
-
-  T=temper;
-  bp=&b;
 
   if (b.non_interacting) { b.nu=b.mu; b.ms=b.m; }
   calc_mu(b,temper);
@@ -369,9 +357,6 @@ void boson_eff::pair_density(boson &b, double temper) {
   int mm, nn;
   ubvector xx(2);
 
-  T=temper;
-  bp=&b;
-
   if (b.non_interacting) { b.ms=b.m; b.nu=b.mu; }
 
   if (b.ms==0.0) return b.massless_calc(temper);
@@ -389,10 +374,10 @@ void boson_eff::pair_density(boson &b, double temper) {
   psi=(-b.nu-b.ms)/temper;
 
   mm_funct11 mfd=std::bind
-    (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &,boson &,double)>
      (&boson_eff::pair_density_fun),
      this,std::placeholders::_1,std::placeholders::_2,
-     std::placeholders::_3);
+     std::placeholders::_3,std::ref(b),temper);
 
   if (psi>-0.05) {
     xx[1]=sqrt(-2.0*parma*psi);
@@ -476,7 +461,7 @@ void boson_eff::pair_density(boson &b, double temper) {
 }
 
 int boson_eff::pair_density_fun(size_t nv, const ubvector &x, 
-				ubvector &y) {
+				ubvector &y, boson &b, double T) {
 
   double h,gg,opg,nc,oph,sumn,pren,sqt,psi;
   int mm, nn;
@@ -491,9 +476,9 @@ int boson_eff::pair_density_fun(size_t nv, const ubvector &x,
   y[0]=psi;
 
   oph=1.0+h;
-  gg=T/bp->ms;
+  gg=T/b.ms;
   opg=1.0+gg;
-  nc=1.0/pi2*pow(bp->ms,3.0);
+  nc=1.0/pi2*pow(b.ms,3.0);
 
   pren=sqt*sqt*pow(gg,1.5)/pow(oph,sizem+2.0)/pow(opg,sizen-1.5);
   sumn=0.0;
@@ -504,7 +489,7 @@ int boson_eff::pair_density_fun(size_t nv, const ubvector &x,
     }
   }
 
-  y[1]=bp->g/2.0*pren*sumn*nc;
+  y[1]=b.g/2.0*pren*sumn*nc;
   
   // Solve for anti-particles:
   h=x[1];
@@ -514,9 +499,9 @@ int boson_eff::pair_density_fun(size_t nv, const ubvector &x,
   y[0]+=psi;
 
   oph=1.0+h;
-  gg=T/bp->ms;
+  gg=T/b.ms;
   opg=1.0+gg;
-  nc=1.0/pi2*pow(bp->ms,3.0);
+  nc=1.0/pi2*pow(b.ms,3.0);
 
   pren=sqt*sqt*pow(gg,1.5)/pow(oph,sizem+2.0)/pow(opg,sizen-1.5);
   sumn=0.0;
@@ -527,9 +512,9 @@ int boson_eff::pair_density_fun(size_t nv, const ubvector &x,
     }
   }
   
-  y[1]-=bp->g/2.0*pren*sumn*nc;
+  y[1]-=b.g/2.0*pren*sumn*nc;
 
-  y[0]=y[0]/(2.0*bp->m/T)-1.0;
+  y[0]=y[0]/(2.0*b.m/T)-1.0;
   y[1]=y[1]/fix_density-1.0;
   //  if (!o2scl::is_finite(y[1]) || !o2scl::is_finite(y[2])) return 1;
 

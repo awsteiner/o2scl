@@ -40,13 +40,12 @@ namespace o2scl {
 
   /** \brief A particle data class with derivatives
 
-      This class adds the derivatives \ref dndmu, \ref dndT, 
-      \ref dsdT, and \ref dndm, which correspond to
+      This class adds the derivatives \ref dndmu, \ref dndT, and
+      \ref dsdT, which correspond to
       \f[
       \left(\frac{d n}{d \mu}\right)_{T,V}, \quad
-      \left(\frac{d n}{d T}\right)_{\mu,V}, \quad
-      \left(\frac{d s}{d T}\right)_{\mu,V}, \quad \mathrm{and} \quad
-      \left(\frac{d n}{d m}\right)_{T,\mu,V},
+      \left(\frac{d n}{d T}\right)_{\mu,V}, \quad \mathrm{and} \quad
+      \left(\frac{d s}{d T}\right)_{\mu,V}
       \f]
       respectively. All other first-order thermodynamic derivatives
       can be expressed in terms of the first three derivatives. In the
@@ -266,6 +265,17 @@ namespace o2scl {
       c_P = c_V + \frac{T \alpha^2}{n \kappa_T} \, .
       \f]
 
+      In the case where the particle is interacting, the 
+      derivative of the density with respect to the effective mass is
+      \f[
+      \left(\frac{dn}{dm^{*}}\right)_{\mu,T} = 3 \frac{n}{m^{*}} - 
+      \frac{T}{m^{*}} \left(\frac{dn}{dT}\right) -
+      \frac{\nu}{m^{*}} \left(\frac{dn}{d\mu}\right) 
+      \f]
+      This relation holds whether or not the mass is included in the
+      chemical potential \f$ \nu \f$, as the rest mass is held
+      constant even though the effective mass is varying. 
+
       \hline
 
       \future Right now the part fields (n, ed, etc.) are
@@ -288,9 +298,6 @@ namespace o2scl {
 
     /// Derivative of entropy density with respect to temperature
     double dsdT;
-
-    /// Derivative of number density with respect to the effective mass
-    double dndm;
 
   };
   

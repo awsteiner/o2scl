@@ -20,8 +20,8 @@
 
   -------------------------------------------------------------------
 */
-#ifndef O2SCL_SN_NR_FERMION_H
-#define O2SCL_SN_NR_FERMION_H
+#ifndef O2SCL_FERMION_DERIV_NR_H
+#define O2SCL_FERMION_DERIV_NR_H
 
 /** \file fermion_deriv_nr.h
     \brief File defining \ref o2scl::fermion_deriv_nr
@@ -269,13 +269,13 @@ namespace o2scl {
 
     /** \brief Set the solver for use in calculating the chemical
 	potential from the density */
-    void set_density_root(root<funct11> &rp) {
+    void set_density_root(root<> &rp) {
       density_root=&rp;
       return;
     }
 
     /// The default solver for npen_density() and pair_density()
-    root_cern<funct11> def_density_root;
+    root_cern<> def_density_root;
 
     /// Return string denoting type ("fermion_deriv_nr")
     virtual const char *type() { return "fermion_deriv_nr"; };
@@ -284,22 +284,16 @@ namespace o2scl {
 
 #ifndef DOXYGEN_INTERNAL
 
-    /// Temperature used in \ref solve_fun() and \ref pair_fun()
-    double T;
-
-    /// Fermion thermodynamics with derivatives
-    fermion_deriv *fp;
-
     /// Solver to compute chemical potential from density
-    root<funct11> *density_root;
+    root<> *density_root;
     
     /// Function to compute chemical potential from density
-    double solve_fun(double x);
+    double solve_fun(double x, fermion_deriv &f, double T);
 
     /** \brief Function to compute chemical potential from density
 	when antiparticles are included
      */
-    double pair_fun(double x);
+    double pair_fun(double x, fermion_deriv &f, double T);
 
 #endif
 

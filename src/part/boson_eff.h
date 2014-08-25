@@ -143,19 +143,14 @@ namespace o2scl {
     /** \brief Set the solver for use in calculating the chemical
 	potential from the density 
     */
-    void set_density_mroot(mroot<mm_funct11,
-			   boost::numeric::ublas::vector<double>, 
-			   jac_funct11> &rp) {
+    void set_density_mroot(mroot<> &rp) {
       density_mroot=&rp;
       return;
     }
 
     /** \brief The default solver for calc_density() and pair_density()
      */
-    mroot_hybrids<mm_funct11,
-      boost::numeric::ublas::vector<double>, 
-      boost::numeric::ublas::matrix<double>,
-      jac_funct11> def_density_mroot;
+    mroot_hybrids<> def_density_mroot;
 
     /** \brief The default solver for \f$ \psi \f$
      */
@@ -178,15 +173,8 @@ namespace o2scl {
     /// Temporary storage
     double fix_density;
 
-    /// The pointer to the current particle being computed
-    boson *bp;
-
-    /// Temporary storage for the temperature
-    double T;
-    
     /// The solver for calc_density()
-    mroot<mm_funct11,boost::numeric::ublas::vector<double>, 
-      jac_funct11> *density_mroot;
+    mroot<> *density_mroot;
 
     /// The solver to compute \f$ h \f$ from \f$ \psi \f$.
     root<> *psi_root;
@@ -195,10 +183,12 @@ namespace o2scl {
     double solve_fun(double x, double &psi);
 
     /// Fix density for \ref calc_density()
-    int density_fun(size_t nv, const ubvector &x, ubvector &y);
+    int density_fun(size_t nv, const ubvector &x, ubvector &y,
+		    boson &b, double T);
 
     /// Fix density for \ref pair_density()
-    int pair_density_fun(size_t nv, const ubvector &x, ubvector &y);
+    int pair_density_fun(size_t nv, const ubvector &x, ubvector &y,
+			 boson &b, double T);
 
 #endif
   };

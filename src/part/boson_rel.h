@@ -46,7 +46,7 @@ namespace o2scl {
 #endif
 
   /** \brief Equation of state for a relativistic boson
-
+      
       \todo Testing not completely finished.
   */
   class boson_rel {
@@ -87,19 +87,19 @@ namespace o2scl {
 
     /** \brief Set the solver for use in calculating the chemical
 	potential from the density */
-    void set_density_root(root<funct11 > &rp) {
+    void set_density_root(root<> &rp) {
       density_root=&rp;
       return;
     }
 
     /// The default solver for calc_density().
-    root_cern<funct11 > def_density_root;
+    root_cern<> def_density_root;
 
     /// Default nondegenerate integrator
-    inte_qagiu_gsl<funct11 > def_nit;
+    inte_qagiu_gsl<> def_nit;
 
     /// Default degenerate integrator
-    inte_qag_gsl<funct11 > def_dit;
+    inte_qag_gsl<> def_dit;
 
     /// Return string denoting type ("boson_rel")
     virtual const char *type() { return "boson_rel"; }
@@ -115,26 +115,20 @@ namespace o2scl {
     /// The solver for calc_density()
     root<> *density_root;
 
-    /// The pointer to the current particle being computed
-    boson *bp;
-    
-    /// Temporary storage for the temperature
-    double T;
-    
     /// Non-degenerate density integral
-    double density_fun(double u);
+    double density_fun(double u, boson &b, double T);
     /// Non-degenerate energy density integral
-    double energy_fun(double u);
+    double energy_fun(double u, boson &b, double T);
     /// Non-degenerate entropy integral
-    double entropy_fun(double u);
+    double entropy_fun(double u, boson &b, double T);
     /// Degenerate density integral
-    double deg_density_fun(double u);
+    double deg_density_fun(double u, boson &b, double T);
     /// Degenerate energy density integral
-    double deg_energy_fun(double u);
+    double deg_energy_fun(double u, boson &b, double T);
     /// Degenerate entropy integral
-    double deg_entropy_fun(double u);
+    double deg_entropy_fun(double u, boson &b, double T);
     /// Solve for the density in calc_density()
-    double solve_fun(double x);
+    double solve_fun(double x, boson &b, double T);
 
 #endif
 

@@ -117,10 +117,7 @@ namespace o2scl {
     
     /// Function to compute chemical potential from density
     int solve_fun(size_t nv, const ubvector &x,
-		  ubvector &y);
-
-    /// Pointer to the data object
-    fermion *fp;
+		  ubvector &y, fermion &f);
 
   public:
 

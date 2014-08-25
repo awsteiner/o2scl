@@ -263,6 +263,9 @@ namespace o2scl {
     virtual void calc_mu(fermion &f, double temper)=0;
 
     /** \brief Calculate properties as function of density
+
+	\note This function returns an integer value, in contrast to
+	\ref calc_mu(), because of the potential for non-convergence.
      */
     virtual int calc_density(fermion &f, double temper)=0;
 
@@ -273,8 +276,11 @@ namespace o2scl {
 
     /** \brief Calculate properties with antiparticles as function of
 	density
+
+	\note This function returns an integer value, in contrast to
+	\ref pair_mu(), because of the potential for non-convergence.
     */
-    virtual void pair_density(fermion &f, double temper)=0;
+    virtual int pair_density(fermion &f, double temper)=0;
 
     /// \name Massless fermions
     //@{

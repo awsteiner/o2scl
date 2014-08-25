@@ -39,8 +39,6 @@ void fermion_mag_zerot::calc_mu_zerot_mag(fermion &f, double qB,
 	      exc_eunimpl);
   }
 
-  fp=&f;
-
   double sign=1.0;
   // If qB<0, then q<0, so set sign to -1 and use qB=|qB|
   if (qB<0.0) {
@@ -199,8 +197,6 @@ void fermion_mag_zerot::calc_density_zerot_mag
 	      exc_eunimpl);
   }
 
-  fp=&f;
-
   // Handle low density limit gracefully.
   // Can probably improve this section by directly computing
   // things instead of calling calc_mu_zerot_mag().
@@ -250,10 +246,10 @@ void fermion_mag_zerot::calc_density_zerot_mag
   if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
 
   mm_funct11 mf=std::bind
-    (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &,fermion &f)>
      (&fermion_mag_zerot::solve_fun),
      this,std::placeholders::_1,std::placeholders::_2,
-     std::placeholders::_3);
+     std::placeholders::_3,std::ref(f));
 
   // Construct an initial guess from the B=0 result
   calc_density_zerot(f);
@@ -264,7 +260,7 @@ void fermion_mag_zerot::calc_density_zerot_mag
   x[0]=f.nu;
 
   // Check initial guess 
-  int ret2=solve_fun(1,x,y);
+  int ret2=solve_fun(1,x,y,f);
   if (ret2!=0) {
     O2SCL_ERR("Initial guess failed in calc_density_zerot_mag().",
 	      exc_efailed);
@@ -279,7 +275,7 @@ void fermion_mag_zerot::calc_density_zerot_mag
   f.nu=x[0];
    
   // Compute final values
-  solve_fun(1,x,y);
+  solve_fun(1,x,y,f);
 
   if (f.non_interacting) { f.mu=f.nu; }
 
@@ -287,22 +283,22 @@ void fermion_mag_zerot::calc_density_zerot_mag
 }
 
 int fermion_mag_zerot::solve_fun(size_t nv, const ubvector &x,
-				 ubvector &y) {
+				 ubvector &y, fermion &f) {
   
   if (!o2scl::is_finite(x[0])) {
     return 3;
   }
 
-  if (fp->non_interacting) {
-    fp->mu=x[0];
-    if (fp->inc_rest_mass && fp->mu<fp->m) return 1;
+  if (f.non_interacting) {
+    f.mu=x[0];
+    if (f.inc_rest_mass && f.mu<f.m) return 1;
   } else {
-    fp->nu=x[0];
-    if (fp->inc_rest_mass && fp->nu<fp->ms) return 2;
+    f.nu=x[0];
+    if (f.inc_rest_mass && f.nu<f.ms) return 2;
   }
   
-  calc_mu_zerot_mag(*fp,qBt,kt);
-  y[0]=(fp->n-dent)/dent;
+  calc_mu_zerot_mag(f,qBt,kt);
+  y[0]=(f.n-dent)/dent;
 
   if (!o2scl::is_finite(y[0])) {
     return 4;

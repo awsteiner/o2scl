@@ -20,8 +20,8 @@
 
   -------------------------------------------------------------------
 */
-#ifndef O2SCL_SN_FERMION_H
-#define O2SCL_SN_FERMION_H
+#ifndef O2SCL_FERMION_DERIV_REL_H
+#define O2SCL_FERMION_DERIV_REL_H
 
 /** \file fermion_deriv_rel.h
     \brief File defining \ref o2scl::fermion_deriv_rel
@@ -364,12 +364,6 @@ namespace o2scl {
     /// The internal integration method
     int intl_method;
 
-    /// Pointer to the data object
-    fermion_deriv *fp;
-
-    /// Temperature
-    double T;
-
     /// The integrator for non-degenerate fermions
     inte<> *nit;
 
@@ -383,37 +377,37 @@ namespace o2scl {
 	non-degenerate integrals
     */
     //@{
-    double density_fun(double u);
-    double energy_fun(double u);
-    double entropy_fun(double u);
-    double density_T_fun(double k);
-    double density_mu_fun(double k);
-    double entropy_T_fun(double k);
-    double density_ms_fun(double k);
+    double density_fun(double u, fermion_deriv &f, double T);
+    double energy_fun(double u, fermion_deriv &f, double T);
+    double entropy_fun(double u, fermion_deriv &f, double T);
+    double density_T_fun(double k, fermion_deriv &f, double T);
+    double density_mu_fun(double k, fermion_deriv &f, double T);
+    double entropy_T_fun(double k, fermion_deriv &f, double T);
+    double density_ms_fun(double k, fermion_deriv &f, double T);
     //@}
 
     /** \name The integrands, as a function of momentum, for the 
 	degenerate integrals
     */
     //@{
-    double deg_density_fun(double u);
-    double deg_energy_fun(double u);
-    double deg_entropy_fun(double u);
-    double deg_density_T_fun(double k);
-    double deg_density_mu_fun(double k);
-    double deg_entropy_T_fun(double k);
-    double deg_density_ms_fun(double k);
+    double deg_density_fun(double u, fermion_deriv &f, double T);
+    double deg_energy_fun(double u, fermion_deriv &f, double T);
+    double deg_entropy_fun(double u, fermion_deriv &f, double T);
+    double deg_density_T_fun(double k, fermion_deriv &f, double T);
+    double deg_density_mu_fun(double k, fermion_deriv &f, double T);
+    double deg_entropy_T_fun(double k, fermion_deriv &f, double T);
+    double deg_density_ms_fun(double k, fermion_deriv &f, double T);
     //@}
 
     /** \brief Solve for the chemical potential from the density 
 	for calc_density()
     */
-    double solve_fun(double x);
+    double solve_fun(double x, fermion_deriv &f, double T);
 
     /** \brief Solve for the chemical potential from the density 
 	for pair_density()
     */
-    double pair_fun(double x);
+    double pair_fun(double x, fermion_deriv &f, double T);
 
 #endif
 

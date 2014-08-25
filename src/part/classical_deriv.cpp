@@ -47,14 +47,12 @@ void classical_deriv::calc_mu(part_deriv &p, double temper) {
     p.dndT=0.0;
     p.dndmu=0.0;
     p.dsdT=0.0;
-    p.dndm=0.0;
     return;
   }
 
   p.dndT=-p.nu/temper/temper*p.n+1.5*p.n/temper;
   p.dndmu=p.n/temper;
   p.dsdT=2.5*p.dndT-p.nu*p.dndT/temper+p.n*p.nu/temper/temper;
-  p.dndm=1.5*p.n/p.ms;
 
   return;
 }
@@ -68,14 +66,12 @@ void classical_deriv::calc_density(part_deriv &p, double temper) {
     p.dndT=0.0;
     p.dndmu=0.0;
     p.dsdT=0.0;
-    p.dndm=0.0;
     return;
   }
 
   p.dndT=-p.nu/temper/temper*p.n+1.5*p.n/temper;
   p.dndmu=p.n/temper;
   p.dsdT=2.5*p.dndT-p.nu*p.dndT/temper+p.n*p.nu/temper/temper;
-  p.dndm=1.5*p.n/p.ms;
   
   return;
 }

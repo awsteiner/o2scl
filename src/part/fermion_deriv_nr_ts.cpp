@@ -119,16 +119,13 @@ int main(void) {
   dndm=(d1-d2)/eps;
 
   snf.calc_mu(sf,T);
-  cout << "sf: " << sf.dndmu << " " << sf.dndT << " " << sf.dsdT << " "
-       << sf.dndm << endl;
+  cout << "sf: " << sf.dndmu << " " << sf.dndT << " " << sf.dsdT << endl;
   cout << "un: " << snf.unc.dndmu << " " << snf.unc.dndT << " " 
        << snf.unc.dsdT << endl;
-  cout << "nu: " << dndmu << " " << dndT << " " << dsdT << " "
-       << dndm << endl;
+  cout << "nu: " << dndmu << " " << dndT << " " << dsdT << endl;
   t.test_rel(dndmu,sf.dndmu,1.0e-4,"ndeg dir dndmu");
   t.test_rel(dndT,sf.dndT,1.0e-4,"ndeg dir dndT");
   t.test_rel(dsdT,sf.dsdT,1.0e-4,"ndeg dir dsdT");
-  t.test_rel(dndm,sf.dndm,1.0e-4,"ndeg dir dndm");
   cout << endl;
 
   cout << "Test derivatives (\"degenerate\", direct): " << endl;
@@ -163,16 +160,14 @@ int main(void) {
   dndm=(d1-d2)/eps;
 
   snf.calc_mu(sf,T);
-  cout << "sf: " << sf.dndmu << " " << sf.dndT << " " << sf.dsdT << " "
-       << sf.dndm << endl;
+  cout << "sf: " << sf.dndmu << " " << sf.dndT << " " << sf.dsdT << endl;
   cout << "un: " << snf.unc.dndmu << " " << snf.unc.dndT << " " 
-       << snf.unc.dsdT << " " << snf.unc.dndm << endl;
+       << snf.unc.dsdT << endl;
   cout << "nu: " << dndmu << " " << dndT << " " << dsdT << " "
        << dndm << endl;
   t.test_rel(dndmu,sf.dndmu,1.0e-4,"deg dir dndmu");
   t.test_rel(dndT,sf.dndT,1.0e-4,"deg dir dndT");
   t.test_rel(dsdT,sf.dsdT,1.0e-4,"deg dir dsdT");
-  t.test_rel(dndm,sf.dndm,1.0e-4,"deg dir dndm");
   cout << endl;
 
   cout << "Test derivatives (\"non-degenerate\", byparts): " << endl;
@@ -207,16 +202,14 @@ int main(void) {
   dndm=(d1-d2)/eps;
 
   snf.calc_mu(sf,T);
-  cout << "sf: " << sf.dndmu << " " << sf.dndT << " " << sf.dsdT << " "
-       << sf.dndm << endl;
+  cout << "sf: " << sf.dndmu << " " << sf.dndT << " " << sf.dsdT << endl;
   cout << "un: " << snf.unc.dndmu << " " << snf.unc.dndT << " " 
-       << snf.unc.dsdT << " " << snf.unc.dndm << endl;
+       << snf.unc.dsdT << endl;
   cout << "nu: " << dndmu << " " << dndT << " " << dsdT << " "
        << dndm << endl;
   t.test_rel(dndmu,sf.dndmu,1.0e-4,"ndeg byp dndmu");
   t.test_rel(dndT,sf.dndT,1.0e-4,"ndeg byp dndT");
   t.test_rel(dsdT,sf.dsdT,1.0e-4,"ndeg byp dsdT");
-  t.test_rel(dndm,sf.dndm,1.0e-4,"ndeg byp dndm");
   cout << endl;
 
   cout << "Test derivatives (\"degenerate\", byparts): " << endl;
@@ -251,16 +244,13 @@ int main(void) {
   dndm=(d1-d2)/eps;
 
   snf.calc_mu(sf,T);
-  cout << "sf: " << sf.dndmu << " " << sf.dndT << " " << sf.dsdT << " "
-       << sf.dndm << endl;
+  cout << "sf: " << sf.dndmu << " " << sf.dndT << " " << sf.dsdT << endl;
   cout << "un: " << snf.unc.dndmu << " " << snf.unc.dndT << " " 
-       << snf.unc.dsdT << " " << snf.unc.dndm << endl;
-  cout << "nu: " << dndmu << " " << dndT << " " << dsdT << " "
-       << dndm << endl;
+       << snf.unc.dsdT << endl;
+  cout << "nu: " << dndmu << " " << dndT << " " << dsdT << endl;
   t.test_rel(dndmu,sf.dndmu,1.0e-4,"deg byp dndmu");
   t.test_rel(dndT,sf.dndT,1.0e-4,"deg byp dndT");
   t.test_rel(dsdT,sf.dsdT,1.0e-4,"deg byp dsdT");
-  t.test_rel(dndm,sf.dndm,1.0e-4,"deg byp dndm");
   cout << endl;
 
   cout << "Check calc_density()." << endl;
