@@ -34,7 +34,7 @@ PROJECT_NAME =
 # number. This could be handy for archiving the generated
 # documentation or if some version control system is used.
 
-PROJECT_NUMBER = "Version 0.916"
+PROJECT_NUMBER = "Version 0.917"
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line
 # description for a project that appears at the top of each page and
@@ -42,7 +42,7 @@ PROJECT_NUMBER = "Version 0.916"
 # Keep the description short.
 
 PROJECT_BRIEF = 
-# "Particles and Nuclei Sub-Library: Version 0.916"
+# "Particles and Nuclei Sub-Library: Version 0.917"
 
 # With the PROJECT_LOGO tag one can specify an logo or icon that is
 # included in the documentation. The maximum height of the logo should

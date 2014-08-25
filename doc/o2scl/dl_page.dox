@@ -1,7 +1,7 @@
 /** 
     \page dl_page Download O2scl
 
-    The current version is 0.916. The source distribution can 
+    The current version is 0.917. The source distribution can 
     be obtained from \n
     - \c http://sourceforge.net/projects/o2scl/files/o2scl/
 
@@ -13,6 +13,8 @@
     \endverbatim
     The checkout process is a bit more time consuming than directly
     downloading the source distribution.
+
+    Version 0.917 corresponds with version ? in the svn repository.
 
     Version 0.916 corresponds with version 1136 in the svn repository.
 
