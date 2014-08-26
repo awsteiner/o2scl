@@ -42,21 +42,17 @@
     \skip Example:
     \until End of example
 
-    Typical output:
-    \verbinclude ex_nucmass.scr
-
-    \image html ex_nucmass_mn.png ""
-    \image latex ex_nucmass_mn.eps "" width=9cm
-    \image html ex_nucmass_ame13.png ""
-    \image latex ex_nucmass_ame13.eps "" width=9cm
-    \image html ex_nucmass_dz.png ""
-    \image latex ex_nucmass_dz.eps "" width=9cm
-    \image html ex_nucmass_hfb.png ""
-    \image latex ex_nucmass_hfb.eps "" width=9cm
-    \image html ex_nucmass_ktuy.png ""
-    \image latex ex_nucmass_ktuy.eps "" width=9cm
-    \image html ex_nucmass_sm.png ""
-    \image latex ex_nucmass_sm.eps "" width=9cm
+    \image html ex_nucmass_se.png ""
+    \image html ex_nucmass_mnmsk.png ""
+    \image html ex_nucmass_dz96.png ""
+    \image html ex_nucmass_ame03.png ""
+    \image html ex_nucmass_hfb14.png ""
+    \image html ex_nucmass_hfb21.png ""
+    \image html ex_nucmass_hfb27.png ""
+    \image html ex_nucmass_ktuy05.png ""
+    \image html ex_nucmass_dvi.png ""
+    \image html ex_nucmass_ws32.png ""
+    \image html ex_nucmass_ws36.png ""
 
     \section ex_nucmass_fit_sect Nuclear mass fit example
     

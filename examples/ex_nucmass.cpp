@@ -24,8 +24,8 @@
 /* Example: ex_nucmass.cpp
    -------------------------------------------------------------------
    Demonstrate nuclear mass formulas by comparing them with 
-   the Audi et al. (2003) atomic mass evaluation. This example
-   computes the RMS deviation in the mass excess. 
+   the Audi et al. (2012) atomic mass evaluation. This example
+   computes the absolute deviation in the mass excess. 
 */
 #include <iostream>
 #include <o2scl/test_mgr.h>
@@ -37,6 +37,8 @@
 #include <o2scl/nucdist.h>
 #include <o2scl/nucmass_fit.h>
 #include <o2scl/nucmass_dz.h>
+#include <o2scl/nucmass_hfb.h>
+#include <o2scl/nucmass_wlw.h>
 #include <o2scl/nucmass_ktuy.h>
 
 using namespace std;
@@ -56,19 +58,27 @@ int main(void) {
   o2scl_hdf::ame_load(ame,"12");
 
   // Instantiate and load all of the nuclear mass objects
-  nucmass_semi_empirical sm;
-  nucmass_mnmsk mn;
-  o2scl_hdf::mnmsk_load(mn);
-  nucmass_hfb hfb;
-  o2scl_hdf::hfb_load(hfb,14);
+  nucmass_semi_empirical se;
+  nucmass_mnmsk mnmsk;
+  o2scl_hdf::mnmsk_load(mnmsk);
+  nucmass_hfb hfb14;
+  o2scl_hdf::hfb_load(hfb14,14);
+  nucmass_hfb_sp hfb21;
+  o2scl_hdf::hfb_sp_load(hfb21,21);
+  nucmass_hfb_sp hfb27;
+  o2scl_hdf::hfb_sp_load(hfb27,27);
   nucmass_ame_exp ame03;
   o2scl_hdf::ame_load(ame03,"03");
   nucmass_dz_table dz;
-  nucmass_ktuy ktuy;
+  nucmass_ktuy ktuy05;
+  nucmass_dvi dvi;
+  nucmass_wlw ws32("WS3.2");
+  nucmass_wlw ws36("WS3.6");
 
   // List of pointers to all masses
-  size_t n_tables=6;
-  nucmass *massp[7]={&sm,&mn,&hfb,&ame03,&dz,&ktuy};
+  static const size_t n_tables=11;
+  nucmass *massp[n_tables]={&se,&mnmsk,&hfb14,&hfb21,&hfb27,
+			    &ame03,&dz,&ktuy05,&dvi,&ws32,&ws36};
 
   // Create a distribution with all of the experimental masses
   vector<nucleus> ame_dist;
@@ -79,18 +89,20 @@ int main(void) {
   nucdist_set(ame_dist,ame,"N>7 & Z>7");
 
   // Fit to the experimental masses
-  size_t n_fits=1;
+  static const size_t n_fits=2;
   nucmass_fit mf;
+  mf.def_mmin.ntrial*=100;
   nucdist_set(mf.dist,ame);
   double res;
-  nucmass_fit_base *fitp[2]={&sm};
+  nucmass_fit_base *fitp[n_fits]={&se,&dvi};
   for(size_t i=0;i<n_fits;i++) {
     mf.fit(*(fitp[i]),res);
   }
 
   // Create a table to store the data
   table_units<> tu;
-  tu.line_of_names("Z N ame sm mn hfb ame03 dz ktuy");
+  tu.line_of_names(((string)"Z N ame se mnmsk hfb14 hfb21 ")+
+		   "hfb27 ame03 dz96 ktuy05 dvi ws32 ws36");
 
   // Create the table
   for(size_t i=0;i<ame_dist.size();i++) {

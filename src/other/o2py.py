@@ -98,7 +98,7 @@ def default_plot(lmar=0.14,bmar=0.12,rmar=0.04,tmar=0.04):
     ax.tick_params('both',length=12,width=1,which='major')
     ax.tick_params('both',length=5,width=1,which='minor')
     plot.grid(False)
-    return ax
+    return (fig,ax)
     
 def get_str_array(dset):
     nw=dset['nw'][0]
