@@ -36,6 +36,12 @@
     In order to create a set of nuclei stored in a <tt>std::vector</tt>
     object, one can use \ref o2scl_part::nucdist_set().
 
+    \section ex_nucmass_fit_sect Nuclear mass fit example
+    
+    \dontinclude ex_nucmass_fit.cpp
+    \skip Example:
+    \until End of example
+
     \section ex_nucmass_sect Nuclear mass example
 
     \dontinclude ex_nucmass.cpp
@@ -53,11 +59,5 @@
     \image html ex_nucmass_dvi.png ""
     \image html ex_nucmass_ws32.png ""
     \image html ex_nucmass_ws36.png ""
-
-    \section ex_nucmass_fit_sect Nuclear mass fit example
-    
-    \dontinclude ex_nucmass_fit.cpp
-    \skip Example:
-    \until End of example
 
 */

@@ -53,11 +53,16 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
 
-  // The most recent experimental masses as a baseline
+  // ------------------------------------------------------
+  // The most recent experimental masses from the 2012 AME as a baseline
+
   nucmass_ame_exp ame;
   o2scl_hdf::ame_load(ame,"12");
 
-  // Instantiate and load all of the nuclear mass objects
+  // ------------------------------------------------------
+  // Instantiate and load all of the nuclear mass objects. Some of
+  // them require a separate HDF5 file
+
   nucmass_semi_empirical se;
   nucmass_mnmsk mnmsk;
   o2scl_hdf::mnmsk_load(mnmsk);
@@ -75,36 +80,48 @@ int main(void) {
   nucmass_wlw ws32("WS3.2");
   nucmass_wlw ws36("WS3.6");
 
-  // List of pointers to all masses
+  // ------------------------------------------------------
+  // List of pointers to all masses for convenience
+
   static const size_t n_tables=11;
   nucmass *massp[n_tables]={&se,&mnmsk,&hfb14,&hfb21,&hfb27,
 			    &ame03,&dz,&ktuy05,&dvi,&ws32,&ws36};
 
-  // Create a distribution with all of the experimental masses
-  vector<nucleus> ame_dist;
-  nucdist_set(ame_dist,ame);
+  // ------------------------------------------------------
+  // Create a list of all of the experimental masses
 
-  // Create a smaller distribution to fit to
-  vector<nucleus> fit_dist;
+  vector<nucleus> ame_dist;
   nucdist_set(ame_dist,ame,"N>7 & Z>7");
 
-  // Fit to the experimental masses
+  // ------------------------------------------------------
+  // Fit the semi-empirical and DvI (2009) mass formulas to 
+  // the 2012 AME data
+
   static const size_t n_fits=2;
   nucmass_fit mf;
-  mf.def_mmin.ntrial*=100;
-  nucdist_set(mf.dist,ame);
+  // The default number of trials isn't enough for the DvI 
+  // model, so we increase it
+  mf.def_mmin.ntrial*=10;
+  // Use the same list as above
+  mf.dist=ame_dist;
+  // The RMS deviation in the mass excess
   double res;
+  // Fit both mass formulas
   nucmass_fit_base *fitp[n_fits]={&se,&dvi};
   for(size_t i=0;i<n_fits;i++) {
     mf.fit(*(fitp[i]),res);
   }
 
+  // ------------------------------------------------------
   // Create a table to store the data
+
   table_units<> tu;
   tu.line_of_names(((string)"Z N ame se mnmsk hfb14 hfb21 ")+
 		   "hfb27 ame03 dz96 ktuy05 dvi ws32 ws36");
 
-  // Create the table
+  // ------------------------------------------------------
+  // Fill the table
+
   for(size_t i=0;i<ame_dist.size();i++) {
     vector<double> line;
     line.push_back(ame_dist[i].Z);
@@ -113,16 +130,19 @@ int main(void) {
     line.push_back(ame_mass);
     for(size_t j=0;j<n_tables;j++) {
       if (massp[j]->is_included(ame_dist[i].Z,ame_dist[i].N)) {
-	line.push_back
-	  (ame_mass-massp[j]->mass_excess(ame_dist[i].Z,ame_dist[i].N));
+	double val=ame_mass-
+	  massp[j]->mass_excess(ame_dist[i].Z,ame_dist[i].N);
+	line.push_back(val);
       } else {
 	line.push_back(0.0);
       }
     }
-    tu.line_of_data(line.size(),line);
+    tu.line_of_data(line);
   }
   
+  // ------------------------------------------------------
   // Output the table to a file
+
   hdf_file hf;
   hf.open_or_create("ex_nucmass_table.o2");
   hdf_output(hf,tu,"nuclear_masses");

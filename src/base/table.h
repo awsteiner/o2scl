@@ -1124,7 +1124,8 @@ namespace o2scl {
     return;
   }
 
-  /** \brief Read a line of data from an array
+  /** \brief Read a line of data from the first \c nv entries in 
+      a vector
    */
   template<class vec2_t> void line_of_data(size_t nv, const vec2_t &v) {
     if (maxlines==0) inc_maxlines(5);
@@ -1146,6 +1147,13 @@ namespace o2scl {
     }
       
     O2SCL_ERR("Not enough lines or columns in line_of_data().",exc_einval);
+    return;
+  }
+
+  /** \brief Read a line of data
+   */
+  template<class vec2_t> void line_of_data(const vec2_t &v) {
+    line_of_data(v.size(),v);
     return;
   }
   //@}
