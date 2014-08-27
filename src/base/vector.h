@@ -156,6 +156,67 @@ namespace o2scl {
   }
   //@}
 
+  /** \brief Simple generic transpose
+      
+      Copy the transpose of \c src to \c dest, resizing \c dest if it
+      is too small.
+      
+      This function will work for any classes \c mat_t and
+      \c mat2_t which have suitably defined <tt>operator()</tt>,
+      <tt>size()</tt>, and <tt>resize()</tt> methods.
+  */
+  template<class mat_t, class mat2_t> 
+    void matrix_transpose(mat_t &src, mat2_t &dest) {
+    size_t m=src.size1();
+    size_t n=src.size2();
+    if (dest.size1()<m || dest.size2()<n) dest.resize(n,m);
+    for(size_t i=0;i<m;i++) {
+      for(size_t j=0;j<n;j++) {
+	dest(i,j)=src(j,i);
+      }
+    }
+  }
+
+  /** \brief Simple generic test for lower triangular
+  */
+  template<class mat_t> bool matrix_is_lower(mat_t &src) {
+    size_t m=src.size1();
+    size_t n=src.size2();
+    bool ret=true;
+    for(size_t i=0;i<m;i++) {
+      for(size_t j=i+1;j<n;j++) {
+	if (src(i,j)!=0.0) return false;
+      }
+    }
+    return ret;
+  }
+
+  /** \brief Simple generic test for lower triangular
+  */
+  template<class mat_t> void matrix_make_lower(mat_t &src) {
+    size_t m=src.size1();
+    size_t n=src.size2();
+    for(size_t i=0;i<m;i++) {
+      for(size_t j=i+1;j<n;j++) {
+	src(i,j)=0.0;
+      }
+    }
+    return;
+  }
+
+  /** \brief Simple generic test for upper triangular
+  */
+  template<class mat_t> void matrix_make_upper(mat_t &src) {
+    size_t m=src.size1();
+    size_t n=src.size2();
+    for(size_t j=0;j<n;j++) {
+      for(size_t i=j+1;i<m;i++) {
+	src(i,j)=0.0;
+      }
+    }
+    return;
+  }
+
   /// \name Swapping parts of vectors and matrices
   //@{
   /** \brief Swap the first N elements of two vectors
