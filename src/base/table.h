@@ -1125,12 +1125,12 @@ namespace o2scl {
   }
 
   /** \brief Read a line of data from the first \c nv entries in 
-      a vector
+      a vector and store as a new row in the table
    */
   template<class vec2_t> void line_of_data(size_t nv, const vec2_t &v) {
-    if (maxlines==0) inc_maxlines(5);
+    if (maxlines==0) inc_maxlines(1);
     if (nlines>=maxlines) inc_maxlines(maxlines);
-      
+    
     if (intp_set) {
       intp_set=false;
       delete si;
@@ -1150,7 +1150,8 @@ namespace o2scl {
     return;
   }
 
-  /** \brief Read a line of data
+  /** \brief Read a line of data and store in a new row of the
+      table
    */
   template<class vec2_t> void line_of_data(const vec2_t &v) {
     line_of_data(v.size(),v);

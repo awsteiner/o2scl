@@ -177,8 +177,8 @@ namespace o2scl {
     }
   }
 
-  /** \brief Simple generic test for lower triangular
-  */
+  /** \brief Simple generic test that a matrix is lower triangular
+   */
   template<class mat_t> bool matrix_is_lower(mat_t &src) {
     size_t m=src.size1();
     size_t n=src.size2();
@@ -191,8 +191,23 @@ namespace o2scl {
     return ret;
   }
 
-  /** \brief Simple generic test for lower triangular
-  */
+  /** \brief Simple generic test that a matrix is upper triangular
+   */
+  template<class mat_t> bool matrix_is_upper(mat_t &src) {
+    size_t m=src.size1();
+    size_t n=src.size2();
+    bool ret=true;
+    for(size_t j=0;j<n;j++) {
+      for(size_t i=j+1;i<m;i++) {
+	if (src(i,j)!=0.0) return false;
+      }
+    }
+    return ret;
+  }
+  
+  /** \brief Make a matrix lower triangular by setting the upper
+      triangular entries to zero
+   */
   template<class mat_t> void matrix_make_lower(mat_t &src) {
     size_t m=src.size1();
     size_t n=src.size2();
@@ -203,8 +218,9 @@ namespace o2scl {
     }
     return;
   }
-
-  /** \brief Simple generic test for upper triangular
+  
+  /** \brief Make a matrix upper triangular by setting the lower
+      triangular entries to zero
   */
   template<class mat_t> void matrix_make_upper(mat_t &src) {
     size_t m=src.size1();
