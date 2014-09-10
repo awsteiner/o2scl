@@ -1,56 +1,29 @@
-(************** Content-type: application/mathematica **************
-                     CreatedBy='Mathematica 5.0'
+(* Content-type: application/vnd.wolfram.mathematica *)
 
-                    Mathematica-Compatible Notebook
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
 
-This notebook can be used with any Mathematica-compatible
-application, such as Mathematica, MathReader or Publicon. The data
-for the notebook starts with the line containing stars above.
+(* CreatedBy='Mathematica 9.0' *)
 
-To get the notebook into a Mathematica-compatible application, do
-one of the following:
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       157,          7]
+NotebookDataLength[     52104,       1890]
+NotebookOptionsPosition[     47751,       1736]
+NotebookOutlinePosition[     48384,       1758]
+CellTagsIndexPosition[     48341,       1755]
+WindowFrame->Normal*)
 
-* Save the data starting with the line of stars above into a file
-  with a name ending in .nb, then open the file inside the
-  application;
-
-* Copy the data starting with the line of stars above to the
-  clipboard, then use the Paste menu command inside the application.
-
-Data for notebooks contains only printable 7-bit ASCII and can be
-sent directly in email or through ftp in text mode.  Newlines can be
-CR, LF or CRLF (Unix, Macintosh or MS-DOS style).
-
-NOTE: If you modify the data for this notebook not in a Mathematica-
-compatible application, you must delete the line below containing
-the word CacheID, otherwise Mathematica-compatible applications may
-try to use invalid cache data.
-
-For more information on notebooks and Mathematica-compatible 
-applications, contact Wolfram Research:
-  web: http://www.wolfram.com
-  email: info@wolfram.com
-  phone: +1-217-398-0700 (U.S.)
-
-Notebook reader applications are available free of charge from 
-Wolfram Research.
-*******************************************************************)
-
-(*CacheID: 232*)
-
-
-(*NotebookFileLineBreakTest
-NotebookFileLineBreakTest*)
-(*NotebookOptionsPosition[     16214,        504]*)
-(*NotebookOutlinePosition[     17063,        532]*)
-(*  CellTagsIndexPosition[     17019,        528]*)
-(*WindowFrame->Normal*)
-
-
-
+(* Beginning of Notebook Content *)
 Notebook[{
 Cell[BoxData[
-    \(Off[General::"\<spell\>"]; Off[General::"\<spell1\>"];\)], "Input"],
+ RowBox[{
+  RowBox[{"Off", "[", 
+   RowBox[{"General", "::", "\"\<spell\>\""}], "]"}], ";", 
+  RowBox[{"Off", "[", 
+   RowBox[{"General", "::", "\"\<spell1\>\""}], "]"}], ";"}]], "Input"],
 
 Cell[CellGroupData[{
 
@@ -59,94 +32,409 @@ Cell["The Hamiltonian", "Subsubsection"],
 Cell[CellGroupData[{
 
 Cell[BoxData[
-    \(h2mns = \(1/2\)/M + n/4 \((t1 \((1 + x1/2)\) + t2 \((1 + x2/2)\))\) + 
-        nn/4 \((t2 \((1/2 + x2)\) - t1 \((1/2 + x1)\))\)\)], "Input"],
+ RowBox[{"h2mns", "=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"1", "/", "2"}], "/", "M"}], "+", 
+   RowBox[{
+    RowBox[{"n", "/", "4"}], 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"t1", 
+       RowBox[{"(", 
+        RowBox[{"1", "+", 
+         RowBox[{"x1", "/", "2"}]}], ")"}]}], "+", 
+      RowBox[{"t2", 
+       RowBox[{"(", 
+        RowBox[{"1", "+", 
+         RowBox[{"x2", "/", "2"}]}], ")"}]}]}], ")"}]}], "+", 
+   RowBox[{
+    RowBox[{"nn", "/", "4"}], 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"t2", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"1", "/", "2"}], "+", "x2"}], ")"}]}], "-", 
+      RowBox[{"t1", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"1", "/", "2"}], "+", "x1"}], ")"}]}]}], 
+     ")"}]}]}]}]], "Input"],
 
 Cell[BoxData[
-    \(1\/\(2\ M\) + 
-      1\/4\ n\ \((t1\ \((1 + x1\/2)\) + t2\ \((1 + x2\/2)\))\) + 
-      1\/4\ nn\ \((\(-t1\)\ \((1\/2 + x1)\) + 
-            t2\ \((1\/2 + x2)\))\)\)], "Output"]
+ RowBox[{
+  FractionBox["1", 
+   RowBox[{"2", " ", "M"}]], "+", 
+  RowBox[{
+   FractionBox["1", "4"], " ", "n", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"t1", " ", 
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        FractionBox["x1", "2"]}], ")"}]}], "+", 
+     RowBox[{"t2", " ", 
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        FractionBox["x2", "2"]}], ")"}]}]}], ")"}]}], "+", 
+  RowBox[{
+   FractionBox["1", "4"], " ", "nn", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"-", "t1"}], " ", 
+      RowBox[{"(", 
+       RowBox[{
+        FractionBox["1", "2"], "+", "x1"}], ")"}]}], "+", 
+     RowBox[{"t2", " ", 
+      RowBox[{"(", 
+       RowBox[{
+        FractionBox["1", "2"], "+", "x2"}], ")"}]}]}], ")"}]}]}]], "Output"]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
-    \(h2mps = \(1/2\)/M + n/4 \((t1 \((1 + x1/2)\) + t2 \((1 + x2/2)\))\) + 
-        np/4 \((t2 \((1/2 + x2)\) - t1 \((1/2 + x1)\))\)\)], "Input"],
+ RowBox[{"h2mps", "=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"1", "/", "2"}], "/", "M"}], "+", 
+   RowBox[{
+    RowBox[{"n", "/", "4"}], 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"t1", 
+       RowBox[{"(", 
+        RowBox[{"1", "+", 
+         RowBox[{"x1", "/", "2"}]}], ")"}]}], "+", 
+      RowBox[{"t2", 
+       RowBox[{"(", 
+        RowBox[{"1", "+", 
+         RowBox[{"x2", "/", "2"}]}], ")"}]}]}], ")"}]}], "+", 
+   RowBox[{
+    RowBox[{"np", "/", "4"}], 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"t2", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"1", "/", "2"}], "+", "x2"}], ")"}]}], "-", 
+      RowBox[{"t1", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"1", "/", "2"}], "+", "x1"}], ")"}]}]}], 
+     ")"}]}]}]}]], "Input"],
 
 Cell[BoxData[
-    \(1\/\(2\ M\) + 
-      1\/4\ n\ \((t1\ \((1 + x1\/2)\) + t2\ \((1 + x2\/2)\))\) + 
-      1\/4\ np\ \((\(-t1\)\ \((1\/2 + x1)\) + 
-            t2\ \((1\/2 + x2)\))\)\)], "Output"]
+ RowBox[{
+  FractionBox["1", 
+   RowBox[{"2", " ", "M"}]], "+", 
+  RowBox[{
+   FractionBox["1", "4"], " ", "n", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"t1", " ", 
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        FractionBox["x1", "2"]}], ")"}]}], "+", 
+     RowBox[{"t2", " ", 
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        FractionBox["x2", "2"]}], ")"}]}]}], ")"}]}], "+", 
+  RowBox[{
+   FractionBox["1", "4"], " ", "np", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"-", "t1"}], " ", 
+      RowBox[{"(", 
+       RowBox[{
+        FractionBox["1", "2"], "+", "x1"}], ")"}]}], "+", 
+     RowBox[{"t2", " ", 
+      RowBox[{"(", 
+       RowBox[{
+        FractionBox["1", "2"], "+", "x2"}], ")"}]}]}], ")"}]}]}]], "Output"]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
-    \(kfn = \((3\ \(\[Pi]\^2\) nn)\)\^\(1/3\)\)], "Input"],
+ RowBox[{"kfn", "=", 
+  SuperscriptBox[
+   RowBox[{"(", 
+    RowBox[{"3", " ", 
+     SuperscriptBox["\[Pi]", "2"], "nn"}], ")"}], 
+   RowBox[{"1", "/", "3"}]]}]], "Input"],
 
 Cell[BoxData[
-    \(3\^\(1/3\)\ nn\^\(1/3\)\ \[Pi]\^\(2/3\)\)], "Output"]
+ RowBox[{
+  SuperscriptBox["3", 
+   RowBox[{"1", "/", "3"}]], " ", 
+  SuperscriptBox["nn", 
+   RowBox[{"1", "/", "3"}]], " ", 
+  SuperscriptBox["\[Pi]", 
+   RowBox[{"2", "/", "3"}]]}]], "Output"]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
-    \(kfp = \((3\ \(\[Pi]\^2\) np)\)\^\(1/3\)\)], "Input"],
+ RowBox[{"kfp", "=", 
+  SuperscriptBox[
+   RowBox[{"(", 
+    RowBox[{"3", " ", 
+     SuperscriptBox["\[Pi]", "2"], "np"}], ")"}], 
+   RowBox[{"1", "/", "3"}]]}]], "Input"],
 
 Cell[BoxData[
-    \(3\^\(1/3\)\ np\^\(1/3\)\ \[Pi]\^\(2/3\)\)], "Output"]
+ RowBox[{
+  SuperscriptBox["3", 
+   RowBox[{"1", "/", "3"}]], " ", 
+  SuperscriptBox["np", 
+   RowBox[{"1", "/", "3"}]], " ", 
+  SuperscriptBox["\[Pi]", 
+   RowBox[{"2", "/", "3"}]]}]], "Output"]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
-    \(\[Tau]n = \(kfn\^5/5\)/\[Pi]\^2\)], "Input"],
+ RowBox[{"\[Tau]n", "=", 
+  RowBox[{
+   RowBox[{
+    SuperscriptBox["kfn", "5"], "/", "5"}], "/", 
+   SuperscriptBox["\[Pi]", "2"]}]}]], "Input"],
 
 Cell[BoxData[
-    \(3\/5\ 3\^\(2/3\)\ nn\^\(5/3\)\ \[Pi]\^\(4/3\)\)], "Output"]
+ RowBox[{
+  FractionBox["3", "5"], " ", 
+  SuperscriptBox["3", 
+   RowBox[{"2", "/", "3"}]], " ", 
+  SuperscriptBox["nn", 
+   RowBox[{"5", "/", "3"}]], " ", 
+  SuperscriptBox["\[Pi]", 
+   RowBox[{"4", "/", "3"}]]}]], "Output"]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
-    \(\[Tau]p = \(kfp\^5/5\)/\[Pi]\^2\)], "Input"],
+ RowBox[{"\[Tau]p", "=", 
+  RowBox[{
+   RowBox[{
+    SuperscriptBox["kfp", "5"], "/", "5"}], "/", 
+   SuperscriptBox["\[Pi]", "2"]}]}]], "Input"],
 
 Cell[BoxData[
-    \(3\/5\ 3\^\(2/3\)\ np\^\(5/3\)\ \[Pi]\^\(4/3\)\)], "Output"]
+ RowBox[{
+  FractionBox["3", "5"], " ", 
+  SuperscriptBox["3", 
+   RowBox[{"2", "/", "3"}]], " ", 
+  SuperscriptBox["np", 
+   RowBox[{"5", "/", "3"}]], " ", 
+  SuperscriptBox["\[Pi]", 
+   RowBox[{"4", "/", "3"}]]}]], "Output"]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
-    \(Hbulk = 
-      Simplify[\[Tau]n\ h2mns + \[Tau]p\ h2mps + 
-            t0/2 \((\((1 + x0/2)\) 
-                    n\^2 - \((1/2 + x0)\) \((nn\^2 + np\^2)\))\) + 
-            a\ t3/6 \((\((1 + x3/2)\)\ \(n\^\[Alpha]\) 
-                    nn\ np + \(2\^\(\[Alpha] - 2\)\) \((1 - 
-                        x3)\) \((nn\^\(\[Alpha] + 2\) + 
-                        np\^\(\[Alpha] + 2\))\))\) + 
-            b\ t3/12 \((\((1 + x3/2)\) 
-                    n\^2 - \((1/2 + x3)\) \((nn\^2 + np\^2)\))\) n\^\[Alpha] /. 
-          n \[Rule] nn + np]\)], "Input"],
+ RowBox[{"Hbulk", "=", 
+  RowBox[{"Simplify", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"\[Tau]n", " ", "h2mns"}], "+", 
+     RowBox[{"\[Tau]p", " ", "h2mps"}], "+", 
+     RowBox[{
+      RowBox[{"t0", "/", "2"}], 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"1", "+", 
+           RowBox[{"x0", "/", "2"}]}], ")"}], 
+         SuperscriptBox["n", "2"]}], "-", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"1", "/", "2"}], "+", "x0"}], ")"}], 
+         RowBox[{"(", 
+          RowBox[{
+           SuperscriptBox["nn", "2"], "+", 
+           SuperscriptBox["np", "2"]}], ")"}]}]}], ")"}]}], "+", 
+     RowBox[{"a", " ", 
+      RowBox[{"t3", "/", "6"}], 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"1", "+", 
+           RowBox[{"x3", "/", "2"}]}], ")"}], " ", 
+         SuperscriptBox["n", "\[Alpha]"], "nn", " ", "np"}], "+", 
+        RowBox[{
+         SuperscriptBox["2", 
+          RowBox[{"\[Alpha]", "-", "2"}]], 
+         RowBox[{"(", 
+          RowBox[{"1", "-", "x3"}], ")"}], 
+         RowBox[{"(", 
+          RowBox[{
+           SuperscriptBox["nn", 
+            RowBox[{"\[Alpha]", "+", "2"}]], "+", 
+           SuperscriptBox["np", 
+            RowBox[{"\[Alpha]", "+", "2"}]]}], ")"}]}]}], ")"}]}], "+", 
+     RowBox[{"b", " ", 
+      RowBox[{"t3", "/", "12"}], 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"1", "+", 
+           RowBox[{"x3", "/", "2"}]}], ")"}], 
+         SuperscriptBox["n", "2"]}], "-", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"1", "/", "2"}], "+", "x3"}], ")"}], 
+         RowBox[{"(", 
+          RowBox[{
+           SuperscriptBox["nn", "2"], "+", 
+           SuperscriptBox["np", "2"]}], ")"}]}]}], ")"}], 
+      SuperscriptBox["n", "\[Alpha]"]}]}], "/.", 
+    RowBox[{"n", "\[Rule]", 
+     RowBox[{"nn", "+", "np"}]}]}], "]"}]}]], "Input"],
 
 Cell[BoxData[
-    \(1\/120\ \((60\ t0\ \((\(-\((nn\^2 + np\^2)\)\)\ \((1\/2 + x0)\) + 
-                1\/2\ \((nn + np)\)\^2\ \((2 + 
-                      x0)\))\) - \(9\ 3\^\(2/3\)\ np\^\(5/3\)\ \[Pi]\^\(4/3\)\
-\ \((\(-4\) - M\ \((np\ \((t1 - t1\ x1 + 3\ t2\ \((1 + x2)\))\) + nn\ \((t1\ \
-\((2 + x1)\) + t2\ \((2 + x2)\))\))\))\)\)\/M - \(9\ 3\^\(2/3\)\ nn\^\(5/3\)\ \
-\[Pi]\^\(4/3\)\ \((\(-4\) + M\ \((nn\ \((t1\ \((\(-1\) + x1)\) - 3\ t2\ \((1 \
-+ x2)\))\) - np\ \((t1\ \((2 + x1)\) + t2\ \((2 + x2)\))\))\))\)\)\/M - 
-          5\ b\ \((nn + np)\)\^\[Alpha]\ t3\ \((nn\^2\ \((\(-1\) + x3)\) + 
-                np\^2\ \((\(-1\) + x3)\) - 2\ nn\ np\ \((2 + x3)\))\) + 
-          5\ a\ t3\ \((\(-2\^\[Alpha]\)\ \((nn\^\(2 + \[Alpha]\) + 
-                      np\^\(2 + \[Alpha]\))\)\ \((\(-1\) + x3)\) + 
-                2\ nn\ np\ \((nn + np)\)\^\[Alpha]\ \((2 + 
-                      x3)\))\))\)\)], "Output"]
+ RowBox[{
+  FractionBox["1", "120"], " ", 
+  RowBox[{"(", 
+   RowBox[{
+    RowBox[{"60", " ", "t0", " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"-", 
+         RowBox[{"(", 
+          RowBox[{
+           SuperscriptBox["nn", "2"], "+", 
+           SuperscriptBox["np", "2"]}], ")"}]}], " ", 
+        RowBox[{"(", 
+         RowBox[{
+          FractionBox["1", "2"], "+", "x0"}], ")"}]}], "+", 
+       RowBox[{
+        FractionBox["1", "2"], " ", 
+        SuperscriptBox[
+         RowBox[{"(", 
+          RowBox[{"nn", "+", "np"}], ")"}], "2"], " ", 
+        RowBox[{"(", 
+         RowBox[{"2", "+", "x0"}], ")"}]}]}], ")"}]}], "-", 
+    RowBox[{
+     FractionBox["1", "M"], 
+     RowBox[{"9", " ", 
+      SuperscriptBox["3", 
+       RowBox[{"2", "/", "3"}]], " ", 
+      SuperscriptBox["np", 
+       RowBox[{"5", "/", "3"}]], " ", 
+      SuperscriptBox["\[Pi]", 
+       RowBox[{"4", "/", "3"}]], " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"-", "4"}], "-", 
+        RowBox[{"M", " ", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"np", " ", 
+            RowBox[{"(", 
+             RowBox[{"t1", "-", 
+              RowBox[{"t1", " ", "x1"}], "+", 
+              RowBox[{"3", " ", "t2", " ", 
+               RowBox[{"(", 
+                RowBox[{"1", "+", "x2"}], ")"}]}]}], ")"}]}], "+", 
+           RowBox[{"nn", " ", 
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{"t1", " ", 
+               RowBox[{"(", 
+                RowBox[{"2", "+", "x1"}], ")"}]}], "+", 
+              RowBox[{"t2", " ", 
+               RowBox[{"(", 
+                RowBox[{"2", "+", "x2"}], ")"}]}]}], ")"}]}]}], ")"}]}]}], 
+       ")"}]}]}], "-", 
+    RowBox[{
+     FractionBox["1", "M"], 
+     RowBox[{"9", " ", 
+      SuperscriptBox["3", 
+       RowBox[{"2", "/", "3"}]], " ", 
+      SuperscriptBox["nn", 
+       RowBox[{"5", "/", "3"}]], " ", 
+      SuperscriptBox["\[Pi]", 
+       RowBox[{"4", "/", "3"}]], " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"-", "4"}], "+", 
+        RowBox[{"M", " ", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"nn", " ", 
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{"t1", " ", 
+               RowBox[{"(", 
+                RowBox[{
+                 RowBox[{"-", "1"}], "+", "x1"}], ")"}]}], "-", 
+              RowBox[{"3", " ", "t2", " ", 
+               RowBox[{"(", 
+                RowBox[{"1", "+", "x2"}], ")"}]}]}], ")"}]}], "-", 
+           RowBox[{"np", " ", 
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{"t1", " ", 
+               RowBox[{"(", 
+                RowBox[{"2", "+", "x1"}], ")"}]}], "+", 
+              RowBox[{"t2", " ", 
+               RowBox[{"(", 
+                RowBox[{"2", "+", "x2"}], ")"}]}]}], ")"}]}]}], ")"}]}]}], 
+       ")"}]}]}], "-", 
+    RowBox[{"5", " ", "b", " ", 
+     SuperscriptBox[
+      RowBox[{"(", 
+       RowBox[{"nn", "+", "np"}], ")"}], "\[Alpha]"], " ", "t3", " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{
+        SuperscriptBox["nn", "2"], " ", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"-", "1"}], "+", "x3"}], ")"}]}], "+", 
+       RowBox[{
+        SuperscriptBox["np", "2"], " ", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"-", "1"}], "+", "x3"}], ")"}]}], "-", 
+       RowBox[{"2", " ", "nn", " ", "np", " ", 
+        RowBox[{"(", 
+         RowBox[{"2", "+", "x3"}], ")"}]}]}], ")"}]}], "+", 
+    RowBox[{"5", " ", "a", " ", "t3", " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"-", 
+         SuperscriptBox["2", "\[Alpha]"]}], " ", 
+        RowBox[{"(", 
+         RowBox[{
+          SuperscriptBox["nn", 
+           RowBox[{"2", "+", "\[Alpha]"}]], "+", 
+          SuperscriptBox["np", 
+           RowBox[{"2", "+", "\[Alpha]"}]]}], ")"}], " ", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"-", "1"}], "+", "x3"}], ")"}]}], "+", 
+       RowBox[{"2", " ", "nn", " ", "np", " ", 
+        SuperscriptBox[
+         RowBox[{"(", 
+          RowBox[{"nn", "+", "np"}], ")"}], "\[Alpha]"], " ", 
+        RowBox[{"(", 
+         RowBox[{"2", "+", "x3"}], ")"}]}]}], ")"}]}]}], ")"}]}]], "Output"]
 }, Open  ]]
 }, Open  ]],
 
@@ -157,53 +445,173 @@ Cell["The energy of symmetric nuclear matter:", "Subsubsection"],
 Cell[CellGroupData[{
 
 Cell[BoxData[
-    \(Hnuc = 
-      Simplify[\(Hbulk /. nn \[Rule] n/2\) /. np \[Rule] n/2]\)], "Input"],
+ RowBox[{"Hnuc", "=", 
+  RowBox[{"Simplify", "[", 
+   RowBox[{
+    RowBox[{"Hbulk", "/.", 
+     RowBox[{"nn", "\[Rule]", 
+      RowBox[{"n", "/", "2"}]}]}], "/.", 
+    RowBox[{"np", "\[Rule]", 
+     RowBox[{"n", "/", "2"}]}]}], "]"}]}]], "Input"],
 
 Cell[BoxData[
-    \(\(n\^\(5/3\)\ \((10\ M\ \((6\ n\^\(1/3\)\ t0 + \((a + b)\)\ n\^\(1\/3 + \
-\[Alpha]\)\ t3)\) + 3\ 2\^\(1/3\)\ 3\^\(2/3\)\ \[Pi]\^\(4/3\)\ \((8 + M\ n\ \
-\((3\ t1 + 5\ t2 + 4\ t2\ x2)\))\))\)\)\/\(160\ M\)\)], "Output"]
+ RowBox[{
+  FractionBox["1", 
+   RowBox[{"160", " ", "M"}]], 
+  RowBox[{
+   SuperscriptBox["n", 
+    RowBox[{"5", "/", "3"}]], " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"10", " ", "M", " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"6", " ", 
+         SuperscriptBox["n", 
+          RowBox[{"1", "/", "3"}]], " ", "t0"}], "+", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"a", "+", "b"}], ")"}], " ", 
+         SuperscriptBox["n", 
+          RowBox[{
+           FractionBox["1", "3"], "+", "\[Alpha]"}]], " ", "t3"}]}], ")"}]}], 
+     "+", 
+     RowBox[{"3", " ", 
+      SuperscriptBox["2", 
+       RowBox[{"1", "/", "3"}]], " ", 
+      SuperscriptBox["3", 
+       RowBox[{"2", "/", "3"}]], " ", 
+      SuperscriptBox["\[Pi]", 
+       RowBox[{"4", "/", "3"}]], " ", 
+      RowBox[{"(", 
+       RowBox[{"8", "+", 
+        RowBox[{"M", " ", "n", " ", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"3", " ", "t1"}], "+", 
+           RowBox[{"5", " ", "t2"}], "+", 
+           RowBox[{"4", " ", "t2", " ", "x2"}]}], ")"}]}]}], ")"}]}]}], 
+    ")"}]}]}]], "Output"]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[{
-    \(kr23 = \(3/10\)/
-          M \((3/2\ \(\[Pi]\^2\) n)\)\^\(2/3\)\), "\[IndentingNewLine]", 
-    \(\[Beta] = M/2 \((1/4 \((3  t1 + 5  t2)\) + t2\ x2)\)\)}], "Input"],
+ RowBox[{"kr23", "=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"3", "/", "10"}], "/", "M"}], 
+   SuperscriptBox[
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"3", "/", "2"}], " ", 
+      SuperscriptBox["\[Pi]", "2"], "n"}], ")"}], 
+    RowBox[{"2", "/", "3"}]]}]}], "\[IndentingNewLine]", 
+ RowBox[{"\[Beta]", "=", 
+  RowBox[{
+   RowBox[{"M", "/", "2"}], 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"1", "/", "4"}], 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"3", "t1"}], "+", 
+        RowBox[{"5", "t2"}]}], ")"}]}], "+", 
+     RowBox[{"t2", " ", "x2"}]}], ")"}]}]}]}], "Input"],
 
 Cell[BoxData[
-    \(\(3\ \((3\/2)\)\^\(2/3\)\ n\^\(2/3\)\ \[Pi]\^\(4/3\)\)\/\(10\ M\)\)], \
-"Output"],
+ FractionBox[
+  RowBox[{"3", " ", 
+   SuperscriptBox[
+    RowBox[{"(", 
+     FractionBox["3", "2"], ")"}], 
+    RowBox[{"2", "/", "3"}]], " ", 
+   SuperscriptBox["n", 
+    RowBox[{"2", "/", "3"}]], " ", 
+   SuperscriptBox["\[Pi]", 
+    RowBox[{"4", "/", "3"}]]}], 
+  RowBox[{"10", " ", "M"}]]], "Output"],
 
 Cell[BoxData[
-    \(1\/2\ M\ \((1\/4\ \((3\ t1 + 5\ t2)\) + t2\ x2)\)\)], "Output"]
+ RowBox[{
+  FractionBox["1", "2"], " ", "M", " ", 
+  RowBox[{"(", 
+   RowBox[{
+    RowBox[{
+     FractionBox["1", "4"], " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"3", " ", "t1"}], "+", 
+       RowBox[{"5", " ", "t2"}]}], ")"}]}], "+", 
+    RowBox[{"t2", " ", "x2"}]}], ")"}]}]], "Output"]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
-    \(Hnuc2 = 
-      n \((kr23 \((1 + \[Beta]\ n)\) + 
-            3\ t0\ n/8\  + \ \((a + b)\) 
-              t3\ n\^\(1 + \[Alpha]\)/16)\)\)], "Input"],
+ RowBox[{"Hnuc2", "=", 
+  RowBox[{"n", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"kr23", 
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        RowBox[{"\[Beta]", " ", "n"}]}], ")"}]}], "+", 
+     RowBox[{"3", " ", "t0", " ", 
+      RowBox[{"n", "/", "8"}]}], " ", "+", " ", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"a", "+", "b"}], ")"}], "t3", " ", 
+      RowBox[{
+       SuperscriptBox["n", 
+        RowBox[{"1", "+", "\[Alpha]"}]], "/", "16"}]}]}], ")"}]}]}]], "Input"],
 
 Cell[BoxData[
-    \(n\ \((\(3\ n\ t0\)\/8 + 
-          1\/16\ \((a + 
-                b)\)\ n\^\(1 + \[Alpha]\)\ t3 + \(3\ \((3\/2)\)\^\(2/3\)\ n\^\
-\(2/3\)\ \[Pi]\^\(4/3\)\ \((1 + 1\/2\ M\ n\ \((1\/4\ \((3\ t1 + 5\ t2)\) + t2\
-\ x2)\))\)\)\/\(10\ M\))\)\)], "Output"]
+ RowBox[{"n", " ", 
+  RowBox[{"(", 
+   RowBox[{
+    FractionBox[
+     RowBox[{"3", " ", "n", " ", "t0"}], "8"], "+", 
+    RowBox[{
+     FractionBox["1", "16"], " ", 
+     RowBox[{"(", 
+      RowBox[{"a", "+", "b"}], ")"}], " ", 
+     SuperscriptBox["n", 
+      RowBox[{"1", "+", "\[Alpha]"}]], " ", "t3"}], "+", 
+    FractionBox[
+     RowBox[{"3", " ", 
+      SuperscriptBox[
+       RowBox[{"(", 
+        FractionBox["3", "2"], ")"}], 
+       RowBox[{"2", "/", "3"}]], " ", 
+      SuperscriptBox["n", 
+       RowBox[{"2", "/", "3"}]], " ", 
+      SuperscriptBox["\[Pi]", 
+       RowBox[{"4", "/", "3"}]], " ", 
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        RowBox[{
+         FractionBox["1", "2"], " ", "M", " ", "n", " ", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{
+            FractionBox["1", "4"], " ", 
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{"3", " ", "t1"}], "+", 
+              RowBox[{"5", " ", "t2"}]}], ")"}]}], "+", 
+           RowBox[{"t2", " ", "x2"}]}], ")"}]}]}], ")"}]}], 
+     RowBox[{"10", " ", "M"}]]}], ")"}]}]], "Output"]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
-    \(Simplify[Hnuc2 - Hnuc]\)], "Input"],
+ RowBox[{"Simplify", "[", 
+  RowBox[{"Hnuc2", "-", "Hnuc"}], "]"}]], "Input"],
 
-Cell[BoxData[
-    \(0\)], "Output"]
+Cell[BoxData["0"], "Output"]
 }, Open  ]]
 }, Open  ]],
 
@@ -216,30 +624,61 @@ Cell["The inverse of the reduced effective mass:", "Text"],
 Cell[CellGroupData[{
 
 Cell[BoxData[
-    \(MoMs = 
-      Simplify[2\ M\ \((\(h2mns /. nn \[Rule] n/2\) /. 
-              np \[Rule] n/2)\)]\)], "Input"],
+ RowBox[{"MoMs", "=", 
+  RowBox[{"Simplify", "[", 
+   RowBox[{"2", " ", "M", " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"h2mns", "/.", 
+       RowBox[{"nn", "\[Rule]", 
+        RowBox[{"n", "/", "2"}]}]}], "/.", 
+      RowBox[{"np", "\[Rule]", 
+       RowBox[{"n", "/", "2"}]}]}], ")"}]}], "]"}]}]], "Input"],
 
 Cell[BoxData[
-    \(1\/8\ \((8 + M\ n\ \((3\ t1 + t2\ \((5 + 4\ x2)\))\))\)\)], "Output"]
+ RowBox[{
+  FractionBox["1", "8"], " ", 
+  RowBox[{"(", 
+   RowBox[{"8", "+", 
+    RowBox[{"M", " ", "n", " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"3", " ", "t1"}], "+", 
+       RowBox[{"t2", " ", 
+        RowBox[{"(", 
+         RowBox[{"5", "+", 
+          RowBox[{"4", " ", "x2"}]}], ")"}]}]}], ")"}]}]}], ")"}]}]], "Output"]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
-    \(MoMs2 = 1 + \[Beta]\ n\)], "Input"],
+ RowBox[{"MoMs2", "=", 
+  RowBox[{"1", "+", 
+   RowBox[{"\[Beta]", " ", "n"}]}]}]], "Input"],
 
 Cell[BoxData[
-    \(1 + 1\/2\ M\ n\ \((1\/4\ \((3\ t1 + 5\ t2)\) + t2\ x2)\)\)], "Output"]
+ RowBox[{"1", "+", 
+  RowBox[{
+   FractionBox["1", "2"], " ", "M", " ", "n", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{
+      FractionBox["1", "4"], " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"3", " ", "t1"}], "+", 
+        RowBox[{"5", " ", "t2"}]}], ")"}]}], "+", 
+     RowBox[{"t2", " ", "x2"}]}], ")"}]}]}]], "Output"]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
-    \(Simplify[MoMs - MoMs2]\)], "Input"],
+ RowBox[{"Simplify", "[", 
+  RowBox[{"MoMs", "-", "MoMs2"}], "]"}]], "Input"],
 
-Cell[BoxData[
-    \(0\)], "Output"]
+Cell[BoxData["0"], "Output"]
 }, Open  ]]
 }, Open  ]],
 
@@ -250,42 +689,131 @@ Cell["The incompressiblity of nuclear matter:", "Subsubsection"],
 Cell[CellGroupData[{
 
 Cell[BoxData[
-    \(K = 
-      Simplify[9 \( n\^2\) 
-          D[D[\((\(Hbulk /. nn \[Rule] n/2\) /. np \[Rule] n/2)\)/n, n], 
-            n]]\)], "Input"],
+ RowBox[{"K", "=", 
+  RowBox[{"Simplify", "[", 
+   RowBox[{"9", 
+    SuperscriptBox["n", "2"], 
+    RowBox[{"D", "[", 
+     RowBox[{
+      RowBox[{"D", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"Hbulk", "/.", 
+            RowBox[{"nn", "\[Rule]", 
+             RowBox[{"n", "/", "2"}]}]}], "/.", 
+           RowBox[{"np", "\[Rule]", 
+            RowBox[{"n", "/", "2"}]}]}], ")"}], "/", "n"}], ",", "n"}], "]"}],
+       ",", "n"}], "]"}]}], "]"}]}]], "Input"],
 
 Cell[BoxData[
-    \(\(3\ n\^\(2/3\)\ \((2\^\(1/3\)\ 3\^\(2/3\)\ \[Pi]\^\(4/3\)\ \((\(-8\) + \
-5\ M\ n\ \((3\ t1 + t2\ \((5 + 4\ x2)\))\))\) + 15\ \((a + b)\)\ M\ n\^\(1\/3 \
-+ \[Alpha]\)\ t3\ \[Alpha]\ \((1 + \[Alpha])\))\)\)\/\(80\ M\)\)], "Output"]
+ RowBox[{
+  FractionBox["1", 
+   RowBox[{"80", " ", "M"}]], 
+  RowBox[{"3", " ", 
+   SuperscriptBox["n", 
+    RowBox[{"2", "/", "3"}]], " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{
+      SuperscriptBox["2", 
+       RowBox[{"1", "/", "3"}]], " ", 
+      SuperscriptBox["3", 
+       RowBox[{"2", "/", "3"}]], " ", 
+      SuperscriptBox["\[Pi]", 
+       RowBox[{"4", "/", "3"}]], " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"-", "8"}], "+", 
+        RowBox[{"5", " ", "M", " ", "n", " ", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"3", " ", "t1"}], "+", 
+           RowBox[{"t2", " ", 
+            RowBox[{"(", 
+             RowBox[{"5", "+", 
+              RowBox[{"4", " ", "x2"}]}], ")"}]}]}], ")"}]}]}], ")"}]}], "+", 
+     
+     RowBox[{"15", " ", 
+      RowBox[{"(", 
+       RowBox[{"a", "+", "b"}], ")"}], " ", "M", " ", 
+      SuperscriptBox["n", 
+       RowBox[{
+        FractionBox["1", "3"], "+", "\[Alpha]"}]], " ", "t3", " ", "\[Alpha]",
+       " ", 
+      RowBox[{"(", 
+       RowBox[{"1", "+", "\[Alpha]"}], ")"}]}]}], ")"}]}]}]], "Output"]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
-    \(K2 = \(-2\) kr23 + 10  kr23\ \[Beta]\ n + 
-        9/16\ \[Alpha] \((\[Alpha] + 1)\) \((a + b)\) 
-          t3\ n\^\(1 + \[Alpha]\)\)], "Input"],
+ RowBox[{"K2", "=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"-", "2"}], "kr23"}], "+", 
+   RowBox[{"10", "kr23", " ", "\[Beta]", " ", "n"}], "+", 
+   RowBox[{
+    RowBox[{"9", "/", "16"}], " ", "\[Alpha]", 
+    RowBox[{"(", 
+     RowBox[{"\[Alpha]", "+", "1"}], ")"}], 
+    RowBox[{"(", 
+     RowBox[{"a", "+", "b"}], ")"}], "t3", " ", 
+    SuperscriptBox["n", 
+     RowBox[{"1", "+", "\[Alpha]"}]]}]}]}]], "Input"],
 
 Cell[BoxData[
-    \(\(-\(\(3\ \((3\/2)\)\^\(2/3\)\ n\^\(2/3\)\ \[Pi]\^\(4/3\)\)\/\(5\ M\)\)\
-\) + 3\/2\ \((3\/2)\)\^\(2/3\)\ n\^\(5/3\)\ \[Pi]\^\(4/3\)\ \((1\/4\ \((3\ t1 \
-+ 5\ t2)\) + t2\ x2)\) + 
-      9\/16\ \((a + 
-            b)\)\ n\^\(1 + \[Alpha]\)\ t3\ \[Alpha]\ \((1 + \[Alpha])\)\)], \
-"Output"]
+ RowBox[{
+  RowBox[{"-", 
+   FractionBox[
+    RowBox[{"3", " ", 
+     SuperscriptBox[
+      RowBox[{"(", 
+       FractionBox["3", "2"], ")"}], 
+      RowBox[{"2", "/", "3"}]], " ", 
+     SuperscriptBox["n", 
+      RowBox[{"2", "/", "3"}]], " ", 
+     SuperscriptBox["\[Pi]", 
+      RowBox[{"4", "/", "3"}]]}], 
+    RowBox[{"5", " ", "M"}]]}], "+", 
+  RowBox[{
+   FractionBox["3", "2"], " ", 
+   SuperscriptBox[
+    RowBox[{"(", 
+     FractionBox["3", "2"], ")"}], 
+    RowBox[{"2", "/", "3"}]], " ", 
+   SuperscriptBox["n", 
+    RowBox[{"5", "/", "3"}]], " ", 
+   SuperscriptBox["\[Pi]", 
+    RowBox[{"4", "/", "3"}]], " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{
+      FractionBox["1", "4"], " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"3", " ", "t1"}], "+", 
+        RowBox[{"5", " ", "t2"}]}], ")"}]}], "+", 
+     RowBox[{"t2", " ", "x2"}]}], ")"}]}], "+", 
+  RowBox[{
+   FractionBox["9", "16"], " ", 
+   RowBox[{"(", 
+    RowBox[{"a", "+", "b"}], ")"}], " ", 
+   SuperscriptBox["n", 
+    RowBox[{"1", "+", "\[Alpha]"}]], " ", "t3", " ", "\[Alpha]", " ", 
+   RowBox[{"(", 
+    RowBox[{"1", "+", "\[Alpha]"}], ")"}]}]}]], "Output"]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
-    RowBox[{"Simplify", "[", 
-      RowBox[{
-        RowBox[{Cell[""], "K2"}], "-", "K"}], "]"}]], "Input"],
+ RowBox[{"Simplify", "[", 
+  RowBox[{
+   RowBox[{Cell[""], "K2"}], "-", "K"}], "]"}]], "Input"],
 
-Cell[BoxData[
-    \(0\)], "Output"]
+Cell[BoxData["0"], "Output"]
 }, Open  ]]
 }, Open  ]],
 
@@ -298,95 +826,366 @@ Cell["Neutron matter:", "Text"],
 Cell[CellGroupData[{
 
 Cell[BoxData[
-    \(Solve[{\((nn - np)\) == n\ \[Delta], n == nn + np}, {nn, 
-        np}]\)], "Input"],
+ RowBox[{"Solve", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"nn", "-", "np"}], ")"}], "==", 
+      RowBox[{"n", " ", "\[Delta]"}]}], ",", 
+     RowBox[{"n", "==", 
+      RowBox[{"nn", "+", "np"}]}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"nn", ",", "np"}], "}"}]}], "]"}]], "Input"],
 
 Cell[BoxData[
-    \({{nn \[Rule] \(-\(1\/2\)\)\ \((\(-n\) - n\ \[Delta])\), 
-        np \[Rule] \(-\(1\/2\)\)\ \((\(-n\) + n\ \[Delta])\)}}\)], "Output"]
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"nn", "\[Rule]", 
+     RowBox[{
+      RowBox[{"-", 
+       FractionBox["1", "2"]}], " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"-", "n"}], "-", 
+        RowBox[{"n", " ", "\[Delta]"}]}], ")"}]}]}], ",", 
+    RowBox[{"np", "\[Rule]", 
+     RowBox[{
+      RowBox[{"-", 
+       FractionBox["1", "2"]}], " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"-", "n"}], "+", 
+        RowBox[{"n", " ", "\[Delta]"}]}], ")"}]}]}]}], "}"}], "}"}]], "Output"]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
-    \(Esym = 
-      Simplify[\((\(D[
-                  D[\((\(Hbulk /. nn \[Rule] 1/2\ \((n + n\ \[Delta])\)\) /. 
-                        np \[Rule] 
-                          1/2\ \((n - n\ \[Delta])\))\), \[Delta]], \[Delta]]/
-                2\)/n)\) /. \[Delta] \[Rule] 0]\)], "Input"],
+ RowBox[{"Esym", "=", 
+  RowBox[{"Simplify", "[", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"D", "[", 
+        RowBox[{
+         RowBox[{"D", "[", 
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"Hbulk", "/.", 
+              RowBox[{"nn", "\[Rule]", 
+               RowBox[{
+                RowBox[{"1", "/", "2"}], " ", 
+                RowBox[{"(", 
+                 RowBox[{"n", "+", 
+                  RowBox[{"n", " ", "\[Delta]"}]}], ")"}]}]}]}], "/.", 
+             RowBox[{"np", "\[Rule]", 
+              RowBox[{
+               RowBox[{"1", "/", "2"}], " ", 
+               RowBox[{"(", 
+                RowBox[{"n", "-", 
+                 RowBox[{"n", " ", "\[Delta]"}]}], ")"}]}]}]}], ")"}], ",", 
+           "\[Delta]"}], "]"}], ",", "\[Delta]"}], "]"}], "/", "2"}], "/", 
+      "n"}], ")"}], "/.", 
+    RowBox[{"\[Delta]", "\[Rule]", "0"}]}], "]"}]}]], "Input"],
 
 Cell[BoxData[
-    \(\(\(1\/\(96\ M\)\)\((8\ 2\^\(1/3\)\ 3\^\(2/3\)\ n\^\(2/3\)\ \
-\[Pi]\^\(4/3\) - 12\ M\ n\ t0\ \((1 + 2\ x0)\) + 
-        2\ 2\^\(1/3\)\ 3\^\(2/3\)\ M\ n\^\(5/3\)\ \[Pi]\^\(4/3\)\ \((\(-3\)\ \
-t1\ x1 + t2\ \((4 + 5\ x2)\))\) - 
-        M\ n\^\(1 + \[Alpha]\)\ t3\ \((2\ b\ \((1 + 2\ x3)\) + 
-              a\ \((2 - 3\ \[Alpha] - \[Alpha]\^2 + 
-                    x3\ \((4 + 
-                          3\ \[Alpha] + \[Alpha]\^2)\))\))\))\)\)\)], "Output"]
+ RowBox[{
+  FractionBox["1", 
+   RowBox[{"96", " ", "M"}]], 
+  RowBox[{"(", 
+   RowBox[{
+    RowBox[{"8", " ", 
+     SuperscriptBox["2", 
+      RowBox[{"1", "/", "3"}]], " ", 
+     SuperscriptBox["3", 
+      RowBox[{"2", "/", "3"}]], " ", 
+     SuperscriptBox["n", 
+      RowBox[{"2", "/", "3"}]], " ", 
+     SuperscriptBox["\[Pi]", 
+      RowBox[{"4", "/", "3"}]]}], "-", 
+    RowBox[{"12", " ", "M", " ", "n", " ", "t0", " ", 
+     RowBox[{"(", 
+      RowBox[{"1", "+", 
+       RowBox[{"2", " ", "x0"}]}], ")"}]}], "+", 
+    RowBox[{"2", " ", 
+     SuperscriptBox["2", 
+      RowBox[{"1", "/", "3"}]], " ", 
+     SuperscriptBox["3", 
+      RowBox[{"2", "/", "3"}]], " ", "M", " ", 
+     SuperscriptBox["n", 
+      RowBox[{"5", "/", "3"}]], " ", 
+     SuperscriptBox["\[Pi]", 
+      RowBox[{"4", "/", "3"}]], " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"-", "3"}], " ", "t1", " ", "x1"}], "+", 
+       RowBox[{"t2", " ", 
+        RowBox[{"(", 
+         RowBox[{"4", "+", 
+          RowBox[{"5", " ", "x2"}]}], ")"}]}]}], ")"}]}], "-", 
+    RowBox[{"M", " ", 
+     SuperscriptBox["n", 
+      RowBox[{"1", "+", "\[Alpha]"}]], " ", "t3", " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"2", " ", "b", " ", 
+        RowBox[{"(", 
+         RowBox[{"1", "+", 
+          RowBox[{"2", " ", "x3"}]}], ")"}]}], "+", 
+       RowBox[{"a", " ", 
+        RowBox[{"(", 
+         RowBox[{"2", "-", 
+          RowBox[{"3", " ", "\[Alpha]"}], "-", 
+          SuperscriptBox["\[Alpha]", "2"], "+", 
+          RowBox[{"x3", " ", 
+           RowBox[{"(", 
+            RowBox[{"4", "+", 
+             RowBox[{"3", " ", "\[Alpha]"}], "+", 
+             SuperscriptBox["\[Alpha]", "2"]}], ")"}]}]}], ")"}]}]}], 
+      ")"}]}]}], ")"}]}]], "Output"]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
-    \(Esym2 = 
-      5/9  kr23 + 
-        10/3\ M\ kr23\ n\ \((1/6\ t2\ \((1 + 5/4  x2)\) - 1/8  t1\ x1)\) - 
-        1/24  b\ t3 \((1/2 + x3)\) n\^\(1 + \[Alpha]\) - 
-        1/4\ t0\ \((1/2 + x0)\) n - 
-        1\/96\ a\ n\^\(1 + \[Alpha]\)\ t3\ \((2 - \[Alpha]\ \((3 + \
-\[Alpha])\) + x3\ \((4 + \[Alpha]\ \((3 + \[Alpha])\))\))\)\)], "Input"],
+ RowBox[{"Esym2", "=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"5", "/", "9"}], "kr23"}], "+", 
+   RowBox[{
+    RowBox[{"10", "/", "3"}], " ", "M", " ", "kr23", " ", "n", " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"1", "/", "6"}], " ", "t2", " ", 
+       RowBox[{"(", 
+        RowBox[{"1", "+", 
+         RowBox[{
+          RowBox[{"5", "/", "4"}], "x2"}]}], ")"}]}], "-", 
+      RowBox[{
+       RowBox[{"1", "/", "8"}], "t1", " ", "x1"}]}], ")"}]}], "-", 
+   RowBox[{
+    RowBox[{"1", "/", "24"}], "b", " ", "t3", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"1", "/", "2"}], "+", "x3"}], ")"}], 
+    SuperscriptBox["n", 
+     RowBox[{"1", "+", "\[Alpha]"}]]}], "-", 
+   RowBox[{
+    RowBox[{"1", "/", "4"}], " ", "t0", " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"1", "/", "2"}], "+", "x0"}], ")"}], "n"}], "-", 
+   RowBox[{
+    FractionBox["1", "96"], " ", "a", " ", 
+    SuperscriptBox["n", 
+     RowBox[{"1", "+", "\[Alpha]"}]], " ", "t3", " ", 
+    RowBox[{"(", 
+     RowBox[{"2", "-", 
+      RowBox[{"\[Alpha]", " ", 
+       RowBox[{"(", 
+        RowBox[{"3", "+", "\[Alpha]"}], ")"}]}], "+", 
+      RowBox[{"x3", " ", 
+       RowBox[{"(", 
+        RowBox[{"4", "+", 
+         RowBox[{"\[Alpha]", " ", 
+          RowBox[{"(", 
+           RowBox[{"3", "+", "\[Alpha]"}], ")"}]}]}], ")"}]}]}], 
+     ")"}]}]}]}]], "Input"],
 
 Cell[BoxData[
-    \(\(n\^\(2/3\)\ \[Pi]\^\(4/3\)\)\/\(2\ 2\^\(2/3\)\ 3\^\(1/3\)\ M\) - 
-      1\/4\ n\ t0\ \((1\/2 + 
-            x0)\) + \((3\/2)\)\^\(2/3\)\ n\^\(5/3\)\ \[Pi]\^\(4/3\)\ \((\(-\(\
-\(t1\ x1\)\/8\)\) + 1\/6\ t2\ \((1 + \(5\ x2\)\/4)\))\) - 
-      1\/24\ b\ n\^\(1 + \[Alpha]\)\ t3\ \((1\/2 + x3)\) - 
-      1\/96\ a\ n\^\(1 + \[Alpha]\)\ t3\ \((2 - \[Alpha]\ \((3 + \[Alpha])\) \
-+ x3\ \((4 + \[Alpha]\ \((3 + \[Alpha])\))\))\)\)], "Output"]
+ RowBox[{
+  FractionBox[
+   RowBox[{
+    SuperscriptBox["n", 
+     RowBox[{"2", "/", "3"}]], " ", 
+    SuperscriptBox["\[Pi]", 
+     RowBox[{"4", "/", "3"}]]}], 
+   RowBox[{"2", " ", 
+    SuperscriptBox["2", 
+     RowBox[{"2", "/", "3"}]], " ", 
+    SuperscriptBox["3", 
+     RowBox[{"1", "/", "3"}]], " ", "M"}]], "-", 
+  RowBox[{
+   FractionBox["1", "4"], " ", "n", " ", "t0", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     FractionBox["1", "2"], "+", "x0"}], ")"}]}], "+", 
+  RowBox[{
+   SuperscriptBox[
+    RowBox[{"(", 
+     FractionBox["3", "2"], ")"}], 
+    RowBox[{"2", "/", "3"}]], " ", 
+   SuperscriptBox["n", 
+    RowBox[{"5", "/", "3"}]], " ", 
+   SuperscriptBox["\[Pi]", 
+    RowBox[{"4", "/", "3"}]], " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"-", 
+      FractionBox[
+       RowBox[{"t1", " ", "x1"}], "8"]}], "+", 
+     RowBox[{
+      FractionBox["1", "6"], " ", "t2", " ", 
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        FractionBox[
+         RowBox[{"5", " ", "x2"}], "4"]}], ")"}]}]}], ")"}]}], "-", 
+  RowBox[{
+   FractionBox["1", "24"], " ", "b", " ", 
+   SuperscriptBox["n", 
+    RowBox[{"1", "+", "\[Alpha]"}]], " ", "t3", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     FractionBox["1", "2"], "+", "x3"}], ")"}]}], "-", 
+  RowBox[{
+   FractionBox["1", "96"], " ", "a", " ", 
+   SuperscriptBox["n", 
+    RowBox[{"1", "+", "\[Alpha]"}]], " ", "t3", " ", 
+   RowBox[{"(", 
+    RowBox[{"2", "-", 
+     RowBox[{"\[Alpha]", " ", 
+      RowBox[{"(", 
+       RowBox[{"3", "+", "\[Alpha]"}], ")"}]}], "+", 
+     RowBox[{"x3", " ", 
+      RowBox[{"(", 
+       RowBox[{"4", "+", 
+        RowBox[{"\[Alpha]", " ", 
+         RowBox[{"(", 
+          RowBox[{"3", "+", "\[Alpha]"}], ")"}]}]}], ")"}]}]}], 
+    ")"}]}]}]], "Output"]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
-    \(Simplify[Esym - Esym2]\)], "Input"],
+ RowBox[{"Simplify", "[", 
+  RowBox[{"Esym", "-", "Esym2"}], "]"}]], "Input"],
 
-Cell[BoxData[
-    \(0\)], "Output"]
+Cell[BoxData["0"], "Output"]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
-    \(EPaul = 
-      5/9\ kr23\ \((1 + 
-              6\ M\ n \((1/6  t2 \((1 + 5/4\ x2)\) - t1\ x1/8)\))\) - 
-        t0/4 \((1/2 + x0)\)\ n + 
-        a\ t3/24\ \(n\^\(1 + \[Alpha]\)\) \((\(-1\) - x3/2 + 
-              1/4 \((1 - x3)\) \((\[Alpha] + 2)\) \((\[Alpha] + 1)\))\) - 
-        b\ t3/24 \((1/2 + x3)\) n\^\(1 + \[Alpha]\)\)], "Input"],
+ RowBox[{"EPaul", "=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"5", "/", "9"}], " ", "kr23", " ", 
+    RowBox[{"(", 
+     RowBox[{"1", "+", 
+      RowBox[{"6", " ", "M", " ", "n", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"1", "/", "6"}], "t2", 
+          RowBox[{"(", 
+           RowBox[{"1", "+", 
+            RowBox[{
+             RowBox[{"5", "/", "4"}], " ", "x2"}]}], ")"}]}], "-", 
+         RowBox[{"t1", " ", 
+          RowBox[{"x1", "/", "8"}]}]}], ")"}]}]}], ")"}]}], "-", 
+   RowBox[{
+    RowBox[{"t0", "/", "4"}], 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"1", "/", "2"}], "+", "x0"}], ")"}], " ", "n"}], "+", 
+   RowBox[{"a", " ", 
+    RowBox[{"t3", "/", "24"}], " ", 
+    SuperscriptBox["n", 
+     RowBox[{"1", "+", "\[Alpha]"}]], 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"-", "1"}], "-", 
+      RowBox[{"x3", "/", "2"}], "+", 
+      RowBox[{
+       RowBox[{"1", "/", "4"}], 
+       RowBox[{"(", 
+        RowBox[{"1", "-", "x3"}], ")"}], 
+       RowBox[{"(", 
+        RowBox[{"\[Alpha]", "+", "2"}], ")"}], 
+       RowBox[{"(", 
+        RowBox[{"\[Alpha]", "+", "1"}], ")"}]}]}], ")"}]}], "-", 
+   RowBox[{"b", " ", 
+    RowBox[{"t3", "/", "24"}], 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"1", "/", "2"}], "+", "x3"}], ")"}], 
+    SuperscriptBox["n", 
+     RowBox[{"1", "+", "\[Alpha]"}]]}]}]}]], "Input"],
 
 Cell[BoxData[
-    \(\(-\(1\/4\)\)\ n\ t0\ \((1\/2 + 
-            x0)\) + \(n\^\(2/3\)\ \[Pi]\^\(4/3\)\ \((1 + 6\ M\ n\ \
-\((\(-\(\(t1\ x1\)\/8\)\) + 1\/6\ t2\ \((1 + \(5\ x2\)\/4)\))\))\)\)\/\(2\ \
-2\^\(2/3\)\ 3\^\(1/3\)\ M\) - 
-      1\/24\ b\ n\^\(1 + \[Alpha]\)\ t3\ \((1\/2 + x3)\) + 
-      1\/24\ a\ n\^\(1 + \[Alpha]\)\ t3\ \((\(-1\) - x3\/2 + 
-            1\/4\ \((1 - 
-                  x3)\)\ \((1 + \[Alpha])\)\ \((2 + \[Alpha])\))\)\)], \
-"Output"]
+ RowBox[{
+  RowBox[{
+   RowBox[{"-", 
+    FractionBox["1", "4"]}], " ", "n", " ", "t0", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     FractionBox["1", "2"], "+", "x0"}], ")"}]}], "+", 
+  FractionBox[
+   RowBox[{
+    SuperscriptBox["n", 
+     RowBox[{"2", "/", "3"}]], " ", 
+    SuperscriptBox["\[Pi]", 
+     RowBox[{"4", "/", "3"}]], " ", 
+    RowBox[{"(", 
+     RowBox[{"1", "+", 
+      RowBox[{"6", " ", "M", " ", "n", " ", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"-", 
+          FractionBox[
+           RowBox[{"t1", " ", "x1"}], "8"]}], "+", 
+         RowBox[{
+          FractionBox["1", "6"], " ", "t2", " ", 
+          RowBox[{"(", 
+           RowBox[{"1", "+", 
+            FractionBox[
+             RowBox[{"5", " ", "x2"}], "4"]}], ")"}]}]}], ")"}]}]}], ")"}]}], 
+   
+   RowBox[{"2", " ", 
+    SuperscriptBox["2", 
+     RowBox[{"2", "/", "3"}]], " ", 
+    SuperscriptBox["3", 
+     RowBox[{"1", "/", "3"}]], " ", "M"}]], "-", 
+  RowBox[{
+   FractionBox["1", "24"], " ", "b", " ", 
+   SuperscriptBox["n", 
+    RowBox[{"1", "+", "\[Alpha]"}]], " ", "t3", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     FractionBox["1", "2"], "+", "x3"}], ")"}]}], "+", 
+  RowBox[{
+   FractionBox["1", "24"], " ", "a", " ", 
+   SuperscriptBox["n", 
+    RowBox[{"1", "+", "\[Alpha]"}]], " ", "t3", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"-", "1"}], "-", 
+     FractionBox["x3", "2"], "+", 
+     RowBox[{
+      FractionBox["1", "4"], " ", 
+      RowBox[{"(", 
+       RowBox[{"1", "-", "x3"}], ")"}], " ", 
+      RowBox[{"(", 
+       RowBox[{"1", "+", "\[Alpha]"}], ")"}], " ", 
+      RowBox[{"(", 
+       RowBox[{"2", "+", "\[Alpha]"}], ")"}]}]}], ")"}]}]}]], "Output"]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
-    \(Simplify[Esym - EPaul]\)], "Input"],
+ RowBox[{"Simplify", "[", 
+  RowBox[{"Esym", "-", "EPaul"}], "]"}]], "Input"],
 
-Cell[BoxData[
-    \(0\)], "Output"]
+Cell[BoxData["0"], "Output"]
 }, Open  ]]
 }, Open  ]],
 
@@ -397,316 +1196,705 @@ Cell["Re-express Hamiltonian as in code:", "Subsubsection"],
 Cell[CellGroupData[{
 
 Cell[BoxData[
-    \(vars = {ham1 -> 
-          t0/2 \((1 + x0/2)\), \[IndentingNewLine]ham2 -> \(-t0\)/
-              2 \((1/2 + x0)\), \[IndentingNewLine]ham3 -> 
-          a\ t3/6 \((1 + x3/2)\), \[IndentingNewLine]ham4 -> 
-          a\ t3\ 2\^\(\[Alpha] - 2\)/6 \((1 - x3)\), \[IndentingNewLine]ham5 -> 
-          b\ t3/12 \((1 + x3/2)\), \[IndentingNewLine]ham6 -> \(-b\)\ t3/
-              12 \((1/2 + x3)\)}\)], "Input"],
+ RowBox[{"vars", "=", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"ham1", "->", 
+     RowBox[{
+      RowBox[{"t0", "/", "2"}], 
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        RowBox[{"x0", "/", "2"}]}], ")"}]}]}], ",", "\[IndentingNewLine]", 
+    RowBox[{"ham2", "->", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"-", "t0"}], "/", "2"}], 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"1", "/", "2"}], "+", "x0"}], ")"}]}]}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{"ham3", "->", 
+     RowBox[{"a", " ", 
+      RowBox[{"t3", "/", "6"}], 
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        RowBox[{"x3", "/", "2"}]}], ")"}]}]}], ",", "\[IndentingNewLine]", 
+    RowBox[{"ham4", "->", 
+     RowBox[{"a", " ", "t3", " ", 
+      RowBox[{
+       SuperscriptBox["2", 
+        RowBox[{"\[Alpha]", "-", "2"}]], "/", "6"}], 
+      RowBox[{"(", 
+       RowBox[{"1", "-", "x3"}], ")"}]}]}], ",", "\[IndentingNewLine]", 
+    RowBox[{"ham5", "->", 
+     RowBox[{"b", " ", 
+      RowBox[{"t3", "/", "12"}], 
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        RowBox[{"x3", "/", "2"}]}], ")"}]}]}], ",", "\[IndentingNewLine]", 
+    RowBox[{"ham6", "->", 
+     RowBox[{
+      RowBox[{"-", "b"}], " ", 
+      RowBox[{"t3", "/", "12"}], 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"1", "/", "2"}], "+", "x3"}], ")"}]}]}]}], "}"}]}]], "Input"],
 
 Cell[BoxData[
-    \({ham1 \[Rule] 1\/2\ t0\ \((1 + x0\/2)\), 
-      ham2 \[Rule] \(-\(1\/2\)\)\ t0\ \((1\/2 + x0)\), 
-      ham3 \[Rule] 1\/6\ a\ t3\ \((1 + x3\/2)\), 
-      ham4 \[Rule] 1\/3\ 2\^\(\(-3\) + \[Alpha]\)\ a\ t3\ \((1 - x3)\), 
-      ham5 \[Rule] 1\/12\ b\ t3\ \((1 + x3\/2)\), 
-      ham6 \[Rule] \(-\(1\/12\)\)\ b\ t3\ \((1\/2 + x3)\)}\)], "Output"]
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"ham1", "\[Rule]", 
+    RowBox[{
+     FractionBox["1", "2"], " ", "t0", " ", 
+     RowBox[{"(", 
+      RowBox[{"1", "+", 
+       FractionBox["x0", "2"]}], ")"}]}]}], ",", 
+   RowBox[{"ham2", "\[Rule]", 
+    RowBox[{
+     RowBox[{"-", 
+      FractionBox["1", "2"]}], " ", "t0", " ", 
+     RowBox[{"(", 
+      RowBox[{
+       FractionBox["1", "2"], "+", "x0"}], ")"}]}]}], ",", 
+   RowBox[{"ham3", "\[Rule]", 
+    RowBox[{
+     FractionBox["1", "6"], " ", "a", " ", "t3", " ", 
+     RowBox[{"(", 
+      RowBox[{"1", "+", 
+       FractionBox["x3", "2"]}], ")"}]}]}], ",", 
+   RowBox[{"ham4", "\[Rule]", 
+    RowBox[{
+     FractionBox["1", "3"], " ", 
+     SuperscriptBox["2", 
+      RowBox[{
+       RowBox[{"-", "3"}], "+", "\[Alpha]"}]], " ", "a", " ", "t3", " ", 
+     RowBox[{"(", 
+      RowBox[{"1", "-", "x3"}], ")"}]}]}], ",", 
+   RowBox[{"ham5", "\[Rule]", 
+    RowBox[{
+     FractionBox["1", "12"], " ", "b", " ", "t3", " ", 
+     RowBox[{"(", 
+      RowBox[{"1", "+", 
+       FractionBox["x3", "2"]}], ")"}]}]}], ",", 
+   RowBox[{"ham6", "\[Rule]", 
+    RowBox[{
+     RowBox[{"-", 
+      FractionBox["1", "12"]}], " ", "b", " ", "t3", " ", 
+     RowBox[{"(", 
+      RowBox[{
+       FractionBox["1", "2"], "+", "x3"}], ")"}]}]}]}], "}"}]], "Output"]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
-    \(Hcode = \[Tau]n\ h2mns + \[Tau]p\ h2mps + ham1\ n\^2 + 
-        ham2 \((nn\^2 + np\^2)\) + ham3\ n\^\[Alpha]\ nn\ np + 
-        ham4 \((nn\^\(\[Alpha] + 2\) + np\^\(\[Alpha] + 2\))\) + 
-        ham5\ n\^\(2 + \[Alpha]\) + 
-        ham6 \((nn\^2 + np\^2)\) n\^\[Alpha]\)], "Input"],
+ RowBox[{"Hcode", "=", 
+  RowBox[{
+   RowBox[{"\[Tau]n", " ", "h2mns"}], "+", 
+   RowBox[{"\[Tau]p", " ", "h2mps"}], "+", 
+   RowBox[{"ham1", " ", 
+    SuperscriptBox["n", "2"]}], "+", 
+   RowBox[{"ham2", 
+    RowBox[{"(", 
+     RowBox[{
+      SuperscriptBox["nn", "2"], "+", 
+      SuperscriptBox["np", "2"]}], ")"}]}], "+", 
+   RowBox[{"ham3", " ", 
+    SuperscriptBox["n", "\[Alpha]"], " ", "nn", " ", "np"}], "+", 
+   RowBox[{"ham4", 
+    RowBox[{"(", 
+     RowBox[{
+      SuperscriptBox["nn", 
+       RowBox[{"\[Alpha]", "+", "2"}]], "+", 
+      SuperscriptBox["np", 
+       RowBox[{"\[Alpha]", "+", "2"}]]}], ")"}]}], "+", 
+   RowBox[{"ham5", " ", 
+    SuperscriptBox["n", 
+     RowBox[{"2", "+", "\[Alpha]"}]]}], "+", 
+   RowBox[{"ham6", 
+    RowBox[{"(", 
+     RowBox[{
+      SuperscriptBox["nn", "2"], "+", 
+      SuperscriptBox["np", "2"]}], ")"}], 
+    SuperscriptBox["n", "\[Alpha]"]}]}]}]], "Input"],
 
 Cell[BoxData[
-    \(ham1\ n\^2 + ham5\ n\^\(2 + \[Alpha]\) + ham3\ n\^\[Alpha]\ nn\ np + 
-      ham2\ \((nn\^2 + np\^2)\) + ham6\ n\^\[Alpha]\ \((nn\^2 + np\^2)\) + 
-      ham4\ \((nn\^\(2 + \[Alpha]\) + np\^\(2 + \[Alpha]\))\) + 
-      3\/5\ 3\^\(2/3\)\ nn\^\(5/3\)\ \[Pi]\^\(4/3\)\ \((1\/\(2\ M\) + 
-            1\/4\ n\ \((t1\ \((1 + x1\/2)\) + t2\ \((1 + x2\/2)\))\) + 
-            1\/4\ nn\ \((\(-t1\)\ \((1\/2 + x1)\) + 
-                  t2\ \((1\/2 + x2)\))\))\) + 
-      3\/5\ 3\^\(2/3\)\ np\^\(5/3\)\ \[Pi]\^\(4/3\)\ \((1\/\(2\ M\) + 
-            1\/4\ n\ \((t1\ \((1 + x1\/2)\) + t2\ \((1 + x2\/2)\))\) + 
-            1\/4\ np\ \((\(-t1\)\ \((1\/2 + x1)\) + 
-                  t2\ \((1\/2 + x2)\))\))\)\)], "Output"]
+ RowBox[{
+  RowBox[{"ham1", " ", 
+   SuperscriptBox["n", "2"]}], "+", 
+  RowBox[{"ham5", " ", 
+   SuperscriptBox["n", 
+    RowBox[{"2", "+", "\[Alpha]"}]]}], "+", 
+  RowBox[{"ham3", " ", 
+   SuperscriptBox["n", "\[Alpha]"], " ", "nn", " ", "np"}], "+", 
+  RowBox[{"ham2", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     SuperscriptBox["nn", "2"], "+", 
+     SuperscriptBox["np", "2"]}], ")"}]}], "+", 
+  RowBox[{"ham6", " ", 
+   SuperscriptBox["n", "\[Alpha]"], " ", 
+   RowBox[{"(", 
+    RowBox[{
+     SuperscriptBox["nn", "2"], "+", 
+     SuperscriptBox["np", "2"]}], ")"}]}], "+", 
+  RowBox[{"ham4", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     SuperscriptBox["nn", 
+      RowBox[{"2", "+", "\[Alpha]"}]], "+", 
+     SuperscriptBox["np", 
+      RowBox[{"2", "+", "\[Alpha]"}]]}], ")"}]}], "+", 
+  RowBox[{
+   FractionBox["3", "5"], " ", 
+   SuperscriptBox["3", 
+    RowBox[{"2", "/", "3"}]], " ", 
+   SuperscriptBox["nn", 
+    RowBox[{"5", "/", "3"}]], " ", 
+   SuperscriptBox["\[Pi]", 
+    RowBox[{"4", "/", "3"}]], " ", 
+   RowBox[{"(", 
+    RowBox[{
+     FractionBox["1", 
+      RowBox[{"2", " ", "M"}]], "+", 
+     RowBox[{
+      FractionBox["1", "4"], " ", "n", " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"t1", " ", 
+         RowBox[{"(", 
+          RowBox[{"1", "+", 
+           FractionBox["x1", "2"]}], ")"}]}], "+", 
+        RowBox[{"t2", " ", 
+         RowBox[{"(", 
+          RowBox[{"1", "+", 
+           FractionBox["x2", "2"]}], ")"}]}]}], ")"}]}], "+", 
+     RowBox[{
+      FractionBox["1", "4"], " ", "nn", " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"-", "t1"}], " ", 
+         RowBox[{"(", 
+          RowBox[{
+           FractionBox["1", "2"], "+", "x1"}], ")"}]}], "+", 
+        RowBox[{"t2", " ", 
+         RowBox[{"(", 
+          RowBox[{
+           FractionBox["1", "2"], "+", "x2"}], ")"}]}]}], ")"}]}]}], ")"}]}], 
+  "+", 
+  RowBox[{
+   FractionBox["3", "5"], " ", 
+   SuperscriptBox["3", 
+    RowBox[{"2", "/", "3"}]], " ", 
+   SuperscriptBox["np", 
+    RowBox[{"5", "/", "3"}]], " ", 
+   SuperscriptBox["\[Pi]", 
+    RowBox[{"4", "/", "3"}]], " ", 
+   RowBox[{"(", 
+    RowBox[{
+     FractionBox["1", 
+      RowBox[{"2", " ", "M"}]], "+", 
+     RowBox[{
+      FractionBox["1", "4"], " ", "n", " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"t1", " ", 
+         RowBox[{"(", 
+          RowBox[{"1", "+", 
+           FractionBox["x1", "2"]}], ")"}]}], "+", 
+        RowBox[{"t2", " ", 
+         RowBox[{"(", 
+          RowBox[{"1", "+", 
+           FractionBox["x2", "2"]}], ")"}]}]}], ")"}]}], "+", 
+     RowBox[{
+      FractionBox["1", "4"], " ", "np", " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"-", "t1"}], " ", 
+         RowBox[{"(", 
+          RowBox[{
+           FractionBox["1", "2"], "+", "x1"}], ")"}]}], "+", 
+        RowBox[{"t2", " ", 
+         RowBox[{"(", 
+          RowBox[{
+           FractionBox["1", "2"], "+", "x2"}], ")"}]}]}], ")"}]}]}], 
+    ")"}]}]}]], "Output"]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
-    \(Simplify[\((\(Hcode /. vars\) /. n \[Rule] nn + np)\) - 
-        Hbulk]\)], "Input"],
+ RowBox[{"Simplify", "[", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"Hcode", "/.", "vars"}], "/.", 
+     RowBox[{"n", "\[Rule]", 
+      RowBox[{"nn", "+", "np"}]}]}], ")"}], "-", "Hbulk"}], "]"}]], "Input"],
 
-Cell[BoxData[
-    \(0\)], "Output"]
+Cell[BoxData["0"], "Output"]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
-    \(D[\((Hcode /. n \[Rule] nn + np)\), nn]\)], "Input"],
+ RowBox[{"D", "[", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{"Hcode", "/.", 
+     RowBox[{"n", "\[Rule]", 
+      RowBox[{"nn", "+", "np"}]}]}], ")"}], ",", "nn"}], "]"}]], "Input"],
 
 Cell[BoxData[
-    \(2\ ham2\ nn + 2\ ham1\ \((nn + np)\) + 
-      2\ ham6\ nn\ \((nn + np)\)\^\[Alpha] + 
-      ham3\ np\ \((nn + np)\)\^\[Alpha] + 
-      3\/20\ 3\^\(2/3\)\ np\^\(5/3\)\ \[Pi]\^\(4/3\)\ \((t1\ \((1 + 
-                  x1\/2)\) + t2\ \((1 + x2\/2)\))\) + 
-      3\/5\ 3\^\(2/3\)\ nn\^\(5/3\)\ \[Pi]\^\(4/3\)\ \((1\/4\ \((t1\ \((1 + 
-                        x1\/2)\) + t2\ \((1 + x2\/2)\))\) + 
-            1\/4\ \((\(-t1\)\ \((1\/2 + x1)\) + t2\ \((1\/2 + x2)\))\))\) + 
-      3\^\(2/3\)\ nn\^\(2/3\)\ \[Pi]\^\(4/3\)\ \((1\/\(2\ M\) + 
-            1\/4\ \((nn + np)\)\ \((t1\ \((1 + x1\/2)\) + 
-                  t2\ \((1 + x2\/2)\))\) + 
-            1\/4\ nn\ \((\(-t1\)\ \((1\/2 + x1)\) + 
-                  t2\ \((1\/2 + x2)\))\))\) + 
-      ham3\ nn\ np\ \((nn + np)\)\^\(\(-1\) + \[Alpha]\)\ \[Alpha] + 
-      ham6\ \((nn + np)\)\^\(\(-1\) + \[Alpha]\)\ \((nn\^2 + 
-            np\^2)\)\ \[Alpha] + 
-      ham4\ nn\^\(1 + \[Alpha]\)\ \((2 + \[Alpha])\) + 
-      ham5\ \((nn + np)\)\^\(1 + \[Alpha]\)\ \((2 + \[Alpha])\)\)], "Output"]
+ RowBox[{
+  RowBox[{"2", " ", "ham2", " ", "nn"}], "+", 
+  RowBox[{"2", " ", "ham1", " ", 
+   RowBox[{"(", 
+    RowBox[{"nn", "+", "np"}], ")"}]}], "+", 
+  RowBox[{"2", " ", "ham6", " ", "nn", " ", 
+   SuperscriptBox[
+    RowBox[{"(", 
+     RowBox[{"nn", "+", "np"}], ")"}], "\[Alpha]"]}], "+", 
+  RowBox[{"ham3", " ", "np", " ", 
+   SuperscriptBox[
+    RowBox[{"(", 
+     RowBox[{"nn", "+", "np"}], ")"}], "\[Alpha]"]}], "+", 
+  RowBox[{
+   FractionBox["3", "20"], " ", 
+   SuperscriptBox["3", 
+    RowBox[{"2", "/", "3"}]], " ", 
+   SuperscriptBox["np", 
+    RowBox[{"5", "/", "3"}]], " ", 
+   SuperscriptBox["\[Pi]", 
+    RowBox[{"4", "/", "3"}]], " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"t1", " ", 
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        FractionBox["x1", "2"]}], ")"}]}], "+", 
+     RowBox[{"t2", " ", 
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        FractionBox["x2", "2"]}], ")"}]}]}], ")"}]}], "+", 
+  RowBox[{
+   FractionBox["3", "5"], " ", 
+   SuperscriptBox["3", 
+    RowBox[{"2", "/", "3"}]], " ", 
+   SuperscriptBox["nn", 
+    RowBox[{"5", "/", "3"}]], " ", 
+   SuperscriptBox["\[Pi]", 
+    RowBox[{"4", "/", "3"}]], " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{
+      FractionBox["1", "4"], " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"t1", " ", 
+         RowBox[{"(", 
+          RowBox[{"1", "+", 
+           FractionBox["x1", "2"]}], ")"}]}], "+", 
+        RowBox[{"t2", " ", 
+         RowBox[{"(", 
+          RowBox[{"1", "+", 
+           FractionBox["x2", "2"]}], ")"}]}]}], ")"}]}], "+", 
+     RowBox[{
+      FractionBox["1", "4"], " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"-", "t1"}], " ", 
+         RowBox[{"(", 
+          RowBox[{
+           FractionBox["1", "2"], "+", "x1"}], ")"}]}], "+", 
+        RowBox[{"t2", " ", 
+         RowBox[{"(", 
+          RowBox[{
+           FractionBox["1", "2"], "+", "x2"}], ")"}]}]}], ")"}]}]}], ")"}]}], 
+  "+", 
+  RowBox[{
+   SuperscriptBox["3", 
+    RowBox[{"2", "/", "3"}]], " ", 
+   SuperscriptBox["nn", 
+    RowBox[{"2", "/", "3"}]], " ", 
+   SuperscriptBox["\[Pi]", 
+    RowBox[{"4", "/", "3"}]], " ", 
+   RowBox[{"(", 
+    RowBox[{
+     FractionBox["1", 
+      RowBox[{"2", " ", "M"}]], "+", 
+     RowBox[{
+      FractionBox["1", "4"], " ", 
+      RowBox[{"(", 
+       RowBox[{"nn", "+", "np"}], ")"}], " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"t1", " ", 
+         RowBox[{"(", 
+          RowBox[{"1", "+", 
+           FractionBox["x1", "2"]}], ")"}]}], "+", 
+        RowBox[{"t2", " ", 
+         RowBox[{"(", 
+          RowBox[{"1", "+", 
+           FractionBox["x2", "2"]}], ")"}]}]}], ")"}]}], "+", 
+     RowBox[{
+      FractionBox["1", "4"], " ", "nn", " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"-", "t1"}], " ", 
+         RowBox[{"(", 
+          RowBox[{
+           FractionBox["1", "2"], "+", "x1"}], ")"}]}], "+", 
+        RowBox[{"t2", " ", 
+         RowBox[{"(", 
+          RowBox[{
+           FractionBox["1", "2"], "+", "x2"}], ")"}]}]}], ")"}]}]}], ")"}]}], 
+  "+", 
+  RowBox[{"ham3", " ", "nn", " ", "np", " ", 
+   SuperscriptBox[
+    RowBox[{"(", 
+     RowBox[{"nn", "+", "np"}], ")"}], 
+    RowBox[{
+     RowBox[{"-", "1"}], "+", "\[Alpha]"}]], " ", "\[Alpha]"}], "+", 
+  RowBox[{"ham6", " ", 
+   SuperscriptBox[
+    RowBox[{"(", 
+     RowBox[{"nn", "+", "np"}], ")"}], 
+    RowBox[{
+     RowBox[{"-", "1"}], "+", "\[Alpha]"}]], " ", 
+   RowBox[{"(", 
+    RowBox[{
+     SuperscriptBox["nn", "2"], "+", 
+     SuperscriptBox["np", "2"]}], ")"}], " ", "\[Alpha]"}], "+", 
+  RowBox[{"ham4", " ", 
+   SuperscriptBox["nn", 
+    RowBox[{"1", "+", "\[Alpha]"}]], " ", 
+   RowBox[{"(", 
+    RowBox[{"2", "+", "\[Alpha]"}], ")"}]}], "+", 
+  RowBox[{"ham5", " ", 
+   SuperscriptBox[
+    RowBox[{"(", 
+     RowBox[{"nn", "+", "np"}], ")"}], 
+    RowBox[{"1", "+", "\[Alpha]"}]], " ", 
+   RowBox[{"(", 
+    RowBox[{"2", "+", "\[Alpha]"}], ")"}]}]}]], "Output"]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
-    \(D[\((Hcode /. n \[Rule] nn + np)\), np]\)], "Input"],
+ RowBox[{"D", "[", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{"Hcode", "/.", 
+     RowBox[{"n", "\[Rule]", 
+      RowBox[{"nn", "+", "np"}]}]}], ")"}], ",", "np"}], "]"}]], "Input"],
 
 Cell[BoxData[
-    \(2\ ham2\ np + 2\ ham1\ \((nn + np)\) + 
-      ham3\ nn\ \((nn + np)\)\^\[Alpha] + 
-      2\ ham6\ np\ \((nn + np)\)\^\[Alpha] + 
-      3\/20\ 3\^\(2/3\)\ nn\^\(5/3\)\ \[Pi]\^\(4/3\)\ \((t1\ \((1 + 
-                  x1\/2)\) + t2\ \((1 + x2\/2)\))\) + 
-      3\/5\ 3\^\(2/3\)\ np\^\(5/3\)\ \[Pi]\^\(4/3\)\ \((1\/4\ \((t1\ \((1 + 
-                        x1\/2)\) + t2\ \((1 + x2\/2)\))\) + 
-            1\/4\ \((\(-t1\)\ \((1\/2 + x1)\) + t2\ \((1\/2 + x2)\))\))\) + 
-      3\^\(2/3\)\ np\^\(2/3\)\ \[Pi]\^\(4/3\)\ \((1\/\(2\ M\) + 
-            1\/4\ \((nn + np)\)\ \((t1\ \((1 + x1\/2)\) + 
-                  t2\ \((1 + x2\/2)\))\) + 
-            1\/4\ np\ \((\(-t1\)\ \((1\/2 + x1)\) + 
-                  t2\ \((1\/2 + x2)\))\))\) + 
-      ham3\ nn\ np\ \((nn + np)\)\^\(\(-1\) + \[Alpha]\)\ \[Alpha] + 
-      ham6\ \((nn + np)\)\^\(\(-1\) + \[Alpha]\)\ \((nn\^2 + 
-            np\^2)\)\ \[Alpha] + 
-      ham4\ np\^\(1 + \[Alpha]\)\ \((2 + \[Alpha])\) + 
-      ham5\ \((nn + np)\)\^\(1 + \[Alpha]\)\ \((2 + \[Alpha])\)\)], "Output"]
+ RowBox[{
+  RowBox[{"2", " ", "ham2", " ", "np"}], "+", 
+  RowBox[{"2", " ", "ham1", " ", 
+   RowBox[{"(", 
+    RowBox[{"nn", "+", "np"}], ")"}]}], "+", 
+  RowBox[{"ham3", " ", "nn", " ", 
+   SuperscriptBox[
+    RowBox[{"(", 
+     RowBox[{"nn", "+", "np"}], ")"}], "\[Alpha]"]}], "+", 
+  RowBox[{"2", " ", "ham6", " ", "np", " ", 
+   SuperscriptBox[
+    RowBox[{"(", 
+     RowBox[{"nn", "+", "np"}], ")"}], "\[Alpha]"]}], "+", 
+  RowBox[{
+   FractionBox["3", "20"], " ", 
+   SuperscriptBox["3", 
+    RowBox[{"2", "/", "3"}]], " ", 
+   SuperscriptBox["nn", 
+    RowBox[{"5", "/", "3"}]], " ", 
+   SuperscriptBox["\[Pi]", 
+    RowBox[{"4", "/", "3"}]], " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"t1", " ", 
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        FractionBox["x1", "2"]}], ")"}]}], "+", 
+     RowBox[{"t2", " ", 
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        FractionBox["x2", "2"]}], ")"}]}]}], ")"}]}], "+", 
+  RowBox[{
+   FractionBox["3", "5"], " ", 
+   SuperscriptBox["3", 
+    RowBox[{"2", "/", "3"}]], " ", 
+   SuperscriptBox["np", 
+    RowBox[{"5", "/", "3"}]], " ", 
+   SuperscriptBox["\[Pi]", 
+    RowBox[{"4", "/", "3"}]], " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{
+      FractionBox["1", "4"], " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"t1", " ", 
+         RowBox[{"(", 
+          RowBox[{"1", "+", 
+           FractionBox["x1", "2"]}], ")"}]}], "+", 
+        RowBox[{"t2", " ", 
+         RowBox[{"(", 
+          RowBox[{"1", "+", 
+           FractionBox["x2", "2"]}], ")"}]}]}], ")"}]}], "+", 
+     RowBox[{
+      FractionBox["1", "4"], " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"-", "t1"}], " ", 
+         RowBox[{"(", 
+          RowBox[{
+           FractionBox["1", "2"], "+", "x1"}], ")"}]}], "+", 
+        RowBox[{"t2", " ", 
+         RowBox[{"(", 
+          RowBox[{
+           FractionBox["1", "2"], "+", "x2"}], ")"}]}]}], ")"}]}]}], ")"}]}], 
+  "+", 
+  RowBox[{
+   SuperscriptBox["3", 
+    RowBox[{"2", "/", "3"}]], " ", 
+   SuperscriptBox["np", 
+    RowBox[{"2", "/", "3"}]], " ", 
+   SuperscriptBox["\[Pi]", 
+    RowBox[{"4", "/", "3"}]], " ", 
+   RowBox[{"(", 
+    RowBox[{
+     FractionBox["1", 
+      RowBox[{"2", " ", "M"}]], "+", 
+     RowBox[{
+      FractionBox["1", "4"], " ", 
+      RowBox[{"(", 
+       RowBox[{"nn", "+", "np"}], ")"}], " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"t1", " ", 
+         RowBox[{"(", 
+          RowBox[{"1", "+", 
+           FractionBox["x1", "2"]}], ")"}]}], "+", 
+        RowBox[{"t2", " ", 
+         RowBox[{"(", 
+          RowBox[{"1", "+", 
+           FractionBox["x2", "2"]}], ")"}]}]}], ")"}]}], "+", 
+     RowBox[{
+      FractionBox["1", "4"], " ", "np", " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"-", "t1"}], " ", 
+         RowBox[{"(", 
+          RowBox[{
+           FractionBox["1", "2"], "+", "x1"}], ")"}]}], "+", 
+        RowBox[{"t2", " ", 
+         RowBox[{"(", 
+          RowBox[{
+           FractionBox["1", "2"], "+", "x2"}], ")"}]}]}], ")"}]}]}], ")"}]}], 
+  "+", 
+  RowBox[{"ham3", " ", "nn", " ", "np", " ", 
+   SuperscriptBox[
+    RowBox[{"(", 
+     RowBox[{"nn", "+", "np"}], ")"}], 
+    RowBox[{
+     RowBox[{"-", "1"}], "+", "\[Alpha]"}]], " ", "\[Alpha]"}], "+", 
+  RowBox[{"ham6", " ", 
+   SuperscriptBox[
+    RowBox[{"(", 
+     RowBox[{"nn", "+", "np"}], ")"}], 
+    RowBox[{
+     RowBox[{"-", "1"}], "+", "\[Alpha]"}]], " ", 
+   RowBox[{"(", 
+    RowBox[{
+     SuperscriptBox["nn", "2"], "+", 
+     SuperscriptBox["np", "2"]}], ")"}], " ", "\[Alpha]"}], "+", 
+  RowBox[{"ham4", " ", 
+   SuperscriptBox["np", 
+    RowBox[{"1", "+", "\[Alpha]"}]], " ", 
+   RowBox[{"(", 
+    RowBox[{"2", "+", "\[Alpha]"}], ")"}]}], "+", 
+  RowBox[{"ham5", " ", 
+   SuperscriptBox[
+    RowBox[{"(", 
+     RowBox[{"nn", "+", "np"}], ")"}], 
+    RowBox[{"1", "+", "\[Alpha]"}]], " ", 
+   RowBox[{"(", 
+    RowBox[{"2", "+", "\[Alpha]"}], ")"}]}]}]], "Output"]
 }, Open  ]],
 
 Cell[BoxData[""], "Input"]
 }, Open  ]]
 },
-FrontEndVersion->"5.0 for X",
-ScreenRectangle->{{0, 1400}, {0, 1050}},
 ScreenStyleEnvironment->"Presentation",
 WindowSize->{1012, 734},
 WindowMargins->{{0, Automatic}, {Automatic, 0}},
 PrintingPageRange->{Automatic, Automatic},
-PrintingOptions->{"PaperSize"->{612, 792},
+PrintingOptions->{"Magnification"->1,
 "PaperOrientation"->"Portrait",
-"PostScriptOutputFile":>"skyrme_eos.ps",
-"Magnification"->1}
+"PaperSize"->{612, 792},
+"PostScriptOutputFile":>"skyrme_eos.ps"},
+PrivateNotebookOptions->{"VersionedStylesheet"->{"Default.nb"[8.] -> False}},
+FrontEndVersion->"9.0 for Linux x86 (64-bit) (February 7, 2013)",
+StyleDefinitions->"Default.nb"
 ]
+(* End of Notebook Content *)
 
-(*******************************************************************
-Cached data follows.  If you edit this Notebook file directly, not
-using Mathematica, you must remove the line containing CacheID at
-the top of  the file.  The cache data will then be recreated when
-you save this file from within Mathematica.
-*******************************************************************)
-
+(* Internal cache information *)
 (*CellTagsOutline
 CellTagsIndex->{}
 *)
-
 (*CellTagsIndex
 CellTagsIndex->{}
 *)
-
 (*NotebookFileOutline
 Notebook[{
-Cell[1754, 51, 87, 1, 37, "Input"],
-
+Cell[557, 20, 201, 5, 52, "Input"],
 Cell[CellGroupData[{
-Cell[1866, 56, 40, 0, 56, "Subsubsection"],
-
+Cell[783, 29, 40, 0, 47, "Subsubsection"],
 Cell[CellGroupData[{
-Cell[1931, 60, 160, 2, 37, "Input"],
-Cell[2094, 64, 196, 4, 55, "Output"]
+Cell[848, 33, 776, 29, 90, "Input"],
+Cell[1627, 64, 776, 28, 142, "Output"]
 }, Open  ]],
-
 Cell[CellGroupData[{
-Cell[2327, 73, 160, 2, 37, "Input"],
-Cell[2490, 77, 196, 4, 55, "Output"]
+Cell[2440, 97, 776, 29, 90, "Input"],
+Cell[3219, 128, 776, 28, 142, "Output"]
 }, Open  ]],
-
 Cell[CellGroupData[{
-Cell[2723, 86, 72, 1, 45, "Input"],
-Cell[2798, 89, 73, 1, 39, "Output"]
+Cell[4032, 161, 185, 6, 61, "Input"],
+Cell[4220, 169, 209, 7, 52, "Output"]
 }, Open  ]],
-
 Cell[CellGroupData[{
-Cell[2908, 95, 72, 1, 45, "Input"],
-Cell[2983, 98, 73, 1, 39, "Output"]
+Cell[4466, 181, 185, 6, 61, "Input"],
+Cell[4654, 189, 209, 7, 52, "Output"]
 }, Open  ]],
-
 Cell[CellGroupData[{
-Cell[3093, 104, 64, 1, 43, "Input"],
-Cell[3160, 107, 79, 1, 55, "Output"]
+Cell[4900, 201, 159, 5, 58, "Input"],
+Cell[5062, 208, 240, 8, 77, "Output"]
 }, Open  ]],
-
 Cell[CellGroupData[{
-Cell[3276, 113, 64, 1, 43, "Input"],
-Cell[3343, 116, 79, 1, 55, "Output"]
+Cell[5339, 221, 159, 5, 58, "Input"],
+Cell[5501, 228, 240, 8, 77, "Output"]
 }, Open  ]],
-
 Cell[CellGroupData[{
-Cell[3459, 122, 573, 11, 123, "Input"],
-Cell[4035, 135, 917, 13, 226, "Output"]
+Cell[5778, 241, 2011, 63, 298, "Input"],
+Cell[7792, 306, 4217, 130, 350, "Output"]
 }, Open  ]]
 }, Open  ]],
-
 Cell[CellGroupData[{
-Cell[5001, 154, 64, 0, 56, "Subsubsection"],
-
+Cell[12058, 442, 64, 0, 47, "Subsubsection"],
 Cell[CellGroupData[{
-Cell[5090, 158, 102, 2, 37, "Input"],
-Cell[5195, 162, 237, 3, 79, "Output"]
+Cell[12147, 446, 260, 8, 52, "Input"],
+Cell[12410, 456, 1122, 37, 132, "Output"]
 }, Open  ]],
-
 Cell[CellGroupData[{
-Cell[5469, 170, 184, 3, 67, "Input"],
-Cell[5656, 175, 101, 2, 68, "Output"],
-Cell[5760, 179, 83, 1, 55, "Output"]
+Cell[13569, 498, 615, 22, 99, "Input"],
+Cell[14187, 522, 318, 11, 96, "Output"],
+Cell[14508, 535, 315, 11, 77, "Output"]
 }, Open  ]],
-
 Cell[CellGroupData[{
-Cell[5880, 185, 167, 4, 44, "Input"],
-Cell[6050, 191, 268, 5, 79, "Output"]
+Cell[14860, 551, 498, 16, 59, "Input"],
+Cell[15361, 569, 1114, 35, 218, "Output"]
 }, Open  ]],
-
 Cell[CellGroupData[{
-Cell[6355, 201, 55, 1, 37, "Input"],
-Cell[6413, 204, 35, 1, 36, "Output"]
+Cell[16512, 609, 91, 2, 52, "Input"],
+Cell[16606, 613, 28, 0, 52, "Output"]
 }, Open  ]]
 }, Open  ]],
-
 Cell[CellGroupData[{
-Cell[6497, 211, 74, 0, 56, "Subsubsection"],
-Cell[6574, 213, 58, 0, 44, "Text"],
-
+Cell[16683, 619, 74, 0, 47, "Subsubsection"],
+Cell[16760, 621, 58, 0, 48, "Text"],
 Cell[CellGroupData[{
-Cell[6657, 217, 129, 3, 37, "Input"],
-Cell[6789, 222, 89, 1, 55, "Output"]
+Cell[16843, 625, 331, 10, 52, "Input"],
+Cell[17177, 637, 355, 12, 77, "Output"]
 }, Open  ]],
-
 Cell[CellGroupData[{
-Cell[6915, 228, 55, 1, 37, "Input"],
-Cell[6973, 231, 90, 1, 55, "Output"]
+Cell[17569, 654, 106, 3, 52, "Input"],
+Cell[17678, 659, 358, 12, 77, "Output"]
 }, Open  ]],
-
 Cell[CellGroupData[{
-Cell[7100, 237, 55, 1, 37, "Input"],
-Cell[7158, 240, 35, 1, 36, "Output"]
+Cell[18073, 676, 91, 2, 52, "Input"],
+Cell[18167, 680, 28, 0, 52, "Output"]
 }, Open  ]]
 }, Open  ]],
-
 Cell[CellGroupData[{
-Cell[7242, 247, 64, 0, 56, "Subsubsection"],
-
+Cell[18244, 686, 64, 0, 47, "Subsubsection"],
 Cell[CellGroupData[{
-Cell[7331, 251, 155, 4, 44, "Input"],
-Cell[7489, 257, 250, 3, 79, "Output"]
+Cell[18333, 690, 531, 17, 136, "Input"],
+Cell[18867, 709, 1104, 36, 137, "Output"]
 }, Open  ]],
-
 Cell[CellGroupData[{
-Cell[7776, 265, 164, 3, 40, "Input"],
-Cell[7943, 270, 307, 6, 68, "Output"]
+Cell[20008, 750, 425, 13, 52, "Input"],
+Cell[20436, 765, 1166, 40, 230, "Output"]
 }, Open  ]],
-
 Cell[CellGroupData[{
-Cell[8287, 281, 121, 3, 44, "Input"],
-Cell[8411, 286, 35, 1, 36, "Output"]
+Cell[21639, 810, 109, 3, 57, "Input"],
+Cell[21751, 815, 28, 0, 52, "Output"]
 }, Open  ]]
 }, Open  ]],
-
 Cell[CellGroupData[{
-Cell[8495, 293, 45, 0, 56, "Subsubsection"],
-Cell[8543, 295, 31, 0, 44, "Text"],
-
+Cell[21828, 821, 45, 0, 47, "Subsubsection"],
+Cell[21876, 823, 31, 0, 48, "Text"],
 Cell[CellGroupData[{
-Cell[8599, 299, 103, 2, 37, "Input"],
-Cell[8705, 303, 153, 2, 55, "Output"]
+Cell[21932, 827, 355, 12, 52, "Input"],
+Cell[22290, 841, 539, 19, 77, "Output"]
 }, Open  ]],
-
 Cell[CellGroupData[{
-Cell[8895, 310, 304, 6, 37, "Input"],
-Cell[9202, 318, 474, 8, 82, "Output"]
+Cell[22866, 865, 960, 28, 164, "Input"],
+Cell[23829, 895, 1774, 55, 158, "Output"]
 }, Open  ]],
-
 Cell[CellGroupData[{
-Cell[9713, 331, 360, 7, 90, "Input"],
-Cell[10076, 340, 456, 7, 102, "Output"]
+Cell[25640, 955, 1372, 44, 199, "Input"],
+Cell[27015, 1001, 1754, 60, 284, "Output"]
 }, Open  ]],
-
 Cell[CellGroupData[{
-Cell[10569, 352, 55, 1, 37, "Input"],
-Cell[10627, 355, 35, 1, 36, "Output"]
+Cell[28806, 1066, 91, 2, 52, "Input"],
+Cell[28900, 1070, 28, 0, 52, "Output"]
 }, Open  ]],
-
 Cell[CellGroupData[{
-Cell[10699, 361, 360, 7, 61, "Input"],
-Cell[11062, 370, 459, 9, 110, "Output"]
+Cell[28965, 1075, 1379, 45, 164, "Input"],
+Cell[30347, 1122, 1685, 56, 227, "Output"]
 }, Open  ]],
-
 Cell[CellGroupData[{
-Cell[11558, 384, 55, 1, 37, "Input"],
-Cell[11616, 387, 35, 1, 36, "Output"]
+Cell[32069, 1183, 91, 2, 52, "Input"],
+Cell[32163, 1187, 28, 0, 52, "Output"]
 }, Open  ]]
 }, Open  ]],
-
 Cell[CellGroupData[{
-Cell[11700, 394, 59, 0, 56, "Subsubsection"],
-
+Cell[32240, 1193, 59, 0, 47, "Subsubsection"],
 Cell[CellGroupData[{
-Cell[11784, 398, 426, 7, 159, "Input"],
-Cell[12213, 407, 364, 6, 97, "Output"]
+Cell[32324, 1197, 1370, 43, 250, "Input"],
+Cell[33697, 1242, 1305, 42, 207, "Output"]
 }, Open  ]],
-
 Cell[CellGroupData[{
-Cell[12614, 418, 300, 5, 73, "Input"],
-Cell[12917, 425, 727, 11, 125, "Output"]
+Cell[35039, 1289, 926, 29, 141, "Input"],
+Cell[35968, 1320, 3007, 102, 357, "Output"]
 }, Open  ]],
-
 Cell[CellGroupData[{
-Cell[13681, 441, 104, 2, 37, "Input"],
-Cell[13788, 445, 35, 1, 36, "Output"]
+Cell[39012, 1427, 233, 7, 52, "Input"],
+Cell[39248, 1436, 28, 0, 52, "Output"]
 }, Open  ]],
-
 Cell[CellGroupData[{
-Cell[13860, 451, 72, 1, 37, "Input"],
-Cell[13935, 454, 1055, 18, 211, "Output"]
+Cell[39313, 1441, 193, 6, 52, "Input"],
+Cell[39509, 1449, 3976, 134, 493, "Output"]
 }, Open  ]],
-
 Cell[CellGroupData[{
-Cell[15027, 477, 72, 1, 37, "Input"],
-Cell[15102, 480, 1055, 18, 211, "Output"]
+Cell[43522, 1588, 193, 6, 52, "Input"],
+Cell[43718, 1596, 3976, 134, 493, "Output"]
 }, Open  ]],
-Cell[16172, 501, 26, 0, 37, "Input"]
+Cell[47709, 1733, 26, 0, 52, "Input"]
 }, Open  ]]
 }
 ]
 *)
 
-
-
-(*******************************************************************
-End of Mathematica Notebook file.
-*******************************************************************)
+(* End of internal cache information *)
 
