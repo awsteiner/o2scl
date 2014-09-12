@@ -44,6 +44,7 @@
     \hline
     \section prt_ug_section Quick Reference to User's Guide
     - \subpage part_section
+    - \subpage ferm_section
     - \subpage nuclei_section
     - \subpage partref_section
     - \ref todo 

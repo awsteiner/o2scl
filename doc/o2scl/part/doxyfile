@@ -754,7 +754,7 @@ WARN_LOGFILE = doxygen.log
 # current directory is searched.
 
 INPUT = . ../../../src/part ../../../src/nuclei main.dox part.dox
-INPUT += nuclei.dox refs.dox
+INPUT += nuclei.dox refs.dox fermion.dox
 
 # This tag can be used to specify the character encoding of the source
 # files that doxygen parses. Internally doxygen uses the UTF-8
