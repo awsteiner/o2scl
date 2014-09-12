@@ -348,6 +348,20 @@ namespace o2scl {
 
     /// \name EOS properties
     //@{
+    /** \brief Compute the number susceptibilities as a function of
+	the chemical potentials, \f$ \partial^2 P / \partial \mu_i
+	\mu_j \f$
+    */
+    virtual void f_number_suscept(double mun, double mup, double &dPdnn, 
+				  double &dPdnp, double &dPdpp);
+
+    /** \brief Compute the 'inverse' number susceptibilities as a
+	function of the densities, \f$ \partial^2 \varepsilon /
+	\partial n_i n_j \f$
+    */
+    virtual void f_inv_number_suscept(double mun, double mup, double &dednn, 
+				      double &dednp, double &dedpp);
+    
     /** \brief Calculate the incompressibility in \f$ \mathrm{fm}^{-1} \f$ 
 	using calc_e()
 
@@ -521,12 +535,43 @@ namespace o2scl {
 
     /// \name Functions for calculating physical properties
     //@{
+    /** \brief Compute the neutron chemical potential at fixed
+	density
+	
+	This function uses \ref neutron, \ref proton, \ref
+	eos_base::eos_thermo, and \ref calc_e() .
+    */
+    double calc_mun_e(double nn, double np);
+
+    /** \brief Compute the proton chemical potential at fixed
+	density
+
+	This function uses \ref neutron, \ref proton, \ref
+	eos_base::eos_thermo, and \ref calc_e() .
+    */
+    double calc_mup_e(double nn, double np);
+
+    /** \brief Compute the neutron density at fixed
+	chemical potential
+	
+	This function uses \ref neutron, \ref proton, \ref
+	eos_base::eos_thermo, and \ref calc_e() .
+    */
+    double calc_nn_p(double mun, double mup);
+
+    /** \brief Compute the proton density at fixed
+	chemical potential
+
+	This function uses \ref neutron, \ref proton, \ref
+	eos_base::eos_thermo, and \ref calc_e() .
+    */
+    double calc_np_p(double mun, double mup);
 
     /** \brief Compute the difference between neutron and proton chemical
 	potentials as a function of the isospin asymmetry
 
-	This uses \ref neutron, \ref proton, \ref eos_base::eos_thermo,
-	and \ref calc_e() .
+	This function uses \ref neutron, \ref proton, \ref
+	eos_base::eos_thermo, and \ref calc_e() .
     */
     double calc_dmu_delta(double delta, double nb);
     
