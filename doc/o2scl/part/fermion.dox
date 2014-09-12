@@ -1,0 +1,167 @@
+/** \page ferm_section Fermions
+
+    The pressure for non-interacting fermions with degeneracy \f$ g \f$ is
+    \f[
+    P = \frac{g T}{2 \pi^2} \int_0^{\infty} 
+    k^2~dk~\ln \left[ 1 + e^{-(E-\mu)/T}\right] = 
+    \frac{g}{2 \pi^2} \int_0^{\infty} k^2\left(\frac{k^2}{3 E}\right)~dk~
+    \frac{1}{1 + e^{-(E-\mu)/T}} \, ,
+    \f]
+    where the second form is obtained with an integration by parts. We
+    use units where \f$\hbar=c=1\f$. The variable substitutions from
+    \ref Johns96 are \f$ \ell = k/m \f$, \f$\psi = (\mu-m)/T\f$, and
+    \f$t=T/m\f$. (Presumably this choice of variables 
+    gives better results for
+    non-relativistic fermions because the mass is separated from the
+    chemical potential in the definition of \f$\psi\f$, but I haven't
+    checked this). These replacements give
+    \f[
+    P = \frac{g m^4}{2 \pi^2} 
+    \int_0^{\infty} d\ell~\frac{\ell^4}{3 \sqrt{\ell^2+1}}
+    \left( \frac{1}{1 + e^{z/t-\psi}} \right)
+    \f]
+    where \f$ z = \sqrt{\ell^2+1}-1\f$ . 
+    Re-expressing in terms of \f$z\f$, one obtains
+    \f[
+    \frac{\ell^4}{3 \sqrt{\ell^2+1}} = \frac{z^2(2+z)^2}
+    {3 (1+z)} \quad\mathrm{and}\quad 
+    \frac{d \ell}{d z} = \frac{1+z}{\sqrt{z(2+z)}} \, .
+    \f]
+    The pressure is
+    \f[
+    P = \frac{g m^4}{2 \pi^2} 
+    \int_0^{\infty} dz~\frac{1}{3}[z(2+z)]^{3/2}
+    \left[ \frac{1}{1 + e^{(z-x)/t}} \right] \, .
+    \f]
+    where \f$x = \psi t = (\mu-m)/m\f$. 
+
+    \section ferm_deg_sect Degenerate expansion
+
+    The Sommerfeld expansion for \f$t \rightarrow 0\f$ is
+    \f{eqnarray}
+    \int_0^{\infty} dz~\frac{f(z)}{1 + e^{(z-x)/t}} &=&
+    \int_0^{x} f(z) + \frac{\pi^2 t^2}{6} f^{\prime}(x) +
+    \frac{7 \pi^4 t^4}{360} f^{(3)}(x) +
+    \frac{31 \pi^6 t^6}{15120} f^{(5)}(x) + \ldots \nonumber \\
+    &=& \int_0^{x} f(z) + \sum_{n=1}^{\infty}
+    \pi^{2n}t^{2n} \left[f^{(2n -1)}(x) \right] 
+    \left[ \frac{2 (-1)^{1+n}(2^{2n-1}-1)B_{2n}}{(2n)!} \right] \nonumber
+    \f}
+    This is an asymptotic expansion, and must thus be used with care.
+    Define
+    \f$\tilde{P}(x,t) \equiv 2 \pi^2 P/(g m^4)\f$.
+    The first term in the Sommerfeld expansion for \f$\tilde{P}\f$
+    depends only on \f$x\f$ alone:
+    \f[
+    P_0 \equiv \frac{1}{24} (1+x)\sqrt{x(2+x)} \left[ -3 + 2 x(2+x)\right]
+    + \frac{1}{4} \log \left[ \frac{
+    \sqrt{x}+\sqrt{2+x}}{\sqrt{2}} \right]
+    \f]
+    where \f$ x = \psi t\f$ . This cannot be used when \f$x\f$ is small, but
+    a Taylor series expansion can be used instead. The next few terms are
+    \f{eqnarray}
+    \frac{2 \pi^2 P}{g m^4} = P_0 + \frac{\pi^2 t^2}{6} \sqrt{x(2+x)}(1 + x) +
+    \frac{7 \pi^4 t^4}{360} \left\{\frac{(1+x)(2
+    x^2+4x-1)}{[x(2+x)]^{3/2}} \right\}
+    -\frac{31\pi^6 t^6}{1008} \frac{(1+x)\sqrt{x(2+x)}}{x^4 (2+x)^4} + 
+    \ldots \nonumber
+    \f}
+    The number density is
+    \f[
+    n = \frac{dP}{d \mu} = \frac{d P}{d x} \frac{d x}{d \mu} = 
+    \frac{1}{m} \left(\frac{d P}{d x}\right)_t
+    \f]
+    Note that because the density is a derivative, it is possible
+    that the terms in the density fail before the terms in the 
+    pressure, thus we should use one less term for the density
+    when using the expansion. The entropy is
+    \f[
+    s = \frac{dP}{d T} = \frac{d P}{d t} \frac{d t}{d T} = 
+    \frac{1}{m} \left(\frac{d P}{d t}\right)_x
+    \f]
+    The derivative of the number density with respect to the 
+    chemical potential is
+    \f[
+    \frac{d n}{d \mu} = \frac{d^2P}{d \mu^2} = \frac{d}{d \mu}
+    \left(\frac{d P}{d x} \frac{d x}{d \mu}\right) = 
+    \frac{d^2 P}{d x^2} \left(\frac{d x}{d \mu}\right)^2 +
+    \frac{d P}{d x} \frac{d^2 x}{d \mu^2} = 
+    \frac{1}{m^2} \left(\frac{d^2 P}{d x^2}\right)_t \, .
+    \f]
+    The derivative of the number density with respect to the
+    temperature is
+    \f[
+    \frac{d n}{d T} = \frac{d^2P}{d \mu dT} = 
+    \frac{1}{m^2} \frac{d^2 P}{d x d t} \, ,
+    \f]
+    and the derivative of the entropy density with respect to 
+    the temperature is
+    \f[
+    \frac{d s}{d T} = \frac{d^2P}{d T^2} = 
+    \frac{1}{m^2} \left(\frac{d^2 P}{d t^2}\right)_x \, .
+    \f]
+    Finally, the derivative of the number density with respect to the mass
+    is more involved because of the mass-dependent prefactor. 
+    \f{eqnarray}
+    \frac{d n}{d m} &=& \frac{4 n}{m}+
+    \left(\frac{g m^4}{2 \pi^2}\right) \frac{d}{d m}
+    \left(\frac{1}{m}\frac{d \tilde{P}}{d x} \right) =
+    \frac{4 n}{m} + 
+    \left(\frac{g m^4}{2 \pi^2}\right)
+    \left[\frac{1}{m}\left(\frac{d^2\tilde{P}}{dx^2}\frac{dx}{dm}+
+    \frac{d^2\tilde{P}}{dt dx}\frac{dt}{dm}\right)-
+    \frac{1}{m^2}\frac{d \tilde{P}}{d x}\right] \nonumber \\
+    &=& \frac{4 n}{m} - \left(\frac{g m^2}{2 \pi^2}\right)
+    \left( \frac{d\tilde{P}}{dx}
+    +\frac{\mu}{m} \frac{d^2\tilde{P}}{dx^2}
+    +\frac{T}{m} \frac{d^2\tilde{P}}{dt dx} \right) = 
+    \frac{3n}{m} -\left[(x+1) \left(\frac{dn}{d\mu}\right) +
+    t \left(\frac{dn}{dT}\right) \right] \nonumber
+    \f}
+
+    These expansions are used in 
+    \ref o2scl::fermion_eval_thermo::calc_mu_deg() and
+    \ref o2scl::fermion_deriv_thermo::calc_mu_deg() .
+
+    \section ferm_ndeg_sect Nondegenerate Expansion
+
+    There is a useful identity (\ref Chandrasekhar39 and \ref Tooper69)
+    \f[
+    \int_0^{\infty} \frac{x^4 \left(x^2+z^2\right)^{-1/2}~dx}
+    {1+e^{\sqrt{x^2+z^2}-\phi}} = 
+    3 z^2 \sum_{n=1}^{\infty} \frac{(-1)^{n-1}}{n^2} e^{n \phi} K_2(n z)
+    \f]
+    which works well when \f$\phi-z < -1\f$. This directly gives
+    the sum in \ref Johns96
+    \f[
+    P = \frac{g m^4}{2 \pi^2} \left[ t^2 \sum_{k=1}^{\infty}
+    \frac{(-1)^{k+1}}{k^2} e^{k(\psi+1/t)} K_2\left(\frac{k}{t}\right)
+    \right]
+    \f]
+    So long as \f$t\f$ is not large compared with \f$k\f$, this sum can
+    be used directly to compute the pressure. 
+    Otherwise, one can use an \f$x\rightarrow\infty\f$ expansion
+    \f[
+    \sqrt{\frac{2x}{\pi}} e^{x} K_2(x) \approx 1 + \frac{3}{8 x} -
+    \frac{15}{128 x^2} + \ldots \, .
+    \f]
+
+    The density is 
+    \f[
+    n = \frac{g m^4}{2 \pi^2} \sum_{k=1}^{\infty} \frac{k}{T}{P_k}
+    \f]
+    and the entropy density is
+    \f[
+    s = \frac{d}{m} \sum_{n=1}^{\infty} \left\{ \frac{2 P_n}{t}
+    -\frac{n P_n}{t^2}+ 
+    \frac{\left(-1\right)^{n+1}}{2 n} 
+    e^{n \left(\psi+1/t\right)} \left[ K_1 \left( \frac{n}{t} 
+    \right)+K_3 \left( \frac{n}{t} \right) \right]
+    \right\}
+    \f]
+
+    These expansions are used in 
+    \ref o2scl::fermion_eval_thermo::calc_mu_deg() .
+
+    
+*/
