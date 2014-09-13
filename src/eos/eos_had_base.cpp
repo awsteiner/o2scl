@@ -824,6 +824,101 @@ int eos_had_temp_base::calc_liqgas_beta_temp_e
   return ret;
 }
 
+double eos_had_temp_base::calc_temp_mun_e(double nn, double np, double T) {
+  
+  neutron->n=nn;  
+  proton->n=np;
+  
+  calc_temp_e(*neutron,*proton,T,*eos_thermo);
+
+  return neutron->mu;
+}
+
+double eos_had_temp_base::calc_temp_mup_e(double nn, double np, double T) {
+  
+  neutron->n=nn;  
+  proton->n=np;
+  
+  calc_temp_e(*neutron,*proton,T,*eos_thermo);
+
+  return neutron->mu;
+}
+
+double eos_had_temp_base::calc_temp_nn_p(double mun, double mup, double T) {
+  
+  neutron->mu=mun;  
+  proton->mu=mup;
+  
+  calc_temp_p(*neutron,*proton,T,*eos_thermo);
+
+  return neutron->n;
+}
+
+double eos_had_temp_base::calc_temp_np_p(double mun, double mup, double T) {
+  
+  neutron->n=mun;  
+  proton->n=mup;
+  
+  calc_temp_p(*neutron,*proton,T,*eos_thermo);
+
+  return neutron->n;
+}
+
+void eos_had_temp_base::f_number_suscept_T
+(double mun, double mup, double T, double &dPdnn, double &dPdnp, 
+ double &dPdpp) {
+
+  // For (d^2 P)/(d mun d mun)
+  funct11 fnn=std::bind
+    (std::mem_fn<double(double,double,double)>
+     (&eos_had_temp_base::calc_temp_nn_p),
+     this,std::placeholders::_1,mup,T);
+  dPdnn=sat_deriv->deriv(mun,fnn);
+  
+  // For (d^2 P)/(d mun d mup)
+  funct11 fnp=std::bind
+    (std::mem_fn<double(double,double,double)>
+     (&eos_had_temp_base::calc_temp_nn_p),
+     this,mun,std::placeholders::_1,T);
+  dPdnp=sat_deriv->deriv(mup,fnn);
+  
+  // For (d^2 P)/(d mup d mup)
+  funct11 fpp=std::bind
+    (std::mem_fn<double(double,double,double)>
+     (&eos_had_temp_base::calc_temp_np_p),
+     this,mun,std::placeholders::_1,T);
+  dPdpp=sat_deriv->deriv(mup,fpp);
+  
+  return;
+}
+
+void eos_had_temp_base::f_inv_number_suscept_T
+(double nn, double np, double T, double &dednn, double &dednp, double &dedpp) {
+
+  // For (d^2 ed)/(d mun d mun)
+  funct11 fnn=std::bind
+    (std::mem_fn<double(double,double,double)>
+     (&eos_had_temp_base::calc_temp_mun_e),
+     this,std::placeholders::_1,np,T);
+  dednn=sat_deriv->deriv(nn,fnn);
+  
+  // For (d^2 ed)/(d mun d mup)
+  funct11 fnp=std::bind
+    (std::mem_fn<double(double,double,double)>
+     (&eos_had_temp_base::calc_temp_mun_e),
+     this,nn,std::placeholders::_1,T);
+  dednp=sat_deriv->deriv(np,fnn);
+  
+  // For (d^2 ed)/(d mup d mup)
+  funct11 fpp=std::bind
+    (std::mem_fn<double(double,double,double)>
+     (&eos_had_temp_base::calc_temp_mup_e),
+     this,nn,std::placeholders::_1,T);
+  dedpp=sat_deriv->deriv(np,fpp);
+  
+  return;
+}
+
 int eos_had_temp_base::nuc_matter_temp_e(size_t nv, const ubvector &x, 
 					 ubvector &y, double mun0, double mup0,
 					 double T) {

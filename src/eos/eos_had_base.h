@@ -1055,6 +1055,30 @@ namespace o2scl {
     virtual double fsyment_T(double nb, double T, double delta=0.0);
     //@}
 
+    /// \name Desc
+    //@{
+    virtual double calc_temp_mun_e(double nn, double np, double T);
+    virtual double calc_temp_mup_e(double nn, double np, double T);
+    virtual double calc_temp_nn_p(double mun, double mup, double T);
+    virtual double calc_temp_np_p(double mun, double mup, double T);
+    //@}
+
+    /** \brief Compute the number susceptibilities as a function of
+	the chemical potentials, \f$ \partial^2 P / \partial \mu_i
+	\mu_j \f$ at a fixed temperature
+    */
+    virtual void f_number_suscept_T
+      (double mun, double mup, double T, double &dPdnn, 
+       double &dPdnp, double &dPdpp);
+
+    /** \brief Compute the 'inverse' number susceptibilities as a
+	function of the densities, \f$ \partial^2 \varepsilon /
+	\partial n_i n_j \f$ at a fixed temperature
+    */
+    virtual void f_inv_number_suscept_T
+      (double mun, double mup, double T, double &dednn, 
+       double &dednp, double &dedpp);
+
   };
 
   /** \brief A hadronic EOS at finite temperature
