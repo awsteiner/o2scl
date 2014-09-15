@@ -147,6 +147,11 @@ int main(void) {
   cout << ame12.get_reference() << endl;
 
   nucmass_semi_empirical sm;
+  {
+    double Rws, chi;
+    double be=sm.binding_energy_densmat_d(26,30,0.01,0.02,0.011,1.0/hc_mev_fm,
+					  Rws,chi);
+  }
   
   nucmass_mnmsk m95;
   o2scl_hdf::mnmsk_load(m95);

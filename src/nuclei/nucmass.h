@@ -38,6 +38,7 @@
 #include <o2scl/table.h>
 #include <o2scl/inte_qagiu_gsl.h>
 #include <o2scl/root_cern.h>
+#include <o2scl/root_brent_gsl.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -362,23 +363,95 @@ namespace o2scl {
   /** \brief A nuclear mass formula for dense matter
    */
   class nucmass_densmat : public nucmass_fit_base {
+    
+  protected:
+
+    /// Bracketing solver
+    root_brent_gsl<> rb;
+
+    /** \brief Function which solves for the volume fraction
+     */
+    virtual double function_solve_chi
+      (double Z, double N, double npout, double nnout, 
+       double chi, double T, double ne) {
+      // Proton and neutron radii
+      double Rp, Rn;
+      binding_energy_chi_radii_d(Z,N,npout,nnout,chi,T,Rp,Rn);
+      // Compute the WS cell size
+      double Rws=cbrt((3.0*Z/4.0/o2scl_const::pi-Rp*Rp*Rp*npout)/(ne-npout));
+      // Solve for chi
+      return chi-pow(Rn/Rws,3.0);
+    }
 
   public:
 
-    /** \brief The binding energy in a nucleus in dense matter
+    /// Return the type, \c "nucmass_densmat".
+    virtual const char *type() { return "nucmass_densmat"; }
+
+    /** \brief The binding energy of a nucleus in dense matter
+     */
+    virtual double binding_energy_chi_radii_d
+      (double Z, double N, double npout, double nnout, 
+       double chi, double T, double &Rp, double &Rn) {
+
+      // Trivial model for radii
+      Rp=cbrt(Z*3.0/4.0/o2scl_const::pi/0.08);
+      Rn=cbrt(N*3.0/4.0/o2scl_const::pi/0.08);
+
+      // Add the finite-size part of the Coulomb energy
+      double chip=chi*pow(Rp/Rn,3.0);
+      double fdu=0.2*chip-0.6*cbrt(chip);
+      
+      // fm^2 fm^{-3} (MeV fm)
+      double coul=(Z+N)*2.0*o2scl_const::pi*o2scl_const::hc_mev_fm*
+        o2scl_const::fine_structure*Rp*Rp*pow(fabs(0.08-npout),2.0)/0.16*fdu;
+      
+      return (mass_excess_d(Z,N)+coul+
+	      ((Z+N)*m_amu-Z*m_elec-N*m_neut-Z*m_prot));
+    }
+
+    /** \brief The binding energy of a nucleus in dense matter
      */
     virtual double binding_energy_densmat_d
       (double Z, double N, double npout, double nnout, 
-       double chi, double T) {
-      return (mass_excess_d(Z,N)+((Z+N)*m_amu-Z*m_elec-N*m_neut-Z*m_prot));
-    }
+       double ne, double T, double &Rws, double &chi) {
 
-    /** \brief The binding energy in a nucleus in dense matter
-     */
-    virtual double binding_energy_densmat
-      (int Z, int N, double npout, double nnout, 
-       double chi, double T) {
-      return (mass_excess(Z,N)+((Z+N)*m_amu-Z*m_elec-N*m_neut-Z*m_prot));
+      // Radius for initial guess for chi
+      double Rp, Rn;
+      binding_energy_chi_radii_d(Z,N,npout,nnout,chi,T,Rp,Rn);
+      Rws=cbrt((3.0*Z/4.0/o2scl_const::pi-Rp*Rp*Rp*npout)/(ne-npout));
+      chi=pow(Rn/Rws,3.0);
+      if (Rws<0.0) {
+	O2SCL_ERR("Rws less than zero in nuclei_densmat.",exc_efailed);
+      }
+
+      // Function object
+      funct11 f=std::bind(std::mem_fn<double(double,double,double,double,
+					    double,double,double)>
+			  (&nucmass_densmat::function_solve_chi),
+			 this,Z,N,npout,nnout,std::placeholders::_1,T,ne);
+
+      // Find a bracketing range for chi
+      double chi_high=1.01*chi;
+      chi/=1.01;
+      int iteration=0;
+      while (iteration<100 && f(chi)*f(chi_high)>0.0) {
+	chi_high*=1.5;
+	chi/=1.5;
+	iteration++;
+	if (chi_high>1.0) chi_high=1.0;
+      }
+
+      // Solve for chi
+      rb.solve_bkt(chi,chi_high,f);
+      
+      // Final evaluation of radii and binding energy
+      double ret=binding_energy_chi_radii_d(Z,N,npout,nnout,chi,T,Rp,Rn);
+
+      // Compute the WS cell size
+      Rws=cbrt((3.0*Z/4.0/o2scl_const::pi-Rp*Rp*Rp*npout)/(ne-npout));
+
+      return ret;
     }
 
   };
