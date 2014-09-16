@@ -5,16 +5,18 @@
     \section onedinte_subsect One-dimensional integration
 
     Several classes integrate arbitrary one-dimensional functions
-    - Integration over a finite interval: inte_adapt_cern,
-    cern_gauss, inte_gauss56_cern, inte_qag_gsl, and inte_qng_gsl.
-    - Integration from 0 to  \f$ \infty \f$ : inte_qagiu_gsl
-    - Integration from  \f$ -\infty \f$ to 0: inte_qagil_gsl
+    - Integration over a finite interval: \ref o2scl::inte_adapt_cern,
+    \ref o2scl::inte_gauss_cern, \ref o2scl::inte_gauss56_cern, 
+    \ref o2scl::inte_qag_gsl, and \ref o2scl::inte_qng_gsl.
+    - Integration from 0 to  \f$ \infty \f$ : \ref o2scl::inte_qagiu_gsl
+    - Integration from  \f$ -\infty \f$ to 0: \ref o2scl::inte_qagil_gsl
     - Integration from  \f$ -\infty \f$ to \f$ \infty \f$ : 
-    inte_qagi_gsl
+    \ref o2scl::inte_qagi_gsl
     - Integration over a finite interval for a function with
-    singularities: inte_qags_gsl (see also \ref o2scl::inte_qaws_gsl). 
+    singularities: \ref o2scl::inte_qags_gsl 
+    (see also \ref o2scl::inte_qaws_gsl). 
     - Cauchy principal value integration over a finite interval:
-    cern_cauchy and inte_qawc_gsl
+    \ref o2scl::inte_cauchy_cern and \ref o2scl::inte_qawc_gsl
     - Integration over a function weighted by \c cos(x) or \c sin(x):
     \ref o2scl::inte_qawo_gsl_cos and \ref o2scl::inte_qawo_gsl_sin
     - Fourier integrals: \ref o2scl::inte_qawf_gsl_cos and \ref
@@ -26,8 +28,8 @@
     is performed by \ref o2scl::inte_qaws_gsl. 
 
     All of these classes are children of \ref o2scl::inte, and the relative
-    and absolute tolerances are stored in inte::tol_rel and
-    inte::tol_abs, respectively. 
+    and absolute tolerances are stored in \ref o2scl::inte::tol_rel and
+    \ref o2scl::inte::tol_abs, respectively. 
     
     There are two competing factors that can slow down an adaptive
     integration algorithm: (1) each evaluation of the integrand can be
@@ -42,11 +44,11 @@
 
     \section gslinte_subsect GSL-based integration routines
 
-    For the GSL-based integration routines, the variables inte::tol_abs
-    and inte::tol_rel have the same role as the quantities usually
-    denoted in the GSL integration routines by \c epsabs and \c
-    epsrel. In particular, the integration classes attempt to ensure
-    that
+    For the GSL-based integration routines, the variables \ref
+    o2scl::inte::tol_abs and \ref o2scl::inte::tol_rel have the same
+    role as the quantities usually denoted in the GSL integration
+    routines by \c epsabs and \c epsrel. In particular, the
+    integration classes attempt to ensure that
     \f[ 
     |\mathrm{result}-I| \leq \mathrm{Max}(\mathrm{tol\_abs},
     \mathrm{tol\_rel}|I|)
@@ -57,13 +59,12 @@
     \mathrm{Max}(\mathrm{tol\_abs},\mathrm{tol\_rel}|I|)
     \f]
     where \c I is the integral to be evaluated. Even when the
-    corresponding descendant of inte::integ() returns success, these
-    inequalities may fail for sufficiently difficult functions. All of
-    the GSL integration routines except for inte_qng_gsl use a
-    workspace given in \ref o2scl::inte_workspace_gsl which holds the results
-    of the various subdivisions of the original interval. The size of
-    this workspace (and thus then number of subdivisions) can be
-    controlled with gsl_inte_table::set_wkspace().
+    corresponding descendant of \ref o2scl::inte::integ() returns
+    success, these inequalities may fail for sufficiently difficult
+    functions. All of the GSL integration routines except for
+    \ref o2scl::inte_qng_gsl use a workspace given in \ref
+    o2scl::inte_workspace_gsl which holds the results of the various
+    subdivisions of the original interval. 
 
     The GSL routines were originally based on QUADPACK, which is
     available at http://www.netlib.org/quadpack . 

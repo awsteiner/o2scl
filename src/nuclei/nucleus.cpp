@@ -29,9 +29,14 @@ using namespace o2scl;
 nucleus::nucleus() {
   Z=0;
   N=0;
+
   m=0;
   g=0;
   ms=0.0;
+
   mex=0.0;
   be=0.0;
+
+  inc_rest_mass=false;
+  non_interacting=true;
 }
