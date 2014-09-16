@@ -364,94 +364,127 @@ namespace o2scl {
    */
   class nucmass_densmat : public nucmass_fit_base {
     
-  protected:
-
-    /// Bracketing solver
-    root_brent_gsl<> rb;
-
-    /** \brief Function which solves for the volume fraction
-     */
-    virtual double function_solve_chi
-      (double Z, double N, double npout, double nnout, 
-       double chi, double T, double ne) {
-      // Proton and neutron radii
-      double Rp, Rn;
-      binding_energy_chi_radii_d(Z,N,npout,nnout,chi,T,Rp,Rn);
-      // Compute the WS cell size
-      double Rws=cbrt((3.0*Z/4.0/o2scl_const::pi-Rp*Rp*Rp*npout)/(ne-npout));
-      // Solve for chi
-      return chi-pow(Rn/Rws,3.0);
-    }
-
   public:
 
     /// Return the type, \c "nucmass_densmat".
     virtual const char *type() { return "nucmass_densmat"; }
 
-    /** \brief The binding energy of a nucleus in dense matter
-     */
-    virtual double binding_energy_chi_radii_d
-      (double Z, double N, double npout, double nnout, 
-       double chi, double T, double &Rp, double &Rn) {
-
-      // Trivial model for radii
-      Rp=cbrt(Z*3.0/4.0/o2scl_const::pi/0.08);
-      Rn=cbrt(N*3.0/4.0/o2scl_const::pi/0.08);
-
-      // Add the finite-size part of the Coulomb energy
-      double chip=chi*pow(Rp/Rn,3.0);
-      double fdu=0.2*chip-0.6*cbrt(chip);
+    /** \brief Test the derivatives for 
+	\ref binding_energy_densmat_derivs()
+    */
+    virtual void test_derivatives(double eps, double &t1, double &t2, 
+				  double &t3, double &t4) {
       
-      // fm^2 fm^{-3} (MeV fm)
-      double coul=(Z+N)*2.0*o2scl_const::pi*o2scl_const::hc_mev_fm*
-        o2scl_const::fine_structure*Rp*Rp*pow(fabs(0.08-npout),2.0)/0.16*fdu;
+      double Z=26.0;
+      double N=30.0;
+
+      // None of these can be zero because we divide by them in 
+      // the tests below
+      double npout=0.005;
+      double nnout=0.02;
+      double ne=0.01;
+      double T=0.01;
+
+      double E2, E1, dEdnp, dEdnn, dEdne, dEdT;
+      double temp1, temp2, temp3, temp4;
+      binding_energy_densmat_derivs(Z,N,npout,nnout,ne,T,E1,
+				    dEdnp,dEdnn,dEdne,dEdT);
       
-      return (mass_excess_d(Z,N)+coul+
-	      ((Z+N)*m_amu-Z*m_elec-N*m_neut-Z*m_prot));
+      binding_energy_densmat_derivs(Z,N,npout*(1.0+eps),nnout,ne,T,E2,
+				    temp1,temp2,temp3,temp4);
+      if (fabs(dEdnp)<1.0e-20) {
+	t1=fabs(dEdnp-(E2-E1)/(npout*eps));
+      } else {
+	t1=fabs(dEdnp-(E2-E1)/(npout*eps))/fabs(dEdnp);
+      }
+      
+      binding_energy_densmat_derivs(Z,N,npout,nnout*(1.0+eps),ne,T,E2,
+				    temp1,temp2,temp3,temp4);
+      if (fabs(dEdnp)<1.0e-20) {
+	t2=fabs(dEdnn-(E2-E1)/(nnout*eps));
+      } else {
+	t2=fabs(dEdnn-(E2-E1)/(nnout*eps))/fabs(dEdnn);
+      }
+      
+      binding_energy_densmat_derivs(Z,N,npout,nnout,ne*(1.0+eps),T,E2,
+				    temp1,temp2,temp3,temp4);
+      if (fabs(dEdnp)<1.0e-20) {
+	t3=fabs(dEdne-(E2-E1)/(ne*eps));
+      } else {
+	t3=fabs(dEdne-(E2-E1)/(ne*eps))/fabs(dEdne);
+      }
+      
+      binding_energy_densmat_derivs(Z,N,npout,nnout,ne,T*(1.0+eps),E2,
+				    temp1,temp2,temp3,temp4);
+      if (fabs(dEdnp)<1.0e-20) {
+	t4=fabs(dEdT-(E2-E1)/(T*eps));
+      } else {
+	t4=fabs(dEdT-(E2-E1)/(T*eps))/fabs(dEdT);
+      }
+      
+      return;
     }
 
     /** \brief The binding energy of a nucleus in dense matter
+	with derivatives
      */
-    virtual double binding_energy_densmat_d
+    virtual void binding_energy_densmat_derivs
       (double Z, double N, double npout, double nnout, 
-       double ne, double T, double &Rws, double &chi) {
+       double ne, double T, double &E, double &dEdnp, double &dEdnn,
+       double &dEdne, double &dEdT) {
 
-      // Radius for initial guess for chi
-      double Rp, Rn;
-      binding_energy_chi_radii_d(Z,N,npout,nnout,chi,T,Rp,Rn);
-      Rws=cbrt((3.0*Z/4.0/o2scl_const::pi-Rp*Rp*Rp*npout)/(ne-npout));
-      chi=pow(Rn/Rws,3.0);
-      if (Rws<0.0) {
-	O2SCL_ERR("Rws less than zero in nuclei_densmat.",exc_efailed);
+      // Half saturation density
+      double n0o2=0.08;
+
+      if (ne<npout) {
+	O2SCL_ERR2("Not enough electrons in nucmass_densmat::",
+		  "binding_energy_densmat_derivs().",exc_einval);
+      }
+      if (npout>n0o2) {
+	O2SCL_ERR2("Too many protons in nucmass_densmat::",
+		  "binding_energy_densmat_derivs().",exc_einval);
       }
 
-      // Function object
-      funct11 f=std::bind(std::mem_fn<double(double,double,double,double,
-					    double,double,double)>
-			  (&nucmass_densmat::function_solve_chi),
-			 this,Z,N,npout,nnout,std::placeholders::_1,T,ne);
+      // Radii
+      double R_p_3=3.0*Z/4.0/o2scl_const::pi/(n0o2-npout);
+      double R_n_3=3.0*N/4.0/o2scl_const::pi/(n0o2-nnout);
+      double R_p=cbrt(R_p_3), R_n=cbrt(R_n_3);
+      double R_WS_3=R_p_3*(n0o2-npout)/(ne-npout);
+      double R_WS=cbrt(R_WS_3);
 
-      // Find a bracketing range for chi
-      double chi_high=1.01*chi;
-      chi/=1.01;
-      int iteration=0;
-      while (iteration<100 && f(chi)*f(chi_high)>0.0) {
-	chi_high*=1.5;
-	chi/=1.5;
-	iteration++;
-	if (chi_high>1.0) chi_high=1.0;
+      if (R_p>R_WS) {
+	O2SCL_ERR2("Proton radius larger than cell in nucmass_densmat::",
+		   "binding_energy_densmat_derivs().",exc_einval);
+      }
+      if (R_n>R_WS) {
+	O2SCL_ERR2("Neutron radius larger than cell in nucmass_densmat::",
+		   "binding_energy_densmat_derivs().",exc_einval);
       }
 
-      // Solve for chi
-      rb.solve_bkt(chi,chi_high,f);
+      // Volume fractions
+      double chi_p=R_p_3/R_WS_3;
+      double chi_n=R_n_3/R_WS_3;
       
-      // Final evaluation of radii and binding energy
-      double ret=binding_energy_chi_radii_d(Z,N,npout,nnout,chi,T,Rp,Rn);
+      // Add the finite-size part of the Coulomb energy
+      double fdu=0.2*chi_p-0.6*cbrt(chi_p);
+      double coul=(Z+N)*2.0*o2scl_const::pi*o2scl_const::hc_mev_fm*
+        o2scl_const::fine_structure*R_p*R_p*
+	pow(fabs(n0o2-npout),2.0)/0.16*fdu;
 
-      // Compute the WS cell size
-      Rws=cbrt((3.0*Z/4.0/o2scl_const::pi-Rp*Rp*Rp*npout)/(ne-npout));
+      // Total binding energy
+      E=mass_excess_d(Z,N)+coul+((Z+N)*m_amu-Z*m_elec-N*m_neut-Z*m_prot);
 
-      return ret;
+      // Derivatives
+      double dfof=(0.2-0.2*pow(chi_p,-2.0/3.0))/fdu;
+      double dchi_dnp=-(n0o2-ne)/pow(n0o2-npout,2.0);
+      double dchi_dne=1.0/(n0o2-npout);
+
+      dEdnp=-4.0/3.0*coul/(n0o2-npout)+coul*dfof*dchi_dnp;
+      dEdne=coul*dfof*dchi_dne;
+      dEdT=0.0;
+      dEdnn=0.0;
+
+      return;
     }
 
   };

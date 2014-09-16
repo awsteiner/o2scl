@@ -148,9 +148,17 @@ int main(void) {
 
   nucmass_semi_empirical sm;
   {
-    double Rws, chi;
-    double be=sm.binding_energy_densmat_d(26,30,0.01,0.02,0.011,1.0/hc_mev_fm,
-					  Rws,chi);
+    // Test densmat_derivs()
+    double temp1, temp2, temp3, temp4;
+    double be;
+    
+    sm.binding_energy_densmat_derivs
+      (26.0,30.0,0.0,0.0,1.0e-40,1.0/hc_mev_fm,be,temp1,temp2,temp3,temp4);
+    t.test_rel(be,sm.binding_energy_d(26,30),1.0e-4,"binding energy");
+
+    sm.test_derivatives(1.0e-4,temp1,temp2,temp3,temp4);
+    t.test_rel(temp1,0.0,1.0e-4,"np derivative");
+    t.test_rel(temp3,0.0,1.0e-4,"ne derivative");
   }
   
   nucmass_mnmsk m95;
