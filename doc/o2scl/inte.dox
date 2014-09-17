@@ -27,9 +27,9 @@
     \f]
     is performed by \ref o2scl::inte_qaws_gsl. 
 
-    All of these classes are children of \ref o2scl::inte, and the relative
-    and absolute tolerances are stored in \ref o2scl::inte::tol_rel and
-    \ref o2scl::inte::tol_abs, respectively. 
+    All of these classes are children of \ref o2scl::inte, and the
+    relative and absolute tolerances are stored in \ref
+    o2scl::inte::tol_rel and \ref o2scl::inte::tol_abs, respectively.
     
     There are two competing factors that can slow down an adaptive
     integration algorithm: (1) each evaluation of the integrand can be

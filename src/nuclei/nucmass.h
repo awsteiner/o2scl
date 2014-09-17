@@ -382,15 +382,15 @@ namespace o2scl {
       // the tests below
       double npout=0.005;
       double nnout=0.02;
-      double ne=0.01;
+      double nneg=0.01;
       double T=0.01;
 
-      double E2, E1, dEdnp, dEdnn, dEdne, dEdT;
+      double E2, E1, dEdnp, dEdnn, dEdnneg, dEdT;
       double temp1, temp2, temp3, temp4;
-      binding_energy_densmat_derivs(Z,N,npout,nnout,ne,T,E1,
-				    dEdnp,dEdnn,dEdne,dEdT);
+      binding_energy_densmat_derivs(Z,N,npout,nnout,nneg,T,E1,
+				    dEdnp,dEdnn,dEdnneg,dEdT);
       
-      binding_energy_densmat_derivs(Z,N,npout*(1.0+eps),nnout,ne,T,E2,
+      binding_energy_densmat_derivs(Z,N,npout*(1.0+eps),nnout,nneg,T,E2,
 				    temp1,temp2,temp3,temp4);
       if (fabs(dEdnp)<1.0e-20) {
 	t1=fabs(dEdnp-(E2-E1)/(npout*eps));
@@ -398,7 +398,7 @@ namespace o2scl {
 	t1=fabs(dEdnp-(E2-E1)/(npout*eps))/fabs(dEdnp);
       }
       
-      binding_energy_densmat_derivs(Z,N,npout,nnout*(1.0+eps),ne,T,E2,
+      binding_energy_densmat_derivs(Z,N,npout,nnout*(1.0+eps),nneg,T,E2,
 				    temp1,temp2,temp3,temp4);
       if (fabs(dEdnp)<1.0e-20) {
 	t2=fabs(dEdnn-(E2-E1)/(nnout*eps));
@@ -406,15 +406,15 @@ namespace o2scl {
 	t2=fabs(dEdnn-(E2-E1)/(nnout*eps))/fabs(dEdnn);
       }
       
-      binding_energy_densmat_derivs(Z,N,npout,nnout,ne*(1.0+eps),T,E2,
+      binding_energy_densmat_derivs(Z,N,npout,nnout,nneg*(1.0+eps),T,E2,
 				    temp1,temp2,temp3,temp4);
       if (fabs(dEdnp)<1.0e-20) {
-	t3=fabs(dEdne-(E2-E1)/(ne*eps));
+	t3=fabs(dEdnneg-(E2-E1)/(nneg*eps));
       } else {
-	t3=fabs(dEdne-(E2-E1)/(ne*eps))/fabs(dEdne);
+	t3=fabs(dEdnneg-(E2-E1)/(nneg*eps))/fabs(dEdnneg);
       }
       
-      binding_energy_densmat_derivs(Z,N,npout,nnout,ne,T*(1.0+eps),E2,
+      binding_energy_densmat_derivs(Z,N,npout,nnout,nneg,T*(1.0+eps),E2,
 				    temp1,temp2,temp3,temp4);
       if (fabs(dEdnp)<1.0e-20) {
 	t4=fabs(dEdT-(E2-E1)/(T*eps));
@@ -425,31 +425,46 @@ namespace o2scl {
       return;
     }
 
-    /** \brief The binding energy of a nucleus in dense matter
-	with derivatives
-     */
+    /** \brief Compute the binding energy of a nucleus in dense matter
+	and derivatives
+
+	This function computes the binding energy of a nucleus in a
+	sea of protons, neutrons, and negative charges (usually
+	electrons) at a fixed temperature, relative to homogeneous
+	nucleonic matter with the same number densities of protons,
+	neutrons, and negative charges. The proton number Z and
+	neutron number N should also be counted relative homogeneous
+	nucleonic matter, not relative to the vacuum.
+
+	As in \ref o2scl::nucmass::binding_energy_d(), the binding
+	energy returned in \c E has units of MeV. All densities are
+	expected to be in \f$ \mathrm{fm}^{-3} \f$, and the
+	temperature should be in MeV. 
+
+	\future Extend to negative N and Z?
+    */
     virtual void binding_energy_densmat_derivs
       (double Z, double N, double npout, double nnout, 
-       double ne, double T, double &E, double &dEdnp, double &dEdnn,
-       double &dEdne, double &dEdT) {
+       double nneg, double T, double &E, double &dEdnp, double &dEdnn,
+       double &dEdnneg, double &dEdT) {
 
       // Half saturation density
       double n0o2=0.08;
 
-      if (ne<npout) {
-	O2SCL_ERR2("Not enough electrons in nucmass_densmat::",
+      if (nneg<npout) {
+	O2SCL_ERR2("Not enough negative charges in nucmass_densmat::",
 		  "binding_energy_densmat_derivs().",exc_einval);
       }
       if (npout>n0o2) {
 	O2SCL_ERR2("Too many protons in nucmass_densmat::",
-		  "binding_energy_densmat_derivs().",exc_einval);
+		   "binding_energy_densmat_derivs().",exc_einval);
       }
 
       // Radii
       double R_p_3=3.0*Z/4.0/o2scl_const::pi/(n0o2-npout);
       double R_n_3=3.0*N/4.0/o2scl_const::pi/(n0o2-nnout);
       double R_p=cbrt(R_p_3), R_n=cbrt(R_n_3);
-      double R_WS_3=R_p_3*(n0o2-npout)/(ne-npout);
+      double R_WS_3=R_p_3*(n0o2-npout)/(nneg-npout);
       double R_WS=cbrt(R_WS_3);
 
       if (R_p>R_WS) {
@@ -476,11 +491,11 @@ namespace o2scl {
 
       // Derivatives
       double dfof=(0.2-0.2*pow(chi_p,-2.0/3.0))/fdu;
-      double dchi_dnp=-(n0o2-ne)/pow(n0o2-npout,2.0);
-      double dchi_dne=1.0/(n0o2-npout);
+      double dchi_dnp=-(n0o2-nneg)/pow(n0o2-npout,2.0);
+      double dchi_dnneg=1.0/(n0o2-npout);
 
       dEdnp=-4.0/3.0*coul/(n0o2-npout)+coul*dfof*dchi_dnp;
-      dEdne=coul*dfof*dchi_dne;
+      dEdnneg=coul*dfof*dchi_dnneg;
       dEdT=0.0;
       dEdnn=0.0;
 

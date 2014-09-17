@@ -36,12 +36,13 @@ namespace o2scl {
 
   /** \brief Adaptive integration (CERNLIB)
     
-      Uses a base integration object (default is \ref inte_gauss56_cern) to
-      perform adaptive integration by automatically subdividing the
-      integration interval. At each step, the interval with the
-      largest absolute uncertainty is divided in half. The routine
-      succeeds if the absolute tolerance is less than \ref tol_abs or
-      if the relative tolerance is less than \ref tol_rel, i.e.
+      Uses a base integration object (default is \ref
+      inte_gauss56_cern) to perform adaptive integration by
+      automatically subdividing the integration interval. At each
+      step, the interval with the largest absolute uncertainty is
+      divided in half. The routine succeeds if the absolute tolerance
+      is less than \ref tol_abs or if the relative tolerance is less
+      than \ref tol_rel, i.e.
       \f[
       \mathrm{err}\leq\mathrm{tol\_abs}~\mathrm{or}~
       \mathrm{err}\leq\mathrm{tol\_rel}\cdot|I|
