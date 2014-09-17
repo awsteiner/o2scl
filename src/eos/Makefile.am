@@ -15,7 +15,7 @@ EOS_SRCS = eos_had_apr.cpp eos_quark_bag.cpp \
 	eos_had_rmf_delta.cpp eos_tov.cpp eos_had_sym4.cpp \
 	eos_had_base.cpp nucleus_rmf.cpp eos_sn.cpp \
 	nucmass_ldrop_shell.cpp eos_quark_cfl.cpp eos_quark_cfl6.cpp \
-	eos_had_hlps.cpp
+	eos_had_hlps.cpp eos_nse_full.cpp
 
 HEADER_VAR = eos_had_apr.h eos_quark_bag.h eos_crust.h eos_had_ddc.h \
 	nstar_cold.h eos_base.h eos_had_potential.h nucmass_ldrop.h \
@@ -24,7 +24,8 @@ HEADER_VAR = eos_had_apr.h eos_quark_bag.h eos_crust.h eos_had_ddc.h \
 	eos_had_tabulated.h eos_nse.h tov_solve.h eos_had_rmf_delta.h \
 	eos_had_sym4.h eos_tov.h eos_had_base.h \
 	hdf_eos_io.h nucleus_rmf.h eos_sn.h nucmass_ldrop_shell.h \
-	eos_had_gogny.h eos_crust_virial.h eos_had_hlps.h
+	eos_had_gogny.h eos_crust_virial.h eos_had_hlps.h \
+	eos_nse_full.h
 
 TEST_VAR = eos_had_apr.scr eos_quark_bag.scr nstar_cold.scr \
 	eos_base.scr eos_had_potential.scr eos_had_sym4.scr \
@@ -33,7 +34,8 @@ TEST_VAR = eos_had_apr.scr eos_quark_bag.scr nstar_cold.scr \
 	eos_had_tabulated.scr eos_nse.scr eos_had_rmf_delta.scr \
 	eos_crust.scr eos_had_ddc.scr eos_had_base.scr nucleus_rmf.scr \
 	eos_crust_virial.scr eos_had_gogny.scr tov_solve.scr \
-	eos_quark_cfl6.scr eos_quark_cfl.scr nucmass_ldrop_shell.scr 
+	eos_quark_cfl6.scr eos_quark_cfl.scr nucmass_ldrop_shell.scr \
+	eos_nse_full.scr
 
 else
 
@@ -45,7 +47,8 @@ EOS_SRCS = eos_had_apr.cpp eos_quark_bag.cpp eos_quark_cfl.cpp \
 	eos_had_skyrme.cpp tov_solve.cpp eos_nse.cpp \
 	eos_had_rmf_delta.cpp eos_tov.cpp eos_had_sym4.cpp \
 	eos_had_base.cpp \
-	eos_sn.cpp nucmass_ldrop_shell.cpp eos_had_hlps.cpp
+	eos_sn.cpp nucmass_ldrop_shell.cpp eos_had_hlps.cpp \
+	eos_nse_full.cpp
 
 HEADER_VAR = eos_had_apr.h eos_quark_bag.h eos_crust.h eos_had_ddc.h \
 	nstar_cold.h eos_base.h eos_had_potential.h nucmass_ldrop.h \
@@ -54,7 +57,7 @@ HEADER_VAR = eos_had_apr.h eos_quark_bag.h eos_crust.h eos_had_ddc.h \
 	eos_had_tabulated.h eos_nse.h tov_solve.h eos_had_rmf_delta.h \
 	eos_had_sym4.h eos_tov.h eos_had_base.h \
 	eos_sn.h nucmass_ldrop_shell.h eos_had_gogny.h \
-	eos_crust_virial.h eos_had_hlps.h
+	eos_crust_virial.h eos_had_hlps.h eos_nse_full.h
 
 TEST_VAR = eos_had_apr.scr eos_quark_bag.scr eos_crust_virial.scr \
 	nstar_cold.scr eos_base.scr eos_had_potential.scr \
@@ -63,7 +66,7 @@ TEST_VAR = eos_had_apr.scr eos_quark_bag.scr eos_crust_virial.scr \
 	eos_had_rmf.scr eos_had_schematic.scr eos_had_skyrme.scr eos_tov.scr \
 	tov_solve.scr eos_quark_cfl6.scr eos_had_tabulated.scr eos_nse.scr \
 	eos_had_rmf_delta.scr eos_crust.scr eos_had_ddc.scr eos_quark_cfl.scr \
-	eos_had_base.scr eos_sn.scr nucmass_ldrop_shell.scr 
+	eos_had_base.scr eos_sn.scr nucmass_ldrop_shell.scr eos_nse_full.scr
 
 endif
 
@@ -136,7 +139,7 @@ check_PROGRAMS = eos_had_apr_ts eos_quark_bag_ts nucmass_ldrop_ts \
 	eos_had_rmf_ts eos_had_schematic_ts eos_had_skyrme_ts eos_tov_ts \
 	tov_solve_ts eos_quark_cfl6_ts eos_had_tabulated_ts eos_nse_ts \
 	eos_had_rmf_delta_ts eos_crust_ts eos_had_ddc_ts eos_quark_cfl_ts \
-	nucleus_rmf_ts \
+	nucleus_rmf_ts eos_nse_full_ts \
 	nucmass_ldrop_shell_ts eos_had_gogny_ts eos_crust_virial_ts
 # eos_sn_ts 
 
@@ -171,6 +174,7 @@ eos_crust_ts_LDADD = $(VCHECK_LIBS)
 eos_had_ddc_ts_LDADD = $(VCHECK_LIBS)
 eos_quark_cfl_ts_LDADD = $(VCHECK_LIBS)
 eos_nse_ts_LDADD = $(VCHECK_LIBS)
+eos_nse_full_ts_LDADD = $(VCHECK_LIBS)
 # eos_sn_ts_LDADD = $(VCHECK_LIBS)
 nucleus_rmf_ts_LDADD = $(VCHECK_LIBS)
 eos_had_gogny_ts_LDADD = $(VCHECK_LIBS)
@@ -222,6 +226,8 @@ eos_quark_cfl.scr: eos_quark_cfl_ts$(EXEEXT)
 	./eos_quark_cfl_ts$(EXEEXT) > eos_quark_cfl.scr
 eos_nse.scr: eos_nse_ts$(EXEEXT) 
 	./eos_nse_ts$(EXEEXT) > eos_nse.scr
+eos_nse_full.scr: eos_nse_full_ts$(EXEEXT) 
+	./eos_nse_full_ts$(EXEEXT) > eos_nse_full.scr
 # eos_sn.scr: eos_sn_ts$(EXEEXT) 
 # 	./eos_sn_ts$(EXEEXT) > eos_sn.scr
 nucleus_rmf.scr: nucleus_rmf_ts$(EXEEXT) 
@@ -254,6 +260,7 @@ eos_crust_ts_SOURCES = eos_crust_ts.cpp
 eos_had_ddc_ts_SOURCES = eos_had_ddc_ts.cpp
 eos_quark_cfl_ts_SOURCES = eos_quark_cfl_ts.cpp
 eos_nse_ts_SOURCES = eos_nse_ts.cpp
+eos_nse_full_ts_SOURCES = eos_nse_full_ts.cpp
 # eos_sn_ts_SOURCES = eos_sn_ts.cpp
 nucleus_rmf_ts_SOURCES = nucleus_rmf_ts.cpp
 eos_had_gogny_ts_SOURCES = eos_had_gogny_ts.cpp

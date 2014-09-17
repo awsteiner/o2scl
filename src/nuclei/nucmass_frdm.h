@@ -104,7 +104,7 @@ namespace o2scl {
 
       \future Add microscopic part.
   */
-  class nucmass_frdm : public nucmass_densmat {
+  class nucmass_frdm : public nucmass_fit_base {
 
   public:
 
