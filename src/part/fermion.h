@@ -66,6 +66,43 @@ namespace o2scl {
 
     /// Return string denoting type ("fermion")
     virtual const char *type() { return "fermion"; }
+    
+    /// Copy constructor
+    fermion(const fermion &f) {
+      g=f.g;
+      m=f.m;
+      ms=f.ms;
+      n=f.n;
+      ed=f.ed;
+      pr=f.pr;
+      mu=f.mu;
+      en=f.en;
+      nu=f.nu;
+      inc_rest_mass=f.inc_rest_mass;
+      non_interacting=f.non_interacting;
+      kf=f.kf;
+      del=f.del;
+    }
+
+    /// Copy construction with operator=()
+    fermion &operator=(const fermion &f) {
+      if (this!=&f) {
+	g=f.g;
+	m=f.m;
+	ms=f.ms;
+	n=f.n;
+	ed=f.ed;
+	pr=f.pr;
+	mu=f.mu;
+	en=f.en;
+	nu=f.nu;
+	inc_rest_mass=f.inc_rest_mass;
+	non_interacting=f.non_interacting;
+	kf=f.kf;
+	del=f.del;
+      }
+      return *this;
+    }
 
   };
 

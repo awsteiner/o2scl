@@ -56,6 +56,27 @@ namespace o2scl {
     /// Return string denoting type ("thermo")
     const char *type() { return "thermo"; }
 
+    // Default constructor
+    thermo() {
+    }
+
+    /// Copy constructor
+    thermo(const thermo &t) {
+      ed=t.ed;
+      pr=t.pr;
+      en=t.en;
+    }
+
+    /// Copy construction with operator=()
+    thermo &operator=(const thermo &t) {
+      if (this!=&t) {
+	ed=t.ed;
+	pr=t.pr;
+	en=t.en;
+      }
+      return *this;
+    }
+
   };
 
   /** \brief Addition operator
@@ -96,6 +117,39 @@ namespace o2scl {
     bool inc_rest_mass;
     /// True if the particle is non-interacting (default true)
     bool non_interacting;
+
+    /// Copy constructor
+    part(const part &p) {
+      g=p.g;
+      m=p.m;
+      ms=p.ms;
+      n=p.n;
+      ed=p.ed;
+      pr=p.pr;
+      mu=p.mu;
+      en=p.en;
+      nu=p.nu;
+      inc_rest_mass=p.inc_rest_mass;
+      non_interacting=p.non_interacting;
+    }
+
+    /// Copy construction with operator=()
+    part &operator=(const part &p) {
+      if (this!=&p) {
+	g=p.g;
+	m=p.m;
+	ms=p.ms;
+	n=p.n;
+	ed=p.ed;
+	pr=p.pr;
+	mu=p.mu;
+	en=p.en;
+	nu=p.nu;
+	inc_rest_mass=p.inc_rest_mass;
+	non_interacting=p.non_interacting;
+      }
+      return *this;
+    }
     
     /// Make a particle of mass \c mass and degeneracy \c dof.
     part(double mass=0.0, double dof=0.0);

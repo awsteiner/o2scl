@@ -36,6 +36,7 @@ int main(void) {
   
   eos_nse_full nse;
   dense_matter dm;
+  int ret;
 
   // Test nucmass_densmat
 
@@ -99,8 +100,9 @@ int main(void) {
     dm.dist[i].n/=(1.0+eps);
     eta_nuc[i]=(fr2-fr1)/(eps*dm.dist[i].n);
   }
-
-  nse.calc_density_noneq_nr(dm,0);
+  
+  ret=nse.calc_density_noneq_nr(dm,0);
+  t.test_gen(ret==0,"ret 1");
   t.test_rel(dm.eta_n,eta_n,1.0e-6,"eta_n");
   t.test_rel(dm.eta_p,eta_p,1.0e-6,"eta_p");
   t.test_rel(dm.eta_nuc[0],eta_nuc[0],1.0e-6,"eta_nuc[0]");
@@ -118,9 +120,13 @@ int main(void) {
 
   // Double check the free energy
 
-  nse.calc_density_noneq_nr(dm,1);
+  ret=nse.calc_density_noneq_nr(dm,1);
+  t.test_gen(ret==0,"ret 2");
   fr2=dm.th.ed-dm.th.en*dm.T;
   t.test_rel(fr1,fr2,1.0e-6,"free energies");
+
+  //dm.T=4.0/hc_mev_fm;
+  //nse.calc_density_nr(dm);
   
   t.report();
   return 0;

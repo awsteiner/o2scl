@@ -75,6 +75,49 @@ namespace o2scl {
     */
     double be;
 
+    /// Copy constructor
+    nucleus(const nucleus &p) {
+      g=p.g;
+      m=p.m;
+      ms=p.ms;
+      n=p.n;
+      ed=p.ed;
+      pr=p.pr;
+      mu=p.mu;
+      en=p.en;
+      nu=p.nu;
+      N=p.N;
+      Z=p.Z;
+      A=p.A;
+      mex=p.mex;
+      be=p.be;
+      inc_rest_mass=p.inc_rest_mass;
+      non_interacting=p.non_interacting;
+    }
+
+    /// Copy construction with operator=()
+    nucleus &operator=(const nucleus &p) {
+      if (this!=&p) {
+	g=p.g;
+	m=p.m;
+	ms=p.ms;
+	n=p.n;
+	ed=p.ed;
+	pr=p.pr;
+	mu=p.mu;
+	en=p.en;
+	nu=p.nu;
+	N=p.N;
+	Z=p.Z;
+	A=p.A;
+	mex=p.mex;
+	be=p.be;
+	inc_rest_mass=p.inc_rest_mass;
+	non_interacting=p.non_interacting;
+      }
+      return *this;
+    }
+
   };
 
 #ifndef DOXYGEN_NO_O2NS

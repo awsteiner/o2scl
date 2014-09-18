@@ -133,7 +133,6 @@ double dense_matter::impurity() {
 
 nucmass_densmat::nucmass_densmat() {
   massp=&ame;
-  // Load nuclear masses
   o2scl_hdf::ame_load(ame,"12");
 }
 
@@ -293,10 +292,19 @@ double eos_nse_full::free_energy_nr(const ubvector &n_nuc, dense_matter &dm) {
   dm.n.n=dm.nB-nB_nuc-dm.p.n;
 
   // Return a large value if necessary
-  dm.e.n=dm.nB*dm.Ye;
-  if (dm.e.n<dm.p.n || dm.n.n<0.0 || dm.p.n<0.0) return 1.0e6;
+  //dm.e.n=dm.nB*dm.Ye;
+  //if (dm.e.n<dm.p.n || dm.n.n<0.0 || dm.p.n<0.0) return 1.0e6;
 
-  calc_density_noneq_nr(dm,0);
+  int ret=calc_density_noneq_nr(dm);
+  if (ret==invalid_config) return 1.0e4;
+
+  /*
+    cout << "fen: ";
+    cout.precision(4);
+    vector_out(cout,n_nuc);
+    cout.precision(6);
+    cout << " " << dm.th.ed-dm.T*dm.th.en << endl;
+  */
 
   return dm.th.ed-dm.T*dm.th.en;
 }
@@ -316,7 +324,15 @@ int eos_nse_full::calc_density_fixcomp_nr(dense_matter &dm, int verbose) {
 
   double fr_min=0.0;
 
+  //fr_min=free_energy_nr(n_nuc,dm);
+  //cout << fr_min << endl;
+  //vector_out(cout,n_nuc,true);
+
   def_mmin.mmin_twovec(n_nuc.size(),n_nuc,n_nuc2,fr_min,mf);
+
+  // Perform a final function evaluation (important to set the final
+  // nuclear densities in the 'dm' parameter)
+  fr_min=free_energy_nr(n_nuc,dm);
 
   return 0;
 }
@@ -371,8 +387,18 @@ int eos_nse_full::calc_density_noneq_nr(dense_matter &dm, int verbose) {
     O2SCL_ERR("Wrong non_interacting for electrons in noneq_nr().",
 	      exc_esanity);
   }
+
+  if (dm.n.n<0.0 || dm.p.n<0.0) {
+    if (verbose>0) {
+      cout << "Neutron (" << dm.n.n << ") or proton ("
+	   << dm.p.n << ") density negative." << endl;
+    }
+    return invalid_config;
+  }
   
+  // -----------------------------------------------------------
   // Compute properties of homogeneous matter
+
   int ret=ehtp->calc_temp_e(dm.n,dm.p,dm.T,dm.drip_th);
   if (ret!=0) return ret;
 
@@ -421,6 +447,14 @@ int eos_nse_full::calc_density_noneq_nr(dense_matter &dm, int verbose) {
 
     // Add electrons
     dm.e.n=Ye*nB;
+    if (dm.e.n<dm.p.n) {
+      if (verbose>0) {
+	cout << "Electron density too small to match proton density."
+	     << endl;
+	cout << "np: " << dm.p.n << " ne: " << dm.e.n << endl;
+      }
+      return invalid_config;
+    }
     ret=relf.calc_density(dm.e,dm.T);
     if (ret!=0) return ret;
     dm.th.ed+=dm.e.ed;
@@ -469,9 +503,30 @@ int eos_nse_full::calc_density_noneq_nr(dense_matter &dm, int verbose) {
     
     if (dm.dist[i].n>0.0) {
 
+      // Check that the proton density isn't too large in
+      // the presence of nuclei
+      if (dm.p.n>0.08) {
+	if (verbose>0) {
+	  cout << "External proton density (" << dm.p.n 
+	       << ") too large." << endl;
+	}
+	return invalid_config;
+      }
+      
+      // Check that the electron density isn't too large
+      // in the presence of nuclei
+      double fac=(0.08-dm.p.n)/(dm.e.n-dm.p.n);
+      if (1.0>fac) {
+	if (verbose>0) {
+	  cout << "Proton radius negative or larger than cell size." << endl;
+	  cout << "fac: " << fac << endl;
+	}
+	return invalid_config;
+      }
+      
       // Create a reference for this nucleus
       nucleus &nuc=dm.dist[i];
-
+      
       // Compute nuclear binding energy and total mass
       double dEdnp, dEdnn, dEdne, dEdT;
       massp->binding_energy_densmat_derivs
@@ -496,7 +551,13 @@ int eos_nse_full::calc_density_noneq_nr(dense_matter &dm, int verbose) {
 	     << nuc.ed+nuc.be*nuc.n << " " << nuc.en << endl;
       }
       
+    } else if (dm.dist[i].n<0.0) {
+      if (verbose>0) {
+	cout << "Density of nucleus: " << i << " negative." << endl;
+      }
+      return invalid_config;
     }
+
   }
 
   // -----------------------------------------------------------
@@ -729,37 +790,123 @@ void eos_nse_full::output(dense_matter &dm, int verbose) {
   return;
 }
 
-void eos_nse_full::copy_dm(dense_matter &src, dense_matter &dest) {
+int eos_nse_full::calc_density_nr(dense_matter &dm, int verbose) {
 
-  dest.n.n=src.n.n;
-  dest.p.n=src.p.n;
-  dest.e.n=src.e.n;
-  dest.mu.n=src.mu.n;
+  double factor=1.0e-10;
 
-  dest.drip_th=src.drip_th;
-  dest.th=src.th;
+  // Temporary storage for a distribution index
+  size_t index;
 
-  dest.dist.clear();
-  for (size_t i=0;i<src.dist.size();i++) {
-    dest.dist.push_back(src.dist[i]);
-  }
+  // Temporary storage for the baryon density in nuclei
+  double nB_nuc;
+  
+  char ch;
+  int ret;
 
-  dest.T=src.T;
-  dest.nB=src.nB;
-  dest.Ye=src.Ye;
+  // Output
+  calc_density_noneq_nr(dm,1);
+  cout << "Initial guess." << endl;
+  cin >> ch;
+  
+  // Initial minimization
+  ret=calc_density_fixcomp_nr(dm);
+  cout << "ret: " << ret << endl;
 
-  return;
-}
+  // Output
+  calc_density_noneq_nr(dm,1);
+  cout << "Post initial minimization." << endl;
+  cin >> ch;
+  
+  // Main loop
+  bool done=false;
+  while (done==false) {
 
-size_t eos_nse_full::add_missing(dense_matter &dm, 
-				 vector<nucleus>::iterator ndi) {
-  for(size_t i=0;i<dm.dist.size();i++) {
-    if (dm.dist[i].Z==ndi->Z && dm.dist[i].N==ndi->N) {
-      return i;
+    // Record guess distribution
+    dense_matter dm2=dm;
+    
+    // Add new nuclei
+    nB_nuc=dm.nB_nuclei();
+    vector<nucleus> new_nuclei;
+    if (false) {
+      for(size_t i=0;i<dm.dist.size();i++) {
+	if (dm.dist[i].n>nB_nuc*factor) {
+	  int Z=dm.dist[i].Z;
+	  int N=dm.dist[i].N;
+	  for(int iz=-1;iz<=1;iz++) {
+	    for(int in=-1;in<=1;in++) {
+	      if (!dm.nuc_in_dist(Z+iz,N+in,index)) {
+		nucleus nuc;
+		nuc.Z=Z+iz;
+		nuc.N=N+in;
+		nuc.A=Z+N;
+		nuc.n=nB_nuc*factor;
+		nuc.g=2.0;
+		new_nuclei.push_back(nuc);
+		dm.dist.push_back(nuc);
+	      }
+	    }
+	  }
+	}
+      }
+    } else {
+      nucleus nuc;
+      nuc.Z=25;
+      nuc.N=25;
+      nuc.A=50;
+      nuc.n=nB_nuc/100.0;
+      nuc.g=2.0;
+      new_nuclei.push_back(nuc);
+      dm.dist.push_back(nuc);
     }
+
+    // Readjust densities
+    ret=density_match_nr(dm);
+    cout << "ret: " << ret << endl;
+
+    // Output
+    ret=calc_density_noneq_nr(dm,1);
+    cout << "retx: " << ret << endl;
+    cout << "Post density match." << endl;
+    cin >> ch;
+
+    for(size_t i=0;i<5;i++) {
+
+      // Perform new minimization
+      cout << "Going to fixcomp: " << endl;
+      ret=calc_density_fixcomp_nr(dm);
+      cout << "ret: " << ret << endl;
+      
+      // Output
+      calc_density_noneq_nr(dm,1);
+      cout << "Post iterative minimization: " << i << endl;
+      cin >> ch;
+    }
+
+    // Prune distribution
+    nB_nuc=dm.nB_nuclei();
+    for(vector<nucleus>::iterator it=dm.dist.begin();
+	it!=dm.dist.end();it++) {
+      if (it->n<nB_nuc*factor) {
+	dm.dist.erase(it);
+	it=dm.dist.begin();
+      }
+    }
+    
+    // Output
+    calc_density_noneq_nr(dm,1);
+    cout << "Post prune." << endl;
+    cin >> ch;
+
+    // Test to see if distribution has changed
+    done=true;
+    for(size_t i=0;i<new_nuclei.size();i++) {
+      if (dm.nuc_in_dist(new_nuclei[i].Z,new_nuclei[i].N,index)) done=false;
+    }
+
+    // If the distribution has changed, perform another iteration
+    cout << "Done: " << done << endl;
   }
-  dm.dist.push_back(*ndi);
-  size_t ix=dm.dist.size()-1;
-  dm.dist[ix].n=0.0;
-  return ix;
+
+  return 0;
 }
+

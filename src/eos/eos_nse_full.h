@@ -101,6 +101,57 @@ namespace o2scl {
 	electron masses.
     */
     dense_matter();
+    
+    dense_matter(const dense_matter &dm) {
+      n=dm.n;
+      p=dm.p;
+      e=dm.e;
+      mu=dm.mu;
+      photon=dm.photon;
+      
+      drip_th=dm.drip_th;
+      th=dm.th;
+      
+      for (size_t i=0;i<dm.dist.size();i++) {
+	dist.push_back(dm.dist[i]);
+      }
+      
+      eta_n=dm.eta_n;
+      eta_p=dm.eta_p;
+      eta_nuc=dm.eta_nuc;
+      
+      T=dm.T;
+      nB=dm.nB;
+      Ye=dm.Ye;
+    }
+
+    dense_matter &operator=(const dense_matter &dm) {
+
+      if (this!=&dm) {
+	n=dm.n;
+	p=dm.p;
+	e=dm.e;
+	mu=dm.mu;
+	photon=dm.photon;
+	
+	drip_th=dm.drip_th;
+	th=dm.th;
+	
+	for (size_t i=0;i<dm.dist.size();i++) {
+	  dist.push_back(dm.dist[i]);
+	}
+	
+	eta_n=dm.eta_n;
+	eta_p=dm.eta_p;
+	eta_nuc=dm.eta_nuc;
+	
+	T=dm.T;
+	nB=dm.nB;
+	Ye=dm.Ye;
+      }
+
+      return *this;
+    }
 
     /** \brief Compute an average inter-ionic spacing
 
@@ -149,13 +200,26 @@ namespace o2scl {
 	This function returns \f$ \sum_i n_i A_i \f$ .
     */
     double nB_nuclei();
+
+    /** \brief Return true if nucleus (Z,N) is in the distribution and
+	record it's index in \c index
+     */
+    bool nuc_in_dist(int Z, int N, size_t &index) {
+      for(size_t i=0;i<dist.size();i++) {
+	if (dist[i].Z==Z && dist[i].N==N) {
+	  index=i;
+	  return true;
+	}
+      }
+      return false;
+    }
     
   };
 
   /** \brief A nuclear mass formula for dense matter
-
+      
       This class is experimental.
-   */
+  */
   class nucmass_densmat {
 
   protected:
@@ -217,7 +281,9 @@ namespace o2scl {
       \endcomment
 
       This class is experimental.
-    
+
+      \todo Add positrons, muons, and anti-muons
+
       \future Eventually, I'd like to add fermion and boson statistics
       to the nuclei in the distribution, but this requires creating a
       new nuclear distribution type which stores fermions and bosons
@@ -240,17 +306,6 @@ namespace o2scl {
     /// The integer which indicates an invalid configuration
     int invalid_config;
     
-    /** \brief Add a missing nucleus to the distribution in \c dm and
-	return the index
-      
-	If the nucleus is already present, then nothing is done and the
-	index of it's location in the distribution is returned.
-	Otherwise, the nucleus is added, the density is set to zero, and
-	the index is returned.
-    */
-    size_t add_missing(dense_matter &dm, 
-		       std::vector<o2scl::nucleus>::iterator ndi);
-
     /// Relativistic fermions
     o2scl::fermion_rel relf;
 
@@ -284,7 +339,7 @@ namespace o2scl {
     /// Compute nuclei in dense matter
     o2scl::nucmass_densmat nuc_dens;
 
-    /// Default EOS
+    /// Default EOS ("SLy4")
     o2scl::eos_had_skyrme sk;
 
     /** \brief If true, call the error handler if calc_density() does
@@ -292,6 +347,9 @@ namespace o2scl {
     */
     bool err_nonconv;
 
+    /// If true, include electrons and photons (default true)
+    bool inc_lept_phot;
+    
     /** \brief Set nuclear mass formula
      */
     void set_mass(o2scl::nucmass_densmat &m) {
@@ -322,28 +380,28 @@ namespace o2scl {
     */
     int calc_density_noneq_nr(dense_matter &dm, int verbose=0);
   
-    /// Compute the free energy for a fixed composition
-    int calc_density_fixcomp_nr(dense_matter &dm, int verbose);
+    /** \brief Compute the free energy for a fixed composition
+
+	Given a fixed baryon density (dm.nB), electron fraction
+	(dm.Ye), temperature (dm.T), this minimizes the free energy
+	over the densities of the nuclei currently present in the
+	distribution.
+     */
+    int calc_density_fixcomp_nr(dense_matter &dm, int verbose=0);
 
     /** \brief Output properties of a \ref dense_matter object to
 	std::cout
     */
     void output(dense_matter &dm, int verbose=0);
 
-    /// If true, include electrons and photons (default true)
-    bool inc_lept_phot;
-
-    /** \brief Copy densities from \c src to \c dest
-
-	This function clears and re-fills the destination nuclear
-	distribution.
-    */
-    void copy_dm(dense_matter &src, dense_matter &dest);
-
     /** \brief Adjust the particle densities to match specified
 	density and electron fraction
     */
     int density_match_nr(dense_matter &dm);
+
+    /** \brief Desc
+     */
+    int calc_density_nr(dense_matter &dm, int verbose=0);
 
   };
 

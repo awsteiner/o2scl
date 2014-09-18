@@ -176,7 +176,7 @@ namespace o2scl {
     double E, new_E, best_E, T, old_E;
     int i, iter=0;
     size_t j;
-
+    
     for(j=0;j<nvar;j++) {
       x[j]=x0[j];
       best_x[j]=x0[j];
