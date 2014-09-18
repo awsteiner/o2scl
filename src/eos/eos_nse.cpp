@@ -28,32 +28,34 @@ using namespace o2scl_const;
 
 eos_nse::eos_nse() {
   root=&def_root;
+  err_nonconv=true;
 }
 
 void eos_nse::calc_mu(double mun, double mup, double T,
-		     double &nb, double &Ye, thermo &th, vector<nucleus> &nd) {
-
-  nb=0.0;
+		      double &nB, double &Ye, thermo &th, 
+		      vector<nucleus> &nd) {
+  
+  nB=0.0;
   Ye=0.0;
 
-  for (vector<nucleus>::iterator ndi=nd.begin();ndi!=nd.end();ndi++) {
-    ndi->mu=mun*ndi->N+mup*ndi->Z-ndi->be;
-    ndi->non_interacting=true;
-    ndi->inc_rest_mass=false;
-    cla.calc_mu(*ndi,T);
-    nb+=ndi->n*((double)ndi->A);
-    Ye+=ndi->n*((double)ndi->Z);
-    th.ed+=ndi->ed;
-    th.pr+=ndi->pr;
-    th.en+=ndi->en;
+  for(size_t i=0;i<nd.size();i++) {
+    nd[i].mu=mun*nd[i].N+mup*nd[i].Z-nd[i].be;
+    nd[i].non_interacting=true;
+    nd[i].inc_rest_mass=false;
+    cla.calc_mu(nd[i],T);
+    nB+=nd[i].n*((double)nd[i].A);
+    Ye+=nd[i].n*((double)nd[i].Z);
+    th.ed+=nd[i].ed;
+    th.pr+=nd[i].pr;
+    th.en+=nd[i].en;
   }
 
-  Ye/=nb;
+  Ye/=nB;
 
   return;
 }
 
-int eos_nse::calc_density(double nb, double Ye, double T, 
+int eos_nse::calc_density(double nB, double Ye, double T, 
 			  double &mun, double &mup, thermo &th, 
 			  vector<nucleus> &nd) {
 
@@ -61,41 +63,44 @@ int eos_nse::calc_density(double nb, double Ye, double T,
   x[0]=mun/T;
   x[1]=mup/T;
 
-  solve_parms sp={nb,Ye,T,&nd};
   mm_funct11 mfm=std::bind
-    (std::mem_fn<int(size_t,const ubvector &,ubvector &,solve_parms &)>
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &,double,
+		     double,double,vector<nucleus> &)>
      (&eos_nse::solve_fun),
      this,std::placeholders::_1,std::placeholders::_2,
-     std::placeholders::_3,std::ref(sp));
-
+    std::placeholders::_3,nB,Ye,T,std::ref(nd));
+  
   int ret=root->msolve(2,x,mfm);
-  // If the solver doesn't throw an exception because err_nonconv is
-  // false, then just return the error value
-  if (ret!=success) return ret;
+  if (ret!=0) {
+    O2SCL_CONV_RET("Solver failed in eos_nse::calc_density().",
+		   exc_efailed,err_nonconv);
+  }
 
   mun=x[0]*T;
   mup=x[1]*T;
   
-  calc_mu(mun,mup,T,nb,Ye,th,nd);
+  // Final evaluation given new chemical potentials
+  calc_mu(mun,mup,T,nB,Ye,th,nd);
 
   return success;
 }
 
 int eos_nse::solve_fun(size_t nv, const ubvector &x, ubvector &y, 
-		       solve_parms &sp) {
+		       double nB, double Ye, double T,
+		       vector<nucleus> &nd) {
 
-  double mun=x[0]*sp.T;
-  double mup=x[1]*sp.T;
+  double mun=x[0]*T;
+  double mup=x[1]*T;
 
-  double nb, Ye;
+  double nB2, Ye2;
   thermo th;
   
-  calc_mu(mun,mup,sp.T,nb,Ye,th,*sp.ndp);
-  
-  y[0]=(nb-sp.nb)/sp.nb;
-  y[1]=Ye-sp.Ye;
+  calc_mu(mun,mup,T,nB2,Ye2,th,nd);
 
-  if (nb<=0.0 || y[0]==-1.0) {
+  y[0]=(nB2-nB)/nB;
+  y[1]=Ye2-Ye;
+
+  if (nB<=0.0 || y[0]==-1.0) {
     return exc_ebadfunc;
   }
   if (!o2scl::is_finite(y[0]) || !o2scl::is_finite(y[1])) {

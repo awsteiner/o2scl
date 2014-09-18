@@ -41,35 +41,68 @@ int main(void) {
   double T=5.0/hc_mev_fm;
   thermo th;
 
+  // Load nuclear masses
   nucmass_mnmsk mm;
   o2scl_hdf::mnmsk_load(mm);
+
+  // Set the distribution of nuclei to use
   vector<nucleus> ad;
   nucdist_set(ad,mm,"Z>=24 & Z<=32 & N>=55 & N<=58");
+  cout << ad.size() << endl;
+  for(size_t i=0;i<ad.size();i++) {
+    ad[i].g=1.0;
+  }
+  t.test_gen(ad.size()==36,"distribution size");
+
   eos_nse ne;
 
-  nb=0.028;
-  Ye=0.364;
+  nb=0.03;
+  Ye=0.36;
 
   // Initial guess
-  mun=-0.064;
-  mup=-0.012;
+  mun=-0.04;
+  mup=-0.04;
   
   int ret=ne.calc_density(nb,Ye,T,mun,mup,th,ad);
   cout << ret << " " << mun << " " << mup << " " << nb << " " << Ye << endl;
+  cout << endl;
 
   // Double check that the density and electron fraction are properly
   // reproduced
   double nbnew=0.0;
   double Yenew=0.0;
-  for(vector<nucleus>::iterator ndi=ad.begin();ndi!=ad.end();ndi++) {
-    cout << ndi->Z << " " << mm.Ztoel(ndi->Z) << " " 
-	 << ndi->A << " " << ndi->n << endl;
-    nbnew+=ndi->n*ndi->A;
-    Yenew+=ndi->n*ndi->Z;
+  for(size_t i=0;i<ad.size();i++) {
+    cout << ad[i].Z << " " << mm.Ztoel(ad[i].Z) << " " 
+	 << ad[i].A << " " << ad[i].n << " " 
+	 << ((double)ad[i].Z)/((double)ad[i].A) << endl;
+    nbnew+=ad[i].n*ad[i].A;
+    Yenew+=ad[i].n*ad[i].Z;
   }
   Yenew/=nbnew;
-  t.test_rel(nbnew,0.028,1.0e-3,"nb match.");
-  t.test_rel(Yenew,0.364,1.0e-3,"Ye match.");
+  cout << endl;
+
+  t.test_rel(nbnew,0.03,1.0e-6,"nb match.");
+  t.test_rel(Yenew,0.36,1.0e-6,"Ye match.");
+
+  for(;T>0.01/hc_mev_fm;T/=1.1) {
+    cout << "Here." << nb << " " << Ye << endl;
+    ret=ne.calc_density(nb,Ye,T,mun,mup,th,ad);
+    cout << ret << " " << T << " "
+	 << mun << " " << mup << " ";
+
+    for(size_t i=0;i<ad.size();i++) {
+      nbnew+=ad[i].n*ad[i].A;
+      Yenew+=ad[i].n*ad[i].Z;
+    }
+    Yenew/=nbnew;
+
+    cout << nbnew << " " << Yenew << endl;
+    exit(-1);
+  }
+  cout << endl;
+
+  t.test_rel(nbnew,0.03,1.0e-6,"nb match.");
+  t.test_rel(Yenew,0.36,1.0e-6,"Ye match.");
   
   t.report();
   return 0;

@@ -38,53 +38,62 @@ namespace o2scl {
 
   /** \brief Equation of state for nuclei in statistical equilibrium
 
-      This class computes the composition of matter in nuclear statistical
-      equilibrium. The chemical potential of a nucleus X with proton number
-      \f$ Z_X \f$ and neutron number \f$ N_X \f$ is given by
+      This class computes the composition of matter in nuclear
+      statistical equilibrium. The chemical potential of a nucleus X
+      with proton number \f$ Z_X \f$ and neutron number \f$ N_X \f$ is
+      given by
       \f[
       \mu_X = N \mu_n + Z \mu_p - E_{\mathrm{bind},X}
       \f]
       where \f$ \mu_n \f$ and \f$ \mu_p \f$ are the neutron and proton
-      chemical potentials and \f$ E_{\mathrm{bind},X} \f$ is the binding
-      energy of the nucleus. 
+      chemical potentials and \f$ E_{\mathrm{bind},X} \f$ is the
+      binding energy of the nucleus. The chemical potentials are
+      assumed to be in units of \f$ \mathrm{fm}^{-1} \f$.
 
       The baryon number density and electron fraction are then given 
       by
       \f[
-      n_B = n_{X} (N_X + Z_X) \qquad Y_e n_B = n_X Z_X
+      n_B = \sum_X n_{X} (N_X + Z_X) \qquad Y_e n_B = \sum_X n_X Z_X
       \f]
       where \f$ n_X \f$ is the number density which is determined from
       the chemical potential above. 
  
-      This implicitly assumes that the nuclei are non-interacting.
+      The nuclei in specified in the parameter named \c nd, must have
+      their proton number, neutron number, atomic number, binding
+      energy, and spin degeracy already specified. This class
+      implicitly assumes that the nuclei are non-interacting and that
+      the values of \ref part::inc_rest_mass are false. The chemical
+      potential arguments also do not include the rest mass. The
+      nuclear rest mass is presumed to be \f$ Z_X m_p + \f$ N_X m_n
+      \f$.
 
-      \future Right now calc_density() needs a very good guess. This 
-      could be fixed, probably by solving for the log(mu/T) instead 
-      of mu. 
+      The function \ref calc_density() can, for low enough
+      temperatures, require a very good guess in order to successfully
+      solve for the chemical potentials. This is particularly a
+      problem also when the typical \f$ Z/A \f$ of the nuclei is not
+      close to the desired \f$ Y_e \f$ or the nuclear distribution has
+      only a few nuclei.
+
+      \future Is it better to solve for the log(mu/T) instead of for
+      mu/T?
   */
   class eos_nse {
 
   public:
 
     typedef boost::numeric::ublas::vector<double> ubvector;
-    typedef boost::numeric::ublas::matrix<double> ubmatrix;
-
-#ifndef DOXYGEN_INTERNAL
-
-  protected:
     
-    /// Parameter structure
-    typedef struct {
-      double nb, Ye, T;
-      std::vector<nucleus> *ndp;
-    } solve_parms;
+#ifndef DOXYGEN_INTERNAL
+    
+  protected:
     
     /// Function to solve for baryon and charge conservation
     int solve_fun(size_t nv, const ubvector &x, ubvector &y, 
-		  solve_parms &pa);
+		  double nB, double Ye, double T,
+		  std::vector<o2scl::nucleus> &nd);
     
     /// Solver
-    mroot<mm_funct11,ubvector,jac_funct11> *root;
+    mroot<> *root;
 
     /// Compute particle properties assuming classical thermodynamics
     classical cla;
@@ -105,34 +114,37 @@ namespace o2scl {
 
 	Given \c mun, \c mup and \c T, this computes the composition
 	(the individual densities are stored in the distribution \c
-	nd) the baryon number density \c nb, and the electron fraction
+	nd) the baryon number density \c nB, and the electron fraction
 	\c Ye. 
 
 	This function does not use the solver.
     */
-    void calc_mu(double mun, double mup, double T,
-		 double &nb, double &Ye, thermo &th, std::vector<nucleus> &nd);
+    void calc_mu(double mun, double mup, double T, double &nB, 
+		 double &Ye, thermo &th, std::vector<nucleus> &nd);
     
     /** \brief Calculate the equation of state as a function of the densities
 
-	Given the baryon number density \c nb, and the electron
-	fraction \c Ye and the temperature \c T, this computes the
-	composition (the individual densities are stored in the
-	distribution \c nd) and the chemical potentials are given in
-	\c mun and \c mup .
+	Given the baryon number density \c nB in \f$ \mathrm{fm}^{-3}
+	\f$, the electron fraction \c Ye and the temperature \c T in
+	\f$ \mathrm{fm}^{-1} \f$, this computes the composition (the
+	individual densities are stored in the distribution \c nd) and
+	the chemical potentials are given in \c mun and \c mup . The
+	nuclei in \c nd must have their proton number, neutron number,
+	atomic number, binding energy, and spin degeracy already
+	specified.
 
 	This function uses the solver to self-consistently compute
 	the chemical potentials. 
      */
-    int calc_density(double nb, double Ye, double T, double &mun, 
+    int calc_density(double nB, double Ye, double T, double &mun, 
 		     double &mup, thermo &th, std::vector<nucleus> &nd);
     
     /// Default solver 
-    mroot_hybrids<mm_funct11,ubvector,ubmatrix,jac_funct11> def_root;
+    mroot_hybrids<> def_root;
 
     /** \brief Set the solver for use in computing the chemical potentials
      */
-    void set_mroot(mroot<mm_funct11,ubvector,jac_funct11> &rp) {
+    void set_mroot(mroot<> &rp) {
       root=&rp;
       return;
     }
