@@ -348,20 +348,6 @@ namespace o2scl {
 
     /// \name EOS properties
     //@{
-    /** \brief Compute the number susceptibilities as a function of
-	the chemical potentials, \f$ \partial^2 P / \partial \mu_i
-	\mu_j \f$
-    */
-    virtual void f_number_suscept(double mun, double mup, double &dPdnn, 
-				  double &dPdnp, double &dPdpp);
-
-    /** \brief Compute the 'inverse' number susceptibilities as a
-	function of the densities, \f$ \partial^2 \varepsilon /
-	\partial n_i n_j \f$
-    */
-    virtual void f_inv_number_suscept(double mun, double mup, double &dednn, 
-				      double &dednp, double &dedpp);
-    
     /** \brief Calculate the incompressibility in \f$ \mathrm{fm}^{-1} \f$ 
 	using calc_e()
 
@@ -517,6 +503,20 @@ namespace o2scl {
     */
     virtual double fn0(double delta, double &leoa);
 
+    /** \brief Compute the number susceptibilities as a function of
+	the chemical potentials, \f$ \partial^2 P / \partial \mu_i
+	\mu_j \f$
+    */
+    virtual void f_number_suscept(double mun, double mup, double &dPdnn, 
+				  double &dPdnp, double &dPdpp);
+
+    /** \brief Compute the 'inverse' number susceptibilities as a
+	function of the densities, \f$ \partial^2 \varepsilon /
+	\partial n_i n_j \f$
+    */
+    virtual void f_inv_number_suscept(double mun, double mup, double &dednn, 
+				      double &dednp, double &dedpp);
+    
     /** \brief Calculates some of the EOS properties at the saturation 
 	density
 	

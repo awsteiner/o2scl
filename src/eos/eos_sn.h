@@ -603,7 +603,7 @@ namespace o2scl {
 
   };
 
-  /** \brief The Shen et al. supernova EOS
+  /** \brief The H. Shen et al. supernova EOS
       
       This class is experimental.
 

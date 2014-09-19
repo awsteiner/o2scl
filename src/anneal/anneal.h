@@ -49,14 +49,13 @@ namespace o2scl {
       each call.
       
       For the algorithms here, it is important that all of the inputs
-      x[i] to the function are scaled similarly relative 
-      to the temperature. For example, if the inputs x[i] are all
-      of order 1, one might consider a temperature schedule which begins
-      with \f$ T=1 \f$ . 
+      <tt>x[i]</tt> to the function are scaled similarly relative to
+      the temperature. For example, if the inputs <tt>x[i]</tt> are
+      all of order 1, one might consider a temperature schedule which
+      begins with \f$ T=1 \f$ .
 
       The number of iterations at each temperature is controlled by
-      multi_min::ntrial which defaults to 100.
-      
+      \ref o2scl::mmin_base::ntrial which defaults to 100.
   */
   template<class func_t=multi_funct11,
     class vec_t=boost::numeric::ublas::vector<double>,

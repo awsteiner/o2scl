@@ -89,19 +89,21 @@ namespace o2scl {
       1.0). Each iteration decreases the temperature by a factor of
       \ref T_dec (default 1.5) for each step, and the minimizer is
       finished when the next decrease would bring the temperature
-      below multi_min::tol_abs. If none of the multi_min::ntrial steps in
-      a particular iteration changes the value of the minimum, and the
-      step sizes are greater than \ref min_step_ratio (default 100)
-      times multi_min::tol_abs, then the step sizes are decreased by a
-      factor of \ref step_dec (default 1.5) for the next iteration.
+      below \ref o2scl::mmin_base::tol_abs. If none of the
+      mmin_base::ntrial steps in a particular iteration changes the
+      value of the minimum, and the step sizes are greater than \ref
+      min_step_ratio (default 100) times \ref
+      o2scl::mmin_base::tol_abs, then the step sizes are decreased by
+      a factor of \ref step_dec (default 1.5) for the next iteration.
 
-      If \ref mmin_base::verbose is greater than zero, then \ref
-      mmin() will print out information and/or request a keypress
+      If \ref o2scl::mmin_base::verbose is greater than zero, then
+      \ref mmin() will print out information and/or request a keypress
       after the function iterations for each temperature.
       
       An example demonstrating the usage of this class is given in
       <tt>examples/ex_anneal.cpp</tt> and in the \ref ex_anneal_sect .
 
+      \comment
       The form of the user-specified function is as in \ref
       multi_funct11 has a "function value" which is the value of the
       function (given in the third argument as a number of type \c
@@ -118,15 +120,19 @@ namespace o2scl {
       minimizer outside the allowed region. Note that this should be
       done with care, however, as this approach may cause convergence
       problems with sufficiently difficult functions or constraints.
+      \endcomment
 
       See also a multi-threaded version of this class in \ref
       anneal_mt.
 
+      \comment
       \future There's x0, old_x, new_x, best_x, and x? There's probably
       some duplication here which could be avoided.
+      9/19/14: Some better documentation now, and it looks like
+      all four have some utility. 
+      \endcomment
 
-      \future 
-      - Implement a more general simulated annealing routine
+      \future Implement a more general simulated annealing routine
       which would allow the solution of discrete problems like the
       Traveling Salesman problem.
       \comment
@@ -314,9 +320,16 @@ namespace o2scl {
       
   protected:
       
-  /// \name Storage for present, next, and best vectors
+  /// \name Storage for points in parameter space
   //@{
-  ubvector x, new_x, best_x, old_x;
+  /// Current point
+  ubvector x;
+  /// Proposed next point
+  ubvector new_x;
+  /// Optimum point over all iterations
+  ubvector best_x;
+  /// Last point from previous iteration
+  ubvector old_x;
   //@}
 
   /// Vector of step sizes

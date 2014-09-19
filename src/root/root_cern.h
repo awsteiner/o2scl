@@ -35,13 +35,13 @@ namespace o2scl {
 
   /** \brief One-dimensional version of cern_mroot
       
-      This one-dimensional root-finding routine, based on cern_mroot,
-      is probably slower than the more typical 1-d routines, but also
-      tends to converge for a larger class of functions than \ref
-      o2scl::root_bkt_cern, \ref o2scl::root_brent_gsl, or \ref
-      o2scl::root_stef. It has been modified from \ref
-      o2scl::mroot_cern and slightly optimized, but has the same basic
-      behavior.
+      This one-dimensional root-finding routine, based on \ref
+      o2scl::mroot_cern, is probably slower than the more typical 1-d
+      routines, but also tends to converge for a larger class of
+      functions than \ref o2scl::root_bkt_cern, \ref
+      o2scl::root_brent_gsl, or \ref o2scl::root_stef. It has been
+      modified from \ref o2scl::mroot_cern and slightly optimized, but
+      has the same basic behavior.
 
       If \f$ x_i \f$ denotes the current iteration, and \f$
       x^{\prime}_i \f$ denotes the previous iteration, then the

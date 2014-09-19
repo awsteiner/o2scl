@@ -24,7 +24,8 @@
 #define O2SCL_MULTI_MIN_H
 
 /** \file mmin.h
-    \brief Function object for gradients and \ref o2scl::mmin_base
+    \brief File defining \ref o2scl::mmin_base, \ref o2scl::grad_funct11,
+    \ref o2scl::gradient, and \ref o2scl::gradient_gsl
 */
 
 #include <o2scl/multi_funct.h>

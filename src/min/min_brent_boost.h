@@ -36,40 +36,48 @@ namespace o2scl {
 #endif
    
   /** \brief One-dimensional minimization using Brent's method (GSL)
-   */
+
+      This is a wrapper for
+      <tt>boost::math::tools::brent_find_minima()</tt> .
+
+      The value of fourth argument, <tt>digits</tt> is 
+      taken to be \f$ - \log_{10}(t) \f$ where \f$ t \f$ is
+      the value of \ref o2scl::min_base::tol_rel .
+  */
   template<class func_t=funct11> class min_brent_boost : 
   public min_bkt_base<func_t> {
     
   public:
  
-    min_brent_boost() {
-    }
+  min_brent_boost() {
+  }
       
-    virtual ~min_brent_boost() {}
+  virtual ~min_brent_boost() {}
   
-    /** \brief Calculate the minimum \c fmin of \c func 
-	with \c x2 bracketed between \c x1 and \c x3.
+  /** \brief Calculate the minimum \c fmin of \c func 
+      with \c x2 bracketed between \c x1 and \c x3.
 
-	The initial value of \c x2 is ignored.
-    */
-    virtual int min_bkt(double &x2, double x1, double x3, double &fmin,
-			func_t &func) {
-      std::pair<double,double> res;
-      size_t digits;
-      if (this->tol_rel>1.0) digits=1;
-      else if (this->tol_rel<=0.0) digits=18;
-      else digits=((size_t)(-log10(this->tol_rel)));
-      res=boost::math::tools::brent_find_minima(func,x1,x3,digits);
-      x2=res.first;
-      fmin=res.second;
-      return success;
-    }
+      The initial value of \c x2 is ignored.
+  */
+  virtual int min_bkt(double &x2, double x1, double x3, double &fmin,
+		      func_t &func) {
+
+    std::pair<double,double> res;
+    size_t digits;
+    if (this->tol_rel>1.0) digits=1;
+    else if (this->tol_rel<=0.0) digits=18;
+    else digits=((size_t)(-log10(this->tol_rel)));
+    res=boost::math::tools::brent_find_minima(func,x1,x3,digits);
+    x2=res.first;
+    fmin=res.second;
+    return success;
+  }
   
-    /// Return string denoting type ("min_brent_boost")
-    virtual const char *type() { return "min_brent_boost"; }
-      
-    };
-
+  /// Return string denoting type ("min_brent_boost")
+  virtual const char *type() { return "min_brent_boost"; }
+  
+  };
+  
 #ifndef DOXYGEN_NO_O2NS
 }
 #endif

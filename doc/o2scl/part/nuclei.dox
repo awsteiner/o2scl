@@ -9,7 +9,7 @@
     from a set of parameters and can be fit to data 
     (\ref o2scl::nucmass_fit). 
 
-    There are five mass table types currently included.
+    There are eleven mass table types currently included.
     - \ref o2scl::nucmass_ame and \ref o2scl::nucmass_ame_exp : data from 
     \ref Audi95, \ref Audi03, or \ref Audi12 and \ref Wang12.
     - \ref o2scl::nucmass_mnmsk and \ref o2scl::nucmass_mnmsk_exp : 
