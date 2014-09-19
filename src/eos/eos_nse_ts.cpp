@@ -84,12 +84,14 @@ int main(void) {
   t.test_rel(nbnew,0.03,1.0e-6,"nb match.");
   t.test_rel(Yenew,0.36,1.0e-6,"Ye match.");
 
+  // Now proceed to lower temperatures
   for(;T>0.01/hc_mev_fm;T/=1.1) {
-    cout << "Here." << nb << " " << Ye << endl;
     ret=ne.calc_density(nb,Ye,T,mun,mup,th,ad);
     cout << ret << " " << T << " "
 	 << mun << " " << mup << " ";
 
+    nbnew=0.0;
+    Yenew=0.0;
     for(size_t i=0;i<ad.size();i++) {
       nbnew+=ad[i].n*ad[i].A;
       Yenew+=ad[i].n*ad[i].Z;
@@ -97,10 +99,18 @@ int main(void) {
     Yenew/=nbnew;
 
     cout << nbnew << " " << Yenew << endl;
-    exit(-1);
   }
   cout << endl;
 
+  // Output the distribution at the lowest temperature
+  for(size_t i=0;i<ad.size();i++) {
+    cout << ad[i].Z << " " << mm.Ztoel(ad[i].Z) << " " 
+	 << ad[i].A << " " << ad[i].n << endl;
+  }
+  cout << endl;
+
+  // Double check that the density and electron fraction are properly
+  // reproduced
   t.test_rel(nbnew,0.03,1.0e-6,"nb match.");
   t.test_rel(Yenew,0.36,1.0e-6,"Ye match.");
   

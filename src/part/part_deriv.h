@@ -299,6 +299,45 @@ namespace o2scl {
     /// Derivative of entropy density with respect to temperature
     double dsdT;
 
+    /// Copy constructor
+    part_deriv(const part_deriv &p) {
+      g=p.g;
+      m=p.m;
+      ms=p.ms;
+      n=p.n;
+      ed=p.ed;
+      pr=p.pr;
+      mu=p.mu;
+      en=p.en;
+      nu=p.nu;
+      dndmu=p.dndmu;
+      dndT=p.dndT;
+      dsdT=p.dsdT;
+      inc_rest_mass=p.inc_rest_mass;
+      non_interacting=p.non_interacting;
+    }
+
+    /// Copy construction with operator=()
+    part_deriv &operator=(const part_deriv &p) {
+      if (this!=&p) {
+	g=p.g;
+	m=p.m;
+	ms=p.ms;
+	n=p.n;
+	ed=p.ed;
+	pr=p.pr;
+	mu=p.mu;
+	en=p.en;
+	nu=p.nu;
+	dndmu=p.dndmu;
+	dndT=p.dndT;
+	dsdT=p.dsdT;
+	inc_rest_mass=p.inc_rest_mass;
+	non_interacting=p.non_interacting;
+      }
+      return *this;
+    }
+
   };
   
   /** \brief A fermion with derivative information
@@ -313,6 +352,45 @@ namespace o2scl {
     
     /// Fermi momentum
     double kf;
+
+    /// Copy constructor
+    fermion_deriv(const fermion_deriv &p) {
+      g=p.g;
+      m=p.m;
+      ms=p.ms;
+      n=p.n;
+      ed=p.ed;
+      pr=p.pr;
+      mu=p.mu;
+      en=p.en;
+      nu=p.nu;
+      dndmu=p.dndmu;
+      dndT=p.dndT;
+      dsdT=p.dsdT;
+      inc_rest_mass=p.inc_rest_mass;
+      non_interacting=p.non_interacting;
+    }
+
+    /// Copy construction with operator=()
+    fermion_deriv &operator=(const fermion_deriv &p) {
+      if (this!=&p) {
+	g=p.g;
+	m=p.m;
+	ms=p.ms;
+	n=p.n;
+	ed=p.ed;
+	pr=p.pr;
+	mu=p.mu;
+	en=p.en;
+	nu=p.nu;
+	dndmu=p.dndmu;
+	dndT=p.dndT;
+	dsdT=p.dsdT;
+	inc_rest_mass=p.inc_rest_mass;
+	non_interacting=p.non_interacting;
+      }
+      return *this;
+    }
     
   };
   

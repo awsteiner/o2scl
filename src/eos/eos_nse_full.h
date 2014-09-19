@@ -21,7 +21,8 @@
   -------------------------------------------------------------------
 */
 /** \file eos_nse_full.h
-    \brief File defining \ref o2scl::eos_nse_full
+    \brief File defining \ref o2scl::dense_matter, 
+    \ref o2scl::nucmass_densmat, and \ref o2scl::eos_nse_full
 */
 #ifndef EOS_NSE_FULL_H
 #define EOS_NSE_FULL_H 
@@ -55,8 +56,6 @@ namespace o2scl {
 
       By default, the rest mass is not included in the neutron,
       or the proton. It is, however, included in the electron. 
-
-      \future Write copy constructors for this class.
   */
   class dense_matter {
   
@@ -104,7 +103,8 @@ namespace o2scl {
 	electron masses.
     */
     dense_matter();
-    
+
+    /// Copy constructor
     dense_matter(const dense_matter &dm) {
       n=dm.n;
       p=dm.p;
@@ -128,6 +128,7 @@ namespace o2scl {
       Ye=dm.Ye;
     }
 
+    /// Copy constructor with operator=()
     dense_matter &operator=(const dense_matter &dm) {
 
       if (this!=&dm) {
@@ -205,7 +206,7 @@ namespace o2scl {
     double nB_nuclei();
 
     /** \brief Return true if nucleus (Z,N) is in the distribution and
-	record it's index in \c index
+	store it's index in \c index
      */
     bool nuc_in_dist(int Z, int N, size_t &index) {
       for(size_t i=0;i<dist.size();i++) {
@@ -276,21 +277,13 @@ namespace o2scl {
 
   };
 
-  /** \brief Updated EOS for nuclear statistical equilibrium
-
-      \comment
-      This class is sort of viewed as a potential replacement for
-      o2scl::eos_nse .
-      \endcomment
+  /** \brief EOS for nuclear statistical equilibrium with interactions
 
       This class is experimental.
 
-      \todo Add positrons, muons, and anti-muons
-
-      \future Eventually, I'd like to add fermion and boson statistics
-      to the nuclei in the distribution, but this requires creating a
-      new nuclear distribution type which stores fermions and bosons
-      instead of classical particles.
+      \future Add positrons, muons, and anti-muons
+      \future Add fermion and boson statistics to the nuclei in the
+      distribution
   */
   class eos_nse_full {
 
@@ -324,8 +317,10 @@ namespace o2scl {
     /// The full distribution of all nuclei to consider
     std::vector<o2scl::nucleus> *ad;
 
-    /// Compute the free energy from a vector of densities of the nuclei
-    double free_energy_nr(const ubvector &n_nuc, dense_matter &dm);
+    /** \brief Compute the free energy from a vector of densities 
+	of the nuclei
+    */
+    double free_energy(const ubvector &n_nuc, dense_matter &dm);
 
     /// The minimizer
     o2scl::mmin_simp2<> def_mmin;
@@ -352,6 +347,11 @@ namespace o2scl {
 
     /// If true, include electrons and photons (default true)
     bool inc_lept_phot;
+
+    /** \brief If true, include dripped protons in the Coulomb energy 
+	(default true)
+    */
+    bool inc_prot_coul;
     
     /** \brief Set nuclear mass formula
      */
@@ -376,12 +376,10 @@ namespace o2scl {
   
     /** \brief Compute the properties of matter from the densities,
 	not presuming equilibrium
-
-	This function does not modify dm.nB or dm.Ye, in order to
-	prevent finite-precision arithmetic from poisoning these two
-	values.
     */
-    int calc_density_noneq_nr(dense_matter &dm, int verbose=0);
+    int calc_density_noneq(dense_matter &dm, int verbose=0);
+
+    int calc_density_fixnp(dense_matter &dm, int verbose);
   
     /** \brief Compute the free energy for a fixed composition
 
@@ -389,22 +387,36 @@ namespace o2scl {
 	(dm.Ye), temperature (dm.T), this minimizes the free energy
 	over the densities of the nuclei currently present in the
 	distribution.
-     */
-    int calc_density_fixcomp_nr(dense_matter &dm, int verbose=0);
+
+	\note This function only performs a very simple minimization
+	and currently works in only limited circumstances.
+    */
+    int calc_density_fixcomp(dense_matter &dm, int verbose=0);
 
     /** \brief Output properties of a \ref dense_matter object to
 	std::cout
+
+	This function was particularly designed for comparing results
+	with \ref o2scl::eos_sn_base derived classes.
     */
     void output(dense_matter &dm, int verbose=0);
 
     /** \brief Adjust the particle densities to match specified
 	density and electron fraction
     */
-    int density_match_nr(dense_matter &dm);
+    int density_match(dense_matter &dm);
+
+#ifdef O2SCL_NEVER_DEFINED
 
     /** \brief Desc
+
+	This was intended to be a version of calc_density_fixcomp()
+	which optimized the composition, but it doesn't really work
+	yet.
      */
-    int calc_density_nr(dense_matter &dm, int verbose=0);
+    int calc_density(dense_matter &dm, int verbose=0);
+
+#endif
 
   };
 

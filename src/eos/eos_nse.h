@@ -59,13 +59,13 @@ namespace o2scl {
       the chemical potential above. 
  
       The nuclei in specified in the parameter named \c nd, must have
-      their proton number, neutron number, atomic number, binding
+      their proton number, neutron number, mass number, binding
       energy, and spin degeracy already specified. This class
       implicitly assumes that the nuclei are non-interacting and that
-      the values of \ref part::inc_rest_mass are false. The chemical
-      potential arguments also do not include the rest mass. The
-      nuclear rest mass is presumed to be \f$ Z_X m_p + \f$ N_X m_n
-      \f$.
+      the values of \ref o2scl::part::inc_rest_mass are false. The
+      chemical potential arguments also do not include the rest mass.
+      The nuclear rest mass is presumed to be \f$ Z_X m_p + N_X m_n
+      \f$. 
 
       The function \ref calc_density() can, for low enough
       temperatures, require a very good guess in order to successfully

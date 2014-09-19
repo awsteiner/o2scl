@@ -71,37 +71,79 @@ int main(void) {
   // Set the temperature
   dm.T=1.0/hc_mev_fm;
 
-  // Compare analytical and numerical values for eta_i
+  // Compare analytical and numerical values for eta_i with
+  // inc_prot_coul = false
 
   double eps=1.0e-6, fr1, fr2, eta_n, eta_p, eta_nuc[3];
 
-  nse.calc_density_noneq_nr(dm,0);
+  nse.inc_prot_coul=false;
+
+  nse.calc_density_noneq(dm,0);
   fr1=dm.th.ed-dm.T*dm.th.en;
   dm.n.n*=(1.0+eps);
-  nse.calc_density_noneq_nr(dm,0);
+  nse.calc_density_noneq(dm,0);
   fr2=dm.th.ed-dm.T*dm.th.en;
   dm.n.n/=(1.0+eps);
   eta_n=(fr2-fr1)/(eps*dm.n.n);
 
-  nse.calc_density_noneq_nr(dm,0);
+  nse.calc_density_noneq(dm,0);
   fr1=dm.th.ed-dm.T*dm.th.en;
   dm.p.n*=(1.0+eps);
-  nse.calc_density_noneq_nr(dm,0);
+  nse.calc_density_noneq(dm,0);
   fr2=dm.th.ed-dm.T*dm.th.en;
   dm.p.n/=(1.0+eps);
   eta_p=(fr2-fr1)/(eps*dm.p.n);
 
   for(size_t i=0;i<3;i++) {
-    nse.calc_density_noneq_nr(dm,0);
+    nse.calc_density_noneq(dm,0);
     fr1=dm.th.ed-dm.T*dm.th.en;
     dm.dist[i].n*=(1.0+eps);
-    nse.calc_density_noneq_nr(dm,0);
+    nse.calc_density_noneq(dm,0);
     fr2=dm.th.ed-dm.T*dm.th.en;
     dm.dist[i].n/=(1.0+eps);
     eta_nuc[i]=(fr2-fr1)/(eps*dm.dist[i].n);
   }
   
-  ret=nse.calc_density_noneq_nr(dm,0);
+  ret=nse.calc_density_noneq(dm,0);
+  t.test_gen(ret==0,"ret 1");
+  t.test_rel(dm.eta_n,eta_n,1.0e-6,"eta_n");
+  t.test_rel(dm.eta_p,eta_p,1.0e-6,"eta_p");
+  t.test_rel(dm.eta_nuc[0],eta_nuc[0],1.0e-6,"eta_nuc[0]");
+  t.test_rel(dm.eta_nuc[1],eta_nuc[1],1.0e-6,"eta_nuc[1]");
+  t.test_rel(dm.eta_nuc[2],eta_nuc[2],1.0e-6,"eta_nuc[2]");
+
+  // Compare analytical and numerical values for eta_i with
+  // inc_prot_coul = true (the default)
+
+  nse.inc_prot_coul=true;
+
+  nse.calc_density_noneq(dm,0);
+  fr1=dm.th.ed-dm.T*dm.th.en;
+  dm.n.n*=(1.0+eps);
+  nse.calc_density_noneq(dm,0);
+  fr2=dm.th.ed-dm.T*dm.th.en;
+  dm.n.n/=(1.0+eps);
+  eta_n=(fr2-fr1)/(eps*dm.n.n);
+
+  nse.calc_density_noneq(dm,0);
+  fr1=dm.th.ed-dm.T*dm.th.en;
+  dm.p.n*=(1.0+eps);
+  nse.calc_density_noneq(dm,0);
+  fr2=dm.th.ed-dm.T*dm.th.en;
+  dm.p.n/=(1.0+eps);
+  eta_p=(fr2-fr1)/(eps*dm.p.n);
+
+  for(size_t i=0;i<3;i++) {
+    nse.calc_density_noneq(dm,0);
+    fr1=dm.th.ed-dm.T*dm.th.en;
+    dm.dist[i].n*=(1.0+eps);
+    nse.calc_density_noneq(dm,0);
+    fr2=dm.th.ed-dm.T*dm.th.en;
+    dm.dist[i].n/=(1.0+eps);
+    eta_nuc[i]=(fr2-fr1)/(eps*dm.dist[i].n);
+  }
+  
+  ret=nse.calc_density_noneq(dm,0);
   t.test_gen(ret==0,"ret 1");
   t.test_rel(dm.eta_n,eta_n,1.0e-6,"eta_n");
   t.test_rel(dm.eta_p,eta_p,1.0e-6,"eta_p");
@@ -114,19 +156,19 @@ int main(void) {
   dm.nB=5.2e-2;
   dm.Ye=0.4943;
 
-  nse.calc_density_fixcomp_nr(dm,0);
+  nse.calc_density_fixcomp(dm,0);
 
   fr1=dm.th.ed-dm.th.en*dm.T;
 
   // Double check the free energy
 
-  ret=nse.calc_density_noneq_nr(dm,1);
+  ret=nse.calc_density_noneq(dm,1);
   t.test_gen(ret==0,"ret 2");
   fr2=dm.th.ed-dm.th.en*dm.T;
   t.test_rel(fr1,fr2,1.0e-6,"free energies");
 
   //dm.T=4.0/hc_mev_fm;
-  //nse.calc_density_nr(dm);
+  //nse.calc_density(dm);
   
   t.report();
   return 0;

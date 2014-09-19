@@ -276,9 +276,11 @@ eos_nse_full::eos_nse_full() {
   def_mmin.ntrial*=100;
   def_mmin.tol_rel/=1000.0;
   def_mmin.tol_abs/=1000.0;
+
+  inc_prot_coul=true;
 }
 
-double eos_nse_full::free_energy_nr(const ubvector &n_nuc, dense_matter &dm) {
+double eos_nse_full::free_energy(const ubvector &n_nuc, dense_matter &dm) {
 
   double nB_nuc=0.0, np_nuc=0.0;
 
@@ -292,24 +294,14 @@ double eos_nse_full::free_energy_nr(const ubvector &n_nuc, dense_matter &dm) {
   dm.n.n=dm.nB-nB_nuc-dm.p.n;
 
   // Return a large value if necessary
-  //dm.e.n=dm.nB*dm.Ye;
-  //if (dm.e.n<dm.p.n || dm.n.n<0.0 || dm.p.n<0.0) return 1.0e6;
 
-  int ret=calc_density_noneq_nr(dm);
+  int ret=calc_density_noneq(dm);
   if (ret==invalid_config) return 1.0e4;
-
-  /*
-    cout << "fen: ";
-    cout.precision(4);
-    vector_out(cout,n_nuc);
-    cout.precision(6);
-    cout << " " << dm.th.ed-dm.T*dm.th.en << endl;
-  */
 
   return dm.th.ed-dm.T*dm.th.en;
 }
 
-int eos_nse_full::calc_density_fixcomp_nr(dense_matter &dm, int verbose) {
+int eos_nse_full::calc_density_fixcomp(dense_matter &dm, int verbose) {
 
   ubvector n_nuc(dm.dist.size()), n_nuc2(dm.dist.size());
   for(size_t i=0;i<n_nuc.size();i++) {
@@ -319,25 +311,247 @@ int eos_nse_full::calc_density_fixcomp_nr(dense_matter &dm, int verbose) {
 
   multi_funct11 mf=std::bind
     (std::mem_fn<double(const ubvector &,dense_matter &)>
-     (&eos_nse_full::free_energy_nr),
+     (&eos_nse_full::free_energy),
      this,std::placeholders::_2,std::ref(dm));
 
   double fr_min=0.0;
-
-  //fr_min=free_energy_nr(n_nuc,dm);
-  //cout << fr_min << endl;
-  //vector_out(cout,n_nuc,true);
 
   def_mmin.mmin_twovec(n_nuc.size(),n_nuc,n_nuc2,fr_min,mf);
 
   // Perform a final function evaluation (important to set the final
   // nuclear densities in the 'dm' parameter)
-  fr_min=free_energy_nr(n_nuc,dm);
+  fr_min=free_energy(n_nuc,dm);
 
   return 0;
 }
 
-int eos_nse_full::calc_density_noneq_nr(dense_matter &dm, int verbose) {
+int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
+
+  // -----------------------------------------------------------
+  // Sanity checks
+
+  if (!o2scl::is_finite(dm.n.n) || 
+      !o2scl::is_finite(dm.p.n)) {
+    O2SCL_ERR2("Neutron or proton density not finite in ",
+	       "eos_nse_full::calc_density_fixnp().",exc_esanity);
+  }
+  if (dm.n.m<0.0 || dm.p.m<0.0) {
+    O2SCL_ERR2("Mass negative in ",
+	       "eos_nse_full::calc_density_fixnp().",exc_esanity);
+  }
+  for(size_t i=0;i<dm.dist.size();i++) {
+    if (dm.dist[i].inc_rest_mass==true) {
+      O2SCL_ERR("Wrong inc_rest_mass for nuclei in fixnp().",
+		exc_esanity);
+    }
+  }
+  if (dm.n.inc_rest_mass==true) {
+    O2SCL_ERR("Wrong inc_rest_mass for neutrons in fixnp().",
+	      exc_esanity);
+  }
+  if (dm.p.inc_rest_mass==true) {
+    O2SCL_ERR("Wrong inc_rest_mass for protons in fixnp().",
+	      exc_esanity);
+  }
+  if (dm.e.inc_rest_mass==false) {
+    O2SCL_ERR("Wrong inc_rest_mass for electrons in fixnp().",
+	      exc_esanity);
+  }
+  for(size_t i=0;i<dm.dist.size();i++) {
+    if (dm.dist[i].non_interacting==false) {
+      O2SCL_ERR("Wrong non_interacting for nuclei in fixnp().",
+		exc_esanity);
+    }
+  }
+  if (dm.n.non_interacting==true) {
+    O2SCL_ERR("Wrong non_interacting for neutrons in fixnp().",
+	      exc_esanity);
+  }
+  if (dm.p.non_interacting==true) {
+    O2SCL_ERR("Wrong non_interacting for protons in fixnp().",
+	      exc_esanity);
+  }
+  if (dm.e.non_interacting==false) {
+    O2SCL_ERR("Wrong non_interacting for electrons in fixnp().",
+	      exc_esanity);
+  }
+
+  if (dm.n.n<0.0 || dm.p.n<0.0) {
+    if (verbose>0) {
+      cout << "Neutron (" << dm.n.n << ") or proton ("
+	   << dm.p.n << ") density negative." << endl;
+    }
+    return invalid_config;
+  }
+  
+  // -----------------------------------------------------------
+  // Compute properties of homogeneous matter
+
+  int ret=ehtp->calc_temp_e(dm.n,dm.p,dm.T,dm.drip_th);
+  if (ret!=0) return ret;
+
+  // Add contribution from dripped nucleons
+  dm.th=dm.drip_th;
+
+  // Compute Ye, nB and electron density
+  double nB, Ye;
+  nB=dm.n.n+dm.p.n;
+  Ye=dm.p.n;
+  for(size_t i=0;i<dm.dist.size();i++) {
+    nB+=dm.dist[i].n*((double)dm.dist[i].A);
+    Ye+=dm.dist[i].n*((double)dm.dist[i].Z);
+  }
+  Ye/=nB;
+  dm.e.n=Ye*nB;
+
+  // -----------------------------------------------------------
+  // Leptons and photons
+
+  if (inc_lept_phot) {
+
+    // Add electrons
+    dm.e.n=Ye*nB;
+    if (dm.e.n<dm.p.n) {
+      if (verbose>0) {
+	cout << "Electron density too small to match proton density."
+	     << endl;
+	cout << "np: " << dm.p.n << " ne: " << dm.e.n << endl;
+      }
+      return invalid_config;
+    }
+    ret=relf.calc_density(dm.e,dm.T);
+    if (ret!=0) return ret;
+    dm.th.ed+=dm.e.ed;
+    dm.th.en+=dm.e.en;
+
+    if (verbose>0) {
+      cout.width(20);
+      cout << "Electrons: " 
+	   << dm.e.n << " " << dm.e.mu << " " << dm.e.ed << " "
+	   << dm.e.en << endl;
+    }
+
+    if (false) {
+      // Add muons
+      dm.mu.mu=dm.e.mu;
+      relf.calc_mu(dm.mu,dm.T);
+      dm.th.ed+=dm.mu.ed;
+      dm.th.en+=dm.mu.en;
+      
+      if (verbose>0) {
+	cout.width(20);
+	cout << "Muons: " 
+	     << dm.mu.n << " " << dm.mu.mu << " " << dm.mu.ed << " "
+	     << dm.mu.en << endl;
+      }
+    }
+
+    // Add photons
+    dm.photon.massless_calc(dm.T);
+    dm.th.ed+=dm.photon.ed;
+    dm.th.en+=dm.photon.en;
+
+    if (verbose>0) {
+      cout.width(20);
+      cout << "Photons: " 
+	   << dm.photon.n << " " << 0.0 << " " << dm.photon.ed << " "
+	   << dm.photon.en << endl;
+    }
+  }
+
+  // Vectors for derivatives of nuclear binding energy
+  ubvector vec_dEdne(dm.dist.size()), vec_dEdnp(dm.dist.size());
+
+  // Compute the properties of the nuclei
+  for(size_t i=0;i<dm.dist.size();i++) {
+    
+    // Check that the proton density isn't too large in
+    // the presence of nuclei
+    if (dm.p.n>0.08) {
+      if (verbose>0) {
+	cout << "External proton density (" << dm.p.n 
+	     << ") too large." << endl;
+      }
+      return invalid_config;
+    }
+      
+    // Check that the electron density isn't too large
+    // in the presence of nuclei
+    double fac=(0.08-dm.p.n)/(dm.e.n-dm.p.n);
+    if (1.0>fac) {
+      if (verbose>0) {
+	cout << "Proton radius negative or larger than cell size." << endl;
+	cout << "fac: " << fac << endl;
+      }
+      return invalid_config;
+    }
+      
+    // Create a reference for this nucleus
+    nucleus &nuc=dm.dist[i];
+
+    // Compute nuclear binding energy and total mass
+    double dEdnp, dEdnn, dEdne, dEdT;
+    // Include protons in the Coulomb energy
+    massp->binding_energy_densmat_derivs
+      (nuc.Z,nuc.N,dm.p.n,dm.n.n,dm.e.n,dm.T,nuc.be,dEdnp,dEdnn,dEdne,dEdT);
+    nuc.be/=hc_mev_fm;
+    nuc.m=nuc.Z*dm.p.m+nuc.N*dm.n.m+nuc.be;
+    nuc.mu=nuc.Z*dm.p.mu+nuc.N*dm.n.mu-nuc.be;
+    vec_dEdne[i]=dEdne;
+
+    // Translational energy
+    cla.calc_density(nuc,dm.T);
+
+    // Update thermo object with information from nucleus
+    dm.th.ed+=nuc.be*nuc.n+nuc.ed;
+    dm.th.en+=nuc.en;
+
+  }
+
+  // -----------------------------------------------------------
+  // Compute etas
+
+  // Ensure the eta vector has the correct size
+  if (dm.eta_nuc.size()!=dm.dist.size()) {
+    dm.eta_nuc.resize(dm.dist.size());
+  }
+
+  dm.eta_n=dm.n.mu;
+  dm.eta_p=dm.p.mu+dm.e.mu;
+
+  for(size_t i=0;i<dm.dist.size();i++) {
+
+    double dmudm_i=-1.5*dm.T/dm.dist[i].m;
+    double dfdm_i=dm.dist[i].n*dmudm_i;
+    dm.eta_nuc[i]=dm.dist[i].be+dm.dist[i].mu+dm.dist[i].Z*dm.e.mu;
+    dm.eta_p+=(dm.dist[i].n+dfdm_i)*(vec_dEdne[i])/hc_mev_fm;
+    
+    for(size_t j=0;j<dm.dist.size();j++) {
+      
+      if (dm.dist[i].n>0.0) {
+	
+	double dmudm=-1.5*dm.T/dm.dist[j].m;
+	double dfdm=dm.dist[j].n*dmudm;
+	
+	dm.eta_nuc[i]+=dm.dist[i].Z*(dm.dist[j].n+dfdm)*
+	  vec_dEdne[j]/hc_mev_fm;
+      }
+    }
+  }
+      
+  // -----------------------------------------------------------
+  // Computation of pressure
+
+  dm.th.pr=-dm.th.ed+dm.n.n*dm.eta_n+dm.p.n*dm.eta_p+
+    dm.T*dm.th.en;
+  for(size_t i=0;i<dm.dist.size();i++) {
+    dm.th.pr+=dm.dist[i].n*dm.eta_nuc[i];
+  }
+
+  return success;
+}
+
+int eos_nse_full::calc_density_noneq(dense_matter &dm, int verbose) {
   
   // -----------------------------------------------------------
   // Sanity checks
@@ -345,46 +559,46 @@ int eos_nse_full::calc_density_noneq_nr(dense_matter &dm, int verbose) {
   if (!o2scl::is_finite(dm.n.n) || 
       !o2scl::is_finite(dm.p.n)) {
     O2SCL_ERR2("Neutron or proton density not finite in ",
-	       "eos_nse_full::calc_density_noneq_nr().",exc_esanity);
+	       "eos_nse_full::calc_density_noneq().",exc_esanity);
   }
   if (dm.n.m<0.0 || dm.p.m<0.0) {
     O2SCL_ERR2("Mass negative in ",
-	       "eos_nse_full::calc_density_noneq_nr().",exc_esanity);
+	       "eos_nse_full::calc_density_noneq().",exc_esanity);
   }
   for(size_t i=0;i<dm.dist.size();i++) {
     if (dm.dist[i].inc_rest_mass==true) {
-      O2SCL_ERR("Wrong inc_rest_mass for nuclei in noneq_nr().",
+      O2SCL_ERR("Wrong inc_rest_mass for nuclei in noneq().",
 		exc_esanity);
     }
   }
   if (dm.n.inc_rest_mass==true) {
-    O2SCL_ERR("Wrong inc_rest_mass for neutrons in noneq_nr().",
+    O2SCL_ERR("Wrong inc_rest_mass for neutrons in noneq().",
 	      exc_esanity);
   }
   if (dm.p.inc_rest_mass==true) {
-    O2SCL_ERR("Wrong inc_rest_mass for protons in noneq_nr().",
+    O2SCL_ERR("Wrong inc_rest_mass for protons in noneq().",
 	      exc_esanity);
   }
   if (dm.e.inc_rest_mass==false) {
-    O2SCL_ERR("Wrong inc_rest_mass for electrons in noneq_nr().",
+    O2SCL_ERR("Wrong inc_rest_mass for electrons in noneq().",
 	      exc_esanity);
   }
   for(size_t i=0;i<dm.dist.size();i++) {
     if (dm.dist[i].non_interacting==false) {
-      O2SCL_ERR("Wrong non_interacting for nuclei in noneq_nr().",
+      O2SCL_ERR("Wrong non_interacting for nuclei in noneq().",
 		exc_esanity);
     }
   }
   if (dm.n.non_interacting==true) {
-    O2SCL_ERR("Wrong non_interacting for neutrons in noneq_nr().",
+    O2SCL_ERR("Wrong non_interacting for neutrons in noneq().",
 	      exc_esanity);
   }
   if (dm.p.non_interacting==true) {
-    O2SCL_ERR("Wrong non_interacting for protons in noneq_nr().",
+    O2SCL_ERR("Wrong non_interacting for protons in noneq().",
 	      exc_esanity);
   }
   if (dm.e.non_interacting==false) {
-    O2SCL_ERR("Wrong non_interacting for electrons in noneq_nr().",
+    O2SCL_ERR("Wrong non_interacting for electrons in noneq().",
 	      exc_esanity);
   }
 
@@ -424,7 +638,7 @@ int eos_nse_full::calc_density_noneq_nr(dense_matter &dm, int verbose) {
     cout.setf(ios::showpos);
     cout << "--------------------------------------"
 	 << "--------------------------------------" << endl;
-    cout << "noneq_nr():" << endl;
+    cout << "noneq():" << endl;
     cout << endl;
     cout << "nB, Ye, T (MeV): " << nB << " " << Ye << " "
 	 << dm.T*hc_mev_fm << endl;
@@ -529,12 +743,23 @@ int eos_nse_full::calc_density_noneq_nr(dense_matter &dm, int verbose) {
       
       // Compute nuclear binding energy and total mass
       double dEdnp, dEdnn, dEdne, dEdT;
-      massp->binding_energy_densmat_derivs
-	(nuc.Z,nuc.N,dm.p.n,dm.n.n,dm.e.n,dm.T,nuc.be,dEdnp,dEdnn,dEdne,dEdT);
-      nuc.be/=hc_mev_fm;
-      nuc.m=nuc.Z*dm.p.m+nuc.N*dm.n.m+nuc.be;
-      vec_dEdnp[i]=dEdnp;
-      vec_dEdne[i]=dEdne;
+      if (inc_prot_coul) {
+	// Include protons in the Coulomb energy
+	massp->binding_energy_densmat_derivs
+	  (nuc.Z,nuc.N,dm.p.n,dm.n.n,dm.e.n,dm.T,nuc.be,dEdnp,dEdnn,dEdne,dEdT);
+	nuc.be/=hc_mev_fm;
+	nuc.m=nuc.Z*dm.p.m+nuc.N*dm.n.m+nuc.be;
+	vec_dEdnp[i]=dEdnp;
+	vec_dEdne[i]=dEdne;
+      } else {
+	// Don't include protons in the Coulomb energy
+	massp->binding_energy_densmat_derivs
+	  (nuc.Z,nuc.N,0.0,dm.n.n,dm.e.n,dm.T,nuc.be,dEdnp,dEdnn,dEdne,dEdT);
+	nuc.be/=hc_mev_fm;
+	nuc.m=nuc.Z*dm.p.m+nuc.N*dm.n.m+nuc.be;
+	vec_dEdnp[i]=0.0;
+	vec_dEdne[i]=dEdne;
+      }
 
       // Translational energy
       cla.calc_density(nuc,dm.T);
@@ -642,7 +867,7 @@ int eos_nse_full::calc_density_noneq_nr(dense_matter &dm, int verbose) {
   return success;
 }
 
-int eos_nse_full::density_match_nr(dense_matter &dm) {
+int eos_nse_full::density_match(dense_matter &dm) {
   
   double nn_fix=(1.0-dm.Ye)*dm.nB;
   double np_fix=dm.Ye*dm.nB;
@@ -658,7 +883,7 @@ int eos_nse_full::density_match_nr(dense_matter &dm) {
   }
 
   // Initial evaluation
-  int ret=calc_density_noneq_nr(dm);
+  int ret=calc_density_noneq(dm);
   
   // If it's invalid, try to fix
   if (ret==invalid_config) {
@@ -678,7 +903,7 @@ int eos_nse_full::density_match_nr(dense_matter &dm) {
       dm.p.n+=(1.0-dm.Ye)*nB_corr;
 
       // Evaluate new 
-      ret=calc_density_noneq_nr(dm);
+      ret=calc_density_noneq(dm);
       shift*=10.0;
     }
   }
@@ -686,7 +911,7 @@ int eos_nse_full::density_match_nr(dense_matter &dm) {
   // If we couldn't fix, throw
   if (ret==invalid_config) {
     O2SCL_ERR2("Could not find valid configuration in ",
-	       "eos_nse_full::density_match_nr().",exc_efailed);
+	       "eos_nse_full::density_match().",exc_efailed);
   } else if (ret!=0) {
     // Or if there is some other failure, return
     return ret;
@@ -710,18 +935,18 @@ int eos_nse_full::density_match_nr(dense_matter &dm) {
     }
     
     // Now add free neutrons and protons to match
-    calc_density_noneq_nr(dm);
+    calc_density_noneq(dm);
     cout << "Adjusting neutrons by: " << nn_fix-(1.0-dm.Ye)*dm.nB << endl;
     dm.n.n+=nn_fix-(1.0-dm.Ye)*dm.nB;
     cout << "Adjusting protons by: " << np_fix-dm.Ye*dm.nB << endl;
     dm.p.n+=np_fix-dm.Ye*dm.nB;
   }
   
-  ret=calc_density_noneq_nr(dm);
+  ret=calc_density_noneq(dm);
 
   if (ret==invalid_config) {
     O2SCL_ERR2("Did not produce valid configuration in ",
-	       "eos_nse_full::density_match_nr().",exc_efailed);
+	       "eos_nse_full::density_match().",exc_efailed);
   }
 
   if (false) {
@@ -734,7 +959,7 @@ int eos_nse_full::density_match_nr(dense_matter &dm) {
   if (fabs((1.0-dm.Ye)*dm.nB-nn_fix)/nn_fix>1.0e-6 ||
       fabs(dm.Ye*dm.nB-np_fix)/np_fix>1.0e-6) {
     O2SCL_ERR2("Density match failed in ",
-	       "eos_nse_full::density_match_nr().",exc_esanity);
+	       "eos_nse_full::density_match().",exc_esanity);
   }
 
   return ret;
@@ -790,7 +1015,9 @@ void eos_nse_full::output(dense_matter &dm, int verbose) {
   return;
 }
 
-int eos_nse_full::calc_density_nr(dense_matter &dm, int verbose) {
+#ifdef O2SCL_NEVER_DEFINED
+
+int eos_nse_full::calc_density(dense_matter &dm, int verbose) {
 
   double factor=1.0e-10;
 
@@ -804,16 +1031,16 @@ int eos_nse_full::calc_density_nr(dense_matter &dm, int verbose) {
   int ret;
 
   // Output
-  calc_density_noneq_nr(dm,1);
+  calc_density_noneq(dm,1);
   cout << "Initial guess." << endl;
   cin >> ch;
   
   // Initial minimization
-  ret=calc_density_fixcomp_nr(dm);
+  ret=calc_density_fixcomp(dm);
   cout << "ret: " << ret << endl;
 
   // Output
-  calc_density_noneq_nr(dm,1);
+  calc_density_noneq(dm,1);
   cout << "Post initial minimization." << endl;
   cin >> ch;
   
@@ -860,11 +1087,11 @@ int eos_nse_full::calc_density_nr(dense_matter &dm, int verbose) {
     }
 
     // Readjust densities
-    ret=density_match_nr(dm);
+    ret=density_match(dm);
     cout << "ret: " << ret << endl;
 
     // Output
-    ret=calc_density_noneq_nr(dm,1);
+    ret=calc_density_noneq(dm,1);
     cout << "retx: " << ret << endl;
     cout << "Post density match." << endl;
     cin >> ch;
@@ -873,11 +1100,11 @@ int eos_nse_full::calc_density_nr(dense_matter &dm, int verbose) {
 
       // Perform new minimization
       cout << "Going to fixcomp: " << endl;
-      ret=calc_density_fixcomp_nr(dm);
+      ret=calc_density_fixcomp(dm);
       cout << "ret: " << ret << endl;
       
       // Output
-      calc_density_noneq_nr(dm,1);
+      calc_density_noneq(dm,1);
       cout << "Post iterative minimization: " << i << endl;
       cin >> ch;
     }
@@ -893,7 +1120,7 @@ int eos_nse_full::calc_density_nr(dense_matter &dm, int verbose) {
     }
     
     // Output
-    calc_density_noneq_nr(dm,1);
+    calc_density_noneq(dm,1);
     cout << "Post prune." << endl;
     cin >> ch;
 
@@ -910,3 +1137,4 @@ int eos_nse_full::calc_density_nr(dense_matter &dm, int verbose) {
   return 0;
 }
 
+#endif

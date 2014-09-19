@@ -66,10 +66,9 @@ int eos_nse::calc_density(double nB, double Ye, double T,
   mm_funct11 mfm=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &,double,
 		     double,double,vector<nucleus> &)>
-     (&eos_nse::solve_fun),
-     this,std::placeholders::_1,std::placeholders::_2,
-    std::placeholders::_3,nB,Ye,T,std::ref(nd));
-  
+    (&eos_nse::solve_fun),this,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3,nB,Ye,T,std::ref(nd));
+
   int ret=root->msolve(2,x,mfm);
   if (ret!=0) {
     O2SCL_CONV_RET("Solver failed in eos_nse::calc_density().",
@@ -99,8 +98,8 @@ int eos_nse::solve_fun(size_t nv, const ubvector &x, ubvector &y,
 
   y[0]=(nB2-nB)/nB;
   y[1]=Ye2-Ye;
-
-  if (nB<=0.0 || y[0]==-1.0) {
+  
+  if (nB2<=0.0 || y[0]==-1.0) {
     return exc_ebadfunc;
   }
   if (!o2scl::is_finite(y[0]) || !o2scl::is_finite(y[1])) {
