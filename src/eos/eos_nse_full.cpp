@@ -103,7 +103,7 @@ double dense_matter::average_N() {
   return Nntot/ntot;
 }
 
-double dense_matter::nB_nuclei() {
+double dense_matter::baryon_density_nuclei() {
     
   double nBtot=0.0;
 
@@ -112,6 +112,28 @@ double dense_matter::nB_nuclei() {
   }
   
   return nBtot;
+}
+
+double dense_matter::baryon_density() {
+    
+  double nBtot=0.0;
+
+  for (size_t i=0;i<dist.size();i++) {
+    nBtot+=dist[i].n*(dist[i].Z+dist[i].N);
+  }
+  
+  return nBtot+n.n+p.n;
+}
+
+double dense_matter::electron_fraction() {
+    
+  double nptot=0.0;
+
+  for (size_t i=0;i<dist.size();i++) {
+    nptot+=dist[i].n*dist[i].Z;
+  }
+  
+  return (nptot+p.n)/baryon_density();
 }
 
 double dense_matter::impurity() {
@@ -325,6 +347,25 @@ int eos_nse_full::calc_density_fixcomp(dense_matter &dm, int verbose) {
   return 0;
 }
 
+#ifdef O2SCL_NEVER_DEFINED
+
+int eos_nse_full::calc_density(dense_matter &dm, int verbose) {
+  return 0;
+}
+
+int eos_nse_full::solve_fixnp(size_t n, const uvector &x, uvector &y,
+			      dense_matter &dm) {
+  dm.nB=x[0];
+  dm.Ye=x[1];
+  ret=calc_density_fixnp(dm);
+  if (ret!=0) return ret;
+  y[0]=2.0*(dm.baryon_density()-dm.nB)/(dm.baryon_density()+dm.nB);
+  y[1]=2.0*(dm.electron_fraction()-dm.Ye)/(dm.electron_fraction()+dm.Ye);
+  return 0;
+}
+
+#endif
+
 int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
 
   // -----------------------------------------------------------
@@ -375,6 +416,10 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
     O2SCL_ERR("Wrong non_interacting for electrons in fixnp().",
 	      exc_esanity);
   }
+  if (inc_prot_coul==true) {
+    O2SCL_ERR2("Including protons in Coulomb not implemented in ",
+	       "eos_nse_full::calc_density_fixnp().",exc_eunimpl);
+  }
 
   if (dm.n.n<0.0 || dm.p.n<0.0) {
     if (verbose>0) {
@@ -393,16 +438,29 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
   // Add contribution from dripped nucleons
   dm.th=dm.drip_th;
 
-  // Compute Ye, nB and electron density
-  double nB, Ye;
-  nB=dm.n.n+dm.p.n;
-  Ye=dm.p.n;
-  for(size_t i=0;i<dm.dist.size();i++) {
-    nB+=dm.dist[i].n*((double)dm.dist[i].A);
-    Ye+=dm.dist[i].n*((double)dm.dist[i].Z);
+  // -----------------------------------------------------------
+  // Verbose output
+
+  if (verbose>0) {
+    cout.setf(ios::left);
+    cout.setf(ios::showpos);
+    cout << "--------------------------------------"
+	 << "--------------------------------------" << endl;
+    cout << "fixnp():" << endl;
+    cout << endl;
+    cout << "nB_0, Ye_0, T (MeV): " << dm.nB << " " << dm.Ye << " "
+	 << dm.T*hc_mev_fm << endl;
+    cout << endl;
+    cout << "                                n            mu          "
+	 << "  ed            en" << endl;
+    cout.width(20);
+    cout << "Neutrons: " << dm.n.n << " " << dm.n.mu << endl;
+    cout.width(20);
+    cout << "Protons: " << dm.p.n << " " << dm.p.mu << endl;
+    cout.width(48);
+    cout << "Dripped nucleons: " 
+	 << dm.drip_th.ed << " " << dm.drip_th.en << endl;
   }
-  Ye/=nB;
-  dm.e.n=Ye*nB;
 
   // -----------------------------------------------------------
   // Leptons and photons
@@ -410,7 +468,7 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
   if (inc_lept_phot) {
 
     // Add electrons
-    dm.e.n=Ye*nB;
+    dm.e.n=dm.Ye*dm.nB;
     if (dm.e.n<dm.p.n) {
       if (verbose>0) {
 	cout << "Electron density too small to match proton density."
@@ -460,7 +518,7 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
   }
 
   // Vectors for derivatives of nuclear binding energy
-  ubvector vec_dEdne(dm.dist.size()), vec_dEdnp(dm.dist.size());
+  ubvector vec_dEdne(dm.dist.size());
 
   // Compute the properties of the nuclei
   for(size_t i=0;i<dm.dist.size();i++) {
@@ -496,16 +554,25 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
       (nuc.Z,nuc.N,dm.p.n,dm.n.n,dm.e.n,dm.T,nuc.be,dEdnp,dEdnn,dEdne,dEdT);
     nuc.be/=hc_mev_fm;
     nuc.m=nuc.Z*dm.p.m+nuc.N*dm.n.m+nuc.be;
-    nuc.mu=nuc.Z*dm.p.mu+nuc.N*dm.n.mu-nuc.be;
     vec_dEdne[i]=dEdne;
 
+    // Use NSE to compute the chemical potential
+    nuc.mu=nuc.Z*dm.p.mu+nuc.N*dm.n.mu-nuc.be;
+    
     // Translational energy
-    cla.calc_density(nuc,dm.T);
+    cla.calc_mu(nuc,dm.T);
 
     // Update thermo object with information from nucleus
     dm.th.ed+=nuc.be*nuc.n+nuc.ed;
     dm.th.en+=nuc.en;
 
+    if (verbose>0) {
+      string s="Nucleus ("+itos(((int)(nuc.Z+1.0e-8)))+","+
+	itos(((int)(nuc.N+1.0e-8)))+"): ";
+      cout.width(20);
+      cout << s << nuc.n << " " << nuc.mu << " " 
+	   << nuc.ed+nuc.be*nuc.n << " " << nuc.en << endl;
+    }
   }
 
   // -----------------------------------------------------------
@@ -524,6 +591,7 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
     double dmudm_i=-1.5*dm.T/dm.dist[i].m;
     double dfdm_i=dm.dist[i].n*dmudm_i;
     dm.eta_nuc[i]=dm.dist[i].be+dm.dist[i].mu+dm.dist[i].Z*dm.e.mu;
+    // In eta_p, we don't include dEdnp terms which are zero
     dm.eta_p+=(dm.dist[i].n+dfdm_i)*(vec_dEdne[i])/hc_mev_fm;
     
     for(size_t j=0;j<dm.dist.size();j++) {
@@ -546,6 +614,44 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
     dm.T*dm.th.en;
   for(size_t i=0;i<dm.dist.size();i++) {
     dm.th.pr+=dm.dist[i].n*dm.eta_nuc[i];
+  }
+
+  // -----------------------------------------------------------
+  // Verbose output
+
+  if (verbose>0) {
+    cout.width(48);
+    cout << "Total: " << dm.th.ed << " " << dm.th.en << endl;
+    cout << endl;
+    cout << "Free energy: " << dm.th.ed-dm.T*dm.th.en << endl;
+    cout << endl;
+    cout << "Contributions to pressure:" << endl;
+    cout << "                                n           eta          "
+	 << "  pr" << endl;
+    cout.width(48);
+    cout << "- Energy: " << -dm.th.ed << endl;
+    cout.width(48);
+    cout << "T * Entropy: " << dm.T*dm.th.en << endl;
+    cout.width(20);
+    cout << "Neutrons: " << dm.n.n << " " << dm.eta_n << " "
+	 << dm.n.n*dm.eta_n << endl;
+    cout.width(20);
+    cout << "Protons: " << dm.p.n << " " << dm.eta_p << " "
+	 << dm.p.n*dm.eta_p << endl;
+    for(size_t i=0;i<dm.dist.size();i++) {
+      nucleus &nuc=dm.dist[i];
+      string s="Nucleus ("+itos(((int)(nuc.Z+1.0e-8)))+","+
+	itos(((int)(nuc.N+1.0e-8)))+"): ";
+      cout.width(20);
+      cout << s << nuc.n << " " << dm.eta_nuc[i] << " "
+	   << nuc.n*dm.eta_nuc[i] << endl;
+    }
+    cout.width(48);
+    cout << "Total pressure: " << dm.th.pr << endl;
+    cout << "--------------------------------------"
+	 << "--------------------------------------" << endl;
+    cout.unsetf(ios::left);
+    cout.unsetf(ios::showpos);
   }
 
   return success;
@@ -814,6 +920,7 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm, int verbose) {
 	  vec_dEdne[j]/hc_mev_fm;
       }
     }
+    
   }
       
 

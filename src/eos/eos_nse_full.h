@@ -203,7 +203,23 @@ namespace o2scl {
       
 	This function returns \f$ \sum_i n_i A_i \f$ .
     */
-    double nB_nuclei();
+    double baryon_density_nuclei();
+
+    /** \brief Compute the total baryon density
+      
+	This function returns \f$ n_n + n_p + \sum_i n_i A_i \f$ .
+    */
+    double baryon_density();
+
+    /** \brief Compute the electron fraction
+      
+	This function returns 
+	\f[
+	\frac{1}{n_B} \left(n_p + \sum_i Z_i n_i \right)
+	\f]
+	where \f$ n_B \f$ is the value returned by \ref baryon_density() .
+    */
+    double electron_fraction();
 
     /** \brief Return true if nucleus (Z,N) is in the distribution and
 	store it's index in \c index
@@ -322,9 +338,6 @@ namespace o2scl {
     */
     double free_energy(const ubvector &n_nuc, dense_matter &dm);
 
-    /// The minimizer
-    o2scl::mmin_simp2<> def_mmin;
-
     /// Nucleonic EOS (0 by default)
     o2scl::eos_had_temp_base *ehtp;
 
@@ -334,6 +347,9 @@ namespace o2scl {
 
     eos_nse_full();
     
+    /// The minimizer
+    o2scl::mmin_simp2<> def_mmin;
+
     /// Compute nuclei in dense matter
     o2scl::nucmass_densmat nuc_dens;
 
@@ -379,7 +395,10 @@ namespace o2scl {
     */
     int calc_density_noneq(dense_matter &dm, int verbose=0);
 
-    int calc_density_fixnp(dense_matter &dm, int verbose);
+    /** \brief Compute the properties of matter from 
+	neutron and proton densities, using NSE
+    */
+    int calc_density_fixnp(dense_matter &dm, int verbose=0);
   
     /** \brief Compute the free energy for a fixed composition
 

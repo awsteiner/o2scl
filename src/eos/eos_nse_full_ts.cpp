@@ -150,25 +150,50 @@ int main(void) {
   t.test_rel(dm.eta_nuc[0],eta_nuc[0],1.0e-6,"eta_nuc[0]");
   t.test_rel(dm.eta_nuc[1],eta_nuc[1],1.0e-6,"eta_nuc[1]");
   t.test_rel(dm.eta_nuc[2],eta_nuc[2],1.0e-6,"eta_nuc[2]");
-
+  
   // Now try to minimize the free energy for this composition
 
   dm.nB=5.2e-2;
   dm.Ye=0.4943;
 
-  nse.calc_density_fixcomp(dm,0);
+  ret=nse.calc_density_fixcomp(dm,0);
+  t.test_gen(ret==0,"ret 2");
+  t.test_rel(dm.baryon_density(),dm.nB,1.0e-6,"baryon density");
+  t.test_rel(dm.electron_fraction(),dm.Ye,1.0e-6,"electron fraction");
 
   fr1=dm.th.ed-dm.th.en*dm.T;
 
-  // Double check the free energy
+  // Double check the free energy, baryon density, and electron fraction
 
-  ret=nse.calc_density_noneq(dm,1);
-  t.test_gen(ret==0,"ret 2");
+  ret=nse.calc_density_noneq(dm);
+  t.test_gen(ret==0,"ret 3");
   fr2=dm.th.ed-dm.th.en*dm.T;
   t.test_rel(fr1,fr2,1.0e-6,"free energies");
 
-  //dm.T=4.0/hc_mev_fm;
-  //nse.calc_density(dm);
+  // Minimize the free energy when inc_prot_coul is false
+
+  nse.inc_prot_coul=false;
+  // (This requires very accurate minimization to work correctly)
+  nse.def_mmin.tol_rel/=1.0e4;
+  nse.def_mmin.tol_abs/=1.0e4;
+
+  ret=nse.calc_density_fixcomp(dm,0);
+  t.test_gen(ret==0,"ret 4");
+
+  for(size_t i=0;i<3;i++) {
+    t.test_rel(dm.dist[i].be+dm.dist[i].mu,
+	       dm.dist[i].Z*dm.p.mu+dm.dist[i].N*dm.n.mu,1.0e-2,"NSE 1");
+    t.test_rel(dm.eta_n*dm.dist[i].N+dm.eta_p*dm.dist[i].Z,
+	       dm.eta_nuc[i],1.0e-3,"NSE 2");
+  }
+  
+  nse.calc_density_noneq(dm,1);
+  nse.calc_density_fixnp(dm,1);
+
+  // But even with this accurate minimization, it doesn't quite
+  // get the right densities
+  cout << dm.nB << " " << dm.baryon_density() << endl;
+  cout << dm.Ye << " " << dm.electron_fraction() << endl;
   
   t.report();
   return 0;
