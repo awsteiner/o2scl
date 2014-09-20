@@ -20,6 +20,29 @@
 
   -------------------------------------------------------------------
 */
+/* interpolation/linear.c
+ * interpolation/cspline.c
+ * interpolation/akima.c
+ * interpolation/steffen.c
+ * 
+ * Copyright (C) 1996, 1997, 1998, 1999, 2000, 2004 Gerard Jungman
+ * Copyright (C) 2014 Jean-François Caron
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301, USA.
+ */
 #ifndef O2SCL_INTERP_H
 #define O2SCL_INTERP_H
 
@@ -1019,7 +1042,10 @@ namespace o2scl {
 
   };
 
-  /** \brief Steffen interpolation
+  /** \brief Steffen's monotonicity-preserving interpolation
+
+      Adapted from the GSL version by J.-F. Caron which
+      was based on \ref Steffen90 .
    */
   template<class vec_t, class vec2_t=vec_t> class interp_steffen : 
   public interp_base<vec_t,vec2_t> {
@@ -1049,7 +1075,8 @@ namespace o2scl {
     ubvector y_prime;
     //@}
     
-    /// Desc
+    /** \brief Flip the sign of x if x and y have different signs
+     */
     double copysign(const double x, const double y) {
       if ((x < 0 && y > 0) || (x > 0 && y < 0)) {
 	return -x;
@@ -1058,19 +1085,16 @@ namespace o2scl {
       return x;
     }
 
-    /// Desc
-    double min(double a, double b) {
-      if (a<b) return a;
-      return b;
-    }
+    //double min(double a, double b) {
+    //if (a<b) return a;
+    //return b;
+    //}
 
 #endif
     
   public:
 
-    /** \brief Create a base interpolation object with natural or
-	periodic boundary conditions
-    */
+    /** \brief Create a base interpolation object */
     interp_steffen() {
       this->min_size=3;
     }
@@ -1131,7 +1155,7 @@ namespace o2scl {
 	
 	/* This is a C equivalent of the FORTRAN statement below eqn 11 */
 	y_prime[i]=(copysign(1.0,sim1)+copysign(1.0,si))*
-	  min(fabs(sim1),min(fabs(si),0.5*fabs(pi))); 
+	  std::min(fabs(sim1),std::min(fabs(si),0.5*fabs(pi))); 
 
       }
 

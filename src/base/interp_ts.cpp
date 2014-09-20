@@ -647,7 +647,7 @@ int main(void) {
     static const size_t N=21;
     double a=2.01;
 
-    bool debug=true;
+    bool debug=false;
     if (debug) cout.precision(4);
     
     // Test data 
@@ -674,13 +674,26 @@ int main(void) {
       double derivb=iov.deriv(x);
       double deriv2a=io.deriv2(x,N,vx,vy);
       double deriv2b=iov.deriv2(x);
+      double integ=-2.0*cos(x/2.0)+x*x/2.0/a+2.0;
+      double intega=io.integ(0.0,x,N,vx,vy);
+      double integb=iov.integ(0.0,x);
       if (debug) {
+	cout.precision(4);
 	cout << x << " " << exact << " " << interpa << " " 
 	     << deriv << " " << deriva << " "
-	     << deriv2 << " " << deriv2a << endl;
+	     << deriv2 << " " << deriv2a << " "
+	     << integ << " " << intega << " " << integb << endl;
+	cout.precision(6);
       }
       t.test_gen(interpa>last,"steffen 2");
+      t.test_gen(interpa==interpb,"types");
       t.test_rel(interpa,exact,4.0e-2,"interp");
+      t.test_gen(deriva==derivb,"types d");
+      t.test_rel(deriva,deriv,100.0,"deriv");
+      t.test_gen(deriv2a==deriv2b,"types d2");
+      t.test_rel(deriv2a,deriv2,50.0,"deriv2");
+      t.test_gen(intega==integb,"types i");
+      t.test_rel(intega,integ,4.0e-1,"integ2");
       last=interpa;
     }
 
