@@ -55,7 +55,9 @@ namespace o2scl {
     /// Akima spline for periodic boundary conditions
     itp_akima_peri=5,
     /// Monotonicity-preserving interpolation
-    itp_monotonic=6
+    itp_monotonic=6,
+    /// Steffen's monotonic method
+    itp_steffen=7
   };
 
   /** \brief Base low-level interpolation class [abstract base]
@@ -1017,6 +1019,251 @@ namespace o2scl {
 
   };
 
+  /** \brief Steffen interpolation
+   */
+  template<class vec_t, class vec2_t=vec_t> class interp_steffen : 
+  public interp_base<vec_t,vec2_t> {
+    
+#ifdef O2SCL_NEVER_DEFINED
+  }{
+#endif
+    
+  public:
+    
+    typedef boost::numeric::ublas::vector<double> ubvector;
+    typedef boost::numeric::ublas::vector_slice<ubvector> ubvector_slice;
+    typedef boost::numeric::ublas::vector_range<ubvector> ubvector_range;
+    typedef boost::numeric::ublas::slice slice;
+    typedef boost::numeric::ublas::range range;
+    
+#ifndef DOXYGEN_INTERNAL
+    
+  protected:
+    
+    /// \name Storage for cubic spline interpolation
+    //@{
+    ubvector a;
+    ubvector b;
+    ubvector c;
+    ubvector d;
+    ubvector y_prime;
+    //@}
+    
+    /// Desc
+    double copysign(const double x, const double y) {
+      if ((x < 0 && y > 0) || (x > 0 && y < 0)) {
+	return -x;
+      }
+      
+      return x;
+    }
+
+    /// Desc
+    double min(double a, double b) {
+      if (a<b) return a;
+      return b;
+    }
+
+#endif
+    
+  public:
+
+    /** \brief Create a base interpolation object with natural or
+	periodic boundary conditions
+    */
+    interp_steffen() {
+      this->min_size=3;
+    }
+
+    virtual ~interp_steffen() {
+    }
+
+    /** \brief Initialize interpolation routine
+     */
+    virtual void set(size_t size, const vec_t &xa, const vec2_t &ya) {
+      
+      if (size<this->min_size) {
+	O2SCL_ERR((((std::string)"Vector size, ")+szttos(size)+", is less"+
+		   " than "+szttos(this->min_size)+" in interp_steffen::"+
+		   "set().").c_str(),exc_einval);
+      }
+      
+      if (size!=this->sz) {
+	a.resize(size);
+	b.resize(size);
+	c.resize(size);
+	d.resize(size);
+	y_prime.resize(size);
+      }
+      
+      this->px=&xa;
+      this->py=&ya;
+      this->sz=size;
+      
+      this->svx.set_vec(size,xa);
+      
+      /*
+       * first assign the interval and slopes for the left boundary.
+       * We use the "simplest possibility" method described in the paper
+       * in section 2.2
+       */
+      double h0=(xa[1]-xa[0]);
+      double s0=(ya[1]-ya[0]) / h0;
+      
+      y_prime[0]=s0;
+      
+      /* Now we calculate all the necessary s, h, p, and y' variables 
+	 from 1 to N-2 (0 to size-2 inclusive) */
+      for (size_t i=1; i < (size-1); i++) {
+	
+	double pi;
+	
+	/* equation 6 in the paper */
+	double hi=(xa[i+1]-xa[i]);
+	double him1=(xa[i]-xa[i-1]);
+	
+	/* equation 7 in the paper */
+	double si=(ya[i+1]-ya[i]) / hi;
+	double sim1=(ya[i]-ya[i-1]) / him1;
+	
+	/* equation 8 in the paper */
+	pi=(sim1*hi + si*him1) / (him1 + hi);
+	
+	/* This is a C equivalent of the FORTRAN statement below eqn 11 */
+	y_prime[i]=(copysign(1.0,sim1)+copysign(1.0,si))*
+	  min(fabs(sim1),min(fabs(si),0.5*fabs(pi))); 
+
+      }
+
+      /*
+       * we also need y' for the rightmost boundary; we use the
+       * "simplest possibility" method described in the paper in
+       * section 2.2
+       *
+       * y'=s_{n-1}
+       */
+      y_prime[size-1]=(ya[size-1]-ya[size-2])/
+	(xa[size-1]-xa[size-2]);
+      
+      /* Now we can calculate all the coefficients for the whole range. */
+      for (size_t i=0; i < (size-1); i++) {
+	double hi=(xa[i+1]-xa[i]);
+	double si=(ya[i+1]-ya[i]) / hi;
+	
+	/* These are from equations 2-5 in the paper. */
+	a[i]=(y_prime[i] + y_prime[i+1]-2*si) / hi / hi;
+	b[i]=(3*si-2*y_prime[i]-y_prime[i+1]) / hi;
+	c[i]=y_prime[i];
+	d[i]=ya[i];
+      }
+      
+      return;
+    }
+    
+    /// Give the value of the function \f$ y(x=x_0) \f$ .
+    virtual double eval(double x0) const {
+      
+      size_t index=this->svx.find(x0);
+
+      double x_lo=(*this->px)[index];
+      double delx=x0-x_lo;
+      
+      /* Use Horner's scheme for efficient evaluation of polynomials. */
+      double y = d[index]+delx*(c[index]+delx*(b[index]+delx*a[index]));
+      
+      return y;
+    }
+
+    /// Give the value of the derivative \f$ y^{\prime}(x=x_0) \f$ .
+    virtual double deriv(double x0) const {
+
+      size_t index=this->svx.find(x0);
+  
+      double x_lo=(*this->px)[index];
+      double delx=x0-x_lo;
+
+      return c[index] + delx*(2.0*b[index] + delx*3.0*a[index]);
+    }
+
+    /** \brief Give the value of the second derivative  
+	\f$ y^{\prime \prime}(x=x_0) \f$ .
+    */
+    virtual double deriv2(double x0) const {
+
+      size_t index=this->svx.find(x0);
+  
+      double x_lo=(*this->px)[index];
+      double delx=x0-x_lo;
+
+      return 2.0*b[index] + delx*6.0*a[index];
+    }
+
+    /// Give the value of the integral \f$ \int_a^{b}y(x)~dx \f$ .
+    virtual double integ(double al, double bl) const {
+
+      size_t i, index_a, index_b;
+  
+      bool flip=false;
+      if (((*this->px)[0]<(*this->px)[this->sz-1] && al>bl) ||
+	  ((*this->px)[0]>(*this->px)[this->sz-1] && al<bl)) {
+	double tmp=al;
+	al=bl;
+	bl=tmp;
+	flip=true;
+      }
+
+      index_a=this->svx.find(al);
+      index_b=this->svx.find(bl);
+
+      double result=0.0;
+  
+      for(i=index_a; i<=index_b; i++) {
+
+	double x_lo=(*this->px)[i];
+	double x_hi=(*this->px)[i+1];
+	double y_lo=(*this->py)[i];
+	double y_hi=(*this->py)[i+1];
+	double dx=x_hi-x_lo;
+	double dy=y_hi-y_lo;
+
+	if(dx != 0.0) {
+
+	  double x1=(i == index_a) ? al-x_lo : 0.0;
+	  double x2=(i == index_b) ? bl-x_lo : x_hi-x_lo;
+	  result += (1.0/4.0)*a[i]*(x2*x2*x2*x2-x1*x1*x1*x1)+
+	    (1.0/3.0)*b[i]*(x2*x2*x2-x1*x1*x1)+
+	    (1.0/2.0)*c[i]*(x2*x2-x1*x1)+d[i]*(x2-x1);
+
+	} else {
+	  std::string str=((std::string)"Interval of length zero ")+
+	    "between ("+o2scl::dtos(x_lo)+","+o2scl::dtos(y_lo)+
+	    ") and ("+o2scl::dtos(x_hi)+","+o2scl::dtos(y_hi)+
+	    " in interp_steffen::integ().";
+	  O2SCL_ERR(str.c_str(),exc_einval);
+	}
+
+      }
+  
+      if (flip) result*=-1.0;
+
+      return result;
+    }
+
+    /// Return the type, \c "interp_steffen".
+    virtual const char *type() const { return "interp_steffen"; }
+
+#ifndef DOXYGEN_INTERNAL
+
+  private:
+  
+  interp_steffen<vec_t,vec2_t>(const interp_steffen<vec_t,vec2_t> &);
+  interp_steffen<vec_t,vec2_t>& operator=
+  (const interp_steffen<vec_t,vec2_t>&);
+  
+#endif
+
+  };
+  
   /** \brief Monotonicity-preserving interpolation
 
       \warning This class is experimental. Integrals don't work yet.
@@ -1323,6 +1570,8 @@ namespace o2scl {
       itp=new interp_akima_peri<vec_t,vec2_t>;
     } else if (interp_type==itp_monotonic) {
       itp=new interp_monotonic<vec_t,vec2_t>;
+    } else if (interp_type==itp_steffen) {
+      itp=new interp_steffen<vec_t,vec2_t>;
     } else {
       O2SCL_ERR((((std::string)"Invalid interpolation type, ")+
 		 o2scl::szttos(interp_type)+", in "+
@@ -1377,6 +1626,10 @@ namespace o2scl {
       itp=new interp_akima<vec_t,vec2_t>;
     } else if (interp_type==itp_akima_peri) {
       itp=new interp_akima_peri<vec_t,vec2_t>;
+    } else if (interp_type==itp_monotonic) {
+      itp=new interp_monotonic<vec_t,vec2_t>;
+    } else if (interp_type==itp_steffen) {
+      itp=new interp_steffen<vec_t,vec2_t>;
     } else {
       O2SCL_ERR((((std::string)"Invalid interpolation type, ")+
 		 o2scl::szttos(interp_type)+", in "+
@@ -1462,6 +1715,8 @@ namespace o2scl {
       itp=new interp_akima_peri<vec_t,vec2_t>;
     } else if (interp_type==itp_monotonic) {
       itp=new interp_monotonic<vec_t,vec2_t>;
+    } else if (interp_type==itp_steffen) {
+      itp=new interp_steffen<vec_t,vec2_t>;
     } else {
       O2SCL_ERR((((std::string)"Invalid interpolation type, ")+
 		 o2scl::szttos(interp_type)+", in "+
@@ -1509,6 +1764,8 @@ namespace o2scl {
       itp=new interp_akima_peri<vec_t,vec2_t>;
     } else if (interp_type==itp_monotonic) {
       itp=new interp_monotonic<vec_t,vec2_t>;
+    } else if (interp_type==itp_steffen) {
+      itp=new interp_steffen<vec_t,vec2_t>;
     } else {
       O2SCL_ERR((((std::string)"Invalid interpolation type, ")+
 		 o2scl::szttos(interp_type)+", in "+

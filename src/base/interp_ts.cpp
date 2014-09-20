@@ -637,6 +637,56 @@ int main(void) {
 
   }
 
+  // ---------------------------------------------------------------
+  // Test Steffen interpolation
+
+  // First, with a sparse dataset to show that monotonicity works. This
+  // is challenging because the underlying function is not actually
+  // monotonic.
+  {
+    static const size_t N=21;
+    double a=2.01;
+
+    bool debug=true;
+    if (debug) cout.precision(4);
+    
+    // Test data 
+    ubvector vx(N), vy(N);
+    for(size_t i=0;i<N;i++) {
+      vx[i]=((double)i);
+      vy[i]=(sin(vx[i]/2.0)+vx[i]/a);
+      if (i>0) t.test_gen(vy[i]>vy[i-1],"steffen 1");
+      if (debug) cout << i << " " << vx[i] << " " << vy[i] << endl;
+    }
+    if (debug) cout << endl;
+
+    interp<> io(itp_steffen);
+    interp_vec<> iov(N,vx,vy,itp_steffen);
+
+    double last=-1.0;
+    for(double x=0.0;x<=7.0;x+=0.02) {
+      double exact=sin(x/2.0)+x/a;
+      double deriv=cos(x/2.0)/2.0+1.0/a;
+      double deriv2=-sin(x/2.0)/4.0;
+      double interpa=io.eval(x,N,vx,vy);
+      double interpb=iov.eval(x);
+      double deriva=io.deriv(x,N,vx,vy);
+      double derivb=iov.deriv(x);
+      double deriv2a=io.deriv2(x,N,vx,vy);
+      double deriv2b=iov.deriv2(x);
+      if (debug) {
+	cout << x << " " << exact << " " << interpa << " " 
+	     << deriv << " " << deriva << " "
+	     << deriv2 << " " << deriv2a << endl;
+      }
+      t.test_gen(interpa>last,"steffen 2");
+      t.test_rel(interpa,exact,4.0e-2,"interp");
+      last=interpa;
+    }
+
+    if (debug) cout.precision(6);
+  }
+
   t.report();
 
   return 0;

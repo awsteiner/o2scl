@@ -47,7 +47,9 @@
     - \ref o2scl::itp_akima_peri - Akima interpolation with periodic
     boundary conditions
     - \ref o2scl::itp_monotonic - Monotonicity-preserving interpolation
-    of Fritsch and Carlson (experimental)
+    of Fritsch and Carlson (unfinished)
+    - \ref o2scl::itp_steffen - Monotonicity-preserving method of
+    Steffen
 
     Integrals are always computed assuming that if the limits are
     ordered so that if the upper limit appears earlier in the array \c
