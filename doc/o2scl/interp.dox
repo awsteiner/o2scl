@@ -12,7 +12,7 @@
     \code
     boost::numeric::ublas::vector<double> x(20), y(20);
     // fill x and y with data
-    interp<> oi(itp_cspline);
+    o2scl::interp<> oi(itp_cspline);
     double y_half=oi.eval(0.5,20,x,y);
     \endcode
     Alternatively, you can create a \ref o2scl::interp_vec
@@ -21,7 +21,7 @@
     \code
     boost::numeric::ublas::vector<double> x(20), y(20);
     // fill x and y with data
-    interp_vec<> oi(20,x,y,itp_linear);
+    o2scl::interp_vec<> oi(20,x,y,itp_linear);
     double y_half=oi.eval(0.5);
     \endcode
 

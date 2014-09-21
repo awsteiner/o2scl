@@ -53,7 +53,6 @@
     - \subpage install_section
     - \subpage usage_section
     - \subpage examples_section
-    - \subpage related_section
     \comment
     - \subpage cplxnum_section
     \endcomment
@@ -88,6 +87,7 @@
     - \subpage team_section
     - \subpage design_section
     - \subpage license_section
+    - \subpage related_section
     - \subpage ack_section
     - \subpage ref_section
     - <b><a href="todo.html">Todo List</a></b>

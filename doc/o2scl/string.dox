@@ -9,11 +9,11 @@
     - \ref o2scl::btos() - boolean value to string
     - \ref o2scl::dtos() - double to string
     - \ref o2scl::stoi() - string to integer 
-    (uses C++11 <tt>std::stoi()</tt> when C++11 support is enabled)
+    (uses C++11 <tt>std::stoi()</tt>)
     - \ref o2scl::stoszt() - string to <tt>size_t</tt>
     - \ref o2scl::stob() - string to boolean value
     - \ref o2scl::stod() - string to double 
-    (uses C++11 <tt>std::stod()</tt> when C++11 support is enabled)
+    (uses C++11 <tt>std::stod()</tt>)
 
     (While \ref o2scl::dtos() and similar functions have been
     implemented in <tt>std::to_string</tt>, these functions do not

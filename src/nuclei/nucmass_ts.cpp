@@ -147,20 +147,6 @@ int main(void) {
   cout << ame12.get_reference() << endl;
 
   nucmass_semi_empirical sm;
-  {
-    // Test densmat_derivs()
-    double temp1, temp2, temp3, temp4;
-    double be;
-    
-    sm.binding_energy_densmat_derivs
-      (26.0,30.0,0.0,0.0,1.0e-40,1.0/hc_mev_fm,be,temp1,temp2,temp3,temp4);
-    t.test_rel(be,sm.binding_energy_d(26,30),1.0e-4,"binding energy");
-
-    sm.test_derivatives(1.0e-4,temp1,temp2,temp3,temp4);
-    t.test_rel(temp1,0.0,1.0e-4,"np derivative");
-    t.test_rel(temp3,0.0,1.0e-4,"ne derivative");
-  }
-  
   nucmass_mnmsk m95;
   o2scl_hdf::mnmsk_load(m95);
   

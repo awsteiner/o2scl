@@ -39,6 +39,7 @@
 
 #include <o2scl/misc.h>
 #include <o2scl/interp.h>
+#include <o2scl/fparser.h>
 
 #ifndef DOXYGEN_NO_O2NS
 

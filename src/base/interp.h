@@ -58,7 +58,6 @@
 
 #include <o2scl/search_vec.h>
 #include <o2scl/tridiag.h>
-#include <o2scl/funct.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -77,7 +76,7 @@ namespace o2scl {
     itp_akima=4,
     /// Akima spline for periodic boundary conditions
     itp_akima_peri=5,
-    /// Monotonicity-preserving interpolation
+    /// Monotonicity-preserving interpolation (unfinished)
     itp_monotonic=6,
     /// Steffen's monotonic method
     itp_steffen=7
@@ -103,7 +102,6 @@ namespace o2scl {
       \endcomment
   */
   template<class vec_t, class vec2_t=vec_t> class interp_base {
-    //public funct {
 
 #ifdef O2SCL_NEVER_DEFINED
   }{
@@ -1081,14 +1079,8 @@ namespace o2scl {
       if ((x < 0 && y > 0) || (x > 0 && y < 0)) {
 	return -x;
       }
-      
       return x;
     }
-
-    //double min(double a, double b) {
-    //if (a<b) return a;
-    //return b;
-    //}
 
 #endif
     
@@ -1188,7 +1180,6 @@ namespace o2scl {
     virtual double eval(double x0) const {
       
       size_t index=this->svx.find(x0);
-
       double x_lo=(*this->px)[index];
       double delx=x0-x_lo;
       
@@ -1202,11 +1193,10 @@ namespace o2scl {
     virtual double deriv(double x0) const {
 
       size_t index=this->svx.find(x0);
-  
       double x_lo=(*this->px)[index];
       double delx=x0-x_lo;
 
-      return c[index] + delx*(2.0*b[index] + delx*3.0*a[index]);
+      return c[index]+delx*(2.0*b[index]+delx*3.0*a[index]);
     }
 
     /** \brief Give the value of the second derivative  
@@ -1215,11 +1205,10 @@ namespace o2scl {
     virtual double deriv2(double x0) const {
 
       size_t index=this->svx.find(x0);
-  
       double x_lo=(*this->px)[index];
       double delx=x0-x_lo;
 
-      return 2.0*b[index] + delx*6.0*a[index];
+      return 2.0*b[index]+delx*6.0*a[index];
     }
 
     /// Give the value of the integral \f$ \int_a^{b}y(x)~dx \f$ .
@@ -1248,7 +1237,6 @@ namespace o2scl {
 	double y_lo=(*this->py)[i];
 	double y_hi=(*this->py)[i+1];
 	double dx=x_hi-x_lo;
-	double dy=y_hi-y_lo;
 
 	if(dx != 0.0) {
 
@@ -1933,9 +1921,9 @@ namespace o2scl {
 
     if (n<=1) {
       O2SCL_ERR2("Need at least two data points in ",
-		     "vector_find_count().",exc_einval);
+		 "vector_find_count().",exc_einval);
     }
-
+    
     size_t count=0;
 
     // Handle left boundary 
