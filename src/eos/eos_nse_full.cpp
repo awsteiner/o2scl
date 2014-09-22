@@ -347,24 +347,30 @@ int eos_nse_full::calc_density_fixcomp(dense_matter &dm, int verbose) {
   return 0;
 }
 
-#ifdef O2SCL_NEVER_DEFINED
-
 int eos_nse_full::calc_density(dense_matter &dm, int verbose) {
+  ubvector x(2), y(2);
+  x[0]=dm.n.n;
+  x[1]=dm.p.n;
+  mm_funct11 mf=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &,dense_matter &)>
+     (&eos_nse_full::solve_fixnp),
+     this,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3,std::ref(dm));
+  def_mroot.msolve(2,x,mf);
+  solve_fixnp(2,x,y,dm);
   return 0;
 }
 
-int eos_nse_full::solve_fixnp(size_t n, const uvector &x, uvector &y,
+int eos_nse_full::solve_fixnp(size_t n, const ubvector &x, ubvector &y,
 			      dense_matter &dm) {
-  dm.nB=x[0];
-  dm.Ye=x[1];
-  ret=calc_density_fixnp(dm);
+  dm.n.n=x[0];
+  dm.p.n=x[1];
+  int ret=calc_density_fixnp(dm);
   if (ret!=0) return ret;
   y[0]=2.0*(dm.baryon_density()-dm.nB)/(dm.baryon_density()+dm.nB);
   y[1]=2.0*(dm.electron_fraction()-dm.Ye)/(dm.electron_fraction()+dm.Ye);
   return 0;
 }
-
-#endif
 
 int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
 

@@ -40,6 +40,7 @@
 #include <o2scl/nucmass_ame.h>
 #include <o2scl/nucdist.h>
 #include <o2scl/hdf_nucmass_io.h>
+#include <o2scl/mroot_hybrids.h>
 
 #include <o2scl/eos_had_skyrme.h>
 
@@ -341,6 +342,9 @@ namespace o2scl {
     /// Nucleonic EOS (0 by default)
     o2scl::eos_had_temp_base *ehtp;
 
+    /// Default solver
+    mroot_hybrids<> def_mroot;
+
 #endif
 
   public:
@@ -381,6 +385,12 @@ namespace o2scl {
     void set_eos(o2scl::eos_had_temp_base &e) {
       ehtp=&e;
       return;
+    }
+
+    /** \brief Get homogeneous matter EOS
+     */
+    o2scl::eos_had_temp_base &get_eos() {
+      return *ehtp;
     }
 
     /** \brief Set distribution of nuclei
@@ -424,6 +434,15 @@ namespace o2scl {
 	density and electron fraction
     */
     int density_match(dense_matter &dm);
+
+    /** \brief Desc
+     */
+    int calc_density(dense_matter &dm, int verbose);
+
+    /** \brief Desc
+     */
+    int solve_fixnp(size_t n, const ubvector &x, ubvector &y,
+			      dense_matter &dm);
 
 #ifdef O2SCL_NEVER_DEFINED
 
