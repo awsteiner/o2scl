@@ -224,22 +224,20 @@ namespace o2scl {
 
     /** \brief Return true if nucleus (Z,N) is in the distribution and
 	store it's index in \c index
-     */
-    bool nuc_in_dist(int Z, int N, size_t &index) {
-      for(size_t i=0;i<dist.size();i++) {
-	if (dist[i].Z==Z && dist[i].N==N) {
-	  index=i;
-	  return true;
-	}
-      }
-      return false;
-    }
+	
+	This function performs a simple brute-force search.
+    */
+    bool nuc_in_dist(int Z, int N, size_t &index);
     
   };
 
   /** \brief A nuclear mass formula for dense matter
       
       This class is experimental.
+
+      The default set of nuclear masses is from the AME 2012
+      mass evaluation and is automatically loaded in the 
+      constructor.
   */
   class nucmass_densmat {
 
@@ -292,6 +290,12 @@ namespace o2scl {
        double nneg, double T, double &E, double &dEdnp, double &dEdnn,
        double &dEdnneg, double &dEdT);
 
+    /** \brief Compute the binding energy of a nucleus in dense matter
+     */
+    virtual void binding_energy_densmat
+      (double Z, double N, double npout, double nnout, 
+       double nneg, double T, double &E);
+
   };
 
   /** \brief EOS for nuclear statistical equilibrium with interactions
@@ -342,8 +346,10 @@ namespace o2scl {
     /// Nucleonic EOS (0 by default)
     o2scl::eos_had_temp_base *ehtp;
 
-    /// Default solver
-    mroot_hybrids<> def_mroot;
+    /** \brief Desc
+     */
+    int solve_fixnp(size_t n, const ubvector &x, ubvector &y,
+			      dense_matter &dm);
 
 #endif
 
@@ -353,6 +359,9 @@ namespace o2scl {
     
     /// The minimizer
     o2scl::mmin_simp2<> def_mmin;
+
+    /// Default solver
+    mroot_hybrids<> def_mroot;
 
     /// Compute nuclei in dense matter
     o2scl::nucmass_densmat nuc_dens;
@@ -435,14 +444,11 @@ namespace o2scl {
     */
     int density_match(dense_matter &dm);
 
-    /** \brief Desc
+    /** \brief Compute properties of matter for fixed neutron 
+	density, proton density, baryon density and electron
+	fraction.
      */
     int calc_density(dense_matter &dm, int verbose);
-
-    /** \brief Desc
-     */
-    int solve_fixnp(size_t n, const ubvector &x, ubvector &y,
-			      dense_matter &dm);
 
 #ifdef O2SCL_NEVER_DEFINED
 

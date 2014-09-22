@@ -153,6 +153,16 @@ double dense_matter::impurity() {
   return sum/ntot;
 }
 
+bool dense_matter::nuc_in_dist(int Z, int N, size_t &index) {
+  for(size_t i=0;i<dist.size();i++) {
+    if (dist[i].Z==Z && dist[i].N==N) {
+      index=i;
+      return true;
+    }
+  }
+  return false;
+}
+
 nucmass_densmat::nucmass_densmat() {
   massp=&ame;
   o2scl_hdf::ame_load(ame,"12");
@@ -216,10 +226,27 @@ void nucmass_densmat::test_derivatives(double eps, double &t1, double &t2,
   return;
 }
 
+void nucmass_densmat::binding_energy_densmat
+(double Z, double N, double npout, double nnout, 
+ double nneg, double T, double &E) {
+  double dEdnn;
+  double dEdnp;
+  double dEdnneg;
+  double dEdT;
+  return binding_energy_densmat_derivs
+    (Z,N,nnout,npout,nneg,T,E,dEdnp,dEdnn,dEdnneg,dEdT);
+}
+
 void nucmass_densmat::binding_energy_densmat_derivs
 (double Z, double N, double npout, double nnout, 
  double nneg, double T, double &E, double &dEdnp, double &dEdnn,
  double &dEdnneg, double &dEdT) {
+
+  if (!massp->is_included(Z+1.0e-10,N+1.0e-10)) {
+    O2SCL_ERR((((string)"Mass with Z=")+o2scl::dtos(Z)+" and N="+
+	       o2scl::dtos(N)+" not included in nucmass_densmat"+
+	       "::binding_energy_densmat_derivs().").c_str(),exc_einval);
+  }
 
   // Half saturation density
   double n0o2=0.08;
@@ -523,12 +550,8 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
     }
   }
 
-  // Vectors for derivatives of nuclear binding energy
-  ubvector vec_dEdne(dm.dist.size());
+  if (dm.dist.size()>0) {
 
-  // Compute the properties of the nuclei
-  for(size_t i=0;i<dm.dist.size();i++) {
-    
     // Check that the proton density isn't too large in
     // the presence of nuclei
     if (dm.p.n>0.08) {
@@ -549,35 +572,56 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
       }
       return invalid_config;
     }
-      
+  }
+
+  // Vectors for derivatives of nuclear binding energy
+  ubvector vec_dEdne(dm.dist.size());
+
+  // Compute the properties of the nuclei
+  for(size_t i=0;i<dm.dist.size();i++) {
+
     // Create a reference for this nucleus
     nucleus &nuc=dm.dist[i];
 
-    // Compute nuclear binding energy and total mass
-    double dEdnp, dEdnn, dEdne, dEdT;
-    // Include protons in the Coulomb energy
-    massp->binding_energy_densmat_derivs
-      (nuc.Z,nuc.N,dm.p.n,dm.n.n,dm.e.n,dm.T,nuc.be,dEdnp,dEdnn,dEdne,dEdT);
-    nuc.be/=hc_mev_fm;
-    nuc.m=nuc.Z*dm.p.m+nuc.N*dm.n.m+nuc.be;
-    vec_dEdne[i]=dEdne;
+    // If this nucleus is unphysical because R_n > R_{WS}, 
+    // set it's density to zero and continue
+    if (nuc.N*(dm.e.n-dm.p.n)/nuc.Z/(0.08-dm.n.n)) {
 
-    // Use NSE to compute the chemical potential
-    nuc.mu=nuc.Z*dm.p.mu+nuc.N*dm.n.mu-nuc.be;
+      nuc.n=0.0;
+      nuc.ed=0.0;
+      nuc.en=0.0;
+      dm.eta_nuc[i]=0.0;
+      vec_dEdne[i]=0.0;
+
+    } else {
     
-    // Translational energy
-    cla.calc_mu(nuc,dm.T);
+      // Compute nuclear binding energy and total mass
+      double dEdnp, dEdnn, dEdne, dEdT;
+      // Include protons in the Coulomb energy
+      massp->binding_energy_densmat_derivs
+	(nuc.Z,nuc.N,dm.p.n,dm.n.n,dm.e.n,dm.T,nuc.be,dEdnp,dEdnn,dEdne,dEdT);
+      nuc.be/=hc_mev_fm;
+      nuc.m=nuc.Z*dm.p.m+nuc.N*dm.n.m+nuc.be;
+      vec_dEdne[i]=dEdne;
 
-    // Update thermo object with information from nucleus
-    dm.th.ed+=nuc.be*nuc.n+nuc.ed;
-    dm.th.en+=nuc.en;
+      // Use NSE to compute the chemical potential
+      nuc.mu=nuc.Z*dm.p.mu+nuc.N*dm.n.mu-nuc.be;
+    
+      // Translational energy
+      cla.calc_mu(nuc,dm.T);
 
-    if (verbose>0) {
-      string s="Nucleus ("+itos(((int)(nuc.Z+1.0e-8)))+","+
-	itos(((int)(nuc.N+1.0e-8)))+"): ";
-      cout.width(20);
-      cout << s << nuc.n << " " << nuc.mu << " " 
-	   << nuc.ed+nuc.be*nuc.n << " " << nuc.en << endl;
+      // Update thermo object with information from nucleus
+      dm.th.ed+=nuc.be*nuc.n+nuc.ed;
+      dm.th.en+=nuc.en;
+
+      if (verbose>0) {
+	string s="Nucleus ("+itos(((int)(nuc.Z+1.0e-8)))+","+
+	  itos(((int)(nuc.N+1.0e-8)))+"): ";
+	cout.width(20);
+	cout << s << nuc.n << " " << nuc.mu << " " 
+	     << nuc.ed+nuc.be*nuc.n << " " << nuc.en << endl;
+      }
+
     }
   }
 
