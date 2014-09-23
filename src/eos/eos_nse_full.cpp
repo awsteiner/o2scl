@@ -392,7 +392,7 @@ int eos_nse_full::solve_fixnp(size_t n, const ubvector &x, ubvector &y,
 			      dense_matter &dm) {
   dm.n.n=x[0];
   dm.p.n=x[1];
-  int ret=calc_density_fixnp(dm);
+  int ret=calc_density_fixnp(dm,0);
   if (ret!=0) return ret;
   y[0]=2.0*(dm.baryon_density()-dm.nB)/(dm.baryon_density()+dm.nB);
   y[1]=2.0*(dm.electron_fraction()-dm.Ye)/(dm.electron_fraction()+dm.Ye);
@@ -480,9 +480,6 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
     cout << "--------------------------------------"
 	 << "--------------------------------------" << endl;
     cout << "fixnp():" << endl;
-    cout << endl;
-    cout << "nB_0, Ye_0, T (MeV): " << dm.nB << " " << dm.Ye << " "
-	 << dm.T*hc_mev_fm << endl;
     cout << endl;
     cout << "                                n            mu          "
 	 << "  ed            en" << endl;
@@ -585,12 +582,11 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
 
     // If this nucleus is unphysical because R_n > R_{WS}, 
     // set it's density to zero and continue
-    if (nuc.N*(dm.e.n-dm.p.n)/nuc.Z/(0.08-dm.n.n)) {
+    if (nuc.N*(dm.e.n-dm.p.n)/nuc.Z/(0.08-dm.n.n)>1.0) {
 
       nuc.n=0.0;
       nuc.ed=0.0;
       nuc.en=0.0;
-      dm.eta_nuc[i]=0.0;
       vec_dEdne[i]=0.0;
 
     } else {
@@ -640,7 +636,11 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
 
     double dmudm_i=-1.5*dm.T/dm.dist[i].m;
     double dfdm_i=dm.dist[i].n*dmudm_i;
-    dm.eta_nuc[i]=dm.dist[i].be+dm.dist[i].mu+dm.dist[i].Z*dm.e.mu;
+    if (dm.dist[i].n>0.0) {
+      dm.eta_nuc[i]=dm.dist[i].be+dm.dist[i].mu+dm.dist[i].Z*dm.e.mu;
+    } else {
+      dm.eta_nuc[i]=0.0;
+    }
     // In eta_p, we don't include dEdnp terms which are zero
     dm.eta_p+=(dm.dist[i].n+dfdm_i)*(vec_dEdne[i])/hc_mev_fm;
     
