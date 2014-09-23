@@ -36,7 +36,8 @@
 #include <o2scl/hdf_nucmass_io.h>
 
 /** \file nucmass_densmat.h
-    \brief File defining \ref o2scl::nucmass_densmat
+    \brief File defining \ref o2scl::dense_matter and
+    \ref o2scl::nucmass_densmat
 */
 
 #ifndef DOXYGEN_NO_O2NS

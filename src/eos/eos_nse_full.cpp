@@ -867,13 +867,16 @@ void eos_nse_full::output(dense_matter &dm, int verbose) {
        << dm.T*hc_mev_fm << " MeV" << endl;
   double nBnuc=0.0;
   double Xa=0.0, Xnuclei=0.0;
+  size_t i_out=0, out_step=dm.dist.size()/10;
+  if (out_step==0) out_step=1;
   for(size_t i=0;i<dm.dist.size();i++) {
     nBnuc+=dm.dist[i].n*(dm.dist[i].N+dm.dist[i].Z);
     if (dm.dist[i].Z==2 && dm.dist[i].N==2) Xa=dm.dist[i].n*4.0;
     else Xnuclei+=dm.dist[i].n*(dm.dist[i].Z+dm.dist[i].N);
-    if (verbose>=2) {
+    if (verbose>1 || (verbose==1 && i==i_out)) {
       cout << "Z,N,n: " << dm.dist[i].Z << " " << dm.dist[i].N << " "
 	   << dm.dist[i].n << endl;
+      i_out+=out_step;
     }
   }
   Xa/=dm.nB;

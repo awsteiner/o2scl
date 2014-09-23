@@ -21,8 +21,7 @@
   -------------------------------------------------------------------
 */
 /** \file eos_nse_full.h
-    \brief File defining \ref o2scl::dense_matter, 
-    \ref o2scl::nucmass_densmat, and \ref o2scl::eos_nse_full
+    \brief File defining \ref o2scl::eos_nse_full
 */
 #ifndef EOS_NSE_FULL_H
 #define EOS_NSE_FULL_H 
@@ -109,9 +108,10 @@ namespace o2scl {
 
 	This function takes two inputs, the neutron and proton
 	densities, and solves to ensure that \ref
-	dense_matter::baryon_density() matches \ref dense_matter::nB
-	and \ref dense_matter::electron_fraction() matches \ref
-	dense_matter::Ye. 
+	dense_matter::baryon_density() matches \ref
+	o2scl::dense_matter::nB and \ref
+	o2scl::dense_matter::electron_fraction() matches \ref
+	dense_matter::Ye.
 
 	This function calls \ref calc_density_fixnp() .
     */
@@ -187,16 +187,16 @@ namespace o2scl {
 	Given a fixed neutron and proton density, this computes their
 	chemical potentials using the homogeneous matter EOS. Then the
 	electrons are computed assuming their density is given from
-	\ref dense_matter::nB and \ref dense_matter::Ye. Finally, the
-	Saha equation is used to determine the nuclear chemical
-	potentials and this gives the nuclear densities.
+	\ref o2scl::dense_matter::nB and \ref o2scl::dense_matter::Ye.
+	Finally, the Saha equation is used to determine the nuclear
+	chemical potentials and this gives the nuclear densities.
 
 	This function only works when \ref inc_prot_coul is
 	<tt>false</tt>.
 
 	Note that, after this function completes, the value returned
-	by \ref dense_matter::baryon_density() will not necessarily be
-	the same as that stored in \ref dense_matter::nB (and
+	by \ref o2scl::dense_matter::baryon_density() will not necessarily be
+	the same as that stored in \ref o2scl::dense_matter::nB (and
 	similarly for the electron fraction). 
     */
     int calc_density_fixnp(dense_matter &dm, int verbose=0);
@@ -227,7 +227,7 @@ namespace o2scl {
      */
     int calc_density_saha(dense_matter &dm, int verbose);
 
-    /** \brief Output properties of a \ref dense_matter object to
+    /** \brief Output properties of a \ref o2scl::dense_matter object to
 	std::cout
 
 	This function was particularly designed for comparing results
