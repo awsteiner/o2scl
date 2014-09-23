@@ -47,6 +47,7 @@ int main(void) {
   t.test_rel(t3,0.0,3.0e-6,"dEdnneg");
   
   // Create a distribution of three nuclei
+
   o2scl::nucleus nuc;
   o2scl::nucmass_ame_exp &ame=nse.nuc_dens.ame;
 
@@ -71,8 +72,8 @@ int main(void) {
   // Set the temperature
   dm.T=1.0/hc_mev_fm;
 
-  // Compare analytical and numerical values for eta_i with
-  // inc_prot_coul = false
+  // Compare analytical and numerical values from calc_density_noneq()
+  // for eta_i with inc_prot_coul = false
 
   double eps=1.0e-6, fr1, fr2, eta_n, eta_p, eta_nuc[3];
 
@@ -112,8 +113,8 @@ int main(void) {
   t.test_rel(dm.eta_nuc[1],eta_nuc[1],1.0e-6,"eta_nuc[1]");
   t.test_rel(dm.eta_nuc[2],eta_nuc[2],1.0e-6,"eta_nuc[2]");
 
-  // Compare analytical and numerical values for eta_i with
-  // inc_prot_coul = true (the default)
+  // Compare analytical and numerical values from calc_density_noneq()
+  // for eta_i with inc_prot_coul = true (the default)
 
   nse.inc_prot_coul=true;
 
@@ -152,23 +153,25 @@ int main(void) {
   t.test_rel(dm.eta_nuc[2],eta_nuc[2],1.0e-6,"eta_nuc[2]");
   
   // Now try to minimize the free energy for this composition
+  // using calc_density_by_min()
 
   dm.nB=5.2e-2;
   dm.Ye=0.4943;
 
-  ret=nse.calc_density_fixcomp(dm,0);
+  ret=nse.calc_density_by_min(dm,0);
   t.test_gen(ret==0,"ret 2");
   t.test_rel(dm.baryon_density(),dm.nB,1.0e-6,"baryon density");
   t.test_rel(dm.electron_fraction(),dm.Ye,1.0e-6,"electron fraction");
 
   fr1=dm.th.ed-dm.th.en*dm.T;
 
-  // Double check the free energy, baryon density, and electron fraction
+  // Double check the free energy, baryon density, and electron
+  // fraction with that returned by calc_density_noneq() 
 
   ret=nse.calc_density_noneq(dm);
   t.test_gen(ret==0,"ret 3");
   fr2=dm.th.ed-dm.th.en*dm.T;
-  t.test_rel(fr1,fr2,1.0e-6,"free energies");
+  t.test_rel(fr1,fr2,1.0e-10,"free energies");
 
   // Minimize the free energy when inc_prot_coul is false
 
@@ -177,7 +180,7 @@ int main(void) {
   nse.def_mmin.tol_rel/=1.0e4;
   nse.def_mmin.tol_abs/=1.0e4;
 
-  ret=nse.calc_density_fixcomp(dm,0);
+  ret=nse.calc_density_by_min(dm,0);
   t.test_gen(ret==0,"ret 4");
 
   for(size_t i=0;i<3;i++) {
