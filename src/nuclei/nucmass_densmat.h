@@ -249,9 +249,6 @@ namespace o2scl {
     
     nucmass_densmat();
 
-    /// Default nuclear masses
-    nucmass_ame_exp ame;
-    
     /// Set base nuclear masses
     void set_mass(nucmass &nm);
 

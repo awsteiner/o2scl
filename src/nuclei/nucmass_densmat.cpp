@@ -163,8 +163,10 @@ bool dense_matter::nuc_in_dist(int Z, int N, size_t &index) {
 }
 
 nucmass_densmat::nucmass_densmat() {
-  massp=&ame;
-  o2scl_hdf::ame_load(ame,"12");
+  // It's important not to automatically load masses from
+  // HDF5 by default because this causes issues instantiating
+  // this class with many processors
+  massp=0;
 }
 
 void nucmass_densmat::set_mass(nucmass &nm) {
@@ -174,6 +176,11 @@ void nucmass_densmat::set_mass(nucmass &nm) {
 
 void nucmass_densmat::test_derivatives(double eps, double &t1, double &t2, 
 				       double &t3, double &t4) {
+
+  if (massp==0) {
+    O2SCL_ERR("Masses not specified in nucmass_densmat::test_derivatives().",
+	      exc_efailed);
+  }
       
   double Z=26.0;
   double N=30.0;
@@ -240,6 +247,11 @@ void nucmass_densmat::binding_energy_densmat_derivs
 (double Z, double N, double npout, double nnout, 
  double nneg, double T, double &E, double &dEdnp, double &dEdnn,
  double &dEdnneg, double &dEdT) {
+
+  if (massp==0) {
+    O2SCL_ERR("Masses not specified in nucmass_densmat::test_derivatives().",
+	      exc_efailed);
+  }
 
   if (!massp->is_included(Z+1.0e-10,N+1.0e-10)) {
     O2SCL_ERR((((string)"Mass with Z=")+o2scl::dtos(Z)+" and N="+

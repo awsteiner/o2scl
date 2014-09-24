@@ -22,6 +22,7 @@
 */
 #include <o2scl/test_mgr.h>
 #include <o2scl/eos_nse_full.h>
+#include <o2scl/hdf_eos_io.h>
 
 using namespace std;
 using namespace o2scl;
@@ -38,9 +39,19 @@ int main(void) {
   dense_matter dm;
   int ret;
 
+  // Nuclear masses
+  nucmass_ame_exp ame;
+  o2scl_hdf::ame_load(ame,"12");
+
+  // Load Skyrme EOS
+  eos_had_skyrme sk;
+  o2scl_hdf::skyrme_load(sk,"SLy4");
+  nse.set_eos(sk);
+
   // Test nucmass_densmat
 
   nucmass_densmat &nd=nse.nuc_dens;
+  nd.set_mass(ame);
   double t1, t2, t3, t4;
   nd.test_derivatives(1.0e-6,t1,t2,t3,t4);
   t.test_rel(t1,0.0,1.0e-6,"dEdnp");
@@ -49,7 +60,6 @@ int main(void) {
   // Create a distribution of three nuclei
 
   o2scl::nucleus nuc;
-  o2scl::nucmass_ame_exp &ame=nse.nuc_dens.ame;
 
   dm.n.n=0.01;
   dm.p.n=0.01;

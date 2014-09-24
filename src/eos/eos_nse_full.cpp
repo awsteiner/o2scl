@@ -30,27 +30,24 @@ using namespace o2scl_const;
 using namespace o2scl_hdf;
 
 eos_nse_full::eos_nse_full() {
-  invalid_config=-10;
   inc_lept_phot=true;
 
   // Ensure fermion_rel doesn't throw exceptions for convergence
   // errors for electrons
-  relf.density_root->err_nonconv=false;
-  relf.err_nonconv=false;
+  err_nonconv=true;
 
-  // Load Skyrme EOS
-  o2scl_hdf::skyrme_load(sk,"SLy4");
-  
-  ehtp=&sk;
+  // It's important not to automatically load masses from
+  // HDF5 by default because this causes issues instantiating
+  // this class with many processors
+  ehtp=0;
   
   massp=&nuc_dens;
-  
-  nucdist_set(def_dist,nuc_dens.ame);
-  ad=&def_dist;
+  ad=0;
 
-  def_mmin.ntrial*=100;
-  def_mmin.tol_rel/=1000.0;
-  def_mmin.tol_abs/=1000.0;
+  // Make the default minimizer more accurate
+  def_mmin.ntrial=10000;
+  def_mmin.tol_rel=1.0e-7;
+  def_mmin.tol_abs=1.0e-7;
 
   inc_prot_coul=true;
 }
@@ -58,6 +55,11 @@ eos_nse_full::eos_nse_full() {
 double eos_nse_full::free_energy(const ubvector &n_nuc, dense_matter &dm) {
 
   double nB_nuc=0.0, np_nuc=0.0;
+
+  if (n_nuc.size()!=dm.dist.size()) {
+    O2SCL_ERR2("Sizes incommensurate in eos_nse_full::",
+	       "free_energy().",exc_einval);
+  }
 
   for(size_t i=0;i<n_nuc.size();i++) {
     dm.dist[i].n=n_nuc[i];
@@ -91,7 +93,11 @@ int eos_nse_full::calc_density_by_min(dense_matter &dm, int verbose) {
 
   double fr_min=0.0;
 
-  def_mmin.mmin_twovec(n_nuc.size(),n_nuc,n_nuc2,fr_min,mf);
+  int ret=def_mmin.mmin_twovec(n_nuc.size(),n_nuc,n_nuc2,fr_min,mf);
+  if (ret!=success) {
+    O2SCL_CONV2_RET("Minimizer failed in eos_nse_full::",
+		    "calc_density_saha().",exc_ebadfunc,err_nonconv);
+  }
 
   // Perform a final function evaluation (important to set the final
   // nuclear densities in the 'dm' parameter)
@@ -109,8 +115,16 @@ int eos_nse_full::calc_density_saha(dense_matter &dm, int verbose) {
      (&eos_nse_full::solve_fixnp),
      this,std::placeholders::_1,std::placeholders::_2,
      std::placeholders::_3,std::ref(dm));
-  def_mroot.msolve(2,x,mf);
-  solve_fixnp(2,x,y,dm);
+  int ret=def_mroot.msolve(2,x,mf);
+  if (ret!=success) {
+    O2SCL_CONV2_RET("Solver failed in eos_nse_full::",
+		    "calc_density_saha().",exc_ebadfunc,err_nonconv);
+  }
+  ret=solve_fixnp(2,x,y,dm);
+  if (ret!=success) {
+    O2SCL_CONV2_RET("Final function evaluation failed in eos_nse_full::",
+		    "calc_density_saha().",exc_ebadfunc,err_nonconv);
+  }
   return 0;
 }
 
@@ -126,6 +140,11 @@ int eos_nse_full::solve_fixnp(size_t n, const ubvector &x, ubvector &y,
 }
 
 int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
+
+  if (ehtp==0) {
+    O2SCL_ERR2("Homogeneous matter EOS not specified in ",
+	       "eos_nse_full::calc_density_fixnp().",exc_efailed);
+  }
 
   // -----------------------------------------------------------
   // Sanity checks
@@ -192,7 +211,10 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
   // Compute properties of homogeneous matter
 
   int ret=ehtp->calc_temp_e(dm.n,dm.p,dm.T,dm.drip_th);
-  if (ret!=0) return ret;
+  if (ret!=success) {
+    O2SCL_CONV2_RET("Homogeneous nucleon EOS failed in eos_nse_full::",
+		    "calc_density_fixnp().",exc_einval,err_nonconv);
+  }
 
   // Add contribution from dripped nucleons
   dm.th=dm.drip_th;
@@ -234,7 +256,10 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
       return invalid_config;
     }
     ret=relf.calc_density(dm.e,dm.T);
-    if (ret!=0) return ret;
+    if (ret!=success) {
+      O2SCL_CONV2_RET("Electron EOS failed in eos_nse_full::",
+		      "calc_density_fixnp().",exc_einval,err_nonconv);
+    }
     dm.th.ed+=dm.e.ed;
     dm.th.en+=dm.e.en;
 
@@ -420,14 +445,14 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
     i_out=0;
     for(size_t i=0;i<dm.dist.size();i++) {
       nucleus &nuc=dm.dist[i];
-      string s="Nucleus ("+itos(((int)(nuc.Z+1.0e-8)))+","+
-	itos(((int)(nuc.N+1.0e-8)))+"): ";
       if (i==i_out || verbose>1) {
+	string s="Nucleus ("+itos(((int)(nuc.Z+1.0e-8)))+","+
+	  itos(((int)(nuc.N+1.0e-8)))+"): ";
 	cout.width(20);
 	cout << s << nuc.n << " " << dm.eta_nuc[i] << " "
 	     << nuc.n*dm.eta_nuc[i] << endl;
+	i_out+=out_step;
       }
-      i_out+=out_step;
     }
     cout.width(48);
     cout << "Total pressure: " << dm.th.pr << endl;
@@ -442,6 +467,11 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
 
 int eos_nse_full::calc_density_noneq(dense_matter &dm, int verbose) {
   
+  if (ehtp==0) {
+    O2SCL_ERR2("Homogeneous matter EOS not specified in ",
+	       "eos_nse_full::calc_density_noneq().",exc_efailed);
+  }
+
   // -----------------------------------------------------------
   // Sanity checks
 
@@ -503,7 +533,10 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm, int verbose) {
   // Compute properties of homogeneous matter
 
   int ret=ehtp->calc_temp_e(dm.n,dm.p,dm.T,dm.drip_th);
-  if (ret!=0) return ret;
+  if (ret!=success) {
+    O2SCL_CONV2_RET("Homogeneous nucleon EOS failed in eos_nse_full::",
+		    "calc_density_noneq().",exc_einval,err_nonconv);
+  }
 
   // Add contribution from dripped nucleons
   dm.th=dm.drip_th;
@@ -559,7 +592,10 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm, int verbose) {
       return invalid_config;
     }
     ret=relf.calc_density(dm.e,dm.T);
-    if (ret!=0) return ret;
+    if (ret!=success) {
+      O2SCL_CONV2_RET("Electron EOS failed in eos_nse_full::",
+		      "calc_density_noneq().",exc_einval,err_nonconv);
+    }
     dm.th.ed+=dm.e.ed;
     dm.th.en+=dm.e.en;
 

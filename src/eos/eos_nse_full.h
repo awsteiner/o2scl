@@ -33,13 +33,8 @@
 #include <o2scl/classical.h>
 #include <o2scl/fermion_rel.h>
 #include <o2scl/fermion_deriv_rel.h>
-#include <o2scl/boson_rel.h>
 
-#include <o2scl/nucmass_frdm.h>
-#include <o2scl/nucmass_ame.h>
 #include <o2scl/nucmass_densmat.h>
-#include <o2scl/nucdist.h>
-#include <o2scl/hdf_nucmass_io.h>
 #include <o2scl/mroot_hybrids.h>
 
 #include <o2scl/eos_had_skyrme.h>
@@ -60,6 +55,17 @@ namespace o2scl {
       nuclei in the distribution, and 2 means the function will
       output the entire distribution.
 
+      This class retains the usual mechanism using \ref err_nonconv to
+      handle what to do if one of the functions does not converge. In
+      addition, \ref calc_density_fixnp() and \ref
+      calc_density_noneq() return \ref invalid_config for invalid
+      configurations, which sometimes occur during normal execution.
+      Since these invalid configurations are 'normal', they do not
+      cause the error handler to be called, independent of the value
+      of \ref err_nonconv . Practically, this means the end-user 
+      must check the return value of these two functions 
+      every time they are called. 
+
       \future Add positrons, muons, and anti-muons
       \future Add fermion and boson statistics to the nuclei in the
       distribution
@@ -78,26 +84,29 @@ namespace o2scl {
     /// Compute particle properties assuming classical thermodynamics
     o2scl::classical cla;
 
-    /// The integer which indicates an invalid configuration
-    int invalid_config;
-    
-    /// Relativistic fermions
-    o2scl::fermion_rel relf;
-
     /// Relativistic fermions with derivatives
     o2scl::fermion_deriv_rel snf;
 
     /// Mass formula (points to \ref nuc_dens by default)
     o2scl::nucmass_densmat *massp;
 
-    /// The default distribution
-    std::vector<o2scl::nucleus> def_dist;
-
-    /// The full distribution of all nuclei to consider
+    /** \brief The full distribution of all nuclei to consider
+	
+	\note Currently, the \c ad variable doesn't do much, but
+	it's important to leave this in as future functions may
+	want to automatically adjust the distribution
+    */
     std::vector<o2scl::nucleus> *ad;
 
     /** \brief Compute the free energy from a vector of densities 
 	of the nuclei
+
+	This calls \ref calc_density_noneq() and then returns the free
+	energy. The vector \c n_nuc and the distribution \c dm.dist
+	must both have the same size.
+
+	If the call to \ref calc_density_noneq() returns a non-zero
+	value, then the value \f$ 10^{4} \f$ is returned.
     */
     double free_energy(const ubvector &n_nuc, dense_matter &dm);
 
@@ -124,18 +133,10 @@ namespace o2scl {
 
     eos_nse_full();
     
-    /// The minimizer
-    o2scl::mmin_simp2<> def_mmin;
-
-    /// Default solver
-    mroot_hybrids<> def_mroot;
-
-    /// Compute nuclei in dense matter
-    o2scl::nucmass_densmat nuc_dens;
-
-    /// Default EOS ("SLy4")
-    o2scl::eos_had_skyrme sk;
-
+    /** \brief The integer which indicates an invalid configuration 
+     */
+    static const int invalid_config=-10;
+    
     /** \brief If true, call the error handler if calc_density() does
 	not converge (default true)
     */
@@ -148,36 +149,14 @@ namespace o2scl {
 	(default true)
     */
     bool inc_prot_coul;
-    
-    /** \brief Set nuclear mass formula
-     */
-    void set_mass(o2scl::nucmass_densmat &m) {
-      massp=&m;
-      return;
-    }
 
-    /** \brief Set homogeneous matter EOS
-     */
-    void set_eos(o2scl::eos_had_temp_base &e) {
-      ehtp=&e;
-      return;
-    }
-
-    /** \brief Get homogeneous matter EOS
-     */
-    o2scl::eos_had_temp_base &get_eos() {
-      return *ehtp;
-    }
-
-    /** \brief Set distribution of nuclei
-     */
-    void set_dist(std::vector<o2scl::nucleus> &dist) {
-      ad=&dist;
-      return;
-    }
-  
     /** \brief Compute the properties of matter from the densities,
 	not presuming equilibrium
+
+	This function is designed to return non-zero values for
+	invalid configurations and can return the value
+	\ref invalid_config without calling the error handler, 
+	independent of the value of \ref err_nonconv .
     */
     int calc_density_noneq(dense_matter &dm, int verbose=0);
 
@@ -195,9 +174,15 @@ namespace o2scl {
 	<tt>false</tt>.
 
 	Note that, after this function completes, the value returned
-	by \ref o2scl::dense_matter::baryon_density() will not necessarily be
-	the same as that stored in \ref o2scl::dense_matter::nB (and
-	similarly for the electron fraction). 
+	by \ref o2scl::dense_matter::baryon_density() will not
+	necessarily be the same as that stored in \ref
+	o2scl::dense_matter::nB (and similarly for the electron
+	fraction).
+
+	This function is designed to return non-zero values for
+	invalid configurations and can return the value
+	\ref invalid_config without calling the error handler, 
+	independent of the value of \ref err_nonconv .
     */
     int calc_density_fixnp(dense_matter &dm, int verbose=0);
   
@@ -239,6 +224,63 @@ namespace o2scl {
 	density and electron fraction
     */
     int density_match(dense_matter &dm);
+
+    /** \brief Relativistic fermions
+
+	\comment
+	Must currently be public for tcan/ecn.cpp.
+	\endcomment
+     */
+    o2scl::fermion_rel relf;
+
+    /// \name Nuclei and nuclear masses
+    //@{
+    /// Compute nuclei in dense matter
+    o2scl::nucmass_densmat nuc_dens;
+
+    /** \brief Set nuclear mass formula
+     */
+    void set_mass(o2scl::nucmass_densmat &m) {
+      massp=&m;
+      return;
+    }
+
+    /** \brief Set distribution of nuclei
+     */
+    void set_dist(std::vector<o2scl::nucleus> &dist) {
+      ad=&dist;
+      return;
+    }
+    //@}
+
+    /// \name Nucleonic matter EOS
+    //@{
+    /** \brief Set homogeneous matter EOS
+     */
+    void set_eos(o2scl::eos_had_temp_base &e) {
+      ehtp=&e;
+      return;
+    }
+
+    /** \brief Get homogeneous matter EOS
+     */
+    o2scl::eos_had_temp_base &get_eos() {
+      if (ehtp==0) {
+	O2SCL_ERR2("Homogeneous matter EOS not specified in ",
+		   "eos_nse_full::get_eos().",exc_efailed);
+      }
+      return *ehtp;
+    }
+    //@}
+
+    /// \name Numerical methods
+    //@{
+    /// The minimizer
+    o2scl::mmin_simp2<> def_mmin;
+
+    /// Default solver
+    mroot_hybrids<> def_mroot;
+    //@}
 
 #ifdef O2SCL_NEVER_DEFINED
 

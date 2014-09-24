@@ -48,6 +48,11 @@
     function documentation should clearly explain why.
     - Wherever possible, objects should be usable by default.
     Avoid zombie objects which are instantiated but unusable.
+    An important exception to this rule is in classes which would
+    otherwise have to load data from a file in order to operate
+    normally, as file I/O should not occur in constructors
+    (so that MPI can instantiate classes without worrying 
+    about parallel I/O).
     - Objects should thread-safe in the weak sense, that is, 
     different processes should be able to safely access and modify
     different instances of the same class at any time. Functions 
