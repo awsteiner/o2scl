@@ -1152,17 +1152,8 @@ namespace o2scl {
 
   /// \name Searching vectors and matrices
   //@{
-  /** \brief Lookup element \c x0 in vector \c x of length \c n
-
-      This function finds the element in vector \c x which is closest
-      to \c x0. It ignores all elements in \c x which are not finite.
-      If the vector is empty (i.e. \c n is zero), or if all of the
-      elements in \c x are not finite, then the error handler will be
-      called.
-
-      This function works for all classes \c vec_t where an operator[]
-      is defined which returns a double (either as a value or a
-      reference).
+  /** \brief Lookup the value \c x0 in the first \c n elements of 
+      vector \c x
   */
   template<class vec_t>
     size_t vector_lookup(size_t n, const vec_t &x, double x0) {
@@ -1187,6 +1178,23 @@ namespace o2scl {
       }
     }
     return row;
+  }
+
+  /** \brief Lookup element \c x0 in vector \c x
+
+      This function finds the element in vector \c x which is closest
+      to \c x0. It ignores all elements in \c x which are not finite.
+      If the vector is empty, or if all of the
+      elements in \c x are not finite, then the error handler will be
+      called.
+      
+      This function works for all classes \c vec_t where an operator[]
+      is defined which returns a double (either as a value or a
+      reference).
+  */
+  template<class vec_t>
+    size_t vector_lookup(const vec_t &x, double x0) {
+    return vector_lookup(x.size(),x,x0);
   }
 
   /** \brief Lookup an element in a matrix

@@ -58,9 +58,9 @@ namespace o2scl {
   
     typedef boost::numeric::ublas::vector<double> ubvector;
   
-    /// Temperature
+    /// Temperature (in \f$ \mathrm{fm}^{-1} \f$)
     double T;
-    /// Baryon number density
+    /// Baryon number density (in \f$ \mathrm{fm}^{-3} \f$)
     double nB;
     /// Electron fraction 
     double Ye;
