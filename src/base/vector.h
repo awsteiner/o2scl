@@ -156,6 +156,8 @@ namespace o2scl {
   }
   //@}
 
+  /// \name Tranpositions
+  //@{
   /** \brief Simple generic transpose
       
       Copy the transpose of \c src to \c dest, resizing \c dest if it
@@ -177,6 +179,68 @@ namespace o2scl {
     }
   }
 
+  /** \brief Simple generic transpose
+
+      Copy the transpose of the first \c m rows and the first \c cols
+      of the matrix \c src into the matrix \c dest
+      
+      This function will work for any classes \c mat_t and \c mat2_t
+      which has a suitably defined <tt>operator()</tt> method.
+  */
+  template<class mat_t, class mat2_t> 
+    void matrix_transpose(size_t m, size_t n, mat_t &src, mat2_t &dest) {
+    for(size_t i=0;i<m;i++) {
+      for(size_t j=0;j<n;j++) {
+	dest(i,j)=src(j,i);
+      }
+    }
+  }
+
+  /** \brief Simple generic transpose in-place
+      
+      Transpose the matrix \c src .
+      
+      This function will work for any classes \c mat_t and
+      \c mat2_t which have suitably defined <tt>operator()</tt>,
+      <tt>size()</tt>, and <tt>resize()</tt> methods.
+  */
+  template<class mat_t, class data_t> 
+    void matrix_transpose(mat_t &src) {
+    size_t m=src.size1();
+    size_t n=src.size2();
+    data_t tmp;
+    for(size_t i=0;i<m;i++) {
+      for(size_t j=0;j<n;j++) {
+	tmp=src(i,j);
+	src(i,j)=src(j,i);
+	src(j,i)=tmp;
+      }
+    }
+  }
+
+  /** \brief Simple generic transpose in-place
+
+      Copy the transpose of the first \c m rows and the first \c cols
+      of the matrix \c src into the matrix \c dest
+      
+      This function will work for any classes \c mat_t and \c mat2_t
+      which has a suitably defined <tt>operator()</tt> method.
+  */
+  template<class mat_t, class data_t> 
+    void matrix_transpose(size_t m, size_t n, mat_t &src) {
+    data_t tmp;
+    for(size_t i=0;i<m;i++) {
+      for(size_t j=0;j<n;j++) {
+	tmp=src(i,j);
+	src(i,j)=src(j,i);
+	src(j,i)=tmp;
+      }
+    }
+  }
+  //@}
+
+  /// \name Upper and lower triangular
+  //@{
   /** \brief Simple generic test that a matrix is lower triangular
    */
   template<class mat_t> bool matrix_is_lower(mat_t &src) {
@@ -233,15 +297,103 @@ namespace o2scl {
     return;
   }
 
+  /** \brief Simple generic test that a matrix is lower triangular
+      for the first \c m rows and \c n columns
+   */
+  template<class mat_t> bool matrix_is_lower(size_t m, size_t n, 
+					     mat_t &src) {
+    bool ret=true;
+    for(size_t i=0;i<m;i++) {
+      for(size_t j=i+1;j<n;j++) {
+	if (src(i,j)!=0.0) return false;
+      }
+    }
+    return ret;
+  }
+
+  /** \brief Simple generic test that a matrix is upper triangular
+      for the first \c m rows and \c n columns
+   */
+  template<class mat_t> bool matrix_is_upper(size_t m, size_t n, 
+					     mat_t &src) {
+    bool ret=true;
+    for(size_t j=0;j<n;j++) {
+      for(size_t i=j+1;i<m;i++) {
+	if (src(i,j)!=0.0) return false;
+      }
+    }
+    return ret;
+  }
+  
+  /** \brief Make the first \c m rows and \c n columns of a matrix
+      lower triangular by setting the upper triangular entries to zero
+   */
+  template<class mat_t> void matrix_make_lower(size_t m, size_t n, 
+					       mat_t &src) {
+    for(size_t i=0;i<m;i++) {
+      for(size_t j=i+1;j<n;j++) {
+	src(i,j)=0.0;
+      }
+    }
+    return;
+  }
+  
+  /** \brief Make the first \c m rows and \c n columns of a matrix
+      upper triangular by setting the lower triangular entries to zero
+  */
+  template<class mat_t> void matrix_make_upper(size_t m, size_t n, 
+					       mat_t &src) {
+    for(size_t j=0;j<n;j++) {
+      for(size_t i=j+1;i<m;i++) {
+	src(i,j)=0.0;
+      }
+    }
+    return;
+  }
+  //@}
+
   /// \name Swapping parts of vectors and matrices
   //@{
   /** \brief Swap the first N elements of two vectors
 
       This function swaps the elements of \c v1 and \c v2, one element
       at a time.
-   */
+  */
   template<class vec_t, class vec2_t, class data_t> 
     void vector_swap(size_t N, vec_t &v1, vec2_t &v2) {
+    data_t temp;
+    size_t i, m=N%4;
+    for(i=0;i<m;i++) {
+      temp=v1[i];
+      v1[i]=v2[i];
+      v2[i]=temp;
+    }
+    for(i=m;i+3<N;i+=4) {
+      temp=v1[i];
+      v1[i]=v2[i];
+      v2[i]=temp;
+      temp=v1[i+1];
+      v1[i+1]=v2[i+1];
+      v2[i+1]=temp;
+      temp=v1[i+2];
+      v1[i+2]=v2[i+2];
+      v2[i+2]=temp;
+      temp=v1[i+3];
+      v1[i+3]=v2[i+3];
+      v2[i+3]=temp;
+    }
+    return;
+  }
+
+  /** \brief Swap all elements in two vectors
+
+      This function swaps the elements of \c v1 and \c v2, one element
+      at a time.
+  */
+  template<class vec_t, class vec2_t, class data_t> 
+    void vector_swap(vec_t &v1, vec2_t &v2) {
+    size_t N=v1.size();
+    if (v2.size()<N) N=v2.size();
     data_t temp;
     size_t i, m=N%4;
     for(i=0;i<m;i++) {
@@ -277,6 +429,40 @@ namespace o2scl {
     return vector_swap<vec_t,vec2_t,double>(N,v1,v2);
   }
 
+  /** \brief Generic swap of of the first N elements of two
+      double-precision vectors
+
+      This function swaps the elements of \c v1 and \c v2, one element
+      at a time.
+   */
+  template<class vec_t, class vec2_t>
+    void vector_swap_double(vec_t &v1, vec2_t &v2) {
+    return vector_swap<vec_t,vec2_t,double>(v1,v2);
+  }
+
+  /** \brief Generic swap two elements in a vector
+
+      This function swaps the element \c i and element \c j of vector
+      \c v1. 
+   */
+  template<class vec_t, class data_t> 
+    void vector_swap(vec_t &v, size_t i, size_t j) {
+    data_t temp=v[i];
+    v[i]=v[j];
+    v[j]=temp;
+    return;
+  }
+  
+  /** \brief Generic swap two elements in a vector
+      
+      This function swaps the element \c i and element \c j of vector
+      \c v1. 
+  */
+  template<class vec_t>
+    void vector_swap_double(vec_t &v, size_t i, size_t j) {
+    return vector_swap<vec_t,double>(v,i,j);
+  }
+  
   /** \brief Generic swap of two matrices
       
       This function swaps the elements of \c v1 and \c v2, one element
@@ -305,29 +491,6 @@ namespace o2scl {
     return matrix_swap<mat_t,mat2_t,double>(M,N,m1,m2);
   }
 
-  /** \brief Generic swap two elements in a vector
-
-      This function swaps the element \c i and element \c j of vector
-      \c v1. 
-   */
-  template<class vec_t, class data_t> 
-    void vector_swap(vec_t &v, size_t i, size_t j) {
-    data_t temp=v[i];
-    v[i]=v[j];
-    v[j]=temp;
-    return;
-  }
-  
-  /** \brief Generic swap two elements in a vector
-      
-      This function swaps the element \c i and element \c j of vector
-      \c v1. 
-  */
-  template<class vec_t>
-    void vector_swap_double(vec_t &v, size_t i, size_t j) {
-    return vector_swap<vec_t,double>(v,i,j);
-  }
-  
   /** \brief Generic swap two elements in a matrix
 
       This function swaps the element <tt>(i1,j1)</tt> and 
@@ -1154,6 +1317,16 @@ namespace o2scl {
   //@{
   /** \brief Lookup the value \c x0 in the first \c n elements of 
       vector \c x
+
+      The function finds the element among the first \c n elements of
+      \c x which is closest to the value \c x0. It ignores all
+      elements in \c x which are not finite. If the vector is empty,
+      or if all of the first \c n elements in \c x are not finite,
+      then the error handler will be called.
+      
+      This function works for all classes \c vec_t where an operator[]
+      is defined which returns a double (either as a value or a
+      reference).
   */
   template<class vec_t>
     size_t vector_lookup(size_t n, const vec_t &x, double x0) {
@@ -1188,9 +1361,9 @@ namespace o2scl {
       elements in \c x are not finite, then the error handler will be
       called.
       
-      This function works for all classes \c vec_t where an operator[]
-      is defined which returns a double (either as a value or a
-      reference).
+      This function works for all classes \c vec_t with a
+      <tt>size()</tt> method and where an operator[] is defined which
+      returns a double (either as a value or a reference).
   */
   template<class vec_t>
     size_t vector_lookup(const vec_t &x, double x0) {
@@ -1233,6 +1406,18 @@ namespace o2scl {
       O2SCL_ERR2("Entire matrix not finite in ",
 		 "function matrix_lookup()",exc_einval);
     }
+    return;
+  }
+
+  /** \brief Lookup an element in a matrix
+
+      Return the location <tt>(i,j)</tt> of the element closest to 
+      \c x0. 
+   */
+  template<class mat_t>
+    void matrix_lookup(const mat_t &A, 
+		       double x0, size_t &i, size_t &j) {
+    matrix_lookup(A.size1(),A.size2(),x0,i,j);
     return;
   }
 

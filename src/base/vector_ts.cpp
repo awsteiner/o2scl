@@ -255,10 +255,50 @@ int main(void) {
   permutation p2=p.inverse();
   vector_out(cout,5,p2,true);
 
-  // Test vector_grid
-  ubvector ovg(11);
-  vector_grid(uniform_grid_end<>(0,1,10),ovg);
-  //cout << ovg << endl;
+  // Test vector_grid and vector_swap
+  ubvector ovg(3), ovg2(3);
+  vector_grid(uniform_grid_end<>(0,1,2),ovg);
+  vector_grid(uniform_grid_end<>(1,2,2),ovg2);
+  vector_swap_double(ovg,ovg2);
+  t.test_rel(ovg[0],1.0,1.0e-16,"vector swap 1");
+  t.test_rel(ovg[1],1.5,1.0e-16,"vector swap 2");
+  t.test_rel(ovg[2],2.0,1.0e-16,"vector swap 3");
+  t.test_rel(ovg2[0],0.0,1.0e-16,"vector swap 4");
+  t.test_rel(ovg2[1],0.5,1.0e-16,"vector swap 5");
+  t.test_rel(ovg2[2],1.0,1.0e-16,"vector swap 6");
+  vector_swap_double(1,ovg,ovg2);
+  t.test_rel(ovg[0],0.0,1.0e-16,"vector swap 7");
+  t.test_rel(ovg[1],1.5,1.0e-16,"vector swap 8");
+  t.test_rel(ovg[2],2.0,1.0e-16,"vector swap 9");
+  t.test_rel(ovg2[0],1.0,1.0e-16,"vector swap 10");
+  t.test_rel(ovg2[1],0.5,1.0e-16,"vector swap 11");
+  t.test_rel(ovg2[2],1.0,1.0e-16,"vector swap 12");
+  vector_swap_double(ovg2,0,1);
+  t.test_rel(ovg2[0],0.5,1.0e-16,"vector swap 13");
+  t.test_rel(ovg2[1],1.0,1.0e-16,"vector swap 14");
+
+  double dvg[3], dvg2[3];
+  vector_grid(uniform_grid_end<>(0,1,2),ovg);
+  vector_grid(uniform_grid_end<>(1,2,2),ovg2);
+  vector_copy(3,ovg,dvg);
+  vector_copy(3,ovg2,dvg2);
+  vector_swap_double(3,dvg,dvg2);
+  t.test_rel(dvg[0],1.0,1.0e-16,"vector swap 1");
+  t.test_rel(dvg[1],1.5,1.0e-16,"vector swap 2");
+  t.test_rel(dvg[2],2.0,1.0e-16,"vector swap 3");
+  t.test_rel(dvg2[0],0.0,1.0e-16,"vector swap 4");
+  t.test_rel(dvg2[1],0.5,1.0e-16,"vector swap 5");
+  t.test_rel(dvg2[2],1.0,1.0e-16,"vector swap 6");
+  vector_swap_double(1,dvg,dvg2);
+  t.test_rel(dvg[0],0.0,1.0e-16,"vector swap 7");
+  t.test_rel(dvg[1],1.5,1.0e-16,"vector swap 8");
+  t.test_rel(dvg[2],2.0,1.0e-16,"vector swap 9");
+  t.test_rel(dvg2[0],1.0,1.0e-16,"vector swap 10");
+  t.test_rel(dvg2[1],0.5,1.0e-16,"vector swap 11");
+  t.test_rel(dvg2[2],1.0,1.0e-16,"vector swap 12");
+  vector_swap_double(dvg2,0,1);
+  t.test_rel(dvg2[0],0.5,1.0e-16,"vector swap 13");
+  t.test_rel(dvg2[1],1.0,1.0e-16,"vector swap 14");
 
   t.report();
   return 0;

@@ -45,7 +45,9 @@
     &(size_t,size_t)></tt> is also a matrix type (the ampersand is
     important unless the matrix is read-only). This means that some
     matrices (e.g. slices of tensors) can be trivially constructed
-    from <tt>std::bind</tt> and <tt>std::mem_fn</tt>.
+    from <tt>std::bind</tt> and <tt>std::mem_fn</tt>. An example
+    of this in \o2e is how <tt>o2scl::eos_sn_base::slice</tt> generates
+    a matrix from a 3-D tensor.
 
     A matrix type is distinct from a "vector of vectors" or a "list of
     vectors", such as that implied by
@@ -66,7 +68,8 @@
     of rank 1 and a matrix is just a \tensor of rank 2. Tensors are
     implemented in \o2 by \ref o2scl::tensor . A multivariate
     function specified on a grid can be implemented in \o2 with
-    \ref o2scl::tensor_grid .
+    \ref o2scl::tensor_grid . See more discussion in the tensor 
+    section below. 
 
     \section vectype_subsect Template classes for vector objects
 
@@ -157,9 +160,11 @@
     the functions \ref o2scl::matrix_out() and \ref
     o2scl::array_2d_out(). The alternative is column-major order where
     the distance from the first element to the element at
-    <tt>(row,col)</tt> is given by <tt>row*n_rows+col</tt>. The \ref
+    <tt>(row,col)</tt> is given by <tt>col*n_rows+row</tt>. The \ref
     o2scl::tensor class uses a simple generalization of row-major
-    order.
+    order. \o2 classes and functions which use <tt>operator(,)</tt>
+    operate independently of how the data is represented in
+    memory.
 
     Sometimes its useful to think about the rows and columns in a
     matrix as referring to a elements of a grid, and the matrix
