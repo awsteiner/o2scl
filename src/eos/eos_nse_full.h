@@ -125,7 +125,7 @@ namespace o2scl {
 	This function calls \ref calc_density_fixnp() .
     */
     int solve_fixnp(size_t n, const ubvector &x, ubvector &y,
-			      dense_matter &dm);
+		    dense_matter &dm);
 
 #endif
 
@@ -145,8 +145,8 @@ namespace o2scl {
     /// If true, include electrons and photons (default true)
     bool inc_lept_phot;
 
-    /** \brief If true, include dripped protons in the Coulomb energy 
-	(default true)
+    /** \brief If true, include dripped protons and
+	neutrons in the nuclear mass (default true)
     */
     bool inc_prot_coul;
 
@@ -209,7 +209,7 @@ namespace o2scl {
 	This function solves the function specified by \ref
 	solve_fixnp() using the current values of <tt>dm.n.n</tt> and
 	<tt>dm.p.n</tt> as initial guesses.
-     */
+    */
     int calc_density_saha(dense_matter &dm, int verbose);
 
     /** \brief Output properties of a \ref o2scl::dense_matter object to
@@ -230,7 +230,7 @@ namespace o2scl {
 	\comment
 	Must currently be public for tcan/ecn.cpp.
 	\endcomment
-     */
+    */
     o2scl::fermion_rel relf;
 
     /// \name Nuclei and nuclear masses
@@ -289,7 +289,7 @@ namespace o2scl {
 	This was intended to be a version of calc_density_by_min()
 	which optimized the composition, but it doesn't really work
 	yet.
-     */
+    */
     int calc_density(dense_matter &dm, int verbose=0);
 
 #endif

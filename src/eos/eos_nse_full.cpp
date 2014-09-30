@@ -244,7 +244,7 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
   // Leptons and photons
 
   if (inc_lept_phot) {
-
+    
     // Add electrons
     dm.e.n=dm.Ye*dm.nB;
     if (dm.e.n<dm.p.n) {
@@ -347,12 +347,17 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
       // Compute nuclear binding energy and total mass
       double dEdnp, dEdnn, dEdne, dEdT;
       // Include protons in the Coulomb energy
-      massp->binding_energy_densmat_derivs
-	(nuc.Z,nuc.N,dm.p.n,dm.n.n,dm.e.n,dm.T,nuc.be,dEdnp,dEdnn,dEdne,dEdT);
+      if (inc_prot_coul) {
+	massp->binding_energy_densmat_derivs
+	  (nuc.Z,nuc.N,dm.p.n,dm.n.n,dm.e.n,dm.T,nuc.be,dEdnp,dEdnn,dEdne,dEdT);
+      } else {
+	massp->binding_energy_densmat_derivs
+	  (nuc.Z,nuc.N,0.0,0.0,dm.e.n,dm.T,nuc.be,dEdnp,dEdnn,dEdne,dEdT);
+      }
       nuc.be/=hc_mev_fm;
       nuc.m=nuc.Z*dm.p.m+nuc.N*dm.n.m+nuc.be;
       vec_dEdne[i]=dEdne;
-
+      
       // Use NSE to compute the chemical potential
       nuc.mu=nuc.Z*dm.p.mu+nuc.N*dm.n.mu-nuc.be;
     
@@ -653,7 +658,7 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm, int verbose) {
 	}
 	return invalid_config;
       }
-      
+	
       // Check that the electron density isn't too large
       // in the presence of nuclei
       double fac=(0.08-dm.p.n)/(dm.e.n-dm.p.n);
@@ -664,7 +669,7 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm, int verbose) {
 	}
 	return invalid_config;
       }
-      
+
       // Create a reference for this nucleus
       nucleus &nuc=dm.dist[i];
       
@@ -681,7 +686,7 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm, int verbose) {
       } else {
 	// Don't include protons in the Coulomb energy
 	massp->binding_energy_densmat_derivs
-	  (nuc.Z,nuc.N,0.0,dm.n.n,dm.e.n,dm.T,nuc.be,dEdnp,dEdnn,dEdne,dEdT);
+	  (nuc.Z,nuc.N,0.0,0.0,dm.e.n,dm.T,nuc.be,dEdnp,dEdnn,dEdne,dEdT);
 	nuc.be/=hc_mev_fm;
 	nuc.m=nuc.Z*dm.p.m+nuc.N*dm.n.m+nuc.be;
 	vec_dEdnp[i]=0.0;
