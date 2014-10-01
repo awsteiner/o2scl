@@ -1565,8 +1565,36 @@ namespace o2scl {
     return sum;
   }
 
-  /** \brief Compute the norm of a vector of floating-point 
-      (single or double precision) numbers
+  /** \brief Compute the sum of the first \c n elements of a vector
+      of double-precision numbers
+
+      If \c n is zero, this will return 0 without throwing
+      an exception.
+  */
+  template<class vec_t>double vector_sum_double(size_t n, vec_t &data) {
+    double sum=0.0;
+    for(size_t i=0;i<n;i++) {
+      sum+=data[i];
+    }
+    return sum;
+  }
+
+  /** \brief Compute the sum of all the elements of a vector
+      of double-precision numbers
+
+      If the vector has zero size, this will return 0 without
+      throwing an exception.
+  */
+  template<class vec_t> double vector_sum_double(vec_t &data) {
+    double sum=0.0;
+    for(size_t i=0;i<data.size();i++) {
+      sum+=data[i];
+    }
+    return sum;
+  }
+
+  /** \brief Compute the norm of the first \c n entries of a 
+      vector of floating-point (single or double precision) numbers
 
       This function is a more generic version of 
       \ref o2scl_cblas::dnrm2 . 
@@ -1600,6 +1628,56 @@ namespace o2scl {
     }
       
     return scale * sqrt(ssq);
+  }
+
+  /** \brief Compute the norm of a vector of floating-point 
+      (single or double precision) numbers
+  */
+  template<class vec_t, class data_t> data_t vector_norm(const vec_t &x) {
+    return vector_norm<vec_t,data_t>(x.size(),x);
+  }
+
+  /** \brief Compute the norm of the first \c n entries of a 
+      vector of double precision numbers
+
+      This function is a more generic version of 
+      \ref o2scl_cblas::dnrm2 . 
+  */
+  template<class vec_t>
+    double vector_norm_double(size_t n, const vec_t &x) {
+    
+    double scale = 0.0;
+    double ssq = 1.0;
+    
+    if (n <= 0) {
+      return 0.0;
+    } else if (n == 1) {
+      return fabs(x[0]);
+    }
+      
+    for (size_t i = 0; i < n; i++) {
+      const double xx = x[i];
+
+      if (xx != 0.0) {
+	const double ax = fabs(xx);
+          
+	if (scale < ax) {
+	  ssq = 1.0 + ssq * (scale / ax) * (scale / ax);
+	  scale = ax;
+	} else {
+	  ssq += (ax / scale) * (ax / scale);
+	}
+      }
+
+    }
+      
+    return scale * sqrt(ssq);
+  }
+
+  /** \brief Compute the norm of a vector of double precision numbers
+  */
+  template<class vec_t> double vector_norm_double(const vec_t &x) {
+    return vector_norm_double<vec_t>(x.size(),x);
   }
   //@}
 
@@ -1651,13 +1729,47 @@ namespace o2scl {
 
   /** \brief Reverse a vector
 
-      If \c n is zero, this function will silently do nothing.
+      If the <tt>size()</tt> method returns zero, this function will
+      silently do nothing.
   */
   template<class vec_t, class data_t>
     void vector_reverse(vec_t &data) {
     data_t tmp;
     size_t n=data.size();
 
+    for(size_t i=0;i<n/2;i++) {
+      tmp=data[n-1-i];
+      data[n-1-i]=data[i];
+      data[i]=tmp;
+    }
+    return;
+  }
+
+  /** \brief Reverse a vector of double precision numbers
+
+      If \c n is zero, this function will silently do nothing.
+  */
+  template<class vec_t>
+    void vector_reverse_double(size_t n, vec_t &data) {
+    double tmp;
+
+    for(size_t i=0;i<n/2;i++) {
+      tmp=data[n-1-i];
+      data[n-1-i]=data[i];
+      data[i]=tmp;
+    }
+    return;
+  }
+
+  /** \brief Reverse a vector of double precision numbers
+
+      If the <tt>size()</tt> method returns zero, this function will
+      silently do nothing.
+  */
+  template<class vec_t> void vector_reverse_double(vec_t &data) {
+    double tmp;
+    size_t n=data.size();
+    
     for(size_t i=0;i<n/2;i++) {
       tmp=data[n-1-i];
       data[n-1-i]=data[i];

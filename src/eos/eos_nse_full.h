@@ -77,8 +77,6 @@ namespace o2scl {
     typedef boost::numeric::ublas::vector<double> ubvector;
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
     
     /// Compute particle properties assuming classical thermodynamics
@@ -113,6 +111,8 @@ namespace o2scl {
     /// Nucleonic EOS (0 by default)
     o2scl::eos_had_temp_base *ehtp;
 
+  public:
+
     /** \brief Function which is solved by \ref calc_density_saha()
 
 	This function takes two inputs, the neutron and proton
@@ -126,10 +126,6 @@ namespace o2scl {
     */
     int solve_fixnp(size_t n, const ubvector &x, ubvector &y,
 		    dense_matter &dm);
-
-#endif
-
-  public:
 
     eos_nse_full();
     
