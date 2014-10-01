@@ -115,7 +115,20 @@ int eos_nse_full::calc_density_saha(dense_matter &dm, int verbose) {
      (&eos_nse_full::solve_fixnp),
      this,std::placeholders::_1,std::placeholders::_2,
      std::placeholders::_3,std::ref(dm));
-  int ret=def_mroot.msolve(2,x,mf);
+
+  int ret;
+  ret=solve_fixnp(2,x,y,dm);
+
+  // Iterate to fix density for initial guess if necessary
+  size_t it=0;
+  while (it<100 && dm.baryon_density()>10.0) {
+    x[0]/=1.5;
+    x[1]/=1.5;
+    ret=solve_fixnp(2,x,y,dm);
+    it++;
+  }
+
+  ret=def_mroot.msolve(2,x,mf);
   if (ret!=success) {
     O2SCL_CONV2_RET("Solver failed in eos_nse_full::",
 		    "calc_density_saha().",exc_ebadfunc,err_nonconv);
@@ -130,12 +143,14 @@ int eos_nse_full::calc_density_saha(dense_matter &dm, int verbose) {
 
 int eos_nse_full::solve_fixnp(size_t n, const ubvector &x, ubvector &y,
 			      dense_matter &dm) {
+  //cout << "x: " << x[0] << " " << x[1] << endl;
   dm.n.n=x[0];
   dm.p.n=x[1];
-  int ret=calc_density_fixnp(dm,0);
+  int ret=calc_density_fixnp(dm);
   if (ret!=0) return ret;
   y[0]=2.0*(dm.baryon_density()-dm.nB)/(dm.baryon_density()+dm.nB);
   y[1]=2.0*(dm.electron_fraction()-dm.Ye)/(dm.electron_fraction()+dm.Ye);
+  //cout << "y: " << y[0] << " " << y[1] << endl;
   return 0;
 }
 
