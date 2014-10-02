@@ -683,7 +683,10 @@ int fermion_rel::pair_density(fermion &f, double temper) {
 
 double fermion_rel::pair_fun(double x, fermion &f, double T) { 
 
-  double nden, yy;
+  // Temporary storage for integration results
+  double nden;
+  // The return value, n/(n') -1
+  double yy;
 
   // -------------------------------------------------------------
   // Compute the contribution from the particles
@@ -692,51 +695,79 @@ double fermion_rel::pair_fun(double x, fermion &f, double T) {
 
   if (f.non_interacting) f.mu=f.nu;
 
-  // Evaluate the degeneracy parameter
   bool deg=true;
+  double psi;
   if (f.inc_rest_mass) {
-    if ((f.nu-f.ms)/T<deg_limit) deg=false;
+    psi=(f.nu-f.ms)/T;
   } else {
-    if ((f.nu+(f.m-f.ms))/T<deg_limit) deg=false;
+    psi=(f.nu+(f.m-f.ms))/T;
+  }
+  if (psi<deg_limit) deg=false;
+
+  bool new_meth=true;
+
+  bool particles_done=false;
+
+  // Try the non-degenerate expansion if psi is small enough
+  if (new_meth && psi<min_psi) {
+    particles_done=calc_mu_ndeg(f,T,1.0e-14);
+    yy=f.n;
+    cout << "ndeg part: " << yy << endl;
   }
 
-  if (!deg) {
-    
-    // Nondegenerate case
+  // Try the degenerate expansion if psi is large enough
+  if (new_meth && particles_done==false && psi>20.0) {
+    particles_done=calc_mu_deg(f,T,1.0e-14);
+    yy=f.n;
+    cout << "deg part: " << yy << endl;
+  }
 
-    funct11 mfe=std::bind(std::mem_fn<double(double,fermion &,double)>
-			  (&fermion_rel::density_fun),
-			  this,std::placeholders::_1,std::ref(f),T);
+  // If neither expansion worked, use direct integration
+  if (true || particles_done==false) {
     
-    nden=nit->integ(mfe,0.0,0.0);
-    nden*=f.g*pow(T,3.0)/2.0/pi2;
-    yy=nden;
-    
-  } else {
-    
-    // Degenerate case
-    
-    funct11 mfe=std::bind(std::mem_fn<double(double,fermion &,double)>
-			  (&fermion_rel::deg_density_fun),
-			  this,std::placeholders::_1,std::ref(f),T);
-
-    double arg;
-    if (f.inc_rest_mass) {
-      arg=pow(upper_limit_fac*T+f.nu,2.0)-f.ms*f.ms;
+    if (!deg) {
+      
+      // Nondegenerate case
+      
+      funct11 mfe=std::bind(std::mem_fn<double(double,fermion &,double)>
+			    (&fermion_rel::density_fun),
+			    this,std::placeholders::_1,std::ref(f),T);
+      
+      nden=nit->integ(mfe,0.0,0.0);
+      nden*=f.g*pow(T,3.0)/2.0/pi2;
+      yy=nden;
+      cout << "ndeg int part: " << yy << endl;
+      
     } else {
-      arg=pow(upper_limit_fac*T+f.nu+f.m,2.0)-f.ms*f.ms;
+      
+      // Degenerate case
+      
+      funct11 mfe=std::bind(std::mem_fn<double(double,fermion &,double)>
+			    (&fermion_rel::deg_density_fun),
+			    this,std::placeholders::_1,std::ref(f),T);
+      
+      double arg;
+      if (f.inc_rest_mass) {
+	arg=pow(upper_limit_fac*T+f.nu,2.0)-f.ms*f.ms;
+      } else {
+	arg=pow(upper_limit_fac*T+f.nu+f.m,2.0)-f.ms*f.ms;
+      }
+      
+      double ul;
+      if (arg>0.0) {
+	ul=sqrt(arg);
+	nden=dit->integ(mfe,0.0,ul);
+	nden*=f.g/2.0/pi2;
+      } else {
+	nden=0.0;
+      }
+      
+      yy=nden;
+      cout << "deg int part: " << yy << endl;
+
     }
 
-    double ul;
-    if (arg>0.0) {
-      ul=sqrt(arg);
-      nden=dit->integ(mfe,0.0,ul);
-      nden*=f.g/2.0/pi2;
-    } else {
-      nden=0.0;
-    }
-
-    yy=nden;
+    particles_done=true;
 
   }
 
@@ -744,55 +775,78 @@ double fermion_rel::pair_fun(double x, fermion &f, double T) {
   // Compute the contribution from the antiparticles
 
   f.nu=-T*x;
+  if (f.non_interacting) f.mu=f.nu;
+
+  bool antiparticles_done=false;
 
   // Evaluate the degeneracy parameter
   deg=true;
   if (f.inc_rest_mass) {
-    if ((f.nu-f.ms)/T<deg_limit) deg=false;
+    psi=(f.nu-f.ms)/T;
   } else {
-    if ((f.nu+(f.m-f.ms))/T<deg_limit) deg=false;
+    psi=(f.nu+(f.m-f.ms))/T;
   }
+  if (psi<deg_limit) deg=false;
   
-  if (!deg) {
+  // Try the non-degenerate expansion if psi is small enough
+  if (new_meth && psi<min_psi) {
+    antiparticles_done=calc_mu_ndeg(f,T,1.0e-14);
+    yy-=f.n;
+  }
+
+  // Try the degenerate expansion if psi is large enough
+  if (new_meth && antiparticles_done==false && psi>20.0) {
+    antiparticles_done=calc_mu_deg(f,T,1.0e-14);
+    yy-=f.n;
+  }
+
+  // If neither expansion worked, use direct integration
+  if (antiparticles_done==false) {
     
-    // Nondegenerate case
-
-    funct11 mf=std::bind(std::mem_fn<double(double,fermion &,double)>
-			  (&fermion_rel::density_fun),
-			  this,std::placeholders::_1,std::ref(f),T);
-    
-    nden=nit->integ(mf,0.0,0.0);
-    nden*=f.g*pow(T,3.0)/2.0/pi2;
-    yy-=nden;
-
-  } else {
-
-    // Degenerate case
-
-    funct11 mf=std::bind(std::mem_fn<double(double,fermion &,double)>
-			  (&fermion_rel::deg_density_fun),
-			  this,std::placeholders::_1,std::ref(f),T);
-    
-    double arg;
-    if (f.inc_rest_mass) {
-      arg=pow(upper_limit_fac*T+f.nu,2.0)-f.ms*f.ms;
+    if (!deg) {
+      
+      // Nondegenerate case
+      
+      funct11 mf=std::bind(std::mem_fn<double(double,fermion &,double)>
+			   (&fermion_rel::density_fun),
+			   this,std::placeholders::_1,std::ref(f),T);
+      
+      nden=nit->integ(mf,0.0,0.0);
+      nden*=f.g*pow(T,3.0)/2.0/pi2;
+      yy-=nden;
+      
     } else {
-      arg=pow(upper_limit_fac*T+f.nu+f.m,2.0)-f.ms*f.ms;
+      
+      // Degenerate case
+      
+      funct11 mf=std::bind(std::mem_fn<double(double,fermion &,double)>
+			   (&fermion_rel::deg_density_fun),
+			   this,std::placeholders::_1,std::ref(f),T);
+      
+      double arg;
+      if (f.inc_rest_mass) {
+	arg=pow(upper_limit_fac*T+f.nu,2.0)-f.ms*f.ms;
+      } else {
+	arg=pow(upper_limit_fac*T+f.nu+f.m,2.0)-f.ms*f.ms;
+      }
+      
+      double ul;
+      if (arg>0.0) {
+	ul=sqrt(arg);
+	nden=dit->integ(mf,0.0,ul);
+	nden*=f.g/2.0/pi2;
+      } else {
+	nden=0.0;
+      }
+      yy-=nden;
+
     }
 
-    double ul;
-    if (arg>0.0) {
-      ul=sqrt(arg);
-      nden=dit->integ(mf,0.0,ul);
-      nden*=f.g/2.0/pi2;
-    } else {
-      nden=0.0;
-    }
-    yy-=nden;
+    antiparticles_done=true;
 
   }
 
-  // Construct the function value
+  // Finish computing the function value
   yy=yy/f.n-1.0;
 
   return yy;

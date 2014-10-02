@@ -267,6 +267,13 @@ namespace o2scl {
       }
       return *ehtp;
     }
+
+    /** \brief Return true if an EOS was specified
+     */
+    bool is_eos_set() {
+      if (ehtp==0) return false;
+      return true;
+    }
     //@}
 
     /// \name Numerical methods

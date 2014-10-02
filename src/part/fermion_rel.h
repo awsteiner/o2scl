@@ -327,7 +327,15 @@ namespace o2scl {
     /// Solve for the chemical potential given the density
     double solve_fun(double x, fermion &f, double T);
 
-    /// Solve for the chemical potential given the density with antiparticles
+    /** \brief Solve for the chemical potential given the density 
+	with antiparticles
+	
+	\future Particles and antiparticles have different degeneracy
+	factors, so we separately use the expansions one at a time. It
+	is probably better to separately generate a new expansion
+	function which automatically handles the sum of particles and
+	antiparticles.
+    */
     double pair_fun(double x, fermion &f, double T);
     
 #endif
