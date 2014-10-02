@@ -115,9 +115,19 @@ int eos_nse_full::calc_density_saha(dense_matter &dm, int verbose) {
      (&eos_nse_full::solve_fixnp),
      this,std::placeholders::_1,std::placeholders::_2,
      std::placeholders::_3,std::ref(dm));
-
+  
+  // Adjust proton density if it's larger than electron density
+  if (dm.nB*dm.Ye<x[1]) {
+    x[1]=dm.nB*dm.Ye*(1.0-1.0e-4);
+  }
+  
   int ret;
   ret=solve_fixnp(2,x,y,dm);
+
+  if (ret!=success) {
+    O2SCL_CONV2_RET("Initial point failed in eos_nse_full::",
+		    "calc_density_saha().",exc_ebadfunc,err_nonconv);
+  }
 
   // Iterate to fix density for initial guess if necessary
   size_t it=0;
