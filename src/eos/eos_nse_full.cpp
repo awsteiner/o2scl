@@ -107,23 +107,30 @@ int eos_nse_full::calc_density_by_min(dense_matter &dm, int verbose) {
 }
 
 int eos_nse_full::calc_density_saha(dense_matter &dm, int verbose) {
+
+  // Check user-specified conditions
+  if (dm.nB<0.0 || dm.Ye<0.0 || dm.T<0.0) {
+    O2SCL_ERR2("Cannot use negative densities or temperatures in ",
+	       "eos_nse_full::calc_density_saha().",exc_einval);
+  }
+
+  // Vector for initial guess and equations
   ubvector x(2), y(2);
   x[0]=dm.n.n;
   x[1]=dm.p.n;
-  mm_funct11 mf=std::bind
-    (std::mem_fn<int(size_t,const ubvector &,ubvector &,dense_matter &)>
-     (&eos_nse_full::solve_fixnp),
-     this,std::placeholders::_1,std::placeholders::_2,
-     std::placeholders::_3,std::ref(dm));
   
+  // Adjust if initial guesses are negative
+  if (x[0]<0.0) x[0]=dm.nB*(1.0-dm.Ye);
+  if (x[1]<0.0) x[1]=dm.nB*dm.Ye;
+
   // Adjust proton density if it's larger than electron density
   if (dm.nB*dm.Ye<x[1]) {
     x[1]=dm.nB*dm.Ye*(1.0-1.0e-4);
   }
-  
+
+  // Perform initial function evaluation 
   int ret;
   ret=solve_fixnp(2,x,y,dm);
-
   if (ret!=success) {
     O2SCL_CONV2_RET("Initial point failed in eos_nse_full::",
 		    "calc_density_saha().",exc_ebadfunc,err_nonconv);
@@ -138,11 +145,19 @@ int eos_nse_full::calc_density_saha(dense_matter &dm, int verbose) {
     it++;
   }
 
+  // Call solver
+  mm_funct11 mf=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &,dense_matter &)>
+     (&eos_nse_full::solve_fixnp),
+     this,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3,std::ref(dm));
   ret=def_mroot.msolve(2,x,mf);
   if (ret!=success) {
     O2SCL_CONV2_RET("Solver failed in eos_nse_full::",
 		    "calc_density_saha().",exc_ebadfunc,err_nonconv);
   }
+
+  // Final function evaluation
   ret=solve_fixnp(2,x,y,dm);
   if (ret!=success) {
     O2SCL_CONV2_RET("Final function evaluation failed in eos_nse_full::",
@@ -156,10 +171,17 @@ int eos_nse_full::solve_fixnp(size_t n, const ubvector &x, ubvector &y,
   //cout << "x: " << x[0] << " " << x[1] << endl;
   dm.n.n=x[0];
   dm.p.n=x[1];
+  if (x[0]<0.0 || x[1]<0.0 || !o2scl::is_finite(x[0]) || 
+      !o2scl::is_finite(x[1])) {
+    return exc_ebadfunc;
+  }
   int ret=calc_density_fixnp(dm);
   if (ret!=0) return ret;
   y[0]=2.0*(dm.baryon_density()-dm.nB)/(dm.baryon_density()+dm.nB);
   y[1]=2.0*(dm.electron_fraction()-dm.Ye)/(dm.electron_fraction()+dm.Ye);
+  if (!o2scl::is_finite(y[0]) || !o2scl::is_finite(y[1])) {
+    return exc_ebadfunc;
+  }
   //cout << "y: " << y[0] << " " << y[1] << endl;
   return 0;
 }
