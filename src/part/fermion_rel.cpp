@@ -683,6 +683,8 @@ int fermion_rel::pair_density(fermion &f, double temper) {
 
 double fermion_rel::pair_fun(double x, fermion &f, double T) { 
 
+  // Temporary storage for density to match
+  double nn_match=f.n;
   // Temporary storage for integration results
   double nden;
   // The return value, n/(n') -1
@@ -704,26 +706,22 @@ double fermion_rel::pair_fun(double x, fermion &f, double T) {
   }
   if (psi<deg_limit) deg=false;
 
-  bool new_meth=true;
-
   bool particles_done=false;
 
   // Try the non-degenerate expansion if psi is small enough
-  if (new_meth && psi<min_psi) {
+  if (psi<min_psi) {
     particles_done=calc_mu_ndeg(f,T,1.0e-14);
     yy=f.n;
-    cout << "ndeg part: " << yy << endl;
   }
 
   // Try the degenerate expansion if psi is large enough
-  if (new_meth && particles_done==false && psi>20.0) {
+  if (particles_done==false && psi>20.0) {
     particles_done=calc_mu_deg(f,T,1.0e-14);
     yy=f.n;
-    cout << "deg part: " << yy << endl;
   }
 
   // If neither expansion worked, use direct integration
-  if (true || particles_done==false) {
+  if (particles_done==false) {
     
     if (!deg) {
       
@@ -736,7 +734,6 @@ double fermion_rel::pair_fun(double x, fermion &f, double T) {
       nden=nit->integ(mfe,0.0,0.0);
       nden*=f.g*pow(T,3.0)/2.0/pi2;
       yy=nden;
-      cout << "ndeg int part: " << yy << endl;
       
     } else {
       
@@ -763,7 +760,6 @@ double fermion_rel::pair_fun(double x, fermion &f, double T) {
       }
       
       yy=nden;
-      cout << "deg int part: " << yy << endl;
 
     }
 
@@ -789,13 +785,13 @@ double fermion_rel::pair_fun(double x, fermion &f, double T) {
   if (psi<deg_limit) deg=false;
   
   // Try the non-degenerate expansion if psi is small enough
-  if (new_meth && psi<min_psi) {
+  if (psi<min_psi) {
     antiparticles_done=calc_mu_ndeg(f,T,1.0e-14);
     yy-=f.n;
   }
 
   // Try the degenerate expansion if psi is large enough
-  if (new_meth && antiparticles_done==false && psi>20.0) {
+  if (antiparticles_done==false && psi>20.0) {
     antiparticles_done=calc_mu_deg(f,T,1.0e-14);
     yy-=f.n;
   }
@@ -847,7 +843,8 @@ double fermion_rel::pair_fun(double x, fermion &f, double T) {
   }
 
   // Finish computing the function value
-  yy=yy/f.n-1.0;
+  f.n=nn_match;
+  yy=yy/nn_match-1.0;
 
   return yy;
 }
