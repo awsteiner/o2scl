@@ -778,14 +778,14 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm, int verbose) {
 
   for(size_t i=0;i<dm.dist.size();i++) {
 
-    double dmudm_i=-1.5*dm.T/dm.dist[i].m;
-    double dfdm_i=dm.dist[i].n*dmudm_i;
-    dm.eta_nuc[i]=dm.dist[i].be+dm.dist[i].mu+dm.dist[i].Z*dm.e.mu;
-    dm.eta_p+=(dm.dist[i].n+dfdm_i)*(vec_dEdnp[i]+vec_dEdne[i])/hc_mev_fm;
-    
-    for(size_t j=0;j<dm.dist.size();j++) {
+    if (dm.dist[i].n>0.0) {
       
-      if (dm.dist[i].n>0.0) {
+      double dmudm_i=-1.5*dm.T/dm.dist[i].m;
+      double dfdm_i=dm.dist[i].n*dmudm_i;
+      dm.eta_nuc[i]=dm.dist[i].be+dm.dist[i].mu+dm.dist[i].Z*dm.e.mu;
+      dm.eta_p+=(dm.dist[i].n+dfdm_i)*(vec_dEdnp[i]+vec_dEdne[i])/hc_mev_fm;
+      
+      for(size_t j=0;j<dm.dist.size();j++) {
 	
 	double dmudm=-1.5*dm.T/dm.dist[j].m;
 	double dfdm=dm.dist[j].n*dmudm;
