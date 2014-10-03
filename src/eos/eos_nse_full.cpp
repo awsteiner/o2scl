@@ -50,6 +50,7 @@ eos_nse_full::eos_nse_full() {
   def_mmin.tol_abs=1.0e-7;
 
   inc_prot_coul=true;
+  include_muons=false;
 }
 
 double eos_nse_full::free_energy(const ubvector &n_nuc, dense_matter &dm) {
@@ -223,6 +224,10 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
     O2SCL_ERR("Wrong inc_rest_mass for electrons in fixnp().",
 	      exc_esanity);
   }
+  if (dm.mu.inc_rest_mass==false) {
+    O2SCL_ERR("Wrong inc_rest_mass for muons in fixnp().",
+	      exc_esanity);
+  }
   for(size_t i=0;i<dm.dist.size();i++) {
     if (dm.dist[i].non_interacting==false) {
       O2SCL_ERR("Wrong non_interacting for nuclei in fixnp().",
@@ -239,6 +244,10 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
   }
   if (dm.e.non_interacting==false) {
     O2SCL_ERR("Wrong non_interacting for electrons in fixnp().",
+	      exc_esanity);
+  }
+  if (dm.mu.non_interacting==false) {
+    O2SCL_ERR("Wrong non_interacting for muons in fixnp().",
 	      exc_esanity);
   }
   if (inc_prot_coul==true) {
@@ -294,14 +303,6 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
     
     // Add electrons
     dm.e.n=dm.Ye*dm.nB;
-    if (dm.e.n<dm.p.n) {
-      if (verbose>0) {
-	cout << "Electron density too small to match proton density."
-	     << endl;
-	cout << "np: " << dm.p.n << " ne: " << dm.e.n << endl;
-      }
-      return invalid_config;
-    }
     ret=relf.pair_density(dm.e,dm.T);
     if (ret!=success) {
       O2SCL_CONV2_RET("Electron EOS failed in eos_nse_full::",
@@ -317,7 +318,7 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
 	   << dm.e.en << endl;
     }
 
-    if (false) {
+    if (include_muons) {
       // Add muons
       dm.mu.mu=dm.e.mu;
       relf.pair_mu(dm.mu,dm.T);
@@ -345,6 +346,23 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
     }
   }
 
+  // Negative charge density
+  double n_neg=dm.Ye*dm.nB;
+  if (include_muons) n_neg+=dm.mu.n;
+
+  // -----------------------------------------------------------
+  // Some invalid configuration checks
+
+  if (n_neg<dm.p.n) {
+    if (verbose>0) {
+      cout << "Negative charge density too small to match proton density."
+	   << endl;
+      cout << "np: " << dm.p.n << " ne: " << dm.e.n 
+	   << "nmu: " << dm.mu.n << endl;
+    }
+    return invalid_config;
+  }
+
   if (dm.dist.size()>0) {
 
     // Check that the proton density isn't too large in
@@ -356,10 +374,10 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
       }
       return invalid_config;
     }
-      
-    // Check that the electron density isn't too large
+    
+    // Check that the negative charge density isn't too large
     // in the presence of nuclei
-    double fac=(0.08-dm.p.n)/(dm.e.n-dm.p.n);
+    double fac=(0.08-dm.p.n)/(n_neg-dm.p.n);
     if (1.0>fac) {
       if (verbose>0) {
 	cout << "Proton radius negative or larger than cell size." << endl;
@@ -369,41 +387,47 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
     }
   }
 
-  // Vectors for derivatives of nuclear binding energy
-  ubvector vec_dEdne(dm.dist.size());
+  // -----------------------------------------------------------
+  // Properties of nuclear distribution
 
-  // Compute the properties of the nuclei
+  // Vectors for derivatives of nuclear binding energy
+  ubvector vec_dEdnneg(dm.dist.size());
+
+  // Stepsize for verbose output
   size_t i_out=0, out_step=dm.dist.size()/10;
   if (out_step==0) out_step=1;
-  for(size_t i=0;i<dm.dist.size();i++) {
 
+  // Main loop
+  for(size_t i=0;i<dm.dist.size();i++) {
+    
     // Create a reference for this nucleus
     nucleus &nuc=dm.dist[i];
 
     // If this nucleus is unphysical because R_n > R_{WS}, 
     // set it's density to zero and continue
-    if (nuc.N*(dm.e.n-dm.p.n)/nuc.Z/(0.08-dm.n.n)>1.0) {
-
+    if (nuc.N*(n_neg-dm.p.n)/nuc.Z/(0.08-dm.n.n)>1.0) {
+      
       nuc.n=0.0;
       nuc.ed=0.0;
       nuc.en=0.0;
-      vec_dEdne[i]=0.0;
+      vec_dEdnneg[i]=0.0;
 
     } else {
     
       // Compute nuclear binding energy and total mass
-      double dEdnp, dEdnn, dEdne, dEdT;
+      double dEdnp, dEdnn, dEdnneg, dEdT;
       // Include protons in the Coulomb energy
       if (inc_prot_coul) {
 	massp->binding_energy_densmat_derivs
-	  (nuc.Z,nuc.N,dm.p.n,dm.n.n,dm.e.n,dm.T,nuc.be,dEdnp,dEdnn,dEdne,dEdT);
+	  (nuc.Z,nuc.N,dm.p.n,dm.n.n,n_neg,dm.T,nuc.be,dEdnp,dEdnn,
+	   dEdnneg,dEdT);
       } else {
 	massp->binding_energy_densmat_derivs
-	  (nuc.Z,nuc.N,0.0,0.0,dm.e.n,dm.T,nuc.be,dEdnp,dEdnn,dEdne,dEdT);
+	  (nuc.Z,nuc.N,0.0,0.0,n_neg,dm.T,nuc.be,dEdnp,dEdnn,dEdnneg,dEdT);
       }
       nuc.be/=hc_mev_fm;
       nuc.m=nuc.Z*dm.p.m+nuc.N*dm.n.m+nuc.be;
-      vec_dEdne[i]=dEdne;
+      vec_dEdnneg[i]=dEdnneg;
       
       // Use NSE to compute the chemical potential
       nuc.mu=nuc.Z*dm.p.mu+nuc.N*dm.n.mu-nuc.be;
@@ -448,7 +472,7 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
       dm.eta_nuc[i]=0.0;
     }
     // In eta_p, we don't include dEdnp terms which are zero
-    dm.eta_p+=(dm.dist[i].n+dfdm_i)*(vec_dEdne[i])/hc_mev_fm;
+    dm.eta_p+=(dm.dist[i].n+dfdm_i)*(vec_dEdnneg[i])/hc_mev_fm;
     
     for(size_t j=0;j<dm.dist.size();j++) {
       
@@ -458,7 +482,7 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
 	double dfdm=dm.dist[j].n*dmudm;
 	
 	dm.eta_nuc[i]+=dm.dist[i].Z*(dm.dist[j].n+dfdm)*
-	  vec_dEdne[j]/hc_mev_fm;
+	  vec_dEdnneg[j]/hc_mev_fm;
       }
     }
   }
@@ -554,6 +578,10 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm, int verbose) {
     O2SCL_ERR("Wrong inc_rest_mass for electrons in noneq().",
 	      exc_esanity);
   }
+  if (dm.mu.inc_rest_mass==false) {
+    O2SCL_ERR("Wrong inc_rest_mass for muons in noneq().",
+	      exc_esanity);
+  }
   for(size_t i=0;i<dm.dist.size();i++) {
     if (dm.dist[i].non_interacting==false) {
       O2SCL_ERR("Wrong non_interacting for nuclei in noneq().",
@@ -570,6 +598,10 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm, int verbose) {
   }
   if (dm.e.non_interacting==false) {
     O2SCL_ERR("Wrong non_interacting for electrons in noneq().",
+	      exc_esanity);
+  }
+  if (dm.mu.non_interacting==false) {
+    O2SCL_ERR("Wrong non_interacting for muons in noneq().",
 	      exc_esanity);
   }
 
@@ -635,14 +667,6 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm, int verbose) {
 
     // Add electrons
     dm.e.n=Ye*nB;
-    if (dm.e.n<dm.p.n) {
-      if (verbose>0) {
-	cout << "Electron density too small to match proton density."
-	     << endl;
-	cout << "np: " << dm.p.n << " ne: " << dm.e.n << endl;
-      }
-      return invalid_config;
-    }
     ret=relf.pair_density(dm.e,dm.T);
     if (ret!=success) {
       O2SCL_CONV2_RET("Electron EOS failed in eos_nse_full::",
@@ -686,12 +710,33 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm, int verbose) {
     }
   }
 
-  // Vectors for derivatives of nuclear binding energy
-  ubvector vec_dEdne(dm.dist.size()), vec_dEdnp(dm.dist.size());
+  double n_neg=dm.e.n;
+  if (include_muons) n_neg+=dm.mu.n;
 
-  // Compute the properties of the nuclei
+  // -----------------------------------------------------------
+  // Some invalid configuration checks
+
+  if (n_neg<dm.p.n) {
+    if (verbose>0) {
+      cout << "Negative charge density too small to match proton density."
+           << endl;
+      cout << "np: " << dm.p.n << " ne: " << dm.e.n 
+           << "nmu: " << dm.mu.n << endl;
+    }
+    return invalid_config;
+  }  
+
+  // -----------------------------------------------------------
+  // Properties of nuclear distribution
+
+  // Vectors for derivatives of nuclear binding energy
+  ubvector vec_dEdnneg(dm.dist.size()), vec_dEdnp(dm.dist.size());
+
+  // Step size for verbose output
   size_t i_out=0, out_step=dm.dist.size()/10;
   if (out_step==0) out_step=1;
+
+  // Main loop
   for(size_t i=0;i<dm.dist.size();i++) {
     
     if (dm.dist[i].n>0.0) {
@@ -708,7 +753,7 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm, int verbose) {
 	
       // Check that the electron density isn't too large
       // in the presence of nuclei
-      double fac=(0.08-dm.p.n)/(dm.e.n-dm.p.n);
+      double fac=(0.08-dm.p.n)/(n_neg-dm.p.n);
       if (1.0>fac) {
 	if (verbose>0) {
 	  cout << "Proton radius negative or larger than cell size." << endl;
@@ -721,23 +766,25 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm, int verbose) {
       nucleus &nuc=dm.dist[i];
       
       // Compute nuclear binding energy and total mass
-      double dEdnp, dEdnn, dEdne, dEdT;
+      double dEdnp, dEdnn, dEdnneg, dEdT;
       if (inc_prot_coul) {
 	// Include protons in the Coulomb energy
 	massp->binding_energy_densmat_derivs
-	  (nuc.Z,nuc.N,dm.p.n,dm.n.n,dm.e.n,dm.T,nuc.be,dEdnp,dEdnn,dEdne,dEdT);
+	  (nuc.Z,nuc.N,dm.p.n,dm.n.n,n_neg,dm.T,nuc.be,
+	   dEdnp,dEdnn,dEdnneg,dEdT);
 	nuc.be/=hc_mev_fm;
 	nuc.m=nuc.Z*dm.p.m+nuc.N*dm.n.m+nuc.be;
 	vec_dEdnp[i]=dEdnp;
-	vec_dEdne[i]=dEdne;
+	vec_dEdnneg[i]=dEdnneg;
       } else {
 	// Don't include protons in the Coulomb energy
 	massp->binding_energy_densmat_derivs
-	  (nuc.Z,nuc.N,0.0,0.0,dm.e.n,dm.T,nuc.be,dEdnp,dEdnn,dEdne,dEdT);
+	  (nuc.Z,nuc.N,0.0,0.0,n_neg,dm.T,nuc.be,
+	   dEdnp,dEdnn,dEdnneg,dEdT);
 	nuc.be/=hc_mev_fm;
 	nuc.m=nuc.Z*dm.p.m+nuc.N*dm.n.m+nuc.be;
 	vec_dEdnp[i]=0.0;
-	vec_dEdne[i]=dEdne;
+	vec_dEdnneg[i]=dEdnneg;
       }
 
       // Translational energy
@@ -783,7 +830,7 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm, int verbose) {
       double dmudm_i=-1.5*dm.T/dm.dist[i].m;
       double dfdm_i=dm.dist[i].n*dmudm_i;
       dm.eta_nuc[i]=dm.dist[i].be+dm.dist[i].mu+dm.dist[i].Z*dm.e.mu;
-      dm.eta_p+=(dm.dist[i].n+dfdm_i)*(vec_dEdnp[i]+vec_dEdne[i])/hc_mev_fm;
+      dm.eta_p+=(dm.dist[i].n+dfdm_i)*(vec_dEdnp[i]+vec_dEdnneg[i])/hc_mev_fm;
       
       for(size_t j=0;j<dm.dist.size();j++) {
 	
@@ -791,7 +838,7 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm, int verbose) {
 	double dfdm=dm.dist[j].n*dmudm;
 	
 	dm.eta_nuc[i]+=dm.dist[i].Z*(dm.dist[j].n+dfdm)*
-	  vec_dEdne[j]/hc_mev_fm;
+	  vec_dEdnneg[j]/hc_mev_fm;
       }
     }
     
@@ -983,6 +1030,10 @@ void eos_nse_full::output(dense_matter &dm, int verbose) {
       cout << "S: " << (dm.th.en)/dm.nB << endl;
       double ed=dm.th.ed-dm.e.ed-dm.photon.ed;
       double en=dm.th.en-dm.e.en-dm.photon.en;
+      if (include_muons) {
+	ed-=dm.mu.ed;
+	en-=dm.mu.en;
+      }
       cout << "Fint: " << (ed-dm.T*en)/dm.nB*hc_mev_fm 
 	   << " MeV" << endl;
       cout << "Eint: " << (ed)/dm.nB*hc_mev_fm << " MeV" << endl;

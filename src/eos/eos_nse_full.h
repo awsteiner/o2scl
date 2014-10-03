@@ -66,7 +66,6 @@ namespace o2scl {
       must check the return value of these two functions 
       every time they are called. 
 
-      \future Add positrons, muons, and anti-muons
       \future Add fermion and boson statistics to the nuclei in the
       distribution
   */
@@ -146,6 +145,9 @@ namespace o2scl {
     */
     bool inc_prot_coul;
 
+    /// If true, include muons (default false)
+    bool include_muons;
+    
     /** \brief Compute the properties of matter from the densities,
 	not presuming equilibrium
 
