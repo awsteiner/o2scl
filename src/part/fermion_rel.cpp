@@ -663,6 +663,21 @@ int fermion_rel::pair_density(fermion &f, double temper) {
   if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
   
   nex=f.nu/temper;
+
+  // -------------------------------------------------------
+  // If the chemical potential is too small, then the solver
+  // will fail
+
+  // Find the larger of either the temperature or the mass
+  double lg=temper;
+  if (f.ms>lg) lg=temper;
+  // Try increasing the chemical potential
+  double y=pair_fun(nex,f,temper);
+  for(size_t i=0;i<10 && y==-1.0;i++) {
+    nex+=lg/temper;
+    y=pair_fun(nex,f,temper);
+  }
+
   funct11 mf=std::bind(std::mem_fn<double(double,fermion &,double)>
 			(&fermion_rel::pair_fun),
 			this,std::placeholders::_1,std::ref(f),temper);

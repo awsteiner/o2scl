@@ -302,7 +302,7 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
       }
       return invalid_config;
     }
-    ret=relf.calc_density(dm.e,dm.T);
+    ret=relf.pair_density(dm.e,dm.T);
     if (ret!=success) {
       O2SCL_CONV2_RET("Electron EOS failed in eos_nse_full::",
 		      "calc_density_fixnp().",exc_einval,err_nonconv);
@@ -320,7 +320,7 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
     if (false) {
       // Add muons
       dm.mu.mu=dm.e.mu;
-      relf.calc_mu(dm.mu,dm.T);
+      relf.pair_mu(dm.mu,dm.T);
       dm.th.ed+=dm.mu.ed;
       dm.th.en+=dm.mu.en;
       
@@ -643,7 +643,7 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm, int verbose) {
       }
       return invalid_config;
     }
-    ret=relf.calc_density(dm.e,dm.T);
+    ret=relf.pair_density(dm.e,dm.T);
     if (ret!=success) {
       O2SCL_CONV2_RET("Electron EOS failed in eos_nse_full::",
 		      "calc_density_noneq().",exc_einval,err_nonconv);
@@ -661,7 +661,7 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm, int verbose) {
     if (false) {
       // Add muons
       dm.mu.mu=dm.e.mu;
-      relf.calc_mu(dm.mu,dm.T);
+      relf.pair_mu(dm.mu,dm.T);
       dm.th.ed+=dm.mu.ed;
       dm.th.en+=dm.mu.en;
       

@@ -89,7 +89,7 @@ int main(void) {
 
   nse.inc_prot_coul=false;
 
-  nse.calc_density_noneq(dm,0);
+  nse.calc_density_noneq(dm);
   fr1=dm.th.ed-dm.T*dm.th.en;
   dm.n.n*=(1.0+eps);
   nse.calc_density_noneq(dm,0);
