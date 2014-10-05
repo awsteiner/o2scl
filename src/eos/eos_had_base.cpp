@@ -927,12 +927,12 @@ int eos_had_temp_base::nuc_matter_temp_e(size_t nv, const ubvector &x,
   
   if (!o2scl::is_finite(neutron->n) || !o2scl::is_finite(proton->n)) {
     O2SCL_ERR2("Density problem in ",
-	       "eos_had_temp_base::nuc_matter_e().",exc_esanity);
+	       "eos_had_temp_base::nuc_matter_temp_e().",exc_esanity);
   }
   int ret=calc_temp_e(*neutron,*proton,T,*eos_thermo);
   if (ret!=0) {
     O2SCL_ERR2("Function calc_e() failed in ",
-	       "eos_had_temp_base::nuc_matter_e().",exc_efailed);
+	       "eos_had_temp_base::nuc_matter_temp_e().",exc_efailed);
   }
 
   y[0]=neutron->mu-mun0;
@@ -940,7 +940,7 @@ int eos_had_temp_base::nuc_matter_temp_e(size_t nv, const ubvector &x,
   
   if (!o2scl::is_finite(neutron->mu) || !o2scl::is_finite(proton->mu)) {
     O2SCL_ERR2("Chemical potential problem in ",
-	       "eos_had_temp_base::nuc_matter_e().",exc_esanity);
+	       "eos_had_temp_base::nuc_matter_temp_e().",exc_esanity);
   }
 
   return ret;
