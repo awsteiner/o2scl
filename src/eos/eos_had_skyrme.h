@@ -49,7 +49,7 @@ namespace o2scl {
       \b Background:
 
       The Hamiltonian is defined (using the notation of 
-      \ref Steiner05b )
+      \ref Steiner05b ) as
       \f[
       {\cal H} = 
       {\cal H}_{k1} +
@@ -59,7 +59,7 @@ namespace o2scl {
       {\cal H}_{p2} +
       {\cal H}_{p3} +
       {\cal H}_{g1} +
-      {\cal H}_{g2}
+      {\cal H}_{g2} \, .
       \f]
       
       The kinetic terms are:
@@ -193,31 +193,30 @@ namespace o2scl {
       m^{*} \f$.
      
       \note The finite temperature code does not include attempt to
-      include antiparticles and uses part::calc_density().
+      include antiparticles and uses \ref
+      o2scl::fermion_nonrel::calc_density().
       
       \note Since this EOS uses the effective masses and chemical
       potentials in the fermion class, the values of
-      part::non_interacting for neutrons and protons are set to false
-      in many of the functions.
+      <tt>part::non_interacting</tt> for neutrons and protons are set
+      to false in many of the functions.
 
       \hline
       
       \todo
       - Convert W0 to b4 and b4p everywhere
-      - Make sure that this class properly handles particles for which 
-      inc_rest_mass is true/false
-      - Need to write a function that calculates saturation density?
       - Remove use of mnuc in calparfun()?
-      - The compressibility could probably use some simplification
-      - Make sure the finite-temperature part is properly tested
-      - The testing code doesn't work if err_mode is 2, probably because
-      of problems in load().
       - Document load() file format.
       - Update reference list.
 
       \future
-      - There is some code duplication between calc_e() and calc_temp_e()
-      which could be simplified.
+      - There is some code duplication between calc_e() and
+      calc_temp_e() which could be simplified.
+      - This EOS typically converges very well. One exception seems
+      to be using <tt>calc_temp_p()</tt> at very low densities. I have
+      had problems, for example, with <tt>mun=5.0, mup=6.5</tt>
+      at <tt>T=1.0/197.33</tt>. 
+
       \hline
       
   */

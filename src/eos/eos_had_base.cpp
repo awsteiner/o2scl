@@ -925,6 +925,10 @@ int eos_had_temp_base::nuc_matter_temp_e(size_t nv, const ubvector &x,
   neutron->n=x[0];
   proton->n=x[1];
   
+  if (x[0]<0.0 || x[1]<0.0) {
+    return exc_ebadfunc;
+  }
+
   if (!o2scl::is_finite(neutron->n) || !o2scl::is_finite(proton->n)) {
     O2SCL_ERR2("Density problem in ",
 	       "eos_had_temp_base::nuc_matter_temp_e().",exc_esanity);
@@ -1040,27 +1044,35 @@ int eos_had_temp_eden_base::calc_temp_p(fermion &n, fermion &p,
   set_n_and_p(n,p);
   set_thermo(th);
   
+  // Replace a bad guess if necessary
+  if (n.n<=0.0) n.n=0.08;
+  if (p.n<=0.0) p.n=0.08;
+
   ubvector den(2);
   den[0]=n.n;
   den[1]=p.n;
-
+  
   mm_funct11 fmf=std::bind
     (std::mem_fn<int(size_t,const ubvector &,
 		     ubvector &, double, double, double)>
     (&eos_had_temp_eden_base::nuc_matter_temp_e),
      this,std::placeholders::_1,std::placeholders::_2,
-     std::placeholders::_3,n.mu,p.mu,T);
+    std::placeholders::_3,n.mu,p.mu,T);
 
-ret=eos_mroot->msolve(2,den,fmf);
+#ifdef O2SCL_NEVER_DEFINED
+}{
+#endif
   
-if (ret!=0) {
-  O2SCL_ERR2("Solver failed in ",
-	     "eos_had_temp_eden_base::calc_temp_p().",ret);
- }
+  ret=eos_mroot->msolve(2,den,fmf);
   
-th=*eos_thermo;
-
-return 0;
+  if (ret!=0) {
+    O2SCL_ERR2("Solver failed in ",
+	       "eos_had_temp_eden_base::calc_temp_p().",ret);
+  }
+  
+  th=*eos_thermo;
+  
+  return 0;
 }
 
 int eos_had_temp_pres_base::calc_e(fermion &n, fermion &p, thermo &th) {
