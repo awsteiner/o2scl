@@ -47,8 +47,25 @@ int eos_had_skyrme::calc_temp_e(fermion &ne, fermion &pr,
   double n, x, hamk, ham, ham1, ham2, ham3, ham4, ham5, ham6;
   double dhdnn, dhdnp, na, npa, nna, term, term2, common, gn, gp;
  
-  ne.non_interacting=false;
-  pr.non_interacting=false;
+#if !O2SCL_NO_RANGE_CHECK
+  if (!o2scl::is_finite(ne.n) || !o2scl::is_finite(ne.n) ||
+      !o2scl::is_finite(ltemper)) {
+    O2SCL_ERR2("Nucleon densities or temperature not finite in ",
+	       "eos_had_skyrme::calc_eq_temp_p().",exc_einval);
+  }
+  if (fabs(ne.g-2.0)>1.0e-10 || fabs(pr.g-2.0)>1.0e-10) {
+    O2SCL_ERR2("Neutron or proton spin degeneracies wrong in ",
+	       "eos_had_skyrme::calc_eq_temp_p().",exc_einval);
+  }
+  if (fabs(ne.m-4.5)>1.0 || fabs(pr.m-4.5)>1.0) {
+    O2SCL_ERR2("Neutron or proton masses wrong in ",
+	       "eos_had_skyrme::calc_eq_temp_p().",exc_einval);
+  }
+  if (ne.non_interacting==true || pr.non_interacting==true) {
+    O2SCL_ERR2("Neutron or protons non-interacting in ",
+	       "eos_had_skyrme::calc_eq_temp_p().",exc_einval);
+  }
+#endif
 
   //---------------------------------------
   // Some local variables of interest:
@@ -157,6 +174,25 @@ int eos_had_skyrme::calc_temp_e(fermion &ne, fermion &pr,
 }
 
 int eos_had_skyrme::calc_e(fermion &ne, fermion &pr, thermo &locth) {
+
+#if !O2SCL_NO_RANGE_CHECK
+  if (!o2scl::is_finite(ne.n) || !o2scl::is_finite(ne.n)) {
+    O2SCL_ERR2("Nucleon densities not finite in ",
+	       "eos_had_skyrme::calc_eq_temp_p().",exc_einval);
+  }
+  if (fabs(ne.g-2.0)>1.0e-10 || fabs(pr.g-2.0)>1.0e-10) {
+    O2SCL_ERR2("Neutron or proton spin degeneracies wrong in ",
+	       "eos_had_skyrme::calc_eq_temp_p().",exc_einval);
+  }
+  if (fabs(ne.m-4.5)>1.0 || fabs(pr.m-4.5)>1.0) {
+    O2SCL_ERR2("Neutron or proton masses wrong in ",
+	       "eos_had_skyrme::calc_eq_temp_p().",exc_einval);
+  }
+  if (ne.non_interacting==true || pr.non_interacting==true) {
+    O2SCL_ERR2("Neutron or protons non-interacting in ",
+	       "eos_had_skyrme::calc_eq_temp_p().",exc_einval);
+  }
+#endif
 
   double x, n, hamk, ham, ham1, ham2, ham3, ham4, ham5, ham6;
   double dhdnn, dhdnp, na, npa, nna, term, term2, common, gn, gp;

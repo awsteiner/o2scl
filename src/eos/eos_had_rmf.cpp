@@ -66,10 +66,10 @@ eos_had_rmf::eos_had_rmf() {
   calc_e_steps=20;
 }
 
-int eos_had_rmf::calc_eq_temp_p(fermion &ne, fermion &pr, double temper,
-			    double sig, double ome, double lrho, double &f1, 
-			    double &f2, double &f3, thermo &lth) {
-  
+int eos_had_rmf::calc_eq_temp_p
+(fermion &ne, fermion &pr, double temper, double sig, double ome, 
+ double lrho, double &f1, double &f2, double &f3, thermo &lth) {
+
   double gs2, gs, gr2, gr, gw2, gw, duds;
   double us, fun, dfdw, fnn=0.0, fnp=0.0, sig2, sig4, ome2, ome4, rho2;
 
@@ -80,7 +80,19 @@ int eos_had_rmf::calc_eq_temp_p(fermion &ne, fermion &pr, double temper,
   // the inputs useful for debugging.
   if (!o2scl::is_finite(ne.mu) || !o2scl::is_finite(ne.mu)) {
     O2SCL_ERR2("Chemical potentials not finite in ",
-	       "eos_had_rmf::calc_eq_temp_p().",exc_efailed);
+	       "eos_had_rmf::calc_eq_temp_p().",exc_einval);
+  }
+  if (fabs(ne.g-2.0)>1.0e-10 || fabs(pr.g-2.0)>1.0e-10) {
+    O2SCL_ERR2("Neutron or proton spin degeneracies wrong in ",
+	       "eos_had_rmf::calc_eq_temp_p().",exc_einval);
+  }
+  if (fabs(ne.m-4.5)>1.0 || fabs(pr.m-4.5)>1.0) {
+    O2SCL_ERR2("Neutron or proton masses wrong in ",
+	       "eos_had_rmf::calc_eq_temp_p().",exc_einval);
+  }
+  if (ne.non_interacting==true || pr.non_interacting==true) {
+    O2SCL_ERR2("Neutron or protons non-interacting in ",
+	       "eos_had_rmf::calc_eq_temp_p().",exc_einval);
   }
 #endif
 

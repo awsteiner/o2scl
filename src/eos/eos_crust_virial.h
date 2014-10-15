@@ -180,12 +180,31 @@ namespace o2scl {
     */
     virtual int calc_temp_p_alpha(fermion &n, fermion &p, boson &d, boson &a, 
 				  double T, thermo &th) {
-
-      double TMeV=T*o2scl_const::hc_mev_fm;
       
+#if !O2SCL_NO_RANGE_CHECK
+      if (!o2scl::is_finite(n.mu) || !o2scl::is_finite(n.mu) ||
+	  !o2scl::is_finite(T)) {
+	O2SCL_ERR2("Chemical potentials or temperature not finite in ",
+		   "eos_crust_virial::calc_eq_temp_p_alpha().",exc_einval);
+      }
+      if (fabs(n.g-2.0)>1.0e-10 || fabs(p.g-2.0)>1.0e-10) {
+	O2SCL_ERR2("Neutron or proton spin degeneracies wrong in ",
+		   "eos_crust_virial::calc_eq_temp_p_alpha().",exc_einval);
+      }
+      if (fabs(n.m-4.5)>1.0 || fabs(p.m-4.5)>1.0) {
+	O2SCL_ERR2("Neutron or proton masses wrong in ",
+		   "eos_crust_virial::calc_eq_temp_p_alpha().",exc_einval);
+      }
+#endif
+
+      // Temperature in MeV
+      double TMeV=T*o2scl_const::hc_mev_fm;
+
+      // Alpha and deuteron chemical potentials in nuc. stat. eq.
       a.mu=2.0*p.mu+2.0*n.mu;
       d.mu=p.mu+n.mu;
 
+      // Fugacities for neutrons, protons, alphas, and deuterons
       double zn, zp, za, zd;
       if (n.inc_rest_mass) {
 	zn=exp((n.mu-n.m)/T);
@@ -200,28 +219,33 @@ namespace o2scl {
       za=zp*zp*zn*zn*exp(-(a.m-2.0*n.m-2.0*p.m)/T);
       zd=zp*zn*exp(-(d.m-n.m-p.m)/T);
       
+      // de Broglie wavelengths for nucleons, alphas, and deutrons
       double lambda=sqrt(4.0*o2scl_const::pi/(n.m+p.m)/T);
-      double lambdaa=sqrt(2.0*o2scl_const::pi/a.m/T);
-      double lambda3=pow(lambda,3.0);
-      double lambdaa3=pow(lambdaa,3.0);
-      double lambdad=sqrt(2.0*o2scl_const::pi/d.m/T);
-      double lambdad3=pow(lambdad,3.0);
-
-      th.pr=T*(2.0/lambda3*(zn+zp+(zn*zn+zp*zp)*bn(TMeV)+2.0*zp*zn*bpn(TMeV))
-	       +1.0/lambdaa3*(za+za*za*ba(TMeV)+2.0*za*(zn+zp)*ban(TMeV)));
+      double lambda3=lambda*lambda*lambda;
+      double lambda_a=sqrt(2.0*o2scl_const::pi/a.m/T);
+      double lambda_a3=lambda_a*lambda_a*lambda_a;
+      double lambda_d=sqrt(2.0*o2scl_const::pi/d.m/T);
+      double lambda_d3=lambda_d*lambda_d*lambda_d;
       
+      // Pressure
+      th.pr=T*(2.0/lambda3*(zn+zp+(zn*zn+zp*zp)*bn(TMeV)+2.0*zp*zn*bpn(TMeV))
+	       +1.0/lambda_a3*(za+za*za*ba(TMeV)+2.0*za*(zn+zp)*ban(TMeV)));
+      
+      // Densities
       n.n=2.0/lambda3*(zn+2.0*zn*zn*bn(TMeV)+2.0*zp*zn*bpn(TMeV)+
 		       8.0*za*zn*ban(TMeV));
       p.n=2.0/lambda3*(zp+2.0*zp*zp*bn(TMeV)+2.0*zp*zn*bpn(TMeV)+
 		       8.0*za*zp*ban(TMeV));
-      a.n=1.0/lambdaa3*(za+2.0*za*za*ba(TMeV)+2.0*za*(zn+zp)*ban(TMeV));
-      d.n=1.0/lambdad3*zd;
+      a.n=1.0/lambda_a3*(za+2.0*za*za*ba(TMeV)+2.0*za*(zn+zp)*ban(TMeV));
+      d.n=1.0/lambda_d3*zd;
       
+      // Entropy
       th.en=5.0*th.pr/2.0/T-n.n*log(zn)-p.n*log(zp)-a.n*log(za)+
 	2.0/lambda3*((zn*zn+zp*zp)*Tbn_prime(TMeV)+
 		     2.0*zp*zn*Tbpn_prime(TMeV))+
-	1.0/lambdaa3*(za*za*Tba_prime(TMeV)+2.0*za*(zn+zp)*Tban_prime(TMeV));
+	1.0/lambda_a3*(za*za*Tba_prime(TMeV)+2.0*za*(zn+zp)*Tban_prime(TMeV));
 
+      // Energy density
       th.ed=-th.pr+T*th.en;
       if (n.inc_rest_mass) {
 	th.ed+=n.n*n.mu;
@@ -243,7 +267,7 @@ namespace o2scl {
 
 	double ed2=th.pr*1.5-a.n*Ealpha+2.0*T/lambda3*
 	((zn*zn+zp*zp)*Tbn_prime(TMeV)+2.0*zn*zp*Tbpn_prime(TMeV))+
-	T/lambdaa3*(za*za*Tba_prime(TMeV)+2.0*za*(zn+zp)*Tban_prime(TMeV));
+	T/lambda_a3*(za*za*Tba_prime(TMeV)+2.0*za*(zn+zp)*Tban_prime(TMeV));
       */
 
       return 0;

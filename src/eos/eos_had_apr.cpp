@@ -78,9 +78,24 @@ int eos_had_apr::calc_e(fermion &ne, fermion &pr, thermo &lth) {
   double dmsndnn, dmspdnp, dkindnn, dkindnp, dmsndnp, dmspdnn;
   double gh1, gh2, dgl1, dgl2, dgh1, dgh2;
 
-  if (!o2scl::is_finite(ne.n) || !o2scl::is_finite(pr.n)) {
-    O2SCL_ERR("Densities not finite in eos_had_apr::calc_e().",exc_einval);
+#if !O2SCL_NO_RANGE_CHECK
+  if (!o2scl::is_finite(ne.n) || !o2scl::is_finite(ne.n)) {
+    O2SCL_ERR2("Nucleon densities not finite in ",
+	       "eos_had_apr::calc_eq_temp_p().",exc_einval);
   }
+  if (fabs(ne.g-2.0)>1.0e-10 || fabs(pr.g-2.0)>1.0e-10) {
+    O2SCL_ERR2("Neutron or proton spin degeneracies wrong in ",
+	       "eos_had_apr::calc_eq_temp_p().",exc_einval);
+  }
+  if (fabs(ne.m-4.5)>1.0 || fabs(pr.m-4.5)>1.0) {
+    O2SCL_ERR2("Neutron or proton masses wrong in ",
+	       "eos_had_apr::calc_eq_temp_p().",exc_einval);
+  }
+  if (ne.non_interacting==true || pr.non_interacting==true) {
+    O2SCL_ERR2("Neutron or protons non-interacting in ",
+	       "eos_had_apr::calc_eq_temp_p().",exc_einval);
+  }
+#endif
   
   //---------------------------------------
   // Some local variables of interest:
@@ -489,6 +504,27 @@ void eos_had_apr::select(int model_index) {
 
 int eos_had_apr::calc_temp_e(fermion &ne, fermion &pr, const double temper, 
 			 thermo &lth) {
+
+#if !O2SCL_NO_RANGE_CHECK
+  if (!o2scl::is_finite(ne.n) || !o2scl::is_finite(ne.n) ||
+      !o2scl::is_finite(temper)) {
+    O2SCL_ERR2("Nucleon densities or temperature not finite in ",
+	       "eos_had_apr::calc_eq_temp_p().",exc_einval);
+  }
+  if (fabs(ne.g-2.0)>1.0e-10 || fabs(pr.g-2.0)>1.0e-10) {
+    O2SCL_ERR2("Neutron or proton spin degeneracies wrong in ",
+	       "eos_had_apr::calc_eq_temp_p().",exc_einval);
+  }
+  if (fabs(ne.m-4.5)>1.0 || fabs(pr.m-4.5)>1.0) {
+    O2SCL_ERR2("Neutron or proton masses wrong in ",
+	       "eos_had_apr::calc_eq_temp_p().",exc_einval);
+  }
+  if (ne.non_interacting==true || pr.non_interacting==true) {
+    O2SCL_ERR2("Neutron or protons non-interacting in ",
+	       "eos_had_apr::calc_eq_temp_p().",exc_einval);
+  }
+#endif
+
   double barn, xp, t1, t2, t3, t4, t5, t6, t7, t8, t9;
   double dt4, nb2, kin, low, high, gl1, gl2;
   double dmsndnn, dmspdnp, dkindnn, dkindnp, dmsndnp, dmspdnn;
