@@ -193,6 +193,28 @@ int main(void) {
   double sig, ome, rho, f1, f2, f3, barn;
   thermo th;
 
+  /*
+    This was an attempt to use check_den(), but it fails
+    because of difficulties with multiple solutions for
+    the field equations and not good guesses
+  */
+
+  /*
+  nferm.n=0.09;
+  p.n=0.07;
+  re.calc_e(nferm,p,th);
+  cout << nferm.n << " " << nferm.mu << " " << p.n << " " << p.mu << endl;
+  cout << "ed,pr: " << th.ed << " " << th.pr << endl;
+  re.get_fields(sig,ome,rho);
+  cout << "fields: " << sig << " " << ome << " " << rho << endl;
+  double nnd, npd, nnde, npde;
+  re.set_fields(sig,ome,rho);
+  re.check_den(nferm,p,th,nnd,npd,nnde,npde);
+  cout << nferm.n << " " << p.n << " " << nnd << " " << npd << " "
+       << nnde << " " << npde << endl;
+  exit(-1);
+  */
+
   // -----------------------------------------------------------------
   // Check calc_e() for both NL3 and RAPR
   // -----------------------------------------------------------------

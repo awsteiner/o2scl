@@ -548,6 +548,11 @@ namespace o2scl {
     */
     double calc_ed(double nn, double np);
 
+    /** \brief Compute the pressure as a function of the nucleon
+	chemical potentials
+    */
+    double calc_pr(double nn, double np);
+
     /** \brief Compute the proton chemical potential at fixed
 	density
 
@@ -847,6 +852,13 @@ namespace o2scl {
 		  double &mup_deriv,
 		  double &mun_err, double &mup_err);
 
+    /** \brief Check the densities by computing the 
+	derivatives numerically
+    */
+    void check_den(fermion &n, fermion &p, thermo &th,
+		   double &nn_deriv, double &np_deriv,
+		   double &nn_err, double &np_err);
+      
 #ifndef DOXYGEN_INTERNAL
 
   protected:

@@ -264,18 +264,24 @@ int eos_had_rmf::calc_p(fermion &ne, fermion &pr, thermo &lth) {
      (&eos_had_rmf::field_eqs),
      this,std::placeholders::_1,std::placeholders::_2,
      std::placeholders::_3);
-  
+
+  eos_mroot->verbose=2;
   ret=eos_mroot->msolve(3,x,fmf);
-
-  sigma=x[0];
-  omega=x[1];
-  rho=x[2];
-
   if (ret!=0) {
     O2SCL_CONV_RET("Solver failed in eos_had_rmf::calc_p().",
 		   exc_efailed,err_nonconv);
   }
 
+  sigma=x[0];
+  omega=x[1];
+  rho=x[2];
+
+  // 10/16/14: Final evaluation to store results in ne, pr, and lth
+  // Use the x vector as a temporary. I'm not sure why this wasn't
+  // here before, as it seems to be necessary in order to
+  // properly report the correct pressure, energy density, etc.
+  calc_eq_p(ne,pr,sigma,omega,rho,x[0],x[1],x[2],lth);
+  
   return 0;
 }
 
