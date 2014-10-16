@@ -58,6 +58,9 @@ int main(void) {
   eos_crust_virial ve;
   fermion_rel rf;
 
+  ve.fit();
+  exit(-1);
+
   vector<double> nba, pra, soaa;
   interp<vector<double> > it(itp_cspline);
 
