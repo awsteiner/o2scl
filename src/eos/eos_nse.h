@@ -62,7 +62,7 @@ namespace o2scl {
       their proton number, neutron number, mass number, binding
       energy, and spin degeracy already specified. This class
       implicitly assumes that the nuclei are non-interacting and that
-      the values of \ref o2scl::part::inc_rest_mass are false. The
+      the values of <tt>part::inc_rest_mass</tt> are false. The
       chemical potential arguments also do not include the rest mass.
       The nuclear rest mass is presumed to be \f$ Z_X m_p + N_X m_n
       \f$. 

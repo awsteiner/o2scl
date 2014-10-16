@@ -286,7 +286,7 @@ int eos_had_rmf::calc_p(fermion &ne, fermion &pr, thermo &lth) {
 }
 
 int eos_had_rmf::calc_temp_p(fermion &ne, fermion &pr, const double T,
-			 thermo &lth) {
+			     thermo &lth) {
   int ret=0;
   ubvector x(3), y(3);
 
@@ -327,8 +327,14 @@ int eos_had_rmf::calc_temp_p(fermion &ne, fermion &pr, const double T,
 
   if (ret!=0) {
     O2SCL_CONV_RET("Solver failed in eos_had_rmf::calc_p().",
-		  exc_efailed,err_nonconv);
+		   exc_efailed,err_nonconv);
   }
+
+  // 10/16/14: Final evaluation to store results in ne, pr, and lth
+  // Use the x vector as a temporary. I'm not sure why this wasn't
+  // here before, as it seems to be necessary in order to
+  // properly report the correct pressure, energy density, etc.
+  calc_eq_temp_p(ne,pr,T,sigma,omega,rho,x[0],x[1],x[2],lth);
   
   return 0;
 }
@@ -419,8 +425,10 @@ int eos_had_rmf::calc_e(fermion &ne, fermion &pr, thermo &lth) {
 	   << "mu_p       sigma       omega      rho         ret" << endl;
       cout.precision(4);
     }
+
     for(double alpha=0.0;alpha<=1.0+1.0e-10;
 	alpha+=1.0/((double)calc_e_steps)) {
+
       if (ce_prot_matter) {
 	n_baryon=0.12*(1.0-alpha)+np*alpha;
 	n_charge=n_baryon;
@@ -432,11 +440,11 @@ int eos_had_rmf::calc_e(fermion &ne, fermion &pr, thermo &lth) {
 	n_charge=0.08*(1.0-alpha)+np*alpha;
       }
     
-      // FIXME: Document this ad-hoc adjustment
-      if (fabs(alpha-0.1)<1.0e-8) {
-	x[0]*=1.0+1.0e-5;
-	x[4]=-1.0e-10;
-      }
+      // 10/16/14: I think this was some previous debug code
+      // if (fabs(alpha-0.1)<1.0e-8) {
+      // x[0]*=1.0+1.0e-5;
+      // x[4]=-1.0e-10;
+      // }
 
       // If the chemical potentials are too small, shift them by
       // a little more than required to get positive densities. 
@@ -632,8 +640,8 @@ int eos_had_rmf::calc_temp_e(fermion &ne, fermion &pr, const double T,
 }
 
 int eos_had_rmf::calc_eq_p(fermion &ne, fermion &pr, double sig, double ome, 
-		       double lrho, double &f1, double &f2, double &f3, 
-		       thermo &lth) {
+			   double lrho, double &f1, double &f2, double &f3, 
+			   thermo &lth) {
 
   ne.non_interacting=false;
   pr.non_interacting=false;
@@ -730,7 +738,7 @@ int eos_had_rmf::calc_eq_p(fermion &ne, fermion &pr, double sig, double ome,
 }
 
 int eos_had_rmf::fix_saturation_fun(size_t nv, const ubvector &x, 
-				ubvector &y) {
+				    ubvector &y) {
   
   double phi,power,ome,dome,one,two,tri;
   double cq,lr,lr13,sqt,fir,sec,kf,kf2,pr,ed,lfac;
@@ -815,7 +823,7 @@ int eos_had_rmf::fix_saturation_fun(size_t nv, const ubvector &x,
   if (!o2scl::is_finite(y[1]) || !o2scl::is_finite(y[2]) || 
       !o2scl::is_finite(y[3]) || !o2scl::is_finite(y[0])) {
     O2SCL_ERR2("Equation not finite in ",
-		   "eos_had_rmf::fix_saturation_fun().",exc_efailed);
+	       "eos_had_rmf::fix_saturation_fun().",exc_efailed);
   }
   return 0;
 }
@@ -880,7 +888,7 @@ int eos_had_rmf::fix_saturation(double gcs, double gcw, double gb, double gc) {
   sig=mnuc*(1.0-msom)/gs;
   if (zm_mode) {
     O2SCL_ERR("Function fix_saturation() does not work with zm_mode=true.",
-		  exc_efailed);
+	      exc_efailed);
   }
 
   if (calc_cr(sig,ome,n0)==0) {
@@ -978,7 +986,8 @@ void eos_had_rmf::saturation() {
 }
 
 int eos_had_rmf::calc_e_solve_fun(size_t nv, const ubvector &ex, 
-			      ubvector &ey) {
+				  ubvector &ey) {
+
   double f1,f2,f3,sig,ome,lrho;
   
   neutron->mu=ex[0];
@@ -1030,7 +1039,7 @@ int eos_had_rmf::calc_e_solve_fun(size_t nv, const ubvector &ex,
 }
 
 int eos_had_rmf::calc_temp_e_solve_fun(size_t nv, const ubvector &ex, 
-				   ubvector &ey) {
+				       ubvector &ey) {
   double f1,f2,f3,sig,ome,lrho;
 
   neutron->mu=ex[0];
@@ -1100,7 +1109,7 @@ int eos_had_rmf::calc_temp_e_solve_fun(size_t nv, const ubvector &ex,
 }
 
 int eos_had_rmf::zero_pressure(size_t nv, const ubvector &ex, 
-			   ubvector &ey) {
+			       ubvector &ey) {
 
   double f1,f2,f3,sig,ome,lrho;
   fermion *n=neutron, *p=proton;
@@ -1144,6 +1153,7 @@ int eos_had_rmf::zero_pressure(size_t nv, const ubvector &ex,
 }
 
 double eos_had_rmf::fesym_fields(double sig, double ome, double l_nb) {
+
   double kf, efs, mstar, ret, fun;
   
   kf=pow(1.5*l_nb*pi2,1.0/3.0);
@@ -1160,6 +1170,7 @@ double eos_had_rmf::fesym_fields(double sig, double ome, double l_nb) {
 }
 
 int eos_had_rmf::calc_cr(double sig, double ome, double l_nb) {
+
   double kf, efs, mstar, up, dn, fun;
 
   kf=pow(1.5*l_nb*pi2,1.0/3.0);
@@ -1183,6 +1194,7 @@ int eos_had_rmf::calc_cr(double sig, double ome, double l_nb) {
 }
 
 double eos_had_rmf::fcomp_fields(double sig, double ome, double l_nb) {
+
   double gs, gw, mstar, efs, d2u;
   double alpha, dsdn, dwdn, ret, rhos, kf;
 
@@ -1209,7 +1221,8 @@ double eos_had_rmf::fcomp_fields(double sig, double ome, double l_nb) {
 }
   
 void eos_had_rmf::fkprime_fields(double sig, double ome, double l_nb,
-			    double &k, double &l_kprime) {
+				 double &k, double &l_kprime) {
+
   double gs, gw, mstar, efs, d2u;
   double alpha, dsdn, dwdn, rhos, kf, lterm;
   double dpdn, d3u, dalphadms, d2sdn2, d2pdn2, d2wdn2;

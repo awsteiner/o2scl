@@ -40,8 +40,13 @@
     
     \anchor Brack85 Brack85:
     <a href="http://dx.doi.org/10.1016/0370-1573(86)90078-5">
-    M. Brack, C. Guet, and H.-B. H&aring;kansson</a>
+    M. Brack, C. Guet, and H.-B. H&aring;kansson</a>,
     Phys. Rep. \b 123 (1985) 275.
+
+    \anchor Bender03 Bender03:
+    <a href="http://dx.doi.org/10.1103/RevModPhys.75.121">
+    M. Bender, P.-H. Heenen, and P.-G. Reinhard</a>,
+    Rev. Mod. Phys. \b 75 (2003) 121.
 
     \anchor Buballa99 Buballa99:
     <a href="http://dx.doi.org/10.1016/S0370-2693(99)00533-X">
@@ -149,10 +154,22 @@
     C.J. Horowitz and J. Piekarewicz</a>,
     Phys. Rev. Lett. \b 86 (2001) 5647.
 
-    \anchor Horowitz05 Horowitz05: 
+    \anchor Horowitz06 Horowitz06: 
+    <a href="http://dx.doi.org/10.1016/j.physletb.2006.05.055">
+    C.J. Horowitz and A. Schwenk</a>,
+    Phys. Lett. B \b 638 (2006) 153.
+
+    \anchor Horowitz06b Horowitz06b: 
     <a href="http://dx.doi.org/10.1016/j.nuclphysa.2006.05.009">
     C.J. Horowitz and A. Schwenk</a>,
     Nucl. Phys. A \b 776 (2006) 55.
+
+    \anchor Kortelainen14 Kortelainen14:
+    <a href="http://dx.doi.org/10.1103/PhysRevC.89.054314">
+    M. Kortelainen, J. McDonnell, W. Nazarewicz, E. Olsen, P.-G.
+    Reinhard, J. Sarich, N. Schunck, S.M. Wild, D. Davesne, J. Erler,
+    A. Pastore</a>,
+    Phys. Rev. C \b 89 (2014) 054314.
 
     \anchor Kubis97 Kubis97: 
     <a href="http://dx.doi.org/10.1016/S0370-2693(97)00306-7">

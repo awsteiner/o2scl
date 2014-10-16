@@ -88,6 +88,10 @@ int main(void) {
   sk.check_mu(n,p,th,mund,mupd,munde,mupde);
   t.test_abs(n.mu,mund,fabs(munde),"neutron chem pot.");
   t.test_abs(p.mu,mupd,fabs(mupde),"proton chem pot.");
+
+  double end, ende;
+  sk.check_en(n,p,5.0/hc_mev_fm,th,end,ende);
+  t.test_abs(th.en,end,ende,"entropy");
   
   // ------------------------------------------------------------
   // Test that calc_p() and calc_temp_p() are working

@@ -40,7 +40,7 @@ namespace o2scl {
   /** \brief Virial EOS for neutrons, protons, deuterons, and alpha 
       particles
       
-      Virial EOS from \ref Horowitz05.
+      Virial EOS from \ref Horowitz06 and \ref Horowitz06b .
       
       \warning This class is implemented as a eos_had_base object
       because it might be helpful to be able to use \ref

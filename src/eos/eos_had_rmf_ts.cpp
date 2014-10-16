@@ -28,6 +28,7 @@
 #include <o2scl/mroot_hybrids.h>
 #include <o2scl/deriv_gsl.h>
 #include <o2scl/eos_had_rmf.h>
+#include <o2scl/hdf_eos_io.h>
 
 using namespace std;
 using namespace o2scl;
@@ -222,7 +223,7 @@ int main(void) {
   load_nl3(re);
 
   // Nuclear matter
-  for(double nbx=0.04;nbx<=1.29;nbx*=2.0) {
+  for(double nbx=1.0e-8;nbx<=1.29;nbx*=2.0) {
     nferm.n=nbx/2.0;
     p.n=nbx/2.0;
     int ret=re.calc_e(nferm,p,th);
@@ -231,21 +232,18 @@ int main(void) {
     t.test_rel(p.n,nbx/2.0,1.0e-6,"NL3 nuclear matter p.n");
   }
   
-  // This calls the error handler for pure neutron matter, which
-  // should be fixed.
   // Neutron matter
-  for(double nbx=0.08;nbx<=1.29;nbx*=2.0) {
+  for(double nbx=1.0e-8;nbx<=1.29;nbx*=2.0) {
     nferm.n=nbx;
     p.n=0.0;
     int ret=re.calc_e(nferm,p,th);
-    cout << nbx << " " << ret << endl;
     t.test_gen(ret==0,"NL3 neutron matter ret. val.");
     t.test_rel(nferm.n,nbx,1.0e-6,"NL3 neutron matter n.n");
     t.test_rel(p.n,0.0,1.0e-6,"NL3 neutron matter p.n");
   }
 
-  // Neutron-rich matter
-  for(double nbx=0.04;nbx<=1.29;nbx*=2.0) {
+  // Neutron-rich matter (lower densities don't work)
+  for(double nbx=1.0e-4;nbx<=1.29;nbx*=2.0) {
     nferm.n=nbx*0.75;
     p.n=nbx/4.0;
     int ret=re.calc_e(nferm,p,th);
@@ -254,12 +252,10 @@ int main(void) {
     t.test_rel(p.n,nbx/4.0,1.0e-6,"NL3 neutron-rich matter p.n");
   }
 
-#ifdef O2SCL_NEVER_DEFINED
+  o2scl_hdf::rmf_load(re,"RAPR");
 
-  re.load("RAPR");
-
-  // Nuclear matter
-  for(double nbx=0.04;nbx<=1.29;nbx*=2.0) {
+  // Nuclear matter (lower densities don't work)
+  for(double nbx=1.0e-4;nbx<=1.29;nbx*=2.0) {
     nferm.n=nbx/2.0;
     p.n=nbx/2.0;
     int ret=re.calc_e(nferm,p,th);
@@ -268,10 +264,8 @@ int main(void) {
     t.test_rel(p.n,nbx/2.0,1.0e-6,"RAPR nuclear matter p.n");
   }
   
-  // This calls the error handler for pure neutron matter, which
-  // should be fixed.
   // Neutron matter
-  for(double nbx=0.04;nbx<=1.29;nbx*=2.0) {
+  for(double nbx=1.0e-8;nbx<=1.29;nbx*=2.0) {
     nferm.n=nbx;
     p.n=0.0;
     int ret=re.calc_e(nferm,p,th);
@@ -280,8 +274,8 @@ int main(void) {
     t.test_rel(p.n,0.0,1.0e-6,"RAPR neutron matter p.n");
   }
 
-  // Neutron-rich matter
-  for(double nbx=0.04;nbx<=1.29;nbx*=2.0) {
+  // Neutron-rich matter (lower densities don't work)
+  for(double nbx=1.0e-4;nbx<=1.29;nbx*=2.0) {
     nferm.n=nbx*0.75;
     p.n=nbx/4.0;
     int ret=re.calc_e(nferm,p,th);
@@ -289,55 +283,6 @@ int main(void) {
     t.test_rel(nferm.n,nbx*0.75,1.0e-6,"RAPR neutron-rich matter n.n");
     t.test_rel(p.n,nbx/4.0,1.0e-6,"RAPR neutron-rich matter p.n");
   }
-
-#endif
-
-  // -----------------------------------------------------------------
-  // Check FSU Gold and compare with NL3
-  // -----------------------------------------------------------------
-
-#ifdef O2SCL_NEVER_DEFINED
-
-  if (false) {
-    cout << "Here." << endl;
-    re.load("NL3");
-    cout << re.ms*hc_mev_fm << endl;
-    cout << re.cs*re.ms*re.cs*re.ms << " "
-	 << re.cw*re.mw*re.cw*re.mw << " "
-	 << re.cr*re.mr*re.cr*re.mr << endl;
-    cout << re.b*2.0*re.mnuc*hc_mev_fm << endl;
-    cout << re.c*6.0 << endl;
-    cout << re.zeta << endl;
-    cout << re.b1/pow(re.mw*re.cw,2.0) << endl;
-
-    re.load("FSUGold");
-    cout << re.ms*hc_mev_fm << endl;
-    cout << re.cs*re.ms*re.cs*re.ms << " "
-	 << re.cw*re.mw*re.cw*re.mw << " "
-	 << re.cr*re.mr*re.cr*re.mr << endl;
-    cout << re.b*2.0*re.mnuc*hc_mev_fm << endl;
-    cout << re.c*6.0 << endl;
-    cout << re.zeta << endl;
-    cout << re.b1/pow(re.mw*re.cw,2.0) << endl;
-    nferm.m=939.0/hc_mev_fm;
-    p.m=939.0/hc_mev_fm;
-    nferm.mu=4.9;
-    p.mu=4.9;
-    re.set_fields(0.1,0.07,0.0);
-    re.saturation();
-    cout << re.n0 << " " << hc_mev_fm*re.eoa << " " 
-	 << re.comp*hc_mev_fm << " "
-	 << re.esym*hc_mev_fm << " " << re.msom << endl;
-    cout << re.fesym_slope(re.n0)*hc_mev_fm << endl;
-    double fgeoa;
-    re.set_fields(0.1,0.07,0.0);
-    double fgn0=re.fn0(0.0,fgeoa);
-    cout << fgn0 << " " << hc_mev_fm*fgeoa << endl;
-
-    exit(-1);
-  }
-
-#endif
 
   // -----------------------------------------------------------------
 
@@ -365,7 +310,7 @@ int main(void) {
   re.set_n_and_p(nferm,p);
   re.set_thermo(th);
 
-  // Test calc_e(). 
+  // Test calc_e()
   re.saturation();
   nferm.n=re.n0/2.0;
   p.n=re.n0/2.0;
@@ -375,7 +320,7 @@ int main(void) {
   t.test_rel((th.ed/(nferm.n+p.n)-nferm.m)*hc_mev_fm,re.eoa*hc_mev_fm,
 	     1.0e-5,"calc_e");
   
-  cout << "\n1. Testing fix_saturation()\n" << endl;
+  cout << "1. Testing fix_saturation()\n" << endl;
   cout << "  From PRL 86, 5647 - NL3" << endl;
 
   re.zeta=0.0;
@@ -474,9 +419,8 @@ int main(void) {
   cout << endl;
 
   t.test_rel(re.comp*hc_mev_fm,225.0,1.0e-5,"fcomp");
-  //  t.test_rel(re.fcomp(re.n0)*hc_mev_fm,225.0,1.0e-5,"fcomp");
 
-  cout << "2. calc_p() - Nuclear matter with zeta=0.0, xi=0.0, "
+  cout << "2. calc_eq_p() - Nuclear matter with zeta=0.0, xi=0.0, "
        << "lamv=0.0, lam4=0.0" << endl << endl;
   nferm.n=re.n0/2.0;
   p.n=re.n0/2.0;
@@ -617,19 +561,6 @@ int main(void) {
   cout << "  Kprime: " << re.kprime*hc_mev_fm << endl;
   cout << endl;
   
-#ifdef O2SCL_NEVER_DEFINED
-
-  re.load("NL4");
-  nferm.m=939.0/hc_mev_fm;
-  p.m=939.0/hc_mev_fm;
-  nferm.mu=4.8;
-  p.mu=4.8;
-  re.saturation();
-  cout << re.n0 << " " << hc_mev_fm*re.eoa << " " << re.comp*hc_mev_fm << " "
-       << re.esym*hc_mev_fm << " " << re.msom << endl;
-
-#endif
-
   load_nl3(rmf);
   double nsig=0.1;
   double nome=0.07;

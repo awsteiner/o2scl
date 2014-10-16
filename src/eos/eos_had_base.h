@@ -1104,6 +1104,17 @@ namespace o2scl {
       (double mun, double mup, double T, double &dednn, 
        double &dednp, double &dedpp);
 
+    /** \brief Check the entropy by computing the 
+	derivative numerically
+    */
+    void check_en(fermion &n, fermion &p, double T, thermo &th,
+		  double &en_deriv, double &en_err);
+    
+    /** \brief Compute the free energy as a function of the temperature
+	and the densities
+    */
+    double calc_fr(double nn, double np, double T);
+
   };
 
   /** \brief A hadronic EOS at finite temperature

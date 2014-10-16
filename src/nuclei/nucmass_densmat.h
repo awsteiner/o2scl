@@ -236,10 +236,9 @@ namespace o2scl {
   class nucmass_densmat {
 
   protected:
-
-    /** \brief Pointer to the nuclear mass formula (points to \ref ame 
-	by default)
-    */
+    
+    /** \brief Pointer to the nuclear mass formula 
+     */
     nucmass *massp;
 
   public:

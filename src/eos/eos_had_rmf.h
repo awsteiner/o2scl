@@ -273,8 +273,8 @@ namespace o2scl {
       - Check the formulas in the "Background" section
       - Make sure that this class properly handles particles for which 
       inc_rest_mass is true/false
-      - The error handler is called sometimes when calc_e() is used
-      to compute pure neutron matter. This should be fixed.
+      - The calc_e() function fails to converge at lower densities. 
+      See the testing code which has trouble with NL3 and RAPR
 
       \future
       - Finish putting the err_nonconv system into calc_p(),
@@ -406,7 +406,6 @@ namespace o2scl {
 	
 	\future Improve the operation of this function when the
 	proton density is zero.
-       
     */
     virtual int calc_e(fermion &ne, fermion &pr, thermo &lth);
   

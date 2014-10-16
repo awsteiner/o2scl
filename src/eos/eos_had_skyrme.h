@@ -416,25 +416,25 @@ namespace o2scl {
 
     /** \brief Set using alternate parameterization
 
-      From \ref Bender03 as in, e.g. \ref Kortelainen14
-      \f{eqnarray*}
-      C^{\rho \rho}_{00} &=& 3 t_0/8 \nonumber \\
-      C^{\rho \rho}_{10} &=& -t_0/4 \left(\frac{1}{2}+x_0 \right) \nonumber \\
-      C^{\rho \rho}_{0D} &=& t_3/16 \nonumber \\
-      C^{\rho \rho}_{1D} &=& -t_3/24 \left(\frac{1}{2}+x_3\right)
-      \nonumber \\
-      C^{\rho \tau}_{0} &=& 3 t_1/16+t_2/4\left(\frac{5}{4}+x_2\right)
-      \nonumber \\
-      C^{\rho \tau}_{1} &=& -t_1/8 \left(\frac{1}{2}+x_1\right) +
-      t_2/8 \left(\frac{1}{2}+x_2\right) \nonumber \\
-      C^{\rho \Delta \rho}_{0} &=& -9/64 t_1+t_2/16 
-      \left(\frac{5}{4}+x_2\right)\nonumber \\
-      C^{\rho \Delta \rho}_{1} &=& 3/32 t_1 \left(\frac{1}{2}+x_1\right) +
-      t_2/32 \left(\frac{1}{2}+x_2\right) \nonumber \\
-      C^{\rho \nabla J}_{0} &=& -b_4 -b_4^{\prime}/2\nonumber \\
-      C^{\rho \nabla J}_{1} &=& -b_4^{\prime}/2
-      \f}
-
+	From \ref Bender03 as in, e.g. \ref Kortelainen14
+	\f{eqnarray*}
+        C^{\rho \rho}_{00} &=& 3 t_0/8 \nonumber \\
+        C^{\rho \rho}_{10} &=& -t_0/4 \left(\frac{1}{2}+x_0 \right) 
+	\nonumber \\
+        C^{\rho \rho}_{0D} &=& t_3/16 \nonumber \\
+        C^{\rho \rho}_{1D} &=& -t_3/24 \left(\frac{1}{2}+x_3\right)
+        \nonumber \\
+        C^{\rho \tau}_{0} &=& 3 t_1/16+t_2/4\left(\frac{5}{4}+x_2\right)
+        \nonumber \\
+        C^{\rho \tau}_{1} &=& -t_1/8 \left(\frac{1}{2}+x_1\right) +
+        t_2/8 \left(\frac{1}{2}+x_2\right) \nonumber \\
+        C^{\rho \Delta \rho}_{0} &=& -9/64 t_1+t_2/16 
+        \left(\frac{5}{4}+x_2\right) \nonumber \\
+        C^{\rho \Delta \rho}_{1} &=& 3/32 t_1 \left(\frac{1}{2}+x_1\right) +
+        t_2/32 \left(\frac{1}{2}+x_2\right) \nonumber \\
+        C^{\rho \nabla J}_{0} &=& -b_4 -b_4^{\prime}/2 \nonumber \\
+        C^{\rho \nabla J}_{1} &=& -b_4^{\prime}/2
+	\f}
     */
     void alt_params_set
       (double Crr00, double Crr10, double Crr0D, double Crr1D, 
