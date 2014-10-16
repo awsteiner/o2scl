@@ -64,6 +64,9 @@ int load_skms(eos_had_skyrme &sk) {
 }
 
 int main(void) {
+
+  cout.setf(ios::scientific);
+
   test_mgr t;
   t.set_output_level(1);
   
@@ -75,7 +78,16 @@ int main(void) {
   p.non_interacting=false;
   thermo th;
 
-  cout.setf(ios::scientific);
+  // ------------------------------------------------------------
+  // Use check_mu() to check chemical potentials
+  // ------------------------------------------------------------
+
+  n.n=0.08;
+  p.n=0.08;
+  double mund, mupd, munde, mupde;
+  sk.check_mu(n,p,th,mund,mupd,munde,mupde);
+  t.test_abs(n.mu,mund,fabs(munde),"neutron chem pot.");
+  t.test_abs(p.mu,mupd,fabs(mupde),"proton chem pot.");
   
   // ------------------------------------------------------------
   // Test that calc_p() and calc_temp_p() are working

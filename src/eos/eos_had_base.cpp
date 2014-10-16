@@ -468,6 +468,16 @@ double eos_had_base::calc_mun_e(double nn, double np) {
   return neutron->mu;
 }
 
+double eos_had_base::calc_ed(double nn, double np) {
+  
+  neutron->n=nn;  
+  proton->n=np;
+  
+  calc_e(*neutron,*proton,*eos_thermo);
+
+  return eos_thermo->ed;
+}
+
 double eos_had_base::calc_mup_e(double nn, double np) {
   
   neutron->n=nn;  
@@ -589,6 +599,38 @@ void eos_had_base::set_sat_deriv(deriv_base<funct11> &de) {
 
 void eos_had_base::set_sat_deriv2(deriv_base<funct11> &de) {
   sat_deriv2=&de;
+  return;
+}
+
+void eos_had_base::check_mu(fermion &n, fermion &p, thermo &th,
+			    double &mun_deriv, double &mup_deriv,
+			    double &mun_err, double &mup_err) {
+
+  set_n_and_p(n,p);
+  set_thermo(th);
+  double nn=n.n;
+  double np=p.n;
+
+  funct11 fn=std::bind
+    (std::mem_fn<double(double,double)>
+     (&eos_had_eden_base::calc_ed),this,std::placeholders::_1,p.n);
+  sat_deriv->deriv_err(n.n,fn,mun_deriv,mun_err);
+
+  n.n=nn;
+  p.n=np;
+
+  funct11 fp=std::bind
+    (std::mem_fn<double(double,double)>
+     (&eos_had_eden_base::calc_ed),this,n.n,std::placeholders::_1);
+  sat_deriv->deriv_err(p.n,fp,mup_deriv,mup_err);
+
+  n.n=nn;
+  p.n=np;
+
+  calc_e(n,p,th);
+  double mun1=n.mu;
+  double mup1=p.mu;
+
   return;
 }
 

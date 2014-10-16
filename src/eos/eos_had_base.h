@@ -543,6 +543,11 @@ namespace o2scl {
     */
     double calc_mun_e(double nn, double np);
 
+    /** \brief Compute the energy density as a function of the nucleon
+	densities
+    */
+    double calc_ed(double nn, double np);
+
     /** \brief Compute the proton chemical potential at fixed
 	density
 
@@ -833,6 +838,14 @@ namespace o2scl {
     /// Return string denoting type ("eos_had_base")
     virtual const char *type() { return "eos_had_base"; }
     //@}
+
+    /** \brief Check the chemical potentials by computing the 
+	derivatives numerically
+    */
+    void check_mu(fermion &n, fermion &p, thermo &th,
+		  double &mun_deriv, 
+		  double &mup_deriv,
+		  double &mun_err, double &mup_err);
 
 #ifndef DOXYGEN_INTERNAL
 
