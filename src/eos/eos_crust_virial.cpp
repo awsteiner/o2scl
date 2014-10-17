@@ -212,42 +212,84 @@ int eos_crust_virial::calc_temp_p_alpha
 void eos_crust_virial::fit() {
 
   vector<double> berr(16);
-  for(size_t i=0;i<16;i++) {
-    berr[i]=fabs(bnv[i])/1.0e2;
-    cout << i << " " << Tv[i] << " " << bnv[i] << " " << berr[i] << endl;
-  }
-  Tv[0]=0.999;
-  bnv[0]=0.288;
-  berr[0]=2.88e-3;
 
-  // Fitting function
   typedef fit_funct11_strings<vector<double> > fit_func;
-  fit_func ffs("a-b/(T+0.0)+c*T","a,b,c","T");
-
-  // Chi-squared and fitting data
-  chi_fit_funct<vector<double>,ubmatrix,fit_func> 
-    cff(16,Tv,bnv,berr,ffs);
-
-  vector<double> params(3);
-  params[0]=0.3;
-  params[1]=0.01;
-  params[2]=0.0006;
-  ubmatrix covar(3,3);
-  double chi2;
 
   // Fitter class
   fit_nonlin<chi_fit_funct<vector<double>,ubmatrix,fit_func>,
 	     vector<double>,ubmatrix> fn;
 
+  vector<double> params(3);
+  ubmatrix covar(3,3);
+  double chi2;
+
 #ifdef O2SCL_NEVER_DEFINED
 }{
 #endif
 
-  fn.verbose=2;
-  cout << params[0] << " " << params[1] << " " << params[2] << endl;
+  // --------------------------------------------
+  // Fit neutron virial coefficient
+
+  for(size_t i=0;i<16;i++) {
+    berr[i]=fabs(bnv[i])/1.0e2;
+  }
+
+  // Replace the T=0 point
+  double Tv0=Tv[0];
+  double bnv0=bnv[0];
+  Tv[0]=0.999;
+  bnv[0]=0.288;
+  berr[0]=bnv[0]/1.0e2;
+
+  // Fitting function
+  fit_func ffs("a-b/(T+0.5)+c*T","a,b,c","T");
+
+  // Chi-squared and fitting data
+  chi_fit_funct<vector<double>,ubmatrix,fit_func> 
+    cff(16,Tv,bnv,berr,ffs);
+
+  params[0]=0.3;
+  params[1]=0.01;
+  params[2]=0.0006;
+
   fn.fit(3,params,covar,chi2,cff);
   cout << chi2 << " " 
        << params[0] << " " << params[1] << " " << params[2] << endl;
+
+  // --------------------------------------------
+  // Fit neutron-proton virial coefficient
   
+  for(size_t i=0;i<16;i++) {
+    berr[i]=fabs(bpnv[i])/1.0e2;
+  }
+
+  // Replace the T=0 point
+  double bpnv0=bpnv[0];
+  Tv[0]=0.999;
+  bpnv[0]=19.4;
+  berr[0]=bpnv[0]/1.0e2;
+  
+  // Fitting function
+  fit_func ffs2("-a+b*exp(2.099/T)-c*T","a,b,c","T");
+
+  // Chi-squared and fitting data
+  chi_fit_funct<vector<double>,ubmatrix,fit_func> 
+    cff2(16,Tv,bpnv,berr,ffs2);
+
+  params[0]=1.0;
+  params[1]=2.5;
+  params[2]=0.018;
+
+  fn.fit(3,params,covar,chi2,cff2);
+  cout << chi2 << " " 
+       << params[0] << " " << params[1] << " " << params[2] << endl;
+
+  // --------------------------------------------
+  // Return original values
+
+  Tv[0]=Tv0;
+  bnv[0]=bnv0;
+  bpnv[0]=bpnv0;
+
   return;
 }
