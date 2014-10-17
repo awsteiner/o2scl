@@ -843,7 +843,9 @@ namespace o2scl {
     /// Return string denoting type ("eos_had_base")
     virtual const char *type() { return "eos_had_base"; }
     //@}
-
+    
+    /// \name Consistency checks
+    //@{
     /** \brief Check the chemical potentials by computing the 
 	derivatives numerically
     */
@@ -858,6 +860,7 @@ namespace o2scl {
     void check_den(fermion &n, fermion &p, thermo &th,
 		   double &nn_deriv, double &np_deriv,
 		   double &nn_err, double &np_err);
+    //@}
       
 #ifndef DOXYGEN_INTERNAL
 
@@ -1080,14 +1083,25 @@ namespace o2scl {
     virtual double fsyment_T(double nb, double T, double delta=0.0);
     //@}
 
-    /// \name Desc
+    /// \name Helper functions
     //@{
+    /// Neutron chemical potential as a function of the densities
     virtual double calc_temp_mun_e(double nn, double np, double T);
+    /// Proton chemical potential as a function of the densities
     virtual double calc_temp_mup_e(double nn, double np, double T);
+    /// Neutron density as a function of the chemical potentials
     virtual double calc_temp_nn_p(double mun, double mup, double T);
+    /// Proton density as a function of the chemical potentials
     virtual double calc_temp_np_p(double mun, double mup, double T);
+
+    /** \brief Compute the free energy as a function of the temperature
+	and the densities
+    */
+    double calc_fr(double nn, double np, double T);
     //@}
 
+    /// \name Susceptibilities
+    //@{
     /** \brief Compute the number susceptibilities as a function of
 	the chemical potentials, \f$ \partial^2 P / \partial \mu_i
 	\mu_j \f$ at a fixed temperature
@@ -1103,18 +1117,17 @@ namespace o2scl {
     virtual void f_inv_number_suscept_T
       (double mun, double mup, double T, double &dednn, 
        double &dednp, double &dedpp);
+    //@}
 
+    /// \name Consistency check
+    //@{
     /** \brief Check the entropy by computing the 
 	derivative numerically
     */
     void check_en(fermion &n, fermion &p, double T, thermo &th,
 		  double &en_deriv, double &en_err);
+    //@}
     
-    /** \brief Compute the free energy as a function of the temperature
-	and the densities
-    */
-    double calc_fr(double nn, double np, double T);
-
   };
 
   /** \brief A hadronic EOS at finite temperature

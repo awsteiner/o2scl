@@ -34,15 +34,17 @@ using namespace o2scl;
 using namespace o2scl_const;
 
 int main(void) {
-  eos_had_potential go;
-  thermo &th=go.def_thermo;
+
+  cout.setf(ios::scientific);
+
   test_mgr t;
   t.set_output_level(1);
 
+  eos_had_potential go;
+  thermo &th=go.def_thermo;
+
   double dtemp, n0, ed_nuc, ed_neut;
   
-  cout.setf(ios::scientific);
-
   cout << "MDI0:" << endl;
   {
 
@@ -80,6 +82,15 @@ int main(void) {
     ed_neut=th.ed;
     cout << "Esym(2): " << (ed_neut-ed_nuc)/n0*hc_mev_fm << endl;
     cout << endl;
+
+    // Check chemical potentials
+    go.def_neutron.n=0.08;
+    go.def_proton.n=0.08;
+    double mund, mupd, munde, mupde;
+    go.check_mu(go.def_neutron,go.def_proton,th,mund,mupd,munde,mupde);
+    t.test_abs(go.def_neutron.mu,mund,fabs(munde),"neutron chem pot.");
+    t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
+
   }
 
   cout << "MDI1:" << endl;
@@ -119,6 +130,14 @@ int main(void) {
     ed_neut=th.ed;
     cout << "Esym(2): " << (ed_neut-ed_nuc)/n0*hc_mev_fm << endl;
     cout << endl;
+
+    // Check chemical potentials
+    go.def_neutron.n=0.08;
+    go.def_proton.n=0.08;
+    double mund, mupd, munde, mupde;
+    go.check_mu(go.def_neutron,go.def_proton,th,mund,mupd,munde,mupde);
+    t.test_abs(go.def_neutron.mu,mund,fabs(munde),"neutron chem pot.");
+    t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
   }
 
   cout << "BGBD_bombaci:" << endl;
@@ -157,6 +176,14 @@ int main(void) {
     ed_neut=th.ed;
     cout << "Esym(2): " << (ed_neut-ed_nuc)/n0*hc_mev_fm << endl;
     cout << endl;
+
+    // Check chemical potentials
+    go.def_neutron.n=0.08;
+    go.def_proton.n=0.08;
+    double mund, mupd, munde, mupde;
+    go.check_mu(go.def_neutron,go.def_proton,th,mund,mupd,munde,mupde);
+    t.test_abs(go.def_neutron.mu,mund,fabs(munde),"neutron chem pot.");
+    t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
   }
 
   cout << "BGBD_das:" << endl;
@@ -191,6 +218,14 @@ int main(void) {
     ed_neut=th.ed;
     cout << "Esym(2): " << (ed_neut-ed_nuc)/n0*hc_mev_fm << endl;
     cout << endl;
+
+    // Check chemical potentials
+    go.def_neutron.n=0.08;
+    go.def_proton.n=0.08;
+    double mund, mupd, munde, mupde;
+    go.check_mu(go.def_neutron,go.def_proton,th,mund,mupd,munde,mupde);
+    t.test_abs(go.def_neutron.mu,mund,fabs(munde),"neutron chem pot.");
+    t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
   }
 
   cout << "BPAL11:" << endl;
@@ -249,6 +284,13 @@ int main(void) {
     cout << "M*/M:    " << go.def_neutron.ms/go.def_neutron.m << endl;
     cout << endl;
     
+    // Check chemical potentials
+    go.def_neutron.n=0.08;
+    go.def_proton.n=0.08;
+    double mund, mupd, munde, mupde;
+    go.check_mu(go.def_neutron,go.def_proton,th,mund,mupd,munde,mupde);
+    t.test_abs(go.def_neutron.mu,mund,fabs(munde),"neutron chem pot.");
+    t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
   }
   
   cout << "BPAL32:" << endl;
@@ -278,6 +320,13 @@ int main(void) {
     cout << "M*/M:    " << go.def_neutron.ms/go.def_neutron.m << endl;
     cout << endl;
     
+    // Check chemical potentials
+    go.def_neutron.n=0.08;
+    go.def_proton.n=0.08;
+    double mund, mupd, munde, mupde;
+    go.check_mu(go.def_neutron,go.def_proton,th,mund,mupd,munde,mupde);
+    t.test_abs(go.def_neutron.mu,mund,fabs(munde),"neutron chem pot.");
+    t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
   }
 
   cout << "BPAL33:" << endl;
@@ -307,6 +356,13 @@ int main(void) {
     cout << "M*/M:    " << go.def_neutron.ms/go.def_neutron.m << endl;
     cout << endl;
     
+    // Check chemical potentials
+    go.def_neutron.n=0.08;
+    go.def_proton.n=0.08;
+    double mund, mupd, munde, mupde;
+    go.check_mu(go.def_neutron,go.def_proton,th,mund,mupd,munde,mupde);
+    t.test_abs(go.def_neutron.mu,mund,fabs(munde),"neutron chem pot.");
+    t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
   }
 
   cout << "BPALb11:" << endl;
@@ -337,6 +393,13 @@ int main(void) {
     cout << "M*/M:    " << go.def_neutron.ms/go.def_neutron.m << endl;
     cout << endl;
     
+    // Check chemical potentials
+    go.def_neutron.n=0.08;
+    go.def_proton.n=0.08;
+    double mund, mupd, munde, mupde;
+    go.check_mu(go.def_neutron,go.def_proton,th,mund,mupd,munde,mupde);
+    t.test_abs(go.def_neutron.mu,mund,fabs(munde),"neutron chem pot.");
+    t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
   }
 
   cout << "BPALb12:" << endl;
@@ -367,6 +430,13 @@ int main(void) {
     cout << "M*/M:    " << go.def_neutron.ms/go.def_neutron.m << endl;
     cout << endl;
     
+    // Check chemical potentials
+    go.def_neutron.n=0.08;
+    go.def_proton.n=0.08;
+    double mund, mupd, munde, mupde;
+    go.check_mu(go.def_neutron,go.def_proton,th,mund,mupd,munde,mupde);
+    t.test_abs(go.def_neutron.mu,mund,fabs(munde),"neutron chem pot.");
+    t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
   }
 
   cout << "BPALb13:" << endl;
@@ -397,6 +467,13 @@ int main(void) {
     cout << "M*/M:    " << go.def_neutron.ms/go.def_neutron.m << endl;
     cout << endl;
     
+    // Check chemical potentials
+    go.def_neutron.n=0.08;
+    go.def_proton.n=0.08;
+    double mund, mupd, munde, mupde;
+    go.check_mu(go.def_neutron,go.def_proton,th,mund,mupd,munde,mupde);
+    t.test_abs(go.def_neutron.mu,mund,fabs(munde),"neutron chem pot.");
+    t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
   }
 
   cout << "BPALb21:" << endl;
@@ -427,6 +504,13 @@ int main(void) {
     cout << "M*/M:    " << go.def_neutron.ms/go.def_neutron.m << endl;
     cout << endl;
     
+    // Check chemical potentials
+    go.def_neutron.n=0.08;
+    go.def_proton.n=0.08;
+    double mund, mupd, munde, mupde;
+    go.check_mu(go.def_neutron,go.def_proton,th,mund,mupd,munde,mupde);
+    t.test_abs(go.def_neutron.mu,mund,fabs(munde),"neutron chem pot.");
+    t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
   }
 
   cout << "BPALb22:" << endl;
@@ -457,6 +541,13 @@ int main(void) {
     cout << "M*/M:    " << go.def_neutron.ms/go.def_neutron.m << endl;
     cout << endl;
     
+    // Check chemical potentials
+    go.def_neutron.n=0.08;
+    go.def_proton.n=0.08;
+    double mund, mupd, munde, mupde;
+    go.check_mu(go.def_neutron,go.def_proton,th,mund,mupd,munde,mupde);
+    t.test_abs(go.def_neutron.mu,mund,fabs(munde),"neutron chem pot.");
+    t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
   }
 
   cout << "BPALb23:" << endl;
@@ -487,6 +578,13 @@ int main(void) {
     cout << "M*/M:    " << go.def_neutron.ms/go.def_neutron.m << endl;
     cout << endl;
     
+    // Check chemical potentials
+    go.def_neutron.n=0.08;
+    go.def_proton.n=0.08;
+    double mund, mupd, munde, mupde;
+    go.check_mu(go.def_neutron,go.def_proton,th,mund,mupd,munde,mupde);
+    t.test_abs(go.def_neutron.mu,mund,fabs(munde),"neutron chem pot.");
+    t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
   }
 
   cout << "BPALb31:" << endl;
@@ -517,6 +615,13 @@ int main(void) {
     cout << "M*/M:    " << go.def_neutron.ms/go.def_neutron.m << endl;
     cout << endl;
     
+    // Check chemical potentials
+    go.def_neutron.n=0.08;
+    go.def_proton.n=0.08;
+    double mund, mupd, munde, mupde;
+    go.check_mu(go.def_neutron,go.def_proton,th,mund,mupd,munde,mupde);
+    t.test_abs(go.def_neutron.mu,mund,fabs(munde),"neutron chem pot.");
+    t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
   }
 
   /*
@@ -618,6 +723,14 @@ int main(void) {
     ed_neut=th.ed;
     cout << "Esym(2): " << (ed_neut-ed_nuc)/n0*hc_mev_fm << endl;
     cout << endl;
+
+    // Check chemical potentials
+    go.def_neutron.n=0.08;
+    go.def_proton.n=0.08;
+    double mund, mupd, munde, mupde;
+    go.check_mu(go.def_neutron,go.def_proton,th,mund,mupd,munde,mupde);
+    t.test_abs(go.def_neutron.mu,mund,fabs(munde),"neutron chem pot.");
+    t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
   }
 
   cout << "GBD0:" << endl;
@@ -657,6 +770,14 @@ int main(void) {
     ed_neut=th.ed;
     cout << "Esym(2): " << (ed_neut-ed_nuc)/n0*hc_mev_fm << endl;
     cout << endl;
+
+    // Check chemical potentials
+    go.def_neutron.n=0.08;
+    go.def_proton.n=0.08;
+    double mund, mupd, munde, mupde;
+    go.check_mu(go.def_neutron,go.def_proton,th,mund,mupd,munde,mupde);
+    t.test_abs(go.def_neutron.mu,mund,fabs(munde),"neutron chem pot.");
+    t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
   }
 
   cout << "GBD1:" << endl;
@@ -695,6 +816,14 @@ int main(void) {
     ed_neut=th.ed;
     cout << "Esym(2): " << (ed_neut-ed_nuc)/n0*hc_mev_fm << endl;
     cout << endl;
+
+    // Check chemical potentials
+    go.def_neutron.n=0.08;
+    go.def_proton.n=0.08;
+    double mund, mupd, munde, mupde;
+    go.check_mu(go.def_neutron,go.def_proton,th,mund,mupd,munde,mupde);
+    t.test_abs(go.def_neutron.mu,mund,fabs(munde),"neutron chem pot.");
+    t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
   }
 
   cout << "CKL: " << endl;
@@ -737,6 +866,14 @@ int main(void) {
       ed_neut=th.ed;
       cout << "Esym(2): " << (ed_neut-ed_nuc)/n0*hc_mev_fm << endl;
       cout << endl;
+
+      // Check chemical potentials
+      go.def_neutron.n=0.08;
+      go.def_proton.n=0.08;
+      double mund, mupd, munde, mupde;
+      go.check_mu(go.def_neutron,go.def_proton,th,mund,mupd,munde,mupde);
+      t.test_abs(go.def_neutron.mu,mund,fabs(munde),"neutron chem pot.");
+      t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
     }
   }
 

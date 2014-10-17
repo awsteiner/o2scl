@@ -58,16 +58,17 @@ namespace o2scl {
 
       \note Matter at two different densities can have the same
       chemical potentials, so the behavior of the function \ref
-      o2scl::eos_had_rmf::calc_temp_p() is ambiguous. This arises because
-      the field equations have more than one solution for a specified
-      chemical potential. Internally, \ref
+      o2scl::eos_had_rmf::calc_temp_p() is ambiguous. This arises
+      because the field equations have more than one solution for a
+      specified chemical potential. Internally, \ref
       o2scl::eos_had_rmf::calc_temp_p() either uses the initial guess
       specified by a call to \ref o2scl::eos_had_rmf::set_fields(), or
       uses hard-coded initial guess values typical for saturation
       densities. In order to ensure that the user gets the desired
       solution to the field equations, it may be necessary to specify
       a sufficiently accurate initial guess. There is no ambiguity in
-      the behavior of \ref o2scl::eos_had_rmf::calc_eq_temp_p(), however.
+      the behavior of \ref o2scl::eos_had_rmf::calc_eq_temp_p(),
+      however.
 
       \note This class can fail to solve the meson field equations or
       fail to solve for the nucleon densities. By default the error

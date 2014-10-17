@@ -41,7 +41,7 @@ int main(void) {
     thermo hb;
     double barn, dtemp;
 
-    ap.select(1);
+    ap.select(eos_had_apr::a18_uix_deltav);
 
     n.non_interacting=false;
     pr.non_interacting=false;
@@ -49,6 +49,8 @@ int main(void) {
     {
       // Test the liquid-gas phase transition
       fermion n2(939.0/197.33,2.0), p2(939.0/197.33,2.0);
+      n2.non_interacting=false;
+      p2.non_interacting=false;
       thermo th2, th;
       n.n=0.09;
       pr.n=n.n;
@@ -73,6 +75,14 @@ int main(void) {
     pr.n=0.08;
     ap.calc_e(n,pr,hb);
     cout << (hb.ed/0.16-n.m)*hc_mev_fm << endl;
+    double mund, mupd, munde, mupde;
+    thermo th3;
+    ap.check_mu(n,pr,th3,mund,mupd,munde,mupde);
+    t.test_abs(n.mu,mund,fabs(munde),"neutron chem pot.");
+    t.test_abs(pr.mu,mupd,fabs(mupde),"proton chem pot.");
+    double end, ende;
+    ap.check_en(n,pr,5.0/hc_mev_fm,th3,end,ende);
+    t.test_abs(th3.en,end,ende,"entropy");
 
     if (true) {
       // Testing low-density Neutron matter for APR

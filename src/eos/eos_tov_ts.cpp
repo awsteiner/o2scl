@@ -54,6 +54,8 @@ public:
   simple_apr() {
     n.init(939.0/hc_mev_fm,2.0);
     p.init(939.0/hc_mev_fm,2.0);
+    n.non_interacting=false;
+    p.non_interacting=false;
     e.init(0.511/hc_mev_fm,2.0);
     ap.select(1);
     ap.pion=0;

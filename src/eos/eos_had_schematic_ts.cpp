@@ -38,28 +38,43 @@ using namespace o2scl;
 using namespace o2scl_const;
 
 int main(void) {
-  eos_had_schematic se, *se2;
-  double dtemp, n0, nb;
+  
+  cout.setf(ios::scientific);
+
   test_mgr t;
   t.set_output_level(1);
 
+  eos_had_schematic se;
+  double dtemp, n0, nb;
+
   thermo th;
   fermion n(939.0/hc_mev_fm,2.0), p(939.0/hc_mev_fm,2.0);
+
+  double mund, mupd, munde, mupde;
 
   n.n=0.159;
   p.n=0.001;
   se.calc_e(n,p,th);
   cout << (th.ed/0.16-n.m)*hc_mev_fm << endl;
+  se.check_mu(n,p,th,mund,mupd,munde,mupde);
+  t.test_abs(n.mu,mund,fabs(munde),"neutron chem pot.");
+  t.test_abs(p.mu,mupd,fabs(mupde),"proton chem pot.");
 
   n.n=0.16;
   p.n=0.00;
   se.calc_e(n,p,th);
   cout << (th.ed/0.16-n.m)*hc_mev_fm << endl;
+  se.check_mu(n,p,th,mund,mupd,munde,mupde);
+  t.test_abs(n.mu,mund,fabs(munde),"neutron chem pot.");
+  t.test_abs(p.mu,mupd,fabs(mupde),"proton chem pot.");
 
   n.n=0.08;
   p.n=0.08;
   se.calc_e(n,p,th);
   cout << (th.ed/0.16-n.m)*hc_mev_fm << endl;
+  se.check_mu(n,p,th,mund,mupd,munde,mupde);
+  t.test_abs(n.mu,mund,fabs(munde),"neutron chem pot.");
+  t.test_abs(p.mu,mupd,fabs(mupde),"proton chem pot.");
 
   se.eoa=-16.0/hc_mev_fm;
   se.comp=200.0/hc_mev_fm;
