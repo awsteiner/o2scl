@@ -303,6 +303,13 @@ namespace o2scl {
       return baryons_only_loaded;
     }
 
+    /** \brief Output EOS to file named \c file_name
+     */
+    void output(std::string file_name);
+
+    /// Labels for the extra data sets included in current EOS
+    std::vector<std::string> oth_names;
+
     /** \brief A slice of data from \ref eos_sn_base for one index fixed
 	
 	This class allows one to easily construct a \ref

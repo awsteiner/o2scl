@@ -78,6 +78,71 @@ eos_sn_base::~eos_sn_base() {
   if (loaded) free();
 }
 
+void eos_sn_base::output(std::string file_name) {
+
+  if (verbose>0) {
+    cout << "eos_sn_base::output(): Output to file named '"
+	 << file_name << "'." << endl;
+  }
+  
+  hdf_file hf;
+  hf.open_or_create(file_name);
+  
+  // Grid
+  hf.set_szt("n_nB",n_nB);
+  hf.set_szt("n_Ye",n_Ye);
+  hf.set_szt("n_T",n_T);
+  std::vector<double> nB_grid(n_nB);
+  for(size_t i=0;i<n_nB;i++) nB_grid[i]=A.get_grid(0,i);
+  std::vector<double> Ye_grid(n_Ye);
+  for(size_t i=0;i<n_Ye;i++) Ye_grid[i]=A.get_grid(1,i);
+  std::vector<double> T_grid(n_T);
+  for(size_t i=0;i<n_T;i++) T_grid[i]=A.get_grid(2,i);
+  hf.setd_vec("nB_grid",nB_grid);
+  hf.setd_vec("Ye_grid",Ye_grid);
+  hf.setd_vec("T_grid",T_grid);
+
+  // Main bulk thermodynamic quantities
+  if (baryons_only_loaded) {
+    hdf_output(hf,F,"F");
+    hdf_output(hf,E,"E");
+    hdf_output(hf,S,"S");
+    hdf_output(hf,P,"P");
+  }
+  if (with_leptons_loaded) {
+    hdf_output(hf,Fint,"Fint");
+    hdf_output(hf,Eint,"Eint");
+    hdf_output(hf,Sint,"Sint");
+    hdf_output(hf,Pint,"Pint");
+  }
+
+  // Chemical potentials
+  hdf_output(hf,mun,"mun");
+  hdf_output(hf,mup,"mup");
+
+  // Composition
+  hdf_output(hf,Z,"Z");
+  hdf_output(hf,Z,"Z");
+  hdf_output(hf,Xn,"Xn");
+  hdf_output(hf,Xp,"Xp");
+  hdf_output(hf,Xalpha,"Xalpha");
+  hdf_output(hf,Xnuclei,"Xnuclei");
+
+  // Other data 
+  for(size_t i=0;i<n_oth;i++) {
+    hdf_output(hf,other[i],oth_names[i]);
+  }
+
+  hf.close();
+
+  if (verbose>0) {
+    cout << "eos_sn_base::output(): Done with output." << endl;
+  }
+
+  return;
+}
+
+
 void eos_sn_base::alloc() {
   size_t dim[3]={n_nB,n_Ye,n_T};
   for(size_t i=0;i<n_base+n_oth;i++) {
@@ -505,12 +570,29 @@ void eos_sn_ls::load(std::string fname) {
   }
   fin.close();
 
+  oth_names.push_back("fill");
+  oth_names.push_back("nb_in");
+  oth_names.push_back("dPdn");
+  oth_names.push_back("dPdT");
+  oth_names.push_back("dPdY");
+  oth_names.push_back("dsdT");
+  oth_names.push_back("dsdY");
+  oth_names.push_back("Nskin");
+  oth_names.push_back("nb_out");
+  oth_names.push_back("x_out");
+  oth_names.push_back("mu");
+
   // Loaded must be set to true before calling set_interp()
   loaded=true;
   with_leptons_loaded=true;
   baryons_only_loaded=true;
   
   set_interp_type(itp_linear);
+
+  if (n_oth!=oth_names.size()) {
+    O2SCL_ERR("Number of names does not match number of data sets.",
+	      exc_einval);
+  }
 
   if (verbose>0) {
     std::cout << "Done in eos_sn_ls::load()." << std::endl;
@@ -635,8 +717,9 @@ void eos_sn_oo::load(std::string fname, size_t mode) {
   n_nB=inb;
   n_T=it;
   n_Ye=iye;
-  if (verbose>0) {
-    cout << n_nB << " " << n_T << " " << n_Ye << " " 
+  if (verbose>1) {
+    cout << "n_nB, n_T, n_Ye, energy_shift: " 
+	 << n_nB << " " << n_T << " " << n_Ye << " " 
 	 << energy_shift << endl;
   }
 
@@ -746,7 +829,16 @@ void eos_sn_oo::load(std::string fname, size_t mode) {
   indices.push_back(22);
   names.push_back("munu");
   indices.push_back(23);
-  
+
+  oth_names.push_back("cs2");
+  oth_names.push_back("dedt");
+  oth_names.push_back("dpderho");
+  oth_names.push_back("dpdrhoe");
+  oth_names.push_back("gamma");
+  oth_names.push_back("mu_e");
+  oth_names.push_back("muhat");
+  oth_names.push_back("munu");
+
   if (mode==hfsl_mode) {
     ndat+=4;
     names.push_back("X3he");
@@ -757,6 +849,11 @@ void eos_sn_oo::load(std::string fname, size_t mode) {
     indices.push_back(26);
     names.push_back("Xd");
     indices.push_back(27);
+
+    oth_names.push_back("X3he");
+    oth_names.push_back("X4li");
+    oth_names.push_back("Xt");
+    oth_names.push_back("Xd");
   }
 		  
   for(size_t i=0;i<ndat;i++) {
@@ -828,6 +925,11 @@ void eos_sn_oo::load(std::string fname, size_t mode) {
   loaded=true;
   with_leptons_loaded=true;
   baryons_only_loaded=false;
+
+  if (n_oth!=oth_names.size()) {
+    O2SCL_ERR("Number of names does not match number of data sets.",
+	      exc_einval);
+  }
   
   set_interp_type(itp_linear);
 
@@ -876,6 +978,7 @@ void eos_sn_stos::load(std::string fname, size_t mode) {
     double ye_temp=pow(10.0,((double)j)*0.025-2.0);
     grid.push_back(ye_temp);
   }
+
   // Temperature grid from Matthias Hempel
   double temp[31]={0.1,0.12,0.15,0.2,0.25,0.32,0.4,0.5,0.63,0.8,
 		   1.0,1.2,1.5,2.0,2.5,3.2,4.0,5.0,6.3,8.0,10.0,
