@@ -89,7 +89,9 @@ namespace o2scl {
       behave this way.)
       \endcomment
 
-      \todo Make this a template like the \ref o2scl::tensor class?
+      \note Currently, HDF5 I/O is only allowed if the tensor is
+      allocated with std::vector-based types, and the \ref
+      interpolate() function only works with ublas-based vector types.
 
       \todo It is possible for the user to create a tensor_grid
       object, upcast it to a tensor object, and then use

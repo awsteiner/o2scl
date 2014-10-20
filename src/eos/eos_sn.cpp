@@ -24,6 +24,7 @@
 #include <o2scl/test_mgr.h>
 #include <o2scl/hdf_file.h>
 #include <o2scl/lib_settings.h>
+#include <o2scl/hdf_io.h>
 
 using namespace std;
 using namespace o2scl;
