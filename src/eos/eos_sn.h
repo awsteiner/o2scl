@@ -753,7 +753,7 @@ namespace o2scl {
     tensor_grid3 &nB;
     /// Electron chemical potential in MeV
     tensor_grid3 &mue;
-    /// Nucleon effective mass in MeV
+    /// Nucleon effective mass (Dirac) in MeV
     tensor_grid3 &M_star;
     //@}
     
@@ -786,6 +786,20 @@ namespace o2scl {
       <tt>fsg_roca_eos_shen98format_v1.0.tab</tt>, and
       <tt>nl3_lala_eos_shen98format_v1.0.tab</tt> as obtained from
       http://phys-merger.physik.unibas.ch/~hempel/eos.html.
+
+      The free energy is stored with respect to the proton mass
+      of 938 MeV, so \ref eos_sn_base::Fint is shifted by
+      \f[
+      938~\mathrm{MeV}-Y_e m_p-(1-Y_e) m_n
+      \f]
+      and the internal energy is stored with respect to an
+      atomic mass unit so \ref eos_sn_base::Eint is shifted
+      by 
+      \f[
+      931~\mathrm{MeV}-Y_e m_p-(1-Y_e) m_n
+      \f]
+      the rest of the file data is copied over directly from
+      the file. 
 
       See also the documentation at \ref eos_sn_base and the
       \ref sneos_section section of the User's guide.

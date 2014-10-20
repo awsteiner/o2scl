@@ -108,20 +108,37 @@ void eos_sn_base::output(std::string file_name) {
     hdf_output(hf,E,"E");
     hdf_output(hf,S,"S");
     hdf_output(hf,P,"P");
+    hf.seti("baryons_only",1);
+  } else {
+    hf.seti("baryons_only",0);
   }
   if (with_leptons_loaded) {
     hdf_output(hf,Fint,"Fint");
     hdf_output(hf,Eint,"Eint");
     hdf_output(hf,Sint,"Sint");
     hdf_output(hf,Pint,"Pint");
+    hf.seti("with_leptons",1);
+  } else {
+    hf.seti("with_leptons",0);
   }
+
+  // Muon flag
+  if (include_muons) {
+    hf.seti("include_muons",1);
+  } else {
+    hf.seti("include_muons",0);
+  }
+
+  // Nucleon masses
+  hf.setd("m_neut",m_neut);
+  hf.setd("m_prot",m_prot);
 
   // Chemical potentials
   hdf_output(hf,mun,"mun");
   hdf_output(hf,mup,"mup");
 
   // Composition
-  hdf_output(hf,Z,"Z");
+  hdf_output(hf,A,"A");
   hdf_output(hf,Z,"Z");
   hdf_output(hf,Xn,"Xn");
   hdf_output(hf,Xp,"Xp");
@@ -129,10 +146,14 @@ void eos_sn_base::output(std::string file_name) {
   hdf_output(hf,Xnuclei,"Xnuclei");
 
   // Other data 
-  for(size_t i=0;i<n_oth;i++) {
-    hdf_output(hf,other[i],oth_names[i]);
+  hf.seti("n_oth",n_oth);
+  if (n_oth>0) {
+    hf.sets_vec("oth_names",oth_names);
+    for(size_t i=0;i<n_oth;i++) {
+      hdf_output(hf,other[i],oth_names[i]);
+    }
   }
-
+  
   hf.close();
 
   if (verbose>0) {
@@ -587,12 +608,12 @@ void eos_sn_ls::load(std::string fname) {
   with_leptons_loaded=true;
   baryons_only_loaded=true;
   
-  set_interp_type(itp_linear);
-
   if (n_oth!=oth_names.size()) {
-    O2SCL_ERR("Number of names does not match number of data sets.",
-	      exc_einval);
+    O2SCL_ERR2("Number of names does not match number of data sets ",
+	       "in eos_sn_ls::load().",exc_efailed);
   }
+
+  set_interp_type(itp_linear);
 
   if (verbose>0) {
     std::cout << "Done in eos_sn_ls::load()." << std::endl;
@@ -927,8 +948,8 @@ void eos_sn_oo::load(std::string fname, size_t mode) {
   baryons_only_loaded=false;
 
   if (n_oth!=oth_names.size()) {
-    O2SCL_ERR("Number of names does not match number of data sets.",
-	      exc_einval);
+    O2SCL_ERR2("Number of names does not match number of data sets ",
+	       "in eos_sn_oo::load().",exc_efailed);
   }
   
   set_interp_type(itp_linear);
@@ -1311,6 +1332,18 @@ void eos_sn_sht::load(std::string fname, size_t mode) {
       
   fin.close();
 
+  oth_names.clear();
+  oth_names.push_back("T");
+  oth_names.push_back("Yp");
+  oth_names.push_back("nB");
+  oth_names.push_back("mue");
+  oth_names.push_back("M_star");
+
+  if (n_oth!=oth_names.size()) {
+    O2SCL_ERR2("Number of names does not match number of data sets ",
+	       "in eos_sn_sht::load().",exc_efailed);
+  }
+
   if (check_grid) {
     // Double check the grid 
     if (verbose>0) {
@@ -1491,6 +1524,19 @@ void eos_sn_hfsl::load(std::string fname) {
   baryons_only_loaded=true;
 
   set_interp_type(itp_linear);
+
+  oth_names.push_back("log_rho");
+  oth_names.push_back("nB");
+  oth_names.push_back("log_Y");
+  oth_names.push_back("Yp");
+  oth_names.push_back("M_star");
+  oth_names.push_back("A_light");
+  oth_names.push_back("Z_light");
+  
+  if (n_oth!=oth_names.size()) {
+    O2SCL_ERR2("Number of names does not match number of data sets ",
+	       "in eos_sn_hfsl::load().",exc_efailed);
+  }
 
   if (check_grid) {
 
