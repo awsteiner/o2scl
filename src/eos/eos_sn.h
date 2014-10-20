@@ -118,7 +118,7 @@ namespace o2scl {
 	where \f$ m_n \f$ is stored in \ref m_neut and \f$ m_p \f$
 	is stored in \ref m_prot .
     */
-    tensor_grid3 F;
+    tensor_grid3<> F;
     /** \brief Free energy per baryon without lepton and photon 
 	contributions in MeV
 
@@ -129,7 +129,7 @@ namespace o2scl {
 	where \f$ m_n \f$ is stored in \ref m_neut and \f$ m_p \f$
 	is stored in \ref m_prot .
     */
-    tensor_grid3 Fint;
+    tensor_grid3<> Fint;
     /** \brief Total internal energy per baryon in MeV (without 
 	baryon rest masses but including electron rest mass)
 
@@ -140,7 +140,7 @@ namespace o2scl {
 	where \f$ m_n \f$ is stored in \ref m_neut and \f$ m_p \f$
 	is stored in \ref m_prot .
     */
-    tensor_grid3 E;
+    tensor_grid3<> E;
     /** \brief Internal energy per baryon without lepton and photon 
 	contributions in MeV
 
@@ -151,45 +151,45 @@ namespace o2scl {
 	where \f$ m_n \f$ is stored in \ref m_neut and \f$ m_p \f$
 	is stored in \ref m_prot .
     */
-    tensor_grid3 Eint;
+    tensor_grid3<> Eint;
     /// Total pressure in \f$ \mathrm{MeV}/\mathrm{fm}^3 \f$
-    tensor_grid3 P;
+    tensor_grid3<> P;
     /** \brief Pressure without lepton and photon contributions
 	in \f$ \mathrm{MeV}/\mathrm{fm}^3 \f$
     */
-    tensor_grid3 Pint;
+    tensor_grid3<> Pint;
     /// Total entropy per baryon
-    tensor_grid3 S;
+    tensor_grid3<> S;
     /// Entry per baryon without lepton and photon contributions
-    tensor_grid3 Sint;
+    tensor_grid3<> Sint;
     /** \brief Neutron chemical potential in MeV
 
 	By default this is relative to the neutron mass in
 	\ref m_neut .
      */
-    tensor_grid3 mun;
+    tensor_grid3<> mun;
     /** \brief Proton chemical potential in MeV
 
 	By default this is relative to the proton mass in
 	\ref m_prot .
     */
-    tensor_grid3 mup;
+    tensor_grid3<> mup;
     /// Proton number
-    tensor_grid3 Z;
+    tensor_grid3<> Z;
     /// Mass number
-    tensor_grid3 A;
+    tensor_grid3<> A;
     /// Neutron baryon fraction
-    tensor_grid3 Xn;
+    tensor_grid3<> Xn;
     /// Proton baryon fraction
-    tensor_grid3 Xp;
+    tensor_grid3<> Xp;
     /// Alpha particle baryon fraction
-    tensor_grid3 Xalpha;
+    tensor_grid3<> Xalpha;
     /// Heavy nuclei baryon fraction
-    tensor_grid3 Xnuclei;
+    tensor_grid3<> Xnuclei;
     /// Other data sets
-    tensor_grid3 other[20];
+    tensor_grid3<> other[20];
     /// List of pointers to data
-    tensor_grid3 *arr[n_base+20];
+    tensor_grid3<> *arr[n_base+20];
     //@}
 
     /** \brief Check the table composition entries
@@ -340,9 +340,9 @@ namespace o2scl {
       /** \brief Set the slice to correspond to a matrix 
 	  in the form \f$ (n_B,T) \f$
        */
-      void set_nB_T(tensor_grid3 &tg3, size_t iYe) {
+      void set_nB_T(tensor_grid3<> &tg3, size_t iYe) {
 	data=std::bind(std::mem_fn<double &(size_t,size_t,size_t)>
-		       (&tensor_grid3::get),tg3,std::placeholders::_1,iYe,
+		       (&tensor_grid3<>::get),tg3,std::placeholders::_1,iYe,
 		       std::placeholders::_2);
 	size_t nx=tg3.get_size(0);
 	grid_x.resize(nx);
@@ -357,9 +357,9 @@ namespace o2scl {
       /** \brief Set the slice to correspond to a matrix 
 	  in the form \f$ (n_B,Y_e) \f$
        */
-      void set_nB_Ye(tensor_grid3 &tg3, size_t iT) {
+      void set_nB_Ye(tensor_grid3<> &tg3, size_t iT) {
 	data=std::bind(std::mem_fn<double &(size_t,size_t,size_t)>
-		       (&tensor_grid3::get),tg3,std::placeholders::_1,
+		       (&tensor_grid3<>::get),tg3,std::placeholders::_1,
 		       std::placeholders::_2,iT);
 	size_t nx=tg3.get_size(0);
 	grid_x.resize(nx);
@@ -374,9 +374,9 @@ namespace o2scl {
       /** \brief Set the slice to correspond to a matrix 
 	  in the form \f$ (T,Y_e) \f$
        */
-      void set_T_Ye(tensor_grid3 &tg3, size_t inB) {
+      void set_T_Ye(tensor_grid3<> &tg3, size_t inB) {
 	data=std::bind(std::mem_fn<double &(size_t,size_t,size_t)>
-		       (&tensor_grid3::get),tg3,inB,std::placeholders::_2,
+		       (&tensor_grid3<>::get),tg3,inB,std::placeholders::_2,
 		       std::placeholders::_1);
 	size_t nx=tg3.get_size(2);
 	grid_x.resize(nx);
@@ -462,29 +462,29 @@ namespace o2scl {
     /// \name Additional data included in this EOS
     //@{
     /// Filling factor for nuclei
-    tensor_grid3 &fill;
+    tensor_grid3<> &fill;
     /// Baryon number density inside nuclei in \f$ \mathrm{fm}^{-3} \f$
-    tensor_grid3 &nb_in;
+    tensor_grid3<> &nb_in;
     /// Derivative of pressure with respect to baryon density
-    tensor_grid3 &dPdn;
+    tensor_grid3<> &dPdn;
     /// Derivative of pressure with respect to temperature
-    tensor_grid3 &dPdT;
+    tensor_grid3<> &dPdT;
     /// Derivative of pressure with respect to electron fraction
-    tensor_grid3 &dPdY;
+    tensor_grid3<> &dPdY;
     /// Derivative of entropy with respect to temperature
-    tensor_grid3 &dsdT;
+    tensor_grid3<> &dsdT;
     /// Derivative of entropy with respect to electron fraction
-    tensor_grid3 &dsdY;
+    tensor_grid3<> &dsdY;
     /// Number of neutrons in skin
-    tensor_grid3 &Nskin;
+    tensor_grid3<> &Nskin;
     /// Baryon density outside nuclei in \f$ \mathrm{fm}^{-3} \f$
-    tensor_grid3 &nb_out;
+    tensor_grid3<> &nb_out;
     /// Proton fraction outside nuclei
-    tensor_grid3 &x_out;
+    tensor_grid3<> &x_out;
     /** \brief Out of whackness parameter, 
 	\f$ \mu_n-\mu_p-\mu_e+1.293~\mathrm{MeV} \f$, in MeV
     */
-    tensor_grid3 &mu;
+    tensor_grid3<> &mu;
     //@}
 
   eos_sn_ls() :
@@ -564,29 +564,29 @@ namespace o2scl {
     /// \name Additional data included in this EOS
     //@{
     /// Speed of sound in cm^2/s^2
-    tensor_grid3 &cs2;
+    tensor_grid3<> &cs2;
     /// C_V in erg/g/K
-    tensor_grid3 &dedt;
+    tensor_grid3<> &dedt;
     /// dpderho in dyn*g/cm^2/erg
-    tensor_grid3 &dpderho;
+    tensor_grid3<> &dpderho;
     /// dpdrhoe in dyn cm^3/cm^2/g
-    tensor_grid3 &dpdrhoe;
+    tensor_grid3<> &dpdrhoe;
     /// Gamma
-    tensor_grid3 &gamma;
+    tensor_grid3<> &gamma;
     /// Electron chemical potential per baryon including rest mass
-    tensor_grid3 &mu_e;
+    tensor_grid3<> &mu_e;
     /// mun - mup
-    tensor_grid3 &muhat;
+    tensor_grid3<> &muhat;
     /// mue - mun + mup
-    tensor_grid3 &munu;
+    tensor_grid3<> &munu;
     /// Helion fraction
-    tensor_grid3 &XHe3;
+    tensor_grid3<> &XHe3;
     /// Lithium-4 fraction
-    tensor_grid3 &XLi4;
+    tensor_grid3<> &XLi4;
     /// Triton fraction
-    tensor_grid3 &Xt;
+    tensor_grid3<> &Xt;
     /// Deuteron fraction
-    tensor_grid3 &Xd;
+    tensor_grid3<> &Xd;
     /// The original mass density grid from the table in g/cm^3
     std::vector<double> rho;
     /// Energy shift for table storage in erg/g
@@ -651,17 +651,17 @@ namespace o2scl {
     /** \brief Logarithm of baryon number density in 
 	\f$ \mathrm{g}/\mathrm{cm}^3 \f$
     */
-    tensor_grid3 &log_rho;
+    tensor_grid3<> &log_rho;
     /// Baryon number density in \f$ \mathrm{fm}^{-3} \f$
-    tensor_grid3 &nB;
+    tensor_grid3<> &nB;
     /// Logarithm of proton fraction
-    tensor_grid3 &log_Y;
+    tensor_grid3<> &log_Y;
     /// Proton fraction
-    tensor_grid3 &Yp;
+    tensor_grid3<> &Yp;
     /// Nucleon effective mass in MeV
-    tensor_grid3 &M_star;
+    tensor_grid3<> &M_star;
     /// Fraction of quark matter
-    tensor_grid3 &quark_frac;
+    tensor_grid3<> &quark_frac;
     //@}
 
   eos_sn_stos() :
@@ -746,15 +746,15 @@ namespace o2scl {
     /// \name Additional data included in this EOS
     //@{
     /// Temperature in MeV
-    tensor_grid3 &T;
+    tensor_grid3<> &T;
     /// Proton fraction
-    tensor_grid3 &Yp;
+    tensor_grid3<> &Yp;
     /// Baryon number density in \f$ 1/\mathrm{fm}^3 \f$
-    tensor_grid3 &nB;
+    tensor_grid3<> &nB;
     /// Electron chemical potential in MeV
-    tensor_grid3 &mue;
+    tensor_grid3<> &mue;
     /// Nucleon effective mass (Dirac) in MeV
-    tensor_grid3 &M_star;
+    tensor_grid3<> &M_star;
     //@}
     
   eos_sn_sht() :
@@ -818,19 +818,19 @@ namespace o2scl {
     /** \brief Logarithm of baryon number density in 
 	\f$ \mathrm{g}/\mathrm{cm}^3 \f$
     */
-    tensor_grid3 &log_rho;
+    tensor_grid3<> &log_rho;
     /// Baryon number density in \f$ 1/\mathrm{fm}^3 \f$
-    tensor_grid3 &nB;
+    tensor_grid3<> &nB;
     /// Logarithm of proton fraction
-    tensor_grid3 &log_Y;
+    tensor_grid3<> &log_Y;
     /// Proton fraction
-    tensor_grid3 &Yp;
+    tensor_grid3<> &Yp;
     /// Nucleon effective mass in MeV
-    tensor_grid3 &M_star;
+    tensor_grid3<> &M_star;
     /// Mass number of light fragments
-    tensor_grid3 &A_light;
+    tensor_grid3<> &A_light;
     /// Proton number of light fragments
-    tensor_grid3 &Z_light;
+    tensor_grid3<> &Z_light;
     //@}
 
     /// If true, check the grid after load() (default true)

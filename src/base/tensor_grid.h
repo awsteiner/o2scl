@@ -43,22 +43,32 @@
 
 // Forward definition of the tensor_grid class for HDF I/O
 namespace o2scl {
-  class tensor_grid;
+  template<class vec_t, class vec_size_t> class tensor_grid;
 }
 
 // Forward definition of HDF I/O to extend friendship
 namespace o2scl_hdf { 
   class hdf_file; 
-  void hdf_input(hdf_file &hf, o2scl::tensor_grid &t, std::string name);
-  void hdf_output(hdf_file &hf, o2scl::tensor_grid &t, std::string name);
+  template<class vec_t, class vec_size_t>
+    void hdf_input(hdf_file &hf, o2scl::tensor_grid<vec_t,vec_size_t> &t, 
+		   std::string name);
+  template<class vec_t, class vec_size_t>
+    void hdf_output(hdf_file &hf, o2scl::tensor_grid<vec_t,vec_size_t> &t, 
+		    std::string name);
 }
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
 #endif
-
+  
+  typedef boost::numeric::ublas::range ub_range;
+  typedef boost::numeric::ublas::vector_range
+    <boost::numeric::ublas::vector<double> > ubvector_range;
+  typedef boost::numeric::ublas::vector_range
+    <boost::numeric::ublas::vector<size_t> > ubvector_size_t_range;
+  
   /** \brief Tensor class with arbitrary dimensions with a grid
-
+      
       This tensor class allows one to assign the indexes to numerical
       scales, so that n-dimensional interpolation can be performed. To
       set the grid, use \ref set_grid() or \ref set_grid_packed() and
@@ -92,26 +102,23 @@ namespace o2scl {
       constructor for a tensor_grid object which just takes 
       as input a set of grids?
   */
-  class tensor_grid : 
-  public tensor<boost::numeric::ublas::vector<double>,
-    boost::numeric::ublas::vector<size_t> > {
-
+  template<class vec_t=std::vector<double>, 
+    class vec_size_t=std::vector<size_t> > class tensor_grid :
+    public tensor<vec_t,vec_size_t> {
+    
   public:
-
-    typedef boost::numeric::ublas::vector<double> ubvector;
-    typedef boost::numeric::ublas::vector<size_t> ubvector_size_t;
-    typedef boost::numeric::ublas::range range;
-    typedef boost::numeric::ublas::vector_range<ubvector> ubvector_range;
-    typedef boost::numeric::ublas::vector_range<ubvector_size_t> 
-      ubvector_size_t_range;
-
+  
 #ifndef DOXYGEN_INTERNAL
-
+  
   protected:
 
+#ifdef O2SCL_NEVER_DEFINED
+  }{
+#endif  
+    
     /// A rank-sized set of arrays for the grid points
-    ubvector grid;
-
+    vec_t grid;
+    
     /// If true, the grid has been set by the user
     bool grid_set;
 
@@ -119,16 +126,16 @@ namespace o2scl {
     size_t itype;
     
     /// Return a reference to the data (for HDF I/O)
-    ubvector &get_data() {
-      return data;
+    vec_t &get_data() {
+      return this->data;
     }
-
+    
 #endif
-
+    
   public:
     
     /// Create an empty tensor with zero rank
-  tensor_grid() : tensor<ubvector,ubvector_size_t>() {
+  tensor_grid() : tensor<vec_t,vec_size_t>() {
       grid_set=false;
       itype=itp_linear;
     }
@@ -141,11 +148,11 @@ namespace o2scl {
     */
     template<class size_vec_t> 
       tensor_grid(size_t rank, const size_vec_t &dim) : 
-    tensor<ubvector,ubvector_size_t>(rank,dim) {
+    tensor<vec_t,vec_size_t>(rank,dim) {
       grid_set=false;
       itype=itp_linear;
       // Note that the parent method sets rk to be equal to rank
-      for(size_t i=0;i<rk;i++) {
+      for(size_t i=0;i<this->rk;i++) {
 	if (dim[i]==0) {
 	  O2SCL_ERR((((std::string)"Requested zero size with non-zero ")+
 		     "rank for index "+szttos(i)+" in tensor_grid::"+
@@ -161,24 +168,24 @@ namespace o2scl {
     /// \name Set functions
     //@{
     /// Set the element closest to grid point \c grdp to value \c val
-    template<class vec_t> 
-      void set_val(const vec_t &grdp, double val) {
-
+    template<class vec2_t> 
+      void set_val(const vec2_t &grdp, double val) {
+      
       // Find indices
-      ubvector_size_t index(rk);
-      for(size_t i=0;i<rk;i++) {
+      vec_size_t index(this->rk);
+      for(size_t i=0;i<this->rk;i++) {
 	index[i]=lookup_grid(i,grdp[i]);
       }
       
       // Pack
       size_t ix=index[0];
-      for(size_t i=1;i<rk;i++) {
-	ix*=size[i];
+      for(size_t i=1;i<this->rk;i++) {
+	ix*=this->size[i];
 	ix+=index[i];
       }
 
       // Set value
-      data[ix]=val;
+      this->data[ix]=val;
 
       return;
     }
@@ -190,24 +197,24 @@ namespace o2scl {
 	allowing one to update a vector \c grdp with the
 	closest grid point.
     */
-    template<class vec_t, class vec2_t> 
-      void set_val(const vec_t &grdp, double val, vec2_t &closest) {
+    template<class vec2_t, class vec3_t> 
+      void set_val(const vec2_t &grdp, double val, vec3_t &closest) {
 
       // Find indices
-      ubvector_size_t index(rk);
-      for(size_t i=0;i<rk;i++) {
+      vec_size_t index(this->rk);
+      for(size_t i=0;i<this->rk;i++) {
 	index[i]=lookup_grid_val(i,grdp[i],closest[i]);
       }
       
       // Pack
       size_t ix=index[0];
-      for(size_t i=1;i<rk;i++) {
-	ix*=size[i];
+      for(size_t i=1;i<this->rk;i++) {
+	ix*=this->size[i];
 	ix+=index[i];
       }
 
       // Set value
-      data[ix]=val;
+      this->data[ix]=val;
 
       return;
     }
@@ -216,23 +223,23 @@ namespace o2scl {
     /// \name Get functions
     //@{
     /// Get the element closest to grid point \c grdp 
-    template<class vec_t> double get_val(const vec_t &grdp) {
+    template<class vec2_t> double get_val(const vec2_t &grdp) {
       
       // Find indices
-      ubvector_size_t index(rk);
-      for(size_t i=0;i<rk;i++) {
+      vec_size_t index(this->rk);
+      for(size_t i=0;i<this->rk;i++) {
 	index[i]=lookup_grid(i,grdp[i]);
       }
 
       // Pack
       size_t ix=index[0];
-      for(size_t i=1;i<rk;i++) {
-	ix*=size[i];
+      for(size_t i=1;i<this->rk;i++) {
+	ix*=this->size[i];
 	ix+=index[i];
       }
 
       // Set value
-      return data[ix];
+      return this->data[ix];
     }
 
     /** \brief Get the element closest to grid point \c grdp to 
@@ -241,24 +248,24 @@ namespace o2scl {
 	The parameters \c grdp and \c closest may refer to the
 	same object. 
     */
-    template<class vec_t, class vec2_t> 
-      double get_val(const vec_t &grdp, vec2_t &closest) {
+    template<class vec2_t, class vec3_t> 
+      double get_val(const vec2_t &grdp, vec3_t &closest) {
       
       // Find indices
-      ubvector_size_t index(rk);
-      for(size_t i=0;i<rk;i++) {
+      vec_size_t index(this->rk);
+      for(size_t i=0;i<this->rk;i++) {
 	index[i]=lookup_grid_val(i,grdp[i],closest[i]);
       }
       
       // Pack
       size_t ix=index[0];
-      for(size_t i=1;i<rk;i++) {
-	ix*=size[i];
+      for(size_t i=1;i<this->rk;i++) {
+	ix*=this->size[i];
 	ix+=index[i];
       }
 
       // Set value
-      return data[ix];
+      return this->data[ix];
     }
     //@}
     
@@ -274,8 +281,8 @@ namespace o2scl {
 	If the user requests any of the sizes to be zero, this
 	function will call the error handler.
     */
-    template<class size_vec_t>
-      void resize(size_t rank, const size_vec_t &dim) {
+    template<class size_vec2_t>
+      void resize(size_t rank, const size_vec2_t &dim) {
       // Double check that none of the sizes that the user
       // specified are zero
       for(size_t i=0;i<rank;i++) {
@@ -286,24 +293,24 @@ namespace o2scl {
 	}
       }
       // Set the new rank
-      rk=rank;
+      this->rk=rank;
       // Resize the size vector
-      size.resize(rk);
+      this->size.resize(this->rk);
       // Reset the grid
       grid_set=false;
       grid.resize(0);
       // If the new rank is zero, reset the data, otherwise,
       // update the size vector and reset the data vector
       if (rank==0) {
-	data.resize(0);
+	this->data.resize(0);
 	return;
       } else {
 	size_t tot=1;
-	for(size_t i=0;i<rk;i++) {
-	  size[i]=dim[i];
-	  tot*=size[i];
+	for(size_t i=0;i<this->rk;i++) {
+	  this->size[i]=dim[i];
+	  tot*=this->size[i];
 	}
-	data.resize(tot);
+	this->data.resize(tot);
       }
       return;
     }
@@ -336,14 +343,14 @@ namespace o2scl {
 
 	\future Define a more generic interface for matrix types
     */
-    template<class vec_t>
-      void set_grid_packed(const vec_t &grid_vec) {
-      if (rk==0) {
+    template<class vec2_t>
+      void set_grid_packed(const vec2_t &grid_vec) {
+      if (this->rk==0) {
 	O2SCL_ERR2("Tried to set grid for empty tensor in ",
 		   "tensor_grid::set_grid_packed().",exc_einval);
       }
       size_t ngrid=0;
-      for(size_t i=0;i<rk;i++) ngrid+=size[i];
+      for(size_t i=0;i<this->rk;i++) ngrid+=this->size[i];
       grid.resize(ngrid);
       for(size_t i=0;i<ngrid;i++) {
 	grid[i]=grid_vec[i];
@@ -356,16 +363,16 @@ namespace o2scl {
      */
     template<class vec_vec_t>
       void set_grid(const vec_vec_t &grid_vecs) {
-      if (rk==0) {
+      if (this->rk==0) {
 	O2SCL_ERR2("Tried to set grid for empty tensor in ",
 		   "tensor_grid::set_grid().",exc_einval);
       }
       size_t ngrid=0;
-      for(size_t i=0;i<rk;i++) ngrid+=size[i];
+      for(size_t i=0;i<this->rk;i++) ngrid+=this->size[i];
       grid.resize(ngrid);
       size_t k=0;
-      for(size_t i=0;i<rk;i++) {
-	for(size_t j=0;j<size[i];j++) {
+      for(size_t i=0;i<this->rk;i++) {
+	for(size_t j=0;j<this->size[i];j++) {
 	  grid[k]=grid_vecs[i][j];
 	  k++;
 	}
@@ -380,14 +387,14 @@ namespace o2scl {
 	O2SCL_ERR("Grid not set in tensor_grid::get_grid().",
 		  exc_einval);
       }
-      if (i>=rk) {
+      if (i>=this->rk) {
 	O2SCL_ERR((((std::string)"Index ")+szttos(i)+
-		   " greater than or equal to rank, "+szttos(rk)+
+		   " greater than or equal to rank, "+szttos(this->rk)+
 		   ", in tensor_grid::get_grid().").c_str(),
 		  exc_einval);
       }
       size_t istart=0;
-      for(size_t k=0;k<i;k++) istart+=size[k];
+      for(size_t k=0;k<i;k++) istart+=this->size[k];
       return grid[istart+j];
     }
 
@@ -397,14 +404,14 @@ namespace o2scl {
 	O2SCL_ERR("Grid not set in tensor_grid::get_grid().",
 		  exc_einval);
       }
-      if (i>=rk) {
+      if (i>=this->rk) {
 	O2SCL_ERR((((std::string)"Index ")+szttos(i)+
-		   " greater than or equal to rank, "+szttos(rk)+
+		   " greater than or equal to rank, "+szttos(this->rk)+
 		   ", in tensor_grid::get_grid().").c_str(),
 		  exc_einval);
       }
       size_t istart=0;
-      for(size_t k=0;k<i;k++) istart+=size[k];
+      for(size_t k=0;k<i;k++) istart+=this->size[k];
       grid[istart+j]=val;
       return;
     }
@@ -415,20 +422,20 @@ namespace o2scl {
 	O2SCL_ERR("Grid not set in tensor_grid::lookup_grid().",
 		  exc_einval);
       }
-      if (i>=rk) {
+      if (i>=this->rk) {
 	O2SCL_ERR((((std::string)"Index ")+szttos(i)+
-		   " greater than or equal to rank, "+szttos(rk)+
+		   " greater than or equal to rank, "+szttos(this->rk)+
 		   ", in tensor_grid::lookup_grid().").c_str(),
 		  exc_einval);
       }
       size_t istart=0;
       
       for(size_t j=0;j<i;j++) {
-	istart+=size[j];
+	istart+=this->size[j];
       }
       size_t best=istart;
       double min=fabs(grid[istart]-val);
-      for(size_t j=istart;j<istart+size[i];j++) {
+      for(size_t j=istart;j<istart+this->size[i];j++) {
 	if (fabs(grid[j]-val)<min) {
 	  best=j;
 	  min=fabs(grid[j]-val);
@@ -447,9 +454,9 @@ namespace o2scl {
 	confusion between the two functions.
 	\endcomment
     */
-    template<class vec_t, class size_vec_t>
-      void lookup_grid_vec(const vec_t &vals, size_vec_t &indices) const {
-      for(size_t k=0;k<rk;k++) {
+    template<class vec2_t, class size_vec2_t>
+      void lookup_grid_vec(const vec2_t &vals, size_vec2_t &indices) const {
+      for(size_t k=0;k<this->rk;k++) {
 	indices[k]=lookup_grid(k,vals[k]);
       }
       return;
@@ -462,9 +469,9 @@ namespace o2scl {
 	same object. 
     */
     size_t lookup_grid_val(size_t i, const double &val, double &val2) {
-      if (i>=rk) {
+      if (i>=this->rk) {
 	O2SCL_ERR((((std::string)"Index ")+szttos(i)+
-		   " greater than or equal to rank, "+szttos(rk)+
+		   " greater than or equal to rank, "+szttos(this->rk)+
 		   ", in tensor_grid::lookup_grid_val().").c_str(),
 		  exc_einval);
       }
@@ -473,11 +480,11 @@ namespace o2scl {
 		  exc_einval);
       }
       size_t istart=0;
-      for(size_t j=0;j<i;j++) istart+=size[j];
+      for(size_t j=0;j<i;j++) istart+=this->size[j];
       size_t best=istart;
       double min=fabs(grid[istart]-val);
       val2=grid[istart];
-      for(size_t j=istart;j<istart+size[i];j++) {
+      for(size_t j=istart;j<istart+this->size[i];j++) {
 	if (fabs(grid[j]-val)<min) {
 	  best=j;
 	  min=fabs(grid[j]-val);
@@ -493,17 +500,17 @@ namespace o2scl {
 	O2SCL_ERR("Grid not set in tensor_grid::lookup_grid_packed().",
 		  exc_einval);
       }
-      if (i>=rk) {
+      if (i>=this->rk) {
 	O2SCL_ERR((((std::string)"Index ")+szttos(i)+" greater than rank, "+
-		   szttos(rk)+
+		   szttos(this->rk)+
 		   ", in tensor_grid::lookup_grid_packed().").c_str(),
 		  exc_einval);
       }
       size_t istart=0;
-      for(size_t j=0;j<i;j++) istart+=size[j];
+      for(size_t j=0;j<i;j++) istart+=this->size[j];
       size_t best=istart;
       double min=fabs(grid[istart]-val);
-      for(size_t j=istart;j<istart+size[i];j++) {
+      for(size_t j=istart;j<istart+this->size[i];j++) {
 	if (fabs(grid[j]-val)<min) {
 	  best=j;
 	  min=fabs(grid[j]-val);
@@ -518,18 +525,18 @@ namespace o2scl {
 	O2SCL_ERR("Grid not set in tensor_grid::lookup_grid_packed().",
 		  exc_einval);
       }
-      if (i>=rk) {
+      if (i>=this->rk) {
 	O2SCL_ERR((((std::string)"Index ")+szttos(i)+" greater than rank, "+
-		   szttos(rk)+
+		   szttos(this->rk)+
 		   ", in tensor_grid::lookup_grid_packed().").c_str(),
 		  exc_einval);
       }
       size_t istart=0;
-      for(size_t j=0;j<i;j++) istart+=size[j];
+      for(size_t j=0;j<i;j++) istart+=this->size[j];
       size_t best=istart;
       double min=fabs(grid[istart]-val);
       val2=grid[istart];
-      for(size_t j=istart;j<istart+size[i];j++) {
+      for(size_t j=istart;j<istart+this->size[i];j++) {
 	if (fabs(grid[j]-val)<min) {
 	  best=j;
 	  min=fabs(grid[j]-val);
@@ -559,12 +566,12 @@ namespace o2scl {
 
 	This currently requires a copy of all the tensor data
 	into the table3d object.
-     */
-    template<class size_vec_t> 
-      void copy_slice_align(size_t ix_x, size_t ix_y, size_vec_t &index, 
+    */
+    template<class size_vec2_t> 
+      void copy_slice_align(size_t ix_x, size_t ix_y, size_vec2_t &index, 
 			    table3d &tab, std::string slice_name) {
       
-      if (ix_x>=rk || ix_y>=rk || ix_x==ix_y) {
+      if (ix_x>=this->rk || ix_y>=this->rk || ix_x==ix_y) {
 	O2SCL_ERR2("Either indices greater than rank or x and y ind",
 		   "ices equal in tensor_grid::copy_slice_align().",
 		   exc_efailed);
@@ -578,10 +585,10 @@ namespace o2scl {
 
 	// If there's no grid, just create it
 	std::vector<double> gx, gy;
-	for(size_t i=0;i<size[ix_x];i++) {
+	for(size_t i=0;i<this->size[ix_x];i++) {
 	  gx.push_back(this->get_grid(ix_x,i));
 	}
-	for(size_t i=0;i<size[ix_y];i++) {
+	for(size_t i=0;i<this->size[ix_y];i++) {
 	  gy.push_back(this->get_grid(ix_y,i));
 	}
 	nx=gx.size();
@@ -590,7 +597,7 @@ namespace o2scl {
       }
 
       // Check that the grids are commensurate
-      if (nx!=size[ix_x] || ny!=size[ix_y]) {
+      if (nx!=this->size[ix_x] || ny!=this->size[ix_y]) {
 	O2SCL_ERR2("Grids not commensurate in ",
 		   "tensor_grid::copy_slice_align().",exc_einval);
       }
@@ -621,12 +628,12 @@ namespace o2scl {
 	
 	\note This function uses the \ref tensor_grid::interp_linear() 
 	for the interpolation.
-     */
-    template<class size_vec_t> 
-      void copy_slice_interp(size_t ix_x, size_t ix_y, size_vec_t &index, 
-			       table3d &tab, std::string slice_name) {
+    */
+    template<class size_vec2_t> 
+      void copy_slice_interp(size_t ix_x, size_t ix_y, size_vec2_t &index, 
+			     table3d &tab, std::string slice_name) {
 
-      if (ix_x>=rk || ix_y>=rk || ix_x==ix_y) {
+      if (ix_x>=this->rk || ix_y>=this->rk || ix_x==ix_y) {
 	O2SCL_ERR2("Either indices greater than rank or x and y ",
 		   "indices equal in tensor_grid::copy_slice_interp().",
 		   exc_efailed);
@@ -642,8 +649,8 @@ namespace o2scl {
       }
 
       // Create vector of values to interpolate with
-      std::vector<double> vals(rk);
-      for(size_t i=0;i<rk;i++) {
+      std::vector<double> vals(this->rk);
+      for(size_t i=0;i<this->rk;i++) {
 	if (i!=ix_x && i!=ix_y) vals[i]=this->get_grid(i,index[i]);
       }
 
@@ -671,7 +678,7 @@ namespace o2scl {
       itype=interp_type;
       return;
     }
-
+  
     /** \brief Interpolate values \c vals into the tensor, 
 	returning the result
 
@@ -694,40 +701,43 @@ namespace o2scl {
 	probably be superceded by a more generic alternative which
 	avoids explicit use of the 1-d interpolation types.
     */
-    double interpolate(double *vals) {
+    template<class range_t=ub_range,
+      class data_range_t=ubvector_range, 
+      class index_range_t=ubvector_size_t_range> 
+      double interpolate(double *vals) {
 
-      typedef interp_vec<ubvector> interp_t;
+      typedef interp_vec<vec_t> interp_t;
       
-      if (rk==1) {
+      if (this->rk==1) {
 	
-	interp_t si(size[0],grid,data,itype);
+	interp_t si(this->size[0],grid,this->data,itype);
 	return si.eval(vals[0]);
 
       } else {
 	
 	// Get total number of interpolations at this level
 	size_t ss=1;
-	for(size_t i=1;i<rk;i++) ss*=size[i];
+	for(size_t i=1;i<this->rk;i++) ss*=this->size[i];
 
 	// Create space for y vectors and interpolators
-	std::vector<ubvector> yvec(ss);
+	std::vector<vec_t> yvec(ss);
 	std::vector<interp_t *> si(ss);
 	for(size_t i=0;i<ss;i++) {
-	  yvec[i].resize(size[0]);
+	  yvec[i].resize(this->size[0]);
 	}
 	
 	// Create space for interpolation results
 	tensor_grid tdat;
-	ubvector_size_t_range size_new(size,range(1,rk));
-	tdat.resize(rk-1,size_new);
+	index_range_t size_new(this->size,ub_range(1,this->rk));
+	tdat.resize(this->rk-1,size_new);
 
 	// Set grid for temporary tensor
-	ubvector_range grid_new(grid,range(size[0],grid.size()));
+	data_range_t grid_new(grid,ub_range(this->size[0],grid.size()));
 	tdat.set_grid_packed(grid_new);
 	
 	// Create starting coordinate and counter
-	ubvector_size_t co(rk);
-	for(size_t i=0;i<rk;i++) co[i]=0;
+	vec_size_t co(this->rk);
+	for(size_t i=0;i<this->rk;i++) co[i]=0;
 	size_t cnt=0;
 
 	// Loop over every interpolation
@@ -735,22 +745,22 @@ namespace o2scl {
 	while(done==false) {
 
 	  // Fill yvector with the appropriate data
-	  for(size_t i=0;i<size[0];i++) {
+	  for(size_t i=0;i<this->size[0];i++) {
 	    co[0]=i;
 	    yvec[cnt][i]=get(co);
 	  }
 	  
-	  si[cnt]=new interp_t(size[0],grid,yvec[cnt],itype);
+	  si[cnt]=new interp_t(this->size[0],grid,yvec[cnt],itype);
 	  
-	  ubvector_size_t_range co2(co,range(1,rk));
+	  index_range_t co2(co,ub_range(1,this->rk));
 	  tdat.set(co2,si[cnt]->eval(vals[0]));
 
 	  // Go to next interpolation
 	  cnt++;
-	  co[rk-1]++;
+	  co[this->rk-1]++;
 	  // carry if necessary
-	  for(int j=((int)rk)-1;j>0;j--) {
-	    if (co[j]>=size[j]) {
+	  for(int j=((int)this->rk)-1;j>0;j--) {
+	    if (co[j]>=this->size[j]) {
 	      co[j]=0;
 	      co[j-1]++;
 	    }
@@ -788,35 +798,35 @@ namespace o2scl {
 
       // Find the the corner of the hypercube containing v
       size_t rgs=0;
-      std::vector<size_t> loc(rk);
+      std::vector<size_t> loc(this->rk);
       std::vector<double> gnew;
-      for(size_t i=0;i<rk;i++) {
-	std::vector<double> grid_unpacked(size[i]);
-	for(size_t j=0;j<size[i];j++) {
+      for(size_t i=0;i<this->rk;i++) {
+	std::vector<double> grid_unpacked(this->size[i]);
+	for(size_t j=0;j<this->size[i];j++) {
 	  grid_unpacked[j]=grid[j+rgs];
 	}
-	search_vec<std::vector<double> > sv(size[i],grid_unpacked);
+	search_vec<std::vector<double> > sv(this->size[i],grid_unpacked);
 	loc[i]=sv.find(v[i]);
 	gnew.push_back(grid_unpacked[loc[i]]);
 	gnew.push_back(grid_unpacked[loc[i]+1]);
-	rgs+=size[i];
+	rgs+=this->size[i];
       }
 
       // Now construct a 2^{rk}-sized tensor containing only that 
       // hypercube
-      std::vector<size_t> snew(rk);
-      for(size_t i=0;i<rk;i++) {
+      std::vector<size_t> snew(this->rk);
+      for(size_t i=0;i<this->rk;i++) {
 	snew[i]=2;
       }
-      tensor_grid tnew(rk,snew);
+      tensor_grid tnew(this->rk,snew);
       tnew.set_grid_packed(gnew);
       
       // Copy over the relevant data
       for(size_t i=0;i<tnew.total_size();i++) {
-	std::vector<size_t> index_new(rk), index_old(rk);
+	std::vector<size_t> index_new(this->rk), index_old(this->rk);
 	tnew.unpack_indices(i,index_new);
-	for(size_t j=0;j<rk;j++) index_old[j]=index_new[j]+loc[j];
-	tnew.set(index_new,get(index_old));
+	for(size_t j=0;j<this->rk;j++) index_old[j]=index_new[j]+loc[j];
+	tnew.set(index_new,this->get(index_old));
       }
       
       // Now use interp_power_two()
@@ -833,27 +843,28 @@ namespace o2scl {
     */
     template<class vec2_t> double interp_linear_power_two(vec2_t &v) {
 
-      if (rk==1) {
-	return data[0]+(data[1]-data[0])/(grid[1]-grid[0])*(v[0]-grid[0]);
+      if (this->rk==1) {
+	return this->data[0]+(this->data[1]-this->data[0])/
+	  (grid[1]-grid[0])*(v[0]-grid[0]);
       }
 
-      size_t last=rk-1;
+      size_t last=this->rk-1;
       double frac=(v[last]-get_grid(last,0))/
 	(get_grid(last,1)-get_grid(last,0));
 
       // Create new size vector and grid
-      tensor_grid tnew(rk-1,size);
+      tensor_grid tnew(this->rk-1,this->size);
       tnew.set_grid_packed(grid);
 
       // Create data in new tensor, removing the last index through
       // linear interpolation
       for(size_t i=0;i<tnew.total_size();i++) {
-	std::vector<size_t> index(rk);
+	std::vector<size_t> index(this->rk);
 	tnew.unpack_indices(i,index);
-	index[rk-1]=0;
-	double val_lo=get(index);
-	index[rk-1]=1;
-	double val_hi=get(index);
+	index[this->rk-1]=0;
+	double val_lo=this->get(index);
+	index[this->rk-1]=1;
+	double val_hi=this->get(index);
 	tnew.set(index,val_lo+frac*(val_hi-val_lo));
       }
       
@@ -862,78 +873,92 @@ namespace o2scl {
     }
     //@}
 
-    friend void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf, tensor_grid &t, 
-				      std::string name);
+    template<class vecf_t, class vecf_size_t> friend void o2scl_hdf::hdf_output
+      (o2scl_hdf::hdf_file &hf, tensor_grid<vecf_t,vecf_size_t> &t, 
+       std::string name);
     
-    friend void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, tensor_grid &t, 
-				     std::string name);
+    template<class vecf_t, class vecf_size_t> friend void o2scl_hdf::hdf_input
+      (o2scl_hdf::hdf_file &hf, tensor_grid<vecf_t,vecf_size_t> &t, 
+       std::string name);
 
   };
 
   /** \brief Rank 1 tensor with a grid
       
       \future Make rank-specific get_val and set_val functions?
-   */
-  class tensor_grid1 : public tensor_grid {
+  */
+  template<class vec_t=std::vector<double>, 
+    class vec_size_t=std::vector<size_t> > class tensor_grid1 : 
+    public tensor_grid<vec_t,vec_size_t> {
      
   public:
      
-    /// Create an empty tensor
-  tensor_grid1() : tensor_grid() {}
+  /// Create an empty tensor
+  tensor_grid1() : tensor_grid<vec_t,vec_size_t>() {}
       
-    /// Create a rank 2 tensor of size \c (sz,sz2,sz3)
-  tensor_grid1(size_t sz) : tensor_grid() {
+  /// Create a rank 2 tensor of size \c (sz,sz2,sz3)
+  tensor_grid1(size_t sz) : tensor_grid<vec_t,vec_size_t>() {
       this->rk=1;
       this->size.resize(1);
       this->size[0]=sz;
       this->data.resize(sz);
       this->grid_set=false;
     }
+  
+#ifdef O2SCL_NEVER_DEFINED
+  }{
+#endif  
     
     virtual ~tensor_grid1() {
     }
-   
+    
     /// Get the element indexed by \c (ix1)
     double &get(size_t ix1) { 
       size_t sz[1]={ix1};
-      return tensor_grid::get(sz); 
+      return tensor_grid<vec_t,vec_size_t>::get(sz); 
     }
-
+    
     /// Get the element indexed by \c (ix1)
     const double &get(size_t ix1) const { 
       size_t sz[1]={ix1};
-      return tensor_grid::get(sz); 
+      return tensor_grid<vec_t,vec_size_t>::get(sz); 
     }
- 
+    
     /// Set the element indexed by \c (ix1) to value \c val
     void set(size_t ix1, double val) {
       size_t sz[1]={ix1};
-      tensor_grid::set(sz,val); 
+      tensor_grid<vec_t,vec_size_t>::set(sz,val); 
     }
-
+    
     /// Interpolate \c x and return the results
-    double interp(double x) {
-      return interpolate(&x);
+    template<class range_t=ub_range, class data_range_t=ubvector_range, 
+      class index_range_t=ubvector_size_t_range> 
+      double interp(double x) {
+      return tensor_grid<vec_t,vec_size_t>::template interpolate
+      <range_t,data_range_t,index_range_t>(&x);
     }
-
+    
     /// Interpolate \c x and return the results
     double interp_linear(double x) {
       double arr[1]={x};
-      return tensor_grid::interp_linear(arr);
+      return tensor_grid<vec_t,vec_size_t>::interp_linear(arr);
     }
+
   };
   
   /** \brief Rank 2 tensor with a grid
    */
-  class tensor_grid2 : public tensor_grid {
+  template<class vec_t=std::vector<double>, 
+    class vec_size_t=std::vector<size_t> > class tensor_grid2 : 
+    public tensor_grid<vec_t,vec_size_t> {
      
   public:
      
-    /// Create an empty tensor
-  tensor_grid2() : tensor_grid() {}
+  /// Create an empty tensor
+  tensor_grid2() : tensor_grid<vec_t,vec_size_t>() {}
 
-    /// Create a rank 2 tensor of size \c (sz,sz2)
-  tensor_grid2(size_t sz, size_t sz2) : tensor_grid() {
+  /// Create a rank 2 tensor of size \c (sz,sz2)
+  tensor_grid2(size_t sz, size_t sz2) : tensor_grid<vec_t,vec_size_t>() {
       this->rk=2;
       this->size.resize(2);
       this->size[0]=sz;
@@ -943,109 +968,130 @@ namespace o2scl {
       this->grid_set=false;
     }
    
+#ifdef O2SCL_NEVER_DEFINED
+  }{
+#endif  
+
     virtual ~tensor_grid2() {
     }
-   
+    
     /// Get the element indexed by \c (ix1,ix2)
     double &get(size_t ix1, size_t ix2) { 
       size_t sz[2]={ix1,ix2};
-      return tensor_grid::get(sz); 
+      return tensor_grid<vec_t,vec_size_t>::get(sz); 
     }
-
+    
     /// Get the element indexed by \c (ix1,ix2)
     const double &get(size_t ix1, size_t ix2) const { 
       size_t sz[2]={ix1,ix2};
-      return tensor_grid::get(sz); 
+      return tensor_grid<vec_t,vec_size_t>::get(sz); 
     }
- 
+    
     /// Set the element indexed by \c (ix1,ix2) to value \c val
     void set(size_t ix1, size_t ix2, double val) {
       size_t sz[2]={ix1,ix2};
-      tensor_grid::set(sz,val); 
+      tensor_grid<vec_t,vec_size_t>::set(sz,val); 
       return;
     }
-
+    
     /// Interpolate \c (x,y) and return the results
-    double interp(double x, double y) {
+    template<class range_t=ub_range, class data_range_t=ubvector_range, 
+      class index_range_t=ubvector_size_t_range> 
+      double interp(double x, double y) {
       double arr[2]={x,y};
-      return interpolate(arr);
+      return tensor_grid<vec_t,vec_size_t>::template interpolate
+      <range_t,data_range_t,index_range_t>(arr);
     }
-
+    
     /// Interpolate \c (x,y) and return the results
     double interp_linear(double x, double y) {
       double arr[2]={x,y};
-      return tensor_grid::interp_linear(arr);
+      return tensor_grid<vec_t,vec_size_t>::interp_linear(arr);
     }
+
   };
   
   /** \brief Rank 3 tensor with a grid
    */
-  class tensor_grid3 : public tensor_grid {
+  template<class vec_t=std::vector<double>, 
+    class vec_size_t=std::vector<size_t> > class tensor_grid3 : 
+    public tensor_grid<vec_t,vec_size_t> {
      
   public:
      
-    /// Create an empty tensor
-  tensor_grid3() : tensor_grid () {}
+  /// Create an empty tensor
+  tensor_grid3() : tensor_grid<vec_t,vec_size_t>() {}
 
-    /// Create a rank 3 tensor of size \c (sz,sz2,sz3)
-  tensor_grid3(size_t sz, size_t sz2, size_t sz3) : tensor_grid () {
-      this->rk=3;
-      this->size.resize(3);
-      this->size[0]=sz;
-      this->size[1]=sz2;
-      this->size[2]=sz3;
-      size_t tot=sz*sz2*sz3;
-      this->data.resize(tot);
-      this->grid_set=false;
-    }
+  /// Create a rank 3 tensor of size \c (sz,sz2,sz3)
+  tensor_grid3(size_t sz, size_t sz2, size_t sz3) : 
+  tensor_grid<vec_t,vec_size_t>() {
+    this->rk=3;
+    this->size.resize(3);
+    this->size[0]=sz;
+    this->size[1]=sz2;
+    this->size[2]=sz3;
+    size_t tot=sz*sz2*sz3;
+    this->data.resize(tot);
+    this->grid_set=false;
+  }
    
+#ifdef O2SCL_NEVER_DEFINED
+  }{
+#endif  
+
     virtual ~tensor_grid3() {
     }
    
     /// Get the element indexed by \c (ix1,ix2,ix3)
     double &get(size_t ix1, size_t ix2, size_t ix3) { 
       size_t sz[3]={ix1,ix2,ix3};
-      return tensor_grid::get(sz); 
+      return tensor_grid<vec_t,vec_size_t>::get(sz); 
     }
  
     /// Get the element indexed by \c (ix1,ix2,ix3)
     const double &get(size_t ix1, size_t ix2, size_t ix3) const { 
       size_t sz[3]={ix1,ix2,ix3};
-      return tensor_grid::get(sz); 
+      return tensor_grid<vec_t,vec_size_t>::get(sz); 
     }
  
     /// Set the element indexed by \c (ix1,ix2,ix3) to value \c val
     void set(size_t ix1, size_t ix2, size_t ix3, double val) {
       size_t sz[3]={ix1,ix2, ix3};
-      tensor_grid::set(sz,val); 
+      tensor_grid<vec_t,vec_size_t>::set(sz,val); 
       return;
     }
-
+    
     /// Interpolate \c (x,y,z) and return the results
-    double interp(double x, double y, double z) {
+    template<class range_t=ub_range, class data_range_t=ubvector_range, 
+      class index_range_t=ubvector_size_t_range> 
+      double interp(double x, double y, double z) {
       double arr[3]={x,y,z};
-      return interpolate(arr);
+      return tensor_grid<vec_t,vec_size_t>::template interpolate
+      <range_t,data_range_t,index_range_t>(arr);
     }
-
+    
     /// Interpolate \c (x,y,z) and return the results
     double interp_linear(double x, double y, double z) {
       double arr[3]={x,y,z};
-      return tensor_grid::interp_linear(arr);
+      return tensor_grid<vec_t,vec_size_t>::interp_linear(arr);
     }
+
   };
   
   /** \brief Rank 4 tensor with a grid
    */
-  class tensor_grid4 : public tensor_grid {
+  template<class vec_t=std::vector<double>, 
+    class vec_size_t=std::vector<size_t> > class tensor_grid4 : 
+    public tensor_grid<vec_t,vec_size_t> {
      
   public:
      
-    /// Create an empty tensor
-  tensor_grid4() : tensor_grid () {}
+  /// Create an empty tensor
+  tensor_grid4() : tensor_grid<vec_t,vec_size_t>() {}
 
-    /// Create a rank 4 tensor of size \c (sz,sz2,sz3,sz4)
+  /// Create a rank 4 tensor of size \c (sz,sz2,sz3,sz4)
   tensor_grid4(size_t sz, size_t sz2, size_t sz3,
-	       size_t sz4) : tensor_grid () {
+	       size_t sz4) : tensor_grid<vec_t,vec_size_t>() {
       this->rk=4;
       this->size.resize(4);
       this->size[0]=sz;
@@ -1057,41 +1103,49 @@ namespace o2scl {
       this->grid_set=false;
     }
    
+#ifdef O2SCL_NEVER_DEFINED
+  }{
+#endif  
+
     virtual ~tensor_grid4() {
     }
    
     /// Get the element indexed by \c (ix1,ix2,ix3,ix4)
     double &get(size_t ix1, size_t ix2, size_t ix3, size_t ix4) { 
       size_t sz[4]={ix1,ix2,ix3,ix4};
-      return tensor_grid::get(sz); 
+      return tensor_grid<vec_t,vec_size_t>::get(sz); 
     }
     
     /// Get the element indexed by \c (ix1,ix2,ix3,ix4)
     const double &get(size_t ix1, size_t ix2, size_t ix3,
 		      size_t ix4) const { 
       size_t sz[4]={ix1,ix2,ix3,ix4};
-      return tensor_grid::get(sz); 
+      return tensor_grid<vec_t,vec_size_t>::get(sz); 
     }
     
     /// Set the element indexed by \c (ix1,ix2,ix3,ix4) to value \c val
     void set(size_t ix1, size_t ix2, size_t ix3, size_t ix4,
-	    double val) {
+	     double val) {
       size_t sz[4]={ix1,ix2,ix3,ix4};
-      tensor_grid::set(sz,val); 
+      tensor_grid<vec_t,vec_size_t>::set(sz,val); 
       return;
     }
 
     /// Interpolate \c (x,y,z,a) and return the results
-    double interp(double x, double y, double z, double a) {
+    template<class range_t=ub_range, class data_range_t=ubvector_range, 
+      class index_range_t=ubvector_size_t_range> 
+      double interp(double x, double y, double z, double a) {
       double arr[4]={x,y,z,a};
-      return interpolate(arr);
+      return tensor_grid<vec_t,vec_size_t>::template interpolate
+      <range_t,data_range_t,index_range_t>(arr);
     }
 
     /// Interpolate \c (x,y,z,a) and return the results
     double interp_linear(double x, double y, double z, double a) {
       double arr[4]={x,y,z,a};
-      return tensor_grid::interp_linear(arr);
+      return tensor_grid<vec_t,vec_size_t>::interp_linear(arr);
     }
+
   };
   
 #ifndef DOXYGEN_NO_O2NS

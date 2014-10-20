@@ -23,8 +23,9 @@
 #include <o2scl/tensor.h>
 #include <o2scl/tensor_grid.h>
 #include <o2scl/test_mgr.h>
-#if O2SCL_HDF_SVAR
+#if O2SCL_HDF
 #include <o2scl/hdf_file.h>
+#include <o2scl/hdf_io.h>
 using namespace o2scl_hdf;
 #endif
 
@@ -72,7 +73,7 @@ int main(void) {
   mat.resize(0,i2);
     
   // Test a rank three tensor
-  tensor_grid m3;
+  tensor_grid<> m3;
   size_t i3[3], j3[3], k3[3];
   i3[0]=4;
   i3[1]=3;
@@ -132,6 +133,8 @@ int main(void) {
 
   // -------------------------------------------------------
   // Test slicing
+
+#ifdef O2SCL_NEVER_DEFINED
 
   typedef boost::numeric::ublas::vector_slice<ubvector> ubvector_slice;
   
@@ -215,9 +218,11 @@ int main(void) {
 
   m3.resize(0,i3);
 
+#endif
+
   // Test of tensor_grid3 I/O
   {
-    tensor_grid3 tg(3,2,1), tg2;
+    tensor_grid3<> tg(3,2,1), tg2;
     double grid2[6]={4,5,6,7,8,9};
     tg.set_grid_packed(grid2);
     for(size_t j=0;j<3;j++) {
@@ -234,7 +239,7 @@ int main(void) {
     tensor3<> t3t(2,2,2);
     tensor4<> t4t(2,2,2,2);
 
-#if O2SCL_HDF_SVAR
+#if O2SCL_HDF
 
     hdf_file hf;
     hf.open_or_create("tens_grid.o2");

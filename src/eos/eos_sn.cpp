@@ -672,29 +672,29 @@ int eos_sn_ls::check_eg(test_mgr &tm) {
     double F_eg=E_eg-T1*S_eg;
 
     cout.setf(ios::showpos);
-    sum+=fabs(E_eg-(E.interp(nb1,ye1,T1)-Eint.interp(nb1,ye1,T1)))/
-      fabs(E.interp(nb1,ye1,T1)-Eint.interp(nb1,ye1,T1));
-    cout << (E_eg-(E.interp(nb1,ye1,T1)-Eint.interp(nb1,ye1,T1)))/
-      fabs(E.interp(nb1,ye1,T1)-Eint.interp(nb1,ye1,T1)) << " ";
-    sum+=fabs(P_eg-(P.interp(nb1,ye1,T1)-Pint.interp(nb1,ye1,T1)))/
-      fabs(P.interp(nb1,ye1,T1)-Pint.interp(nb1,ye1,T1));
-    cout << (P_eg-(P.interp(nb1,ye1,T1)-Pint.interp(nb1,ye1,T1)))/
-      fabs(P.interp(nb1,ye1,T1)-Pint.interp(nb1,ye1,T1)) << " ";
-    sum+=fabs(S_eg-(S.interp(nb1,ye1,T1)-Sint.interp(nb1,ye1,T1)))/
-      fabs(S.interp(nb1,ye1,T1)-Sint.interp(nb1,ye1,T1));
-    cout << (S_eg-(S.interp(nb1,ye1,T1)-Sint.interp(nb1,ye1,T1)))/
-      fabs(S.interp(nb1,ye1,T1)-Sint.interp(nb1,ye1,T1)) << " ";
-    sum+=fabs(F_eg-(F.interp(nb1,ye1,T1)-Fint.interp(nb1,ye1,T1)))/
-      fabs(F.interp(nb1,ye1,T1)-Fint.interp(nb1,ye1,T1));
-    cout << (F_eg-(F.interp(nb1,ye1,T1)-Fint.interp(nb1,ye1,T1)))/
-      fabs(F.interp(nb1,ye1,T1)-Fint.interp(nb1,ye1,T1)) << endl;
+    sum+=fabs(E_eg-(E.interp_linear(nb1,ye1,T1)-Eint.interp_linear(nb1,ye1,T1)))/
+      fabs(E.interp_linear(nb1,ye1,T1)-Eint.interp_linear(nb1,ye1,T1));
+    cout << (E_eg-(E.interp_linear(nb1,ye1,T1)-Eint.interp_linear(nb1,ye1,T1)))/
+      fabs(E.interp_linear(nb1,ye1,T1)-Eint.interp_linear(nb1,ye1,T1)) << " ";
+    sum+=fabs(P_eg-(P.interp_linear(nb1,ye1,T1)-Pint.interp_linear(nb1,ye1,T1)))/
+      fabs(P.interp_linear(nb1,ye1,T1)-Pint.interp_linear(nb1,ye1,T1));
+    cout << (P_eg-(P.interp_linear(nb1,ye1,T1)-Pint.interp_linear(nb1,ye1,T1)))/
+      fabs(P.interp_linear(nb1,ye1,T1)-Pint.interp_linear(nb1,ye1,T1)) << " ";
+    sum+=fabs(S_eg-(S.interp_linear(nb1,ye1,T1)-Sint.interp_linear(nb1,ye1,T1)))/
+      fabs(S.interp_linear(nb1,ye1,T1)-Sint.interp_linear(nb1,ye1,T1));
+    cout << (S_eg-(S.interp_linear(nb1,ye1,T1)-Sint.interp_linear(nb1,ye1,T1)))/
+      fabs(S.interp_linear(nb1,ye1,T1)-Sint.interp_linear(nb1,ye1,T1)) << " ";
+    sum+=fabs(F_eg-(F.interp_linear(nb1,ye1,T1)-Fint.interp_linear(nb1,ye1,T1)))/
+      fabs(F.interp_linear(nb1,ye1,T1)-Fint.interp_linear(nb1,ye1,T1));
+    cout << (F_eg-(F.interp_linear(nb1,ye1,T1)-Fint.interp_linear(nb1,ye1,T1)))/
+      fabs(F.interp_linear(nb1,ye1,T1)-Fint.interp_linear(nb1,ye1,T1)) << endl;
     cout.unsetf(ios::showpos);
 
     if (ell==6 || ell==32 || ell==13) {
       cout.precision(8);
       cout << nb1 << " " << ye1 << " " << T1 << " " 
-	   << E.interp(nb1,ye1,T1) << " " << Eint.interp(nb1,ye1,T1) << endl;
-      cout << E.interp(nb1,ye1,T1)-Eint.interp(nb1,ye1,T1) << " "
+	   << E.interp_linear(nb1,ye1,T1) << " " << Eint.interp_linear(nb1,ye1,T1) << endl;
+      cout << E.interp_linear(nb1,ye1,T1)-Eint.interp_linear(nb1,ye1,T1) << " "
 	   << E_eg << " " << 1.3*ye1 << " "
 	   << electron.n*electron.m/nb1*hc_mev_fm << " " << electron.mu << endl;
       cout.precision(3);
@@ -1223,7 +1223,7 @@ void eos_sn_sht::load(std::string fname, size_t mode) {
   }
   size_t ndat=16;
 
-  tensor_grid3 *Eptr, *Fptr, *Sptr, *Pptr;
+  tensor_grid3<> *Eptr, *Fptr, *Sptr, *Pptr;
   if (mode==mode_17b || mode==mode_21b || mode==mode_NL3b) {
     Eptr=&Eint;
     Pptr=&Pint;

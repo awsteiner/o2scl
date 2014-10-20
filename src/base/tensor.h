@@ -118,7 +118,7 @@ namespace o2scl {
 
   */
   template<class vec_t=std::vector<double>, 
-    class vec_size_t_int=std::vector<size_t> > class tensor {
+    class vec_size_t=std::vector<size_t> > class tensor {
     
   public:
   
@@ -130,7 +130,7 @@ namespace o2scl {
   vec_t data;
   
   /// A rank-sized vector of the sizes of each dimension
-  vec_size_t_int size;
+  vec_size_t size;
   
   /// Rank
   size_t rk;
@@ -406,7 +406,7 @@ namespace o2scl {
   }
     
   /// Return the full vector of sizes
-  const vec_size_t_int &get_size_arr() const {
+  const vec_size_t &get_size_arr() const {
     return size;
   }
 
@@ -487,34 +487,34 @@ namespace o2scl {
   /** \brief Rank 1 tensor
    */
   template<class vec_t=std::vector<double>, 
-    class vec_size_t_int=std::vector<size_t> > class tensor1 : 
-  public tensor<vec_t,vec_size_t_int> {
+    class vec_size_t=std::vector<size_t> > class tensor1 : 
+  public tensor<vec_t,vec_size_t> {
 
   public:
     
     /// Create an empty tensor
-  tensor1() : tensor<vec_t,vec_size_t_int>() {}
+  tensor1() : tensor<vec_t,vec_size_t>() {}
 
     /// Create a rank 1 tensory of size \c sz
-  tensor1(size_t sz) : tensor<vec_t,vec_size_t_int>() {
-      vec_size_t_int sizex(1);
+  tensor1(size_t sz) : tensor<vec_t,vec_size_t>() {
+      vec_size_t sizex(1);
       sizex[0]=sz;
       this->resize(1,sizex);
     }
 	
     /// Get the element indexed by \c ix
     double &get(size_t ix) { 
-      return tensor<vec_t,vec_size_t_int>::get(&ix); 
+      return tensor<vec_t,vec_size_t>::get(&ix); 
     }
 
     /// Get the element indexed by \c ix
     const double &get(size_t ix) const { 
-      return tensor<vec_t,vec_size_t_int>::get(&ix); 
+      return tensor<vec_t,vec_size_t>::get(&ix); 
     }
 	
     /// Set the element indexed by \c index to value \c val
     void set(size_t index, double val) 
-    { tensor<vec_t,vec_size_t_int>::set(&index,val); }
+    { tensor<vec_t,vec_size_t>::set(&index,val); }
     
     /** \brief Set the element indexed by \c index to value \c val
 
@@ -523,7 +523,7 @@ namespace o2scl {
     */
     template<class size_vec_t>
       void set(const size_vec_t &index, double val) {
-      tensor<vec_t,vec_size_t_int>::set(index,val);
+      tensor<vec_t,vec_size_t>::set(index,val);
     }
 
     /// Get an element using array-like indexing
@@ -542,16 +542,16 @@ namespace o2scl {
   /** \brief Rank 2 tensor
    */
   template<class vec_t=std::vector<double>, 
-    class vec_size_t_int=std::vector<size_t> > class tensor2 : 
-  public tensor<vec_t,vec_size_t_int> {
+    class vec_size_t=std::vector<size_t> > class tensor2 : 
+  public tensor<vec_t,vec_size_t> {
 
   public:
 
     /// Create an empty tensor
-  tensor2() : tensor<vec_t,vec_size_t_int>() {}
+  tensor2() : tensor<vec_t,vec_size_t>() {}
 
     /// Create a rank 2 tensor of size \c (sz,sz2)
-  tensor2(size_t sz, size_t sz2) : tensor<vec_t,vec_size_t_int>() {
+  tensor2(size_t sz, size_t sz2) : tensor<vec_t,vec_size_t>() {
       this->rk=2;
       this->size.resize(2);
       this->size[0]=sz;
@@ -563,19 +563,19 @@ namespace o2scl {
     /// Get the element indexed by \c (ix1,ix2)
     double &get(size_t ix1, size_t ix2) { 
       size_t sz[2]={ix1,ix2};
-      return tensor<vec_t,vec_size_t_int>::get(sz); 
+      return tensor<vec_t,vec_size_t>::get(sz); 
     }
 
     /// Get the element indexed by \c (ix1,ix2)
     const double &get(size_t ix1, size_t ix2) const { 
       size_t sz[2]={ix1,ix2};
-      return tensor<vec_t,vec_size_t_int>::get(sz); 
+      return tensor<vec_t,vec_size_t>::get(sz); 
     }
 
     /// Set the element indexed by \c (ix1,ix2) to value \c val
     void set(size_t ix1, size_t ix2, double val) {
       size_t sz[2]={ix1,ix2};
-      tensor<vec_t,vec_size_t_int>::set(sz,val); 
+      tensor<vec_t,vec_size_t>::set(sz,val); 
       return;
     }
 
@@ -586,7 +586,7 @@ namespace o2scl {
     */
     template<class size_vec_t>
       void set(const size_vec_t &index, double val) {
-      tensor<vec_t,vec_size_t_int>::set(index,val);
+      tensor<vec_t,vec_size_t>::set(index,val);
       return;
     }
 
@@ -602,17 +602,17 @@ namespace o2scl {
   /** \brief Rank 3 tensor
    */
   template<class vec_t=std::vector<double>, 
-    class vec_size_t_int=std::vector<size_t> > class tensor3 : 
-  public tensor<vec_t,vec_size_t_int> {
+    class vec_size_t=std::vector<size_t> > class tensor3 : 
+  public tensor<vec_t,vec_size_t> {
 
   public:
 
     /// Create an empty tensor
-  tensor3() : tensor<vec_t,vec_size_t_int>() {}
+  tensor3() : tensor<vec_t,vec_size_t>() {}
 
     /// Create a rank 3 tensor of size \c (sz,sz2,sz3)
   tensor3(size_t sz, size_t sz2, size_t sz3) : 
-  tensor<vec_t,vec_size_t_int>() {
+  tensor<vec_t,vec_size_t>() {
       this->rk=3;
       this->size.resize(3);
       this->size[0]=sz;
@@ -625,19 +625,19 @@ namespace o2scl {
     /// Get the element indexed by \c (ix1,ix2,ix3)
     double &get(size_t ix1, size_t ix2, size_t ix3) { 
       size_t sz[3]={ix1,ix2,ix3};
-      return tensor<vec_t,vec_size_t_int>::get(sz); 
+      return tensor<vec_t,vec_size_t>::get(sz); 
     }
 
     /// Get the element indexed by \c (ix1,ix2,ix3)
     const double &get(size_t ix1, size_t ix2, size_t ix3) const { 
       size_t sz[3]={ix1,ix2,ix3};
-      return tensor<vec_t,vec_size_t_int>::get(sz); 
+      return tensor<vec_t,vec_size_t>::get(sz); 
     }
 
     /// Set the element indexed by \c (ix1,ix2,ix3) to value \c val
     void set(size_t ix1, size_t ix2, size_t ix3, double val) {
       size_t sz[3]={ix1,ix2,ix3};
-      tensor<vec_t,vec_size_t_int>::set(sz,val); 
+      tensor<vec_t,vec_size_t>::set(sz,val); 
       return;
     }
 
@@ -648,7 +648,7 @@ namespace o2scl {
     */
     template<class size_vec_t>
       void set(const size_vec_t &index, double val) {
-      tensor<vec_t,vec_size_t_int>::set(index,val);
+      tensor<vec_t,vec_size_t>::set(index,val);
       return;
     }
 
@@ -657,17 +657,17 @@ namespace o2scl {
   /** \brief Rank 4 tensor
    */
   template<class vec_t=std::vector<double>, 
-    class vec_size_t_int=std::vector<size_t> > class tensor4 : 
-  public tensor<vec_t,vec_size_t_int> {
+    class vec_size_t=std::vector<size_t> > class tensor4 : 
+  public tensor<vec_t,vec_size_t> {
 
   public:
 
     /// Create an empty tensor
-  tensor4() : tensor<vec_t,vec_size_t_int>() {}
+  tensor4() : tensor<vec_t,vec_size_t>() {}
 
     /// Create a rank 4 tensor of size \c (sz,sz2,sz3,sz4)
   tensor4(size_t sz, size_t sz2, size_t sz3, size_t sz4) : 
-    tensor<vec_t,vec_size_t_int>() {
+    tensor<vec_t,vec_size_t>() {
       this->rk=4;
       this->size.resize(4);
       this->size[0]=sz;
@@ -681,21 +681,21 @@ namespace o2scl {
     /// Get the element indexed by \c (ix1,ix2,ix3,ix4)
     double &get(size_t ix1, size_t ix2, size_t ix3, size_t ix4) { 
       size_t sz[4]={ix1,ix2,ix3,ix4};
-      return tensor<vec_t,vec_size_t_int>::get(sz); 
+      return tensor<vec_t,vec_size_t>::get(sz); 
     }
 
     /// Get the element indexed by \c (ix1,ix2,ix3,ix4)
     const double &get(size_t ix1, size_t ix2, size_t ix3, 
 		      size_t ix4) const { 
       size_t sz[4]={ix1,ix2,ix3,ix4};
-      return tensor<vec_t,vec_size_t_int>::get(sz); 
+      return tensor<vec_t,vec_size_t>::get(sz); 
     }
 
     /// Set the element indexed by \c (ix1,ix2,ix3,ix4) to value \c val
     void set(size_t ix1, size_t ix2, size_t ix3, size_t ix4, 
 	     double val) {
       size_t sz[4]={ix1,ix2,ix3,ix4};
-      tensor<vec_t,vec_size_t_int>::set(sz,val); 
+      tensor<vec_t,vec_size_t>::set(sz,val); 
       return;
     }
 
@@ -706,7 +706,7 @@ namespace o2scl {
     */
     template<class size_vec_t>
       void set(const size_vec_t &index, double val) {
-      tensor<vec_t,vec_size_t_int>::set(index,val);
+      tensor<vec_t,vec_size_t>::set(index,val);
       return;
     }
   };
