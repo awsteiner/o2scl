@@ -573,8 +573,11 @@ public:
     return 0;
   }
 
-  /// Desc
+  /// Create data files for the UNEDF forces
   int unedf(vector<string> &sv, bool itive_com) {
+
+    test_mgr t;
+    t.set_output_level(2);
     
     double coups[13][3]={
       {-706.382928878428856,-779.3730087208653,-650.796319465688839},
@@ -606,13 +609,46 @@ public:
 			coups[4][i],coups[5][i],coups[7][i],coups[8][i],
 			coups[9][i],coups[10][i],coups[6][i]);
       sk.saturation();
-      cout << "n0: " << sk.n0 << endl;
-      cout << "L: " << sk.fesym_slope(sk.n0)*hc_mev_fm << endl;
+
+      cout << "Testing n_0 and L" << endl;
+      if (i==0) {
+	t.test_rel(sk.n0,0.16053,1.0e-4,"sat 0");
+      } else if (i==1) {
+	t.test_rel(sk.n0,0.15871,1.0e-4,"sat 1");
+      } else {
+	t.test_rel(sk.n0,0.15631,1.0e-4,"sat 2");
+      }
+      if (i==0) {
+	t.test_rel(sk.fesym_slope(sk.n0)*hc_mev_fm,45.080,1.0e-4,"sat 0");
+      } else if (i==1) {
+	t.test_rel(sk.fesym_slope(sk.n0)*hc_mev_fm,40.005,1.0e-4,"sat 1");
+      } else {
+	t.test_rel(sk.fesym_slope(sk.n0)*hc_mev_fm,40.0,1.0e-4,"sat 2");
+      }
       
+      if (i==0) {
+	sk.reference=((string)"M. Kortelainen, T. Lesinski, ")+
+	  "J. More, W. Nazarewicz, J. Sarich, N. Schunck, "+
+	  "M. V. Stoitsov, and S. Wild, Phys. Rev. C 82, "+
+	  "024313 (2010).";
+      } else if (i==1) {
+	sk.reference=((string)"M. Kortelainen, J. McDonnell, ")+
+	  "W. Nazarewicz, P.-G. Reinhard, J. Sarich, N. Schunck, "+
+	  "M. V. Stoitsov, and S. M. Wild, Phys. Rev. C 85, "+
+	  "024304 (2012).";
+      } else {
+	sk.reference=((string)"M. Kortelainen, J. McDonnell, ")+
+	  "W. Nazarewicz, E. Olsen, P.-G. Reinhard, J. Sarich, "+
+	  "N. Schunck, S. M. Wild, D. Davesne, J. Erler, "+
+	  "and A. Pastore, Phys. Rev. C 89, 054314 (2014)";
+      }
+
       hf.open_or_create(((string)"UNEDF")+szttos(i)+".o2");
       skyrme_write(hf,sk,((string)"UNEDF")+szttos(i));
       hf.close();
     }
+
+    t.report();
 
     return 0;
   }
