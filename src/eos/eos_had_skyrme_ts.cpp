@@ -89,6 +89,14 @@ int main(void) {
   t.test_abs(n.mu,mund,fabs(munde),"neutron chem pot.");
   t.test_abs(p.mu,mupd,fabs(mupde),"proton chem pot.");
 
+  sk.check_mu_T(n,p,1.0/hc_mev_fm,th,mund,mupd,munde,mupde);
+  t.test_abs(n.mu,mund,fabs(munde),"neutron chem pot. T=1");
+  t.test_abs(p.mu,mupd,fabs(mupde),"proton chem pot. T=1");
+
+  sk.check_mu_T(n,p,10.0/hc_mev_fm,th,mund,mupd,munde,mupde);
+  t.test_abs(n.mu,mund,fabs(munde),"neutron chem pot. T=10");
+  t.test_abs(p.mu,mupd,fabs(mupde),"proton chem pot. T=10");
+
   double end, ende;
   sk.check_en(n,p,5.0/hc_mev_fm,th,end,ende);
   t.test_abs(th.en,end,ende,"entropy");

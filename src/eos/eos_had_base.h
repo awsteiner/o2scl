@@ -1126,6 +1126,13 @@ namespace o2scl {
     */
     void check_en(fermion &n, fermion &p, double T, thermo &th,
 		  double &en_deriv, double &en_err);
+
+    /** \brief Check the chemical potentials at finite temperature 
+	by computing the derivative numerically
+    */
+    void check_mu_T(fermion &n, fermion &p, double T, thermo &th,
+		    double &mun_deriv, double &mup_deriv, 
+		    double &mun_err, double &mup_err);
     //@}
     
   };

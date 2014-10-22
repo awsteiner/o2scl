@@ -691,6 +691,36 @@ void eos_had_temp_base::check_en(fermion &n, fermion &p, double T, thermo &th,
   return;
 }
 
+void eos_had_temp_base::check_mu_T(fermion &n, fermion &p, double T, thermo &th,
+				   double &mun_deriv, double &mup_deriv,
+				   double &mun_err, double &mup_err) {
+
+  set_n_and_p(n,p);
+  set_thermo(th);
+  double nn=n.n;
+  double np=p.n;
+
+  funct11 fn=std::bind
+    (std::mem_fn<double(double,double,double)>
+     (&eos_had_temp_base::calc_fr),this,std::placeholders::_1,p.n,T);
+  sat_deriv->deriv_err(n.n,fn,mun_deriv,mun_err);
+
+  n.n=nn;
+  p.n=np;
+
+  funct11 fp=std::bind
+    (std::mem_fn<double(double,double,double)>
+     (&eos_had_temp_base::calc_fr),this,n.n,std::placeholders::_1,T);
+  sat_deriv->deriv_err(p.n,fp,mup_deriv,mup_err);
+  
+  n.n=nn;
+  p.n=np;
+
+  calc_temp_e(n,p,T,th);
+
+  return;
+}
+
 int eos_had_eden_base::calc_p(fermion &n, fermion &p, thermo &th) {
   int ret;
   
