@@ -74,14 +74,13 @@ bool test_mgr::test_rel(double result, double expected, double rel_error,
     ret=test_abs(result,expected,rel_error,description);
     return ret;
   } else {
-    ret=((fabs(expected-result))/fabs(expected)<rel_error);
+    ret=((fabs(expected-result))/fabs(expected)<rel_error);	
     description=dtos(result)+" vs. "+dtos(expected)+
-      " is "+dtos(fabs(expected-result)/fabs(expected))+"\n "+
-      description;
+          " is "+dtos(fabs(expected-result)/fabs(expected))+
+    	  " > "+dtos(rel_error)+"\n "+description;
   }
   
   process_test(ret,"relative",description);
-
   return ret;
 }
 
@@ -99,7 +98,8 @@ bool test_mgr::test_abs(double result, double expected, double abs_error,
   } else {
     ret=(fabs(expected-result)<abs_error);
     description=dtos(result)+" vs. "+ dtos(expected)+" is "
-      +dtos(fabs(expected-result))+"\n "+description;
+      +dtos(fabs(expected-result))+" > "+dtos(abs_error)+
+      "\n "+description;
   }
   
   process_test(ret,"absolute",description);
