@@ -64,18 +64,22 @@ bool test_mgr::test_rel(double result, double expected, double rel_error,
   bool ret;
   if (std::isnan(expected)) {
     ret=(std::isnan(expected)==std::isnan(result));
+    description=dtos(result)+" vs. "+ dtos(expected)+
+      "\n "+description;
   } else if (std::isinf(expected)) {
     ret=(std::isinf(expected)==std::isinf(result));
+    description=dtos(result)+" vs. "+ dtos(expected)+
+      "\n "+description;
   } else if (expected==0.0) {
     ret=test_abs(result,expected,rel_error,description);
     return ret;
   } else {
     ret=((fabs(expected-result))/fabs(expected)<rel_error);
+    description=dtos(result)+" vs. "+dtos(expected)+
+      " is "+dtos(fabs(expected-result)/fabs(expected))+"\n "+
+      description;
   }
   
-  description=dtos(result)+" vs. "+dtos(expected)+
-    " is "+dtos(fabs(expected-result)/fabs(expected))+"\n "+
-    description;
   process_test(ret,"relative",description);
 
   return ret;
@@ -124,7 +128,7 @@ bool test_mgr::test_fact(double result, double expected, double factor,
 }
 
 bool test_mgr::test_gen(bool value, std::string description) {
-
+  
   process_test(value,"general",description);
 
   return value;
