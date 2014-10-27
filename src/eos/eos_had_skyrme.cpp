@@ -549,6 +549,46 @@ void eos_had_skyrme::landau_neutron
   return;
 }
 
+void eos_had_skyrme::alt_params_saturation
+(double n0, double EoA, double K, double Ms_star, double a, double L,
+ double Mv_star, double CrDr0, double CrDr1, double CrnJ0, double CrnJ1,
+ double alpha2) {
+ 
+  double mnuc=939.0/197.33;
+  double C_k=0.6*pow(1.5*pi2,2.0/3.0);
+  double tau_c=C_k*pow(n0,2.0/3.0);
+  double gamma=(tau_c*(4.0/Ms_star-3.0)/2.0/mnuc-K-9.0*EoA)/
+    (tau_c*(6.0/Ms_star-9.0)/2.0/mnuc+9.0*EoA);
+  double Crr00=(((2.0-3.0*gamma)/Ms_star-3.0)*tau_c+3.0*(1.0+gamma)*EoA)/
+    (3.0*gamma*n0);
+  double Crr0D=((3.0-2.0/Ms_star)*tau_c/2.0/mnuc-3.0*EoA)/
+    (3.0*gamma*pow(n0,1.0+gamma));
+  double Crt0=(1.0/Ms_star-1.0)/n0/2.0/mnuc;
+  double Crt1=Crt0-(Mv_star-1.0)/n0/2.0/mnuc;
+  double Crr10=(27.0*(1.0+gamma)*a-9.0*L+5.0*tau_c*(2.0-3.0*gamma)*
+		(Crt0+3.0*Crt1)*n0-5.0*tau_c*(1.0+3.0*gamma)/2.0/mnuc)/
+    (27.0*gamma*n0);
+  double Crr1D=(-27.0*a+9.0*L+5.0*(1.0/2.0/mnuc-2.0*n0*(Crt0+3.0*Crt1))*
+		tau_c)/(27.0*gamma*pow(n0,1.0+gamma));
+  
+  cout << "gamma: " << gamma << endl;
+  cout << "Crr00: " << Crr00*hc_mev_fm << endl;
+  cout << "Crr0D: " << Crr0D*hc_mev_fm << endl;
+  cout << "Crt0: " << Crt0*hc_mev_fm << endl;
+  cout << "Crt1: " << Crt1*hc_mev_fm << endl;
+  cout << "Crr10: " << Crr10*hc_mev_fm << endl;
+  cout << "Crr1D: " << Crr1D*hc_mev_fm << endl;
+  cout << "CrDr0: " << CrDr0*hc_mev_fm << endl;
+  cout << "CrDr1: " << CrDr1*hc_mev_fm << endl;
+  cout << "CrnJ0: " << CrnJ0*hc_mev_fm << endl;
+  cout << "CrnJ1: " << CrnJ1*hc_mev_fm << endl;
+
+  alt_params_set(Crr00,Crr10,Crr0D,Crr1D,Crt0,Crt1,CrDr0,CrDr1,
+		 CrnJ0,CrnJ1,alpha2);
+
+  return;
+}
+
 void eos_had_skyrme::alt_params_set
 (double Crr00, double Crr10, double Crr0D, double Crr1D, double Crt0,
  double Crt1, double CrDr0, double CrDr1, double CrnJ0, double CrnJ1,

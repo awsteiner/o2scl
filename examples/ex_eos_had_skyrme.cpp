@@ -595,19 +595,54 @@ public:
       {0.0,0.0,-65.9030310445938028}
     };
 
+    /*
+      UNEDF0 and UNEDF1 from Kort et al. PRC 85 (2012) 024304
+      t0 −1883.68781034 −2078.32802326
+      t1 277.50021224 239.40081204
+      t2 608.43090559 1575.11954190
+      t3 13901.94834463 14263.64624708
+      x0 0.00974375 0.05375692
+      x1 −1.77784395 −5.07723238
+      x2 −1.67699035 −1.36650561
+      x3 −0.38079041 −0.16249117
+      b4 125.16100000 38.36807206
+      b4p −91.2604000 71.31652223
+    */
+    
     // Why is this necessary?
     skyrme_load(sk,"SLy4");
     
     for(size_t i=0;i<3;i++) {
+
       // Convert to O2scl units
       for(size_t j=0;j<13;j++) {
 	if (j!=6) {
 	  coups[j][i]/=hc_mev_fm;
 	}
       }
+
       sk.alt_params_set(coups[0][i],coups[1][i],coups[2][i],coups[3][i],
 			coups[4][i],coups[5][i],coups[7][i],coups[8][i],
 			coups[9][i],coups[10][i],coups[6][i]);
+      cout << sk.t0*hc_mev_fm << endl;
+      cout << sk.t1*hc_mev_fm << endl;
+      cout << sk.t2*hc_mev_fm << endl;
+      cout << sk.t3*hc_mev_fm << endl;
+      cout << sk.x0 << endl;
+      cout << sk.x1 << endl;
+      cout << sk.x2 << endl;
+      cout << sk.x3 << endl;
+      cout << sk.b4*hc_mev_fm << endl;
+      cout << sk.b4p*hc_mev_fm << endl;
+
+      sk.alt_params_saturation(0.16053,-16.056/hc_mev_fm,
+			       230.0/hc_mev_fm,0.9,1.0,30.543/hc_mev_fm,
+			       45.080/hc_mev_fm,coups[7][i],coups[8][i],
+			       coups[9][i],coups[10][i],coups[6][i]);
+      sk.saturation();
+      cout << sk.n0 << endl;
+      exit(-1);
+
       sk.saturation();
 
       cout << "Testing n_0 and L" << endl;

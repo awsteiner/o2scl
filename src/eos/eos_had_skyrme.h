@@ -449,6 +449,11 @@ namespace o2scl {
       (double &Crr00, double &Crr10, double &Crr0D, double &Crr1D, 
        double &Crt0, double &Crt1, double &CrDr0, double &CrDr1, 
        double &CrnJ0, double &CrnJ1, double &alpha2);
+
+    void alt_params_saturation
+      (double n0, double EoA, double K, double Ms_star, double a, double L,
+       double Mv_star, double CrDr0, double CrDr1, double CrnJ0, double CrnJ1,
+       double alpha2);
  
 #ifndef DOXYGEN_NO_O2NS
     
