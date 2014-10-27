@@ -309,7 +309,7 @@ int main(void) {
 
   {
     // Show how to slice a tensor
-    tensor_grid3 tg(3,2,1);
+    tensor_grid3<> tg(3,2,1);
     double grid[6]={4,5,6,7,8,9};
     tg.set_grid_packed(grid);
     for(size_t j=0;j<3;j++) {
@@ -320,7 +320,8 @@ int main(void) {
       }
     }
     std::function<double &(size_t,size_t)> slice=
-      std::bind(std::mem_fn<double &(size_t,size_t,size_t)>(&tensor_grid3::get),
+      std::bind(std::mem_fn<double &(size_t,size_t,size_t)>
+		(&tensor_grid3<>::get),
 		tg,std::placeholders::_1,0,std::placeholders::_2);
     
   }

@@ -50,7 +50,7 @@ int main(void) {
   for(size_t i=0;i<i1[0];i++) {
     j1[0]=i;
     arr.set(j1,((double)i));
-    t.test_rel(arr.get(j1),i,1.0e-12,"R1 element.");
+    t.test_rel(arr.get(j1),((double)i),1.0e-12,"R1 element.");
   }
   t.test_gen(arr.total_size()==3,"R1 size.");
   arr.resize(0,i1);
@@ -66,7 +66,7 @@ int main(void) {
       j2[0]=i;
       j2[1]=j;
       mat.set(j2,((double)i)+j);
-      t.test_rel(mat.get(j2),i+j,1.0e-12,"R2 element.");
+      t.test_rel(mat.get(j2),((double)i+j),1.0e-12,"R2 element.");
     }
   }
   t.test_gen(mat.total_size()==12,"R2 size.");
@@ -88,7 +88,7 @@ int main(void) {
 	m3.set(j3,((double)i)+j+k);
 	size_t jp=m3.pack_indices(j3);
 	m3.unpack_indices(jp,k3);
-	t.test_rel(m3.get(j3),i+j+k,1.0e-12,"R2 element.");
+	t.test_rel(m3.get(j3),((double)i+j+k),1.0e-12,"R2 element.");
 	t.test_gen(j3[0]==k3[0],"R3 pack/unpack.");
 	t.test_gen(j3[1]==k3[1],"R3 pack/unpack.");
 	t.test_gen(j3[2]==k3[2],"R3 pack/unpack.");

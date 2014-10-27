@@ -51,7 +51,8 @@ namespace o2scl {
 
       Created for \ref Steiner06.
 
-      \bug Testing was disabled in HDF conversion. Fix this.
+      \bug Testing hasn't been working recently, especially for
+      MDI-like models. 
    */
   class eos_had_sym4_base {
 

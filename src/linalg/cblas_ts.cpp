@@ -95,9 +95,10 @@ int main(void) {
     gsl_blas_daxpy(0.5,g1,g2);
     cblas_daxpy(5,0.5,h1->data,1,h2->data,1);
     o2scl_cblas::daxpy(0.5,5,v1,v2);
-    t.test_rel_arrgslgsl(5,g2,h2,1.0e-12,"daxpy1 operator[]");
-    t.test_rel_arrgsl(5,v2,h2,1.0e-12,"daxpy2 operator[] ");
-
+    t.test_rel_vec(5,gsl_vector_wrap(g2),
+		   gsl_vector_wrap(h2),1.0e-12,"daxpy1 operator[]");
+    t.test_rel_vec(5,v2,gsl_vector_wrap(h2),1.0e-12,"daxpy2 operator[] ");
+    
     // ddot
     cout << "ddot: " << endl;
     gsl_blas_ddot(g1,g2,&res1);
@@ -119,8 +120,9 @@ int main(void) {
     gsl_blas_dscal(0.5,g3);
     cblas_dscal(5,0.5,h3->data,1);
     o2scl_cblas::dscal(0.5,5,v3);
-    t.test_rel_arrgslgsl(5,g3,h3,1.0e-12,"dscal1 operator[] ");
-    t.test_rel_arrgsl(5,v3,h3,1.0e-12,"dscal2 operator[] ");
+    t.test_rel_vec(5,gsl_vector_wrap(g3),
+		   gsl_vector_wrap(h3),1.0e-12,"dscal1 operator[] ");
+    t.test_rel_vec(5,v3,gsl_vector_wrap(h3),1.0e-12,"dscal2 operator[] ");
 
     // dgemv, NoTrans
     cout << "dgemv, NoTrans: " << endl;
@@ -130,8 +132,9 @@ int main(void) {
     o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
 		       o2scl_cblas::o2cblas_NoTrans,
 		       5,5,0.1,m1,v1,0.2,v2);
-    t.test_rel_arrgslgsl(5,g2,h2,1.0e-12,"dgemv1 operator[] ");
-    t.test_rel_arrgsl(5,v2,h2,1.0e-12,"dgemv2 operator[] ");
+    t.test_rel_vec(5,gsl_vector_wrap(g2),
+		   gsl_vector_wrap(h2),1.0e-12,"dgemv1 operator[] ");
+    t.test_rel_vec(5,v2,gsl_vector_wrap(h2),1.0e-12,"dgemv2 operator[] ");
 
     // dgemv, Trans (Note that ConjTrans was not originally supported)
     cout << "dgemv, Trans: " << endl;
@@ -141,8 +144,8 @@ int main(void) {
     o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
 		       o2scl_cblas::o2cblas_Trans,
 		       5,5,0.1,m1,v1,0.2,v2);
-    t.test_rel_arrgslgsl(5,g2,h2,1.0e-12,"dgemv1t operator[] ");
-    t.test_rel_arrgsl(5,v2,h2,1.0e-12,"dgemv2t operator[] ");
+    t.test_rel_vec(5,gsl_vector_wrap(g2),gsl_vector_wrap(h2),1.0e-12,"dgemv1t operator[] ");
+    t.test_rel_vec(5,v2,gsl_vector_wrap(h2),1.0e-12,"dgemv2t operator[] ");
 
     // dtrsv, Upper, NoTrans, NonUnit
     cout << "dtrsv, Upper, NoTrans, NonUnit: " << endl;
@@ -153,8 +156,8 @@ int main(void) {
 		       o2scl_cblas::o2cblas_Upper,
 		       o2scl_cblas::o2cblas_NoTrans,
 		       o2scl_cblas::o2cblas_NonUnit,5,5,m1,v3);
-    t.test_rel_arrgslgsl(5,g3,h3,1.0e-12,"dtrsv1unn operator[] ");
-    t.test_rel_arrgsl(5,v3,h3,1.0e-12,"dtrsv2unn operator[] ");
+    t.test_rel_vec(5,gsl_vector_wrap(g3),gsl_vector_wrap(h3),1.0e-12,"dtrsv1unn operator[] ");
+    t.test_rel_vec(5,v3,gsl_vector_wrap(h3),1.0e-12,"dtrsv2unn operator[] ");
 
     // dtrsv, Lower, NoTrans, NonUnit
     cout << "dtrsv, Lower, NoTrans, NonUnit: " << endl;
@@ -165,8 +168,8 @@ int main(void) {
 		       o2scl_cblas::o2cblas_Lower,
 		       o2scl_cblas::o2cblas_NoTrans,
 		       o2scl_cblas::o2cblas_NonUnit,5,5,m1,v3);
-    t.test_rel_arrgslgsl(5,g3,h3,1.0e-12,"dtrsv1lnn operator[] ");
-    t.test_rel_arrgsl(5,v3,h3,1.0e-12,"dtrsv2lnn operator[] ");
+    t.test_rel_vec(5,gsl_vector_wrap(g3),gsl_vector_wrap(h3),1.0e-12,"dtrsv1lnn operator[] ");
+    t.test_rel_vec(5,v3,gsl_vector_wrap(h3),1.0e-12,"dtrsv2lnn operator[] ");
 
     // dtrsv, Upper, Trans, NonUnit
     cout << "dtrsv, Upper, Trans, NonUnit: " << endl;
@@ -177,8 +180,8 @@ int main(void) {
 		       o2scl_cblas::o2cblas_Upper,
 		       o2scl_cblas::o2cblas_Trans,
 		       o2scl_cblas::o2cblas_NonUnit,5,5,m1,v3);
-    t.test_rel_arrgslgsl(5,g3,h3,1.0e-12,"dtrsv1utn operator[] ");
-    t.test_rel_arrgsl(5,v3,h3,1.0e-12,"dtrsv2utn operator[] ");
+    t.test_rel_vec(5,gsl_vector_wrap(g3),gsl_vector_wrap(h3),1.0e-12,"dtrsv1utn operator[] ");
+    t.test_rel_vec(5,v3,gsl_vector_wrap(h3),1.0e-12,"dtrsv2utn operator[] ");
 
     // dtrsv, Lower, Trans, NonUnit
     cout << "dtrsv, Lower, Trans, NonUnit: " << endl;
@@ -189,8 +192,8 @@ int main(void) {
 		       o2scl_cblas::o2cblas_Lower,
 		       o2scl_cblas::o2cblas_Trans,
 		       o2scl_cblas::o2cblas_NonUnit,5,5,m1,v3);
-    t.test_rel_arrgslgsl(5,g3,h3,1.0e-12,"dtrsv1ltn operator[] ");
-    t.test_rel_arrgsl(5,v3,h3,1.0e-12,"dtrsv2ltn operator[] ");
+    t.test_rel_vec(5,gsl_vector_wrap(g3),gsl_vector_wrap(h3),1.0e-12,"dtrsv1ltn operator[] ");
+    t.test_rel_vec(5,v3,gsl_vector_wrap(h3),1.0e-12,"dtrsv2ltn operator[] ");
 
     // dgemm, NoTrans, NoTrans
     cout << "dgemm, NoTrans, NoTrans: " << endl;
@@ -201,8 +204,8 @@ int main(void) {
 		       o2scl_cblas::o2cblas_NoTrans,
 		       o2scl_cblas::o2cblas_NoTrans,
 		       5,5,5,0.1,m1,m2,0.2,m3);
-    t.test_rel_matgslgsl(5,5,gm3,hm3,1.0e-12,"dgemm1ntnt operator[] ");
-    t.test_rel_matgsl(5,5,m3,hm3,1.0e-12,"dgemm2ntnt operator[] ");
+    t.test_rel_mat(5,5,gsl_matrix_wrap(gm3),gsl_matrix_wrap(hm3),1.0e-12,"dgemm1ntnt operator[] ");
+    t.test_rel_mat(5,5,m3,gsl_matrix_wrap(hm3),1.0e-12,"dgemm2ntnt operator[] ");
     
     // dgemm, Trans, NoTrans
     cout << "dgemm, Trans, NoTrans: " << endl;
@@ -213,8 +216,8 @@ int main(void) {
 		       o2scl_cblas::o2cblas_Trans,
 		       o2scl_cblas::o2cblas_NoTrans,
 		       5,5,5,0.1,m1,m2,0.2,m3);
-    t.test_rel_matgslgsl(5,5,gm3,hm3,1.0e-12,"dgemm1tnt operator[] ");
-    t.test_rel_matgsl(5,5,m3,hm3,1.0e-12,"dgemm2tnt operator[] ");
+    t.test_rel_mat(5,5,gsl_matrix_wrap(gm3),gsl_matrix_wrap(hm3),1.0e-12,"dgemm1tnt operator[] ");
+    t.test_rel_mat(5,5,m3,gsl_matrix_wrap(hm3),1.0e-12,"dgemm2tnt operator[] ");
 
     // dgemm, NoTrans, Trans
     cout << "dgemm, NoTrans, Trans: " << endl;
@@ -225,8 +228,8 @@ int main(void) {
 		       o2scl_cblas::o2cblas_NoTrans,
 		       o2scl_cblas::o2cblas_Trans,
 		       5,5,5,0.1,m1,m2,0.2,m3);
-    t.test_rel_matgslgsl(5,5,gm3,hm3,1.0e-12,"dgemm1ntt operator[] ");
-    t.test_rel_matgsl(5,5,m3,hm3,1.0e-12,"dgemm2ntt operator[] ");
+    t.test_rel_mat(5,5,gsl_matrix_wrap(gm3),gsl_matrix_wrap(hm3),1.0e-12,"dgemm1ntt operator[] ");
+    t.test_rel_mat(5,5,m3,gsl_matrix_wrap(hm3),1.0e-12,"dgemm2ntt operator[] ");
 
     // dgemm, Trans, Trans
     cout << "dgemm, Trans, Trans: " << endl;
@@ -237,8 +240,8 @@ int main(void) {
 		       o2scl_cblas::o2cblas_Trans,
 		       o2scl_cblas::o2cblas_Trans,
 		       5,5,5,0.1,m1,m2,0.2,m3);
-    t.test_rel_matgslgsl(5,5,gm3,hm3,1.0e-12,"dgemm1tt operator[] ");
-    t.test_rel_matgsl(5,5,m3,hm3,1.0e-12,"dgemm2tt operator[] ");
+    t.test_rel_mat(5,5,gsl_matrix_wrap(gm3),gsl_matrix_wrap(hm3),1.0e-12,"dgemm1tt operator[] ");
+    t.test_rel_mat(5,5,m3,gsl_matrix_wrap(hm3),1.0e-12,"dgemm2tt operator[] ");
 
     // dgemm, ColMajor, NoTrans, NoTrans
     cout << "dgemm, ColMajor, NoTrans, NoTrans: " << endl;
@@ -248,7 +251,7 @@ int main(void) {
 		       o2scl_cblas::o2cblas_NoTrans,
 		       o2scl_cblas::o2cblas_NoTrans,
 		       5,5,5,0.1,m1,m2,0.2,m3);
-    t.test_rel_matgsl(5,5,m3,hm3,1.0e-12,"dgemmc2ntnt operator[] ");
+    t.test_rel_mat(5,5,m3,gsl_matrix_wrap(hm3),1.0e-12,"dgemmc2ntnt operator[] ");
     
     // dgemm, ColMajor, Trans, NoTrans
     cout << "dgemm, ColMajor, Trans, NoTrans: " << endl;
@@ -258,7 +261,7 @@ int main(void) {
 		       o2scl_cblas::o2cblas_Trans,
 		       o2scl_cblas::o2cblas_NoTrans,
 		       5,5,5,0.1,m1,m2,0.2,m3);
-    t.test_rel_matgsl(5,5,m3,hm3,1.0e-12,"dgemmc2tnt operator[] ");
+    t.test_rel_mat(5,5,m3,gsl_matrix_wrap(hm3),1.0e-12,"dgemmc2tnt operator[] ");
 
     // dgemm, ColMajor, NoTrans, Trans
     cout << "dgemm, ColMajor, NoTrans, Trans: " << endl;
@@ -268,7 +271,7 @@ int main(void) {
 		       o2scl_cblas::o2cblas_NoTrans,
 		       o2scl_cblas::o2cblas_Trans,
 		       5,5,5,0.1,m1,m2,0.2,m3);
-    t.test_rel_matgsl(5,5,m3,hm3,1.0e-12,"dgemmc2ntt operator[] ");
+    t.test_rel_mat(5,5,m3,gsl_matrix_wrap(hm3),1.0e-12,"dgemmc2ntt operator[] ");
 
     // dgemm, ColMajor, Trans, Trans
     cout << "dgemm, ColMajor, Trans, Trans: " << endl;
@@ -278,7 +281,7 @@ int main(void) {
 		       o2scl_cblas::o2cblas_Trans,
 		       o2scl_cblas::o2cblas_Trans,
 		       5,5,5,0.1,m1,m2,0.2,m3);
-    t.test_rel_matgsl(5,5,m3,hm3,1.0e-12,"dgemmc2tt operator[] ");
+    t.test_rel_mat(5,5,m3,gsl_matrix_wrap(hm3),1.0e-12,"dgemmc2tt operator[] ");
 
 #ifdef O2SCL_NEVER_DEFINED
 
@@ -295,7 +298,7 @@ int main(void) {
       ubvector_subvector vsub2(v2,k,5-k);
       o2scl_cblas::daxpy(0.5,5-k,vsub1,vsub2);
       o2scl_cblas::daxpy_subvec(0.5,5,g1,g2,k);
-      t.test_rel_arr(5,v2,g2,1.0e-12,"daxpy_subvec1 operator[] ");
+      t.test_rel_vec(5,v2,g2,1.0e-12,"daxpy_subvec1 operator[] ");
     }
 
     // ddot_subvec

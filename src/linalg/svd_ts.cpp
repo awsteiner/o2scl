@@ -950,11 +950,11 @@ int main(int argv, char *argc[]) {
     gsl_linalg_SV_solve(gm1,gm2,gv1,gv3,gv4);
     SV_solve(arr_size,arr_size,om1,om2,ov1,ov3,ov4);
 
-    t.test_abs_matgsl(arr_size,arr_size,om1,gm1,5.0e-14,"m1");
-    t.test_abs_matgsl(arr_size,arr_size,om2,gm2,5.0e-14,"m2");
-    t.test_rel_arrgsl(arr_size,ov1,gv1,1.0e-12,"v1");
-    t.test_rel_arrgsl(arr_size-1,ov2,gv2,1.0e-12,"v2");
-    t.test_rel_arrgsl(arr_size,ov4,gv4,1.0e-12,"v4 (solve)");
+    t.test_abs_mat(arr_size,arr_size,om1,gsl_matrix_wrap(gm1),5.0e-14,"m1");
+    t.test_abs_mat(arr_size,arr_size,om2,gsl_matrix_wrap(gm2),5.0e-14,"m2");
+    t.test_rel_vec(arr_size,ov1,gsl_vector_wrap(gv1),1.0e-12,"v1");
+    t.test_rel_vec(arr_size-1,ov2,gsl_vector_wrap(gv2),1.0e-12,"v2");
+    t.test_rel_vec(arr_size,ov4,gsl_vector_wrap(gv4),1.0e-12,"v4 (solve)");
 
 #ifdef O2SCL_ARMA
 
@@ -983,7 +983,7 @@ int main(int argv, char *argc[]) {
 
     t.test_rel_mat(arr_size,arr_size,om1,am2,1.0e-11,"arma m1");
     t.test_rel_mat(arr_size,arr_size,om2,am3,1.0e-11,"arma m2");
-    t.test_rel_arr(arr_size,ov1,av1,1.0e-14,"arma v2");
+    t.test_rel_vec(arr_size,ov1,av1,1.0e-14,"arma v2");
 
 #endif
 
@@ -1019,7 +1019,7 @@ int main(int argv, char *argc[]) {
 
     t.test_rel_mat(arr_size,arr_size,om1,em2,1.0e-11,"eigen m1");
     t.test_rel_mat(arr_size,arr_size,om2,em3,1.0e-11,"eigen m2");
-    t.test_rel_arr(arr_size,ov1,ev1,1.0e-14,"eigen v2");
+    t.test_rel_vec(arr_size,ov1,ev1,1.0e-14,"eigen v2");
 
 #endif
 
@@ -1042,11 +1042,11 @@ int main(int argv, char *argc[]) {
     gsl_linalg_SV_decomp_mod(gm1,gm2,gm3,gv1,gv2);
     SV_decomp_mod(arr_size,arr_size,om1,om2,om3,ov1,ov2);
 
-    t.test_abs_matgsl(arr_size,arr_size,om1,gm1,5.0e-14,"mod m1");
-    t.test_abs_matgsl(arr_size,arr_size,om2,gm2,5.0e-14,"mod m2");
-    t.test_abs_matgsl(arr_size,arr_size,om3,gm3,5.0e-14,"mod m3");
-    t.test_rel_arrgsl(arr_size,ov1,gv1,1.0e-12,"mod v1");
-    t.test_rel_arrgsl(arr_size-1,ov2,gv2,1.0e-12,"mod v2");
+    t.test_abs_mat(arr_size,arr_size,om1,gsl_matrix_wrap(gm1),5.0e-14,"mod m1");
+    t.test_abs_mat(arr_size,arr_size,om2,gsl_matrix_wrap(gm2),5.0e-14,"mod m2");
+    t.test_abs_mat(arr_size,arr_size,om3,gsl_matrix_wrap(gm3),5.0e-14,"mod m3");
+    t.test_rel_vec(arr_size,ov1,gsl_vector_wrap(gv1),1.0e-12,"mod v1");
+    t.test_rel_vec(arr_size-1,ov2,gsl_vector_wrap(gv2),1.0e-12,"mod v2");
   }
   
   // ----------------------------------------------------------
@@ -1065,9 +1065,9 @@ int main(int argv, char *argc[]) {
     gsl_linalg_SV_decomp_jacobi(gm1,gm2,gv1);
     SV_decomp_jacobi(arr_size,arr_size,om1,om2,ov1);
     
-    t.test_abs_matgsl(arr_size,arr_size,om1,gm1,5.0e-14,"jacobi m1");
-    t.test_abs_matgsl(arr_size,arr_size,om2,gm2,5.0e-14,"jacobi m2");
-    t.test_rel_arrgsl(arr_size,ov1,gv1,1.0e-12,"jacobi v1");
+    t.test_abs_mat(arr_size,arr_size,om1,gsl_matrix_wrap(gm1),5.0e-14,"jacobi m1");
+    t.test_abs_mat(arr_size,arr_size,om2,gsl_matrix_wrap(gm2),5.0e-14,"jacobi m2");
+    t.test_rel_vec(arr_size,ov1,gsl_vector_wrap(gv1),1.0e-12,"jacobi v1");
 
   }
 

@@ -71,11 +71,11 @@ int main(void) {
   
     gsl_linalg_householder_transform(gv1);
     householder_transform<ubvector>(5,ov1);
-    t.test_rel_arrgsl(5,ov1,gv1,1.0e-12,"h trans 1");
+    t.test_rel_vec(5,ov1,gsl_vector_wrap(gv1),1.0e-12,"h trans 1");
 
     gsl_linalg_householder_hm(1.5,gv1,gm1);
     householder_hm(5,5,1.5,ov1,om1);
-    t.test_rel_arrgsl(5,ov1,gv1,1.0e-12,"h hm 1");
+    t.test_rel_vec(5,ov1,gsl_vector_wrap(gv1),1.0e-12,"h hm 1");
 
     // Test householder_hv
   
@@ -88,8 +88,8 @@ int main(void) {
 
     gsl_linalg_householder_hv(1.5,gv2,gv1);
     householder_hv<ubvector>(5,1.5,ov2,ov1);
-    t.test_rel_arrgsl(5,ov1,gv1,1.0e-12,"h hv 1");
-    t.test_rel_arrgsl(5,ov2,gv2,1.0e-12,"h hv 2");
+    t.test_rel_vec(5,ov1,gsl_vector_wrap(gv1),1.0e-12,"h hv 1");
+    t.test_rel_vec(5,ov2,gsl_vector_wrap(gv2),1.0e-12,"h hv 2");
 
     // Test householder_mh
 
@@ -106,8 +106,8 @@ int main(void) {
   
     gsl_linalg_householder_mh(1.5,gv1,gm1);
     householder_mh(5,5,1.5,ov1,om1);
-    t.test_rel_arrgsl(5,ov1,gv1,1.0e-12,"h mh 1");
-    t.test_rel_matgsl(5,5,om1,gm1,1.0e-12,"h mh 2");
+    t.test_rel_vec(5,ov1,gsl_vector_wrap(gv1),1.0e-12,"h mh 1");
+    t.test_rel_mat(5,5,om1,gsl_matrix_wrap(gm1),1.0e-12,"h mh 2");
 
     // Test householder_hm1
 
@@ -124,7 +124,7 @@ int main(void) {
   
     gsl_linalg_householder_hm1(sqrt(2.0),gm1);
     householder_hm1(5,5,sqrt(2.0),om1);
-    t.test_rel_matgsl(5,5,om1,gm1,1.0e-12,"h hm1 2");
+    t.test_rel_mat(5,5,om1,gsl_matrix_wrap(gm1),1.0e-12,"h hm1 2");
 
   }
 

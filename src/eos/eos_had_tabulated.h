@@ -47,10 +47,15 @@ namespace o2scl {
       compressibility which effectively requires a second derivative),
       it is important to tabulated the EOS precisely enough to ensure
       that the derivatives are accurate. In the case of ensuring that
-      the compressibility at saturation density is well reproduced, I
-      have needed the EOS to be specified with at least 6 digits of
-      precision on a grid at least as small as 0.002 
-      \f$ \mathrm{fm}^{-3} \f$.
+      the compressibility at saturation density is reproduced to
+      within 3 significant figures, the EOS should be specified with
+      at least 6 digits of precision on a grid at least as small as
+      0.002 \f$ \mathrm{fm}^{-3} \f$.
+      
+      \future Storage in a \ref o2scl::table object isn't necessary, and
+      storing in a vector object is more efficient.
+      \future Allow the pressure to be specified to make the
+      EOS more accurate?
   */
   class eos_had_tabulated : public eos_had_eden_base {
     

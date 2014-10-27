@@ -72,7 +72,7 @@ int main(void) {
       gsl_linalg_HH_solve(gm1,gv1,gv3);
       HH_solve(5,om1,ov1,ov3);
 
-      t.test_rel_arrgsl(5,ov3,gv3,1.0e-11,"hh solve 1");
+      t.test_rel_vec(5,ov3,gsl_vector_wrap(gv3),1.0e-11,"hh solve 1");
 
     }
   }

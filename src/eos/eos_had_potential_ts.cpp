@@ -67,7 +67,7 @@ int main(void) {
     cout << "M*/M:    " << go.def_neutron.ms/go.def_neutron.m << endl;
     
     t.test_rel(n0,0.16,1.0e-2,"n0");
-    t.test_rel(dtemp*hc_mev_fm,-16,1.0e-2,"eoa");
+    t.test_rel(dtemp*hc_mev_fm,-16.0,1.0e-2,"eoa");
     t.test_rel(go.fcomp(n0)*hc_mev_fm,220.0,40.0,"comp");
     t.test_rel(go.fesym(n0)*hc_mev_fm,30.0,5.0,"esym");
     
@@ -115,7 +115,7 @@ int main(void) {
     cout << "M*/M:    " << go.def_neutron.ms/go.def_neutron.m << endl;
     
     t.test_rel(n0,0.16,1.0e-2,"n0");
-    t.test_rel(dtemp*hc_mev_fm,-16,1.0e-2,"eoa");
+    t.test_rel(dtemp*hc_mev_fm,-16.0,1.0e-2,"eoa");
     t.test_rel(go.fcomp(n0)*hc_mev_fm,220.0,40.0,"comp");
     t.test_rel(go.fesym(n0)*hc_mev_fm,30.0,5.0,"esym");
     
@@ -755,7 +755,7 @@ int main(void) {
     cout << "M*/M:    " << go.def_neutron.ms/go.def_neutron.m << endl;
     
     t.test_rel(n0,0.16,1.0e-2,"n0");
-    t.test_rel(dtemp*hc_mev_fm,-16,1.0e-2,"eoa");
+    t.test_rel(dtemp*hc_mev_fm,-16.0,1.0e-2,"eoa");
     t.test_rel(go.fcomp(n0)*hc_mev_fm,220.0,40.0,"comp");
     t.test_rel(go.fesym(n0)*hc_mev_fm,30.0,5.0,"esym");
     
@@ -801,7 +801,7 @@ int main(void) {
     cout << "M*/M:    " << go.def_neutron.ms/go.def_neutron.m << endl;
     
     t.test_rel(n0,0.16,1.0e-2,"n0");
-    t.test_rel(dtemp*hc_mev_fm,-16,1.0e-2,"eoa");
+    t.test_rel(dtemp*hc_mev_fm,-16.0,1.0e-2,"eoa");
     t.test_rel(go.fcomp(n0)*hc_mev_fm,220.0,40.0,"comp");
     t.test_rel(go.fesym(n0)*hc_mev_fm,30.0,5.0,"esym");
     
@@ -851,7 +851,7 @@ int main(void) {
       cout << "M*/M:    " << go.def_neutron.ms/go.def_neutron.m << endl;
 
       t.test_rel(n0,0.16,1.0e-2,"n0");
-      t.test_rel(dtemp*hc_mev_fm,-16,1.0e-2,"eoa");
+      t.test_rel(dtemp*hc_mev_fm,-16.0,1.0e-2,"eoa");
       t.test_rel(go.fcomp(n0)*hc_mev_fm,220.0,40.0,"comp");
       t.test_rel(go.fesym(n0)*hc_mev_fm,30.0,5.0,"esym");
     

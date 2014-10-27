@@ -77,7 +77,7 @@ int main(void) {
 
       gsl_linalg_LU_decomp(gm1,gp1,&sig);
       LU_decomp(5,om1,op1,sig);
-      t.test_rel_matgsl(5,5,om1,gm1,1.0e-8,"LU decomp");
+      t.test_rel_mat(5,5,om1,gsl_matrix_wrap(gm1),1.0e-8,"LU decomp");
 
       // -------------------------------------------------
       // Prepare data for solve and refine
@@ -115,7 +115,8 @@ int main(void) {
       gsl_linalg_LU_solve(gm1,gp1,gv2,gv1);
 
       gsl_blas_dgemv(CblasNoTrans,1.0,gm2,gv1,0.0,gv3);
-      t.test_rel_arrgslgsl(5,gv2,gv3,1.0e-10,"solve 1");
+      t.test_rel_vec(5,gsl_vector_wrap(gv2),
+		     gsl_vector_wrap(gv3),1.0e-10,"solve 1");
     
       for(size_t i=0;i<5;i++) {
 	gsl_vector_set(gv1,i,gsl_vector_get(gv1,i)*1.2);
@@ -124,7 +125,8 @@ int main(void) {
       gsl_linalg_LU_refine(gm2,gm1,gp1,gv2,gv1,gv3);
 
       gsl_blas_dgemv(CblasNoTrans,1.0,gm2,gv1,0.0,gv3);
-      t.test_rel_arrgslgsl(5,gv2,gv3,1.0e-10,"refine 1");
+      t.test_rel_vec(5,gsl_vector_wrap(gv2),
+		     gsl_vector_wrap(gv3),1.0e-10,"refine 1");
 
       // -------------------------------------------------
       // O2scl version of solve and refine
@@ -133,14 +135,14 @@ int main(void) {
       LU_solve(5,om1,op1,ov1,ov2);
 
       dgemv(o2cblas_RowMajor,o2cblas_NoTrans,5,5,1.0,om2,ov1,0.0,ov3);
-      t.test_rel_arr(5,ov2,ov3,1.0e-10,"solve 2 (paren)");
+      t.test_rel_vec(5,ov2,ov3,1.0e-10,"solve 2 (paren)");
 
       for(size_t i=0;i<5;i++) ov1[i]*=1.2;
 
       LU_refine(5,om2,om1,op1,ov2,ov1,ov3);
 
       dgemv(o2cblas_RowMajor,o2cblas_NoTrans,5,5,1.0,om2,ov1,0.0,ov3);
-      t.test_rel_arr(5,ov2,ov3,1.0e-10,"refine 2 (paren)");
+      t.test_rel_vec(5,ov2,ov3,1.0e-10,"refine 2 (paren)");
 
       // -------------------------------------------------
       // Test invert
@@ -162,7 +164,7 @@ int main(void) {
       LU_decomp(5,om1,op1,sig);
       LU_invert<ubmatrix,ubmatrix,ubmatrix_column>(5,om1,op1,om2);
     
-      t.test_rel_matgsl(5,5,om2,gm2,1.0e-12,"LU invert 1 (paren)");
+      t.test_rel_mat(5,5,om2,gsl_matrix_wrap(gm2),1.0e-12,"LU invert 1 (paren)");
 
     }
   }

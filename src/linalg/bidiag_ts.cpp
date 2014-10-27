@@ -74,18 +74,18 @@ int main(int argv, char *argc[]) {
   gsl_linalg_bidiag_decomp(gm1,gv1,gv2);
   bidiag_decomp(arr_size,arr_size,om1,ov1,ov2);
 
-  t.test_rel_matgsl(arr_size,arr_size,om1,gm1,5.0e-12,"m1");
-  t.test_rel_arrgsl(arr_size,ov1,gv1,1.0e-12,"v1");
-  t.test_rel_arrgsl(arr_size-1,ov2,gv2,1.0e-12,"v2");
+  t.test_rel_mat(arr_size,arr_size,om1,gsl_matrix_wrap(gm1),5.0e-12,"m1");
+  t.test_rel_vec(arr_size,ov1,gsl_vector_wrap(gv1),1.0e-12,"v1");
+  t.test_rel_vec(arr_size-1,ov2,gsl_vector_wrap(gv2),1.0e-12,"v2");
 
   // Test unpack
   gsl_linalg_bidiag_unpack(gm1,gv1,gm2,gv2,gm3,gv3,gv4);
   bidiag_unpack(arr_size,arr_size,om1,ov1,om2,ov2,om3,ov3,ov4);
 
-  t.test_abs_matgsl(arr_size,arr_size,om2,gm2,1.0e-12,"m2");
-  t.test_abs_matgsl(arr_size,arr_size,om3,gm3,1.0e-12,"m3");
-  t.test_rel_arrgsl(arr_size,ov3,gv3,1.0e-12,"v3");
-  t.test_rel_arrgsl(arr_size-1,ov4,gv4,1.0e-12,"v4");
+  t.test_abs_mat(arr_size,arr_size,om2,gsl_matrix_wrap(gm2),1.0e-12,"m2");
+  t.test_abs_mat(arr_size,arr_size,om3,gsl_matrix_wrap(gm3),1.0e-12,"m3");
+  t.test_rel_vec(arr_size,ov3,gsl_vector_wrap(gv3),1.0e-12,"v3");
+  t.test_rel_vec(arr_size-1,ov4,gsl_vector_wrap(gv4),1.0e-12,"v4");
 
   // Setup original matrix
   for(size_t i=0;i<arr_size;i++) {
@@ -103,7 +103,7 @@ int main(int argv, char *argc[]) {
   gsl_linalg_bidiag_unpack2(gm1,gv1,gv2,gm2);
   bidiag_unpack2(arr_size,arr_size,om1,ov1,ov2,om2);
 
-  t.test_abs_matgsl(arr_size,arr_size,om2,gm2,1.0e-12,"m4");
+  t.test_abs_mat(arr_size,arr_size,om2,gsl_matrix_wrap(gm2),1.0e-12,"m4");
 
   // Setup original matrix
   for(size_t i=0;i<arr_size;i++) {
@@ -121,8 +121,8 @@ int main(int argv, char *argc[]) {
   gsl_linalg_bidiag_unpack_B(gm1,gv3,gv4);
   bidiag_unpack_B(arr_size,arr_size,om1,ov3,ov4);
 
-  t.test_rel_arrgsl(arr_size,ov3,gv3,1.0e-12,"v5");
-  t.test_rel_arrgsl(arr_size-1,ov4,gv4,1.0e-12,"v6");
+  t.test_rel_vec(arr_size,ov3,gsl_vector_wrap(gv3),1.0e-12,"v5");
+  t.test_rel_vec(arr_size-1,ov4,gsl_vector_wrap(gv4),1.0e-12,"v6");
 
   t.report();
   return 0;

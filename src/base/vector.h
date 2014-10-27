@@ -53,10 +53,63 @@
 #include <fstream>
 #include <sstream>
 
+#include <gsl/gsl_vector.h>
+#include <gsl/gsl_sys.h>
+#include <gsl/gsl_matrix.h>
+
 #include <o2scl/misc.h>
 #include <o2scl/uniform_grid.h>
 
 namespace o2scl {
+
+  /** \brief A simple convenience wrapper for GSL vector objects
+
+      \note This uses typecasts on externally allocated GSL 
+      pointers and is not safe or fully const-correct. 
+   */
+  class gsl_vector_wrap {
+    const double *d;
+    size_t sz;
+  public:
+    gsl_vector_wrap(gsl_vector *m) {
+      d=(const double *)m->data;
+      sz=m->size;
+    }
+    const double operator[](size_t i) const {
+      return d[i];
+    }
+    size_t size() {
+      return sz;
+    }
+  };
+
+  /** \brief A simple convenience wrapper for GSL matrix objects
+
+      \note This uses typecasts on externally allocated GSL 
+      pointers and is not safe or fully const-correct. 
+  */
+  class gsl_matrix_wrap {
+    const double *d;
+    size_t sz1;
+    size_t sz2;
+    size_t tda;
+  public:
+    gsl_matrix_wrap(gsl_matrix *m) {
+      d=(const double *)m->data;
+      sz1=m->size1;
+      sz2=m->size2;
+      tda=m->tda;
+    }
+    const double operator()(size_t i, size_t j) const {
+      return *(d+i*tda+j);
+    }
+    size_t size1() {
+      return sz1;
+    }
+    size_t size2() {
+      return sz2;
+    }
+  };
 
   /// \name Copying vectors and matrices
   //@{
@@ -85,7 +138,7 @@ namespace o2scl {
     }
     return;
   }
-
+  
   /** \brief Simple generic vector copy of the first N elements
 
       Copy the first \c N elements of \c src to \c dest.

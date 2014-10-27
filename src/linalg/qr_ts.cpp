@@ -78,8 +78,8 @@ int main(void) {
 
       gsl_linalg_QR_decomp(gm1,gv1);
       QR_decomp(5,5,om1,ov1);
-      t.test_rel_matgsl(5,5,om1,gm1,1.0e-11,"qr decomp 1");
-      t.test_rel_arrgsl(5,ov1,gv1,1.0e-11,"qr decomp 2");
+      t.test_rel_mat(5,5,om1,gsl_matrix_wrap(gm1),1.0e-11,"qr decomp 1");
+      t.test_rel_vec(5,ov1,gsl_vector_wrap(gv1),1.0e-11,"qr decomp 2");
 
 #ifdef O2SCL_EIGEN
 
@@ -114,7 +114,7 @@ int main(void) {
 
       gsl_linalg_QR_QTvec(gm1,gv1,gv2);
       QR_QTvec(5,5,om1,ov1,ov2);
-      t.test_rel_arrgsl(5,ov2,gv2,1.0e-11,"qr qtvec 1");
+      t.test_rel_vec(5,ov2,gsl_vector_wrap(gv2),1.0e-11,"qr qtvec 1");
 
       // Test solve
 
@@ -137,7 +137,7 @@ int main(void) {
       QR_decomp(5,5,om1,ov2);
       QR_solve(5,om1,ov2,ov1,ov3);
 
-      t.test_rel_arrgsl(5,ov3,gv3,1.0e-11,"qr solve 1");
+      t.test_rel_vec(5,ov3,gsl_vector_wrap(gv3),1.0e-11,"qr solve 1");
 
       // Test unpack
 
@@ -162,8 +162,8 @@ int main(void) {
       QR_decomp(5,5,om1,ov2);
       QR_unpack(5,5,om1,ov2,om2,om3);
 
-      t.test_rel_matgsl(5,5,om2,gm2,1.0e-11,"qr decomp 5");
-      t.test_rel_matgsl(5,5,om3,gm3,1.0e-11,"qr decomp 6");
+      t.test_rel_mat(5,5,om2,gsl_matrix_wrap(gm2),1.0e-11,"qr decomp 5");
+      t.test_rel_mat(5,5,om3,gsl_matrix_wrap(gm3),1.0e-11,"qr decomp 6");
 
     }
 

@@ -232,7 +232,7 @@ int main(void) {
     gsl_vector_free(gx);
   }
 
-  t.test_rel_arr(resid_test.size(),resid_test,resid_test2,1.0e-2,
+  t.test_rel_vec(resid_test.size(),resid_test,resid_test2,1.0e-2,
 		 "GSL vs. O2scl");
 
 #ifdef O2SCL_EIGEN
@@ -422,10 +422,10 @@ int main(void) {
     gsl_multiroot_fsolver_free(s);
     gsl_vector_free(gx);
   }
-
-  t.test_rel_arr(resid_test.size(),resid_test,resid_test2,1.0e-2,
+  
+  t.test_rel_vec(resid_test.size(),resid_test,resid_test2,1.0e-2,
 		 "GSL vs. O2scl");
-
+  
   t.report();
   return 0;
 }

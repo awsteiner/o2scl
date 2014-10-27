@@ -145,7 +145,7 @@ int main(void) {
   //cout << covar_full2 << endl;
   cout << endl;
   
-  t.test_rel_arr(3,par_full1,par_full2,1.0e-9,"par_full1/2");
+  t.test_rel_vec(3,par_full1,par_full2,1.0e-9,"par_full1/2");
   t.test_rel_mat(3,3,covar_full1,covar_full2,1.0e-9,"covar_full1/2");
   t.test_rel(chi2_full1,chi2_full2,1.0e-9,"chi2_full1/2");
 
@@ -163,7 +163,7 @@ int main(void) {
   //cout << covar_full3 << endl;
   cout << endl;
 
-  t.test_rel_arr(3,par_full1,par_full3,1.0e-9,"par_full1/3");
+  t.test_rel_vec(3,par_full1,par_full3,1.0e-9,"par_full1/3");
   t.test_rel_mat(3,3,covar_full1,covar_full3,1.0e-9,"covar_full1/3");
   t.test_rel(chi2_full1,chi2_full3,1.0e-9,"chi2_full1/3");
 

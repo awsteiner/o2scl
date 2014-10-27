@@ -627,10 +627,10 @@ int main(void) {
 
   o2scl_linalg::svd2(arr_size,arr_size,ov1,ov2,om1,om2);
   
-  t.test_rel_arrgsl(arr_size,ov1,gv1,1.0e-10,"svd2");
-  t.test_rel_arrgsl(arr_size,ov2,gv2,1.0e-10,"svd2");
-  t.test_rel_matgsl(arr_size,arr_size,om1,gm1,1.0e-10,"svd2");
-  t.test_rel_matgsl(arr_size,arr_size,om2,gm2,1.0e-10,"svd2");
+  t.test_rel_vec(arr_size,ov1,gsl_vector_wrap(gv1),1.0e-10,"svd2");
+  t.test_rel_vec(arr_size,ov2,gsl_vector_wrap(gv2),1.0e-10,"svd2");
+  t.test_rel_mat(arr_size,arr_size,om1,gsl_matrix_wrap(gm1),1.0e-10,"svd2");
+  t.test_rel_mat(arr_size,arr_size,om2,gsl_matrix_wrap(gm2),1.0e-10,"svd2");
 
   for(size_t i=0;i<arr_size;i++) {
     gsl_vector_set(gv1,i,i/100.0);
@@ -654,10 +654,10 @@ int main(void) {
 
   o2scl_linalg::qrstep(arr_size,arr_size,arr_size,ov1,ov2,om1,om2);
   
-  t.test_rel_arrgsl(arr_size,ov1,gv1,1.0e-10,"qrstep");
-  t.test_rel_arrgsl(arr_size,ov2,gv2,1.0e-10,"qrstep");
-  t.test_rel_matgsl(arr_size,arr_size,om1,gm1,1.0e-10,"qrstep");
-  t.test_rel_matgsl(arr_size,arr_size,om2,gm2,1.0e-10,"qrstep");
+  t.test_rel_vec(arr_size,ov1,gsl_vector_wrap(gv1),1.0e-10,"qrstep");
+  t.test_rel_vec(arr_size,ov2,gsl_vector_wrap(gv2),1.0e-10,"qrstep");
+  t.test_rel_mat(arr_size,arr_size,om1,gsl_matrix_wrap(gm1),1.0e-10,"qrstep");
+  t.test_rel_mat(arr_size,arr_size,om2,gsl_matrix_wrap(gm2),1.0e-10,"qrstep");
 
   t.report();
   return 0;

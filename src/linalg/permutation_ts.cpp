@@ -83,7 +83,7 @@ int main(void) {
   c[4]=5.0;
 
   ip.apply(c);
-  t.test_rel_arr(5,a,c,1.0e-10,"inverse permutation");
+  t.test_rel_vec(5,a,c,1.0e-10,"inverse permutation");
 
   t.report();
   return 0;

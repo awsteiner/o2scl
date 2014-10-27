@@ -203,10 +203,14 @@
     Nucl. Phys. A \b 606 (1996), 508.
 
     \anchor Negele73 Negele73:
-    J.W. Negele and D. Vautherin, Nucl. Phys. A \b 207 (1973) 298.
+    <a href="10.1016/0375-9474(73)90349-7">J.W.
+    Negele and D. Vautherin</a>, 
+    Nucl. Phys. A \b 207 (1973) 298.
     
     \anchor Newton13 Newton13:
-    W.G. Newton, M. Gearheart, B.-A. Li, arXiv:1110.4043.
+    <a href="http://dx.doi.org/10.1088/0067-0049/204/1/9">W.G. 
+    Newton, M. Gearheart, B.-A. Li</a>, 
+    Astrophys. J. Supp. \b 204 (2013) 9.
 
     \anchor OConnor10 OConnor10:
     <a href="http://dx.doi.org/10.1088/0264-9381/27/11/114103">
@@ -364,7 +368,7 @@
 
     \anchor Typel99 Typel99:
     <a href="http://dx.doi.org/10.1016/S0375-9474(99)00310-3">
-    S. Typel and H. H. Wolter</a>,
+    S. Typel and H.H. Wolter</a>,
     Nucl. Phys. A \b 656 (1999) 331.
     
     \anchor VanGiai81 VanGiai81:
@@ -374,7 +378,7 @@
 
     \anchor Zimanyi90 Zimanyi90:
     <a href="http://dx.doi.org/10.1103/PhysRevC.42.1416">
-    Zimanyi and Moszkowski</a>,
+    J. Zimanyi and S.A. Moszkowski</a>,
     Phys. Rev. C \b 42 (1990) 1416.
 
 */

@@ -113,7 +113,7 @@ int main(void) {
     
     t.test_gen(c2=='z',"character");
     t.test_rel(d2,sqrt(2.0),1.0e-12,"double");
-    t.test_rel(f2,sqrt(2.0),1.0e-7,"float");
+    t.test_rel(f2,sqrt(2.0f),1.0e-7f,"float");
     t.test_gen(i2==31,"integer");
     t.test_gen(u2==41,"size_t");
     t.test_gen(s2=="Test two.","string");
@@ -171,10 +171,10 @@ int main(void) {
 
     // Compare the old and new values
     
-    t.test_gen_arr<char *>(4,c,c2,"character");
-    t.test_rel_arr<double *>(4,d,d2,1.0e-12,"double");
-    t.test_rel_arr<float *>(4,f,f2,1.0e-7,"float");
-    t.test_gen_arr<int *>(4,i,i2,"int");
+    t.test_gen_vec<char *>(4,c,c2,"character");
+    t.test_rel_vec<double *>(4,d,d2,1.0e-12,"double");
+    t.test_rel_vec<float *>(4,f,f2,1.0e-7f,"float");
+    t.test_gen_vec<int *>(4,i,i2,"int");
 
     delete[] c2;
     delete[] d2;
@@ -263,10 +263,10 @@ int main(void) {
 
     // Compare the old and new values
 
-    t.test_gen_arr<char *>(6,c,c2,"character");
-    t.test_rel_arr<double *>(6,d,d2,1.0e-12,"double");
-    t.test_rel_arr<float *>(6,f,f2,1.0e-7,"float");
-    t.test_gen_arr<int *>(6,i,i2,"int");
+    t.test_gen_vec<char *>(6,c,c2,"character");
+    t.test_rel_vec<double *>(6,d,d2,1.0e-12,"double");
+    t.test_rel_vec<float *>(6,f,f2,1.0e-7f,"float");
+    t.test_gen_vec<int *>(6,i,i2,"int");
 
     for(size_t j=0;j<vs.size();j++) {
       t.test_gen(vs[j]==vs2[j],"string");
@@ -345,10 +345,10 @@ int main(void) {
 
     hf.close();
     
-    t.test_rel_arr(6,v1b,v1c,1.0e-12,"vector 1");
-    t.test_rel_arr(6,v2b,v2c,1.0e-12,"vector 2");
-    t.test_rel_arr(6,v3b,v3c,1.0e-12,"vector 3");
-    //t.test_rel_arr(6,v4b,v4c,1.0e-12,"vector 4");
+    t.test_rel_vec(6,v1b,v1c,1.0e-12,"vector 1");
+    t.test_rel_vec(6,v2b,v2c,1.0e-12,"vector 2");
+    t.test_rel_vec(6,v3b,v3c,1.0e-12,"vector 3");
+    //t.test_rel_vec(6,v4b,v4c,1.0e-12,"vector 4");
     
   }
   cout << endl;

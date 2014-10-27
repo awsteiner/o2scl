@@ -81,7 +81,7 @@ int main(void) {
     cout << "A*x: " << endl;
     //cout << gv3 << endl;
 
-    t.test_rel_arr(5,gv1,gv3,1.0e-10,"solve 1");
+    t.test_rel_vec(5,gv1,gv3,1.0e-10,"solve 1");
   }
 
   // Test QR solve using O2SCL
@@ -113,7 +113,7 @@ int main(void) {
     cout << "A*x: " << endl;
     //cout << gv3 << endl;
 
-    t.test_rel_arr(5,gv1,gv3,1.0e-10,"solve 1");
+    t.test_rel_vec(5,gv1,gv3,1.0e-10,"solve 1");
   }
 
   // Test HH solve using O2SCL
@@ -145,7 +145,7 @@ int main(void) {
     cout << "A*x: " << endl;
     //cout << gv3 << endl;
 
-    t.test_rel_arr(5,gv1,gv3,1.0e-10,"solve 1");
+    t.test_rel_vec(5,gv1,gv3,1.0e-10,"solve 1");
   }
 
   t.report();

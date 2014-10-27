@@ -28,6 +28,7 @@
 #include <o2scl/eos_had_sym4.h>
 #include <o2scl/fermion_nonrel.h>
 #include <o2scl/nstar_cold.h>
+#include <o2scl/hdf_eos_io.h>
 
 using namespace std;
 using namespace o2scl;
@@ -40,31 +41,28 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
-#ifdef O2SCL_NEVER_DEFINED
-
   thermo th;
 
-  fermion_eff n, p;
-  fermion_nonrel nrn, nrp;
+  fermion n, p;
 
   bool optv;
 
   eos_had_apr apr;
-  apr4_eos apr4;
-  eos_had_sym4_base s4e;
+  eos_had_sym4_apr apr4;
+  eos_had_sym4 s4e;
   eos_had_rmf rmf;
   eos_had_rmf rmf_b;
   eos_had_rmf rmf_c;
-  rmf4_eos rmf4;
-  rmf4_eos rmf4_b;
-  rmf4_eos rmf4_c;
-  rmf4_eos rnew;
-  rmf4_eos rhi;
-  rmf4_eos rlo;
+  eos_had_sym4_rmf rmf4;
+  eos_had_sym4_rmf rmf4_b;
+  eos_had_sym4_rmf rmf4_c;
+  eos_had_sym4_rmf rnew;
+  eos_had_sym4_rmf rhi;
+  eos_had_sym4_rmf rlo;
   eos_had_skyrme sk;
-  skyrme4_eos sk4;
+  eos_had_sym4_skyrme sk4;
   eos_had_potential mdi;
-  mdi4_eos mdi4;
+  eos_had_sym4_mdi mdi4;
 
   nstar_cold cnx;
   
@@ -75,26 +73,22 @@ int main(void) {
   p.init(939.0/hc_mev_fm,2.0);
   n.non_interacting=false;
   p.non_interacting=false;
-  nrn.init(939.0/hc_mev_fm,2.0);
-  nrp.init(939.0/hc_mev_fm,2.0);
-  nrn.non_interacting=false;
-  nrp.non_interacting=false;
 
-  sk.load("SLy230a");
-  sk4.load("SLy230a");
+  o2scl_hdf::skyrme_load(sk,"SLy230a");
+  o2scl_hdf::skyrme_load(sk4,"SLy230a");
 
   /// Initialize
 
-  rmf.load("NL4");
-  rmf4.load("NL4");
+  o2scl_hdf::rmf_load(rmf,"NL4");
+  o2scl_hdf::rmf_load(rmf4,"NL4");
   rmf.mnuc=939.0/197.33;
   rmf4.mnuc=939.0/197.33;
-  rmf_b.load("NL4");
-  rmf4_b.load("NL4");
+  o2scl_hdf::rmf_load(rmf_b,"NL4");
+  o2scl_hdf::rmf_load(rmf4_b,"NL4");
   rmf_b.mnuc=939.0/197.33;
   rmf4_b.mnuc=939.0/197.33;
-  rmf_c.load("NL4");
-  rmf4_c.load("NL4");
+  o2scl_hdf::rmf_load(rmf_c,"NL4");
+  o2scl_hdf::rmf_load(rmf4_c,"NL4");
   rmf_c.mnuc=939.0/197.33;
   rmf4_c.mnuc=939.0/197.33;
 
@@ -229,7 +223,7 @@ int main(void) {
   mdi4.Lambda=cbrt(1.5*pi2*mdi4.rho0);
   mdi4.form=mdi4.mdi_form;
   
-  rnew.load("NL3");
+  o2scl_hdf::rmf_load(rnew,"NL3");
 
   rnew.mnuc=939.0/197.33;
   rnew.esym=34.0/hc_mev_fm;
@@ -254,7 +248,7 @@ int main(void) {
   rnew.set_fields(0.1,0.07,-0.001);
   rnew.saturation();
 
-  rlo.load("NL3");
+  o2scl_hdf::rmf_load(rlo,"NL3");
 
   rlo.mnuc=939.0/197.33;
   rlo.esym=34.0/hc_mev_fm;
@@ -282,7 +276,7 @@ int main(void) {
   rlo.set_fields(0.1,0.07,-0.001);
   rlo.saturation();
 
-  rhi.load("NL3");
+  o2scl_hdf::rmf_load(rhi,"NL3");
 
   rhi.mnuc=939.0/197.33;
   rhi.esym=34.0/hc_mev_fm;
@@ -347,17 +341,17 @@ int main(void) {
   /// ----------------------------------------------------------------
   /// Test MDI EOS
 
-  nrn.n=0.08;
-  nrp.n=0.08;
-  mdi4.test_separation(nrn,nrp,t);
+  n.n=0.08;
+  p.n=0.08;
+  //mdi4.test_separation(n,p,t);
 
-  nrn.n=0.12;
-  nrp.n=0.04;
-  mdi4.test_separation(nrn,nrp,t);
+  n.n=0.12;
+  p.n=0.04;
+  //mdi4.test_separation(n,p,t);
 
-  nrn.n=0.16;
-  nrp.n=0.0;
-  mdi4.test_separation(nrn,nrp,t);
+  n.n=0.16;
+  p.n=0.0;
+  //mdi4.test_separation(n,p,t);
   cout << endl;
 
   /// ----------------------------------------------------------------
@@ -371,91 +365,91 @@ int main(void) {
   /// Check nuclear matter
 
   cout << "Nuclear matter." << endl;
-  nrn.n=0.08;
-  nrp.n=0.08;
-  apr.calc_e(nrn,nrp,th);
-  cout << nrn.n << " " << nrp.n << " " 
-       << (th.ed/0.16-nrn.m)*hc_mev_fm << " " 
-       << nrn.mu << " " << nrp.mu << endl;  
-  t1=(th.ed/0.16-nrn.m)*hc_mev_fm;
-  t2=nrn.mu;
-  t3=nrp.mu;
-  apr4.calc_e(nrn,nrp,th);
-  cout << nrn.n << " " << nrp.n << " " 
-       << (th.ed/0.16-nrn.m)*hc_mev_fm << " " 
-       << nrn.mu << " " << nrp.mu << endl;
-  t.test_rel((th.ed/0.16-nrn.m)*hc_mev_fm,t1,1.0e-6,"apr nuc");
-  t.test_rel(nrn.mu,t2,1.0e-6,"apr nuc");
-  t.test_rel(nrp.mu,t3,1.0e-6,"apr nuc");
-  s4e.calc_e(nrn,nrp,th);
-  cout << nrn.n << " " << nrp.n << " " 
-       << (th.ed/0.16-nrn.m)*hc_mev_fm << " " 
-       << nrn.mu << " " << nrp.mu << endl;
-  t.test_rel((th.ed/0.16-nrn.m)*hc_mev_fm,t1,1.0e-6,"apr nuc");
-  t.test_rel(nrn.mu,t2,1.0e-6,"apr nuc");
-  t.test_rel(nrp.mu,t3,1.0e-6,"apr nuc");
+  n.n=0.08;
+  p.n=0.08;
+  apr.calc_e(n,p,th);
+  cout << n.n << " " << p.n << " " 
+       << (th.ed/0.16-n.m)*hc_mev_fm << " " 
+       << n.mu << " " << p.mu << endl;  
+  t1=(th.ed/0.16-n.m)*hc_mev_fm;
+  t2=n.mu;
+  t3=p.mu;
+  apr4.calc_e(n,p,th);
+  cout << n.n << " " << p.n << " " 
+       << (th.ed/0.16-n.m)*hc_mev_fm << " " 
+       << n.mu << " " << p.mu << endl;
+  t.test_rel((th.ed/0.16-n.m)*hc_mev_fm,t1,1.0e-6,"apr nuc");
+  t.test_rel(n.mu,t2,1.0e-6,"apr nuc");
+  t.test_rel(p.mu,t3,1.0e-6,"apr nuc");
+  s4e.calc_e(n,p,th);
+  cout << n.n << " " << p.n << " " 
+       << (th.ed/0.16-n.m)*hc_mev_fm << " " 
+       << n.mu << " " << p.mu << endl;
+  t.test_rel((th.ed/0.16-n.m)*hc_mev_fm,t1,1.0e-6,"apr nuc");
+  t.test_rel(n.mu,t2,1.0e-6,"apr nuc");
+  t.test_rel(p.mu,t3,1.0e-6,"apr nuc");
 
   /// Check neutron matter
 
   cout << "Neutron matter." << endl;
-  nrn.n=0.16;
-  nrp.n=0.0;
-  apr.calc_e(nrn,nrp,th);
-  t1=(th.ed/0.16-nrn.m)*hc_mev_fm;
-  t2=nrn.mu;
-  cout << nrn.n << " " << nrp.n << " " 
-       << (th.ed/0.16-nrn.m)*hc_mev_fm << " " 
-       << nrn.mu << " " << nrp.mu << endl;
-  apr4.calc_e(nrn,nrp,th);
-  cout << nrn.n << " " << nrp.n << " " 
-       << (th.ed/0.16-nrn.m)*hc_mev_fm << " " 
-       << nrn.mu << " " << nrp.mu << endl;
-  t.test_rel((th.ed/0.16-nrn.m)*hc_mev_fm,t1,1.0e-5,"apr neut");
-  t.test_rel(nrn.mu,t2,1.0e-5,"apr neut");
-  s4e.calc_e(nrn,nrp,th);
-  cout << nrn.n << " " << nrp.n << " " 
-       << (th.ed/0.16-nrn.m)*hc_mev_fm << " " 
-       << nrn.mu << " " << nrp.mu << endl;
-  t.test_rel((th.ed/0.16-nrn.m)*hc_mev_fm,t1,1.0e-5,"apr neut");
-  t.test_rel(nrn.mu,t2,1.0e-5,"apr neut");
+  n.n=0.16;
+  p.n=0.0;
+  apr.calc_e(n,p,th);
+  t1=(th.ed/0.16-n.m)*hc_mev_fm;
+  t2=n.mu;
+  cout << n.n << " " << p.n << " " 
+       << (th.ed/0.16-n.m)*hc_mev_fm << " " 
+       << n.mu << " " << p.mu << endl;
+  apr4.calc_e(n,p,th);
+  cout << n.n << " " << p.n << " " 
+       << (th.ed/0.16-n.m)*hc_mev_fm << " " 
+       << n.mu << " " << p.mu << endl;
+  t.test_rel((th.ed/0.16-n.m)*hc_mev_fm,t1,1.0e-5,"apr neut");
+  t.test_rel(n.mu,t2,1.0e-5,"apr neut");
+  s4e.calc_e(n,p,th);
+  cout << n.n << " " << p.n << " " 
+       << (th.ed/0.16-n.m)*hc_mev_fm << " " 
+       << n.mu << " " << p.mu << endl;
+  t.test_rel((th.ed/0.16-n.m)*hc_mev_fm,t1,1.0e-5,"apr neut");
+  t.test_rel(n.mu,t2,1.0e-5,"apr neut");
   
   /// Check neutron-rich matter
 
   cout << "Neutron-rich matter." << endl;
-  nrn.n=0.12;
-  nrp.n=0.04;
-  apr.calc_e(nrn,nrp,th);
-  t1=(th.ed/0.16-nrn.m)*hc_mev_fm;
-  t2=nrn.mu;
-  t3=nrp.mu;
-  cout << nrn.n << " " << nrp.n << " " 
-       << (th.ed/0.16-nrn.m)*hc_mev_fm << " " 
-       << nrn.mu << " " << nrp.mu << endl;
-  apr4.calc_e(nrn,nrp,th);
-  cout << nrn.n << " " << nrp.n << " " 
-       << (th.ed/0.16-nrn.m)*hc_mev_fm << " " 
-       << nrn.mu << " " << nrp.mu << endl;
-  t.test_rel((th.ed/0.16-nrn.m)*hc_mev_fm,t1,1.0e-5,"apr nmix");
-  t.test_rel(nrn.mu,t2,1.0e-5,"apr nmix");
-  t.test_rel(nrp.mu,t3,1.0e-5,"apr nmix");
-  s4e.calc_e(nrn,nrp,th);
-  cout << nrn.n << " " << nrp.n << " " 
-       << (th.ed/0.16-nrn.m)*hc_mev_fm << " " 
-       << nrn.mu << " " << nrp.mu << endl;
-  t.test_rel((th.ed/0.16-nrn.m)*hc_mev_fm,t1,1.0e-5,"apr nmix");
-  t.test_rel(nrn.mu,t2,1.0e-5,"apr nmix");
-  t.test_rel(nrp.mu,t3,1.0e-5,"apr nmix");
+  n.n=0.12;
+  p.n=0.04;
+  apr.calc_e(n,p,th);
+  t1=(th.ed/0.16-n.m)*hc_mev_fm;
+  t2=n.mu;
+  t3=p.mu;
+  cout << n.n << " " << p.n << " " 
+       << (th.ed/0.16-n.m)*hc_mev_fm << " " 
+       << n.mu << " " << p.mu << endl;
+  apr4.calc_e(n,p,th);
+  cout << n.n << " " << p.n << " " 
+       << (th.ed/0.16-n.m)*hc_mev_fm << " " 
+       << n.mu << " " << p.mu << endl;
+  t.test_rel((th.ed/0.16-n.m)*hc_mev_fm,t1,1.0e-5,"apr nmix");
+  t.test_rel(n.mu,t2,1.0e-5,"apr nmix");
+  t.test_rel(p.mu,t3,1.0e-5,"apr nmix");
+  s4e.calc_e(n,p,th);
+  cout << n.n << " " << p.n << " " 
+       << (th.ed/0.16-n.m)*hc_mev_fm << " " 
+       << n.mu << " " << p.mu << endl;
+  t.test_rel((th.ed/0.16-n.m)*hc_mev_fm,t1,1.0e-5,"apr nmix");
+  t.test_rel(n.mu,t2,1.0e-5,"apr nmix");
+  t.test_rel(p.mu,t3,1.0e-5,"apr nmix");
 
   /// Check neutron-rich matter with non-trivial alpha
 
   cout << "Neutron-rich matter, alpha!=3." << endl;
-  nrn.n=0.12;
-  nrp.n=0.04;
+  n.n=0.12;
+  p.n=0.04;
   s4e.alpha=2.0;
-  s4e.calc_e(nrn,nrp,th);
-  cout << nrn.n << " " << nrp.n << " " 
-       << (th.ed/0.16-nrn.m)*hc_mev_fm << " " 
-       << nrn.mu << " " << nrp.mu << endl;
+  s4e.calc_e(n,p,th);
+  cout << n.n << " " << p.n << " " 
+       << (th.ed/0.16-n.m)*hc_mev_fm << " " 
+       << n.mu << " " << p.mu << endl;
   cout << endl;
 
   /// ----------------------------------------------------------------
@@ -468,91 +462,91 @@ int main(void) {
   /// Check nuclear matter
 
   cout << "Nuclear matter." << endl;
-  nrn.n=0.08;
-  nrp.n=0.08;
-  sk.calc_e(nrn,nrp,th);
-  t1=(th.ed/0.16-nrn.m)*hc_mev_fm;
-  t2=nrn.mu;
-  t3=nrp.mu;
-  cout << nrn.n << " " << nrp.n << " " 
-       << (th.ed/0.16-nrn.m)*hc_mev_fm << " " 
-       << nrn.mu << " " << nrp.mu << endl;
-  sk4.calc_e(nrn,nrp,th);
-  cout << nrn.n << " " << nrp.n << " " 
-       << (th.ed/0.16-nrn.m)*hc_mev_fm << " " 
-       << nrn.mu << " " << nrp.mu << endl;
-  t.test_rel((th.ed/0.16-nrn.m)*hc_mev_fm,t1,1.0e-5,"sk nuc");
-  t.test_rel(nrn.mu,t2,1.0e-5,"sk nuc");
-  t.test_rel(nrp.mu,t3,1.0e-5,"sk nuc");
-  s4e.calc_e(nrn,nrp,th);
-  cout << nrn.n << " " << nrp.n << " " 
-       << (th.ed/0.16-nrn.m)*hc_mev_fm << " " 
-       << nrn.mu << " " << nrp.mu << endl;
-  t.test_rel((th.ed/0.16-nrn.m)*hc_mev_fm,t1,1.0e-5,"sk nuc");
-  t.test_rel(nrn.mu,t2,1.0e-5,"sk nuc");
-  t.test_rel(nrp.mu,t3,1.0e-5,"sk nuc");
+  n.n=0.08;
+  p.n=0.08;
+  sk.calc_e(n,p,th);
+  t1=(th.ed/0.16-n.m)*hc_mev_fm;
+  t2=n.mu;
+  t3=p.mu;
+  cout << n.n << " " << p.n << " " 
+       << (th.ed/0.16-n.m)*hc_mev_fm << " " 
+       << n.mu << " " << p.mu << endl;
+  sk4.calc_e(n,p,th);
+  cout << n.n << " " << p.n << " " 
+       << (th.ed/0.16-n.m)*hc_mev_fm << " " 
+       << n.mu << " " << p.mu << endl;
+  t.test_rel((th.ed/0.16-n.m)*hc_mev_fm,t1,1.0e-5,"sk nuc");
+  t.test_rel(n.mu,t2,1.0e-5,"sk nuc");
+  t.test_rel(p.mu,t3,1.0e-5,"sk nuc");
+  s4e.calc_e(n,p,th);
+  cout << n.n << " " << p.n << " " 
+       << (th.ed/0.16-n.m)*hc_mev_fm << " " 
+       << n.mu << " " << p.mu << endl;
+  t.test_rel((th.ed/0.16-n.m)*hc_mev_fm,t1,1.0e-5,"sk nuc");
+  t.test_rel(n.mu,t2,1.0e-5,"sk nuc");
+  t.test_rel(p.mu,t3,1.0e-5,"sk nuc");
 
   /// Check neutron matter
 
   cout << "Neutron matter." << endl;
-  nrn.n=0.16;
-  nrp.n=0.0;
-  sk.calc_e(nrn,nrp,th);
-  t1=(th.ed/0.16-nrn.m)*hc_mev_fm;
-  t2=nrn.mu;
-  cout << nrn.n << " " << nrp.n << " " 
-       << (th.ed/0.16-nrn.m)*hc_mev_fm << " " 
-       << nrn.mu << " " << nrp.mu << endl;
-  sk4.calc_e(nrn,nrp,th);
-  cout << nrn.n << " " << nrp.n << " " 
-       << (th.ed/0.16-nrn.m)*hc_mev_fm << " " 
-       << nrn.mu << " " << nrp.mu << endl;
-  t.test_rel((th.ed/0.16-nrn.m)*hc_mev_fm,t1,1.0e-5,"sk neut");
-  t.test_rel(nrn.mu,t2,1.0e-5,"sk neut");
-  s4e.calc_e(nrn,nrp,th);
-  cout << nrn.n << " " << nrp.n << " " 
-       << (th.ed/0.16-nrn.m)*hc_mev_fm << " " 
-       << nrn.mu << " " << nrp.mu << endl;
-  t.test_rel((th.ed/0.16-nrn.m)*hc_mev_fm,t1,1.0e-5,"sk neut");
-  t.test_rel(nrn.mu,t2,1.0e-5,"sk neut");
+  n.n=0.16;
+  p.n=0.0;
+  sk.calc_e(n,p,th);
+  t1=(th.ed/0.16-n.m)*hc_mev_fm;
+  t2=n.mu;
+  cout << n.n << " " << p.n << " " 
+       << (th.ed/0.16-n.m)*hc_mev_fm << " " 
+       << n.mu << " " << p.mu << endl;
+  sk4.calc_e(n,p,th);
+  cout << n.n << " " << p.n << " " 
+       << (th.ed/0.16-n.m)*hc_mev_fm << " " 
+       << n.mu << " " << p.mu << endl;
+  t.test_rel((th.ed/0.16-n.m)*hc_mev_fm,t1,1.0e-5,"sk neut");
+  t.test_rel(n.mu,t2,1.0e-5,"sk neut");
+  s4e.calc_e(n,p,th);
+  cout << n.n << " " << p.n << " " 
+       << (th.ed/0.16-n.m)*hc_mev_fm << " " 
+       << n.mu << " " << p.mu << endl;
+  t.test_rel((th.ed/0.16-n.m)*hc_mev_fm,t1,1.0e-5,"sk neut");
+  t.test_rel(n.mu,t2,1.0e-5,"sk neut");
 
   /// Check neutron-rich matter
 
   cout << "Neutron-rich matter." << endl;
-  nrn.n=0.12;
-  nrp.n=0.04;
-  sk.calc_e(nrn,nrp,th);
-  t1=(th.ed/0.16-nrn.m)*hc_mev_fm;
-  t2=nrn.mu;
-  t3=nrp.mu;
-  cout << nrn.n << " " << nrp.n << " " 
-       << (th.ed/0.16-nrn.m)*hc_mev_fm << " " 
-       << nrn.mu << " " << nrp.mu << endl;
-  sk4.calc_e(nrn,nrp,th);
-  cout << nrn.n << " " << nrp.n << " " 
-       << (th.ed/0.16-nrn.m)*hc_mev_fm << " " 
-       << nrn.mu << " " << nrp.mu << endl;
-  t.test_rel((th.ed/0.16-nrn.m)*hc_mev_fm,t1,1.0e-5,"sk nrich");
-  t.test_rel(nrn.mu,t2,1.0e-5,"sk nrich");
-  t.test_rel(nrp.mu,t3,1.0e-5,"sk nrich");
-  s4e.calc_e(nrn,nrp,th);
-  cout << nrn.n << " " << nrp.n << " " 
-       << (th.ed/0.16-nrn.m)*hc_mev_fm << " " 
-       << nrn.mu << " " << nrp.mu << endl;
-  t.test_rel((th.ed/0.16-nrn.m)*hc_mev_fm,t1,1.0e-5,"sk nrich");
-  t.test_rel(nrn.mu,t2,1.0e-5,"sk nrich");
-  t.test_rel(nrp.mu,t3,1.0e-5,"sk nrich");
+  n.n=0.12;
+  p.n=0.04;
+  sk.calc_e(n,p,th);
+  t1=(th.ed/0.16-n.m)*hc_mev_fm;
+  t2=n.mu;
+  t3=p.mu;
+  cout << n.n << " " << p.n << " " 
+       << (th.ed/0.16-n.m)*hc_mev_fm << " " 
+       << n.mu << " " << p.mu << endl;
+  sk4.calc_e(n,p,th);
+  cout << n.n << " " << p.n << " " 
+       << (th.ed/0.16-n.m)*hc_mev_fm << " " 
+       << n.mu << " " << p.mu << endl;
+  t.test_rel((th.ed/0.16-n.m)*hc_mev_fm,t1,1.0e-5,"sk nrich");
+  t.test_rel(n.mu,t2,1.0e-5,"sk nrich");
+  t.test_rel(p.mu,t3,1.0e-5,"sk nrich");
+  s4e.calc_e(n,p,th);
+  cout << n.n << " " << p.n << " " 
+       << (th.ed/0.16-n.m)*hc_mev_fm << " " 
+       << n.mu << " " << p.mu << endl;
+  t.test_rel((th.ed/0.16-n.m)*hc_mev_fm,t1,1.0e-5,"sk nrich");
+  t.test_rel(n.mu,t2,1.0e-5,"sk nrich");
+  t.test_rel(p.mu,t3,1.0e-5,"sk nrich");
 
   /// Check neutron-rich matter with non-trivial alpha
 
   cout << "Neutron-rich matter, alpha!=3." << endl;
-  nrn.n=0.12;
-  nrp.n=0.04;
+  n.n=0.12;
+  p.n=0.04;
   s4e.alpha=2.0;
-  s4e.calc_e(nrn,nrp,th);
-  cout << nrn.n << " " << nrp.n << " " 
-       << (th.ed/0.16-nrn.m)*hc_mev_fm << " " 
-       << nrn.mu << " " << nrp.mu << endl;
+  s4e.calc_e(n,p,th);
+  cout << n.n << " " << p.n << " " 
+       << (th.ed/0.16-n.m)*hc_mev_fm << " " 
+       << n.mu << " " << p.mu << endl;
   cout << endl;
 
   /// ----------------------------------------------------------------
@@ -897,16 +891,16 @@ int main(void) {
   cout << n.n << " " << p.n << " " 
        << (th.ed/0.16-n.m)*hc_mev_fm << " "
        << n.mu << " " << p.mu << endl;
-  t.test_rel((th.ed/0.16-n.m)*hc_mev_fm,t1,1.0e-5,"mdi nuc");
-  t.test_rel(n.mu,t2,1.0e-5,"mdi nuc");
-  t.test_rel(p.mu,t3,1.0e-5,"mdi nuc");
+  //t.test_rel((th.ed/0.16-n.m)*hc_mev_fm,t1,1.0e-5,"mdi nuc");
+  //t.test_rel(n.mu,t2,1.0e-5,"mdi nuc");
+  //t.test_rel(p.mu,t3,1.0e-5,"mdi nuc");
   s4e.calc_e(n,p,th);
   cout << n.n << " " << p.n << " " 
        << (th.ed/0.16-n.m)*hc_mev_fm << " "
        << n.mu << " " << p.mu << endl;
-  t.test_rel((th.ed/0.16-n.m)*hc_mev_fm,t1,1.0e-5,"mdi nuc");
-  t.test_rel(n.mu,t2,1.0e-5,"mdi nuc");
-  t.test_rel(p.mu,t3,1.0e-5,"mdi nuc");
+  //t.test_rel((th.ed/0.16-n.m)*hc_mev_fm,t1,1.0e-5,"mdi nuc");
+  //t.test_rel(n.mu,t2,1.0e-5,"mdi nuc");
+  //t.test_rel(p.mu,t3,1.0e-5,"mdi nuc");
 
   /// Check neutron matter
 
@@ -926,16 +920,16 @@ int main(void) {
   cout << n.n << " " << p.n << " " 
        << (th.ed/0.16-n.m)*hc_mev_fm << " "
        << n.mu << " " << p.mu << endl;
-  t.test_rel((th.ed/0.16-n.m)*hc_mev_fm,t1,1.0e-5,"mdi neut");
-  t.test_rel(n.mu,t2,1.0e-5,"mdi neut");
+  //t.test_rel((th.ed/0.16-n.m)*hc_mev_fm,t1,1.0e-5,"mdi neut");
+  //t.test_rel(n.mu,t2,1.0e-5,"mdi neut");
   n.n=0.16;
   p.n=0.0;
   s4e.calc_e(n,p,th);
   cout << n.n << " " << p.n << " " 
        << (th.ed/0.16-n.m)*hc_mev_fm << " "
        << n.mu << " " << p.mu << endl;
-  t.test_rel((th.ed/0.16-n.m)*hc_mev_fm,t1,1.0e-5,"mdi neut");
-  t.test_rel(n.mu,t2,1.0e-5,"mdi neut");
+  //t.test_rel((th.ed/0.16-n.m)*hc_mev_fm,t1,1.0e-5,"mdi neut");
+  //t.test_rel(n.mu,t2,1.0e-5,"mdi neut");
 
   /// Check neutron-rich matter
 
@@ -970,21 +964,24 @@ int main(void) {
 
   /// Check neutron-rich matter with non-trivial alpha
 
-  cout << "Neutron-rich matter, alpha!=3." << endl;
-  n.n=0.12;
-  p.n=0.04;
-  s4e.alpha=2.0;
-  s4e.calc_e(n,p,th);
-  cout << n.n << " " << p.n << " " 
-       << (th.ed/0.16-n.m)*hc_mev_fm << " "
-       << n.mu << " " << p.mu << endl;
-  cout << endl;
+  /*
+    cout << "Neutron-rich matter, alpha!=3." << endl;
+    n.n=0.12;
+    p.n=0.04;
+    s4e.alpha=2.0;
+    s4e.calc_e(n,p,th);
+    cout << n.n << " " << p.n << " " 
+    << (th.ed/0.16-n.m)*hc_mev_fm << " "
+    << n.mu << " " << p.mu << endl;
+    cout << endl;
+  */
 
   /// ----------------------------------------------------------------
   /// Check that we get the same threshold for URCA in both 
   /// APR and the new version with a sym4 object
   
-  cnx.set_n_and_p(nrn,nrp);
+  /*
+  cnx.set_n_and_p(n,p);
   cnx.set_eos(apr);
 
   double uden, uden2, nnu, npu;
@@ -1003,11 +1000,10 @@ int main(void) {
   uden2=cnx.allow_urca;
   t.test_rel(uden,uden2,1.0e-6,"urca density comparison");
   cout << "APR urca density (no muons): " << uden << endl;
+  */
 
   /// ----------------------------------------------------------------
 
-#endif
-  
   t.report();
   
   return 0;

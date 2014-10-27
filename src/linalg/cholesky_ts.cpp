@@ -81,7 +81,7 @@ int main(void) {
     gsl_linalg_cholesky_decomp(gm1);
     cholesky_decomp(5,om1);
       
-    t.test_rel_matgsl(5,5,om1,gm1,5.0e-12,"cholesky decomp");
+    t.test_rel_mat(5,5,om1,gsl_matrix_wrap(gm1),5.0e-12,"cholesky decomp");
       
     // Test solve 
 
@@ -104,7 +104,8 @@ int main(void) {
     gsl_linalg_cholesky_solve(gm1,gv2,gv1);
     gsl_blas_dgemv(CblasTrans,1.0,gm2,gv1,0.0,gv3);
 
-    t.test_rel_arrgslgsl(5,gv2,gv3,1.0e-10,"solve 1");
+    t.test_rel_vec(5,gsl_vector_wrap(gv2),
+		   gsl_vector_wrap(gv3),1.0e-10,"solve 1");
     
     // -------------------------------------------------
 
@@ -112,7 +113,7 @@ int main(void) {
     cholesky_solve(5,om1,ov2,ov1);
     dgemv(o2cblas_RowMajor,o2cblas_NoTrans,5,5,1.0,om2,ov1,0.0,ov3);
 
-    t.test_rel_arr(5,ov2,ov3,1.0e-10,"solve 2");
+    t.test_rel_vec(5,ov2,ov3,1.0e-10,"solve 2");
 
     // -------------------------------------------------
 
@@ -133,7 +134,7 @@ int main(void) {
     cholesky_decomp(5,om1);
     cholesky_invert<ubmatrix>(5,om1);
     
-    t.test_rel_matgsl(5,5,om1,gm1,5.0e-12,"cholesky invert 1");
+    t.test_rel_mat(5,5,om1,gsl_matrix_wrap(gm1),5.0e-12,"cholesky invert 1");
 
   }
 

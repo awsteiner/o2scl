@@ -39,12 +39,9 @@
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
 #endif
-
+  
   /** \brief A class to manage testing and record success and failure
-
-      \future test_mgr::success and test_mgr::last_fail should be protected,
-      but that breaks the operator+() function. Can this be fixed?
-  */
+   */
   class test_mgr {
 
   protected:
@@ -60,25 +57,52 @@ namespace o2scl {
     /// A helper function for processing tests
     void process_test(bool ret, std::string d2, std::string description);
 
+    /// True if all tests have passed
+    bool success;
+
+    /// The description of the last failed test
+    std::string last_fail;
+
 #endif
   
   public:
 
-    test_mgr() {
-      success=true; 
-      ntests=0; 
-      output_level=1;
+    /// Create a \ref test_mgr object
+    test_mgr(bool success_l=true, std::string last_fail_l="", 
+	     int ntests_l=0, int output_level_l=1) {
+      success=success_l;
+      last_fail=last_fail_l;
+      ntests=ntests_l;
+      output_level=output_level_l;
     }
 
     /** \brief Provide a report of all tests so far.
 
-	Returns true if all tests have passed and false if at least
-	one test failed.
+	This function reports on whether or not all tests have passed
+	according to the current output level. It returns true if all
+	tests have passed and false if at least one test failed.
     */
-    bool report();
+    bool report() const;
+
+    /// \name Individual get and set methods
+    //@{
+    /// Return true if all tests have succeeded
+    bool get_success() const {
+      return success;
+    }
+
+    /// Return the last failure description
+    std::string get_last_fail() const {
+      return last_fail;
+    }
+
+    /// Return the output level
+    int get_output_level() const {
+      return output_level;
+    }
 
     /// Returns the description of the last test that failed.
-    std::string get_last_fail() {return last_fail;};
+    std::string get_last_fail() { return last_fail; };
 
     /** \brief Set the output level
 
@@ -90,28 +114,90 @@ namespace o2scl {
     void set_output_level(int l) { output_level=l; };
 
     /// Return the number of tests performed so far
-    int get_ntests() {return ntests;};
+    int get_ntests() const { return ntests; };
+    //@}
 
-    /// \name The testing methods
-    ///@{
-
+    /// \name Main testing methods
+    //@{
     /** \brief Test for \f$|\mathrm{result}-\mathrm{expected}|/
 	\mathrm{expected}<\mathrm{rel\_error}\f$
     */
-    bool test_rel(double result, double expected, double rel_error,
-		  std::string description);
-
+    template<class data_t>
+      bool test_rel(data_t result, data_t expected, data_t rel_error,
+		    std::string description) {
+      bool ret;
+      if (std::isnan(expected)) {
+	ret=(std::isnan(expected)==std::isnan(result));
+	description=dtos(result)+" vs. "+ dtos(expected)+
+	  "\n "+description;
+      } else if (std::isinf(expected)) {
+	ret=(std::isinf(expected)==std::isinf(result));
+	description=dtos(result)+" vs. "+ dtos(expected)+
+	  "\n "+description;
+      } else if (expected==0.0) {
+	ret=test_abs(result,expected,rel_error,description);
+	return ret;
+      } else {
+	ret=((fabs(expected-result))/fabs(expected)<rel_error);	
+	description=dtos(result)+" vs. "+dtos(expected)+
+          " is "+dtos(fabs(expected-result)/fabs(expected))+
+    	  " > "+dtos(rel_error)+"\n "+description;
+      }
+      
+      process_test(ret,"relative",description);
+      return ret;
+    }
+    
     /** \brief Test for \f$|\mathrm{result}-\mathrm{expected}|/
 	<\mathrm{abs\_error}\f$
     */
-    bool test_abs(double result, double expected, double abs_error,
-		  std::string description);
+    template<class data_t>
+      bool test_abs(data_t result, data_t expected, data_t abs_error,
+		    std::string description) {
+      bool ret;
+      if (std::isnan(expected)) {
+	ret=(std::isnan(expected)==std::isnan(result));
+	description=dtos(result)+" vs. "+ dtos(expected)+
+	  "\n "+description;
+      } else if (std::isinf(expected)) {
+	ret=(std::isinf(expected)==std::isinf(result));
+	description=dtos(result)+" vs. "+ dtos(expected)+
+	  "\n "+description;
+      } else {
+	ret=(fabs(expected-result)<abs_error);
+	description=dtos(result)+" vs. "+ dtos(expected)+" is "
+	  +dtos(fabs(expected-result))+" > "+dtos(abs_error)+
+	  "\n "+description;
+      }
+  
+      process_test(ret,"absolute",description);
+
+      return ret;
+    }
 
     /** \brief  Test for \f$1/\mathrm{factor} < \mathrm{result/expected} 
 	< \mathrm{factor}\f$
     */
-    bool test_fact(double result, double expected, double factor,
-		   std::string description);
+    template<class data_t>
+      bool test_fact(data_t result, data_t expected, data_t factor,
+		     std::string description) {
+      bool ret;
+      double ratio;
+      if (std::isnan(expected)) {
+	ret=(std::isnan(expected)==std::isnan(result));
+      } else if (std::isinf(expected)) {
+	ret=(std::isinf(expected)==std::isinf(result));
+      } else {
+	ratio=expected/result;
+	ret=(ratio<factor && ratio>1.0/factor);
+      }
+
+      description= dtos(result)+" vs. "+ dtos(expected)+"\n "+
+	description;
+      process_test(ret,"factor",description);
+
+      return ret;
+    }
 
     /// Test for \f$\mathrm{result}=\mathrm{expected}\f$
     bool test_str(std::string result, std::string expected, 
@@ -119,14 +205,17 @@ namespace o2scl {
 
     /// Test for \f$\mathrm{result}=\mathrm{expected}\f$
     bool test_gen(bool value, std::string description);
+    //@}
 
+    /// \name Vector testing methods
+    //@{
     /** \brief Test for \f$|\mathrm{result}-\mathrm{expected}|/
 	\mathrm{expected}<\mathrm{rel\_error}\f$ over each element
 	of an array
     */
-    template<class vec_t, class vec2_t>
-      bool test_rel_arr(int nv, const vec_t &result, const vec2_t &expected, 
-			double rel_error, std::string description) {
+    template<class vec_t, class vec2_t, class data_t>
+      bool test_rel_vec(int nv, const vec_t &result, const vec2_t &expected, 
+			data_t rel_error, std::string description) {
       bool ret=true;
       double max=0.0;
       int i;
@@ -158,239 +247,86 @@ namespace o2scl {
     }
 
     /** \brief Test for \f$|\mathrm{result}-\mathrm{expected}|/
-	\mathrm{expected}<\mathrm{rel\_error}\f$ over each element
+	<\mathrm{abs\_error}\f$ over each element
 	of an array
     */
-    bool test_rel_arrgslgsl(int nv, gsl_vector *result, gsl_vector *expected, 
-			 double rel_error, std::string description) {
+    template<class vec_t, class vec2_t, class data_t>
+      bool test_abs_vec(int nv, const vec_t &result, const vec2_t &expected, 
+			data_t abs_error, std::string description) {
       bool ret=true;
-      double max=0.0;
       int i;
-      
+  
       for(i=0;i<nv;i++) {
-	if (o2scl::is_nan(gsl_vector_get(expected,i))) {
-	  ret=(ret && (o2scl::is_nan(gsl_vector_get(expected,i))==
-		       o2scl::is_nan(gsl_vector_get(result,i))));
-	} else if (o2scl::is_inf(gsl_vector_get(expected,i))) {
-	  ret=(ret && (o2scl::is_inf(gsl_vector_get(expected,i))==
-		       o2scl::is_inf(gsl_vector_get(result,i))));
-	} else if (gsl_vector_get(expected,i)==0.0) {
-	  ret=(ret && test_abs(gsl_vector_get(result,i),
-			       gsl_vector_get(expected,i),
-			       rel_error,description));
-	  if (fabs(gsl_vector_get(result,i)-
-		   gsl_vector_get(expected,i))>max) {
-	    max=fabs(gsl_vector_get(result,i)-gsl_vector_get(expected,i));
-	  }
+	if (o2scl::is_nan(expected[i])) {
+	  ret=(ret && (o2scl::is_nan(expected[i])==o2scl::is_nan(result[i])));
+	} else if (o2scl::is_inf(expected[i])) {
+	  ret=(ret && (o2scl::is_inf(expected[i])==o2scl::is_inf(result[i])));
 	} else {
-	  ret=(ret && ((fabs(gsl_vector_get(expected,i)-
-			     gsl_vector_get(result,i)))/
-		       fabs(gsl_vector_get(expected,i))<rel_error));
-	  if (fabs(gsl_vector_get(expected,i)-
-		   gsl_vector_get(result,i))/
-	      fabs(gsl_vector_get(expected,i))>max) {
-	    max=fabs(gsl_vector_get(expected,i)-
-		     gsl_vector_get(result,i))/
-	      fabs(gsl_vector_get(expected,i));
-	  }
+	  ret=(ret && (fabs(expected[i]-result[i])<abs_error));
 	}
       }
-      
-      description=((std::string)"max=")+o2scl::dtos(max)+
-	"\n "+description;
-      process_test(ret,"relative array",description);
-      
+  
+      description="\n "+description;
+      process_test(ret,"absolute array",description);
+  
       return ret;
-      
+    }
+
+    /** \brief Test for \f$ 1/factor < result/expected < factor \f$ 
+	over each element of an array
+    */
+    template<class vec_t, class vec2_t, class data_t>
+      bool test_fact_vec(int nv, const vec_t &result, const vec2_t &expected, 
+			 data_t factor, std::string description) {
+      bool ret=true;
+      int i;
+      double ratio;
+  
+      for(i=0;i<nv;i++) {
+	if (o2scl::is_nan(expected[i])) {
+	  ret=(ret && (o2scl::is_nan(expected[i])==o2scl::is_nan(result[i])));
+	} else if (o2scl::is_inf(expected[i])) {
+	  ret=(ret && (o2scl::is_inf(expected[i])==o2scl::is_inf(result[i])));
+	} else {
+	  ratio=expected[i]/result[i];
+	  ret=(ret && (ratio<factor && ratio>1.0/factor));
+	}
+      }
+  
+      description="\n "+description;
+      process_test(ret,"factor array",description);
+  
+      return ret;
     }
     
-    /** \brief Test for \f$|\mathrm{result}-\mathrm{expected}|/
-	\mathrm{expected}<\mathrm{rel\_error}\f$ over each element
-	of an array
-    */
+    /// Test for equality of a generic array
     template<class vec_t>
-      bool test_rel_arrgsl(int nv, const vec_t &result, gsl_vector *expected, 
-			   double rel_error, std::string description) {
+      bool test_gen_vec(int nv, const vec_t &result, const vec_t &expected, 
+			std::string description) {
       bool ret=true;
-      double max=0.0;
       int i;
       
       for(i=0;i<nv;i++) {
-	if (o2scl::is_nan(gsl_vector_get(expected,i))) {
-	  ret=(ret && (o2scl::is_nan(gsl_vector_get(expected,i))==
-		       o2scl::is_nan(result[i])));
-	} else if (o2scl::is_inf(gsl_vector_get(expected,i))) {
-	  ret=(ret && (o2scl::is_inf(gsl_vector_get(expected,i))==
-		       o2scl::is_inf(result[i])));
-	} else if (gsl_vector_get(expected,i)==0.0) {
-	  ret=(ret && test_abs(result[i],gsl_vector_get(expected,i),
-			       rel_error,description));
-	  if (fabs(result[i]-gsl_vector_get(expected,i))>max) {
-	    max=fabs(result[i]-gsl_vector_get(expected,i));
-	  }
-	} else {
-	  ret=(ret && ((fabs(gsl_vector_get(expected,i)-result[i]))/
-		       fabs(gsl_vector_get(expected,i))<rel_error));
-	  if (fabs(gsl_vector_get(expected,i)-result[i])/
-	      fabs(gsl_vector_get(expected,i))>max) {
-	    max=fabs(gsl_vector_get(expected,i)-result[i])/
-	      fabs(gsl_vector_get(expected,i));
-	  }
-	}
+	ret=(ret && (result[i]==expected[i]));
       }
       
-      description=((std::string)"max=")+o2scl::dtos(max)+
-	"\n "+description;
-      process_test(ret,"relative array",description);
+      description="\n "+description;
+      process_test(ret,"generic array",description);
       
       return ret;
-      
     }
-    
-    /** \brief Test for \f$|\mathrm{result}-\mathrm{expected}|/
-	\mathrm{expected}<\mathrm{rel\_error}\f$ over each element
-	of an array
-    */
-    bool test_rel_matgslgsl(int nr, int nc, gsl_matrix *result, 
-			      gsl_matrix *expected, 
-			      double rel_error, std::string description) {
-      bool ret=true;
-      double max=0.0;
-      int i, j;
-      
-      for(i=0;i<nr;i++) {
-	for(j=0;j<nc;j++) {
-	  if (o2scl::is_nan(gsl_matrix_get(expected,i,j))) {
-	    ret=(ret && (o2scl::is_nan(gsl_matrix_get(expected,i,j))==
-			 o2scl::is_nan(gsl_matrix_get(result,i,j))));
-	  } else if (o2scl::is_inf(gsl_matrix_get(expected,i,j))) {
-	    ret=(ret && (o2scl::is_inf(gsl_matrix_get(expected,i,j))==
-			 o2scl::is_inf(gsl_matrix_get(result,i,j))));
-	  } else if (gsl_matrix_get(expected,i,j)==0.0) {
-	    ret=(ret && test_abs(gsl_matrix_get(result,i,j),
-				 gsl_matrix_get(expected,i,j),rel_error,
-				 description));
-	    if (fabs(gsl_matrix_get(result,i,j)-
-		     gsl_matrix_get(expected,i,j))>max) {
-	      max=fabs(gsl_matrix_get(result,i,j)-
-		       gsl_matrix_get(expected,i,j));
-	    }
-	  } else {
-	    ret=(ret && ((fabs(gsl_matrix_get(expected,i,j)-
-			       gsl_matrix_get(result,i,j)))/
-			 fabs(gsl_matrix_get(expected,i,j))<rel_error));
-	    if (fabs(gsl_matrix_get(expected,i,j)-
-		     gsl_matrix_get(result,i,j))/
-		fabs(gsl_matrix_get(expected,i,j))>max) {
-	      max=fabs(gsl_matrix_get(expected,i,j)-
-		       gsl_matrix_get(result,i,j))/
-		fabs(gsl_matrix_get(expected,i,j));
-	    }
-	  }
-	}
-      }
-      
-      description=((std::string)"max=")+o2scl::dtos(max)+
-	"\n "+description;
-      process_test(ret,"relative matrix",description);
-      
-      return ret;
-      
-    }
-    
-    /** \brief Test for \f$|\mathrm{result}-\mathrm{expected}|/
-	\mathrm{expected}<\mathrm{rel\_error}\f$ over each element
-	of an array
-    */
-    template<class mat_t>
-      bool test_rel_matgsl(int nr, int nc, const mat_t &result, 
-			   gsl_matrix *expected, 
-			   double rel_error, std::string description) {
-      bool ret=true;
-      double max=0.0;
-      int i, j;
-  
-      for(i=0;i<nr;i++) {
-	for(j=0;j<nc;j++) {
-	  if (o2scl::is_nan(gsl_matrix_get(expected,i,j))) {
-	    ret=(ret && (o2scl::is_nan(gsl_matrix_get(expected,i,j))==
-			 o2scl::is_nan(result(i,j))));
-	  } else if (o2scl::is_inf(gsl_matrix_get(expected,i,j))) {
-	    ret=(ret && (o2scl::is_inf(gsl_matrix_get(expected,i,j))==
-			 o2scl::is_inf(result(i,j))));
-	  } else if (gsl_matrix_get(expected,i,j)==0.0) {
-	    ret=(ret && test_abs(result(i,j),
-				 gsl_matrix_get(expected,i,j),rel_error,
-				 description));
-	    if (fabs(result(i,j)-gsl_matrix_get(expected,i,j))>max) {
-	      max=fabs(result(i,j)-gsl_matrix_get(expected,i,j));
-	    }
-	  } else {
-	    ret=(ret && ((fabs(gsl_matrix_get(expected,i,j)-result(i,j)))/
-			 fabs(gsl_matrix_get(expected,i,j))<rel_error));
-	    if (fabs(gsl_matrix_get(expected,i,j)-
-		     result(i,j))/fabs(gsl_matrix_get(expected,i,j))>max) {
-	      max=fabs(gsl_matrix_get(expected,i,j)-
-		       result(i,j))/fabs(gsl_matrix_get(expected,i,j));
-	    }
-	  }
-	}
-      }
-      
-      description=((std::string)"max=")+o2scl::dtos(max)+
-	"\n "+description;
-      process_test(ret,"relative matrix",description);
-      
-      return ret;
-      
-    }
+    //@}
 
-    /** \brief Test for \f$|\mathrm{result}-\mathrm{expected}|
-	<\mathrm{rel\_error}\f$ over each element
-	of an array
-    */
-    template<class mat_t>
-      bool test_abs_matgsl(int nr, int nc, const mat_t &result, 
-			   gsl_matrix *expected, 
-			   double rel_error, std::string description) {
-      bool ret=true;
-      double max=0.0;
-      int i, j;
-  
-      for(i=0;i<nr;i++) {
-	for(j=0;j<nc;j++) {
-	  if (o2scl::is_nan(gsl_matrix_get(expected,i,j))) {
-	    ret=(ret && (o2scl::is_nan(gsl_matrix_get(expected,i,j))==
-			 o2scl::is_nan(result(i,j))));
-	  } else if (o2scl::is_inf(gsl_matrix_get(expected,i,j))) {
-	    ret=(ret && (o2scl::is_inf(gsl_matrix_get(expected,i,j))==
-			 o2scl::is_inf(result(i,j))));
-	  } else {
-	    ret=(ret && ((fabs(gsl_matrix_get(expected,i,j)-result(i,j)))
-			 <rel_error));
-	    if (fabs(gsl_matrix_get(expected,i,j)-result(i,j))>max) {
-	      max=fabs(gsl_matrix_get(expected,i,j)-result(i,j));
-	    }
-	  }
-	}
-      }
-      
-      description=((std::string)"max=")+o2scl::dtos(max)+
-	"\n "+description;
-      process_test(ret,"relative matrix",description);
-      
-      return ret;
-      
-    }
-
+    /// \name Matrix testing methods
+    //@{
     /** \brief Test for \f$|\mathrm{result}-\mathrm{expected}|/
 	\mathrm{expected}<\mathrm{rel\_error}\f$ over each element
 	of an array
     */
-    template<class mat_t, class mat2_t>
+    template<class mat_t, class mat2_t, class data_t>
       bool test_rel_mat(int nr, int nc, const mat_t &result, 
 			const mat2_t &expected, 
-			double rel_error, std::string description) {
+			data_t rel_error, std::string description) {
       bool ret=true;
       double max=0.0;
       int i, j;
@@ -427,86 +363,60 @@ namespace o2scl {
       
     }
     
-    /** \brief Test for \f$|\mathrm{result}-\mathrm{expected}|/
-	<\mathrm{abs\_error}\f$ over each element
-	of an array
+    /** \brief Test for \f$|\mathrm{result}-\mathrm{expected}| <
+	\mathrm{abs\_error} \f$ over each element in a matrix
     */
-    template<class vec_t, class vec2_t>
-      bool test_abs_arr(int nv, const vec_t &result, const vec2_t &expected, 
-			double rel_error, std::string description) {
-      bool ret=true;
-      int i;
-  
-      for(i=0;i<nv;i++) {
-	if (o2scl::is_nan(expected[i])) {
-	  ret=(ret && (o2scl::is_nan(expected[i])==o2scl::is_nan(result[i])));
-	} else if (o2scl::is_inf(expected[i])) {
-	  ret=(ret && (o2scl::is_inf(expected[i])==o2scl::is_inf(result[i])));
-	} else {
-	  ret=(ret && (fabs(expected[i]-result[i])<rel_error));
-	}
-      }
-  
-      description="\n "+description;
-      process_test(ret,"absolute array",description);
-  
-      return ret;
-    }
-
-    /** \brief Test for \f$ 1/factor < result/expected < factor \f$ 
-	over each element of an array
-    */
-    template<class vec_t, class vec2_t>
-      bool test_fact_arr(int nv, const vec_t &result, const vec2_t &expected, 
-			 double factor, std::string description) {
-      bool ret=true;
-      int i;
-      double ratio;
-  
-      for(i=0;i<nv;i++) {
-	if (o2scl::is_nan(expected[i])) {
-	  ret=(ret && (o2scl::is_nan(expected[i])==o2scl::is_nan(result[i])));
-	} else if (o2scl::is_inf(expected[i])) {
-	  ret=(ret && (o2scl::is_inf(expected[i])==o2scl::is_inf(result[i])));
-	} else {
-	  ratio=expected[i]/result[i];
-	  ret=(ret && (ratio<factor && ratio>1.0/factor));
-	}
-      }
-  
-      description="\n "+description;
-      process_test(ret,"factor array",description);
-  
-      return ret;
-    }
-    
-    /// Test for equality of a generic array
-    template<class vec_t>
-      bool test_gen_arr(int nv, const vec_t &result, const vec_t &expected, 
+    template<class mat_t, class mat2_t, class data_t>
+      bool test_abs_mat(int nr, int nc, const mat_t &result, 
+			const mat2_t &expected, data_t abs_error, 
 			std::string description) {
+			
       bool ret=true;
-      int i;
+      double max=0.0;
+      int i, j;
       
-      for(i=0;i<nv;i++) {
-	ret=(ret && (result[i]==expected[i]));
+      for(i=0;i<nr;i++) {
+	for(j=0;j<nc;j++) {
+	  if (o2scl::is_nan(expected(i,j))) {
+	    ret=(ret && (o2scl::is_nan(expected(i,j))==
+			 o2scl::is_nan(result(i,j))));
+	  } else if (o2scl::is_inf(expected(i,j))) {
+	    ret=(ret && (o2scl::is_inf(expected(i,j))==
+			 o2scl::is_inf(result(i,j))));
+	  } else if (expected(i,j)==0.0) {
+	    ret=(ret && test_abs(result(i,j),expected(i,j),abs_error,
+				 description));
+	    if (fabs(result(i,j)-expected(i,j))>max) {
+	      max=fabs(result(i,j)-expected(i,j));
+	    }
+	  } else {
+	    ret=(ret && ((fabs(expected(i,j)-result(i,j)))<abs_error));
+	    if (fabs(expected(i,j)-result(i,j))>max) {
+	      max=fabs(expected(i,j)-result(i,j));
+	    }
+	  }
+	}
       }
       
-      description="\n "+description;
-      process_test(ret,"generic array",description);
+      description=((std::string)"max=")+o2scl::dtos(max)+
+	"\n "+description;
+      process_test(ret,"absolute matrix",description);
       
       return ret;
+      
     }
-    ///@}
+    //@}
 
-    /// Add two test_mgr objects (if either failed, the sum fails)
+    /** \brief Add two test_mgr objects (if either failed, the sum fails)
+
+	The output level is set to the maximum value of left and
+	right operand and the number of tests is set equal to
+	the sum. The last failure descriptions of both operands
+	are appended with a <tt>operator+()</tt> prefix, or blank
+	if there were no failures from either. 
+    */
     friend const test_mgr operator+(const test_mgr& left, 
 				    const test_mgr& right);
-
-    /// True if all tests have passed
-    bool success;
-
-    /// The description of the last failed test
-    std::string last_fail;
 
   };
 

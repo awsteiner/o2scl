@@ -123,7 +123,7 @@ int main(void) {
     gsl_vector_free(gx);
   }
 
-  t.test_rel_arr(resid_test.size(),resid_test,resid_test2,1.0e-10,
+  t.test_rel_vec(resid_test.size(),resid_test,resid_test2,1.0e-10,
 		 "GSL vs. O2scl");
 
 #ifdef NEVER_DEFINED
@@ -262,7 +262,7 @@ int main(void) {
     gsl_vector_free(gx);
   }
   
-  t.test_rel_arr(resid_test.size(),resid_test,resid_test2,1.0e-2,
+  t.test_rel_vec(resid_test.size(),resid_test,resid_test2,1.0e-2,
 		 "GSL vs. O2scl");
 
 #endif

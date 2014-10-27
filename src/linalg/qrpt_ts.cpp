@@ -79,12 +79,12 @@ int main(void) {
       
       gsl_linalg_QRPT_decomp(gm1,gv1,gp1,&gsig,gv2);
       QRPT_decomp(5,5,om1,ov1,op1,osig,ov2);
-      t.test_rel_matgsl(5,5,om1,gm1,1.0e-11,"qrpt decomp 1");
-      t.test_rel_arrgsl(5,ov1,gv1,1.0e-11,"qrpt decomp 2");
+      t.test_rel_mat(5,5,om1,gsl_matrix_wrap(gm1),1.0e-11,"qrpt decomp 1");
+      t.test_rel_vec(5,ov1,gsl_vector_wrap(gv1),1.0e-11,"qrpt decomp 2");
       // We decrease the accuracy to 10^{-6} here because the last
       // element is six orders of magnitude smaller than the first,
       // and thus easily susceptible to precision problems.
-      t.test_rel_arrgsl(5,ov2,gv2,5.0e-6,"qrpt decomp 3");
+      t.test_rel_vec(5,ov2,gsl_vector_wrap(gv2),5.0e-6,"qrpt decomp 3");
 
     }
 
