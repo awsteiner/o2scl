@@ -186,7 +186,7 @@ int poly_real_coeff_gsl::solve_rc
   double a[5]={e4,d4,c4,b4,a4};
   double z[8];
   complex<double> i(0.0,1.0);
-  
+
   gsl_poly_complex_solve(a,5,w4,z);
   
   r1=z[0]+i*z[1];

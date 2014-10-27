@@ -105,7 +105,9 @@ namespace o2scl {
       An example demonstrating the usage of this class is given in
       <tt>examples/ex_deriv.cpp</tt> and the \ref ex_deriv_sect .
 
-      \future Include the forward and backward GSL derivatives?
+      \future Include the forward and backward GSL derivatives. 
+      These would be useful for EOS classes which run in to 
+      trouble for negative densities.
   */
   template<class func_t=funct11> class deriv_gsl : 
   public deriv_base<func_t> {

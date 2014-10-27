@@ -306,6 +306,12 @@ namespace o2scl {
       or the "symmetry entropy"
       \future Compute the speed of sound or the number susceptibilities?
       \future Compute isoscalar and isovector effective masses
+      \future A lot of the numerical derivatives here might possibly
+      request negative number densities for the nucleons, which 
+      may cause exceptions, espescially at very low densities. 
+      Since the default EOS objects are GSL derivatives, one can
+      get around these issues by setting the GSL derivative object
+      step size, but this is a temporary solution.
   */
   class eos_had_base : public eos_base {
 
