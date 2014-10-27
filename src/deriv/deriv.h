@@ -38,8 +38,8 @@ namespace o2scl {
   /** \brief Numerical differentiation base [abstract base]
       
       This base class does not perform any actual differentiation.
-      Use one of the children cern_deriv, gsl_deriv, or eqi_deriv
-      instead.
+      Use one of the children \ref o2scl::deriv_cern, \ref o2scl::deriv_gsl, 
+      or \ref o2scl::deriv_eqi instead. 
 
       This base class contains some code to automatically apply
       the first derivative routines to compute second or third
