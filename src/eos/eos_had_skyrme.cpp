@@ -571,18 +571,6 @@ void eos_had_skyrme::alt_params_saturation
   double Crr1D=(-27.0*a+9.0*L+5.0*(h2o2m-2.0*n0*(Crt0+3.0*Crt1))*
 		tau_c)/(27.0*gamma*pow(n0,1.0+gamma));
   
-  cout << "gamma: " << gamma << endl;
-  cout << "Crr00: " << Crr00*hc_mev_fm << endl;
-  cout << "Crr0D: " << Crr0D*hc_mev_fm << endl;
-  cout << "Crt0: " << Crt0*hc_mev_fm << endl;
-  cout << "Crt1: " << Crt1*hc_mev_fm << endl;
-  cout << "Crr10: " << Crr10*hc_mev_fm << endl;
-  cout << "Crr1D: " << Crr1D*hc_mev_fm << endl;
-  cout << "CrDr0: " << CrDr0*hc_mev_fm << endl;
-  cout << "CrDr1: " << CrDr1*hc_mev_fm << endl;
-  cout << "CrnJ0: " << CrnJ0*hc_mev_fm << endl;
-  cout << "CrnJ1: " << CrnJ1*hc_mev_fm << endl;
-
   alt_params_set(Crr00,Crr10,Crr0D,Crr1D,Crt0,Crt1,CrDr0,CrDr1,
 		 CrnJ0,CrnJ1,alpha2);
 

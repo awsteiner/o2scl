@@ -468,15 +468,17 @@ namespace o2scl {
     */
     virtual double fmsom(double nb, double delta=0.0);
 
-    /** \brief Neutron effective mass
+    /** \brief Neutron (reduced) effective mass
      */
     virtual double f_effm_neut(double nb, double delta=0.0);
-    /** \brief Proton effective mass
+    /** \brief Proton (reduced) effective mass
      */
     virtual double f_effm_prot(double nb, double delta=0.0);
     /** \brief Scalar effective mass
 
-	The scalar and vector effective masses are defined by
+	Given the reduced nucleon effective masses, \f$ m_n^{*} \f$
+	and \f$ m_p^{*} \f$, the scalar and vector effective masses
+	are defined by (see e.g. \ref Farine01)
 	\f[
 	\frac{1}{m^{*}_n} = (1+\delta) \frac{1}{m^{*}_s} - 
 	\delta \frac{1}{m^{*}_v}
@@ -487,20 +489,28 @@ namespace o2scl {
 	\f]
 	this implies
 	\f[
-	\frac{1}{m^{*}_s} = \frac{1}{2} \frac{1}{m^{*}_n}+
-	\frac{1}{2} \frac{1}{m^{*}_p}
+	m_{\mathrm{scalar}}^{*} = 
+	\frac{2 m^{*}_n m^{*}_p}{m^{*}_n+m^{*}_p}
 	\f]
+	and 
 	\f[
-	\frac{1}{m^{*}_v} = \frac{\delta-1}{2 \delta} \frac{1}{m^{*}_n}+
-	\frac{1+\delta}{2 \delta} \frac{1}{m^{*}_p}
+	m_{\mathrm{vector}}^{*} = 
+	\frac{2 m^{*}_n m^{*}_p \delta}{m^{*}_n - m^{*}_p
+	+ \delta(m^{*}_n + m^{*}_p)}
 	\f]
     */
     virtual double f_effm_scalar(double nb, double delta=0.0);
     /** \brief Vector effective mass
 	
 	See documentation for \ref eos_had_base::f_effm_scalar().
+
+	Note that the vector effective mass diverges when \f$ m^{*}_n
+	= m^{*}_p \f$ and \f$ \delta = 0 \f$, but many models have
+	vector effective masses which are independent of \f$ \delta
+	\f$. For now, we set \f$ \delta =1 \f$ to be the default
+	value, corresponding to neutron matter. 
      */
-    virtual double f_effm_vector(double nb, double delta=0.0);
+    virtual double f_effm_vector(double nb, double delta=1.0);
 
     /** \brief Calculate saturation density using calc_e()
 

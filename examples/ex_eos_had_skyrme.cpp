@@ -578,7 +578,11 @@ public:
 
     test_mgr t;
     t.set_output_level(2);
-    
+
+    /*
+      These copulings are in the supplemental material
+      for Kortelainen et al. PRC 89 (2014)
+     */
     double coups[13][3]={
       {-706.382928878428856,-779.3730087208653,-650.796319465688839},
       {240.049520427681131,287.722131583286796,291.664014339185485},
@@ -596,7 +600,7 @@ public:
     };
 
     /*
-      UNEDF0 and UNEDF1 from Kort et al. PRC 85 (2012) 024304
+      UNEDF0 and UNEDF1 from Kortelainen et al. PRC 85 (2012) 024304
       t0 −1883.68781034 −2078.32802326
       t1 277.50021224 239.40081204
       t2 608.43090559 1575.11954190
@@ -634,7 +638,10 @@ public:
       cout << sk.x3 << endl;
       cout << sk.b4*hc_mev_fm << endl;
       cout << sk.b4p*hc_mev_fm << endl;
+      cout << endl;
 
+      sk.def_neutron.m=hc_mev_fm/20.73553/2.0;
+      sk.def_proton.m=hc_mev_fm/20.73553/2.0;
       sk.alt_params_saturation
 	(0.160526,-16.0559/hc_mev_fm,230.0/hc_mev_fm,1.0/0.9,
 	 30.5429/hc_mev_fm,45.0804/hc_mev_fm,1.0/1.249838,coups[7][i],
@@ -645,7 +652,12 @@ public:
       cout << sk.eoa*hc_mev_fm << endl;
       cout << sk.comp*hc_mev_fm << endl;
       cout << sk.esym*hc_mev_fm << endl;
-      cout << 1.0/sk.msom << endl;
+      cout << endl;
+      cout << sk.f_effm_neut(sk.n0) << endl;
+      cout << sk.f_effm_prot(sk.n0) << endl;
+      cout << 1.0/sk.f_effm_scalar(sk.n0) << endl;
+      cout << 1.0/sk.f_effm_vector(sk.n0) << endl;
+      cout << endl;
       cout << sk.fesym_slope(sk.n0)*hc_mev_fm << endl;
       exit(-1);
 

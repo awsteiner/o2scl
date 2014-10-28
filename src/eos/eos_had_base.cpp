@@ -233,7 +233,7 @@ double eos_had_base::f_effm_neut(double nb, double delta) {
 
   calc_e(*neutron,*proton,*eos_thermo);
 
-  return neutron->ms;
+  return neutron->ms/neutron->m;
 }
 
 double eos_had_base::f_effm_prot(double nb, double delta) {
@@ -243,7 +243,7 @@ double eos_had_base::f_effm_prot(double nb, double delta) {
 
   calc_e(*neutron,*proton,*eos_thermo);
 
-  return proton->ms;
+  return proton->ms/proton->m;
 }
 
 double eos_had_base::f_effm_scalar(double nb, double delta) {
@@ -253,10 +253,10 @@ double eos_had_base::f_effm_scalar(double nb, double delta) {
 
   calc_e(*neutron,*proton,*eos_thermo);
 
-  double imn=1.0/neutron->ms;
-  double imp=1.0/proton->ms;
-
-  return 2.0/(imn+imp);
+  double mn=neutron->ms/neutron->m;
+  double mp=proton->ms/proton->m;
+  
+  return 2.0*mn*mp/(mn+mp);
 }
 
 double eos_had_base::f_effm_vector(double nb, double delta) {
@@ -266,10 +266,10 @@ double eos_had_base::f_effm_vector(double nb, double delta) {
 
   calc_e(*neutron,*proton,*eos_thermo);
 
-  double imn=1.0/neutron->ms;
-  double imp=1.0/proton->ms;
+  double mn=neutron->ms/neutron->m;
+  double mp=proton->ms/proton->m;
   
-  return 2.0*delta/((delta-1.0)*imn+(delta+1.0)*imp);
+  return 2.0*mn*mp*delta/((mn+mp)*delta+mn-mp);
 }
 
 double eos_had_base::fn0(double delta, double &leoa) {
