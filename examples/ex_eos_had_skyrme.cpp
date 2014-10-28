@@ -635,12 +635,18 @@ public:
       cout << sk.b4*hc_mev_fm << endl;
       cout << sk.b4p*hc_mev_fm << endl;
 
-      sk.alt_params_saturation(0.16053,-16.056/hc_mev_fm,
-			       230.0/hc_mev_fm,0.9,1.0,30.543/hc_mev_fm,
-			       45.080/hc_mev_fm,coups[7][i],coups[8][i],
-			       coups[9][i],coups[10][i],coups[6][i]);
+      sk.alt_params_saturation
+	(0.160526,-16.0559/hc_mev_fm,230.0/hc_mev_fm,1.0/0.9,
+	 30.5429/hc_mev_fm,45.0804/hc_mev_fm,1.0/1.249838,coups[7][i],
+	 coups[8][i],coups[9][i],coups[10][i],coups[6][i]);
+	 
       sk.saturation();
       cout << sk.n0 << endl;
+      cout << sk.eoa*hc_mev_fm << endl;
+      cout << sk.comp*hc_mev_fm << endl;
+      cout << sk.esym*hc_mev_fm << endl;
+      cout << 1.0/sk.msom << endl;
+      cout << sk.fesym_slope(sk.n0)*hc_mev_fm << endl;
       exit(-1);
 
       sk.saturation();
