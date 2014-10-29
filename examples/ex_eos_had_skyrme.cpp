@@ -601,16 +601,16 @@ public:
 
     /*
       UNEDF0 and UNEDF1 from Kortelainen et al. PRC 85 (2012) 024304
-      t0 −1883.68781034 −2078.32802326
+      t0 -1883.68781034 -2078.32802326
       t1 277.50021224 239.40081204
       t2 608.43090559 1575.11954190
       t3 13901.94834463 14263.64624708
       x0 0.00974375 0.05375692
-      x1 −1.77784395 −5.07723238
-      x2 −1.67699035 −1.36650561
-      x3 −0.38079041 −0.16249117
+      x1 -1.77784395 -5.07723238
+      x2 -1.67699035 -1.36650561
+      x3 -0.38079041 -0.16249117
       b4 125.16100000 38.36807206
-      b4p −91.2604000 71.31652223
+      b4p -91.2604000 71.31652223
     */
     
     // Why is this necessary?
@@ -645,7 +645,7 @@ public:
       sk.alt_params_saturation
 	(0.160526,-16.0559/hc_mev_fm,230.0/hc_mev_fm,1.0/0.9,
 	 30.5429/hc_mev_fm,45.0804/hc_mev_fm,1.0/1.249838,coups[7][i],
-	 coups[8][i],coups[9][i],coups[10][i],coups[6][i]);
+	 coups[8][i],coups[9][i],coups[10][i]);
 	 
       sk.saturation();
       cout << sk.n0 << endl;
@@ -659,6 +659,7 @@ public:
       cout << 1.0/sk.f_effm_vector(sk.n0) << endl;
       cout << endl;
       cout << sk.fesym_slope(sk.n0)*hc_mev_fm << endl;
+      cout << sk.alpha << endl;
       exit(-1);
 
       sk.saturation();
