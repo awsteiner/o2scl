@@ -310,8 +310,8 @@ int main(void) {
     fit_funct11_strings<> ffs("a*exp(x)+b*sqrt(x)","a,b","x");
     chi_fit_funct<ubvector,ubmatrix,fit_funct11_strings<> > 
       cff(ndat,xdat,ydat,yerr,ffs);
-    cff.auto_jac.epsrel=1.0e-4;
-
+    cff.auto_jac.set_epsrel(1.0e-4);
+    
     parms[0]=2.0;
     parms[1]=-0.5;
   

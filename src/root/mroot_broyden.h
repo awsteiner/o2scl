@@ -152,7 +152,7 @@ namespace o2scl {
     mroot_broyden() {
       mem_size=0;
       ajac=&def_jac;
-      def_jac.epsrel=sqrt(std::numeric_limits<double>::epsilon());
+      def_jac.set_epsrel(sqrt(std::numeric_limits<double>::epsilon()));
     }
     
     /// Default Jacobian object

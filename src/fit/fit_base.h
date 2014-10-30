@@ -242,10 +242,9 @@ namespace o2scl {
 		  std::placeholders::_1,std::placeholders::_2,
 		  std::placeholders::_3);
 
-    //mfm.set_function(this,&chi_fit_funct::jac_mm_funct);
     auto_jac.set_function(mfm);
     double sqrt_dbl_eps=sqrt(std::numeric_limits<double>::epsilon());
-    auto_jac.epsrel=sqrt_dbl_eps;
+    auto_jac.set_epsrel(sqrt_dbl_eps);
   }
 
   /** \brief Set the data to be fit 

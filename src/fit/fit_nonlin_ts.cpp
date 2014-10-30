@@ -172,7 +172,8 @@ int main(void) {
   fit_funct11 fff=func;
   chi_fit_funct<> cff(40,axdat,ay,asigma,fff);
   //cff.auto_jac.epsrel=GSL_SQRT_DBL_EPSILON;
-  cff.auto_jac.epsrel=1.0e-4;
+  cff.auto_jac.set_epsrel(1.0e-4);
+  cff.auto_jac.set_epsmin(0.0);
 
   // Copy of GSL covariance matrix for testing
   gsl_matrix *covar1=gsl_matrix_alloc(3,3);

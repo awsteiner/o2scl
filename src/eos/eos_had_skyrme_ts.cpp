@@ -68,7 +68,7 @@ int main(void) {
   cout.setf(ios::scientific);
 
   test_mgr t;
-  t.set_output_level(1);
+  t.set_output_level(2);
   
   double n0, eoa2;
   eos_had_skyrme sk;
@@ -77,6 +77,8 @@ int main(void) {
   n.non_interacting=false;
   p.non_interacting=false;
   thermo th;
+
+  load_sly4(sk);
 
   // ------------------------------------------------------------
   // Use check_mu() to check chemical potentials
@@ -107,7 +109,6 @@ int main(void) {
 
   n.n=0.02;
   p.n=0.02;
-  load_sly4(sk);
 
   sk.calc_e(n,p,th);
   cout << n.mu << " " << p.mu << endl;

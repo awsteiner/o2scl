@@ -100,9 +100,10 @@ namespace o2scl {
   /** \brief Simple automatic Jacobian
 
       This class computes a numerical Jacobian by finite differencing.
-      The stepsize is chosen to be \f$ h_j = \mathrm{epsrel}~x_j \f$ or
-      \f$ h_j = \mathrm{epsrel} \f$ if \f$ \mathrm{epsrel}\times x_j <
-      \mathrm{epsmin} \f$.
+      The stepsize is initially chosen to be
+      \f$ h_j = \mathrm{max}(\mathrm{epsrel}~|x_j|,\mathrm{epsmin}) \f$.
+      Then if \f$ h_j = 0 \f$, the value of \f$ h_j \f$ is set to
+      \f$ \mathrm{epsrel}) \f$
       
       This is nearly equivalent to the GSL method for computing
       Jacobians as in \c multiroots/fdjac.c. To obtain the GSL
@@ -141,6 +142,13 @@ namespace o2scl {
   /// Size of allocated memory in y
   size_t mem_size_y;
 
+  /** \brief The relative stepsize for finite-differencing 
+  */
+  double epsrel;
+    
+  /// The minimum stepsize 
+  double epsmin;
+
 #endif
 
   public:
@@ -155,15 +163,37 @@ namespace o2scl {
 
   virtual ~jacobian_gsl() {
   }
-  
-  /** \brief The relative stepsize for finite-differencing 
-      (default \f$ 10^{-4} \f$ )
-  */
-  double epsrel;
-    
-  /// The minimum stepsize (default \f$ 10^{-15} \f$)
-  double epsmin;
 
+  /** \brief Get the relative stepsize (default \f$ 10^{-4} \f$ )
+   */
+  double get_epsrel() { return epsrel; }
+
+  /** \brief Get the minimum stepsize (default \f$ 10^{-15} \f$)
+   */
+  double get_epsmin() { return epsmin; }
+
+  /** \brief Set the relative stepsize (must be \f$ > 0 \f$)
+   */
+  void set_epsrel(double l_epsrel) {
+    if (l_epsrel<=0.0) {
+      O2SCL_ERR2("Negative or zero value specified in ",
+		 "jacobian_gsl::set_epsrel().",exc_einval);
+    }
+    epsrel=l_epsrel;
+    return;
+  }
+
+  /** \brief Set the minimum stepsize (must be \f$ \geq 0 \f$)
+   */
+  void set_epsmin(double l_epsmin) {
+    if (l_epsmin<0.0) {
+      O2SCL_ERR("Negative value specified in jacobian_gsl::set_epsmin().",
+		exc_einval);
+    }
+    epsmin=l_epsmin;
+    return;
+  }
+  
   /// If true, call the error handler if the routine does not "converge"
   bool err_nonconv;
 
@@ -186,9 +216,11 @@ namespace o2scl {
     vector_copy(nx,x,xx);
 
     for (j=0;j<nx;j++) {
-	
+
+      // Thanks to suggestion from Conrad Curry.
       h=epsrel*fabs(x[j]);
-      if (fabs(h)<=epsmin) h=epsrel;
+      if (h<=epsmin) h=epsmin;
+      if (h==0.0) h=epsrel;
       
       xx[j]=x[j]+h;
       (this->func)(nx,xx,f);
