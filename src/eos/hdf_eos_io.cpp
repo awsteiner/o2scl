@@ -148,7 +148,7 @@ void o2scl_hdf::skyrme_load(o2scl::eos_had_skyrme &sk, std::string model,
   } else {
     fname=dir+"/skdata/"+model+".o2";
   }
-  
+
   hdf_file hf;
   hf.open(fname);
 
@@ -202,6 +202,12 @@ void o2scl_hdf::skyrme_load(o2scl::eos_had_skyrme &sk, std::string model,
 }
 
 #ifdef O2SCL_NEVER_DEFINED
+
+/*
+  This is a draft of a new version designed to name the 
+  fields a bit more sensibly. It's not finished yet and
+  we need to redo the Skyrme model data files
+*/
 
 void o2scl_hdf::skyrme_load(hdf_file &hf, o2scl::eos_had_skyrme &sk, 
 			    std::string name) {
@@ -257,7 +263,8 @@ void o2scl_hdf::skyrme_write(o2scl::eos_had_skyrme &sk, std::string model) {
   
 void o2scl_hdf::skyrme_write(hdf_file &hf, o2scl::eos_had_skyrme &sk, 
 			    std::string name) {
-  
+
+  /*
   // Start group
   hid_t top=hf.get_current_id();
   hid_t group=hf.open_group(name);
@@ -265,12 +272,13 @@ void o2scl_hdf::skyrme_write(hdf_file &hf, o2scl::eos_had_skyrme &sk,
       
   // Add typename
   hf.sets_fixed("o2scl_type","eos_had_skyrme");
+  */
 
   // Write data
-  hf.setd("t0_hc",sk.t0*o2scl_const::hc_mev_fm);
-  hf.setd("t1_hc",sk.t1*o2scl_const::hc_mev_fm);
-  hf.setd("t2_hc",sk.t2*o2scl_const::hc_mev_fm);
-  hf.setd("t3_hc",sk.t3*o2scl_const::hc_mev_fm);
+  hf.setd("t0hc",sk.t0*o2scl_const::hc_mev_fm);
+  hf.setd("t1hc",sk.t1*o2scl_const::hc_mev_fm);
+  hf.setd("t2hc",sk.t2*o2scl_const::hc_mev_fm);
+  hf.setd("t3hc",sk.t3*o2scl_const::hc_mev_fm);
   hf.setd("x0",sk.x0);
   hf.setd("x1",sk.x1);
   hf.setd("x2",sk.x2);
@@ -280,15 +288,18 @@ void o2scl_hdf::skyrme_write(hdf_file &hf, o2scl::eos_had_skyrme &sk,
   hf.setd("alpha",sk.alpha);
   hf.setd("delta_n_hc",sk.W0*o2scl_const::hc_mev_fm);
   hf.setd("delta_p_hc",sk.W0*o2scl_const::hc_mev_fm);
-  hf.setd("b4_hc",sk.b4*o2scl_const::hc_mev_fm);
-  hf.setd("b4p_hc",sk.b4p*o2scl_const::hc_mev_fm);
+  hf.setd("b4",sk.b4);
+  hf.setd("b4p",sk.b4p);
+  hf.setd("W0hc",0.0);
   hf.sets("reference",sk.reference);
 
+  /*
   // Close eos_had_skyrme group
   hf.close_group(group);
-      
+  
   // Return location to previous value
   hf.set_current_id(top);
+  */
 
   return;
 }

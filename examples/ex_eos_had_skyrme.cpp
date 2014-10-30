@@ -613,9 +613,9 @@ public:
       b4p -91.2604000 71.31652223
     */
     
-    // Why is this necessary?
-    skyrme_load(sk,"SLy4");
-    
+    sk.def_neutron.m=hc_mev_fm/20.73553/2.0;
+    sk.def_proton.m=hc_mev_fm/20.73553/2.0;
+
     for(size_t i=0;i<3;i++) {
 
       // Convert to O2scl units
@@ -628,39 +628,53 @@ public:
       sk.alt_params_set(coups[0][i],coups[1][i],coups[2][i],coups[3][i],
 			coups[4][i],coups[5][i],coups[7][i],coups[8][i],
 			coups[9][i],coups[10][i],coups[6][i]);
-      cout << sk.t0*hc_mev_fm << endl;
-      cout << sk.t1*hc_mev_fm << endl;
-      cout << sk.t2*hc_mev_fm << endl;
-      cout << sk.t3*hc_mev_fm << endl;
-      cout << sk.x0 << endl;
-      cout << sk.x1 << endl;
-      cout << sk.x2 << endl;
-      cout << sk.x3 << endl;
-      cout << sk.b4*hc_mev_fm << endl;
-      cout << sk.b4p*hc_mev_fm << endl;
-      cout << endl;
 
-      sk.def_neutron.m=hc_mev_fm/20.73553/2.0;
-      sk.def_proton.m=hc_mev_fm/20.73553/2.0;
-      sk.alt_params_saturation
-	(0.160526,-16.0559/hc_mev_fm,230.0/hc_mev_fm,1.0/0.9,
-	 30.5429/hc_mev_fm,45.0804/hc_mev_fm,1.0/1.249838,coups[7][i],
-	 coups[8][i],coups[9][i],coups[10][i]);
-	 
-      sk.saturation();
-      cout << sk.n0 << endl;
-      cout << sk.eoa*hc_mev_fm << endl;
-      cout << sk.comp*hc_mev_fm << endl;
-      cout << sk.esym*hc_mev_fm << endl;
-      cout << endl;
-      cout << sk.f_effm_neut(sk.n0) << endl;
-      cout << sk.f_effm_prot(sk.n0) << endl;
-      cout << 1.0/sk.f_effm_scalar(sk.n0) << endl;
-      cout << 1.0/sk.f_effm_vector(sk.n0) << endl;
-      cout << endl;
-      cout << sk.fesym_slope(sk.n0)*hc_mev_fm << endl;
-      cout << sk.alpha << endl;
-      exit(-1);
+      // Test coefficients from Kortelainen et al. PRC 85 (2012) 024304
+
+      if (i==0) {
+	t.test_rel(sk.t0*hc_mev_fm,-1883.68781034,1.0e-4,"");
+	t.test_rel(sk.t1*hc_mev_fm,277.50021224,1.0e-4,"");
+	t.test_rel(sk.t2*hc_mev_fm,608.43090559,1.0e-4,"");
+	t.test_rel(sk.t3*hc_mev_fm,13901.94834463,1.0e-4,"");
+	t.test_rel(sk.x0,0.00974375,1.0e-4,"");
+	t.test_rel(sk.x1,-1.77784395,1.0e-4,"");
+	t.test_rel(sk.x2,-1.67699035,1.0e-4,"");
+	t.test_rel(sk.x3,-0.38079041,1.0e-4,"");
+	t.test_rel(sk.b4*hc_mev_fm,125.16100000,1.0e-4,"");
+	t.test_rel(sk.b4p*hc_mev_fm,-91.2604000,1.0e-4,"");
+      } else if (i==1) {
+	t.test_rel(sk.t0*hc_mev_fm,-2078.32802326,1.0e-4,"");
+	t.test_rel(sk.t1*hc_mev_fm,239.40081204,1.0e-4,"");
+	t.test_rel(sk.t2*hc_mev_fm,1575.11954190,1.0e-4,"");
+	t.test_rel(sk.t3*hc_mev_fm,14263.64624708,1.0e-4,"");
+	t.test_rel(sk.x0,0.05375692,1.0e-4,"");
+	t.test_rel(sk.x1,-5.07723238,1.0e-4,"");
+	t.test_rel(sk.x2,-1.36650561,1.0e-4,"");
+	t.test_rel(sk.x3,-0.16249117,1.0e-4,"");
+	t.test_rel(sk.b4*hc_mev_fm,38.36807206,1.0e-4,"");
+	t.test_rel(sk.b4p*hc_mev_fm,71.31652223,1.0e-4,"");
+      }
+
+      if (i==0) {
+	sk.alt_params_saturation
+	  (0.160526,-16.0559/hc_mev_fm,230.0/hc_mev_fm,1.0/0.9,
+	   30.5429/hc_mev_fm,45.0804/hc_mev_fm,1.0/1.249838,coups[7][i],
+	   coups[8][i],coups[9][i],coups[10][i]);
+	
+	sk.saturation();
+	cout << sk.n0 << endl;
+	cout << sk.eoa*hc_mev_fm << endl;
+	cout << sk.comp*hc_mev_fm << endl;
+	cout << sk.esym*hc_mev_fm << endl;
+	cout << endl;
+	cout << sk.f_effm_neut(sk.n0) << endl;
+	cout << sk.f_effm_prot(sk.n0) << endl;
+	cout << 1.0/sk.f_effm_scalar(sk.n0) << endl;
+	cout << 1.0/sk.f_effm_vector(sk.n0) << endl;
+	cout << endl;
+	cout << sk.fesym_slope(sk.n0)*hc_mev_fm << endl;
+	cout << sk.alpha << endl;
+      }
 
       sk.saturation();
 
