@@ -42,7 +42,7 @@ eos_had_skyrme::eos_had_skyrme() {
 }
 
 int eos_had_skyrme::calc_temp_e(fermion &ne, fermion &pr, 
-			    double ltemper, thermo &locth) {
+				double ltemper, thermo &locth) {
   
   double n, x, hamk, ham, ham1, ham2, ham3, ham4, ham5, ham6;
   double dhdnn, dhdnp, na, npa, nna, term, term2, common, gn, gp;
@@ -113,9 +113,14 @@ int eos_had_skyrme::calc_temp_e(fermion &ne, fermion &pr,
   ne.ms=ne.m/(1.0+2.0*(n*term+ne.n*term2)*ne.m);
   pr.ms=pr.m/(1.0+2.0*(n*term+pr.n*term2)*pr.m);
   
+  if (ne.ms<0.0 || pr.ms<0.0) {
+    O2SCL_ERR2("Effective masses negative in ",
+	       "eos_had_skyrme::calc_temp_e().",exc_einval);
+  }
+
   nrf.calc_density(ne,ltemper);
   nrf.calc_density(pr,ltemper);
-
+  
   // Single particle potentials and energy density
 
   na=pow(fabs(n),alpha);
@@ -161,7 +166,7 @@ int eos_had_skyrme::calc_temp_e(fermion &ne, fermion &pr,
       ham4*(npa*pr.n*(2.0+alpha))+
       ham6*(2.0*pr.n*na+(ne.n*ne.n+pr.n*pr.n)*alpha*na/n);
   }
-  
+
   ne.mu=dhdnn;
   pr.mu=dhdnp;
   
@@ -241,6 +246,11 @@ int eos_had_skyrme::calc_e(fermion &ne, fermion &pr, thermo &locth) {
   term2=0.25*(t2*(0.5+x2)-t1*(0.5+x1));
   ne.ms=ne.m/(1.0+2.0*(n*term+ne.n*term2)*ne.m);
   pr.ms=pr.m/(1.0+2.0*(n*term+pr.n*term2)*pr.m);
+
+  if (ne.ms<0.0 || pr.ms<0.0) {
+    O2SCL_ERR2("Effective masses negative in ",
+	       "eos_had_skyrme::calc_temp_e().",exc_einval);
+  }
 
   // We don't record error values, since these functions usually
   // always succeed
