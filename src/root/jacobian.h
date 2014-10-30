@@ -101,7 +101,7 @@ namespace o2scl {
 
       This class computes a numerical Jacobian by finite differencing.
       The stepsize is chosen to be \f$ h_j = \mathrm{epsrel}~x_j \f$ or
-      \f$ h_j = \mathrm{epsmin} \f$ if \f$ \mathrm{epsrel}\times x_j <
+      \f$ h_j = \mathrm{epsrel} \f$ if \f$ \mathrm{epsrel}\times x_j <
       \mathrm{epsmin} \f$.
       
       This is nearly equivalent to the GSL method for computing
