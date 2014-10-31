@@ -209,7 +209,7 @@ namespace o2scl {
     void set_baryon_density(double nb, double ed) {
       if (nb<0.0 || ed<0.0) {
 	O2SCL_ERR2("Negative densities not supported in ",
-		   "eos_tov_polytrope::set_coeff_index().",exc_einval);
+		   "eos_tov_buchdahl::set_coeff_index().",exc_einval);
       }
       baryon_column=true;
       nb1=nb;
