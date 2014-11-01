@@ -378,7 +378,7 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
     // Check that the negative charge density isn't too large
     // in the presence of nuclei
     double fac=(0.08-dm.p.n)/(n_neg-dm.p.n);
-    if (1.0>fac) {
+    if (1.0>=fac) {
       if (verbose>0) {
 	cout << "Proton radius negative or larger than cell size." << endl;
 	cout << "fac: " << fac << endl;
@@ -412,7 +412,7 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
 
     // If this nucleus is unphysical because R_n > R_{WS}, 
     // set it's density to zero and continue
-    if (condition>1.0) {
+    if (condition>=1.0) {
       
       nuc.n=0.0;
       nuc.ed=0.0;
