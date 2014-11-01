@@ -399,13 +399,20 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, int verbose) {
 
   // Main loop
   for(size_t i=0;i<dm.dist.size();i++) {
-    
+
     // Create a reference for this nucleus
     nucleus &nuc=dm.dist[i];
 
+    double condition;
+    if (inc_prot_coul) {
+      condition=nuc.N*(n_neg-dm.p.n)/nuc.Z/(0.08-dm.n.n);
+    } else {
+      condition=nuc.N*(n_neg)/nuc.Z/(0.08);
+    }
+
     // If this nucleus is unphysical because R_n > R_{WS}, 
     // set it's density to zero and continue
-    if (nuc.N*(n_neg-dm.p.n)/nuc.Z/(0.08-dm.n.n)>1.0) {
+    if (condition>1.0) {
       
       nuc.n=0.0;
       nuc.ed=0.0;
@@ -843,7 +850,6 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm, int verbose) {
     }
     
   }
-      
 
   // -----------------------------------------------------------
   // Computation of pressure
