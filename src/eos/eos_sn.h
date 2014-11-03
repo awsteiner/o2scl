@@ -193,9 +193,9 @@ namespace o2scl {
     /// Heavy nuclei baryon fraction
     tensor_grid3<> Xnuclei;
     /// Other data sets
-    tensor_grid3<> other[20];
+    tensor_grid3<> other[30];
     /// List of pointers to data
-    tensor_grid3<> *arr[n_base+20];
+    tensor_grid3<> *arr[n_base+30];
     //@}
 
     /** \brief Check the table composition entries

@@ -53,7 +53,7 @@ eos_sn_base::eos_sn_base() : cu(o2scl_settings.get_convert_units()) {
   arr[13]=&Xp;
   arr[14]=&Xalpha;
   arr[15]=&Xnuclei;
-  for(size_t i=0;i<20;i++) arr[16+i]=&other[i];
+  for(size_t i=0;i<30;i++) arr[16+i]=&other[i];
 
   photon.init(0.0,2.0);
   

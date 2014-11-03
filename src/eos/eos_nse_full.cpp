@@ -1006,6 +1006,8 @@ int eos_nse_full::density_match(dense_matter &dm) {
 void eos_nse_full::output(dense_matter &dm, int verbose) {
   cout << "nB=" << dm.nB << " fm^{-3}, Ye=" << dm.Ye << ", T="
        << dm.T*hc_mev_fm << " MeV" << endl;
+
+  // Output nuclear densities and compute Xalpha and Xnuclei
   double nBnuc=0.0;
   double Xa=0.0, Xnuclei=0.0;
   size_t i_out=0, out_step=dm.dist.size()/10;
@@ -1022,6 +1024,8 @@ void eos_nse_full::output(dense_matter &dm, int verbose) {
   }
   Xa/=dm.nB;
   Xnuclei/=dm.nB;
+
+  // Main output
   cout << "nn,np,nBnuc: " << dm.n.n << " " << dm.p.n << " " 
        << nBnuc << " fm^{-3}" << endl;
   cout << "N,<Z>,<N>,<Q>: " << dm.dist.size() << " " 
@@ -1033,21 +1037,26 @@ void eos_nse_full::output(dense_matter &dm, int verbose) {
       cout << "F: " << (dm.th.ed-dm.T*dm.th.en)/dm.nB*hc_mev_fm 
 	   << " MeV" << endl;
       cout << "E: " << (dm.th.ed)/dm.nB*hc_mev_fm << " MeV" << endl;
+      cout << "P: " << dm.th.pr*hc_mev_fm << " MeV/fm^3" << endl;
       cout << "S: " << (dm.th.en)/dm.nB << endl;
       double ed=dm.th.ed-dm.e.ed-dm.photon.ed;
+      double pr=dm.th.pr-dm.e.pr-dm.photon.pr;
       double en=dm.th.en-dm.e.en-dm.photon.en;
       if (include_muons) {
 	ed-=dm.mu.ed;
+	pr-=dm.mu.pr;
 	en-=dm.mu.en;
       }
       cout << "Fint: " << (ed-dm.T*en)/dm.nB*hc_mev_fm 
 	   << " MeV" << endl;
-      cout << "Eint: " << (ed)/dm.nB*hc_mev_fm << " MeV" << endl;
-      cout << "Sint: " << (en)/dm.nB << " MeV" << endl;
+      cout << "Eint: " << ed/dm.nB*hc_mev_fm << " MeV" << endl;
+      cout << "Pint: " << pr*hc_mev_fm << " MeV/fm^3" << endl;
+      cout << "Sint: " << en/dm.nB << endl;
     } else {
       cout << "Fint: " << (dm.th.ed-dm.T*dm.th.en)/dm.nB*hc_mev_fm 
 	   << " MeV" << endl;
       cout << "Eint: " << (dm.th.ed)/dm.nB*hc_mev_fm << " MeV" << endl;
+      cout << "Pint: " << dm.th.pr*hc_mev_fm << " MeV/fm^3" << endl;
       cout << "Sint: " << (dm.th.en)/dm.nB << endl;
     }
     cout << "<A>: " << dm.average_A() << endl;
@@ -1056,6 +1065,11 @@ void eos_nse_full::output(dense_matter &dm, int verbose) {
     cout << "Xn: " << dm.n.n/dm.nB << endl;
     cout << "Xp: " << dm.p.n/dm.nB << endl;
     cout << "Xnuclei: " << Xnuclei << endl;
+    cout << "mu_n: " << dm.eta_n*hc_mev_fm << " MeV" << endl;
+    cout << "mu_p: " << dm.eta_p*hc_mev_fm << " MeV" << endl;
+    if (include_muons) {
+      cout << "Xmu: " << dm.mu.n/dm.nB << endl;
+    }
   }
   return;
 }
