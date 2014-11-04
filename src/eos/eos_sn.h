@@ -100,11 +100,11 @@ namespace o2scl {
     size_t n_Ye;
     /// Size of temperature grid
     size_t n_T;
-    /// Baryon density grid
+    /// Baryon density grid (in \f$ \mathrm{fm}^{-3} \f$)
     std::vector<double> nB_grid;
     /// Electron fraction grid
     std::vector<double> Ye_grid;
-    /// Temperature grid
+    /// Temperature grid (in \f$ \mathrm{MeV} \f$)
     std::vector<double> T_grid;
     /// Number of additional data sets
     size_t n_oth;
