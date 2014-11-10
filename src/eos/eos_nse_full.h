@@ -66,6 +66,9 @@ namespace o2scl {
       must check the return value of these two functions 
       every time they are called. 
 
+      \bug I don't think inc_lept_phot=false works because then
+      all WS cells have infinite size because of no electrons
+
       \future Add fermion and boson statistics to the nuclei in the
       distribution
   */
@@ -112,6 +115,9 @@ namespace o2scl {
 
   public:
 
+    /// Verbose parameter
+    int verbose;
+
     /** \brief Function which is solved by \ref calc_density_saha()
 
 	This function takes two inputs, the neutron and proton
@@ -151,12 +157,17 @@ namespace o2scl {
     /** \brief Compute the properties of matter from the densities,
 	not presuming equilibrium
 
+	The values of <tt>dm.nB</tt> and <tt>dm.Ye</tt> are not
+	changed by this function. The initial value for the electron
+	density is ignored and is automatically set by charge
+	neutrality.
+
 	This function is designed to return non-zero values for
 	invalid configurations and can return the value
 	\ref invalid_config without calling the error handler, 
 	independent of the value of \ref err_nonconv .
     */
-    int calc_density_noneq(dense_matter &dm, int verbose=0);
+    int calc_density_noneq(dense_matter &dm);
 
     /** \brief Compute the properties of matter from 
 	neutron and proton densities, using the Saha equation
@@ -182,7 +193,7 @@ namespace o2scl {
 	\ref invalid_config without calling the error handler, 
 	independent of the value of \ref err_nonconv .
     */
-    int calc_density_fixnp(dense_matter &dm, int verbose=0);
+    int calc_density_fixnp(dense_matter &dm);
   
     /** \brief Compute the free energy for a fixed composition 
 	by minimization
@@ -199,7 +210,7 @@ namespace o2scl {
 	minimization and currently works in only limited
 	circumstances.
     */
-    int calc_density_by_min(dense_matter &dm, int verbose=0);
+    int calc_density_by_min(dense_matter &dm);
 
     /** \brief Compute properties of matter for baryon density and
 	electron fraction using the Saha equation
@@ -208,7 +219,7 @@ namespace o2scl {
 	solve_fixnp() using the current values of <tt>dm.n.n</tt> and
 	<tt>dm.p.n</tt> as initial guesses.
     */
-    int calc_density_saha(dense_matter &dm, int verbose);
+    int calc_density_saha(dense_matter &dm);
 
     /** \brief Output properties of a \ref o2scl::dense_matter object to
 	std::cout
@@ -216,7 +227,7 @@ namespace o2scl {
 	This function was particularly designed for comparing results
 	with \ref o2scl::eos_sn_base derived classes.
     */
-    void output(dense_matter &dm, int verbose=0);
+    void output(dense_matter &dm, int output_level);
 
     /** \brief Adjust the particle densities to match specified
 	density and electron fraction
@@ -295,7 +306,7 @@ namespace o2scl {
 	which optimized the composition, but it doesn't really work
 	yet.
     */
-    int calc_density(dense_matter &dm, int verbose=0);
+    int calc_density(dense_matter &dm);
 
 #endif
 
