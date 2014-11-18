@@ -673,7 +673,7 @@ int fermion_rel::pair_density(fermion &f, double temper) {
   if (f.ms>lg) lg=temper;
   // Try increasing the chemical potential
   double y=pair_fun(nex,f,temper);
-  for(size_t i=0;i<10 && y==-1.0;i++) {
+  for(size_t i=0;i<10 && fabs(y+1.0)<1.0e-6;i++) {
     nex+=lg/temper;
     y=pair_fun(nex,f,temper);
   }

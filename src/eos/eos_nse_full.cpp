@@ -298,6 +298,10 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm) {
 
   int ret=ehtp->calc_temp_e(dm.n,dm.p,dm.T,dm.drip_th);
   if (ret!=success) {
+    if (verbose>0) {
+      cout << "Homogeneous nucleonic EOS failed in "
+	   << "eos_nse_full::calc_density_fixnp()." << endl;
+    }
     O2SCL_CONV2_RET("Homogeneous nucleon EOS failed in eos_nse_full::",
 		    "calc_density_fixnp().",exc_einval,err_nonconv);
   }
@@ -335,6 +339,10 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm) {
     dm.e.n=dm.Ye*dm.nB;
     ret=relf.pair_density(dm.e,dm.T);
     if (ret!=success) {
+      if (verbose>0) {
+	cout << "Electron EOS failed in "
+	     << "eos_nse_full::calc_density_fixnp()." << endl;
+      }
       O2SCL_CONV2_RET("Electron EOS failed in eos_nse_full::",
 		      "calc_density_fixnp().",exc_einval,err_nonconv);
     }
