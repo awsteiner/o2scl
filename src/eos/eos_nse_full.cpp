@@ -766,8 +766,8 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm) {
 
   // -----------------------------------------------------------
   // Finite precision errors can cause n_neg<dm.p.n, so we make a
-  // small adjustement
-
+  // small adjustment
+  
   if (n_neg<dm.p.n) {
     dm.e.n*=(1.0+1.0e-12);
     n_neg=dm.e.n;
@@ -782,7 +782,8 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm) {
       cout << "Negative charge density too small to match proton density"
 	   << "\n\tin calc_density_noneq()." << endl;
       cout << "np: " << dm.p.n << " ne: " << dm.e.n 
-           << " nmu: " << dm.mu.n << " " << n_neg-dm.p.n << endl;
+           << " nmu: " << dm.mu.n << " n_neg: " << n_neg << " " 
+	   << n_neg-dm.p.n << endl;
     }
     return invalid_config;
   }  

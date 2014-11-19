@@ -665,6 +665,8 @@ int fermion_rel::pair_density(fermion &f, double temper) {
     calc_density_zerot(f);
     return success;
   }
+
+  double density_temp=f.n;
   if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
   
   nex=f.nu/temper;
@@ -688,6 +690,25 @@ int fermion_rel::pair_density(fermion &f, double temper) {
 			this,std::placeholders::_1,std::ref(f),temper);
   int ret=density_root->solve(nex,mf);
   if (ret!=0) {
+    // If it fails, try to increase the tolerances on the 
+    // integrators
+    double tol1=dit->tol_rel, tol2=dit->tol_abs;
+    double tol3=nit->tol_rel, tol4=nit->tol_abs;
+    dit->tol_rel/=1.0e2;
+    dit->tol_abs/=1.0e2;
+    nit->tol_rel/=1.0e2;
+    nit->tol_abs/=1.0e2;
+    ret=density_root->solve(nex,mf);
+    dit->tol_rel=tol1;
+    dit->tol_abs=tol2;
+    nit->tol_rel=tol3;
+    nit->tol_abs=tol4;
+  }
+  if (ret!=0) {
+    double dx=1.0e-5;
+    for(double nex0=nex/(1.0+dx);nex0<nex*(1.0+dx);nex0*=1.0+dx/100.0) {
+      cout << nex0 << " " << pair_fun(nex0,f,temper) << endl;
+    }
     O2SCL_CONV2_RET("Density solver failed in fermion_rel::",
 		    "pair_density().",exc_efailed,this->err_nonconv);
   }
@@ -697,6 +718,11 @@ int fermion_rel::pair_density(fermion &f, double temper) {
   if (f.non_interacting==true) { f.mu=f.nu; }
   
   pair_mu(f,temper);
+
+  // The function pair_mu() can modify the density, which is
+  // confusing to the user, so we return it to the user-specified
+  // value.
+  f.n=density_temp;
 
   return success;
 }
