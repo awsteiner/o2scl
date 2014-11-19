@@ -92,30 +92,30 @@ int main(void) {
   nse.calc_density_noneq(dm);
   fr1=dm.th.ed-dm.T*dm.th.en;
   dm.n.n*=(1.0+eps);
-  nse.calc_density_noneq(dm,0);
+  nse.calc_density_noneq(dm);
   fr2=dm.th.ed-dm.T*dm.th.en;
   dm.n.n/=(1.0+eps);
   eta_n=(fr2-fr1)/(eps*dm.n.n);
 
-  nse.calc_density_noneq(dm,0);
+  nse.calc_density_noneq(dm);
   fr1=dm.th.ed-dm.T*dm.th.en;
   dm.p.n*=(1.0+eps);
-  nse.calc_density_noneq(dm,0);
+  nse.calc_density_noneq(dm);
   fr2=dm.th.ed-dm.T*dm.th.en;
   dm.p.n/=(1.0+eps);
   eta_p=(fr2-fr1)/(eps*dm.p.n);
 
   for(size_t i=0;i<3;i++) {
-    nse.calc_density_noneq(dm,0);
+    nse.calc_density_noneq(dm);
     fr1=dm.th.ed-dm.T*dm.th.en;
     dm.dist[i].n*=(1.0+eps);
-    nse.calc_density_noneq(dm,0);
+    nse.calc_density_noneq(dm);
     fr2=dm.th.ed-dm.T*dm.th.en;
     dm.dist[i].n/=(1.0+eps);
     eta_nuc[i]=(fr2-fr1)/(eps*dm.dist[i].n);
   }
   
-  ret=nse.calc_density_noneq(dm,0);
+  ret=nse.calc_density_noneq(dm);
   t.test_gen(ret==0,"ret 1");
   t.test_rel(dm.eta_n,eta_n,1.0e-6,"eta_n");
   t.test_rel(dm.eta_p,eta_p,1.0e-6,"eta_p");
@@ -128,33 +128,33 @@ int main(void) {
 
   nse.inc_prot_coul=true;
 
-  nse.calc_density_noneq(dm,0);
+  nse.calc_density_noneq(dm);
   fr1=dm.th.ed-dm.T*dm.th.en;
   dm.n.n*=(1.0+eps);
-  nse.calc_density_noneq(dm,0);
+  nse.calc_density_noneq(dm);
   fr2=dm.th.ed-dm.T*dm.th.en;
   dm.n.n/=(1.0+eps);
   eta_n=(fr2-fr1)/(eps*dm.n.n);
 
-  nse.calc_density_noneq(dm,0);
+  nse.calc_density_noneq(dm);
   fr1=dm.th.ed-dm.T*dm.th.en;
   dm.p.n*=(1.0+eps);
-  nse.calc_density_noneq(dm,0);
+  nse.calc_density_noneq(dm);
   fr2=dm.th.ed-dm.T*dm.th.en;
   dm.p.n/=(1.0+eps);
   eta_p=(fr2-fr1)/(eps*dm.p.n);
 
   for(size_t i=0;i<3;i++) {
-    nse.calc_density_noneq(dm,0);
+    nse.calc_density_noneq(dm);
     fr1=dm.th.ed-dm.T*dm.th.en;
     dm.dist[i].n*=(1.0+eps);
-    nse.calc_density_noneq(dm,0);
+    nse.calc_density_noneq(dm);
     fr2=dm.th.ed-dm.T*dm.th.en;
     dm.dist[i].n/=(1.0+eps);
     eta_nuc[i]=(fr2-fr1)/(eps*dm.dist[i].n);
   }
   
-  ret=nse.calc_density_noneq(dm,0);
+  ret=nse.calc_density_noneq(dm);
   t.test_gen(ret==0,"ret 1");
   t.test_rel(dm.eta_n,eta_n,1.0e-6,"eta_n");
   t.test_rel(dm.eta_p,eta_p,1.0e-6,"eta_p");
@@ -168,7 +168,7 @@ int main(void) {
   dm.nB=5.2e-2;
   dm.Ye=0.4943;
 
-  ret=nse.calc_density_by_min(dm,0);
+  ret=nse.calc_density_by_min(dm);
   t.test_gen(ret==0,"ret 2");
   t.test_rel(dm.baryon_density(),dm.nB,1.0e-6,"baryon density");
   t.test_rel(dm.electron_fraction(),dm.Ye,1.0e-6,"electron fraction");
@@ -190,7 +190,7 @@ int main(void) {
   nse.def_mmin.tol_rel/=1.0e4;
   nse.def_mmin.tol_abs/=1.0e4;
 
-  ret=nse.calc_density_by_min(dm,0);
+  ret=nse.calc_density_by_min(dm);
   t.test_gen(ret==0,"ret 4");
 
   for(size_t i=0;i<3;i++) {
@@ -200,8 +200,8 @@ int main(void) {
 	       dm.eta_nuc[i],1.0e-3,"NSE 2");
   }
   
-  nse.calc_density_noneq(dm,1);
-  nse.calc_density_fixnp(dm,1);
+  nse.calc_density_noneq(dm);
+  nse.calc_density_fixnp(dm);
 
   // But even with this accurate minimization, it doesn't quite
   // get the right densities

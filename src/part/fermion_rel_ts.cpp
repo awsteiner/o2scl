@@ -24,6 +24,7 @@
 #include <o2scl/fermion_rel.h>
 #include <o2scl/fermion_eff.h>
 #include <o2scl/test_mgr.h>
+#include <o2scl/inte_qag_gsl.h>
 
 using namespace std;
 using namespace o2scl;

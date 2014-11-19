@@ -34,11 +34,8 @@
 #include <o2scl/constants.h>
 #include <o2scl/mroot.h>
 #include <o2scl/inte.h>
-#include <o2scl/root_cern.h>
-#include <o2scl/inte_qagiu_gsl.h>
-#include <o2scl/inte_qag_gsl.h>
-#include <o2scl/fermion_eff.h>
 #include <o2scl/shared_ptr.h>
+#include <o2scl/fermion.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -298,6 +295,9 @@ namespace o2scl {
 
     /// The solver for calc_density()
     o2_shared_ptr<root<> >::type density_root;
+
+    /// The backup solver for calc_density()
+    o2_shared_ptr<root<> >::type density_root2;
     
     /// Return string denoting type ("fermion_rel")
     virtual const char *type() { return "fermion_rel"; }

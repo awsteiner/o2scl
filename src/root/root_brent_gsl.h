@@ -248,7 +248,7 @@ namespace o2scl {
 	  y=f(root);
 	    
 	  this->print_iter(root,y,iter,fabs(x_upper-x_lower),this->tol_abs,
-			   "root_brent_gsl");
+			   "root_brent_gsl (abs)");
 	}
       }
 	
@@ -266,11 +266,11 @@ namespace o2scl {
 
 	if (fabs(y)<this->tol_rel) status=o2scl::success;
       
-	status=gsl_root_test_interval(x_lower,x_upper,0.0,this->tol_abs);
+	//status=gsl_root_test_interval(x_lower,x_upper,0.0,this->tol_abs);
       
 	if (this->verbose>0) {
-	  this->print_iter(root,y,iter,fabs(x_upper-x_lower),this->tol_abs,
-			   "root_brent_gsl");
+	  this->print_iter(root,y,iter,fabs(y),this->tol_rel,
+			   "root_brent_gsl (rel)");
 	}
       }
 
@@ -289,12 +289,16 @@ namespace o2scl {
 	if (status==o2scl::success) {
 	  double y=f(root);
 	  if (fabs(y)>=this->tol_rel) status=gsl_continue;
-	}
-	    
-	if (this->verbose>0) {
-	  double y=f(root);
-	  this->print_iter(root,y,iter,fabs(x_upper-x_lower),this->tol_abs,
-			   "root_brent_gsl");
+	  if (this->verbose>0) {
+	    this->print_iter(root,y,iter,fabs(y),this->tol_rel,
+			     "root_brent_gsl (rel)");
+	  }
+	} else {
+	  if (this->verbose>0) {
+	    double y=f(root);
+	    this->print_iter(root,y,iter,fabs(x_upper-x_lower),this->tol_abs,
+			     "root_brent_gsl (abs)");
+	  }
 	}
       }
 
@@ -302,17 +306,16 @@ namespace o2scl {
 
     x1=root;
   
-    if (status!=o2scl::success) {
-      int ret=o2scl::err_hnd->get_errno();
-      return ret;
-    }
-
     if (iter>=this->ntrial) {
-      O2SCL_CONV2_RET("Function solve_bkt() exceeded maximum number ",
-		      "of iterations.",o2scl::exc_emaxiter,
+      O2SCL_CONV2_RET("Function root_brent_gsl::solve_bkt() exceeded ",
+		      "maximum number of iterations.",o2scl::exc_emaxiter,
 		      this->err_nonconv);
     }
   
+    if (status!=o2scl::success) {
+      return status;
+    }
+
     return o2scl::success;
   }
 

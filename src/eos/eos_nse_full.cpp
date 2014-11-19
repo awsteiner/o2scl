@@ -23,6 +23,7 @@
 #include <o2scl/eos_nse_full.h>
 #include <o2scl/hdf_nucmass_io.h>
 #include <o2scl/hdf_eos_io.h>
+#include <o2scl/root_brent_gsl.h>
 
 using namespace std;
 using namespace o2scl;
@@ -298,6 +299,10 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm) {
 
   int ret=ehtp->calc_temp_e(dm.n,dm.p,dm.T,dm.drip_th);
   if (ret!=success) {
+    if (verbose>0) {
+      cout << "Homogeneous nucleonic EOS failed in "
+	   << "eos_nse_full::calc_density_fixnp()." << endl;
+    }
     O2SCL_CONV2_RET("Homogeneous nucleon EOS failed in eos_nse_full::",
 		    "calc_density_fixnp().",exc_einval,err_nonconv);
   }
@@ -335,6 +340,10 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm) {
     dm.e.n=dm.Ye*dm.nB;
     ret=relf.pair_density(dm.e,dm.T);
     if (ret!=success) {
+      if (verbose>0) {
+	cout << "Electron EOS failed in "
+	     << "eos_nse_full::calc_density_fixnp()." << endl;
+      }
       O2SCL_CONV2_RET("Electron EOS failed in eos_nse_full::",
 		      "calc_density_fixnp().",exc_einval,err_nonconv);
     }
@@ -707,6 +716,10 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm) {
     dm.e.n=Ye*nB;
     ret=relf.pair_density(dm.e,dm.T);
     if (ret!=success) {
+      if (verbose>0) {
+	cout << "Electron EOS failed in "
+	     << "eos_nse_full::calc_density_noneq()." << endl;
+      }
       O2SCL_CONV2_RET("Electron EOS failed in eos_nse_full::",
 		      "calc_density_noneq().",exc_einval,err_nonconv);
     }
@@ -719,8 +732,8 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm) {
 	   << dm.e.n << " " << dm.e.mu << " " << dm.e.ed << " "
 	   << dm.e.en << endl;
     }
-
-    if (false) {
+    
+    if (include_muons) {
       // Add muons
       dm.mu.mu=dm.e.mu;
       relf.pair_mu(dm.mu,dm.T);
@@ -769,7 +782,7 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm) {
       cout << "Negative charge density too small to match proton density"
 	   << "\n\tin calc_density_noneq()." << endl;
       cout << "np: " << dm.p.n << " ne: " << dm.e.n 
-           << " nmu: " << dm.mu.n << endl;
+           << " nmu: " << dm.mu.n << " " << n_neg-dm.p.n << endl;
     }
     return invalid_config;
   }  
@@ -928,7 +941,7 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm) {
       nucleus &nuc=dm.dist[i];
       string s="Nucleus ("+itos(((int)(nuc.Z+1.0e-8)))+","+
 	itos(((int)(nuc.N+1.0e-8)))+"): ";
-      if (i==i_out || verbose>1) {
+      if (i==i_out || verbose>2) {
 	cout.width(20);
 	cout << s << nuc.n << " " << dm.eta_nuc[i] << " "
 	     << nuc.n*dm.eta_nuc[i] << endl;
@@ -1028,7 +1041,7 @@ int eos_nse_full::density_match(dense_matter &dm) {
 	       "eos_nse_full::density_match().",exc_efailed);
   }
 
-  if (false) {
+  if (verbose>1) {
     cout << "Density match: " << endl;
     cout << (1.0-dm.Ye)*dm.nB << " " << nn_fix << endl;
     cout << dm.Ye*dm.nB << " " << np_fix << endl;
