@@ -727,8 +727,8 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm) {
 	   << dm.e.n << " " << dm.e.mu << " " << dm.e.ed << " "
 	   << dm.e.en << endl;
     }
-
-    if (false) {
+    
+    if (include_muons) {
       // Add muons
       dm.mu.mu=dm.e.mu;
       relf.pair_mu(dm.mu,dm.T);
@@ -936,7 +936,7 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm) {
       nucleus &nuc=dm.dist[i];
       string s="Nucleus ("+itos(((int)(nuc.Z+1.0e-8)))+","+
 	itos(((int)(nuc.N+1.0e-8)))+"): ";
-      if (i==i_out || verbose>1) {
+      if (i==i_out || verbose>2) {
 	cout.width(20);
 	cout << s << nuc.n << " " << dm.eta_nuc[i] << " "
 	     << nuc.n*dm.eta_nuc[i] << endl;
@@ -1036,7 +1036,7 @@ int eos_nse_full::density_match(dense_matter &dm) {
 	       "eos_nse_full::density_match().",exc_efailed);
   }
 
-  if (false) {
+  if (verbose>1) {
     cout << "Density match: " << endl;
     cout << (1.0-dm.Ye)*dm.nB << " " << nn_fix << endl;
     cout << dm.Ye*dm.nB << " " << np_fix << endl;
