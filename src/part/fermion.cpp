@@ -127,7 +127,6 @@ void fermion_zerot::calc_density_zerot(fermion &f) {
 
   f.kf=cbrt(6.0*pi2/f.g*f.n);
   f.nu=gsl_hypot(f.kf,f.ms);
-  f.n=f.g/6.0/pi2*pow(f.kf,3.0);
   energy_density_zerot(f);
   pressure_zerot(f);
   f.en=0.0;

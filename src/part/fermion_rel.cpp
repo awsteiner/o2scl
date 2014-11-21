@@ -52,6 +52,9 @@ fermion_rel::~fermion_rel() {
 
 void fermion_rel::calc_mu(fermion &f, double temper) {
 
+  // -----------------------------------------------------------------
+  // Handle T<=0
+
   if (temper<0.0) {
     O2SCL_ERR("Temperature less than zero in fermion_rel::calc_density().",
 	      exc_einval);
@@ -278,7 +281,15 @@ int fermion_rel::nu_from_n(fermion &f, double temper) {
 }
 
 int fermion_rel::calc_density(fermion &f, double temper) {
+
+  // The function pair_mu() can modify the density, which is
+  // confusing to the user, so we return it to the user-specified
+  // value.
+  double density_temp=f.n;
   
+  // -----------------------------------------------------------------
+  // Handle T<=0
+
   if (temper<0.0) {
     O2SCL_ERR("Temperature less than zero in fermion_rel::calc_density().",
 	      exc_einval);
@@ -299,6 +310,9 @@ int fermion_rel::calc_density(fermion &f, double temper) {
   }
 #endif
 
+  // -----------------------------------------------------------------
+  // First determine the chemical potential by solving for the density
+
   if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
   
   int ret=nu_from_n(f,temper);
@@ -309,6 +323,10 @@ int fermion_rel::calc_density(fermion &f, double temper) {
 
   if (f.non_interacting) { f.mu=f.nu; }
 
+  // -----------------------------------------------------------------
+  // Now use the chemical potential to compute the energy density,
+  // pressure, and entropy
+
   bool deg=true;
   double psi;
   if (f.inc_rest_mass) {
@@ -318,12 +336,14 @@ int fermion_rel::calc_density(fermion &f, double temper) {
   }
   if (psi<deg_limit) deg=false;
 
+  // Try the non-degenerate expansion if psi is small enough
   if (psi<min_psi) {
     bool acc=calc_mu_ndeg(f,temper,1.0e-14);
     if (acc) {
       unc.ed=f.ed*1.0e-14;
       unc.pr=f.pr*1.0e-14;
       unc.en=f.en*1.0e-14;
+      f.n=density_temp;
       return 0;
     }
   }
@@ -336,9 +356,11 @@ int fermion_rel::calc_density(fermion &f, double temper) {
       unc.ed=f.ed*1.0e-14;
       unc.pr=f.pr*1.0e-14;
       unc.en=f.en*1.0e-14;
+      f.n=density_temp;
       return 0;
     }
   }
+
   if (!deg) {
     
     funct11 mfe=std::bind(std::mem_fn<double(double,fermion &,double)>
@@ -418,6 +440,7 @@ int fermion_rel::calc_density(fermion &f, double temper) {
     }
   }
 
+  f.n=density_temp;
   f.pr=-f.ed+temper*f.en+f.mu*f.n;
   unc.pr=sqrt(unc.ed*unc.ed+temper*unc.en*temper*unc.en+
 	      f.mu*unc.n*f.mu*unc.n);
@@ -552,7 +575,8 @@ double fermion_rel::solve_fun(double x, fermion &f, double T) {
     psi=(f.nu+(f.m-f.ms))/T;
   }
   if (psi<deg_limit) deg=false;
-  
+
+  // Try the non-degenerate expansion if psi is small enough
   if (psi<min_psi) {
     double ntemp=f.n;
     bool acc=calc_mu_ndeg(f,T,1.0e-14);
@@ -578,7 +602,7 @@ double fermion_rel::solve_fun(double x, fermion &f, double T) {
     f.n=ntemp;
   }
 
-
+  // Otherwise, directly perform the integration
   if (!deg) {
 
     funct11 mfe=std::bind(std::mem_fn<double(double,fermion &,double)>
@@ -659,7 +683,9 @@ void fermion_rel::pair_mu(fermion &f, double temper) {
 }
 
 int fermion_rel::pair_density(fermion &f, double temper) {
-  double nex;
+
+  // -----------------------------------------------------------------
+  // Handle T<=0
 
   if (temper<=0.0) {
     calc_density_zerot(f);
@@ -669,9 +695,9 @@ int fermion_rel::pair_density(fermion &f, double temper) {
   double density_temp=f.n;
   if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
   
-  nex=f.nu/temper;
+  double nex=f.nu/temper;
 
-  // -------------------------------------------------------
+  // -----------------------------------------------------------------
   // If the chemical potential is too small, then the solver
   // will fail
 
@@ -699,16 +725,24 @@ int fermion_rel::pair_density(fermion &f, double temper) {
     nit->tol_rel/=1.0e2;
     nit->tol_abs/=1.0e2;
     ret=density_root->solve(nex,mf);
+    if (ret!=0) {
+      // If that doesn't work, try a different solver
+      root_brent_gsl<> rbg;
+      rbg.err_nonconv=false;
+      ret=rbg.solve(nex,mf);
+    }
     dit->tol_rel=tol1;
     dit->tol_abs=tol2;
     nit->tol_rel=tol3;
     nit->tol_abs=tol4;
   }
   if (ret!=0) {
-    double dx=1.0e-5;
+    cout << "ret: " << ret << endl;
+    double dx=1.0e-3;
     for(double nex0=nex/(1.0+dx);nex0<nex*(1.0+dx);nex0*=1.0+dx/100.0) {
       cout << nex0 << " " << pair_fun(nex0,f,temper) << endl;
     }
+    exit(-1);
     O2SCL_CONV2_RET("Density solver failed in fermion_rel::",
 		    "pair_density().",exc_efailed,this->err_nonconv);
   }
@@ -736,7 +770,7 @@ double fermion_rel::pair_fun(double x, fermion &f, double T) {
   // The return value, n/(n') -1
   double yy;
 
-  // -------------------------------------------------------------
+  // -----------------------------------------------------------------
   // Compute the contribution from the particles
 
   f.nu=T*x;
@@ -813,7 +847,7 @@ double fermion_rel::pair_fun(double x, fermion &f, double T) {
 
   }
 
-  // -------------------------------------------------------------
+  // -----------------------------------------------------------------
   // Compute the contribution from the antiparticles
 
   f.nu=-T*x;
