@@ -201,12 +201,10 @@ namespace o2scl {
       i++;
     }
     if (done==false) {
-      O2SCL_ERR("Failed to bracket function in root_bkt::solve().",
-		    o2scl::exc_emaxiter);
+      O2SCL_CONV_RET("Failed to bracket function in root_bkt::solve().",
+		     o2scl::exc_emaxiter,this->err_nonconv);
     }
     return solve_bkt(x,x2,func);
-
-    return 0;
   }
 
   /** \brief Solve \c func using \c x as an initial
@@ -237,12 +235,11 @@ namespace o2scl {
     }
 	
     if (done==false) {
-      O2SCL_ERR("Failed to bracket function in root_bkt::solve_de().",
-		    o2scl::exc_efailed);
+      O2SCL_CONV_RET("Failed to bracket function in root_bkt::solve_de().",
+		     o2scl::exc_emaxiter,this->err_nonconv);
     }
     
     return solve_bkt(x,x2,func);
-    
   }
   
   };
