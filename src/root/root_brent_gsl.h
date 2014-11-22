@@ -154,12 +154,12 @@ namespace o2scl {
     }
   
     if (fabs(e) < tol || fabs(fa) <= fabs(fb)) {
-      // use bisection 
+      // [GSL] Use bisection 
       d=m;            
       e=m;
     } else {
 
-      // use inverse cubic interpolation 
+      // [GSL] Use inverse cubic interpolation 
       double p, q, r;   
       double s=fb/fa;
     
@@ -185,7 +185,7 @@ namespace o2scl {
 	e=d;
 	d=p/q;
       } else {
-	// Interpolation failed, fall back to bisection.
+	// [GSL] Interpolation failed, fall back to bisection.
 	d=m;
 	e=m;
       }
@@ -348,7 +348,7 @@ namespace o2scl {
     root=0.5*(lower+upper);
   
     double f_lower, f_upper;
-  
+    
     f_lower=ff(x_lower);
     f_upper=ff(x_upper);
 	

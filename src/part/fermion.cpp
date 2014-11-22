@@ -760,6 +760,7 @@ bool fermion_eval_thermo::calc_mu_ndeg(fermion &f, double temper,
   f.en=0.0;
 
   for(size_t j=1;j<=max_term;j++) {
+
     double dj=((double)j);
     double pterm, nterm, enterm;
 
@@ -816,7 +817,10 @@ bool fermion_eval_thermo::calc_mu_ndeg(fermion &f, double temper,
 		exp(dj*psi)*sqrt(pi/2.0/novert)*
 		(ebk1+ebk3)/2.0/dj)/f.ms;
       }
+
+      // Else statement for 'if (novert>700.0)'
     } else {
+
       pterm=exp(dj*(psi+1.0/tt))/novert/novert*gsl_sf_bessel_Kn(2,novert);
       if (j%2==0) pterm*=-1.0;
       nterm=pterm*dj/temper;
@@ -831,6 +835,8 @@ bool fermion_eval_thermo::calc_mu_ndeg(fermion &f, double temper,
 		(gsl_sf_bessel_K1(dj/tt)+
 		 gsl_sf_bessel_Kn(3,dj/tt)))/f.ms;
       }
+
+      // End of 'if (novert>700.0) else'
     }
 
     if (j==1) first_term=pterm;
@@ -848,20 +854,19 @@ bool fermion_eval_thermo::calc_mu_ndeg(fermion &f, double temper,
       return true;
     }
 
-    // Stop early if we can
+    // Stop if the last term is sufficiently small compared to
+    // the first term
     if (j>1 && fabs(pterm)<prec*fabs(first_term)) {
       f.pr*=prefac;
       f.n*=prefac;
       f.en*=prefac;
       f.ed=-f.pr+f.nu*f.n+temper*f.en;
       return true;
-    } else if (j==max_term) {
-      // The last iteration failed to converge
-      return false;
     }
+
+    // End of 'for(size_t j=1;j<=max_term;j++)'
   }
 
-  O2SCL_ERR2("Loop exited in fermion_eval_thermo::",
-	     "calc_mu_ndeg().",exc_esanity);
+  // We failed to add enough terms, so return false
   return false;
 }

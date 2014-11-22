@@ -715,10 +715,6 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm) {
     // Add electrons
     dm.e.n=Ye*nB;
     ret=relf.pair_density(dm.e,dm.T);
-    for(size_t i=0;i<5 && ret!=0;i++) {
-      cout << i << " " << dm.e.mu << " " << ret << endl;
-      ret=relf.pair_density(dm.e,dm.T);
-    }
     if (ret!=success) {
       if (verbose>0) {
 	cout << "Electron EOS failed in "

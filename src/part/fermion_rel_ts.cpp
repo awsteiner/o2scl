@@ -47,6 +47,19 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
+  {
+    e.mu=0.0;
+    e.init(0.511/197.33,2.0);
+    e.n=1.0e-8;
+    T=100.0/197.33;
+    for(size_t i=0;i<5;i++) {
+      rf.pair_density(e,T);
+      cout << e.mu << endl;
+      e.n/=10.0;
+    }
+    exit(-1);
+  }
+
   // -----------------------------------------------------------------
   // fermion_rel tests
   

@@ -66,8 +66,10 @@ namespace o2scl {
       must check the return value of these two functions 
       every time they are called. 
 
-      \bug I don't think inc_lept_phot=false works because then
-      all WS cells have infinite size because of no electrons
+      \todo I don't think inc_lept_phot=false works because then
+      all WS cells have infinite size because of no electrons.
+      For the moment, this variable is protected to discourage
+      the user from changing it.
 
       \future Add fermion and boson statistics to the nuclei in the
       distribution
@@ -81,6 +83,9 @@ namespace o2scl {
 
   protected:
     
+    /// If true, include electrons and photons (default true)
+    bool inc_lept_phot;
+
     /// Compute particle properties assuming classical thermodynamics
     o2scl::classical cla;
 
@@ -142,9 +147,6 @@ namespace o2scl {
 	not converge (default true)
     */
     bool err_nonconv;
-
-    /// If true, include electrons and photons (default true)
-    bool inc_lept_phot;
 
     /** \brief If true, include dripped protons and
 	neutrons in the nuclear mass (default true)

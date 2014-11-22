@@ -30,6 +30,7 @@
 #include <cmath>
 #include <o2scl/err_hnd.h>
 #include <o2scl/funct.h>
+#include <o2scl/misc.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -147,7 +148,7 @@ namespace o2scl {
   public:
 
   root_bkt() {
-    bracket_step=1.0e-4;
+    bracket_step=0.0;
     bracket_iters=10;
   }
       
@@ -175,19 +176,26 @@ namespace o2scl {
   /** \brief Solve \c func using \c x as an initial guess
   */
   virtual int solve(double &x, func_t &func) {
-
-    if (bracket_step==0.0) bracket_step=1.0e-4;
+    
+    if (bracket_step<=0.0) {
+      bracket_step=fabs(x)*1.0e-4;
+      if (bracket_step<1.0e-15) bracket_step=1.0e-15;
+    }
 
     double x2=0.0, dx, fx, fx2;
     size_t i=0;
     bool done=false;
     // Use function to try to bracket a root
     while(done==false && i<bracket_iters) {
-	  
+      
       fx=func(x);
       fx2=func(x*(1.0+bracket_step));
 	    
       dx=(fx2-fx)/(bracket_step*x);
+      if (dx==0.0) {
+	O2SCL_CONV_RET("Failed to bracket (dx==0) in root_bkt::solve().",
+		       o2scl::exc_emaxiter,this->err_nonconv);
+      }
       x2=x-2.0*fx/dx;
 	  
       fx2=func(x2);
@@ -201,7 +209,7 @@ namespace o2scl {
       i++;
     }
     if (done==false) {
-      O2SCL_CONV_RET("Failed to bracket function in root_bkt::solve().",
+      O2SCL_CONV_RET("Failed to bracket (iters>max) in root_bkt::solve().",
 		     o2scl::exc_emaxiter,this->err_nonconv);
     }
     return solve_bkt(x,x2,func);

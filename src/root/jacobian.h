@@ -219,7 +219,7 @@ namespace o2scl {
 
       // Thanks to suggestion from Conrad Curry.
       h=epsrel*fabs(x[j]);
-      if (h<=epsmin) h=epsmin;
+      if (h<epsmin) h=epsmin;
       if (h==0.0) h=epsrel;
       
       xx[j]=x[j]+h;
