@@ -78,7 +78,7 @@ void fermion_rel::calc_mu(fermion &f, double temper) {
   if (psi<deg_limit) deg=false;
   
   // Try the non-degenerate expansion if psi is small enough
-  if (psi<min_psi) {
+  if (false && psi<min_psi) {
     bool acc=calc_mu_ndeg(f,temper,1.0e-14);
     if (acc) {
       unc.n=f.n*1.0e-14;
@@ -337,7 +337,7 @@ int fermion_rel::calc_density(fermion &f, double temper) {
   if (psi<deg_limit) deg=false;
 
   // Try the non-degenerate expansion if psi is small enough
-  if (psi<min_psi) {
+  if (false && psi<min_psi) {
     bool acc=calc_mu_ndeg(f,temper,1.0e-14);
     if (acc) {
       unc.ed=f.ed*1.0e-14;
@@ -577,7 +577,7 @@ double fermion_rel::solve_fun(double x, fermion &f, double T) {
   if (psi<deg_limit) deg=false;
 
   // Try the non-degenerate expansion if psi is small enough
-  if (psi<min_psi) {
+  if (false && psi<min_psi) {
     double ntemp=f.n;
     bool acc=calc_mu_ndeg(f,T,1.0e-14);
     if (acc) {
@@ -788,7 +788,7 @@ double fermion_rel::pair_fun(double x, fermion &f, double T) {
   bool particles_done=false;
 
   // Try the non-degenerate expansion if psi is small enough
-  if (psi<min_psi) {
+  if (false && psi<min_psi) {
     if (calc_mu_ndeg(f,T,1.0e-14)) {
       particles_done=true;
       yy=f.n;
@@ -885,7 +885,7 @@ double fermion_rel::pair_fun(double x, fermion &f, double T) {
   if (psi<deg_limit) deg=false;
   
   // Try the non-degenerate expansion if psi is small enough
-  if (psi<min_psi) {
+  if (false && psi<min_psi) {
     if (calc_mu_ndeg(f,T,1.0e-14)) {
       antiparticles_done=true;
       yy-=f.n;

@@ -708,8 +708,30 @@ bool fermion_eval_thermo::calc_mu_deg(fermion &f, double temper,
   return true;
 }
 
+double fermion_eval_thermo::expK(double nu, double x, double prec, 
+				 size_t k_max) {
+				 
+  // If x is sufficiently small, just use the exact expression
+  if (x<650.0) {
+    return exp(x)*gsl_sf_bessel_Kn(nu,x);
+  }
+  
+  double ret=0.0, ak=1.0;
+  for(size_t k=0;k<k_max;k++) {
+    double term=ak/pow(x,k);
+    ret+=term;
+    if (term<prec) return ret*sqrt(o2scl_const::pi/2.0/x);
+    double dkp1=((double)(k+1));
+    ak*=0.125/dkp1*(4.0*nu*nu-pow(2.0*dkp1-1.0,2.0));
+  }
+  
+  O2SCL_ERR2("Failed to reach requested precision in ",
+	     "fermion_eval_thermo::expK()",exc_einval);
+  return 0.0;
+}
+
 bool fermion_eval_thermo::calc_mu_ndeg(fermion &f, double temper, 
-				       double prec) {
+				       double prec, bool inc_antip) {
 
   if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
 
@@ -720,14 +742,14 @@ bool fermion_eval_thermo::calc_mu_ndeg(fermion &f, double temper,
   double tt=temper/f.ms;
 
   // Return false immediately if we're degenerate
-  if (psi>-1.0) return false;
+  if (inc_antip==false && psi>-1.0) return false;
 
   // Prefactor 'd' in Johns96
   double prefac=f.g/2.0/pi2*pow(f.ms,4.0);
 
   // One term is always used, so only values of max_term greater than
   // 0 are useful.
-  static const size_t max_term=20;
+  static const size_t max_term=40;
   
   // Maximum argument for exponential
   // double log_dbl_max=709.78;
@@ -740,20 +762,28 @@ bool fermion_eval_thermo::calc_mu_ndeg(fermion &f, double temper,
     f.en=0.0;
     return true;
   }
+
+  // -----------------------------------------------------
+  // Return early if the last term is going to be too large.
   
-  if (max_term/tt<700.0) {
-    // Ratio of last term to first term
-    double rat=exp((max_term-1.0)*(psi+1.0/tt))*
-      gsl_sf_bessel_Kn(2,max_term/tt)/
-      gsl_sf_bessel_Kn(2,1.0/tt)/pow(((double)max_term),2.0);
-    
-    // If the ratio between the last term and the first term is 
-    // not small enough, return false
-    if (rat>prec) {
-      return false;
-    }
+  // Ratio of last term to first term
+  double rat;
+  double dj1=((double)max_term), jot1=max_term/tt;
+  double dj2=1.0, jot2=1.0/tt;
+  if (inc_antip==false) {
+    rat=exp(dj1*psi)/jot1/jot1*expK(2.0,jot1);
+    rat/=exp(dj2*psi)/jot2/jot2*expK(2.0,jot2);
+  } else {
+    rat=exp(-jot1)*2.0*cosh(dj1*f.nu/temper)/jot1/jot1*expK(2.0,jot1);
+    rat/=exp(-jot2)*2.0*cosh(dj2*f.nu/temper)/jot2/jot2*expK(2.0,jot2);
   }
-    
+  
+  // If the ratio between the last term and the first term is 
+  // not small enough, return false
+  if (rat>prec) {
+    return false;
+  }
+  
   double first_term=0.0;
   f.pr=0.0;
   f.n=0.0;
@@ -764,79 +794,40 @@ bool fermion_eval_thermo::calc_mu_ndeg(fermion &f, double temper,
     double dj=((double)j);
     double pterm, nterm, enterm;
 
-    double novert=dj/tt;
+    double jot=dj/tt;
 
-    // If n/t is large, we have to use an expansion for
-    // the bessel functions and part of the exponential
-    if (novert>700.0) {
-      double novert2=novert*novert;
-      double novert3=novert2*novert;
-      double novert4=novert2*novert2;
-      double novert5=novert3*novert2;
-      double novert6=novert3*novert3;
-      double novert7=novert4*novert3;
-      double novert8=novert4*novert4;
-      double novert9=novert5*novert4;
-      double novert10=novert5*novert5;
-      double novert11=novert6*novert5;
-      double novert12=novert6*novert6;
-      pterm=exp(dj*psi)/novert/novert*sqrt(pi/2.0/novert);
-      pterm*=(1.0+15.0/8.0/novert+105.0/128.0/novert2-
-	      315.0/1024.0/novert3+10395.0/32768.0/novert4-
-	      135135.0/262144.0/novert5+4729725.0/4194304.0/novert6-
-	      103378275.0/33554432.0/novert7+
-	      21606059475.0/2147483648.0/novert8-
-	      655383804075.0/17179869184.0/novert9+
-	      45221482481175.0/274877906944.0/novert10-
-	      1747193641318125.0/2199023255552.0/novert11+
-	      298770112665399375.0/70368744177664.0/novert12);
-      if (j%2==0) pterm*=-1.0;
-      nterm=pterm*dj/temper;
-      double ebk1=1.0+3.0/8.0/novert-15.0/128.0/novert2+
-	105.0/1024.0/novert3-4725.0/32768.0/novert4+
-	72765.0/262144.0/novert5-2837835.0/4194304.0/novert6+
-	66891825.0/33554432.0/novert7-14783093325.0/2147483648.0/novert8+
-	468131288625.0/17179869184.0/novert9-
-	33424574007825.0/274877906944.0/novert10+
-	1327867167401775.0/2199023255552.0/novert11-
-	232376754295310625.0/70368744177664.0/novert12;
-      double ebk3=1.0+35.0/8.0/novert+945.0/128.0/novert2+
-	3465.0/1024.0/novert3-45045.0/32768.0/novert4+
-	405405.0/262144.0/novert5-11486475.0/4194304.0/novert6+
-	218243025.0/33554432.0/novert7-41247931725.0/2147483648.0/novert8+
-	1159525191825.0/17179869184.0/novert9-
-	75369137468625.0/274877906944.0/novert10+
-	2774954606799375.0/2199023255552.0/novert11-
-	456017540384030625.0/70368744177664.0/novert12;
+    if (inc_antip==false) {
+      pterm=exp(dj*psi)/jot/jot*expK(2.0,jot);
       if (j%2==0) {
-	enterm=(pterm*2.0/tt-pterm/tt/tt*dj-
-		exp(dj*psi)*sqrt(pi/2.0/novert)*
-		(ebk1+ebk3)/2.0/dj)/f.ms;
-      } else {
-	enterm=(pterm*2.0/tt-pterm/tt/tt*dj+
-		exp(dj*psi)*sqrt(pi/2.0/novert)*
-		(ebk1+ebk3)/2.0/dj)/f.ms;
+	pterm*=-1.0;
       }
-
-      // Else statement for 'if (novert>700.0)'
+      nterm=pterm*dj/temper;
     } else {
-
-      pterm=exp(dj*(psi+1.0/tt))/novert/novert*gsl_sf_bessel_Kn(2,novert);
-      if (j%2==0) pterm*=-1.0;
-      nterm=pterm*dj/temper;
+      pterm=exp(-jot)*2.0*cosh(dj*f.nu/temper)/jot/jot*expK(2.0,jot);
+      if (j%2==0) {
+	pterm*=-1.0;
+      }
+      nterm=pterm*tanh(dj*f.nu/temper)*dj/temper;
+    }
+    
+    if (inc_antip==false) {
       if (j%2==0) {
 	enterm=(pterm*2.0/tt-pterm/tt/tt*dj-
-		exp(dj*(psi+1.0/tt))/2.0/dj*
-		(gsl_sf_bessel_K1(dj/tt)+
-		 gsl_sf_bessel_Kn(3,dj/tt)))/f.ms;
+		exp(dj*psi)/2.0/dj*(expK(1.0,jot)+expK(3.0,jot)))/f.ms;
       } else {
 	enterm=(pterm*2.0/tt-pterm/tt/tt*dj+
-		exp(dj*(psi+1.0/tt))/2.0/dj*
-		(gsl_sf_bessel_K1(dj/tt)+
-		 gsl_sf_bessel_Kn(3,dj/tt)))/f.ms;
+		exp(dj*psi)/2.0/dj*(expK(1.0,jot)+expK(3.0,jot)))/f.ms;
       }
-
-      // End of 'if (novert>700.0) else'
+    } else {
+      if (j%2==0) {
+	enterm=(pterm*2.0/tt-cosh(dj*f.nu/temper)/dj*
+		(expK(1.0,jot)+expK(3.0,jot))+2.0*pterm*f.nu*dj/tt/tt*
+		tanh(dj*f.nu/temper)/f.ms)/f.ms;
+      } else {
+	enterm=(pterm*2.0/tt+cosh(dj*f.nu/temper)/dj*
+		(expK(1.0,jot)+expK(3.0,jot))+2.0*pterm*f.nu*dj/tt/tt*
+		tanh(dj*f.nu/temper)/f.ms)/f.ms;
+      }
     }
 
     if (j==1) first_term=pterm;

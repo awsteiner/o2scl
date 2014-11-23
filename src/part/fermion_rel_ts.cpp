@@ -48,15 +48,74 @@ int main(void) {
   cout.setf(ios::scientific);
 
   {
-    e.mu=0.0;
-    e.init(0.511/197.33,2.0);
-    e.n=1.0e-8;
-    T=100.0/197.33;
-    for(size_t i=0;i<5;i++) {
-      rf.pair_density(e,T);
-      cout << e.mu << endl;
-      e.n/=10.0;
+    bool acc;
+    double pr1;
+
+    T=1.01;
+    e.init(1.03,2.0);
+    e.mu=-3.0;
+    rf.calc_mu(e,T);
+    cout << 1 << " " << e.pr << " " << e.n << " " << e.en << endl;
+    acc=rf.calc_mu_ndeg(e,T,1.0e-15,false);
+    cout << acc << " " << e.pr << " " << e.n << " " << e.en << endl;
+    pr1=e.pr;
+    T=1.0101;
+    acc=rf.calc_mu_ndeg(e,T,1.0e-15,false);
+    cout << acc << " " << e.pr << " " << e.n << " " << e.en << endl;
+    cout << (e.pr-pr1)/0.0001 << endl;
+    T=1.01;
+    cout << endl;
+
+    e.mu=1.0e-11;
+    rf.pair_mu(e,T);
+    cout << 1 << " " << e.pr << " " << e.n << " " << e.en << endl;
+    acc=rf.calc_mu_ndeg(e,T,1.0e-12,true);
+    cout << acc << " " << e.pr << " " << e.n << " " << e.en << endl;
+    pr1=e.pr;
+    T=1.0101;
+    acc=rf.calc_mu_ndeg(e,T,1.0e-12,true);
+    cout << acc << " " << e.pr << " " << e.n << " " << e.en << endl;
+    cout << (e.pr-pr1)/0.0001 << endl;
+    T=1.01;
+    cout << endl;
+
+    exit(-1);
+  }
+
+  if (false) {
+    e.init(0.25,2.0);
+    T=0.001;
+    //e.mu=1.0e1;
+    e.mu=1.0e-11;
+    for(size_t i=0;i<15;i++) {
+      rf.pair_mu(e,T);
+      cout.setf(ios::showpos);
+      cout << e.mu << " ";
+      cout.unsetf(ios::showpos);
+      cout << e.n << " " << e.pr << " ";
+      bool ret=rf.calc_mu_ndeg(e,T,1.0e300,true);
+      cout << ret << " " << e.n << " " << e.pr << endl;
+      exit(-1);
+      e.mu/=10.0;
     }
+    cout << endl;
+    exit(-1);
+  }
+
+  if (false) {
+    e.mu=1.0e1;
+    for(size_t i=0;i<15;i++) {
+      rf.calc_mu(e,T);
+      cout.setf(ios::showpos);
+      cout << e.mu << " ";
+      cout.unsetf(ios::showpos);
+      cout << e.n << " " << e.pr << " ";
+      bool ret=rf.calc_mu_ndeg(e,T,1.0e-3,false);
+      cout << ret << " " << e.n << " " << e.pr << endl;
+      e.mu-=2.0;
+    }
+    cout << endl;
+
     exit(-1);
   }
 

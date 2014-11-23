@@ -199,6 +199,15 @@ namespace o2scl {
   class fermion_eval_thermo : public fermion_zerot {
 
   public:
+    
+    /** \brief Evaluate \f$ e^{x} K_{\nu}(x) \f$
+	
+	This evalutes the function \f$ e^{x} K_{\nu}(x)
+	\f$ without overflow in the exponential for large \f$ x \f$
+	using a series expansion to obtain a specified precision.
+    */
+    double expK(double nu, double x, double prec=1.0e-17, 
+		size_t k_max=200);
 
     fermion_eval_thermo();
 
@@ -273,8 +282,8 @@ namespace o2scl {
 	10^{-18} \f$ since \f$ (20/700)^{12} \sim 10^{-19} \f$.
     */
     virtual bool calc_mu_ndeg(fermion &f, double temper, 
-			      double prec=1.0e-18);
-    
+			      double prec=1.0e-18, bool inc_antip=false);
+
     /** \brief Degenerate expansion for fermions
 
 	Attempts to evaulate thermodynamics of a degenerate fermion.

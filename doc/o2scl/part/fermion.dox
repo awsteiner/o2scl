@@ -143,8 +143,16 @@
     Otherwise, one can use an \f$x\rightarrow\infty\f$ expansion
     \f[
     \sqrt{\frac{2x}{\pi}} e^{x} K_2(x) \approx 1 + \frac{3}{8 x} -
-    \frac{15}{128 x^2} + \ldots \, .
+    \frac{15}{128 x^2} + \ldots = 
+    \sum_{k=0}^{\infty} \frac{a_k(\nu)}{z^k}
+    \, .
     \f]
+    where
+    \f[
+    a_{k}(\nu) = \frac{1}{k! \, 8^k} \prod_{i=1}^{i=k}
+    \left[4 \nu^2 - (2 i-1)^2\right]
+    \f]
+    as given in \ref Oliver10 .
 
     The density is 
     \f[
