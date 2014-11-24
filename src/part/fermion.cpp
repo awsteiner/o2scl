@@ -708,28 +708,6 @@ bool fermion_eval_thermo::calc_mu_deg(fermion &f, double temper,
   return true;
 }
 
-double fermion_eval_thermo::expK(double nu, double x, double prec, 
-				 size_t k_max) {
-				 
-  // If x is sufficiently small, just use the exact expression
-  if (x<650.0) {
-    return exp(x)*gsl_sf_bessel_Kn(nu,x);
-  }
-  
-  double ret=0.0, ak=1.0;
-  for(size_t k=0;k<k_max;k++) {
-    double term=ak/pow(x,k);
-    ret+=term;
-    if (term<prec) return ret*sqrt(o2scl_const::pi/2.0/x);
-    double dkp1=((double)(k+1));
-    ak*=0.125/dkp1*(4.0*nu*nu-pow(2.0*dkp1-1.0,2.0));
-  }
-  
-  O2SCL_ERR2("Failed to reach requested precision in ",
-	     "fermion_eval_thermo::expK()",exc_einval);
-  return 0.0;
-}
-
 bool fermion_eval_thermo::calc_mu_ndeg(fermion &f, double temper, 
 				       double prec, bool inc_antip) {
 
@@ -775,20 +753,22 @@ bool fermion_eval_thermo::calc_mu_ndeg(fermion &f, double temper,
   double dj1=((double)max_term), jot1=max_term/tt;
   double dj2=1.0, jot2=1.0/tt;
   if (inc_antip==false) {
-    rat=exp(dj1*psi)/jot1/jot1*expK(2.0,jot1);
-    rat/=exp(dj2*psi)/jot2/jot2*expK(2.0,jot2);
+    rat=exp(dj1*psi)/jot1/jot1*gsl_sf_bessel_Kn_scaled(2.0,jot1);
+    rat/=exp(dj2*psi)/jot2/jot2*gsl_sf_bessel_Kn_scaled(2.0,jot2);
   } else {
     if (f.inc_rest_mass) {
-      rat=exp(-jot1)*2.0*cosh(dj1*f.nu/temper)/jot1/jot1*expK(2.0,jot1);
-      rat/=exp(-jot2)*2.0*cosh(dj2*f.nu/temper)/jot2/jot2*expK(2.0,jot2);
+      rat=exp(-jot1)*2.0*cosh(dj1*f.nu/temper)/jot1/jot1*
+	gsl_sf_bessel_Kn_scaled(2.0,jot1);
+      rat/=exp(-jot2)*2.0*cosh(dj2*f.nu/temper)/jot2/jot2*
+	gsl_sf_bessel_Kn_scaled(2.0,jot2);
     } else {
-      rat=exp(-jot1)*2.0*cosh(dj1*(f.nu+f.m)/temper)/jot1/jot1*expK(2.0,jot1);
-      rat/=exp(-jot2)*2.0*cosh(dj2*(f.nu+f.m)/temper)/jot2/jot2*expK(2.0,jot2);
+      rat=exp(-jot1)*2.0*cosh(dj1*(f.nu+f.m)/temper)/jot1/jot1*
+	gsl_sf_bessel_Kn_scaled(2.0,jot1);
+      rat/=exp(-jot2)*2.0*cosh(dj2*(f.nu+f.m)/temper)/jot2/jot2*
+	gsl_sf_bessel_Kn_scaled(2.0,jot2);
     }
   }
 
-  //cout << "rat: " << rat << endl;
-  
   // If the ratio between the last term and the first term is 
   // not small enough, return false
   if (rat>prec) {
@@ -808,20 +788,22 @@ bool fermion_eval_thermo::calc_mu_ndeg(fermion &f, double temper,
     double pterm, nterm, enterm;
 
     if (inc_antip==false) {
-      pterm=exp(dj*psi)/jot/jot*expK(2.0,jot);
+      pterm=exp(dj*psi)/jot/jot*gsl_sf_bessel_Kn_scaled(2.0,jot);
       if (j%2==0) {
 	pterm*=-1.0;
       }
       nterm=pterm*dj/temper;
     } else {
       if (f.inc_rest_mass) {
-	pterm=exp(-jot)*2.0*cosh(dj*f.nu/temper)/jot/jot*expK(2.0,jot);
+	pterm=exp(-jot)*2.0*cosh(dj*f.nu/temper)/jot/jot*
+	  gsl_sf_bessel_Kn_scaled(2.0,jot);
 	if (j%2==0) {
 	  pterm*=-1.0;
 	}
 	nterm=pterm*tanh(dj*f.nu/temper)*dj/temper;
       } else {
-	pterm=exp(-jot)*2.0*cosh(dj*(f.nu+f.m)/temper)/jot/jot*expK(2.0,jot);
+	pterm=exp(-jot)*2.0*cosh(dj*(f.nu+f.m)/temper)/jot/jot*
+	  gsl_sf_bessel_Kn_scaled(2.0,jot);
 	if (j%2==0) {
 	  pterm*=-1.0;
 	}
@@ -829,16 +811,16 @@ bool fermion_eval_thermo::calc_mu_ndeg(fermion &f, double temper,
       }
     }
 
-    //cout << "pterm: " << dj << " " << pterm << endl;
-    
     if (inc_antip==false) {
       if (j%2==0) {
 	enterm=(pterm*2.0/tt-pterm/tt/tt*dj-
-		exp(dj*psi)/2.0/dj*(expK(1.0,jot)+expK(3.0,jot)))/f.ms-
+		exp(dj*psi)/2.0/dj*(gsl_sf_bessel_Kn_scaled(1.0,jot)+
+				    gsl_sf_bessel_Kn_scaled(3.0,jot)))/f.ms-
 	  pterm*dj*psi_num/temper/temper;
       } else {
 	enterm=(pterm*2.0/tt-pterm/tt/tt*dj+
-		exp(dj*psi)/2.0/dj*(expK(1.0,jot)+expK(3.0,jot)))/f.ms-
+		exp(dj*psi)/2.0/dj*(gsl_sf_bessel_Kn_scaled(1.0,jot)+
+				    gsl_sf_bessel_Kn_scaled(3.0,jot)))/f.ms-
 	  pterm*dj*psi_num/temper/temper;
       }
     } else {
@@ -846,11 +828,13 @@ bool fermion_eval_thermo::calc_mu_ndeg(fermion &f, double temper,
       if (f.inc_rest_mass==false) nu2+=f.m;
       if (j%2==0) {
 	enterm=(pterm*2.0/tt-cosh(dj*nu2/temper)/dj*exp(-jot)*
-		(expK(1.0,jot)+expK(3.0,jot))+2.0*pterm*nu2*dj/tt/tt*
+		(gsl_sf_bessel_Kn_scaled(1.0,jot)+
+		 gsl_sf_bessel_Kn_scaled(3.0,jot))+2.0*pterm*nu2*dj/tt/tt*
 		tanh(dj*nu2/temper)/f.ms)/f.ms;
       } else {
 	enterm=(pterm*2.0/tt+cosh(dj*nu2/temper)/dj*exp(-jot)*
-		(expK(1.0,jot)+expK(3.0,jot))+2.0*pterm*nu2*dj/tt/tt*
+		(gsl_sf_bessel_Kn_scaled(1.0,jot)+
+		 gsl_sf_bessel_Kn_scaled(3.0,jot))+2.0*pterm*nu2*dj/tt/tt*
 		tanh(dj*nu2/temper)/f.ms)/f.ms;
       }
     }

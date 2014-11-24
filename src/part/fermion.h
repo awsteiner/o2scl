@@ -200,15 +200,6 @@ namespace o2scl {
 
   public:
     
-    /** \brief Evaluate \f$ e^{x} K_{\nu}(x) \f$
-	
-	This evalutes the function \f$ e^{x} K_{\nu}(x)
-	\f$ without overflow in the exponential for large \f$ x \f$
-	using a series expansion to obtain a specified precision.
-    */
-    double expK(double nu, double x, double prec=1.0e-17, 
-		size_t k_max=200);
-
     fermion_eval_thermo();
 
     virtual ~fermion_eval_thermo() {

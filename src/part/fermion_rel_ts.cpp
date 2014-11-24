@@ -685,7 +685,7 @@ int main(void) {
     t2=xr.nu;
     rf.pair_mu(xr,temper);
     cout << xr.n << " " << den << endl;
-    t.test_rel(xr.n,den,1.0e-6,"den2");
+    t.test_rel(xr.n,den,2.0e-5,"den2");
     
     xr.nu=mu;
     rf.calc_mu(xr,temper);
@@ -700,7 +700,7 @@ int main(void) {
     cout << den << " " << d1 << " " << d2 << " " << d1-d2 << endl;
     t3=d1;
     t4=d2;
-    t.test_rel(den,d1-d2,1.0e-6,"den3");
+    t.test_rel(den,d1-d2,2.0e-5,"den3");
     cout << endl;
 
     // -----------------------------------------------------------------
@@ -729,7 +729,7 @@ int main(void) {
     t.test_rel(xr.nu,t2,1.0e-6,"nu2");
     rf.pair_mu(xr,temper);
     cout << xr.n << " " << den << endl;
-    t.test_rel(xr.n,den,1.0e-6,"den2");
+    t.test_rel(xr.n,den,2.0e-5,"den2");
     
     xr.mu=mu;
     rf.calc_mu(xr,temper);
@@ -738,7 +738,7 @@ int main(void) {
     rf.calc_mu(xr,temper);
     d2=xr.n;
     cout << den << " " << d1 << " " << d2 << " " << d1-d2 << endl;
-    t.test_rel(den,d1-d2,1.0e-6,"den3");
+    t.test_rel(den,d1-d2,2.0e-5,"den3");
     t.test_rel(t3,d1,1.0e-6,"den4");
     t.test_rel(t4,d2,1.0e-6,"den5");
     cout << endl;

@@ -1120,8 +1120,10 @@ void eos_nse_full::output(dense_matter &dm, int output_level) {
     cout << "Xn: " << dm.n.n/dm.nB << endl;
     cout << "Xp: " << dm.p.n/dm.nB << endl;
     cout << "Xnuclei: " << Xnuclei << endl;
-    cout << "mu_n: " << dm.eta_n*hc_mev_fm << " MeV" << endl;
-    cout << "mu_p: " << dm.eta_p*hc_mev_fm << " MeV" << endl;
+    cout << "mu_n: " << dm.n.mu*hc_mev_fm << " MeV" << endl;
+    cout << "mu_p: " << dm.p.mu*hc_mev_fm << " MeV" << endl;
+    cout << "eta_n: " << dm.eta_n*hc_mev_fm << " MeV" << endl;
+    cout << "eta_p: " << dm.eta_p*hc_mev_fm << " MeV" << endl;
     if (include_muons) {
       cout << "Xmu: " << dm.mu.n/dm.nB << endl;
     }
