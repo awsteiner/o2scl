@@ -108,8 +108,13 @@
     P. Moller, J.R. Nix, and K.-L. Kratz</a>,
     At. Data Nucl. Data Tables \b 66 (1997) 131.
 
+    \comment
     \anchor Oliver10 Oliver10
     ISBN 9780521192255, http://dlmf.nist.gov
+    This reference was originally used in non-degnerate expansion,
+    but is now unused. I keep it here because it may be useful
+    in the future.
+    \endcomment
 
     \anchor Samyn04 Samyn04:
     <a href="http://link.aps.org/doi/10.1103/PhysRevC.70.044309">

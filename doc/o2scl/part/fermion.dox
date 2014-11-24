@@ -57,8 +57,9 @@
     + \frac{1}{4} \log \left[ \frac{
     \sqrt{x}+\sqrt{2+x}}{\sqrt{2}} \right]
     \f]
-    where \f$ x = \psi t\f$ . This cannot be used when \f$x\f$ is small, but
-    a Taylor series expansion can be used instead. The next few terms are
+    where \f$ x = \psi t\f$ . This expression cannot be used when
+    \f$x\f$ is small, but a Taylor series expansion can be used
+    instead. A few terms are
     \f{eqnarray}
     \frac{2 \pi^2 P}{g m^4} = P_0 + \frac{\pi^2 t^2}{6} \sqrt{x(2+x)}(1 + x) +
     \frac{7 \pi^4 t^4}{360} \left\{\frac{(1+x)(2
@@ -131,45 +132,40 @@
     {1+e^{\sqrt{x^2+z^2}-\phi}} = 
     3 z^2 \sum_{n=1}^{\infty} \frac{(-1)^{n-1}}{n^2} e^{n \phi} K_2(n z)
     \f]
-    which works well when \f$\phi-z < -1\f$. This directly gives
-    the sum in \ref Johns96
+    which works well when \f$\phi-z < -1\f$. This result directly 
+    gives the sum in \ref Johns96
     \f[
-    P = \frac{g m^4}{2 \pi^2} \left[ t^2 \sum_{k=1}^{\infty}
-    \frac{(-1)^{k+1}}{k^2} e^{k(\psi+1/t)} K_2\left(\frac{k}{t}\right)
+    P = \frac{g m^4}{2 \pi^2} \sum_{k=1}^{\infty} P_k \equiv 
+    \frac{g m^4}{2 \pi^2} \left[ \sum_{k=1}^{\infty}
+    \frac{t^2 (-1)^{k+1}}{k^2} e^{k \psi} e^{k/t} K_2\left(\frac{k}{t}\right)
     \right]
     \f]
-    So long as \f$t\f$ is not large compared with \f$k\f$, this sum can
-    be used directly to compute the pressure. 
-    Otherwise, one can use an \f$x\rightarrow\infty\f$ expansion
+    The function \f$ e^{x} K_2(x) \f$ is implemented in GSL as
+    <tt>gsl_sf_bessel_Kn_scaled</tt>. In the case that one
+    wants to include antiparticles, the result is
+    similar
     \f[
-    \sqrt{\frac{2x}{\pi}} e^{x} K_2(x) \approx 1 + \frac{3}{8 x} -
-    \frac{15}{128 x^2} + \ldots = 
-    \sum_{k=0}^{\infty} \frac{a_k(\nu)}{z^k}
-    \, .
+    P = \frac{g m^4}{2 \pi^2} \sum_{k=1}^{\infty} Q_k \equiv 
+    \frac{g m^4}{2 \pi^2} \left\{ \sum_{k=1}^{\infty}
+    \frac{2 t^2 (-1)^{k+1}}{k^2} e^{-k/t} \mathrm{cosh}
+    \left[k \mu/(t m)\right] \left[ e^{k/t} 
+    K_2\left(\frac{k}{t}\right) \right]
+    \right\}
     \f]
-    where
-    \f[
-    a_{k}(\nu) = \frac{1}{k! \, 8^k} \prod_{i=1}^{i=k}
-    \left[4 \nu^2 - (2 i-1)^2\right]
-    \f]
-    as given in \ref Oliver10 .
-
+    where the scaled Bessel function has been separated out.
     The density is 
     \f[
     n = \frac{g m^4}{2 \pi^2} \sum_{k=1}^{\infty} \frac{k}{T}{P_k}
     \f]
-    and the entropy density is
+    and 
     \f[
-    s = \frac{d}{m} \sum_{n=1}^{\infty} \left\{ \frac{2 P_n}{t}
-    -\frac{n P_n}{t^2}+ 
-    \frac{\left(-1\right)^{n+1}}{2 n} 
-    e^{n \left(\psi+1/t\right)} \left[ K_1 \left( \frac{n}{t} 
-    \right)+K_3 \left( \frac{n}{t} \right) \right]
-    \right\}
+    n = \frac{g m^4}{2 \pi^2} \sum_{k=1}^{\infty} \frac{k}{T}{Q_k} 
+    \mathrm{tanh} \left[k \mu/(t m)\right]
     \f]
+    if antiparticles are included. The entropy density can
+    also be written down similarly. 
 
     These expansions are used in 
-    \ref o2scl::fermion_eval_thermo::calc_mu_deg() .
-
+    \ref o2scl::fermion_eval_thermo::calc_mu_ndeg() .
     
 */
