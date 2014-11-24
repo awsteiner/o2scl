@@ -190,15 +190,31 @@ namespace o2scl {
       
       fx=func(x);
       fx2=func(x*(1.0+bracket_step));
-	    
+
+      if (this->verbose>0) {
+	std::cout << "root_bkt::solve(): Iteration " << i << " of "
+		  << bracket_iters << "." << std::endl;
+	std::cout << "\tx1: " << x << " f(x1): " << fx << std::endl;
+	std::cout << "\tx2: " << x*(1.0+bracket_step) 
+		  << " f(x2): " << fx2 << std::endl;
+      }
+      
       dx=(fx2-fx)/(bracket_step*x);
       if (dx==0.0) {
 	O2SCL_CONV_RET("Failed to bracket (dx==0) in root_bkt::solve().",
 		       o2scl::exc_emaxiter,this->err_nonconv);
       }
       x2=x-2.0*fx/dx;
-	  
+      
       fx2=func(x2);
+      if (this->verbose>0) {
+	std::cout << "\tx_new: " << x2 << " f(x_new): " << fx2 << std::endl;
+	if (this->verbose>1) {
+	  std::cout << "Press a key and type enter to continue. ";
+	  char ch;
+	  std::cin >> ch;
+	}
+      }
 	  
       if (fx*fx2<0.0) {
 	done=true;
@@ -211,6 +227,10 @@ namespace o2scl {
     if (done==false) {
       O2SCL_CONV_RET("Failed to bracket (iters>max) in root_bkt::solve().",
 		     o2scl::exc_emaxiter,this->err_nonconv);
+    }
+    if (this->verbose>0) {
+      std::cout << "root_bkt::solve(): Going to solve_bkt()." 
+		<< std::endl;
     }
     return solve_bkt(x,x2,func);
   }

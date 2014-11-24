@@ -45,6 +45,7 @@ fermion_rel::fermion_rel() : nit(new inte_qagiu_gsl<>),
   deg_entropy_fac=30.0;
   min_psi=-4.0;
   err_nonconv=true;
+  use_expansions=true;
 }
 
 fermion_rel::~fermion_rel() {
@@ -78,7 +79,7 @@ void fermion_rel::calc_mu(fermion &f, double temper) {
   if (psi<deg_limit) deg=false;
   
   // Try the non-degenerate expansion if psi is small enough
-  if (false && psi<min_psi) {
+  if (use_expansions && psi<min_psi) {
     bool acc=calc_mu_ndeg(f,temper,1.0e-14);
     if (acc) {
       unc.n=f.n*1.0e-14;
@@ -90,7 +91,7 @@ void fermion_rel::calc_mu(fermion &f, double temper) {
   }
 
   // Try the degenerate expansion if psi is large enough
-  if (psi>20.0) {
+  if (use_expansions && psi>20.0) {
     bool acc=calc_mu_deg(f,temper,1.0e-14);
     if (acc) {
       unc.n=f.n*1.0e-14;
@@ -337,7 +338,7 @@ int fermion_rel::calc_density(fermion &f, double temper) {
   if (psi<deg_limit) deg=false;
 
   // Try the non-degenerate expansion if psi is small enough
-  if (false && psi<min_psi) {
+  if (use_expansions && psi<min_psi) {
     bool acc=calc_mu_ndeg(f,temper,1.0e-14);
     if (acc) {
       unc.ed=f.ed*1.0e-14;
@@ -349,7 +350,7 @@ int fermion_rel::calc_density(fermion &f, double temper) {
   }
   
   // Try the degenerate expansion if psi is large enough
-  if (psi>20.0) {
+  if (use_expansions && psi>20.0) {
     bool acc=calc_mu_deg(f,temper,1.0e-14);
     if (acc) {
       unc.n=f.n*1.0e-14;
@@ -449,12 +450,17 @@ int fermion_rel::calc_density(fermion &f, double temper) {
 }
 
 double fermion_rel::deg_density_fun(double k, fermion &f, double T) {
-
+  
   double E=gsl_hypot(k,f.ms), ret;
   if (!f.inc_rest_mass) E-=f.m;
-  
+
   ret=k*k/(1.0+exp((E-f.nu)/T));
-  
+
+  if (!o2scl::is_finite(ret)) {
+    O2SCL_ERR2("Returned not finite result ",
+	       "in fermion_rel::deg_density_fun().",exc_einval);
+  }
+
   return ret;
 }
 
@@ -464,6 +470,11 @@ double fermion_rel::deg_energy_fun(double k, fermion &f, double T) {
   if (!f.inc_rest_mass) E-=f.m;
 
   ret=k*k*E/(1.0+exp((E-f.nu)/T));
+
+  if (!o2scl::is_finite(ret)) {
+    O2SCL_ERR2("Returned not finite result ",
+	       "in fermion_rel::deg_energy_fun().",exc_einval);
+  }
   
   return ret;
 }
@@ -488,10 +499,16 @@ double fermion_rel::deg_entropy_fun(double k, fermion &f, double T) {
     ret=-k*k*(nx*log(nx)+(1.0-nx)*log(1.0-nx));
   }
 
+  if (!o2scl::is_finite(ret)) {
+    O2SCL_ERR2("Returned not finite result ",
+	       "in fermion_rel::deg_entropy_fun().",exc_einval);
+  }
+
   return ret;
 }
   
 double fermion_rel::density_fun(double u, fermion &f, double T) {
+
   double ret, y, mx;
 
   if (f.inc_rest_mass) {
@@ -577,7 +594,7 @@ double fermion_rel::solve_fun(double x, fermion &f, double T) {
   if (psi<deg_limit) deg=false;
 
   // Try the non-degenerate expansion if psi is small enough
-  if (false && psi<min_psi) {
+  if (use_expansions && psi<min_psi) {
     double ntemp=f.n;
     bool acc=calc_mu_ndeg(f,T,1.0e-14);
     if (acc) {
@@ -590,7 +607,7 @@ double fermion_rel::solve_fun(double x, fermion &f, double T) {
   }
 
   // Try the degenerate expansion if psi is large enough
-  if (psi>20.0) {
+  if (use_expansions && psi>20.0) {
     double ntemp=f.n;
     bool acc=calc_mu_deg(f,T,1.0e-14);
     if (acc) {
@@ -654,6 +671,16 @@ void fermion_rel::pair_mu(fermion &f, double temper) {
 
   if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
 
+  if (use_expansions) {
+    if (calc_mu_ndeg(f,temper,1.0e-14,true)) {
+      unc.n=1.0e-14*f.n;
+      unc.ed=1.0e-14*f.ed;
+      unc.en=1.0e-14*f.en;
+      unc.pr=1.0e-14*f.pr;
+      return;
+    }
+  }
+
   fermion antip(f.ms,f.g);
   f.anti(antip);
 
@@ -705,17 +732,22 @@ int fermion_rel::pair_density(fermion &f, double temper) {
   double lg=temper;
   if (f.ms>lg) lg=temper;
   // Try increasing the chemical potential
-  double y=pair_fun(nex,f,temper);
+  double y=pair_fun(nex,f,temper,false);
   for(size_t i=0;i<10 && fabs(y+1.0)<1.0e-6;i++) {
     nex+=lg/temper;
-    y=pair_fun(nex,f,temper);
+    y=pair_fun(nex,f,temper,false);
   }
 
-  funct11 mf=std::bind(std::mem_fn<double(double,fermion &,double)>
+  funct11 mf=std::bind(std::mem_fn<double(double,fermion &,double,bool)>
 		       (&fermion_rel::pair_fun),
-		       this,std::placeholders::_1,std::ref(f),temper);
+		       this,std::placeholders::_1,std::ref(f),temper,false);
+
+  bool drec=density_root->err_nonconv;
+  density_root->err_nonconv=false;
   int ret=density_root->solve(nex,mf);
+
   if (ret!=0) {
+
     // If it fails, try to increase the tolerances on the 
     // integrators
     double tol1=dit->tol_rel, tol2=dit->tol_abs;
@@ -725,17 +757,36 @@ int fermion_rel::pair_density(fermion &f, double temper) {
     nit->tol_rel/=1.0e2;
     nit->tol_abs/=1.0e2;
     ret=density_root->solve(nex,mf);
+
+    funct11 lmf=std::bind(std::mem_fn<double(double,fermion &,double,bool)>
+			  (&fermion_rel::pair_fun),
+			  this,std::placeholders::_1,std::ref(f),temper,true);
+
     if (ret!=0) {
-      // If that doesn't work, try a different solver
+      // Try working in log units
+      nex=log(nex);
+      ret=density_root->solve(nex,lmf);
+      nex=exp(nex);
+    }
+    
+    if (ret!=0) {
+      // Try a different solver
       root_brent_gsl<> rbg;
       rbg.err_nonconv=false;
-      ret=rbg.solve(nex,mf);
+      nex=log(nex);
+      ret=rbg.solve(nex,lmf);
+      nex=exp(nex);
     }
+
+    // Return tolerances to their original values
     dit->tol_rel=tol1;
     dit->tol_abs=tol2;
     nit->tol_rel=tol3;
     nit->tol_abs=tol4;
   }
+
+  density_root->err_nonconv=drec;
+
   if (ret!=0) {
     O2SCL_CONV2_RET("Density solver failed in fermion_rel::",
 		    "pair_density().",exc_efailed,this->err_nonconv);
@@ -755,7 +806,7 @@ int fermion_rel::pair_density(fermion &f, double temper) {
   return success;
 }
 
-double fermion_rel::pair_fun(double x, fermion &f, double T) { 
+double fermion_rel::pair_fun(double x, fermion &f, double T, bool log_mode) { 
 
   // Temporary storage for density to match
   double nn_match=f.n;
@@ -765,16 +816,37 @@ double fermion_rel::pair_fun(double x, fermion &f, double T) {
   double yy;
 
   // -----------------------------------------------------------------
-  // Compute the contribution from the particles
 
   f.nu=T*x;
+  if (log_mode) f.nu=T*exp(x);
 
-  if (!o2scl::is_finite(f.nu)) {
-    O2SCL_ERR("Chemical potential not finite in fermion_rel::pair_fun().",
-	      exc_einval);
-  }
+  //if (!o2scl::is_finite(f.nu)) {
+  //O2SCL_ERR("Chemical potential not finite in fermion_rel::pair_fun().",
+  //exc_einval);
+  //}
 
   if (f.non_interacting) f.mu=f.nu;
+
+  // -----------------------------------------------------------------
+  // First, try the non-degenerate expansion with both particles and
+  // antiparticles together
+  
+  if (use_expansions) {
+    if (calc_mu_ndeg(f,T,1.0e-8,true) && o2scl::is_finite(f.n)) {
+      yy=f.n;
+      f.n=nn_match;
+      yy=yy/nn_match-1.0;
+      if (!o2scl::is_finite(yy)) {
+	O2SCL_ERR("Value 'yy' not finite (10) in fermion_rel::pair_fun().",
+		  exc_einval);
+      }
+      return yy;
+    }
+  }
+
+  // -----------------------------------------------------------------
+  // If that doesn't work, evaluate particles and antiparticles 
+  // separately. This is the contribution for particles
 
   bool deg=true;
   double psi;
@@ -788,8 +860,8 @@ double fermion_rel::pair_fun(double x, fermion &f, double T) {
   bool particles_done=false;
 
   // Try the non-degenerate expansion if psi is small enough
-  if (false && psi<min_psi) {
-    if (calc_mu_ndeg(f,T,1.0e-14)) {
+  if (use_expansions && psi<min_psi) {
+    if (calc_mu_ndeg(f,T,1.0e-8) && o2scl::is_finite(f.n)) {
       particles_done=true;
       yy=f.n;
       if (!o2scl::is_finite(yy)) {
@@ -800,8 +872,8 @@ double fermion_rel::pair_fun(double x, fermion &f, double T) {
   }
   
   // Try the degenerate expansion if psi is large enough
-  if (particles_done==false && psi>20.0) {
-    if (calc_mu_deg(f,T,1.0e-14)) {
+  if (use_expansions && particles_done==false && psi>20.0) {
+    if (calc_mu_deg(f,T,1.0e-8) && o2scl::is_finite(f.n)) {
       particles_done=true;
       yy=f.n;
       if (!o2scl::is_finite(yy)) {
@@ -871,6 +943,7 @@ double fermion_rel::pair_fun(double x, fermion &f, double T) {
   // Compute the contribution from the antiparticles
 
   f.nu=-T*x;
+  if (log_mode) f.nu=-T*exp(x);
   if (f.non_interacting) f.mu=f.nu;
 
   bool antiparticles_done=false;
@@ -885,8 +958,8 @@ double fermion_rel::pair_fun(double x, fermion &f, double T) {
   if (psi<deg_limit) deg=false;
   
   // Try the non-degenerate expansion if psi is small enough
-  if (false && psi<min_psi) {
-    if (calc_mu_ndeg(f,T,1.0e-14)) {
+  if (use_expansions && psi<min_psi) {
+    if (calc_mu_ndeg(f,T,1.0e-8)) {
       antiparticles_done=true;
       yy-=f.n;
       if (!o2scl::is_finite(yy)) {
@@ -897,8 +970,8 @@ double fermion_rel::pair_fun(double x, fermion &f, double T) {
   }
 
   // Try the degenerate expansion if psi is large enough
-  if (antiparticles_done==false && psi>20.0) {
-    if (calc_mu_deg(f,T,1.0e-14)) {
+  if (use_expansions && antiparticles_done==false && psi>20.0) {
+    if (calc_mu_deg(f,T,1.0e-8)) {
       antiparticles_done=true;
       yy-=f.n;
       if (!o2scl::is_finite(yy)) {

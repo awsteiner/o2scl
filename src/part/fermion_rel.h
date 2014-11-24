@@ -250,6 +250,9 @@ namespace o2scl {
     /// Storage for the uncertainty
     fermion unc;
 
+    /// If true, use expansions for extreme conditions (default true)
+    bool use_expansions;
+
     /// Create a fermion with mass \c m and degeneracy \c g
     fermion_rel();
 
@@ -336,7 +339,7 @@ namespace o2scl {
 	function which automatically handles the sum of particles and
 	antiparticles.
     */
-    double pair_fun(double x, fermion &f, double T);
+    double pair_fun(double x, fermion &f, double T, bool log_mode);
     
 #endif
 

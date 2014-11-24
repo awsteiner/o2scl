@@ -20,7 +20,6 @@
 
   -------------------------------------------------------------------
 */
-
 #include <o2scl/fermion_rel.h>
 #include <o2scl/fermion_eff.h>
 #include <o2scl/test_mgr.h>
@@ -31,92 +30,97 @@ using namespace o2scl;
 using namespace o2scl_const;
 
 int main(void) {
+
+  cout.setf(ios::scientific);
+
   test_mgr t;
   t.set_output_level(1);
 
   fermion e(1.0,2.0);
-  fermion e3(1.0,2.0);
   fermion_eff ef;
   fermion_rel rf;
-  t.test_rel(e3.m,1.0,1.0e-6,"mass inheritance");
-  e.non_interacting=true;
-  e3.non_interacting=true;
 
+  // Temperature
   double T;
   double t1, t2, t3, t4, t5;
 
-  cout.setf(ios::scientific);
+  // -----------------------------------------------------------------
+  // Compare fermion_rel to non-degnerate expansion
+
+  if (false) {
+    //rf.density_root->verbose=2;
+    rf.upper_limit_fac=40.0;
+    e.m=+2.58960507648850176e-03;
+    e.n=2.51188643150958458e-11*1.10000000000000001e-01;
+    T=3.31131121482591269e+01/o2scl_const::hc_mev_fm;
+    e.mu=0.80883511431080757e-08/hc_mev_fm;
+    rf.pair_density(e,T);
+    cout << e.mu << endl;
+    exit(-1);
+  }
 
   {
+    rf.use_expansions=false;
     bool acc;
-    double pr1;
 
+    // Without antiparticles and with inc_rest_mass=true
     T=1.01;
     e.init(1.03,2.0);
     e.mu=-3.0;
     rf.calc_mu(e,T);
     cout << 1 << " " << e.pr << " " << e.n << " " << e.en << endl;
+    double pr1=e.pr, n1=e.n, en1=e.en;
     acc=rf.calc_mu_ndeg(e,T,1.0e-15,false);
     cout << acc << " " << e.pr << " " << e.n << " " << e.en << endl;
-    pr1=e.pr;
-    T=1.0101;
-    acc=rf.calc_mu_ndeg(e,T,1.0e-15,false);
-    cout << acc << " " << e.pr << " " << e.n << " " << e.en << endl;
-    cout << (e.pr-pr1)/0.0001 << endl;
-    T=1.01;
+    t.test_rel(e.pr,pr1,1.0e-11,"ndeg pr");
+    t.test_rel(e.n,n1,1.0e-11,"ndeg n");
+    t.test_rel(e.en,en1,1.0e-11,"ndeg en");
     cout << endl;
 
-    e.mu=1.0e-11;
+    // With antiparticles and with inc_rest_mass=true
+    e.mu=1.0e-10;
     rf.pair_mu(e,T);
     cout << 1 << " " << e.pr << " " << e.n << " " << e.en << endl;
-    acc=rf.calc_mu_ndeg(e,T,1.0e-12,true);
+    double pr2=e.pr, n2=e.n, en2=e.en;
+    acc=rf.calc_mu_ndeg(e,T,1.0e-15,true);
     cout << acc << " " << e.pr << " " << e.n << " " << e.en << endl;
+    t.test_rel(e.pr,pr2,1.0e-11,"ndeg pr");
+    t.test_rel(e.n,n2,1.0e-6,"ndeg n");
+    t.test_rel(e.en,en2,1.0e-11,"ndeg en");
+    cout << endl;
+
+    e.inc_rest_mass=false;
+
+    // Without antiparticles and with inc_rest_mass=false
+    e.mu=-3.0-e.m;
+    rf.calc_mu(e,T);
+    cout << 1 << " " << e.pr << " " << e.n << " " << e.en << endl;
     pr1=e.pr;
-    T=1.0101;
-    acc=rf.calc_mu_ndeg(e,T,1.0e-12,true);
+    n1=e.n;
+    en1=e.en;
+    acc=rf.calc_mu_ndeg(e,T,1.0e-15,false);
     cout << acc << " " << e.pr << " " << e.n << " " << e.en << endl;
-    cout << (e.pr-pr1)/0.0001 << endl;
-    T=1.01;
+    t.test_rel(e.pr,pr1,1.0e-11,"ndeg pr");
+    t.test_rel(e.n,n1,1.0e-11,"ndeg n");
+    t.test_rel(e.en,en1,1.0e-11,"ndeg en");
     cout << endl;
 
-    exit(-1);
-  }
-
-  if (false) {
-    e.init(0.25,2.0);
-    T=0.001;
-    //e.mu=1.0e1;
-    e.mu=1.0e-11;
-    for(size_t i=0;i<15;i++) {
-      rf.pair_mu(e,T);
-      cout.setf(ios::showpos);
-      cout << e.mu << " ";
-      cout.unsetf(ios::showpos);
-      cout << e.n << " " << e.pr << " ";
-      bool ret=rf.calc_mu_ndeg(e,T,1.0e300,true);
-      cout << ret << " " << e.n << " " << e.pr << endl;
-      exit(-1);
-      e.mu/=10.0;
-    }
-    cout << endl;
-    exit(-1);
-  }
-
-  if (false) {
-    e.mu=1.0e1;
-    for(size_t i=0;i<15;i++) {
-      rf.calc_mu(e,T);
-      cout.setf(ios::showpos);
-      cout << e.mu << " ";
-      cout.unsetf(ios::showpos);
-      cout << e.n << " " << e.pr << " ";
-      bool ret=rf.calc_mu_ndeg(e,T,1.0e-3,false);
-      cout << ret << " " << e.n << " " << e.pr << endl;
-      e.mu-=2.0;
-    }
+    // With antiparticles and with inc_rest_mass=false
+    e.mu=1.0e-10-e.m;
+    rf.pair_mu(e,T);
+    cout << 1 << " " << e.pr << " " << e.n << " " << e.en << endl;
+    pr2=e.pr;
+    n2=e.n;
+    en2=e.en;
+    acc=rf.calc_mu_ndeg(e,T,1.0e-15,true);
+    cout << acc << " " << e.pr << " " << e.n << " " << e.en << endl;
+    t.test_rel(e.pr,pr2,1.0e-11,"ndeg pr");
+    t.test_rel(e.n,n2,1.0e-6,"ndeg n");
+    t.test_rel(e.en,en2,1.0e-11,"ndeg en");
     cout << endl;
 
-    exit(-1);
+    e.inc_rest_mass=true;
+    rf.use_expansions=true;
   }
 
   // -----------------------------------------------------------------
@@ -130,8 +134,8 @@ int main(void) {
   cout << "Non-degenerate with M/T large: " << endl;
   e.m=4.5;
   e.n=1.0e-9;
-  e3.m=4.5;
-  e3.n=1.0e-9;
+  e.m=4.5;
+  e.n=1.0e-9;
   T=1.0e-3;
   ef.calc_density(e,T);
   cout << e.n << " " << e.mu << " " << e.ed << " " 
@@ -140,10 +144,10 @@ int main(void) {
   cout << e.n << " " << e.mu << " " << e.ed << " " 
        << e.pr << " " << e.en << endl; 
   
-  e3.mu=0.0;
-  rf.calc_density(e3,T);
-  cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
-       << e3.pr << " " << e3.en << endl;
+  e.mu=0.0;
+  rf.calc_density(e,T);
+  cout << e.n << " " << e.mu << " " << e.ed << " " 
+       << e.pr << " " << e.en << endl;
   cout << "0 " << rf.unc.n << " " << rf.unc.mu << " " << rf.unc.ed << " " 
        << rf.unc.pr << " " << rf.unc.en << endl;
 
@@ -171,28 +175,28 @@ int main(void) {
   t.test_rel(t4,e.pr,1.0e-10,"pressure 1");
   t.test_rel(t5,e.en,1.0e-10,"entropy 1");
   
-  e3.m=0.1;
-  e3.mu=1.0;
+  e.m=0.1;
+  e.mu=1.0;
   T=0.1;
 
   cout << "fermion_rel: calc_mu(T) vs. calc_density(T)" << endl;
-  rf.calc_mu(e3,T);
-  cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
-       << e3.pr << " " << e3.en << endl; 
-  t1=e3.n;
-  t2=e3.mu;
-  t3=e3.ed;
-  t4=e3.pr;
-  t5=e3.en;
-  e3.mu=0.0;
-  rf.calc_density(e3,T);
-  cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
-       << e3.pr << " " << e3.en << endl;
-  t.test_rel(t1,e3.n,1.0e-9,"density 2");
-  t.test_rel(t2,e3.mu,1.0e-9,"chem. pot. 2");
-  t.test_rel(t3,e3.ed,1.0e-9,"energy 2");
-  t.test_rel(t4,e3.pr,1.0e-9,"pressure 2");
-  t.test_rel(t5,e3.en,1.0e-9,"entropy 2");
+  rf.calc_mu(e,T);
+  cout << e.n << " " << e.mu << " " << e.ed << " " 
+       << e.pr << " " << e.en << endl; 
+  t1=e.n;
+  t2=e.mu;
+  t3=e.ed;
+  t4=e.pr;
+  t5=e.en;
+  e.mu=0.0;
+  rf.calc_density(e,T);
+  cout << e.n << " " << e.mu << " " << e.ed << " " 
+       << e.pr << " " << e.en << endl;
+  t.test_rel(t1,e.n,1.0e-9,"density 2");
+  t.test_rel(t2,e.mu,1.0e-9,"chem. pot. 2");
+  t.test_rel(t3,e.ed,1.0e-9,"energy 2");
+  t.test_rel(t4,e.pr,1.0e-9,"pressure 2");
+  t.test_rel(t5,e.en,1.0e-9,"entropy 2");
   cout << endl;
 
   cout << "Non-degenerate: " << endl;
@@ -219,71 +223,71 @@ int main(void) {
   t.test_rel(t4,e.pr,1.0e-9,"pressure 3");
   t.test_rel(t5,e.en,1.0e-9,"entropy 3");
 
-  e3.m=0.1;
-  e3.mu=0.11;
+  e.m=0.1;
+  e.mu=0.11;
   T=1.0;
   cout << "fermion_rel: calc_mu(T) vs. calc_density(T)" << endl;
-  rf.calc_mu(e3,T);
-  cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
-       << e3.pr << " " << e3.en << endl; 
-  t1=e3.n;
-  t2=e3.mu;
-  t3=e3.ed;
-  t4=e3.pr;
-  t5=e3.en;
-  e3.mu=0.0;
-  rf.calc_density(e3,T);
-  cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
-       << e3.pr << " " << e3.en << endl;
-  t.test_rel(t1,e3.n,1.0e-10,"density 4");
-  t.test_rel(t2,e3.mu,1.0e-10,"chem. pot. 4");
-  t.test_rel(t3,e3.ed,1.0e-10,"energy 4");
-  t.test_rel(t4,e3.pr,1.0e-10,"pressure 4");
-  t.test_rel(t5,e3.en,1.0e-10,"entropy 4");
+  rf.calc_mu(e,T);
+  cout << e.n << " " << e.mu << " " << e.ed << " " 
+       << e.pr << " " << e.en << endl; 
+  t1=e.n;
+  t2=e.mu;
+  t3=e.ed;
+  t4=e.pr;
+  t5=e.en;
+  e.mu=0.0;
+  rf.calc_density(e,T);
+  cout << e.n << " " << e.mu << " " << e.ed << " " 
+       << e.pr << " " << e.en << endl;
+  t.test_rel(t1,e.n,1.0e-10,"density 4");
+  t.test_rel(t2,e.mu,1.0e-10,"chem. pot. 4");
+  t.test_rel(t3,e.ed,1.0e-10,"energy 4");
+  t.test_rel(t4,e.pr,1.0e-10,"pressure 4");
+  t.test_rel(t5,e.en,1.0e-10,"entropy 4");
   cout << endl;
 
   cout << "Zero-temperature: " << endl;
-  e3.m=0.1;
-  e3.mu=0.11;
+  e.m=0.1;
+  e.mu=0.11;
   T=0.001;
-  cout << "(m=" << e3.m << ", mu=" << e3.mu << ", T=" << T << ")" << endl;
+  cout << "(m=" << e.m << ", mu=" << e.mu << ", T=" << T << ")" << endl;
   cout << "fermion_rel: calc_mu(T) vs. calc_density(T)" << endl;
-  rf.calc_mu(e3,T);
-  cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
-       << e3.pr << " " << e3.en << endl; 
-  t1=e3.n;
-  t2=e3.mu;
-  t3=e3.ed;
-  t4=e3.pr;
-  t5=e3.en;
-  e3.mu=e3.m;
-  rf.calc_density(e3,T);
-  cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
-       << e3.pr << " " << e3.en << endl;
-  t.test_rel(t1,e3.n,1.0e-10,"density 5");
-  t.test_rel(t2,e3.mu,1.0e-10,"chem. pot. 5");
-  t.test_rel(t3,e3.ed,1.0e-10,"energy 5");
-  t.test_rel(t4,e3.pr,1.0e-10,"pressure 5");
-  t.test_rel(t5,e3.en,1.0e-10,"entropy 5");
+  rf.calc_mu(e,T);
+  cout << e.n << " " << e.mu << " " << e.ed << " " 
+       << e.pr << " " << e.en << endl; 
+  t1=e.n;
+  t2=e.mu;
+  t3=e.ed;
+  t4=e.pr;
+  t5=e.en;
+  e.mu=e.m;
+  rf.calc_density(e,T);
+  cout << e.n << " " << e.mu << " " << e.ed << " " 
+       << e.pr << " " << e.en << endl;
+  t.test_rel(t1,e.n,1.0e-10,"density 5");
+  t.test_rel(t2,e.mu,1.0e-10,"chem. pot. 5");
+  t.test_rel(t3,e.ed,1.0e-10,"energy 5");
+  t.test_rel(t4,e.pr,1.0e-10,"pressure 5");
+  t.test_rel(t5,e.en,1.0e-10,"entropy 5");
 
   cout << "fermion_rel: calc_mu(T=0) vs. calc_density(T=0)" << endl;
-  ef.calc_mu_zerot(e3);
-  cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
-       << e3.pr << " " << e3.en << endl; 
-  t1=e3.n;
-  t2=e3.mu;
-  t3=e3.ed;
-  t4=e3.pr;
-  t5=e3.en;
-  e3.mu=0.0;
-  ef.calc_density_zerot(e3);
-  cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
-       << e3.pr << " " << e3.en << endl;
-  t.test_rel(t1,e3.n,1.0e-10,"density 6");
-  t.test_rel(t2,e3.mu,1.0e-10,"chem. pot. 6");
-  t.test_rel(t3,e3.ed,1.0e-10,"energy 6");
-  t.test_rel(t4,e3.pr,1.0e-10,"pressure 6");
-  t.test_rel(t5,e3.en,1.0e-10,"entropy 6");
+  ef.calc_mu_zerot(e);
+  cout << e.n << " " << e.mu << " " << e.ed << " " 
+       << e.pr << " " << e.en << endl; 
+  t1=e.n;
+  t2=e.mu;
+  t3=e.ed;
+  t4=e.pr;
+  t5=e.en;
+  e.mu=0.0;
+  ef.calc_density_zerot(e);
+  cout << e.n << " " << e.mu << " " << e.ed << " " 
+       << e.pr << " " << e.en << endl;
+  t.test_rel(t1,e.n,1.0e-10,"density 6");
+  t.test_rel(t2,e.mu,1.0e-10,"chem. pot. 6");
+  t.test_rel(t3,e.ed,1.0e-10,"energy 6");
+  t.test_rel(t4,e.pr,1.0e-10,"pressure 6");
+  t.test_rel(t5,e.en,1.0e-10,"entropy 6");
   cout << endl;
 
   cout << "Non-degenerate: " << endl;
@@ -312,37 +316,37 @@ int main(void) {
   t.test_rel(t4,e.pr,1.0e-10,"pressure 7");
   t.test_rel(t5,e.en,1.0e-10,"entropy 7");
 
-  e3.m=0.1;
-  e3.mu=0.11;
+  e.m=0.1;
+  e.mu=0.11;
   T=1.0;
   cout << "fermion_rel: pair_mu(T) vs. pair_density(T)" << endl;
-  rf.pair_mu(e3,T);
-  cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
-       << e3.pr << " " << e3.en << endl; 
-  t1=e3.n;
-  t2=e3.mu;
-  t3=e3.ed;
-  t4=e3.pr;
-  t5=e3.en;
-  e3.mu=0.0;
-  rf.pair_density(e3,T);
-  cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
-       << e3.pr << " " << e3.en << endl;
-  t.test_rel(t1,e3.n,1.0e-10,"density 8");
-  t.test_rel(t2,e3.mu,1.0e-10,"chem. pot. 8");
-  t.test_rel(t3,e3.ed,1.0e-10,"energy 8");
-  t.test_rel(t4,e3.pr,1.0e-10,"pressure 8");
-  t.test_rel(t5,e3.en,1.0e-10,"entropy 8");
+  rf.pair_mu(e,T);
+  cout << e.n << " " << e.mu << " " << e.ed << " " 
+       << e.pr << " " << e.en << endl; 
+  t1=e.n;
+  t2=e.mu;
+  t3=e.ed;
+  t4=e.pr;
+  t5=e.en;
+  e.mu=0.0;
+  rf.pair_density(e,T);
+  cout << e.n << " " << e.mu << " " << e.ed << " " 
+       << e.pr << " " << e.en << endl;
+  t.test_rel(t1,e.n,1.0e-10,"density 8");
+  t.test_rel(t2,e.mu,1.0e-10,"chem. pot. 8");
+  t.test_rel(t3,e.ed,1.0e-10,"energy 8");
+  t.test_rel(t4,e.pr,1.0e-10,"pressure 8");
+  t.test_rel(t5,e.en,1.0e-10,"entropy 8");
   cout << endl;
 
   cout << "Comparing answers near deg_limit: " << endl;
   e.m=0.1;
   T=1.0;
   e.mu=(rf.deg_limit+1.0e-4)*T+e.m;
-  e3.m=0.1;
+  e.m=0.1;
   T=1.0;
-  e3.mu=(rf.deg_limit+1.0e-4)*T+e3.m;
-  cout << "(m=" << e3.m << ", mu=" << e3.mu << ", T=" << T << ")" << endl;
+  e.mu=(rf.deg_limit+1.0e-4)*T+e.m;
+  cout << "(m=" << e.m << ", mu=" << e.mu << ", T=" << T << ")" << endl;
   cout << "fermion_eff: pair_mu(T) vs. pair_density(T)" << endl;
   ef.pair_mu(e,T);
   cout << e.n << " " << e.mu << " " << e.ed << " " 
@@ -363,31 +367,31 @@ int main(void) {
   t.test_rel(t5,e.en,1.0e-9,"entropy 9");
 
   cout << "fermion_rel: pair_mu(T) vs. pair_density(T)" << endl;
-  rf.pair_mu(e3,T);
-  cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
-       << e3.pr << " " << e3.en << endl; 
-  t1=e3.n;
-  t2=e3.mu;
-  t3=e3.ed;
-  t4=e3.pr;
-  t5=e3.en;
-  e3.mu=0.0;
-  rf.pair_density(e3,T);
-  cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
-       << e3.pr << " " << e3.en << endl;
-  t.test_rel(t1,e3.n,1.0e-8,"density 10");
-  t.test_rel(t2,e3.mu,1.0e-8,"chem. pot. 10");
-  t.test_rel(t3,e3.ed,1.0e-8,"energy 10");
-  t.test_rel(t4,e3.pr,1.0e-8,"pressure 10");
-  t.test_rel(t5,e3.en,1.0e-8,"entropy 10");
+  rf.pair_mu(e,T);
+  cout << e.n << " " << e.mu << " " << e.ed << " " 
+       << e.pr << " " << e.en << endl; 
+  t1=e.n;
+  t2=e.mu;
+  t3=e.ed;
+  t4=e.pr;
+  t5=e.en;
+  e.mu=0.0;
+  rf.pair_density(e,T);
+  cout << e.n << " " << e.mu << " " << e.ed << " " 
+       << e.pr << " " << e.en << endl;
+  t.test_rel(t1,e.n,1.0e-8,"density 10");
+  t.test_rel(t2,e.mu,1.0e-8,"chem. pot. 10");
+  t.test_rel(t3,e.ed,1.0e-8,"energy 10");
+  t.test_rel(t4,e.pr,1.0e-8,"pressure 10");
+  t.test_rel(t5,e.en,1.0e-8,"entropy 10");
 
   e.m=0.1;
   T=1.0;
   e.mu=(rf.deg_limit-1.0e-4)*T+e.m;
-  e3.m=0.1;
+  e.m=0.1;
   T=1.0;
-  e3.mu=(rf.deg_limit-1.0e-4)*T+e3.m;
-  cout << "(m=" << e3.m << ", mu=" << e3.mu << ", T=" << T << ")" << endl;
+  e.mu=(rf.deg_limit-1.0e-4)*T+e.m;
+  cout << "(m=" << e.m << ", mu=" << e.mu << ", T=" << T << ")" << endl;
   cout << "fermion_eff: pair_mu(T) vs. pair_density(T)" << endl;
   ef.pair_mu(e,T);
   cout << e.n << " " << e.mu << " " << e.ed << " " 
@@ -408,23 +412,23 @@ int main(void) {
   t.test_rel(t5,e.en,1.0e-9,"entropy 11");
 
   cout << "fermion_rel: pair_mu(T) vs. pair_density(T)" << endl;
-  rf.pair_mu(e3,T);
-  cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
-       << e3.pr << " " << e3.en << endl; 
-  t1=e3.n;
-  t2=e3.mu;
-  t3=e3.ed;
-  t4=e3.pr;
-  t5=e3.en;
-  e3.mu=0.0;
-  rf.pair_density(e3,T);
-  cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
-       << e3.pr << " " << e3.en << endl;
-  t.test_rel(t1,e3.n,1.0e-9,"density 12");
-  t.test_rel(t2,e3.mu,1.0e-9,"chem. pot. 12");
-  t.test_rel(t3,e3.ed,1.0e-9,"energy 12");
-  t.test_rel(t4,e3.pr,1.0e-9,"pressure 12");
-  t.test_rel(t5,e3.en,1.0e-9,"entropy 12");
+  rf.pair_mu(e,T);
+  cout << e.n << " " << e.mu << " " << e.ed << " " 
+       << e.pr << " " << e.en << endl; 
+  t1=e.n;
+  t2=e.mu;
+  t3=e.ed;
+  t4=e.pr;
+  t5=e.en;
+  e.mu=0.0;
+  rf.pair_density(e,T);
+  cout << e.n << " " << e.mu << " " << e.ed << " " 
+       << e.pr << " " << e.en << endl;
+  t.test_rel(t1,e.n,1.0e-9,"density 12");
+  t.test_rel(t2,e.mu,1.0e-9,"chem. pot. 12");
+  t.test_rel(t3,e.ed,1.0e-9,"energy 12");
+  t.test_rel(t4,e.pr,1.0e-9,"pressure 12");
+  t.test_rel(t5,e.en,1.0e-9,"entropy 12");
   cout << endl;
 
 
@@ -460,31 +464,31 @@ int main(void) {
   t.test_rel(t4,e.pr,1.0e-10,"pressure 13");
   t.test_rel(t5,e.en,1.0e-10,"entropy 13");
 
-  e3.m=0.1;
-  e3.mu=1.0;
+  e.m=0.1;
+  e.mu=1.0;
   T=0.1;
   cout << "fermion_rel: calc_mu(T) vs. calc_density(T)" << endl;
-  rf.calc_mu(e3,T);
-  cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
-       << e3.pr << " " << e3.en << endl; 
+  rf.calc_mu(e,T);
+  cout << e.n << " " << e.mu << " " << e.ed << " " 
+       << e.pr << " " << e.en << endl; 
   cout << "U " << rf.unc.n << " " << 0.0 << " " << rf.unc.ed << " "
        << rf.unc.pr << " " << rf.unc.en << endl;
-  t1=e3.n;
-  t2=e3.mu;
-  t3=e3.ed;
-  t4=e3.pr;
-  t5=e3.en;
-  e3.mu=0.0;
-  rf.calc_density(e3,T);
-  cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
-       << e3.pr << " " << e3.en << endl;
+  t1=e.n;
+  t2=e.mu;
+  t3=e.ed;
+  t4=e.pr;
+  t5=e.en;
+  e.mu=0.0;
+  rf.calc_density(e,T);
+  cout << e.n << " " << e.mu << " " << e.ed << " " 
+       << e.pr << " " << e.en << endl;
   cout << "U " << rf.unc.n << " " << 0.0 << " " << rf.unc.ed << " "
        << rf.unc.pr << " " << rf.unc.en << endl;
-  t.test_rel(t1,e3.n,1.0e-9,"density 14");
-  t.test_rel(t2,e3.mu,1.0e-9,"chem. pot. 14");
-  t.test_rel(t3,e3.ed,1.0e-9,"energy 14");
-  t.test_rel(t4,e3.pr,1.0e-9,"pressure 14");
-  t.test_rel(t5,e3.en,1.0e-9,"entropy 14");
+  t.test_rel(t1,e.n,1.0e-9,"density 14");
+  t.test_rel(t2,e.mu,1.0e-9,"chem. pot. 14");
+  t.test_rel(t3,e.ed,1.0e-9,"energy 14");
+  t.test_rel(t4,e.pr,1.0e-9,"pressure 14");
+  t.test_rel(t5,e.en,1.0e-9,"entropy 14");
   cout << endl;
 
   cout << "Non-degenerate: " << endl;
@@ -511,79 +515,79 @@ int main(void) {
   t.test_rel(t4,e.pr,1.0e-9,"pressure 15");
   t.test_rel(t5,e.en,1.0e-9,"entropy 15");
 
-  e3.m=0.1;
-  e3.mu=0.11;
+  e.m=0.1;
+  e.mu=0.11;
   T=1.0;
   cout << "fermion_rel: calc_mu(T) vs. calc_density(T)" << endl;
-  rf.calc_mu(e3,T);
-  cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
-       << e3.pr << " " << e3.en << endl; 
+  rf.calc_mu(e,T);
+  cout << e.n << " " << e.mu << " " << e.ed << " " 
+       << e.pr << " " << e.en << endl; 
   cout << "U " << rf.unc.n << " " << 0.0 << " " << rf.unc.ed << " "
        << rf.unc.pr << " " << rf.unc.en << endl;
-  t1=e3.n;
-  t2=e3.mu;
-  t3=e3.ed;
-  t4=e3.pr;
-  t5=e3.en;
-  e3.mu=0.0;
-  rf.calc_density(e3,T);
-  cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
-       << e3.pr << " " << e3.en << endl;
+  t1=e.n;
+  t2=e.mu;
+  t3=e.ed;
+  t4=e.pr;
+  t5=e.en;
+  e.mu=0.0;
+  rf.calc_density(e,T);
+  cout << e.n << " " << e.mu << " " << e.ed << " " 
+       << e.pr << " " << e.en << endl;
   cout << "U " << rf.unc.n << " " << 0.0 << " " << rf.unc.ed << " "
        << rf.unc.pr << " " << rf.unc.en << endl;
-  t.test_rel(t1,e3.n,1.0e-10,"density 16");
-  t.test_rel(t2,e3.mu,1.0e-10,"chem. pot. 16");
-  t.test_rel(t3,e3.ed,1.0e-10,"energy 16");
-  t.test_rel(t4,e3.pr,1.0e-10,"pressure 16");
-  t.test_rel(t5,e3.en,1.0e-10,"entropy 16");
+  t.test_rel(t1,e.n,1.0e-10,"density 16");
+  t.test_rel(t2,e.mu,1.0e-10,"chem. pot. 16");
+  t.test_rel(t3,e.ed,1.0e-10,"energy 16");
+  t.test_rel(t4,e.pr,1.0e-10,"pressure 16");
+  t.test_rel(t5,e.en,1.0e-10,"entropy 16");
   cout << endl;
 
   cout << "Zero-temperature: " << endl;
-  e3.m=0.1;
-  e3.mu=0.11;
+  e.m=0.1;
+  e.mu=0.11;
   T=0.001;
-  cout << "(m=" << e3.m << ", mu=" << e3.mu << ", T=" << T << ")" << endl;
+  cout << "(m=" << e.m << ", mu=" << e.mu << ", T=" << T << ")" << endl;
   cout << "fermion_rel: calc_mu(T) vs. calc_density(T)" << endl;
-  rf.calc_mu(e3,T);
-  cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
-       << e3.pr << " " << e3.en << endl; 
+  rf.calc_mu(e,T);
+  cout << e.n << " " << e.mu << " " << e.ed << " " 
+       << e.pr << " " << e.en << endl; 
   cout << "U " << rf.unc.n << " " << 0.0 << " " << rf.unc.ed << " "
        << rf.unc.pr << " " << rf.unc.en << endl;
-  t1=e3.n;
-  t2=e3.mu;
-  t3=e3.ed;
-  t4=e3.pr;
-  t5=e3.en;
-  e3.mu=e3.m;
-  rf.calc_density(e3,T);
-  cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
-       << e3.pr << " " << e3.en << endl;
+  t1=e.n;
+  t2=e.mu;
+  t3=e.ed;
+  t4=e.pr;
+  t5=e.en;
+  e.mu=e.m;
+  rf.calc_density(e,T);
+  cout << e.n << " " << e.mu << " " << e.ed << " " 
+       << e.pr << " " << e.en << endl;
   cout << "U " << rf.unc.n << " " << 0.0 << " " << rf.unc.ed << " "
        << rf.unc.pr << " " << rf.unc.en << endl;
-  t.test_rel(t1,e3.n,1.0e-10,"density 17");
-  t.test_rel(t2,e3.mu,1.0e-10,"chem. pot. 17");
-  t.test_rel(t3,e3.ed,1.0e-10,"energy 17");
-  t.test_rel(t4,e3.pr,1.0e-10,"pressure 17");
-  t.test_rel(t5,e3.en,1.0e-10,"entropy 17");
+  t.test_rel(t1,e.n,1.0e-10,"density 17");
+  t.test_rel(t2,e.mu,1.0e-10,"chem. pot. 17");
+  t.test_rel(t3,e.ed,1.0e-10,"energy 17");
+  t.test_rel(t4,e.pr,1.0e-10,"pressure 17");
+  t.test_rel(t5,e.en,1.0e-10,"entropy 17");
 
   cout << "fermion_rel: calc_mu(T=0) vs. calc_density(T=0)" << endl;
-  ef.calc_mu_zerot(e3);
-  cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
-       << e3.pr << " " << e3.en << endl; 
-  t1=e3.n;
-  t2=e3.mu;
-  t3=e3.ed;
-  t4=e3.pr;
-  t5=e3.en;
-  e3.mu=0.0;
-  ef.calc_density_zerot(e3);
-  cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
-       << e3.pr << " " << e3.en << endl;
-  t.test_rel(t1,e3.n,1.0e-10,"density 18");
-  t.test_rel(t2,e3.mu,1.0e-10,"chem. pot. 18");
-  t.test_rel(t3,e3.ed,1.0e-10,"energy 18");
-  t.test_rel(t4,e3.pr,1.0e-10,"pressure 18");
-  t.test_rel(t5,e3.en,1.0e-10,"entropy 18");
+  ef.calc_mu_zerot(e);
+  cout << e.n << " " << e.mu << " " << e.ed << " " 
+       << e.pr << " " << e.en << endl; 
+  t1=e.n;
+  t2=e.mu;
+  t3=e.ed;
+  t4=e.pr;
+  t5=e.en;
+  e.mu=0.0;
+  ef.calc_density_zerot(e);
+  cout << e.n << " " << e.mu << " " << e.ed << " " 
+       << e.pr << " " << e.en << endl;
+  t.test_rel(t1,e.n,1.0e-10,"density 18");
+  t.test_rel(t2,e.mu,1.0e-10,"chem. pot. 18");
+  t.test_rel(t3,e.ed,1.0e-10,"energy 18");
+  t.test_rel(t4,e.pr,1.0e-10,"pressure 18");
+  t.test_rel(t5,e.en,1.0e-10,"entropy 18");
   cout << endl;
 
   cout << "Non-degenerate: " << endl;
@@ -610,31 +614,31 @@ int main(void) {
   t.test_rel(t4,e.pr,1.0e-10,"pressure 19");
   t.test_rel(t5,e.en,1.0e-10,"entropy 19");
 
-  e3.m=0.1;
-  e3.mu=0.11;
+  e.m=0.1;
+  e.mu=0.11;
   T=1.0;
   cout << "fermion_rel: pair_mu(T) vs. pair_density(T)" << endl;
-  rf.pair_mu(e3,T);
-  cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
-       << e3.pr << " " << e3.en << endl; 
+  rf.pair_mu(e,T);
+  cout << e.n << " " << e.mu << " " << e.ed << " " 
+       << e.pr << " " << e.en << endl; 
   cout << "U " << rf.unc.n << " " << 0.0 << " " << rf.unc.ed << " "
        << rf.unc.pr << " " << rf.unc.en << endl;
-  t1=e3.n;
-  t2=e3.mu;
-  t3=e3.ed;
-  t4=e3.pr;
-  t5=e3.en;
-  e3.mu=0.0;
-  rf.pair_density(e3,T);
-  cout << e3.n << " " << e3.mu << " " << e3.ed << " " 
-       << e3.pr << " " << e3.en << endl;
+  t1=e.n;
+  t2=e.mu;
+  t3=e.ed;
+  t4=e.pr;
+  t5=e.en;
+  e.mu=0.0;
+  rf.pair_density(e,T);
+  cout << e.n << " " << e.mu << " " << e.ed << " " 
+       << e.pr << " " << e.en << endl;
   cout << "U " << rf.unc.n << " " << 0.0 << " " << rf.unc.ed << " "
        << rf.unc.pr << " " << rf.unc.en << endl;
-  t.test_rel(t1,e3.n,1.0e-10,"density 20");
-  t.test_rel(t2,e3.mu,1.0e-10,"chem. pot. 20");
-  t.test_rel(t3,e3.ed,1.0e-10,"energy 20");
-  t.test_rel(t4,e3.pr,1.0e-10,"pressure 20");
-  t.test_rel(t5,e3.en,1.0e-10,"entropy 20");
+  t.test_rel(t1,e.n,1.0e-10,"density 20");
+  t.test_rel(t2,e.mu,1.0e-10,"chem. pot. 20");
+  t.test_rel(t3,e.ed,1.0e-10,"energy 20");
+  t.test_rel(t4,e.pr,1.0e-10,"pressure 20");
+  t.test_rel(t5,e.en,1.0e-10,"entropy 20");
   cout << endl;
 
   cout << "----------------------------------------------------" << endl;
@@ -748,7 +752,7 @@ int main(void) {
   cout << "----------------------------------------------------" << endl;
   cout << endl;
   
-  double v1=rf.calibrate(e3,1);
+  double v1=rf.calibrate(e,1);
   t.test_rel(v1,0.0,1.0e-6,"calibrate");
 
   cout << "----------------------------------------------------" << endl;
@@ -756,8 +760,8 @@ int main(void) {
   cout << "----------------------------------------------------" << endl;
   cout << endl;
 
-  // These seem to improve the accuracy. It's not clear that even
-  // smaller tolerances will improve results.
+  // These seem to improve the accuracy. It's not clear that more
+  // stringent tolerances will improve results.
   rf.upper_limit_fac=40.0;
   rf.dit->tol_abs=1.0e-13;
   rf.dit->tol_rel=1.0e-13;
@@ -765,7 +769,7 @@ int main(void) {
   rf.nit->tol_rel=1.0e-13;
   rf.density_root->tol_rel=1.0e-10;
 
-  double v2=rf.calibrate(e3,1);
+  double v2=rf.calibrate(e,1);
   t.test_rel(v2,0.0,1.0e-10,"calibrate 2");
 
   // -----------------------------------------------------------------

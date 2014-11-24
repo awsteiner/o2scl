@@ -736,9 +736,13 @@ bool fermion_eval_thermo::calc_mu_ndeg(fermion &f, double temper,
   if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
 
   // Compute psi and tt
-  double psi;
-  if (f.inc_rest_mass) psi=(f.nu-f.ms)/temper;
-  else psi=(f.nu+f.m-f.ms)/temper;
+  double psi, psi_num;
+  if (f.inc_rest_mass) {
+    psi_num=f.nu-f.ms;
+  } else {
+    psi_num=f.nu+f.m-f.ms;
+  }
+  psi=psi_num/temper;
   double tt=temper/f.ms;
 
   // Return false immediately if we're degenerate
@@ -749,7 +753,7 @@ bool fermion_eval_thermo::calc_mu_ndeg(fermion &f, double temper,
 
   // One term is always used, so only values of max_term greater than
   // 0 are useful.
-  static const size_t max_term=40;
+  static const size_t max_term=200;
   
   // Maximum argument for exponential
   // double log_dbl_max=709.78;
@@ -766,7 +770,7 @@ bool fermion_eval_thermo::calc_mu_ndeg(fermion &f, double temper,
   // -----------------------------------------------------
   // Return early if the last term is going to be too large.
   
-  // Ratio of last term to first term
+  // Ratio of last term to first term in the pressure expansion
   double rat;
   double dj1=((double)max_term), jot1=max_term/tt;
   double dj2=1.0, jot2=1.0/tt;
@@ -774,9 +778,16 @@ bool fermion_eval_thermo::calc_mu_ndeg(fermion &f, double temper,
     rat=exp(dj1*psi)/jot1/jot1*expK(2.0,jot1);
     rat/=exp(dj2*psi)/jot2/jot2*expK(2.0,jot2);
   } else {
-    rat=exp(-jot1)*2.0*cosh(dj1*f.nu/temper)/jot1/jot1*expK(2.0,jot1);
-    rat/=exp(-jot2)*2.0*cosh(dj2*f.nu/temper)/jot2/jot2*expK(2.0,jot2);
+    if (f.inc_rest_mass) {
+      rat=exp(-jot1)*2.0*cosh(dj1*f.nu/temper)/jot1/jot1*expK(2.0,jot1);
+      rat/=exp(-jot2)*2.0*cosh(dj2*f.nu/temper)/jot2/jot2*expK(2.0,jot2);
+    } else {
+      rat=exp(-jot1)*2.0*cosh(dj1*(f.nu+f.m)/temper)/jot1/jot1*expK(2.0,jot1);
+      rat/=exp(-jot2)*2.0*cosh(dj2*(f.nu+f.m)/temper)/jot2/jot2*expK(2.0,jot2);
+    }
   }
+
+  //cout << "rat: " << rat << endl;
   
   // If the ratio between the last term and the first term is 
   // not small enough, return false
@@ -792,9 +803,9 @@ bool fermion_eval_thermo::calc_mu_ndeg(fermion &f, double temper,
   for(size_t j=1;j<=max_term;j++) {
 
     double dj=((double)j);
-    double pterm, nterm, enterm;
-
     double jot=dj/tt;
+
+    double pterm, nterm, enterm;
 
     if (inc_antip==false) {
       pterm=exp(dj*psi)/jot/jot*expK(2.0,jot);
@@ -803,30 +814,44 @@ bool fermion_eval_thermo::calc_mu_ndeg(fermion &f, double temper,
       }
       nterm=pterm*dj/temper;
     } else {
-      pterm=exp(-jot)*2.0*cosh(dj*f.nu/temper)/jot/jot*expK(2.0,jot);
-      if (j%2==0) {
-	pterm*=-1.0;
+      if (f.inc_rest_mass) {
+	pterm=exp(-jot)*2.0*cosh(dj*f.nu/temper)/jot/jot*expK(2.0,jot);
+	if (j%2==0) {
+	  pterm*=-1.0;
+	}
+	nterm=pterm*tanh(dj*f.nu/temper)*dj/temper;
+      } else {
+	pterm=exp(-jot)*2.0*cosh(dj*(f.nu+f.m)/temper)/jot/jot*expK(2.0,jot);
+	if (j%2==0) {
+	  pterm*=-1.0;
+	}
+	nterm=pterm*tanh(dj*(f.nu+f.m)/temper)*dj/temper;
       }
-      nterm=pterm*tanh(dj*f.nu/temper)*dj/temper;
     }
+
+    //cout << "pterm: " << dj << " " << pterm << endl;
     
     if (inc_antip==false) {
       if (j%2==0) {
 	enterm=(pterm*2.0/tt-pterm/tt/tt*dj-
-		exp(dj*psi)/2.0/dj*(expK(1.0,jot)+expK(3.0,jot)))/f.ms;
+		exp(dj*psi)/2.0/dj*(expK(1.0,jot)+expK(3.0,jot)))/f.ms-
+	  pterm*dj*psi_num/temper/temper;
       } else {
 	enterm=(pterm*2.0/tt-pterm/tt/tt*dj+
-		exp(dj*psi)/2.0/dj*(expK(1.0,jot)+expK(3.0,jot)))/f.ms;
+		exp(dj*psi)/2.0/dj*(expK(1.0,jot)+expK(3.0,jot)))/f.ms-
+	  pterm*dj*psi_num/temper/temper;
       }
     } else {
+      double nu2=f.nu;
+      if (f.inc_rest_mass==false) nu2+=f.m;
       if (j%2==0) {
-	enterm=(pterm*2.0/tt-cosh(dj*f.nu/temper)/dj*
-		(expK(1.0,jot)+expK(3.0,jot))+2.0*pterm*f.nu*dj/tt/tt*
-		tanh(dj*f.nu/temper)/f.ms)/f.ms;
+	enterm=(pterm*2.0/tt-cosh(dj*nu2/temper)/dj*exp(-jot)*
+		(expK(1.0,jot)+expK(3.0,jot))+2.0*pterm*nu2*dj/tt/tt*
+		tanh(dj*nu2/temper)/f.ms)/f.ms;
       } else {
-	enterm=(pterm*2.0/tt+cosh(dj*f.nu/temper)/dj*
-		(expK(1.0,jot)+expK(3.0,jot))+2.0*pterm*f.nu*dj/tt/tt*
-		tanh(dj*f.nu/temper)/f.ms)/f.ms;
+	enterm=(pterm*2.0/tt+cosh(dj*nu2/temper)/dj*exp(-jot)*
+		(expK(1.0,jot)+expK(3.0,jot))+2.0*pterm*nu2*dj/tt/tt*
+		tanh(dj*nu2/temper)/f.ms)/f.ms;
       }
     }
 
