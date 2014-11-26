@@ -168,10 +168,13 @@ int eos_nse_full::calc_density_saha(dense_matter &dm) {
 
   // Call solver
   mm_funct11 mf=std::bind
-    (std::mem_fn<int(size_t,const ubvector &,ubvector &,dense_matter &)>
-     (&eos_nse_full::solve_fixnp),
-     this,std::placeholders::_1,std::placeholders::_2,
-     std::placeholders::_3,std::ref(dm));
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &,dense_matter &,
+		     bool)>(&eos_nse_full::solve_fixnp),
+    this,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3,std::ref(dm),true);
+#ifdef O2SCL_NEVER_DEFINED
+}{
+#endif
   ret=def_mroot.msolve(2,x,mf);
   if (ret!=success) {
     if (verbose>0) {
@@ -193,23 +196,43 @@ int eos_nse_full::calc_density_saha(dense_matter &dm) {
 }
 
 int eos_nse_full::solve_fixnp(size_t n, const ubvector &x, ubvector &y,
-			      dense_matter &dm) {
-  dm.n.n=x[0];
-  dm.p.n=x[1];
-  if (x[0]<0.0 || x[1]<0.0 || !o2scl::is_finite(x[0]) || 
-      !o2scl::is_finite(x[1])) {
-    if (verbose>0) {
-      cout << "Not positive and finite point in "
-	   << "eos_nse_full::solve_fixnp() " << x[0] << " " << x[1] << endl;
+			      dense_matter &dm, bool from_densities) {
+
+  if (from_densities) {
+    dm.n.n=x[0];
+    dm.p.n=x[1];
+    if (x[0]<0.0 || x[1]<0.0 || !o2scl::is_finite(x[0]) || 
+	!o2scl::is_finite(x[1])) {
+      if (verbose>0) {
+	cout << "Not positive and finite point (den) in "
+	     << "eos_nse_full::solve_fixnp() " << x[0] << " " << x[1] << endl;
+      }
+      return exc_ebadfunc;
     }
-    return exc_ebadfunc;
-  }
-  int ret=calc_density_fixnp(dm);
-  if (ret!=0) return ret;
-  y[0]=2.0*(dm.baryon_density()-dm.nB)/(dm.baryon_density()+dm.nB);
-  y[1]=2.0*(dm.electron_fraction()-dm.Ye)/(dm.electron_fraction()+dm.Ye);
-  if (fabs(y[0])>=2.0 || fabs(y[1])>=2.0) {
-    return exc_ebadfunc;
+    int ret=calc_density_fixnp(dm,true);
+    if (ret!=0) return ret;
+    y[0]=2.0*(dm.baryon_density()-dm.nB)/(dm.baryon_density()+dm.nB);
+    y[1]=2.0*(dm.electron_fraction()-dm.Ye)/(dm.electron_fraction()+dm.Ye);
+    if (fabs(y[0])>=2.0 || fabs(y[1])>=2.0) {
+      return exc_ebadfunc;
+    }
+  } else {
+    dm.n.mu=x[0];
+    dm.p.mu=x[1];
+    if (!o2scl::is_finite(x[0]) || !o2scl::is_finite(x[1])) {
+      if (verbose>0) {
+	cout << "Not positive and finite point (cp) in "
+	     << "eos_nse_full::solve_fixnp() " << x[0] << " " << x[1] << endl;
+      }
+      return exc_ebadfunc;
+    }
+    int ret=calc_density_fixnp(dm,false);
+    if (ret!=0) return ret;
+    y[0]=2.0*(dm.baryon_density()-dm.nB)/(dm.baryon_density()+dm.nB);
+    y[1]=2.0*(dm.electron_fraction()-dm.Ye)/(dm.electron_fraction()+dm.Ye);
+    if (fabs(y[0])>=2.0 || fabs(y[1])>=2.0) {
+      return exc_ebadfunc;
+    }
   }
   if (!o2scl::is_finite(y[0]) || !o2scl::is_finite(y[1])) {
     if (verbose>0) {
@@ -221,7 +244,7 @@ int eos_nse_full::solve_fixnp(size_t n, const ubvector &x, ubvector &y,
   return 0;
 }
 
-int eos_nse_full::calc_density_fixnp(dense_matter &dm) {
+int eos_nse_full::calc_density_fixnp(dense_matter &dm, bool fix_densities) {
 
   if (ehtp==0) {
     O2SCL_ERR2("Homogeneous matter EOS not specified in ",
@@ -289,26 +312,39 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm) {
 	       "eos_nse_full::calc_density_fixnp().",exc_eunimpl);
   }
 
-  if (dm.n.n<0.0 || dm.p.n<0.0) {
-    if (verbose>0) {
-      cout << "Neutron (" << dm.n.n << ") or proton ("
-	   << dm.p.n << ") density negative." << endl;
-    }
-    return invalid_config;
-  }
-  
   // -----------------------------------------------------------
   // Compute properties of homogeneous matter
 
-  int ret=ehtp->calc_temp_e(dm.n,dm.p,dm.T,dm.drip_th);
-  if (ret!=success) {
-    if (verbose>0) {
-      cout << "Homogeneous nucleonic EOS failed in "
-	   << "eos_nse_full::calc_density_fixnp()." << endl;
+  int ret=0;
+  if (fix_densities) {
+    if (dm.n.n<0.0 || dm.p.n<0.0) {
+      if (verbose>0) {
+	cout << "Neutron (" << dm.n.n << ") or proton ("
+	     << dm.p.n << ") density negative." << endl;
+      }
+      return invalid_config;
     }
-    O2SCL_CONV2_RET("Homogeneous nucleon EOS failed in eos_nse_full::",
-		    "calc_density_fixnp().",exc_einval,err_nonconv);
+    ret=ehtp->calc_temp_e(dm.n,dm.p,dm.T,dm.drip_th);
+    if (ret!=success) {
+      if (verbose>0) {
+	cout << "Homogeneous nucleonic EOS failed (den) in "
+	     << "eos_nse_full::calc_density_fixnp()." << endl;
+      }
+      O2SCL_CONV2_RET("Homogeneous nucleon EOS failed (den) in eos_nse_full::",
+		      "calc_density_fixnp().",exc_einval,err_nonconv);
+    }
+  } else {
+    ret=ehtp->calc_temp_p(dm.n,dm.p,dm.T,dm.drip_th);
+    if (ret!=success) {
+      if (verbose>0) {
+	cout << "Homogeneous nucleonic EOS failed (cp) in "
+	     << "eos_nse_full::calc_density_fixnp()." << endl;
+      }
+      O2SCL_CONV2_RET("Homogeneous nucleon EOS failed (cp) in eos_nse_full::",
+		      "calc_density_fixnp().",exc_einval,err_nonconv);
+    }
   }
+
 
   // Add contribution from dripped nucleons
   dm.th=dm.drip_th;
@@ -591,6 +627,15 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm) {
   return success;
 }
 
+double eos_nse_full::charge_neutrality(double mu_e, double np_tot, 
+				    dense_matter &dm) {
+  dm.e.mu=mu_e;
+  relf.pair_density(dm.e,dm.T);
+  dm.mu.mu=mu_e;
+  relf.pair_density(dm.mu,dm.T);
+  return (np_tot-dm.e.n-dm.mu.n)/np_tot;
+}
+
 int eos_nse_full::calc_density_noneq(dense_matter &dm) {
   
   if (ehtp==0) {
@@ -675,16 +720,14 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm) {
   // Add contribution from dripped nucleons
   dm.th=dm.drip_th;
 
-  // Compute Ye, nB and electron density
-  double nB, Ye;
-  nB=dm.n.n+dm.p.n;
-  Ye=dm.p.n;
+  // Compute nn_tot, np_tot (note that, because of muons,
+  // this is not trivially related to nB and Ye). 
+  double nn_tot=dm.n.n;
+  double np_tot=dm.p.n;
   for(size_t i=0;i<dm.dist.size();i++) {
-    nB+=dm.dist[i].n*((double)dm.dist[i].A);
-    Ye+=dm.dist[i].n*((double)dm.dist[i].Z);
+    nn_tot+=dm.dist[i].n*((double)(dm.dist[i].A-dm.dist[i].Z));
+    np_tot+=dm.dist[i].n*((double)dm.dist[i].Z);
   }
-  Ye/=nB;
-  dm.e.n=Ye*nB;
 
   // -----------------------------------------------------------
   // Verbose output
@@ -696,7 +739,7 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm) {
 	 << "--------------------------------------" << endl;
     cout << "noneq():" << endl;
     cout << endl;
-    cout << "nB, Ye, T (MeV): " << nB << " " << Ye << " "
+    cout << "nn_tot, Yptot, T (MeV): " << nn_tot << " " << np_tot << " "
 	 << dm.T*hc_mev_fm << endl;
     cout << endl;
     cout << "                                n            mu          "
@@ -714,9 +757,9 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm) {
   // Leptons and photons
 
   if (inc_lept_phot) {
-
-    // Add electrons
-    dm.e.n=Ye*nB;
+    
+    // Electrons
+    dm.e.n=np_tot;
     ret=relf.pair_density(dm.e,dm.T);
     if (ret!=success) {
       if (verbose>0) {
@@ -726,23 +769,34 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm) {
       O2SCL_CONV2_RET("Electron EOS failed in eos_nse_full::",
 		      "calc_density_noneq().",exc_einval,err_nonconv);
     }
+    
+    if (include_muons) {
+
+      funct11 f=std::bind
+	(std::mem_fn<double(double,double,dense_matter &)>
+	 (&eos_nse_full::charge_neutrality),
+	 this,std::placeholders::_1,np_tot,std::ref(dm));
+      
+      def_root.solve(dm.e.mu,f);
+
+      // Last function evaluation to make sure final values stored
+      charge_neutrality(dm.e.mu,np_tot,dm);
+      
+    } 
+
+    // Add electrons
     dm.th.ed+=dm.e.ed;
     dm.th.en+=dm.e.en;
-
     if (verbose>1) {
       cout.width(20);
       cout << "Electrons: " 
 	   << dm.e.n << " " << dm.e.mu << " " << dm.e.ed << " "
 	   << dm.e.en << endl;
     }
-    
+
     if (include_muons) {
-      // Add muons
-      dm.mu.mu=dm.e.mu;
-      relf.pair_mu(dm.mu,dm.T);
       dm.th.ed+=dm.mu.ed;
       dm.th.en+=dm.mu.en;
-      
       if (verbose>1) {
 	cout.width(20);
 	cout << "Muons: " 
@@ -776,20 +830,14 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm) {
     n_neg=dm.e.n;
     if (include_muons) n_neg+=dm.mu.n;
   }
-
-  // -----------------------------------------------------------
-  // Some invalid configuration checks
-
+  
+  // At this point, the number of negatively charged particles should
+  // always be larger than the number of protons. We do a sanity
+  // check here:
   if (n_neg<dm.p.n) {
-    if (verbose>0) {
-      cout << "Negative charge density too small to match proton density"
-	   << "\n\tin calc_density_noneq()." << endl;
-      cout << "np: " << dm.p.n << " ne: " << dm.e.n 
-           << " nmu: " << dm.mu.n << " n_neg: " << n_neg << " " 
-	   << n_neg-dm.p.n << endl;
-    }
-    return invalid_config;
-  }  
+    O2SCL_ERR2("Charge sanity problem in eos_nse_full::",
+	      "calc_density_noneq().",exc_esanity);
+  } 
 
   // -----------------------------------------------------------
   // Properties of nuclear distribution

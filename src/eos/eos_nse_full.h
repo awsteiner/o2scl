@@ -36,6 +36,7 @@
 
 #include <o2scl/nucmass_densmat.h>
 #include <o2scl/mroot_hybrids.h>
+#include <o2scl/root_cern.h>
 
 #include <o2scl/eos_had_skyrme.h>
 
@@ -49,11 +50,10 @@ namespace o2scl {
 
       This class is experimental.
 
-      Several of the functions have a verbose parameter. Generally,
-      0 means no output, 1 means the function will output the
-      composition and thermodynamics for the first 10 or so 
-      nuclei in the distribution, and 2 means the function will
-      output the entire distribution.
+      For the verbose parameter, generally 0 means no output, 1 means
+      the function will output the composition and thermodynamics for
+      the first 10 or so nuclei in the distribution, and 2 means the
+      function will output the entire distribution.
 
       This class retains the usual mechanism using \ref err_nonconv to
       handle what to do if one of the functions does not converge. In
@@ -62,9 +62,14 @@ namespace o2scl {
       configurations, which sometimes occur during normal execution.
       Since these invalid configurations are 'normal', they do not
       cause the error handler to be called, independent of the value
-      of \ref err_nonconv . Practically, this means the end-user 
-      must check the return value of these two functions 
-      every time they are called. 
+      of \ref err_nonconv . Practically, this means the end-user must
+      check the return value of these two functions every time they
+      are called.
+
+      This class presumes that electrons include their rest mass,
+      but nucleons and nuclei do not. The error handler is called
+      by some functions if this is not the case (determined 
+      by the values in <tt>o2scl::part::inc_rest_mass</tt>). 
 
       \todo I don't think inc_lept_phot=false works because then
       all WS cells have infinite size because of no electrons.
@@ -72,7 +77,7 @@ namespace o2scl {
       the user from changing it.
 
       \future Add fermion and boson statistics to the nuclei in the
-      distribution
+      distribution. 
   */
   class eos_nse_full {
 
@@ -103,15 +108,23 @@ namespace o2scl {
     */
     std::vector<o2scl::nucleus> *ad;
 
+    /** \brief Desc
+     */
+    double charge_neutrality(double mu_e, double np_tot, dense_matter &dm);
+    
     /** \brief Compute the free energy from a vector of densities 
 	of the nuclei
 
 	This calls \ref calc_density_noneq() and then returns the free
 	energy. The vector \c n_nuc and the distribution \c dm.dist
-	must both have the same size.
+	must both have the same size. The nucleon densities are
+	taken from \c n_nuc and the proton and neutron densities
+	are determined automatically from \ref o2scl::dense_matter::nB
+	and \ref o2scl::dense_matter::Ye . 
 
 	If the call to \ref calc_density_noneq() returns a non-zero
-	value, then the value \f$ 10^{4} \f$ is returned.
+	value, e.g. because of an invalid configuration,
+	then the value \f$ 10^{4} \f$ is returned. 
     */
     double free_energy(const ubvector &n_nuc, dense_matter &dm);
 
@@ -120,29 +133,18 @@ namespace o2scl {
 
   public:
 
+    eos_nse_full();
+    
+    /** \brief The integer return value which indicates an invalid 
+	configuration 
+     */
+    static const int invalid_config=-10;
+
+    /// \name Various settings
+    //@{
     /// Verbose parameter
     int verbose;
 
-    /** \brief Function which is solved by \ref calc_density_saha()
-
-	This function takes two inputs, the neutron and proton
-	densities, and solves to ensure that \ref
-	dense_matter::baryon_density() matches \ref
-	o2scl::dense_matter::nB and \ref
-	o2scl::dense_matter::electron_fraction() matches \ref
-	dense_matter::Ye.
-
-	This function calls \ref calc_density_fixnp() .
-    */
-    int solve_fixnp(size_t n, const ubvector &x, ubvector &y,
-		    dense_matter &dm);
-
-    eos_nse_full();
-    
-    /** \brief The integer which indicates an invalid configuration 
-     */
-    static const int invalid_config=-10;
-    
     /** \brief If true, call the error handler if calc_density() does
 	not converge (default true)
     */
@@ -155,19 +157,43 @@ namespace o2scl {
 
     /// If true, include muons (default false)
     bool include_muons;
+    //@}
     
+    /** \brief Function which is solved by \ref calc_density_saha()
+
+	This function takes two inputs, the neutron and proton
+	densities, and solves to ensure that \ref
+	dense_matter::baryon_density() matches \ref
+	o2scl::dense_matter::nB and \ref
+	o2scl::dense_matter::electron_fraction() matches \ref
+	dense_matter::Ye.
+
+	This function calls \ref calc_density_fixnp() .
+    */
+    int solve_fixnp(size_t n, const ubvector &x, ubvector &y,
+		    dense_matter &dm, bool from_densities=true);
+
     /** \brief Compute the properties of matter from the densities,
 	not presuming equilibrium
 
 	The values of <tt>dm.nB</tt> and <tt>dm.Ye</tt> are not
 	changed by this function. The initial value for the electron
 	density is ignored and is automatically set by charge
-	neutrality.
+	neutrality. Muons, if included, are computed assuming that
+	their chemical potential is equal to the electron chemical
+	potential (and charge neutrality). Photons are always
+	included.
 
 	This function is designed to return non-zero values for
 	invalid configurations and can return the value
 	\ref invalid_config without calling the error handler, 
 	independent of the value of \ref err_nonconv .
+
+	Possible invalid configurations are:
+	- negative nucleon or nucleus densities, or
+	- proton radii larger than WS cell radii, i.e.
+	\f$ (0.08 - n_p) / (n_e+n_{\mu}-n_p) < 1 \f$ or 
+	\f$ n_p > 0.08 \f$ . 
     */
     int calc_density_noneq(dense_matter &dm);
 
@@ -178,8 +204,10 @@ namespace o2scl {
 	chemical potentials using the homogeneous matter EOS. Then the
 	electrons are computed assuming their density is given from
 	\ref o2scl::dense_matter::nB and \ref o2scl::dense_matter::Ye.
-	Finally, the Saha equation is used to determine the nuclear
-	chemical potentials and this gives the nuclear densities.
+	Muons are added assuming their chemical potential is equal to
+	the electron chemical potential. Finally, the Saha equation is
+	used to determine the nuclear chemical potentials and this
+	gives the nuclear densities.
 
 	This function only works when \ref inc_prot_coul is
 	<tt>false</tt>.
@@ -194,8 +222,14 @@ namespace o2scl {
 	invalid configurations and can return the value
 	\ref invalid_config without calling the error handler, 
 	independent of the value of \ref err_nonconv .
+
+	Possible invalid configurations are:
+	- negative nucleon densities, or
+	- proton radii larger than WS cell radii, i.e.
+	\f$ (0.08 - n_p) / (n_e+n_{\mu}-n_p) < 1 \f$ or 
+	\f$ n_p > 0.08 \f$ . 
     */
-    int calc_density_fixnp(dense_matter &dm);
+    int calc_density_fixnp(dense_matter &dm, bool fix_densities=true);
   
     /** \brief Compute the free energy for a fixed composition 
 	by minimization
@@ -233,6 +267,11 @@ namespace o2scl {
 
     /** \brief Adjust the particle densities to match specified
 	density and electron fraction
+
+	This function attempts to match the nuclear and nucleon
+	densities so that the baryon density and electron fraction are
+	equal to those specified in \ref o2scl::dense_matter::nB and
+	\ref o2scl::dense_matter::Ye .
     */
     int density_match(dense_matter &dm);
 
@@ -274,6 +313,8 @@ namespace o2scl {
     }
 
     /** \brief Get homogeneous matter EOS
+
+	This function calls the error handler if no EOS has been set
      */
     o2scl::eos_had_temp_base &get_eos() {
       if (ehtp==0) {
@@ -298,6 +339,9 @@ namespace o2scl {
 
     /// Default solver
     mroot_hybrids<> def_mroot;
+
+    /// Lepton solver
+    root_cern<> def_root;
     //@}
 
 #ifdef O2SCL_NEVER_DEFINED
