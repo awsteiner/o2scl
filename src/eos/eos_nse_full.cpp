@@ -137,9 +137,12 @@ int eos_nse_full::calc_density_saha(dense_matter &dm) {
   if (x[0]<0.0) x[0]=dm.nB*(1.0-dm.Ye);
   if (x[1]<0.0) x[1]=dm.nB*dm.Ye;
 
-  // Adjust proton density if it's larger than electron density
+  // Adjust proton density if it's larger than electron density.
+  // It's important to make the adjustment large enough so that
+  // small steps from the solver don't make the configuration 
+  // invalid. 
   if (dm.nB*dm.Ye<x[1]) {
-    x[1]=dm.nB*dm.Ye*(1.0-1.0e-4);
+    x[1]=dm.nB*dm.Ye*(1.0-1.0e-2);
   }
   
   // Perform initial function evaluation 
@@ -197,7 +200,7 @@ int eos_nse_full::solve_fixnp(size_t n, const ubvector &x, ubvector &y,
       !o2scl::is_finite(x[1])) {
     if (verbose>0) {
       cout << "Not positive and finite point in "
-	   << "eos_nse_full::solve_fixnp()." << endl;
+	   << "eos_nse_full::solve_fixnp() " << x[0] << " " << x[1] << endl;
     }
     return exc_ebadfunc;
   }

@@ -771,7 +771,7 @@ bool fermion_eval_thermo::calc_mu_ndeg(fermion &f, double temper,
 
   // If the ratio between the last term and the first term is 
   // not small enough, return false
-  if (rat>prec) {
+  if (o2scl::is_finite(rat) && rat>prec) {
     return false;
   }
   
@@ -810,7 +810,7 @@ bool fermion_eval_thermo::calc_mu_ndeg(fermion &f, double temper,
 	nterm=pterm*tanh(dj*(f.nu+f.m)/temper)*dj/temper;
       }
     }
-
+    
     if (inc_antip==false) {
       if (j%2==0) {
 	enterm=(pterm*2.0/tt-pterm/tt/tt*dj-
