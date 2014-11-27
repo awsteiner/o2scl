@@ -118,6 +118,10 @@ int eos_nse_full::calc_density_saha(dense_matter &dm) {
 	       "eos_nse_full::calc_density_saha().",exc_einval);
   }
   
+  // Initial values of chemical potentials in case we need them below
+  double mun_init=dm.n.mu, mup_init=dm.p.mu;
+
+  // If we're in the nucleonic matter region, ignore nuclei
   if (dm.nB*dm.Ye>=0.08 || dm.T*hc_mev_fm>30.0) {
     dm.n.n=dm.nB*(1.0-dm.Ye);
     dm.p.n=dm.nB*dm.Ye;
@@ -128,70 +132,198 @@ int eos_nse_full::calc_density_saha(dense_matter &dm) {
     return calc_density_noneq(dm);
   }
 
-  // Vector for initial guess and equations
-  ubvector x(2), y(2);
-  x[0]=dm.n.n;
-  x[1]=dm.p.n;
+  // Adjust if initial guesses for densities are negative
+  if (dm.n.n<0.0) {
+    dm.n.n=dm.nB*(1.0-dm.Ye);
+    if (verbose>0) {
+      cout << "Adjustment for negative neutron density." << endl;
+    }
+  }
+  if (dm.p.n<0.0) {
+    dm.p.n=dm.nB*dm.Ye;
+    if (verbose>0) {
+      cout << "Adjustment for negative proton density." << endl;
+    }
+  }
 
-  // Adjust if initial guesses are negative
-  if (x[0]<0.0) x[0]=dm.nB*(1.0-dm.Ye);
-  if (x[1]<0.0) x[1]=dm.nB*dm.Ye;
+  // If true, the densities for nucleons are too small,
+  // so we have to work from the chemical potentials
+  bool cp_mode=false;
 
-  // Adjust proton density if it's larger than electron density.
-  // It's important to make the adjustment large enough so that
-  // small steps from the solver don't make the configuration 
-  // invalid. 
-  if (dm.nB*dm.Ye<x[1]) {
-    x[1]=dm.nB*dm.Ye*(1.0-1.0e-2);
+  // Perform initial call
+  calc_density_fixnp(dm);
+
+  // Now if the baryon density is too small, adjust accordingly
+  int iter=0;
+  while (dm.baryon_density()<dm.nB*1.0e-4 && iter<20) {
+    dm.n.n*=1.2;
+    dm.p.n*=1.2;
+    if (verbose>0) {
+      cout << "Adjustment because baryon density is too small." << endl;
+    }
+    calc_density_fixnp(dm);
+    iter++;
   }
   
-  // Perform initial function evaluation 
-  int ret;
-  ret=solve_fixnp(2,x,y,dm);
-  if (ret!=success) {
+  // If the nucleon densities are too small, then move to chemical
+  // potential mode
+  if (dm.n.n<dm.nB*1.0e-8 || dm.p.n<dm.nB*1.0e-8) {
+
+    cp_mode=true;
     if (verbose>0) {
-      cout << "Initial point failed in "
-	   << "eos_nse_full::calc_density_saha()." << endl;
+      cout << "Going to cp_mode (1)." << endl;
     }
-    O2SCL_CONV2_RET("Initial point failed in eos_nse_full::",
-		    "calc_density_saha().",exc_ebadfunc,err_nonconv);
-  }
 
-  // Iterate to fix density for initial guess if necessary
-  size_t it=0;
-  while (it<100 && dm.baryon_density()>10.0) {
-    x[0]/=1.5;
-    x[1]/=1.5;
+  } else {
+  
+    // If the baryon density is too large, adjust accordingly
+    iter=0;
+    double bar_den=dm.baryon_density();
+    while ((bar_den>dm.nB*1.0e4 || bar_den>10.0) && 
+	   iter<200 && cp_mode==false) {
+      dm.n.n/=2.0;
+      dm.p.n/=2.0;
+      if (verbose>0) {
+	cout << "Adjustment because baryon density is too large: "
+	     << dm.n.n << " " << dm.p.n << " " << bar_den << endl;
+      }
+      if (dm.n.n<dm.nB*1.0e-8 || dm.p.n<dm.nB*1.0e-8) {
+	cp_mode=true;
+	if (verbose>0) {
+	  cout << "Going to cp_mode (2)." << endl;
+	}
+      } else {
+	calc_density_fixnp(dm);
+	bar_den=dm.baryon_density();
+	iter++;
+      }
+    }
+    
+  }
+  
+  // Vector for initial guess and equations
+  ubvector x(2), y(2);
+
+  if (cp_mode==false) {
+    
+    x[0]=dm.n.n;
+    x[1]=dm.p.n;
+    
+    // Adjust proton density if it's larger than electron density.
+    // It's important to make the adjustment large enough so that
+    // small steps from the solver don't make the configuration 
+    // invalid. 
+    if (dm.nB*dm.Ye<x[1]) {
+      x[1]=dm.nB*dm.Ye*(1.0-1.0e-2);
+      if (verbose>0) {
+	cout << "Adjusting protons for electrons." << endl;
+      }
+    }
+    
+    // Perform initial function evaluation 
+    int ret;
     ret=solve_fixnp(2,x,y,dm);
-    it++;
-  }
-
-  // Call solver
-  mm_funct11 mf=std::bind
-    (std::mem_fn<int(size_t,const ubvector &,ubvector &,dense_matter &,
-		     bool)>(&eos_nse_full::solve_fixnp),
-    this,std::placeholders::_1,std::placeholders::_2,
-     std::placeholders::_3,std::ref(dm),true);
+    if (ret!=success) {
+      if (verbose>0) {
+	cout << "Initial point failed in "
+	     << "eos_nse_full::calc_density_saha()." << endl;
+      }
+      O2SCL_CONV2_RET("Initial point failed in eos_nse_full::",
+		      "calc_density_saha().",exc_ebadfunc,err_nonconv);
+    }
+    
+    // Call solver
+    mm_funct11 mf=std::bind
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &,dense_matter &,
+		       bool)>(&eos_nse_full::solve_fixnp),
+       this,std::placeholders::_1,std::placeholders::_2,
+       std::placeholders::_3,std::ref(dm),true);
 #ifdef O2SCL_NEVER_DEFINED
 }{
 #endif
-  ret=def_mroot.msolve(2,x,mf);
-  if (ret!=success) {
-    if (verbose>0) {
-      cout << "Solver failed in eos_nse_full::calc_density_saha()." << endl;
+    ret=def_mroot.msolve(2,x,mf);
+    if (ret!=success) {
+      if (verbose>0) {
+	cout << "Solver failed in eos_nse_full::calc_density_saha()." << endl;
+      }
+      O2SCL_CONV2_RET("Solver failed in eos_nse_full::",
+		      "calc_density_saha().",exc_ebadfunc,err_nonconv);
     }
-    O2SCL_CONV2_RET("Solver failed in eos_nse_full::",
-		    "calc_density_saha().",exc_ebadfunc,err_nonconv);
+    
+    // Final function evaluation
+    ret=solve_fixnp(2,x,y,dm);
+    if (ret!=success) {
+      cout << "Final function evaluation failed in "
+	   << "eos_nse_full::calc_density_saha()." << endl;
+      O2SCL_CONV2_RET("Final function evaluation failed in eos_nse_full::",
+		      "calc_density_saha().",exc_ebadfunc,err_nonconv);
+    }
+
+  } else {
+
+    x[0]=mun_init;
+    x[1]=mup_init;
+    
+    // Perform initial function evaluation 
+    int ret=solve_fixnp(2,x,y,dm,false);
+    double bar_den=dm.baryon_density();
+
+    iter=0;
+    for(iter=0;iter<100 && (dm.e.n<dm.p.n || bar_den>dm.nB*1.0e4);iter++) {
+      if (verbose>0) {
+	cout << "Adjusting " << iter << " "
+	     << x[0] << " " << x[1] << " " << bar_den << " "
+	     << dm.e.n << " " << dm.p.n << endl;
+      }
+      if (bar_den>dm.nB*1.0e4) {
+	x[0]-=dm.T/2.0;
+      }
+      x[1]-=dm.T/2.0;
+      ret=solve_fixnp(2,x,y,dm,false);
+      bar_den=dm.baryon_density();
+    }
+
+    if (ret!=success) {
+      if (verbose>0) {
+	cout << "Initial point failed (cp) in "
+	     << "eos_nse_full::calc_density_saha()." << endl;
+      }
+      O2SCL_CONV2_RET("Initial point failed (cp) in eos_nse_full::",
+		      "calc_density_saha().",exc_ebadfunc,err_nonconv);
+    }
+
+    // Call solver
+    mm_funct11 mf=std::bind
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &,dense_matter &,
+		       bool)>(&eos_nse_full::solve_fixnp),
+       this,std::placeholders::_1,std::placeholders::_2,
+       std::placeholders::_3,std::ref(dm),false);
+#ifdef O2SCL_NEVER_DEFINED
+}{
+#endif
+
+    ret=def_mroot.msolve(2,x,mf);
+    if (ret!=success) {
+      if (verbose>0) {
+	cout << "Solver failed in (cp) " 
+	     << "eos_nse_full::calc_density_saha()." << endl;
+      }
+      O2SCL_CONV2_RET("Solver failed in (cp) eos_nse_full::",
+		      "calc_density_saha().",exc_ebadfunc,err_nonconv);
+    }
+    
+    // Final function evaluation
+    ret=solve_fixnp(2,x,y,dm);
+    if (ret!=success) {
+      cout << "Final function evaluation failed (cp) in "
+	   << "eos_nse_full::calc_density_saha()." << endl;
+      O2SCL_CONV2_RET("Final function evaluation failed (cp) in ",
+		      "eos_nse_full::calc_density_saha().",exc_ebadfunc,
+		      err_nonconv);
+    }
+
   }
 
-  // Final function evaluation
-  ret=solve_fixnp(2,x,y,dm);
-  if (ret!=success) {
-    cout << "Final function evaluation failed in "
-	 << "eos_nse_full::calc_density_saha()." << endl;
-    O2SCL_CONV2_RET("Final function evaluation failed in eos_nse_full::",
-		    "calc_density_saha().",exc_ebadfunc,err_nonconv);
-  }
   return 0;
 }
 
@@ -209,7 +341,7 @@ int eos_nse_full::solve_fixnp(size_t n, const ubvector &x, ubvector &y,
       }
       return exc_ebadfunc;
     }
-    int ret=calc_density_fixnp(dm,true);
+    int ret=calc_density_fixnp(dm,from_densities);
     if (ret!=0) return ret;
     y[0]=2.0*(dm.baryon_density()-dm.nB)/(dm.baryon_density()+dm.nB);
     y[1]=2.0*(dm.electron_fraction()-dm.Ye)/(dm.electron_fraction()+dm.Ye);
@@ -226,7 +358,7 @@ int eos_nse_full::solve_fixnp(size_t n, const ubvector &x, ubvector &y,
       }
       return exc_ebadfunc;
     }
-    int ret=calc_density_fixnp(dm,false);
+    int ret=calc_density_fixnp(dm,from_densities);
     if (ret!=0) return ret;
     y[0]=2.0*(dm.baryon_density()-dm.nB)/(dm.baryon_density()+dm.nB);
     y[1]=2.0*(dm.electron_fraction()-dm.Ye)/(dm.electron_fraction()+dm.Ye);
@@ -244,7 +376,7 @@ int eos_nse_full::solve_fixnp(size_t n, const ubvector &x, ubvector &y,
   return 0;
 }
 
-int eos_nse_full::calc_density_fixnp(dense_matter &dm, bool fix_densities) {
+int eos_nse_full::calc_density_fixnp(dense_matter &dm, bool from_densities) {
 
   if (ehtp==0) {
     O2SCL_ERR2("Homogeneous matter EOS not specified in ",
@@ -316,7 +448,7 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, bool fix_densities) {
   // Compute properties of homogeneous matter
 
   int ret=0;
-  if (fix_densities) {
+  if (from_densities) {
     if (dm.n.n<0.0 || dm.p.n<0.0) {
       if (verbose>0) {
 	cout << "Neutron (" << dm.n.n << ") or proton ("
@@ -333,18 +465,16 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, bool fix_densities) {
       O2SCL_CONV2_RET("Homogeneous nucleon EOS failed (den) in eos_nse_full::",
 		      "calc_density_fixnp().",exc_einval,err_nonconv);
     }
-  } else {
-    ret=ehtp->calc_temp_p(dm.n,dm.p,dm.T,dm.drip_th);
-    if (ret!=success) {
-      if (verbose>0) {
-	cout << "Homogeneous nucleonic EOS failed (cp) in "
-	     << "eos_nse_full::calc_density_fixnp()." << endl;
-      }
-      O2SCL_CONV2_RET("Homogeneous nucleon EOS failed (cp) in eos_nse_full::",
-		      "calc_density_fixnp().",exc_einval,err_nonconv);
-    }
-  }
 
+  } else {
+
+    dm.n.n=0.0;
+    dm.p.n=0.0;
+    dm.th.ed=0.0;
+    dm.th.pr=0.0;
+    dm.th.en=0.0;
+
+  }
 
   // Add contribution from dripped nucleons
   dm.th=dm.drip_th;
@@ -434,7 +564,7 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, bool fix_densities) {
   if (n_neg<dm.p.n) {
     if (verbose>0) {
       cout << "Negative charge density too small to match proton density."
-	   << "\n\tineos_nse_full::calc_density_fixnp()." << endl;
+	   << "\n\tin eos_nse_full::calc_density_fixnp()." << endl;
       cout << "np: " << dm.p.n << " ne: " << dm.e.n 
 	   << " nmu: " << dm.mu.n << endl;
     }
@@ -628,7 +758,7 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, bool fix_densities) {
 }
 
 double eos_nse_full::charge_neutrality(double mu_e, double np_tot, 
-				    dense_matter &dm) {
+				       dense_matter &dm) {
   dm.e.mu=mu_e;
   relf.pair_density(dm.e,dm.T);
   dm.mu.mu=mu_e;

@@ -76,6 +76,8 @@ namespace o2scl {
       For the moment, this variable is protected to discourage
       the user from changing it.
 
+      \future There is a bit of duplication between calc_density_noneq()
+      and calc_density_fixnp() which could be streamlined.
       \future Add fermion and boson statistics to the nuclei in the
       distribution. 
   */
@@ -108,8 +110,15 @@ namespace o2scl {
     */
     std::vector<o2scl::nucleus> *ad;
 
-    /** \brief Desc
-     */
+    /** \brief Solve for charge neutrality assuming the specified
+	electron chemical potential and proton number density. 
+
+	This function returns 
+	\f[
+	\left[n_p-n_e(\mu_e)-n_{\mu}(\mu_{\mu}=\mu_e)\right]/n_p
+	\f]
+	using \ref relf.
+    */
     double charge_neutrality(double mu_e, double np_tot, dense_matter &dm);
     
     /** \brief Compute the free energy from a vector of densities 
@@ -176,13 +185,14 @@ namespace o2scl {
     /** \brief Compute the properties of matter from the densities,
 	not presuming equilibrium
 
-	The values of <tt>dm.nB</tt> and <tt>dm.Ye</tt> are not
-	changed by this function. The initial value for the electron
-	density is ignored and is automatically set by charge
-	neutrality. Muons, if included, are computed assuming that
-	their chemical potential is equal to the electron chemical
-	potential (and charge neutrality). Photons are always
-	included.
+	The values of <tt>dm.nB</tt> and <tt>dm.Ye</tt> are ignored
+	and unchanged by this function. The electron and muon density
+	are determined by charged neutrality and assuming their
+	chemical potentials are equal. Photons are always included.
+
+	If the nuclear densities are all zero, then this just
+	returns nuclear matter with leptons and photons as
+	determined by charge neutrality. 
 
 	This function is designed to return non-zero values for
 	invalid configurations and can return the value
@@ -200,20 +210,26 @@ namespace o2scl {
     /** \brief Compute the properties of matter from 
 	neutron and proton densities, using the Saha equation
 
-	Given a fixed neutron and proton density, this computes their
-	chemical potentials using the homogeneous matter EOS. Then the
-	electrons are computed assuming their density is given from
-	\ref o2scl::dense_matter::nB and \ref o2scl::dense_matter::Ye.
-	Muons are added assuming their chemical potential is equal to
-	the electron chemical potential. Finally, the Saha equation is
-	used to determine the nuclear chemical potentials and this
-	gives the nuclear densities.
+	If the parameter <tt>from_densities</tt> is true, then this
+	computes nucleonic matter using the neutron and proton
+	densities stored in <tt>dm.n.n</tt> and </tt>dm.p.n</tt>.
+	Otherwise, nucleonic matter is computed using the chemical
+	potential stored in <tt>dm.n.mu</tt> and </tt>dm.p.mu</tt>.
+	Either way, electrons are computed assuming their density is
+	given from \ref o2scl::dense_matter::nB and \ref
+	o2scl::dense_matter::Ye. Muons are added assuming their
+	chemical potential is equal to the electron chemical
+	potential. Finally, the Saha equation is used to determine the
+	nuclear chemical potentials and this gives the nuclear
+	densities.
 
 	This function only works when \ref inc_prot_coul is
 	<tt>false</tt>.
 
-	Note that, after this function completes, the value returned
-	by \ref o2scl::dense_matter::baryon_density() will not
+	The values in \ref o2scl::dense_matter::nB and \ref
+	o2scl::dense_matter::Ye are unchanged by this function. Note
+	that, after this function completes, the value returned by
+	\ref o2scl::dense_matter::baryon_density() will not
 	necessarily be the same as that stored in \ref
 	o2scl::dense_matter::nB (and similarly for the electron
 	fraction).
@@ -229,7 +245,7 @@ namespace o2scl {
 	\f$ (0.08 - n_p) / (n_e+n_{\mu}-n_p) < 1 \f$ or 
 	\f$ n_p > 0.08 \f$ . 
     */
-    int calc_density_fixnp(dense_matter &dm, bool fix_densities=true);
+    int calc_density_fixnp(dense_matter &dm, bool from_densities=true);
   
     /** \brief Compute the free energy for a fixed composition 
 	by minimization
