@@ -126,9 +126,11 @@ namespace o2scl {
 
 	This calls \ref calc_density_noneq() and then returns the free
 	energy. The vector \c n_nuc and the distribution \c dm.dist
-	must both have the same size. The nucleon densities are
+	must both have the same size. The nuclear densities are
 	taken from \c n_nuc and the proton and neutron densities
-	are determined automatically from \ref o2scl::dense_matter::nB
+	are determined automatically from subtracting the density
+	contributions of nuclei from the total neutron and proton
+	densities as determined in \ref o2scl::dense_matter::nB
 	and \ref o2scl::dense_matter::Ye . 
 
 	If the call to \ref calc_density_noneq() returns a non-zero
