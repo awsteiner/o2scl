@@ -90,6 +90,15 @@ namespace o2scl {
 
   protected:
     
+    /** \brief Desc
+     */
+    virtual void check_dm(o2scl::dense_matter &dm);
+    
+    /** \brief Desc
+     */
+    virtual void verb_output(o2scl::dense_matter &dm, 
+			     std::string func_name);
+
     /// If true, include electrons and photons (default true)
     bool inc_lept_phot;
 
@@ -119,7 +128,8 @@ namespace o2scl {
 	\f]
 	using \ref relf.
     */
-    double charge_neutrality(double mu_e, double np_tot, dense_matter &dm);
+    virtual double charge_neutrality(double mu_e, double np_tot, 
+				     dense_matter &dm);
     
     /** \brief Compute the free energy from a vector of densities 
 	of the nuclei
@@ -137,8 +147,8 @@ namespace o2scl {
 	value, e.g. because of an invalid configuration,
 	then the value \f$ 10^{4} \f$ is returned. 
     */
-    double free_energy(const ubvector &n_nuc, dense_matter &dm);
-
+    virtual double free_energy(const ubvector &n_nuc, dense_matter &dm);
+    
     /// Nucleonic EOS (0 by default)
     o2scl::eos_had_temp_base *ehtp;
 
@@ -181,8 +191,8 @@ namespace o2scl {
 
 	This function calls \ref calc_density_fixnp() .
     */
-    int solve_fixnp(size_t n, const ubvector &x, ubvector &y,
-		    dense_matter &dm, bool from_densities=true);
+    virtual int solve_fixnp(size_t n, const ubvector &x, ubvector &y,
+			    dense_matter &dm, bool from_densities=true);
 
     /** \brief Compute the properties of matter from the densities,
 	not presuming equilibrium
@@ -207,7 +217,7 @@ namespace o2scl {
 	\f$ (0.08 - n_p) / (n_e+n_{\mu}-n_p) < 1 \f$ or 
 	\f$ n_p > 0.08 \f$ . 
     */
-    int calc_density_noneq(dense_matter &dm);
+    virtual int calc_density_noneq(dense_matter &dm);
 
     /** \brief Compute the properties of matter from 
 	neutron and proton densities, using the Saha equation
@@ -247,7 +257,7 @@ namespace o2scl {
 	\f$ (0.08 - n_p) / (n_e+n_{\mu}-n_p) < 1 \f$ or 
 	\f$ n_p > 0.08 \f$ . 
     */
-    int calc_density_fixnp(dense_matter &dm, bool from_densities=true);
+    virtual int calc_density_fixnp(dense_matter &dm, bool from_densities=true);
   
     /** \brief Compute the free energy for a fixed composition 
 	by minimization
@@ -264,7 +274,7 @@ namespace o2scl {
 	minimization and currently works in only limited
 	circumstances.
     */
-    int calc_density_by_min(dense_matter &dm);
+    virtual int calc_density_by_min(dense_matter &dm);
 
     /** \brief Compute properties of matter for baryon density and
 	electron fraction using the Saha equation
@@ -273,7 +283,7 @@ namespace o2scl {
 	solve_fixnp() using the current values of <tt>dm.n.n</tt> and
 	<tt>dm.p.n</tt> as initial guesses.
     */
-    int calc_density_saha(dense_matter &dm);
+    virtual int calc_density_saha(dense_matter &dm);
 
     /** \brief Output properties of a \ref o2scl::dense_matter object to
 	std::cout
@@ -281,7 +291,7 @@ namespace o2scl {
 	This function was particularly designed for comparing results
 	with \ref o2scl::eos_sn_base derived classes.
     */
-    void output(dense_matter &dm, int output_level);
+    virtual void output(dense_matter &dm, int output_level);
 
     /** \brief Adjust the particle densities to match specified
 	density and electron fraction
@@ -291,7 +301,7 @@ namespace o2scl {
 	equal to those specified in \ref o2scl::dense_matter::nB and
 	\ref o2scl::dense_matter::Ye .
     */
-    int density_match(dense_matter &dm);
+    virtual int density_match(dense_matter &dm);
 
     /** \brief Relativistic fermions
 

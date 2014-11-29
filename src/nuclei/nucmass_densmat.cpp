@@ -162,6 +162,35 @@ bool dense_matter::nuc_in_dist(int Z, int N, size_t &index) {
   return false;
 }
 
+void dense_matter::prune_distribution(double factor) {
+  
+  double nB_nuc=baryon_density_nuclei();
+  for(vector<nucleus>::iterator it=dist.begin();it!=dist.end();it++) {
+    if (it->n<nB_nuc*factor) {
+      dist.erase(it);
+      it=dist.begin();
+    }
+  }
+  
+  return;
+}
+
+void dense_matter::copy_densities_from(dense_matter &dm2) {
+  for(size_t i=0;i<dist.size();i++) {
+    dist[i].n=0.0;
+  }
+  for(size_t i=0;i<dm2.dist.size();i++) {
+    for(size_t j=0;j<dist.size();j++) {
+      if (dist[j].Z==dm2.dist[i].Z &&
+	  dist[j].N==dm2.dist[i].N) {
+	dist[j].n=dm2.dist[i].n;
+	j=dist.size();
+      }
+    }
+  }
+  return;
+}
+
 nucmass_densmat::nucmass_densmat() {
   // It's important not to automatically load masses from
   // HDF5 by default because this causes issues instantiating

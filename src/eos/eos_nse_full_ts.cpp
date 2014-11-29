@@ -36,6 +36,8 @@ int main(void) {
   t.set_output_level(2);
   
   eos_nse_full nse;
+  nse.verbose=0;
+
   dense_matter dm;
   int ret;
 

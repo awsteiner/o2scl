@@ -48,7 +48,7 @@ int eos_had_skyrme::calc_temp_e(fermion &ne, fermion &pr,
   double dhdnn, dhdnp, na, npa, nna, term, term2, common, gn, gp;
  
 #if !O2SCL_NO_RANGE_CHECK
-  if (!o2scl::is_finite(ne.n) || !o2scl::is_finite(ne.n) ||
+  if (!o2scl::is_finite(ne.n) || !o2scl::is_finite(pr.n) ||
       !o2scl::is_finite(ltemper)) {
     O2SCL_ERR2("Nucleon densities or temperature not finite in ",
 	       "eos_had_skyrme::calc_eq_temp_p().",exc_einval);

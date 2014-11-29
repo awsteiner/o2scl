@@ -56,6 +56,158 @@ eos_nse_full::eos_nse_full() {
   verbose=1;
 }
 
+void eos_nse_full::check_dm(o2scl::dense_matter &dm) {
+  
+  if (!o2scl::is_finite(dm.n.n) || 
+	!o2scl::is_finite(dm.p.n)) {
+      O2SCL_ERR2("Neutron or proton density not finite in ",
+		 "eos_nse_full::check_dm().",o2scl::exc_esanity);
+    }
+    if (dm.n.m<0.0 || dm.p.m<0.0) {
+      O2SCL_ERR2("Mass negative in ",
+		 "eos_nse_full::check_dm().",o2scl::exc_esanity);
+    }
+    for(size_t i=0;i<dm.dist.size();i++) {
+      if (dm.dist[i].inc_rest_mass==true) {
+	O2SCL_ERR2("Wrong inc_rest_mass for nuclei in ",
+		   "eos_nse_full::check_dm().",o2scl::exc_esanity);
+      }
+    }
+    if (dm.n.inc_rest_mass==true) {
+      O2SCL_ERR2("Wrong inc_rest_mass for neutrons in ",
+		 "eos_nse_full::check_dm().",o2scl::exc_esanity);
+    }
+    if (dm.p.inc_rest_mass==true) {
+      O2SCL_ERR2("Wrong inc_rest_mass for protons in ",
+		 "eos_nse_full::check_dm().",o2scl::exc_esanity);
+    }
+    if (dm.e.inc_rest_mass==false) {
+      O2SCL_ERR2("Wrong inc_rest_mass for electrons in ",
+		 "eos_nse_full::check_dm().",o2scl::exc_esanity);
+    }
+    if (dm.mu.inc_rest_mass==false) {
+      O2SCL_ERR2("Wrong inc_rest_mass for muons in ",
+		 "eos_nse_full::check_dm().",o2scl::exc_esanity);
+    }
+    for(size_t i=0;i<dm.dist.size();i++) {
+      if (dm.dist[i].non_interacting==false) {
+	O2SCL_ERR2("Wrong non_interacting for nuclei in ",
+		   "eos_nse_full::check_dm().",o2scl::exc_esanity);
+      }
+    }
+    if (dm.n.non_interacting==true) {
+      O2SCL_ERR2("Wrong non_interacting for neutrons in ",
+		 "eos_nse_full::check_dm().",o2scl::exc_esanity);
+    }
+    if (dm.p.non_interacting==true) {
+      O2SCL_ERR2("Wrong non_interacting for protons in ",
+		 "eos_nse_full::check_dm().",o2scl::exc_esanity);
+    }
+    if (dm.e.non_interacting==false) {
+      O2SCL_ERR2("Wrong non_interacting for electrons in ",
+		 "eos_nse_full::check_dm().",o2scl::exc_esanity);
+    }
+    if (dm.mu.non_interacting==false) {
+      O2SCL_ERR2("Wrong non_interacting for muons in ",
+		 "eos_nse_full::check_dm().",o2scl::exc_esanity);
+    }
+
+    return;
+  }
+
+void eos_nse_full::verb_output(o2scl::dense_matter &dm, 
+			       std::string func_name) {
+
+  if (verbose>1) {
+    cout.setf(ios::left);
+    cout.setf(ios::showpos);
+    cout << "--------------------------------------"
+	 << "--------------------------------------" << endl;
+    cout << func_name << endl;
+    cout << endl;
+    cout << "                                n            mu          "
+	 << "  ed            en" << endl;
+    cout.width(20);
+    cout << "Neutrons: " << dm.n.n << " " << dm.n.mu << endl;
+    cout.width(20);
+    cout << "Protons: " << dm.p.n << " " << dm.p.mu << endl;
+    cout.width(48);
+    cout << "Dripped nucleons: " 
+	 << dm.drip_th.ed << " " << dm.drip_th.en << endl;
+    cout.width(20);
+    cout << "Electrons: " 
+	 << dm.e.n << " " << dm.e.mu << " " << dm.e.ed << " "
+	 << dm.e.en << endl;
+    cout.width(20);
+    cout << "Muons: " 
+	 << dm.mu.n << " " << dm.mu.mu << " " << dm.mu.ed << " "
+	 << dm.mu.en << endl;
+    cout.width(20);
+    cout << "Photons: " 
+	 << dm.photon.n << " " << 0.0 << " " << dm.photon.ed << " "
+	 << dm.photon.en << endl;
+    
+    size_t i_out=0;
+    size_t out_step=dm.dist.size()/10;
+    
+    for(size_t i=0;i<dm.dist.size();i++) {
+      o2scl::nucleus &nuc=dm.dist[i];
+      
+      if (i==i_out || (verbose>2 && nuc.n>0.0)) {
+	string s="Nucleus ("+o2scl::itos(((int)(nuc.Z+1.0e-8)))+","+
+	  o2scl::itos(((int)(nuc.N+1.0e-8)))+"): ";
+	cout.width(20);
+	cout << s << nuc.n << " " << nuc.mu << " " 
+	     << nuc.ed+nuc.be*nuc.n << " " << nuc.en << endl;
+	i_out+=out_step;
+      }
+      
+    }
+    
+    cout.width(48);
+    cout << "Total: " << dm.th.ed << " " << dm.th.en << endl;
+    cout << endl;
+    cout << "Free energy: " << dm.th.ed-dm.T*dm.th.en << endl;
+    cout << endl;
+    cout << "Contributions to pressure:" << endl;
+    cout << "                                n           eta          "
+	 << "  pr" << endl;
+    cout.width(48);
+    cout << "- Energy: " << -dm.th.ed << endl;
+    cout.width(48);
+    cout << "T * Entropy: " << dm.T*dm.th.en << endl;
+    cout.width(20);
+    cout << "Neutrons: " << dm.n.n << " " << dm.eta_n << " "
+	 << dm.n.n*dm.eta_n << endl;
+    cout.width(20);
+    cout << "Protons: " << dm.p.n << " " << dm.eta_p << " "
+	 << dm.p.n*dm.eta_p << endl;
+    
+    i_out=0;
+    for(size_t i=0;i<dm.dist.size();i++) {
+      o2scl::nucleus &nuc=dm.dist[i];
+      
+      if (i==i_out || (verbose>2 && nuc.n>0.0)) {
+	string s="Nucleus ("+o2scl::itos(((int)(nuc.Z+1.0e-8)))+","+
+	  o2scl::itos(((int)(nuc.N+1.0e-8)))+"): ";
+	cout.width(20);
+	cout << s << nuc.n << " " << dm.eta_nuc[i] << " "
+	     << nuc.n*dm.eta_nuc[i] << endl;
+	i_out+=out_step;
+      }
+    }
+    
+    cout.width(48);
+    cout << "Total pressure: " << dm.th.pr << endl;
+    cout << "--------------------------------------"
+	 << "--------------------------------------" << endl;
+    cout.unsetf(ios::left);
+    cout.unsetf(ios::showpos);
+  }
+
+  return;
+}
+
 double eos_nse_full::free_energy(const ubvector &n_nuc, dense_matter &dm) {
 
   double nB_nuc=0.0, np_nuc=0.0;
@@ -378,67 +530,16 @@ int eos_nse_full::solve_fixnp(size_t n, const ubvector &x, ubvector &y,
 
 int eos_nse_full::calc_density_fixnp(dense_matter &dm, bool from_densities) {
 
+  // -----------------------------------------------------------
+  // Sanity checks
+
   if (ehtp==0) {
     O2SCL_ERR2("Homogeneous matter EOS not specified in ",
 	       "eos_nse_full::calc_density_fixnp().",exc_efailed);
   }
 
-  // -----------------------------------------------------------
-  // Sanity checks
+  check_dm(dm);
 
-  if (!o2scl::is_finite(dm.n.n) || 
-      !o2scl::is_finite(dm.p.n)) {
-    O2SCL_ERR2("Neutron or proton density not finite in ",
-	       "eos_nse_full::calc_density_fixnp().",exc_esanity);
-  }
-  if (dm.n.m<0.0 || dm.p.m<0.0) {
-    O2SCL_ERR2("Mass negative in ",
-	       "eos_nse_full::calc_density_fixnp().",exc_esanity);
-  }
-  for(size_t i=0;i<dm.dist.size();i++) {
-    if (dm.dist[i].inc_rest_mass==true) {
-      O2SCL_ERR("Wrong inc_rest_mass for nuclei in fixnp().",
-		exc_esanity);
-    }
-  }
-  if (dm.n.inc_rest_mass==true) {
-    O2SCL_ERR("Wrong inc_rest_mass for neutrons in fixnp().",
-	      exc_esanity);
-  }
-  if (dm.p.inc_rest_mass==true) {
-    O2SCL_ERR("Wrong inc_rest_mass for protons in fixnp().",
-	      exc_esanity);
-  }
-  if (dm.e.inc_rest_mass==false) {
-    O2SCL_ERR("Wrong inc_rest_mass for electrons in fixnp().",
-	      exc_esanity);
-  }
-  if (dm.mu.inc_rest_mass==false) {
-    O2SCL_ERR("Wrong inc_rest_mass for muons in fixnp().",
-	      exc_esanity);
-  }
-  for(size_t i=0;i<dm.dist.size();i++) {
-    if (dm.dist[i].non_interacting==false) {
-      O2SCL_ERR("Wrong non_interacting for nuclei in fixnp().",
-		exc_esanity);
-    }
-  }
-  if (dm.n.non_interacting==true) {
-    O2SCL_ERR("Wrong non_interacting for neutrons in fixnp().",
-	      exc_esanity);
-  }
-  if (dm.p.non_interacting==true) {
-    O2SCL_ERR("Wrong non_interacting for protons in fixnp().",
-	      exc_esanity);
-  }
-  if (dm.e.non_interacting==false) {
-    O2SCL_ERR("Wrong non_interacting for electrons in fixnp().",
-	      exc_esanity);
-  }
-  if (dm.mu.non_interacting==false) {
-    O2SCL_ERR("Wrong non_interacting for muons in fixnp().",
-	      exc_esanity);
-  }
   if (inc_prot_coul==true) {
     O2SCL_ERR2("Including protons in Coulomb not implemented in ",
 	       "eos_nse_full::calc_density_fixnp().",exc_eunimpl);
@@ -480,27 +581,6 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, bool from_densities) {
   dm.th=dm.drip_th;
 
   // -----------------------------------------------------------
-  // Verbose output
-
-  if (verbose>1) {
-    cout.setf(ios::left);
-    cout.setf(ios::showpos);
-    cout << "--------------------------------------"
-	 << "--------------------------------------" << endl;
-    cout << "fixnp():" << endl;
-    cout << endl;
-    cout << "                                n            mu          "
-	 << "  ed            en" << endl;
-    cout.width(20);
-    cout << "Neutrons: " << dm.n.n << " " << dm.n.mu << endl;
-    cout.width(20);
-    cout << "Protons: " << dm.p.n << " " << dm.p.mu << endl;
-    cout.width(48);
-    cout << "Dripped nucleons: " 
-	 << dm.drip_th.ed << " " << dm.drip_th.en << endl;
-  }
-
-  // -----------------------------------------------------------
   // Leptons and photons
 
   if (inc_lept_phot) {
@@ -519,13 +599,6 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, bool from_densities) {
     dm.th.ed+=dm.e.ed;
     dm.th.en+=dm.e.en;
 
-    if (verbose>1) {
-      cout.width(20);
-      cout << "Electrons: " 
-	   << dm.e.n << " " << dm.e.mu << " " << dm.e.ed << " "
-	   << dm.e.en << endl;
-    }
-
     if (include_muons) {
       // Add muons
       dm.mu.mu=dm.e.mu;
@@ -533,12 +606,6 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, bool from_densities) {
       dm.th.ed+=dm.mu.ed;
       dm.th.en+=dm.mu.en;
       
-      if (verbose>1) {
-	cout.width(20);
-	cout << "Muons: " 
-	     << dm.mu.n << " " << dm.mu.mu << " " << dm.mu.ed << " "
-	     << dm.mu.en << endl;
-      }
     }
 
     // Add photons
@@ -546,12 +613,6 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, bool from_densities) {
     dm.th.ed+=dm.photon.ed;
     dm.th.en+=dm.photon.en;
 
-    if (verbose>1) {
-      cout.width(20);
-      cout << "Photons: " 
-	   << dm.photon.n << " " << 0.0 << " " << dm.photon.ed << " "
-	   << dm.photon.en << endl;
-    }
   }
 
   // Negative charge density
@@ -655,15 +716,6 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, bool from_densities) {
       dm.th.ed+=nuc.be*nuc.n+nuc.ed;
       dm.th.en+=nuc.en;
 
-      if ((verbose>1 && i==i_out) || verbose>2) {
-	string s="Nucleus ("+itos(((int)(nuc.Z+1.0e-8)))+","+
-	  itos(((int)(nuc.N+1.0e-8)))+"): ";
-	cout.width(20);
-	cout << s << nuc.n << " " << nuc.mu << " " 
-	     << nuc.ed+nuc.be*nuc.n << " " << nuc.en << endl;
-	i_out+=out_step;
-      }
-
     }
   }
 
@@ -715,44 +767,7 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, bool from_densities) {
   // -----------------------------------------------------------
   // Verbose output
 
-  if (verbose>1) {
-    cout.width(48);
-    cout << "Total: " << dm.th.ed << " " << dm.th.en << endl;
-    cout << endl;
-    cout << "Free energy: " << dm.th.ed-dm.T*dm.th.en << endl;
-    cout << endl;
-    cout << "Contributions to pressure:" << endl;
-    cout << "                                n           eta          "
-	 << "  pr" << endl;
-    cout.width(48);
-    cout << "- Energy: " << -dm.th.ed << endl;
-    cout.width(48);
-    cout << "T * Entropy: " << dm.T*dm.th.en << endl;
-    cout.width(20);
-    cout << "Neutrons: " << dm.n.n << " " << dm.eta_n << " "
-	 << dm.n.n*dm.eta_n << endl;
-    cout.width(20);
-    cout << "Protons: " << dm.p.n << " " << dm.eta_p << " "
-	 << dm.p.n*dm.eta_p << endl;
-    i_out=0;
-    for(size_t i=0;i<dm.dist.size();i++) {
-      nucleus &nuc=dm.dist[i];
-      if (i==i_out || verbose>2) {
-	string s="Nucleus ("+itos(((int)(nuc.Z+1.0e-8)))+","+
-	  itos(((int)(nuc.N+1.0e-8)))+"): ";
-	cout.width(20);
-	cout << s << nuc.n << " " << dm.eta_nuc[i] << " "
-	     << nuc.n*dm.eta_nuc[i] << endl;
-	i_out+=out_step;
-      }
-    }
-    cout.width(48);
-    cout << "Total pressure: " << dm.th.pr << endl;
-    cout << "--------------------------------------"
-	 << "--------------------------------------" << endl;
-    cout.unsetf(ios::left);
-    cout.unsetf(ios::showpos);
-  }
+  verb_output(dm,"calc_density_fixnp()");
 
   return success;
 }
@@ -768,67 +783,18 @@ double eos_nse_full::charge_neutrality(double mu_e, double np_tot,
 
 int eos_nse_full::calc_density_noneq(dense_matter &dm) {
   
+  // -----------------------------------------------------------
+  // Sanity checks
+
+  check_dm(dm);
+
   if (ehtp==0) {
     O2SCL_ERR2("Homogeneous matter EOS not specified in ",
 	       "eos_nse_full::calc_density_noneq().",exc_efailed);
   }
 
   // -----------------------------------------------------------
-  // Sanity checks
-
-  if (!o2scl::is_finite(dm.n.n) || 
-      !o2scl::is_finite(dm.p.n)) {
-    O2SCL_ERR2("Neutron or proton density not finite in ",
-	       "eos_nse_full::calc_density_noneq().",exc_esanity);
-  }
-  if (dm.n.m<0.0 || dm.p.m<0.0) {
-    O2SCL_ERR2("Mass negative in ",
-	       "eos_nse_full::calc_density_noneq().",exc_esanity);
-  }
-  for(size_t i=0;i<dm.dist.size();i++) {
-    if (dm.dist[i].inc_rest_mass==true) {
-      O2SCL_ERR("Wrong inc_rest_mass for nuclei in noneq().",
-		exc_esanity);
-    }
-  }
-  if (dm.n.inc_rest_mass==true) {
-    O2SCL_ERR("Wrong inc_rest_mass for neutrons in noneq().",
-	      exc_esanity);
-  }
-  if (dm.p.inc_rest_mass==true) {
-    O2SCL_ERR("Wrong inc_rest_mass for protons in noneq().",
-	      exc_esanity);
-  }
-  if (dm.e.inc_rest_mass==false) {
-    O2SCL_ERR("Wrong inc_rest_mass for electrons in noneq().",
-	      exc_esanity);
-  }
-  if (dm.mu.inc_rest_mass==false) {
-    O2SCL_ERR("Wrong inc_rest_mass for muons in noneq().",
-	      exc_esanity);
-  }
-  for(size_t i=0;i<dm.dist.size();i++) {
-    if (dm.dist[i].non_interacting==false) {
-      O2SCL_ERR("Wrong non_interacting for nuclei in noneq().",
-		exc_esanity);
-    }
-  }
-  if (dm.n.non_interacting==true) {
-    O2SCL_ERR("Wrong non_interacting for neutrons in noneq().",
-	      exc_esanity);
-  }
-  if (dm.p.non_interacting==true) {
-    O2SCL_ERR("Wrong non_interacting for protons in noneq().",
-	      exc_esanity);
-  }
-  if (dm.e.non_interacting==false) {
-    O2SCL_ERR("Wrong non_interacting for electrons in noneq().",
-	      exc_esanity);
-  }
-  if (dm.mu.non_interacting==false) {
-    O2SCL_ERR("Wrong non_interacting for muons in noneq().",
-	      exc_esanity);
-  }
+  // Compute properties of homogeneous matter
 
   if (dm.n.n<0.0 || dm.p.n<0.0) {
     if (verbose>0) {
@@ -837,18 +803,26 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm) {
     }
     return invalid_config;
   }
-  
-  // -----------------------------------------------------------
-  // Compute properties of homogeneous matter
 
-  int ret=ehtp->calc_temp_e(dm.n,dm.p,dm.T,dm.drip_th);
-  if (ret!=success) {
-    O2SCL_CONV2_RET("Homogeneous nucleon EOS failed in eos_nse_full::",
-		    "calc_density_noneq().",exc_einval,err_nonconv);
+  int ret;
+
+  dm.th.ed=0.0;
+  dm.th.en=0.0;
+  dm.th.pr=0.0;
+
+  // If both densities are zero, we just ignore them, which
+  // is useful in the case that the densities are small enough
+  // that free nucleons can be ignore
+  if (dm.n.n>0.0 || dm.p.n>0.0) {
+    ret=ehtp->calc_temp_e(dm.n,dm.p,dm.T,dm.drip_th);
+    if (ret!=success) {
+      O2SCL_CONV2_RET("Homogeneous nucleon EOS failed in eos_nse_full::",
+		      "calc_density_noneq().",exc_einval,err_nonconv);
+    }
+    
+    // Add contribution from dripped nucleons
+    dm.th=dm.drip_th;
   }
-
-  // Add contribution from dripped nucleons
-  dm.th=dm.drip_th;
 
   // Compute nn_tot, np_tot (note that, because of muons,
   // this is not trivially related to nB and Ye). 
@@ -857,30 +831,6 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm) {
   for(size_t i=0;i<dm.dist.size();i++) {
     nn_tot+=dm.dist[i].n*((double)(dm.dist[i].A-dm.dist[i].Z));
     np_tot+=dm.dist[i].n*((double)dm.dist[i].Z);
-  }
-
-  // -----------------------------------------------------------
-  // Verbose output
-
-  if (verbose>1) {
-    cout.setf(ios::left);
-    cout.setf(ios::showpos);
-    cout << "--------------------------------------"
-	 << "--------------------------------------" << endl;
-    cout << "noneq():" << endl;
-    cout << endl;
-    cout << "nn_tot, Yptot, T (MeV): " << nn_tot << " " << np_tot << " "
-	 << dm.T*hc_mev_fm << endl;
-    cout << endl;
-    cout << "                                n            mu          "
-	 << "  ed            en" << endl;
-    cout.width(20);
-    cout << "Neutrons: " << dm.n.n << " " << dm.n.mu << endl;
-    cout.width(20);
-    cout << "Protons: " << dm.p.n << " " << dm.p.mu << endl;
-    cout.width(48);
-    cout << "Dripped nucleons: " 
-	 << dm.drip_th.ed << " " << dm.drip_th.en << endl;
   }
 
   // -----------------------------------------------------------
@@ -917,35 +867,16 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm) {
     // Add electrons
     dm.th.ed+=dm.e.ed;
     dm.th.en+=dm.e.en;
-    if (verbose>1) {
-      cout.width(20);
-      cout << "Electrons: " 
-	   << dm.e.n << " " << dm.e.mu << " " << dm.e.ed << " "
-	   << dm.e.en << endl;
-    }
 
     if (include_muons) {
       dm.th.ed+=dm.mu.ed;
       dm.th.en+=dm.mu.en;
-      if (verbose>1) {
-	cout.width(20);
-	cout << "Muons: " 
-	     << dm.mu.n << " " << dm.mu.mu << " " << dm.mu.ed << " "
-	     << dm.mu.en << endl;
-      }
     }
 
     // Add photons
     dm.photon.massless_calc(dm.T);
     dm.th.ed+=dm.photon.ed;
     dm.th.en+=dm.photon.en;
-
-    if (verbose>1) {
-      cout.width(20);
-      cout << "Photons: " 
-	   << dm.photon.n << " " << 0.0 << " " << dm.photon.ed << " "
-	   << dm.photon.en << endl;
-    }
   }
 
   double n_neg=dm.e.n;
@@ -1037,15 +968,6 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm) {
       dm.th.ed+=nuc.be*nuc.n+nuc.ed;
       dm.th.en+=nuc.en;
 
-      if (verbose>2 || (verbose>1 && i==i_out)) {
-	string s="Nucleus ("+itos(((int)(nuc.Z+1.0e-8)))+","+
-	  itos(((int)(nuc.N+1.0e-8)))+"): ";
-	cout.width(20);
-	cout << s << nuc.n << " " << nuc.mu << " " 
-	     << nuc.ed+nuc.be*nuc.n << " " << nuc.en << endl;
-	i_out+=out_step;
-      }
-
     } else if (dm.dist[i].n<0.0) {
       if (verbose>0) {
 	cout << "Density of nucleus: " << i << " negative." << endl;
@@ -1099,44 +1021,7 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm) {
   // -----------------------------------------------------------
   // Verbose output
 
-  if (verbose>1) {
-    cout.width(48);
-    cout << "Total: " << dm.th.ed << " " << dm.th.en << endl;
-    cout << endl;
-    cout << "Free energy: " << dm.th.ed-dm.T*dm.th.en << endl;
-    cout << endl;
-    cout << "Contributions to pressure:" << endl;
-    cout << "                                n           eta          "
-	 << "  pr" << endl;
-    cout.width(48);
-    cout << "- Energy: " << -dm.th.ed << endl;
-    cout.width(48);
-    cout << "T * Entropy: " << dm.T*dm.th.en << endl;
-    cout.width(20);
-    cout << "Neutrons: " << dm.n.n << " " << dm.eta_n << " "
-	 << dm.n.n*dm.eta_n << endl;
-    cout.width(20);
-    cout << "Protons: " << dm.p.n << " " << dm.eta_p << " "
-	 << dm.p.n*dm.eta_p << endl;
-    i_out=0;
-    for(size_t i=0;i<dm.dist.size();i++) {
-      nucleus &nuc=dm.dist[i];
-      string s="Nucleus ("+itos(((int)(nuc.Z+1.0e-8)))+","+
-	itos(((int)(nuc.N+1.0e-8)))+"): ";
-      if (i==i_out || verbose>2) {
-	cout.width(20);
-	cout << s << nuc.n << " " << dm.eta_nuc[i] << " "
-	     << nuc.n*dm.eta_nuc[i] << endl;
-	i_out+=out_step;
-      }
-    }
-    cout.width(48);
-    cout << "Total pressure: " << dm.th.pr << endl;
-    cout << "--------------------------------------"
-	 << "--------------------------------------" << endl;
-    cout.unsetf(ios::left);
-    cout.unsetf(ios::showpos);
-  }
+  verb_output(dm,"calc_density_noneq()");
   
   return success;
 }

@@ -222,6 +222,14 @@ namespace o2scl {
 	This function performs a simple brute-force search.
     */
     bool nuc_in_dist(int Z, int N, size_t &index);
+
+    /** \brief Desc
+     */
+    void prune_distribution(double factor);
+
+    /** \brief Desc
+     */
+    void copy_densities_from(dense_matter &dm2);
     
   };
 
