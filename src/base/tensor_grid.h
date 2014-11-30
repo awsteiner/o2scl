@@ -224,13 +224,13 @@ namespace o2scl {
 
     /// \name Get functions
     //@{
-    /// Get the element closest to grid point \c grdp 
-    template<class vec2_t> double get_val(const vec2_t &grdp) {
+    /// Get the element closest to grid point \c gridp 
+    template<class vec2_t> double get_val(const vec2_t &gridp) {
       
       // Find indices
       vec_size_t index(this->rk);
       for(size_t i=0;i<this->rk;i++) {
-	index[i]=lookup_grid(i,grdp[i]);
+	index[i]=lookup_grid(i,gridp[i]);
       }
 
       // Pack
@@ -244,19 +244,19 @@ namespace o2scl {
       return this->data[ix];
     }
 
-    /** \brief Get the element closest to grid point \c grdp to 
-	value \c val
+    /** \brief Get the element closest to grid point \c gridp, 
+	store grid values in \c closest and return value
 
-	The parameters \c grdp and \c closest may refer to the
+	The parameters \c gridp and \c closest may refer to the
 	same object. 
     */
     template<class vec2_t, class vec3_t> 
-      double get_val(const vec2_t &grdp, vec3_t &closest) {
+      double get_val(const vec2_t &gridp, vec3_t &closest) {
       
       // Find indices
       vec_size_t index(this->rk);
       for(size_t i=0;i<this->rk;i++) {
-	index[i]=lookup_grid_val(i,grdp[i],closest[i]);
+	index[i]=lookup_grid_val(i,gridp[i],closest[i]);
       }
       
       // Pack
@@ -481,15 +481,20 @@ namespace o2scl {
 	O2SCL_ERR("Grid not set in tensor_grid::lookup_grid_val().",
 		  exc_einval);
       }
+
+      // We have to store the grid point in a temporary in case 
+      // the parameters gridp and closest refer to the same object
+      double temp=val;
+
       size_t istart=0;
       for(size_t j=0;j<i;j++) istart+=this->size[j];
       size_t best=istart;
-      double min=fabs(grid[istart]-val);
+      double min=fabs(grid[istart]-temp);
       val2=grid[istart];
       for(size_t j=istart;j<istart+this->size[i];j++) {
-	if (fabs(grid[j]-val)<min) {
+	if (fabs(grid[j]-temp)<min) {
 	  best=j;
-	  min=fabs(grid[j]-val);
+	  min=fabs(grid[j]-temp);
 	  val2=grid[j];
 	}
       }

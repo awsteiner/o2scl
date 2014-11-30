@@ -164,7 +164,6 @@ void eos_sn_base::output(std::string file_name) {
   return;
 }
 
-
 void eos_sn_base::alloc() {
   size_t dim[3]={n_nB,n_Ye,n_T};
   for(size_t i=0;i<n_base+n_oth;i++) {
@@ -189,7 +188,7 @@ void eos_sn_base::free() {
 void eos_sn_base::set_interp_type(size_t interp_type) {
   if (!loaded) {
     O2SCL_ERR("File not loaded in eos_sn_base::set_interp().",
-		  exc_einval);
+	      exc_einval);
   }
   for(size_t i=0;i<n_base+n_oth;i++) {
     arr[i]->set_interp_type(interp_type);
@@ -197,7 +196,7 @@ void eos_sn_base::set_interp_type(size_t interp_type) {
   return;
 }
 
-int eos_sn_base::compute_eg() {
+void eos_sn_base::compute_eg() {
 
   if (verbose>0) {
     cout << "Adding automatically computed electrons and photons." << endl;
@@ -271,7 +270,7 @@ int eos_sn_base::compute_eg() {
     baryons_only_loaded=true;
   }
   
-  return 0;
+  return;
 }
 
 void eos_sn_base::check_free_energy(double &avg) {
@@ -314,7 +313,8 @@ void eos_sn_base::check_free_energy(double &avg) {
     if (baryons_only_loaded) {
       sum+=fabs(Eint.get(i,j,k)-
 		Fint.get(i,j,k)-T1*Sint.get(i,j,k))/fabs(Eint.get(i,j,k));
-    } else {
+    }
+    if (with_leptons_loaded) {
       sum+=fabs(E.get(i,j,k)-
 		F.get(i,j,k)-T1*S.get(i,j,k))/fabs(E.get(i,j,k));
     }
@@ -477,6 +477,141 @@ void eos_sn_base::beta_eq_Tfixed(double nB, double T, double &Ye) {
   return;
 }
 
+double eos_sn_base::check_eg() {
+  
+  if (!baryons_only_loaded || !with_leptons_loaded) {
+    O2SCL_ERR("Not enough data loaded in check_eg().",exc_efailed);
+  }
+
+  // Double check lepton and photon contribution
+  if (verbose>0) {
+    std::cout << "Checking leptons and photons. " << std::endl;
+  }
+  
+  int i=10, j=10, k=10;
+  
+  double sum=0.0;
+  int count=0;
+
+  for(size_t ell=0;ell<400;ell++) {
+    if (ell%10==0) cout << ell << "/400" << endl;
+    if (ell%3==0) {
+      i+=49;
+      i=i%n_nB;
+    }
+    if (ell%3==1) {
+      j+=49;
+      j=j%n_Ye;
+    }
+    if (ell%3==2) {
+      k+=49;
+      k=k%n_T;
+    }
+    double nb1, ye1, T1;
+    nb1=E.get_grid(0,i);
+    ye1=E.get_grid(1,j);
+    T1=E.get_grid(2,k);
+
+    if (ye1>1.0e-20) {
+      electron.n=nb1*ye1;
+
+      cout.precision(3);
+      cout.width(3);
+      cout << ell << " ";
+      cout << nb1 << " " << ye1 << " " << T1 << " " << flush;
+
+      relf.pair_density(electron,T1/hc_mev_fm);
+      photon.massless_calc(T1/hc_mev_fm);
+    
+      double E_eg=(electron.ed+photon.ed)/nb1*hc_mev_fm;
+      double P_eg=(electron.pr+photon.pr)*hc_mev_fm;
+      double S_eg=(electron.en+photon.en)/nb1;
+      double F_eg=E_eg-T1*S_eg;
+
+      cout.setf(ios::showpos);
+
+      double diff, rat;
+
+      // -----------------------------------------------------
+      // Compare the energy
+
+      double val_E=E.get(i,j,k);
+      double val_Eint=Eint.get(i,j,k);
+      diff=E_eg-(val_E-val_Eint);
+
+      // Rescale difference by the maximum of X and Xint
+      rat=diff;
+      if (fabs(val_E)>fabs(val_Eint)) rat/=val_E;
+      else rat/=val_Eint;
+    
+      sum+=fabs(rat);
+      cout << rat << " ";
+
+      // -----------------------------------------------------
+      // Compare the pressure
+
+      double val_P=P.get(i,j,k);
+      double val_Pint=Pint.get(i,j,k);
+      diff=P_eg-(val_P-val_Pint);
+
+      // Rescale difference by the maximum of X and Xint
+      rat=diff;
+      if (fabs(val_P)>fabs(val_Pint)) rat/=val_P;
+      else rat/=val_Pint;
+    
+      sum+=fabs(rat);
+      cout << rat << " ";
+
+      // -----------------------------------------------------
+      // Compare the entropy
+
+      if (T1>0.0) {
+	double val_S=S.get(i,j,k);
+	double val_Sint=Sint.get(i,j,k);
+	diff=S_eg-(val_S-val_Sint);
+	
+	// Rescale difference by the maximum of X and Xint
+	rat=diff;
+	if (fabs(val_S)>fabs(val_Sint)) rat/=val_S;
+	else rat/=val_Sint;
+	
+	sum+=fabs(rat);
+      } else {
+	rat=0.0;
+      }
+      cout << rat << " ";
+
+      // -----------------------------------------------------
+      // Compare the free energy
+
+      double val_F=F.get(i,j,k);
+      double val_Fint=Fint.get(i,j,k);
+      diff=F_eg-(val_F-val_Fint);
+
+      // Rescale difference by the maximum of X and Xint
+      rat=diff;
+      if (fabs(val_F)>fabs(val_Fint)) rat/=val_F;
+      else rat/=val_Fint;
+    
+      sum+=fabs(rat);
+      cout << rat << endl;
+    
+      // -----------------------------------------------------
+
+      cout.unsetf(ios::showpos);
+    
+      count+=4;
+
+    }
+  }
+
+  if (verbose>0) {
+    cout << "Check electrons photons result: " << sum/count << endl;
+  }
+  
+  return sum/count;
+}
+
 void eos_sn_ls::load(std::string fname) {
   
   if (verbose>0) {
@@ -623,7 +758,7 @@ void eos_sn_ls::load(std::string fname) {
   return;
 }
 
-int eos_sn_ls::check_eg(test_mgr &tm) {
+double eos_sn_ls::check_eg() {
   
   if (!baryons_only_loaded || !with_leptons_loaded) {
     O2SCL_ERR("Not enough data loaded in check_eg().",exc_efailed);
@@ -699,25 +834,14 @@ int eos_sn_ls::check_eg(test_mgr &tm) {
       fabs(F.interp_linear(nb1,ye1,T1)-Fint.interp_linear(nb1,ye1,T1)) << endl;
     cout.unsetf(ios::showpos);
     
-    if (ell==6 || ell==32 || ell==13) {
-      cout.precision(8);
-      cout << nb1 << " " << ye1 << " " << T1 << " " 
-	   << E.interp_linear(nb1,ye1,T1) << " " 
-	   << Eint.interp_linear(nb1,ye1,T1) << endl;
-      cout << E.interp_linear(nb1,ye1,T1)-Eint.interp_linear(nb1,ye1,T1) << " "
-	   << E_eg << " " << 1.3*ye1 << " "
-	   << electron.n*electron.m/nb1*hc_mev_fm << " " << electron.mu << endl;
-      cout.precision(3);
-    }
-    
     count+=4;
   }
   
-  cout << sum/count << endl;
-  cout << endl;
-  tm.test_gen((sum/count)<1.0e-1,"electron and photons");
+  if (verbose>0) {
+    cout << "Check electrons photons result: " << sum/count << endl;
+  }
   
-  return 0;
+  return sum/count;
 }
 
 void eos_sn_oo::load(std::string fname, size_t mode) {
@@ -803,8 +927,12 @@ void eos_sn_oo::load(std::string fname, size_t mode) {
     double nb=rho[i]/o2scl_cgs::unified_atomic_mass/1.0e39;
     grid.push_back(nb);
   }
-  for(size_t i=0;i<ye_grid.size();i++) grid.push_back(ye_grid[i]);
-  for(size_t i=0;i<t_grid.size();i++) grid.push_back(pow(10.0,t_grid[i]));
+  for(size_t i=0;i<ye_grid.size();i++) {
+    grid.push_back(ye_grid[i]);
+  }
+  for(size_t i=0;i<t_grid.size();i++) {
+    grid.push_back(pow(10.0,t_grid[i]));
+  }
 
   for(size_t i=0;i<n_base+n_oth;i++) {
     arr[i]->set_grid_packed(grid);
@@ -1393,14 +1521,17 @@ void eos_sn_sht::load(std::string fname, size_t mode) {
 
   }
 
-  loaded=true;
+  // Here, we make sure not to reset the values of the flags if an EOS
+  // has already been loaded. This is important so we can load both
+  // the EOS table with lepton contributions and the table without.
   if (mode==mode_17b || mode==mode_21b || mode==mode_NL3b) {
-    with_leptons_loaded=false;
+    if (loaded==false) with_leptons_loaded=false;
     baryons_only_loaded=true;
   } else {
     with_leptons_loaded=true;
-    baryons_only_loaded=false;
+    if (loaded==false) baryons_only_loaded=false;
   }
+  loaded=true;
 
   if (verbose>0) {
     std::cout << "Done in eos_sn_sht::load()." << std::endl;

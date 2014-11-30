@@ -829,6 +829,12 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm) {
   double nn_tot=dm.n.n;
   double np_tot=dm.p.n;
   for(size_t i=0;i<dm.dist.size();i++) {
+    if (dm.dist[i].n<0.0) {
+      if (verbose>0) {
+	cout << "Density of nucleus: " << i << " negative (1)." << endl;
+      }
+      return invalid_config;
+    }   
     nn_tot+=dm.dist[i].n*((double)(dm.dist[i].A-dm.dist[i].Z));
     np_tot+=dm.dist[i].n*((double)dm.dist[i].Z);
   }

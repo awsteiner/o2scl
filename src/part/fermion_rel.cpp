@@ -711,6 +711,11 @@ void fermion_rel::pair_mu(fermion &f, double temper) {
 
 int fermion_rel::pair_density(fermion &f, double temper) {
 
+  if (f.n==0.0) {
+    O2SCL_ERR("Zero density sent to fermion_rel::pair_density().",
+	      exc_einval);
+  }
+
   // -----------------------------------------------------------------
   // Handle T<=0
 
