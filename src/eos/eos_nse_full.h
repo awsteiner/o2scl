@@ -221,12 +221,12 @@ namespace o2scl {
 
     /** \brief Compute the properties of matter from 
 	neutron and proton densities, using the Saha equation
-
+	
 	If the parameter <tt>from_densities</tt> is true, then this
 	computes nucleonic matter using the neutron and proton
-	densities stored in <tt>dm.n.n</tt> and </tt>dm.p.n</tt>.
+	densities stored in <tt>dm.n.n</tt> and <tt>dm.p.n</tt>.
 	Otherwise, nucleonic matter is computed using the chemical
-	potential stored in <tt>dm.n.mu</tt> and </tt>dm.p.mu</tt>.
+	potential stored in <tt>dm.n.mu</tt> and <tt>dm.p.mu</tt>.
 	Either way, electrons are computed assuming their density is
 	given from \ref o2scl::dense_matter::nB and \ref
 	o2scl::dense_matter::Ye. Muons are added assuming their

@@ -507,7 +507,6 @@ int eos_had_rmf::calc_temp_e(fermion &ne, fermion &pr, const double T,
   if (T<=0.0) return calc_e(ne,pr,lth);
 
   ubvector x(5), y(5);
-  int ret;
   
   ce_temp=T;
 
@@ -543,6 +542,8 @@ int eos_had_rmf::calc_temp_e(fermion &ne, fermion &pr, const double T,
      this,std::placeholders::_1,std::placeholders::_2,
      std::placeholders::_3);
 
+  int ret=1;
+
   if (guess_set) {
     
     // If an initial guess is given, then use it to directly compute
@@ -555,13 +556,27 @@ int eos_had_rmf::calc_temp_e(fermion &ne, fermion &pr, const double T,
     x[4]=rho;
     guess_set=false;
 
+    if (verbose>0) {
+      cout << "Solving in eos_had_rmf::calc_temp_e()." << endl;
+      cout << " Init. guess: " << ne.mu << " " << pr.mu << " "
+	   << sigma << " " << omega << " " << rho << endl;
+    }
+
+    bool ent=eos_mroot->err_nonconv;
+    eos_mroot->err_nonconv=false;
     ret=eos_mroot->msolve(5,x,fmf);
+    if (ret!=0) {
+      cout << " Return value: " << ret << endl;
+    }
+    eos_mroot->err_nonconv=ent;
     calc_temp_e_solve_fun(5,x,y);
     
-  } else {
+  } 
 
-    // If no initial guess is given, then create one by beginning
-    // at saturated nuclear matter and proceeding incrementally.
+  // If no initial guess is given, or if the initial guess failed,
+  // begin at saturated nuclear matter and proceeding incrementally.
+
+  if (ret!=0) {
 
     double nn=ne.n;
     double np=pr.n;
@@ -576,7 +591,7 @@ int eos_had_rmf::calc_temp_e(fermion &ne, fermion &pr, const double T,
     if (fabs(log10(0.16/n_baryon))>6.0) log_mode=true;
     
     if (verbose>0) {
-      cout << "Solving in eos_had_rmf::calc_temp_e()." << endl;
+      cout << " Proceeding incrementally." << endl;
       cout << " alpha       n_B         n_ch        mu_n        "
 	   << "mu_p        sigma       omega       rho         ret" << endl;
       cout.setf(ios::showpos);
@@ -632,7 +647,7 @@ int eos_had_rmf::calc_temp_e(fermion &ne, fermion &pr, const double T,
   rho=x[4];
   
   if (ret!=0) {
-    O2SCL_CONV2_RET("Solver failed in eos_had_rmf::calc_temp_e (fermion,",
+    O2SCL_CONV2_RET("Solver failed in eos_had_rmf::calc_temp_e(fermion,",
 		    "fermion,double,thermo).",exc_efailed,err_nonconv);
   }
   
