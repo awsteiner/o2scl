@@ -153,6 +153,7 @@ class plotter:
     verbose=1
     dset=0
     axes=0
+    fig=0
     canvas_flag=0
     dtype=''
     cmap='jet'
@@ -335,7 +336,7 @@ class plotter:
         if self.verbose>2:
             print 'Canvas'
         # Default o2mpl plot
-        self.axes=default_plot()
+        (self.fig,self.axes)=default_plot()
         # Plot limits
         if self.xset==1:
             plot.xlim([self.xlo,self.xhi])
