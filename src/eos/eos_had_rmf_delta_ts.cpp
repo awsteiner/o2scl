@@ -37,6 +37,9 @@ int main(void) {
   
   cout.setf(ios::scientific);
 
+  red.def_mroot.def_jac.set_epsrel(1.0e-4);
+  red.def_sat_mroot.def_jac.set_epsrel(1.0e-4);
+
   fermion n(939.0/hc_mev_fm,2.0), p(939.0/hc_mev_fm,2.0);
   n.non_interacting=false;
   p.non_interacting=false;

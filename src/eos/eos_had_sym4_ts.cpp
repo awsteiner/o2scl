@@ -137,6 +137,16 @@ int main(void) {
   rmf4_c.zeta=0.0;
   rmf4_c.a2=3.0;
   
+  rmf.def_mroot.def_jac.set_epsrel(1.0e-4);
+  rmf4.def_mroot.def_jac.set_epsrel(1.0e-4);
+  rmf_b.def_mroot.def_jac.set_epsrel(1.0e-4);
+  rmf_c.def_mroot.def_jac.set_epsrel(1.0e-4);
+  rmf4_b.def_mroot.def_jac.set_epsrel(1.0e-4);
+  rmf4_c.def_mroot.def_jac.set_epsrel(1.0e-4);
+  rnew.def_mroot.def_jac.set_epsrel(1.0e-4);
+  rlo.def_mroot.def_jac.set_epsrel(1.0e-4);
+  rhi.def_mroot.def_jac.set_epsrel(1.0e-4);
+
   double dx, eoat;
 
   n.mu=4.8;

@@ -137,6 +137,11 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
+  re.def_mroot.def_jac.set_epsrel(1.0e-4);
+  re.def_sat_mroot.def_jac.set_epsrel(1.0e-4);
+  rmf.def_mroot.def_jac.set_epsrel(1.0e-4);
+  rmf.def_sat_mroot.def_jac.set_epsrel(1.0e-4);
+
   /*
       hdf_file hf;
       string reference=((string)"A.W. Steiner, M. Hempel, and ")+
@@ -548,6 +553,7 @@ int main(void) {
   cout << "  Field equations: " << f1 << " " << f2 << " " << f3 << endl;
   cout << endl;
 
+  rmf.set_fields(0.1,0.07,-0.001);
   re.saturation();
   t.test_rel(re.n0,0.16,1.0e-4,"sat2 n0");
   t.test_rel(re.msom,0.855,1.0e-4,"sat2 msom");

@@ -103,15 +103,23 @@ namespace o2scl {
       The stepsize is initially chosen to be
       \f$ h_j = \mathrm{max}(\mathrm{epsrel}~|x_j|,\mathrm{epsmin}) \f$.
       Then if \f$ h_j = 0 \f$, the value of \f$ h_j \f$ is set to
-      \f$ \mathrm{epsrel}) \f$
+      \f$ \mathrm{epsrel}) \f$ .
+
+      If the function evaluation leads to a non-zero return value,
+      then the step size is alternately flipped in sign or decreased
+      by a fixed factor (default \f$ 10^2 \f$, set in \ref
+      set_shrink_fact() ) in order to obtain a valid result. This
+      process is repeated a fixed number of times (default 10, set in
+      \ref set_max_shrink_iters() ).
       
-      This is nearly equivalent to the GSL method for computing
-      Jacobians as in \c multiroots/fdjac.c. To obtain the GSL
-      behavior, set \ref epsrel to \c GSL_SQRT_DBL_EPSILON and set
-      \ref epsmin to zero. The \ref mroot_hybrids and \ref
-      chi_fit_funct classes set \ref epsrel to \c GSL_SQRT_DBL_EPSILON
-      in their constructor in order to partially mimic the GSL
-      behavior, but do not set \ref epsmin to zero.
+      This is equivalent to the GSL method for computing Jacobians as
+      in \c multiroots/fdjac.c if one calls \ref
+      set_max_shrink_iters() with a parameter value of zero.
+
+      If one row of the Jacobian is all zero, or if there was no
+      step-size found which would give a zero return value from
+      the user-specified function, then the error handler is called
+      depending on the value of \ref err_nonconv.
       
       This class does not separately check the vector and matrix sizes
       to ensure they are commensurate. 
@@ -149,16 +157,26 @@ namespace o2scl {
   /// The minimum stepsize 
   double epsmin;
 
+  /// Maximum number of times to shrink the step size
+  size_t max_shrink_iters;
+
+  /// Factor to shrink stepsize by
+  double shrink_fact;
+
 #endif
 
   public:
     
   jacobian_gsl() {
-    epsrel=1.0e-4;
-    epsmin=1.0e-15;
+    //epsrel=1.0e-4;
+    //epsmin=1.0e-15;
+    epsrel=sqrt(std::numeric_limits<double>::epsilon());
+    epsmin=0.0;
     err_nonconv=true;
     mem_size_x=0;
     mem_size_y=0;
+    max_shrink_iters=10;
+    shrink_fact=1.0e2;
   }
 
   virtual ~jacobian_gsl() {
@@ -194,6 +212,24 @@ namespace o2scl {
     return;
   }
   
+  /** \brief Set shrink factor for decreasing step size
+   */
+  void set_shrink_fact(double l_shrink_fact) {
+    if (l_shrink_fact<0.0) {
+      O2SCL_ERR("Negative value specified in jacobian_gsl::set_shrink_fact().",
+		exc_einval);
+    }
+    shrink_fact=l_shrink_fact;
+    return;
+  }
+
+  /** \brief Set number of times to decrease step size
+   */
+  void set_max_shrink_iters(size_t it) {
+    max_shrink_iters=it;
+    return;
+  }
+  
   /// If true, call the error handler if the routine does not "converge"
   bool err_nonconv;
 
@@ -221,10 +257,42 @@ namespace o2scl {
       h=epsrel*fabs(x[j]);
       if (h<epsmin) h=epsmin;
       if (h==0.0) h=epsrel;
-      
+
       xx[j]=x[j]+h;
-      (this->func)(nx,xx,f);
+      int ret=(this->func)(nx,xx,f);
       xx[j]=x[j];
+      
+      // The function returned a non-zero value, so try a different step
+      size_t it=0;
+      while (ret!=0 && h>=epsmin && it<max_shrink_iters) {
+
+	// First try flipping the sign
+	h=-h;
+	xx[j]=x[j]+h;
+	ret=(this->func)(nx,xx,f);
+	xx[j]=x[j];
+
+	if (ret!=0) {
+
+	  // If that didn't work, flip to positive and try a smaller
+	  // stepsize
+	  h/=-shrink_fact;
+	  if (h>=epsmin) {
+	    xx[j]=x[j]+h;
+	    ret=(this->func)(nx,xx,f);
+	    xx[j]=x[j];
+	  }
+	  
+	}
+
+	it++;
+      }
+
+      if (ret!=0) {
+	O2SCL_CONV2_RET("Jacobian failed to find valid step in ",
+			"jacobian_gsl::operator().",exc_ebadfunc,
+			this->err_nonconv);
+      }
 
       // This is the equivalent of GSL's test of
       // gsl_vector_isnull(&col.vector)
@@ -236,7 +304,6 @@ namespace o2scl {
 	jac(i,j)=temp;
       }
       if (nonzero==false) success=false;
-
 
     }
     
