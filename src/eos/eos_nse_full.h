@@ -290,6 +290,12 @@ namespace o2scl {
 
 	This function was particularly designed for comparing results
 	with \ref o2scl::eos_sn_base derived classes.
+
+	If output level is 0, then just the basic quantities are
+	output without any information about the distribution. If
+	output_level is 1, then only about 10 nuclei in the
+	distribution are output, and if output_level is 2,
+	then all nuclei in the distribution are output. 
     */
     virtual void output(dense_matter &dm, int output_level);
 
