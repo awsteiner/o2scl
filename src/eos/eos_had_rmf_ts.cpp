@@ -135,12 +135,17 @@ int main(void) {
   eos_had_rmf re;
   mroot_hybrids<mm_funct11> mrp;
   test_mgr t;
-  t.set_output_level(1);
+  t.set_output_level(2);
 
   re.def_mroot.def_jac.set_epsrel(1.0e-4);
   re.def_sat_mroot.def_jac.set_epsrel(1.0e-4);
   rmf.def_mroot.def_jac.set_epsrel(1.0e-4);
   rmf.def_sat_mroot.def_jac.set_epsrel(1.0e-4);
+
+  // This is important because the rho field is zero in 
+  // nuclear matter and so the step size has to be large
+  // enough to compute derivatives
+  re.def_mroot.def_jac.set_epsmin(1.0e-15);
 
   /*
       hdf_file hf;

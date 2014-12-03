@@ -121,6 +121,8 @@ int main(void) {
 
   // RMF
 
+  ld.def_had_eos.def_mroot.def_jac.set_epsmin(1.0e-15);
+
   double eoa;
   ld.n0=ld.def_had_eos.fn0(0.0,eoa);
   cout << "Lead from RMF: " << endl;

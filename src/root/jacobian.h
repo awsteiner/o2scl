@@ -105,6 +105,11 @@ namespace o2scl {
       Then if \f$ h_j = 0 \f$, the value of \f$ h_j \f$ is set to
       \f$ \mathrm{epsrel}) \f$ .
 
+      Values of \c epsmin which are non-zero are useful, for example,
+      in \ref mroot_hybrids when one of the variables is either
+      very small or zero, so that the step size doesn't become too
+      small. 
+
       If the function evaluation leads to a non-zero return value,
       then the step size is alternately flipped in sign or decreased
       by a fixed factor (default \f$ 10^2 \f$, set in \ref
