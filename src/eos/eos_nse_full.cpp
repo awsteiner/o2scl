@@ -586,16 +586,24 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, bool from_densities) {
   if (inc_lept_phot) {
     
     // Add electrons
-    dm.e.n=dm.Ye*dm.nB;
-    ret=relf.pair_density(dm.e,dm.T);
-    if (ret!=success) {
-      if (verbose>0) {
-	cout << "Electron EOS failed in "
-	     << "eos_nse_full::calc_density_fixnp()." << endl;
+    if (dm.Ye>0.0) {
+      dm.e.n=dm.Ye*dm.nB;
+      ret=relf.pair_density(dm.e,dm.T);
+      if (ret!=success) {
+	if (verbose>0) {
+	  cout << "Electron EOS failed in "
+	       << "eos_nse_full::calc_density_fixnp()." << endl;
+	}
+	O2SCL_CONV2_RET("Electron EOS failed in eos_nse_full::",
+			"calc_density_fixnp().",exc_einval,err_nonconv);
       }
-      O2SCL_CONV2_RET("Electron EOS failed in eos_nse_full::",
-		      "calc_density_fixnp().",exc_einval,err_nonconv);
+    } else {
+      dm.e.n=0.0;
+      dm.e.ed=0.0;
+      dm.e.pr=0.0;
+      dm.e.en=0.0;
     }
+
     dm.th.ed+=dm.e.ed;
     dm.th.en+=dm.e.en;
 
@@ -751,7 +759,9 @@ int eos_nse_full::calc_density_fixnp(dense_matter &dm, bool from_densities) {
 	
 	dm.eta_nuc[i]+=dm.dist[i].Z*(dm.dist[j].n+dfdm)*
 	  vec_dEdnneg[j]/hc_mev_fm;
+
       }
+
     }
   }
       
@@ -846,14 +856,21 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm) {
     
     // Electrons
     dm.e.n=np_tot;
-    ret=relf.pair_density(dm.e,dm.T);
-    if (ret!=success) {
-      if (verbose>0) {
-	cout << "Electron EOS failed in "
-	     << "eos_nse_full::calc_density_noneq()." << endl;
+    if (np_tot>0.0) {
+      ret=relf.pair_density(dm.e,dm.T);
+      if (ret!=success) {
+	if (verbose>0) {
+	  cout << "Electron EOS failed in "
+	       << "eos_nse_full::calc_density_noneq()." << endl;
+	}
+	O2SCL_CONV2_RET("Electron EOS failed in eos_nse_full::",
+			"calc_density_noneq().",exc_einval,err_nonconv);
       }
-      O2SCL_CONV2_RET("Electron EOS failed in eos_nse_full::",
-		      "calc_density_noneq().",exc_einval,err_nonconv);
+    } else {
+      dm.e.ed=0.0;
+      dm.e.n=0.0;
+      dm.e.en=0.0;
+      dm.e.pr=0.0;
     }
     
     if (include_muons) {
@@ -979,6 +996,11 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm) {
 	cout << "Density of nucleus: " << i << " negative." << endl;
       }
       return invalid_config;
+    } else {
+      dm.dist[i].ed=0.0;
+      dm.dist[i].pr=0.0;
+      dm.dist[i].en=0.0;
+      dm.dist[i].mu=0.0;
     }
 
   }
@@ -1011,6 +1033,9 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm) {
 	dm.eta_nuc[i]+=dm.dist[i].Z*(dm.dist[j].n+dfdm)*
 	  vec_dEdnneg[j]/hc_mev_fm;
       }
+
+    } else {
+      dm.eta_nuc[i]=0.0;
     }
     
   }
