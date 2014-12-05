@@ -33,7 +33,6 @@ using namespace o2scl_const;
 eos_had_skyrme::eos_had_skyrme() {
 
   parent_method=false;
-  mu_at_zero_density=false;
 
   neutron->init(939.0/hc_mev_fm,2.0);
   proton->init(939.0/hc_mev_fm,2.0);
@@ -150,22 +149,14 @@ int eos_had_skyrme::calc_temp_e(fermion &ne, fermion &pr,
     gp=2.0*pr.ms*pr.ed;
   }
   common=(gn+gp)*term+2.0*ham1*n+ham5*(2.0+alpha)*n*na;
-  if (!mu_at_zero_density && ne.n<=0.0) {
-    dhdnn=0.0;
-  } else {
-    dhdnn=common+ne.nu+gn*term2+
-      2.0*ham2*ne.n+ham3*na*pr.n*(alpha*ne.n/n+1.0)+
-      ham4*(nna*ne.n*(2.0+alpha))+
-      ham6*(2.0*ne.n*na+(ne.n*ne.n+pr.n*pr.n)*alpha*na/n);
-  }
-  if (!mu_at_zero_density && pr.n<=0.0) {
-    dhdnp=0.0;
-  } else {
-    dhdnp=common+pr.nu+gp*term2+
-      2.0*ham2*pr.n+ham3*na*ne.n*(alpha*pr.n/n+1.0)+
-      ham4*(npa*pr.n*(2.0+alpha))+
-      ham6*(2.0*pr.n*na+(ne.n*ne.n+pr.n*pr.n)*alpha*na/n);
-  }
+  dhdnn=common+ne.nu+gn*term2+
+    2.0*ham2*ne.n+ham3*na*pr.n*(alpha*ne.n/n+1.0)+
+    ham4*(nna*ne.n*(2.0+alpha))+
+    ham6*(2.0*ne.n*na+(ne.n*ne.n+pr.n*pr.n)*alpha*na/n);
+  dhdnp=common+pr.nu+gp*term2+
+    2.0*ham2*pr.n+ham3*na*ne.n*(alpha*pr.n/n+1.0)+
+    ham4*(npa*pr.n*(2.0+alpha))+
+    ham6*(2.0*pr.n*na+(ne.n*ne.n+pr.n*pr.n)*alpha*na/n);
 
   ne.mu=dhdnn;
   pr.mu=dhdnp;
@@ -231,8 +222,10 @@ int eos_had_skyrme::calc_e(fermion &ne, fermion &pr, thermo &locth) {
     return success;
   } else if (ne.n<=0.0) {
     ne.n=0.0;
+    ne.nu=0.0;
   } else if (pr.n<=0.0) {
     pr.n=0.0;
+    pr.nu=0.0;
   }
 
   n=ne.n+pr.n;
@@ -281,22 +274,14 @@ int eos_had_skyrme::calc_e(fermion &ne, fermion &pr, thermo &locth) {
     gp=2.0*pr.ms*pr.ed;
   }
   common=(gn+gp)*term+2.0*ham1*n+ham5*(2.0+alpha)*n*na;
-  if (!mu_at_zero_density && ne.n<=0.0) {
-    dhdnn=0.0;
-  } else {
-    dhdnn=common+ne.nu+gn*term2+
-      2.0*ham2*ne.n+ham3*na*pr.n*(alpha*ne.n/n+1.0)+
-      ham4*(nna*ne.n*(2.0+alpha))+
-      ham6*(2.0*ne.n*na+(ne.n*ne.n+pr.n*pr.n)*alpha*na/n);
-  }
-  if (!mu_at_zero_density && pr.n<=0.0) {
-    dhdnp=0.0;
-  } else {
-    dhdnp=common+pr.nu+gp*term2+
-      2.0*ham2*pr.n+ham3*na*ne.n*(alpha*pr.n/n+1.0)+
-      ham4*(npa*pr.n*(2.0+alpha))+
-      ham6*(2.0*pr.n*na+(ne.n*ne.n+pr.n*pr.n)*alpha*na/n);
-  }
+  dhdnn=common+ne.nu+gn*term2+
+    2.0*ham2*ne.n+ham3*na*pr.n*(alpha*ne.n/n+1.0)+
+    ham4*(nna*ne.n*(2.0+alpha))+
+    ham6*(2.0*ne.n*na+(ne.n*ne.n+pr.n*pr.n)*alpha*na/n);
+  dhdnp=common+pr.nu+gp*term2+
+    2.0*ham2*pr.n+ham3*na*ne.n*(alpha*pr.n/n+1.0)+
+    ham4*(npa*pr.n*(2.0+alpha))+
+    ham6*(2.0*pr.n*na+(ne.n*ne.n+pr.n*pr.n)*alpha*na/n);
     
   ne.mu=dhdnn;
   pr.mu=dhdnp;

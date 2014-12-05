@@ -191,6 +191,18 @@ namespace o2scl {
       the Hamiltonian w.r.t. density while energy density held
       constant). Equivalently, \f$ \nu_n\f$ is just \f$ -k_{F_n}^2/ 2
       m^{*} \f$.
+
+      \note At zero density, the chemical potentials are computed
+      assuming $\nu=0$. This is correct at zero temperature, but is
+      confusing at finite temperature then the \f$ T \rightarrow 0 \f$
+      limit doesn't give the same results as the zero temperature
+      results. 
+
+      \note This EOS doesn't include antiparticles. For this reason,
+      the values returned for the proton chemical potential in pure
+      neutron matter at finite temperature or the neutron chemical
+      potential in pure proton matter at finite temperature are
+      meaningless.
      
       \note The finite temperature code does not include attempt to
       include antiparticles and uses \ref
@@ -410,9 +422,6 @@ namespace o2scl {
 
     /// Return string denoting type ("eos_had_skyrme")
     virtual const char *type() { return "eos_had_skyrme"; }
-
-    /// If true, compute the chemical potentials even at zero density
-    bool mu_at_zero_density;
 
     /** \brief Set using alternate parameterization
 
