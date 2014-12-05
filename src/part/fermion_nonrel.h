@@ -45,8 +45,9 @@ namespace o2scl {
 
   /** \brief Nonrelativistic fermion class
 
-      The rest mass energy density is given by n*m not n*ms. Note that
-      the effective mass here is the Landau mass, not the Dirac mass.
+      The rest mass energy density is given by <tt>n*m</tt> not
+      <tt>n*ms</tt>. Note that the effective mass here is the Landau
+      mass, not the Dirac mass.
       
       Pressure is computed with
       \f[
@@ -59,14 +60,18 @@ namespace o2scl {
       These relations can be verified with an integration by
       parts. See, e.g. \ref Callen pg. 403 or \ref Landau pg. 164.
       
-      The functions pair_density() and pair_mu() have not 
-      been implemented. 
+      The functions \ref pair_density() and \ref pair_mu() have not 
+      been implemented and just call the error handler.
+      
+      \note The function \ref calc_density() calls the error handler
+      at zero density and finite temperature, because the correct
+      answer implies \f$ \mu = - \infty \f$ . At zero density and zero
+      temperature the function \ref calc_density() calls \ref
+      calc_density_zerot() which gives the proper chemical potential
+      of \f$ mu = m \f$ without calling the error handler.
 
-      \todo Check behaviour of calc_density() at zero density, and
-      compare with that from \ref o2scl::fermion_eff, \ref
-      o2scl::fermion_rel, and \ref o2scl::classical.
-
-      \todo Implement pair_density() and pair_mu().
+      \todo Implement \ref o2scl::fermion_nonrel::pair_density() and 
+      \ref o2scl::fermion_nonrel::pair_mu().
 
       \todo Make sure to test with non-interacting equal to 
       true or false, and document whether or not it works

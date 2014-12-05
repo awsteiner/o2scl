@@ -25,7 +25,6 @@
 #include <o2scl/nucmass.h>
 #include <o2scl/nucmass_ldrop.h>
 #include <o2scl/nucmass_ldrop_shell.h>
-#include <o2scl/eos_had_apr.h>
 #include <o2scl/eos_had_skyrme.h>
 #include <o2scl/fermion_nonrel.h>
 #include <o2scl/nucmass_fit.h>
@@ -51,7 +50,6 @@ int main(void) {
   ame_load(au,"03");
   nucmass_ldrop_pair ld;
   nucmass_ldrop_shell ld2;
-  eos_had_apr apr;
 
   fermion nrn(o2scl_settings.get_convert_units().convert
 	      ("kg","1/fm",o2scl_mks::mass_neutron),2.0);
@@ -68,13 +66,11 @@ int main(void) {
 
   cout << "-------------------------------------------------\n" << endl;
 
-  // APR
-
   ld.set_eos_had_temp_base(sk);
   ld.set_n_and_p(nrn,nrp);
   ld.n0=0.16;
   ld.n1=0.0;
-  cout << "Lead from APR with nucmass_ldrop_pair: " << endl;
+  cout << "Lead from SLy4 with nucmass_ldrop_pair: " << endl;
   cout << "Mass excess:\t\t " <<  ld.mass_excess(82,126) << endl;
   cout << "Binding energy:\t\t " << ld.binding_energy(82,126)/208.0 << endl;
   cout << "Total mass:\t\t " << ld.total_mass(82,126) << endl;
@@ -87,15 +83,13 @@ int main(void) {
   ld2.set_n_and_p(nrn,nrp);
   ld2.n0=0.16;
   ld2.n1=0.0;
-  cout << "Lead from APR with nucmass_ldrop_shell: " << endl;
+  cout << "Lead from SLy4 with nucmass_ldrop_shell: " << endl;
   cout << "Mass excess:\t\t " <<  ld2.mass_excess(82,126) << endl;
   cout << "Binding energy:\t\t " << ld2.binding_energy(82,126)/208.0 << endl;
   cout << "Total mass:\t\t " << ld2.total_mass(82,126) << endl;
   cout << endl;
 
   cout << "-------------------------------------------------\n" << endl;
-
-  // fit APR
 
   cout << "nucmass_ldrop_pair fit:" << endl;
   nucmass_fit mf;

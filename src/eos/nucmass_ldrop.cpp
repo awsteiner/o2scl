@@ -127,7 +127,7 @@ double nucmass_ldrop::drip_binding_energy_d
   // but they're here for now just in case
   n->mu=n->m;
   p->mu=p->m;
-      
+
   int err=heos->calc_e(*n,*p,th);
   if (err!=0) {
     O2SCL_ERR2("Hadronic EOS failed in ",
@@ -242,6 +242,10 @@ double nucmass_ldrop_skin::drip_binding_energy_d
     p->n=np;
     n->mu=n->m;
     p->mu=p->m;
+
+    if (n->n<0.0) n->n=1.0e-3;
+    if (p->n<0.0) p->n=1.0e-3;
+
     if (T<=0.0) {
       err=heos->calc_e(*n,*p,th);
       bulk=(th.ed-nn*n->m-np*p->m)/nL*o2scl_const::hc_mev_fm;

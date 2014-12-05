@@ -192,21 +192,14 @@ namespace o2scl {
       constant). Equivalently, \f$ \nu_n\f$ is just \f$ -k_{F_n}^2/ 2
       m^{*} \f$.
 
-      \note At zero density, the chemical potentials are computed
-      assuming $\nu=0$. This is correct at zero temperature, but is
-      confusing at finite temperature then the \f$ T \rightarrow 0 \f$
-      limit doesn't give the same results as the zero temperature
-      results. 
-
-      \note This EOS doesn't include antiparticles. For this reason,
-      the values returned for the proton chemical potential in pure
-      neutron matter at finite temperature or the neutron chemical
-      potential in pure proton matter at finite temperature are
-      meaningless.
-     
       \note The finite temperature code does not include attempt to
       include antiparticles and uses \ref
-      o2scl::fermion_nonrel::calc_density().
+      o2scl::fermion_nonrel::calc_density(). At finite temperature,
+      pure neutron matter implies a zero proton number density which
+      would imply that the proton chemical potential is \f$ - \infty
+      \f$ . This class handles this situation by just setting \f$
+      \nu_p \f$ to zero. The case of pure proton matter is handled
+      similarly.
       
       \note Since this EOS uses the effective masses and chemical
       potentials in the fermion class, the values of

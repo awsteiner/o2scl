@@ -81,19 +81,23 @@ int eos_had_apr::calc_e(fermion &ne, fermion &pr, thermo &lth) {
 #if !O2SCL_NO_RANGE_CHECK
   if (!o2scl::is_finite(ne.n) || !o2scl::is_finite(ne.n)) {
     O2SCL_ERR2("Nucleon densities not finite in ",
-	       "eos_had_apr::calc_eq_temp_p().",exc_einval);
+	       "eos_had_apr::calc_e().",exc_einval);
+  }
+  if (ne.n<0.0 || pr.n<0.0) {
+    O2SCL_ERR2("Nucleon densities negative in ",
+	       "eos_had_apr::calc_e().",exc_einval);
   }
   if (fabs(ne.g-2.0)>1.0e-10 || fabs(pr.g-2.0)>1.0e-10) {
     O2SCL_ERR2("Neutron or proton spin degeneracies wrong in ",
-	       "eos_had_apr::calc_eq_temp_p().",exc_einval);
+	       "eos_had_apr::calc_e().",exc_einval);
   }
   if (fabs(ne.m-4.5)>1.0 || fabs(pr.m-4.5)>1.0) {
     O2SCL_ERR2("Neutron or proton masses wrong in ",
-	       "eos_had_apr::calc_eq_temp_p().",exc_einval);
+	       "eos_had_apr::calc_e().",exc_einval);
   }
   if (ne.non_interacting==true || pr.non_interacting==true) {
     O2SCL_ERR2("Neutron or protons non-interacting in ",
-	       "eos_had_apr::calc_eq_temp_p().",exc_einval);
+	       "eos_had_apr::calc_e().",exc_einval);
   }
 #endif
   
@@ -509,19 +513,23 @@ int eos_had_apr::calc_temp_e(fermion &ne, fermion &pr, const double temper,
   if (!o2scl::is_finite(ne.n) || !o2scl::is_finite(ne.n) ||
       !o2scl::is_finite(temper)) {
     O2SCL_ERR2("Nucleon densities or temperature not finite in ",
-	       "eos_had_apr::calc_eq_temp_p().",exc_einval);
+	       "eos_had_apr::calc_temp_e().",exc_einval);
+  }
+  if (ne.n<0.0 || pr.n<0.0) {
+    O2SCL_ERR2("Nucleon densities negative in ",
+	       "eos_had_apr::calc_temp_e().",exc_einval);
   }
   if (fabs(ne.g-2.0)>1.0e-10 || fabs(pr.g-2.0)>1.0e-10) {
     O2SCL_ERR2("Neutron or proton spin degeneracies wrong in ",
-	       "eos_had_apr::calc_eq_temp_p().",exc_einval);
+	       "eos_had_apr::calc_temp_e().",exc_einval);
   }
   if (fabs(ne.m-4.5)>1.0 || fabs(pr.m-4.5)>1.0) {
     O2SCL_ERR2("Neutron or proton masses wrong in ",
-	       "eos_had_apr::calc_eq_temp_p().",exc_einval);
+	       "eos_had_apr::calc_temp_e().",exc_einval);
   }
   if (ne.non_interacting==true || pr.non_interacting==true) {
     O2SCL_ERR2("Neutron or protons non-interacting in ",
-	       "eos_had_apr::calc_eq_temp_p().",exc_einval);
+	       "eos_had_apr::calc_temp_e().",exc_einval);
   }
 #endif
 
@@ -551,7 +559,7 @@ int eos_had_apr::calc_temp_e(fermion &ne, fermion &pr, const double temper,
     return success;
   }
   
-  if (ne.n<=0.0 && pr.n<=0.0) {
+  if (ne.n==0.0 && pr.n==0.0) {
     ne.ms=ne.m;
     pr.ms=pr.m;
     ne.mu=ne.m;
@@ -564,10 +572,6 @@ int eos_had_apr::calc_temp_e(fermion &ne, fermion &pr, const double temper,
     lth.ed=0.0;
     lth.en=0.0;
     return success;
-  } else if (ne.n<=0.0) {
-    ne.n=0.0;
-  } else if (pr.n<=0.0) {
-    pr.n=0.0;
   }
 
   barn=ne.n+pr.n;
@@ -585,8 +589,26 @@ int eos_had_apr::calc_temp_e(fermion &ne, fermion &pr, const double temper,
   ne.ms=1.0/(1.0/ne.m+2.0*t1*t2);
   pr.ms=1.0/(1.0/pr.m+2.0*t1*t3);
 
-  nrf.calc_density(ne,temper);
-  nrf.calc_density(pr,temper);
+  if (ne.n>0.0) {
+    nrf.calc_density(ne,temper);
+  } else {
+    // If the neutron density is zero, we just assume we're 
+    // computing pure proton matter
+    ne.ed=0.0;
+    ne.en=0.0;
+    ne.pr=0.0;
+    ne.nu=0.0;
+  }
+  if (pr.n>0.0) {
+    nrf.calc_density(pr,temper);
+  } else {
+    // If the proton density is zero, we just assume we're 
+    // computing pure neutron matter
+    pr.ed=0.0;
+    pr.en=0.0;
+    pr.pr=0.0;
+    pr.nu=0.0;
+  }
 
   if (ne.n==0 && pr.n==0) {
     lth.ed=0.0;

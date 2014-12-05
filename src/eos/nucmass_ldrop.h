@@ -148,6 +148,11 @@ namespace o2scl {
       E_{\mathrm{Coul}}/A = 0.76~\mathrm{MeV}~Z^2 A^{-4/3}
       \f]
 
+      \todo 12/4/14: This doesn't gracefully handle negative values of
+      n0 and n1 as then the neutron and proton densities become
+      negative. This needs to be addressed. For now, there is a
+      fix at line 246 in nucmass_ldrop.cpp .
+
       \hline
 
       <b>References</b>

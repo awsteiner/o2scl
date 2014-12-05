@@ -195,43 +195,32 @@ void fermion_nonrel::nu_from_n(fermion &f, double temper) {
 
 int fermion_nonrel::calc_density(fermion &f, double temper) {
 
+  if (f.ms<0.0) {
+    O2SCL_ERR2("Mass negative in ",
+	       "fermion_nonrel::calc_density().",exc_einval);
+  }
   if (temper<0.0) {
-    O2SCL_ERR("Temperature less than zero in fermion_nonrel::calc_density().",
-	      exc_einval);
+    O2SCL_ERR2("Temperature less than zero in ",
+	       "fermion_nonrel::calc_density().",exc_einval);
   }
   if (temper==0.0) {
     calc_density_zerot(f);
     return 0;
   }
 
-  double y, spi, ey, sy;
-
   if (f.n<=0.0) {
-    f.nu=0.0;
-    f.mu=0.0;
-    f.ed=0.0;
-    f.en=0.0;
-    f.pr=0.0;
-    return 0;
+    O2SCL_ERR2("Density less than or equal to zero in ",
+	       "fermion_nonrel::calc_density().",exc_einval);
   }
   
   if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
-
-  if (f.ms<0.0) {
-    O2SCL_ERR2("Mass negative in ",
-	       "fermion_nonrel::calc_density().",exc_einval);
-  }
-
-  if (temper<=0.0) {
-    calc_density_zerot(f);
-    return 0;
-  }
-
+  
   double guess=f.nu;
   nu_from_n(f,temper);
   
   if (f.non_interacting) { f.mu=f.nu; }
 
+  double y, spi, ey, sy;
   if (f.inc_rest_mass) {
     y=-(f.nu-f.m)/temper;
   } else {
