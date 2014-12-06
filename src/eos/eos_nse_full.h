@@ -193,6 +193,19 @@ namespace o2scl {
     */
     virtual int solve_fixnp(size_t n, const ubvector &x, ubvector &y,
 			    dense_matter &dm, bool from_densities=true);
+    
+    /** \brief Desc
+     */
+    virtual int bracket_mu_solve(dense_matter &dm);
+
+    /** \brief Desc
+     */
+    double mup_for_Ye(double mup, double mun_low,
+		      double mun_high, dense_matter &dm);
+
+    /** \brief Desc
+     */
+    virtual double solve_mun(double mun, dense_matter &dm);
 
     /** \brief Compute the properties of matter from the densities,
 	not presuming equilibrium
