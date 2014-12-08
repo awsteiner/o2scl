@@ -196,14 +196,43 @@ namespace o2scl {
     
     /** \brief Desc
      */
-    virtual int bracket_mu_solve(dense_matter &dm);
+    virtual int bracket_mu_solve(double &mun_low, double &mun_high,
+				 double &mup_low, double &mup_high,
+				 dense_matter &dm);
 
-    /** \brief Desc
-     */
-    double mup_for_Ye(double mup, double mun_low,
-		      double mun_high, dense_matter &dm);
+    /** \brief Fix electron fraction by varying proton chemical
+	potential
 
-    /** \brief Desc
+	At some fixed values of <tt>dm.Ye</tt> and <tt>dm.nB</tt>,
+	given a value of \f$ \mu_p \f$, and given an initial bracket
+	for \f$ \mu_n \f$ (stored in <tt>mun_low</tt> and
+	<tt>mun_high</tt>), this function attempts to find the value
+	of \f$ \mu_n \f$ which ensures that the baryon density in
+	nuclei matches that in <tt>dm.nB</tt> using a bracketing
+	solver. It then returns the difference between the value of
+	the proton fraction in nuclei and the value in <tt>dm.Ye</tt>.
+	
+	If <tt>mun_low</tt> and <tt>mun_high</tt> do not bracket the
+	correct value of \f$ \mu_n \f$, this function attempts to
+	modify them to give a proper bracket for the root. The
+	finaly value of \f$ \mu_n \f$ is stored in <tt>dm.n.mu</tt>. 
+
+	Currently, the values of <tt>dm.n.n</tt> and <tt>dm.p.n</tt>
+	are ignored and set to zero.
+    */
+    double mup_for_Ye(double mup, double &mun_low,
+		      double &mun_high, dense_matter &dm);
+    
+    /** \brief Fix the baryon density by varying the neutron 
+	chemical potential
+	
+	Given a value of \f$ \mu_n \f$ (the value in <tt>dm.n.mu</tt>
+	is ignored), this function computes the baryon density 
+	in nuclei and returns the difference between this value
+	and that stored in <tt>dm.nB</tt>.
+	
+	Currently, the values of <tt>dm.n.n</tt> and <tt>dm.p.n</tt>
+	are ignored and set to zero.
      */
     virtual double solve_mun(double mun, dense_matter &dm);
 

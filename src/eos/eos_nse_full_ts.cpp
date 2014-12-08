@@ -66,6 +66,7 @@ int main(void) {
   dm.n.n=0.01;
   dm.p.n=0.01;
   dm.dist.clear();
+
   ame.get_nucleus(26,26,nuc);
   nuc.g=2.0;
   nuc.n=0.01/50.0;
@@ -209,6 +210,22 @@ int main(void) {
   // get the right densities
   cout << dm.nB << " " << dm.baryon_density() << endl;
   cout << dm.Ye << " " << dm.electron_fraction() << endl;
+
+  if (false) {
+    // Add a full distribution and test mup_for_Ye
+    dm.dist.clear();
+    nucdist_set(dm.dist,ame,"(N+Z)>1");
+    dm.nB=1.0e-10;
+    dm.Ye=0.45;
+    dm.T=0.1/hc_mev_fm;
+    double mup_high=-5.0/hc_mev_fm;
+    double mup_low=-6.0/hc_mev_fm;
+    double mun_low=-12.0/hc_mev_fm;
+    double mun_high=-11.5/hc_mev_fm;
+    nse.verbose=1;
+    //nse.mup_for_Ye(dm.p.mu,mun_low,mun_high,dm);
+    nse.bracket_mu_solve(mun_low,mun_high,mup_low,mup_high,dm);
+  }
   
   t.report();
   return 0;

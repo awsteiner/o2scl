@@ -479,152 +479,425 @@ int eos_nse_full::calc_density_saha(dense_matter &dm) {
   return 0;
 }
 
-int eos_nse_full::bracket_mu_solve(dense_matter &dm) {
+int eos_nse_full::bracket_mu_solve(double &mun_low, double &mun_high,
+				   double &mup_low, double &mup_high,
+				   dense_matter &dm) {
 
-  double mup_low=dm.p.mu-0.02/hc_mev_fm;
-  double mup_high=dm.p.mu+0.02/hc_mev_fm;
-  double mun_low=dm.n.mu-0.02/hc_mev_fm;
-  double mun_high=dm.n.mu+0.02/hc_mev_fm;
+  /*
+    double mup_low=dm.p.mu-0.02/hc_mev_fm;
+    double mup_high=dm.p.mu+0.02/hc_mev_fm;
+    double mun_low=dm.n.mu-0.02/hc_mev_fm;
+    double mun_high=dm.n.mu+0.02/hc_mev_fm;
+  */
 
   int iter;
 
-  // ------------------------------------------------------------
-  // Set the lower bracket value for mu_p
-
-  mup_for_Ye(mup_low,mun_low,mun_high,dm);
-  cout << "Low: " << dm.nB << " " << dm.n.mu << " " << dm.p.mu << " " 
-       << dm.baryon_density_nuclei() << " " 
-       << dm.electron_fraction() << endl;
-  iter=0;
-  while (iter<100 && dm.electron_fraction()<dm.Ye*1.0e-4) {
-    mup_low+=0.02/hc_mev_fm;
+  if (false) {
+    
+    // ------------------------------------------------------------
+    // Set the lower bracket value for mu_p
+    
     mup_for_Ye(mup_low,mun_low,mun_high,dm);
-    cout << "Low: " << dm.nB << " " << dm.n.mu << " " << dm.p.mu << " " 
-	 << dm.electron_fraction() << " " 
-	 << dm.electron_fraction() << endl;
-    iter++;
-  }
-  iter=0;
-  while (iter<100 && dm.electron_fraction()>dm.Ye) {
-    mup_low-=0.02/hc_mev_fm;
-    calc_density_fixnp(dm,false);
     cout << "Low: " << dm.nB << " " << dm.n.mu << " " << dm.p.mu << " " 
 	 << dm.baryon_density_nuclei() << " " 
 	 << dm.electron_fraction() << endl;
-    iter++;
+    iter=0;
+    while (iter<100 && dm.electron_fraction()<dm.Ye*1.0e-4) {
+      mup_low+=0.02/hc_mev_fm;
+      mup_for_Ye(mup_low,mun_low,mun_high,dm);
+      cout << "Low: " << dm.nB << " " << dm.n.mu << " " << dm.p.mu << " " 
+	   << dm.electron_fraction() << " " 
+	   << dm.electron_fraction() << endl;
+      iter++;
+    }
+    iter=0;
+    while (iter<100 && dm.electron_fraction()>dm.Ye) {
+      mup_low-=0.02/hc_mev_fm;
+      calc_density_fixnp(dm,false);
+      cout << "Low: " << dm.nB << " " << dm.n.mu << " " << dm.p.mu << " " 
+	   << dm.baryon_density_nuclei() << " " 
+	   << dm.electron_fraction() << endl;
+      iter++;
+    }
+    cout << "Low: " << dm.nB << " " << dm.n.mu << " " << dm.p.mu << " " 
+	 << dm.baryon_density_nuclei() << " " 
+	 << dm.electron_fraction() << endl;
+    
+  } else {
+
+    bool done=false;
+
+    // Ensure bracket is ordered
+    if (mup_high<mup_low) {
+      double dtemp=mup_low;
+      mup_low=mup_high;
+      mup_high=dtemp;
+    }
+
+    // Perform initial function evaluation
+    double y_low=mup_for_Ye(mup_low,mun_low,mun_high,dm);
+    double y_high=mup_for_Ye(mup_high,mun_low,mun_high,dm);
+
+    if (!o2scl::is_finite(y_low) || !o2scl::is_finite(y_high)) {
+      O2SCL_CONV2_RET("Failed to bracket (bad init. point.) in ",
+		      "eos_nse_full::bracket_mu_solve().",
+		      o2scl::exc_einval,this->err_nonconv);
+    }
+
+    if (y_low*y_high<0.0) done=true;
+
+    int iter=0;
+
+    // Use function to try to bracket a root
+    while(done==false && iter<100) {
+
+      double dydx=(y_high-y_low)/(mup_high-mup_low);
+      if (dydx==0.0) {
+	O2SCL_CONV2_RET("Failed to bracket (dydx==0) in ",
+			"eos_nse_full::bracket_mu_solve().",
+			o2scl::exc_esing,this->err_nonconv);
+      }
+
+      // Compute the initial step size
+      double fact=1.0;
+      double step=-fact*y_low/dydx;
+
+      // Ensure the step makes the interval larger
+      if (step>0.0 && step<mup_high-mup_low) {
+	step=(fact+1.0)*(mup_high-mup_low);
+      } else if (step>mup_low-mup_high) {
+	step=fact*(mup_low-mup_high);
+      }
+
+      // Find the new function value
+      double mup_new=mup_low+step;
+      double y_new=mup_for_Ye(mup_new,mun_low,mun_high,dm);
+      if (verbose>0) {
+	cout << mup_low << " " << mup_high << " " << mup_new << endl;
+	cout << y_low << " " << y_high << " " << y_new << endl;
+      }
+
+      // If the step took it outside a reasonable range,
+      // try making a smaller step by decreasing 'fact'
+      int jter=0;
+      while (!o2scl::is_finite(y_new) && jter<10) {
+
+	// This is selected so 10 steps does not make 'fact' vanish
+	fact-=0.099;
+	step=-fact*y_low/dydx;
+
+	// Again make sure the step makes the interval larger
+	if (step>0.0 && step<mup_high-mup_low) {
+	  step=(fact+1.0)*(mup_high-mup_low);
+	} else if (step>mup_low-mup_high) {
+	  step=fact*(mup_low-mup_high);
+	}
+
+	// The new function value
+	mup_new=mup_low+step;
+	y_new=mup_for_Ye(mup_new,mun_low,mun_high,dm);
+	if (verbose>0) {
+	  cout << mup_low << " " << mup_high << " " << mup_new << endl;
+	  cout << y_low << " " << y_high << " " << y_new << endl;
+	}
+	jter++;
+      }
+      
+      // See if we're done or get new interval
+      if (y_new*y_low<0.0) {
+	done=true;
+	mup_high=mup_new;
+	y_high=y_new;
+	// Ensure bracket is ordered
+	if (mup_high<mup_low) {
+	  double dtemp=mup_low;
+	  mup_low=mup_high;
+	  mup_high=dtemp;
+	}
+      } else if (y_new*y_high<0.0) {
+	done=true;
+	mup_low=mup_new;
+	y_low=y_new;
+	// Ensure bracket is ordered
+	if (mup_high<mup_low) {
+	  double dtemp=mup_low;
+	  mup_low=mup_high;
+	  mup_high=dtemp;
+	}
+      } else if (mup_new>mup_high) {
+	mup_high=mup_new;
+	y_high=y_new;
+      } else if (mup_new<mup_low) {
+	mup_low=mup_new;
+	y_low=y_new;
+      } else if (fabs(y_low)<fabs(y_high)) {
+	mup_high=mup_new;
+	y_high=y_new;
+      } else {
+	mup_low=mup_new;
+	y_low=y_new;
+      }
+      if (verbose>0) {
+	cout << mup_low << " " << mup_high << endl;
+	cout << y_low << " " << y_high << endl;
+      }
+      
+      iter++;
+    }
+
+    if (done==false) {
+	O2SCL_CONV2_RET("Failed to bracket (max. iters.) in ",
+			"eos_nse_full::bracket_mu_solve().",
+			o2scl::exc_emaxiter,this->err_nonconv);
+    }
+
   }
-  cout << "Low: " << dm.nB << " " << dm.n.mu << " " << dm.p.mu << " " 
-       << dm.baryon_density_nuclei() << " " 
-       << dm.electron_fraction() << endl;
 
   // ------------------------------------------------------------
   // Use the bracketing solver
 
   o2scl::root_brent_gsl<> rbg;
+  rbg.verbose=2;
   
   // Call solver
   o2scl::funct11 f11=std::bind
-    (std::mem_fn<double(double,double,double,o2scl::dense_matter &)>
+    (std::mem_fn<double(double,double &,double &,o2scl::dense_matter &)>
      (&o2scl::eos_nse_full::mup_for_Ye),
-     this,std::placeholders::_1,mun_low,mun_high,std::ref(dm));
-  rbg.solve_bkt(mup_low,mup_high,f11);
+     this,std::placeholders::_1,std::ref(mun_low),
+     std::ref(mun_high),std::ref(dm));
+  double mup_solve=mup_low;
+  rbg.solve_bkt(mup_solve,mup_high,f11);
   
-  dm.p.mu=mup_low;
-  calc_density_fixnp(dm,false);
-
-  
+  // Final function evaluation
+  dm.p.mu=mup_solve;
+  mup_for_Ye(dm.p.mu,mun_low,mun_high,dm);
 
   return 0;
 }
 
-double eos_nse_full::mup_for_Ye(double mup, double mun_low,
-				double mun_high, dense_matter &dm) {
+double eos_nse_full::mup_for_Ye(double mup, double &mun_low,
+				double &mun_high, dense_matter &dm) {
 
-  int iter;
-  
   dm.p.mu=mup;
 
-  // ------------------------------------------------------------
-  // Set the lower bracket value for mu_n
+  if (false) {
 
-  dm.n.mu=mun_low;
-  calc_density_fixnp(dm,false);
-  cout << "Low: " << dm.nB << " " << dm.n.mu << " " << dm.p.mu << " " 
-       << dm.baryon_density_nuclei() << " " 
-       << dm.electron_fraction() << endl;
-  iter=0;
-  while (iter<100 && dm.baryon_density_nuclei()<dm.nB*1.0e-4) {
-    dm.n.mu+=0.02/hc_mev_fm;
-    calc_density_fixnp(dm,false);
-    cout << "Low: " << dm.nB << " " << dm.n.mu << " " << dm.p.mu << " " 
-	 << dm.baryon_density_nuclei() << " " 
-	 << dm.electron_fraction() << endl;
-    iter++;
-  }
-  iter=0;
-  while (iter<100 && dm.baryon_density_nuclei()>dm.nB) {
-    dm.n.mu-=0.02/hc_mev_fm;
-    calc_density_fixnp(dm,false);
-    cout << "Low: " << dm.nB << " " << dm.n.mu << " " << dm.p.mu << " " 
-	 << dm.baryon_density_nuclei() << " " 
-	 << dm.electron_fraction() << endl;
-    iter++;
-  }
-  cout << "Low: " << dm.nB << " " << dm.n.mu << " " << dm.p.mu << " " 
-       << dm.baryon_density_nuclei() << " " 
-       << dm.electron_fraction() << endl;
-  mun_low=dm.n.mu;
+    int iter;
   
-  // ------------------------------------------------------------
-  // Set the upper bracket value for mu_n
+    // ------------------------------------------------------------
+    // Set the lower bracket value for mu_n
+    
+    dm.n.mu=mun_low;
+    calc_density_fixnp(dm,false);
+    cout << "Low: " << dm.nB << " " << dm.n.mu << " " << dm.p.mu << " " 
+	 << dm.baryon_density_nuclei() << " " 
+	 << dm.electron_fraction() << endl;
+    iter=0;
+    while (iter<100 && dm.baryon_density_nuclei()<dm.nB*1.0e-4) {
+      dm.n.mu+=0.02/hc_mev_fm;
+      calc_density_fixnp(dm,false);
+      cout << "Low: " << dm.nB << " " << dm.n.mu << " " << dm.p.mu << " " 
+	   << dm.baryon_density_nuclei() << " " 
+	   << dm.electron_fraction() << endl;
+      iter++;
+    }
+    iter=0;
+    while (iter<100 && dm.baryon_density_nuclei()>dm.nB) {
+      dm.n.mu-=0.02/hc_mev_fm;
+      calc_density_fixnp(dm,false);
+      cout << "Low: " << dm.nB << " " << dm.n.mu << " " << dm.p.mu << " " 
+	   << dm.baryon_density_nuclei() << " " 
+	   << dm.electron_fraction() << endl;
+      iter++;
+    }
+    cout << "Low: " << dm.nB << " " << dm.n.mu << " " << dm.p.mu << " " 
+	 << dm.baryon_density_nuclei() << " " 
+	 << dm.electron_fraction() << endl;
+    mun_low=dm.n.mu;
+    
+    // ------------------------------------------------------------
+    // Set the upper bracket value for mu_n
+    
+    dm.n.mu=mun_high;
+    calc_density_fixnp(dm,false);
+    cout << "High: " << dm.nB << " " << dm.n.mu << " " << dm.p.mu << " " 
+	 << dm.baryon_density_nuclei() << " " 
+	 << dm.electron_fraction() << endl;
+    iter=0;
+    while (iter<100 && dm.baryon_density_nuclei()>dm.nB*1.0e4) {
+      dm.n.mu-=0.02/hc_mev_fm;
+      calc_density_fixnp(dm,false);
+      cout << "High: " << dm.nB << " " << dm.n.mu << " " 
+	   << dm.p.mu << " " 
+	   << dm.baryon_density_nuclei() << " " 
+	   << dm.electron_fraction() << endl;
+      iter++;
+    }
+    iter=0;
+    while (iter<100 && dm.baryon_density_nuclei()<dm.nB) {
+      dm.n.mu+=0.02/hc_mev_fm;
+      calc_density_fixnp(dm,false);
+      cout << "High: " << dm.nB << " " << dm.n.mu << " " 
+	   << dm.p.mu << " " 
+	   << dm.baryon_density_nuclei() << " " 
+	   << dm.electron_fraction() << endl;
+      iter++;
+    }
+    cout << "High: " << dm.nB << " " << dm.n.mu << " " << dm.p.mu << " " 
+	 << dm.baryon_density_nuclei() << " " 
+	 << dm.electron_fraction() << endl;
+    mun_high=dm.n.mu;
+    
+  } else {
 
-  dm.n.mu=mun_high;
-  calc_density_fixnp(dm,false);
-  cout << "High: " << dm.nB << " " << dm.n.mu << " " << dm.p.mu << " " 
-       << dm.baryon_density_nuclei() << " " 
-       << dm.electron_fraction() << endl;
-  iter=0;
-  while (iter<100 && dm.baryon_density_nuclei()>dm.nB*1.0e4) {
-    dm.n.mu-=0.02/hc_mev_fm;
-    calc_density_fixnp(dm,false);
-    cout << "High: " << dm.nB << " " << dm.n.mu << " " 
-	 << dm.p.mu << " " 
-	 << dm.baryon_density_nuclei() << " " 
-	 << dm.electron_fraction() << endl;
-    iter++;
+    bool done=false;
+
+    // Ensure bracket is ordered
+    if (mun_high<mun_low) {
+      double dtemp=mun_low;
+      mun_low=mun_high;
+      mun_high=dtemp;
+    }
+
+    // Perform initial function evaluation
+    double y_low=solve_mun(mun_low,dm);
+    double y_high=solve_mun(mun_high,dm);
+
+    if (!o2scl::is_finite(y_low) || !o2scl::is_finite(y_high)) {
+      O2SCL_CONV2_RET("Failed to bracket (bad init. point.) in ",
+		      "eos_nse_full::mup_for_Ye().",
+		      o2scl::exc_einval,this->err_nonconv);
+    }
+
+    if (y_low*y_high<0.0) done=true;
+
+    int iter=0;
+
+    // Use function to try to bracket a root
+    while(done==false && iter<100) {
+
+      double dydx=(y_high-y_low)/(mun_high-mun_low);
+      if (dydx==0.0) {
+	O2SCL_CONV2_RET("Failed to bracket (dydx==0) in ",
+			"eos_nse_full::mup_for_Ye().",
+			o2scl::exc_esing,this->err_nonconv);
+      }
+
+      // Compute the initial step size
+      double fact=1.0;
+      double step=-fact*y_low/dydx;
+
+      // Ensure the step makes the interval larger
+      if (step>0.0 && step<mun_high-mun_low) {
+	step=(fact+1.0)*(mun_high-mun_low);
+      } else if (step>mun_low-mun_high) {
+	step=fact*(mun_low-mun_high);
+      }
+
+      // Find the new function value
+      double mun_new=mun_low+step;
+      double y_new=solve_mun(mun_new,dm);
+      if (verbose>0) {
+	cout << mun_low << " " << mun_high << " " << mun_new << endl;
+	cout << y_low << " " << y_high << " " << y_new << endl;
+      }
+
+      // If the step took it outside a reasonable range,
+      // try making a smaller step by decreasing 'fact'
+      int jter=0;
+      while (!o2scl::is_finite(y_new) && jter<10) {
+
+	// This is selected so 10 steps does not make 'fact' vanish
+	fact-=0.099;
+	step=-fact*y_low/dydx;
+
+	// Again make sure the step makes the interval larger
+	if (step>0.0 && step<mun_high-mun_low) {
+	  step=(fact+1.0)*(mun_high-mun_low);
+	} else if (step>mun_low-mun_high) {
+	  step=fact*(mun_low-mun_high);
+	}
+
+	// The new function value
+	mun_new=mun_low+step;
+	y_new=solve_mun(mun_new,dm);
+	if (verbose>0) {
+	  cout << mun_low << " " << mun_high << " " << mun_new << endl;
+	  cout << y_low << " " << y_high << " " << y_new << endl;
+	}
+	jter++;
+      }
+      
+      // See if we're done or get new interval
+      if (y_new*y_low<0.0) {
+	done=true;
+	mun_high=mun_new;
+	y_high=y_new;
+	// Ensure bracket is ordered
+	if (mun_high<mun_low) {
+	  double dtemp=mun_low;
+	  mun_low=mun_high;
+	  mun_high=dtemp;
+	}
+      } else if (y_new*y_high<0.0) {
+	done=true;
+	mun_low=mun_new;
+	y_low=y_new;
+	// Ensure bracket is ordered
+	if (mun_high<mun_low) {
+	  double dtemp=mun_low;
+	  mun_low=mun_high;
+	  mun_high=dtemp;
+	}
+      } else if (mun_new>mun_high) {
+	mun_high=mun_new;
+	y_high=y_new;
+      } else if (mun_new<mun_low) {
+	mun_low=mun_new;
+	y_low=y_new;
+      } else if (fabs(y_low)<fabs(y_high)) {
+	mun_high=mun_new;
+	y_high=y_new;
+      } else {
+	mun_low=mun_new;
+	y_low=y_new;
+      }
+      if (verbose>0) {
+	cout << mun_low << " " << mun_high << endl;
+	cout << y_low << " " << y_high << endl;
+      }
+      
+      iter++;
+    }
+
+    if (done==false) {
+	O2SCL_CONV2_RET("Failed to bracket (max. iters.) in ",
+			"eos_nse_full::mup_for_Ye().",
+			o2scl::exc_emaxiter,this->err_nonconv);
+    }
   }
-  iter=0;
-  while (iter<100 && dm.baryon_density_nuclei()<dm.nB) {
-    dm.n.mu+=0.02/hc_mev_fm;
-    calc_density_fixnp(dm,false);
-    cout << "High: " << dm.nB << " " << dm.n.mu << " " 
-	 << dm.p.mu << " " 
-	 << dm.baryon_density_nuclei() << " " 
-	 << dm.electron_fraction() << endl;
-    iter++;
-  }
-  cout << "High: " << dm.nB << " " << dm.n.mu << " " << dm.p.mu << " " 
-       << dm.baryon_density_nuclei() << " " 
-       << dm.electron_fraction() << endl;
-  mun_high=dm.n.mu;
   
   // ------------------------------------------------------------
   // Use the bracketing solver
 
   o2scl::root_brent_gsl<> rbg;
+  rbg.verbose=1;
   
   // Call solver
   o2scl::funct11 f11=std::bind
     (std::mem_fn<double(double,o2scl::dense_matter &)>
      (&o2scl::eos_nse_full::solve_mun),
      this,std::placeholders::_1,std::ref(dm));
-  rbg.solve_bkt(mun_low,mun_high,f11);
-  
-  dm.n.mu=mun_low;
+  double mun_solve=mun_low;
+  rbg.solve_bkt(mun_solve,mun_high,f11);
+
+  // Perform a final function evaluation
+  dm.n.mu=mun_solve;
   calc_density_fixnp(dm,false);
 
   double dret=dm.electron_fraction()-dm.Ye;
 
+  // Output results
   cout << "F: " << dm.nB << " " << dm.n.mu << " " << dm.p.mu << " "
        << dm.baryon_density() << " " 
        << dm.electron_fraction() << endl;
@@ -637,7 +910,6 @@ double eos_nse_full::mup_for_Ye(double mup, double mun_low,
 double eos_nse_full::solve_mun(double mun, dense_matter &dm) {
   dm.n.mu=mun;
   int ret=calc_density_fixnp(dm,false);
-  cout << "sm: " << mun << " " << dm.baryon_density()-dm.nB << endl;
   return dm.baryon_density()-dm.nB;
 }
 
