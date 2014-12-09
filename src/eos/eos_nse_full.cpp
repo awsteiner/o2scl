@@ -678,6 +678,9 @@ int eos_nse_full::bracket_mu_solve(double &mun_low, double &mun_high,
 double eos_nse_full::mup_for_Ye(double mup, double &mun_low,
 				double &mun_high, dense_matter &dm) {
 
+  cout << "In mup_for_Ye: " << mup << " " << mun_low << " "
+       << mun_high << endl;
+
   dm.p.mu=mup;
 
   if (false) {
@@ -760,8 +763,19 @@ double eos_nse_full::mup_for_Ye(double mup, double &mun_low,
     }
 
     // Perform initial function evaluation
+    double dmu=mun_high-mun_low;
     double y_low=solve_mun(mun_low,dm);
     double y_high=solve_mun(mun_high,dm);
+    int kter=0;
+
+    // Try to correct if the baryon density is zero
+    while (dm.baryon_density()==0.0 && kter<10) {
+      mun_low+=dm.T;
+      mun_high=dmu+mun_low;
+      y_low=solve_mun(mun_low,dm);
+      y_high=solve_mun(mun_high,dm);
+      kter++;
+    }
 
     if (!o2scl::is_finite(y_low) || !o2scl::is_finite(y_high)) {
       O2SCL_CONV2_RET("Failed to bracket (bad init. point.) in ",
@@ -798,6 +812,7 @@ double eos_nse_full::mup_for_Ye(double mup, double &mun_low,
       double mun_new=mun_low+step;
       double y_new=solve_mun(mun_new,dm);
       if (verbose>0) {
+	cout << "Bracketing in mup_for_Ye() 1." << endl;
 	cout << mun_low << " " << mun_high << " " << mun_new << endl;
 	cout << y_low << " " << y_high << " " << y_new << endl;
       }
@@ -822,6 +837,7 @@ double eos_nse_full::mup_for_Ye(double mup, double &mun_low,
 	mun_new=mun_low+step;
 	y_new=solve_mun(mun_new,dm);
 	if (verbose>0) {
+	  cout << "Bracketing in mup_for_Ye() 2." << endl;
 	  cout << mun_low << " " << mun_high << " " << mun_new << endl;
 	  cout << y_low << " " << y_high << " " << y_new << endl;
 	}
@@ -863,6 +879,7 @@ double eos_nse_full::mup_for_Ye(double mup, double &mun_low,
 	y_low=y_new;
       }
       if (verbose>0) {
+	cout << "Bracketing in mup_for_Ye() 3." << endl;
 	cout << mun_low << " " << mun_high << endl;
 	cout << y_low << " " << y_high << endl;
       }
@@ -881,7 +898,7 @@ double eos_nse_full::mup_for_Ye(double mup, double &mun_low,
   // Use the bracketing solver
 
   o2scl::root_brent_gsl<> rbg;
-  rbg.verbose=1;
+  //rbg.verbose=1;
   
   // Call solver
   o2scl::funct11 f11=std::bind
@@ -889,6 +906,7 @@ double eos_nse_full::mup_for_Ye(double mup, double &mun_low,
      (&o2scl::eos_nse_full::solve_mun),
      this,std::placeholders::_1,std::ref(dm));
   double mun_solve=mun_low;
+  cout << "Going to solver in mup_for_Ye." << endl;
   rbg.solve_bkt(mun_solve,mun_high,f11);
 
   // Perform a final function evaluation
@@ -898,11 +916,8 @@ double eos_nse_full::mup_for_Ye(double mup, double &mun_low,
   double dret=dm.electron_fraction()-dm.Ye;
 
   // Output results
-  cout << "F: " << dm.nB << " " << dm.n.mu << " " << dm.p.mu << " "
-       << dm.baryon_density() << " " 
-       << dm.electron_fraction() << endl;
-  cout << "\t" << "G: " << dm.average_Z() << " " 
-       << dm.average_A() << " " << dret << endl;
+  cout << "Done in mup_for_Ye: " << mup << " " << mun_low << " "
+       << mun_high << " " << dm.n.mu << endl;
 
   return dret;
 }

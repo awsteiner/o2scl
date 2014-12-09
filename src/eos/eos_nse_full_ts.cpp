@@ -211,7 +211,7 @@ int main(void) {
   cout << dm.nB << " " << dm.baryon_density() << endl;
   cout << dm.Ye << " " << dm.electron_fraction() << endl;
 
-  if (false) {
+  if (true) {
     // Add a full distribution and test mup_for_Ye
     dm.dist.clear();
     nucdist_set(dm.dist,ame,"(N+Z)>1");
@@ -219,11 +219,16 @@ int main(void) {
     dm.Ye=0.45;
     dm.T=0.1/hc_mev_fm;
     double mup_high=-5.0/hc_mev_fm;
-    double mup_low=-6.0/hc_mev_fm;
+    double mup_low=-5.5/hc_mev_fm;
     double mun_low=-12.0/hc_mev_fm;
     double mun_high=-11.5/hc_mev_fm;
     nse.verbose=1;
-    //nse.mup_for_Ye(dm.p.mu,mun_low,mun_high,dm);
+    nse.mup_for_Ye(-6.0/hc_mev_fm,mun_low,mun_high,dm);
+    cout << dm.n.mu*hc_mev_fm << endl;
+    cout << dm.baryon_density() << endl;
+    cout << dm.electron_fraction() << endl;
+    exit(-1);
+
     nse.bracket_mu_solve(mun_low,mun_high,mup_low,mup_high,dm);
   }
   
