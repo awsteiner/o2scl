@@ -38,13 +38,14 @@ namespace o2scl {
 
   /** \brief Schematic EOS from Hebeler et al.
 
-      From an energy per baryon of
+      The energy per baryon is
       \f[
       E/A = \left( 3 \pi^2 n_0/2 \right)^{2/3} \frac{1}{2 M}
-      \left\{ \frac{3}{5} \left[ x^{5/3} + (1-x)^5/3 \right] (2 u)^{2/3}-
-      [(2 \alpha - 4 \alpha_L) x (1-x)+\alpha_L] +
+      \left\{ \frac{3}{5} \left[ x^{5/3} + (1-x)^{5/3} \right] (2 u)^{2/3}-
+      [(2 \alpha - 4 \alpha_L) x (1-x)+\alpha_L] u +
       \left[ (2 \eta - 4 \eta_L) x (1-x) + \eta_L \right] u^{\gamma} \right\}
       \f]
+      where \f$ u = n/n_0 \f$ .
 
       One can fix the values of \f$ \alpha, \eta, \f$ and \f$ \gamma \f$
       by the requirement that the pressure is zero at saturation and
