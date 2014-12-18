@@ -34,6 +34,161 @@ using namespace o2scl;
 using namespace o2scl_hdf;
 using namespace o2scl_const;
 
+eos_tov::eos_tov() {
+  baryon_column=false;
+  verbose=1;
+}
+
+void eos_tov::check_nb(double &avg_abs_dev, double &max_abs_dev) {
+  if (!baryon_column) {
+    O2SCL_ERR2("Variable 'baryon_column' false in",
+	       "eos_tov::check_nb().",exc_einval);
+  }
+  std::vector<double> edv, prv, nbv, dedn;
+  for (double pres=0.1;pres<3.0;pres*=1.001) {
+    double eps, nb;
+    get_eden(pres,eps,nb);
+    edv.push_back(eps);
+    prv.push_back(pres);
+    nbv.push_back(nb);
+  }
+  dedn.resize(edv.size());
+  vector_deriv_interp(edv.size(),nbv,edv,dedn,itp_linear);
+  avg_abs_dev=0.0;
+  max_abs_dev=0.0;
+  for(size_t i=0;i<edv.size();i++) {
+    double abs_dev=(fabs(edv[i]+prv[i]-dedn[i]*nbv[i])/
+		    fabs(dedn[i]*nbv[i]));
+    if (abs_dev>max_abs_dev) max_abs_dev=abs_dev;
+    avg_abs_dev+=abs_dev;
+  }
+  avg_abs_dev/=((double)edv.size());
+  return;
+}
+
+eos_tov_buchdahl::eos_tov_buchdahl() {
+  Pstar=3.2e-5;
+}
+
+void eos_tov_buchdahl::set_baryon_density(double nb, double ed) {
+  if (nb<0.0 || ed<0.0) {
+    O2SCL_ERR2("Negative densities not supported in ",
+	       "eos_tov_buchdahl::set_coeff_index().",exc_einval);
+  }
+  baryon_column=true;
+  nb1=nb;
+  ed1=ed;
+  if (36.0*Pstar*Pstar-5.0*Pstar*ed<0.0) {
+    O2SCL_ERR2("Values of 'Pstar' and 'ed' incommensurate in ",
+	       "eos_tov_buchdahl::set_baryon_density().",exc_einval);
+  }
+  pr1=0.04*(72.0*Pstar-5.0*ed+
+	    12.0*sqrt(36.0*Pstar*Pstar-5.0*Pstar*ed));
+  return;
+}
+
+void eos_tov_buchdahl::get_eden(double P, double &e, double &nb) {
+  e=12.0*sqrt(Pstar*P)-5.0*P;
+  if (baryon_column) {
+    double mu1=(pr1+ed1)/nb1;
+    double t1=sqrt(P/Pstar);
+    double t2=sqrt(pr1/Pstar);
+    double mu=mu1*pow((-pr1+9.0*Pstar)*(3.0+t1)*(3.0-t2)/
+		      (-P+9.0*Pstar)/(3.0-t1)/(3.0+t2),0.25);
+    nb=(P+e)/mu;
+  } else {
+    nb=0.0;
+  }
+  return;
+}
+
+int eos_tov_buchdahl::solve_u_rp_fun
+(size_t bv, const std::vector<double> &bx, std::vector<double> &by) {
+  
+  double u, rp;
+  u=bx[0];
+  rp=bx[1];
+  //by[0]=rp*(1.0-beta+u)/(1.0-2.0*beta)-buchrad;
+  //by[1]=beta/biga/rp*sin(biga*rp);
+  return 0;
+}
+
+eos_tov_polytrope::eos_tov_polytrope() {
+  K=1.0;
+  n=3.0;
+}
+
+void eos_tov_polytrope::set_coeff_index(double coeff, double index) {
+  if (coeff<0.0 || index<0.0) {
+    O2SCL_ERR2("Negative coefficients and indices not supported in ",
+	       "eos_tov_polytrope::set_coeff_index().",exc_einval);
+  }
+  K=coeff;
+  n=index;
+  if (baryon_column) {
+    pr1=K*pow(ed1,1.0+1.0/n);
+  }
+  return;
+}
+
+void eos_tov_polytrope::set_baryon_density(double nb, double ed) {
+  if (nb<0.0 || ed<0.0) {
+    O2SCL_ERR2("Negative densities not supported in ",
+	       "eos_tov_polytrope::set_baryon_density().",exc_einval);
+  }
+  baryon_column=true;
+  nb1=nb;
+  ed1=ed;
+  pr1=K*pow(ed1,1.0+1.0/n);
+  return;
+}
+
+    double eos_tov_polytrope::ed_from_pr(double pr) {
+      return pow(pr/K,n/(1.0+n));
+    }
+    double eos_tov_polytrope::pr_from_ed(double ed) {
+      return K*pow(ed,1.0+1.0/n);
+    }
+    double eos_tov_polytrope::nb_from_ed(double ed) {
+#if !O2SCL_NO_RANGE_CHECK
+      if (nb1==0.0) {
+	O2SCL_ERR2("Fiducial baryon density not specified in ",
+		   "eos_tov_polytrope::nb_from_ed().",exc_einval);
+      }
+#endif
+      double pr=K*pow(ed,1.0+1.0/n);
+      return nb1*pow(ed/ed1,1.0+n)/pow((ed+pr)/(ed1+pr1),n);
+    }
+    double eos_tov_polytrope::nb_from_pr(double pr) {
+#if !O2SCL_NO_RANGE_CHECK
+      if (nb1==0.0) {
+	O2SCL_ERR2("Fiducial baryon density not specified in ",
+		   "eos_tov_polytrope::nb_from_ed().",exc_einval);
+      }
+#endif
+      double ed=pow(pr/K,n/(1.0+n));
+      return nb1*pow(ed/ed1,1.0+n)/pow((ed+pr)/(ed1+pr1),n);
+    }
+    double eos_tov_polytrope::ed_from_nb(double nb) {
+#if !O2SCL_NO_RANGE_CHECK
+      if (nb1==0.0) {
+	O2SCL_ERR2("Fiducial baryon density not specified in ",
+		   "eos_tov_polytrope::nb_from_ed().",exc_einval);
+      }
+#endif
+      return 0.0;
+    }
+    double eos_tov_polytrope::pr_from_nb(double nb) {
+#if !O2SCL_NO_RANGE_CHECK
+      if (nb1==0.0) {
+	O2SCL_ERR2("Fiducial baryon density not specified in ",
+		   "eos_tov_polytrope::nb_from_ed().",exc_einval);
+      }
+#endif
+      return 0.0;
+    }
+
+
 eos_tov_interp::eos_tov_interp() {
 
   eos_read=false;

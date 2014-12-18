@@ -43,6 +43,10 @@ namespace o2scl {
 #endif
 
   /** \brief A EOS base class for the TOV solver
+
+      \todo Document why tov_solve needs to be a friend .
+      \future Make get_aux() and get_names() template functions with
+      generic vector types?
   */
   class eos_tov {
 
@@ -52,15 +56,12 @@ namespace o2scl {
 	EOS (default false)
     */
     bool baryon_column;
-    
+
     friend class tov_solve;
 
   public:
     
-    eos_tov() {
-      baryon_column=false;
-      verbose=1;
-    }
+    eos_tov();
 
     virtual ~eos_tov() {}
     
@@ -76,7 +77,7 @@ namespace o2scl {
 	If \ref baryon_column is false, then \c nb is unmodified.
     */
     virtual void get_eden(double P, double &e, double &nb)=0;
-    
+
     /** \brief Given the pressure, produce all the remaining quantities 
 	
 	The argument \c P should always be in \f$
@@ -96,36 +97,35 @@ namespace o2scl {
       np=0;
       return;
     }
-
+    
     /** \brief Check that the baryon density is consistent 
-	with the EOS
+	with the \f$ P(\varepsilon) \f$
+    */
+    void check_nb(double &avg_abs_dev, double &max_abs_dev);
+
+#ifdef O2SCL_NEVER_DEFINED
+    /** \brief From the pressure, return the energy density
      */
-    void check_nb(double &avg_abs_dev, double &max_abs_dev) {
-      if (!baryon_column) {
-	O2SCL_ERR2("Variable 'baryon_column' false in",
-		   "eos_tov::check_nb().",exc_einval);
-      }
-      std::vector<double> edv, prv, nbv, dedn;
-      for (double pres=0.1;pres<3.0;pres*=1.001) {
-	double eps, nb;
-	get_eden(pres,eps,nb);
-	edv.push_back(eps);
-	prv.push_back(pres);
-	nbv.push_back(nb);
-      }
-      dedn.resize(edv.size());
-      vector_deriv_interp(edv.size(),nbv,edv,dedn,itp_linear);
-      avg_abs_dev=0.0;
-      max_abs_dev=0.0;
-      for(size_t i=0;i<edv.size();i++) {
-	double abs_dev=(fabs(edv[i]+prv[i]-dedn[i]*nbv[i])/
-		      fabs(dedn[i]*nbv[i]));
-	if (abs_dev>max_abs_dev) max_abs_dev=abs_dev;
-	avg_abs_dev+=abs_dev;
-      }
-      avg_abs_dev/=((double)edv.size());
-      return;
-    }
+    virtual double ed_from_pr(double pr)=0;
+    /** \brief From the energy density, return the pressure
+     */
+    virtual double pr_from_ed(double ed)=0;
+    /** \brief From the energy density, return the baryon density
+     */
+    virtual double nb_from_ed(double ed)=0;
+    /** \brief From the pressure, return the baryon density
+     */
+    virtual double nb_from_pr(double pr)=0;
+    /** \brief From the baryon density, return the energy density
+     */
+    virtual double ed_from_nb(double nb)=0;
+    /** \brief From the baryon density, return the pressure
+     */
+    virtual double pr_from_nb(double nb)=0;
+    /** \brief Given the pressure, produce the energy and number densities
+     */
+    virtual void ed_nb_from_pr(double pr, double &ed, double &nb)=0;
+#endif
 
   };
 
@@ -192,9 +192,7 @@ namespace o2scl {
 
   public:
 
-    eos_tov_buchdahl() {
-      Pstar=3.2e-5;
-    }
+    eos_tov_buchdahl();
 
     virtual ~eos_tov_buchdahl() {}
 
@@ -206,59 +204,39 @@ namespace o2scl {
     
     /** \brief Set the baryon density
      */
-    void set_baryon_density(double nb, double ed) {
-      if (nb<0.0 || ed<0.0) {
-	O2SCL_ERR2("Negative densities not supported in ",
-		   "eos_tov_buchdahl::set_coeff_index().",exc_einval);
-      }
-      baryon_column=true;
-      nb1=nb;
-      ed1=ed;
-      if (36.0*Pstar*Pstar-5.0*Pstar*ed<0.0) {
-	O2SCL_ERR2("Values of 'Pstar' and 'ed' incommensurate in ",
-		   "eos_tov_buchdahl::set_baryon_density().",exc_einval);
-      }
-      pr1=0.04*(72.0*Pstar-5.0*ed+
-		12.0*sqrt(36.0*Pstar*Pstar-5.0*Pstar*ed));
-      return;
-    }
+    void set_baryon_density(double nb, double ed);
 
     /** \brief Given the pressure, produce the energy and number densities
 	
 	If the baryon density is not specified, it should be set to
 	zero or \ref baryon_column should be set to false
     */
-    virtual void get_eden(double P, double &e, double &nb) {
-      e=12.0*sqrt(Pstar*P)-5.0*P;
-      if (baryon_column) {
-	double mu1=(pr1+ed1)/nb1;
-	//double t1=P/sqrt(P*Pstar);
-	//double t2=pr1/sqrt(pr1*Pstar);
-	double t1=sqrt(P/Pstar);
-	double t2=sqrt(pr1/Pstar);
-	double mu=mu1*pow((-pr1+9.0*Pstar)*(3.0+t1)*(3.0-t2)/
-			  (-P+9.0*Pstar)/(3.0-t1)/(3.0+t2),0.25);
-	nb=(P+e)/mu;
-      } else {
-	nb=0.0;
-      }
-      return;
-    }
+    virtual void get_eden(double P, double &e, double &nb);
     
-    /// Given the pressure, produce all the remaining quantities 
-    virtual void get_aux(double P, size_t &np, std::vector<double> &auxp) {
-      np=0;
-      return;
-    }
-    
-    /** \brief Fill a list with strings for the names of the remaining 
-	quanities
-    */
-    virtual void get_names(size_t &np, std::vector<std::string> &pnames) {
-      np=0;
-      return;
-    }
-    
+#ifdef O2SCL_NEVER_DEFINED
+    /** \brief From the pressure, return the energy density
+     */
+    virtual double ed_from_pr(double pr)=0;
+    /** \brief From the energy density, return the pressure
+     */
+    virtual double pr_from_ed(double ed)=0;
+    /** \brief From the energy density, return the baryon density
+     */
+    virtual double nb_from_ed(double ed)=0;
+    /** \brief From the pressure, return the baryon density
+     */
+    virtual double nb_from_pr(double pr)=0;
+    /** \brief From the baryon density, return the energy density
+     */
+    virtual double ed_from_nb(double nb)=0;
+    /** \brief From the baryon density, return the pressure
+     */
+    virtual double pr_from_nb(double nb)=0;
+    /** \brief Given the pressure, produce the energy and number densities
+     */
+    virtual void ed_nb_from_pr(double pr, double &ed, double &nb)=0;
+#endif
+
   protected:
     
     /** \brief Solve to compute profiles
@@ -281,17 +259,9 @@ namespace o2scl {
 	\left(1 - \beta - 3 u/2\right) \left(1 - \beta + u \right)^{-2}
 	\nonumber \\
 	\f}
-	
     */
     int solve_u_rp_fun(size_t bv, const std::vector<double> &bx, 
-		       std::vector<double> &by) {
-      double u, rp;
-      u=bx[0];
-      rp=bx[1];
-      //by[0]=rp*(1.0-beta+u)/(1.0-2.0*beta)-buchrad;
-      //by[1]=beta/biga/rp*sin(biga*rp);
-      return 0;
-    }
+		       std::vector<double> &by);
 
   };
 
@@ -325,38 +295,47 @@ namespace o2scl {
 
   public:
 
-    eos_tov_polytrope() {
-      K=1.0;
-      n=3.0;
-    }
+    eos_tov_polytrope();
 
     virtual ~eos_tov_polytrope() {}
 
-    /** \brief Desc
+    /** \brief Set the coefficient and polytropic index
      */
-    void set_coeff_index(double coeff, double index) {
-      if (coeff<0.0 || index<0.0) {
-	O2SCL_ERR2("Negative coefficients and indices not supported in ",
-		   "eos_tov_polytrope::set_coeff_index().",exc_einval);
-      }
-      K=coeff;
-      n=index;
-      if (baryon_column) {
-	pr1=K*pow(ed1,1.0+1.0/n);
-      }
-    }
+    void set_coeff_index(double coeff, double index);
     
     /** \brief Set the baryon density
      */
-    void set_baryon_density(double nb, double ed) {
-      if (nb<0.0 || ed<0.0) {
-	O2SCL_ERR2("Negative densities not supported in ",
-		   "eos_tov_polytrope::set_coeff_index().",exc_einval);
-      }
-      baryon_column=true;
-      nb1=nb;
-      ed1=ed;
-      pr1=K*pow(ed1,1.0+1.0/n);
+    void set_baryon_density(double nb, double ed);
+
+    /** \brief From the pressure, return the energy density
+     */
+    virtual double ed_from_pr(double pr);
+
+    /** \brief From the energy density, return the pressure
+     */
+    virtual double pr_from_ed(double ed);
+
+    /** \brief From the energy density, return the baryon density
+     */
+    virtual double nb_from_ed(double ed);
+
+    /** \brief From the pressure, return the baryon density
+     */
+    virtual double nb_from_pr(double pr);
+
+    /** \brief From the baryon density, return the energy density
+     */
+    virtual double ed_from_nb(double nb);
+
+    /** \brief From the baryon density, return the pressure
+     */
+    virtual double pr_from_nb(double nb);
+
+    /** \brief Given the pressure, produce the energy and number densities
+     */
+    virtual void ed_nb_from_pr(double pr, double &ed, double &nb) {
+      ed=ed_from_pr(pr);
+      nb=nb_from_pr(pr);
       return;
     }
 
@@ -376,6 +355,22 @@ namespace o2scl {
 
   /** \brief Linear EOS \f$ P = c_s^2 (\varepsilon-\varepsilon_0) \f$
 
+      This implements a linear EOS with a fixed speed of sound and a
+      fixed energy density at zero pressure. This will also compute
+      the baryon density, if one calls \ref set_baryon_density() to
+      set the baryon density at one fiducial energy density.
+
+      Given a fiducial baryon density \f$ n_{B,1} \f$ at
+      some energy density \f$ \varepsilon_1 \f$ and pressure
+      \f$ P_1 \f$, the baryon density is
+      \f[
+      n_B = n_{B,1} \left[ \frac{\varepsilon(1+c_s^2) - 
+      c_s^2 \varepsilon_0 } {\varepsilon_1 (1 + c_s^2) - 
+      c_s^2 \varepsilon_0}\right]^{1/(1+c_s^2)} = 
+      n_{B,1} \left[ \frac{ \varepsilon + P }
+      {\varepsilon_1 + P_1} \right]^{1/(1+c_s^2)}
+      \f]
+
       \note Experimental
    */
   class eos_tov_linear : public eos_tov {
@@ -390,7 +385,7 @@ namespace o2scl {
      */
     double ed1;
 
-    /** \brief The pressure at \c ed1
+    /** \brief The pressure for which the baryon density is known
      */
     double pr1;
 
@@ -398,7 +393,7 @@ namespace o2scl {
     */
     double cs2;
 
-    /// Index (default 0.0)
+    /// The energy density at zero pressure (default 0.0)
     double eps0;
 
   public:
@@ -406,11 +401,12 @@ namespace o2scl {
     eos_tov_linear() {
       cs2=1.0;
       eps0=0.0;
+      nb1=0.0;
     }
 
     virtual ~eos_tov_linear() {}
 
-    /** \brief Desc
+    /** \brief Set the sound speed and energy density at zero pressure
      */
     void set_cs2_eps0(double cs2_, double eps0_) {
       eps0=eps0_;
@@ -421,14 +417,88 @@ namespace o2scl {
     /** \brief Set the baryon density
      */
     void set_baryon_density(double nb, double ed) {
-      if (nb<0.0 || ed<0.0) {
-	O2SCL_ERR2("Negative densities not supported in ",
+      if (nb<=0.0 || ed<=0.0) {
+	O2SCL_ERR2("Negative and zero densities not supported in ",
 		   "eos_tov_polytrope::set_coeff_index().",exc_einval);
       }
       baryon_column=true;
       nb1=nb;
       ed1=ed;
-      pr1=cs2*(ed-eps0);
+      return;
+    }
+
+    /** \brief From the pressure, return the energy density
+     */
+    virtual double ed_from_pr(double pr) {
+      return pr/cs2+eps0;
+    }
+
+    /** \brief From the energy density, return the pressure
+     */
+    virtual double pr_from_ed(double ed) {
+      return (ed-eps0)*cs2;
+    }
+
+    /** \brief From the energy density, return the baryon density
+     */
+    virtual double nb_from_ed(double ed) {
+#if !O2SCL_NO_RANGE_CHECK
+      if (nb1==0.0) {
+	O2SCL_ERR2("Fiducial baryon density not specified in ",
+		   "eos_tov_linear::nb_from_ed().",exc_einval);
+      }
+#endif
+      return nb1*pow(ed+cs2*ed-cs2*eps0,1.0/(1.0+cs2))*
+	pow(ed1+cs2*(-eps0+ed1),-1.0/(1.0+cs2));
+    }
+
+    /** \brief From the pressure, return the baryon density
+     */
+    virtual double nb_from_pr(double pr) {
+#if !O2SCL_NO_RANGE_CHECK
+      if (nb1==0.0) {
+	O2SCL_ERR2("Fiducial baryon density not specified in ",
+		   "eos_tov_linear::nb_from_ed().",exc_einval);
+      }
+#endif
+      double ed=pr/cs2+eps0;
+      return nb1*pow(ed+cs2*ed-cs2*eps0,1.0/(1.0+cs2))*
+	pow(ed1+cs2*(-eps0+ed1),-1.0/(1.0+cs2));
+    }
+
+    /** \brief From the baryon density, return the energy density
+     */
+    virtual double ed_from_nb(double nb) {
+#if !O2SCL_NO_RANGE_CHECK
+      if (nb1==0.0) {
+	O2SCL_ERR2("Fiducial baryon density not specified in ",
+		   "eos_tov_linear::nb_from_ed().",exc_einval);
+      }
+#endif
+      double ret=(pow(nb/pow(ed1+cs2*(-eps0+ed1),-1.0/(1.0+cs2))/nb1,
+		      1.0+cs2)+cs2*eps0)/(1.0+cs2);
+      return ret;
+    }
+
+    /** \brief From the baryon density, return the pressure
+     */
+    virtual double pr_from_nb(double nb) {
+#if !O2SCL_NO_RANGE_CHECK
+      if (nb1==0.0) {
+	O2SCL_ERR2("Fiducial baryon density not specified in ",
+		   "eos_tov_linear::nb_from_ed().",exc_einval);
+      }
+#endif
+      double ed=(pow(nb/pow(ed1+cs2*(-eps0+ed1),-1.0/(1.0+cs2))/nb1,
+		     1.0+cs2)+cs2*eps0)/(1.0+cs2);
+      return (ed-eps0)*cs2;
+    }
+
+    /** \brief Given the pressure, produce the energy and number densities
+     */
+    virtual void ed_nb_from_pr(double pr, double &ed, double &nb) {
+      ed=ed_from_pr(pr);
+      nb=nb_from_pr(pr);
       return;
     }
 
@@ -442,20 +512,6 @@ namespace o2scl {
       } else {
 	nb=0.0;
       }
-      return;
-    }
-    
-    /// Given the pressure, produce all the remaining quantities 
-    virtual void get_aux(double P, size_t &np, std::vector<double> &auxp) {
-      np=0;
-      return;
-    }
-    
-    /** \brief Fill a list with strings for the names of the remaining 
-	quanities
-    */
-    virtual void get_names(size_t &np, std::vector<std::string> &pnames) {
-      np=0;
       return;
     }
     
@@ -538,6 +594,33 @@ namespace o2scl {
     static const int smooth_trans=0;
     static const int match_line=1;
     //@}
+
+#ifdef O2SCL_NEVER_DEFINED
+    /// \name Basic EOS functions
+    //@{
+    /** \brief From the pressure, return the energy density
+     */
+    virtual double ed_from_pr(double pr)=0;
+    /** \brief From the energy density, return the pressure
+     */
+    virtual double pr_from_ed(double ed)=0;
+    /** \brief From the energy density, return the baryon density
+     */
+    virtual double nb_from_ed(double ed)=0;
+    /** \brief From the pressure, return the baryon density
+     */
+    virtual double nb_from_pr(double pr)=0;
+    /** \brief From the baryon density, return the energy density
+     */
+    virtual double ed_from_nb(double nb)=0;
+    /** \brief From the baryon density, return the pressure
+     */
+    virtual double pr_from_nb(double nb)=0;
+    /** \brief Given the pressure, produce the energy and number densities
+     */
+    virtual void ed_nb_from_pr(double pr, double &ed, double &nb)=0;
+    //@}
+#endif
 
     /// \name Basic usage
     //@{
