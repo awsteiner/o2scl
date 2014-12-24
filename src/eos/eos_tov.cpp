@@ -34,6 +34,9 @@ using namespace o2scl;
 using namespace o2scl_hdf;
 using namespace o2scl_const;
 
+// ----------------------------------------------------------------
+// eos_tov functions
+
 eos_tov::eos_tov() {
   baryon_column=false;
   verbose=1;
@@ -65,6 +68,9 @@ void eos_tov::check_nb(double &avg_abs_dev, double &max_abs_dev) {
   avg_abs_dev/=((double)edv.size());
   return;
 }
+
+// ----------------------------------------------------------------
+// eos_tov_buchdahl functions
 
 eos_tov_buchdahl::eos_tov_buchdahl() {
   Pstar=3.2e-5;
@@ -113,6 +119,45 @@ int eos_tov_buchdahl::solve_u_rp_fun
   return 0;
 }
 
+double eos_tov_buchdahl::ed_from_pr(double pr) {
+  return 12.0*sqrt(Pstar*pr)-5.0*pr;
+}
+
+double eos_tov_buchdahl::pr_from_ed(double ed) {
+  return 0.0;
+}
+
+double eos_tov_buchdahl::nb_from_ed(double ed) {
+  return 0.0;
+}
+
+double eos_tov_buchdahl::nb_from_pr(double pr) {
+  double ed=12.0*sqrt(Pstar*pr)-5.0*pr;
+  double mu1=(pr1+ed1)/nb1;
+  double t1=sqrt(pr/Pstar);
+  double t2=sqrt(pr1/Pstar);
+  double mu=mu1*pow((-pr1+9.0*Pstar)*(3.0+t1)*(3.0-t2)/
+		    (-pr+9.0*Pstar)/(3.0-t1)/(3.0+t2),0.25);
+  return (pr+ed)/mu;
+}
+
+double eos_tov_buchdahl::ed_from_nb(double nb) {
+  return 0.0;
+}
+
+double eos_tov_buchdahl::pr_from_nb(double nb) {
+  return 0.0;
+}
+
+void eos_tov_buchdahl::ed_nb_from_pr(double pr, double &ed, double &nb) {
+  ed=ed_from_pr(pr);
+  nb=nb_from_pr(pr);
+  return;
+}
+
+// ----------------------------------------------------------------
+// eos_tov_polytrope functions
+
 eos_tov_polytrope::eos_tov_polytrope() {
   K=1.0;
   n=3.0;
@@ -143,54 +188,176 @@ void eos_tov_polytrope::set_baryon_density(double nb, double ed) {
   return;
 }
 
-    double eos_tov_polytrope::ed_from_pr(double pr) {
-      return pow(pr/K,n/(1.0+n));
-    }
-    double eos_tov_polytrope::pr_from_ed(double ed) {
-      return K*pow(ed,1.0+1.0/n);
-    }
-    double eos_tov_polytrope::nb_from_ed(double ed) {
-#if !O2SCL_NO_RANGE_CHECK
-      if (nb1==0.0) {
-	O2SCL_ERR2("Fiducial baryon density not specified in ",
-		   "eos_tov_polytrope::nb_from_ed().",exc_einval);
-      }
-#endif
-      double pr=K*pow(ed,1.0+1.0/n);
-      return nb1*pow(ed/ed1,1.0+n)/pow((ed+pr)/(ed1+pr1),n);
-    }
-    double eos_tov_polytrope::nb_from_pr(double pr) {
-#if !O2SCL_NO_RANGE_CHECK
-      if (nb1==0.0) {
-	O2SCL_ERR2("Fiducial baryon density not specified in ",
-		   "eos_tov_polytrope::nb_from_ed().",exc_einval);
-      }
-#endif
-      double ed=pow(pr/K,n/(1.0+n));
-      return nb1*pow(ed/ed1,1.0+n)/pow((ed+pr)/(ed1+pr1),n);
-    }
-    double eos_tov_polytrope::ed_from_nb(double nb) {
-#if !O2SCL_NO_RANGE_CHECK
-      if (nb1==0.0) {
-	O2SCL_ERR2("Fiducial baryon density not specified in ",
-		   "eos_tov_polytrope::nb_from_ed().",exc_einval);
-      }
-#endif
-      return 0.0;
-    }
-    double eos_tov_polytrope::pr_from_nb(double nb) {
-#if !O2SCL_NO_RANGE_CHECK
-      if (nb1==0.0) {
-	O2SCL_ERR2("Fiducial baryon density not specified in ",
-		   "eos_tov_polytrope::nb_from_ed().",exc_einval);
-      }
-#endif
-      return 0.0;
-    }
+double eos_tov_polytrope::ed_from_pr(double pr) {
+  return pow(pr/K,n/(1.0+n));
+}
 
+double eos_tov_polytrope::pr_from_ed(double ed) {
+  return K*pow(ed,1.0+1.0/n);
+}
+
+double eos_tov_polytrope::nb_from_ed(double ed) {
+#if !O2SCL_NO_RANGE_CHECK
+  if (nb1==0.0) {
+    O2SCL_ERR2("Fiducial baryon density not specified in ",
+	       "eos_tov_polytrope::nb_from_ed().",exc_einval);
+  }
+#endif
+  double pr=K*pow(ed,1.0+1.0/n);
+  return nb1*pow(ed/ed1,1.0+n)/pow((ed+pr)/(ed1+pr1),n);
+}
+
+double eos_tov_polytrope::nb_from_pr(double pr) {
+#if !O2SCL_NO_RANGE_CHECK
+  if (nb1==0.0) {
+    O2SCL_ERR2("Fiducial baryon density not specified in ",
+	       "eos_tov_polytrope::nb_from_ed().",exc_einval);
+  }
+#endif
+  double ed=pow(pr/K,n/(1.0+n));
+  return nb1*pow(ed/ed1,1.0+n)/pow((ed+pr)/(ed1+pr1),n);
+}
+
+double eos_tov_polytrope::ed_from_nb(double nb) {
+#if !O2SCL_NO_RANGE_CHECK
+  if (nb1==0.0) {
+    O2SCL_ERR2("Fiducial baryon density not specified in ",
+	       "eos_tov_polytrope::nb_from_ed().",exc_einval);
+  }
+#endif
+  return pow(pow(nb1/nb/ed1,1.0/n)*(1.0+pr1/ed1)-K,-n);
+}
+
+double eos_tov_polytrope::pr_from_nb(double nb) {
+#if !O2SCL_NO_RANGE_CHECK
+  if (nb1==0.0) {
+    O2SCL_ERR2("Fiducial baryon density not specified in ",
+	       "eos_tov_polytrope::nb_from_ed().",exc_einval);
+  }
+#endif
+  return K*pow(pow(nb1/nb/ed1,1.0/n)*(1.0+pr1/ed1)-K,-(n+1.0));
+}
+
+void eos_tov_polytrope::ed_nb_from_pr(double pr, double &ed, double &nb) {
+  ed=ed_from_pr(pr);
+  nb=nb_from_pr(pr);
+  return;
+}
+
+void eos_tov_polytrope::get_eden(double P, double &e, double &nb) {
+  e=pow(P/K,n/(1.0+n));
+  if (baryon_column) {
+    nb=nb1*pow(e/ed1,1.0+n)/pow((e+P)/(ed1+pr1),n);
+  } else {
+    nb=0.0;
+  }
+  return;
+}
+
+// ----------------------------------------------------------------
+// eos_tov_linear functions
+
+eos_tov_linear::eos_tov_linear() {
+  cs2=1.0;
+  eps0=0.0;
+  nb1=0.0;
+}
+
+void eos_tov_linear::set_cs2_eps0(double cs2_, double eps0_) {
+  eps0=eps0_;
+  cs2=cs2_;
+  return;
+}
+
+void eos_tov_linear::set_baryon_density(double nb, double ed) {
+  if (nb<=0.0 || ed<=0.0) {
+    O2SCL_ERR2("Negative and zero densities not supported in ",
+	       "eos_tov_linear::set_coeff_index().",exc_einval);
+  }
+  baryon_column=true;
+  nb1=nb;
+  ed1=ed;
+  pr1=cs2*(ed1-eps0);
+  return;
+}
+
+double eos_tov_linear::ed_from_pr(double pr) {
+  return pr/cs2+eps0;
+}
+
+double eos_tov_linear::pr_from_ed(double ed) {
+  return (ed-eps0)*cs2;
+}
+
+double eos_tov_linear::nb_from_ed(double ed) {
+#if !O2SCL_NO_RANGE_CHECK
+  if (nb1==0.0) {
+    O2SCL_ERR2("Fiducial baryon density not specified in ",
+	       "eos_tov_linear::nb_from_ed().",exc_einval);
+  }
+#endif
+  return nb1*pow(ed+cs2*ed-cs2*eps0,1.0/(1.0+cs2))*
+    pow(ed1+cs2*(-eps0+ed1),-1.0/(1.0+cs2));
+}
+
+double eos_tov_linear::nb_from_pr(double pr) {
+#if !O2SCL_NO_RANGE_CHECK
+  if (nb1==0.0) {
+    O2SCL_ERR2("Fiducial baryon density not specified in ",
+	       "eos_tov_linear::nb_from_ed().",exc_einval);
+  }
+#endif
+  double ed=pr/cs2+eps0;
+  return nb1*pow(ed+cs2*ed-cs2*eps0,1.0/(1.0+cs2))*
+    pow(ed1+cs2*(-eps0+ed1),-1.0/(1.0+cs2));
+}
+
+double eos_tov_linear::ed_from_nb(double nb) {
+#if !O2SCL_NO_RANGE_CHECK
+  if (nb1==0.0) {
+    O2SCL_ERR2("Fiducial baryon density not specified in ",
+	       "eos_tov_linear::nb_from_ed().",exc_einval);
+  }
+#endif
+  double ret=(pow(nb/pow(ed1+cs2*(-eps0+ed1),-1.0/(1.0+cs2))/nb1,
+		  1.0+cs2)+cs2*eps0)/(1.0+cs2);
+  return ret;
+}
+
+double eos_tov_linear::pr_from_nb(double nb) {
+#if !O2SCL_NO_RANGE_CHECK
+  if (nb1==0.0) {
+    O2SCL_ERR2("Fiducial baryon density not specified in ",
+	       "eos_tov_linear::nb_from_ed().",exc_einval);
+  }
+#endif
+  double ed=(pow(nb/pow(ed1+cs2*(-eps0+ed1),-1.0/(1.0+cs2))/nb1,
+		 1.0+cs2)+cs2*eps0)/(1.0+cs2);
+  return (ed-eps0)*cs2;
+}
+
+void eos_tov_linear::ed_nb_from_pr(double pr, double &ed, double &nb) {
+  ed=ed_from_pr(pr);
+  nb=nb_from_pr(pr);
+  return;
+}
+
+void eos_tov_linear::get_eden(double P, double &e, double &nb) {
+  e=P/cs2+eps0;
+  if (baryon_column) {
+    nb=nb1*pow(e+cs2*e-cs2*eps0,1.0/(1.0+cs2))*
+      pow(ed1+cs2*(-eps0+ed1),-1.0/(1.0+cs2));
+  } else {
+    nb=0.0;
+  }
+  return;
+}
+
+// ----------------------------------------------------------------
+// eos_tov_interp functions
 
 eos_tov_interp::eos_tov_interp() {
-
+  
   eos_read=false;
   use_crust=false;
   verbose=1;
@@ -218,8 +385,8 @@ eos_tov_interp::~eos_tov_interp() {
 }
 
 void eos_tov_interp::get_names_units(size_t &np, 
-				  std::vector<std::string> &pnames,
-				  std::vector<std::string> &vs_units) {
+				     std::vector<std::string> &pnames,
+				     std::vector<std::string> &vs_units) {
   np=0;
   if (core_auxp>0) {
     for(int i=0;i<((int)core_table->get_ncolumns());i++) {
@@ -235,7 +402,7 @@ void eos_tov_interp::get_names_units(size_t &np,
 }
 
 void eos_tov_interp::read_vectors(size_t n_core, std::vector<double> &core_ed, 
-			       std::vector<double> &core_pr) {
+				  std::vector<double> &core_pr) {
 
   core_table=0;
   full_nlines=n_core;
@@ -253,8 +420,8 @@ void eos_tov_interp::read_vectors(size_t n_core, std::vector<double> &core_ed,
 }
 
 void eos_tov_interp::read_vectors(size_t n_core, std::vector<double> &core_ed, 
-			       std::vector<double> &core_pr, 
-			       std::vector<double> &core_nb) {
+				  std::vector<double> &core_pr, 
+				  std::vector<double> &core_nb) {
 
   read_vectors(n_core,core_ed,core_pr);
   efactor=1.0;
@@ -725,7 +892,7 @@ void eos_tov_interp::sho11_low_dens_eos() {
 }
 
 void eos_tov_interp::ngl13_low_dens_eos(double L, string model,
-				     bool external) {
+					bool external) {
 
   std::string fname;
   std::string dir=o2scl::o2scl_settings.get_data_dir();
@@ -844,7 +1011,7 @@ void eos_tov_interp::ngl13_low_dens_eos(double L, string model,
   If S=30-e, L=85-e, then interpolate between (28,30) and (75,85)
 */
 void eos_tov_interp::ngl13_low_dens_eos2(double S, double L, double nt,
-				     string fname) {
+					 string fname) {
 
   if (S<28.0 || S>38.0) {
     O2SCL_ERR("S out of range.",exc_efailed);
@@ -1119,6 +1286,36 @@ void eos_tov_interp::get_eden(double pres, double &ed, double &nb) {
     O2SCL_ERR(s.c_str(),exc_efailed);
   }
   
+  return;
+}
+
+double eos_tov_interp::ed_from_pr(double pr) {
+  return pe_int.eval(pr);
+}
+
+double eos_tov_interp::ed_from_nb(double nb) {
+  return gen_int.eval(nb,full_nlines,full_vecnb,full_vece);
+}
+
+double eos_tov_interp::nb_from_pr(double pr) {
+  return pnb_int.eval(pr);
+}
+
+double eos_tov_interp::nb_from_ed(double ed) {
+  return gen_int.eval(ed,full_nlines,full_vece,full_vecnb);
+}
+
+double eos_tov_interp::pr_from_nb(double nb) {
+  return gen_int.eval(nb,full_nlines,full_vecnb,full_vecp);
+}
+
+double eos_tov_interp::pr_from_ed(double ed) {
+  return gen_int.eval(ed,full_nlines,full_vece,full_vecp);
+}
+
+void eos_tov_interp::ed_nb_from_pr(double pr, double &ed, double &nb) {
+  ed=ed_from_pr(pr);
+  nb=nb_from_pr(pr);
   return;
 }
 

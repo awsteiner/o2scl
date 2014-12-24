@@ -201,6 +201,14 @@ int main(void) {
     cout << c1 << " " << c2 << endl;
     t.test_rel(c1,0.0,4.0e-4,"check_nb linear c1");
     t.test_rel(c2,0.0,4.0e-4,"check_nb linear c2");
+    
+    t.test_rel(lin.nb_from_ed(lin.ed_from_nb(0.32)),0.32,1.0e-12,
+	       "ed_from_nb and nb_from_ed lin");
+    t.test_rel(lin.pr_from_ed(lin.ed_from_pr(0.32)),0.32,1.0e-12,
+	       "ed_from_pr and pr_from_ed lin");
+    t.test_rel(lin.nb_from_pr(lin.pr_from_nb(0.32)),0.32,1.0e-12,
+	       "pr_from_nb and nb_from_pr lin");
+
   }
 
   {
@@ -211,6 +219,13 @@ int main(void) {
     cout << c1 << " " << c2 << endl;
     t.test_rel(c1,0.0,4.0e-4,"check_nb polytrope c1");
     t.test_rel(c2,0.0,4.0e-4,"check_nb polytrope c2");
+
+    t.test_rel(pt.nb_from_ed(pt.ed_from_nb(0.32)),0.32,1.0e-12,
+	       "ed_from_nb and nb_from_ed pt");
+    t.test_rel(pt.pr_from_ed(pt.ed_from_pr(0.32)),0.32,1.0e-12,
+	       "ed_from_pr and pr_from_ed pt");
+    t.test_rel(pt.nb_from_pr(pt.pr_from_nb(0.32)),0.32,1.0e-12,
+	       "pr_from_nb and nb_from_pr pt");
   }
 
   {
@@ -266,6 +281,14 @@ int main(void) {
   pr_low=cu.convert("Msun/km^3","1/fm^4",pr_low);
   pr_high=cu.convert("Msun/km^3","1/fm^4",pr_high);
   cout << endl;
+
+  // Test new EOS functions
+  t.test_rel(te.nb_from_ed(te.ed_from_nb(0.32)),0.32,1.0e-12,"ednb1");
+  t.test_rel(te.nb_from_ed(te.ed_from_nb(0.02)),0.02,1.0e-12,"ednb2");
+  t.test_rel(te.nb_from_pr(te.pr_from_nb(0.32)),0.32,1.0e-12,"prnb1");
+  t.test_rel(te.nb_from_pr(te.pr_from_nb(0.02)),0.02,1.0e-12,"prnb2");
+  t.test_rel(te.ed_from_pr(te.pr_from_ed(1.0)),1.0,1.0e-12,"edpr1");
+  t.test_rel(te.ed_from_pr(te.pr_from_ed(0.01)),0.01,1.0e-12,"edpr2");
   
   //test_crust(te,cu,pr_low,pr_high,true,t);
 
