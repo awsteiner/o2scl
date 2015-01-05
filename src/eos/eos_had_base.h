@@ -660,7 +660,7 @@ namespace o2scl {
 	<tt>pa[1]</tt>.
 
 	Because this function is designed to be used in a solver,
-	it returns \ref exc_efailed without calling the error 
+	it returns <tt>exc_efailed</tt> without calling the error 
 	handler if the densities are not finite.
 
 	This function is used by \ref eos_had_pres_base::calc_e().
@@ -676,7 +676,7 @@ namespace o2scl {
 	<tt>pa[1]</tt>.
 
 	Because this function is designed to be used in a solver,
-	it returns \ref exc_efailed without calling the error 
+	it returns <tt>exc_efailed</tt> without calling the error 
 	handler if the chemical potentials are not finite.
 
 	This function is used by \ref eos_had_eden_base::calc_p().

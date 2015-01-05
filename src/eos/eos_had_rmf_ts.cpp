@@ -146,6 +146,7 @@ int main(void) {
   // nuclear matter and so the step size has to be large
   // enough to compute derivatives
   re.def_mroot.def_jac.set_epsmin(1.0e-15);
+  rmf.def_mroot.def_jac.set_epsmin(1.0e-15);
 
   /*
       hdf_file hf;
