@@ -380,7 +380,6 @@ public:
     cout << "EOS:" << endl;
     {
       double nb_last=10.0;
-      sk.mu_at_zero_density=true;
       for(double nb=0.16;nb<=2.0001;nb+=0.001) {
 	p.n=0.0;
 	n.n=nb-p.n;
@@ -392,7 +391,6 @@ public:
 	  nb=2.1;
 	}
       }
-      sk.mu_at_zero_density=false;
       if (nb_last<10.0) {
 	cout << "Pure neutron matter after nb=" << nb_last << endl;
 	nst.nb_end=nb_last;
@@ -400,6 +398,7 @@ public:
 	nst.nb_end=2.0;
       }
     }
+    nst.verbose=2;
     nst.calc_eos();
     cout << endl;
 

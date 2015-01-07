@@ -882,89 +882,93 @@ public:
 
     cout << "--------- Neutron star matter ----------------------\n" << endl;
 
-    cout << "Maxwell construction." << endl;
-  
-    // Verify Figure 7
+    // Removing this for now, as it caused negative densities
+    if (false) {
+      
+      cout << "Maxwell construction." << endl;
+      
+      // Verify Figure 7
 
-    filenm=prefix;
-    filenm+="fig7.1.txt";
-    fout.open(filenm.c_str());
-    fout.setf(ios::scientific);
-    x[0]=0.32;
-    for(f7x=0.5;f7x>=-0.001;f7x-=0.025) {
-      ret=solver.msolve(1,x,f_fig7fun);
-      if (ret!=0) {
-	O2SCL_ERR("Failed to perform maxwell.",exc_efailed);
+      filenm=prefix;
+      filenm+="fig7.1.txt";
+      fout.open(filenm.c_str());
+      fout.setf(ios::scientific);
+      x[0]=0.32;
+      for(f7x=0.5;f7x>=-0.001;f7x-=0.025) {
+	ret=solver.msolve(1,x,f_fig7fun);
+	if (ret!=0) {
+	  O2SCL_ERR("Failed to perform maxwell.",exc_efailed);
+	}
+	fout << f7x << " " << x[0] << endl;
       }
-      fout << f7x << " " << x[0] << endl;
-    }
-    fout.close();
-    cout << "Generated file '" << filenm << "'." << endl;
+      fout.close();
+      cout << "Generated file '" << filenm << "'." << endl;
 
-    // Compute the beginning and ending densities
-    // for the Maxwell construction
+      // Compute the beginning and ending densities
+      // for the Maxwell construction
 
-    x[0]=0.94*0.2;
-    x[1]=0.06*0.2;
-    x[2]=0.95*0.24;
-    x[3]=0.05*0.24;
-    solver.msolve(4,x,f_maxwell_fig7);
+      x[0]=0.94*0.2;
+      x[1]=0.06*0.2;
+      x[2]=0.95*0.24;
+      x[3]=0.05*0.24;
+      solver.msolve(4,x,f_maxwell_fig7);
 
-    double nb_low=x[0]+x[1], nb_high=x[2]+x[3];
-    cout << "Mixed phase begins at nb=" << nb_low << " fm^{-3}." << endl;
-    cout << "Mixed phase ends at nb=" << nb_high << " fm^{-3}." << endl;
-    x[0]=nbstart/1.1;
+      double nb_low=x[0]+x[1], nb_high=x[2]+x[3];
+      cout << "Mixed phase begins at nb=" << nb_low << " fm^{-3}." << endl;
+      cout << "Mixed phase ends at nb=" << nb_high << " fm^{-3}." << endl;
+      x[0]=nbstart/1.1;
 
-    filenm=prefix; 
-    filenm+="fig7.2.txt";
-    fout.open(filenm.c_str());
+      filenm=prefix; 
+      filenm+="fig7.2.txt";
+      fout.open(filenm.c_str());
     
-    /// Compute matter at densities below the maxwell construction
+      /// Compute matter at densities below the maxwell construction
 
-    for(nb=0.02;nb<nb_low*1.00001;nb+=(nb_low-nbstart)/20.0) {
-      ret=solver.msolve(1,x,f_nstar_low);
-      if (ret!=0) {
-	cout << nb << endl;
-	f_nstar_low(1,x,y);
-	cout << x[0] << " " << y[0] << endl;
-	O2SCL_ERR("Solving Maxwell construction failed.",
-		  exc_efailed);
+      for(nb=0.02;nb<nb_low*1.00001;nb+=(nb_low-nbstart)/20.0) {
+	ret=solver.msolve(1,x,f_nstar_low);
+	if (ret!=0) {
+	  cout << nb << endl;
+	  f_nstar_low(1,x,y);
+	  cout << x[0] << " " << y[0] << endl;
+	  O2SCL_ERR("Solving Maxwell construction failed.",
+		    exc_efailed);
+	}
+	fout << p.n/nb << " " << nb << endl;
       }
-      fout << p.n/nb << " " << nb << endl;
-    }
 
-    // Compute matter at densities inside the Maxwell construction
+      // Compute matter at densities inside the Maxwell construction
 
-    x[0]=(1.0-0.07)*nb_low;
-    x[1]=0.07*nb_low;
-    x[2]=(1.0-0.06)*nb_high;
-    x[3]=0.06*nb_high;
-    x[4]=1.0;
-    dnb=(nb_high-nb_low)/20.0;
-    for(nb=nb_low+dnb;nb<=nb_high*1.00001;nb+=dnb) {
-      ret=solver.msolve(5,x,f_mixedmaxwell);
-      if (ret!=0) {
-	cout << nb << endl;
-	O2SCL_ERR("Solving Maxwell construction (part 2) failed.",
-		  exc_efailed);
+      x[0]=(1.0-0.07)*nb_low;
+      x[1]=0.07*nb_low;
+      x[2]=(1.0-0.06)*nb_high;
+      x[3]=0.06*nb_high;
+      x[4]=1.0;
+      dnb=(nb_high-nb_low)/20.0;
+      for(nb=nb_low+dnb;nb<=nb_high*1.00001;nb+=dnb) {
+	ret=solver.msolve(5,x,f_mixedmaxwell);
+	if (ret!=0) {
+	  cout << nb << endl;
+	  O2SCL_ERR("Solving Maxwell construction (part 2) failed.",
+		    exc_efailed);
+	}
+	fout << (chi*p.n+(1.0-chi)*p2.n)/nb << " " << nb << endl;
       }
-      fout << (chi*p.n+(1.0-chi)*p2.n)/nb << " " << nb << endl;
-    }
     
-    // Compute matter at densities above the Maxwell construction
+      // Compute matter at densities above the Maxwell construction
     
-    x[0]=0.23;
-    for(nb=nb_high;nb<nb_end;nb+=(nb_end-nb_high)/40.0) {
-      ret=solver.msolve(1,x,f_nstar_high);
-      if (ret!=0) {
-	cout << nb << endl;
-	O2SCL_ERR("Solving Maxwell construction (part 3) failed.",
-		  exc_efailed);
+      x[0]=0.23;
+      for(nb=nb_high;nb<nb_end;nb+=(nb_end-nb_high)/40.0) {
+	ret=solver.msolve(1,x,f_nstar_high);
+	if (ret!=0) {
+	  cout << nb << endl;
+	  O2SCL_ERR("Solving Maxwell construction (part 3) failed.",
+		    exc_efailed);
+	}
+	fout << p2.n/nb << " " << nb << endl;
       }
-      fout << p2.n/nb << " " << nb << endl;
+      fout.close();
+      cout << "Generated file '" << filenm << "'." << endl;
     }
-    fout.close();
-    cout << "Generated file '" << filenm << "'." << endl;
     
     //--------------------------------------------------------------------
     // Neutron star matter - Gibbs construction

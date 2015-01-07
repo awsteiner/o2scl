@@ -338,7 +338,11 @@ namespace o2scl {
 
       Within \o2p, this class has only two children,
       \ref nucmass_frdm and \ref nucmass_semi_empirical. There
-      is also a child \ref nucmass_ldrop in \o2e.
+      is also a child <tt>nucmass_ldrop</tt> in \o2e.
+      \comment
+      (Note that nucmass_ldrop is in o2scl_eos so currently
+      can't be referenced)
+      \endcomment
   */
   class nucmass_fit_base : public nucmass {
     
