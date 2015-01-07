@@ -544,7 +544,7 @@ public:
     t.test_rel(res.n0,0.1595468,1.0e-5,"n0");
     t.test_rel(res.m_max,2.050391,4.0e-4,"m_max");
     t.test_rel(res.r_14,11.72476,4.0e-3,"R_1.4");
-
+    
     t.report();
 
     output_files=of_old;

@@ -150,6 +150,19 @@ void nstar_cold::calc_eos(double np_0) {
 	 << "[1/fm^4]    [1/fm^4]" << endl;
   }
 
+  // Get a better initial guess for nb_start. This section of code was
+  // put in to avoid negative densities for calc_eos from the solver
+  // below. 
+  barn=nb_start;
+  bool done=false;
+  for(size_t i=0;done==false && i<20;i++) {
+    if (solve_fun(x)>0.0) {
+      x=sqrt(nb_start*x);
+    } else {
+      done=true;
+    }
+  }
+  
   solver_success=true;
   for(barn=nb_start;barn<=nb_end+dnb/10.0;barn+=dnb) {
     
