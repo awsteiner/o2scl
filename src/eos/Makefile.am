@@ -35,7 +35,7 @@ TEST_VAR = eos_had_apr.scr eos_quark_bag.scr nstar_cold.scr \
 	eos_crust.scr eos_had_ddc.scr eos_had_base.scr nucleus_rmf.scr \
 	eos_crust_virial.scr eos_had_gogny.scr tov_solve.scr \
 	eos_quark_cfl6.scr eos_quark_cfl.scr nucmass_ldrop_shell.scr \
-	eos_nse_full.scr
+	eos_nse_full.scr eos_had_hlps.scr
 
 else
 
@@ -61,7 +61,7 @@ HEADER_VAR = eos_had_apr.h eos_quark_bag.h eos_crust.h eos_had_ddc.h \
 
 TEST_VAR = eos_had_apr.scr eos_quark_bag.scr eos_crust_virial.scr \
 	nstar_cold.scr eos_base.scr eos_had_potential.scr \
-	eos_had_sym4.scr \
+	eos_had_sym4.scr eos_had_hlps.scr \
 	eos_quark_njl.scr eos_quark.scr eos_had_gogny.scr \
 	eos_had_rmf.scr eos_had_schematic.scr eos_had_skyrme.scr eos_tov.scr \
 	tov_solve.scr eos_quark_cfl6.scr eos_had_tabulated.scr eos_nse.scr \
@@ -110,16 +110,10 @@ else
 O2SCL_ARMA_MVAR =
 endif
 
-if O2SCL_CPP11
-O2SCL_CPP11_MVAR = 
-else
-O2SCL_CPP11_MVAR = -DO2SCL_NO_CPP11
-endif
-
 AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
 	$(O2SCL_PART_MVAR) $(O2SCL_EOS_MVAR) $(O2SCL_HDF_MVAR) \
 	$(O2SCL_OPENMP_MVAR) $(O2SCL_EIGEN_MVAR) $(O2SCL_ARMA_MVAR) \
-	$(O2SCL_CPP11_MVAR) -DO2SCL_COND_FLAG
+	-DO2SCL_COND_FLAG
 
 # ------------------------------------------------------------
 # Install headers
@@ -139,7 +133,7 @@ check_PROGRAMS = eos_had_apr_ts eos_quark_bag_ts nucmass_ldrop_ts \
 	eos_had_rmf_ts eos_had_schematic_ts eos_had_skyrme_ts eos_tov_ts \
 	tov_solve_ts eos_quark_cfl6_ts eos_had_tabulated_ts eos_nse_ts \
 	eos_had_rmf_delta_ts eos_crust_ts eos_had_ddc_ts eos_quark_cfl_ts \
-	nucleus_rmf_ts eos_nse_full_ts \
+	nucleus_rmf_ts eos_nse_full_ts eos_had_hlps_ts \
 	nucmass_ldrop_shell_ts eos_had_gogny_ts eos_crust_virial_ts
 # eos_sn_ts 
 
@@ -152,6 +146,7 @@ VCHECK_LIBS = $(libdir)/libo2scl_eos.la $(libdir)/libo2scl_part.la \
 endif
 
 eos_had_apr_ts_LDADD = $(VCHECK_LIBS)
+eos_had_hlps_ts_LDADD = $(VCHECK_LIBS)
 eos_quark_bag_ts_LDADD = $(VCHECK_LIBS)
 nstar_cold_ts_LDADD = $(VCHECK_LIBS)
 nucmass_ldrop_ts_LDADD = $(VCHECK_LIBS)
@@ -182,6 +177,8 @@ eos_crust_virial_ts_LDADD = $(VCHECK_LIBS)
 
 eos_had_apr.scr: eos_had_apr_ts$(EXEEXT) 
 	./eos_had_apr_ts$(EXEEXT) > eos_had_apr.scr
+eos_had_hlps.scr: eos_had_hlps_ts$(EXEEXT) 
+	./eos_had_hlps_ts$(EXEEXT) > eos_had_hlps.scr
 eos_quark_bag.scr: eos_quark_bag_ts$(EXEEXT) 
 	./eos_quark_bag_ts$(EXEEXT) > eos_quark_bag.scr
 nstar_cold.scr: nstar_cold_ts$(EXEEXT) 
@@ -238,6 +235,7 @@ eos_crust_virial.scr: eos_crust_virial_ts$(EXEEXT)
 	./eos_crust_virial_ts$(EXEEXT) > eos_crust_virial.scr
 
 eos_had_apr_ts_SOURCES = eos_had_apr_ts.cpp
+eos_had_hlps_ts_SOURCES = eos_had_hlps_ts.cpp
 eos_quark_bag_ts_SOURCES = eos_quark_bag_ts.cpp
 nstar_cold_ts_SOURCES = nstar_cold_ts.cpp
 nucmass_ldrop_ts_SOURCES = nucmass_ldrop_ts.cpp
