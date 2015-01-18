@@ -173,8 +173,6 @@ namespace o2scl {
   public:
     
   jacobian_gsl() {
-    //epsrel=1.0e-4;
-    //epsmin=1.0e-15;
     epsrel=sqrt(std::numeric_limits<double>::epsilon());
     epsmin=0.0;
     err_nonconv=true;
