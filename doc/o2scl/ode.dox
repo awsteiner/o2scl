@@ -133,9 +133,7 @@
     by linearizing the ODEs on a mesh and using an iterative method
     (sometimes called relaxation). The \ref o2scl::ode_it_solve class
     demonstrates how this works, but is slow for large grid sizes
-    because the matrix is very sparse. See \o2i which shows how a
-    similar problem can be done more efficiently using the native
-    iterative method and sparse matrix format.
+    because the matrix is very sparse. 
 
     \dontinclude ex_ode_it.cpp
     \skip Example:
