@@ -149,7 +149,7 @@ namespace o2scl {
 
   root_bkt() {
     bracket_step=0.0;
-    bracket_iters=10;
+    bracket_iters=20;
   }
       
   virtual ~root_bkt() {}
@@ -174,23 +174,75 @@ namespace o2scl {
   virtual int solve_bkt(double &x1, double x2, func_t &func)=0; 
     
   /** \brief Solve \c func using \c x as an initial guess
-  */
+
+      This has been updated to automatically bracket functions
+      which are undefined away from the initial guess, but there
+      are still various ways in which the bracketing algorithm
+      can fail.
+      
+      \future Return early if the bracketing procedure finds a root
+      early?
+   */
   virtual int solve(double &x, func_t &func) {
     
     if (bracket_step<=0.0) {
       bracket_step=fabs(x)*1.0e-4;
       if (bracket_step<1.0e-15) bracket_step=1.0e-15;
     }
-
-    double x2=0.0, dx, fx, fx2;
+    
+    double x2=0.0, df, fx, fx2;
     size_t i=0;
     bool done=false;
+
     // Use function to try to bracket a root
     while(done==false && i<bracket_iters) {
-      
-      fx=func(x);
-      fx2=func(x*(1.0+bracket_step));
 
+      // -----------------------------------------------------------
+      // Phase 1: Compute the function value and the derivative
+
+      fx=func(x);
+      if (!o2scl::is_finite(fx)) {
+	O2SCL_ERR2("First function value not finite in ",
+		   "root_bkt::solve().",exc_ebadfunc);
+      }
+      
+      fx2=func(x+bracket_step);
+      df=(fx2-fx)/bracket_step;
+      if (this->verbose>0) {
+	std::cout << "x,x2,fx,fx2,df: " << x << " "
+		  << x+bracket_step << " "
+		  << fx << " " << fx2 << " " << df << std::endl;
+      }
+
+      // If the stepsize made the function not finite or the
+      // derivative zero, adjust accordingly
+      size_t j=0;
+      double new_step=bracket_step;
+      while ((!o2scl::is_finite(fx2) || df==0.0) && j<bracket_iters*2) {
+	// Alternate between flipping the sign and making it smaller
+	if (j%2==0) new_step*=-1.0;
+	else new_step/=2.0;
+	fx2=func(x+new_step);
+	df=(fx2-fx)/new_step;
+	if (this->verbose>1) {
+	  std::cout << "x,x2,fx,fx2,df: " << x << " " << x+new_step << " "
+		    << fx << " " << fx2 << " " << df << std::endl;
+	}
+	j++;
+      }
+
+      // If we failed to compute the derivative
+      if (df==0.0) {
+	O2SCL_CONV_RET("Failed to bracket (df==0) in root_bkt::solve().",
+		       o2scl::exc_emaxiter,this->err_nonconv);
+      }
+      if (!o2scl::is_finite(fx2)) {
+	O2SCL_CONV2_RET("Failed to bracket (f2 not finite) in ",
+			"root_bkt::solve().",
+			o2scl::exc_emaxiter,this->err_nonconv);
+      }
+
+      // Output the current iteration information
       if (this->verbose>0) {
 	std::cout << "root_bkt::solve(): Iteration " << i << " of "
 		  << bracket_iters << "." << std::endl;
@@ -198,36 +250,69 @@ namespace o2scl {
 	std::cout << "\tx2: " << x*(1.0+bracket_step) 
 		  << " f(x2): " << fx2 << std::endl;
       }
+
+      // -----------------------------------------------------------
+      // Phase 2: Create a new value which may provide a bracket
       
-      dx=(fx2-fx)/(bracket_step*x);
-      if (dx==0.0) {
-	O2SCL_CONV_RET("Failed to bracket (dx==0) in root_bkt::solve().",
-		       o2scl::exc_emaxiter,this->err_nonconv);
-      }
-      x2=x-2.0*fx/dx;
-      
+      double step=2.0;
+      x2=x-step*fx/df;
       fx2=func(x2);
       if (this->verbose>0) {
-	std::cout << "\tx_new: " << x2 << " f(x_new): " << fx2 << std::endl;
+	std::cout << "x,x2,fx,fx2: " << x << " " << x2 << " "
+		  << fx << " " << fx2 << std::endl;
+      }
+
+      // Adjust if the function value is not finite
+      size_t k=0;
+      while (!o2scl::is_finite(fx2) && k<bracket_iters) {
+	step/=2.0;
+	x2=x-step*fx/df;
+	fx2=func(x2);
+	k++;
+	if (this->verbose>0) {
+	  std::cout << "x,x2,fx,fx2: " << x << " " << x2 << " "
+		    << fx << " " << fx2 << std::endl;
+	}
+      }
+
+      // Throw if we failed
+      if (!o2scl::is_finite(fx2)) {
+	O2SCL_CONV2_RET("Failed to bracket (f2 not finite) in ",
+			"root_bkt::solve().",
+			o2scl::exc_emaxiter,this->err_nonconv);
+      }
+
+      // Continue verbose output
+      if (this->verbose>0) {
+	std::cout << "\tx2: " << x2 << " f(x2): " << fx2 << std::endl;
 	if (this->verbose>1) {
 	  std::cout << "Press a key and type enter to continue. ";
 	  char ch;
 	  std::cin >> ch;
 	}
       }
-	  
+
+      // -----------------------------------------------------------
+      // See if we're done
+      
       if (fx*fx2<0.0) {
 	done=true;
       } else {
+	// The step didn't cause a sign flip. Update 'x'.
 	x=(x2+x)/2.0;
       }
 
+      // Continue for the next bracketing iteration
       i++;
     }
+
+    // Throw if we failed
     if (done==false) {
       O2SCL_CONV_RET("Failed to bracket (iters>max) in root_bkt::solve().",
 		     o2scl::exc_emaxiter,this->err_nonconv);
     }
+
+    // Go to the bracketing solver
     if (this->verbose>0) {
       std::cout << "root_bkt::solve(): Going to solve_bkt()." 
 		<< std::endl;
