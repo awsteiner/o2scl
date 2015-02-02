@@ -94,12 +94,10 @@ namespace o2scl_linalg {
     for (j = 0; j < N - 1; j++) {
     
       /* Find maximum in the j-th column */
-      if (j>=N) O2SCL_ERR("Fail 1.",o2scl::exc_einval);
       double ajj, max = fabs(O2SCL_IX2(A,j,j));
       size_t i_pivot = j;
       
       for (i = j + 1; i < N; i++) {
-	if (i>=N || j>=N) O2SCL_ERR("Fail 2.",o2scl::exc_einval);
 	double aij = fabs (O2SCL_IX2(A,i,j));
       
 	if (aij > max) {
@@ -113,9 +111,7 @@ namespace o2scl_linalg {
 	// Swap rows j and i_pivot
 	double temp;
 	for (k=0;k<N;k++) {
-	  if (k>=N || j>=N) O2SCL_ERR("Fail 3.",o2scl::exc_einval);
 	  temp=O2SCL_IX2(A,j,k);
-	  if (k>=N || i_pivot>=N) O2SCL_ERR("Fail 4.",o2scl::exc_einval);
 	  O2SCL_IX2(A,j,k)=O2SCL_IX2(A,i_pivot,k);
 	  O2SCL_IX2(A,i_pivot,k)=temp;
 	}
@@ -127,11 +123,9 @@ namespace o2scl_linalg {
       
       if (ajj != 0.0) {
 	for (i = j + 1; i < N; i++) {
-	  if (j>=N || i>=N) O2SCL_ERR("Fail 5.",o2scl::exc_einval);
 	  double aij = O2SCL_IX2(A,i,j) / ajj;
 	  O2SCL_IX2(A,i,j)=aij;
 	  for (k = j + 1; k < N; k++) {
-	    if (j>=N || i>=N || k>=N) O2SCL_ERR("Fail 6.",o2scl::exc_einval);
 	    double aik = O2SCL_IX2(A,i,k);
 	    double ajk = O2SCL_IX2(A,j,k);
 	    O2SCL_IX2(A,i,k)=aik - aij * ajk;
@@ -327,7 +321,6 @@ namespace o2scl_linalg {
     // Set matrix 'inverse' to the identity
     for(i=0;i<N;i++) {
       for(size_t j=0;j<N;j++) {
-	if (j>=N || i>=N) O2SCL_ERR("Fail 7.",o2scl::exc_einval);
 	if (i==j) O2SCL_IX2(inverse,i,j)=1.0;
 	else O2SCL_IX2(inverse,i,j)=0.0;
       }
