@@ -53,8 +53,11 @@
   
   -------------------------------------------------------------------
 */
-#ifndef RNS_H
-#define RNS_H
+/** \file nstar_rot.h
+    \brief File defining \ref o2scl::nstar_rot
+*/
+#ifndef NSTAR_ROT_H
+#define NSTAR_ROT_H
 
 #include <cmath>
 #include <iostream>
@@ -72,7 +75,7 @@ namespace o2scl {
 
       Several changes have been made to the original code. The code
       using Numerical Recipes has been removed and replaced with an
-      equivalent based on GSL and O2scl. The overall interface has
+      equivalent based on GSL and \o2. The overall interface has
       been changed and some code has been updated with C++
       equivalents.
 
@@ -81,10 +84,16 @@ namespace o2scl {
       The original RNS code suggests that the initial guess is
       typically a star with a smaller angular momentum.
 
-      <b>References</b>
-      See \ref Bonazzola73, \ref Bonazzola94, \ref Cook92, \ref Friedman88,
-      \ref Gourgoulhon94, \ref Laarakkers99, \ref Komatsu89, and 
-      \ref Stergioulas03
+      <b>References</b> 
+
+      The original RNS v1.1d can be obtained from
+      http://www.gravity.phys.uwm.edu/rns/ , and you may find Nick
+      Stergioulas's web page http://www.astro.auth.gr/~niksterg/ , or
+      Sharon Morsink's page http://fermi.phys.ualberta.ca/~morsink/
+      useful. See \ref Bonazzola73, \ref Bonazzola94, \ref Cook92,
+      \ref Cook94, \ref Friedman88, \ref Gourgoulhon94, \ref
+      Komatsu89, \ref Laarakkers99, \ref Nozawa98, \ref Stergioulas95,
+      and \ref Stergioulas03
 
       \todo Better documentation is needed everywhere.
 
@@ -183,7 +192,7 @@ namespace o2scl {
 
     /** \brief Subclass of \ref nstar_rot which specifies the function
 	to invert a polytropic EOS
-     */
+    */
     class polytrope_solve {
 
     protected:
@@ -329,38 +338,38 @@ namespace o2scl {
 
     /** \brief Radius at pole */      
     double r_p;                          
-    /** \brief s-coordinate at pole */
+    /** \brief The value of the s-coordinate at the pole */
     double s_p;                          
-    /** \brief s-coordinate at equator */
+    /** \brief The value of the s-coordinate at the equator */
     double s_e; 
-    /** \brief gamma^hat at pole */  
+    /** \brief The value of \f$ \hat{\gamma} \f$ at the pole */  
     double gamma_pole_h;                  
-    /** \brief gamma^hat at center */
+    /** \brief The value of \f$ \hat{\gamma} \f$ at the center */
     double gamma_center_h;                
-    /** \brief gamma^hat at equator */
+    /** \brief The value of \f$ \hat{\gamma} \f$ at the equator */
     double gamma_equator_h;               
-    /** \brief rho^hat at pole */ 
+    /** \brief The value of \f$ \hat{\rho} \f$ at the pole */ 
     double rho_pole_h;                   
-    /** \brief rho^hat at center */
+    /** \brief The value of \f$ \hat{\rho} \f$ at the center */
     double rho_center_h;                 
-    /** \brief rho^hat at equator */ 
+    /** \brief The value of \f$ \hat{\rho} \f$ at the equator */ 
     double rho_equator_h;                
-    /** \brief omega^hat at equator */
+    /** \brief The value of \f$ \hat{\omega} \f$ at the equator */
     double omega_equator_h;              
-    /** \brief angular velocity \f$ \Omega^hat \f$ */
+    /** \brief Angular velocity, \f$ \hat{\omega} \f$ */
     double Omega_h;                      
-    /** \brief central pressure */ 
+    /** \brief Central pressure */ 
     double p_center;                     
-    /** \brief central enthalpy */
+    /** \brief Central enthalpy */
     double h_center;                     
 
     /// \name Desc
     //@{
-    /** \brief f_rho(s,n,s') */
+    /** \brief \f$ f_{\rho}(s,n,s') \f$ */
     double f_rho[SDIV+1][LMAX+1][SDIV+1];
-    /** \brief f_gamma(s,n,s') */
+    /** \brief \f$ f_{\gamma}(s,n,s') \f$ */
     double f_gamma[SDIV+1][LMAX+1][SDIV+1];
-    /** \brief f_omega(s,n,s') */
+    /** \brief \f$ f_{\omega}(s,n,s') \f$ */
     double f_omega[SDIV+1][LMAX+1][SDIV+1];
     /** \brief Legendre polynomial \f$ P_{2n}(\mu) \f$ 
      */  
@@ -400,27 +409,27 @@ namespace o2scl {
     double da_dm_s[MDIV+1];         
     /** \brief temporary storage of derivative */
     double d_temp;                      
-    /** \brief accuracy in r_e (default \f$ 10^{-5} \f$) */
+    /** \brief accuracy in \f$ r_e \f$ (default \f$ 10^{-5} \f$) */
     double accuracy;                    
 
-    /** \brief integrated term over m in eqn for rho */
+    /** \brief Integrated term over m in eqn for \f$ \rho \f$ */
     double D1_rho[LMAX+1][SDIV+1];  
-    /** \brief integrated term over m in eqn for gamma */
+    /** \brief Integrated term over m in eqn for \f$ \gamma \f$ */
     double D1_gamma[LMAX+1][SDIV+1]; 
-    /** \brief integ. term over m in eqn for omega */
+    /** \brief Integ. term over m in eqn for \f$ \omega \f$ */
     double D1_omega[LMAX+1][SDIV+1];
-    /** \brief integrated term over s in eqn for rho */
+    /** \brief Integrated term over s in eqn for \f$ \rho \f$ */
     double D2_rho[SDIV+1][LMAX+1];  
-    /** \brief integrated term over s in eqn for gamma */
+    /** \brief Integrated term over s in eqn for \f$ \gamma \f$ */
     double D2_gamma[SDIV+1][LMAX+1]; 
-    /** \brief integ. term over s in eqn for omega */
+    /** \brief Integ. term over s in eqn for \f$ \omega \f$ */
     double D2_omega[SDIV+1][LMAX+1];
 
-    /** \brief source term in eqn for gamma */
+    /** \brief source term in eqn for \f$ \gamma \f$ */
     double S_gamma[SDIV+1][MDIV+1];  
-    /** \brief source term in eqn for rho */
+    /** \brief source term in eqn for \f$ \rho \f$ */
     double S_rho[SDIV+1][MDIV+1];   
-    /** \brief source term in eqn for omega */
+    /** \brief source term in eqn for \f$ \omega \f$ */
     double S_omega[SDIV+1][MDIV+1]; 
 
     // Desc
@@ -577,7 +586,7 @@ namespace o2scl {
     /** \brief Pressure at fixed enthalpy
 
 	Used in \ref iterate().
-     */
+    */
     double p_at_h(double hh);
 
     /** \brief Enthalpy at fixed pressure 
@@ -589,7 +598,7 @@ namespace o2scl {
     /** \brief Baryon density at fixed energy density 
 
 	Used in \ref comp_M_J() and \ref comp() .
-     */
+    */
     double n0_at_e(double ee);
 
     /** \brief Returns the derivative w.r.t. s of an array f[SDIV+1]. 
@@ -649,7 +658,7 @@ namespace o2scl {
     /** \brief Compute various quantities.
 
 	The main post-processing funciton
-     */
+    */
     void comp(void);
 
     /** \brief Desc */
@@ -848,7 +857,7 @@ namespace o2scl {
 
 	Compares with
 	<tt>rns -f eosC -t kepler -e 2e15 -d 0</tt>
-     */    
+    */    
     void test2(o2scl::test_mgr &t);
     
     /** \brief Test fixed central energy density and fixed 
@@ -856,7 +865,7 @@ namespace o2scl {
 
 	Compares with
 	<tt>rns -f eosC -t gmass -e 1e15 -m 1.5 -d 0  </tt>
-     */    
+    */    
     void test3(o2scl::test_mgr &t);
     
     /** \brief Test fixed central energy density and fixed baryonic 
@@ -864,7 +873,7 @@ namespace o2scl {
 	
 	Compares with
 	<tt>rns -f eosC -t rmass -e 1e15 -z 1.55 -d 0</tt>
-     */    
+    */    
     void test4(o2scl::test_mgr &t);
     
     /** \brief Test fixed central energy density and fixed angular
@@ -872,7 +881,7 @@ namespace o2scl {
 
 	Compares with
 	<tt>rns -f eosC -t omega -e 1e15 -o 0.5 -d 0 </tt>
-     */    
+    */    
     void test5(o2scl::test_mgr &t);
     
     /** \brief Test fixed central energy density and fixed angular 
@@ -880,7 +889,7 @@ namespace o2scl {
 
 	Compares with
 	<tt>rns -f eosC -t jmoment -e 1e15 -j 1.5 -d 0 </tt>
-     */    
+    */    
     void test6(o2scl::test_mgr &t);
 
     /** \brief Test a series of non-rotating stars on a energy density
@@ -888,14 +897,14 @@ namespace o2scl {
 
 	Compares with
 	<tt>rns -f eosC -t static -e 6e14 -l 2e15 -n 2 -p 2 -d 0</tt>
-     */    
+    */    
     void test7(o2scl::test_mgr &t);
 
     /** \brief Test Keplerian frequency for a polytrope
 
 	Compares with
 	<tt>rns -q poly -N 1.0 -e 0.137 -t kepler -d 0</tt>
-     */    
+    */    
     void test8(o2scl::test_mgr &t);
     //@}
 

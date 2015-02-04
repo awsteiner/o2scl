@@ -1,0 +1,41 @@
+Index of equations of state files
+
+file name	description
+
+eosA		PANDHARIPANDE NEUTRON: A&B EOS A
+eosAU		WFF1 (denoted AV14+UVII in WFF) matched to Negele-Vautherin
+eosB		PANDHARIPANDE HYPERON: A&B EOS B
+eosC		BETHE-JOHNSON MODEL 1: A&B EOS C
+eosF		PANDHARIPANDE (HYPERON) AND ARPONEN: A&B EOS F
+eosFP		FRIEDMAN&PANDHARIPANDE EOS.(NEGELE-VAUTHERIN FOR 
+			N<.1FM**-3,THEN * BPS FOR N<.001FM**-3)
+eosFPS	        Lorenz, Ravenhall and Pethick, 1993, PRL 70,379
+eosG		CANUTO-CHITRE (SOLID): A&B EOS G 
+eosL		PANDHARIPANDE AND SMITH (MEAN FIELD): A&B EOS L
+eosN		WALECKA-SEROT: A&B EOS N
+eosNV		Negele & Vautherin, 1973, Nucl. Phys. A207, 298
+eosO		BOWERS, GLEESON, AND PEDIGO. A&B EOS O
+eosUU		WFF2 (denoted UV14+UVII in WFF) matched to Negele-Vautherin
+eosWNV		WFF3 (denoted UV14+TNI in WFF) matched to Negele-Vautherin
+eosWS		WFF3 (UV14+TNI) mathed to EOS FPS
+
+A&B = Arnett and Bowers (1977) APJS 33, 415
+WFF = Wiringa, Fiks and Fabrocini (1988), Phys. Rev. C 38, 1010
+
+
+The equation of state files are in the format required for 
+Nikolaos Stergioulas' rotating star codes:     
+rns.c	(rapidly rotating neutron stars in equilibrium) 
+
+The format required is as follows:
+line 1) number of tabulated points in file
+remaining lines) four columns:
+
+column 1) energy density/c^2 	(g/cm^3)
+column 2) pressure		(dynes/cm^2)
+column 3) enthalpy 		(cm^2/s^2)
+column 4) baryon number density (cm^{-3})
+
+The program HnG.c can be used to convert an equation of state in the form
+energy density vs pressure to Nick's format. Look at a listing of the 
+c code to learn how to use  the program. 

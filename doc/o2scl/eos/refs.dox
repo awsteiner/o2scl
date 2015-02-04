@@ -39,12 +39,12 @@
     and W. U. Schr&ouml;der (2001) Nova Science, New York. 
     
     \anchor Bonazzola73 Bonazzola73:
-    <a href="http://dx.doi.org/">
+    <a href="http://dx.doi.org/10.1086/152140">
     S. Bonazzola</a>,
     Astrophys. J. <b>182</b> (1973) 335.
 
     \anchor Bonazzola94 Bonazzola94:
-    <a href="http://dx.doi.org/">
+    <a href="http://dx.doi.org/10.1088/0264-9381/11/7/014">
     S. Bonazzola and E. Gourgoulhon</a>,
     Class. Quant. Grav. <b>11</b> (1994) 1775.
 
@@ -84,9 +84,14 @@
     Phys. Lett. B \b 668 (2008) 420.
 
     \anchor Cook92 Cook92:
-    <a href="http://dx.doi.org/">
+    <a href="http://dx.doi.org/10.1086/171849">
     G. Cook, S. Shapiro and S. Teukolsky</a>,
     Astrophys. J. <b>398</b> (1992) 203.
+
+    \anchor Cook94 Cook94:
+    <a href="http://dx.doi.org/10.1086/173721">
+    G.B. Cook, S.L. Shapiro, and S.A. Teukolsky</a>,
+    Astrophys. J. <b>422</b> (1994) 227.
 
     \anchor Danielewicz08 Danielewicz08:
     <a href="http://dx.doi.org/10.1016/j.nuclphysa.2008.11.007">
@@ -109,11 +114,12 @@
     Nucl. Phys. A \b 458 (1986) 77.
 
     \anchor Farine01 Farine01:
-    <a href="">M. Farine, J.M. Pearson, and F. Tondeur</a>,
+    <a href="http://dx.doi.org/10.1016/S0375-9474(01)01136-8">M. 
+    Farine, J.M. Pearson, and F. Tondeur</a>,
     Nucl. Phys. A \b 696 (2001) 396.
 
     \anchor Friedman88 Friedman88:
-    <a href="http://dx.doi.org/">
+    <a href="http://dx.doi.org/10.1086/166043">
     J.L. Friedman, J.R. Ipser, and R.D Sorkin</a>,
     Astrophys. J. <b>325</b> (1988) 722.
 
@@ -139,7 +145,7 @@
     Phys. Rev. C \b 82 (2010) 035804.
 
     \anchor Gourgoulhon94 Gourgoulhon94:
-    <a href="http://dx.doi.org/">
+    <a href="http://dx.doi.org/10.1088/0264-9381/11/2/015">
     E. Gourgoulhon and S. Bonazzola</a>,
     Class. Quant. Grav. <b>11</b> (1994) 443.
 
@@ -189,7 +195,7 @@
     Nucl. Phys. A \b 776 (2006) 55.
 
     \anchor Komatsu89 Komatsu89:
-    <a href="http://dx.doi.org/">
+    <a href="http://dx.doi.org/10.1093/mnras/237.2.355">
     H. Komatsu, Y. Eriguchi and I. Hachisu</a>,
     Mon. Not. R. Astron. Soc. <b>237</b> (1989) 355.
 
@@ -206,7 +212,7 @@
     Phys. Lett. B \b 399 (1997) 191.
 
     \anchor Laarakkers99 Laarakkers99:
-    <a href="http://dx.doi.org/">
+    <a href="http://dx.doi.org/10.1086/306732">
     W.G. Laarakkers and E. Poisson</a>,
     Astrophys. J. <b>512</b> (1999) 282.
 
@@ -245,6 +251,11 @@
     <a href="http://dx.doi.org/10.1088/0067-0049/204/1/9">W.G. 
     Newton, M. Gearheart, B.-A. Li</a>, 
     Astrophys. J. Supp. \b 204 (2013) 9.
+
+    \anchor Nozawa98 Nozawa98:
+    <a href="http://dx.doi.org/10.1051/aas:1998304">
+    T. Nozawa, N. Stergioulas, E. Gourgoulhon, and Y. Eriguchi</a>,
+    Astrophys. J. Supp. \b 132 (1998) 431.
 
     \anchor OConnor10 OConnor10:
     <a href="http://dx.doi.org/10.1088/0264-9381/27/11/114103">
@@ -389,8 +400,13 @@
     A.W. Steiner</a>,
     Phys. Rev. C, \b 85 (2012) 055804.
 
+    \anchor Stergioulas95 Stergioulas95:
+    <a href="http://dx.doi.org/10.1086/175605">
+    N. Stergioulas and J.L. Friedman</a>,
+    Astrophys. J. \b 444 (1995) 306.
+
     \anchor Stergioulas03 Stergioulas03:
-    <a href="http://dx.doi.org/">
+    <a href="http://dx.doi.org/10.12942/lrr-2003-3">
     N. Stergioulas</a>,
     Liv. Rev. Rel. <b>6</b> (2003) 3.
 
