@@ -4,46 +4,6 @@
     the work referred to directly through <tt>dx.doi.org</tt> for journal
     articles or <tt>worldcat.org</tt> for books.
 
-    \anchor Bonazzola73 Bonazzola73:
-    <a href="http://dx.doi.org/">
-    S. Bonazzola</a>,
-    Astrophys. J. <b>182</b> (1973) 335.
-
-    \anchor Bonazzola94 Bonazzola94:
-    <a href="http://dx.doi.org/">
-    S. Bonazzola and E. Gourgoulhon</a>,
-    Class. Quant. Grav. <b>11</b> (1994) 1775.
-
-    \anchor Cook92 Cook92:
-    <a href="http://dx.doi.org/">
-    G. Cook, S. Shapiro and S. Teukolsky</a>,
-    Astrophys. J. <b>398</b> (1992) 203.
-
-    \anchor Friedman88 Friedman88:
-    <a href="http://dx.doi.org/">
-    J.L. Friedman, J.R. Ipser, and R.D Sorkin</a>,
-    Astrophys. J. <b>325</b> (1988) 722.
-
-    \anchor Gourgoulhon94 Gourgoulhon94:
-    <a href="http://dx.doi.org/">
-    E. Gourgoulhon and S. Bonazzola</a>,
-    Class. Quant. Grav. <b>11</b> (1994) 443.
-
-    \anchor Laarakkers99 Laarakkers99:
-    <a href="http://dx.doi.org/">
-    W.G. Laarakkers and E. Poisson</a>,
-    Astrophys. J. <b>512</b> (1999) 282.
-
-    \anchor Komatsu89 Komatsu89:
-    <a href="http://dx.doi.org/">
-    H. Komatsu, Y. Eriguchi and I. Hachisu</a>,
-    Mon. Not. R. Astron. Soc. <b>237</b> (1989) 355.
-
-    \anchor Stergioulas03 Stergioulas03:
-    <a href="http://dx.doi.org/">
-    N. Stergioulas</a>,
-    Liv. Rev. Rel. <b>6</b> (2003) 3.
-
     \anchor Akmal98 Akmal98:
     <a href="http://dx.doi.org/10.1103/PhysRevC.58.1805">
     A. Akmal, V.R. Pandharipande, and D.G. Ravenhall</a>, 
@@ -78,6 +38,16 @@
     ed. by B-A. Li 
     and W. U. Schr&ouml;der (2001) Nova Science, New York. 
     
+    \anchor Bonazzola73 Bonazzola73:
+    <a href="http://dx.doi.org/">
+    S. Bonazzola</a>,
+    Astrophys. J. <b>182</b> (1973) 335.
+
+    \anchor Bonazzola94 Bonazzola94:
+    <a href="http://dx.doi.org/">
+    S. Bonazzola and E. Gourgoulhon</a>,
+    Class. Quant. Grav. <b>11</b> (1994) 1775.
+
     \anchor Brack85 Brack85:
     <a href="http://dx.doi.org/10.1016/0370-1573(86)90078-5">
     M. Brack, C. Guet, and H.-B. H&aring;kansson</a>,
@@ -113,6 +83,11 @@
     F. Chappert, M. Girod, and S. Hilaire</a>,
     Phys. Lett. B \b 668 (2008) 420.
 
+    \anchor Cook92 Cook92:
+    <a href="http://dx.doi.org/">
+    G. Cook, S. Shapiro and S. Teukolsky</a>,
+    Astrophys. J. <b>398</b> (1992) 203.
+
     \anchor Danielewicz08 Danielewicz08:
     <a href="http://dx.doi.org/10.1016/j.nuclphysa.2008.11.007">
     P. Danielewicz, J. Lee</a>,
@@ -137,6 +112,11 @@
     <a href="">M. Farine, J.M. Pearson, and F. Tondeur</a>,
     Nucl. Phys. A \b 696 (2001) 396.
 
+    \anchor Friedman88 Friedman88:
+    <a href="http://dx.doi.org/">
+    J.L. Friedman, J.R. Ipser, and R.D Sorkin</a>,
+    Astrophys. J. <b>325</b> (1988) 722.
+
     \anchor Friedrich86 Friedrich86:
     <a href="http://dx.doi.org/10.1103/PhysRevC.33.335">
     J. Friedrich, and P.-G. Reinhard</a>,
@@ -157,6 +137,11 @@
     <a href="http://dx.doi.org/10.1103/PhysRevC.82.035804">
     S. Goriely, N. Chamel, and J.M. Pearson</a>,
     Phys. Rev. C \b 82 (2010) 035804.
+
+    \anchor Gourgoulhon94 Gourgoulhon94:
+    <a href="http://dx.doi.org/">
+    E. Gourgoulhon and S. Bonazzola</a>,
+    Class. Quant. Grav. <b>11</b> (1994) 443.
 
     \anchor Hatsuda94 Hatsuda94:
     <a href="http://dx.doi.org/10.1016/0370-1573(94)90022-1">
@@ -203,6 +188,11 @@
     C.J. Horowitz and A. Schwenk</a>,
     Nucl. Phys. A \b 776 (2006) 55.
 
+    \anchor Komatsu89 Komatsu89:
+    <a href="http://dx.doi.org/">
+    H. Komatsu, Y. Eriguchi and I. Hachisu</a>,
+    Mon. Not. R. Astron. Soc. <b>237</b> (1989) 355.
+
     \anchor Kortelainen14 Kortelainen14:
     <a href="http://dx.doi.org/10.1103/PhysRevC.89.054314">
     M. Kortelainen, J. McDonnell, W. Nazarewicz, E. Olsen, P.-G.
@@ -214,6 +204,11 @@
     <a href="http://dx.doi.org/10.1016/S0370-2693(97)00306-7">
     S. Kubis and M. Kutschera</a>,
     Phys. Lett. B \b 399 (1997) 191.
+
+    \anchor Laarakkers99 Laarakkers99:
+    <a href="http://dx.doi.org/">
+    W.G. Laarakkers and E. Poisson</a>,
+    Astrophys. J. <b>512</b> (1999) 282.
 
     \anchor Lattimer85 Lattimer85:
     <a href="http://dx.doi.org/10.1016/0375-9474(85)90006-5">
@@ -393,6 +388,11 @@
     <a href="http://dx.doi.org/10.1103/PhysRevC.85.055804">
     A.W. Steiner</a>,
     Phys. Rev. C, \b 85 (2012) 055804.
+
+    \anchor Stergioulas03 Stergioulas03:
+    <a href="http://dx.doi.org/">
+    N. Stergioulas</a>,
+    Liv. Rev. Rel. <b>6</b> (2003) 3.
 
     \anchor Souza09 Souza09:
     <a href="http://dx.doi.org/10.1088/0004-637X/707/2/1495">

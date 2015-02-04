@@ -73,10 +73,32 @@ namespace o2scl {
       Several changes have been made to the original code. The code
       using Numerical Recipes has been removed and replaced with an
       equivalent based on GSL and O2scl. The overall interface has
-      been changed, some code has been updated with C++ equivalents,
-      constants have been updated with more recent values, and the
-      coding style has been changed.
+      been changed and some code has been updated with C++
+      equivalents.
 
+      <b>Initial guess</b>
+
+      The original RNS code suggests that the initial guess is
+      typically a star with a smaller angular momentum.
+
+      <b>References</b>
+      See \ref Bonazzola73, \ref Bonazzola94, \ref Cook92, \ref Friedman88,
+      \ref Gourgoulhon94, \ref Laarakkers99, \ref Komatsu89, and 
+      \ref Stergioulas03
+
+      \todo Better documentation is needed everywhere.
+
+      \future Better integration with the other \o2e EOSs. 
+      \future Fix unit-indexed arrays.
+      \future Try moving some of the storage to the heap.
+      \future Allow more than 200 points in the tabulated EOS.
+      \future Some of the arrays seem larger than necessary.
+      \future The function \ref o2scl::nstar_rot::new_search() is
+      inefficient because it has to handle the boundary conditions
+      separately. This could be improved.
+      \future Give the user more control over the initial guess.
+
+      \comment
       <b>Quadrupole moments</b>
 
       Quadrupole moments computed using the method in \ref Laarakkers99. 
@@ -143,22 +165,7 @@ namespace o2scl {
       \Omega_K = \frac{\omega^{\prime}}{2 \psi^{\prime}} ...
       \f]
       (eq. 31 in \ref Stergioulas03 )
-
-      \future Fix unit-indexed arrays
-      \future Try moving some of the storage to the heap
-      \future Allow more than 200 points in the tabulated EOS
-      \future Some of the arrays seem larger than necessary
-      \future The function \ref o2scl::nstar_rot::new_search() is inefficient
-      because it has to handle the boundary conditions separately.
-      This could be improved.
-      \future Give the user more control over the initial guess
-
-      <b>Initial guess</b>
-
-      The original RNS code suggests that the initial guess is
-      typically a star with a smaller angular momentum.
-
-      <b>References</b>
+      \comment
 
   */
   class nstar_rot {
@@ -174,8 +181,8 @@ namespace o2scl {
 
   protected:
 
-    /** \brief Class which specifies the function to invert 
-	a polytropic EOS
+    /** \brief Subclass of \ref nstar_rot which specifies the function
+	to invert a polytropic EOS
      */
     class polytrope_solve {
 
@@ -232,7 +239,7 @@ namespace o2scl {
     /// The constant \f$ \pi \f$
     double PI;
 
-    /// Desc (default \f$ 10^{-15} \f$)
+    // Desc (default \f$ 10^{-15} \f$)
     double RMIN;
 
     /** \brief Nearest grid point, used in interpolation (default 1) */ 
@@ -363,33 +370,33 @@ namespace o2scl {
     double P1_2n_1[MDIV+1][LMAX+1];      
     //@}
 
-    /// Desc
+    // Desc
     double velocity_equator;              
     /// Proper mass
     double Mass_p;
     /** \brief used in guess */
     double r_final;
-    /// Desc
+    // Desc
     double m_final;
-    /// Desc
+    // Desc
     double r_is_final;
-    /// Desc
+    // Desc
     double r_gp[RDIV+1];
-    /// Desc
+    // Desc
     double r_is_gp[RDIV+1];
-    /// Desc
+    // Desc
     double m_gp[RDIV+1];
-    /// Desc
+    // Desc
     double lambda_gp[RDIV+1];
-    /// Desc
+    // Desc
     double e_d_gp[RDIV+1];   
-    /// Desc
+    // Desc
     double nu_gp[RDIV+1];
-    /// Desc
+    // Desc
     double gamma_s[SDIV+1];
-    /// Desc
+    // Desc
     double rho_s[SDIV+1];
-    /// Desc
+    // Desc
     double da_dm_s[MDIV+1];         
     /** \brief temporary storage of derivative */
     double d_temp;                      
@@ -416,47 +423,47 @@ namespace o2scl {
     /** \brief source term in eqn for omega */
     double S_omega[SDIV+1][MDIV+1]; 
 
-    /// Desc
+    // Desc
     double v_plus[SDIV+1];
-    /// Desc
+    // Desc
     double v_minus[SDIV+1];
 
-    /// Desc
+    // Desc
     double vel_plus;
-    /// Desc
+    // Desc
     double vel_minus;
-    /// Desc
+    // Desc
     double sign;
-    /// Desc
+    // Desc
     double dr;
-    /// Desc
+    // Desc
     double omega_error;
-    /// Desc
+    // Desc
     double h_error;
-    /// Desc
+    // Desc
     double M_0const;
-    /// Desc
+    // Desc
     double J_const;
-    /// Desc
+    // Desc
     double M_0_error;
-    /// Desc
+    // Desc
     double M_error;
-    /// Desc
+    // Desc
     double J_error;
-    /// Desc
+    // Desc
     double dgds[SDIV+1][MDIV+1];
-    /// Desc
+    // Desc
     double dgdm[SDIV+1][MDIV+1];
-    /// Desc
+    // Desc
     double Omega_const;
-    /// Desc (default \f$ 10^{-4} \f$ )
+    // Desc (default \f$ 10^{-4} \f$ )
     double fix_error;
 
     /// \name Set in the run() function
     //@{
-    /// Desc
+    // Desc
     double p_surface;
-    /// Desc
+    // Desc
     double e_surface;
     /** \brief min. enthalpy in h file */
     double enthalpy_min;                 
@@ -465,32 +472,32 @@ namespace o2scl {
     double n_P;
     /// Polytropic exponent
     double Gamma_P;
-    /// Desc
+    // Desc
     double rho0_center;
-    /// Desc
+    // Desc
     double eccentricity;
-    /// Desc
+    // Desc
     double grv2;
-    /// Desc
+    // Desc
     double grv2_new;
-    /// Desc
+    // Desc
     double grv3;
 
     /// \name These are only used when CL_LOW is true   
     //@{
-    /// Desc
+    // Desc
     double e_match;
-    /// Desc
+    // Desc
     double p_match;
-    /// Desc
+    // Desc
     double h_match;
-    /// Desc
+    // Desc
     double n0_match;
     //@}
 
-    /// Desc
+    // Desc
     double de_pt;
-    /// Desc
+    // Desc
     double e_cl;
 
     /** \brief Create computational mesh. 
@@ -507,8 +514,10 @@ namespace o2scl {
 	\f]
 	When \f$ r=0 \f$, \f$ s=0 \f$, when \f$ r=r_e \f$, 
 	\f$ s=1/2 \f$, and when \f$ r = \infty \f$, \f$ s=1 \f$ .
+	\comment
 	(Note that some versions of the manual have a typo,
 	giving \f$ 1-i \f$ rather than \f$ i-1 \f$ above.)
+	\endcomment
 	
 	Points in the mu-direction are stored in the array
 	<tt>mu[i]</tt>. Points in the s-direction are stored in the
@@ -613,19 +622,19 @@ namespace o2scl {
 	
 	This function computes the 2-point functions \f$
 	f^m_{2n}(r,r') \f$ used to integrate the potentials \f$ \rho,
-	\gamma \f$ and \f$ \omega \f$ (See KEH for details). Since the
-	grid points are fixed, we can compute the functions \ref
-	f_rho, \ref f_gamma, \ref f_omega, \ref P_2n, and \ref P1_2n_1
-	once at the beginning.
+	\gamma \f$ and \f$ \omega \f$ (See \ref Komatsu89 for
+	details). Since the grid points are fixed, we can compute the
+	functions \ref f_rho, \ref f_gamma, \ref f_omega, \ref P_2n,
+	and \ref P1_2n_1 once at the beginning.
 
-	See eqs (27)-(29) of CST and (33) - (35) of KEH 
+	See eqs (27)-(29) of \ref Cook92 and (33) - (35) of \ref Komatsu89 
     */
     void comp_f_P(void);
 
     /** \brief Compute central pressure and enthalpy from central
 	energy density
 
-	For polytropic EOSs, this also computes \ref rho0_center .
+	For polytropic EOSs, this also computes <tt>rho0_center</tt> .
     */
     void make_center(double e_center);
 
@@ -730,9 +739,9 @@ namespace o2scl {
 
     /// \name Hard-coded EOSs for testing
     //@{
-    /// Desc
+    // Desc
     void eosC();
-    /// Desc
+    // Desc
     void eosL();
     //@}
 
@@ -778,7 +787,7 @@ namespace o2scl {
 	If this is zero then all orbits are stable.
     */
     double h_minus;
-    /// Desc
+    // Desc
     double mass_quadrupole;
     /** \brief Radius at equator 
      */ 
@@ -786,19 +795,19 @@ namespace o2scl {
     /** \brief Circumferential radius (i.e. the radius defined such
 	that \f$ 2 \pi R_e \f$ is the proper circumference) */
     double R_e;                          
-    /// Desc
+    // Desc
     double om_over_Om;
-    /// Desc
+    // Desc
     double Omega_plus;
     /// Angular velocity of a particle in a circular orbit at the equator
     double Omega_p;
-    /// Desc
+    // Desc
     double u_phi;
-    /// Desc
+    // Desc
     double schwarz;
     //@}
 
-    /// \name Constants
+    /// \name Internal constants
     //@{
     /** \brief Use the values of the constants from the original RNS
 	code
