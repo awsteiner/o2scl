@@ -38,7 +38,7 @@ int main(void) {
   t.set_output_level(1);
 
   nstar_rot nst;
-  nst.original_constants();
+  nst.constants_rns();
   nst.eosC();
   nst.test1(t);
   nst.test2(t);

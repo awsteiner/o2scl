@@ -62,6 +62,7 @@
 #include <cmath>
 #include <iostream>
 
+#include <o2scl/err_hnd.h>
 #include <o2scl/search_vec.h>
 #include <o2scl/test_mgr.h>
 #include <o2scl/root_bkt_cern.h>
@@ -78,6 +79,8 @@ namespace o2scl {
       equivalent based on GSL and \o2. The overall interface has
       been changed and some code has been updated with C++
       equivalents.
+
+      <b>Usage</b>
 
       <b>Initial guess</b>
 
@@ -97,10 +100,10 @@ namespace o2scl {
 
       \todo Better documentation is needed everywhere.
 
-      \future Better integration with the other \o2e EOSs. 
+      \future Rework EOS interface and implement better 
+      integration with the other \o2e EOSs. 
       \future Fix unit-indexed arrays.
-      \future Try moving some of the storage to the heap.
-      \future Allow more than 200 points in the tabulated EOS.
+      \future Try moving some of the storage to the heap?
       \future Some of the arrays seem larger than necessary.
       \future The function \ref o2scl::nstar_rot::new_search() is
       inefficient because it has to handle the boundary conditions
@@ -534,7 +537,8 @@ namespace o2scl {
 
 	This function sets \ref s_gp, \ref s_1_s, \ref one_s,
 	\ref mu, \ref one_m2, \ref theta and \ref sin_theta .
-	All of these arrays are unit-indexed.
+	All of these arrays are unit-indexed. It is called by
+	the constructor.
     */
     void make_grid();
 
@@ -636,7 +640,8 @@ namespace o2scl {
 	functions \ref f_rho, \ref f_gamma, \ref f_omega, \ref P_2n,
 	and \ref P1_2n_1 once at the beginning.
 
-	See eqs (27)-(29) of \ref Cook92 and (33) - (35) of \ref Komatsu89 
+	See Eqs. 27-29 of \ref Cook92 and Eqs. 33-35 of \ref
+	Komatsu89. This function is called by the constructor.
     */
     void comp_f_P(void);
 
@@ -716,19 +721,6 @@ namespace o2scl {
     int J_model(double J_const);
     //@}
 
-  public:
-    
-    nstar_rot();
-
-    /// \name Settings
-    //@{
-    /** \brief Desc (default false)
-     */
-    bool CL_LOW;
-    /// The convergence factor (default 1.0)
-    double cf;
-    //@}
-
     /// \name Tabulated EOS
     //@{
     /** \brief If true, use a tabulated EOS (default true)
@@ -746,13 +738,9 @@ namespace o2scl {
     double log_n0_tab[201];              
     //@}
 
-    /// \name Hard-coded EOSs for testing
-    //@{
-    // Desc
-    void eosC();
-    // Desc
-    void eosL();
-    //@}
+  public:
+    
+    nstar_rot();
 
     /// \name Output
     //@{
@@ -796,7 +784,8 @@ namespace o2scl {
 	If this is zero then all orbits are stable.
     */
     double h_minus;
-    // Desc
+    /** \brief Mass quadrupole moment
+     */
     double mass_quadrupole;
     /** \brief Radius at equator 
      */ 
@@ -816,55 +805,139 @@ namespace o2scl {
     double schwarz;
     //@}
 
+    /// \name Settings
+    //@{
+    /** \brief Desc (default false)
+     */
+    bool CL_LOW;
+    /// The convergence factor (default 1.0)
+    double cf;
+    //@}
+
     /// \name Internal constants
     //@{
     /** \brief Use the values of the constants from the original RNS
 	code
     */
-    void original_constants();
-    /** Speed of light in vacuum (in CGS units) */ 
+    void constants_rns();
+    /** \brief Use the \o2 values
+     */
+    void constants_o2scl();
+    /** \brief Speed of light in vacuum (in CGS units) */ 
     double C;
-    /** Gravitational constant (in CGS units) */ 
+    /** \brief Gravitational constant (in CGS units) */ 
     double G;
-    /** Mass of sun (in g) */
+    /** \brief Mass of sun (in g) */
     double MSUN;
     /** \brief Square of length scale in CGS units, 
 	\f$ \kappa \equiv 10^{-15} c^2/G \f$
     */
     double KAPPA;
-    /// The mass of one baryon (in g)
+    /** \brief The mass of one baryon (in g)
+     */
     double MB;
     /** \brief The value \f$ \kappa G c^{-4} \f$ */
     double KSCALE;
     //@}
 
-    /** \brief Function representing old main() function
-     */
+    /// \name Hard-coded EOSs
+    //@{
+    /// Bethe-Johnson model, NPA 230 (1974) 1
+    void eosC();
+    /// Pandharipande and Smith, NPA 175 (1975) 225.
+    void eosL();
+    //@}
+
+    /// \name Basic Usage
+    //@{
+    /** \brief Set the EOS from four vectors
+
+	\verbatim
+	column 1) energy density/c^2    (g/cm^3)
+	column 2) pressure              (dynes/cm^2)
+	column 3) enthalpy              (cm^2/s^2)
+	column 4) baryon number density (cm^{-3})
+	\endverbatim
+    */
+    template<class vec1_t, class vec2_t, class vec3_t, class vec4_t>
+      void set_eos(vec1_t &eden, vec2_t &pres, vec3_t &enth, vec4_t &nb) {
+
+      tabulated_eos=true;
+      if (eden.size()>200) {
+	O2SCL_ERR2("Too many EOS points in ",
+		   "nstar_rot::set_eos().",o2scl::exc_einval);
+      }
+      n_tab=eden.size();
+      for(size_t i=0;i<n_tab;i++) {
+	log_e_tab[i+1]=log10(eden[i]);
+	log_p_tab[i+1]=log10(pres[i]);
+	log_h_tab[i+1]=log10(enth[i]);
+	log_n0_tab[i+1]=log10(nb[i]);
+      }
+
+      return;
+    }
+    
+    /** \brief Construct a configuration with a fixed central 
+	energy density and a fixed axis ratio
+	
+	The central energy density should be in \f$
+	\mathrm{g}/\mathrm{cm}^3 \f$ .
+    */
+    int fix_cent_eden_axis_rat(double cent_eden, double axis_rat);
+    
+    /** \brief Construct a configuration with a fixed central 
+	energy density and a fixed gravitational mass
+	
+	The central energy density should be in \f$
+	\mathrm{g}/\mathrm{cm}^3 \f$ and the gravitational 
+	mass should be in solar masses. 
+    */
+    int fix_cent_eden_grav_mass(double cent_eden, double grav_mass);
+
+    /** \brief Construct a configuration with a fixed central 
+	energy density and a fixed baryonic mass
+	
+	The central energy density should be in \f$
+	\mathrm{g}/\mathrm{cm}^3 \f$ and the baryonic 
+	mass should be in solar masses. 
+    */
+    int fix_cent_eden_bar_mass(double cent_eden, double bar_mass);
+
+    /** \brief Construct a configuration with a fixed central 
+	energy density and the Keplerian rotation rate
+	
+	The central energy density should be in \f$
+	\mathrm{g}/\mathrm{cm}^3 \f$ .
+    */
+    int fix_cent_eden_with_kepler(double cent_eden);
+
+    /*
+      int fix_cent_eden_ang_vel(double cent_eden, double ang_vel);
+      int fix_cent_eden_ang_mom(double cent_eden, double ang_mom);
+      template<class vec_t> int grid_cent_eden(vec_t &cent_eden);
+    */
+    
+    /** \brief Function representing old main() function from 
+	RNS v1.1d
+    */
     int run(int argc, char const **argv);
+    //@}
 
     /// \name Testing functions
     //@{
     /** \brief Test determining configuration with fixed central
 	energy density and fixed radius ratio with EOS C
-	
-	Compares with
-	<tt>rns -f eosC -t model -e 2e15 -r 0.59 -d 0 </tt>
     */    
     void test1(o2scl::test_mgr &t);
     
     /** \brief Test configuration rotating and Keplerian frequency
 	with a fixed central energy density and EOS C
-
-	Compares with
-	<tt>rns -f eosC -t kepler -e 2e15 -d 0</tt>
     */    
     void test2(o2scl::test_mgr &t);
     
     /** \brief Test fixed central energy density and fixed 
 	gravitational mass with EOS C
-
-	Compares with
-	<tt>rns -f eosC -t gmass -e 1e15 -m 1.5 -d 0  </tt>
     */    
     void test3(o2scl::test_mgr &t);
     
