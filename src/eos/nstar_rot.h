@@ -109,6 +109,7 @@ namespace o2scl {
       inefficient because it has to handle the boundary conditions
       separately. This could be improved.
       \future Give the user more control over the initial guess.
+      \future Remove the CL_LOW stuff?
 
       \comment
       <b>Quadrupole moments</b>
@@ -851,30 +852,50 @@ namespace o2scl {
     /// \name Basic Usage
     //@{
     /** \brief Set the EOS from four vectors
-
-	\verbatim
-	column 1) energy density/c^2    (g/cm^3)
-	column 2) pressure              (dynes/cm^2)
-	column 3) enthalpy              (cm^2/s^2)
-	column 4) baryon number density (cm^{-3})
-	\endverbatim
-    */
-    template<class vec1_t, class vec2_t, class vec3_t, class vec4_t>
-      void set_eos(vec1_t &eden, vec2_t &pres, vec3_t &enth, vec4_t &nb) {
-
+     */
+    template<class vec1_t, class vec2_t, class vec3_t>
+      void set_eos(vec1_t &eden, vec2_t &pres, vec3_t &nb) {
+      
+      double conv1=o2scl_settings.get_convert_units().convert
+	("1/fm^4","g/cm^3",1.0);
+      double conv2=o2scl_settings.get_convert_units().convert
+	("1/fm^4","dyne/cm^2",1.0);
+      
       tabulated_eos=true;
       if (eden.size()>200) {
 	O2SCL_ERR2("Too many EOS points in ",
 		   "nstar_rot::set_eos().",o2scl::exc_einval);
       }
       n_tab=eden.size();
+
+            // 1/(e+P) in units of dyn/cm^2
+      vt.push_back(1.0/(ed_cgs*(conv2/conv1)+pr_cgs));
+
+      std::vector<double> vt;
+      
       for(size_t i=0;i<n_tab;i++) {
-	log_e_tab[i+1]=log10(eden[i]);
-	log_p_tab[i+1]=log10(pres[i]);
-	log_h_tab[i+1]=log10(enth[i]);
-	log_n0_tab[i+1]=log10(nb[i]);
+	log_e_tab[i+1]=log10(eden[i]*conv1*C*C*KSCALE);
+	log_p_tab[i+1]=log10(pres[i]*conv2*KSCALE);
+	vt[i]=1.0/(eden[i]*conv2+pres[i]*conv2);
+	log_n0_tab[i+1]=log10(nb[i]*6.0e23);
       }
 
+      // Compute enthalpy
+      o2scl::interp_vec<vec2_t,std::vector<double> > 
+	rns_itp(pres.size(),pres,vt,itp_linear);
+
+      for(size_t i=0;i<v1.size();i++) {
+	log_h_tab[i+1]=rns_itp.integ(0.0,pres[i])*conv2/conv1;
+      }
+
+      return;
+    }
+
+    /** \brief Use a polytropic EOS with a specified index
+     */
+    void polytrope_eos(double index) {
+      n_P=index;
+      tabulated_eos=false;
       return;
     }
     
@@ -911,20 +932,37 @@ namespace o2scl {
 	\mathrm{g}/\mathrm{cm}^3 \f$ .
     */
     int fix_cent_eden_with_kepler(double cent_eden);
-
-    /*
-      int fix_cent_eden_ang_vel(double cent_eden, double ang_vel);
-      int fix_cent_eden_ang_mom(double cent_eden, double ang_mom);
-      template<class vec_t> int grid_cent_eden(vec_t &cent_eden);
-    */
     
-    /** \brief Function representing old main() function from 
-	RNS v1.1d
+    /** \brief Construct a non-rotating configuration with a fixed central 
+	energy density
+	
+	The central energy density should be in \f$
+	\mathrm{g}/\mathrm{cm}^3 \f$ .
     */
-    int run(int argc, char const **argv);
-    //@}
+    int fix_cent_eden_non_rot(double cent_eden);
 
-    /// \name Testing functions
+    /** \brief Construct a configuration with a fixed central 
+	energy density and a fixed angular velocity.
+	
+	The central energy density should be in \f$
+	\mathrm{g}/\mathrm{cm}^3 \f$.
+    */
+    int fix_cent_eden_ang_vel(double cent_eden, double ang_vel);
+
+    /** \brief Construct a configuration with a fixed central 
+	energy density and a fixed angular momentum.
+	
+	The central energy density should be in \f$
+	\mathrm{g}/\mathrm{cm}^3 \f$.
+    */
+    int fix_cent_eden_ang_mom(double cent_eden, double ang_mom);
+    //@}
+    
+    /** \name Testing functions
+
+	All these compare with hard-coded results obtained with
+	the RNS code. 
+     */
     //@{
     /** \brief Test determining configuration with fixed central
 	energy density and fixed radius ratio with EOS C
@@ -943,43 +981,36 @@ namespace o2scl {
     
     /** \brief Test fixed central energy density and fixed baryonic 
 	mass with EOS C
-	
-	Compares with
-	<tt>rns -f eosC -t rmass -e 1e15 -z 1.55 -d 0</tt>
     */    
     void test4(o2scl::test_mgr &t);
     
     /** \brief Test fixed central energy density and fixed angular
 	velocity with EOS C
-
-	Compares with
-	<tt>rns -f eosC -t omega -e 1e15 -o 0.5 -d 0 </tt>
     */    
     void test5(o2scl::test_mgr &t);
     
     /** \brief Test fixed central energy density and fixed angular 
 	momentum with EOS C
-
-	Compares with
-	<tt>rns -f eosC -t jmoment -e 1e15 -j 1.5 -d 0 </tt>
     */    
     void test6(o2scl::test_mgr &t);
 
     /** \brief Test a series of non-rotating stars on a energy density
 	grid with EOS C
-
-	Compares with
-	<tt>rns -f eosC -t static -e 6e14 -l 2e15 -n 2 -p 2 -d 0</tt>
     */    
     void test7(o2scl::test_mgr &t);
-
+    
     /** \brief Test Keplerian frequency for a polytrope
-
-	Compares with
-	<tt>rns -q poly -N 1.0 -e 0.137 -t kepler -d 0</tt>
-    */    
+     */    
     void test8(o2scl::test_mgr &t);
     //@}
+
+    /// \name Old interface
+    //@{
+    /** \brief Function representing main() function from RNS v1.1d
+     */
+    int run(int argc, char const **argv);
+    //@}
+
 
   };
 

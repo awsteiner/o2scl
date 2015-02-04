@@ -47,7 +47,6 @@
 #include <gsl/gsl_sf_legendre.h>
 
 #include <o2scl/constants.h>
-#include <o2scl/err_hnd.h>
 #include <o2scl/nstar_rot.h>
 
 using namespace std;
@@ -77,11 +76,14 @@ nstar_rot::nstar_rot() {
   print_option=1;  
   cf=1.0;
   print_dif=1;
-  accuracy=1e-5;    
-  fix_error=1e-4;   
+  accuracy=1.0e-5;    
+  fix_error=1.0e-4;   
  
   CL_LOW=false;
   tabulated_eos=true;
+
+  // Default polytropic index
+  n_P=1.0;
 
   // Create the computational mesh for variables "s" and "mu=cos theta"
   make_grid();
@@ -175,7 +177,7 @@ double nstar_rot::interp(double xp[], double yp[], int np, double xb) {
   if (max<k) k=max;
 
   if (xb==xp[k] || xb==xp[k+1] || xb==xp[k+2] || xb==xp[k+3]) {
-    xb+=1e-12;
+    xb+=1.0e-12;
   }
   
   y=(xb-xp[k+1])*(xb-xp[k+2])*(xb-xp[k+3])*yp[k]/
@@ -197,7 +199,7 @@ double nstar_rot::interp_4_k(double xp[], double yp[], int np, double xb,
   double y;     
 
   if (xb==xp[k] ||  xb==xp[k+1] || xb==xp[k+2] || xb==xp[k+3]) {
-    xb+=1e-14;
+    xb+=1.0e-14;
   }
   
   y=(xb-xp[k+1])*(xb-xp[k+2])*(xb-xp[k+3])*yp[k]/
@@ -2791,8 +2793,8 @@ void nstar_rot::h_model(void) {
     else {
       comp();
       if (h_plus>0.0) {
-	d_h=h_plus/1e5;
-	diff_h=h_plus/1e5;
+	d_h=h_plus/1.0e5;
+	diff_h=h_plus/1.0e5;
       } 
       else {
 	d_h= -1.0;
@@ -3100,7 +3102,7 @@ int nstar_rot::run(int argc, char const **argv) {
     r_ratio=0.75;
     M_fix=1.4*MSUN;
     M_0const=1.4*MSUN;
-    Omega_const=1e-5;
+    Omega_const=1.0e-5;
     J_const=0.0;
   } else {
 
@@ -3110,7 +3112,7 @@ int nstar_rot::run(int argc, char const **argv) {
     r_ratio=0.58447265625;
     M_fix=0.1;
     M_0const=0.1;
-    Omega_const=1e-5;
+    Omega_const=1.0e-5;
     J_const=0.0;
     
   }
@@ -3176,7 +3178,7 @@ int nstar_rot::run(int argc, char const **argv) {
 	break;
       case 'u':
 	sscanf(argv[i+1],"%lf",&n0_match);
-	n0_match*=1e39;
+	n0_match*=1.0e39;
 	break;
 
       case 'y':
@@ -3364,7 +3366,7 @@ int nstar_rot::run(int argc, char const **argv) {
 	  make_center(e_center);
 	  guess();
 	  //printf("M=%8.7e  R=%8.7e  Z=%8.7e\n",Mass/MSUN,
-	  //R_e/1e5,Z_p);   
+	  //R_e/1.0e5,Z_p);   
           
 	  break;
 
@@ -3409,14 +3411,8 @@ int nstar_rot::fix_cent_eden_axis_rat(double cent_eden, double axis_rat) {
   int task_option;
 
   double e_min;
-  double e_max;
-  double a;
   double M_fix;
  
-  /* DEFAULT POLYTROPIC EOS PARAMETERS */
-
-  n_P=1.0;
-  
   if (tabulated_eos==true) {
     e_surface=7.8*C*C*KSCALE;
     p_surface=1.01e8*KSCALE;
@@ -3440,22 +3436,20 @@ int nstar_rot::fix_cent_eden_axis_rat(double cent_eden, double axis_rat) {
 
     /* set default values for star with tabulated eos */
     e_min=2.66e15*C*C*KSCALE;
-    e_max=1e16*C*C*KSCALE;
     r_ratio=0.75;
     M_fix=1.4*MSUN;
     M_0const=1.4*MSUN;
-    Omega_const=1e-5;
+    Omega_const=1.0e-5;
     J_const=0.0;
 
   } else {
 
     /* set default values for polytropic star */
     e_min=0.34;
-    e_max=0.5;
     r_ratio=0.58447265625;
     M_fix=0.1;
     M_0const=0.1;
-    Omega_const=1e-5;
+    Omega_const=1.0e-5;
     J_const=0.0;
     
   }
@@ -3504,14 +3498,8 @@ int nstar_rot::fix_cent_eden_with_kepler(double cent_eden) {
   int task_option;
 
   double e_min;
-  double e_max;
-  double a;
   double M_fix;
  
-  /* DEFAULT POLYTROPIC EOS PARAMETERS */
-
-  n_P=1.0;
-  
   if (tabulated_eos==true) {
     e_surface=7.8*C*C*KSCALE;
     p_surface=1.01e8*KSCALE;
@@ -3535,22 +3523,20 @@ int nstar_rot::fix_cent_eden_with_kepler(double cent_eden) {
 
     /* set default values for star with tabulated eos */
     e_min=2.66e15*C*C*KSCALE;
-    e_max=1e16*C*C*KSCALE;
     r_ratio=0.75;
     M_fix=1.4*MSUN;
     M_0const=1.4*MSUN;
-    Omega_const=1e-5;
+    Omega_const=1.0e-5;
     J_const=0.0;
 
   } else {
 
     /* set default values for polytropic star */
     e_min=0.34;
-    e_max=0.5;
     r_ratio=0.58447265625;
     M_fix=0.1;
     M_0const=0.1;
-    Omega_const=1e-5;
+    Omega_const=1.0e-5;
     J_const=0.0;
     
   }
@@ -3581,21 +3567,15 @@ int nstar_rot::fix_cent_eden_with_kepler(double cent_eden) {
   return 0;
 }
 
-int nstar_rot::fix_cent_eden_grav_mass(double cent_eden, double grav_mass) {
+int nstar_rot::fix_cent_eden_non_rot(double cent_eden) {
 
   int i;
   int j;
   int task_option;
 
   double e_min;
-  double e_max;
-  double a;
   double M_fix;
  
-  /* DEFAULT POLYTROPIC EOS PARAMETERS */
-
-  n_P=1.0;
-  
   if (tabulated_eos==true) {
     e_surface=7.8*C*C*KSCALE;
     p_surface=1.01e8*KSCALE;
@@ -3619,22 +3599,98 @@ int nstar_rot::fix_cent_eden_grav_mass(double cent_eden, double grav_mass) {
 
     /* set default values for star with tabulated eos */
     e_min=2.66e15*C*C*KSCALE;
-    e_max=1e16*C*C*KSCALE;
     r_ratio=0.75;
     M_fix=1.4*MSUN;
     M_0const=1.4*MSUN;
-    Omega_const=1e-5;
+    Omega_const=1.0e-5;
     J_const=0.0;
 
   } else {
 
     /* set default values for polytropic star */
     e_min=0.34;
-    e_max=0.5;
     r_ratio=0.58447265625;
     M_fix=0.1;
     M_0const=0.1;
-    Omega_const=1e-5;
+    Omega_const=1.0e-5;
+    J_const=0.0;
+    
+  }
+
+  e_min=cent_eden;
+  if (tabulated_eos==true) {
+    e_min*=C*C*KSCALE;
+  }
+  print_option=0;
+  print_dif=0;
+  
+  Gamma_P=1.0+1.0/n_P;
+
+  if (CL_LOW==true) {
+    n_nearest=n_tab/2;
+    e_match=pow(10.0,interp(log_n0_tab,log_e_tab,n_tab,log10(n0_match)));
+    p_match=pow(10.0,interp(log_n0_tab,log_p_tab,n_tab,log10(n0_match)));
+    h_match=pow(10.0,interp(log_n0_tab,log_h_tab,n_tab,log10(n0_match)));
+   
+    if (e_cl != 0.0) de_pt=e_cl - e_match;   
+  }
+
+  r_ratio=1.0;
+  e_center=e_min;
+  make_center(e_center);
+  guess();
+  iterate(r_ratio);
+  comp();
+  
+  return 0;
+}
+
+int nstar_rot::fix_cent_eden_grav_mass(double cent_eden, double grav_mass) {
+
+  int i;
+  int j;
+  int task_option;
+
+  double e_min;
+  double M_fix;
+ 
+  if (tabulated_eos==true) {
+    e_surface=7.8*C*C*KSCALE;
+    p_surface=1.01e8*KSCALE;
+    enthalpy_min=1.0/(C*C);
+  } else {
+    e_surface=0.0;
+    p_surface=0.0;
+    enthalpy_min=0.0;
+  }
+
+  if (tabulated_eos==true) {
+
+    /* load the equation of state file */
+    //load_eos(file_name);
+
+    if (CL_LOW==true) {
+      n0_match=1.0e38;
+      e_cl=0.0; 
+      de_pt=0.0;
+    }
+
+    /* set default values for star with tabulated eos */
+    e_min=2.66e15*C*C*KSCALE;
+    r_ratio=0.75;
+    M_fix=1.4*MSUN;
+    M_0const=1.4*MSUN;
+    Omega_const=1.0e-5;
+    J_const=0.0;
+
+  } else {
+
+    /* set default values for polytropic star */
+    e_min=0.34;
+    r_ratio=0.58447265625;
+    M_fix=0.1;
+    M_0const=0.1;
+    Omega_const=1.0e-5;
     J_const=0.0;
     
   }
@@ -3676,14 +3732,8 @@ int nstar_rot::fix_cent_eden_bar_mass(double cent_eden, double bar_mass) {
   int task_option;
 
   double e_min;
-  double e_max;
-  double a;
   double M_fix;
  
-  /* DEFAULT POLYTROPIC EOS PARAMETERS */
-
-  n_P=1.0;
-  
   if (tabulated_eos==true) {
     e_surface=7.8*C*C*KSCALE;
     p_surface=1.01e8*KSCALE;
@@ -3707,22 +3757,20 @@ int nstar_rot::fix_cent_eden_bar_mass(double cent_eden, double bar_mass) {
 
     /* set default values for star with tabulated eos */
     e_min=2.66e15*C*C*KSCALE;
-    e_max=1e16*C*C*KSCALE;
     r_ratio=0.75;
     M_fix=1.4*MSUN;
     M_0const=1.4*MSUN;
-    Omega_const=1e-5;
+    Omega_const=1.0e-5;
     J_const=0.0;
 
   } else {
 
     /* set default values for polytropic star */
     e_min=0.34;
-    e_max=0.5;
     r_ratio=0.58447265625;
     M_fix=0.1;
     M_0const=0.1;
-    Omega_const=1e-5;
+    Omega_const=1.0e-5;
     J_const=0.0;
     
   }
@@ -3752,6 +3800,164 @@ int nstar_rot::fix_cent_eden_bar_mass(double cent_eden, double bar_mass) {
   e_center=e_min;
   M_0_error=fix_error;
   m0_model(M_0const);
+
+  return 0;
+}
+
+int nstar_rot::fix_cent_eden_ang_vel(double cent_eden, double ang_vel) {
+
+  int i;
+  int j;
+  int task_option;
+
+  double e_min;
+  double M_fix;
+ 
+  if (tabulated_eos==true) {
+    e_surface=7.8*C*C*KSCALE;
+    p_surface=1.01e8*KSCALE;
+    enthalpy_min=1.0/(C*C);
+  } else {
+    e_surface=0.0;
+    p_surface=0.0;
+    enthalpy_min=0.0;
+  }
+
+  if (tabulated_eos==true) {
+
+    /* load the equation of state file */
+    //load_eos(file_name);
+
+    if (CL_LOW==true) {
+      n0_match=1.0e38;
+      e_cl=0.0; 
+      de_pt=0.0;
+    }
+
+    /* set default values for star with tabulated eos */
+    e_min=2.66e15*C*C*KSCALE;
+    r_ratio=0.75;
+    M_fix=1.4*MSUN;
+    M_0const=1.4*MSUN;
+    Omega_const=1.0e-5;
+    J_const=0.0;
+
+  } else {
+
+    /* set default values for polytropic star */
+    e_min=0.34;
+    r_ratio=0.58447265625;
+    M_fix=0.1;
+    M_0const=0.1;
+    Omega_const=1.0e-5;
+    J_const=0.0;
+    
+  }
+
+  e_min=cent_eden;
+  if (tabulated_eos==true) {
+    e_min*=C*C*KSCALE;
+  }
+  Omega_const=ang_vel;
+  if (tabulated_eos==true) {
+    Omega_const*=1.0e4;
+  }
+  print_option=0;
+  print_dif=0;
+  
+  Gamma_P=1.0+1.0/n_P;
+
+  if (CL_LOW==true) {
+    n_nearest=n_tab/2;
+    e_match=pow(10.0,interp(log_n0_tab,log_e_tab,n_tab,log10(n0_match)));
+    p_match=pow(10.0,interp(log_n0_tab,log_p_tab,n_tab,log10(n0_match)));
+    h_match=pow(10.0,interp(log_n0_tab,log_h_tab,n_tab,log10(n0_match)));
+   
+    if (e_cl != 0.0) de_pt=e_cl - e_match;   
+  }
+
+  omega_error=fix_error;
+  e_center=e_min;
+  omega_model(Omega_const);
+
+  return 0;
+}
+
+int nstar_rot::fix_cent_eden_ang_mom(double cent_eden, double ang_mom) {
+
+  int i;
+  int j;
+  int task_option;
+
+  double e_min;
+  double M_fix;
+ 
+  if (tabulated_eos==true) {
+    e_surface=7.8*C*C*KSCALE;
+    p_surface=1.01e8*KSCALE;
+    enthalpy_min=1.0/(C*C);
+  } else {
+    e_surface=0.0;
+    p_surface=0.0;
+    enthalpy_min=0.0;
+  }
+
+  if (tabulated_eos==true) {
+
+    /* load the equation of state file */
+    //load_eos(file_name);
+
+    if (CL_LOW==true) {
+      n0_match=1.0e38;
+      e_cl=0.0; 
+      de_pt=0.0;
+    }
+
+    /* set default values for star with tabulated eos */
+    e_min=2.66e15*C*C*KSCALE;
+    r_ratio=0.75;
+    M_fix=1.4*MSUN;
+    M_0const=1.4*MSUN;
+    Omega_const=1.0e-5;
+    J_const=0.0;
+
+  } else {
+
+    /* set default values for polytropic star */
+    e_min=0.34;
+    r_ratio=0.58447265625;
+    M_fix=0.1;
+    M_0const=0.1;
+    Omega_const=1.0e-5;
+    J_const=0.0;
+    
+  }
+
+  e_min=cent_eden;
+  if (tabulated_eos==true) {
+    e_min*=C*C*KSCALE;
+  }
+  J_const=ang_mom;
+  if (tabulated_eos==true) {
+    J_const*=G*MSUN*MSUN/C;
+  }
+  print_option=0;
+  print_dif=0;
+  
+  Gamma_P=1.0+1.0/n_P;
+
+  if (CL_LOW==true) {
+    n_nearest=n_tab/2;
+    e_match=pow(10.0,interp(log_n0_tab,log_e_tab,n_tab,log10(n0_match)));
+    p_match=pow(10.0,interp(log_n0_tab,log_p_tab,n_tab,log10(n0_match)));
+    h_match=pow(10.0,interp(log_n0_tab,log_h_tab,n_tab,log10(n0_match)));
+   
+    if (e_cl != 0.0) de_pt=e_cl - e_match;   
+  }
+
+  J_error=fix_error;
+  e_center=e_min;
+  if (J_model(J_const)!=0) return 1;
 
   return 0;
 }
@@ -3845,19 +4051,9 @@ void nstar_rot::test3(o2scl::test_mgr &t) {
 
 void nstar_rot::test4(o2scl::test_mgr &t) {
 
-  static const int narr=13;
-  std::string arr[narr]={"rns","-f","nst_eos/eosC","-t","rmass","-e","1e15",
-			 "-z","1.55","-d","0","-p","0"};
-  
-  const char *carr[narr];
-  for(int i=0;i<narr;i++) {
-    carr[i]=arr[i].c_str();
-  }
-  run(narr,carr);
-
-  //constants_rns();
-  //eosC();
-  //fix_cent_eden_bar_mass(1.0e15,1.55);
+  constants_rns();
+  eosC();
+  fix_cent_eden_bar_mass(1.0e15,1.55);
 
   t.test_rel(e_center,1.0,2.0e-6,"1");
   t.test_rel(Mass/MSUN,1.41870,4.0e-6,"2");
@@ -3884,15 +4080,9 @@ void nstar_rot::test4(o2scl::test_mgr &t) {
 
 void nstar_rot::test5(o2scl::test_mgr &t) {
 
-  static const int narr=13;
-  std::string arr[narr]={"rns","-f","nst_eos/eosC","-t","omega","-e","1e15",
-			 "-o","0.5","-d","0","-p","0"};
-  
-  const char *carr[narr];
-  for(int i=0;i<narr;i++) {
-    carr[i]=arr[i].c_str();
-  }
-  run(narr,carr);
+  constants_rns();
+  eosC();
+  fix_cent_eden_ang_vel(1.0e15,0.5);
 
   t.test_rel(e_center,1.0,2.0e-6,"1");
   t.test_rel(Mass/MSUN,1.45222,4.0e-6,"2");
@@ -3919,15 +4109,9 @@ void nstar_rot::test5(o2scl::test_mgr &t) {
 
 void nstar_rot::test6(o2scl::test_mgr &t) {
 
-  static const int narr=13;
-  std::string arr[narr]={"rns","-f","nst_eos/eosC","-t","jmoment","-e","1e15",
-			 "-j","1.5","-p","0","-d","0"};
-  
-  const char *carr[narr];
-  for(int i=0;i<narr;i++) {
-    carr[i]=arr[i].c_str();
-  }
-  run(narr,carr);
+  constants_rns();
+  eosC();
+  fix_cent_eden_ang_mom(1.0e15,1.5);
 
   t.test_rel(e_center,1.0,2.0e-6,"1");
   t.test_rel(Mass/MSUN,1.57929,2.0e-6,"2");
@@ -3954,15 +4138,9 @@ void nstar_rot::test6(o2scl::test_mgr &t) {
 
 void nstar_rot::test7(o2scl::test_mgr &t) {
 
-  static const int narr=15;
-  std::string arr[narr]={"rns","-f","nst_eos/eosC","-t","static","-e","6e14",
-			 "-l","2e15","-n","2","-p","0","-d","0"};
-  
-  const char *carr[narr];
-  for(int i=0;i<narr;i++) {
-    carr[i]=arr[i].c_str();
-  }
-  run(narr,carr);
+  constants_rns();
+  eosC();
+  fix_cent_eden_non_rot(2.0e15);
 
   t.test_rel(e_center,2.0,2.0e-6,"1");
   t.test_rel(Mass/MSUN,1.79249,2.0e-6,"2");
@@ -3989,18 +4167,9 @@ void nstar_rot::test7(o2scl::test_mgr &t) {
 
 void nstar_rot::test8(o2scl::test_mgr &t) {
 
-  // The equivalent of "rns -q poly -N 1.0 -e 0.137 -t kepler -d 0"
-  static const int narr=11;
-  std::string arr[narr]={"rns","-N","1.0","-e","0.137",
-			 "-t","kepler","-p","0","-d","0"};
+  polytrope_eos(1.0);
+  fix_cent_eden_with_kepler(0.137);
   
-  const char *carr[narr];
-  for(int i=0;i<narr;i++) {
-    carr[i]=arr[i].c_str();
-  }
-  tabulated_eos=false;
-  run(narr,carr);
-
   t.test_rel(e_center,0.137,2.0e-6,"1");
   t.test_rel(Mass,0.167269,2.0e-6,"2");
   t.test_rel(Mass_0,0.180264,2.0e-6,"3");
