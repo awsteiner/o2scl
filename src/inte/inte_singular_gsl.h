@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2014, Jerry Gagelman
+  Copyright (C) 2006-2015, Jerry Gagelman
   and Andrew W. Steiner
   
   This file is part of O2scl.

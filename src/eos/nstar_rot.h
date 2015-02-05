@@ -3,7 +3,7 @@
   
   This file is part of O2scl. It has been adapted from RNS v1.1d
   written by N. Stergioulas and S. Morsink. The modifications made in
-  this version from the original are copyright (C) 2014, Andrew W.
+  this version from the original are copyright (C) 2015, Andrew W.
   Steiner.
   
   O2scl is free software; you can redistribute it and/or modify
@@ -66,6 +66,8 @@
 #include <o2scl/search_vec.h>
 #include <o2scl/test_mgr.h>
 #include <o2scl/root_bkt_cern.h>
+#include <o2scl/lib_settings.h>
+#include <o2scl/interp.h>
 
 namespace o2scl {
 
@@ -96,7 +98,7 @@ namespace o2scl {
       useful. See \ref Bonazzola73, \ref Bonazzola94, \ref Cook92,
       \ref Cook94, \ref Friedman88, \ref Gourgoulhon94, \ref
       Komatsu89, \ref Laarakkers99, \ref Nozawa98, \ref Stergioulas95,
-      and \ref Stergioulas03
+      and \ref Stergioulas03 .
 
       \todo Better documentation is needed everywhere.
 
@@ -722,6 +724,8 @@ namespace o2scl {
     int J_model(double J_const);
     //@}
 
+  public:
+    
     /// \name Tabulated EOS
     //@{
     /** \brief If true, use a tabulated EOS (default true)
@@ -739,8 +743,6 @@ namespace o2scl {
     double log_n0_tab[201];              
     //@}
 
-  public:
-    
     nstar_rot();
 
     /// \name Output
@@ -851,41 +853,65 @@ namespace o2scl {
 
     /// \name Basic Usage
     //@{
-    /** \brief Set the EOS from four vectors
+    /** \brief Set the EOS from four vectors in the native unit system
+     */
+    template<class vec1_t, class vec2_t, class vec3_t, class vec4_t>
+      void set_eos_native(vec1_t &eden, vec2_t &pres, vec3_t &enth,
+			  vec4_t &nb) {
+
+      n_tab=eden.size();
+
+      for(int i=1;i<=n_tab;i++) {  
+	log_e_tab[i]=log10(eden[i-1]*C*C*KSCALE);
+	log_p_tab[i]=log10(pres[i-1]*KSCALE);
+	log_h_tab[i]=log10(enth[i-1]/(C*C));
+	log_n0_tab[i]=log10(nb[i-1]);
+      }
+      
+      return;
+    }
+    
+    /** \brief Set the EOS from energy density, pressure, and
+	baryon density stored in powers of \f$ \mathrm{fm} \f$ .
      */
     template<class vec1_t, class vec2_t, class vec3_t>
-      void set_eos(vec1_t &eden, vec2_t &pres, vec3_t &nb) {
-      
+      void set_eos_fm(size_t n, vec1_t &eden, vec2_t &pres, vec3_t &nb) {
+
+      if (n>200) {
+	O2SCL_ERR2("Too many EOS points in ",
+		   "nstar_rot::set_eos().",o2scl::exc_einval);
+      }
+
+      // Conversion factor for energy density
       double conv1=o2scl_settings.get_convert_units().convert
 	("1/fm^4","g/cm^3",1.0);
+      // Conversion factor for pressure
       double conv2=o2scl_settings.get_convert_units().convert
 	("1/fm^4","dyne/cm^2",1.0);
       
       tabulated_eos=true;
-      if (eden.size()>200) {
-	O2SCL_ERR2("Too many EOS points in ",
-		   "nstar_rot::set_eos().",o2scl::exc_einval);
-      }
-      n_tab=eden.size();
+      n_tab=n;
 
-            // 1/(e+P) in units of dyn/cm^2
-      vt.push_back(1.0/(ed_cgs*(conv2/conv1)+pr_cgs));
-
-      std::vector<double> vt;
+      // Temporary vector for the enthalpy integrand
+      std::vector<double> vt(n_tab);
       
       for(size_t i=0;i<n_tab;i++) {
+
+	// Store energy density, pressure, and baryon density
 	log_e_tab[i+1]=log10(eden[i]*conv1*C*C*KSCALE);
 	log_p_tab[i+1]=log10(pres[i]*conv2*KSCALE);
-	vt[i]=1.0/(eden[i]*conv2+pres[i]*conv2);
-	log_n0_tab[i+1]=log10(nb[i]*6.0e23);
+	log_n0_tab[i+1]=log10(nb[i]*1.0e39);
+
+	// The integrand for the enthalpy
+	vt[i]=1.0/(eden[i]+pres[i]);
       }
 
       // Compute enthalpy
       o2scl::interp_vec<vec2_t,std::vector<double> > 
-	rns_itp(pres.size(),pres,vt,itp_linear);
+	rns_itp(n_tab,pres,vt,itp_linear);
 
-      for(size_t i=0;i<v1.size();i++) {
-	log_h_tab[i+1]=rns_itp.integ(0.0,pres[i])*conv2/conv1;
+      for(size_t i=0;i<n_tab;i++) {
+	log_h_tab[i+1]=log10(rns_itp.integ(0.0,pres[i]));
       }
 
       return;
