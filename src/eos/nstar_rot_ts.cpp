@@ -28,28 +28,13 @@
 #include <o2scl/nstar_rot.h>
 #include <o2scl/eos_had_skyrme.h>
 #include <o2scl/nstar_cold.h>
+#include <o2scl/hdf_eos_io.h>
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
 typedef boost::numeric::ublas::vector<double> ubvector;
-
-int load_sly4(eos_had_skyrme &sk) {
-  sk.t0=-2488.913/hc_mev_fm;
-  sk.t1=486.818/hc_mev_fm;
-  sk.t2=-546.395/hc_mev_fm;
-  sk.t3=13777.0/hc_mev_fm;
-  sk.x0=0.8340;
-  sk.x1=-0.3438;
-  sk.x2=-1.0; 
-  sk.x3=1.3540;
-  sk.a=0.0;
-  sk.b=1.0;
-  sk.alpha=0.1666666666667;
-  sk.W0=123/hc_mev_fm;
-  return 0;
-}
 
 int main(void) {
 
@@ -71,21 +56,34 @@ int main(void) {
   nst.test8(t);
 
   eos_had_skyrme sk;
-  load_sly4(sk);
+  o2scl_hdf::skyrme_load(sk,"Gs");
+
   nstar_cold nco;
   nco.def_tov.verbose=0;
   nco.set_eos(sk);
+
+  // Compute the Skyrme EOS in beta-equilibrium
   nco.calc_eos();
-  nco.calc_nstar();
-  
   o2_shared_ptr<table_units<> >::type eos=nco.get_eos_results();
+
+  // Evalulate the mass-radius curve
+  nco.calc_nstar();
   o2_shared_ptr<table_units<> >::type mvsr=nco.get_tov_results();
 
+  // Lookup the central energy density of a 1.4 Msun neutron star
+  // in g/cm^3
+  convert_units &cu=o2scl_settings.get_convert_units();
+  double ed_cent=mvsr->get("ed",mvsr->lookup("gm",1.4));
+  ed_cent=cu.convert("1/fm^4","g/cm^3",ed_cent);
+
+  // Send the EOS to the nstar_rot object
   nst.set_eos_fm(eos->get_nlines(),(*eos)["ed"],(*eos)["pr"],(*eos)["nb"]);
 
-  //cout << "Here." << endl;
-  //nst.fix_cent_eden_non_rot(1.0e15);
-  //cout << nst.Mass << endl;
+  // Compute the mass of the non-rotating configuration with the
+  // same energy density
+  nst.fix_cent_eden_non_rot(ed_cent);
+  // Compare with with the answer from nstar_rot
+  t.test_rel(nst.Mass/nst.MSUN,1.4,0.015,"correct mass");
 
   t.report();
   

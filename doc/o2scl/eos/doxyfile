@@ -769,9 +769,9 @@ WARN_LOGFILE = doxygen.log
 # files or directories with spaces. Note: If this tag is empty the
 # current directory is searched.
 
-INPUT = . ../../../src/eos main.dox hadronic.dox quark.dox 
-INPUT += tov.dox cold_ns.dox rmf_nuc.dox bps.dox sneos.dox refs.dox todos.dox
-INPUT += ../../../examples/ex_eos_had_apr.cpp 
+INPUT = . ../../../src/eos main.dox hadronic.dox quark.dox rot.dox
+INPUT += tov.dox cold_ns.dox rmf_nuc.dox bps.dox sneos.dox refs.dox 
+INPUT += todos.dox ../../../examples/ex_eos_had_apr.cpp 
 INPUT += ../../../examples/ex_eos_had_skyrme.cpp 
 
 # This tag can be used to specify the character encoding of the source

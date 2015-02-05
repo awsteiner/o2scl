@@ -47,6 +47,7 @@
     - \subpage quark_matter
     - \subpage tovtoc
     - \subpage cnstar
+    - \subpage rotpage
     - \subpage bps_section
     - \subpage nucleus_rmf_section
     - \subpage sneos_section

@@ -202,6 +202,8 @@ int main(void) {
     t.test_rel(dm.eta_n*dm.dist[i].N+dm.eta_p*dm.dist[i].Z,
 	       dm.eta_nuc[i],1.0e-3,"NSE 2");
   }
+
+#ifdef O2SCL_NEVER_DEFINED
   
   nse.calc_density_noneq(dm);
   nse.calc_density_fixnp(dm);
@@ -231,6 +233,8 @@ int main(void) {
 
     nse.bracket_mu_solve(mun_low,mun_high,mup_low,mup_high,dm);
   }
+  
+#endif
   
   t.report();
   return 0;
