@@ -53,11 +53,11 @@
   
   -------------------------------------------------------------------
 */
-/** \file nstar_rot.h
-    \brief File defining \ref o2scl::nstar_rot
+/** \file nstar_rot2.h
+    \brief File defining \ref o2scl::nstar_rot2
 */
-#ifndef NSTAR_ROT_H
-#define NSTAR_ROT_H
+#ifndef NSTAR_ROT2_H
+#define NSTAR_ROT2_H
 
 #include <cmath>
 #include <iostream>
@@ -68,8 +68,190 @@
 #include <o2scl/root_bkt_cern.h>
 #include <o2scl/lib_settings.h>
 #include <o2scl/interp.h>
+#include <o2scl/eos_tov.h>
 
 namespace o2scl {
+  
+  /** \brief An EOS for \ref nstar_rot2
+   */
+  class eos_nstar_rot : public eos_tov {
+    
+  public:
+
+    /** \brief From the pressure, return the enthalpy
+     */
+    virtual double enth_from_pr(double pr)=0;
+
+    /** \brief From the enthalpy, return the pressure
+     */
+    virtual double pr_from_enth(double enth)=0;
+
+    /** \brief From the baryon density, return the enthalpy
+     */
+    virtual double enth_from_nb(double nb)=0;
+
+    void ed_nb_from_pr(double pr, double &ed, double &nb) {
+      return;
+    }
+  };
+  
+  /** \brief
+   */
+  class eos_nstar_rot_interp : public eos_nstar_rot {
+    
+  protected:
+
+    /// Array search object
+    o2scl::search_vec<double *> sv;
+    
+    /// Search in array \c x of length \c n for value \c val
+    int new_search(int n, double *x, double val);
+
+    /** \brief Cache for interpolation
+     */
+    int n_nearest;
+    
+    /** \brief number of tabulated EOS points */
+    int n_tab;                           
+    /** \brief rho points in tabulated EOS */
+    double log_e_tab[201];               
+    /** \brief p points in tabulated EOS */
+    double log_p_tab[201];               
+    /** \brief h points in EOS file */
+    double log_h_tab[201];               
+    /** \brief number density in EOS file */  
+    double log_n0_tab[201];              
+    
+    /** \brief Speed of light in vacuum (in CGS units) */ 
+    double C;
+    /** \brief Gravitational constant (in CGS units) */ 
+    double G;
+    /** \brief Square of length scale in CGS units, 
+	\f$ \kappa \equiv 10^{-15} c^2/G \f$
+    */
+    double KAPPA;
+    /** \brief The value \f$ \kappa G c^{-4} \f$ */
+    double KSCALE;
+    
+    /** \brief Driver for the interpolation routine. 
+	
+	First we find the tab. point nearest to xb, then we
+	interpolate using four points around xb.
+    */  
+    double interp(double xp[], double yp[], int np, double xb);
+    
+  public:
+    
+    eos_nstar_rot_interp();
+    
+    /** \brief Set the EOS from four vectors in the native unit system
+     */
+    template<class vec1_t, class vec2_t, class vec3_t, class vec4_t>
+      void set_eos_native(vec1_t &eden, vec2_t &pres, vec3_t &enth,
+			  vec4_t &nb) {
+      
+      double C=o2scl_cgs::speed_of_light;
+      double G=o2scl_cgs::gravitational_constant;
+      double KAPPA=1.0e-15*C*C/G;
+      double KSCALE=KAPPA*G/(C*C*C*C);
+  
+      n_tab=eden.size();
+
+      for(int i=1;i<=n_tab;i++) {  
+	log_e_tab[i]=log10(eden[i-1]*C*C*KSCALE);
+	log_p_tab[i]=log10(pres[i-1]*KSCALE);
+	log_h_tab[i]=log10(enth[i-1]/(C*C));
+	log_n0_tab[i]=log10(nb[i-1]);
+      }
+      
+      return;
+    }
+
+    /** \brief Set the EOS from energy density, pressure, and
+	baryon density stored in powers of \f$ \mathrm{fm} \f$ .
+    */
+    template<class vec1_t, class vec2_t, class vec3_t>
+      void set_eos_fm(size_t n, vec1_t &eden, vec2_t &pres, vec3_t &nb) {
+      
+      if (n>200) {
+	O2SCL_ERR2("Too many EOS points in ",
+		   "nstar_rot::set_eos().",o2scl::exc_einval);
+      }
+
+      // Conversion factor for energy density
+      double conv1=o2scl_settings.get_convert_units().convert
+	("1/fm^4","g/cm^3",1.0);
+      // Conversion factor for pressure
+      double conv2=o2scl_settings.get_convert_units().convert
+	("1/fm^4","dyne/cm^2",1.0);
+      
+      n_tab=n;
+
+      double mu0=(eden[0]+pres[0])/nb[0];
+      double mu1=(eden[1]+pres[1])/nb[1];
+      double mu_start=2.0*mu0-mu1;
+      
+      for(size_t i=0;i<n_tab;i++) {
+	log_e_tab[i+1]=log10(eden[i]*conv1*C*C*KSCALE);
+	log_p_tab[i+1]=log10(pres[i]*conv2*KSCALE);
+	log_n0_tab[i+1]=log10(nb[i]*1.0e39);
+	log_h_tab[i+1]=log10(log((eden[i]+pres[i])/nb[i])-log(mu_start));
+      }
+
+      return;
+    }
+
+    /** \brief From the pressure, return the energy density
+     */
+    virtual double ed_from_pr(double pr);
+
+    /** \brief From the energy density, return the pressure
+     */
+    virtual double pr_from_ed(double ed);
+
+    /** \brief From the pressure, return the baryon density
+     */
+    virtual double nb_from_pr(double pr);
+
+    /** \brief From the baryon density, return the pressure
+     */
+    virtual double pr_from_nb(double nb);
+
+    /** \brief From the baryon density, return the energy density
+     */
+    virtual double ed_from_nb(double nb);
+
+    /** \brief From the energy density, return the baryon density
+     */
+    virtual double nb_from_ed(double ed);
+
+    /** \brief From the pressure, return the enthalpy
+     */
+    virtual double enth_from_pr(double pr);
+
+    /** \brief From the baryon density, return the enthalpy
+     */
+    virtual double enth_from_nb(double nb);
+
+    /** \brief From the enthalpy, return the pressure
+     */
+    virtual double pr_from_enth(double enth);
+
+  };
+  
+  /** \brief EOS C
+   */
+  class eos_nstar_rot_C : public eos_nstar_rot_interp {
+  public:
+    eos_nstar_rot_C();
+  };
+  
+  /** \brief EOS L
+   */
+  class eos_nstar_rot_L : public eos_nstar_rot_interp {
+  public:
+    eos_nstar_rot_L();
+  };
   
   /** \brief Rotating neutron star class based on RNS v1.1d from
       N. Stergioulas et al.
@@ -183,7 +365,7 @@ namespace o2scl {
       \comment
       
   */
-  class nstar_rot {
+  class nstar_rot2 {
   
  public:    
   
@@ -193,12 +375,6 @@ namespace o2scl {
   static const int SDIV=129;
   /// The number of Legendre polynomials
   static const int LMAX=10;
-
-  /** \brief Compute \f$ P(\varepsilon) \f$  
-	
-      Used in \ref make_center() and \ref integrate().
-  */
-  double p_at_e(double ee);
 
   protected:
 
@@ -590,6 +766,12 @@ namespace o2scl {
   */
   double e_at_p(double pp);
 
+  /** \brief Compute \f$ P(\varepsilon) \f$  
+	
+      Used in \ref make_center() and \ref integrate().
+  */
+  double p_at_e(double ee);
+
   /** \brief Pressure at fixed enthalpy
 
       Used in \ref iterate().
@@ -724,27 +906,24 @@ namespace o2scl {
   int J_model(double J_const);
   //@}
 
-  public:
-    
-  /// \name Tabulated EOS
-  //@{
-  /** \brief If true, use a tabulated EOS (default true)
+  /** \brief
+   */
+  bool eos_set;
+  
+  /** \brief
    */
   bool tabulated_eos;
-  /** \brief number of tabulated EOS points */
-  int n_tab;                           
-  /** \brief rho points in tabulated EOS */
-  double log_e_tab[201];               
-  /** \brief p points in tabulated EOS */
-  double log_p_tab[201];               
-  /** \brief h points in EOS file */
-  double log_h_tab[201];               
-  /** \brief number density in EOS file */  
-  double log_n0_tab[201];              
-  //@}
 
-  nstar_rot();
+  /** \brief Desc
+   */
+  eos_nstar_rot *eosp;
+  
+  public:
 
+  nstar_rot2();
+
+  /** \brief Desc
+   */
   int verbose;
 
   /// \name Output
@@ -848,74 +1027,19 @@ namespace o2scl {
   /// \name Hard-coded EOSs
   //@{
   /// Bethe-Johnson model, NPA 230 (1974) 1
-  void eosC();
+  //void eosC();
   /// Pandharipande and Smith, NPA 175 (1975) 225.
-  void eosL();
+  //void eosL();
   //@}
 
   /// \name Basic Usage
   //@{
-  /** \brief Set the EOS from four vectors in the native unit system
+  /** \brief Set the EOS
    */
-  template<class vec1_t, class vec2_t, class vec3_t, class vec4_t>
-    void set_eos_native(vec1_t &eden, vec2_t &pres, vec3_t &enth,
-			vec4_t &nb) {
-
-    n_tab=eden.size();
-
-    for(int i=1;i<=n_tab;i++) {  
-      log_e_tab[i]=log10(eden[i-1]*C*C*KSCALE);
-      log_p_tab[i]=log10(pres[i-1]*KSCALE);
-      log_h_tab[i]=log10(enth[i-1]/(C*C));
-      log_n0_tab[i]=log10(nb[i-1]);
-    }
-      
-    return;
-  }
-    
-  /** \brief Set the EOS from energy density, pressure, and
-      baryon density stored in powers of \f$ \mathrm{fm} \f$ .
-  */
-  template<class vec1_t, class vec2_t, class vec3_t>
-    void set_eos_fm(size_t n, vec1_t &eden, vec2_t &pres, vec3_t &nb) {
-
-    if (n>200) {
-      O2SCL_ERR2("Too many EOS points in ",
-		 "nstar_rot::set_eos().",o2scl::exc_einval);
-    }
-
-    // Conversion factor for energy density
-    double conv1=o2scl_settings.get_convert_units().convert
-      ("1/fm^4","g/cm^3",1.0);
-    // Conversion factor for pressure
-    double conv2=o2scl_settings.get_convert_units().convert
-      ("1/fm^4","dyne/cm^2",1.0);
-      
+  void set_eos(eos_nstar_rot &eos) {
+    eosp=&eos;
+    eos_set=true;
     tabulated_eos=true;
-    n_tab=n;
-
-    // Temporary vector for the enthalpy integrand
-    std::vector<double> vt(n_tab);
-      
-    for(size_t i=0;i<n_tab;i++) {
-
-      // Store energy density, pressure, and baryon density
-      log_e_tab[i+1]=log10(eden[i]*conv1*C*C*KSCALE);
-      log_p_tab[i+1]=log10(pres[i]*conv2*KSCALE);
-      log_n0_tab[i+1]=log10(nb[i]*1.0e39);
-
-      // The integrand for the enthalpy
-      vt[i]=1.0/(eden[i]+pres[i]);
-    }
-
-    // Compute enthalpy
-    o2scl::interp_vec<vec2_t,std::vector<double> > 
-      rns_itp(n_tab,pres,vt,itp_linear);
-
-    for(size_t i=0;i<n_tab;i++) {
-      log_h_tab[i+1]=log10(rns_itp.integ(0.0,pres[i]));
-    }
-
     return;
   }
 
@@ -924,6 +1048,7 @@ namespace o2scl {
   void polytrope_eos(double index) {
     n_P=index;
     tabulated_eos=false;
+    eos_set=true;
     return;
   }
     

@@ -47,12 +47,318 @@
 #include <gsl/gsl_sf_legendre.h>
 
 #include <o2scl/constants.h>
-#include <o2scl/nstar_rot.h>
+#include <o2scl/nstar_rot2.h>
 
 using namespace std;
 using namespace o2scl;
 
-nstar_rot::nstar_rot() {
+eos_nstar_rot_interp::eos_nstar_rot_interp() {
+  n_nearest=1;
+  
+  C=2.9979e10;                  
+  G=6.6732e-8;                  
+  KAPPA=1.346790806509621e+13;  
+  KSCALE=1.112668301525780e-36; 
+
+  /*
+    C=o2scl_cgs::speed_of_light;
+    G=o2scl_cgs::gravitational_constant;
+    KAPPA=1.0e-15*C*C/G;
+    KSCALE=KAPPA*G/(C*C*C*C);
+  */
+}
+
+int eos_nstar_rot_interp::new_search(int n, double *x, double val) {
+  int ret;
+  double *xnew=x+1;
+  bool inc=false;
+  if (xnew[0]<xnew[n-1]) inc=true;
+  if (inc) {
+    if (val<xnew[0]) {
+      return 0;
+    } else if (val>xnew[n-1]) {
+      return n;
+    }
+  } else {
+    if (val>xnew[0]) {
+      return 0;
+    } else if (val<xnew[n-1]) {
+      return n;
+    }
+  }
+  sv.set_vec(n,xnew);
+  return sv.find(val)+1;
+}
+
+double eos_nstar_rot_interp::ed_from_pr(double pr) {
+  return pow(10.0,interp(log_p_tab,log_e_tab,n_tab,log10(pr)));
+}
+
+double eos_nstar_rot_interp::pr_from_ed(double ed) {
+  return pow(10.0,interp(log_e_tab,log_p_tab,n_tab,log10(ed)));
+}
+
+double eos_nstar_rot_interp::nb_from_pr(double pr) {
+  return pow(10.0,interp(log_p_tab,log_n0_tab,n_tab,log10(pr)));
+}
+
+double eos_nstar_rot_interp::pr_from_nb(double nb) {
+  return pow(10.0,interp(log_n0_tab,log_p_tab,n_tab,log10(nb)));
+}
+
+double eos_nstar_rot_interp::ed_from_nb(double nb) {
+  return pow(10.0,interp(log_n0_tab,log_e_tab,n_tab,log10(nb)));
+}
+
+double eos_nstar_rot_interp::nb_from_ed(double ed) {
+  return pow(10.0,interp(log_e_tab,log_n0_tab,n_tab,log10(ed)));
+}
+
+double eos_nstar_rot_interp::enth_from_pr(double pr) {
+  return pow(10.0,interp(log_p_tab,log_h_tab,n_tab,log10(pr)));
+}
+
+double eos_nstar_rot_interp::enth_from_nb(double nb) {
+  return pow(10.0,interp(log_n0_tab,log_h_tab,n_tab,log10(nb)));
+}
+
+double eos_nstar_rot_interp::pr_from_enth(double enth) {
+  return pow(10.0,interp(log_h_tab,log_p_tab,n_tab,log10(enth)));
+}
+
+double eos_nstar_rot_interp::interp(double xp[], double yp[], int np,
+				    double xb) {
+  // index of 1st point
+  int k;        
+  // degree of interpolation
+  int m=4;      
+ 
+  // intermediate value
+  double y;     
+
+  n_nearest=new_search(np,xp,xb);
+
+  int max=n_nearest-(m-1)/2;
+  if (max<1) max=1;
+  k=np+1-m;
+  if (max<k) k=max;
+
+  if (xb==xp[k] || xb==xp[k+1] || xb==xp[k+2] || xb==xp[k+3]) {
+    xb+=1.0e-12;
+  }
+  
+  y=(xb-xp[k+1])*(xb-xp[k+2])*(xb-xp[k+3])*yp[k]/
+    ((xp[k]-xp[k+1])*(xp[k]-xp[k+2])*(xp[k]-xp[k+3]))+
+    (xb-xp[k])*(xb-xp[k+2])*(xb-xp[k+3])*yp[k+1]/
+    ((xp[k+1]-xp[k])*(xp[k+1]-xp[k+2])*(xp[k+1]-xp[k+3]))+
+    (xb-xp[k])*(xb-xp[k+1])*(xb-xp[k+3])*yp[k+2]/
+    ((xp[k+2]-xp[k])*(xp[k+2]-xp[k+1])*(xp[k+2]-xp[k+3]))+
+    (xb-xp[k])*(xb-xp[k+1])*(xb-xp[k+2])*yp[k+3]/
+    ((xp[k+3]-xp[k])*(xp[k+3]-xp[k+1])*(xp[k+3]-xp[k+2]));
+  
+  return (y);
+}
+
+eos_nstar_rot_C::eos_nstar_rot_C() {
+  double eosC_arr[96][4]={
+    {7.80000e+00,1.01000e+08,1.000000000000000e+00,4.698795180722962e+24},
+    {7.86000e+00,1.01000e+09,1.157946629165269e+08,4.734939759036205e+24},
+    {7.90000e+00,1.01000e+10,1.269452049889617e+09,4.759036144578364e+24},
+    {8.15000e+00,1.01000e+11,1.267708525005907e+10,4.909638554215315e+24},
+    {1.16000e+01,1.21000e+12,1.211370595001572e+11,6.987951807098076e+24},
+    {1.64000e+01,1.40000e+13,1.017364459510011e+12,9.879518070489597e+24},
+    {4.51000e+01,1.70000e+14,6.076705858546280e+12,2.716867462904601e+25},
+    {2.12000e+02,5.82000e+15,4.872391666226939e+13,1.277108403508764e+26},
+    {1.15000e+03,1.90000e+17,3.206724388438867e+14,6.927709645088004e+26},
+    {1.04400e+04,9.74400e+18,2.085685492452927e+15,6.289148562640985e+27},
+    {2.62200e+04,4.96800e+19,4.300724422116231e+15,1.579513843816999e+28},
+    {6.58700e+04,2.43100e+20,8.585327648535554e+15,3.968050678245718e+28},
+    {1.65400e+05,1.15100e+21,1.661134940613050e+16,9.963748410271617e+28},
+    {4.15600e+05,5.26600e+21,3.113184639693159e+16,2.503563031417219e+29},
+    {1.04400e+06,2.31800e+22,5.637078789809274e+16,6.288917532113082e+29},
+    {2.62200e+06,9.75500e+22,9.823793802270347e+16,1.579410809416864e+30},
+    {6.58800e+06,3.91100e+23,1.651370193851722e+17,3.968207649843547e+30},
+    {8.29300e+06,5.25900e+23,1.833070570850680e+17,4.995116726219748e+30},
+    {1.65500e+07,1.43500e+24,2.575234489468157e+17,9.967984755458204e+30},
+    {3.30200e+07,3.83300e+24,3.565410566998838e+17,1.988624478073943e+31},
+    {6.58900e+07,1.00600e+25,4.855034973143420e+17,3.967807406359445e+31},
+    {1.31500e+08,2.60400e+25,6.514242926503165e+17,7.917691186982454e+31},
+    {2.62400e+08,6.67600e+25,8.653913867049318e+17,1.579648605894070e+32},
+    {3.30400e+08,8.73800e+25,9.351655321505760e+17,1.988876577393412e+32},
+    {5.23700e+08,1.62900e+26,1.113042991360343e+18,3.152005155076383e+32},
+    {8.30100e+08,3.02900e+26,1.322173059425539e+18,4.995278531652059e+32},
+    {1.04500e+09,4.12900e+26,1.440858462676231e+18,6.287859551784352e+32},
+    {1.31600e+09,5.03600e+26,1.518045189928309e+18,7.917701445937253e+32},
+    {1.65700e+09,6.86000e+26,1.639959584391741e+18,9.968319738044036e+32},
+    {2.62600e+09,1.27200e+27,1.916631713149610e+18,1.579408507997411e+33},
+    {4.16400e+09,2.35600e+27,2.239467717942762e+18,2.503766293549853e+33},
+    {6.60100e+09,4.36200e+27,2.618527558269814e+18,3.967852390467774e+33},
+    {8.31200e+09,5.66200e+27,2.793223911233673e+18,4.995474308724729e+33},
+    {1.04600e+10,7.70200e+27,3.010604603009213e+18,6.285277578607203e+33},
+    {1.31800e+10,1.04800e+28,3.246131568141483e+18,7.918132634568090e+33},
+    {1.65900e+10,1.42500e+28,3.499915730795552e+18,9.964646988214994e+33},
+    {2.09000e+10,1.93800e+28,3.774741006863546e+18,1.255052800774333e+34},
+    {2.63100e+10,2.50300e+28,4.014780206768711e+18,1.579545673652798e+34},
+    {3.31300e+10,3.40400e+28,4.317831726448436e+18,1.988488463504033e+34},
+    {4.17200e+10,4.62800e+28,4.646291608758636e+18,2.503379640977065e+34},
+    {5.25400e+10,5.94900e+28,4.927359777046148e+18,3.151720931652274e+34},
+    {6.61700e+10,8.08900e+28,5.287586080904092e+18,3.968151735612910e+34},
+    {8.33200e+10,1.10000e+29,5.677637396835295e+18,4.994995310195290e+34},
+    {1.04900e+11,1.49500e+29,6.097968154425379e+18,6.286498800006776e+34},
+    {1.32200e+11,2.03300e+29,6.553704076675019e+18,7.919521253825185e+34},
+    {1.66400e+11,2.59700e+29,6.932922860174182e+18,9.964341016667146e+34},
+    {1.84400e+11,2.89200e+29,7.100996231341637e+18,1.104024323001462e+35},
+    {2.09600e+11,3.29000e+29,7.302912999460339e+18,1.254619611126682e+35},
+    {2.64000e+11,4.47300e+29,7.801189133603082e+18,1.579588892045295e+35},
+    {3.32500e+11,5.81600e+29,8.252940103235718e+18,1.988565738933728e+35},
+    {4.18800e+11,7.53800e+29,8.710551350551819e+18,2.503561780689725e+35},
+    {4.29900e+11,7.80500e+29,8.774012262748510e+18,2.569780082714395e+35},
+    {4.46000e+11,7.89000e+29,8.793402718214299e+18,2.665824694449485e+35},
+    {5.22800e+11,8.35200e+29,8.888584165828376e+18,3.123946525953616e+35},
+    {6.61000e+11,9.09800e+29,9.015182344330039e+18,3.948222384313103e+35},
+    {7.96400e+11,9.83100e+29,9.115886202428306e+18,4.755697604312120e+35},
+    {9.72800e+11,1.08300e+30,9.228938242554155e+18,5.807556544067428e+35},
+    {1.19600e+12,1.21800e+30,9.353548588340060e+18,7.138304213736713e+35},
+    {1.47100e+12,1.39900e+30,9.489304401520411e+18,8.777653631971616e+35},
+    {1.80500e+12,1.68300e+30,9.662916598353355e+18,1.076837272716171e+36},
+    {2.20200e+12,1.95000e+30,9.796648174499881e+18,1.313417953138369e+36},
+    {2.93000e+12,2.59200e+30,1.004639229994465e+19,1.747157788902558e+36},
+    {3.83300e+12,3.50600e+30,1.031719959699455e+19,2.285004034820638e+36},
+    {4.93300e+12,4.77100e+30,1.060626231961342e+19,2.939983642627298e+36},
+    {6.24800e+12,6.48100e+30,1.091248816114249e+19,3.722722765704268e+36},
+    {7.80100e+12,8.74800e+30,1.123546353605510e+19,4.646805278760175e+36},
+    {9.61100e+12,1.17000e+31,1.157469224223553e+19,5.723413975645761e+36},
+    {1.24600e+13,1.69500e+31,1.205104455978235e+19,7.417258934884369e+36},
+    {1.49600e+13,2.20900e+31,1.242585565332612e+19,8.902909532230595e+36},
+    {1.77800e+13,2.84800e+31,1.281598407175551e+19,1.057801059193907e+37},
+    {2.21000e+13,3.93100e+31,1.335910916365704e+19,1.314278492046241e+37},
+    {2.98800e+13,6.17800e+31,1.422481793925897e+19,1.775810743961577e+37},
+    {3.76700e+13,8.77400e+31,1.499308970128912e+19,2.237518046976615e+37},
+    {5.08100e+13,1.38600e+32,1.614317463895106e+19,3.015480061626022e+37},
+    {6.19300e+13,1.88200e+32,1.702142123464848e+19,3.673108933334910e+37},
+    {7.73200e+13,2.66200e+32,1.813939645708965e+19,4.582250451016437e+37},
+    {9.82600e+13,3.89700e+32,1.954253029978894e+19,5.817514573447143e+37},
+    {1.26200e+14,5.86100e+32,2.128347366138737e+19,7.462854442694524e+37},
+    {1.70600e+14,1.75600e+33,2.885278398767732e+19,1.006639916443579e+38},
+    {2.56700e+14,4.56500e+33,4.178979788188595e+19,1.505335697605081e+38},
+    {3.45800e+14,9.39700e+33,5.738041973520725e+19,2.013381591984608e+38},
+    {4.35000e+14,1.65700e+34,7.507944724919534e+19,2.512629566428361e+38},
+    {5.27700e+14,2.62500e+34,9.423281380878824e+19,3.020920486283259e+38},
+    {7.16600e+14,5.55000e+34,1.379858119588385e+20,4.021520391505177e+38},
+    {9.16300e+14,1.00000e+35,1.872894652613005e+20,5.025727131203635e+38},
+    {1.12800e+15,1.63000e+35,2.412896024049271e+20,6.030527187437616e+38},
+    {1.35300e+15,2.41800e+35,2.951587122936742e+20,7.036003566506166e+38},
+    {1.59600e+15,3.38500e+35,3.490539607233137e+20,8.058746778042895e+38},
+    {1.84700e+15,4.51800e+35,4.015539689708425e+20,9.054485628019740e+38},
+    {2.12100e+15,5.89800e+35,4.554634605761517e+20,1.007895513739328e+39},
+    {3.72600e+15,1.61400e+36,7.092250567926366e+20,1.510986122033221e+39},
+    {5.81200e+15,3.28900e+36,9.371241098390350e+20,2.011274032860530e+39},
+    {8.46800e+15,5.71800e+36,1.139974260034128e+21,2.512899672966290e+39},
+    {1.17500e+16,8.98200e+36,1.320440905946775e+21,3.014116952600337e+39},
+    {2.03200e+16,1.82500e+37,1.626616375316661e+21,4.005670613879821e+39},
+    {3.22700e+16,3.20400e+37,1.886033418779976e+21,5.017750644193835e+39}};
+
+  n_tab=96;
+
+  for(int i=1;i<=n_tab;i++) {  
+
+    double rho=eosC_arr[i-1][0];
+    double p=eosC_arr[i-1][1];
+    double h=eosC_arr[i-1][2];
+    double n0=eosC_arr[i-1][3];
+
+    log_e_tab[i]=log10(rho*C*C*KSCALE);
+    log_p_tab[i]=log10(p*KSCALE);
+    log_h_tab[i]=log10(h/(C*C));
+    log_n0_tab[i]=log10(n0);
+  }
+}
+
+eos_nstar_rot_L::eos_nstar_rot_L() {
+  double eosL_arr[64][4]={
+    {7.80000e+00,1.01000e+08,1.000000000000000e+00,4.698795180722962e+24},
+    {7.86000e+00,1.01000e+09,1.157946629165269e+08,4.734939759036205e+24},
+    {7.90000e+00,1.01000e+10,1.269452049889617e+09,4.759036144578364e+24},
+    {8.15000e+00,1.01000e+11,1.267708525005907e+10,4.909638554215315e+24},
+    {1.16000e+01,1.21000e+12,1.211370595001572e+11,6.987951807098076e+24},
+    {1.64000e+01,1.40000e+13,1.017364459510011e+12,9.879518070489597e+24},
+    {4.51000e+01,1.70000e+14,6.076705858546280e+12,2.716867462904601e+25},
+    {2.12000e+02,5.82000e+15,4.872391666226939e+13,1.277108403508764e+26},
+    {1.15000e+03,1.90000e+17,3.206724388438867e+14,6.927709645088004e+26},
+    {1.04400e+04,9.74400e+18,2.085685492452927e+15,6.289148562640985e+27},
+    {2.62200e+04,4.96800e+19,4.300724422116231e+15,1.579513843816999e+28},
+    {6.58700e+04,2.43100e+20,8.585327648535554e+15,3.968050678245718e+28},
+    {1.65400e+05,1.15100e+21,1.661134940613050e+16,9.963748410271617e+28},
+    {4.15600e+05,5.26600e+21,3.113184639693159e+16,2.503563031417219e+29},
+    {1.04400e+06,2.31800e+22,5.637078789809274e+16,6.288917532113082e+29},
+    {2.62200e+06,9.75500e+22,9.823793802270347e+16,1.579410809416864e+30},
+    {6.58800e+06,3.91100e+23,1.651370193851722e+17,3.968207649843547e+30},
+    {8.29300e+06,5.25900e+23,1.833070570850680e+17,4.995116726219748e+30},
+    {1.65500e+07,1.43500e+24,2.575234489468157e+17,9.967984755458204e+30},
+    {3.30200e+07,3.83300e+24,3.565410566998838e+17,1.988624478073943e+31},
+    {6.58900e+07,1.00600e+25,4.855034973143420e+17,3.967807406359445e+31},
+    {1.31500e+08,2.60400e+25,6.514242926503165e+17,7.917691186982454e+31},
+    {2.62400e+08,6.67600e+25,8.653913867049318e+17,1.579648605894070e+32},
+    {3.30400e+08,8.73800e+25,9.351655321505760e+17,1.988876577393412e+32},
+    {5.23700e+08,1.62900e+26,1.113042991360343e+18,3.152005155076383e+32},
+    {8.30100e+08,3.02900e+26,1.322173059425539e+18,4.995278531652059e+32},
+    {1.04500e+09,4.12900e+26,1.440858462676231e+18,6.287859551784352e+32},
+    {1.31600e+09,5.03600e+26,1.518045189928309e+18,7.917701445937253e+32},
+    {1.65700e+09,6.86000e+26,1.639959584391741e+18,9.968319738044036e+32},
+    {2.62600e+09,1.27200e+27,1.916631713149610e+18,1.579408507997411e+33},
+    {4.16400e+09,2.35600e+27,2.239467717942762e+18,2.503766293549853e+33},
+    {6.60100e+09,4.36200e+27,2.618527558269814e+18,3.967852390467774e+33},
+    {8.31200e+09,5.66200e+27,2.793223911233673e+18,4.995474308724729e+33},
+    {1.04600e+10,7.70200e+27,3.010604603009213e+18,6.285277578607203e+33},
+    {1.31800e+10,1.04800e+28,3.246131568141483e+18,7.918132634568090e+33},
+    {1.65900e+10,1.42500e+28,3.499915730795552e+18,9.964646988214994e+33},
+    {2.09000e+10,1.93800e+28,3.774741006863546e+18,1.255052800774333e+34},
+    {2.63100e+10,2.50300e+28,4.014780206768711e+18,1.579545673652798e+34},
+    {3.31300e+10,3.40400e+28,4.317831726448436e+18,1.988488463504033e+34},
+    {4.17200e+10,4.62800e+28,4.646291608758636e+18,2.503379640977065e+34},
+    {5.25400e+10,5.94900e+28,4.927359777046148e+18,3.151720931652274e+34},
+    {6.61700e+10,8.08900e+28,5.287586080904092e+18,3.968151735612910e+34},
+    {8.33200e+10,1.10000e+29,5.677647984386809e+18,4.994995251352083e+34},
+    {1.00000e+11,1.40200e+29,6.007356633978408e+18,5.993299174014897e+34},
+    {2.00000e+11,3.13400e+29,7.206489006907356e+18,1.197281032014887e+35},
+    {4.00000e+11,7.15700e+29,8.672720920156850e+18,2.391248847376186e+35},
+    {8.00000e+11,1.03600e+30,9.228502681906242e+18,4.776917888094152e+35},
+    {1.00000e+12,1.25700e+30,9.473901401216950e+18,5.969265140210954e+35},
+    {2.00000e+12,2.12200e+30,1.008175138682551e+19,1.192786036339965e+36},
+    {4.00000e+12,3.78000e+30,1.065412286010822e+19,2.383745936109886e+36},
+    {8.00000e+12,8.52700e+30,1.145481617345254e+19,4.763886330347948e+36},
+    {1.00000e+13,1.16200e+31,1.179848405023799e+19,5.953217185533753e+36},
+    {2.00000e+13,3.26200e+31,1.321734278540367e+19,1.189384774424109e+37},
+    {4.00000e+13,9.40700e+31,1.529633911184461e+19,2.375173071697946e+37},
+    {8.00000e+13,2.74600e+32,1.834132290018557e+19,4.739957123069321e+37},
+    {1.00000e+14,3.92900e+32,1.965106871694968e+19,5.919574167379903e+37},
+    {2.00000e+14,3.38000e+33,3.747246764168948e+19,1.177348214981387e+38},
+    {4.00000e+14,3.25500e+34,1.262888655801689e+20,2.283330744375166e+38},
+    {8.00000e+14,1.92700e+35,3.530690068286150e+20,4.125664617034758e+38},
+    {1.00000e+15,2.96800e+35,4.423515236827836e+20,4.898535647530366e+38},
+    {2.00000e+15,8.09200e+35,6.966531453934924e+20,8.048311708651028e+38},
+    {4.00000e+15,1.86300e+36,9.409246465914199e+20,1.284130443857022e+39},
+    {8.00000e+15,4.85900e+36,1.261068058921259e+21,1.985296494438113e+39},
+    {1.00000e+16,6.55100e+36,1.371873265801520e+21,2.263286974848659e+39}};
+
+  n_tab=64;
+
+  for(int i=1;i<=n_tab;i++) {  
+
+    double rho=eosL_arr[i-1][0];
+    double p=eosL_arr[i-1][1];
+    double h=eosL_arr[i-1][2];
+    double n0=eosL_arr[i-1][3];
+
+    log_e_tab[i]=log10(rho*C*C*KSCALE);
+    log_p_tab[i]=log10(p*KSCALE);
+    log_h_tab[i]=log10(h/(C*C));
+    log_n0_tab[i]=log10(n0);
+
+  }
+}
+
+nstar_rot2::nstar_rot2() {
   verbose=1;
   
   SMAX=0.9999;                
@@ -87,6 +393,8 @@ nstar_rot::nstar_rot() {
   // Default polytropic index
   n_P=1.0;
 
+  eos_set=false;
+  
   // Create the computational mesh for variables "s" and "mu=cos theta"
   make_grid();
   
@@ -96,7 +404,7 @@ nstar_rot::nstar_rot() {
   comp_f_P();
 }
 
-void nstar_rot::constants_rns() {
+void nstar_rot2::constants_rns() {
   C=2.9979e10;                  
   G=6.6732e-8;                  
   KAPPA=1.346790806509621e+13;  
@@ -107,7 +415,7 @@ void nstar_rot::constants_rns() {
   return;
 }
 
-void nstar_rot::constants_o2scl() {
+void nstar_rot2::constants_o2scl() {
   C=o2scl_cgs::speed_of_light;
   G=o2scl_cgs::gravitational_constant;
   MSUN=o2scl_cgs::solar_mass;
@@ -118,7 +426,7 @@ void nstar_rot::constants_o2scl() {
   return;
 }
 
-void nstar_rot::make_grid(void) {                                    
+void nstar_rot2::make_grid(void) {                                    
     
   for(int s=1;s<=SDIV;s++) {
     s_gp[s]=SMAX*(1.0*s-1.0)/(SDIV-1);
@@ -136,11 +444,11 @@ void nstar_rot::make_grid(void) {
   return;
 }
 
-double nstar_rot::e_of_rho0(double rho0) {
+double nstar_rot2::e_of_rho0(double rho0) {
   return(pow(rho0,Gamma_P)/(Gamma_P-1.0)+rho0);
 }
 
-int nstar_rot::new_search(int n, double *x, double val) {
+int nstar_rot2::new_search(int n, double *x, double val) {
   int ret;
   double *xnew=x+1;
   bool inc=false;
@@ -162,7 +470,7 @@ int nstar_rot::new_search(int n, double *x, double val) {
   return sv.find(val)+1;
 }
 
-double nstar_rot::interp(double xp[], double yp[], int np, double xb) {
+double nstar_rot2::interp(double xp[], double yp[], int np, double xb) {
   // index of 1st point
   int k;        
   // degree of interpolation
@@ -181,7 +489,7 @@ double nstar_rot::interp(double xp[], double yp[], int np, double xb) {
   if (xb==xp[k] || xb==xp[k+1] || xb==xp[k+2] || xb==xp[k+3]) {
     xb+=1.0e-12;
   }
-  
+
   y=(xb-xp[k+1])*(xb-xp[k+2])*(xb-xp[k+3])*yp[k]/
     ((xp[k]-xp[k+1])*(xp[k]-xp[k+2])*(xp[k]-xp[k+3]))+
     (xb-xp[k])*(xb-xp[k+2])*(xb-xp[k+3])*yp[k+1]/
@@ -194,7 +502,7 @@ double nstar_rot::interp(double xp[], double yp[], int np, double xb) {
   return (y);
 }
 
-double nstar_rot::interp_4_k(double xp[], double yp[], int np, double xb, 
+double nstar_rot2::interp_4_k(double xp[], double yp[], int np, double xb, 
 			  int k) {
 
   // intermediate value
@@ -216,7 +524,7 @@ double nstar_rot::interp_4_k(double xp[], double yp[], int np, double xb,
   return(y);
 }
 
-double nstar_rot::int_z(double f[MDIV+1], int m) {
+double nstar_rot2::int_z(double f[MDIV+1], int m) {
   double x[9];
 
   x[1]=f[m-1];  
@@ -232,19 +540,20 @@ double nstar_rot::int_z(double f[MDIV+1], int m) {
 		       2989.0*x[5]+1323.0*x[6]+3577.0*x[7]+751.0*x[8]));
 }
 
-double nstar_rot::e_at_p(double pp) {
+double nstar_rot2::e_at_p(double pp) {
   if (tabulated_eos==true) {
     if (CL_LOW==true && pp > p_match) {
       return pp+e_match+de_pt-p_match;
     } else {
-      return pow(10.0,interp(log_p_tab,log_e_tab,n_tab,log10(pp)));
+      return eosp->ed_from_pr(pp);
+      //return pow(10.0,interp(log_p_tab,log_e_tab,n_tab,log10(pp)));
     }
   } else {
     return pp/(Gamma_P-1.0)+pow(pp,1.0/Gamma_P); 
   }
 }
 
-double nstar_rot::p_at_e(double ee) {
+double nstar_rot2::p_at_e(double ee) {
   if (CL_LOW==true && ee > e_match) {
     if (ee<=e_cl) {
       return p_match; 
@@ -252,29 +561,32 @@ double nstar_rot::p_at_e(double ee) {
       return ee-e_match-de_pt+p_match;
     }
   } else {
-    return pow(10.0,interp(log_e_tab,log_p_tab,n_tab,log10(ee)));
+    return eosp->pr_from_ed(ee);
+    //return pow(10.0,interp(log_e_tab,log_p_tab,n_tab,log10(ee)));
   }
 } 
 
-double nstar_rot::p_at_h(double hh) {
+double nstar_rot2::p_at_h(double hh) {
   if (CL_LOW==true && hh > h_match) {
     return 0.5*( (e_match+de_pt+p_match)*exp(2.0*(hh-h_match)) 
 		 +p_match-e_match-de_pt);
   } else {
-    return pow(10.0,interp(log_h_tab,log_p_tab,n_tab,log10(hh)));
+    return eosp->pr_from_enth(hh);
+    //return pow(10.0,interp(log_h_tab,log_p_tab,n_tab,log10(hh)));
   }
 }
 
-double nstar_rot::h_at_p(double pp) {
+double nstar_rot2::h_at_p(double pp) {
   if (CL_LOW==true && pp > p_match) {
     return h_match+0.5*log( (2.0*pp+e_match+de_pt-p_match)/
 			    (e_match+de_pt+p_match));
   } else {
-    return pow(10.0,interp(log_p_tab,log_h_tab,n_tab,log10(pp)));
+    return eosp->enth_from_pr(pp);
+    //return pow(10.0,interp(log_p_tab,log_h_tab,n_tab,log10(pp)));
   }
 }
 
-double nstar_rot::n0_at_e(double ee) {
+double nstar_rot2::n0_at_e(double ee) {
   if (CL_LOW==true && ee > e_match) {
     if (ee<=e_cl) {
       return ((ee+p_match)/(MB*C*C*KSCALE))*exp(-h_match);
@@ -283,11 +595,12 @@ double nstar_rot::n0_at_e(double ee) {
 	*sqrt(1.0+2.0*(ee-e_match-de_pt)/(e_match+de_pt+p_match));
     }
   } else {
-    return pow(10.0,interp(log_e_tab,log_n0_tab,n_tab,log10(ee)));
+    return eosp->nb_from_ed(ee);
+    //return pow(10.0,interp(log_e_tab,log_n0_tab,n_tab,log10(ee)));
   }
 }
 
-double nstar_rot::s_deriv(double f[SDIV+1], int s) {
+double nstar_rot2::s_deriv(double f[SDIV+1], int s) {
 
   switch(s) { 
   case 1 : 
@@ -304,7 +617,7 @@ double nstar_rot::s_deriv(double f[SDIV+1], int s) {
   return d_temp;
 }
 
-double nstar_rot::m_deriv(double f[MDIV+1], int m) {
+double nstar_rot2::m_deriv(double f[MDIV+1], int m) {
 
   switch(m) {  
   case 1 : 
@@ -321,7 +634,7 @@ double nstar_rot::m_deriv(double f[MDIV+1], int m) {
   return d_temp;
 }
 
-double nstar_rot::deriv_s(double f[SDIV+1][MDIV+1], int s, int m) {
+double nstar_rot2::deriv_s(double f[SDIV+1][MDIV+1], int s, int m) {
 
   switch(s) { 
   case 1 : 
@@ -338,7 +651,7 @@ double nstar_rot::deriv_s(double f[SDIV+1][MDIV+1], int s, int m) {
   return d_temp;
 }
 
-double nstar_rot::deriv_m(double f[SDIV+1][MDIV+1], int s, int m) {
+double nstar_rot2::deriv_m(double f[SDIV+1][MDIV+1], int s, int m) {
 
   switch(m) { 
   case 1 : 
@@ -355,7 +668,7 @@ double nstar_rot::deriv_m(double f[SDIV+1][MDIV+1], int s, int m) {
   return d_temp;
 }
 
-double nstar_rot::deriv_sm(double f[SDIV+1][MDIV+1], int s, int m) {
+double nstar_rot2::deriv_sm(double f[SDIV+1][MDIV+1], int s, int m) {
 
   switch(s) {
 
@@ -405,7 +718,7 @@ double nstar_rot::deriv_sm(double f[SDIV+1][MDIV+1], int s, int m) {
   return d_temp;
 }
 
-double nstar_rot::legendre(int n, double x) {
+double nstar_rot2::legendre(int n, double x) {
   // counter
   int i;           
 
@@ -427,7 +740,7 @@ double nstar_rot::legendre(int n, double x) {
   }
 }
 
-void nstar_rot::comp_f_P(void) {
+void nstar_rot2::comp_f_P(void) {
   // counter
   int n;                 
   // counter for s'
@@ -575,10 +888,8 @@ void nstar_rot::comp_f_P(void) {
 
 }
 
-void nstar_rot::make_center(double e_center_loc) {
+void nstar_rot2::make_center(double e_center_loc) {
   double rho0_center;
-
-  n_nearest=n_tab/2; 
 
   if (tabulated_eos==true) {
 
@@ -595,11 +906,11 @@ void nstar_rot::make_center(double e_center_loc) {
     p_center=pow(rho0_center,Gamma_P);
     h_center=log((e_center_loc+p_center)/rho0_center);
   }
-  
+
   return;
 }
 
-void nstar_rot::comp_omega(void) {
+void nstar_rot2::comp_omega(void) {
   int s;
   int m;
 
@@ -670,7 +981,7 @@ void nstar_rot::comp_omega(void) {
   r_e_guess=r_e;
 }
   
-void nstar_rot::comp_M_J(void) {
+void nstar_rot2::comp_M_J(void) {
   int s;
   int m;
   int s_temp;
@@ -751,7 +1062,6 @@ void nstar_rot::comp_M_J(void) {
   J=0.0;
 
   if (tabulated_eos==true) {
-    n_nearest=n_tab/2;
     for(s=1;s<=SDIV;s++)
       for(m=1;m<=MDIV;m++) {
 	if (energy[s][m]>e_surface)
@@ -873,7 +1183,7 @@ void nstar_rot::comp_M_J(void) {
   return;
 }
 
-void nstar_rot::comp(void) {
+void nstar_rot2::comp(void) {
   int s_surf_1=0;
   int s_temp;
   int s;
@@ -1058,7 +1368,6 @@ void nstar_rot::comp(void) {
   J=0.0;
 
   if (tabulated_eos==true) {
-    n_nearest=n_tab/2;
     for(s=1;s<=SDIV;s++) {
       for(m=1;m<=MDIV;m++) {
 	if (energy[s][m]>e_surface) {
@@ -1909,7 +2218,7 @@ void nstar_rot::comp(void) {
   return;
 }
 
-double nstar_rot::dm_dr_is(double r_is, double r, double m, double p) {
+double nstar_rot2::dm_dr_is(double r_is, double r, double m, double p) {
   double dmdr,
     e_d;
 
@@ -1925,7 +2234,7 @@ double nstar_rot::dm_dr_is(double r_is, double r, double m, double p) {
   return dmdr;
 }
  
-double nstar_rot::dp_dr_is(double r_is, double r, double m, double p) {
+double nstar_rot2::dp_dr_is(double r_is, double r, double m, double p) {
   double dpdr, e_d; 
     
   if (p<p_surface) e_d=0.0;
@@ -1941,7 +2250,7 @@ double nstar_rot::dp_dr_is(double r_is, double r, double m, double p) {
   return dpdr;
 }
 
-double nstar_rot::dr_dr_is(double r_is, double r, double m) {
+double nstar_rot2::dr_dr_is(double r_is, double r, double m) {
   double drdris;
 
   if (r_is<RMIN) drdris=1.0;
@@ -1950,7 +2259,7 @@ double nstar_rot::dr_dr_is(double r_is, double r, double m) {
   return drdris;
 }
 
-void nstar_rot::integrate(int i_check) {
+void nstar_rot2::integrate(int i_check) {
   int i=2;
 
   // radius 
@@ -2102,7 +2411,7 @@ void nstar_rot::integrate(int i_check) {
   return;
 }
 
-void nstar_rot::guess(void) {
+void nstar_rot2::guess(void) {
   int i;
   int s;
   int m;
@@ -2113,8 +2422,6 @@ void nstar_rot::guess(void) {
   double nu_s;
   double gamma_eq;
   double rho_eq;
-
-  n_nearest=n_tab/2;
 
   /* SOLVE THE OPPENHEIMER-VOLKOV EQUATIONS USING A RUNGE-KUTTA METHOD
      The functions integrate solves the equations using the r_is coordinate */
@@ -2184,7 +2491,7 @@ void nstar_rot::guess(void) {
   return;
 }
 
-int nstar_rot::iterate(double r_ratio) {
+int nstar_rot2::iterate(double r_ratio) {
   int m;
   int s;
   int n;
@@ -2262,14 +2569,10 @@ int nstar_rot::iterate(double r_ratio) {
   r_e=r_e_guess;
 
   while (dif>accuracy || n_of_it<2) { 
-    
+
     if (verbose>1) {
       cout << "dif, accuracy: " << dif << " " << accuracy << endl;
     }
-
-    //if (print_dif!=0) {
-    //printf("dif: %4.3e %4.3e\n",dif,accuracy);
-    //}
  
     /* Rescale potentials and construct arrays with the potentials along
        | the equatorial and polar directions.
@@ -2323,8 +2626,6 @@ int nstar_rot::iterate(double r_ratio) {
  
     // Compute velocity, energy density and pressure
  
-    n_nearest=n_tab/2; 
-
     for(s=1;s<=SDIV;s++) {
       sgp=s_gp[s];
 
@@ -2711,7 +3012,7 @@ int nstar_rot::iterate(double r_ratio) {
   return 0;
 } 
 
-void nstar_rot::ms_model(void) {
+void nstar_rot2::ms_model(void) {
   /* First model is guess */
   
   make_center(e_center);
@@ -2755,7 +3056,7 @@ void nstar_rot::ms_model(void) {
   return;
 }
 
-void nstar_rot::h_model(void) {
+void nstar_rot2::h_model(void) {
 
   double d_h,
     diff_h;
@@ -2816,7 +3117,7 @@ void nstar_rot::h_model(void) {
   return;
 }
 
-void nstar_rot::m0_model(double M_0) {
+void nstar_rot2::m0_model(double M_0) {
 
   double dr;
   double diff_M_0;
@@ -2876,7 +3177,7 @@ void nstar_rot::m0_model(double M_0) {
   return;
 }
  
-int nstar_rot::m_model(double M_fix) {
+int nstar_rot2::m_model(double M_fix) {
   double dr;
   double diff_M;
   double d_ratio_M=0.0;
@@ -2935,7 +3236,7 @@ int nstar_rot::m_model(double M_fix) {
   return 0;
 }
 
-void nstar_rot::omega_model(double Omega_const) {
+void nstar_rot2::omega_model(double Omega_const) {
   double dr;
   double diff_Omega;
   double d_ratio_Omega=0.0;
@@ -2993,7 +3294,7 @@ void nstar_rot::omega_model(double Omega_const) {
   return;
 }
 
-int nstar_rot::J_model(double J_const) {
+int nstar_rot2::J_model(double J_const) {
   double dr;
   double diff_J;
   double d_ratio_J=0.0;
@@ -3054,7 +3355,7 @@ int nstar_rot::J_model(double J_const) {
   return 0;
 }
 
-int nstar_rot::run(int argc, char const **argv) {
+int nstar_rot2::run(int argc, char const **argv) {
   
   int i;
   int j;
@@ -3203,10 +3504,13 @@ int nstar_rot::run(int argc, char const **argv) {
   Gamma_P=1.0+1.0/n_P;
 
   if (CL_LOW==true) {
-    n_nearest=n_tab/2;
-    e_match=pow(10.0,interp(log_n0_tab,log_e_tab,n_tab,log10(n0_match)));
-    p_match=pow(10.0,interp(log_n0_tab,log_p_tab,n_tab,log10(n0_match)));
-    h_match=pow(10.0,interp(log_n0_tab,log_h_tab,n_tab,log10(n0_match)));
+
+    e_match=eosp->ed_from_nb(n0_match);
+    p_match=eosp->pr_from_nb(n0_match);
+    h_match=eosp->enth_from_nb(n0_match);
+    //e_match=pow(10.0,interp(log_n0_tab,log_e_tab,n_tab,log10(n0_match)));
+    //p_match=pow(10.0,interp(log_n0_tab,log_p_tab,n_tab,log10(n0_match)));
+    //h_match=pow(10.0,interp(log_n0_tab,log_h_tab,n_tab,log10(n0_match)));
    
     if (e_cl != 0.0) de_pt=e_cl - e_match;   
   }
@@ -3410,11 +3714,15 @@ int nstar_rot::run(int argc, char const **argv) {
   return 0;
 }
 
-int nstar_rot::fix_cent_eden_axis_rat(double cent_eden, double axis_rat) {
+int nstar_rot2::fix_cent_eden_axis_rat(double cent_eden, double axis_rat) {
 
+  if (eos_set==false) {
+    O2SCL_ERR2("EOS not specified in ",
+	       "nstar_rot2::fix_cent_eden...().",exc_einval);
+  }
+  
   int i;
   int j;
-  int task_option;
 
   double e_min;
   double M_fix;
@@ -3471,10 +3779,12 @@ int nstar_rot::fix_cent_eden_axis_rat(double cent_eden, double axis_rat) {
   Gamma_P=1.0+1.0/n_P;
 
   if (CL_LOW==true) {
-    n_nearest=n_tab/2;
-    e_match=pow(10.0,interp(log_n0_tab,log_e_tab,n_tab,log10(n0_match)));
-    p_match=pow(10.0,interp(log_n0_tab,log_p_tab,n_tab,log10(n0_match)));
-    h_match=pow(10.0,interp(log_n0_tab,log_h_tab,n_tab,log10(n0_match)));
+    e_match=eosp->ed_from_nb(n0_match);
+    p_match=eosp->pr_from_nb(n0_match);
+    h_match=eosp->enth_from_nb(n0_match);
+    //e_match=pow(10.0,interp(log_n0_tab,log_e_tab,n_tab,log10(n0_match)));
+    //p_match=pow(10.0,interp(log_n0_tab,log_p_tab,n_tab,log10(n0_match)));
+    //h_match=pow(10.0,interp(log_n0_tab,log_h_tab,n_tab,log10(n0_match)));
    
     if (e_cl != 0.0) de_pt=e_cl - e_match;   
   }
@@ -3497,11 +3807,14 @@ int nstar_rot::fix_cent_eden_axis_rat(double cent_eden, double axis_rat) {
   return 0;
 }
 
-int nstar_rot::fix_cent_eden_with_kepler(double cent_eden) {
+int nstar_rot2::fix_cent_eden_with_kepler(double cent_eden) {
 
+  if (eos_set==false) {
+    O2SCL_ERR2("EOS not specified in ",
+	       "nstar_rot2::fix_cent_eden...().",exc_einval);
+  }
   int i;
   int j;
-  int task_option;
 
   double e_min;
   double M_fix;
@@ -3557,10 +3870,12 @@ int nstar_rot::fix_cent_eden_with_kepler(double cent_eden) {
   Gamma_P=1.0+1.0/n_P;
 
   if (CL_LOW==true) {
-    n_nearest=n_tab/2;
-    e_match=pow(10.0,interp(log_n0_tab,log_e_tab,n_tab,log10(n0_match)));
-    p_match=pow(10.0,interp(log_n0_tab,log_p_tab,n_tab,log10(n0_match)));
-    h_match=pow(10.0,interp(log_n0_tab,log_h_tab,n_tab,log10(n0_match)));
+    e_match=eosp->ed_from_nb(n0_match);
+    p_match=eosp->pr_from_nb(n0_match);
+    h_match=eosp->enth_from_nb(n0_match);
+    //e_match=pow(10.0,interp(log_n0_tab,log_e_tab,n_tab,log10(n0_match)));
+    //p_match=pow(10.0,interp(log_n0_tab,log_p_tab,n_tab,log10(n0_match)));
+    //h_match=pow(10.0,interp(log_n0_tab,log_h_tab,n_tab,log10(n0_match)));
    
     if (e_cl != 0.0) de_pt=e_cl - e_match;   
   }
@@ -3573,11 +3888,14 @@ int nstar_rot::fix_cent_eden_with_kepler(double cent_eden) {
   return 0;
 }
 
-int nstar_rot::fix_cent_eden_non_rot(double cent_eden) {
+int nstar_rot2::fix_cent_eden_non_rot(double cent_eden) {
 
+  if (eos_set==false) {
+    O2SCL_ERR2("EOS not specified in ",
+	       "nstar_rot2::fix_cent_eden...().",exc_einval);
+  }
   int i;
   int j;
-  int task_option;
 
   double e_min;
   double M_fix;
@@ -3633,10 +3951,12 @@ int nstar_rot::fix_cent_eden_non_rot(double cent_eden) {
   Gamma_P=1.0+1.0/n_P;
 
   if (CL_LOW==true) {
-    n_nearest=n_tab/2;
-    e_match=pow(10.0,interp(log_n0_tab,log_e_tab,n_tab,log10(n0_match)));
-    p_match=pow(10.0,interp(log_n0_tab,log_p_tab,n_tab,log10(n0_match)));
-    h_match=pow(10.0,interp(log_n0_tab,log_h_tab,n_tab,log10(n0_match)));
+    e_match=eosp->ed_from_nb(n0_match);
+    p_match=eosp->pr_from_nb(n0_match);
+    h_match=eosp->enth_from_nb(n0_match);
+    //e_match=pow(10.0,interp(log_n0_tab,log_e_tab,n_tab,log10(n0_match)));
+    //p_match=pow(10.0,interp(log_n0_tab,log_p_tab,n_tab,log10(n0_match)));
+    //h_match=pow(10.0,interp(log_n0_tab,log_h_tab,n_tab,log10(n0_match)));
    
     if (e_cl != 0.0) de_pt=e_cl - e_match;   
   }
@@ -3651,11 +3971,14 @@ int nstar_rot::fix_cent_eden_non_rot(double cent_eden) {
   return 0;
 }
 
-int nstar_rot::fix_cent_eden_grav_mass(double cent_eden, double grav_mass) {
+int nstar_rot2::fix_cent_eden_grav_mass(double cent_eden, double grav_mass) {
 
+  if (eos_set==false) {
+    O2SCL_ERR2("EOS not specified in ",
+	       "nstar_rot2::fix_cent_eden...().",exc_einval);
+  }
   int i;
   int j;
-  int task_option;
 
   double e_min;
   double M_fix;
@@ -3715,10 +4038,12 @@ int nstar_rot::fix_cent_eden_grav_mass(double cent_eden, double grav_mass) {
   Gamma_P=1.0+1.0/n_P;
 
   if (CL_LOW==true) {
-    n_nearest=n_tab/2;
-    e_match=pow(10.0,interp(log_n0_tab,log_e_tab,n_tab,log10(n0_match)));
-    p_match=pow(10.0,interp(log_n0_tab,log_p_tab,n_tab,log10(n0_match)));
-    h_match=pow(10.0,interp(log_n0_tab,log_h_tab,n_tab,log10(n0_match)));
+    e_match=eosp->ed_from_nb(n0_match);
+    p_match=eosp->pr_from_nb(n0_match);
+    h_match=eosp->enth_from_nb(n0_match);
+    //e_match=pow(10.0,interp(log_n0_tab,log_e_tab,n_tab,log10(n0_match)));
+    //p_match=pow(10.0,interp(log_n0_tab,log_p_tab,n_tab,log10(n0_match)));
+    //h_match=pow(10.0,interp(log_n0_tab,log_h_tab,n_tab,log10(n0_match)));
    
     if (e_cl != 0.0) de_pt=e_cl - e_match;   
   }
@@ -3731,11 +4056,14 @@ int nstar_rot::fix_cent_eden_grav_mass(double cent_eden, double grav_mass) {
   return 0;
 }
 
-int nstar_rot::fix_cent_eden_bar_mass(double cent_eden, double bar_mass) {
+int nstar_rot2::fix_cent_eden_bar_mass(double cent_eden, double bar_mass) {
 
+  if (eos_set==false) {
+    O2SCL_ERR2("EOS not specified in ",
+	       "nstar_rot2::fix_cent_eden...().",exc_einval);
+  }
   int i;
   int j;
-  int task_option;
 
   double e_min;
   double M_fix;
@@ -3791,10 +4119,12 @@ int nstar_rot::fix_cent_eden_bar_mass(double cent_eden, double bar_mass) {
   Gamma_P=1.0+1.0/n_P;
 
   if (CL_LOW==true) {
-    n_nearest=n_tab/2;
-    e_match=pow(10.0,interp(log_n0_tab,log_e_tab,n_tab,log10(n0_match)));
-    p_match=pow(10.0,interp(log_n0_tab,log_p_tab,n_tab,log10(n0_match)));
-    h_match=pow(10.0,interp(log_n0_tab,log_h_tab,n_tab,log10(n0_match)));
+    e_match=eosp->ed_from_nb(n0_match);
+    p_match=eosp->pr_from_nb(n0_match);
+    h_match=eosp->enth_from_nb(n0_match);
+    //e_match=pow(10.0,interp(log_n0_tab,log_e_tab,n_tab,log10(n0_match)));
+    //p_match=pow(10.0,interp(log_n0_tab,log_p_tab,n_tab,log10(n0_match)));
+    //h_match=pow(10.0,interp(log_n0_tab,log_h_tab,n_tab,log10(n0_match)));
    
     if (e_cl != 0.0) de_pt=e_cl - e_match;   
   }
@@ -3810,11 +4140,14 @@ int nstar_rot::fix_cent_eden_bar_mass(double cent_eden, double bar_mass) {
   return 0;
 }
 
-int nstar_rot::fix_cent_eden_ang_vel(double cent_eden, double ang_vel) {
+int nstar_rot2::fix_cent_eden_ang_vel(double cent_eden, double ang_vel) {
 
+  if (eos_set==false) {
+    O2SCL_ERR2("EOS not specified in ",
+	       "nstar_rot2::fix_cent_eden...().",exc_einval);
+  }
   int i;
   int j;
-  int task_option;
 
   double e_min;
   double M_fix;
@@ -3874,10 +4207,12 @@ int nstar_rot::fix_cent_eden_ang_vel(double cent_eden, double ang_vel) {
   Gamma_P=1.0+1.0/n_P;
 
   if (CL_LOW==true) {
-    n_nearest=n_tab/2;
-    e_match=pow(10.0,interp(log_n0_tab,log_e_tab,n_tab,log10(n0_match)));
-    p_match=pow(10.0,interp(log_n0_tab,log_p_tab,n_tab,log10(n0_match)));
-    h_match=pow(10.0,interp(log_n0_tab,log_h_tab,n_tab,log10(n0_match)));
+    e_match=eosp->ed_from_nb(n0_match);
+    p_match=eosp->pr_from_nb(n0_match);
+    h_match=eosp->enth_from_nb(n0_match);
+    //e_match=pow(10.0,interp(log_n0_tab,log_e_tab,n_tab,log10(n0_match)));
+    //p_match=pow(10.0,interp(log_n0_tab,log_p_tab,n_tab,log10(n0_match)));
+    //h_match=pow(10.0,interp(log_n0_tab,log_h_tab,n_tab,log10(n0_match)));
    
     if (e_cl != 0.0) de_pt=e_cl - e_match;   
   }
@@ -3889,11 +4224,14 @@ int nstar_rot::fix_cent_eden_ang_vel(double cent_eden, double ang_vel) {
   return 0;
 }
 
-int nstar_rot::fix_cent_eden_ang_mom(double cent_eden, double ang_mom) {
+int nstar_rot2::fix_cent_eden_ang_mom(double cent_eden, double ang_mom) {
 
+  if (eos_set==false) {
+    O2SCL_ERR2("EOS not specified in ",
+	       "nstar_rot2::fix_cent_eden...().",exc_einval);
+  }
   int i;
   int j;
-  int task_option;
 
   double e_min;
   double M_fix;
@@ -3953,10 +4291,12 @@ int nstar_rot::fix_cent_eden_ang_mom(double cent_eden, double ang_mom) {
   Gamma_P=1.0+1.0/n_P;
 
   if (CL_LOW==true) {
-    n_nearest=n_tab/2;
-    e_match=pow(10.0,interp(log_n0_tab,log_e_tab,n_tab,log10(n0_match)));
-    p_match=pow(10.0,interp(log_n0_tab,log_p_tab,n_tab,log10(n0_match)));
-    h_match=pow(10.0,interp(log_n0_tab,log_h_tab,n_tab,log10(n0_match)));
+    e_match=eosp->ed_from_nb(n0_match);
+    p_match=eosp->pr_from_nb(n0_match);
+    h_match=eosp->enth_from_nb(n0_match);
+    //e_match=pow(10.0,interp(log_n0_tab,log_e_tab,n_tab,log10(n0_match)));
+    //p_match=pow(10.0,interp(log_n0_tab,log_p_tab,n_tab,log10(n0_match)));
+    //h_match=pow(10.0,interp(log_n0_tab,log_h_tab,n_tab,log10(n0_match)));
    
     if (e_cl != 0.0) de_pt=e_cl - e_match;   
   }
@@ -3968,11 +4308,13 @@ int nstar_rot::fix_cent_eden_ang_mom(double cent_eden, double ang_mom) {
   return 0;
 }
 
-void nstar_rot::test1(o2scl::test_mgr &t) {
+void nstar_rot2::test1(o2scl::test_mgr &t) {
 
   constants_rns();
-  eosC();
+  eos_nstar_rot_C p;
+  set_eos(p);
   fix_cent_eden_axis_rat(2.0e15,0.59);
+  eos_set=false;
 
   t.test_rel(e_center,2.0,2.0e-6,"1");
   t.test_rel(Mass/MSUN,2.13324,2.0e-6,"2");
@@ -3997,11 +4339,13 @@ void nstar_rot::test1(o2scl::test_mgr &t) {
   return;
 }
 
-void nstar_rot::test2(o2scl::test_mgr &t) {
+void nstar_rot2::test2(o2scl::test_mgr &t) {
 
   constants_rns();
-  eosC();
+  eos_nstar_rot_C p;
+  set_eos(p);
   fix_cent_eden_with_kepler(2.0e15);
+  eos_set=false;
 
   t.test_rel(e_center,2.0,2.0e-6,"1");
   t.test_rel(Mass/MSUN,2.13633,2.0e-6,"2");
@@ -4026,11 +4370,13 @@ void nstar_rot::test2(o2scl::test_mgr &t) {
   return;
 }
 
-void nstar_rot::test3(o2scl::test_mgr &t) {
+void nstar_rot2::test3(o2scl::test_mgr &t) {
   
   constants_rns();
-  eosC();
+  eos_nstar_rot_C p;
+  set_eos(p);
   fix_cent_eden_grav_mass(1.0e15,1.5);
+  eos_set=false;
 
   t.test_rel(e_center,1.0,2.0e-6,"1");
   t.test_rel(Mass/MSUN,1.49996,4.0e-6,"2");
@@ -4055,11 +4401,13 @@ void nstar_rot::test3(o2scl::test_mgr &t) {
   return;
 }
 
-void nstar_rot::test4(o2scl::test_mgr &t) {
+void nstar_rot2::test4(o2scl::test_mgr &t) {
 
   constants_rns();
-  eosC();
+  eos_nstar_rot_C p;
+  set_eos(p);
   fix_cent_eden_bar_mass(1.0e15,1.55);
+  eos_set=false;
 
   t.test_rel(e_center,1.0,2.0e-6,"1");
   t.test_rel(Mass/MSUN,1.41870,4.0e-6,"2");
@@ -4084,11 +4432,13 @@ void nstar_rot::test4(o2scl::test_mgr &t) {
   return;
 }
 
-void nstar_rot::test5(o2scl::test_mgr &t) {
+void nstar_rot2::test5(o2scl::test_mgr &t) {
 
   constants_rns();
-  eosC();
+  eos_nstar_rot_C p;
+  set_eos(p);
   fix_cent_eden_ang_vel(1.0e15,0.5);
+  eos_set=false;
 
   t.test_rel(e_center,1.0,2.0e-6,"1");
   t.test_rel(Mass/MSUN,1.45222,4.0e-6,"2");
@@ -4113,11 +4463,13 @@ void nstar_rot::test5(o2scl::test_mgr &t) {
   return;
 }
 
-void nstar_rot::test6(o2scl::test_mgr &t) {
+void nstar_rot2::test6(o2scl::test_mgr &t) {
 
   constants_rns();
-  eosC();
+  eos_nstar_rot_C p;
+  set_eos(p);
   fix_cent_eden_ang_mom(1.0e15,1.5);
+  eos_set=false;
 
   t.test_rel(e_center,1.0,2.0e-6,"1");
   t.test_rel(Mass/MSUN,1.57929,2.0e-6,"2");
@@ -4142,11 +4494,13 @@ void nstar_rot::test6(o2scl::test_mgr &t) {
   return;
 }
 
-void nstar_rot::test7(o2scl::test_mgr &t) {
+void nstar_rot2::test7(o2scl::test_mgr &t) {
 
   constants_rns();
-  eosC();
+  eos_nstar_rot_C p;
+  set_eos(p);
   fix_cent_eden_non_rot(2.0e15);
+  eos_set=false;
 
   t.test_rel(e_center,2.0,2.0e-6,"1");
   t.test_rel(Mass/MSUN,1.79249,2.0e-6,"2");
@@ -4171,7 +4525,7 @@ void nstar_rot::test7(o2scl::test_mgr &t) {
   return;
 }
 
-void nstar_rot::test8(o2scl::test_mgr &t) {
+void nstar_rot2::test8(o2scl::test_mgr &t) {
 
   polytrope_eos(1.0);
   fix_cent_eden_with_kepler(0.137);
@@ -4194,212 +4548,6 @@ void nstar_rot::test8(o2scl::test_mgr &t) {
   t.test_rel(om_over_Om,0.459837,2.0e-6,"16");
   t.test_rel(r_e,1.18909,2.0e-6,"17");
   t.test_rel(r_ratio,0.575244,2.0e-6,"18");
-
-  return;
-}
-
-void nstar_rot::eosC() {
-
-  double eosC_arr[96][4]={
-    {7.80000e+00,1.01000e+08,1.000000000000000e+00,4.698795180722962e+24},
-    {7.86000e+00,1.01000e+09,1.157946629165269e+08,4.734939759036205e+24},
-    {7.90000e+00,1.01000e+10,1.269452049889617e+09,4.759036144578364e+24},
-    {8.15000e+00,1.01000e+11,1.267708525005907e+10,4.909638554215315e+24},
-    {1.16000e+01,1.21000e+12,1.211370595001572e+11,6.987951807098076e+24},
-    {1.64000e+01,1.40000e+13,1.017364459510011e+12,9.879518070489597e+24},
-    {4.51000e+01,1.70000e+14,6.076705858546280e+12,2.716867462904601e+25},
-    {2.12000e+02,5.82000e+15,4.872391666226939e+13,1.277108403508764e+26},
-    {1.15000e+03,1.90000e+17,3.206724388438867e+14,6.927709645088004e+26},
-    {1.04400e+04,9.74400e+18,2.085685492452927e+15,6.289148562640985e+27},
-    {2.62200e+04,4.96800e+19,4.300724422116231e+15,1.579513843816999e+28},
-    {6.58700e+04,2.43100e+20,8.585327648535554e+15,3.968050678245718e+28},
-    {1.65400e+05,1.15100e+21,1.661134940613050e+16,9.963748410271617e+28},
-    {4.15600e+05,5.26600e+21,3.113184639693159e+16,2.503563031417219e+29},
-    {1.04400e+06,2.31800e+22,5.637078789809274e+16,6.288917532113082e+29},
-    {2.62200e+06,9.75500e+22,9.823793802270347e+16,1.579410809416864e+30},
-    {6.58800e+06,3.91100e+23,1.651370193851722e+17,3.968207649843547e+30},
-    {8.29300e+06,5.25900e+23,1.833070570850680e+17,4.995116726219748e+30},
-    {1.65500e+07,1.43500e+24,2.575234489468157e+17,9.967984755458204e+30},
-    {3.30200e+07,3.83300e+24,3.565410566998838e+17,1.988624478073943e+31},
-    {6.58900e+07,1.00600e+25,4.855034973143420e+17,3.967807406359445e+31},
-    {1.31500e+08,2.60400e+25,6.514242926503165e+17,7.917691186982454e+31},
-    {2.62400e+08,6.67600e+25,8.653913867049318e+17,1.579648605894070e+32},
-    {3.30400e+08,8.73800e+25,9.351655321505760e+17,1.988876577393412e+32},
-    {5.23700e+08,1.62900e+26,1.113042991360343e+18,3.152005155076383e+32},
-    {8.30100e+08,3.02900e+26,1.322173059425539e+18,4.995278531652059e+32},
-    {1.04500e+09,4.12900e+26,1.440858462676231e+18,6.287859551784352e+32},
-    {1.31600e+09,5.03600e+26,1.518045189928309e+18,7.917701445937253e+32},
-    {1.65700e+09,6.86000e+26,1.639959584391741e+18,9.968319738044036e+32},
-    {2.62600e+09,1.27200e+27,1.916631713149610e+18,1.579408507997411e+33},
-    {4.16400e+09,2.35600e+27,2.239467717942762e+18,2.503766293549853e+33},
-    {6.60100e+09,4.36200e+27,2.618527558269814e+18,3.967852390467774e+33},
-    {8.31200e+09,5.66200e+27,2.793223911233673e+18,4.995474308724729e+33},
-    {1.04600e+10,7.70200e+27,3.010604603009213e+18,6.285277578607203e+33},
-    {1.31800e+10,1.04800e+28,3.246131568141483e+18,7.918132634568090e+33},
-    {1.65900e+10,1.42500e+28,3.499915730795552e+18,9.964646988214994e+33},
-    {2.09000e+10,1.93800e+28,3.774741006863546e+18,1.255052800774333e+34},
-    {2.63100e+10,2.50300e+28,4.014780206768711e+18,1.579545673652798e+34},
-    {3.31300e+10,3.40400e+28,4.317831726448436e+18,1.988488463504033e+34},
-    {4.17200e+10,4.62800e+28,4.646291608758636e+18,2.503379640977065e+34},
-    {5.25400e+10,5.94900e+28,4.927359777046148e+18,3.151720931652274e+34},
-    {6.61700e+10,8.08900e+28,5.287586080904092e+18,3.968151735612910e+34},
-    {8.33200e+10,1.10000e+29,5.677637396835295e+18,4.994995310195290e+34},
-    {1.04900e+11,1.49500e+29,6.097968154425379e+18,6.286498800006776e+34},
-    {1.32200e+11,2.03300e+29,6.553704076675019e+18,7.919521253825185e+34},
-    {1.66400e+11,2.59700e+29,6.932922860174182e+18,9.964341016667146e+34},
-    {1.84400e+11,2.89200e+29,7.100996231341637e+18,1.104024323001462e+35},
-    {2.09600e+11,3.29000e+29,7.302912999460339e+18,1.254619611126682e+35},
-    {2.64000e+11,4.47300e+29,7.801189133603082e+18,1.579588892045295e+35},
-    {3.32500e+11,5.81600e+29,8.252940103235718e+18,1.988565738933728e+35},
-    {4.18800e+11,7.53800e+29,8.710551350551819e+18,2.503561780689725e+35},
-    {4.29900e+11,7.80500e+29,8.774012262748510e+18,2.569780082714395e+35},
-    {4.46000e+11,7.89000e+29,8.793402718214299e+18,2.665824694449485e+35},
-    {5.22800e+11,8.35200e+29,8.888584165828376e+18,3.123946525953616e+35},
-    {6.61000e+11,9.09800e+29,9.015182344330039e+18,3.948222384313103e+35},
-    {7.96400e+11,9.83100e+29,9.115886202428306e+18,4.755697604312120e+35},
-    {9.72800e+11,1.08300e+30,9.228938242554155e+18,5.807556544067428e+35},
-    {1.19600e+12,1.21800e+30,9.353548588340060e+18,7.138304213736713e+35},
-    {1.47100e+12,1.39900e+30,9.489304401520411e+18,8.777653631971616e+35},
-    {1.80500e+12,1.68300e+30,9.662916598353355e+18,1.076837272716171e+36},
-    {2.20200e+12,1.95000e+30,9.796648174499881e+18,1.313417953138369e+36},
-    {2.93000e+12,2.59200e+30,1.004639229994465e+19,1.747157788902558e+36},
-    {3.83300e+12,3.50600e+30,1.031719959699455e+19,2.285004034820638e+36},
-    {4.93300e+12,4.77100e+30,1.060626231961342e+19,2.939983642627298e+36},
-    {6.24800e+12,6.48100e+30,1.091248816114249e+19,3.722722765704268e+36},
-    {7.80100e+12,8.74800e+30,1.123546353605510e+19,4.646805278760175e+36},
-    {9.61100e+12,1.17000e+31,1.157469224223553e+19,5.723413975645761e+36},
-    {1.24600e+13,1.69500e+31,1.205104455978235e+19,7.417258934884369e+36},
-    {1.49600e+13,2.20900e+31,1.242585565332612e+19,8.902909532230595e+36},
-    {1.77800e+13,2.84800e+31,1.281598407175551e+19,1.057801059193907e+37},
-    {2.21000e+13,3.93100e+31,1.335910916365704e+19,1.314278492046241e+37},
-    {2.98800e+13,6.17800e+31,1.422481793925897e+19,1.775810743961577e+37},
-    {3.76700e+13,8.77400e+31,1.499308970128912e+19,2.237518046976615e+37},
-    {5.08100e+13,1.38600e+32,1.614317463895106e+19,3.015480061626022e+37},
-    {6.19300e+13,1.88200e+32,1.702142123464848e+19,3.673108933334910e+37},
-    {7.73200e+13,2.66200e+32,1.813939645708965e+19,4.582250451016437e+37},
-    {9.82600e+13,3.89700e+32,1.954253029978894e+19,5.817514573447143e+37},
-    {1.26200e+14,5.86100e+32,2.128347366138737e+19,7.462854442694524e+37},
-    {1.70600e+14,1.75600e+33,2.885278398767732e+19,1.006639916443579e+38},
-    {2.56700e+14,4.56500e+33,4.178979788188595e+19,1.505335697605081e+38},
-    {3.45800e+14,9.39700e+33,5.738041973520725e+19,2.013381591984608e+38},
-    {4.35000e+14,1.65700e+34,7.507944724919534e+19,2.512629566428361e+38},
-    {5.27700e+14,2.62500e+34,9.423281380878824e+19,3.020920486283259e+38},
-    {7.16600e+14,5.55000e+34,1.379858119588385e+20,4.021520391505177e+38},
-    {9.16300e+14,1.00000e+35,1.872894652613005e+20,5.025727131203635e+38},
-    {1.12800e+15,1.63000e+35,2.412896024049271e+20,6.030527187437616e+38},
-    {1.35300e+15,2.41800e+35,2.951587122936742e+20,7.036003566506166e+38},
-    {1.59600e+15,3.38500e+35,3.490539607233137e+20,8.058746778042895e+38},
-    {1.84700e+15,4.51800e+35,4.015539689708425e+20,9.054485628019740e+38},
-    {2.12100e+15,5.89800e+35,4.554634605761517e+20,1.007895513739328e+39},
-    {3.72600e+15,1.61400e+36,7.092250567926366e+20,1.510986122033221e+39},
-    {5.81200e+15,3.28900e+36,9.371241098390350e+20,2.011274032860530e+39},
-    {8.46800e+15,5.71800e+36,1.139974260034128e+21,2.512899672966290e+39},
-    {1.17500e+16,8.98200e+36,1.320440905946775e+21,3.014116952600337e+39},
-    {2.03200e+16,1.82500e+37,1.626616375316661e+21,4.005670613879821e+39},
-    {3.22700e+16,3.20400e+37,1.886033418779976e+21,5.017750644193835e+39}};
-
-  n_tab=96;
-
-  for(int i=1;i<=n_tab;i++) {  
-
-    double rho=eosC_arr[i-1][0];
-    double p=eosC_arr[i-1][1];
-    double h=eosC_arr[i-1][2];
-    double n0=eosC_arr[i-1][3];
-
-    log_e_tab[i]=log10(rho*C*C*KSCALE);
-    log_p_tab[i]=log10(p*KSCALE);
-    log_h_tab[i]=log10(h/(C*C));
-    log_n0_tab[i]=log10(n0);
-
-  }
-
-  return;
-}
-
-void nstar_rot::eosL() {
-  
-  double eosL_arr[64][4]={
-    {7.80000e+00,1.01000e+08,1.000000000000000e+00,4.698795180722962e+24},
-    {7.86000e+00,1.01000e+09,1.157946629165269e+08,4.734939759036205e+24},
-    {7.90000e+00,1.01000e+10,1.269452049889617e+09,4.759036144578364e+24},
-    {8.15000e+00,1.01000e+11,1.267708525005907e+10,4.909638554215315e+24},
-    {1.16000e+01,1.21000e+12,1.211370595001572e+11,6.987951807098076e+24},
-    {1.64000e+01,1.40000e+13,1.017364459510011e+12,9.879518070489597e+24},
-    {4.51000e+01,1.70000e+14,6.076705858546280e+12,2.716867462904601e+25},
-    {2.12000e+02,5.82000e+15,4.872391666226939e+13,1.277108403508764e+26},
-    {1.15000e+03,1.90000e+17,3.206724388438867e+14,6.927709645088004e+26},
-    {1.04400e+04,9.74400e+18,2.085685492452927e+15,6.289148562640985e+27},
-    {2.62200e+04,4.96800e+19,4.300724422116231e+15,1.579513843816999e+28},
-    {6.58700e+04,2.43100e+20,8.585327648535554e+15,3.968050678245718e+28},
-    {1.65400e+05,1.15100e+21,1.661134940613050e+16,9.963748410271617e+28},
-    {4.15600e+05,5.26600e+21,3.113184639693159e+16,2.503563031417219e+29},
-    {1.04400e+06,2.31800e+22,5.637078789809274e+16,6.288917532113082e+29},
-    {2.62200e+06,9.75500e+22,9.823793802270347e+16,1.579410809416864e+30},
-    {6.58800e+06,3.91100e+23,1.651370193851722e+17,3.968207649843547e+30},
-    {8.29300e+06,5.25900e+23,1.833070570850680e+17,4.995116726219748e+30},
-    {1.65500e+07,1.43500e+24,2.575234489468157e+17,9.967984755458204e+30},
-    {3.30200e+07,3.83300e+24,3.565410566998838e+17,1.988624478073943e+31},
-    {6.58900e+07,1.00600e+25,4.855034973143420e+17,3.967807406359445e+31},
-    {1.31500e+08,2.60400e+25,6.514242926503165e+17,7.917691186982454e+31},
-    {2.62400e+08,6.67600e+25,8.653913867049318e+17,1.579648605894070e+32},
-    {3.30400e+08,8.73800e+25,9.351655321505760e+17,1.988876577393412e+32},
-    {5.23700e+08,1.62900e+26,1.113042991360343e+18,3.152005155076383e+32},
-    {8.30100e+08,3.02900e+26,1.322173059425539e+18,4.995278531652059e+32},
-    {1.04500e+09,4.12900e+26,1.440858462676231e+18,6.287859551784352e+32},
-    {1.31600e+09,5.03600e+26,1.518045189928309e+18,7.917701445937253e+32},
-    {1.65700e+09,6.86000e+26,1.639959584391741e+18,9.968319738044036e+32},
-    {2.62600e+09,1.27200e+27,1.916631713149610e+18,1.579408507997411e+33},
-    {4.16400e+09,2.35600e+27,2.239467717942762e+18,2.503766293549853e+33},
-    {6.60100e+09,4.36200e+27,2.618527558269814e+18,3.967852390467774e+33},
-    {8.31200e+09,5.66200e+27,2.793223911233673e+18,4.995474308724729e+33},
-    {1.04600e+10,7.70200e+27,3.010604603009213e+18,6.285277578607203e+33},
-    {1.31800e+10,1.04800e+28,3.246131568141483e+18,7.918132634568090e+33},
-    {1.65900e+10,1.42500e+28,3.499915730795552e+18,9.964646988214994e+33},
-    {2.09000e+10,1.93800e+28,3.774741006863546e+18,1.255052800774333e+34},
-    {2.63100e+10,2.50300e+28,4.014780206768711e+18,1.579545673652798e+34},
-    {3.31300e+10,3.40400e+28,4.317831726448436e+18,1.988488463504033e+34},
-    {4.17200e+10,4.62800e+28,4.646291608758636e+18,2.503379640977065e+34},
-    {5.25400e+10,5.94900e+28,4.927359777046148e+18,3.151720931652274e+34},
-    {6.61700e+10,8.08900e+28,5.287586080904092e+18,3.968151735612910e+34},
-    {8.33200e+10,1.10000e+29,5.677647984386809e+18,4.994995251352083e+34},
-    {1.00000e+11,1.40200e+29,6.007356633978408e+18,5.993299174014897e+34},
-    {2.00000e+11,3.13400e+29,7.206489006907356e+18,1.197281032014887e+35},
-    {4.00000e+11,7.15700e+29,8.672720920156850e+18,2.391248847376186e+35},
-    {8.00000e+11,1.03600e+30,9.228502681906242e+18,4.776917888094152e+35},
-    {1.00000e+12,1.25700e+30,9.473901401216950e+18,5.969265140210954e+35},
-    {2.00000e+12,2.12200e+30,1.008175138682551e+19,1.192786036339965e+36},
-    {4.00000e+12,3.78000e+30,1.065412286010822e+19,2.383745936109886e+36},
-    {8.00000e+12,8.52700e+30,1.145481617345254e+19,4.763886330347948e+36},
-    {1.00000e+13,1.16200e+31,1.179848405023799e+19,5.953217185533753e+36},
-    {2.00000e+13,3.26200e+31,1.321734278540367e+19,1.189384774424109e+37},
-    {4.00000e+13,9.40700e+31,1.529633911184461e+19,2.375173071697946e+37},
-    {8.00000e+13,2.74600e+32,1.834132290018557e+19,4.739957123069321e+37},
-    {1.00000e+14,3.92900e+32,1.965106871694968e+19,5.919574167379903e+37},
-    {2.00000e+14,3.38000e+33,3.747246764168948e+19,1.177348214981387e+38},
-    {4.00000e+14,3.25500e+34,1.262888655801689e+20,2.283330744375166e+38},
-    {8.00000e+14,1.92700e+35,3.530690068286150e+20,4.125664617034758e+38},
-    {1.00000e+15,2.96800e+35,4.423515236827836e+20,4.898535647530366e+38},
-    {2.00000e+15,8.09200e+35,6.966531453934924e+20,8.048311708651028e+38},
-    {4.00000e+15,1.86300e+36,9.409246465914199e+20,1.284130443857022e+39},
-    {8.00000e+15,4.85900e+36,1.261068058921259e+21,1.985296494438113e+39},
-    {1.00000e+16,6.55100e+36,1.371873265801520e+21,2.263286974848659e+39}};
-
-  n_tab=64;
-
-  for(int i=1;i<=n_tab;i++) {  
-
-    double rho=eosL_arr[i-1][0];
-    double p=eosL_arr[i-1][1];
-    double h=eosL_arr[i-1][2];
-    double n0=eosL_arr[i-1][3];
-
-    log_e_tab[i]=log10(rho*C*C*KSCALE);
-    log_p_tab[i]=log10(p*KSCALE);
-    log_h_tab[i]=log10(h/(C*C));
-    log_n0_tab[i]=log10(n0);
-
-  }
 
   return;
 }

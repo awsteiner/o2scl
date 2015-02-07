@@ -71,16 +71,6 @@ namespace o2scl {
     /// Control for output (default 1)
     int verbose;
 
-    /** \brief Given the pressure, produce the energy and number densities
-
-	The arguments \c P and \c e should always be in \f$
-	M_{\odot}/\mathrm{km}^3 \f$ . The argument for \c nb should be
-	in \f$ \mathrm{fm}^{-3} \f$ .
-	
-	If \ref baryon_column is false, then \c nb is unmodified.
-    */
-    virtual void get_eden(double P, double &e, double &nb)=0;
-
     /** \brief Given the pressure, produce all the remaining quantities 
 	
 	The argument \c P should always be in \f$
@@ -131,7 +121,13 @@ namespace o2scl {
     virtual double pr_from_nb(double nb)=0;
 
     /** \brief Given the pressure, produce the energy and number densities
-     */
+
+	The arguments \c pr and \c ed should always be in \f$
+	M_{\odot}/\mathrm{km}^3 \f$ . The argument for \c nb should be
+	in \f$ \mathrm{fm}^{-3} \f$ .
+	
+	If \ref baryon_column is false, then \c nb is unmodified.
+    */
     virtual void ed_nb_from_pr(double pr, double &ed, double &nb)=0;
 
   };
@@ -214,13 +210,6 @@ namespace o2scl {
      */
     void set_baryon_density(double nb, double ed);
 
-    /** \brief Given the pressure, produce the energy and number densities
-	
-	If the baryon density is not specified, it should be set to
-	zero or \ref baryon_column should be set to false
-    */
-    virtual void get_eden(double P, double &e, double &nb);
-    
     /** \brief From the pressure, return the energy density
      */
     virtual double ed_from_pr(double pr);
@@ -246,7 +235,10 @@ namespace o2scl {
     virtual double pr_from_nb(double nb);
 
     /** \brief Given the pressure, produce the energy and number densities
-     */
+	
+	If the baryon density is not specified, it should be set to
+	zero or \ref baryon_column should be set to false
+    */
     virtual void ed_nb_from_pr(double pr, double &ed, double &nb);
 
   protected:
@@ -381,10 +373,6 @@ namespace o2scl {
      */
     virtual void ed_nb_from_pr(double pr, double &ed, double &nb);
 
-    /** \brief Given the pressure, produce the energy and number densities
-     */
-    virtual void get_eden(double P, double &e, double &nb);
-    
   };
 
   /** \brief Linear EOS \f$ P = c_s^2 (\varepsilon-\varepsilon_0) \f$
@@ -472,10 +460,6 @@ namespace o2scl {
      */
     virtual void ed_nb_from_pr(double pr, double &ed, double &nb);
 
-    /** \brief Given the pressure, produce the energy and number densities
-    */
-    virtual void get_eden(double P, double &e, double &nb);
-    
   };
 
   /** \brief An EOS for the TOV solver using simple linear
@@ -525,7 +509,7 @@ namespace o2scl {
       \mathrm{M}_{\odot}/\mathrm{km}^3 \f$ and baryon density is
       stored in units of \f$ \mathrm{fm}^{-3} \f$ . The user-specified
       EOS table is left as is, and unit conversion is performed as
-      needed in get_eden() and other functions from the units
+      needed in ed_nb_from_pr() and other functions from the units
       specified in the input \ref table_units object.
 
       \todo It might be useful to exit more gracefully when non-finite
@@ -581,10 +565,6 @@ namespace o2scl {
     /** \brief From the baryon density, return the pressure
      */
     virtual double pr_from_nb(double nb);
-
-    /** \brief Given the pressure, produce the energy and number densities
-     */
-    virtual void ed_nb_from_pr(double pr, double &ed, double &nb);
     //@}
 
     /// \name Basic usage
@@ -663,14 +643,14 @@ namespace o2scl {
     //@{
     /** \brief Given the pressure, produce the energy and number densities
 
-	The arguments \c P and \c e should always be in \f$
+	The arguments \c pr and \c ed should always be in \f$
 	M_{\odot}/\mathrm{km}^3 \f$ . The argument for \c nb should be
 	in \f$ \mathrm{fm}^{-3} \f$ .
 	
 	If the baryon density is not specified, it should be set to
 	zero or \ref baryon_column should be set to false
     */
-    virtual void get_eden(double pres, double &ed, double &nb);
+    virtual void ed_nb_from_pr(double pr, double &ed, double &nb);
 
     /** \brief Given the pressure, produce all the remaining quantities 
 	

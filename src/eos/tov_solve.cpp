@@ -226,7 +226,7 @@ int tov_solve::derivs(double r, size_t nv, const ubvector &y,
   // The function get_eden() is now already in the proper units,
   // so there's no need for unit conversion here
   double ed, nb;
-  te->get_eden(pres,ed,nb);
+  te->ed_nb_from_pr(pres,ed,nb);
   
   if (!o2scl::is_finite(ed)) {
     return exc_efailed;
@@ -466,7 +466,7 @@ void tov_solve::make_table() {
 	O2SCL_ERR2("Pressure not finite in ",
 		   "tov_solve::make_table().",exc_efailed);
       }
-      te->get_eden(exp(rky[bix][1]),ed,nb);
+      te->ed_nb_from_pr(exp(rky[bix][1]),ed,nb);
       // Convert pressure, energy density, and baryon density to user 
       // units by dividing by their factors
       out_table->set("pr",tix,exp(rky[bix][1])/pfactor);
@@ -898,7 +898,7 @@ int tov_solve::mvsr() {
       O2SCL_ERR2("Central pressure not finite in ",
 		 "tov_solve::mvsr().",exc_efailed);
     }
-    te->get_eden(x[0],ed,nb);
+    te->ed_nb_from_pr(x[0],ed,nb);
     
     // Convert pressure, energy density, and baryon density to user 
     // units by dividing by their factors

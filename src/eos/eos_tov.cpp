@@ -50,7 +50,7 @@ void eos_tov::check_nb(double &avg_abs_dev, double &max_abs_dev) {
   std::vector<double> edv, prv, nbv, dedn;
   for (double pres=0.1;pres<3.0;pres*=1.001) {
     double eps, nb;
-    get_eden(pres,eps,nb);
+    ed_nb_from_pr(pres,eps,nb);
     edv.push_back(eps);
     prv.push_back(pres);
     nbv.push_back(nb);
@@ -93,15 +93,15 @@ void eos_tov_buchdahl::set_baryon_density(double nb, double ed) {
   return;
 }
 
-void eos_tov_buchdahl::get_eden(double P, double &e, double &nb) {
-  e=12.0*sqrt(Pstar*P)-5.0*P;
+void eos_tov_buchdahl::ed_nb_from_pr(double pr, double &ed, double &nb) {
+  ed=12.0*sqrt(Pstar*pr)-5.0*pr;
   if (baryon_column) {
     double mu1=(pr1+ed1)/nb1;
-    double t1=sqrt(P/Pstar);
+    double t1=sqrt(pr/Pstar);
     double t2=sqrt(pr1/Pstar);
     double mu=mu1*pow((-pr1+9.0*Pstar)*(3.0+t1)*(3.0-t2)/
-		      (-P+9.0*Pstar)/(3.0-t1)/(3.0+t2),0.25);
-    nb=(P+e)/mu;
+		      (-pr+9.0*Pstar)/(3.0-t1)/(3.0+t2),0.25);
+    nb=(pr+ed)/mu;
   } else {
     nb=0.0;
   }
@@ -147,12 +147,6 @@ double eos_tov_buchdahl::ed_from_nb(double nb) {
 
 double eos_tov_buchdahl::pr_from_nb(double nb) {
   return 0.0;
-}
-
-void eos_tov_buchdahl::ed_nb_from_pr(double pr, double &ed, double &nb) {
-  ed=ed_from_pr(pr);
-  nb=nb_from_pr(pr);
-  return;
 }
 
 // ----------------------------------------------------------------
@@ -239,15 +233,9 @@ double eos_tov_polytrope::pr_from_nb(double nb) {
 }
 
 void eos_tov_polytrope::ed_nb_from_pr(double pr, double &ed, double &nb) {
-  ed=ed_from_pr(pr);
-  nb=nb_from_pr(pr);
-  return;
-}
-
-void eos_tov_polytrope::get_eden(double P, double &e, double &nb) {
-  e=pow(P/K,n/(1.0+n));
+  ed=pow(pr/K,n/(1.0+n));
   if (baryon_column) {
-    nb=nb1*pow(e/ed1,1.0+n)/pow((e+P)/(ed1+pr1),n);
+    nb=nb1*pow(ed/ed1,1.0+n)/pow((ed+pr)/(ed1+pr1),n);
   } else {
     nb=0.0;
   }
@@ -337,15 +325,9 @@ double eos_tov_linear::pr_from_nb(double nb) {
 }
 
 void eos_tov_linear::ed_nb_from_pr(double pr, double &ed, double &nb) {
-  ed=ed_from_pr(pr);
-  nb=nb_from_pr(pr);
-  return;
-}
-
-void eos_tov_linear::get_eden(double P, double &e, double &nb) {
-  e=P/cs2+eps0;
+  ed=pr/cs2+eps0;
   if (baryon_column) {
-    nb=nb1*pow(e+cs2*e-cs2*eps0,1.0/(1.0+cs2))*
+    nb=nb1*pow(ed+cs2*ed-cs2*eps0,1.0/(1.0+cs2))*
       pow(ed1+cs2*(-eps0+ed1),-1.0/(1.0+cs2));
   } else {
     nb=0.0;
@@ -1268,21 +1250,21 @@ void eos_tov_interp::gcp10_low_dens_eos(string model, bool external) {
   return;
 }
 
-void eos_tov_interp::get_eden(double pres, double &ed, double &nb) {
-  
-  if (!o2scl::is_finite(pres)) {
-    O2SCL_ERR("Pressure not finite in eos_tov_interp::get_eden().",
+void eos_tov_interp::ed_nb_from_pr(double pr, double &ed, double &nb) {
+
+  if (!o2scl::is_finite(pr)) {
+    O2SCL_ERR("Pressure not finite in eos_tov_interp::ed_nb_from_pr().",
 	      exc_efailed);
   }
-  
-  ed=pe_int.eval(pres);
+
+  ed=pe_int.eval(pr);
   if (baryon_column) {
-    nb=pnb_int.eval(pres);
+    nb=pnb_int.eval(pr);
   }
 
   if (!o2scl::is_finite(ed) || (baryon_column && !o2scl::is_finite(nb))) {
     string s="Energy density or baryon density not finite at pressure ";
-    s+=dtos(pres)+" in eos_tov_interp::get_eden().";
+    s+=dtos(pr)+" in eos_tov_interp::ed_nb_from_pr().";
     O2SCL_ERR(s.c_str(),exc_efailed);
   }
   
@@ -1311,12 +1293,6 @@ double eos_tov_interp::pr_from_nb(double nb) {
 
 double eos_tov_interp::pr_from_ed(double ed) {
   return gen_int.eval(ed,full_nlines,full_vece,full_vecp);
-}
-
-void eos_tov_interp::ed_nb_from_pr(double pr, double &ed, double &nb) {
-  ed=ed_from_pr(pr);
-  nb=nb_from_pr(pr);
-  return;
 }
 
 void eos_tov_interp::get_eden_user(double pres, double &ed, double &nb) {
