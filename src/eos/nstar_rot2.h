@@ -121,7 +121,9 @@ namespace o2scl {
     double log_h_tab[201];               
     /** \brief number density in EOS file */  
     double log_n0_tab[201];              
-    
+
+    /// \name Constants
+    //@{
     /** \brief Speed of light in vacuum (in CGS units) */ 
     double C;
     /** \brief Gravitational constant (in CGS units) */ 
@@ -132,6 +134,7 @@ namespace o2scl {
     double KAPPA;
     /** \brief The value \f$ \kappa G c^{-4} \f$ */
     double KSCALE;
+    //@}
     
     /** \brief Driver for the interpolation routine. 
 	
@@ -433,20 +436,13 @@ namespace o2scl {
    */ 
   double DM;
 
-  /// The constant \f$ \pi \f$
-  double PI;
-
-  // Desc (default \f$ 10^{-15} \f$)
+  /// Desc (default \f$ 10^{-15} \f$)
   double RMIN;
 
   /** \brief Nearest grid point, used in interpolation (default 1) */ 
   int n_nearest;                     
   /** \brief Indicates if iteration diverged (default 0) */ 
   int a_check;                       
-  /** \brief 0 if not print dif (default 1) */  
-  int print_dif;                       
-  /** \brief select print out (default 1) */ 
-  int print_option;                    
 
   /// \name Grid quantities set in make_grid()
   //@{
@@ -567,33 +563,33 @@ namespace o2scl {
   double P1_2n_1[MDIV+1][LMAX+1];      
   //@}
 
-  // Desc
+  /// Desc
   double velocity_equator;              
   /// Proper mass
   double Mass_p;
   /** \brief used in guess */
   double r_final;
-  // Desc
+  /// Desc
   double m_final;
-  // Desc
+  /// Desc
   double r_is_final;
-  // Desc
+  /// Desc
   double r_gp[RDIV+1];
-  // Desc
+  /// Desc
   double r_is_gp[RDIV+1];
-  // Desc
+  /// Desc
   double m_gp[RDIV+1];
-  // Desc
+  /// Desc
   double lambda_gp[RDIV+1];
-  // Desc
+  /// Desc
   double e_d_gp[RDIV+1];   
-  // Desc
+  /// Desc
   double nu_gp[RDIV+1];
-  // Desc
+  /// Desc
   double gamma_s[SDIV+1];
-  // Desc
+  /// Desc
   double rho_s[SDIV+1];
-  // Desc
+  /// Desc
   double da_dm_s[MDIV+1];         
   /** \brief temporary storage of derivative */
   double d_temp;                      
@@ -620,47 +616,27 @@ namespace o2scl {
   /** \brief source term in eqn for \f$ \omega \f$ */
   double S_omega[SDIV+1][MDIV+1]; 
 
-  // Desc
+  /// Desc
   double v_plus[SDIV+1];
-  // Desc
+  /// Desc
   double v_minus[SDIV+1];
 
-  // Desc
+  /// Desc
   double vel_plus;
-  // Desc
+  /// Desc
   double vel_minus;
-  // Desc
-  double sign;
-  // Desc
-  double dr;
-  // Desc
-  double omega_error;
-  // Desc
-  double h_error;
-  // Desc
-  double M_0const;
-  // Desc
-  double J_const;
-  // Desc
-  double M_0_error;
-  // Desc
-  double M_error;
-  // Desc
-  double J_error;
-  // Desc
+  /// Desc
   double dgds[SDIV+1][MDIV+1];
-  // Desc
+  /// Desc
   double dgdm[SDIV+1][MDIV+1];
-  // Desc
-  double Omega_const;
-  // Desc (default \f$ 10^{-4} \f$ )
+  /// Desc (default \f$ 10^{-4} \f$ )
   double fix_error;
 
-  /// \name Set in the run() function
+  /// \name Desc
   //@{
-  // Desc
+  /// Desc
   double p_surface;
-  // Desc
+  /// Desc
   double e_surface;
   /** \brief min. enthalpy in h file */
   double enthalpy_min;                 
@@ -669,32 +645,32 @@ namespace o2scl {
   double n_P;
   /// Polytropic exponent
   double Gamma_P;
-  // Desc
+  /// Desc
   double rho0_center;
-  // Desc
+  /// Desc
   double eccentricity;
-  // Desc
+  /// Desc
   double grv2;
-  // Desc
+  /// Desc
   double grv2_new;
-  // Desc
+  /// Desc
   double grv3;
 
   /// \name These are only used when CL_LOW is true   
   //@{
-  // Desc
+  /// Desc
   double e_match;
-  // Desc
+  /// Desc
   double p_match;
-  // Desc
+  /// Desc
   double h_match;
-  // Desc
+  /// Desc
   double n0_match;
   //@}
 
-  // Desc
+  /// Desc
   double de_pt;
-  // Desc
+  /// Desc
   double e_cl;
 
   /** \brief Create computational mesh. 
@@ -727,9 +703,6 @@ namespace o2scl {
   */
   void make_grid();
 
-  /** \brief Desc */
-  double e_of_rho0(double rho0);
- 
   /** \brief Driver for the interpolation routine. 
 	
       First we find the tab. point nearest to xb, then we
@@ -738,7 +711,7 @@ namespace o2scl {
       Used by \ref int_z(), \ref e_at_p(), \ref p_at_e(), 
       \ref p_at_h(), \ref h_at_p(), \ref n0_at_e(), 
       \ref comp_omega(), \ref comp_M_J(), \ref comp(), 
-      \ref guess(), \ref iterate(), and \ref run().
+      \ref guess(), \ref iterate().
   */  
   double interp(double xp[], double yp[], int np ,double xb);
 
@@ -759,6 +732,8 @@ namespace o2scl {
   */
   double int_z(double f[MDIV+1], int m);
 
+  /// \name EOS functions
+  //@{
   /** \brief Compute \f$ \varepsilon(P) \f$  
 	
       Used in \ref dm_dr_is(), \ref dp_dr_is(), \ref integrate()
@@ -789,7 +764,10 @@ namespace o2scl {
       Used in \ref comp_M_J() and \ref comp() .
   */
   double n0_at_e(double ee);
+  //@}
 
+  /// \name Derivatives on the grid
+  //@{
   /** \brief Returns the derivative w.r.t. s of an array f[SDIV+1]. 
    */ 
   double s_deriv(double f[SDIV+1], int s);
@@ -809,6 +787,7 @@ namespace o2scl {
   /** \brief Returns the derivative w.r.t. s and mu 
    */ 
   double deriv_sm(double f[SDIV+1][MDIV+1], int s, int m);
+  //@}
 
   /** \brief Returns the Legendre polynomial of degree n, evaluated at x. 
 
@@ -879,42 +858,15 @@ namespace o2scl {
    */
   int iterate(double r_ratio);
 
-  /// \name Solvers 
-  //@{
-  /** \brief Compute m/s model for current e_center. 
-   */
-  void ms_model(void);
-
-  /** \brief Compute h+ = 0 model for current e_center. 
-   */
-  void h_model(void);
-
-  /** \brief Compute intermediate model for given Mass_0 and e_center. 
-   */
-  void m0_model(double M_0);
-
-  /** \brief Compute intermediate model for given Mass and e_center. 
-   */
-  int m_model(double M_fix);
-
-  /** \brief Compute intermediate model for given Omega and e_center. 
-   */
-  void omega_model(double Omega_const);
-
-  /** \brief Compute model for given J and e_center. 
-   */
-  int J_model(double J_const);
-  //@}
-
-  /** \brief
+  /** \brief If true, then an EOS has been set
    */
   bool eos_set;
   
-  /** \brief
+  /** \brief If true, then use a polytrope and rescale
    */
-  bool tabulated_eos;
+  bool scaled_polytrope;
 
-  /** \brief Desc
+  /** \brief Pointer to the user-specified EOS
    */
   eos_nstar_rot *eosp;
   
@@ -977,15 +929,15 @@ namespace o2scl {
   /** \brief Circumferential radius (i.e. the radius defined such
       that \f$ 2 \pi R_e \f$ is the proper circumference) */
   double R_e;                          
-  // Desc
+  /// Desc
   double om_over_Om;
-  // Desc
+  /// Desc
   double Omega_plus;
   /// Angular velocity of a particle in a circular orbit at the equator
   double Omega_p;
-  // Desc
+  /// Desc
   double u_phi;
-  // Desc
+  /// Desc
   double schwarz;
   //@}
 
@@ -1022,14 +974,8 @@ namespace o2scl {
   double MB;
   /** \brief The value \f$ \kappa G c^{-4} \f$ */
   double KSCALE;
-  //@}
-
-  /// \name Hard-coded EOSs
-  //@{
-  /// Bethe-Johnson model, NPA 230 (1974) 1
-  //void eosC();
-  /// Pandharipande and Smith, NPA 175 (1975) 225.
-  //void eosL();
+  /// The constant \f$ \pi \f$
+  double PI;
   //@}
 
   /// \name Basic Usage
@@ -1039,7 +985,7 @@ namespace o2scl {
   void set_eos(eos_nstar_rot &eos) {
     eosp=&eos;
     eos_set=true;
-    tabulated_eos=true;
+    scaled_polytrope=false;
     return;
   }
 
@@ -1047,7 +993,7 @@ namespace o2scl {
    */
   void polytrope_eos(double index) {
     n_P=index;
-    tabulated_eos=false;
+    scaled_polytrope=true;
     eos_set=true;
     return;
   }
@@ -1155,13 +1101,6 @@ namespace o2scl {
   /** \brief Test Keplerian frequency for a polytrope
    */    
   void test8(o2scl::test_mgr &t);
-  //@}
-
-  /// \name Old interface
-  //@{
-  /** \brief Function representing main() function from RNS v1.1d
-   */
-  int run(int argc, char const **argv);
   //@}
 
 
