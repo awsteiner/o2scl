@@ -360,9 +360,6 @@ nstar_rot2::nstar_rot2() {
   n_nearest=1;                     
   a_check=0;                       
   s_e=0.5;
-  r_final=0.0;                 
-  m_final=0.0;
-  r_is_final=0.0;
 
   C=o2scl_cgs::speed_of_light;
   G=o2scl_cgs::gravitational_constant;
@@ -374,8 +371,8 @@ nstar_rot2::nstar_rot2() {
 
   // set program defaults
   cf=1.0;
-  accuracy=1.0e-5;    
-  fix_error=1.0e-4;   
+  eq_radius_tol_rel=1.0e-5;    
+  tol_abs=1.0e-4;   
  
   CL_LOW=false;
   scaled_polytrope=false;
@@ -416,7 +413,7 @@ void nstar_rot2::constants_o2scl() {
   return;
 }
 
-void nstar_rot2::make_grid(void) {                                    
+void nstar_rot2::make_grid() {                                    
     
   for(int s=1;s<=SDIV;s++) {
     s_gp[s]=SMAX*(1.0*s-1.0)/(SDIV-1);
@@ -588,6 +585,8 @@ double nstar_rot2::n0_at_e(double ee) {
 
 double nstar_rot2::s_deriv(double f[SDIV+1], int s) {
 
+  double d_temp;
+  
   switch(s) { 
   case 1 : 
     d_temp=(f[s+1]-f[s])/DS;
@@ -604,6 +603,8 @@ double nstar_rot2::s_deriv(double f[SDIV+1], int s) {
 }
 
 double nstar_rot2::m_deriv(double f[MDIV+1], int m) {
+
+  double d_temp;
 
   switch(m) {  
   case 1 : 
@@ -622,6 +623,8 @@ double nstar_rot2::m_deriv(double f[MDIV+1], int m) {
 
 double nstar_rot2::deriv_s(double f[SDIV+1][MDIV+1], int s, int m) {
 
+  double d_temp;
+
   switch(s) { 
   case 1 : 
     d_temp=(f[s+1][m]-f[s][m])/DS;
@@ -639,6 +642,8 @@ double nstar_rot2::deriv_s(double f[SDIV+1][MDIV+1], int s, int m) {
 
 double nstar_rot2::deriv_m(double f[SDIV+1][MDIV+1], int s, int m) {
 
+  double d_temp;
+
   switch(m) { 
   case 1 : 
     d_temp=(f[s][m+1]-f[s][m])/DM;
@@ -655,6 +660,8 @@ double nstar_rot2::deriv_m(double f[SDIV+1][MDIV+1], int s, int m) {
 }
 
 double nstar_rot2::deriv_sm(double f[SDIV+1][MDIV+1], int s, int m) {
+
+  double d_temp;
 
   switch(s) {
 
@@ -726,7 +733,7 @@ double nstar_rot2::legendre(int n, double x) {
   }
 }
 
-void nstar_rot2::comp_f_P(void) {
+void nstar_rot2::comp_f_P() {
   // counter
   int n;                 
   // counter for s'
@@ -896,7 +903,7 @@ void nstar_rot2::make_center(double e_center_loc) {
   return;
 }
 
-void nstar_rot2::comp_omega(void) {
+void nstar_rot2::comp_omega() {
   int s;
   int m;
 
@@ -967,7 +974,7 @@ void nstar_rot2::comp_omega(void) {
   r_e_guess=r_e;
 }
   
-void nstar_rot2::comp_M_J(void) {
+void nstar_rot2::comp_M_J() {
   int s;
   int m;
   int s_temp;
@@ -1169,150 +1176,36 @@ void nstar_rot2::comp_M_J(void) {
   return;
 }
 
-void nstar_rot2::comp(void) {
-  int s_surf_1=0;
-  int s_temp;
+void nstar_rot2::comp() {
+
+  // Loop indices
   int s;
   int m;
-  // counter
   int i;                
- 
-  // velocity
-  double velocity[SDIV+1][MDIV+1];  
-  // gamma at pole
-  double gamma_pole;                 
-  // gamma at equator
-  double gamma_equator;              
-  // rho at pole
-  double rho_pole;                  
-  // rho at equator
-  double rho_equator;               
-  // omega at equator
-  double omega_equator;             
-  // int. quantity for M
-  double D_m[SDIV+1];               
-  // int. quantity for M_0
-  double D_m_0[SDIV+1];             
-  // int. quantity for M_p
-  double D_m_p[SDIV+1];             
-  // int. quantity for J
-  double D_J[SDIV+1];               
-  // rest mass density
-  double rho_0[SDIV+1][MDIV+1];     
-  double d_o_e[SDIV+1];
-  double d_g_e[SDIV+1];
-  double d_r_e[SDIV+1];
-  double d_v_e[SDIV+1];
-  double doe;
-  double dge; 
-  double dre;
-  double dve;
-  double vek;
-  double d_gamma_s;
-  double d_rho_s;
-  double d_omega_s;
-  double d_gamma_m;
-  double d_rho_m;
-  double d_omega_m;
-  double d_alpha_s;
-  double d_alpha_m;
-  double sqrt_v;
-  double s1;
-  double s_1;
-  double s_plus;
-  double s_minus;
-  double r_plus=0.0;
-  double gamma_plus=0.0;
-  double rho_plus=0.0;
-  double gamma_minus;
-  double rho_minus;
-  double B_st_p[SDIV+1];
-  double B_st_m[SDIV+1];
-  double d_v_plus_s;
-  double d_v_minus_s;
-  double gamma_m[SDIV+1];
-  double rho_m[SDIV+1];
-  double alpha_m[SDIV+1];
-  double enthalpy_m[SDIV+1];
-  double r_surface[MDIV+1];
-  double s_surface[MDIV+1];
-  double dpi_dm;
-  double d_r_s_dm;
-  double d_gamma_s_dm;
-  double d_rho_s_dm;
-  double srt_1_m2;
-  double f_mu[MDIV+1];
-  double virial1;
-  double virial2;
-  double virial3;
-  double S_virial1[SDIV+1][MDIV+1];
-  double S_virial2[SDIV+1][MDIV+1];
-  double S_virial3[SDIV+1][MDIV+1];
-  double u_t;
-  double u_t_plus;
-  double omega_plus;
-  double vel_p;
-  double D_virial1[SDIV+1];
-  double D_virial2[SDIV+1];
-  double m1;
-  double temp_x[5];
-  double temp_y1[5];
-  double temp_y2[5];
-  double S_ad1[SDIV+1][4];
-  double S_ad2[SDIV+1][4];
-  double muCh[MDIV+1];
-  double t_rho[MDIV+1];
-  double t_alpha[MDIV+1];
-  double t_rho_s[MDIV+1];
-  double t_gamma_s[MDIV+1];
-  double t_gamma_m[MDIV+1];
-  double t_rho_m[MDIV+1];
-  double t_omega_s[MDIV+1];
-  double t_omega_m[MDIV+1];
-  double t_pressure[MDIV+1];
-  double t_energy[MDIV+1];
-  double t_v2[MDIV+1];
-  double rhoCh;
-  double alphaCh;
-  double rho_sCh;
-  double gamma_sCh;
-  double gamma_mCh;
-  double rho_mCh;
-  double omega_sCh;
-  double omega_mCh;
-  double pressureCh;
-  double energyCh;
-  double v2Ch;
-  double Sv1Ch[SDIV+1][MDIV+1];
-  double Sv2Ch[SDIV+1][MDIV+1];
-  double Dv1Ch[SDIV+1];
-  double Dv2Ch[SDIV+1];
-  double gamma_surface[MDIV+1];
-  double rho_surface[MDIV+1];
-  double alpha_surface[MDIV+1]; 
-  double pi_bar[MDIV+1];
-  double z_emb[MDIV+1];
-  double grv2_spherical;
-  double B_st_p_surface;
-  double B_st_m_surface;
-  double B_st_p_out[SDIV-(SDIV/2)+2+1];
-  double B_st_m_out[SDIV-(SDIV/2)+2+1];
-  double s_gp_out[SDIV-(SDIV/2)+2+1];
 
-  // radius at pole
+  // ---------------------------------------------------------------
+  // Radius at pole
+
   r_p=r_ratio*r_e;                              
-  // s-coordinate at pole
+
+  // ---------------------------------------------------------------
+  // The s-coordinate at pole and equator
+  
   s_p=r_p/(r_p+r_e);                            
   s_e=0.5;
 
+  // ---------------------------------------------------------------
   // Compute velocity over the grid
+
+  double velocity[SDIV+1][MDIV+1];  
   for(s=1;s<=SDIV;s++) {
     for(m=1;m<=MDIV;m++) {
       velocity[s][m]=sqrt(velocity_sq[s][m]);
     }
   }
 
-  // ?
+  // ---------------------------------------------------------------
+  // Compute velocity_equator
  
   for(s=1;s<=SDIV;s++) {
     gamma_mu_1[s]=gamma[s][MDIV];                
@@ -1323,10 +1216,18 @@ void nstar_rot2::comp(void) {
   }
   
   n_nearest=SDIV/2;
-  gamma_pole=interp(s_gp,gamma_mu_1,SDIV,s_p);    
-  gamma_equator=interp(s_gp,gamma_mu_0,SDIV,s_e); 
-  rho_pole=interp(s_gp,rho_mu_1,SDIV,s_p);      
-  rho_equator=interp(s_gp,rho_mu_0,SDIV,s_e);   
+
+  // gamma at pole
+  double gamma_pole=interp(s_gp,gamma_mu_1,SDIV,s_p);    
+  // gamma at equator
+  double gamma_equator=interp(s_gp,gamma_mu_0,SDIV,s_e); 
+  // rho at pole
+  double rho_pole=interp(s_gp,rho_mu_1,SDIV,s_p);      
+  // rho at equator
+  double rho_equator=interp(s_gp,rho_mu_0,SDIV,s_e);   
+
+  // omega at equator
+  double omega_equator;             
 
   if (r_ratio==1.0) {
     velocity_equator=0.0;
@@ -1337,6 +1238,7 @@ void nstar_rot2::comp(void) {
 				  -rho_equator));
   }
 
+  // ---------------------------------------------------------------
   // Circumferential radius
 
   if (scaled_polytrope==false) {
@@ -1345,6 +1247,7 @@ void nstar_rot2::comp(void) {
     R_e=r_e*exp((gamma_equator-rho_equator)/2.0);
   }
 
+  // ---------------------------------------------------------------
   // Masses and angular momentum
 
   // initialize
@@ -1352,6 +1255,9 @@ void nstar_rot2::comp(void) {
   Mass_0=0.0;
   Mass_p=0.0;
   J=0.0;
+
+  // rest mass density
+  double rho_0[SDIV+1][MDIV+1];     
 
   if (scaled_polytrope==false) {
     for(s=1;s<=SDIV;s++) {
@@ -1371,6 +1277,17 @@ void nstar_rot2::comp(void) {
     }
   }
 
+
+  // int. quantity for M
+  double D_m[SDIV+1];               
+  // int. quantity for M_0
+  double D_m_0[SDIV+1];             
+  // int. quantity for M_p
+  double D_m_p[SDIV+1];             
+  // int. quantity for J
+  double D_J[SDIV+1];               
+
+  int s_temp;
 
   if (SMAX==1.0) s_temp=SDIV-1;
   else s_temp=SDIV;
@@ -1506,6 +1423,7 @@ void nstar_rot2::comp(void) {
     W=Mass_p-Mass+T;
   }
 
+  // ---------------------------------------------------------------
   // Redshifts
 
   Z_p=exp(-0.5*(gamma_pole+rho_pole))-1.0;
@@ -1518,7 +1436,13 @@ void nstar_rot2::comp(void) {
     (exp(-0.5*(gamma_equator+rho_equator))/(1.0+omega_equator*r_e
 					    *exp(-rho_equator)))-1.0;
 
+  // ---------------------------------------------------------------
   // Kepler angular velocity
+
+  double d_o_e[SDIV+1];
+  double d_g_e[SDIV+1];
+  double d_r_e[SDIV+1];
+  double d_v_e[SDIV+1];
 
   for(s=1;s<=SDIV;s++) { 
     d_o_e[s]=deriv_s(omega,s,1);
@@ -1527,23 +1451,35 @@ void nstar_rot2::comp(void) {
     d_v_e[s]=deriv_s(velocity,s,1);
   }
 
-  doe=interp(s_gp,d_o_e,SDIV,s_e);
-  dge=interp(s_gp,d_g_e,SDIV,s_e);
-  dre=interp(s_gp,d_r_e,SDIV,s_e);
-  dve=interp(s_gp,d_v_e,SDIV,s_e);
+  double doe=interp(s_gp,d_o_e,SDIV,s_e);
+  double dge=interp(s_gp,d_g_e,SDIV,s_e);
+  double dre=interp(s_gp,d_r_e,SDIV,s_e);
+  double dve=interp(s_gp,d_v_e,SDIV,s_e);
 
-  vek=(doe/(8.0+dge-dre))*r_e*exp(-rho_equator)+
+  double vek=(doe/(8.0+dge-dre))*r_e*exp(-rho_equator)+
     sqrt(((dge+dre)/(8.0+dge-dre))+pow((doe/(8.0+dge-dre))*
 				       r_e*exp(-rho_equator),2.0));
-    
+  
   if (scaled_polytrope==false) {
     Omega_K=(C/sqrt(KAPPA))*(omega_equator+vek*exp(rho_equator)/r_e);
   } else {
     Omega_K=omega_equator+vek*exp(rho_equator)/r_e;
   }
 
+  // ---------------------------------------------------------------
   // Embedding
     
+  double gamma_m[SDIV+1];
+  double rho_m[SDIV+1];
+  double alpha_m[SDIV+1];
+  double enthalpy_m[SDIV+1];
+  double s_surface[MDIV+1];
+  double r_surface[MDIV+1];
+  double gamma_surface[MDIV+1];
+  double rho_surface[MDIV+1];
+  double alpha_surface[MDIV+1]; 
+  int s_surf_1=0;
+
   for(m=1;m<=MDIV;m++) { 
 
     /* Find last s grid point inside star. Construct arrays for the
@@ -1588,6 +1524,12 @@ void nstar_rot2::comp(void) {
     alpha_surface[m]=interp(s_gp,alpha_m,SDIV,s_surface[m]);
   }
 
+  double d_r_s_dm;
+  double d_gamma_s_dm;
+  double d_rho_s_dm;
+  double f_mu[MDIV+1];
+  double dpi_dm;
+
   for(m=1;m<=MDIV;m++) {
     d_gamma_s_dm=m_deriv(gamma_surface,m);
     d_rho_s_dm=m_deriv(rho_surface,m);
@@ -1607,6 +1549,9 @@ void nstar_rot2::comp(void) {
     }
   }
 
+  double pi_bar[MDIV+1];
+  double z_emb[MDIV+1];
+
   pi_bar[1]=R_e;
   // integrate f_mu
   z_emb[1]=0.0;                         
@@ -1621,7 +1566,20 @@ void nstar_rot2::comp(void) {
   
   eccentricity=sqrt(1.0-pow(z_emb[MDIV]/R_e,2.0));
   
+  // ---------------------------------------------------------------
   // Last stable circular orbit
+
+  double s1;
+  double s_1;
+  double d_gamma_s;
+  double d_rho_s;
+  double d_omega_s;
+  double d_gamma_m;
+  double d_rho_m;
+  double d_omega_m;
+  double d_alpha_s;
+  double d_alpha_m;
+  double sqrt_v;
 
   for(s=1;s<=SDIV-1;s++) {
     s1=s_gp[s]*(1.0-s_gp[s]);
@@ -1654,6 +1612,11 @@ void nstar_rot2::comp(void) {
   v_plus[SDIV]=0.0;
   v_minus[SDIV]=0.0;
 
+  double B_st_p[SDIV+1];
+  double B_st_m[SDIV+1];
+  double d_v_plus_s;
+  double d_v_minus_s;
+
   for(s=1;s<=SDIV;s++) {
     s1=s_gp[s]*(1.0-s_gp[s]);
         
@@ -1672,6 +1635,20 @@ void nstar_rot2::comp(void) {
 			  +s1*d_v_minus_s)+0.5*s1*(d_gamma_s+d_rho_s)-
       pow(v_minus[s],4.0)*(1.0+0.5*s1*(d_gamma_s-d_rho_s));
   }  
+
+  double B_st_p_surface;
+  double B_st_m_surface;
+  double B_st_p_out[SDIV-(SDIV/2)+2+1];
+  double B_st_m_out[SDIV-(SDIV/2)+2+1];
+  double s_plus;
+  double s_minus;
+  double r_plus=0.0;
+  double gamma_plus=0.0;
+  double rho_plus=0.0;
+  double gamma_minus;
+  double rho_minus;
+  double omega_plus;
+  double s_gp_out[SDIV-(SDIV/2)+2+1];
 
   B_st_p_surface=interp(s_gp,B_st_p,SDIV,s_surface[1]);
   B_st_m_surface=interp(s_gp,B_st_m,SDIV,s_surface[1]);
@@ -1732,6 +1709,8 @@ void nstar_rot2::comp(void) {
     }
   }
     
+  double vel_p;
+
   if (h_plus!= 0.0) {
 
     u_phi=vel_plus*r_plus*exp((gamma_plus-rho_plus)/2.0)/
@@ -1760,6 +1739,12 @@ void nstar_rot2::comp(void) {
   // Virial theorem
 
   // GRV2 spherical
+
+  double virial1;
+  double virial2;
+  double S_virial1[SDIV+1][MDIV+1];
+  double S_virial2[SDIV+1][MDIV+1];
+  double grv2_spherical;
 
   virial1=0.0;
   virial2=0.0; 
@@ -1800,15 +1785,25 @@ void nstar_rot2::comp(void) {
 
   // GRV2
 
+  double virial3;
+  double S_virial3[SDIV+1][MDIV+1];
+
   virial1=0.0;
   virial2=0.0; 
   virial3=0.0;
+
+  double temp_x[5];
 
   for(i=1;i<=4;i++) {
     temp_x[i]=mu[MDIV+1-i];
   }
 
   double temp9=cos(0.5*(theta[MDIV]+theta[MDIV-2]));
+  double temp_y1[5];
+  double temp_y2[5];
+  double S_ad1[SDIV+1][4];
+  double S_ad2[SDIV+1][4];
+  double m1;
 
   // Set equal to zero at center
 
@@ -1892,6 +1887,9 @@ void nstar_rot2::comp(void) {
 
   }
 
+  double D_virial1[SDIV+1];
+  double D_virial2[SDIV+1];
+
   for(s=1;s<=SDIV;s++) {
     for(m=1;m<=MDIV-4;m+=2) {
       virial1+=(DM/3.0)*(S_virial1[s][m]+4.0*S_virial1[s][m+1]
@@ -1931,6 +1929,23 @@ void nstar_rot2::comp(void) {
 
   // GRV2 GAUSS-CHEBYSHEV
 
+  double t_rho[MDIV+1];
+  double t_alpha[MDIV+1];
+  double t_rho_s[MDIV+1];
+  double t_gamma_s[MDIV+1];
+  double t_gamma_m[MDIV+1];
+  double t_rho_m[MDIV+1];
+  double t_omega_s[MDIV+1];
+  double t_omega_m[MDIV+1];
+  double muCh[MDIV+1];
+  double t_pressure[MDIV+1];
+  double t_energy[MDIV+1];
+  double Sv1Ch[SDIV+1][MDIV+1];
+  double Sv2Ch[SDIV+1][MDIV+1];
+  double Dv1Ch[SDIV+1];
+  double Dv2Ch[SDIV+1];
+  double t_v2[MDIV+1];
+
   virial1=0.0;
   virial2=0.0;
 
@@ -1950,7 +1965,19 @@ void nstar_rot2::comp(void) {
       t_energy[m]=energy[s][m];
       t_v2[m]=velocity_sq[s][m];
     }
-
+    
+    double rhoCh;
+    double alphaCh;
+    double rho_sCh;
+    double gamma_sCh;
+    double gamma_mCh;
+    double rho_mCh;
+    double omega_sCh;
+    double omega_mCh;
+    double pressureCh;
+    double energyCh;
+    double v2Ch;
+    
     for(m=1;m<=MDIV;m++) {
       rhoCh=interp(mu,t_rho,MDIV,muCh[m]);
       alphaCh=interp(mu,t_alpha,MDIV,muCh[m]);
@@ -2176,10 +2203,10 @@ void nstar_rot2::comp(void) {
   if (r_ratio!=1.0) om_over_Om=omega[1][1]*r_e/Omega_h;
   else om_over_Om=0.0;
 
-  /* Calculate the mass quadrupole moment */
+  // Calculate the mass quadrupole moment
   if (r_ratio!=1.0) {
     double r_infinity;
-    /* Value of the coordinate r at infinity*/
+    // Value of the coordinate r at infinity
     r_infinity=r_e*s_gp[SDIV-1]/(1.0-s_gp[SDIV-1]);	
     mass_quadrupole=-0.5*pow(r_infinity,3)*D2_rho[SDIV-1][1];
   } else {
@@ -2187,8 +2214,7 @@ void nstar_rot2::comp(void) {
   }
 
   // ------------------------------------------------------
-
-  /* Prepare next guess */
+  // Prepare next guess
 
   for(s=1;s<=SDIV;s++) {
     for(m=1;m<=MDIV;m++) {
@@ -2205,8 +2231,7 @@ void nstar_rot2::comp(void) {
 }
 
 double nstar_rot2::dm_dr_is(double r_is, double r, double m, double p) {
-  double dmdr,
-    e_d;
+  double dmdr, e_d;
 
   if (p<p_surface) e_d=0.0;
   else e_d=e_at_p(p);
@@ -2245,7 +2270,8 @@ double nstar_rot2::dr_dr_is(double r_is, double r, double m) {
   return drdris;
 }
 
-void nstar_rot2::integrate(int i_check) {
+void nstar_rot2::integrate(int i_check, double &r_final, double &m_final,
+			   double &r_is_final) {
   int i=2;
 
   // radius 
@@ -2268,8 +2294,9 @@ void nstar_rot2::integrate(int i_check) {
   // stepsize during integration 
   double h;                           
   // coeff. in Runge-Kutta equations 
-  double a1,a2,a3,a4,b1,b2,b3,b4;     
-  double c1,c2,c3,c4;
+  double a1, a2, a3, a4;
+  double b1, b2, b3, b4;     
+  double c1, c2, c3, c4;
   double rho0;   
 
   if (i_check==1) {
@@ -2397,23 +2424,35 @@ void nstar_rot2::integrate(int i_check) {
   return;
 }
 
-void nstar_rot2::guess(void) {
+void nstar_rot2::spherical_star() {
   int i;
   int s;
   int m;
   int s_temp;
+
+  /** \brief */
+  double r_final;
+  /// Desc
+  double m_final;
+  /// Desc
+  double r_is_final;
+
+  r_final=0.0;                 
+  m_final=0.0;
+  r_is_final=0.0;
 
   double r_is_s;
   double lambda_s;
   double nu_s;
   double gamma_eq;
   double rho_eq;
-
-  /* SOLVE THE OPPENHEIMER-VOLKOV EQUATIONS USING A RUNGE-KUTTA METHOD
-     The functions integrate solves the equations using the r_is coordinate */
-  integrate(1);
-  integrate(2);
-  integrate(3);
+  
+  /* Solve the Oppenheimer-Volkov equations using Runge-Kutta. The
+     function integrate() solves the equations using the r_is
+     coordinate. */
+  integrate(1,r_final,m_final,r_is_final);
+  integrate(2,r_final,m_final,r_is_final);
+  integrate(3,r_final,m_final,r_is_final);
 
   if (SMAX==1.0) s_temp=SDIV-1;
   else s_temp=SDIV;
@@ -2477,7 +2516,7 @@ void nstar_rot2::guess(void) {
   return;
 }
 
-int nstar_rot2::iterate(double r_ratio) {
+int nstar_rot2::iterate(double r_ratio_loc) {
   int m;
   int s;
   int n;
@@ -2496,7 +2535,7 @@ int nstar_rot2::iterate(double r_ratio) {
   // Equatorial radius in previous cycle
   double r_e_old;             
   // Difference | r_e_old -r_e |
-  double dif=1.0;             
+  double r_e_diff=1.0;             
   // Derivative of gamma w.r.t. s
   double d_gamma_s;            
   // Derivative of gamma w.r.t. m
@@ -2535,6 +2574,11 @@ int nstar_rot2::iterate(double r_ratio) {
   double e_rsm; 
   double rho0sm;
  
+  /// Desc
+  double dgds[SDIV+1][MDIV+1];
+  /// Desc
+  double dgdm[SDIV+1][MDIV+1];
+
   if (SMAX==1.0) {
     s_temp=SDIV-1;
   } else {
@@ -2555,10 +2599,11 @@ int nstar_rot2::iterate(double r_ratio) {
 
   r_e=r_e_guess;
 
-  while (dif>accuracy || n_of_it<2) { 
+  while (r_e_diff>eq_radius_tol_rel || n_of_it<2) { 
 
     if (verbose>1) {
-      cout << "dif, accuracy: " << dif << " " << accuracy << endl;
+      cout << "r_e_diff, eq_radius_tol_rel: "
+	   << r_e_diff << " " << eq_radius_tol_rel << endl;
     }
  
     /* Rescale potentials and construct arrays with the potentials
@@ -2584,7 +2629,7 @@ int nstar_rot2::iterate(double r_ratio) {
     // Compute new r_e
 
     r_e_old=r_e;
-    r_p=r_ratio*r_e;                          
+    r_p=r_ratio_loc*r_e;                          
     s_p=r_p/(r_p+r_e);                        
   
     n_nearest=SDIV/2;
@@ -2601,7 +2646,7 @@ int nstar_rot2::iterate(double r_ratio) {
 
     // Compute angular velocity Omega
  
-    if (r_ratio==1.0) {
+    if (r_ratio_loc==1.0) {
       Omega_h=0.0;
       omega_equator_h=0.0;
     } else {
@@ -2620,7 +2665,7 @@ int nstar_rot2::iterate(double r_ratio) {
       for(m=1;m<=MDIV;m++) {
 	rsm=rho[s][m];
             
-	if (r_ratio==1.0 || s > (SDIV/2+2) ) {
+	if (r_ratio_loc==1.0 || s > (SDIV/2+2) ) {
 	  velocity_sq[s][m]=0.0;
 	} else {
 	  velocity_sq[s][m]=pow((Omega_h-omega[s][m])*(sgp/(1.0-sgp))
@@ -2661,7 +2706,7 @@ int nstar_rot2::iterate(double r_ratio) {
       }
     }
 
-    // Evaluation of source terms (Eqs. 30-33 of Cook92)
+    // Evaluation of source terms (Eqs. 30-33 of Cook, et al. (1992))
 
     if (SMAX==1.0) {
       s=SDIV;
@@ -2731,7 +2776,7 @@ int nstar_rot2::iterate(double r_ratio) {
       }
     }
     
-    // Angular integration (see Eqs. 27-29 of Cook92)
+    // Angular integration (see Eqs. 27-29 of Cook, et al. (1992))
   
     n=0;
     for(k=1;k<=SDIV;k++) {      
@@ -2868,7 +2913,7 @@ int nstar_rot2::iterate(double r_ratio) {
 
     // Treat spherical case
 
-    if (r_ratio==1.0) {
+    if (r_ratio_loc==1.0) {
       for(s=1;s<=SDIV;s++) {
 	for(m=1;m<=MDIV;m++) {
 	  rho[s][m]=rho[s][1];
@@ -2897,9 +2942,9 @@ int nstar_rot2::iterate(double r_ratio) {
       }
     }
 
-    // ALPHA (Integration of eq (39) of Cook92)
+    // ALPHA (Integration of eq (39) of Cook, et al. (1992))
  
-    if (r_ratio==1.0) {
+    if (r_ratio_loc==1.0) {
       for(s=1;s<=SDIV;s++) {
 	for(m=1;m<=MDIV;m++) {
 	  da_dm[s][m]=0.0;
@@ -2985,10 +3030,10 @@ int nstar_rot2::iterate(double r_ratio) {
     
     if (a_check==200) break;
     
-    dif=fabs(r_e_old-r_e)/r_e;
+    r_e_diff=fabs(r_e_old-r_e)/r_e;
     n_of_it++;
 
-    // end of while (def<accuracy || n_of_it<2)
+    // end of while (r_e_diff<eq_radius_tol_rel || n_of_it<2)
   }   
 
   for(s=1;s<=SDIV;s++) {
@@ -3071,7 +3116,7 @@ int nstar_rot2::fix_cent_eden_axis_rat(double cent_eden, double axis_rat) {
 
   e_center=e_min;
   make_center(e_center);
-  guess();
+  spherical_star();
   
   if (r_ratio<0.8) {
     iterate(0.8);
@@ -3150,7 +3195,7 @@ int nstar_rot2::fix_cent_eden_with_kepler(double cent_eden) {
   /* First model is guess */
   
   make_center(e_center);
-  guess();             
+  spherical_star();             
   double d_Omega=1.0;           
   double sign=1.0;
   double dr=0.1;
@@ -3163,7 +3208,7 @@ int nstar_rot2::fix_cent_eden_with_kepler(double cent_eden) {
      | its direction.
   */
 
-  while((diff_omega>fix_error || d_Omega<0.0) && r_ratio<=1.0) {          
+  while((diff_omega>tol_abs || d_Omega<0.0) && r_ratio<=1.0) {          
     if (d_Omega*sign<0.0) { 
       sign=d_Omega;        
       dr/=(-2.0);              
@@ -3251,7 +3296,7 @@ int nstar_rot2::fix_cent_eden_non_rot(double cent_eden) {
   r_ratio=1.0;
   e_center=e_min;
   make_center(e_center);
-  guess();
+  spherical_star();
   iterate(r_ratio);
   comp();
   
@@ -3333,7 +3378,7 @@ int nstar_rot2::fix_cent_eden_grav_mass(double cent_eden, double grav_mass) {
     /* Compute first rotating model */
 
     make_center(e_center);
-    guess();
+    spherical_star();
     a_check=0.0;
     if (iterate(r_ratio)!=0) return 1;
     double sign;
@@ -3356,7 +3401,7 @@ int nstar_rot2::fix_cent_eden_grav_mass(double cent_eden, double grav_mass) {
       dr/=(-2.0);
     }
 
-    while(d_ratio_M>fix_error && r_ratio<=1.0) {
+    while(d_ratio_M>tol_abs && r_ratio<=1.0) {
       if (diff_M*sign<0.0) {
 	sign=diff_M;
 	dr/=(-2.0);
@@ -3459,7 +3504,7 @@ int nstar_rot2::fix_cent_eden_bar_mass(double cent_eden, double bar_mass) {
     /* Compute first rotating model */
 
     make_center(e_center);
-    guess();
+    spherical_star();
     a_check=0.0;
     iterate(r_ratio);
     double sign;
@@ -3482,7 +3527,7 @@ int nstar_rot2::fix_cent_eden_bar_mass(double cent_eden, double bar_mass) {
       dr/=(-2.0);
     }
 
-    while(d_ratio_M_0>fix_error && r_ratio<=1.0) {
+    while(d_ratio_M_0>tol_abs && r_ratio<=1.0) {
       if (diff_M_0*sign<0.0) {
 	sign=diff_M_0;
 	dr/=(-2.0);
@@ -3583,7 +3628,7 @@ int nstar_rot2::fix_cent_eden_ang_vel(double cent_eden, double ang_vel) {
     /* Compute first rotating model */
 
     make_center(e_center);
-    guess();
+    spherical_star();
     a_check=0.0;
     iterate(r_ratio);
     double sign;
@@ -3606,7 +3651,7 @@ int nstar_rot2::fix_cent_eden_ang_vel(double cent_eden, double ang_vel) {
       dr/=(-2.0);
     }
 
-    while(d_ratio_Omega>fix_error && r_ratio<=1.0) {
+    while(d_ratio_Omega>tol_abs && r_ratio<=1.0) {
       if (diff_Omega*sign<0.0) {
 	sign=diff_Omega;
 	dr/=(-2.0);
@@ -3708,7 +3753,7 @@ int nstar_rot2::fix_cent_eden_ang_mom(double cent_eden, double ang_mom) {
     /* Compute first rotating model */
 
     make_center(e_center);
-    guess();
+    spherical_star();
     a_check=0.0;
     if (iterate(r_ratio)!=0) return 1;
     double sign;
@@ -3733,7 +3778,7 @@ int nstar_rot2::fix_cent_eden_ang_mom(double cent_eden, double ang_mom) {
 
     int new_ctr=0;
 
-    while(d_ratio_J>fix_error && r_ratio<=1.0) {
+    while(d_ratio_J>tol_abs && r_ratio<=1.0) {
       if (diff_J*sign<0.0) {
 	sign=diff_J;
 	dr/=(-2.0);
