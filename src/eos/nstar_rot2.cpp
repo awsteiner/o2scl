@@ -46,18 +46,11 @@ using namespace o2scl;
 
 eos_nstar_rot_interp::eos_nstar_rot_interp() {
   n_nearest=1;
-  
-  C=2.9979e10;                  
-  G=6.6732e-8;                  
-  KAPPA=1.346790806509621e+13;  
-  KSCALE=1.112668301525780e-36; 
 
-  /*
-    C=o2scl_cgs::speed_of_light;
-    G=o2scl_cgs::gravitational_constant;
-    KAPPA=1.0e-15*C*C/G;
-    KSCALE=KAPPA*G/(C*C*C*C);
-  */
+  C=o2scl_cgs::speed_of_light;
+  G=o2scl_cgs::gravitational_constant;
+  KAPPA=1.0e-15*C*C/G;
+  KSCALE=KAPPA*G/(C*C*C*C);
 }
 
 int eos_nstar_rot_interp::new_search(int n, double *x, double val) {
@@ -118,6 +111,12 @@ double eos_nstar_rot_interp::pr_from_enth(double enth) {
   return pow(10.0,interp(log_h_tab,log_p_tab,n_tab,log10(enth)));
 }
 
+void eos_nstar_rot_interp::ed_nb_from_pr(double pr, double &ed, double &nb) {
+  ed_from_pr(pr);
+  nb_from_pr(pr);
+  return;
+}
+
 double eos_nstar_rot_interp::interp(double xp[], double yp[], int np,
 				    double xb) {
   // index of 1st point
@@ -151,7 +150,13 @@ double eos_nstar_rot_interp::interp(double xp[], double yp[], int np,
   return (y);
 }
 
-eos_nstar_rot_C::eos_nstar_rot_C() {
+eos_nstar_rot_C::eos_nstar_rot_C(bool rns_constants) {
+  if (rns_constants) {
+    C=2.9979e10;                  
+    G=6.6732e-8;                  
+    KAPPA=1.346790806509621e+13;  
+    KSCALE=1.112668301525780e-36; 
+  }
   double eosC_arr[96][4]={
     {7.80000e+00,1.01000e+08,1.000000000000000e+00,4.698795180722962e+24},
     {7.86000e+00,1.01000e+09,1.157946629165269e+08,4.734939759036205e+24},
@@ -253,20 +258,30 @@ eos_nstar_rot_C::eos_nstar_rot_C() {
   n_tab=96;
 
   for(int i=1;i<=n_tab;i++) {  
-
+    
     double rho=eosC_arr[i-1][0];
     double p=eosC_arr[i-1][1];
     double h=eosC_arr[i-1][2];
     double n0=eosC_arr[i-1][3];
+    
+    //cout << (rho+p/pow(o2scl_cgs::speed_of_light,2.0))/n0 << " "
+    //<< 1.66e-24*exp(h/pow(o2scl_cgs::speed_of_light,2.0)) << endl;
 
     log_e_tab[i]=log10(rho*C*C*KSCALE);
     log_p_tab[i]=log10(p*KSCALE);
     log_h_tab[i]=log10(h/(C*C));
     log_n0_tab[i]=log10(n0);
   }
+  //exit(-1);
 }
 
-eos_nstar_rot_L::eos_nstar_rot_L() {
+eos_nstar_rot_L::eos_nstar_rot_L(bool rns_constants) {
+  if (rns_constants) {
+    C=2.9979e10;                  
+    G=6.6732e-8;                  
+    KAPPA=1.346790806509621e+13;  
+    KSCALE=1.112668301525780e-36; 
+  }
   double eosL_arr[64][4]={
     {7.80000e+00,1.01000e+08,1.000000000000000e+00,4.698795180722962e+24},
     {7.86000e+00,1.01000e+09,1.157946629165269e+08,4.734939759036205e+24},
@@ -351,6 +366,11 @@ eos_nstar_rot_L::eos_nstar_rot_L() {
 }
 
 nstar_rot2::nstar_rot2() {
+  efac=1.0;
+  pfac=1.0;
+  nfac=1.0;
+  hfac=1.0;
+
   verbose=1;
   
   SMAX=0.9999;                
@@ -1069,9 +1089,11 @@ void nstar_rot2::comp_M_J() {
   }
 
 
-  if (SMAX==1.0) s_temp=SDIV-1;
-  else  
+  if (SMAX==1.0) {
+    s_temp=SDIV-1;
+  } else {
     s_temp=SDIV;
+  }
 
   for(s=1;s<=s_temp;s++) {
     // initialize
@@ -1163,13 +1185,14 @@ void nstar_rot2::comp_M_J() {
     J*=4*PI*pow(r_e,4.0);
   }
 
-  for(s=1;s<=SDIV;s++)
+  for(s=1;s<=SDIV;s++) {
     for(m=1;m<=MDIV;m++) {
       gamma_guess[s][m]=gamma[s][m];
       rho_guess[s][m]=rho[s][m];
       alpha_guess[s][m]=alpha[s][m];
       omega_guess[s][m]=omega[s][m];
     }
+  }
 
   r_e_guess=r_e;
 
@@ -2235,7 +2258,7 @@ double nstar_rot2::dm_dr_is(double r_is, double r, double m, double p) {
 
   if (p<p_surface) e_d=0.0;
   else e_d=e_at_p(p);
- 
+  
   if (r_is<RMIN) {
     dmdr=4.0*PI*e_center*r*r*(1.0+4.0*PI*e_center*r*r/3.0);
   } else {
@@ -2461,7 +2484,7 @@ void nstar_rot2::spherical_star() {
 
   for(s=1;s<=s_temp;s++) {
     r_is_s=r_is_final*(s_gp[s]/(1.0-s_gp[s]));
-    /* CONVERT THE SPHERICAL SOLUTION TO THE "s" "radial" coordinate */
+    // Convert the spherical solution to the 's' coordinte
     if (r_is_s<r_is_final) {
       lambda_s=interp(r_is_gp,lambda_gp,RDIV,r_is_s);
       nu_s=interp(r_is_gp,nu_gp,RDIV,r_is_s);
@@ -2470,7 +2493,7 @@ void nstar_rot2::spherical_star() {
       nu_s=log((1.0-m_final/(2.0*r_is_s))/(1.0+m_final/(2*r_is_s)));
     }
 
-    /* TRANSFORM TO THE STANDARD METRIC FUNCTIONS gamma and rho */
+    // Transform to the standard metric functions, gamma and rho
     gamma[s][1]=nu_s+lambda_s;
     rho[s][1]=nu_s-lambda_s;
 
@@ -2483,9 +2506,9 @@ void nstar_rot2::spherical_star() {
       omega_guess[s][m]=0.0; 
     }
  
-    /* gamma at \mu=0 */
+    // gamma at \mu=0 
     gamma_mu_0[s]=gamma[s][1];                   
-    /* rho at \mu=0 */
+    // rho at \mu=0 
     rho_mu_0[s]=rho[s][1];                     
   }
 
@@ -2502,9 +2525,9 @@ void nstar_rot2::spherical_star() {
   }
    
   n_nearest=SDIV/2;
-  /* gamma at equator */
+  // gamma at equator
   gamma_eq=interp(s_gp,gamma_mu_0,SDIV,s_e);      
-  /* rho at equator */
+  // rho at equator 
   rho_eq=interp(s_gp,rho_mu_0,SDIV,s_e);        
  
   r_e_guess=r_final*exp(0.5*(rho_eq-gamma_eq)); 
@@ -2691,9 +2714,7 @@ int nstar_rot2::iterate(double r_ratio_loc) {
 	  } else {
 	    rho0sm=pow(((Gamma_P-1.0)/Gamma_P)
 		       *(exp(enthalpy[s][m])-1.0),1.0/(Gamma_P-1.0));
- 
 	    pressure[s][m]=pow(rho0sm,Gamma_P);
-
 	    energy[s][m]=pressure[s][m]/(Gamma_P-1.0)+rho0sm;
 	  }
 	}  
@@ -2882,8 +2903,7 @@ int nstar_rot2::iterate(double r_ratio_loc) {
 	  if (m==MDIV) {             
 	    sum_omega+=0.5*e_rsm*e_gsm*D2_omega[s][n]; 
 	    sum_gamma+=-(2.0/PI)*e_gsm*D2_gamma[s][n];   
-	  }
-	  else { 
+	  } else { 
 	    sum_omega+=-e_rsm*e_gsm*(P1_2n_1[m][n]/
 				     (2.0*n*(2.0*n-1.0)
 				      *temp1))*D2_omega[s][n];  
@@ -3214,7 +3234,7 @@ int nstar_rot2::fix_cent_eden_with_kepler(double cent_eden) {
       dr/=(-2.0);              
     } 
     r_ratio -= dr; 
-    a_check=0.0;
+    a_check=0;
     iterate(r_ratio);
     if (a_check==200) {
       d_Omega=-1.0;
@@ -3379,7 +3399,7 @@ int nstar_rot2::fix_cent_eden_grav_mass(double cent_eden, double grav_mass) {
 
     make_center(e_center);
     spherical_star();
-    a_check=0.0;
+    a_check=0;
     if (iterate(r_ratio)!=0) return 1;
     double sign;
     if (a_check==200) {
@@ -3407,7 +3427,7 @@ int nstar_rot2::fix_cent_eden_grav_mass(double cent_eden, double grav_mass) {
 	dr/=(-2.0);
       }
       r_ratio -= dr;
-      a_check=0.0;
+      a_check=0;
       if (iterate(r_ratio)!=0) return 2;
       if (a_check==200) {
 	diff_M=-1.0;
@@ -3505,7 +3525,7 @@ int nstar_rot2::fix_cent_eden_bar_mass(double cent_eden, double bar_mass) {
 
     make_center(e_center);
     spherical_star();
-    a_check=0.0;
+    a_check=0;
     iterate(r_ratio);
     double sign;
     if (a_check==200) {
@@ -3533,7 +3553,7 @@ int nstar_rot2::fix_cent_eden_bar_mass(double cent_eden, double bar_mass) {
 	dr/=(-2.0);
       }
       r_ratio -= dr;
-      a_check=0.0;
+      a_check=0;
       iterate(r_ratio);
       if (a_check==200) {
 	diff_M_0=-1.0;
@@ -3629,7 +3649,7 @@ int nstar_rot2::fix_cent_eden_ang_vel(double cent_eden, double ang_vel) {
 
     make_center(e_center);
     spherical_star();
-    a_check=0.0;
+    a_check=0;
     iterate(r_ratio);
     double sign;
     if (a_check==200) {
@@ -3657,7 +3677,7 @@ int nstar_rot2::fix_cent_eden_ang_vel(double cent_eden, double ang_vel) {
 	dr/=(-2.0);
       }
       r_ratio -= dr;
-      a_check=0.0;
+      a_check=0;
       iterate(r_ratio);
       if (a_check==200) {
 	diff_Omega=-1.0;
@@ -3754,7 +3774,7 @@ int nstar_rot2::fix_cent_eden_ang_mom(double cent_eden, double ang_mom) {
 
     make_center(e_center);
     spherical_star();
-    a_check=0.0;
+    a_check=0;
     if (iterate(r_ratio)!=0) return 1;
     double sign;
     if (a_check==200) {
@@ -3784,7 +3804,7 @@ int nstar_rot2::fix_cent_eden_ang_mom(double cent_eden, double ang_mom) {
 	dr/=(-2.0);
       }
       r_ratio -= dr;
-      a_check=0.0;
+      a_check=0;
       if (iterate(r_ratio)!=0) return 2;
       if (a_check==200) {
 	diff_J=-1.0;
@@ -3809,7 +3829,7 @@ int nstar_rot2::fix_cent_eden_ang_mom(double cent_eden, double ang_mom) {
 void nstar_rot2::test1(o2scl::test_mgr &t) {
 
   constants_rns();
-  eos_nstar_rot_C p;
+  eos_nstar_rot_C p(true);
   set_eos(p);
   fix_cent_eden_axis_rat(2.0e15,0.59);
   eos_set=false;
@@ -3840,7 +3860,7 @@ void nstar_rot2::test1(o2scl::test_mgr &t) {
 void nstar_rot2::test2(o2scl::test_mgr &t) {
 
   constants_rns();
-  eos_nstar_rot_C p;
+  eos_nstar_rot_C p(true);
   set_eos(p);
   fix_cent_eden_with_kepler(2.0e15);
   eos_set=false;
@@ -3871,7 +3891,7 @@ void nstar_rot2::test2(o2scl::test_mgr &t) {
 void nstar_rot2::test3(o2scl::test_mgr &t) {
   
   constants_rns();
-  eos_nstar_rot_C p;
+  eos_nstar_rot_C p(true);
   set_eos(p);
   fix_cent_eden_grav_mass(1.0e15,1.5);
   eos_set=false;
@@ -3902,7 +3922,7 @@ void nstar_rot2::test3(o2scl::test_mgr &t) {
 void nstar_rot2::test4(o2scl::test_mgr &t) {
 
   constants_rns();
-  eos_nstar_rot_C p;
+  eos_nstar_rot_C p(true);
   set_eos(p);
   fix_cent_eden_bar_mass(1.0e15,1.55);
   eos_set=false;
@@ -3933,7 +3953,7 @@ void nstar_rot2::test4(o2scl::test_mgr &t) {
 void nstar_rot2::test5(o2scl::test_mgr &t) {
 
   constants_rns();
-  eos_nstar_rot_C p;
+  eos_nstar_rot_C p(true);
   set_eos(p);
   fix_cent_eden_ang_vel(1.0e15,0.5);
   eos_set=false;
@@ -3964,7 +3984,7 @@ void nstar_rot2::test5(o2scl::test_mgr &t) {
 void nstar_rot2::test6(o2scl::test_mgr &t) {
 
   constants_rns();
-  eos_nstar_rot_C p;
+  eos_nstar_rot_C p(true);
   set_eos(p);
   fix_cent_eden_ang_mom(1.0e15,1.5);
   eos_set=false;
@@ -3995,7 +4015,7 @@ void nstar_rot2::test6(o2scl::test_mgr &t) {
 void nstar_rot2::test7(o2scl::test_mgr &t) {
 
   constants_rns();
-  eos_nstar_rot_C p;
+  eos_nstar_rot_C p(true);
   set_eos(p);
   fix_cent_eden_non_rot(2.0e15);
   eos_set=false;

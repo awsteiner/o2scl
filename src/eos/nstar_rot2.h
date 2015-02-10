@@ -89,13 +89,9 @@ namespace o2scl {
     /** \brief From the baryon density, return the enthalpy
      */
     virtual double enth_from_nb(double nb)=0;
-
-    void ed_nb_from_pr(double pr, double &ed, double &nb) {
-      return;
-    }
   };
   
-  /** \brief
+  /** \brief Create a tabulated EOS for \ref nstar_rot using interpolation
    */
   class eos_nstar_rot_interp : public eos_nstar_rot {
     
@@ -106,7 +102,6 @@ namespace o2scl {
     
     /// Search in array \c x of length \c n for value \c val
     int new_search(int n, double *x, double val);
-
     
     /** \brief number of tabulated EOS points */
     int n_tab;                           
@@ -196,10 +191,16 @@ namespace o2scl {
       double mu_start=2.0*mu0-mu1;
       
       for(size_t i=0;i<n_tab;i++) {
+	/*
+	  std::cout << eden[i]*conv1 << " " << pres[i]*conv2 << " "
+	  << log((eden[i]+pres[i])/nb[i]/mu_start)*C*C << " " 
+	  << nb[i]*1.0e39 << " "
+	  << (eden[i]+pres[i])/nb[i] << " " << mu_start << std::endl;
+	*/
 	log_e_tab[i+1]=log10(eden[i]*conv1*C*C*KSCALE);
 	log_p_tab[i+1]=log10(pres[i]*conv2*KSCALE);
 	log_n0_tab[i+1]=log10(nb[i]*1.0e39);
-	log_h_tab[i+1]=log10(log((eden[i]+pres[i])/nb[i])-log(mu_start));
+	log_h_tab[i+1]=log10(log((eden[i]+pres[i])/nb[i]/mu_start));
       }
 
       return;
@@ -241,20 +242,33 @@ namespace o2scl {
      */
     virtual double pr_from_enth(double enth);
 
+    /** \brief Given the pressure, produce the energy and number densities
+
+	The arguments \c pr and \c ed should always be in \f$
+	M_{\odot}/\mathrm{km}^3 \f$ . The argument for \c nb should be
+	in \f$ \mathrm{fm}^{-3} \f$ .
+	
+	If \ref baryon_column is false, then \c nb is unmodified.
+    */
+    virtual void ed_nb_from_pr(double pr, double &ed, double &nb);
   };
   
-  /** \brief EOS C
-   */
+  /** \brief Tabulated EOS for \ref nstar_rot from \ref Bethe74
+      
+      Bethe-Johnson model, NPA 230 (1974) 1
+  */
   class eos_nstar_rot_C : public eos_nstar_rot_interp {
   public:
-    eos_nstar_rot_C();
+    eos_nstar_rot_C(bool rns_constants=false);
   };
   
-  /** \brief EOS L
-   */
+  /** \brief Tabulated EOS for \ref nstar_rot from \ref Pandharipande75
+      
+      Pandharipande and Smith, NPA 175 (1975) 225.
+  */
   class eos_nstar_rot_L : public eos_nstar_rot_interp {
   public:
-    eos_nstar_rot_L();
+    eos_nstar_rot_L(bool rns_constants=false);
   };
   
   /** \brief Rotating neutron star class based on RNS v1.1d from
@@ -299,7 +313,22 @@ namespace o2scl {
       \future Give the user more control over the initial guess.
       \future Remove the CL_LOW stuff?
 
-      \comment
+      <b>Draft documentation</b> 
+
+      \note In this class, the specific enthalpy is defined
+      relative to a fiducial baryon mass, i.e.
+      \f[
+      h = \log(\mu/m_B) = \int \frac{dP}{\varepsilon+P}
+      \f]
+
+      For spherical stars, the isotropic radius \f$ r_{\mathrm{is}}
+      \f$ is defined by
+      \f[
+      \frac{d r}{d r_{\mathrm{is}}} = 
+      \left(\frac{r}{r_{\mathrm{is}}}\right)
+      \left(1 - 2 \frac{m}{r}\right)^{1/2}
+      \f]
+
       <b>Quadrupole moments</b>
 
       Quadrupole moments computed using the method in \ref Laarakkers99. 
@@ -366,7 +395,6 @@ namespace o2scl {
       \Omega_K = \frac{\omega^{\prime}}{2 \psi^{\prime}} ...
       \f]
       (eq. 31 in \ref Stergioulas03 )
-      \comment
       
   */
   class nstar_rot2 {
@@ -421,9 +449,11 @@ namespace o2scl {
   /// Array search object
   o2scl::search_vec<double *> sv;
 
-  /** \brief grid point in RK integration */ 
+  /** \brief The number of grid points in integration of TOV equations
+      for spherical stars
+  */ 
   static const int RDIV=900;                     
-    
+  
   /** \brief Maximum value of s-coordinate (default 0.9999) */  
   double SMAX;
   /** \brief Spacing in \f$ s \f$ direction, 
@@ -879,8 +909,9 @@ namespace o2scl {
 
   /// \name Output
   //@{
-  /** \brief Central energy density (in \f$ \mathrm{g}/\mathrm{cm}^3 \f$) 
-   */
+  /** \brief Central energy density (in units of 
+      \f$ 10^{15} \mathrm{g}/\mathrm{cm}^3 \f$) 
+  */
   double e_center;                     
   /** \brief Ratio of polar to equatorial radius
    */ 
@@ -900,10 +931,10 @@ namespace o2scl {
   double s_e; 
   /// The velocity at the equator
   double velocity_equator;              
-  /** \brief Circumferential radius (i.e. the radius defined such
-      that \f$ 2 \pi R_e \f$ is the proper circumference) */
+  /** \brief Circumferential radius in cm (i.e. the radius defined
+      such that \f$ 2 \pi R_e \f$ is the proper circumference) */
   double R_e;                          
-  /// Proper mass
+  /// Proper mass (in g)
   double Mass_p;
   /// Gravitational mass (in g)
   double Mass;
