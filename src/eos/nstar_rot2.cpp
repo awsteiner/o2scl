@@ -366,11 +366,6 @@ eos_nstar_rot_L::eos_nstar_rot_L(bool rns_constants) {
 }
 
 nstar_rot2::nstar_rot2() {
-  efac=1.0;
-  pfac=1.0;
-  nfac=1.0;
-  hfac=1.0;
-
   verbose=1;
   
   SMAX=0.9999;                
@@ -2500,9 +2495,9 @@ void nstar_rot2::spherical_star() {
     for(m=1;m<=MDIV;m++) {
       /* Since the solution is spherically symmetric, 
 	 funct[m]=funct[1]=value of function on equatorial plane */
-      gamma_guess[s][m]=gamma[s][1],        
-	rho_guess[s][m]=rho[s][1],
-	alpha_guess[s][m]=(gamma[s][1]-rho[s][1])/2.0;
+      gamma_guess[s][m]=gamma[s][1];
+      rho_guess[s][m]=rho[s][1];
+      alpha_guess[s][m]=(gamma[s][1]-rho[s][1])/2.0;
       omega_guess[s][m]=0.0; 
     }
  
