@@ -57,24 +57,32 @@ int main(void) {
   se.calc_e(n,p,th);
   cout << (th.ed/0.16-n.m)*hc_mev_fm << endl;
   se.check_mu(n,p,th,mund,mupd,munde,mupde);
-  t.test_abs(n.mu,mund,fabs(munde),"neutron chem pot.");
-  t.test_abs(p.mu,mupd,fabs(mupde),"proton chem pot.");
+  t.test_abs(n.mu,mund,fabs(munde),"neutron chem pot. neut.-rich mat.");
+  t.test_abs(p.mu,mupd,fabs(mupde),"proton chem pot. neut.-rich mat.");
 
   n.n=0.16;
   p.n=0.00;
   se.calc_e(n,p,th);
   cout << (th.ed/0.16-n.m)*hc_mev_fm << endl;
   se.check_mu(n,p,th,mund,mupd,munde,mupde);
-  t.test_abs(n.mu,mund,fabs(munde),"neutron chem pot.");
-  t.test_abs(p.mu,mupd,fabs(mupde),"proton chem pot.");
+  t.test_abs(n.mu,mund,fabs(munde),"neutron chem pot. neut. mat.");
+  t.test_abs(p.mu,mupd,fabs(mupde),"proton chem pot. neut. mat.");
 
   n.n=0.08;
   p.n=0.08;
   se.calc_e(n,p,th);
   cout << (th.ed/0.16-n.m)*hc_mev_fm << endl;
   se.check_mu(n,p,th,mund,mupd,munde,mupde);
-  t.test_abs(n.mu,mund,fabs(munde),"neutron chem pot.");
-  t.test_abs(p.mu,mupd,fabs(mupde),"proton chem pot.");
+  t.test_abs(n.mu,mund,fabs(munde),"neutron chem pot. nuc. mat. n0");
+  t.test_abs(p.mu,mupd,fabs(mupde),"proton chem pot. nuc. mat. n0");
+
+  n.n=0.16;
+  p.n=0.16;
+  se.calc_e(n,p,th);
+  cout << (th.ed/0.16-n.m)*hc_mev_fm << endl;
+  se.check_mu(n,p,th,mund,mupd,munde,mupde);
+  t.test_abs(n.mu,mund,fabs(munde),"neutron chem pot. nuc. mat. 2*n0");
+  t.test_abs(p.mu,mupd,fabs(mupde),"proton chem pot. nuc. mat. 2*n0");
 
   se.eoa=-16.0/hc_mev_fm;
   se.comp=200.0/hc_mev_fm;
