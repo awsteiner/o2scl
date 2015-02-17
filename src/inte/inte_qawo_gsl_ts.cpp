@@ -150,7 +150,11 @@ int main(void) {
       Qsin.omega=n;
       Qsin.integ_err(f_odd,-M_PI,M_PI,o2scl_res,o2scl_err);
 
-      t.test_abs(gsl_res,o2scl_res,GSL_DBL_MIN,"QAWO: GSL vs O2scl");
+      double dbl_eps=std::numeric_limits<double>::epsilon();
+      // AWS, 2/15/16: multiplied dbl_eps by 5.0 since if 
+      // GSL and O2scl are compiled with different flags, this
+      // difference can be larger
+      t.test_abs(gsl_res,o2scl_res,dbl_eps*5.0,"QAWO: GSL vs O2scl");
       
       string coef="b_"+itos(n);
       cout.width(8); cout << coef;
@@ -173,7 +177,7 @@ int main(void) {
       Qcos.integ_err(f_even,-M_PI,M_PI,o2scl_res,o2scl_err);
 			
       double dbl_eps=std::numeric_limits<double>::epsilon();
-      t.test_abs(gsl_res,o2scl_res,dbl_eps,"QAWO: GSL vs O2scl");
+      t.test_abs(gsl_res,o2scl_res,dbl_eps,"QAWO: GSL vs O2scl (2)");
 			
       string coef="a_"+itos(n);
       cout.width(8); cout << coef;

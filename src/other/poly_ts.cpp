@@ -817,7 +817,7 @@ int main(void) {
   test_quadratic_real_coeff(ne,&t1,"gsl_quad_real_coeff",1.0e-5,
 			    1.0e-15,1.0e-15,1.0e-15,1.0e-15,tt);
   test_quadratic_real_coeff(ne,&t2,"quadratic_complex_std",1.0e-5,
-			    1.0e-15,1.0e-15,1.0e-15,1.0e-15,tt);
+			    1.0e-15,1.0e-15,1.0e-15,5.0e-15,tt);
   test_quadratic_real_coeff(ne,&p3,"poly_real_coeff_gsl",1.0e-5,
 			    1.0e-15,1.0e-15,1.0e-15,1.0e-15,tt);
   cout << endl;
@@ -835,7 +835,7 @@ int main(void) {
   test_cubic_real_coeff(ne,&c1,"cern_real_coeff",1.0,
 			1.0e0,1.0e6,1.0e1,1.0e7);
   test_cubic_real_coeff(ne,&c2,"cubic_real_coeff_gsl",1.0,
-			1.0e-2,1.0e-2,1.0e1,1.0e0);
+			1.0e-2,1.0e-2,1.0e1,8.0e0);
   test_cubic_real_coeff(ne,&c3,"cubic_complex_std",1.0,
 			1.0e-1,1.0e-2,1.0e1,1.0e1);
   test_cubic_real_coeff(ne,&p3,"poly_real_coeff_gsl",1.0,
@@ -849,7 +849,7 @@ int main(void) {
   test_cubic_real_coeff(ne,&c1,"cern_real_coeff",1.0e-3,
 			1.0e-5,1.0e-3,1.0e-3,1.0e-2);
   test_cubic_real_coeff(ne,&c2,"cubic_real_coeff_gsl",1.0e-3,
-			1.0e-4,1.0e-4,1.0e-3,1.0e-3);
+			1.0e-4,5.0e-4,1.0e-3,1.0e-3);
   test_cubic_real_coeff(ne,&c3,"cubic_complex_std",1.0e-3,
 			1.0e-4,1.0e+2,1.0e-2,1.0e+5);
   test_cubic_real_coeff(ne,&p3,"poly_real_coeff_gsl",1.0e-3,
@@ -868,7 +868,7 @@ int main(void) {
   cout << "type                   Avg 1      Avg 2      Max 1"
        << "      Max 2      time" << endl;
   test_quartic_real(ne,&q1,"cern_real_coeff",1.0,
-		    5.0e-12,1.0,5.0e-9,1.0);
+		    5.0e-12,1.0,2.0e-8,1.0);
   test_quartic_real(ne,&q2,"quartic_real_gsl",1.0,
 		    5.0e-2,1.0,1.0e2,1.0);
   test_quartic_real(ne,&q3,"quartic_real_gsl2",1.0,

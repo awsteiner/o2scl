@@ -188,9 +188,9 @@ int main(void) {
     //cout << covar_12 << endl;
     cout << endl;
     
-    t.test_rel(par_11[0],par_12[1],1.0e-9,"par_11/12 1");
-    t.test_rel(par_11[1],par_12[2],1.0e-9,"par_11/12 2");
-    if (k==0) t.test_rel_mat(2,2,covar_11,covar_12,1.0e-9,"covar_11/12");
+    t.test_rel(par_11[0],par_12[1],5.0e-9,"par_11/12 1");
+    t.test_rel(par_11[1],par_12[2],5.0e-9,"par_11/12 2");
+    if (k==0) t.test_rel_mat(2,2,covar_11,covar_12,1.0e-7,"covar_11/12");
     t.test_rel(chi2_11,chi2_12,1.0e-9,"chi2_11/12");
   }
 

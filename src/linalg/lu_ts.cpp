@@ -77,6 +77,7 @@ int main(void) {
 
       gsl_linalg_LU_decomp(gm1,gp1,&sig);
       LU_decomp(5,om1,op1,sig);
+
       t.test_rel_mat(5,5,om1,gsl_matrix_wrap(gm1),1.0e-8,"LU decomp");
 
       // -------------------------------------------------
@@ -164,7 +165,8 @@ int main(void) {
       LU_decomp(5,om1,op1,sig);
       LU_invert<ubmatrix,ubmatrix,ubmatrix_column>(5,om1,op1,om2);
     
-      t.test_rel_mat(5,5,om2,gsl_matrix_wrap(gm2),1.0e-12,"LU invert 1 (paren)");
+      t.test_rel_mat(5,5,om2,gsl_matrix_wrap(gm2),1.0e-12,
+		     "LU invert 1 (paren)");
 
     }
   }

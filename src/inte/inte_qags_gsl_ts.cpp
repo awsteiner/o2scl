@@ -142,8 +142,8 @@ int main(void) {
 
     Q.integ_err(f,0,1,o2scl_res,o2scl_err);
 		
-      double dbl_eps=std::numeric_limits<double>::epsilon();
-    t.test_abs(gsl_res,o2scl_res,dbl_eps,"QAGS: GSL vs O2scl");
+    double dbl_eps=std::numeric_limits<double>::epsilon();
+    t.test_abs(gsl_res,o2scl_res,dbl_eps*1.01,"QAGS: GSL vs O2scl");
 		
     cout.width(15); cout << o2scl_err;
     cout.width(15); cout << fabs(o2scl_res-log_recip_exact(alpha));

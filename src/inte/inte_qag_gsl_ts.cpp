@@ -143,7 +143,7 @@ int main(void) {
   Q.tol_abs=1.0e-8;		
   // relative error bound
   Q.tol_rel=0.0;		
-	
+
   while (Q.tol_abs > 1.5e-14) {
     cout << "\nabsolute tolerance: " << Q.tol_abs << "...\n";
     cout.width(15); cout << "GK-rule";
@@ -158,8 +158,9 @@ int main(void) {
 			  limit, key, work, &gsl_res, &gsl_err);
       Q.set_rule(key);
       Q.integ_err(f, 0.0, M_PI, o2scl_res, o2scl_err);
-			
-      t.test_abs(o2scl_res, gsl_res, GSL_DBL_MIN, "QAG: O2scl vs GSL");
+
+      double dbl_eps=std::numeric_limits<double>::epsilon()*1.01;
+      t.test_abs(o2scl_res,gsl_res,dbl_eps,"QAG: O2scl vs GSL");
 			
       cout.width(15); cout << Q.get_rule();
       cout.width(15); cout << o2scl_err;
