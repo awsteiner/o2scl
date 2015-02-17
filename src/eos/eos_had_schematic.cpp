@@ -59,7 +59,7 @@ int eos_had_schematic::calc_e(fermion &ln, fermion &lp, thermo &lth) {
   
   sym=a*pow(barn/n0,2.0/3.0)+b*pow(barn/n0,gamma);
   
-  // The derivative of the symmetry energy w.r.t. density
+  // The derivative of the symmetry energy w.r.t. (barn/n0)
   symp=a*2.0/3.0*pow(barn/n0,-1.0/3.0)+b*gamma*pow(barn/n0,gamma-1.0);
   
   lth.ed=ln.m*ln.n+lp.m*lp.n+barn*
