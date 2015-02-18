@@ -45,7 +45,6 @@ int main(void) {
 
   nstar_rot nst;
   nst.constants_rns();
-  nst.eosC();
   nst.test1(t);
   nst.test2(t);
   nst.test3(t);
@@ -77,8 +76,10 @@ int main(void) {
   ed_cent=cu.convert("1/fm^4","g/cm^3",ed_cent);
 
   // Send the EOS to the nstar_rot object
-  nst.set_eos_fm(eos->get_nlines(),(*eos)["ed"],(*eos)["pr"],(*eos)["nb"]);
-
+  eos_nstar_rot_interp p;
+  p.set_eos_fm(eos->get_nlines(),(*eos)["ed"],(*eos)["pr"],(*eos)["nb"]);
+  nst.set_eos(p);
+  
   // Compute the mass of the non-rotating configuration with the
   // same energy density
   nst.fix_cent_eden_non_rot(ed_cent);

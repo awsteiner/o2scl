@@ -202,7 +202,7 @@ int main(void) {
   cout << "NVBPS crust." << endl;
   for(size_t i=0;i<200;i++) {
     crust_comp.set("pr",i,pr_grid[i]);
-    te.get_eden(cu.convert("1/fm^4","Msun/km^3",pr_grid[i]),ed,nb);
+    te.ed_nb_from_pr(cu.convert("1/fm^4","Msun/km^3",pr_grid[i]),ed,nb);
     ed=cu.convert("Msun/km^3","1/fm^4",ed);
     crust_comp.set("ed_NVBPS",i,ed);
     crust_comp.set("nb_NVBPS",i,nb);
@@ -215,7 +215,7 @@ int main(void) {
   te.sho11_low_dens_eos();
   for(size_t i=0;i<200;i++) {
     crust_comp.set("pr",i,pr_grid[i]);
-    te.get_eden(cu.convert("1/fm^4","Msun/km^3",pr_grid[i]),ed,nb);
+    te.ed_nb_from_pr(cu.convert("1/fm^4","Msun/km^3",pr_grid[i]),ed,nb);
     ed=cu.convert("Msun/km^3","1/fm^4",ed);
     crust_comp.set("ed_SHO",i,ed);
     crust_comp.set("nb_SHO",i,nb);
@@ -228,7 +228,7 @@ int main(void) {
   te.ngl13_low_dens_eos(40.0);
   for(size_t i=0;i<200;i++) {
     crust_comp.set("pr",i,pr_grid[i]);
-    te.get_eden(cu.convert("1/fm^4","Msun/km^3",pr_grid[i]),ed,nb);
+    te.ed_nb_from_pr(cu.convert("1/fm^4","Msun/km^3",pr_grid[i]),ed,nb);
     ed=cu.convert("Msun/km^3","1/fm^4",ed);
     crust_comp.set("ed_PNM_L40",i,ed);
     crust_comp.set("nb_PNM_L40",i,nb);
@@ -238,7 +238,7 @@ int main(void) {
   te.ngl13_low_dens_eos(100.0);
   for(size_t i=0;i<200;i++) {
     crust_comp.set("pr",i,pr_grid[i]);
-    te.get_eden(cu.convert("1/fm^4","Msun/km^3",pr_grid[i]),ed,nb);
+    te.ed_nb_from_pr(cu.convert("1/fm^4","Msun/km^3",pr_grid[i]),ed,nb);
     ed=cu.convert("Msun/km^3","1/fm^4",ed);
     crust_comp.set("ed_PNM_L100",i,ed);
     crust_comp.set("nb_PNM_L100",i,nb);
@@ -248,7 +248,7 @@ int main(void) {
   te.ngl13_low_dens_eos(40.0,"J35");
   for(size_t i=0;i<200;i++) {
     crust_comp.set("pr",i,pr_grid[i]);
-    te.get_eden(cu.convert("1/fm^4","Msun/km^3",pr_grid[i]),ed,nb);
+    te.ed_nb_from_pr(cu.convert("1/fm^4","Msun/km^3",pr_grid[i]),ed,nb);
     ed=cu.convert("Msun/km^3","1/fm^4",ed);
     crust_comp.set("ed_J35_L40",i,ed);
     crust_comp.set("nb_J35_L40",i,nb);
@@ -258,7 +258,7 @@ int main(void) {
   te.ngl13_low_dens_eos(100.0,"J35");
   for(size_t i=0;i<200;i++) {
     crust_comp.set("pr",i,pr_grid[i]);
-    te.get_eden(cu.convert("1/fm^4","Msun/km^3",pr_grid[i]),ed,nb);
+    te.ed_nb_from_pr(cu.convert("1/fm^4","Msun/km^3",pr_grid[i]),ed,nb);
     ed=cu.convert("Msun/km^3","1/fm^4",ed);
     crust_comp.set("ed_J35_L100",i,ed);
     crust_comp.set("nb_J35_L100",i,nb);
@@ -268,7 +268,7 @@ int main(void) {
   te.s12_low_dens_eos("SLy4");
   for(size_t i=0;i<200;i++) {
     crust_comp.set("pr",i,pr_grid[i]);
-    te.get_eden(cu.convert("1/fm^4","Msun/km^3",pr_grid[i]),ed,nb);
+    te.ed_nb_from_pr(cu.convert("1/fm^4","Msun/km^3",pr_grid[i]),ed,nb);
     ed=cu.convert("Msun/km^3","1/fm^4",ed);
     crust_comp.set("ed_SLy4",i,ed);
     crust_comp.set("nb_SLy4",i,nb);
@@ -278,7 +278,7 @@ int main(void) {
   te.s12_low_dens_eos("APR");
   for(size_t i=0;i<200;i++) {
     crust_comp.set("pr",i,pr_grid[i]);
-    te.get_eden(cu.convert("1/fm^4","Msun/km^3",pr_grid[i]),ed,nb);
+    te.ed_nb_from_pr(cu.convert("1/fm^4","Msun/km^3",pr_grid[i]),ed,nb);
     ed=cu.convert("Msun/km^3","1/fm^4",ed);
     crust_comp.set("ed_APR",i,ed);
     crust_comp.set("nb_APR",i,nb);
@@ -288,7 +288,7 @@ int main(void) {
   te.s12_low_dens_eos("Rs");
   for(size_t i=0;i<200;i++) {
     crust_comp.set("pr",i,pr_grid[i]);
-    te.get_eden(cu.convert("1/fm^4","Msun/km^3",pr_grid[i]),ed,nb);
+    te.ed_nb_from_pr(cu.convert("1/fm^4","Msun/km^3",pr_grid[i]),ed,nb);
     ed=cu.convert("Msun/km^3","1/fm^4",ed);
     crust_comp.set("ed_Rs",i,ed);
     crust_comp.set("nb_Rs",i,nb);

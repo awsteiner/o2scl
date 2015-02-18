@@ -68,8 +68,208 @@
 #include <o2scl/root_bkt_cern.h>
 #include <o2scl/lib_settings.h>
 #include <o2scl/interp.h>
+#include <o2scl/eos_tov.h>
 
 namespace o2scl {
+  
+  /** \brief An EOS for \ref nstar_rot
+   */
+  class eos_nstar_rot : public eos_tov {
+    
+  public:
+
+    /** \brief From the pressure, return the enthalpy
+     */
+    virtual double enth_from_pr(double pr)=0;
+
+    /** \brief From the enthalpy, return the pressure
+     */
+    virtual double pr_from_enth(double enth)=0;
+
+    /** \brief From the baryon density, return the enthalpy
+     */
+    virtual double enth_from_nb(double nb)=0;
+  };
+  
+  /** \brief Create a tabulated EOS for \ref nstar_rot using interpolation
+   */
+  class eos_nstar_rot_interp : public eos_nstar_rot {
+    
+  protected:
+
+    /// Array search object
+    o2scl::search_vec<double *> sv;
+    
+    /// Search in array \c x of length \c n for value \c val
+    int new_search(int n, double *x, double val);
+    
+    /** \brief number of tabulated EOS points */
+    int n_tab;                           
+    /** \brief rho points in tabulated EOS */
+    double log_e_tab[201];               
+    /** \brief p points in tabulated EOS */
+    double log_p_tab[201];               
+    /** \brief h points in EOS file */
+    double log_h_tab[201];               
+    /** \brief number density in EOS file */  
+    double log_n0_tab[201];              
+
+    /// \name Constants
+    //@{
+    /** \brief Speed of light in vacuum (in CGS units) */ 
+    double C;
+    /** \brief Gravitational constant (in CGS units) */ 
+    double G;
+    /** \brief Square of length scale in CGS units, 
+	\f$ \kappa \equiv 10^{-15} c^2/G \f$
+    */
+    double KAPPA;
+    /** \brief The value \f$ \kappa G c^{-4} \f$ */
+    double KSCALE;
+    //@}
+
+    /** \brief Cache for interpolation
+     */
+    int n_nearest;
+    
+    /** \brief Driver for the interpolation routine. 
+	
+	First we find the tab. point nearest to xb, then we
+	interpolate using four points around xb.
+    */  
+    double interp(double xp[], double yp[], int np, double xb);
+    
+  public:
+    
+    eos_nstar_rot_interp();
+    
+    /** \brief Set the EOS from four vectors in the native unit system
+     */
+    template<class vec1_t, class vec2_t, class vec3_t, class vec4_t>
+      void set_eos_native(vec1_t &eden, vec2_t &pres, vec3_t &enth,
+			  vec4_t &nb) {
+      
+      double C=o2scl_cgs::speed_of_light;
+      double G=o2scl_cgs::gravitational_constant;
+      double KAPPA=1.0e-15*C*C/G;
+      double KSCALE=KAPPA*G/(C*C*C*C);
+  
+      n_tab=eden.size();
+
+      for(int i=1;i<=n_tab;i++) {  
+	log_e_tab[i]=log10(eden[i-1]*C*C*KSCALE);
+	log_p_tab[i]=log10(pres[i-1]*KSCALE);
+	log_h_tab[i]=log10(enth[i-1]/(C*C));
+	log_n0_tab[i]=log10(nb[i-1]);
+      }
+      
+      return;
+    }
+
+    /** \brief Set the EOS from energy density, pressure, and
+	baryon density stored in powers of \f$ \mathrm{fm} \f$ .
+    */
+    template<class vec1_t, class vec2_t, class vec3_t>
+      void set_eos_fm(size_t n, vec1_t &eden, vec2_t &pres, vec3_t &nb) {
+      
+      if (n>200) {
+	O2SCL_ERR2("Too many EOS points in ",
+		   "nstar_rot::set_eos().",o2scl::exc_einval);
+      }
+
+      // Conversion factor for energy density
+      double conv1=o2scl_settings.get_convert_units().convert
+	("1/fm^4","g/cm^3",1.0);
+      // Conversion factor for pressure
+      double conv2=o2scl_settings.get_convert_units().convert
+	("1/fm^4","dyne/cm^2",1.0);
+      
+      n_tab=n;
+
+      double mu0=(eden[0]+pres[0])/nb[0];
+      double mu1=(eden[1]+pres[1])/nb[1];
+      double mu_start=2.0*mu0-mu1;
+      
+      for(size_t i=0;i<n_tab;i++) {
+	/*
+	  std::cout << eden[i]*conv1 << " " << pres[i]*conv2 << " "
+	  << log((eden[i]+pres[i])/nb[i]/mu_start)*C*C << " " 
+	  << nb[i]*1.0e39 << " "
+	  << (eden[i]+pres[i])/nb[i] << " " << mu_start << std::endl;
+	*/
+	log_e_tab[i+1]=log10(eden[i]*conv1*C*C*KSCALE);
+	log_p_tab[i+1]=log10(pres[i]*conv2*KSCALE);
+	log_n0_tab[i+1]=log10(nb[i]*1.0e39);
+	log_h_tab[i+1]=log10(log((eden[i]+pres[i])/nb[i]/mu_start));
+      }
+
+      return;
+    }
+
+    /** \brief From the pressure, return the energy density
+     */
+    virtual double ed_from_pr(double pr);
+
+    /** \brief From the energy density, return the pressure
+     */
+    virtual double pr_from_ed(double ed);
+
+    /** \brief From the pressure, return the baryon density
+     */
+    virtual double nb_from_pr(double pr);
+
+    /** \brief From the baryon density, return the pressure
+     */
+    virtual double pr_from_nb(double nb);
+
+    /** \brief From the baryon density, return the energy density
+     */
+    virtual double ed_from_nb(double nb);
+
+    /** \brief From the energy density, return the baryon density
+     */
+    virtual double nb_from_ed(double ed);
+
+    /** \brief From the pressure, return the enthalpy
+     */
+    virtual double enth_from_pr(double pr);
+
+    /** \brief From the baryon density, return the enthalpy
+     */
+    virtual double enth_from_nb(double nb);
+
+    /** \brief From the enthalpy, return the pressure
+     */
+    virtual double pr_from_enth(double enth);
+
+    /** \brief Given the pressure, produce the energy and number densities
+
+	The arguments \c pr and \c ed should always be in \f$
+	M_{\odot}/\mathrm{km}^3 \f$ . The argument for \c nb should be
+	in \f$ \mathrm{fm}^{-3} \f$ .
+	
+	If \ref baryon_column is false, then \c nb is unmodified.
+    */
+    virtual void ed_nb_from_pr(double pr, double &ed, double &nb);
+  };
+  
+  /** \brief Tabulated EOS for \ref nstar_rot from \ref Bethe74
+      
+      Bethe-Johnson model, NPA 230 (1974) 1
+  */
+  class eos_nstar_rot_C : public eos_nstar_rot_interp {
+  public:
+    eos_nstar_rot_C(bool rns_constants=false);
+  };
+  
+  /** \brief Tabulated EOS for \ref nstar_rot from \ref Pandharipande75
+      
+      Pandharipande and Smith, NPA 175 (1975) 225.
+  */
+  class eos_nstar_rot_L : public eos_nstar_rot_interp {
+  public:
+    eos_nstar_rot_L(bool rns_constants=false);
+  };
   
   /** \brief Rotating neutron star class based on RNS v1.1d from
       N. Stergioulas et al.
@@ -113,7 +313,22 @@ namespace o2scl {
       \future Give the user more control over the initial guess.
       \future Remove the CL_LOW stuff?
 
-      \comment
+      <b>Draft documentation</b> 
+
+      \note In this class, the specific enthalpy is defined
+      relative to a fiducial baryon mass, i.e.
+      \f[
+      h = \log(\mu/m_B) = \int \frac{dP}{\varepsilon+P}
+      \f]
+
+      For spherical stars, the isotropic radius \f$ r_{\mathrm{is}}
+      \f$ is defined by
+      \f[
+      \frac{d r}{d r_{\mathrm{is}}} = 
+      \left(\frac{r}{r_{\mathrm{is}}}\right)
+      \left(1 - 2 \frac{m}{r}\right)^{1/2}
+      \f]
+
       <b>Quadrupole moments</b>
 
       Quadrupole moments computed using the method in \ref Laarakkers99. 
@@ -180,7 +395,6 @@ namespace o2scl {
       \Omega_K = \frac{\omega^{\prime}}{2 \psi^{\prime}} ...
       \f]
       (eq. 31 in \ref Stergioulas03 )
-      \comment
       
   */
   class nstar_rot {
@@ -193,12 +407,6 @@ namespace o2scl {
   static const int SDIV=129;
   /// The number of Legendre polynomials
   static const int LMAX=10;
-
-  /** \brief Compute \f$ P(\varepsilon) \f$  
-	
-      Used in \ref make_center() and \ref integrate().
-  */
-  double p_at_e(double ee);
 
   protected:
 
@@ -213,7 +421,7 @@ namespace o2scl {
      */
     double _Gamma_P;
 
-    /** \brief Desc
+    /** \brief The energy density
      */
     double _ee;
 
@@ -238,15 +446,14 @@ namespace o2scl {
   /// The polytrope solver
   o2scl::root_bkt_cern<polytrope_solve> rbc;
 
-  /// Search in array \c x of length \c n for value \c val
-  int new_search(int n, double *x, double val);
-    
   /// Array search object
   o2scl::search_vec<double *> sv;
 
-  /** \brief grid point in RK integration */ 
+  /** \brief The number of grid points in integration of TOV equations
+      for spherical stars
+  */ 
   static const int RDIV=900;                     
-    
+  
   /** \brief Maximum value of s-coordinate (default 0.9999) */  
   double SMAX;
   /** \brief Spacing in \f$ s \f$ direction, 
@@ -257,20 +464,11 @@ namespace o2scl {
    */ 
   double DM;
 
-  /// The constant \f$ \pi \f$
-  double PI;
-
-  // Desc (default \f$ 10^{-15} \f$)
+  /// Minimum radius for spherical stars (default \f$ 10^{-15} \f$)
   double RMIN;
 
-  /** \brief Nearest grid point, used in interpolation (default 1) */ 
-  int n_nearest;                     
   /** \brief Indicates if iteration diverged (default 0) */ 
   int a_check;                       
-  /** \brief 0 if not print dif (default 1) */  
-  int print_dif;                       
-  /** \brief select print out (default 1) */ 
-  int print_option;                    
 
   /// \name Grid quantities set in make_grid()
   //@{
@@ -290,6 +488,22 @@ namespace o2scl {
   double sin_theta[MDIV+1];
   //@}
 
+  /// \name Grid values computed in integrate() for spherical_star()
+  //@{
+  /// Isotropic radius
+  double r_gp[RDIV+1];
+  /// Radial coordinate
+  double r_is_gp[RDIV+1];
+  /// Metric function \f$ \lambda \f$
+  double lambda_gp[RDIV+1];
+  /// Metric function \f$ \nu \f$
+  double nu_gp[RDIV+1];
+  /// Enclosed gravitational mass
+  double m_gp[RDIV+1];
+  /// Energy density
+  double e_d_gp[RDIV+1];   
+  //@}
+
   /// \name Metric functions
   //@{
   /** \brief potential \f$ \rho \f$ */ 
@@ -302,7 +516,7 @@ namespace o2scl {
   double alpha[SDIV+1][MDIV+1];        
   //@}
 
-  /// \name Initial guess
+  /// \name Initial guess computed by \ref comp()
   //@{
   /// Guess for the equatorial radius
   double r_e_guess;
@@ -348,12 +562,6 @@ namespace o2scl {
   double omega_mu_0[SDIV+1];           
   //@}
 
-  /** \brief Radius at pole */      
-  double r_p;                          
-  /** \brief The value of the s-coordinate at the pole */
-  double s_p;                          
-  /** \brief The value of the s-coordinate at the equator */
-  double s_e; 
   /** \brief The value of \f$ \hat{\gamma} \f$ at the pole */  
   double gamma_pole_h;                  
   /** \brief The value of \f$ \hat{\gamma} \f$ at the center */
@@ -383,6 +591,10 @@ namespace o2scl {
   double f_gamma[SDIV+1][LMAX+1][SDIV+1];
   /** \brief \f$ f_{\omega}(s,n,s') \f$ */
   double f_omega[SDIV+1][LMAX+1][SDIV+1];
+  //@}
+  
+  /// \name Legendre polynomials
+  //@{
   /** \brief Legendre polynomial \f$ P_{2n}(\mu) \f$ 
    */  
   double P_2n[MDIV+1][LMAX+1];         
@@ -391,38 +603,12 @@ namespace o2scl {
   double P1_2n_1[MDIV+1][LMAX+1];      
   //@}
 
-  // Desc
-  double velocity_equator;              
-  /// Proper mass
-  double Mass_p;
-  /** \brief used in guess */
-  double r_final;
-  // Desc
-  double m_final;
-  // Desc
-  double r_is_final;
-  // Desc
-  double r_gp[RDIV+1];
-  // Desc
-  double r_is_gp[RDIV+1];
-  // Desc
-  double m_gp[RDIV+1];
-  // Desc
-  double lambda_gp[RDIV+1];
-  // Desc
-  double e_d_gp[RDIV+1];   
-  // Desc
-  double nu_gp[RDIV+1];
-  // Desc
-  double gamma_s[SDIV+1];
-  // Desc
-  double rho_s[SDIV+1];
-  // Desc
-  double da_dm_s[MDIV+1];         
-  /** \brief temporary storage of derivative */
-  double d_temp;                      
-  /** \brief accuracy in \f$ r_e \f$ (default \f$ 10^{-5} \f$) */
-  double accuracy;                    
+  /** \brief Relative accuracy for the equatorial radius,
+      \f$ r_e \f$ (default \f$ 10^{-5} \f$) 
+
+      Used in \ref iterate() .
+  */
+  double eq_radius_tol_rel;                    
 
   /** \brief Integrated term over m in eqn for \f$ \rho \f$ */
   double D1_rho[LMAX+1][SDIV+1];  
@@ -444,84 +630,169 @@ namespace o2scl {
   /** \brief source term in eqn for \f$ \omega \f$ */
   double S_omega[SDIV+1][MDIV+1]; 
 
-  // Desc
-  double v_plus[SDIV+1];
-  // Desc
-  double v_minus[SDIV+1];
+  /** \brief The tolerance for the functions with the prefix "fix" 
+      (default \f$ 10^{-4} \f$ )
+  */
+  double tol_abs;
 
-  // Desc
-  double vel_plus;
-  // Desc
-  double vel_minus;
-  // Desc
-  double sign;
-  // Desc
-  double dr;
-  // Desc
-  double omega_error;
-  // Desc
-  double h_error;
-  // Desc
-  double M_0const;
-  // Desc
-  double J_const;
-  // Desc
-  double M_0_error;
-  // Desc
-  double M_error;
-  // Desc
-  double J_error;
-  // Desc
-  double dgds[SDIV+1][MDIV+1];
-  // Desc
-  double dgdm[SDIV+1][MDIV+1];
-  // Desc
-  double Omega_const;
-  // Desc (default \f$ 10^{-4} \f$ )
-  double fix_error;
-
-  /// \name Set in the run() function
+  /// \name Thermodyanmic quantities near the surface
   //@{
-  // Desc
+  /// Pressure at the surface
   double p_surface;
-  // Desc
+  /// Energy density at the surface
   double e_surface;
-  /** \brief min. enthalpy in h file */
+  /** \brief Minimum specific enthalpy
+   */
   double enthalpy_min;                 
   //@}
+
+  /// \name Polytrope parameters
+  //@{
   /// Polytropic index
   double n_P;
   /// Polytropic exponent
   double Gamma_P;
-  // Desc
-  double rho0_center;
-  // Desc
-  double eccentricity;
-  // Desc
-  double grv2;
-  // Desc
-  double grv2_new;
-  // Desc
-  double grv3;
-
-  /// \name These are only used when CL_LOW is true   
-  //@{
-  // Desc
-  double e_match;
-  // Desc
-  double p_match;
-  // Desc
-  double h_match;
-  // Desc
-  double n0_match;
   //@}
 
-  // Desc
+  /// \name For CL_LOW is true
+  //@{
+  /// Desc
+  double e_match;
+  /// Desc
+  double p_match;
+  /// Desc
+  double h_match;
+  /// Desc
+  double n0_match;
+  /** \brief Desc (default false)
+   */
+  bool CL_LOW;
+  /// Desc
   double de_pt;
-  // Desc
+  /// Desc
   double e_cl;
+  //@}
 
-  /** \brief Create computational mesh. 
+  /// \name Interpolation functions
+  //@{
+  /** \brief Cache for interpolation
+   */
+  int n_nearest;
+  
+  /// Search in array \c x of length \c n for value \c val
+  int new_search(int n, double *x, double val);
+    
+  /** \brief Driver for the interpolation routine. 
+	
+      First we find the tab. point nearest to xb, then we
+      interpolate using four points around xb.
+	
+      Used by \ref int_z(), \ref e_at_p(), \ref p_at_e(), 
+      \ref p_at_h(), \ref h_at_p(), \ref n0_at_e(), 
+      \ref comp_omega(), \ref comp_M_J(), \ref comp(), 
+      \ref spherical_star(), \ref iterate().
+  */  
+  double interp(double xp[], double yp[], int np ,double xb);
+
+  /** \brief Driver for the interpolation routine.
+
+      Four point interpolation at a 
+      given offset the index of the first point k. 
+
+      Used in \ref comp() .
+  */
+  double interp_4_k(double xp[], double yp[], int np, double xb, int k);
+  //@}
+
+  /** \brief Integrate f[mu] from m-1 to m. 
+
+      This implements a 8-point closed Newton-Cotes formula.
+	
+      Used in \ref comp() .
+  */
+  double int_z(double f[MDIV+1], int m);
+
+  /// \name EOS functions
+  //@{
+  /** \brief Compute \f$ \varepsilon(P) \f$  
+	
+      Used in \ref dm_dr_is(), \ref dp_dr_is(), \ref integrate()
+      and \ref iterate(). 
+  */
+  double e_at_p(double pp);
+
+  /** \brief Compute \f$ P(\varepsilon) \f$  
+	
+      Used in \ref make_center() and \ref integrate().
+  */
+  double p_at_e(double ee);
+
+  /** \brief Pressure at fixed enthalpy
+
+      Used in \ref iterate().
+  */
+  double p_at_h(double hh);
+
+  /** \brief Enthalpy at fixed pressure 
+
+      Used in \ref make_center() and \ref integrate().
+  */
+  double h_at_p(double pp);
+    
+  /** \brief Baryon density at fixed energy density 
+
+      Used in \ref comp_M_J() and \ref comp() .
+  */
+  double n0_at_e(double ee);
+  //@}
+
+  /// \name Derivatives on the grid
+  //@{
+  /** \brief Returns the derivative w.r.t. s of an array f[SDIV+1]. 
+   */ 
+  double s_deriv(double f[SDIV+1], int s);
+
+  /** \brief Returns the derivative w.r.t. mu of an array f[MDIV+1]. 
+   */ 
+  double m_deriv(double f[MDIV+1], int m);
+
+  /** \brief Returns the derivative w.r.t. s  
+   */ 
+  double deriv_s(double f[SDIV+1][MDIV+1], int s, int m);
+
+  /** \brief Returns the derivative w.r.t. mu 
+   */ 
+  double deriv_m(double f[SDIV+1][MDIV+1], int s, int m);
+
+  /** \brief Returns the derivative w.r.t. s and mu 
+   */ 
+  double deriv_sm(double f[SDIV+1][MDIV+1], int s, int m);
+  //@}
+
+  /// \name Initialization functions
+  //@{
+  /** \brief Returns the Legendre polynomial of degree n, evaluated at x. 
+
+      This uses the recurrence relation and is used in \ref comp_f_P()
+      which is called by the constructor.
+  */
+  double legendre(int n, double x);
+
+  /** \brief Compute two-point functions
+	
+      This function computes the 2-point functions \f$
+      f^m_{2n}(r,r') \f$ used to integrate the potentials \f$ \rho,
+      \gamma \f$ and \f$ \omega \f$ (See \ref Komatsu89 for
+      details). Since the grid points are fixed, we can compute the
+      functions \ref f_rho, \ref f_gamma, \ref f_omega, \ref P_2n,
+      and \ref P1_2n_1 once at the beginning.
+
+      See Eqs. 27-29 of \ref Cook92 and Eqs. 33-35 of \ref
+      Komatsu89. This function is called by the constructor.
+  */
+  void comp_f_P();
+
+    /** \brief Create computational mesh. 
 
       Create the computational mesh for \f$ s=r/(r+r_e) \f$
       (where \f$ r_e \f$ is the coordinate equatorial radius) 
@@ -550,103 +821,7 @@ namespace o2scl {
       the constructor.
   */
   void make_grid();
-
-  /** \brief Desc */
-  double e_of_rho0(double rho0);
- 
-  /** \brief Driver for the interpolation routine. 
-	
-      First we find the tab. point nearest to xb, then we
-      interpolate using four points around xb.
-	
-      Used by \ref int_z(), \ref e_at_p(), \ref p_at_e(), 
-      \ref p_at_h(), \ref h_at_p(), \ref n0_at_e(), 
-      \ref comp_omega(), \ref comp_M_J(), \ref comp(), 
-      \ref guess(), \ref iterate(), and \ref run().
-  */  
-  double interp(double xp[], double yp[], int np ,double xb);
-
-  /** \brief Driver for the interpolation routine.
-
-      Four point interpolation at a 
-      given offset the index of the first point k. 
-
-      Used in \ref comp() .
-  */
-  double interp_4_k(double xp[], double yp[], int np, double xb, int k);
-
-  /** \brief Integrate f[mu] from m-1 to m. 
-
-      This implements a 8-point closed Newton-Cotes formula.
-	
-      Used in \ref comp() .
-  */
-  double int_z(double f[MDIV+1], int m);
-
-  /** \brief Compute \f$ \varepsilon(P) \f$  
-	
-      Used in \ref dm_dr_is(), \ref dp_dr_is(), \ref integrate()
-      and \ref iterate(). 
-  */
-  double e_at_p(double pp);
-
-  /** \brief Pressure at fixed enthalpy
-
-      Used in \ref iterate().
-  */
-  double p_at_h(double hh);
-
-  /** \brief Enthalpy at fixed pressure 
-
-      Used in \ref make_center() and \ref integrate().
-  */
-  double h_at_p(double pp);
-    
-  /** \brief Baryon density at fixed energy density 
-
-      Used in \ref comp_M_J() and \ref comp() .
-  */
-  double n0_at_e(double ee);
-
-  /** \brief Returns the derivative w.r.t. s of an array f[SDIV+1]. 
-   */ 
-  double s_deriv(double f[SDIV+1], int s);
-
-  /** \brief Returns the derivative w.r.t. mu of an array f[MDIV+1]. 
-   */ 
-  double m_deriv(double f[MDIV+1], int m);
-
-  /** \brief Returns the derivative w.r.t. s  
-   */ 
-  double deriv_s(double f[SDIV+1][MDIV+1], int s, int m);
-
-  /** \brief Returns the derivative w.r.t. mu 
-   */ 
-  double deriv_m(double f[SDIV+1][MDIV+1], int s, int m);
-
-  /** \brief Returns the derivative w.r.t. s and mu 
-   */ 
-  double deriv_sm(double f[SDIV+1][MDIV+1], int s, int m);
-
-  /** \brief Returns the Legendre polynomial of degree n, evaluated at x. 
-
-      This uses the recurrence relation.
-  */
-  double legendre(int n, double x);
-
-  /** \brief Compute two-point functions
-	
-      This function computes the 2-point functions \f$
-      f^m_{2n}(r,r') \f$ used to integrate the potentials \f$ \rho,
-      \gamma \f$ and \f$ \omega \f$ (See \ref Komatsu89 for
-      details). Since the grid points are fixed, we can compute the
-      functions \ref f_rho, \ref f_gamma, \ref f_omega, \ref P_2n,
-      and \ref P1_2n_1 once at the beginning.
-
-      See Eqs. 27-29 of \ref Cook92 and Eqs. 33-35 of \ref
-      Komatsu89. This function is called by the constructor.
-  */
-  void comp_f_P(void);
+  //@}
 
   /** \brief Compute central pressure and enthalpy from central
       energy density
@@ -655,32 +830,25 @@ namespace o2scl {
   */
   void make_center(double e_center);
 
+  /// \name Post-processing functions
+  //@{
   /** \brief Compute Omega and Omega_K. 
    */
-  void comp_omega(void);
+  void comp_omega();
   
   /** \brief Compute rest mass and angular momentum. 
    */
-  void comp_M_J(void);
+  void comp_M_J();
 
   /** \brief Compute various quantities.
 
       The main post-processing funciton
   */
-  void comp(void);
+  void comp();
+  //@}
 
-  /** \brief Desc */
-  double dm_dr_is(double r_is, double r, double m, double p);
- 
-  /** \brief Desc */
-  double dp_dr_is(double r_is, double r, double m, double p);
-
-  /** \brief Desc */
-  double dr_dr_is(double r_is, double r, double m);
-
-  /** \brief Desc */
-  void integrate(int i_check);
-
+  /// \name For computing spherical stars
+  //@{
   /** \brief Computes a spherically symmetric star 
 	
       The metric is 
@@ -690,79 +858,92 @@ namespace o2scl {
       \f]
       where \f$ r \f$ is an isotropic radial coordinate 
       (corresponding to <tt>r_is</tt> in the code).
+      
+      This function computes \ref r_e_guess, \ref R_e, 
+      \ref Mass, and \ref Z_p .
   */
-  void guess(void);
+  void spherical_star();
 
-  /** \brief Main iteration cycle. 
+  /** \brief Derivative of gravitational mass with respect to
+      isotropic radius */
+  double dm_dr_is(double r_is, double r, double m, double p);
+ 
+  /** \brief Derivative of pressure with respect to isotropic radius */
+  double dp_dr_is(double r_is, double r, double m, double p);
+
+  /** \brief Derivative of radius with respect to isotropic radius */
+  double dr_dr_is(double r_is, double r, double m);
+  
+  /** \brief Integrate one of the differential equations for 
+      spherical stars*/
+  void integrate(int i_check, double &r_final, double &m_final,
+		 double &r_is_final);
+  //@}
+
+  /** \brief Main iteration function
    */
   int iterate(double r_ratio);
 
-  /// \name Solvers 
-  //@{
-  /** \brief Compute m/s model for current e_center. 
+  /// \name EOS member variables
+  //@{ 
+  /** \brief If true, then an EOS has been set
    */
-  void ms_model(void);
+  bool eos_set;
+  
+  /** \brief If true, then use a polytrope and rescale
+   */
+  bool scaled_polytrope;
 
-  /** \brief Compute h+ = 0 model for current e_center. 
+  /** \brief Pointer to the user-specified EOS
    */
-  void h_model(void);
-
-  /** \brief Compute intermediate model for given Mass_0 and e_center. 
-   */
-  void m0_model(double M_0);
-
-  /** \brief Compute intermediate model for given Mass and e_center. 
-   */
-  int m_model(double M_fix);
-
-  /** \brief Compute intermediate model for given Omega and e_center. 
-   */
-  void omega_model(double Omega_const);
-
-  /** \brief Compute model for given J and e_center. 
-   */
-  int J_model(double J_const);
+  eos_nstar_rot *eosp;
   //@}
-
+  
   public:
-    
-  /// \name Tabulated EOS
-  //@{
-  /** \brief If true, use a tabulated EOS (default true)
-   */
-  bool tabulated_eos;
-  /** \brief number of tabulated EOS points */
-  int n_tab;                           
-  /** \brief rho points in tabulated EOS */
-  double log_e_tab[201];               
-  /** \brief p points in tabulated EOS */
-  double log_p_tab[201];               
-  /** \brief h points in EOS file */
-  double log_h_tab[201];               
-  /** \brief number density in EOS file */  
-  double log_n0_tab[201];              
-  //@}
 
   nstar_rot();
 
+  /** \brief Verbosity parameter
+   */
   int verbose;
 
   /// \name Output
   //@{
-  /** \brief Kepler rotation frequency (in 1/s) */  
-  double Omega_K;                      
-  /** \brief Central energy density (in \f$ \mathrm{g}/\mathrm{cm}^3 \f$) 
-   */
+  /** \brief Central energy density (in units of 
+      \f$ 10^{15} \mathrm{g}/\mathrm{cm}^3 \f$) 
+  */
   double e_center;                     
+  /** \brief Ratio of polar to equatorial radius
+   */ 
+  double r_ratio;                      
+  /** \brief Coordinate equatorial radius
+   */ 
+  double r_e;                          
+  //@}
+
+  /// \name Quantities computed by nstar_rot::comp() (in order)
+  //@{
+  /** \brief Radius at pole */      
+  double r_p;                          
+  /** \brief The value of the s-coordinate at the pole */
+  double s_p;                          
+  /** \brief The value of the s-coordinate at the equator */
+  double s_e; 
+  /// The velocity at the equator
+  double velocity_equator;              
+  /** \brief Circumferential radius in cm (i.e. the radius defined
+      such that \f$ 2 \pi R_e \f$ is the proper circumference) */
+  double R_e;                          
+  /// Proper mass (in g)
+  double Mass_p;
   /// Gravitational mass (in g)
   double Mass;
   /// Baryonic mass (in g)
   double Mass_0;
-  /** \brief Ratio of polar to equatorial radius
-   */ 
-  double r_ratio;                      
   /// Angular momentum
   double J;
+  /// Angular velocity
+  double Omega;
   /// Total rotational kinetic energy
   double T;
   /// Moment of inertia
@@ -775,8 +956,18 @@ namespace o2scl {
   double Z_f;
   /// Backward equatorial redshift
   double Z_b;
-  /// Angular velocity
-  double Omega;
+  /** \brief Kepler rotation frequency (in 1/s) */  
+  double Omega_K;                      
+  /// The eccentricity
+  double eccentricity;
+  /// Desc
+  double v_plus[SDIV+1];
+  /// Desc
+  double v_minus[SDIV+1];
+  /// Desc
+  double vel_plus;
+  /// Desc
+  double vel_minus;
   /** \brief Height from surface of last stable co-rotating circular 
       orbit in equatorial plane
 
@@ -789,32 +980,29 @@ namespace o2scl {
       If this is zero then all orbits are stable.
   */
   double h_minus;
+  /// Desc
+  double Omega_plus;
+  /// Desc
+  double u_phi;
+  /// Angular velocity of a particle in a circular orbit at the equator
+  double Omega_p;
+  /// Desc
+  double grv2;
+  /// Desc
+  double grv2_new;
+  /// Desc
+  double grv3;
+  /** \brief Ratio of potential \f$ \omega \f$ to angular 
+      velocity \f$ \Omega \f$
+  */
+  double om_over_Om;
   /** \brief Mass quadrupole moment
    */
   double mass_quadrupole;
-  /** \brief Radius at equator 
-   */ 
-  double r_e;                          
-  /** \brief Circumferential radius (i.e. the radius defined such
-      that \f$ 2 \pi R_e \f$ is the proper circumference) */
-  double R_e;                          
-  // Desc
-  double om_over_Om;
-  // Desc
-  double Omega_plus;
-  /// Angular velocity of a particle in a circular orbit at the equator
-  double Omega_p;
-  // Desc
-  double u_phi;
-  // Desc
-  double schwarz;
   //@}
 
   /// \name Settings
   //@{
-  /** \brief Desc (default false)
-   */
-  bool CL_LOW;
   /// The convergence factor (default 1.0)
   double cf;
   //@}
@@ -843,79 +1031,18 @@ namespace o2scl {
   double MB;
   /** \brief The value \f$ \kappa G c^{-4} \f$ */
   double KSCALE;
-  //@}
-
-  /// \name Hard-coded EOSs
-  //@{
-  /// Bethe-Johnson model, NPA 230 (1974) 1
-  void eosC();
-  /// Pandharipande and Smith, NPA 175 (1975) 225.
-  void eosL();
+  /// The constant \f$ \pi \f$
+  double PI;
   //@}
 
   /// \name Basic Usage
   //@{
-  /** \brief Set the EOS from four vectors in the native unit system
+  /** \brief Set the EOS
    */
-  template<class vec1_t, class vec2_t, class vec3_t, class vec4_t>
-    void set_eos_native(vec1_t &eden, vec2_t &pres, vec3_t &enth,
-			vec4_t &nb) {
-
-    n_tab=eden.size();
-
-    for(int i=1;i<=n_tab;i++) {  
-      log_e_tab[i]=log10(eden[i-1]*C*C*KSCALE);
-      log_p_tab[i]=log10(pres[i-1]*KSCALE);
-      log_h_tab[i]=log10(enth[i-1]/(C*C));
-      log_n0_tab[i]=log10(nb[i-1]);
-    }
-      
-    return;
-  }
-    
-  /** \brief Set the EOS from energy density, pressure, and
-      baryon density stored in powers of \f$ \mathrm{fm} \f$ .
-  */
-  template<class vec1_t, class vec2_t, class vec3_t>
-    void set_eos_fm(size_t n, vec1_t &eden, vec2_t &pres, vec3_t &nb) {
-
-    if (n>200) {
-      O2SCL_ERR2("Too many EOS points in ",
-		 "nstar_rot::set_eos().",o2scl::exc_einval);
-    }
-
-    // Conversion factor for energy density
-    double conv1=o2scl_settings.get_convert_units().convert
-      ("1/fm^4","g/cm^3",1.0);
-    // Conversion factor for pressure
-    double conv2=o2scl_settings.get_convert_units().convert
-      ("1/fm^4","dyne/cm^2",1.0);
-      
-    tabulated_eos=true;
-    n_tab=n;
-
-    // Temporary vector for the enthalpy integrand
-    std::vector<double> vt(n_tab);
-      
-    for(size_t i=0;i<n_tab;i++) {
-
-      // Store energy density, pressure, and baryon density
-      log_e_tab[i+1]=log10(eden[i]*conv1*C*C*KSCALE);
-      log_p_tab[i+1]=log10(pres[i]*conv2*KSCALE);
-      log_n0_tab[i+1]=log10(nb[i]*1.0e39);
-
-      // The integrand for the enthalpy
-      vt[i]=1.0/(eden[i]+pres[i]);
-    }
-
-    // Compute enthalpy
-    o2scl::interp_vec<vec2_t,std::vector<double> > 
-      rns_itp(n_tab,pres,vt,itp_linear);
-
-    for(size_t i=0;i<n_tab;i++) {
-      log_h_tab[i+1]=log10(rns_itp.integ(0.0,pres[i]));
-    }
-
+  void set_eos(eos_nstar_rot &eos) {
+    eosp=&eos;
+    eos_set=true;
+    scaled_polytrope=false;
     return;
   }
 
@@ -923,7 +1050,8 @@ namespace o2scl {
    */
   void polytrope_eos(double index) {
     n_P=index;
-    tabulated_eos=false;
+    scaled_polytrope=true;
+    eos_set=true;
     return;
   }
     
@@ -1030,13 +1158,6 @@ namespace o2scl {
   /** \brief Test Keplerian frequency for a polytrope
    */    
   void test8(o2scl::test_mgr &t);
-  //@}
-
-  /// \name Old interface
-  //@{
-  /** \brief Function representing main() function from RNS v1.1d
-   */
-  int run(int argc, char const **argv);
   //@}
 
 
