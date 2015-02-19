@@ -1,3 +1,48 @@
+Notes for 0.917 release:
+
+Documentation improvements everywhere.
+
+Moved tensor_grid to template class.
+
+Better exception descriptions in test_mgr.
+
+Added UNEDF parameterizations and exceptions for negative
+masses in eos_had_skyrme.
+
+Added monotonicity preserving interpolation from GSL.
+
+Created 'upper' and 'lower' functions to test upper and lower
+triangularity for matrices.
+
+Added functions to vector.h to operate on vectors without an
+additional size_t parameter.
+
+Improved bracketing to avoid undefined regions in root_bkt::solve().
+
+Created a new class nstar_rot, based on RNS, which computes the
+structure of rotating neutron stars, and an associated set of
+EOS classes. This infrastructure is still in progress.
+
+Created functions for computing number susceptibilities for the
+hadronic EOSs.
+
+Created new copy constructors for part, fermion, and nucleus.
+
+Created eos_had_base::check_mu() to check chemical potentials.
+
+Improvements to the nuclear mass example.
+
+Added new tests for the eos_had_hlps class.
+
+Improved accuracy and convergence of fermion_rel::pair_density() in
+degenerate and nondegenerate limits.
+
+Improved eos_crust_virial and eos_sn classes.
+
+More work on eos_nse_full. 
+
+------------------------------------------------------------------------
+
 Notes for 0.916 release:
 
 Several updates for C++11 and function types. Created funct_gsl.

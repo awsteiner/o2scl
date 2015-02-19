@@ -254,18 +254,14 @@ namespace o2scl {
   };
   
   /** \brief Tabulated EOS for \ref nstar_rot from \ref Bethe74
-      
-      Bethe-Johnson model, NPA 230 (1974) 1
-  */
+   */
   class eos_nstar_rot_C : public eos_nstar_rot_interp {
   public:
     eos_nstar_rot_C(bool rns_constants=false);
   };
   
   /** \brief Tabulated EOS for \ref nstar_rot from \ref Pandharipande75
-      
-      Pandharipande and Smith, NPA 175 (1975) 225.
-  */
+        */
   class eos_nstar_rot_L : public eos_nstar_rot_interp {
   public:
     eos_nstar_rot_L(bool rns_constants=false);
