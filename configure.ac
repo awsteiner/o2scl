@@ -279,16 +279,17 @@ AM_CONDITIONAL(O2SCL_OPENMP, test x$openmp = xtrue)
 AC_CONFIG_FILES([Makefile
                  src/Makefile
 		 src/anneal/Makefile
-		 src/fparser/Makefile
                  src/base/Makefile
                  src/base/arma/Makefile
                  src/base/both/Makefile
                  src/base/eigen/Makefile
                  src/base/neither/Makefile
                  src/boost/Makefile
+		 src/cubature/Makefile
                  src/deriv/Makefile
                  src/eos/Makefile
                  src/fit/Makefile
+		 src/fparser/Makefile
                  src/hdf/Makefile
                  src/inte/Makefile
                  src/linalg/Makefile

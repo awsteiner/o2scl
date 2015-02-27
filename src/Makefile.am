@@ -19,14 +19,14 @@ if O2SCL_HDF
 
 SUBDIRS = anneal base boost deriv fit inte mcarlo \
 	min ode other root internal linalg \
-	part nuclei eos hdf fparser
+	part nuclei eos hdf fparser cubature
 LIBLIST = libo2scl.la libo2scl_part.la
 
 else
 
 SUBDIRS = anneal base boost deriv fit inte mcarlo \
 	min ode other root internal linalg \
-	part nuclei eos fparser
+	part nuclei eos fparser cubature
 LIBLIST = libo2scl.la libo2scl_part.la
 
 endif
@@ -36,14 +36,14 @@ if O2SCL_HDF
 
 SUBDIRS = anneal base boost deriv fit inte mcarlo \
 	min ode other root internal linalg \
-	nuclei part hdf fparser
+	nuclei part hdf fparser cubature
 LIBLIST = libo2scl.la libo2scl_part.la
 
 else
 
 SUBDIRS = anneal base boost deriv fit inte mcarlo \
 	min ode other root internal linalg \
-	nuclei part fparser
+	nuclei part fparser cubature
 LIBLIST = libo2scl.la libo2scl_part.la
 
 endif
@@ -53,13 +53,13 @@ else
 if O2SCL_HDF
 
 SUBDIRS = anneal base boost deriv fit inte mcarlo \
-	min ode other root internal linalg hdf fparser
+	min ode other root internal linalg hdf fparser cubature
 LIBLIST = libo2scl.la
 
 else
 
 SUBDIRS = anneal base boost deriv fit inte mcarlo \
-	min ode other root internal linalg fparser
+	min ode other root internal linalg fparser cubature
 LIBLIST = libo2scl.la
 
 endif
@@ -68,7 +68,8 @@ endif
 SUBLIBS = mcarlo/libo2scl_mcarlo.la other/libo2scl_other.la \
 	min/libo2scl_min.la \
 	inte/libo2scl_inte.la linalg/libo2scl_linalg.la \
-	base/libo2scl_base.la fparser/libo2scl_fparser.la
+	base/libo2scl_base.la fparser/libo2scl_fparser.la \
+	cubature/libo2scl_cubature.la
 
 #	fit/libo2scl_fit.la
 
