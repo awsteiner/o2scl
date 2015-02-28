@@ -2,21 +2,21 @@
 # Basic variables
 # ------------------------------------------------------------
 
-OTHER_SRCS = gsl_fft.cpp series_acc.cpp poly.cpp polylog.cpp \
+OTHER_SRCS = series_acc.cpp poly.cpp polylog.cpp \
 	interp2_eqi.cpp pinside.cpp bin_size.cpp \
 	contour.cpp smooth_gsl.cpp hist.cpp \
 	hist_2d.cpp prob_dens_func.cpp
 
 #interp2_seq.cpp  interp2_direct.cpp 
 
-HEADER_VAR = contour.h cheb_approx.h gsl_fft.h \
+HEADER_VAR = contour.h cheb_approx.h \
 	series_acc.h interp2_planar.h poly.h polylog.h \
 	interp2_direct.h interp2_eqi.h pinside.h bin_size.h \
 	vec_stats.h smooth_gsl.h hist.h interpm_neigh.h \
 	hist_2d.h prob_dens_func.h interp2_seq.h interp2_neigh.h \
 	interpm_idw.h interp2.h
 
-TEST_VAR = gsl_fft.scr series_acc.scr interp2_planar.scr contour.scr \
+TEST_VAR = series_acc.scr interp2_planar.scr contour.scr \
 	poly.scr polylog.scr cheb_approx.scr vec_stats.scr smooth_gsl.scr \
 	hist.scr hist_2d.scr prob_dens_func.scr interp2_direct.scr \
 	pinside.scr interp2_seq.scr interp2_neigh.scr interpm_neigh.scr \
@@ -62,16 +62,10 @@ else
 O2SCL_ARMA_MVAR =
 endif
 
-if O2SCL_CPP11
-O2SCL_CPP11_MVAR = 
-else
-O2SCL_CPP11_MVAR = -DO2SCL_NO_CPP11
-endif
-
 AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
 	$(O2SCL_PART_MVAR) $(O2SCL_EOS_MVAR) $(O2SCL_HDF_MVAR) \
 	$(O2SCL_OPENMP_MVAR) $(O2SCL_EIGEN_MVAR) $(O2SCL_ARMA_MVAR) \
-	$(O2SCL_CPP11_MVAR) -DO2SCL_COND_FLAG
+	-DO2SCL_COND_FLAG
 
 # ------------------------------------------------------------
 # Install headers
@@ -85,7 +79,7 @@ pkginclude_HEADERS = $(HEADER_VAR)
 # libtool testing targets
 # ------------------------------------------------------------
 
-check_PROGRAMS = gsl_fft_ts series_acc_ts interp2_planar_ts \
+check_PROGRAMS = series_acc_ts interp2_planar_ts \
 	contour_ts poly_ts polylog_ts pinside_ts \
 	interp2_direct_ts vec_stats_ts cheb_approx_ts \
 	smooth_gsl_ts hist_ts hist_2d_ts interp2_seq_ts \
@@ -98,7 +92,6 @@ else
 VCHECK_LIBS = $(libdir)/libo2scl.la
 endif
 
-gsl_fft_ts_LDADD = $(VCHECK_LIBS)
 smooth_gsl_ts_LDADD = $(VCHECK_LIBS)
 series_acc_ts_LDADD = $(VCHECK_LIBS)
 interp2_planar_ts_LDADD = $(VCHECK_LIBS)
@@ -117,8 +110,6 @@ hist_2d_ts_LDADD = $(VCHECK_LIBS)
 prob_dens_func_ts_LDADD = $(VCHECK_LIBS)
 vec_stats_ts_LDADD = $(VCHECK_LIBS)
 
-gsl_fft.scr: gsl_fft_ts$(EXEEXT) 
-	./gsl_fft_ts$(EXEEXT) > gsl_fft.scr
 smooth_gsl.scr: smooth_gsl_ts$(EXEEXT) 
 	./smooth_gsl_ts$(EXEEXT) > smooth_gsl.scr
 series_acc.scr: series_acc_ts$(EXEEXT) 
@@ -156,7 +147,6 @@ vec_stats.scr: vec_stats_ts$(EXEEXT)
 
 cheb_approx_ts_SOURCES = cheb_approx_ts.cpp
 contour_ts_SOURCES = contour_ts.cpp
-gsl_fft_ts_SOURCES = gsl_fft_ts.cpp
 series_acc_ts_SOURCES = series_acc_ts.cpp
 hist_ts_SOURCES = hist_ts.cpp
 hist_2d_ts_SOURCES = hist_2d_ts.cpp

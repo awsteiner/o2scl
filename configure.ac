@@ -187,6 +187,38 @@ AC_CHECK_LIB([hdf5_hl], [H5TBread_table], [],
 ])
 
 # ----------------------------------------------
+# Enable or disable FFTW support
+# ----------------------------------------------
+
+dnl AC_ARG_ENABLE(fftw,
+dnl [  --enable-fftw           Include FFTW support @<:@default=no@:>@],
+dnl [case "${enableval}" in
+dnl yes) fftw=true ;;
+dnl no)  fftw=false ;;
+dnl *) AC_MSG_ERROR(bad value ${enableval} for --enable-fftw) ;;
+dnl esac],[fftw=false])
+
+dnl AM_CONDITIONAL(O2SCL_FFTW, test x$fftw = xtrue)
+
+# ----------------------------------------------
+# If enabled, check for the FFTW library
+# ----------------------------------------------
+
+dnl AS_IF([test "x$enable_fftw" != "xno"], [
+	    
+dnl AC_CHECK_LIB([fftw3], [fftw_ifree], [],
+dnl 	[echo ""
+dnl         echo "FFTW not found. Either provide the location for "
+dnl 	echo "the fftw libraries or ensure that FFTW support is "
+dnl 	echo "disabled with the --disable-fftw option to configure. "
+dnl 	echo ""
+dnl 	echo -n " The present value of LDFLAGS is: " 
+dnl 	echo $LDFLAGS
+dnl  	],[-lm])
+
+dnl ])
+
+# ----------------------------------------------
 # Enable or disable support for acol
 # ----------------------------------------------
 
@@ -231,20 +263,6 @@ AM_CONDITIONAL(O2SCL_ARMA, test x$armadillo = xtrue)
 #	],[])
 #
 #])
-
-# ----------------------------------------------
-# Enable or disable Cpp11 support
-# ----------------------------------------------
-
-AC_ARG_ENABLE(cpp11,
-[  --enable-cpp11          Include C++11 support @<:@default=yes@:>@],
-[case "${enableval}" in
-yes) cpp11=true ;;
-no)  cpp11=false ;;
-*) AC_MSG_ERROR(bad value ${enableval} for --enable-cpp11) ;;
-esac],[cpp11=true])
-
-AM_CONDITIONAL(O2SCL_CPP11, test x$cpp11 = xtrue)
 
 # ----------------------------------------------
 # Enable or disable Eigen support

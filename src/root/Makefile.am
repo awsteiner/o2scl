@@ -57,16 +57,10 @@ else
 O2SCL_ARMA_MVAR =
 endif
 
-if O2SCL_CPP11
-O2SCL_CPP11_MVAR = 
-else
-O2SCL_CPP11_MVAR = -DO2SCL_NO_CPP11
-endif
-
 AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
 	$(O2SCL_PART_MVAR) $(O2SCL_EOS_MVAR) $(O2SCL_HDF_MVAR) \
 	$(O2SCL_OPENMP_MVAR) $(O2SCL_EIGEN_MVAR) $(O2SCL_ARMA_MVAR) \
-	$(O2SCL_CPP11_MVAR) -DO2SCL_COND_FLAG
+	-DO2SCL_COND_FLAG
 
 # ------------------------------------------------------------
 # Install headers

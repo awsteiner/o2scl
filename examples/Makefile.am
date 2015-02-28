@@ -75,12 +75,6 @@ OOLIBSTWO = -lo2scl -L../src
 endif
 endif
 
-if O2SCL_CPP11
-O2SCL_CPP11_MVAR = 
-else
-O2SCL_CPP11_MVAR = -DO2SCL_NO_CPP11
-endif
-
 if O2SCL_HDF
 O2SCL_HDF_MVAR = -DO2SCL_HDF
 else
@@ -88,7 +82,7 @@ O2SCL_HDF_MVAR =
 endif
 
 AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
-	$(O2SCL_HDF_MVAR) $(O2SCL_CPP11_MVAR) -DO2SCL_COND_FLAG
+	$(O2SCL_HDF_MVAR) -DO2SCL_COND_FLAG
 
 # -------------------------------------------------------------
 # Distribution files
