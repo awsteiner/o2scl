@@ -134,6 +134,7 @@ static double morokoff(unsigned dim, const double *x, void *params) {
 
 int f_test(unsigned dim, const double *x, void *data_,
 	   unsigned fdim, double *retval) {
+  
   double val;
   unsigned i, j;
   ++count;
@@ -244,7 +245,12 @@ int main(void) {
     xmin[i]=0.0;
     xmax[i]=1.0;
   }
-
+  
+  //typedef int (*cfunc)(unsigned, const double *, void *, unsigned, double *);
+  //typedef int (*cfunc_v)(unsigned, size_t, const double *, void *,
+  //unsigned, double *);
+  //hcub_class<cfunc,cfunc_v> hc;
+  
   for(size_t test_iand=0;test_iand<8;test_iand++) {
 
     double tol, val, err;
@@ -252,6 +258,9 @@ int main(void) {
 
     tol=1.0e-2;
     maxEval=0;
+
+    //hcub_class<cfunc,cfunc_v>::error_norm en=
+    //hcub_class<cfunc,cfunc_v>::ERROR_INDIVIDUAL;
     
     which_integrand = test_iand; 
     
@@ -259,7 +268,9 @@ int main(void) {
 
       hcubature(1,f_test,0,dim,xmin,xmax, 
 		maxEval,0,tol,ERROR_INDIVIDUAL,&val,&err);
-
+      //hc.integ(1,&f_test,0,dim,xmin,xmax, 
+      //maxEval,0,tol,en,&val,&err);
+      
       cout << "# " << which_integrand << " " 
 	   << "integral " << val << " " << "est. error " << err << " " 
 	   << "true error " 

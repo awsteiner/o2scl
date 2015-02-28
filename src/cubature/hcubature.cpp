@@ -917,12 +917,74 @@ static heap_item heap_pop(heap *h)
 
 static int converged(unsigned fdim, const esterr *ee,
 		     double reqAbsError, double reqRelError, error_norm norm)
-#define ERR(j) ee[j].err
-#define VAL(j) ee[j].val
-#include <o2scl/converged.h>
-#ifdef O2SCL_NEVER_DEFINED
-{}
-#endif
+{
+  unsigned j;
+#    define SQR(x) ((x) * (x))
+  switch (norm) {
+  case ERROR_INDIVIDUAL:
+    for (j = 0; j < fdim; ++j)
+      if (ee[j].err > reqAbsError && ee[j].err > fabs(ee[j].val)*reqRelError)
+	return 0;
+    return 1;
+	      
+  case ERROR_PAIRED:
+    for (j = 0; j+1 < fdim; j += 2) {
+      double maxerr, serr, err, maxval, sval, val;
+      /* scale to avoid overflow/underflow */
+      maxerr = ee[j].err > ee[j+1].err ? ee[j].err : ee[j+1].err;
+      maxval = ee[j].val > ee[j+1].val ? ee[j].val : ee[j+1].val;
+      serr = maxerr > 0 ? 1/maxerr : 1;
+      sval = maxval > 0 ? 1/maxval : 1;
+      err = sqrt(SQR(ee[j].err*serr) + SQR(ee[j+1].err*serr)) * maxerr;
+      val = sqrt(SQR(ee[j].val*sval) + SQR(ee[j+1].val*sval)) * maxval;
+      if (err > reqAbsError && err > val*reqRelError)
+	return 0;
+    }
+    if (j < fdim) /* fdim is odd, do last dimension individually */
+      if (ee[j].err > reqAbsError && ee[j].err > fabs(ee[j].val)*reqRelError)
+	return 0;
+    return 1;
+
+  case ERROR_L1: {
+    double err = 0, val = 0;
+    for (j = 0; j < fdim; ++j) {
+      err += ee[j].err;
+      val += fabs(ee[j].val);
+    }
+    return err <= reqAbsError || err <= val*reqRelError;
+  }
+
+  case ERROR_LINF: {
+    double err = 0, val = 0;
+    for (j = 0; j < fdim; ++j) {
+      double absval = fabs(ee[j].val);
+      if (ee[j].err > err) err = ee[j].err;
+      if (absval > val) val = absval;
+    }
+    return err <= reqAbsError || err <= val*reqRelError;
+  }
+
+  case ERROR_L2: {
+    double maxerr = 0, maxval = 0, serr, sval, err = 0, val = 0;
+    /* scale values by 1/max to avoid overflow/underflow */
+    for (j = 0; j < fdim; ++j) {
+      double absval = fabs(ee[j].val);
+      if (ee[j].err > maxerr) maxerr = ee[j].err;
+      if (absval > maxval) maxval = absval;
+    }
+    serr = maxerr > 0 ? 1/maxerr : 1;
+    sval = maxval > 0 ? 1/maxval : 1;
+    for (j = 0; j < fdim; ++j) {
+      err += SQR(ee[j].err * serr);
+      val += SQR(fabs(ee[j].val) * sval);
+    }
+    err = sqrt(err) * maxerr;
+    val = sqrt(val) * maxval;
+    return err <= reqAbsError || err <= val*reqRelError;
+  }
+  }
+  return 1; /* unreachable */
+}
 
 /***************************************************************************/
 /* adaptive integration, analogous to adaptintegrator.cpp in HIntLib */
@@ -1085,7 +1147,7 @@ static int cubature(unsigned fdim, integrand_v f, void *fdata,
   return status;
 }
 
-int hcubature_v(unsigned fdim, integrand_v f, void *fdata, 
+int o2scl::hcubature_v(unsigned fdim, integrand_v f, void *fdata, 
                 unsigned dim, const double *xmin, const double *xmax, 
                 size_t maxEval, double reqAbsError, double reqRelError, 
                 error_norm norm,
@@ -1094,13 +1156,27 @@ int hcubature_v(unsigned fdim, integrand_v f, void *fdata,
 		  maxEval, reqAbsError, reqRelError, norm, val, err, 1);
 }
 
-#include <o2scl/vwrapper.h>
+typedef struct fv_data_s { integrand f; void *fdata; } fv_data;
+static int fv(unsigned ndim, size_t npt,
+	      const double *x, void *d_,
+	      unsigned fdim, double *fval)
+{
+     fv_data *d = (fv_data *) d_;
+     integrand f = d->f;
+     void *fdata = d->fdata;
+     unsigned i;
+     /* printf("npt = %u\n", npt); */
+     for (i = 0; i < npt; ++i) 
+	  if (f(ndim, x + i*ndim, fdata, fdim, fval + i*fdim))
+	       return FAILURE;
+     return SUCCESS;
+}
 
-int hcubature(unsigned fdim, integrand f, void *fdata, 
-	      unsigned dim, const double *xmin, const double *xmax, 
-	      size_t maxEval, double reqAbsError, double reqRelError, 
-	      error_norm norm,
-	      double *val, double *err) {
+int o2scl::hcubature(unsigned fdim, integrand f, void *fdata, 
+		     unsigned dim, const double *xmin, const double *xmax, 
+		     size_t maxEval, double reqAbsError, double reqRelError, 
+		     error_norm norm,
+		     double *val, double *err) {
   int ret;
   fv_data d;
 

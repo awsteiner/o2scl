@@ -4,9 +4,9 @@
 
 CUBATURE_SRCS = hcubature.cpp pcubature.cpp
 
-HEADERS_VAR = clencurt.h cubature.h converged.h vwrapper.h 
+HEADERS_VAR = clencurt.h cubature.h
 
-TEST_VAR = cubature_ts
+TEST_VAR = cubature.scr
 
 # ------------------------------------------------------------
 # Includes
