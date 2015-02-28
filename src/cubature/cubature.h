@@ -49,8 +49,8 @@
  *
  */
 
-#ifndef CUBATURE_H
-#define CUBATURE_H
+#ifndef O2SCL_CUBATURE_H
+#define O2SCL_CUBATURE_H
 
 // For size_t
 #include <cstdlib>

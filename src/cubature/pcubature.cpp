@@ -302,6 +302,10 @@ static int converged(unsigned fdim, const double *vals, const double *errs,
 #define ERR(j) errs[j]
 #define VAL(j) vals[j]
 #include <o2scl/converged.h>
+  
+#ifdef O2SCL_NEVER_DEFINED
+{}
+#endif
 
 /***************************************************************************/
 /* Vectorized version with user-supplied buffer to store points and values.
@@ -312,15 +316,15 @@ static int converged(unsigned fdim, const double *vals, const double *errs,
    Also allows the caller to specify an array m[dim] of starting degrees
    for the rule, which upon return will hold the final degrees.  The
    number of points in each dimension i is 2^(m[i]+1) + 1. */
-  
-  int pcubature_v_buf(unsigned fdim, integrand_v f, void *fdata,
-		      unsigned dim, const double *xmin, const double *xmax,
-		      size_t maxEval,
-		      double reqAbsError, double reqRelError,
-		      error_norm norm,
-		      unsigned *m,
-		      double **buf, size_t *nbuf, size_t max_nbuf,
-		      double *val, double *err)
+
+int pcubature_v_buf(unsigned fdim, integrand_v f, void *fdata,
+		    unsigned dim, const double *xmin, const double *xmax,
+		    size_t maxEval,
+		    double reqAbsError, double reqRelError,
+		    error_norm norm,
+		    unsigned *m,
+		    double **buf, size_t *nbuf, size_t max_nbuf,
+		    double *val, double *err)
 {
   int ret = FAILURE;
   double V = 1;

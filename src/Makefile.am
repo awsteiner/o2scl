@@ -209,14 +209,11 @@ endif
 test_anneal:
 	cd anneal && $(MAKE) o2scl-test-rec
 
-test_cubature:
-	cd cubature && $(MAKE) o2scl-test-rec
-
-test_fparser:
-	cd fparser && $(MAKE) o2scl-test-rec
-
 test_base:
 	cd base && $(MAKE) o2scl-test-rec
+
+test_cubature:
+	cd cubature && $(MAKE) o2scl-test-rec
 
 test_deriv:
 	cd deriv && $(MAKE) o2scl-test-rec
@@ -226,6 +223,9 @@ test_eos:
 
 test_fit:
 	cd fit && $(MAKE) o2scl-test-rec
+
+test_fparser:
+	cd fparser && $(MAKE) o2scl-test-rec
 
 test_hdf:
 	cd hdf && $(MAKE) o2scl-test-rec

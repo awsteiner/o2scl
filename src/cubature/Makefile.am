@@ -83,14 +83,14 @@ cubature.scr: cubature_ts$(EXEEXT)
 cubature_ts_SOURCES = cubature_ts.cpp
 
 # ------------------------------------------------------------
-# No library o2scl_cubature
+# Library o2scl_cubature
 # ------------------------------------------------------------
-
-am__libo2scl_cubature_la_SOURCES_DIST = $(CUBATURE_SRCS)
 
 noinst_LTLIBRARIES = libo2scl_cubature.la
 
 libo2scl_cubature_la_SOURCES = $(CUBATURE_SRCS)
+
+am__libo2scl_cubature_la_SOURCES_DIST = $(CUBATURE_SRCS)
 
 # ------------------------------------------------------------
 # Misc
