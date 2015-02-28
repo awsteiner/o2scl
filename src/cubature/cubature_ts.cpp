@@ -53,6 +53,7 @@
 #include <o2scl/test_mgr.h>
 
 using namespace std;
+using namespace o2scl;
 
 int count = 0;
 int which_integrand;
@@ -184,16 +185,9 @@ int f_test(unsigned dim, const double *x, void *data_,
       val = morokoff(dim, x, &fdata);
       break;
     default:
-      fprintf(stderr, "unknown integrand %d\n", which_integrand);
-      exit(EXIT_FAILURE);
+      cout << "Unknown integrand." << endl;
+      exit(-1);
     }
-#if VERBOSE
-    if (count < 100) {
-      printf("%d: f(%g", count, x[0]);
-      for (i = 1; i < dim; ++i) printf(", %g", x[i]);
-      printf(") = %g\n", val);
-    }
-#endif
     retval[j] = val;
   }
   return 0;
@@ -239,36 +233,58 @@ static double exact_integral(int which, unsigned dim, const double *xmax) {
 
 int main(void) {
 
-  o2scl::test_mgr tmgr;
+  cout.setf(ios::scientific);
+  
+  test_mgr tmgr;
   tmgr.set_output_level(2);
 
   size_t dim=3;
   double xmin[3], xmax[3];
-  for (size_t i = 0; i < dim; ++i) {
-    xmin[i] = 0;
-    xmax[i] = 1;
+  for (size_t i=0;i<dim;++i) {
+    xmin[i]=0.0;
+    xmax[i]=1.0;
   }
 
   for(size_t test_iand=0;test_iand<8;test_iand++) {
-    
+
     double tol, val, err;
     unsigned maxEval;
-    
+
     tol=1.0e-2;
     maxEval=0;
     
     which_integrand = test_iand; 
     
-    hcubature(1,f_test,0,dim,xmin,xmax, 
-	      maxEval,0,tol,ERROR_INDIVIDUAL,&val,&err);
+    if (test_iand!=2) {
 
-    cout << "integrand " << which_integrand << " " 
-	 << "integral " << val << " " << "est. error " << err << " " 
-	 << "true error " 
-	 << fabs(val-exact_integral(which_integrand,dim,xmax)) << endl;
-    cout << "evals " << count << endl;
+      hcubature(1,f_test,0,dim,xmin,xmax, 
+		maxEval,0,tol,ERROR_INDIVIDUAL,&val,&err);
+
+      cout << "# " << which_integrand << " " 
+	   << "integral " << val << " " << "est. error " << err << " " 
+	   << "true error " 
+	   << fabs(val-exact_integral(which_integrand,dim,xmax)) << endl;
+      cout << "evals " << count << endl;
+      tmgr.test_gen(fabs(val-exact_integral(which_integrand,dim,xmax))<
+		    err*2.0,"hcub");
+    }
+
+    if (test_iand!=3) {
+
+      pcubature(1,f_test,0,dim,xmin,xmax, 
+		maxEval,0,tol,ERROR_INDIVIDUAL,&val,&err);
+      
+      cout << "# " << which_integrand << " " 
+	   << "integral " << val << " " << "est. error " << err << " " 
+	   << "true error " 
+	   << fabs(val-exact_integral(which_integrand,dim,xmax)) << endl;
+      cout << "evals " << count << endl;
+      tmgr.test_gen(fabs(val-exact_integral(which_integrand,dim,xmax))<
+		    err*2.0,"pcub");
+    }
     
   }
-  
+
+  tmgr.report();
   return 0;
 }

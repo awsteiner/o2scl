@@ -2,7 +2,7 @@
 # Basic variables
 # ------------------------------------------------------------
 
-DERIV_SRCS = hcubature.c pcubature.c
+CUBATURE_SRCS = hcubature.cpp pcubature.cpp
 
 HEADERS_VAR = clencurt.h cubature.h converged.h vwrapper.h 
 
@@ -83,14 +83,14 @@ cubature.scr: cubature_ts$(EXEEXT)
 cubature_ts_SOURCES = cubature_ts.cpp
 
 # ------------------------------------------------------------
-# No library o2scl_deriv
+# No library o2scl_cubature
 # ------------------------------------------------------------
 
 am__libo2scl_cubature_la_SOURCES_DIST = $(CUBATURE_SRCS)
 
 noinst_LTLIBRARIES = libo2scl_cubature.la
 
-libo2scl_cubature_la_SOURCES = $(DERIV_SRCS)
+libo2scl_cubature_la_SOURCES = $(CUBATURE_SRCS)
 
 # ------------------------------------------------------------
 # Misc
@@ -113,7 +113,7 @@ o2scl-test: $(TEST_VAR)
 	../internal/tsumm$(EXEEXT)
 
 o2scl-test-rec: $(TEST_VAR)
-	echo "src/deriv" $(TEST_VAR) >> ../../testlist
+	echo "src/cubature" $(TEST_VAR) >> ../../testlist
 
 test-clean:
 	rm -f *_ts.o *_ts *.scr

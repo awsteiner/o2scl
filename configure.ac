@@ -54,11 +54,11 @@ AC_SUBST(OLIB_LT_VERSION)
 
 AC_ARG_ENABLE(partlib,
 [  --enable-partlib        Include particle library @<:@default=yes@:>@],
-[case "${enableval}" in
-yes) partlib=true ;;
-no)  partlib=false ;;
-*) AC_MSG_ERROR(bad value ${enableval} for --enable-partlib) ;;
-esac],[partlib=true])
+   [case "${enableval}" in
+   yes) partlib=true ;;
+   no)  partlib=false ;;
+   *) AC_MSG_ERROR(bad value ${enableval} for --enable-partlib) ;;
+   esac],[partlib=true])
 
 AM_CONDITIONAL(O2SCL_PARTLIB, test x$partlib = xtrue)
 
@@ -68,11 +68,11 @@ AM_CONDITIONAL(O2SCL_PARTLIB, test x$partlib = xtrue)
 
 AC_ARG_ENABLE(eoslib,
 [  --enable-eoslib         Include equation of state library @<:@default=yes@:>@],
-[case "${enableval}" in
-yes) eoslib=true ;;
-no)  eoslib=false ;;
-*) AC_MSG_ERROR(bad value ${enableval} for --enable-eoslib) ;;
-esac],[eoslib=true])
+   [case "${enableval}" in
+   yes) eoslib=true ;;
+   no)  eoslib=false ;;
+   *) AC_MSG_ERROR(bad value ${enableval} for --enable-eoslib) ;;
+   esac],[eoslib=true])
 
 AM_CONDITIONAL(O2SCL_EOSLIB, test x$eoslib = xtrue)
 
@@ -131,11 +131,11 @@ AC_CHECK_LIB([gsl], [gsl_vector_get], [],
 
 AC_ARG_ENABLE(readline,
 [  --enable-readline       Include readline support @<:@default=yes@:>@],
-[case "${enableval}" in
-yes) readline=true ;;
-no)  readline=false ;;
-*) AC_MSG_ERROR(bad value ${enableval} for --enable-readline) ;;
-esac],[readline=true])
+	[case "${enableval}" in
+	yes) readline=true ;;
+	no)  readline=false ;;
+	*) AC_MSG_ERROR(bad value ${enableval} for --enable-readline) ;;
+	esac],[readline=true])
 
 AM_CONDITIONAL(O2SCL_READLINE, test x$readline = xtrue)
 
@@ -144,12 +144,12 @@ AM_CONDITIONAL(O2SCL_READLINE, test x$readline = xtrue)
 # ----------------------------------------------
 
 AC_ARG_ENABLE(hdf,
-[  --enable-hdf            Include HDF5 support @<:@default=yes@:>@],
-[case "${enableval}" in
-yes) hdf=true ;;
-no)  hdf=false ;;
-*) AC_MSG_ERROR(bad value ${enableval} for --enable-hdf) ;;
-esac],[hdf=true])
+	[  --enable-hdf            Include HDF5 support @<:@default=yes@:>@],
+	[case "${enableval}" in
+	yes) hdf=true ;;
+	no)  hdf=false ;;
+	*) AC_MSG_ERROR(bad value ${enableval} for --enable-hdf) ;;
+	esac],[hdf=true])
 
 AM_CONDITIONAL(O2SCL_HDF, test x$hdf = xtrue)
 
@@ -190,22 +190,21 @@ AC_CHECK_LIB([hdf5_hl], [H5TBread_table], [],
 # Enable or disable FFTW support
 # ----------------------------------------------
 
-dnl AC_ARG_ENABLE(fftw,
-dnl [  --enable-fftw           Include FFTW support @<:@default=no@:>@],
-dnl [case "${enableval}" in
-dnl yes) fftw=true ;;
-dnl no)  fftw=false ;;
-dnl *) AC_MSG_ERROR(bad value ${enableval} for --enable-fftw) ;;
-dnl esac],[fftw=false])
-
-dnl AM_CONDITIONAL(O2SCL_FFTW, test x$fftw = xtrue)
+AC_ARG_ENABLE(fftw,
+	[  --enable-fftw           Include FFTW support @<:@default=no@:>@],
+	[case "${enableval}" in
+	yes) fftw=true ;;
+	no)  fftw=false ;;
+	*) AC_MSG_ERROR(bad value ${enableval} for --enable-fftw) ;;
+	esac],[fftw=false])
+	
+AM_CONDITIONAL(O2SCL_FFTW, test x$fftw = xtrue)
 
 # ----------------------------------------------
 # If enabled, check for the FFTW library
 # ----------------------------------------------
 
-dnl AS_IF([test "x$enable_fftw" != "xno"], [
-	    
+dnl AS_IF([test "x$enable_fftw" != "xno"],[
 dnl AC_CHECK_LIB([fftw3], [fftw_ifree], [],
 dnl 	[echo ""
 dnl         echo "FFTW not found. Either provide the location for "
@@ -215,7 +214,6 @@ dnl 	echo ""
 dnl 	echo -n " The present value of LDFLAGS is: " 
 dnl 	echo $LDFLAGS
 dnl  	],[-lm])
-
 dnl ])
 
 # ----------------------------------------------
@@ -223,12 +221,12 @@ dnl ])
 # ----------------------------------------------
 
 AC_ARG_ENABLE(acol,
-[  --enable-acol           Include command-line utility 'acol' @<:@default=yes@:>@],
-[case "${enableval}" in
-yes) acol=true ;;
-no)  acol=false ;;
-*) AC_MSG_ERROR(bad value ${enableval} for --enable-acol) ;;
-esac],[acol=true])
+[  --enable-acol           Include 'acol' utility @<:@default=yes@:>@],
+   [case "${enableval}" in
+   yes) acol=true ;;
+   no)  acol=false ;;
+   *) AC_MSG_ERROR(bad value ${enableval} for --enable-acol) ;;
+   esac],[acol=true])
 
 AM_CONDITIONAL(O2SCL_ENABLE_ACOL, test x$acol = xtrue)
 
@@ -238,11 +236,11 @@ AM_CONDITIONAL(O2SCL_ENABLE_ACOL, test x$acol = xtrue)
 
 AC_ARG_ENABLE(armadillo,
 [  --enable-armadillo      Include Armadillo support @<:@default=no@:>@],
-[case "${enableval}" in
-yes) armadillo=true ;;
-no)  armadillo=false ;;
-*) AC_MSG_ERROR(bad value ${enableval} for --enable-armadillo) ;;
-esac],[armadillo=false])
+   [case "${enableval}" in
+   yes) armadillo=true ;;
+   no)  armadillo=false ;;
+   *) AC_MSG_ERROR(bad value ${enableval} for --enable-armadillo) ;;
+   esac],[armadillo=false])
 
 AM_CONDITIONAL(O2SCL_ARMA, test x$armadillo = xtrue)
 
@@ -269,12 +267,12 @@ AM_CONDITIONAL(O2SCL_ARMA, test x$armadillo = xtrue)
 # ----------------------------------------------
 
 AC_ARG_ENABLE(eigen,
-[  --enable-eigen          Include Eigen support @<:@default=no@:>@],
-[case "${enableval}" in
-yes) eigen=true ;;
-no)  eigen=false ;;
-*) AC_MSG_ERROR(bad value ${enableval} for --enable-eigen) ;;
-esac],[eigen=false])
+	[  --enable-eigen          Include Eigen support @<:@default=no@:>@],
+	[case "${enableval}" in
+	yes) eigen=true ;;
+	no)  eigen=false ;;
+	*) AC_MSG_ERROR(bad value ${enableval} for --enable-eigen) ;;
+	esac],[eigen=false])
 
 AM_CONDITIONAL(O2SCL_EIGEN, test x$eigen = xtrue)
 
@@ -283,12 +281,12 @@ AM_CONDITIONAL(O2SCL_EIGEN, test x$eigen = xtrue)
 # ----------------------------------------------
 
 AC_ARG_ENABLE(openmp,
-[  --enable-openmp         Include OpenMP support @<:@default=no@:>@],
-[case "${enableval}" in
-yes) openmp=true ;;
-no)  openmp=false ;;
-*) AC_MSG_ERROR(bad value ${enableval} for --enable-openmp) ;;
-esac],[openmp=false])
+	[  --enable-openmp         Include OpenMP support @<:@default=no@:>@],
+	[case "${enableval}" in
+	yes) openmp=true ;;
+	no)  openmp=false ;;
+	*) AC_MSG_ERROR(bad value ${enableval} for --enable-openmp) ;;
+	esac],[openmp=false])
 
 AM_CONDITIONAL(O2SCL_OPENMP, test x$openmp = xtrue)
 
