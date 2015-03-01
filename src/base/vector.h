@@ -64,7 +64,7 @@ namespace o2scl {
 
   /** \brief A simple convenience wrapper for GSL vector objects
 
-      \note This uses typecasts on externally allocated GSL 
+      \warning This uses typecasts on externally allocated GSL 
       pointers and is not safe or fully const-correct. 
    */
   class gsl_vector_wrap {
@@ -85,7 +85,7 @@ namespace o2scl {
 
   /** \brief A simple convenience wrapper for GSL matrix objects
 
-      \note This uses typecasts on externally allocated GSL 
+      \warning This uses typecasts on externally allocated GSL 
       pointers and is not safe or fully const-correct. 
   */
   class gsl_matrix_wrap {
@@ -292,7 +292,7 @@ namespace o2scl {
   }
   //@}
 
-  /// \name Upper and lower triangular
+  /// \name Upper and lower triangular functions
   //@{
   /** \brief Simple generic test that a matrix is lower triangular
    */
@@ -1855,16 +1855,25 @@ namespace o2scl {
   /** \brief Generic object which represents a row of a matrix
 
       \note This class is experimental.
-   */
+  */
   template<class mat_t> class matrix_row_gen {
+
   public:
+
     mat_t &m_;
+
     size_t row_;
+
+    /// Create a row object from row \c row of matrix \c m 
   matrix_row_gen(mat_t &m, size_t row) : m_(m), row_(row) {
     }
+    
+    /// Return a reference to the ith column of the selected row
     double &operator[](size_t i) {
       return m_(row_,i);
     }
+    
+    /// Return a const reference to the ith column of the selected row
     const double &operator[](size_t i) const {
       return m_(row_,i);
     }
