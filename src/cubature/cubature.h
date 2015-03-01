@@ -60,23 +60,20 @@
 #include <cstring>
 // For DBL_MIN
 #include <cfloat>
-// For stderr and fprintf
-#include <cstdio>
 
 #include <cmath>
 
 #include <o2scl/clencurt.h>
+#include <o2scl/err_hnd.h>
 
 namespace o2scl {
 
-  /** \brief Desc
+  /** \brief Base class for integration routines from the 
+      Cubature library
    */
   class inte_cubature_base {
     
   public:
-    
-    static const int SUCCESS=0;
-    static const int FAILURE=1;
     
     /** \brief Desc
      */
@@ -84,24 +81,65 @@ namespace o2scl {
       return x * x;
     }
 
-    /* Different ways of measuring the absolute and relative error when
-       we have multiple integrands, given a vector e of error estimates
-       in the individual components of a vector v of integrands.  These
-       are all equivalent when there is only a single integrand. */
+    /** \brief Different ways of measuring the absolute and 
+	relative error
+
+	Error estimates given a vector e of error estimates in the
+	individual components of a vector v of integrands. These are
+	all equivalent when there is only a single integrand.
+    */
     typedef enum {
-      ERROR_INDIVIDUAL = 0, /* individual relerr criteria in each component */
-      ERROR_PAIRED, /* paired L2 norms of errors in each component,
-		       mainly for integrating vectors of complex numbers */
-      ERROR_L2, /* abserr is L_2 norm |e|, and relerr is |e|/|v| */
-      ERROR_L1, /* abserr is L_1 norm |e|, and relerr is |e|/|v| */
-      ERROR_LINF /* abserr is L_\infty norm |e|, and relerr is |e|/|v| */
+      /** individual relerr criteria in each component */
+      ERROR_INDIVIDUAL = 0, 
+      /** paired L2 norms of errors in each component,
+	  mainly for integrating vectors of complex numbers */
+      ERROR_PAIRED, 
+      /** abserr is L_2 norm |e|, and relerr is |e|/|v| */
+      ERROR_L2, 
+      /** abserr is L_1 norm |e|, and relerr is |e|/|v| */
+      ERROR_L1, 
+      /** abserr is L_\infty norm |e|, and relerr is |e|/|v| */
+      ERROR_LINF 
     } error_norm;
     
   };
 
-  /** \brief Desc
+  /** \brief Adaptive multidimensional integration on hyper-rectangles
+      using cubature rules from the Cubature library
 
       This class is experimental.
+
+      \hline
+      \b Documentation \b adapted \b from \b Cubature
+      
+      A cubature rule takes a function and a hypercube and evaluates
+      the function at a small number of points, returning an estimate
+      of the integral as well as an estimate of the error, and also
+      a suggested dimension of the hypercube to subdivide.
+      
+      Given such a rule, the adaptive integration is simple:
+      
+      1) Evaluate the cubature rule on the hypercube(s).
+      Stop if converged.
+      
+      2) Pick the hypercube with the largest estimated error,
+      and divide it in two along the suggested dimension.
+      
+      3) Goto (1).
+      
+      The basic algorithm is based on the adaptive cubature described in
+      
+      A. C. Genz and A. A. Malik, "An adaptive algorithm for numeric
+      integration over an N-dimensional rectangular region,"
+      J. Comput. Appl. Math. 6 (4), 295-302 (1980).
+      
+      and subsequently extended to integrating a vector of integrands in
+      
+      J. Berntsen, T. O. Espelid, and A. Genz, "An adaptive algorithm
+      for the approximate calculation of multiple integrals,"
+      ACM Trans. Math. Soft. 17 (4), 437-451 (1991).
+      \hline      
+
    */
   template<class func_t, class func_v_t> class inte_hcubature
     : public inte_cubature_base {
@@ -130,8 +168,10 @@ namespace o2scl {
      */
     typedef struct {
       unsigned dim;
-      double *data; /* length 2*dim = center followed by half-widths */
-      double vol;   /* cache volume = product of widths */
+      /** length 2*dim = center followed by half-widths */
+      double *data; 
+      /** cache volume = product of widths */
+      double vol;   
     } hypercube;
 
     /** \brief Desc
@@ -139,8 +179,9 @@ namespace o2scl {
     double compute_vol(const hypercube *h) {
       unsigned i;
       double vol = 1;
-      for (i = 0; i < h->dim; ++i)
+      for (i = 0; i < h->dim; ++i) {
 	vol *= 2 * h->data[i + h->dim];
+      }
       return vol;
     }
 
@@ -194,9 +235,12 @@ namespace o2scl {
     typedef struct {
       hypercube h;
       unsigned splitDim;
-      unsigned fdim; /* dimensionality of vector integrand */
-      esterr *ee; /* array of length fdim */
-      double errmax; /* max ee[k].err */
+      /** dimensionality of vector integrand */
+      unsigned fdim; 
+      /** array of length fdim */
+      esterr *ee; 
+      /** max ee[k].err */
+      double errmax; 
     } region;
 
     /** \brief Desc
@@ -231,7 +275,7 @@ namespace o2scl {
       R->h.data[d + dim] *= 0.5;
       R->h.vol *= 0.5;
       R2->h = make_hypercube(dim, R->h.data, R->h.data + dim);
-      if (!R2->h.data) return FAILURE;
+      if (!R2->h.data) return o2scl::gsl_failure;
       R->h.data[d] -= R->h.data[d + dim];
       R2->h.data[d] += R->h.data[d + dim];
       R2->ee = (esterr *) malloc(sizeof(esterr) * R2->fdim);
@@ -253,15 +297,15 @@ namespace o2scl {
     /** \brief Desc
      */
     typedef struct rule_s {
-      /* the dimensionality & number of functions */
+      /** the dimensionality & number of functions */
       unsigned dim, fdim;
-      /* number of evaluation points */
+      /** number of evaluation points */
       unsigned num_points;
-      /* max number of regions evaluated at once */
+      /** max number of regions evaluated at once */
       unsigned num_regions;
-      /* points to eval: num_regions * num_points * dim */
+      /** points to eval: num_regions * num_points * dim */
       double *pts;
-      /* num_regions * num_points * fdim */
+      /** num_regions * num_points * fdim */
       double *vals; 
       evalError_func evalError;
       destroy_func destroy;
@@ -295,11 +339,11 @@ namespace o2scl {
 	r->pts = (double *) malloc(sizeof(double) * 
 				   (num_regions
 				    * r->num_points * (r->dim + r->fdim)));
-	if (r->fdim + r->dim > 0 && !r->pts) return FAILURE;
+	if (r->fdim + r->dim > 0 && !r->pts) return o2scl::gsl_failure;
 	r->vals = r->pts + num_regions * r->num_points * r->dim;
 	r->num_regions = num_regions;
       }
-      return SUCCESS;
+      return o2scl::success;
     }
 
     /** \brief Desc
@@ -331,13 +375,13 @@ namespace o2scl {
       unsigned iR;
       if (nR == 0) {
 	/* nothing to evaluate */
-	return SUCCESS;
+	return o2scl::success;
       }
-      if (r->evalError(r, R->fdim, f, fdata, nR, R)) return FAILURE;
+      if (r->evalError(r, R->fdim, f, fdata, nR, R)) return o2scl::gsl_failure;
       for (iR = 0; iR < nR; ++iR) {
 	R[iR].errmax = errMax(R->fdim, R[iR].ee);
       }
-      return SUCCESS;
+      return o2scl::success;
     }
 
     /** \brief Desc
@@ -491,8 +535,8 @@ namespace o2scl {
     /** \brief Desc
 
 	Based on rule75genzmalik.cpp in HIntLib-0.0.10: An embedded
-	cubature rule of degree 7 (embedded rule degree 5) due to A. C. Genz
-	and A. A. Malik.  See:
+	cubature rule of degree 7 (embedded rule degree 5) due to A.
+	C. Genz and A. A. Malik. See:
 	
 	A. C. Genz and A. A. Malik, "An imbedded [sic] family of fully
 	symmetric numerical integration rules," SIAM
@@ -555,7 +599,7 @@ namespace o2scl {
     size_t npts = 0;
     double *diff, *pts, *vals;
 
-    if (alloc_rule_pts(r_, nR)) return FAILURE;
+    if (alloc_rule_pts(r_, nR)) return o2scl::gsl_failure;
     pts = r_->pts; vals = r_->vals;
 
     for (iR = 0; iR < nR; ++iR) {
@@ -590,7 +634,7 @@ namespace o2scl {
 
     /* Evaluate the integrand function(s) at all the points */
     if (f(dim, npts, pts, fdata, fdim, vals))
-      return FAILURE;
+      return o2scl::gsl_failure;
 
     /* we are done with the points, and so we can re-use the pts
        array to store the maximum difference diff[i] in each dimension 
@@ -667,7 +711,7 @@ namespace o2scl {
       }
       R[iR].splitDim = dimDiffMax;
     }
-return SUCCESS;
+return o2scl::success;
 }
 
 #ifdef O2SCL_NEVER_DEFINED
@@ -718,8 +762,8 @@ return SUCCESS;
     */
     static int rule15gauss_evalError(rule *r,
 				     unsigned fdim, func_v_t &f, void *fdata,
-				     unsigned nR, region *R)
-    {
+				     unsigned nR, region *R) {
+      
       /* Gauss quadrature weights and kronrod quadrature abscissae and
 	 weights as evaluated with 80 decimal digit arithmetic by
 	 L. W. Fullerton, Bell Labs, Nov. 1981. */
@@ -756,7 +800,7 @@ return SUCCESS;
       size_t npts = 0;
       double *pts, *vals;
 
-      if (alloc_rule_pts(r, nR)) return FAILURE;
+      if (alloc_rule_pts(r, nR)) return o2scl::gsl_failure;
       pts = r->pts; vals = r->vals;
 
       for (iR = 0; iR < nR; ++iR) {
@@ -782,7 +826,7 @@ return SUCCESS;
       }
 
       if (f(1, npts, pts, fdata, fdim, vals)) {
-	return FAILURE;
+	return o2scl::gsl_failure;
       }
      
       for (k = 0; k < fdim; ++k) {
@@ -853,7 +897,7 @@ return SUCCESS;
 	  vk += 15*fdim;
 	}
       }
-      return SUCCESS;
+      return o2scl::success;
     }
      
     /** \brief Desc
@@ -880,7 +924,8 @@ return SUCCESS;
       size_t n, nalloc;
       heap_item *items;
       unsigned fdim;
-      esterr *ee; /* array of length fdim of the total integrand & error */
+      /** array of length fdim of the total integrand & error */
+      esterr *ee; 
     } heap;
 
     /** \brief Desc
@@ -888,13 +933,14 @@ return SUCCESS;
     void heap_resize(heap *h, size_t nalloc) {
 
       h->nalloc = nalloc;
-      if (nalloc)
+      if (nalloc) {
 	h->items = (heap_item *) realloc(h->items, sizeof(heap_item)*nalloc);
-      else {
+      } else {
 	/* BSD realloc does not free for a zero-sized reallocation */
 	free(h->items);
 	h->items = NULL;
       }
+      return;
     }
 
     /** \brief Desc
@@ -923,6 +969,7 @@ return SUCCESS;
       heap_resize(h, 0);
       h->fdim = 0;
       free(h->ee);
+      return;
     }
 
     /** \brief Desc
@@ -939,7 +986,7 @@ return SUCCESS;
       insert = h->n;
       if (++(h->n) > h->nalloc) {
 	heap_resize(h, h->n * 2);
-	if (!h->items) return FAILURE;
+	if (!h->items) return o2scl::gsl_failure;
       }
 
       while (insert) {
@@ -951,16 +998,17 @@ return SUCCESS;
 	insert = parent;
       }
       h->items[insert] = hi;
-      return SUCCESS;
+      return o2scl::success;
     }
 
     /** \brief Desc
      */
     int heap_push_many(heap *h, size_t ni, heap_item *hi) {
       size_t i;
-      for (i = 0; i < ni; ++i)
-	if (heap_push(h, hi[i])) return FAILURE;
-      return SUCCESS;
+      for (i = 0; i < ni; ++i) {
+	if (heap_push(h, hi[i])) return o2scl::gsl_failure;
+      }
+      return o2scl::success;
     }
 
     /** \brief Desc
@@ -971,13 +1019,15 @@ return SUCCESS;
       int i, n, child;
 
       if (!(h->n)) {
-	fprintf(stderr, "attempted to pop an empty heap\n");
-	exit(EXIT_FAILURE);
+	O2SCL_ERR("Attempted to pop an empty heap in cubature.",
+		  o2scl::exc_esanity);
       }
 
       ret = h->items[0];
       h->items[i = 0] = h->items[n = --(h->n)];
+
       while ((child = i * 2 + 1) < n) {
+
 	int largest;
 	heap_item swap;
 
@@ -991,8 +1041,9 @@ return SUCCESS;
 	    h->items[child].errmax) {
 	  largest = child;
 	}
-	if (largest == i)
+	if (largest == i) {
 	  break;
+	}
 	swap = h->items[i];
 	h->items[i] = h->items[largest];
 	h->items[i = largest] = swap;
@@ -1018,10 +1069,12 @@ return SUCCESS;
 
       switch (norm) {
       case ERROR_INDIVIDUAL:
-	for (j = 0; j < fdim; ++j)
+	for (j = 0; j < fdim; ++j) {
 	  if (ee[j].err > reqAbsError && ee[j].err >
-	      fabs(ee[j].val)*reqRelError)
+	      fabs(ee[j].val)*reqRelError) {
 	    return 0;
+	  }
+	}
 	return 1;
               
       case ERROR_PAIRED:
@@ -1035,16 +1088,21 @@ return SUCCESS;
 	  sval = maxval > 0 ? 1/maxval : 1;
 	  err = sqrt(isqr(ee[j].err*serr) + isqr(ee[j+1].err*serr)) * maxerr;
 	  val = sqrt(isqr(ee[j].val*sval) + isqr(ee[j+1].val*sval)) * maxval;
-	  if (err > reqAbsError && err > val*reqRelError)
+	  if (err > reqAbsError && err > val*reqRelError) {
 	    return 0;
+	  }
 	}
 
-	if (j < fdim) /* fdim is odd, do last dimension individually */
+	/* fdim is odd, do last dimension individually */
+	if (j < fdim) {
 	  if (ee[j].err > reqAbsError && ee[j].err >
-	      fabs(ee[j].val)*reqRelError)
+	      fabs(ee[j].val)*reqRelError) {
 	    return 0;
+	  }
+	}
+	
 	return 1;
-
+	
       case ERROR_L1: {
 	double err = 0, val = 0;
 	for (j = 0; j < fdim; ++j) {
@@ -1101,8 +1159,10 @@ return SUCCESS;
       size_t nR_alloc = 0;
       esterr *ee = NULL;
 
-      if (fdim <= 1) norm = ERROR_INDIVIDUAL; /* norm is irrelevant */
-      if (norm < 0 || norm > ERROR_LINF) return FAILURE; /* invalid norm */
+      /* norm is irrelevant */
+      if (fdim <= 1) norm = ERROR_INDIVIDUAL; 
+      /* invalid norm */
+      if (norm < 0 || norm > ERROR_LINF) return o2scl::gsl_failure; 
 
       regions = heap_alloc(1, fdim);
       if (!regions.ee || !regions.items) goto bad;
@@ -1121,6 +1181,7 @@ return SUCCESS;
       numEval += r->num_points;
      
       while (numEval < maxEval || !maxEval) {
+
 	if (converged(fdim, regions.ee, reqAbsError, reqRelError, norm)) {
 	  break;
 	}
@@ -1156,6 +1217,7 @@ return SUCCESS;
 	  size_t nR = 0;
 	  for (j = 0; j < fdim; ++j) ee[j] = regions.ee[j];
 	  do {
+
 	    if (nR + 2 > nR_alloc) {
 	      nR_alloc = (nR + 2) * 2;
 	      R = (region *) realloc(R, nR_alloc * sizeof(region));
@@ -1166,14 +1228,19 @@ return SUCCESS;
 	    if (cut_region(R+nR, R+nR+1)) goto bad;
 	    numEval += r->num_points * 2;
 	    nR += 2;
-	    if (converged(fdim, ee, reqAbsError, reqRelError, norm))
+	    if (converged(fdim, ee, reqAbsError, reqRelError, norm)) {
 	      break; /* other regions have small errs */
+	    }
+	    
 	  } while (regions.n > 0 && (numEval < maxEval || !maxEval));
+
 	  if (eval_regions(nR, R, f, fdata, r)
-	      || heap_push_many(&regions, nR, R))
+	      || heap_push_many(&regions, nR, R)) {
 	    goto bad;
-	}
-	else { /* minimize number of function evaluations */
+	  }
+
+	} else { /* minimize number of function evaluations */
+	
 	  R[0] = heap_pop(&regions); /* get worst region */
 	  if (cut_region(R, R+1)
 	      || eval_regions(2, R, f, fdata, r)
@@ -1198,7 +1265,7 @@ return SUCCESS;
       heap_free(&regions);
       free(R);
 
-      return SUCCESS;
+      return o2scl::success;
 
     bad:
       
@@ -1206,7 +1273,7 @@ return SUCCESS;
       heap_free(&regions);
       free(R);
 
-      return FAILURE;
+      return o2scl::gsl_failure;
     }
     
     /** \brief Desc
@@ -1222,11 +1289,11 @@ return SUCCESS;
       int status;
       unsigned i;
       
-      if (fdim == 0) /* nothing to do */ return SUCCESS;
+      if (fdim == 0) /* nothing to do */ return o2scl::success;
       if (dim == 0) { /* trivial integration */
-	if (f(0, 1, xmin, fdata, fdim, val)) return FAILURE;
+	if (f(0, 1, xmin, fdata, fdim, val)) return o2scl::gsl_failure;
 	for (i = 0; i < fdim; ++i) err[i] = 0;
-	return SUCCESS;
+	return o2scl::success;
       }
       r = dim == 1 ? make_rule15gauss(dim, fdim)
 	: make_rule75genzmalik(dim, fdim);
@@ -1235,10 +1302,10 @@ return SUCCESS;
 	  val[i] = 0;
 	  err[i] = HUGE_VAL; 
 	}
-	return FAILURE;
+	return o2scl::gsl_failure;
       }
       h = make_hypercube_range(dim, xmin, xmax);
-      status = !h.data ? FAILURE
+      status = !h.data ? o2scl::gsl_failure
 	: rulecubature(r, fdim, f, fdata, &h,
 		       maxEval, reqAbsError, reqRelError, norm,
 		       val, err, parallel);
@@ -1275,10 +1342,10 @@ return SUCCESS;
       /* printf("npt = %u\n", npt); */
       for (i = 0; i < npt; ++i) {
 	if (f(ndim, x + i*ndim, fdata, fdim, fval + i*fdim)) {
-	  return FAILURE;
+	  return o2scl::gsl_failure;
 	}
       }
-      return SUCCESS;
+      return o2scl::success;
     }
 
     /** \brief Desc
@@ -1292,7 +1359,7 @@ return SUCCESS;
       int ret;
       fv_data d;
 
-      if (fdim == 0) return SUCCESS; /* nothing to do */     
+      if (fdim == 0) return o2scl::success; /* nothing to do */     
      
       d.f = f;
       d.fdata = fdata;
@@ -1308,10 +1375,21 @@ return SUCCESS;
 }{
 #endif
     
-  /** \brief Desc
-      
+  /** \brief Integration by p-adaptive cubature from the Cubature library
+
       This class is experimental.
-   */
+
+      \hline
+      \b Documentation \b adapted \b from \b Cubature
+      
+      This class performs adaptive integration by increasing the
+      degree of the cubature rule rather than subdividing the domain,
+      using products of Clenshaw-Curtis rules. This algorithm may be
+      superior to Genz-Malik for smooth integrands lacking
+      strongly-localized features, in moderate dimensions.
+
+      \hline      
+  */
   template<class func_t, class func_v_t> class inte_pcubature
     : public inte_cubature_base {
       
@@ -1381,7 +1459,7 @@ return SUCCESS;
 	memcpy(buf + (*ibuf)++ * dim, p, sizeof(double) * dim);
 	if (*ibuf == nbuf) { /* flush buffer */
 	  if (f(dim, nbuf, buf, fdata, fdim, val + *vali)) {
-	    return FAILURE;
+	    return o2scl::gsl_failure;
 	  }
 	  *vali += *ibuf * fdim;
 	  *ibuf = 0;
@@ -1400,7 +1478,7 @@ return SUCCESS;
 	  if (compute_cacheval(m, mi, val, vali, fdim, f, fdata,
 			       dim, id + 1, p,
 			       xmin, xmax, buf, nbuf, ibuf)) {
-	    return FAILURE;
+	    return o2scl::gsl_failure;
 	  }
 	}
 	for (i = 0; i < nx; ++i) {
@@ -1408,17 +1486,17 @@ return SUCCESS;
 	  if (compute_cacheval(m, mi, val, vali, fdim, f, fdata,
 			       dim, id + 1, p,
 			       xmin, xmax, buf, nbuf, ibuf)) {
-	    return FAILURE;
+	    return o2scl::gsl_failure;
 	  }
 	  p[id] = c - r * x[i];
 	  if (compute_cacheval(m, mi, val, vali, fdim, f, fdata,
 			       dim, id + 1, p,
 			       xmin, xmax, buf, nbuf, ibuf)) {
-	    return FAILURE;
+	    return o2scl::gsl_failure;
 	  }
 	}
       }
-      return SUCCESS;
+      return o2scl::success;
     }
 
     /** \brief Desc
@@ -1455,13 +1533,11 @@ return SUCCESS;
       memcpy(vc->c[ic].m, m, sizeof(unsigned) * dim);
       nval = fdim * num_cacheval(m, mi, dim);
       vc->c[ic].val = (double *) malloc(sizeof(double) * nval);
-      if (!vc->c[ic].val) return FAILURE;
+      if (!vc->c[ic].val) return o2scl::gsl_failure;
 
-      if (compute_cacheval(m, mi, vc->c[ic].val, &vali,
-			   fdim, f, fdata,
-			   dim, 0, p, xmin, xmax,
-			   buf, nbuf, &ibuf)) {
-	return FAILURE;
+      if (compute_cacheval(m, mi, vc->c[ic].val, &vali, fdim, f, fdata,
+			   dim, 0, p, xmin, xmax, buf, nbuf, &ibuf)) {
+	return o2scl::gsl_failure;
       }
 
       if (ibuf > 0) {
@@ -1469,7 +1545,7 @@ return SUCCESS;
 	return f(dim, ibuf, buf, fdata, fdim, vc->c[ic].val + vali);
       }
 
-      return SUCCESS;
+      return o2scl::success;
     }
     
     /** \brief Desc
@@ -1680,22 +1756,26 @@ return SUCCESS;
 		    double **buf, size_t *nbuf, size_t max_nbuf,
 		    double *val, double *err) {
 
-      int ret = FAILURE;
+      int ret = o2scl::gsl_failure;
       double V = 1;
       size_t numEval = 0, new_nbuf;
       unsigned i;
       valcache vc = {0, NULL};
       double *val1 = NULL;
 
-      if (fdim <= 1) norm = ERROR_INDIVIDUAL; /* norm is irrelevant */
-      if (norm < 0 || norm > ERROR_LINF) return FAILURE; /* invalid norm */
-
-      if (fdim == 0) return SUCCESS; /* nothing to do */
-      if (dim > MAXDIM) return FAILURE; /* unsupported */
-      if (dim == 0) { /* trivial case */
-	if (f(0, 1, xmin, fdata, fdim, val)) return FAILURE;
+      /* norm is irrelevant */
+      if (fdim <= 1) norm = ERROR_INDIVIDUAL;
+      /* invalid norm */
+      if (norm < 0 || norm > ERROR_LINF) return o2scl::gsl_failure; 
+      /* nothing to do */
+      if (fdim == 0) return o2scl::success; 
+      /* unsupported */
+      if (dim > MAXDIM) return o2scl::gsl_failure; 
+      /* trivial case */
+      if (dim == 0) { 
+	if (f(0, 1, xmin, fdata, fdim, val)) return o2scl::gsl_failure;
 	for (i = 0; i < fdim; ++i) err[i] = 0;
-	return SUCCESS;
+	return o2scl::success;
       }
 
       for (i = 0; i < fdim; ++i) {
@@ -1704,7 +1784,8 @@ return SUCCESS;
       }
 
       for (i = 0; i < dim; ++i) {
-	V *= (xmax[i] - xmin[i]) * 0.5; /* scale factor for C-C volume */
+	/* scale factor for C-C volume */
+	V *= (xmax[i] - xmin[i]) * 0.5; 
       }
 
       new_nbuf = num_cacheval(m, dim, dim);
@@ -1720,8 +1801,9 @@ return SUCCESS;
 
       /* start by evaluating the m=0 cubature rule */
       if (add_cacheval(&vc, m, dim, fdim, f, fdata, dim, xmin, xmax, 
-		       *buf, *nbuf) != SUCCESS)
+		       *buf, *nbuf) != o2scl::success) {
 	goto done;
+      }
 
       val1 = (double *) malloc(sizeof(double) * fdim);
 
@@ -1731,7 +1813,7 @@ return SUCCESS;
 	eval_integral(vc, m, fdim, dim, V, &mi, val, err, val1);
 	if (converged(fdim, val, err, reqAbsError, reqRelError, norm)
 	    || (numEval > maxEval && maxEval)) {
-	  ret = SUCCESS;
+	  ret = o2scl::success;
 	  goto done;
 	}
 	m[mi] += 1;
@@ -1747,8 +1829,9 @@ return SUCCESS;
 	}
 
 	if (add_cacheval(&vc, m, mi, fdim, f, fdata, 
-			 dim, xmin, xmax, *buf, *nbuf) != SUCCESS)
+			 dim, xmin, xmax, *buf, *nbuf) != o2scl::success) {
 	  goto done; /* FAILURE */
+	}
 	numEval += new_nbuf;
       }
 
@@ -1792,16 +1875,18 @@ return SUCCESS;
      */
     static int fv(unsigned ndim, size_t npt, const double *x, void *d_,
 		  unsigned fdim, double *fval) {
-
+      
       fv_data *d = (fv_data *) d_;
       func_t f = d->f;
       void *fdata = d->fdata;
       unsigned i;
       /* printf("npt = %u\n", npt); */
-      for (i = 0; i < npt; ++i) 
-	if (f(ndim, x + i*ndim, fdata, fdim, fval + i*fdim))
-	  return FAILURE;
-      return SUCCESS;
+      for (i = 0; i < npt; ++i) {
+	if (f(ndim, x + i*ndim, fdata, fdim, fval + i*fdim)) {
+	  return o2scl::gsl_failure;
+	}
+      }
+      return o2scl::success;
     }
 
     /** \brief Desc
@@ -1829,88 +1914,6 @@ return SUCCESS;
     }
 
   };
-
-  /* USAGE: Call hcubature or pcubature with your function as described
-     in the README file. */
-  
-  /* a vector integrand - evaluates the function at the given point x
-     (an array of length ndim) and returns the result in fval (an
-     array of length fdim). The void* parameter is there in case you
-     have to pass any additional data through to your function (it
-     corresponds to the fdata parameter you pass to cubature). Return
-     0 on success or nonzero to terminate the integration. */
-  typedef int (*integrand)(unsigned ndim, const double *x, void *,
-			   unsigned fdim, double *fval);
-  
-  /* a vector integrand of a vector of npt points: x[i*ndim + j] is the
-     j-th coordinate of the i-th point, and the k-th function evaluation
-     for the i-th point is returned in fval[i*fdim + k].  Return 0 on success
-     or nonzero to terminate the integration. */
-  typedef int (*integrand_v)(unsigned ndim, size_t npt,
-			     const double *x, void *,
-			     unsigned fdim, double *fval);
-  
-  /* Different ways of measuring the absolute and relative error when
-     we have multiple integrands, given a vector e of error estimates
-     in the individual components of a vector v of integrands.  These
-     are all equivalent when there is only a single integrand. */
-  typedef enum {
-    ERROR_INDIVIDUAL = 0, /* individual relerr criteria in each component */
-    ERROR_PAIRED, /* paired L2 norms of errors in each component,
-		     mainly for integrating vectors of complex numbers */
-    ERROR_L2, /* abserr is L_2 norm |e|, and relerr is |e|/|v| */
-    ERROR_L1, /* abserr is L_1 norm |e|, and relerr is |e|/|v| */
-    ERROR_LINF /* abserr is L_\infty norm |e|, and relerr is |e|/|v| */
-  } error_norm;
-
-  /* Integrate the function f from xmin[dim] to xmax[dim], with at most
-     maxEval function evaluations (0 for no limit), until the given
-     absolute or relative error is achieved.  val returns the integral,
-     and err returns the estimate for the absolute error in val; both
-     of these are arrays of length fdim, the dimension of the vector
-     integrand f(x). The return value of the function is 0 on success
-     and non-zero if there  was an error. */
-  
-  /* adapative integration by partitioning the integration domain
-     ("h-adaptive") and using the same fixed-degree quadrature in each
-     subdomain, recursively, until convergence is achieved. */
-  int hcubature(unsigned fdim, integrand f, void *fdata,
-		unsigned dim, const double *xmin, const double *xmax, 
-		size_t maxEval, double reqAbsError, double reqRelError, 
-		error_norm norm,
-		double *val, double *err);
-
-  /* as hcubature, but vectorized integrand */
-  int hcubature_v(unsigned fdim, integrand_v f, void *fdata,
-		  unsigned dim, const double *xmin, const double *xmax, 
-		  size_t maxEval, double reqAbsError, double reqRelError, 
-		  error_norm norm,
-		  double *val, double *err);
-
-  /* adaptive integration by increasing the degree of (tensor-product
-     Clenshaw-Curtis) quadrature rules ("p-adaptive"), rather than
-     subdividing the domain ("h-adaptive").  Possibly better for
-     smooth integrands in low dimensions. */
-  int pcubature_v_buf(unsigned fdim, integrand_v f, void *fdata,
-		      unsigned dim, const double *xmin, const double *xmax,
-		      size_t maxEval, 
-		      double reqAbsError, double reqRelError,
-		      error_norm norm,
-		      unsigned *m,
-		      double **buf, size_t *nbuf, size_t max_nbuf,
-		      double *val, double *err);
-  
-  int pcubature_v(unsigned fdim, integrand_v f, void *fdata,
-		  unsigned dim, const double *xmin, const double *xmax, 
-		  size_t maxEval, double reqAbsError, double reqRelError, 
-		  error_norm norm,
-		  double *val, double *err);
-
-  int pcubature(unsigned fdim, integrand f, void *fdata,
-		unsigned dim, const double *xmin, const double *xmax, 
-		size_t maxEval, double reqAbsError, double reqRelError, 
-		error_norm norm,
-		double *val, double *err);
 
 }
 

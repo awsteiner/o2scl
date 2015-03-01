@@ -68,8 +68,7 @@ endif
 SUBLIBS = mcarlo/libo2scl_mcarlo.la other/libo2scl_other.la \
 	min/libo2scl_min.la \
 	inte/libo2scl_inte.la linalg/libo2scl_linalg.la \
-	base/libo2scl_base.la fparser/libo2scl_fparser.la \
-	cubature/libo2scl_cubature.la
+	base/libo2scl_base.la fparser/libo2scl_fparser.la 
 
 #	fit/libo2scl_fit.la
 

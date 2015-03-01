@@ -2,7 +2,7 @@
 # Basic variables
 # ------------------------------------------------------------
 
-CUBATURE_SRCS = hcubature.cpp pcubature.cpp
+CUBATURE_SRCS = 
 
 HEADERS_VAR = clencurt.h cubature.h
 
@@ -83,14 +83,14 @@ cubature.scr: cubature_ts$(EXEEXT)
 cubature_ts_SOURCES = cubature_ts.cpp
 
 # ------------------------------------------------------------
-# Library o2scl_cubature
+# No library o2scl_cubature
 # ------------------------------------------------------------
 
-noinst_LTLIBRARIES = libo2scl_cubature.la
+# noinst_LTLIBRARIES = libo2scl_cubature.la
 
-libo2scl_cubature_la_SOURCES = $(CUBATURE_SRCS)
+# libo2scl_cubature_la_SOURCES = $(CUBATURE_SRCS)
 
-am__libo2scl_cubature_la_SOURCES_DIST = $(CUBATURE_SRCS)
+# am__libo2scl_cubature_la_SOURCES_DIST = $(CUBATURE_SRCS)
 
 # ------------------------------------------------------------
 # Misc
