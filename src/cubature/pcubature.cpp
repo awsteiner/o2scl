@@ -58,7 +58,7 @@ using namespace o2scl;
 #define FAILURE 1
 
 /* pre-generated Clenshaw-Curtis rules and weights */
-#include <o2scl/clencurt.h>
+//#include <o2scl/clencurt.h>
 
 /* no point in supporting very high dimensional integrals here */
 #define MAXDIM (20U)
