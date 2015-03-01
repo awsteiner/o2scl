@@ -11,7 +11,6 @@
     \b Series \b acceleration - \ref o2scl::series_acc \n
     \b Command-line \b interface - \ref o2scl::cli \n
     \b Automatic \b bin \b sizing - \ref o2scl::bin_size \n
-    \b Fourier \b transforms - \ref o2scl::gsl_fft \n
     \b Polylogarithms - \ref o2scl::polylog \n
 
 */

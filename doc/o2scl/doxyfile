@@ -766,11 +766,14 @@ WARN_LOGFILE = doxygen.log
 # files or directories with spaces. Note: If this tag is empty the
 # current directory is searched.
 
+# We don't include the full src/cubature directory because
+# clencurt.h is too large for Doxygen to process
+
 INPUT = . ../../src ../../src/anneal ../../src/base ../../src/boost 
 INPUT += ../../src/deriv ../../src/fit ../../src/hdf ../../src/inte 
 INPUT += ../../src/linalg ../../src/mcarlo ../../src/min
 INPUT += ../../src/ode ../../src/other ../../src/root 
-INPUT += ../../src/fparser
+INPUT += ../../src/fparser ../../src/cubature/cubature.h
 INPUT += main.dox install.dox usage.dox ex_compile.dox related.dox
 INPUT += complex.dox vec_mat.dox linalg.dox interp.dox
 INPUT += constants.dox funct.dox table.dox string.dox deriv.dox

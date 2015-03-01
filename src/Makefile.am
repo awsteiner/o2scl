@@ -68,8 +68,7 @@ endif
 SUBLIBS = mcarlo/libo2scl_mcarlo.la other/libo2scl_other.la \
 	min/libo2scl_min.la \
 	inte/libo2scl_inte.la linalg/libo2scl_linalg.la \
-	base/libo2scl_base.la fparser/libo2scl_fparser.la \
-	cubature/libo2scl_cubature.la
+	base/libo2scl_base.la fparser/libo2scl_fparser.la 
 
 #	fit/libo2scl_fit.la
 
@@ -209,14 +208,11 @@ endif
 test_anneal:
 	cd anneal && $(MAKE) o2scl-test-rec
 
-test_cubature:
-	cd cubature && $(MAKE) o2scl-test-rec
-
-test_fparser:
-	cd fparser && $(MAKE) o2scl-test-rec
-
 test_base:
 	cd base && $(MAKE) o2scl-test-rec
+
+test_cubature:
+	cd cubature && $(MAKE) o2scl-test-rec
 
 test_deriv:
 	cd deriv && $(MAKE) o2scl-test-rec
@@ -226,6 +222,9 @@ test_eos:
 
 test_fit:
 	cd fit && $(MAKE) o2scl-test-rec
+
+test_fparser:
+	cd fparser && $(MAKE) o2scl-test-rec
 
 test_hdf:
 	cd hdf && $(MAKE) o2scl-test-rec
