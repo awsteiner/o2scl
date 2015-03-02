@@ -22,7 +22,6 @@
 */
 #include <o2scl/test_mgr.h>
 #include <o2scl/multi_funct.h>
-#include <o2scl/inte_multi_comp.h>
 #include <o2scl/inte_qng_gsl.h>
 #include <o2scl/inte_qag_gsl.h>
 #include <o2scl/mcarlo_miser.h>

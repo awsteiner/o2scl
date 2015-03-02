@@ -49,31 +49,31 @@
  *
  */
 /** \file cubature.h
-    \brief Desc
+    \brief File for definitions of \ref o2scl::inte_hcubature and 
+    \ref o2scl::inte_pcubature
 */
 #ifndef O2SCL_CUBATURE_H
 #define O2SCL_CUBATURE_H
 
-// For size_t
-#include <cstdlib>
 // For memcpy
 #include <cstring>
-// For DBL_MIN
-#include <cfloat>
 
 #include <cmath>
+#include <functional>
+#include <boost/numeric/ublas/vector.hpp>
 
 #include <o2scl/clencurt.h>
 #include <o2scl/err_hnd.h>
+#include <o2scl/vector.h>
 
 namespace o2scl {
 
-#ifdef O2SCL_NEVER_DEFINED
-
+#ifndef O2SCL_NEVER_DEFINED
+  
   /** \brief Desc
    */
   typedef std::function<
-    int(size_t,size_t,const boost::numeric::ublas::vector<double> &,
+    int(size_t,const boost::numeric::ublas::vector<double> &,
 	size_t,boost::numeric::ublas::vector<double> &) > cub_funct11;
 
   /** \brief Desc
@@ -84,7 +84,7 @@ namespace o2scl {
 
   /** \brief Desc
    */
-  template<class vec_t, class subvec_t, class func_t> class cub_wrapper {
+  template<class vec_t, class func_t> class cub_wrapper {
 
   protected:
 
@@ -104,29 +104,35 @@ namespace o2scl {
      */
     int operator()(size_t ndim, size_t npts, const vec_t &x,
 		   size_t fdim, vec_t &fval) {
-      for (size_t i = 0; i < npt; i++) {
-	subvec_t s(x,i*ndim,ndim);
-	subvec_t sf(fval,i*fdim,fdim);
-	f(ndim,s,fdata,fdim,sf);
+      for (size_t i = 0; i < npts; i++) {
+	vec_t s=o2scl::vector_range<double>(x,i*ndim,(i+1)*ndim);
+	vec_t sf=o2scl::vector_range<double>(fval,i*fdim,(i+1)*fdim);
+	f(ndim,s,fdim,sf);
       }
       return o2scl::success;
     }
     
   };
-  
-#endif
 
+#endif
+  
   /** \brief Base class for integration routines from the 
       Cubature library
-   */
+  */
   class inte_cubature_base {
     
   public:
     
-    /** \brief Desc
+    /** \brief Square an integer
      */
     int isqr(int x) {
-      return x * x;
+      return x*x;
+    }
+    
+    /** \brief Square an double-precision floating-point number
+     */
+    double dsqr(double x) {
+      return x*x;
     }
 
     /** \brief Different ways of measuring the absolute and 
@@ -137,16 +143,17 @@ namespace o2scl {
 	all equivalent when there is only a single integrand.
     */
     typedef enum {
-      /** individual relerr criteria in each component */
+      /** \brief individual relerr criteria in each component */
       ERROR_INDIVIDUAL = 0, 
-      /** paired L2 norms of errors in each component,
+      /** \brief paired L2 norms of errors in each component,
 	  mainly for integrating vectors of complex numbers */
       ERROR_PAIRED, 
-      /** abserr is L_2 norm |e|, and relerr is |e|/|v| */
+      /** \brief abserr is L_2 norm |e|, and relerr is |e|/|v| */
       ERROR_L2, 
-      /** abserr is L_1 norm |e|, and relerr is |e|/|v| */
+      /** \brief abserr is L_1 norm |e|, and relerr is |e|/|v| */
       ERROR_L1, 
-      /** abserr is L_\infty norm |e|, and relerr is |e|/|v| */
+      /** \brief abserr is \f$ L_{\infty} \f$ norm |e|, and 
+	  relerr is |e|/|v| */
       ERROR_LINF 
     } error_norm;
     
@@ -175,20 +182,13 @@ namespace o2scl {
       
       3) Goto (1).
       
-      The basic algorithm is based on the adaptive cubature described in
-      
-      A. C. Genz and A. A. Malik, "An adaptive algorithm for numeric
-      integration over an N-dimensional rectangular region,"
-      J. Comput. Appl. Math. 6 (4), 295-302 (1980).
-      
-      and subsequently extended to integrating a vector of integrands in
-      
-      J. Berntsen, T. O. Espelid, and A. Genz, "An adaptive algorithm
-      for the approximate calculation of multiple integrals,"
-      ACM Trans. Math. Soft. 17 (4), 437-451 (1991).
+      The basic algorithm is based on the adaptive cubature described
+      in \ref Genz80 and subsequently extended to integrating a vector
+      of integrands in \ref Berntsen91 .
+
       \hline      
 
-   */
+  */
   template<class func_t, class func_v_t> class inte_hcubature
     : public inte_cubature_base {
     
@@ -214,10 +214,11 @@ namespace o2scl {
     /** \brief Desc
      */
     typedef struct {
+      /** \brief Desc */
       unsigned dim;
-      /** length 2*dim = center followed by half-widths */
+      /** \brief length 2*dim = center followed by half-widths */
       double *data; 
-      /** cache volume = product of widths */
+      /** \brief cache volume = product of widths */
       double vol;   
     } hypercube;
 
@@ -277,13 +278,15 @@ namespace o2scl {
     /** \brief Desc
      */
     typedef struct {
+      /** \brief Desc */
       hypercube h;
+      /** \brief Desc */
       unsigned splitDim;
-      /** dimensionality of vector integrand */
+      /** \brief dimensionality of vector integrand */
       unsigned fdim; 
-      /** array of length fdim */
+      /** \brief array of length fdim */
       esterr *ee; 
-      /** max ee[k].err */
+      /** \brief max ee[k].err */
       double errmax; 
     } region;
 
@@ -333,7 +336,7 @@ namespace o2scl {
     typedef int (*evalError_func)(struct rule_s *r,
 				  unsigned fdim, func_v_t &f, void *fdata,
 				  unsigned nR, region *R);
-
+    
     /** \brief Desc
      */
     typedef void (*destroy_func)(struct rule_s *r);
@@ -414,7 +417,7 @@ namespace o2scl {
     /** \brief Desc
 
 	note: all regions must have same fdim 
-     */
+    */
     int eval_regions(unsigned nR, region *R, 
 		     func_v_t &f, void *fdata, rule *r) {
 
@@ -483,7 +486,8 @@ namespace o2scl {
 			  const double *c, const double *r) {
       
       unsigned i;
-      unsigned signs = 0; /* 0/1 bit = +/- for corresponding element of r[] */
+      /* 0/1 bit = +/- for corresponding element of r[] */
+      unsigned signs = 0; 
 
       /* We start with the point where r is ADDed in every coordinate
 	 (this implies signs=0). */
@@ -493,8 +497,9 @@ namespace o2scl {
       /* Loop through the points in Gray-code ordering */
       for (i = 0;; ++i) {
 	unsigned mask, d;
-
-	memcpy(pts, p, sizeof(double) * dim); pts += dim;
+	
+	memcpy(pts, p, sizeof(double) * dim);
+	pts += dim;
 
 	d = ls0(i); /* which coordinate to flip */
 	if (d >= dim) {
@@ -518,13 +523,17 @@ namespace o2scl {
 	p[i] = c[i] - r[i];
 	for (unsigned j = i + 1; j < dim; ++j) {
 	  p[j] = c[j] - r[j];
-	  memcpy(pts, p, sizeof(double) * dim); pts += dim;
+	  memcpy(pts, p, sizeof(double) * dim);
+	  pts += dim;
 	  p[i] = c[i] + r[i];
-	  memcpy(pts, p, sizeof(double) * dim); pts += dim;
+	  memcpy(pts, p, sizeof(double) * dim);
+	  pts += dim;
 	  p[j] = c[j] + r[j];
-	  memcpy(pts, p, sizeof(double) * dim); pts += dim;
+	  memcpy(pts, p, sizeof(double) * dim);
+	  pts += dim;
 	  p[i] = c[i] - r[i];
-	  memcpy(pts, p, sizeof(double) * dim); pts += dim;
+	  memcpy(pts, p, sizeof(double) * dim);
+	  pts += dim;
 
 	  // Done with j -> Restore p[j]
 	  p[j] = c[j];      
@@ -541,20 +550,25 @@ namespace o2scl {
       (double *pts, unsigned dim, double *p, const double *c,
        const double *r1, const double *r2) {
       
-      memcpy(pts, p, sizeof(double) * dim); pts += dim;
+      memcpy(pts, p, sizeof(double) * dim);
+      pts += dim;
 
       for (unsigned i = 0; i < dim; i++) {
 	p[i] = c[i] - r1[i];
-	memcpy(pts, p, sizeof(double) * dim); pts += dim;
+	memcpy(pts, p, sizeof(double) * dim);
+	pts += dim;
 
 	p[i] = c[i] + r1[i];
-	memcpy(pts, p, sizeof(double) * dim); pts += dim;
+	memcpy(pts, p, sizeof(double) * dim);
+	pts += dim;
 
 	p[i] = c[i] - r2[i];
-	memcpy(pts, p, sizeof(double) * dim); pts += dim;
+	memcpy(pts, p, sizeof(double) * dim);
+	pts += dim;
 
 	p[i] = c[i] + r2[i];
-	memcpy(pts, p, sizeof(double) * dim); pts += dim;
+	memcpy(pts, p, sizeof(double) * dim);
+	pts += dim;
 
 	p[i] = c[i];
       }
@@ -577,44 +591,43 @@ namespace o2scl {
     /** \brief Desc
 
 	Based on rule75genzmalik.cpp in HIntLib-0.0.10: An embedded
-	cubature rule of degree 7 (embedded rule degree 5) due to A.
-	C. Genz and A. A. Malik. See:
-	
-	A. C. Genz and A. A. Malik, "An imbedded [sic] family of fully
-	symmetric numerical integration rules," SIAM
-	J. Numer. Anal. 20 (3), 580-588 (1983).
+	cubature rule of degree 7 (embedded rule degree 5) 
+	from \ref Genz83.
     */
     typedef struct {
-    rule parent;
 
-    /* temporary arrays of length dim */
-    double *widthLambda, *widthLambda2, *p;
-
-    /* dimension-dependent constants */
-    double weight1, weight3, weight5;
-    double weightE1, weightE3;
-  } rule75genzmalik;
+      /** \brief Desc */
+      rule parent;
+      
+      /** \brief temporary arrays of length dim */
+      double *widthLambda, *widthLambda2, *p;
+      
+      /** \brief dimension-dependent constants */
+      double weight1, weight3, weight5;
+      /** \brief Desc */
+      double weightE1, weightE3;
+    } rule75genzmalik;
     
     /** \brief Desc
      */
     static double real(int x) {
-    return ((double)(x));
-  }
+      return ((double)(x));
+    }
     
     /** \brief Desc
      */
     static int to_int(double n) {
-    return ((int)(n));
-  }
-
+      return ((int)(n));
+    }
+    
     /** \brief Desc
      */
     static void destroy_rule75genzmalik(rule *r_)
     {
-    rule75genzmalik *r = (rule75genzmalik *) r_;
-    free(r->p);
-    return;
-  }
+      rule75genzmalik *r = (rule75genzmalik *) r_;
+      free(r->p);
+      return;
+    }
     
 #ifdef O2SCL_NEVER_DEFINED
   }{
@@ -624,145 +637,144 @@ namespace o2scl {
      */
     static int rule75genzmalik_evalError
       (rule *r_, unsigned fdim, func_v_t &f, void *fdata,
-      unsigned nR, region *R) {
+       unsigned nR, region *R) {
     
-    /* lambda2 = sqrt(9/70), lambda4 = sqrt(9/10), lambda5 = sqrt(9/19) */
-    const double lambda2 = 0.3585685828003180919906451539079374954541;
-    const double lambda4 = 0.9486832980505137995996680633298155601160;
-    const double lambda5 = 0.6882472016116852977216287342936235251269;
-    const double weight2 = 980. / 6561.;
-    const double weight4 = 200. / 19683.;
-    const double weightE2 = 245. / 486.;
-    const double weightE4 = 25. / 729.;
-    const double ratio = (lambda2 * lambda2) / (lambda4 * lambda4);
+      /* lambda2 = sqrt(9/70), lambda4 = sqrt(9/10), lambda5 = sqrt(9/19) */
+      const double lambda2 = 0.3585685828003180919906451539079374954541;
+      const double lambda4 = 0.9486832980505137995996680633298155601160;
+      const double lambda5 = 0.6882472016116852977216287342936235251269;
+      const double weight2 = 980. / 6561.;
+      const double weight4 = 200. / 19683.;
+      const double weightE2 = 245. / 486.;
+      const double weightE4 = 25. / 729.;
+      const double ratio = (lambda2 * lambda2) / (lambda4 * lambda4);
 
-    rule75genzmalik *r = (rule75genzmalik *) r_;
-    unsigned i, j, iR, dim = r_->dim;
-    size_t npts = 0;
-    double *diff, *pts, *vals;
+      rule75genzmalik *r = (rule75genzmalik *) r_;
+      unsigned i, j, iR, dim = r_->dim;
+      size_t npts = 0;
+      double *diff, *pts, *vals;
 
-    if (alloc_rule_pts(r_, nR)) return o2scl::gsl_failure;
-    pts = r_->pts; vals = r_->vals;
+      if (alloc_rule_pts(r_, nR)) return o2scl::gsl_failure;
+      pts = r_->pts; vals = r_->vals;
 
-    for (iR = 0; iR < nR; ++iR) {
-    const double *center = R[iR].h.data;
-    const double *halfwidth = R[iR].h.data + dim;
+      for (iR = 0; iR < nR; ++iR) {
+	const double *center = R[iR].h.data;
+	const double *halfwidth = R[iR].h.data + dim;
           
-    for (i = 0; i < dim; ++i) {
-      r->p[i] = center[i];
-  }
+	for (i = 0; i < dim; ++i) {
+	  r->p[i] = center[i];
+	}
           
-    for (i = 0; i < dim; ++i) {
-      r->widthLambda2[i] = halfwidth[i] * lambda2;
-  }
-    for (i = 0; i < dim; ++i) {
-      r->widthLambda[i] = halfwidth[i] * lambda4;
-  }
+	for (i = 0; i < dim; ++i) {
+	  r->widthLambda2[i] = halfwidth[i] * lambda2;
+	}
+	for (i = 0; i < dim; ++i) {
+	  r->widthLambda[i] = halfwidth[i] * lambda4;
+	}
 
-    /* Evaluate points in the center, in (lambda2,0,...,0) and
-       (lambda3=lambda4, 0,...,0).  */
-    evalR0_0fs4d(pts + npts*dim, dim, r->p, center, 
-      r->widthLambda2, r->widthLambda);
-    npts += num0_0(dim) + 2 * numR0_0fs(dim);
+	/* Evaluate points in the center, in (lambda2,0,...,0) and
+	   (lambda3=lambda4, 0,...,0).  */
+	evalR0_0fs4d(pts + npts*dim, dim, r->p, center, 
+		     r->widthLambda2, r->widthLambda);
+	npts += num0_0(dim) + 2 * numR0_0fs(dim);
 
+	/* Calculate points for (lambda4, lambda4, 0, ...,0) */
+	evalRR0_0fs(pts + npts*dim, dim, r->p, center, r->widthLambda);
+	npts += numRR0_0fs(dim);
 
-    /* Calculate points for (lambda4, lambda4, 0, ...,0) */
-    evalRR0_0fs(pts + npts*dim, dim, r->p, center, r->widthLambda);
-    npts += numRR0_0fs(dim);
+	/* Calculate points for (lambda5, lambda5, ..., lambda5) */
+	for (i = 0; i < dim; ++i) {
+	  r->widthLambda[i] = halfwidth[i] * lambda5;
+	}
+	evalR_Rfs(pts + npts*dim, dim, r->p, center, r->widthLambda);
+	npts += numR_Rfs(dim);
+      }
 
-    /* Calculate points for (lambda5, lambda5, ..., lambda5) */
-    for (i = 0; i < dim; ++i) {
-      r->widthLambda[i] = halfwidth[i] * lambda5;
-  }
-    evalR_Rfs(pts + npts*dim, dim, r->p, center, r->widthLambda);
-    npts += numR_Rfs(dim);
-  }
+      /* Evaluate the integrand function(s) at all the points */
+      if (f(dim, npts, pts, fdata, fdim, vals)) {
+	return o2scl::gsl_failure;
+      }
 
-    /* Evaluate the integrand function(s) at all the points */
-    if (f(dim, npts, pts, fdata, fdim, vals)) {
-      return o2scl::gsl_failure;
-  }
-
-    /* we are done with the points, and so we can re-use the pts
-       array to store the maximum difference diff[i] in each dimension 
-       for each hypercube */
-    diff = pts;
-    for (i = 0; i < dim * nR; ++i) diff[i] = 0;
+      /* we are done with the points, and so we can re-use the pts
+	 array to store the maximum difference diff[i] in each dimension 
+	 for each hypercube */
+      diff = pts;
+      for (i = 0; i < dim * nR; ++i) diff[i] = 0;
       
-    for (j = 0; j < fdim; ++j) {
+      for (j = 0; j < fdim; ++j) {
     
-    const double *v = vals + j;
+	const double *v = vals + j;
     
-    for (iR = 0; iR < nR; ++iR) {
-    double result, res5th;
-    double val0, sum2=0, sum3=0, sum4=0, sum5=0;
-    unsigned k, k0 = 0;
-    /* accumulate j-th function values into j-th integrals
-       NOTE: this relies on the ordering of the eval functions
-       above, as well as on the internal structure of
-       the evalR0_0fs4d function */
+	for (iR = 0; iR < nR; ++iR) {
+	  double result, res5th;
+	  double val0, sum2=0, sum3=0, sum4=0, sum5=0;
+	  unsigned k, k0 = 0;
+	  /* accumulate j-th function values into j-th integrals
+	     NOTE: this relies on the ordering of the eval functions
+	     above, as well as on the internal structure of
+	     the evalR0_0fs4d function */
 
-    val0 = v[fdim*(0)]; /* central point */
-    k0 += 1;
+	  val0 = v[fdim*(0)]; /* central point */
+	  k0 += 1;
 
-    for (k = 0; k < dim; ++k) {
-    double v0 = v[fdim*(k0 + 4*k)];
-    double v1 = v[fdim*((k0 + 4*k) + 1)];
-    double v2 = v[fdim*((k0 + 4*k) + 2)];
-    double v3 = v[fdim*((k0 + 4*k) + 3)];
+	  for (k = 0; k < dim; ++k) {
+	    double v0 = v[fdim*(k0 + 4*k)];
+	    double v1 = v[fdim*((k0 + 4*k) + 1)];
+	    double v2 = v[fdim*((k0 + 4*k) + 2)];
+	    double v3 = v[fdim*((k0 + 4*k) + 3)];
               
-    sum2 += v0 + v1;
-    sum3 += v2 + v3;
+	    sum2 += v0 + v1;
+	    sum3 += v2 + v3;
     
-    diff[iR * dim + k] += 
-      fabs(v0 + v1 - 2*val0 - ratio * (v2 + v3 - 2*val0));
-  }
+	    diff[iR * dim + k] += 
+	      fabs(v0 + v1 - 2*val0 - ratio * (v2 + v3 - 2*val0));
+	  }
 #ifdef O2SCL_NEVER_DEFINED
-  }{
+	}{
 #endif
-    k0 += 4*k;
+	  k0 += 4*k;
     
-    for (k = 0; k < numRR0_0fs(dim); ++k) {
-      sum4 += v[fdim*(k0 + k)];
-  }
-    k0 += k;
+	  for (k = 0; k < numRR0_0fs(dim); ++k) {
+	    sum4 += v[fdim*(k0 + k)];
+	  }
+	  k0 += k;
     
-    for (k = 0; k < numR_Rfs(dim); ++k) {
-      sum5 += v[fdim*(k0 + k)];
-  }
+	  for (k = 0; k < numR_Rfs(dim); ++k) {
+	    sum5 += v[fdim*(k0 + k)];
+	  }
     
-    /* Calculate fifth and seventh order results */
-    result = R[iR].h.vol * (r->weight1 * val0 + weight2 * sum2 +
-      r->weight3 * sum3 + weight4 * sum4 +
-      r->weight5 * sum5);
-    res5th = R[iR].h.vol * (r->weightE1 * val0 + weightE2 * sum2 +
-      r->weightE3 * sum3 + weightE4 * sum4);
+	  /* Calculate fifth and seventh order results */
+	  result = R[iR].h.vol * (r->weight1 * val0 + weight2 * sum2 +
+				  r->weight3 * sum3 + weight4 * sum4 +
+				  r->weight5 * sum5);
+	  res5th = R[iR].h.vol * (r->weightE1 * val0 + weightE2 * sum2 +
+				  r->weightE3 * sum3 + weightE4 * sum4);
     
-    R[iR].ee[j].val = result;
-    R[iR].ee[j].err = fabs(res5th - result);
+	  R[iR].ee[j].val = result;
+	  R[iR].ee[j].err = fabs(res5th - result);
     
-    v += r_->num_points * fdim;
-  }
-  }
-
-    /* figure out dimension to split: */
-    for (iR = 0; iR < nR; ++iR) {
-      double maxdiff = 0;
-      unsigned dimDiffMax = 0;
-  
-      for (i = 0; i < dim; ++i) {
-	if (diff[iR*dim + i] > maxdiff) {
-	  maxdiff = diff[iR*dim + i];
-	  dimDiffMax = i;
+	  v += r_->num_points * fdim;
 	}
       }
-      R[iR].splitDim = dimDiffMax;
+
+      /* figure out dimension to split: */
+      for (iR = 0; iR < nR; ++iR) {
+	double maxdiff = 0;
+	unsigned dimDiffMax = 0;
+  
+	for (i = 0; i < dim; ++i) {
+	  if (diff[iR*dim + i] > maxdiff) {
+	    maxdiff = diff[iR*dim + i];
+	    dimDiffMax = i;
+	  }
+	}
+	R[iR].splitDim = dimDiffMax;
+      }
+      return o2scl::success;
     }
-return o2scl::success;
-}
 
 #ifdef O2SCL_NEVER_DEFINED
-}{
+  }{
 #endif
     
     /** \brief Desc
@@ -810,7 +822,10 @@ return o2scl::success;
     static int rule15gauss_evalError(rule *r,
 				     unsigned fdim, func_v_t &f, void *fdata,
 				     unsigned nR, region *R) {
-      
+
+      static const double DBL_MIN=std::numeric_limits<double>::min();
+      static const double DBL_EPSILON=std::numeric_limits<double>::epsilon();
+
       /* Gauss quadrature weights and kronrod quadrature abscissae and
 	 weights as evaluated with 80 decimal digit arithmetic by
 	 L. W. Fullerton, Bell Labs, Nov. 1981. */
@@ -956,11 +971,13 @@ return o2scl::success;
       return make_rule(sizeof(rule),dim,fdim,15,
 		       rule15gauss_evalError,0);
     }
-     
-    /* binary heap implementation (ala _Introduction to Algorithms_ by
-       Cormen, Leiserson, and Rivest), for use as a priority queue of
-       regions to integrate. */
-     
+
+    /** \name Binary heap implementation
+	
+	Based on \ref Cormen and used as a priority queue of
+	regions to integrate.
+    */
+    //@{
     /** \brief Desc
      */
     typedef region heap_item;
@@ -968,8 +985,13 @@ return o2scl::success;
     /** \brief Desc
      */
     typedef struct {
-      size_t n, nalloc;
+      /** \brief Desc */
+      size_t n;
+      /** \brief Desc */
+      size_t nalloc;
+      /** \brief Desc */
       heap_item *items;
+      /** \brief Desc */
       unsigned fdim;
       /** array of length fdim of the total integrand & error */
       esterr *ee; 
@@ -1103,6 +1125,7 @@ return o2scl::success;
       }
       return ret;
     }
+    //@}
 
     /** \brief Desc
      */
@@ -1113,7 +1136,9 @@ return o2scl::success;
       unsigned j;
 
       switch (norm) {
+	
       case ERROR_INDIVIDUAL:
+	
 	for (j = 0; j < fdim; ++j) {
 	  if (ee[j].err > reqAbsError && ee[j].err >
 	      fabs(ee[j].val)*reqRelError) {
@@ -1131,8 +1156,8 @@ return o2scl::success;
 	  maxval = ee[j].val > ee[j+1].val ? ee[j].val : ee[j+1].val;
 	  serr = maxerr > 0 ? 1/maxerr : 1;
 	  sval = maxval > 0 ? 1/maxval : 1;
-	  err = sqrt(isqr(ee[j].err*serr) + isqr(ee[j+1].err*serr)) * maxerr;
-	  val = sqrt(isqr(ee[j].val*sval) + isqr(ee[j+1].val*sval)) * maxval;
+	  err = sqrt(dsqr(ee[j].err*serr) + dsqr(ee[j+1].err*serr)) * maxerr;
+	  val = sqrt(dsqr(ee[j].val*sval) + dsqr(ee[j+1].val*sval)) * maxval;
 	  if (err > reqAbsError && err > val*reqRelError) {
 	    return 0;
 	  }
@@ -1178,8 +1203,8 @@ return o2scl::success;
 	serr = maxerr > 0 ? 1/maxerr : 1;
 	sval = maxval > 0 ? 1/maxval : 1;
 	for (j = 0; j < fdim; ++j) {
-	  err += isqr(ee[j].err * serr);
-	  val += isqr(fabs(ee[j].val) * sval);
+	  err += dsqr(ee[j].err * serr);
+	  val += dsqr(fabs(ee[j].val) * sval);
 	}
 	err = sqrt(err) * maxerr;
 	val = sqrt(val) * maxval;
@@ -1196,7 +1221,7 @@ return o2scl::success;
 		     double reqAbsError, double reqRelError,
 		     error_norm norm, double *val, double *err,
 		     int parallel) {
-
+      
       size_t numEval = 0;
       heap regions;
       unsigned i, j;
@@ -1724,8 +1749,8 @@ return o2scl::success;
 	  maxval = vals[j] > vals[j+1] ? vals[j] : vals[j+1];
 	  serr = maxerr > 0 ? 1/maxerr : 1;
 	  sval = maxval > 0 ? 1/maxval : 1;
-	  err = sqrt(isqr(errs[j]*serr) + isqr(errs[j+1]*serr)) * maxerr;
-	  val = sqrt(isqr(vals[j]*sval) + isqr(vals[j+1]*sval)) * maxval;
+	  err = sqrt(dsqr(errs[j]*serr) + dsqr(errs[j+1]*serr)) * maxerr;
+	  val = sqrt(dsqr(vals[j]*sval) + dsqr(vals[j+1]*sval)) * maxval;
 	  if (err > reqAbsError && err > val*reqRelError)
 	    return 0;
 	}
@@ -1764,8 +1789,8 @@ return o2scl::success;
 	serr = maxerr > 0 ? 1/maxerr : 1;
 	sval = maxval > 0 ? 1/maxval : 1;
 	for (j = 0; j < fdim; ++j) {
-	  err += isqr(errs[j] * serr);
-	  val += isqr(fabs(vals[j]) * sval);
+	  err += dsqr(errs[j] * serr);
+	  val += dsqr(fabs(vals[j]) * sval);
 	}
 	err = sqrt(err) * maxerr;
 	val = sqrt(val) * maxval;

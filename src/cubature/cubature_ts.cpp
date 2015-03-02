@@ -55,7 +55,7 @@
 using namespace std;
 using namespace o2scl;
 
-int count = 0;
+int cub_count = 0;
 int which_integrand;
 const double radius = 0.50124145262344534123412; /* random */
 
@@ -137,7 +137,7 @@ int f_test(unsigned dim, const double *x, void *data_,
   
   double val;
   unsigned i, j;
-  ++count;
+  ++cub_count;
   (void) data_; /* not used */
   for (j = 0; j < 1; ++j) {
     double fdata = which_integrand == 6 ? (1.0+sqrt (10.0))/9.0 : 0.1;
@@ -232,6 +232,10 @@ static double exact_integral(int which, unsigned dim, const double *xmax) {
   return val;
 }
 
+int fun(int x, int y) {
+  return x*2+y;
+}
+
 int main(void) {
 
   cout.setf(ios::scientific);
@@ -245,13 +249,26 @@ int main(void) {
     xmin[i]=0.0;
     xmax[i]=1.0;
   }
-  
+
   typedef int (*cfunc)(unsigned, const double *, void *, unsigned, double *);
   typedef int (*cfunc_v)(unsigned, size_t, const double *, void *,
 			 unsigned, double *);
   inte_hcubature<cfunc,cfunc_v> hc;
   inte_pcubature<cfunc,cfunc_v> pc;
+
+  typedef std::function<
+    int(unsigned,const double *,unsigned,double *)> cub_funct_arr;
+  inte_hcubature<cub_funct_arr,cub_wrapper<double *,cub_funct_arr> > hc2;
+  inte_pcubature<cub_funct_arr,cub_wrapper<double *,cub_funct_arr> > pc2;
   
+  std::function<int(int)> ftx=std::bind(fun,std::placeholders::_1,1);
+  cout << ftx(2) << endl;
+
+  /*std::function<int(unsigned,const double *,unsigned,double *)> cfa=
+    std::bind(f_test,std::placeholders::_1,std::placeholders::_2,0,
+    std::placeholders::_3,std::placeholders::_4);
+  */
+    
   int test_n[14]={33,125,693,4913,70785,33,3861,35937,3465,35937,297,
 		  729,33,729};
   
@@ -288,17 +305,19 @@ int main(void) {
     
     if (test_iand!=2) {
 
-      count=0;
+      cub_count=0;
+      //hc2.integ(1,cfa,0,dim,xmin,xmax, 
+      //maxEval,0,tol,enh,&val,&err);
       hc.integ(1,&f_test,0,dim,xmin,xmax, 
 	       maxEval,0,tol,enh,&val,&err);
       cout << "# " << which_integrand << " " 
 	   << "integral " << val << " " << "est. error " << err << " " 
 	   << "true error " 
 	   << fabs(val-exact_integral(which_integrand,dim,xmax)) << endl;
-      cout << "evals " << count << endl;
+      cout << "evals " << cub_count << endl;
       tmgr.test_gen(fabs(val-exact_integral(which_integrand,dim,xmax))<
 		    err*2.0,"hcub 2");
-      tmgr.test_gen(test_n[tcnt]==count,"count");
+      tmgr.test_gen(test_n[tcnt]==cub_count,"cub_count");
       tmgr.test_rel(val,test_vals[tcnt][0],5.0e-6,"val");
       tmgr.test_rel(err,test_vals[tcnt][1],5.0e-6,"err");
       tmgr.test_rel(fabs(val-exact_integral(which_integrand,dim,xmax)),
@@ -310,17 +329,17 @@ int main(void) {
 
     if (test_iand!=3) {
 
-      count=0;
+      cub_count=0;
       pc.integ(1,&f_test,0,dim,xmin,xmax, 
 	       maxEval,0,tol,enp,&val,&err);
       cout << "# " << which_integrand << " " 
 	   << "integral " << val << " " << "est. error " << err << " " 
 	   << "true error " 
 	   << fabs(val-exact_integral(which_integrand,dim,xmax)) << endl;
-      cout << "evals " << count << endl;
+      cout << "evals " << cub_count << endl;
       tmgr.test_gen(fabs(val-exact_integral(which_integrand,dim,xmax))<
 		    err*2.0,"pcub 2");
-      tmgr.test_gen(test_n[tcnt]==count,"count");
+      tmgr.test_gen(test_n[tcnt]==cub_count,"cub_count");
       tmgr.test_rel(val,test_vals[tcnt][0],5.0e-6,"val");
       tmgr.test_rel(err,test_vals[tcnt][1],5.0e-6,"err");
       tmgr.test_rel(fabs(val-exact_integral(which_integrand,dim,xmax)),

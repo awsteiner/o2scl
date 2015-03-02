@@ -43,6 +43,11 @@
     \endlatexonly
     Numer. Math. \b 41 (1983) 373.
 
+    \anchor Berntsen91 Berntsen91:
+    J. Berntsen, T. O. Espelid, and A. Genz, "An adaptive algorithm
+    for the approximate calculation of multiple integrals,"
+    ACM Trans. Math. Soft. 17 (4), 437-451 (1991).
+
     \anchor Birgin00 Birgin00:
     \htmlonly
     <a href="http://dx.doi.org/10.1137/S1052623497330963">
@@ -109,6 +114,9 @@
     \endlatexonly
     ACM Trans. Math. Soft. \b 16 (1990) 201.
 
+    \anchor Cormen Cormen:
+    "Introduction to Algorithms" by Cormen, Leiserson, and Rivest
+
     \anchor EngelnMullges96 EngelnMullges96:
     \htmlonly
     G. Engeln-M&uuml;llges and F. Uhlig,
@@ -165,6 +173,16 @@
     Scientific Library Reference Manual - Third Edition}",
     \endlatexonly
     (2009) Network Theory, Bristol.
+
+    \anchor Genz80 Genz80:
+    A. C. Genz and A. A. Malik, "An adaptive algorithm for numeric
+    integration over an N-dimensional rectangular region,"
+    J. Comput. Appl. Math. 6 (4), 295-302 (1980).
+    
+    \anchor Genz83 Genz83:
+    A. C. Genz and A. A. Malik, "An imbedded [sic] family of fully
+    symmetric numerical integration rules," SIAM
+    J. Numer. Anal. 20 (3), 580-588 (1983).
 
     \anchor GolubXX Golub:
     Golub & Van Loan, "Matrix Computations" (3rd ed)

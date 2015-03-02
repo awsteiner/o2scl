@@ -1831,6 +1831,31 @@ namespace o2scl {
     return;
   }
 
+  /** \brief Vector range function for pointers
+   */
+  template<class dat_t> dat_t *vector_range
+    (dat_t *v, size_t start, size_t last) {
+    return v+start;
+  }
+  
+  /** \brief Vector range function template for ublas vectors
+   */
+  template<class dat_t> boost::numeric::ublas::vector_range
+    <boost::numeric::ublas::vector<dat_t> >
+    vector_range(boost::numeric::ublas::vector<dat_t> &v,
+		 size_t start, size_t last) {
+    return boost::numeric::ublas::vector_range
+      <boost::numeric::ublas::vector<dat_t> >
+      (v,boost::numeric::ublas::range(start,last));
+  }
+  
+  /** \brief Vector range function template for <tt>std::vector</tt>
+   */
+  template<class dat_t> std::vector<dat_t>
+    vector_range(std::vector<dat_t> &v, size_t start, size_t last) {
+    return std::vector<dat_t> (v.begin()+start,v.begin()+last);
+  }
+
   /** \brief Construct a row of a matrix
 
       This class template works with combinations of ublas
