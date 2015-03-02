@@ -68,11 +68,7 @@
 
 namespace o2scl {
 
-<<<<<<< HEAD
 #ifndef O2SCL_NEVER_DEFINED
-=======
-#ifdef O2SCL_NEVER_DEFINED
->>>>>>> 876371c0615c7d99db21211f42072112c8d81607
   
   /** \brief Desc
    */
@@ -111,11 +107,7 @@ namespace o2scl {
       for (size_t i = 0; i < npts; i++) {
 	vec_t s=o2scl::vector_range<double>(x,i*ndim,(i+1)*ndim);
 	vec_t sf=o2scl::vector_range<double>(fval,i*fdim,(i+1)*fdim);
-<<<<<<< HEAD
 	f(ndim,s,fdim,sf);
-=======
-	f(ndim,s,fdata,fdim,sf);
->>>>>>> 876371c0615c7d99db21211f42072112c8d81607
       }
       return o2scl::success;
     }

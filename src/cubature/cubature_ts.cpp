@@ -256,7 +256,6 @@ int main(void) {
   inte_hcubature<cfunc,cfunc_v> hc;
   inte_pcubature<cfunc,cfunc_v> pc;
 
-<<<<<<< HEAD
   typedef std::function<
     int(unsigned,const double *,unsigned,double *)> cub_funct_arr;
   inte_hcubature<cub_funct_arr,cub_wrapper<double *,cub_funct_arr> > hc2;
@@ -268,13 +267,6 @@ int main(void) {
   /*std::function<int(unsigned,const double *,unsigned,double *)> cfa=
     std::bind(f_test,std::placeholders::_1,std::placeholders::_2,0,
     std::placeholders::_3,std::placeholders::_4);
-=======
-  /*
-    typedef std::function<
-    int(size_t,const double *,size_t,double *) > cub_funct_arr;
-    inte_hcubature<cub_funct_arr,cub_wrapper<double *,cub_funct_arr> hc;
-    inte_pcubature<cub_funct_arr,cub_wrapper<double *,cub_funct_arr> pc;
->>>>>>> 876371c0615c7d99db21211f42072112c8d81607
   */
     
   int test_n[14]={33,125,693,4913,70785,33,3861,35937,3465,35937,297,
@@ -314,11 +306,8 @@ int main(void) {
     if (test_iand!=2) {
 
       cub_count=0;
-<<<<<<< HEAD
       //hc2.integ(1,cfa,0,dim,xmin,xmax, 
       //maxEval,0,tol,enh,&val,&err);
-=======
->>>>>>> 876371c0615c7d99db21211f42072112c8d81607
       hc.integ(1,&f_test,0,dim,xmin,xmax, 
 	       maxEval,0,tol,enh,&val,&err);
       cout << "# " << which_integrand << " " 
