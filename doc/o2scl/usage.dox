@@ -160,6 +160,10 @@
     Member functions which store pointers to user-specified objects
     warn that they are doing so in the documentation for the class.
 
+    \todo This section of the documentation needs to be fixed.
+    \comment
+    This is commented out because I'm deprecating inte_multi_comp .
+
     A simple example of this is provided by the multi-dimensional
     integrator \ref o2scl::inte_multi_comp. It works by combining several
     one-dimensional integrators to integrate over a multi-dimensional
@@ -178,9 +182,10 @@
     references which are pointing to it. While shared pointer objects
     are part of the new TR1 standard, not all compilers implement this
     standard yet. If TR1 is not available, then the user can define
-    the constant O2SCL_NO_TR1_MEMROY and the boost shared pointer type
+    the constant O2SCL_NO_TR1_MEMORY and the boost shared pointer type
     will be used. See the documentation for \ref o2scl::o2_shared_ptr
     for more details.
+    \endcomment
 
     \section refparm_subsect Reference parameters
 

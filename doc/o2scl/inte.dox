@@ -185,18 +185,15 @@
       
     \section multiinte_subsect Multi-dimensional integration routines
 
+    \o2 reimplements the Cubature library for multi-dimensional
+    integration. The h-adaptive and p-adaptive integration methods are
+    implemented in \ref o2scl::inte_hcubature and \ref
+    o2scl::inte_pcubature . See also the Monte Carlo integration
+    routines in \ref mcarlo_section .
+
+    \comment
     Multi-dimensional hypercubic integration is performed by
     children of \ref o2scl::inte_multi . Currently in \o2, only the 
-    Monte Carlo integration routines (see \ref mcarlo_section)
-    provide error estimates for multi-dimensional integrals.
-    See the \ref mcarlo_example_sect .
-
-    However, the simple combination of one-dimensional integrators can
-    occasionally give faster results for well-behaved integrands. The
-    class \ref o2scl::inte_multi_comp allows you to specify a set of
-    one-dimensional integration routines (objects of type \ref o2scl::inte)
-    and apply them to a multi-dimensional problem (but does not
-    provide error estimates). See the \ref minteg_example_sect .
 
     General multi-dimensional integration is performed by \ref
     o2scl::inte_gen_comp, the sole descendant of \ref o2scl::inte_gen.
@@ -212,6 +209,7 @@
     \f]
     Again, one specifies a set of \ref o2scl::inte objects to apply to
     each variable to be integrated over.
+    \endcomment
 
     \comment
     --------------------------------------------------------------
@@ -238,6 +236,7 @@
     --------------------------------------------------------------
     \endcomment
 
+    \comment
     \section minteg_example_sect Multi-dimensional integration example
 
     This example computes the integral \f$ \int_{0}^{1} \int_{0}^{1}
@@ -247,5 +246,6 @@
     \dontinclude ex_minte.cpp
     \skip Example:
     \until End of example
+    \endcomment
 
 */

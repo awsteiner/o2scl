@@ -8,15 +8,14 @@ HEADER_VAR = inte.h inte_multi.h inte_gen.h inte_qng_gsl.h inte_qag_gsl.h \
 	inte_qags_gsl.h inte_qagi_gsl.h inte_qagil_gsl.h inte_qagiu_gsl.h \
 	inte_gsl.h inte_gauss56_cern.h inte_gauss_cern.h \
 	inte_cauchy_cern.h inte_adapt_cern.h \
-	inte_kronrod_gsl.h inte_multi_comp.h inte_gen_comp.h inte_qawc_gsl.h \
+	inte_kronrod_gsl.h inte_qawc_gsl.h \
 	inte_qawo_gsl.h inte_qawf_gsl.h inte_qaws_gsl.h inte_singular_gsl.h
 
 TEST_VAR = inte_adapt_cern.scr inte_cauchy_cern.scr inte_gauss_cern.scr \
-	inte_gauss56_cern.scr \
+	inte_gauss56_cern.scr inte_qawc_gsl.scr \
 	inte_qng_gsl.scr inte_qag_gsl.scr inte_qags_gsl.scr \
 	inte_qagi_gsl.scr inte_qagil_gsl.scr inte_qagiu_gsl.scr \
-	inte_multi_comp.scr inte_qawc_gsl.scr \
-	inte_qawo_gsl.scr inte_qawf_gsl.scr inte_qaws_gsl.scr inte_gen_comp.scr
+	inte_qawo_gsl.scr inte_qawf_gsl.scr inte_qaws_gsl.scr
 
 # ------------------------------------------------------------
 # Includes
@@ -78,9 +77,8 @@ pkginclude_HEADERS = $(HEADER_VAR)
 check_PROGRAMS = inte_adapt_cern_ts inte_cauchy_cern_ts inte_gauss_cern_ts \
 	inte_qng_gsl_ts inte_qag_gsl_ts inte_qags_gsl_ts \
 	inte_qagi_gsl_ts inte_qagil_gsl_ts inte_qagiu_gsl_ts \
-	inte_multi_comp_ts inte_gen_comp_ts inte_qawc_gsl_ts \
 	inte_qawo_gsl_ts inte_qawf_gsl_ts inte_gauss56_cern_ts \
-	inte_qaws_gsl_ts
+	inte_qaws_gsl_ts inte_qawc_gsl_ts 
 
 if O2SCL_HDF
 VCHECK_LIBS = $(libdir)/libo2scl.la $(libdir)/libo2scl_hdf.la
@@ -97,8 +95,6 @@ inte_qags_gsl_ts_LDADD = $(VCHECK_LIBS)
 inte_qagi_gsl_ts_LDADD = $(VCHECK_LIBS)
 inte_qagil_gsl_ts_LDADD = $(VCHECK_LIBS)
 inte_qagiu_gsl_ts_LDADD = $(VCHECK_LIBS)
-inte_multi_comp_ts_LDADD = $(VCHECK_LIBS)
-inte_gen_comp_ts_LDADD = $(VCHECK_LIBS)
 inte_qawc_gsl_ts_LDADD = $(VCHECK_LIBS)
 inte_qawo_gsl_ts_LDADD = $(VCHECK_LIBS)
 inte_qawf_gsl_ts_LDADD = $(VCHECK_LIBS)
@@ -123,10 +119,6 @@ inte_qagil_gsl.scr: inte_qagil_gsl_ts$(EXEEXT)
 	./inte_qagil_gsl_ts$(EXEEXT) > inte_qagil_gsl.scr
 inte_qagiu_gsl.scr: inte_qagiu_gsl_ts$(EXEEXT) 
 	./inte_qagiu_gsl_ts$(EXEEXT) > inte_qagiu_gsl.scr
-inte_multi_comp.scr: inte_multi_comp_ts$(EXEEXT) 
-	./inte_multi_comp_ts$(EXEEXT) > inte_multi_comp.scr
-inte_gen_comp.scr: inte_gen_comp_ts$(EXEEXT) 
-	./inte_gen_comp_ts$(EXEEXT) > inte_gen_comp.scr
 inte_qawc_gsl.scr: inte_qawc_gsl_ts$(EXEEXT) 
 	./inte_qawc_gsl_ts$(EXEEXT) > inte_qawc_gsl.scr
 inte_qawo_gsl.scr: inte_qawo_gsl_ts$(EXEEXT) 
@@ -147,8 +139,6 @@ inte_qags_gsl_ts_SOURCES = inte_qags_gsl_ts.cpp
 inte_qagi_gsl_ts_SOURCES = inte_qagi_gsl_ts.cpp
 inte_qagil_gsl_ts_SOURCES = inte_qagil_gsl_ts.cpp
 inte_qagiu_gsl_ts_SOURCES = inte_qagiu_gsl_ts.cpp
-inte_multi_comp_ts_SOURCES = inte_multi_comp_ts.cpp
-inte_gen_comp_ts_SOURCES = inte_gen_comp_ts.cpp
 inte_qawc_gsl_ts_SOURCES = inte_qawc_gsl_ts.cpp
 inte_qawo_gsl_ts_SOURCES = inte_qawo_gsl_ts.cpp
 inte_qawf_gsl_ts_SOURCES = inte_qawf_gsl_ts.cpp

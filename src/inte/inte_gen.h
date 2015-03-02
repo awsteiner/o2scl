@@ -55,9 +55,6 @@ namespace o2scl {
       similarly for the upper limits specified in <tt>b</tt> and 
       the integrands specified in <tt>func</tt>.
 
-      At present, the only implementation of this abstract base is in
-      \ref o2scl::inte_gen_comp .
-
       \future It might be interesting to construct a child class of
       \ref o2scl::inte_gen which automatically transforms variables to
       a hypercube and then applies a child of \ref o2scl::inte_multi

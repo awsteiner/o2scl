@@ -35,6 +35,7 @@ using namespace std;
 using namespace o2scl;
 
 typedef boost::numeric::ublas::vector<double> ubvector;
+typedef boost::numeric::ublas::vector_range<ubvector> ubvector_range;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 typedef boost::numeric::ublas::matrix_row<ubmatrix> ubmatrix_row;
 typedef boost::numeric::ublas::matrix_column<ubmatrix> ubmatrix_column;
@@ -42,6 +43,42 @@ typedef boost::numeric::ublas::matrix_column<ubmatrix> ubmatrix_column;
 int main(void) {
   test_mgr t;
   t.set_output_level(1);
+
+  {
+    // Test vector_range
+    ubvector x(5);
+    x[0]=3.0;
+    x[1]=1.0;
+    x[2]=4.0;
+    x[3]=1.0;
+    x[4]=5.0;
+    ubvector_range xr=vector_range(x,1,3);
+    t.test_gen(xr.size()==2,"vector_range");
+  }
+  
+  {
+    // Test vector_range
+    double x[5];
+    x[0]=3.0;
+    x[1]=1.0;
+    x[2]=4.0;
+    x[3]=1.0;
+    x[4]=5.0;
+    double *xr=vector_range(x,1,3);
+    t.test_rel(xr[0],1.0,1.0e-13,"vector_range");
+  }
+  
+  {
+    // Test vector_range
+    std::vector<double> x(5);
+    x[0]=3.0;
+    x[1]=1.0;
+    x[2]=4.0;
+    x[3]=1.0;
+    x[4]=5.0;
+    std::vector<double> xr=vector_range(x,1,3);
+    t.test_gen(xr.size()==2,"vector_range 2");
+  }
 
   {
     ubmatrix ub1(3,3);
