@@ -197,7 +197,10 @@ namespace o2scl {
     /** \brief Desc
      */
     typedef struct {
-      double val, err;
+      /** \brief Desc */
+      double val;
+      /** \brief Desc */
+      double err;
     } esterr;
 
     /** \brief Desc
@@ -333,8 +336,8 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    typedef int (*evalError_func)(struct rule_s *r,
-				  unsigned fdim, func_v_t &f, void *fdata,
+    typedef int (*evalError_func)(struct rule_s *r, unsigned fdim,
+				  func_v_t &f, void *fdata,
 				  unsigned nR, region *R);
     
     /** \brief Desc
@@ -344,17 +347,19 @@ namespace o2scl {
     /** \brief Desc
      */
     typedef struct rule_s {
-      /** the dimensionality & number of functions */
+      /** \brief The dimensionality and the number of functions */
       unsigned dim, fdim;
-      /** number of evaluation points */
+      /** \brief The number of evaluation points */
       unsigned num_points;
-      /** max number of regions evaluated at once */
+      /** \brief The max number of regions evaluated at once */
       unsigned num_regions;
-      /** points to eval: num_regions * num_points * dim */
+      /** \brief points to eval: num_regions * num_points * dim */
       double *pts;
-      /** num_regions * num_points * fdim */
-      double *vals; 
+      /** \brief num_regions * num_points * fdim */
+      double *vals;
+      /** \brief Desc */
       evalError_func evalError;
+      /** \brief Desc */
       destroy_func destroy;
     } rule;
 
@@ -600,21 +605,31 @@ namespace o2scl {
       rule parent;
       
       /** \brief temporary arrays of length dim */
-      double *widthLambda, *widthLambda2, *p;
+      double *widthLambda;
+      /** \brief Desc */
+      double *widthLambda2;
+      /** \brief Desc */
+      double *p;
       
       /** \brief dimension-dependent constants */
-      double weight1, weight3, weight5;
+      double weight1;
       /** \brief Desc */
-      double weightE1, weightE3;
+      double weight3;
+      /** \brief Desc */
+      double weight5;
+      /** \brief Desc */
+      double weightE1;
+      /** \brief Desc */
+      double weightE3;
     } rule75genzmalik;
     
-    /** \brief Desc
+    /** \brief Convert integer to double
      */
     static double real(int x) {
       return ((double)(x));
     }
     
-    /** \brief Desc
+    /** \brief Convert double to intger
      */
     static int to_int(double n) {
       return ((int)(n));
@@ -1173,43 +1188,47 @@ namespace o2scl {
 	
 	return 1;
 	
-      case ERROR_L1: {
-	double err = 0, val = 0;
-	for (j = 0; j < fdim; ++j) {
-	  err += ee[j].err;
-	  val += fabs(ee[j].val);
+      case ERROR_L1:
+	{
+	  double err = 0, val = 0;
+	  for (j = 0; j < fdim; ++j) {
+	    err += ee[j].err;
+	    val += fabs(ee[j].val);
+	  }
+	  return err <= reqAbsError || err <= val*reqRelError;
 	}
-	return err <= reqAbsError || err <= val*reqRelError;
-      }
-
-      case ERROR_LINF: {
-	double err = 0, val = 0;
-	for (j = 0; j < fdim; ++j) {
-	  double absval = fabs(ee[j].val);
-	  if (ee[j].err > err) err = ee[j].err;
-	  if (absval > val) val = absval;
+	
+      case ERROR_LINF:
+	{
+	  double err = 0, val = 0;
+	  for (j = 0; j < fdim; ++j) {
+	    double absval = fabs(ee[j].val);
+	    if (ee[j].err > err) err = ee[j].err;
+	    if (absval > val) val = absval;
+	  }
+	  return err <= reqAbsError || err <= val*reqRelError;
 	}
-	return err <= reqAbsError || err <= val*reqRelError;
-      }
-
-      case ERROR_L2: {
-	double maxerr = 0, maxval = 0, serr, sval, err = 0, val = 0;
-	/* scale values by 1/max to avoid overflow/underflow */
-	for (j = 0; j < fdim; ++j) {
-	  double absval = fabs(ee[j].val);
-	  if (ee[j].err > maxerr) maxerr = ee[j].err;
-	  if (absval > maxval) maxval = absval;
+	
+      case ERROR_L2:
+	{
+	  double maxerr = 0, maxval = 0, serr, sval, err = 0, val = 0;
+	  /* scale values by 1/max to avoid overflow/underflow */
+	  for (j = 0; j < fdim; ++j) {
+	    double absval = fabs(ee[j].val);
+	    if (ee[j].err > maxerr) maxerr = ee[j].err;
+	    if (absval > maxval) maxval = absval;
+	  }
+	  serr = maxerr > 0 ? 1/maxerr : 1;
+	  sval = maxval > 0 ? 1/maxval : 1;
+	  for (j = 0; j < fdim; ++j) {
+	    err += dsqr(ee[j].err * serr);
+	    val += dsqr(fabs(ee[j].val) * sval);
+	  }
+	  err = sqrt(err) * maxerr;
+	  val = sqrt(val) * maxval;
+	  return err <= reqAbsError || err <= val*reqRelError;
 	}
-	serr = maxerr > 0 ? 1/maxerr : 1;
-	sval = maxval > 0 ? 1/maxval : 1;
-	for (j = 0; j < fdim; ++j) {
-	  err += dsqr(ee[j].err * serr);
-	  val += dsqr(fabs(ee[j].val) * sval);
-	}
-	err = sqrt(err) * maxerr;
-	val = sqrt(val) * maxval;
-	return err <= reqAbsError || err <= val*reqRelError;
-      }
+	
       }
       return 1; /* unreachable */
     }
@@ -1225,7 +1244,8 @@ namespace o2scl {
       size_t numEval = 0;
       heap regions;
       unsigned i, j;
-      region *R = 0; /* array of regions to evaluate */
+      /* array of regions to evaluate */
+      region *R = 0; 
       size_t nR_alloc = 0;
       esterr *ee = 0;
 
@@ -1299,7 +1319,8 @@ namespace o2scl {
 	    numEval += r->num_points * 2;
 	    nR += 2;
 	    if (converged(fdim, ee, reqAbsError, reqRelError, norm)) {
-	      break; /* other regions have small errs */
+	      /* other regions have small errs */
+	      break; 
 	    }
 	    
 	  } while (regions.n > 0 && (numEval < maxEval || !maxEval));
@@ -1309,9 +1330,12 @@ namespace o2scl {
 	    goto bad;
 	  }
 
-	} else { /* minimize number of function evaluations */
-	
-	  R[0] = heap_pop(&regions); /* get worst region */
+	} else { 
+
+	  /* minimize number of function evaluations */
+	  
+	  /* get worst region */
+	  R[0] = heap_pop(&regions); 
 	  if (cut_region(R, R+1)
 	      || eval_regions(2, R, f, fdata, r)
 	      || heap_push_many(&regions, 2, R))
@@ -1359,8 +1383,12 @@ namespace o2scl {
       int status;
       unsigned i;
       
-      if (fdim == 0) /* nothing to do */ return o2scl::success;
-      if (dim == 0) { /* trivial integration */
+      if (fdim == 0) {
+	/* nothing to do */
+	return o2scl::success;
+      }
+      if (dim == 0) {
+	/* trivial integration */
 	if (f(0, 1, xmin, fdata, fdim, val)) return o2scl::gsl_failure;
 	for (i = 0; i < fdim; ++i) err[i] = 0;
 	return o2scl::success;
@@ -1428,7 +1456,10 @@ namespace o2scl {
       int ret;
       fv_data d;
 
-      if (fdim == 0) return o2scl::success; /* nothing to do */     
+      if (fdim == 0) {
+	/* nothing to do */     
+	return o2scl::success;
+      }
      
       d.f = f;
       d.fdata = fdata;
@@ -1483,15 +1514,20 @@ namespace o2scl {
 	point in the center.) 
     */
     typedef struct cacheval_s {
+      /** \brief Desc */
       unsigned m[MAXDIM];
+      /** \brief Desc */
       unsigned mi;
+      /** \brief Desc */
       double *val;
     } cacheval;
 
     /** \brief Desc  array of ncache cachevals c[i] 
      */
     typedef struct valcache_s {
+      /** \brief Desc */
       size_t ncache;
+      /** \brief Desc */
       cacheval *c;
     } valcache;
 
@@ -1523,9 +1559,11 @@ namespace o2scl {
 			 const double *xmin, const double *xmax,
 			 double *buf, size_t nbuf, size_t *ibuf) {
 
-      if (id == dim) { /* add point to buffer of points */
+      if (id == dim) {
+	/* add point to buffer of points */
 	memcpy(buf + (*ibuf)++ * dim, p, sizeof(double) * dim);
-	if (*ibuf == nbuf) { /* flush buffer */
+	if (*ibuf == nbuf) {
+	  /* flush buffer */
 	  if (f(dim, nbuf, buf, fdata, fdim, val + *vali)) {
 	    return o2scl::gsl_failure;
 	  }
@@ -1617,7 +1655,7 @@ namespace o2scl {
     
     /** \brief Desc
 	
-	recursive loop to evaluate the integral contribution from the
+	Recursive loop to evaluate the integral contribution from the
 	cache entry c, accumulating in val, for the given m[] except
 	with m[md] -> m[md] - 1 if md < dim, using the cached values
 	(cm,cmi,cval). id is the current loop dimension (from 0 to
@@ -1644,7 +1682,8 @@ namespace o2scl {
       } else {
       
 	unsigned i;
-	unsigned mid = m[id] - (id == md); /* order of C-C rule */
+	/* order of C-C rule */
+	unsigned mid = m[id] - (id == md); 
 	const double *w = clencurt_w + mid + (1 << mid) - 1
 	  + (id == cmi ? (cm[id] ? 1 + (1 << (cm[id]-1)) : 1) : 0);
 	unsigned cnx = (id == cmi ? (cm[id] ? (1 << (cm[id]-1)) : 1)
@@ -1671,7 +1710,7 @@ namespace o2scl {
 
     /** \brief Desc
 
-	loop over all cache entries that contribute to the integral,
+	Loop over all cache entries that contribute to the integral,
 	(with m[md] decremented by 1) 
     */
     void evals(valcache vc, const unsigned *m, unsigned md,
@@ -1690,7 +1729,7 @@ namespace o2scl {
 
     /** \brief Desc
 
-	evaluate the integrals for the given m[] using the cached
+	Evaluate the integrals for the given m[] using the cached
 	values in vc, storing the integrals in val[], the error
 	estimate in err[], and the dimension to subdivide next (the
 	largest error contribution) in *mi
@@ -1736,12 +1775,14 @@ namespace o2scl {
       unsigned j;
       switch (norm) {
       case ERROR_INDIVIDUAL:
+
 	for (j = 0; j < fdim; ++j)
 	  if (errs[j] > reqAbsError && errs[j] > fabs(vals[j])*reqRelError)
 	    return 0;
 	return 1;
 	      
       case ERROR_PAIRED:
+
 	for (j = 0; j+1 < fdim; j += 2) {
 	  double maxerr, serr, err, maxval, sval, val;
 	  /* scale to avoid overflow/underflow */
@@ -1754,49 +1795,59 @@ namespace o2scl {
 	  if (err > reqAbsError && err > val*reqRelError)
 	    return 0;
 	}
-	if (j < fdim) /* fdim is odd, do last dimension individually */
-	  if (errs[j] > reqAbsError && errs[j] > fabs(vals[j])*reqRelError)
+	/* fdim is odd, do last dimension individually */
+	if (j < fdim) {
+	  if (errs[j] > reqAbsError && errs[j] > fabs(vals[j])*reqRelError) {
 	    return 0;
+	  }
+	}
 	return 1;
 
-      case ERROR_L1: {
-	double err = 0, val = 0;
-	for (j = 0; j < fdim; ++j) {
-	  err += errs[j];
-	  val += fabs(vals[j]);
+      case ERROR_L1:
+
+	{
+	  double err = 0, val = 0;
+	  for (j = 0; j < fdim; ++j) {
+	    err += errs[j];
+	    val += fabs(vals[j]);
+	  }
+	  return err <= reqAbsError || err <= val*reqRelError;
 	}
-	return err <= reqAbsError || err <= val*reqRelError;
+	
+      case ERROR_LINF:
+
+	{
+	  double err = 0, val = 0;
+	  for (j = 0; j < fdim; ++j) {
+	    double absval = fabs(vals[j]);
+	    if (errs[j] > err) err = errs[j];
+	    if (absval > val) val = absval;
+	  }
+	  return err <= reqAbsError || err <= val*reqRelError;
+	}
+	
+      case ERROR_L2:
+
+	{
+	  double maxerr = 0, maxval = 0, serr, sval, err = 0, val = 0;
+	  /* scale values by 1/max to avoid overflow/underflow */
+	  for (j = 0; j < fdim; ++j) {
+	    double absval = fabs(vals[j]);
+	    if (errs[j] > maxerr) maxerr = errs[j];
+	    if (absval > maxval) maxval = absval;
+	  }
+	  serr = maxerr > 0 ? 1/maxerr : 1;
+	  sval = maxval > 0 ? 1/maxval : 1;
+	  for (j = 0; j < fdim; ++j) {
+	    err += dsqr(errs[j] * serr);
+	    val += dsqr(fabs(vals[j]) * sval);
+	  }
+	  err = sqrt(err) * maxerr;
+	  val = sqrt(val) * maxval;
+	  return err <= reqAbsError || err <= val*reqRelError;
+	}
       }
 
-      case ERROR_LINF: {
-	double err = 0, val = 0;
-	for (j = 0; j < fdim; ++j) {
-	  double absval = fabs(vals[j]);
-	  if (errs[j] > err) err = errs[j];
-	  if (absval > val) val = absval;
-	}
-	return err <= reqAbsError || err <= val*reqRelError;
-      }
-
-      case ERROR_L2: {
-	double maxerr = 0, maxval = 0, serr, sval, err = 0, val = 0;
-	/* scale values by 1/max to avoid overflow/underflow */
-	for (j = 0; j < fdim; ++j) {
-	  double absval = fabs(vals[j]);
-	  if (errs[j] > maxerr) maxerr = errs[j];
-	  if (absval > maxval) maxval = absval;
-	}
-	serr = maxerr > 0 ? 1/maxerr : 1;
-	sval = maxval > 0 ? 1/maxval : 1;
-	for (j = 0; j < fdim; ++j) {
-	  err += dsqr(errs[j] * serr);
-	  val += dsqr(fabs(vals[j]) * sval);
-	}
-	err = sqrt(err) * maxerr;
-	val = sqrt(val) * maxval;
-	return err <= reqAbsError || err <= val*reqRelError;
-      }
-      }
       return 1; /* unreachable */
     }
     
@@ -1882,7 +1933,10 @@ namespace o2scl {
 	  goto done;
 	}
 	m[mi] += 1;
-	if (m[mi] > clencurt_M) goto done; /* FAILURE */
+	if (m[mi] > clencurt_M) {
+	  /* FAILURE */
+	  goto done; 
+	}
 
 	new_nbuf = num_cacheval(m, mi, dim);
 	if (new_nbuf > *nbuf && *nbuf < max_nbuf) {
@@ -1890,12 +1944,16 @@ namespace o2scl {
 	  if (*nbuf > max_nbuf) *nbuf = max_nbuf;
 	  free(*buf);
 	  *buf = (double *) malloc(sizeof(double) * *nbuf * dim);
-	  if (!*buf) goto done; /* FAILURE */
+	  if (!*buf) {
+	    /* FAILURE */
+	    goto done; 
+	  }
 	}
 
 	if (add_cacheval(&vc, m, mi, fdim, f, fdata, 
 			 dim, xmin, xmax, *buf, *nbuf) != o2scl::success) {
-	  goto done; /* FAILURE */
+	  /* FAILURE */
+	  goto done; 
 	}
 	numEval += new_nbuf;
       }
