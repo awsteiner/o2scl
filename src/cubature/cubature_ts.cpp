@@ -232,8 +232,14 @@ static double exact_integral(int which, unsigned dim, const double *xmax) {
   return val;
 }
 
-int fun(int x, int y) {
-  return x*2+y;
+int fv(unsigned ndim, size_t npt, const double *x, unsigned fdim,
+       double *fval) {
+  for (unsigned i = 0; i < npt; ++i) {
+    if (f_test(ndim, x + i*ndim, 0, fdim, fval + i*fdim)) {
+      return o2scl::gsl_failure;
+    }
+  }
+  return o2scl::success;
 }
 
 int main(void) {
@@ -245,24 +251,20 @@ int main(void) {
 
   size_t dim=3;
   double xmin[3], xmax[3];
+  std::vector<double> xmin2(3), xmax2(3);
   for (size_t i=0;i<dim;++i) {
     xmin[i]=0.0;
     xmax[i]=1.0;
+    xmin2[i]=0.0;
+    xmax2[i]=1.0;
   }
 
-  typedef int (*cfunc)(unsigned, const double *, void *, unsigned, double *);
-  typedef int (*cfunc_v)(unsigned, size_t, const double *, void *,
-			 unsigned, double *);
-  inte_hcubature<cfunc,cfunc_v> hc;
-  inte_pcubature<cfunc,cfunc_v> pc;
-
   typedef std::function<
-    int(unsigned,const double *,unsigned,double *)> cub_funct_arr;
-  inte_hcubature<cub_funct_arr,cub_wrapper<double *,cub_funct_arr> > hc2;
-  inte_pcubature<cub_funct_arr,cub_wrapper<double *,cub_funct_arr> > pc2;
-  
-  std::function<int(int)> ftx=std::bind(fun,std::placeholders::_1,1);
-  cout << ftx(2) << endl;
+    int(unsigned,size_t,const double *,unsigned,double *)> cub_funct_arr;
+  inte_hcubature<cub_funct_arr> hc;
+  inte_pcubature<cub_funct_arr,std::vector<double> > pc;
+
+  cub_funct_arr cfa=fv;
 
   /*std::function<int(unsigned,const double *,unsigned,double *)> cfa=
     std::bind(f_test,std::placeholders::_1,std::placeholders::_2,0,
@@ -296,25 +298,24 @@ int main(void) {
     tol=1.0e-2;
     maxEval=0;
     
-    inte_hcubature<cfunc,cfunc_v>::error_norm enh=
-      inte_hcubature<cfunc,cfunc_v>::ERROR_INDIVIDUAL;
-    inte_pcubature<cfunc,cfunc_v>::error_norm enp=
-      inte_pcubature<cfunc,cfunc_v>::ERROR_INDIVIDUAL;
+    inte_hcubature<cub_funct_arr>::error_norm enh=
+      inte_hcubature<cub_funct_arr>::ERROR_INDIVIDUAL;
+    inte_pcubature<cub_funct_arr,std::vector<double> >::error_norm enp=
+      inte_pcubature<cub_funct_arr,std::vector<double> >::ERROR_INDIVIDUAL;
     
     which_integrand = test_iand; 
     
     if (test_iand!=2) {
 
       cub_count=0;
-      //hc2.integ(1,cfa,0,dim,xmin,xmax, 
-      //maxEval,0,tol,enh,&val,&err);
-      hc.integ(1,&f_test,0,dim,xmin,xmax, 
-	       maxEval,0,tol,enh,&val,&err);
+      hc.integ(1,cfa,dim,xmin,xmax,maxEval,0,tol,enh,&val,&err);
+	       
       cout << "# " << which_integrand << " " 
 	   << "integral " << val << " " << "est. error " << err << " " 
 	   << "true error " 
 	   << fabs(val-exact_integral(which_integrand,dim,xmax)) << endl;
       cout << "evals " << cub_count << endl;
+
       tmgr.test_gen(fabs(val-exact_integral(which_integrand,dim,xmax))<
 		    err*2.0,"hcub 2");
       tmgr.test_gen(test_n[tcnt]==cub_count,"cub_count");
@@ -330,13 +331,14 @@ int main(void) {
     if (test_iand!=3) {
 
       cub_count=0;
-      pc.integ(1,&f_test,0,dim,xmin,xmax, 
-	       maxEval,0,tol,enp,&val,&err);
+      pc.integ(1,cfa,dim,xmin2,xmax2,maxEval,0,tol,enp,&val,&err);
+	       
       cout << "# " << which_integrand << " " 
 	   << "integral " << val << " " << "est. error " << err << " " 
 	   << "true error " 
 	   << fabs(val-exact_integral(which_integrand,dim,xmax)) << endl;
       cout << "evals " << cub_count << endl;
+
       tmgr.test_gen(fabs(val-exact_integral(which_integrand,dim,xmax))<
 		    err*2.0,"pcub 2");
       tmgr.test_gen(test_n[tcnt]==cub_count,"cub_count");

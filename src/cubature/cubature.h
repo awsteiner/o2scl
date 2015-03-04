@@ -75,7 +75,7 @@ namespace o2scl {
   typedef std::function<
     int(size_t,const boost::numeric::ublas::vector<double> &,
 	size_t,boost::numeric::ublas::vector<double> &) > cub_funct11;
-
+  
   /** \brief Desc
    */
   typedef std::function<
@@ -189,7 +189,7 @@ namespace o2scl {
       \hline      
 
   */
-  template<class func_t, class func_v_t> class inte_hcubature
+  template<class func_t> class inte_hcubature
     : public inte_cubature_base {
     
   protected:
@@ -337,7 +337,7 @@ namespace o2scl {
     /** \brief Desc
      */
     typedef int (*evalError_func)(struct rule_s *r, unsigned fdim,
-				  func_v_t &f, void *fdata,
+				  func_t &f, 
 				  unsigned nR, region *R);
     
     /** \brief Desc
@@ -382,7 +382,7 @@ namespace o2scl {
 	r->pts = r->vals = 0;
 	r->num_regions = 0;
 
-	/* allocate extra so that repeatedly calling alloc_rule_pts
+	/* Allocate extra so that repeatedly calling alloc_rule_pts
 	   with growing num_regions only needs a logarithmic number of
 	   allocations 
 	*/
@@ -403,7 +403,7 @@ namespace o2scl {
     rule *make_rule(size_t sz, /* >= sizeof(rule) */
 		    unsigned dim, unsigned fdim, unsigned num_points,
 		    evalError_func evalError, destroy_func destroy) {
-
+      
       rule *r;
 
       if (sz < sizeof(rule)) return 0;
@@ -421,26 +421,24 @@ namespace o2scl {
 
     /** \brief Desc
 
-	note: all regions must have same fdim 
+	\note All regions must have same fdim 
     */
     int eval_regions(unsigned nR, region *R, 
-		     func_v_t &f, void *fdata, rule *r) {
+		     func_t &f, rule *r) {
 
       unsigned iR;
       if (nR == 0) {
 	/* nothing to evaluate */
 	return o2scl::success;
       }
-      if (r->evalError(r, R->fdim, f, fdata, nR, R)) return o2scl::gsl_failure;
+      if (r->evalError(r, R->fdim, f, nR, R)) return o2scl::gsl_failure;
       for (iR = 0; iR < nR; ++iR) {
 	R[iR].errmax = errMax(R->fdim, R[iR].ee);
       }
       return o2scl::success;
     }
 
-    /** \brief Desc
-
-	Functions to loop over points in a hypercube.
+    /** \brief Functions to loop over points in a hypercube.
     
 	Based on orbitrule.cpp in HIntLib-0.0.10
     
@@ -651,7 +649,7 @@ namespace o2scl {
     /** \brief Desc
      */
     static int rule75genzmalik_evalError
-      (rule *r_, unsigned fdim, func_v_t &f, void *fdata,
+      (rule *r_, unsigned fdim, func_t &f, 
        unsigned nR, region *R) {
     
       /* lambda2 = sqrt(9/70), lambda4 = sqrt(9/10), lambda5 = sqrt(9/19) */
@@ -706,7 +704,7 @@ namespace o2scl {
       }
 
       /* Evaluate the integrand function(s) at all the points */
-      if (f(dim, npts, pts, fdata, fdim, vals)) {
+      if (f(dim, npts, pts, fdim, vals)) {
 	return o2scl::gsl_failure;
       }
 
@@ -835,7 +833,7 @@ namespace o2scl {
 	and qk.c in GNU GSL (which in turn is based on QUADPACK).
     */
     static int rule15gauss_evalError(rule *r,
-				     unsigned fdim, func_v_t &f, void *fdata,
+				     unsigned fdim, func_t &f, 
 				     unsigned nR, region *R) {
 
       static const double DBL_MIN=std::numeric_limits<double>::min();
@@ -902,7 +900,7 @@ namespace o2scl {
 	R[iR].splitDim = 0; /* no choice but to divide 0th dimension */
       }
 
-      if (f(1, npts, pts, fdata, fdim, vals)) {
+      if (f(1, npts, pts, fdim, vals)) {
 	return o2scl::gsl_failure;
       }
      
@@ -1235,7 +1233,7 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    int rulecubature(rule *r, unsigned fdim, func_v_t &f, void *fdata, 
+    int rulecubature(rule *r, unsigned fdim, func_t &f, 
 		     const hypercube *h, size_t maxEval,
 		     double reqAbsError, double reqRelError,
 		     error_norm norm, double *val, double *err,
@@ -1264,7 +1262,7 @@ namespace o2scl {
       R = (region *) malloc(sizeof(region) * nR_alloc);
       if (!R) goto bad;
       R[0] = make_region(h, fdim);
-      if (!R[0].ee || eval_regions(1, R, f, fdata, r) ||
+      if (!R[0].ee || eval_regions(1, R, f, r) ||
 	  heap_push(&regions, R[0])) {
 	goto bad;
       }
@@ -1325,7 +1323,7 @@ namespace o2scl {
 	    
 	  } while (regions.n > 0 && (numEval < maxEval || !maxEval));
 
-	  if (eval_regions(nR, R, f, fdata, r)
+	  if (eval_regions(nR, R, f, r)
 	      || heap_push_many(&regions, nR, R)) {
 	    goto bad;
 	  }
@@ -1337,7 +1335,7 @@ namespace o2scl {
 	  /* get worst region */
 	  R[0] = heap_pop(&regions); 
 	  if (cut_region(R, R+1)
-	      || eval_regions(2, R, f, fdata, r)
+	      || eval_regions(2, R, f, r)
 	      || heap_push_many(&regions, 2, R))
 	    goto bad;
 	  numEval += r->num_points * 2;
@@ -1372,7 +1370,7 @@ namespace o2scl {
     
     /** \brief Desc
      */
-    int cubature(unsigned fdim, func_v_t f, void *fdata, 
+    int cubature(unsigned fdim, func_t &f, 
 		 unsigned dim, const double *xmin, const double *xmax, 
 		 size_t maxEval, double reqAbsError, double reqRelError, 
 		 error_norm norm,
@@ -1389,7 +1387,7 @@ namespace o2scl {
       }
       if (dim == 0) {
 	/* trivial integration */
-	if (f(0, 1, xmin, fdata, fdim, val)) return o2scl::gsl_failure;
+	if (f(0, 1, xmin, fdim, val)) return o2scl::gsl_failure;
 	for (i = 0; i < fdim; ++i) err[i] = 0;
 	return o2scl::success;
       }
@@ -1404,7 +1402,7 @@ namespace o2scl {
       }
       h = make_hypercube_range(dim, xmin, xmax);
       status = !h.data ? o2scl::gsl_failure
-	: rulecubature(r, fdim, f, fdata, &h,
+	: rulecubature(r, fdim, f, &h,
 		       maxEval, reqAbsError, reqRelError, norm,
 		       val, err, parallel);
       destroy_hypercube(&h);
@@ -1416,57 +1414,17 @@ namespace o2scl {
     
     /** \brief Desc
      */
-    int integ_v(unsigned fdim, func_t f, void *fdata,
-		unsigned dim, const double *xmin, const double *xmax, 
-		size_t maxEval, double reqAbsError, double reqRelError, 
-		error_norm norm, double *val, double *err) {
-      return cubature(fdim,f,fdata,dim,xmin,xmax,
-		      maxEval,reqAbsError,reqRelError,norm,val,err,1);
-    }
-    
-    /** \brief Desc
-     */
-    typedef struct fv_data_s { func_t f; void *fdata; } fv_data;
-    
-    /** \brief Desc
-     */
-    static int fv(unsigned ndim, size_t npt,
-		  const double *x, void *d_,
-		  unsigned fdim, double *fval) {
-      fv_data *d = (fv_data *) d_;
-      func_t f = d->f;
-      void *fdata = d->fdata;
-      /* printf("npt = %u\n", npt); */
-      for (unsigned i = 0; i < npt; ++i) {
-	if (f(ndim, x + i*ndim, fdata, fdim, fval + i*fdim)) {
-	  return o2scl::gsl_failure;
-	}
-      }
-      return o2scl::success;
-    }
-
-    /** \brief Desc
-     */
-    int integ(unsigned fdim, func_t f, void *fdata,
+    int integ(unsigned fdim, func_t &f,
 	      unsigned dim, const double *xmin,
 	      const double *xmax, size_t maxEval, double reqAbsError,
 	      double reqRelError, error_norm norm, double *val,
 	      double *err) {
-
-      int ret;
-      fv_data d;
-
       if (fdim == 0) {
 	/* nothing to do */     
 	return o2scl::success;
       }
-     
-      d.f = f;
-      d.fdata = fdata;
-      ret = cubature(fdim,fv,&d,dim,xmin,xmax,
-		     maxEval,reqAbsError,reqRelError,norm,val,err,0);
-      return ret;
-
+      return cubature(fdim,f,dim,xmin,xmax,
+		      maxEval,reqAbsError,reqRelError,norm,val,err,0);
     }
     
   };
@@ -1490,7 +1448,7 @@ namespace o2scl {
 
       \hline      
   */
-  template<class func_t, class func_v_t> class inte_pcubature
+  template<class func_t, class vec_t> class inte_pcubature
     : public inte_cubature_base {
       
   protected:
@@ -1554,9 +1512,9 @@ namespace o2scl {
     */
     int compute_cacheval(const unsigned *m, unsigned mi, 
 			 double *val, size_t *vali,
-			 unsigned fdim, func_v_t f, void *fdata,
+			 unsigned fdim, func_t &f, 
 			 unsigned dim, unsigned id, double *p,
-			 const double *xmin, const double *xmax,
+			 const vec_t &xmin, const vec_t &xmax,
 			 double *buf, size_t nbuf, size_t *ibuf) {
 
       if (id == dim) {
@@ -1564,7 +1522,7 @@ namespace o2scl {
 	memcpy(buf + (*ibuf)++ * dim, p, sizeof(double) * dim);
 	if (*ibuf == nbuf) {
 	  /* flush buffer */
-	  if (f(dim, nbuf, buf, fdata, fdim, val + *vali)) {
+	  if (f(dim, nbuf, buf, fdim, val + *vali)) {
 	    return o2scl::gsl_failure;
 	  }
 	  *vali += *ibuf * fdim;
@@ -1581,7 +1539,7 @@ namespace o2scl {
 			  : (1 << (m[id])));
 	if (id != mi) {
 	  p[id] = c;
-	  if (compute_cacheval(m, mi, val, vali, fdim, f, fdata,
+	  if (compute_cacheval(m, mi, val, vali, fdim, f,
 			       dim, id + 1, p,
 			       xmin, xmax, buf, nbuf, ibuf)) {
 	    return o2scl::gsl_failure;
@@ -1589,13 +1547,13 @@ namespace o2scl {
 	}
 	for (i = 0; i < nx; ++i) {
 	  p[id] = c + r * x[i];
-	  if (compute_cacheval(m, mi, val, vali, fdim, f, fdata,
+	  if (compute_cacheval(m, mi, val, vali, fdim, f,
 			       dim, id + 1, p,
 			       xmin, xmax, buf, nbuf, ibuf)) {
 	    return o2scl::gsl_failure;
 	  }
 	  p[id] = c - r * x[i];
-	  if (compute_cacheval(m, mi, val, vali, fdim, f, fdata,
+	  if (compute_cacheval(m, mi, val, vali, fdim, f,
 			       dim, id + 1, p,
 			       xmin, xmax, buf, nbuf, ibuf)) {
 	    return o2scl::gsl_failure;
@@ -1623,9 +1581,9 @@ namespace o2scl {
     /** \brief Desc
      */
     int add_cacheval(valcache *vc, const unsigned *m, unsigned mi,
-		     unsigned fdim, func_v_t f, void *fdata,
-		     unsigned dim, const double *xmin,
-		     const double *xmax, double *buf, size_t nbuf) {
+		     unsigned fdim, func_t &f,
+		     unsigned dim, const vec_t &xmin,
+		     const vec_t &xmax, double *buf, size_t nbuf) {
       
       size_t ic = vc->ncache;
       size_t nval, vali = 0, ibuf = 0;
@@ -1640,14 +1598,14 @@ namespace o2scl {
       vc->c[ic].val = (double *) malloc(sizeof(double) * nval);
       if (!vc->c[ic].val) return o2scl::gsl_failure;
 
-      if (compute_cacheval(m, mi, vc->c[ic].val, &vali, fdim, f, fdata,
+      if (compute_cacheval(m, mi, vc->c[ic].val, &vali, fdim, f,
 			   dim, 0, p, xmin, xmax, buf, nbuf, &ibuf)) {
 	return o2scl::gsl_failure;
       }
 
       if (ibuf > 0) {
 	/* flush remaining buffer */
-	return f(dim, ibuf, buf, fdata, fdim, vc->c[ic].val + vali);
+	return f(dim, ibuf, buf, fdim, vc->c[ic].val + vali);
       }
 
       return o2scl::success;
@@ -1865,8 +1823,8 @@ namespace o2scl {
 	for the rule, which upon return will hold the final degrees.  The
 	number of points in each dimension i is 2^(m[i]+1) + 1. 
     */
-    int integ_v_buf(unsigned fdim, func_v_t f, void *fdata,
-		    unsigned dim, const double *xmin, const double *xmax,
+    int integ_v_buf(unsigned fdim, func_t &f, 
+		    unsigned dim, const vec_t &xmin, const vec_t &xmax,
 		    size_t maxEval, double reqAbsError, double reqRelError,
 		    error_norm norm, unsigned *m,
 		    double **buf, size_t *nbuf, size_t max_nbuf,
@@ -1888,8 +1846,9 @@ namespace o2scl {
       /* unsupported */
       if (dim > MAXDIM) return o2scl::gsl_failure; 
       /* trivial case */
-      if (dim == 0) { 
-	if (f(0, 1, xmin, fdata, fdim, val)) return o2scl::gsl_failure;
+      if (dim == 0) {
+	// AWS: this is one location where vector types need sync'ing
+	if (f(0, 1, &xmin[0], fdim, val)) return o2scl::gsl_failure;
 	for (i = 0; i < fdim; ++i) err[i] = 0;
 	return o2scl::success;
       }
@@ -1916,7 +1875,7 @@ namespace o2scl {
       }
 
       /* start by evaluating the m=0 cubature rule */
-      if (add_cacheval(&vc, m, dim, fdim, f, fdata, dim, xmin, xmax, 
+      if (add_cacheval(&vc, m, dim, fdim, f, dim, xmin, xmax, 
 		       *buf, *nbuf) != o2scl::success) {
 	goto done;
       }
@@ -1950,7 +1909,7 @@ namespace o2scl {
 	  }
 	}
 
-	if (add_cacheval(&vc, m, mi, fdim, f, fdata, 
+	if (add_cacheval(&vc, m, mi, fdim, f, 
 			 dim, xmin, xmax, *buf, *nbuf) != o2scl::success) {
 	  /* FAILURE */
 	  goto done; 
@@ -1972,49 +1931,8 @@ namespace o2scl {
     
     /** \brief Desc
      */
-    int integ_v(unsigned fdim, func_v_t f, void *fdata,
-		unsigned dim, const double *xmin, const double *xmax,
-		size_t maxEval, double reqAbsError, double reqRelError,
-		error_norm norm, double *val, double *err) {
-
-      int ret;
-      size_t nbuf = 0;
-      unsigned m[MAXDIM];
-      double *buf = 0;
-      memset(m, 0, sizeof(unsigned) * dim);
-      ret = integ_v_buf(fdim, f, fdata, dim, xmin, xmax,
-			maxEval, reqAbsError, reqRelError, norm,
-			m, &buf, &nbuf, DEFAULT_MAX_NBUF, val, err);
-      free(buf);
-
-      return ret;
-    }
-
-    /** \brief Desc
-     */
-    typedef struct fv_data_s { func_t f; void *fdata; } fv_data;
-
-    /** \brief Desc
-     */
-    static int fv(unsigned ndim, size_t npt, const double *x, void *d_,
-		  unsigned fdim, double *fval) {
-      
-      fv_data *d = (fv_data *) d_;
-      func_t f = d->f;
-      void *fdata = d->fdata;
-      /* printf("npt = %u\n", npt); */
-      for (unsigned i = 0; i < npt; ++i) {
-	if (f(ndim, x + i*ndim, fdata, fdim, fval + i*fdim)) {
-	  return o2scl::gsl_failure;
-	}
-      }
-      return o2scl::success;
-    }
-
-    /** \brief Desc
-     */
-    int integ(unsigned fdim, func_t f, void *fdata,
-	      unsigned dim, const double *xmin, const double *xmax,
+    int integ(unsigned fdim, func_t &f,
+	      unsigned dim, const vec_t &xmin, const vec_t &xmax,
 	      size_t maxEval, double reqAbsError, double reqRelError,
 	      error_norm norm, double *val, double *err) {
       
@@ -2022,13 +1940,10 @@ namespace o2scl {
       size_t nbuf = 0;
       unsigned m[MAXDIM];
       double *buf = 0;
-      fv_data d;
 
-      d.f = f;
-      d.fdata = fdata;
       memset(m, 0, sizeof(unsigned) * dim);
       /* max_nbuf > 0 to amortize function overhead */
-      ret = integ_v_buf(fdim, fv, &d, dim, xmin, xmax, 
+      ret = integ_v_buf(fdim, f, dim, xmin, xmax, 
 			maxEval, reqAbsError, reqRelError, norm,
 			m, &buf, &nbuf, 16, val, err);
       free(buf);
