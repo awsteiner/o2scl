@@ -746,7 +746,7 @@ namespace o2scl {
       // the vector values is time consuming, so I perform this 
       // check only if extra_finite_check is true.
       for(size_t ik=0;ik<dim;ik++) {
-	if (!o2scl::is_finite(x_trial[ik])) {
+	if (!std::isfinite(x_trial[ik])) {
 	  O2SCL_CONV2_RET("Iteration lead to non-finite values in ",
 			  "mroot_hybrids::iterate().",exc_efailed,
 			  this->err_nonconv);

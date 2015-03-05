@@ -316,7 +316,7 @@ namespace o2scl {
       exist.
   */
   void set(std::string scol, size_t row, double val) {
-    if (!o2scl::is_finite(val)) {
+    if (!std::isfinite(val)) {
       O2SCL_ERR((((std::string)"Value '")+dtos(val)+
 		 "' not finite for column '"+
 		 scol+"' in table::set(string,size_t,double)").c_str(),
@@ -353,7 +353,7 @@ namespace o2scl {
       \f$ {\cal O}(1) \f$
   */
   void set(size_t icol, size_t row, double val) {
-    if (!o2scl::is_finite(val)) {
+    if (!std::isfinite(val)) {
       if (icol>=get_ncolumns()) {
 	O2SCL_ERR((((std::string)"Value '")+dtos(val)+
 		   "' not finite and index "+szttos(icol)+
@@ -823,7 +823,7 @@ namespace o2scl {
       rows will have uninitialized values.
   */
   void init_column(std::string scol, double val) {
-    if (!o2scl::is_finite(val)) {
+    if (!std::isfinite(val)) {
       O2SCL_ERR((((std::string)"Value '")+dtos(val)+
 		 "' not finite for column '"+
 		 scol+"' in table::init_column()").c_str(),exc_einval);
@@ -1174,7 +1174,7 @@ namespace o2scl {
   */
   size_t ordered_lookup(std::string scol, double val) const {
     int ret;
-    if (!o2scl::is_finite(val)) {
+    if (!std::isfinite(val)) {
       O2SCL_ERR((((std::string)"Value '")+dtos(val)+
 		 "' not finite for column '"+
 		 scol+"' in table::ordered_lookup()").c_str(),exc_einval);
@@ -1197,7 +1197,7 @@ namespace o2scl {
       \f$ {\cal O}(R \log(C)) \f$
   */
   size_t lookup(std::string scol, double val) const {
-    if (!o2scl::is_finite(val)) {
+    if (!std::isfinite(val)) {
       O2SCL_ERR((((std::string)"Value '")+dtos(val)+
 		 "' not finite for column '"+
 		 scol+"' in table::lookup()").c_str(),exc_einval);
@@ -1218,7 +1218,7 @@ namespace o2scl {
     size_t row=0, i=0;
 
     // Find first finite row
-    while(!o2scl::is_finite(ov[i]) && i<nlines-1) i++;
+    while(!std::isfinite(ov[i]) && i<nlines-1) i++;
     if (i==nlines-1) {
       O2SCL_ERR2("Entire array not finite in ",
 		 "table::lookup()",exc_einval);
@@ -1228,7 +1228,7 @@ namespace o2scl {
     // Beginning with that row, look for the closest value
     double best=ov[i], bdiff=fabs(ov[i]-val);
     for(;i<nlines;i++) {
-      if (o2scl::is_finite(ov[i]) && fabs(ov[i]-val)<bdiff) {
+      if (std::isfinite(ov[i]) && fabs(ov[i]-val)<bdiff) {
 	row=i;
 	best=ov[i];
 	bdiff=fabs(ov[i]-val);
@@ -1241,7 +1241,7 @@ namespace o2scl {
   /// Search column \c col for the value \c val and return value in \c col2
   double lookup_val(std::string scol, double val, std::string scol2) const {
     int i, indx=0;
-    if (!o2scl::is_finite(val)) {
+    if (!std::isfinite(val)) {
       O2SCL_ERR((((std::string)"Value '")+dtos(val)+
 		 "' not finite for column '"+
 		 scol+"' in table::lookup_val()").c_str(),exc_einval);
@@ -1269,7 +1269,7 @@ namespace o2scl {
   size_t mlookup(std::string scol, double val, std::vector<size_t> &results,
 		 double threshold=0.0) const {
     size_t i;
-    if (!o2scl::is_finite(val)) {
+    if (!std::isfinite(val)) {
       O2SCL_ERR((((std::string)"Value '")+dtos(val)+
 		 "' not finite for column '"+
 		 scol+"' in table::mlookup()").c_str(),exc_einval);
@@ -1333,7 +1333,7 @@ namespace o2scl {
 		exc_enotfound);
       return 0.0;
     }
-    if (!o2scl::is_finite(x0)) {
+    if (!std::isfinite(x0)) {
       O2SCL_ERR("x0 not finite in table::interp().",exc_einval);
       return exc_einval;
     }
@@ -1367,7 +1367,7 @@ namespace o2scl {
 		exc_enotfound);
       return 0.0;
     }
-    if (!o2scl::is_finite(x0)) {
+    if (!std::isfinite(x0)) {
       O2SCL_ERR("x0 not finite in table::interp_const().",exc_einval);
       return exc_einval;
     }
@@ -1434,7 +1434,7 @@ namespace o2scl {
 		exc_enotfound);
       return 0.0;
     }
-    if (!o2scl::is_finite(x0)) {
+    if (!std::isfinite(x0)) {
       O2SCL_ERR("x0 not finite in table::deriv().",exc_einval);
       return exc_einval;
     }
@@ -1468,7 +1468,7 @@ namespace o2scl {
 		exc_enotfound);
       return 0.0;
     }
-    if (!o2scl::is_finite(x0)) {
+    if (!std::isfinite(x0)) {
       O2SCL_ERR("x0 not finite in table::deriv_const().",exc_einval);
       return exc_einval;
     }
@@ -1536,7 +1536,7 @@ namespace o2scl {
 		exc_enotfound);
       return 0.0;
     }
-    if (!o2scl::is_finite(x0)) {
+    if (!std::isfinite(x0)) {
       O2SCL_ERR("x0 not finite in table::deriv2().",exc_einval);
       return exc_einval;
     }
@@ -1570,7 +1570,7 @@ namespace o2scl {
 		exc_enotfound);
       return 0.0;
     }
-    if (!o2scl::is_finite(x0)) {
+    if (!std::isfinite(x0)) {
       O2SCL_ERR("x0 not finite in table::deriv2_const().",exc_einval);
       return exc_einval;
     }
@@ -1613,7 +1613,7 @@ namespace o2scl {
 		exc_enotfound);
       return 0.0;
     }
-    if (!o2scl::is_finite(x1) || !o2scl::is_finite(x2)) {
+    if (!std::isfinite(x1) || !std::isfinite(x2)) {
       std::string msg=((std::string)"Value x1=")+dtos(x1)+" or x2="+
       dtos(x2)+" not finite in table.integ().";
       O2SCL_ERR(msg.c_str(),exc_einval);
@@ -1649,7 +1649,7 @@ namespace o2scl {
 		exc_enotfound);
       return 0.0;
     }
-    if (!o2scl::is_finite(x1) || !o2scl::is_finite(x2)) {
+    if (!std::isfinite(x1) || !std::isfinite(x2)) {
       O2SCL_ERR("x1 or x2 not finite in table::integ_const().",exc_einval);
       return exc_einval;
     }
@@ -1722,7 +1722,7 @@ namespace o2scl {
     const vec_t &dcol=get_column(scol);
     bool setb=false;
     for(i=0;i<((int)nlines);i++) {
-      if (o2scl::is_finite(dcol[i])) {
+      if (std::isfinite(dcol[i])) {
 	if (setb==false) {
 	  ret=dcol[i];
 	  setb=true;
@@ -1753,7 +1753,7 @@ namespace o2scl {
     const vec_t &dcol=get_column(scol);
     bool setb=false;
     for(i=0;i<((int)nlines);i++) {
-      if (o2scl::is_finite(dcol[i])) {
+      if (std::isfinite(dcol[i])) {
 	if (setb==false) {
 	  ret=dcol[i];
 	  setb=true;
@@ -2331,7 +2331,7 @@ namespace o2scl {
 	// Evaluate the new columns
 	for(size_t j=0;j<(newcols.size());j++) {
 	  (*newcols[j].col)[i]=newcols[j].fpp->Eval(vals);
-	  if (!o2scl::is_finite((*newcols[j].col)[i])) {
+	  if (!std::isfinite((*newcols[j].col)[i])) {
 	    (*newcols[j].col)[i]=0.0;
 	  } else if (newcols[j].fpp->EvalError()!=0) {
 	    (*newcols[j].col)[i]=0.0;
@@ -2418,7 +2418,7 @@ namespace o2scl {
       }
       double temp=fp.Eval(vals);
       colp[j]=fp.Eval(vals);
-      if (!o2scl::is_finite(colp[j])) {
+      if (!std::isfinite(colp[j])) {
 	colp[j]=0.0;
       } else if (fp.EvalError()!=0) {
 	colp[j]=0.0;
@@ -2478,7 +2478,7 @@ namespace o2scl {
       vec[j]=fp.Eval(vals);
       if (fp.EvalError()!=0) {
 	vec[j]=0.0;
-      } else if (!o2scl::is_finite(vec[j])) {
+      } else if (!std::isfinite(vec[j])) {
 	vec[j]=0.0;
       }
     }
@@ -2730,9 +2730,9 @@ namespace o2scl {
   /// \name Iterator types
   //@{
   /// Map iterator type
-  typedef typename std::map<std::string,col,string_comp>::iterator aiter;
+  typedef typename std::map<std::string,col,std::greater<std::string> >::iterator aiter;
   /// Const map iterator type
-  typedef typename std::map<std::string,col,string_comp>::const_iterator 
+  typedef typename std::map<std::string,col,std::greater<std::string> >::const_iterator 
   aciter;
   /// Vector iterator type
   typedef typename std::vector<aiter>::iterator aviter;
@@ -2745,7 +2745,7 @@ namespace o2scl {
   /// The size of presently used memory
   size_t nlines;
   /// The tree of columns
-  std::map<std::string,col,string_comp> atree;
+  std::map<std::string,col,std::greater<std::string> > atree;
   /// The list of tree iterators
   std::vector<aiter> alist;
   //@}

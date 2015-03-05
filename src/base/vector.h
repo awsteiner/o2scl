@@ -1389,7 +1389,7 @@ namespace o2scl {
       return 0;
     }
     size_t row=0, i=0;
-    while(!o2scl::is_finite(x[i]) && i<n-1) i++;
+    while(!std::isfinite(x[i]) && i<n-1) i++;
     if (i==n-1) {
       O2SCL_ERR2("Entire vector not finite in ",
 		 "function vector_lookup()",exc_einval);
@@ -1397,7 +1397,7 @@ namespace o2scl {
     }
     double best=x[i], bdiff=fabs(x[i]-x0);
     for(;i<n;i++) {
-      if (o2scl::is_finite(x[i]) && fabs(x[i]-x0)<bdiff) {
+      if (std::isfinite(x[i]) && fabs(x[i]-x0)<bdiff) {
 	row=i;
 	best=x[i];
 	bdiff=fabs(x[i]-x0);
@@ -1439,7 +1439,7 @@ namespace o2scl {
     bool found_one=false;
     for(size_t i2=0;i2<m;i2++) {
       for(size_t j2=0;j2<n;j2++) {
-	if (o2scl::is_finite(A(i,j))) {
+	if (std::isfinite(A(i,j))) {
 	  if (found_one==false) {
 	    dist=fabs(A(i,j)-x0);
 	    found_one=true;

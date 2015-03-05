@@ -613,7 +613,7 @@ namespace o2scl_linalg {
     for(size_t j=0;j<N;j++) {
       double s=O2SCL_CBLAS_NAMESPACE::dasum_subcol(A,0,j,M);
       double f=1.0;
-      if (s==0.0 || !o2scl::is_finite(s)) {
+      if (s==0.0 || !std::isfinite(s)) {
 	O2SCL_IX(D,j)=f;
 	continue;
       }

@@ -285,7 +285,7 @@ void fermion_mag_zerot::calc_density_zerot_mag
 int fermion_mag_zerot::solve_fun(size_t nv, const ubvector &x,
 				 ubvector &y, fermion &f) {
   
-  if (!o2scl::is_finite(x[0])) {
+  if (!std::isfinite(x[0])) {
     return 3;
   }
 
@@ -300,7 +300,7 @@ int fermion_mag_zerot::solve_fun(size_t nv, const ubvector &x,
   calc_mu_zerot_mag(f,qBt,kt);
   y[0]=(f.n-dent)/dent;
 
-  if (!o2scl::is_finite(y[0])) {
+  if (!std::isfinite(y[0])) {
     return 4;
   }
   return success;

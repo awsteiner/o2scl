@@ -118,8 +118,8 @@ int eos_crust_virial::calc_temp_p_alpha
 (fermion &n, fermion &p, boson &d, boson &a, double T, thermo &th) {
       
 #if !O2SCL_NO_RANGE_CHECK
-  if (!o2scl::is_finite(n.mu) || !o2scl::is_finite(n.mu) ||
-      !o2scl::is_finite(T)) {
+  if (!std::isfinite(n.mu) || !std::isfinite(n.mu) ||
+      !std::isfinite(T)) {
     O2SCL_ERR2("Chemical potentials or temperature not finite in ",
 	       "eos_crust_virial::calc_eq_temp_p_alpha().",exc_einval);
   }

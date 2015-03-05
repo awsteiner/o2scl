@@ -1057,6 +1057,19 @@ namespace o2scl {
      */
     int heap_push(heap *h, heap_item hi) {
 
+      /*
+	if (h->n>30) {
+	for(unsigned i=0;i<h->fdim;i++) {
+	std::cout << h->ee[i].val << " " << h->ee[i].err << std::endl;
+	}
+	for(unsigned i=0;i<h->n;i++) {
+	std::cout << h->items[i].errmax << std::endl;
+	}
+	std::cout << h->fdim << " " << h->n << " " << h->nalloc << std::endl;
+	exit(-1);
+	}
+      */
+
       int insert;
       unsigned fdim = h->fdim;
 

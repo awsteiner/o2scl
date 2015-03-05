@@ -444,7 +444,7 @@ int eos_quark_njl::gapfunqq(size_t nv, const ubvector &x, ubvector &y) {
   y[1]=gap2;
   y[2]=gap3;
 
-  if (!o2scl::is_finite(y[0]) || !o2scl::is_finite(y[1]) || !o2scl::is_finite(y[2])) return 2;
+  if (!std::isfinite(y[0]) || !std::isfinite(y[1]) || !std::isfinite(y[2])) return 2;
   
   return 0;
 }
@@ -465,7 +465,7 @@ int eos_quark_njl::gapfunms(size_t nv, const ubvector &x, ubvector &y) {
   y[1]=gap2;
   y[2]=gap3;
 
-  if (!o2scl::is_finite(y[0]) || !o2scl::is_finite(y[1]) || !o2scl::is_finite(y[2])) return 2;
+  if (!std::isfinite(y[0]) || !std::isfinite(y[1]) || !std::isfinite(y[2])) return 2;
 
   return 0;
 }
@@ -485,7 +485,7 @@ int eos_quark_njl::gapfunqqT(size_t nv, const ubvector &x, ubvector &y) {
   y[1]=gap2;
   y[2]=gap3;
 
-  if (!o2scl::is_finite(y[0]) || !o2scl::is_finite(y[1]) || !o2scl::is_finite(y[2])) return 2;
+  if (!std::isfinite(y[0]) || !std::isfinite(y[1]) || !std::isfinite(y[2])) return 2;
   
   return 0;
 }
@@ -506,7 +506,7 @@ int eos_quark_njl::gapfunmsT(size_t nv, const ubvector &x, ubvector &y) {
   y[1]=gap2;
   y[2]=gap3;
 
-  if (!o2scl::is_finite(y[0]) || !o2scl::is_finite(y[1]) || !o2scl::is_finite(y[2])) return 2;
+  if (!std::isfinite(y[0]) || !std::isfinite(y[1]) || !std::isfinite(y[2])) return 2;
 
   return 0;
 }
@@ -531,7 +531,7 @@ int eos_quark_njl::B0fun(size_t nv, const ubvector &x, ubvector &y) {
   y[1]=gap2;
   y[2]=gap3;
 
-  if (!o2scl::is_finite(y[0]) || !o2scl::is_finite(y[1]) || !o2scl::is_finite(y[2])) return 2;
+  if (!std::isfinite(y[0]) || !std::isfinite(y[1]) || !std::isfinite(y[2])) return 2;
 
   return 0;
 }

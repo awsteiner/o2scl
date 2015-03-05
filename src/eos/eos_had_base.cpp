@@ -561,7 +561,7 @@ int eos_had_base::nuc_matter_e(size_t nv, const ubvector &x,
   y[0]=neutron->mu-mun0;
   y[1]=proton->mu-mup0;
   
-  if (!o2scl::is_finite(neutron->mu) || !o2scl::is_finite(proton->mu)) {
+  if (!std::isfinite(neutron->mu) || !std::isfinite(proton->mu)) {
     return exc_efailed;
   }
 
@@ -579,7 +579,7 @@ int eos_had_base::nuc_matter_p(size_t nv, const ubvector &x,
   y[0]=neutron->n-nn0;
   y[1]=proton->n-np0;
 
-  if (!o2scl::is_finite(neutron->n) || !o2scl::is_finite(proton->n)) {
+  if (!std::isfinite(neutron->n) || !std::isfinite(proton->n)) {
     return exc_efailed;
   }
   
@@ -1068,7 +1068,7 @@ int eos_had_temp_base::nuc_matter_temp_e(size_t nv, const ubvector &x,
     return exc_ebadfunc;
   }
 
-  if (!o2scl::is_finite(neutron->n) || !o2scl::is_finite(proton->n)) {
+  if (!std::isfinite(neutron->n) || !std::isfinite(proton->n)) {
     O2SCL_ERR2("Density problem in ",
 	       "eos_had_temp_base::nuc_matter_temp_e().",exc_esanity);
   }
@@ -1081,7 +1081,7 @@ int eos_had_temp_base::nuc_matter_temp_e(size_t nv, const ubvector &x,
   y[0]=neutron->mu-mun0;
   y[1]=proton->mu-mup0;
   
-  if (!o2scl::is_finite(neutron->mu) || !o2scl::is_finite(proton->mu)) {
+  if (!std::isfinite(neutron->mu) || !std::isfinite(proton->mu)) {
     O2SCL_ERR2("Chemical potential problem in ",
 	       "eos_had_temp_base::nuc_matter_temp_e().",exc_esanity);
   }

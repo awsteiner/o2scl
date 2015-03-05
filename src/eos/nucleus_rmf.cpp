@@ -644,7 +644,7 @@ int nucleus_rmf::post_converge(int nucleus_Z, int nucleus_N, int unocc_Z,
       stens+=step_size*(energy[i+j-1]-energy[2]*arho[i+j-1]/arho[2])*fac[j];
     }
   }
-  if (!o2scl::is_finite(stens)) {
+  if (!std::isfinite(stens)) {
     stens=0.0;
   }
   
@@ -828,7 +828,7 @@ void nucleus_rmf::center_mass_corr(double atot) {
     chcm=chcm+chdenc[i]*x*x;
     charge=charge+chden1[i]*x*x;
     
-    if (!o2scl::is_finite(chdenc[i])) chdenc[i]=0.0;
+    if (!std::isfinite(chdenc[i])) chdenc[i]=0.0;
     double line[3]={x,chden1[i],chdenc[i]};
     chden_table->line_of_data(3,line);
     

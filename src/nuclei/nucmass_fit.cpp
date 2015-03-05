@@ -92,7 +92,7 @@ void nucmass_fit::eval(nucmass &n, double &fmin) {
       int N=ndi->N;
       if (N>=minN && Z>=minZ && (even_even==false || (N%2==0 && Z%2==0))) {
 	fmin+=pow(ndi->mex*hc_mev_fm-n.mass_excess(Z,N),2.0);
-	if (!o2scl::is_finite(fmin)) {
+	if (!std::isfinite(fmin)) {
 	  std::string s=((std::string)"Non-finite value for nucleus with Z=")+
 	    itos(Z)+" and N="+itos(N)+" in nucmass_fit::eval() (1).";
 	  O2SCL_ERR(s.c_str(),exc_efailed);
@@ -110,7 +110,7 @@ void nucmass_fit::eval(nucmass &n, double &fmin) {
       int N=ndi->N;
       if (N>=minN && Z>=minZ && (even_even==false || (N%2==0 && Z%2==0))) {
 	fmin+=pow(ndi->be*hc_mev_fm-n.binding_energy(Z,N),2.0);
-	if (!o2scl::is_finite(fmin)) {
+	if (!std::isfinite(fmin)) {
 	  std::string s=((std::string)"Non-finite value for nucleus with Z=")+
 	    itos(Z)+" and N="+itos(N)+" in nucmass_fit::eval() (2).";
 	  O2SCL_ERR(s.c_str(),exc_efailed);
@@ -130,7 +130,7 @@ void nucmass_fit::eval(nucmass &n, double &fmin) {
 	if (unc_ix>=uncs.size()) unc_ix=0;
 	fmin+=pow((ndi->mex*hc_mev_fm-n.mass_excess(Z,N))/
 		  (uncs[unc_ix]),2.0);
-	if (!o2scl::is_finite(fmin)) {
+	if (!std::isfinite(fmin)) {
 	  std::string s=((std::string)"Non-finite value for nucleus with Z=")+
 	    itos(Z)+" and N="+itos(N)+" in nucmass_fit::eval() (3).";
 	  O2SCL_ERR(s.c_str(),exc_efailed);
@@ -149,7 +149,7 @@ void nucmass_fit::eval(nucmass &n, double &fmin) {
 	if (unc_ix>=uncs.size()) unc_ix=0;
 	fmin+=pow((ndi->be*hc_mev_fm-n.binding_energy(Z,N))/
 		  (uncs[unc_ix]),2.0);
-	if (!o2scl::is_finite(fmin)) {
+	if (!std::isfinite(fmin)) {
 	  std::string s=((std::string)"Non-finite value for nucleus with Z=")+
 	    itos(Z)+" and N="+itos(N)+" in nucmass_fit::eval() (4).";
 	  O2SCL_ERR(s.c_str(),exc_efailed);

@@ -1252,7 +1252,7 @@ void eos_tov_interp::gcp10_low_dens_eos(string model, bool external) {
 
 void eos_tov_interp::ed_nb_from_pr(double pr, double &ed, double &nb) {
 
-  if (!o2scl::is_finite(pr)) {
+  if (!std::isfinite(pr)) {
     O2SCL_ERR("Pressure not finite in eos_tov_interp::ed_nb_from_pr().",
 	      exc_efailed);
   }
@@ -1262,7 +1262,7 @@ void eos_tov_interp::ed_nb_from_pr(double pr, double &ed, double &nb) {
     nb=pnb_int.eval(pr);
   }
 
-  if (!o2scl::is_finite(ed) || (baryon_column && !o2scl::is_finite(nb))) {
+  if (!std::isfinite(ed) || (baryon_column && !std::isfinite(nb))) {
     string s="Energy density or baryon density not finite at pressure ";
     s+=dtos(pr)+" in eos_tov_interp::ed_nb_from_pr().";
     O2SCL_ERR(s.c_str(),exc_efailed);

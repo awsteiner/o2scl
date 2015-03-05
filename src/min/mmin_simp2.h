@@ -295,7 +295,7 @@ namespace o2scl {
 	  x1[i][j]=0.5*(x1[i][j]+x1[best][j]);
 	}
 	y1[i]=f(nvar,x1[i]);
-	if (!o2scl::is_finite(y1[i])) {
+	if (!std::isfinite(y1[i])) {
 	  std::string err=((std::string)"Function not finite (returned ")+
 	    dtos(y1[i])+" in mmin_simp2::contract_by_best().";
 	  O2SCL_ERR(err.c_str(),exc_ebadfunc);
@@ -579,7 +579,7 @@ namespace o2scl {
     // first point is the original x0 
       
     y1[0]=ufunc(dim,ax);
-    if (!o2scl::is_finite(y1[0])) {
+    if (!std::isfinite(y1[0])) {
       std::string err=((std::string)"Function not finite (returned ")+
 	dtos(y1[0])+" in mmin_simp2::set().";
       O2SCL_ERR(err.c_str(),exc_ebadfunc);
@@ -620,7 +620,7 @@ namespace o2scl {
 	x1[i][j]=sx(i,j);
       }
       y1[i]=ufunc(dim,x1[i]);
-      if (!o2scl::is_finite(y1[i])) {
+      if (!std::isfinite(y1[i])) {
 	std::string err=((std::string)"Function not finite (returned ")+
 	  dtos(y1[i])+" in mmin_simp2::set_simplex().";
 	O2SCL_ERR(err.c_str(),exc_ebadfunc);
@@ -687,7 +687,7 @@ namespace o2scl {
       }
     }
       
-    if (o2scl::is_finite(val) && val<y1[lo]) {
+    if (std::isfinite(val) && val<y1[lo]) {
 
       /* reflected point becomes lowest point,try expansion */
 	
@@ -706,17 +706,17 @@ namespace o2scl {
 	}
       }
 
-      if (o2scl::is_finite(val2) && val2<y1[lo]) {
+      if (std::isfinite(val2) && val2<y1[lo]) {
 	update_point(hi,ws2,val2);
       } else {
 	update_point(hi,ws1,val);
       }
 	  
-    } else if (!o2scl::is_finite(val) || val > y1[s_hi]) {
+    } else if (!std::isfinite(val) || val > y1[s_hi]) {
 	
       /* reflection does not improve things enough */
 	
-      if (o2scl::is_finite(val) && val <= y1[hi]) {
+      if (std::isfinite(val) && val <= y1[hi]) {
 	    
 	/* if trial point is better than highest point,replace
 	   highest point */
@@ -741,7 +741,7 @@ namespace o2scl {
 	}
       }
 	  
-      if (o2scl::is_finite(val2) && val2 <= y1[hi]) {
+      if (std::isfinite(val2) && val2 <= y1[hi]) {
 
 	update_point(hi,ws2,val2);
 

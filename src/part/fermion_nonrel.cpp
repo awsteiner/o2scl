@@ -132,7 +132,7 @@ void fermion_nonrel::calc_mu(fermion &f, double temper) {
     
   }
 
-  if (!o2scl::is_finite(f.nu) || !o2scl::is_finite(f.n)) {
+  if (!std::isfinite(f.nu) || !std::isfinite(f.n)) {
     O2SCL_ERR2("Chemical potential or density in ",
 		   "fermion_nonrel::calc_mu().",exc_efailed);
   }

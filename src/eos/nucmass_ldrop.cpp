@@ -221,7 +221,7 @@ double nucmass_ldrop_skin::drip_binding_energy_d
   np=nL*(1.0-delta)/2.0;
   nn=nL*(1.0+delta)/2.0;
 
-  if (!o2scl::is_finite(nn) || !o2scl::is_finite(np)) {
+  if (!std::isfinite(nn) || !std::isfinite(np)) {
     O2SCL_ERR2("Neutron or proton density not finite in ",
 	       "nucmass_ldrop::drip_binding_energy_d().",exc_efailed);
     return 0.0;

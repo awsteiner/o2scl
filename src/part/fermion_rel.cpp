@@ -262,7 +262,7 @@ int fermion_rel::nu_from_n(fermion &f, double temper) {
   }
   
   // If neither worked, call the error handler
-  if (y==1.0 || !o2scl::is_finite(y)) {
+  if (y==1.0 || !std::isfinite(y)) {
     O2SCL_CONV2_RET("Couldn't find reasonable initial guess in ",
 		    "fermion_rel::nu_from_n().",exc_einval,this->err_nonconv);
   }
@@ -305,7 +305,7 @@ int fermion_rel::calc_density(fermion &f, double temper) {
   // that this function will produce gibberish if the density is not
   // finite, but I've found this extra checking of the inputs useful
   // for debugging.
-  if (!o2scl::is_finite(f.n)) {
+  if (!std::isfinite(f.n)) {
     O2SCL_ERR2("Density not finite in ",
 	       "fermion_rel::calc_density().",exc_einval);
   }
@@ -456,7 +456,7 @@ double fermion_rel::deg_density_fun(double k, fermion &f, double T) {
 
   ret=k*k/(1.0+exp((E-f.nu)/T));
 
-  if (!o2scl::is_finite(ret)) {
+  if (!std::isfinite(ret)) {
     O2SCL_ERR2("Returned not finite result ",
 	       "in fermion_rel::deg_density_fun().",exc_einval);
   }
@@ -471,7 +471,7 @@ double fermion_rel::deg_energy_fun(double k, fermion &f, double T) {
 
   ret=k*k*E/(1.0+exp((E-f.nu)/T));
 
-  if (!o2scl::is_finite(ret)) {
+  if (!std::isfinite(ret)) {
     O2SCL_ERR2("Returned not finite result ",
 	       "in fermion_rel::deg_energy_fun().",exc_einval);
   }
@@ -499,7 +499,7 @@ double fermion_rel::deg_entropy_fun(double k, fermion &f, double T) {
     ret=-k*k*(nx*log(nx)+(1.0-nx)*log(1.0-nx));
   }
 
-  if (!o2scl::is_finite(ret)) {
+  if (!std::isfinite(ret)) {
     O2SCL_ERR2("Returned not finite result ",
 	       "in fermion_rel::deg_entropy_fun().",exc_einval);
   }
@@ -526,7 +526,7 @@ double fermion_rel::density_fun(double u, fermion &f, double T) {
     ret=(mx+u)*sqrt(u*u+2.0*mx*u)*exp(y)/(exp(mx+u)+exp(y));
   }
 
-  if (!o2scl::is_finite(ret)) {
+  if (!std::isfinite(ret)) {
     ret=0.0;
   }
 
@@ -549,7 +549,7 @@ double fermion_rel::energy_fun(double u, fermion &f, double T) {
     ret=(mx+u)*(mx+u)*sqrt(u*u+2.0*mx*u)*exp(y)/(exp(mx+u)+exp(y));
   }
  
-  if (!o2scl::is_finite(ret)) {
+  if (!std::isfinite(ret)) {
     return 0.0;
   }
 
@@ -570,7 +570,7 @@ double fermion_rel::entropy_fun(double u, fermion &f, double T) {
   term2=log(1.0+exp(mx+u-y))/(1.0+exp(mx+u-y));
   ret=(mx+u)*sqrt(u*u+2.0*mx*u)*(term1+term2);
   
-  if (!o2scl::is_finite(ret)) {
+  if (!std::isfinite(ret)) {
     return 0.0;
   }
 
@@ -825,7 +825,7 @@ double fermion_rel::pair_fun(double x, fermion &f, double T, bool log_mode) {
   f.nu=T*x;
   if (log_mode) f.nu=T*exp(x);
 
-  //if (!o2scl::is_finite(f.nu)) {
+  //if (!std::isfinite(f.nu)) {
   //O2SCL_ERR("Chemical potential not finite in fermion_rel::pair_fun().",
   //exc_einval);
   //}
@@ -837,11 +837,11 @@ double fermion_rel::pair_fun(double x, fermion &f, double T, bool log_mode) {
   // antiparticles together
   
   if (use_expansions) {
-    if (calc_mu_ndeg(f,T,1.0e-8,true) && o2scl::is_finite(f.n)) {
+    if (calc_mu_ndeg(f,T,1.0e-8,true) && std::isfinite(f.n)) {
       yy=f.n;
       f.n=nn_match;
       yy=yy/nn_match-1.0;
-      if (!o2scl::is_finite(yy)) {
+      if (!std::isfinite(yy)) {
 	O2SCL_ERR("Value 'yy' not finite (10) in fermion_rel::pair_fun().",
 		  exc_einval);
       }
@@ -866,10 +866,10 @@ double fermion_rel::pair_fun(double x, fermion &f, double T, bool log_mode) {
 
   // Try the non-degenerate expansion if psi is small enough
   if (use_expansions && psi<min_psi) {
-    if (calc_mu_ndeg(f,T,1.0e-8) && o2scl::is_finite(f.n)) {
+    if (calc_mu_ndeg(f,T,1.0e-8) && std::isfinite(f.n)) {
       particles_done=true;
       yy=f.n;
-      if (!o2scl::is_finite(yy)) {
+      if (!std::isfinite(yy)) {
 	O2SCL_ERR("Value 'yy' not finite (1) in fermion_rel::pair_fun().",
 		  exc_einval);
       }
@@ -878,10 +878,10 @@ double fermion_rel::pair_fun(double x, fermion &f, double T, bool log_mode) {
   
   // Try the degenerate expansion if psi is large enough
   if (use_expansions && particles_done==false && psi>20.0) {
-    if (calc_mu_deg(f,T,1.0e-8) && o2scl::is_finite(f.n)) {
+    if (calc_mu_deg(f,T,1.0e-8) && std::isfinite(f.n)) {
       particles_done=true;
       yy=f.n;
-      if (!o2scl::is_finite(yy)) {
+      if (!std::isfinite(yy)) {
 	O2SCL_ERR("Value 'yy' not finite (2) in fermion_rel::pair_fun().",
 		  exc_einval);
       }
@@ -902,7 +902,7 @@ double fermion_rel::pair_fun(double x, fermion &f, double T, bool log_mode) {
       nden=nit->integ(mfe,0.0,0.0);
       nden*=f.g*pow(T,3.0)/2.0/pi2;
       yy=nden;
-      if (!o2scl::is_finite(yy)) {
+      if (!std::isfinite(yy)) {
 	O2SCL_ERR("Value 'yy' not finite (3) in fermion_rel::pair_fun().",
 		  exc_einval);
       }
@@ -932,7 +932,7 @@ double fermion_rel::pair_fun(double x, fermion &f, double T, bool log_mode) {
       }
       
       yy=nden;
-      if (!o2scl::is_finite(yy)) {
+      if (!std::isfinite(yy)) {
 	O2SCL_ERR("Value 'yy' not finite (4) in fermion_rel::pair_fun().",
 		  exc_einval);
       }
@@ -967,7 +967,7 @@ double fermion_rel::pair_fun(double x, fermion &f, double T, bool log_mode) {
     if (calc_mu_ndeg(f,T,1.0e-8)) {
       antiparticles_done=true;
       yy-=f.n;
-      if (!o2scl::is_finite(yy)) {
+      if (!std::isfinite(yy)) {
 	O2SCL_ERR("Value 'yy' not finite (5) in fermion_rel::pair_fun().",
 		  exc_einval);
       }
@@ -979,7 +979,7 @@ double fermion_rel::pair_fun(double x, fermion &f, double T, bool log_mode) {
     if (calc_mu_deg(f,T,1.0e-8)) {
       antiparticles_done=true;
       yy-=f.n;
-      if (!o2scl::is_finite(yy)) {
+      if (!std::isfinite(yy)) {
 	O2SCL_ERR("Value 'yy' not finite (6) in fermion_rel::pair_fun().",
 		  exc_einval);
       }
@@ -1000,7 +1000,7 @@ double fermion_rel::pair_fun(double x, fermion &f, double T, bool log_mode) {
       nden=nit->integ(mf,0.0,0.0);
       nden*=f.g*pow(T,3.0)/2.0/pi2;
       yy-=nden;
-      if (!o2scl::is_finite(yy)) {
+      if (!std::isfinite(yy)) {
 	O2SCL_ERR("Value 'yy' not finite (7) in fermion_rel::pair_fun().",
 		  exc_einval);
       }
@@ -1029,7 +1029,7 @@ double fermion_rel::pair_fun(double x, fermion &f, double T, bool log_mode) {
 	nden=0.0;
       }
       yy-=nden;
-      if (!o2scl::is_finite(yy)) {
+      if (!std::isfinite(yy)) {
 	O2SCL_ERR("Value 'yy' not finite (8) in fermion_rel::pair_fun().",
 		  exc_einval);
       }
@@ -1043,7 +1043,7 @@ double fermion_rel::pair_fun(double x, fermion &f, double T, bool log_mode) {
   f.n=nn_match;
   yy=yy/nn_match-1.0;
 
-  if (!o2scl::is_finite(yy)) {
+  if (!std::isfinite(yy)) {
     O2SCL_ERR("Value 'yy' not finite (9) in fermion_rel::pair_fun().",
 	      exc_einval);
   }

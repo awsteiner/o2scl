@@ -199,7 +199,7 @@ int nucmass_info::parse_elstring(std::string ela, int &Z, int &N,
 }
 
 int nucmass_info::eltoZ(std::string el) {
-  std::map<std::string,int,string_comp>::iterator 
+  std::map<std::string,int,std::greater<std::string> >::iterator 
     eti=element_table.find(el);
   if (eti==element_table.end()) {
     O2SCL_ERR2("Failed to find element in ",
@@ -426,7 +426,7 @@ double nucmass_ibm_shell::shell_energy(int Z, int N) {
   double Snp=nv*nvbar*zv*zvbar/Dn/Dz;
   double ret=s_a1*S2+s_a2*S2*S2+s_a3*S3+s_anp*Snp;
 
-  if (!o2scl::is_finite(ret)) {
+  if (!std::isfinite(ret)) {
     cout << S2 << " " << S3 << " " << Snp << " " << ret << endl;
     O2SCL_ERR("Not finite in nucmass_ibm_shell.",exc_efailed);
   }

@@ -79,7 +79,7 @@ int eos_had_apr::calc_e(fermion &ne, fermion &pr, thermo &lth) {
   double gh1, gh2, dgl1, dgl2, dgh1, dgh2;
 
 #if !O2SCL_NO_RANGE_CHECK
-  if (!o2scl::is_finite(ne.n) || !o2scl::is_finite(ne.n)) {
+  if (!std::isfinite(ne.n) || !std::isfinite(ne.n)) {
     O2SCL_ERR2("Nucleon densities not finite in ",
 	       "eos_had_apr::calc_e().",exc_einval);
   }
@@ -227,7 +227,7 @@ int eos_had_apr::calc_e(fermion &ne, fermion &pr, thermo &lth) {
   lth.pr=-lth.ed+ne.mu*ne.n+pr.mu*pr.n;
   lth.en=0.0;
 
-  if (!o2scl::is_finite(lth.pr)) {
+  if (!std::isfinite(lth.pr)) {
     cout << ne.n << " " << pr.n << endl;
     O2SCL_ERR("Pressure not finite in calc_e().",exc_efailed);
     return exc_efailed;
@@ -510,8 +510,8 @@ int eos_had_apr::calc_temp_e(fermion &ne, fermion &pr, const double temper,
 			 thermo &lth) {
 
 #if !O2SCL_NO_RANGE_CHECK
-  if (!o2scl::is_finite(ne.n) || !o2scl::is_finite(ne.n) ||
-      !o2scl::is_finite(temper)) {
+  if (!std::isfinite(ne.n) || !std::isfinite(ne.n) ||
+      !std::isfinite(temper)) {
     O2SCL_ERR2("Nucleon densities or temperature not finite in ",
 	       "eos_had_apr::calc_temp_e().",exc_einval);
   }
@@ -680,7 +680,7 @@ int eos_had_apr::calc_temp_e(fermion &ne, fermion &pr, const double temper,
   lth.en=ne.en+pr.en;
   lth.pr=-lth.ed+ne.mu*ne.n+pr.mu*pr.n+temper*lth.en;
   
-  if (!o2scl::is_finite(lth.pr)) {
+  if (!std::isfinite(lth.pr)) {
     O2SCL_ERR("Pressure not finite in calc_e().",exc_efailed);
   }
 

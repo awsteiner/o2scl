@@ -219,7 +219,7 @@ int tov_solve::derivs(double r, size_t nv, const ubvector &y,
   double pres=exp(y[1]);
   double gm=y[0];
 
-  if (!o2scl::is_finite(pres)) {
+  if (!std::isfinite(pres)) {
     return exc_efailed;
   }
 
@@ -228,7 +228,7 @@ int tov_solve::derivs(double r, size_t nv, const ubvector &y,
   double ed, nb;
   te->ed_nb_from_pr(pres,ed,nb);
   
-  if (!o2scl::is_finite(ed)) {
+  if (!std::isfinite(ed)) {
     return exc_efailed;
   }
 
@@ -462,7 +462,7 @@ void tov_solve::make_table() {
     // Energy density, pressure, and baryon density
     if (rky[bix][1]>min_log_pres) {
       double ed, nb;
-      if (!o2scl::is_finite(exp(rky[bix][1]))) {
+      if (!std::isfinite(exp(rky[bix][1]))) {
 	O2SCL_ERR2("Pressure not finite in ",
 		   "tov_solve::make_table().",exc_efailed);
       }
@@ -513,7 +513,7 @@ void tov_solve::make_table() {
     
     // Check for non-finite values
     for(size_t ik=0;ik<out_table->get_ncolumns();ik++) {
-      if (!o2scl::is_finite(out_table->get(ik,tix))) {
+      if (!std::isfinite(out_table->get(ik,tix))) {
 	O2SCL_ERR((((string)"Non-finite value for column '")+
 		   out_table->get_column_name(ik)+
 		   "' in tov_solve::make_table().").c_str(),exc_efailed);
@@ -894,7 +894,7 @@ int tov_solve::mvsr() {
     // output central pressure, energy density, and baryon density
 
     double ed, nb;
-    if (!o2scl::is_finite(x[0])) {
+    if (!std::isfinite(x[0])) {
       O2SCL_ERR2("Central pressure not finite in ",
 		 "tov_solve::mvsr().",exc_efailed);
     }
@@ -947,14 +947,14 @@ int tov_solve::mvsr() {
 				ix_last-1,lpr_col,rkx);
 	double thisgm=iop.eval(log(pr_list[ii]*pfactor),
 				 ix_last-1,lpr_col,gm_col);
-	if (!o2scl::is_finite(thisr)) {
+	if (!std::isfinite(thisr)) {
 	  string str=((string)"Obtained non-finite value when ")+
 	    "interpolating radius for pressure "+dtos(pr_list[ii])+
 	    " in tov_solve::mvsr().";
 	  O2SCL_ERR(str.c_str(),exc_efailed);
 	}
 	line.push_back(thisr);
-	if (!o2scl::is_finite(thisgm)) {
+	if (!std::isfinite(thisgm)) {
 	  string str=((string)"Obtained non-finite value when ")+
 	    "interpolating gravitational mass for pressure "+dtos(pr_list[ii])+
 	    " in tov_solve::mvsr().";
@@ -964,7 +964,7 @@ int tov_solve::mvsr() {
 	if (te->baryon_column) {
 	  double thisbm=iop.eval(log(pr_list[ii]*pfactor),
 				 ix_last-1,lpr_col,bm_col);
-	  if (!o2scl::is_finite(thisbm)) {
+	  if (!std::isfinite(thisbm)) {
 	    string str=((string)"Obtained non-finite value when ")+
 	      "interpolating baryon mass for pressure "+dtos(pr_list[ii])+
 	      " in tov_solve::mvsr().";

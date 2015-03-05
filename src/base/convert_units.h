@@ -102,10 +102,10 @@ namespace o2scl {
     } unit_t;
 
     /// The cache where unit conversions are stored
-    std::map<std::string,unit_t,string_comp> mcache;
+    std::map<std::string,unit_t,std::greater<std::string> > mcache;
     
     /// The iterator type
-    typedef std::map<std::string,unit_t,string_comp>::iterator miter;
+    typedef std::map<std::string,unit_t,std::greater<std::string> >::iterator miter;
       
 #endif
 

@@ -123,10 +123,10 @@ namespace o2scl {
     /** \brief A map containing the proton numbers organized by 
 	element abbreviation
     */
-    std::map<std::string,int,string_comp> element_table;
+    std::map<std::string,int,std::greater<std::string> > element_table;
     
     /// A convenient typedef for an iterator for element_table
-    typedef std::map<std::string,int,string_comp>::iterator table_it;
+    typedef std::map<std::string,int,std::greater<std::string> >::iterator table_it;
     
     /// The list of elements organized by proton number
     std::string element_list[nelements];

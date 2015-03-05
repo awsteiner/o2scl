@@ -32,21 +32,6 @@
 using namespace std;
 using namespace o2scl;
 
-bool o2scl::is_finite(double x) {
-  if (std::isfinite(x)) return true;
-  return false;
-}
-
-bool o2scl::is_nan(double x) {
-  if (std::isnan(x)) return true;
-  return false;
-}
-
-bool o2scl::is_inf(double x) {
-  if (std::isinf(x)) return true;
-  return false;
-}
-
 std::string o2scl::binary_to_hex(std::string s) {
   std::string t="";
   char nums[16]={'0','1','2','3','4','5','6','7',

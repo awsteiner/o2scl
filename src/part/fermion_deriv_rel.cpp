@@ -328,7 +328,7 @@ int fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
 
   }
   
-  if (!o2scl::is_finite(f.en)) {
+  if (!std::isfinite(f.en)) {
     O2SCL_ERR2("Entropy not finite in ",
 	       "fermion_deriv_rel::calc_mu().",exc_efailed);
   }
@@ -488,7 +488,7 @@ double fermion_deriv_rel::deg_entropy_fun(double k, fermion_deriv &f,
     if (nx==0.0) ret=0.0;
     else ret=-k*k*(nx*log(nx)+(1.0-nx)*log(1.0-nx));
   }
-  if (!o2scl::is_finite(ret)) {
+  if (!std::isfinite(ret)) {
     ret=0.0;
     //O2SCL_ERR("Entropy not finite in fermion_deriv_rel::deg_entropy_fun().",
     //exc_efailed);

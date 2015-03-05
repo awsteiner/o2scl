@@ -47,8 +47,8 @@ int eos_had_skyrme::calc_temp_e(fermion &ne, fermion &pr,
   double dhdnn, dhdnp, na, npa, nna, term, term2, common, gn, gp;
  
 #if !O2SCL_NO_RANGE_CHECK
-  if (!o2scl::is_finite(ne.n) || !o2scl::is_finite(pr.n) ||
-      !o2scl::is_finite(ltemper)) {
+  if (!std::isfinite(ne.n) || !std::isfinite(pr.n) ||
+      !std::isfinite(ltemper)) {
     O2SCL_ERR2("Nucleon densities or temperature not finite in ",
 	       "eos_had_skyrme::calc_temp_e().",exc_einval);
   }
@@ -189,7 +189,7 @@ int eos_had_skyrme::calc_temp_e(fermion &ne, fermion &pr,
 int eos_had_skyrme::calc_e(fermion &ne, fermion &pr, thermo &locth) {
 
 #if !O2SCL_NO_RANGE_CHECK
-  if (!o2scl::is_finite(ne.n) || !o2scl::is_finite(ne.n)) {
+  if (!std::isfinite(ne.n) || !std::isfinite(ne.n)) {
     O2SCL_ERR2("Nucleon densities not finite in ",
 	       "eos_had_skyrme::calc_e().",exc_einval);
   }
@@ -308,7 +308,7 @@ int eos_had_skyrme::calc_e(fermion &ne, fermion &pr, thermo &locth) {
   locth.pr=-locth.ed+ne.mu*ne.n+pr.mu*pr.n;
   locth.en=0.0;
 
-  if (!o2scl::is_finite(locth.pr)) {
+  if (!std::isfinite(locth.pr)) {
     O2SCL_ERR("Pressure not finite in calc_e()",exc_efailed);
   }
 

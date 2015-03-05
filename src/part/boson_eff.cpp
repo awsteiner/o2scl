@@ -254,7 +254,7 @@ void boson_eff::calc_density(boson &b, double temper) {
     }
     h=xx[0];
   }
-  if (!o2scl::is_finite(h)) {
+  if (!std::isfinite(h)) {
     O2SCL_ERR("Variable h not finite in calc_density_mroot().",exc_einval);
   }
   sqt=sqrt(parma)+h;
@@ -325,7 +325,7 @@ int boson_eff::density_fun(size_t nv, const ubvector &x,
   }
 
   y[0]=b.g/2.0*pren*sumn*nc/fix_density-1.0;
-  if (!o2scl::is_finite(y[0])) {
+  if (!std::isfinite(y[0])) {
     O2SCL_ERR("Not finite in boson_eff::density_fun().",
 	      exc_efailed);
   }
@@ -516,7 +516,7 @@ int boson_eff::pair_density_fun(size_t nv, const ubvector &x,
 
   y[0]=y[0]/(2.0*b.m/T)-1.0;
   y[1]=y[1]/fix_density-1.0;
-  //  if (!o2scl::is_finite(y[1]) || !o2scl::is_finite(y[2])) return 1;
+  //  if (!std::isfinite(y[1]) || !std::isfinite(y[2])) return 1;
 
   return success;
 }

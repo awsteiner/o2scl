@@ -765,8 +765,8 @@ namespace o2scl {
     
     /// \name Iterator types
     //@{
-    typedef std::map<std::string,size_t, string_comp>::iterator map_iter;
-    typedef std::map<std::string,size_t, string_comp>::const_iterator 
+    typedef std::map<std::string,size_t, std::greater<std::string> >::iterator map_iter;
+    typedef std::map<std::string,size_t, std::greater<std::string> >::const_iterator 
       map_const_iter;
     //@}
   
@@ -782,7 +782,7 @@ namespace o2scl {
     size_t numy;
 
     /// A tree connecting column names to list indexes
-    std::map<std::string,size_t,string_comp> tree;
+    std::map<std::string,size_t,std::greater<std::string> > tree;
 
     /// The name for the x grid
     std::string xname;

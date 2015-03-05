@@ -527,7 +527,7 @@ namespace o2scl {
       if (!this->is_column(dest)) this->new_column(dest);
 
       typedef typename std::map<std::string,
-	typename table<vec_t>::col,string_comp>::iterator aiter;
+	typename table<vec_t>::col,std::greater<std::string> >::iterator aiter;
 
       aiter its=this->atree.find(src);
       if (its==this->atree.end()) {
@@ -715,13 +715,13 @@ namespace o2scl {
     /// \name Unit map iterator types
     //@{
     typedef std::map<std::string,std::string,
-      string_comp>::iterator uiter;
+      std::greater<std::string> >::iterator uiter;
     typedef std::map<std::string,std::string,
-      string_comp>::const_iterator uciter;
+      std::greater<std::string> >::const_iterator uciter;
     //@}
   
     /// Unit map
-    std::map<std::string,std::string,string_comp> utree;
+    std::map<std::string,std::string,std::greater<std::string> > utree;
   
 #endif
 

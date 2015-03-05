@@ -207,7 +207,7 @@ void fermion_eff::calc_mu(fermion &f, double temper) {
     xx=parma/8.0*(4.0+psi*psi+psi*sqrt(8.0+psi*psi));
   }
 
-  if (!o2scl::is_finite(psi) || !o2scl::is_finite(xx)) {
+  if (!std::isfinite(psi) || !std::isfinite(xx)) {
     O2SCL_ERR("Psi or xx not finite in fermion_eff::calc_density().",
 	      exc_efailed);
   }
@@ -342,7 +342,7 @@ double fermion_eff::solve_fun(double x, double &psi) {
     y=(2.0*sqt+log(aarg))/psi-1.0;
   }
   
-  if (!o2scl::is_finite(y)) {
+  if (!std::isfinite(y)) {
     O2SCL_ERR2("Variable 'y' not finite in ",
 		   "fermion_eff::solve_fun().",exc_efailed);
   }

@@ -244,7 +244,7 @@ void fermion_eval_thermo::massless_pair_density(fermion &f, double temper) {
     f.ed=f.g*nu2*nu2/8.0/pi2*(1.0+2.0*pitmu2+7.0/15.0*pitmu2*pitmu2);
     f.pr=f.ed/3.0;
 
-    if (!o2scl::is_finite(f.nu)) {
+    if (!std::isfinite(f.nu)) {
       string str="Chemical potential not finite ("+dtos(f.nu)+
 	") in fermion::massless_pair_density().";
       O2SCL_ERR(str.c_str(),exc_efailed);
@@ -771,7 +771,7 @@ bool fermion_eval_thermo::calc_mu_ndeg(fermion &f, double temper,
 
   // If the ratio between the last term and the first term is 
   // not small enough, return false
-  if (o2scl::is_finite(rat) && rat>prec) {
+  if (std::isfinite(rat) && rat>prec) {
     return false;
   }
   

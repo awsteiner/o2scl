@@ -348,9 +348,9 @@ namespace o2scl {
     /// \name Parameter storage and associated iterator type
     //@{
     /// Parameter list
-    std::map<std::string,parameter *,string_comp> par_list;
+    std::map<std::string,parameter *,std::greater<std::string> > par_list;
     /// List iterator
-    typedef std::map<std::string,parameter *,string_comp>::iterator par_t;
+    typedef std::map<std::string,parameter *,std::greater<std::string> >::iterator par_t;
     //@}
     
 #ifndef DOXYGEN_NO_O2NS_INTERNAL
@@ -421,8 +421,8 @@ namespace o2scl {
 
     /// \name Aliases
     //@{
-    std::map<std::string,std::string,string_comp> als;
-    typedef std::map<std::string,std::string,string_comp>::iterator al_it;
+    std::map<std::string,std::string,std::greater<std::string> > als;
+    typedef std::map<std::string,std::string,std::greater<std::string> >::iterator al_it;
     //@}
     
     /// Compare two strings, treating dashes and underscores as equivalent

@@ -446,7 +446,7 @@ void table3d::copy_slice(std::string src, std::string dest) {
 }
   
 void table3d::init_slice(std::string scol, double val) {
-  if (!o2scl::is_finite(val)) {
+  if (!std::isfinite(val)) {
     O2SCL_ERR("Value not finite in table3d::init_slice()",
 	      exc_einval);
   }

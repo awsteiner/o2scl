@@ -291,7 +291,7 @@ int eos_had_rmf_delta::calc_p(fermion &ne, fermion &pr,
     ne.pr+pr.pr+gr2*rho2*fun-0.5*md*md*delta*delta;
   th.ed=-th.pr+ne.mu*ne.n+pr.mu*pr.n;
   
-  if (!o2scl::is_finite(th.pr) || !o2scl::is_finite(th.ed)) {
+  if (!std::isfinite(th.pr) || !std::isfinite(th.ed)) {
     O2SCL_ERR2("Pressure or energy not finite in ",
 		   "eos_had_rmf_delta::calc_p().",exc_efailed);
   }
@@ -313,7 +313,7 @@ int eos_had_rmf_delta::zero_pressure(size_t nv, const ubvector &ex,
   delta=ex[5];
 
   for(i=0;i<6;i++) {
-    if (ex[i]!=0.0 && !o2scl::is_finite(ex[i])) {
+    if (ex[i]!=0.0 && !std::isfinite(ex[i])) {
       O2SCL_ERR("Variable not finite in zero_pressure()",exc_efailed);
     }
   }
@@ -328,7 +328,7 @@ int eos_had_rmf_delta::zero_pressure(size_t nv, const ubvector &ex,
   ey[5]=f4;
   
   for(i=0;i<6;i++) {
-    if (!o2scl::is_finite(ex[i]) || !o2scl::is_finite(ey[i])) {
+    if (!std::isfinite(ex[i]) || !std::isfinite(ey[i])) {
       O2SCL_ERR((((string)"Eq. ")+itos(i)+
 		   " not finite in zero_pressure()").c_str(),exc_efailed);
     }
@@ -372,7 +372,7 @@ int eos_had_rmf_delta::calc_e_solve_fun(size_t nv, const ubvector &ex,
   ey[5]=f4;
 
   for(int i=0;i<6;i++) {
-    if (!o2scl::is_finite(ex[i]) || !o2scl::is_finite(ey[i])) {
+    if (!std::isfinite(ex[i]) || !std::isfinite(ey[i])) {
       O2SCL_ERR((((string)"Eq. ")+itos(i)+
 		  " not finite in eos_had_rmf_delta::calc_e_solve_fun().").c_str(),
 		  exc_efailed);

@@ -58,8 +58,8 @@ eos_nse_full::eos_nse_full() {
 
 void eos_nse_full::check_dm(o2scl::dense_matter &dm) {
   
-  if (!o2scl::is_finite(dm.n.n) || 
-	!o2scl::is_finite(dm.p.n)) {
+  if (!std::isfinite(dm.n.n) || 
+	!std::isfinite(dm.p.n)) {
       O2SCL_ERR2("Neutron or proton density not finite in ",
 		 "eos_nse_full::check_dm().",o2scl::exc_esanity);
     }
@@ -538,7 +538,7 @@ int eos_nse_full::bracket_mu_solve(double &mun_low, double &mun_high,
     double y_low=mup_for_Ye(mup_low,mun_low,mun_high,dm);
     double y_high=mup_for_Ye(mup_high,mun_low,mun_high,dm);
 
-    if (!o2scl::is_finite(y_low) || !o2scl::is_finite(y_high)) {
+    if (!std::isfinite(y_low) || !std::isfinite(y_high)) {
       O2SCL_CONV2_RET("Failed to bracket (bad init. point.) in ",
 		      "eos_nse_full::bracket_mu_solve().",
 		      o2scl::exc_einval,this->err_nonconv);
@@ -580,7 +580,7 @@ int eos_nse_full::bracket_mu_solve(double &mun_low, double &mun_high,
       // If the step took it outside a reasonable range,
       // try making a smaller step by decreasing 'fact'
       int jter=0;
-      while (!o2scl::is_finite(y_new) && jter<10) {
+      while (!std::isfinite(y_new) && jter<10) {
 
 	// This is selected so 10 steps does not make 'fact' vanish
 	fact-=0.099;
@@ -777,7 +777,7 @@ double eos_nse_full::mup_for_Ye(double mup, double &mun_low,
       kter++;
     }
 
-    if (!o2scl::is_finite(y_low) || !o2scl::is_finite(y_high)) {
+    if (!std::isfinite(y_low) || !std::isfinite(y_high)) {
       O2SCL_CONV2_RET("Failed to bracket (bad init. point.) in ",
 		      "eos_nse_full::mup_for_Ye().",
 		      o2scl::exc_einval,this->err_nonconv);
@@ -820,7 +820,7 @@ double eos_nse_full::mup_for_Ye(double mup, double &mun_low,
       // If the step took it outside a reasonable range,
       // try making a smaller step by decreasing 'fact'
       int jter=0;
-      while (!o2scl::is_finite(y_new) && jter<10) {
+      while (!std::isfinite(y_new) && jter<10) {
 
 	// This is selected so 10 steps does not make 'fact' vanish
 	fact-=0.099;
@@ -934,8 +934,8 @@ int eos_nse_full::solve_fixnp(size_t n, const ubvector &x, ubvector &y,
   if (from_densities) {
     dm.n.n=x[0];
     dm.p.n=x[1];
-    if (x[0]<0.0 || x[1]<0.0 || !o2scl::is_finite(x[0]) || 
-	!o2scl::is_finite(x[1])) {
+    if (x[0]<0.0 || x[1]<0.0 || !std::isfinite(x[0]) || 
+	!std::isfinite(x[1])) {
       if (verbose>0) {
 	cout << "Not positive and finite point (den) in "
 	     << "eos_nse_full::solve_fixnp() " << x[0] << " " << x[1] << endl;
@@ -952,7 +952,7 @@ int eos_nse_full::solve_fixnp(size_t n, const ubvector &x, ubvector &y,
   } else {
     dm.n.mu=x[0];
     dm.p.mu=x[1];
-    if (!o2scl::is_finite(x[0]) || !o2scl::is_finite(x[1])) {
+    if (!std::isfinite(x[0]) || !std::isfinite(x[1])) {
       if (verbose>0) {
 	cout << "Not positive and finite point (cp) in "
 	     << "eos_nse_full::solve_fixnp() " << x[0] << " " << x[1] << endl;
@@ -967,7 +967,7 @@ int eos_nse_full::solve_fixnp(size_t n, const ubvector &x, ubvector &y,
       return exc_ebadfunc;
     }
   }
-  if (!o2scl::is_finite(y[0]) || !o2scl::is_finite(y[1])) {
+  if (!std::isfinite(y[0]) || !std::isfinite(y[1])) {
     if (verbose>0) {
       cout << "Not finite point returning from "
 	   << "eos_nse_full::solve_fixnp()." << endl;

@@ -102,7 +102,7 @@ int eos_nse::solve_fun(size_t nv, const ubvector &x, ubvector &y,
   if (nB2<=0.0 || y[0]==-1.0) {
     return exc_ebadfunc;
   }
-  if (!o2scl::is_finite(y[0]) || !o2scl::is_finite(y[1])) {
+  if (!std::isfinite(y[0]) || !std::isfinite(y[1])) {
     O2SCL_ERR("Function values not finite in eos_nse::solve_fun().",
 	      exc_efailed);
   }

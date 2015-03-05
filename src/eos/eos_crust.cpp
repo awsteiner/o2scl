@@ -74,7 +74,7 @@ int eos_crust::eq274(size_t nv, const ubvector &nx, ubvector &ny,
   // to the lattice
   ny[0]=log(eos_thermo->pr)-log(e.pr+PL);
 
-  if (!o2scl::is_finite(ny[0])) {
+  if (!std::isfinite(ny[0])) {
     return 1;
   }
   

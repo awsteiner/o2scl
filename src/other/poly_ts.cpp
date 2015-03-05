@@ -229,7 +229,7 @@ void test_quadratic_real_coeff(size_t ne, quadratic_real_coeff *po,
 	  s2+=q2;
 	  if (q2>m2) m2=q2;
 
-	  if (!o2scl::is_finite(q1) || !o2scl::is_finite(q2) || 
+	  if (!std::isfinite(q1) || !std::isfinite(q2) || 
 	      fabs(q1)>1.0e-10 || fabs(q2)>1.0e-10) {
 	    O2SCL_ERR("Failure in test_quadratic_real_coeff().",
 		      exc_esanity);
@@ -428,12 +428,12 @@ void compare_gsl_cubic(size_t ne, string str,
 	} else {
 	  gsl_poly_complex_solve_cubic_lm(cb,cc,cd,&z0,&z1,&z2);
 	}
-	if (!o2scl::is_finite(GSL_REAL(z0)) ||
-	    !o2scl::is_finite(GSL_IMAG(z0)) ||
-	    !o2scl::is_finite(GSL_REAL(z1)) ||
-	    !o2scl::is_finite(GSL_IMAG(z1)) ||
-	    !o2scl::is_finite(GSL_REAL(z2)) ||
-	    !o2scl::is_finite(GSL_IMAG(z2))) {
+	if (!std::isfinite(GSL_REAL(z0)) ||
+	    !std::isfinite(GSL_IMAG(z0)) ||
+	    !std::isfinite(GSL_REAL(z1)) ||
+	    !std::isfinite(GSL_IMAG(z1)) ||
+	    !std::isfinite(GSL_REAL(z2)) ||
+	    !std::isfinite(GSL_IMAG(z2))) {
 	  nfails++;
 	}
 	std::complex<double> cr1(GSL_REAL(z0),GSL_IMAG(z0));
@@ -453,11 +453,11 @@ void compare_gsl_cubic(size_t ne, string str,
 	q2=sqrt(abs(czo1)*abs(czo1)+abs(czo2)*abs(czo2)+
 		abs(czo3)*abs(czo3));
 
-	if (o2scl::is_finite(q1)) {
+	if (std::isfinite(q1)) {
 	  s1+=q1;
 	  if (q1>m1) m1=q1;
 	} 
-	if (o2scl::is_finite(q2)) {
+	if (std::isfinite(q2)) {
 	  s2+=q2;
 	  if (q2>m2) m2=q2;
 	}
@@ -739,7 +739,7 @@ void test_quartic_complex(size_t ne, quartic_complex *po, string str,
 		      abs(ce-cep)*abs(ce-cep));
 	      q2=sqrt(abs(czo1)*abs(czo1)+abs(czo2)*abs(czo2)+
 		      abs(czo3)*abs(czo3)+abs(czo4)*abs(czo4));
-	      if (!o2scl::is_finite(q1)) {
+	      if (!std::isfinite(q1)) {
 		O2SCL_ERR("Failure in test_quartic_complex().",
 			  exc_esanity);
 	      }

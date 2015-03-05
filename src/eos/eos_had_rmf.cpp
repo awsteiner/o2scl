@@ -78,7 +78,7 @@ int eos_had_rmf::calc_eq_temp_p
   // that this function will produce gibberish if the chemical
   // potentials aren't finite, but I've found this extra checking of
   // the inputs useful for debugging.
-  if (!o2scl::is_finite(ne.mu) || !o2scl::is_finite(ne.mu)) {
+  if (!std::isfinite(ne.mu) || !std::isfinite(ne.mu)) {
     O2SCL_ERR2("Chemical potentials not finite in ",
 	       "eos_had_rmf::calc_eq_temp_p().",exc_einval);
   }
@@ -187,8 +187,8 @@ int eos_had_rmf::field_eqs(size_t nv, const ubvector &x, ubvector &y) {
   // fields aren't finite, but I've found this extra checking of
   // the inputs useful for debugging.
 
-  if (!o2scl::is_finite(x[0]) || !o2scl::is_finite(x[1]) ||
-      !o2scl::is_finite(x[2])) {
+  if (!std::isfinite(x[0]) || !std::isfinite(x[1]) ||
+      !std::isfinite(x[2])) {
     O2SCL_ERR("Fields not finite in eos_had_rmf::field_eqs().",
 	      exc_efailed);
   }
@@ -197,8 +197,8 @@ int eos_had_rmf::field_eqs(size_t nv, const ubvector &x, ubvector &y) {
   calc_eq_p(*neutron,*proton,x[0],x[1],x[2],y[0],y[1],y[2],
 	    *eos_thermo);
 
-  if (!o2scl::is_finite(y[0]) || !o2scl::is_finite(y[1]) ||
-      !o2scl::is_finite(y[2])) {
+  if (!std::isfinite(y[0]) || !std::isfinite(y[1]) ||
+      !std::isfinite(y[2])) {
     return exc_ebadfunc;
   }
   return 0;
@@ -210,8 +210,8 @@ int eos_had_rmf::field_eqsT(size_t nv, const ubvector &x, ubvector &y) {
   // that this function will produce gibberish if the 
   // fields aren't finite, but I've found this extra checking of
   // the inputs useful for debugging.
-  if (!o2scl::is_finite(x[0]) || !o2scl::is_finite(x[1]) ||
-      !o2scl::is_finite(x[2])) {
+  if (!std::isfinite(x[0]) || !std::isfinite(x[1]) ||
+      !std::isfinite(x[2])) {
     O2SCL_ERR("Fields not finite in eos_had_rmf::field_eqsT().",
 	      exc_efailed);
   }
@@ -230,8 +230,8 @@ int eos_had_rmf::field_eqsT(size_t nv, const ubvector &x, ubvector &y) {
   calc_eq_temp_p(*neutron,*proton,fe_temp,x[0],x[1],x[2],y[0],y[1],y[2],
 		 *eos_thermo);
 
-  if (!o2scl::is_finite(y[0]) || !o2scl::is_finite(y[1]) ||
-      !o2scl::is_finite(y[2])) {
+  if (!std::isfinite(y[0]) || !std::isfinite(y[1]) ||
+      !std::isfinite(y[2])) {
     return exc_ebadfunc;
   }
 
@@ -290,7 +290,7 @@ int eos_had_rmf::calc_temp_p(fermion &ne, fermion &pr, const double T,
   int ret=0;
   ubvector x(3), y(3);
 
-  if (!o2scl::is_finite(ne.mu) || !o2scl::is_finite(ne.mu)) {
+  if (!std::isfinite(ne.mu) || !std::isfinite(ne.mu)) {
     O2SCL_ERR2("Chemical potentials not finite in ",
 	       "eos_had_rmf::calc_temp_p().",exc_efailed);
   }
@@ -835,8 +835,8 @@ int eos_had_rmf::fix_saturation_fun(size_t nv, const ubvector &x,
   // Compressibilty
   y[3]=aknm-comp;
 
-  if (!o2scl::is_finite(y[1]) || !o2scl::is_finite(y[2]) || 
-      !o2scl::is_finite(y[3]) || !o2scl::is_finite(y[0])) {
+  if (!std::isfinite(y[1]) || !std::isfinite(y[2]) || 
+      !std::isfinite(y[3]) || !std::isfinite(y[0])) {
     O2SCL_ERR2("Equation not finite in ",
 	       "eos_had_rmf::fix_saturation_fun().",exc_efailed);
   }
@@ -1043,7 +1043,7 @@ int eos_had_rmf::calc_e_solve_fun(size_t nv, const ubvector &ex,
   ey[4]=f3;
 
   for(int i=0;i<5;i++) {
-    if (!o2scl::is_finite(ex[i]) || !o2scl::is_finite(ey[i])) {
+    if (!std::isfinite(ex[i]) || !std::isfinite(ey[i])) {
       // 07/12/11 - We don't want to call the error handler here, because
       // sometimes the solver may be able to handle it automatically
       return 3;
@@ -1069,12 +1069,12 @@ int eos_had_rmf::calc_temp_e_solve_fun(size_t nv, const ubvector &ex,
   // finite, but I've found this extra checking of the inputs useful
   // for debugging.
 
-  if (!o2scl::is_finite(ex[0]) || !o2scl::is_finite(ex[1])) {
+  if (!std::isfinite(ex[0]) || !std::isfinite(ex[1])) {
     O2SCL_ERR2("Chemical potentials not finite in ",
 	       "eos_had_rmf::calc_temp_e_solve_fun().",exc_efailed);
   }
-  if (!o2scl::is_finite(ex[2]) || !o2scl::is_finite(ex[3]) ||
-      !o2scl::is_finite(ex[4])) {
+  if (!std::isfinite(ex[2]) || !std::isfinite(ex[3]) ||
+      !std::isfinite(ex[4])) {
     O2SCL_ERR2("Fields not finite in ",
 	       "eos_had_rmf::calc_temp_e_solve_fun().",exc_efailed);
   }
@@ -1112,7 +1112,7 @@ int eos_had_rmf::calc_temp_e_solve_fun(size_t nv, const ubvector &ex,
   ey[4]=f3;
 
   for(int i=0;i<5;i++) {
-    if (!o2scl::is_finite(ex[i]) || !o2scl::is_finite(ey[i])) {
+    if (!std::isfinite(ex[i]) || !std::isfinite(ey[i])) {
       O2SCL_ERR
 	((((string)"Eq. ")+itos(i)+
 	  " not finite in eos_had_rmf::calc_temp_e_solve_fun().").c_str(),
@@ -1137,7 +1137,7 @@ int eos_had_rmf::zero_pressure(size_t nv, const ubvector &ex,
   lrho=ex[4];
 
   for(i=0;i<5;i++) {
-    if (!o2scl::is_finite(ex[i])) {
+    if (!std::isfinite(ex[i])) {
       O2SCL_ERR("Variable not finite in zero_pressure()",exc_efailed);
     }
   }
@@ -1157,7 +1157,7 @@ int eos_had_rmf::zero_pressure(size_t nv, const ubvector &ex,
   }
 
   for(i=0;i<5;i++) {
-    if (!o2scl::is_finite(ex[i]) || !o2scl::is_finite(ey[i])) {
+    if (!std::isfinite(ex[i]) || !std::isfinite(ey[i])) {
       // 07/12/11 - We don't want to call the error handler here, because
       // sometimes the solver may be able to handle it automatically
       return 2;
@@ -1201,7 +1201,7 @@ int eos_had_rmf::calc_cr(double sig, double ome, double l_nb) {
   
   cr=sqrt(up/dn);
 
-  if (!o2scl::is_finite(cr)) {
+  if (!std::isfinite(cr)) {
     O2SCL_ERR("Coupling not finite in eos_had_rmf::calc_cr()",exc_efailed);
   }
 

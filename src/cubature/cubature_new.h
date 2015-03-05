@@ -194,19 +194,26 @@ namespace o2scl {
     
   protected:
 
-    /** \brief Desc
+    /** \brief Simple class for a value and its uncertainty
+	\comment
+	Default copy constructors are ok for this class
+	\endcomment
      */
-    typedef struct {
-      /** \brief Desc */
+    class esterr {
+
+    public:
+
+      /** \brief Value */
       double val;
-      /** \brief Desc */
+      /** \brief Error */
       double err;
-    } esterr;
 
-    /** \brief Desc
+    };
+    
+    /** \brief Return the maximum error from the array \c ee
      */
-    double errMax(unsigned fdim, const esterr *ee) {
-
+    double errMax(unsigned fdim, const std::vector<esterr> &ee) {
+      
       double errmax = 0;
       for (unsigned k = 0; k < fdim; ++k) {
 	if (ee[k].err > errmax) errmax = ee[k].err;
@@ -214,10 +221,17 @@ namespace o2scl {
       return errmax;
     }
 
-    /** \brief Desc
+    /** \brief Specification of the hypercubic region over which 
+	one wants to integrate
+	
+	\comment
+	Default copy constructors are not ok for this class
+	\endcomment
      */
     class hypercube {
+      
     public:
+
       /** \brief Desc */
       unsigned dim;
       /** \brief length 2*dim = center followed by half-widths */
@@ -228,10 +242,10 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    double compute_vol(const hypercube *h) {
-      double vol = 1;
-      for (unsigned i = 0; i < h->dim; ++i) {
-	vol *= 2 * h->data[i + h->dim];
+    double compute_vol(const hypercube &h) {
+      double vol = 1.0;
+      for (unsigned i = 0; i < h.dim; ++i) {
+	vol *= 2 * h.data[i + h.dim];
       }
       return vol;
     }
@@ -250,7 +264,7 @@ namespace o2scl {
 	  h.data[i] = center[i];
 	  h.data[i + dim] = halfwidth[i];
 	}
-	h.vol = compute_vol(&h);
+	h.vol = compute_vol(h);
       }
       return h;
     }
@@ -266,22 +280,28 @@ namespace o2scl {
 	  h.data[i] = 0.5 * (xmin[i] + xmax[i]);
 	  h.data[i + dim] = 0.5 * (xmax[i] - xmin[i]);
 	}
-	h.vol = compute_vol(&h);
+	h.vol = compute_vol(h);
       }
       return h;
     }
 
     /** \brief Desc
      */
-    void destroy_hypercube(hypercube *h) {
-      h->data.clear();
-      h->dim = 0;
+    void destroy_hypercube(hypercube &h) {
+      h.data.clear();
+      h.dim = 0;
       return;
     }
 
     /** \brief Desc
+	\comment
+	Default copy constructors are not ok for this class
+	\endcomment
      */
-    typedef struct {
+    class region {
+
+    public:
+
       /** \brief Desc */
       hypercube h;
       /** \brief Desc */
@@ -289,22 +309,23 @@ namespace o2scl {
       /** \brief dimensionality of vector integrand */
       unsigned fdim; 
       /** \brief array of length fdim */
-      esterr *ee; 
+      std::vector<esterr> ee;
       /** \brief max ee[k].err */
       double errmax; 
-    } region;
+
+    };
 
     /** \brief Desc
      */
-    region make_region(const hypercube *h, unsigned fdim) {
+    region make_region(const hypercube &h, unsigned fdim) {
 
       region R;
-      vec_t htmp=o2scl::vector_range(h->data,h->dim,h->data.size());
-      R.h = make_hypercube(h->dim, h->data, htmp);
+      vec_t htmp=o2scl::vector_range(h.data,h.dim,h.data.size());
+      R.h = make_hypercube(h.dim, h.data, htmp);
       R.splitDim = 0;
       R.fdim = fdim;
       if (R.h.data.size()>0) {
-	R.ee=(esterr *) malloc(sizeof(esterr) * fdim);
+	R.ee.resize(fdim);
       }
       R.errmax = HUGE_VAL;
 
@@ -313,10 +334,9 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    void destroy_region(region *R) {
-      destroy_hypercube(&R->h);
-      free(R->ee);
-      R->ee = 0;
+    void destroy_region(region &R) {
+      destroy_hypercube(R.h);
+      R.ee.clear();
       return;
     }
 
@@ -333,8 +353,8 @@ namespace o2scl {
       if (R2->h.data.size()==0) return o2scl::gsl_failure;
       R->h.data[d] -= R->h.data[d + dim];
       R2->h.data[d] += R->h.data[d + dim];
-      R2->ee = (esterr *) malloc(sizeof(esterr) * R2->fdim);
-      return R2->ee == 0;
+      R2->ee.resize(R2->fdim);
+      return 0;
     }
 
     struct rule_s; /* forward declaration */
@@ -342,8 +362,7 @@ namespace o2scl {
     /** \brief Desc
      */
     typedef int (*evalError_func)(struct rule_s *r, unsigned fdim,
-				  func_t &f, 
-				  unsigned nR, region *R);
+				  func_t &f, unsigned nR, region *R);
     
     /** \brief Desc
      */
@@ -495,6 +514,9 @@ namespace o2scl {
       /* 0/1 bit = +/- for corresponding element of r[] */
       unsigned signs = 0; 
 
+      size_t istart=0;
+      vec_t vtmp=o2scl::vector_range(pts,istart,pts.size());
+
       /* We start with the point where r is ADDed in every coordinate
 	 (this implies signs=0). */
       for (i = 0; i < dim; ++i)
@@ -504,10 +526,12 @@ namespace o2scl {
       for (i = 0;; ++i) {
 	unsigned mask, d;
 	
-	memcpy(pts, p, sizeof(double) * dim);
-	pts += dim;
-
-	d = ls0(i); /* which coordinate to flip */
+	for(size_t kk=0;kk<dim;kk++) vtmp[kk]=p[kk];
+	istart+=dim;
+	vtmp=o2scl::vector_range(pts,istart,pts.size());
+	
+	/* which coordinate to flip */
+	d = ls0(i); 
 	if (d >= dim) {
 	  break;
 	}
@@ -525,21 +549,35 @@ namespace o2scl {
     static void evalRR0_0fs(vec_t &pts, unsigned dim, double *p,
 			    const vec_t &c, const double *r) {
       
+      size_t istart=0;
+      vec_t vtmp=o2scl::vector_range(pts,istart,pts.size());
+
       for (unsigned i = 0; i < dim - 1; ++i) {
 	p[i] = c[i] - r[i];
 	for (unsigned j = i + 1; j < dim; ++j) {
 	  p[j] = c[j] - r[j];
-	  memcpy(pts, p, sizeof(double) * dim);
-	  pts += dim;
+
+	  for(size_t kk=0;kk<dim;kk++) vtmp[kk]=p[kk];
+	  istart+=dim;
+	  vtmp=o2scl::vector_range(pts,istart,pts.size());
+
 	  p[i] = c[i] + r[i];
-	  memcpy(pts, p, sizeof(double) * dim);
-	  pts += dim;
+
+	  for(size_t kk=0;kk<dim;kk++) vtmp[kk]=p[kk];
+	  istart+=dim;
+	  vtmp=o2scl::vector_range(pts,istart,pts.size());
+
 	  p[j] = c[j] + r[j];
-	  memcpy(pts, p, sizeof(double) * dim);
-	  pts += dim;
+
+	  for(size_t kk=0;kk<dim;kk++) vtmp[kk]=p[kk];
+	  istart+=dim;
+	  vtmp=o2scl::vector_range(pts,istart,pts.size());
+
 	  p[i] = c[i] - r[i];
-	  memcpy(pts, p, sizeof(double) * dim);
-	  pts += dim;
+
+	  for(size_t kk=0;kk<dim;kk++) vtmp[kk]=p[kk];
+	  istart+=dim;
+	  vtmp=o2scl::vector_range(pts,istart,pts.size());
 
 	  // Done with j -> Restore p[j]
 	  p[j] = c[j];      
@@ -566,23 +604,23 @@ namespace o2scl {
       for (unsigned i = 0; i < dim; i++) {
 	p[i] = c[i] - r1[i];
 	for(size_t kk=0;kk<dim;kk++) vtmp[kk]=p[kk];
-      istart+=dim;
-      vtmp=o2scl::vector_range(pts,istart,pts.size());
+	istart+=dim;
+	vtmp=o2scl::vector_range(pts,istart,pts.size());
 	
 	p[i] = c[i] + r1[i];
 	for(size_t kk=0;kk<dim;kk++) vtmp[kk]=p[kk];
-      istart+=dim;
-      vtmp=o2scl::vector_range(pts,istart,pts.size());
+	istart+=dim;
+	vtmp=o2scl::vector_range(pts,istart,pts.size());
 	
 	p[i] = c[i] - r2[i];
 	for(size_t kk=0;kk<dim;kk++) vtmp[kk]=p[kk];
-      istart+=dim;
-      vtmp=o2scl::vector_range(pts,istart,pts.size());
+	istart+=dim;
+	vtmp=o2scl::vector_range(pts,istart,pts.size());
 	
 	p[i] = c[i] + r2[i];
 	for(size_t kk=0;kk<dim;kk++) vtmp[kk]=p[kk];
-      istart+=dim;
-      vtmp=o2scl::vector_range(pts,istart,pts.size());
+	istart+=dim;
+	vtmp=o2scl::vector_range(pts,istart,pts.size());
 
 	p[i] = c[i];
       }
@@ -663,14 +701,17 @@ namespace o2scl {
       (rule *r_, unsigned fdim, func_t &f, 
        unsigned nR, region *R) {
     
-      /* lambda2 = sqrt(9/70), lambda4 = sqrt(9/10), lambda5 = sqrt(9/19) */
+      // lambda2 = sqrt(9/70)
+      // lambda4 = sqrt(9/10)
+      // lambda5 = sqrt(9/19)
+
       const double lambda2 = 0.3585685828003180919906451539079374954541;
       const double lambda4 = 0.9486832980505137995996680633298155601160;
       const double lambda5 = 0.6882472016116852977216287342936235251269;
-      const double weight2 = 980. / 6561.;
-      const double weight4 = 200. / 19683.;
-      const double weightE2 = 245. / 486.;
-      const double weightE4 = 25. / 729.;
+      const double weight2 = 980.0/6561.0;
+      const double weight4 = 200.0/19683.0;
+      const double weightE2 = 245.0/486.0;
+      const double weightE4 = 25.0/729.0;
       const double ratio = (lambda2 * lambda2) / (lambda4 * lambda4);
 
       rule75genzmalik *r = (rule75genzmalik *) r_;
@@ -721,9 +762,9 @@ namespace o2scl {
 	return o2scl::gsl_failure;
       }
 
-      /* we are done with the points, and so we can re-use the pts
+      /* We are done with the points, and so we can re-use the pts
 	 array to store the maximum difference diff[i] in each dimension 
-	 for each hypercube */
+	 for each hypercube. */
       vec_t &diff = pts;
       for (i = 0; i < dim * nR; ++i) diff[i] = 0;
       
@@ -731,18 +772,19 @@ namespace o2scl {
 
 	unsigned vj=j;
 	vec_t v=o2scl::vector_range(vals,vj,vals.size());
-	//const double *v = vals + j;
     
 	for (iR = 0; iR < nR; ++iR) {
 	  double result, res5th;
 	  double val0, sum2=0, sum3=0, sum4=0, sum5=0;
 	  unsigned k, k0 = 0;
+
 	  /* accumulate j-th function values into j-th integrals
 	     NOTE: this relies on the ordering of the eval functions
 	     above, as well as on the internal structure of
 	     the evalR0_0fs4d function */
 
-	  val0 = v[fdim*(0)]; /* central point */
+	  /* central point */
+	  val0 = v[fdim*(0)]; 
 	  k0 += 1;
 
 	  for (k = 0; k < dim; ++k) {
@@ -812,13 +854,15 @@ namespace o2scl {
 
       rule75genzmalik *r;
       
-      if (dim < 2) return 0; /* this rule does not support 1d integrals */
+      /* this rule does not support 1d integrals */
+      if (dim < 2) return 0; 
       
-      /* Because of the use of a bit-field in evalR_Rfs, we are limited
-	 to be < 32 dimensions (or however many bits are in unsigned).
-	 This is not a practical limitation...long before you reach
-	 32 dimensions, the Genz-Malik cubature_new becomes excruciatingly
-	 slow and is superseded by other methods (e.g. Monte-Carlo). */
+      /* Because of the use of a bit-field in evalR_Rfs, we are
+	 limited to be < 32 dimensions (or however many bits are in
+	 unsigned). This is not a practical limitation...long before
+	 you reach 32 dimensions, the Genz-Malik cubature_new becomes
+	 excruciatingly slow and is superseded by other methods (e.g.
+	 Monte-Carlo). */
       if (dim >= sizeof(unsigned) * 8) return 0;
       
       r = (rule75genzmalik *) make_rule(sizeof(rule75genzmalik),
@@ -845,8 +889,10 @@ namespace o2scl {
       return (rule *) r;
     }
 
-    /** \brief 1d 15-point Gaussian quadrature rule, based on qk15.c
-	and qk.c in GNU GSL (which in turn is based on QUADPACK).
+    /** \brief 1d 15-point Gaussian quadrature rule
+	
+	Based on qk15.c and qk.c in GNU GSL (which in turn is based on
+	QUADPACK).
     */
     static int rule15gauss_evalError(rule *r,
 				     unsigned fdim, func_t &f, 
@@ -1027,7 +1073,7 @@ namespace o2scl {
       /** \brief Desc */
       unsigned fdim;
       /** array of length fdim of the total integrand & error */
-      esterr *ee; 
+      std::vector<esterr> ee; 
     } heap;
 
     /** \brief Desc
@@ -1054,11 +1100,9 @@ namespace o2scl {
       h.nalloc = 0;
       h.items = 0;
       h.fdim = fdim;
-      h.ee = (esterr *) malloc(sizeof(esterr) * fdim);
-      if (h.ee) {
-	for (unsigned i = 0; i < fdim; ++i) h.ee[i].val = h.ee[i].err = 0;
-	heap_resize(&h, nalloc);
-      }
+      h.ee.resize(fdim);
+      for (unsigned i = 0; i < fdim; ++i) h.ee[i].val = h.ee[i].err = 0;
+      heap_resize(&h, nalloc);
       return h;
     }
 
@@ -1069,7 +1113,7 @@ namespace o2scl {
       h->n = 0;
       heap_resize(h, 0);
       h->fdim = 0;
-      free(h->ee);
+      h->ee.clear();
       return;
     }
 
@@ -1162,7 +1206,7 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    int converged(unsigned fdim, const esterr *ee,
+    int converged(unsigned fdim, const std::vector<esterr> &ee,
 		  double reqAbsError, double reqRelError,
 		  error_norm norm) {
 
@@ -1248,16 +1292,19 @@ namespace o2scl {
 	}
 	
       }
-      return 1; /* unreachable */
+      
+      O2SCL_ERR2("Invalid value of 'norm' in ",
+		 "cubature::converged().",o2scl::exc_einval);
+      return o2scl::exc_einval; 
     }
 
     /** \brief Desc
      */
     int rulecubature_new(rule *r, unsigned fdim, func_t &f, 
-		     const hypercube *h, size_t maxEval,
-		     double reqAbsError, double reqRelError,
-		     error_norm norm, vec_t &val, vec_t &err,
-		     int parallel) {
+			 const hypercube *h, size_t maxEval,
+			 double reqAbsError, double reqRelError,
+			 error_norm norm, vec_t &val, vec_t &err,
+			 int parallel) {
       
       size_t numEval = 0;
       heap regions;
@@ -1265,7 +1312,7 @@ namespace o2scl {
       /* array of regions to evaluate */
       region *R = 0; 
       size_t nR_alloc = 0;
-      esterr *ee = 0;
+      std::vector<esterr> ee;
 
       /* norm is irrelevant */
       if (fdim <= 1) norm = ERROR_INDIVIDUAL; 
@@ -1273,19 +1320,13 @@ namespace o2scl {
       if (norm < 0 || norm > ERROR_LINF) return o2scl::gsl_failure; 
 
       regions = heap_alloc(1, fdim);
-      if (!regions.ee || !regions.items) goto bad;
-
-      ee = (esterr *) malloc(sizeof(esterr) * fdim);
-      if (!ee) goto bad;
+      
+      ee.resize(fdim);
      
       nR_alloc = 2;
       R = (region *) malloc(sizeof(region) * nR_alloc);
-      if (!R) goto bad;
-      R[0] = make_region(h, fdim);
-      if (!R[0].ee || eval_regions(1, R, f, r) ||
-	  heap_push(&regions, R[0])) {
-	goto bad;
-      }
+
+      R[0] = make_region(*h, fdim);
       numEval += r->num_points;
      
       while (numEval < maxEval || !maxEval) {
@@ -1369,11 +1410,10 @@ namespace o2scl {
 	  val[j] += regions.items[i].ee[j].val;
 	  err[j] += regions.items[i].ee[j].err;
 	}
-	destroy_region(&regions.items[i]);
+	destroy_region(regions.items[i]);
       }
-
-      /* printf("regions.nalloc = %d\n", regions.nalloc); */
-      free(ee);
+      
+      ee.clear();
       heap_free(&regions);
       free(R);
 
@@ -1381,7 +1421,7 @@ namespace o2scl {
 
     bad:
       
-      free(ee);
+      ee.clear();
       heap_free(&regions);
       free(R);
 
@@ -1391,9 +1431,9 @@ namespace o2scl {
     /** \brief Desc
      */
     int cubature_new(unsigned fdim, func_t &f, 
-		 unsigned dim, const vec_t &xmin, const vec_t &xmax, 
-		 size_t maxEval, double reqAbsError, double reqRelError, 
-		 error_norm norm, vec_t &val, vec_t &err, int parallel) {
+		     unsigned dim, const vec_t &xmin, const vec_t &xmax, 
+		     size_t maxEval, double reqAbsError, double reqRelError, 
+		     error_norm norm, vec_t &val, vec_t &err, int parallel) {
 
       rule *r;
       hypercube h;
@@ -1423,7 +1463,7 @@ namespace o2scl {
       status=rulecubature_new(r, fdim, f, &h, maxEval, reqAbsError, 
 			      reqRelError, norm, val, err, parallel);
 			      
-      destroy_hypercube(&h);
+      destroy_hypercube(h);
       destroy_rule(r);
       return status;
     }
@@ -1442,7 +1482,7 @@ namespace o2scl {
 	return o2scl::success;
       }
       return cubature_new(fdim,f,dim,xmin,xmax,
-		      maxEval,reqAbsError,reqRelError,norm,val,err,0);
+			  maxEval,reqAbsError,reqRelError,norm,val,err,0);
     }
     
   };
@@ -1451,7 +1491,8 @@ namespace o2scl {
 }{
 #endif
   
-  /** \brief Integration by p-adaptive cubature_new from the Cubature_New library
+  /** \brief Integration by p-adaptive cubature_new from the Cubature
+      library
 
       This class is experimental.
 
@@ -1678,9 +1719,10 @@ namespace o2scl {
 	  ++w;
 	}
 	for (i = 0; i < nx; ++i) {
-	  voff += eval(cm, cmi, cval + voff, m, md, fdim, dim, id + 1,
+	  vec_t vtmp=o2scl::vector_range(cval,voff,cval.size());
+	  voff += eval(cm, cmi, vtmp, m, md, fdim, dim, id + 1,
 		       weight * w[i], val);
-	  voff += eval(cm, cmi, cval + voff, m, md, fdim, dim, id + 1,
+	  voff += eval(cm, cmi, vtmp, m, md, fdim, dim, id + 1,
 		       weight * w[i], val);
 	}
 

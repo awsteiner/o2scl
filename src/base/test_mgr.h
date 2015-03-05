@@ -221,10 +221,10 @@ namespace o2scl {
       int i;
   
       for(i=0;i<nv;i++) {
-	if (o2scl::is_nan(expected[i])) {
-	  ret=(ret && (o2scl::is_nan(expected[i])==o2scl::is_nan(result[i])));
-	} else if (o2scl::is_inf(expected[i])) {
-	  ret=(ret && (o2scl::is_inf(expected[i])==o2scl::is_inf(result[i])));
+	if (std::isnan(expected[i])) {
+	  ret=(ret && (std::isnan(expected[i])==std::isnan(result[i])));
+	} else if (std::isinf(expected[i])) {
+	  ret=(ret && (std::isinf(expected[i])==std::isinf(result[i])));
 	} else if (expected[i]==0.0) {
 	  ret=(ret && test_abs(result[i],expected[i],rel_error,description));
 	  if (fabs(result[i]-expected[i])>max) {
@@ -257,10 +257,10 @@ namespace o2scl {
       int i;
   
       for(i=0;i<nv;i++) {
-	if (o2scl::is_nan(expected[i])) {
-	  ret=(ret && (o2scl::is_nan(expected[i])==o2scl::is_nan(result[i])));
-	} else if (o2scl::is_inf(expected[i])) {
-	  ret=(ret && (o2scl::is_inf(expected[i])==o2scl::is_inf(result[i])));
+	if (std::isnan(expected[i])) {
+	  ret=(ret && (std::isnan(expected[i])==std::isnan(result[i])));
+	} else if (std::isinf(expected[i])) {
+	  ret=(ret && (std::isinf(expected[i])==std::isinf(result[i])));
 	} else {
 	  ret=(ret && (fabs(expected[i]-result[i])<abs_error));
 	}
@@ -283,10 +283,10 @@ namespace o2scl {
       double ratio;
   
       for(i=0;i<nv;i++) {
-	if (o2scl::is_nan(expected[i])) {
-	  ret=(ret && (o2scl::is_nan(expected[i])==o2scl::is_nan(result[i])));
-	} else if (o2scl::is_inf(expected[i])) {
-	  ret=(ret && (o2scl::is_inf(expected[i])==o2scl::is_inf(result[i])));
+	if (std::isnan(expected[i])) {
+	  ret=(ret && (std::isnan(expected[i])==std::isnan(result[i])));
+	} else if (std::isinf(expected[i])) {
+	  ret=(ret && (std::isinf(expected[i])==std::isinf(result[i])));
 	} else {
 	  ratio=expected[i]/result[i];
 	  ret=(ret && (ratio<factor && ratio>1.0/factor));
@@ -333,12 +333,12 @@ namespace o2scl {
   
       for(i=0;i<nr;i++) {
 	for(j=0;j<nc;j++) {
-	  if (o2scl::is_nan(expected(i,j))) {
-	    ret=(ret && (o2scl::is_nan(expected(i,j))==
-			 o2scl::is_nan(result(i,j))));
-	  } else if (o2scl::is_inf(expected(i,j))) {
-	    ret=(ret && (o2scl::is_inf(expected(i,j))==
-			 o2scl::is_inf(result(i,j))));
+	  if (std::isnan(expected(i,j))) {
+	    ret=(ret && (std::isnan(expected(i,j))==
+			 std::isnan(result(i,j))));
+	  } else if (std::isinf(expected(i,j))) {
+	    ret=(ret && (std::isinf(expected(i,j))==
+			 std::isinf(result(i,j))));
 	  } else if (expected(i,j)==0.0) {
 	    ret=(ret && test_abs(result(i,j),expected(i,j),rel_error,
 				 description));
@@ -377,12 +377,12 @@ namespace o2scl {
       
       for(i=0;i<nr;i++) {
 	for(j=0;j<nc;j++) {
-	  if (o2scl::is_nan(expected(i,j))) {
-	    ret=(ret && (o2scl::is_nan(expected(i,j))==
-			 o2scl::is_nan(result(i,j))));
-	  } else if (o2scl::is_inf(expected(i,j))) {
-	    ret=(ret && (o2scl::is_inf(expected(i,j))==
-			 o2scl::is_inf(result(i,j))));
+	  if (std::isnan(expected(i,j))) {
+	    ret=(ret && (std::isnan(expected(i,j))==
+			 std::isnan(result(i,j))));
+	  } else if (std::isinf(expected(i,j))) {
+	    ret=(ret && (std::isinf(expected(i,j))==
+			 std::isinf(result(i,j))));
 	  } else if (expected(i,j)==0.0) {
 	    ret=(ret && test_abs(result(i,j),expected(i,j),abs_error,
 				 description));

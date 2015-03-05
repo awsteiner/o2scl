@@ -707,10 +707,10 @@ int cubic_complex_std::solve_c
   // It seems that if the real part of alpha is < 0 and the imaginary
   // part is zero, then cbrta is NaN (esp. w/Cygwin). We fix this
   // here:
-  if (!o2scl::is_finite(cbrta.real())) {
+  if (!std::isfinite(cbrta.real())) {
     cbrta=pow(-alpha,1.0/3.0)*exp(mo*pi/3.0);
   }
-  if (!o2scl::is_finite(cbrtb.real())) {
+  if (!std::isfinite(cbrtb.real())) {
     cbrtb=pow(-beta,1.0/3.0)*exp(mo*pi/3.0);
   }
 

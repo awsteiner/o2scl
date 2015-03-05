@@ -139,7 +139,7 @@ int format_float::remove_zeros_dpt(string &s) {
 string format_float::convert(double x, bool debug) {
 
   // Handle special cases
-  if (!o2scl::is_finite(x)) return not_finte;
+  if (!std::isfinite(x)) return not_finte;
   if (x==0.0) return zeros;
 
   if (debug) cout.setf(ios::scientific);
