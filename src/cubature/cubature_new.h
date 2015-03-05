@@ -3,7 +3,7 @@
   
   Copyright (C) 2015, Andrew W. Steiner
   
-  This file is part of O2scl. It has been adapted from cubature 
+  This file is part of O2scl. It has been adapted from cubature_new 
   written by Steven G. Johnson. 
   
   O2scl is free software; you can redistribute it and/or modify
@@ -48,12 +48,12 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-/** \file cubature.h
-    \brief File for definitions of \ref o2scl::inte_hcubature and 
-    \ref o2scl::inte_pcubature
+/** \file cubature_new.h
+    \brief File for definitions of \ref o2scl::inte_hcubature_new and 
+    \ref o2scl::inte_pcubature_new
 */
-#ifndef O2SCL_CUBATURE_H
-#define O2SCL_CUBATURE_H
+#ifndef O2SCL_CUBATURE_NEW_H
+#define O2SCL_CUBATURE_NEW_H
 
 // For memcpy
 #include <cstring>
@@ -117,9 +117,9 @@ namespace o2scl {
 #endif
   
   /** \brief Base class for integration routines from the 
-      Cubature library
+      Cubature_New library
   */
-  class inte_cubature_base {
+  class inte_cubature_new_base {
     
   public:
     
@@ -160,21 +160,21 @@ namespace o2scl {
   };
 
   /** \brief Adaptive multidimensional integration on hyper-rectangles
-      using cubature rules from the Cubature library
+      using cubature_new rules from the Cubature_New library
 
       This class is experimental.
 
       \hline
-      \b Documentation \b adapted \b from \b Cubature
+      \b Documentation \b adapted \b from \b Cubature_New
       
-      A cubature rule takes a function and a hypercube and evaluates
+      A cubature_new rule takes a function and a hypercube and evaluates
       the function at a small number of points, returning an estimate
       of the integral as well as an estimate of the error, and also
       a suggested dimension of the hypercube to subdivide.
       
       Given such a rule, the adaptive integration is simple:
       
-      1) Evaluate the cubature rule on the hypercube(s).
+      1) Evaluate the cubature_new rule on the hypercube(s).
       Stop if converged.
       
       2) Pick the hypercube with the largest estimated error,
@@ -182,15 +182,15 @@ namespace o2scl {
       
       3) Goto (1).
       
-      The basic algorithm is based on the adaptive cubature described
+      The basic algorithm is based on the adaptive cubature_new described
       in \ref Genz80 and subsequently extended to integrating a vector
       of integrands in \ref Berntsen91 .
 
       \hline      
 
   */
-  template<class func_t, class vec_t> class inte_hcubature
-    : public inte_cubature_base {
+  template<class func_t, class vec_t> class inte_hcubature_new
+    : public inte_cubature_new_base {
     
   protected:
 
@@ -216,14 +216,15 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    typedef struct {
+    class hypercube {
+    public:
       /** \brief Desc */
       unsigned dim;
       /** \brief length 2*dim = center followed by half-widths */
-      double *data; 
+      vec_t data; 
       /** \brief cache volume = product of widths */
       double vol;   
-    } hypercube;
+    };
 
     /** \brief Desc
      */
@@ -242,9 +243,9 @@ namespace o2scl {
       
       hypercube h;
       h.dim = dim;
-      h.data = (double *) malloc(sizeof(double) * dim * 2);
+      h.data.resize(dim*2);
       h.vol = 0;
-      if (h.data) {
+      if (h.data.size()>0) {
 	for (unsigned i = 0; i < dim; ++i) {
 	  h.data[i] = center[i];
 	  h.data[i + dim] = halfwidth[i];
@@ -260,7 +261,7 @@ namespace o2scl {
       (unsigned dim, const vec_t &xmin, const vec_t &xmax) {
 
       hypercube h = make_hypercube(dim, xmin, xmax);
-      if (h.data) {
+      if (h.data.size()>0) {
 	for (unsigned i = 0; i < dim; ++i) {
 	  h.data[i] = 0.5 * (xmin[i] + xmax[i]);
 	  h.data[i + dim] = 0.5 * (xmax[i] - xmin[i]);
@@ -273,7 +274,7 @@ namespace o2scl {
     /** \brief Desc
      */
     void destroy_hypercube(hypercube *h) {
-      free(h->data);
+      h->data.clear();
       h->dim = 0;
       return;
     }
@@ -298,10 +299,13 @@ namespace o2scl {
     region make_region(const hypercube *h, unsigned fdim) {
 
       region R;
-      R.h = make_hypercube(h->dim, h->data, h->data + h->dim);
+      vec_t htmp=o2scl::vector_range(h->data,h->dim,h->data.size());
+      R.h = make_hypercube(h->dim, h->data, htmp);
       R.splitDim = 0;
       R.fdim = fdim;
-      R.ee = R.h.data ? (esterr *) malloc(sizeof(esterr) * fdim) : 0;
+      if (R.h.data.size()>0) {
+	R.ee=(esterr *) malloc(sizeof(esterr) * fdim);
+      }
       R.errmax = HUGE_VAL;
 
       return R;
@@ -324,8 +328,9 @@ namespace o2scl {
       *R2 = *R;
       R->h.data[d + dim] *= 0.5;
       R->h.vol *= 0.5;
-      R2->h = make_hypercube(dim, R->h.data, R->h.data + dim);
-      if (!R2->h.data) return o2scl::gsl_failure;
+      vec_t vtmp=o2scl::vector_range(R->h.data,dim,R->h.data.size());
+      R2->h = make_hypercube(dim, R->h.data, vtmp);
+      if (R2->h.data.size()==0) return o2scl::gsl_failure;
       R->h.data[d] -= R->h.data[d + dim];
       R2->h.data[d] += R->h.data[d + dim];
       R2->ee = (esterr *) malloc(sizeof(esterr) * R2->fdim);
@@ -354,9 +359,9 @@ namespace o2scl {
       /** \brief The max number of regions evaluated at once */
       unsigned num_regions;
       /** \brief points to eval: num_regions * num_points * dim */
-      double *pts;
+      vec_t pts;
       /** \brief num_regions * num_points * fdim */
-      double *vals;
+      vec_t vals;
       /** \brief Desc */
       evalError_func evalError;
       /** \brief Desc */
@@ -368,7 +373,6 @@ namespace o2scl {
     void destroy_rule(rule *r) {
       if (r) {
 	if (r->destroy) r->destroy(r);
-	free(r->pts);
 	free(r);
       }
       return;
@@ -378,8 +382,8 @@ namespace o2scl {
      */
     static int alloc_rule_pts(rule *r, unsigned num_regions) {
       if (num_regions > r->num_regions) {
-	free(r->pts);
-	r->pts = r->vals = 0;
+	r->pts.clear();
+	r->vals.clear();
 	r->num_regions = 0;
 
 	/* Allocate extra so that repeatedly calling alloc_rule_pts
@@ -388,11 +392,9 @@ namespace o2scl {
 	*/
 	num_regions *= 2; 
 
-	r->pts = (double *) malloc(sizeof(double) * 
-				   (num_regions
-				    * r->num_points * (r->dim + r->fdim)));
-	if (r->fdim + r->dim > 0 && !r->pts) return o2scl::gsl_failure;
-	r->vals = r->pts + num_regions * r->num_points * r->dim;
+	r->pts.resize((num_regions* r->num_points * (r->dim + r->fdim)));
+	r->vals=o2scl::vector_range(r->pts,num_regions * r->num_points *
+				    r->dim,r->vals.size());
 	r->num_regions = num_regions;
       }
       return o2scl::success;
@@ -409,7 +411,8 @@ namespace o2scl {
       if (sz < sizeof(rule)) return 0;
       r = (rule *) malloc(sz);
       if (!r) return 0;
-      r->pts = r->vals = 0;
+      r->pts.clear();
+      r->vals.clear();
       r->num_regions = 0;
       r->dim = dim;
       r->fdim = fdim;
@@ -485,8 +488,8 @@ namespace o2scl {
 	coordinate updates in p, although this doesn't matter as much
 	now that we are saving all pts.
     */
-    static void evalR_Rfs(double *pts, unsigned dim, double *p,
-			  const double *c, const double *r) {
+    static void evalR_Rfs(vec_t &pts, unsigned dim, double *p,
+			  const vec_t &c, const double *r) {
       
       unsigned i;
       /* 0/1 bit = +/- for corresponding element of r[] */
@@ -519,8 +522,8 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    static void evalRR0_0fs(double *pts, unsigned dim, double *p,
-			    const double *c, const double *r) {
+    static void evalRR0_0fs(vec_t &pts, unsigned dim, double *p,
+			    const vec_t &c, const double *r) {
       
       for (unsigned i = 0; i < dim - 1; ++i) {
 	p[i] = c[i] - r[i];
@@ -550,28 +553,36 @@ namespace o2scl {
     /** \brief Desc
      */
     static void evalR0_0fs4d
-      (double *pts, unsigned dim, double *p, const double *c,
+      (vec_t &pts, unsigned dim, double *p, const vec_t &c,
        const double *r1, const double *r2) {
+
+      size_t istart=0;
+      vec_t vtmp=o2scl::vector_range(pts,istart,pts.size());
       
-      memcpy(pts, p, sizeof(double) * dim);
-      pts += dim;
+      for(size_t kk=0;kk<dim;kk++) vtmp[kk]=p[kk];
+      istart+=dim;
+      vtmp=o2scl::vector_range(pts,istart,pts.size());
 
       for (unsigned i = 0; i < dim; i++) {
 	p[i] = c[i] - r1[i];
-	memcpy(pts, p, sizeof(double) * dim);
-	pts += dim;
-
+	for(size_t kk=0;kk<dim;kk++) vtmp[kk]=p[kk];
+      istart+=dim;
+      vtmp=o2scl::vector_range(pts,istart,pts.size());
+	
 	p[i] = c[i] + r1[i];
-	memcpy(pts, p, sizeof(double) * dim);
-	pts += dim;
-
+	for(size_t kk=0;kk<dim;kk++) vtmp[kk]=p[kk];
+      istart+=dim;
+      vtmp=o2scl::vector_range(pts,istart,pts.size());
+	
 	p[i] = c[i] - r2[i];
-	memcpy(pts, p, sizeof(double) * dim);
-	pts += dim;
-
+	for(size_t kk=0;kk<dim;kk++) vtmp[kk]=p[kk];
+      istart+=dim;
+      vtmp=o2scl::vector_range(pts,istart,pts.size());
+	
 	p[i] = c[i] + r2[i];
-	memcpy(pts, p, sizeof(double) * dim);
-	pts += dim;
+	for(size_t kk=0;kk<dim;kk++) vtmp[kk]=p[kk];
+      istart+=dim;
+      vtmp=o2scl::vector_range(pts,istart,pts.size());
 
 	p[i] = c[i];
       }
@@ -594,7 +605,7 @@ namespace o2scl {
     /** \brief Desc
 
 	Based on rule75genzmalik.cpp in HIntLib-0.0.10: An embedded
-	cubature rule of degree 7 (embedded rule degree 5) 
+	cubature_new rule of degree 7 (embedded rule degree 5) 
 	from \ref Genz83.
     */
     typedef struct {
@@ -665,15 +676,16 @@ namespace o2scl {
       rule75genzmalik *r = (rule75genzmalik *) r_;
       unsigned i, j, iR, dim = r_->dim;
       size_t npts = 0;
-      double *diff, *pts, *vals;
 
       if (alloc_rule_pts(r_, nR)) return o2scl::gsl_failure;
-      pts = r_->pts; vals = r_->vals;
+      vec_t &pts=r_->pts;
+      vec_t &vals=r_->vals;
 
       for (iR = 0; iR < nR; ++iR) {
-	const double *center = R[iR].h.data;
-	const double *halfwidth = R[iR].h.data + dim;
-          
+	const vec_t &center = R[iR].h.data;
+	const vec_t halfwidth=o2scl::vector_range(R[iR].h.data,dim,
+						  R[iR].h.data.size());
+	
 	for (i = 0; i < dim; ++i) {
 	  r->p[i] = center[i];
 	}
@@ -687,19 +699,20 @@ namespace o2scl {
 
 	/* Evaluate points in the center, in (lambda2,0,...,0) and
 	   (lambda3=lambda4, 0,...,0).  */
-	evalR0_0fs4d(pts + npts*dim, dim, r->p, center, 
-		     r->widthLambda2, r->widthLambda);
+	vec_t ptmp=o2scl::vector_range(pts,npts*dim,pts.size());
+	evalR0_0fs4d(ptmp,dim,r->p,center, 
+		     r->widthLambda2,r->widthLambda);
 	npts += num0_0(dim) + 2 * numR0_0fs(dim);
 
 	/* Calculate points for (lambda4, lambda4, 0, ...,0) */
-	evalRR0_0fs(pts + npts*dim, dim, r->p, center, r->widthLambda);
+	evalRR0_0fs(ptmp, dim, r->p, center, r->widthLambda);
 	npts += numRR0_0fs(dim);
 
 	/* Calculate points for (lambda5, lambda5, ..., lambda5) */
 	for (i = 0; i < dim; ++i) {
 	  r->widthLambda[i] = halfwidth[i] * lambda5;
 	}
-	evalR_Rfs(pts + npts*dim, dim, r->p, center, r->widthLambda);
+	evalR_Rfs(ptmp, dim, r->p, center, r->widthLambda);
 	npts += numR_Rfs(dim);
       }
 
@@ -711,12 +724,14 @@ namespace o2scl {
       /* we are done with the points, and so we can re-use the pts
 	 array to store the maximum difference diff[i] in each dimension 
 	 for each hypercube */
-      diff = pts;
+      vec_t &diff = pts;
       for (i = 0; i < dim * nR; ++i) diff[i] = 0;
       
       for (j = 0; j < fdim; ++j) {
-    
-	const double *v = vals + j;
+
+	unsigned vj=j;
+	vec_t v=o2scl::vector_range(vals,vj,vals.size());
+	//const double *v = vals + j;
     
 	for (iR = 0; iR < nR; ++iR) {
 	  double result, res5th;
@@ -766,7 +781,8 @@ namespace o2scl {
 	  R[iR].ee[j].val = result;
 	  R[iR].ee[j].err = fabs(res5th - result);
     
-	  v += r_->num_points * fdim;
+	  vj += r_->num_points * fdim;
+	  v=o2scl::vector_range(vals,vj,vals.size());
 	}
       }
 
@@ -801,7 +817,7 @@ namespace o2scl {
       /* Because of the use of a bit-field in evalR_Rfs, we are limited
 	 to be < 32 dimensions (or however many bits are in unsigned).
 	 This is not a practical limitation...long before you reach
-	 32 dimensions, the Genz-Malik cubature becomes excruciatingly
+	 32 dimensions, the Genz-Malik cubature_new becomes excruciatingly
 	 slow and is superseded by other methods (e.g. Monte-Carlo). */
       if (dim >= sizeof(unsigned) * 8) return 0;
       
@@ -873,7 +889,7 @@ namespace o2scl {
       };
       unsigned j, k, iR;
       size_t npts = 0;
-      double *pts, *vals;
+      vec_t pts, vals;
 
       if (alloc_rule_pts(r, nR)) return o2scl::gsl_failure;
       pts = r->pts; vals = r->vals;
@@ -905,7 +921,10 @@ namespace o2scl {
       }
      
       for (k = 0; k < fdim; ++k) {
-	const double *vk = vals + k;
+
+	unsigned vk0=k;
+	vec_t vk=o2scl::vector_range(vals,vk0,vals.size());
+
 	for (iR = 0; iR < nR; ++iR) {
 	  const double halfwidth = R[iR].h.data[1];
 	  double result_gauss = vk[0] * wg[n/2 - 1];
@@ -969,7 +988,8 @@ namespace o2scl {
 	  R[iR].ee[k].err = err;
                
 	  /* increment vk to point to next batch of results */
-	  vk += 15*fdim;
+	  vk0+=15*fdim;
+	  vk=o2scl::vector_range(vals,vk0,vals.size());
 	}
       }
       return o2scl::success;
@@ -1099,7 +1119,7 @@ namespace o2scl {
       int i, n, child;
 
       if (!(h->n)) {
-	O2SCL_ERR("Attempted to pop an empty heap in cubature.",
+	O2SCL_ERR("Attempted to pop an empty heap in cubature_new.",
 		  o2scl::exc_esanity);
       }
 
@@ -1233,7 +1253,7 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    int rulecubature(rule *r, unsigned fdim, func_t &f, 
+    int rulecubature_new(rule *r, unsigned fdim, func_t &f, 
 		     const hypercube *h, size_t maxEval,
 		     double reqAbsError, double reqRelError,
 		     error_norm norm, vec_t &val, vec_t &err,
@@ -1370,7 +1390,7 @@ namespace o2scl {
     
     /** \brief Desc
      */
-    int cubature(unsigned fdim, func_t &f, 
+    int cubature_new(unsigned fdim, func_t &f, 
 		 unsigned dim, const vec_t &xmin, const vec_t &xmax, 
 		 size_t maxEval, double reqAbsError, double reqRelError, 
 		 error_norm norm, vec_t &val, vec_t &err, int parallel) {
@@ -1400,10 +1420,9 @@ namespace o2scl {
 	return o2scl::gsl_failure;
       }
       h = make_hypercube_range(dim, xmin, xmax);
-      status = !h.data ? o2scl::gsl_failure
-	: rulecubature(r, fdim, f, &h,
-		       maxEval, reqAbsError, reqRelError, norm,
-		       val, err, parallel);
+      status=rulecubature_new(r, fdim, f, &h, maxEval, reqAbsError, 
+			      reqRelError, norm, val, err, parallel);
+			      
       destroy_hypercube(&h);
       destroy_rule(r);
       return status;
@@ -1422,7 +1441,7 @@ namespace o2scl {
 	/* nothing to do */     
 	return o2scl::success;
       }
-      return cubature(fdim,f,dim,xmin,xmax,
+      return cubature_new(fdim,f,dim,xmin,xmax,
 		      maxEval,reqAbsError,reqRelError,norm,val,err,0);
     }
     
@@ -1432,23 +1451,23 @@ namespace o2scl {
 }{
 #endif
   
-  /** \brief Integration by p-adaptive cubature from the Cubature library
+  /** \brief Integration by p-adaptive cubature_new from the Cubature_New library
 
       This class is experimental.
 
       \hline
-      \b Documentation \b adapted \b from \b Cubature
+      \b Documentation \b adapted \b from \b Cubature_New
       
       This class performs adaptive integration by increasing the
-      degree of the cubature rule rather than subdividing the domain,
+      degree of the cubature_new rule rather than subdividing the domain,
       using products of Clenshaw-Curtis rules. This algorithm may be
       superior to Genz-Malik for smooth integrands lacking
       strongly-localized features, in moderate dimensions.
 
       \hline      
   */
-  template<class func_t, class vec_t> class inte_pcubature
-    : public inte_cubature_base {
+  template<class func_t, class vec_t> class inte_pcubature_new
+    : public inte_cubature_new_base {
       
   protected:
       
@@ -1458,7 +1477,7 @@ namespace o2scl {
     
     /** \brief Cache of the values for the m[dim] grid.  
 
-	For adaptive cubature, thanks to the nesting of the C-C rules, we
+	For adaptive cubature_new, thanks to the nesting of the C-C rules, we
 	can re-use the values from coarser grids for finer grids, and the
 	coarser grids are also used for error estimation. 
 	
@@ -1495,9 +1514,6 @@ namespace o2scl {
     void free_cachevals(valcache *v) {
       if (!v) return;
       if (v->c) {
-	for (size_t i = 0; i < v->ncache; ++i) {
-	  free(v->c[i].val);
-	}
 	free(v->c);
 	v->c = 0;
       }
@@ -1507,7 +1523,7 @@ namespace o2scl {
 
     /** \brief Desc
 
-	recursive loop over all cubature points for the given (m,mi)
+	recursive loop over all cubature_new points for the given (m,mi)
 	cache entry: add each point to the buffer buf, evaluating all
 	at once whenever the buffer is full or when we are done
     */
@@ -1516,14 +1532,20 @@ namespace o2scl {
 			 unsigned fdim, func_t &f, 
 			 unsigned dim, unsigned id, double *p,
 			 const vec_t &xmin, const vec_t &xmax,
-			 double *buf, size_t nbuf, size_t *ibuf) {
+			 vec_t &buf, size_t nbuf, size_t *ibuf) {
 
       if (id == dim) {
+
 	/* add point to buffer of points */
-	memcpy(buf + (*ibuf)++ * dim, p, sizeof(double) * dim);
+	for (size_t kk=0;kk<dim;kk++) {
+	  buf[kk+(*ibuf)*dim]=p[kk];
+	}
+	*ibuf++;
+
 	if (*ibuf == nbuf) {
 	  /* flush buffer */
-	  if (f(dim, nbuf, buf, fdim, val + *vali)) {
+	  vec_t vtmp=o2scl::vector_range(val,*vali,val.size());
+	  if (f(dim, nbuf, buf, fdim, vtmp)) {
 	    return o2scl::gsl_failure;
 	  }
 	  *vali += *ibuf * fdim;
@@ -1621,10 +1643,10 @@ namespace o2scl {
 	(cm,cmi,cval). id is the current loop dimension (from 0 to
 	dim-1).
     */
-    unsigned eval(const unsigned *cm, unsigned cmi, double *cval,
+    unsigned eval(const unsigned *cm, unsigned cmi, vec_t &cval,
 		  const unsigned *m, unsigned md,
 		  unsigned fdim, unsigned dim, unsigned id,
-		  double weight, double *val) {
+		  double weight, vec_t &val) {
 
       size_t voff = 0; /* amount caller should offset cval array afterwards */
       if (id == dim) {
@@ -1674,9 +1696,10 @@ namespace o2scl {
 	(with m[md] decremented by 1) 
     */
     void evals(valcache vc, const unsigned *m, unsigned md,
-	       unsigned fdim, unsigned dim, double V, double *val) {
-      
-      memset(val, 0, sizeof(double) * fdim);
+	       unsigned fdim, unsigned dim, double V, vec_t &val) {
+
+      for(size_t kk=0;kk<fdim;kk++) val[kk]=0.0;
+
       for (size_t i = 0; i < vc.ncache; ++i) {
 	if (vc.c[i].mi >= dim ||
 	    vc.c[i].m[vc.c[i].mi] + (vc.c[i].mi == md) <= m[vc.c[i].mi]) {
@@ -1697,7 +1720,7 @@ namespace o2scl {
     void eval_integral(valcache vc, const unsigned *m, 
 		       unsigned fdim, unsigned dim, double V,
 		       unsigned *mi, vec_t &val, vec_t &err,
-		       double *val1) {
+		       vec_t &val1) {
 
       double maxerr = 0;
       unsigned i, j;
@@ -1707,7 +1730,8 @@ namespace o2scl {
       /* error estimates along each dimension by comparing val with
 	 lower-order rule in that dimension; overall (conservative)
 	 error estimate from maximum error of lower-order rules. */
-      memset(err, 0, sizeof(double) * fdim);
+      for(size_t kk=0;kk<fdim;kk++) err[kk]=0.0;
+
       *mi = 0;
       for (i = 0; i < dim; ++i) {
 	double emax = 0;
@@ -1839,7 +1863,7 @@ namespace o2scl {
       valcache vc;
       vc.ncache=0;
       vc.c=0;
-      double *val1 = 0;
+      vec_t val1;
 
       /* norm is irrelevant */
       if (fdim <= 1) norm = ERROR_INDIVIDUAL;
@@ -1871,17 +1895,16 @@ namespace o2scl {
       if (max_nbuf < 1) max_nbuf = 1;
       if (new_nbuf > max_nbuf) new_nbuf = max_nbuf;
       if (*nbuf < new_nbuf) {
-	buf.resize(new_nbuf);
-	for(size_t jj=0;jj<new_nbuf;jj++) buf[jj].resize(dim);
+	buf.resize(new_nbuf*dim);
       }
 
-      /* start by evaluating the m=0 cubature rule */
+      /* start by evaluating the m=0 cubature_new rule */
       if (add_cacheval(&vc, m, dim, fdim, f, dim, xmin, xmax, 
 		       buf, *nbuf) != o2scl::success) {
 	goto done;
       }
 
-      val1 = (double *) malloc(sizeof(double) * fdim);
+      val1.resize(fdim);
 
       while (1) {
 	unsigned mi;
@@ -1915,7 +1938,6 @@ namespace o2scl {
 
     done:
 
-      free(val1);
       free_cachevals(&vc);
       
       return ret;

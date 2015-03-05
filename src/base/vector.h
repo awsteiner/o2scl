@@ -1856,6 +1856,13 @@ namespace o2scl {
     return std::vector<dat_t> (v.begin()+start,v.begin()+last);
   }
 
+  /** \brief Const vector range function template for <tt>std::vector</tt>
+   */
+  template<class dat_t> const std::vector<dat_t>
+    vector_range(const std::vector<dat_t> &v, size_t start, size_t last) {
+    return std::vector<dat_t> (v.begin()+start,v.begin()+last);
+  }
+
   /** \brief Construct a row of a matrix
 
       This class template works with combinations of ublas

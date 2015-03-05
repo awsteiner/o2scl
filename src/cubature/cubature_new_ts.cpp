@@ -3,7 +3,7 @@
   
   Copyright (C) 2015, Andrew W. Steiner
   
-  This file is part of O2scl. It has been adapted from cubature 
+  This file is part of O2scl. It has been adapted from cubature_new 
   written by Steven G. Johnson. 
   
   O2scl is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@
  */
 
 #include <iostream>
-#include <o2scl/cubature.h>
+#include <o2scl/cubature_new.h>
 #include <o2scl/test_mgr.h>
 
 using namespace std;
@@ -263,8 +263,8 @@ int main(void) {
   typedef std::function<
     int(unsigned,size_t,const std::vector<double> &,unsigned,
 	std::vector<double> &)> cub_funct_arr;
-  inte_hcubature<cub_funct_arr,std::vector<double> > hc;
-  inte_pcubature<cub_funct_arr,std::vector<double> > pc;
+  inte_hcubature_new<cub_funct_arr,std::vector<double> > hc;
+  inte_pcubature_new<cub_funct_arr,std::vector<double> > pc;
   
   cub_funct_arr cfa=fv;
 
@@ -298,10 +298,10 @@ int main(void) {
     tol=1.0e-2;
     maxEval=0;
     
-    inte_hcubature<cub_funct_arr,std::vector<double> >::error_norm enh=
-      inte_hcubature<cub_funct_arr,std::vector<double> >::ERROR_INDIVIDUAL;
-    inte_pcubature<cub_funct_arr,std::vector<double> >::error_norm enp=
-      inte_pcubature<cub_funct_arr,std::vector<double> >::ERROR_INDIVIDUAL;
+    inte_hcubature_new<cub_funct_arr,std::vector<double> >::error_norm enh=
+      inte_hcubature_new<cub_funct_arr,std::vector<double> >::ERROR_INDIVIDUAL;
+    inte_pcubature_new<cub_funct_arr,std::vector<double> >::error_norm enp=
+      inte_pcubature_new<cub_funct_arr,std::vector<double> >::ERROR_INDIVIDUAL;
     
     which_integrand = test_iand; 
     
