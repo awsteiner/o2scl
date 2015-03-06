@@ -223,10 +223,6 @@ namespace o2scl {
 
     /** \brief Specification of the hypercubic region over which 
 	one wants to integrate
-	
-	\comment
-	Default copy constructors are not ok for this class
-	\endcomment
      */
     class hypercube {
       
@@ -237,7 +233,31 @@ namespace o2scl {
       /** \brief length 2*dim = center followed by half-widths */
       vec_t data; 
       /** \brief cache volume = product of widths */
-      double vol;   
+      double vol;
+
+      /// Create blank object
+      hypercube() {
+	dim=0;
+	vol=0;
+      }
+      
+      /// Copy constructor
+      hypercube(const hypercube &h) {
+	dim=h.dim;
+	vol=h.vol;
+	data=h.data;
+	return;
+      }
+
+      /// Copy constructor
+      hypercube &operator=(const hypercube &h) {
+	if (this!=&h) {
+	  dim=h.dim;
+	  vol=h.vol;
+	  data=h.data;
+	}
+	return *this;
+      }
     };
 
     /** \brief Desc
@@ -313,6 +333,33 @@ namespace o2scl {
       /** \brief max ee[k].err */
       double errmax; 
 
+      /// Create blank object
+      region() {
+	splitDim=0;
+	fdim=0;
+      }
+      
+      /// Copy constructor
+      region(const region &r) {
+	h=r.h;
+	splitDim=r.splitDim;
+	fdim=r.fdim;
+	ee=r.ee;
+	errmax=r.errmax;
+	return;
+      }
+
+      /// Copy constructor
+      region &operator=(const region &r) {
+	if (this!=&r) {
+	  h=r.h;
+	  splitDim=r.splitDim;
+	  fdim=r.fdim;
+	  ee=r.ee;
+	  errmax=r.errmax;
+	}
+	return *this;
+      }
     };
 
     /** \brief Desc
@@ -342,18 +389,18 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    int cut_region(region *R, region *R2) {
+    int cut_region(region &R, region &R2) {
 
-      unsigned d = R->splitDim, dim = R->h.dim;
-      *R2 = *R;
-      R->h.data[d + dim] *= 0.5;
-      R->h.vol *= 0.5;
-      vec_t vtmp=o2scl::vector_range(R->h.data,dim,R->h.data.size());
-      R2->h = make_hypercube(dim, R->h.data, vtmp);
-      if (R2->h.data.size()==0) return o2scl::gsl_failure;
-      R->h.data[d] -= R->h.data[d + dim];
-      R2->h.data[d] += R->h.data[d + dim];
-      R2->ee.resize(R2->fdim);
+      unsigned d = R.splitDim, dim = R.h.dim;
+      R2=R;
+      R.h.data[d + dim] *= 0.5;
+      R.h.vol *= 0.5;
+      vec_t vtmp=o2scl::vector_range(R.h.data,dim,R.h.data.size());
+      R2.h = make_hypercube(dim, R.h.data, vtmp);
+      if (R2.h.data.size()==0) return o2scl::gsl_failure;
+      R.h.data[d] -= R.h.data[d + dim];
+      R2.h.data[d] += R.h.data[d + dim];
+      R2.ee.resize(R2.fdim);
       return 0;
     }
 
@@ -371,8 +418,10 @@ namespace o2scl {
     /** \brief Desc
      */
     typedef struct rule_s {
-      /** \brief The dimensionality and the number of functions */
-      unsigned dim, fdim;
+      /** \brief The dimensionality */
+      unsigned dim;
+      /** \brief The number of function */
+      unsigned fdim;
       /** \brief The number of evaluation points */
       unsigned num_points;
       /** \brief The max number of regions evaluated at once */
@@ -445,7 +494,7 @@ namespace o2scl {
 
 	\note All regions must have same fdim 
     */
-    int eval_regions(unsigned nR, region *R, 
+    int eval_regions(unsigned nR, std::vector<region> &R, 
 		     func_t &f, rule *r) {
 
       unsigned iR;
@@ -453,9 +502,9 @@ namespace o2scl {
 	/* nothing to evaluate */
 	return o2scl::success;
       }
-      if (r->evalError(r, R->fdim, f, nR, R)) return o2scl::gsl_failure;
+      if (r->evalError(r, R.fdim, f, nR, R)) return o2scl::gsl_failure;
       for (iR = 0; iR < nR; ++iR) {
-	R[iR].errmax = errMax(R->fdim, R[iR].ee);
+	R[iR].errmax = errMax(R.fdim, R[iR].ee);
       }
       return o2scl::success;
     }
@@ -1148,7 +1197,7 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    int heap_push_many(heap *h, size_t ni, heap_item *hi) {
+    int heap_push_many(heap *h, size_t ni, std::vector<heap_item> &hi) {
       for (size_t i = 0; i < ni; ++i) {
 	if (heap_push(h, hi[i])) return o2scl::gsl_failure;
       }
@@ -1310,7 +1359,7 @@ namespace o2scl {
       heap regions;
       unsigned i, j;
       /* array of regions to evaluate */
-      region *R = 0; 
+      std::vector<region> R;
       size_t nR_alloc = 0;
       std::vector<esterr> ee;
 
@@ -1324,7 +1373,7 @@ namespace o2scl {
       ee.resize(fdim);
      
       nR_alloc = 2;
-      R = (region *) malloc(sizeof(region) * nR_alloc);
+      R.resize(nR_alloc);
 
       R[0] = make_region(*h, fdim);
       numEval += r->num_points;
@@ -1369,12 +1418,11 @@ namespace o2scl {
 
 	    if (nR + 2 > nR_alloc) {
 	      nR_alloc = (nR + 2) * 2;
-	      R = (region *) realloc(R, nR_alloc * sizeof(region));
-	      if (!R) goto bad;
+	      R.resize(nR_alloc);
 	    }
 	    R[nR] = heap_pop(&regions);
 	    for (j = 0; j < fdim; ++j) ee[j].err -= R[nR].ee[j].err;
-	    if (cut_region(R+nR, R+nR+1)) goto bad;
+	    if (cut_region(R[nR], R[nR+1])) goto bad;
 	    numEval += r->num_points * 2;
 	    nR += 2;
 	    if (converged(fdim, ee, reqAbsError, reqRelError, norm)) {
@@ -1395,7 +1443,7 @@ namespace o2scl {
 	  
 	  /* get worst region */
 	  R[0] = heap_pop(&regions); 
-	  if (cut_region(R, R+1)
+	  if (cut_region(R[0], R[1])
 	      || eval_regions(2, R, f, r)
 	      || heap_push_many(&regions, 2, R))
 	    goto bad;
@@ -1415,15 +1463,13 @@ namespace o2scl {
       
       ee.clear();
       heap_free(&regions);
-      free(R);
-
+      
       return o2scl::success;
 
     bad:
       
       ee.clear();
       heap_free(&regions);
-      free(R);
 
       return o2scl::gsl_failure;
     }
