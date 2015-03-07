@@ -9,18 +9,15 @@ AM_INIT_AUTOMAKE
 
 # Checks for compiler and other required programs
 AC_PROG_CXX
-AC_PROG_CC
-AC_PROG_CPP
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 
+# Require c++11 support
+AX_CXX_COMPILE_STDCXX_11
+
 # Newer replacement for AC_PROG_LIBTOOL
 LT_INIT
-
-# Checks for header files.
-AC_HEADER_STDC
-AC_CHECK_HEADERS([malloc.h stdlib.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
@@ -31,7 +28,6 @@ AC_TYPE_SIZE_T
 # Checks for library functions.
 AC_FUNC_MALLOC
 AC_FUNC_SELECT_ARGTYPES
-AC_FUNC_STRTOD
 
 # Check for popen
 AC_CHECK_FUNC([popen],[AC_DEFINE([HAVE_POPEN],[1],
