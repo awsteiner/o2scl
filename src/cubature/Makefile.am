@@ -6,7 +6,7 @@ CUBATURE_SRCS =
 
 HEADERS_VAR = clencurt.h cubature.h cubature_new.h
 
-TEST_VAR = cubature.scr cubature_new.scr
+TEST_VAR = cubature.scr
 
 # ------------------------------------------------------------
 # Includes
