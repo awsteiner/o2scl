@@ -2472,7 +2472,7 @@ int acol_manager::comm_list(std::vector<std::string> &sv, bool itive_com) {
     if (tabp->get_nunits()>0) {
       tabp->summary(&cout,ncols);
     } else {
-      tabp->table<>::summary(&cout,ncols);
+      tabp->table<std::vector<double> >::summary(&cout,ncols);
     }
   } else {
     cerr << "No table to list columns for." << endl;

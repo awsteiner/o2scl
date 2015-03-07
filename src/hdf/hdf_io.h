@@ -284,7 +284,7 @@ namespace o2scl_hdf {
   /// Input a \ref o2scl::tensor_grid object from a \ref hdf_file
   template<class vec_t, class vec_size_t>
     void hdf_input(hdf_file &hf, o2scl::tensor_grid<vec_t, vec_size_t> &t, 
-		   std::string name="") {
+		   std::string name) {
 
     // If no name specified, find name of first group of specified type
     if (name.length()==0) {
