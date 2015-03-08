@@ -3,7 +3,7 @@ libraries built on GNU Autotools (like O2scl). For detailed
 installation instructions on O2scl and a list of dependencies, see
 http://o2scl.sourceforge.net. Alternatively, if you obtained O2scl
 from a release distribution, then the documentation can be found in
-doc/o2scl/html/index.html or doc/o2scl/latex/refman.pdf.
+doc/o2scl/html/index.html.
 
 ---------------------------------------------------------------------
 

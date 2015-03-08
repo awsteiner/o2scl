@@ -1,20 +1,39 @@
 /** \page install_section Installation
     
+    \section installdir_subsect Installation instructions
+
     \o2 installation is generally the same as that for other GNU
     libraries. The file \c INSTALL has some details on this procedure.
     Generally, you should be able to run <tt>./configure</tt> and then
     type \c make and \c make \c install. More information on the \c
     configure command can also be obtained from <tt>./configure
-    --help</tt>. \o2 requires Boost and the GSL library. If the
-    <tt>configure</tt> script cannot find Boost or GSL, you may have
-    to specify their location in the <tt>CPPFLAGS</tt> and
-    <tt>LDFLAGS</tt> environment variables (<tt>./configure
-    --help</tt> shows some information on this). The documentation is
-    included in the distribution and automatically installed by \c
+    --help</tt>. \o2 assumes some C++11 support, typically that which
+    was supported in gcc-4.4.7 and higher. The <tt>./configure</tt>
+    script attempts to determine the proper compiler flags for C++11
+    support, e.g. <tt>-std=gnu++11</tt>. The documentation is included
+    in the \o2 release distribution and automatically installed by \c
     make \c install.
 
+    \o2 requires the Boost (any relatively recent version) and the GSL
+    libraries (version 1.16). If the <tt>configure</tt> script cannot
+    find Boost or GSL, you may have to specify their location in the
+    <tt>CXXFLAGS</tt> and <tt>LDFLAGS</tt> environment variables
+    (<tt>./configure --help</tt> shows some information on this).
+    Along with GSL, a CBLAS library is also required, and
+    <tt>./configure</tt> will look for <tt>libcblas</tt> first, and if
+    not found then it will look for <tt>libgslcblas</tt>. If neither
+    is present, then you may have to manually specify a CBLAS library
+    using the <tt>LIBS</tt> and <tt>LDFLAGS</tt> environment
+    variables.
+
+    Compiling with the readline and HDF5 libraries is optional, but
+    they are assumed to be present by default. To compile without
+    these libraries, you will need to use the arguments
+    <tt>--disable-readline</tt> or <tt>--disable-hdf</tt> to
+    <tt>./configure</tt>, respectively.
+
     After \c make \c install, you may test the library with \c make \c
-    o2scl-test. At the end, the phrase <tt>All O2scl tests passed</tt>
+    o2scl-test. At the end, the phrase "<tt>All O2scl tests passed</tt>"
     indicates that the testing was successful. You may also run \c
     make \c o2scl-test in the individual subdirectories of the src
     directory to individually test the classes and functions in that
@@ -24,22 +43,21 @@
     o2scl-test</tt>, running <tt>src/base/lib_settings_ts</tt> will
     output several of the installation settings.
 
-    \comment 
-    This ensures that the URLs fit in the PDF documentation
-    \endcomment
-    \latexonly
-    \sloppy
-    \endlatexonly
+    \section installmac_subsect Compiling on Mac OSX
 
-    This library requires GSL and is designed to work with GSL
-    versions 1.16 or greater, which can be obtained from
-    http://www.gnu.org/software/gsl . Some classes may work with older
-    versions of GSL, but this cannot be guaranteed. A CBLAS library is
-    also required, and <tt>./configure</tt> will look for
-    <tt>libcblas</tt> first, and if not found then it will look for
-    <tt>libgslcblas</tt>. If neither is present, then you may have to
-    manually specify a CBLAS library using the <tt>LIBS</tt> and
-    <tt>LDFLAGS</tt> environment variables.
+    The easiest way to perform compilation on Mac OSX is 
+    with homebrew. Use:
+
+    \code
+    brew tap awsteiner/science
+    brew install o2scl
+    \endcode
+
+    to install \o2 . Alternatively, it is also possible to install
+    directly from source with the <tt>./configure</tt> script as
+    described above.
+
+    \section installopt_subsect Optional linear algebra libraries
 
     Most classes and functions which require linear algebra can be
     used with the Eigen (http://eigen.tuxfamily.org) or Armadillo
@@ -50,28 +68,17 @@
     Armadillo must be compiled with LAPACK support, and you may need
     to specify the location of the LAPACK libraries manually.
 
-    File I/O is handled using the HDF5 library, which can be obtained
-    from http://www.hdfgroup.org . To compile \o2 without HDF support,
-    use the argument <tt>--disable-hdf</tt> to <tt>configure</tt>
-    during installation. If HDF5 is not located in a typical location
-    for your system, in order to compile \o2 with HDF support you may
-    have to specify the location of the HDF header files and libraries
-    with the <tt>-I</tt> and <tt>-L</tt> flags. Some \o2 functions use
-    the high-level HDF routines found in the \c hdf5_hl library, but
-    this library is usually in the same location as the base hdf5
-    library.
-
-    \o2 assumes some c++11 support, typically that which was supported
-    in gcc-4.4.7 and higher. You may have to add a flag to compile
-    with c++11 support to your compiler, e.g. <tt>-std=c++0x</tt>.
+    \section installrange_subsect Range-checking
 
     Range-checking for vectors and matrices is turned on by default.
     You can disable range-checking by defining -DO2SCL_NO_RANGE_CHECK,
     e.g. 
 
     \code
-    CPPFLAGS="-DO2SCL_NO_RANGE_CHECK" ./configure
+    CXXFLAGS="-DO2SCL_NO_RANGE_CHECK" ./configure
     \endcode
+
+    \section installphys_subsect Optional physics libraries
 
     The separate libraries \o2e and \o2p are installed by default. To
     disable the installation of these libraries and their associated
@@ -80,6 +87,8 @@
     on \o2p so using \c --disable-partlib without \c --disable-eoslib
     will not work. Note also that both \o2p and \o2e require
     HDF5 support. 
+
+    \section installflags_subsect More configure flags
 
     There are several warning flags that are useful when configuring
     and compiling with \o2. See the GSL documentation for an 
@@ -90,7 +99,7 @@
 
     \code
     CPPFLAGS="-O3 -I/home/asteiner/install/include" \
-    LDFLAGS="-L/home/asteiner/install/lib" ./configure -C \
+    LDFLAGS="-L/home/asteiner/install/lib" ./configure \
     --prefix=/home/asteiner/install
     \endcode
     In this example, specifying
@@ -100,28 +109,21 @@
     machine). The <tt>--prefix=/home/asteiner/install</tt> argument to
     <tt>./configure</tt> ensures that \o2 is installed there as well.
 
-    For those users wanting to compile \o2 under Xcode on a Mac, some
-    advice for doing this has been posted to the \c o2scl-help mailing
-    list.
+    \section installdoxygen_subsect Generation of documentation
 
     The \o2 documentation is generated with \doxygen. In principle,
     the documentation can be regenerated by the end-user, but this is
     not supported and requires several external applications not
     included in the distribution.
 
-    \b Un-installation: While there is no explicit "uninstall"
-    makefile target, there are only a couple places to check.
-    Installation creates directories named <tt>o2scl</tt> in the
-    include, doc and shared files directory (which default to \c
-    /usr/local/include, \c /usr/local/doc, and \c /usr/local/share)
-    which can be removed. Finally, all of the libraries are named with
-    the prefix \c libo2scl and are created by default in
-    /usr/local/lib. As configured with the settings above, the files
-    are in \c /home/asteiner/install/include/o2scl, \c
-    /home/asteiner/install/lib, \c /home/asteiner/install/share/o2scl,
-    and \c /home/asteiner/install/doc/o2scl.
+    \section uninstall_subsect Uninstallation
 
-    \latexonly
-    \fussy
-    \endlatexonly
+    While there is no explicit "uninstall" makefile target, there are
+    only a couple places to check. Installation creates directories
+    named <tt>o2scl</tt> in the include, doc and shared files
+    directory (which default to \c /usr/local/include, \c
+    /usr/local/doc, and \c /usr/local/share) which can be removed. The
+    <tt>acol</tt> command-line utility is installed to \c
+    /usr/local/bin . Finally, all of the libraries are named with the
+    prefix \c libo2scl and are created by default in /usr/local/lib.
 */
