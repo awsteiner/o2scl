@@ -410,7 +410,7 @@ namespace o2scl {
   /** \brief Swap the first N elements of two vectors
 
       This function swaps the elements of \c v1 and \c v2, one element
-      at a time.
+      at a time. 
   */
   template<class vec_t, class vec2_t, class data_t> 
     void vector_swap(size_t N, vec_t &v1, vec2_t &v2) {
@@ -442,6 +442,9 @@ namespace o2scl {
 
       This function swaps the elements of \c v1 and \c v2, one element
       at a time.
+
+      \note It is almost always better to use <tt>std::swap</tt>
+      than this function.
   */
   template<class vec_t, class vec2_t, class data_t> 
     void vector_swap(vec_t &v1, vec2_t &v2) {
@@ -950,6 +953,24 @@ namespace o2scl {
     return max;
   }
 
+  /** \brief Compute the maximum value of a vector
+   */
+  template<class vec_t, class data_t>
+    data_t vector_max_value(const vec_t &data) {
+
+    size_t n=data.size();
+    if (n==0) {
+      O2SCL_ERR("Sent empty vector to vector_max_value().",exc_efailed);
+    }
+    data_t max=data[0];
+    for(size_t i=1;i<n;i++) {
+      if (data[i]>max) {
+	max=data[i];
+      }
+    }
+    return max;
+  }
+
   /** \brief Compute the index which holds the 
       maximum of the first \c n elements of a vector
    */
@@ -997,6 +1018,24 @@ namespace o2scl {
     
     if (n==0) {
       O2SCL_ERR("Sent size=0 to vector_min_value().",exc_efailed);
+    }
+    data_t min=data[0];
+    for(size_t i=1;i<n;i++) {
+      if (data[i]<min) {
+	min=data[i];
+      }
+    }
+    return min;
+  }
+
+  /** \brief Compute the minimum value in a vector
+   */
+  template<class vec_t, class data_t>
+    data_t vector_min_value(const vec_t &data) {
+
+    size_t n=data.size();
+    if (n==0) {
+      O2SCL_ERR("Sent empty vector to vector_min_value().",exc_efailed);
     }
     data_t min=data[0];
     for(size_t i=1;i<n;i++) {
