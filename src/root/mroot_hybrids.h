@@ -466,6 +466,10 @@ namespace o2scl {
       classes given in <tt>examples/ex_mroot.cpp</tt>, see the \ref
       ex_mroot_sect .
 
+      \note The \ref set() and \ref set_de() functions store a pointer
+      to the function object and the user must ensure that the object
+      is still valid for a later call to \ref iterate(). 
+
       The original GSL algorithm has been modified to shrink the
       stepsize if a proposed step causes the function to return a
       non-zero value. This allows the routine to automatically try to

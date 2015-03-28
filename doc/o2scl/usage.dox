@@ -158,34 +158,16 @@
     by GSL, for example.
 
     Member functions which store pointers to user-specified objects
-    warn that they are doing so in the documentation for the class.
+    should warn that they are doing so in the documentation for the
+    class.
 
-    \todo This section of the documentation needs to be fixed.
-    \comment
-    This is commented out because I'm deprecating inte_multi_comp .
-
-    A simple example of this is provided by the multi-dimensional
-    integrator \ref o2scl::inte_multi_comp. It works by combining several
-    one-dimensional integrators to integrate over a multi-dimensional
-    hybercube. If the specified one-dimensional integrator goes
-    out of scope an integration is attempted, the integration will
-    fail, for example,
-    \include scope_doc.cpp
-
-    This will fail because the one-dimensional integration objects go
-    out of scope (it's a local variable in the function and its
-    destructor is called before the <tt>set_integrator()</tt> function
-    exits) before the <tt>minteg_err()</tt> function is called.
-
-    This difficulty can be solved by using shared pointers, which
-    ensure that an object is deleted only when it has no more
-    references which are pointing to it. While shared pointer objects
-    are part of the new TR1 standard, not all compilers implement this
-    standard yet. If TR1 is not available, then the user can define
-    the constant O2SCL_NO_TR1_MEMORY and the boost shared pointer type
-    will be used. See the documentation for \ref o2scl::o2_shared_ptr
-    for more details.
-    \endcomment
+    For example, say that a user wants to solve several equations
+    using a \ref o2scl::mroot_hybrids object and use the functions
+    \ref o2scl::mroot_hybrids::set() and \ref
+    o2scl::mroot_hybrids::iterate(). Since the function is specified
+    by the call to <tt>set()</tt>, it is important that this function
+    object does not go out of scope before the call to
+    <tt>iterate()</tt> occurs.
 
     \section refparm_subsect Reference parameters
 

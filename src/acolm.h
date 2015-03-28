@@ -60,10 +60,6 @@ namespace o2scl_acol {
       but it might be ok.
       \endcomment
 
-      \todo Rework so that the error handler isn't called prematurely.
-      Ensure table::make_cols() and table::calc() don't call the error 
-      handler.
-      
       \todo Ensure add() copies constants and interpolation type,
       and units. 
 

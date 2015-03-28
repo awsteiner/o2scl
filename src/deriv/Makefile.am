@@ -68,7 +68,7 @@ pkginclude_HEADERS = $(HEADERS_VAR)
 
 check_PROGRAMS = deriv_cern_ts deriv_eqi_ts deriv_gsl_ts vector_derint_ts
 
-# TESTS = $(check_PROGRAMS)
+check_SCRIPTS = o2scl-test
 
 if O2SCL_HDF
 VCHECK_LIBS = $(libdir)/libo2scl.la $(libdir)/libo2scl_hdf.la

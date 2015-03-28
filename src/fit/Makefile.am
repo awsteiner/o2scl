@@ -68,7 +68,10 @@ pkginclude_HEADERS = $(HEADER_VAR)
 # ------------------------------------------------------------
 
 check_PROGRAMS = fit_base_ts fit_min_ts fit_nonlin_ts fit_fix_ts \
-	fit_linear_ts fit_bayes_ts
+	fit_linear_ts
+# fit_bayes_ts
+
+check_SCRIPTS = o2scl-test
 
 if O2SCL_HDF
 VCHECK_LIBS = $(libdir)/libo2scl.la $(libdir)/libo2scl_hdf.la
@@ -81,10 +84,10 @@ fit_nonlin_ts_LDADD = $(VCHECK_LIBS)
 fit_min_ts_LDADD = $(VCHECK_LIBS)
 fit_fix_ts_LDADD = $(VCHECK_LIBS)
 fit_linear_ts_LDADD = $(VCHECK_LIBS)
-fit_bayes_ts_LDADD = $(VCHECK_LIBS)
+#fit_bayes_ts_LDADD = $(VCHECK_LIBS)
 
-fit_bayes.scr: fit_bayes_ts$(EXEEXT)
-	./fit_bayes_ts$(EXEEXT) > fit_bayes.scr
+#fit_bayes.scr: fit_bayes_ts$(EXEEXT)
+#	./fit_bayes_ts$(EXEEXT) > fit_bayes.scr
 fit_base.scr: fit_base_ts$(EXEEXT)
 	./fit_base_ts$(EXEEXT) > fit_base.scr
 fit_nonlin.scr: fit_nonlin_ts$(EXEEXT)
@@ -96,7 +99,7 @@ fit_fix.scr: fit_fix_ts$(EXEEXT)
 fit_linear.scr: fit_linear_ts$(EXEEXT)
 	./fit_linear_ts$(EXEEXT) > fit_linear.scr
 
-fit_bayes_ts_SOURCES = fit_bayes_ts.cpp
+#fit_bayes_ts_SOURCES = fit_bayes_ts.cpp
 fit_base_ts_SOURCES = fit_base_ts.cpp
 fit_nonlin_ts_SOURCES = fit_nonlin_ts.cpp
 fit_min_ts_SOURCES = fit_min_ts.cpp

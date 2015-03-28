@@ -113,7 +113,7 @@ namespace o2scl {
 
   /// \name Copying vectors and matrices
   //@{
-  /** \brief Simple generic vector copy
+  /** \brief Simple vector copy
 
       Copy \c src to \c dest, resizing \c dest if it is too small
       to hold <tt>src.size()</tt> elements.
@@ -139,7 +139,7 @@ namespace o2scl {
     return;
   }
   
-  /** \brief Simple generic vector copy of the first N elements
+  /** \brief Simple vector copy of the first N elements
 
       Copy the first \c N elements of \c src to \c dest.
       It is assumed that the memory allocation for \c dest
@@ -166,7 +166,7 @@ namespace o2scl {
     return;
   }
 
-  /** \brief Simple generic matrix copy
+  /** \brief Simple matrix copy
       
       Copy \c src to \c dest, resizing \c dest if it is too small.
       
@@ -186,7 +186,7 @@ namespace o2scl {
     }
   }
 
-  /** \brief Simple generic matrix copy of the first \f$ (M,N) \f$ 
+  /** \brief Simple matrix copy of the first \f$ (M,N) \f$ 
       matrix elements
 
       Copy the first <tt>(M,N)</tt> elements of \c src to \c dest. It
@@ -211,7 +211,7 @@ namespace o2scl {
 
   /// \name Tranpositions
   //@{
-  /** \brief Simple generic transpose
+  /** \brief Simple transpose
       
       Copy the transpose of \c src to \c dest, resizing \c dest if it
       is too small.
@@ -224,7 +224,7 @@ namespace o2scl {
     void matrix_transpose(mat_t &src, mat2_t &dest) {
     size_t m=src.size1();
     size_t n=src.size2();
-    if (dest.size1()<m || dest.size2()<n) dest.resize(n,m);
+    if (dest.size1()<n || dest.size2()<m) dest.resize(n,m);
     for(size_t i=0;i<m;i++) {
       for(size_t j=0;j<n;j++) {
 	dest(i,j)=src(j,i);
@@ -232,7 +232,8 @@ namespace o2scl {
     }
   }
 
-  /** \brief Simple generic transpose
+  /** \brief Simple transpose of the first \f$ (m,n) \f$
+      matrix elements
 
       Copy the transpose of the first \c m rows and the first \c cols
       of the matrix \c src into the matrix \c dest
@@ -249,9 +250,11 @@ namespace o2scl {
     }
   }
 
-  /** \brief Simple generic transpose in-place
+  /** \brief Simple transpose in-place
       
-      Transpose the matrix \c src .
+      Transpose the matrix \c src . If the matrix is not square,
+      only the upper-left square part of the matrix will be
+      transposed.
       
       This function will work for any classes \c mat_t and
       \c mat2_t which have suitably defined <tt>operator()</tt>,
@@ -261,8 +264,10 @@ namespace o2scl {
     void matrix_transpose(mat_t &src) {
     size_t m=src.size1();
     size_t n=src.size2();
+    // Choose the smaller of n and m
+    if (m<n) n=m;
     data_t tmp;
-    for(size_t i=0;i<m;i++) {
+    for(size_t i=0;i<n;i++) {
       for(size_t j=0;j<n;j++) {
 	tmp=src(i,j);
 	src(i,j)=src(j,i);
@@ -271,7 +276,8 @@ namespace o2scl {
     }
   }
 
-  /** \brief Simple generic transpose in-place
+  /** \brief Simple in-place transpose of the first \f$ (m,n) \f$ 
+      matrix elements
 
       Copy the transpose of the first \c m rows and the first \c cols
       of the matrix \c src into the matrix \c dest
@@ -294,7 +300,7 @@ namespace o2scl {
 
   /// \name Upper and lower triangular functions
   //@{
-  /** \brief Simple generic test that a matrix is lower triangular
+  /** \brief Simple test that a matrix is lower triangular
    */
   template<class mat_t> bool matrix_is_lower(mat_t &src) {
     size_t m=src.size1();
@@ -308,7 +314,7 @@ namespace o2scl {
     return ret;
   }
 
-  /** \brief Simple generic test that a matrix is upper triangular
+  /** \brief Simple test that a matrix is upper triangular
    */
   template<class mat_t> bool matrix_is_upper(mat_t &src) {
     size_t m=src.size1();
@@ -350,7 +356,7 @@ namespace o2scl {
     return;
   }
 
-  /** \brief Simple generic test that a matrix is lower triangular
+  /** \brief Simple test that a matrix is lower triangular
       for the first \c m rows and \c n columns
    */
   template<class mat_t> bool matrix_is_lower(size_t m, size_t n, 
@@ -364,7 +370,7 @@ namespace o2scl {
     return ret;
   }
 
-  /** \brief Simple generic test that a matrix is upper triangular
+  /** \brief Simple test that a matrix is upper triangular
       for the first \c m rows and \c n columns
    */
   template<class mat_t> bool matrix_is_upper(size_t m, size_t n, 
@@ -407,7 +413,7 @@ namespace o2scl {
 
   /// \name Swapping parts of vectors and matrices
   //@{
-  /** \brief Swap the first N elements of two vectors
+  /** \brief Swap the first \c N elements of two vectors
 
       This function swaps the elements of \c v1 and \c v2, one element
       at a time. 
@@ -444,7 +450,9 @@ namespace o2scl {
       at a time.
 
       \note It is almost always better to use <tt>std::swap</tt>
-      than this function.
+      than this function, which is provided only in cases where
+      one knows one is going to be forced to use a vector type
+      without a properly defined <tt>std::swap</tt> method.
   */
   template<class vec_t, class vec2_t, class data_t> 
     void vector_swap(vec_t &v1, vec2_t &v2) {
@@ -474,30 +482,35 @@ namespace o2scl {
     return;
   }
 
-  /** \brief Generic swap of of the first N elements of two
+  /** \brief Swap of of the first N elements of two
       double-precision vectors
 
       This function swaps the elements of \c v1 and \c v2, one element
       at a time.
-   */
+  */
   template<class vec_t, class vec2_t>
     void vector_swap_double(size_t N, vec_t &v1, vec2_t &v2) {
     return vector_swap<vec_t,vec2_t,double>(N,v1,v2);
   }
 
-  /** \brief Generic swap of of the first N elements of two
+  /** \brief Swap of all the elements in two
       double-precision vectors
 
       This function swaps the elements of \c v1 and \c v2, one element
       at a time.
+
+      \note It is almost always better to use <tt>std::swap</tt>
+      than this function, which is provided only in cases where
+      one knows one is going to be forced to use a vector type
+      without a properly defined <tt>std::swap</tt> method.
    */
   template<class vec_t, class vec2_t>
     void vector_swap_double(vec_t &v1, vec2_t &v2) {
     return vector_swap<vec_t,vec2_t,double>(v1,v2);
   }
 
-  /** \brief Generic swap two elements in a vector
-
+  /** \brief Swap two elements in a vector
+      
       This function swaps the element \c i and element \c j of vector
       \c v1. 
    */
@@ -509,17 +522,20 @@ namespace o2scl {
     return;
   }
   
-  /** \brief Generic swap two elements in a vector
+  /** \brief Swap two elements in a vector
       
       This function swaps the element \c i and element \c j of vector
       \c v1. 
+      
+      This function is used in \ref o2scl_linalg::QRPT_decomp() .
   */
   template<class vec_t>
     void vector_swap_double(vec_t &v, size_t i, size_t j) {
     return vector_swap<vec_t,double>(v,i,j);
   }
   
-  /** \brief Generic swap of two matrices
+  /** \brief Swap of the first \f$ (M,N) \f$ elements in two
+      matrices
       
       This function swaps the elements of \c v1 and \c v2, one element
       at a time.
@@ -537,7 +553,8 @@ namespace o2scl {
     return;
   }
 
-  /** \brief Generic swap of two matrices
+  /** \brief Swap of the first \f$ (M,N) \f$ elements in two
+      matrices
       
       This function swaps the elements of \c m1 and \c m2, one element
       at a time.
@@ -547,7 +564,7 @@ namespace o2scl {
     return matrix_swap<mat_t,mat2_t,double>(M,N,m1,m2);
   }
 
-  /** \brief Generic swap two elements in a matrix
+  /** \brief Swap two elements in a matrix
 
       This function swaps the element <tt>(i1,j1)</tt> and 
       element <tt>(i2,j2)</tt> of matrix \c m1. 
@@ -560,7 +577,7 @@ namespace o2scl {
     return;
   }
   
-  /** \brief Generic swap two elements in a matrix
+  /** \brief Swap two elements in a matrix
       
       This function swaps the element \c i and element \c j of matrix
       \c v1. 
@@ -571,7 +588,7 @@ namespace o2scl {
     return matrix_swap<mat_t,double>(m,i1,j1,i2,j2);
   }
   
-  /** \brief Generic swap two columns in a matrix
+  /** \brief Swap the first \c M rows of two columns in a matrix
 
       This function swaps the element <tt>(i1,j1)</tt> and 
       element <tt>(i2,j2)</tt> of matrix \c m1. 
@@ -587,7 +604,8 @@ namespace o2scl {
     return;
   }
   
-  /** \brief Generic swap two elements in a matrix
+  /** \brief Swap the first \c M rows of two columns in a 
+      double-precision matrix
       
       This function swaps the element \c i and element \c j of matrix
       \c v1. 
@@ -597,7 +615,8 @@ namespace o2scl {
     return matrix_swap_cols<mat_t,double>(M,m,j1,j2);
   }
   
-  /** \brief Generic swap two columns in a matrix
+  /** \brief Swap the first \c N columns of two rows in a 
+      matrix
 
       This function swaps the element <tt>(i1,j1)</tt> and 
       element <tt>(i2,j2)</tt> of matrix \c m1. 
@@ -613,7 +632,8 @@ namespace o2scl {
     return;
   }
   
-  /** \brief Generic swap two elements in a matrix
+  /** \brief Swap the first \c N columns of two rows in a 
+      double-precision matrix
       
       This function swaps the element \c i and element \c j of matrix
       \c v1. 
@@ -643,6 +663,8 @@ namespace o2scl {
     }
     
     data[k]=v;
+
+    return;
   }
 
   /** \brief Sort a vector (in increasing order)
@@ -833,12 +855,14 @@ namespace o2scl {
   
   /// \name Smallest or largest subset functions
   //@{
-  /** \brief Find the k smallest entries of a vector
+  /** \brief Find the k smallest entries of the first \c n elements
+      of a vector
 
-      Given a vector \c data of size \c n this sets the first \c k
-      entries of the vector \c smallest to the k smallest entries from
-      vector \c data in ascending order. The vector \c smallest must
-      be allocated beforehand to hold at least \c k elements.
+      Given a vector \c data of size \c n, this function sets the
+      first \c k entries of the vector \c smallest to the k smallest
+      entries from vector \c data in ascending order. The vector \c
+      smallest must be allocated beforehand to hold at least \c k
+      elements.
 
       This works similarly to the GSL function <tt>gsl_sort_smallest()</tt>.
 
@@ -883,7 +907,31 @@ namespace o2scl {
     return;
   }
 
-  /** \brief Find the k largest entries of a vector
+  /** \brief Find the k smallest entries of a vector
+      of a vector
+
+      Given a vector \c data, this function sets the first \c k
+      entries of the vector \c smallest to the k smallest entries from
+      vector \c data in ascending order. The vector \c smallest
+      is resized if necessary to hold at least \c k elements.
+
+      This works similarly to the GSL function <tt>gsl_sort_smallest()</tt>.
+
+      \note This \f$ {\cal O}(k N) \f$ algorithm is useful only when 
+      \f$ k << N \f$.
+
+      If \c k is zero, then this function does nothing and
+      returns \ref o2scl::success .
+   */
+  template<class vec_t, class data_t>
+    void vector_smallest(vec_t &data, size_t k, vec_t &smallest) {
+    size_t n=data.size();
+    if (smallest.size()<k) smallest.resize(k);
+    return vector_smallest(n,data,k,smallest);
+  }
+
+  /** \brief Find the k largest entries of the first \c n elements
+      of a vector
 
       Given a vector \c data of size \c n this sets the first \c k
       entries of the vector \c largest to the k largest entries from
@@ -932,8 +980,31 @@ namespace o2scl {
     }
     return;
   }
+  
+  /** \brief Find the k largest entries of a vector
+      of a vector
+      
+      Given a vector \c data, this function sets the first \c k
+      entries of the vector \c largest to the k largest entries from
+      vector \c data in ascending order. The vector \c largest
+      is resized if necessary to hold at least \c k elements.
+      
+      This works similarly to the GSL function <tt>gsl_sort_largest()</tt>.
+      
+      \note This \f$ {\cal O}(k N) \f$ algorithm is useful only when 
+      \f$ k << N \f$.
+      
+      If \c k is zero, then this function does nothing and
+      returns \ref o2scl::success .
+  */
+  template<class vec_t, class data_t>
+    void vector_largest(vec_t &data, size_t k, vec_t &largest) {
+    size_t n=data.size();
+    if (largest.size()<k) largest.resize(k);
+    return vector_largest(n,data,k,largest);
+  }
   //@}
-
+  
   /// \name Vector minimum and maximum functions
   //@{
   /** \brief Compute the maximum of the first \c n elements of a vector
@@ -1625,6 +1696,23 @@ namespace o2scl {
     }
     return vector_bsearch_dec<vec_t,data_t>(x0,x,lo,hi);
   }
+  
+  /** \brief Binary search a monotonic vector for
+      <tt>x0</tt>.
+      
+      This function calls \ref o2scl::vector_bsearch_inc() or
+      \ref o2scl::vector_bsearch_dec() depending on the ordering
+      of \c x. 
+  */
+  template<class vec_t, class data_t> 
+    size_t vector_bsearch(const data_t x0, const vec_t &x) {
+    size_t lo=0;
+    size_t hi=x.size();
+    if (x[lo]<x[hi-1]) {
+      return vector_bsearch_inc<vec_t,data_t>(x0,x,lo,hi);
+    }
+    return vector_bsearch_dec<vec_t,data_t>(x0,x,lo,hi);
+  }
   //@}
 
   /// \name Miscellaneous mathematical functions
@@ -1802,9 +1890,9 @@ namespace o2scl {
     
     return;
   }
-
-  /** \brief Reverse a vector
-
+  
+  /** \brief Reverse the first \c n elements of a vector
+      
       If \c n is zero, this function will silently do nothing.
   */
   template<class vec_t, class data_t>
@@ -1837,7 +1925,8 @@ namespace o2scl {
     return;
   }
 
-  /** \brief Reverse a vector of double precision numbers
+  /** \brief Reverse the first n elements in a vector of double
+      precision numbers
 
       If \c n is zero, this function will silently do nothing.
   */
@@ -1871,7 +1960,10 @@ namespace o2scl {
   }
 
   /** \brief Vector range function for pointers
-   */
+      
+      \note This function is currently used in the \o2 implementation
+      of the Cubature integration functions.
+  */
   template<class dat_t> dat_t *vector_range
     (dat_t *v, size_t start, size_t last) {
     return v+start;
@@ -1989,14 +2081,12 @@ namespace o2scl {
     }
   };
 
-  /** \brief Output a vector to a stream
+  /** \brief Output the first \c n elements of a vector to a stream,
+      \c os
       
       No trailing space is output after the last element, and an
       endline is output only if \c endline is set to \c true.  If the
       parameter \c n is zero, this function silently does nothing.
-
-      Note that the \o2 vector classes also have their own
-      \c operator<<() defined for them.
 
       This works with any class <tt>vec_t</tt> which has an operator[]
       which returns either the value of or a reference to the ith
@@ -2021,9 +2111,6 @@ namespace o2scl {
       No trailing space is output after the last element, and an
       endline is output only if \c endline is set to \c true.  If the
       parameter \c n is zero, this function silently does nothing.
-
-      Note that the \o2 vector classes also have their own
-      \c operator<<() defined for them.
 
       This works with any class <tt>vec_t</tt> which has an operator[]
       which returns either the value of or a reference to the ith

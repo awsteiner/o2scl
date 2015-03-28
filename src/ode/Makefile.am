@@ -74,8 +74,10 @@ pkginclude_HEADERS = $(HEADER_VAR)
 # ------------------------------------------------------------
 
 check_PROGRAMS = astep_gsl_ts ode_rkck_gsl_ts astep_nonadapt_ts \
-	ode_iv_solve_ts ode_bv_solve_ts ode_rk8pd_gsl_ts ode_it_solve_ts \
-	ode_bsimp_gsl_ts ode_rkf45_gsl_ts ode_iv_table_ts ode_bv_mshoot_ts 
+	ode_iv_solve_ts ode_rk8pd_gsl_ts ode_it_solve_ts \
+	ode_bsimp_gsl_ts ode_rkf45_gsl_ts 
+
+#ode_bv_mshoot_ts ode_bv_solve_ts ode_iv_table_ts
 
 if O2SCL_HDF
 VCHECK_LIBS = $(libdir)/libo2scl.la $(libdir)/libo2scl_hdf.la
@@ -89,10 +91,10 @@ ode_rkck_gsl_ts_LDADD = $(VCHECK_LIBS)
 ode_bsimp_gsl_ts_LDADD = $(VCHECK_LIBS)
 astep_nonadapt_ts_LDADD = $(VCHECK_LIBS)
 ode_iv_solve_ts_LDADD = $(VCHECK_LIBS)
-ode_iv_table_ts_LDADD = $(VCHECK_LIBS)
-ode_bv_mshoot_ts_LDADD = $(VCHECK_LIBS)
+#ode_iv_table_ts_LDADD = $(VCHECK_LIBS)
+#ode_bv_mshoot_ts_LDADD = $(VCHECK_LIBS)
 ode_it_solve_ts_LDADD = $(VCHECK_LIBS)
-ode_bv_solve_ts_LDADD = $(VCHECK_LIBS)
+#ode_bv_solve_ts_LDADD = $(VCHECK_LIBS)
 ode_rk8pd_gsl_ts_LDADD = $(VCHECK_LIBS)
 
 astep_gsl.scr: astep_gsl_ts$(EXEEXT)
@@ -109,14 +111,14 @@ astep_nonadapt.scr: astep_nonadapt_ts$(EXEEXT)
 	./astep_nonadapt_ts$(EXEEXT) > astep_nonadapt.scr
 ode_iv_solve.scr: ode_iv_solve_ts$(EXEEXT)
 	./ode_iv_solve_ts$(EXEEXT) > ode_iv_solve.scr
-ode_iv_table.scr: ode_iv_table_ts$(EXEEXT)
-	./ode_iv_table_ts$(EXEEXT) > ode_iv_table.scr
-ode_bv_mshoot.scr: ode_bv_mshoot_ts$(EXEEXT)
-	./ode_bv_mshoot_ts$(EXEEXT) > ode_bv_mshoot.scr
+#ode_iv_table.scr: ode_iv_table_ts$(EXEEXT)
+#	./ode_iv_table_ts$(EXEEXT) > ode_iv_table.scr
+#ode_bv_mshoot.scr: ode_bv_mshoot_ts$(EXEEXT)
+#	./ode_bv_mshoot_ts$(EXEEXT) > ode_bv_mshoot.scr
 ode_it_solve.scr: ode_it_solve_ts$(EXEEXT)
 	./ode_it_solve_ts$(EXEEXT) > ode_it_solve.scr
-ode_bv_solve.scr: ode_bv_solve_ts$(EXEEXT)
-	./ode_bv_solve_ts$(EXEEXT) > ode_bv_solve.scr
+#ode_bv_solve.scr: ode_bv_solve_ts$(EXEEXT)
+#	./ode_bv_solve_ts$(EXEEXT) > ode_bv_solve.scr
 
 astep_gsl_ts_SOURCES = astep_gsl_ts.cpp
 astep_nonadapt_ts_SOURCES = astep_nonadapt_ts.cpp
@@ -124,10 +126,10 @@ ode_rkck_gsl_ts_SOURCES = ode_rkck_gsl_ts.cpp
 ode_rkf45_gsl_ts_SOURCES = ode_rkf45_gsl_ts.cpp
 ode_bsimp_gsl_ts_SOURCES = ode_bsimp_gsl_ts.cpp
 ode_iv_solve_ts_SOURCES = ode_iv_solve_ts.cpp
-ode_iv_table_ts_SOURCES = ode_iv_table_ts.cpp
-ode_bv_mshoot_ts_SOURCES = ode_bv_mshoot_ts.cpp
+#ode_iv_table_ts_SOURCES = ode_iv_table_ts.cpp
+#ode_bv_mshoot_ts_SOURCES = ode_bv_mshoot_ts.cpp
 ode_it_solve_ts_SOURCES = ode_it_solve_ts.cpp
-ode_bv_solve_ts_SOURCES = ode_bv_solve_ts.cpp
+#ode_bv_solve_ts_SOURCES = ode_bv_solve_ts.cpp
 ode_rk8pd_gsl_ts_SOURCES = ode_rk8pd_gsl_ts.cpp
 
 # ------------------------------------------------------------

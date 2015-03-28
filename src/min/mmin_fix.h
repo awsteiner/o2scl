@@ -62,9 +62,6 @@ namespace o2scl {
       See an example for the usage of this class in \ref
       ex_mmin_fix_sect .
 
-      \todo This hasn't been converted yet with the new C++11
-      function types.
-
       \comment
       We cannot really do a version of mmin_de() for this class
       because there's no good way to rewrite the gradient

@@ -65,7 +65,11 @@ pkginclude_HEADERS = $(HEADERS_VAR)
 # libtool testing targets
 # ------------------------------------------------------------
 
-check_PROGRAMS = cubature_ts cubature_new_ts
+check_PROGRAMS = cubature_ts
+
+#cubature_new_ts
+
+check_SCRIPTS = o2scl-test
 
 # TESTS = $(check_PROGRAMS)
 

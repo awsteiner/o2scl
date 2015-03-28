@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2014 Andrew W. Steiner
+  Copyright (C) 2006-2015 Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -111,25 +111,3 @@
     \endhtmlonly
 
 */
-namespace o2scl {
-  /** \brief An empty class to add some items to the todo and bug lists
-   
-      \todo 
-      - Make sure an error message is printed to ensure users 
-      do 'make o2scl-test' and not 'make check'
-      - Make sure cstdlib is included wherever exit() is used 
-      [5/22/11 - Most of these are taken care of now.]
-
-      \future Currently, I believe the testing code requires the
-      shared libraries and may not work if the static libraries
-      only are installed. It would be nice to ensure the tests
-      could be complied in either case.
-   
-  */
-  class other_todos_and_bugs {
-  }
-}
-
-/*
-
- */

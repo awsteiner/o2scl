@@ -31,7 +31,7 @@
 #include <o2scl/astep.h>
 #include <o2scl/astep_gsl.h>
 #include <o2scl/ode_iv_solve.h>
-#include <o2scl/gsl_mroot_hybrids.h>
+#include <o2scl/mroot_hybrids.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {

@@ -1947,8 +1947,6 @@ namespace o2scl {
   }
 
   /** \brief Individually sort the column \c scol
-
-      \todo Use vector_sort() rather than qsort().
   */
   void sort_column(std::string scol) {
     int i;

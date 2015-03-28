@@ -296,7 +296,6 @@ AC_CONFIG_FILES([Makefile
                  src/base/both/Makefile
                  src/base/eigen/Makefile
                  src/base/neither/Makefile
-                 src/boost/Makefile
 		 src/cubature/Makefile
                  src/deriv/Makefile
                  src/eos/Makefile

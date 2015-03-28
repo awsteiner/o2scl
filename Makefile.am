@@ -43,8 +43,8 @@ help:
 #	@echo "tharkad-web:      Copy current docs to tharkad"
 
 #
-check:
-	@echo "Please use 'make o2scl-test' to test the installation."
+
+# @echo "Please use 'make o2scl-test' to test the installation."
 #	ls 
 
 # Create a distribution without documentation (not recently tested)
@@ -123,6 +123,8 @@ o2scl-docp:
 #o2scl-docp-verbose:
 	echo "Disabled."
 	cd doc/o2scl && $(MAKE) o2scl-docp-verbose-recursive
+
+check_SCRIPTS = o2scl-test
 
 # Clean all generated documentation
 clean-doc:
