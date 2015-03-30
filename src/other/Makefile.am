@@ -86,6 +86,8 @@ check_PROGRAMS = series_acc_ts interp2_planar_ts \
 	prob_dens_func_ts interp2_neigh_ts interpm_neigh_ts \
 	interpm_idw_ts
 
+check_SCRIPTS = o2scl-test
+
 if O2SCL_HDF
 VCHECK_LIBS = $(libdir)/libo2scl.la $(libdir)/libo2scl_hdf.la
 else

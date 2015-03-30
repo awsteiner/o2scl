@@ -77,6 +77,8 @@ check_PROGRAMS = astep_gsl_ts ode_rkck_gsl_ts astep_nonadapt_ts \
 	ode_iv_solve_ts ode_rk8pd_gsl_ts ode_it_solve_ts \
 	ode_bsimp_gsl_ts ode_rkf45_gsl_ts 
 
+check_SCRIPTS = o2scl-test
+
 #ode_bv_mshoot_ts ode_bv_solve_ts ode_iv_table_ts
 
 if O2SCL_HDF

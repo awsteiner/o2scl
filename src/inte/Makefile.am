@@ -80,6 +80,8 @@ check_PROGRAMS = inte_adapt_cern_ts inte_cauchy_cern_ts inte_gauss_cern_ts \
 	inte_qawo_gsl_ts inte_qawf_gsl_ts inte_gauss56_cern_ts \
 	inte_qaws_gsl_ts inte_qawc_gsl_ts 
 
+check_SCRIPTS = o2scl-test
+
 if O2SCL_HDF
 VCHECK_LIBS = $(libdir)/libo2scl.la $(libdir)/libo2scl_hdf.la
 else

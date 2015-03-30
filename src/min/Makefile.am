@@ -79,6 +79,8 @@ check_PROGRAMS = min_cern_ts min_brent_gsl_ts \
 	min_ts mmin_simp2_ts min_quad_golden_ts diff_evo_ts \
 	diff_evo_adapt_ts min_brent_boost_ts
 
+check_SCRIPTS = o2scl-test
+
 if O2SCL_HDF
 VCHECK_LIBS = $(libdir)/libo2scl.la $(libdir)/libo2scl_hdf.la
 else

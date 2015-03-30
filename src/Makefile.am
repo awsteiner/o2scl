@@ -9,7 +9,9 @@ help:
 # -------------------------------------------------------------
 
 # The ordering is important for these directories, since part, nuclei,
-# and eos, depend on the base library. We don't need to list
+# and eos, depend on the base library. We also need to make sure
+# 'internal' appears before the other subdirectories because 'tsumm'
+# needs to be created first for 'make check'. We don't need to list
 # libo2scl_eos and libo2scl_hdf here, since they're taken care of in
 # their respective directories.
 
@@ -17,15 +19,15 @@ if O2SCL_PARTLIB
 if O2SCL_EOSLIB
 if O2SCL_HDF
 
-SUBDIRS = anneal base deriv fit inte mcarlo \
-	min ode other root internal linalg \
+SUBDIRS = internal anneal base deriv fit inte mcarlo \
+	min ode other root linalg \
 	part nuclei eos hdf fparser cubature
 LIBLIST = libo2scl.la libo2scl_part.la
 
 else
 
-SUBDIRS = anneal base deriv fit inte mcarlo \
-	min ode other root internal linalg \
+SUBDIRS = internal anneal base deriv fit inte mcarlo \
+	min ode other root linalg \
 	part nuclei eos fparser cubature
 LIBLIST = libo2scl.la libo2scl_part.la
 
@@ -34,15 +36,15 @@ else
 
 if O2SCL_HDF
 
-SUBDIRS = anneal base deriv fit inte mcarlo \
-	min ode other root internal linalg \
+SUBDIRS = internal anneal base deriv fit inte mcarlo \
+	min ode other root linalg \
 	nuclei part hdf fparser cubature
 LIBLIST = libo2scl.la libo2scl_part.la
 
 else
 
-SUBDIRS = anneal base deriv fit inte mcarlo \
-	min ode other root internal linalg \
+SUBDIRS = internal anneal base deriv fit inte mcarlo \
+	min ode other root linalg \
 	nuclei part fparser cubature
 LIBLIST = libo2scl.la libo2scl_part.la
 
@@ -52,14 +54,14 @@ else
 
 if O2SCL_HDF
 
-SUBDIRS = anneal base deriv fit inte mcarlo \
-	min ode other root internal linalg hdf fparser cubature
+SUBDIRS = internal anneal base deriv fit inte mcarlo \
+	min ode other root linalg hdf fparser cubature
 LIBLIST = libo2scl.la
 
 else
 
-SUBDIRS = anneal base deriv fit inte mcarlo \
-	min ode other root internal linalg fparser cubature
+SUBDIRS = internal anneal base deriv fit inte mcarlo \
+	min ode other root linalg fparser cubature
 LIBLIST = libo2scl.la
 
 endif

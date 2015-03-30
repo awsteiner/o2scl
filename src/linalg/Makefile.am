@@ -78,6 +78,8 @@ check_PROGRAMS = cblas_ts permutation_ts lanczos_ts tridiag_ts lu_ts \
 	qr_ts householder_ts hh_ts linear_solver_ts svdstep_ts \
 	cholesky_ts qrpt_ts bidiag_ts svd_ts
 
+check_SCRIPTS = o2scl-test
+
 if O2SCL_HDF
 VCHECK_LIBS = $(libdir)/libo2scl.la $(libdir)/libo2scl_hdf.la
 else

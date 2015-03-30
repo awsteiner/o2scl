@@ -78,6 +78,8 @@ check_PROGRAMS = classical_ts fermion_eff_ts fermion_rel_ts \
 	part_ts quark_ts fermion_deriv_rel_ts fermion_mag_zerot_ts \
 	classical_deriv_ts fermion_deriv_nr_ts boson_rel_ts boson_eff_ts
 
+check_SCRIPTS = o2scl-test
+
 VCHECK_LIBS = $(libdir)/libo2scl_part.la $(libdir)/libo2scl.la \
 	$(libdir)/libo2scl_hdf.la 
 

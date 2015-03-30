@@ -71,8 +71,6 @@ check_PROGRAMS = cubature_ts
 
 check_SCRIPTS = o2scl-test
 
-# TESTS = $(check_PROGRAMS)
-
 if O2SCL_HDF
 VCHECK_LIBS = $(libdir)/libo2scl.la $(libdir)/libo2scl_hdf.la
 else

@@ -78,7 +78,7 @@ check_PROGRAMS = root_bkt_cern_ts mroot_cern_ts mroot_hybrids_ts \
 	root_stef_ts root_cern_ts root_brent_gsl_ts jacobian_ts \
 	mroot_broyden_ts root_toms748_ts
 
-# TESTS = $(check_PROGRAMS)
+check_SCRIPTS = o2scl-test
 
 if O2SCL_HDF
 VCHECK_LIBS = $(libdir)/libo2scl.la $(libdir)/libo2scl_hdf.la

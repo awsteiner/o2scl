@@ -111,6 +111,8 @@ pkginclude_HEADERS = $(HEADER_VAR)
 
 check_PROGRAMS = fparser_ts
 
+check_SCRIPTS = o2scl-test
+
 if O2SCL_HDF
 VCHECK_LIBS = $(libdir)/libo2scl.la $(libdir)/libo2scl_hdf.la
 else

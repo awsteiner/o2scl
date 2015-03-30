@@ -139,6 +139,8 @@ check_PROGRAMS = eos_had_apr_ts eos_quark_bag_ts nucmass_ldrop_ts \
 	nucmass_ldrop_shell_ts eos_had_gogny_ts eos_crust_virial_ts \
 	nstar_rot_ts
 
+check_SCRIPTS = o2scl-test
+
 if O2SCL_HDF
 VCHECK_LIBS = $(libdir)/libo2scl_eos.la $(libdir)/libo2scl_part.la \
 	$(libdir)/libo2scl_hdf.la $(libdir)/libo2scl.la 

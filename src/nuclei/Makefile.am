@@ -101,6 +101,8 @@ check_PROGRAMS = nucmass_ts nucdist_ts nucleus_ts \
 	nucmass_fit_ts reaction_lib_ts hdf_nucmass_io_ts nucmass_frdm_ts \
 	nucmass_dz_ts
 
+check_SCRIPTS = o2scl-test
+
 if O2SCL_HDF
 VCHECK_LIBS = $(libdir)/libo2scl_part.la $(libdir)/libo2scl.la \
 	$(libdir)/libo2scl_hdf.la

@@ -95,7 +95,7 @@ CPVAR = err_hnd_ts funct_ts convert_units_ts \
 
 check_PROGRAMS = $(CPVAR)
 
-# TESTS = $(check_PROGRAMS)
+check_SCRIPTS = o2scl-test
 
 if O2SCL_HDF
 VCHECK_LIBS = $(libdir)/libo2scl.la $(libdir)/libo2scl_hdf.la
