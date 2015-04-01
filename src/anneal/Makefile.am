@@ -4,9 +4,9 @@
 
 ANNEAL_SRCS = 
 
-HEADER_VAR = anneal.h anneal_gsl.h
+HEADER_VAR = anneal.h anneal_gsl.h anneal_mt.h
 
-TEST_VAR = anneal_gsl.scr
+TEST_VAR = anneal_gsl.scr anneal_mt.scr
 
 # ------------------------------------------------------------
 # Includes
@@ -65,7 +65,7 @@ pkginclude_HEADERS = $(HEADER_VAR)
 # libtool testing targets
 # ------------------------------------------------------------
 
-check_PROGRAMS = anneal_gsl_ts
+check_PROGRAMS = anneal_gsl_ts anneal_mt_ts
 
 check_SCRIPTS = o2scl-test
 
@@ -81,6 +81,13 @@ anneal_gsl.scr: anneal_gsl_ts$(EXEEXT)
 	./anneal_gsl_ts$(EXEEXT) > anneal_gsl.scr
 
 anneal_gsl_ts_SOURCES = anneal_gsl_ts.cpp
+
+anneal_mt_ts_LDADD = $(VCHECK_LIBS)
+
+anneal_mt.scr: anneal_mt_ts$(EXEEXT)
+	./anneal_mt_ts$(EXEEXT) > anneal_mt.scr
+
+anneal_mt_ts_SOURCES = anneal_mt_ts.cpp
 
 # ------------------------------------------------------------
 # No library o2scl_anneal

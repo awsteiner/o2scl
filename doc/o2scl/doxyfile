@@ -769,7 +769,7 @@ WARN_LOGFILE = doxygen.log
 # We don't include the full src/cubature directory because
 # clencurt.h is too large for Doxygen to process
 
-INPUT = . ../../src ../../src/anneal ../../src/base ../../src/boost 
+INPUT = . ../../src ../../src/anneal ../../src/base 
 INPUT += ../../src/deriv ../../src/fit ../../src/hdf ../../src/inte 
 INPUT += ../../src/linalg ../../src/mcarlo ../../src/min
 INPUT += ../../src/ode ../../src/other ../../src/root 

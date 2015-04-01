@@ -33,15 +33,15 @@
     <tt>./configure</tt>, respectively.
 
     After \c make \c install, you may test the library with \c make \c
-    o2scl-test. At the end, the phrase "<tt>All O2scl tests passed</tt>"
-    indicates that the testing was successful. You may also run \c
-    make \c o2scl-test in the individual subdirectories of the src
-    directory to individually test the classes and functions in that
-    part of \o2. Note that <tt>make check</tt> will not work. The
-    testing code in <tt>src/base/lib_settings_ts.cpp</tt> can be
-    useful in finding out how \o2 was compiled. After <tt>make
-    o2scl-test</tt>, running <tt>src/base/lib_settings_ts</tt> will
-    output several of the installation settings.
+    check or \c make \c o2scl-test. At the end, the phrase "<tt>All
+    O2scl tests passed</tt>" indicates that the testing was
+    successful. You may also run \c make \c o2scl-test in the
+    individual subdirectories of the src directory to individually
+    test the classes and functions in that part of \o2. The testing
+    code in <tt>src/base/lib_settings_ts.cpp</tt> can be useful in
+    finding out how \o2 was compiled. After <tt>make o2scl-test</tt>,
+    running <tt>src/base/lib_settings_ts</tt> will output several of
+    the installation settings.
 
     \section installmac_subsect Compiling on Mac OSX
 
