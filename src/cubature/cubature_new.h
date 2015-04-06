@@ -3,7 +3,7 @@
   
   Copyright (C) 2015, Andrew W. Steiner
   
-  This file is part of O2scl. It has been adapted from cubature_new 
+  This file is part of O2scl. It has been adapted from Cubature
   written by Steven G. Johnson. 
   
   O2scl is free software; you can redistribute it and/or modify
@@ -502,9 +502,9 @@ namespace o2scl {
 	/* nothing to evaluate */
 	return o2scl::success;
       }
-      if (r->evalError(r, R.fdim, f, nR, R)) return o2scl::gsl_failure;
+      if (r->evalError(r, R[0].fdim, f, nR, R)) return o2scl::gsl_failure;
       for (iR = 0; iR < nR; ++iR) {
-	R[iR].errmax = errMax(R.fdim, R[iR].ee);
+	R[iR].errmax = errMax(R[iR].fdim, R[iR].ee);
       }
       return o2scl::success;
     }
