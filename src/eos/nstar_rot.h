@@ -189,19 +189,29 @@ namespace o2scl {
       double mu0=(eden[0]+pres[0])/nb[0];
       double mu1=(eden[1]+pres[1])/nb[1];
       double mu_start=2.0*mu0-mu1;
-      
+      //mu_start=939.0/197.33-0.08;
+      mu_start=4.775;
+
+      //std::cout << "mu_start: " << mu_start << std::endl;
       for(size_t i=0;i<n_tab;i++) {
-	/*
-	  std::cout << eden[i]*conv1 << " " << pres[i]*conv2 << " "
-	  << log((eden[i]+pres[i])/nb[i]/mu_start)*C*C << " " 
-	  << nb[i]*1.0e39 << " "
-	  << (eden[i]+pres[i])/nb[i] << " " << mu_start << std::endl;
-	*/
 	log_e_tab[i+1]=log10(eden[i]*conv1*C*C*KSCALE);
 	log_p_tab[i+1]=log10(pres[i]*conv2*KSCALE);
+	if (false && i==0) {
+	  std::cout << eden[i]*conv1 << " "
+		    << pres[i]*conv2 << " "
+		    << 1.0 << " "
+		    << nb[i]*1.0e39 << std::endl;
+	  log_h_tab[i+1]=0.0;
+	} else {
+	  //std::cout << eden[i]*conv1 << " "
+	  //<< pres[i]*conv2 << " "
+	  //<< log((eden[i]+pres[i])/nb[i]/mu_start)*C*C << " " 
+	  //<< nb[i]*1.0e39 << std::endl;
+	  log_h_tab[i+1]=log10(log((eden[i]+pres[i])/nb[i]/mu_start));
+	}
 	log_n0_tab[i+1]=log10(nb[i]*1.0e39);
-	log_h_tab[i+1]=log10(log((eden[i]+pres[i])/nb[i]/mu_start));
       }
+      //exit(-1);
 
       return;
     }
