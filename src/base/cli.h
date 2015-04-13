@@ -304,14 +304,25 @@ namespace o2scl {
 
     public:
       
+      parameter_double() {
+	parse_strings=true;
+      }
+
       virtual ~parameter_double() {}
 
       /// Parameter
       double *d;
 
+      /// If true, 
+      bool parse_strings;
+
       /// Set from string
       virtual int set(std::string s) {
-	*d=o2scl::stod(s);
+	if (parse_strings) {
+	  *d=function_to_double(s,false);
+	} else {
+	  *d=o2scl::stod(s);
+	}
 	return 0;
       }
 
@@ -350,7 +361,8 @@ namespace o2scl {
     /// Parameter list
     std::map<std::string,parameter *,std::greater<std::string> > par_list;
     /// List iterator
-    typedef std::map<std::string,parameter *,std::greater<std::string> >::iterator par_t;
+    typedef std::map<std::string,parameter *,
+      std::greater<std::string> >::iterator par_t;
     //@}
     
 #ifndef DOXYGEN_NO_O2NS_INTERNAL

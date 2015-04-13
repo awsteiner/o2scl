@@ -798,7 +798,7 @@ int cli::comm_option_set(vector<string> &sv, bool itive_com) {
 }
 
 int cli::output_param_list() {
-
+  
   size_t nr=par_list.size()+1;
   if (nr>1) {
 
