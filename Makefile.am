@@ -47,6 +47,12 @@ help:
 # @echo "Please use 'make o2scl-test' to test the installation."
 #	ls 
 
+latest:
+	$(MAKE) dist
+	cp o2scl-0.918.tar.gz ~/svn/int3/web/utk
+	openssl dgst -sha256 o2scl-0.918.tar.gz > ~/svn/int3/web/utk/hash.txt
+	cd ~/svn/int3/web; $(MAKE) put
+
 # Create a distribution without documentation (not recently tested)
 dist-nodoc:
 	cd doc/o2scl/html; mkdir ../htdir; mv -i *.html *.png ../htdir; 
