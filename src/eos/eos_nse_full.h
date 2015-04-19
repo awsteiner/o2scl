@@ -90,16 +90,21 @@ namespace o2scl {
 
   protected:
     
-    /** \brief Desc
+    /** \brief Check the \ref o2scl::dense_matter object to 
+	see if the rest masses are correctly included or not, 
+	etc.
      */
     virtual void check_dm(o2scl::dense_matter &dm);
     
-    /** \brief Desc
+    /** \brief Output a \ref o2scl::dense_matter object 
+	according to the setting of \ref verbose 
+	for function specified in \c func_name .
      */
     virtual void verb_output(o2scl::dense_matter &dm, 
 			     std::string func_name);
 
-    /// If true, include electrons and photons (default true)
+    /** \brief If true, include electrons and photons (default true)
+     */
     bool inc_lept_phot;
 
     /// Compute particle properties assuming classical thermodynamics
@@ -410,7 +415,7 @@ namespace o2scl {
 
     /// \name Numerical methods
     //@{
-    /// The minimizer
+    /// The default minimizer
     o2scl::mmin_simp2<> def_mmin;
 
     /// Default solver

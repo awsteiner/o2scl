@@ -49,8 +49,18 @@ namespace o2scl {
 
       This class is experimental.
 
-      By default, the rest mass is not included in the neutron,
-      or the proton. It is, however, included in the electron. 
+      By default, the rest mass is not included in the neutron, or the
+      proton. It is, however, included in the electron. Note that the
+      values of \ref nB and \ref Ye need not always correspond exactly
+      to the values returned by \ref baryon_density() and \ref
+      electron_fraction(). This design enables this object to refer to
+      the composition while some algorithm is matching to a fixed
+      baryon density and electron fraction. Note also that the
+      chemical potentials in \ref eta_n, \ref eta_p, and \ref eta_nuc may
+      contain corrections from heterogeneous matter which are not
+      typically included in the values in \ref o2scl::part::mu which
+      only contain the homogeneous parts.
+      
   */
   class dense_matter {
   
@@ -223,11 +233,25 @@ namespace o2scl {
     */
     bool nuc_in_dist(int Z, int N, size_t &index);
 
-    /** \brief Desc
+    /** \brief Remove nuclei from the distribution which have
+	a small density
+
+	This function removes all nuclei which have densities
+	smaller than \c factor times the value returned
+	by \ref baryon_density_nuclei() .
      */
     void prune_distribution(double factor);
 
-    /** \brief Desc
+    /** \brief Copy densities from those stored in another
+	\ref dense_matter object
+
+	This function sets all nuclear densities to zero and then, for
+	each nucleus in the distribution, looks for the same nucleus
+	in \c dm2. If the nucleus is found in \c dm2, its density is
+	copied over, otherwise its density is left at zero. This is a
+	brute-force algorithm of order \f$ {\cal O}(N_1 N_2) \f$ where
+	\f$ N_1 \f$ is the number of nuclei in the distribution and
+	\f$ N_2 \f$ is the number of nuclei in \c dm2.
      */
     void copy_densities_from(dense_matter &dm2);
     
@@ -240,6 +264,11 @@ namespace o2scl {
       The default set of nuclear masses is from the AME 2012
       mass evaluation and is automatically loaded in the 
       constructor.
+
+      \future If this isn't going to be in a child of \ref nucmass,
+      then maybe we can simplify \ref binding_energy_densmat_derivs()
+      to just <tt>binding_energy()</tt>.
+      
   */
   class nucmass_densmat {
 
@@ -273,14 +302,14 @@ namespace o2scl {
 	electrons) at a fixed temperature, relative to homogeneous
 	nucleonic matter with the same number densities of protons,
 	neutrons, and negative charges. The proton number Z and
-	neutron number N should also be counted relative homogeneous
-	nucleonic matter, not relative to the vacuum.
+	neutron number N should also be counted relative to
+	homogeneous nucleonic matter, not relative to the vacuum.
 
 	As in \ref o2scl::nucmass::binding_energy_d(), the binding
 	energy returned in \c E has units of MeV. All densities are
 	expected to be in \f$ \mathrm{fm}^{-3} \f$, and the
 	temperature should be in MeV. 
-
+	
 	\future Extend to negative N and Z?
     */
     virtual void binding_energy_densmat_derivs
@@ -289,6 +318,7 @@ namespace o2scl {
        double &dEdnneg, double &dEdT);
 
     /** \brief Compute the binding energy of a nucleus in dense matter
+	without the derivatives
      */
     virtual void binding_energy_densmat
       (double Z, double N, double npout, double nnout, 
