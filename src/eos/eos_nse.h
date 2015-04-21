@@ -89,11 +89,11 @@ namespace o2scl {
     
     /// Function to solve for baryon and charge conservation
     int solve_fun(size_t nv, const ubvector &x, ubvector &y, 
-		  double nB, double Ye, double T,
+		  double nn, double np, double T,
 		  std::vector<o2scl::nucleus> &nd);
     
     /// Solver
-    mroot<> *root;
+    mroot<> *mroot_ptr;
 
     /// Compute particle properties assuming classical thermodynamics
     classical cla;
@@ -103,6 +103,12 @@ namespace o2scl {
   public:
 
     eos_nse();
+
+    /// Verbosity parameter (default 1)
+    int verbose;
+    
+    /// The maximum number of iterations for \ref make_guess() (default 40)
+    size_t make_guess_iters;
     
     /** \brief If true, call the error handler if calc_density() does
 	not converge (default true)
@@ -114,38 +120,55 @@ namespace o2scl {
 
 	Given \c mun, \c mup and \c T, this computes the composition
 	(the individual densities are stored in the distribution \c
-	nd) the baryon number density \c nB, and the electron fraction
-	\c Ye. 
+	nd), the neutron number density \c nn, and the proton number
+	density \c np. 
 
 	This function does not use the solver.
     */
-    void calc_mu(double mun, double mup, double T, double &nB, 
-		 double &Ye, thermo &th, std::vector<nucleus> &nd);
-    
-    /** \brief Calculate the equation of state as a function of the densities
+    void calc_mu(double mun, double mup, double T, double &nn, 
+		 double &np, thermo &th, std::vector<nucleus> &nd);
 
-	Given the baryon number density \c nB in \f$ \mathrm{fm}^{-3}
-	\f$, the electron fraction \c Ye and the temperature \c T in
-	\f$ \mathrm{fm}^{-1} \f$, this computes the composition (the
-	individual densities are stored in the distribution \c nd) and
-	the chemical potentials are given in \c mun and \c mup . The
-	nuclei in \c nd must have their proton number, neutron number,
-	atomic number, binding energy, and spin degeracy already
-	specified.
+    /** \brief Find values for the chemical potentials which ensure
+	that the densities are within a fixed range
+
+	This function is used by \ref calc_density() to improve
+	the initial guesses for the chemical potentials if
+	necessary.
+
+	\note This function can fail, for example if the density range
+	specified is too small or if the specified distribution
+	consists of nuclei with different values of Ye from that
+	specified by the density range.
+    */
+    int make_guess(double &mun, double &mup, double T,
+		    thermo &th, std::vector<nucleus> &nd,
+		    double nn_min=1.0e-20, double nn_max=1.0e8,
+		    double np_min=1.0e-20, double np_max=1.0e8);
+
+  /** \brief Calculate the equation of state as a function of the densities
+
+	Given the neutron number density \c nn in \f$ \mathrm{fm}^{-3}
+	\f$, the proton number density \c np and the temperature \c T
+	in \f$ \mathrm{fm}^{-1} \f$, this computes the composition
+	(the individual densities are stored in the distribution \c
+	nd) and the chemical potentials are given in \c mun and \c mup
+	. The nuclei in \c nd must have their proton number, neutron
+	number, atomic number, binding energy, and spin degeracy
+	already specified.
 
 	This function uses the solver to self-consistently compute
 	the chemical potentials. 
      */
-    int calc_density(double nB, double Ye, double T, double &mun, 
+    int calc_density(double nn, double np, double T, double &mun, 
 		     double &mup, thermo &th, std::vector<nucleus> &nd);
     
     /// Default solver 
-    mroot_hybrids<> def_root;
+    mroot_hybrids<> def_mroot;
 
     /** \brief Set the solver for use in computing the chemical potentials
      */
     void set_mroot(mroot<> &rp) {
-      root=&rp;
+      mroot_ptr=&rp;
       return;
     }
     

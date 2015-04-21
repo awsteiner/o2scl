@@ -36,7 +36,8 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
-  double nb, Ye, mun, mup;
+  double nB, Ye, mun, mup, nn, np;
+  eos_nse ne;
   
   double T=5.0/hc_mev_fm;
   thermo th;
@@ -54,51 +55,76 @@ int main(void) {
   }
   t.test_gen(ad.size()==36,"distribution size");
 
-  eos_nse ne;
+  // ---------------------------------------------------------
+  // Test make_guess()
 
-  nb=0.03;
-  Ye=0.36;
+  ne.verbose=1;
 
-  // Initial guess
-  mun=-0.04;
-  mup=-0.04;
+  // Test make_guess() with very large chemical potentials
+  mun=1.0;
+  mup=1.0;
+  ne.make_guess(mun,mup,T,th,ad);
+
+  // Test make_guess() with very small chemical potentials
+  mun=-1.0;
+  mup=-1.0;
+  ne.make_guess(mun,mup,T,th,ad);
+
+  // Test make_guess() with large mun and small mup
+  mun=1.0;
+  mup=-1.0;
+  ne.make_guess(mun,mup,T,th,ad);
+
+  // Test make_guess() with large mup and small mun
+  mun=-1.0;
+  mup=1.0;
+  ne.make_guess(mun,mup,T,th,ad);
+
+  // ---------------------------------------------------------
+  // Now test calc_density()
   
-  int ret=ne.calc_density(nb,Ye,T,mun,mup,th,ad);
-  cout << ret << " " << mun << " " << mup << " " << nb << " " << Ye << endl;
-  cout << endl;
+  nn=0.64*0.03;
+  np=0.36*0.03;
+
+  mun=1.0;
+  mup=1.0;
+  
+  int ret=ne.calc_density(nn,np,T,mun,mup,th,ad);
+
+  ne.verbose=0;
 
   // Double check that the density and electron fraction are properly
   // reproduced
-  double nbnew=0.0;
+  double nBnew=0.0;
   double Yenew=0.0;
   for(size_t i=0;i<ad.size();i++) {
     cout << ad[i].Z << " " << mm.Ztoel(ad[i].Z) << " " 
 	 << ad[i].A << " " << ad[i].n << " " 
 	 << ((double)ad[i].Z)/((double)ad[i].A) << endl;
-    nbnew+=ad[i].n*ad[i].A;
+    nBnew+=ad[i].n*ad[i].A;
     Yenew+=ad[i].n*ad[i].Z;
   }
-  Yenew/=nbnew;
+  Yenew/=nBnew;
   cout << endl;
 
-  t.test_rel(nbnew,0.03,1.0e-6,"nb match.");
+  t.test_rel(nBnew,0.03,1.0e-6,"nB match.");
   t.test_rel(Yenew,0.36,1.0e-6,"Ye match.");
 
   // Now proceed to lower temperatures
   for(;T>0.01/hc_mev_fm;T/=1.1) {
-    ret=ne.calc_density(nb,Ye,T,mun,mup,th,ad);
+    ret=ne.calc_density(nn,np,T,mun,mup,th,ad);
     cout << ret << " " << T << " "
 	 << mun << " " << mup << " ";
 
-    nbnew=0.0;
+    nBnew=0.0;
     Yenew=0.0;
     for(size_t i=0;i<ad.size();i++) {
-      nbnew+=ad[i].n*ad[i].A;
+      nBnew+=ad[i].n*ad[i].A;
       Yenew+=ad[i].n*ad[i].Z;
     }
-    Yenew/=nbnew;
+    Yenew/=nBnew;
 
-    cout << nbnew << " " << Yenew << endl;
+    cout << nBnew << " " << Yenew << endl;
   }
   cout << endl;
 
@@ -111,7 +137,7 @@ int main(void) {
 
   // Double check that the density and electron fraction are properly
   // reproduced
-  t.test_rel(nbnew,0.03,1.0e-6,"nb match.");
+  t.test_rel(nBnew,0.03,1.0e-6,"nB match.");
   t.test_rel(Yenew,0.36,1.0e-6,"Ye match.");
   
   t.report();
