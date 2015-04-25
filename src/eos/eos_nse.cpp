@@ -59,9 +59,10 @@ void eos_nse::calc_mu(double mun, double mup, double T,
 int eos_nse::calc_density(double nn, double np, double T, 
 			  double &mun, double &mup, thermo &th, 
 			  vector<nucleus> &nd) {
-  
-  int ret=make_guess(mun,mup,T,th,nd,nn*1.0e-4,nn*1.0e4,
-		     np*1.0e-4,np*1.0e4);
+
+  double fac=1.0e1;
+  int ret=make_guess(mun,mup,T,th,nd,nn/fac,nn*fac,
+		     np/fac,np*fac);
   if (ret!=0) {
     O2SCL_CONV_RET("Function make_guess() failed in eos_nse::calc_density().",
 		   exc_efailed,err_nonconv);
@@ -128,128 +129,211 @@ int eos_nse::make_guess(double &mun, double &mup, double T,
   // Initial result
   calc_mu(mun,mup,T,nn,np,th,nd);
   if (verbose>0) {
+    cout << "In make_guess()." << endl;
     cout << mun << " " << mup << " " << nn << " " << np << endl;
   }
 
   // If we're already done, return
   if (std::isfinite(nn) && std::isfinite(np) &&
-      nn>0.0 && np>0.0) {
+      nn>nn_min && np>np_min && nn<nn_max && np<np_max) {
     return o2scl::success;
   }
-  
-  double mun_step=T, mup_step=T, nn2, np2, mun2, mup2;
-  
-  // If the densities are infinite, or larger than 10^8, decrease the
-  // chemical potentials until they are not.
-  if (std::isinf(nn) || std::isinf(np) || nn>nn_max || np>np_max) {
-    if (verbose>0) {
-      cout << mun << " " << mup << " " << nn << " " << np
-	   << " Infinite." << endl;
-    }
 
-    bool done=false;
-    size_t k=0;
-    while (done==false && k<make_guess_iters) {
-      mun2=mun-mun_step;
-      mup2=mup-mup_step;
-      calc_mu(mun2,mup2,T,nn2,np2,th,nd);
-      if (verbose>0) {
-	cout << mun2 << " " << mup2 << " " << nn2 << " " << np2
-	     << " k=" << k << endl;
-      }
-      if (!std::isinf(nn2) && !std::isinf(np2) && nn2<nn_max && np2<np_max) {
-	done=true;
-	mun=mun2;
-	mup=mup2;
-      } else {
-	mun_step*=2.0;
-	mup_step*=2.0;
-      }
-      k++;
-    }
-    if (done==false) {
-      O2SCL_CONV2_RET("Failed to make densities small enough ",
-		      "in eos_nse::make_guess().",exc_efailed,err_nonconv);
-    }
-    calc_mu(mun,mup,T,nn,np,th,nd);
-    if (verbose>0) {
-      cout << mun << " " << mup << " " << nn << " " << np
-	   << " Done." << endl;
-    }
+  bool mun_changing=true, mup_changing=true;
+  double mun_step=0.0, mup_step=0.0, nn2, np2, mun2, mup2;
+
+  if (std::isinf(nn) || nn>nn_max) {
+    mun_step=-1.0e5*T;
+  } else if (nn<nn_min) {
+    mun_step=1.0e5*T;
+  } else {
+    mun_changing=false;
+  }
+  if (std::isinf(np) || np>np_max) {
+    mup_step=-1.0e5*T;
+  } else if (np<np_min) {
+    mup_step=1.0e5*T;
+  } else {
+    mup_changing=false;
   }
 
-  // Now, if one of the densities are zero, then increase the
-  // chemical potentials until they are nonzero
+  bool done=false;
+  size_t k=0;
+  while (done==false && k<make_guess_iters) {
 
-  mun_step=T;
-  mup_step=T;
-  if (nn==0.0 || np==0.0) {
-    if (nn==0.0) mun_step=1.0e5*T;
-    if (np==0.0) mup_step=1.0e5*T;
-    
-    bool done=false;
-    size_t k=0;
-    while (done==false && k<make_guess_iters) {
+    // Go to and evaluate new point
+    if (mun_changing) {
       mun2=mun+mun_step;
+    } else {
+      mun2=mun;
+    }
+    if (mup_changing) {
       mup2=mup+mup_step;
-      calc_mu(mun2,mup2,T,nn2,np2,th,nd);
-      if (verbose>0) {
-	cout << mun2 << " " << mup2 << " " << nn2 << " " << np2
-	     << " k=" << k << endl;
-      }
+    } else {
+      mup2=mup;
+    }
+    calc_mu(mun2,mup2,T,nn2,np2,th,nd);
 
-      done=true;
-      // If the new point gives infinite densities, decrease the step
-      // size by a factor of two.
-      if (std::isinf(nn2) || nn2>nn_max) {
-	mun_step/=2.0;
-	done=false;
-	if (verbose>0) {
-	  cout << "nn too large." << endl;
-	}
-      }
-      if (std::isinf(np2) || np2>np_max) {
-	mup_step/=2.0;
-	done=false;
-	if (verbose>0) {
-	  cout << "np too large." << endl;
-	}
-      }
-      if (done) {
-	mun=mun2;
-	mup=mup2;
-	nn=nn2;
-	np=np2;
-	// Otherwise if one of the densities is still zero, update the
-	// point and increase the step size by a factor of 3/2.
-	if (nn2<=nn_min || np2<=np_min) {
-	  if (nn2<=nn_min) {
-	    mun_step*=1.5;
-	    if (verbose>0) {
-	      cout << "nn too small." << endl;
-	    }
-	  }
-	  if (np2<=np_min) {
-	    mup_step*=1.5;
-	    if (verbose>0) {
-	      cout << "np too small." << endl;
-	    }
-	  }
-	  done=false;
-	  calc_mu(mun,mup,T,nn,np,th,nd);
-	}
-      }
-      k++;
-    }
-    if (done==false) {
-      O2SCL_CONV2_RET("Failed to get densities in specified range ",
-		      "in eos_nse::make_guess().",exc_efailed,err_nonconv);
-    }
-    calc_mu(mun,mup,T,nn,np,th,nd);
     if (verbose>0) {
-      cout << mun << " " << mup << " " << nn << " " << np
-	   << " Done." << endl;
+      cout << "k=" << k << endl;
+      cout.setf(ios::showpos);
+      cout << mun << " " << mup << " ";
+      cout.unsetf(ios::showpos);
+      cout << nn << " " << np << endl;
+      cout.setf(ios::showpos);
+      cout << mun_step << " " << mup_step << " ";
+      cout.unsetf(ios::showpos);
+      cout << nn_min << " " << np_min << endl;
+      cout.setf(ios::showpos);
+      cout << mun2 << " " << mup2 << " ";
+      cout.unsetf(ios::showpos);
+      cout << nn2 << " " << np2 << endl;
+      cout.setf(ios::showpos);
+      cout << 0.0 << " " << 0.0 << " ";
+      cout.unsetf(ios::showpos);
+      cout << nn_max << " " << np_max << endl;
     }
+
+    bool accept=true;
+    bool eval_protons=true;
+    
+    // Update based on neutron density
+    if (mun_changing==false) {
+      if (std::isinf(nn2) || nn2>nn_max || nn2<nn_min) {
+	// The proton step put the neutron density out of range, so
+	// shrink the proton step and try again
+	mup_step/=1.5;
+	accept=false;
+	// No point in looking at protons
+	eval_protons=false;
+	if (verbose>0) {
+	  cout << "Value of mun_changing false but neutrons "
+	       << "out of range." << endl;
+	}
+      }
+    } else if (mun_step<0.0) {
+      // Neutron step is negative
+      if (nn2<nn_min) {
+	// If the step went too far, decrease the neutron step
+	mun_step/=1.5;
+	accept=false;
+	if (verbose>0) {
+	  cout << "Neutron step went too far (1)." << endl;
+	}
+      } else if (std::isfinite(nn2) && nn2<nn_max) {
+	// If the step is just right, stop changing it
+	// and accept the step
+	mun_changing=false;
+	mun_step=0.0;
+	if (verbose>0) {
+	  cout << "Neutrons now in range (1)." << endl;
+	}
+      }
+      // Otherwise, the step didn't go far enough to we accept and try
+      // another one.
+    } else {
+      // Neutron step is positive
+      if (std::isinf(nn2) || nn2>nn_max) {
+	// If the step went too far, decrease the neutron step
+	mun_step/=1.5;
+	accept=false;
+	if (verbose>0) {
+	  cout << "Neutron step went too far (2)." << endl;
+	}
+      } else if (nn2>nn_min) {
+	// If the step is just right, stop changing it
+	// and accept the step
+	mun_changing=false;
+	mun_step=0.0;
+	if (verbose>0) {
+	  cout << "Neutrons now in range (2)." << endl;
+	}
+      }
+      // Otherwise, the step didn't go far enough to we accept and try
+      // another one.
+    }
+
+    // Update based on proton density
+    if (eval_protons) {
+      if (mup_changing==false) {
+	if (std::isinf(np2) || np2>np_max || np2<np_min) {
+	  // The neutron step put the proton density out of range, so
+	  // shrink the neutron step and try again
+	  mun_step/=1.5;
+	  accept=false;
+	  if (verbose>0) {
+	    cout << "Value of mup_changing false but protons "
+		 << "out of range." << endl;
+	  }
+	}
+      } else if (mup_step<0.0) {
+	// Proton step is negative
+	if (np2<np_min) {
+	  // If the step went too far, decrease the proton step
+	  mup_step/=1.5;
+	  accept=false;
+	  if (verbose>0) {
+	    cout << "Proton step went too far." << endl;
+	  }
+	} else if (std::isfinite(np2) && np2<np_max) {
+	  // If the step is just right, stop changing it
+	  // and accept the step
+	  mup_changing=false;
+	  mup_step=0.0;
+	  if (verbose>0) {
+	    cout << "Protons now in range." << endl;
+	  }
+	}
+	// Otherwise, the step didn't go far enough to we accept and try
+	// another one.
+      } else {
+	// Proton step is positive
+	if (std::isinf(np2) || np2>np_max) {
+	  // If the step went too far, decrease the proton step
+	  mup_step/=1.5;
+	  accept=false;
+	  if (verbose>0) {
+	    cout << "Proton step went too far." << endl;
+	  }
+	} else if (np2>np_min) {
+	  // If the step is just right, stop changing it
+	  // and accept the step
+	  mup_changing=false;
+	  mup_step=0.0;
+	  if (verbose>0) {
+	    cout << "Protons now in range." << endl;
+	  }
+	}
+	// Otherwise, the step didn't go far enough to we accept and try
+	// another one.
+      }
+    }
+
+    if (accept) {
+      mun=mun2;
+      mup=mup2;
+      calc_mu(mun,mup,T,nn,np,th,nd);
+      if (verbose>0) {
+	cout << "Accept." << endl;
+      }
+      if (std::isfinite(nn) && std::isfinite(np) &&
+	  nn>nn_min && np>np_min && nn<nn_max && np<np_max) {
+	done=true;
+	cout << "Done." << endl;
+      }
+    }
+
+    if (verbose>1) {
+      char ch;
+      cin >> ch;
+    }
+
+    // Go to next iteration
+    k++;
+  }
+
+  if (done==false) {
+    O2SCL_ERR("Failed in make_guess().",exc_efailed);
   }
 
   return o2scl::success;

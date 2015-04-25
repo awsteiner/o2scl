@@ -49,7 +49,6 @@ int main(void) {
   // Set the distribution of nuclei to use
   vector<nucleus> ad;
   nucdist_set(ad,mm,"Z>=24 & Z<=32 & N>=55 & N<=58");
-  cout << ad.size() << endl;
   for(size_t i=0;i<ad.size();i++) {
     ad[i].g=1.0;
   }
@@ -60,25 +59,27 @@ int main(void) {
 
   ne.verbose=1;
 
+  double fac=1.0e4;
+
   // Test make_guess() with very large chemical potentials
   mun=1.0;
   mup=1.0;
-  ne.make_guess(mun,mup,T,th,ad);
+  ne.make_guess(mun,mup,T,th,ad,1.0/fac,fac,1.0/fac,fac);
 
   // Test make_guess() with very small chemical potentials
   mun=-1.0;
   mup=-1.0;
-  ne.make_guess(mun,mup,T,th,ad);
+  ne.make_guess(mun,mup,T,th,ad,1.0/fac,fac,1.0/fac,fac);
 
   // Test make_guess() with large mun and small mup
   mun=1.0;
   mup=-1.0;
-  ne.make_guess(mun,mup,T,th,ad);
+  ne.make_guess(mun,mup,T,th,ad,1.0/fac,fac,1.0/fac,fac);
 
   // Test make_guess() with large mup and small mun
   mun=-1.0;
   mup=1.0;
-  ne.make_guess(mun,mup,T,th,ad);
+  ne.make_guess(mun,mup,T,th,ad,1.0/fac,fac,1.0/fac,fac);
 
   // ---------------------------------------------------------
   // Now test calc_density()
