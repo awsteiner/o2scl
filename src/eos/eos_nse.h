@@ -68,12 +68,20 @@ namespace o2scl {
       The nuclear rest mass is presumed to be \f$ Z_X m_p + N_X m_n
       \f$. 
 
-      The function \ref calc_density() can, for low enough
-      temperatures, require a very good guess in order to successfully
-      solve for the chemical potentials. This is particularly a
-      problem also when the typical \f$ Z/A \f$ of the nuclei is not
-      close to the desired \f$ Y_e \f$ or the nuclear distribution has
-      only a few nuclei.
+      The function \ref calc_density() attempts to solve for the
+      neutron and proton chemical potentials given the neutron and
+      proton densities. However, this is relatively difficult. At low
+      enough temperatures, \f$ n(\mu) \f$ is a staircase-like function
+      with alernating regions which are very flat and or nearly
+      vertical. For this reason, derivative-based methods often fail
+      without extremely good guesses. The current method of solution
+      combines \ref make_guess(), \ref density_min() and \ref
+      direct_solve() in order to obtain the solution.
+
+      Note also that \ref calc_density() will fail if there are
+      no nuclei in the distribution which equal, or surround the
+      requested value of \f$ Y_e=n_p/(n_n+n_p) \f$ determined from \c nn and 
+      \c np .
   */
   class eos_nse {
 
@@ -85,12 +93,12 @@ namespace o2scl {
     
   protected:
     
-    /// Function to solve for baryon and charge conservation
+    /// Function to solve to match neutron and proton densities
     int solve_fun(size_t nv, const ubvector &x, ubvector &y, 
 		  double nn, double np, double T,
 		  std::vector<o2scl::nucleus> &nd);
 
-    /// Desc
+    /// Function to minimize to match neutron and proton densities
     double minimize_fun(size_t nv, const ubvector &x, double T,
 			double nn, double np, o2scl::thermo &th,
 			std::vector<o2scl::nucleus> &nd);
@@ -110,14 +118,10 @@ namespace o2scl {
 
     eos_nse();
 
+    /// \name Basic usage
+    //@{
     /// Verbosity parameter (default 1)
     int verbose;
-    
-    /// The maximum number of iterations for \ref make_guess() (default 40)
-    size_t make_guess_iters;
-
-    /// Desc
-    double make_guess_init_step;
     
     /** \brief If true, call the error handler if calc_density() does
 	not converge (default true)
@@ -130,30 +134,13 @@ namespace o2scl {
 	Given \c mun, \c mup and \c T, this computes the composition
 	(the individual densities are stored in the distribution \c
 	nd), the neutron number density \c nn, and the proton number
-	density \c np. 
+	density \c np. Note that the densities can be infinite if
+	the chemical potentials are sufficiently large.
 
-	This function does not use the solver.
+	This function does not use the solver or the minimizer.
     */
     void calc_mu(double mun, double mup, double T, double &nn, 
 		 double &np, thermo &th, std::vector<nucleus> &nd);
-
-    /** \brief Find values for the chemical potentials which ensure
-	that the densities are within a fixed range
-
-	This function is used by \ref calc_density() to improve
-	the initial guesses for the chemical potentials if
-	necessary.
-
-	\note This function can fail, for example if the density range
-	specified is too small or if the specified distribution
-	consists of nuclei with different values of Ye from that
-	specified by the density range.
-    */
-    int make_guess(double &mun, double &mup, double T,
-		   thermo &th, std::vector<nucleus> &nd,
-		   double nn_min=1.0e-20, double nn_max=1.0e8,
-		   double np_min=1.0e-20, double np_max=1.0e8,
-		   bool err_on_fail=true);
 
   /** \brief Calculate the equation of state as a function of the densities
 
@@ -171,15 +158,69 @@ namespace o2scl {
      */
     int calc_density(double nn, double np, double T, double &mun, 
 		     double &mup, thermo &th, std::vector<nucleus> &nd);
+    //@}
+
+    /// \name Tools for fixing chemical potentials from the densities
+    //@{
+    /// The maximum number of iterations for \ref make_guess() (default 60)
+    size_t make_guess_iters;
+
+    /** \brief The initial stepsize for the chemical potentials relative
+	to the temperature (default \f$ 10^5 \f$ )
+    */
+    double make_guess_init_step;
     
+    /** \brief Find values for the chemical potentials which ensure
+	that the densities are within a fixed range
+
+	This function improves initial guesses for the chemical
+	potentials in order to ensure the densities are within a
+	specified range. It can sometimes even succeed when the
+	chemical potentials are so far off as to make the densities
+	infinite or zero. This function is used by \ref calc_density()
+	to improve the initial guesses for the chemical potentials if
+	necessary.
+
+	The algorithm can fail in several different ways. This is
+	particularly likely if the density range specified by \c
+	nn_min, \c nn_max, \c np_min, and \c np_max is small. This
+	function ignores the value of \ref err_nonconv, and throws an
+	exception on failure only if \c err_on_fail is true (which is
+	the default).
+    */
+    int make_guess(double &mun, double &mup, double T,
+		   thermo &th, std::vector<nucleus> &nd,
+		   double nn_min=1.0e-20, double nn_max=1.0e8,
+		   double np_min=1.0e-20, double np_max=1.0e8,
+		   bool err_on_fail=true);
+
+    /** \brief Obtain chemical potentials from densities directly
+	using a solver
+
+	This function often requires extremely good guesses for the
+	chemical potentials, especially at low temperatures.
+    */
     int direct_solve(double nn, double np, double T, 
 		     double &mun, double &mup, thermo &th, 
-		     std::vector<nucleus> &nd, bool err_on_fail=true);
+		     std::vector<nucleus> &nd);
     
+    /** \brief Obtain chemical potentials from densities 
+	using a minimizer
+	
+	This function often requires extremely good guesses for the
+	chemical potentials, especially at low temperatures. By
+	default, this calls the minimizer five times, as this seems to
+	improve convergence using the default minimizer. By default,
+	the value of \ref o2scl::mmin_base::err_nonconv is set to
+	false for \ref def_mmin .
+    */
     int density_min(double nn, double np, double T, 
 		    double &mun, double &mup, thermo &th, 
 		    std::vector<nucleus> &nd);
-    
+    //@}
+
+    /// \name Numerical methods
+    //@{
     /// Default solver 
     mroot_hybrids<> def_mroot;
     
@@ -199,6 +240,7 @@ namespace o2scl {
       mmin_ptr=&mp;
       return;
     }
+    //@}
     
   };
 

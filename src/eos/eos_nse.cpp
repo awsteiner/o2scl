@@ -82,7 +82,7 @@ int eos_nse::calc_density(double nn, double np, double T,
     // convergence errors for now
     err_nonconv_save=mroot_ptr->err_nonconv;
     mroot_ptr->err_nonconv=false;
-    ds_ret=direct_solve(nn,np,T,mun,mup,th,nd,false);
+    ds_ret=direct_solve(nn,np,T,mun,mup,th,nd);
     mroot_ptr->err_nonconv=err_nonconv_save;
     if (verbose>0) {
       cout << "In calc_density(), initial direct_solve() returns "
@@ -124,7 +124,7 @@ int eos_nse::calc_density(double nn, double np, double T,
 
 int eos_nse::direct_solve(double nn, double np, double T, 
 			  double &mun, double &mup, thermo &th, 
-			  vector<nucleus> &nd, bool err_on_fail) {
+			  vector<nucleus> &nd) {
   ubvector x(2);
   x[0]=mun/T;
   x[1]=mup/T;
@@ -136,11 +136,6 @@ int eos_nse::direct_solve(double nn, double np, double T,
      std::placeholders::_3,nn,np,T,std::ref(nd));
   
   int ret=mroot_ptr->msolve(2,x,mfm);
-  if (ret!=0) {
-    if (err_on_fail) {
-      O2SCL_ERR("Solver failed in eos_nse::direct_solve().",ret);
-    }
-  }
 
   mun=x[0]*T;
   mup=x[1]*T;
