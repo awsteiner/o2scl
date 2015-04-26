@@ -37,7 +37,7 @@ int main(void) {
   t.set_output_level(1);
 
   double nB, Ye, mun, mup, nn, np;
-  eos_nse ne;
+  eos_nse en;
   
   double T=5.0/hc_mev_fm;
   thermo th;
@@ -55,31 +55,33 @@ int main(void) {
   t.test_gen(ad.size()==36,"distribution size");
 
   // ---------------------------------------------------------
-  // Test make_guess()
+  // Test make_guess(), show that it can solve for the
+  // densities within a factor of two
 
-  ne.verbose=1;
+  en.verbose=1;
+  en.make_guess_iters=60;
 
-  double fac=1.0e4;
+  double fac=2.0;
 
   // Test make_guess() with very large chemical potentials
   mun=1.0;
   mup=1.0;
-  ne.make_guess(mun,mup,T,th,ad,1.0/fac,fac,1.0/fac,fac);
+  en.make_guess(mun,mup,T,th,ad,1.0/fac,fac,1.0/fac,fac);
 
   // Test make_guess() with very small chemical potentials
   mun=-1.0;
   mup=-1.0;
-  ne.make_guess(mun,mup,T,th,ad,1.0/fac,fac,1.0/fac,fac);
+  en.make_guess(mun,mup,T,th,ad,1.0/fac,fac,1.0/fac,fac);
 
   // Test make_guess() with large mun and small mup
   mun=1.0;
   mup=-1.0;
-  ne.make_guess(mun,mup,T,th,ad,1.0/fac,fac,1.0/fac,fac);
+  en.make_guess(mun,mup,T,th,ad,1.0/fac,fac,1.0/fac,fac);
 
   // Test make_guess() with large mup and small mun
   mun=-1.0;
   mup=1.0;
-  ne.make_guess(mun,mup,T,th,ad,1.0/fac,fac,1.0/fac,fac);
+  en.make_guess(mun,mup,T,th,ad,1.0/fac,fac,1.0/fac,fac);
 
   // ---------------------------------------------------------
   // Now test calc_density()
@@ -90,9 +92,9 @@ int main(void) {
   mun=1.0;
   mup=1.0;
   
-  int ret=ne.calc_density(nn,np,T,mun,mup,th,ad);
+  int ret=en.calc_density(nn,np,T,mun,mup,th,ad);
 
-  ne.verbose=0;
+  en.verbose=0;
 
   // Double check that the density and electron fraction are properly
   // reproduced
@@ -113,7 +115,7 @@ int main(void) {
 
   // Now proceed to lower temperatures
   for(;T>0.01/hc_mev_fm;T/=1.1) {
-    ret=ne.calc_density(nn,np,T,mun,mup,th,ad);
+    ret=en.calc_density(nn,np,T,mun,mup,th,ad);
     cout << ret << " " << T << " "
 	 << mun << " " << mup << " ";
 
@@ -140,6 +142,52 @@ int main(void) {
   // reproduced
   t.test_rel(nBnew,0.03,1.0e-6,"nB match.");
   t.test_rel(Yenew,0.36,1.0e-6,"Ye match.");
+
+  // ---------------------------------------------------------
+  // Test with a more complete distribution at large and
+  // small Ye
+
+  o2scl::nucdist_set(ad,mm,"1");
+  double min=1.0, max=0.0;
+  for(size_t i=0;i<ad.size();i++) {
+    if (((double)ad[i].Z)/((double)ad[i].A)<min) {
+      min=((double)ad[i].Z)/((double)ad[i].A);
+    }
+    if (((double)ad[i].Z)/((double)ad[i].A)>max) {
+      max=((double)ad[i].Z)/((double)ad[i].A);
+    }
+  }
+  cout << "min Ye, max Ye: " << min << " " << max << endl;
+
+  mun=1.0;
+  mup=1.0;
+  Ye=0.24;
+  nn=1.0e-12*(1.0-Ye);
+  np=1.0e-12*Ye;
+  T=100.0/hc_mev_fm;
+  double fact=2.0;
+  int ret1=0, ret2, ret3;
+  while (T>1.0/hc_mev_fm) {
+    ret3=en.calc_density(nn,np,T,mun,mup,th,ad);
+    cout << ret1 << " " << ret3 << " " << T << " " << mun << " "
+	 << mup << endl;
+    T/=1.5;
+  }
+  cout << endl;
+  
+  mun=1.0;
+  mup=1.0;
+  Ye=0.67;
+  nn=1.0e-12*(1.0-Ye);
+  np=1.0e-12*Ye;
+  T=100.0/hc_mev_fm;
+  while (T>1.0/hc_mev_fm) {
+    ret3=en.calc_density(nn,np,T,mun,mup,th,ad);
+    cout << ret1 << " " << ret3 << " " << T << " " << mun << " "
+	 << mup << endl;
+    T/=1.1;
+  }
+  cout << endl;
   
   t.report();
   return 0;

@@ -31,6 +31,7 @@
 #include <o2scl/nucdist.h>
 #include <o2scl/mm_funct.h>
 #include <o2scl/mroot_hybrids.h>
+#include <o2scl/mmin_simp2.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -73,9 +74,6 @@ namespace o2scl {
       problem also when the typical \f$ Z/A \f$ of the nuclei is not
       close to the desired \f$ Y_e \f$ or the nuclear distribution has
       only a few nuclei.
-
-      \future Is it better to solve for the log(mu/T) instead of for
-      mu/T?
   */
   class eos_nse {
 
@@ -91,9 +89,17 @@ namespace o2scl {
     int solve_fun(size_t nv, const ubvector &x, ubvector &y, 
 		  double nn, double np, double T,
 		  std::vector<o2scl::nucleus> &nd);
+
+    /// Desc
+    double minimize_fun(size_t nv, const ubvector &x, double T,
+			double nn, double np, o2scl::thermo &th,
+			std::vector<o2scl::nucleus> &nd);
     
     /// Solver
     mroot<> *mroot_ptr;
+
+    /// Minimizer
+    mmin_base<> *mmin_ptr;
 
     /// Compute particle properties assuming classical thermodynamics
     classical cla;
@@ -109,6 +115,9 @@ namespace o2scl {
     
     /// The maximum number of iterations for \ref make_guess() (default 40)
     size_t make_guess_iters;
+
+    /// Desc
+    double make_guess_init_step;
     
     /** \brief If true, call the error handler if calc_density() does
 	not converge (default true)
@@ -141,9 +150,10 @@ namespace o2scl {
 	specified by the density range.
     */
     int make_guess(double &mun, double &mup, double T,
-		    thermo &th, std::vector<nucleus> &nd,
-		    double nn_min=1.0e-20, double nn_max=1.0e8,
-		    double np_min=1.0e-20, double np_max=1.0e8);
+		   thermo &th, std::vector<nucleus> &nd,
+		   double nn_min=1.0e-20, double nn_max=1.0e8,
+		   double np_min=1.0e-20, double np_max=1.0e8,
+		   bool err_on_fail=true);
 
   /** \brief Calculate the equation of state as a function of the densities
 
@@ -162,13 +172,31 @@ namespace o2scl {
     int calc_density(double nn, double np, double T, double &mun, 
 		     double &mup, thermo &th, std::vector<nucleus> &nd);
     
+    int direct_solve(double nn, double np, double T, 
+		     double &mun, double &mup, thermo &th, 
+		     std::vector<nucleus> &nd, bool err_on_fail=true);
+    
+    int density_min(double nn, double np, double T, 
+		    double &mun, double &mup, thermo &th, 
+		    std::vector<nucleus> &nd);
+    
     /// Default solver 
     mroot_hybrids<> def_mroot;
-
-    /** \brief Set the solver for use in computing the chemical potentials
+    
+    /// Default minimizer
+    mmin_simp2<> def_mmin;
+    
+    /** \brief Set the solver for use in \ref direct_solve()
      */
     void set_mroot(mroot<> &rp) {
       mroot_ptr=&rp;
+      return;
+    }
+
+    /** \brief Set the minimizer for use in \ref density_min()
+     */
+    void set_mmin(mmin_base<> &mp) {
+      mmin_ptr=&mp;
       return;
     }
     
