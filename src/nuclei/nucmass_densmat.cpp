@@ -60,6 +60,22 @@ double dense_matter::average_a() {
   return cbrt(3.0/4.0/o2scl_const::pi/ntot);
 }
 
+double dense_matter::nn_tot() {
+  double nn_tot_val=n.n;
+  for (size_t i=0;i<dist.size();i++) {
+    nn_tot_val+=dist[i].n*dist[i].N;
+  }
+  return nn_tot_val;
+}
+
+double dense_matter::np_tot() {
+  double np_tot_val=p.n;
+  for (size_t i=0;i<dist.size();i++) {
+    np_tot_val+=dist[i].n*dist[i].Z;
+  }
+  return np_tot_val;
+}
+
 double dense_matter::average_A() {
     
   double ntot=0.0;

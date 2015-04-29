@@ -179,6 +179,14 @@ namespace o2scl {
     */
     double average_A();
 
+    /** \brief Compute total density of neutrons
+     */
+    double nn_tot();
+
+    /** \brief Compute total density of protons
+     */
+    double np_tot();
+
     /** \brief Compute the number-averaged neutron number
 
 	This function returns 
