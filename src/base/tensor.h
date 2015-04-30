@@ -482,6 +482,89 @@ namespace o2scl {
   }
   //@}
 
+  /// \name Minimum and maximum
+  //@{
+  /** \brief Compute the minimum value in the tensor
+   */
+  double min_value() {
+    return o2scl::vector_min_value<vec_t,double>(total_size(),data);
+  }
+
+  /** \brief Compute the index of the minimum value in the tensor
+   */
+  void min_index(vec_size_t &index) {
+    size_t ix=o2scl::vector_min_index<vec_t,double>(total_size(),data);
+    unpack_indices(ix,index);
+    return;
+  }
+
+  /** \brief Compute the index of the minimum value in the tensor
+      and return the minimum
+   */
+  double min(vec_size_t &index) {
+    double val;
+    size_t ix;
+    o2scl::vector_min<vec_t,double>(total_size(),data,ix,val);
+    unpack_indices(ix,index);
+    return val; 
+  }
+
+  /** \brief Compute the maximum value in the tensor
+   */
+  double max_value() {
+    return o2scl::vector_max_value<vec_t,double>(total_size(),data);
+  }
+
+  /** \brief Compute the index of the maximum value in the tensor
+   */
+  void max_index(vec_size_t &index) {
+    size_t ix=o2scl::vector_max_index<vec_t,double>(total_size(),data);
+    unpack_indices(ix,index);
+    return; 
+  }
+
+  /** \brief Compute the index and value of the maximum value in the tensor
+      and return the maximum
+   */
+  double max(vec_size_t &index) {
+    double val;
+    size_t ix;
+    o2scl::vector_max<vec_t,double>(total_size(),data,ix,val);
+    unpack_indices(ix,index);
+    return;
+  }
+
+    /** \brief Compute the minimum and maximum values in the tensor
+   */
+  void minmax_value(double &min, double &max) {
+    return o2scl::vector_minmax_value<vec_t,double>(total_size(),data,min,max);
+  }
+
+  /** \brief Compute the indices of the minimum and maximum values in the tensor
+   */
+  void minmax_index(vec_size_t &index_min, vec_size_t &index_max) {
+    size_t ix_min, ix_max;
+    o2scl::vector_minmax_index<vec_t,double>
+    (total_size(),data,ix_min,ix_max);
+    unpack_indices(ix_min,index_min);
+    unpack_indices(ix_max,index_max);
+    return;
+  }
+
+  /** \brief Compute the indices and values of the maximum and minimum
+      in the tensor
+   */
+  void minmax(vec_size_t &index, size_t &index_min, double &min,
+		     size_t &index_max, double &max) {
+    size_t ix_min, ix_max;
+    o2scl::vector_minmax<vec_t,double>(total_size(),data,ix_min,min,
+				ix_max,max);
+    unpack_indices(ix_min,index_min);
+    unpack_indices(ix_max,index_max);
+    return;
+  }
+  //@}
+  
   };
 
   /** \brief Rank 1 tensor
