@@ -566,7 +566,9 @@ namespace o2scl {
       }
 
       // No return statement needed since the above if statement
-      // always forces a return
+      // always forces a return, but some compilers like having one
+      // anyway.
+      return o2scl::success;
     }
 
     /// 25-point quadrature for Cauchy principal values

@@ -322,7 +322,8 @@ int eos_quark_cfl::integ_err(double a, double b, const size_t nr,
   }
   inte_npoints=88;
   O2SCL_ERR("failed to reach tolerance with highest-order rule",
-		exc_etol);
+	    exc_etol);
+  return exc_etol;
 }
   
 int eos_quark_cfl::set_parameters(double lambda, double fourferm, 

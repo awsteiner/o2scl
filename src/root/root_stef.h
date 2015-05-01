@@ -220,8 +220,8 @@ namespace o2scl {
     */
     virtual int solve_de(double &xx, func_t &fun, dfunc_t &dfun) {
       
-      int status1, status2=gsl_continue, iter=0;
-	
+      int status1=success, status2=gsl_continue, iter=0;
+
       set(fun,dfun,xx);
 
       while (status1==success && status2==gsl_continue && 

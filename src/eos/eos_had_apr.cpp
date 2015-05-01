@@ -370,7 +370,7 @@ double eos_had_apr::fcomp(double nb) {
 		par[21]*(2.0+4.0*par[18]*t5+t5*t5*par[18]*par[18]))*
     exp(par[18]*t5);
   double ddfh2=(par[15]*(2.0*par[16]+t6*par[16]*par[16])+
-		par[24]*(2.0+4.0*par[16]*t6+t6*t6*par[16]*par[16]))*
+		par[14]*(2.0+4.0*par[16]*t6+t6*t6*par[16]*par[16]))*
     exp(par[16]*t6);
   
   

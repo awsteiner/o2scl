@@ -501,12 +501,11 @@ namespace o2scl {
   /** \brief Compute the index of the minimum value in the tensor
       and return the minimum
    */
-  double min(vec_size_t &index) {
-    double val;
+  void min(vec_size_t &index, double &val) {
     size_t ix;
     o2scl::vector_min<vec_t,double>(total_size(),data,ix,val);
     unpack_indices(ix,index);
-    return val; 
+    return; 
   }
 
   /** \brief Compute the maximum value in the tensor
@@ -526,8 +525,7 @@ namespace o2scl {
   /** \brief Compute the index and value of the maximum value in the tensor
       and return the maximum
    */
-  double max(vec_size_t &index) {
-    double val;
+  void max(vec_size_t &index, double &val) {
     size_t ix;
     o2scl::vector_max<vec_t,double>(total_size(),data,ix,val);
     unpack_indices(ix,index);

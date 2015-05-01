@@ -1,8 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2015, Jerry Gagelman
-  and Andrew W. Steiner
+  Copyright (C) 2006-2015, Jerry Gagelman and Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -295,7 +294,9 @@ namespace o2scl {
     }
       
     // No return statement needed since the above if statement
-    // always forces a return
+    // always forces a return, but some compilers like having one
+    // anyway.
+    return o2scl::success;
   }
     
 #endif

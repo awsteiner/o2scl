@@ -68,6 +68,7 @@ int main(void) {
 			 (&cl::mfnd),&acl,std::placeholders::_1);
   root_stef<funct11,funct11> cr1;
   a=1.0e-5;
+  cr1.verbose=1;
   cr1.solve_de(a,fmf,fmfd);
   t.test_rel(a,0.2,1.0e-6,"1");
     

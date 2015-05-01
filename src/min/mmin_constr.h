@@ -348,7 +348,8 @@ namespace o2scl {
 		     func_t &ff) 
     {
       O2SCL_ERR("Not yet implemented mmin_constr::mmin().",
-		    exc_eunimpl);
+		exc_eunimpl);
+      return exc_eunimpl;
     }
 
     /** \brief Calculate the minimum \c min of \c ff

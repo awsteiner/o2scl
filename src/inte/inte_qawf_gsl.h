@@ -364,6 +364,10 @@ namespace o2scl {
 	estr+="::qawf() (it may have returned a non-finite result).";
 	O2SCL_ERR(estr.c_str(),exc_efailed);
       }
+      // No return statement needed since the above if statement
+      // always forces a return, but some compilers like having one
+      // anyway.
+      return o2scl::success;
     }
 
     /// Add the oscillating part to the integrand
