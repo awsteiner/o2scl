@@ -57,7 +57,6 @@ int main(void) {
   ubvector_float v2(g2.get_npoints());
   g2.vector(v2);
 
-  //cout << v2 << endl;
   for(size_t i=0;i<g2.get_npoints();i++) {
     cout << g2[i] << " ";
   }
@@ -68,7 +67,6 @@ int main(void) {
   ubvector v3(g3.get_npoints());
   g3.vector(v3);
 
-  //cout << v3 << endl;
   for(size_t i=0;i<g3.get_npoints();i++) {
     cout << g3[i] << " ";
   }
@@ -81,11 +79,43 @@ int main(void) {
   ubvector v4(g4.get_npoints());
   g4.vector(v4);
 
-  //cout << v4 << endl;
   for(size_t i=0;i<g4.get_npoints();i++) {
     cout << g4[i] << " ";
   }
   cout << endl;
+
+  // Linear decreasing grid
+  uniform_grid_end<> g5(1,0,5);
+
+  for(size_t i=0;i<g5.get_npoints();i++) {
+    cout << g5[i] << " ";
+  }
+  cout << endl;
+  
+  // Logarthmic decreasing grid
+  uniform_grid_log_end<> g6(1,0.1,5);
+
+  for(size_t i=0;i<g6.get_npoints();i++) {
+    cout << g6[i] << " ";
+  }
+  cout << endl;
+
+  // Logarthmic grid with negative values
+  uniform_grid_log_end<> g7(-0.1,-1.0,5);
+  
+  for(size_t i=0;i<g7.get_npoints() && i<10;i++) {
+    cout << g7[i] << " ";
+  }
+  cout << endl;
+  
+  // Logarthmic decreasing grid with negative values
+  uniform_grid_log_end<> g8(-1.0,-0.1,5);
+
+  for(size_t i=0;i<g8.get_npoints() && i<10;i++) {
+    cout << g8[i] << " ";
+  }
+  cout << endl;
+
 
   t.report();
   return 0;

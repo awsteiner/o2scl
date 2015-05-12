@@ -34,6 +34,8 @@
 #include <vector>
 // For std::isinf and std::isnan in C++11
 #include <cmath>
+// For vec_index
+#include <map>
 
 #include <o2scl/err_hnd.h>
 
@@ -91,8 +93,8 @@ namespace o2scl {
   */
   template<class string_arr_t>
     void screenify(size_t nin, const string_arr_t &in_cols, 
-		  std::vector<std::string> &out_cols,
-		  size_t max_size=80) {
+		   std::vector<std::string> &out_cols,
+		   size_t max_size=80) {
 
     if (nin==0) {
       O2SCL_ERR("No strings specified in screenify().",exc_efailed);
@@ -158,7 +160,7 @@ namespace o2scl {
 
       This function removes all characters in \c s which correspond to
       the integer values 9, 10, 11, 12, 13, or 32.
-   */
+  */
   void remove_whitespace(std::string &s);
 
   /** \brief Take a string of binary quads and compress them to 
@@ -295,7 +297,7 @@ namespace o2scl {
 
     if (x1==x2 || x2==x3 || x1==x3) {
       O2SCL_ERR2("Two abscissae cannot be equal in function ",
-		     "quadratic_extremum_x().",exc_einval);
+		 "quadratic_extremum_x().",exc_einval);
     }
     
     /*
@@ -348,7 +350,7 @@ namespace o2scl {
 
     if (x1==x2 || x2==x3 || x1==x3) {
       O2SCL_ERR2("Two abscissae cannot be equal in function ",
-		     "quadratic_extremum_y().",exc_einval);
+		 "quadratic_extremum_y().",exc_einval);
     }
     
     double a,b,c,den=(x1*x1-x2*x2)*(x3-x2)-(x3*x3-x2*x2)*(x1-x2);
@@ -428,7 +430,71 @@ namespace o2scl {
 
     return;
   }
-  
+
+  /** \brief A class to assign string labels to array indices
+   */
+  class vec_index {
+
+  protected:
+
+    /// The map version for string lookup
+    std::map<std::string,size_t,std::greater<std::string> > tmap;
+    /// The vector version for size_t lookup
+    std::vector<std::string> tvec;
+
+  public:
+
+    /// Create an empty assignment
+    vec_index() {}
+    
+    /// Create an assignment based on the values in \c s
+    vec_index(std::vector<std::string> &s) {
+      for(size_t i=0;i<s.size();i++) {
+	tmap.insert(std::make_pair(s[i],i));
+	tvec.push_back(s[i]);
+      }
+    }
+
+    /// Return the string of index \c i
+    std::string operator()(size_t i) {
+      return tvec[i];
+    }
+
+    /// Return the index of string \c s
+    size_t operator()(std::string s) {
+      std::map<std::string,size_t,std::greater<std::string> >::iterator it;
+      it=tmap.find(s);
+      if (it==tmap.end()) {
+	O2SCL_ERR("Failed to find in vec_index::operator().",
+		  o2scl::exc_efailed);
+      }
+      return it->second;
+    }
+
+    /// Return the string of index \c i
+    std::string operator[](size_t i) {
+      return tvec[i];
+    }
+
+    /// Return the index of string \c s
+    size_t operator[](std::string s) {
+      std::map<std::string,size_t,std::greater<std::string> >::iterator it;
+      it=tmap.find(s);
+      if (it==tmap.end()) {
+	O2SCL_ERR("Failed to find in vec_index::operator().",
+		  o2scl::exc_efailed);
+      }
+      return it->second;
+    }
+
+    /// Add string \c s to the object and assign it the next index
+    void push_back(std::string s) {
+      tmap.insert(std::make_pair(s,tvec.size()));
+      tvec.push_back(s);
+      return;
+    }
+  };
+
 #ifndef DOXYGEN_NO_O2NS
 }
 #endif

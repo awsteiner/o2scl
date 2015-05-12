@@ -2728,9 +2728,11 @@ namespace o2scl {
   /// \name Iterator types
   //@{
   /// Map iterator type
-  typedef typename std::map<std::string,col,std::greater<std::string> >::iterator aiter;
+  typedef typename std::map<std::string,col,
+  std::greater<std::string> >::iterator aiter;
   /// Const map iterator type
-  typedef typename std::map<std::string,col,std::greater<std::string> >::const_iterator 
+  typedef typename std::map<std::string,col,
+  std::greater<std::string> >::const_iterator 
   aciter;
   /// Vector iterator type
   typedef typename std::vector<aiter>::iterator aviter;

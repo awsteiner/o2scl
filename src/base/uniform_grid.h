@@ -136,13 +136,35 @@ namespace o2scl {
 		  "uniform_grid::uniform_grid().",exc_einval);
       }
       if (log) {
-	if (width<=1.0) {
-	  O2SCL_ERR2("Requested width <=1 for logrithmic grid in ",
+	if (start>0.0) {
+	  if ((width<1.0 && start<end) ||
+	      (width>1.0 && start>end)) {
+	    O2SCL_ERR2("Incommensurate logarithmic grid in ",
+		       "uniform_grid::uniform_grid().",exc_einval);
+	  }
+	} else if (start<0.0) {
+	  if ((width<1.0 && start>end) ||
+	      (width>1.0 && start<end)) {
+	    O2SCL_ERR2("Incommensurate logarithmic grid in ",
+		       "uniform_grid::uniform_grid().",exc_einval);
+	  }
+	} else if (start==0.0 || end==0.0) {
+	  O2SCL_ERR2("Requested logarithmic grid with either ",
+		     "start or end=0 in uniform_grid::uniform_grid().",
+		     exc_einval);
+	}
+	if (width==1.0) {
+	  O2SCL_ERR2("Requested width 1 for logrithmic grid in ",
 		     "uniform_grid::uniform_grid().",exc_einval);
 	}
       } else {
-	if (width<=0.0) {
-	  O2SCL_ERR2("Requested negative or zero width for linear grid in ",
+	if ((width<0.0 && start<end) ||
+	    (width>0.0 && start>end)) {
+	  O2SCL_ERR2("Incommensurate linear grid in ",
+		     "uniform_grid::uniform_grid().",exc_einval);
+	}
+	if (width==0.0) {
+	  O2SCL_ERR2("Requested zero width for linear grid in ",
 		     "uniform_grid::uniform_grid().",exc_einval);
 	}
       }
@@ -242,30 +264,15 @@ namespace o2scl {
 
       // Linear case
       if (!g_log) {
-	if (g_start<g_end) {
-	  // Increasing
-	  if (i==0) return g_start;
-	  else if (i==g_n_bins) return g_end;
-	  return g_start+i*g_width;
-	} else {
-	  // Decreasing
-	  if (i==0) return g_start;
-	  else if (i==g_n_bins) return g_end;
-	  return g_start-i*g_width;
-	}
-      }
-
-      // Logarithmic case
-      if (g_start<g_end) {
-	// Increasing
+	if (i==0) return g_start;
+	else if (i==g_n_bins) return g_end;
+	return g_start+i*g_width;
+      } else {
+	// Logarithmic case
 	if (i==0) return g_start;
 	else if (i==g_n_bins) return g_end;
 	return g_start*std::pow(g_width,((data_t)i));
       }
-      // Decreasing
-      if (i==0) return g_start;
-      else if (i==g_n_bins) return g_end;
-      return g_start/std::pow(g_width,((data_t)i));
     }
 
     /// Copy constructor

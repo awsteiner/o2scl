@@ -84,6 +84,15 @@ int main(void) {
   remove_whitespace(ss);
   t.test_gen(ss=="Thisisatest","remove_whitespace()");
 
+  vec_index vi;
+  vi.push_back("a1");
+  vi.push_back("c1");
+  vi.push_back("b1");
+  t.test_gen(vi(1)==((string)"c1"),"vec_index 1");
+  t.test_gen(vi[2]==((string)"b1"),"vec_index 2");
+  t.test_gen(vi("a1")==0,"vec_index 3");
+  t.test_gen(vi("b1")==2,"vec_index 4");
+  
   t.report();
   return 0;
 }
