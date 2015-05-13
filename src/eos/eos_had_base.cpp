@@ -1078,8 +1078,8 @@ int eos_had_temp_base::nuc_matter_temp_e(size_t nv, const ubvector &x,
 	       "eos_had_temp_base::nuc_matter_temp_e().",exc_efailed);
   }
 
-  y[0]=neutron->mu-mun0;
-  y[1]=proton->mu-mup0;
+  y[0]=(neutron->mu-mun0)/mun0;
+  y[1]=(proton->mu-mup0)/mup0;
   
   if (!std::isfinite(neutron->mu) || !std::isfinite(proton->mu)) {
     O2SCL_ERR2("Chemical potential problem in ",
@@ -1211,7 +1211,7 @@ int eos_had_temp_eden_base::calc_temp_p(fermion &n, fermion &p,
   
   th=*eos_thermo;
   
-  return 0;
+  return ret;
 }
 
 int eos_had_temp_pres_base::calc_e(fermion &n, fermion &p, thermo &th) {
