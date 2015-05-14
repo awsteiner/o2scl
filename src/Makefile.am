@@ -114,8 +114,7 @@ else
 O2SCL_ARMA_MVAR =
 endif
 
-AM_CPPFLAGS = -I@includedir@ \
-	-I../include/ $(ADDINC) -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
+AM_CPPFLAGS = -I../include/ $(ADDINC) -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
 	$(O2SCL_PART_MVAR) $(O2SCL_EOS_MVAR) $(O2SCL_HDF_MVAR) \
 	$(O2SCL_OPENMP_MVAR) $(O2SCL_EIGEN_MVAR) $(O2SCL_ARMA_MVAR) \
 	-DO2SCL_COND_FLAG

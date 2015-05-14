@@ -33,16 +33,14 @@ endif
 if O2SCL_OPENMP
 if O2SCL_EIGEN
 if O2SCL_ARMA
-AM_CPPFLAGS = -I@includedir@ \
-	-I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
+AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
 	-DO2SCL_PART_SVAR=$(O2SCL_PART_MVAR) \
 	-DO2SCL_EOS_SVAR=$(O2SCL_EOS_MVAR) \
 	-DO2SCL_HDF_SVAR=$(O2SCL_HDF_MVAR) \
 	-DO2SCL_OPENMP_SVAR=1 -DO2SCL_ARMA -DO2SCL_EIGEN \
 	-fopenmp -DO2SCL_COND_FLAG
 else
-AM_CPPFLAGS = -I@includedir@ \
-	-I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
+AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
 	-DO2SCL_PART_SVAR=$(O2SCL_PART_MVAR) \
 	-DO2SCL_EOS_SVAR=$(O2SCL_EOS_MVAR) \
 	-DO2SCL_HDF_SVAR=$(O2SCL_HDF_MVAR) \
@@ -51,16 +49,14 @@ AM_CPPFLAGS = -I@includedir@ \
 endif # ARMA
 else
 if O2SCL_ARMA
-AM_CPPFLAGS = -I@includedir@ \
-	-I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
+AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
 	-DO2SCL_PART_SVAR=$(O2SCL_PART_MVAR) \
 	-DO2SCL_EOS_SVAR=$(O2SCL_EOS_MVAR) \
 	-DO2SCL_HDF_SVAR=$(O2SCL_HDF_MVAR) \
 	-DO2SCL_OPENMP_SVAR=1 -DO2SCL_ARMA -fopenmp \
 	-DO2SCL_COND_FLAG
 else
-AM_CPPFLAGS = -I@includedir@ \
-	-I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
+AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
 	-DO2SCL_PART_SVAR=$(O2SCL_PART_MVAR) \
 	-DO2SCL_EOS_SVAR=$(O2SCL_EOS_MVAR) \
 	-DO2SCL_HDF_SVAR=$(O2SCL_HDF_MVAR) \
@@ -71,15 +67,13 @@ endif # EIGEN
 else
 if O2SCL_EIGEN
 if O2SCL_ARMA
-AM_CPPFLAGS = -I@includedir@ \
-	-I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
+AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
 	-DO2SCL_PART_SVAR=$(O2SCL_PART_MVAR) \
 	-DO2SCL_EOS_SVAR=$(O2SCL_EOS_MVAR) \
 	-DO2SCL_HDF_SVAR=$(O2SCL_HDF_MVAR) \
 	-DO2SCL_OPENMP_SVAR=0 -DO2SCL_ARMA -DO2SCL_EIGEN -DO2SCL_COND_FLAG
 else
-AM_CPPFLAGS = -I@includedir@ \
-	-I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
+AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
 	-DO2SCL_PART_SVAR=$(O2SCL_PART_MVAR) \
 	-DO2SCL_EOS_SVAR=$(O2SCL_EOS_MVAR) \
 	-DO2SCL_HDF_SVAR=$(O2SCL_HDF_MVAR) \
@@ -87,15 +81,13 @@ AM_CPPFLAGS = -I@includedir@ \
 endif # ARMA
 else
 if O2SCL_ARMA
-AM_CPPFLAGS = -I@includedir@ \
-	-I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
+AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
 	-DO2SCL_PART_SVAR=$(O2SCL_PART_MVAR) \
 	-DO2SCL_EOS_SVAR=$(O2SCL_EOS_MVAR) \
 	-DO2SCL_HDF_SVAR=$(O2SCL_HDF_MVAR) \
 	-DO2SCL_OPENMP_SVAR=0 -DO2SCL_ARMA -DO2SCL_COND_FLAG
 else
-AM_CPPFLAGS = -I@includedir@ \
-	-I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
+AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
 	-DO2SCL_PART_SVAR=$(O2SCL_PART_MVAR) \
 	-DO2SCL_EOS_SVAR=$(O2SCL_EOS_MVAR) \
 	-DO2SCL_HDF_SVAR=$(O2SCL_HDF_MVAR) \
