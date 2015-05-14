@@ -32,23 +32,13 @@ help:
 	@echo "Developer targets"
 	@echo "-------------------------------------------------------------"
 	@echo "o2scl-doc:        Make HTML documentation"
-#	@echo "o2scl-docp:       Make LaTeX documentation"
 	@echo "clean-doc:        Remove generated doc files"
 	@echo "dist-nodoc:       Make a distribution w/o the documentation"
 	@echo "sf-sync-doc:      Upload current documentation to SourceForge"
 	@echo "emacs-clean:      Remove files ending with a tilde"
 	@echo 
 
-#	@echo "pngfix:           Remove transparency in doc PNG images"
-#	@echo "tharkad-web:      Copy current docs to tharkad"
-
-#
-
-# @echo "Please use 'make o2scl-test' to test the installation."
-#	ls 
-
 latest:
-	$(MAKE) dist
 	cp o2scl-0.918.tar.gz ~/svn/int3/web/utk
 	openssl dgst -sha256 o2scl-0.918.tar.gz > ~/svn/int3/web/utk/hash.txt
 	cd ~/svn/int3/web; $(MAKE) put
