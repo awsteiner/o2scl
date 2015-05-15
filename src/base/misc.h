@@ -34,8 +34,9 @@
 #include <vector>
 // For std::isinf and std::isnan in C++11
 #include <cmath>
-// For vec_index
+// For the vec_index class below
 #include <map>
+#include <initializer_list>
 
 #include <o2scl/err_hnd.h>
 
@@ -447,11 +448,22 @@ namespace o2scl {
     /// Create an empty assignment
     vec_index() {}
     
-    /// Create an assignment based on the values in \c s
-    vec_index(std::vector<std::string> &s) {
-      for(size_t i=0;i<s.size();i++) {
-	tmap.insert(std::make_pair(s[i],i));
-	tvec.push_back(s[i]);
+    /// Create an assignment based on the strings in \c list
+    vec_index(std::vector<std::string> &list) {
+      for(size_t i=0;i<list.size();i++) {
+	tmap.insert(std::make_pair(list[i],i));
+	tvec.push_back(list[i]);
+      }
+    }
+
+    /// Create an assignment based on the strings in \c list
+    vec_index(std::initializer_list<std::string> list) {
+      size_t ix=0;
+      for(std::initializer_list<std::string>::iterator it=list.begin();
+	  it!=list.end();it++) {
+	tmap.insert(std::make_pair(*it,ix));
+	tvec.push_back(*it);
+	ix++;
       }
     }
 
@@ -465,8 +477,9 @@ namespace o2scl {
       std::map<std::string,size_t,std::greater<std::string> >::iterator it;
       it=tmap.find(s);
       if (it==tmap.end()) {
-	O2SCL_ERR("Failed to find in vec_index::operator().",
-		  o2scl::exc_efailed);
+	std::string str=((std::string)"Failed to find '")+s+
+	  "' in vec_index::operator().";
+	O2SCL_ERR(str.c_str(),o2scl::exc_efailed);
       }
       return it->second;
     }
@@ -481,17 +494,29 @@ namespace o2scl {
       std::map<std::string,size_t,std::greater<std::string> >::iterator it;
       it=tmap.find(s);
       if (it==tmap.end()) {
-	O2SCL_ERR("Failed to find in vec_index::operator().",
-		  o2scl::exc_efailed);
+	std::string str=((std::string)"Failed to find '")+s+
+	  "' in vec_index::operator[].";
+	O2SCL_ERR(str.c_str(),o2scl::exc_efailed);
       }
       return it->second;
     }
 
-    /// Add string \c s to the object and assign it the next index
-    void push_back(std::string s) {
+    /// Add string \c s and assign it the next index
+    void append(std::string s) {
       tmap.insert(std::make_pair(s,tvec.size()));
       tvec.push_back(s);
       return;
+    }
+    
+    /// Add a list of strings
+    void append(std::initializer_list<std::string> list) {
+      size_t ix=tvec.size();
+      for(std::initializer_list<std::string>::iterator it=list.begin();
+	  it!=list.end();it++) {
+	tmap.insert(std::make_pair(*it,ix));
+	tvec.push_back(*it);
+	ix++;
+      }
     }
   };
 

@@ -152,10 +152,11 @@ namespace o2scl {
 	. The nuclei in \c nd must have their proton number, neutron
 	number, atomic number, binding energy, and spin degeracy
 	already specified.
-
-	This function uses the solver to self-consistently compute
-	the chemical potentials. 
-     */
+	
+	This function uses \ref make_guess(), \ref direct_solve(),
+	and \ref density_min(), to self-consistently compute the
+	chemical potentials.
+    */
     int calc_density(double nn, double np, double T, double &mun, 
 		     double &mup, thermo &th, std::vector<nucleus> &nd);
     //@}

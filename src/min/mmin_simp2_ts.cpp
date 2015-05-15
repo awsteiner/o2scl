@@ -44,6 +44,12 @@ double minfun(size_t n, const ubvector &x) {
   return ret;
 }
 
+double minfun2(size_t n, const ubvector &x) {
+  double ret;
+  ret=x[0]*x[0]+(x[1]-2.0e-9)*(x[1]-2.0e-9)+3.0;
+  return ret;
+}
+
 #ifdef O2SCL_EIGEN
 double minfun_Eigen(size_t n, const VectorXd &x) {
   double ret;
@@ -63,18 +69,26 @@ int main(void) {
   mmin_simp2<multi_funct11> g;
   
   multi_funct11 mf=minfun;
+  multi_funct11 mf2=minfun2;
   
-  int ret;
-
   // Standard function
 
   x[0]=1.1;
   x[1]=0.9;
-  ret=g.mmin(2,x,min,mf);
+  g.mmin(2,x,min,mf);
   cout << min << " " << x[0] << " " << x[1] << endl;
   t.test_abs(x[0],0.0,1.0e-4,"mmin_simp2 1");
   t.test_rel(x[1],2.0,2.0e-4,"mmin_simp2 2");
-  
+
+  // Function demonstrating bad scaling
+
+  x[0]=1.1e-9;
+  x[1]=9.0e-10;
+  g.mmin(2,x,min,mf2);
+  cout << min << " " << x[0] << " " << x[1] << endl;
+  //t.test_abs(x[0],0.0,1.0e-4,"mmin_simp2 1");
+  //t.test_rel(x[1],2.0e-9,2.0e-4,"mmin_simp2 2");
+
   // GSL-like interface
 
   x[0]=1.0;
@@ -102,7 +116,7 @@ int main(void) {
   simp(1,1)=1.1;
   simp(2,0)=2.0;
   simp(2,1)=1.0;
-  ret=g.mmin_simplex(2,simp,min,mf);
+  g.mmin_simplex(2,simp,min,mf);
   cout << min << " " << x[0] << " " << x[1] << endl;
   t.test_abs(simp(0,0),0.0,1.0e-4,"mmin_simp2 full simplex 1");
   t.test_rel(simp(0,1),2.0,2.0e-4,"mmin_simp2 full simplex 2");
@@ -120,7 +134,7 @@ int main(void) {
   VectorXd x_Eigen(2);
   x_Eigen[0]=1.1;
   x_Eigen[1]=0.9;
-  ret=g_Eigen.mmin(2,x_Eigen,min,mf_Eigen);
+  g_Eigen.mmin(2,x_Eigen,min,mf_Eigen);
   cout << min << " " << x_Eigen[0] << " " << x_Eigen[1] << endl;
   t.test_abs(x_Eigen[0],0.0,1.0e-4,"mmin_simp2 Eigen 1");
   t.test_rel(x_Eigen[1],2.0,2.0e-4,"mmin_simp2 Eigen 2");

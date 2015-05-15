@@ -95,8 +95,12 @@ namespace o2scl {
       over which one is minimizing. For example, if all three points
       in a simplex for minimizing over a two-dimensional space contain
       nearly the same value for the second parameter, then the
-      minimizer may only min the function with respect to the
-      first parameter. 
+      minimizer may only minimize the function with respect to the
+      first parameter.
+
+      \note The algorithm used to estimate the simplex size does not
+      work well any of the parameters in the minimization problem has
+      a scale which is not close to 1.
 
       See an example for the usage of this class
       in \ref ex_mmin_sect .
@@ -207,7 +211,7 @@ namespace o2scl {
     size_t P=dim+1;
 	
     /* 
-       xc = (1-coeff)*(P/(P-1)) * center(all) + 
+       GSL: xc = (1-coeff)*(P/(P-1)) * center(all) + 
        ((P*coeff-1)/(P-1))*x_corner 
     */
     double alpha=(1.0-coeff)*((double)P)/((double)dim);
@@ -228,19 +232,19 @@ namespace o2scl {
 
     const size_t P=dim+1;
 
-    /* Compute delta = x - x_orig */
+    /* GSL: Compute delta = x - x_orig */
     for(size_t j=0;j<dim;j++) {
       delta[j]=xx[j];
       delta[j]-=x1[i][j];
     }
 
-    /* Compute xmc = x_orig - c */
+    /* GSL: Compute xmc = x_orig - c */
     for(size_t j=0;j<dim;j++) {
       xmc[j]=x1[i][j];
       xmc[j]-=center[j];
     }
 	
-    /* Update size: S2' = S2 + (2/P) * 
+    /* GSL: Update size: S2' = S2 + (2/P) * 
        (x_orig - c).delta + (P-1)*(delta/P)^2 
     */
     double d=o2scl_cblas::dnrm2(dim,delta);
@@ -248,7 +252,7 @@ namespace o2scl {
     S2 += (2.0 / ((double)P)) * xmcd + 
     ((((double)P) - 1.0) / ((double)P)) * (d * d / ((double)P));
 
-    /* Update center:  c' = c + (x - x_orig) / P */
+    /* GSL: Update center:  c' = c + (x - x_orig) / P */
     double alpha=1.0/((double)P);
     for(size_t j=0;j<dim;j++) {
       center[j]-=alpha*x1[i][j];
@@ -276,7 +280,7 @@ namespace o2scl {
   virtual int contract_by_best(size_t best, func_t &f, 
 			       size_t nvar) {
 	
-    /* Function contracts the simplex in respect to best valued
+    /* GSL: Function contracts the simplex in respect to best valued
        corner. That is, all corners besides the best corner are
        moved. (This function is rarely called in practice, since
        it is the last choice, hence not optimised - BJG) 
@@ -689,7 +693,7 @@ namespace o2scl {
       
     if (std::isfinite(val) && val<y1[lo]) {
 
-      /* reflected point becomes lowest point,try expansion */
+      /* reflected point becomes lowest point, try expansion */
 	
       int ret2=try_corner_move(-2.0,hi,ws2,*func,dim,val2);
 
@@ -718,13 +722,13 @@ namespace o2scl {
 	
       if (std::isfinite(val) && val <= y1[hi]) {
 	    
-	/* if trial point is better than highest point,replace
+	/* if trial point is better than highest point, replace
 	   highest point */
 	    
 	update_point(hi,ws1,val);
       }
       
-      /* try one dimensional contraction */
+      /* try one-dimensional contraction */
 	
       int ret3=try_corner_move(0.5,hi,ws2,*func,dim,val2);
 

@@ -89,7 +89,7 @@ int eos_nse::calc_density(double nn, double np, double T,
 	   << ds_ret << endl;
     }
 
-    // If the solver found a solution
+    // If the solver found a solution, then return
     if (ds_ret==success) {
       return success;
     }
