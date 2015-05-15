@@ -38,8 +38,7 @@ EXAMPLE_PRGS = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 	ex_mcarlo.scr ex_string.scr ex_contour.scr ex_eos_crust.scr \
 	ex_mmin_fix.scr ex_nucmass_fit.scr \
 	ex_stiff.scr ex_markov.scr ex_chebapp.scr ex_poly.scr ex_conmin.scr \
-	ex_nucleus_rmf.scr ex_methast.scr ex_eos_had_skyrme.scr ex_nucmass.scr \
-	ex_minte.scr
+	ex_nucleus_rmf.scr ex_methast.scr ex_eos_had_skyrme.scr ex_nucmass.scr 
 
 # ex_ode_it.scr ex_gen_sn_eos.scr 
 
@@ -52,8 +51,7 @@ EXAMPLE_PRGS = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 	ex_mroot.scr ex_mmin.scr ex_inte.scr ex_deriv.scr \
 	ex_ode.scr ex_anneal.scr ex_mcarlo.scr ex_string.scr ex_mmin_fix.scr \
 	ex_stiff.scr ex_markov.scr \
-	ex_chebapp.scr ex_poly.scr ex_conmin.scr ex_methast.scr \
-	ex_minte.scr
+	ex_chebapp.scr ex_poly.scr ex_conmin.scr ex_methast.scr 
 
 # ex_ode_it.scr 
 
@@ -129,7 +127,6 @@ EXTRA_PROGRAMS = \
 	ex_ode_it \
 	ex_anneal \
 	ex_mcarlo \
-	ex_minte \
 	ex_string \
 	ex_gen_sn_eos \
 	ex_contour \
@@ -175,7 +172,6 @@ EXTRA_PROGRAMS = ex_fptr \
 	ex_ode \
 	ex_anneal \
 	ex_mcarlo \
-	ex_minte \
 	ex_string \
 	ex_contour \
 	ex_hydrogen \
@@ -291,11 +287,6 @@ ex_mcarlo_LDADD = $(OOLIBS) $(OOLIBSTWO)
 ex_mcarlo_SOURCES = ex_mcarlo.cpp
 ex_mcarlo.scr: ex_mcarlo
 	./ex_mcarlo > ex_mcarlo.scr
-
-ex_minte_LDADD = $(OOLIBS) $(OOLIBSTWO)
-ex_minte_SOURCES = ex_minte.cpp
-ex_minte.scr: ex_minte
-	./ex_minte > ex_minte.scr
 
 ex_string_LDADD = $(OOLIBS) $(OOLIBSTWO)
 ex_string_SOURCES = ex_string.cpp
