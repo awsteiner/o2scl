@@ -43,6 +43,88 @@
 namespace o2scl {
 #endif
 
+#ifdef O2SCL_NEVER_DEFINED
+
+  /** \brief Desc
+   */
+  class eos_had_data {
+
+  public:
+    
+    /// \name Nucleon masses
+    //@{
+    /** \brief Neutron mass in \f$ \mathrm{MeV} \f$ 
+	(defaults to o2scl_mks::mass_neutron times o2scl_const::hc_mev_fm)
+    */
+    double m_neut;
+    
+    /** \brief Proton mass in \f$ \mathrm{MeV} \f$ 
+	(defaults to o2scl_mks::mass_proton times o2scl_const::hc_mev_fm)
+    */
+    double m_prot;
+    //@}
+    
+    /// \name Grid and data sizes
+    //@{
+    /// Size of baryon density grid
+    size_t n_nB;
+    /// Size of electron fraction grid
+    size_t n_Ye;
+    /// Size of temperature grid
+    size_t n_T;
+    /// Baryon density grid (in \f$ \mathrm{fm}^{-3} \f$)
+    std::vector<double> nB_grid;
+    /// Electron fraction grid
+    std::vector<double> Ye_grid;
+    /// Temperature grid (in \f$ \mathrm{MeV} \f$)
+    std::vector<double> T_grid;
+    //@}
+
+    /// \name Data
+    //@{
+    /** \brief Total free energy per baryon in MeV (without 
+	baryon rest masses but including electron rest mass)
+	
+	By default, this energy is relative to 
+	\f[
+	m_n (1-Y_e) + m_p Y_e
+	\f]
+	where \f$ m_n \f$ is stored in \ref m_neut and \f$ m_p \f$
+	is stored in \ref m_prot .
+    */
+    tensor_grid3<> F;
+    /** \brief Total internal energy per baryon in MeV (without 
+	baryon rest masses but including electron rest mass)
+
+	By default, this energy is relative to 
+	\f[
+	m_n (1-Y_e) + m_p Y_e
+	\f]
+	where \f$ m_n \f$ is stored in \ref m_neut and \f$ m_p \f$
+	is stored in \ref m_prot .
+    */
+    tensor_grid3<> E;
+    /// Total pressure in \f$ \mathrm{MeV}/\mathrm{fm}^3 \f$
+    tensor_grid3<> P;
+    /// Total entropy per baryon
+    tensor_grid3<> S;
+    /** \brief Neutron chemical potential in MeV
+	
+	By default this is relative to the neutron mass in
+	\ref m_neut .
+    */
+    tensor_grid3<> mun;
+    /** \brief Proton chemical potential in MeV
+	
+	By default this is relative to the proton mass in
+	\ref m_prot .
+    */
+    tensor_grid3<> mup;
+    //@}
+  };
+  
+#endif
+  
   /** \brief A base class for the supernova EOSs [abstract]
 
       This class is experimental.
@@ -59,9 +141,6 @@ namespace o2scl {
       aren't either purely linear or purely logarithmic.
       \endcomment
 
-      \future Currently, tensor_grid objects are based on 
-      ublas vectors and thus require a copy for HDF5 output. 
-      Can tensor_grid objects be based on std::vector instead?
       \future Add option to rescale energies and chemical 
       potentials to different masses.
       \future Create a \ref o2scl::table object, possibly using 
