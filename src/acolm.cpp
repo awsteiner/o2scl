@@ -2411,6 +2411,8 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << "EOS library: " << o2scl_settings.eos_installed() << endl;
   cout << "Particle library: " << o2scl_settings.part_installed() << endl;
   cout << "HDF support: " << o2scl_settings.hdf_support() << endl;
+  cout << "Armadillo support: " << o2scl_settings.armadillo_support() << endl;
+  cout << "Eigen support: " << o2scl_settings.eigen_support() << endl;
   cout << "Data directory: " << o2scl_settings.get_data_dir() << endl;
   cout << endl;
   cout << "o2scl_name: " << o2scl_settings.o2scl_name() << endl;
