@@ -53,9 +53,14 @@
     brew install o2scl
     \endcode
 
-    to install \o2 . Alternatively, it is also possible to install
-    directly from source with the <tt>./configure</tt> script as
-    described above.
+    to install \o2 . There are a few options for <tt>brew
+    install</tt>. The option <tt>--with-check</tt> performs the
+    build-time tests and the option <tt>--with-examples</tt> double
+    checks that the examples can also be compiled and executed. The
+    homebrew recipe for \o2 uses the Mac OS X compiler clang.
+
+    Alternatively, it is also possible to install directly from source
+    with the <tt>./configure</tt> script as described above.
 
     \section installopt_subsect Optional linear algebra libraries
 
@@ -67,6 +72,9 @@
     the \o2 classes which use Armadillo use matrix decompositions so
     Armadillo must be compiled with LAPACK support, and you may need
     to specify the location of the LAPACK libraries manually.
+    If you are installing on Mac OS X with homebrew, the
+    options <tt>--with-eigen</tt> and </tt>with-armadillo</tt> can
+    be used.
 
     \section installrange_subsect Range-checking
 
