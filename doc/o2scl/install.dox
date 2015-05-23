@@ -73,7 +73,7 @@
     Armadillo must be compiled with LAPACK support, and you may need
     to specify the location of the LAPACK libraries manually.
     If you are installing on Mac OS X with homebrew, the
-    options <tt>--with-eigen</tt> and </tt>with-armadillo</tt> can
+    options <tt>--with-eigen</tt> and <tt>with-armadillo</tt> can
     be used.
 
     \section installrange_subsect Range-checking

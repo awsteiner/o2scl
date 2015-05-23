@@ -136,7 +136,7 @@ namespace o2scl {
     
   public:
     
-    /// Create an empty tensor with zero rank
+  /// Create an empty tensor with zero rank
   tensor_grid() : tensor<vec_t,vec_size_t>() {
       grid_set=false;
       itype=itp_linear;
@@ -383,6 +383,21 @@ namespace o2scl {
       return;
     }
 
+    /** \brief Copy grid for index \c i to vector \c v
+	
+	The type \c rvec_t must be a vector with a resize
+	method. 
+    */
+    template<class rvec_t> void copy_grid(size_t i, rvec_t &v) {
+      v.resize(this->size[i]);
+      size_t istart=0;
+      for(size_t k=0;k<i;k++) istart+=this->size[k];
+      for(size_t k=0;k<this->size[i];k++) {
+	v[k]=grid[istart+k];
+      }
+      return;
+    }
+    
     /// Lookup jth value on the ith grid
     double get_grid(size_t i, size_t j) const {
       if (!grid_set) {
@@ -674,6 +689,17 @@ namespace o2scl {
 	}
       }
 
+      return;
+    }
+    //@}
+
+    /// \name Clear method
+    //@{
+    /// Clear the tensor of all data and free allocated memory
+    void clear() {
+      grid.resize(0);
+      grid_set=false;
+      tensor<vec_t,vec_size_t>::clear();
       return;
     }
     //@}

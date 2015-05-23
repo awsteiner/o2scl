@@ -1163,10 +1163,10 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
     hf.set_current_id(top);
 
     if (otype.length()!=0) {
-      cout << "Found group with o2scl object named '" << name << "' of type " 
+      cout << "O2scl object named '" << name << "' of type " 
 	   << otype << "." << endl;
     } else {
-      cout << "Found group named '" << name << "'." << endl;
+      cout << "Group named '" << name << "'." << endl;
     }
 
   } else if (infobuf.type==H5O_TYPE_DATASET) {

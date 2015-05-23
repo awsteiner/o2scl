@@ -138,7 +138,7 @@ namespace o2scl {
 #endif
   
   public:
-  
+
   /// Create an empty tensor with zero rank
   tensor() {
     rk=0;
@@ -179,6 +179,17 @@ namespace o2scl {
   ~tensor() {
   }
 
+    /// \name Clear method
+    //@{
+    /// Clear the tensor of all data and free allocated memory
+  void clear() {
+    rk=0;
+    data.resize(0);
+    size.resize(0);
+    return;
+  }
+  //@}
+  
   /// \name Set functions
   //@{
   /// Set the element indexed by \c index to value \c val

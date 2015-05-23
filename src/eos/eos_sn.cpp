@@ -79,6 +79,7 @@ eos_sn_base::~eos_sn_base() {
   if (loaded) free();
 }
 
+/*
 void eos_sn_base::output(std::string file_name) {
 
   if (verbose>0) {
@@ -163,6 +164,7 @@ void eos_sn_base::output(std::string file_name) {
 
   return;
 }
+*/
 
 void eos_sn_base::alloc() {
   size_t dim[3]={n_nB,n_Ye,n_T};
