@@ -176,6 +176,8 @@ namespace o2scl {
     }
     
     fmin=0.0;
+
+    step_norm=1.0;
     
     allocate(nvar);
     
@@ -332,6 +334,9 @@ namespace o2scl {
   ubvector old_x;
   //@}
 
+  /// Normalization for step
+  double step_norm;
+  
   /// Vector of step sizes
   ubvector step_vec;
       
@@ -345,11 +350,9 @@ namespace o2scl {
       return success;
     }
     if (n_moves==0) {
-      for(size_t i=0;i<nvar;i++) {
-	if (i<step_vec.size() && step_vec[i]>this->tol_abs*min_step_ratio) {
-	  step_vec[i]/=step_dec;
-	}
-      }
+      // If we haven't made any progress, shrink the step by
+      // decreasing step_norm
+      step_norm/=step_dec;
     }
     T/=T_dec;
     return success;
@@ -379,7 +382,15 @@ namespace o2scl {
     size_t nstep=step_vec.size();
     for(int i=0;i<nvar;i++) {
       double u=this->rng_dist(this->rng);
-      sx[i]=(2.0*u-1.0)*step_vec[i%nstep]+sx[i];
+
+      // Construct the step in the ith direction
+      double step_i=step_norm*step_vec[i%nstep];
+      // Fix if the step is too small
+      if (step_i<this->tol_abs*min_step_ratio) {
+	step_i=this->tol_abs*min_step_ratio;
+      }
+      
+      sx[i]=(2.0*u-1.0)*step_i+sx[i];
     }
     return 0;
   }
