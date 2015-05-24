@@ -241,7 +241,7 @@ namespace o2scl {
       }
 	  
       // See if we're finished and proceed to the next step
-      next(nvar,old_x,old_E,x,E,T,nmoves,done);
+      next(nvar,old_x,old_E,x,E,T,nmoves,best_E,done);
       
     }
   
@@ -343,8 +343,8 @@ namespace o2scl {
   /// Determine how to change the minimization for the next iteration
   virtual int next(size_t nvar, vec_t &x_old, double min_old, 
 		   vec_t &x_new, double min_new, double &T, 
-		   size_t n_moves, bool &finished) {
-	
+		   size_t n_moves, double best_E, bool &finished) {
+    
     if (T/T_dec<this->tol_abs) {
       finished=true;
       return success;
@@ -353,6 +353,11 @@ namespace o2scl {
       // If we haven't made any progress, shrink the step by
       // decreasing step_norm
       step_norm/=step_dec;
+      // Also reset x to best value so far
+      for(size_t i=0;i<nvar;i++) {
+	x_new[i]=best_x[i];
+      }
+      min_new=best_E;
     }
     T/=T_dec;
     return success;

@@ -51,6 +51,58 @@ dense_matter::dense_matter() {
   photon.init(0.0,2.0);
 }
 
+#ifdef O2SCL_NEVER_DEFINED
+
+void dense_matter::dist_properties(double &ntot, double &A, double &Z,
+				   double &N, double &a) {
+				   
+
+  ntot=0.0;
+  A=0.0;
+  Z=0.0;
+  N=0.0;
+    
+  for (size_t i=0;i<dist.size();i++) {
+    double den_i=dist[i].n;
+    ntot+=den_i;
+    A+=dist[i].A*den_i;
+    Z+=dist[i].Z*den_i;
+    N+=dist[i].N*den_i;
+  }
+
+  A/=ntot;
+  Z/=ntot;
+  N/=ntot;
+  a=cbrt(3.0/4.0/o2scl_const::pi/ntot);
+
+  return;
+}
+
+double dense_matter::impurity(double ntot, double ave_Z) {
+    
+  double sum=0.0;
+  
+  for (size_t i=0;i<dist.size();i++) {
+    sum+=dist[i].n*pow(dist[i].Z-ave_Z,2.0);
+  }
+  
+  if (ntot==0.0) return 0.0;
+
+  return sum/ntot;
+}
+
+void dense_matter::densities(double &nn, double &np) {
+  double nn=n.n;
+  double np=p.n;
+  for (size_t i=0;i<dist.size();i++) {
+    nn+=dist[i].n*dist[i].N;
+    np+=dist[i].n*dist[i].Z;
+  }
+  return;
+}
+
+#endif
+
 double dense_matter::average_a() {
   double ntot=0.0;
   for (size_t i=0;i<dist.size();i++) {

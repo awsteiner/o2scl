@@ -370,6 +370,12 @@ namespace o2scl {
       other initial guesses, and I think this will happen in the GSL
       versions too. I need to examine this more closely with some code
       designed to clearly show this.
+
+      \future When the bfgs2 line minimizer returns a zero status,
+      the minimization fails. When err_nonconv is false, the 
+      minimizer isn't able to update the x vector so the mmin()
+      function doesn't return the best minimum obtained so far.
+      This is a bit confusing, and could be improved. 
   */
   template<class func_t=multi_funct11, 
     class vec_t=boost::numeric::ublas::vector<double> , 
@@ -461,9 +467,9 @@ namespace o2scl {
       // value.
       return exc_enoprog;
     }
-      
-      double dbl_eps=std::numeric_limits<double>::epsilon();
-
+    
+    double dbl_eps=std::numeric_limits<double>::epsilon();
+    
     if (delta_f < 0) {
       double del;
       if (-delta_f>10.0*dbl_eps*fabs(f0)) del=-delta_f;
@@ -483,6 +489,7 @@ namespace o2scl {
       O2SCL_CONV2("Variable stepb vanished in ",
 		  "mmin_bfgs2::iterate().",
 		  exc_enoprog,this->err_nonconv);
+
       // The functions mmin() and mmin_de() use this return value, so
       // when err_nonconv is false, we still want to return a non-zero
       // value.
@@ -755,7 +762,8 @@ namespace o2scl {
       }
 	
     } while (status == gsl_continue && xiter < this->ntrial);
-      
+
+    std::cout << "H: " << (*st_x)[0] << std::endl;
     for(size_t i=0;i<nn;i++) xx[i]=(*st_x)[i];
     fmin=st_f;
       
