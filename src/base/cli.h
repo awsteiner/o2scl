@@ -359,7 +359,7 @@ namespace o2scl {
     /// \name Parameter storage and associated iterator type
     //@{
     /// Parameter list
-    std::map<std::string,parameter *,std::greater<std::string> > par_list;
+    std::map<std::string,parameter *,std::less<std::string> > par_list;
     /// List iterator
     typedef std::map<std::string,parameter *,
       std::greater<std::string> >::iterator par_t;

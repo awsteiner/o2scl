@@ -638,8 +638,8 @@ namespace o2scl_hdf {
 	type and if found, set \c group_name to the associated object
 	name
 
-	This function returns 1 if an object of type \c type is found
-	and 0 if it fails.
+	This function returns 0 if an object of type \c type is found
+	and \ref exc_enoprog if it fails.
     */
     int find_group_by_type(hdf_file &hf, std::string type,
 			   std::string &group_name, int verbose=0);
@@ -647,8 +647,8 @@ namespace o2scl_hdf {
     /** \brief Look in hdf_file \c hf for an \o2 object with name 
 	\c name and if found, set \c type to the associated type
 	
-	This function returns 1 if an object with name \c name is
-	found and 0 if it fails.
+	This function returns 0 if an object with name \c name is
+	found and \ref exc_enoprog if it fails.
     */
     int find_group_by_name(hdf_file &hf, std::string name,
 			   std::string &type, int verbose=0);
