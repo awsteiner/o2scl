@@ -79,76 +79,70 @@ eos_sn_base::~eos_sn_base() {
   if (loaded) free();
 }
 
-/*
-void eos_sn_base::output(std::string file_name) {
+void eos_sn_base::output(std::string fname) {
 
+  if (loaded==false) {
+    O2SCL_ERR("Not loaded in eos_sn_base::output().",
+	      exc_efailed);
+  }
+  
   if (verbose>0) {
     cout << "eos_sn_base::output(): Output to file named '"
-	 << file_name << "'." << endl;
+	 << fname << "'." << endl;
   }
   
   hdf_file hf;
-  hf.open_or_create(file_name);
-  
+
+  hf.open_or_create(fname);
+
   // Grid
   hf.set_szt("n_nB",n_nB);
   hf.set_szt("n_Ye",n_Ye);
   hf.set_szt("n_T",n_T);
-  nB_grid.resize(n_nB);
-  Ye_grid.resize(n_Ye);
-  T_grid.resize(n_T);
-  for(size_t i=0;i<n_nB;i++) nB_grid[i]=A.get_grid(0,i);
-  for(size_t i=0;i<n_Ye;i++) Ye_grid[i]=A.get_grid(1,i);
-  for(size_t i=0;i<n_T;i++) T_grid[i]=A.get_grid(2,i);
   hf.setd_vec("nB_grid",nB_grid);
   hf.setd_vec("Ye_grid",Ye_grid);
   hf.setd_vec("T_grid",T_grid);
 
-  // Main bulk thermodynamic quantities
-  if (baryons_only_loaded) {
-    hdf_output(hf,F,"F");
-    hdf_output(hf,E,"E");
-    hdf_output(hf,S,"S");
-    hdf_output(hf,P,"P");
-    hf.seti("baryons_only",1);
-  } else {
-    hf.seti("baryons_only",0);
-  }
-  if (with_leptons_loaded) {
-    hdf_output(hf,Fint,"Fint");
-    hdf_output(hf,Eint,"Eint");
-    hdf_output(hf,Sint,"Sint");
-    hdf_output(hf,Pint,"Pint");
-    hf.seti("with_leptons",1);
-  } else {
-    hf.seti("with_leptons",0);
-  }
-
-  // Muon flag
+  // Flags
+  hf.seti("baryons_only",data_baryons_only());
+  hf.seti("with_leptons",data_with_leptons());
   if (include_muons) {
     hf.seti("include_muons",1);
   } else {
     hf.seti("include_muons",0);
   }
 
-  // Nucleon masses
-  hf.setd("m_neut",m_neut);
-  hf.setd("m_prot",m_prot);
+  if (with_leptons_loaded) {
+    hdf_output(hf,F,"F");
+    hdf_output(hf,E,"E");
+    hdf_output(hf,P,"P");
+    hdf_output(hf,S,"S");
+  }
+  if (baryons_only_loaded) {
+    hdf_output(hf,Fint,"Fint");
+    hdf_output(hf,Eint,"Eint");
+    hdf_output(hf,Pint,"Pint");
+    hdf_output(hf,Sint,"Sint");
+  }
 
   // Chemical potentials
   hdf_output(hf,mun,"mun");
   hdf_output(hf,mup,"mup");
 
   // Composition
-  hdf_output(hf,A,"A");
   hdf_output(hf,Z,"Z");
+  hdf_output(hf,A,"A");
   hdf_output(hf,Xn,"Xn");
   hdf_output(hf,Xp,"Xp");
-  hdf_output(hf,Xalpha,"Xalpha");
   hdf_output(hf,Xnuclei,"Xnuclei");
+  hdf_output(hf,Xalpha,"Xalpha");
+  
+  // Nucleon masses
+  hf.setd("m_neut",m_neut);
+  hf.setd("m_prot",m_prot);
 
   // Other data 
-  hf.seti("n_oth",n_oth);
+  hf.set_szt("n_oth",n_oth);
   if (n_oth>0) {
     hf.sets_vec("oth_names",oth_names);
     for(size_t i=0;i<n_oth;i++) {
@@ -164,7 +158,92 @@ void eos_sn_base::output(std::string file_name) {
 
   return;
 }
-*/
+
+void eos_sn_base::load(std::string fname) {
+
+  if (verbose>0) {
+    cout << "In eos_sn_base::load(), loading EOS from file\n\t'"
+	 << fname << "'." << endl;
+  }
+
+  if (loaded) free();
+  
+  hdf_file hf;
+
+  hf.open(fname);
+
+  // Grid
+  hf.get_szt("n_nB",n_nB);
+  hf.get_szt("n_Ye",n_Ye);
+  hf.get_szt("n_T",n_T);
+  hf.getd_vec("nB_grid",nB_grid);
+  hf.getd_vec("Ye_grid",Ye_grid);
+  hf.getd_vec("T_grid",T_grid);
+
+  // Flags
+  int itmp;
+  hf.geti("baryons_only",itmp);
+  if (itmp==1) baryons_only_loaded=true;
+  else baryons_only_loaded=false;
+  hf.geti("with_leptons",itmp);
+  if (itmp==1) with_leptons_loaded=true;
+  else with_leptons_loaded=false;
+  hf.geti("include_muons",itmp);
+  if (itmp==1) include_muons=true;
+  else include_muons=false;
+
+  if (with_leptons_loaded) {
+    hdf_input(hf,F,"F");
+    hdf_input(hf,E,"E");
+    hdf_input(hf,P,"P");
+    hdf_input(hf,S,"S");
+  }
+  if (baryons_only_loaded) {
+    hdf_input(hf,Fint,"Fint");
+    hdf_input(hf,Eint,"Eint");
+    hdf_input(hf,Pint,"Pint");
+    hdf_input(hf,Sint,"Sint");
+  }
+
+  // Chemical potentials
+  hdf_input(hf,mun,"mun");
+  hdf_input(hf,mup,"mup");
+
+  // Composition
+  hdf_input(hf,Z,"Z");
+  hdf_input(hf,A,"A");
+  hdf_input(hf,Xn,"Xn");
+  hdf_input(hf,Xp,"Xp");
+  hdf_input(hf,Xnuclei,"Xnuclei");
+  hdf_input(hf,Xalpha,"Xalpha");
+  
+  // Nucleon masses
+  hf.getd("m_neut",m_neut);
+  hf.getd("m_prot",m_prot);
+
+  // Other data
+  hf.get_szt("n_oth",n_oth);
+  if (n_oth>0) {
+    hf.gets_vec("oth_names",oth_names);
+    for(size_t i=0;i<n_oth;i++) {
+      hdf_input(hf,other[i],oth_names[i]);
+    }
+  }
+  
+  hf.close();
+
+  loaded=true;
+
+  // It is important that 'loaded' is set to true before the call to
+  // set_interp_type().
+  set_interp_type(itp_linear);
+
+  if (verbose>0) {
+    cout << "Done in eos_sn_base::load()." << endl;
+  }
+
+  return;
+}
 
 void eos_sn_base::alloc() {
   size_t dim[3]={n_nB,n_Ye,n_T};
@@ -751,6 +830,8 @@ void eos_sn_ls::load(std::string fname) {
 	       "in eos_sn_ls::load().",exc_efailed);
   }
 
+  // It is important that 'loaded' is set to true before the call to
+  // set_interp_type().
   set_interp_type(itp_linear);
 
   if (verbose>0) {
@@ -857,9 +938,6 @@ void eos_sn_oo::load(std::string fname, size_t mode) {
   
   if (loaded) free();
 
-  std::ifstream fin;
-  fin.open(fname.c_str());
-      
   // Read grid size and allocate memory
 
   hdf_file hf;
@@ -1092,6 +1170,8 @@ void eos_sn_oo::load(std::string fname, size_t mode) {
 	       "in eos_sn_oo::load().",exc_efailed);
   }
   
+  // It is important that 'loaded' is set to true before the call to
+  // set_interp_type().
   set_interp_type(itp_linear);
 
   if (verbose>0) {
@@ -1290,6 +1370,8 @@ void eos_sn_stos::load(std::string fname, size_t mode) {
   with_leptons_loaded=false;
   baryons_only_loaded=true;
 
+  // It is important that 'loaded' is set to true before the call to
+  // set_interp_type().
   set_interp_type(itp_linear);
 
   // Double check the grid 
@@ -1570,15 +1652,18 @@ void eos_sn_hfsl::load(std::string fname) {
   for(size_t i=0;i<n_nB;i++) {
     double nb_temp=pow(10.0,((double)i)*0.04-12);
     grid.push_back(nb_temp);
+    nB_grid.push_back(nb_temp);
   }
   for(size_t i=0;i<n_Ye;i++) {
     double ye_temp=0.01*((double)(i+1));
     grid.push_back(ye_temp);
+    Ye_grid.push_back(ye_temp);
   }
   double temp_temp;
   for(size_t i=0;i<n_T;i++) {
     temp_temp=pow(10.0,((double)i)*0.04-1.0);
     grid.push_back(temp_temp);
+    T_grid.push_back(temp_temp);
   }
   for(size_t ell=0;ell<n_base+n_oth;ell++) {
     arr[ell]->set_grid_packed(grid);
@@ -1666,6 +1751,8 @@ void eos_sn_hfsl::load(std::string fname) {
   with_leptons_loaded=false;
   baryons_only_loaded=true;
 
+  // It is important that 'loaded' is set to true before the call to
+  // set_interp_type().
   set_interp_type(itp_linear);
 
   oth_names.push_back("log_rho");

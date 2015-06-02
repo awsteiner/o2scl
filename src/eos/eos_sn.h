@@ -315,9 +315,25 @@ namespace o2scl {
       return baryons_only_loaded;
     }
 
+    /* \brief Load EOS from file named \c file_name
+
+       \comment
+       The native EOS type overriddes this generic function,
+       but this function is for loading other EOSs in the
+       base class format
+       \endcomment
+    */
+    virtual void load(std::string fname);
+
     /* \brief Output EOS to file named \c file_name
-     */
-    //void output(std::string file_name);
+
+       \comment
+       The native EOS type overriddes this generic function,
+       but this function is for writing other EOSs in the
+       base class format
+       \endcomment
+    */
+    virtual void output(std::string fname);
 
     /// Labels for the extra data sets included in current EOS
     std::vector<std::string> oth_names;

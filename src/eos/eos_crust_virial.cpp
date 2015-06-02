@@ -275,7 +275,7 @@ void eos_crust_virial::fit() {
   // Chi-squared and fitting data
   chi_fit_funct<vector<double>,ubmatrix,fit_func> 
     cff2(16,Tv,bpnv,berr,ffs2);
-
+  
   params[0]=1.0;
   params[1]=2.5;
   params[2]=0.018;
