@@ -592,7 +592,7 @@ namespace o2scl {
   bool set_called;
 
   /// Finish the solution after set() or set_de() has been called
-  int solve_set(size_t nn, vec_t &xx, func_t &ufunc) {
+  virtual int solve_set(size_t nn, vec_t &xx, func_t &ufunc) {
 
     int status;
     iter=0;
