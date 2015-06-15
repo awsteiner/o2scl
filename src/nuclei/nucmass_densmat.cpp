@@ -375,12 +375,23 @@ void nucmass_densmat::binding_energy_densmat_derivs
   double R_WS_3=R_p_3*(n0o2-npout)/(nneg-npout);
   double R_WS=cbrt(R_WS_3);
 
+  // Allow a small error from finite precision
+  if (R_p>R_WS) {
+    R_p=R_WS*(1.0-1.0e-8);
+    R_p_3=R_p*R_p*R_p;
+  }
   if (R_p>R_WS) {
     cout << "Z,N,np,nn,ne: " << Z << " " << N << " " 
 	 << npout << " " << nnout << " " << nneg << endl;
     cout << "Rn,Rp,RWS: " << R_n << " "<< R_p << " " << R_WS << endl;
     O2SCL_ERR2("Proton radius larger than cell in nucmass_densmat::",
 	       "binding_energy_densmat_derivs().",exc_einval);
+  }
+
+  // Allow a small error from finite precision
+  if (R_n>R_WS) {
+    R_n=R_WS*(1.0-1.0e-8);
+    R_n_3=R_n*R_n*R_n;
   }
   if (R_n>R_WS) {
     cout << "Z,N,np,nn,ne: " << Z << " " << N << " " 
