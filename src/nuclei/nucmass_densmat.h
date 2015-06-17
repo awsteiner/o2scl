@@ -162,6 +162,8 @@ namespace o2scl {
       return *this;
     }
 
+    void output(std::ostream &out, int verbose=1);
+    
     /** \brief Compute an average inter-ionic spacing
 
 	This function returns 

@@ -21,7 +21,7 @@ HEADER_VAR = nucmass.h nucdist.h nucleus.h nucmass_fit.h \
 
 TEST_VAR = nucmass.scr nucdist.scr nucleus.scr nucmass_fit.scr \
 	reaction_lib.scr hdf_nucmass_io.scr nucmass_frdm.scr \
-	nucmass_dz.scr
+	nucmass_dz.scr nucmass_densmat.scr
 
 else
 
@@ -99,7 +99,7 @@ pkginclude_HEADERS = $(HEADER_VAR)
 
 check_PROGRAMS = nucmass_ts nucdist_ts nucleus_ts \
 	nucmass_fit_ts reaction_lib_ts hdf_nucmass_io_ts nucmass_frdm_ts \
-	nucmass_dz_ts
+	nucmass_dz_ts nucmass_densmat_ts
 
 check_SCRIPTS = o2scl-test
 
@@ -118,6 +118,7 @@ nucleus_ts_LDADD = $(VCHECK_LIBS)
 nucmass_fit_ts_LDADD = $(VCHECK_LIBS)
 nucmass_frdm_ts_LDADD = $(VCHECK_LIBS)
 nucmass_dz_ts_LDADD = $(VCHECK_LIBS)
+nucmass_densmat_ts_LDADD = $(VCHECK_LIBS)
 
 nucmass.scr: nucmass_ts$(EXEEXT)
 	./nucmass_ts$(EXEEXT) > nucmass.scr
@@ -135,6 +136,8 @@ nucmass_frdm.scr: nucmass_frdm_ts$(EXEEXT)
 	./nucmass_frdm_ts$(EXEEXT) > nucmass_frdm.scr
 nucmass_dz.scr: nucmass_dz_ts$(EXEEXT)
 	./nucmass_dz_ts$(EXEEXT) > nucmass_dz.scr
+nucmass_densmat.scr: nucmass_densmat_ts$(EXEEXT)
+	./nucmass_densmat_ts$(EXEEXT) > nucmass_densmat.scr
 
 nucmass_ts_SOURCES = nucmass_ts.cpp
 reaction_lib_ts_SOURCES = reaction_lib_ts.cpp
@@ -144,6 +147,7 @@ nucleus_ts_SOURCES = nucleus_ts.cpp
 nucmass_fit_ts_SOURCES = nucmass_fit_ts.cpp
 nucmass_frdm_ts_SOURCES = nucmass_frdm_ts.cpp
 nucmass_dz_ts_SOURCES = nucmass_dz_ts.cpp
+nucmass_densmat_ts_SOURCES = nucmass_densmat_ts.cpp
 
 # ------------------------------------------------------------
 # Library o2scl_nuclei

@@ -103,6 +103,136 @@ void dense_matter::densities(double &nn, double &np) {
 
 #endif
 
+void dense_matter::output(std::ostream &out, int verbose) {
+
+  out.setf(ios::scientific);
+  out.setf(ios::left);
+  out.setf(ios::showpos);
+  out << "--------------------------------------"
+      << "--------------------------------------" << endl;
+  out << "       nB= " << nB << " Ye= " << Ye << " T= "
+      << T*hc_mev_fm << endl;
+  out << "Check: nB= " << baryon_density() << " Ye= " << electron_fraction()
+      << endl;
+  cout << "Nuclei: A= " << average_A() << "  Z= "
+       << average_Z() << " Q= " << impurity() << endl;
+  out << endl;
+  out << "                                n            mu          "
+      << "  ed            en" << endl;
+  out.width(20);
+  out << "Neutrons: " << n.n << " " << n.mu << endl;
+  out.width(20);
+  out << "Protons: " << p.n << " " << p.mu << endl;
+  out.width(48);
+  out << "Dripped nucleons: " 
+      << drip_th.ed << " " << drip_th.en << endl;
+  out.width(20);
+  out << "Electrons: " 
+      << e.n << " " << e.mu << " " << e.ed << " "
+      << e.en << endl;
+  out.width(20);
+  out << "Muons: " 
+      << mu.n << " " << mu.mu << " " << mu.ed << " "
+      << mu.en << endl;
+  out.width(20);
+  out << "Photons: " 
+      << photon.n << " " << 0.0 << " " << photon.ed << " "
+      << photon.en << endl;
+  
+  size_t i_out;
+  
+  if (verbose>0) {
+    
+    i_out=0;
+  
+    for(size_t i=0;i<dist.size();i++) {
+      o2scl::nucleus &nuc=dist[i];
+    
+      if ((verbose==1 && nuc.n>0.0 && i_out<10) ||
+	  (verbose==2 && nuc.n>0.0) ||
+	  verbose>=3) {
+	string s="Nucleus ("+o2scl::itos(((int)(nuc.Z+1.0e-8)))+","+
+	  o2scl::itos(((int)(nuc.N+1.0e-8)))+"): ";
+	out.width(20);
+	out << s << nuc.n << " " << nuc.mu << " " 
+	    << nuc.ed+nuc.be*nuc.n << " " << nuc.en << endl;
+	i_out++;
+      }
+    
+    }
+
+  } else {
+    
+    double sum_e=0.0, sum_s=0.0;
+    for(size_t i=0;i<dist.size();i++) {
+      o2scl::nucleus &nuc=dist[i];
+      if (nuc.n>0.0) {
+	sum_e+=nuc.ed+nuc.be*nuc.n;
+	sum_s+=nuc.en;
+      }
+    }
+    out << "Nuclei:                                         "
+	<< sum_e << " " << sum_s << endl;
+  }
+  
+  out.width(48);
+  out << "Total: " << th.ed << " " << th.en << endl;
+  out << "Free energy: " << th.ed-T*th.en << endl;
+  out << endl;
+  out << "Contributions to pressure:" << endl;
+  out << "                                n           eta          "
+      << "  pr" << endl;
+  out.width(48);
+  out << "- Energy: " << -th.ed << endl;
+  out.width(48);
+  out << "T * Entropy: " << T*th.en << endl;
+  out.width(20);
+  out << "Neutrons: " << n.n << " " << eta_n << " "
+      << n.n*eta_n << endl;
+  out.width(20);
+  out << "Protons: " << p.n << " " << eta_p << " "
+      << p.n*eta_p << endl;
+
+  if (verbose>0) {
+    
+    i_out=0;
+    for(size_t i=0;i<dist.size();i++) {
+      o2scl::nucleus &nuc=dist[i];
+      
+      if ((verbose==1 && nuc.n>0.0 && i_out<10) ||
+	  (verbose==2 && nuc.n>0.0) ||
+	  verbose>=3) {
+	string s="Nucleus ("+o2scl::itos(((int)(nuc.Z+1.0e-8)))+","+
+	  o2scl::itos(((int)(nuc.N+1.0e-8)))+"): ";
+	out.width(20);
+	out << s << nuc.n << " " << eta_nuc[i] << " "
+	    << nuc.n*eta_nuc[i] << endl;
+	i_out++;
+      }
+    }
+
+  } else {
+    double sum_p=0.0;
+    for(size_t i=0;i<dist.size();i++) {
+      o2scl::nucleus &nuc=dist[i];
+      if (nuc.n>0.0) {
+	sum_p+=nuc.n*eta_nuc[i];
+      }
+    }
+    out << "Nuclei:                                         "
+	<< sum_p << endl;
+  }
+  
+  out.width(48);
+  out << "Total pressure: " << th.pr << endl;
+  out << "--------------------------------------"
+      << "--------------------------------------" << endl;
+  out.unsetf(ios::left);
+  out.unsetf(ios::showpos);
+
+  return;
+}
+
 double dense_matter::average_a() {
   double ntot=0.0;
   for (size_t i=0;i<dist.size();i++) {
