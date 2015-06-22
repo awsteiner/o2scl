@@ -179,13 +179,13 @@ void dense_matter::output(std::ostream &out, int verbose) {
   out << "Total: " << th.ed << " " << th.en << endl;
   out << "Free energy: " << th.ed-T*th.en << endl;
   out << endl;
-  out << "Contributions to pressure:" << endl;
-  out << "                                n           eta          "
-      << "  pr" << endl;
+  out.width(48);
+  out << "Contributions to pressure:" << " pr" << endl;
   out.width(48);
   out << "- Energy: " << -th.ed << endl;
   out.width(48);
-  out << "T * Entropy: " << T*th.en << endl;
+  out << "T * Entropy:         n             eta"
+      << T*th.en << endl;
   out.width(20);
   out << "Neutrons: " << n.n << " " << eta_n << " "
       << n.n*eta_n << endl;
