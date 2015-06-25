@@ -36,7 +36,7 @@ EXAMPLE_PRGS = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 	ex_nstar_cold.scr ex_mroot.scr ex_mmin.scr ex_eos_had_apr.scr \
 	ex_inte.scr ex_deriv.scr ex_part.scr ex_ode.scr ex_anneal.scr \
 	ex_mcarlo.scr ex_string.scr ex_contour.scr ex_eos_crust.scr \
-	ex_mmin_fix.scr ex_nucmass_fit.scr \
+	ex_mmin_fix.scr ex_nucmass_fit.scr ex_eos_had_rmf.scr\
 	ex_stiff.scr ex_markov.scr ex_chebapp.scr ex_poly.scr ex_conmin.scr \
 	ex_nucleus_rmf.scr ex_methast.scr ex_eos_had_skyrme.scr ex_nucmass.scr 
 
@@ -133,6 +133,7 @@ EXTRA_PROGRAMS = \
 	ex_eos_crust \
 	ex_eos_had_apr \
 	ex_eos_had_skyrme \
+	ex_eos_had_rmf \
 	ex_nucmass \
 	ex_hydrogen \
 	ex_mmin_fix \
@@ -312,6 +313,11 @@ ex_eos_had_skyrme_LDADD = $(OOLIBS) $(OOLIBSTWO)
 ex_eos_had_skyrme_SOURCES = ex_eos_had_skyrme.cpp
 ex_eos_had_skyrme.scr: ex_eos_had_skyrme
 	./ex_eos_had_skyrme -test > ex_eos_had_skyrme.scr
+
+ex_eos_had_rmf_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_eos_had_rmf_SOURCES = ex_eos_had_rmf.cpp
+ex_eos_had_rmf.scr: ex_eos_had_rmf
+	./ex_eos_had_rmf -test > ex_eos_had_rmf.scr
 
 ex_nucmass_LDADD = $(OOLIBS) $(OOLIBSTWO)
 ex_nucmass_SOURCES = ex_nucmass.cpp
