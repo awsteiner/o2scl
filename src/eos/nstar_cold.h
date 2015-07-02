@@ -157,6 +157,10 @@ namespace o2scl {
 
       \hline
 
+      \todo Maybe calc_eos() doesn't really need a thermo object since
+      it can use the default EOS thermo object and we can get
+      rid of the class variables h, hb, and l
+
       \future Warn if the EOS becomes pure neutron matter.
   */
 
@@ -181,7 +185,7 @@ namespace o2scl {
     /** \brief Calculate the given equation of state
      */
     void calc_eos(double np_0=0.0);
-
+    
     /** \brief Compute the density at which the direct Urca process is allowe
 
 	This is faster than using calc_eos() since it does nothing

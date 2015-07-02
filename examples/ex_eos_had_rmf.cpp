@@ -25,11 +25,47 @@
 #include <o2scl/deriv_gsl.h>
 #include <o2scl/eos_had_rmf.h>
 #include <o2scl/hdf_eos_io.h>
+#include <o2scl/nstar_cold.h>
+#include <o2scl/root_cern.h>
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_hdf;
 using namespace o2scl_const;
+
+class beta_temp {
+
+public:
+  
+  o2scl::eos_had_rmf &re;
+  o2scl::fermion &n;
+  o2scl::fermion &p;
+  
+  beta_temp(o2scl::eos_had_rmf &ret, o2scl::fermion &nt,
+	    o2scl::fermion &pt) : re(ret), n(nt), p(pt) {
+    e.init(o2scl_settings.get_convert_units().convert
+	   ("kg","1/fm",o2scl_mks::mass_electron),2.0);
+  }
+  
+  fermion e;
+  fermion_zerot fzt;
+  double barn;
+  
+  double solve_fun(double x) {
+
+    //cout << "x: " << x << " " << barn << endl;
+    p.n=x*barn;
+    n.n=barn-p.n;
+    re.calc_temp_e(n,p,8.0/hc_mev_fm,re.def_thermo);
+    
+    e.mu=n.mu-p.mu;
+    fzt.calc_mu_zerot(e);
+    //cout << "y: " << p.n-e.n << endl;
+    return p.n-e.n;
+  }
+
+};
+
 
 int main(void) {
 
@@ -139,27 +175,60 @@ int main(void) {
   re.def_mroot.def_jac.set_epsmin(1.0e-15);
   re.def_mroot.ntrial*=10;
 
-  // Temp
+  // Test beta equilibrium at 8 MeV
   double sigma, omega, rho;
-  double xp=0.0170456;
+  double xp=0.02;
   double nb=0.02;
+
   re.def_neutron.m=939.0/hc_mev_fm;
   re.def_proton.m=939.0/hc_mev_fm;
+
+  beta_temp bt(re,re.def_neutron,re.def_proton);
+  bt.barn=0.02;
+
+  funct11 bf=std::bind(std::mem_fn<double(double)>
+		       (&beta_temp::solve_fun),
+		       &bt,std::placeholders::_1);
+  root_cern<> rt;
+  rt.solve(xp,bf);
+  bt.solve_fun(xp);
+
+  re.get_fields(sigma,omega,rho);
+  cout << re.def_neutron.n+re.def_proton.n << " "
+       << re.def_proton.n/(re.def_neutron.n+re.def_proton.n) << endl;
+  cout << re.def_neutron.mu*hc_mev_fm << " "
+       << re.def_proton.mu*hc_mev_fm << endl;
+  cout << re.def_neutron.nu*hc_mev_fm << " "
+       << re.def_proton.nu*hc_mev_fm << endl;
+  cout << sigma*hc_mev_fm << " " << omega*hc_mev_fm << " "
+       << rho*hc_mev_fm << endl;
+  cout << 1.0/re.def_neutron.ms*(re.def_neutron.ed-3.0*re.def_neutron.pr)
+       << endl;
+  cout << 1.0/re.def_proton.ms*(re.def_proton.ed-3.0*re.def_proton.pr)
+       << endl;
+  cout << re.def_thermo.ed/nb*hc_mev_fm-939.0 << endl;
+  cout << endl;
+
+  // Verify from EOS
   re.def_neutron.n=nb*(1.0-xp);
   re.def_proton.n=nb*xp;
-  re.def_neutron.mu=889.233/hc_mev_fm;
-  re.def_proton.mu=851.5/hc_mev_fm;
-  re.set_fields(6.08211/hc_mev_fm,3.2217/hc_mev_fm,-1.64777/hc_mev_fm);
   re.calc_temp_e(re.def_neutron,re.def_proton,8.0/hc_mev_fm,re.def_thermo);
   re.get_fields(sigma,omega,rho);
   cout << re.def_neutron.n+re.def_proton.n << " "
        << re.def_proton.n/(re.def_neutron.n+re.def_proton.n) << endl;
   cout << re.def_neutron.mu*hc_mev_fm << " "
        << re.def_proton.mu*hc_mev_fm << endl;
+  cout << re.def_neutron.nu*hc_mev_fm << " "
+       << re.def_proton.nu*hc_mev_fm << endl;
   cout << sigma*hc_mev_fm << " " << omega*hc_mev_fm << " "
        << rho*hc_mev_fm << endl;
+  cout << 1.0/re.def_neutron.ms*(re.def_neutron.ed-3.0*re.def_neutron.pr)
+       << endl;
+  cout << 1.0/re.def_proton.ms*(re.def_proton.ed-3.0*re.def_proton.pr)
+       << endl;
   cout << re.def_thermo.ed/nb*hc_mev_fm-939.0 << endl;
-  
+  cout << endl;
+
   t.report();
 
   return 0;
