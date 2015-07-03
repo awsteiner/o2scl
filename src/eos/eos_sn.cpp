@@ -145,6 +145,7 @@ void eos_sn_base::output(std::string fname) {
   hf.set_szt("n_oth",n_oth);
   if (n_oth>0) {
     hf.sets_vec("oth_names",oth_names);
+    hf.sets_vec("oth_units",oth_units);
     for(size_t i=0;i<n_oth;i++) {
       hdf_output(hf,other[i],oth_names[i]);
     }
@@ -225,6 +226,7 @@ void eos_sn_base::load(std::string fname) {
   hf.get_szt("n_oth",n_oth);
   if (n_oth>0) {
     hf.gets_vec("oth_names",oth_names);
+    hf.gets_vec("oth_units",oth_units);
     for(size_t i=0;i<n_oth;i++) {
       hdf_input(hf,other[i],oth_names[i]);
     }
@@ -820,6 +822,18 @@ void eos_sn_ls::load(std::string fname) {
   oth_names.push_back("x_out");
   oth_names.push_back("mu");
 
+  oth_units.push_back("");
+  oth_units.push_back("1/fm^3");
+  oth_units.push_back("MeV");
+  oth_units.push_back("1/fm^3");
+  oth_units.push_back("MeV/fm^3");
+  oth_units.push_back("1/(MeV*fm^3)");
+  oth_units.push_back("1/fm^3");
+  oth_units.push_back("");
+  oth_units.push_back("1/fm^3");
+  oth_units.push_back("");
+  oth_units.push_back("MeV");
+
   // Loaded must be set to true before calling set_interp()
   loaded=true;
   with_leptons_loaded=true;
@@ -1078,6 +1092,15 @@ void eos_sn_oo::load(std::string fname, size_t mode) {
   oth_names.push_back("muhat");
   oth_names.push_back("munu");
 
+  oth_units.push_back("");
+  oth_units.push_back("");
+  oth_units.push_back("");
+  oth_units.push_back("");
+  oth_units.push_back("");
+  oth_units.push_back("MeV");
+  oth_units.push_back("MeV");
+  oth_units.push_back("MeV");
+
   if (mode==hfsl_mode) {
     ndat+=4;
     names.push_back("X3he");
@@ -1093,6 +1116,11 @@ void eos_sn_oo::load(std::string fname, size_t mode) {
     oth_names.push_back("X4li");
     oth_names.push_back("Xt");
     oth_names.push_back("Xd");
+
+    oth_units.push_back("");
+    oth_units.push_back("");
+    oth_units.push_back("");
+    oth_units.push_back("");
   }
 		  
   for(size_t i=0;i<ndat;i++) {
@@ -1561,6 +1589,13 @@ void eos_sn_sht::load(std::string fname, size_t mode) {
   oth_names.push_back("mue");
   oth_names.push_back("M_star");
 
+  oth_units.clear();
+  oth_units.push_back("MeV");
+  oth_units.push_back("");
+  oth_units.push_back("1/fm^3");
+  oth_units.push_back("MeV");
+  oth_units.push_back("MeV");
+  
   if (n_oth!=oth_names.size()) {
     O2SCL_ERR2("Number of names does not match number of data sets ",
 	       "in eos_sn_sht::load().",exc_efailed);
@@ -1762,6 +1797,14 @@ void eos_sn_hfsl::load(std::string fname) {
   oth_names.push_back("M_star");
   oth_names.push_back("A_light");
   oth_names.push_back("Z_light");
+  
+  oth_units.push_back("");
+  oth_units.push_back("1/fm^3");
+  oth_units.push_back("");
+  oth_units.push_back("");
+  oth_units.push_back("MeV");
+  oth_units.push_back("");
+  oth_units.push_back("");
   
   if (n_oth!=oth_names.size()) {
     O2SCL_ERR2("Number of names does not match number of data sets ",

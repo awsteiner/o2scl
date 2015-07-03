@@ -338,6 +338,9 @@ namespace o2scl {
     /// Labels for the extra data sets included in current EOS
     std::vector<std::string> oth_names;
 
+    /// Units for the extra data sets included in current EOS
+    std::vector<std::string> oth_units;
+
     /** \brief A slice of data from \ref eos_sn_base for one index fixed
 	
 	This class allows one to easily construct a \ref
