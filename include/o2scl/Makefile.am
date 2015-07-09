@@ -14,6 +14,10 @@ distclean: distclean-am remove-links
 
 install: install-am header-links
 
+# Homebrew seems to delete the header links before running
+# 'make check', so we add them back here
+check_SCRIPTS = header-links
+
 header-links: remove-links
 # Links to normal header files
 	HEADERLIST="$(top_srcdir)/src/*/*.h"; \
