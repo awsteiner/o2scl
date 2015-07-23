@@ -1,3 +1,38 @@
+Notes for 0.918 release:
+
+The GNU-style target 'make check' now works, and is equivalent to
+'make o2scl-test'
+
+The ./configure script now properly detects the flags for c++11. 
+
+O2scl can now be installed using homebrew, using 'brew tap
+awsteiner/science'. 
+
+O2scl is now reimplementing Cubature from Steven G. Johnson for
+multi-dimensional integration. The current implementation just uses
+simple wrappers to allow the use of std::function objects. Later work
+will more fully implement template methods in the Cubature code.
+
+Fixes for step size and normalization in anneal_gsl.
+
+Added tensor clear(), min() and max() methods.
+
+Fixed several warnings from gcc-5 and clang.
+
+Created a new vec_index class similar to a python dictionary. 
+
+Improved solving for eos_had_base::calc_temp_p().
+
+Created RMF EOS example ex_eos_had_rmf.
+
+Improvements and better documentation for eos_nse.
+
+Added units and updated I/O in eos_sn.
+
+Updates and new testing for dense_matter and nucmass_densmat. 
+
+------------------------------------------------------------------------
+
 Notes for 0.917 release:
 
 Documentation improvements everywhere.
