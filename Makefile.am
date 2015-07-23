@@ -106,6 +106,9 @@ emacs-clean:
 sf-sync-doc:
 	cd doc/o2scl && $(MAKE) sf-sync-doc
 
+utk-sync-doc:
+	cd doc/o2scl && $(MAKE) utk-sync-doc
+
 # Run doxygen to create documentation
 o2scl-doc:
 	cd doc/o2scl && $(MAKE) o2scl-doc-recursive

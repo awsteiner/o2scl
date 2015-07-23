@@ -68,6 +68,15 @@ sf-sync-doc:
 #	rsync -Cavzu --exclude=.svn part/latex/refman.pdf \
 #	awsteiner,o2scl@web.sourceforge.net:htdocs/o2scl/part/latex/refman.pdf
 
+utk-sync-doc:
+	cp -r $(HOME)/install/o2scl-0.918/doc/o2scl \
+		$(HOME)/svn/int3/web/utk
+	cp extras/index.html $(HOME)/svn/int3/web/utk/o2scl
+	cp extras/bootstrap.css $(HOME)/svn/int3/web/utk/o2scl
+	cp extras/bootstrap.js $(HOME)/svn/int3/web/utk/o2scl
+	cp extras/bootstrap-responsive.css $(HOME)/svn/int3/web/utk/o2scl
+	cp extras/jquery-2.0.3.min.js $(HOME)/svn/int3/web/utk/o2scl
+
 sf-test-doc:
 	rsync -Cavzun --exclude=.svn html \
 		awsteiner,o2scl@web.sourceforge.net:htdocs/o2scl
