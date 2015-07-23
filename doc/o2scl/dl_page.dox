@@ -1,20 +1,19 @@
 /** 
     \page dl_page Download O2scl
 
-    The current version is 0.917. The source distribution can 
+    The current version is 0.918. The source distribution can 
     be obtained from \n
-    - \c http://sourceforge.net/projects/o2scl/files/o2scl/
+    - \c https://github.com/awsteiner/o2scl/releases/download/v0.917/o2scl-0.917.tar.gz
 
-    You may also download \o2 from version from the Subversion
-    repository. To obtain the most recent stable version, use
-    something like
+    You may also download \o2 from version from the Github
+    repository. To obtain the most recent development version, 
+    use something like
     \verbatim
-    svn co svn://svn.code.sf.net/p/o2scl/code/trunk o2scl
+    git clone https://github.com/awsteiner/o2scl.git
     \endverbatim
-    The checkout process is a bit more time consuming than directly
-    downloading the source distribution.
 
-    Version 0.91* corresponds with version ? in the svn repository.
+    \comment
+    Version 0.918 corresponds with version ? in the svn repository.
 
     Version 0.917 corresponds with version 1275 in the svn repository.
 
@@ -57,7 +56,7 @@
     with a version in the repository. 
 
     Version 0.805 corresponds with version 16 in the svn respository.
-    
+    \endcomment
 */
 /*
   \htmlonly
