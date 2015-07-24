@@ -20,17 +20,16 @@
 	  <h1>Why O<sub>2</sub>scl?
 	  </h1>
 	  <p>
-	  A brief discussion of the context and future direction for an
+	  A brief discussion about the
 	  object-oriented scientific computing library.
 	  </p>
 	</div>
 	<div class="col-sm-7">
 	  <p align="right">
-	    <a href="http://o2scl.sourceforge.net/o2scl/html/index.html">O<sub>2</sub>scl
-	    User's Guide</a><br>
-	    <a href="http://sourceforge.net/projects/o2scl/files/latest/download">Download the most recent release</a><br>
-	    <a href="http://sourceforge.net/projects/o2scl">O<sub>2</sub>scl 
-	      at sourceforge.net</a><br>
+	    &nbsp;<br>
+	    <h3>
+	    <a href="http://web.utk.edu/~asteine1/o2scl/html/index.html">O<sub>2</sub>scl
+	    User's Guide</a></h3>
 	    <a href="http://github.com/awsteiner/o2scl">O<sub>2</sub>scl 
 	      at github.com</a>
 	    </p>
@@ -45,31 +44,25 @@
 <!-- style="background-color: #eeeeee;"> -->
 
 	  <p>
-	    <h2>C++ has changed</h2>
+	    <h2><a href="#scicomp">Scientific computing is changing</a></h2>
 	  </p>
 
 	  <hr>
 
 	  <p>
-	    <h2>Standards are still young</h2>
+	    <h2><a href="#vecmat">Vectors, matrices, and other types</a></h2>
 	  </p>
 
 	  <hr>
 
 	  <p>
-	    <h2>Vectors, matrices, and other types</h2>
+	    <h2><a href="#onestop">One-stop shopping</a></h2>
 	  </p>
 
 	  <hr>
 
 	  <p>
-	    <h2>Oldies but goodies</h2>
-	  </p>
-
-	  <hr>
-
-	  <p>
-	    <h2>Get it working already!</h2>
+	    <h2><a href="wip">Get it working already!</a></h2>
 	  </p>
 
 	  <hr>
@@ -79,9 +72,10 @@
 	<div class="col-sm-9">
 
 	  <div class="alert alert-success">
-	  <h2>Scientific computing in C++ has changed significantly
-	  in the past few years. <small>(Or maybe a bit more than a 
-	      few.)</small></h2>
+	    <a name="scicomp"></a>
+	    <h2>Scientific computing in C++ has changed significantly
+	      in the past few years. <small>(Or maybe a bit more than a 
+		few.)</small></h2>
 	  </div>
 	  <p>
 	    <h4>
@@ -125,36 +119,9 @@ cout &lt;&lt; a &lt;&lt; endl;
 	  </ul>
 	  
 	  <div class="alert alert-success">
-	    <h2>On the other hand C++11 support is not
-	      universal. <small>(That would be too easy.)</small> </h2>
-	  </div>
-	  <p>
-	    <h4>
-	      Some high-performance computing machines do not yet
-	      have C++11 support for all compilers.
-	    </h4>
-	  </p>
-	  <ul>
-	  <p>
-	    <li>
-	      For example, some compilers on
-	      some <a href="http://www.nersc.gov">NERSC</a> machines
-	      do not support all of the C++11 features.
-	    </li>
-	  </p>
-	  <p>
-	    O<sub>2</sub>scl has been successfully used on all 
-	    of NERSC's largest machines. The next version of will have 
-	    a <tt>configure</tt> flag,
-	    <tt>--disable-cpp11</tt>, which ensures compilation with
-	    earlier compilers and will use the Boost configuration
-	    macros to ensure C++11 is used only when it is supported.
-	  </p>
-	  </ul>
-	  
-	  <div class="alert alert-success">
-	    <h2>Linear algebra in C++ is still a developing
-	      art. <small>(And yes, it is truly an art.)</small>
+	    <a name="vecmat"></a>
+	    <h2>Vector and matrix types have proliferated.
+	      <small>(Templates can save us.)</small>
 	    </h2>
 	  </div>
 	  <p>
@@ -247,9 +214,10 @@ matrix_row r1=<a href="http://o2scl.sourceforge.net/o2scl/html/namespaceo2scl.ht
 	  </ul>
 	  
 	  <div class="alert alert-success">
+	    <a name="onestop"></a>
 	    <h2>There is no &ldquo;one-stop shopping&rdquo; solution for 
 	      scientific computing.
-	    <small>(No single library will solve all your probllems.)
+	    <small>(We try to combine several tools in a useful way.)
 	      </small></h2>
 	  </div>
 
@@ -263,16 +231,18 @@ matrix_row r1=<a href="http://o2scl.sourceforge.net/o2scl/html/namespaceo2scl.ht
 	  <ul>
 	    <li>
 	      <p>GSL does, of course, but is more difficult to use
-		with C++ member functions. Two-dimensional
-		interpolation has only recently found its way into the
-		GSL repository yet has been in O<sub>2</sub>scl for
-		many years. In fact, some GSL improvements were guided
-		by O<sub>2</sub>scl development.</p>
+		with C++ member functions and generic vector types.
+		Two-dimensional interpolation has only recently found
+		its way into the GSL repository yet has been in
+		O<sub>2</sub>scl for many years. (In fact, some GSL
+		improvements were guided by O<sub>2</sub>scl
+		development.)</p>
 	    </li>
 	    
 	  </ul>
 
 	  <div class="alert alert-success">
+	    <a name="wip"></a>
 	    <h2>O<sub>2</sub>scl is a work-in-progress.
 	    <small>(Help me Obi-Wan!)</small></h2>
 	  </div>

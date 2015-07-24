@@ -1187,7 +1187,7 @@ DOCSET_FEEDNAME = "Doxygen generated docs"
 # the name. The default value is: org.doxygen.Project. This tag
 # requires that the tag GENERATE_DOCSET is set to YES.
 
-DOCSET_BUNDLE_ID = org.doxygen.Project
+DOCSET_BUNDLE_ID = edu.utk.web
 
 # The DOCSET_PUBLISHER_ID tag specifies a string that should uniquely
 # identify the documentation publisher. This should be a reverse
