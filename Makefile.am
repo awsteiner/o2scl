@@ -39,8 +39,9 @@ help:
 	@echo 
 
 latest:
-	cp o2scl-0.918.tar.gz ~/svn/int3/web/utk
-	openssl dgst -sha256 o2scl-0.918.tar.gz > ~/svn/int3/web/utk/hash.txt
+	cp o2scl-0.918.tar.gz ~/svn/int3/web/utk/o2scl
+	openssl dgst -sha256 o2scl-0.918.tar.gz > \
+		~/svn/int3/web/utk/o2scl/hash.txt
 	cd ~/svn/int3/web; $(MAKE) put
 
 # Create a distribution without documentation (not recently tested)
