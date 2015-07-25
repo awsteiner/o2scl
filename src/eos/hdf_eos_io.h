@@ -47,7 +47,7 @@ namespace o2scl_hdf {
   
   /** \brief Input a \ref o2scl::eos_had_rmf object from an HDF file
 
-      If \ref external is <tt>false</tt> (the default), then the model
+      If \c external is <tt>false</tt> (the default), then the model
       is loaded from the \o2 data directory <tt>rmfdata</tt> with the
       suffix <tt>.o2</tt>. Otherwise, the parameter \c model is 
       taken to be the full pathname of the HDF5 file containing 
@@ -58,7 +58,7 @@ namespace o2scl_hdf {
   
   /** \brief Input a \ref o2scl::eos_had_skyrme object from an HDF file
 
-      If \ref external is <tt>false</tt> (the default), then the model
+      If \c external is <tt>false</tt> (the default), then the model
       is loaded from the \o2 data directory <tt>skdata</tt> with the
       suffix <tt>.o2</tt>. Otherwise, the parameter \c model is 
       taken to be the full pathname of the HDF5 file containing 
