@@ -41,7 +41,7 @@ help:
 latest:
 	cp o2scl-0.919.tar.gz ~/svn/int3/web/utk/o2scl
 	openssl dgst -sha256 o2scl-0.919.tar.gz > \
-		~/svn/int3/web/utk/o2scl/hash.txt
+		~/svn/int3/web/utk/o2scl/o2scl-0.919.sha256
 	cd ~/svn/int3/web; $(MAKE) put
 
 # Create a distribution without documentation (not recently tested)
