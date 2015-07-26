@@ -1,6 +1,8 @@
 /** 
     \page dl_page Download O2scl
 
+    This documentation is from development version 0.919.
+
     The current version is 0.918. The source distribution can 
     be obtained from \n
     - \c https://github.com/awsteiner/o2scl/releases/download/v0.918/o2scl-0.918.tar.gz
@@ -13,7 +15,7 @@
     \endverbatim
 
     \comment
-    Version 0.918 corresponds with version ? in the svn repository.
+    Version 0.918 and later don't have mappings to the old svn repository
 
     Version 0.917 corresponds with version 1275 in the svn repository.
 

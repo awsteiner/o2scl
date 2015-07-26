@@ -69,7 +69,7 @@ sf-sync-doc:
 #	awsteiner,o2scl@web.sourceforge.net:htdocs/o2scl/part/latex/refman.pdf
 
 utk-sync-doc:
-	cp -r $(HOME)/install/o2scl-0.918/doc/o2scl \
+	cp -r $(HOME)/install/o2scl-0.919/doc/o2scl \
 		$(HOME)/svn/int3/web/utk
 	cp extras/index.html $(HOME)/svn/int3/web/utk/o2scl
 	cp extras/bootstrap.css $(HOME)/svn/int3/web/utk/o2scl
