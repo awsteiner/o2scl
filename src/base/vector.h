@@ -1960,16 +1960,19 @@ namespace o2scl {
   }
 
   /** \brief Vector range function for pointers
-      
-      \note This function is currently used in the \o2 implementation
-      of the Cubature integration functions.
-  */
+
+      \note In this case, the return type is the same as the
+      type of the first parameter. 
+   */
   template<class dat_t> dat_t *vector_range
     (dat_t *v, size_t start, size_t last) {
     return v+start;
   }
   
   /** \brief Vector range function template for ublas vectors
+
+      \note In this case, the return type is not the same as the
+      type of the first parameter. 
    */
   template<class dat_t> boost::numeric::ublas::vector_range
     <boost::numeric::ublas::vector<dat_t> >
@@ -1979,8 +1982,27 @@ namespace o2scl {
       <boost::numeric::ublas::vector<dat_t> >
       (v,boost::numeric::ublas::range(start,last));
   }
+
+  /** \brief Vector range function template for const ublas vectors
+
+      \note In this case, the return type is not the same as the
+      type of the first parameter. 
+   */
+  template<class dat_t> const boost::numeric::ublas::vector_range
+    <const boost::numeric::ublas::vector<dat_t> >
+    vector_range(const boost::numeric::ublas::vector<dat_t> &v,
+		 size_t start, size_t last) {
+    return boost::numeric::ublas::vector_range
+      <const boost::numeric::ublas::vector<dat_t> >
+      (v,boost::numeric::ublas::range(start,last));
+  }
   
   /** \brief Vector range function template for <tt>std::vector</tt>
+      
+      \note In this case, the return type is the same as the
+      type of the first parameter. 
+      \note Unlike the ublas and pointer cases, this forces
+      a copy. 
    */
   template<class dat_t> std::vector<dat_t>
     vector_range(std::vector<dat_t> &v, size_t start, size_t last) {
@@ -1988,6 +2010,11 @@ namespace o2scl {
   }
 
   /** \brief Const vector range function template for <tt>std::vector</tt>
+      
+      \note In this case, the return type is the same as the
+      type of the first parameter. 
+      \note Unlike the ublas and pointer cases, this forces
+      a copy. 
    */
   template<class dat_t> const std::vector<dat_t>
     vector_range(const std::vector<dat_t> &v, size_t start, size_t last) {
