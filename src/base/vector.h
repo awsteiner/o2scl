@@ -1991,7 +1991,7 @@ namespace o2scl {
   template<class dat_t> const boost::numeric::ublas::vector_range
     <const boost::numeric::ublas::vector<dat_t> >
     vector_range(const boost::numeric::ublas::vector<dat_t> &v,
-		 size_t start, size_t last) {
+		  size_t start, size_t last) {
     return boost::numeric::ublas::vector_range
       <const boost::numeric::ublas::vector<dat_t> >
       (v,boost::numeric::ublas::range(start,last));

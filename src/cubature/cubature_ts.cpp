@@ -52,7 +52,7 @@
 #include <o2scl/cubature.h>
 #include <o2scl/test_mgr.h>
 
-static const bool debug=true;
+static const bool debug=false;
 
 using namespace std;
 using namespace o2scl;

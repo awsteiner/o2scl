@@ -62,7 +62,10 @@
 #include <functional>
 #include <boost/numeric/ublas/vector.hpp>
 
+#ifndef O2SCL_CLENCURT_H
+#define O2SCL_CLENCURT_H
 #include <o2scl/clencurt.h>
+#endif
 #include <o2scl/err_hnd.h>
 #include <o2scl/vector.h>
 
