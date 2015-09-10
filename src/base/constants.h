@@ -52,7 +52,7 @@ namespace o2scl_const {
   const double yocto=1e-24;
 
   /** \brief Fine structure constant (CODATA 2010 value)
-  */
+   */
   const double fine_structure=7.2973525698e-3;
   /** \brief Avogadro's number (CODATA 2010 value)
   */
@@ -74,9 +74,9 @@ namespace o2scl_const {
   const double zeta5=1.0369277551433699263;
   /// \f$ \zeta(7) \f$
   const double zeta7=1.0083492773819228268;
-
-  /// \f$ \sin^2 \theta_W \f$ (CODATA 2010 value)
-  const double sin2_theta_weak=0.2224;
+  
+  /// \f$ \sin^2 \theta_W \f$ (PDG 2014 value)
+  const double sin2_theta_weak=0.23126;
 }
   
 /** \brief Constants in CGS units 
@@ -84,6 +84,12 @@ namespace o2scl_const {
     CODATA 2010 values are in \ref Mohr12. IAU 2009 values
     are from \ref Luzum11 . Solar mass from 
     http://asa.usno.navy.mil/SecK/2013/Astronomical_Constants_2013.pdf
+
+    \comment 
+    See also
+    http://asa.usno.navy.mil/static/files/2015/Astronomical_Constants_2015.pdf
+    \endcomment
+
 */
 namespace o2scl_cgs {
   /// cm
@@ -97,7 +103,7 @@ namespace o2scl_cgs {
   /// Planck constant divided by 2 pi in g cm^2 / s (derived)
   const double plancks_constant_hbar=o2scl_cgs::plancks_constant_h/
     2.0/o2scl_const::pi;
-  /// Astronomical unit in cm (IAU 2009 value)
+  /// Astronomical unit in cm (IAU 2009 value; now exact)
   const double astronomical_unit=1.49597870700e13;
   /// cm
   const double light_year=9.46053620707e17;
@@ -290,9 +296,7 @@ namespace o2scl_cgs {
 
 /** \brief Constants in CGSM units
     
-    CODATA 2010 values are in \ref Mohr12. IAU 2009 values
-    are from \ref Luzum11 . Solar mass from 
-    http://asa.usno.navy.mil/SecK/2013/Astronomical_Constants_2013.pdf
+    See also documentation at \ref o2scl_cgs .
 */
 namespace o2scl_cgsm {
   /// cm
@@ -306,7 +310,7 @@ namespace o2scl_cgsm {
   /// Planck constant divided by 2 pi in g cm^2 / s (derived)
   const double plancks_constant_hbar=o2scl_cgsm::plancks_constant_h/
     2.0/o2scl_const::pi;
-  /// Astronomical unit in cm (IAU 2009 value)
+  /// Astronomical unit in cm (IAU 2009 value; now exact)
   const double astronomical_unit=1.49597870700e13;
   /// cm
   const double light_year=9.46053620707e17;
@@ -510,12 +514,14 @@ namespace o2scl_cgsm {
 }
 
 /** \brief Constants in MKS units
-    
-    CODATA 2010 values are in \ref Mohr12. IAU 2009 values
-    are from \ref Luzum11 . Solar mass from 
-    http://asa.usno.navy.mil/SecK/2013/Astronomical_Constants_2013.pdf
+
+    See also documentation at \ref o2scl_cgs .
 */
 namespace o2scl_mks {
+  /// Heliocentric gravitational constant in m^3 / s^2 (from \ref Luzum11) 
+  const double helgc_tcb=1.3712442099;
+  /// Heliocentric gravitational constant in m^3 / s^2 (from \ref Luzum11) 
+  const double helgc_tdb=1.3712440041;
   /// m
   const double schwarzchild_radius=2.95325008e3;
   /// m / s
@@ -527,7 +533,7 @@ namespace o2scl_mks {
   /// Planck constant divided by 2 pi in kg m^2 / s (CODATA 2010 value)
   const double plancks_constant_hbar=o2scl_mks::plancks_constant_h/
     2.0/o2scl_const::pi;
-  /// Astronomical unit in m (IAU 2009 value)
+  /// Astronomical unit in m (IAU 2009 value; now exact)
   const double astronomical_unit=1.49597870700e11;
   /// m
   const double light_year=9.46053620707e15;
@@ -738,11 +744,13 @@ namespace o2scl_mks {
 
 /** \brief Constants in MKSA units
     
-    CODATA 2010 values are in \ref Mohr12. IAU 2009 values
-    are from \ref Luzum11 . Solar mass from 
-    http://asa.usno.navy.mil/SecK/2013/Astronomical_Constants_2013.pdf
+    See also documentation at \ref o2scl_cgs .
 */
 namespace o2scl_mksa {
+  /// Heliocentric gravitational constant in m^3 / s^2 (from \ref Luzum11) 
+  const double helgc_tcb=1.3712442099;
+  /// Heliocentric gravitational constant in m^3 / s^2 (from \ref Luzum11) 
+  const double helgc_tdb=1.3712440041;
   /// m
   const double schwarzchild_radius=2.95325008e3;
   /// m / s
@@ -754,7 +762,7 @@ namespace o2scl_mksa {
   /// Planck constant divided by 2 pi in kg m^2 / s (CODATA 2010 value)
   const double plancks_constant_hbar=o2scl_mksa::plancks_constant_h/
     2.0/o2scl_const::pi;
-  /// Astronomical unit in m (IAU 2009 value)
+  /// Astronomical unit in m (IAU 2009 value; now exact)
   const double astronomical_unit=1.49597870700e11;
   /// m
   const double light_year=9.46053620707e15;
