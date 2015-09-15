@@ -1,6 +1,10 @@
 language: cpp
 
 before_install:
+     - mkdir m4
+     - autoreconf -i
+     - autoconf
+     - automake -a --gnu
      - sudo apt-get install libgsl0-dev
      - sudo apt-get install libboost-all-dev
      - sudo apt-get install libhdf5-serial-dev
