@@ -10,7 +10,8 @@ before_install:
      - sudo apt-get install libhdf5-serial-dev
 
 install:
-	CXXFLAGS="-std=c++0x" ./configure
+	export CXXFLAGS="-std=c++0x"
+	./configure
 	make
 	make install
 	make test
