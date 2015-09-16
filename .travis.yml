@@ -39,11 +39,13 @@ before_install:
 #
 script:
   # 
-  # Perform the installation on linux, and run acol --version to see if
-  # it works
+  # Perform the installation on linux. Since there is no documentation,
+  # 'make blank-doc' is used to create dummy documentation so that
+  # 'make install' does not fail. At the end, 'acol --version' is used
+  # to double check that the install worked.
   # 
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-      ./configure && make && make install && make check && acol --version;
+      ./configure && make && make blank-doc && make install && make check && acol --version ;
     fi
   # 
   # Use homebrew to install the development version on OSX

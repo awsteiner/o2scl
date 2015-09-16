@@ -103,10 +103,7 @@ emacs-clean:
 	rm -v -f */*/*/*~
 	rm -v -f */*/*/*/*~
 
-# Upload docs to sourceforge
-sf-sync-doc:
-	cd doc/o2scl && $(MAKE) sf-sync-doc
-
+# Upload docs to UTK
 utk-sync-doc:
 	cd doc/o2scl && $(MAKE) utk-sync-doc
 
@@ -114,21 +111,28 @@ utk-sync-doc:
 o2scl-doc:
 	cd doc/o2scl && $(MAKE) o2scl-doc-recursive
 
-# Create .pdf file from doxygen latex files
-o2scl-docp:
-	echo "Disabled."
-#	cd doc/o2scl && $(MAKE) o2scl-docp-recursive
-
-# Create .pdf file from doxygen latex files verbosely
-#o2scl-docp-verbose:
-	echo "Disabled."
-	cd doc/o2scl && $(MAKE) o2scl-docp-verbose-recursive
-
 check_SCRIPTS = o2scl-test
 
 # Clean all generated documentation
 clean-doc:
 	cd doc/o2scl && $(MAKE) clean-doc-recursive
 
-pngfix:
-	cd doc/o2scl; $(MAKE) pngfix-recursive
+blank-doc:
+	touch doc/o2scl/html/blank.html
+	touch doc/o2scl/html/doxygen.css
+	touch doc/o2scl/html/formula.repository
+	touch doc/o2scl/html/jquery.js
+	touch doc/o2scl/html/tabs.css
+	touch doc/o2scl/html/dynsections.js
+	touch doc/o2scl/eos/html/blank.html
+	touch doc/o2scl/eos/html/doxygen.css
+	touch doc/o2scl/eos/html/formula.repository
+	touch doc/o2scl/eos/html/jquery.js
+	touch doc/o2scl/eos/html/tabs.css
+	touch doc/o2scl/eos/html/dynsections.js
+	touch doc/o2scl/part/html/blank.html
+	touch doc/o2scl/part/html/doxygen.css
+	touch doc/o2scl/part/html/formula.repository
+	touch doc/o2scl/part/html/jquery.js
+	touch doc/o2scl/part/html/tabs.css
+	touch doc/o2scl/part/html/dynsections.js
