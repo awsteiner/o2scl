@@ -2,7 +2,6 @@ language: cpp
 
 os:
   - linux
-  - osx
 
 before_install:
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
@@ -12,11 +11,10 @@ before_install:
       automake -a --gnu ;
       sudo apt-get install libgsl0-dev ;
       sudo apt-get install libboost-all-dev ;
-      sudo apt-get install hdf5-tools ;
+      sudo apt-get install libhdf5-serial-dev ;
       cd /usr/lib ;
       cat `find . -name libhdf5_serial.settings` ;
       cd ;
-      sudo apt-get install libhdf5-serial-dev ;
     fi
 
 script:
