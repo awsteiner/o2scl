@@ -26,12 +26,12 @@ before_install:
   # compatibility version to the old format (I'm not sure why), so
   # install it from source. Newer versions of the Ubuntu HDF5
   # package do not have this problem, but Travis uses 12.04 LTS.
+  # We download a new version and compile manually from source.
   # 
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
       wget http://www.hdfgroup.org/ftp/HDF5/current/src/hdf5-1.8.15-patch1.tar.gz ;
       tar -xzf hdf5-1.8.15-patch1.tar.gz ;
-      cd hdf5-1.8.15-patch1 && ./configure --build=x86_64-unknown-linux-gnu --prefix=/usr && make > /dev/null 2> /dev/null && sudo make install ;
-      ls ;
+      cd hdf5-1.8.15-patch1 && ./configure --build=x86_64-unknown-linux-gnu --prefix=/usr && make > /dev/null 2> /dev/null && sudo make install && cd .. ;
     fi
 
 #
@@ -39,19 +39,17 @@ before_install:
 #
 script:
   # 
-  # Perform the installation
+  # Perform the installation on linux, and run acol --version to see if
+  # it works
   # 
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-      ./configure && make && make install && make check ;
-      ls src/base ;
+      ./configure && make && make install && make check && acol --version;
     fi
   # 
   # Use homebrew to install the development version on OSX
   # 
   - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
-      brew install homebrew/science/hdf5 ;
-      brew tap awsteiner/science ;
-      brew install o2scl --with-check --devel ;
+      brew install homebrew/science/hdf5 && brew tap awsteiner/science && brew install o2scl --with-check --devel && acol --version ;
     fi
 
 notifications:
