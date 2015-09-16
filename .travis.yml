@@ -1,24 +1,28 @@
 language: cpp
 
 before_install:
-     - mkdir m4
-     - autoreconf -i
-     - autoconf
-     - automake -a --gnu
-     - sudo apt-get install libgsl0-dev
-     - sudo apt-get install libboost-all-dev
-     - sudo apt-get install libhdf5-serial-dev
+  - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+      ls
+    fi
+  - mkdir m4
+  - autoreconf -i
+  - autoconf
+  - automake -a --gnu
+  - sudo apt-get install libgsl0-dev
+  - sudo apt-get install libboost-all-dev
+  - sudo apt-get install libhdf5-serial-dev
 
 install:
-     - CFLAGS="-std=c++0x" CXXFLAGS="-std=c++0x" ./configure
-     - make
-     - make install
-     - make test
+  - env
+  - CFLAGS="-std=c++0x" CXXFLAGS="-std=c++0x" ./configure
+  - make
+  - make install
+  - make test
 
 after_failure:
-     - cat config.log
+  - cat config.log
 
 notifications:
-     email:
-          on_success: never
-          on_failure: never
+  email:
+    on_success: never
+    on_failure: never

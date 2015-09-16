@@ -1,0 +1,33 @@
+language: cpp
+
+os:
+     - linux
+     - osx
+
+before_install:
+     if ($TRAVIS_OS_NAME EQ "linux")
+     - mkdir m4
+     - autoreconf -i
+     - autoconf
+     - automake -a --gnu
+     - sudo apt-get install libgsl0-dev
+     - sudo apt-get install libboost-all-dev
+     - sudo apt-get install libhdf5-serial-dev
+
+install:
+     if ($TRAVIS_OS_NAME EQ "linux")
+     - CFLAGS="-std=c++0x" CXXFLAGS="-std=c++0x" ./configure
+     - make
+     - make install
+     - make test
+     else
+     brew install o2scl
+
+after_failure:
+     if ($TRAVIS_OS_NAME EQ "linux")
+     - cat config.log
+
+notifications:
+     email:
+          on_success: never
+          on_failure: never
