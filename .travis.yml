@@ -12,6 +12,8 @@ before_install:
       automake -a --gnu ;
       sudo apt-get install libgsl0-dev ;
       sudo apt-get install libboost-all-dev ;
+      sudo apt-get install hdf5-tools ;
+      h5dump --version ;
       sudo apt-get install libhdf5-serial-dev ;
     fi
 
@@ -20,8 +22,9 @@ script:
       ./configure && make && make install && make test ;
     fi
   - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
+      brew install homebrew/science/hdf5 ;
       brew tap awsteiner/science ;
-      brew install o2scl ;
+      brew install o2scl --with-check --devel ;
     fi
 
 after_failure:
