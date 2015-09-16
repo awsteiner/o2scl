@@ -2,7 +2,7 @@ language: cpp
 
 before_install:
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-      ls
+      ls ;
     fi
   - mkdir m4
   - autoreconf -i
