@@ -17,12 +17,11 @@ before_install:
 
 script:
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-      CFLAGS="-std=c++0x" CXXFLAGS="-std=c++0x" ./configure && make
-      && make install && make test ;
+      ./configure && make && make install && make test ;
     fi
   - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
       brew tap awsteiner/science ;
-      brew install o2scl
+      brew install o2scl ;
     fi
 
 after_failure:

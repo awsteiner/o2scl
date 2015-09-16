@@ -14,7 +14,7 @@ AC_PROG_LN_S
 AC_PROG_MAKE_SET
 
 # Require c++11 support
-AX_CXX_COMPILE_STDCXX_11
+AX_CXX_COMPILE_STDCXX_11(,[optional])
 
 # Newer replacement for AC_PROG_LIBTOOL
 LT_INIT
