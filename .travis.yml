@@ -45,7 +45,7 @@ script:
   # to double check that the install worked.
   # 
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-      ./configure && make && make blank-doc && make install && make check && acol --version ;
+      ./configure && echo A && make blank-doc && echo B && make && make install && make check && acol --version ;
     fi
   # 
   # Use homebrew to install the development version on OSX
