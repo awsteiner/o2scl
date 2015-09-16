@@ -33,6 +33,7 @@ help:
 	@echo "-------------------------------------------------------------"
 	@echo "o2scl-doc:        Make HTML documentation"
 	@echo "clean-doc:        Remove generated doc files"
+	@echo "blank-doc:        Create blank documentation"
 	@echo "dist-nodoc:       Make a distribution w/o the documentation"
 	@echo "sf-sync-doc:      Upload current documentation to SourceForge"
 	@echo "emacs-clean:      Remove files ending with a tilde"
