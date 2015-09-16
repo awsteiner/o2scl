@@ -1,26 +1,34 @@
 language: cpp
 
+os:
+  - linux
+  - osx
+
 before_install:
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-      ls ;
+      mkdir m4 ;
+      autoreconf -i ;
+      autoconf ;
+      automake -a --gnu ;
+      sudo apt-get install libgsl0-dev ;
+      sudo apt-get install libboost-all-dev ;
+      sudo apt-get install libhdf5-serial-dev ;
     fi
-  - mkdir m4
-  - autoreconf -i
-  - autoconf
-  - automake -a --gnu
-  - sudo apt-get install libgsl0-dev
-  - sudo apt-get install libboost-all-dev
-  - sudo apt-get install libhdf5-serial-dev
 
-install:
-  - env
-  - CFLAGS="-std=c++0x" CXXFLAGS="-std=c++0x" ./configure
-  - make
-  - make install
-  - make test
+script:
+  - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+      CFLAGS="-std=c++0x" CXXFLAGS="-std=c++0x" ./configure && make
+      && make install && make test ;
+    fi
+  - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
+      brew tap awsteiner/science ;
+      brew install o2scl
+    fi
 
 after_failure:
-  - cat config.log
+  - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+      cat config.log ;
+    fi
 
 notifications:
   email:
