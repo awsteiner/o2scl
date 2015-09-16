@@ -12,9 +12,7 @@ before_install:
       sudo apt-get install libgsl0-dev ;
       sudo apt-get install libboost-all-dev ;
       sudo apt-get install libhdf5-serial-dev ;
-      cd /usr/lib ;
-      cat `find . -name libhdf5_serial.settings` ;
-      cd ;
+      cat /usr/lib/x86_64-linux-gnu/libhdf5_serial.settings ;
     fi
 
 script:
