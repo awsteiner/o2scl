@@ -121,7 +121,7 @@ void hdf_file::setc(std::string name, char c) {
   H5E_BEGIN_TRY
     {
       // See if the dataspace already exists first
-      dset=H5Dopen2(current,name.c_str(),H5P_DEFAULT);
+      dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
     } 
   H5E_END_TRY 
 #ifdef O2SCL_NEVER_DEFINED

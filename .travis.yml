@@ -13,7 +13,9 @@ before_install:
       sudo apt-get install libgsl0-dev ;
       sudo apt-get install libboost-all-dev ;
       sudo apt-get install hdf5-tools ;
-      h5dump --version ;
+      cd /usr/lib ;
+      cat `find . -name libhdf5_serial.settings` ;
+      cd ;
       sudo apt-get install libhdf5-serial-dev ;
     fi
 
