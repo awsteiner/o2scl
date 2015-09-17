@@ -80,7 +80,7 @@ check_PROGRAMS = classical_ts fermion_eff_ts fermion_rel_ts \
 
 check_SCRIPTS = o2scl-test
 
-VCHECK_LIBS = libo2scl_part.la ../libo2scl_hdf.la ../libo2scl.la
+VCHECK_LIBS = ../libo2scl_part.la ../hdf/libo2scl_hdf.la ../libo2scl.la
 
 classical_ts_LDADD = $(VCHECK_LIBS)
 fermion_eff_ts_LDADD = $(VCHECK_LIBS)
