@@ -1,9 +1,16 @@
+#
+# Todo: this language specification doens't seem to work with
+# multiple OSs. The install still proceeds ok for now.
+#
 language: cpp
 
 os:
   - linux
   - osx
 
+# 
+# Prepare autotools and install dependencies before installation
+#
 before_install:
   # 
   # Use GNU autotools to generate ./configure automatically
@@ -35,9 +42,9 @@ before_install:
     fi
 
 #
-# Use script instead of install because it continues after errors
+# Installation script
 #
-script:
+install:
   # 
   # Perform the installation on linux. Since there is no documentation,
   # 'make blank-doc' is used to create dummy documentation so that
@@ -45,10 +52,11 @@ script:
   # to double check that the install worked.
   # 
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-      ./configure && echo A && make blank-doc && echo B && make && make install && make check && acol --version ;
+      ./configure && make blank-doc && make && make install && make check && acol --version ;
     fi
   # 
-  # Use homebrew to install the development version on OSX
+  # Use homebrew to install the development version on OSX. At the end,
+  # 'acol --version' is used to double check that the install worked.
   # 
   - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
       brew install homebrew/science/hdf5 && brew tap awsteiner/science && brew install o2scl --with-check --devel && acol --version ;

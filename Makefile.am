@@ -120,18 +120,21 @@ clean-doc:
 
 blank-doc:
 	touch doc/o2scl/html/blank.html
+	touch doc/o2scl/html/blank.png
 	touch doc/o2scl/html/doxygen.css
 	touch doc/o2scl/html/formula.repository
 	touch doc/o2scl/html/jquery.js
 	touch doc/o2scl/html/tabs.css
 	touch doc/o2scl/html/dynsections.js
 	touch doc/o2scl/eos/html/blank.html
+	touch doc/o2scl/eos/html/blank.png
 	touch doc/o2scl/eos/html/doxygen.css
 	touch doc/o2scl/eos/html/formula.repository
 	touch doc/o2scl/eos/html/jquery.js
 	touch doc/o2scl/eos/html/tabs.css
 	touch doc/o2scl/eos/html/dynsections.js
 	touch doc/o2scl/part/html/blank.html
+	touch doc/o2scl/part/html/blank.png
 	touch doc/o2scl/part/html/doxygen.css
 	touch doc/o2scl/part/html/formula.repository
 	touch doc/o2scl/part/html/jquery.js
