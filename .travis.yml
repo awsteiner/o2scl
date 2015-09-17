@@ -55,14 +55,14 @@ script:
   # to double check that the install worked.
   # 
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-      ./configure && make blank-doc && make && sudo make install && make check && acol --version ;
+      ./configure && make blank-doc && make && sudo make install && cd src/base && make o2scl-test && cd ../.. && ls /usr/local/lib && make check && acol --version ;
     fi
   # 
   # Use homebrew to install the HEAD version on OSX. At the end,
   # 'acol --version' is used to double check that the install worked.
   # 
   - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
-      brew install homebrew/science/hdf5 && brew tap awsteiner/science && brew install o2scl --with-check --HEAD && acol --version ;
+      brew install homebrew/science/hdf5 && brew install automake && brew install autoconf && brew install libtool && brew tap awsteiner/science && brew install o2scl --with-check --HEAD && acol --version ;
     fi
 
 notifications:
