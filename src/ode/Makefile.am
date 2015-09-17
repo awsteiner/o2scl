@@ -82,9 +82,9 @@ check_SCRIPTS = o2scl-test
 #ode_bv_mshoot_ts ode_bv_solve_ts ode_iv_table_ts
 
 if O2SCL_HDF
-VCHECK_LIBS = $(libdir)/libo2scl.la $(libdir)/libo2scl_hdf.la
+VCHECK_LIBS = ../hdf/libo2scl_hdf.la ../libo2scl.la
 else
-VCHECK_LIBS = $(libdir)/libo2scl.la
+VCHECK_LIBS = ../libo2scl.la
 endif
 
 astep_gsl_ts_LDADD = $(VCHECK_LIBS)

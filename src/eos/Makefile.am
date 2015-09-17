@@ -142,11 +142,10 @@ check_PROGRAMS = eos_had_apr_ts eos_quark_bag_ts nucmass_ldrop_ts \
 check_SCRIPTS = o2scl-test
 
 if O2SCL_HDF
-VCHECK_LIBS = $(libdir)/libo2scl_eos.la $(libdir)/libo2scl_part.la \
-	$(libdir)/libo2scl_hdf.la $(libdir)/libo2scl.la 
+VCHECK_LIBS = libo2scl_eos.la ../libo2scl_part.la \
+	../hdf/libo2scl_hdf.la ../libo2scl.la
 else
-VCHECK_LIBS = $(libdir)/libo2scl_eos.la $(libdir)/libo2scl_part.la \
-	$(libdir)/libo2scl.la 
+VCHECK_LIBS = libo2scl_eos.la ../libo2scl_part.la ../libo2scl.la
 endif
 
 eos_had_apr_ts_LDADD = $(VCHECK_LIBS)

@@ -74,9 +74,9 @@ check_PROGRAMS = fit_base_ts fit_min_ts fit_nonlin_ts fit_fix_ts \
 check_SCRIPTS = o2scl-test
 
 if O2SCL_HDF
-VCHECK_LIBS = $(libdir)/libo2scl.la $(libdir)/libo2scl_hdf.la
+VCHECK_LIBS = ../hdf/libo2scl_hdf.la ../libo2scl.la
 else
-VCHECK_LIBS = $(libdir)/libo2scl.la
+VCHECK_LIBS = ../libo2scl.la
 endif
 
 fit_base_ts_LDADD = $(VCHECK_LIBS)

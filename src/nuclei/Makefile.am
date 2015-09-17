@@ -104,10 +104,10 @@ check_PROGRAMS = nucmass_ts nucdist_ts nucleus_ts \
 check_SCRIPTS = o2scl-test
 
 if O2SCL_HDF
-VCHECK_LIBS = $(libdir)/libo2scl_part.la $(libdir)/libo2scl.la \
-	$(libdir)/libo2scl_hdf.la
+VCHECK_LIBS = ../libo2scl_part.la ../libo2scl.la \
+	../hdf/libo2scl_hdf.la
 else
-VCHECK_LIBS = $(libdir)/libo2scl_part.la $(libdir)/libo2scl.la 
+VCHECK_LIBS = ../libo2scl_part.la ../libo2scl.la 
 endif
 
 nucmass_ts_LDADD = $(VCHECK_LIBS)

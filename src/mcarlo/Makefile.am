@@ -75,9 +75,9 @@ check_PROGRAMS = mcarlo_miser_ts mcarlo_vegas_ts mcarlo_plain_ts expval_ts \
 check_SCRIPTS = o2scl-test
 
 if O2SCL_HDF
-VCHECK_LIBS = $(libdir)/libo2scl.la $(libdir)/libo2scl_hdf.la
+VCHECK_LIBS = ../hdf/libo2scl_hdf.la ../libo2scl.la
 else
-VCHECK_LIBS = $(libdir)/libo2scl.la
+VCHECK_LIBS = ../libo2scl.la
 endif
 
 mcarlo_miser_ts_LDADD = $(VCHECK_LIBS)

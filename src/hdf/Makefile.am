@@ -75,7 +75,7 @@ endif
 
 check_SCRIPTS = o2scl-test
 
-VCHECK_LIBS = $(libdir)/libo2scl_hdf.la $(libdir)/libo2scl.la 
+VCHECK_LIBS = ../hdf/libo2scl_hdf.la ../libo2scl.la
 
 hdf_file_ts_LDADD = $(VCHECK_LIBS)
 hdf_io_ts_LDADD = $(VCHECK_LIBS)
