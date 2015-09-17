@@ -874,7 +874,7 @@ int main(void) {
   test_quartic_real(ne,&q3,"quartic_real_gsl2",1.0,
 		    1.0e-2,1.0,1.0e1,1.0);
   test_quartic_real(ne,&q4,"quartic_real_simple",1.0,
-		    5.0e1,1.0,1.0e3,1.0);
+		    2.0e5,1.0,3.0e7,1.0);
   test_quartic_real(ne,&q5,"simple_quartic_cmplx",1.0,
 		    1.0e-1,1.0,1.0e2,1.0);
   test_quartic_real(ne,&p3,"poly_real_coeff_gsl",1.0,
@@ -893,7 +893,7 @@ int main(void) {
   test_quartic_real(ne,&q3,"quartic_real_gsl2",1.0e-5,
 		    1.0e-5,1.0,1.0e-3,1.0);
   test_quartic_real(ne,&q4,"quartic_real_simple",3.0e-4,
-		    5.0e1,1.0,2.0e2,1.0);
+		    2.0e5,1.0,3.0e7,1.0);
   test_quartic_real(ne,&q5,"simple_quartic_cmplx",1.0e-5,
 		    1.0e-1,1.0,5.0,1.0);
   test_quartic_real(ne,&p3,"poly_real_coeff_gsl",1.0e-5,
