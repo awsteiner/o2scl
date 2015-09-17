@@ -6,7 +6,6 @@ language: cpp
 
 os:
   - linux
-  - osx
 
 # 
 # Prepare autotools and install dependencies before installation
@@ -53,7 +52,7 @@ script:
   # to double check that the install worked.
   # 
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-      ./configure && make blank-doc && make && sudo make install && ls /usr/local/lib && make check && acol --version ;
+      ./configure && make blank-doc && make && sudo make install && cd src/other && make poly.scr && cat poly.scr && cd ../.. && make check && acol --version ;
     fi
   # 
   # Use homebrew to install the HEAD version on OSX. At the end,
