@@ -284,14 +284,12 @@ double fermion_eval_thermo::calibrate
     cout << "In fermion_T::calibrate(), loading file named\n\t" 
 	 << fname << "\n" << endl;
   }
-  cout << "Here: " << fname << endl;
   table<> tab;
   hdf_file hf;
   hf.open(fname);
   string name;
   hdf_input(hf,tab,name);
   hf.close();
-  cout << "Here2: " << name << endl;
   
   if (tab.get_nlines()==0) {
     string str="Failed to load data from file '"+fname+
