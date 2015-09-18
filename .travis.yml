@@ -26,11 +26,11 @@ before_install:
       sudo apt-get install libboost-all-dev ;
     fi
   # 
-  # We cannot use the ubuntu HDF5 package because it sets the
-  # compatibility version to the old format (I'm not sure why), so
-  # install it from source. Newer versions of the Ubuntu HDF5
-  # package do not have this problem, but Travis uses 12.04 LTS.
-  # We download a new version and compile manually from source.
+  # We cannot use the ubuntu HDF5 package because it is configured to
+  # be compatibile only the with old format, so HDF5 is installed from
+  # source. Newer versions of the Ubuntu HDF5 package do not have this
+  # problem, but Travis uses 12.04 LTS. We download a new version and
+  # compile manually from source.
   # 
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
       wget http://www.hdfgroup.org/ftp/HDF5/current/src/hdf5-1.8.15-patch1.tar.gz ;
@@ -52,7 +52,7 @@ script:
   # to double check that the install worked.
   # 
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-      ./configure && make blank-doc && make && sudo make install && h5dump /usr/local/share/o2scl/fermion_cal.o2 && make check && acol --version ;
+      ./configure && make blank-doc && make && sudo make install && h5dump /usr/local/share/o2scl/fermion_cal.o2 && cd src/part && make fermion_eff_ts && fermion_eff_ts && make check && acol --version ;
     fi
   # 
   # Use homebrew to install the HEAD version on OSX. At the end,
