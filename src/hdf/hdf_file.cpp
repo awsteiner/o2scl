@@ -53,8 +53,9 @@ int hdf_file::open(std::string fname, bool err_on_fail) {
     {
       file=H5Fopen(fname.c_str(),H5F_ACC_RDWR,H5P_DEFAULT);
     } 
-  H5E_END_TRY 
-    if (file<0) {
+  H5E_END_TRY
+    cout << "Filexx: " << file << endl;
+    if (false && file<0) {
       if (err_on_fail) {
 	O2SCL_ERR((((string)"Open file named '")+fname+
 		   "' failed in hdf_file::open().").c_str(),exc_efilenotfound);
@@ -76,7 +77,8 @@ void hdf_file::open_or_create(std::string fname) {
     if(file < 0) {
       file=H5Fcreate(fname.c_str(),H5F_ACC_TRUNC,H5P_DEFAULT,H5P_DEFAULT);
     }
-  if (file<0) {
+  cout << "Filex2: " << file << endl;
+  if (false && file<0) {
     O2SCL_ERR((((string)"Open or create file named '")+fname+
 	       "' failed in hdf_file::open_or_create().").c_str(),
 	      exc_efilenotfound);
