@@ -236,6 +236,12 @@ namespace o2scl {
       called <tt>"omega_rat"</tt> and <tt>"rjw"</tt>, respectively.
       One can compute the baryonic mass by integration or by adding
       one additional differential equation, bringing the total to six.
+
+      The moment of inertia is (see \ref tovtoc),
+      \f[
+      I = \frac{R^4}{6 G} \left.\frac{df}{dr}\right|_{r=R}
+      \f]
+      where the last fraction is stored in \ref domega_rat .
       
       <b>Convergence details</b>
 
@@ -311,7 +317,7 @@ namespace o2scl {
     /** \brief Target mass for integ_star()
 	
 	Has a value of zero, unless set to a non-zero value by \ref fixed(). 
-     */
+    */
     double tmass;
     
     /** \brief Ensure \c col does not match strings in \c cnames
@@ -427,6 +433,10 @@ namespace o2scl {
     double bmass;
     /// Gravitational potential (when computed)
     double gpot;
+    /// The value of \f$ r^4 j df / dr \f$
+    double last_rjw;
+    /// The value of \f$ \bar{\omega} / \Omega \f$
+    double last_f;
     /** \brief The value of \f$ d (\bar{\omega}/\Omega)/dr \f$ 
 	at the surface (when computed)
     */

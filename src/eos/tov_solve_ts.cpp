@@ -255,6 +255,17 @@ int main(void) {
   }
 
   // --------------------------------------------------------------
+  // M vs. R with rotation
+  
+  at.ang_vel=true;
+  at.mvsr();
+  tab=at.get_results();
+  tab->summary(&cout);
+  t.test_rel(mom2,tab->interp("gm",1.4,"rjw")/3.0/schwarz_km,
+	     1.0e-3,"I from M vs. R");
+  at.ang_vel=false;
+
+  // --------------------------------------------------------------
   // Maximum mass star
 
   cout << "----------------------------------------------------" << endl;

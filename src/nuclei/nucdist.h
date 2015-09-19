@@ -35,7 +35,7 @@
 /** \brief Placeholder namespace for global functions in \o2p 
 
     This namespace is created to help doxygen understand 
-    functions in \o2p that are in the \ref o2scl namespace.
+    functions in \o2p that are in the \c o2scl namespace.
     Functions documented here should be called using, for example,
     \verbatim
     o2scl::nucdist_set(dist,nm);
@@ -54,7 +54,7 @@ namespace o2scl_part {
 	\c Z and \c N, determines which nuclei will be added to the
 	distribution.
 
-	\note This function is actually in the \ref o2scl namespace.
+	\note This function is actually in the \c o2scl namespace.
 	Unfortunately doxygen has difficulty extending namespaces
 	in separate doxyfile instances. 
     */

@@ -797,22 +797,30 @@ int tov_solve::integ_star(size_t ndvar, const ubvector &ndx,
     // Adjustments for rotation
     
     if (ang_vel) {
-      double last_rjw=rky[ix][iv]*exp(-phi_shift);
-      double last_f=rky[ix][iv+1];
+
+      last_rjw=rky[ix][iv]*exp(-phi_shift);
+      last_f=rky[ix][iv+1];
       double f_corr=last_f+last_rjw/pow(rad,3.0)/3.0;
+
       // Correction for rjw
       for(size_t k=0;k<ix_last;k++) {
 	rky[k][iv]*=exp(-phi_shift)/f_corr;
       }
       rky[ix_last][iv]=last_rjw/f_corr;
       iv++;
+
       // Correction for omega_rat
       rky[ix_last][iv]=last_f;
       for(size_t k=0;k<=ix_last;k++) {
 	rky[k][iv]/=f_corr;
       }
       iv++;
-      domega_rat=last_rjw/f_corr/pow(rad,4.0);
+
+      last_rjw/=f_corr;
+      last_f/=f_corr;
+      
+      // Compute d ( (omega bar)/Omega ) / dr
+      domega_rat=last_rjw/pow(rad,4.0);
     }
   }
   
@@ -883,8 +891,8 @@ int tov_solve::mvsr() {
     if (calc_gpot) {
       line.push_back(gpot);
       if (ang_vel) {
-	line.push_back(0.0);
-	line.push_back(0.0);
+	line.push_back(last_rjw);
+	line.push_back(last_f);
       }
     }
 
