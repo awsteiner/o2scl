@@ -22,7 +22,7 @@ before_install:
   # Install GSL and Boost
   # 
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-      sudo apt-get install libgsl0-dev && sudo apt-get install libboost-all-dev && sudo apt-get install libhdf5-serial-dev;
+      sudo apt-get install libgsl0-dev && sudo apt-get install libboost-all-dev;
     fi
   # 
   # We cannot use the ubuntu HDF5 package because it is configured to
@@ -51,7 +51,7 @@ script:
   # to double check that the install worked.
   # 
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-      ./configure && make blank-doc && make && sudo make install && make check && acol --version ;
+      ./configure --disable-hdf --disable-partlib --disable-eoslib && make blank-doc && make && sudo make install && make check;
     fi
   # 
   # Use homebrew to install the HEAD version on OSX. At the end,
