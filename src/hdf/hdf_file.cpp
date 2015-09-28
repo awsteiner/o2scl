@@ -121,7 +121,11 @@ void hdf_file::setc(std::string name, char c) {
   H5E_BEGIN_TRY
     {
       // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+      dset=H5Dopen1(current,name.c_str());
+#else
       dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
     } 
   H5E_END_TRY 
 #ifdef O2SCL_NEVER_DEFINED
@@ -172,7 +176,11 @@ void hdf_file::setd(std::string name, double d) {
   H5E_BEGIN_TRY
     {
       // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+      dset=H5Dopen1(current,name.c_str());
+#else
       dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
     } 
   H5E_END_TRY 
 #ifdef O2SCL_NEVER_DEFINED
@@ -215,8 +223,11 @@ void hdf_file::setf(std::string name, float f) {
 
   H5E_BEGIN_TRY
     {
-      // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+      dset=H5Dopen1(current,name.c_str());
+#else
       dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
     } 
   H5E_END_TRY 
 #ifdef O2SCL_NEVER_DEFINED
@@ -259,8 +270,11 @@ void hdf_file::seti(std::string name, int i) {
 
   H5E_BEGIN_TRY
     {
-      // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+      dset=H5Dopen1(current,name.c_str());
+#else
       dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
     } 
   H5E_END_TRY 
 #ifdef O2SCL_NEVER_DEFINED
@@ -303,8 +317,11 @@ void hdf_file::set_szt(std::string name, size_t u) {
 
   H5E_BEGIN_TRY
     {
-      // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+      dset=H5Dopen1(current,name.c_str());
+#else
       dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
     } 
   H5E_END_TRY 
 #ifdef O2SCL_NEVER_DEFINED
@@ -359,7 +376,11 @@ void hdf_file::sets_fixed(std::string name, std::string s) {
   H5E_BEGIN_TRY
     {
       // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+      dset=H5Dopen1(current,name.c_str());
+#else
       dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
     } 
   H5E_END_TRY 
 #ifdef O2SCL_NEVER_DEFINED
@@ -438,7 +459,11 @@ int hdf_file::gets_fixed(std::string name, std::string &s) {
   H5E_BEGIN_TRY
     {
       // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+      dset=H5Dopen1(current,name.c_str());
+#else
       dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
     } 
   H5E_END_TRY 
 #ifdef O2SCL_NEVER_DEFINED
@@ -496,7 +521,11 @@ int hdf_file::gets_def_fixed(std::string name, std::string def,
   H5E_BEGIN_TRY
     {
       // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+      dset=H5Dopen1(current,name.c_str());
+#else
       dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
     } 
   H5E_END_TRY 
 #ifdef O2SCL_NEVER_DEFINED
@@ -546,9 +575,14 @@ int hdf_file::gets_def_fixed(std::string name, std::string def,
 }
     
 int hdf_file::getc(std::string name, char &c) {
-      
+  
   // Open the data space
+#ifdef O2SCL_HDF_OLD
+  hid_t dset=H5Dopen1(current,name.c_str());
+#else
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
+  
   if (dset<0) {
     O2SCL_ERR((((string)"Dataspace named '")+name+
 		   "' not found in hdf_file::getc().").c_str(),exc_einval);
@@ -570,7 +604,11 @@ int hdf_file::getc(std::string name, char &c) {
 int hdf_file::getd(std::string name, double &d) {
       
   // Open the data space
+#ifdef O2SCL_HDF_OLD
+  hid_t dset=H5Dopen1(current,name.c_str());
+#else
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
   if (dset<0) {
     O2SCL_ERR((((string)"Dataspace named '")+name+
 		   "' not found in hdf_file::getd().").c_str(),exc_einval);
@@ -592,7 +630,11 @@ int hdf_file::getd(std::string name, double &d) {
 int hdf_file::getf(std::string name, float &f) {
       
   // Open the data space
+#ifdef O2SCL_HDF_OLD
+  hid_t dset=H5Dopen1(current,name.c_str());
+#else
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
   if (dset<0) {
     O2SCL_ERR((((string)"Dataspace named '")+name+
 		   "' not found in hdf_file::getf().").c_str(),exc_einval);
@@ -614,7 +656,11 @@ int hdf_file::getf(std::string name, float &f) {
 int hdf_file::geti(std::string name, int &i) {
       
   // Open the data space
+#ifdef O2SCL_HDF_OLD
+  hid_t dset=H5Dopen1(current,name.c_str());
+#else
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
   if (dset<0) {
     O2SCL_ERR((((string)"Dataspace named '")+name+
 		   "' not found in hdf_file::geti().").c_str(),exc_einval);
@@ -636,7 +682,11 @@ int hdf_file::geti(std::string name, int &i) {
 int hdf_file::get_szt(std::string name, size_t &u) {
       
   // Open the data space
+#ifdef O2SCL_HDF_OLD
+  hid_t dset=H5Dopen1(current,name.c_str());
+#else
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
   if (dset<0) {
     O2SCL_ERR((((string)"Dataspace named '")+name+
 		   "' not found in hdf_file::get_szt().").c_str(),exc_einval);
@@ -671,7 +721,11 @@ int hdf_file::get_szt(std::string name, size_t &u) {
 int hdf_file::gets(std::string name, std::string &s) {
       
   // Open the data space
+#ifdef O2SCL_HDF_OLD
+  hid_t dset=H5Dopen1(current,name.c_str());
+#else
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
   if (dset<0) {
     O2SCL_ERR((((string)"Dataspace named '")+name+
 		   "' not found in hdf_file::gets().").c_str(),exc_einval);
@@ -716,8 +770,12 @@ int hdf_file::getc_def(std::string name, char def, char &c) {
   hid_t dset=0;
    
   H5E_BEGIN_TRY {
-    // See if the dataspace already exists first
-    dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+      // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+      dset=H5Dopen1(current,name.c_str());
+#else
+      dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
   }
   H5E_END_TRY
 #ifdef O2SCL_NEVER_DEFINED
@@ -749,8 +807,12 @@ int hdf_file::getd_def(std::string name, double def, double &d) {
   hid_t dset=0;
    
   H5E_BEGIN_TRY {
-    // See if the dataspace already exists first
-    dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+      // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+      dset=H5Dopen1(current,name.c_str());
+#else
+      dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
   }
   H5E_END_TRY
 #ifdef O2SCL_NEVER_DEFINED
@@ -782,8 +844,12 @@ int hdf_file::getf_def(std::string name, float def, float &f) {
   hid_t dset=0;
    
   H5E_BEGIN_TRY {
-    // See if the dataspace already exists first
-    dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+      // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+      dset=H5Dopen1(current,name.c_str());
+#else
+      dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
   }
   H5E_END_TRY
 #ifdef O2SCL_NEVER_DEFINED
@@ -815,8 +881,12 @@ int hdf_file::get_szt_def(std::string name, size_t def, size_t &u) {
   hid_t dset=0;
    
   H5E_BEGIN_TRY {
-    // See if the dataspace already exists first
-    dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+      // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+      dset=H5Dopen1(current,name.c_str());
+#else
+      dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
   }
   H5E_END_TRY
 #ifdef O2SCL_NEVER_DEFINED
@@ -861,8 +931,12 @@ int hdf_file::geti_def(std::string name, int def, int &i) {
   hid_t dset=0;
    
   H5E_BEGIN_TRY {
-    // See if the dataspace already exists first
-    dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+      // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+      dset=H5Dopen1(current,name.c_str());
+#else
+      dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
   }
   H5E_END_TRY
 #ifdef O2SCL_NEVER_DEFINED
@@ -895,7 +969,12 @@ int hdf_file::gets_def(std::string name, std::string def, std::string &s) {
   hid_t dset=0;
 
   H5E_BEGIN_TRY {
-    dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+      // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+      dset=H5Dopen1(current,name.c_str());
+#else
+      dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
   }
   H5E_END_TRY
 #ifdef O2SCL_NEVER_DEFINED
@@ -954,7 +1033,11 @@ int hdf_file::setc_arr_fixed(std::string name, size_t n, const char *c) {
   H5E_BEGIN_TRY
     {
       // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+      dset=H5Dopen1(current,name.c_str());
+#else
       dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
     } 
   H5E_END_TRY 
 #ifdef O2SCL_NEVER_DEFINED
@@ -1010,7 +1093,11 @@ int hdf_file::setd_arr_fixed(std::string name, size_t n, const double *d) {
   H5E_BEGIN_TRY
     {
       // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+      dset=H5Dopen1(current,name.c_str());
+#else
       dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
     } 
   H5E_END_TRY 
 #ifdef O2SCL_NEVER_DEFINED
@@ -1066,7 +1153,11 @@ int hdf_file::setf_arr_fixed(std::string name, size_t n, const float *f) {
   H5E_BEGIN_TRY
     {
       // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+      dset=H5Dopen1(current,name.c_str());
+#else
       dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
     } 
   H5E_END_TRY 
 #ifdef O2SCL_NEVER_DEFINED
@@ -1122,7 +1213,11 @@ int hdf_file::seti_arr_fixed(std::string name, size_t n, const int *i) {
   H5E_BEGIN_TRY
     {
       // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+      dset=H5Dopen1(current,name.c_str());
+#else
       dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
     } 
   H5E_END_TRY 
 #ifdef O2SCL_NEVER_DEFINED
@@ -1174,7 +1269,11 @@ int hdf_file::setc_arr(std::string name, size_t n, const char *c) {
   H5E_BEGIN_TRY
     {
       // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+      dset=H5Dopen1(current,name.c_str());
+#else
       dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
     } 
   H5E_END_TRY 
 #ifdef O2SCL_NEVER_DEFINED
@@ -1251,7 +1350,11 @@ int hdf_file::setd_arr(std::string name, size_t n, const double *d) {
   H5E_BEGIN_TRY
     {
       // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+      dset=H5Dopen1(current,name.c_str());
+#else
       dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
     } 
   H5E_END_TRY 
 #ifdef O2SCL_NEVER_DEFINED
@@ -1326,7 +1429,11 @@ int hdf_file::setd_arr_comp(std::string name, size_t n, const double *d) {
   H5E_BEGIN_TRY
     {
       // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+      dset=H5Dopen1(current,name.c_str());
+#else
       dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
     } 
   H5E_END_TRY 
 #ifdef O2SCL_NEVER_DEFINED
@@ -1411,7 +1518,11 @@ int hdf_file::setf_arr(std::string name, size_t n, const float *f) {
   H5E_BEGIN_TRY
     {
       // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+      dset=H5Dopen1(current,name.c_str());
+#else
       dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
     } 
   H5E_END_TRY 
 #ifdef O2SCL_NEVER_DEFINED
@@ -1486,7 +1597,11 @@ int hdf_file::seti_arr(std::string name, size_t n, const int *i) {
   H5E_BEGIN_TRY
     {
       // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+      dset=H5Dopen1(current,name.c_str());
+#else
       dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
     } 
   H5E_END_TRY 
 #ifdef O2SCL_NEVER_DEFINED
@@ -1561,7 +1676,11 @@ int hdf_file::set_szt_arr(std::string name, size_t n, const size_t *u) {
   H5E_BEGIN_TRY
     {
       // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+      dset=H5Dopen1(current,name.c_str());
+#else
       dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
     } 
   H5E_END_TRY 
 #ifdef O2SCL_NEVER_DEFINED
@@ -1642,7 +1761,11 @@ int hdf_file::set_szt_arr(std::string name, size_t n, const size_t *u) {
 int hdf_file::getc_arr(std::string name, size_t n, char *c) {
       
   // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+  hid_t dset=H5Dopen1(current,name.c_str());
+#else
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
 
   // Get space requirements, to make sure they coincide
   // with the size specified by the user
@@ -1667,7 +1790,11 @@ int hdf_file::getc_arr(std::string name, size_t n, char *c) {
 int hdf_file::getd_arr(std::string name, size_t n, double *d) {
       
   // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+  hid_t dset=H5Dopen1(current,name.c_str());
+#else
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
 
   // Get filter information
   hid_t plist_id=H5Dget_create_plist(dset);
@@ -1710,7 +1837,11 @@ int hdf_file::getd_arr(std::string name, size_t n, double *d) {
 int hdf_file::getf_arr(std::string name, size_t n, float *f) {
       
   // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+  hid_t dset=H5Dopen1(current,name.c_str());
+#else
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
 
   // Get space requirements, to make sure they coincide
   // with the size specified by the user
@@ -1735,7 +1866,11 @@ int hdf_file::getf_arr(std::string name, size_t n, float *f) {
 int hdf_file::geti_arr(std::string name, size_t n, int *i) {
       
   // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+  hid_t dset=H5Dopen1(current,name.c_str());
+#else
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
 
   // Get space requirements, to make sure they coincide
   // with the size specified by the user
@@ -1760,7 +1895,11 @@ int hdf_file::geti_arr(std::string name, size_t n, int *i) {
 int hdf_file::getc_arr_alloc(std::string name, size_t &n, char *c) {
       
   // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+  hid_t dset=H5Dopen1(current,name.c_str());
+#else
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
 
   // Get space requirements, to allocate memory
   hid_t space=H5Dget_space(dset);  
@@ -1782,7 +1921,11 @@ int hdf_file::getc_arr_alloc(std::string name, size_t &n, char *c) {
 int hdf_file::getd_arr_alloc(std::string name, size_t &n, double *d) {
       
   // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+  hid_t dset=H5Dopen1(current,name.c_str());
+#else
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
 
   // Get space requirements, to allocate memory
   hid_t space=H5Dget_space(dset);  
@@ -1804,7 +1947,11 @@ int hdf_file::getd_arr_alloc(std::string name, size_t &n, double *d) {
 int hdf_file::getf_arr_alloc(std::string name, size_t &n, float *f) {
       
   // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+  hid_t dset=H5Dopen1(current,name.c_str());
+#else
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
 
   // Get space requirements, to allocate memory
   hid_t space=H5Dget_space(dset);  
@@ -1826,7 +1973,11 @@ int hdf_file::getf_arr_alloc(std::string name, size_t &n, float *f) {
 int hdf_file::geti_arr_alloc(std::string name, size_t &n, int *i) {
       
   // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+  hid_t dset=H5Dopen1(current,name.c_str());
+#else
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
 
   // Get space requirements, to allocate memory
   hid_t space=H5Dget_space(dset);  
@@ -1913,7 +2064,11 @@ int hdf_file::set_szt_vec(std::string name, const std::vector<size_t> &v) {
 int hdf_file::getd_vec(std::string name, std::vector<double> &v) {
       
   // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+  hid_t dset=H5Dopen1(current,name.c_str());
+#else
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
   
   // Get space requirements, to make sure they coincide
   // with the size specified by the user
@@ -1941,7 +2096,11 @@ int hdf_file::getd_vec(std::string name, std::vector<double> &v) {
 int hdf_file::geti_vec(std::string name, std::vector<int> &v) {
       
   // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+  hid_t dset=H5Dopen1(current,name.c_str());
+#else
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
   
   // Get space requirements, to make sure they coincide
   // with the size specified by the user
@@ -1969,7 +2128,11 @@ int hdf_file::geti_vec(std::string name, std::vector<int> &v) {
 int hdf_file::get_szt_vec(std::string name, std::vector<size_t> &v) {
       
   // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+  hid_t dset=H5Dopen1(current,name.c_str());
+#else
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
   
   // Get space requirements, to make sure they coincide
   // with the size specified by the user
@@ -2145,7 +2308,11 @@ int hdf_file::setd_mat_copy(std::string name, const ubmatrix &m) {
   H5E_BEGIN_TRY
     {
       // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+      dset=H5Dopen1(current,name.c_str());
+#else
       dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
     } 
   H5E_END_TRY 
 #ifdef O2SCL_NEVER_DEFINED
@@ -2212,7 +2379,11 @@ int hdf_file::setd_mat_copy(std::string name, const ubmatrix &m) {
 int hdf_file::getd_mat_copy(std::string name, ubmatrix &m) {
       
   // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+  hid_t dset=H5Dopen1(current,name.c_str());
+#else
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
   
   // Get space requirements, to make sure they coincide
   // with the size specified by the user
@@ -2259,7 +2430,11 @@ int hdf_file::seti_mat_copy(std::string name, const ubmatrix_int &m) {
   H5E_BEGIN_TRY
     {
       // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+      dset=H5Dopen1(current,name.c_str());
+#else
       dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
     } 
   H5E_END_TRY 
 #ifdef O2SCL_NEVER_DEFINED
@@ -2325,7 +2500,11 @@ int hdf_file::seti_mat_copy(std::string name, const ubmatrix_int &m) {
 int hdf_file::geti_mat_copy(std::string name, ubmatrix_int &m) {
       
   // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+  hid_t dset=H5Dopen1(current,name.c_str());
+#else
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
   
   // Get space requirements, to make sure they coincide
   // with the size specified by the user
@@ -2367,7 +2546,11 @@ int hdf_file::setd_ten(std::string name,
   H5E_BEGIN_TRY
     {
       // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+      dset=H5Dopen1(current,name.c_str());
+#else
       dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
     } 
   H5E_END_TRY 
 #ifdef O2SCL_NEVER_DEFINED
@@ -2445,7 +2628,11 @@ int hdf_file::getd_ten(std::string name,
 				     std::vector<size_t> > &t) {
   
   // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+  hid_t dset=H5Dopen1(current,name.c_str());
+#else
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
   
   // Get space requirements, to make sure they coincide
   // with the size specified by the user
@@ -2477,7 +2664,11 @@ int hdf_file::getd_ten(std::string name,
 int hdf_file::getd_vec_prealloc(std::string name, size_t n, double *d) {
       
   // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+  hid_t dset=H5Dopen1(current,name.c_str());
+#else
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
       
   // Get space requirements, to make sure they coincide
   // with the size specified by the user
@@ -2504,7 +2695,11 @@ int hdf_file::getd_vec_prealloc(std::string name, size_t n, double *d) {
 int hdf_file::geti_vec_prealloc(std::string name, size_t n, int *i) {
       
   // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+  hid_t dset=H5Dopen1(current,name.c_str());
+#else
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
       
   // Get space requirements, to make sure they coincide
   // with the size specified by the user
@@ -2532,7 +2727,11 @@ int hdf_file::getd_mat_prealloc(std::string name, size_t n,
 				size_t m, double *d) {
       
   // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+  hid_t dset=H5Dopen1(current,name.c_str());
+#else
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
       
   // Get space requirements, to make sure they coincide
   // with the size specified by the user
@@ -2560,7 +2759,11 @@ int hdf_file::geti_mat_prealloc(std::string name, size_t n,
 				size_t m, int *i) {
       
   // See if the dataspace already exists first
+#ifdef O2SCL_HDF_OLD
+  hid_t dset=H5Dopen1(current,name.c_str());
+#else
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+#endif
       
   // Get space requirements, to make sure they coincide
   // with the size specified by the user
