@@ -2106,8 +2106,12 @@ hid_t hdf_file::open_group(hid_t init_id, std::string path) {
     }
   H5E_END_TRY 
     if (group<0) {
-      group=H5Gcreate(init_id,path.c_str(),H5P_DEFAULT,
+#ifdef O2SCL_HDF_OLD
+      group=H5Gcreate1(current,path.c_str(),0);
+#else
+      group=H5Gcreate(current,path.c_str(),H5P_DEFAULT,
 		      H5P_DEFAULT,H5P_DEFAULT);
+#endif
     }
   if (group<0) {
     O2SCL_ERR2("Failed to open or create group in ",
