@@ -142,6 +142,7 @@ blank-doc:
 	touch doc/o2scl/part/html/dynsections.js
 
 tc_temp.scr:
-	g++ -L/usr/local/lib -L/usr/lib -I/usr/local/include -I/usr/include \
+	g++ -std=c++0x -L/usr/local/lib -L/usr/lib \
+		-I/usr/local/include -I/usr/include \
 		-o tc_temp tc_temp.cpp
 	./tc_temp > tc_temp.scr

@@ -455,7 +455,7 @@ namespace o2scl {
 	tvec.push_back(list[i]);
       }
     }
-
+    
     /// Create an assignment based on the strings in \c list
     vec_index(std::initializer_list<std::string> list) {
       size_t ix=0;
@@ -466,7 +466,7 @@ namespace o2scl {
 	ix++;
       }
     }
-
+    
     /// Return the string of index \c i
     std::string operator()(size_t i) {
       return tvec[i];
