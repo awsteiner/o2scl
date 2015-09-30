@@ -144,5 +144,7 @@ blank-doc:
 tc_temp.scr:
 	g++ -std=c++0x -L/usr/local/lib -L/usr/lib \
 		-I/usr/local/include -I/usr/include \
+		-lo2scl_hdf -lo2scl_eos -lo2scl_part -lo2scl \
+		-lgslcblas -lgsl -lhdf5_hl -lhdf5 \
 		-o tc_temp tc_temp.cpp
 	./tc_temp > tc_temp.scr
