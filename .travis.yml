@@ -1,6 +1,12 @@
 #
+# Todo: Right now, we check only the current version, not the latest dist.
+#
 # Todo: this language specification doens't seem to work with
 # multiple OSs. The install still proceeds ok for now.
+#
+# Todo: the Travis OS seems to fool the automatic detection for C++11
+# support, so CXXFLAGS="-std=c++0x" is required here. This is
+# done in O2scl's Travis CI settings page.
 #
 language: cpp
 
@@ -9,7 +15,7 @@ os:
   - osx
 
 #
-# Todo: Fix OSX build
+# Todo: Fix OSX build. 
 #
 matrix:
   allow_failures:
@@ -66,7 +72,7 @@ script:
   # 'acol --version' is used to double check that the install worked.
   # 
   - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
-      brew install homebrew/science/hdf5 && brew install automake && brew install autoconf && brew install libtool && brew tap awsteiner/science && which autoconf && brew install o2scl --with-check --HEAD && acol --version ;
+      brew tap homebrew/science && brew install hdf5 && brew install automake && brew install autoconf && brew install libtool && brew tap awsteiner/science && which autoconf && brew install o2scl --with-check --HEAD && acol --version ;
     fi
 
 notifications:
