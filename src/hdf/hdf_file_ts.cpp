@@ -31,6 +31,8 @@ int main(void) {
 
   {
     system("h5dump /usr/local/share/o2scl//fermion_cal.o2");
+    system("ls -l /usr/local/share/o2scl//fermion_cal.o2");
+    system("whoami");
     
     hid_t file;
     file=H5Fopen("/usr/local/share/o2scl//fermion_cal.o2",
