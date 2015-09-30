@@ -6,13 +6,21 @@ language: cpp
 
 os:
   - linux
+  - osx
 
+#
+# Todo: Fix OSX build
+#
+matrix:
+  allow_failures:
+    - os: osx
+    
 # 
 # Prepare autotools and install dependencies before installation
 #
 before_install:
   # 
-  # Use GNU autotools to generate ./configure automatically
+  # Use GNU autotools to generate ./configure automatically on linux
   # 
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
       mkdir m4 ;
@@ -22,36 +30,36 @@ before_install:
   # Install GSL and Boost
   # 
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-      sudo apt-get install libgsl0-dev && sudo apt-get install libboost-all-dev && sudo apt-get install libhdf5-serial-dev && sudo apt-get install hdf5-tools;
+      sudo apt-get install libgsl0-dev && sudo apt-get install libboost-all-dev;
     fi
   # 
-  # We cannot use the ubuntu HDF5 package because it is configured to
-  # be compatibile only the with old format, so HDF5 is installed from
-  # source. Newer versions of the Ubuntu HDF5 package do not have this
-  # problem, but Travis uses 12.04 LTS. We download a new version and
-  # compile manually from source.
+  # The ubuntu HDF5 package cannot be used because it is configured to
+  # be compatibile only the with older API. Newer versions of the
+  # Ubuntu HDF5 package do not have this problem, but Travis uses
+  # 12.04 LTS (but is upgrading to 14.04 soon). For now, the script
+  # compiles HDF5 manually from source.
   # 
-  #  - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-  #      wget http://www.hdfgroup.org/ftp/HDF5/current/src/hdf5-1.8.15-patch1.tar.gz ;
-  #      tar -xzf hdf5-1.8.15-patch1.tar.gz ;
-  #      cd hdf5-1.8.15-patch1 && ./configure --build=x86_64-unknown-linux-gnu --prefix=/usr && make > /dev/null 2> /dev/null && sudo make install && cd .. ;
-  #    fi
+  - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+      wget http://www.hdfgroup.org/ftp/HDF5/current/src/hdf5-1.8.15-patch1.tar.gz ;
+      tar -xzf hdf5-1.8.15-patch1.tar.gz ;
+      cd hdf5-1.8.15-patch1 && ./configure --build=x86_64-unknown-linux-gnu --prefix=/usr && make > /dev/null 2> /dev/null && sudo make install && cd .. ;
+    fi
 
 #
 # Installation script
 #
-# Fixme: on Mac, using install: doesn't work here b/c it additionally
+# Todo: on Mac, using "install:" doesn't work here b/c it additionally
 # tries to run ./configure after doing the homebrew installation.
 #
 script:
   # 
   # Perform the installation on linux. Since there is no documentation,
   # 'make blank-doc' is used to create dummy documentation so that
-  # 'make install' does not fail. At the end, 'acol --version' is used
-  # to double check that the install worked.
+  # 'make install' does not fail. Currently, we have to use 'sudo'
+  # for 'make check' because of the HDF5 I/O's to shared data.
   # 
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-      ./configure && make blank-doc && make && sudo make install && h5dump /usr/local/share/o2scl//fermion_cal.o2 && cd src/hdf && sudo make hdf_file_ts && ./hdf_file_ts && cd ../.. && sudo make check;
+      ./configure && make blank-doc && make && sudo make install && sudo make check;
     fi
   # 
   # Use homebrew to install the HEAD version on OSX. At the end,

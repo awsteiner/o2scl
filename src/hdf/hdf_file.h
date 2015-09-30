@@ -80,6 +80,10 @@ namespace o2scl_hdf {
       future versions. Later versions of \o2 will have stronger
       guarantees on backwards compatibility.
 
+      \todo This class opens all files in R/W mode, which may
+      cause I/O problems in file systems. This needs to be
+      fixed by allowing the user to open a read-only file. 
+
       \future The \o2 HDF functions do not always consistently choose
       between throwing \o2 exceptions and throwing HDF5 exceptions.
       Check and/or fix this.
