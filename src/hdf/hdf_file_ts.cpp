@@ -30,7 +30,6 @@ using namespace o2scl_hdf;
 int main(void) {
 
   {
-    system("h5dump /usr/local/share/o2scl/fermion_cal.o2");
     system("h5dump /usr/local/share/o2scl//fermion_cal.o2");
     
     hid_t file;

@@ -51,7 +51,7 @@ script:
   # to double check that the install worked.
   # 
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-      ./configure && make blank-doc && make && sudo make install && h5dump /usr/local/share/o2scl//fermion_cal.o2 && make check;
+      ./configure && make blank-doc && make && sudo make install && h5dump /usr/local/share/o2scl//fermion_cal.o2 && cd src/hdf && make hdf_file_ts && ./hdf_file_ts && cd ../.. && make check;
     fi
   # 
   # Use homebrew to install the HEAD version on OSX. At the end,
