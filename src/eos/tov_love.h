@@ -38,25 +38,7 @@
 namespace o2scl {
   #endif
 
-  /** \brief Determination of the Love number
-
-      \anchor Postnikov10 Postnikov10:
-      \htmlonly
-      S. Postnikov, M. Prakash, and J. M. Lattimer
-      \endhtmlonly
-      \latexonly
-      S. Postnikov, M. Prakash, and J. M. Lattimer
-      \endlatexonly
-      Phys. Rev. D \b 82, 024016 (2010).
-
-      \anchor Hinderer10 Hinderer10:
-      \htmlonly
-      T. Hinderer, B. D. Lackey, R. N. Lang, J. S. Read
-      \endhtmlonly
-      \latexonly
-      T. Hinderer, B. D. Lackey, R. N. Lang, J. S. Read
-      \endlatexonly
-      Phys. Rev. D \b 81, 123016 (2010).
+  /** \brief Determination of the neutron star Love number
 
       We use \f$ c=1 \f$ but keep factors of \f$ G \f$, which has
       units \f$ \mathrm{km}/\mathrm{M_{\odot}} \f$.
@@ -166,8 +148,11 @@ namespace o2scl {
   
   protected:
 
+    /// The default ODE integrator
+    o2scl::ode_iv_solve<> def_ois;
+
     /// The ODE integrator
-    o2scl::ode_iv_solve<> ois;
+    o2scl::ode_iv_solve<> *oisp;
 
     /** \brief The derivative \f$ y^{\prime}(r) \f$
      */
@@ -180,13 +165,7 @@ namespace o2scl {
     int H_derivs(double r, size_t nv, const ubvector &vals,
 		 ubvector &ders);
 
-    /// The adaptive ODE stepper
-    o2scl::astep_gsl<> stp;
-    
-    /// A higher order stepper for testing
-    o2scl::ode_rk8pd_gsl<> rk8;
-    
-    /// Schwarzchild radius in km
+    /// Schwarzchild radius in km (set in constructor)
     double schwarz_km;
   
     /** \brief Compute \f$ k_2(\beta,y_R) \f$ using the analytic 
@@ -211,7 +190,12 @@ namespace o2scl {
 
     /// Pointer to the input profile
     o2scl::o2_shared_ptr<o2scl::table_units<> >::type tab;
-  
+
+    /// Set ODE integrator
+    void set_ODE(o2scl::ode_iv_solve<> &ois_new) {
+      oisp=&ois_new;
+    }
+    
     /** \brief Compute the love number using y
      */
     void calc_y(double &yR, double &beta, double &k2, double &lambda_km5,

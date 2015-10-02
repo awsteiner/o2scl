@@ -30,14 +30,14 @@ using namespace o2scl;
 typedef boost::numeric::ublas::vector<double> ubvector;
 
 tov_love::tov_love() {
+  oisp=&def_ois;
   schwarz_km=o2scl_cgs::schwarzchild_radius/1.0e5;
   eps=0.02;
-  //stp.set_step(rk8);
   /*
-    ois.gsl_astp.con.a_dydt=1.0;
-    ois.gsl_astp.con.eps_rel=1.0e-10;
-    ois.gsl_astp.con.eps_abs=1.0e-10;
-    ois.ntrial*=10;
+    oisp->gsl_astp.con.a_dydt=1.0;
+    oisp->gsl_astp.con.eps_rel=1.0e-10;
+    oisp->gsl_astp.con.eps_abs=1.0e-10;
+    oisp->ntrial*=10;
   */
 }
 
@@ -130,9 +130,6 @@ void tov_love::calc_y(double &yR, double &beta, double &k2,
 			 double &lambda_km5, double &lambda_cgs,
 			 bool tabulate) {
 
-  //std::cout << yR << " " << beta << " " 
-  //<< k2 << " " << lambda_post << " " << lambda_cgs << std::endl;
-    
   size_t count;
 
   double R=tab->max("r");
@@ -155,55 +152,9 @@ void tov_love::calc_y(double &yR, double &beta, double &k2,
      this,std::placeholders::_1,std::placeholders::_2,
      std::placeholders::_3,std::placeholders::_4);
 
-  //ode_funct11_mfptr<tov_love,ubvector>
-  //od(this,&tov_love::y_derivs);
-
-  if (true) {
-
     ubvector yout(1);
-    ois.solve_final_value(eps,R,h,1,y,yout,od);
+    oisp->solve_final_value(eps,R,h,1,y,yout,od);
     y[0]=yout[0];
-
-  } else {
-
-    //stp.verbose=1;
-    count=0;
-    //std::cout << "r            y            yerr" << std::endl;
-    while (r<R) {
-      int ret=stp.astep(r,R,h,1,y,dydx_out,yerr,od);
-
-      if (tabulate) {
-	double line[3]={r,y[0],dydx_out[0]};
-	results.line_of_data(3,line);
-      }
-      count++;
-      if (count==8) {
-	//std::cout << r << " " << y[0] << " " << yerr[0] << std::endl;
-	count=0;
-      }
-      if (count>1000 || ret!=0) {
-	if (false) {
-	  if (count>1000) {
-	    std::cout << "Count>1000 at r=" << r << " with radius " << R 
-		      << std::endl;
-	  } else {
-	    std::cout << "ret!=0 at r=" << r << " with radius " << R 
-		      << std::endl;
-	  }
-	  std::cout << "ed=" << tab->interp("r",r,"ed") 
-		    << " pr=" << tab->interp("r",r,"pr") 
-		    << " cs2=" << tab->interp("r",r,"cs2") << std::endl;
-	}
-	yR=0.0;
-	beta=0.0;
-	k2=0.0;
-	lambda_km5=0.0;
-	lambda_cgs=0.0;
-	return;
-      }
-    }
-
-  }
 
   yR=y[0];
   beta=schwarz_km/2.0*gm/R;
@@ -248,43 +199,12 @@ void tov_love::calc_H(double &yR, double &beta, double &k2,
      (&tov_love::H_derivs),
      this,std::placeholders::_1,std::placeholders::_2,
      std::placeholders::_3,std::placeholders::_4);
-
-  //ode_funct_mfptr<tov_love,ubvector> od2(this,&tov_love::H_derivs);
-    
-  if (true) {
-
-    ubvector yout(2);
-    ois.solve_final_value(eps,R,h,2,y,yout,od2);
-    y[0]=yout[0];
-    y[1]=yout[1];
-
-  } else {
-
-    //stp.verbose=1;
-    size_t count=0;
-    //std::cout << "r            H            H'           y" << std::endl;
-    while (r<R) {
-      stp.astep(r,R,h,2,y,dydx_out,yerr,od2);
-
-      if (false && r>8.0) {
-	cout.setf(ios::scientific);
-	ubvector ycheck(1), dycheck(1);
-	ycheck[0]=y[1]*r/y[0];
-	y_derivs(r,1,ycheck,dycheck);
-	cout << r << " " << dycheck[0] << " ";
-	cout << y[1]/y[0]+r*dydx_out[1]/y[0]-r*y[1]*y[1]/y[0]/y[0] << endl;
-      }
-
-      count++;
-      if (count==8) {
-	//std::cout << r << " " << y[0] << " " << y[1] << " " 
-	//      << r*y[1]/y[0] << std::endl;
-	count=0;
-      }
-    }
-
-  }
-
+  
+  ubvector yout(2);
+  oisp->solve_final_value(eps,R,h,2,y,yout,od2);
+  y[0]=yout[0];
+  y[1]=yout[1];
+  
   yR=R*y[1]/y[0];
 
   beta=schwarz_km/2.0*gm/R;

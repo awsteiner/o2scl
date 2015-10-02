@@ -36,7 +36,7 @@ TEST_VAR = eos_had_apr.scr eos_quark_bag.scr nstar_cold.scr \
 	eos_crust.scr eos_had_ddc.scr eos_had_base.scr nucleus_rmf.scr \
 	eos_crust_virial.scr eos_had_gogny.scr tov_solve.scr \
 	eos_quark_cfl6.scr eos_quark_cfl.scr nucmass_ldrop_shell.scr \
-	eos_nse_full.scr eos_had_hlps.scr nstar_rot.scr
+	eos_nse_full.scr eos_had_hlps.scr nstar_rot.scr tov_love.scr
 
 else
 
@@ -68,7 +68,7 @@ TEST_VAR = eos_had_apr.scr eos_quark_bag.scr eos_crust_virial.scr \
 	tov_solve.scr eos_quark_cfl6.scr eos_had_tabulated.scr eos_nse.scr \
 	eos_had_rmf_delta.scr eos_crust.scr eos_had_ddc.scr eos_quark_cfl.scr \
 	eos_had_base.scr eos_sn.scr nucmass_ldrop_shell.scr eos_nse_full.scr \
-	nstar_rot.scr
+	nstar_rot.scr tov_love.scr
 
 endif
 
@@ -137,7 +137,7 @@ check_PROGRAMS = eos_had_apr_ts eos_quark_bag_ts nucmass_ldrop_ts \
 	eos_had_rmf_delta_ts eos_crust_ts eos_had_ddc_ts eos_quark_cfl_ts \
 	nucleus_rmf_ts eos_nse_full_ts eos_had_hlps_ts \
 	nucmass_ldrop_shell_ts eos_had_gogny_ts eos_crust_virial_ts \
-	nstar_rot_ts
+	nstar_rot_ts tov_love_ts
 
 check_SCRIPTS = o2scl-test
 
@@ -165,6 +165,7 @@ eos_had_schematic_ts_LDADD = $(VCHECK_LIBS)
 eos_had_skyrme_ts_LDADD = $(VCHECK_LIBS)
 eos_tov_ts_LDADD = $(VCHECK_LIBS)
 tov_solve_ts_LDADD = $(VCHECK_LIBS)
+tov_love_ts_LDADD = $(VCHECK_LIBS)
 nstar_rot_ts_LDADD = $(VCHECK_LIBS)
 eos_quark_cfl6_ts_LDADD = $(VCHECK_LIBS)
 eos_had_tabulated_ts_LDADD = $(VCHECK_LIBS)
@@ -213,6 +214,8 @@ eos_tov.scr: eos_tov_ts$(EXEEXT)
 	./eos_tov_ts$(EXEEXT) > eos_tov.scr
 tov_solve.scr: tov_solve_ts$(EXEEXT) 
 	./tov_solve_ts$(EXEEXT) > tov_solve.scr
+tov_love.scr: tov_love_ts$(EXEEXT) 
+	./tov_love_ts$(EXEEXT) > tov_love.scr
 nstar_rot.scr: nstar_rot_ts$(EXEEXT) 
 	./nstar_rot_ts$(EXEEXT) > nstar_rot.scr
 eos_quark_cfl6.scr: eos_quark_cfl6_ts$(EXEEXT) 
@@ -257,6 +260,7 @@ eos_had_schematic_ts_SOURCES = eos_had_schematic_ts.cpp
 eos_had_skyrme_ts_SOURCES = eos_had_skyrme_ts.cpp
 eos_tov_ts_SOURCES = eos_tov_ts.cpp
 tov_solve_ts_SOURCES = tov_solve_ts.cpp
+tov_love_ts_SOURCES = tov_love_ts.cpp
 nstar_rot_ts_SOURCES = nstar_rot_ts.cpp
 eos_quark_cfl6_ts_SOURCES = eos_quark_cfl6_ts.cpp
 eos_had_tabulated_ts_SOURCES = eos_had_tabulated_ts.cpp
