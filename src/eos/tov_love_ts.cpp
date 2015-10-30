@@ -41,6 +41,8 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
 
+  double schwarz_km=o2scl_cgs::schwarzchild_radius/1.0e5;
+  
   eos_had_apr apr;
   apr.pion=1;
   
@@ -62,15 +64,32 @@ int main(void) {
   ts.fixed(1.4);
 
   o2_shared_ptr<table_units<> >::type profile=ts.get_results();
-  profile->summary(&cout);
 
+  // I'm not sure why cs2 isn't computed properly, so
+  // we have to recompute it here
+  profile->delete_column("cs2");
+  profile->deriv("ed","pr","cs2");
+
+  double I=ts.domega_rat*pow(ts.rad,4.0)/3.0/schwarz_km;
+  cout << "Radius: " << ts.rad << " km" << endl;
+  cout << "Moment of inertia: " << I << " Msun*km^2" << endl;
+
+  // Compute dimensionless tidal deformability from
+  // Yagi and Yunes (2013) correlation
+  double l_ibar=log(I/pow(schwarz_km/2.0,2.0)/pow(1.4,3.0));
+  double lbar=exp(-30.5395+38.3931*l_ibar-16.3071*pow(l_ibar,2.0)+
+		  3.36972*pow(l_ibar,3.0)-0.26105*pow(l_ibar,4.0));
+
+  // Direct calculation
   tov_love tl;
   tl.tab=profile;
   double yR, beta, k2, lambda_km5, lambda_cgs;
-  cout << "Here." << endl;
-  tl.calc_H(yR,beta,k2,lambda_km5,lambda_cgs);
-
-  cout << lambda_cgs << endl;
+  tl.calc_y(yR,beta,k2,lambda_km5,lambda_cgs);
+  
+  cout << "Dimensionless tidal deformability (YY13 correlation): "
+       << lbar << endl;
+  cout << "Dimensionless tidal deformability (direct calculation): " 
+       << lambda_km5/pow(schwarz_km/2.0,5.0)/pow(1.4,5.0) << endl;
 
   t.report();
   

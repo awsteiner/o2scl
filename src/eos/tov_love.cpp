@@ -122,7 +122,7 @@ int tov_love::H_derivs(double r, size_t nv, const ubvector &vals,
 		      +2.0/fact*pow(schwarz_km/2.0*gm/r/r+
 				    2.0*pi*pr*r*schwarz_km,2.0))+
     2.0*dHdr/r/fact*(-1.0+schwarz_km/2.0*gm/r+pi*r*r*(ed-pr)*schwarz_km);
-    
+
   return 0;
 }
 
@@ -201,10 +201,16 @@ void tov_love::calc_H(double &yR, double &beta, double &k2,
      std::placeholders::_3,std::placeholders::_4);
   
   ubvector yout(2);
-  oisp->solve_final_value(eps,R,h,2,y,yout,od2);
-  y[0]=yout[0];
-  y[1]=yout[1];
-  
+
+  size_t N=10;
+  for(size_t i=0;i<N;i++) {
+    double r2=eps+(R-eps)/((double)N)*((double)(i+1));
+    oisp->solve_final_value(r,r2,h,2,y,yout,od2);
+    y[0]=yout[0];
+    y[1]=yout[1];
+    r=r2;
+  }
+    
   yR=R*y[1]/y[0];
 
   beta=schwarz_km/2.0*gm/R;
