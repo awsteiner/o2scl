@@ -72,7 +72,7 @@ script:
   # 'acol --version' is used to double check that the install worked.
   # 
   - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
-      brew update && brew install homebrew/science/hdf5 && brew install autoconf && brew install libtool && brew tap awsteiner/science && which autoconf && brew install o2scl --with-check --HEAD && acol --version ;
+      brew update && brew install homebrew/science/hdf5 && brew tap awsteiner/science && which autoconf && brew install o2scl --with-check --HEAD && acol --version ;
     fi
 
 notifications:
