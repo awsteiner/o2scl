@@ -54,11 +54,8 @@ double tov_love::eval_k2(double beta, double yR) {
 int tov_love::y_derivs(double r, size_t nv, const ubvector &vals,
 			  ubvector &ders) {
     
-  double conv=o2scl_settings.get_convert_units().convert
-    ("1/fm^4","Msun/km^3",1.0);
-
-  double ed=tab->interp("r",r,"ed")*conv;
-  double pr=tab->interp("r",r,"pr")*conv;
+  double ed=tab->interp("r",r,"ed");
+  double pr=tab->interp("r",r,"pr");
   double cs2=tab->interp("r",r,"cs2");
   double gm=tab->interp("r",r,"gm");
   double pi=o2scl_const::pi;
@@ -93,11 +90,8 @@ int tov_love::y_derivs(double r, size_t nv, const ubvector &vals,
 int tov_love::H_derivs(double r, size_t nv, const ubvector &vals,
 			  ubvector &ders) {
     
-  double conv=o2scl_settings.get_convert_units().convert
-    ("1/fm^4","Msun/km^3",1.0);
-
-  double ed=tab->interp("r",r,"ed")*conv;
-  double pr=tab->interp("r",r,"pr")*conv;
+  double ed=tab->interp("r",r,"ed");
+  double pr=tab->interp("r",r,"pr");
   double cs2=tab->interp("r",r,"cs2");
   double gm=tab->interp("r",r,"gm");
   double pi=o2scl_const::pi;
@@ -127,9 +121,9 @@ int tov_love::H_derivs(double r, size_t nv, const ubvector &vals,
 }
 
 void tov_love::calc_y(double &yR, double &beta, double &k2, 
-			 double &lambda_km5, double &lambda_cgs,
-			 bool tabulate) {
-
+		      double &lambda_km5, double &lambda_cgs,
+		      bool tabulate) {
+  
   size_t count;
 
   double R=tab->max("r");

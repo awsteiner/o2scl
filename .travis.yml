@@ -1,12 +1,11 @@
 #
 # Todo: Right now, we check only the current version, not the latest dist.
 #
-# Todo: this language specification doens't seem to work with
-# multiple OSs. The install still proceeds ok for now.
-#
 # Todo: the Travis OS seems to fool the automatic detection for C++11
 # support, so CXXFLAGS="-std=c++0x" is required here. This is
 # done in O2scl's Travis CI settings page.
+#
+# Todo: Try adding eigen and armadillo support
 #
 language: cpp
 
@@ -14,13 +13,6 @@ os:
   - linux
   - osx
 
-#
-# Todo: Fix OSX build. 
-#
-matrix:
-  allow_failures:
-    - os: osx
-    
 # 
 # Prepare autotools and install dependencies before installation
 #
@@ -54,8 +46,9 @@ before_install:
 #
 # Installation script
 #
-# Todo: on Mac, using "install:" doesn't work here b/c it additionally
-# tries to run ./configure after doing the homebrew installation.
+# On Mac, using "install:" doesn't work here b/c it additionally
+# tries to run ./configure after doing the homebrew installation,
+# so we use "script:" here instead
 #
 script:
   # 

@@ -39,7 +39,7 @@ int main(void) {
   cout.setf(ios::scientific);
 
   test_mgr t;
-  t.set_output_level(2);
+  t.set_output_level(1);
 
   double schwarz_km=o2scl_cgs::schwarzchild_radius/1.0e5;
   
@@ -62,35 +62,48 @@ int main(void) {
   ts.calc_gpot=true;
   ts.ang_vel=true;
   ts.fixed(1.4);
-
+  
   o2_shared_ptr<table_units<> >::type profile=ts.get_results();
 
   // I'm not sure why cs2 isn't computed properly, so
   // we have to recompute it here
   profile->delete_column("cs2");
   profile->deriv("ed","pr","cs2");
-
+  
+  // Moment of inertia
   double I=ts.domega_rat*pow(ts.rad,4.0)/3.0/schwarz_km;
   cout << "Radius: " << ts.rad << " km" << endl;
   cout << "Moment of inertia: " << I << " Msun*km^2" << endl;
+  double Ibar=I/pow(schwarz_km/2.0,2.0)/pow(1.4,3.0);
+  cout << "Dimensionless moment of inertia: "
+       << Ibar << endl;
+    
 
-  // Compute dimensionless tidal deformability from
-  // Yagi and Yunes (2013) correlation
-  double l_ibar=log(I/pow(schwarz_km/2.0,2.0)/pow(1.4,3.0));
-  double lbar=exp(-30.5395+38.3931*l_ibar-16.3071*pow(l_ibar,2.0)+
-		  3.36972*pow(l_ibar,3.0)-0.26105*pow(l_ibar,4.0));
-
-  // Direct calculation
+  // Tidal deformability
   tov_love tl;
   tl.tab=profile;
-  double yR, beta, k2, lambda_km5, lambda_cgs;
-  tl.calc_y(yR,beta,k2,lambda_km5,lambda_cgs);
+  double yR, beta, k2, lambda_km5, lambda_cgs, lbar;
   
-  cout << "Dimensionless tidal deformability (YY13 correlation): "
+  tl.calc_y(yR,beta,k2,lambda_km5,lambda_cgs);
+  lbar=lambda_km5/pow(1.4*schwarz_km/2.0,5.0);
+  cout << "Dimensionless tidal deformability (direct calculation, y): " 
        << lbar << endl;
-  cout << "Dimensionless tidal deformability (direct calculation): " 
-       << lambda_km5/pow(schwarz_km/2.0,5.0)/pow(1.4,5.0) << endl;
+  tl.calc_H(yR,beta,k2,lambda_km5,lambda_cgs);
+  lbar=lambda_km5/pow(1.4*schwarz_km/2.0,5.0);
+  cout << "Dimensionless tidal deformability (direct calculation, H): " 
+       << lbar << endl;
 
+  // Compute the Correlation
+  double l_lbar=log(lbar);
+  double l_Ibar=1.47+0.0817*l_lbar+0.0149*l_lbar*l_lbar+
+    2.87e-4*l_lbar*l_lbar*l_lbar-3.64e-5*l_lbar*l_lbar*l_lbar*l_lbar;
+  cout << "Dimensionless moment of inertia from YY13 correlation: "
+       << exp(l_Ibar) << endl;
+  
+  double acc=fabs(exp(l_Ibar)-Ibar)/Ibar;
+  cout << "Relative deviation: " << acc << endl;
+  t.test_abs(acc,0.0,0.015,"lambda and I");
+  
   t.report();
   
   return 0;
