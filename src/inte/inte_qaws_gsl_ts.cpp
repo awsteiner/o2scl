@@ -22,6 +22,11 @@
   -------------------------------------------------------------------
 */
 #include <cmath>
+
+// AWS, 11/11/15: cstdlib appears to be
+// required for size_t in gsl_sf_legendre
+#include <cstdlib>
+
 #include <gsl/gsl_sf_legendre.h>
 #include <gsl/gsl_integration.h>
 
