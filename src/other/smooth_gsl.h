@@ -46,7 +46,8 @@ namespace o2scl {
       more documentation.
       
       \future Generalize to generic vector types. (Does this require
-      reworking the GSL linear fitting routines?) 
+      reworking the GSL linear fitting routines? Doesn't matter now,
+      the GSL linear fitting routines are now reworked.)
       
       \future Possibly create a new gsl_bspline class which replaces
       the GSL bspline workspace 

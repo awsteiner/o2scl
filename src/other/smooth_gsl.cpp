@@ -63,6 +63,8 @@ int smooth_gsl::init() {
   c=gsl_vector_alloc(ncoeffs);
   cov=gsl_matrix_alloc(ncoeffs,ncoeffs);
   mw=gsl_multifit_linear_alloc(n,ncoeffs);
+  mw->n=n;
+  mw->p=ncoeffs;
   
   gsl_bspline_knots_uniform(gsl_vector_get(x,0),gsl_vector_get(x,n-1),bw);
   

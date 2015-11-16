@@ -52,8 +52,6 @@ int main(void) {
   
   smooth_gsl gs(x);
   
-  // FIXME: temporarily commented out for gsl-2.0 upgrade
-  /*
   gs.smooth_data(y,e,ys);
   
   for(size_t i=0;i<N;i++) {
@@ -62,7 +60,6 @@ int main(void) {
 		 sin(gsl_vector_get(x,i)),0.02,"smooth_gsl");
     }
   }
-  */
 
   t.report();
   return 0;

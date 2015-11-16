@@ -446,6 +446,8 @@ int main(void) {
     cout << endl;
   }
   
+  // FIXME: Commented out for gsl-2.0 upgrade. 
+  /*
   // GSL linear fit without scaling
   {
     cout << "GSL unbalanced linear fit: " << endl;
@@ -455,9 +457,8 @@ int main(void) {
     gsl_multifit_linear_workspace *work=gsl_multifit_linear_alloc(ndat,npar);
     size_t rank;
     // Use a large tolerance to force it to ignore a fit component
-    // FIXME: temporarily commented out for gsl-2.0 upgrade
-    //gsl_multifit_linear_usvd(xpred_gsl2,y_gsl2,0.99,&rank,
-    //p_gsl2,covar_gsl,&chi2,work);
+    gsl_multifit_linear_usvd(xpred_gsl2,y_gsl2,0.99,&rank,
+        p_gsl2,covar_gsl,&chi2,work);
 
     cout << "Parameters: " << gsl_vector_get(p_gsl2,0) << " "
 	 << gsl_vector_get(p_gsl2,1) << endl;
@@ -469,17 +470,18 @@ int main(void) {
     cout << "Chi-squared: " << chi2 << " rank: " << rank << endl;
 
     // FIXME: temporarily commented out for gsl-2.0 upgrade
-    //tm.test_rel_vec(2,parms_bench,gsl_vector_wrap(p_gsl2),1.0e-12,
-    //"gsl unbalanced linear parms vs. O2scl unbalanced");
-    //tm.test_rel(chi2,chi2_bench,1.0e-12,
-    //"gsl unbalanced linear chi2 vs. O2scl unbalanced");
-    //tm.test_rel_mat(2,2,covar_bench,gsl_matrix_wrap(covar_gsl),1.0e-12,
-    //"gsl unbalanced linear covar vs. O2scl unbalanced");
+    tm.test_rel_vec(2,parms_bench,gsl_vector_wrap(p_gsl2),1.0e-12,
+    "gsl unbalanced linear parms vs. O2scl unbalanced");
+    tm.test_rel(chi2,chi2_bench,1.0e-12,
+    "gsl unbalanced linear chi2 vs. O2scl unbalanced");
+    tm.test_rel_mat(2,2,covar_bench,gsl_matrix_wrap(covar_gsl),1.0e-12,
+    "gsl unbalanced linear covar vs. O2scl unbalanced");
 
     cout << endl;
 
     gsl_multifit_linear_free(work);
   }
+  */
 
   tm.report();
   return 0;
