@@ -187,6 +187,7 @@ int main(void) {
 
     const gsl_multifit_fdfsolver_type *T;
     gsl_multifit_fdfsolver *s;
+    gsl_matrix *J=gsl_matrix_alloc(n,3);
 
     int status;
     size_t i, iter=0;
@@ -233,8 +234,8 @@ int main(void) {
     x1_s.push_back(gsl_vector_get(s->x,1));
     x2_s.push_back(gsl_vector_get(s->x,2));
 
-    // FIXME: temporarily commented out for gsl-2.0 upgrade
-    //gsl_multifit_covar(s->J,0.0,covar1);
+    gsl_multifit_fdfsolver_jac(s,J);
+    gsl_multifit_covar(J,0.0,covar1);
 
     double chi=gsl_blas_dnrm2(s->f);
     chi2red_s=chi*chi/(n-p);
@@ -253,6 +254,7 @@ int main(void) {
 
     const gsl_multifit_fdfsolver_type *T;
     gsl_multifit_fdfsolver *s;
+    gsl_matrix *J=gsl_matrix_alloc(n,3);
 
     int status;
     size_t i, iter=0;
@@ -301,8 +303,8 @@ int main(void) {
     x1_u.push_back(gsl_vector_get(s->x,1));
     x2_u.push_back(gsl_vector_get(s->x,2));
 
-    // FIXME: temporarily commented out for gsl-2.0 upgrade
-    //gsl_multifit_covar (s->J, 0.0, covar);
+    gsl_multifit_fdfsolver_jac(s,J);
+    gsl_multifit_covar(J,0.0,covar);
 
     double chi=gsl_blas_dnrm2(s->f);
     chi2red_u=chi*chi/(n-p);
@@ -339,9 +341,8 @@ int main(void) {
 
     for(size_t i=0;i<3;i++) {
       for(size_t j=0;j<3;j++) {
-	// FIXME: temporarily commented out for gsl-2.0 upgrade
-	//tm.test_rel(mycovar(i,j),gsl_matrix_get(covar1,i,j),
-	//1.0e-8,"covariance mat.");
+	tm.test_rel(mycovar(i,j),gsl_matrix_get(covar1,i,j),
+	1.0e-8,"covariance mat.");
       }
     }
 
