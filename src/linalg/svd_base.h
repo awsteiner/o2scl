@@ -604,6 +604,12 @@ namespace o2scl_linalg {
 
   /** \brief  Balance a general matrix A by scaling the columns
       by the diagonal matrix D
+
+      The function computes 
+      \f$
+      A_{\mathrm{new}} = A D^{-1}
+      \f$
+      where \f$ D \f$ is a diagonal matrix.
   */
   template<class mat_t, class vec_t>
     void balance_columns(size_t M, size_t N, mat_t &A, vec_t &D) {
