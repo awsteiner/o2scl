@@ -40,10 +40,10 @@ help:
 	@echo 
 
 latest:
-	cp o2scl-0.919.tar.gz ~/svn/int3/web/utk/o2scl
+	cp o2scl-0.919.tar.gz ~/wcs/int3/web/utk/o2scl
 	openssl dgst -sha256 o2scl-0.919.tar.gz > \
-		~/svn/int3/web/utk/o2scl/o2scl-0.919.sha256
-	cd ~/svn/int3/web; $(MAKE) put
+		~/wcs/int3/web/utk/o2scl/o2scl-0.919.sha256
+	cd ~/wcs/int3/web; $(MAKE) puto
 
 # Create a distribution without documentation (not recently tested)
 dist-nodoc:
