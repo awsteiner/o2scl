@@ -93,6 +93,10 @@ namespace o2scl {
      */
     table3d(o2scl::table_units<> &t, std::string colx, std::string coly);
 
+    /** \brief Desc
+     */
+    int read_gen3_list(std::istream &fin, int verbose=0);
+    
     /// \name Initialization
     //@{
     /** \brief Initialize the x-y grid

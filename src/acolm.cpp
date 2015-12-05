@@ -986,10 +986,11 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
   }
 
   // Delete previous table
-  if (threed) {
+  if (threed && t3p!=0) {
+    threed=0;
     delete t3p;
     t3p=0;
-  } else {
+  } else if (tabp!=0) {
     delete tabp;
     tabp=0;
   }
@@ -2379,6 +2380,26 @@ int acol_manager::make_unique_name(string &col, std::vector<string> &cnames) {
   return 0;
 }
 
+/*
+int acol_manager::comm_gen3_list(std::vector<std::string> &sv,
+				 bool itive_com) {
+
+  // Delete previous table
+  if (threed && t3p!=0) {
+    threed=0;
+    delete t3p;
+    t3p=0;
+  } else if (tabp!=0) {
+    delete tabp;
+    tabp=0;
+  }
+  
+  t3p=new table3d;
+
+  return 0;
+}
+*/
+
 int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
 
   // Input a generic file
@@ -2389,7 +2410,16 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
     return exc_efailed;
   }
 
-  delete tabp;
+  // Delete previous table
+  if (threed && t3p!=0) {
+    threed=0;
+    delete t3p;
+    t3p=0;
+  } else if (tabp!=0) {
+    delete tabp;
+    tabp=0;
+  }
+
   tabp=new table_units<>(100);
   tabp->read_generic(ifs,verbose);
   
