@@ -25,7 +25,7 @@
 
 using namespace std;
 using namespace o2scl;
-#if O2SCL_HDF_SVAR
+#ifdef O2SCL_HDF
 #include <o2scl/hdf_file.h>
 using namespace o2scl_hdf;
 #endif
@@ -38,7 +38,7 @@ int main(void) {
 
   test_mgr t;
   t.set_output_level(1);
-
+  
   table3d at;
   at.set_size(2,4);
   at.set_size(3,5);
@@ -165,7 +165,7 @@ int main(void) {
       }
     }
     
-#if O2SCL_HDF_SVAR
+#if O2SCL_HDF
 
     hdf_file hf;
     hf.open_or_create("table3d.o2");
@@ -215,6 +215,36 @@ int main(void) {
     }
     cout << endl;
   }
+
+  /*
+    12/4/15: This was old code for testing gen3_list. It just
+    needs to be rewritten not to depend on separate text
+    files.
+    
+    {
+    table3d glt;
+    ifstream fin;
+    fin.open("gen_list3.txt");
+    glt.read_gen3_list(fin,3);
+    fin.close();
+    hdf_file hf;
+    hf.open_or_create("gl.o2");
+    hdf_output(hf,glt,"table3d");
+    hf.close();
+    }
+    {
+    table3d glt;
+    ifstream fin;
+    fin.open("gen_list3b.txt");
+    glt.read_gen3_list(fin,3);
+    fin.close();
+    hdf_file hf;
+    hf.open_or_create("glb.o2");
+    hdf_output(hf,glt,"table3d");
+    hf.close();
+    exit(-1);
+    }
+  */
 
   t.report();
 

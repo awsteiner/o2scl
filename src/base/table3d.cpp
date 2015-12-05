@@ -133,6 +133,165 @@ table3d::table3d(table_units<> &t, std::string colx, std::string coly) {
 
 }
 
+int table3d::read_gen3_list(std::istream &fin, int verbose) {
+      
+  double data;
+  std::string line;
+  std::string cname, xname="x", yname="y";
+  std::istringstream *is;
+      
+  std::vector<std::vector<double> > odata;
+      
+  // Read first line and into list
+  std::vector<std::string> onames, nnames;
+  getline(fin,line);
+  is=new std::istringstream(line);
+  while ((*is) >> cname) {
+    onames.push_back(cname);
+    if (verbose>2) {
+      std::cout << "Read possible name: " << cname << std::endl;
+    }
+  }
+  delete is;
+
+  if (onames.size()<3) {
+    std::cout << "Not enough columns of data." << std::endl;
+    return o2scl::exc_efailed;
+  }
+      
+  // Create odata vectors
+  std::vector<double> empty;
+  for(size_t i=0;i<onames.size();i++) {
+    odata.push_back(empty);
+  }
+	
+  // Count number of likely numbers in the first row
+  size_t n_nums=0;
+  for(size_t i=0;i<onames.size();i++) {
+    if (is_number(onames[i])) n_nums++;
+  }
+      
+  int irow=0;
+      
+  if (n_nums==onames.size()) {
+	
+    if (verbose>0) {
+      std::cout << "First row looks like it contains numerical values." 
+		<< std::endl;
+      std::cout << "Creating generic slice names: ";
+    }
+
+    for(size_t i=2;i<onames.size();i++) {
+      std::cout << "Here: " << onames.size() << std::endl;
+      std::cout << "Here2: " << nnames.size() << std::endl;
+      nnames.push_back(((std::string)"s")+szttos(i-1));
+      std::cout << "Here: " << onames.size() << std::endl;
+      std::cout << "Here2: " << nnames.size() << std::endl;
+      if (verbose>0) std::cout << nnames[i-2] << " ";
+	  
+    }
+    if (verbose>0) std::cout << std::endl;
+	
+    // Add first row of data
+    for(size_t i=0;i<onames.size();i++) {
+      std::cout << "Adding: " << o2scl::stod(onames[i]) << std::endl;
+      odata[i].push_back(o2scl::stod(onames[i]));
+    }
+    irow++;
+
+  } else {
+
+    // Ensure good names
+    for(size_t i=0;i<onames.size();i++) {
+      std::string temps=onames[i];
+      //make_fp_varname(onames[i]);
+      //make_unique_name(onames[i],onames);
+      if (temps!=onames[i] && verbose>0) {
+	std::cout << "Converted slice named '" << onames[i] << "' to '" 
+		  << temps << "'." << std::endl;
+      }
+    }
+
+    // Grid names
+    xname=onames[0];
+    yname=onames[1];
+	
+    // Make slices
+    for(size_t i=2;i<onames.size();i++) {
+      nnames.push_back(onames[i]);
+    }
+	
+  }
+      
+  // Read remaining rows
+  while ((fin) >> data) {
+    std::cout << "data: " << 0 << " " << data << std::endl;
+    odata[0].push_back(data);
+    for(size_t i=1;i<onames.size();i++) {
+      (fin) >> data;
+      std::cout << "data: " << i << " " << data << std::endl;
+      odata[i].push_back(data);
+    }
+    irow++;
+  }
+
+  // Setup x and y grid vectors from data
+  std::vector<double> xgrid, ygrid;
+  for(size_t i=0;i<odata[0].size();i++) {
+    bool found=false;
+    for(size_t j=0;j<xgrid.size();j++) {
+      if (fabs(odata[0][i]-xgrid[j])/fabs(xgrid[j])<1.0e-12) {
+	found=true;
+      }
+    }
+    if (found==false) {
+      xgrid.push_back(odata[0][i]);
+    }
+    found=false;
+    for(size_t j=0;j<ygrid.size();j++) {
+      if (fabs(odata[1][i]-ygrid[j])/fabs(ygrid[j])<1.0e-12) {
+	found=true;
+      }
+    }
+    if (found==false) {
+      ygrid.push_back(odata[1][i]);
+    }
+  }
+
+  if (verbose>0) {
+    for(size_t k=0;k<xgrid.size();k++) {
+      std::cout << k << " " << xgrid[k] << std::endl;
+    }
+    for(size_t k=0;k<ygrid.size();k++) {
+      std::cout << k << " " << ygrid[k] << std::endl;
+    }
+  }
+      
+  // Set grid from x and y vectors
+  set_xy(xname,xgrid.size(),xgrid,yname,ygrid.size(),ygrid);
+
+  // Create new slices
+  for(size_t i=0;i<nnames.size();i++) {
+    if (verbose>0) {
+      std::cout << "New slice: " << nnames[i] << std::endl;
+    }
+    new_slice(nnames[i]);
+  }
+
+  // Set the data
+  for(size_t j=2;j<odata.size();j++) {
+    for(size_t i=0;i<odata[j].size();i++) {
+      if (verbose>0) {
+	std::cout << "Set value: " << odata[j][i] << std::endl;
+      }
+      set_val(odata[0][i],odata[1][i],nnames[j-2],odata[j][i]);
+    }
+  }
+
+  return 0;
+}
+
+
 void table3d::set_size(size_t nx, size_t ny) {
   if ((has_slice && size_set) || xy_set) {
     O2SCL_ERR("Size cannot be reset in table3d::set_xy().",
@@ -805,18 +964,18 @@ void table3d::extract_y(double y, table<> &t) {
 }
    
 const boost::numeric::ublas::matrix<double> &table3d::get_slice
-  (std::string name) const {
+(std::string name) const {
   size_t z=lookup_slice(name);
   return list[z];
 }
 
 const boost::numeric::ublas::matrix<double> &table3d::get_slice
-  (size_t iz) const {
+(size_t iz) const {
   return list[iz];
 }
 
 boost::numeric::ublas::matrix<double> &table3d::get_slice
-  (std::string name) {
+(std::string name) {
   size_t z=lookup_slice(name);
   return list[z];
 }
