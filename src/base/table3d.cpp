@@ -225,11 +225,15 @@ int table3d::read_gen3_list(std::istream &fin, int verbose) {
       
   // Read remaining rows
   while ((fin) >> data) {
-    std::cout << "data: " << 0 << " " << data << std::endl;
+    if (verbose>1) {
+      std::cout << "data: " << 0 << " " << data << std::endl;
+    }
     odata[0].push_back(data);
     for(size_t i=1;i<onames.size();i++) {
       (fin) >> data;
-      std::cout << "data: " << i << " " << data << std::endl;
+      if (verbose>1) {
+	std::cout << "data: " << i << " " << data << std::endl;
+      }
       odata[i].push_back(data);
     }
     irow++;
@@ -258,7 +262,7 @@ int table3d::read_gen3_list(std::istream &fin, int verbose) {
     }
   }
 
-  if (verbose>0) {
+  if (verbose>1) {
     for(size_t k=0;k<xgrid.size();k++) {
       std::cout << k << " " << xgrid[k] << std::endl;
     }
@@ -281,7 +285,7 @@ int table3d::read_gen3_list(std::istream &fin, int verbose) {
   // Set the data
   for(size_t j=2;j<odata.size();j++) {
     for(size_t i=0;i<odata[j].size();i++) {
-      if (verbose>0) {
+      if (verbose>1) {
 	std::cout << "Set value: " << odata[j][i] << std::endl;
       }
       set_val(odata[0][i],odata[1][i],nnames[j-2],odata[j][i]);

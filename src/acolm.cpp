@@ -61,7 +61,7 @@ int acol_manager::setup_options() {
   const int cl_param=cli::comm_option_cl_param;
   const int both=cli::comm_option_both;
 
-  static const int narr=41;
+  static const int narr=42;
 
   // Options, sorted by long name. We allow 0 parameters in many of these
   // options so they can be requested from the user in interactive mode. 
@@ -149,6 +149,10 @@ int acol_manager::setup_options() {
      "the one at the end of the line. All remaining lines are assumed "+
      "to contain data. ",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_generic),
+     both},
+    {0,"gen3-list","Read in a generic data file (3d only).",0,1,"<file>",
+     ((string)"Desc ")+"Desc2",
+     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_gen3_list),
      both},
     {0,"get-row","Get a row by index.",
      0,1,"<index>",((string)"Get a row by index. The first row ")+
@@ -2380,10 +2384,21 @@ int acol_manager::make_unique_name(string &col, std::vector<string> &cnames) {
   return 0;
 }
 
-/*
 int acol_manager::comm_gen3_list(std::vector<std::string> &sv,
 				 bool itive_com) {
 
+  if (sv.size()<2) {
+    cerr << "No file specified in 'gen3-list'." << endl;
+    return o2scl::exc_efailed;
+  }
+  
+  // Input a generic file
+  ifstream ifs;
+  ifs.open(sv[1].c_str());
+  if (!(ifs)) {
+    cerr << "Read failed. Non-existent file?" << endl;
+    return exc_efailed;
+  }
   // Delete previous table
   if (threed && t3p!=0) {
     threed=0;
@@ -2393,14 +2408,22 @@ int acol_manager::comm_gen3_list(std::vector<std::string> &sv,
     delete tabp;
     tabp=0;
   }
-  
+
+  threed=1;
   t3p=new table3d;
+  t3p->read_gen3_list(ifs,verbose);
+
+  ifs.close();
 
   return 0;
 }
-*/
 
 int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
+
+  if (sv.size()<2) {
+    cerr << "No file specified in 'generic'." << endl;
+    return o2scl::exc_efailed;
+  }
 
   // Input a generic file
   ifstream ifs;
