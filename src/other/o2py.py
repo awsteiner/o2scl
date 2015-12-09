@@ -25,9 +25,8 @@
   - Be able to close HDF5 file and retain data set?
 """
 
+import getopt, sys, h5py, math
 import matplotlib.pyplot as plot
-import h5py 
-import math
 from matplotlib.colors import LinearSegmentedColormap
 
 list_of_dsets=[]
@@ -239,7 +238,6 @@ class plotter:
                 plot.plot(reps,weights,**kwargs)
         return
         
-
     def plot(self,colx,coly,**kwargs):
         if self.verbose>2:
             print 'plot',colx,coly,kwargs
@@ -368,7 +366,13 @@ class plotter:
         plot.show()
         return
 
+    def save(self,filename):
+        plot.savefig(filename)
+        return
+
     def read(self,filename):
+        if self.verbose>0:
+            print 'Reading file',filename,'.'
         self.dset=h5read_first_type(filename,'table')
         self.dtype='table'
         return
@@ -391,7 +395,7 @@ class plotter:
                 print '-----------------------'
             unit_list=[]
             unit_flag=self.dset['unit_flag'][0]
-            print 'unit_flag ',unit_flag
+            print 'unit_flag',unit_flag
             if self.verbose>2:
                 print 'unit_flag:',unit_flag
             if unit_flag==1:
@@ -524,6 +528,9 @@ class plotter:
             print 'den_plot(slice_name)'
         elif arg=='get':
             print 'get(name)'
+            print ''
+            print 'logx,logy,xtitle,ytitle,xlo,xhi,xset,ylo,yhi,yset'
+            print 'zlo,zhi,zset,verbose'
         elif arg=='line':
             print 'line(x1,y1,x2,y2,color,lstyle)'
         elif arg=='list':
@@ -542,6 +549,9 @@ class plotter:
             print 'reset_ylimits()'
         elif arg=='set':
             print 'set(name,value)'
+            print ''
+            print 'logx,logy,xtitle,ytitle,xlo,xhi,xset,ylo,yhi,yset'
+            print 'zlo,zhi,zset,verbose'
         elif arg=='show':
             print 'show()'
         elif arg=='text':
@@ -587,33 +597,33 @@ class plotter:
 
     def get(self,name):
         if name=='logx':
-            print 'logx is',self.logx
+            print 'The value of logx is',self.logx
         elif name=='logy':
-            print 'logy is',self.logy
+            print 'The value of logy is',self.logy
         elif name=='xtitle':
-            print 'xtitle is',self.xtitle
+            print 'The value of xtitle is',self.xtitle
         elif name=='ytitle':
-            print 'ytitle is',self.ytitle
+            print 'The value of ytitle is',self.ytitle
         elif name=='xlo':
-            print 'xlo is',self.xlo
+            print 'The value of xlo is',self.xlo
         elif name=='xhi':
-            print 'xhi is',self.xhi
+            print 'The value of xhi is',self.xhi
         elif name=='xset':
-            print 'xset is',self.xset
+            print 'The value of xset is',self.xset
         elif name=='ylo':
-            print 'ylo is',self.ylo
+            print 'The value of ylo is',self.ylo
         elif name=='yhi':
-            print 'yhi is',self.yhi
+            print 'The value of yhi is',self.yhi
         elif name=='yset':
-            print 'yset is',self.yset
+            print 'The value of yset is',self.yset
         elif name=='zlo':
-            print 'zlo is',self.zlo
+            print 'The value of zlo is',self.zlo
         elif name=='zhi':
-            print 'zhi is',self.zhi
+            print 'The value of zhi is',self.zhi
         elif name=='zset':
-            print 'zset is',self.zset
+            print 'The value of zset is',self.zset
         elif name=='verbose':
-            print 'verbose is',self.verbose
+            print 'The value of verbose is',self.verbose
         else:
             print 'No variable named',name
         return
@@ -662,21 +672,21 @@ class plotter:
                     if ix_next-ix<3:
                         print 'Not enough parameters for set option.'
                     else:
-                        set(argv[ix+1],argv[ix+2])
+                        self.set(argv[ix+1],argv[ix+2])
                 elif cmd_name=='get':
                     if self.verbose>2:
                         print 'Process get.'
                     if ix_next-ix<2:
                         print 'Not enough parameters for get option.'
                     else:
-                        get(argv[ix+1])
+                        self.get(argv[ix+1])
                 elif cmd_name=='text':
                     if self.verbose>2:
                         print 'Process text.'
                     if ix_next-ix<4:
                         print 'Not enough parameters for text option.'
                     else:
-                        text(argv[ix+1],argv[ix+2],argv[ix+3])
+                        self.text(argv[ix+1],argv[ix+2],argv[ix+3])
                 elif cmd_name=='read':
                     if self.verbose>2:
                         print 'Process read.'
@@ -684,6 +694,20 @@ class plotter:
                         print 'Not enough parameters for read option.'
                     else:
                         self.read(argv[ix+1])
+                elif cmd_name=='read-name':
+                    if self.verbose>2:
+                        print 'Process read-name.'
+                    if ix_next-ix<3:
+                        print 'Not enough parameters for read-name option.'
+                    else:
+                        self.read_name(argv[ix+1],argv[ix+2])
+                elif cmd_name=='read-type':
+                    if self.verbose>2:
+                        print 'Process read-type.'
+                    if ix_next-ix<3:
+                        print 'Not enough parameters for read-type option.'
+                    else:
+                        self.read_type(argv[ix+1],argv[ix+2])
                 elif cmd_name=='den-plot':
                     if self.verbose>2:
                         print 'Process den-plot.'
@@ -710,14 +734,32 @@ class plotter:
                         print 'Process plot.'
                     if ix_next-ix<3:
                         print 'Not enough parameters for plot option.'
+                    elif ix_next-ix<4:
+                        self.plot(argv[ix+1],argv[ix+2])
                     else:
-                        self.line(argv[ix+1],argv[ix+2])
+                        self.plot(argv[ix+1],argv[ix+2],eval(argv[ix+3]))
+                elif cmd_name=='plot1':
+                    if self.verbose>2:
+                        print 'Process plot1.'
+                    if ix_next-ix<2:
+                        print 'Not enough parameters for plot1 option.'
+                    else:
+                        self.plot1(argv[ix+1])
+                elif cmd_name=='save':
+                    if self.verbose>2:
+                        print 'Process save.'
+                    if ix_next-ix<2:
+                        print 'Not enough parameters for save option.'
+                    else:
+                        self.plot(argv[ix+1])
                 elif cmd_name=='line':
                     if self.verbose>2:
                         print 'Process line.'
                     if ix_next-ix<5:
                         print 'Not enough parameters for line option.'
                     else:
+                        # Attempt to include keyword arguments.
+                        # Doesn't work yet.
                         self.line(argv[ix+1],argv[ix+2],argv[ix+3],argv[ix+4])
                 elif cmd_name=='list':
                     if self.verbose>2:
@@ -727,6 +769,17 @@ class plotter:
                     if self.verbose>2:
                         print 'Process move-labels.'
                     self.move_labels()
+                elif cmd_name=='help':
+                    if self.verbose>2:
+                        print 'Process help.'
+                    if ix_next-ix<2:
+                        self.help()
+                    else:
+                        self.help(argv[ix+1])
+                elif cmd_name=='show':
+                    if self.verbose>2:
+                        print 'Process show.'
+                    self.show()
                 elif cmd_name=='canvas':
                     if self.verbose>2:
                         print 'Process canvas.'
