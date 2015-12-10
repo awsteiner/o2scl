@@ -16,7 +16,9 @@
     <tt>hdf_output</tt> and <tt>hdf_input</tt> based on the \ref
     o2scl_hdf::hdf_file class. Some of the current classes which
     provide I/O are \ref o2scl::table, \ref o2scl::table_units, \ref
-    o2scl::table3d, \ref o2scl::hist, and \ref o2scl::hist_2d.
+    o2scl::table3d, \ref tensor_grid, \ref o2scl::hist, and \ref
+    o2scl::hist_2d. These functions are documented at
+    \ref hdf_io.h .
     
     \o2 formats complicated data types for HDF I/O by combining basic
     data into groups. For that reason, one cannot use \o2 to read or
@@ -38,7 +40,7 @@
     error handling policies between \o2 and the HDF library. HDF
     functions do not always call the \o2 error handler and thus do not
     always throw \o2 exceptions.
-
+    
     \future Create an HDF file I/O example.
 
 */

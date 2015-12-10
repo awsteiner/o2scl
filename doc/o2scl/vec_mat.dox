@@ -208,7 +208,9 @@
     o2scl::tensor_grid provides a space to define a hyper-cubic grid
     in addition to the the tensor data. This class \ref
     o2scl::tensor_grid also provides simple n-dimensional
-    interpolation of the data defined on the specified grid.
+    interpolation of the data defined on the specified grid. There are
+    functions in \ref hdf_io.h which provide HDF5 I/O for tensor
+    objects.
 
     \section vec_io_cont_subsect I/O and contiguous storage
 
@@ -227,7 +229,7 @@
     matrix and tensor I/O. It is the efficiency of this I/O which
     motivated the default choice of <tt>std::vector</tt> objects as
     the default vector type in \ref o2scl::table and \ref
-    o2scl::tensor .
+    o2scl::tensor . 
 
 
 */

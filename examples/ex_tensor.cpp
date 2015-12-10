@@ -97,8 +97,8 @@ int main(void) {
   t.test_rel(func(vals[0],vals[1],vals[2]),
 	     m3.interp_linear(vals),2.0e-1,"interp linear");
 
-  vals[0]=2.0;
-  vals[1]=3.0;
+  vals[0]=3.5;
+  vals[1]=2.5;
   vals[2]=1.0;
   cout << "Exact: " << func(vals[0],vals[1],vals[2])
        << " interpolated: "
@@ -106,6 +106,48 @@ int main(void) {
   t.test_rel(func(vals[0],vals[1],vals[2]),
 	     m3.interp_linear(vals),2.0e-1,"interp linear");
   cout << endl;
+
+#if O2SCL_HDF
+
+  // ----------------------------------------------------------------
+  // Demonstrate HDF5 I/O. Note that this only works with tensors
+  // built out of std::vector<> objects.
+
+  // Output to a file
+  hdf_file hf;
+  hf.open_or_create("ex_tensor_dat.o2");
+  hdf_output(hf,m3,"tens_grid_test");
+  hf.close();
+
+  // Now read from that file
+  tensor_grid<> m3c;
+  hf.open("ex_tensor_dat.o2");
+  hdf_input(hf,m3c,"tens_grid_test");
+  hf.close();
+
+  // Test interpolation between grid points
+  cout << "Interpolation: " << endl;
+  
+  vals[0]=2.5;
+  vals[1]=2.5;
+  vals[2]=1.5;
+  cout << "Exact: " << func(vals[0],vals[1],vals[2])
+       << " interpolated: "
+       << m3c.interp_linear(vals) << endl;
+  t.test_rel(func(vals[0],vals[1],vals[2]),
+	     m3c.interp_linear(vals),2.0e-1,"interp linear");
+
+  vals[0]=3.5;
+  vals[1]=2.5;
+  vals[2]=1.0;
+  cout << "Exact: " << func(vals[0],vals[1],vals[2])
+       << " interpolated: "
+       << m3c.interp_linear(vals) << endl;
+  t.test_rel(func(vals[0],vals[1],vals[2]),
+	     m3c.interp_linear(vals),2.0e-1,"interp linear");
+  cout << endl;
+
+#endif
 
   // ----------------------------------------------------------------
   // Example of a tensor built out of ublas vector objects

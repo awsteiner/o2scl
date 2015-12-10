@@ -70,12 +70,12 @@ namespace o2scl {
   /** \brief Tensor class with arbitrary dimensions with a grid
       
       This tensor class allows one to assign the indexes to numerical
-      scales, so that n-dimensional interpolation can be performed. To
-      set the grid, use \ref set_grid() or \ref set_grid_packed() and
-      then interpolation can be done using \ref interp_linear() or 
-      \ref interpolate().
+      scales, effectively defining a data set on an n-dimensional
+      grid. To set the grid, use \ref set_grid() or \ref
+      set_grid_packed() and then interpolation can be done using \ref
+      interp_linear() or \ref interpolate().
       
-      By convention, member functions ending in the _val 
+      By convention, member functions ending in the <tt>_val</tt>
       suffix return the closest grid-point to some user-specified
       values. 
 
@@ -98,6 +98,7 @@ namespace o2scl {
       tensor::resize() to resize the tensor, failing to resize the
       grid. This probably needs fixing.
 
+      \future Is it really necessary that get_data() is public?
       \future Only allocate space for grid if it is set
       \future Consider creating a new set_grid() function which
       takes grids from an object like uniform_grid. Maybe make a 
@@ -126,11 +127,6 @@ namespace o2scl {
 
     /// Interpolation type
     size_t itype;
-    
-    /// Return a reference to the data (for HDF I/O)
-    vec_t &get_data() {
-      return this->data;
-    }
     
 #endif
     
@@ -569,6 +565,11 @@ namespace o2scl {
     }
     //@}
 
+    /// Return a reference to the data (for HDF I/O)
+    vec_t &get_data() {
+      return this->data;
+    }
+    
     /// \name Slicing
     //@{
     /** \brief Create a slice in a table3d object with an aligned
@@ -715,8 +716,13 @@ namespace o2scl {
     /** \brief Interpolate values \c vals into the tensor, 
 	returning the result
 
+	\comment
 	\warning This is being deprecated and may be removed
 	or completely rewritten in later versions. 
+	12/10/15: This function is certainly obtuse, but it's
+	still useful to have around, so for now I removed the
+	warning above.
+	\endcomment
       
 	This is a quick and dirty implementation of n-dimensional
 	interpolation by recursive application of the 1-dimensional

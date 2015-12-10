@@ -128,7 +128,7 @@ namespace o2scl_hdf {
     int nlines2;
     hf.geti("nlines",nlines2);
     t.set_nlines(nlines2);
-
+    
     // Output the interpolation type
     hf.get_szt_def("itype",o2scl::itp_cspline,t.itype);
 
@@ -230,132 +230,7 @@ namespace o2scl_hdf {
 
     return;
   }
-
-  /// Output a \ref o2scl::tensor_grid object to a \ref hdf_file
-  template<class vec_t, class vec_size_t>
-    void hdf_output(hdf_file &hf, o2scl::tensor_grid<vec_t, vec_size_t> &t, 
-		    std::string name) {
-
-    // Start group
-    hid_t top=hf.get_current_id();
-    hid_t group=hf.open_group(name);
-    hf.set_current_id(group);
-      
-    // Add typename
-    hf.sets_fixed("o2scl_type","tensor_grid");
-      
-    // Add rank
-    hf.seti("rank",t.get_rank());
-      
-    // Add dimensions
-    std::vector<int> size_arr;
-    for(size_t i=0;i<t.get_rank();i++) {
-      size_arr.push_back(t.get_size(i));
-    }
-    hf.seti_vec("size",size_arr);
-      
-    // Add data
-    const std::vector<double> &d=t.get_data();
-    hf.setd_vec("data",d);
-      
-    // Add grid
-    if (t.is_grid_set()) hf.seti("grid_set",1);
-    else hf.seti("grid_set",0);
-      
-    if (t.is_grid_set()) {
-      std::vector<double> grid2;
-      for(size_t j=0;j<t.get_rank();j++) {
-	for(size_t k=0;k<t.get_size(j);k++) {
-	  grid2.push_back(t.get_grid(j,k));
-	}
-      }
-      hf.setd_vec("grid",grid2);
-    }
-      
-    // Close group
-    hf.close_group(group);
-      
-    // Return location to previous value
-    hf.set_current_id(top);
-      
-    return;
-  }
   
-  /// Input a \ref o2scl::tensor_grid object from a \ref hdf_file
-  template<class vec_t, class vec_size_t>
-    void hdf_input(hdf_file &hf, o2scl::tensor_grid<vec_t, vec_size_t> &t, 
-		   std::string name) {
-
-    // If no name specified, find name of first group of specified type
-    if (name.length()==0) {
-      hf.find_group_by_type(hf,"tensor_grid",name);
-      if (name.length()==0) {
-	O2SCL_ERR2("No object of type tensor_grid found in ",
-		   "tensor::hdf_input().",o2scl::exc_efailed);
-      }
-    }
-      
-    // Open main group
-    hid_t top=hf.get_current_id();
-    hid_t group=hf.open_group(name);
-    hf.set_current_id(group);
-      
-    // Check typename
-    std::string type;
-    hf.gets_fixed("o2scl_type",type);
-    if (type!="tensor_grid") {
-      O2SCL_ERR2("Typename in HDF group does not match ",
-		 "class in hdf_input().",o2scl::exc_einval);
-    }
-      
-    // Get rank
-    int rank;
-    hf.geti("rank",rank);
-    int *size_i=new int[rank];
-    hf.geti_vec_prealloc("size",rank,size_i);
-      
-    size_t *size_s=new size_t[rank];
-    for(int k=0;k<rank;k++) size_s[k]=size_i[k];
-    t.resize(rank,size_s);
-      
-    delete[] size_i;
-    delete[] size_s;
-    
-    hf.getd_vec("data",t.get_data());
-  
-    // Get grid
-    bool grid_set2=false;
-    int igrid_set;
-    hf.geti("grid_set",igrid_set);
-    if (igrid_set>0) grid_set2=true;
-    if (grid_set2) {
-      std::vector<double> ogrid;
-      hf.getd_vec("grid",ogrid);
-      size_t ix=0;
-      double **grid2=new double *[rank];
-      for(size_t j=0;j<((size_t)rank);j++) {
-	grid2[j]=new double[t.get_size(j)];
-	for(size_t k=0;k<t.get_size(j);k++) {
-	  grid2[j][k]=ogrid[ix];
-	  ix++;
-	}
-      }
-      t.set_grid_packed(ogrid);
-      for(size_t j=0;j<((size_t)rank);j++) {
-	delete[] grid2[j];
-      }
-      delete[] grid2;
-    }
-      
-    // Close group
-    hf.close_group(group);
-      
-    // Return location to previous value
-    hf.set_current_id(top);
-      
-    return;
-  }
-
   /// Output a \ref o2scl::hist object to a \ref hdf_file
   void hdf_output(hdf_file &hf, o2scl::hist &h, std::string name);
   /// Input a \ref o2scl::hist object from a \ref hdf_file
@@ -398,6 +273,12 @@ namespace o2scl_hdf {
   /// Input a vector of \ref o2scl::edge_crossings objects from a \ref hdf_file
   void hdf_input(hdf_file &hf, std::vector<o2scl::edge_crossings> &ec, 
 		 std::string name="");
+  /// Output a \ref o2scl::tensor_grid object to a \ref hdf_file
+  void hdf_output(hdf_file &hf, o2scl::tensor_grid<std::vector<double>,
+		  std::vector<size_t> > &t, std::string name);
+  /// Input a \ref o2scl::tensor_grid object from a \ref hdf_file
+  void hdf_input(hdf_file &hf, o2scl::tensor_grid<std::vector<double>,
+		 std::vector<size_t> > &t, std::string name);
 
 }
 
