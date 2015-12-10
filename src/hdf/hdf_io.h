@@ -278,7 +278,7 @@ namespace o2scl_hdf {
 		  std::vector<size_t> > &t, std::string name);
   /// Input a \ref o2scl::tensor_grid object from a \ref hdf_file
   void hdf_input(hdf_file &hf, o2scl::tensor_grid<std::vector<double>,
-		 std::vector<size_t> > &t, std::string name);
+		 std::vector<size_t> > &t, std::string name="");
 
 }
 

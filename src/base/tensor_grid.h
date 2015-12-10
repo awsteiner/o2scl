@@ -72,8 +72,7 @@ namespace o2scl {
       This tensor class allows one to assign the indexes to numerical
       scales, effectively defining a data set on an n-dimensional
       grid. To set the grid, use \ref set_grid() or \ref
-      set_grid_packed() and then interpolation can be done using \ref
-      interp_linear() or \ref interpolate().
+      set_grid_packed().
       
       By convention, member functions ending in the <tt>_val</tt>
       suffix return the closest grid-point to some user-specified

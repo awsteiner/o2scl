@@ -1042,9 +1042,9 @@ void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, vector<edge_crossings> &ec,
   return;
 }
 
-void hdf_output(hdf_file &hf, o2scl::tensor_grid<std::vector<double>,
-		std::vector<size_t>> &t, std::string name) {
-    
+void o2scl_hdf::hdf_output(hdf_file &hf, o2scl::tensor_grid<std::vector<double>,
+			   std::vector<size_t>> &t, std::string name) {
+  
   // Start group
   hid_t top=hf.get_current_id();
   hid_t group=hf.open_group(name);
@@ -1090,7 +1090,7 @@ void hdf_output(hdf_file &hf, o2scl::tensor_grid<std::vector<double>,
   return;
 }
   
-void hdf_input(hdf_file &hf, o2scl::tensor_grid<std::vector<double>,
+void o2scl_hdf::hdf_input(hdf_file &hf, o2scl::tensor_grid<std::vector<double>,
 	       std::vector<size_t>> &t, std::string name) {
     
   // If no name specified, find name of first group of specified type
