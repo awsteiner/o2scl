@@ -780,7 +780,7 @@ namespace o2scl {
 	  // Fill yvector with the appropriate data
 	  for(size_t i=0;i<this->size[0];i++) {
 	    co[0]=i;
-	    yvec[cnt][i]=get(co);
+	    yvec[cnt][i]=this->get(co);
 	  }
 	  
 	  si[cnt]=new interp_t(this->size[0],grid,yvec[cnt],itype);
