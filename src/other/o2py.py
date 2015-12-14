@@ -1,7 +1,7 @@
 """
   -------------------------------------------------------------------
 
-  Copyright (C) 2006-2014, Andrew W. Steiner
+  Copyright (C) 2006-2015, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -138,6 +138,7 @@ class plotter:
     
     logx=0
     logy=0
+    logz=0
     xtitle=''
     ytitle=''
     xlo=0
@@ -239,6 +240,9 @@ class plotter:
         return
         
     def plot(self,colx,coly,**kwargs):
+        if self.dtype!='table':
+            print 'Wrong type for plot.'
+            return
         if self.verbose>2:
             print 'plot',colx,coly,kwargs
         if self.canvas_flag==0:
@@ -261,6 +265,9 @@ class plotter:
         return
 
     def plot1(self,col,**kwargs):
+        if self.dtype!='table':
+            print 'Wrong type for plot1.'
+            return
         if self.verbose>2:
             print 'plot1',col,kwargs
         if self.canvas_flag==0:
@@ -368,6 +375,8 @@ class plotter:
         return
 
     def save(self,filename):
+        if self.verbose>0:
+            print 'Saving as',filename,'.'
         plot.savefig(filename)
         return
 
@@ -379,11 +388,15 @@ class plotter:
         return
 
     def read_type(self,filename,loc_type):
+        if self.verbose>0:
+            print 'Reading file',filename,'for type',loc_type,'.'
         self.dset=h5read_first_type(filename,loc_type)
         self.dtype=loc_type
         return
 
     def read_name(self,filename,name):
+        if self.verbose>0:
+            print 'Reading file',filename,'for name',name,'.'
         atuple=h5read_name(filename,name)
         self.dset=atuple[0]
         self.dtype=atuple[1]
@@ -446,16 +459,21 @@ class plotter:
             if self.logy==1:
                 for i in range(0,len(ygrid)):
                     ygrid[i]=math.log(ygrid[i],10)
+            lx=len(xgrid)
+            ly=len(ygrid)
             plot.imshow(sl,cmap=self.cmap,interpolation='nearest',
                         origin='lower',
-                        extent=[xgrid[0],xgrid[len(xgrid)-1],ygrid[0],
-                                ygrid[len(ygrid)-1]],aspect='auto',**kwargs)
+                        extent=[xgrid[0]-(xgrid[1]-xgrid[0])/2,
+                                xgrid[lx-1]+(xgrid[lx-1]-xgrid[lx-2])/2,
+                                ygrid[0]-(ygrid[1]-ygrid[0])/2,
+                                ygrid[ly-1]+(ygrid[ly-1]-ygrid[ly-2])/2],
+                        aspect='auto',**kwargs)
         else:
             print 'Cannot density plot object of type',self.dtype
         return
 
     def set(self,name,value):
-        if self.verbose>1:
+        if self.verbose>0:
             print 'Set',name,'to',value
         if name=='logx':
             self.logx=int(value)
@@ -485,6 +503,8 @@ class plotter:
             self.zset=int(value)
         elif name=='verbose':
             self.verbose=int(value)
+        elif name=='cmap':
+            self.cmap=value
         else:
             print 'No variable named',name
         return
@@ -531,7 +551,7 @@ class plotter:
             print 'get(name)'
             print ''
             print 'logx,logy,xtitle,ytitle,xlo,xhi,xset,ylo,yhi,yset'
-            print 'zlo,zhi,zset,verbose'
+            print 'zlo,zhi,zset,verbose,cmap'
         elif arg=='line':
             print 'line(x1,y1,x2,y2,color,lstyle)'
         elif arg=='list':
@@ -552,7 +572,7 @@ class plotter:
             print 'set(name,value)'
             print ''
             print 'logx,logy,xtitle,ytitle,xlo,xhi,xset,ylo,yhi,yset'
-            print 'zlo,zhi,zset,verbose'
+            print 'zlo,zhi,zset,verbose,cmap'
         elif arg=='show':
             print 'show()'
         elif arg=='text':
@@ -625,6 +645,8 @@ class plotter:
             print 'The value of zset is',self.zset
         elif name=='verbose':
             print 'The value of verbose is',self.verbose
+        elif name=='cmap':
+            print 'The value of cmap is',self.cmap
         else:
             print 'No variable named',name
         return
@@ -733,11 +755,13 @@ class plotter:
                 elif cmd_name=='plot':
                     if self.verbose>2:
                         print 'Process plot.'
+                        print ix,ix_next
                     if ix_next-ix<3:
                         print 'Not enough parameters for plot option.'
                     elif ix_next-ix<4:
                         self.plot(argv[ix+1],argv[ix+2])
                     else:
+                        print 'plot parse_argv',argv[ix+1],argv[ix+2],argv[ix+3]
                         self.plot(argv[ix+1],argv[ix+2],eval(argv[ix+3]))
                 elif cmd_name=='plot1':
                     if self.verbose>2:
@@ -766,6 +790,10 @@ class plotter:
                     if self.verbose>2:
                         print 'Process list.'
                     self.list()
+                elif cmd_name=='type':
+                    if self.verbose>2:
+                        print 'Process type.'
+                    print self.dtype;
                 elif cmd_name=='move-labels':
                     if self.verbose>2:
                         print 'Process move-labels.'
