@@ -341,6 +341,7 @@ class plotter:
         if self.yset==1:
             plot.ylim([self.ylo,self.yhi])
         # Titles
+        print 'Titles:',self.xtitle,self.ytitle
         if self.xtitle!='':
             plot.xlabel(self.xtitle,fontsize=16)
         if self.ytitle!='':
@@ -751,7 +752,7 @@ class plotter:
                     if ix_next-ix<2:
                         print 'Not enough parameters for save option.'
                     else:
-                        self.plot(argv[ix+1])
+                        plot.savefig(argv[ix+1])
                 elif cmd_name=='line':
                     if self.verbose>2:
                         print 'Process line.'
