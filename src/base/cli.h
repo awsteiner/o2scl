@@ -382,25 +382,6 @@ namespace o2scl {
     int apply_alias(std::vector<std::string> &sv, 
 		    std::string sold, std::string snew);
 
-    /** \brief Separate a string into words, handling quotes
-
-        This function separates a string into words, and handles words
-	that begin with a <tt>"</tt> by adding more words until
-	finding one which ends with another <tt>"</tt>.
-
-	This is used to reformat command descriptions and help text
-	for the screen width in comm_option_help(), to process lines
-	read from a file in comm_option_run(), and to process input in
-	run_interactive().
-
-	\note This function does not understand nested quotes.
-
-	\future Move this to a global function and use in 
-	acol also. 
-	\future Handle comma-delimited as well as space-delimited strings
-    */
-    int separate(std::string str, std::vector<std::string> &sv);
-  
     /// Control screen output
     int verbose;
 
@@ -434,7 +415,8 @@ namespace o2scl {
     /// \name Aliases
     //@{
     std::map<std::string,std::string,std::greater<std::string> > als;
-    typedef std::map<std::string,std::string,std::greater<std::string> >::iterator al_it;
+    typedef std::map<std::string,std::string,
+      std::greater<std::string> >::iterator al_it;
     //@}
     
     /// Compare two strings, treating dashes and underscores as equivalent

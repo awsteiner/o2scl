@@ -378,11 +378,6 @@ namespace o2scl_acol {
 
   protected:
     
-    /** \brief Separate string into words delimited by whitespace 
-	(for comm_fit())
-    */
-    int separate(std::string str, std::vector<std::string> &sv);
-
     /// An internal command for prompting the user for command arguments
     int get_input(std::vector<std::string> &sv, 
 		  std::vector<std::string> &directions,

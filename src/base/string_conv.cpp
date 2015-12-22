@@ -224,34 +224,95 @@ double o2scl::function_to_double(std::string s, bool err_on_fail) {
   return dat;
 }
 
-void o2scl::split_string(std::string str, std::vector<std::string> &sv) {
+void o2scl::split_string(string str, vector<string> &sv) {
+  
   string tmp, tmp2;
   
   istringstream *is=new istringstream(str.c_str());
+
   while ((*is) >> tmp) {
     
-    // If it begins with a quote, add more words accordingly
+    // If it begins with a quote...
     if (tmp[0]=='\"') {
-      tmp2=tmp.substr(1,tmp.size()-1);
-      bool done=false;
-      while (done==false) {
-	if (!((*is) >> tmp)) {
-	  done=true;
-	} else if (tmp[tmp.size()-1]=='\"') {
-	  tmp=tmp.substr(0,tmp.size()-1);
-	  done=true;
+
+      // If it also ends with a quote, just remove them both
+      if (tmp[tmp.length()-1]=='\"') {
+
+	// Remove the initial quote
+	tmp2=tmp.substr(1,tmp.size()-2);
+
+	// Copy the reformatted string to the original 'tmp' variable
+	tmp=tmp2;
+
+	// Otherwise, look for the next word with a final quote
+      } else {
+	
+	// Remove the initial quote
+	tmp2=tmp.substr(1,tmp.size()-1);
+	
+	// Add entries until a final quote is found
+	bool done=false;
+	while (done==false) {
+	  
+	  // If there are no more words, or if the next word ends in a
+	  // quote, then we're done
+	  if (!((*is) >> tmp)) {
+	    done=true;
+	  } else if (tmp[tmp.size()-1]=='\"') {
+	    tmp=tmp.substr(0,tmp.size()-1);
+	    done=true;
+	  }
+	  tmp2+=" ";
+	  tmp2+=tmp;
 	}
-	tmp2+=" ";
-	tmp2+=tmp;
+	
+	// Copy the reformatted string to the original 'tmp' variable
+	tmp=tmp2;
+
       }
-      tmp=tmp2;
     }
 
     // Add to the list
     sv.push_back(tmp);
   }
+  
   delete is;
 
   return;
 }
 
+void o2scl::rewrap(std::string str, std::vector<std::string> &sv,
+		   size_t ncol) {
+  
+  std::vector<std::string> sv_tmp;
+  split_string(str,sv_tmp);
+
+  //for(size_t i=0;i<sv_tmp.size();i++) {
+  //cout << "Phase 1: " << i << " x" << sv_tmp[i] << "x" << endl;
+  //}
+
+  string stmp;
+  if (sv.size()>0) sv.clear();
+  for(size_t old_ix=0;old_ix<sv_tmp.size();old_ix++) {
+    if (stmp.length()+sv_tmp[old_ix].length()+1<ncol) {
+      if (stmp.length()==0) {
+	stmp+=sv_tmp[old_ix];
+      } else {
+	stmp+=((string)" ")+sv_tmp[old_ix];
+      }
+    } else {
+      sv.push_back(stmp);
+      stmp=sv_tmp[old_ix];
+    }
+  }
+  if (stmp.size()>0) {
+    sv.push_back(stmp);
+  }
+  
+  //for(size_t i=0;i<sv.size();i++) {
+  //cout << "Phase 2: " << i << " x" << sv[i] << "x" << endl;
+  //}
+  //exit(-1);
+
+  return;
+}

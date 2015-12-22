@@ -261,63 +261,6 @@ int cli::expand_tilde(vector<string> &sv) {
   return 0;
 }
 
-int cli::separate(string str, vector<string> &sv) {
-
-  string tmp, tmp2;
-
-  istringstream *is=new istringstream(str.c_str());
-
-  while ((*is) >> tmp) {
-    
-    // If it begins with a quote...
-    if (tmp[0]=='\"') {
-
-      // If it also ends with a quote, just remove them both
-      if (tmp[tmp.length()-1]=='\"') {
-
-	// Remove the initial quote
-	tmp2=tmp.substr(1,tmp.size()-2);
-
-	// Copy the reformatted string to the original 'tmp' variable
-	tmp=tmp2;
-
-	// Otherwise, look for the next word with a final quote
-      } else {
-	
-	// Remove the initial quote
-	tmp2=tmp.substr(1,tmp.size()-1);
-	
-	// Add entries until a final quote is found
-	bool done=false;
-	while (done==false) {
-	  
-	  // If there are no more words, or if the next word ends in a
-	  // quote, then we're done
-	  if (!((*is) >> tmp)) {
-	    done=true;
-	  } else if (tmp[tmp.size()-1]=='\"') {
-	    tmp=tmp.substr(0,tmp.size()-1);
-	    done=true;
-	  }
-	  tmp2+=" ";
-	  tmp2+=tmp;
-	}
-	
-	// Copy the reformatted string to the original 'tmp' variable
-	tmp=tmp2;
-
-      }
-    }
-
-    // Add to the list
-    sv.push_back(tmp);
-  }
-  
-  delete is;
-
-  return 0;
-}
-
 int cli::set_verbose(int v) {
   verbose=v;
   return 0;
@@ -389,7 +332,7 @@ int cli::process_args(string s, vector<cmd_line_arg> &ca,
   // Reformat string s into the (argc,argv) format
   s="acol "+s;
   vector<string> sv;
-  separate(s,sv);
+  split_string(s,sv);
   int argc=sv.size();
   char **argv=new char *[argc];
   for(int i=0;i<argc;i++) argv[i]=(char *)(sv[i].c_str());
@@ -836,9 +779,9 @@ int cli::output_param_list() {
 
 	cout << " ";
 	
-	// First separate help description into words with separate()
+	// First separate help description into words with split_string()
 	vector<string> desc2;
-	separate(it->second->help,desc2);
+	split_string(it->second->help,desc2);
 
 	// The fill a buffer 'bufx' with lines with less than 78
 	// characters. (We need 78 here instead of 79 to accomodate
@@ -1000,7 +943,7 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
 	{
 	  // Output description
 	  vector<string> desc2;
-	  separate(clist[ix].help,desc2);
+	  split_string(clist[ix].help,desc2);
 	  string bufx;
 	  for(size_t j=0;j<desc2.size();j++) {
 	    if (j!=0 && bufx.length()+desc2[j].length()>79) {
@@ -1094,7 +1037,7 @@ int cli::comm_option_run(vector<string> &sv, bool itive_com) {
 
     if (entry.length()>0 && entry!="exit" && entry!="quit") {
       
-      separate(entry,sw);
+      split_string(entry,sw);
       
       // Apply any aliases
       for(al_it it=als.begin();it!=als.end();it++) {
@@ -1268,7 +1211,7 @@ int cli::run_interactive() {
 
     } else if (entry.length()>0) {
       
-      separate(entry,sv);
+      split_string(entry,sv);
       
       // Apply any aliases
       for(al_it it=als.begin();it!=als.end();it++) {

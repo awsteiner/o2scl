@@ -3375,37 +3375,6 @@ int acol_manager::comm_interp(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
 
-int acol_manager::separate(std::string str, std::vector<std::string> &sv) {
-  string tmp, tmp2;
-
-  istringstream *is=new istringstream(str.c_str());
-  while ((*is) >> tmp) {
-    
-    // If it begins with a quote, add more words accordingly
-    if (tmp[0]=='\"') {
-      tmp2=tmp.substr(1,tmp.size()-1);
-      bool done=false;
-      while (done==false) {
-	if (!((*is) >> tmp)) {
-	  done=true;
-	} else if (tmp[tmp.size()-1]=='\"') {
-	  tmp=tmp.substr(0,tmp.size()-1);
-	  done=true;
-	}
-	tmp2+=" ";
-	tmp2+=tmp;
-      }
-      tmp=tmp2;
-    }
-
-    // Add to the list
-    sv.push_back(tmp);
-  }
-  delete is;
-
-  return 0;
-}
-
 int acol_manager::comm_fit(std::vector<std::string> &sv, bool itive_com) {
 
   if (threed) {
@@ -3469,7 +3438,7 @@ int acol_manager::comm_fit(std::vector<std::string> &sv, bool itive_com) {
 
   // Parse initial parameter values
   std::vector<std::string> param_list;
-  separate(in[6],param_list);
+  split_string(in[6],param_list);
   size_t n_parms=param_list.size();
   ubvector params(n_parms);
   for(size_t k=0;k<n_parms;k++) {

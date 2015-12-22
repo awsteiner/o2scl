@@ -33,6 +33,9 @@
 #include <fstream>
 #include <sstream>
 
+// For screenify()
+#include <o2scl/misc.h>
+
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
 #endif
@@ -164,13 +167,26 @@ namespace o2scl {
   /** \brief Split a string into words using whitespace for delimiters and 
       (partially) respecting quotes
 
+      This function separates a string into words, and handles words
+      that begin with a <tt>"</tt> by adding more words until
+      finding one which ends with another <tt>"</tt>.
+      
+      This is used to reformat command descriptions and help text for
+      the screen width in cli::comm_option_help(), to process lines
+      read from a file in cli::comm_option_run(), and to process input
+      in cli::run_interactive().
+      
       \todo 
       - More documentation
       - Add user-specified delimiters?
-      - Add version which ignores quotes
-      - Use this function in acol
   */
   void split_string(std::string str, std::vector<std::string> &sv);
+
+  /** \brief Rewrap a string into a single column, avoiding
+      strings less than a particular number of characters
+   */
+  void rewrap(std::string str, std::vector<std::string> &sv,
+	      size_t ncol=79);
   //@}
 
 #ifndef DOXYGEN_NO_O2NS
