@@ -2768,10 +2768,13 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
     // Copy constants from old to new table3d
     // ----------------------------------------
 
-    for(size_t i=0;i<tabp->get_nconsts();i++) {
+    for(size_t i=0;i<t3p->get_nconsts();i++) {
       string tnam;
       double tval;
-      tabp->get_constant(i,tnam,tval);
+      t3p->get_constant(i,tnam,tval);
+      if (verbose>2) {
+	cout << "Adding constant " << tnam << " = " << tval << endl;
+      }
       new_table3d->add_constant(tnam,tval);
     }
   
@@ -2779,8 +2782,8 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
     // Add slides and data to new table3d
     // ----------------------------------------
 
-    std::vector<bool> matched(tabp->get_ncolumns());
-    for(size_t i=0;i<tabp->get_ncolumns();i++) {
+    std::vector<bool> matched(t3p->get_nslices());
+    for(size_t i=0;i<t3p->get_nslices();i++) {
       matched[i]=false;
     }
 
