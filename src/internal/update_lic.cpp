@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2015, Andrew W. Steiner
+  Copyright (C) 2006-2016, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -35,7 +35,7 @@ std::string base[22]={
   "/*",
   "  -------------------------------------------------------------------",
   "  ",
-  "  Copyright (C) 2006-2015, Andrew W. Steiner",
+  "  Copyright (C) 2006-2016, Andrew W. Steiner",
   "  ",
   "  This file is part of O2scl.",
   "  ",

@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2015, Andrew W. Steiner
+  Copyright (C) 2015-2016, Andrew W. Steiner
   
   This file is part of O2scl. It has been adapted from Cubature
   written by Steven G. Johnson. 

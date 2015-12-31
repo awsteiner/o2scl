@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2015, Andrew W. Steiner
+  Copyright (C) 2006-2016, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -138,21 +138,19 @@ int table3d::read_gen3_list(std::istream &fin, int verbose) {
   double data;
   std::string line;
   std::string cname, xname="x", yname="y";
-  std::istringstream *is;
       
   std::vector<std::vector<double> > odata;
       
   // Read first line and into list
   std::vector<std::string> onames, nnames;
   getline(fin,line);
-  is=new std::istringstream(line);
-  while ((*is) >> cname) {
+  std::istringstream is(line);
+  while (is >> cname) {
     onames.push_back(cname);
     if (verbose>2) {
       std::cout << "Read possible name: " << cname << std::endl;
     }
   }
-  delete is;
 
   if (onames.size()<3) {
     std::cout << "Not enough columns of data." << std::endl;
@@ -518,12 +516,11 @@ size_t table3d::get_nslices() const {
 void table3d::line_of_names(std::string names) {
   std::string head;
       
-  std::istringstream *is=new std::istringstream(names);
+  std::istringstream is(names);
       
-  while((*is) >> head) {
+  while(is >> head) {
     new_slice(head);
   }
-  delete is;
       
   return;
 }
@@ -857,7 +854,7 @@ void table3d::summary(std::ostream *out, int ncol) const {
   } else {
     (*out) << nh << " slices: " << std::endl;
   }
-  std::string *h=new std::string[nh];
+  std::vector<std::string> h(nh);
   for(int i=0;i<nh;i++) {
     h[i]=itos(i)+". "+get_slice_name(i);
   }
@@ -888,8 +885,6 @@ void table3d::summary(std::ostream *out, int ncol) const {
     (*out) << "No y-grid." << std::endl;
   }
 
-  delete[] h;
-      
   return;
 }
 
@@ -1005,64 +1000,11 @@ void table3d::get_constant(size_t ix, std::string &name,
 }
 
 void table3d::function_slice(string function, string scol) {
-  string vlist;
-  std::vector<double> vals;
   
   new_slice(scol);
   size_t ic=lookup_slice(scol);
 
-  // Create variable list
-  vlist=xname+","+yname;
-  for(size_t k=0;k<list.size();k++) {
-    if (k!=ic) {
-      vlist+=((string)",")+get_slice_name(k);
-    }
-  }
-
-  // Parse function
-  FunctionParser fp;
-  set_fp_consts(fp);
-  int ret=fp.Parse(function,vlist);
-  if (ret>=0) {
-    O2SCL_ERR((((string)"Failed to parse in table3d::function_slice(). ")+
-	       "Error from FunctionParser: "+
-	       fp.ErrorMsg()).c_str(),ret+1);
-  }
-  
-  bool success=true;
-  for(size_t i=0;i<numx;i++) {
-    for(size_t j=0;j<numy;j++) {
-      vals.clear();
-      vals.push_back(xval[i]);
-      vals.push_back(yval[j]);
-   
-      for(size_t k=0;k<list.size();k++) {
-	if (k!=ic) {
-	  vals.push_back(list[k](i,j));
-	}
-      }
-  
-      // Temporary hack to convert vals into a double *
-      double *dvals=new double[vals.size()];
-      for(size_t k=0;k<vals.size();k++) dvals[k]=vals[k];
-
-      list[ic](i,j)=fp.Eval(dvals);
-
-      delete[] dvals;
-
-      if (fp.EvalError()!=0) {
-	success=false;
-      }
-    }
-  }
-
-  if (!success) {
-    O2SCL_ERR((((string)"Failed to evaluate in table3d::function_slice().")+
-	       "Error from FunctionParser: "+
-	       itos(fp.EvalError())).c_str(),
-	      exc_einval);
-  }
+  function_matrix(function,list[ic]);
 
   return;
 }
-    

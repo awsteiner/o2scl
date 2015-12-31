@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2015, Andrew W. Steiner
+  Copyright (C) 2006-2016, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -473,9 +473,12 @@ namespace o2scl {
 
       If the object \c row previously contains any data, it will be
       lost.
+
+      The type <tt>resize_vec_t</tt> must be a type which has
+      <tt>size()</tt> and <tt>resize()</tt> methods.
   */
-  template<class vec2_t>
-  void get_row(std::string scol, double val, vec2_t &row) const {
+  template<class resize_vec_t>
+  void get_row(std::string scol, double val, resize_vec_t &row) const {
       
     int irow=lookup(scol,val);
     if (irow==exc_enotfound) {
@@ -496,9 +499,12 @@ namespace o2scl {
 
       If the object \c row previously contains any data, it will be
       lost.
+
+      The type <tt>resize_vec_t</tt> must be a type which has
+      <tt>size()</tt> and <tt>resize()</tt> methods.
   */
-  template<class vec2_t>
-  void get_row(size_t irow, vec2_t &row) const {
+  template<class resize_vec_t>
+  void get_row(size_t irow, resize_vec_t &row) const {
       
     if (irow+1>nlines) {
       O2SCL_ERR((((std::string)"Row '")+ itos(irow)+
@@ -687,9 +693,12 @@ namespace o2scl {
       copied, up to the current number of lines.
       
       This function calls the error handler if \c sz is zero.
+
+      The type <tt>vec2_t</tt> can be any type with an
+      <tt>operator[]</tt> method.
   */
   template<class vec2_t> int new_column(std::string name, 
-				       size_t sz, vec2_t &v) {
+					size_t sz, vec2_t &v) {
     
     if (sz==0) {
       O2SCL_ERR2("Sent column of zero size in ",
@@ -913,6 +922,9 @@ namespace o2scl {
   }
 
   /** \brief Copy to a column from a generic vector object
+
+      The type <tt>vec2_t</tt> can be any type with an
+      <tt>operator[]</tt> method.
    */
   template<class vec2_t> 
   void copy_to_column(vec2_t &v, std::string scol) {
@@ -1110,12 +1122,10 @@ namespace o2scl {
     int ret=0;
     std::string head;
 
-    std::istringstream *is=new std::istringstream(newheads);
-  
-    while((*is) >> head) {
+    std::istringstream is(newheads);
+    while(is >> head) {
       new_column(head);
     } 
-    delete is;
   
     if (ret!=0) {
       O2SCL_ERR2("At least one new column failed in ",
@@ -1127,6 +1137,9 @@ namespace o2scl {
 
   /** \brief Read a line of data from the first \c nv entries in 
       a vector and store as a new row in the table
+
+      The type <tt>vec2_t</tt> can be any type with an
+      <tt>operator[]</tt> method.
    */
   template<class vec2_t> void line_of_data(size_t nv, const vec2_t &v) {
     if (maxlines==0) inc_maxlines(1);
@@ -1153,6 +1166,9 @@ namespace o2scl {
 
   /** \brief Read a line of data and store in a new row of the
       table
+
+      The type <tt>vec2_t</tt> can be any type with an
+      <tt>operator[]</tt> method.
    */
   template<class vec2_t> void line_of_data(const vec2_t &v) {
     line_of_data(v.size(),v);
@@ -1371,12 +1387,9 @@ namespace o2scl {
       O2SCL_ERR("x0 not finite in table::interp_const().",exc_einval);
       return exc_einval;
     }
-    interp_vec<vec_t> *sic=new 
-    interp_vec<vec_t>
-    (nlines,itx->second.dat,ity->second.dat,itype);
+    interp_vec<vec_t> sic(nlines,itx->second.dat,ity->second.dat,itype);
 
-    ret=sic->interp(x0);
-    delete sic;
+    ret=sic.interp(x0);
     return ret;
   }
     
@@ -1472,13 +1485,12 @@ namespace o2scl {
       O2SCL_ERR("x0 not finite in table::deriv_const().",exc_einval);
       return exc_einval;
     }
-    interp_vec<vec_t> *sic=new interp_vec<vec_t>
+    interp_vec<vec_t> sic
     (nlines,itx->second.dat,ity->second.dat,itype);
-    ret=sic->deriv(x0);
-    delete sic;
+    ret=sic.deriv(x0);
     return ret;
   }
-
+  
   /** \brief The first derivative of the function iy(ix) at ix=x0.
       
       O(log(R)) but can be as bad as O(R) if the relevant columns
@@ -1574,10 +1586,9 @@ namespace o2scl {
       O2SCL_ERR("x0 not finite in table::deriv2_const().",exc_einval);
       return exc_einval;
     }
-    interp_vec<vec_t> *sic=new interp_vec<vec_t>
+    interp_vec<vec_t> sic
     (nlines,itx->second.dat,ity->second.dat,itype);
-    ret=sic->deriv2(x0);
-    delete sic;
+    ret=sic.deriv2(x0);
     return ret;
   }
 
@@ -1653,10 +1664,9 @@ namespace o2scl {
       O2SCL_ERR("x1 or x2 not finite in table::integ_const().",exc_einval);
       return exc_einval;
     }
-    interp_vec<vec_t> *sic=new interp_vec<vec_t>
+    interp_vec<vec_t> sic
     (nlines,itx->second.dat,ity->second.dat,itype);
-    ret=si->integ(x1,x2);
-    delete sic;
+    ret=sic.integ(x1,x2);
     return ret;
   }
   
@@ -1809,11 +1819,10 @@ namespace o2scl {
       bottom=nlines-1;
     }
   
-    std::istringstream *is;
-    is=new std::istringstream(list);
+    std::istringstream is(list);
 
     at=new table<vec_t>(sublines);
-    while((*is) >> head) {
+    while(is >> head) {
       it=atree.find(head);
       if (it==atree.end()) {
 	O2SCL_ERR
@@ -1836,8 +1845,6 @@ namespace o2scl {
     //}
     at->nlines=sublines;
   
-    delete is;
-
     return at;
   }
   //@}
@@ -2004,7 +2011,7 @@ namespace o2scl {
       } else {
 	(*out) << nh << " columns: " << std::endl;
       }
-      std::string *h=new std::string[nh];
+      std::vector<std::string> h(nh);
       for(size_t i=0;i<nh;i++) {
 	h[i]=szttos(i)+". "+get_column_name(i);
       }
@@ -2018,7 +2025,6 @@ namespace o2scl {
       for(size_t i=0;i<nh2;i++) {
 	(*out) << h2[i] << std::endl;
       }
-      delete[] h;
 
     }
   
@@ -2097,19 +2103,18 @@ namespace o2scl {
     double data;
     std::string line;
     std::string cname;
-    std::istringstream *is;
+    
 
     // Read first line and into list
     std::vector<std::string> onames, nnames;
     getline(fin,line);
-    is=new std::istringstream(line);
-    while ((*is) >> cname) {
+    std::istringstream is(line);
+    while (is >> cname) {
       onames.push_back(cname);
       if (verbose>2) {
 	std::cout << "Read possible column name: " << cname << std::endl;
       }
     }
-    delete is;
 
     // Count number of likely numbers in the first row
     size_t n_nums=0;
@@ -2261,7 +2266,7 @@ namespace o2scl {
       }
     }
 
-    double *vals=new double[get_ncolumns()+funcs.size()];
+    std::vector<double> vals(get_ncolumns()+funcs.size());
     
     FunctionParser fp;
     set_fp_consts(fp);
@@ -2328,7 +2333,7 @@ namespace o2scl {
       
 	// Evaluate the new columns
 	for(size_t j=0;j<(newcols.size());j++) {
-	  (*newcols[j].col)[i]=newcols[j].fpp->Eval(vals);
+	  (*newcols[j].col)[i]=newcols[j].fpp->Eval(&vals[0]);
 	  if (!std::isfinite((*newcols[j].col)[i])) {
 	    (*newcols[j].col)[i]=0.0;
 	  } else if (newcols[j].fpp->EvalError()!=0) {
@@ -2345,8 +2350,6 @@ namespace o2scl {
     
     }
     
-    delete[] vals;
-
     // Check to see if we need to return an error because one of the 
     // columns was never computed
     {
@@ -2380,62 +2383,39 @@ namespace o2scl {
     std::string vlist;
     aiter it;
 
+    // Create new column if necessary
     if (!is_column(scol)) {
       new_column(scol);
     }
+
+    // Find vector reference
     aiter it2=atree.find(scol);
     vec_t &colp=it2->second.dat;
 
-    double *vals=new double[((int)atree.size())];
-  
-    // Parse function
-    it=atree.begin();
-    vlist=it->first;
-    it++;
-    while(it!=atree.end()) {
-      vlist+=",";
-      vlist+=it->first;
-      it++;
-    }
-  
-    FunctionParser fp;
-    set_fp_consts(fp);
-    ret=fp.Parse(function,vlist)+1;
-    if (ret!=0) {
-      std::string s=((std::string)"Failed to parse function '")+function+
-	"'\n   in table::function_column().\n  Error '"+itos(ret)+
-	"' from FunctionParser: "+fp.ErrorMsg()+".";
-      O2SCL_ERR(s.c_str(),exc_einval);
-      return;
-    }
-
-    // Create column from function
-    for(j=0;j<((int)nlines);j++) {
-      for(i=0,it=atree.begin();it!=atree.end();it++,i++) {
-	vals[i]=it->second.dat[j];
-      }
-      double temp=fp.Eval(vals);
-      colp[j]=fp.Eval(vals);
-      if (!std::isfinite(colp[j])) {
-	colp[j]=0.0;
-      } else if (fp.EvalError()!=0) {
-	colp[j]=0.0;
-      }
-    }
-  
-    delete[] vals;
+    // Fill vector with result of function
+    function_vector(function,colp);
 
     return;
   }
 
   /** \brief Compute a column from a function specified 
       in a string
+      
+      The type \c resize_vec_t must have <tt>resize()</tt> and
+      <tt>size()</tt> methods. If \c vec does not have enough space to
+      hold the number of entries given by \ref get_nlines(), it is
+      resized.
+
+      \comment
+      This function must return an int rather than void because
+      of the presence of the 'throw_on_err' mechanism
+      \endcomment
   */
-  template<class vec2_t>
-  void function_vector(std::string function, vec2_t &vec,
-		       bool throw_on_err=true) {
+  template<class resize_vec_t>
+  int function_vector(std::string function, resize_vec_t &vec,
+		      bool throw_on_err=true) {
     
-    // Parse function
+    // Create variable list for parser
     aciter it=atree.begin();
     std::string vlist=it->first;
     it++;
@@ -2444,6 +2424,8 @@ namespace o2scl {
       vlist+=it->first;
       it++;
     }
+
+    // Parse function
     FunctionParser fp;
     set_fp_consts(fp);
     int ret=fp.Parse(function,vlist)+1;
@@ -2455,16 +2437,14 @@ namespace o2scl {
 	  "' from FunctionParser: "+fp.ErrorMsg()+".";
 	O2SCL_ERR(s.c_str(),exc_einval);
       }
-      return;
-    } else {
-      ret=0;
+      return ret;
     }
 
-    // Resize vector
-    vec.resize(nlines);
+    // Resize vector if necessary
+    if (vec.size()<nlines) vec.resize(nlines);
 
     // Create space for column values
-    double *vals=new double[atree.size()];
+    std::vector<double> vals(atree.size());
   
     // Create column from function
     for(size_t j=0;j<nlines;j++) {
@@ -2473,7 +2453,7 @@ namespace o2scl {
 	vals[i]=it->second.dat[j];
 	i++;
       }
-      vec[j]=fp.Eval(vals);
+      vec[j]=fp.Eval(&vals[0]);
       if (fp.EvalError()!=0) {
 	vec[j]=0.0;
       } else if (!std::isfinite(vec[j])) {
@@ -2481,10 +2461,7 @@ namespace o2scl {
       }
     }
 
-    // Free memory
-    delete[] vals;
-
-    return;
+    return ret;
   }
 
   /** \brief Compute a value by applying a function to a row
@@ -2492,13 +2469,9 @@ namespace o2scl {
   double row_function(std::string function, size_t row) const {
     int ret, i;
     std::string vlist;
-    double *vals=new double[((int)atree.size())];
+    std::vector<double> vals(atree.size());
     aciter it;
 
-    // There's a potential for a memory leak here if the function parser
-    // throws an exception and the vals array isn't deallocated. This
-    // should be fixed.
-  
     // Parse function
     if (atree.begin()!=atree.end()) {
       it=atree.begin();
@@ -2516,7 +2489,6 @@ namespace o2scl {
     set_fp_consts(fp);
     ret=fp.Parse(function,vlist);
     if (ret>=0) {
-      delete[] vals;
       std::string s=((std::string)"Failed to parse function '")+function+
 	"'\n   in table::row_function().\n  Error '"+itos(ret)+
 	"' from FunctionParser: "+fp.ErrorMsg()+".";
@@ -2527,7 +2499,7 @@ namespace o2scl {
     for(i=0,it=atree.begin();it!=atree.end();it++,i++) {
       vals[i]=it->second.dat[row];
     }
-    double dret=fp.Eval(vals);
+    double dret=fp.Eval(&vals[0]);
     if (fp.EvalError()!=0) {
       O2SCL_ERR((((std::string)"Failed to evaluate in table::")+
 		 "row_function(). Error from FunctionParser: "+
@@ -2536,26 +2508,17 @@ namespace o2scl {
       dret=0.0;
     }
 
-    delete[] vals;
-  
     return dret;
   }
 
   /** \brief Compute a value by applying a function to a row
-
-      \todo There is a fixme entry in this function associated
-      with error handling in function parser class.
   */
   size_t function_find_row(std::string function) const {
     int ret, i;
     std::string vlist;
-    double *vals=new double[((int)atree.size())];
+    std::vector<double> vals(atree.size());
     aciter it;
   
-    // There's a potential for a memory leak here if the function parser
-    // throws an exception and the vals array isn't deallocated. This
-    // should be fixed.
-
     // Parse function
     if (atree.begin()!=atree.end()) {
       it=atree.begin();
@@ -2573,7 +2536,6 @@ namespace o2scl {
     set_fp_consts(fp);
     ret=fp.Parse(function,vlist);
     if (ret>=0) {
-      delete[] vals;
       std::string s=((std::string)"Failed to parse function '")+function+
 	"'\n   in table::row_function().\n  Error '"+itos(ret)+
 	"' from FunctionParser: "+fp.ErrorMsg()+".";
@@ -2587,9 +2549,8 @@ namespace o2scl {
       for(i=0,it=atree.begin();it!=atree.end();it++,i++) {
 	vals[i]=it->second.dat[row];
       }
-      double dtemp=fp.Eval(vals);
+      double dtemp=fp.Eval(&vals[0]);
       if (fp.EvalError()!=0) {
-	delete[] vals;
 	O2SCL_ERR((((std::string)"Failed to evaluate in table::row_")+
 		   "function(). Error from FunctionParser: "+
 		   o2scl::itos(fp.EvalError())).c_str(),
@@ -2605,8 +2566,6 @@ namespace o2scl {
 	}
       }
     }
-  
-    delete[] vals;
   
     return best_row;
   }

@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2015, Andrew W. Steiner
+  Copyright (C) 2006-2016, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -531,6 +531,21 @@ namespace o2scl {
 	\endcomment
      */
     const std::vector<ubmatrix> &get_data();
+
+    /** \brief Copy to a slice from a generic matrix object
+	
+	The type <tt>mat_t</tt> can be any type with an
+	<tt>operator(,)</tt> method.
+    */
+    template<class mat_t> 
+      void copy_to_slice(mat_t &m, std::string scol) {
+      for(size_t i=0;i<numx;i++) {
+	for(size_t j=0;j<numy;j++) {
+	  this->set(i,j,scol,m(i,j));
+	}
+      }
+      return;
+    }
     //@}
   
     // --------------------------------------------------------
@@ -735,12 +750,79 @@ namespace o2scl {
 	\endcomment
      */
     //@{
-    /** \brief Make a column from <tt>formula</tt> and add it to the table.
+    /** \brief Fill a matrix from the function specified in \c function
+
+      \comment
+      This function must return an int rather than void because
+      of the presence of the 'throw_on_err' mechanism
+      \endcomment
+    */
+    template<class resize_mat_t>
+      int function_matrix(std::string function, resize_mat_t &mat,
+			   bool throw_on_err=true) {
+      
+      std::vector<double> vals;
+      
+      // Create variable list
+      std::string vlist=xname+","+yname;
+      for(size_t k=0;k<list.size();k++) {
+	vlist+=((std::string)",")+get_slice_name(k);
+      }
+      
+      // Parse function
+      FunctionParser fp;
+      set_fp_consts(fp);
+      int ret=fp.Parse(function,vlist);
+      if (ret>=0) {
+	if (throw_on_err) {
+	  O2SCL_ERR((((std::string)"Failed to parse in table3d::function_")+
+		     "matrix(). Error from FunctionParser: "+
+		     fp.ErrorMsg()).c_str(),ret+1);
+	}
+	return ret;
+      }
+
+      if (mat.size1()!=numx || mat.size2()!=numy) {
+	mat.resize(numx,numy);
+      }
+      
+      bool success=true;
+      for(size_t i=0;i<numx;i++) {
+	for(size_t j=0;j<numy;j++) {
+	  vals.clear();
+	  vals.push_back(xval[i]);
+	  vals.push_back(yval[j]);
+	  
+	  for(size_t k=0;k<list.size();k++) {
+	    vals.push_back(list[k](i,j));
+	  }
+	  
+	  mat(i,j)=fp.Eval(&vals[0]);
+	  
+	  if (fp.EvalError()!=0) {
+	    success=false;
+	  }
+	}
+      }
+      
+      if (!success) {
+	if (throw_on_err) {
+	  O2SCL_ERR((((std::string)"Failed to evaluate in table3d::function")+
+		     "_slice(). Error from FunctionParser: "+
+		     itos(fp.EvalError())).c_str(),
+		    exc_einval);
+	}
+      }
+
+      return ret;
+    }
+
+    /** \brief Make a column from <tt>function</tt> and add it to the table.
 	
 	If the column already exists, the data already present is 
 	overwritten with the result.
     */
-    void function_slice(std::string formula, std::string col);
+    void function_slice(std::string function, std::string col);
     //@}
 
   protected:
@@ -769,9 +851,10 @@ namespace o2scl {
     
     /// \name Iterator types
     //@{
-    typedef std::map<std::string,size_t, std::greater<std::string> >::iterator map_iter;
-    typedef std::map<std::string,size_t, std::greater<std::string> >::const_iterator 
-      map_const_iter;
+    typedef std::map<std::string,size_t,
+      std::greater<std::string> >::iterator map_iter;
+    typedef std::map<std::string,size_t,
+      std::greater<std::string> >::const_iterator map_const_iter;
     //@}
   
     /// \name Data storage

@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2013, Andrew W. Steiner
+  Copyright (C) 2006-2016, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -731,7 +731,7 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
     //---------------------------------------
     // Count column widths
 
-    size_t *col_wids=new size_t[tabp->get_ncolumns()];
+    vector<size_t> col_wids(tabp->get_ncolumns());
 
     for(size_t i=0;i<tabp->get_ncolumns();i++) {
       col_wids[i]=prec+6;
@@ -839,8 +839,8 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
 int acol_manager::comm_add(std::vector<std::string> &sv, bool itive_com) {
 
   if (sv.size()<6) {
-    cout << "Not enough arguments to add." << endl;
-    return -1;
+    cerr << "Not enough arguments to add." << endl;
+    return exc_efailed;
   }
 
   string s1=sv[1];
@@ -849,42 +849,42 @@ int acol_manager::comm_add(std::vector<std::string> &sv, bool itive_com) {
   string name2=sv[4];
   string sum=sv[5];
 
-  table3d *t1=new table3d;
-  table3d *t2=new table3d;
+  table3d t1;
+  table3d t2;
   table3d tsum;
 
   hdf_file hf;
   hf.open(s1);
-  hdf_input(hf,*t1,name1);
+  hdf_input(hf,t1,name1);
   hf.close();
   hf.open(s2);
-  hdf_input(hf,*t2,name2);
+  hdf_input(hf,t2,name2);
   hf.close();
   
-  if (t1->get_nx()!=t2->get_nx() ||
-      t1->get_ny()!=t2->get_ny()) {
-    cout << "First table3d object. nx,ny: " 
-	 << t1->get_nx() << " " << t1->get_ny() << endl;
-    cout << "Second table3d object. nx,ny: " 
-	 << t2->get_nx() << " " << t2->get_ny() << endl;
-    cout << "Tables not compatible." << endl;
-    return 0;
+  if (t1.get_nx()!=t2.get_nx() ||
+      t1.get_ny()!=t2.get_ny()) {
+    cerr << "First table3d object has nx,ny: " 
+	 << t1.get_nx() << " " << t1.get_ny() << endl;
+    cerr << "Second table3d object has nx,ny: " 
+	 << t2.get_nx() << " " << t2.get_ny() << endl;
+    cerr << "Tables not compatible. Command 'add' canceled." << endl;
+    return exc_efailed;
   }
   
-  size_t nx=t1->get_nx();
-  size_t ny=t1->get_ny();
-  string sx=t1->get_x_name();
-  string sy=t1->get_y_name();
-  const ubvector &xg=t1->get_x_data();
-  const ubvector &yg=t1->get_y_data();
+  size_t nx=t1.get_nx();
+  size_t ny=t1.get_ny();
+  string sx=t1.get_x_name();
+  string sy=t1.get_y_name();
+  const ubvector &xg=t1.get_x_data();
+  const ubvector &yg=t1.get_y_data();
   
   tsum.set_xy(sx,nx,xg,sy,ny,yg);
-  for(size_t k=0;k<t1->get_nslices();k++) {
-    string slname=t1->get_slice_name(k);
+  for(size_t k=0;k<t1.get_nslices();k++) {
+    string slname=t1.get_slice_name(k);
     tsum.new_slice(slname);
     for(size_t i=0;i<nx;i++) {
       for(size_t j=0;j<ny;j++) {
-	tsum.set(i,j,slname,t1->get(i,j,slname)+t2->get(i,j,slname));
+	tsum.set(i,j,slname,t1.get(i,j,slname)+t2.get(i,j,slname));
       }
     }
   }
@@ -2673,84 +2673,12 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
     }
   }
 
-  if (threed) {
-
-    if (t3p==0) {
-      cerr << "No table3d to select from." << endl;
-      return exc_efailed;
-    }
-    
-    size_t nargs=sv.size()-1;
-    vector<string> names;
-    
-    if (nargs==0) {
-      cerr << "No columns selected. Command 'select' aborted." << endl;
-      return exc_efailed;
-    }
-    
-    for(size_t i=0;i<nargs;i++) {
-      names.push_back(sv[i+1]);
-    }
-
-    // Make new table3d
-    table3d *newt=new table3d;
-    
-    // Copy grid over
-    size_t nx, ny;
-    t3p->get_size(nx,ny);
-    double *xv=new double[nx];
-    double *yv=new double[ny];
-    
-    for(size_t i=0;i<nx;i++) {
-      xv[i]=t3p->get_grid_x(i);
-    }
-    for(size_t i=0;i<ny;i++) {
-      yv[i]=t3p->get_grid_y(i);
-    }
-    newt->set_xy(t3p->get_x_name(),nx,xv,t3p->get_y_name(),ny,yv);
-    delete[] xv;
-    delete[] yv;
-	
-    // Create the new slices
-    for(size_t i=0;i<nargs;i++) {
-      newt->new_slice(names[i]);
-    }
-
-    // Copy the data over
-    for(size_t k=0;k<nargs;k++) {
-
-      // Return an error if the slice doesn't exist
-      size_t k2;
-      if (t3p->is_slice(names[k],k2)==false) {
-	cerr << "Slice '" << names[k] << "' is not in the table." << endl;
-	return exc_einval;
-      }
-
-      for(size_t i=0;i<nx;i++) {
-	for(size_t j=0;j<ny;j++) {
-	  newt->set(i,j,names[k],t3p->get(i,j,names[k]));
-	}
-      }
-    }
-    
-    // Delete the old table3d and copy the new one over
-    delete t3p;
-    t3p=newt;
-    
-    return 0;
-  }
-
-  if (tabp==0) {
-    cerr << "No table to select from." << endl;
-    return exc_efailed;
-  }
-
   // ----------------------------------------------------------------
   // Parse arguments into names and values
   // ----------------------------------------------------------------
 
   // The number of column arguments
-  int nargs;
+  int nargs=((int)sv.size())-1;
   // The name part of the argument
   std::vector<std::string> names;
   // The function part of the argument
@@ -2759,11 +2687,9 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
   std::vector<bool> is_pattern;
   
   // ----------------------------------------------------------------
-
-  nargs=sv.size()-1;
   
   if (nargs==0) {
-    cerr << "No columns selected. Command 'select' aborted." << endl;
+    cerr << "No arguments to 'select'. Command 'select' aborted." << endl;
     return exc_efailed;
   }
   
@@ -2821,97 +2747,193 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
     }
   }
 
-  // ----------------------------------------
-  // Create new table
-  // ----------------------------------------
+  if (threed) {
+
+    if (t3p==0) {
+      cerr << "No table3d to select from." << endl;
+      return exc_efailed;
+    }
+    
+    // ----------------------------------------
+    // Create new table3d and copy grid over
+    // ----------------------------------------
+
+    table3d *new_table3d=new table3d;
+    size_t nx, ny;
+    t3p->get_size(nx,ny);
+    new_table3d->set_xy(t3p->get_x_name(),nx,t3p->get_x_data(),
+		 t3p->get_y_name(),ny,t3p->get_y_data());
+	
+    // ----------------------------------------
+    // Copy constants from old to new table3d
+    // ----------------------------------------
+
+    for(size_t i=0;i<tabp->get_nconsts();i++) {
+      string tnam;
+      double tval;
+      tabp->get_constant(i,tnam,tval);
+      new_table3d->add_constant(tnam,tval);
+    }
   
-  table_units<> *new_table;
-  new_table=new table_units<>(tabp->get_nlines());
+    // ----------------------------------------
+    // Add slides and data to new table3d
+    // ----------------------------------------
+
+    std::vector<bool> matched(tabp->get_ncolumns());
+    for(size_t i=0;i<tabp->get_ncolumns();i++) {
+      matched[i]=false;
+    }
+
+    // In this next loop, we need fix the code to ensure that when a
+    // non-pattern column is given, it sets matched to true
+    // appropriately.
+
+    // Copy the data over
+    for(size_t i=0;i<nargs;i++) {
+
+      if (is_pattern[i]==false) {
+	
+        // Return an error if the slice doesn't exist
+	size_t ix;
+        if (names[i]==args[i] && t3p->is_slice(args[i],ix)==false) {
+          cerr << "Slice '" << args[i] << "' is not in the table." << endl;
+          return exc_einval;
+        }
+
+        // Add the new slice to the new table
+        new_table3d->new_slice(names[i]);
+
+        // Fill slice with the new data
+        ubmatrix mat(nx,ny);
+        t3p->function_matrix(args[i],mat,false);
+        new_table3d->copy_to_slice(mat,names[i]);
+
+      } else {
+	
+        // Find the matching slices
+        for(size_t j=0;j<t3p->get_nslices();j++) {
+	  
+          if (matched[j]==false &&  
+              fnmatch(args[i].c_str(),
+                      t3p->get_slice_name(j).c_str(),0)==0) {
+	    
+            // If we've found a match, add it to the new table
+            matched[j]=true;
+	    
+            // Add the new slice to the new table
+            new_table3d->new_slice(t3p->get_slice_name(j));
+	    
+            // Fill it with the new data
+	    ubmatrix mat(nx,ny);
+	    t3p->function_matrix(args[i],mat,false);
+	    new_table3d->copy_to_slice(mat,t3p->get_slice_name(j));
+          }
+        }
+      }
+    }
+    
+    // Delete the old table3d and copy the new one over
+    delete t3p;
+    t3p=new_table3d;
+    
+  } else {
+
+    if (tabp==0) {
+      cerr << "No table to select from." << endl;
+      return exc_efailed;
+    }
+
+    // ----------------------------------------
+    // Create new table
+    // ----------------------------------------
   
-  new_table->set_nlines(tabp->get_nlines());
-
-  // ----------------------------------------
-  // Copy constants from old to new table
-  // ----------------------------------------
-
-  for(size_t i=0;i<tabp->get_nconsts();i++) {
-    string tnam;
-    double tval;
-    tabp->get_constant(i,tnam,tval);
-    new_table->add_constant(tnam,tval);
-  }
+    table_units<> *new_table;
+    new_table=new table_units<>(tabp->get_nlines());
   
-  // ----------------------------------------
-  // Add columns and data to new table
-  // ----------------------------------------
+    new_table->set_nlines(tabp->get_nlines());
 
-  bool *matched=new bool[tabp->get_ncolumns()];
-  for(size_t i=0;i<tabp->get_ncolumns();i++) {
-    matched[i]=false;
-  }
+    // ----------------------------------------
+    // Copy constants from old to new table
+    // ----------------------------------------
 
-  // In this next loop, we need fix the code to ensure that when a
-  // non-pattern column is given, it sets matched to true
-  // appropriately.
+    for(size_t i=0;i<tabp->get_nconsts();i++) {
+      string tnam;
+      double tval;
+      tabp->get_constant(i,tnam,tval);
+      new_table->add_constant(tnam,tval);
+    }
+  
+    // ----------------------------------------
+    // Add columns and data to new table
+    // ----------------------------------------
 
-  for(int i=0;i<nargs;i++) {
+    std::vector<bool> matched(tabp->get_ncolumns());
+    for(size_t i=0;i<tabp->get_ncolumns();i++) {
+      matched[i]=false;
+    }
 
-    if (is_pattern[i]==false) {
+    // In this next loop, we need fix the code to ensure that when a
+    // non-pattern column is given, it sets matched to true
+    // appropriately.
+
+    for(int i=0;i<nargs;i++) {
+
+      if (is_pattern[i]==false) {
       
-      // Return an error if the column doesn't exist
-      if (names[i]==args[i] && tabp->is_column(args[i])==false) {
-	cerr << "Column '" << args[i] << "' is not in the table." << endl;
-	return exc_einval;
-      }
+	// Return an error if the column doesn't exist
+	if (names[i]==args[i] && tabp->is_column(args[i])==false) {
+	  cerr << "Column '" << args[i] << "' is not in the table." << endl;
+	  return exc_einval;
+	}
 
-      // Add the new column to the new table
-      new_table->new_column(names[i]);
+	// Add the new column to the new table
+	new_table->new_column(names[i]);
 
-      // If necessary, set units
-      if (names[i]==args[i] && tabp->get_unit(args[i]).length()!=0) {
-	new_table->set_unit(names[i],tabp->get_unit(args[i]));
-      }
+	// If necessary, set units
+	if (names[i]==args[i] && tabp->get_unit(args[i]).length()!=0) {
+	  new_table->set_unit(names[i],tabp->get_unit(args[i]));
+	}
 
-      // Fill column with the new data
-      ubvector vec(tabp->get_nlines());
-      tabp->function_vector(args[i],vec,false);
-      new_table->copy_to_column(vec,names[i]);
+	// Fill column with the new data
+	ubvector vec(tabp->get_nlines());
+	tabp->function_vector(args[i],vec,false);
+	new_table->copy_to_column(vec,names[i]);
 
-    } else {
+      } else {
 
-      // Find the matching columns
-      for(size_t j=0;j<tabp->get_ncolumns();j++) {
+	// Find the matching columns
+	for(size_t j=0;j<tabp->get_ncolumns();j++) {
 
-	if (matched[j]==false &&  
-	    fnmatch(args[i].c_str(),
-		    tabp->get_column_name(j).c_str(),0)==0) {
+	  if (matched[j]==false &&  
+	      fnmatch(args[i].c_str(),
+		      tabp->get_column_name(j).c_str(),0)==0) {
 
-	  // If we've found a match, add it to the new table
-	  matched[j]=true;
+	    // If we've found a match, add it to the new table
+	    matched[j]=true;
 
-	  // Add the new column to the new table
-	  new_table->new_column(tabp->get_column_name(j));
+	    // Add the new column to the new table
+	    new_table->new_column(tabp->get_column_name(j));
 
-	  // If necessary, set units
-	  string tmp=tabp->get_column_name(j);
-	  if (tabp!=0 && tabp->get_unit(tmp).length()!=0) {
-	    new_table->set_unit(tmp,tabp->get_unit(tmp));
+	    // If necessary, set units
+	    string tmp=tabp->get_column_name(j);
+	    if (tabp!=0 && tabp->get_unit(tmp).length()!=0) {
+	      new_table->set_unit(tmp,tabp->get_unit(tmp));
+	    }
+
+	    // Fill it with the new data
+	    ubvector vec(tabp->get_nlines());
+	    tabp->function_vector(tabp->get_column_name(j),vec,false);
+	    new_table->copy_to_column(vec,tabp->get_column_name(j));
 	  }
-
-	  // Fill it with the new data
-	  ubvector vec(tabp->get_nlines());
-	  tabp->function_vector(tabp->get_column_name(j),vec,false);
-	  new_table->copy_to_column(vec,tabp->get_column_name(j));
 	}
       }
     }
+
+    // Replace the old table with the new one
+    delete tabp;
+    tabp=new_table;
+
   }
-
-  delete[] matched;
-
-  // Replace the old table with the new one
-  delete tabp;
-  tabp=new_table;
 
   // Call list command
   if (verbose>0) {
@@ -2954,6 +2976,7 @@ int acol_manager::comm_delete_rows(std::vector<std::string> &sv,
 
 int acol_manager::comm_select_rows(std::vector<std::string> &sv, 
 				   bool itive_com) {
+
   if (threed) {
     cout << "Not implemented for table3d." << endl;
     return 0;
@@ -3226,6 +3249,7 @@ int acol_manager::comm_insert(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_insert_full(std::vector<std::string> &sv, 
 				   bool itive_com) {
+
   if (threed) {
     cout << "Not implemented for table3d." << endl;
     return 0;
@@ -3279,6 +3303,7 @@ int acol_manager::comm_insert_full(std::vector<std::string> &sv,
 }
 
 int acol_manager::comm_interp(std::vector<std::string> &sv, bool itive_com) {
+
   if (threed) {
 
     // --------------------------------------------------------------
