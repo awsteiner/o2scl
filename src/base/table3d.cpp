@@ -686,28 +686,17 @@ double table3d::interp(double x, double y, std::string name) {
   
   size_t z=lookup_slice(name);
   
-  interp_vec<ubvector> itp;
-
-  std::cout << "interp: " << x << " " << y << std::endl;
+  interp_vec<ubvector,ubmatrix_column> itp;
   
   ubvector icol(numy);
-  std::cout << itype << std::endl;
   for(size_t i=0;i<numy;i++) {
     ubmatrix_column col(list[z],i);
     itp.set(numx,xval,col,itype);
-    std::cout << &col << std::endl;
-    for(size_t j=0;j<numx;j++) {
-      std::cout << "xval,col: " << xval[j] << " " << col[j] << std::endl;
-    }
     icol[i]=itp.eval(x);
-    std::cout << x << " " << icol[i] << std::endl;
-    exit(-1);
   }
       
   interp_vec<ubvector> siy(numy,yval,icol,itype);
   result=siy.eval(y);
-  std::cout << result << std::endl;
-  //exit(-1);
 
   return result;
 }
@@ -717,7 +706,7 @@ double table3d::deriv_x(double x, double y, std::string name) {
   
   size_t z=lookup_slice(name);
   
-  interp_vec<ubvector> itp;
+  interp_vec<ubvector,ubmatrix_column> itp;
 
   ubvector icol(numy);
   for(size_t i=0;i<numy;i++) {
@@ -737,7 +726,7 @@ double table3d::deriv_y(double x, double y, std::string name) {
   
   size_t z=lookup_slice(name);
   
-  interp_vec<ubvector> itp;
+  interp_vec<ubvector,ubmatrix_column> itp;
 
   ubvector icol(numy);
   for(size_t i=0;i<numy;i++) {
@@ -757,7 +746,7 @@ double table3d::integ_x(double x1, double x2, double y, std::string name) {
   
   size_t z=lookup_slice(name);
   
-  interp_vec<ubvector> itp;
+  interp_vec<ubvector,ubmatrix_row> itp;
 
   ubvector icol(numx);
   for(size_t i=0;i<numx;i++) {
@@ -777,7 +766,7 @@ double table3d::integ_y(double x, double y1, double y2, std::string name) {
   
   size_t z=lookup_slice(name);
   
-  interp_vec<ubvector> itp;
+  interp_vec<ubvector,ubmatrix_column> itp;
 
   ubvector icol(numy);
   for(size_t i=0;i<numy;i++) {
@@ -797,7 +786,7 @@ double table3d::deriv_xy(double x, double y, std::string name) {
   
   size_t z=lookup_slice(name);
   
-  interp_vec<ubvector> itp;
+  interp_vec<ubvector,ubmatrix_column> itp;
 
   ubvector icol(numy);
   for(size_t i=0;i<numy;i++) {

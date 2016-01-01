@@ -577,7 +577,7 @@ namespace o2scl {
     size_t get_interp_type() const;
     
     /** \brief Interpolate \c x and \c y in slice named \c name
-    */
+     */
     double interp(double x, double y, std::string name);
 
     /** \brief Interpolate the derivative of the data with respect to
