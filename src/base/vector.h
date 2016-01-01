@@ -1314,7 +1314,7 @@ namespace o2scl {
   /** \brief Compute the maximum of the lower-left part of a matrix
    */
   template<class mat_t, class data_t>
-    data_t matrix_max(size_t m, const size_t n, const mat_t &data) {
+    data_t matrix_max_value(size_t m, const size_t n, const mat_t &data) {
     
     if (n==0 || m==0) {
       O2SCL_ERR("Sent size=0 to matrix_max().",exc_efailed);
@@ -1332,13 +1332,34 @@ namespace o2scl {
 
   /** \brief Compute the maximum of a matrix
    */
-  template<class mat_t, class data_t> data_t matrix_max(const mat_t &data) {
+  template<class mat_t, class data_t> data_t
+    matrix_max_value(const mat_t &data) {
     size_t m=data.size1();
     size_t n=data.size2();
     if (n==0 || m==0) {
       O2SCL_ERR("Sent size=0 to matrix_max().",exc_efailed);
     }
     data_t max=data(0,0);
+    for(size_t i=0;i<n;i++) {
+      for(size_t j=0;j<m;j++) {
+	if (data(i,j)>max) {
+	  max=data(i,j);
+	}
+      }
+    }
+    return max;
+  }
+
+  /** \brief Compute the maximum of a matrix
+   */
+  template<class mat_t> double
+    matrix_max_value_double(const mat_t &data) {
+    size_t m=data.size1();
+    size_t n=data.size2();
+    if (n==0 || m==0) {
+      O2SCL_ERR("Sent size=0 to matrix_max().",exc_efailed);
+    }
+    double max=data(0,0);
     for(size_t i=0;i<n;i++) {
       for(size_t j=0;j<m;j++) {
 	if (data(i,j)>max) {
@@ -1377,12 +1398,55 @@ namespace o2scl {
   /** \brief Compute the minimum of a matrix
    */
   template<class mat_t, class data_t>
-    data_t matrix_min(size_t n, const size_t m, const mat_t &data) {
+    data_t matrix_min_value(size_t n, const size_t m, const mat_t &data) {
     
     if (n==0 || m==0) {
       O2SCL_ERR("Sent size=0 to matrix_min().",exc_efailed);
     }
     data_t min=data(0,0);
+    for(size_t i=0;i<n;i++) {
+      for(size_t j=0;j<m;j++) {
+	if (data(i,j)<min) {
+	  min=data(i,j);
+	}
+      }
+    }
+    return min;
+  }
+
+  /** \brief Compute the minimum of a matrix
+   */
+  template<class mat_t, class data_t>
+    data_t matrix_min_value(const mat_t &data) {
+    
+    size_t m=data.size1();
+    size_t n=data.size2();
+
+    if (n==0 || m==0) {
+      O2SCL_ERR("Sent size=0 to matrix_min().",exc_efailed);
+    }
+    data_t min=data(0,0);
+    for(size_t i=0;i<n;i++) {
+      for(size_t j=0;j<m;j++) {
+	if (data(i,j)<min) {
+	  min=data(i,j);
+	}
+      }
+    }
+    return min;
+  }
+
+  /** \brief Compute the minimum of a matrix
+   */
+  template<class mat_t> double matrix_min_value_double(const mat_t &data) {
+    
+    size_t m=data.size1();
+    size_t n=data.size2();
+
+    if (n==0 || m==0) {
+      O2SCL_ERR("Sent size=0 to matrix_min().",exc_efailed);
+    }
+    double min=data(0,0);
     for(size_t i=0;i<n;i++) {
       for(size_t j=0;j<m;j++) {
 	if (data(i,j)<min) {

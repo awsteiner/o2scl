@@ -230,11 +230,21 @@ namespace o2scl {
       this->px=&x;
       this->py=&y;
       this->sz=size;
+      std::cout << "ls: " << &x << " " << &y << std::endl;
+      for(size_t k=0;k<size;k++) {
+	std::cout << "ls: " << (*this->px)[k] << " "
+		  << (*this->py)[k] << std::endl;
+      }
       return;
     }
     
     /// Give the value of the function \f$ y(x=x_0) \f$ .
     virtual double eval(double x0) const {
+
+      for(size_t k=0;k<this->sz;k++) {
+	std::cout << "li: " << (*this->px)[k] << " "
+		  << (*this->py)[k] << std::endl;
+      }
 
       size_t index=this->svx.find(x0);
       
@@ -244,6 +254,13 @@ namespace o2scl {
       double y_hi=(*this->py)[index+1];
       double dx=x_hi-x_lo;
       
+      std::cout << "li: " << index << " " << x0 << std::endl;
+      for(size_t k=0;k<this->sz;k++) {
+	std::cout << "li: " << (*this->px)[k] << " "
+		  << (*this->py)[k] << std::endl;
+      }
+      std::cout << "li: " << x_lo << " " << x_hi << " " << y_lo << " "
+		<< y_hi << " " << this->py << std::endl;
       return y_lo+(x0-x_lo)/dx*(y_hi-y_lo);
     }
     
@@ -1784,7 +1801,11 @@ namespace o2scl {
 		 "interp_vec::set().").c_str(),exc_einval);
     }
     itype=interp_type;
-
+    
+    std::cout << "ivs: " << &x << " " << &y << std::endl;
+    for(size_t kk=0;kk<n;kk++) {
+      std::cout << "ivs: " << x[kk] << " " << y[kk] << std::endl;
+    }
     itp->set(n,x,y);
   }
 

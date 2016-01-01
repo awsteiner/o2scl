@@ -49,7 +49,10 @@ namespace o2scl_hdf {
 
   /** \brief Input a \ref o2scl::table object from a \ref hdf_file
 
-      \todo Removed default value for \c name for compiling at nersc
+      \comment
+      Note that a default value is not allowed here because this
+      is a template function
+      \endcomment
   */
   template<class vec_t> 
     void hdf_input(hdf_file &hf, o2scl::table<vec_t> &t, std::string name) {
@@ -167,7 +170,10 @@ namespace o2scl_hdf {
 
   /** \brief Input a \ref o2scl::table_units object from a \ref hdf_file
 
-      \todo Removed default value for \c name for compiling at nersc
+      \comment
+      Note that a default value is not allowed here because this
+      is a template function
+      \endcomment
   */
   template<class vec_t> 
     void hdf_input(hdf_file &hf, o2scl::table_units<vec_t> &t, 

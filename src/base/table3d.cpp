@@ -688,15 +688,26 @@ double table3d::interp(double x, double y, std::string name) {
   
   interp_vec<ubvector> itp;
 
+  std::cout << "interp: " << x << " " << y << std::endl;
+  
   ubvector icol(numy);
+  std::cout << itype << std::endl;
   for(size_t i=0;i<numy;i++) {
     ubmatrix_column col(list[z],i);
     itp.set(numx,xval,col,itype);
+    std::cout << &col << std::endl;
+    for(size_t j=0;j<numx;j++) {
+      std::cout << "xval,col: " << xval[j] << " " << col[j] << std::endl;
+    }
     icol[i]=itp.eval(x);
+    std::cout << x << " " << icol[i] << std::endl;
+    exit(-1);
   }
       
   interp_vec<ubvector> siy(numy,yval,icol,itype);
   result=siy.eval(y);
+  std::cout << result << std::endl;
+  //exit(-1);
 
   return result;
 }
