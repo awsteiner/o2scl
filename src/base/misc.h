@@ -153,7 +153,7 @@ namespace o2scl {
       test program \c misc_ts enumerates the characters between 0 and
       255 (inclusive) that count as whitespace for this purpose.
 
-      \todo Make consistent with split_string().
+      \future Make consistent with split_string().
   */
   size_t count_words(std::string str);
   

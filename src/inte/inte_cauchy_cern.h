@@ -110,41 +110,27 @@ namespace o2scl {
     }
 
     /** \brief Integrate function \c func from \c a to \c b
-	giving result \c res and error \c err
-
-	\todo Fix converge error issue here.
-    */
-    virtual int integ_err(func_t &func, double a, double b, 
+     */
+    virtual int integ_err(func_t &func, double a, double b,
 			  double &res, double &err) {
-      if (s==a || s==b) {
-	O2SCL_ERR("Singularity on boundary in inte_cauchy_cern::integ().",
-		      exc_einval);
-      }
-      res=integ(func,a,b);
-      err=0.0;
-      //if (this->err_nonconv) return this->last_conv;
-      return success;
-    }
-    
-    /** \brief Integrate function \c func from \c a to \c b
-    */
-    virtual double integ(func_t &func, double a, double b) {
       double y1, y2, y3, y4;
       size_t itx=0;
       
+      err=0.0;
+      
       if (s==a || s==b) {
-	O2SCL_ERR("Singularity on boundary in inte_cauchy_cern::integ().",
-		  exc_einval);
-	return 0.0;
+	O2SCL_CONV2_RET("Singularity on boundary in ",
+			"inte_cauchy_cern::integ_err().",
+			exc_einval,this->err_nonconv);
       } else if ((s<a && s<b) || (s>a && s>b)) {
-	return it->integ(func,a,b );
+	return it->integ_err(func,a,b,res,err);
       }
       double h, b0;
       if (2.0*s<a+b) {
-	h=it->integ(func,2.0*s-a,b );
+	h=it->integ(func,2.0*s-a,b);
 	b0=s-a;
       } else {
-	h=it->integ(func,a,2.0*s-b );
+	h=it->integ(func,a,2.0*s-b);
 	b0=b-s;
       }
       double c=0.005/b0;
@@ -190,9 +176,8 @@ namespace o2scl {
 	      loop2=false;
 	    } else {
 	      this->last_iter=itx;
-	      O2SCL_CONV2("Couldn't reach required accuracy in cern_",
-			  "cauchy::integ()",exc_efailed,this->err_nonconv);
-	      return 0.0;
+	      O2SCL_CONV2_RET("Couldn't reach required accuracy in cern_",
+			      "cauchy::integ()",exc_efailed,this->err_nonconv);
 	    }
 	  }
 	}
@@ -200,7 +185,8 @@ namespace o2scl {
 	if (bb==b0) loop1=false;
       }
       this->last_iter=itx;
-      return h;
+      res=h;
+      return o2scl::success;
     }
 
     /// Default integration object

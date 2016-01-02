@@ -376,8 +376,11 @@ namespace o2scl {
 
   /** \brief One-dimensional with solver with derivatives [abstract base]
 
-      \todo At the moment, the functions solve() and solve_bkt() 
+      \note At the moment, the functions solve() and solve_bkt() 
       are not implemented for derivative solvers.
+      
+      \future Implement the functions solve() and solve_bkt() 
+      for derivative solvers.
   */
   template<class func_t=funct11, class dfunc_t=func_t> 
     class root_de : public root<func_t> {

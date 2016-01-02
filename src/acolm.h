@@ -60,9 +60,6 @@ namespace o2scl_acol {
       but it might be ok.
       \endcomment
 
-      \todo Ensure add() copies constants and interpolation type,
-      and units. 
-
       \future Stack-like operations (push, pop, swap, stack-list, etc.)
 
       \future Use get_input() in comm_create?

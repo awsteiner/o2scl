@@ -24,7 +24,8 @@
 #define O2SCL_SEARCH_VEC_H
 
 /** \file search_vec.h
-    \brief File defining \ref o2scl::search_vec and \ref o2scl::search_vec_ext 
+    \brief File defining \ref o2scl::search_vec and 
+    \ref o2scl::search_vec_ext 
 */
 
 #include <iostream>
@@ -256,33 +257,54 @@ namespace o2scl {
 
   /** \brief An extended search_vec which is allowed to return 
       the last element
-
-      \todo The constructor is too restrictive, as it actually calls
-      the parent search_vec constructor and thus requires nn<2 instead
-      of nn<1. Fix this. 
   */
-  template<class vec_t> class search_vec_ext : 
-  public search_vec<vec_t> {
+  template<class vec_t> class search_vec_ext {
     
+#ifndef DOXYGEN_INTERNAL
+
+  protected:
+
+    /** \brief Storage for the most recent index
+	
+        \note This is marked mutable to ensure const-correctness is 
+	straightforward.
+    */
+    mutable size_t cache;
+
+    /// The vector to be searched
+    const vec_t *v;
+    
+    /// The vector size
+    size_t n;
+
+#endif
+
   public:
-    
+
     /** \brief Create a blank searching object
      */
-  search_vec_ext() : search_vec<vec_t>() {
+  search_vec_ext() : v(0), n(0) {
     }
-    
+
     /** \brief Create a searching object for vector \c x of size 
 	\c nn
-	
+
+	\comment
+	Note that this constructor does not call the parent
+	constructor because that requires nn<2 while this
+	class really only requires nn<1.
+	\endcomment
+
 	\future Ensure this is fully tested for vectors with
 	only one element.
     */
-  search_vec_ext(size_t nn, const vec_t &x) : search_vec<vec_t>(nn,x) {
+  search_vec_ext(size_t nn, const vec_t &x) : v(&x), n(nn) {
       if (nn<1) {
 	std::string str=((std::string)"Vector too small (n=")+
 	  o2scl::szttos(nn)+") in search_vec_ext::search_vec_ext().";
 	O2SCL_ERR(str.c_str(),exc_einval);
       }
+      cache=0;
     }
     
     /** \brief Search an increasing or decreasing vector for the interval

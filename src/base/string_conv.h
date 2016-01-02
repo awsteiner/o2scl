@@ -57,10 +57,6 @@ namespace o2scl {
    */
   std::string szttos(size_t x);
 
-  /** \brief Convert an integer to a string (exception-free version)
-   */
-  std::string itos_nothrow(int x) throw();
-
   /** \brief Convert a boolean value to a string 
 
       This returns \c "1" for true and \c "0" for false.
@@ -164,21 +160,27 @@ namespace o2scl {
   */
   double function_to_double(std::string s, bool err_on_fail=true);
 
-  /** \brief Split a string into words using whitespace for delimiters and 
-      (partially) respecting quotes
+  /** \brief Split a string into words using whitespace for delimiters
+      and (partially) respecting quotes
 
       This function separates a string into words, and handles words
-      that begin with a <tt>"</tt> by adding more words until
-      finding one which ends with another <tt>"</tt>.
-      
+      that begin with a <tt>"</tt> by adding more words until finding
+      one which ends with another <tt>"</tt>. Strings like
+      \code
+      this is a test
+      \endcode
+      get parsed as "this", "is", "a", "test" and strings like
+      \code
+      "this is" a test
+      \endcode
+      get parsed as "this is", "a", "test".
+
       This is used to reformat command descriptions and help text for
       the screen width in cli::comm_option_help(), to process lines
       read from a file in cli::comm_option_run(), and to process input
       in cli::run_interactive().
       
-      \todo 
-      - More documentation
-      - Add user-specified delimiters?
+      \future Add user-specified delimiters?
   */
   void split_string(std::string str, std::vector<std::string> &sv);
 

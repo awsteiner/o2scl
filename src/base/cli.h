@@ -208,10 +208,6 @@ namespace o2scl {
 
       \note In interactive mode, commands are limited to 300 characters.
 
-      \todo Long options cannot be one letter long, or else 
-      process_args() will fail, thus the class should throw
-      if a long option with only one letter is given.
-
       \future Warn in run_interactive() when extra parameters are given
       \future Include a "remove command" function
       \future A replace command function, there's already some code
@@ -511,6 +507,12 @@ namespace o2scl {
       (size_t list_size, vec_t &option_list) {
 
       for(size_t k=0;k<list_size;k++) {
+
+	if (option_list[k].lng.length()<2) {
+	  O2SCL_ERR2("Long options must have at least two characters in ",
+		     "cli::set_comm_option_vec().",o2scl::exc_efailed);
+	}
+	
 	bool found=false;
 	for(size_t i=0;found==false && i<clist.size();i++) {
 	  // If short or long options match
@@ -574,7 +576,7 @@ namespace o2scl {
     
     /** \brief Process command-line arguments from a string
 
-	\todo There's a typecast in this function to (char *)
+	\future There's a typecast in this function to (char *)
 	from (const char *) which needs reworking.
      */
     int process_args(std::string s, std::vector<cmd_line_arg> &ca, 

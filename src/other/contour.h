@@ -297,8 +297,8 @@ namespace o2scl {
     */
     template<class mat_t>
       void set_data(const uniform_grid<double> &ugx, 
-		   const uniform_grid<double> &ugy,
-		   const mat_t &udata) {
+		    const uniform_grid<double> &ugy,
+		    const mat_t &udata) {
       
       size_t sizex=ugx.get_npoints();
       size_t sizey=ugy.get_npoints();
@@ -396,19 +396,19 @@ namespace o2scl {
 
     /** \brief Return the edges for each contour level
 
-	The size of \c rt_edges and \c bm_edges will both be equal to
+	The size of \c y_edges and \c x_edges will both be equal to
 	the number of levels set by \ref set_levels().
      */
-    void get_edges(std::vector<edge_crossings> &rt_edges,
-		  std::vector<edge_crossings> &bm_edges) {
-      rt_edges=red;
-      bm_edges=bed;
+    void get_edges(std::vector<edge_crossings> &x_edges,
+		   std::vector<edge_crossings> &y_edges) {
+      y_edges=yed;
+      x_edges=xed;
       return;
     }
-
+    
     /// Print out the edges to cout
-    void print_edges(edge_crossings &right,
-		     edge_crossings &bottom);
+    void print_edges(edge_crossings &xedges,
+		     edge_crossings &yedges);
     
     //@}
     
@@ -440,8 +440,8 @@ namespace o2scl {
 
     /// \name Edge direction
     //@{
-    static const int dright=0;
-    static const int dbottom=1;
+    static const int dxdir=0;
+    static const int dydir=1;
     //@}
 
     /// \name Edge found or not found
@@ -465,39 +465,39 @@ namespace o2scl {
     //@}
 
     /// Right edge list
-    std::vector<edge_crossings> red;
+    std::vector<edge_crossings> yed;
     /// Bottom edge list
-    std::vector<edge_crossings> bed;
+    std::vector<edge_crossings> xed;
 
     /// Find next point starting from a point on a right edge
-    int find_next_point_right(int j, int k, int &jnext, int &knext, 
-			      int &dir_next, int nsw,
-			      edge_crossings &right,
-			      edge_crossings &bottom);
+    int find_next_point_y_direct(int j, int k, int &jnext, int &knext, 
+				 int &dir_next, int nsw,
+				 edge_crossings &xedges,
+				 edge_crossings &yedges);
     
     /// Find next point starting from a point on a bottom edge
-    int find_next_point_bottom(int j, int k, int &jnext, int &knext, 
-			       int &dir_next, int nsw,
-			       edge_crossings &right,
-			       edge_crossings &bottom);
-
+    int find_next_point_x_direct(int j, int k, int &jnext, int &knext, 
+				 int &dir_next, int nsw,
+				 edge_crossings &xedges,
+				 edge_crossings &yedges);
+    
     /// Find all of the intersections of the edges with the contour level
     void find_intersections(size_t ilev, double &level,
-			    edge_crossings &right, edge_crossings &bottom);
+			    edge_crossings &xedges, edge_crossings &yedges);
 
     /// Interpolate all right edge crossings 
-    void right_edges(double level, interp<ubvector> &si,
-		    edge_crossings &right);
+    void edges_in_y_direct(double level, interp<ubvector> &si,
+		    edge_crossings &yedges);
     
     /// Interpolate all bottom edge crossings
-    void bottom_edges(double level, interp<ubvector> &si,
-		     edge_crossings &bottom);
+    void edges_in_x_direct(double level, interp<ubvector> &si,
+			   edge_crossings &xedges);
 
     /// Create a contour line from a starting edge
     void process_line(int j, int k, int dir, std::vector<double> &x, 
 		      std::vector<double> &y, 
-		      bool first, edge_crossings &right,
-		      edge_crossings &bottom);
+		      bool first, edge_crossings &xedges,
+		      edge_crossings &yedges);
 
     /// Check to ensure the x- and y-arrays are monotonic
     void check_data();

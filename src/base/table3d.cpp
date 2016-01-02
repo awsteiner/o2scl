@@ -888,6 +888,26 @@ void table3d::summary(std::ostream *out, int ncol) const {
   return;
 }
 
+bool table3d::is_constant(std::string name) const {
+  if (constants.find(name)==constants.end()) {
+    return false;
+  }
+  return true;
+}
+
+
+void table3d::get_constant(size_t ix, std::string &name, 
+			   double &val) const {
+  if (ix<constants.size()) {
+    std::map<std::string,double>::const_iterator cit=constants.begin();
+    for(size_t i=0;i<ix;i++) cit++;
+    name=cit->first;
+    val=cit->second;
+    return;
+  }
+  O2SCL_ERR("Index too large in table3d::get_constant().",exc_eindex);
+}
+
 void table3d::add_constant(std::string name, double val) {
   if (constants.find(name)!=constants.end()) {
     constants.find(name)->second=val;
@@ -902,22 +922,27 @@ void table3d::remove_constant(std::string name) {
   return;
 }
 
-void table3d::set_constant(std::string name, double val) {
+int table3d::set_constant(std::string name, double val,
+			   bool err_on_notfound) {
   if (constants.find(name)!=constants.end()) {
     constants.find(name)->second=val;
-    return;
+    return 0;
   }
-  O2SCL_ERR("No constant with specified name in table3d::set_constant().",
-	    exc_einval);
+  if (err_on_notfound) {
+    std::string err=((std::string)"No constant with name '")+name+
+      "' in table3d::set_constant().";
+    O2SCL_ERR(err.c_str(),exc_enotfound);
+  }
+  return exc_enotfound;
 }
 
 double table3d::get_constant(std::string name) {
-  if (constants.find(name)!=constants.end()) {
-    return constants.find(name)->second;
+  if (constants.find(name)==constants.end()) {
+    std::string err=((std::string)"No constant with name '")+name+
+      "' in table3d::get_constant().";
+    O2SCL_ERR(err.c_str(),exc_einval);
   }
-  O2SCL_ERR("No constant with specified name in table3d::get_constant().",
-	    exc_einval);
-  return 0.0;
+  return constants.find(name)->second;
 }
 
 void table3d::extract_x(double x, table<> &t) {
@@ -985,18 +1010,6 @@ boost::numeric::ublas::matrix<double> &table3d::get_slice(size_t iz) {
 
 const vector<boost::numeric::ublas::matrix<double> > &table3d::get_data() {
   return list;
-}
-
-void table3d::get_constant(size_t ix, std::string &name, 
-			   double &val) const {
-  if (ix<constants.size()) {
-    std::map<std::string,double>::const_iterator cit=constants.begin();
-    for(size_t i=0;i<ix;i++) cit++;
-    name=cit->first;
-    val=cit->second;
-    return;
-  }
-  O2SCL_ERR("Index too large in table3d::get_constant().",exc_eindex);
 }
 
 void table3d::function_slice(string function, string scol) {

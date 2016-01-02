@@ -132,11 +132,11 @@ void contour::regrid_data(size_t xfact, size_t yfact, size_t interp_type) {
   return;
 }
 
-int contour::find_next_point_right(int j, int k, int &jnext, int &knext, 
-				   int &dir_next, int nsw,
-				   edge_crossings &right,
-				   edge_crossings &bottom) {
-
+int contour::find_next_point_y_direct(int j, int k, int &jnext, int &knext, 
+				      int &dir_next, int nsw,
+				      edge_crossings &xedges,
+				      edge_crossings &yedges) {
+  
   double closest=0.0, next;
   bool found=false;
 
@@ -144,30 +144,30 @@ int contour::find_next_point_right(int j, int k, int &jnext, int &knext,
 
     size_t top_count=0, bottom_count=0;
     if (j>=1) {
-      if (right.status(k,j-1)!=empty) {
+      if (yedges.status(k,j-1)!=empty) {
 	top_count++;
       }
-      if (bottom.status(k,j-1)!=empty) {
+      if (xedges.status(k,j-1)!=empty) {
 	top_count++;
       }
-      if (bottom.status(k+1,j-1)!=empty) {
+      if (xedges.status(k+1,j-1)!=empty) {
 	top_count++;
       }
     }
     if (j<nx-1) {
-      if (bottom.status(k,j)!=empty) {
+      if (xedges.status(k,j)!=empty) {
 	bottom_count++;
       }
-      if (bottom.status(k+1,j)!=empty) {
+      if (xedges.status(k+1,j)!=empty) {
 	bottom_count++;
       }
-      if (right.status(k,j+1)!=empty) {
+      if (yedges.status(k,j+1)!=empty) {
 	bottom_count++;
       }
     }
 
     if (j>0 && j<nx-1 && bottom_count+top_count%2==1) {
-      O2SCL_ERR("Malformed edge in find_next_point_right().",exc_efailed);
+      O2SCL_ERR("Malformed edge in find_next_point_y_direct().",exc_efailed);
     }
 
   }
@@ -175,29 +175,29 @@ int contour::find_next_point_right(int j, int k, int &jnext, int &knext,
   if (false) {
 
     cout.precision(4);
-    cout << "right: " << endl;
+    cout << "y edges: " << endl;
     cout << "j,k,nx,ny: " << j << " " << k << " " << nx << " " << ny << endl;
     if (j>=1) {
 
       // Top points and edge above
       cout << "(" << xfun[j-1] << "," << yfun[k] << ")" << " ";
-      if (right.status(k,j-1)!=empty) {
+      if (yedges.status(k,j-1)!=empty) {
 	cout << "[" << xfun[j-1] << "," 
-	     << right.values(k,j-1) << "]" << " ";
+	     << yedges.values(k,j-1) << "]" << " ";
       } else {
 	cout << "[" << xfun[j-1] << "," << "          " << "]" << " ";
       }
       cout << "(" << xfun[j-1] << "," << yfun[k+1] << ")" << endl;
       
       // Bottom edges above
-      if (bottom.status(k,j-1)!=empty) {
-	cout << "[" << bottom.values(k,j-1) << "," << yfun[k] << "]";
+      if (xedges.status(k,j-1)!=empty) {
+	cout << "[" << xedges.values(k,j-1) << "," << yfun[k] << "]";
       } else {
 	cout << "[" << "          " << "," << yfun[k] << "]";
       }
       cout << "                         ";
-      if (bottom.status(k+1,j-1)!=empty) {
-	cout << "[" << bottom.values(k+1,j-1) << "," << yfun[k+1] 
+      if (xedges.status(k+1,j-1)!=empty) {
+	cout << "[" << xedges.values(k+1,j-1) << "," << yfun[k+1] 
 	     << "]" << endl;
       } else {
 	cout << "[" << "          " << "," << yfun[k+1] << "]" << endl;
@@ -206,20 +206,20 @@ int contour::find_next_point_right(int j, int k, int &jnext, int &knext,
     
     // Right edge
     cout << "(" << xfun[j] << "," << yfun[k] << ")" << " ";
-    cout << "[" << xfun[j] << "," << right.values(k,j) << "]" << " ";
+    cout << "[" << xfun[j] << "," << yedges.values(k,j) << "]" << " ";
     cout << "(" << xfun[j] << "," << yfun[k+1] << ")" << endl;
     
     if (j<nx-1) {
       
       // Bottom edges below
-      if (bottom.status(k,j)!=empty) {
-	cout << "[" << bottom.values(k,j) << "," << yfun[k] << "]";
+      if (xedges.status(k,j)!=empty) {
+	cout << "[" << xedges.values(k,j) << "," << yfun[k] << "]";
       } else {
 	cout << "[" << "          " << "," << yfun[k] << "]";
       }
       cout << "                         ";
-      if (bottom.status(k+1,j)!=empty) {
-	cout << "[" << bottom.values(k+1,j) << "," 
+      if (xedges.status(k+1,j)!=empty) {
+	cout << "[" << xedges.values(k+1,j) << "," 
 	     << yfun[k+1] << "]" << endl;
       } else {
 	cout << "[" << "          " << "," << yfun[k+1] << "]" << endl;
@@ -227,9 +227,9 @@ int contour::find_next_point_right(int j, int k, int &jnext, int &knext,
       
       // Right points and edge below
       cout << "(" << xfun[j+1] << "," << yfun[k] << ")" << " ";
-      if (right.status(k,j+1)!=empty) {
+      if (yedges.status(k,j+1)!=empty) {
 	cout << "[" << xfun[j+1] << "," 
-	     << right.values(k,j+1) << "]" << " ";
+	     << yedges.values(k,j+1) << "]" << " ";
       } else {
 	cout << "[" << xfun[j+1] << "," << "          " << "]" << " ";
       }
@@ -242,71 +242,71 @@ int contour::find_next_point_right(int j, int k, int &jnext, int &knext,
   }
 
   // down and left
-  if (j<nx-1 && bottom.status(k,j)==nsw) {
-    closest=sqrt(pow(right.values(k,j)-yfun[k],2.0)+
-		 pow(xfun[j]-bottom.values(k,j),2.0));
+  if (j<nx-1 && xedges.status(k,j)==nsw) {
+    closest=sqrt(pow(yedges.values(k,j)-yfun[k],2.0)+
+		 pow(xfun[j]-xedges.values(k,j),2.0));
     found=true;
     jnext=j;
     knext=k;
-    dir_next=dbottom;
+    dir_next=dxdir;
   }
   // down
-  if (j<nx-1 && right.status(k,j+1)==nsw) {
-    next=sqrt(pow(right.values(k,j)-right.values(k,j+1),2.0)+
+  if (j<nx-1 && yedges.status(k,j+1)==nsw) {
+    next=sqrt(pow(yedges.values(k,j)-yedges.values(k,j+1),2.0)+
 	      pow(xfun[j]-xfun[j+1],2.0));
     if ((found==true && next<closest) || found==false) {
       found=true;
       jnext=j+1;
       knext=k;
-      dir_next=dright;
+      dir_next=dydir;
       closest=next;
     }
   }
   // down and right
-  if (j<nx-1 && bottom.status(k+1,j)==nsw) {
-    next=sqrt(pow(right.values(k,j)-yfun[k+1],2.0)+
-	      pow(xfun[j]-bottom.values(k+1,j),2.0));
+  if (j<nx-1 && xedges.status(k+1,j)==nsw) {
+    next=sqrt(pow(yedges.values(k,j)-yfun[k+1],2.0)+
+	      pow(xfun[j]-xedges.values(k+1,j),2.0));
     if ((found==true && next<closest) || found==false) {
       found=true;
       jnext=j;
       knext=k+1;
-      dir_next=dbottom;
+      dir_next=dxdir;
       closest=next;
     }
   }
   // up
-  if (j>0 && right.status(k,j-1)==nsw) { 
-    next=sqrt(pow(right.values(k,j)-right.values(k,j-1),2.0)+
+  if (j>0 && yedges.status(k,j-1)==nsw) { 
+    next=sqrt(pow(yedges.values(k,j)-yedges.values(k,j-1),2.0)+
 	      pow(xfun[j]-xfun[j-1],2.0));
     if ((found==true && next<closest) || found==false) {
       found=true;
       jnext=j-1;
       knext=k;
-      dir_next=dright;
+      dir_next=dydir;
       closest=next;
     }
   }
   // up and left
-  if (j>0 && bottom.status(k,j-1)==nsw) {
-    next=sqrt(pow(right.values(k,j)-yfun[k],2.0)+
-	      pow(xfun[j]-bottom.values(k,j-1),2.0));
+  if (j>0 && xedges.status(k,j-1)==nsw) {
+    next=sqrt(pow(yedges.values(k,j)-yfun[k],2.0)+
+	      pow(xfun[j]-xedges.values(k,j-1),2.0));
     if ((found==true && next<closest) || found==false) {
       found=true;
       jnext=j-1;
       knext=k;
-      dir_next=dbottom;
+      dir_next=dxdir;
       closest=next;
     }
   }
   // up and right
-  if (j>0 && bottom.status(k+1,j-1)==nsw) {
-    next=sqrt(pow(right.values(k,j)-yfun[k+1],2.0)+
-	      pow(xfun[j]-bottom.values(k+1,j-1),2.0));
+  if (j>0 && xedges.status(k+1,j-1)==nsw) {
+    next=sqrt(pow(yedges.values(k,j)-yfun[k+1],2.0)+
+	      pow(xfun[j]-xedges.values(k+1,j-1),2.0));
     if ((found==true && next<closest) || found==false) {
       found=true;
       jnext=j-1;
       knext=k+1;
-      dir_next=dbottom;
+      dir_next=dxdir;
       closest=next;
     }
   }
@@ -314,10 +314,10 @@ int contour::find_next_point_right(int j, int k, int &jnext, int &knext,
   return enot_found;
 }
 
-int contour::find_next_point_bottom(int j, int k, int &jnext, int &knext, 
-				    int &dir_next, int nsw,
-				    edge_crossings &right,
-				    edge_crossings &bottom) {
+int contour::find_next_point_x_direct(int j, int k, int &jnext, int &knext, 
+				      int &dir_next, int nsw,
+				      edge_crossings &xedges,
+				      edge_crossings &yedges) {
 
   double closest=0.0, next;
   bool found=false;
@@ -327,30 +327,30 @@ int contour::find_next_point_bottom(int j, int k, int &jnext, int &knext,
     size_t left_count=0, right_count=0;
 
     if (k>0) {
-      if (bottom.values(k-1,j)!=empty) {
+      if (xedges.values(k-1,j)!=empty) {
 	left_count++;
       }
-      if (right.status(k-1,j)!=empty) {
+      if (yedges.status(k-1,j)!=empty) {
 	left_count++;
       }
-      if (right.status(k-1,j+1)!=empty) {
+      if (yedges.status(k-1,j+1)!=empty) {
 	left_count++;
       }
     }
     if (k<ny-1) {
-      if (right.status(k,j)!=empty) {
+      if (yedges.status(k,j)!=empty) {
 	right_count++;
       }
-      if (right.status(k,j+1)!=empty) {
+      if (yedges.status(k,j+1)!=empty) {
 	right_count++;
       }
-      if (bottom.values(k+1,j)!=empty) {
+      if (xedges.values(k+1,j)!=empty) {
 	right_count++;
       }
     }
     
     if (k>0 && k<ny-1 && left_count+right_count%2==1) {
-      O2SCL_ERR("Malformed edge in find_next_point_bottom().",exc_efailed);
+      O2SCL_ERR("Malformed edge in find_next_point_x_direct().",exc_efailed);
     }
   }
 
@@ -363,8 +363,8 @@ int contour::find_next_point_bottom(int j, int k, int &jnext, int &knext,
 
       // Left points and edge 
       cout << "(" << xfun[j] << "," << yfun[k-1] << ")" << " ";
-      if (bottom.values(k-1,j)!=empty) {
-	cout << "[" << bottom.values(k-1,j) << "," 
+      if (xedges.values(k-1,j)!=empty) {
+	cout << "[" << xedges.values(k-1,j) << "," 
 	     << yfun[k-1] << "]" << " ";
       } else {
 	cout << "[" << "          " << "," << yfun[k-1] << "]" << " ";
@@ -372,14 +372,14 @@ int contour::find_next_point_bottom(int j, int k, int &jnext, int &knext,
       cout << "(" << xfun[j+1] << "," << yfun[k-1] << ")" << endl;
 
       // Left edges
-      if (right.status(k-1,j)!=empty) {
-	cout << "[" << xfun[j] << " " << right.values(k-1,j) << "]";
+      if (yedges.status(k-1,j)!=empty) {
+	cout << "[" << xfun[j] << " " << yedges.values(k-1,j) << "]";
       } else {
 	cout << "[" << xfun[j] << "," << "          " << "]";
       }
       cout << "                         ";
-      if (right.status(k-1,j+1)!=empty) {
-	cout << "[" << xfun[j+1] << "," << right.values(k-1,j+1) 
+      if (yedges.status(k-1,j+1)!=empty) {
+	cout << "[" << xfun[j+1] << "," << yedges.values(k-1,j+1) 
 	     << "]" << endl;
       } else {
 	cout << "[" << xfun[j+1] << "," << "          " << "]" << endl;
@@ -387,20 +387,20 @@ int contour::find_next_point_bottom(int j, int k, int &jnext, int &knext,
     }
     
     cout << "(" << xfun[j] << "," << yfun[k] << ")" << " ";
-    cout << "[" << bottom.values(k,j) << "," << yfun[k] << "]" << " ";
+    cout << "[" << xedges.values(k,j) << "," << yfun[k] << "]" << " ";
     cout << "(" << xfun[j+1] << "," << yfun[k] << ")" << endl;
     
     if (k<ny-1) {
 
       // Right edges
-      if (right.status(k,j)!=empty) {
-	cout << "[" << xfun[j] << " " << right.values(k,j) << "]";
+      if (yedges.status(k,j)!=empty) {
+	cout << "[" << xfun[j] << " " << yedges.values(k,j) << "]";
       } else {
 	cout << "[" << xfun[j] << "," << "          " << "]";
       }
       cout << "                         ";
-      if (right.status(k,j+1)!=empty) {
-	cout << "[" << xfun[j+1] << "," << right.values(k,j+1) 
+      if (yedges.status(k,j+1)!=empty) {
+	cout << "[" << xfun[j+1] << "," << yedges.values(k,j+1) 
 	     << "]" << endl;
       } else {
 	cout << "[" << xfun[j+1] << "," << "          " << "]" << endl;
@@ -408,8 +408,8 @@ int contour::find_next_point_bottom(int j, int k, int &jnext, int &knext,
 
       // Right points and edge
       cout << "(" << xfun[j] << "," << yfun[k+1] << ")" << " ";
-      if (bottom.values(k+1,j)!=empty) {
-	cout << "[" << bottom.values(k+1,j) << "," 
+      if (xedges.values(k+1,j)!=empty) {
+	cout << "[" << xedges.values(k+1,j) << "," 
 	     << yfun[k+1] << "]" << " ";
       } else {
 	cout << "[" << "          " << "," << yfun[k+1] << "]" << " ";
@@ -423,71 +423,71 @@ int contour::find_next_point_bottom(int j, int k, int &jnext, int &knext,
   }
 
   // right and up
-  if (k<ny-1 && right.status(k,j)==nsw) {
-    closest=sqrt(pow(bottom.values(k,j)-xfun[j],2.0)+
-		 pow(yfun[k]-right.values(k,j),2.0));
+  if (k<ny-1 && yedges.status(k,j)==nsw) {
+    closest=sqrt(pow(xedges.values(k,j)-xfun[j],2.0)+
+		 pow(yfun[k]-yedges.values(k,j),2.0));
     found=true;
     jnext=j;
     knext=k;
-    dir_next=dright;
+    dir_next=dydir;
   }
   // right and down
-  if (k<ny-1 && right.status(k,j+1)==nsw) {
-    next=sqrt(pow(bottom.values(k,j)-xfun[j+1],2.0)+
-	      pow(yfun[k]-right.values(k,j+1),2.0));
+  if (k<ny-1 && yedges.status(k,j+1)==nsw) {
+    next=sqrt(pow(xedges.values(k,j)-xfun[j+1],2.0)+
+	      pow(yfun[k]-yedges.values(k,j+1),2.0));
     if ((found==true && next<closest) || found==false) {
       found=true;
       jnext=j+1;
       knext=k;
-      dir_next=dright;
+      dir_next=dydir;
       closest=next;
     }
   }
   // right
-  if (k<ny-1 && bottom.status(k+1,j)==nsw) {
-    next=sqrt(pow(bottom.values(k,j)-bottom.values(k+1,j),2.0)+
+  if (k<ny-1 && xedges.status(k+1,j)==nsw) {
+    next=sqrt(pow(xedges.values(k,j)-xedges.values(k+1,j),2.0)+
 	      pow(yfun[k]-yfun[k+1],2.0));
     if ((found==true && next<closest) || found==false) {
       found=true;
       jnext=j;
       knext=k+1;
-      dir_next=dbottom;
+      dir_next=dxdir;
       closest=next;
     }
   }
   // left and up
-  if (k>0 && right.status(k-1,j)==nsw) {
-    next=sqrt(pow(bottom.values(k,j)-xfun[j],2.0)+
-	      pow(yfun[k]-right.values(k-1,j),2.0));
+  if (k>0 && yedges.status(k-1,j)==nsw) {
+    next=sqrt(pow(xedges.values(k,j)-xfun[j],2.0)+
+	      pow(yfun[k]-yedges.values(k-1,j),2.0));
     if ((found==true && next<closest) || found==false) {
       found=true;
       jnext=j;
       knext=k-1;
-      dir_next=dright;
+      dir_next=dydir;
       closest=next;
     }
   }
   // left and down
-  if (k>0 && right.status(k-1,j+1)==nsw) {
-    next=sqrt(pow(bottom.values(k,j)-xfun[j+1],2.0)+
-	      pow(yfun[k]-right.values(k-1,j+1),2.0));
+  if (k>0 && yedges.status(k-1,j+1)==nsw) {
+    next=sqrt(pow(xedges.values(k,j)-xfun[j+1],2.0)+
+	      pow(yfun[k]-yedges.values(k-1,j+1),2.0));
     if ((found==true && next<closest) || found==false) {
       found=true;
       jnext=j+1;
       knext=k-1;
-      dir_next=dright;
+      dir_next=dydir;
       closest=next;
     }
   }
   // left
-  if (k>0 && bottom.status(k-1,j)==nsw) {
-    next=sqrt(pow(bottom.values(k,j)-bottom.values(k-1,j),2.0)+
+  if (k>0 && xedges.status(k-1,j)==nsw) {
+    next=sqrt(pow(xedges.values(k,j)-xedges.values(k-1,j),2.0)+
 	      pow(yfun[k]-yfun[k-1],2.0));
     if ((found==true && next<closest) || found==false) {
       found=true;
       jnext=j;
       knext=k-1;
-      dir_next=dbottom;
+      dir_next=dxdir;
       closest=next;
     }
   }
@@ -497,13 +497,14 @@ int contour::find_next_point_bottom(int j, int k, int &jnext, int &knext,
 }
 
 void contour::find_intersections(size_t ilev, double &level,
-				edge_crossings &right, 
-				edge_crossings &bottom) {
-
+				 edge_crossings &xedges, 
+				 edge_crossings &yedges) {
+  
   // Adjust the specified contour level to ensure none of the data
   // points is exactly on a contour
   bool level_corner;
   do {
+    
     // Look for a match
     level_corner=false;
     for(int k=0;k<ny;k++) {
@@ -549,15 +550,16 @@ void contour::find_intersections(size_t ilev, double &level,
       }
       if (verbose>0) cout << level << endl;
     }
+
   } while (level_corner==true);
   
   // Find all level crossings
   for(int k=0;k<ny;k++) {
     for(int j=0;j<nx;j++) {
       if (j<nx-1) {
-	bottom.status(k,j)=empty;
+	xedges.status(k,j)=empty;
 	if ((data(j,k)-level)*(data(j+1,k)-level)<0.0) {
-	  bottom.status(k,j)=edge;
+	  xedges.status(k,j)=edge;
 	  if (verbose>1) {
 	    cout << "Vertical edge for level   " << level << " between (" 
 		 << k << "," << j << ") and (" << k << "," 
@@ -566,33 +568,32 @@ void contour::find_intersections(size_t ilev, double &level,
 	} 
       }
       if (k<ny-1) {
-	right.status(k,j)=empty;
+	yedges.status(k,j)=empty;
 	if ((data(j,k)-level)*(data(j,k+1)-level)<0.0) {
 	  if (verbose>1) {
 	    cout << "Horizontal edge for level " << level << " between (" 
 		 << k << "," << j << ") and (" << k+1 << "," 
 		 << j << ")" << endl;
 	  }
-	  right.status(k,j)=edge;
+	  yedges.status(k,j)=edge;
 	}
       }
     }
   }
 
-  //print_edges(right,bottom);
+  //print_edges(xedges,yedges);
 
   return;
 }
 
-void contour::right_edges(double level, 
-			 interp<ubvector> &si,
-			 edge_crossings &right) {
+void contour::edges_in_y_direct(double level, interp<ubvector> &si,
+				edge_crossings &yedges) {
 
   for(int k=0;k<ny-1;k++) {
     for(int j=0;j<nx;j++) {
       
       // For each iright edge
-      if (right.status(k,j)==edge) {
+      if (yedges.status(k,j)==edge) {
 		
 	// Find two points for linear interpolation
 	int ileft=k;
@@ -607,18 +608,18 @@ void contour::right_edges(double level,
 	yi[1]=yfun[ileft+1];
 	
 	// Do the interpolation and set the edge appropriately
-	right.values(k,j)=si.eval(level,nint,xi,yi);
+	yedges.values(k,j)=si.eval(level,nint,xi,yi);
 	
 	if (verbose>1) {
 	  cout << "Horizontal edge: (" << k << "," << j << ") -> ("
 	       << k+1 << "," << j << ")" << endl;
 	  cout << " coords: " << yfun[ileft] << " "
-	       << right.values(k,j) << " " << yfun[ileft+1] << endl;
+	       << yedges.values(k,j) << " " << yfun[ileft+1] << endl;
 	  cout << "   data: " << data(j,k) << " "
 	       << level << " " << data(j,k+1) << endl;
 	}
       } else {
-	right.values(k,j)=0.0;
+	yedges.values(k,j)=0.0;
       }
     }
   }
@@ -626,15 +627,14 @@ void contour::right_edges(double level,
   return;
 }
 
-void contour::bottom_edges(double level, 
-			  interp<ubvector> &si,
-			  edge_crossings &bottom) {
+void contour::edges_in_x_direct(double level, interp<ubvector> &si,
+				edge_crossings &xedges) {
 
   for(int k=0;k<ny;k++) {
     for(int j=0;j<nx-1;j++) {
       
       // For each bottom edge
-      if (bottom.status(k,j)==edge) {
+      if (xedges.status(k,j)==edge) {
 	
 	// Find two points for linear interpolation
 	int ileft=j;
@@ -649,18 +649,18 @@ void contour::bottom_edges(double level,
 	yi[1]=xfun[ileft+1];
 
 	// Do the interpolation and set the edge appropriately
-	bottom.values(k,j)=si.eval(level,nint,xi,yi);
+	xedges.values(k,j)=si.eval(level,nint,xi,yi);
 	
 	if (verbose>1) {
 	  cout << "Vertical edge:   (" << k << "," << j << ") -> ("
 	       << k+1 << "," << j << ")" << endl;
 	  cout << " coords: " << xfun[ileft] << " "
-	       << bottom.values(k,j) << " " << xfun[ileft+1] << endl;
+	       << xedges.values(k,j) << " " << xfun[ileft+1] << endl;
 	  cout << "   data: " << data(j,k) << " "
 	       << level << " " << data(j+1,k) << endl;
 	}
       } else {
-	bottom.values(k,j)=0.0;
+	xedges.values(k,j)=0.0;
       }
     }
   }
@@ -670,66 +670,66 @@ void contour::bottom_edges(double level,
 
 void contour::process_line(int j, int k, int dir, std::vector<double> &x, 
 			   std::vector<double> &y, bool first, 
-			   edge_crossings &right,
-			   edge_crossings &bottom) {
+			   edge_crossings &xedges, edge_crossings &yedges) {
+  
   std::vector<double> xt, yt;
 
   int fp, jnext, knext, dir_next;
   bool zero_points;
 
   // If we've found a new intersection
-  if (dir==dright) {
-    fp=find_next_point_right(j,k,jnext,knext,dir_next,edge,right,bottom);
+  if (dir==dydir) {
+    fp=find_next_point_y_direct(j,k,jnext,knext,dir_next,edge,xedges,yedges);
   } else {
-    fp=find_next_point_bottom(j,k,jnext,knext,dir_next,edge,right,bottom);
+    fp=find_next_point_x_direct(j,k,jnext,knext,dir_next,edge,xedges,yedges);
   }
   if (fp==enot_found) zero_points=true;
   else zero_points=false;
   while (fp==efound) {
 
-    //print_edges(right,bottom);
+    //print_edges(xedges,yedges);
 
     j=jnext;
     k=knext;
     dir=dir_next;
-    if (dir==dright) {
+    if (dir==dydir) {
       if (verbose>0) {
-	cout << "(" << xfun[j] << ", " << right.values(k,j) << ")" << endl;
+	cout << "(" << xfun[j] << ", " << yedges.values(k,j) << ")" << endl;
       }
 
       if (first) {
 	x.push_back(xfun[j]);
-	y.push_back(right.values(k,j));
+	y.push_back(yedges.values(k,j));
       } else {
 	xt.push_back(xfun[j]);
-	yt.push_back(right.values(k,j));
+	yt.push_back(yedges.values(k,j));
       }
 
-      right.status(k,j)=contourp;
-      fp=find_next_point_right(j,k,jnext,knext,dir_next,edge,right,bottom);
+      yedges.status(k,j)=contourp;
+      fp=find_next_point_y_direct(j,k,jnext,knext,dir_next,edge,xedges,yedges);
     } else {
       if (verbose>0) {
-	cout << "(" << bottom.values(k,j) << ", " << yfun[k] << ")" << endl;
+	cout << "(" << xedges.values(k,j) << ", " << yfun[k] << ")" << endl;
       }
 
       if (first) {
-	x.push_back(bottom.values(k,j));
+	x.push_back(xedges.values(k,j));
 	y.push_back(yfun[k]);
       } else {
-	xt.push_back(bottom.values(k,j));
+	xt.push_back(xedges.values(k,j));
 	yt.push_back(yfun[k]);
       }
 
-      bottom.status(k,j)=contourp;
-      fp=find_next_point_bottom(j,k,jnext,knext,dir_next,edge,right,bottom);
+      xedges.status(k,j)=contourp;
+      fp=find_next_point_x_direct(j,k,jnext,knext,dir_next,edge,xedges,yedges);
     }
   }
   
   // Set the last point to an endpoint
-  if (dir==dright) {
-    right.status(k,j)=endpoint;
+  if (dir==dydir) {
+    yedges.status(k,j)=endpoint;
   } else {
-    bottom.status(k,j)=endpoint;
+    xedges.status(k,j)=endpoint;
   }
   
   if (first==false) {
@@ -754,12 +754,12 @@ void contour::process_line(int j, int k, int dir, std::vector<double> &x,
   if (first==false && x.size()>0) {
 
     // Look for an endpoint next to the last endpoint
-    if (dir==dright) {
-      fp=find_next_point_right(j,k,jnext,knext,dir_next,endpoint,
-			       right,bottom);
+    if (dir==dydir) {
+      fp=find_next_point_y_direct(j,k,jnext,knext,dir_next,endpoint,
+				  xedges,yedges);
     } else {
-      fp=find_next_point_bottom(j,k,jnext,knext,dir_next,endpoint,
-				right,bottom);
+      fp=find_next_point_x_direct(j,k,jnext,knext,dir_next,endpoint,
+				  xedges,yedges);
     }
     
     // If we found two adjacent end-points, close the contour. We 
@@ -769,15 +769,15 @@ void contour::process_line(int j, int k, int dir, std::vector<double> &x,
 
       // We found a connection, so change the edge status
       // of the two endpoints to internal contour points
-      if (dir==dright) {
-	right.status(k,j)=contourp;
+      if (dir==dydir) {
+	yedges.status(k,j)=contourp;
       } else {
-	bottom.status(k,j)=contourp;
+	xedges.status(k,j)=contourp;
       }
-      if (dir_next==dright) {
-	right.status(knext,jnext)=contourp;
+      if (dir_next==dydir) {
+	yedges.status(knext,jnext)=contourp;
       } else {
-	bottom.status(knext,jnext)=contourp;
+	xedges.status(knext,jnext)=contourp;
       }
       
       // Add the first point to the end to close the contour
@@ -811,8 +811,8 @@ void contour::calc_contours(std::vector<contour_line> &clines) {
   }
 
   // Clear edge storage
-  red.clear();
-  bed.clear();
+  yed.clear();
+  xed.clear();
 
   // The interpolation object (only works with linear interpolation
   // at the moment)
@@ -822,11 +822,11 @@ void contour::calc_contours(std::vector<contour_line> &clines) {
   for(int i=0;i<nlev;i++) {
 
     // Make space for the edges
-    edge_crossings right, bottom;
-    right.status.resize(ny-1,nx);
-    right.values.resize(ny-1,nx);
-    bottom.status.resize(ny,nx-1);
-    bottom.values.resize(ny,nx-1);
+    edge_crossings xedges, yedges;
+    yedges.status.resize(ny-1,nx);
+    yedges.values.resize(ny-1,nx);
+    xedges.status.resize(ny,nx-1);
+    xedges.values.resize(ny,nx-1);
 
     if (verbose>1) {
       std::cout << "\nLooking for edges for level: " 
@@ -834,7 +834,7 @@ void contour::calc_contours(std::vector<contour_line> &clines) {
     }
 
     // Examine the each of the rows for an intersection
-    find_intersections(i,levels[i],right,bottom);
+    find_intersections(i,levels[i],xedges,yedges);
 	
     if (verbose>1) {
       std::cout << "\nInterpolating edge intersections for level: " 
@@ -842,10 +842,10 @@ void contour::calc_contours(std::vector<contour_line> &clines) {
     }
 
     // Process the right edges
-    right_edges(levels[i],oi,right);
+    edges_in_y_direct(levels[i],oi,yedges);
     
     // Process the bottom edges
-    bottom_edges(levels[i],oi,bottom);
+    edges_in_x_direct(levels[i],oi,xedges);
 
     if (verbose>1) {
       std::cout << "\nPiecing together contour lines for level: " 
@@ -863,44 +863,44 @@ void contour::calc_contours(std::vector<contour_line> &clines) {
 	  c.level=levels[i];
 	      
 	  // A line beginning with a right edge
-	  if (k<ny-1 && right.status(k,j)==edge) {
+	  if (k<ny-1 && yedges.status(k,j)==edge) {
 	    if (verbose>0) {
 	      std::cout << "Starting contour line for level "
 			<< levels[i] << ":" << std::endl;
-	      std::cout << "(" << xfun[j] << ", " << right.values(k,j) 
+	      std::cout << "(" << xfun[j] << ", " << yedges.values(k,j) 
 			<< ")" << std::endl;
 	    }
 	    c.x.push_back(xfun[j]);
-	    c.y.push_back(right.values(k,j));
-	    right.status(k,j)++;
+	    c.y.push_back(yedges.values(k,j));
+	    yedges.status(k,j)++;
 	    
 	    // Go through both sides
-	    process_line(j,k,dright,c.x,c.y,true,right,bottom);
+	    process_line(j,k,dydir,c.x,c.y,true,xedges,yedges);
 	    if (verbose>0) {
 	      std::cout << "Computing other side of line." << std::endl;
 	    }
-	    process_line(j,k,dright,c.x,c.y,false,right,bottom);
+	    process_line(j,k,dydir,c.x,c.y,false,xedges,yedges);
 	    foundline=true;
 	  }
 
 	  // A line beginning with a bottom edge
-	  if (j<nx-1 && foundline==false && bottom.status(k,j)==edge) {
+	  if (j<nx-1 && foundline==false && xedges.status(k,j)==edge) {
 	    if (verbose>0) {
 	      std::cout << "Starting contour line for level "
 			<< levels[i] << ":" << std::endl;
-	      std::cout << "(" << bottom.values(k,j) << ", " << yfun[k] 
+	      std::cout << "(" << xedges.values(k,j) << ", " << yfun[k] 
 			<< ")" << std::endl;
 	    }
-	    c.x.push_back(bottom.values(k,j));
+	    c.x.push_back(xedges.values(k,j));
 	    c.y.push_back(yfun[k]);
-	    bottom.status(k,j)++;
+	    xedges.status(k,j)++;
 	    
 	    // Go through both sides
-	    process_line(j,k,dbottom,c.x,c.y,true,right,bottom);
+	    process_line(j,k,dxdir,c.x,c.y,true,xedges,yedges);
 	    if (verbose>0) {
 	      std::cout << "Computing other side of line." << std::endl;
 	    }
-	    process_line(j,k,dbottom,c.x,c.y,false,right,bottom);
+	    process_line(j,k,dxdir,c.x,c.y,false,xedges,yedges);
 	    foundline=true;
 	  }
 
@@ -914,8 +914,8 @@ void contour::calc_contours(std::vector<contour_line> &clines) {
     }
 
     // Store edge information from this level
-    red.push_back(right);
-    bed.push_back(bottom);
+    yed.push_back(yedges);
+    xed.push_back(xedges);
 
     if (verbose>0) {
       std::cout << "Processing next level." << std::endl;
@@ -925,27 +925,27 @@ void contour::calc_contours(std::vector<contour_line> &clines) {
   return;
 }
 
-void contour::print_edges(edge_crossings &right,
-			  edge_crossings &bottom) {
+void contour::print_edges(edge_crossings &xedges,
+			  edge_crossings &yedges) {
   
-  size_t ny2=bottom.status.size1();
-  size_t nx2=right.status.size2();
-  for(size_t j=0;j<nx2;j++) {
-    for(size_t i=0;i<ny2;i++) {
-      if (i<ny2-1) {
+  size_t nx2=xedges.status.size1();
+  size_t ny2=yedges.status.size2();
+  for(size_t j=0;j<ny2;j++) {
+    for(size_t i=0;i<nx2;i++) {
+      if (i<nx2-1) {
 	cout << " ";
-	if (right.status(i,j)==empty) cout << "_";
-	else if (right.status(i,j)==edge) cout << "+";
-	else if (right.status(i,j)==contourp) cout << "*";
+	if (yedges.status(i,j)==empty) cout << "_";
+	else if (yedges.status(i,j)==edge) cout << "+";
+	else if (yedges.status(i,j)==contourp) cout << "*";
 	else cout << "E";
       }
     }
     cout << endl;
-    for(size_t i=0;i<ny2;i++) {
-      if (j<nx2-1) {
-	if (bottom.status(i,j)==empty) cout << "|";
-	else if (bottom.status(i,j)==edge) cout << "+";
-	else if (bottom.status(i,j)==contourp) cout << "*";
+    for(size_t i=0;i<nx2;i++) {
+      if (j<ny2-1) {
+	if (xedges.status(i,j)==empty) cout << "|";
+	else if (xedges.status(i,j)==edge) cout << "+";
+	else if (xedges.status(i,j)==contourp) cout << "*";
 	else cout << "E";
 	cout << " ";
       }

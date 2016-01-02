@@ -718,14 +718,29 @@ namespace o2scl {
     // --------------------------------------------------------
     /// \name Manipulating constants
     //@{
-    /// Add a constant
+    /** \brief Add a constant, or if the constant already exists, change 
+	its value
+    */
     virtual void add_constant(std::string name, double val);
 
     /// Remove a constant
     virtual void remove_constant(std::string name);
     
-    /// Add a constant
-    virtual void set_constant(std::string name, double val);
+    /** \brief Set a constant equal to a value, but don't add it if
+	not already present
+	
+	If \c err_on_notfound is <tt>true</tt> (the default), then
+	this function throws an exception if a constant with
+	name \c name is not found. If \c err_on_notfound is
+	<tt>false</tt>, then if a constant with name \c name
+	is not found this function just silently returns
+	\ref o2scl::exc_enotfound.
+    */
+    virtual int set_constant(std::string name, double val,
+			     bool err_on_notfound=true);
+
+    /// Test if \c name is a constant
+    virtual bool is_constant(std::string name) const;
 
     /// Get a constant
     virtual double get_constant(std::string name);

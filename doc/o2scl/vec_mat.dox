@@ -229,7 +229,9 @@
     matrix and tensor I/O. It is the efficiency of this I/O which
     motivated the default choice of <tt>std::vector</tt> objects as
     the default vector type in \ref o2scl::table and \ref
-    o2scl::tensor . 
+    o2scl::tensor . Also because of this issue, \o2 does not
+    currently provide HDF I/O functions for \ref o2scl::tensor
+    classes unless it is built upon <tt>std::vector</tt>.
 
 
 */

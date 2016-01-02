@@ -84,7 +84,11 @@ namespace o2scl {
    */
   virtual double integ(func_t &func, double a, double b) {
     double res;
-    integ_err(func,a,b,res,this->interror);
+    int ret=integ_err(func,a,b,res,this->interror);
+    if (ret!=0) {
+      O2SCL_ERR2("Integration failed in inte::integ(), ",
+		 "but cannot return int.",o2scl::exc_efailed);
+    }
     return res;
   }
 

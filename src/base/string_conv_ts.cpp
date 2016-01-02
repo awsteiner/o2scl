@@ -28,47 +28,52 @@ using namespace std;
 using namespace o2scl;
 
 int main(void) {
-  double x=sqrt(2.0);
-  int i=3;
-  string s1="4", s2="1.7320508";
+
+  cout.setf(ios::scientific);
+
   test_mgr t;
   t.set_output_level(2);
-  
-  cout << "These are strings: ";
-  cout << itos(i) << " " << dtos(x) << endl;
-  cout << "These are numbers: ";
-  cout << o2scl::stoi(s1) << " " << o2scl::stod(s2) << endl;
-  cout << endl;
 
-  cout << "Testing incorrect inputs: " << endl;
-  cout << "stoi(\"5.6\"): \t\t" << o2scl::stoi("5.6") << endl;
-  cout << "stoi(\"987.6\"): \t\t" << o2scl::stoi("987.6") << endl;
-  cout << "stoi(\"234.43e1zxepq\"): \t" << o2scl::stoi("234.43e1zxepq") << endl;
-  cout << "stod(\"234.43e1zxepq\"): \t" << o2scl::stod("234.43e1zxepq") << endl;
-
-  cout << "This demonstrates has_minus_sign(): " << endl;
-  cout.setf(ios::scientific);
   double z1=0.0;
   double z2=-0.0;
-  cout << z1 << " " << z2 << endl;
-  cout << (z1>=0.0) << " " << (z2>=0.0) << endl;
-  cout << has_minus_sign(&z1) << " " << has_minus_sign(&z2) << endl;
-  
-  cout << "Here." << endl;
-  cout << stob(" true") << endl;
-  cout << stob(" false") << endl;
-  cout << stob("True") << endl;
-  cout << stob("1") << endl;
-  cout << stob(" 1") << endl;
-  cout << stob(" 0") << endl;
-  cout << stob("-1") << endl;
+  t.test_gen(has_minus_sign(&z1)==false,"hms1");
+  t.test_gen(has_minus_sign(&z2)==true,"hms1");
 
-  cout << size_of_exponent(1.0e-111) << " " << 1.0e-111 << endl;
-  cout << size_of_exponent(1.0e-11) << " " << 1.0e-11 << endl;
-  cout << size_of_exponent(1.0e-1) << " " << 1.0e-1 << endl;
-  cout << size_of_exponent(1.0e1) << " " << 1.0e1 << endl;
-  cout << size_of_exponent(1.0e11) << " " << 1.0e11 << endl;
-  cout << size_of_exponent(1.0e111) << " " << 1.0e111 << endl;
+  t.test_gen(stob(" true")==1,"stob1");
+  t.test_gen(stob(" false")==0,"stob2");
+  t.test_gen(stob("True")==1,"stob3");
+  t.test_gen(stob("1")==1,"stob4");
+  t.test_gen(stob(" 1")==1,"stob5");
+  t.test_gen(stob(" 0")==0,"stob6");
+  t.test_gen(stob("-1")==0,"stob1");
+
+  t.test_gen(size_of_exponent(1.0e-111)==3,"soe1");
+  t.test_gen(size_of_exponent(1.0e-11)==2,"soe2");
+  t.test_gen(size_of_exponent(1.0e-1)==2,"soe3");
+  t.test_gen(size_of_exponent(1.0e1)==2,"soe4");
+  t.test_gen(size_of_exponent(1.0e11)==2,"soe5");
+  t.test_gen(size_of_exponent(1.0e111)==3,"soe6");
+
+  vector<string> ss;
+  split_string("this is a test",ss);
+  t.test_gen(ss.size()==4,"ss1");
+  t.test_gen(ss[3]==((string)"test"),"ss2");
+  ss.clear();
+
+  split_string("\"this is\" a test",ss);
+  t.test_gen(ss.size()==3,"ss3");
+  t.test_gen(ss[0]==((string)"this is"),"ss4");
+  ss.clear();
+
+  string longstr=((string)"This is a test of a really long string ")+
+    "which occupies several lines in a normal 80 column terminal "+
+    "window so that I can test where the rewrap() function will "+
+    "split the lines.";
+  rewrap(longstr,ss);
+  t.test_gen(ss.size()==3,"ss5");
+  t.test_gen(ss[0]==((string)"This is a test of a really long ")+
+	     "string which occupies several lines in a","ss6");
+  ss.clear();
 
   t.report();
   return 0;

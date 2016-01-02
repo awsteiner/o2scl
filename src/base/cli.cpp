@@ -339,7 +339,7 @@ int cli::process_args(string s, vector<cmd_line_arg> &ca,
   
   // Process arguments from the (argc,argv) format
   int ret=process_args(argc,argv,ca,debug);
-  
+
   // Delete allocated memory
   delete[] argv;
 
@@ -1336,6 +1336,10 @@ int cli::run_interactive() {
 }
 
 int cli::set_comm_option(comm_option_s &ic) {
+  if (ic.lng.length()<2) {
+    O2SCL_ERR2("Long options must have at least two characters in ",
+	       "cli::set_comm_option().",exc_efailed);
+  }
   bool found=false;
   for(size_t i=0;found==false && i<clist.size();i++) {
     if ((ic.shrt!=0 && clist[i].shrt==ic.shrt) || 

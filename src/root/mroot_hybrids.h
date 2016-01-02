@@ -700,11 +700,6 @@ namespace o2scl {
 	
       At the end of the iteration, the current value of the solution 
       is stored in \ref x.
-
-      \todo This now just returns zero during convergence errors,
-      because it caused problems with tov_eos_ts, but this should be
-      fixed so that it returns a non-zero value, and functions which
-      call iterate() need to handle the return value appropriately. 
   */
   int iterate() {
 	

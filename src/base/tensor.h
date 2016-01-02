@@ -67,8 +67,16 @@ namespace o2scl {
       For a slice with two dimensions not fixed, see \ref matrix_slice().
       \endcomment
 
+      The type <tt>vec_t</tt> can be any vector type with
+      <tt>operator[]</tt>, <tt>size()</tt> and <tt>resize()</tt>
+      methods. The type <tt>vec_size_t</tt> can be any integer-like
+      vector type with <tt>operator[]</tt>, <tt>size()</tt> and
+      <tt>resize()</tt> methods.
+
       For I/O with tensors, see \ref o2scl_hdf::hdf_file::setd_ten()
-      and \ref o2scl_hdf::hdf_file::getd_ten() .
+      and \ref o2scl_hdf::hdf_file::getd_ten() . See also
+      the discussion in the sections \ref tensor_subsect and 
+      \ref vec_io_cont_subsect of the user's guide.
 
       The storage pattern is a generalization of row-major order.
       In the case of a 4-rank tensor, the location of a generic 
@@ -83,12 +91,7 @@ namespace o2scl {
       the distance between two elements \f$(i_0,i_1,i_2,i_3)\f$ and
       \f$ (i_0,i_1,i_2,i_3+1) \f$ is just unity.
 
-      \todo Specify somewhere what kind of vector types can be used
-      for the template parameter. ublas objects work, but what about
-      armadillo and Eigen vectors? The main reason the default type is
-      std::vector is because of HDF5 I/O.
-
-      \todo The \ref o2scl::tensor::vector_slice() function should
+      \note The \ref o2scl::tensor::vector_slice() function should
       clearly work for uBlas vectors, and seems to work with
       std::vector objects also, but latter use has not been fully
       tested.

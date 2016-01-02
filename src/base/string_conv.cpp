@@ -43,43 +43,11 @@ bool o2scl::has_minus_sign(double *x) {
 }
 
 string o2scl::itos(int x) {
-  string ret;
-  ostringstream strout;
-  strout.setf(ios::scientific);
-  
-  if (strout << x) {
-    return strout.str();
-  }
-  
-  O2SCL_ERR("Conversion from integer to string failed in itos().",
-	    exc_einval);
-  return "";
+  return std::to_string(x);
 }
 
 string o2scl::szttos(size_t x) {
-  string ret;
-  ostringstream strout;
-  strout.setf(ios::scientific);
-  
-  if (strout << x) {
-    return strout.str();
-  }
-  
-  O2SCL_ERR("Conversion from size_t to string failed in itos().",
-	    exc_einval);
-  return "";
-}
-
-string o2scl::itos_nothrow(int x) throw() {
-  string ret;
-  ostringstream strout;
-  strout.setf(ios::scientific);
-  
-  if (strout << x) {
-    return strout.str();
-  }
-  
-  return "";
+  return std::to_string(x);
 }
 
 string o2scl::ptos(void *p) {
@@ -228,9 +196,9 @@ void o2scl::split_string(string str, vector<string> &sv) {
   
   string tmp, tmp2;
   
-  istringstream *is=new istringstream(str.c_str());
+  istringstream is(str.c_str());
 
-  while ((*is) >> tmp) {
+  while (is >> tmp) {
     
     // If it begins with a quote...
     if (tmp[0]=='\"') {
@@ -238,7 +206,7 @@ void o2scl::split_string(string str, vector<string> &sv) {
       // If it also ends with a quote, just remove them both
       if (tmp[tmp.length()-1]=='\"') {
 
-	// Remove the initial quote
+	// Remove the initial and final quotes
 	tmp2=tmp.substr(1,tmp.size()-2);
 
 	// Copy the reformatted string to the original 'tmp' variable
@@ -256,7 +224,7 @@ void o2scl::split_string(string str, vector<string> &sv) {
 	  
 	  // If there are no more words, or if the next word ends in a
 	  // quote, then we're done
-	  if (!((*is) >> tmp)) {
+	  if (!(is >> tmp)) {
 	    done=true;
 	  } else if (tmp[tmp.size()-1]=='\"') {
 	    tmp=tmp.substr(0,tmp.size()-1);
@@ -276,8 +244,6 @@ void o2scl::split_string(string str, vector<string> &sv) {
     sv.push_back(tmp);
   }
   
-  delete is;
-
   return;
 }
 

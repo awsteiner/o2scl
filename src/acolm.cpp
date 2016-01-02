@@ -870,6 +870,30 @@ int acol_manager::comm_add(std::vector<std::string> &sv, bool itive_com) {
     cerr << "Tables not compatible. Command 'add' canceled." << endl;
     return exc_efailed;
   }
+
+  // Copy constants over
+  for(size_t i=0;i<t1.get_nconsts();i++) {
+    string tnam;
+    double tval;
+    t1.get_constant(i,tnam,tval);
+    if (verbose>2) {
+      cout << "Adding constant " << tnam << " = " << tval << endl;
+    }
+    tsum.add_constant(tnam,tval);
+  }
+  for(size_t i=0;i<t2.get_nconsts();i++) {
+    string tnam;
+    double tval;
+    t2.get_constant(i,tnam,tval);
+    if (tsum.is_constant(tnam)==false) {
+      if (verbose>2) {
+	cout << "Adding constant " << tnam << " = " << tval << endl;
+      }
+      tsum.add_constant(tnam,tval);
+    }
+  }
+
+  tsum.set_interp_type(t1.get_interp_type());
   
   size_t nx=t1.get_nx();
   size_t ny=t1.get_ny();

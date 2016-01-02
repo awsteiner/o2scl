@@ -151,7 +151,17 @@ namespace o2scl {
       Because of the structure, this class is not suitable for the
       matrix manipulation.
 
-      <B> Thread-safety </b> \n
+      <b>Vector types</b> \n
+
+      The type <tt>vec_t</tt> can be any vector type with
+      <tt>operator[]</tt>, <tt>size()</tt> and <tt>resize()</tt>
+      methods. HDF5 I/O with vector types other than
+      <tt>std::vector<double> </tt> requires a copy. See the
+      the discussion in the sections \ref tensor_subsect
+      and \ref vec_io_cont_subsect of the user's guide for
+      more details.
+
+      <b>Thread-safety</b> \n
 
       Generally, the member functions are only thread-safe 
       if they are <tt>const</tt> .  
@@ -165,12 +175,6 @@ namespace o2scl {
 
       There is an example for the usage of this class given
       in <tt>examples/ex_table.cpp</tt>.
-
-      \todo Specify somewhere what kind of vector types can
-      be used for the template parameter. ublas objects work,
-      but what about armadillo and Eigen vectors? The main
-      reason the default type is std::vector is because of
-      HDF5 I/O. 
 
       \future 
       - Create a delete_columns(std::string) function
@@ -1790,14 +1794,12 @@ namespace o2scl {
       Uses the columns specified in \c list from the row \c top
       to the row of index \c bottom to generate a new table
       which is a copy of part of the original.
-
-      \todo Modify to return a shared pointer.
   */
-  table<vec_t> *subtable(std::string list, size_t top, 
-			     size_t bottom) const {
+  void subtable(std::string list, size_t top, 
+		size_t bottom, table<vec_t> &tnew) const {
 
+    tnew.clear_all();
     int sublines, i;
-    table<vec_t> *at;
     std::string head;
     aciter it;
   
@@ -1821,7 +1823,7 @@ namespace o2scl {
   
     std::istringstream is(list);
 
-    at=new table<vec_t>(sublines);
+    tnew.set_nlines(sublines);
     while(is >> head) {
       it=atree.find(head);
       if (it==atree.end()) {
@@ -1829,23 +1831,21 @@ namespace o2scl {
 	  ((((std::string)"Couldn't find column named ")+head+
 	    " in table::subtable(). Returning 0.").c_str(),
 	   exc_einval);
-	delete at;
-	return 0;
       }
-      at->new_column(head);
-      vec_t &dcol=at->get_column(head);
+      tnew.new_column(head);
+      vec_t &dcol=tnew.get_column(head);
       for(i=0;i<sublines;i++) {
 	dcol[i]=it->second.dat[i+top];
       }
     } 
-    if (at->get_ncolumns()==0) {
+    if (tnew.get_ncolumns()==0) {
       O2SCL_ERR("Subtable has no columns in table::subtable().",
 		exc_einval);
     }
     //}
-    at->nlines=sublines;
+    tnew.nlines=sublines;
   
-    return at;
+    return;
   }
   //@}
   
@@ -2050,7 +2050,16 @@ namespace o2scl {
     return;
   }
 
-  /// Add a constant
+  /** \brief Set a constant equal to a value, but don't add it if
+      not already present
+
+      If \c err_on_notfound is <tt>true</tt> (the default), then
+      this function throws an exception if a constant with
+      name \c name is not found. If \c err_on_notfound is
+      <tt>false</tt>, then if a constant with name \c name
+      is not found this function just silently returns
+      \ref o2scl::exc_enotfound.
+   */
   virtual int set_constant(std::string name, double val,
 			   bool err_on_notfound=true) {
     if (constants.find(name)!=constants.end()) {
@@ -2060,13 +2069,26 @@ namespace o2scl {
     if (err_on_notfound) {
       std::string err=((std::string)"No constant with name '")+name+
       "' in table::set_constant().";
-      O2SCL_ERR(err.c_str(),exc_einval);
+      O2SCL_ERR(err.c_str(),exc_enotfound);
     }
     return exc_enotfound;
   }
 
+  /// Test if \c name is a constant
+  virtual bool is_constant(std::string name) const {
+    if (constants.find(name)==constants.end()) {
+      return false;
+    }
+    return true;
+  }
+
   /// Get a constant
   virtual double get_constant(std::string name) const {
+    if (constants.find(name)==constants.end()) {
+      std::string err=((std::string)"No constant with name '")+name+
+      "' in table::get_constant().";
+      O2SCL_ERR(err.c_str(),exc_einval);
+    }
     return constants.find(name)->second;
   }
 

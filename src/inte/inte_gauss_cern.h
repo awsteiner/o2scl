@@ -125,24 +125,13 @@ namespace o2scl {
       w[11]=0.18945061045506850;
     }
 
-    /** \brief Integrate function \c func from \c a to \c b
-	giving result \c res and error \c err
-
-	\todo Fix converge error issue here.
+    /** \brief Integrate function \c func from \c a to \c b.
     */
     virtual int integ_err(func_t &func, double a, double b, 
 			  double &res, double &err) {
-      res=integ(func,a,b);
-      err=0.0;
-      //if (this->err_nonconv) return this->last_conv;
-      return success;
-    }
-
-    /** \brief Integrate function \c func from \c a to \c b.
-    */
-    virtual double integ(func_t &func, double a, double b) {
 
       double y1, y2;
+      err=0.0;
 
       size_t itx=0;
 
@@ -150,7 +139,10 @@ namespace o2scl {
       bool loop=true, loop2=false;
       static const double cst=0.005;
       double h=0.0;
-      if (b==a) return 0.0;
+      if (b==a) {
+	res=0.0;
+	return o2scl::success;
+      }
       double cnst=cst/(b-a);
       double aa=0.0, bb=a;
       while (loop==true || loop2==true) {
@@ -188,14 +180,14 @@ namespace o2scl {
 	    loop2=true;
 	  } else {
 	    this->last_iter=itx;
-	    O2SCL_CONV2("Failed to reach required accuracy in cern_",
-			"gauss::integ().",exc_efailed,this->err_nonconv);
-	    return h;
+	    O2SCL_CONV2_RET("Failed to reach required accuracy in cern_",
+			    "gauss::integ().",exc_efailed,this->err_nonconv);
 	  }
 	}
       }
       this->last_iter=itx;
-      return h;
+      res=h;
+      return o2scl::success;
     }
 
     protected:

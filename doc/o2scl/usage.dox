@@ -82,12 +82,12 @@
     reach numerical convergence. While these failures are treated as
     errors (and by default an exception is thrown), some of the
     classes which attempt to reach numerical convergence have an
-    option (e.g. mroot::err_nonconv) to turn this default behavior off
-    for these convergence errors. To set these "convergence" errors in
-    code provided by the user, the macros \ref O2SCL_CONV and \ref
-    O2SCL_CONV_RET can be used. Functions which may have convergence
-    errors sometimes return <tt>int</tt>, to indicate which
-    convergence error was returned when the value of
+    option (e.g. \ref o2scl::mroot::err_nonconv) to turn this default
+    behavior off for these convergence errors. To set these
+    "convergence" errors in code provided by the user, the macros \ref
+    O2SCL_CONV and \ref O2SCL_CONV_RET can be used. Functions which
+    may have convergence errors sometimes return <tt>int</tt>, to
+    indicate which convergence error was returned when the value of
     <tt>err_nonconv</tt> has been set to false.
 
     Of course, the standard \c try, \c catch mechanism of error
