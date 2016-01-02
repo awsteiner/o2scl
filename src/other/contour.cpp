@@ -33,6 +33,7 @@ contour::contour() {
   nx=0;
   lev_adjust=1.0e-8;
   verbose=0;
+  debug_next_point=false;
 }
 
 contour::~contour() {
@@ -163,12 +164,100 @@ int contour::find_next_point_y_direct(int j, int k, int &jnext, int &knext,
     }
 
     if (j>0 && j<nx-1 && xhi_count+xlo_count%2==1) {
-      O2SCL_ERR("Malformed edge in find_next_point_y_direct().",exc_efailed);
+      O2SCL_ERR("Malformed edge in find_next_point_y_direct().",exc_esanity);
     }
 
   }
+  
+  if (j<nx-1) {
+    
+    double xscale=fabs(xfun[j+1]-xfun[j]);
+    double yscale=fabs(yfun[k+1]-yfun[k]);
+    
+    // down and left
+    if (xedges.status(j,k)==nsw) {
+      closest=sqrt(pow(yedges.values(j,k)-yfun[k],2.0)/yscale/yscale+
+		   pow(xfun[j]-xedges.values(j,k),2.0)/xscale/xscale);
+      found=true;
+      jnext=j;
+      knext=k;
+      dir_next=dxdir;
+    }
+    
+    // down
+    if (yedges.status(j+1,k)==nsw) {
+      next=sqrt(pow(yedges.values(j,k)-yedges.values(j+1,k),2.0)/yscale/
+		yscale+pow(xfun[j]-xfun[j+1],2.0)/xscale/xscale);
+      if ((found==true && next<closest) || found==false) {
+	found=true;
+	jnext=j+1;
+	knext=k;
+	dir_next=dydir;
+	closest=next;
+      }
+    }
+    
+    // down and right
+    if (xedges.status(j,k+1)==nsw) {
+      next=sqrt(pow(yedges.values(j,k)-yfun[k+1],2.0)/yscale/yscale+
+		pow(xfun[j]-xedges.values(j,k+1),2.0)/xscale/xscale);
+      if ((found==true && next<closest) || found==false) {
+	found=true;
+	jnext=j;
+	knext=k+1;
+	dir_next=dxdir;
+	closest=next;
+      }
+    }
+    
+  }
 
-  if (false) {
+  if (j>0) {
+  
+    double xscale=fabs(xfun[j]-xfun[j-1]);
+    double yscale=fabs(yfun[k+1]-yfun[k]);
+    
+    // up
+    if (yedges.status(j-1,k)==nsw) { 
+      next=sqrt(pow(yedges.values(j,k)-yedges.values(j-1,k),2.0)/yscale/
+		yscale+pow(xfun[j]-xfun[j-1],2.0)/xscale/xscale);
+      if ((found==true && next<closest) || found==false) {
+	found=true;
+	jnext=j-1;
+	knext=k;
+	dir_next=dydir;
+	closest=next;
+      }
+    }
+    
+    // up and left
+    if (xedges.status(j-1,k)==nsw) {
+      next=sqrt(pow(yedges.values(j,k)-yfun[k],2.0)/yscale/yscale+
+		pow(xfun[j]-xedges.values(j-1,k),2.0)/xscale/xscale);
+      if ((found==true && next<closest) || found==false) {
+	found=true;
+	jnext=j-1;
+	knext=k;
+	dir_next=dxdir;
+	closest=next;
+      }
+    }
+    
+    // up and right
+    if (xedges.status(j-1,k+1)==nsw) {
+      next=sqrt(pow(yedges.values(j,k)-yfun[k+1],2.0)/yscale/yscale+
+		pow(xfun[j]-xedges.values(j-1,k+1),2.0)/xscale/xscale);
+      if ((found==true && next<closest) || found==false) {
+	found=true;
+	jnext=j-1;
+	knext=k+1;
+	dir_next=dxdir;
+	closest=next;
+      }
+    }
+  }
+
+  if (debug_next_point) {
 
     cout.precision(4);
     cout << "y edges: " << endl;
@@ -233,79 +322,24 @@ int contour::find_next_point_y_direct(int j, int k, int &jnext, int &knext,
 
     }
     
+    cout << "found: " << found << endl;
+    cout << "(" << xfun[j] << "," << yedges.values(j,k) << ")";
+    if (found) {
+      cout << " -> (";
+      if (dir_next==dxdir) {
+	cout << xedges.values(jnext,knext) << ","
+	     << yfun[knext] << ")";
+      } else {
+	cout << xfun[jnext] << ","
+	     << yedges.values(jnext,knext) << ")";
+      }
+    }
+    cout << endl;
+    
     cout << endl;
     cout.precision(6);
   }
 
-  // down and left
-  if (j<nx-1 && xedges.status(j,k)==nsw) {
-    closest=sqrt(pow(yedges.values(j,k)-yfun[k],2.0)+
-		 pow(xfun[j]-xedges.values(j,k),2.0));
-    found=true;
-    jnext=j;
-    knext=k;
-    dir_next=dxdir;
-  }
-  // down
-  if (j<nx-1 && yedges.status(j+1,k)==nsw) {
-    next=sqrt(pow(yedges.values(j,k)-yedges.values(j+1,k),2.0)+
-	      pow(xfun[j]-xfun[j+1],2.0));
-    if ((found==true && next<closest) || found==false) {
-      found=true;
-      jnext=j+1;
-      knext=k;
-      dir_next=dydir;
-      closest=next;
-    }
-  }
-  // down and right
-  if (j<nx-1 && xedges.status(j,k+1)==nsw) {
-    next=sqrt(pow(yedges.values(j,k)-yfun[k+1],2.0)+
-	      pow(xfun[j]-xedges.values(j,k+1),2.0));
-    if ((found==true && next<closest) || found==false) {
-      found=true;
-      jnext=j;
-      knext=k+1;
-      dir_next=dxdir;
-      closest=next;
-    }
-  }
-  // up
-  if (j>0 && yedges.status(j-1,k)==nsw) { 
-    next=sqrt(pow(yedges.values(j,k)-yedges.values(j-1,k),2.0)+
-	      pow(xfun[j]-xfun[j-1],2.0));
-    if ((found==true && next<closest) || found==false) {
-      found=true;
-      jnext=j-1;
-      knext=k;
-      dir_next=dydir;
-      closest=next;
-    }
-  }
-  // up and left
-  if (j>0 && xedges.status(j-1,k)==nsw) {
-    next=sqrt(pow(yedges.values(j,k)-yfun[k],2.0)+
-	      pow(xfun[j]-xedges.values(j-1,k),2.0));
-    if ((found==true && next<closest) || found==false) {
-      found=true;
-      jnext=j-1;
-      knext=k;
-      dir_next=dxdir;
-      closest=next;
-    }
-  }
-  // up and right
-  if (j>0 && xedges.status(j-1,k+1)==nsw) {
-    next=sqrt(pow(yedges.values(j,k)-yfun[k+1],2.0)+
-	      pow(xfun[j]-xedges.values(j-1,k+1),2.0));
-    if ((found==true && next<closest) || found==false) {
-      found=true;
-      jnext=j-1;
-      knext=k+1;
-      dir_next=dxdir;
-      closest=next;
-    }
-  }
   if (found==true) return efound;
   return enot_found;
 }
@@ -346,12 +380,101 @@ int contour::find_next_point_x_direct(int j, int k, int &jnext, int &knext,
     }
     
     if (k>0 && k<ny-1 && ylo_count+yhi_count%2==1) {
-      O2SCL_ERR("Malformed edge in find_next_point_x_direct().",exc_efailed);
+      O2SCL_ERR("Malformed edge in find_next_point_x_direct().",
+		exc_esanity);
     }
   }
+  
+  if (k<ny-1) {
+    
+    double xscale=fabs(xfun[j+1]-xfun[j]);
+    double yscale=fabs(yfun[k+1]-yfun[k]);
+    
+    // right and up
+    if (yedges.status(j,k)==nsw) {
+      closest=sqrt(pow(xedges.values(j,k)-xfun[j],2.0)/xscale/xscale+
+		   pow(yfun[k]-yedges.values(j,k),2.0)/yscale/yscale);
+      found=true;
+      jnext=j;
+      knext=k;
+      dir_next=dydir;
+    }
+    
+    // right and down
+    if (yedges.status(j+1,k)==nsw) {
+      next=sqrt(pow(xedges.values(j,k)-xfun[j+1],2.0)/xscale/xscale+
+		pow(yfun[k]-yedges.values(j+1,k),2.0)/yscale/yscale);
+      if ((found==true && next<closest) || found==false) {
+	found=true;
+	jnext=j+1;
+	knext=k;
+	dir_next=dydir;
+	closest=next;
+      }
+    }
+    
+    // right
+    if (xedges.status(j,k+1)==nsw) {
+      next=sqrt(pow(xedges.values(j,k)-xedges.values(j,k+1),2.0)/xscale/
+		xscale+pow(yfun[k]-yfun[k+1],2.0)/yscale/yscale);
+      if ((found==true && next<closest) || found==false) {
+	found=true;
+	jnext=j;
+	knext=k+1;
+	dir_next=dxdir;
+	closest=next;
+      }
+    }
+  }
+    
+  if (k>0) {
 
-  if (false) {
-
+    double xscale=fabs(xfun[j+1]-xfun[j]);
+    double yscale=fabs(yfun[k]-yfun[k-1]);
+    
+    // left and up
+    if (yedges.status(j,k-1)==nsw) {
+      next=sqrt(pow(xedges.values(j,k)-xfun[j],2.0)/xscale/xscale+
+		pow(yfun[k]-yedges.values(j,k-1),2.0)/yscale/yscale);
+      if ((found==true && next<closest) || found==false) {
+	found=true;
+	jnext=j;
+	knext=k-1;
+	dir_next=dydir;
+	closest=next;
+      }
+    }
+    
+    // left and down
+    if (yedges.status(j+1,k-1)==nsw) {
+      next=sqrt(pow(xedges.values(j,k)-xfun[j+1],2.0)/xscale/xscale+
+		pow(yfun[k]-yedges.values(j+1,k-1),2.0)/yscale/yscale);
+      if ((found==true && next<closest) || found==false) {
+	found=true;
+	jnext=j+1;
+	knext=k-1;
+	dir_next=dydir;
+	closest=next;
+      }
+    }
+    
+    // left
+    if (xedges.status(j,k-1)==nsw) {
+      next=sqrt(pow(xedges.values(j,k)-xedges.values(j,k-1),2.0)/xscale/
+		xscale+pow(yfun[k]-yfun[k-1],2.0)/yscale/yscale);
+      if ((found==true && next<closest) || found==false) {
+	found=true;
+	jnext=j;
+	knext=k-1;
+	dir_next=dxdir;
+	closest=next;
+      }
+    }
+    
+  }
+  
+  if (debug_next_point) {
+    
     cout.precision(4);
     cout << "x edges: " << endl;
     cout << "j,k,nx,ny: " << j << " " << k << " " << nx << " " << ny << endl;
@@ -414,78 +537,22 @@ int contour::find_next_point_x_direct(int j, int k, int &jnext, int &knext,
 
     }
     
+    cout << "found: " << found << endl;
+    cout << "(" << xedges.values(j,k) << "," << yfun[k] << ")";
+    if (found) {
+      cout << " -> (";
+      if (dir_next==dxdir) {
+	cout << xedges.values(jnext,knext) << ","
+	     << yfun[knext] << ")";
+      } else {
+	cout << xfun[jnext] << ","
+	     << yedges.values(jnext,knext) << ")";
+      }
+    }
+    cout << endl;
+    
     cout << endl;
     cout.precision(6);
-  }
-
-  // right and up
-  if (k<ny-1 && yedges.status(j,k)==nsw) {
-    closest=sqrt(pow(xedges.values(j,k)-xfun[j],2.0)+
-		 pow(yfun[k]-yedges.values(j,k),2.0));
-    found=true;
-    jnext=j;
-    knext=k;
-    dir_next=dydir;
-  }
-  // right and down
-  if (k<ny-1 && yedges.status(j+1,k)==nsw) {
-    next=sqrt(pow(xedges.values(j,k)-xfun[j+1],2.0)+
-	      pow(yfun[k]-yedges.values(j+1,k),2.0));
-    if ((found==true && next<closest) || found==false) {
-      found=true;
-      jnext=j+1;
-      knext=k;
-      dir_next=dydir;
-      closest=next;
-    }
-  }
-  // right
-  if (k<ny-1 && xedges.status(j,k+1)==nsw) {
-    next=sqrt(pow(xedges.values(j,k)-xedges.values(j,k+1),2.0)+
-	      pow(yfun[k]-yfun[k+1],2.0));
-    if ((found==true && next<closest) || found==false) {
-      found=true;
-      jnext=j;
-      knext=k+1;
-      dir_next=dxdir;
-      closest=next;
-    }
-  }
-  // left and up
-  if (k>0 && yedges.status(j,k-1)==nsw) {
-    next=sqrt(pow(xedges.values(j,k)-xfun[j],2.0)+
-	      pow(yfun[k]-yedges.values(j,k-1),2.0));
-    if ((found==true && next<closest) || found==false) {
-      found=true;
-      jnext=j;
-      knext=k-1;
-      dir_next=dydir;
-      closest=next;
-    }
-  }
-  // left and down
-  if (k>0 && yedges.status(j+1,k-1)==nsw) {
-    next=sqrt(pow(xedges.values(j,k)-xfun[j+1],2.0)+
-	      pow(yfun[k]-yedges.values(j+1,k-1),2.0));
-    if ((found==true && next<closest) || found==false) {
-      found=true;
-      jnext=j+1;
-      knext=k-1;
-      dir_next=dydir;
-      closest=next;
-    }
-  }
-  // left
-  if (k>0 && xedges.status(j,k-1)==nsw) {
-    next=sqrt(pow(xedges.values(j,k)-xedges.values(j,k-1),2.0)+
-	      pow(yfun[k]-yfun[k-1],2.0));
-    if ((found==true && next<closest) || found==false) {
-      found=true;
-      jnext=j;
-      knext=k-1;
-      dir_next=dxdir;
-      closest=next;
-    }
   }
   
   if (found==true) return efound;
@@ -576,8 +643,6 @@ void contour::find_intersections(size_t ilev, double &level,
       }
     }
   }
-
-  //print_edges_yhoriz(xedges,yedges);
 
   return;
 }
@@ -682,8 +747,6 @@ void contour::process_line(int j, int k, int dir, std::vector<double> &x,
   if (fp==enot_found) zero_points=true;
   else zero_points=false;
   while (fp==efound) {
-
-    //print_edges_yhoriz(xedges,yedges);
 
     j=jnext;
     k=knext;

@@ -157,12 +157,12 @@ namespace o2scl {
       times for the same data without calling set_data() again.
 
       Note that in order to simplify the algorithm for computing
-      contour lines, the calc_contours() function will adjust the
-      user-specified contour levels slightly in order to ensure that
-      no contour line passes exactly through any data point on the
-      grid. The contours are adjusted by multiplying the original
-      contour level by 1 plus a small number (\f$ 10^{-8} \f$ by
-      default), which is specified in \ref lev_adjust.
+      contour lines, the calc_contours() function will sometimes
+      adjust the user-specified contour levels slightly in order to
+      ensure that no contour line passes exactly through any data
+      point on the grid. The contours are adjusted by multiplying the
+      original contour level by 1 plus a small number (\f$ 10^{-8} \f$
+      by default), which is specified in \ref lev_adjust.
 
       Linear interpolation is used to decide whether or not a line
       segment from the grid and a contour cross. This choice is
@@ -191,16 +191,21 @@ namespace o2scl {
       intersection of a line segment with a level curve into a full
       contour line.
 
-      \todo Convert distances in find_next_point functions to 
-      be scaled by grid spacing. 
+      \future Copy constructor
 
-      \todo Copy constructor
+      \future Improve the algorithm to ensure that no contour
+      line ends on an internal point. I am not sure the 
+      best way to do this, but it could be done recursively
+      just by trying all possible links instead of just using
+      the one that minimizes the distance. 
 
       \future Rewrite the code which adjusts the contour levels 
       to ensure contours don't go through the data to adjust the
       internal copy of the data instead? This should be more 
       accurate because we're perturbing one point instead of 
       perturbing the entire line.
+
+      \future Change nx and ny to size_t?
 
       \future It would be nice to have a function which creates a set
       of closed regions to fill which represent the data. However,
@@ -209,8 +214,6 @@ namespace o2scl {
       calc_contours() function. There are, for example, several cases
       which are difficult to handle, such as filling a region in
       between several closed contours 
-
-      \future Change nx and ny to size_t?
 
       \comment 
 
@@ -429,6 +432,11 @@ namespace o2scl {
 
     /// (default \f$ 10^{-8} \f$)
     double lev_adjust;
+    
+    /** \brief If true, debug the functions which determine the
+	next point functions (default false)p
+    */
+    bool debug_next_point;
     
     /// \name Edge status
     //@{

@@ -26,6 +26,7 @@
 #include <iostream>
 #include <o2scl/contour.h>
 #include <o2scl/test_mgr.h>
+#include <o2scl/rng_gsl.h>
 
 using namespace std;
 using namespace o2scl;
@@ -153,9 +154,9 @@ int main(void) {
   for(j=0;j<5;j++) {
     for(i=0;i<5;i++) {
       datas(j,i)=15.0*exp(-pow(xs[i]-20.0,2.0)/400.0-
-			   pow(ys[j]-5.0,2.0)/25.0);
+			  pow(ys[j]-5.0,2.0)/25.0);
       datas(j,i)+=40.0*exp(-pow(xs[i]-70.0,2.0)/4900.0-
-			    pow(ys[j]-2.0,2.0)/4.0);
+			   pow(ys[j]-2.0,2.0)/4.0);
     }
   }
 
@@ -335,44 +336,97 @@ int main(void) {
   
   // ------------------------------------------------------------
 
-  /*
-  cout << "Contour with corners:" << endl;
-  double cordat[7][7]={{1,2,3,4,5,6,7},
-		       {0,1,2,3,4,5,6},
-		       {1,0,1,2,3,4,5},
-		       {2,1,0,1,2,3,4},
-		       {3,2,1,0,1,2,3},
-		       {4,3,2,1,0,1,2},
-		       {5,4,3,2,1,0,1}};
-  double corx[7]={0,1,2,3,4,5,6};
-  double cory[7]={0,1,2,3,4,5,6};
-  double corlev[4]={1,2,3,4};
+  if (false) {
+  
+    cout << "Stress test:" << endl;
 
-  print_data_xhoriz(7,7,corx,cory,cordat);
+    rng_gsl ran;
+  
+    // Test non-square data
+    ubvector tsx(3), tsy(3), tslev(1);
+    ubmatrix tsd(3,3);
+    
+    for(i=0;i<3;i++) tsx[i]=((double)i);
+    for(i=0;i<3;i++) tsy[i]=((double)i);
+    tslev[0]=0.5;
 
-  co.set_data(7,7,corx,cory,cordat);
-  co.set_levels(4,corlev);
-  vector<contour_line> conts4;
-  co.calc_contours(conts4);
-  nc=conts4.size();
+    for(size_t count=0;count<100;count++) {
+      cout << "count: " << count << endl;
 
-  fout << nc << endl;
-  fout.precision(10);
-  for(i=0;i<nc;i++) {
-    cout << "Contour " << i << " at level " 
-	 << conts4[i].level << ":" << endl;
-    int cs=conts4[i].x.size();
-    fout << cs << " ";
-    for(j=0;j<cs;j++) {
-      fout << conts4[i].x[j] << " " << conts4[i].y[j] << " ";
-      cout << "(" << conts4[i].x[j] << ", " 
-	   << conts4[i].y[j] << ")" << endl;
+      for(i=0;i<3;i++) {
+	for(j=0;j<3;j++) {
+	  tsd(j,i)=ran.random();
+	}
+      }
+    
+      co.set_data(3,3,tsx,tsy,tsd);
+      co.set_levels(1,tslev);
+      vector<contour_line> conts4;
+      if (count==50) {
+	co.debug_next_point=true;
+      }
+      co.calc_contours(conts4);
+      nc=conts4.size();
+      size_t cs=conts4[0].x.size();
+    
+      if (nc>0 && (conts4[0].x[0]!=conts4[0].x[cs-1] ||
+		   conts4[0].y[0]!=conts4[0].y[cs-1])) {
+	bool xedge1=false, yedge1=false;
+	bool xedge2=false, yedge2=false;
+	if (conts4[0].x[0]==0.0 || conts4[0].x[0]==2.0) {
+	  xedge1=true;
+	}
+	if (conts4[0].x[cs-1]==0.0 || conts4[0].x[cs-1]==2.0) {
+	  xedge2=true;
+	}
+	if (conts4[0].y[0]==0.0 || conts4[0].y[0]==2.0) {
+	  yedge1=true;
+	}
+	if (conts4[0].y[cs-1]==0.0 || conts4[0].y[cs-1]==2.0) {
+	  yedge2=true;
+	}
+	cout << xedge1 << " " << yedge1 << " "
+	     << xedge2 << " " << yedge2 << endl;
+	if (!((xedge1 || yedge1) && (xedge2 || yedge2))) {
+
+	  for(size_t i=0;i<cs;i++) {
+	    cout << conts4[0].x[i] << " ";
+	    cout << conts4[0].y[i] << endl;
+	  }
+
+	  for(size_t i=0;i<cs;i++) {
+	    for(size_t j=0;j<cs;j++) {
+	      cout << i << " " << j << " "
+		   << conts4[0].x[i] << " " << conts4[0].y[i] << " "
+		   << conts4[0].x[j] << " " << conts4[0].y[j] << " "
+		   << sqrt(pow(conts4[0].x[i]-conts4[0].x[j],2.0)+
+			   pow(conts4[0].y[i]-conts4[0].y[j],2.0)) << endl;
+	    }
+	  }
+	
+	  xed.clear();
+	  yed.clear();
+	  co.get_edges(xed,yed);
+	
+	  print_data_xhoriz(3,3,tsx,tsy,tsd);
+	
+	  cout << "Print edges: " << endl;
+	  for(size_t ir=0;ir<yed.size();ir++) {
+	    cout << "Level: " << tslev[ir] << endl;
+	    co.print_edges_xhoriz(xed[ir],yed[ir]);
+	  }
+	  cout << endl;
+	
+	  O2SCL_ERR("Contour failed.",exc_esanity);
+	}
+      }
+    
     }
-    fout << endl;
-  }
-  cout << endl;
-  */
 
+  }
+  
+  // ------------------------------------------------------------
+  
   fout.close();
   
   t.report();
