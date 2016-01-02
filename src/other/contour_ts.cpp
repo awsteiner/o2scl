@@ -253,10 +253,10 @@ int main(void) {
   nc=conts3.size();
   
   cout << "Print edges: " << endl;
-  vector<edge_crossings> red, bed;
-  co.get_edges(red,bed);
-  for(size_t ir=0;ir<red.size();ir++) {
-    co.print_edges(red[ir],bed[ir]);
+  vector<edge_crossings> xed, yed;
+  co.get_edges(xed,yed);
+  for(size_t ir=0;ir<yed.size();ir++) {
+    co.print_edges(xed[ir],yed[ir]);
   }
   cout << endl;
 

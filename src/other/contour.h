@@ -368,7 +368,7 @@ namespace o2scl {
 	zero and they cannot both be 1.
     */
     void regrid_data(size_t xfact, size_t yfact, 
-		    size_t interp_type=o2scl::itp_cspline);
+		     size_t interp_type=o2scl::itp_cspline);
     //@}
 
     /// \name Obtain internal data
@@ -398,11 +398,11 @@ namespace o2scl {
 
 	The size of \c y_edges and \c x_edges will both be equal to
 	the number of levels set by \ref set_levels().
-     */
+    */
     void get_edges(std::vector<edge_crossings> &x_edges,
 		   std::vector<edge_crossings> &y_edges) {
-      y_edges=yed;
       x_edges=xed;
+      y_edges=yed;
       return;
     }
     
@@ -487,7 +487,7 @@ namespace o2scl {
 
     /// Interpolate all right edge crossings 
     void edges_in_y_direct(double level, interp<ubvector> &si,
-		    edge_crossings &yedges);
+			   edge_crossings &yedges);
     
     /// Interpolate all bottom edge crossings
     void edges_in_x_direct(double level, interp<ubvector> &si,
