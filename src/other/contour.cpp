@@ -75,27 +75,25 @@ void contour::regrid_data(size_t xfact, size_t yfact, size_t interp_type) {
   ubvector xfun_old=xfun, yfun_old=yfun;
   ubmatrix data_old=data;
 
-  interp_vec<ubvector> *si;
+  interp_vec<ubvector> si;
 
   // Create new xfun
   ubvector xidx(nx);
   xfun.resize(newx);
   for(int i=0;i<nx;i++) xidx[i]=((double)i);
-  si=new interp_vec<ubvector>(nx,xidx,xfun_old,interp_type);
+  si.set(nx,xidx,xfun_old,interp_type);
   for(int i=0;i<newx;i++) {
-    xfun[i]=si->eval(((double)i)/(newx-1+xfact)*nx);
+    xfun[i]=si.eval(((double)i)/(newx-1+xfact)*nx);
   }
-  delete si;
 
   // Create new yfun
   ubvector yidx(ny);
   yfun.resize(newy);
   for(int i=0;i<ny;i++) yidx[i]=((double)i);
-  si=new interp_vec<ubvector>(ny,yidx,yfun_old,interp_type);
+  si.set(ny,yidx,yfun_old,interp_type);
   for(int i=0;i<newy;i++) {
-    yfun[i]=si->eval(((double)i)/(newy-1+yfact)*ny);
+    yfun[i]=si.eval(((double)i)/(newy-1+yfact)*ny);
   }
-  delete si;
   
   // Perform the first round, expanding the number of rows from 
   // nx -> newx 
@@ -105,11 +103,10 @@ void contour::regrid_data(size_t xfact, size_t yfact, size_t interp_type) {
     ubvector at(nx);
     for(int ij=0;ij<nx;ij++) at[ij]=data_old(ij,i/yfact);
     // Use it to interpolate a column into bc
-    si=new interp_vec<ubvector>(nx,xfun_old,at,interp_type);
+    si.set(nx,xfun_old,at,interp_type);
     for(int j=0;j<newx;j++) {
-      bc(j,i/yfact)=si->eval(xfun[j]);
+      bc(j,i/yfact)=si.eval(xfun[j]);
     }
-    delete si;
   }
   
   // Perform the second round, expanding the number of columns
@@ -118,11 +115,10 @@ void contour::regrid_data(size_t xfact, size_t yfact, size_t interp_type) {
   for(int i=0;i<newx;i++) {
     ubvector at2(ny);
     for(int ij=0;ij<ny;ij++) at2[ij]=bc(i,ij);
-    si=new interp_vec<ubvector>(ny,yfun_old,at2,interp_type);
+    si.set(ny,yfun_old,at2,interp_type);
     for(int j=0;j<newy;j++) {
-      data(i,j)=si->eval(yfun[j]);
+      data(i,j)=si.eval(yfun[j]);
     }
-    delete si;
   }
 
   // Modify size
@@ -142,31 +138,31 @@ int contour::find_next_point_y_direct(int j, int k, int &jnext, int &knext,
 
   if (true) {
 
-    size_t top_count=0, bottom_count=0;
+    size_t xlo_count=0, xhi_count=0;
     if (j>=1) {
       if (yedges.status(j-1,k)!=empty) {
-	top_count++;
+	xlo_count++;
       }
       if (xedges.status(j-1,k)!=empty) {
-	top_count++;
+	xlo_count++;
       }
       if (xedges.status(j-1,k+1)!=empty) {
-	top_count++;
+	xlo_count++;
       }
     }
     if (j<nx-1) {
       if (xedges.status(j,k)!=empty) {
-	bottom_count++;
+	xhi_count++;
       }
       if (xedges.status(j,k+1)!=empty) {
-	bottom_count++;
+	xhi_count++;
       }
       if (yedges.status(j+1,k)!=empty) {
-	bottom_count++;
+	xhi_count++;
       }
     }
 
-    if (j>0 && j<nx-1 && bottom_count+top_count%2==1) {
+    if (j>0 && j<nx-1 && xhi_count+xlo_count%2==1) {
       O2SCL_ERR("Malformed edge in find_next_point_y_direct().",exc_efailed);
     }
 
@@ -324,32 +320,32 @@ int contour::find_next_point_x_direct(int j, int k, int &jnext, int &knext,
 
   if (true) {
 
-    size_t left_count=0, right_count=0;
+    size_t ylo_count=0, yhi_count=0;
 
     if (k>0) {
       if (xedges.values(j,k-1)!=empty) {
-	left_count++;
+	ylo_count++;
       }
       if (yedges.status(j,k-1)!=empty) {
-	left_count++;
+	ylo_count++;
       }
       if (yedges.status(j+1,k-1)!=empty) {
-	left_count++;
+	ylo_count++;
       }
     }
     if (k<ny-1) {
       if (yedges.status(j,k)!=empty) {
-	right_count++;
+	yhi_count++;
       }
       if (yedges.status(j+1,k)!=empty) {
-	right_count++;
+	yhi_count++;
       }
       if (xedges.values(j,k+1)!=empty) {
-	right_count++;
+	yhi_count++;
       }
     }
     
-    if (k>0 && k<ny-1 && left_count+right_count%2==1) {
+    if (k>0 && k<ny-1 && ylo_count+yhi_count%2==1) {
       O2SCL_ERR("Malformed edge in find_next_point_x_direct().",exc_efailed);
     }
   }
@@ -357,7 +353,7 @@ int contour::find_next_point_x_direct(int j, int k, int &jnext, int &knext,
   if (false) {
 
     cout.precision(4);
-    cout << "bottom: " << endl;
+    cout << "x edges: " << endl;
     cout << "j,k,nx,ny: " << j << " " << k << " " << nx << " " << ny << endl;
     if (k>0) {
 
@@ -581,7 +577,7 @@ void contour::find_intersections(size_t ilev, double &level,
     }
   }
 
-  //print_edges(xedges,yedges);
+  //print_edges_yhoriz(xedges,yedges);
 
   return;
 }
@@ -687,7 +683,7 @@ void contour::process_line(int j, int k, int dir, std::vector<double> &x,
   else zero_points=false;
   while (fp==efound) {
 
-    //print_edges(xedges,yedges);
+    //print_edges_yhoriz(xedges,yedges);
 
     j=jnext;
     k=knext;
@@ -709,7 +705,7 @@ void contour::process_line(int j, int k, int dir, std::vector<double> &x,
       fp=find_next_point_y_direct(j,k,jnext,knext,dir_next,edge,xedges,yedges);
     } else {
       if (verbose>0) {
-	cout << "(" << xedges.values(k,j) << ", " << yfun[k] << ")" << endl;
+	cout << "(" << xedges.values(j,k) << ", " << yfun[k] << ")" << endl;
       }
 
       if (first) {
@@ -823,10 +819,10 @@ void contour::calc_contours(std::vector<contour_line> &clines) {
 
     // Make space for the edges
     edge_crossings xedges, yedges;
-    yedges.status.resize(nx,ny-1);
-    yedges.values.resize(nx,ny-1);
     xedges.status.resize(nx-1,ny);
     xedges.values.resize(nx-1,ny);
+    yedges.status.resize(nx,ny-1);
+    yedges.values.resize(nx,ny-1);
 
     if (verbose>1) {
       std::cout << "\nLooking for edges for level: " 
@@ -841,12 +837,12 @@ void contour::calc_contours(std::vector<contour_line> &clines) {
 		<< levels[i] << std::endl;
     }
 
-    // Process the right edges
-    edges_in_y_direct(levels[i],oi,yedges);
-    
-    // Process the bottom edges
+    // Process the edges in the x direction
     edges_in_x_direct(levels[i],oi,xedges);
 
+    // Process the edges in the y direction
+    edges_in_y_direct(levels[i],oi,yedges);
+    
     if (verbose>1) {
       std::cout << "\nPiecing together contour lines for level: " 
 		<< levels[i] << std::endl;
@@ -914,8 +910,8 @@ void contour::calc_contours(std::vector<contour_line> &clines) {
     }
 
     // Store edge information from this level
-    yed.push_back(yedges);
     xed.push_back(xedges);
+    yed.push_back(yedges);
 
     if (verbose>0) {
       std::cout << "Processing next level." << std::endl;
@@ -925,34 +921,89 @@ void contour::calc_contours(std::vector<contour_line> &clines) {
   return;
 }
 
-void contour::print_edges(edge_crossings &xedges,
-			  edge_crossings &yedges) {
+void contour::print_edges_yhoriz(edge_crossings &xedges,
+				 edge_crossings &yedges) {
   
   size_t ny2=xedges.status.size2();
   size_t nx2=yedges.status.size1();
-  for(size_t i=0;i<nx2;i++) {
-    for(size_t j=0;j<ny2;j++) {
-      if (j<ny2-1) {
-	cout << " ";
-	if (yedges.status(i,j)==empty) cout << "_";
-	else if (yedges.status(i,j)==edge) cout << "+";
-	else if (yedges.status(i,j)==contourp) cout << "*";
-	else cout << "E";
-      }
-    }
-    cout << endl;
-    for(size_t j=0;j<ny2;j++) {
-      if (i<nx2-1) {
+  cout << " ";
+  for(size_t j=0;j<ny2;j++) {
+    cout << j%10 << " ";
+  }
+  cout << endl;
+  for(int i=nx2-1;i>=0;i--) {
+    if (i<nx2-1) {
+      cout << " ";
+      for(size_t j=0;j<ny2;j++) {
 	if (xedges.status(i,j)==empty) cout << "|";
 	else if (xedges.status(i,j)==edge) cout << "+";
 	else if (xedges.status(i,j)==contourp) cout << "*";
 	else cout << "E";
 	cout << " ";
       }
+      cout << endl;
     }
-    cout << endl;
+    cout << i%10;
+    for(size_t j=0;j<ny2;j++) {
+      if (j<ny2-1) {
+	cout << " ";
+	if (yedges.status(i,j)==empty) cout << "-";
+	else if (yedges.status(i,j)==edge) cout << "+";
+	else if (yedges.status(i,j)==contourp) cout << "*";
+	else cout << "E";
+      }
+    }
+    cout << " " << i%10 << endl;
   }
+  cout << " ";
+  for(size_t j=0;j<ny2;j++) {
+    cout << j%10 << " ";
+  }
+  cout << endl;
 
+  return;
+}
+
+void contour::print_edges_xhoriz(edge_crossings &xedges,
+				 edge_crossings &yedges) {
+  
+  size_t ny2=xedges.status.size2();
+  size_t nx2=yedges.status.size1();
+  cout << " ";
+  for(size_t i=0;i<nx2;i++) {
+    cout << i%10 << " ";
+  }
+  cout << endl;
+  for(int j=ny2-1;j>=0;j--) {
+    if (j<ny2-1) {
+      cout << " ";
+      for(size_t i=0;i<nx2;i++) {
+	if (yedges.status(i,j)==empty) cout << "|";
+	else if (yedges.status(i,j)==edge) cout << "+";
+	else if (yedges.status(i,j)==contourp) cout << "*";
+	else cout << "E";
+	cout << " ";
+      }
+      cout << endl;
+    }
+    cout << j%10;
+    for(size_t i=0;i<nx2;i++) {
+      if (i<nx2-1) {
+	cout << " ";
+	if (xedges.status(i,j)==empty) cout << "-";
+	else if (xedges.status(i,j)==edge) cout << "+";
+	else if (xedges.status(i,j)==contourp) cout << "*";
+	else cout << "E";
+      }
+    }
+    cout << " " << j%10 << endl;
+  }
+  cout << " ";
+  for(size_t i=0;i<nx2;i++) {
+    cout << i%10 << " ";
+  }
+  cout << endl;
+  
   return;
 }
 

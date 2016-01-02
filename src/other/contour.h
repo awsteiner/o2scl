@@ -407,8 +407,12 @@ namespace o2scl {
     }
     
     /// Print out the edges to cout
-    void print_edges(edge_crossings &xedges,
-		     edge_crossings &yedges);
+    void print_edges_yhoriz(edge_crossings &xedges,
+			    edge_crossings &yedges);
+    
+    /// Print out the edges to cout
+    void print_edges_xhoriz(edge_crossings &xedges,
+			    edge_crossings &yedges);
     
     //@}
     

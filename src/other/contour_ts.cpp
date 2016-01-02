@@ -43,24 +43,54 @@ double fun2(double x, double y) {
 }
 
 template<class vec_t, class mat_t> 
-int print_data(int nx, int ny, vec_t &x, vec_t &y, mat_t &data) {
+int print_data_xhoriz(int nx, int ny, vec_t &x, vec_t &y, mat_t &data) {
   int j, k;
+
   cout.setf(ios::showpos);
   cout.precision(3);
-  cout << "              ";
-  for(k=0;k<ny;k++) {
+
+  for(k=ny-1;k>=0;k--) {
     string stx="y";
     stx+=itos(k);
+    cout.width(3);
+    cout << stx << " ";
+    cout << y[k] << " ";
+    for(j=0;j<nx;j++) {
+      cout << data(j,k) << " ";
+    }
+    cout << endl;
+  }
+
+  // X grid
+  cout << "               ";
+  for(j=0;j<nx;j++) {
+    cout << x[j] << " ";
+  }
+  cout << endl;
+
+  // X labels
+  cout << "              ";
+  for(j=0;j<nx;j++) {
+    string stx="x";
+    stx+=itos(j);
     cout.width(11);
     cout << stx;
   }
   cout << endl;
-  cout << "               ";
-  for(k=0;k<ny;k++) {
-    cout << y[k] << " ";
-  }
-  cout << endl;
-  for(j=0;j<nx;j++) {
+
+  cout.unsetf(ios::showpos);
+  cout.precision(6);
+  return 0;
+}
+
+template<class vec_t, class mat_t> 
+int print_data_yhoriz(int nx, int ny, vec_t &x, vec_t &y, mat_t &data) {
+  int j, k;
+
+  cout.setf(ios::showpos);
+  cout.precision(3);
+
+  for(j=nx-1;j>=0;j--) {
     string stx="x";
     stx+=itos(j);
     cout.width(3);
@@ -71,6 +101,24 @@ int print_data(int nx, int ny, vec_t &x, vec_t &y, mat_t &data) {
     }
     cout << endl;
   }
+
+  // Y grid
+  cout << "               ";
+  for(k=0;k<ny;k++) {
+    cout << y[k] << " ";
+  }
+  cout << endl;
+
+  // Y labels
+  cout << "              ";
+  for(k=0;k<ny;k++) {
+    string stx="y";
+    stx+=itos(k);
+    cout.width(11);
+    cout << stx;
+  }
+  cout << endl;
+
   cout.unsetf(ios::showpos);
   cout.precision(6);
   return 0;
@@ -112,7 +160,7 @@ int main(void) {
   }
 
   co.set_data(5,5,xs,ys,datas);
-  print_data(5,5,xs,ys,datas);
+  print_data_xhoriz(5,5,xs,ys,datas);
   
   // Regrid
   cout << "In regrid: " << endl;
@@ -124,7 +172,7 @@ int main(void) {
   ubmatrix *datag=0;
   co.get_data(ngx,ngy,xg,yg,datag);
   
-  print_data(ngx,ngy,*xg,*yg,*datag);
+  print_data_xhoriz(ngx,ngy,*xg,*yg,*datag);
 
   // Now test contour lines
 
@@ -140,7 +188,7 @@ int main(void) {
   }
   
   cout << "Square 1:" << endl;
-  print_data(10,10,x,y,data);
+  print_data_xhoriz(10,10,x,y,data);
 
   ubvector levels(7);
   levels[0]=5.0;
@@ -189,9 +237,6 @@ int main(void) {
   for(i=0;i<8;i++) {
     for(j=0;j<10;j++) {
       sqd(j,i)=2.0*pow(sqx[j]-4.0,2.0)+6.0*pow(sqy[i]-2.0,2.0);
-      if (i==5 && j==5) {
-	cout << i << " " << j << " " << sqd(j,i) << endl;
-      }
     }
   }
   sqlev[0]=4.0;
@@ -199,7 +244,7 @@ int main(void) {
   sqlev[2]=20.0;
   sqlev[3]=40.0;
 
-  print_data(10,8,sqx,sqy,sqd);
+  print_data_xhoriz(10,8,sqx,sqy,sqd);
 
   co.set_data(10,8,sqx,sqy,sqd);
   co.set_levels(4,sqlev);
@@ -243,8 +288,6 @@ int main(void) {
   srlev[1]=10.0;
   srlev[2]=20.0;
   srlev[3]=40.0;
-  
-  print_data(8,10,srx,sry,srd);
 
   co.set_data(8,10,srx,sry,srd);
   co.set_levels(4,srlev);
@@ -252,11 +295,24 @@ int main(void) {
   co.calc_contours(conts3);
   nc=conts3.size();
   
-  cout << "Print edges: " << endl;
   vector<edge_crossings> xed, yed;
   co.get_edges(xed,yed);
+  
+  print_data_xhoriz(8,10,srx,sry,srd);
+
+  cout << "Print edges: " << endl;
   for(size_t ir=0;ir<yed.size();ir++) {
-    co.print_edges(xed[ir],yed[ir]);
+    cout << "Level: " << srlev[ir] << endl;
+    co.print_edges_xhoriz(xed[ir],yed[ir]);
+  }
+  cout << endl;
+
+  print_data_yhoriz(8,10,srx,sry,srd);
+
+  cout << "Print edges: " << endl;
+  for(size_t ir=0;ir<yed.size();ir++) {
+    cout << "Level: " << srlev[ir] << endl;
+    co.print_edges_yhoriz(xed[ir],yed[ir]);
   }
   cout << endl;
 
@@ -292,7 +348,7 @@ int main(void) {
   double cory[7]={0,1,2,3,4,5,6};
   double corlev[4]={1,2,3,4};
 
-  print_data(7,7,corx,cory,cordat);
+  print_data_xhoriz(7,7,corx,cory,cordat);
 
   co.set_data(7,7,corx,cory,cordat);
   co.set_levels(4,corlev);

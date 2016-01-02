@@ -54,8 +54,8 @@ int print_data(int nx, int ny, ubvector &x, ubvector &y,
 // A function for printing the contour information to a file
 int file_out(string prefix, ubvector &x, ubvector &y,
 	     ubmatrix &data, vector<contour_line> &conts, 
-	     vector<edge_crossings> &recs,
-	     vector<edge_crossings> &becs);
+	     vector<edge_crossings> &xecs,
+	     vector<edge_crossings> &yecs);
 
 int main(void) {
   test_mgr t;
@@ -105,12 +105,12 @@ int main(void) {
   vector<contour_line> conts;
   co.calc_contours(conts);
 
-  vector<edge_crossings> recs, becs;
-  co.get_edges(recs,becs);
+  vector<edge_crossings> xecs, yecs;
+  co.get_edges(xecs,yecs);
 
   // Output to a file
 
-  file_out("c1",x,y,data,conts,recs,becs);
+  file_out("c1",x,y,data,conts,xecs,yecs);
 
   // Print the contours to the screen and test to make sure
   // that they match the requested level
@@ -142,12 +142,12 @@ int main(void) {
   vector<contour_line> conts2;
   co.calc_contours(conts2);
 
-  vector<edge_crossings> recs2, becs2;
-  co.get_edges(recs2,becs2);
+  vector<edge_crossings> xecs2, yecs2;
+  co.get_edges(xecs2,yecs2);
 
   // Output to a file
 
-  file_out("c2",*x2,*y2,*data2,conts2,recs2,becs2);
+  file_out("c2",*x2,*y2,*data2,conts2,xecs2,yecs2);
 
   t.report();
 
@@ -157,8 +157,8 @@ int main(void) {
 
 int file_out(string prefix, ubvector &x, ubvector &y,
 	     ubmatrix &data, vector<contour_line> &conts, 
-	     vector<edge_crossings> &recs,
-	     vector<edge_crossings> &becs) {
+	     vector<edge_crossings> &xecs,
+	     vector<edge_crossings> &yecs) {
   
   hdf_file hf;
   hf.open_or_create("ex_contour.o2");
@@ -166,8 +166,8 @@ int file_out(string prefix, ubvector &x, ubvector &y,
   hf.setd_vec_copy(prefix+"_y",y);
   hf.setd_mat_copy(prefix+"_data",data);
   hdf_output(hf,conts,prefix+"_cl");
-  hdf_output(hf,recs,prefix+"_re");
-  hdf_output(hf,becs,prefix+"_be");
+  hdf_output(hf,xecs,prefix+"_xe");
+  hdf_output(hf,yecs,prefix+"_ye");
   hf.close();
 
   return 0;
