@@ -1813,7 +1813,7 @@ namespace o2scl {
       O2SCL_ERR2("Can't make a subtable of an empty table. ",
 		 "Returning 0 in table::subtable().",
 		 exc_einval);
-      return 0;
+      return;
     }
     if (bottom+1>nlines) {
       O2SCL_ERR2("Requested row beyond nlines. Adjusting ",
