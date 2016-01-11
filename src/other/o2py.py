@@ -194,7 +194,7 @@ class plotter:
         n_lines=self.dset['n_lines'][0]
         for i in range(0,n_lines):
             line_level=self.dset['line_'+str(i)+'/level'][0]
-            if abs(level-line_level) < 1.0e-10:
+            if abs(level-line_level) < 1.0e-7:
                 if self.logx==1:
                     if self.logy==1:
                         plot.loglog(self.dset['line_'+str(i)+'/x'],

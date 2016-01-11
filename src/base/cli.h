@@ -509,8 +509,10 @@ namespace o2scl {
       for(size_t k=0;k<list_size;k++) {
 
 	if (option_list[k].lng.length()<2) {
-	  O2SCL_ERR2("Long options must have at least two characters in ",
-		     "cli::set_comm_option_vec().",o2scl::exc_efailed);
+	  std::string str=((std::string)"Long option '")+option_list[k].lng+
+	    "' does not have at "+
+	    "least two characters in cli::set_comm_option().";
+	  O2SCL_ERR(str.c_str(),exc_efailed);
 	}
 	
 	bool found=false;
