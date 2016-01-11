@@ -24,7 +24,7 @@
 #define O2SCL_HDF_NUCMASS_IO_H
 
 /** \file hdf_nucmass_io.h
-    \brief File for HDF input of the \o2 \ref o2scl::nucmass_ame and 
+    \brief File for HDF input of the \ref o2scl::nucmass_ame and 
     \ref o2scl::nucmass_mnmsk data files
 */
 
@@ -64,7 +64,11 @@ namespace o2scl_hdf {
       is called. If a data file has not been loaded, then
       nucmass_ame::is_loaded() returns false.
       
-      \note This function is in the \ref o2scl_hdf namespace.
+      \comment
+      On ubuntu/doxygen-1.8.11, \ref o2scl_hdf fails here.
+      \endcomment
+      \note This function is in the o2scl_hdf namespace,
+      see \ref hdf_nucmass_io.h .
   */
   void ame_load(o2scl::nucmass_ame &ame, std::string file_name, 
 		std::string table_name);
@@ -83,13 +87,21 @@ namespace o2scl_hdf {
       is called. If a data file has not been loaded, then
       nucmass_ame::is_loaded() returns false.
       
-      \note This function is in the \ref o2scl_hdf namespace.
+      \comment
+      On ubuntu/doxygen-1.8.11, \ref o2scl_hdf fails here.
+      \endcomment
+      \note This function is in the o2scl_hdf namespace,
+      see \ref hdf_nucmass_io.h .
    */
   void ame_load(o2scl::nucmass_ame &ame, std::string name="12");
   
   /** \brief Read data for \ref o2scl::nucmass_mnmsk from an HDF table
 
-      \note This function is in the \ref o2scl_hdf namespace.
+      \comment
+      On ubuntu/doxygen-1.8.11, \ref o2scl_hdf fails here.
+      \endcomment
+      \note This function is in the o2scl_hdf namespace,
+      see \ref hdf_nucmass_io.h .
 
       \todo Switch to the same 'external' file mechanism used in 
       hdf_eos_io.h. 
@@ -103,7 +115,11 @@ namespace o2scl_hdf {
       (\ref Goriely07). If a number other than these three is given,
       the error handler is called. 
 
-      \note This function is in the \ref o2scl_hdf namespace.
+      \comment
+      On ubuntu/doxygen-1.8.11, \ref o2scl_hdf fails here.
+      \endcomment
+      \note This function is in the o2scl_hdf namespace,
+      see \ref hdf_nucmass_io.h .
 
       \todo Switch to the same 'external' file mechanism used in 
       hdf_eos_io.h. 
@@ -117,7 +133,11 @@ namespace o2scl_hdf {
       number other than these two is given, the error handler is
       called.
 
-      \note This function is in the \ref o2scl_hdf namespace.
+      \comment
+      On ubuntu/doxygen-1.8.11, \ref o2scl_hdf fails here.
+      \endcomment
+      \note This function is in the o2scl_hdf namespace,
+      see \ref hdf_nucmass_io.h .
 
       \todo Switch to the same 'external' file mechanism used in 
       hdf_eos_io.h. 
