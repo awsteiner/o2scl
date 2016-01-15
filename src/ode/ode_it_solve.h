@@ -48,6 +48,11 @@ namespace o2scl {
     (size_t,double,boost::numeric::ublas::matrix_row
      <boost::numeric::ublas::matrix<double> > &)> ode_it_funct11;
   
+  /// Function derivatives for iterative solving of ODEs
+  typedef std::function<double
+    (size_t,size_t,double,boost::numeric::ublas::matrix_row
+     <boost::numeric::ublas::matrix<double> > &)> ode_it_dfunct11;
+  
   /** \brief ODE solver using a generic linear solver to solve 
       finite-difference equations
 
@@ -129,6 +134,47 @@ namespace o2scl {
     fl=&left;
     fr=&right;
     
+    ode_it_dfunct11 d2_derivs=std::bind
+      (std::mem_fn<double(size_t,size_t,double,matrix_row_t &)>
+       (&ode_it_solve::fd_derivs),this,std::placeholders::_1,
+       std::placeholders::_2,std::placeholders::_3,std::placeholders::_4);
+    ode_it_dfunct11 d2_left=std::bind
+      (std::mem_fn<double(size_t,size_t,double,matrix_row_t &)>
+       (&ode_it_solve::fd_left),this,std::placeholders::_1,
+       std::placeholders::_2,std::placeholders::_3,std::placeholders::_4);
+    ode_it_dfunct11 d2_right=std::bind
+      (std::mem_fn<double(size_t,size_t,double,matrix_row_t &)>
+       (&ode_it_solve::fd_right),this,std::placeholders::_1,
+       std::placeholders::_2,std::placeholders::_3,std::placeholders::_4);
+
+    return solve_derivs(n_grid,n_eq,nb_left,x,y,derivs,left,right,
+			d2_derivs,d2_left,d2_right,mat,rhs,dy);
+  }
+
+  /** \brief Solve \c derivs with boundary conditions \c left and 
+      \c right
+
+      Given a grid of size \c n_grid and \c n_eq differential equations,
+      solve them by relaxation. The grid is specified in \c x, which
+      is a vector of size \c n_grid. The differential equations are
+      given in \c derivs, the boundary conditions on the left hand
+      side in \c left, and the boundary conditions on the right hand
+      side in \c right. The number of boundary conditions on the left
+      hand side is \c nb_left, and the number of boundary conditions on
+      the right hand side should be <tt>n_eq-nb_left</tt>. The initial
+      guess for the solution, a matrix of size <tt>[n_grid][n_eq]</tt>
+      should be given in \c y. Upon success, \c y will contain an
+      approximate solution of the differential equations. The matrix
+      \c mat is workspace of size <tt>[n_grid*n_eq][n_grid*n_eq]</tt>, and
+      the vectors \c rhs and \c y are workspace of size
+      <tt>[n_grid*n_eq]</tt>.
+  */
+  template<class dfunc_t>
+  int solve_derivs(size_t n_grid, size_t n_eq, size_t nb_left, vec_t &x, 
+		   mat_t &y, func_t &derivs, func_t &left, func_t &right,
+		   dfunc_t &d_derivs, dfunc_t &d_left, dfunc_t &d_right,
+		   solver_mat_t &mat, solver_vec_t &rhs, solver_vec_t &dy) {
+
     // Variable index
     size_t ix;
 
@@ -151,17 +197,20 @@ namespace o2scl {
 
       // Construct the entries corresponding to the LHS boundary. 
       // This makes the first nb_left rows of the matrix.
+      //std::cout << "Left" << std::endl;
       for(size_t i=0;i<nb_left;i++) {
 	matrix_row_t yk=o2scl::matrix_row<mat_t,matrix_row_t>(y,0);
 	rhs[ix]=-left(i,x[0],yk);
 	for(size_t j=0;j<n_eq;j++) {
-	  mat(ix,j)=fd_left(i,j,x[0],yk);
+	  mat(ix,j)=d_left(i,j,x[0],yk);
+	  //std::cout << "mat(ix,j): " << mat(ix,j) << std::endl;
 	}
 	ix++;
       }
 
       // Construct the matrix entries for the internal points
       // This loop adds n_grid-1 sets of n_eq rows
+      //std::cout << "Cent" << std::endl;
       for(size_t k=0;k<n_grid-1;k++) {
 	size_t kp1=k+1;
 	double tx=(x[kp1]+x[k])/2.0;
@@ -176,8 +225,12 @@ namespace o2scl {
 	  
 	  size_t lhs=k*n_eq;
 	  for(size_t j=0;j<n_eq;j++) {
-	    mat(ix,lhs+j)=-fd_derivs(i,j,tx,yk)*dx/2.0;
-	    mat(ix,lhs+j+n_eq)=-fd_derivs(i,j,tx,ykp1)*dx/2.0;
+	    mat(ix,lhs+j)=-d_derivs(i,j,tx,yk)*dx/2.0;
+	    mat(ix,lhs+j+n_eq)=-d_derivs(i,j,tx,ykp1)*dx/2.0;
+	    //std::cout << "mat(ix,lhs+j): "
+	    //<< mat(ix,lhs+j) << std::endl;
+	    //std::cout << "mat(ix,lhs+j+n_eq): "
+	    //<< mat(ix,lhs+j+n_eq) << std::endl;
 	    if (i==j) {
 	      mat(ix,lhs+j)=mat(ix,lhs+j)-1.0;
 	      mat(ix,lhs+j+n_eq)=mat(ix,lhs+j+n_eq)+1.0;
@@ -187,6 +240,8 @@ namespace o2scl {
 	  ix++;
 
 	}
+	
+	//exit(-1);
       }
       
       // Construct the entries corresponding to the RHS boundary
@@ -198,7 +253,7 @@ namespace o2scl {
 	rhs[ix]=-right(i,x[n_grid-1],ylast);
 	
 	for(size_t j=0;j<n_eq;j++) {
-	  mat(ix,lhs+j)=fd_right(i,j,x[n_grid-1],ylast);
+	  mat(ix,lhs+j)=d_right(i,j,x[n_grid-1],ylast);
 	}
 	  
 	ix++;
@@ -222,7 +277,7 @@ namespace o2scl {
       }
 
       if (make_mats) return 0;
-	
+
       solver->solve(ix,mat,rhs,dy);
 
       if (verbose>3) {
@@ -280,7 +335,7 @@ namespace o2scl {
   
   /// \name Storage for functions
   //@{
-  ode_it_funct11 *fl, *fr, *fd;
+  func_t *fl, *fr, *fd;
   //@}
 
   /// Solver
