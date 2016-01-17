@@ -56,9 +56,12 @@ namespace o2scl {
   /** \brief ODE solver using a generic linear solver to solve 
       finite-difference equations
 
+      \future Set up convergence error if it goes beyond max iterations
       \future Create a GSL-like set() and iterate() interface
       \future Implement as a child of ode_bv_solve ?
       \future Max and average tolerance?
+      \future Allow the user to ensure that the solver doesn't
+      apply the full correction
   */
   template <class func_t=ode_it_funct11,
     class vec_t=boost::numeric::ublas::vector<double>, 
@@ -81,6 +84,9 @@ namespace o2scl {
     solver=&def_solver;
     alpha=1.0;
     make_mats=false;
+    fd=0;
+    fl=0;
+    fr=0;
   }
 
   virtual ~ode_it_solve() {}
@@ -197,20 +203,17 @@ namespace o2scl {
 
       // Construct the entries corresponding to the LHS boundary. 
       // This makes the first nb_left rows of the matrix.
-      //std::cout << "Left" << std::endl;
       for(size_t i=0;i<nb_left;i++) {
 	matrix_row_t yk=o2scl::matrix_row<mat_t,matrix_row_t>(y,0);
 	rhs[ix]=-left(i,x[0],yk);
 	for(size_t j=0;j<n_eq;j++) {
 	  mat(ix,j)=d_left(i,j,x[0],yk);
-	  //std::cout << "mat(ix,j): " << mat(ix,j) << std::endl;
 	}
 	ix++;
       }
 
       // Construct the matrix entries for the internal points
       // This loop adds n_grid-1 sets of n_eq rows
-      //std::cout << "Cent" << std::endl;
       for(size_t k=0;k<n_grid-1;k++) {
 	size_t kp1=k+1;
 	double tx=(x[kp1]+x[k])/2.0;
@@ -227,10 +230,6 @@ namespace o2scl {
 	  for(size_t j=0;j<n_eq;j++) {
 	    mat(ix,lhs+j)=-d_derivs(i,j,tx,yk)*dx/2.0;
 	    mat(ix,lhs+j+n_eq)=-d_derivs(i,j,tx,ykp1)*dx/2.0;
-	    //std::cout << "mat(ix,lhs+j): "
-	    //<< mat(ix,lhs+j) << std::endl;
-	    //std::cout << "mat(ix,lhs+j+n_eq): "
-	    //<< mat(ix,lhs+j+n_eq) << std::endl;
 	    if (i==j) {
 	      mat(ix,lhs+j)=mat(ix,lhs+j)-1.0;
 	      mat(ix,lhs+j+n_eq)=mat(ix,lhs+j+n_eq)+1.0;
@@ -241,7 +240,6 @@ namespace o2scl {
 
 	}
 	
-	//exit(-1);
       }
       
       // Construct the entries corresponding to the RHS boundary

@@ -693,7 +693,7 @@ int eos_had_rmf::calc_eq_p(fermion &ne, fermion &pr, double sig, double ome,
   else ne.kf=sqrt(ne.nu*ne.nu-ne.ms*ne.ms);
   if (pr.nu<pr.ms || pr.ms<0.0) pr.kf=0.0;
   else pr.kf=sqrt(pr.nu*pr.nu-pr.ms*pr.ms);
-  
+
   // We don't record error values, since these functions usually
   // always succeed
   fet->calc_mu_zerot(ne);
