@@ -77,7 +77,8 @@ namespace o2scl {
   bool make_mats;
   
   ode_it_solve() {
-    h=1.0e-4;
+    eps_rel=sqrt(std::numeric_limits<double>::epsilon());
+    eps_min=1.0e-15;
     niter=30;
     tol_rel=1.0e-8;
     verbose=0;
@@ -96,7 +97,12 @@ namespace o2scl {
 
   /** \brief Stepsize for finite differencing (default \f$ 10^{-4} \f$)
    */
-  double h;
+  double eps_rel;
+
+  /** \brief Minimum stepsize for finite differencing (default \f$
+      10^{-15} \f$)
+   */
+  double eps_min;
 
   /// Tolerance (default \f$ 10^{-8} \f$)
   double tol_rel;
@@ -348,6 +354,10 @@ namespace o2scl {
 
     double ret, dydx;
     
+    double h=eps_rel*fabs(y[ivar]);
+    if (h<eps_min) h=eps_min;
+    if (h==0.0) h=eps_rel;
+
     y[ivar]+=h;
     ret=(*fl)(ieq,x,y);
     
@@ -367,6 +377,10 @@ namespace o2scl {
 
     double ret, dydx;
     
+    double h=eps_rel*fabs(y[ivar]);
+    if (h<eps_min) h=eps_min;
+    if (h==0.0) h=eps_rel;
+
     y[ivar]+=h;
     ret=(*fr)(ieq,x,y);
     
@@ -386,6 +400,10 @@ namespace o2scl {
   virtual double fd_derivs(size_t ieq, size_t ivar, double x, matrix_row_t &y) {
 
     double ret, dydx;
+
+    double h=eps_rel*fabs(y[ivar]);
+    if (h<eps_min) h=eps_min;
+    if (h==0.0) h=eps_rel;
     
     y[ivar]+=h;
     ret=(*fd)(ieq,x,y);
