@@ -53,8 +53,10 @@ int eos_had_skyrme::calc_temp_e(fermion &ne, fermion &pr,
 	       "eos_had_skyrme::calc_temp_e().",exc_einval);
   }
   if (ne.n<0.0 || pr.n<0.0) {
-    O2SCL_ERR2("Nucleon densities negative in ",
-	       "eos_had_skyrme::calc_temp_e().",exc_einval);
+    string str=((string)"Nucleon densities negative, n_n=")+
+      std::to_string(ne.n)+", n_p="+std::to_string(pr.n)+", in "+
+      "eos_had_skyrme::calc_temp_e().";
+    O2SCL_ERR(str.c_str(),exc_einval);
   }
   if (fabs(ne.g-2.0)>1.0e-10 || fabs(pr.g-2.0)>1.0e-10) {
     O2SCL_ERR2("Neutron or proton spin degeneracies wrong in ",
@@ -194,8 +196,9 @@ int eos_had_skyrme::calc_e(fermion &ne, fermion &pr, thermo &locth) {
 	       "eos_had_skyrme::calc_e().",exc_einval);
   }
   if (ne.n<0.0 || pr.n<0.0) {
-    O2SCL_ERR2("Nucleon densities negative in ",
-	       "eos_had_skyrme::calc_temp_e().",exc_einval);
+    string str=((string)"Nucleon densities negative, n_n=")+
+      std::to_string(ne.n)+", n_p="+std::to_string(pr.n)+", in "+
+      "eos_had_skyrme::calc_e().";
   }
   if (fabs(ne.g-2.0)>1.0e-10 || fabs(pr.g-2.0)>1.0e-10) {
     O2SCL_ERR2("Neutron or proton spin degeneracies wrong in ",
