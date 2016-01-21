@@ -85,15 +85,15 @@ public:
 
 #ifdef O2SCL_EIGEN
 
-  double lefte(size_t ieq, double x, Eigen::VectorXd &yleft) {
+  double lefte(size_t ieq, double x, Eigen::MatrixXd::RowXpr &yleft) {
     return yleft[1]-1.0;
   }
   
-  double righte(size_t ieq, double x, Eigen::VectorXd &yright) {
+  double righte(size_t ieq, double x, Eigen::MatrixXd::RowXpr &yright) {
     return yright[0]-2.0;
   }
   
-  double derivse(size_t ieq, double x, Eigen::VectorXd &y) {
+  double derivse(size_t ieq, double x, Eigen::MatrixXd::RowXpr &y) {
     if (ieq==0) return y[0]+y[1];
     return y[0];
   }
@@ -202,9 +202,6 @@ int main(void) {
        (&fc1::right),&f1,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
 
-    //ode_it_funct_mfptr<fc1,ubmatrix_row> f_derivs(&f1,&fc1::derivs);
-    //ode_it_funct_mfptr<fc1,ubmatrix_row> f_left(&f1,&fc1::left);
-    //ode_it_funct_mfptr<fc1,ubmatrix_row> f_right(&f1,&fc1::right);
     ode_it_solve<> oit;
     oit.solve(5,2,1,x,y,f_derivs,f_left,f_right,A,rhs,dy);
   }
@@ -236,10 +233,6 @@ int main(void) {
       (std::mem_fn<double(size_t,double,ubmatrix_row &)>
        (&fc1::right),&f1,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
-
-    //ode_it_funct_mfptr<fc1,ubmatrix_row> f_derivs(&f1,&fc1::derivs);
-    //ode_it_funct_mfptr<fc1,ubmatrix_row> f_left(&f1,&fc1::left);
-    //ode_it_funct_mfptr<fc1,ubmatrix_row> f_right(&f1,&fc1::right);
 
     ode_it_solve<> oit;
     oit.solve(11,2,1,x,y,f_derivs,f_left,f_right,A,rhs,dy);
@@ -302,10 +295,6 @@ int main(void) {
        (&fc2::right),&f2,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
 
-    //ode_it_funct_mfptr<fc2,ubmatrix_row> f_derivs(&f2,&fc2::derivs);
-    //ode_it_funct_mfptr<fc2,ubmatrix_row> f_left(&f2,&fc2::left);
-    //ode_it_funct_mfptr<fc2,ubmatrix_row> f_right(&f2,&fc2::right);
-
     ode_it_solve<> oit;
     oit.solve(11,2,1,x,y,f_derivs,f_left,f_right,A,rhs,dy);
 
@@ -365,10 +354,6 @@ int main(void) {
        (&fc3::right),&f3,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
 
-    //ode_it_funct_mfptr<fc3,ubmatrix_row> ofm3d(&f3,&fc3::derivs);
-    //ode_it_funct_mfptr<fc3,ubmatrix_row> ofm3l(&f3,&fc3::left);
-    //ode_it_funct_mfptr<fc3,ubmatrix_row> ofm3r(&f3,&fc3::right);
-
     ode_it_solve<> oit;
     oit.solve(5,3,2,x4,y,ofm3d,ofm3l,ofm3r,A4,rhs4,dy);
 
@@ -410,9 +395,6 @@ int main(void) {
        (&fc4::right),&f4,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
 
-    //ode_it_funct_mfptr<fc4,ubmatrix_row> ofm4d(&f4,&fc4::derivs);
-    //ode_it_funct_mfptr<fc4,ubmatrix_row> ofm4l(&f4,&fc4::left);
-    //ode_it_funct_mfptr<fc4,ubmatrix_row> ofm4r(&f4,&fc4::right);
     ode_it_solve<> oit;
     oit.solve(5,3,1,x,y,ofm4d,ofm4l,ofm4r,A,rhs,dy);
   
@@ -450,10 +432,6 @@ int main(void) {
       (std::mem_fn<double(size_t,double,ubmatrix_row &)>
        (&fc1::right),&f1,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
-
-    //ode_it_funct_mfptr<fc1,ubmatrix_row> f_derivs(&f1,&fc1::derivs);
-    //ode_it_funct_mfptr<fc1,ubmatrix_row> f_left(&f1,&fc1::left);
-    //ode_it_funct_mfptr<fc1,ubmatrix_row> f_right(&f1,&fc1::right);
 
     ode_it_solve<ode_it_funct11,ubvector,ubmatrix,
 		 ubmatrix_row,ubvector,ubcomp_matrix> oit;
@@ -507,9 +485,6 @@ int main(void) {
        (&fc1::righta),&f1,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
 
-    //ode_it_funct_mfptr<fc1,arma::rowvec> f_derivs(&f1,&fc1::derivsa);
-    //ode_it_funct_mfptr<fc1,arma::rowvec> f_left(&f1,&fc1::lefta);
-    //ode_it_funct_mfptr<fc1,arma::rowvec> f_right(&f1,&fc1::righta);
     ode_it_solve<ode_it_funct11,arma::colvec,arma::mat,
 		 arma::rowvec,arma::colvec,arma::mat> oit;
     
@@ -558,7 +533,7 @@ int main(void) {
   {
     fc1 f1;
 
-    ode_it_funct11 f_derivs=std::bind
+    ode_it_funct f_derivs=std::bind
       (std::mem_fn<double(size_t,double,ubmatrix_row &)>
        (&fc1::derivsa),&f1,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
@@ -570,10 +545,6 @@ int main(void) {
       (std::mem_fn<double(size_t,double,ubmatrix_row &)>
        (&fc1::righta),&f1,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
-
-    //ode_it_funct_mfptr<fc1,arma::rowvec> f_derivs(&f1,&fc1::derivsa);
-    //ode_it_funct_mfptr<fc1,arma::rowvec> f_left(&f1,&fc1::lefta);
-    //ode_it_funct_mfptr<fc1,arma::rowvec> f_right(&f1,&fc1::righta);
 
     ode_it_solve<ode_it_funct11,arma::colvec,arma::mat,
 		 arma::rowvec,arma::colvec,arma::sp_mat> oit;
@@ -621,32 +592,30 @@ int main(void) {
 
 #endif
 
-#ifdef O2SCL_NEVER_DEFINED
-
 #ifdef O2SCL_EIGEN
 
   // Eigen with dense matrices and QR solver with column pivoting
   {
     fc1 f1;
 
-    ode_it_funct11 f_derivs=std::bind
-      (std::mem_fn<double(size_t,double,Eigen::VectorXd &)>
+    typedef std::function
+      <double(size_t,double,Eigen::MatrixXd::RowXpr &)> ode_it_funct_eigen;
+    
+    ode_it_funct_eigen f_derivs=std::bind
+      (std::mem_fn<double(size_t,double,Eigen::MatrixXd::RowXpr &)>
        (&fc1::derivse),&f1,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
-    ode_it_funct11 f_left=std::bind
-      (std::mem_fn<double(size_t,double,Eigen::VectorXd &)>
+    ode_it_funct_eigen f_left=std::bind
+      (std::mem_fn<double(size_t,double,Eigen::MatrixXd::RowXpr &)>
        (&fc1::lefte),&f1,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
-    ode_it_funct11 f_right=std::bind
-      (std::mem_fn<double(size_t,double,Eigen::VectorXd &)>
+    ode_it_funct_eigen f_right=std::bind
+      (std::mem_fn<double(size_t,double,Eigen::MatrixXd::RowXpr &)>
        (&fc1::righte),&f1,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
-
-    //ode_it_funct_mfptr<fc1,Eigen::VectorXd> f_derivs(&f1,&fc1::derivse);
-    //ode_it_funct_mfptr<fc1,Eigen::VectorXd> f_left(&f1,&fc1::lefte);
-    //ode_it_funct_mfptr<fc1,Eigen::VectorXd> f_right(&f1,&fc1::righte);
-    ode_it_solve<ode_it_funct<Eigen::VectorXd>,Eigen::VectorXd,Eigen::MatrixXd,
-		 Eigen::VectorXd,Eigen::VectorXd,Eigen::MatrixXd> oit;
+    
+    ode_it_solve<ode_it_funct_eigen,Eigen::VectorXd,Eigen::MatrixXd,
+		 Eigen::MatrixXd::RowXpr,Eigen::VectorXd,Eigen::MatrixXd> oit;
     
     Eigen::VectorXd x(11);
     Eigen::MatrixXd y(11,2);
@@ -691,8 +660,6 @@ int main(void) {
   
 #endif
 
-#endif
-  
   t.report();
 
   return 0;

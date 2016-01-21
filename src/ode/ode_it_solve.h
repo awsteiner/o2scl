@@ -48,11 +48,6 @@ namespace o2scl {
     (size_t,double,boost::numeric::ublas::matrix_row
      <boost::numeric::ublas::matrix<double> > &)> ode_it_funct11;
   
-  /// Function derivatives for iterative solving of ODEs
-  typedef std::function<double
-    (size_t,size_t,double,boost::numeric::ublas::matrix_row
-     <boost::numeric::ublas::matrix<double> > &)> ode_it_dfunct11;
-  
   /** \brief ODE solver using a generic linear solver to solve 
       finite-difference equations
 
@@ -145,6 +140,10 @@ namespace o2scl {
     fd=&derivs;
     fl=&left;
     fr=&right;
+    
+    /// Function derivatives for iterative solving of ODEs
+    typedef std::function<double
+      (size_t,size_t,double,matrix_row_t &)> ode_it_dfunct11;
     
     ode_it_dfunct11 d2_derivs=std::bind
       (std::mem_fn<double(size_t,size_t,double,matrix_row_t &)>
@@ -397,7 +396,8 @@ namespace o2scl {
       This function computes \f$ \partial f_{\mathrm{ieq}} / \partial
       y_{\mathrm{ivar}} \f$
   */
-  virtual double fd_derivs(size_t ieq, size_t ivar, double x, matrix_row_t &y) {
+  virtual double fd_derivs(size_t ieq, size_t ivar, double x,
+			   matrix_row_t &y) {
 
     double ret, dydx;
 
