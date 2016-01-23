@@ -28,8 +28,9 @@
 
     This file contains a set of template functions which can be
     applied to almost any vector or matrix type which allow element
-    access through <tt>operator[]</tt>. Detailed requirements
-    on the template parameters are given in the functions below. 
+    access through <tt>operator[]</tt> (for vectors) or
+    <tt>operator(,)</tt> for matrices. Detailed requirements on the
+    template parameters are given in the functions below.
 
     For a general discussion of vectors and matrices in \o2, see the
     \ref vecmat_section of the User's Guide.
@@ -1316,8 +1317,11 @@ namespace o2scl {
   template<class mat_t, class data_t>
     data_t matrix_max_value(size_t m, const size_t n, const mat_t &data) {
     
-    if (n==0 || m==0) {
-      O2SCL_ERR("Sent size=0 to matrix_max().",exc_efailed);
+    if (m==0 || n==0) {
+      std::string str=((std::string)"Matrix with zero size (")+
+	std::to_string(m)+","+std::to_string(n)+") in "+
+	"matrix_max_value().";
+      O2SCL_ERR(str.c_str(),exc_einval);
     }
     data_t max=data(0,0);
     for(size_t i=0;i<m;i++) {
@@ -1336,12 +1340,15 @@ namespace o2scl {
     matrix_max_value(const mat_t &data) {
     size_t m=data.size1();
     size_t n=data.size2();
-    if (n==0 || m==0) {
-      O2SCL_ERR("Sent size=0 to matrix_max().",exc_efailed);
+    if (m==0 || n==0) {
+      std::string str=((std::string)"Matrix with zero size (")+
+	std::to_string(m)+","+std::to_string(n)+") in "+
+	"matrix_max_value().";
+      O2SCL_ERR(str.c_str(),exc_einval);
     }
     data_t max=data(0,0);
-    for(size_t i=0;i<n;i++) {
-      for(size_t j=0;j<m;j++) {
+    for(size_t i=0;i<m;i++) {
+      for(size_t j=0;j<n;j++) {
 	if (data(i,j)>max) {
 	  max=data(i,j);
 	}
@@ -1356,12 +1363,15 @@ namespace o2scl {
     matrix_max_value_double(const mat_t &data) {
     size_t m=data.size1();
     size_t n=data.size2();
-    if (n==0 || m==0) {
-      O2SCL_ERR("Sent size=0 to matrix_max().",exc_efailed);
+    if (m==0 || n==0) {
+      std::string str=((std::string)"Matrix with zero size (")+
+	std::to_string(m)+","+std::to_string(n)+") in "+
+	"matrix_max_value_double().";
+      O2SCL_ERR(str.c_str(),exc_einval);
     }
     double max=data(0,0);
-    for(size_t i=0;i<n;i++) {
-      for(size_t j=0;j<m;j++) {
+    for(size_t i=0;i<m;i++) {
+      for(size_t j=0;j<n;j++) {
 	if (data(i,j)>max) {
 	  max=data(i,j);
 	}
@@ -1374,17 +1384,50 @@ namespace o2scl {
       the indices of the maximum element
    */
   template<class mat_t, class data_t>
-    void matrix_max_index(size_t n, const size_t m, const mat_t &data,
+    void matrix_max_index(size_t m, size_t n, const mat_t &data,
 			  size_t &i_max, size_t &j_max, data_t &max) {
     
-    if (n==0 || m==0) {
-      O2SCL_ERR("Sent size=0 to matrix_max().",exc_efailed);
+    if (m==0 || n==0) {
+      std::string str=((std::string)"Matrix with zero size (")+
+	std::to_string(m)+","+std::to_string(n)+") in "+
+	"matrix_max_index().";
+      O2SCL_ERR(str.c_str(),exc_einval);
     }
     max=data(0,0);
     i_max=0;
     j_max=0;
-    for(size_t i=0;i<n;i++) {
-      for(size_t j=0;j<m;j++) {
+    for(size_t i=0;i<m;i++) {
+      for(size_t j=0;j<n;j++) {
+	if (data(i,j)>max) {
+	  max=data(i,j);
+	  i_max=i;
+	  j_max=j;
+	}
+      }
+    }
+    return;
+  }
+
+  /** \brief Compute the maximum of a matrix and return 
+      the indices of the maximum element
+   */
+  template<class mat_t, class data_t>
+    void matrix_max_index(const mat_t &data,
+			  size_t &i_max, size_t &j_max, data_t &max) {
+
+    size_t m=data.size1();
+    size_t n=data.size2();
+    if (m==0 || n==0) {
+      std::string str=((std::string)"Matrix with zero size (")+
+	std::to_string(m)+","+std::to_string(n)+") in "+
+	"matrix_max_index().";
+      O2SCL_ERR(str.c_str(),exc_einval);
+    }
+    max=data(0,0);
+    i_max=0;
+    j_max=0;
+    for(size_t i=0;i<m;i++) {
+      for(size_t j=0;j<n;j++) {
 	if (data(i,j)>max) {
 	  max=data(i,j);
 	  i_max=i;
@@ -1398,14 +1441,17 @@ namespace o2scl {
   /** \brief Compute the minimum of a matrix
    */
   template<class mat_t, class data_t>
-    data_t matrix_min_value(size_t n, const size_t m, const mat_t &data) {
+    data_t matrix_min_value(size_t m, size_t n, const mat_t &data) {
     
-    if (n==0 || m==0) {
-      O2SCL_ERR("Sent size=0 to matrix_min().",exc_efailed);
+    if (m==0 || n==0) {
+      std::string str=((std::string)"Matrix with zero size (")+
+	std::to_string(m)+","+std::to_string(n)+") in "+
+	"matrix_min_value().";
+      O2SCL_ERR(str.c_str(),exc_einval);
     }
     data_t min=data(0,0);
-    for(size_t i=0;i<n;i++) {
-      for(size_t j=0;j<m;j++) {
+    for(size_t i=0;i<m;i++) {
+      for(size_t j=0;j<n;j++) {
 	if (data(i,j)<min) {
 	  min=data(i,j);
 	}
@@ -1421,13 +1467,15 @@ namespace o2scl {
     
     size_t m=data.size1();
     size_t n=data.size2();
-
-    if (n==0 || m==0) {
-      O2SCL_ERR("Sent size=0 to matrix_min().",exc_efailed);
+    if (m==0 || n==0) {
+      std::string str=((std::string)"Matrix with zero size (")+
+	std::to_string(m)+","+std::to_string(n)+") in "+
+	"matrix_min_value().";
+      O2SCL_ERR(str.c_str(),exc_einval);
     }
     data_t min=data(0,0);
-    for(size_t i=0;i<n;i++) {
-      for(size_t j=0;j<m;j++) {
+    for(size_t i=0;i<m;i++) {
+      for(size_t j=0;j<n;j++) {
 	if (data(i,j)<min) {
 	  min=data(i,j);
 	}
@@ -1438,17 +1486,20 @@ namespace o2scl {
 
   /** \brief Compute the minimum of a matrix
    */
-  template<class mat_t> double matrix_min_value_double(const mat_t &data) {
+  template<class mat_t>
+    double matrix_min_value_double(const mat_t &data) {
     
     size_t m=data.size1();
     size_t n=data.size2();
-
-    if (n==0 || m==0) {
-      O2SCL_ERR("Sent size=0 to matrix_min().",exc_efailed);
+    if (m==0 || n==0) {
+      std::string str=((std::string)"Matrix with zero size (")+
+	std::to_string(m)+","+std::to_string(n)+") in "+
+	"matrix_min_value().";
+      O2SCL_ERR(str.c_str(),exc_einval);
     }
     double min=data(0,0);
-    for(size_t i=0;i<n;i++) {
-      for(size_t j=0;j<m;j++) {
+    for(size_t i=0;i<m;i++) {
+      for(size_t j=0;j<n;j++) {
 	if (data(i,j)<min) {
 	  min=data(i,j);
 	}
@@ -1461,17 +1512,50 @@ namespace o2scl {
       the indices of the minimum element
   */
   template<class mat_t, class data_t>
-    void matrix_min_index(size_t n, const size_t m, const mat_t &data,
+    void matrix_min_index(size_t n, size_t m, const mat_t &data,
 			  size_t &i_min, size_t &j_min, data_t &min) {
     
-    if (n==0 || m==0) {
-      O2SCL_ERR("Sent size=0 to matrix_min().",exc_efailed);
+    if (m==0 || n==0) {
+      std::string str=((std::string)"Matrix with zero size (")+
+	std::to_string(m)+","+std::to_string(n)+") in "+
+	"matrix_min_index().";
+      O2SCL_ERR(str.c_str(),exc_einval);
     }
     min=data(0,0);
     i_min=0;
     j_min=0;
-    for(size_t i=0;i<n;i++) {
-      for(size_t j=0;j<m;j++) {
+    for(size_t i=0;i<m;i++) {
+      for(size_t j=0;j<n;j++) {
+	if (data(i,j)<min) {
+	  min=data(i,j);
+	  i_min=i;
+	  j_min=j;
+	}
+      }
+    }
+    return;
+  }
+
+  /** \brief Compute the minimum of a matrix and return 
+      the indices of the minimum element
+  */
+  template<class mat_t, class data_t>
+    void matrix_min_index(const mat_t &data,
+			  size_t &i_min, size_t &j_min, data_t &min) {
+    
+    size_t m=data.size1();
+    size_t n=data.size2();
+    if (m==0 || n==0) {
+      std::string str=((std::string)"Matrix with zero size (")+
+	std::to_string(m)+","+std::to_string(n)+") in "+
+	"matrix_min_index().";
+      O2SCL_ERR(str.c_str(),exc_einval);
+    }
+    min=data(0,0);
+    i_min=0;
+    j_min=0;
+    for(size_t i=0;i<m;i++) {
+      for(size_t j=0;j<n;j++) {
 	if (data(i,j)<min) {
 	  min=data(i,j);
 	  i_min=i;
@@ -1485,7 +1569,7 @@ namespace o2scl {
   /** \brief Compute the minimum and maximum of a matrix
    */
   template<class mat_t, class data_t>
-    void matrix_minmax(size_t n, const size_t m, const mat_t &data,
+    void matrix_minmax(size_t n, size_t m, const mat_t &data,
 		      data_t &min, data_t &max) {
     
     if (n==0 || m==0) {
@@ -1509,7 +1593,7 @@ namespace o2scl {
       return their locations
    */
   template<class mat_t, class data_t>
-    void matrix_minmax_index(size_t n, const size_t m, const mat_t &data,
+    void matrix_minmax_index(size_t n, size_t m, const mat_t &data,
 			     size_t &i_min, size_t &j_min, data_t &min, 
 			     size_t &i_max, size_t &j_max, data_t &max) {
     
@@ -2255,6 +2339,9 @@ namespace o2scl {
   /// Armadillo version of \ref matrix_max()
   double matrix_max(const arma::mat &data);
 
+    /// Armadillo version of \ref matrix_min()
+  double matrix_min(const arma::mat &data);
+
   /// Armadillo version of \ref matrix_row()
   template<> arma::subview_row<double>  
     matrix_row<arma::mat,arma::subview_row<double> >
@@ -2279,7 +2366,10 @@ namespace o2scl {
   //@{
   /// Eigen version of \ref matrix_max()
   double matrix_max(const Eigen::MatrixXd &data);
-  
+
+  /// Eigen version of \ref matrix_min()
+  double matrix_min(const Eigen::MatrixXd &data);
+
   /// Eigen version of \ref matrix_row()
   template<> Eigen::MatrixXd::RowXpr 
     matrix_row<Eigen::MatrixXd,Eigen::MatrixXd::RowXpr>

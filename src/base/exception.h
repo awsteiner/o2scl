@@ -44,12 +44,12 @@ namespace o2scl {
       This class derives from <tt>std::exception</tt>.
 
       The errors which are handled with this exception type are
-      - gsl_failure (-1) Failure \n
-      - gsl_efailed (5) Generic failure \n
-      - gsl_esanity (7) Sanity check failed \n
-      - gsl_eunsup (23) Requested feature is not 
+      - \ref o2scl::gsl_failure (-1) Failure \n
+      - \ref o2scl::exc_efailed (5) Generic failure \n
+      - \ref o2scl::exc_esanity (7) Sanity check failed \n
+      - \ref o2scl::exc_eunsup (23) Requested feature is not 
       supported by the hardware \n
-      - gsl_eunimpl (24) Requested feature not 
+      - \ref o2scl::exc_eunimpl (24) Requested feature not 
       (yet) implemented  
     
   */
@@ -76,7 +76,7 @@ namespace o2scl {
       This class derives from <tt>std::logic_error</tt>.
 
       The error which is handled with this exception type is
-      - gsl_ememtype (34) Incorrect type for memory object
+      - \ref o2scl::exc_ememtype (34) Incorrect type for memory object
 
   */
   class exc_logic_error : public std::logic_error {
@@ -102,11 +102,11 @@ namespace o2scl {
       This class derives from <tt>std::invalid_argument</tt>.
 
       The errors which are handled with this exception type are
-      - gsl_einval (4) invalid argument supplied by user \n
-      - gsl_ebadtol (13) user specified an invalid tolerance \n
-      - gsl_ebadlen (19) matrix, vector lengths are not conformant \n
-      - gsl_enotsqr (20) matrix not square \n
-      - gsl_eindex (36) Invalid index for array or matrix 
+      - \ref o2scl::exc_einval (4) invalid argument supplied by user \n
+      - \ref o2scl::exc_ebadtol (13) user specified an invalid tolerance \n
+      - \ref o2scl::exc_ebadlen (19) matrix, vector lengths are not conformant \n
+      - \ref o2scl::exc_enotsqr (20) matrix not square \n
+      - \ref o2scl::exc_eindex (36) Invalid index for array or matrix 
   */
   class exc_invalid_argument : public std::invalid_argument {
     
@@ -131,27 +131,27 @@ namespace o2scl {
       This class derives from <tt>std::runtime_error</tt>.
 
       The errors which are handled with this exception type are
-      - gsl_efault (3) invalid pointer \n
-      - gsl_efactor (6) factorization failed \n
-      - gsl_enomem (8) malloc failed \n
-      - gsl_ebadfunc (9) problem with user-supplied function \n
-      - gsl_erunaway (10) iterative process is out of control \n
-      - gsl_emaxiter (11) exceeded max number of iterations \n
-      - gsl_etol (14) failed to reach the specified tolerance \n
-      - gsl_eloss (17) loss of accuracy \n
-      - gsl_eround (18) failed because of roundoff error \n
-      - gsl_esing (21) apparent singularity detected \n
-      - gsl_ediverge (22) integral or series is divergent \n
-      - gsl_ecache (25) cache limit exceeded \n
-      - gsl_etable (26) table limit exceeded \n
-      - gsl_enoprog (27) iteration is not making progress toward solution \n
-      - gsl_enoprogj (28) jacobian evaluations are not
+      - \ref o2scl::exc_efault (3) invalid pointer \n
+      - \ref o2scl::exc_efactor (6) factorization failed \n
+      - \ref o2scl::exc_enomem (8) malloc failed \n
+      - \ref o2scl::exc_ebadfunc (9) problem with user-supplied function \n
+      - \ref o2scl::exc_erunaway (10) iterative process is out of control \n
+      - \ref o2scl::exc_emaxiter (11) exceeded max number of iterations \n
+      - \ref o2scl::exc_etol (14) failed to reach the specified tolerance \n
+      - \ref o2scl::exc_eloss (17) loss of accuracy \n
+      - \ref o2scl::exc_eround (18) failed because of roundoff error \n
+      - \ref o2scl::exc_esing (21) apparent singularity detected \n
+      - \ref o2scl::exc_ediverge (22) integral or series is divergent \n
+      - \ref o2scl::exc_ecache (25) cache limit exceeded \n
+      - \ref o2scl::exc_etable (26) table limit exceeded \n
+      - \ref o2scl::exc_enoprog (27) iteration is not making progress toward solution \n
+      - \ref o2scl::exc_enoprogj (28) jacobian evaluations are not
       improving the solution \n
-      - gsl_etolf (29) cannot reach the specified tolerance in f \n
-      - gsl_etolx (30) cannot reach the specified tolerance in x \n
-      - gsl_etolg (31) cannot reach the specified tolerance in gradient \n
-      - gsl_enotfound (33) Generic "not found" result \n
-      - gsl_outsidecons (37) Outside constraint region
+      - \ref o2scl::exc_etolf (29) cannot reach the specified tolerance in f \n
+      - \ref o2scl::exc_etolx (30) cannot reach the specified tolerance in x \n
+      - \ref o2scl::exc_etolg (31) cannot reach the specified tolerance in gradient \n
+      - \ref o2scl::exc_enotfound (33) Generic "not found" result \n
+      - exc_outsidecons (37) Outside constraint region
 
   */
   class exc_runtime_error : public std::runtime_error {
@@ -177,9 +177,9 @@ namespace o2scl {
       This class derives from <tt>std::range_error</tt>.
 
       The errors which are handled with this exception type are
-      - gsl_edom (1) input domain error, e.g sqrt(-1) \n
-      - gsl_erange (2) output range error, e.g. exp(1e100) \n
-      - gsl_eundrflw (15) underflow   
+      - \ref o2scl::exc_edom (1) input domain error, e.g sqrt(-1) \n
+      - \ref o2scl::exc_erange (2) output range error, e.g. exp(1e100) \n
+      - \ref o2scl::exc_eundrflw (15) underflow   
   */
   class exc_range_error : public std::range_error {
 
@@ -204,8 +204,8 @@ namespace o2scl {
       This class derives from <tt>std::overflow_error</tt>.
 
       The errors which are handled with this exception type are
-      - gsl_ezerodiv (12) tried to divide by zero \n
-      - gsl_eovrflw (16) overflow 
+      - \ref o2scl::exc_ezerodiv (12) tried to divide by zero \n
+      - \ref o2scl::exc_eovrflw (16) overflow 
   */
   class exc_overflow_error : public std::overflow_error {
 
@@ -230,8 +230,8 @@ namespace o2scl {
       This class derives from <tt>std::ios::failure</tt>.
 
       The errors which are handled with this exception type are
-      - gsl_eof=32 end of file \n
-      - gsl_efilenotfound=35 File not found
+      - \ref o2scl::exc_eof=32 end of file \n
+      - \ref o2scl::exc_efilenotfound=35 File not found
   */
   class exc_ios_failure : public std::ios::failure {
     

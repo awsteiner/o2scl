@@ -56,6 +56,23 @@ double o2scl::matrix_max(const arma::mat &data) {
   return max;
 }
 
+double o2scl::matrix_min(const arma::mat &data) {
+  size_t m=data.n_rows;
+  size_t n=data.n_cols;
+  if (n==0 || m==0) {
+    O2SCL_ERR("Sent size=0 to matrix_min().",exc_efailed);
+  }
+  double min=data(0,0);
+  for(size_t i=0;i<n;i++) {
+    for(size_t j=0;j<m;j++) {
+      if (data(i,j)<min) {
+	min=data(i,j);
+      }
+    }
+  }
+  return min;
+}
+
 #endif
 
 #ifdef O2SCL_EIGEN
@@ -87,6 +104,23 @@ double o2scl::matrix_max(const Eigen::MatrixXd &data) {
     }
   }
   return max;
+}
+
+double o2scl::matrix_min(const Eigen::MatrixXd &data) {
+  size_t m=data.rows();
+  size_t n=data.cols();
+  if (n==0 || m==0) {
+    O2SCL_ERR("Sent size=0 to matrix_min().",exc_efailed);
+  }
+  double min=data(0,0);
+  for(size_t i=0;i<n;i++) {
+    for(size_t j=0;j<m;j++) {
+      if (data(i,j)<min) {
+	min=data(i,j);
+      }
+    }
+  }
+  return min;
 }
 
 #endif

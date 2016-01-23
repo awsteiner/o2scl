@@ -1306,14 +1306,21 @@ int acol_manager::comm_max(std::vector<std::string> &sv, bool itive_com) {
 			  i1,"max",itive_com);
     if (ret!=0) return ret;
 
-    double max=t3p->get(0,0,i1);
-    for(size_t i=0;i<t3p->get_nx();i++) {
-      for(size_t j=0;j<t3p->get_ny();j++) {
-	if (t3p->get(i,j,i1)>max) max=t3p->get(i,j,i1);
-      }
+    size_t ix;
+    if (!t3p->is_slice(i1,ix)) {
+      cerr << "No slice named '" << i1 << "'." << endl;
+      return exc_efailed;
     }
+    
+    const ubmatrix &mat=t3p->get_slice(ix);
+    size_t i, j;
+    double max;
+    matrix_max_index(mat,i,j,max);
+
     cout << "Maximum value of slice '" << i1 << "' is: " 
-	 << max << endl;
+	 << max << " at indices (" << i << "," << j << ")\n  and grid "
+	 << "point (" << t3p->get_grid_x(i) << ","
+	 << t3p->get_grid_y(j) << ")." << endl;
 
     return 0;
   }
@@ -1333,8 +1340,11 @@ int acol_manager::comm_max(std::vector<std::string> &sv, bool itive_com) {
     return exc_efailed;
   }
 
+  double max;
+  size_t ix;
+  vector_max(tabp->get_nlines(),(*tabp)[i1],ix,max);
   cout << "Maximum value of column '" << i1 << "' is: " 
-       << tabp->max(i1) << endl;
+       << max << " at row with index " << ix << "." << endl;
   
   return 0;
 }
@@ -1353,14 +1363,21 @@ int acol_manager::comm_min(std::vector<std::string> &sv, bool itive_com) {
 			  i1,"min",itive_com);
     if (ret!=0) return ret;
 
-    double min=t3p->get(0,0,i1);
-    for(size_t i=0;i<t3p->get_nx();i++) {
-      for(size_t j=0;j<t3p->get_ny();j++) {
-	if (t3p->get(i,j,i1)<min) min=t3p->get(i,j,i1);
-      }
+    size_t ix;
+    if (!t3p->is_slice(i1,ix)) {
+      cerr << "No slice named '" << i1 << "'." << endl;
+      return exc_efailed;
     }
+    
+    const ubmatrix &mat=t3p->get_slice(ix);
+    size_t i, j;
+    double min;
+    matrix_min_index(mat,i,j,min);
+
     cout << "Minimum value of slice '" << i1 << "' is: " 
-	 << min << endl;
+	 << min << " at indices (" << i << "," << j << ")\n  and grid "
+	 << "point (" << t3p->get_grid_x(i) << ","
+	 << t3p->get_grid_y(j) << ")." << endl;
 
     return 0;
   }
@@ -1380,8 +1397,11 @@ int acol_manager::comm_min(std::vector<std::string> &sv, bool itive_com) {
     return exc_efailed;
   }
 
+  double min;
+  size_t ix;
+  vector_min(tabp->get_nlines(),(*tabp)[i1],ix,min);
   cout << "Minimum value of column '" << i1 << "' is: " 
-       << tabp->min(i1) << endl;
+       << min << " at row with index " << ix << "." << endl;
   
   return 0;
 }
