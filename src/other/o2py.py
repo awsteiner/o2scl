@@ -157,6 +157,7 @@ class plotter:
     canvas_flag=0
     dtype=''
     cmap='jet'
+    colbar=0
 
     def myreds(self):
         cdict={'red': ((0.0,1.0,1.0),(1.0,1.0,1.0)),
@@ -468,6 +469,9 @@ class plotter:
                                 ygrid[0]-(ygrid[1]-ygrid[0])/2,
                                 ygrid[ly-1]+(ygrid[ly-1]-ygrid[ly-2])/2],
                         aspect='auto',**kwargs)
+            if self.colbar>0:
+                plot.colorbar()
+                
         else:
             print 'Cannot density plot object of type',self.dtype
         return
@@ -505,6 +509,8 @@ class plotter:
             self.verbose=int(value)
         elif name=='cmap':
             self.cmap=value
+        elif name=='colbar':
+            self.colbar=value
         else:
             print 'No variable named',name
         return
@@ -551,7 +557,7 @@ class plotter:
             print 'get(name)'
             print ''
             print 'logx,logy,xtitle,ytitle,xlo,xhi,xset,ylo,yhi,yset'
-            print 'zlo,zhi,zset,verbose,cmap'
+            print 'zlo,zhi,zset,verbose,cmap,colbar'
         elif arg=='line':
             print 'line(x1,y1,x2,y2,color,lstyle)'
         elif arg=='list':
