@@ -53,7 +53,7 @@ namespace o2scl {
   public:
 
     /** \brief The kinetic energy symmetry coefficient in inverse fm 
-	(default \f$ 17~mathrm{MeV}~/(\hbar c) \f$)
+	(default \f$ 17~\mathrm{MeV}~/(\hbar c) \f$)
 
 	The default value corresponds to an effective mass of about
 	0.7. 
@@ -61,7 +61,7 @@ namespace o2scl {
     double a;
     
     /** \brief The potential energy symmetry coefficient in inverse 
-	fm (default \f$ 13~mathrm{MeV}~/(\hbar c) \f$) 
+	fm (default \f$ 13~\mathrm{MeV}~/(\hbar c) \f$) 
     */
     double b;
 
