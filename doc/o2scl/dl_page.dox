@@ -59,6 +59,7 @@
     o2scl-0.9.tar.gz   | 414735b64db1d2ab02d20517f56001d1e6439b46648e94876102b457f513952e
     o2scl-0.901.tar.gz | 0c22784be0c22676fae9d75092982907213a0f5d7bd1c9ee3bfdb93453e7a2e0
     o2scl-0.902.tar.gz | 0ab27c6868ba9c863210b62c8ff0f667b02fde451cb9a3b06b2c4be1fa4f3711
+    v0.903 does not exist | (none)
     o2scl-0.904.tar.gz | 00da1f01a98d30c4d29f52d2de51434b0ec98a515fcc8576bf65407a8d27c46b
     o2scl-0.905.tar.gz | 374eb2e514e4fbd44144ac59a150445ceef8a0a9acf2fa9c20a2d0ec1e2dfde8
     o2scl-0.906.tar.gz | d349e265232aff9d05c5364a762533b78263bb3623293b4ff685d1e92bbf08e1
@@ -75,7 +76,36 @@
     o2scl-0.917.tar.gz | 8d8fc13d565f46e85a33bf75a180ed2780bc31b04084de1fbd61683355876f8c
     o2scl-0.918.tar.gz | d5c3bafd57dca10ee9b7c8a60708ac0537dfe31eef4e88eafeacfd62b3ee674c
 
+    Version | Date     | Rev. in Sourceforge SVN | Github repo hash                        
+    --------|----------|-------------------------|-----------------------------------------
+    0.8     | 10.04/07 |                         |                                        
+    0.801   | 10/30/07 |                         |                                        
+    0.802   | 12/08/07 |                         |                                        
+    0.803   | 01/02/08 |                         |                                        
+    0.804   | 03/08/08 | 5                       |                                        
+    0.805   | 05/07/08 | 16                      |                                        
+    0.806   | 08/22/08 |                         |                                        
+    0.9     | 09/27/08 | 26                      |                                        
+    0.901   | 12/09/08 | 31                      |                                        
+    0.902   | 04/13/09 | 37                      |                                        
+    0.904   | 06/09/09 | 40                      |                                        
+    0.905   | 11/08/09 | 48                      |                                        
+    0.906   | 02/03/10 | 54                      |                                        
+    0.907   | 04/22/10 | 107                     |                                        
+    0.908   | 05/21/11 | 200                     |                                        
+    0.909   | 11/04/11 | 317                     |                                        
+    0.910   | 03/23/12 | 376                     |                                        
+    0.911   | 08/25/12 | 481                     |                                        
+    0.912   | 01/23/13 | 588                     |                                        
+    0.913   | 08/10/13 | 787                     |                                        
+    0.914   | 12/28/13 | 951                     |                                         
+    0.915   | 05/30/14 | 1052                    | 74d7efd3efdfa527cc10941bfd3454032b7ecdfa
+    0.916   | 08/25/14 | 1136                    | daf5267b9d05c2084cbee1d3fcd02625990f90db
+    0.917   | 02/18/15 | 1275                    | d4b331e7419db75d00545945bc22790100513261
+    0.918   | 07/24/15 |                         | e317843ffbf5638896b0b04aea4f6f689efedbad
+
     \comment
+
     Version 0.918 and later don't have mappings to the old svn repository
 
     Version 0.917 corresponds with version 1275 in the svn repository.
@@ -119,6 +149,8 @@
     with a version in the repository. 
 
     Version 0.805 corresponds with version 16 in the svn respository.
+
+    Version 0.804 corresponds with version 5 in the svn respository.
     \endcomment
 */
 /*
