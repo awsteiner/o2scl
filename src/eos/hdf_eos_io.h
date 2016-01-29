@@ -32,6 +32,7 @@
 #include <o2scl/constants.h>
 #include <o2scl/hdf_file.h>
 #include <o2scl/lib_settings.h>
+#include <o2scl/eos_had_apr.h>
 #include <o2scl/eos_had_skyrme.h>
 #include <o2scl/eos_had_rmf.h>
 #include <o2scl/eos_had_gogny.h>
@@ -75,6 +76,11 @@ namespace o2scl_hdf {
       in the \o2 data directory
   */
   void skyrme_write(o2scl::eos_had_skyrme &sk, std::string model);
+
+  /** \brief Return a pointer to an eos_had_base object 
+      from two strings specifying type and name
+  */
+  o2scl::eos_had_base *eos_had_strings(std::string type, std::string name="");
   
 }
 

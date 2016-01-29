@@ -304,3 +304,20 @@ void o2scl_hdf::skyrme_write(hdf_file &hf, o2scl::eos_had_skyrme &sk,
   return;
 }
   
+eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
+					 std::string name) {
+  if (type=="skyrme") {
+    eos_had_skyrme *sk=new eos_had_skyrme;
+    skyrme_load(*sk,name);
+    return sk;
+  } else if (type=="apr") {
+    eos_had_apr *apr=new eos_had_apr;
+    return apr;
+  } else if (type=="rmf") {
+    eos_had_rmf *rmf=new eos_had_rmf;
+    rmf_load(*rmf,name);
+    return rmf;
+  }
+  O2SCL_ERR("Type not understood in eos_had_strings().",exc_einval);
+  return 0;
+}
