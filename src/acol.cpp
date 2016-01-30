@@ -30,13 +30,13 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_acol;
 
-int main(int argv, char *argc[]) {
+int main(int argc, char *argv[]) {
   
   //---------------------------------------
   // Create acol_manager object
   
   acol_manager am;
-  am.run(argv,argc);
+  am.run(argc,argv);
   
   return 0;
 }
