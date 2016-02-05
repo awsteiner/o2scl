@@ -489,20 +489,26 @@ class plotter:
             self.ytitle=value
         elif name=='xlo':
             self.xlo=float(value)
+            self.xset=1
         elif name=='xhi':
             self.xhi=float(value)
+            self.xset=1
         elif name=='xset':
             self.xset=int(value)
         elif name=='ylo':
             self.ylo=float(value)
+            self.yset=1
         elif name=='yhi':
             self.yhi=float(value)
+            self.yset=1
         elif name=='yset':
             self.yset=int(value)
         elif name=='zlo':
             self.zlo=float(value)
+            self.zset=1
         elif name=='zhi':
             self.zhi=float(value)
+            self.zset=1
         elif name=='zset':
             self.zset=int(value)
         elif name=='verbose':
