@@ -44,8 +44,6 @@ namespace o2scl {
 
   /** \brief A EOS base class for the TOV solver
 
-      \todo Document why tov_solve needs to be a friend .
-
       \comment
       \future Make get_aux() and get_names() template functions with
       generic vector types? No, because then they can't be virtual. 
@@ -60,8 +58,6 @@ namespace o2scl {
     */
     bool baryon_column;
 
-    friend class tov_solve;
-
   public:
     
     eos_tov();
@@ -71,6 +67,11 @@ namespace o2scl {
     /// Control for output (default 1)
     int verbose;
 
+    /// Return true if a baryon density is available
+    bool has_baryons() {
+      return baryon_column;
+    }
+    
     /** \brief Given the pressure, produce all the remaining quantities 
 	
 	The argument \c P should always be in \f$
@@ -462,6 +463,164 @@ namespace o2scl {
 
   };
 
+  /** \brief Provide an EOS for TOV solvers based on 
+      interpolation of user-supplied vectors
+   */
+  template<class vec_t> class eos_tov_vectors : public eos_tov {
+
+    /** \brief Desc
+     */
+    void reset_interp(size_t n) {
+      pe_int.set(n,pr,ed,itp_linear);
+      ep_int.set(n,ed,pr,itp_linear);
+      return;
+    }
+    
+    /** \brief Desc
+     */
+    void reset_interp_nb(size_t n) {
+      reset_interp();
+      pn_int.set(n,pr,nb,itp_linear);
+      np_int.set(n,nb,pr,itp_linear);
+      en_int.set(n,ed,nb,itp_linear);
+      ne_int.set(n,nb,ed,itp_linear);
+      return;
+    }
+    
+  public:
+
+    /** \brief Read the EOS from a set of equal length
+	vectors for energy density, pressure, and baryon density
+    */
+    void read_vectors_swap(size_t user_n, vec_t &user_ed, vec_t &user_pr,
+			   vec_t &user_nb) {
+      std::swap(user_ed,ed);
+      std::swap(user_pr,pr);
+      std::swap(user_nb,nb);
+      this->baryon_column=true;
+      reset_interp_nb(user_n);
+      return;
+    }
+    
+    /** \brief Read the EOS from a pair of equal length
+	vectors for energy density and pressure
+    */
+    void read_vectors_swap(size_t user_n, vec_t &user_ed, vec_t &user_pr) {
+      std::swap(user_ed,ed);
+      std::swap(user_pr,pr);
+      this->baryon_column=false;
+      reset_interp(user_n);
+      return;
+    }
+
+    /** \brief Read the EOS from a set of equal length
+	vectors for energy density, pressure, and baryon density
+    */
+    void read_vectors_copy(size_t user_n, vec_t &user_ed, vec_t &user_pr,
+			   vec_t &user_nb) {
+      if (ed.size()!=user_n) ed.resize(user_n);
+      if (pr.size()!=user_n) pr.resize(user_n);
+      if (nb.size()!=user_n) nb.resize(user_n);
+      vector_copy(user_ed,ed);
+      vector_copy(user_pr,pr);
+      vector_copy(user_nb,nb);
+      this->baryon_column=true;
+      reset_interp_nb(user_n);
+      return;
+    }
+    
+    /** \brief Read the EOS from a pair of equal length
+	vectors for energy density and pressure
+    */
+    void read_vectors_copy(size_t user_n, vec_t &user_ed, vec_t &user_pr) {
+      if (ed.size()!=user_n) ed.resize(user_n);
+      if (pr.size()!=user_n) pr.resize(user_n);
+      vector_copy(user_ed,ed);
+      vector_copy(user_pr,pr);
+      this->baryon_column=false;
+      reset_interp(user_n);
+      return;
+    }
+
+    /// \name Basic EOS functions
+    //@{
+    /** \brief From the pressure, return the energy density
+     */
+    virtual double ed_from_pr(double pr) {
+      return pe_int.eval(pr);
+    }
+
+    /** \brief From the energy density, return the pressure
+     */
+    virtual double pr_from_ed(double ed) {
+      return ep_int.eval(pr);
+    }
+    
+    /** \brief From the energy density, return the baryon density
+     */
+    virtual double nb_from_ed(double ed) {
+      return en_int.eval(ed);
+    }
+    
+    /** \brief From the pressure, return the baryon density
+     */
+    virtual double nb_from_pr(double pr) {
+      return pn_int.eval(ed);
+    }
+    
+    /** \brief From the baryon density, return the energy density
+     */
+    virtual double ed_from_nb(double nb) {
+      return ne_int.eval(ed);
+    }
+    
+    /** \brief From the baryon density, return the pressure
+     */
+    virtual double pr_from_nb(double nb) {
+      return np_int.eval(ed);
+    }
+
+    /** \brief Given the pressure, produce the energy and number densities
+
+	The arguments \c pr and \c ed should always be in \f$
+	M_{\odot}/\mathrm{km}^3 \f$ . The argument for \c nb should be
+	in \f$ \mathrm{fm}^{-3} \f$ .
+	
+	If \ref baryon_column is false, then \c nb is unmodified.
+    */
+    virtual void ed_nb_from_pr(double pr, double &ed, double &nb) {
+      ed_from_pr(pr);
+      if (this->baryon_column) {
+	nb_from_pr(pr);
+      }
+      return;
+    }
+    //@}
+    
+  protected:
+    
+    /// \name EOS storage
+    //@{
+    /// Energy densities from full EOS
+    vec_t ed;
+    /// Pressures from full EOS
+    vec_t pr;
+    /// Baryon densities from full EOS
+    vec_t nb;
+    //@}
+
+    /// \name Interpolators
+    //@{
+    interp<vec_t> pe_int;
+    interp<vec_t> pn_int;
+    interp<vec_t> ep_int;
+    interp<vec_t> en_int;
+    interp<vec_t> np_int;
+    interp<vec_t> ne_int;
+    //@}
+
+  };
+  
   /** \brief An EOS for the TOV solver using simple linear
       interpolation and an optional crust EOS
 
@@ -512,18 +671,23 @@ namespace o2scl {
       needed in ed_nb_from_pr() and other functions from the units
       specified in the input \ref table_units object.
 
+      \comment
       \todo It might be useful to exit more gracefully when non-finite
       values are obtained in interpolation, analogous to the
       err_nonconv mechanism elsewhere.
+      2/6/16: I'm not sure this is really necessary. It's only
+      linear interpolation, so the err_nonconv mechanism probably
+      won't be useful.
+      \endcomment
 
-      \todo Create a sanity check where core_auxp is nonzero only if
+      \future Create a sanity check where core_auxp is nonzero only if
       core_table is also nonzero. Alternatively, this complication is
       due to the fact that this class works in two ways: one where it
       reads a table (and adds a crust), and one where it reads in
       vectors (with no crust). Maybe these two modes of operation
-      should be separated into two classes.
-
-      \todo Read different vector types than just std::vector<>. 
+      should be separated into two classes. (2/6/16: Now there is
+      a new eos_tov_vector class. The best way forward may be 
+      to make this a child of eos_tov_vectors.)
   */
   class eos_tov_interp : public eos_tov {
     
@@ -572,19 +736,6 @@ namespace o2scl {
     /// Specify the EOS through a table
     void read_table(table_units<> &eosat, std::string s_cole, 
 		    std::string s_colp, std::string s_colnb="");
-    
-    /** \brief Read the EOS from a set of equal length
-	vectors for energy density, pressure, and baryon density
-     */
-    void read_vectors(size_t n_core, std::vector<double> &core_ed, 
-		      std::vector<double> &core_pr, 
-		      std::vector<double> &core_nb);
-    
-    /** \brief Read the EOS from a pair of equal length
-	vectors for energy density and pressure
-    */
-    void read_vectors(size_t n_core, std::vector<double> &core_ed, 
-		      std::vector<double> &core_pr);
     //@}
     
     /// \name Crust EOS functions

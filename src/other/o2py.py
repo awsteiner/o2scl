@@ -588,7 +588,7 @@ class plotter:
         elif arg=='show':
             print 'show()'
         elif arg=='text':
-            print 'text(string,x,y,color)'
+            print 'text(x,y,string,color)'
         elif arg=='xlimits':
             print 'xlimits(xlow,xhigh)'
         elif arg=='ylimits':
@@ -615,7 +615,7 @@ class plotter:
             print 'reset_ylimits()'
             print 'set(name,value)'
             print 'show()'
-            print 'text(string,x,y,**kwargs)'
+            print 'text(x,y,string,**kwargs)'
             print 'xlimits(xlow,xhigh)'
             print 'ylimits(ylow,yhigh)'
         return

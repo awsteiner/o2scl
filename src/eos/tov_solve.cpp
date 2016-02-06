@@ -209,7 +209,7 @@ int tov_solve::derivs(double r, size_t nv, const ubvector &y,
 	ix++;
       }
     }
-    if (te->baryon_column) {
+    if (te->has_baryons()) {
       dydx[ix]=0.0;
       ix++;
     }
@@ -263,7 +263,7 @@ int tov_solve::derivs(double r, size_t nv, const ubvector &y,
       ix+=2;
     }
   }
-  if (te->baryon_column) {
+  if (te->has_baryons()) {
     if (gm<0.0) {
       dydx[ix]=4.0*pi*r*r*nb*baryon_mass/o2scl_mks::solar_mass*
 	1.0e54;
@@ -318,7 +318,7 @@ void tov_solve::column_setup(size_t &naux, vector<string> &ext_names,
       iunits.push_back("");
     }
   }
-  if (te->baryon_column) {
+  if (te->has_baryons()) {
     inames.push_back("bm");
     iunits.push_back("Msun");
   }
@@ -326,7 +326,7 @@ void tov_solve::column_setup(size_t &naux, vector<string> &ext_names,
   iunits.push_back(punits);
   inames.push_back("ed");
   iunits.push_back(eunits);
-  if (te->baryon_column) {
+  if (te->has_baryons()) {
     inames.push_back("nb");
     iunits.push_back(nunits);
   }
@@ -342,7 +342,7 @@ void tov_solve::column_setup(size_t &naux, vector<string> &ext_names,
     inames.push_back("dgpdr");
     iunits.push_back("1/km");
   }
-  if (te->baryon_column) {
+  if (te->has_baryons()) {
     inames.push_back("dbmdr");
     iunits.push_back("Msun/km");
   }
@@ -352,7 +352,7 @@ void tov_solve::column_setup(size_t &naux, vector<string> &ext_names,
       iunits.push_back("km");
       inames.push_back(((string)"gm")+szttos(i));
       iunits.push_back("Msun");
-      if (te->baryon_column) {
+      if (te->has_baryons()) {
 	inames.push_back(((string)"bm")+szttos(i));
 	iunits.push_back("Msun");
       }
@@ -454,7 +454,7 @@ void tov_solve::make_table() {
     }
 
     // Enclosed baryon mass
-    if (te->baryon_column) {
+    if (te->has_baryons()) {
       out_table->set("bm",tix,rky[bix][iv]);
       iv++;
     }
@@ -471,13 +471,13 @@ void tov_solve::make_table() {
       // units by dividing by their factors
       out_table->set("pr",tix,exp(rky[bix][1])/pfactor);
       out_table->set("ed",tix,ed/efactor);
-      if (te->baryon_column) {
+      if (te->has_baryons()) {
 	out_table->set("nb",tix,nb/nfactor);
       }
     } else {
       out_table->set("pr",tix,0.0);
       out_table->set("ed",tix,0.0);
-      if (te->baryon_column) {
+      if (te->has_baryons()) {
 	out_table->set("nb",tix,0.0);
       }
     }
@@ -501,7 +501,7 @@ void tov_solve::make_table() {
       out_table->set("dgpdr",tix,rkdydx[bix][iv]);
       iv++;
     }
-    if (te->baryon_column) {
+    if (te->has_baryons()) {
       out_table->set("dbmdr",tix,rkdydx[bix][iv]);
       iv++;
     }
@@ -564,7 +564,7 @@ int tov_solve::integ_star(size_t ndvar, const ubvector &ndx,
     nvar++;
     if (ang_vel) nvar+=2;
   }
-  if (te->baryon_column) nvar++;
+  if (te->has_baryons()) nvar++;
 
   // ---------------------------------------------------------------
   // Resize and allocate memory if necessary
@@ -597,7 +597,7 @@ int tov_solve::integ_star(size_t ndvar, const ubvector &ndx,
       iv++;
     }
   }
-  if (te->baryon_column) {
+  if (te->has_baryons()) {
     rky[0][iv]=0.0;
     iv++;
   }
@@ -742,7 +742,7 @@ int tov_solve::integ_star(size_t ndvar, const ubvector &ndx,
     iv++;
     if (ang_vel) iv+=2;
   }
-  if (te->baryon_column) {
+  if (te->has_baryons()) {
     bmass=rky[ix][iv]-rkdydx[ix][iv]*(rkx[ix]-rad);
   }
   
@@ -827,7 +827,7 @@ int tov_solve::integ_star(size_t ndvar, const ubvector &ndx,
   // --------------------------------------------------------------
   // Store the last point for baryonic mass
 
-  if (te->baryon_column) {
+  if (te->has_baryons()) {
     rky[ix_last][iv]=bmass;
     iv++;
   }
@@ -897,7 +897,7 @@ int tov_solve::mvsr() {
     }
 
     // output baryon mass
-    if (te->baryon_column) line.push_back(bmass);
+    if (te->has_baryons()) line.push_back(bmass);
     
     // output central pressure, energy density, and baryon density
 
@@ -912,7 +912,7 @@ int tov_solve::mvsr() {
     // units by dividing by their factors
     line.push_back(x[0]/pfactor);
     line.push_back(ed/efactor);
-    if (te->baryon_column) {
+    if (te->has_baryons()) {
       line.push_back(nb/nfactor);
     }
 
@@ -932,7 +932,7 @@ int tov_solve::mvsr() {
     line.push_back(0.0);
     line.push_back(0.0);
     if (calc_gpot) line.push_back(0.0);
-    if (te->baryon_column) line.push_back(0.0);
+    if (te->has_baryons()) line.push_back(0.0);
 
     // Radius interpolation
     if (pr_list.size()>0) {
@@ -941,7 +941,7 @@ int tov_solve::mvsr() {
       for(size_t ii=0;ii<rky.size();ii++) {
 	lpr_col[ii]=rky[ii][1];
 	gm_col[ii]=rky[ii][0];
-	if (te->baryon_column) {
+	if (te->has_baryons()) {
 	  size_t index=2;
 	  if (calc_gpot) {
 	    index++;
@@ -969,7 +969,7 @@ int tov_solve::mvsr() {
 	  O2SCL_ERR(str.c_str(),exc_efailed);
 	}
 	line.push_back(thisgm);
-	if (te->baryon_column) {
+	if (te->has_baryons()) {
 	  double thisbm=iop.eval(log(pr_list[ii]*pfactor),
 				 ix_last-1,lpr_col,bm_col);
 	  if (!std::isfinite(thisbm)) {
@@ -1083,7 +1083,7 @@ int tov_solve::max() {
 
   if (verbose>0) {
     cout << "Maximum gravitational mass is: " << mass << endl;
-    if (te->baryon_column) {
+    if (te->has_baryons()) {
       cout << "Corresponding baryon mass is: " << bmass << endl;
     }
     cout << "Corresponding radius is: " << rad << endl;
@@ -1167,7 +1167,7 @@ int tov_solve::fixed(double target_mass, double pmax) {
   if (verbose>0) {
     cout << "Gravitational mass is: " << mass << endl;
     cout << "Radius is: " << rad << endl;
-    if (te->baryon_column) {
+    if (te->has_baryons()) {
       cout << "Baryon mass is: " << bmass << endl;
     }
   }

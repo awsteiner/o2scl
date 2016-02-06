@@ -383,39 +383,6 @@ void eos_tov_interp::get_names_units(size_t &np,
   return;
 }
 
-void eos_tov_interp::read_vectors(size_t n_core, std::vector<double> &core_ed, 
-				  std::vector<double> &core_pr) {
-
-  core_table=0;
-  full_nlines=n_core;
-  pfactor=1.0;
-  efactor=1.0;
-  std::swap(core_ed,full_vece);
-  std::swap(core_pr,full_vecp);
-  core_auxp=0;
-  baryon_column=false;
-  eos_read=true;
-
-  pe_int.set(n_core,full_vecp,full_vece,itp_linear);
-
-  return;
-}
-
-void eos_tov_interp::read_vectors(size_t n_core, std::vector<double> &core_ed, 
-				  std::vector<double> &core_pr, 
-				  std::vector<double> &core_nb) {
-
-  read_vectors(n_core,core_ed,core_pr);
-  efactor=1.0;
-  nfactor=1.0;
-  std::swap(core_nb,full_vecnb);
-  baryon_column=true;
-
-  pnb_int.set(n_core,full_vecp,full_vecnb,itp_linear);
-
-  return;
-}
-
 void eos_tov_interp::read_table(table_units<> &eosat, string s_cole, 
 				string s_colp, string s_colnb) {
   
