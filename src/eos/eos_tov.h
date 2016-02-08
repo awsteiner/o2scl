@@ -491,6 +491,9 @@ namespace o2scl {
 
     /** \brief Read the EOS from a set of equal length
 	vectors for energy density, pressure, and baryon density
+
+	In this version, the user-specified vectors are swapped
+	with internal storage.
     */
     void read_vectors_swap(size_t user_n, vec_t &user_ed, vec_t &user_pr,
 			   vec_t &user_nb) {
@@ -504,6 +507,9 @@ namespace o2scl {
     
     /** \brief Read the EOS from a pair of equal length
 	vectors for energy density and pressure
+
+	In this version, the user-specified vectors are swapped
+	with internal storage.
     */
     void read_vectors_swap(size_t user_n, vec_t &user_ed, vec_t &user_pr) {
       std::swap(user_ed,ed);
@@ -515,6 +521,9 @@ namespace o2scl {
 
     /** \brief Read the EOS from a set of equal length
 	vectors for energy density, pressure, and baryon density
+
+	In this version, the user-specified vectors are copied
+	to internal storage.
     */
     void read_vectors_copy(size_t user_n, vec_t &user_ed, vec_t &user_pr,
 			   vec_t &user_nb) {
@@ -531,6 +540,9 @@ namespace o2scl {
     
     /** \brief Read the EOS from a pair of equal length
 	vectors for energy density and pressure
+
+	In this version, the user-specified vectors are copied
+	to internal storage.
     */
     void read_vectors_copy(size_t user_n, vec_t &user_ed, vec_t &user_pr) {
       if (ed.size()!=user_n) ed.resize(user_n);
@@ -733,7 +745,19 @@ namespace o2scl {
 
     /// \name Basic usage
     //@{
-    /// Specify the EOS through a table
+    /** \brief Specify the EOS through a table
+
+	If units are specified for any of the columns, then this
+	function attempts to automatically determine the correct
+	conversion factors using the \ref o2scl::convert_units object
+	returned by \ref o2scl::o2scl_settings . If the units for any
+	of the columns are blank, then they are assumed to be the
+	native units for \ref o2scl::tov_solve .
+
+	\warning If the user sends a table object instead of a
+	table_units object and so a temporary is constructed and then
+	that pointer is stored by this function.
+     */
     void read_table(table_units<> &eosat, std::string s_cole, 
 		    std::string s_colp, std::string s_colnb="");
     //@}
@@ -858,6 +882,9 @@ namespace o2scl {
 
   protected:
 
+    /** \brief Internal function to reinterpolate if if either the
+	core or crust tables are changed
+     */
     void internal_read();
 
     /// \name Crust EOS variables
