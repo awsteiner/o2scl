@@ -153,13 +153,13 @@ namespace o2scl {
       this->nlines=t.get_nlines();
       this->maxlines=this->nlines;
       for(size_t i=0;i<t.get_ncolumns();i++) {
-
+	
 	// Column name
 	std::string cname=t.get_column_name(i);
 
 	// Insert column into tree
 	typename table<vec_t>::col s;
-	s.dat=new vec_t(this->nlines);
+	s.dat.resize(this->nlines);
 	s.index=this->atree.size();
 	this->atree.insert(make_pair(cname,s));
 
@@ -169,7 +169,7 @@ namespace o2scl {
     
 	// Fill the data
 	for(size_t j=0;j<t.get_nlines();j++) {
-	  (*it->second.dat)[j]=t.get(cname,j);
+	  it->second.dat[j]=t.get(cname,j);
 	}
     
       }

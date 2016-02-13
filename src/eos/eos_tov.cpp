@@ -477,7 +477,8 @@ void eos_tov_interp::internal_read() {
 
   // Add lines of crust before transition
   if (verbose>1) {
-    cout << "Crust: " << endl;
+    cout << "Crust: use_crust = " << use_crust << " crust_nlines = "
+	 << crust_nlines << endl;
   }
   if (use_crust) {
     for(size_t i=0;i<crust_nlines;i++) {
@@ -572,7 +573,7 @@ void eos_tov_interp::internal_read() {
 
   // Add core lines
   if (verbose>1) {
-    cout << "Core: " << endl;
+    cout << "Core: lines = " << core_nlines << endl;
   }
   for(size_t i=0;i<core_nlines;i++) {
     double pt=((*core_table)[colp])[i]*pfactor;
