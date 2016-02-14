@@ -159,7 +159,7 @@ int main(void) {
   at.set_eos(te);
 
   // Get a pointer to the results table for use later
-  o2_shared_ptr<table_units<> >::type tab=at.get_results();
+  std::shared_ptr<table_units<> > tab=at.get_results();
   tab->set_interp_type(itp_linear);
 
   // --------------------------------------------------------------

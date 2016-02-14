@@ -63,11 +63,11 @@ int main(void) {
 
   // Compute the Skyrme EOS in beta-equilibrium
   nco.calc_eos();
-  o2_shared_ptr<table_units<> >::type eos=nco.get_eos_results();
+  std::shared_ptr<table_units<> > eos=nco.get_eos_results();
 
   // Evalulate the mass-radius curve
   nco.calc_nstar();
-  o2_shared_ptr<table_units<> >::type mvsr=nco.get_tov_results();
+  std::shared_ptr<table_units<> > mvsr=nco.get_tov_results();
 
   // Lookup the central energy density of a 1.4 Msun neutron star
   // in g/cm^3

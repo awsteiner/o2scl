@@ -267,13 +267,13 @@ namespace o2scl {
 
     /** \brief Get the eos table (after having called calc_eos())
      */
-    o2_shared_ptr<table_units<> >::type get_eos_results() {
+    std::shared_ptr<table_units<> > get_eos_results() {
       return eost;
     }
     
     /** \brief Get the results from the TOV (after having called calc_nstar())
      */
-    o2_shared_ptr<table_units<> >::type get_tov_results() {
+    std::shared_ptr<table_units<> > get_tov_results() {
       return tp->get_results();
     }
     //@}
@@ -392,7 +392,7 @@ namespace o2scl {
     root<> *rp;
 
     /// Storage for the EOS table
-    o2_shared_ptr<table_units<> >::type eost;
+    std::shared_ptr<table_units<> > eost;
 
     /// The baryon density
     double barn;

@@ -36,7 +36,6 @@
 #include <o2scl/table_units.h>
 #include <o2scl/ode_rkck_gsl.h>
 #include <o2scl/ode_funct.h>
-#include <o2scl/shared_ptr.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -322,11 +321,11 @@ namespace o2scl {
 	
 	The profiles are calculated each iteration by iterate().
     */
-    o2_shared_ptr<table_units<> >::type get_profiles() { return profiles; };
+    std::shared_ptr<table_units<> > get_profiles() { return profiles; };
     
     /** \brief The final charge densities
      */
-    o2_shared_ptr<table_units<> >::type get_chden() { return chden_table; };
+    std::shared_ptr<table_units<> > get_chden() { return chden_table; };
     
     /// The number of levels
     int nlevels;
@@ -526,11 +525,11 @@ namespace o2scl {
 
     /** \brief The radial profiles
      */
-    o2_shared_ptr<table_units<> >::type profiles;
+    std::shared_ptr<table_units<> > profiles;
     
     /** \brief The final charge densities
      */
-    o2_shared_ptr<table_units<> >::type chden_table;
+    std::shared_ptr<table_units<> > chden_table;
     
     /** \brief A pointer to the current vector of levels 
 	(either \ref levels or \ref unocc_levels)

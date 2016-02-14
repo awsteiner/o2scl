@@ -50,7 +50,7 @@ int main(void) {
   nst.set_eos(apr);
   nst.calc_eos();
   
-  o2_shared_ptr<table_units<> >::type te=nst.get_eos_results();
+  std::shared_ptr<table_units<> > te=nst.get_eos_results();
 
   eos_tov_interp eti;
   eti.default_low_dens_eos();
@@ -63,7 +63,7 @@ int main(void) {
   ts.ang_vel=true;
   ts.fixed(1.4);
   
-  o2_shared_ptr<table_units<> >::type profile=ts.get_results();
+  std::shared_ptr<table_units<> > profile=ts.get_results();
 
   // I'm not sure why cs2 isn't computed properly, so
   // we have to recompute it here

@@ -28,7 +28,6 @@
 #include <boost/numeric/ublas/vector.hpp>
 
 #include <o2scl/astep_gsl.h>
-#include <o2scl/shared_ptr.h>
 #include <o2scl/table_units.h>
 #include <o2scl/astep_nonadapt.h>
 #include <o2scl/ode_rk8pd_gsl.h>
@@ -189,7 +188,7 @@ namespace o2scl {
     double eps;
 
     /// Pointer to the input profile
-    o2scl::o2_shared_ptr<o2scl::table_units<> >::type tab;
+    std::shared_ptr<o2scl::table_units<> > tab;
 
     /// Set ODE integrator
     void set_ODE(o2scl::ode_iv_solve<> &ois_new) {

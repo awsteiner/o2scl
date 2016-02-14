@@ -59,7 +59,7 @@ int main(void) {
   nst.calc_eos();
   nst.calc_nstar();
   
-  o2_shared_ptr<table_units<> >::type te=nst.get_eos_results();
+  std::shared_ptr<table_units<> > te=nst.get_eos_results();
   cout << "EOS results: " << endl;
   double ed1=te->interp("nb",0.16,"ed");
   double pr1=te->interp("nb",0.16,"pr");
@@ -67,7 +67,7 @@ int main(void) {
   te->summary(&cout);
   cout << endl;
 
-  o2_shared_ptr<table_units<> >::type tr=nst.get_tov_results();
+  std::shared_ptr<table_units<> > tr=nst.get_tov_results();
   tr->summary(&cout);
   cout << endl;
   cout << " M_{max} = " << tr->max("gm") << " R_{max} = "

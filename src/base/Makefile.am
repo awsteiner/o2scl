@@ -4,7 +4,7 @@
 
 BASE_HEADER_VAR =  err_hnd.h misc.h test_mgr.h table.h \
 	constants.h funct.h multi_funct.h mm_funct.h \
-	lib_settings.h search_vec.h interp.h shared_ptr.h \
+	lib_settings.h search_vec.h interp.h \
 	cli.h columnify.h convert_units.h string_conv.h \
 	tensor.h vector.h table3d.h cli_readline.h tensor_grid.h \
 	format_float.h table_units.h exception.h uniform_grid.h 
@@ -20,7 +20,7 @@ BASE_SRCS = $(BASE_BASE_SRCS)
 
 BASE_TEST_VAR = err_hnd.scr funct.scr table3d.scr \
 	lib_settings.scr misc.scr mm_funct.scr multi_funct.scr \
-	search_vec.scr table.scr shared_ptr.scr vector.scr \
+	search_vec.scr table.scr vector.scr \
 	interp.scr columnify.scr convert_units.scr \
 	string_conv.scr tensor.scr \
 	format_float.scr table_units.scr exception.scr uniform_grid.scr 
@@ -89,7 +89,7 @@ am__pkginclude_HEADERS_DIST = $(HEADER_VAR)
 CPVAR = err_hnd_ts funct_ts convert_units_ts \
 	lib_settings_ts misc_ts mm_funct_ts \
 	multi_funct_ts search_vec_ts table_ts interp_ts \
-	columnify_ts shared_ptr_ts \
+	columnify_ts \
 	string_conv_ts tensor_ts vector_ts table3d_ts \
 	format_float_ts table_units_ts exception_ts uniform_grid_ts 
 
@@ -123,7 +123,6 @@ tensor_ts_LDFLAGS = -fopenmp
 table_units_ts_LDFLAGS = -fopenmp
 exception_ts_LDFLAGS = -fopenmp
 uniform_grid_ts_LDFLAGS = -fopenmp
-shared_ptr_ts_LDFLAGS = -fopenmp
 endif
 
 err_hnd_ts_LDADD = $(VCHECK_LIBS)
@@ -145,7 +144,6 @@ tensor_ts_LDADD = $(VCHECK_LIBS)
 table_units_ts_LDADD = $(VCHECK_LIBS)
 exception_ts_LDADD = $(VCHECK_LIBS)
 uniform_grid_ts_LDADD = $(VCHECK_LIBS)
-shared_ptr_ts_LDADD = $(VCHECK_LIBS)
 
 err_hnd.scr: err_hnd_ts$(EXEEXT) 
 	./err_hnd_ts$(EXEEXT) > err_hnd.scr
@@ -185,8 +183,6 @@ exception.scr: exception_ts$(EXEEXT)
 	./exception_ts$(EXEEXT) > exception.scr
 uniform_grid.scr: uniform_grid_ts$(EXEEXT) 
 	./uniform_grid_ts$(EXEEXT) > uniform_grid.scr
-shared_ptr.scr: shared_ptr_ts$(EXEEXT) 
-	./shared_ptr_ts$(EXEEXT) > shared_ptr.scr
 
 err_hnd_ts_SOURCES = err_hnd_ts.cpp
 convert_units_ts_SOURCES = convert_units_ts.cpp
@@ -207,7 +203,6 @@ tensor_ts_SOURCES = tensor_ts.cpp
 table_units_ts_SOURCES = table_units_ts.cpp
 exception_ts_SOURCES = exception_ts.cpp
 uniform_grid_ts_SOURCES = uniform_grid_ts.cpp
-shared_ptr_ts_SOURCES = shared_ptr_ts.cpp
 
 # ------------------------------------------------------------
 # Library o2scl_base

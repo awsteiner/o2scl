@@ -29,7 +29,6 @@
 #include <o2scl/eos_tov.h>
 #include <o2scl/interp.h>
 #include <o2scl/table_units.h>
-#include <o2scl/shared_ptr.h>
 #include <o2scl/ode_iv_solve.h>
 #include <o2scl/mroot_hybrids.h>
 #include <o2scl/min_brent_gsl.h>
@@ -383,7 +382,7 @@ namespace o2scl {
     //@}
 
     /// The output table
-    o2_shared_ptr<table_units<> >::type out_table;
+    std::shared_ptr<table_units<> > out_table;
 
     /// \name Numerical methods
     //@{
@@ -598,7 +597,7 @@ namespace o2scl {
     
     /** \brief Return the results data table
      */
-    o2_shared_ptr<table_units<> >::type get_results() {
+    std::shared_ptr<table_units<> > get_results() {
       return out_table;
     }
     //@}
