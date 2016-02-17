@@ -183,35 +183,113 @@ namespace o2scl {
       // Conversion factor for pressure
       double conv2=o2scl_settings.get_convert_units().convert
 	("1/fm^4","dyne/cm^2",1.0);
+
+      static const int n_crust=78;
       
-      n_tab=n;
+      n_tab=n+n_crust;
+      
+      double nst_arr[n_crust][3]={
+	{7.800e+00,1.010e+08,4.698795180722962e+24},
+	{7.860e+00,1.010e+09,4.734939759036205e+24},
+	{7.900e+00,1.010e+10,4.759036144578364e+24},
+	{8.150e+00,1.010e+11,4.909638554215315e+24},
+	{1.160e+01,1.210e+12,6.987951807098076e+24},
+	{1.640e+01,1.400e+13,9.879518070489597e+24},
+	{4.510e+01,1.700e+14,2.716867462904601e+25},
+	{2.120e+02,5.820e+15,1.277108403508764e+26},
+	{1.150e+03,1.900e+17,6.927709645088004e+26},
+	{1.044e+04,9.744e+18,6.289148562640985e+27},
+	{2.622e+04,4.968e+19,1.579513843816999e+28},
+	{6.587e+04,2.431e+20,3.968050678245718e+28},
+	{1.654e+05,1.151e+21,9.963748410271617e+28},
+	{4.156e+05,5.266e+21,2.503563031417219e+29},
+	{1.044e+06,2.318e+22,6.288917532113082e+29},
+	{2.622e+06,9.755e+22,1.579410809416864e+30},
+	{6.588e+06,3.911e+23,3.968207649843547e+30},
+	{8.293e+06,5.259e+23,4.995116726219748e+30},
+	{1.655e+07,1.435e+24,9.967984755458204e+30},
+	{3.302e+07,3.833e+24,1.988624478073943e+31},
+	{6.589e+07,1.006e+25,3.967807406359445e+31},
+	{1.315e+08,2.604e+25,7.917691186982454e+31},
+	{2.624e+08,6.676e+25,1.579648605894070e+32},
+	{3.304e+08,8.738e+25,1.988876577393412e+32},
+	{5.237e+08,1.629e+26,3.152005155076383e+32},
+	{8.301e+08,3.029e+26,4.995278531652059e+32},
+	{1.045e+09,4.129e+26,6.287859551784352e+32},
+	{1.316e+09,5.036e+26,7.917701445937253e+32},
+	{1.657e+09,6.860e+26,9.968319738044036e+32},
+	{2.626e+09,1.272e+27,1.579408507997411e+33},
+	{4.164e+09,2.356e+27,2.503766293549853e+33},
+	{6.601e+09,4.362e+27,3.967852390467774e+33},
+	{8.312e+09,5.662e+27,4.995474308724729e+33},
+	{1.046e+10,7.702e+27,6.285277578607203e+33},
+	{1.318e+10,1.048e+28,7.918132634568090e+33},
+	{1.659e+10,1.425e+28,9.964646988214994e+33},
+	{2.090e+10,1.938e+28,1.255052800774333e+34},
+	{2.631e+10,2.503e+28,1.579545673652798e+34},
+	{3.313e+10,3.404e+28,1.988488463504033e+34},
+	{4.172e+10,4.628e+28,2.503379640977065e+34},
+	{5.254e+10,5.949e+28,3.151720931652274e+34},
+	{6.617e+10,8.089e+28,3.968151735612910e+34},
+	{8.332e+10,1.100e+29,4.994995310195290e+34},
+	{1.049e+11,1.495e+29,6.286498800006776e+34},
+	{1.322e+11,2.033e+29,7.919521253825185e+34},
+	{1.664e+11,2.597e+29,9.964341016667146e+34},
+	{1.844e+11,2.892e+29,1.104024323001462e+35},
+	{2.096e+11,3.290e+29,1.254619611126682e+35},
+	{2.640e+11,4.473e+29,1.579588892045295e+35},
+	{3.325e+11,5.816e+29,1.988565738933728e+35},
+	{4.188e+11,7.538e+29,2.503561780689725e+35},
+	{4.299e+11,7.805e+29,2.569780082714395e+35},
+	{4.460e+11,7.890e+29,2.665824694449485e+35},
+	{5.228e+11,8.352e+29,3.123946525953616e+35},
+	{6.610e+11,9.098e+29,3.948222384313103e+35},
+	{7.964e+11,9.831e+29,4.755697604312120e+35},
+	{9.728e+11,1.083e+30,5.807556544067428e+35},
+	{1.196e+12,1.218e+30,7.138304213736713e+35},
+	{1.471e+12,1.399e+30,8.777653631971616e+35},
+	{1.805e+12,1.683e+30,1.076837272716171e+36},
+	{2.202e+12,1.950e+30,1.313417953138369e+36},
+	{2.930e+12,2.592e+30,1.747157788902558e+36},
+	{3.833e+12,3.506e+30,2.285004034820638e+36},
+	{4.933e+12,4.771e+30,2.939983642627298e+36},
+	{6.248e+12,6.481e+30,3.722722765704268e+36},
+	{7.801e+12,8.748e+30,4.646805278760175e+36},
+	{9.611e+12,1.170e+31,5.723413975645761e+36},
+	{1.246e+13,1.695e+31,7.417258934884369e+36},
+	{1.496e+13,2.209e+31,8.902909532230595e+36},
+	{1.778e+13,2.848e+31,1.057801059193907e+37},
+	{2.210e+13,3.931e+31,1.314278492046241e+37},
+	{2.988e+13,6.178e+31,1.775810743961577e+37},
+	{3.767e+13,8.774e+31,2.237518046976615e+37},
+	{5.081e+13,1.386e+32,3.015480061626022e+37},
+	{6.193e+13,1.882e+32,3.673108933334910e+37},
+	{7.732e+13,2.662e+32,4.582250451016437e+37},
+	{9.826e+13,3.897e+32,5.817514573447143e+37},
+	{1.262e+14,5.861e+32,7.462854442694524e+37}};
 
-      double mu0=(eden[0]+pres[0])/nb[0];
-      double mu1=(eden[1]+pres[1])/nb[1];
-      double mu_start=2.0*mu0-mu1;
-      //mu_start=939.0/197.33-0.08;
-      mu_start=4.775;
-
-      //std::cout << "mu_start: " << mu_start << std::endl;
-      for(size_t i=0;i<n_tab;i++) {
-	log_e_tab[i+1]=log10(eden[i]*conv1*C*C*KSCALE);
-	log_p_tab[i+1]=log10(pres[i]*conv2*KSCALE);
-	if (false && i==0) {
-	  std::cout << eden[i]*conv1 << " "
-		    << pres[i]*conv2 << " "
-		    << 1.0 << " "
-		    << nb[i]*1.0e39 << std::endl;
-	  log_h_tab[i+1]=0.0;
+      double mu_start;
+      for(size_t i=0;i<n_crust;i++) {
+	log_e_tab[i+1]=log10(nst_arr[i][0]*C*C*KSCALE);
+	log_p_tab[i+1]=log10(nst_arr[i][1]*KSCALE);
+	double mu=(nst_arr[i][0]/conv1+nst_arr[i][1]/conv2)/
+	  nst_arr[i][2]*1.0e39;
+	if (i==0) {
+	  mu_start=mu;
+	  log_h_tab[i+1]=-15.0;
 	} else {
-	  //std::cout << eden[i]*conv1 << " "
-	  //<< pres[i]*conv2 << " "
-	  //<< log((eden[i]+pres[i])/nb[i]/mu_start)*C*C << " " 
-	  //<< nb[i]*1.0e39 << std::endl;
-	  log_h_tab[i+1]=log10(log((eden[i]+pres[i])/nb[i]/mu_start));
+	  log_h_tab[i+1]=log10(log(mu/mu_start));
 	}
-	log_n0_tab[i+1]=log10(nb[i]*1.0e39);
+	log_n0_tab[i+1]=log10(nst_arr[i][2]);
       }
-      //exit(-1);
+
+      for(size_t i=0;i<n;i++) {
+	log_e_tab[i+n_crust+1]=log10(eden[i]*conv1*C*C*KSCALE);
+	log_p_tab[i+n_crust+1]=log10(pres[i]*conv2*KSCALE);
+	log_h_tab[i+n_crust+1]=log10(log((eden[i]+pres[i])/nb[i]/
+					 mu_start));
+	log_n0_tab[i+n_crust+1]=log10(nb[i]*1.0e39);
+      }
 
       return;
     }
@@ -271,7 +349,7 @@ namespace o2scl {
   };
   
   /** \brief Tabulated EOS for \ref nstar_rot from \ref Pandharipande75
-        */
+   */
   class eos_nstar_rot_L : public eos_nstar_rot_interp {
   public:
     eos_nstar_rot_L(bool rns_constants=false);
@@ -405,766 +483,766 @@ namespace o2scl {
   */
   class nstar_rot {
   
- public:    
+  public:    
   
-  /// The number of grid points in the \f$ \mu \f$ direction
-  static const int MDIV=65;
-  /// The number of grid points in the \f$ s \f$ direction
-  static const int SDIV=129;
-  /// The number of Legendre polynomials
-  static const int LMAX=10;
+    /// The number of grid points in the \f$ \mu \f$ direction
+    static const int MDIV=65;
+    /// The number of grid points in the \f$ s \f$ direction
+    static const int SDIV=129;
+    /// The number of Legendre polynomials
+    static const int LMAX=10;
 
   protected:
 
-  /** \brief Subclass of \ref nstar_rot which specifies the function
-      to invert a polytropic EOS
-  */
-  class polytrope_solve {
-
-  protected:
-
-    /** \brief The polytropic index
-     */
-    double _Gamma_P;
-
-    /** \brief The energy density
-     */
-    double _ee;
-
-  public:
-
-    /** \brief Create a function object with specified 
-	polytropic index and ?
+    /** \brief Subclass of \ref nstar_rot which specifies the function
+	to invert a polytropic EOS
     */
-    polytrope_solve(double Gamma_P, double ee) {
-      _Gamma_P=Gamma_P;
-      _ee=ee;
-    }
+    class polytrope_solve {
+
+    protected:
+
+      /** \brief The polytropic index
+       */
+      double _Gamma_P;
+
+      /** \brief The energy density
+       */
+      double _ee;
+
+    public:
+
+      /** \brief Create a function object with specified 
+	  polytropic index and ?
+      */
+      polytrope_solve(double Gamma_P, double ee) {
+	_Gamma_P=Gamma_P;
+	_ee=ee;
+      }
       
-    /** \brief The function
+      /** \brief The function
+       */
+      double operator()(double rho0) {
+	return pow(rho0,_Gamma_P)/(_Gamma_P-1.0)+rho0-_ee;
+      }
+      
+    };
+
+    /// The polytrope solver
+    o2scl::root_bkt_cern<polytrope_solve> rbc;
+
+    /// Array search object
+    o2scl::search_vec<double *> sv;
+
+    /** \brief The number of grid points in integration of TOV equations
+	for spherical stars
+    */ 
+    static const int RDIV=900;                     
+  
+    /** \brief Maximum value of s-coordinate (default 0.9999) */  
+    double SMAX;
+    /** \brief Spacing in \f$ s \f$ direction, 
+	\f$ \mathrm{SMAX}/(\mathrm{SDIV}-1) \f$ 
+    */
+    double DS;
+    /** \brief Spacing in \f$ \mu \f$ direction, \f$ 1/(\mathrm{MDIV}-1) \f$ 
+     */ 
+    double DM;
+
+    /// Minimum radius for spherical stars (default \f$ 10^{-15} \f$)
+    double RMIN;
+
+    /** \brief Indicates if iteration diverged (default 0) */ 
+    int a_check;                       
+
+    /// \name Grid quantities set in make_grid()
+    //@{
+    /// \f$ s \f$
+    double s_gp[SDIV+1];                 
+    /// \f$ s (1-s) \f$
+    double s_1_s[SDIV+1];
+    /// \f$ 1-s \f$
+    double one_s[SDIV+1];
+    /// \f$ \mu \f$
+    double mu[MDIV+1];                   
+    /// \f$ 1-\mu^2 \f$
+    double one_m2[MDIV+1];
+    /// \f$ \theta \f$ defined by \f$ \mathrm{acos}~\mu \f$
+    double theta[MDIV+1];
+    /// \f$ \sin \theta \f$
+    double sin_theta[MDIV+1];
+    //@}
+
+    /// \name Grid values computed in integrate() for spherical_star()
+    //@{
+    /// Isotropic radius
+    double r_gp[RDIV+1];
+    /// Radial coordinate
+    double r_is_gp[RDIV+1];
+    /// Metric function \f$ \lambda \f$
+    double lambda_gp[RDIV+1];
+    /// Metric function \f$ \nu \f$
+    double nu_gp[RDIV+1];
+    /// Enclosed gravitational mass
+    double m_gp[RDIV+1];
+    /// Energy density
+    double e_d_gp[RDIV+1];   
+    //@}
+
+    /// \name Metric functions
+    //@{
+    /** \brief potential \f$ \rho \f$ */ 
+    double rho[SDIV+1][MDIV+1];          
+    /** \brief potential \f$ \gamma \f$ */ 
+    double gamma[SDIV+1][MDIV+1];         
+    /** \brief potential \f$ \omega \f$ */ 
+    double omega[SDIV+1][MDIV+1];        
+    /** \brief potential \f$ \alpha \f$ */ 
+    double alpha[SDIV+1][MDIV+1];        
+    //@}
+
+    /// \name Initial guess computed by \ref comp()
+    //@{
+    /// Guess for the equatorial radius
+    double r_e_guess;
+    /** \brief Guess for \f$ \rho \f$ */ 
+    double rho_guess[SDIV+1][MDIV+1];    
+    /** \brief Guess for \f$ \gamma \f$ */
+    double gamma_guess[SDIV+1][MDIV+1];   
+    /** \brief Guess for \f$ \alpha \f$ */
+    double omega_guess[SDIV+1][MDIV+1];  
+    /** \brief Guess for \f$ \omega \f$ */
+    double alpha_guess[SDIV+1][MDIV+1];  
+    //@}
+
+    /// \name EOS quantities
+    //@{
+    /** \brief Energy density \f$ \epsilon \f$ */
+    double energy[SDIV+1][MDIV+1];       
+    /** \brief Pressure */ 
+    double pressure[SDIV+1][MDIV+1];     
+    /** \brief Enthalpy */
+    double enthalpy[SDIV+1][MDIV+1];     
+    //@}
+
+    /// \name Other quantities defined over the full two-dimensional grid
+    //@{
+    /** \brief Proper velocity squared */
+    double velocity_sq[SDIV+1][MDIV+1];  
+    /** \brief Derivative of \f$ \alpha \f$ with respect to \f$ \mu \f$ */
+    double da_dm[SDIV+1][MDIV+1];
+    //@}
+
+    /// \name Quantities defined for fixed values of mu
+    //@{
+    /** \brief \f$ \gamma(s) \f$ at \f$ \mu=1 \f$ */
+    double gamma_mu_1[SDIV+1];            
+    /** \brief \f$ \gamma(s) \f$ at \f$ \mu=0 \f$ */
+    double gamma_mu_0[SDIV+1];            
+    /** \brief \f$ \rho(s) \f$ at \f$ \mu=1 \f$ */
+    double rho_mu_1[SDIV+1];             
+    /** \brief \f$ \rho(s) \f$ at \f$ \mu=0 \f$ */
+    double rho_mu_0[SDIV+1];             
+    /** \brief \f$ \omega(s) \f$ at \f$ \mu=0 \f$ */
+    double omega_mu_0[SDIV+1];           
+    //@}
+
+    /** \brief The value of \f$ \hat{\gamma} \f$ at the pole */  
+    double gamma_pole_h;                  
+    /** \brief The value of \f$ \hat{\gamma} \f$ at the center */
+    double gamma_center_h;                
+    /** \brief The value of \f$ \hat{\gamma} \f$ at the equator */
+    double gamma_equator_h;               
+    /** \brief The value of \f$ \hat{\rho} \f$ at the pole */ 
+    double rho_pole_h;                   
+    /** \brief The value of \f$ \hat{\rho} \f$ at the center */
+    double rho_center_h;                 
+    /** \brief The value of \f$ \hat{\rho} \f$ at the equator */ 
+    double rho_equator_h;                
+    /** \brief The value of \f$ \hat{\omega} \f$ at the equator */
+    double omega_equator_h;              
+    /** \brief Angular velocity, \f$ \hat{\omega} \f$ */
+    double Omega_h;                      
+    /** \brief Central pressure */ 
+    double p_center;                     
+    /** \brief Central enthalpy */
+    double h_center;                     
+
+    /// \name Desc
+    //@{
+    /** \brief \f$ f_{\rho}(s,n,s') \f$ */
+    double f_rho[SDIV+1][LMAX+1][SDIV+1];
+    /** \brief \f$ f_{\gamma}(s,n,s') \f$ */
+    double f_gamma[SDIV+1][LMAX+1][SDIV+1];
+    /** \brief \f$ f_{\omega}(s,n,s') \f$ */
+    double f_omega[SDIV+1][LMAX+1][SDIV+1];
+    //@}
+  
+    /// \name Legendre polynomials
+    //@{
+    /** \brief Legendre polynomial \f$ P_{2n}(\mu) \f$ 
+     */  
+    double P_2n[MDIV+1][LMAX+1];         
+    /** \brief Associated Legendre polynomial \f$ P^1_{2n-1}(\mu) \f$ 
+     */ 
+    double P1_2n_1[MDIV+1][LMAX+1];      
+    //@}
+
+    /** \brief Relative accuracy for the equatorial radius,
+	\f$ r_e \f$ (default \f$ 10^{-5} \f$) 
+
+	Used in \ref iterate() .
+    */
+    double eq_radius_tol_rel;                    
+
+    /** \brief Integrated term over m in eqn for \f$ \rho \f$ */
+    double D1_rho[LMAX+1][SDIV+1];  
+    /** \brief Integrated term over m in eqn for \f$ \gamma \f$ */
+    double D1_gamma[LMAX+1][SDIV+1]; 
+    /** \brief Integ. term over m in eqn for \f$ \omega \f$ */
+    double D1_omega[LMAX+1][SDIV+1];
+    /** \brief Integrated term over s in eqn for \f$ \rho \f$ */
+    double D2_rho[SDIV+1][LMAX+1];  
+    /** \brief Integrated term over s in eqn for \f$ \gamma \f$ */
+    double D2_gamma[SDIV+1][LMAX+1]; 
+    /** \brief Integ. term over s in eqn for \f$ \omega \f$ */
+    double D2_omega[SDIV+1][LMAX+1];
+
+    /** \brief source term in eqn for \f$ \gamma \f$ */
+    double S_gamma[SDIV+1][MDIV+1];  
+    /** \brief source term in eqn for \f$ \rho \f$ */
+    double S_rho[SDIV+1][MDIV+1];   
+    /** \brief source term in eqn for \f$ \omega \f$ */
+    double S_omega[SDIV+1][MDIV+1]; 
+
+    /** \brief The tolerance for the functions with the prefix "fix" 
+	(default \f$ 10^{-4} \f$ )
+    */
+    double tol_abs;
+
+    /// \name Thermodyanmic quantities near the surface
+    //@{
+    /// Pressure at the surface
+    double p_surface;
+    /// Energy density at the surface
+    double e_surface;
+    /** \brief Minimum specific enthalpy
      */
-    double operator()(double rho0) {
-      return pow(rho0,_Gamma_P)/(_Gamma_P-1.0)+rho0-_ee;
-    }
-      
-  };
+    double enthalpy_min;                 
+    //@}
 
-  /// The polytrope solver
-  o2scl::root_bkt_cern<polytrope_solve> rbc;
+    /// \name Polytrope parameters
+    //@{
+    /// Polytropic index
+    double n_P;
+    /// Polytropic exponent
+    double Gamma_P;
+    //@}
 
-  /// Array search object
-  o2scl::search_vec<double *> sv;
+    /// \name For CL_LOW is true
+    //@{
+    /// Desc
+    double e_match;
+    /// Desc
+    double p_match;
+    /// Desc
+    double h_match;
+    /// Desc
+    double n0_match;
+    /** \brief Desc (default false)
+     */
+    bool CL_LOW;
+    /// Desc
+    double de_pt;
+    /// Desc
+    double e_cl;
+    //@}
 
-  /** \brief The number of grid points in integration of TOV equations
-      for spherical stars
-  */ 
-  static const int RDIV=900;                     
+    /// \name Interpolation functions
+    //@{
+    /** \brief Cache for interpolation
+     */
+    int n_nearest;
   
-  /** \brief Maximum value of s-coordinate (default 0.9999) */  
-  double SMAX;
-  /** \brief Spacing in \f$ s \f$ direction, 
-      \f$ \mathrm{SMAX}/(\mathrm{SDIV}-1) \f$ 
-  */
-  double DS;
-  /** \brief Spacing in \f$ \mu \f$ direction, \f$ 1/(\mathrm{MDIV}-1) \f$ 
-   */ 
-  double DM;
-
-  /// Minimum radius for spherical stars (default \f$ 10^{-15} \f$)
-  double RMIN;
-
-  /** \brief Indicates if iteration diverged (default 0) */ 
-  int a_check;                       
-
-  /// \name Grid quantities set in make_grid()
-  //@{
-  /// \f$ s \f$
-  double s_gp[SDIV+1];                 
-  /// \f$ s (1-s) \f$
-  double s_1_s[SDIV+1];
-  /// \f$ 1-s \f$
-  double one_s[SDIV+1];
-  /// \f$ \mu \f$
-  double mu[MDIV+1];                   
-  /// \f$ 1-\mu^2 \f$
-  double one_m2[MDIV+1];
-  /// \f$ \theta \f$ defined by \f$ \mathrm{acos}~\mu \f$
-  double theta[MDIV+1];
-  /// \f$ \sin \theta \f$
-  double sin_theta[MDIV+1];
-  //@}
-
-  /// \name Grid values computed in integrate() for spherical_star()
-  //@{
-  /// Isotropic radius
-  double r_gp[RDIV+1];
-  /// Radial coordinate
-  double r_is_gp[RDIV+1];
-  /// Metric function \f$ \lambda \f$
-  double lambda_gp[RDIV+1];
-  /// Metric function \f$ \nu \f$
-  double nu_gp[RDIV+1];
-  /// Enclosed gravitational mass
-  double m_gp[RDIV+1];
-  /// Energy density
-  double e_d_gp[RDIV+1];   
-  //@}
-
-  /// \name Metric functions
-  //@{
-  /** \brief potential \f$ \rho \f$ */ 
-  double rho[SDIV+1][MDIV+1];          
-  /** \brief potential \f$ \gamma \f$ */ 
-  double gamma[SDIV+1][MDIV+1];         
-  /** \brief potential \f$ \omega \f$ */ 
-  double omega[SDIV+1][MDIV+1];        
-  /** \brief potential \f$ \alpha \f$ */ 
-  double alpha[SDIV+1][MDIV+1];        
-  //@}
-
-  /// \name Initial guess computed by \ref comp()
-  //@{
-  /// Guess for the equatorial radius
-  double r_e_guess;
-  /** \brief Guess for \f$ \rho \f$ */ 
-  double rho_guess[SDIV+1][MDIV+1];    
-  /** \brief Guess for \f$ \gamma \f$ */
-  double gamma_guess[SDIV+1][MDIV+1];   
-  /** \brief Guess for \f$ \alpha \f$ */
-  double omega_guess[SDIV+1][MDIV+1];  
-  /** \brief Guess for \f$ \omega \f$ */
-  double alpha_guess[SDIV+1][MDIV+1];  
-  //@}
-
-  /// \name EOS quantities
-  //@{
-  /** \brief Energy density \f$ \epsilon \f$ */
-  double energy[SDIV+1][MDIV+1];       
-  /** \brief Pressure */ 
-  double pressure[SDIV+1][MDIV+1];     
-  /** \brief Enthalpy */
-  double enthalpy[SDIV+1][MDIV+1];     
-  //@}
-
-  /// \name Other quantities defined over the full two-dimensional grid
-  //@{
-  /** \brief Proper velocity squared */
-  double velocity_sq[SDIV+1][MDIV+1];  
-  /** \brief Derivative of \f$ \alpha \f$ with respect to \f$ \mu \f$ */
-  double da_dm[SDIV+1][MDIV+1];
-  //@}
-
-  /// \name Quantities defined for fixed values of mu
-  //@{
-  /** \brief \f$ \gamma(s) \f$ at \f$ \mu=1 \f$ */
-  double gamma_mu_1[SDIV+1];            
-  /** \brief \f$ \gamma(s) \f$ at \f$ \mu=0 \f$ */
-  double gamma_mu_0[SDIV+1];            
-  /** \brief \f$ \rho(s) \f$ at \f$ \mu=1 \f$ */
-  double rho_mu_1[SDIV+1];             
-  /** \brief \f$ \rho(s) \f$ at \f$ \mu=0 \f$ */
-  double rho_mu_0[SDIV+1];             
-  /** \brief \f$ \omega(s) \f$ at \f$ \mu=0 \f$ */
-  double omega_mu_0[SDIV+1];           
-  //@}
-
-  /** \brief The value of \f$ \hat{\gamma} \f$ at the pole */  
-  double gamma_pole_h;                  
-  /** \brief The value of \f$ \hat{\gamma} \f$ at the center */
-  double gamma_center_h;                
-  /** \brief The value of \f$ \hat{\gamma} \f$ at the equator */
-  double gamma_equator_h;               
-  /** \brief The value of \f$ \hat{\rho} \f$ at the pole */ 
-  double rho_pole_h;                   
-  /** \brief The value of \f$ \hat{\rho} \f$ at the center */
-  double rho_center_h;                 
-  /** \brief The value of \f$ \hat{\rho} \f$ at the equator */ 
-  double rho_equator_h;                
-  /** \brief The value of \f$ \hat{\omega} \f$ at the equator */
-  double omega_equator_h;              
-  /** \brief Angular velocity, \f$ \hat{\omega} \f$ */
-  double Omega_h;                      
-  /** \brief Central pressure */ 
-  double p_center;                     
-  /** \brief Central enthalpy */
-  double h_center;                     
-
-  /// \name Desc
-  //@{
-  /** \brief \f$ f_{\rho}(s,n,s') \f$ */
-  double f_rho[SDIV+1][LMAX+1][SDIV+1];
-  /** \brief \f$ f_{\gamma}(s,n,s') \f$ */
-  double f_gamma[SDIV+1][LMAX+1][SDIV+1];
-  /** \brief \f$ f_{\omega}(s,n,s') \f$ */
-  double f_omega[SDIV+1][LMAX+1][SDIV+1];
-  //@}
-  
-  /// \name Legendre polynomials
-  //@{
-  /** \brief Legendre polynomial \f$ P_{2n}(\mu) \f$ 
-   */  
-  double P_2n[MDIV+1][LMAX+1];         
-  /** \brief Associated Legendre polynomial \f$ P^1_{2n-1}(\mu) \f$ 
-   */ 
-  double P1_2n_1[MDIV+1][LMAX+1];      
-  //@}
-
-  /** \brief Relative accuracy for the equatorial radius,
-      \f$ r_e \f$ (default \f$ 10^{-5} \f$) 
-
-      Used in \ref iterate() .
-  */
-  double eq_radius_tol_rel;                    
-
-  /** \brief Integrated term over m in eqn for \f$ \rho \f$ */
-  double D1_rho[LMAX+1][SDIV+1];  
-  /** \brief Integrated term over m in eqn for \f$ \gamma \f$ */
-  double D1_gamma[LMAX+1][SDIV+1]; 
-  /** \brief Integ. term over m in eqn for \f$ \omega \f$ */
-  double D1_omega[LMAX+1][SDIV+1];
-  /** \brief Integrated term over s in eqn for \f$ \rho \f$ */
-  double D2_rho[SDIV+1][LMAX+1];  
-  /** \brief Integrated term over s in eqn for \f$ \gamma \f$ */
-  double D2_gamma[SDIV+1][LMAX+1]; 
-  /** \brief Integ. term over s in eqn for \f$ \omega \f$ */
-  double D2_omega[SDIV+1][LMAX+1];
-
-  /** \brief source term in eqn for \f$ \gamma \f$ */
-  double S_gamma[SDIV+1][MDIV+1];  
-  /** \brief source term in eqn for \f$ \rho \f$ */
-  double S_rho[SDIV+1][MDIV+1];   
-  /** \brief source term in eqn for \f$ \omega \f$ */
-  double S_omega[SDIV+1][MDIV+1]; 
-
-  /** \brief The tolerance for the functions with the prefix "fix" 
-      (default \f$ 10^{-4} \f$ )
-  */
-  double tol_abs;
-
-  /// \name Thermodyanmic quantities near the surface
-  //@{
-  /// Pressure at the surface
-  double p_surface;
-  /// Energy density at the surface
-  double e_surface;
-  /** \brief Minimum specific enthalpy
-   */
-  double enthalpy_min;                 
-  //@}
-
-  /// \name Polytrope parameters
-  //@{
-  /// Polytropic index
-  double n_P;
-  /// Polytropic exponent
-  double Gamma_P;
-  //@}
-
-  /// \name For CL_LOW is true
-  //@{
-  /// Desc
-  double e_match;
-  /// Desc
-  double p_match;
-  /// Desc
-  double h_match;
-  /// Desc
-  double n0_match;
-  /** \brief Desc (default false)
-   */
-  bool CL_LOW;
-  /// Desc
-  double de_pt;
-  /// Desc
-  double e_cl;
-  //@}
-
-  /// \name Interpolation functions
-  //@{
-  /** \brief Cache for interpolation
-   */
-  int n_nearest;
-  
-  /// Search in array \c x of length \c n for value \c val
-  int new_search(int n, double *x, double val);
+    /// Search in array \c x of length \c n for value \c val
+    int new_search(int n, double *x, double val);
     
-  /** \brief Driver for the interpolation routine. 
+    /** \brief Driver for the interpolation routine. 
 	
-      First we find the tab. point nearest to xb, then we
-      interpolate using four points around xb.
+	First we find the tab. point nearest to xb, then we
+	interpolate using four points around xb.
 	
-      Used by \ref int_z(), \ref e_at_p(), \ref p_at_e(), 
-      \ref p_at_h(), \ref h_at_p(), \ref n0_at_e(), 
-      \ref comp_omega(), \ref comp_M_J(), \ref comp(), 
-      \ref spherical_star(), \ref iterate().
-  */  
-  double interp(double xp[], double yp[], int np ,double xb);
+	Used by \ref int_z(), \ref e_at_p(), \ref p_at_e(), 
+	\ref p_at_h(), \ref h_at_p(), \ref n0_at_e(), 
+	\ref comp_omega(), \ref comp_M_J(), \ref comp(), 
+	\ref spherical_star(), \ref iterate().
+    */  
+    double interp(double xp[], double yp[], int np ,double xb);
 
-  /** \brief Driver for the interpolation routine.
+    /** \brief Driver for the interpolation routine.
 
-      Four point interpolation at a 
-      given offset the index of the first point k. 
+	Four point interpolation at a 
+	given offset the index of the first point k. 
 
-      Used in \ref comp() .
-  */
-  double interp_4_k(double xp[], double yp[], int np, double xb, int k);
-  //@}
+	Used in \ref comp() .
+    */
+    double interp_4_k(double xp[], double yp[], int np, double xb, int k);
+    //@}
 
-  /** \brief Integrate f[mu] from m-1 to m. 
+    /** \brief Integrate f[mu] from m-1 to m. 
 
-      This implements a 8-point closed Newton-Cotes formula.
+	This implements a 8-point closed Newton-Cotes formula.
 	
-      Used in \ref comp() .
-  */
-  double int_z(double f[MDIV+1], int m);
+	Used in \ref comp() .
+    */
+    double int_z(double f[MDIV+1], int m);
 
-  /// \name EOS functions
-  //@{
-  /** \brief Compute \f$ \varepsilon(P) \f$  
+    /// \name EOS functions
+    //@{
+    /** \brief Compute \f$ \varepsilon(P) \f$  
 	
-      Used in \ref dm_dr_is(), \ref dp_dr_is(), \ref integrate()
-      and \ref iterate(). 
-  */
-  double e_at_p(double pp);
+	Used in \ref dm_dr_is(), \ref dp_dr_is(), \ref integrate()
+	and \ref iterate(). 
+    */
+    double e_at_p(double pp);
 
-  /** \brief Compute \f$ P(\varepsilon) \f$  
+    /** \brief Compute \f$ P(\varepsilon) \f$  
 	
-      Used in \ref make_center() and \ref integrate().
-  */
-  double p_at_e(double ee);
+	Used in \ref make_center() and \ref integrate().
+    */
+    double p_at_e(double ee);
 
-  /** \brief Pressure at fixed enthalpy
+    /** \brief Pressure at fixed enthalpy
 
-      Used in \ref iterate().
-  */
-  double p_at_h(double hh);
+	Used in \ref iterate().
+    */
+    double p_at_h(double hh);
 
-  /** \brief Enthalpy at fixed pressure 
+    /** \brief Enthalpy at fixed pressure 
 
-      Used in \ref make_center() and \ref integrate().
-  */
-  double h_at_p(double pp);
+	Used in \ref make_center() and \ref integrate().
+    */
+    double h_at_p(double pp);
     
-  /** \brief Baryon density at fixed energy density 
+    /** \brief Baryon density at fixed energy density 
 
-      Used in \ref comp_M_J() and \ref comp() .
-  */
-  double n0_at_e(double ee);
-  //@}
+	Used in \ref comp_M_J() and \ref comp() .
+    */
+    double n0_at_e(double ee);
+    //@}
 
-  /// \name Derivatives on the grid
-  //@{
-  /** \brief Returns the derivative w.r.t. s of an array f[SDIV+1]. 
-   */ 
-  double s_deriv(double f[SDIV+1], int s);
+    /// \name Derivatives on the grid
+    //@{
+    /** \brief Returns the derivative w.r.t. s of an array f[SDIV+1]. 
+     */ 
+    double s_deriv(double f[SDIV+1], int s);
 
-  /** \brief Returns the derivative w.r.t. mu of an array f[MDIV+1]. 
-   */ 
-  double m_deriv(double f[MDIV+1], int m);
+    /** \brief Returns the derivative w.r.t. mu of an array f[MDIV+1]. 
+     */ 
+    double m_deriv(double f[MDIV+1], int m);
 
-  /** \brief Returns the derivative w.r.t. s  
-   */ 
-  double deriv_s(double f[SDIV+1][MDIV+1], int s, int m);
+    /** \brief Returns the derivative w.r.t. s  
+     */ 
+    double deriv_s(double f[SDIV+1][MDIV+1], int s, int m);
 
-  /** \brief Returns the derivative w.r.t. mu 
-   */ 
-  double deriv_m(double f[SDIV+1][MDIV+1], int s, int m);
+    /** \brief Returns the derivative w.r.t. mu 
+     */ 
+    double deriv_m(double f[SDIV+1][MDIV+1], int s, int m);
 
-  /** \brief Returns the derivative w.r.t. s and mu 
-   */ 
-  double deriv_sm(double f[SDIV+1][MDIV+1], int s, int m);
-  //@}
+    /** \brief Returns the derivative w.r.t. s and mu 
+     */ 
+    double deriv_sm(double f[SDIV+1][MDIV+1], int s, int m);
+    //@}
 
-  /// \name Initialization functions
-  //@{
-  /** \brief Returns the Legendre polynomial of degree n, evaluated at x. 
+    /// \name Initialization functions
+    //@{
+    /** \brief Returns the Legendre polynomial of degree n, evaluated at x. 
 
-      This uses the recurrence relation and is used in \ref comp_f_P()
-      which is called by the constructor.
-  */
-  double legendre(int n, double x);
+	This uses the recurrence relation and is used in \ref comp_f_P()
+	which is called by the constructor.
+    */
+    double legendre(int n, double x);
 
-  /** \brief Compute two-point functions
+    /** \brief Compute two-point functions
 	
-      This function computes the 2-point functions \f$
-      f^m_{2n}(r,r') \f$ used to integrate the potentials \f$ \rho,
-      \gamma \f$ and \f$ \omega \f$ (See \ref Komatsu89 for
-      details). Since the grid points are fixed, we can compute the
-      functions \ref f_rho, \ref f_gamma, \ref f_omega, \ref P_2n,
-      and \ref P1_2n_1 once at the beginning.
+	This function computes the 2-point functions \f$
+	f^m_{2n}(r,r') \f$ used to integrate the potentials \f$ \rho,
+	\gamma \f$ and \f$ \omega \f$ (See \ref Komatsu89 for
+	details). Since the grid points are fixed, we can compute the
+	functions \ref f_rho, \ref f_gamma, \ref f_omega, \ref P_2n,
+	and \ref P1_2n_1 once at the beginning.
 
-      See Eqs. 27-29 of \ref Cook92 and Eqs. 33-35 of \ref
-      Komatsu89. This function is called by the constructor.
-  */
-  void comp_f_P();
+	See Eqs. 27-29 of \ref Cook92 and Eqs. 33-35 of \ref
+	Komatsu89. This function is called by the constructor.
+    */
+    void comp_f_P();
 
     /** \brief Create computational mesh. 
 
-      Create the computational mesh for \f$ s=r/(r+r_e) \f$
-      (where \f$ r_e \f$ is the coordinate equatorial radius) 
-      and \f$ \mu = \cos \theta \f$
-      using 
-      \f[
-      s[i]=\mathrm{SMAX}\left(\frac{i-1}{\mathrm{SDIV}-1}\right)
-      \f]
-      \f[
-      \mu[j]=\left(\frac{i-1}{\mathrm{MDIV}-1}\right)
-      \f]
-      When \f$ r=0 \f$, \f$ s=0 \f$, when \f$ r=r_e \f$, 
-      \f$ s=1/2 \f$, and when \f$ r = \infty \f$, \f$ s=1 \f$ .
-      \comment
-      (Note that some versions of the manual have a typo,
-      giving \f$ 1-i \f$ rather than \f$ i-1 \f$ above.)
-      \endcomment
+	Create the computational mesh for \f$ s=r/(r+r_e) \f$
+	(where \f$ r_e \f$ is the coordinate equatorial radius) 
+	and \f$ \mu = \cos \theta \f$
+	using 
+	\f[
+	s[i]=\mathrm{SMAX}\left(\frac{i-1}{\mathrm{SDIV}-1}\right)
+	\f]
+	\f[
+	\mu[j]=\left(\frac{i-1}{\mathrm{MDIV}-1}\right)
+	\f]
+	When \f$ r=0 \f$, \f$ s=0 \f$, when \f$ r=r_e \f$, 
+	\f$ s=1/2 \f$, and when \f$ r = \infty \f$, \f$ s=1 \f$ .
+	\comment
+	(Note that some versions of the manual have a typo,
+	giving \f$ 1-i \f$ rather than \f$ i-1 \f$ above.)
+	\endcomment
 	
-      Points in the mu-direction are stored in the array
-      <tt>mu[i]</tt>. Points in the s-direction are stored in the
-      array <tt>s_gp[j]</tt>.
+	Points in the mu-direction are stored in the array
+	<tt>mu[i]</tt>. Points in the s-direction are stored in the
+	array <tt>s_gp[j]</tt>.
 
-      This function sets \ref s_gp, \ref s_1_s, \ref one_s,
-      \ref mu, \ref one_m2, \ref theta and \ref sin_theta .
-      All of these arrays are unit-indexed. It is called by
-      the constructor.
-  */
-  void make_grid();
-  //@}
+	This function sets \ref s_gp, \ref s_1_s, \ref one_s,
+	\ref mu, \ref one_m2, \ref theta and \ref sin_theta .
+	All of these arrays are unit-indexed. It is called by
+	the constructor.
+    */
+    void make_grid();
+    //@}
 
-  /** \brief Compute central pressure and enthalpy from central
-      energy density
+    /** \brief Compute central pressure and enthalpy from central
+	energy density
 
-      For polytropic EOSs, this also computes <tt>rho0_center</tt> .
-  */
-  void make_center(double e_center);
+	For polytropic EOSs, this also computes <tt>rho0_center</tt> .
+    */
+    void make_center(double e_center);
 
-  /// \name Post-processing functions
-  //@{
-  /** \brief Compute Omega and Omega_K. 
-   */
-  void comp_omega();
+    /// \name Post-processing functions
+    //@{
+    /** \brief Compute Omega and Omega_K. 
+     */
+    void comp_omega();
   
-  /** \brief Compute rest mass and angular momentum. 
-   */
-  void comp_M_J();
+    /** \brief Compute rest mass and angular momentum. 
+     */
+    void comp_M_J();
 
-  /** \brief Compute various quantities.
+    /** \brief Compute various quantities.
 
-      The main post-processing funciton
-  */
-  void comp();
-  //@}
+	The main post-processing funciton
+    */
+    void comp();
+    //@}
 
-  /// \name For computing spherical stars
-  //@{
-  /** \brief Computes a spherically symmetric star 
+    /// \name For computing spherical stars
+    //@{
+    /** \brief Computes a spherically symmetric star 
 	
-      The metric is 
-      \f[
-      ds^2 = -e^{2\nu}dt^2 + e^{2\lambda} dr^2 + r^2 d\theta^2 + 
-      r^2 sin^2\theta d\phi^2
-      \f]
-      where \f$ r \f$ is an isotropic radial coordinate 
-      (corresponding to <tt>r_is</tt> in the code).
+	The metric is 
+	\f[
+	ds^2 = -e^{2\nu}dt^2 + e^{2\lambda} dr^2 + r^2 d\theta^2 + 
+	r^2 sin^2\theta d\phi^2
+	\f]
+	where \f$ r \f$ is an isotropic radial coordinate 
+	(corresponding to <tt>r_is</tt> in the code).
       
-      This function computes \ref r_e_guess, \ref R_e, 
-      \ref Mass, and \ref Z_p .
-  */
-  void spherical_star();
+	This function computes \ref r_e_guess, \ref R_e, 
+	\ref Mass, and \ref Z_p .
+    */
+    void spherical_star();
 
-  /** \brief Derivative of gravitational mass with respect to
-      isotropic radius */
-  double dm_dr_is(double r_is, double r, double m, double p);
+    /** \brief Derivative of gravitational mass with respect to
+	isotropic radius */
+    double dm_dr_is(double r_is, double r, double m, double p);
  
-  /** \brief Derivative of pressure with respect to isotropic radius */
-  double dp_dr_is(double r_is, double r, double m, double p);
+    /** \brief Derivative of pressure with respect to isotropic radius */
+    double dp_dr_is(double r_is, double r, double m, double p);
 
-  /** \brief Derivative of radius with respect to isotropic radius */
-  double dr_dr_is(double r_is, double r, double m);
+    /** \brief Derivative of radius with respect to isotropic radius */
+    double dr_dr_is(double r_is, double r, double m);
   
-  /** \brief Integrate one of the differential equations for 
-      spherical stars*/
-  void integrate(int i_check, double &r_final, double &m_final,
-		 double &r_is_final);
-  //@}
+    /** \brief Integrate one of the differential equations for 
+	spherical stars*/
+    void integrate(int i_check, double &r_final, double &m_final,
+		   double &r_is_final);
+    //@}
 
-  /** \brief Main iteration function
-   */
-  int iterate(double r_ratio);
+    /** \brief Main iteration function
+     */
+    int iterate(double r_ratio);
 
-  /// \name EOS member variables
-  //@{ 
-  /** \brief If true, then an EOS has been set
-   */
-  bool eos_set;
+    /// \name EOS member variables
+    //@{ 
+    /** \brief If true, then an EOS has been set
+     */
+    bool eos_set;
   
-  /** \brief If true, then use a polytrope and rescale
-   */
-  bool scaled_polytrope;
+    /** \brief If true, then use a polytrope and rescale
+     */
+    bool scaled_polytrope;
 
-  /** \brief Pointer to the user-specified EOS
-   */
-  eos_nstar_rot *eosp;
-  //@}
+    /** \brief Pointer to the user-specified EOS
+     */
+    eos_nstar_rot *eosp;
+    //@}
   
   public:
 
-  nstar_rot();
+    nstar_rot();
 
-  /** \brief Verbosity parameter
-   */
-  int verbose;
+    /** \brief Verbosity parameter
+     */
+    int verbose;
 
-  /// \name Output
-  //@{
-  /** \brief Central energy density (in units of 
-      \f$ 10^{15} \mathrm{g}/\mathrm{cm}^3 \f$) 
-  */
-  double e_center;                     
-  /** \brief Ratio of polar to equatorial radius
-   */ 
-  double r_ratio;                      
-  /** \brief Coordinate equatorial radius
-   */ 
-  double r_e;                          
-  //@}
+    /// \name Output
+    //@{
+    /** \brief Central energy density (in units of 
+	\f$ 10^{15} \mathrm{g}/\mathrm{cm}^3 \f$) 
+    */
+    double e_center;                     
+    /** \brief Ratio of polar to equatorial radius
+     */ 
+    double r_ratio;                      
+    /** \brief Coordinate equatorial radius
+     */ 
+    double r_e;                          
+    //@}
 
-  /// \name Quantities computed by nstar_rot::comp() (in order)
-  //@{
-  /** \brief Radius at pole */      
-  double r_p;                          
-  /** \brief The value of the s-coordinate at the pole */
-  double s_p;                          
-  /** \brief The value of the s-coordinate at the equator */
-  double s_e; 
-  /// The velocity at the equator
-  double velocity_equator;              
-  /** \brief Circumferential radius in cm (i.e. the radius defined
-      such that \f$ 2 \pi R_e \f$ is the proper circumference) */
-  double R_e;                          
-  /// Proper mass (in g)
-  double Mass_p;
-  /// Gravitational mass (in g)
-  double Mass;
-  /// Baryonic mass (in g)
-  double Mass_0;
-  /// Angular momentum
-  double J;
-  /// Angular velocity
-  double Omega;
-  /// Total rotational kinetic energy
-  double T;
-  /// Moment of inertia
-  double I;
-  /// Gravitational binding energy
-  double W;
-  /// Polar redshift
-  double Z_p;
-  /// Forward equatorial redshift
-  double Z_f;
-  /// Backward equatorial redshift
-  double Z_b;
-  /** \brief Kepler rotation frequency (in 1/s) */  
-  double Omega_K;                      
-  /// The eccentricity
-  double eccentricity;
-  /// Desc
-  double v_plus[SDIV+1];
-  /// Desc
-  double v_minus[SDIV+1];
-  /// Desc
-  double vel_plus;
-  /// Desc
-  double vel_minus;
-  /** \brief Height from surface of last stable co-rotating circular 
-      orbit in equatorial plane
+    /// \name Quantities computed by nstar_rot::comp() (in order)
+    //@{
+    /** \brief Radius at pole */      
+    double r_p;                          
+    /** \brief The value of the s-coordinate at the pole */
+    double s_p;                          
+    /** \brief The value of the s-coordinate at the equator */
+    double s_e; 
+    /// The velocity at the equator
+    double velocity_equator;              
+    /** \brief Circumferential radius in cm (i.e. the radius defined
+	such that \f$ 2 \pi R_e \f$ is the proper circumference) */
+    double R_e;                          
+    /// Proper mass (in g)
+    double Mass_p;
+    /// Gravitational mass (in g)
+    double Mass;
+    /// Baryonic mass (in g)
+    double Mass_0;
+    /// Angular momentum
+    double J;
+    /// Angular velocity
+    double Omega;
+    /// Total rotational kinetic energy
+    double T;
+    /// Moment of inertia
+    double I;
+    /// Gravitational binding energy
+    double W;
+    /// Polar redshift
+    double Z_p;
+    /// Forward equatorial redshift
+    double Z_f;
+    /// Backward equatorial redshift
+    double Z_b;
+    /** \brief Kepler rotation frequency (in 1/s) */  
+    double Omega_K;                      
+    /// The eccentricity
+    double eccentricity;
+    /// Desc
+    double v_plus[SDIV+1];
+    /// Desc
+    double v_minus[SDIV+1];
+    /// Desc
+    double vel_plus;
+    /// Desc
+    double vel_minus;
+    /** \brief Height from surface of last stable co-rotating circular 
+	orbit in equatorial plane
 
-      If this is zero then all orbits are stable.
-  */
-  double h_plus;
-  /** \brief Height from surface of last stable counter-rotating circular 
-      orbit in equatorial plane
+	If this is zero then all orbits are stable.
+    */
+    double h_plus;
+    /** \brief Height from surface of last stable counter-rotating circular 
+	orbit in equatorial plane
 	
-      If this is zero then all orbits are stable.
-  */
-  double h_minus;
-  /// Desc
-  double Omega_plus;
-  /// Desc
-  double u_phi;
-  /// Angular velocity of a particle in a circular orbit at the equator
-  double Omega_p;
-  /// Desc
-  double grv2;
-  /// Desc
-  double grv2_new;
-  /// Desc
-  double grv3;
-  /** \brief Ratio of potential \f$ \omega \f$ to angular 
-      velocity \f$ \Omega \f$
-  */
-  double om_over_Om;
-  /** \brief Mass quadrupole moment
-   */
-  double mass_quadrupole;
-  //@}
+	If this is zero then all orbits are stable.
+    */
+    double h_minus;
+    /// Desc
+    double Omega_plus;
+    /// Desc
+    double u_phi;
+    /// Angular velocity of a particle in a circular orbit at the equator
+    double Omega_p;
+    /// Desc
+    double grv2;
+    /// Desc
+    double grv2_new;
+    /// Desc
+    double grv3;
+    /** \brief Ratio of potential \f$ \omega \f$ to angular 
+	velocity \f$ \Omega \f$
+    */
+    double om_over_Om;
+    /** \brief Mass quadrupole moment
+     */
+    double mass_quadrupole;
+    //@}
 
-  /// \name Settings
-  //@{
-  /// The convergence factor (default 1.0)
-  double cf;
-  //@}
+    /// \name Settings
+    //@{
+    /// The convergence factor (default 1.0)
+    double cf;
+    //@}
 
-  /// \name Internal constants
-  //@{
-  /** \brief Use the values of the constants from the original RNS
-      code
-  */
-  void constants_rns();
-  /** \brief Use the \o2 values
-   */
-  void constants_o2scl();
-  /** \brief Speed of light in vacuum (in CGS units) */ 
-  double C;
-  /** \brief Gravitational constant (in CGS units) */ 
-  double G;
-  /** \brief Mass of sun (in g) */
-  double MSUN;
-  /** \brief Square of length scale in CGS units, 
-      \f$ \kappa \equiv 10^{-15} c^2/G \f$
-  */
-  double KAPPA;
-  /** \brief The mass of one baryon (in g)
-   */
-  double MB;
-  /** \brief The value \f$ \kappa G c^{-4} \f$ */
-  double KSCALE;
-  /// The constant \f$ \pi \f$
-  double PI;
-  //@}
+    /// \name Internal constants
+    //@{
+    /** \brief Use the values of the constants from the original RNS
+	code
+    */
+    void constants_rns();
+    /** \brief Use the \o2 values
+     */
+    void constants_o2scl();
+    /** \brief Speed of light in vacuum (in CGS units) */ 
+    double C;
+    /** \brief Gravitational constant (in CGS units) */ 
+    double G;
+    /** \brief Mass of sun (in g) */
+    double MSUN;
+    /** \brief Square of length scale in CGS units, 
+	\f$ \kappa \equiv 10^{-15} c^2/G \f$
+    */
+    double KAPPA;
+    /** \brief The mass of one baryon (in g)
+     */
+    double MB;
+    /** \brief The value \f$ \kappa G c^{-4} \f$ */
+    double KSCALE;
+    /// The constant \f$ \pi \f$
+    double PI;
+    //@}
 
-  /// \name Basic Usage
-  //@{
-  /** \brief Set the EOS
-   */
-  void set_eos(eos_nstar_rot &eos) {
-    eosp=&eos;
-    eos_set=true;
-    scaled_polytrope=false;
-    return;
-  }
+    /// \name Basic Usage
+    //@{
+    /** \brief Set the EOS
+     */
+    void set_eos(eos_nstar_rot &eos) {
+      eosp=&eos;
+      eos_set=true;
+      scaled_polytrope=false;
+      return;
+    }
 
-  /** \brief Use a polytropic EOS with a specified index
-   */
-  void polytrope_eos(double index) {
-    n_P=index;
-    scaled_polytrope=true;
-    eos_set=true;
-    return;
-  }
+    /** \brief Use a polytropic EOS with a specified index
+     */
+    void polytrope_eos(double index) {
+      n_P=index;
+      scaled_polytrope=true;
+      eos_set=true;
+      return;
+    }
     
-  /** \brief Construct a configuration with a fixed central 
-      energy density and a fixed axis ratio
+    /** \brief Construct a configuration with a fixed central 
+	energy density and a fixed axis ratio
 	
-      The central energy density should be in \f$
-      \mathrm{g}/\mathrm{cm}^3 \f$ .
-  */
-  int fix_cent_eden_axis_rat(double cent_eden, double axis_rat);
+	The central energy density should be in \f$
+	\mathrm{g}/\mathrm{cm}^3 \f$ .
+    */
+    int fix_cent_eden_axis_rat(double cent_eden, double axis_rat);
     
-  /** \brief Construct a configuration with a fixed central 
-      energy density and a fixed gravitational mass
+    /** \brief Construct a configuration with a fixed central 
+	energy density and a fixed gravitational mass
 	
-      The central energy density should be in \f$
-      \mathrm{g}/\mathrm{cm}^3 \f$ and the gravitational 
-      mass should be in solar masses. 
-  */
-  int fix_cent_eden_grav_mass(double cent_eden, double grav_mass);
+	The central energy density should be in \f$
+	\mathrm{g}/\mathrm{cm}^3 \f$ and the gravitational 
+	mass should be in solar masses. 
+    */
+    int fix_cent_eden_grav_mass(double cent_eden, double grav_mass);
 
-  /** \brief Construct a configuration with a fixed central 
-      energy density and a fixed baryonic mass
+    /** \brief Construct a configuration with a fixed central 
+	energy density and a fixed baryonic mass
 	
-      The central energy density should be in \f$
-      \mathrm{g}/\mathrm{cm}^3 \f$ and the baryonic 
-      mass should be in solar masses. 
-  */
-  int fix_cent_eden_bar_mass(double cent_eden, double bar_mass);
+	The central energy density should be in \f$
+	\mathrm{g}/\mathrm{cm}^3 \f$ and the baryonic 
+	mass should be in solar masses. 
+    */
+    int fix_cent_eden_bar_mass(double cent_eden, double bar_mass);
 
-  /** \brief Construct a configuration with a fixed central 
-      energy density and the Keplerian rotation rate
+    /** \brief Construct a configuration with a fixed central 
+	energy density and the Keplerian rotation rate
 	
-      The central energy density should be in \f$
-      \mathrm{g}/\mathrm{cm}^3 \f$ .
-  */
-  int fix_cent_eden_with_kepler(double cent_eden);
+	The central energy density should be in \f$
+	\mathrm{g}/\mathrm{cm}^3 \f$ .
+    */
+    int fix_cent_eden_with_kepler(double cent_eden);
     
-  /** \brief Construct a non-rotating configuration with a fixed central 
-      energy density
+    /** \brief Construct a non-rotating configuration with a fixed central 
+	energy density
 	
-      The central energy density should be in \f$
-      \mathrm{g}/\mathrm{cm}^3 \f$ .
-  */
-  int fix_cent_eden_non_rot(double cent_eden);
+	The central energy density should be in \f$
+	\mathrm{g}/\mathrm{cm}^3 \f$ .
+    */
+    int fix_cent_eden_non_rot(double cent_eden);
 
-  /** \brief Construct a configuration with a fixed central 
-      energy density and a fixed angular velocity.
+    /** \brief Construct a configuration with a fixed central 
+	energy density and a fixed angular velocity.
 	
-      The central energy density should be in \f$
-      \mathrm{g}/\mathrm{cm}^3 \f$.
-  */
-  int fix_cent_eden_ang_vel(double cent_eden, double ang_vel);
+	The central energy density should be in \f$
+	\mathrm{g}/\mathrm{cm}^3 \f$.
+    */
+    int fix_cent_eden_ang_vel(double cent_eden, double ang_vel);
 
-  /** \brief Construct a configuration with a fixed central 
-      energy density and a fixed angular momentum.
+    /** \brief Construct a configuration with a fixed central 
+	energy density and a fixed angular momentum.
 	
-      The central energy density should be in \f$
-      \mathrm{g}/\mathrm{cm}^3 \f$.
-  */
-  int fix_cent_eden_ang_mom(double cent_eden, double ang_mom);
-  //@}
+	The central energy density should be in \f$
+	\mathrm{g}/\mathrm{cm}^3 \f$.
+    */
+    int fix_cent_eden_ang_mom(double cent_eden, double ang_mom);
+    //@}
     
-  /** \name Testing functions
+    /** \name Testing functions
 
-      All these compare with hard-coded results obtained with
-      the RNS code. 
-  */
-  //@{
-  /** \brief Test determining configuration with fixed central
-      energy density and fixed radius ratio with EOS C
-  */    
-  void test1(o2scl::test_mgr &t);
+	All these compare with hard-coded results obtained with
+	the RNS code. 
+    */
+    //@{
+    /** \brief Test determining configuration with fixed central
+	energy density and fixed radius ratio with EOS C
+    */    
+    void test1(o2scl::test_mgr &t);
     
-  /** \brief Test configuration rotating and Keplerian frequency
-      with a fixed central energy density and EOS C
-  */    
-  void test2(o2scl::test_mgr &t);
+    /** \brief Test configuration rotating and Keplerian frequency
+	with a fixed central energy density and EOS C
+    */    
+    void test2(o2scl::test_mgr &t);
     
-  /** \brief Test fixed central energy density and fixed 
-      gravitational mass with EOS C
-  */    
-  void test3(o2scl::test_mgr &t);
+    /** \brief Test fixed central energy density and fixed 
+	gravitational mass with EOS C
+    */    
+    void test3(o2scl::test_mgr &t);
     
-  /** \brief Test fixed central energy density and fixed baryonic 
-      mass with EOS C
-  */    
-  void test4(o2scl::test_mgr &t);
+    /** \brief Test fixed central energy density and fixed baryonic 
+	mass with EOS C
+    */    
+    void test4(o2scl::test_mgr &t);
     
-  /** \brief Test fixed central energy density and fixed angular
-      velocity with EOS C
-  */    
-  void test5(o2scl::test_mgr &t);
+    /** \brief Test fixed central energy density and fixed angular
+	velocity with EOS C
+    */    
+    void test5(o2scl::test_mgr &t);
     
-  /** \brief Test fixed central energy density and fixed angular 
-      momentum with EOS C
-  */    
-  void test6(o2scl::test_mgr &t);
+    /** \brief Test fixed central energy density and fixed angular 
+	momentum with EOS C
+    */    
+    void test6(o2scl::test_mgr &t);
 
-  /** \brief Test a series of non-rotating stars on a energy density
-      grid with EOS C
-  */    
-  void test7(o2scl::test_mgr &t);
+    /** \brief Test a series of non-rotating stars on a energy density
+	grid with EOS C
+    */    
+    void test7(o2scl::test_mgr &t);
     
-  /** \brief Test Keplerian frequency for a polytrope
-   */    
-  void test8(o2scl::test_mgr &t);
-  //@}
+    /** \brief Test Keplerian frequency for a polytrope
+     */    
+    void test8(o2scl::test_mgr &t);
+    //@}
 
 
   };
