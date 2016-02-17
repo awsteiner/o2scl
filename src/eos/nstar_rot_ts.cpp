@@ -30,6 +30,8 @@
 #include <o2scl/eos_had_rmf.h>
 #include <o2scl/nstar_cold.h>
 #include <o2scl/hdf_eos_io.h>
+#include <o2scl/hdf_io.h>
+#include <o2scl/hdf_file.h>
 
 using namespace std;
 using namespace o2scl;
@@ -99,6 +101,46 @@ int main(void) {
     nst.fix_cent_eden_non_rot(ed_cent);
     // Compare with with the answer from nstar_rot
     t.test_rel(nst.Mass/nst.MSUN,1.4,0.015,"correct mass");
+
+    // Compute a configuration with a fixed ratio of radii
+    nst.fix_cent_eden_axis_rat(ed_cent,0.7);
+    t.test_rel(nst.r_ratio,0.7,1.0e-6,"correct ratio");
+
+    // Create an output table
+    table3d t;
+    nst.output_table(t);
+
+    // Now reinterpolate to construct a new table in cartesian
+    // coordinates
+    table3d t2;
+    t.set_interp_type(itp_linear);
+    // Equatorial radius in km
+    double rad_eq=nst.R_e/1.0e5;
+    uniform_grid_end<double> coord_grid(0,rad_eq*1.1,100);
+    t2.set_xy("x",coord_grid,"z",coord_grid);
+    t2.line_of_names("ed pr h vsq rho gamma omega alpha");
+    for(size_t i=0;i<t2.get_nx();i++) {
+      for(size_t j=0;j<t2.get_ny();j++) {
+	double r=sqrt(pow(coord_grid[i],2.0)+pow(coord_grid[j],2.0));
+	double theta=atan(-coord_grid[j]/coord_grid[i])+acos(-1)/2.0;
+	if (i==0 && j==0) theta=0.0;
+	t2.set(i,j,"ed",t.interp(r/(r+rad_eq),cos(theta),"ed"));
+	t2.set(i,j,"pr",t.interp(r/(r+rad_eq),cos(theta),"pr"));
+	t2.set(i,j,"h",t.interp(r/(r+rad_eq),cos(theta),"h"));
+	t2.set(i,j,"vsq",t.interp(r/(r+rad_eq),cos(theta),"vsq"));
+	t2.set(i,j,"rho",t.interp(r/(r+rad_eq),cos(theta),"rho"));
+	t2.set(i,j,"gamma",t.interp(r/(r+rad_eq),cos(theta),"gamma"));
+	t2.set(i,j,"omega",t.interp(r/(r+rad_eq),cos(theta),"omega"));
+	t2.set(i,j,"alpha",t.interp(r/(r+rad_eq),cos(theta),"alpha"));
+      }
+    }
+
+    // Write both tables to a file
+    o2scl_hdf::hdf_file hf;
+    hf.open_or_create("nstar_rot.o2");
+    o2scl_hdf::hdf_output(hf,t,"nstar_rot");
+    o2scl_hdf::hdf_output(hf,t2,"nstar_rot2");
+    hf.close();
   }
 
   {
@@ -145,9 +187,13 @@ int main(void) {
     nst.fix_cent_eden_non_rot(ed_cent);
     // Compare with with the answer from nstar_rot
     t.test_rel(nst.Mass/nst.MSUN,1.4,0.015,"correct mass");
+
+    // Compute a configuration with a fixed ratio of radii
+    nst.fix_cent_eden_axis_rat(ed_cent,0.7);
+    t.test_rel(nst.r_ratio,0.7,1.0e-6,"correct ratio");
   }
 
   t.report();
-  
+
   return 0;
 }

@@ -262,37 +262,6 @@ eos_nstar_rot_C::eos_nstar_rot_C(bool rns_constants) {
 
   n_tab=96;
 
-  if (false) {
-    table<> t;
-    convert_units &cu=o2scl_settings.get_convert_units();
-    t.line_of_names("ed pr h nb");
-    for(size_t i=0;i<n_tab;i++) {
-      double line[4]={cu.convert("g/cm^3","MeV/fm^3",eosC_arr[i][0]),
-		      cu.convert("dyne/cm^2","MeV/fm^3",eosC_arr[i][1]),
-		      eosC_arr[i][2],
-		      cu.convert("1/cm^3","1/fm^3",eosC_arr[i][3])};
-      t.line_of_data(4,line);
-    }
-    t.new_column("iand");
-    t.add_constant("c",o2scl_cgs::speed_of_light);
-    t.set_interp_type(itp_linear);
-    t.function_column("c^2/(ed+pr)","iand");
-    t.integ("pr","iand","h2");
-    t.function_column("c^2*(log((ed+pr)/nb))","h3");
-    double h30=t.get("h3",0);
-    for(size_t i=0;i<n_tab;i++) {
-      t.set("h3",i,t.get("h3",i)-h30);
-    }
-    for(size_t i=0;i<n_tab;i++) {
-      cout << t.get("pr",i) << " "
-	   << t.get("iand",i) << " "
-	   << t.get("h",i) << " "
-	   << t.get("h2",i) << " "
-	   << t.get("h3",i) << endl;
-    }
-    exit(-1);
-  }
-  
   for(int i=1;i<=n_tab;i++) {  
     
     double rho=eosC_arr[i-1][0];
@@ -300,15 +269,11 @@ eos_nstar_rot_C::eos_nstar_rot_C(bool rns_constants) {
     double h=eosC_arr[i-1][2];
     double n0=eosC_arr[i-1][3];
     
-    //cout << (rho+p/pow(o2scl_cgs::speed_of_light,2.0))/n0 << " "
-    //<< 1.66e-24*exp(h/pow(o2scl_cgs::speed_of_light,2.0)) << endl;
-
     log_e_tab[i]=log10(rho*C*C*KSCALE);
     log_p_tab[i]=log10(p*KSCALE);
     log_h_tab[i]=log10(h/(C*C));
     log_n0_tab[i]=log10(n0);
   }
-  //exit(-1);
 }
 
 eos_nstar_rot_L::eos_nstar_rot_L(bool rns_constants) {
@@ -399,6 +364,7 @@ eos_nstar_rot_L::eos_nstar_rot_L(bool rns_constants) {
     log_n0_tab[i]=log10(n0);
 
   }
+  
 }
 
 nstar_rot::nstar_rot() {
@@ -463,6 +429,34 @@ void nstar_rot::constants_o2scl() {
   KSCALE=KAPPA*G/(C*C*C*C);
   return;
 }
+
+void nstar_rot::output_table(o2scl::table3d &t) {
+  t.clear_table();
+  std::vector<double> s_grid, m_grid;
+  for(int i=1;i<=SDIV;i++) {
+    s_grid.push_back(s_gp[i]);
+  }
+  for(int i=1;i<=MDIV;i++) {
+    m_grid.push_back(mu[i]);
+  }
+  t.set_xy("s",s_grid.size(),s_grid,
+	   "m",m_grid.size(),m_grid);
+  t.line_of_names("ed pr h vsq rho gamma omega alpha");
+  for(size_t i=0;i<s_grid.size();i++) {
+    for(size_t j=0;j<m_grid.size();j++) {
+      t.set(i,j,"ed",energy[i+1][j+1]);
+      t.set(i,j,"pr",pressure[i+1][j+1]);
+      t.set(i,j,"h",enthalpy[i+1][j+1]);
+      t.set(i,j,"vsq",velocity_sq[i+1][j+1]);
+      t.set(i,j,"rho",rho[i+1][j+1]);
+      t.set(i,j,"gamma",gamma[i+1][j+1]);
+      t.set(i,j,"omega",omega[i+1][j+1]);
+      t.set(i,j,"alpha",alpha[i+1][j+1]);
+    }
+  }
+  return;
+}
+
 
 void nstar_rot::make_grid() {                                    
     

@@ -69,6 +69,7 @@
 #include <o2scl/lib_settings.h>
 #include <o2scl/interp.h>
 #include <o2scl/eos_tov.h>
+#include <o2scl/table3d.h>
 
 namespace o2scl {
   
@@ -172,7 +173,9 @@ namespace o2scl {
     template<class vec1_t, class vec2_t, class vec3_t>
       void set_eos_fm(size_t n, vec1_t &eden, vec2_t &pres, vec3_t &nb) {
       
-      if (n>200) {
+      static const int n_crust=78;
+      
+      if (n>200-n_crust) {
 	O2SCL_ERR2("Too many EOS points in ",
 		   "nstar_rot::set_eos().",o2scl::exc_einval);
       }
@@ -184,13 +187,14 @@ namespace o2scl {
       double conv2=o2scl_settings.get_convert_units().convert
 	("1/fm^4","dyne/cm^2",1.0);
 
-      static const int n_crust=78;
-      
       n_tab=n+n_crust;
 
       /* Use the original RNS crust, except for the enthalpy which is
-	 computed by hand below.
-       */
+	 computed by hand below. This appears to work better than the
+	 default O2scl crust, and this may have to do with the fact
+	 that the default O2scl crust has decreasing mu with
+	 increasing density at low densities.
+      */
       double nst_arr[n_crust][3]={
 	{7.800e+00,1.010e+08,4.698795180722962e+24},
 	{7.860e+00,1.010e+09,4.734939759036205e+24},
@@ -272,7 +276,8 @@ namespace o2scl {
 	{1.262e+14,5.861e+32,7.462854442694524e+37}};
 
       double mu_start;
-      double fact=1.0;//C*C;
+      // Note that there is no c^2 needed in the computation of the
+      // enthalpy as the original code removes it.
       for(size_t i=0;i<n_crust;i++) {
 	log_e_tab[i+1]=log10(nst_arr[i][0]*C*C*KSCALE);
 	log_p_tab[i+1]=log10(nst_arr[i][1]*KSCALE);
@@ -281,23 +286,18 @@ namespace o2scl {
 	if (i==0) {
 	  mu_start=mu;
 	} else {
-	  log_h_tab[i+1]=log10(fact*log(mu/mu_start));
+	  log_h_tab[i+1]=log10(log(mu/mu_start));
 	}
 	log_n0_tab[i+1]=log10(nst_arr[i][2]);
-	//std::cout << fact*log(mu/mu_start) << " "
-	//<< log_h_tab[i+1] << std::endl;
       }
       log_h_tab[1]=log_h_tab[2]-3.0;
 
       for(size_t i=0;i<n;i++) {
 	log_e_tab[i+n_crust+1]=log10(eden[i]*conv1*C*C*KSCALE);
 	log_p_tab[i+n_crust+1]=log10(pres[i]*conv2*KSCALE);
-	log_h_tab[i+n_crust+1]=log10(fact*log((eden[i]+pres[i])/nb[i]/
+	log_h_tab[i+n_crust+1]=log10(log((eden[i]+pres[i])/nb[i]/
 					 mu_start));
 	log_n0_tab[i+n_crust+1]=log10(nb[i]*1.0e39);
-	//std::cout << fact*log((eden[i]+pres[i])/nb[i]/
-	//mu_start)  << " "
-	//<< log_h_tab[i+n_crust+1] << std::endl;
       }
 
       return;
@@ -411,8 +411,11 @@ namespace o2scl {
       This class retains the definition of the specific enthalpy 
       from the original code, namely that
       \f[
-      h = \log[\frac{\mu}{\mu(P=0)}] = \int \frac{dP}{\varepsilon+P}
+      h = c^2 \log[\frac{\mu}{\mu(P=0)}] = \int \frac{c^2 dP}{\varepsilon+P}
       \f]
+      but note that the factor of \f$ c^2 \f$ is dropped before
+      taking the log in the internal copy of the EOS table.
+      Typically, \f$ \mu(P=0) \f$ is around 931 MeV. 
 
       For spherical stars, the isotropic radius \f$ r_{\mathrm{is}}
       \f$ is defined by
@@ -609,7 +612,7 @@ namespace o2scl {
     double alpha[SDIV+1][MDIV+1];        
     //@}
 
-    /// \name Initial guess computed by \ref comp()
+    /// \name Initial guess computed by the comp() function
     //@{
     /// Guess for the equatorial radius
     double r_e_guess;
@@ -1000,6 +1003,10 @@ namespace o2scl {
      */
     int verbose;
 
+    /** \brief Create an output table
+     */
+    void output_table(o2scl::table3d &t);
+    
     /// \name Output
     //@{
     /** \brief Central energy density (in units of 
