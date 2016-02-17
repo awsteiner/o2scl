@@ -1643,7 +1643,7 @@ void nstar_rot::comp() {
     d_rho_s=deriv_s(rho,s,1);
     d_omega_s=deriv_s(omega,s,1);
 
-    sqrt_v= exp(-2.0*rho[s][1])*r_e*r_e*pow(s_gp[s],4.0)*pow(d_omega_s,2.0) 
+    sqrt_v=exp(-2.0*rho[s][1])*r_e*r_e*pow(s_gp[s],4.0)*pow(d_omega_s,2.0) 
       +2*s1*(d_gamma_s+d_rho_s)+s1*s1*(d_gamma_s*d_gamma_s-d_rho_s*d_rho_s);
 
     if (sqrt_v>0.0) {
@@ -1651,8 +1651,10 @@ void nstar_rot::comp() {
     } else {
       sqrt_v=0.0;
       if (s_gp[s]>=s_e) {
-	O2SCL_ERR("velocity imaginary.",o2scl::exc_efailed);
-	//printf("velocity imaginary at s=%3.2e\n",s_gp[s]);
+	string str=((string)"Velocity imaginary at ")+
+	  std::to_string(s)+" "+std::to_string(s_gp[s])+" " +
+	  std::to_string(s_e)+" .";
+	O2SCL_ERR(str.c_str(),o2scl::exc_efailed);
       }
     }
 
@@ -1762,7 +1764,7 @@ void nstar_rot::comp() {
 		   exp((gamma_equator-rho_equator)/2.0));
     }
   }
-    
+
   double vel_p;
 
   if (h_plus!= 0.0) {

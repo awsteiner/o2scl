@@ -187,7 +187,10 @@ namespace o2scl {
       static const int n_crust=78;
       
       n_tab=n+n_crust;
-      
+
+      /* Use the original RNS crust, except for the enthalpy which is
+	 computed by hand below.
+       */
       double nst_arr[n_crust][3]={
 	{7.800e+00,1.010e+08,4.698795180722962e+24},
 	{7.860e+00,1.010e+09,4.734939759036205e+24},
@@ -269,6 +272,7 @@ namespace o2scl {
 	{1.262e+14,5.861e+32,7.462854442694524e+37}};
 
       double mu_start;
+      double fact=1.0;//C*C;
       for(size_t i=0;i<n_crust;i++) {
 	log_e_tab[i+1]=log10(nst_arr[i][0]*C*C*KSCALE);
 	log_p_tab[i+1]=log10(nst_arr[i][1]*KSCALE);
@@ -276,19 +280,24 @@ namespace o2scl {
 	  nst_arr[i][2]*1.0e39;
 	if (i==0) {
 	  mu_start=mu;
-	  log_h_tab[i+1]=-15.0;
 	} else {
-	  log_h_tab[i+1]=log10(log(mu/mu_start));
+	  log_h_tab[i+1]=log10(fact*log(mu/mu_start));
 	}
 	log_n0_tab[i+1]=log10(nst_arr[i][2]);
+	//std::cout << fact*log(mu/mu_start) << " "
+	//<< log_h_tab[i+1] << std::endl;
       }
+      log_h_tab[1]=log_h_tab[2]-3.0;
 
       for(size_t i=0;i<n;i++) {
 	log_e_tab[i+n_crust+1]=log10(eden[i]*conv1*C*C*KSCALE);
 	log_p_tab[i+n_crust+1]=log10(pres[i]*conv2*KSCALE);
-	log_h_tab[i+n_crust+1]=log10(log((eden[i]+pres[i])/nb[i]/
+	log_h_tab[i+n_crust+1]=log10(fact*log((eden[i]+pres[i])/nb[i]/
 					 mu_start));
 	log_n0_tab[i+n_crust+1]=log10(nb[i]*1.0e39);
+	//std::cout << fact*log((eden[i]+pres[i])/nb[i]/
+	//mu_start)  << " "
+	//<< log_h_tab[i+n_crust+1] << std::endl;
       }
 
       return;
@@ -399,10 +408,10 @@ namespace o2scl {
 
       <b>Draft documentation</b> 
 
-      \note In this class, the specific enthalpy is defined
-      relative to a fiducial baryon mass, i.e.
+      This class retains the definition of the specific enthalpy 
+      from the original code, namely that
       \f[
-      h = \log(\mu/m_B) = \int \frac{dP}{\varepsilon+P}
+      h = \log[\frac{\mu}{\mu(P=0)}] = \int \frac{dP}{\varepsilon+P}
       \f]
 
       For spherical stars, the isotropic radius \f$ r_{\mathrm{is}}
