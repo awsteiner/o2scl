@@ -62,6 +62,9 @@
 #include <cmath>
 #include <iostream>
 
+#include <boost/numeric/ublas/vector.hpp>
+#include <boost/numeric/ublas/matrix.hpp>
+
 #include <o2scl/err_hnd.h>
 #include <o2scl/search_vec.h>
 #include <o2scl/test_mgr.h>
@@ -497,6 +500,9 @@ namespace o2scl {
   
   public:    
   
+    typedef boost::numeric::ublas::vector<double> ubvector;
+    typedef boost::numeric::ublas::matrix<double> ubmatrix;
+    
     /// The number of grid points in the \f$ \mu \f$ direction
     static const int MDIV=65;
     /// The number of grid points in the \f$ s \f$ direction
@@ -788,7 +794,7 @@ namespace o2scl {
 	\ref comp_omega(), \ref comp_M_J(), \ref comp(), 
 	\ref spherical_star(), \ref iterate().
     */  
-    double interp(double xp[], double yp[], int np ,double xb);
+    double interp(double xp[], double yp[], int np, double xb);
 
     /** \brief Driver for the interpolation routine.
 
@@ -853,12 +859,20 @@ namespace o2scl {
     double m_deriv(double f[MDIV+1], int m);
 
     /** \brief Returns the derivative w.r.t. s  
-     */ 
+     */
     double deriv_s(double f[SDIV+1][MDIV+1], int s, int m);
+
+    /** \brief Returns the derivative w.r.t. s  
+     */
+    double deriv_s_ub(ubmatrix &f, int s, int m);
 
     /** \brief Returns the derivative w.r.t. mu 
      */ 
     double deriv_m(double f[SDIV+1][MDIV+1], int s, int m);
+
+    /** \brief Returns the derivative w.r.t. mu 
+     */ 
+    double deriv_m_ub(ubmatrix &f, int s, int m);
 
     /** \brief Returns the derivative w.r.t. s and mu 
      */ 
@@ -902,6 +916,8 @@ namespace o2scl {
 	\f]
 	When \f$ r=0 \f$, \f$ s=0 \f$, when \f$ r=r_e \f$, 
 	\f$ s=1/2 \f$, and when \f$ r = \infty \f$, \f$ s=1 \f$ .
+	Inverting the relationship between \f$ r \f$ and \f$ s \f$
+	gives \f$ r = r_e s / (1-s) \f$ .
 	\comment
 	(Note that some versions of the manual have a typo,
 	giving \f$ 1-i \f$ rather than \f$ i-1 \f$ above.)

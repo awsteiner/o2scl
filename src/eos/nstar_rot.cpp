@@ -606,8 +606,8 @@ double nstar_rot::p_at_h(double hh) {
 
 double nstar_rot::h_at_p(double pp) {
   if (CL_LOW==true && pp > p_match) {
-    return h_match+0.5*log( (2.0*pp+e_match+de_pt-p_match)/
-			    (e_match+de_pt+p_match));
+    return h_match+0.5*log((2.0*pp+e_match+de_pt-p_match)/
+			   (e_match+de_pt+p_match));
   } else {
     return eosp->enth_from_pr(pp);
     //return pow(10.0,interp(log_p_tab,log_h_tab,n_tab,log10(pp)));
@@ -685,6 +685,25 @@ double nstar_rot::deriv_s(double f[SDIV+1][MDIV+1], int s, int m) {
   return d_temp;
 }
 
+double nstar_rot::deriv_s_ub(ubmatrix &f, int s, int m) {
+
+  double d_temp;
+  
+  switch(s) { 
+  case 1 : 
+    d_temp=(f(s+1,m)-f(s,m))/DS;
+    break;
+  case SDIV : 
+    d_temp=(f(s,m)-f(s-1,m))/DS;
+    break;
+  default : 
+    d_temp=(f(s+1,m)-f(s-1,m))/(2.0*DS);
+    break; 
+  } 
+
+  return d_temp;
+}
+
 double nstar_rot::deriv_m(double f[SDIV+1][MDIV+1], int s, int m) {
 
   double d_temp;
@@ -698,6 +717,25 @@ double nstar_rot::deriv_m(double f[SDIV+1][MDIV+1], int s, int m) {
     break;
   default : 
     d_temp=(f[s][m+1]-f[s][m-1])/(2.0*DM);
+    break; 
+  } 
+
+  return d_temp;
+}
+
+double nstar_rot::deriv_m_ub(ubmatrix &f, int s, int m) {
+
+  double d_temp;
+
+  switch(m) { 
+  case 1 : 
+    d_temp=(f(s,m+1)-f(s,m))/DM;
+    break;
+  case MDIV : 
+    d_temp=(f(s,m)-f(s,m-1))/DM;
+    break;
+  default : 
+    d_temp=(f(s,m+1)-f(s,m-1))/(2.0*DM);
     break; 
   } 
 
@@ -1031,7 +1069,7 @@ void nstar_rot::comp_M_J() {
   // int. quantity for J
   double D_J[SDIV+1];               
   // rest mass density
-  double rho_0[SDIV+1][MDIV+1];     
+  ubmatrix rho_0(SDIV+1,MDIV+1);
   double rho_mu_0[SDIV+1];
   double omega_mu_0[SDIV+1];
   double rho_equator;
@@ -1103,14 +1141,14 @@ void nstar_rot::comp_M_J() {
     for(s=1;s<=SDIV;s++)
       for(m=1;m<=MDIV;m++) {
 	if (energy[s][m]>e_surface)
-	  rho_0[s][m]=n0_at_e(energy[s][m])*MB*C*C*KSCALE;
+	  rho_0(s,m)=n0_at_e(energy[s][m])*MB*C*C*KSCALE;
 	else
-	  rho_0[s][m]=0.0;
+	  rho_0(s,m)=0.0;
       } 
   } else {
     for(s=1;s<=SDIV;s++)
       for(m=1;m<=MDIV;m++)
-	rho_0[s][m]=(energy[s][m]+pressure[s][m])*exp(-enthalpy[s][m]);
+	rho_0(s,m)=(energy[s][m]+pressure[s][m])*exp(-enthalpy[s][m]);
   }
 
 
@@ -1151,13 +1189,13 @@ void nstar_rot::comp_M_J() {
       D_m_0[s]+=(1.0/(3.0*(MDIV-1)))*
 	(exp(2.0*alpha[s][m]+
 	     (gamma[s][m]
-	      -rho[s][m])/2.0)*rho_0[s][m]/sqrt(1.0-velocity_sq[s][m])
+	      -rho[s][m])/2.0)*rho_0(s,m)/sqrt(1.0-velocity_sq[s][m])
 	 +4.0* exp(2.0*alpha[s][m+1]+
 		   (gamma[s][m+1]
-		    -rho[s][m+1])/2.0)*rho_0[s][m+1]/
+		    -rho[s][m+1])/2.0)*rho_0(s,m+1)/
 	 sqrt(1.0-velocity_sq[s][m+1])
 	 +exp(2.0*alpha[s][m+2]+(gamma[s][m+2]
-				 -rho[s][m+2])/2.0)*rho_0[s][m+2]
+				 -rho[s][m+2])/2.0)*rho_0(s,m+2)
 	 /sqrt(1.0-velocity_sq[s][m+2])); 
 
       D_J[s]+=(1.0/(3.0*(MDIV-1)))*
@@ -1245,10 +1283,10 @@ void nstar_rot::comp() {
   // ---------------------------------------------------------------
   // Compute velocity over the grid
 
-  double velocity[SDIV+1][MDIV+1];  
+  ubmatrix velocity(SDIV+1,MDIV+1);
   for(s=1;s<=SDIV;s++) {
     for(m=1;m<=MDIV;m++) {
-      velocity[s][m]=sqrt(velocity_sq[s][m]);
+      velocity(s,m)=sqrt(velocity_sq[s][m]);
     }
   }
 
@@ -1305,22 +1343,22 @@ void nstar_rot::comp() {
   J=0.0;
 
   // rest mass density
-  double rho_0[SDIV+1][MDIV+1];     
-
+  ubmatrix rho_0(SDIV+1,MDIV+1);
+  
   if (scaled_polytrope==false) {
     for(s=1;s<=SDIV;s++) {
       for(m=1;m<=MDIV;m++) {
 	if (energy[s][m]>e_surface) {
-	  rho_0[s][m]=n0_at_e(energy[s][m])*MB*C*C*KSCALE;
+	  rho_0(s,m)=n0_at_e(energy[s][m])*MB*C*C*KSCALE;
 	} else {
-	  rho_0[s][m]=0.0;
+	  rho_0(s,m)=0.0;
 	}
       } 
     }
   } else {
     for(s=1;s<=SDIV;s++) {
       for(m=1;m<=MDIV;m++) {
-	rho_0[s][m]=(energy[s][m]+pressure[s][m])*exp(-enthalpy[s][m]);
+	rho_0(s,m)=(energy[s][m]+pressure[s][m])*exp(-enthalpy[s][m]);
       }
     }
   }
@@ -1371,13 +1409,13 @@ void nstar_rot::comp() {
       D_m_0[s]+=(1.0/(3.0*(MDIV-1)))*
 	(exp(2.0*alpha[s][m]+
 	     (gamma[s][m]
-	      -rho[s][m])/2.0)*rho_0[s][m]/sqrt(1.0-velocity_sq[s][m])
-	 +4.0* exp(2.0*alpha[s][m+1]+
+	      -rho[s][m])/2.0)*rho_0(s,m)/sqrt(1.0-velocity_sq[s][m])
+	 +4.0*exp(2.0*alpha[s][m+1]+
 		   (gamma[s][m+1]-rho[s][m+1])/2.0)*
-	 rho_0[s][m+1]/sqrt(1.0-velocity_sq[s][m+1])
+	 rho_0(s,m+1)/sqrt(1.0-velocity_sq[s][m+1])
 	 +exp(2.0*alpha[s][m+2]+
 	      (gamma[s][m+2]-rho[s][m+2])/2.0)*
-	 rho_0[s][m+2]/sqrt(1.0-velocity_sq[s][m+2])); 
+	 rho_0(s,m+2)/sqrt(1.0-velocity_sq[s][m+2])); 
       
       D_m_p[s]+=(1.0/(3.0*(MDIV-1)))*
 	(exp(2.0*alpha[s][m]+(gamma[s][m]-rho[s][m])/2.0)*
@@ -1496,7 +1534,7 @@ void nstar_rot::comp() {
     d_o_e[s]=deriv_s(omega,s,1);
     d_g_e[s]=deriv_s(gamma,s,1);
     d_r_e[s]=deriv_s(rho,s,1);
-    d_v_e[s]=deriv_s(velocity,s,1);
+    d_v_e[s]=deriv_s_ub(velocity,s,1);
   }
 
   double doe=interp(s_gp,d_o_e,SDIV,s_e);
@@ -1792,8 +1830,8 @@ void nstar_rot::comp() {
 
   double virial1;
   double virial2;
-  double S_virial1[SDIV+1][MDIV+1];
-  double S_virial2[SDIV+1][MDIV+1];
+  ubmatrix S_virial1(SDIV+1,MDIV+1);
+  ubmatrix S_virial2(SDIV+1,MDIV+1);
   double grv2_spherical;
 
   virial1=0.0;
@@ -1808,26 +1846,26 @@ void nstar_rot::comp() {
       d_gamma_s=deriv_s(gamma,s,1);
       d_rho_s=deriv_s(rho,s,1);
  
-      S_virial1[s][1]=8*pow(PI*r_e,2.0)*s_gp[s]*pressure[s][1]
+      S_virial1(s,1)=8*pow(PI*r_e,2.0)*s_gp[s]*pressure[s][1]
 	*exp(2.0*alpha[s][1])/pow(1.0-s_gp[s],3.0);
 
-      S_virial2[s][1]=PI*s_1_s[s]*pow(d_gamma_s+d_rho_s,2.0)/4.0;
+      S_virial2(s,1)=PI*s_1_s[s]*pow(d_gamma_s+d_rho_s,2.0)/4.0;
     }
  
  
     if (SMAX==1.0) { 
-      S_virial1[SDIV][1] =0.0;
+      S_virial1(SDIV,1)=0.0;
  
       d_gamma_s=deriv_s(gamma,SDIV,1);
       d_rho_s=deriv_s(rho,SDIV,1);
-      S_virial2[SDIV][1] =PI*s_1_s[s]*pow(d_gamma_s+d_rho_s,2.0)/4.0;
+      S_virial2(SDIV,1)=PI*s_1_s[s]*pow(d_gamma_s+d_rho_s,2.0)/4.0;
     }
 
     for(s=1;s<=SDIV-2;s+=2) {
-      virial1+=(DS/3.0)*(S_virial1[s][1]+4.0*S_virial1[s+1][1]
-			 +S_virial1[s+2][1]);
-      virial2+=(DS/3.0)*(S_virial2[s][1]+4.0*S_virial2[s+1][1]
-			 +S_virial2[s+2][1]);
+      virial1+=(DS/3.0)*(S_virial1(s,1)+4.0*S_virial1(s+1,1)
+			 +S_virial1(s+2,1));
+      virial2+=(DS/3.0)*(S_virial2(s,1)+4.0*S_virial2(s+1,1)
+			 +S_virial2(s+2,1));
     }
     
     grv2_spherical=fabs(1.0-virial1/virial2); 
@@ -1836,7 +1874,7 @@ void nstar_rot::comp() {
   // GRV2
 
   double virial3;
-  double S_virial3[SDIV+1][MDIV+1];
+  ubmatrix S_virial3(SDIV+1,MDIV+1);
 
   virial1=0.0;
   virial2=0.0; 
@@ -1851,8 +1889,8 @@ void nstar_rot::comp() {
   double temp9=cos(0.5*(theta[MDIV]+theta[MDIV-2]));
   double temp_y1[5];
   double temp_y2[5];
-  double S_ad1[SDIV+1][4];
-  double S_ad2[SDIV+1][4];
+  ubmatrix S_ad1(SDIV+1,4);
+  ubmatrix S_ad2(SDIV+1,4);
   double m1;
 
   // Set equal to zero at center
@@ -1871,29 +1909,28 @@ void nstar_rot::comp() {
       d_omega_s=deriv_s(omega,s,m);
       d_omega_m=deriv_m(omega,s,m);
       if (m==MDIV || m==MDIV-1) { 
-	S_virial1[s][m]=0.0;
-	S_virial3[s][m]=0.0;
+	S_virial1(s,m)=0.0;
+	S_virial3(s,m)=0.0;
       } else {
 	if (SMAX==1 && s==SDIV) {
-	  S_virial1[s][m]=0.0;
+	  S_virial1(s,m)=0.0;
 	} else {
-	  S_virial1[s][m]=16*PI*pow(r_e,2.0)*(s_gp[s]/pow(1.0-s_gp[s],3.0))*
+	  S_virial1(s,m)=16*PI*pow(r_e,2.0)*(s_gp[s]/pow(1.0-s_gp[s],3.0))*
 	    (pressure[s][m]+(energy[s][m]+pressure[s][m])*
 	     (velocity_sq[s][m]/(1.0-velocity_sq[s][m])))*
 	    exp(2.0*alpha[s][m])/sqrt(m1);
 	}
-	S_virial3[s][m]=(s1/(2.0*sqrt(m1)))*pow(d_gamma_s+d_rho_s,2.0);
+	S_virial3(s,m)=(s1/(2.0*sqrt(m1)))*pow(d_gamma_s+d_rho_s,2.0);
       }
 
       if (SMAX==1.0 && s==SDIV) {
-	S_virial2[s][m]=0.0;
+	S_virial2(s,m)=0.0;
       } else {
-	S_virial2[s][m]=2.0*
-	  ( sqrt(m1)*pow(d_gamma_m+d_rho_m,2.0)/s1 
-	    -(3.0*pow(r_e,2.0)
-	      *s_gp[s]/(4.0*pow(1.0-s_gp[s],3.0)))*sqrt(m1)
-	    *exp(-2.0*rho[s][m])
-	    *(pow(s1*d_omega_s,2.0)+m1*pow(d_omega_m,2.0)));
+	S_virial2(s,m)=2.0*
+	  (sqrt(m1)*pow(d_gamma_m+d_rho_m,2.0)/s1 
+	   -(3.0*pow(r_e,2.0)*s_gp[s]/(4.0*pow(1.0-s_gp[s],3.0)))*sqrt(m1)
+	   *exp(-2.0*rho[s][m])
+	   *(pow(s1*d_omega_s,2.0)+m1*pow(d_omega_m,2.0)));
       }
     }
       
@@ -1902,12 +1939,12 @@ void nstar_rot::comp() {
       // confusion in the original
       for(m=1;m<4;m++) { 
 	if (m!=2) {
-	  S_ad1[s][m]=0.0;
-	  S_ad2[s][m]=0.0;
+	  S_ad1(s,m)=0.0;
+	  S_ad2(s,m)=0.0;
 	}
       }
-      S_ad1[s][2]=0.0;
-      S_ad2[s][2]=0.0;
+      S_ad1(s,2)=0.0;
+      S_ad2(s,2)=0.0;
     } else {
       for(m=1;m<=4;m++) { 
 	temp_y1[m]=16*PI*pow(r_e,2.0)*(s_gp[s]/pow(1.0-s_gp[s],3.0))*
@@ -1923,16 +1960,16 @@ void nstar_rot::comp() {
 	// AWS 4/25/14: This conditional was modified from the 
 	// original because of array-indexing confusion
 	if (m!=2 && m!=4) {
-	  S_ad1[s][m]=temp_y1[m];
-	  S_ad2[s][m]=temp_y2[m];
+	  S_ad1(s,m)=temp_y1[m];
+	  S_ad2(s,m)=temp_y2[m];
 	}            
       }  
 
       double temp1=interp(temp_x,temp_y1,4,temp9);
       double temp2=interp(temp_x,temp_y2,4,temp9);
 
-      S_ad1[s][2]=temp1;
-      S_ad2[s][2]=temp2;
+      S_ad1(s,2)=temp1;
+      S_ad2(s,2)=temp2;
     }
 
   }
@@ -1942,22 +1979,22 @@ void nstar_rot::comp() {
 
   for(s=1;s<=SDIV;s++) {
     for(m=1;m<=MDIV-4;m+=2) {
-      virial1+=(DM/3.0)*(S_virial1[s][m]+4.0*S_virial1[s][m+1]
-			 +S_virial1[s][m+2]);
-      virial2+=(DM/3.0)*(S_virial2[s][m]+4.0*S_virial2[s][m+1]
-			 +S_virial2[s][m+2]);    
-      virial3+=(DM/3.0)*(S_virial3[s][m]+4.0*S_virial3[s][m+1]
-			 +S_virial3[s][m+2]);    
+      virial1+=(DM/3.0)*(S_virial1(s,m)+4.0*S_virial1(s,m+1)
+			 +S_virial1(s,m+2));
+      virial2+=(DM/3.0)*(S_virial2(s,m)+4.0*S_virial2(s,m+1)
+			 +S_virial2(s,m+2));    
+      virial3+=(DM/3.0)*(S_virial3(s,m)+4.0*S_virial3(s,m+1)
+			 +S_virial3(s,m+2));    
 
     }
 
     virial1+=((theta[MDIV-2]-theta[MDIV])/6.0)*
-      (S_ad1[s][1]+4.0*S_ad1[s][2]+S_ad1[s][3]);
+      (S_ad1(s,1)+4.0*S_ad1(s,2)+S_ad1(s,3));
     
-    virial2+=(DM/3.0)*(S_virial2[s][MDIV-2]+4.0*S_virial2[s][MDIV-1]
-		       +S_virial2[s][MDIV]);    
+    virial2+=(DM/3.0)*(S_virial2(s,MDIV-2)+4.0*S_virial2(s,MDIV-1)
+		       +S_virial2(s,MDIV));    
     virial3+=((theta[MDIV-2]-theta[MDIV])/6.0)*
-      (S_ad2[s][1]+4.0*S_ad2[s][2]+S_ad2[s][3]);
+      (S_ad2(s,1)+4.0*S_ad2(s,2)+S_ad2(s,3));
     
     virial2+=virial3;
 
@@ -1990,8 +2027,8 @@ void nstar_rot::comp() {
   double muCh[MDIV+1];
   double t_pressure[MDIV+1];
   double t_energy[MDIV+1];
-  double Sv1Ch[SDIV+1][MDIV+1];
-  double Sv2Ch[SDIV+1][MDIV+1];
+  ubmatrix Sv1Ch(SDIV+1,MDIV+1);
+  ubmatrix Sv2Ch(SDIV+1,MDIV+1);
   double Dv1Ch[SDIV+1];
   double Dv2Ch[SDIV+1];
   double t_v2[MDIV+1];
@@ -2047,11 +2084,11 @@ void nstar_rot::comp() {
       if (s==1) temp1=0.0;
       else temp1=1.0/s1;
       
-      Sv1Ch[s][m]= 8*PI*pow(r_e,2.0)*(s_gp[s]/pow(1.0-s_gp[s],3.0))*
+      Sv1Ch(s,m)= 8*PI*pow(r_e,2.0)*(s_gp[s]/pow(1.0-s_gp[s],3.0))*
 	(pressureCh+(energyCh+pressureCh)*v2Ch/(1.0-v2Ch))*
 	exp(2.0*alphaCh);
       
-      Sv2Ch[s][m]=s1*pow(gamma_sCh+rho_sCh,2.0)/4.0+
+      Sv2Ch(s,m)=s1*pow(gamma_sCh+rho_sCh,2.0)/4.0+
 	m1*pow(gamma_mCh+rho_mCh,2.0)*
 	temp1-(3.0/4.0)*pow(r_e,2.0)*(s_gp[s]/pow(1.0-s_gp[s],3.0))*m1*
 	exp(-2.0*rhoCh)*(pow(s1*omega_sCh,2.0)+m1*pow(omega_mCh,2.0));	 
@@ -2060,8 +2097,8 @@ void nstar_rot::comp() {
 
     if (SMAX==1.0) {
       for(m=1;m<=MDIV;m++) {    
-	Sv1Ch[SDIV][m]=0.0;
-	Sv2Ch[SDIV][m]=0.0;
+	Sv1Ch(SDIV,m)=0.0;
+	Sv2Ch(SDIV,m)=0.0;
       }
     }
 
@@ -2069,8 +2106,8 @@ void nstar_rot::comp() {
     Dv2Ch[s]=0.0;
 
     for(m=1;m<=MDIV;m++) {
-      Dv1Ch[s]+=(2.0*PI/(2.0*MDIV-1.0))*Sv1Ch[s][m];
-      Dv2Ch[s]+=(2.0*PI/(2.0*MDIV-1.0))*Sv2Ch[s][m];
+      Dv1Ch[s]+=(2.0*PI/(2.0*MDIV-1.0))*Sv1Ch(s,m);
+      Dv2Ch[s]+=(2.0*PI/(2.0*MDIV-1.0))*Sv2Ch(s,m);
     }
   }
 
@@ -2192,23 +2229,23 @@ void nstar_rot::comp() {
 
 
       if (SMAX==1.0 && s==SDIV) {
-	S_virial1[s][m]=0.0;
+	S_virial1(s,m)=0.0;
 
 	/* CORRECT THIS ! */
 	
-	S_virial2[s][m]=0.5*(pow(s_gp[s]*(d_gamma_s+d_rho_s),2.0)- d_alpha_s*
+	S_virial2(s,m)=0.5*(pow(s_gp[s]*(d_gamma_s+d_rho_s),2.0)- d_alpha_s*
 			     (pow(s_gp[s],2.0)*(d_gamma_s-d_rho_s)))*
 	  exp(0.5*(gamma[s][m]-rho[s][m]))*r_e;
 	
       } else {
 	
-	S_virial1[s][m]=8.0*PI*
+	S_virial1(s,m)=8.0*PI*
 	  (3.0*pressure[s][m]+(energy[s][m]+pressure[s][m])*
 	   velocity_sq[s][m]/(1.0-velocity_sq[s][m]))*
 	  exp(2.0*alpha[s][m]+0.5*(gamma[s][m]-rho[s][m]))*
 	  pow(r_e,2.0)*r_e*pow(s_gp[s]/pow(1.0-s_gp[s],2.0),2.0);
 	
-	S_virial2[s][m]=0.5*
+	S_virial2(s,m)=0.5*
 	  (pow(s1*(d_gamma_s+d_rho_s),2.0)+m1*pow(d_gamma_m+d_rho_m,2.0)
 	   -d_alpha_s*(pow(s1,2.0)*(d_gamma_s-d_rho_s)+2.0*s1)
 	   +d_alpha_m*(m1*(-d_gamma_m+d_rho_m)+2.0*mu[m]) 
@@ -2227,10 +2264,10 @@ void nstar_rot::comp() {
     
   for(s=1;s<=SDIV;s++) {
     for(m=1;m<=MDIV-2;m+=2) {
-      virial1+=(DM/3.0)*(S_virial1[s][m]+4.0*S_virial1[s][m+1]
-			 +S_virial1[s][m+2]);
-      virial2+=(DM/3.0)*(S_virial2[s][m]+4.0*S_virial2[s][m+1]
-			 +S_virial2[s][m+2]);
+      virial1+=(DM/3.0)*(S_virial1(s,m)+4.0*S_virial1(s,m+1)
+			 +S_virial1(s,m+2));
+      virial2+=(DM/3.0)*(S_virial2(s,m)+4.0*S_virial2(s,m+1)
+			 +S_virial2(s,m+2));
     }     
     D_virial1[s]=virial1;
     D_virial2[s]=virial2;
@@ -2625,9 +2662,9 @@ int nstar_rot::iterate(double r_ratio_loc) {
   double rho0sm;
  
   /// Desc
-  double dgds[SDIV+1][MDIV+1];
+  ubmatrix dgds(SDIV+1,MDIV+1);
   /// Desc
-  double dgdm[SDIV+1][MDIV+1];
+  ubmatrix dgdm(SDIV+1,MDIV+1);
 
   if (SMAX==1.0) {
     s_temp=SDIV-1;
@@ -2984,8 +3021,8 @@ int nstar_rot::iterate(double r_ratio_loc) {
  
     for(s=1;s<=SDIV;s++) {
       for(m=1;m<=MDIV;m++) {
-	dgds[s][m]=deriv_s(gamma,s,m);
-	dgdm[s][m]=deriv_m(gamma,s,m);
+	dgds(s,m)=deriv_s(gamma,s,m);
+	dgdm(s,m)=deriv_m(gamma,s,m);
       }
     }
 
@@ -3009,14 +3046,14 @@ int nstar_rot::iterate(double r_ratio_loc) {
 	  mum=mu[m]; 
 	  m1=1.0-pow(mum,2.0);
           
-	  d_gamma_s=dgds[s][m];
-	  d_gamma_m=dgdm[s][m];
+	  d_gamma_s=dgds(s,m);
+	  d_gamma_m=dgdm(s,m);
 	  d_rho_s=deriv_s(rho,s,m);
 	  d_rho_m=deriv_m(rho,s,m);
 	  d_omega_s=deriv_s(omega,s,m);
 	  d_omega_m=deriv_m(omega,s,m);
-	  d_gamma_ss=s1*deriv_s(dgds,s,m)+(1.0-2.0*sgp)*d_gamma_s;
-	  d_gamma_mm=m1*deriv_m(dgdm,s,m)-2.0*mum*d_gamma_m;  
+	  d_gamma_ss=s1*deriv_s_ub(dgds,s,m)+(1.0-2.0*sgp)*d_gamma_s;
+	  d_gamma_mm=m1*deriv_m_ub(dgdm,s,m)-2.0*mum*d_gamma_m;  
 	  d_gamma_sm=deriv_sm(gamma,s,m);
 
 	  double temp1=2.0*pow(sgp,2.0)*(sgp/(1.0-sgp))*m1*d_omega_s*d_omega_m

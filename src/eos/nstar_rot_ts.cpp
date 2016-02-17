@@ -57,6 +57,8 @@ int main(void) {
   nst.test7(t);
   nst.test8(t);
 
+  nst.constants_o2scl();
+  
   {
     eos_had_skyrme sk;
     o2scl_hdf::skyrme_load(sk,"SLy4");
