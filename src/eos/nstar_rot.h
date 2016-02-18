@@ -1006,7 +1006,11 @@ namespace o2scl {
      */
     eos_nstar_rot *eosp;
     //@}
-  
+
+    /** \brief Compute masses and angular momentum
+     */
+    void calc_masses_J(ubmatrix &rho_0);
+    
   public:
 
     nstar_rot();
