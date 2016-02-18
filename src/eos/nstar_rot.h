@@ -614,13 +614,13 @@ namespace o2scl {
     /// \name Metric functions
     //@{
     /** \brief potential \f$ \rho \f$ */ 
-    double rho[SDIV+1][MDIV+1];          
+    ubmatrix rho;
     /** \brief potential \f$ \gamma \f$ */ 
-    double gamma[SDIV+1][MDIV+1];         
+    ubmatrix gamma;
     /** \brief potential \f$ \omega \f$ */ 
-    double omega[SDIV+1][MDIV+1];        
+    ubmatrix omega;
     /** \brief potential \f$ \alpha \f$ */ 
-    double alpha[SDIV+1][MDIV+1];        
+    ubmatrix alpha;
     //@}
 
     /// \name Initial guess computed by the comp() function
@@ -704,10 +704,10 @@ namespace o2scl {
     //@{
     /** \brief Legendre polynomial \f$ P_{2n}(\mu) \f$ 
      */  
-    double P_2n[MDIV+1][LMAX+1];         
+    ubmatrix P_2n;
     /** \brief Associated Legendre polynomial \f$ P^1_{2n-1}(\mu) \f$ 
      */ 
-    double P1_2n_1[MDIV+1][LMAX+1];      
+    ubmatrix P1_2n_1;
     //@}
 
     /** \brief Relative accuracy for the equatorial radius,
@@ -718,24 +718,24 @@ namespace o2scl {
     double eq_radius_tol_rel;                    
 
     /** \brief Integrated term over m in eqn for \f$ \rho \f$ */
-    double D1_rho[LMAX+1][SDIV+1];  
+    ubmatrix D1_rho;
     /** \brief Integrated term over m in eqn for \f$ \gamma \f$ */
-    double D1_gamma[LMAX+1][SDIV+1]; 
+    ubmatrix D1_gamma;
     /** \brief Integ. term over m in eqn for \f$ \omega \f$ */
-    double D1_omega[LMAX+1][SDIV+1];
+    ubmatrix D1_omega;
     /** \brief Integrated term over s in eqn for \f$ \rho \f$ */
-    double D2_rho[SDIV+1][LMAX+1];  
+    ubmatrix D2_rho;
     /** \brief Integrated term over s in eqn for \f$ \gamma \f$ */
-    double D2_gamma[SDIV+1][LMAX+1]; 
+    ubmatrix D2_gamma;
     /** \brief Integ. term over s in eqn for \f$ \omega \f$ */
-    double D2_omega[SDIV+1][LMAX+1];
+    ubmatrix D2_omega;
 
     /** \brief source term in eqn for \f$ \gamma \f$ */
-    double S_gamma[SDIV+1][MDIV+1];  
+    ubmatrix S_gamma;
     /** \brief source term in eqn for \f$ \rho \f$ */
-    double S_rho[SDIV+1][MDIV+1];   
+    ubmatrix S_rho;
     /** \brief source term in eqn for \f$ \omega \f$ */
-    double S_omega[SDIV+1][MDIV+1]; 
+    ubmatrix S_omega;
 
     /** \brief The tolerance for the functions with the prefix "fix" 
 	(default \f$ 10^{-4} \f$ )
@@ -869,6 +869,8 @@ namespace o2scl {
      */ 
     double s_deriv(double f[SDIV+1], int s);
 
+    double s_deriv_ub(ubvector &f, int s);
+
     /** \brief Returns the derivative w.r.t. mu of an array f[MDIV+1]. 
      */ 
     double m_deriv(double f[MDIV+1], int m);
@@ -894,6 +896,8 @@ namespace o2scl {
     /** \brief Returns the derivative w.r.t. s and mu 
      */ 
     double deriv_sm(double f[SDIV+1][MDIV+1], int s, int m);
+
+    double deriv_sm_ub(ubmatrix &f, int s, int m);
     //@}
 
     /// \name Initialization functions
@@ -1094,9 +1098,9 @@ namespace o2scl {
     /// The eccentricity
     double eccentricity;
     /// Desc
-    double v_plus[SDIV+1];
+    ubvector v_plus;
     /// Desc
-    double v_minus[SDIV+1];
+    ubvector v_minus;
     /// Desc
     double vel_plus;
     /// Desc
