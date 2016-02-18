@@ -421,6 +421,18 @@ nstar_rot::nstar_rot() {
   rho_mu_0.resize(SDIV+1);             
   omega_mu_0.resize(SDIV+1);           
   
+  rho_guess.resize(SDIV+1,MDIV+1);    
+  gamma_guess.resize(SDIV+1,MDIV+1);
+  omega_guess.resize(SDIV+1,MDIV+1);
+  alpha_guess.resize(SDIV+1,MDIV+1);
+  
+  energy.resize(SDIV+1,MDIV+1);       
+  pressure.resize(SDIV+1,MDIV+1);     
+  enthalpy.resize(SDIV+1,MDIV+1);     
+
+  velocity_sq.resize(SDIV+1,MDIV+1);  
+  da_dm.resize(SDIV+1,MDIV+1);
+  
   C=o2scl_cgs::speed_of_light;
   G=o2scl_cgs::gravitational_constant;
   MSUN=o2scl_cgs::solar_mass;
@@ -487,10 +499,10 @@ void nstar_rot::output_table(o2scl::table3d &t) {
   t.line_of_names("ed pr h vsq rho gamma omega alpha");
   for(size_t i=0;i<s_grid.size();i++) {
     for(size_t j=0;j<m_grid.size();j++) {
-      t.set(i,j,"ed",energy[i+1][j+1]);
-      t.set(i,j,"pr",pressure[i+1][j+1]);
-      t.set(i,j,"h",enthalpy[i+1][j+1]);
-      t.set(i,j,"vsq",velocity_sq[i+1][j+1]);
+      t.set(i,j,"ed",energy(i+1,j+1));
+      t.set(i,j,"pr",pressure(i+1,j+1));
+      t.set(i,j,"h",enthalpy(i+1,j+1));
+      t.set(i,j,"vsq",velocity_sq(i+1,j+1));
       t.set(i,j,"rho",rho(i+1,j+1));
       t.set(i,j,"gamma",gamma(i+1,j+1));
       t.set(i,j,"omega",omega(i+1,j+1));
@@ -519,28 +531,6 @@ void nstar_rot::make_grid() {
   return;
 }
 
-int nstar_rot::new_search(int n, double *x, double val) {
-  int ret;
-  double *xnew=x+1;
-  bool inc=false;
-  if (xnew[0]<xnew[n-1]) inc=true;
-  if (inc) {
-    if (val<xnew[0]) {
-      return 0;
-    } else if (val>xnew[n-1]) {
-      return n;
-    }
-  } else {
-    if (val>xnew[0]) {
-      return 0;
-    } else if (val<xnew[n-1]) {
-      return n;
-    }
-  }
-  sv.set_vec(n,xnew);
-  return sv.find(val)+1;
-}
-
 int nstar_rot::new_search_ub(int n, ubvector &x, double val) {
   int ret;
   ubvector xnew(n);
@@ -564,39 +554,6 @@ int nstar_rot::new_search_ub(int n, ubvector &x, double val) {
   }
   sv_ub.set_vec(n,xnew);
   return sv_ub.find(val)+1;
-}
-
-double nstar_rot::interp_ub(double xp[], ubvector &yp, int np,
-				       double xb) {
-  // index of 1st point
-  int k;        
-  // degree of interpolation
-  int m=4;      
- 
-  // intermediate value
-  double y;     
-
-  n_nearest=new_search(np,xp,xb);
-
-  int max=n_nearest-(m-1)/2;
-  if (max<1) max=1;
-  k=np+1-m;
-  if (max<k) k=max;
-
-  if (xb==xp[k] || xb==xp[k+1] || xb==xp[k+2] || xb==xp[k+3]) {
-    xb+=1.0e-12;
-  }
-  
-  y=(xb-xp[k+1])*(xb-xp[k+2])*(xb-xp[k+3])*yp[k]/
-    ((xp[k]-xp[k+1])*(xp[k]-xp[k+2])*(xp[k]-xp[k+3]))+
-    (xb-xp[k])*(xb-xp[k+2])*(xb-xp[k+3])*yp[k+1]/
-    ((xp[k+1]-xp[k])*(xp[k+1]-xp[k+2])*(xp[k+1]-xp[k+3]))+
-    (xb-xp[k])*(xb-xp[k+1])*(xb-xp[k+3])*yp[k+2]/
-    ((xp[k+2]-xp[k])*(xp[k+2]-xp[k+1])*(xp[k+2]-xp[k+3]))+
-    (xb-xp[k])*(xb-xp[k+1])*(xb-xp[k+2])*yp[k+3]/
-    ((xp[k+3]-xp[k])*(xp[k+3]-xp[k+1])*(xp[k+3]-xp[k+2]));
-  
-  return (y);
 }
 
 double nstar_rot::interp_ub_ub(ubvector &xp, ubvector &yp, int np,
@@ -630,60 +587,6 @@ double nstar_rot::interp_ub_ub(ubvector &xp, ubvector &yp, int np,
     ((xp[k+3]-xp[k])*(xp[k+3]-xp[k+1])*(xp[k+3]-xp[k+2]));
   
   return (y);
-}
-
-double nstar_rot::interp(double xp[], double yp[], int np, double xb) {
-  // index of 1st point
-  int k;        
-  // degree of interpolation
-  int m=4;      
- 
-  // intermediate value
-  double y;     
-
-  n_nearest=new_search(np,xp,xb);
-
-  int max=n_nearest-(m-1)/2;
-  if (max<1) max=1;
-  k=np+1-m;
-  if (max<k) k=max;
-
-  if (xb==xp[k] || xb==xp[k+1] || xb==xp[k+2] || xb==xp[k+3]) {
-    xb+=1.0e-12;
-  }
-
-  y=(xb-xp[k+1])*(xb-xp[k+2])*(xb-xp[k+3])*yp[k]/
-    ((xp[k]-xp[k+1])*(xp[k]-xp[k+2])*(xp[k]-xp[k+3]))+
-    (xb-xp[k])*(xb-xp[k+2])*(xb-xp[k+3])*yp[k+1]/
-    ((xp[k+1]-xp[k])*(xp[k+1]-xp[k+2])*(xp[k+1]-xp[k+3]))+
-    (xb-xp[k])*(xb-xp[k+1])*(xb-xp[k+3])*yp[k+2]/
-    ((xp[k+2]-xp[k])*(xp[k+2]-xp[k+1])*(xp[k+2]-xp[k+3]))+
-    (xb-xp[k])*(xb-xp[k+1])*(xb-xp[k+2])*yp[k+3]/
-    ((xp[k+3]-xp[k])*(xp[k+3]-xp[k+1])*(xp[k+3]-xp[k+2]));
-  
-  return (y);
-}
-
-double nstar_rot::interp_4_k(double xp[], double yp[], int np, double xb, 
-			      int k) {
-
-  // intermediate value
-  double y;     
-
-  if (xb==xp[k] ||  xb==xp[k+1] || xb==xp[k+2] || xb==xp[k+3]) {
-    xb+=1.0e-14;
-  }
-  
-  y=(xb-xp[k+1])*(xb-xp[k+2])*(xb-xp[k+3])*yp[k]/
-    ((xp[k]-xp[k+1])*(xp[k]-xp[k+2])*(xp[k]-xp[k+3]))
-    +(xb-xp[k])*(xb-xp[k+2])*(xb-xp[k+3])*yp[k+1]/
-    ((xp[k+1]-xp[k])*(xp[k+1]-xp[k+2])*(xp[k+1]-xp[k+3]))
-    +(xb-xp[k])*(xb-xp[k+1])*(xb-xp[k+3])*yp[k+2]/
-    ((xp[k+2]-xp[k])*(xp[k+2]-xp[k+1])*(xp[k+2]-xp[k+3]))
-    +(xb-xp[k])*(xb-xp[k+1])*(xb-xp[k+2])*yp[k+3]/
-    ((xp[k+3]-xp[k])*(xp[k+3]-xp[k+1])*(xp[k+3]-xp[k+2]));
-
-  return(y);
 }
 
 double nstar_rot::interp_4_k_ub(ubvector &xp, ubvector &yp, int np, double xb, 
@@ -1311,10 +1214,10 @@ void nstar_rot::comp_omega() {
 
   for(s=1;s<=SDIV;s++) {
     for(m=1;m<=MDIV;m++) {
-      gamma_guess[s][m]=gamma(s,m);
-      rho_guess[s][m]=rho(s,m);
-      alpha_guess[s][m]=alpha(s,m);
-      omega_guess[s][m]=omega(s,m);
+      gamma_guess(s,m)=gamma(s,m);
+      rho_guess(s,m)=rho(s,m);
+      alpha_guess(s,m)=alpha(s,m);
+      omega_guess(s,m)=omega(s,m);
     }
   }
 
@@ -1404,15 +1307,17 @@ void nstar_rot::comp_M_J() {
   if (scaled_polytrope==false) {
     for(s=1;s<=SDIV;s++)
       for(m=1;m<=MDIV;m++) {
-	if (energy[s][m]>e_surface)
-	  rho_0(s,m)=n0_at_e(energy[s][m])*MB*C*C*KSCALE;
+	if (energy(s,m)>e_surface)
+	  rho_0(s,m)=n0_at_e(energy(s,m))*MB*C*C*KSCALE;
 	else
 	  rho_0(s,m)=0.0;
       } 
   } else {
-    for(s=1;s<=SDIV;s++)
-      for(m=1;m<=MDIV;m++)
-	rho_0(s,m)=(energy[s][m]+pressure[s][m])*exp(-enthalpy[s][m]);
+    for(s=1;s<=SDIV;s++) {
+      for(m=1;m<=MDIV;m++) {
+	rho_0(s,m)=(energy(s,m)+pressure(s,m))*exp(-enthalpy(s,m));
+      }
+    }
   }
 
 
@@ -1431,50 +1336,50 @@ void nstar_rot::comp_M_J() {
     for(m=1;m<=MDIV-2;m+=2) {
 
       D_m[s]+=(1.0/(3.0*(MDIV-1)))*
-	( exp(2.0*alpha(s,m)+gamma(s,m))*
-	  (((energy[s][m]+pressure[s][m])/(1.0-velocity_sq[s][m]))*
-	   (1.0+velocity_sq[s][m]+
-	    (2.0*s_gp[s]*sqrt(velocity_sq[s][m])/
-	     (1.0-s_gp[s]))*sqrt(1.0-mu[m]*mu[m])*r_e*omega(s,m)*
-	    exp(-rho(s,m)))+2.0*pressure[s][m])
-	  +4.0*exp(2.0*alpha(s,m+1)+gamma(s,m+1))*
-	  (((energy[s][m+1]+pressure[s][m+1])/(1.0-velocity_sq[s][m+1]))*
-	   (1.0+velocity_sq[s][m+1]+
-	    (2.0*s_gp[s]*sqrt(velocity_sq[s][m+1])/
-	     (1.0-s_gp[s]))*sqrt(1.0-mu[m+1]*mu[m+1])*r_e*omega(s,m+1)*
-	    exp(-rho(s,m+1)))+2.0*pressure[s][m+1]) 
-	  +exp(2.0*alpha(s,m+2)+gamma(s,m+2))*
-	  (((energy[s][m+2]+pressure[s][m+2])/(1.0-velocity_sq[s][m+2]))*
-	   (1.0+velocity_sq[s][m+2]+
-	    (2.0*s_gp[s]*sqrt(velocity_sq[s][m+2])/
-	     (1.0-s_gp[s]))*sqrt(1.0-mu[m+2]*mu[m+2])*r_e*omega(s,m+2)*
-	    exp(-rho(s,m+2)))+2.0*pressure[s][m+2]));    
-
+	(exp(2.0*alpha(s,m)+gamma(s,m))*
+	 (((energy(s,m)+pressure(s,m))/(1.0-velocity_sq(s,m)))*
+	  (1.0+velocity_sq(s,m)+
+	   (2.0*s_gp[s]*sqrt(velocity_sq(s,m))/
+	    (1.0-s_gp[s]))*sqrt(1.0-mu[m]*mu[m])*r_e*omega(s,m)*
+	   exp(-rho(s,m)))+2.0*pressure(s,m))
+	 +4.0*exp(2.0*alpha(s,m+1)+gamma(s,m+1))*
+	 (((energy(s,m+1)+pressure(s,m+1))/(1.0-velocity_sq(s,m+1)))*
+	  (1.0+velocity_sq(s,m+1)+
+	   (2.0*s_gp[s]*sqrt(velocity_sq(s,m+1))/
+	    (1.0-s_gp[s]))*sqrt(1.0-mu[m+1]*mu[m+1])*r_e*omega(s,m+1)*
+	   exp(-rho(s,m+1)))+2.0*pressure(s,m+1)) 
+	 +exp(2.0*alpha(s,m+2)+gamma(s,m+2))*
+	 (((energy(s,m+2)+pressure(s,m+2))/(1.0-velocity_sq(s,m+2)))*
+	  (1.0+velocity_sq(s,m+2)+
+	   (2.0*s_gp[s]*sqrt(velocity_sq(s,m+2))/
+	    (1.0-s_gp[s]))*sqrt(1.0-mu[m+2]*mu[m+2])*r_e*omega(s,m+2)*
+	   exp(-rho(s,m+2)))+2.0*pressure(s,m+2)));    
+      
       D_m_0[s]+=(1.0/(3.0*(MDIV-1)))*
 	(exp(2.0*alpha(s,m)+
 	     (gamma(s,m)
-	      -rho(s,m))/2.0)*rho_0(s,m)/sqrt(1.0-velocity_sq[s][m])
+	      -rho(s,m))/2.0)*rho_0(s,m)/sqrt(1.0-velocity_sq(s,m))
 	 +4.0* exp(2.0*alpha(s,m+1)+
 		   (gamma(s,m+1)
 		    -rho(s,m+1))/2.0)*rho_0(s,m+1)/
-	 sqrt(1.0-velocity_sq[s][m+1])
+	 sqrt(1.0-velocity_sq(s,m+1))
 	 +exp(2.0*alpha(s,m+2)+(gamma(s,m+2)
 				-rho(s,m+2))/2.0)*rho_0(s,m+2)
-	 /sqrt(1.0-velocity_sq[s][m+2])); 
+	 /sqrt(1.0-velocity_sq(s,m+2))); 
 
       D_J[s]+=(1.0/(3.0*(MDIV-1)))*
 	(sin_theta[m]*
 	 exp(2.0*alpha(s,m)+gamma(s,m)-rho(s,m))*
-	 (energy[s][m]+pressure[s][m])*sqrt(velocity_sq[s][m])/
-	 (1.0-velocity_sq[s][m])
+	 (energy(s,m)+pressure(s,m))*sqrt(velocity_sq(s,m))/
+	 (1.0-velocity_sq(s,m))
 	 +4.0*sqrt(1.0-mu[m+1]*mu[m+1])*
 	 exp(2.0*alpha(s,m+1)+gamma(s,m+1)-rho(s,m+1))
-	 *(energy[s][m+1]+pressure[s][m+1])*sqrt(velocity_sq[s][m+1])/
-	 (1.0-velocity_sq[s][m+1])
+	 *(energy(s,m+1)+pressure(s,m+1))*sqrt(velocity_sq(s,m+1))/
+	 (1.0-velocity_sq(s,m+1))
 	 +sqrt(1.0-mu[m+2]*mu[m+2])*
 	 exp(2.0*alpha(s,m+2)+gamma(s,m+2)-rho(s,m+2))
-	 *(energy[s][m+2]+pressure[s][m+2])*sqrt(velocity_sq[s][m+2])/
-	 (1.0-velocity_sq[s][m+2]));
+	 *(energy(s,m+2)+pressure(s,m+2))*sqrt(velocity_sq(s,m+2))/
+	 (1.0-velocity_sq(s,m+2)));
     }
   }
     
@@ -1514,10 +1419,10 @@ void nstar_rot::comp_M_J() {
 
   for(s=1;s<=SDIV;s++) {
     for(m=1;m<=MDIV;m++) {
-      gamma_guess[s][m]=gamma(s,m);
-      rho_guess[s][m]=rho(s,m);
-      alpha_guess[s][m]=alpha(s,m);
-      omega_guess[s][m]=omega(s,m);
+      gamma_guess(s,m)=gamma(s,m);
+      rho_guess(s,m)=rho(s,m);
+      alpha_guess(s,m)=alpha(s,m);
+      omega_guess(s,m)=omega(s,m);
     }
   }
 
@@ -1550,7 +1455,7 @@ void nstar_rot::comp() {
   ubmatrix velocity(SDIV+1,MDIV+1);
   for(s=1;s<=SDIV;s++) {
     for(m=1;m<=MDIV;m++) {
-      velocity(s,m)=sqrt(velocity_sq[s][m]);
+      velocity(s,m)=sqrt(velocity_sq(s,m));
     }
   }
 
@@ -1612,8 +1517,8 @@ void nstar_rot::comp() {
   if (scaled_polytrope==false) {
     for(s=1;s<=SDIV;s++) {
       for(m=1;m<=MDIV;m++) {
-	if (energy[s][m]>e_surface) {
-	  rho_0(s,m)=n0_at_e(energy[s][m])*MB*C*C*KSCALE;
+	if (energy(s,m)>e_surface) {
+	  rho_0(s,m)=n0_at_e(energy(s,m))*MB*C*C*KSCALE;
 	} else {
 	  rho_0(s,m)=0.0;
 	}
@@ -1622,7 +1527,7 @@ void nstar_rot::comp() {
   } else {
     for(s=1;s<=SDIV;s++) {
       for(m=1;m<=MDIV;m++) {
-	rho_0(s,m)=(energy[s][m]+pressure[s][m])*exp(-enthalpy[s][m]);
+	rho_0(s,m)=(energy(s,m)+pressure(s,m))*exp(-enthalpy(s,m));
       }
     }
   }
@@ -1652,58 +1557,58 @@ void nstar_rot::comp() {
     for(m=1;m<=MDIV-2;m+=2) {
       D_m[s]+=(1.0/(3.0*(MDIV-1)))*
 	(exp(2.0*alpha(s,m)+gamma(s,m))*
-	 (((energy[s][m]+pressure[s][m])/(1.0-velocity_sq[s][m]))*
-	  (1.0+velocity_sq[s][m]+
-	   (2.0*s_gp[s]*sqrt(velocity_sq[s][m])/
+	 (((energy(s,m)+pressure(s,m))/(1.0-velocity_sq(s,m)))*
+	  (1.0+velocity_sq(s,m)+
+	   (2.0*s_gp[s]*sqrt(velocity_sq(s,m))/
 	    (1.0-s_gp[s]))*sqrt(1.0-mu[m]*mu[m])*r_e*omega(s,m)*
-	   exp(-rho(s,m)))+2.0*pressure[s][m])
+	   exp(-rho(s,m)))+2.0*pressure(s,m))
 	 +4.0*exp(2.0*alpha(s,m+1)+gamma(s,m+1))*
-	 (((energy[s][m+1]+pressure[s][m+1])/(1.0-velocity_sq[s][m+1]))*
-	  (1.0+velocity_sq[s][m+1]+
-	   (2.0*s_gp[s]*sqrt(velocity_sq[s][m+1])/
+	 (((energy(s,m+1)+pressure(s,m+1))/(1.0-velocity_sq(s,m+1)))*
+	  (1.0+velocity_sq(s,m+1)+
+	   (2.0*s_gp[s]*sqrt(velocity_sq(s,m+1))/
 	    (1.0-s_gp[s]))*sqrt(1.0-mu[m+1]*mu[m+1])*r_e*omega(s,m+1)*
-	   exp(-rho(s,m+1)))+2.0*pressure[s][m+1]) 
+	   exp(-rho(s,m+1)))+2.0*pressure(s,m+1)) 
 	 +exp(2.0*alpha(s,m+2)+gamma(s,m+2))*
-	 (((energy[s][m+2]+pressure[s][m+2])/(1.0-velocity_sq[s][m+2]))*
-	  (1.0+velocity_sq[s][m+2]+
-	   (2.0*s_gp[s]*sqrt(velocity_sq[s][m+2])/
+	 (((energy(s,m+2)+pressure(s,m+2))/(1.0-velocity_sq(s,m+2)))*
+	  (1.0+velocity_sq(s,m+2)+
+	   (2.0*s_gp[s]*sqrt(velocity_sq(s,m+2))/
 	    (1.0-s_gp[s]))*sqrt(1.0-mu[m+2]*mu[m+2])*r_e*omega(s,m+2)*
-	   exp(-rho(s,m+2)))+2.0*pressure[s][m+2]));    
+	   exp(-rho(s,m+2)))+2.0*pressure(s,m+2)));    
       
       D_m_0[s]+=(1.0/(3.0*(MDIV-1)))*
 	(exp(2.0*alpha(s,m)+
 	     (gamma(s,m)
-	      -rho(s,m))/2.0)*rho_0(s,m)/sqrt(1.0-velocity_sq[s][m])
+	      -rho(s,m))/2.0)*rho_0(s,m)/sqrt(1.0-velocity_sq(s,m))
 	 +4.0*exp(2.0*alpha(s,m+1)+
 		  (gamma(s,m+1)-rho(s,m+1))/2.0)*
-	 rho_0(s,m+1)/sqrt(1.0-velocity_sq[s][m+1])
+	 rho_0(s,m+1)/sqrt(1.0-velocity_sq(s,m+1))
 	 +exp(2.0*alpha(s,m+2)+
 	      (gamma(s,m+2)-rho(s,m+2))/2.0)*
-	 rho_0(s,m+2)/sqrt(1.0-velocity_sq[s][m+2])); 
+	 rho_0(s,m+2)/sqrt(1.0-velocity_sq(s,m+2))); 
       
       D_m_p[s]+=(1.0/(3.0*(MDIV-1)))*
 	(exp(2.0*alpha(s,m)+(gamma(s,m)-rho(s,m))/2.0)*
-	 energy[s][m]/sqrt(1.0-velocity_sq[s][m])
+	 energy(s,m)/sqrt(1.0-velocity_sq(s,m))
 	 +4.0*exp(2.0*alpha(s,m+1)+
 		   (gamma(s,m+1)-rho(s,m+1))/2.0)*
-	 energy[s][m+1]/sqrt(1.0-velocity_sq[s][m+1])
+	 energy(s,m+1)/sqrt(1.0-velocity_sq(s,m+1))
 	 +exp(2.0*alpha(s,m+2)+
 	      (gamma(s,m+2)-rho(s,m+2))/2.0)*
-	 energy[s][m+2]/sqrt(1.0-velocity_sq[s][m+2])); 
+	 energy(s,m+2)/sqrt(1.0-velocity_sq(s,m+2))); 
       
       D_J[s]+=(1.0/(3.0*(MDIV-1)))*
 	(sqrt(1.0-mu[m]*mu[m])*
 	 exp(2.0*alpha(s,m)+gamma(s,m)-rho(s,m))*
-	 (energy[s][m]+pressure[s][m])*sqrt(velocity_sq[s][m])/
-	 (1.0-velocity_sq[s][m])
+	 (energy(s,m)+pressure(s,m))*sqrt(velocity_sq(s,m))/
+	 (1.0-velocity_sq(s,m))
 	 +4.0*sqrt(1.0-mu[m+1]*mu[m+1])*
 	 exp(2.0*alpha(s,m+1)+gamma(s,m+1)-rho(s,m+1))*
-	 (energy[s][m+1]+pressure[s][m+1])*sqrt(velocity_sq[s][m+1])/
-	 (1.0-velocity_sq[s][m+1])
+	 (energy(s,m+1)+pressure(s,m+1))*sqrt(velocity_sq(s,m+1))/
+	 (1.0-velocity_sq(s,m+1))
 	 +sqrt(1.0-mu[m+2]*mu[m+2])*
 	 exp(2.0*alpha(s,m+2)+gamma(s,m+2)-rho(s,m+2))*
-	 (energy[s][m+2]+pressure[s][m+2])*sqrt(velocity_sq[s][m+2])/
-	 (1.0-velocity_sq[s][m+2]));
+	 (energy(s,m+2)+pressure(s,m+2))*sqrt(velocity_sq(s,m+2))/
+	 (1.0-velocity_sq(s,m+2)));
       
     }
   }
@@ -1836,11 +1741,11 @@ void nstar_rot::comp() {
        metric potentials and the enthalpy along each direction \mu.
     */
     for(s=1;s<=SDIV;s++) {
-      if (energy[s][m]>0) s_surf_1=s;       
+      if (energy(s,m)>0) s_surf_1=s;       
       gamma_m[s]=gamma(s,m);                 
       rho_m[s]=rho(s,m);                    
       alpha_m[s]=alpha(s,m);         
-      enthalpy_m[s]=enthalpy[s][m];
+      enthalpy_m[s]=enthalpy(s,m);
     }
  
     /* If the positive enthalpy region outside the star is at a
@@ -2110,7 +2015,7 @@ void nstar_rot::comp() {
       d_gamma_s=deriv_s_ub(gamma,s,1);
       d_rho_s=deriv_s_ub(rho,s,1);
  
-      S_virial1(s,1)=8*pow(PI*r_e,2.0)*s_gp[s]*pressure[s][1]
+      S_virial1(s,1)=8*pow(PI*r_e,2.0)*s_gp[s]*pressure(s,1)
 	*exp(2.0*alpha(s,1))/pow(1.0-s_gp[s],3.0);
 
       S_virial2(s,1)=PI*s_1_s[s]*pow(d_gamma_s+d_rho_s,2.0)/4.0;
@@ -2144,15 +2049,15 @@ void nstar_rot::comp() {
   virial2=0.0; 
   virial3=0.0;
 
-  double temp_x[5];
+  ubvector temp_x(5);
 
   for(i=1;i<=4;i++) {
     temp_x[i]=mu[MDIV+1-i];
   }
 
   double temp9=cos(0.5*(theta[MDIV]+theta[MDIV-2]));
-  double temp_y1[5];
-  double temp_y2[5];
+  ubvector temp_y1(5);
+  ubvector temp_y2(5);
   ubmatrix S_ad1(SDIV+1,4);
   ubmatrix S_ad2(SDIV+1,4);
   double m1;
@@ -2180,8 +2085,8 @@ void nstar_rot::comp() {
 	  S_virial1(s,m)=0.0;
 	} else {
 	  S_virial1(s,m)=16*PI*pow(r_e,2.0)*(s_gp[s]/pow(1.0-s_gp[s],3.0))*
-	    (pressure[s][m]+(energy[s][m]+pressure[s][m])*
-	     (velocity_sq[s][m]/(1.0-velocity_sq[s][m])))*
+	    (pressure(s,m)+(energy(s,m)+pressure(s,m))*
+	     (velocity_sq(s,m)/(1.0-velocity_sq(s,m))))*
 	    exp(2.0*alpha(s,m))/sqrt(m1);
 	}
 	S_virial3(s,m)=(s1/(2.0*sqrt(m1)))*pow(d_gamma_s+d_rho_s,2.0);
@@ -2211,12 +2116,11 @@ void nstar_rot::comp() {
       S_ad2(s,2)=0.0;
     } else {
       for(m=1;m<=4;m++) { 
+
 	temp_y1[m]=16*PI*pow(r_e,2.0)*(s_gp[s]/pow(1.0-s_gp[s],3.0))*
-	  (pressure[s][MDIV+1-m]+
-	   (energy[s][MDIV+1-m] 
-	    +pressure[s][MDIV+1-m])*
-	   (velocity_sq[s][MDIV+1-m]/
-	    (1.0-velocity_sq[s][MDIV+1-m])))*exp(2.0*alpha(s,MDIV+1-m));
+	  (pressure(s,MDIV+1-m)+(energy(s,MDIV+1-m)+pressure(s,MDIV+1-m))*
+	   (velocity_sq(s,MDIV+1-m)/
+	    (1.0-velocity_sq(s,MDIV+1-m))))*exp(2.0*alpha(s,MDIV+1-m));
 	  
 	temp_y2[m]=0.5*s1*pow(deriv_s_ub(gamma,s,MDIV+1-m)+
 			      deriv_s_ub(rho,s,MDIV+1-m),2.0);
@@ -2229,8 +2133,8 @@ void nstar_rot::comp() {
 	}            
       }  
 
-      double temp1=interp(temp_x,temp_y1,4,temp9);
-      double temp2=interp(temp_x,temp_y2,4,temp9);
+      double temp1=interp_ub_ub(temp_x,temp_y1,4,temp9);
+      double temp2=interp_ub_ub(temp_x,temp_y2,4,temp9);
 
       S_ad1(s,2)=temp1;
       S_ad2(s,2)=temp2;
@@ -2310,9 +2214,9 @@ void nstar_rot::comp() {
       t_rho_m[m]=deriv_m_ub(rho,s,m);
       t_omega_s[m]=deriv_s_ub(omega,s,m);
       t_omega_m[m]=deriv_m_ub(omega,s,m);
-      t_pressure[m]=pressure[s][m];
-      t_energy[m]=energy[s][m];
-      t_v2[m]=velocity_sq[s][m];
+      t_pressure[m]=pressure(s,m);
+      t_energy[m]=energy(s,m);
+      t_v2[m]=velocity_sq(s,m);
     }
     
     double rhoCh;
@@ -2502,8 +2406,8 @@ void nstar_rot::comp() {
       } else {
 	
 	S_virial1(s,m)=8.0*PI*
-	  (3.0*pressure[s][m]+(energy[s][m]+pressure[s][m])*
-	   velocity_sq[s][m]/(1.0-velocity_sq[s][m]))*
+	  (3.0*pressure(s,m)+(energy(s,m)+pressure(s,m))*
+	   velocity_sq(s,m)/(1.0-velocity_sq(s,m)))*
 	  exp(2.0*alpha(s,m)+0.5*(gamma(s,m)-rho(s,m)))*
 	  pow(r_e,2.0)*r_e*pow(s_gp[s]/pow(1.0-s_gp[s],2.0),2.0);
 	
@@ -2567,10 +2471,10 @@ void nstar_rot::comp() {
 
   for(s=1;s<=SDIV;s++) {
     for(m=1;m<=MDIV;m++) {
-      gamma_guess[s][m]=gamma(s,m);
-      rho_guess[s][m]=rho(s,m);
-      alpha_guess[s][m]=alpha(s,m);
-      omega_guess[s][m]=omega(s,m);
+      gamma_guess(s,m)=gamma(s,m);
+      rho_guess(s,m)=rho(s,m);
+      alpha_guess(s,m)=alpha(s,m);
+      omega_guess(s,m)=omega(s,m);
     }
   }
 
@@ -2826,10 +2730,10 @@ void nstar_rot::spherical_star() {
     for(m=1;m<=MDIV;m++) {
       /* Since the solution is spherically symmetric, 
 	 funct[m]=funct[1]=value of function on equatorial plane */
-      gamma_guess[s][m]=gamma(s,1);
-      rho_guess[s][m]=rho(s,1);
-      alpha_guess[s][m]=(gamma(s,1)-rho(s,1))/2.0;
-      omega_guess[s][m]=0.0; 
+      gamma_guess(s,m)=gamma(s,1);
+      rho_guess(s,m)=rho(s,1);
+      alpha_guess(s,m)=(gamma(s,1)-rho(s,1))/2.0;
+      omega_guess(s,m)=0.0; 
     }
  
     // gamma at \mu=0 
@@ -2840,10 +2744,10 @@ void nstar_rot::spherical_star() {
 
   if (SMAX==1.0) {
     for(m=1;m<=MDIV;m++) {
-      gamma_guess[SDIV][m]=0.0;
-      rho_guess[SDIV][m]=0.0;
-      alpha_guess[SDIV][m]=0.0;
-      omega_guess[SDIV][m]=0.0; 
+      gamma_guess(SDIV,m)=0.0;
+      rho_guess(SDIV,m)=0.0;
+      alpha_guess(SDIV,m)=0.0;
+      omega_guess(SDIV,m)=0.0; 
     }
  
     gamma_mu_0[SDIV]=0.0;
@@ -2939,10 +2843,10 @@ int nstar_rot::iterate(double r_ratio_loc) {
   */
   for(s=1;s<=SDIV;s++) {
     for(m=1;m<=MDIV;m++) {
-      gamma(s,m)=gamma_guess[s][m];
-      rho(s,m)=rho_guess[s][m];
-      alpha(s,m)=alpha_guess[s][m];
-      omega(s,m)=omega_guess[s][m];
+      gamma(s,m)=gamma_guess(s,m);
+      rho(s,m)=rho_guess(s,m);
+      alpha(s,m)=alpha_guess(s,m);
+      omega(s,m)=omega_guess(s,m);
     }
   }
 
@@ -3015,33 +2919,33 @@ int nstar_rot::iterate(double r_ratio_loc) {
 	rsm=rho(s,m);
             
 	if (r_ratio_loc==1.0 || s > (SDIV/2+2) ) {
-	  velocity_sq[s][m]=0.0;
+	  velocity_sq(s,m)=0.0;
 	} else {
-	  velocity_sq[s][m]=pow((Omega_h-omega(s,m))*(sgp/(1.0-sgp))
+	  velocity_sq(s,m)=pow((Omega_h-omega(s,m))*(sgp/(1.0-sgp))
 				*sin_theta[m]*exp(-rsm*pow(r_e,2.0)),2.0);
 	}
 	
-	if (velocity_sq[s][m]>=1.0) {
-	  velocity_sq[s][m]=0.0;
+	if (velocity_sq(s,m)>=1.0) {
+	  velocity_sq(s,m)=0.0;
 	}
 
-	enthalpy[s][m]=enthalpy_min+0.5*
+	enthalpy(s,m)=enthalpy_min+0.5*
 	  (pow(r_e,2.0)*(gamma_pole_h+rho_pole_h
-			 -gamma(s,m)-rsm)-log(1.0-velocity_sq[s][m]));
+			 -gamma(s,m)-rsm)-log(1.0-velocity_sq(s,m)));
 	
-	if ((enthalpy[s][m]<=enthalpy_min) || (sgp>s_e)) {
-	  pressure[s][m]=0.0;
-	  energy[s][m]=0.0; 
+	if ((enthalpy(s,m)<=enthalpy_min) || (sgp>s_e)) {
+	  pressure(s,m)=0.0;
+	  energy(s,m)=0.0; 
 	} else { 
 
 	  if (scaled_polytrope==false) {
-	    pressure[s][m]=p_at_h(enthalpy[s][m]);
-	    energy[s][m]=e_at_p(pressure[s][m]);
+	    pressure(s,m)=p_at_h(enthalpy(s,m));
+	    energy(s,m)=e_at_p(pressure(s,m));
 	  } else {
 	    rho0sm=pow(((Gamma_P-1.0)/Gamma_P)
-		       *(exp(enthalpy[s][m])-1.0),1.0/(Gamma_P-1.0));
-	    pressure[s][m]=pow(rho0sm,Gamma_P);
-	    energy[s][m]=pressure[s][m]/(Gamma_P-1.0)+rho0sm;
+		       *(exp(enthalpy(s,m))-1.0),1.0/(Gamma_P-1.0));
+	    pressure(s,m)=pow(rho0sm,Gamma_P);
+	    energy(s,m)=pressure(s,m)/(Gamma_P-1.0)+rho0sm;
 	  }
 	}  
 
@@ -3069,11 +2973,11 @@ int nstar_rot::iterate(double r_ratio_loc) {
 	rsm=rho(s,m);
 	gsm=gamma(s,m);
 	omsm=omega(s,m);
-	esm=energy[s][m];
-	psm=pressure[s][m];
+	esm=energy(s,m);
+	psm=pressure(s,m);
 	e_gsm=exp(0.5*gsm);
 	e_rsm=exp(-rsm);
-	v2sm=velocity_sq[s][m];
+	v2sm=velocity_sq(s,m);
 	mum=mu[m];            
 	m1=1.0-pow(mum,2.0);
 	sgp=s_gp[s];
@@ -3292,7 +3196,7 @@ int nstar_rot::iterate(double r_ratio_loc) {
     if (r_ratio_loc==1.0) {
       for(s=1;s<=SDIV;s++) {
 	for(m=1;m<=MDIV;m++) {
-	  da_dm[s][m]=0.0;
+	  da_dm(s,m)=0.0;
 	}
       }
     } else {
@@ -3300,7 +3204,7 @@ int nstar_rot::iterate(double r_ratio_loc) {
       for(s=2;s<=s_temp;s++) {
 	for(m=1;m<=MDIV;m++) {
 
-	  da_dm[1][m]=0.0; 
+	  da_dm(1,m)=0.0; 
        
 	  sgp=s_gp[s];
 	  s1=sgp*(1.0-sgp);
@@ -3339,9 +3243,9 @@ int nstar_rot::iterate(double r_ratio_loc) {
 	  double temp7=s1*mum*d_gamma_s*(1.0+s1*d_gamma_s);
 	  double temp8=m1*exp(-2*rho(s,m));
 	  
-	  da_dm[s][m]=-0.5*(d_rho_m+d_gamma_m)-
-	    temp2*(0.5*(temp3-d_gamma_mm-temp4)*(-mum+m1*d_gamma_m)+0.25*temp5-
-		   temp6+temp7+0.25*temp8*temp1);	 
+	  da_dm(s,m)=-0.5*(d_rho_m+d_gamma_m)-
+	    temp2*(0.5*(temp3-d_gamma_mm-temp4)*(-mum+m1*d_gamma_m)+
+		   0.25*temp5-temp6+temp7+0.25*temp8*temp1);	 
 	}
       }
     }
@@ -3349,7 +3253,7 @@ int nstar_rot::iterate(double r_ratio_loc) {
     for(s=1;s<=s_temp;s++) {
       alpha(s,1)=0.0;
       for(m=1;m<=MDIV-1;m++) {
-	alpha(s,m+1)=alpha(s,m)+0.5*DM*(da_dm[s][m+1]+da_dm[s][m]);
+	alpha(s,m+1)=alpha(s,m)+0.5*DM*(da_dm(s,m+1)+da_dm(s,m));
       }
     } 
  
@@ -3382,10 +3286,10 @@ int nstar_rot::iterate(double r_ratio_loc) {
 
   for(s=1;s<=SDIV;s++) {
     for(m=1;m<=MDIV;m++) {
-      gamma_guess[s][m]=gamma(s,m);
-      rho_guess[s][m]=rho(s,m);
-      alpha_guess[s][m]=alpha(s,m);
-      omega_guess[s][m]=omega(s,m);
+      gamma_guess(s,m)=gamma(s,m);
+      rho_guess(s,m)=rho(s,m);
+      alpha_guess(s,m)=alpha(s,m);
+      omega_guess(s,m)=omega(s,m);
     }
   }
  

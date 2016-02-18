@@ -552,8 +552,6 @@ namespace o2scl {
     o2scl::root_bkt_cern<polytrope_solve> rbc;
 
     /// Array search object
-    o2scl::search_vec<double *> sv;
-
     o2scl::search_vec<ubvector> sv_ub;
 
     /** \brief The number of grid points in integration of TOV equations
@@ -628,31 +626,31 @@ namespace o2scl {
     /// Guess for the equatorial radius
     double r_e_guess;
     /** \brief Guess for \f$ \rho \f$ */ 
-    double rho_guess[SDIV+1][MDIV+1];    
+    ubmatrix rho_guess;
     /** \brief Guess for \f$ \gamma \f$ */
-    double gamma_guess[SDIV+1][MDIV+1];   
+    ubmatrix gamma_guess;
     /** \brief Guess for \f$ \alpha \f$ */
-    double omega_guess[SDIV+1][MDIV+1];  
+    ubmatrix omega_guess;
     /** \brief Guess for \f$ \omega \f$ */
-    double alpha_guess[SDIV+1][MDIV+1];  
+    ubmatrix alpha_guess;
     //@}
 
     /// \name EOS quantities
     //@{
     /** \brief Energy density \f$ \epsilon \f$ */
-    double energy[SDIV+1][MDIV+1];       
+    ubmatrix energy;
     /** \brief Pressure */ 
-    double pressure[SDIV+1][MDIV+1];     
+    ubmatrix pressure;
     /** \brief Enthalpy */
-    double enthalpy[SDIV+1][MDIV+1];     
+    ubmatrix enthalpy;
     //@}
 
     /// \name Other quantities defined over the full two-dimensional grid
     //@{
     /** \brief Proper velocity squared */
-    double velocity_sq[SDIV+1][MDIV+1];  
+    ubmatrix velocity_sq;
     /** \brief Derivative of \f$ \alpha \f$ with respect to \f$ \mu \f$ */
-    double da_dm[SDIV+1][MDIV+1];
+    ubmatrix da_dm;
     //@}
 
     /// \name Quantities defined for fixed values of mu
@@ -787,8 +785,6 @@ namespace o2scl {
     int n_nearest;
   
     /// Search in array \c x of length \c n for value \c val
-    int new_search(int n, double *x, double val);
-
     int new_search_ub(int n, ubvector &x, double val);
 
     /** \brief Driver for the interpolation routine. 
@@ -801,10 +797,6 @@ namespace o2scl {
 	\ref comp_omega(), \ref comp_M_J(), \ref comp(), 
 	\ref spherical_star(), \ref iterate().
     */  
-    double interp(double xp[], double yp[], int np, double xb);
-
-    double interp_ub(double xp[], ubvector &yp, int np, double xb);
-
     double interp_ub_ub(ubvector &xp, ubvector &yp, int np, double xb);
 
     /** \brief Driver for the interpolation routine.
@@ -814,8 +806,6 @@ namespace o2scl {
 
 	Used in \ref comp() .
     */
-    double interp_4_k(double xp[], double yp[], int np, double xb, int k);
-
     double interp_4_k_ub(ubvector &xp, ubvector &yp, int np, double xb, int k);
     //@}
 
