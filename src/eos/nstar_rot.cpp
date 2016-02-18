@@ -461,13 +461,13 @@ void nstar_rot::output_table(o2scl::table3d &t) {
 void nstar_rot::make_grid() {                                    
     
   for(int s=1;s<=SDIV;s++) {
-    s_gp[s]=SMAX*(1.0*s-1.0)/(SDIV-1);
+    s_gp[s]=((double)SMAX)*(((double)s)-1.0)/((double)(SDIV-1));
     s_1_s[s]=s_gp[s]*(1.0-s_gp[s]);
     one_s[s]=1.0-s_gp[s];
   }
   
   for(int m=1;m<=MDIV;m++) {
-    mu[m]=(1.0*m-1.0)/(MDIV-1);
+    mu[m]=(((double)m)-1.0)/((double)(MDIV-1));
     one_m2[m]=1.0-mu[m]*mu[m];
     theta[m]=acos(mu[m]);
     sin_theta[m]=sqrt(one_m2[m]);
@@ -496,6 +496,97 @@ int nstar_rot::new_search(int n, double *x, double val) {
   }
   sv.set_vec(n,xnew);
   return sv.find(val)+1;
+}
+
+int nstar_rot::new_search_ub(int n, ubvector &x, double val) {
+  int ret;
+  ubvector xnew(n);
+  for(size_t i=0;i<n;i++) {
+    xnew[i]=x[i+1];
+  }
+  bool inc=false;
+  if (xnew[0]<xnew[n-1]) inc=true;
+  if (inc) {
+    if (val<xnew[0]) {
+      return 0;
+    } else if (val>xnew[n-1]) {
+      return n;
+    }
+  } else {
+    if (val>xnew[0]) {
+      return 0;
+    } else if (val<xnew[n-1]) {
+      return n;
+    }
+  }
+  sv_ub.set_vec(n,xnew);
+  return sv_ub.find(val)+1;
+}
+
+double nstar_rot::interp_ub(double xp[], ubvector &yp, int np,
+				       double xb) {
+  // index of 1st point
+  int k;        
+  // degree of interpolation
+  int m=4;      
+ 
+  // intermediate value
+  double y;     
+
+  n_nearest=new_search(np,xp,xb);
+
+  int max=n_nearest-(m-1)/2;
+  if (max<1) max=1;
+  k=np+1-m;
+  if (max<k) k=max;
+
+  if (xb==xp[k] || xb==xp[k+1] || xb==xp[k+2] || xb==xp[k+3]) {
+    xb+=1.0e-12;
+  }
+  
+  y=(xb-xp[k+1])*(xb-xp[k+2])*(xb-xp[k+3])*yp[k]/
+    ((xp[k]-xp[k+1])*(xp[k]-xp[k+2])*(xp[k]-xp[k+3]))+
+    (xb-xp[k])*(xb-xp[k+2])*(xb-xp[k+3])*yp[k+1]/
+    ((xp[k+1]-xp[k])*(xp[k+1]-xp[k+2])*(xp[k+1]-xp[k+3]))+
+    (xb-xp[k])*(xb-xp[k+1])*(xb-xp[k+3])*yp[k+2]/
+    ((xp[k+2]-xp[k])*(xp[k+2]-xp[k+1])*(xp[k+2]-xp[k+3]))+
+    (xb-xp[k])*(xb-xp[k+1])*(xb-xp[k+2])*yp[k+3]/
+    ((xp[k+3]-xp[k])*(xp[k+3]-xp[k+1])*(xp[k+3]-xp[k+2]));
+  
+  return (y);
+}
+
+double nstar_rot::interp_ub_ub(ubvector &xp, ubvector &yp, int np,
+			       double xb) {
+  // index of 1st point
+  int k;        
+  // degree of interpolation
+  int m=4;      
+ 
+  // intermediate value
+  double y;     
+
+  n_nearest=new_search_ub(np,xp,xb);
+
+  int max=n_nearest-(m-1)/2;
+  if (max<1) max=1;
+  k=np+1-m;
+  if (max<k) k=max;
+
+  if (xb==xp[k] || xb==xp[k+1] || xb==xp[k+2] || xb==xp[k+3]) {
+    xb+=1.0e-12;
+  }
+  
+  y=(xb-xp[k+1])*(xb-xp[k+2])*(xb-xp[k+3])*yp[k]/
+    ((xp[k]-xp[k+1])*(xp[k]-xp[k+2])*(xp[k]-xp[k+3]))+
+    (xb-xp[k])*(xb-xp[k+2])*(xb-xp[k+3])*yp[k+1]/
+    ((xp[k+1]-xp[k])*(xp[k+1]-xp[k+2])*(xp[k+1]-xp[k+3]))+
+    (xb-xp[k])*(xb-xp[k+1])*(xb-xp[k+3])*yp[k+2]/
+    ((xp[k+2]-xp[k])*(xp[k+2]-xp[k+1])*(xp[k+2]-xp[k+3]))+
+    (xb-xp[k])*(xb-xp[k+1])*(xb-xp[k+2])*yp[k+3]/
+    ((xp[k+3]-xp[k])*(xp[k+3]-xp[k+1])*(xp[k+3]-xp[k+2]));
+  
+  return (y);
 }
 
 double nstar_rot::interp(double xp[], double yp[], int np, double xb) {
@@ -552,6 +643,28 @@ double nstar_rot::interp_4_k(double xp[], double yp[], int np, double xb,
   return(y);
 }
 
+double nstar_rot::interp_4_k_ub(ubvector &xp, double yp[], int np, double xb, 
+			      int k) {
+
+  // intermediate value
+  double y;     
+
+  if (xb==xp[k] ||  xb==xp[k+1] || xb==xp[k+2] || xb==xp[k+3]) {
+    xb+=1.0e-14;
+  }
+  
+  y=(xb-xp[k+1])*(xb-xp[k+2])*(xb-xp[k+3])*yp[k]/
+    ((xp[k]-xp[k+1])*(xp[k]-xp[k+2])*(xp[k]-xp[k+3]))
+    +(xb-xp[k])*(xb-xp[k+2])*(xb-xp[k+3])*yp[k+1]/
+    ((xp[k+1]-xp[k])*(xp[k+1]-xp[k+2])*(xp[k+1]-xp[k+3]))
+    +(xb-xp[k])*(xb-xp[k+1])*(xb-xp[k+3])*yp[k+2]/
+    ((xp[k+2]-xp[k])*(xp[k+2]-xp[k+1])*(xp[k+2]-xp[k+3]))
+    +(xb-xp[k])*(xb-xp[k+1])*(xb-xp[k+2])*yp[k+3]/
+    ((xp[k+3]-xp[k])*(xp[k+3]-xp[k+1])*(xp[k+3]-xp[k+2]));
+
+  return(y);
+}
+
 double nstar_rot::int_z(double f[MDIV+1], int m) {
   double x[9];
 
@@ -562,6 +675,22 @@ double nstar_rot::int_z(double f[MDIV+1], int m) {
   x[5]=interp(mu,f,MDIV,mu[m-1]+4.0*DM/7.0);
   x[6]=interp(mu,f,MDIV,mu[m-1]+5.0*DM/7.0);
   x[7]=interp(mu,f,MDIV,mu[m-1]+6.0*DM/7.0);
+  x[8]=f[m];
+  
+  return((DM/17280.0)*(751.0*x[1]+3577.0*x[2]+1323.0*x[3]+2989.0*x[4]+
+		       2989.0*x[5]+1323.0*x[6]+3577.0*x[7]+751.0*x[8]));
+}
+
+double nstar_rot::int_z_ub(ubvector &f, int m) {
+  double x[9];
+
+  x[1]=f[m-1];  
+  x[2]=interp_ub(mu,f,MDIV,mu[m-1]+DM/7.0);
+  x[3]=interp_ub(mu,f,MDIV,mu[m-1]+2.0*DM/7.0);
+  x[4]=interp_ub(mu,f,MDIV,mu[m-1]+3.0*DM/7.0);
+  x[5]=interp_ub(mu,f,MDIV,mu[m-1]+4.0*DM/7.0);
+  x[6]=interp_ub(mu,f,MDIV,mu[m-1]+5.0*DM/7.0);
+  x[7]=interp_ub(mu,f,MDIV,mu[m-1]+6.0*DM/7.0);
   x[8]=f[m];
   
   return((DM/17280.0)*(751.0*x[1]+3577.0*x[2]+1323.0*x[3]+2989.0*x[4]+
@@ -648,6 +777,25 @@ double nstar_rot::s_deriv(double f[SDIV+1], int s) {
 }
 
 double nstar_rot::m_deriv(double f[MDIV+1], int m) {
+
+  double d_temp;
+
+  switch(m) {  
+  case 1 : 
+    d_temp=(f[m+1]-f[m])/DM;
+    break;
+  case MDIV : 
+    d_temp=(f[m]-f[m-1])/DM;
+    break;
+  default : 
+    d_temp=(f[m+1]-f[m-1])/(2.0*DM);
+    break; 
+  }
+ 
+  return d_temp;
+}
+
+double nstar_rot::m_deriv_ub(ubvector &f, int m) {
 
   double d_temp;
 
@@ -990,9 +1138,9 @@ void nstar_rot::comp_omega() {
   int s;
   int m;
 
-  double d_o_e[SDIV+1];
-  double d_g_e[SDIV+1];
-  double d_r_e[SDIV+1];
+  ubvector d_o_e(SDIV+1);
+  ubvector d_g_e(SDIV+1);
+  ubvector d_r_e(SDIV+1);
   double doe;
   double dge; 
   double dre;
@@ -1031,9 +1179,9 @@ void nstar_rot::comp_omega() {
     d_r_e[s]=deriv_s(rho,s,1);
   }
 
-  doe=interp(s_gp,d_o_e,SDIV,s_e);
-  dge=interp(s_gp,d_g_e,SDIV,s_e);
-  dre=interp(s_gp,d_r_e,SDIV,s_e);
+  doe=interp_ub(s_gp,d_o_e,SDIV,s_e);
+  dge=interp_ub(s_gp,d_g_e,SDIV,s_e);
+  dre=interp_ub(s_gp,d_r_e,SDIV,s_e);
 
   vek=(doe/(8.0+dge-dre))*r_e*exp(-rho_equator)+
     sqrt(((dge+dre)/(8.0+dge-dre))+pow((doe/(8.0+dge-dre))*
@@ -1063,20 +1211,20 @@ void nstar_rot::comp_M_J() {
   int s_temp;
 
   // int. quantity for M_0
-  double D_m_0[SDIV+1];             
+  ubvector D_m_0(SDIV+1);             
   // int. quantity for M
-  double D_m[SDIV+1];               
+  ubvector D_m(SDIV+1);               
   // int. quantity for J
-  double D_J[SDIV+1];               
+  ubvector D_J(SDIV+1);               
   // rest mass density
   ubmatrix rho_0(SDIV+1,MDIV+1);
-  double rho_mu_0[SDIV+1];
-  double omega_mu_0[SDIV+1];
+  ubvector rho_mu_0(SDIV+1);
+  ubvector omega_mu_0(SDIV+1);
   double rho_equator;
   double omega_equator;                      
-  double d_o_e[SDIV+1];
-  double d_g_e[SDIV+1];
-  double d_r_e[SDIV+1];
+  ubvector d_o_e(SDIV+1);
+  ubvector d_g_e(SDIV+1);
+  ubvector d_r_e(SDIV+1);
   double doe;
   double dge;
   double dre;
@@ -1103,12 +1251,12 @@ void nstar_rot::comp_M_J() {
   }
 
   n_nearest=SDIV/2;
-  rho_equator=interp(s_gp,rho_mu_0,SDIV,s_e);   
+  rho_equator=interp_ub(s_gp,rho_mu_0,SDIV,s_e);   
 
   if (r_ratio==1.0) {
     omega_equator=0.0; 
   } else {
-    omega_equator=interp(s_gp,omega_mu_0,SDIV,s_e);
+    omega_equator=interp_ub(s_gp,omega_mu_0,SDIV,s_e);
   }
  
   for(s=1;s<=SDIV;s++) { 
@@ -1117,9 +1265,9 @@ void nstar_rot::comp_M_J() {
     d_r_e[s]=deriv_s(rho,s,1);
   }
 
-  doe=interp(s_gp,d_o_e,SDIV,s_e);
-  dge=interp(s_gp,d_g_e,SDIV,s_e);
-  dre=interp(s_gp,d_r_e,SDIV,s_e);
+  doe=interp_ub(s_gp,d_o_e,SDIV,s_e);
+  dge=interp_ub(s_gp,d_g_e,SDIV,s_e);
+  dre=interp_ub(s_gp,d_r_e,SDIV,s_e);
   
   vek=(doe/(8.0+dge-dre))*r_e*exp(-rho_equator)+
     sqrt(((dge+dre)/(8.0+dge-dre))+pow((doe/(8.0+dge-dre))*
@@ -1365,13 +1513,13 @@ void nstar_rot::comp() {
 
 
   // int. quantity for M
-  double D_m[SDIV+1];               
+  ubvector D_m(SDIV+1);               
   // int. quantity for M_0
-  double D_m_0[SDIV+1];             
+  ubvector D_m_0(SDIV+1);             
   // int. quantity for M_p
-  double D_m_p[SDIV+1];             
+  ubvector D_m_p(SDIV+1);             
   // int. quantity for J
-  double D_J[SDIV+1];               
+  ubvector D_J(SDIV+1);               
 
   int s_temp;
 
@@ -1525,10 +1673,10 @@ void nstar_rot::comp() {
   // ---------------------------------------------------------------
   // Kepler angular velocity
 
-  double d_o_e[SDIV+1];
-  double d_g_e[SDIV+1];
-  double d_r_e[SDIV+1];
-  double d_v_e[SDIV+1];
+  ubvector d_o_e(SDIV+1);
+  ubvector d_g_e(SDIV+1);
+  ubvector d_r_e(SDIV+1);
+  ubvector d_v_e(SDIV+1);
 
   for(s=1;s<=SDIV;s++) { 
     d_o_e[s]=deriv_s(omega,s,1);
@@ -1537,10 +1685,10 @@ void nstar_rot::comp() {
     d_v_e[s]=deriv_s_ub(velocity,s,1);
   }
 
-  double doe=interp(s_gp,d_o_e,SDIV,s_e);
-  double dge=interp(s_gp,d_g_e,SDIV,s_e);
-  double dre=interp(s_gp,d_r_e,SDIV,s_e);
-  double dve=interp(s_gp,d_v_e,SDIV,s_e);
+  double doe=interp_ub(s_gp,d_o_e,SDIV,s_e);
+  double dge=interp_ub(s_gp,d_g_e,SDIV,s_e);
+  double dre=interp_ub(s_gp,d_r_e,SDIV,s_e);
+  double dve=interp_ub(s_gp,d_v_e,SDIV,s_e);
 
   double vek=(doe/(8.0+dge-dre))*r_e*exp(-rho_equator)+
     sqrt(((dge+dre)/(8.0+dge-dre))+pow((doe/(8.0+dge-dre))*
@@ -1555,15 +1703,15 @@ void nstar_rot::comp() {
   // ---------------------------------------------------------------
   // Embedding
     
-  double gamma_m[SDIV+1];
-  double rho_m[SDIV+1];
-  double alpha_m[SDIV+1];
-  double enthalpy_m[SDIV+1];
-  double s_surface[MDIV+1];
-  double r_surface[MDIV+1];
-  double gamma_surface[MDIV+1];
-  double rho_surface[MDIV+1];
-  double alpha_surface[MDIV+1]; 
+  ubvector gamma_m(SDIV+1);
+  ubvector rho_m(SDIV+1);
+  ubvector alpha_m(SDIV+1);
+  ubvector enthalpy_m(SDIV+1);
+  ubvector s_surface(MDIV+1);
+  ubvector r_surface(MDIV+1);
+  ubvector gamma_surface(MDIV+1);
+  ubvector rho_surface(MDIV+1);
+  ubvector alpha_surface(MDIV+1); 
   int s_surf_1=0;
 
   for(m=1;m<=MDIV;m++) { 
@@ -1587,7 +1735,7 @@ void nstar_rot::comp() {
     */
         
     if (enthalpy_m[s_surf_1+2]<0.0) {
-      s_surface[m]=interp_4_k(enthalpy_m,s_gp,SDIV,0.0,s_surf_1-1);
+      s_surface[m]=interp_4_k_ub(enthalpy_m,s_gp,SDIV,0.0,s_surf_1-1);
     } else {     
       if (enthalpy_m[s_surf_1+1]<0.0) {
 	s_surface[m]=s_gp[s_surf_1]-DS*enthalpy_m[s_surf_1]/
@@ -1605,21 +1753,21 @@ void nstar_rot::comp() {
  
     r_surface[m]=r_e*(s_surface[m]/(1.0-s_surface[m]));
 
-    gamma_surface[m]=interp(s_gp,gamma_m,SDIV,s_surface[m]);
-    rho_surface[m]=interp(s_gp,rho_m,SDIV,s_surface[m]);
-    alpha_surface[m]=interp(s_gp,alpha_m,SDIV,s_surface[m]);
+    gamma_surface[m]=interp_ub(s_gp,gamma_m,SDIV,s_surface[m]);
+    rho_surface[m]=interp_ub(s_gp,rho_m,SDIV,s_surface[m]);
+    alpha_surface[m]=interp_ub(s_gp,alpha_m,SDIV,s_surface[m]);
   }
 
   double d_r_s_dm;
   double d_gamma_s_dm;
   double d_rho_s_dm;
-  double f_mu[MDIV+1];
+  ubvector f_mu(MDIV+1);
   double dpi_dm;
 
   for(m=1;m<=MDIV;m++) {
-    d_gamma_s_dm=m_deriv(gamma_surface,m);
-    d_rho_s_dm=m_deriv(rho_surface,m);
-    d_r_s_dm=m_deriv(r_surface,m);
+    d_gamma_s_dm=m_deriv_ub(gamma_surface,m);
+    d_rho_s_dm=m_deriv_ub(rho_surface,m);
+    d_r_s_dm=m_deriv_ub(r_surface,m);
 
     if (m==MDIV) {
       f_mu[m]=0.0;
@@ -1635,14 +1783,14 @@ void nstar_rot::comp() {
     }
   }
 
-  double pi_bar[MDIV+1];
-  double z_emb[MDIV+1];
+  ubvector pi_bar(MDIV+1);
+  ubvector z_emb(MDIV+1);
 
   pi_bar[1]=R_e;
   // integrate f_mu
   z_emb[1]=0.0;                         
   for(m=2;m<=MDIV;m++) {                
-    z_emb[m]=z_emb[m-1]+sqrt(KAPPA)*int_z(f_mu,m);    
+    z_emb[m]=z_emb[m-1]+sqrt(KAPPA)*int_z_ub(f_mu,m);    
     pi_bar[m]=sqrt(KAPPA)*exp((gamma_surface[m]-rho_surface[m])/2.0)
       *r_surface[m]*sin_theta[m];
     if (pi_bar[m]>pi_bar[m-1] && m>=2) {
@@ -1700,8 +1848,8 @@ void nstar_rot::comp() {
   v_plus[SDIV]=0.0;
   v_minus[SDIV]=0.0;
 
-  double B_st_p[SDIV+1];
-  double B_st_m[SDIV+1];
+  ubvector B_st_p(SDIV+1);
+  ubvector B_st_m(SDIV+1);
   double d_v_plus_s;
   double d_v_minus_s;
 
@@ -1726,8 +1874,8 @@ void nstar_rot::comp() {
 
   double B_st_p_surface;
   double B_st_m_surface;
-  double B_st_p_out[SDIV-(SDIV/2)+2+1];
-  double B_st_m_out[SDIV-(SDIV/2)+2+1];
+  ubvector B_st_p_out(SDIV-(SDIV/2)+2+1);
+  ubvector B_st_m_out(SDIV-(SDIV/2)+2+1);
   double s_plus;
   double s_minus;
   double r_plus=0.0;
@@ -1736,10 +1884,10 @@ void nstar_rot::comp() {
   double gamma_minus;
   double rho_minus;
   double omega_plus;
-  double s_gp_out[SDIV-(SDIV/2)+2+1];
+  ubvector s_gp_out(SDIV-(SDIV/2)+2+1);
 
-  B_st_p_surface=interp(s_gp,B_st_p,SDIV,s_surface[1]);
-  B_st_m_surface=interp(s_gp,B_st_m,SDIV,s_surface[1]);
+  B_st_p_surface=interp_ub(s_gp,B_st_p,SDIV,s_surface[1]);
+  B_st_m_surface=interp_ub(s_gp,B_st_m,SDIV,s_surface[1]);
 
   if (B_st_p_surface>0.0) {
     h_plus=0.0;
@@ -1752,7 +1900,7 @@ void nstar_rot::comp() {
     }
 
     n_nearest=SDIV/4;
-    s_plus=interp(B_st_p_out, s_gp_out, SDIV-(SDIV/2)+2, 0.0);
+    s_plus=interp_ub_ub(B_st_p_out,s_gp_out,SDIV-(SDIV/2)+2,0.0);
     r_plus=r_e*s_plus/(1.0-s_plus);
     gamma_plus=interp(s_gp,gamma_mu_0,SDIV,s_plus);
     rho_plus=interp(s_gp,rho_mu_0,SDIV,s_plus);
@@ -1781,7 +1929,7 @@ void nstar_rot::comp() {
     }
     
     n_nearest=SDIV/4;
-    s_minus=interp(B_st_m_out,s_gp_out,SDIV-(SDIV/2)+2,0.0);
+    s_minus=interp_ub_ub(B_st_m_out,s_gp_out,SDIV-(SDIV/2)+2,0.0);
     gamma_minus=interp(s_gp,gamma_mu_0,SDIV,s_minus);
     rho_minus=interp(s_gp,rho_mu_0,SDIV,s_minus);
     vel_minus=interp(s_gp,v_plus,SDIV,s_minus); 
@@ -1974,8 +2122,8 @@ void nstar_rot::comp() {
 
   }
 
-  double D_virial1[SDIV+1];
-  double D_virial2[SDIV+1];
+  ubvector D_virial1(SDIV+1);
+  ubvector D_virial2(SDIV+1);
 
   for(s=1;s<=SDIV;s++) {
     for(m=1;m<=MDIV-4;m+=2) {
@@ -2016,22 +2164,22 @@ void nstar_rot::comp() {
 
   // GRV2 GAUSS-CHEBYSHEV
 
-  double t_rho[MDIV+1];
-  double t_alpha[MDIV+1];
-  double t_rho_s[MDIV+1];
-  double t_gamma_s[MDIV+1];
-  double t_gamma_m[MDIV+1];
-  double t_rho_m[MDIV+1];
-  double t_omega_s[MDIV+1];
-  double t_omega_m[MDIV+1];
-  double muCh[MDIV+1];
-  double t_pressure[MDIV+1];
-  double t_energy[MDIV+1];
+  ubvector t_rho(MDIV+1);
+  ubvector t_alpha(MDIV+1);
+  ubvector t_rho_s(MDIV+1);
+  ubvector t_gamma_s(MDIV+1);
+  ubvector t_gamma_m(MDIV+1);
+  ubvector t_rho_m(MDIV+1);
+  ubvector t_omega_s(MDIV+1);
+  ubvector t_omega_m(MDIV+1);
+  ubvector muCh(MDIV+1);
+  ubvector t_pressure(MDIV+1);
+  ubvector t_energy(MDIV+1);
   ubmatrix Sv1Ch(SDIV+1,MDIV+1);
   ubmatrix Sv2Ch(SDIV+1,MDIV+1);
-  double Dv1Ch[SDIV+1];
-  double Dv2Ch[SDIV+1];
-  double t_v2[MDIV+1];
+  ubvector Dv1Ch(SDIV+1);
+  ubvector Dv2Ch(SDIV+1);
+  ubvector t_v2(MDIV+1);
 
   virial1=0.0;
   virial2=0.0;
@@ -2066,17 +2214,17 @@ void nstar_rot::comp() {
     double v2Ch;
     
     for(m=1;m<=MDIV;m++) {
-      rhoCh=interp(mu,t_rho,MDIV,muCh[m]);
-      alphaCh=interp(mu,t_alpha,MDIV,muCh[m]);
-      rho_sCh=interp(mu,t_rho_s,MDIV,muCh[m]);
-      gamma_sCh=interp(mu,t_gamma_s,MDIV,muCh[m]);
-      gamma_mCh=interp(mu,t_gamma_m,MDIV,muCh[m]);
-      rho_mCh=interp(mu,t_rho_m,MDIV,muCh[m]);
-      omega_sCh=interp(mu,t_omega_s,MDIV,muCh[m]);
-      omega_mCh=interp(mu,t_omega_m,MDIV,muCh[m]);
-      pressureCh=interp(mu,t_pressure,MDIV,muCh[m]);
-      energyCh=interp(mu,t_energy,MDIV,muCh[m]);
-      v2Ch=interp(mu,t_v2,MDIV,muCh[m]);
+      rhoCh=interp_ub(mu,t_rho,MDIV,muCh[m]);
+      alphaCh=interp_ub(mu,t_alpha,MDIV,muCh[m]);
+      rho_sCh=interp_ub(mu,t_rho_s,MDIV,muCh[m]);
+      gamma_sCh=interp_ub(mu,t_gamma_s,MDIV,muCh[m]);
+      gamma_mCh=interp_ub(mu,t_gamma_m,MDIV,muCh[m]);
+      rho_mCh=interp_ub(mu,t_rho_m,MDIV,muCh[m]);
+      omega_sCh=interp_ub(mu,t_omega_s,MDIV,muCh[m]);
+      omega_mCh=interp_ub(mu,t_omega_m,MDIV,muCh[m]);
+      pressureCh=interp_ub(mu,t_pressure,MDIV,muCh[m]);
+      energyCh=interp_ub(mu,t_energy,MDIV,muCh[m]);
+      v2Ch=interp_ub(mu,t_v2,MDIV,muCh[m]);
       s1=s_1_s[s];
       m1=1.0-pow(muCh[m],2.0); 
 
@@ -2084,7 +2232,7 @@ void nstar_rot::comp() {
       if (s==1) temp1=0.0;
       else temp1=1.0/s1;
       
-      Sv1Ch(s,m)= 8*PI*pow(r_e,2.0)*(s_gp[s]/pow(1.0-s_gp[s],3.0))*
+      Sv1Ch(s,m)=8*PI*pow(r_e,2.0)*(s_gp[s]/pow(1.0-s_gp[s],3.0))*
 	(pressureCh+(energyCh+pressureCh)*v2Ch/(1.0-v2Ch))*
 	exp(2.0*alphaCh);
       

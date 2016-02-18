@@ -103,7 +103,7 @@ namespace o2scl {
 
     /// Array search object
     o2scl::search_vec<double *> sv;
-    
+
     /// Search in array \c x of length \c n for value \c val
     int new_search(int n, double *x, double val);
     
@@ -136,13 +136,16 @@ namespace o2scl {
      */
     int n_nearest;
     
+    typedef boost::numeric::ublas::vector<double> ubvector;
+    typedef boost::numeric::ublas::matrix<double> ubmatrix;
+
     /** \brief Driver for the interpolation routine. 
 	
 	First we find the tab. point nearest to xb, then we
 	interpolate using four points around xb.
-    */  
+    */
     double interp(double xp[], double yp[], int np, double xb);
-    
+
   public:
     
     eos_nstar_rot_interp();
@@ -551,6 +554,8 @@ namespace o2scl {
     /// Array search object
     o2scl::search_vec<double *> sv;
 
+    o2scl::search_vec<ubvector> sv_ub;
+
     /** \brief The number of grid points in integration of TOV equations
 	for spherical stars
     */ 
@@ -783,7 +788,9 @@ namespace o2scl {
   
     /// Search in array \c x of length \c n for value \c val
     int new_search(int n, double *x, double val);
-    
+
+    int new_search_ub(int n, ubvector &x, double val);
+
     /** \brief Driver for the interpolation routine. 
 	
 	First we find the tab. point nearest to xb, then we
@@ -796,6 +803,10 @@ namespace o2scl {
     */  
     double interp(double xp[], double yp[], int np, double xb);
 
+    double interp_ub(double xp[], ubvector &yp, int np, double xb);
+
+    double interp_ub_ub(ubvector &xp, ubvector &yp, int np, double xb);
+
     /** \brief Driver for the interpolation routine.
 
 	Four point interpolation at a 
@@ -804,6 +815,8 @@ namespace o2scl {
 	Used in \ref comp() .
     */
     double interp_4_k(double xp[], double yp[], int np, double xb, int k);
+
+    double interp_4_k_ub(ubvector &ub, double yp[], int np, double xb, int k);
     //@}
 
     /** \brief Integrate f[mu] from m-1 to m. 
@@ -813,6 +826,8 @@ namespace o2scl {
 	Used in \ref comp() .
     */
     double int_z(double f[MDIV+1], int m);
+
+    double int_z_ub(ubvector &f, int m);
 
     /// \name EOS functions
     //@{
@@ -857,6 +872,8 @@ namespace o2scl {
     /** \brief Returns the derivative w.r.t. mu of an array f[MDIV+1]. 
      */ 
     double m_deriv(double f[MDIV+1], int m);
+
+    double m_deriv_ub(ubvector &f, int m);
 
     /** \brief Returns the derivative w.r.t. s  
      */
