@@ -400,6 +400,27 @@ nstar_rot::nstar_rot() {
   omega.resize(SDIV+1,MDIV+1);        
   alpha.resize(SDIV+1,MDIV+1);        
   
+  s_gp.resize(SDIV+1);                 
+  s_1_s.resize(SDIV+1);
+  one_s.resize(SDIV+1);
+  mu.resize(MDIV+1);                   
+  one_m2.resize(MDIV+1);
+  theta.resize(MDIV+1);
+  sin_theta.resize(MDIV+1);
+
+  r_gp.resize(RDIV+1);
+  r_is_gp.resize(RDIV+1);
+  lambda_gp.resize(RDIV+1);
+  nu_gp.resize(RDIV+1);
+  m_gp.resize(RDIV+1);
+  e_d_gp.resize(RDIV+1);   
+
+  gamma_mu_1.resize(SDIV+1);            
+  gamma_mu_0.resize(SDIV+1);            
+  rho_mu_1.resize(SDIV+1);             
+  rho_mu_0.resize(SDIV+1);             
+  omega_mu_0.resize(SDIV+1);           
+  
   C=o2scl_cgs::speed_of_light;
   G=o2scl_cgs::gravitational_constant;
   MSUN=o2scl_cgs::solar_mass;
@@ -665,7 +686,7 @@ double nstar_rot::interp_4_k(double xp[], double yp[], int np, double xb,
   return(y);
 }
 
-double nstar_rot::interp_4_k_ub(ubvector &xp, double yp[], int np, double xb, 
+double nstar_rot::interp_4_k_ub(ubvector &xp, ubvector &yp, int np, double xb, 
 			      int k) {
 
   // intermediate value
@@ -687,6 +708,7 @@ double nstar_rot::interp_4_k_ub(ubvector &xp, double yp[], int np, double xb,
   return(y);
 }
 
+/*
 double nstar_rot::int_z(double f[MDIV+1], int m) {
   double x[9];
 
@@ -702,17 +724,18 @@ double nstar_rot::int_z(double f[MDIV+1], int m) {
   return((DM/17280.0)*(751.0*x[1]+3577.0*x[2]+1323.0*x[3]+2989.0*x[4]+
 		       2989.0*x[5]+1323.0*x[6]+3577.0*x[7]+751.0*x[8]));
 }
+*/
 
 double nstar_rot::int_z_ub(ubvector &f, int m) {
   double x[9];
 
   x[1]=f[m-1];  
-  x[2]=interp_ub(mu,f,MDIV,mu[m-1]+DM/7.0);
-  x[3]=interp_ub(mu,f,MDIV,mu[m-1]+2.0*DM/7.0);
-  x[4]=interp_ub(mu,f,MDIV,mu[m-1]+3.0*DM/7.0);
-  x[5]=interp_ub(mu,f,MDIV,mu[m-1]+4.0*DM/7.0);
-  x[6]=interp_ub(mu,f,MDIV,mu[m-1]+5.0*DM/7.0);
-  x[7]=interp_ub(mu,f,MDIV,mu[m-1]+6.0*DM/7.0);
+  x[2]=interp_ub_ub(mu,f,MDIV,mu[m-1]+DM/7.0);
+  x[3]=interp_ub_ub(mu,f,MDIV,mu[m-1]+2.0*DM/7.0);
+  x[4]=interp_ub_ub(mu,f,MDIV,mu[m-1]+3.0*DM/7.0);
+  x[5]=interp_ub_ub(mu,f,MDIV,mu[m-1]+4.0*DM/7.0);
+  x[6]=interp_ub_ub(mu,f,MDIV,mu[m-1]+5.0*DM/7.0);
+  x[7]=interp_ub_ub(mu,f,MDIV,mu[m-1]+6.0*DM/7.0);
   x[8]=f[m];
   
   return((DM/17280.0)*(751.0*x[1]+3577.0*x[2]+1323.0*x[3]+2989.0*x[4]+
@@ -1258,12 +1281,12 @@ void nstar_rot::comp_omega() {
   }
 
   n_nearest=SDIV/2;
-  rho_equator=interp(s_gp,rho_mu_0,SDIV,s_e);   
+  rho_equator=interp_ub_ub(s_gp,rho_mu_0,SDIV,s_e);   
 
   if (r_ratio==1.0) {
     omega_equator=0.0;
   } else {
-    omega_equator=interp(s_gp,omega_mu_0,SDIV,s_e);
+    omega_equator=interp_ub_ub(s_gp,omega_mu_0,SDIV,s_e);
   }
 
   for(s=1;s<=SDIV;s++) { 
@@ -1272,9 +1295,9 @@ void nstar_rot::comp_omega() {
     d_r_e[s]=deriv_s_ub(rho,s,1);
   }
 
-  doe=interp_ub(s_gp,d_o_e,SDIV,s_e);
-  dge=interp_ub(s_gp,d_g_e,SDIV,s_e);
-  dre=interp_ub(s_gp,d_r_e,SDIV,s_e);
+  doe=interp_ub_ub(s_gp,d_o_e,SDIV,s_e);
+  dge=interp_ub_ub(s_gp,d_g_e,SDIV,s_e);
+  dre=interp_ub_ub(s_gp,d_r_e,SDIV,s_e);
 
   vek=(doe/(8.0+dge-dre))*r_e*exp(-rho_equator)+
     sqrt(((dge+dre)/(8.0+dge-dre))+pow((doe/(8.0+dge-dre))*
@@ -1344,12 +1367,12 @@ void nstar_rot::comp_M_J() {
   }
 
   n_nearest=SDIV/2;
-  rho_equator=interp_ub(s_gp,rho_mu_0,SDIV,s_e);   
+  rho_equator=interp_ub_ub(s_gp,rho_mu_0,SDIV,s_e);   
 
   if (r_ratio==1.0) {
     omega_equator=0.0; 
   } else {
-    omega_equator=interp_ub(s_gp,omega_mu_0,SDIV,s_e);
+    omega_equator=interp_ub_ub(s_gp,omega_mu_0,SDIV,s_e);
   }
  
   for(s=1;s<=SDIV;s++) { 
@@ -1358,9 +1381,9 @@ void nstar_rot::comp_M_J() {
     d_r_e[s]=deriv_s_ub(rho,s,1);
   }
 
-  doe=interp_ub(s_gp,d_o_e,SDIV,s_e);
-  dge=interp_ub(s_gp,d_g_e,SDIV,s_e);
-  dre=interp_ub(s_gp,d_r_e,SDIV,s_e);
+  doe=interp_ub_ub(s_gp,d_o_e,SDIV,s_e);
+  dge=interp_ub_ub(s_gp,d_g_e,SDIV,s_e);
+  dre=interp_ub_ub(s_gp,d_r_e,SDIV,s_e);
   
   vek=(doe/(8.0+dge-dre))*r_e*exp(-rho_equator)+
     sqrt(((dge+dre)/(8.0+dge-dre))+pow((doe/(8.0+dge-dre))*
@@ -1545,13 +1568,13 @@ void nstar_rot::comp() {
   n_nearest=SDIV/2;
 
   // gamma at pole
-  double gamma_pole=interp(s_gp,gamma_mu_1,SDIV,s_p);    
+  double gamma_pole=interp_ub_ub(s_gp,gamma_mu_1,SDIV,s_p);    
   // gamma at equator
-  double gamma_equator=interp(s_gp,gamma_mu_0,SDIV,s_e); 
+  double gamma_equator=interp_ub_ub(s_gp,gamma_mu_0,SDIV,s_e); 
   // rho at pole
-  double rho_pole=interp(s_gp,rho_mu_1,SDIV,s_p);      
+  double rho_pole=interp_ub_ub(s_gp,rho_mu_1,SDIV,s_p);      
   // rho at equator
-  double rho_equator=interp(s_gp,rho_mu_0,SDIV,s_e);   
+  double rho_equator=interp_ub_ub(s_gp,rho_mu_0,SDIV,s_e);   
 
   // omega at equator
   double omega_equator;             
@@ -1560,7 +1583,7 @@ void nstar_rot::comp() {
     velocity_equator=0.0;
     omega_equator=0.0;
   } else {
-    omega_equator=interp(s_gp,omega_mu_0,SDIV,s_e);
+    omega_equator=interp_ub_ub(s_gp,omega_mu_0,SDIV,s_e);
     velocity_equator=sqrt(1.0-exp(gamma_pole+rho_pole-gamma_equator
 				  -rho_equator));
   }
@@ -1778,10 +1801,10 @@ void nstar_rot::comp() {
     d_v_e[s]=deriv_s_ub(velocity,s,1);
   }
 
-  double doe=interp_ub(s_gp,d_o_e,SDIV,s_e);
-  double dge=interp_ub(s_gp,d_g_e,SDIV,s_e);
-  double dre=interp_ub(s_gp,d_r_e,SDIV,s_e);
-  double dve=interp_ub(s_gp,d_v_e,SDIV,s_e);
+  double doe=interp_ub_ub(s_gp,d_o_e,SDIV,s_e);
+  double dge=interp_ub_ub(s_gp,d_g_e,SDIV,s_e);
+  double dre=interp_ub_ub(s_gp,d_r_e,SDIV,s_e);
+  double dve=interp_ub_ub(s_gp,d_v_e,SDIV,s_e);
 
   double vek=(doe/(8.0+dge-dre))*r_e*exp(-rho_equator)+
     sqrt(((dge+dre)/(8.0+dge-dre))+pow((doe/(8.0+dge-dre))*
@@ -1846,9 +1869,9 @@ void nstar_rot::comp() {
  
     r_surface[m]=r_e*(s_surface[m]/(1.0-s_surface[m]));
 
-    gamma_surface[m]=interp_ub(s_gp,gamma_m,SDIV,s_surface[m]);
-    rho_surface[m]=interp_ub(s_gp,rho_m,SDIV,s_surface[m]);
-    alpha_surface[m]=interp_ub(s_gp,alpha_m,SDIV,s_surface[m]);
+    gamma_surface[m]=interp_ub_ub(s_gp,gamma_m,SDIV,s_surface[m]);
+    rho_surface[m]=interp_ub_ub(s_gp,rho_m,SDIV,s_surface[m]);
+    alpha_surface[m]=interp_ub_ub(s_gp,alpha_m,SDIV,s_surface[m]);
   }
 
   double d_r_s_dm;
@@ -1979,8 +2002,8 @@ void nstar_rot::comp() {
   double omega_plus;
   ubvector s_gp_out(SDIV-(SDIV/2)+2+1);
 
-  B_st_p_surface=interp_ub(s_gp,B_st_p,SDIV,s_surface[1]);
-  B_st_m_surface=interp_ub(s_gp,B_st_m,SDIV,s_surface[1]);
+  B_st_p_surface=interp_ub_ub(s_gp,B_st_p,SDIV,s_surface[1]);
+  B_st_m_surface=interp_ub_ub(s_gp,B_st_m,SDIV,s_surface[1]);
 
   if (B_st_p_surface>0.0) {
     h_plus=0.0;
@@ -1995,10 +2018,10 @@ void nstar_rot::comp() {
     n_nearest=SDIV/4;
     s_plus=interp_ub_ub(B_st_p_out,s_gp_out,SDIV-(SDIV/2)+2,0.0);
     r_plus=r_e*s_plus/(1.0-s_plus);
-    gamma_plus=interp(s_gp,gamma_mu_0,SDIV,s_plus);
-    rho_plus=interp(s_gp,rho_mu_0,SDIV,s_plus);
-    omega_plus=interp(s_gp,omega_mu_0,SDIV,s_plus);
-    vel_plus=interp_ub(s_gp,v_plus,SDIV,s_plus); 
+    gamma_plus=interp_ub_ub(s_gp,gamma_mu_0,SDIV,s_plus);
+    rho_plus=interp_ub_ub(s_gp,rho_mu_0,SDIV,s_plus);
+    omega_plus=interp_ub_ub(s_gp,omega_mu_0,SDIV,s_plus);
+    vel_plus=interp_ub_ub(s_gp,v_plus,SDIV,s_plus); 
  
     if (scaled_polytrope==false) {
       h_plus=sqrt(KAPPA)*(r_plus*exp((gamma_plus-rho_plus)/2.0)
@@ -2023,9 +2046,9 @@ void nstar_rot::comp() {
     
     n_nearest=SDIV/4;
     s_minus=interp_ub_ub(B_st_m_out,s_gp_out,SDIV-(SDIV/2)+2,0.0);
-    gamma_minus=interp(s_gp,gamma_mu_0,SDIV,s_minus);
-    rho_minus=interp(s_gp,rho_mu_0,SDIV,s_minus);
-    vel_minus=interp_ub(s_gp,v_plus,SDIV,s_minus); 
+    gamma_minus=interp_ub_ub(s_gp,gamma_mu_0,SDIV,s_minus);
+    rho_minus=interp_ub_ub(s_gp,rho_mu_0,SDIV,s_minus);
+    vel_minus=interp_ub_ub(s_gp,v_plus,SDIV,s_minus); 
  
     if (scaled_polytrope==false) {
       h_minus=sqrt(KAPPA)*r_e*((s_minus/(1.0-s_minus))*
@@ -2305,17 +2328,17 @@ void nstar_rot::comp() {
     double v2Ch;
     
     for(m=1;m<=MDIV;m++) {
-      rhoCh=interp_ub(mu,t_rho,MDIV,muCh[m]);
-      alphaCh=interp_ub(mu,t_alpha,MDIV,muCh[m]);
-      rho_sCh=interp_ub(mu,t_rho_s,MDIV,muCh[m]);
-      gamma_sCh=interp_ub(mu,t_gamma_s,MDIV,muCh[m]);
-      gamma_mCh=interp_ub(mu,t_gamma_m,MDIV,muCh[m]);
-      rho_mCh=interp_ub(mu,t_rho_m,MDIV,muCh[m]);
-      omega_sCh=interp_ub(mu,t_omega_s,MDIV,muCh[m]);
-      omega_mCh=interp_ub(mu,t_omega_m,MDIV,muCh[m]);
-      pressureCh=interp_ub(mu,t_pressure,MDIV,muCh[m]);
-      energyCh=interp_ub(mu,t_energy,MDIV,muCh[m]);
-      v2Ch=interp_ub(mu,t_v2,MDIV,muCh[m]);
+      rhoCh=interp_ub_ub(mu,t_rho,MDIV,muCh[m]);
+      alphaCh=interp_ub_ub(mu,t_alpha,MDIV,muCh[m]);
+      rho_sCh=interp_ub_ub(mu,t_rho_s,MDIV,muCh[m]);
+      gamma_sCh=interp_ub_ub(mu,t_gamma_s,MDIV,muCh[m]);
+      gamma_mCh=interp_ub_ub(mu,t_gamma_m,MDIV,muCh[m]);
+      rho_mCh=interp_ub_ub(mu,t_rho_m,MDIV,muCh[m]);
+      omega_sCh=interp_ub_ub(mu,t_omega_s,MDIV,muCh[m]);
+      omega_mCh=interp_ub_ub(mu,t_omega_m,MDIV,muCh[m]);
+      pressureCh=interp_ub_ub(mu,t_pressure,MDIV,muCh[m]);
+      energyCh=interp_ub_ub(mu,t_energy,MDIV,muCh[m]);
+      v2Ch=interp_ub_ub(mu,t_v2,MDIV,muCh[m]);
       s1=s_1_s[s];
       m1=1.0-pow(muCh[m],2.0); 
 
@@ -2789,8 +2812,8 @@ void nstar_rot::spherical_star() {
     r_is_s=r_is_final*(s_gp[s]/(1.0-s_gp[s]));
     // Convert the spherical solution to the 's' coordinte
     if (r_is_s<r_is_final) {
-      lambda_s=interp(r_is_gp,lambda_gp,RDIV,r_is_s);
-      nu_s=interp(r_is_gp,nu_gp,RDIV,r_is_s);
+      lambda_s=interp_ub_ub(r_is_gp,lambda_gp,RDIV,r_is_s);
+      nu_s=interp_ub_ub(r_is_gp,nu_gp,RDIV,r_is_s);
     } else {
       lambda_s=2.0*log(1.0+m_final/(2.0*r_is_s));
       nu_s=log((1.0-m_final/(2.0*r_is_s))/(1.0+m_final/(2*r_is_s)));
@@ -2829,9 +2852,9 @@ void nstar_rot::spherical_star() {
    
   n_nearest=SDIV/2;
   // gamma at equator
-  gamma_eq=interp(s_gp,gamma_mu_0,SDIV,s_e);      
+  gamma_eq=interp_ub_ub(s_gp,gamma_mu_0,SDIV,s_e);      
   // rho at equator 
-  rho_eq=interp(s_gp,rho_mu_0,SDIV,s_e);        
+  rho_eq=interp_ub_ub(s_gp,rho_mu_0,SDIV,s_e);        
  
   r_e_guess=r_final*exp(0.5*(rho_eq-gamma_eq)); 
 
@@ -2959,12 +2982,12 @@ int nstar_rot::iterate(double r_ratio_loc) {
     s_p=r_p/(r_p+r_e);                        
   
     n_nearest=SDIV/2;
-    gamma_pole_h=interp(s_gp,gamma_mu_1,SDIV,s_p); 
-    gamma_equator_h=interp(s_gp,gamma_mu_0,SDIV,s_e);
+    gamma_pole_h=interp_ub_ub(s_gp,gamma_mu_1,SDIV,s_p); 
+    gamma_equator_h=interp_ub_ub(s_gp,gamma_mu_0,SDIV,s_e);
     gamma_center_h=gamma(1,1);                    
   
-    rho_pole_h=interp(s_gp,rho_mu_1,SDIV,s_p);   
-    rho_equator_h=interp(s_gp,rho_mu_0,SDIV,s_e);
+    rho_pole_h=interp_ub_ub(s_gp,rho_mu_1,SDIV,s_p);   
+    rho_equator_h=interp_ub_ub(s_gp,rho_mu_0,SDIV,s_e);
     rho_center_h=rho(1,1);                      
  
     r_e=sqrt(2*h_center/(gamma_pole_h+rho_pole_h-gamma_center_h-
@@ -2977,7 +3000,7 @@ int nstar_rot::iterate(double r_ratio_loc) {
       omega_equator_h=0.0;
     } else {
       // AWS: This looks like Eq. 46 from Cook '92
-      omega_equator_h=interp(s_gp,omega_mu_0,SDIV,s_e);
+      omega_equator_h=interp_ub_ub(s_gp,omega_mu_0,SDIV,s_e);
       Omega_h=omega_equator_h+exp(pow(r_e,2.0)*rho_equator_h)*
 	sqrt(1.0-exp(pow(r_e,2.0)*(gamma_pole_h+rho_pole_h-gamma_equator_h
 				   -rho_equator_h)));

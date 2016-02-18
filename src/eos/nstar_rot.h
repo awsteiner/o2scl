@@ -580,35 +580,35 @@ namespace o2scl {
     /// \name Grid quantities set in make_grid()
     //@{
     /// \f$ s \f$
-    double s_gp[SDIV+1];                 
+    ubvector s_gp;
     /// \f$ s (1-s) \f$
-    double s_1_s[SDIV+1];
+    ubvector s_1_s;
     /// \f$ 1-s \f$
-    double one_s[SDIV+1];
+    ubvector one_s;
     /// \f$ \mu \f$
-    double mu[MDIV+1];                   
+    ubvector mu;
     /// \f$ 1-\mu^2 \f$
-    double one_m2[MDIV+1];
+    ubvector one_m2;
     /// \f$ \theta \f$ defined by \f$ \mathrm{acos}~\mu \f$
-    double theta[MDIV+1];
+    ubvector theta;
     /// \f$ \sin \theta \f$
-    double sin_theta[MDIV+1];
+    ubvector sin_theta;
     //@}
 
     /// \name Grid values computed in integrate() for spherical_star()
     //@{
     /// Isotropic radius
-    double r_gp[RDIV+1];
+    ubvector r_gp;
     /// Radial coordinate
-    double r_is_gp[RDIV+1];
+    ubvector r_is_gp;
     /// Metric function \f$ \lambda \f$
-    double lambda_gp[RDIV+1];
+    ubvector lambda_gp;
     /// Metric function \f$ \nu \f$
-    double nu_gp[RDIV+1];
+    ubvector nu_gp;
     /// Enclosed gravitational mass
-    double m_gp[RDIV+1];
+    ubvector m_gp;
     /// Energy density
-    double e_d_gp[RDIV+1];   
+    ubvector e_d_gp;
     //@}
 
     /// \name Metric functions
@@ -658,15 +658,15 @@ namespace o2scl {
     /// \name Quantities defined for fixed values of mu
     //@{
     /** \brief \f$ \gamma(s) \f$ at \f$ \mu=1 \f$ */
-    double gamma_mu_1[SDIV+1];            
+    ubvector gamma_mu_1;
     /** \brief \f$ \gamma(s) \f$ at \f$ \mu=0 \f$ */
-    double gamma_mu_0[SDIV+1];            
+    ubvector gamma_mu_0;
     /** \brief \f$ \rho(s) \f$ at \f$ \mu=1 \f$ */
-    double rho_mu_1[SDIV+1];             
+    ubvector rho_mu_1;
     /** \brief \f$ \rho(s) \f$ at \f$ \mu=0 \f$ */
-    double rho_mu_0[SDIV+1];             
+    ubvector rho_mu_0;
     /** \brief \f$ \omega(s) \f$ at \f$ \mu=0 \f$ */
-    double omega_mu_0[SDIV+1];           
+    ubvector omega_mu_0;
     //@}
 
     /** \brief The value of \f$ \hat{\gamma} \f$ at the pole */  
@@ -816,8 +816,10 @@ namespace o2scl {
     */
     double interp_4_k(double xp[], double yp[], int np, double xb, int k);
 
-    double interp_4_k_ub(ubvector &ub, double yp[], int np, double xb, int k);
+    double interp_4_k_ub(ubvector &xp, ubvector &yp, int np, double xb, int k);
     //@}
+
+    //double int_z(double f[MDIV+1], int m);
 
     /** \brief Integrate f[mu] from m-1 to m. 
 
@@ -825,8 +827,6 @@ namespace o2scl {
 	
 	Used in \ref comp() .
     */
-    double int_z(double f[MDIV+1], int m);
-
     double int_z_ub(ubvector &f, int m);
 
     /// \name EOS functions
