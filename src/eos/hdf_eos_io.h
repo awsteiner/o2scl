@@ -81,7 +81,11 @@ namespace o2scl_hdf {
       from two strings specifying type and name
   */
   o2scl::eos_had_base *eos_had_strings(std::string type, std::string name="");
-  
+
+  /** \brief Desc
+  */
+  void eos_had_strings_list();
+
 }
 
 #endif
