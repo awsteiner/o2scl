@@ -73,6 +73,7 @@
 #include <o2scl/interp.h>
 #include <o2scl/eos_tov.h>
 #include <o2scl/table3d.h>
+#include <o2scl/tensor.h>
 
 namespace o2scl {
   
@@ -507,11 +508,11 @@ namespace o2scl {
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
     
     /// The number of grid points in the \f$ \mu \f$ direction
-    static const int MDIV=65;
+    int MDIV;
     /// The number of grid points in the \f$ s \f$ direction
-    static const int SDIV=129;
+    int SDIV;
     /// The number of Legendre polynomials
-    static const int LMAX=10;
+    int LMAX;
 
   protected:
 
@@ -557,7 +558,7 @@ namespace o2scl {
     /** \brief The number of grid points in integration of TOV equations
 	for spherical stars
     */ 
-    static const int RDIV=900;                     
+    int RDIV;
   
     /** \brief Maximum value of s-coordinate (default 0.9999) */  
     double SMAX;
@@ -691,11 +692,11 @@ namespace o2scl {
     /// \name Desc
     //@{
     /** \brief \f$ f_{\rho}(s,n,s') \f$ */
-    double f_rho[SDIV+1][LMAX+1][SDIV+1];
+    tensor3<> f_rho;
     /** \brief \f$ f_{\gamma}(s,n,s') \f$ */
-    double f_gamma[SDIV+1][LMAX+1][SDIV+1];
+    tensor3<> f_gamma;
     /** \brief \f$ f_{\omega}(s,n,s') \f$ */
-    double f_omega[SDIV+1][LMAX+1][SDIV+1];
+    tensor3<> f_omega;
     //@}
   
     /// \name Legendre polynomials
@@ -785,31 +786,29 @@ namespace o2scl {
     int n_nearest;
   
     /// Search in array \c x of length \c n for value \c val
-    int new_search_ub(int n, ubvector &x, double val);
+    int new_search(int n, ubvector &x, double val);
 
     /** \brief Driver for the interpolation routine. 
 	
 	First we find the tab. point nearest to xb, then we
 	interpolate using four points around xb.
 	
-	Used by \ref int_z(), \ref e_at_p(), \ref p_at_e(), 
-	\ref p_at_h(), \ref h_at_p(), \ref n0_at_e(), 
-	\ref comp_omega(), \ref comp_M_J(), \ref comp(), 
-	\ref spherical_star(), \ref iterate().
+	Used by \ref int_z(), \ref e_at_p(), \ref p_at_e(), \ref
+	p_at_h(), \ref h_at_p(), \ref n0_at_e(), \ref comp_omega(),
+	\ref comp_M_J(), \ref comp(), \ref spherical_star(), \ref
+	iterate().
     */  
-    double interp_ub_ub(ubvector &xp, ubvector &yp, int np, double xb);
+    double interp(ubvector &xp, ubvector &yp, int np, double xb);
 
     /** \brief Driver for the interpolation routine.
 
-	Four point interpolation at a 
-	given offset the index of the first point k. 
+	Four point interpolation at a given offset the index of the
+	first point k.
 
 	Used in \ref comp() .
     */
-    double interp_4_k_ub(ubvector &xp, ubvector &yp, int np, double xb, int k);
+    double interp_4_k(ubvector &xp, ubvector &yp, int np, double xb, int k);
     //@}
-
-    //double int_z(double f[MDIV+1], int m);
 
     /** \brief Integrate f[mu] from m-1 to m. 
 
@@ -817,7 +816,7 @@ namespace o2scl {
 	
 	Used in \ref comp() .
     */
-    double int_z_ub(ubvector &f, int m);
+    double int_z(ubvector &f, int m);
 
     /// \name EOS functions
     //@{
@@ -857,37 +856,23 @@ namespace o2scl {
     //@{
     /** \brief Returns the derivative w.r.t. s of an array f[SDIV+1]. 
      */ 
-    double s_deriv(double f[SDIV+1], int s);
-
-    double s_deriv_ub(ubvector &f, int s);
+    double s_deriv(ubvector &f, int s);
 
     /** \brief Returns the derivative w.r.t. mu of an array f[MDIV+1]. 
      */ 
-    double m_deriv(double f[MDIV+1], int m);
-
-    double m_deriv_ub(ubvector &f, int m);
+    double m_deriv(ubvector &f, int m);
 
     /** \brief Returns the derivative w.r.t. s  
      */
-    double deriv_s(double f[SDIV+1][MDIV+1], int s, int m);
-
-    /** \brief Returns the derivative w.r.t. s  
-     */
-    double deriv_s_ub(ubmatrix &f, int s, int m);
+    double deriv_s(ubmatrix &f, int s, int m);
 
     /** \brief Returns the derivative w.r.t. mu 
      */ 
-    double deriv_m(double f[SDIV+1][MDIV+1], int s, int m);
-
-    /** \brief Returns the derivative w.r.t. mu 
-     */ 
-    double deriv_m_ub(ubmatrix &f, int s, int m);
+    double deriv_m(ubmatrix &f, int s, int m);
 
     /** \brief Returns the derivative w.r.t. s and mu 
      */ 
-    double deriv_sm(double f[SDIV+1][MDIV+1], int s, int m);
-
-    double deriv_sm_ub(ubmatrix &f, int s, int m);
+    double deriv_sm(ubmatrix &f, int s, int m);
     //@}
 
     /// \name Initialization functions

@@ -369,6 +369,11 @@ eos_nstar_rot_L::eos_nstar_rot_L(bool rns_constants) {
 
 nstar_rot::nstar_rot() {
   verbose=1;
+
+  RDIV=900;
+  MDIV=65;
+  SDIV=129;
+  LMAX=10;
   
   SMAX=0.9999;                
   DS=(SMAX/(SDIV-1.0));
@@ -377,7 +382,12 @@ nstar_rot::nstar_rot() {
   n_nearest=1;                     
   a_check=0;                       
   s_e=0.5;
-  
+
+  size_t sz[3]={((size_t)SDIV+1),((size_t)LMAX+1),((size_t)SDIV+1)};
+  f_gamma.resize(3,sz);
+  f_rho.resize(3,sz);
+  f_omega.resize(3,sz);
+
   P_2n.resize(MDIV+1,LMAX+1);
   P1_2n_1.resize(MDIV+1,LMAX+1);
 
@@ -531,7 +541,7 @@ void nstar_rot::make_grid() {
   return;
 }
 
-int nstar_rot::new_search_ub(int n, ubvector &x, double val) {
+int nstar_rot::new_search(int n, ubvector &x, double val) {
   int ret;
   ubvector xnew(n);
   for(size_t i=0;i<n;i++) {
@@ -556,7 +566,7 @@ int nstar_rot::new_search_ub(int n, ubvector &x, double val) {
   return sv_ub.find(val)+1;
 }
 
-double nstar_rot::interp_ub_ub(ubvector &xp, ubvector &yp, int np,
+double nstar_rot::interp(ubvector &xp, ubvector &yp, int np,
 			       double xb) {
   // index of 1st point
   int k;        
@@ -566,7 +576,7 @@ double nstar_rot::interp_ub_ub(ubvector &xp, ubvector &yp, int np,
   // intermediate value
   double y;     
 
-  n_nearest=new_search_ub(np,xp,xb);
+  n_nearest=new_search(np,xp,xb);
 
   int max=n_nearest-(m-1)/2;
   if (max<1) max=1;
@@ -589,7 +599,7 @@ double nstar_rot::interp_ub_ub(ubvector &xp, ubvector &yp, int np,
   return (y);
 }
 
-double nstar_rot::interp_4_k_ub(ubvector &xp, ubvector &yp, int np, double xb, 
+double nstar_rot::interp_4_k(ubvector &xp, ubvector &yp, int np, double xb, 
 			      int k) {
 
   // intermediate value
@@ -629,16 +639,16 @@ double nstar_rot::int_z(double f[MDIV+1], int m) {
 }
 */
 
-double nstar_rot::int_z_ub(ubvector &f, int m) {
+double nstar_rot::int_z(ubvector &f, int m) {
   double x[9];
 
   x[1]=f[m-1];  
-  x[2]=interp_ub_ub(mu,f,MDIV,mu[m-1]+DM/7.0);
-  x[3]=interp_ub_ub(mu,f,MDIV,mu[m-1]+2.0*DM/7.0);
-  x[4]=interp_ub_ub(mu,f,MDIV,mu[m-1]+3.0*DM/7.0);
-  x[5]=interp_ub_ub(mu,f,MDIV,mu[m-1]+4.0*DM/7.0);
-  x[6]=interp_ub_ub(mu,f,MDIV,mu[m-1]+5.0*DM/7.0);
-  x[7]=interp_ub_ub(mu,f,MDIV,mu[m-1]+6.0*DM/7.0);
+  x[2]=interp(mu,f,MDIV,mu[m-1]+DM/7.0);
+  x[3]=interp(mu,f,MDIV,mu[m-1]+2.0*DM/7.0);
+  x[4]=interp(mu,f,MDIV,mu[m-1]+3.0*DM/7.0);
+  x[5]=interp(mu,f,MDIV,mu[m-1]+4.0*DM/7.0);
+  x[6]=interp(mu,f,MDIV,mu[m-1]+5.0*DM/7.0);
+  x[7]=interp(mu,f,MDIV,mu[m-1]+6.0*DM/7.0);
   x[8]=f[m];
   
   return((DM/17280.0)*(751.0*x[1]+3577.0*x[2]+1323.0*x[3]+2989.0*x[4]+
@@ -705,217 +715,71 @@ double nstar_rot::n0_at_e(double ee) {
   }
 }
 
-double nstar_rot::s_deriv(double f[SDIV+1], int s) {
+double nstar_rot::s_deriv(ubvector &f, int s) {
 
   double d_temp;
   
-  switch(s) { 
-  case 1 : 
+  if (s==1) {
     d_temp=(f[s+1]-f[s])/DS;
-    break;
-  case SDIV : 
+  } else if (s==SDIV) {
     d_temp=(f[s]-f[s-1])/DS;
-    break;
-  default : 
+  } else {
     d_temp=(f[s+1]-f[s-1])/(2.0*DS);
-    break; 
   }
  
   return d_temp;
 }
 
-double nstar_rot::s_deriv_ub(ubvector &f, int s) {
-
-  double d_temp;
-  
-  switch(s) { 
-  case 1 : 
-    d_temp=(f[s+1]-f[s])/DS;
-    break;
-  case SDIV : 
-    d_temp=(f[s]-f[s-1])/DS;
-    break;
-  default : 
-    d_temp=(f[s+1]-f[s-1])/(2.0*DS);
-    break; 
-  }
- 
-  return d_temp;
-}
-
-double nstar_rot::m_deriv(double f[MDIV+1], int m) {
+double nstar_rot::m_deriv(ubvector &f, int m) {
 
   double d_temp;
 
-  switch(m) {  
-  case 1 : 
+  if (m==1) {
     d_temp=(f[m+1]-f[m])/DM;
-    break;
-  case MDIV : 
+  } else if (m==MDIV) {
     d_temp=(f[m]-f[m-1])/DM;
-    break;
-  default : 
+  } else {
     d_temp=(f[m+1]-f[m-1])/(2.0*DM);
-    break; 
   }
  
   return d_temp;
 }
 
-double nstar_rot::m_deriv_ub(ubvector &f, int m) {
+double nstar_rot::deriv_s(ubmatrix &f, int s, int m) {
 
   double d_temp;
 
-  switch(m) {  
-  case 1 : 
-    d_temp=(f[m+1]-f[m])/DM;
-    break;
-  case MDIV : 
-    d_temp=(f[m]-f[m-1])/DM;
-    break;
-  default : 
-    d_temp=(f[m+1]-f[m-1])/(2.0*DM);
-    break; 
-  }
- 
-  return d_temp;
-}
-
-double nstar_rot::deriv_s(double f[SDIV+1][MDIV+1], int s, int m) {
-
-  double d_temp;
-
-  switch(s) { 
-  case 1 : 
-    d_temp=(f[s+1][m]-f[s][m])/DS;
-    break;
-  case SDIV : 
-    d_temp=(f[s][m]-f[s-1][m])/DS;
-    break;
-  default : 
-    d_temp=(f[s+1][m]-f[s-1][m])/(2.0*DS);
-    break; 
-  } 
-
-  return d_temp;
-}
-
-double nstar_rot::deriv_s_ub(ubmatrix &f, int s, int m) {
-
-  double d_temp;
-  
-  switch(s) { 
-  case 1 : 
+  if (s==1) {
     d_temp=(f(s+1,m)-f(s,m))/DS;
-    break;
-  case SDIV : 
+  } else if (s==SDIV) {
     d_temp=(f(s,m)-f(s-1,m))/DS;
-    break;
-  default : 
+  } else {
     d_temp=(f(s+1,m)-f(s-1,m))/(2.0*DS);
-    break; 
-  } 
-
-  return d_temp;
-}
-
-double nstar_rot::deriv_m(double f[SDIV+1][MDIV+1], int s, int m) {
-
-  double d_temp;
-
-  switch(m) { 
-  case 1 : 
-    d_temp=(f[s][m+1]-f[s][m])/DM;
-    break;
-  case MDIV : 
-    d_temp=(f[s][m]-f[s][m-1])/DM;
-    break;
-  default : 
-    d_temp=(f[s][m+1]-f[s][m-1])/(2.0*DM);
-    break; 
-  } 
-
-  return d_temp;
-}
-
-double nstar_rot::deriv_m_ub(ubmatrix &f, int s, int m) {
-
-  double d_temp;
-
-  switch(m) { 
-  case 1 : 
-    d_temp=(f(s,m+1)-f(s,m))/DM;
-    break;
-  case MDIV : 
-    d_temp=(f(s,m)-f(s,m-1))/DM;
-    break;
-  default : 
-    d_temp=(f(s,m+1)-f(s,m-1))/(2.0*DM);
-    break; 
-  } 
-
-  return d_temp;
-}
-
-double nstar_rot::deriv_sm(double f[SDIV+1][MDIV+1], int s, int m) {
-
-  double d_temp;
-
-  switch(s) {
-
-  case 1 : 
-    if (m==1) {   
-      d_temp=(f[s+1][m+1]-f[s][m+1]-f[s+1][m]+f[s][m])/(DM*DS);
-    } else {
-      if (m==MDIV) {
-	d_temp=(f[s+1][m]-f[s][m]-f[s+1][m-1]+f[s][m-1])/(DM*DS);
-      } else {         
-	d_temp=(f[s+1][m+1]-f[s+1][m-1]-f[s][m+1]+f[s][m-1])/
-	  (2.0*DM*DS);
-      }
-    }
-    break;
-
-  case SDIV : 
-    if (m==1) {   
-      d_temp=(f[s][m+1]-f[s][m]-f[s-1][m+1]+f[s-1][m])/(DM*DS);
-    } else {
-      if (m==MDIV) {
-	d_temp=(f[s][m]-f[s-1][m]-f[s][m-1]+f[s-1][m-1])/(DM*DS);
-      } else {         
-	d_temp=(f[s][m+1]-f[s][m-1]-f[s-1][m+1]+f[s-1][m-1])/
-	  (2.0*DM*DS);
-      }
-    }
-    break;
-  
-  default : 
-
-    if (m==1) {   
-      d_temp=(f[s+1][m+1]-f[s-1][m+1]-f[s+1][m]+f[s-1][m])/(2.0*DM*DS);
-    } else {
-      if (m==MDIV) {
-	d_temp=(f[s+1][m]-f[s-1][m]-f[s+1][m-1]+f[s-1][m-1])/
-	  (2.0*DM*DS);
-      } else {         
-	d_temp=(f[s+1][m+1]-f[s-1][m+1]-f[s+1][m-1]+f[s-1][m-1])/
-	  (4.0*DM*DS);
-      }
-    }
-    break;
-
   }
 
   return d_temp;
 }
 
-double nstar_rot::deriv_sm_ub(ubmatrix &f, int s, int m) {
+double nstar_rot::deriv_m(ubmatrix &f, int s, int m) {
 
   double d_temp;
 
-  switch(s) {
+  if (m==1) {
+    d_temp=(f(s,m+1)-f(s,m))/DM;
+  } else if (m==MDIV) {
+    d_temp=(f(s,m)-f(s,m-1))/DM;
+  } else {
+    d_temp=(f(s,m+1)-f(s,m-1))/(2.0*DM);
+  }
 
-  case 1 : 
+  return d_temp;
+}
+
+double nstar_rot::deriv_sm(ubmatrix &f, int s, int m) {
+
+  double d_temp;
+
+  if (s==1) {
     if (m==1) {   
       d_temp=(f(s+1,m+1)-f(s,m+1)-f(s+1,m)+f(s,m))/(DM*DS);
     } else {
@@ -926,9 +790,7 @@ double nstar_rot::deriv_sm_ub(ubmatrix &f, int s, int m) {
 	  (2.0*DM*DS);
       }
     }
-    break;
-
-  case SDIV : 
+  } else if (s==SDIV) {
     if (m==1) {   
       d_temp=(f(s,m+1)-f(s,m)-f(s-1,m+1)+f(s-1,m))/(DM*DS);
     } else {
@@ -939,10 +801,7 @@ double nstar_rot::deriv_sm_ub(ubmatrix &f, int s, int m) {
 	  (2.0*DM*DS);
       }
     }
-    break;
-  
-  default : 
-
+  } else {
     if (m==1) {   
       d_temp=(f(s+1,m+1)-f(s-1,m+1)-f(s+1,m)+f(s-1,m))/(2.0*DM*DS);
     } else {
@@ -954,8 +813,6 @@ double nstar_rot::deriv_sm_ub(ubmatrix &f, int s, int m) {
 	  (4.0*DM*DS);
       }
     }
-    break;
-
   }
 
   return d_temp;
@@ -1004,7 +861,7 @@ void nstar_rot::comp_f_P() {
   n=0; 
   for(k=2;k<=SDIV;k++) {
     sk=s_gp[k];
-    f_rho[j][n][k]=1.0/(sk*(1.0-sk));
+    f_rho.get(j,n,k)=1.0/(sk*(1.0-sk));
   }
 
   // n=1, k>j case
@@ -1014,18 +871,18 @@ void nstar_rot::comp_f_P() {
     sk=s_gp[k];
     sk1=1.0-sk;
          
-    f_rho[j][n][k]=0.0;
-    f_gamma[j][n][k]=1.0/(sk*sk1);
-    f_omega[j][n][k]=1.0/(sk*sk1);
+    f_rho.get(j,n,k)=0.0;
+    f_gamma.get(j,n,k)=1.0/(sk*sk1);
+    f_omega.get(j,n,k)=1.0/(sk*sk1);
   }
 
   // n>=2, k>=j case
 
   for(n=2;n<=LMAX;n++) {
     for(k=1;k<=SDIV;k++) {
-      f_rho[j][n][k]=0.0;
-      f_gamma[j][n][k]=0.0;
-      f_omega[j][n][k]=0.0;
+      f_rho.get(j,n,k)=0.0;
+      f_gamma.get(j,n,k)=0.0;
+      f_omega.get(j,n,k)=0.0;
     }
   }
 
@@ -1035,16 +892,16 @@ void nstar_rot::comp_f_P() {
 
   n=0;
   for(j=1;j<=SDIV;j++) {
-    f_rho[j][n][k]=0.0;
+    f_rho.get(j,n,k)=0.0;
   }
 
   // n>=1, j>=k case
 
   for(j=1;j<=SDIV;j++) {
     for(n=1;n<=LMAX;n++) {
-      f_rho[j][n][k]=0.0;
-      f_gamma[j][n][k]=0.0;
-      f_omega[j][n][k]=0.0;
+      f_rho.get(j,n,k)=0.0;
+      f_gamma.get(j,n,k)=0.0;
+      f_omega.get(j,n,k)=0.0;
     }
   }
 
@@ -1055,7 +912,7 @@ void nstar_rot::comp_f_P() {
     for(k=2;k<=SDIV;k++) {
 
       if (SMAX==1.0 && (k==SDIV || j==SDIV)) {
-	f_rho[j][n][k]=0.0;
+	f_rho.get(j,n,k)=0.0;
       } else {      
 	sk=s_gp[k];
 	sj=s_gp[j];
@@ -1063,10 +920,10 @@ void nstar_rot::comp_f_P() {
 	sj1=1.0-sj;
 
 	if (k<j) {
-	  f_rho[j][n][k]=pow(sj1/sj,2.0*n+1.0)*
+	  f_rho.get(j,n,k)=pow(sj1/sj,2.0*n+1.0)*
 	    pow(sk,2.0*n)/pow(sk1,2.0*n+2.0);
 	} else {
-	  f_rho[j][n][k]=pow(sj/sj1,2.0*n)*
+	  f_rho.get(j,n,k)=pow(sj/sj1,2.0*n)*
 	    pow(sk1,2.0*n-1.0)/pow(sk,2.0*n+1.0);
 	}
       }
@@ -1080,9 +937,9 @@ void nstar_rot::comp_f_P() {
       for(k=2;k<=SDIV;k++) {
 
 	if (SMAX==1.0 && (k==SDIV || j==SDIV)) {
-	  f_rho[j][n][k]=0.0;
-	  f_gamma[j][n][k]=0.0;
-	  f_omega[j][n][k]=0.0;
+	  f_rho.get(j,n,k)=0.0;
+	  f_gamma.get(j,n,k)=0.0;
+	  f_omega.get(j,n,k)=0.0;
 	} else {      
 	  sk=s_gp[k];
 	  sj=s_gp[j];
@@ -1090,18 +947,18 @@ void nstar_rot::comp_f_P() {
 	  sj1=1.0-sj;
 
 	  if (k<j) {   
-	    f_rho[j][n][k]=pow(sj1/sj,2.0*n+1.0)*
+	    f_rho.get(j,n,k)=pow(sj1/sj,2.0*n+1.0)*
 	      pow(sk,2.0*n)/pow(sk1,2.0*n+2.0);
-	    f_gamma[j][n][k]=pow(sj1/sj,2.0*n)*
+	    f_gamma.get(j,n,k)=pow(sj1/sj,2.0*n)*
 	      pow(sk,2.0*n-1.0)/pow(sk1,2.0*n+1.0);
-	    f_omega[j][n][k]=pow(sj1/sj,2.0*n+1.0)*
+	    f_omega.get(j,n,k)=pow(sj1/sj,2.0*n+1.0)*
 	      pow(sk,2.0*n)/pow(sk1,2.0*n+2.0);
 	  } else {     
-	    f_rho[j][n][k]=pow(sj/sj1,2.0*n)*
+	    f_rho.get(j,n,k)=pow(sj/sj1,2.0*n)*
 	      pow(sk1,2.0*n-1.0)/pow(sk,2.0*n+1.0);
-	    f_gamma[j][n][k]=pow(sj/sj1,2.0*n-2.0)*
+	    f_gamma.get(j,n,k)=pow(sj/sj1,2.0*n-2.0)*
 	      pow(sk1,2.0*n-3.0)/pow(sk,2.0*n-1.0);
-	    f_omega[j][n][k]=pow(sj/sj1,2.0*n-2.0)*
+	    f_omega.get(j,n,k)=pow(sj/sj1,2.0*n-2.0)*
 	      pow(sk1,2.0*n-3.0)/pow(sk,2.0*n-1.0);
 	  }
 	}
@@ -1184,23 +1041,23 @@ void nstar_rot::comp_omega() {
   }
 
   n_nearest=SDIV/2;
-  rho_equator=interp_ub_ub(s_gp,rho_mu_0,SDIV,s_e);   
+  rho_equator=interp(s_gp,rho_mu_0,SDIV,s_e);   
 
   if (r_ratio==1.0) {
     omega_equator=0.0;
   } else {
-    omega_equator=interp_ub_ub(s_gp,omega_mu_0,SDIV,s_e);
+    omega_equator=interp(s_gp,omega_mu_0,SDIV,s_e);
   }
 
   for(s=1;s<=SDIV;s++) { 
-    d_o_e[s]=deriv_s_ub(omega,s,1);
-    d_g_e[s]=deriv_s_ub(gamma,s,1);
-    d_r_e[s]=deriv_s_ub(rho,s,1);
+    d_o_e[s]=deriv_s(omega,s,1);
+    d_g_e[s]=deriv_s(gamma,s,1);
+    d_r_e[s]=deriv_s(rho,s,1);
   }
 
-  doe=interp_ub_ub(s_gp,d_o_e,SDIV,s_e);
-  dge=interp_ub_ub(s_gp,d_g_e,SDIV,s_e);
-  dre=interp_ub_ub(s_gp,d_r_e,SDIV,s_e);
+  doe=interp(s_gp,d_o_e,SDIV,s_e);
+  dge=interp(s_gp,d_g_e,SDIV,s_e);
+  dre=interp(s_gp,d_r_e,SDIV,s_e);
 
   vek=(doe/(8.0+dge-dre))*r_e*exp(-rho_equator)+
     sqrt(((dge+dre)/(8.0+dge-dre))+pow((doe/(8.0+dge-dre))*
@@ -1270,23 +1127,23 @@ void nstar_rot::comp_M_J() {
   }
 
   n_nearest=SDIV/2;
-  rho_equator=interp_ub_ub(s_gp,rho_mu_0,SDIV,s_e);   
+  rho_equator=interp(s_gp,rho_mu_0,SDIV,s_e);   
 
   if (r_ratio==1.0) {
     omega_equator=0.0; 
   } else {
-    omega_equator=interp_ub_ub(s_gp,omega_mu_0,SDIV,s_e);
+    omega_equator=interp(s_gp,omega_mu_0,SDIV,s_e);
   }
  
   for(s=1;s<=SDIV;s++) { 
-    d_o_e[s]=deriv_s_ub(omega,s,1);
-    d_g_e[s]=deriv_s_ub(gamma,s,1);
-    d_r_e[s]=deriv_s_ub(rho,s,1);
+    d_o_e[s]=deriv_s(omega,s,1);
+    d_g_e[s]=deriv_s(gamma,s,1);
+    d_r_e[s]=deriv_s(rho,s,1);
   }
 
-  doe=interp_ub_ub(s_gp,d_o_e,SDIV,s_e);
-  dge=interp_ub_ub(s_gp,d_g_e,SDIV,s_e);
-  dre=interp_ub_ub(s_gp,d_r_e,SDIV,s_e);
+  doe=interp(s_gp,d_o_e,SDIV,s_e);
+  dge=interp(s_gp,d_g_e,SDIV,s_e);
+  dre=interp(s_gp,d_r_e,SDIV,s_e);
   
   vek=(doe/(8.0+dge-dre))*r_e*exp(-rho_equator)+
     sqrt(((dge+dre)/(8.0+dge-dre))+pow((doe/(8.0+dge-dre))*
@@ -1473,13 +1330,13 @@ void nstar_rot::comp() {
   n_nearest=SDIV/2;
 
   // gamma at pole
-  double gamma_pole=interp_ub_ub(s_gp,gamma_mu_1,SDIV,s_p);    
+  double gamma_pole=interp(s_gp,gamma_mu_1,SDIV,s_p);    
   // gamma at equator
-  double gamma_equator=interp_ub_ub(s_gp,gamma_mu_0,SDIV,s_e); 
+  double gamma_equator=interp(s_gp,gamma_mu_0,SDIV,s_e); 
   // rho at pole
-  double rho_pole=interp_ub_ub(s_gp,rho_mu_1,SDIV,s_p);      
+  double rho_pole=interp(s_gp,rho_mu_1,SDIV,s_p);      
   // rho at equator
-  double rho_equator=interp_ub_ub(s_gp,rho_mu_0,SDIV,s_e);   
+  double rho_equator=interp(s_gp,rho_mu_0,SDIV,s_e);   
 
   // omega at equator
   double omega_equator;             
@@ -1488,7 +1345,7 @@ void nstar_rot::comp() {
     velocity_equator=0.0;
     omega_equator=0.0;
   } else {
-    omega_equator=interp_ub_ub(s_gp,omega_mu_0,SDIV,s_e);
+    omega_equator=interp(s_gp,omega_mu_0,SDIV,s_e);
     velocity_equator=sqrt(1.0-exp(gamma_pole+rho_pole-gamma_equator
 				  -rho_equator));
   }
@@ -1700,16 +1557,16 @@ void nstar_rot::comp() {
   ubvector d_v_e(SDIV+1);
 
   for(s=1;s<=SDIV;s++) { 
-    d_o_e[s]=deriv_s_ub(omega,s,1);
-    d_g_e[s]=deriv_s_ub(gamma,s,1);
-    d_r_e[s]=deriv_s_ub(rho,s,1);
-    d_v_e[s]=deriv_s_ub(velocity,s,1);
+    d_o_e[s]=deriv_s(omega,s,1);
+    d_g_e[s]=deriv_s(gamma,s,1);
+    d_r_e[s]=deriv_s(rho,s,1);
+    d_v_e[s]=deriv_s(velocity,s,1);
   }
 
-  double doe=interp_ub_ub(s_gp,d_o_e,SDIV,s_e);
-  double dge=interp_ub_ub(s_gp,d_g_e,SDIV,s_e);
-  double dre=interp_ub_ub(s_gp,d_r_e,SDIV,s_e);
-  double dve=interp_ub_ub(s_gp,d_v_e,SDIV,s_e);
+  double doe=interp(s_gp,d_o_e,SDIV,s_e);
+  double dge=interp(s_gp,d_g_e,SDIV,s_e);
+  double dre=interp(s_gp,d_r_e,SDIV,s_e);
+  double dve=interp(s_gp,d_v_e,SDIV,s_e);
 
   double vek=(doe/(8.0+dge-dre))*r_e*exp(-rho_equator)+
     sqrt(((dge+dre)/(8.0+dge-dre))+pow((doe/(8.0+dge-dre))*
@@ -1756,7 +1613,7 @@ void nstar_rot::comp() {
     */
         
     if (enthalpy_m[s_surf_1+2]<0.0) {
-      s_surface[m]=interp_4_k_ub(enthalpy_m,s_gp,SDIV,0.0,s_surf_1-1);
+      s_surface[m]=interp_4_k(enthalpy_m,s_gp,SDIV,0.0,s_surf_1-1);
     } else {     
       if (enthalpy_m[s_surf_1+1]<0.0) {
 	s_surface[m]=s_gp[s_surf_1]-DS*enthalpy_m[s_surf_1]/
@@ -1774,9 +1631,9 @@ void nstar_rot::comp() {
  
     r_surface[m]=r_e*(s_surface[m]/(1.0-s_surface[m]));
 
-    gamma_surface[m]=interp_ub_ub(s_gp,gamma_m,SDIV,s_surface[m]);
-    rho_surface[m]=interp_ub_ub(s_gp,rho_m,SDIV,s_surface[m]);
-    alpha_surface[m]=interp_ub_ub(s_gp,alpha_m,SDIV,s_surface[m]);
+    gamma_surface[m]=interp(s_gp,gamma_m,SDIV,s_surface[m]);
+    rho_surface[m]=interp(s_gp,rho_m,SDIV,s_surface[m]);
+    alpha_surface[m]=interp(s_gp,alpha_m,SDIV,s_surface[m]);
   }
 
   double d_r_s_dm;
@@ -1786,9 +1643,9 @@ void nstar_rot::comp() {
   double dpi_dm;
 
   for(m=1;m<=MDIV;m++) {
-    d_gamma_s_dm=m_deriv_ub(gamma_surface,m);
-    d_rho_s_dm=m_deriv_ub(rho_surface,m);
-    d_r_s_dm=m_deriv_ub(r_surface,m);
+    d_gamma_s_dm=m_deriv(gamma_surface,m);
+    d_rho_s_dm=m_deriv(rho_surface,m);
+    d_r_s_dm=m_deriv(r_surface,m);
 
     if (m==MDIV) {
       f_mu[m]=0.0;
@@ -1811,7 +1668,7 @@ void nstar_rot::comp() {
   // integrate f_mu
   z_emb[1]=0.0;                         
   for(m=2;m<=MDIV;m++) {                
-    z_emb[m]=z_emb[m-1]+sqrt(KAPPA)*int_z_ub(f_mu,m);    
+    z_emb[m]=z_emb[m-1]+sqrt(KAPPA)*int_z(f_mu,m);    
     pi_bar[m]=sqrt(KAPPA)*exp((gamma_surface[m]-rho_surface[m])/2.0)
       *r_surface[m]*sin_theta[m];
     if (pi_bar[m]>pi_bar[m-1] && m>=2) {
@@ -1840,9 +1697,9 @@ void nstar_rot::comp() {
     s1=s_gp[s]*(1.0-s_gp[s]);
     s_1=1.0-s_gp[s];
     
-    d_gamma_s=deriv_s_ub(gamma,s,1);
-    d_rho_s=deriv_s_ub(rho,s,1);
-    d_omega_s=deriv_s_ub(omega,s,1);
+    d_gamma_s=deriv_s(gamma,s,1);
+    d_rho_s=deriv_s(rho,s,1);
+    d_omega_s=deriv_s(omega,s,1);
 
     sqrt_v=exp(-2.0*rho(s,1))*r_e*r_e*pow(s_gp[s],4.0)*pow(d_omega_s,2.0) 
       +2*s1*(d_gamma_s+d_rho_s)+s1*s1*(d_gamma_s*d_gamma_s-d_rho_s*d_rho_s);
@@ -1877,12 +1734,12 @@ void nstar_rot::comp() {
   for(s=1;s<=SDIV;s++) {
     s1=s_gp[s]*(1.0-s_gp[s]);
         
-    d_gamma_s=deriv_s_ub(gamma,s,1);
-    d_rho_s=deriv_s_ub(rho,s,1);
-    d_omega_s=deriv_s_ub(omega,s,1);
+    d_gamma_s=deriv_s(gamma,s,1);
+    d_rho_s=deriv_s(rho,s,1);
+    d_omega_s=deriv_s(omega,s,1);
 
-    d_v_plus_s=s_deriv_ub(v_plus,s);
-    d_v_minus_s=s_deriv_ub(v_minus,s);
+    d_v_plus_s=s_deriv(v_plus,s);
+    d_v_minus_s=s_deriv(v_minus,s);
  
     B_st_p[s]=v_plus[s]*(r_e*s_gp[s]*s_gp[s]*d_omega_s*exp(-rho(s,1))
 			 +s1*d_v_plus_s)+0.5*s1*(d_gamma_s+d_rho_s)-
@@ -1907,8 +1764,8 @@ void nstar_rot::comp() {
   double omega_plus;
   ubvector s_gp_out(SDIV-(SDIV/2)+2+1);
 
-  B_st_p_surface=interp_ub_ub(s_gp,B_st_p,SDIV,s_surface[1]);
-  B_st_m_surface=interp_ub_ub(s_gp,B_st_m,SDIV,s_surface[1]);
+  B_st_p_surface=interp(s_gp,B_st_p,SDIV,s_surface[1]);
+  B_st_m_surface=interp(s_gp,B_st_m,SDIV,s_surface[1]);
 
   if (B_st_p_surface>0.0) {
     h_plus=0.0;
@@ -1921,12 +1778,12 @@ void nstar_rot::comp() {
     }
 
     n_nearest=SDIV/4;
-    s_plus=interp_ub_ub(B_st_p_out,s_gp_out,SDIV-(SDIV/2)+2,0.0);
+    s_plus=interp(B_st_p_out,s_gp_out,SDIV-(SDIV/2)+2,0.0);
     r_plus=r_e*s_plus/(1.0-s_plus);
-    gamma_plus=interp_ub_ub(s_gp,gamma_mu_0,SDIV,s_plus);
-    rho_plus=interp_ub_ub(s_gp,rho_mu_0,SDIV,s_plus);
-    omega_plus=interp_ub_ub(s_gp,omega_mu_0,SDIV,s_plus);
-    vel_plus=interp_ub_ub(s_gp,v_plus,SDIV,s_plus); 
+    gamma_plus=interp(s_gp,gamma_mu_0,SDIV,s_plus);
+    rho_plus=interp(s_gp,rho_mu_0,SDIV,s_plus);
+    omega_plus=interp(s_gp,omega_mu_0,SDIV,s_plus);
+    vel_plus=interp(s_gp,v_plus,SDIV,s_plus); 
  
     if (scaled_polytrope==false) {
       h_plus=sqrt(KAPPA)*(r_plus*exp((gamma_plus-rho_plus)/2.0)
@@ -1950,10 +1807,10 @@ void nstar_rot::comp() {
     }
     
     n_nearest=SDIV/4;
-    s_minus=interp_ub_ub(B_st_m_out,s_gp_out,SDIV-(SDIV/2)+2,0.0);
-    gamma_minus=interp_ub_ub(s_gp,gamma_mu_0,SDIV,s_minus);
-    rho_minus=interp_ub_ub(s_gp,rho_mu_0,SDIV,s_minus);
-    vel_minus=interp_ub_ub(s_gp,v_plus,SDIV,s_minus); 
+    s_minus=interp(B_st_m_out,s_gp_out,SDIV-(SDIV/2)+2,0.0);
+    gamma_minus=interp(s_gp,gamma_mu_0,SDIV,s_minus);
+    rho_minus=interp(s_gp,rho_mu_0,SDIV,s_minus);
+    vel_minus=interp(s_gp,v_plus,SDIV,s_minus); 
  
     if (scaled_polytrope==false) {
       h_minus=sqrt(KAPPA)*r_e*((s_minus/(1.0-s_minus))*
@@ -2012,8 +1869,8 @@ void nstar_rot::comp() {
     else s_temp=SDIV;
 
     for(s=1;s<=s_temp;s++) {
-      d_gamma_s=deriv_s_ub(gamma,s,1);
-      d_rho_s=deriv_s_ub(rho,s,1);
+      d_gamma_s=deriv_s(gamma,s,1);
+      d_rho_s=deriv_s(rho,s,1);
  
       S_virial1(s,1)=8*pow(PI*r_e,2.0)*s_gp[s]*pressure(s,1)
 	*exp(2.0*alpha(s,1))/pow(1.0-s_gp[s],3.0);
@@ -2025,8 +1882,8 @@ void nstar_rot::comp() {
     if (SMAX==1.0) { 
       S_virial1(SDIV,1)=0.0;
  
-      d_gamma_s=deriv_s_ub(gamma,SDIV,1);
-      d_rho_s=deriv_s_ub(rho,SDIV,1);
+      d_gamma_s=deriv_s(gamma,SDIV,1);
+      d_rho_s=deriv_s(rho,SDIV,1);
       S_virial2(SDIV,1)=PI*s_1_s[s]*pow(d_gamma_s+d_rho_s,2.0)/4.0;
     }
 
@@ -2071,12 +1928,12 @@ void nstar_rot::comp() {
     for(m=1;m<=MDIV;m++) {
       s1=s_1_s[s];
       m1=one_m2[m]; 
-      d_gamma_s=deriv_s_ub(gamma,s,m);
-      d_rho_s=deriv_s_ub(rho,s,m);
-      d_gamma_m=deriv_m_ub(gamma,s,m);
-      d_rho_m=deriv_m_ub(rho,s,m);
-      d_omega_s=deriv_s_ub(omega,s,m);
-      d_omega_m=deriv_m_ub(omega,s,m);
+      d_gamma_s=deriv_s(gamma,s,m);
+      d_rho_s=deriv_s(rho,s,m);
+      d_gamma_m=deriv_m(gamma,s,m);
+      d_rho_m=deriv_m(rho,s,m);
+      d_omega_s=deriv_s(omega,s,m);
+      d_omega_m=deriv_m(omega,s,m);
       if (m==MDIV || m==MDIV-1) { 
 	S_virial1(s,m)=0.0;
 	S_virial3(s,m)=0.0;
@@ -2122,8 +1979,8 @@ void nstar_rot::comp() {
 	   (velocity_sq(s,MDIV+1-m)/
 	    (1.0-velocity_sq(s,MDIV+1-m))))*exp(2.0*alpha(s,MDIV+1-m));
 	  
-	temp_y2[m]=0.5*s1*pow(deriv_s_ub(gamma,s,MDIV+1-m)+
-			      deriv_s_ub(rho,s,MDIV+1-m),2.0);
+	temp_y2[m]=0.5*s1*pow(deriv_s(gamma,s,MDIV+1-m)+
+			      deriv_s(rho,s,MDIV+1-m),2.0);
 	
 	// AWS 4/25/14: This conditional was modified from the 
 	// original because of array-indexing confusion
@@ -2133,8 +1990,8 @@ void nstar_rot::comp() {
 	}            
       }  
 
-      double temp1=interp_ub_ub(temp_x,temp_y1,4,temp9);
-      double temp2=interp_ub_ub(temp_x,temp_y2,4,temp9);
+      double temp1=interp(temp_x,temp_y1,4,temp9);
+      double temp2=interp(temp_x,temp_y2,4,temp9);
 
       S_ad1(s,2)=temp1;
       S_ad2(s,2)=temp2;
@@ -2208,12 +2065,12 @@ void nstar_rot::comp() {
     for(m=1;m<=MDIV;m++) {
       t_rho[m]=rho(s,m);
       t_alpha[m]=alpha(s,m);
-      t_rho_s[m]=deriv_s_ub(rho,s,m);
-      t_gamma_s[m]=deriv_s_ub(gamma,s,m);
-      t_gamma_m[m]=deriv_m_ub(gamma,s,m);
-      t_rho_m[m]=deriv_m_ub(rho,s,m);
-      t_omega_s[m]=deriv_s_ub(omega,s,m);
-      t_omega_m[m]=deriv_m_ub(omega,s,m);
+      t_rho_s[m]=deriv_s(rho,s,m);
+      t_gamma_s[m]=deriv_s(gamma,s,m);
+      t_gamma_m[m]=deriv_m(gamma,s,m);
+      t_rho_m[m]=deriv_m(rho,s,m);
+      t_omega_s[m]=deriv_s(omega,s,m);
+      t_omega_m[m]=deriv_m(omega,s,m);
       t_pressure[m]=pressure(s,m);
       t_energy[m]=energy(s,m);
       t_v2[m]=velocity_sq(s,m);
@@ -2232,17 +2089,17 @@ void nstar_rot::comp() {
     double v2Ch;
     
     for(m=1;m<=MDIV;m++) {
-      rhoCh=interp_ub_ub(mu,t_rho,MDIV,muCh[m]);
-      alphaCh=interp_ub_ub(mu,t_alpha,MDIV,muCh[m]);
-      rho_sCh=interp_ub_ub(mu,t_rho_s,MDIV,muCh[m]);
-      gamma_sCh=interp_ub_ub(mu,t_gamma_s,MDIV,muCh[m]);
-      gamma_mCh=interp_ub_ub(mu,t_gamma_m,MDIV,muCh[m]);
-      rho_mCh=interp_ub_ub(mu,t_rho_m,MDIV,muCh[m]);
-      omega_sCh=interp_ub_ub(mu,t_omega_s,MDIV,muCh[m]);
-      omega_mCh=interp_ub_ub(mu,t_omega_m,MDIV,muCh[m]);
-      pressureCh=interp_ub_ub(mu,t_pressure,MDIV,muCh[m]);
-      energyCh=interp_ub_ub(mu,t_energy,MDIV,muCh[m]);
-      v2Ch=interp_ub_ub(mu,t_v2,MDIV,muCh[m]);
+      rhoCh=interp(mu,t_rho,MDIV,muCh[m]);
+      alphaCh=interp(mu,t_alpha,MDIV,muCh[m]);
+      rho_sCh=interp(mu,t_rho_s,MDIV,muCh[m]);
+      gamma_sCh=interp(mu,t_gamma_s,MDIV,muCh[m]);
+      gamma_mCh=interp(mu,t_gamma_m,MDIV,muCh[m]);
+      rho_mCh=interp(mu,t_rho_m,MDIV,muCh[m]);
+      omega_sCh=interp(mu,t_omega_s,MDIV,muCh[m]);
+      omega_mCh=interp(mu,t_omega_m,MDIV,muCh[m]);
+      pressureCh=interp(mu,t_pressure,MDIV,muCh[m]);
+      energyCh=interp(mu,t_energy,MDIV,muCh[m]);
+      v2Ch=interp(mu,t_v2,MDIV,muCh[m]);
       s1=s_1_s[s];
       m1=1.0-pow(muCh[m],2.0); 
 
@@ -2384,14 +2241,14 @@ void nstar_rot::comp() {
     for(m=1;m<=MDIV;m++) {
       s1=s_1_s[s];
       m1=one_m2[m];
-      d_gamma_s=deriv_s_ub(gamma,s,m);
-      d_gamma_m=deriv_m_ub(gamma,s,m);
-      d_rho_s=deriv_s_ub(rho,s,m);
-      d_rho_m=deriv_m_ub(rho,s,m);
-      d_omega_s=deriv_s_ub(omega,s,m);
-      d_omega_m=deriv_m_ub(omega,s,m);
-      d_alpha_s=deriv_s_ub(alpha,s,m);
-      d_alpha_m=deriv_m_ub(alpha,s,m);
+      d_gamma_s=deriv_s(gamma,s,m);
+      d_gamma_m=deriv_m(gamma,s,m);
+      d_rho_s=deriv_s(rho,s,m);
+      d_rho_m=deriv_m(rho,s,m);
+      d_omega_s=deriv_s(omega,s,m);
+      d_omega_m=deriv_m(omega,s,m);
+      d_alpha_s=deriv_s(alpha,s,m);
+      d_alpha_m=deriv_m(alpha,s,m);
 
 
       if (SMAX==1.0 && s==SDIV) {
@@ -2716,8 +2573,8 @@ void nstar_rot::spherical_star() {
     r_is_s=r_is_final*(s_gp[s]/(1.0-s_gp[s]));
     // Convert the spherical solution to the 's' coordinte
     if (r_is_s<r_is_final) {
-      lambda_s=interp_ub_ub(r_is_gp,lambda_gp,RDIV,r_is_s);
-      nu_s=interp_ub_ub(r_is_gp,nu_gp,RDIV,r_is_s);
+      lambda_s=interp(r_is_gp,lambda_gp,RDIV,r_is_s);
+      nu_s=interp(r_is_gp,nu_gp,RDIV,r_is_s);
     } else {
       lambda_s=2.0*log(1.0+m_final/(2.0*r_is_s));
       nu_s=log((1.0-m_final/(2.0*r_is_s))/(1.0+m_final/(2*r_is_s)));
@@ -2756,9 +2613,9 @@ void nstar_rot::spherical_star() {
    
   n_nearest=SDIV/2;
   // gamma at equator
-  gamma_eq=interp_ub_ub(s_gp,gamma_mu_0,SDIV,s_e);      
+  gamma_eq=interp(s_gp,gamma_mu_0,SDIV,s_e);      
   // rho at equator 
-  rho_eq=interp_ub_ub(s_gp,rho_mu_0,SDIV,s_e);        
+  rho_eq=interp(s_gp,rho_mu_0,SDIV,s_e);        
  
   r_e_guess=r_final*exp(0.5*(rho_eq-gamma_eq)); 
 
@@ -2886,12 +2743,12 @@ int nstar_rot::iterate(double r_ratio_loc) {
     s_p=r_p/(r_p+r_e);                        
   
     n_nearest=SDIV/2;
-    gamma_pole_h=interp_ub_ub(s_gp,gamma_mu_1,SDIV,s_p); 
-    gamma_equator_h=interp_ub_ub(s_gp,gamma_mu_0,SDIV,s_e);
+    gamma_pole_h=interp(s_gp,gamma_mu_1,SDIV,s_p); 
+    gamma_equator_h=interp(s_gp,gamma_mu_0,SDIV,s_e);
     gamma_center_h=gamma(1,1);                    
   
-    rho_pole_h=interp_ub_ub(s_gp,rho_mu_1,SDIV,s_p);   
-    rho_equator_h=interp_ub_ub(s_gp,rho_mu_0,SDIV,s_e);
+    rho_pole_h=interp(s_gp,rho_mu_1,SDIV,s_p);   
+    rho_equator_h=interp(s_gp,rho_mu_0,SDIV,s_e);
     rho_center_h=rho(1,1);                      
  
     r_e=sqrt(2*h_center/(gamma_pole_h+rho_pole_h-gamma_center_h-
@@ -2904,7 +2761,7 @@ int nstar_rot::iterate(double r_ratio_loc) {
       omega_equator_h=0.0;
     } else {
       // AWS: This looks like Eq. 46 from Cook '92
-      omega_equator_h=interp_ub_ub(s_gp,omega_mu_0,SDIV,s_e);
+      omega_equator_h=interp(s_gp,omega_mu_0,SDIV,s_e);
       Omega_h=omega_equator_h+exp(pow(r_e,2.0)*rho_equator_h)*
 	sqrt(1.0-exp(pow(r_e,2.0)*(gamma_pole_h+rho_pole_h-gamma_equator_h
 				   -rho_equator_h)));
@@ -2995,12 +2852,12 @@ int nstar_rot::iterate(double r_ratio_loc) {
 	  d_omega_s=0.0;
 	  d_omega_m=0.0;
 	} else {
-	  d_gamma_s=deriv_s_ub(gamma,s,m);
-	  d_gamma_m=deriv_m_ub(gamma,s,m);
-	  d_rho_s=deriv_s_ub(rho,s,m);
-	  d_rho_m=deriv_m_ub(rho,s,m);
-	  d_omega_s=deriv_s_ub(omega,s,m);
-	  d_omega_m=deriv_m_ub(omega,s,m);
+	  d_gamma_s=deriv_s(gamma,s,m);
+	  d_gamma_m=deriv_m(gamma,s,m);
+	  d_rho_s=deriv_s(rho,s,m);
+	  d_rho_m=deriv_m(rho,s,m);
+	  d_omega_s=deriv_s(omega,s,m);
+	  d_omega_m=deriv_m(omega,s,m);
 	}
 
 	S_rho(s,m)=e_gsm*
@@ -3078,9 +2935,9 @@ int nstar_rot::iterate(double r_ratio_loc) {
     n=0;
     for(s=1;s<=SDIV;s++) {
       for(k=1;k<=SDIV-2;k+=2) { 
-	sum_rho+=(DS/3.0)*(f_rho[s][n][k]*D1_rho(n,k)+
-			   4.0*f_rho[s][n][k+1]*D1_rho(n,k+1)+
-			   f_rho[s][n][k+2]*D1_rho(n,k+2));
+	sum_rho+=(DS/3.0)*(f_rho.get(s,n,k)*D1_rho(n,k)+
+			   4.0*f_rho.get(s,n,k+1)*D1_rho(n,k+1)+
+			   f_rho.get(s,n,k+2)*D1_rho(n,k+2));
       }
       D2_rho(s,n)=sum_rho;
       D2_gamma(s,n)=0.0;
@@ -3091,17 +2948,17 @@ int nstar_rot::iterate(double r_ratio_loc) {
     for(s=1;s<=SDIV;s++) {
       for(n=1;n<=LMAX;n++) {
 	for(k=1;k<=SDIV-2;k+=2) { 
-	  sum_rho+=(DS/3.0)*(f_rho[s][n][k]*D1_rho(n,k) 
-			     +4.0*f_rho[s][n][k+1]*D1_rho(n,k+1)
-			     +f_rho[s][n][k+2]*D1_rho(n,k+2));
+	  sum_rho+=(DS/3.0)*(f_rho.get(s,n,k)*D1_rho(n,k) 
+			     +4.0*f_rho.get(s,n,k+1)*D1_rho(n,k+1)
+			     +f_rho.get(s,n,k+2)*D1_rho(n,k+2));
 	  
-	  sum_gamma+=(DS/3.0)*(f_gamma[s][n][k]*D1_gamma(n,k) 
-			       + 4.0*f_gamma[s][n][k+1]*D1_gamma(n,k+1)
-			       + f_gamma[s][n][k+2]*D1_gamma(n,k+2));
+	  sum_gamma+=(DS/3.0)*(f_gamma.get(s,n,k)*D1_gamma(n,k) 
+			       + 4.0*f_gamma.get(s,n,k+1)*D1_gamma(n,k+1)
+			       + f_gamma.get(s,n,k+2)*D1_gamma(n,k+2));
 	  
-	  sum_omega+=(DS/3.0)*(f_omega[s][n][k]*D1_omega(n,k) 
-			       +4.0*f_omega[s][n][k+1]*D1_omega(n,k+1)
-			       +f_omega[s][n][k+2]*D1_omega(n,k+2));
+	  sum_omega+=(DS/3.0)*(f_omega.get(s,n,k)*D1_omega(n,k) 
+			       +4.0*f_omega.get(s,n,k+1)*D1_omega(n,k+1)
+			       +f_omega.get(s,n,k+2)*D1_omega(n,k+2));
 	}
 	D2_rho(s,n)=sum_rho;
 	D2_gamma(s,n)=sum_gamma;
@@ -3186,8 +3043,8 @@ int nstar_rot::iterate(double r_ratio_loc) {
  
     for(s=1;s<=SDIV;s++) {
       for(m=1;m<=MDIV;m++) {
-	dgds(s,m)=deriv_s_ub(gamma,s,m);
-	dgdm(s,m)=deriv_m_ub(gamma,s,m);
+	dgds(s,m)=deriv_s(gamma,s,m);
+	dgdm(s,m)=deriv_m(gamma,s,m);
       }
     }
 
@@ -3213,13 +3070,13 @@ int nstar_rot::iterate(double r_ratio_loc) {
           
 	  d_gamma_s=dgds(s,m);
 	  d_gamma_m=dgdm(s,m);
-	  d_rho_s=deriv_s_ub(rho,s,m);
-	  d_rho_m=deriv_m_ub(rho,s,m);
-	  d_omega_s=deriv_s_ub(omega,s,m);
-	  d_omega_m=deriv_m_ub(omega,s,m);
-	  d_gamma_ss=s1*deriv_s_ub(dgds,s,m)+(1.0-2.0*sgp)*d_gamma_s;
-	  d_gamma_mm=m1*deriv_m_ub(dgdm,s,m)-2.0*mum*d_gamma_m;  
-	  d_gamma_sm=deriv_sm_ub(gamma,s,m);
+	  d_rho_s=deriv_s(rho,s,m);
+	  d_rho_m=deriv_m(rho,s,m);
+	  d_omega_s=deriv_s(omega,s,m);
+	  d_omega_m=deriv_m(omega,s,m);
+	  d_gamma_ss=s1*deriv_s(dgds,s,m)+(1.0-2.0*sgp)*d_gamma_s;
+	  d_gamma_mm=m1*deriv_m(dgdm,s,m)-2.0*mum*d_gamma_m;  
+	  d_gamma_sm=deriv_sm(gamma,s,m);
 
 	  double temp1=2.0*pow(sgp,2.0)*(sgp/(1.0-sgp))*m1*d_omega_s*d_omega_m
 	    *(1.0+s1*d_gamma_s)-(pow(pow(sgp,2.0)*d_omega_s,2.0)-
