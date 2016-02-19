@@ -58,6 +58,16 @@ lib_settings_class::lib_settings_class() {
   def_cu.insert_cache("1/fm^3","1/cm^3",1.0e39);
   def_cu.insert_cache("1/fm^3","1/m^3",1.0e45);
 
+  // Simple length conversions
+  def_cu.insert_cache("pc","m",o2scl_mks::parsec);
+  def_cu.insert_cache("kpc","m",o2scl_mks::parsec*1.0e3);
+  def_cu.insert_cache("km","m",1.0e3);
+  def_cu.insert_cache("cm","m",1.0e-2);
+  def_cu.insert_cache("lyr","m",o2scl_mks::light_year);
+
+  // Simple mass/energy conversions
+  def_cu.insert_cache("MeV","eV",1.0e6);
+  def_cu.insert_cache("keV","eV",1.0e3);
 }
 
 lib_settings_class::~lib_settings_class() {
