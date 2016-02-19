@@ -240,6 +240,31 @@ class plotter:
                 plot.plot(reps,weights,**kwargs)
         return
         
+    def points(self,colx,coly,**kwargs):
+        if self.dtype!='table':
+            print 'Wrong type for plot.'
+            return
+        if self.verbose>2:
+            print 'plot',colx,coly,kwargs
+        if self.canvas_flag==0:
+            self.canvas()
+            self.canvas_flag=1
+        if self.logx==1:
+            if self.logy==1:
+                plot.loglog(self.dset['data/'+colx],
+                            self.dset['data/'+coly],lw=0,marker='.',**kwargs)
+            else:
+                plot.semilogx(self.dset['data/'+colx],
+                              self.dset['data/'+coly],lw=0,marker='.',**kwargs)
+        else:
+            if self.logy==1:
+                plot.semilogy(self.dset['data/'+colx],
+                              self.dset['data/'+coly],lw=0,marker='.',**kwargs)
+            else:
+                plot.plot(self.dset['data/'+colx],
+                          self.dset['data/'+coly],lw=0,marker='.',**kwargs)
+        return
+
     def plot(self,colx,coly,**kwargs):
         if self.dtype!='table':
             print 'Wrong type for plot.'
@@ -775,6 +800,18 @@ class plotter:
                     else:
                         print 'plot parse_argv',argv[ix+1],argv[ix+2],argv[ix+3]
                         self.plot(argv[ix+1],argv[ix+2],eval(argv[ix+3]))
+                elif cmd_name=='points':
+                    if self.verbose>2:
+                        print 'Process points.'
+                        print ix,ix_next
+                    if ix_next-ix<3:
+                        print 'Not enough parameters for points option.'
+                    elif ix_next-ix<4:
+                        self.points(argv[ix+1],argv[ix+2])
+                    else:
+                        print('points parse_argv',argv[ix+1],argv[ix+2],
+                              argv[ix+3])
+                        self.points(argv[ix+1],argv[ix+2],eval(argv[ix+3]))
                 elif cmd_name=='plot1':
                     if self.verbose>2:
                         print 'Process plot1.'
