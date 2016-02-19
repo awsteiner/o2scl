@@ -7,8 +7,11 @@ FIT_SRCS =
 HEADER_VAR = fit_base.h fit_nonlin.h fit_min.h fit_fix.h fit_linear.h \
 	fit_bayes.h
 
-TEST_VAR = fit_base.scr fit_nonlin.scr fit_min.scr fit_fix.scr \
-	fit_linear.scr
+TEST_VAR = fit_base.scr fit_min.scr fit_fix.scr
+
+# These can't be included until gsl-2.x is more widely distributed
+#fit_linear.scr \
+#	fit_nonlin.scr
 
 # ------------------------------------------------------------
 # Includes
