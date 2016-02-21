@@ -3270,6 +3270,32 @@ int nstar_rot::solve_bar_mass(size_t nv, const ubvector &x,
   return 0;
 }
 
+int nstar_rot::solve_ang_vel(size_t nv, const ubvector &x,
+			       ubvector &y, double ang_vel) {
+  r_ratio=x[0];
+  if (r_ratio>1.0 || r_ratio<0.1) {
+    return 3;
+  }
+  int ret=iterate(r_ratio);
+  if (ret!=0) return ret;
+  comp_omega();
+  y[0]=(Omega-ang_vel)/ang_vel;
+  return 0;
+}
+
+int nstar_rot::solve_ang_mom(size_t nv, const ubvector &x,
+			       ubvector &y, double ang_mom) {
+  r_ratio=x[0];
+  if (r_ratio>1.0 || r_ratio<0.1) {
+    return 3;
+  }
+  int ret=iterate(r_ratio);
+  if (ret!=0) return ret;
+  comp_M_J();
+  y[0]=(J-ang_mom)/ang_mom;
+  return 0;
+}
+
 int nstar_rot::fix_cent_eden_with_kepler_alt(double cent_eden) {
 
   if (eos_set==false) {
@@ -3752,6 +3778,58 @@ int nstar_rot::fix_cent_eden_bar_mass(double cent_eden, double bar_mass) {
   return 0;
 }
 
+int nstar_rot::fix_cent_eden_ang_vel_alt(double cent_eden,
+					   double ang_vel) {
+
+  if (eos_set==false) {
+    O2SCL_ERR2("EOS not specified in ",
+	       "nstar_rot::fix_cent_eden_ang_vel_alt().",exc_einval);
+  }
+
+  if (scaled_polytrope==false) {
+    // set default values for star with tabulated eos
+    e_surface=7.8*C*C*KSCALE;
+    p_surface=1.01e8*KSCALE;
+    enthalpy_min=1.0/(C*C);
+    r_ratio=0.75;
+  } else {
+    // set default values for polytropic star 
+    e_surface=0.0;
+    p_surface=0.0;
+    enthalpy_min=0.0;
+    r_ratio=0.5848;
+  }
+
+  double e_min=cent_eden;
+  if (scaled_polytrope==false) {
+    e_min*=C*C*KSCALE;
+  } else {
+    Gamma_P=1.0+1.0/n_P;
+  }
+
+  e_center=e_min;
+
+  // First model is guess
+  
+  make_center(e_center);
+  spherical_star();             
+
+  r_ratio=1.0;
+  
+  ubvector x(1), y(1);
+  x[0]=0.75;
+  mm_funct11 nf=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &,double)>
+     (&nstar_rot::solve_ang_vel),this,std::placeholders::_1,
+     std::placeholders::_2,std::placeholders::_3,ang_vel);
+
+  mh.msolve(1,x,nf);
+
+  comp();
+  
+  return 0;
+}
+
 int nstar_rot::fix_cent_eden_ang_vel(double cent_eden, double ang_vel) {
 
   if (eos_set==false) {
@@ -3850,6 +3928,59 @@ int nstar_rot::fix_cent_eden_ang_vel(double cent_eden, double ang_vel) {
     comp();
   }
 
+  return 0;
+}
+
+int nstar_rot::fix_cent_eden_ang_mom_alt(double cent_eden,
+					   double ang_mom) {
+
+  if (eos_set==false) {
+    O2SCL_ERR2("EOS not specified in ",
+	       "nstar_rot::fix_cent_eden_ang_mom_alt().",exc_einval);
+  }
+
+  if (scaled_polytrope==false) {
+    // set default values for star with tabulated eos
+    e_surface=7.8*C*C*KSCALE;
+    p_surface=1.01e8*KSCALE;
+    enthalpy_min=1.0/(C*C);
+    r_ratio=0.75;
+  } else {
+    // set default values for polytropic star 
+    e_surface=0.0;
+    p_surface=0.0;
+    enthalpy_min=0.0;
+    r_ratio=0.5848;
+  }
+
+  double e_min=cent_eden;
+  if (scaled_polytrope==false) {
+    e_min*=C*C*KSCALE;
+  } else {
+    Gamma_P=1.0+1.0/n_P;
+  }
+
+  e_center=e_min;
+
+  // First model is guess
+  
+  make_center(e_center);
+  spherical_star();             
+
+  r_ratio=1.0;
+  
+  ubvector x(1), y(1);
+  x[0]=0.75;
+  double J0=G*MSUN*MSUN/C;
+  mm_funct11 nf=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &,double)>
+     (&nstar_rot::solve_ang_mom),this,std::placeholders::_1,
+     std::placeholders::_2,std::placeholders::_3,ang_mom*J0);
+
+  mh.msolve(1,x,nf);
+
+  comp();
+  
   return 0;
 }
 

@@ -48,19 +48,20 @@ int main(void) {
 
   nstar_rot nst;
 
-  nst.constants_rns();
-  nst.test1(t);
-  nst.test2(t);
-  nst.test3(t);
-  nst.test4(t);
-  nst.test5(t);
-  nst.test6(t);
-  nst.test7(t);
-  nst.test8(t);
+  if (true) {
+    nst.constants_rns();
+    nst.test1(t);
+    nst.test2(t);
+    nst.test3(t);
+    nst.test4(t);
+    nst.test5(t);
+    nst.test6(t);
+    nst.test7(t);
+    nst.test8(t);
+    nst.constants_o2scl();
+  }
   
-  nst.constants_o2scl();
-  
-  {
+  if (true) {
     eos_had_skyrme sk;
     o2scl_hdf::skyrme_load(sk,"SLy4");
 
@@ -194,8 +195,6 @@ int main(void) {
     // Compute a configuration with a fixed ratio of radii
     nst.fix_cent_eden_axis_rat(ed_cent,0.7);
     t.test_rel(nst.r_ratio,0.7,1.0e-6,"correct ratio");
-    cout << nst.Mass << endl;
-    cout << nst.Mass_0 << endl;
 
     // The old method for finding the configuration rotating at the
     // Keplerian frequency
@@ -210,23 +209,38 @@ int main(void) {
     nst.fix_cent_eden_with_kepler_alt(ed_cent);
     t.test_rel(nst.Omega_K,nst.Omega,1.0e-8,"kepler 2");
 
-    if (false) {
-      nst.eq_radius_tol_rel=1.0e-5;
-      nst.fix_cent_eden_grav_mass(ed_cent,3.072e33/nst.MSUN);
-      t.test_rel(3.072e33,nst.Mass,1.0e-4,"gmass 1");
-      
-      nst.eq_radius_tol_rel=1.0e-7;
-      nst.fix_cent_eden_grav_mass_alt(ed_cent,3.072e33/nst.MSUN);
-      t.test_rel(3.072e33,nst.Mass,1.0e-8,"gmass 2");
-      
-      nst.eq_radius_tol_rel=1.0e-5;
-      nst.fix_cent_eden_bar_mass(ed_cent,3.072e33/nst.MSUN);
-      t.test_rel(3.072e33,nst.Mass,1.0e-4,"bmass 1");
-      
-      nst.eq_radius_tol_rel=1.0e-7;
-      nst.fix_cent_eden_bar_mass_alt(ed_cent,3.072e33/nst.MSUN);
-      t.test_rel(3.072e33,nst.Mass,1.0e-8,"bmass 2");
-    }
+    nst.eq_radius_tol_rel=1.0e-5;
+    nst.fix_cent_eden_grav_mass(ed_cent,3.072e33/nst.MSUN);
+    t.test_rel(3.072e33,nst.Mass,1.0e-4,"gmass 1");
+    
+    nst.eq_radius_tol_rel=1.0e-9;
+    nst.fix_cent_eden_grav_mass_alt(ed_cent,3.072e33/nst.MSUN);
+    t.test_rel(3.072e33,nst.Mass,1.0e-9,"gmass 2");
+    
+    nst.eq_radius_tol_rel=1.0e-5;
+    nst.fix_cent_eden_bar_mass(ed_cent,3.373e33/nst.MSUN);
+    t.test_rel(3.373e33,nst.Mass,1.0e-1,"bmass 1");
+    
+    nst.eq_radius_tol_rel=1.0e-9;
+    nst.fix_cent_eden_bar_mass_alt(ed_cent,3.373e33/nst.MSUN);
+    t.test_rel(3.373e33,nst.Mass,1.0e-1,"bmass 2");
+    
+    nst.eq_radius_tol_rel=1.0e-5;
+    nst.fix_cent_eden_ang_vel(ed_cent,1.131e4);
+    t.test_rel(1.131e4,nst.Omega,1.0e-4,"ang_vel 1");
+    
+    nst.eq_radius_tol_rel=1.0e-9;
+    nst.fix_cent_eden_ang_vel_alt(ed_cent,1.131e4);
+    t.test_rel(1.131e4,nst.Omega,1.0e-9,"ang_vel 2");
+
+    double J0=nst.G*nst.MSUN*nst.MSUN/nst.C;
+    nst.eq_radius_tol_rel=1.0e-5;
+    nst.fix_cent_eden_ang_mom(ed_cent,1.059e49/J0);
+    t.test_rel(1.059e49,nst.J,1.0e-4,"ang_mom 1");
+
+    nst.eq_radius_tol_rel=1.0e-9;
+    nst.fix_cent_eden_ang_mom_alt(ed_cent,1.059e49/J0);
+    t.test_rel(1.059e49,nst.J,1.0e-8,"ang_mom 2");
   }
 
   t.report();

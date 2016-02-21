@@ -514,14 +514,18 @@ namespace o2scl {
     /// The number of Legendre polynomials
     int LMAX;
 
-    // Resize the grid
+    /// Resize the grid
     void resize(int MDIV_new, int SDIV_new, int LMAX_new,
 		int RDIV_new);
-  protected:
 
-    /// Desc
+    /** \brief Solver
+
+	\note Temporarily public
+    */
     o2scl::mroot_hybrids<> mh;
     
+  protected:
+
     /// Solve for the Keplerian velocity
     int solve_kepler(size_t nv, const ubvector &x, ubvector &y);
 
@@ -532,6 +536,14 @@ namespace o2scl {
     /// Solve for the gravitational mass
     int solve_bar_mass(size_t nv, const ubvector &x, ubvector &y,
 			double bar_mass);
+    
+    /// Solve for the gravitational mass
+    int solve_ang_vel(size_t nv, const ubvector &x, ubvector &y,
+			double ang_vel);
+    
+    /// Solve for the gravitational mass
+    int solve_ang_mom(size_t nv, const ubvector &x, ubvector &y,
+			double ang_mom);
     
     /** \brief Subclass of \ref nstar_rot which specifies the function
 	to invert a polytropic EOS
@@ -1050,15 +1062,15 @@ namespace o2scl {
     /** \brief Circumferential radius in cm (i.e. the radius defined
 	such that \f$ 2 \pi R_e \f$ is the proper circumference) */
     double R_e;                          
-    /// Proper mass (in g)
+    /// Proper mass (in \f$ \mathrm{g} \f$ )
     double Mass_p;
-    /// Gravitational mass (in g)
+    /// Gravitational mass (in \f$ \mathrm{g} \f$ )
     double Mass;
-    /// Baryonic mass (in g)
+    /// Baryonic mass (in \f$ \mathrm{g} \f$ )
     double Mass_0;
-    /// Angular momentum
+    /// Angular momentum (in \f$ \mathrm{g}~\mathrm{cm}^2 / \mathrm{s} \f$ )
     double J;
-    /// Angular velocity
+    /// Angular velocity (in \f$ \mathrm{radians}/\mathrm{s} \f$ )
     double Omega;
     /// Total rotational kinetic energy
     double T;
@@ -1222,6 +1234,16 @@ namespace o2scl {
 	\ref fix_cent_eden_bar_mass()
     */
     int fix_cent_eden_bar_mass_alt(double cent_eden, double bar_mass);
+    
+    /** \brief Experimental alternate form for
+	\ref fix_cent_eden_ang_vel()
+    */
+    int fix_cent_eden_ang_vel_alt(double cent_eden, double ang_vel);
+    
+    /** \brief Experimental alternate form for
+	\ref fix_cent_eden_ang_mom()
+    */
+    int fix_cent_eden_ang_mom_alt(double cent_eden, double ang_mom);
     
     /** \brief Construct a non-rotating configuration with a fixed central 
 	energy density
