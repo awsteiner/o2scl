@@ -47,6 +47,7 @@ int main(void) {
   t.set_output_level(1);
 
   nstar_rot nst;
+
   nst.constants_rns();
   nst.test1(t);
   nst.test2(t);
@@ -56,7 +57,7 @@ int main(void) {
   nst.test6(t);
   nst.test7(t);
   nst.test8(t);
-
+  
   nst.constants_o2scl();
   
   {
@@ -193,6 +194,10 @@ int main(void) {
     // Compute a configuration with a fixed ratio of radii
     nst.fix_cent_eden_axis_rat(ed_cent,0.7);
     t.test_rel(nst.r_ratio,0.7,1.0e-6,"correct ratio");
+
+    //nst.verbose=2;
+    //nst.eq_radius_tol_rel=1.0e-7;
+    //nst.fix_cent_eden_with_kepler_alt(ed_cent);
   }
 
   t.report();

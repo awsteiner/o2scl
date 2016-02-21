@@ -74,6 +74,7 @@
 #include <o2scl/eos_tov.h>
 #include <o2scl/table3d.h>
 #include <o2scl/tensor.h>
+#include <o2scl/mroot_hybrids.h>
 
 namespace o2scl {
   
@@ -104,7 +105,7 @@ namespace o2scl {
 
     /// Array search object
     o2scl::search_vec<double *> sv;
-
+    
     /// Search in array \c x of length \c n for value \c val
     int new_search(int n, double *x, double val);
     
@@ -514,8 +515,17 @@ namespace o2scl {
     /// The number of Legendre polynomials
     int LMAX;
 
+    // Resize the grid
+    void resize(int MDIV_new, int SDIV_new, int LMAX_new,
+		int RDIV_new);
   protected:
 
+    /// Desc
+    o2scl::mroot_hybrids<> mh;
+    
+    /// Solve for the Keplerian velocity
+    int solve_kepler(size_t nv, const ubvector &x, ubvector &y);
+    
     /** \brief Subclass of \ref nstar_rot which specifies the function
 	to invert a polytropic EOS
     */
@@ -708,13 +718,6 @@ namespace o2scl {
      */ 
     ubmatrix P1_2n_1;
     //@}
-
-    /** \brief Relative accuracy for the equatorial radius,
-	\f$ r_e \f$ (default \f$ 10^{-5} \f$) 
-
-	Used in \ref iterate() .
-    */
-    double eq_radius_tol_rel;                    
 
     /** \brief Integrated term over m in eqn for \f$ \rho \f$ */
     ubmatrix D1_rho;
@@ -1013,6 +1016,13 @@ namespace o2scl {
     
   public:
 
+    /** \brief Relative accuracy for the equatorial radius,
+	\f$ r_e \f$ (default \f$ 10^{-5} \f$) 
+
+	Used in \ref iterate() .
+    */
+    double eq_radius_tol_rel;                    
+
     nstar_rot();
 
     /** \brief Verbosity parameter
@@ -1173,11 +1183,14 @@ namespace o2scl {
     
     /** \brief Construct a configuration with a fixed central 
 	energy density and a fixed axis ratio
-	
+
 	The central energy density should be in \f$
-	\mathrm{g}/\mathrm{cm}^3 \f$ .
+	\mathrm{g}/\mathrm{cm}^3 \f$ and the axis ratio is unitless.
+	This is fastest of the high-level interface functions as it
+	doesn't require an additional solver.
     */
-    int fix_cent_eden_axis_rat(double cent_eden, double axis_rat);
+    int fix_cent_eden_axis_rat(double cent_eden, double axis_rat,
+			       bool use_guess=false);
     
     /** \brief Construct a configuration with a fixed central 
 	energy density and a fixed gravitational mass
@@ -1204,6 +1217,11 @@ namespace o2scl {
 	\mathrm{g}/\mathrm{cm}^3 \f$ .
     */
     int fix_cent_eden_with_kepler(double cent_eden);
+
+    /** \brief Experimental alternate form for
+	\ref fix_cent_eden_with_kepler()
+     */
+    int fix_cent_eden_with_kepler_alt(double cent_eden);
     
     /** \brief Construct a non-rotating configuration with a fixed central 
 	energy density
@@ -1217,7 +1235,14 @@ namespace o2scl {
 	energy density and a fixed angular velocity.
 	
 	The central energy density should be in \f$
-	\mathrm{g}/\mathrm{cm}^3 \f$.
+	\mathrm{g}/\mathrm{cm}^3 \f$ and the angular
+	velocity should be in \f$ \mathrm{rad}/\mathrm{s} \f$.
+	The final angular velocity (possibly slightly different
+	than <tt>ang_vel</tt> is stored in \ref Omega .
+	
+	\note In the original RNS code, the <tt>ang_vel</tt> argument
+	is different because it was rescaled by a factor of \f$ 10^{4}
+	\f$.
     */
     int fix_cent_eden_ang_vel(double cent_eden, double ang_vel);
 
@@ -1225,7 +1250,8 @@ namespace o2scl {
 	energy density and a fixed angular momentum.
 	
 	The central energy density should be in \f$
-	\mathrm{g}/\mathrm{cm}^3 \f$.
+	\mathrm{g}/\mathrm{cm}^3 \f$. The angular momentum should be
+	in units of \f$ G M_{\odot}^2/C \f$ .
     */
     int fix_cent_eden_ang_mom(double cent_eden, double ang_mom);
     //@}

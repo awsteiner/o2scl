@@ -45,6 +45,7 @@
 
 #include <o2scl/constants.h>
 #include <o2scl/nstar_rot.h>
+#include <o2scl/mm_funct.h>
 
 using namespace std;
 using namespace o2scl;
@@ -471,6 +472,9 @@ nstar_rot::nstar_rot() {
      to integrate the metric potentials rho, gamma and omega 
   */
   comp_f_P();
+
+  //mh.tol_rel=1.0e-6;
+  //mh.tol_abs=1.0e-6;
 }
 
 void nstar_rot::constants_rns() {
@@ -566,7 +570,7 @@ int nstar_rot::new_search(int n, ubvector &x, double val) {
 }
 
 double nstar_rot::interp(ubvector &xp, ubvector &yp, int np,
-			       double xb) {
+			 double xb) {
   // index of 1st point
   int k;        
   // degree of interpolation
@@ -599,7 +603,7 @@ double nstar_rot::interp(ubvector &xp, ubvector &yp, int np,
 }
 
 double nstar_rot::interp_4_k(ubvector &xp, ubvector &yp, int np, double xb, 
-			      int k) {
+			     int k) {
 
   // intermediate value
   double y;     
@@ -621,7 +625,7 @@ double nstar_rot::interp_4_k(ubvector &xp, ubvector &yp, int np, double xb,
 }
 
 /*
-double nstar_rot::int_z(double f[MDIV+1], int m) {
+  double nstar_rot::int_z(double f[MDIV+1], int m) {
   double x[9];
 
   x[1]=f[m-1];  
@@ -634,8 +638,8 @@ double nstar_rot::int_z(double f[MDIV+1], int m) {
   x[8]=f[m];
   
   return((DM/17280.0)*(751.0*x[1]+3577.0*x[2]+1323.0*x[3]+2989.0*x[4]+
-		       2989.0*x[5]+1323.0*x[6]+3577.0*x[7]+751.0*x[8]));
-}
+  2989.0*x[5]+1323.0*x[6]+3577.0*x[7]+751.0*x[8]));
+  }
 */
 
 double nstar_rot::int_z(ubvector &f, int m) {
@@ -1352,7 +1356,7 @@ void nstar_rot::calc_masses_J(ubmatrix &rho_0) {
 	(exp(2.0*alpha(s,m)+(gamma(s,m)-rho(s,m))/2.0)*
 	 energy(s,m)/sqrt(1.0-velocity_sq(s,m))
 	 +4.0*exp(2.0*alpha(s,m+1)+
-		   (gamma(s,m+1)-rho(s,m+1))/2.0)*
+		  (gamma(s,m+1)-rho(s,m+1))/2.0)*
 	 energy(s,m+1)/sqrt(1.0-velocity_sq(s,m+1))
 	 +exp(2.0*alpha(s,m+2)+
 	      (gamma(s,m+2)-rho(s,m+2))/2.0)*
@@ -2252,7 +2256,7 @@ void nstar_rot::comp() {
 	/* CORRECT THIS ! */
 	
 	S_virial2(s,m)=0.5*(pow(s_gp[s]*(d_gamma_s+d_rho_s),2.0)- d_alpha_s*
-			     (pow(s_gp[s],2.0)*(d_gamma_s-d_rho_s)))*
+			    (pow(s_gp[s],2.0)*(d_gamma_s-d_rho_s)))*
 	  exp(0.5*(gamma(s,m)-rho(s,m)))*r_e;
 	
       } else {
@@ -2376,7 +2380,7 @@ double nstar_rot::dr_dr_is(double r_is, double r, double m) {
 }
 
 void nstar_rot::integrate(int i_check, double &r_final, double &m_final,
-			   double &r_is_final) {
+			  double &r_is_final) {
   int i=2;
 
   // radius 
@@ -2622,63 +2626,9 @@ void nstar_rot::spherical_star() {
 }
 
 int nstar_rot::iterate(double r_ratio_loc) {
-  int m;
-  int s;
-  int n;
-  int k;
-  int n_of_it=0;
+
   int s_temp;
-  
-  // Term in sum
-  double s_term=0.0;          
-  // Intermediate sum in eqn for rho
-  double sum_rho=0.0;         
-  // Intermediate sum in eqn for gamma
-  double sum_gamma=0.0;        
-  // Intermediate sum in eqn for omega
-  double sum_omega=0.0;       
-  // Equatorial radius in previous cycle
-  double r_e_old;             
-  // Difference | r_e_old -r_e |
-  double r_e_diff=1.0;             
-  // Derivative of gamma w.r.t. s
-  double d_gamma_s;            
-  // Derivative of gamma w.r.t. m
-  double d_gamma_m;            
-  // Derivative of rho w.r.t. s
-  double d_rho_s;             
-  // Derivative of rho w.r.t. m
-  double d_rho_m;             
-  // Derivative of omega w.r.t. s
-  double d_omega_s;           
-  // Derivative of omega w.r.t. m
-  double d_omega_m;           
-  // Second derivative of gamma w.r.t. s
-  double d_gamma_ss;           
-  // Second derivative of gamma w.r.t. m
-  double d_gamma_mm;           
-  // Derivative of gamma w.r.t. m and s
-  double d_gamma_sm;           
-  // Temporary term in da_dm
-  double m1;                  
-  double s1;
-  double s2;
-  double ea;
-  double R_emb_eq;
-  double R_emb_pole;
-  double rsm;
-  double gsm;
-  double esm;
-  double psm;
-  double v2sm;
-  double mum;
-  double omsm;
-  double sgp;
-  double s_1;
-  double e_gsm;
-  double e_rsm; 
-  double rho0sm;
- 
+
   /// Desc
   ubmatrix dgds(SDIV+1,MDIV+1);
   /// Desc
@@ -2693,8 +2643,8 @@ int nstar_rot::iterate(double r_ratio_loc) {
   /* The variable 'thing_guess' is the spherical solution for 'thing',
      or a previously computed star with lower angular momentum 
   */
-  for(s=1;s<=SDIV;s++) {
-    for(m=1;m<=MDIV;m++) {
+  for(int s=1;s<=SDIV;s++) {
+    for(int m=1;m<=MDIV;m++) {
       gamma(s,m)=gamma_guess(s,m);
       rho(s,m)=rho_guess(s,m);
       alpha(s,m)=alpha_guess(s,m);
@@ -2704,19 +2654,23 @@ int nstar_rot::iterate(double r_ratio_loc) {
 
   r_e=r_e_guess;
 
+  int n_of_it=0;
+  // Difference | r_e_old -r_e |
+  double r_e_diff=1.0;             
+
   while (r_e_diff>eq_radius_tol_rel || n_of_it<2) { 
 
     if (verbose>1) {
-      cout << "r_e_diff, eq_radius_tol_rel: "
-	   << r_e_diff << " " << eq_radius_tol_rel << endl;
+      cout << "r_e_diff, n_of_it, eq_radius_tol_rel: "
+	   << r_e_diff << " " << n_of_it << " " << eq_radius_tol_rel << endl;
     }
  
     /* Rescale potentials and construct arrays with the potentials
        along the equatorial and polar directions.
     */        
 
-    for(s=1;s<=SDIV;s++) {
-      for(m=1;m<=MDIV;m++) {
+    for(int s=1;s<=SDIV;s++) {
+      for(int m=1;m<=MDIV;m++) {
 	rho(s,m)/=pow(r_e,2.0);
 	gamma(s,m)/=pow(r_e,2.0); 
 	alpha(s,m)/=pow(r_e,2.0);
@@ -2733,7 +2687,8 @@ int nstar_rot::iterate(double r_ratio_loc) {
  
     // Compute new r_e
 
-    r_e_old=r_e;
+    // Equatorial radius in previous cycle
+    double r_e_old=r_e;
     r_p=r_ratio_loc*r_e;                          
     s_p=r_p/(r_p+r_e);                        
   
@@ -2764,17 +2719,17 @@ int nstar_rot::iterate(double r_ratio_loc) {
  
     // Compute velocity, energy density and pressure
  
-    for(s=1;s<=SDIV;s++) {
-      sgp=s_gp[s];
+    for(int s=1;s<=SDIV;s++) {
+      double sgp=s_gp[s];
 
-      for(m=1;m<=MDIV;m++) {
-	rsm=rho(s,m);
+      for(int m=1;m<=MDIV;m++) {
+	double rsm=rho(s,m);
             
 	if (r_ratio_loc==1.0 || s > (SDIV/2+2) ) {
 	  velocity_sq(s,m)=0.0;
 	} else {
 	  velocity_sq(s,m)=pow((Omega_h-omega(s,m))*(sgp/(1.0-sgp))
-				*sin_theta[m]*exp(-rsm*pow(r_e,2.0)),2.0);
+			       *sin_theta[m]*exp(-rsm*pow(r_e,2.0)),2.0);
 	}
 	
 	if (velocity_sq(s,m)>=1.0) {
@@ -2794,8 +2749,8 @@ int nstar_rot::iterate(double r_ratio_loc) {
 	    pressure(s,m)=p_at_h(enthalpy(s,m));
 	    energy(s,m)=e_at_p(pressure(s,m));
 	  } else {
-	    rho0sm=pow(((Gamma_P-1.0)/Gamma_P)
-		       *(exp(enthalpy(s,m))-1.0),1.0/(Gamma_P-1.0));
+	    double rho0sm=pow(((Gamma_P-1.0)/Gamma_P)
+			      *(exp(enthalpy(s,m))-1.0),1.0/(Gamma_P-1.0));
 	    pressure(s,m)=pow(rho0sm,Gamma_P);
 	    energy(s,m)=pressure(s,m)/(Gamma_P-1.0)+rho0sm;
 	  }
@@ -2811,9 +2766,10 @@ int nstar_rot::iterate(double r_ratio_loc) {
 
     // Evaluation of source terms (Eqs. 30-33 of Cook, et al. (1992))
 
+    int s;
     if (SMAX==1.0) {
       s=SDIV;
-      for(m=1;m<=MDIV;m++) {
+      for(int m=1;m<=MDIV;m++) {
 	S_rho(s,m)=0.0;
 	S_gamma(s,m)=0.0;
 	S_omega(s,m)=0.0;
@@ -2821,24 +2777,37 @@ int nstar_rot::iterate(double r_ratio_loc) {
     }
 
     for(s=1;s<=s_temp;s++) {
-      for(m=1;m<=MDIV;m++) {
-	rsm=rho(s,m);
-	gsm=gamma(s,m);
-	omsm=omega(s,m);
-	esm=energy(s,m);
-	psm=pressure(s,m);
-	e_gsm=exp(0.5*gsm);
-	e_rsm=exp(-rsm);
-	v2sm=velocity_sq(s,m);
-	mum=mu[m];            
-	m1=1.0-pow(mum,2.0);
-	sgp=s_gp[s];
-	s_1=1.0-sgp;
-	s1=sgp*s_1;
-	s2=pow(sgp/s_1,2.0);  
+      for(int m=1;m<=MDIV;m++) {
+	double rsm=rho(s,m);
+	double gsm=gamma(s,m);
+	double omsm=omega(s,m);
+	double esm=energy(s,m);
+	double psm=pressure(s,m);
+	double e_gsm=exp(0.5*gsm);
+	double e_rsm=exp(-rsm);
+	double v2sm=velocity_sq(s,m);
+	double mum=mu[m];            
+	double m1=1.0-pow(mum,2.0);
+	double sgp=s_gp[s];
+	double s_1=1.0-sgp;
+	double s1=sgp*s_1;
+	double s2=pow(sgp/s_1,2.0);  
 
-	ea=16.0*PI*exp(2.0*alpha(s,m))*pow(r_e,2.0);
- 
+	double ea=16.0*PI*exp(2.0*alpha(s,m))*pow(r_e,2.0);
+
+	// Derivative of gamma w.r.t. s
+	double d_gamma_s;            
+	// Derivative of gamma w.r.t. m
+	double d_gamma_m;            
+	// Derivative of rho w.r.t. s
+	double d_rho_s;             
+	// Derivative of rho w.r.t. m
+	double d_rho_m;             
+	// Derivative of omega w.r.t. s
+	double d_omega_s;           
+	// Derivative of omega w.r.t. m
+	double d_omega_m;
+	
 	if (s==1) {
 	  d_gamma_s=0.0;
 	  d_gamma_m=0.0;
@@ -2881,10 +2850,12 @@ int nstar_rot::iterate(double r_ratio_loc) {
     
     // Angular integration (see Eqs. 27-29 of Cook, et al. (1992))
   
-    n=0;
-    for(k=1;k<=SDIV;k++) {      
+    int n=0;
+    for(int k=1;k<=SDIV;k++) {      
 
-      for(m=1;m<=MDIV-2;m+=2) {
+      // Intermediate sum in eqn for rho
+      double sum_rho=0.0;
+      for(int m=1;m<=MDIV-2;m+=2) {
 	sum_rho+=(DM/3.0)*(P_2n(m,n)*S_rho(k,m)
 			   +4.0*P_2n(m+1,n)*S_rho(k,m+1) 
 			   +P_2n(m+2,n)*S_rho(k,m+2));
@@ -2893,13 +2864,14 @@ int nstar_rot::iterate(double r_ratio_loc) {
       D1_rho(n,k)=sum_rho;
       D1_gamma(n,k)=0.0;
       D1_omega(n,k)=0.0;
-      sum_rho=0.0;
 
     }
 
     for(n=1;n<=LMAX;n++) {
-      for(k=1;k<=SDIV;k++) {      
-	for(m=1;m<=MDIV-2;m+=2) {
+      for(int k=1;k<=SDIV;k++) {
+	// Intermediate sums in eqns for rho, gamma, omega
+	double sum_rho=0.0, sum_gamma=0.0, sum_omega=0.0;
+	for(int m=1;m<=MDIV-2;m+=2) {
 
 	  sum_rho+=(DM/3.0)*(P_2n(m,n)*S_rho(k,m)
 			     +4.0*P_2n(m+1,n)*S_rho(k,m+1) 
@@ -2919,9 +2891,6 @@ int nstar_rot::iterate(double r_ratio_loc) {
 	D1_rho(n,k)=sum_rho;
 	D1_gamma(n,k)=sum_gamma;
 	D1_omega(n,k)=sum_omega;
-	sum_rho=0.0;
-	sum_gamma=0.0;
-	sum_omega=0.0;
       }
     }
 
@@ -2929,7 +2898,9 @@ int nstar_rot::iterate(double r_ratio_loc) {
 
     n=0;
     for(s=1;s<=SDIV;s++) {
-      for(k=1;k<=SDIV-2;k+=2) { 
+      // Intermediate sum in eqn for rho
+      double sum_rho=0.0;
+      for(int k=1;k<=SDIV-2;k+=2) { 
 	sum_rho+=(DS/3.0)*(f_rho.get(s,n,k)*D1_rho(n,k)+
 			   4.0*f_rho.get(s,n,k+1)*D1_rho(n,k+1)+
 			   f_rho.get(s,n,k+2)*D1_rho(n,k+2));
@@ -2937,12 +2908,13 @@ int nstar_rot::iterate(double r_ratio_loc) {
       D2_rho(s,n)=sum_rho;
       D2_gamma(s,n)=0.0;
       D2_omega(s,n)=0.0;
-      sum_rho=0.0;
     }
 
     for(s=1;s<=SDIV;s++) {
       for(n=1;n<=LMAX;n++) {
-	for(k=1;k<=SDIV-2;k+=2) { 
+	// Intermediate sums in eqns for rho, gamma, omega
+	double sum_rho=0.0, sum_gamma=0.0, sum_omega=0.0;
+	for(int k=1;k<=SDIV-2;k+=2) { 
 	  sum_rho+=(DS/3.0)*(f_rho.get(s,n,k)*D1_rho(n,k) 
 			     +4.0*f_rho.get(s,n,k+1)*D1_rho(n,k+1)
 			     +f_rho.get(s,n,k+2)*D1_rho(n,k+2));
@@ -2958,25 +2930,25 @@ int nstar_rot::iterate(double r_ratio_loc) {
 	D2_rho(s,n)=sum_rho;
 	D2_gamma(s,n)=sum_gamma;
 	D2_omega(s,n)=sum_omega;
-	sum_rho=0.0;
-	sum_gamma=0.0;
-	sum_omega=0.0;
       }
     }
 
     // Summation of coefficients
 
     for(s=1;s<=SDIV;s++) {
-      for(m=1;m<=MDIV;m++) {
+      for(int m=1;m<=MDIV;m++) {
 
-	gsm=gamma(s,m);
-	rsm=rho(s,m);
-	omsm=omega(s,m);             
-	e_gsm=exp(-0.5*gsm);
-	e_rsm=exp(rsm);
+	double gsm=gamma(s,m);
+	double rsm=rho(s,m);
+	double omsm=omega(s,m);             
+	double e_gsm=exp(-0.5*gsm);
+	double e_rsm=exp(rsm);
 	double temp1=sin_theta[m];
 
-	sum_rho+=-e_gsm*P_2n(m,0)*D2_rho(s,0); 
+	// Intermediate sums in eqns for rho, gamma, omega
+	double sum_rho=-e_gsm*P_2n(m,0)*D2_rho(s,0);
+	double sum_omega=0.0;
+	double sum_gamma=0.0;
 
 	for(n=1;n<=LMAX;n++) {
 
@@ -2998,9 +2970,6 @@ int nstar_rot::iterate(double r_ratio_loc) {
 	gamma(s,m)=gsm+cf*(sum_gamma-gsm);
 	omega(s,m)=omsm+cf*(sum_omega-omsm);
 
-	sum_omega=0.0;
-	sum_rho=0.0;
-	sum_gamma=0.0; 
       }
     }
 
@@ -3016,7 +2985,7 @@ int nstar_rot::iterate(double r_ratio_loc) {
 
     if (r_ratio_loc==1.0) {
       for(s=1;s<=SDIV;s++) {
-	for(m=1;m<=MDIV;m++) {
+	for(int m=1;m<=MDIV;m++) {
 	  rho(s,m)=rho(s,1);
 	  gamma(s,m)=gamma(s,1);
 	  omega(s,m)=0.0;          
@@ -3027,7 +2996,7 @@ int nstar_rot::iterate(double r_ratio_loc) {
     // Treat infinity when SMAX=1.0
     
     if (SMAX==1.0) {
-      for(m=1;m<=MDIV;m++) {
+      for(int m=1;m<=MDIV;m++) {
 	rho(SDIV,m)=0.0;
 	gamma(SDIV,m)=0.0;
 	omega(SDIV,m)=0.0;
@@ -3037,7 +3006,7 @@ int nstar_rot::iterate(double r_ratio_loc) {
     // Compute first order derivatives of gamma
  
     for(s=1;s<=SDIV;s++) {
-      for(m=1;m<=MDIV;m++) {
+      for(int m=1;m<=MDIV;m++) {
 	dgds(s,m)=deriv_s(gamma,s,m);
 	dgdm(s,m)=deriv_m(gamma,s,m);
       }
@@ -3047,31 +3016,41 @@ int nstar_rot::iterate(double r_ratio_loc) {
  
     if (r_ratio_loc==1.0) {
       for(s=1;s<=SDIV;s++) {
-	for(m=1;m<=MDIV;m++) {
+	for(int m=1;m<=MDIV;m++) {
 	  da_dm(s,m)=0.0;
 	}
       }
     } else {
     
       for(s=2;s<=s_temp;s++) {
-	for(m=1;m<=MDIV;m++) {
+	for(int m=1;m<=MDIV;m++) {
 
 	  da_dm(1,m)=0.0; 
        
-	  sgp=s_gp[s];
-	  s1=sgp*(1.0-sgp);
-	  mum=mu[m]; 
-	  m1=1.0-pow(mum,2.0);
+	  double sgp=s_gp[s];
+	  double s1=sgp*(1.0-sgp);
+	  double mum=mu[m]; 
+	  double m1=1.0-pow(mum,2.0);
           
-	  d_gamma_s=dgds(s,m);
-	  d_gamma_m=dgdm(s,m);
-	  d_rho_s=deriv_s(rho,s,m);
-	  d_rho_m=deriv_m(rho,s,m);
-	  d_omega_s=deriv_s(omega,s,m);
-	  d_omega_m=deriv_m(omega,s,m);
-	  d_gamma_ss=s1*deriv_s(dgds,s,m)+(1.0-2.0*sgp)*d_gamma_s;
-	  d_gamma_mm=m1*deriv_m(dgdm,s,m)-2.0*mum*d_gamma_m;  
-	  d_gamma_sm=deriv_sm(gamma,s,m);
+	  // Derivative of gamma w.r.t. s
+	  double d_gamma_s=dgds(s,m);
+	  // Derivative of gamma w.r.t. m
+	  double d_gamma_m=dgdm(s,m);
+	  // Derivative of rho w.r.t. s
+	  double d_rho_s=deriv_s(rho,s,m);
+	  // Derivative of rho w.r.t. m
+	  double d_rho_m=deriv_m(rho,s,m);
+	  // Derivative of omega w.r.t. s
+	  double d_omega_s=deriv_s(omega,s,m);
+	  // Derivative of omega w.r.t. m
+	  double d_omega_m=deriv_m(omega,s,m);
+	  
+	  // Second derivative of gamma w.r.t. s
+	  double d_gamma_ss=s1*deriv_s(dgds,s,m)+(1.0-2.0*sgp)*d_gamma_s;
+	  // Second derivative of gamma w.r.t. m
+	  double d_gamma_mm=m1*deriv_m(dgdm,s,m)-2.0*mum*d_gamma_m;  
+	  // Derivative of gamma w.r.t. m and s
+	  double d_gamma_sm=deriv_sm(gamma,s,m);
 
 	  double temp1=2.0*pow(sgp,2.0)*(sgp/(1.0-sgp))*m1*d_omega_s*d_omega_m
 	    *(1.0+s1*d_gamma_s)-(pow(pow(sgp,2.0)*d_omega_s,2.0)-
@@ -3104,13 +3083,13 @@ int nstar_rot::iterate(double r_ratio_loc) {
 
     for(s=1;s<=s_temp;s++) {
       alpha(s,1)=0.0;
-      for(m=1;m<=MDIV-1;m++) {
+      for(int m=1;m<=MDIV-1;m++) {
 	alpha(s,m+1)=alpha(s,m)+0.5*DM*(da_dm(s,m+1)+da_dm(s,m));
       }
     } 
  
     for(s=1;s<=s_temp;s++) {
-      for(m=1;m<=MDIV;m++) {     
+      for(int m=1;m<=MDIV;m++) {     
 
 	alpha(s,m)+=-alpha(s,MDIV)+0.5*(gamma(s,MDIV)-rho(s,MDIV));
 	if (alpha(s,m)>=300.0) {
@@ -3123,7 +3102,7 @@ int nstar_rot::iterate(double r_ratio_loc) {
     }
 
     if (SMAX==1.0) {
-      for(m=1;m<=MDIV;m++) {
+      for(int m=1;m<=MDIV;m++) {
 	alpha(SDIV,m)=0.0;
       }
     }
@@ -3136,8 +3115,8 @@ int nstar_rot::iterate(double r_ratio_loc) {
     // end of while (r_e_diff<eq_radius_tol_rel || n_of_it<2)
   }   
 
-  for(s=1;s<=SDIV;s++) {
-    for(m=1;m<=MDIV;m++) {
+  for(int s=1;s<=SDIV;s++) {
+    for(int m=1;m<=MDIV;m++) {
       gamma_guess(s,m)=gamma(s,m);
       rho_guess(s,m)=rho(s,m);
       alpha_guess(s,m)=alpha(s,m);
@@ -3150,7 +3129,8 @@ int nstar_rot::iterate(double r_ratio_loc) {
   return 0;
 } 
 
-int nstar_rot::fix_cent_eden_axis_rat(double cent_eden, double axis_rat) {
+int nstar_rot::fix_cent_eden_axis_rat(double cent_eden, double axis_rat,
+				      bool use_guess) {
 
   if (eos_set==false) {
     O2SCL_ERR2("EOS not specified in ",
@@ -3213,14 +3193,17 @@ int nstar_rot::fix_cent_eden_axis_rat(double cent_eden, double axis_rat) {
 
   e_center=e_min;
   make_center(e_center);
-  spherical_star();
-  
-  if (r_ratio<0.8) {
-    iterate(0.8);
-  }
-  
-  if (r_ratio<0.6) {
-    iterate(0.6);
+
+  if (use_guess==false) {
+    spherical_star();
+    
+    if (r_ratio<0.8) {
+      iterate(0.8);
+    }
+    
+    if (r_ratio<0.6) {
+      iterate(0.6);
+    }
   }
   
   iterate(r_ratio);
@@ -3228,6 +3211,114 @@ int nstar_rot::fix_cent_eden_axis_rat(double cent_eden, double axis_rat) {
 
   return 0;
 }
+
+void nstar_rot::resize(int MDIV_new, int SDIV_new, int LMAX_new,
+		       int RDIV_new) {
+  RDIV=RDIV_new;
+  MDIV=MDIV_new;
+  SDIV=SDIV_new;
+  LMAX=LMAX_new;
+  
+  size_t sz[3]={((size_t)SDIV+1),((size_t)LMAX+1),((size_t)SDIV+1)};
+  f_gamma.resize(3,sz);
+  f_rho.resize(3,sz);
+  f_omega.resize(3,sz);
+
+  P_2n.resize(MDIV+1,LMAX+1);
+  P1_2n_1.resize(MDIV+1,LMAX+1);
+
+  D1_rho.resize(LMAX+1,SDIV+1);  
+  D1_gamma.resize(LMAX+1,SDIV+1); 
+  D1_omega.resize(LMAX+1,SDIV+1);
+  D2_rho.resize(SDIV+1,LMAX+1);  
+  D2_gamma.resize(SDIV+1,LMAX+1); 
+  D2_omega.resize(SDIV+1,LMAX+1);
+  
+  S_gamma.resize(SDIV+1,MDIV+1);  
+  S_rho.resize(SDIV+1,MDIV+1);   
+  S_omega.resize(SDIV+1,MDIV+1); 
+
+  v_plus.resize(SDIV+1);
+  v_minus.resize(SDIV+1);
+
+  rho.resize(SDIV+1,MDIV+1);          
+  gamma.resize(SDIV+1,MDIV+1);         
+  omega.resize(SDIV+1,MDIV+1);        
+  alpha.resize(SDIV+1,MDIV+1);        
+  
+  s_gp.resize(SDIV+1);                 
+  s_1_s.resize(SDIV+1);
+  one_s.resize(SDIV+1);
+  mu.resize(MDIV+1);                   
+  one_m2.resize(MDIV+1);
+  theta.resize(MDIV+1);
+  sin_theta.resize(MDIV+1);
+
+  r_gp.resize(RDIV+1);
+  r_is_gp.resize(RDIV+1);
+  lambda_gp.resize(RDIV+1);
+  nu_gp.resize(RDIV+1);
+  m_gp.resize(RDIV+1);
+  e_d_gp.resize(RDIV+1);   
+
+  gamma_mu_1.resize(SDIV+1);            
+  gamma_mu_0.resize(SDIV+1);            
+  rho_mu_1.resize(SDIV+1);             
+  rho_mu_0.resize(SDIV+1);             
+  omega_mu_0.resize(SDIV+1);           
+  
+  rho_guess.resize(SDIV+1,MDIV+1);    
+  gamma_guess.resize(SDIV+1,MDIV+1);
+  omega_guess.resize(SDIV+1,MDIV+1);
+  alpha_guess.resize(SDIV+1,MDIV+1);
+  
+  energy.resize(SDIV+1,MDIV+1);       
+  pressure.resize(SDIV+1,MDIV+1);     
+  enthalpy.resize(SDIV+1,MDIV+1);     
+
+  velocity_sq.resize(SDIV+1,MDIV+1);  
+  da_dm.resize(SDIV+1,MDIV+1);
+  
+  DS=(SMAX/(SDIV-1.0));
+  DM=(1.0/(MDIV-1.0));          
+
+  // Rereate the computational mesh for variables "s" and "mu=cos theta"
+  make_grid();
+  
+  /* Recreate the 2-point functions and legendre polynomials needed
+     to integrate the metric potentials rho, gamma and omega 
+  */
+  comp_f_P();
+
+  return;
+}
+
+int nstar_rot::solve_kepler(size_t nv, const ubvector &x,
+			    ubvector &y) {
+  r_ratio=x[0];
+  if (r_ratio>1.0 || r_ratio<0.1) {
+    return 1;
+  }
+  iterate(r_ratio);
+  comp_omega();
+  y[0]=(Omega-Omega_K)/fabs(Omega);
+  return 0;
+}
+
+int nstar_rot::fix_cent_eden_with_kepler_alt(double cent_eden) {
+
+  ubvector x(1), y(1);
+  x[0]=0.75;
+  mm_funct11 nf=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+     (&nstar_rot::solve_kepler),this,std::placeholders::_1,
+     std::placeholders::_2,std::placeholders::_3);
+
+  mh.verbose=1;
+  mh.msolve(1,x,nf);
+  return 0;
+}
+
 
 int nstar_rot::fix_cent_eden_with_kepler(double cent_eden) {
 
@@ -3686,9 +3777,9 @@ int nstar_rot::fix_cent_eden_ang_vel(double cent_eden, double ang_vel) {
     e_min*=C*C*KSCALE;
   }
   double Omega_const=ang_vel;
-  if (scaled_polytrope==false) {
-    Omega_const*=1.0e4;
-  }
+  //if (scaled_polytrope==false) {
+  //Omega_const*=1.0e4;
+  //}
   
   Gamma_P=1.0+1.0/n_P;
 
@@ -4020,7 +4111,7 @@ void nstar_rot::test5(o2scl::test_mgr &t) {
   constants_rns();
   eos_nstar_rot_C p(true);
   set_eos(p);
-  fix_cent_eden_ang_vel(1.0e15,0.5);
+  fix_cent_eden_ang_vel(1.0e15,5.0e3);
   eos_set=false;
 
   t.test_rel(e_center,1.0,2.0e-6,"1");
