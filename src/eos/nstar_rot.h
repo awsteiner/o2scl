@@ -412,7 +412,6 @@ namespace o2scl {
       inefficient because it has to handle the boundary conditions
       separately. This could be improved.
       \future Give the user more control over the initial guess.
-      \future Remove the CL_LOW stuff?
 
       <b>Draft documentation</b> 
 
@@ -525,6 +524,14 @@ namespace o2scl {
     
     /// Solve for the Keplerian velocity
     int solve_kepler(size_t nv, const ubvector &x, ubvector &y);
+
+    /// Solve for the gravitational mass
+    int solve_grav_mass(size_t nv, const ubvector &x, ubvector &y,
+			double grav_mass);
+    
+    /// Solve for the gravitational mass
+    int solve_bar_mass(size_t nv, const ubvector &x, ubvector &y,
+			double bar_mass);
     
     /** \brief Subclass of \ref nstar_rot which specifies the function
 	to invert a polytropic EOS
@@ -622,7 +629,7 @@ namespace o2scl {
     /// Desc
     ubmatrix dgdm;
 
-  /// \name Metric functions
+    /// \name Metric functions
     //@{
     /** \brief potential \f$ \rho \f$ */ 
     ubmatrix rho;
@@ -763,25 +770,6 @@ namespace o2scl {
     double n_P;
     /// Polytropic exponent
     double Gamma_P;
-    //@}
-
-    /// \name For CL_LOW is true
-    //@{
-    /// Desc
-    double e_match;
-    /// Desc
-    double p_match;
-    /// Desc
-    double h_match;
-    /// Desc
-    double n0_match;
-    /** \brief Desc (default false)
-     */
-    bool CL_LOW;
-    /// Desc
-    double de_pt;
-    /// Desc
-    double e_cl;
     //@}
 
     /// \name Interpolation functions
@@ -1018,11 +1006,6 @@ namespace o2scl {
     
   public:
 
-    /** \brief Desc
-     */
-    int iterate2(double r_ratio_loc, double &r_e_loc, int s_temp,
-		 double &r_e_old);
-    
     /** \brief Relative accuracy for the equatorial radius,
 	\f$ r_e \f$ (default \f$ 10^{-5} \f$) 
 
@@ -1227,8 +1210,18 @@ namespace o2scl {
 
     /** \brief Experimental alternate form for
 	\ref fix_cent_eden_with_kepler()
-     */
+    */
     int fix_cent_eden_with_kepler_alt(double cent_eden);
+
+    /** \brief Experimental alternate form for
+	\ref fix_cent_eden_grav_mass()
+    */
+    int fix_cent_eden_grav_mass_alt(double cent_eden, double grav_mass);
+    
+    /** \brief Experimental alternate form for
+	\ref fix_cent_eden_bar_mass()
+    */
+    int fix_cent_eden_bar_mass_alt(double cent_eden, double bar_mass);
     
     /** \brief Construct a non-rotating configuration with a fixed central 
 	energy density

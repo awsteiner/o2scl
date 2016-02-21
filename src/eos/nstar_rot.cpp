@@ -459,7 +459,6 @@ nstar_rot::nstar_rot() {
   eq_radius_tol_rel=1.0e-5;    
   tol_abs=1.0e-4;   
  
-  CL_LOW=false;
   scaled_polytrope=false;
 
   // Default polytropic index
@@ -662,62 +661,26 @@ double nstar_rot::int_z(ubvector &f, int m) {
 
 double nstar_rot::e_at_p(double pp) {
   if (scaled_polytrope==false) {
-    if (CL_LOW==true && pp > p_match) {
-      return pp+e_match+de_pt-p_match;
-    } else {
-      return eosp->ed_from_pr(pp);
-      //return pow(10.0,interp(log_p_tab,log_e_tab,n_tab,log10(pp)));
-    }
+    return eosp->ed_from_pr(pp);
   } else {
     return pp/(Gamma_P-1.0)+pow(pp,1.0/Gamma_P); 
   }
 }
 
 double nstar_rot::p_at_e(double ee) {
-  if (CL_LOW==true && ee > e_match) {
-    if (ee<=e_cl) {
-      return p_match; 
-    } else {
-      return ee-e_match-de_pt+p_match;
-    }
-  } else {
-    return eosp->pr_from_ed(ee);
-    //return pow(10.0,interp(log_e_tab,log_p_tab,n_tab,log10(ee)));
-  }
+  return eosp->pr_from_ed(ee);
 } 
 
 double nstar_rot::p_at_h(double hh) {
-  if (CL_LOW==true && hh > h_match) {
-    return 0.5*( (e_match+de_pt+p_match)*exp(2.0*(hh-h_match)) 
-		 +p_match-e_match-de_pt);
-  } else {
-    return eosp->pr_from_enth(hh);
-    //return pow(10.0,interp(log_h_tab,log_p_tab,n_tab,log10(hh)));
-  }
+  return eosp->pr_from_enth(hh);
 }
 
 double nstar_rot::h_at_p(double pp) {
-  if (CL_LOW==true && pp > p_match) {
-    return h_match+0.5*log((2.0*pp+e_match+de_pt-p_match)/
-			   (e_match+de_pt+p_match));
-  } else {
-    return eosp->enth_from_pr(pp);
-    //return pow(10.0,interp(log_p_tab,log_h_tab,n_tab,log10(pp)));
-  }
+  return eosp->enth_from_pr(pp);
 }
 
 double nstar_rot::n0_at_e(double ee) {
-  if (CL_LOW==true && ee > e_match) {
-    if (ee<=e_cl) {
-      return ((ee+p_match)/(MB*C*C*KSCALE))*exp(-h_match);
-    } else {
-      return (n0_match+(de_pt/(MB*C*C*KSCALE))*exp(-h_match))  
-	*sqrt(1.0+2.0*(ee-e_match-de_pt)/(e_match+de_pt+p_match));
-    }
-  } else {
-    return eosp->nb_from_ed(ee);
-    //return pow(10.0,interp(log_e_tab,log_n0_tab,n_tab,log10(ee)));
-  }
+  return eosp->nb_from_ed(ee);
 }
 
 double nstar_rot::s_deriv(ubvector &f, int s) {
@@ -2627,451 +2590,6 @@ void nstar_rot::spherical_star() {
   return;
 }
 
-int nstar_rot::iterate2(double r_ratio_loc, double &r_e_loc, int s_temp,
-			double &r_e_old) {
- 
-  /* Rescale potentials and construct arrays with the potentials
-     along the equatorial and polar directions.
-  */        
-
-  for(int s=1;s<=SDIV;s++) {
-    for(int m=1;m<=MDIV;m++) {
-      rho(s,m)/=pow(r_e_loc,2.0);
-      gamma(s,m)/=pow(r_e_loc,2.0); 
-      alpha(s,m)/=pow(r_e_loc,2.0);
-      omega(s,m)*=r_e_loc;
-    }
-    // The value of rho on the equatorial plane is rho_mu_0
-    rho_mu_0[s]=rho(s,1);     
-    gamma_mu_0[s]=gamma(s,1);   
-    omega_mu_0[s]=omega(s,1); 
-    // Value of rho on the polar axis is rho_mu_1
-    rho_mu_1[s]=rho(s,MDIV);  
-    gamma_mu_1[s]=gamma(s,MDIV);
-  }
- 
-  // Compute new r_e
-
-  // Equatorial radius in previous cycle
-  r_e_old=r_e_loc;
-  r_p=r_ratio_loc*r_e_loc;                          
-  s_p=r_p/(r_p+r_e_loc);                        
-  
-  n_nearest=SDIV/2;
-  gamma_pole_h=interp(s_gp,gamma_mu_1,SDIV,s_p); 
-  gamma_equator_h=interp(s_gp,gamma_mu_0,SDIV,s_e);
-  gamma_center_h=gamma(1,1);                    
-  
-  rho_pole_h=interp(s_gp,rho_mu_1,SDIV,s_p);   
-  rho_equator_h=interp(s_gp,rho_mu_0,SDIV,s_e);
-  rho_center_h=rho(1,1);                      
- 
-  r_e_loc=sqrt(2*h_center/(gamma_pole_h+rho_pole_h-gamma_center_h-
-			   rho_center_h));
-
-  // Compute angular velocity Omega
- 
-  if (r_ratio_loc==1.0) {
-    Omega_h=0.0;
-    omega_equator_h=0.0;
-  } else {
-    // AWS: This looks like Eq. 46 from Cook '92
-    omega_equator_h=interp(s_gp,omega_mu_0,SDIV,s_e);
-    Omega_h=omega_equator_h+exp(pow(r_e_loc,2.0)*rho_equator_h)*
-      sqrt(1.0-exp(pow(r_e_loc,2.0)*(gamma_pole_h+rho_pole_h-gamma_equator_h
-				     -rho_equator_h)));
-  }
- 
-  // Compute velocity, energy density and pressure
- 
-  for(int s=1;s<=SDIV;s++) {
-    double sgp=s_gp[s];
-
-    for(int m=1;m<=MDIV;m++) {
-      double rsm=rho(s,m);
-            
-      if (r_ratio_loc==1.0 || s > (SDIV/2+2) ) {
-	velocity_sq(s,m)=0.0;
-      } else {
-	velocity_sq(s,m)=pow((Omega_h-omega(s,m))*(sgp/(1.0-sgp))
-			     *sin_theta[m]*exp(-rsm*pow(r_e_loc,2.0)),2.0);
-      }
-	
-      if (velocity_sq(s,m)>=1.0) {
-	velocity_sq(s,m)=0.0;
-      }
-
-      enthalpy(s,m)=enthalpy_min+0.5*
-	(pow(r_e_loc,2.0)*(gamma_pole_h+rho_pole_h
-			   -gamma(s,m)-rsm)-log(1.0-velocity_sq(s,m)));
-	
-      if ((enthalpy(s,m)<=enthalpy_min) || (sgp>s_e)) {
-	pressure(s,m)=0.0;
-	energy(s,m)=0.0; 
-      } else { 
-
-	if (scaled_polytrope==false) {
-	  pressure(s,m)=p_at_h(enthalpy(s,m));
-	  energy(s,m)=e_at_p(pressure(s,m));
-	} else {
-	  double rho0sm=pow(((Gamma_P-1.0)/Gamma_P)
-			    *(exp(enthalpy(s,m))-1.0),1.0/(Gamma_P-1.0));
-	  pressure(s,m)=pow(rho0sm,Gamma_P);
-	  energy(s,m)=pressure(s,m)/(Gamma_P-1.0)+rho0sm;
-	}
-      }  
-
-      // Rescale back metric potentials (except omega)
-
-      rho(s,m)*=pow(r_e_loc,2.0);
-      gamma(s,m)*=pow(r_e_loc,2.0);
-      alpha(s,m)*=pow(r_e_loc,2.0);
-    }
-  }
-
-  // Evaluation of source terms (Eqs. 30-33 of Cook, et al. (1992))
-
-  int s;
-  if (SMAX==1.0) {
-    s=SDIV;
-    for(int m=1;m<=MDIV;m++) {
-      S_rho(s,m)=0.0;
-      S_gamma(s,m)=0.0;
-      S_omega(s,m)=0.0;
-    }
-  }
-
-  for(s=1;s<=s_temp;s++) {
-    for(int m=1;m<=MDIV;m++) {
-      double rsm=rho(s,m);
-      double gsm=gamma(s,m);
-      double omsm=omega(s,m);
-      double esm=energy(s,m);
-      double psm=pressure(s,m);
-      double e_gsm=exp(0.5*gsm);
-      double e_rsm=exp(-rsm);
-      double v2sm=velocity_sq(s,m);
-      double mum=mu[m];            
-      double m1=1.0-pow(mum,2.0);
-      double sgp=s_gp[s];
-      double s_1=1.0-sgp;
-      double s1=sgp*s_1;
-      double s2=pow(sgp/s_1,2.0);  
-
-      double ea=16.0*PI*exp(2.0*alpha(s,m))*pow(r_e_loc,2.0);
-
-      // Derivative of gamma w.r.t. s
-      double d_gamma_s;            
-      // Derivative of gamma w.r.t. m
-      double d_gamma_m;            
-      // Derivative of rho w.r.t. s
-      double d_rho_s;             
-      // Derivative of rho w.r.t. m
-      double d_rho_m;             
-      // Derivative of omega w.r.t. s
-      double d_omega_s;           
-      // Derivative of omega w.r.t. m
-      double d_omega_m;
-	
-      if (s==1) {
-	d_gamma_s=0.0;
-	d_gamma_m=0.0;
-	d_rho_s=0.0;
-	d_rho_m=0.0;
-	d_omega_s=0.0;
-	d_omega_m=0.0;
-      } else {
-	d_gamma_s=deriv_s(gamma,s,m);
-	d_gamma_m=deriv_m(gamma,s,m);
-	d_rho_s=deriv_s(rho,s,m);
-	d_rho_m=deriv_m(rho,s,m);
-	d_omega_s=deriv_s(omega,s,m);
-	d_omega_m=deriv_m(omega,s,m);
-      }
-
-      S_rho(s,m)=e_gsm*
-	(0.5*ea*(esm+psm)*s2*(1.0+v2sm)/(1.0-v2sm)+
-	 s2*m1*pow(e_rsm,2.0)*
-	 (pow(s1*d_omega_s,2.0)+m1*pow(d_omega_m,2.0))
-	 +s1*d_gamma_s-mum*d_gamma_m+0.5*rsm*
-	 (ea*psm*s2-s1*d_gamma_s*(0.5*s1*d_gamma_s+1.0)
-	  -d_gamma_m*(0.5*m1*d_gamma_m-mum)));
-
-      S_gamma(s,m)=e_gsm*
-	(ea*psm*s2+0.5*gsm*(ea*psm*s2-0.5*pow(s1*d_gamma_s,2.0)-
-			    0.5*m1*pow(d_gamma_m,2.0)));
-	
-      S_omega(s,m)=e_gsm*e_rsm*
-	(-ea*(Omega_h-omsm)*(esm+psm)*s2/(1.0-v2sm)+
-	 omsm*(-0.5*ea*(((1.0+v2sm)*esm+2.0*v2sm*psm)/(1.0-v2sm))*s2-
-	       s1*(2*d_rho_s+0.5*d_gamma_s)
-	       +mum*(2*d_rho_m+0.5*d_gamma_m)+0.25*pow(s1,2.0)*
-	       (4*pow(d_rho_s,2.0)-pow(d_gamma_s,2.0))+0.25*m1*
-	       (4*pow(d_rho_m,2.0)-pow(d_gamma_m,2.0))-
-	       m1*pow(e_rsm,2.0)*(pow(pow(sgp,2.0)*d_omega_s,2.0)
-				  +s2*m1*pow(d_omega_m,2.0))));
-    }
-  }
-    
-  // Angular integration (see Eqs. 27-29 of Cook, et al. (1992))
-  
-  int n=0;
-  for(int k=1;k<=SDIV;k++) {      
-
-    // Intermediate sum in eqn for rho
-    double sum_rho=0.0;
-    for(int m=1;m<=MDIV-2;m+=2) {
-      sum_rho+=(DM/3.0)*(P_2n(m,n)*S_rho(k,m)
-			 +4.0*P_2n(m+1,n)*S_rho(k,m+1) 
-			 +P_2n(m+2,n)*S_rho(k,m+2));
-    }
-
-    D1_rho(n,k)=sum_rho;
-    D1_gamma(n,k)=0.0;
-    D1_omega(n,k)=0.0;
-
-  }
-
-  for(n=1;n<=LMAX;n++) {
-    for(int k=1;k<=SDIV;k++) {
-      // Intermediate sums in eqns for rho, gamma, omega
-      double sum_rho=0.0, sum_gamma=0.0, sum_omega=0.0;
-      for(int m=1;m<=MDIV-2;m+=2) {
-
-	sum_rho+=(DM/3.0)*(P_2n(m,n)*S_rho(k,m)
-			   +4.0*P_2n(m+1,n)*S_rho(k,m+1) 
-			   +P_2n(m+2,n)*S_rho(k,m+2));
-                       
-	sum_gamma+=(DM/3.0)*(sin((2.0*n-1.0)*theta[m])*S_gamma(k,m)
-			     +4.0*sin((2.0*n-1.0)*theta[m+1])*
-			     S_gamma(k,m+1)
-			     +sin((2.0*n-1.0)*theta[m+2])*S_gamma(k,m+2));
-  
-	sum_omega+=(DM/3.0)*(sin_theta[m]*P1_2n_1(m,n)*S_omega(k,m)
-			     +4.0*sin_theta[m+1]*P1_2n_1(m+1,n)*
-			     S_omega(k,m+1)
-			     +sin_theta[m+2]*P1_2n_1(m+2,n)*
-			     S_omega(k,m+2));
-      }
-      D1_rho(n,k)=sum_rho;
-      D1_gamma(n,k)=sum_gamma;
-      D1_omega(n,k)=sum_omega;
-    }
-  }
-
-  // Radial integration
-
-  n=0;
-  for(s=1;s<=SDIV;s++) {
-    // Intermediate sum in eqn for rho
-    double sum_rho=0.0;
-    for(int k=1;k<=SDIV-2;k+=2) { 
-      sum_rho+=(DS/3.0)*(f_rho.get(s,n,k)*D1_rho(n,k)+
-			 4.0*f_rho.get(s,n,k+1)*D1_rho(n,k+1)+
-			 f_rho.get(s,n,k+2)*D1_rho(n,k+2));
-    }
-    D2_rho(s,n)=sum_rho;
-    D2_gamma(s,n)=0.0;
-    D2_omega(s,n)=0.0;
-  }
-
-  for(s=1;s<=SDIV;s++) {
-    for(n=1;n<=LMAX;n++) {
-      // Intermediate sums in eqns for rho, gamma, omega
-      double sum_rho=0.0, sum_gamma=0.0, sum_omega=0.0;
-      for(int k=1;k<=SDIV-2;k+=2) { 
-	sum_rho+=(DS/3.0)*(f_rho.get(s,n,k)*D1_rho(n,k) 
-			   +4.0*f_rho.get(s,n,k+1)*D1_rho(n,k+1)
-			   +f_rho.get(s,n,k+2)*D1_rho(n,k+2));
-	  
-	sum_gamma+=(DS/3.0)*(f_gamma.get(s,n,k)*D1_gamma(n,k) 
-			     + 4.0*f_gamma.get(s,n,k+1)*D1_gamma(n,k+1)
-			     + f_gamma.get(s,n,k+2)*D1_gamma(n,k+2));
-	  
-	sum_omega+=(DS/3.0)*(f_omega.get(s,n,k)*D1_omega(n,k) 
-			     +4.0*f_omega.get(s,n,k+1)*D1_omega(n,k+1)
-			     +f_omega.get(s,n,k+2)*D1_omega(n,k+2));
-      }
-      D2_rho(s,n)=sum_rho;
-      D2_gamma(s,n)=sum_gamma;
-      D2_omega(s,n)=sum_omega;
-    }
-  }
-
-  // Summation of coefficients
-
-  for(s=1;s<=SDIV;s++) {
-    for(int m=1;m<=MDIV;m++) {
-
-      double gsm=gamma(s,m);
-      double rsm=rho(s,m);
-      double omsm=omega(s,m);             
-      double e_gsm=exp(-0.5*gsm);
-      double e_rsm=exp(rsm);
-      double temp1=sin_theta[m];
-
-      // Intermediate sums in eqns for rho, gamma, omega
-      double sum_rho=-e_gsm*P_2n(m,0)*D2_rho(s,0);
-      double sum_omega=0.0;
-      double sum_gamma=0.0;
-
-      for(n=1;n<=LMAX;n++) {
-
-	sum_rho+=-e_gsm*P_2n(m,n)*D2_rho(s,n); 
-
-	if (m==MDIV) {             
-	  sum_omega+=0.5*e_rsm*e_gsm*D2_omega(s,n); 
-	  sum_gamma+=-(2.0/PI)*e_gsm*D2_gamma(s,n);   
-	} else { 
-	  sum_omega+=-e_rsm*e_gsm*(P1_2n_1(m,n)/
-				   (2.0*n*(2.0*n-1.0)
-				    *temp1))*D2_omega(s,n);  
-	  sum_gamma+=-(2.0/PI)*e_gsm*(sin((2.0*n-1.0)*theta[m])
-				      /((2.0*n-1.0)*temp1))*D2_gamma(s,n);
-	}
-      }
-	   
-      rho(s,m)=rsm+cf*(sum_rho-rsm);
-      gamma(s,m)=gsm+cf*(sum_gamma-gsm);
-      omega(s,m)=omsm+cf*(sum_omega-omsm);
-
-    }
-  }
-
-  // Check for divergence
-
-  if (fabs(omega(2,1))>100.0 || fabs(rho(2,1))>100.0 
-      || fabs(gamma(2,1))>300.0) {
-    return 1;
-  }
-
-  // Treat spherical case
-
-  if (r_ratio_loc==1.0) {
-    for(s=1;s<=SDIV;s++) {
-      for(int m=1;m<=MDIV;m++) {
-	rho(s,m)=rho(s,1);
-	gamma(s,m)=gamma(s,1);
-	omega(s,m)=0.0;          
-      }
-    }
-  }
-    
-  // Treat infinity when SMAX=1.0
-    
-  if (SMAX==1.0) {
-    for(int m=1;m<=MDIV;m++) {
-      rho(SDIV,m)=0.0;
-      gamma(SDIV,m)=0.0;
-      omega(SDIV,m)=0.0;
-    }
-  } 
-      
-  // Compute first order derivatives of gamma
- 
-  for(s=1;s<=SDIV;s++) {
-    for(int m=1;m<=MDIV;m++) {
-      dgds(s,m)=deriv_s(gamma,s,m);
-      dgdm(s,m)=deriv_m(gamma,s,m);
-    }
-  }
-
-  // ALPHA (Integration of eq (39) of Cook, et al. (1992))
- 
-  if (r_ratio_loc==1.0) {
-    for(s=1;s<=SDIV;s++) {
-      for(int m=1;m<=MDIV;m++) {
-	da_dm(s,m)=0.0;
-      }
-    }
-  } else {
-    
-    for(s=2;s<=s_temp;s++) {
-      for(int m=1;m<=MDIV;m++) {
-
-	da_dm(1,m)=0.0; 
-       
-	double sgp=s_gp[s];
-	double s1=sgp*(1.0-sgp);
-	double mum=mu[m]; 
-	double m1=1.0-pow(mum,2.0);
-          
-	// Derivative of gamma w.r.t. s
-	double d_gamma_s=dgds(s,m);
-	// Derivative of gamma w.r.t. m
-	double d_gamma_m=dgdm(s,m);
-	// Derivative of rho w.r.t. s
-	double d_rho_s=deriv_s(rho,s,m);
-	// Derivative of rho w.r.t. m
-	double d_rho_m=deriv_m(rho,s,m);
-	// Derivative of omega w.r.t. s
-	double d_omega_s=deriv_s(omega,s,m);
-	// Derivative of omega w.r.t. m
-	double d_omega_m=deriv_m(omega,s,m);
-	  
-	// Second derivative of gamma w.r.t. s
-	double d_gamma_ss=s1*deriv_s(dgds,s,m)+(1.0-2.0*sgp)*d_gamma_s;
-	// Second derivative of gamma w.r.t. m
-	double d_gamma_mm=m1*deriv_m(dgdm,s,m)-2.0*mum*d_gamma_m;  
-	// Derivative of gamma w.r.t. m and s
-	double d_gamma_sm=deriv_sm(gamma,s,m);
-
-	double temp1=2.0*pow(sgp,2.0)*(sgp/(1.0-sgp))*m1*d_omega_s*d_omega_m
-	  *(1.0+s1*d_gamma_s)-(pow(pow(sgp,2.0)*d_omega_s,2.0)-
-			       pow(sgp*d_omega_m/(1.0-sgp),2.0)*m1)*
-	  (-mum+m1*d_gamma_m); 
-	  
-	double temp2=1.0/(m1*pow(1.0+s1*d_gamma_s,2.0)+
-			  pow(-mum+m1*d_gamma_m,2.0));
-
-	double temp3=s1*d_gamma_ss+pow(s1*d_gamma_s,2.0);
-  
-	double temp4=d_gamma_m*(-mum+m1*d_gamma_m);
-	  
-	double temp5=(pow(s1*(d_rho_s+d_gamma_s),2.0)-
-		      m1*pow(d_rho_m+d_gamma_m,2.0))*(-mum+m1*d_gamma_m);
-
-	double temp6=s1*m1*(0.5*(d_rho_s+d_gamma_s)*(d_rho_m+d_gamma_m) 
-			    +d_gamma_sm+d_gamma_s*d_gamma_m)*
-	  (1.0+s1*d_gamma_s); 
-	  
-	double temp7=s1*mum*d_gamma_s*(1.0+s1*d_gamma_s);
-	double temp8=m1*exp(-2*rho(s,m));
-	  
-	da_dm(s,m)=-0.5*(d_rho_m+d_gamma_m)-
-	  temp2*(0.5*(temp3-d_gamma_mm-temp4)*(-mum+m1*d_gamma_m)+
-		 0.25*temp5-temp6+temp7+0.25*temp8*temp1);	 
-      }
-    }
-  }
-
-  for(s=1;s<=s_temp;s++) {
-    alpha(s,1)=0.0;
-    for(int m=1;m<=MDIV-1;m++) {
-      alpha(s,m+1)=alpha(s,m)+0.5*DM*(da_dm(s,m+1)+da_dm(s,m));
-    }
-  } 
- 
-  for(s=1;s<=s_temp;s++) {
-    for(int m=1;m<=MDIV;m++) {     
-
-      alpha(s,m)+=-alpha(s,MDIV)+0.5*(gamma(s,MDIV)-rho(s,MDIV));
-      if (alpha(s,m)>=300.0) {
-	return 2;
-      }
-	
-      omega(s,m)/=r_e_loc;
-    } 
-  }
-
-  if (SMAX==1.0) {
-    for(int m=1;m<=MDIV;m++) {
-      alpha(SDIV,m)=0.0;
-    }
-  }
-  return 0;
-}
-
 int nstar_rot::iterate(double r_ratio_loc) {
 
   int s_temp;
@@ -3106,9 +2624,445 @@ int nstar_rot::iterate(double r_ratio_loc) {
 	   << r_e_diff << " " << n_of_it << " " << eq_radius_tol_rel << endl;
     }
 
-    double r_e_old;
-    int ret=iterate2(r_ratio_loc,r_e,s_temp,r_e_old);
-    if (ret!=0) return ret;
+    /* Rescale potentials and construct arrays with the potentials
+       along the equatorial and polar directions.
+    */        
+
+    for(int s=1;s<=SDIV;s++) {
+      for(int m=1;m<=MDIV;m++) {
+	rho(s,m)/=pow(r_e,2.0);
+	gamma(s,m)/=pow(r_e,2.0); 
+	alpha(s,m)/=pow(r_e,2.0);
+	omega(s,m)*=r_e;
+      }
+      // The value of rho on the equatorial plane is rho_mu_0
+      rho_mu_0[s]=rho(s,1);     
+      gamma_mu_0[s]=gamma(s,1);   
+      omega_mu_0[s]=omega(s,1); 
+      // Value of rho on the polar axis is rho_mu_1
+      rho_mu_1[s]=rho(s,MDIV);  
+      gamma_mu_1[s]=gamma(s,MDIV);
+    }
+ 
+    // Compute new r_e
+
+    // Equatorial radius in previous cycle
+    double r_e_old=r_e;
+    r_p=r_ratio_loc*r_e;                          
+    s_p=r_p/(r_p+r_e);                        
+  
+    n_nearest=SDIV/2;
+    gamma_pole_h=interp(s_gp,gamma_mu_1,SDIV,s_p); 
+    gamma_equator_h=interp(s_gp,gamma_mu_0,SDIV,s_e);
+    gamma_center_h=gamma(1,1);                    
+  
+    rho_pole_h=interp(s_gp,rho_mu_1,SDIV,s_p);   
+    rho_equator_h=interp(s_gp,rho_mu_0,SDIV,s_e);
+    rho_center_h=rho(1,1);                      
+ 
+    r_e=sqrt(2*h_center/(gamma_pole_h+rho_pole_h-gamma_center_h-
+			 rho_center_h));
+
+    // Compute angular velocity Omega
+ 
+    if (r_ratio_loc==1.0) {
+      Omega_h=0.0;
+      omega_equator_h=0.0;
+    } else {
+      // AWS: This looks like Eq. 46 from Cook '92
+      omega_equator_h=interp(s_gp,omega_mu_0,SDIV,s_e);
+      Omega_h=omega_equator_h+exp(pow(r_e,2.0)*rho_equator_h)*
+	sqrt(1.0-exp(pow(r_e,2.0)*(gamma_pole_h+rho_pole_h-gamma_equator_h
+				   -rho_equator_h)));
+    }
+ 
+    // Compute velocity, energy density and pressure
+ 
+    for(int s=1;s<=SDIV;s++) {
+      double sgp=s_gp[s];
+
+      for(int m=1;m<=MDIV;m++) {
+	double rsm=rho(s,m);
+            
+	if (r_ratio_loc==1.0 || s > (SDIV/2+2) ) {
+	  velocity_sq(s,m)=0.0;
+	} else {
+	  velocity_sq(s,m)=pow((Omega_h-omega(s,m))*(sgp/(1.0-sgp))
+			       *sin_theta[m]*exp(-rsm*pow(r_e,2.0)),2.0);
+	}
+	
+	if (velocity_sq(s,m)>=1.0) {
+	  velocity_sq(s,m)=0.0;
+	}
+
+	enthalpy(s,m)=enthalpy_min+0.5*
+	  (pow(r_e,2.0)*(gamma_pole_h+rho_pole_h
+			 -gamma(s,m)-rsm)-log(1.0-velocity_sq(s,m)));
+	
+	if ((enthalpy(s,m)<=enthalpy_min) || (sgp>s_e)) {
+	  pressure(s,m)=0.0;
+	  energy(s,m)=0.0; 
+	} else { 
+
+	  if (scaled_polytrope==false) {
+	    pressure(s,m)=p_at_h(enthalpy(s,m));
+	    energy(s,m)=e_at_p(pressure(s,m));
+	  } else {
+	    double rho0sm=pow(((Gamma_P-1.0)/Gamma_P)
+			      *(exp(enthalpy(s,m))-1.0),1.0/(Gamma_P-1.0));
+	    pressure(s,m)=pow(rho0sm,Gamma_P);
+	    energy(s,m)=pressure(s,m)/(Gamma_P-1.0)+rho0sm;
+	  }
+	}  
+
+	// Rescale back metric potentials (except omega)
+
+	rho(s,m)*=pow(r_e,2.0);
+	gamma(s,m)*=pow(r_e,2.0);
+	alpha(s,m)*=pow(r_e,2.0);
+      }
+    }
+
+    // Evaluation of source terms (Eqs. 30-33 of Cook, et al. (1992))
+
+    int s;
+    if (SMAX==1.0) {
+      s=SDIV;
+      for(int m=1;m<=MDIV;m++) {
+	S_rho(s,m)=0.0;
+	S_gamma(s,m)=0.0;
+	S_omega(s,m)=0.0;
+      }
+    }
+
+    for(s=1;s<=s_temp;s++) {
+      for(int m=1;m<=MDIV;m++) {
+	double rsm=rho(s,m);
+	double gsm=gamma(s,m);
+	double omsm=omega(s,m);
+	double esm=energy(s,m);
+	double psm=pressure(s,m);
+	double e_gsm=exp(0.5*gsm);
+	double e_rsm=exp(-rsm);
+	double v2sm=velocity_sq(s,m);
+	double mum=mu[m];            
+	double m1=1.0-pow(mum,2.0);
+	double sgp=s_gp[s];
+	double s_1=1.0-sgp;
+	double s1=sgp*s_1;
+	double s2=pow(sgp/s_1,2.0);  
+
+	double ea=16.0*PI*exp(2.0*alpha(s,m))*pow(r_e,2.0);
+
+	// Derivative of gamma w.r.t. s
+	double d_gamma_s;            
+	// Derivative of gamma w.r.t. m
+	double d_gamma_m;            
+	// Derivative of rho w.r.t. s
+	double d_rho_s;             
+	// Derivative of rho w.r.t. m
+	double d_rho_m;             
+	// Derivative of omega w.r.t. s
+	double d_omega_s;           
+	// Derivative of omega w.r.t. m
+	double d_omega_m;
+	
+	if (s==1) {
+	  d_gamma_s=0.0;
+	  d_gamma_m=0.0;
+	  d_rho_s=0.0;
+	  d_rho_m=0.0;
+	  d_omega_s=0.0;
+	  d_omega_m=0.0;
+	} else {
+	  d_gamma_s=deriv_s(gamma,s,m);
+	  d_gamma_m=deriv_m(gamma,s,m);
+	  d_rho_s=deriv_s(rho,s,m);
+	  d_rho_m=deriv_m(rho,s,m);
+	  d_omega_s=deriv_s(omega,s,m);
+	  d_omega_m=deriv_m(omega,s,m);
+	}
+
+	S_rho(s,m)=e_gsm*
+	  (0.5*ea*(esm+psm)*s2*(1.0+v2sm)/(1.0-v2sm)+
+	   s2*m1*pow(e_rsm,2.0)*
+	   (pow(s1*d_omega_s,2.0)+m1*pow(d_omega_m,2.0))
+	   +s1*d_gamma_s-mum*d_gamma_m+0.5*rsm*
+	   (ea*psm*s2-s1*d_gamma_s*(0.5*s1*d_gamma_s+1.0)
+	    -d_gamma_m*(0.5*m1*d_gamma_m-mum)));
+
+	S_gamma(s,m)=e_gsm*
+	  (ea*psm*s2+0.5*gsm*(ea*psm*s2-0.5*pow(s1*d_gamma_s,2.0)-
+			      0.5*m1*pow(d_gamma_m,2.0)));
+	
+	S_omega(s,m)=e_gsm*e_rsm*
+	  (-ea*(Omega_h-omsm)*(esm+psm)*s2/(1.0-v2sm)+
+	   omsm*(-0.5*ea*(((1.0+v2sm)*esm+2.0*v2sm*psm)/(1.0-v2sm))*s2-
+		 s1*(2*d_rho_s+0.5*d_gamma_s)
+		 +mum*(2*d_rho_m+0.5*d_gamma_m)+0.25*pow(s1,2.0)*
+		 (4*pow(d_rho_s,2.0)-pow(d_gamma_s,2.0))+0.25*m1*
+		 (4*pow(d_rho_m,2.0)-pow(d_gamma_m,2.0))-
+		 m1*pow(e_rsm,2.0)*(pow(pow(sgp,2.0)*d_omega_s,2.0)
+				    +s2*m1*pow(d_omega_m,2.0))));
+      }
+    }
+    
+    // Angular integration (see Eqs. 27-29 of Cook, et al. (1992))
+  
+    int n=0;
+    for(int k=1;k<=SDIV;k++) {      
+
+      // Intermediate sum in eqn for rho
+      double sum_rho=0.0;
+      for(int m=1;m<=MDIV-2;m+=2) {
+	sum_rho+=(DM/3.0)*(P_2n(m,n)*S_rho(k,m)
+			   +4.0*P_2n(m+1,n)*S_rho(k,m+1) 
+			   +P_2n(m+2,n)*S_rho(k,m+2));
+      }
+
+      D1_rho(n,k)=sum_rho;
+      D1_gamma(n,k)=0.0;
+      D1_omega(n,k)=0.0;
+
+    }
+
+    for(n=1;n<=LMAX;n++) {
+      for(int k=1;k<=SDIV;k++) {
+	// Intermediate sums in eqns for rho, gamma, omega
+	double sum_rho=0.0, sum_gamma=0.0, sum_omega=0.0;
+	for(int m=1;m<=MDIV-2;m+=2) {
+
+	  sum_rho+=(DM/3.0)*(P_2n(m,n)*S_rho(k,m)
+			     +4.0*P_2n(m+1,n)*S_rho(k,m+1) 
+			     +P_2n(m+2,n)*S_rho(k,m+2));
+                       
+	  sum_gamma+=(DM/3.0)*(sin((2.0*n-1.0)*theta[m])*S_gamma(k,m)
+			       +4.0*sin((2.0*n-1.0)*theta[m+1])*
+			       S_gamma(k,m+1)
+			       +sin((2.0*n-1.0)*theta[m+2])*S_gamma(k,m+2));
+  
+	  sum_omega+=(DM/3.0)*(sin_theta[m]*P1_2n_1(m,n)*S_omega(k,m)
+			       +4.0*sin_theta[m+1]*P1_2n_1(m+1,n)*
+			       S_omega(k,m+1)
+			       +sin_theta[m+2]*P1_2n_1(m+2,n)*
+			       S_omega(k,m+2));
+	}
+	D1_rho(n,k)=sum_rho;
+	D1_gamma(n,k)=sum_gamma;
+	D1_omega(n,k)=sum_omega;
+      }
+    }
+
+    // Radial integration
+
+    n=0;
+    for(s=1;s<=SDIV;s++) {
+      // Intermediate sum in eqn for rho
+      double sum_rho=0.0;
+      for(int k=1;k<=SDIV-2;k+=2) { 
+	sum_rho+=(DS/3.0)*(f_rho.get(s,n,k)*D1_rho(n,k)+
+			   4.0*f_rho.get(s,n,k+1)*D1_rho(n,k+1)+
+			   f_rho.get(s,n,k+2)*D1_rho(n,k+2));
+      }
+      D2_rho(s,n)=sum_rho;
+      D2_gamma(s,n)=0.0;
+      D2_omega(s,n)=0.0;
+    }
+
+    for(s=1;s<=SDIV;s++) {
+      for(n=1;n<=LMAX;n++) {
+	// Intermediate sums in eqns for rho, gamma, omega
+	double sum_rho=0.0, sum_gamma=0.0, sum_omega=0.0;
+	for(int k=1;k<=SDIV-2;k+=2) { 
+	  sum_rho+=(DS/3.0)*(f_rho.get(s,n,k)*D1_rho(n,k) 
+			     +4.0*f_rho.get(s,n,k+1)*D1_rho(n,k+1)
+			     +f_rho.get(s,n,k+2)*D1_rho(n,k+2));
+	  
+	  sum_gamma+=(DS/3.0)*(f_gamma.get(s,n,k)*D1_gamma(n,k) 
+			       + 4.0*f_gamma.get(s,n,k+1)*D1_gamma(n,k+1)
+			       + f_gamma.get(s,n,k+2)*D1_gamma(n,k+2));
+	  
+	  sum_omega+=(DS/3.0)*(f_omega.get(s,n,k)*D1_omega(n,k) 
+			       +4.0*f_omega.get(s,n,k+1)*D1_omega(n,k+1)
+			       +f_omega.get(s,n,k+2)*D1_omega(n,k+2));
+	}
+	D2_rho(s,n)=sum_rho;
+	D2_gamma(s,n)=sum_gamma;
+	D2_omega(s,n)=sum_omega;
+      }
+    }
+
+    // Summation of coefficients
+
+    for(s=1;s<=SDIV;s++) {
+      for(int m=1;m<=MDIV;m++) {
+
+	double gsm=gamma(s,m);
+	double rsm=rho(s,m);
+	double omsm=omega(s,m);             
+	double e_gsm=exp(-0.5*gsm);
+	double e_rsm=exp(rsm);
+	double temp1=sin_theta[m];
+
+	// Intermediate sums in eqns for rho, gamma, omega
+	double sum_rho=-e_gsm*P_2n(m,0)*D2_rho(s,0);
+	double sum_omega=0.0;
+	double sum_gamma=0.0;
+
+	for(n=1;n<=LMAX;n++) {
+
+	  sum_rho+=-e_gsm*P_2n(m,n)*D2_rho(s,n); 
+
+	  if (m==MDIV) {             
+	    sum_omega+=0.5*e_rsm*e_gsm*D2_omega(s,n); 
+	    sum_gamma+=-(2.0/PI)*e_gsm*D2_gamma(s,n);   
+	  } else { 
+	    sum_omega+=-e_rsm*e_gsm*(P1_2n_1(m,n)/
+				     (2.0*n*(2.0*n-1.0)
+				      *temp1))*D2_omega(s,n);  
+	    sum_gamma+=-(2.0/PI)*e_gsm*(sin((2.0*n-1.0)*theta[m])
+					/((2.0*n-1.0)*temp1))*D2_gamma(s,n);
+	  }
+	}
+	   
+	rho(s,m)=rsm+cf*(sum_rho-rsm);
+	gamma(s,m)=gsm+cf*(sum_gamma-gsm);
+	omega(s,m)=omsm+cf*(sum_omega-omsm);
+
+      }
+    }
+
+    // Check for divergence
+
+    if (fabs(omega(2,1))>100.0 || fabs(rho(2,1))>100.0 
+	|| fabs(gamma(2,1))>300.0) {
+      return 1;
+    }
+
+    // Treat spherical case
+
+    if (r_ratio_loc==1.0) {
+      for(s=1;s<=SDIV;s++) {
+	for(int m=1;m<=MDIV;m++) {
+	  rho(s,m)=rho(s,1);
+	  gamma(s,m)=gamma(s,1);
+	  omega(s,m)=0.0;          
+	}
+      }
+    }
+    
+    // Treat infinity when SMAX=1.0
+    
+    if (SMAX==1.0) {
+      for(int m=1;m<=MDIV;m++) {
+	rho(SDIV,m)=0.0;
+	gamma(SDIV,m)=0.0;
+	omega(SDIV,m)=0.0;
+      }
+    } 
+      
+    // Compute first order derivatives of gamma
+ 
+    for(s=1;s<=SDIV;s++) {
+      for(int m=1;m<=MDIV;m++) {
+	dgds(s,m)=deriv_s(gamma,s,m);
+	dgdm(s,m)=deriv_m(gamma,s,m);
+      }
+    }
+
+    // ALPHA (Integration of eq (39) of Cook, et al. (1992))
+ 
+    if (r_ratio_loc==1.0) {
+      for(s=1;s<=SDIV;s++) {
+	for(int m=1;m<=MDIV;m++) {
+	  da_dm(s,m)=0.0;
+	}
+      }
+    } else {
+    
+      for(s=2;s<=s_temp;s++) {
+	for(int m=1;m<=MDIV;m++) {
+
+	  da_dm(1,m)=0.0; 
+       
+	  double sgp=s_gp[s];
+	  double s1=sgp*(1.0-sgp);
+	  double mum=mu[m]; 
+	  double m1=1.0-pow(mum,2.0);
+          
+	  // Derivative of gamma w.r.t. s
+	  double d_gamma_s=dgds(s,m);
+	  // Derivative of gamma w.r.t. m
+	  double d_gamma_m=dgdm(s,m);
+	  // Derivative of rho w.r.t. s
+	  double d_rho_s=deriv_s(rho,s,m);
+	  // Derivative of rho w.r.t. m
+	  double d_rho_m=deriv_m(rho,s,m);
+	  // Derivative of omega w.r.t. s
+	  double d_omega_s=deriv_s(omega,s,m);
+	  // Derivative of omega w.r.t. m
+	  double d_omega_m=deriv_m(omega,s,m);
+	  
+	  // Second derivative of gamma w.r.t. s
+	  double d_gamma_ss=s1*deriv_s(dgds,s,m)+(1.0-2.0*sgp)*d_gamma_s;
+	  // Second derivative of gamma w.r.t. m
+	  double d_gamma_mm=m1*deriv_m(dgdm,s,m)-2.0*mum*d_gamma_m;  
+	  // Derivative of gamma w.r.t. m and s
+	  double d_gamma_sm=deriv_sm(gamma,s,m);
+
+	  double temp1=2.0*pow(sgp,2.0)*(sgp/(1.0-sgp))*m1*d_omega_s*d_omega_m
+	    *(1.0+s1*d_gamma_s)-(pow(pow(sgp,2.0)*d_omega_s,2.0)-
+				 pow(sgp*d_omega_m/(1.0-sgp),2.0)*m1)*
+	    (-mum+m1*d_gamma_m); 
+	  
+	  double temp2=1.0/(m1*pow(1.0+s1*d_gamma_s,2.0)+
+			    pow(-mum+m1*d_gamma_m,2.0));
+
+	  double temp3=s1*d_gamma_ss+pow(s1*d_gamma_s,2.0);
+  
+	  double temp4=d_gamma_m*(-mum+m1*d_gamma_m);
+	  
+	  double temp5=(pow(s1*(d_rho_s+d_gamma_s),2.0)-
+			m1*pow(d_rho_m+d_gamma_m,2.0))*(-mum+m1*d_gamma_m);
+
+	  double temp6=s1*m1*(0.5*(d_rho_s+d_gamma_s)*(d_rho_m+d_gamma_m) 
+			      +d_gamma_sm+d_gamma_s*d_gamma_m)*
+	    (1.0+s1*d_gamma_s); 
+	  
+	  double temp7=s1*mum*d_gamma_s*(1.0+s1*d_gamma_s);
+	  double temp8=m1*exp(-2*rho(s,m));
+	  
+	  da_dm(s,m)=-0.5*(d_rho_m+d_gamma_m)-
+	    temp2*(0.5*(temp3-d_gamma_mm-temp4)*(-mum+m1*d_gamma_m)+
+		   0.25*temp5-temp6+temp7+0.25*temp8*temp1);	 
+	}
+      }
+    }
+
+    for(s=1;s<=s_temp;s++) {
+      alpha(s,1)=0.0;
+      for(int m=1;m<=MDIV-1;m++) {
+	alpha(s,m+1)=alpha(s,m)+0.5*DM*(da_dm(s,m+1)+da_dm(s,m));
+      }
+    } 
+ 
+    for(s=1;s<=s_temp;s++) {
+      for(int m=1;m<=MDIV;m++) {     
+
+	alpha(s,m)+=-alpha(s,MDIV)+0.5*(gamma(s,MDIV)-rho(s,MDIV));
+	if (alpha(s,m)>=300.0) {
+	  return 2;
+	}
+	
+	omega(s,m)/=r_e;
+      } 
+    }
+
+    if (SMAX==1.0) {
+      for(int m=1;m<=MDIV;m++) {
+	alpha(SDIV,m)=0.0;
+      }
+    }
     
     r_e_diff=fabs(r_e_old-r_e)/r_e;
     n_of_it++;
@@ -3152,15 +3106,6 @@ int nstar_rot::fix_cent_eden_axis_rat(double cent_eden, double axis_rat,
 
   if (scaled_polytrope==false) {
 
-    /* load the equation of state file */
-    //load_eos(file_name);
-
-    if (CL_LOW==true) {
-      n0_match=1.0e38;
-      e_cl=0.0; 
-      de_pt=0.0;
-    }
-
     /* set default values for star with tabulated eos */
     e_min=2.66e15*C*C*KSCALE;
     r_ratio=0.75;
@@ -3169,7 +3114,7 @@ int nstar_rot::fix_cent_eden_axis_rat(double cent_eden, double axis_rat,
 
     /* set default values for polytropic star */
     e_min=0.34;
-    r_ratio=0.58447265625;
+    r_ratio=0.5848;
     
   }
 
@@ -3180,17 +3125,6 @@ int nstar_rot::fix_cent_eden_axis_rat(double cent_eden, double axis_rat,
   }
   
   Gamma_P=1.0+1.0/n_P;
-
-  if (CL_LOW==true) {
-    e_match=eosp->ed_from_nb(n0_match);
-    p_match=eosp->pr_from_nb(n0_match);
-    h_match=eosp->enth_from_nb(n0_match);
-    //e_match=pow(10.0,interp(log_n0_tab,log_e_tab,n_tab,log10(n0_match)));
-    //p_match=pow(10.0,interp(log_n0_tab,log_p_tab,n_tab,log10(n0_match)));
-    //h_match=pow(10.0,interp(log_n0_tab,log_h_tab,n_tab,log10(n0_match)));
-   
-    if (e_cl != 0.0) de_pt=e_cl - e_match;   
-  }
 
   e_center=e_min;
   make_center(e_center);
@@ -3301,16 +3235,78 @@ int nstar_rot::solve_kepler(size_t nv, const ubvector &x,
 			    ubvector &y) {
   r_ratio=x[0];
   if (r_ratio>1.0 || r_ratio<0.1) {
-    return 1;
+    return 3;
   }
-  iterate(r_ratio);
+  int ret=iterate(r_ratio);
+  if (ret!=0) return ret;
   comp_omega();
   y[0]=(Omega-Omega_K)/fabs(Omega);
   return 0;
 }
 
+int nstar_rot::solve_grav_mass(size_t nv, const ubvector &x,
+			       ubvector &y, double grav_mass) {
+  r_ratio=x[0];
+  if (r_ratio>1.0 || r_ratio<0.1) {
+    return 3;
+  }
+  int ret=iterate(r_ratio);
+  if (ret!=0) return ret;
+  comp_M_J();
+  y[0]=(Mass-grav_mass)/grav_mass;
+  return 0;
+}
+
+int nstar_rot::solve_bar_mass(size_t nv, const ubvector &x,
+			       ubvector &y, double bar_mass) {
+  r_ratio=x[0];
+  if (r_ratio>1.0 || r_ratio<0.1) {
+    return 3;
+  }
+  int ret=iterate(r_ratio);
+  if (ret!=0) return ret;
+  comp_M_J();
+  y[0]=(Mass_0-bar_mass)/bar_mass;
+  return 0;
+}
+
 int nstar_rot::fix_cent_eden_with_kepler_alt(double cent_eden) {
 
+  if (eos_set==false) {
+    O2SCL_ERR2("EOS not specified in ",
+	       "nstar_rot::fix_cent_eden_with_kepler_alt().",exc_einval);
+  }
+
+  if (scaled_polytrope==false) {
+    // set default values for star with tabulated eos
+    e_surface=7.8*C*C*KSCALE;
+    p_surface=1.01e8*KSCALE;
+    enthalpy_min=1.0/(C*C);
+    r_ratio=0.75;
+  } else {
+    // set default values for polytropic star 
+    e_surface=0.0;
+    p_surface=0.0;
+    enthalpy_min=0.0;
+    r_ratio=0.5848;
+  }
+
+  double e_min=cent_eden;
+  if (scaled_polytrope==false) {
+    e_min*=C*C*KSCALE;
+  } else {
+    Gamma_P=1.0+1.0/n_P;
+  }
+
+  e_center=e_min;
+
+  // First model is guess
+  
+  make_center(e_center);
+  spherical_star();             
+
+  r_ratio=1.0;
+  
   ubvector x(1), y(1);
   x[0]=0.75;
   mm_funct11 nf=std::bind
@@ -3318,8 +3314,10 @@ int nstar_rot::fix_cent_eden_with_kepler_alt(double cent_eden) {
      (&nstar_rot::solve_kepler),this,std::placeholders::_1,
      std::placeholders::_2,std::placeholders::_3);
 
-  mh.verbose=1;
   mh.msolve(1,x,nf);
+
+  comp();
+  
   return 0;
 }
 
@@ -3328,7 +3326,7 @@ int nstar_rot::fix_cent_eden_with_kepler(double cent_eden) {
 
   if (eos_set==false) {
     O2SCL_ERR2("EOS not specified in ",
-	       "nstar_rot::fix_cent_eden...().",exc_einval);
+	       "nstar_rot::fix_cent_eden_with_kepler().",exc_einval);
   }
 
   if (scaled_polytrope==false) {
@@ -3343,22 +3341,13 @@ int nstar_rot::fix_cent_eden_with_kepler(double cent_eden) {
 
   if (scaled_polytrope==false) {
 
-    /* load the equation of state file */
-    //load_eos(file_name);
-
-    if (CL_LOW==true) {
-      n0_match=1.0e38;
-      e_cl=0.0; 
-      de_pt=0.0;
-    }
-
     /* set default values for star with tabulated eos */
     r_ratio=0.75;
 
   } else {
 
     /* set default values for polytropic star */
-    r_ratio=0.58447265625;
+    r_ratio=0.5848;
     
   }
 
@@ -3368,17 +3357,6 @@ int nstar_rot::fix_cent_eden_with_kepler(double cent_eden) {
   }
   
   Gamma_P=1.0+1.0/n_P;
-
-  if (CL_LOW==true) {
-    e_match=eosp->ed_from_nb(n0_match);
-    p_match=eosp->pr_from_nb(n0_match);
-    h_match=eosp->enth_from_nb(n0_match);
-    //e_match=pow(10.0,interp(log_n0_tab,log_e_tab,n_tab,log10(n0_match)));
-    //p_match=pow(10.0,interp(log_n0_tab,log_p_tab,n_tab,log10(n0_match)));
-    //h_match=pow(10.0,interp(log_n0_tab,log_h_tab,n_tab,log10(n0_match)));
-   
-    if (e_cl != 0.0) de_pt=e_cl - e_match;   
-  }
 
   e_center=e_min;
 
@@ -3443,22 +3421,13 @@ int nstar_rot::fix_cent_eden_non_rot(double cent_eden) {
 
   if (scaled_polytrope==false) {
 
-    /* load the equation of state file */
-    //load_eos(file_name);
-
-    if (CL_LOW==true) {
-      n0_match=1.0e38;
-      e_cl=0.0; 
-      de_pt=0.0;
-    }
-
     /* set default values for star with tabulated eos */
     r_ratio=0.75;
 
   } else {
 
     /* set default values for polytropic star */
-    r_ratio=0.58447265625;
+    r_ratio=0.5848;
     
   }
 
@@ -3469,22 +3438,63 @@ int nstar_rot::fix_cent_eden_non_rot(double cent_eden) {
   
   Gamma_P=1.0+1.0/n_P;
 
-  if (CL_LOW==true) {
-    e_match=eosp->ed_from_nb(n0_match);
-    p_match=eosp->pr_from_nb(n0_match);
-    h_match=eosp->enth_from_nb(n0_match);
-    //e_match=pow(10.0,interp(log_n0_tab,log_e_tab,n_tab,log10(n0_match)));
-    //p_match=pow(10.0,interp(log_n0_tab,log_p_tab,n_tab,log10(n0_match)));
-    //h_match=pow(10.0,interp(log_n0_tab,log_h_tab,n_tab,log10(n0_match)));
-   
-    if (e_cl != 0.0) de_pt=e_cl - e_match;   
-  }
-
   r_ratio=1.0;
   e_center=e_min;
   make_center(e_center);
   spherical_star();
   iterate(r_ratio);
+  comp();
+  
+  return 0;
+}
+
+int nstar_rot::fix_cent_eden_grav_mass_alt(double cent_eden,
+					   double grav_mass) {
+
+  if (eos_set==false) {
+    O2SCL_ERR2("EOS not specified in ",
+	       "nstar_rot::fix_cent_eden_grav_mass_alt().",exc_einval);
+  }
+
+  if (scaled_polytrope==false) {
+    // set default values for star with tabulated eos
+    e_surface=7.8*C*C*KSCALE;
+    p_surface=1.01e8*KSCALE;
+    enthalpy_min=1.0/(C*C);
+    r_ratio=0.75;
+  } else {
+    // set default values for polytropic star 
+    e_surface=0.0;
+    p_surface=0.0;
+    enthalpy_min=0.0;
+    r_ratio=0.5848;
+  }
+
+  double e_min=cent_eden;
+  if (scaled_polytrope==false) {
+    e_min*=C*C*KSCALE;
+  } else {
+    Gamma_P=1.0+1.0/n_P;
+  }
+
+  e_center=e_min;
+
+  // First model is guess
+  
+  make_center(e_center);
+  spherical_star();             
+
+  r_ratio=1.0;
+  
+  ubvector x(1), y(1);
+  x[0]=0.75;
+  mm_funct11 nf=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &,double)>
+     (&nstar_rot::solve_grav_mass),this,std::placeholders::_1,
+     std::placeholders::_2,std::placeholders::_3,grav_mass*MSUN);
+
+  mh.msolve(1,x,nf);
+
   comp();
   
   return 0;
@@ -3509,22 +3519,13 @@ int nstar_rot::fix_cent_eden_grav_mass(double cent_eden, double grav_mass) {
 
   if (scaled_polytrope==false) {
 
-    /* load the equation of state file */
-    //load_eos(file_name);
-
-    if (CL_LOW==true) {
-      n0_match=1.0e38;
-      e_cl=0.0; 
-      de_pt=0.0;
-    }
-
     /* set default values for star with tabulated eos */
     r_ratio=0.75;
 
   } else {
 
     /* set default values for polytropic star */
-    r_ratio=0.58447265625;
+    r_ratio=0.5848;
     
   }
 
@@ -3538,17 +3539,6 @@ int nstar_rot::fix_cent_eden_grav_mass(double cent_eden, double grav_mass) {
   }
   
   Gamma_P=1.0+1.0/n_P;
-
-  if (CL_LOW==true) {
-    e_match=eosp->ed_from_nb(n0_match);
-    p_match=eosp->pr_from_nb(n0_match);
-    h_match=eosp->enth_from_nb(n0_match);
-    //e_match=pow(10.0,interp(log_n0_tab,log_e_tab,n_tab,log10(n0_match)));
-    //p_match=pow(10.0,interp(log_n0_tab,log_p_tab,n_tab,log10(n0_match)));
-    //h_match=pow(10.0,interp(log_n0_tab,log_h_tab,n_tab,log10(n0_match)));
-   
-    if (e_cl != 0.0) de_pt=e_cl - e_match;   
-  }
 
   e_center=e_min;
   
@@ -3609,6 +3599,58 @@ int nstar_rot::fix_cent_eden_grav_mass(double cent_eden, double grav_mass) {
   return 0;
 }
 
+int nstar_rot::fix_cent_eden_bar_mass_alt(double cent_eden,
+					   double bar_mass) {
+
+  if (eos_set==false) {
+    O2SCL_ERR2("EOS not specified in ",
+	       "nstar_rot::fix_cent_eden_bar_mass_alt().",exc_einval);
+  }
+
+  if (scaled_polytrope==false) {
+    // set default values for star with tabulated eos
+    e_surface=7.8*C*C*KSCALE;
+    p_surface=1.01e8*KSCALE;
+    enthalpy_min=1.0/(C*C);
+    r_ratio=0.75;
+  } else {
+    // set default values for polytropic star 
+    e_surface=0.0;
+    p_surface=0.0;
+    enthalpy_min=0.0;
+    r_ratio=0.5848;
+  }
+
+  double e_min=cent_eden;
+  if (scaled_polytrope==false) {
+    e_min*=C*C*KSCALE;
+  } else {
+    Gamma_P=1.0+1.0/n_P;
+  }
+
+  e_center=e_min;
+
+  // First model is guess
+  
+  make_center(e_center);
+  spherical_star();             
+
+  r_ratio=1.0;
+  
+  ubvector x(1), y(1);
+  x[0]=0.75;
+  mm_funct11 nf=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &,double)>
+     (&nstar_rot::solve_bar_mass),this,std::placeholders::_1,
+     std::placeholders::_2,std::placeholders::_3,bar_mass*MSUN);
+
+  mh.msolve(1,x,nf);
+
+  comp();
+  
+  return 0;
+}
+
 int nstar_rot::fix_cent_eden_bar_mass(double cent_eden, double bar_mass) {
 
   if (eos_set==false) {
@@ -3628,22 +3670,13 @@ int nstar_rot::fix_cent_eden_bar_mass(double cent_eden, double bar_mass) {
 
   if (scaled_polytrope==false) {
 
-    /* load the equation of state file */
-    //load_eos(file_name);
-
-    if (CL_LOW==true) {
-      n0_match=1.0e38;
-      e_cl=0.0; 
-      de_pt=0.0;
-    }
-
     /* set default values for star with tabulated eos */
     r_ratio=0.75;
 
   } else {
 
     /* set default values for polytropic star */
-    r_ratio=0.58447265625;
+    r_ratio=0.5848;
     
   }
 
@@ -3653,17 +3686,6 @@ int nstar_rot::fix_cent_eden_bar_mass(double cent_eden, double bar_mass) {
   }
   
   Gamma_P=1.0+1.0/n_P;
-
-  if (CL_LOW==true) {
-    e_match=eosp->ed_from_nb(n0_match);
-    p_match=eosp->pr_from_nb(n0_match);
-    h_match=eosp->enth_from_nb(n0_match);
-    //e_match=pow(10.0,interp(log_n0_tab,log_e_tab,n_tab,log10(n0_match)));
-    //p_match=pow(10.0,interp(log_n0_tab,log_p_tab,n_tab,log10(n0_match)));
-    //h_match=pow(10.0,interp(log_n0_tab,log_h_tab,n_tab,log10(n0_match)));
-   
-    if (e_cl != 0.0) de_pt=e_cl - e_match;   
-  }
 
   double M_0const=bar_mass;
   if (scaled_polytrope==false) {
@@ -3749,22 +3771,13 @@ int nstar_rot::fix_cent_eden_ang_vel(double cent_eden, double ang_vel) {
 
   if (scaled_polytrope==false) {
 
-    /* load the equation of state file */
-    //load_eos(file_name);
-
-    if (CL_LOW==true) {
-      n0_match=1.0e38;
-      e_cl=0.0; 
-      de_pt=0.0;
-    }
-
     /* set default values for star with tabulated eos */
     r_ratio=0.75;
 
   } else {
 
     /* set default values for polytropic star */
-    r_ratio=0.58447265625;
+    r_ratio=0.5848;
     
   }
 
@@ -3778,17 +3791,6 @@ int nstar_rot::fix_cent_eden_ang_vel(double cent_eden, double ang_vel) {
   //}
   
   Gamma_P=1.0+1.0/n_P;
-
-  if (CL_LOW==true) {
-    e_match=eosp->ed_from_nb(n0_match);
-    p_match=eosp->pr_from_nb(n0_match);
-    h_match=eosp->enth_from_nb(n0_match);
-    //e_match=pow(10.0,interp(log_n0_tab,log_e_tab,n_tab,log10(n0_match)));
-    //p_match=pow(10.0,interp(log_n0_tab,log_p_tab,n_tab,log10(n0_match)));
-    //h_match=pow(10.0,interp(log_n0_tab,log_h_tab,n_tab,log10(n0_match)));
-   
-    if (e_cl != 0.0) de_pt=e_cl - e_match;   
-  }
 
   e_center=e_min;
   {
@@ -3870,22 +3872,13 @@ int nstar_rot::fix_cent_eden_ang_mom(double cent_eden, double ang_mom) {
 
   if (scaled_polytrope==false) {
 
-    /* load the equation of state file */
-    //load_eos(file_name);
-
-    if (CL_LOW==true) {
-      n0_match=1.0e38;
-      e_cl=0.0; 
-      de_pt=0.0;
-    }
-
     /* set default values for star with tabulated eos */
     r_ratio=0.75;
 
   } else {
 
     /* set default values for polytropic star */
-    r_ratio=0.58447265625;
+    r_ratio=0.5848;
     
   }
 
@@ -3899,17 +3892,6 @@ int nstar_rot::fix_cent_eden_ang_mom(double cent_eden, double ang_mom) {
   }
   
   Gamma_P=1.0+1.0/n_P;
-
-  if (CL_LOW==true) {
-    e_match=eosp->ed_from_nb(n0_match);
-    p_match=eosp->pr_from_nb(n0_match);
-    h_match=eosp->enth_from_nb(n0_match);
-    //e_match=pow(10.0,interp(log_n0_tab,log_e_tab,n_tab,log10(n0_match)));
-    //p_match=pow(10.0,interp(log_n0_tab,log_p_tab,n_tab,log10(n0_match)));
-    //h_match=pow(10.0,interp(log_n0_tab,log_h_tab,n_tab,log10(n0_match)));
-   
-    if (e_cl != 0.0) de_pt=e_cl - e_match;   
-  }
 
   e_center=e_min;
 
@@ -3983,25 +3965,25 @@ void nstar_rot::test1(o2scl::test_mgr &t) {
   fix_cent_eden_axis_rat(2.0e15,0.59);
   eos_set=false;
 
-  t.test_rel(e_center,2.0,2.0e-6,"1");
-  t.test_rel(Mass/MSUN,2.13324,2.0e-6,"2");
-  t.test_rel(Mass_0/MSUN,2.43446,2.0e-6,"3");
-  t.test_rel(R_e/1.0e5,13.9518,2.0e-6,"4");
-  t.test_rel(Omega/1.0e4,0.961702,2.0e-6,"5");
-  t.test_rel(Omega_K/1.0e4,1.00322,4.0e-6,"6");
-  t.test_rel(T/W,0.109774,4.0e-6,"7");
-  t.test_rel(J*C/G/MSUN/MSUN,2.89653,2.0e-6,"8");
-  t.test_rel(I/1.0e45,2.64698,2.0e-6,"9");
+  t.test_rel(e_center,2.0,2.0e-6,"central energy density");
+  t.test_rel(Mass/MSUN,2.13324,2.0e-6,"gravitational mass");
+  t.test_rel(Mass_0/MSUN,2.43446,2.0e-6,"baryonic mass");
+  t.test_rel(R_e/1.0e5,13.9518,2.0e-6,"radius");
+  t.test_rel(Omega/1.0e4,0.961702,2.0e-6,"angular frequency");
+  t.test_rel(Omega_K/1.0e4,1.00322,4.0e-6,"Keplerian angular frequency");
+  t.test_rel(T/W,0.109774,4.0e-6,"T/W");
+  t.test_rel(J*C/G/MSUN/MSUN,2.89653,2.0e-6,"angular momentum");
+  t.test_rel(I/1.0e45,2.64698,2.0e-6,"moment of inertia");
   t.test_rel(mass_quadrupole*pow(sqrt(KAPPA),3.0)*C*C/G/1.0e42,
-	     277.074,2.0e-6,"10");
-  t.test_rel(h_plus/1.0e5,0.129382,4.0e-6,"11");
-  t.test_rel(h_minus/1.0e5,11.9949,4.0e-6,"12");
-  t.test_rel(Z_p,0.591305,2.0e-6,"13");
-  t.test_rel(Z_f,-0.296001,2.0e-6,"14");
-  t.test_rel(Z_b,1.66307,2.0e-6,"15");
-  t.test_rel(om_over_Om,0.722768,2.0e-6,"16");
-  t.test_rel(r_e*sqrt(KAPPA)/1.0e5,10.4129,4.0e-6,"17");
-  t.test_rel(r_ratio,0.59,2.0e-6,"18");
+	     277.074,2.0e-6,"mass quadrupole");
+  t.test_rel(h_plus/1.0e5,0.129382,4.0e-6,"h+");
+  t.test_rel(h_minus/1.0e5,11.9949,4.0e-6,"h-");
+  t.test_rel(Z_p,0.591305,2.0e-6,"Z_p");
+  t.test_rel(Z_f,-0.296001,2.0e-6,"Z_f");
+  t.test_rel(Z_b,1.66307,2.0e-6,"Z_b");
+  t.test_rel(om_over_Om,0.722768,2.0e-6,"om_over_Om");
+  t.test_rel(r_e*sqrt(KAPPA)/1.0e5,10.4129,4.0e-6,"coordinate radius");
+  t.test_rel(r_ratio,0.59,2.0e-6,"axis ratio");
 
   return;
 }
@@ -4014,25 +3996,25 @@ void nstar_rot::test2(o2scl::test_mgr &t) {
   fix_cent_eden_with_kepler(2.0e15);
   eos_set=false;
 
-  t.test_rel(e_center,2.0,2.0e-6,"1");
-  t.test_rel(Mass/MSUN,2.13633,2.0e-6,"2");
-  t.test_rel(Mass_0/MSUN,2.43798,2.0e-6,"3");
-  t.test_rel(R_e/1.0e5,14.3217,2.0e-6,"4");
-  t.test_rel(Omega/1.0e4,0.964219,2.0e-6,"5");
-  t.test_rel(Omega_K/1.0e4,0.964286,2.0e-6,"6");
-  t.test_rel(T/W,0.110522,6.0e-6,"7");
-  t.test_rel(J*C/G/MSUN/MSUN,2.91467,2.0e-6,"8");
-  t.test_rel(I/1.0e45,2.6566,2.0e-6,"9");
+  t.test_rel(e_center,2.0,2.0e-6,"central energy density");
+  t.test_rel(Mass/MSUN,2.13633,2.0e-6,"gravitational mass");
+  t.test_rel(Mass_0/MSUN,2.43798,2.0e-6,"baryonic mass");
+  t.test_rel(R_e/1.0e5,14.3217,2.0e-6,"radius");
+  t.test_rel(Omega/1.0e4,0.964219,2.0e-6,"angular frequency");
+  t.test_rel(Omega_K/1.0e4,0.964286,2.0e-6,"Keplerian angular frequency");
+  t.test_rel(T/W,0.110522,6.0e-6,"T/W");
+  t.test_rel(J*C/G/MSUN/MSUN,2.91467,2.0e-6,"angular momentum");
+  t.test_rel(I/1.0e45,2.6566,2.0e-6,"moment of inertia");
   t.test_rel(mass_quadrupole*pow(sqrt(KAPPA),3.0)*C*C/G/1.0e42,
-	     279.481,2.0e-6,"10");
-  t.test_abs(h_plus/1.0e5,0.0,4.0e-6,"11");
-  t.test_rel(h_minus/1.0e5,11.6851,4.0e-6,"12");
-  t.test_rel(Z_p,0.592893,2.0e-6,"13");
-  t.test_rel(Z_f,-0.315912,2.0e-6,"14");
-  t.test_rel(Z_b,1.67823,4.0e-6,"15");
-  t.test_rel(om_over_Om,0.723265,2.0e-6,"16");
-  t.test_rel(r_e*sqrt(KAPPA)/1.0e5,10.7938,4.0e-6,"17");
-  t.test_rel(r_ratio,0.568311,2.0e-6,"18");
+	     279.481,2.0e-6,"mass quadrupole");
+  t.test_abs(h_plus/1.0e5,0.0,4.0e-6,"h+");
+  t.test_rel(h_minus/1.0e5,11.6851,4.0e-6,"h-");
+  t.test_rel(Z_p,0.592893,2.0e-6,"Z_p");
+  t.test_rel(Z_f,-0.315912,2.0e-6,"Z_f");
+  t.test_rel(Z_b,1.67823,4.0e-6,"Z_b");
+  t.test_rel(om_over_Om,0.723265,2.0e-6,"om_over_Om");
+  t.test_rel(r_e*sqrt(KAPPA)/1.0e5,10.7938,4.0e-6,"coordinate radius");
+  t.test_rel(r_ratio,0.568311,2.0e-6,"axis ratio");
 
   return;
 }
@@ -4045,25 +4027,25 @@ void nstar_rot::test3(o2scl::test_mgr &t) {
   fix_cent_eden_grav_mass(1.0e15,1.5);
   eos_set=false;
 
-  t.test_rel(e_center,1.0,2.0e-6,"1");
-  t.test_rel(Mass/MSUN,1.49996,4.0e-6,"2");
-  t.test_rel(Mass_0/MSUN,1.64049,4.0e-6,"3");
-  t.test_rel(R_e/1.0e5,13.7545,2.0e-6,"4");
-  t.test_rel(Omega/1.0e4,0.566135,2.0e-6,"5");
-  t.test_rel(Omega_K/1.0e4,0.87723,2.0e-6,"6");
-  t.test_rel(T/W,0.0642316,2.0e-6,"7");
-  t.test_rel(J*C/G/MSUN/MSUN,1.14759,2.0e-6,"8");
-  t.test_rel(I/1.0e45,1.78148,2.0e-6,"9");
+  t.test_rel(e_center,1.0,2.0e-6,"central energy density");
+  t.test_rel(Mass/MSUN,1.49996,4.0e-6,"gravitational mass");
+  t.test_rel(Mass_0/MSUN,1.64049,4.0e-6,"baryonic mass");
+  t.test_rel(R_e/1.0e5,13.7545,2.0e-6,"radius");
+  t.test_rel(Omega/1.0e4,0.566135,2.0e-6,"angular frequency");
+  t.test_rel(Omega_K/1.0e4,0.87723,2.0e-6,"Keplerian angular frequency");
+  t.test_rel(T/W,0.0642316,2.0e-6,"T/W");
+  t.test_rel(J*C/G/MSUN/MSUN,1.14759,2.0e-6,"angular momentum");
+  t.test_rel(I/1.0e45,1.78148,2.0e-6,"moment of inertia");
   t.test_rel(mass_quadrupole*pow(sqrt(KAPPA),3.0)*C*C/G/1.0e42,
-	     162.164,2.0e-6,"10");
-  t.test_abs(h_plus/1.0e5,0.0,4.0e-6,"11");
-  t.test_rel(h_minus/1.0e5,4.56495,2.0e-6,"12");
-  t.test_rel(Z_p,0.272299,2.0e-6,"13");
-  t.test_rel(Z_f,-0.117745,4.0e-6,"14");
-  t.test_rel(Z_b,0.689716,2.0e-6,"15");
-  t.test_rel(om_over_Om,0.475405,2.0e-6,"16");
-  t.test_rel(r_e*sqrt(KAPPA)/1.0e5,11.3694,4.0e-6,"17");
-  t.test_rel(r_ratio,0.763672,2.0e-6,"18");
+	     162.164,2.0e-6,"mass quadrupole");
+  t.test_abs(h_plus/1.0e5,0.0,4.0e-6,"h+");
+  t.test_rel(h_minus/1.0e5,4.56495,2.0e-6,"h-");
+  t.test_rel(Z_p,0.272299,2.0e-6,"Z_p");
+  t.test_rel(Z_f,-0.117745,4.0e-6,"Z_f");
+  t.test_rel(Z_b,0.689716,2.0e-6,"Z_b");
+  t.test_rel(om_over_Om,0.475405,2.0e-6,"om_over_Om");
+  t.test_rel(r_e*sqrt(KAPPA)/1.0e5,11.3694,4.0e-6,"coordinate radius");
+  t.test_rel(r_ratio,0.763672,2.0e-6,"axis ratio");
 
   return;
 }
@@ -4076,25 +4058,25 @@ void nstar_rot::test4(o2scl::test_mgr &t) {
   fix_cent_eden_bar_mass(1.0e15,1.55);
   eos_set=false;
 
-  t.test_rel(e_center,1.0,2.0e-6,"1");
-  t.test_rel(Mass/MSUN,1.41870,4.0e-6,"2");
-  t.test_rel(Mass_0/MSUN,1.55003,4.0e-6,"3");
-  t.test_rel(R_e/1.0e5,12.8888,4.0e-6,"4");
-  t.test_rel(Omega/1.0e4,0.439794,2.0e-6,"5");
-  t.test_rel(Omega_K/1.0e4,0.935245,2.0e-6,"6");
-  t.test_rel(T/W,0.0364707,2.0e-6,"7");
-  t.test_rel(J*C/G/MSUN/MSUN,0.767165,2.0e-6,"8");
-  t.test_rel(I/1.0e45,1.53303,4.0e-6,"9");
+  t.test_rel(e_center,1.0,2.0e-6,"central energy density");
+  t.test_rel(Mass/MSUN,1.41870,4.0e-6,"gravitational mass");
+  t.test_rel(Mass_0/MSUN,1.55003,4.0e-6,"baryonic mass");
+  t.test_rel(R_e/1.0e5,12.8888,4.0e-6,"radius");
+  t.test_rel(Omega/1.0e4,0.439794,2.0e-6,"angular frequency");
+  t.test_rel(Omega_K/1.0e4,0.935245,2.0e-6,"Keplerian angular frequency");
+  t.test_rel(T/W,0.0364707,2.0e-6,"T/W");
+  t.test_rel(J*C/G/MSUN/MSUN,0.767165,2.0e-6,"angular momentum");
+  t.test_rel(I/1.0e45,1.53303,4.0e-6,"moment of inertia");
   t.test_rel(mass_quadrupole*pow(sqrt(KAPPA),3.0)*C*C/G/1.0e42,
-	     86.1211,2.0e-6,"10");
-  t.test_abs(h_plus/1.0e5,0.0,4.0e-6,"11");
-  t.test_rel(h_minus/1.0e5,3.17552,2.0e-6,"12");
-  t.test_rel(Z_p,0.247316,2.0e-6,"13");
-  t.test_rel(Z_f,-0.0334667,2.0e-6,"14");
-  t.test_rel(Z_b,0.542684,2.0e-6,"15");
-  t.test_rel(om_over_Om,0.454775,2.0e-6,"16");
-  t.test_rel(r_e*sqrt(KAPPA)/1.0e5,10.6565,4.0e-6,"17");
-  t.test_rel(r_ratio,0.863281,2.0e-6,"18");
+	     86.1211,2.0e-6,"mass quadrupole");
+  t.test_abs(h_plus/1.0e5,0.0,4.0e-6,"h+");
+  t.test_rel(h_minus/1.0e5,3.17552,2.0e-6,"h-");
+  t.test_rel(Z_p,0.247316,2.0e-6,"Z_p");
+  t.test_rel(Z_f,-0.0334667,2.0e-6,"Z_f");
+  t.test_rel(Z_b,0.542684,2.0e-6,"Z_b");
+  t.test_rel(om_over_Om,0.454775,2.0e-6,"om_over_Om");
+  t.test_rel(r_e*sqrt(KAPPA)/1.0e5,10.6565,4.0e-6,"coordinate radius");
+  t.test_rel(r_ratio,0.863281,2.0e-6,"axis ratio");
 
   return;
 }
@@ -4107,25 +4089,25 @@ void nstar_rot::test5(o2scl::test_mgr &t) {
   fix_cent_eden_ang_vel(1.0e15,5.0e3);
   eos_set=false;
 
-  t.test_rel(e_center,1.0,2.0e-6,"1");
-  t.test_rel(Mass/MSUN,1.45222,4.0e-6,"2");
-  t.test_rel(Mass_0/MSUN,1.58737,4.0e-6,"3");
-  t.test_rel(R_e/1.0e5,13.2294,2.0e-6,"4");
-  t.test_rel(Omega/1.0e4,0.499991,2.0e-6,"5");
-  t.test_rel(Omega_K/1.0e4,0.912182,2.0e-6,"6");
-  t.test_rel(T/W,0.0483527,2.0e-6,"7");
-  t.test_rel(J*C/G/MSUN/MSUN,0.929068,2.0e-6,"8");
-  t.test_rel(I/1.0e45,1.63304,4.0e-6,"9");
+  t.test_rel(e_center,1.0,2.0e-6,"central energy density");
+  t.test_rel(Mass/MSUN,1.45222,4.0e-6,"gravitational mass");
+  t.test_rel(Mass_0/MSUN,1.58737,4.0e-6,"baryonic mass");
+  t.test_rel(R_e/1.0e5,13.2294,2.0e-6,"radius");
+  t.test_rel(Omega/1.0e4,0.499991,2.0e-6,"angular frequency");
+  t.test_rel(Omega_K/1.0e4,0.912182,2.0e-6,"Keplerian angular frequency");
+  t.test_rel(T/W,0.0483527,2.0e-6,"T/W");
+  t.test_rel(J*C/G/MSUN/MSUN,0.929068,2.0e-6,"angular momentum");
+  t.test_rel(I/1.0e45,1.63304,4.0e-6,"moment of inertia");
   t.test_rel(mass_quadrupole*pow(sqrt(KAPPA),3.0)*C*C/G/1.0e42,
-	     117.189,2.0e-6,"10");
-  t.test_abs(h_plus/1.0e5,0.0,4.0e-6,"11");
-  t.test_rel(h_minus/1.0e5,3.81883,2.0e-6,"12");
-  t.test_rel(Z_p,0.257732,2.0e-6,"13");
-  t.test_rel(Z_f,-0.0714265,2.0e-6,"14");
-  t.test_rel(Z_b,0.606809,2.0e-6,"15");
-  t.test_rel(om_over_Om,0.463524,2.0e-6,"16");
-  t.test_rel(r_e*sqrt(KAPPA)/1.0e5,10.9333,4.0e-6,"17");
-  t.test_rel(r_ratio,0.820703,2.0e-6,"18");
+	     117.189,2.0e-6,"mass quadrupole");
+  t.test_abs(h_plus/1.0e5,0.0,4.0e-6,"h+");
+  t.test_rel(h_minus/1.0e5,3.81883,2.0e-6,"h-");
+  t.test_rel(Z_p,0.257732,2.0e-6,"Z_p");
+  t.test_rel(Z_f,-0.0714265,2.0e-6,"Z_f");
+  t.test_rel(Z_b,0.606809,2.0e-6,"Z_b");
+  t.test_rel(om_over_Om,0.463524,2.0e-6,"om_over_Om");
+  t.test_rel(r_e*sqrt(KAPPA)/1.0e5,10.9333,4.0e-6,"coordinate radius");
+  t.test_rel(r_ratio,0.820703,2.0e-6,"axis ratio");
 
   return;
 }
@@ -4138,25 +4120,25 @@ void nstar_rot::test6(o2scl::test_mgr &t) {
   fix_cent_eden_ang_mom(1.0e15,1.5);
   eos_set=false;
 
-  t.test_rel(e_center,1.0,2.0e-6,"1");
-  t.test_rel(Mass/MSUN,1.57929,2.0e-6,"2");
-  t.test_rel(Mass_0/MSUN,1.72880,2.0e-6,"3");
-  t.test_rel(R_e/1.0e5,14.8602,2.0e-6,"4");
-  t.test_rel(Omega/1.0e4,0.644938,2.0e-6,"5");
-  t.test_rel(Omega_K/1.0e4,0.803770,4.0e-6,"6");
-  t.test_rel(T/W,0.0882324,4.0e-6,"7");
-  t.test_rel(J*C/G/MSUN/MSUN,1.50003,4.0e-6,"8");
-  t.test_rel(I/1.0e45,2.04407,2.0e-6,"9");
+  t.test_rel(e_center,1.0,2.0e-6,"central energy density");
+  t.test_rel(Mass/MSUN,1.57929,2.0e-6,"gravitational mass");
+  t.test_rel(Mass_0/MSUN,1.72880,2.0e-6,"baryonic mass");
+  t.test_rel(R_e/1.0e5,14.8602,2.0e-6,"radius");
+  t.test_rel(Omega/1.0e4,0.644938,2.0e-6,"angular frequency");
+  t.test_rel(Omega_K/1.0e4,0.803770,4.0e-6,"Keplerian angular frequency");
+  t.test_rel(T/W,0.0882324,4.0e-6,"T/W");
+  t.test_rel(J*C/G/MSUN/MSUN,1.50003,4.0e-6,"angular momentum");
+  t.test_rel(I/1.0e45,2.04407,2.0e-6,"moment of inertia");
   t.test_rel(mass_quadrupole*pow(sqrt(KAPPA),3.0)*C*C/G/1.0e42,
-	     239.194,2.0e-6,"10");
-  t.test_abs(h_plus/1.0e5,0.0,4.0e-6,"11");
-  t.test_rel(h_minus/1.0e5,5.35325,4.0e-6,"12");
-  t.test_rel(Z_p,0.295876,2.0e-6,"13");
-  t.test_rel(Z_f,-0.188541,2.0e-6,"14");
-  t.test_rel(Z_b,0.818747,2.0e-6,"15");
-  t.test_rel(om_over_Om,0.493751,2.0e-6,"16");
-  t.test_rel(r_e*sqrt(KAPPA)/1.0e5,12.3358,4.0e-6,"17");
-  t.test_rel(r_ratio,0.670508,2.0e-6,"18");
+	     239.194,2.0e-6,"mass quadrupole");
+  t.test_abs(h_plus/1.0e5,0.0,4.0e-6,"h+");
+  t.test_rel(h_minus/1.0e5,5.35325,4.0e-6,"h-");
+  t.test_rel(Z_p,0.295876,2.0e-6,"Z_p");
+  t.test_rel(Z_f,-0.188541,2.0e-6,"Z_f");
+  t.test_rel(Z_b,0.818747,2.0e-6,"Z_b");
+  t.test_rel(om_over_Om,0.493751,2.0e-6,"om_over_Om");
+  t.test_rel(r_e*sqrt(KAPPA)/1.0e5,12.3358,4.0e-6,"coordinate radius");
+  t.test_rel(r_ratio,0.670508,2.0e-6,"axis ratio");
 
   return;
 }
@@ -4169,25 +4151,25 @@ void nstar_rot::test7(o2scl::test_mgr &t) {
   fix_cent_eden_non_rot(2.0e15);
   eos_set=false;
 
-  t.test_rel(e_center,2.0,2.0e-6,"1");
-  t.test_rel(Mass/MSUN,1.79249,2.0e-6,"2");
-  t.test_rel(Mass_0/MSUN,2.04981,2.0e-6,"3");
-  t.test_rel(R_e/1.0e5,10.7698,2.0e-6,"4");
-  t.test_abs(Omega/1.0e4,0.0,2.0e-6,"5");
-  t.test_rel(Omega_K/1.0e4,1.37951,2.0e-6,"6");
-  t.test_abs(T/W,0.0,2.0e-6,"7");
-  t.test_abs(J*C/G/MSUN/MSUN,0.0,2.0e-6,"8");
-  t.test_rel(h_plus/1.0e5,5.10143,4.0e-6,"11");
-  t.test_rel(h_minus/1.0e5,5.10143,2.0e-6,"12");
-  t.test_rel(Z_p,0.401754,2.0e-6,"13");
-  t.test_rel(Z_f,0.401754,2.0e-6,"14");
-  t.test_rel(Z_b,0.401754,2.0e-6,"15");
-  t.test_abs(om_over_Om,0.0,2.0e-6,"16");
-  t.test_rel(r_e,0.215396,2.0e-6,"17");
-  t.test_rel(r_ratio,1.0,2.0e-6,"18");
-  t.test_rel(Omega_p/1.0e4,1.28671,4.0e-6,"19");
-  t.test_rel(Omega_plus/1.0e4,1.27724,4.0e-6,"20");
-  t.test_rel(u_phi,6.20982,2.0e-6,"21");
+  t.test_rel(e_center,2.0,2.0e-6,"central energy density");
+  t.test_rel(Mass/MSUN,1.79249,2.0e-6,"gravitational mass");
+  t.test_rel(Mass_0/MSUN,2.04981,2.0e-6,"baryonic mass");
+  t.test_rel(R_e/1.0e5,10.7698,2.0e-6,"radius");
+  t.test_abs(Omega/1.0e4,0.0,2.0e-6,"angular frequency");
+  t.test_rel(Omega_K/1.0e4,1.37951,2.0e-6,"Keplerian angular frequency");
+  t.test_abs(T/W,0.0,2.0e-6,"T/W");
+  t.test_abs(J*C/G/MSUN/MSUN,0.0,2.0e-6,"angular momentum");
+  t.test_rel(h_plus/1.0e5,5.10143,4.0e-6,"h+");
+  t.test_rel(h_minus/1.0e5,5.10143,2.0e-6,"h-");
+  t.test_rel(Z_p,0.401754,2.0e-6,"Z_p");
+  t.test_rel(Z_f,0.401754,2.0e-6,"Z_f");
+  t.test_rel(Z_b,0.401754,2.0e-6,"Z_b");
+  t.test_abs(om_over_Om,0.0,2.0e-6,"om_over_Om");
+  t.test_rel(r_e,0.215396,2.0e-6,"coordinate radius");
+  t.test_rel(r_ratio,1.0,2.0e-6,"axis ratio");
+  t.test_rel(Omega_p/1.0e4,1.28671,4.0e-6,"Omega_p");
+  t.test_rel(Omega_plus/1.0e4,1.27724,4.0e-6,"Omega_plus");
+  t.test_rel(u_phi,6.20982,2.0e-6,"u_phi");
 
   return;
 }
@@ -4197,24 +4179,24 @@ void nstar_rot::test8(o2scl::test_mgr &t) {
   polytrope_eos(1.0);
   fix_cent_eden_with_kepler(0.137);
   
-  t.test_rel(e_center,0.137,2.0e-6,"1");
-  t.test_rel(Mass,0.167269,2.0e-6,"2");
-  t.test_rel(Mass_0,0.180264,2.0e-6,"3");
-  t.test_rel(R_e,1.36735,2.0e-6,"4");
-  t.test_rel(Omega,0.258135,2.0e-6,"5");
-  t.test_rel(Omega_K,0.258149,2.0e-6,"6");
-  t.test_rel(T/W,0.0924266,2.0e-6,"7");
-  t.test_rel(J,0.0180245,2.0e-6,"8");
-  t.test_rel(I,0.0698259,2.0e-6,"9");
-  t.test_rel(mass_quadrupole,0.00971932,2.0e-6,"10");
-  t.test_abs(h_plus,0.0,2.0e-6,"11");
-  t.test_rel(h_minus,0.196584,4.0e-6,"12");
-  t.test_rel(Z_p,0.250523,2.0e-6,"13");
-  t.test_rel(Z_f,-0.247359,2.0e-6,"14");
-  t.test_rel(Z_b,0.772557,2.0e-6,"15");
-  t.test_rel(om_over_Om,0.459837,2.0e-6,"16");
-  t.test_rel(r_e,1.18909,2.0e-6,"17");
-  t.test_rel(r_ratio,0.575244,2.0e-6,"18");
+  t.test_rel(e_center,0.137,2.0e-6,"central energy density");
+  t.test_rel(Mass,0.167269,2.0e-6,"gravitational mass");
+  t.test_rel(Mass_0,0.180264,2.0e-6,"baryonic mass");
+  t.test_rel(R_e,1.36735,2.0e-6,"radius");
+  t.test_rel(Omega,0.258135,2.0e-6,"angular frequency");
+  t.test_rel(Omega_K,0.258149,2.0e-6,"Keplerian angular frequency");
+  t.test_rel(T/W,0.0924266,2.0e-6,"T/W");
+  t.test_rel(J,0.0180245,2.0e-6,"angular momentum");
+  t.test_rel(I,0.0698259,2.0e-6,"moment of inertia");
+  t.test_rel(mass_quadrupole,0.00971932,2.0e-6,"mass quadrupole");
+  t.test_abs(h_plus,0.0,2.0e-6,"h+");
+  t.test_rel(h_minus,0.196584,4.0e-6,"h-");
+  t.test_rel(Z_p,0.250523,2.0e-6,"Z_p");
+  t.test_rel(Z_f,-0.247359,2.0e-6,"Z_f");
+  t.test_rel(Z_b,0.772557,2.0e-6,"Z_b");
+  t.test_rel(om_over_Om,0.459837,2.0e-6,"om_over_Om");
+  t.test_rel(r_e,1.18909,2.0e-6,"coordinate radius");
+  t.test_rel(r_ratio,0.575244,2.0e-6,"axis ratio");
 
   return;
 }

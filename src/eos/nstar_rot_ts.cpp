@@ -44,10 +44,9 @@ int main(void) {
   cout.setf(ios::scientific);
 
   test_mgr t;
-  t.set_output_level(1);
+  t.set_output_level(2);
 
   nstar_rot nst;
-  nst.verbose=2;
 
   nst.constants_rns();
   nst.test1(t);
@@ -195,10 +194,39 @@ int main(void) {
     // Compute a configuration with a fixed ratio of radii
     nst.fix_cent_eden_axis_rat(ed_cent,0.7);
     t.test_rel(nst.r_ratio,0.7,1.0e-6,"correct ratio");
+    cout << nst.Mass << endl;
+    cout << nst.Mass_0 << endl;
 
-    //nst.verbose=2;
-    //nst.eq_radius_tol_rel=1.0e-7;
-    //nst.fix_cent_eden_with_kepler_alt(ed_cent);
+    // The old method for finding the configuration rotating at the
+    // Keplerian frequency
+    nst.eq_radius_tol_rel=1.0e-5;
+    nst.fix_cent_eden_with_kepler(ed_cent);
+    t.test_rel(nst.Omega_K,nst.Omega,1.0e-4,"kepler 1");
+
+    // The new method for finding the configuration rotating at the
+    // Keplerian frequency. This appears to be faster and more
+    // accurate
+    nst.eq_radius_tol_rel=1.0e-7;
+    nst.fix_cent_eden_with_kepler_alt(ed_cent);
+    t.test_rel(nst.Omega_K,nst.Omega,1.0e-8,"kepler 2");
+
+    if (false) {
+      nst.eq_radius_tol_rel=1.0e-5;
+      nst.fix_cent_eden_grav_mass(ed_cent,3.072e33/nst.MSUN);
+      t.test_rel(3.072e33,nst.Mass,1.0e-4,"gmass 1");
+      
+      nst.eq_radius_tol_rel=1.0e-7;
+      nst.fix_cent_eden_grav_mass_alt(ed_cent,3.072e33/nst.MSUN);
+      t.test_rel(3.072e33,nst.Mass,1.0e-8,"gmass 2");
+      
+      nst.eq_radius_tol_rel=1.0e-5;
+      nst.fix_cent_eden_bar_mass(ed_cent,3.072e33/nst.MSUN);
+      t.test_rel(3.072e33,nst.Mass,1.0e-4,"bmass 1");
+      
+      nst.eq_radius_tol_rel=1.0e-7;
+      nst.fix_cent_eden_bar_mass_alt(ed_cent,3.072e33/nst.MSUN);
+      t.test_rel(3.072e33,nst.Mass,1.0e-8,"bmass 2");
+    }
   }
 
   t.report();
