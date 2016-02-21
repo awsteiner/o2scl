@@ -583,9 +583,6 @@ namespace o2scl {
     /// Minimum radius for spherical stars (default \f$ 10^{-15} \f$)
     double RMIN;
 
-    /** \brief Indicates if iteration diverged (default 0) */ 
-    int a_check;                       
-
     /// \name Grid quantities set in make_grid()
     //@{
     /// \f$ s \f$
@@ -620,7 +617,12 @@ namespace o2scl {
     ubvector e_d_gp;
     //@}
 
-    /// \name Metric functions
+    /// Desc
+    ubmatrix dgds;
+    /// Desc
+    ubmatrix dgdm;
+
+  /// \name Metric functions
     //@{
     /** \brief potential \f$ \rho \f$ */ 
     ubmatrix rho;
@@ -1016,6 +1018,11 @@ namespace o2scl {
     
   public:
 
+    /** \brief Desc
+     */
+    int iterate2(double r_ratio_loc, double &r_e_loc, int s_temp,
+		 double &r_e_old);
+    
     /** \brief Relative accuracy for the equatorial radius,
 	\f$ r_e \f$ (default \f$ 10^{-5} \f$) 
 

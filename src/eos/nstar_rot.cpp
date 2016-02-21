@@ -381,8 +381,10 @@ nstar_rot::nstar_rot() {
   DM=(1.0/(MDIV-1.0));          
   RMIN=1.0e-15;
   n_nearest=1;                     
-  a_check=0;                       
   s_e=0.5;
+
+  dgds.resize(SDIV+1,MDIV+1);
+  dgdm.resize(SDIV+1,MDIV+1);
 
   size_t sz[3]={((size_t)SDIV+1),((size_t)LMAX+1),((size_t)SDIV+1)};
   f_gamma.resize(3,sz);
@@ -2625,15 +2627,454 @@ void nstar_rot::spherical_star() {
   return;
 }
 
+int nstar_rot::iterate2(double r_ratio_loc, double &r_e_loc, int s_temp,
+			double &r_e_old) {
+ 
+  /* Rescale potentials and construct arrays with the potentials
+     along the equatorial and polar directions.
+  */        
+
+  for(int s=1;s<=SDIV;s++) {
+    for(int m=1;m<=MDIV;m++) {
+      rho(s,m)/=pow(r_e_loc,2.0);
+      gamma(s,m)/=pow(r_e_loc,2.0); 
+      alpha(s,m)/=pow(r_e_loc,2.0);
+      omega(s,m)*=r_e_loc;
+    }
+    // The value of rho on the equatorial plane is rho_mu_0
+    rho_mu_0[s]=rho(s,1);     
+    gamma_mu_0[s]=gamma(s,1);   
+    omega_mu_0[s]=omega(s,1); 
+    // Value of rho on the polar axis is rho_mu_1
+    rho_mu_1[s]=rho(s,MDIV);  
+    gamma_mu_1[s]=gamma(s,MDIV);
+  }
+ 
+  // Compute new r_e
+
+  // Equatorial radius in previous cycle
+  r_e_old=r_e_loc;
+  r_p=r_ratio_loc*r_e_loc;                          
+  s_p=r_p/(r_p+r_e_loc);                        
+  
+  n_nearest=SDIV/2;
+  gamma_pole_h=interp(s_gp,gamma_mu_1,SDIV,s_p); 
+  gamma_equator_h=interp(s_gp,gamma_mu_0,SDIV,s_e);
+  gamma_center_h=gamma(1,1);                    
+  
+  rho_pole_h=interp(s_gp,rho_mu_1,SDIV,s_p);   
+  rho_equator_h=interp(s_gp,rho_mu_0,SDIV,s_e);
+  rho_center_h=rho(1,1);                      
+ 
+  r_e_loc=sqrt(2*h_center/(gamma_pole_h+rho_pole_h-gamma_center_h-
+			   rho_center_h));
+
+  // Compute angular velocity Omega
+ 
+  if (r_ratio_loc==1.0) {
+    Omega_h=0.0;
+    omega_equator_h=0.0;
+  } else {
+    // AWS: This looks like Eq. 46 from Cook '92
+    omega_equator_h=interp(s_gp,omega_mu_0,SDIV,s_e);
+    Omega_h=omega_equator_h+exp(pow(r_e_loc,2.0)*rho_equator_h)*
+      sqrt(1.0-exp(pow(r_e_loc,2.0)*(gamma_pole_h+rho_pole_h-gamma_equator_h
+				     -rho_equator_h)));
+  }
+ 
+  // Compute velocity, energy density and pressure
+ 
+  for(int s=1;s<=SDIV;s++) {
+    double sgp=s_gp[s];
+
+    for(int m=1;m<=MDIV;m++) {
+      double rsm=rho(s,m);
+            
+      if (r_ratio_loc==1.0 || s > (SDIV/2+2) ) {
+	velocity_sq(s,m)=0.0;
+      } else {
+	velocity_sq(s,m)=pow((Omega_h-omega(s,m))*(sgp/(1.0-sgp))
+			     *sin_theta[m]*exp(-rsm*pow(r_e_loc,2.0)),2.0);
+      }
+	
+      if (velocity_sq(s,m)>=1.0) {
+	velocity_sq(s,m)=0.0;
+      }
+
+      enthalpy(s,m)=enthalpy_min+0.5*
+	(pow(r_e_loc,2.0)*(gamma_pole_h+rho_pole_h
+			   -gamma(s,m)-rsm)-log(1.0-velocity_sq(s,m)));
+	
+      if ((enthalpy(s,m)<=enthalpy_min) || (sgp>s_e)) {
+	pressure(s,m)=0.0;
+	energy(s,m)=0.0; 
+      } else { 
+
+	if (scaled_polytrope==false) {
+	  pressure(s,m)=p_at_h(enthalpy(s,m));
+	  energy(s,m)=e_at_p(pressure(s,m));
+	} else {
+	  double rho0sm=pow(((Gamma_P-1.0)/Gamma_P)
+			    *(exp(enthalpy(s,m))-1.0),1.0/(Gamma_P-1.0));
+	  pressure(s,m)=pow(rho0sm,Gamma_P);
+	  energy(s,m)=pressure(s,m)/(Gamma_P-1.0)+rho0sm;
+	}
+      }  
+
+      // Rescale back metric potentials (except omega)
+
+      rho(s,m)*=pow(r_e_loc,2.0);
+      gamma(s,m)*=pow(r_e_loc,2.0);
+      alpha(s,m)*=pow(r_e_loc,2.0);
+    }
+  }
+
+  // Evaluation of source terms (Eqs. 30-33 of Cook, et al. (1992))
+
+  int s;
+  if (SMAX==1.0) {
+    s=SDIV;
+    for(int m=1;m<=MDIV;m++) {
+      S_rho(s,m)=0.0;
+      S_gamma(s,m)=0.0;
+      S_omega(s,m)=0.0;
+    }
+  }
+
+  for(s=1;s<=s_temp;s++) {
+    for(int m=1;m<=MDIV;m++) {
+      double rsm=rho(s,m);
+      double gsm=gamma(s,m);
+      double omsm=omega(s,m);
+      double esm=energy(s,m);
+      double psm=pressure(s,m);
+      double e_gsm=exp(0.5*gsm);
+      double e_rsm=exp(-rsm);
+      double v2sm=velocity_sq(s,m);
+      double mum=mu[m];            
+      double m1=1.0-pow(mum,2.0);
+      double sgp=s_gp[s];
+      double s_1=1.0-sgp;
+      double s1=sgp*s_1;
+      double s2=pow(sgp/s_1,2.0);  
+
+      double ea=16.0*PI*exp(2.0*alpha(s,m))*pow(r_e_loc,2.0);
+
+      // Derivative of gamma w.r.t. s
+      double d_gamma_s;            
+      // Derivative of gamma w.r.t. m
+      double d_gamma_m;            
+      // Derivative of rho w.r.t. s
+      double d_rho_s;             
+      // Derivative of rho w.r.t. m
+      double d_rho_m;             
+      // Derivative of omega w.r.t. s
+      double d_omega_s;           
+      // Derivative of omega w.r.t. m
+      double d_omega_m;
+	
+      if (s==1) {
+	d_gamma_s=0.0;
+	d_gamma_m=0.0;
+	d_rho_s=0.0;
+	d_rho_m=0.0;
+	d_omega_s=0.0;
+	d_omega_m=0.0;
+      } else {
+	d_gamma_s=deriv_s(gamma,s,m);
+	d_gamma_m=deriv_m(gamma,s,m);
+	d_rho_s=deriv_s(rho,s,m);
+	d_rho_m=deriv_m(rho,s,m);
+	d_omega_s=deriv_s(omega,s,m);
+	d_omega_m=deriv_m(omega,s,m);
+      }
+
+      S_rho(s,m)=e_gsm*
+	(0.5*ea*(esm+psm)*s2*(1.0+v2sm)/(1.0-v2sm)+
+	 s2*m1*pow(e_rsm,2.0)*
+	 (pow(s1*d_omega_s,2.0)+m1*pow(d_omega_m,2.0))
+	 +s1*d_gamma_s-mum*d_gamma_m+0.5*rsm*
+	 (ea*psm*s2-s1*d_gamma_s*(0.5*s1*d_gamma_s+1.0)
+	  -d_gamma_m*(0.5*m1*d_gamma_m-mum)));
+
+      S_gamma(s,m)=e_gsm*
+	(ea*psm*s2+0.5*gsm*(ea*psm*s2-0.5*pow(s1*d_gamma_s,2.0)-
+			    0.5*m1*pow(d_gamma_m,2.0)));
+	
+      S_omega(s,m)=e_gsm*e_rsm*
+	(-ea*(Omega_h-omsm)*(esm+psm)*s2/(1.0-v2sm)+
+	 omsm*(-0.5*ea*(((1.0+v2sm)*esm+2.0*v2sm*psm)/(1.0-v2sm))*s2-
+	       s1*(2*d_rho_s+0.5*d_gamma_s)
+	       +mum*(2*d_rho_m+0.5*d_gamma_m)+0.25*pow(s1,2.0)*
+	       (4*pow(d_rho_s,2.0)-pow(d_gamma_s,2.0))+0.25*m1*
+	       (4*pow(d_rho_m,2.0)-pow(d_gamma_m,2.0))-
+	       m1*pow(e_rsm,2.0)*(pow(pow(sgp,2.0)*d_omega_s,2.0)
+				  +s2*m1*pow(d_omega_m,2.0))));
+    }
+  }
+    
+  // Angular integration (see Eqs. 27-29 of Cook, et al. (1992))
+  
+  int n=0;
+  for(int k=1;k<=SDIV;k++) {      
+
+    // Intermediate sum in eqn for rho
+    double sum_rho=0.0;
+    for(int m=1;m<=MDIV-2;m+=2) {
+      sum_rho+=(DM/3.0)*(P_2n(m,n)*S_rho(k,m)
+			 +4.0*P_2n(m+1,n)*S_rho(k,m+1) 
+			 +P_2n(m+2,n)*S_rho(k,m+2));
+    }
+
+    D1_rho(n,k)=sum_rho;
+    D1_gamma(n,k)=0.0;
+    D1_omega(n,k)=0.0;
+
+  }
+
+  for(n=1;n<=LMAX;n++) {
+    for(int k=1;k<=SDIV;k++) {
+      // Intermediate sums in eqns for rho, gamma, omega
+      double sum_rho=0.0, sum_gamma=0.0, sum_omega=0.0;
+      for(int m=1;m<=MDIV-2;m+=2) {
+
+	sum_rho+=(DM/3.0)*(P_2n(m,n)*S_rho(k,m)
+			   +4.0*P_2n(m+1,n)*S_rho(k,m+1) 
+			   +P_2n(m+2,n)*S_rho(k,m+2));
+                       
+	sum_gamma+=(DM/3.0)*(sin((2.0*n-1.0)*theta[m])*S_gamma(k,m)
+			     +4.0*sin((2.0*n-1.0)*theta[m+1])*
+			     S_gamma(k,m+1)
+			     +sin((2.0*n-1.0)*theta[m+2])*S_gamma(k,m+2));
+  
+	sum_omega+=(DM/3.0)*(sin_theta[m]*P1_2n_1(m,n)*S_omega(k,m)
+			     +4.0*sin_theta[m+1]*P1_2n_1(m+1,n)*
+			     S_omega(k,m+1)
+			     +sin_theta[m+2]*P1_2n_1(m+2,n)*
+			     S_omega(k,m+2));
+      }
+      D1_rho(n,k)=sum_rho;
+      D1_gamma(n,k)=sum_gamma;
+      D1_omega(n,k)=sum_omega;
+    }
+  }
+
+  // Radial integration
+
+  n=0;
+  for(s=1;s<=SDIV;s++) {
+    // Intermediate sum in eqn for rho
+    double sum_rho=0.0;
+    for(int k=1;k<=SDIV-2;k+=2) { 
+      sum_rho+=(DS/3.0)*(f_rho.get(s,n,k)*D1_rho(n,k)+
+			 4.0*f_rho.get(s,n,k+1)*D1_rho(n,k+1)+
+			 f_rho.get(s,n,k+2)*D1_rho(n,k+2));
+    }
+    D2_rho(s,n)=sum_rho;
+    D2_gamma(s,n)=0.0;
+    D2_omega(s,n)=0.0;
+  }
+
+  for(s=1;s<=SDIV;s++) {
+    for(n=1;n<=LMAX;n++) {
+      // Intermediate sums in eqns for rho, gamma, omega
+      double sum_rho=0.0, sum_gamma=0.0, sum_omega=0.0;
+      for(int k=1;k<=SDIV-2;k+=2) { 
+	sum_rho+=(DS/3.0)*(f_rho.get(s,n,k)*D1_rho(n,k) 
+			   +4.0*f_rho.get(s,n,k+1)*D1_rho(n,k+1)
+			   +f_rho.get(s,n,k+2)*D1_rho(n,k+2));
+	  
+	sum_gamma+=(DS/3.0)*(f_gamma.get(s,n,k)*D1_gamma(n,k) 
+			     + 4.0*f_gamma.get(s,n,k+1)*D1_gamma(n,k+1)
+			     + f_gamma.get(s,n,k+2)*D1_gamma(n,k+2));
+	  
+	sum_omega+=(DS/3.0)*(f_omega.get(s,n,k)*D1_omega(n,k) 
+			     +4.0*f_omega.get(s,n,k+1)*D1_omega(n,k+1)
+			     +f_omega.get(s,n,k+2)*D1_omega(n,k+2));
+      }
+      D2_rho(s,n)=sum_rho;
+      D2_gamma(s,n)=sum_gamma;
+      D2_omega(s,n)=sum_omega;
+    }
+  }
+
+  // Summation of coefficients
+
+  for(s=1;s<=SDIV;s++) {
+    for(int m=1;m<=MDIV;m++) {
+
+      double gsm=gamma(s,m);
+      double rsm=rho(s,m);
+      double omsm=omega(s,m);             
+      double e_gsm=exp(-0.5*gsm);
+      double e_rsm=exp(rsm);
+      double temp1=sin_theta[m];
+
+      // Intermediate sums in eqns for rho, gamma, omega
+      double sum_rho=-e_gsm*P_2n(m,0)*D2_rho(s,0);
+      double sum_omega=0.0;
+      double sum_gamma=0.0;
+
+      for(n=1;n<=LMAX;n++) {
+
+	sum_rho+=-e_gsm*P_2n(m,n)*D2_rho(s,n); 
+
+	if (m==MDIV) {             
+	  sum_omega+=0.5*e_rsm*e_gsm*D2_omega(s,n); 
+	  sum_gamma+=-(2.0/PI)*e_gsm*D2_gamma(s,n);   
+	} else { 
+	  sum_omega+=-e_rsm*e_gsm*(P1_2n_1(m,n)/
+				   (2.0*n*(2.0*n-1.0)
+				    *temp1))*D2_omega(s,n);  
+	  sum_gamma+=-(2.0/PI)*e_gsm*(sin((2.0*n-1.0)*theta[m])
+				      /((2.0*n-1.0)*temp1))*D2_gamma(s,n);
+	}
+      }
+	   
+      rho(s,m)=rsm+cf*(sum_rho-rsm);
+      gamma(s,m)=gsm+cf*(sum_gamma-gsm);
+      omega(s,m)=omsm+cf*(sum_omega-omsm);
+
+    }
+  }
+
+  // Check for divergence
+
+  if (fabs(omega(2,1))>100.0 || fabs(rho(2,1))>100.0 
+      || fabs(gamma(2,1))>300.0) {
+    return 1;
+  }
+
+  // Treat spherical case
+
+  if (r_ratio_loc==1.0) {
+    for(s=1;s<=SDIV;s++) {
+      for(int m=1;m<=MDIV;m++) {
+	rho(s,m)=rho(s,1);
+	gamma(s,m)=gamma(s,1);
+	omega(s,m)=0.0;          
+      }
+    }
+  }
+    
+  // Treat infinity when SMAX=1.0
+    
+  if (SMAX==1.0) {
+    for(int m=1;m<=MDIV;m++) {
+      rho(SDIV,m)=0.0;
+      gamma(SDIV,m)=0.0;
+      omega(SDIV,m)=0.0;
+    }
+  } 
+      
+  // Compute first order derivatives of gamma
+ 
+  for(s=1;s<=SDIV;s++) {
+    for(int m=1;m<=MDIV;m++) {
+      dgds(s,m)=deriv_s(gamma,s,m);
+      dgdm(s,m)=deriv_m(gamma,s,m);
+    }
+  }
+
+  // ALPHA (Integration of eq (39) of Cook, et al. (1992))
+ 
+  if (r_ratio_loc==1.0) {
+    for(s=1;s<=SDIV;s++) {
+      for(int m=1;m<=MDIV;m++) {
+	da_dm(s,m)=0.0;
+      }
+    }
+  } else {
+    
+    for(s=2;s<=s_temp;s++) {
+      for(int m=1;m<=MDIV;m++) {
+
+	da_dm(1,m)=0.0; 
+       
+	double sgp=s_gp[s];
+	double s1=sgp*(1.0-sgp);
+	double mum=mu[m]; 
+	double m1=1.0-pow(mum,2.0);
+          
+	// Derivative of gamma w.r.t. s
+	double d_gamma_s=dgds(s,m);
+	// Derivative of gamma w.r.t. m
+	double d_gamma_m=dgdm(s,m);
+	// Derivative of rho w.r.t. s
+	double d_rho_s=deriv_s(rho,s,m);
+	// Derivative of rho w.r.t. m
+	double d_rho_m=deriv_m(rho,s,m);
+	// Derivative of omega w.r.t. s
+	double d_omega_s=deriv_s(omega,s,m);
+	// Derivative of omega w.r.t. m
+	double d_omega_m=deriv_m(omega,s,m);
+	  
+	// Second derivative of gamma w.r.t. s
+	double d_gamma_ss=s1*deriv_s(dgds,s,m)+(1.0-2.0*sgp)*d_gamma_s;
+	// Second derivative of gamma w.r.t. m
+	double d_gamma_mm=m1*deriv_m(dgdm,s,m)-2.0*mum*d_gamma_m;  
+	// Derivative of gamma w.r.t. m and s
+	double d_gamma_sm=deriv_sm(gamma,s,m);
+
+	double temp1=2.0*pow(sgp,2.0)*(sgp/(1.0-sgp))*m1*d_omega_s*d_omega_m
+	  *(1.0+s1*d_gamma_s)-(pow(pow(sgp,2.0)*d_omega_s,2.0)-
+			       pow(sgp*d_omega_m/(1.0-sgp),2.0)*m1)*
+	  (-mum+m1*d_gamma_m); 
+	  
+	double temp2=1.0/(m1*pow(1.0+s1*d_gamma_s,2.0)+
+			  pow(-mum+m1*d_gamma_m,2.0));
+
+	double temp3=s1*d_gamma_ss+pow(s1*d_gamma_s,2.0);
+  
+	double temp4=d_gamma_m*(-mum+m1*d_gamma_m);
+	  
+	double temp5=(pow(s1*(d_rho_s+d_gamma_s),2.0)-
+		      m1*pow(d_rho_m+d_gamma_m,2.0))*(-mum+m1*d_gamma_m);
+
+	double temp6=s1*m1*(0.5*(d_rho_s+d_gamma_s)*(d_rho_m+d_gamma_m) 
+			    +d_gamma_sm+d_gamma_s*d_gamma_m)*
+	  (1.0+s1*d_gamma_s); 
+	  
+	double temp7=s1*mum*d_gamma_s*(1.0+s1*d_gamma_s);
+	double temp8=m1*exp(-2*rho(s,m));
+	  
+	da_dm(s,m)=-0.5*(d_rho_m+d_gamma_m)-
+	  temp2*(0.5*(temp3-d_gamma_mm-temp4)*(-mum+m1*d_gamma_m)+
+		 0.25*temp5-temp6+temp7+0.25*temp8*temp1);	 
+      }
+    }
+  }
+
+  for(s=1;s<=s_temp;s++) {
+    alpha(s,1)=0.0;
+    for(int m=1;m<=MDIV-1;m++) {
+      alpha(s,m+1)=alpha(s,m)+0.5*DM*(da_dm(s,m+1)+da_dm(s,m));
+    }
+  } 
+ 
+  for(s=1;s<=s_temp;s++) {
+    for(int m=1;m<=MDIV;m++) {     
+
+      alpha(s,m)+=-alpha(s,MDIV)+0.5*(gamma(s,MDIV)-rho(s,MDIV));
+      if (alpha(s,m)>=300.0) {
+	return 2;
+      }
+	
+      omega(s,m)/=r_e_loc;
+    } 
+  }
+
+  if (SMAX==1.0) {
+    for(int m=1;m<=MDIV;m++) {
+      alpha(SDIV,m)=0.0;
+    }
+  }
+  return 0;
+}
+
 int nstar_rot::iterate(double r_ratio_loc) {
 
   int s_temp;
-
-  /// Desc
-  ubmatrix dgds(SDIV+1,MDIV+1);
-  /// Desc
-  ubmatrix dgdm(SDIV+1,MDIV+1);
-
   if (SMAX==1.0) {
     s_temp=SDIV-1;
   } else {
@@ -2664,450 +3105,10 @@ int nstar_rot::iterate(double r_ratio_loc) {
       cout << "r_e_diff, n_of_it, eq_radius_tol_rel: "
 	   << r_e_diff << " " << n_of_it << " " << eq_radius_tol_rel << endl;
     }
- 
-    /* Rescale potentials and construct arrays with the potentials
-       along the equatorial and polar directions.
-    */        
 
-    for(int s=1;s<=SDIV;s++) {
-      for(int m=1;m<=MDIV;m++) {
-	rho(s,m)/=pow(r_e,2.0);
-	gamma(s,m)/=pow(r_e,2.0); 
-	alpha(s,m)/=pow(r_e,2.0);
-	omega(s,m)*=r_e;
-      }
-      // The value of rho on the equatorial plane is rho_mu_0
-      rho_mu_0[s]=rho(s,1);     
-      gamma_mu_0[s]=gamma(s,1);   
-      omega_mu_0[s]=omega(s,1); 
-      // Value of rho on the polar axis is rho_mu_1
-      rho_mu_1[s]=rho(s,MDIV);  
-      gamma_mu_1[s]=gamma(s,MDIV);
-    }
- 
-    // Compute new r_e
-
-    // Equatorial radius in previous cycle
-    double r_e_old=r_e;
-    r_p=r_ratio_loc*r_e;                          
-    s_p=r_p/(r_p+r_e);                        
-  
-    n_nearest=SDIV/2;
-    gamma_pole_h=interp(s_gp,gamma_mu_1,SDIV,s_p); 
-    gamma_equator_h=interp(s_gp,gamma_mu_0,SDIV,s_e);
-    gamma_center_h=gamma(1,1);                    
-  
-    rho_pole_h=interp(s_gp,rho_mu_1,SDIV,s_p);   
-    rho_equator_h=interp(s_gp,rho_mu_0,SDIV,s_e);
-    rho_center_h=rho(1,1);                      
- 
-    r_e=sqrt(2*h_center/(gamma_pole_h+rho_pole_h-gamma_center_h-
-			 rho_center_h));
-
-    // Compute angular velocity Omega
- 
-    if (r_ratio_loc==1.0) {
-      Omega_h=0.0;
-      omega_equator_h=0.0;
-    } else {
-      // AWS: This looks like Eq. 46 from Cook '92
-      omega_equator_h=interp(s_gp,omega_mu_0,SDIV,s_e);
-      Omega_h=omega_equator_h+exp(pow(r_e,2.0)*rho_equator_h)*
-	sqrt(1.0-exp(pow(r_e,2.0)*(gamma_pole_h+rho_pole_h-gamma_equator_h
-				   -rho_equator_h)));
-    }
- 
-    // Compute velocity, energy density and pressure
- 
-    for(int s=1;s<=SDIV;s++) {
-      double sgp=s_gp[s];
-
-      for(int m=1;m<=MDIV;m++) {
-	double rsm=rho(s,m);
-            
-	if (r_ratio_loc==1.0 || s > (SDIV/2+2) ) {
-	  velocity_sq(s,m)=0.0;
-	} else {
-	  velocity_sq(s,m)=pow((Omega_h-omega(s,m))*(sgp/(1.0-sgp))
-			       *sin_theta[m]*exp(-rsm*pow(r_e,2.0)),2.0);
-	}
-	
-	if (velocity_sq(s,m)>=1.0) {
-	  velocity_sq(s,m)=0.0;
-	}
-
-	enthalpy(s,m)=enthalpy_min+0.5*
-	  (pow(r_e,2.0)*(gamma_pole_h+rho_pole_h
-			 -gamma(s,m)-rsm)-log(1.0-velocity_sq(s,m)));
-	
-	if ((enthalpy(s,m)<=enthalpy_min) || (sgp>s_e)) {
-	  pressure(s,m)=0.0;
-	  energy(s,m)=0.0; 
-	} else { 
-
-	  if (scaled_polytrope==false) {
-	    pressure(s,m)=p_at_h(enthalpy(s,m));
-	    energy(s,m)=e_at_p(pressure(s,m));
-	  } else {
-	    double rho0sm=pow(((Gamma_P-1.0)/Gamma_P)
-			      *(exp(enthalpy(s,m))-1.0),1.0/(Gamma_P-1.0));
-	    pressure(s,m)=pow(rho0sm,Gamma_P);
-	    energy(s,m)=pressure(s,m)/(Gamma_P-1.0)+rho0sm;
-	  }
-	}  
-
-	// Rescale back metric potentials (except omega)
-
-	rho(s,m)*=pow(r_e,2.0);
-	gamma(s,m)*=pow(r_e,2.0);
-	alpha(s,m)*=pow(r_e,2.0);
-      }
-    }
-
-    // Evaluation of source terms (Eqs. 30-33 of Cook, et al. (1992))
-
-    int s;
-    if (SMAX==1.0) {
-      s=SDIV;
-      for(int m=1;m<=MDIV;m++) {
-	S_rho(s,m)=0.0;
-	S_gamma(s,m)=0.0;
-	S_omega(s,m)=0.0;
-      }
-    }
-
-    for(s=1;s<=s_temp;s++) {
-      for(int m=1;m<=MDIV;m++) {
-	double rsm=rho(s,m);
-	double gsm=gamma(s,m);
-	double omsm=omega(s,m);
-	double esm=energy(s,m);
-	double psm=pressure(s,m);
-	double e_gsm=exp(0.5*gsm);
-	double e_rsm=exp(-rsm);
-	double v2sm=velocity_sq(s,m);
-	double mum=mu[m];            
-	double m1=1.0-pow(mum,2.0);
-	double sgp=s_gp[s];
-	double s_1=1.0-sgp;
-	double s1=sgp*s_1;
-	double s2=pow(sgp/s_1,2.0);  
-
-	double ea=16.0*PI*exp(2.0*alpha(s,m))*pow(r_e,2.0);
-
-	// Derivative of gamma w.r.t. s
-	double d_gamma_s;            
-	// Derivative of gamma w.r.t. m
-	double d_gamma_m;            
-	// Derivative of rho w.r.t. s
-	double d_rho_s;             
-	// Derivative of rho w.r.t. m
-	double d_rho_m;             
-	// Derivative of omega w.r.t. s
-	double d_omega_s;           
-	// Derivative of omega w.r.t. m
-	double d_omega_m;
-	
-	if (s==1) {
-	  d_gamma_s=0.0;
-	  d_gamma_m=0.0;
-	  d_rho_s=0.0;
-	  d_rho_m=0.0;
-	  d_omega_s=0.0;
-	  d_omega_m=0.0;
-	} else {
-	  d_gamma_s=deriv_s(gamma,s,m);
-	  d_gamma_m=deriv_m(gamma,s,m);
-	  d_rho_s=deriv_s(rho,s,m);
-	  d_rho_m=deriv_m(rho,s,m);
-	  d_omega_s=deriv_s(omega,s,m);
-	  d_omega_m=deriv_m(omega,s,m);
-	}
-
-	S_rho(s,m)=e_gsm*
-	  (0.5*ea*(esm+psm)*s2*(1.0+v2sm)/(1.0-v2sm)+
-	   s2*m1*pow(e_rsm,2.0)*
-	   (pow(s1*d_omega_s,2.0)+m1*pow(d_omega_m,2.0))
-	   +s1*d_gamma_s-mum*d_gamma_m+0.5*rsm*
-	   (ea*psm*s2-s1*d_gamma_s*(0.5*s1*d_gamma_s+1.0)
-	    -d_gamma_m*(0.5*m1*d_gamma_m-mum)));
-
-	S_gamma(s,m)=e_gsm*
-	  (ea*psm*s2+0.5*gsm*(ea*psm*s2-0.5*pow(s1*d_gamma_s,2.0)-
-			      0.5*m1*pow(d_gamma_m,2.0)));
-	
-	S_omega(s,m)=e_gsm*e_rsm*
-	  (-ea*(Omega_h-omsm)*(esm+psm)*s2/(1.0-v2sm)+
-	   omsm*(-0.5*ea*(((1.0+v2sm)*esm+2.0*v2sm*psm)/(1.0-v2sm))*s2-
-		 s1*(2*d_rho_s+0.5*d_gamma_s)
-		 +mum*(2*d_rho_m+0.5*d_gamma_m)+0.25*pow(s1,2.0)*
-		 (4*pow(d_rho_s,2.0)-pow(d_gamma_s,2.0))+0.25*m1*
-		 (4*pow(d_rho_m,2.0)-pow(d_gamma_m,2.0))-
-		 m1*pow(e_rsm,2.0)*(pow(pow(sgp,2.0)*d_omega_s,2.0)
-				    +s2*m1*pow(d_omega_m,2.0))));
-      }
-    }
-    
-    // Angular integration (see Eqs. 27-29 of Cook, et al. (1992))
-  
-    int n=0;
-    for(int k=1;k<=SDIV;k++) {      
-
-      // Intermediate sum in eqn for rho
-      double sum_rho=0.0;
-      for(int m=1;m<=MDIV-2;m+=2) {
-	sum_rho+=(DM/3.0)*(P_2n(m,n)*S_rho(k,m)
-			   +4.0*P_2n(m+1,n)*S_rho(k,m+1) 
-			   +P_2n(m+2,n)*S_rho(k,m+2));
-      }
-
-      D1_rho(n,k)=sum_rho;
-      D1_gamma(n,k)=0.0;
-      D1_omega(n,k)=0.0;
-
-    }
-
-    for(n=1;n<=LMAX;n++) {
-      for(int k=1;k<=SDIV;k++) {
-	// Intermediate sums in eqns for rho, gamma, omega
-	double sum_rho=0.0, sum_gamma=0.0, sum_omega=0.0;
-	for(int m=1;m<=MDIV-2;m+=2) {
-
-	  sum_rho+=(DM/3.0)*(P_2n(m,n)*S_rho(k,m)
-			     +4.0*P_2n(m+1,n)*S_rho(k,m+1) 
-			     +P_2n(m+2,n)*S_rho(k,m+2));
-                       
-	  sum_gamma+=(DM/3.0)*(sin((2.0*n-1.0)*theta[m])*S_gamma(k,m)
-			       +4.0*sin((2.0*n-1.0)*theta[m+1])*
-			       S_gamma(k,m+1)
-			       +sin((2.0*n-1.0)*theta[m+2])*S_gamma(k,m+2));
-  
-	  sum_omega+=(DM/3.0)*(sin_theta[m]*P1_2n_1(m,n)*S_omega(k,m)
-			       +4.0*sin_theta[m+1]*P1_2n_1(m+1,n)*
-			       S_omega(k,m+1)
-			       +sin_theta[m+2]*P1_2n_1(m+2,n)*
-			       S_omega(k,m+2));
-	}
-	D1_rho(n,k)=sum_rho;
-	D1_gamma(n,k)=sum_gamma;
-	D1_omega(n,k)=sum_omega;
-      }
-    }
-
-    // Radial integration
-
-    n=0;
-    for(s=1;s<=SDIV;s++) {
-      // Intermediate sum in eqn for rho
-      double sum_rho=0.0;
-      for(int k=1;k<=SDIV-2;k+=2) { 
-	sum_rho+=(DS/3.0)*(f_rho.get(s,n,k)*D1_rho(n,k)+
-			   4.0*f_rho.get(s,n,k+1)*D1_rho(n,k+1)+
-			   f_rho.get(s,n,k+2)*D1_rho(n,k+2));
-      }
-      D2_rho(s,n)=sum_rho;
-      D2_gamma(s,n)=0.0;
-      D2_omega(s,n)=0.0;
-    }
-
-    for(s=1;s<=SDIV;s++) {
-      for(n=1;n<=LMAX;n++) {
-	// Intermediate sums in eqns for rho, gamma, omega
-	double sum_rho=0.0, sum_gamma=0.0, sum_omega=0.0;
-	for(int k=1;k<=SDIV-2;k+=2) { 
-	  sum_rho+=(DS/3.0)*(f_rho.get(s,n,k)*D1_rho(n,k) 
-			     +4.0*f_rho.get(s,n,k+1)*D1_rho(n,k+1)
-			     +f_rho.get(s,n,k+2)*D1_rho(n,k+2));
-	  
-	  sum_gamma+=(DS/3.0)*(f_gamma.get(s,n,k)*D1_gamma(n,k) 
-			       + 4.0*f_gamma.get(s,n,k+1)*D1_gamma(n,k+1)
-			       + f_gamma.get(s,n,k+2)*D1_gamma(n,k+2));
-	  
-	  sum_omega+=(DS/3.0)*(f_omega.get(s,n,k)*D1_omega(n,k) 
-			       +4.0*f_omega.get(s,n,k+1)*D1_omega(n,k+1)
-			       +f_omega.get(s,n,k+2)*D1_omega(n,k+2));
-	}
-	D2_rho(s,n)=sum_rho;
-	D2_gamma(s,n)=sum_gamma;
-	D2_omega(s,n)=sum_omega;
-      }
-    }
-
-    // Summation of coefficients
-
-    for(s=1;s<=SDIV;s++) {
-      for(int m=1;m<=MDIV;m++) {
-
-	double gsm=gamma(s,m);
-	double rsm=rho(s,m);
-	double omsm=omega(s,m);             
-	double e_gsm=exp(-0.5*gsm);
-	double e_rsm=exp(rsm);
-	double temp1=sin_theta[m];
-
-	// Intermediate sums in eqns for rho, gamma, omega
-	double sum_rho=-e_gsm*P_2n(m,0)*D2_rho(s,0);
-	double sum_omega=0.0;
-	double sum_gamma=0.0;
-
-	for(n=1;n<=LMAX;n++) {
-
-	  sum_rho+=-e_gsm*P_2n(m,n)*D2_rho(s,n); 
-
-	  if (m==MDIV) {             
-	    sum_omega+=0.5*e_rsm*e_gsm*D2_omega(s,n); 
-	    sum_gamma+=-(2.0/PI)*e_gsm*D2_gamma(s,n);   
-	  } else { 
-	    sum_omega+=-e_rsm*e_gsm*(P1_2n_1(m,n)/
-				     (2.0*n*(2.0*n-1.0)
-				      *temp1))*D2_omega(s,n);  
-	    sum_gamma+=-(2.0/PI)*e_gsm*(sin((2.0*n-1.0)*theta[m])
-					/((2.0*n-1.0)*temp1))*D2_gamma(s,n);
-	  }
-	}
-	   
-	rho(s,m)=rsm+cf*(sum_rho-rsm);
-	gamma(s,m)=gsm+cf*(sum_gamma-gsm);
-	omega(s,m)=omsm+cf*(sum_omega-omsm);
-
-      }
-    }
-
-    // Check for divergence
-
-    if (fabs(omega(2,1))>100.0 || fabs(rho(2,1))>100.0 
-	|| fabs(gamma(2,1))>300.0) {
-      a_check=200; 
-      break;
-    }
-
-    // Treat spherical case
-
-    if (r_ratio_loc==1.0) {
-      for(s=1;s<=SDIV;s++) {
-	for(int m=1;m<=MDIV;m++) {
-	  rho(s,m)=rho(s,1);
-	  gamma(s,m)=gamma(s,1);
-	  omega(s,m)=0.0;          
-	}
-      }
-    }
-    
-    // Treat infinity when SMAX=1.0
-    
-    if (SMAX==1.0) {
-      for(int m=1;m<=MDIV;m++) {
-	rho(SDIV,m)=0.0;
-	gamma(SDIV,m)=0.0;
-	omega(SDIV,m)=0.0;
-      }
-    } 
-      
-    // Compute first order derivatives of gamma
- 
-    for(s=1;s<=SDIV;s++) {
-      for(int m=1;m<=MDIV;m++) {
-	dgds(s,m)=deriv_s(gamma,s,m);
-	dgdm(s,m)=deriv_m(gamma,s,m);
-      }
-    }
-
-    // ALPHA (Integration of eq (39) of Cook, et al. (1992))
- 
-    if (r_ratio_loc==1.0) {
-      for(s=1;s<=SDIV;s++) {
-	for(int m=1;m<=MDIV;m++) {
-	  da_dm(s,m)=0.0;
-	}
-      }
-    } else {
-    
-      for(s=2;s<=s_temp;s++) {
-	for(int m=1;m<=MDIV;m++) {
-
-	  da_dm(1,m)=0.0; 
-       
-	  double sgp=s_gp[s];
-	  double s1=sgp*(1.0-sgp);
-	  double mum=mu[m]; 
-	  double m1=1.0-pow(mum,2.0);
-          
-	  // Derivative of gamma w.r.t. s
-	  double d_gamma_s=dgds(s,m);
-	  // Derivative of gamma w.r.t. m
-	  double d_gamma_m=dgdm(s,m);
-	  // Derivative of rho w.r.t. s
-	  double d_rho_s=deriv_s(rho,s,m);
-	  // Derivative of rho w.r.t. m
-	  double d_rho_m=deriv_m(rho,s,m);
-	  // Derivative of omega w.r.t. s
-	  double d_omega_s=deriv_s(omega,s,m);
-	  // Derivative of omega w.r.t. m
-	  double d_omega_m=deriv_m(omega,s,m);
-	  
-	  // Second derivative of gamma w.r.t. s
-	  double d_gamma_ss=s1*deriv_s(dgds,s,m)+(1.0-2.0*sgp)*d_gamma_s;
-	  // Second derivative of gamma w.r.t. m
-	  double d_gamma_mm=m1*deriv_m(dgdm,s,m)-2.0*mum*d_gamma_m;  
-	  // Derivative of gamma w.r.t. m and s
-	  double d_gamma_sm=deriv_sm(gamma,s,m);
-
-	  double temp1=2.0*pow(sgp,2.0)*(sgp/(1.0-sgp))*m1*d_omega_s*d_omega_m
-	    *(1.0+s1*d_gamma_s)-(pow(pow(sgp,2.0)*d_omega_s,2.0)-
-				 pow(sgp*d_omega_m/(1.0-sgp),2.0)*m1)*
-	    (-mum+m1*d_gamma_m); 
-	  
-	  double temp2=1.0/(m1*pow(1.0+s1*d_gamma_s,2.0)+
-			    pow(-mum+m1*d_gamma_m,2.0));
-
-	  double temp3=s1*d_gamma_ss+pow(s1*d_gamma_s,2.0);
-  
-	  double temp4=d_gamma_m*(-mum+m1*d_gamma_m);
-	  
-	  double temp5=(pow(s1*(d_rho_s+d_gamma_s),2.0)-
-			m1*pow(d_rho_m+d_gamma_m,2.0))*(-mum+m1*d_gamma_m);
-
-	  double temp6=s1*m1*(0.5*(d_rho_s+d_gamma_s)*(d_rho_m+d_gamma_m) 
-			      +d_gamma_sm+d_gamma_s*d_gamma_m)*
-	    (1.0+s1*d_gamma_s); 
-	  
-	  double temp7=s1*mum*d_gamma_s*(1.0+s1*d_gamma_s);
-	  double temp8=m1*exp(-2*rho(s,m));
-	  
-	  da_dm(s,m)=-0.5*(d_rho_m+d_gamma_m)-
-	    temp2*(0.5*(temp3-d_gamma_mm-temp4)*(-mum+m1*d_gamma_m)+
-		   0.25*temp5-temp6+temp7+0.25*temp8*temp1);	 
-	}
-      }
-    }
-
-    for(s=1;s<=s_temp;s++) {
-      alpha(s,1)=0.0;
-      for(int m=1;m<=MDIV-1;m++) {
-	alpha(s,m+1)=alpha(s,m)+0.5*DM*(da_dm(s,m+1)+da_dm(s,m));
-      }
-    } 
- 
-    for(s=1;s<=s_temp;s++) {
-      for(int m=1;m<=MDIV;m++) {     
-
-	alpha(s,m)+=-alpha(s,MDIV)+0.5*(gamma(s,MDIV)-rho(s,MDIV));
-	if (alpha(s,m)>=300.0) {
-	  a_check=200; 
-	  break;
-	}
-	
-	omega(s,m)/=r_e;
-      } 
-    }
-
-    if (SMAX==1.0) {
-      for(int m=1;m<=MDIV;m++) {
-	alpha(SDIV,m)=0.0;
-      }
-    }
-    
-    if (a_check==200) break;
+    double r_e_old;
+    int ret=iterate2(r_ratio_loc,r_e,s_temp,r_e_old);
+    if (ret!=0) return ret;
     
     r_e_diff=fabs(r_e_old-r_e)/r_e;
     n_of_it++;
@@ -3219,6 +3220,9 @@ void nstar_rot::resize(int MDIV_new, int SDIV_new, int LMAX_new,
   SDIV=SDIV_new;
   LMAX=LMAX_new;
   
+  dgds.resize(SDIV+1,MDIV+1);
+  dgdm.resize(SDIV+1,MDIV+1);
+
   size_t sz[3]={((size_t)SDIV+1),((size_t)LMAX+1),((size_t)SDIV+1)};
   f_gamma.resize(3,sz);
   f_rho.resize(3,sz);
@@ -3390,7 +3394,7 @@ int nstar_rot::fix_cent_eden_with_kepler(double cent_eden) {
   double diff_omega=1.0;
  
   /* Decrease r_p. Whenever Omega_K-Omega changes sign, or iteration does
-     | not converge (a_check=200), cut the step dr in half and reverse 
+     | not converge, cut the step dr in half and reverse 
      | its direction.
   */
 
@@ -3400,10 +3404,9 @@ int nstar_rot::fix_cent_eden_with_kepler(double cent_eden) {
       dr/=(-2.0);              
     } 
     r_ratio -= dr; 
-    a_check=0;
-    iterate(r_ratio);
+    int ret=iterate(r_ratio);
 
-    if (a_check==200) {
+    if (ret!=0) {
       d_Omega=-1.0;
     } else {
       comp_omega();
@@ -3561,14 +3564,12 @@ int nstar_rot::fix_cent_eden_grav_mass(double cent_eden, double grav_mass) {
 
     make_center(e_center);
     spherical_star();
-    a_check=0;
-    if (iterate(r_ratio)!=0) return 1;
+    int ret=iterate(r_ratio);
     double sign;
-    if (a_check==200) {
+    if (ret!=0) {
       diff_M=-1.0;
       sign=-1.0;
-    } 
-    else { 
+    } else { 
       comp_M_J();
       diff_M=M_fix-Mass;
       sign=diff_M;
@@ -3589,12 +3590,10 @@ int nstar_rot::fix_cent_eden_grav_mass(double cent_eden, double grav_mass) {
 	dr/=(-2.0);
       }
       r_ratio -= dr;
-      a_check=0;
-      if (iterate(r_ratio)!=0) return 2;
-      if (a_check==200) {
+      int ret=iterate(r_ratio);
+      if (ret!=0) {
 	diff_M=-1.0;
-      }
-      else { 
+      } else { 
 	comp_M_J();      
 	if (Omega>Omega_K) {
 	  diff_M=-1.0;
@@ -3685,10 +3684,9 @@ int nstar_rot::fix_cent_eden_bar_mass(double cent_eden, double bar_mass) {
 
     make_center(e_center);
     spherical_star();
-    a_check=0;
-    iterate(r_ratio);
+    int ret=iterate(r_ratio);
     double sign;
-    if (a_check==200) {
+    if (ret!=0) {
       diff_M_0=-1.0;
       sign=-1.0;
     } 
@@ -3713,12 +3711,10 @@ int nstar_rot::fix_cent_eden_bar_mass(double cent_eden, double bar_mass) {
 	dr/=(-2.0);
       }
       r_ratio -= dr;
-      a_check=0;
-      iterate(r_ratio);
-      if (a_check==200) {
+      int ret=iterate(r_ratio);
+      if (ret!=0) {
 	diff_M_0=-1.0;
-      } 
-      else { 
+      } else { 
 	comp_M_J();      
 	if (Omega>Omega_K)
 	  diff_M_0=-1.0;
@@ -3807,11 +3803,10 @@ int nstar_rot::fix_cent_eden_ang_vel(double cent_eden, double ang_vel) {
 
     make_center(e_center);
     spherical_star();
-    a_check=0;
-    iterate(r_ratio);
+    int ret=iterate(r_ratio);
 
     double sign;
-    if (a_check==200) {
+    if (ret!=0) {
       diff_Omega=-1.0;
       sign=-1.0;
     } else { 
@@ -3835,10 +3830,10 @@ int nstar_rot::fix_cent_eden_ang_vel(double cent_eden, double ang_vel) {
 	dr/=(-2.0);
       }
       r_ratio -= dr;
-      a_check=0;
-      iterate(r_ratio);
 
-      if (a_check==200) {
+      int ret=iterate(r_ratio);
+
+      if (ret!=0) {
 	diff_Omega=-1.0;
       } else { 
 	comp_omega();      
@@ -3930,10 +3925,9 @@ int nstar_rot::fix_cent_eden_ang_mom(double cent_eden, double ang_mom) {
 
     make_center(e_center);
     spherical_star();
-    a_check=0;
-    if (iterate(r_ratio)!=0) return 1;
+    int ret=iterate(r_ratio);
     double sign;
-    if (a_check==200) {
+    if (ret!=0) {
       diff_J=-1.0;
       sign=-1.0;
     } 
@@ -3960,9 +3954,8 @@ int nstar_rot::fix_cent_eden_ang_mom(double cent_eden, double ang_mom) {
 	dr/=(-2.0);
       }
       r_ratio -= dr;
-      a_check=0;
-      if (iterate(r_ratio)!=0) return 2;
-      if (a_check==200) {
+      int ret=iterate(r_ratio);
+      if (ret!=0) {
 	diff_J=-1.0;
       } else { 
 	comp_M_J();      

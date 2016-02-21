@@ -47,6 +47,7 @@ int main(void) {
   t.set_output_level(1);
 
   nstar_rot nst;
+  nst.verbose=2;
 
   nst.constants_rns();
   nst.test1(t);
