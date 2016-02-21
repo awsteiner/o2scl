@@ -505,6 +505,9 @@ namespace o2scl {
   public:    
   
     typedef boost::numeric::ublas::vector<double> ubvector;
+    typedef boost::numeric::ublas::range ub_range;
+    typedef boost::numeric::ublas::vector_range
+      <boost::numeric::ublas::vector<double> > ubvector_range;
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
     
     /// The number of grid points in the \f$ \mu \f$ direction
@@ -582,7 +585,7 @@ namespace o2scl {
     o2scl::root_bkt_cern<polytrope_solve> rbc;
 
     /// Array search object
-    o2scl::search_vec<ubvector> sv_ub;
+    o2scl::search_vec<ubvector_range> sv_ub;
 
     /** \brief The number of grid points in integration of TOV equations
 	for spherical stars
@@ -1223,27 +1226,32 @@ namespace o2scl {
     /** \brief Experimental alternate form for
 	\ref fix_cent_eden_with_kepler()
     */
-    int fix_cent_eden_with_kepler_alt(double cent_eden);
+    int fix_cent_eden_with_kepler_alt(double cent_eden,
+				      bool use_guess=false);
 
     /** \brief Experimental alternate form for
 	\ref fix_cent_eden_grav_mass()
     */
-    int fix_cent_eden_grav_mass_alt(double cent_eden, double grav_mass);
+    int fix_cent_eden_grav_mass_alt(double cent_eden, double grav_mass,
+				    bool use_guess=false);
     
     /** \brief Experimental alternate form for
 	\ref fix_cent_eden_bar_mass()
     */
-    int fix_cent_eden_bar_mass_alt(double cent_eden, double bar_mass);
+    int fix_cent_eden_bar_mass_alt(double cent_eden, double bar_mass,
+				   bool use_guess=false);
     
     /** \brief Experimental alternate form for
 	\ref fix_cent_eden_ang_vel()
     */
-    int fix_cent_eden_ang_vel_alt(double cent_eden, double ang_vel);
+    int fix_cent_eden_ang_vel_alt(double cent_eden, double ang_vel,
+				  bool use_guess=false);
     
     /** \brief Experimental alternate form for
 	\ref fix_cent_eden_ang_mom()
     */
-    int fix_cent_eden_ang_mom_alt(double cent_eden, double ang_mom);
+    int fix_cent_eden_ang_mom_alt(double cent_eden, double ang_mom,
+				  bool use_guess=false);
     
     /** \brief Construct a non-rotating configuration with a fixed central 
 	energy density

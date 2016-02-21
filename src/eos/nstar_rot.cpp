@@ -547,10 +547,11 @@ void nstar_rot::make_grid() {
 
 int nstar_rot::new_search(int n, ubvector &x, double val) {
   int ret;
-  ubvector xnew(n);
-  for(size_t i=0;i<n;i++) {
-    xnew[i]=x[i+1];
-  }
+
+  // This temporary fix won't be necessary when the arrays are
+  // zero-indexed.
+  ubvector_range xnew(x,ub_range(1,n+1));
+
   bool inc=false;
   if (xnew[0]<xnew[n-1]) inc=true;
   if (inc) {
@@ -624,24 +625,6 @@ double nstar_rot::interp_4_k(ubvector &xp, ubvector &yp, int np, double xb,
 
   return(y);
 }
-
-/*
-  double nstar_rot::int_z(double f[MDIV+1], int m) {
-  double x[9];
-
-  x[1]=f[m-1];  
-  x[2]=interp(mu,f,MDIV,mu[m-1]+DM/7.0);
-  x[3]=interp(mu,f,MDIV,mu[m-1]+2.0*DM/7.0);
-  x[4]=interp(mu,f,MDIV,mu[m-1]+3.0*DM/7.0);
-  x[5]=interp(mu,f,MDIV,mu[m-1]+4.0*DM/7.0);
-  x[6]=interp(mu,f,MDIV,mu[m-1]+5.0*DM/7.0);
-  x[7]=interp(mu,f,MDIV,mu[m-1]+6.0*DM/7.0);
-  x[8]=f[m];
-  
-  return((DM/17280.0)*(751.0*x[1]+3577.0*x[2]+1323.0*x[3]+2989.0*x[4]+
-  2989.0*x[5]+1323.0*x[6]+3577.0*x[7]+751.0*x[8]));
-  }
-*/
 
 double nstar_rot::int_z(ubvector &f, int m) {
   double x[9];
@@ -787,8 +770,6 @@ double nstar_rot::deriv_sm(ubmatrix &f, int s, int m) {
 }
 
 double nstar_rot::legendre(int n, double x) {
-  // counter
-  int i;           
 
   // Legendre polynomials of order n, n-1, and n-2 
   double p;   
@@ -796,7 +777,7 @@ double nstar_rot::legendre(int n, double x) {
   double p_2=1.0;      
 
   if (n>=2) { 
-    for(i=2;i<=n;i++) {
+    for(int i=2;i<=n;i++) {
       p=(x*(2.0*i-1.0)*p_1-(i-1.0)*p_2)/i;
       p_2=p_1;
       p_1=p;
@@ -1242,8 +1223,8 @@ void nstar_rot::comp_M_J() {
     J*=4*PI*pow(r_e,4.0);
   }
 
-  for(s=1;s<=SDIV;s++) {
-    for(m=1;m<=MDIV;m++) {
+  for(int s=1;s<=SDIV;s++) {
+    for(int m=1;m<=MDIV;m++) {
       gamma_guess(s,m)=gamma(s,m);
       rho_guess(s,m)=rho(s,m);
       alpha_guess(s,m)=alpha(s,m);
@@ -3296,12 +3277,15 @@ int nstar_rot::solve_ang_mom(size_t nv, const ubvector &x,
   return 0;
 }
 
-int nstar_rot::fix_cent_eden_with_kepler_alt(double cent_eden) {
+int nstar_rot::fix_cent_eden_with_kepler_alt(double cent_eden,
+					     bool use_guess) {
 
   if (eos_set==false) {
     O2SCL_ERR2("EOS not specified in ",
 	       "nstar_rot::fix_cent_eden_with_kepler_alt().",exc_einval);
   }
+
+  double e_min=cent_eden;
 
   if (scaled_polytrope==false) {
     // set default values for star with tabulated eos
@@ -3309,32 +3293,26 @@ int nstar_rot::fix_cent_eden_with_kepler_alt(double cent_eden) {
     p_surface=1.01e8*KSCALE;
     enthalpy_min=1.0/(C*C);
     r_ratio=0.75;
+    e_min*=C*C*KSCALE;
   } else {
     // set default values for polytropic star 
     e_surface=0.0;
     p_surface=0.0;
     enthalpy_min=0.0;
     r_ratio=0.5848;
-  }
-
-  double e_min=cent_eden;
-  if (scaled_polytrope==false) {
-    e_min*=C*C*KSCALE;
-  } else {
     Gamma_P=1.0+1.0/n_P;
   }
 
   e_center=e_min;
-
-  // First model is guess
   
-  make_center(e_center);
-  spherical_star();             
-
-  r_ratio=1.0;
+  if (use_guess==false) {
+    make_center(e_center);
+    spherical_star();
+    r_ratio=0.75;
+  }
   
   ubvector x(1), y(1);
-  x[0]=0.75;
+  x[0]=r_ratio;
   mm_funct11 nf=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
      (&nstar_rot::solve_kepler),this,std::placeholders::_1,
@@ -3475,12 +3453,15 @@ int nstar_rot::fix_cent_eden_non_rot(double cent_eden) {
 }
 
 int nstar_rot::fix_cent_eden_grav_mass_alt(double cent_eden,
-					   double grav_mass) {
+					   double grav_mass,
+					   bool use_guess) {
 
   if (eos_set==false) {
     O2SCL_ERR2("EOS not specified in ",
 	       "nstar_rot::fix_cent_eden_grav_mass_alt().",exc_einval);
   }
+
+  double e_min=cent_eden;
 
   if (scaled_polytrope==false) {
     // set default values for star with tabulated eos
@@ -3488,32 +3469,26 @@ int nstar_rot::fix_cent_eden_grav_mass_alt(double cent_eden,
     p_surface=1.01e8*KSCALE;
     enthalpy_min=1.0/(C*C);
     r_ratio=0.75;
+    e_min*=C*C*KSCALE;
   } else {
     // set default values for polytropic star 
     e_surface=0.0;
     p_surface=0.0;
     enthalpy_min=0.0;
     r_ratio=0.5848;
-  }
-
-  double e_min=cent_eden;
-  if (scaled_polytrope==false) {
-    e_min*=C*C*KSCALE;
-  } else {
     Gamma_P=1.0+1.0/n_P;
   }
 
   e_center=e_min;
 
-  // First model is guess
-  
-  make_center(e_center);
-  spherical_star();             
-
-  r_ratio=1.0;
+  if (use_guess==false) {
+    make_center(e_center);
+    spherical_star();
+    r_ratio=0.75;
+  }
   
   ubvector x(1), y(1);
-  x[0]=0.75;
+  x[0]=r_ratio;
   mm_funct11 nf=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &,double)>
      (&nstar_rot::solve_grav_mass),this,std::placeholders::_1,
@@ -3626,45 +3601,41 @@ int nstar_rot::fix_cent_eden_grav_mass(double cent_eden, double grav_mass) {
 }
 
 int nstar_rot::fix_cent_eden_bar_mass_alt(double cent_eden,
-					   double bar_mass) {
+					  double bar_mass,
+					  bool use_guess) {
 
   if (eos_set==false) {
     O2SCL_ERR2("EOS not specified in ",
 	       "nstar_rot::fix_cent_eden_bar_mass_alt().",exc_einval);
   }
 
+  double e_min=cent_eden;
   if (scaled_polytrope==false) {
     // set default values for star with tabulated eos
     e_surface=7.8*C*C*KSCALE;
     p_surface=1.01e8*KSCALE;
     enthalpy_min=1.0/(C*C);
     r_ratio=0.75;
+    e_min*=C*C*KSCALE;
   } else {
     // set default values for polytropic star 
     e_surface=0.0;
     p_surface=0.0;
     enthalpy_min=0.0;
     r_ratio=0.5848;
-  }
-
-  double e_min=cent_eden;
-  if (scaled_polytrope==false) {
-    e_min*=C*C*KSCALE;
-  } else {
     Gamma_P=1.0+1.0/n_P;
   }
 
   e_center=e_min;
 
-  // First model is guess
-  
-  make_center(e_center);
-  spherical_star();             
-
-  r_ratio=1.0;
+  if (use_guess==false) {
+    make_center(e_center);
+    spherical_star();             
+    r_ratio=0.75;
+  }
   
   ubvector x(1), y(1);
-  x[0]=0.75;
+  x[0]=r_ratio;
   mm_funct11 nf=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &,double)>
      (&nstar_rot::solve_bar_mass),this,std::placeholders::_1,
@@ -3779,12 +3750,15 @@ int nstar_rot::fix_cent_eden_bar_mass(double cent_eden, double bar_mass) {
 }
 
 int nstar_rot::fix_cent_eden_ang_vel_alt(double cent_eden,
-					   double ang_vel) {
+					 double ang_vel,
+					 bool use_guess) {
 
   if (eos_set==false) {
     O2SCL_ERR2("EOS not specified in ",
 	       "nstar_rot::fix_cent_eden_ang_vel_alt().",exc_einval);
   }
+
+  double e_min=cent_eden;
 
   if (scaled_polytrope==false) {
     // set default values for star with tabulated eos
@@ -3792,32 +3766,26 @@ int nstar_rot::fix_cent_eden_ang_vel_alt(double cent_eden,
     p_surface=1.01e8*KSCALE;
     enthalpy_min=1.0/(C*C);
     r_ratio=0.75;
+    e_min*=C*C*KSCALE;
   } else {
     // set default values for polytropic star 
     e_surface=0.0;
     p_surface=0.0;
     enthalpy_min=0.0;
     r_ratio=0.5848;
-  }
-
-  double e_min=cent_eden;
-  if (scaled_polytrope==false) {
-    e_min*=C*C*KSCALE;
-  } else {
     Gamma_P=1.0+1.0/n_P;
   }
 
   e_center=e_min;
 
-  // First model is guess
-  
-  make_center(e_center);
-  spherical_star();             
-
-  r_ratio=1.0;
+  if (use_guess) {
+    make_center(e_center);
+    spherical_star();             
+    r_ratio=0.75;
+  }
   
   ubvector x(1), y(1);
-  x[0]=0.75;
+  x[0]=r_ratio;
   mm_funct11 nf=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &,double)>
      (&nstar_rot::solve_ang_vel),this,std::placeholders::_1,
@@ -3932,12 +3900,15 @@ int nstar_rot::fix_cent_eden_ang_vel(double cent_eden, double ang_vel) {
 }
 
 int nstar_rot::fix_cent_eden_ang_mom_alt(double cent_eden,
-					   double ang_mom) {
+					 double ang_mom,
+					 bool use_guess) {
 
   if (eos_set==false) {
     O2SCL_ERR2("EOS not specified in ",
 	       "nstar_rot::fix_cent_eden_ang_mom_alt().",exc_einval);
   }
+
+  double e_min=cent_eden;
 
   if (scaled_polytrope==false) {
     // set default values for star with tabulated eos
@@ -3945,32 +3916,26 @@ int nstar_rot::fix_cent_eden_ang_mom_alt(double cent_eden,
     p_surface=1.01e8*KSCALE;
     enthalpy_min=1.0/(C*C);
     r_ratio=0.75;
+    e_min*=C*C*KSCALE;
   } else {
     // set default values for polytropic star 
     e_surface=0.0;
     p_surface=0.0;
     enthalpy_min=0.0;
     r_ratio=0.5848;
-  }
-
-  double e_min=cent_eden;
-  if (scaled_polytrope==false) {
-    e_min*=C*C*KSCALE;
-  } else {
     Gamma_P=1.0+1.0/n_P;
   }
 
   e_center=e_min;
 
-  // First model is guess
-  
-  make_center(e_center);
-  spherical_star();             
-
-  r_ratio=1.0;
+  if (use_guess==false) {
+    make_center(e_center);
+    spherical_star();             
+    r_ratio=0.75;
+  }
   
   ubvector x(1), y(1);
-  x[0]=0.75;
+  x[0]=r_ratio;
   double J0=G*MSUN*MSUN/C;
   mm_funct11 nf=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &,double)>
