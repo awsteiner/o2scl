@@ -130,7 +130,7 @@ namespace o2scl {
 	\f$ \kappa \equiv 10^{-15} c^2/G \f$
     */
     double KAPPA;
-    /** \brief The value \f$ \kappa G c^{-4} \f$ */
+    /** \brief The value \f$ 10^{-15}/c^2 \f$ */
     double KSCALE;
     //@}
 

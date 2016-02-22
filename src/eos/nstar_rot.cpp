@@ -56,7 +56,7 @@ eos_nstar_rot_interp::eos_nstar_rot_interp() {
   C=o2scl_cgs::speed_of_light;
   G=o2scl_cgs::gravitational_constant;
   KAPPA=1.0e-15*C*C/G;
-  KSCALE=KAPPA*G/(C*C*C*C);
+  KSCALE=1.0e-15/C/C;
 }
 
 int eos_nstar_rot_interp::new_search(int n, double *x, double val) {
@@ -452,7 +452,7 @@ nstar_rot::nstar_rot() {
   PI=o2scl_const::pi;
   MB=o2scl_cgs::mass_neutron;
   KAPPA=1.0e-15*C*C/G;
-  KSCALE=KAPPA*G/(C*C*C*C);
+  KSCALE=1.0e-15/C/C;
 
   // set program defaults
   cf=1.0;
@@ -474,8 +474,6 @@ nstar_rot::nstar_rot() {
   */
   comp_f_P();
 
-  //mh.tol_rel=1.0e-6;
-  //mh.tol_abs=1.0e-6;
 }
 
 void nstar_rot::constants_rns() {
@@ -496,7 +494,7 @@ void nstar_rot::constants_o2scl() {
   PI=o2scl_const::pi;
   MB=o2scl_cgs::mass_neutron;
   KAPPA=1.0e-15*C*C/G;
-  KSCALE=KAPPA*G/(C*C*C*C);
+  KSCALE=1.0e-15/C/C;
   return;
 }
 
@@ -916,19 +914,16 @@ void nstar_rot::comp_f_P() {
     }
   }
 
-  // counter for mu grid
-  int i;
-
   // n=0 case
 
   n=0;
-  for(i=1;i<=MDIV;i++) {
+  for(int i=1;i<=MDIV;i++) {
     P_2n(i,n)=legendre(2*n,mu[i]);
   }
 
   // n>=1 case
 
-  for(i=1;i<=MDIV;i++) {
+  for(int i=1;i<=MDIV;i++) {
     for(n=1;n<=LMAX;n++) {
       P_2n(i,n)=legendre(2*n,mu[i]);
       P1_2n_1(i,n)=gsl_sf_legendre_Plm(2*n-1,1,mu[i]);
@@ -978,7 +973,6 @@ void nstar_rot::comp_omega() {
   if (scaled_polytrope==false) {
     Omega=Omega_h*C/(r_e*sqrt(KAPPA));
   } else {
-    // Omega=Omega_h*C/r_e;
     Omega=Omega_h/r_e;
   }
 
@@ -1063,7 +1057,6 @@ void nstar_rot::comp_M_J() {
     if (scaled_polytrope==false) {
       Omega=Omega_h*C/(r_e*sqrt(KAPPA));
     } else {
-      // Omega=Omega_h*C/r_e;
       Omega=Omega_h/r_e;
     }
   }   
@@ -1803,14 +1796,11 @@ void nstar_rot::comp() {
 
   // GRV2 spherical
 
-  double virial1;
-  double virial2;
+  double virial1=0.0;
+  double virial2=0.0;
   ubmatrix S_virial1(SDIV+1,MDIV+1);
   ubmatrix S_virial2(SDIV+1,MDIV+1);
   double grv2_spherical;
-
-  virial1=0.0;
-  virial2=0.0; 
 
   if (r_ratio==1.0) {
 
@@ -2091,6 +2081,8 @@ void nstar_rot::comp() {
   virial1=0.0;
   virial2=0.0; 
 
+  // AWS: This was commented out in the original version
+  
   /* Set equal to zero at center */
   /*
     for(m=1;m<=MDIV;m++) {
@@ -2199,6 +2191,7 @@ void nstar_rot::comp() {
       if (SMAX==1.0 && s==SDIV) {
 	S_virial1(s,m)=0.0;
 
+	// AWS: This comment was in the original RNS v1.1d 
 	/* CORRECT THIS ! */
 	
 	S_virial2(s,m)=0.5*(pow(s_gp[s]*(d_gamma_s+d_rho_s),2.0)- d_alpha_s*
@@ -2260,9 +2253,8 @@ void nstar_rot::comp() {
 
   // Calculate the mass quadrupole moment
   if (r_ratio!=1.0) {
-    double r_infinity;
     // Value of the coordinate r at infinity
-    r_infinity=r_e*s_gp[SDIV-1]/(1.0-s_gp[SDIV-1]);	
+    double r_infinity=r_e*s_gp[SDIV-1]/(1.0-s_gp[SDIV-1]);	
     mass_quadrupole=-0.5*pow(r_infinity,3)*D2_rho(SDIV-1,1);
   } else {
     mass_quadrupole=0.0;
@@ -2480,21 +2472,13 @@ void nstar_rot::integrate(int i_check, double &r_final, double &m_final,
 }
 
 void nstar_rot::spherical_star() {
-  int i;
-  int s;
-  int m;
-  int s_temp;
 
   /** \brief */
-  double r_final;
+  double r_final=0.0;
   /// Desc
-  double m_final;
+  double m_final=0.0;
   /// Desc
-  double r_is_final;
-
-  r_final=0.0;                 
-  m_final=0.0;
-  r_is_final=0.0;
+  double r_is_final=0.0;
 
   double r_is_s;
   double lambda_s;
@@ -2509,12 +2493,13 @@ void nstar_rot::spherical_star() {
   integrate(2,r_final,m_final,r_is_final);
   integrate(3,r_final,m_final,r_is_final);
 
+  int s_temp;
   if (SMAX==1.0) s_temp=SDIV-1;
   else s_temp=SDIV;
 
   n_nearest=RDIV/2;
 
-  for(s=1;s<=s_temp;s++) {
+  for(int s=1;s<=s_temp;s++) {
     r_is_s=r_is_final*(s_gp[s]/(1.0-s_gp[s]));
     // Convert the spherical solution to the 's' coordinte
     if (r_is_s<r_is_final) {
@@ -2529,7 +2514,7 @@ void nstar_rot::spherical_star() {
     gamma(s,1)=nu_s+lambda_s;
     rho(s,1)=nu_s-lambda_s;
 
-    for(m=1;m<=MDIV;m++) {
+    for(int m=1;m<=MDIV;m++) {
       /* Since the solution is spherically symmetric, 
 	 funct[m]=funct[1]=value of function on equatorial plane */
       gamma_guess(s,m)=gamma(s,1);
@@ -2545,7 +2530,7 @@ void nstar_rot::spherical_star() {
   }
 
   if (SMAX==1.0) {
-    for(m=1;m<=MDIV;m++) {
+    for(int m=1;m<=MDIV;m++) {
       gamma_guess(SDIV,m)=0.0;
       rho_guess(SDIV,m)=0.0;
       alpha_guess(SDIV,m)=0.0;
@@ -3397,8 +3382,8 @@ int nstar_rot::fix_cent_eden_with_kepler(double cent_eden) {
     }
     
     if (r_ratio>=1.0) {
-      O2SCL_ERR("r_ratio>1.",o2scl::exc_efailed);
-      //printf("r_ratio>=1.0 !\n");
+      O2SCL_ERR2("Variable r_ratio>=1.0 in ",
+		 "fix_cent_eden_with_kepler().",o2scl::exc_efailed);
     }
   }
   comp();
@@ -3505,7 +3490,7 @@ int nstar_rot::fix_cent_eden_grav_mass(double cent_eden, double grav_mass) {
 
   if (eos_set==false) {
     O2SCL_ERR2("EOS not specified in ",
-	       "nstar_rot::fix_cent_eden...().",exc_einval);
+	       "nstar_rot::fix_cent_eden_grav_mass().",exc_einval);
   }
 
   if (scaled_polytrope==false) {
@@ -3652,7 +3637,7 @@ int nstar_rot::fix_cent_eden_bar_mass(double cent_eden, double bar_mass) {
 
   if (eos_set==false) {
     O2SCL_ERR2("EOS not specified in ",
-	       "nstar_rot::fix_cent_eden...().",exc_einval);
+	       "nstar_rot::fix_cent_eden_bar_mass().",exc_einval);
   }
 
   if (scaled_polytrope==false) {
@@ -3802,7 +3787,7 @@ int nstar_rot::fix_cent_eden_ang_vel(double cent_eden, double ang_vel) {
 
   if (eos_set==false) {
     O2SCL_ERR2("EOS not specified in ",
-	       "nstar_rot::fix_cent_eden...().",exc_einval);
+	       "nstar_rot::fix_cent_eden_ang_vel().",exc_einval);
   }
 
   if (scaled_polytrope==false) {
@@ -3953,7 +3938,7 @@ int nstar_rot::fix_cent_eden_ang_mom(double cent_eden, double ang_mom) {
 
   if (eos_set==false) {
     O2SCL_ERR2("EOS not specified in ",
-	       "nstar_rot::fix_cent_eden...().",exc_einval);
+	       "nstar_rot::fix_cent_eden_ang_mom().",exc_einval);
   }
 
   if (scaled_polytrope==false) {
