@@ -238,6 +238,10 @@ class plotter:
                 plot.semilogy(reps,weights,**kwargs)
             else:
                 plot.plot(reps,weights,**kwargs)
+        if self.xset==1:
+            plot.xlim([self.xlo,self.xhi])
+        if self.yset==1:
+            plot.ylim([self.ylo,self.yhi])
         return
         
     def points(self,colx,coly,**kwargs):
@@ -263,6 +267,10 @@ class plotter:
             else:
                 plot.plot(self.dset['data/'+colx],
                           self.dset['data/'+coly],lw=0,marker='.',**kwargs)
+        if self.xset==1:
+            plot.xlim([self.xlo,self.xhi])
+        if self.yset==1:
+            plot.ylim([self.ylo,self.yhi])
         return
 
     def plot(self,colx,coly,**kwargs):
@@ -288,6 +296,10 @@ class plotter:
             else:
                 plot.plot(self.dset['data/'+colx],
                           self.dset['data/'+coly],**kwargs)
+        if self.xset==1:
+            plot.xlim([self.xlo,self.xhi])
+        if self.yset==1:
+            plot.ylim([self.ylo,self.yhi])
         return
 
     def plot1(self,col,**kwargs):
@@ -310,6 +322,10 @@ class plotter:
                 plot.semilogy(tlist,self.dset['data/'+col],**kwargs)
             else:
                 plot.plot(tlist,self.dset['data/'+col],**kwargs)
+        if self.xset==1:
+            plot.xlim([self.xlo,self.xhi])
+        if self.yset==1:
+            plot.ylim([self.ylo,self.yhi])
         return
 
     def hist(self,col,**kwargs):
@@ -789,6 +805,20 @@ class plotter:
                         print 'Not enough parameters for read option.'
                     else:
                         self.read_type(argv[ix+1],argv[ix+2])
+                elif cmd_name=='xlimits':
+                    if self.verbose>2:
+                        print 'Process xlimits.'
+                    if ix_next-ix<3:
+                        print 'Not enough parameters for xlimits option.'
+                    else:
+                        self.xlimits(float(argv[ix+1]),float(argv[ix+2]))
+                elif cmd_name=='ylimits':
+                    if self.verbose>2:
+                        print 'Process ylimits.'
+                    if ix_next-ix<3:
+                        print 'Not enough parameters for ylimits option.'
+                    else:
+                        self.ylimits(float(argv[ix+1]),float(argv[ix+2]))
                 elif cmd_name=='plot':
                     if self.verbose>2:
                         print 'Process plot.'
