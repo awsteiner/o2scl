@@ -222,7 +222,10 @@ namespace o2scl {
       t.get_constant(i,name,val);
       constants.insert(make_pair(name,val));
     }
-  
+
+    // Copy interpolation type
+    itype=t.itype;
+    
     // Copy the columns and data
     nlines=t.get_nlines();
     maxlines=nlines;
@@ -275,6 +278,9 @@ namespace o2scl {
       nlines=t.get_nlines();
       maxlines=nlines;
       
+    // Copy interpolation type
+    itype=t.itype;
+    
       for(size_t i=0;i<t.get_ncolumns();i++) {
 	
 	// Column name

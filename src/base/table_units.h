@@ -103,6 +103,9 @@ namespace o2scl {
       // Copy constants 
       this->constants=t.constants;
   
+      // Copy interpolation type
+      this->itype=t.itype;
+    
       // Copy the columns and data
       this->nlines=t.get_nlines();
       this->maxlines=this->nlines;
@@ -149,6 +152,9 @@ namespace o2scl {
 	this->constants.insert(make_pair(name,val));
       }
   
+      // Copy interpolation type
+      this->itype=t.itype;
+    
       // Copy the columns and data
       this->nlines=t.get_nlines();
       this->maxlines=this->nlines;
@@ -193,6 +199,9 @@ namespace o2scl {
 	// Copy constants 
 	this->constants=t.constants;
   
+      // Copy interpolation type
+      this->itype=t.itype;
+    
 	// Copy the columns and data
 	this->nlines=t.get_nlines();
 	for(size_t i=0;i<t.get_ncolumns();i++) {
@@ -250,6 +259,9 @@ namespace o2scl {
 	  this->constants.insert(make_pair(name,val));
 	}
   
+      // Copy interpolation type
+      this->itype=t.itype;
+    
 	// Copy the columns and data
 	this->nlines=t.get_nlines();
 	for(size_t i=0;i<t.get_ncolumns();i++) {
