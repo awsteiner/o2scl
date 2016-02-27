@@ -403,6 +403,15 @@ void eos_tov_interp::read_table(table_units<> &eosat, string s_cole,
     baryon_column=false;
   }
 
+  if (core_nlines<2) {
+    O2SCL_ERR2("Size of table less than 2 rows in ",
+	       "eos_tov_interp::read_table().",exc_einval);
+  }
+  if (core_table->get(s_colp,0)>core_table->get(s_colp,core_nlines-1)) {
+    O2SCL_ERR2("Core table pressure decreasing in ",
+	       "eos_tov_interp::read_table().",exc_einval);
+  }
+  
   // ---------------------------------------------------------------
   // Set core_auxp
 

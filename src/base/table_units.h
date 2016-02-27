@@ -465,6 +465,16 @@ namespace o2scl {
       return;
     }
 
+    /** \brief Rename column named \c src to \c dest
+	\f$ {\cal O}(C) \f$
+    */
+    virtual void rename_column(std::string src, std::string dest) {
+      std::string unit=get_unit(src);
+      table<vec_t>::rename_column(src,dest);
+      set_unit(dest,unit);
+      return;
+    }
+
     /// Output a summary of the information stored
     virtual void summary(std::ostream *out, size_t ncol=79) const {
 

@@ -190,8 +190,9 @@ double convert_units::convert(std::string from, std::string to, double val) {
 #endif
       
   if (err_on_fail) {
-    O2SCL_ERR("Conversion not found in convert_units::convert().",
-	      exc_efailed);
+    string str=((string)"Conversion between ")+from+" and "+to+
+      " not found in convert_units::convert().";
+    O2SCL_ERR(str.c_str(),exc_efailed);
   }
 
   return 0.0;

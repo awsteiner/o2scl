@@ -754,6 +754,9 @@ namespace o2scl {
 	of the columns are blank, then they are assumed to be the
 	native units for \ref o2scl::tov_solve .
 
+	\note The input table must have at least 2 rows and 
+	the pressure column must be strictly increasing.
+
 	\warning If the user sends a table object instead of a
 	table_units object and so a temporary is constructed and then
 	that pointer is stored by this function.

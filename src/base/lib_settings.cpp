@@ -35,14 +35,22 @@ lib_settings_class::lib_settings_class() {
   data_dir=((std::string)(O2SCL_DATA_DIR));
   cup=&def_cu;
 
-  // Default conversions 
+  // Default conversions are given here. Obviously GNU units is better
+  // at handling these things, but it's nice to have some of the easy
+  // conversions in by default rather than worrying about opening a
+  // pipe, etc.
+
+  // Simple mass/energy conversions
 
   def_cu.insert_cache("kg","1/fm",1.0e-15/o2scl_mks::plancks_constant_hbar*
 		      o2scl_mks::speed_of_light);
-  def_cu.insert_cache("kg","MeV",1.0e-15/o2scl_mks::plancks_constant_hbar*
-		      o2scl_mks::speed_of_light*o2scl_const::hc_mev_fm);
+  def_cu.insert_cache("kg","MeV",pow(o2scl_mks::speed_of_light,2.0)/
+		      o2scl_mks::electron_volt*1.0e-6);
+  def_cu.insert_cache("MeV","eV",1.0e6);
+  def_cu.insert_cache("keV","eV",1.0e3);
 
   // For the TOV solver
+
   def_cu.insert_cache("g/cm^3","Msun/km^3",1.0e12/o2scl_mks::solar_mass);
   def_cu.insert_cache("erg/cm^3","Msun/km^3",1.0e12/o2scl_cgs::speed_of_light/
 		      o2scl_cgs::speed_of_light/o2scl_mks::solar_mass);
@@ -58,16 +66,35 @@ lib_settings_class::lib_settings_class() {
   def_cu.insert_cache("1/fm^3","1/cm^3",1.0e39);
   def_cu.insert_cache("1/fm^3","1/m^3",1.0e45);
 
-  // Simple length conversions
+  // Simple length conversions 
+
   def_cu.insert_cache("pc","m",o2scl_mks::parsec);
   def_cu.insert_cache("kpc","m",o2scl_mks::parsec*1.0e3);
   def_cu.insert_cache("km","m",1.0e3);
   def_cu.insert_cache("cm","m",1.0e-2);
+  def_cu.insert_cache("fm","m",1.0e-15);
+  def_cu.insert_cache("mm","m",1.0e-3);
+  def_cu.insert_cache("nm","m",1.0e-9);
   def_cu.insert_cache("lyr","m",o2scl_mks::light_year);
-
-  // Simple mass/energy conversions
-  def_cu.insert_cache("MeV","eV",1.0e6);
-  def_cu.insert_cache("keV","eV",1.0e3);
+  
+  def_cu.insert_cache("pc^2","m^2",pow(o2scl_mks::parsec,2.0));
+  def_cu.insert_cache("kpc^2","m^2",pow(o2scl_mks::parsec*1.0e3,2.0));
+  def_cu.insert_cache("km^2","m^2",1.0e6);
+  def_cu.insert_cache("cm^2","m^2",1.0e-4);
+  def_cu.insert_cache("fm^2","m^2",1.0e-30);
+  def_cu.insert_cache("mm^2","m^2",1.0e-6);
+  def_cu.insert_cache("nm^2","m^2",1.0e-18);
+  def_cu.insert_cache("lyr^2","m^2",pow(o2scl_mks::light_year,2.0));
+  
+  def_cu.insert_cache("pc^3","m^3",pow(o2scl_mks::parsec,3.0));
+  def_cu.insert_cache("kpc^3","m^3",pow(o2scl_mks::parsec*1.0e3,3.0));
+  def_cu.insert_cache("km^3","m^3",1.0e9);
+  def_cu.insert_cache("cm^3","m^3",1.0e-6);
+  def_cu.insert_cache("fm^3","m^3",1.0e-45);
+  def_cu.insert_cache("mm^3","m^3",1.0e-9);
+  def_cu.insert_cache("nm^3","m^3",1.0e-27);
+  def_cu.insert_cache("lyr^3","m^3",pow(o2scl_mks::light_year,3.0));
+  
 }
 
 lib_settings_class::~lib_settings_class() {
