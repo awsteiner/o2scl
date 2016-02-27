@@ -44,7 +44,7 @@ int main(void) {
   thermo &th=go.def_thermo;
 
   double dtemp, n0, ed_nuc, ed_neut;
-  
+
   cout << "MDI0:" << endl;
   {
 
@@ -228,7 +228,7 @@ int main(void) {
     t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
   }
 
-  cout << "BPAL11:" << endl;
+  cout << "PAL11:" << endl;
   {
 
     go.A=75.94/hc_mev_fm;
@@ -245,7 +245,36 @@ int main(void) {
     go.rho0=0.16;
     go.Lambda=1.5*cbrt(1.5*pi2*go.rho0);
     go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
-    go.form=go.bpal_form;
+    go.form=go.pal_form;
+    
+    n0=go.fn0(0.0,dtemp);
+    cout << "n0:      " << n0 << endl;
+    cout << "eoa:    " << dtemp*hc_mev_fm << endl;
+    cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
+    cout << "Esym(1): " << go.fesym(n0)*hc_mev_fm << endl;
+    cout << "M*/M:    " << go.def_neutron.ms/go.def_neutron.m << endl;
+    cout << endl;
+
+  }
+  
+  cout << "PAL12:" << endl;
+  {
+
+    go.A=75.94/hc_mev_fm;
+    go.B=-30.880/hc_mev_fm;
+    go.Bp=0.0;
+    go.sigma=0.498;
+    go.C1=-83.84/hc_mev_fm;
+    go.C2=23.0/hc_mev_fm;
+    go.x0=0.0;
+    go.x3=0.0;
+    go.z1=0.0;
+    go.z2=0.0;
+    go.sym_index=2;
+    go.rho0=0.16;
+    go.Lambda=1.5*cbrt(1.5*pi2*go.rho0);
+    go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
+    go.form=go.pal_form;
     
     n0=go.fn0(0.0,dtemp);
     cout << "n0:      " << n0 << endl;
@@ -257,7 +286,122 @@ int main(void) {
     
   }
   
-  cout << "BPAL31:" << endl;
+  cout << "PAL13:" << endl;
+  {
+
+    go.A=75.94/hc_mev_fm;
+    go.B=-30.880/hc_mev_fm;
+    go.Bp=0.0;
+    go.sigma=0.498;
+    go.C1=-83.84/hc_mev_fm;
+    go.C2=23.0/hc_mev_fm;
+    go.x0=0.0;
+    go.x3=0.0;
+    go.z1=0.0;
+    go.z2=0.0;
+    go.sym_index=3;
+    go.rho0=0.16;
+    go.Lambda=1.5*cbrt(1.5*pi2*go.rho0);
+    go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
+    go.form=go.pal_form;
+    
+    n0=go.fn0(0.0,dtemp);
+    cout << "n0:      " << n0 << endl;
+    cout << "eoa:    " << dtemp*hc_mev_fm << endl;
+    cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
+    cout << "Esym(1): " << go.fesym(n0)*hc_mev_fm << endl;
+    cout << "M*/M:    " << go.def_neutron.ms/go.def_neutron.m << endl;
+    cout << endl;
+    
+  }
+
+  cout << "PAL21:" << endl;
+  {
+
+    go.A=440.94/hc_mev_fm;
+    go.B=-213.41/hc_mev_fm;
+    go.Bp=0.0;
+    go.sigma=0.927;
+    go.C1=-83.84/hc_mev_fm;
+    go.C2=23.0/hc_mev_fm;
+    go.x0=0.0;
+    go.x3=0.0;
+    go.z1=0.0;
+    go.z2=0.0;
+    go.sym_index=1;
+    go.rho0=0.16;
+    go.Lambda=1.5*cbrt(1.5*pi2*go.rho0);
+    go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
+    go.form=go.pal_form;
+    
+    n0=go.fn0(0.0,dtemp);
+    cout << "n0:      " << n0 << endl;
+    cout << "eoa:    " << dtemp*hc_mev_fm << endl;
+    cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
+    cout << "Esym(1): " << go.fesym(n0)*hc_mev_fm << endl;
+    cout << "M*/M:    " << go.def_neutron.ms/go.def_neutron.m << endl;
+    cout << endl;
+    
+  }
+  
+  cout << "PAL22:" << endl;
+  {
+
+    go.A=440.94/hc_mev_fm;
+    go.B=-213.41/hc_mev_fm;
+    go.Bp=0.0;
+    go.sigma=0.927;
+    go.C1=-83.84/hc_mev_fm;
+    go.C2=23.0/hc_mev_fm;
+    go.x0=0.0;
+    go.x3=0.0;
+    go.z1=0.0;
+    go.z2=0.0;
+    go.sym_index=2;
+    go.rho0=0.16;
+    go.Lambda=1.5*cbrt(1.5*pi2*go.rho0);
+    go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
+    go.form=go.pal_form;
+    
+    n0=go.fn0(0.0,dtemp);
+    cout << "n0:      " << n0 << endl;
+    cout << "eoa:    " << dtemp*hc_mev_fm << endl;
+    cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
+    cout << "Esym(1): " << go.fesym(n0)*hc_mev_fm << endl;
+    cout << "M*/M:    " << go.def_neutron.ms/go.def_neutron.m << endl;
+    cout << endl;
+    
+  }
+  
+  cout << "PAL23:" << endl;
+  {
+
+    go.A=440.94/hc_mev_fm;
+    go.B=-213.41/hc_mev_fm;
+    go.Bp=0.0;
+    go.sigma=0.927;
+    go.C1=-83.84/hc_mev_fm;
+    go.C2=23.0/hc_mev_fm;
+    go.x0=0.0;
+    go.x3=0.0;
+    go.z1=0.0;
+    go.z2=0.0;
+    go.sym_index=3;
+    go.rho0=0.16;
+    go.Lambda=1.5*cbrt(1.5*pi2*go.rho0);
+    go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
+    go.form=go.pal_form;
+    
+    n0=go.fn0(0.0,dtemp);
+    cout << "n0:      " << n0 << endl;
+    cout << "eoa:    " << dtemp*hc_mev_fm << endl;
+    cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
+    cout << "Esym(1): " << go.fesym(n0)*hc_mev_fm << endl;
+    cout << "M*/M:    " << go.def_neutron.ms/go.def_neutron.m << endl;
+    cout << endl;
+  }
+  
+  cout << "PAL31:" << endl;
   {
 
     go.A=-46.65/hc_mev_fm;
@@ -274,7 +418,7 @@ int main(void) {
     go.rho0=0.16;
     go.Lambda=1.5*cbrt(1.5*pi2*go.rho0);
     go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
-    go.form=go.bpal_form;
+    go.form=go.pal_form;
     
     n0=go.fn0(0.0,dtemp);
     cout << "n0:      " << n0 << endl;
@@ -293,7 +437,7 @@ int main(void) {
     t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
   }
   
-  cout << "BPAL32:" << endl;
+  cout << "PAL32:" << endl;
   {
 
     go.A=-46.65/hc_mev_fm;
@@ -310,7 +454,7 @@ int main(void) {
     go.rho0=0.16;
     go.Lambda=1.5*cbrt(1.5*pi2*go.rho0);
     go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
-    go.form=go.bpal_form;
+    go.form=go.pal_form;
     
     n0=go.fn0(0.0,dtemp);
     cout << "n0:      " << n0 << endl;
@@ -329,7 +473,7 @@ int main(void) {
     t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
   }
 
-  cout << "BPAL33:" << endl;
+  cout << "PAL33:" << endl;
   {
 
     go.A=-46.65/hc_mev_fm;
@@ -346,7 +490,7 @@ int main(void) {
     go.rho0=0.16;
     go.Lambda=1.5*cbrt(1.5*pi2*go.rho0);
     go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
-    go.form=go.bpal_form;
+    go.form=go.pal_form;
     
     n0=go.fn0(0.0,dtemp);
     cout << "n0:      " << n0 << endl;
@@ -635,7 +779,7 @@ int main(void) {
     go.A=-46.65/hc_mev_fm;
     go.B=39.54/hc_mev_fm;
     go.Bp=0.3;
-    go.sigma=0.498;
+    go.sigma=1.663;
     go.C1=-83.84/hc_mev_fm;
     go.C2=23.0/hc_mev_fm;
     go.x0=0.0;
@@ -664,7 +808,7 @@ int main(void) {
     go.A=-46.65/hc_mev_fm;
     go.B=39.54/hc_mev_fm;
     go.Bp=0.3;
-    go.sigma=0.498;
+    go.sigma=1.663;
     go.C1=-83.84/hc_mev_fm;
     go.C2=23.0/hc_mev_fm;
     go.x0=0.0;

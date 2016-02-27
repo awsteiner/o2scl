@@ -530,10 +530,15 @@ void o2scl_hdf::eos_had_strings_list() {
   list.push_back("pot MDI0");
   list.push_back("pot MDI1");
   list.push_back("pot BGBD_das");
-  list.push_back("pot BPAL11");
-  list.push_back("pot BPAL31");
-  list.push_back("pot BPAL32");
-  list.push_back("pot BPAL33");
+  list.push_back("pot PAL11");
+  list.push_back("pot PAL12");
+  list.push_back("pot PAL13");
+  list.push_back("pot PAL21");
+  list.push_back("pot PAL22");
+  list.push_back("pot PAL23");
+  list.push_back("pot PAL31");
+  list.push_back("pot PAL32");
+  list.push_back("pot PAL33");
   list.push_back("pot BPALb11");
   list.push_back("pot BPALb12");
   list.push_back("pot BPALb13");
@@ -580,8 +585,6 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->Cl=-11.70/o2scl_const::hc_mev_fm;
       pot->sigma=4.0/3.0;
       pot->x=0.0;
-      pot->rho0=0.16;
-      pot->Lambda=cbrt(1.5*o2scl_const::pi2*pot->rho0);
       pot->form=pot->mdi_form;
     } else if (name=="MDI1") {
       pot->Au=-187.27/o2scl_const::hc_mev_fm;
@@ -591,8 +594,6 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->Cl=-11.70/o2scl_const::hc_mev_fm;
       pot->sigma=4.0/3.0;
       pot->x=1.0;
-      pot->rho0=0.16;
-      pot->Lambda=cbrt(1.5*o2scl_const::pi2*pot->rho0);
       pot->form=pot->mdi_form;
     } else if (name=="BGBD_das") {
       pot->Au=-192.0/o2scl_const::hc_mev_fm;
@@ -602,10 +603,8 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->Cl=-65.472/o2scl_const::hc_mev_fm;
       pot->sigma=7.0/6.0;
       pot->x=1.0/15.0;
-      pot->rho0=0.16;
-      pot->Lambda=1.5*cbrt(1.5*o2scl_const::pi2*pot->rho0);
       pot->form=pot->gbd_form;
-    } else if (name=="BPAL11") {
+    } else if (name=="PAL11") {
       pot->A=75.94/o2scl_const::hc_mev_fm;
       pot->B=-30.880/o2scl_const::hc_mev_fm;
       pot->Bp=0.0;
@@ -617,11 +616,73 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->z1=0.0;
       pot->z2=0.0;
       pot->sym_index=1;
-      pot->rho0=0.16;
-      pot->Lambda=1.5*cbrt(1.5*o2scl_const::pi2*pot->rho0);
-      pot->Lambda2=3.0*cbrt(1.5*o2scl_const::pi2*pot->rho0);
-      pot->form=pot->bpal_form;
-    } else if (name=="BPAL31") {
+      pot->form=pot->pal_form;
+    } else if (name=="PAL12") {
+      pot->A=75.94/o2scl_const::hc_mev_fm;
+      pot->B=-30.880/o2scl_const::hc_mev_fm;
+      pot->Bp=0.0;
+      pot->sigma=0.498;
+      pot->C1=-83.84/o2scl_const::hc_mev_fm;
+      pot->C2=23.0/o2scl_const::hc_mev_fm;
+      pot->x0=0.0;
+      pot->x3=0.0;
+      pot->z1=0.0;
+      pot->z2=0.0;
+      pot->sym_index=2;
+      pot->form=pot->pal_form;
+    } else if (name=="PAL13") {
+      pot->A=75.94/o2scl_const::hc_mev_fm;
+      pot->B=-30.880/o2scl_const::hc_mev_fm;
+      pot->Bp=0.0;
+      pot->sigma=0.498;
+      pot->C1=-83.84/o2scl_const::hc_mev_fm;
+      pot->C2=23.0/o2scl_const::hc_mev_fm;
+      pot->x0=0.0;
+      pot->x3=0.0;
+      pot->z1=0.0;
+      pot->z2=0.0;
+      pot->sym_index=3;
+      pot->form=pot->pal_form;
+    } else if (name=="PAL21") {
+      pot->A=440.94/o2scl_const::hc_mev_fm;
+      pot->B=-213.41/o2scl_const::hc_mev_fm;
+      pot->Bp=0.0;
+      pot->sigma=0.927;
+      pot->C1=-83.84/o2scl_const::hc_mev_fm;
+      pot->C2=23.0/o2scl_const::hc_mev_fm;
+      pot->x0=0.0;
+      pot->x3=0.0;
+      pot->z1=0.0;
+      pot->z2=0.0;
+      pot->sym_index=1;
+      pot->form=pot->pal_form;
+    } else if (name=="PAL22") {
+      pot->A=440.94/o2scl_const::hc_mev_fm;
+      pot->B=-213.41/o2scl_const::hc_mev_fm;
+      pot->Bp=0.0;
+      pot->sigma=0.927;
+      pot->C1=-83.84/o2scl_const::hc_mev_fm;
+      pot->C2=23.0/o2scl_const::hc_mev_fm;
+      pot->x0=0.0;
+      pot->x3=0.0;
+      pot->z1=0.0;
+      pot->z2=0.0;
+      pot->sym_index=2;
+      pot->form=pot->pal_form;
+    } else if (name=="PAL23") {
+      pot->A=440.94/o2scl_const::hc_mev_fm;
+      pot->B=-213.41/o2scl_const::hc_mev_fm;
+      pot->Bp=0.0;
+      pot->sigma=0.927;
+      pot->C1=-83.84/o2scl_const::hc_mev_fm;
+      pot->C2=23.0/o2scl_const::hc_mev_fm;
+      pot->x0=0.0;
+      pot->x3=0.0;
+      pot->z1=0.0;
+      pot->z2=0.0;
+      pot->sym_index=3;
+      pot->form=pot->pal_form;
+    } else if (name=="PAL31") {
       pot->A=-46.65/o2scl_const::hc_mev_fm;
       pot->B=39.54/o2scl_const::hc_mev_fm;
       pot->Bp=0.3;
@@ -633,11 +694,8 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->z1=0.0;
       pot->z2=0.0;
       pot->sym_index=1;
-      pot->rho0=0.16;
-      pot->Lambda=1.5*cbrt(1.5*o2scl_const::pi2*pot->rho0);
-      pot->Lambda2=3.0*cbrt(1.5*o2scl_const::pi2*pot->rho0);
-      pot->form=pot->bpal_form;
-    } else if (name=="BPAL32") {
+      pot->form=pot->pal_form;
+    } else if (name=="PAL32") {
       pot->A=-46.65/o2scl_const::hc_mev_fm;
       pot->B=39.54/o2scl_const::hc_mev_fm;
       pot->Bp=0.3;
@@ -649,11 +707,8 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->z1=0.0;
       pot->z2=0.0;
       pot->sym_index=2;
-      pot->rho0=0.16;
-      pot->Lambda=1.5*cbrt(1.5*o2scl_const::pi2*pot->rho0);
-      pot->Lambda2=3.0*cbrt(1.5*o2scl_const::pi2*pot->rho0);
-      pot->form=pot->bpal_form;
-    } else if (name=="BPAL33") {
+      pot->form=pot->pal_form;
+    } else if (name=="PAL33") {
       pot->A=-46.65/o2scl_const::hc_mev_fm;
       pot->B=39.54/o2scl_const::hc_mev_fm;
       pot->Bp=0.3;
@@ -665,10 +720,7 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->z1=0.0;
       pot->z2=0.0;
       pot->sym_index=3;
-      pot->rho0=0.16;
-      pot->Lambda=1.5*cbrt(1.5*o2scl_const::pi2*pot->rho0);
-      pot->Lambda2=3.0*cbrt(1.5*o2scl_const::pi2*pot->rho0);
-      pot->form=pot->bpal_form;
+      pot->form=pot->pal_form;
     } else if (name=="BPALb11") {
       pot->A=75.94/o2scl_const::hc_mev_fm;
       pot->B=-30.880/o2scl_const::hc_mev_fm;
@@ -680,9 +732,6 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->x3=-0.244;
       pot->z1=-13.91/o2scl_const::hc_mev_fm;
       pot->z2=16.69/o2scl_const::hc_mev_fm;
-      pot->rho0=0.16;
-      pot->Lambda=1.5*cbrt(1.5*o2scl_const::pi2*pot->rho0);
-      pot->Lambda2=3.0*cbrt(1.5*o2scl_const::pi2*pot->rho0);
       pot->form=pot->bpalb_form;
     } else if (name=="BPALb12") {
       pot->A=75.94/o2scl_const::hc_mev_fm;
@@ -695,9 +744,6 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->x3=-0.244;
       pot->z1=-13.91/o2scl_const::hc_mev_fm;
       pot->z2=16.69/o2scl_const::hc_mev_fm;
-      pot->rho0=0.16;
-      pot->Lambda=1.5*cbrt(1.5*o2scl_const::pi2*pot->rho0);
-      pot->Lambda2=3.0*cbrt(1.5*o2scl_const::pi2*pot->rho0);
       pot->form=pot->bpalb_form;
     } else if (name=="BPALb13") {
       pot->A=75.94/o2scl_const::hc_mev_fm;
@@ -710,9 +756,6 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->x3=-1.056;
       pot->z1=-1.83/o2scl_const::hc_mev_fm;
       pot->z2=5.09/o2scl_const::hc_mev_fm;
-      pot->rho0=0.16;
-      pot->Lambda=1.5*cbrt(1.5*o2scl_const::pi2*pot->rho0);
-      pot->Lambda2=3.0*cbrt(1.5*o2scl_const::pi2*pot->rho0);
       pot->form=pot->bpalb_form;
     } else if (name=="BPALb21") {
       pot->A=440.94/o2scl_const::hc_mev_fm;
@@ -725,9 +768,6 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->x3=0.561;
       pot->z1=-18.4/o2scl_const::hc_mev_fm;
       pot->z2=46.27/o2scl_const::hc_mev_fm;
-      pot->rho0=0.16;
-      pot->Lambda=1.5*cbrt(1.5*o2scl_const::pi2*pot->rho0);
-      pot->Lambda2=3.0*cbrt(1.5*o2scl_const::pi2*pot->rho0);
       pot->form=pot->bpalb_form;
     } else if (name=="BPALb22") {
       pot->A=440.94/o2scl_const::hc_mev_fm;
@@ -740,9 +780,6 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->x3=0.561;
       pot->z1=-18.4/o2scl_const::hc_mev_fm;
       pot->z2=46.27/o2scl_const::hc_mev_fm;
-      pot->rho0=0.16;
-      pot->Lambda=1.5*cbrt(1.5*o2scl_const::pi2*pot->rho0);
-      pot->Lambda2=3.0*cbrt(1.5*o2scl_const::pi2*pot->rho0);
       pot->form=pot->bpalb_form;
     } else if (name=="BPALb23") {
       pot->A=440.94/o2scl_const::hc_mev_fm;
@@ -755,9 +792,6 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->x3=0.561;
       pot->z1=-18.4/o2scl_const::hc_mev_fm;
       pot->z2=46.27/o2scl_const::hc_mev_fm;
-      pot->rho0=0.16;
-      pot->Lambda=1.5*cbrt(1.5*o2scl_const::pi2*pot->rho0);
-      pot->Lambda2=3.0*cbrt(1.5*o2scl_const::pi2*pot->rho0);
       pot->form=pot->bpalb_form;
     } else if (name=="BPALb31") {
       pot->A=-46.65/o2scl_const::hc_mev_fm;
@@ -770,9 +804,6 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->x3=0.246;
       pot->z1=-12.23/o2scl_const::hc_mev_fm;
       pot->z2=-2.98/o2scl_const::hc_mev_fm;
-      pot->rho0=0.16;
-      pot->Lambda=1.5*cbrt(1.5*o2scl_const::pi2*pot->rho0);
-      pot->Lambda2=3.0*cbrt(1.5*o2scl_const::pi2*pot->rho0);
       pot->form=pot->bpalb_form;
     } else if (name=="SL12") {
       pot->A=3.706/o2scl_const::hc_mev_fm;
@@ -785,9 +816,6 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->x3=-0.5;
       pot->z1=-13.355/o2scl_const::hc_mev_fm;
       pot->z2=2.789/o2scl_const::hc_mev_fm;
-      pot->rho0=0.16;
-      pot->Lambda=1.5*cbrt(1.5*o2scl_const::pi2*pot->rho0);
-      pot->Lambda2=3.0*cbrt(1.5*o2scl_const::pi2*pot->rho0);
       pot->form=pot->sl_form;
     } else if (name=="GBD0") {
       pot->Au=-109.85/o2scl_const::hc_mev_fm;
@@ -797,8 +825,6 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->Cl=-26.26/o2scl_const::hc_mev_fm;
       pot->sigma=7.0/6.0;
       pot->x=0.0;
-      pot->rho0=0.16;
-      pot->Lambda=1.5*cbrt(1.5*o2scl_const::pi2*pot->rho0);
       pot->form=pot->gbd_form;
     } else if (name=="GBD1") {
       pot->Au=-299.69/o2scl_const::hc_mev_fm;
@@ -808,16 +834,12 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->Cl=-26.26/o2scl_const::hc_mev_fm;
       pot->sigma=7.0/6.0;
       pot->x=1.0;
-      pot->rho0=0.16;
-      pot->Lambda=1.5*cbrt(1.5*o2scl_const::pi2*pot->rho0);
     } else if (name=="CKLxm2") {
       pot->B=106.35/o2scl_const::hc_mev_fm;
       pot->sigma=4.0/3.0;
-      pot->rho0=0.16;
       pot->Cu=-103.40/o2scl_const::hc_mev_fm;
       pot->Cl=-11.70/o2scl_const::hc_mev_fm;
       pot->form=pot->mdi_form;
-      pot->Lambda=cbrt(1.5*o2scl_const::pi2*pot->rho0);
       pot->x=-2.0;
       pot->Au=-95.98/o2scl_const::hc_mev_fm-2.0*pot->B*
 	pot->x/(pot->sigma+1.0);
@@ -826,11 +848,9 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
     } else if (name=="CKLxm1") {
       pot->B=106.35/o2scl_const::hc_mev_fm;
       pot->sigma=4.0/3.0;
-      pot->rho0=0.16;
       pot->Cu=-103.40/o2scl_const::hc_mev_fm;
       pot->Cl=-11.70/o2scl_const::hc_mev_fm;
       pot->form=pot->mdi_form;
-      pot->Lambda=cbrt(1.5*o2scl_const::pi2*pot->rho0);
       pot->x=-2.0;
       pot->Au=-95.98/o2scl_const::hc_mev_fm-2.0*pot->B*
 	pot->x/(pot->sigma+1.0);
@@ -839,11 +859,9 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
     } else if (name=="CKLx0") {
       pot->B=106.35/o2scl_const::hc_mev_fm;
       pot->sigma=4.0/3.0;
-      pot->rho0=0.16;
       pot->Cu=-103.40/o2scl_const::hc_mev_fm;
       pot->Cl=-11.70/o2scl_const::hc_mev_fm;
       pot->form=pot->mdi_form;
-      pot->Lambda=cbrt(1.5*o2scl_const::pi2*pot->rho0);
       pot->x=-1.0;
       pot->Au=-95.98/o2scl_const::hc_mev_fm-2.0*pot->B*
 	pot->x/(pot->sigma+1.0);
@@ -852,17 +870,18 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
     } else if (name=="CKLx1") {
       pot->B=106.35/o2scl_const::hc_mev_fm;
       pot->sigma=4.0/3.0;
-      pot->rho0=0.16;
       pot->Cu=-103.40/o2scl_const::hc_mev_fm;
       pot->Cl=-11.70/o2scl_const::hc_mev_fm;
       pot->form=pot->mdi_form;
-      pot->Lambda=cbrt(1.5*o2scl_const::pi2*pot->rho0);
       pot->x=1.0;
       pot->Au=-95.98/o2scl_const::hc_mev_fm-2.0*pot->B*
 	pot->x/(pot->sigma+1.0);
       pot->Al=-120.75/o2scl_const::hc_mev_fm+2.0*pot->B*
 	pot->x/(pot->sigma+1.0);
     }
+    pot->rho0=0.16;
+    pot->Lambda=1.5*cbrt(1.5*o2scl_const::pi2*pot->rho0);
+    pot->Lambda2=3.0*cbrt(1.5*o2scl_const::pi2*pot->rho0);
     return pot;
   } else if (type=="rmf") {
     eos_had_rmf *rmf=new eos_had_rmf;

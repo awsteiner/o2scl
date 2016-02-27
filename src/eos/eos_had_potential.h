@@ -152,7 +152,7 @@ namespace o2scl {
       \bug The BGBD EOS doesn't work and the 
       effective mass for the GBD EOS doesn't work
       
-      \future Calculate the chemical potentials analytically 
+      \future Calculate the chemical potentials analytically.
   */
   class eos_had_potential : public eos_had_eden_base {
 
@@ -189,7 +189,7 @@ namespace o2scl {
     static const int gbd_form=5;
     
     /// The form from \ref Prakash88.
-    static const int bpal_form=6;
+    static const int pal_form=6;
 
     /** \brief Set the derivative object to calculate the 
 	chemical potentials

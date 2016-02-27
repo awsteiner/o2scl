@@ -276,7 +276,7 @@ double eos_had_sym4_mdi::energy_pot(double var) {
       ham3=0.8/rho0*(C1+2.0*z1)*n*(gn+gp)+0.4/rho0*(C1-8.0*z1)*
 	(neutron->n*gn+proton->n*gp);
 
-    } else if (form==bpal_form) {
+    } else if (form==pal_form) {
 
       double gn1, gp1, gn2, gp2;
       gn1=Lambda*Lambda/pi2*(neutron->kf-Lambda*atan(neutron->kf/Lambda));

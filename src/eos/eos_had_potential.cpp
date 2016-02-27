@@ -108,7 +108,7 @@ double eos_had_potential::energy(double var) {
     
     ham=hamk+ham1+ham2+ham3;
 
-  } else if (form==bpal_form) {
+  } else if (form==pal_form) {
     
     double u=n/rho0;
     double cu=cbrt(u);
@@ -216,6 +216,14 @@ int eos_had_potential::calc_e(fermion &ne, fermion &pr,
   } else if (pr.n<=0.0) {
     pr.n=0.0;
   }
+  
+  // We set z1 and z2 to zero for pal_form so that we can use the
+  // form for the effective mass from bpalb_form.
+  double zz1=z1, zz2=z2;
+  if (form==pal_form) {
+    zz1=0.0;
+    zz2=0.0;
+  }
 
   ne.non_interacting=false;
   pr.non_interacting=false;
@@ -261,38 +269,38 @@ int eos_had_potential::calc_e(fermion &ne, fermion &pr,
   } else if (form==bgbd_form) {
     double termn=-0.8*ne.m/rho0*Lambda*Lambda/
       pow(ne.kf*ne.kf+Lambda*Lambda,2.0)*
-      (3.0*C1*ne.n+2.0*C1*pr.n-4.0*z1*ne.n+4.0*z1*pr.n);
+      (3.0*C1*ne.n+2.0*C1*pr.n-4.0*zz1*ne.n+4.0*zz1*pr.n);
     double termp=-0.8*pr.m/rho0*Lambda*Lambda/
       pow(pr.kf*pr.kf+Lambda*Lambda,2.0)*
-      (3.0*C1*pr.n+2.0*C1*ne.n-4.0*z1*pr.n+4.0*z1*ne.n);
+      (3.0*C1*pr.n+2.0*C1*ne.n-4.0*zz1*pr.n+4.0*zz1*ne.n);
     ne.ms=ne.m/(1.0+termn);
     pr.ms=pr.m/(1.0+termp);
-  } else if (form==bpalb_form) {
-    double termn=(-ne.n*(C1-8.0*z1)*Lambda*Lambda-
-		  2.0*n*(C1+2.0*z1)*Lambda*Lambda)/
+  } else if (form==bpalb_form || form==pal_form) {
+    double termn=(-ne.n*(C1-8.0*zz1)*Lambda*Lambda-
+		  2.0*n*(C1+2.0*zz1)*Lambda*Lambda)/
       pow(ne.kf*ne.kf+Lambda*Lambda,2.0);
-    termn+=(-ne.n*(C2-8.0*z2)*Lambda2*Lambda2-
-	    2.0*n*(C2+2.0*z2)*Lambda2*Lambda2)/
+    termn+=(-ne.n*(C2-8.0*zz2)*Lambda2*Lambda2-
+	    2.0*n*(C2+2.0*zz2)*Lambda2*Lambda2)/
       pow(ne.kf*ne.kf+Lambda2*Lambda2,2.0);
     termn*=0.8*ne.m/rho0;
-    double termp=(-pr.n*(C1-8.0*z1)*Lambda*Lambda-
-		  2.0*n*(C1+2.0*z1)*Lambda*Lambda)/
+    double termp=(-pr.n*(C1-8.0*zz1)*Lambda*Lambda-
+		  2.0*n*(C1+2.0*zz1)*Lambda*Lambda)/
       pow(pr.kf*pr.kf+Lambda*Lambda,2.0);
-    termp+=(-pr.n*(C2-8.0*z2)*Lambda2*Lambda2-
-	    2.0*n*(C2+2.0*z2)*Lambda2*Lambda2)/
+    termp+=(-pr.n*(C2-8.0*zz2)*Lambda2*Lambda2-
+	    2.0*n*(C2+2.0*zz2)*Lambda2*Lambda2)/
       pow(pr.kf*pr.kf+Lambda2*Lambda2,2.0);
     termp*=0.8*pr.m/rho0;
     ne.ms=ne.m/(1.0+termn);
     pr.ms=pr.m/(1.0+termp);
   } else if (form==sl_form) {
-    double termn=(-4.0*ne.kf*ne.n*(C1-8.0*z1)-8.0*ne.kf*n*(C1+2.0*z1))/
+    double termn=(-4.0*ne.kf*ne.n*(C1-8.0*zz1)-8.0*ne.kf*n*(C1+2.0*zz1))/
       (5.0*rho0*Lambda*Lambda);
-    termn+=(-4.0*ne.kf*ne.n*(C2-8.0*z2)-8.0*ne.kf*n*(C2+2.0*z2))/
+    termn+=(-4.0*ne.kf*ne.n*(C2-8.0*zz2)-8.0*ne.kf*n*(C2+2.0*zz2))/
       (5.0*rho0*Lambda2*Lambda2*pow(1.0+ne.kf*ne.kf/Lambda2/Lambda2,2.0));
     termn*=ne.m/ne.kf;
-    double termp=(-4.0*pr.kf*pr.n*(C1-8.0*z1)-8.0*pr.kf*n*(C1+2.0*z1))/
+    double termp=(-4.0*pr.kf*pr.n*(C1-8.0*zz1)-8.0*pr.kf*n*(C1+2.0*zz1))/
       (5.0*rho0*Lambda*Lambda);
-    termp+=(-4.0*pr.kf*pr.n*(C2-8.0*z2)-8.0*pr.kf*n*(C2+2.0*z2))/
+    termp+=(-4.0*pr.kf*pr.n*(C2-8.0*zz2)-8.0*pr.kf*n*(C2+2.0*zz2))/
       (5.0*rho0*Lambda2*Lambda2*pow(1.0+pr.kf*pr.kf/Lambda2/Lambda2,2.0));
     termp*=pr.m/pr.kf;
     ne.ms=ne.m/(1.0+termn);
