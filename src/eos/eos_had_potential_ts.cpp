@@ -45,104 +45,10 @@ int main(void) {
 
   double dtemp, n0, ed_nuc, ed_neut;
 
-  cout << "MDI0:" << endl;
-  {
-
-    go.Au=-95.98/hc_mev_fm;
-    go.Al=-120.57/hc_mev_fm;
-    go.B=106.35/hc_mev_fm;
-    go.Cu=-103.40/hc_mev_fm;
-    go.Cl=-11.70/hc_mev_fm;
-    go.sigma=4.0/3.0;
-    go.x=0.0;
-    go.rho0=0.16;
-    go.Lambda=cbrt(1.5*pi2*go.rho0);
-    go.form=go.mdi_form;
-
-    n0=go.fn0(0.0,dtemp);
-    cout << "n0:      " << n0 << endl;
-    cout << "eoa:    " << dtemp*hc_mev_fm << endl;
-    cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
-    cout << "Esym(1): " << go.fesym(n0)*hc_mev_fm << endl;
-    cout << "M*/M:    " << go.def_neutron.ms/go.def_neutron.m << endl;
-    
-    t.test_rel(n0,0.16,1.0e-2,"n0");
-    t.test_rel(dtemp*hc_mev_fm,-16.0,1.0e-2,"eoa");
-    t.test_rel(go.fcomp(n0)*hc_mev_fm,220.0,40.0,"comp");
-    t.test_rel(go.fesym(n0)*hc_mev_fm,30.0,5.0,"esym");
-    
-    // alternative for symmetry energy
-    go.def_neutron.n=n0/2.0;
-    go.def_proton.n=n0/2.0;
-    go.calc_e(go.def_neutron,go.def_proton,th);
-    ed_nuc=th.ed;
-    go.def_neutron.n=n0;
-    go.def_proton.n=0.0;
-    go.calc_e(go.def_neutron,go.def_proton,th);
-    ed_neut=th.ed;
-    cout << "Esym(2): " << (ed_neut-ed_nuc)/n0*hc_mev_fm << endl;
-    cout << endl;
-
-    // Check chemical potentials
-    go.def_neutron.n=0.08;
-    go.def_proton.n=0.08;
-    double mund, mupd, munde, mupde;
-    go.check_mu(go.def_neutron,go.def_proton,th,mund,mupd,munde,mupde);
-    t.test_abs(go.def_neutron.mu,mund,fabs(munde),"neutron chem pot.");
-    t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
-
-  }
-
-  cout << "MDI1:" << endl;
-  {
-
-    go.Au=-187.27/hc_mev_fm;
-    go.Al=-29.28/hc_mev_fm;
-    go.B=106.35/hc_mev_fm;
-    go.Cu=-103.40/hc_mev_fm;
-    go.Cl=-11.70/hc_mev_fm;
-    go.sigma=4.0/3.0;
-    go.x=1.0;
-    go.rho0=0.16;
-    go.Lambda=cbrt(1.5*pi2*go.rho0);
-    go.form=go.mdi_form;
-  
-    n0=go.fn0(0.0,dtemp);
-    cout << "n0:      " << n0 << endl;
-    cout << "eoa:    " << dtemp*hc_mev_fm << endl;
-    cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
-    cout << "Esym(1): " << go.fesym(n0)*hc_mev_fm << endl;
-    cout << "M*/M:    " << go.def_neutron.ms/go.def_neutron.m << endl;
-    
-    t.test_rel(n0,0.16,1.0e-2,"n0");
-    t.test_rel(dtemp*hc_mev_fm,-16.0,1.0e-2,"eoa");
-    t.test_rel(go.fcomp(n0)*hc_mev_fm,220.0,40.0,"comp");
-    t.test_rel(go.fesym(n0)*hc_mev_fm,30.0,5.0,"esym");
-    
-    // alternative for symmetry energy
-    go.def_neutron.n=n0/2.0;
-    go.def_proton.n=n0/2.0;
-    go.calc_e(go.def_neutron,go.def_proton,th);
-    ed_nuc=th.ed;
-    go.def_neutron.n=n0;
-    go.def_proton.n=0.0;
-    go.calc_e(go.def_neutron,go.def_proton,th);
-    ed_neut=th.ed;
-    cout << "Esym(2): " << (ed_neut-ed_nuc)/n0*hc_mev_fm << endl;
-    cout << endl;
-
-    // Check chemical potentials
-    go.def_neutron.n=0.08;
-    go.def_proton.n=0.08;
-    double mund, mupd, munde, mupde;
-    go.check_mu(go.def_neutron,go.def_proton,th,mund,mupd,munde,mupde);
-    t.test_abs(go.def_neutron.mu,mund,fabs(munde),"neutron chem pot.");
-    t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
-  }
-
   cout << "BGBD_bombaci:" << endl;
   {
 
+    // These numerical values are from Bombaci01
     go.A=-144.0/hc_mev_fm;
     go.B=203.3/hc_mev_fm;
     go.Bp=0.0;
@@ -151,7 +57,7 @@ int main(void) {
     go.C2=0.0;
     go.x0=0.0;
     go.x3=-0.4;
-    go.z1=-3.42/hc_mev_fm;
+    go.z1=-3.42;
     go.z2=0.0;
     go.rho0=0.16;
     go.Lambda=1.5*cbrt(1.5*pi2*go.rho0);
@@ -189,6 +95,7 @@ int main(void) {
   cout << "BGBD_das:" << endl;
   {
 
+    // These numerical values are from Das03
     go.Au=-192.0/hc_mev_fm;
     go.Al=-96.0/hc_mev_fm;
     go.B=203.3/hc_mev_fm;
@@ -198,6 +105,7 @@ int main(void) {
     go.x=1.0/15.0;
     go.rho0=0.16;
     go.Lambda=1.5*cbrt(1.5*pi2*go.rho0);
+    go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
     go.form=go.gbd_form;
   
     n0=go.fn0(0.0,dtemp);
@@ -227,7 +135,7 @@ int main(void) {
     t.test_abs(go.def_neutron.mu,mund,fabs(munde),"neutron chem pot.");
     t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
   }
-
+  
   cout << "PAL11:" << endl;
   {
 
@@ -283,7 +191,6 @@ int main(void) {
     cout << "Esym(1): " << go.fesym(n0)*hc_mev_fm << endl;
     cout << "M*/M:    " << go.def_neutron.ms/go.def_neutron.m << endl;
     cout << endl;
-    
   }
   
   cout << "PAL13:" << endl;
@@ -509,7 +416,7 @@ int main(void) {
     t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
   }
 
-  cout << "BPALb11:" << endl;
+  cout << "BPAL11:" << endl;
   {
 
     go.A=75.94/hc_mev_fm;
@@ -525,7 +432,7 @@ int main(void) {
     go.rho0=0.16;
     go.Lambda=1.5*cbrt(1.5*pi2*go.rho0);
     go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
-    go.form=go.bpalb_form;
+    go.form=go.bpal_form;
   
     go.def_neutron.n=0.08;
     go.def_proton.n=0.08;
@@ -546,7 +453,7 @@ int main(void) {
     t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
   }
 
-  cout << "BPALb12:" << endl;
+  cout << "BPAL12:" << endl;
   {
 
     go.A=75.94/hc_mev_fm;
@@ -562,7 +469,7 @@ int main(void) {
     go.rho0=0.16;
     go.Lambda=1.5*cbrt(1.5*pi2*go.rho0);
     go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
-    go.form=go.bpalb_form;
+    go.form=go.bpal_form;
   
     go.def_neutron.n=0.08;
     go.def_proton.n=0.08;
@@ -583,7 +490,7 @@ int main(void) {
     t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
   }
 
-  cout << "BPALb13:" << endl;
+  cout << "BPAL13:" << endl;
   {
 
     go.A=75.94/hc_mev_fm;
@@ -599,7 +506,7 @@ int main(void) {
     go.rho0=0.16;
     go.Lambda=1.5*cbrt(1.5*pi2*go.rho0);
     go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
-    go.form=go.bpalb_form;
+    go.form=go.bpal_form;
   
     go.def_neutron.n=0.08;
     go.def_proton.n=0.08;
@@ -620,7 +527,7 @@ int main(void) {
     t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
   }
 
-  cout << "BPALb21:" << endl;
+  cout << "BPAL21:" << endl;
   {
 
     go.A=440.94/hc_mev_fm;
@@ -636,7 +543,7 @@ int main(void) {
     go.rho0=0.16;
     go.Lambda=1.5*cbrt(1.5*pi2*go.rho0);
     go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
-    go.form=go.bpalb_form;
+    go.form=go.bpal_form;
   
     go.def_neutron.n=0.08;
     go.def_proton.n=0.08;
@@ -657,7 +564,7 @@ int main(void) {
     t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
   }
 
-  cout << "BPALb22:" << endl;
+  cout << "BPAL22:" << endl;
   {
 
     go.A=440.94/hc_mev_fm;
@@ -673,7 +580,7 @@ int main(void) {
     go.rho0=0.16;
     go.Lambda=1.5*cbrt(1.5*pi2*go.rho0);
     go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
-    go.form=go.bpalb_form;
+    go.form=go.bpal_form;
   
     go.def_neutron.n=0.08;
     go.def_proton.n=0.08;
@@ -694,7 +601,7 @@ int main(void) {
     t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
   }
 
-  cout << "BPALb23:" << endl;
+  cout << "BPAL23:" << endl;
   {
 
     go.A=440.94/hc_mev_fm;
@@ -710,7 +617,7 @@ int main(void) {
     go.rho0=0.16;
     go.Lambda=1.5*cbrt(1.5*pi2*go.rho0);
     go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
-    go.form=go.bpalb_form;
+    go.form=go.bpal_form;
   
     go.def_neutron.n=0.08;
     go.def_proton.n=0.08;
@@ -731,7 +638,7 @@ int main(void) {
     t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
   }
 
-  cout << "BPALb31:" << endl;
+  cout << "BPAL31:" << endl;
   {
 
     go.A=-46.65/hc_mev_fm;
@@ -747,7 +654,7 @@ int main(void) {
     go.rho0=0.16;
     go.Lambda=1.5*cbrt(1.5*pi2*go.rho0);
     go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
-    go.form=go.bpalb_form;
+    go.form=go.bpal_form;
   
     go.def_neutron.n=0.08;
     go.def_proton.n=0.08;
@@ -773,24 +680,23 @@ int main(void) {
     These next two don't work:
 
    */
-  cout << "BPALb32:" << endl;
-  if (false) {
-
+  cout << "BPAL32:" << endl;
+  {
+    
     go.A=-46.65/hc_mev_fm;
     go.B=39.54/hc_mev_fm;
     go.Bp=0.3;
     go.sigma=1.663;
     go.C1=-83.84/hc_mev_fm;
     go.C2=23.0/hc_mev_fm;
-    go.x0=0.0;
-    go.x3=0.0;
-    go.z1=0.0;
-    go.z2=0.0;
-    go.sym_index=2;
+    go.x0=0.927;
+    go.x3=-0.227;
+    go.z1=-11.51;
+    go.z2=8.38;
     go.rho0=0.16;
     go.Lambda=1.5*cbrt(1.5*pi2*go.rho0);
     go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
-    go.form=go.bpalb_form;
+    go.form=go.bpal_form;
   
     n0=go.fn0(0.0,dtemp);
     cout << "n0:      " << n0 << endl;
@@ -802,8 +708,8 @@ int main(void) {
     
   }
 
-  cout << "BPALb33:" << endl;
-  if (false) {
+  cout << "BPAL33:" << endl;
+  if (true) {
 
     go.A=-46.65/hc_mev_fm;
     go.B=39.54/hc_mev_fm;
@@ -811,15 +717,14 @@ int main(void) {
     go.sigma=1.663;
     go.C1=-83.84/hc_mev_fm;
     go.C2=23.0/hc_mev_fm;
-    go.x0=0.0;
-    go.x3=0.0;
-    go.z1=0.0;
-    go.z2=0.0;
-    go.sym_index=2;
+    go.x0=1.654;
+    go.x3=-1.112;
+    go.z1=3.81;
+    go.z2=13.16;
     go.rho0=0.16;
     go.Lambda=1.5*cbrt(1.5*pi2*go.rho0);
     go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
-    go.form=go.bpalb_form;
+    go.form=go.bpal_form;
   
     n0=go.fn0(0.0,dtemp);
     cout << "n0:      " << n0 << endl;
@@ -842,8 +747,100 @@ int main(void) {
     go.C2=23.0/hc_mev_fm;
     go.x0=-3.548;
     go.x3=-0.5;
-    go.z1=-13.355/hc_mev_fm;
-    go.z2=2.789/hc_mev_fm;
+    go.z1=-13.355;
+    go.z2=2.789;
+    go.rho0=0.16;
+    go.Lambda=1.5*cbrt(1.5*pi2*go.rho0);
+    go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
+    go.form=go.sl_form;
+  
+    n0=go.fn0(0.0,dtemp);
+    cout << "n0:      " << n0 << endl;
+    cout << "eoa:    " << dtemp*hc_mev_fm << endl;
+    cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
+    cout << "Esym(1): " << go.fesym(n0)*hc_mev_fm << endl;
+    cout << "M*/M:    " << go.def_neutron.ms/go.def_neutron.m << endl;
+    
+    // alternative for symmetry energy
+    go.def_neutron.n=n0/2.0;
+    go.def_proton.n=n0/2.0;
+    go.calc_e(go.def_neutron,go.def_proton,th);
+    ed_nuc=th.ed;
+    go.def_neutron.n=n0;
+    go.def_proton.n=0.0;
+    go.calc_e(go.def_neutron,go.def_proton,th);
+    ed_neut=th.ed;
+    cout << "Esym(2): " << (ed_neut-ed_nuc)/n0*hc_mev_fm << endl;
+    cout << endl;
+
+    // Check chemical potentials
+    go.def_neutron.n=0.08;
+    go.def_proton.n=0.08;
+    double mund, mupd, munde, mupde;
+    go.check_mu(go.def_neutron,go.def_proton,th,mund,mupd,munde,mupde);
+    t.test_abs(go.def_neutron.mu,mund,fabs(munde),"neutron chem pot.");
+    t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
+  }
+
+  cout << "SL22:" << endl;
+  {
+
+    go.A=159.470/hc_mev_fm;
+    go.B=-109.040/hc_mev_fm;
+    go.Bp=0.0;
+    go.sigma=0.844;
+    go.C1=-41.28/hc_mev_fm;
+    go.C2=23.0/hc_mev_fm;
+    go.x0=-0.41;
+    go.x3=-0.105;
+    go.z1=9.38;
+    go.z2=-4.421;
+    go.rho0=0.16;
+    go.Lambda=1.5*cbrt(1.5*pi2*go.rho0);
+    go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
+    go.form=go.sl_form;
+  
+    n0=go.fn0(0.0,dtemp);
+    cout << "n0:      " << n0 << endl;
+    cout << "eoa:    " << dtemp*hc_mev_fm << endl;
+    cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
+    cout << "Esym(1): " << go.fesym(n0)*hc_mev_fm << endl;
+    cout << "M*/M:    " << go.def_neutron.ms/go.def_neutron.m << endl;
+    
+    // alternative for symmetry energy
+    go.def_neutron.n=n0/2.0;
+    go.def_proton.n=n0/2.0;
+    go.calc_e(go.def_neutron,go.def_proton,th);
+    ed_nuc=th.ed;
+    go.def_neutron.n=n0;
+    go.def_proton.n=0.0;
+    go.calc_e(go.def_neutron,go.def_proton,th);
+    ed_neut=th.ed;
+    cout << "Esym(2): " << (ed_neut-ed_nuc)/n0*hc_mev_fm << endl;
+    cout << endl;
+
+    // Check chemical potentials
+    go.def_neutron.n=0.08;
+    go.def_proton.n=0.08;
+    double mund, mupd, munde, mupde;
+    go.check_mu(go.def_neutron,go.def_proton,th,mund,mupd,munde,mupde);
+    t.test_abs(go.def_neutron.mu,mund,fabs(munde),"neutron chem pot.");
+    t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
+  }
+
+  cout << "SL32:" << endl;
+  {
+
+    go.A=-204.010/hc_mev_fm;
+    go.B=72.704/hc_mev_fm;
+    go.Bp=0.3;
+    go.sigma=1.235;
+    go.C1=-41.28/hc_mev_fm;
+    go.C2=23.0/hc_mev_fm;
+    go.x0=-0.442;
+    go.x3=-0.5;
+    go.z1=-13.387;
+    go.z2=2.917;
     go.rho0=0.16;
     go.Lambda=1.5*cbrt(1.5*pi2*go.rho0);
     go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
@@ -880,6 +877,7 @@ int main(void) {
   cout << "GBD0:" << endl;
   {
 
+    // These numerical values are from Das03
     go.Au=-109.85/hc_mev_fm;
     go.Al=-191.30/hc_mev_fm;
     go.B=205.66/hc_mev_fm;
@@ -970,8 +968,6 @@ int main(void) {
     t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
   }
 
-  cout << "CKL: " << endl;
-
   go.B=106.35/hc_mev_fm;
   go.sigma=4.0/3.0;
   go.rho0=0.16;
@@ -981,7 +977,10 @@ int main(void) {
   go.Lambda=cbrt(1.5*pi2*go.rho0);
   
   for(go.x=-2.0;go.x<1.01;go.x+=1.0) {
-    
+    if (fabs(go.x+2.0)<1.0e-4) cout << "MDIxm2: " << endl;
+    else if (fabs(go.x+1.0)<1.0e-4) cout << "MDIxm1: " << endl;
+    else if (fabs(go.x)<1.0e-4) cout << "MDIx0: " << endl;
+    else if (fabs(go.x-1.0)<1.0e-4) cout << "MDIx1: " << endl;
     
     go.Au=-95.98/hc_mev_fm-2.0*go.B*go.x/(go.sigma+1.0);
     go.Al=-120.75/hc_mev_fm+2.0*go.B*go.x/(go.sigma+1.0);

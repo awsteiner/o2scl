@@ -88,7 +88,9 @@ namespace o2scl {
       {1-(\vec{k}-\vec{k}^{\prime})^2/\Lambda^2}
       \f]
       where \f$C_{1/2,1/2}=C_{-1/2,-1/2}=C_{\ell}\f$ and
-      \f$C_{1/2,-1/2}=C_{-1/2,1/2}=C_{u}\f$.
+      \f$C_{1/2,-1/2}=C_{-1/2,1/2}=C_{u}\f$. Later 
+      parameterizations in this form are given in \ref Chen05.
+
       Otherwise if \ref form is equal to \ref gbd_form, then
       \f[
       V_{mom}(\rho,\delta)=
@@ -103,7 +105,7 @@ namespace o2scl {
       \mathrm{tan}^{-1} \left(k_{F,i}/\Lambda\right) \right]
       \f]
 
-      Otherwise, if \ref form is equal to \ref bgbd_form, \ref bpalb_form
+      Otherwise, if \ref form is equal to \ref bgbd_form, \ref bpal_form
       or \ref sl_form, then the potential energy density is
       given by \ref Bombaci01 :
       \f[
@@ -137,7 +139,7 @@ namespace o2scl {
       \f]
 
       For \ref form is equal to \ref bgbd_form or \ref form 
-      is equal to \ref bpalb_form, the form factor is given by
+      is equal to \ref bpal_form, the form factor is given by
       \f[
       g_i(k) = \left(1+\frac{k^2}{\Lambda_i^2}\right)^{-1}
       \f]
@@ -149,8 +151,7 @@ namespace o2scl {
       where \f$\Lambda_1\f$ is specified in the parameter 
       \c Lambda when necessary.
 
-      \bug The BGBD EOS doesn't work and the 
-      effective mass for the GBD EOS doesn't work
+      \bug The BGBD and SL EOSs do not work.
       
       \future Calculate the chemical potentials analytically.
   */
@@ -173,14 +174,16 @@ namespace o2scl {
     /// Form of potential
     int form;
 
-    /// The "momentum-dependent-interaction" form
+    /** \brief The "momentum-dependent-interaction" form from 
+	\ref Das03
+     */
     static const int mdi_form=1;
 
     /// The modifed GBD form
     static const int bgbd_form=2;
 
     /// The form from \ref Prakash88 as formulated in \ref Bombaci01
-    static const int bpalb_form=3;
+    static const int bpal_form=3;
 
     /// The "SL" form. See \ref Bombaci01.
     static const int sl_form=4;

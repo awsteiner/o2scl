@@ -160,7 +160,7 @@ double eos_had_potential::energy(double var) {
       ham3=0.8/rho0*(C1+2.0*z1)*n*(gn+gp)+0.4/rho0*(C1-8.0*z1)*
 	(neutron->n*gn+proton->n*gp);
 
-    } else if (form==bpalb_form) {
+    } else if (form==bpal_form) {
 
       double gn1, gp1, gn2, gp2;
       gn1=Lambda*Lambda/pi2*(neutron->kf-Lambda*atan(neutron->kf/Lambda));
@@ -218,7 +218,7 @@ int eos_had_potential::calc_e(fermion &ne, fermion &pr,
   }
   
   // We set z1 and z2 to zero for pal_form so that we can use the
-  // form for the effective mass from bpalb_form.
+  // form for the effective mass from bpal_form.
   double zz1=z1, zz2=z2;
   if (form==pal_form) {
     zz1=0.0;
@@ -275,7 +275,7 @@ int eos_had_potential::calc_e(fermion &ne, fermion &pr,
       (3.0*C1*pr.n+2.0*C1*ne.n-4.0*zz1*pr.n+4.0*zz1*ne.n);
     ne.ms=ne.m/(1.0+termn);
     pr.ms=pr.m/(1.0+termp);
-  } else if (form==bpalb_form || form==pal_form) {
+  } else if (form==bpal_form || form==pal_form) {
     double termn=(-ne.n*(C1-8.0*zz1)*Lambda*Lambda-
 		  2.0*n*(C1+2.0*zz1)*Lambda*Lambda)/
       pow(ne.kf*ne.kf+Lambda*Lambda,2.0);
