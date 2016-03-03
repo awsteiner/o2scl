@@ -103,7 +103,7 @@ int main(void) {
     go.Cl=-65.472/hc_mev_fm;
     go.sigma=7.0/6.0;
     go.x=1.0/15.0;
-    go.rho0=0.16;
+    go.rho0=0.163;
     go.Lambda=1.5*cbrt(1.5*pi2*go.rho0);
     go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
     go.form=go.gbd_form;
@@ -824,8 +824,8 @@ int main(void) {
     go.def_proton.n=0.08;
     double mund, mupd, munde, mupde;
     go.check_mu(go.def_neutron,go.def_proton,th,mund,mupd,munde,mupde);
-    t.test_abs(go.def_neutron.mu,mund,fabs(munde),"neutron chem pot.");
-    t.test_abs(go.def_proton.mu,mupd,fabs(mupde),"proton chem pot.");
+    t.test_abs(go.def_neutron.mu,mund,fabs(munde)*2.0,"neutron chem pot.");
+    t.test_abs(go.def_proton.mu,mupd,fabs(mupde)*2.0,"proton chem pot.");
   }
 
   cout << "SL32:" << endl;
