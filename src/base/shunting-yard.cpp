@@ -1,6 +1,6 @@
-// Source: http://www.daniweb.com/software-development/cpp/code/427500/calculator-using-shunting-yard-algorithm#
-// Author: Jesse Brown
+// Original author: Jesse Brown
 // Modifications: Brandon Amos, redpois0n
+// Additional modifications for use in O2scl by Andrew W. Steiner
 
 /*
   The MIT License (MIT)

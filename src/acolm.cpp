@@ -395,11 +395,13 @@ int acol_manager::setup_help() {
   dsc+="5. The select command assumes that the first equals sign indicates\n";
   dsc+="   renaming, so use \"eq=if(x=3,1,0)\" not \"if(x=3,1,0)\".\n\n";
   dsc+="Known operators:\n() - ^ * / % + - = < > & |\n\n";
-  dsc+="Known functions:\n";
-  dsc+="abs(x) acos(x) acosh(x) asin(x) asinh(x) atan(x) atan2(x,y)\n";
-  dsc+="atanh(x) ceil(x) cos(x) cosh(x) cot(x) csc(x) eval(...) exp(x)\n";
-  dsc+="floor(x) if(x,y,z) int(x) log(x) log10(x) max(x,y) min(x,y)\n";
-  dsc+="sec(x) sin(x) sinh(x) sqrt(x) tan(x) tanh(x)\n\n";
+  /*
+    dsc+="Known functions:\n";
+    dsc+="abs(x) acos(x) acosh(x) asin(x) asinh(x) atan(x) atan2(x,y)\n";
+    dsc+="atanh(x) ceil(x) cos(x) cosh(x) cot(x) csc(x) eval(...) exp(x)\n";
+    dsc+="floor(x) if(x,y,z) int(x) log(x) log10(x) max(x,y) min(x,y)\n";
+    dsc+="sec(x) sin(x) sinh(x) sqrt(x) tan(x) tanh(x)\n\n";
+  */
   
   dsc+=((string)"Compiled at ")+((string)__TIME__)+" on "+
     ((string)__DATE__)+" for "+((string)PACKAGE)+", version "+
@@ -3449,6 +3451,10 @@ int acol_manager::comm_interp(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_fit(std::vector<std::string> &sv, bool itive_com) {
 
+  cout << "Not implemented." << endl;
+  return 0;
+
+#ifdef O2SCL_NEVER_DEFINED
   if (threed) {
     cout << "Not implemented for table3d." << endl;
     return 0;
@@ -3526,7 +3532,7 @@ int acol_manager::comm_fit(std::vector<std::string> &sv, bool itive_com) {
   }
 
   // Set up fitting function
-  fit_funct11_strings<> ffs(in[5],in[4],in[0],0);
+  fit_funct11_strings ffs(in[5],in[4],in[0]);
   ffs.set_aux_parms(params);
 
   // Fitting function object
@@ -3562,6 +3568,8 @@ int acol_manager::comm_fit(std::vector<std::string> &sv, bool itive_com) {
   matrix_out(cout,n_parms,n_parms,covar);
   cout << "Chi-squared: " << chi2 << endl;
   cout << endl;
+  
+#endif
   
   return 0;
 }

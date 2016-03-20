@@ -2278,7 +2278,7 @@ namespace o2scl {
       will cause the error handler to be thrown. 
   */
   void functions_columns(std::string list) {
-#ifdef O2SCL_NEVER_DEFINED
+
     // Separate the list into names and functions
     std::vector<std::string> funcs, names;
     {
@@ -2296,114 +2296,41 @@ namespace o2scl {
       }
     }
 
-    std::vector<double> vals(get_ncolumns()+funcs.size());
-    
-    calculator calc;
     std::map<std::string,double> vars;
-    
     std::map<std::string,double>::const_iterator mit;
     for(mit=constants.begin();mit!=constants.end();mit++) {
       vars[mit->first]=mit->second;
     }
     
-    // Continue while we've found at least one column which can
-    // be computed
-    bool one_success=true;
-    while(one_success==true) {
-      one_success=false;
-
-      // The list of new columns to be computed in the current pass
-      std::vector<fparser_column> newcols;
-
-      /* We separate the calculation into two parts. First, go through
-	 all the columns and create a function parser object for each of
-	 the columns which can be computed during this pass (creating
-	 new columns if necessary). Second, we go through each row,
-	 computing the value of the new columns from the data currently
-	 stored in the row.
-      */
+    std::vector<calculator> calcs(funcs.size());
+    std::vector<vec_t> newcols(funcs.size());
     
-      // Record the present columns as variables for parsing
-      std::string vars=get_column_name(0);
-      for(size_t ii=1;ii<get_ncolumns();ii++) {
-	vars+=","+get_column_name(ii);
-      }
-    
-      // Look for new columns to be calculated
-      for(size_t i=0;i<(funcs.size());i++) {
-
-	if (funcs[i].length()>0 && fp.Parse(funcs[i],vars)+1==0) {
-
-	  // We have found a column that can be calculated, add the
-	  // function parser, and the column pointer to the newcols
-	  // list.
-
-	  if (!is_column(names[i])) {
-	    new_column(names[i]);
-	  }
-	  FunctionParser *fp2=new FunctionParser;
-	  set_fp_consts(*fp2);
-	  fp2->Parse(funcs[i],vars);
-
-	  aiter it2=atree.find(names[i]);
-	  fparser_column m={fp2,&it2->second.dat};
-	  newcols.push_back(m);
-
-	  // We indicate that the function has been computed by
-	  // setting it equal to the empty string
-	  funcs[i]="";
-
-	  one_success=true;
-	} 
-
-      }
-    
-      // Calculate all of the columns in the newcols list:
-      for(size_t i=0;i<nlines;i++) {
-      
-	// Record the values of the variables for this line:
-	for(size_t j=0;j<atree.size();j++) {
-	  vals[j]=(*this)[j][i];
-	}
-      
-	// Evaluate the new columns
-	for(size_t j=0;j<(newcols.size());j++) {
-	  (*newcols[j].col)[i]=newcols[j].fpp->Eval(&vals[0]);
-	  if (!std::isfinite((*newcols[j].col)[i])) {
-	    (*newcols[j].col)[i]=0.0;
-	  } else if (newcols[j].fpp->EvalError()!=0) {
-	    (*newcols[j].col)[i]=0.0;
-	  }
-	}
-      }
-    
-      // Now clear the FunctionParser pointers and the newcols list for the 
-      // next round
-      for(size_t i=0;i<(newcols.size());i++) {
-	delete newcols[i].fpp;
-      }
-    
+    for(size_t j=0;j<funcs.size();j++) {
+      calcs[j].compile(funcs[j].c_str(),&vars);
+      newcols[j].resize(maxlines);
     }
     
-    // Check to see if we need to return an error because one of the 
-    // columns was never computed
-    {
-      std::string bad_function;
-      bool all_empty=true;
-      for(size_t i=0;i<funcs.size();i++) {
-	if (funcs[i].length()>1) {
-	  bad_function=funcs[i];
-	  all_empty=false;
-	}
+    // Calculate all of the columns in the newcols list:
+    for(size_t i=0;i<nlines;i++) {
+      
+      // Record the values of the variables for this line:
+      for(size_t j=0;j<atree.size();j++) {
+	vars[get_column_name(j)]=(*this)[j][i];
       }
-      if (all_empty==false) {
-	O2SCL_ERR((((std::string)"Column '")+bad_function+
-		   "' failed in table::functions_columns().").c_str(),
-		  exc_einval);
-	return;
-      } 
+      
+      // Evaluate the new columns
+      for(size_t j=0;j<funcs.size();j++) {
+	newcols[j][i]=calcs[j].eval(&vars);
+      }
     }
-#endif
+
+    for(size_t j=0;j<funcs.size();j++) {
+      if (!is_column(names[j])) {
+	new_column(names[j]);
+      }
+      swap_column_data(names[j],newcols[j]);
+    }
+    
     return;
   }
 

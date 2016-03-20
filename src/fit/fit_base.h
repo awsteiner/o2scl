@@ -40,77 +40,49 @@ namespace o2scl {
   typedef std::function<
     double(size_t,const boost::numeric::ublas::vector<double> &, 
 	   double)> fit_funct11;
-
-#ifdef O2SCL_NEVER_DEFINED
   
   /** \brief String fitting function
       
       Default template arguments
       - \c vec_t - \ref boost::numeric::ublas::vector \< double \>
   */
-  template<class vec_t=boost::numeric::ublas::vector<double> >
-    class fit_funct11_strings {
-
-    public:
-
+  class fit_funct11_strings {
+    
+  public:
+    
     /** \brief Specify a fitting function through a string
      */
-    fit_funct11_strings(std::string formula, std::string parms, 
-			 std::string var, int nauxp=0, 
-			 std::string auxp="") {
-      if(nauxp<1) {
-	std::string both=parms+","+var;
-	fpw.Parse(formula,both);
-	naux=0;
-	st_auxp="";
-      } else {
-	std::string all=parms+","+var+","+auxp;
-	fpw.Parse(formula,all);
-	naux=nauxp;
-	aux=new double[naux];
-	st_auxp=auxp;
-      }
+    template<class vec_string_t=std::vector<std::string> >
+      fit_funct11_strings(std::string formula, vec_string_t &parms, 
+			  std::string var) {
+      calc.compile(formula.c_str(),&vars);
       st_form=formula;
-      st_parms=parms;
+      size_t np=parms.size();
+      st_parms.resize(np);
+      for (int i=0;i<np;i++) {
+	st_parms[i]=parms[i];
+      }
       st_var=var;
     }
 
-    virtual ~fit_funct11_strings() {
-      if (naux>0) {
-	delete[] aux;
-      }
-    }
-  
     /** \brief Set the values of the auxilliary parameters that were
 	specified in \c auxp in the constructor
     */
-    int set_aux_parms(vec_t &ap) {
-      for(int i=0;i<naux;i++) {
-	aux[i]=ap[i];
-      }
+    int set_aux_parm(std::string name, double val) {
+      vars[name]=val;
       return 0;
     }
 
     /** \brief Using parameters in \c p, predict \c y given \c x
      */
-    virtual double operator()(size_t np, const vec_t &p, double x) {
+    template<class vec_t=boost::numeric::ublas::vector<double> >
+      double operator()(size_t np, const vec_t &p, double x) {
 
-      size_t i;
-      double y;
-      if(naux<1) {
-	double *both=new double[np+1];
-	for(i=0;i<np;i++) both[i]=p[i];
-	both[np]=x;
-	y=fpw.Eval(both);
-	delete[] both;
-      } else {
-	double *all=new double[np+1+naux];
-	for(i=0;i<np;i++) all[i]=p[i];
-	all[np]=x;
-	for(i=np+1;i<np+1+naux;i++) all[i]=aux[i-np-1];
-	y=fpw.Eval(all);
-	delete[] all;
+      for(size_t i=0;i<np;i++) {
+	vars[st_parms[i]]=p[i];
       }
+      vars[st_var]=x;
+      double y=calc.eval(&vars);
       return y;
     }
 
@@ -118,21 +90,19 @@ namespace o2scl {
 
     protected:
 
-    /// The function evaluation object
-    FunctionParser fpw;
-
-    /// \name The auxillary parameters
-    //@{
-    int naux;
-    double *aux;
-    std::string st_auxp;
-    //@}
-
+    /// The function parser
+    calculator calc;
+      
+    /// Desc
+    std::map<std::string,double> vars;
+      
     /// The formula
-    std::string st_form; 
+    std::string st_form;
+      
     /// The parameters
-    std::string st_parms; 
-    /// The variables
+    std::vector<std::string> st_parms; 
+
+    /// The variable
     std::string st_var; 
 
     fit_funct11_strings() {};
@@ -150,8 +120,6 @@ namespace o2scl {
 
   };
 
-#endif
-  
   /** \brief Generalized fitting function [abstract base]
 
       Default template arguments

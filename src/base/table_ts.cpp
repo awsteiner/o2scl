@@ -61,7 +61,8 @@ int main(void) {
 	       "line_of_data(new) and get() (2)");
     t.test_abs(at.get("col1",3),0.0,1.0e-14,"get() (3)");
 
-    at.functions_columns("m2=m1+col1 m1=col1+col2");
+    at.functions_columns("m1=col1+col2");
+    at.functions_columns("m2=m1+col1");
     for(size_t ii=0;ii<at.get_nlines();ii++) {
       cout << at.get("col1",ii) << " ";
       cout << at.get("col2",ii) << " ";
@@ -143,7 +144,8 @@ int main(void) {
 	       "line_of_data(new) and get() (2)");
     t.test_abs(at.get("col1",3),0.0,1.0e-14,"get() (3)");
 
-    at.functions_columns("m2=m1+col1 m1=col1+col2");
+    at.functions_columns("m1=col1+col2");
+    at.functions_columns("m2=m1+col1");
     for(size_t ii=0;ii<at.get_nlines();ii++) {
       cout << at.get("col1",ii) << " ";
       cout << at.get("col2",ii) << " ";

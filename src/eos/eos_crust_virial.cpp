@@ -213,7 +213,7 @@ void eos_crust_virial::fit() {
 
   vector<double> berr(16);
 
-  typedef fit_funct11_strings<vector<double> > fit_func;
+  typedef fit_funct11_strings fit_func;
 
   // Fitter class
   fit_nonlin<chi_fit_funct<vector<double>,ubmatrix,fit_func>,
@@ -242,7 +242,8 @@ void eos_crust_virial::fit() {
   berr[0]=bnv[0]/1.0e2;
 
   // Fitting function
-  fit_func ffs("a-b/(T+0.5)+c*T","a,b,c","T");
+  vector<string> parms={"a","b","c"};
+  fit_func ffs("a-b/(T+0.5)+c*T",parms,"T");
 
   // Chi-squared and fitting data
   chi_fit_funct<vector<double>,ubmatrix,fit_func> 
@@ -270,7 +271,7 @@ void eos_crust_virial::fit() {
   berr[0]=bpnv[0]/1.0e2;
   
   // Fitting function
-  fit_func ffs2("-a+b*exp(2.099/T)-c*T","a,b,c","T");
+  fit_func ffs2("-a+b*exp(2.099/T)-c*T",parms,"T");
 
   // Chi-squared and fitting data
   chi_fit_funct<vector<double>,ubmatrix,fit_func> 
