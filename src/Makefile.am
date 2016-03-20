@@ -21,14 +21,14 @@ if O2SCL_HDF
 
 SUBDIRS = internal anneal base deriv fit inte mcarlo \
 	min ode other root linalg \
-	part nuclei eos hdf fparser cubature
+	part nuclei eos hdf cubature
 LIBLIST = libo2scl.la libo2scl_part.la
 
 else
 
 SUBDIRS = internal anneal base deriv fit inte mcarlo \
 	min ode other root linalg \
-	part nuclei eos fparser cubature
+	part nuclei eos cubature
 LIBLIST = libo2scl.la libo2scl_part.la
 
 endif
@@ -38,14 +38,14 @@ if O2SCL_HDF
 
 SUBDIRS = internal anneal base deriv fit inte mcarlo \
 	min ode other root linalg \
-	nuclei part hdf fparser cubature
+	nuclei part hdf cubature
 LIBLIST = libo2scl.la libo2scl_part.la
 
 else
 
 SUBDIRS = internal anneal base deriv fit inte mcarlo \
 	min ode other root linalg \
-	nuclei part fparser cubature
+	nuclei part cubature
 LIBLIST = libo2scl.la libo2scl_part.la
 
 endif
@@ -55,13 +55,13 @@ else
 if O2SCL_HDF
 
 SUBDIRS = internal anneal base deriv fit inte mcarlo \
-	min ode other root linalg hdf fparser cubature
+	min ode other root linalg hdf cubature
 LIBLIST = libo2scl.la
 
 else
 
 SUBDIRS = internal anneal base deriv fit inte mcarlo \
-	min ode other root linalg fparser cubature
+	min ode other root linalg cubature
 LIBLIST = libo2scl.la
 
 endif
@@ -70,7 +70,7 @@ endif
 SUBLIBS = mcarlo/libo2scl_mcarlo.la other/libo2scl_other.la \
 	min/libo2scl_min.la \
 	inte/libo2scl_inte.la linalg/libo2scl_linalg.la \
-	base/libo2scl_base.la fparser/libo2scl_fparser.la 
+	base/libo2scl_base.la
 
 #	fit/libo2scl_fit.la
 
@@ -173,24 +173,24 @@ if O2SCL_HDF
 O2SCL_TEST_ADD = test_anneal test_base test_deriv test_eos test_fit \
 	test_inte test_mcarlo test_min test_nuclei test_ode \
 	test_other test_part test_root test_linalg \
-	test_internal test_hdf test_fparser test_cubature
+	test_internal test_hdf test_cubature
 else
 O2SCL_TEST_ADD = test_anneal test_base test_deriv test_eos test_fit \
 	test_inte test_mcarlo test_min test_nuclei test_ode \
 	test_other test_part test_root test_linalg \
-	test_internal test_fparser test_cubature
+	test_internal test_cubature
 endif
 else
 if O2SCL_HDF
 O2SCL_TEST_ADD = test_anneal test_base test_deriv test_fit \
 	test_inte test_mcarlo test_min test_nuclei test_ode \
 	test_other test_part test_root test_linalg \
-	test_internal test_hdf test_fparser test_cubature
+	test_internal test_hdf test_cubature
 else
 O2SCL_TEST_ADD = test_anneal test_base test_deriv test_fit \
 	test_inte test_mcarlo test_min test_nuclei test_ode \
 	test_other test_part test_root test_linalg \
-	test_internal test_fparser test_cubature
+	test_internal test_cubature
 endif
 endif
 else 
@@ -198,12 +198,12 @@ if O2SCL_HDF
 O2SCL_TEST_ADD = test_anneal test_base test_deriv test_fit \
 	test_inte test_mcarlo test_min test_ode \
 	test_other test_root test_linalg \
-	test_internal test_hdf test_fparser test_cubature
+	test_internal test_hdf test_cubature
 else
 O2SCL_TEST_ADD = test_anneal test_base test_deriv test_fit \
 	test_inte test_mcarlo test_min test_ode \
 	test_other test_root test_linalg \
-	test_internal test_fparser test_cubature
+	test_internal test_cubature
 endif
 endif
 
@@ -224,9 +224,6 @@ test_eos:
 
 test_fit:
 	cd fit && $(MAKE) o2scl-test-rec
-
-test_fparser:
-	cd fparser && $(MAKE) o2scl-test-rec
 
 test_hdf:
 	cd hdf && $(MAKE) o2scl-test-rec

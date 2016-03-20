@@ -31,8 +31,6 @@
 
 #include <boost/numeric/ublas/vector.hpp>
 
-#include <o2scl/fparser.h>
-
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
 #endif
@@ -43,6 +41,8 @@ namespace o2scl {
 			    const boost::numeric::ublas::vector<double> &,
 			    boost::numeric::ublas::vector<double> &)> 
     ode_funct11;
+
+#ifdef O2SCL_NEVER_DEFINED
   
   /** \brief One-dimensional function from strings
       \nothing
@@ -180,7 +180,8 @@ namespace o2scl {
 #endif
 
   };
-
+  
+#endif
 
 #ifndef DOXYGEN_NO_O2NS
 }

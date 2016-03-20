@@ -21,7 +21,6 @@
   -------------------------------------------------------------------
 */
 #include <o2scl/nucdist.h>
-#include <o2scl/fparser.h>
 
 using namespace std;
 using namespace o2scl;
@@ -35,14 +34,9 @@ void o2scl::nucdist_set(vector<nucleus> &dist, nucmass &nm,
   if (dist.size()>0) dist.clear();
 
   /// The function parser
-  FunctionParser fp;
-  double vals[2];
-  
-  // Parse the formula
-  int ret=fp.Parse(expr,"Z,N");
-  if (ret!=-1) {
-    O2SCL_ERR("Failed to parse in nucdist_set().",exc_einval);
-  }
+  calculator calc;
+  std::map<std::string,double> vars;
+  calc.compile(expr.c_str(),&vars);
   
   size_t dist_size=0;
   
@@ -57,9 +51,9 @@ void o2scl::nucdist_set(vector<nucleus> &dist, nucmass &nm,
 	  ix++;
 	}
       } else {
-	vals[0]=Z;
-	vals[1]=A-Z;
-	if (nm.is_included(Z,A-Z) && fp.Eval(vals)) {
+	vars["Z"]=Z;
+	vars["A"]=A;
+	if (nm.is_included(Z,A-Z) && calc.eval(&vars)>0.5) {
 	  dist.push_back(n);
 	  nm.get_nucleus(Z,A-Z,dist[ix]);
 	  ix++;

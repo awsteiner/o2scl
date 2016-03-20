@@ -204,11 +204,11 @@ int main(void) {
     atf.summary(&cout);
 
     // Test make_slice().
-    atf.function_slice("sin(z1)+z2+1.0","z3");
+    atf.function_slice("(z1)-z2+1.0","z3");
     for(size_t i=0;i<4;i++) {
       for(size_t j=0;j<4;j++) {
 	cout << atf.get(i,j,"z3") << " ";
-	t.test_rel(atf.get(i,j,"z3"),sin(sqrt((double)(i+j)))+1.0,1.0e-8,
+	t.test_rel(atf.get(i,j,"z3"),(sqrt((double)(i+j)))+1.0,1.0e-8,
 		   "make_slice() results.");
       }
       cout << endl;

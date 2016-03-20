@@ -30,7 +30,6 @@
 #include <string>
 
 #include <o2scl/jacobian.h>
-#include <o2scl/fparser.h>
 #include <o2scl/mm_funct.h>
 
 #ifndef DOXYGEN_NO_O2NS
@@ -42,6 +41,8 @@ namespace o2scl {
     double(size_t,const boost::numeric::ublas::vector<double> &, 
 	   double)> fit_funct11;
 
+#ifdef O2SCL_NEVER_DEFINED
+  
   /** \brief String fitting function
       
       Default template arguments
@@ -149,6 +150,8 @@ namespace o2scl {
 
   };
 
+#endif
+  
   /** \brief Generalized fitting function [abstract base]
 
       Default template arguments

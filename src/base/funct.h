@@ -34,7 +34,7 @@
 
 #include <boost/numeric/ublas/vector.hpp>
 
-#include <o2scl/fparser.h>
+#include <o2scl/shunting-yard.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -65,20 +65,9 @@ namespace o2scl {
 
     /** \brief Specify the string and the parameters
      */
-    funct11_string(std::string formula, std::string var, 
-		 int np=0, std::string parms="") {
-      if(np<1) {
-	fpw.Parse(formula,var);
-	st_np=0;
-	st_parms="";
-      } else {
-	std::string all=var+","+parms;
-	fpw.Parse(formula,all);
-	st_np=np;
-	st_parms=parms;
-	arr.resize(np);
-      }
-      st_form=formula;
+    funct11_string(std::string expr, std::string var) {
+      calc.compile(expr.c_str(),&vars);
+      st_form=expr;
       st_var=var;
     }
 
@@ -88,20 +77,9 @@ namespace o2scl {
   
     /** \brief Specify the string and the parameters
      */
-    int set_function(std::string formula, std::string var, 
-		     int np=0, std::string parms="") {
-      if(np<1) {
-	fpw.Parse(formula,var);
-	st_np=0;
-	st_parms="";
-      } else {
-	std::string all=var+","+parms;
-	fpw.Parse(formula,all);
-	st_np=np;
-	st_parms=parms;
-	arr.resize(np);
-      }
-      st_form=formula;
+    int set_function(std::string expr, std::string var) {
+      calc.compile(expr.c_str(),&vars);
+      st_form=expr;
       st_var=var;
       return 0;
     }
@@ -109,27 +87,16 @@ namespace o2scl {
     /** \brief Set the values of the auxilliary parameters that were
 	specified in \c parms in the constructor
     */
-    template<class vec_t> int set_parms(const vec_t &p) {
-      for(int i=0;i<st_np;i++) {
-	arr[i]=p[i];
-      }
+    int set_parm(std::string name, double val) {
+      vars[name]=val;
       return 0;
     }
     
     /** \brief Compute the function at point \c x and return the result
      */
     virtual double operator()(double x) const {
-      double y;
-      if(st_np<1) {
-	y=fpw.Eval(&x);
-      } else {
-	double *all=new double[st_np+1];
-	all[0]=x;
-	for(size_t i=1;i<=st_np;i++) all[i]=arr[i-1];
-	y=fpw.Eval(all);
-	delete[] all;
-      }
-      return y;
+      vars[st_var]=x;
+      return calc.eval(&vars);
     }
 
 #ifndef DOXYGEN_INTERNAL
@@ -137,20 +104,15 @@ namespace o2scl {
   protected:
 
     /// The object for evaluating strings
-    mutable FunctionParser fpw;
+    mutable calculator calc;
 
-    /// The number of parameters
-    size_t st_np;
-
-    /// Storage for the \ref fpw call.
-    ubvector arr;
-
-    /// The formula
+    /// Parameter map
+    mutable std::map<std::string,double> vars;
+    
+    /// The expr
     std::string st_form;
-    /// The variables
+    /// The variable
     std::string st_var;
-    /// The parameters
-    std::string st_parms;
 
     funct11_string() {};
 

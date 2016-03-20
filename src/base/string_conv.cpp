@@ -26,7 +26,7 @@
 
 #include <o2scl/string_conv.h>
 #include <o2scl/err_hnd.h>
-#include <o2scl/fparser.h>
+#include <o2scl/shunting-yard.h>
 
 using namespace std;
 using namespace o2scl;
@@ -180,15 +180,10 @@ bool o2scl::is_number(std::string s) {
 }
 
 double o2scl::function_to_double(std::string s, bool err_on_fail) {
-  FunctionParser fp;
-  int ret=fp.Parse(s,"");
-  if (ret!=-1) {
-    if (err_on_fail) {
-      O2SCL_ERR("Failed to parse number in form2d.",exc_einval);
-    }
-    return 0.0;
-  }
-  double dat=fp.Eval(0);
+  calculator calc;
+  std::map<std::string,double> vars;
+  calc.compile(s.c_str(),&vars);
+  double dat=calc.eval(&vars);
   return dat;
 }
 

@@ -39,7 +39,8 @@
 
 #include <o2scl/misc.h>
 #include <o2scl/interp.h>
-#include <o2scl/fparser.h>
+
+#include <o2scl/shunting-yard.h>
 
 #ifndef DOXYGEN_NO_O2NS
 
@@ -2277,6 +2278,7 @@ namespace o2scl {
       will cause the error handler to be thrown. 
   */
   void functions_columns(std::string list) {
+#ifdef O2SCL_NEVER_DEFINED
     // Separate the list into names and functions
     std::vector<std::string> funcs, names;
     {
@@ -2296,9 +2298,14 @@ namespace o2scl {
 
     std::vector<double> vals(get_ncolumns()+funcs.size());
     
-    FunctionParser fp;
-    set_fp_consts(fp);
-  
+    calculator calc;
+    std::map<std::string,double> vars;
+    
+    std::map<std::string,double>::const_iterator mit;
+    for(mit=constants.begin();mit!=constants.end();mit++) {
+      vars[mit->first]=mit->second;
+    }
+    
     // Continue while we've found at least one column which can
     // be computed
     bool one_success=true;
@@ -2396,6 +2403,7 @@ namespace o2scl {
 	return;
       } 
     }
+#endif
     return;
   }
 
@@ -2443,30 +2451,14 @@ namespace o2scl {
   int function_vector(std::string function, resize_vec_t &vec,
 		      bool throw_on_err=true) {
     
-    // Create variable list for parser
-    aciter it=atree.begin();
-    std::string vlist=it->first;
-    it++;
-    while(it!=atree.end()) {
-      vlist+=",";
-      vlist+=it->first;
-      it++;
-    }
-
     // Parse function
-    FunctionParser fp;
-    set_fp_consts(fp);
-    int ret=fp.Parse(function,vlist)+1;
-    if (ret!=0) {
-      if (throw_on_err) {
-	std::string s=((std::string)"Failed to parse function '")+function+
-	  "' with variable list '"+vlist+
-	  "' in table::function_ubvector().\n  Error '"+itos(ret)+
-	  "' from FunctionParser: "+fp.ErrorMsg()+".";
-	O2SCL_ERR(s.c_str(),exc_einval);
-      }
-      return ret;
+    calculator calc;
+    std::map<std::string,double> vars;
+    std::map<std::string,double>::const_iterator mit;
+    for(mit=constants.begin();mit!=constants.end();mit++) {
+      vars[mit->first]=mit->second;
     }
+    calc.compile(function.c_str(),&vars);
 
     // Resize vector if necessary
     if (vec.size()<nlines) vec.resize(nlines);
@@ -2476,115 +2468,56 @@ namespace o2scl {
   
     // Create column from function
     for(size_t j=0;j<nlines;j++) {
-      size_t i=0;
-      for(it=atree.begin();it!=atree.end();it++) {
-	vals[i]=it->second.dat[j];
-	i++;
+      for(aciter it=atree.begin();it!=atree.end();it++) {
+	vars[it->first]=it->second.dat[j];
       }
-      vec[j]=fp.Eval(&vals[0]);
-      if (fp.EvalError()!=0) {
-	vec[j]=0.0;
-      } else if (!std::isfinite(vec[j])) {
-	vec[j]=0.0;
-      }
+      vec[j]=calc.eval(&vars);
     }
 
-    return ret;
+    return 0;
   }
 
   /** \brief Compute a value by applying a function to a row
    */
   double row_function(std::string function, size_t row) const {
-    int ret, i;
-    std::string vlist;
-    std::vector<double> vals(atree.size());
-    aciter it;
 
     // Parse function
-    if (atree.begin()!=atree.end()) {
-      it=atree.begin();
-      vlist=it->first;
-      it++;
-      while(it!=atree.end()) {
-	vlist+=",";
-	vlist+=it->first;
-	it++;
-      }
-    } else {
-      vlist="";
+    calculator calc;
+    std::map<std::string,double> vars;
+    std::map<std::string,double>::const_iterator mit;
+    for(mit=constants.begin();mit!=constants.end();mit++) {
+      vars[mit->first]=mit->second;
     }
-    FunctionParser fp;
-    set_fp_consts(fp);
-    ret=fp.Parse(function,vlist);
-    if (ret>=0) {
-      std::string s=((std::string)"Failed to parse function '")+function+
-	"'\n   in table::row_function().\n  Error '"+itos(ret)+
-	"' from FunctionParser: "+fp.ErrorMsg()+".";
-      O2SCL_ERR(s.c_str(),exc_einval);
-      return 0.0;
+    calc.compile(function.c_str(),&vars);
+
+    for(aciter it=atree.begin();it!=atree.end();it++) {
+      vars[it->first]=it->second.dat[row];
     }
 
-    for(i=0,it=atree.begin();it!=atree.end();it++,i++) {
-      vals[i]=it->second.dat[row];
-    }
-    double dret=fp.Eval(&vals[0]);
-    if (fp.EvalError()!=0) {
-      O2SCL_ERR((((std::string)"Failed to evaluate in table::")+
-		 "row_function(). Error from FunctionParser: "+
-		 o2scl::itos(fp.EvalError())).c_str(),
-		o2scl::exc_einval);
-      dret=0.0;
-    }
-
+    double dret=calc.eval(&vars);
     return dret;
   }
 
-  /** \brief Compute a value by applying a function to a row
+  /** \brief Find a row which maximizes a function
   */
   size_t function_find_row(std::string function) const {
-    int ret, i;
-    std::string vlist;
-    std::vector<double> vals(atree.size());
-    aciter it;
-  
+
     // Parse function
-    if (atree.begin()!=atree.end()) {
-      it=atree.begin();
-      vlist=it->first;
-      it++;
-      while(it!=atree.end()) {
-	vlist+=",";
-	vlist+=it->first;
-	it++;
-      }
-    } else {
-      vlist="";
+    calculator calc;
+    std::map<std::string,double> vars;
+    std::map<std::string,double>::const_iterator mit;
+    for(mit=constants.begin();mit!=constants.end();mit++) {
+      vars[mit->first]=mit->second;
     }
-    FunctionParser fp;
-    set_fp_consts(fp);
-    ret=fp.Parse(function,vlist);
-    if (ret>=0) {
-      std::string s=((std::string)"Failed to parse function '")+function+
-	"'\n   in table::row_function().\n  Error '"+itos(ret)+
-	"' from FunctionParser: "+fp.ErrorMsg()+".";
-      O2SCL_ERR(s.c_str(),exc_einval);
-      return 0;
-    }
+    calc.compile(function.c_str(),&vars);
 
     double best_val=0.0;
     size_t best_row=0;
     for(size_t row=0;row<nlines-1;row++) {
-      for(i=0,it=atree.begin();it!=atree.end();it++,i++) {
-	vals[i]=it->second.dat[row];
+      for(aciter it=atree.begin();it!=atree.end();it++) {
+	vars[it->first]=it->second.dat[row];
       }
-      double dtemp=fp.Eval(&vals[0]);
-      if (fp.EvalError()!=0) {
-	O2SCL_ERR((((std::string)"Failed to evaluate in table::row_")+
-		   "function(). Error from FunctionParser: "+
-		   o2scl::itos(fp.EvalError())).c_str(),
-		  o2scl::exc_einval);
-	return 0;
-      }
+      double dtemp=calc.eval(&vars);
       if (row==0) {
 	best_val=dtemp;
       } else {
@@ -2619,25 +2552,6 @@ namespace o2scl {
   
   protected:
   
-  /// Structure for functions_columns() [protected]
-  typedef struct fparser_column_struct {
-    /// Array of function parser objects
-    FunctionParser *fpp;
-    /// Array of columns
-    vec_t *col;
-  } fparser_column;
-
-  /** \brief Internal function to set function parser constants equal to 
-      internal constants
-  */
-  void set_fp_consts(FunctionParser &fp) const {
-    std::map<std::string,double>::const_iterator mit;
-    for(mit=constants.begin();mit!=constants.end();mit++) {
-      fp.AddConstant(mit->first,mit->second);
-    }
-    return;
-  }
-
   /** \brief The list of constants 
    */
   std::map<std::string,double> constants;

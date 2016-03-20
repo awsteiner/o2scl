@@ -47,6 +47,8 @@
 #include <o2scl/table_units.h>
 #include <o2scl/contour.h>
 
+#include <o2scl/shunting-yard.h>
+
 // Forward definition of the table3d class for HDF I/O
 namespace o2scl {
   class table3d;
@@ -776,60 +778,35 @@ namespace o2scl {
       int function_matrix(std::string function, resize_mat_t &mat,
 			   bool throw_on_err=true) {
       
-      std::vector<double> vals;
-      
-      // Create variable list
-      std::string vlist=xname+","+yname;
-      for(size_t k=0;k<list.size();k++) {
-	vlist+=((std::string)",")+get_slice_name(k);
+      calculator calc;
+      std::map<std::string,double> vars;
+
+      std::map<std::string,double>::const_iterator mit;
+      for(mit=constants.begin();mit!=constants.end();mit++) {
+	vars[mit->first]=mit->second;
       }
-      
-      // Parse function
-      FunctionParser fp;
-      set_fp_consts(fp);
-      int ret=fp.Parse(function,vlist);
-      if (ret>=0) {
-	if (throw_on_err) {
-	  O2SCL_ERR((((std::string)"Failed to parse in table3d::function_")+
-		     "matrix(). Error from FunctionParser: "+
-		     fp.ErrorMsg()).c_str(),ret+1);
-	}
-	return ret;
-      }
+
+      calc.compile(function.c_str(),&vars);
 
       if (mat.size1()!=numx || mat.size2()!=numy) {
 	mat.resize(numx,numy);
       }
-      
-      bool success=true;
+
       for(size_t i=0;i<numx;i++) {
 	for(size_t j=0;j<numy;j++) {
-	  vals.clear();
-	  vals.push_back(xval[i]);
-	  vals.push_back(yval[j]);
+	  vars[xname]=xval[i];
+	  vars[yname]=yval[j];
 	  
 	  for(size_t k=0;k<list.size();k++) {
-	    vals.push_back(list[k](i,j));
+	    vars[get_slice_name(k)]=list[k](i,j);
 	  }
 	  
-	  mat(i,j)=fp.Eval(&vals[0]);
-	  
-	  if (fp.EvalError()!=0) {
-	    success=false;
-	  }
+	  mat(i,j)=calc.eval(&vars);
 	}
       }
       
-      if (!success) {
-	if (throw_on_err) {
-	  O2SCL_ERR((((std::string)"Failed to evaluate in table3d::function")+
-		     "_slice(). Error from FunctionParser: "+
-		     itos(fp.EvalError())).c_str(),
-		    exc_einval);
-	}
-      }
-
-      return ret;
+      
+      return 0;
     }
 
     /** \brief Make a column from <tt>function</tt> and add it to the table.
@@ -844,17 +821,6 @@ namespace o2scl {
 
 #ifndef DOXYGEN_INTERNAL
     
-    /** \brief Internal function to set function parser constants equal to 
-	internal constants
-    */
-    void set_fp_consts(FunctionParser &fp) const {
-      std::map<std::string,double>::const_iterator mit;
-      for(mit=constants.begin();mit!=constants.end();mit++) {
-	fp.AddConstant(mit->first,mit->second);
-      }
-      return;
-    }
-
     /// \name Interpolation data
     //@{
     /// The array of interp_sm pointers 
