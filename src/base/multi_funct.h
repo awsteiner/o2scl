@@ -33,7 +33,7 @@
 #include <boost/numeric/ublas/vector.hpp>
 
 #include <o2scl/err_hnd.h>
-#include <o2scl/shunting-yard.h>
+#include <o2scl/shunting_yard.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {

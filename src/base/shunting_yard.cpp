@@ -34,7 +34,9 @@
 #include <stdexcept>
 #include <math.h>
 
-#include "shunting-yard.h"
+#include <o2scl/shunting_yard.h>
+
+using namespace o2scl;
 
 std::map<std::string, int> calculator::buildOpPrecedence() {
   std::map<std::string, int> opp;
@@ -43,37 +45,49 @@ std::map<std::string, int> calculator::buildOpPrecedence() {
   // precedence order as described on cppreference website:
   // http://en.cppreference.com/w/c/language/operator_precedence
   opp["^"]  = 2;
-  opp["*"]  = 3; opp["/"]  = 3; opp["%"] = 3;
-  opp["+"]  = 4; opp["-"]  = 4;
-  opp["<<"] = 5; opp[">>"] = 5;
-  opp["<"]  = 6; opp["<="] = 6; opp[">="] = 6; opp[">"] = 6;
-  opp["=="] = 7; opp["!="] = 7;
+  opp["*"]  = 3;
+  opp["/"]  = 3;
+  opp["%"] = 3;
+  opp["+"]  = 4;
+  opp["-"]  = 4;
+  opp["<<"] = 5;
+  opp[">>"] = 5;
+  opp["<"]  = 6;
+  opp["<="] = 6;
+  opp[">="] = 6;
+  opp[">"] = 6;
+  opp["=="] = 7;
+  opp["!="] = 7;
   opp["&&"] = 11;
   opp["||"] = 12;
   opp["("]  = 16;
 
   return opp;
 }
+
 // Builds the opPrecedence map only once:
-std::map<std::string, int> calculator::opPrecedence = calculator::buildOpPrecedence();
+std::map<std::string, int> calculator::opPrecedence=
+  calculator::buildOpPrecedence();
 
 #define isvariablechar(c) (isalpha(c) || c == '_')
 
 TokenQueue_t calculator::toRPN(const char* expr,
 			       std::map<std::string, double>* vars) {
+
   TokenQueue_t rpnQueue; std::stack<std::string> operatorStack;
   bool lastTokenWasOp = true;
 
   // In one pass, ignore whitespace and parse the expression into RPN
   // using Dijkstra's Shunting-yard algorithm.
   while (*expr && isspace(*expr )) ++expr;
+
   while (*expr ) {
     if (isdigit(*expr )) {
       // If the token is a number, add it to the output queue.
       char* nextChar = 0;
       double digit = strtod(expr , &nextChar);
 #     ifdef DEBUG
-        std::cout << digit << std::endl;
+      std::cout << digit << std::endl;
 #     endif
       rpnQueue.push(new Token<double>(digit, NUM));
       expr = nextChar;
@@ -95,92 +109,102 @@ TokenQueue_t calculator::toRPN(const char* expr,
       std::string key = ss.str();
 
       if(key == "true") {
-        found = true; val = 1;
+        found = true;
+	val = 1;
       } else if(key == "false") {
-        found = true; val = 0;
+        found = true;
+	val = 0;
       } else if(vars) {
         std::map<std::string, double>::iterator it = vars->find(key);
-        if(it != vars->end()) { found = true; val = it->second; }
+        if(it != vars->end()) {
+	  found = true;
+	  val = it->second;
+	}
       }
 
       if (found) {
         // Save the number
-  #     ifdef DEBUG
-          std::cout << val << std::endl;
-  #     endif
+#     ifdef DEBUG
+	std::cout << val << std::endl;
+#     endif
         rpnQueue.push(new Token<double>(val, NUM));;
       } else {
         // Save the variable name:
-  #     ifdef DEBUG
-          std::cout << key << std::endl;
-  #     endif
+#     ifdef DEBUG
+	std::cout << key << std::endl;
+#     endif
         rpnQueue.push(new Token<std::string>(key, VAR));
       }
 
       lastTokenWasOp = false;
+
     } else {
+
       // Otherwise, the variable is an operator or parenthesis.
       switch (*expr) {
-        case '(':
-          operatorStack.push("(");
-          ++expr;
-          break;
-        case ')':
-          while (operatorStack.top().compare("(")) {
-            rpnQueue.push(new Token<std::string>(operatorStack.top(), OP));
-            operatorStack.pop();
-          }
-          operatorStack.pop();
-          ++expr;
-          break;
-        default:
-          {
-            // The token is an operator.
-            //
-            // Let p(o) denote the precedence of an operator o.
-            //
-            // If the token is an operator, o1, then
-            //   While there is an operator token, o2, at the top
-            //       and p(o1) <= p(o2), then
-            //     pop o2 off the stack onto the output queue.
-            //   Push o1 on the stack.
-            std::stringstream ss;
-            ss << *expr;
-            ++expr;
-            while (*expr && !isspace(*expr ) && !isdigit(*expr )
-                && !isvariablechar(*expr) && *expr != '(' && *expr != ')') {
-              ss << *expr;
-              ++expr;
-            }
-            ss.clear();
-            std::string str;
-            ss >> str;
+      case '(':
+	operatorStack.push("(");
+	++expr;
+	break;
+      case ')':
+	while (operatorStack.top().compare("(")) {
+	  rpnQueue.push(new Token<std::string>(operatorStack.top(), OP));
+	  operatorStack.pop();
+	}
+	operatorStack.pop();
+	++expr;
+	break;
+
+      default:
+	{
+	  // The token is an operator.
+	  //
+	  // Let p(o) denote the precedence of an operator o.
+	  //
+	  // If the token is an operator, o1, then
+	  //   While there is an operator token, o2, at the top
+	  //       and p(o1) <= p(o2), then
+	  //     pop o2 off the stack onto the output queue.
+	  //   Push o1 on the stack.
+	  std::stringstream ss;
+	  ss << *expr;
+	  ++expr;
+	  while (*expr && !isspace(*expr ) && !isdigit(*expr )
+		 && !isvariablechar(*expr) && *expr != '(' &&
+		 *expr != ')') {
+	    ss << *expr;
+	    ++expr;
+	  }
+	  ss.clear();
+	  std::string str;
+	  ss >> str;
 #           ifdef DEBUG
-              std::cout << str << std::endl;
+	  std::cout << str << std::endl;
 #           endif
 
-            if (lastTokenWasOp) {
-              // Convert unary operators to binary in the RPN.
-              if (!str.compare("-") || !str.compare("+")) {
-                rpnQueue.push(new Token<double>(0, NUM));
-              } else {
-                throw std::domain_error(
-                    "Unrecognized unary operator: '" + str + "'.");
-              }
-            }
+	  if (lastTokenWasOp) {
+	    // Convert unary operators to binary in the RPN.
+	    if (!str.compare("-") || !str.compare("+")) {
+	      rpnQueue.push(new Token<double>(0, NUM));
+	    } else {
+	      throw std::domain_error("Unrecognized unary operator: '" +
+				      str + "'.");
+	    }
+	  }
 
-            while (!operatorStack.empty() &&
-                opPrecedence[str] >= opPrecedence[operatorStack.top()]) {
-              rpnQueue.push(new Token<std::string>(operatorStack.top(), OP));
-              operatorStack.pop();
-            }
-            operatorStack.push(str);
-            lastTokenWasOp = true;
-          }
+	  while (!operatorStack.empty() &&
+		 opPrecedence[str] >= opPrecedence[operatorStack.top()]) {
+	    rpnQueue.push(new Token<std::string>(operatorStack.top(), OP));
+	    operatorStack.pop();
+	  }
+	  operatorStack.push(str);
+	  lastTokenWasOp = true;
+	}
       }
     }
     while (*expr && isspace(*expr )) ++expr;
   }
+  
   while (!operatorStack.empty()) {
     rpnQueue.push(new Token<std::string>(operatorStack.top(), OP));
     operatorStack.pop();
@@ -189,7 +213,7 @@ TokenQueue_t calculator::toRPN(const char* expr,
 }
 
 double calculator::calculate(const char* expr,
-    std::map<std::string, double>* vars) {
+			     std::map<std::string, double>* vars) {
 
   // Convert to RPN with Dijkstra's Shunting-yard algorithm.
   TokenQueue_t rpn = toRPN(expr, vars);
@@ -202,7 +226,7 @@ double calculator::calculate(const char* expr,
 }
 
 double calculator::calculate(TokenQueue_t rpn,
-    std::map<std::string, double>* vars) {
+			     std::map<std::string, double>* vars) {
 
   // Evaluate the expression in RPN form.
   std::stack<double> evaluation;
@@ -259,18 +283,17 @@ double calculator::calculate(TokenQueue_t rpn,
       evaluation.push(doubleTok->val);
     } else if (base->type == VAR) { // Variable
       if (!vars) {
-        throw std::domain_error(
-            "Detected variable, but the variable map is null.");
+        throw std::domain_error
+	  ("Detected variable, but the variable map is null.");
       }
-
+      
       Token<std::string>* strTok = static_cast<Token<std::string>*>(base);
-
+      
       std::string key = strTok->val;
       std::map<std::string, double>::iterator it = vars->find(key);
-
+      
       if (it == vars->end()) {
-        throw std::domain_error(
-            "Unable to find the variable '" + key + "'.");
+        throw std::domain_error("Unable to find the variable '" + key + "'.");
       }
       evaluation.push(it->second);
     } else {
@@ -285,9 +308,8 @@ void calculator::cleanRPN(TokenQueue_t& rpn) {
     delete rpn.front();
     rpn.pop();
   }
+  return;
 }
-
-/* * * * * Non Static Functions * * * * */
 
 calculator::~calculator() {
   cleanRPN(this->RPN);
@@ -310,8 +332,6 @@ void calculator::compile(const char* expr,
 double calculator::eval(std::map<std::string, double>* vars) {
   return calculate(this->RPN, vars);
 }
-
-/* * * * * For Debug Only * * * * */
 
 std::string calculator::str() {
   std::stringstream ss;

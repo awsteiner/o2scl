@@ -26,7 +26,7 @@
 
 #include <o2scl/string_conv.h>
 #include <o2scl/err_hnd.h>
-#include <o2scl/shunting-yard.h>
+#include <o2scl/shunting_yard.h>
 
 using namespace std;
 using namespace o2scl;

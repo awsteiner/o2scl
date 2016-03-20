@@ -47,7 +47,7 @@
 #include <o2scl/table_units.h>
 #include <o2scl/contour.h>
 
-#include <o2scl/shunting-yard.h>
+#include <o2scl/shunting_yard.h>
 
 // Forward definition of the table3d class for HDF I/O
 namespace o2scl {
