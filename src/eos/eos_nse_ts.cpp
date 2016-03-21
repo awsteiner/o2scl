@@ -48,7 +48,7 @@ int main(void) {
 
   // Set the distribution of nuclei to use
   vector<nucleus> ad;
-  nucdist_set(ad,mm,"Z>=24 & Z<=32 & N>=55 & N<=58");
+  nucdist_set(ad,mm,"Z>=24 && Z<=32 && N>=55 && N<=58");
   for(size_t i=0;i<ad.size();i++) {
     ad[i].g=1.0;
   }

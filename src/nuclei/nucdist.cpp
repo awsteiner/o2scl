@@ -53,6 +53,7 @@ void o2scl::nucdist_set(vector<nucleus> &dist, nucmass &nm,
       } else {
 	vars["Z"]=Z;
 	vars["A"]=A;
+	vars["N"]=A-Z;
 	if (nm.is_included(Z,A-Z) && calc.eval(&vars)>0.5) {
 	  dist.push_back(n);
 	  nm.get_nucleus(Z,A-Z,dist[ix]);

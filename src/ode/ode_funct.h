@@ -28,8 +28,11 @@
 */
 
 #include <string>
+#include <map>
 
 #include <boost/numeric/ublas/vector.hpp>
+
+#include <o2scl/shunting_yard.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -41,110 +44,71 @@ namespace o2scl {
 			    const boost::numeric::ublas::vector<double> &,
 			    boost::numeric::ublas::vector<double> &)> 
     ode_funct11;
-
-#ifdef O2SCL_NEVER_DEFINED
   
   /** \brief One-dimensional function from strings
       \nothing
   */
-  template <class vec_y_t=boost::numeric::ublas::vector<double>,
-    class vec_dydx_t=vec_y_t>
-    class ode_funct11_strings {
-    public:
-
+  class ode_funct11_strings {
+    
+  public:
+    
     /** \brief Specify the string and the parameters
      */
-    ode_funct11_strings(size_t nv, std::string *formulas, std::string funcs, 
-			std::string var, size_t np=0, std::string parms="") {
-      size_t i;
-      fpw=new FunctionParser[nv];
-      if(np<1) {
-	for(i=0;i<nv;i++) {
-	  fpw[i].Parse(formulas[i],funcs+","+var);
-	}
-	st_np=0;
-	st_parms="";
-      } else {
-	for(i=0;i<nv;i++) {
-	  fpw[i].Parse(formulas[i],funcs+","+var+","+parms);
-	}
-	st_np=np;
-	st_parms=parms;
-	arr=new double[np];
+    template<class vec_string_t=std::vector<std::string> >
+      ode_funct11_strings(size_t nv, vec_string_t &formulas,
+			  vec_string_t &funcs, std::string var) {
+      
+      calc.resize(nv);
+      st_forms.resize(nv);
+      st_funcs.resize(nv);
+      for(size_t i=0;i<nv;i++) {
+	st_forms[i]=formulas[i];
+	calc[i].compile(formulas[i].c_str(),&vars);
+	st_funcs[i]=funcs[i];
       }
-      st_forms=formulas;
-      st_var=var;
-      st_funcs=funcs;
       st_nv=nv;
+      st_var=var;
     }
-  
+    
     virtual ~ode_funct11_strings() {
-      if (st_np>0) {
-	delete[] arr;
-      }
-      delete[] fpw;
     }
-  
+    
     /** \brief Specify the string and the parameters
      */
-    int set_function(size_t nv, std::string *formulas, std::string funcs, 
-		     std::string var, size_t np=0, std::string parms="") {
-      size_t i;
-      if (nv!=st_nv) {
-	delete[] fpw;
-	fpw=new FunctionParser[nv];
+    template<class vec_string_t=std::vector<std::string> >
+      void set_function(size_t nv, vec_string_t &formulas,
+			vec_string_t &funcs, std::string var) {
+      calc.resize(nv);
+      st_forms.resize(nv);
+      st_funcs.resize(nv);
+      for(size_t i=0;i<nv;i++) {
+	st_forms[i]=formulas[i];
+	st_funcs[i]=funcs[i];
       }
-      if(np<1) {
-	for(i=0;i<nv;i++) {
-	  fpw[i].Parse(formulas[i],funcs+","+var);
-	}
-	st_np=0;
-	st_parms="";
-      } else {
-	for(i=0;i<nv;i++) {
-	  fpw[i].Parse(formulas[i],funcs+","+var+","+parms);
-	}
-	st_np=np;
-	st_parms=parms;
-	arr=new double[np];
-      }
-      st_forms=formulas;
-      st_var=var;
-      st_funcs=funcs;
       st_nv=nv;
-      return 0;
+      st_var=var;
+      return;
     }
 
     /** \brief Set the values of the auxilliary parameters that were
 	specified in 'parms' in the constructor
     */
-    template<class vec_p_t> void set_parms(vec_p_t &p) {
-      for(size_t i=0;i<st_np;i++) {
-	arr[i]=p[i];
-      }
-      return;
+    int set_parm(std::string name, double val) {
+      vars[name]=val;
+      return 0;
     }
   
-    virtual int operator()(double x, size_t nv, const vec_y_t &y, 
-			   vec_dydx_t &dydx) {
-      size_t i;
-      if(st_np<1) {
-	double *all=new double[nv+1];
-	for(i=0;i<nv;i++) all[i]=y[i];
-	all[nv]=x;
-	for(i=0;i<st_nv;i++) {
-	  dydx[i]=fpw[i].Eval(all);
-	}
-	delete[] all;
-      } else {
-	double *all=new double[st_np+st_nv+1];
-	for(i=0;i<st_nv;i++) all[i]=y[i];
-	all[st_nv]=x;
-	for(i=st_nv+1;i<st_np+st_nv+1;i++) all[i]=arr[i-st_nv-1];
-	for(i=0;i<st_nv;i++) {
-	  dydx[i]=fpw[i].Eval(all);
-	}
-	delete[] all;
+    template <class vec_y_t=boost::numeric::ublas::vector<double>,
+      class vec_dydx_t=vec_y_t>
+      int operator()(double x, size_t nv, const vec_y_t &y, 
+		     vec_dydx_t &dydx) {
+
+      for(size_t i=0;i<st_nv;i++) {
+	vars[st_funcs[i]]=y[i];
+	vars[st_var]=x;
+      }
+      for(size_t i=0;i<st_nv;i++) {
+	dydx[i]=calc[i].eval(&vars);
       }
       return 0;
     }
@@ -153,22 +117,20 @@ namespace o2scl {
 
     protected:
 
-    /// The formula parser
-    FunctionParser *fpw;
-    /// The number of parameters
-    size_t st_np;
+    /// The function parser
+    std::vector<calculator> calc;
+      
+    /// Desc
+    std::map<std::string,double> vars;
+
     /// The number of variables
     size_t st_nv;
-    /// The parameters
-    double *arr;
     /// The formulas
-    std::string *st_forms;
+    std::vector<std::string> st_forms;
     /// The variables
     std::string st_var;
-    /// The parameters
-    std::string st_parms;
     /// The function names
-    std::string st_funcs;
+    std::vector<std::string> st_funcs;
 
     ode_funct11_strings() {};
 
@@ -181,8 +143,6 @@ namespace o2scl {
 
   };
   
-#endif
-
 #ifndef DOXYGEN_NO_O2NS
 }
 #endif
