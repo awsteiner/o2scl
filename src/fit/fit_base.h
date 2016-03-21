@@ -57,7 +57,7 @@ namespace o2scl {
 			  std::string var) {
       calc.compile(formula.c_str(),&vars);
       st_form=formula;
-      size_t np=parms.size();
+      int np=parms.size();
       st_parms.resize(np);
       for (int i=0;i<np;i++) {
 	st_parms[i]=parms[i];
