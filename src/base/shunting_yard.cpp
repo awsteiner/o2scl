@@ -1,8 +1,30 @@
-// Original author: Jesse Brown
-// Modifications: Brandon Amos, redpois0n
-// Additional modifications for use in O2scl by Andrew W. Steiner
-
 /*
+  -------------------------------------------------------------------
+  
+  Original author: Jesse Brown
+  Modifications: Brandon Amos, redpois0n
+  Modifications for O2scl copyright (C) 2016, Andrew W. Steiner
+  
+  This file is part of O2scl.
+  
+  O2scl is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 3 of the License, or
+  (at your option) any later version.
+  
+  O2scl is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with O2scl. If not, see <http://www.gnu.org/licenses/>.
+
+  -------------------------------------------------------------------
+*/
+/*
+  Original cpp-expresion-parser license from Brandon Amos:
+
   The MIT License (MIT)
   
   Copyright (c) 2013 Brandon Amos <http://bamos.github.io>
@@ -32,7 +54,7 @@
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
-#include <math.h>
+#include <cmath>
 
 #include <o2scl/shunting_yard.h>
 
@@ -61,6 +83,12 @@ std::map<std::string, int> calculator::buildOpPrecedence() {
   opp["&&"] = 11;
   opp["||"] = 12;
   opp["("]  = 16;
+  opp["sin"]  = 17;
+  opp["cos"]  = 18;
+  opp["tan"]  = 19;
+  opp["sqrt"]  = 20;
+  opp["log"]  = 21;
+  opp["exp"]  = 22;
 
   return opp;
 }
@@ -69,36 +97,44 @@ std::map<std::string, int> calculator::buildOpPrecedence() {
 std::map<std::string, int> calculator::opPrecedence=
   calculator::buildOpPrecedence();
 
-#define isvariablechar(c) (isalpha(c) || c == '_')
+bool calculator::isvariablechar(const char c) {
+  return (isalpha(c) || c == '_');
+}
 
 TokenQueue_t calculator::toRPN(const char* expr,
-			       std::map<std::string, double>* vars) {
+			       std::map<std::string, double>* vars,
+			       bool debug) {
 
-  TokenQueue_t rpnQueue; std::stack<std::string> operatorStack;
+  TokenQueue_t rpnQueue;
+  std::stack<std::string> operatorStack;
   bool lastTokenWasOp = true;
 
   // In one pass, ignore whitespace and parse the expression into RPN
   // using Dijkstra's Shunting-yard algorithm.
-  while (*expr && isspace(*expr )) ++expr;
+  while (*expr && isspace(*expr)) ++expr;
 
-  while (*expr ) {
-    if (isdigit(*expr )) {
+  while (*expr) {
+    
+    if (isdigit(*expr)) {
+
       // If the token is a number, add it to the output queue.
       char* nextChar = 0;
-      double digit = strtod(expr , &nextChar);
-#     ifdef DEBUG
-      std::cout << digit << std::endl;
-#     endif
+      double digit = strtod(expr,&nextChar);
+      if (debug) {
+	std::cout << "digit: " << digit << std::endl;
+      }
       rpnQueue.push(new Token<double>(digit, NUM));
       expr = nextChar;
       lastTokenWasOp = false;
-    } else if (isvariablechar(*expr )) {
+
+    } else if (isvariablechar(*expr)) {
+
       // If the function is a variable, resolve it and
       // add the parsed number to the output queue.
       std::stringstream ss;
       ss << *expr;
       ++expr;
-      while( isvariablechar(*expr ) || isdigit(*expr) ) {
+      while (isvariablechar(*expr) || isdigit(*expr)) {
         ss << *expr;
         ++expr;
       }
@@ -108,35 +144,57 @@ TokenQueue_t calculator::toRPN(const char* expr,
 
       std::string key = ss.str();
 
-      if(key == "true") {
-        found = true;
-	val = 1;
-      } else if(key == "false") {
-        found = true;
-	val = 0;
-      } else if(vars) {
-        std::map<std::string, double>::iterator it = vars->find(key);
-        if(it != vars->end()) {
-	  found = true;
-	  val = it->second;
-	}
-      }
-
-      if (found) {
-        // Save the number
-#     ifdef DEBUG
-	std::cout << val << std::endl;
-#     endif
-        rpnQueue.push(new Token<double>(val, NUM));;
+      if (key=="sin") {
+	operatorStack.push("sin");
+	lastTokenWasOp=true;
+      } else if (key=="cos") {
+	operatorStack.push("cos");
+	lastTokenWasOp=true;
+      } else if (key=="tan") {
+	operatorStack.push("tan");
+	lastTokenWasOp=true;
+      } else if (key=="sqrt") {
+	operatorStack.push("sqrt");
+	lastTokenWasOp=true;
+      } else if (key=="log") {
+	operatorStack.push("log");
+	lastTokenWasOp=true;
+      } else if (key=="exp") {
+	operatorStack.push("exp");
+	lastTokenWasOp=true;
       } else {
-        // Save the variable name:
-#     ifdef DEBUG
-	std::cout << key << std::endl;
-#     endif
-        rpnQueue.push(new Token<std::string>(key, VAR));
+	
+	if (key == "true") {
+	  found = true;
+	  val = 1;
+	} else if (key == "false") {
+	  found = true;
+	  val = 0;
+	} else if (vars) {
+	  std::map<std::string, double>::iterator it = vars->find(key);
+	  if(it != vars->end()) {
+	    found = true;
+	    val = it->second;
+	  }
+	}
+	
+	if (found) {
+	  // Save the number
+	  if (debug) {
+	    std::cout << "val: " << val << std::endl;
+	  }
+	  rpnQueue.push(new Token<double>(val, NUM));;
+	} else {
+	  // Save the variable name:
+	  if (debug) {
+	    std::cout << "key: " << key << std::endl;
+	  }
+	  rpnQueue.push(new Token<std::string>(key, VAR));
+	}
+	
+	lastTokenWasOp = false;
+	
       }
-
-      lastTokenWasOp = false;
 
     } else {
 
@@ -148,7 +206,7 @@ TokenQueue_t calculator::toRPN(const char* expr,
 	break;
       case ')':
 	while (operatorStack.top().compare("(")) {
-	  rpnQueue.push(new Token<std::string>(operatorStack.top(), OP));
+	  rpnQueue.push(new Token<std::string>(operatorStack.top(),OP));
 	  operatorStack.pop();
 	}
 	operatorStack.pop();
@@ -169,7 +227,7 @@ TokenQueue_t calculator::toRPN(const char* expr,
 	  std::stringstream ss;
 	  ss << *expr;
 	  ++expr;
-	  while (*expr && !isspace(*expr ) && !isdigit(*expr )
+	  while (*expr && !isspace(*expr) && !isdigit(*expr)
 		 && !isvariablechar(*expr) && *expr != '(' &&
 		 *expr != ')') {
 	    ss << *expr;
@@ -178,9 +236,9 @@ TokenQueue_t calculator::toRPN(const char* expr,
 	  ss.clear();
 	  std::string str;
 	  ss >> str;
-#           ifdef DEBUG
-	  std::cout << str << std::endl;
-#           endif
+	  if (debug) {
+	    std::cout << "str: " << str << std::endl;
+	  }
 
 	  if (lastTokenWasOp) {
 	    // Convert unary operators to binary in the RPN.
@@ -201,14 +259,16 @@ TokenQueue_t calculator::toRPN(const char* expr,
 	  lastTokenWasOp = true;
 	}
       }
-    }
-    while (*expr && isspace(*expr )) ++expr;
+    } while (*expr && isspace(*expr)) ++expr;
+
+    // End of while (*expr)
   }
   
   while (!operatorStack.empty()) {
     rpnQueue.push(new Token<std::string>(operatorStack.top(), OP));
     operatorStack.pop();
   }
+
   return rpnQueue;
 }
 
@@ -216,7 +276,7 @@ double calculator::calculate(const char* expr,
 			     std::map<std::string, double>* vars) {
 
   // Convert to RPN with Dijkstra's Shunting-yard algorithm.
-  TokenQueue_t rpn = toRPN(expr, vars);
+  TokenQueue_t rpn = toRPN(expr,vars);
 
   double ret = calculate(rpn);
 
@@ -238,45 +298,63 @@ double calculator::calculate(TokenQueue_t rpn,
     if (base->type == OP) {
       Token<std::string>* strTok = static_cast<Token<std::string>*>(base);
       std::string str = strTok->val;
-      if (evaluation.size() < 2) {
+      /*
+	if (evaluation.size() < 2) {
         throw std::domain_error("Invalid equation.");
-      }
-      double right = evaluation.top(); evaluation.pop();
-      double left  = evaluation.top(); evaluation.pop();
-      if (!str.compare("+")) {
-        evaluation.push(left + right);
-      } else if (!str.compare("*")) {
-        evaluation.push(left * right);
-      } else if (!str.compare("-")) {
-        evaluation.push(left - right);
-      } else if (!str.compare("/")) {
-        evaluation.push(left / right);
-      } else if (!str.compare("<<")) {
-        evaluation.push((int) left << (int) right);
-      } else if (!str.compare("^")) {
-        evaluation.push(pow(left, right));
-      } else if (!str.compare(">>")) {
-        evaluation.push((int) left >> (int) right);
-      } else if (!str.compare("%")) {
-        evaluation.push((int) left % (int) right);
-      } else if (!str.compare("<")) {
-        evaluation.push(left < right);
-      } else if (!str.compare(">")) {
-        evaluation.push(left > right);
-      } else if (!str.compare("<=")) {
-        evaluation.push(left <= right);
-      } else if (!str.compare(">=")) {
-        evaluation.push(left >= right);
-      } else if (!str.compare("==")) {
-        evaluation.push(left == right);
-      } else if (!str.compare("!=")) {
-        evaluation.push(left != right);
-      } else if (!str.compare("&&")) {
-        evaluation.push((int) left && (int) right);
-      } else if (!str.compare("||")) {
-        evaluation.push((int) left || (int) right);
+	}
+      */
+      double right = evaluation.top();
+      evaluation.pop();
+      if (!str.compare("sin")) {
+	evaluation.push(sin(right));
+      } else if (!str.compare("cos")) {
+	evaluation.push(cos(right));
+      } else if (!str.compare("tan")) {
+	evaluation.push(tan(right));
+      } else if (!str.compare("sqrt")) {
+	evaluation.push(sqrt(right));
+      } else if (!str.compare("log")) {
+	evaluation.push(log(right));
+      } else if (!str.compare("exp")) {
+	evaluation.push(exp(right));
       } else {
-        throw std::domain_error("Unknown operator: '" + str + "'.");
+	double left  = evaluation.top();
+	evaluation.pop();
+	if (!str.compare("+")) {
+	  evaluation.push(left + right);
+	} else if (!str.compare("*")) {
+	  evaluation.push(left * right);
+	} else if (!str.compare("-")) {
+	  evaluation.push(left - right);
+	} else if (!str.compare("/")) {
+	  evaluation.push(left / right);
+	} else if (!str.compare("<<")) {
+	  evaluation.push((int) left << (int) right);
+	} else if (!str.compare("^")) {
+	  evaluation.push(pow(left, right));
+	} else if (!str.compare(">>")) {
+	  evaluation.push((int) left >> (int) right);
+	} else if (!str.compare("%")) {
+	  evaluation.push((int) left % (int) right);
+	} else if (!str.compare("<")) {
+	  evaluation.push(left < right);
+	} else if (!str.compare(">")) {
+	  evaluation.push(left > right);
+	} else if (!str.compare("<=")) {
+	  evaluation.push(left <= right);
+	} else if (!str.compare(">=")) {
+	  evaluation.push(left >= right);
+	} else if (!str.compare("==")) {
+	  evaluation.push(left == right);
+	} else if (!str.compare("!=")) {
+	  evaluation.push(left != right);
+	} else if (!str.compare("&&")) {
+	  evaluation.push((int) left && (int) right);
+	} else if (!str.compare("||")) {
+	  evaluation.push((int) left || (int) right);
+	} else {
+	  throw std::domain_error("Unknown operator: '" + str + "'.");
+	}
       }
     } else if (base->type == NUM) { // Number
       Token<double>* doubleTok = static_cast<Token<double>*>(base);
@@ -304,7 +382,7 @@ double calculator::calculate(TokenQueue_t rpn,
 }
 
 void calculator::cleanRPN(TokenQueue_t& rpn) {
-  while( rpn.size() ) {
+  while (rpn.size()) {
     delete rpn.front();
     rpn.pop();
   }
@@ -317,7 +395,7 @@ calculator::~calculator() {
 
 calculator::calculator(const char* expr,
 		       std::map<std::string, double>* vars) {
-  compile(expr, vars);
+  compile(expr,vars);
 }
 
 void calculator::compile(const char* expr,
@@ -333,21 +411,23 @@ double calculator::eval(std::map<std::string, double>* vars) {
   return calculate(this->RPN, vars);
 }
 
-std::string calculator::str() {
+std::string calculator::RPN_to_string() {
   std::stringstream ss;
   TokenQueue_t rpn = this->RPN;
 
   ss << "calculator { RPN: [ ";
-  while( rpn.size() ) {
+  while (rpn.size()) {
     TokenBase* base = rpn.front();
 
     Token<double>* doubleTok = dynamic_cast<Token<double>*>(base);
-    if(doubleTok)
+    if(doubleTok) {
       ss << doubleTok->val;
+    }
 
     Token<std::string>* strTok = dynamic_cast<Token<std::string>*>(base);
-    if(strTok)
+    if(strTok) {
       ss << "'" << strTok->val << "'";
+    }
 
     rpn.pop();
 

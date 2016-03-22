@@ -234,7 +234,7 @@ int main(void) {
   }
 
   double schwarz_km=o2scl_cgs::schwarzchild_radius/1.0e5;
-  string sfunc=((string)"iand=8.0*acos(-1)/3.0*r^4*(ed+pr)")+
+  string sfunc=((string)"iand=8.0*3.14159265358979/3.0*r^4*(ed+pr)")+
     "*exp(-gp)*omega_rat/sqrt(1-schwarz*gm/r)";
   tab->functions_columns(sfunc);
   double mom=tab->integ("r",0.0,at.rad,"iand");

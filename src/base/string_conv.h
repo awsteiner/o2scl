@@ -155,8 +155,9 @@ namespace o2scl {
 
   /** \brief Convert a formula to a double 
       
-      This uses \c FunctionParser to convert strings like "-1.0e-3",
-      "1.0/3.0" and "exp(cos(-1.0e-2))" to floating point numbers.
+      This uses \ref o2scl::calculator to convert strings like
+      "-1.0e-3", "1.0/3.0" and "exp(cos(-1.0e-2))" to floating point
+      numbers.
   */
   double function_to_double(std::string s, bool err_on_fail=true);
 
