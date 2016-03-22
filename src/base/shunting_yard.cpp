@@ -103,6 +103,7 @@ bool calculator::isvariablechar(const char c) {
 
 TokenQueue_t calculator::toRPN(const char* expr,
 			       std::map<std::string, double>* vars,
+			       std::map<std::string, int> opPrec,
 			       bool debug) {
 
   TokenQueue_t rpnQueue;
@@ -251,7 +252,7 @@ TokenQueue_t calculator::toRPN(const char* expr,
 	  }
 
 	  while (!operatorStack.empty() &&
-		 opPrecedence[str] >= opPrecedence[operatorStack.top()]) {
+		 opPrec[str] >= opPrec[operatorStack.top()]) {
 	    rpnQueue.push(new Token<std::string>(operatorStack.top(), OP));
 	    operatorStack.pop();
 	  }
@@ -394,17 +395,19 @@ calculator::~calculator() {
 }
 
 calculator::calculator(const char* expr,
-		       std::map<std::string, double>* vars) {
-  compile(expr,vars);
+		       std::map<std::string, double>* vars,
+		       std::map<std::string, int> opPrec) {
+  compile(expr,vars,opPrec);
 }
 
 void calculator::compile(const char* expr,
-			 std::map<std::string, double>* vars) {
+			 std::map<std::string, double>* vars,
+			 std::map<std::string, int> opPrec) {
 
   // Make sure it is empty:
   cleanRPN(this->RPN);
 
-  this->RPN = calculator::toRPN(expr, vars);
+  this->RPN = calculator::toRPN(expr, vars, opPrec);
 }
 
 double calculator::eval(std::map<std::string, double>* vars) {
