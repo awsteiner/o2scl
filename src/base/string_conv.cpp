@@ -181,9 +181,8 @@ bool o2scl::is_number(std::string s) {
 
 double o2scl::function_to_double(std::string s, bool err_on_fail) {
   calculator calc;
-  std::map<std::string,double> vars;
-  calc.compile(s.c_str(),&vars);
-  double dat=calc.eval(&vars);
+  calc.compile(s.c_str(),0);
+  double dat=calc.eval(0);
   return dat;
 }
 

@@ -392,11 +392,12 @@ int acol_manager::setup_help() {
   dsc+="3. Long options may be preceeded by two dashes.\n\n";
   dsc+="4. In order to avoid confusion between arguments and functions,\n";
   dsc+="   use \"(-x*2)\" not \"-x*2\"\n\n";
-  dsc+="5. The select command assumes that the first equals sign indicates\n";
-  dsc+="   renaming, so use \"eq=if(x=3,1,0)\" not \"if(x=3,1,0)\".\n\n";
-  dsc+="Known operators:\n() - ^ * / % + - = < > & |\n\n";
+  //dsc+="5. The select command assumes that the first equals sign indicates\n";
+  //dsc+="   renaming, so use \"eq=if(x=3,1,0)\" not \"if(x=3,1,0)\".\n\n";
+  dsc+="Known operators:\n() ^ * / % + - == != < > && || << >> >= <=\n\n";
+  dsc+="Known functions:\n";
+  dsc+="exp(x) log(x) sin(x) cos(x) tan(x) sqrt(x)\n\n";
   /*
-    dsc+="Known functions:\n";
     dsc+="abs(x) acos(x) acosh(x) asin(x) asinh(x) atan(x) atan2(x,y)\n";
     dsc+="atanh(x) ceil(x) cos(x) cosh(x) cot(x) csc(x) eval(...) exp(x)\n";
     dsc+="floor(x) if(x,y,z) int(x) log(x) log10(x) max(x,y) min(x,y)\n";

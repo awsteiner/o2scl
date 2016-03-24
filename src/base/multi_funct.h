@@ -53,14 +53,14 @@ namespace o2scl {
     /** \brief Specify the string and the parameters
      */
     template<class vec_string_t=std::vector<std::string> >
-      multi_funct11_strings(std::string formula, int nv,
+      multi_funct11_strings(std::string expr, int nv,
 			    vec_string_t &var_arr) {
     
       st_nv=nv;
-      st_form=formula;
+      st_form=expr;
       st_vars.resize(nv);
       for (int i=0;i<nv;i++) {
-	calc.compile(formula.c_str(),&vars);
+	calc.compile(expr.c_str(),&vars);
 	st_vars[i]=var_arr[i];
       }
     }
@@ -68,13 +68,13 @@ namespace o2scl {
     /** \brief Specify the string and the parameters
      */
     template<class vec_string_t=std::vector<std::string> >
-      void set_function(std::string formula, int nv, vec_string_t &var_arr) {
+      void set_function(std::string expr, int nv, vec_string_t &var_arr) {
 
       st_nv=nv;
-      st_form=formula;
+      st_form=expr;
       st_vars.resize(nv);
       for (int i=0;i<nv;i++) {
-	calc.compile(formula.c_str(),&vars);
+	calc.compile(expr.c_str(),&vars);
 	st_vars[i]=var_arr[i];
       }
       return;
@@ -115,7 +115,7 @@ namespace o2scl {
     /// The number of variables
     int st_nv;
 
-    /// The formula string
+    /// The expr string
     std::string st_form;
     /// The variable string
     std::vector<std::string> st_vars;

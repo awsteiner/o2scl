@@ -55,15 +55,15 @@ namespace o2scl {
     /** \brief Specify the string and the parameters
      */
     template<class vec_string_t=std::vector<std::string> >
-      ode_funct11_strings(size_t nv, vec_string_t &formulas,
+      ode_funct11_strings(size_t nv, vec_string_t &exprs,
 			  vec_string_t &funcs, std::string var) {
       
       calc.resize(nv);
       st_forms.resize(nv);
       st_funcs.resize(nv);
       for(size_t i=0;i<nv;i++) {
-	st_forms[i]=formulas[i];
-	calc[i].compile(formulas[i].c_str(),&vars);
+	st_forms[i]=exprs[i];
+	calc[i].compile(exprs[i].c_str(),&vars);
 	st_funcs[i]=funcs[i];
       }
       st_nv=nv;
@@ -76,13 +76,13 @@ namespace o2scl {
     /** \brief Specify the string and the parameters
      */
     template<class vec_string_t=std::vector<std::string> >
-      void set_function(size_t nv, vec_string_t &formulas,
+      void set_function(size_t nv, vec_string_t &exprs,
 			vec_string_t &funcs, std::string var) {
       calc.resize(nv);
       st_forms.resize(nv);
       st_funcs.resize(nv);
       for(size_t i=0;i<nv;i++) {
-	st_forms[i]=formulas[i];
+	st_forms[i]=exprs[i];
 	st_funcs[i]=funcs[i];
       }
       st_nv=nv;
@@ -125,7 +125,7 @@ namespace o2scl {
 
     /// The number of variables
     size_t st_nv;
-    /// The formulas
+    /// The expressions
     std::vector<std::string> st_forms;
     /// The variables
     std::string st_var;

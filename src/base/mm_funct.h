@@ -51,7 +51,7 @@ namespace o2scl {
     /** \brief Specify the strings
      */
     template<class vec_string_t=std::vector<std::string> >
-      mm_funct11_strings(int nv, vec_string_t &formulas,
+      mm_funct11_strings(int nv, vec_string_t &exprs,
 			 vec_string_t &var_arr) {
 
       st_nv=nv;
@@ -59,9 +59,9 @@ namespace o2scl {
       st_vars.resize(nv);
       calc.resize(nv);
       for (int i=0;i<nv;i++) {
-	calc[i].compile(formulas[i],&vars);
+	calc[i].compile(exprs[i],&vars);
 	st_vars[i]=var_arr[i];
-	st_forms[i]=formulas[i];
+	st_forms[i]=exprs[i];
       }
     }
       
@@ -93,7 +93,7 @@ namespace o2scl {
       
     /// Set the functions
     template<class vec_string_t=std::vector<std::string> >
-      void set_function(int nv, vec_string_t &formulas,
+      void set_function(int nv, vec_string_t &exprs,
 			vec_string_t &var_arr) {
 
       st_nv=nv;
@@ -101,9 +101,9 @@ namespace o2scl {
       st_vars.resize(nv);
       calc.resize(nv);
       for (int i=0;i<nv;i++) {
-	calc[i].compile(formulas[i],&vars);
+	calc[i].compile(exprs[i],&vars);
 	st_vars[i]=var_arr[i];
-	st_forms[i]=formulas[i];
+	st_forms[i]=exprs[i];
       }
 
       return;
@@ -119,7 +119,7 @@ namespace o2scl {
     /// Desc
     std::map<std::string,double> vars;
       
-    /// The formulas
+    /// The expressions
     std::vector<std::string> st_forms;
       
     /// The variables

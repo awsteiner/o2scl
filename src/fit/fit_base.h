@@ -53,10 +53,10 @@ namespace o2scl {
     /** \brief Specify a fitting function through a string
      */
     template<class vec_string_t=std::vector<std::string> >
-      fit_funct11_strings(std::string formula, vec_string_t &parms, 
+      fit_funct11_strings(std::string expr, vec_string_t &parms, 
 			  std::string var) {
-      calc.compile(formula.c_str(),&vars);
-      st_form=formula;
+      calc.compile(expr.c_str(),&vars);
+      st_form=expr;
       int np=parms.size();
       st_parms.resize(np);
       for (int i=0;i<np;i++) {
@@ -96,7 +96,7 @@ namespace o2scl {
     /// Desc
     std::map<std::string,double> vars;
       
-    /// The formula
+    /// The expression
     std::string st_form;
       
     /// The parameters
@@ -108,7 +108,7 @@ namespace o2scl {
     fit_funct11_strings() {};
 
     /// Specify the strings which define the fitting function
-    int set_function(std::string formula, std::string parms, 
+    int set_function(std::string expr, std::string parms, 
 		     std::string var, int nauxp=0, std::string auxp="");
 
     private:

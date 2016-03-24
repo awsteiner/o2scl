@@ -2259,7 +2259,8 @@ namespace o2scl {
       values for the column. If a column named <tt>name</tt> is 
       already present, it is overwritten. Otherwise, a new column
       is created. 
-	
+
+      \comment
       The formulas in \c list may depend on any of the column names
       that will be defined later in \c list. For example, for a
       table initially containing two columns, \c x and \c y, the
@@ -2276,6 +2277,7 @@ namespace o2scl {
       function_columns("a=2*z z=a*3");
       \endcode
       will cause the error handler to be thrown. 
+      \endcomment
   */
   void functions_columns(std::string list) {
 
