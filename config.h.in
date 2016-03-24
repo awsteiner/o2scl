@@ -15,6 +15,9 @@
 /* Define to 1 if you have the `gsl' library (-lgsl). */
 #undef HAVE_LIBGSL
 
+/* Define to 1 if you have GSL v2.0 or v2.1 */
+#undef HAVE_LIBGSL2
+
 /* Define to 1 if you have the `gslcblas' library (-lgslcblas). */
 #undef HAVE_LIBGSLCBLAS
 
@@ -23,6 +26,9 @@
 
 /* Define to 1 if you have the `hdf5_hl' library (-lhdf5_hl). */
 #undef HAVE_LIBHDF5_HL
+
+/* Define to 1 if you have the `m' library (-lm). */
+#undef HAVE_LIBM
 
 /* Define to 1 if your system has a GNU libc compatible `malloc' function, and
    to 0 otherwise. */

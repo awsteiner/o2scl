@@ -13,7 +13,10 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 
-# Require c++11 support
+# O2scl requires c++11 support, but sometimes it isn't properly
+# detected when it's present (notably in travis), so we make it
+# optional here and users will have to modify their flags if this
+# fails.
 AX_CXX_COMPILE_STDCXX_11(,[optional])
 
 # Newer replacement for AC_PROG_LIBTOOL
@@ -89,6 +92,12 @@ AM_CONDITIONAL(O2SCL_EOSLIB, test x$eoslib = xtrue)
 #	],[])
 
 # ----------------------------------------------
+# Check for math library
+# ----------------------------------------------
+
+AC_CHECK_LIB([m],[cos])
+
+# ----------------------------------------------
 # Check for BLAS
 # ----------------------------------------------
 
@@ -104,8 +113,8 @@ AC_CHECK_LIB([cblas],[cblas_dgemm],[],[
     echo -n " The present value of LDFLAGS is: " 
     echo $LDFLAGS
     echo ""
-  ],[-lm])
-],[-lm])
+  ],[])
+],[])
 
 # ----------------------------------------------
 # Check for GSL library (must check for BLAS first)
@@ -119,7 +128,18 @@ AC_CHECK_LIB([gsl], [gsl_vector_get], [],
 	echo -n " The present value of LDFLAGS is: " 
 	echo $LDFLAGS
         exit -1
-	],[-lm])
+	],[])
+
+# ----------------------------------------------
+# Check if we have gsl 2.0 or 2.1
+# ----------------------------------------------
+
+AX_PATH_GSL(2.0,[AC_DEFINE([HAVE_LIBGSL2],[1],
+	[Define to 1 if you have GSL v2.0 or v2.1])],	
+	[AX_PATH_GSL(2.1,[AC_DEFINE([HAVE_LIBGSL2],[1],
+	[Define to 1 if you have GSL v2.0 or v2.1])],	
+	[AC_DEFINE([HAVE_LIBGSL2],[0],
+	[Define to 1 if you have GSL v2.0 or v2.1])])])
 
 # ----------------------------------------------
 # Check for Readline libraries
@@ -163,7 +183,7 @@ AC_CHECK_LIB([hdf5], [H5Fopen], [],
 	echo ""
 	echo -n " The present value of LDFLAGS is: " 
 	echo $LDFLAGS
- 	],[-lm])
+ 	],[])
 
 # ----------------------------------------------
 # ... and for the HDF5 high-level library
@@ -178,7 +198,7 @@ AC_CHECK_LIB([hdf5_hl], [H5TBread_table], [],
 	echo ""
 	echo -n " The present value of LDFLAGS is: " 
 	echo $LDFLAGS
- 	],[-lm])
+ 	],[])
 
 ])
 
@@ -209,7 +229,7 @@ dnl 	echo "disabled with the --disable-fftw option to configure. "
 dnl 	echo ""
 dnl 	echo -n " The present value of LDFLAGS is: " 
 dnl 	echo $LDFLAGS
-dnl  	],[-lm])
+dnl  	],[])
 dnl ])
 
 # ----------------------------------------------
@@ -300,7 +320,6 @@ AC_CONFIG_FILES([Makefile
                  src/deriv/Makefile
                  src/eos/Makefile
                  src/fit/Makefile
-		 src/fparser/Makefile
                  src/hdf/Makefile
                  src/inte/Makefile
                  src/linalg/Makefile
