@@ -1,3 +1,34 @@
+Notes for 0.919 release:
+
+The old "FunctionParser" class has been replaced by a much nicer
+"calculator" class adapted from Brandon Amos' code.
+
+Travis testing has been implemented, and works for Linux and Mac OS X.
+
+The 'table' class copy constructor was fixed. 
+
+A new tov_love class has been created to compute tidal deformability.
+The class 'nstar_rot' has been improved significantly.
+
+Some upgrades have been implemented to work well with GSL versions 2.0
+and later. A new flag to ./configure, --enable-gsl2 , enables
+extensions built on new GSL code.
+
+Improvements have been made to ode_it_solve and associated
+testing.
+
+Exception safety has been improved in several classes.
+
+The 'contour' class internals have been reworked to make
+the code easier to understand. 
+
+A new acol command gen3-list was created. The auxillary python
+code o2py.py has been updated.
+
+Documentation has been improved everywhere.
+
+------------------------------------------------------------------------
+
 Notes for 0.918 release:
 
 The GNU-style target 'make check' now works, and is equivalent to
