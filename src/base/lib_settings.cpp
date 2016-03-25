@@ -188,6 +188,14 @@ bool lib_settings_class::openmp_support() {
 #endif
 }
 
+bool lib_settings_class::gsl2_support() {
+#ifdef O2SCL_GSL2
+  return true;
+#else
+  return false;
+#endif
+}
+
 void lib_settings_class::config_h_report() {
 #ifdef HAVE_ACOSH
   cout << "HAVE_ACOSH: " << HAVE_ACOSH << endl;

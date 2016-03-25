@@ -48,6 +48,20 @@ OLIB_LT_VERSION="${OLIB_CURRENT}:${OLIB_REVISION}:${OLIB_AGE}"
 AC_SUBST(OLIB_LT_VERSION)
 
 # ----------------------------------------------
+# Enable or disable GSL 2.0 support
+# ----------------------------------------------
+
+AC_ARG_ENABLE(gsl2,
+[  --enable-gsl2           Include GSL v2.0 support @<:@default=no@:>@],
+   [case "${enableval}" in
+   yes) gsl2=true ;;
+   no)  gsl2=false ;;
+   *) AC_MSG_ERROR(bad value ${enableval} for --enable-gsl2) ;;
+   esac],[gsl2=false])
+
+AM_CONDITIONAL(O2SCL_GSL2, test x$gsl2 = xtrue)
+
+# ----------------------------------------------
 # Enable or disable particle and nuclei library
 # ----------------------------------------------
 

@@ -2,7 +2,7 @@
     
     \section installdir_subsect Installation instructions
 
-    \o2 installation is generally the same as that for other GNU
+    \o2 installation is generally similar to that for GNU-style
     libraries. The file \c INSTALL has some details on this procedure.
     Generally, you should be able to run <tt>./configure</tt> and then
     type \c make and \c make \c install. More information on the \c
@@ -17,11 +17,14 @@
     automatically installed by \c make \c install.
 
     \o2 requires the Boost (any relatively recent version) and the GSL
-    libraries (version 2.0 or later). If the <tt>configure</tt> script
-    cannot find Boost or GSL, you may have to specify their location
-    in the <tt>CXXFLAGS</tt> and <tt>LDFLAGS</tt> environment
+    libraries (version 1.16 or later). If the <tt>configure</tt>
+    script cannot find Boost or GSL, you may have to specify their
+    location in the <tt>CXXFLAGS</tt> and <tt>LDFLAGS</tt> environment
     variables (<tt>./configure --help</tt> shows some information on
-    this). Along with GSL, a CBLAS library is also required, and
+    this). In order to allow \o2 to take advantage of new
+    functionality in GSL versions 2.0 and later, you can add
+    <tt>--enable-gsl2</tt> to the <tt>./configure</tt> script.
+    Along with GSL, a CBLAS library is also required, and
     <tt>./configure</tt> will look for <tt>libcblas</tt> first, and if
     not found then it will look for <tt>libgslcblas</tt>. If neither
     is present, then you may have to manually specify a CBLAS library
@@ -56,13 +59,27 @@
 
     For example, to install \o2 on Ubuntu, begin by installing GSL
     (the <tt>libgsl0-dev</tt> package), Boost (the
-    <tt>libboost-all-dev</tt> package) and HDF5 the
-    <tt>libhdf5-dev</tt> package). In older versions of Ubuntu, the
-    HDF5 package only supports the older (and now deprecated) HDF5
-    API. If you get HDF5 errors you may have to install HDF5 from
-    source. You can then install \o2 from one of the release
-    distributions by using the standard GNU <tt>./configure</tt>
-    script and then invoking <tt>make</tt> and <tt>make install</tt>.
+    <tt>libboost-all-dev</tt> package), GNU readline (the
+    <tt>libreadline-dev</tt> and <tt>libncurses-dev</tt> packages),
+    and HDF5 the <tt>libhdf5-dev</tt> package). In older versions of
+    Ubuntu, the HDF5 package only supports the older (and now
+    deprecated) HDF5 API. If you get HDF5 errors you may have to
+    install HDF5 from source. You can then install \o2 from one of the
+    release distributions by using the standard GNU
+    <tt>./configure</tt> script and then invoking <tt>make</tt> and
+    <tt>make install</tt>.
+
+    If you want to install from source (without generating the
+    documentation), then you must first install the
+    <tt>autoconf</tt> and <tt>libtool</tt> packages.
+    Then you can use something along the lines of
+    \code
+    git clone https://github.com/awsteiner/o2scl
+    mkdir m4
+    autoreconf -i
+    \endcode
+    and then execute the <tt>/.configure</tt> script and install
+    as above. 
 
     \section installmac_subsect Compiling on Mac OS X
 

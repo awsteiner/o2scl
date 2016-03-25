@@ -127,6 +127,8 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
+#ifdef O2SCL_GSL2
+
   static const size_t ndat=20;
   static const size_t npar=2;
 
@@ -307,8 +309,9 @@ int main(void) {
   {
     cout << "O2scl nonlinear fit:" << endl;
     fit_nonlin<> gf;
-    fit_funct11_strings<> ffs("a*exp(x)+b*sqrt(x)","a,b","x");
-    chi_fit_funct<ubvector,ubmatrix,fit_funct11_strings<> > 
+    vector<string> vars={"a","b"};
+    fit_funct11_strings ffs("a*exp(x)+b*sqrt(x)",vars,"x");
+    chi_fit_funct<ubvector,ubmatrix,fit_funct11_strings> 
       cff(ndat,xdat,ydat,yerr,ffs);
     cff.auto_jac.set_epsrel(1.0e-4);
     
@@ -483,6 +486,8 @@ int main(void) {
   }
   */
 
+#endif
+  
   tm.report();
   return 0;
 }
