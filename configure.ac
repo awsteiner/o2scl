@@ -131,17 +131,6 @@ AC_CHECK_LIB([gsl], [gsl_vector_get], [],
 	],[])
 
 # ----------------------------------------------
-# Check if we have gsl 2.0 or 2.1
-# ----------------------------------------------
-
-AX_PATH_GSL(2.0,[AC_DEFINE([HAVE_LIBGSL2],[1],
-	[Define to 1 if you have GSL v2.0 or v2.1])],	
-	[AX_PATH_GSL(2.1,[AC_DEFINE([HAVE_LIBGSL2],[1],
-	[Define to 1 if you have GSL v2.0 or v2.1])],	
-	[AC_DEFINE([HAVE_LIBGSL2],[0],
-	[Define to 1 if you have GSL v2.0 or v2.1])])])
-
-# ----------------------------------------------
 # Check for Readline libraries
 # ----------------------------------------------
 
