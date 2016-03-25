@@ -37,12 +37,12 @@ emacs-clean:
 
 utk-sync-doc:
 	cp -r $(HOME)/install/o2scl-0.919/doc/o2scl \
-		$(HOME)/svn/int3/web/utk
-	cp extras/index.html $(HOME)/svn/int3/web/utk/o2scl
-	cp extras/bootstrap.css $(HOME)/svn/int3/web/utk/o2scl
-	cp extras/bootstrap.js $(HOME)/svn/int3/web/utk/o2scl
-	cp extras/bootstrap-responsive.css $(HOME)/svn/int3/web/utk/o2scl
-	cp extras/jquery-2.0.3.min.js $(HOME)/svn/int3/web/utk/o2scl
+		$(HOME)/wcs/int3/web/utk
+	cp extras/index.html $(HOME)/wcs/int3/web/utk/o2scl
+	cp extras/bootstrap.css $(HOME)/wcs/int3/web/utk/o2scl
+	cp extras/bootstrap.js $(HOME)/wcs/int3/web/utk/o2scl
+	cp extras/bootstrap-responsive.css $(HOME)/wcs/int3/web/utk/o2scl
+	cp extras/jquery-2.0.3.min.js $(HOME)/wcs/int3/web/utk/o2scl
 
 o2scl-doc-recursive: o2scl-doc
 	cd eos && $(MAKE) o2scl-doc
