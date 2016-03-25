@@ -83,6 +83,10 @@ namespace o2scl {
       }
       vars[st_var]=x;
       double y=calc.eval(&vars);
+      //std::cout << "Debug: " << calc.RPN_to_string() << std::endl;
+      //std::cout << "Here: " << y << " " << p[0]*exp(x)+p[1]*sqrt(x)
+      //<< std::endl;
+      //exit(-1);
       return y;
     }
 

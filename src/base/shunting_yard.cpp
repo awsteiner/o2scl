@@ -66,6 +66,12 @@ std::map<std::string, int> calculator::buildOpPrecedence() {
   // Create the operator precedence map based on C++ default
   // precedence order as described on cppreference website:
   // http://en.cppreference.com/w/c/language/operator_precedence
+  opp["sin"]  = 2;
+  opp["cos"]  = 2;
+  opp["tan"]  = 2;
+  opp["sqrt"]  = 2;
+  opp["log"]  = 2;
+  opp["exp"]  = 2;
   opp["^"]  = 2;
   opp["*"]  = 3;
   opp["/"]  = 3;
@@ -83,12 +89,6 @@ std::map<std::string, int> calculator::buildOpPrecedence() {
   opp["&&"] = 11;
   opp["||"] = 12;
   opp["("]  = 16;
-  opp["sin"]  = 17;
-  opp["cos"]  = 18;
-  opp["tan"]  = 19;
-  opp["sqrt"]  = 20;
-  opp["log"]  = 21;
-  opp["exp"]  = 22;
 
   return opp;
 }
@@ -103,8 +103,8 @@ bool calculator::isvariablechar(const char c) {
 
 TokenQueue_t calculator::toRPN(const char* expr,
 			       std::map<std::string, double>* vars,
-			       std::map<std::string, int> opPrec,
-			       bool debug) {
+			       bool debug,
+			       std::map<std::string, int> opPrec) {
 
   TokenQueue_t rpnQueue;
   std::stack<std::string> operatorStack;
@@ -274,10 +274,11 @@ TokenQueue_t calculator::toRPN(const char* expr,
 }
 
 double calculator::calculate(const char* expr,
-			     std::map<std::string, double>* vars) {
+			     std::map<std::string, double>* vars,
+			     bool debug) {
 
   // Convert to RPN with Dijkstra's Shunting-yard algorithm.
-  TokenQueue_t rpn = toRPN(expr,vars);
+  TokenQueue_t rpn = toRPN(expr,vars,debug,opPrecedence);
 
   double ret = calculate(rpn);
 
@@ -396,18 +397,20 @@ calculator::~calculator() {
 
 calculator::calculator(const char* expr,
 		       std::map<std::string, double>* vars,
+		       bool debug,
 		       std::map<std::string, int> opPrec) {
-  compile(expr,vars,opPrec);
+  compile(expr,vars,debug,opPrec);
 }
 
 void calculator::compile(const char* expr,
 			 std::map<std::string, double>* vars,
+			 bool debug,
 			 std::map<std::string, int> opPrec) {
 
   // Make sure it is empty:
   cleanRPN(this->RPN);
 
-  this->RPN = calculator::toRPN(expr, vars, opPrec);
+  this->RPN = calculator::toRPN(expr,vars,debug,opPrec);
 }
 
 double calculator::eval(std::map<std::string, double>* vars) {

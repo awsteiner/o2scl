@@ -3,9 +3,9 @@
 
     This documentation is from development version 0.919.
 
-    The current version is 0.918. The source distribution can 
+    The current version is 0.919. The source distribution can 
     be obtained from \n
-    - \c https://github.com/awsteiner/o2scl/releases/download/v0.918/o2scl-0.918.tar.gz
+    - \c https://github.com/awsteiner/o2scl/releases/download/v0.919/o2scl-0.919.tar.gz
 
     You may also download \o2 from the Github
     repository. To obtain the most recent development version, 
@@ -46,6 +46,7 @@
     o2scl-0.916.tar.gz | 748a2bb1ebc5169f1d6ba36b6e64b40c
     o2scl-0.917.tar.gz | cedd7c408574c643d7e829a14542e814
     o2scl-0.918.tar.gz | 5749e0fe55c6837fcd1f975ecc307bfb  
+    o2scl-0.918.tar.gz | 
 
     Release tarball    | SHA256 digest
     -------------------|-----------------------------------------------------------------
@@ -75,6 +76,7 @@
     o2scl-0.916.tar.gz | 2046d753263315000a710056fe53fd02314a7f42ab790cc112de5997cfa61855
     o2scl-0.917.tar.gz | 8d8fc13d565f46e85a33bf75a180ed2780bc31b04084de1fbd61683355876f8c
     o2scl-0.918.tar.gz | d5c3bafd57dca10ee9b7c8a60708ac0537dfe31eef4e88eafeacfd62b3ee674c
+    o2scl-0.919.tar.gz | 
 
     Version | Date     | Rev. in Sourceforge SVN | Github repo hash                        
     --------|----------|-------------------------|-----------------------------------------
@@ -103,65 +105,6 @@
     0.916   | 08/25/14 | 1136                    | daf5267b9d05c2084cbee1d3fcd02625990f90db
     0.917   | 02/18/15 | 1275                    | d4b331e7419db75d00545945bc22790100513261
     0.918   | 07/24/15 |                         | e317843ffbf5638896b0b04aea4f6f689efedbad
+    0.919   | 07/24/15 |                         | 
 
-    \comment
-
-    Version 0.918 and later don't have mappings to the old svn repository
-
-    Version 0.917 corresponds with version 1275 in the svn repository.
-
-    Version 0.916 corresponds with version 1136 in the svn repository.
-
-    Version 0.915 corresponds with version 1052 in the svn repository.
-
-    Version 0.914 corresponds with version 951 in the svn repository.
-
-    Version 0.913 corresponds with version 787 in the svn repository.
-
-    Version 0.912 corresponds with version 588 in the svn repository.
-
-    Version 0.911 corresponds with version 481 in the svn repository.
-
-    Version 0.910 corresponds with version 376 in the svn repository.
-
-    Version 0.909 corresponds with version 317 in the svn repository.
-
-    Version 0.908 corresponds with version 200 in the svn repository.
-
-    Version 0.907 corresponds with version 107 in the svn repository.
-
-    Version 0.906 corresponds with version 54 in the svn repository.
-
-    Version 0.905 corresponds with version 48 in the svn repository.
-
-    Version 0.904 corresponds with version 40 in the svn repository.
-
-    Version 0.903 does not exist (this number was skipped)
-
-    Version 0.902 corresponds with version 37 in the svn respository.
-
-    Version 0.901 corresponds with version 31 in the svn respository.
-
-    Version 0.9 corresponds with version 26 in the svn respository.
-
-    Version 0.806 was a quick release to fix some issues with
-    compilations in Mac OS X and does not correspond exactly 
-    with a version in the repository. 
-
-    Version 0.805 corresponds with version 16 in the svn respository.
-
-    Version 0.804 corresponds with version 5 in the svn respository.
-    \endcomment
-*/
-/*
-  \htmlonly
-  <table border=0>
-  <tr><td>Release version number</td><td>SVN repository number</td></tr>
-  <tr><td>0.901</td><td>31</td></tr>
-  <tr><td>0.9</td><td>26</td></tr>
-  <tr><td>0.806</td><td>none</td></tr>
-  <tr><td>0.805</td><td>16</td></tr>
-  </table>
-  \endhtmlonly
-  
 */

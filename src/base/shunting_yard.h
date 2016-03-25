@@ -126,7 +126,8 @@ namespace o2scl {
 	\c vars
      */
     static double calculate(const char* expr,
-			    std::map<std::string, double>* vars = 0);
+			    std::map<std::string, double>* vars = 0,
+			    bool debug=false);
 
   private:
 
@@ -147,8 +148,8 @@ namespace o2scl {
      */
     static TokenQueue_t toRPN(const char* expr,
 			      std::map<std::string, double>* vars,
-			      std::map<std::string, int> opPrec=opPrecedence,
-			      bool debug=false);
+			      bool debug=false,
+			      std::map<std::string, int> opPrec=opPrecedence);
 
   private:
 
@@ -169,6 +170,7 @@ namespace o2scl {
      */
     calculator(const char* expr,
 	       std::map<std::string, double> *vars=0,
+	       bool debug=false,
 	       std::map<std::string, int> opPrec=opPrecedence);
     
     /** \brief Compile expression \c expr using variables 
@@ -176,6 +178,7 @@ namespace o2scl {
     */
     void compile(const char* expr,
 		 std::map<std::string, double> *vars=0,
+		 bool debug=false,
 		 std::map<std::string, int> opPrec=opPrecedence);
     
     /** \brief Evalate the previously compiled expression using

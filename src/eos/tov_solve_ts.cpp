@@ -238,7 +238,7 @@ int main(void) {
     "*exp(-gp)*omega_rat/sqrt(1-schwarz*gm/(r+1.0e-12))";
   tab->functions_columns(sfunc);
   double mom=tab->integ("r",0.0,at.rad,"iand");
-  t.test_rel(mom,67.7,1.5e-1,"I method 1");
+  t.test_rel(mom,67.7,1.5e-2,"I method 1");
   double mom2=at.domega_rat*pow(at.rad,4.0)/3.0/schwarz_km;
   t.test_rel(mom2,67.7,1.5e-2,"I method 2");
   // Crustal fraction of the moment of inertia

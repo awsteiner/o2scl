@@ -119,6 +119,15 @@ int main(void) {
   calc.compile("-exp(0.2+sin(4+5))",0);
   cout << calc.RPN_to_string() << endl;
   t.test_gen(calc.eval(0)==-exp(0.2+sin(4+5)),"calc25");
+  calc.compile("-exp(0.2)+sin(4)",0);
+  cout << calc.RPN_to_string() << endl;
+  t.test_gen(calc.eval(0)==-exp(0.2)+sin(4),"calc26");
+  calc.compile("exp(0.2)+sin(4)",0);
+  cout << calc.RPN_to_string() << endl;
+  t.test_gen(calc.eval(0)==exp(0.2)+sin(4),"calc27");
+  calc.compile("exp(0.2)^2*sin(4)",0);
+  cout << calc.RPN_to_string() << endl;
+  t.test_gen(calc.eval(0)==pow(exp(0.2),2.0)*sin(4),"calc28");
 
   t.report();
   return 0;
