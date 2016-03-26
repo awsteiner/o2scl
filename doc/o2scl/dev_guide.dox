@@ -4,18 +4,21 @@
     <h1>Developer guidelines</h1>
     \endhtmlonly
     
+    This set of guidelines is intended for \o2 developers.
+
     \comment
     This page is primarily designed as an internal section for
     developers only, while related sections in the User's guide are
     aimed at advanced end-users.
     \endcomment
 
-    Release procedure
+    <b>Release procedure</b>
     - Make sure version numbers are updated in configure.ac, 
     doc/o2scl/doxyfile, doc/o2scl/main.dox, and tables in dl_page.dox
     are updated with "not yet set" for the new version hashes.
     - For most recent commit, make sure the tests, examples, and
-    documentation all succeed. 
+    documentation all succeed. Check source installs on ubuntu and
+    OS X and a homebrew HEAD install.
     - Update NEWS file with recent changes.
     - Make the final commit targeted for release.
     - Refresh the documentation using "make o2scl-doc".
@@ -24,14 +27,17 @@
     the distribution.
     - Compute hashes and update dl_page.dox wish hashes and github
     release hash.
+    - Update internal svn web file storing sha256 hash.
     - Regenerate documentation and copy dl_page.html to internal
     svn repo.
     - Run "make utk-sync-doc" in doc/o2scl in order to move new docs
     to the internal svn repo.
     - Go to the internal web page copy and run "make puto" to publish
-    web docs.
-
-    This set of guidelines is intended for \o2 developers.
+    web docs, new distribution, and new sha256 hash.
+    - Update homebrew recipe.
+    - Check installation using homebrew directly.
+    - Turn on build pushes in travis-ci.org and commit again since
+    dl_page.dox has changed. 
 
     <b>General coding guidelines:</b>
     - Comment code liberally. 
