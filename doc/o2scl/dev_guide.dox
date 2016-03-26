@@ -10,6 +10,27 @@
     aimed at advanced end-users.
     \endcomment
 
+    Release procedure
+    - Make sure version numbers are updated in configure.ac, 
+    doc/o2scl/doxyfile, doc/o2scl/main.dox, and tables in dl_page.dox
+    are updated with "not yet set" for the new version hashes.
+    - For most recent commit, make sure the tests, examples, and
+    documentation all succeed. 
+    - Update NEWS file with recent changes.
+    - Make the final commit targeted for release.
+    - Refresh the documentation using "make o2scl-doc".
+    - Create the new distribution and copy to internal svn repo.
+    - Create github release, tagging the recent commit and uploading
+    the distribution.
+    - Compute hashes and update dl_page.dox wish hashes and github
+    release hash.
+    - Regenerate documentation and copy dl_page.html to internal
+    svn repo.
+    - Run "make utk-sync-doc" in doc/o2scl in order to move new docs
+    to the internal svn repo.
+    - Go to the internal web page copy and run "make puto" to publish
+    web docs.
+
     This set of guidelines is intended for \o2 developers.
 
     <b>General coding guidelines:</b>
