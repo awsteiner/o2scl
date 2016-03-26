@@ -111,8 +111,8 @@ int main(int argv, char *argc[]) {
   hdf_file hf2;
   hf.open_or_create("ex_nucleus_rmf_prof.o2");
   hf2.open_or_create("ex_nucleus_rmf_chden.o2");
-  o2_shared_ptr<table_units<> >::type profiles=rn.get_profiles();
-  o2_shared_ptr<table_units<> >::type charge_dens=rn.get_chden();
+  std::shared_ptr<table_units<> > profiles=rn.get_profiles();
+  std::shared_ptr<table_units<> > charge_dens=rn.get_chden();
   hdf_output(hf,*profiles,"profiles");
   hdf_output(hf2,*charge_dens,"charge_densities");
   hf.close();

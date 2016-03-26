@@ -67,11 +67,11 @@ int main(void) {
   nst.set_eos(rmf);
   nst.verbose=1;
   nst.calc_eos();
-  o2_shared_ptr<table_units<> >::type te=nst.get_eos_results();
+  std::shared_ptr<table_units<> > te=nst.get_eos_results();
 
   // Compute mass vs. radius
   nst.calc_nstar();
-  o2_shared_ptr<table_units<> >::type tr=nst.get_tov_results();
+  std::shared_ptr<table_units<> > tr=nst.get_tov_results();
   cout << "Maximum mass: " << tr->max("gm") << endl;
   cout << "Radius of maximum mass star: " 
        << tr->get("r",tr->lookup("gm",tr->max("gm"))) << endl;

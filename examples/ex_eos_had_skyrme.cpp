@@ -404,8 +404,8 @@ public:
 
     cout << "Neutron stars:" << endl;
     nst.calc_nstar();
-    o2_shared_ptr<table_units<> >::type te=nst.get_eos_results();
-    o2_shared_ptr<table_units<> >::type tr=nst.get_tov_results();
+    std::shared_ptr<table_units<> > te=nst.get_eos_results();
+    std::shared_ptr<table_units<> > tr=nst.get_tov_results();
 
     if (output_files) {
       // Output EOS and M vs. R curve to file

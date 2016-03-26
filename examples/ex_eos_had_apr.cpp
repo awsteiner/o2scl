@@ -1124,7 +1124,7 @@ public:
     // Get results
     
     atov.mvsr();
-    o2_shared_ptr<table_units<> >::type tov_tmp=atov.get_results();
+    std::shared_ptr<table_units<> > tov_tmp=atov.get_results();
     cout << "Maximum mass is " << tov_tmp->max("gm") 
 	 << " solar masses." << endl;
     t.test_rel(tov_tmp->max("gm"),2.191338,5.0e-4,"max mass.");
@@ -1141,7 +1141,7 @@ public:
     cout << "--------- TOV solver, 1.4 Msun ---------------------\n" << endl;
 
     atov.fixed(1.4);
-    o2_shared_ptr<table_units<> >::type tov_tmp2=atov.get_results();
+    std::shared_ptr<table_units<> > tov_tmp2=atov.get_results();
     cout << "Aprpoximate radius of a 1.4 solar mass neutron star is " 
 	 << tov_tmp2->get("r",tov_tmp2->lookup("gm",1.4)) << " km." << endl;
     t.test_rel(tov_tmp2->get("r",tov_tmp2->lookup("gm",1.4)),11.46630,

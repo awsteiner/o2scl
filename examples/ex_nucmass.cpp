@@ -91,7 +91,7 @@ int main(void) {
   // Create a list of all of the experimental masses
 
   vector<nucleus> ame_dist;
-  nucdist_set(ame_dist,ame,"N>7 & Z>7");
+  nucdist_set(ame_dist,ame,"N>7 && Z>7");
 
   // ------------------------------------------------------
   // Fit the semi-empirical and DvI (2009) mass formulas to 
