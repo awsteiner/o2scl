@@ -36,7 +36,7 @@ emacs-clean:
 	rm -f */*/*/*/*~
 
 utk-sync-doc:
-	cp -r $(HOME)/install/o2scl-0.919/doc/o2scl \
+	cp -r $(HOME)/install/o2scl-0.920/doc/o2scl \
 		$(HOME)/wcs/int3/web/utk
 	cp extras/index.html $(HOME)/wcs/int3/web/utk/o2scl
 	cp extras/bootstrap.css $(HOME)/wcs/int3/web/utk/o2scl

@@ -40,9 +40,9 @@ help:
 	@echo 
 
 latest:
-	cp o2scl-0.919.tar.gz ~/wcs/int3/web/utk/o2scl
-	openssl dgst -sha256 o2scl-0.919.tar.gz > \
-		~/wcs/int3/web/utk/o2scl/o2scl-0.919.sha256
+	cp o2scl-0.920.tar.gz ~/wcs/int3/web/utk/o2scl
+	openssl dgst -sha256 o2scl-0.920.tar.gz > \
+		~/wcs/int3/web/utk/o2scl/o2scl-0.920.sha256
 	cd ~/wcs/int3/web; $(MAKE) puto
 
 # Create a distribution without documentation (not recently tested)
