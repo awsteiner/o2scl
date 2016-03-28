@@ -76,10 +76,7 @@ int main(void) {
 
   string cmd=((string)"cp ")+o2scl_settings.get_data_dir()+
     "/rmfdata/FSUGold.o2 temp.o2";
-  system(cmd.c_str());
-  cmd=((string)"cp ")+o2scl_settings.get_data_dir()+
-    "/rmfdata/FSUGold.o2 temp2.o2";
-  system(cmd.c_str());
+  int ret=system(cmd.c_str());
 
   eos_had_rmf re;
 
