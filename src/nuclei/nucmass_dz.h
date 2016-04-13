@@ -107,12 +107,12 @@ namespace o2scl {
       nucmass::m_prot are adjusted to make sure that the mass
       excesses match the values given in the original.
       
-      \future This class is cannot be used for very large nuclei
-      because the index <tt>i</tt> becomes larger than <tt>imax</tt>
-      and then statements like <tt>noc[i][j]=moc-ju</tt> and
-      <tt>noc[i+1][j]=ju</tt> become invalid. This needs to be more
-      carefully understood and documented. For now, is_included() just
-      arbitrarily chooses 240 as a maximum for N and Z.
+      \todo This appears to be limited for large nuclei because 'i'
+      becomes larger than imax and then statements like
+      noc[i][j]=moc-ju and noc[i+1][j]=ju become invalid. This needs
+      to be more carefully understood and documented. For now,
+      is_included() just arbitrarily chooses 240 as a maximum for N
+      and Z. 
       \comment
       Are there any bound nuclei for which the arrays aren't 
       sufficient? Maybe not, in which case there isn't really a
