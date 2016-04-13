@@ -3,11 +3,10 @@
     A basic data structure for nuclei, class \ref o2scl::nucleus, is
     implemented as a child of of \ref o2scl::part. 
 
-    Nuclear masses are given as children of \ref o2scl::nucmass
-    and are generally of two types: tables of masses (children
-    of \ref o2scl::nucmass_table) or formulas which generate masses
-    from a set of parameters and can be fit to data 
-    (\ref o2scl::nucmass_fit). 
+    Nuclear masses are given as children of \ref o2scl::nucmass and
+    are generally of two types: tables of masses (children of \ref
+    o2scl::nucmass_table) or formulas which generate masses from a set
+    of parameters and can be fit to data (\ref o2scl::nucmass_fit).
 
     There are eleven mass table types currently included.
     - \ref o2scl::nucmass_ame and \ref o2scl::nucmass_ame_exp : data from 

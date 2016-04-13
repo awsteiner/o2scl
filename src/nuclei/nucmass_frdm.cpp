@@ -51,22 +51,26 @@ nucmass_frdm::nucmass_frdm() {
   ca=0.436;
   C=60.0;
   gamma=0.831;
-  amu=931.5014;
+  m_amu=931.5014;
   //nfit=12;
   nfit=10;
 
   kg_to_invfm=o2scl_settings.get_convert_units().convert("kg","1/fm",1.0);
+  m_neut=Mn+m_amu;
+  //m_prot=m_amu+MH-m_elec;
 
 }
 
-double nucmass_frdm::mass_excess_d(double Z, double N) {
+double nucmass_frdm::mass_excess(int Z, int N) {
   double ret;
-      
-  double A=Z+N;
-  double cN=cbrt(N);
-  double cZ=cbrt(Z);
+
+  double dZ=((double)Z);
+  double dN=((double)N);
+  double A=dZ+dN;
+  double cN=cbrt(dN);
+  double cZ=cbrt(dZ);
   double cA=cbrt(A);
-  double I=(N-Z)/A;
+  double I=(dN-dZ)/A;
       
   // Ansatz for computing nuclear radius
   // This should imply a saturation density
@@ -117,31 +121,31 @@ double nucmass_frdm::mass_excess_d(double Z, double N) {
 
   // Average bulk nuclear asymmetry, which
   // goes like \f$ (I,Z A^{-2/3} B1^{-1}) / (1,B1^{-1}) \f$.
-  deltabar=(I+3.0/16.0*c1/Q*Z/cA/cA*Bv*Bs/B1)/
+  deltabar=(I+3.0/16.0*c1/Q*dZ/cA/cA*Bv*Bs/B1)/
     (1.0+2.25*J/Q/cA*Bs*Bs/B1);
 
   // Average relative deviation of bulk density
   epsbar=(C*exp(-gamma*cA)-2.0*a2*B2/cA+L*deltabar*deltabar+
-	  c1*Z*Z/A/cA*B4)/K;
+	  c1*dZ*dZ/A/cA*B4)/K;
       
   // Pairing contribution
   double tm=0.0, tm2;
-  if (((int)Z)%2==1 && ((int)N)%2==1) {
+  if (Z%2==1 && N%2==1) {
     if (Z==N) tm=1.0/A;
     tm2=Deltap+Deltan-deltanp;
-  } else if (((int)Z)%2==1 && ((int)N)%2==0) {
+  } else if (Z%2==1 && N%2==0) {
     tm2=Deltap;
-  } else if (((int)N)%2==1) {
+  } else if (N%2==1) {
     tm2=Deltan;
   } else {
     tm2=0.0;
   }
       
-  ret=MH*Z+Mn*N+(-a1+J*deltabar*deltabar-0.5*K*epsbar*epsbar)*A
+  ret=MH*dZ+Mn*dN+(-a1+J*deltabar*deltabar-0.5*K*epsbar*epsbar)*A
     +(a2*B1+2.25*J*J/Q*deltabar*deltabar*Bs*Bs/B1)*cA*cA
-    +a3*cA*Bk+c1*Z*Z/cA*B3-c2*Z*Z*cA*Br-c4*Z*cZ/cA
-    -c5*Z*Z*Bw*Bs/B1+f0*Z*Z/A-ca*(N-Z)+W*(fabs(I)+tm)+tm2
-    -ael*pow(Z,2.39);
+    +a3*cA*Bk+c1*dZ*dZ/cA*B3-c2*dZ*dZ*cA*Br-c4*dZ*cZ/cA
+    -c5*dZ*dZ*Bw*Bs/B1+f0*dZ*dZ/A-ca*(dN-dZ)+W*(fabs(I)+tm)+tm2
+    -ael*pow(dZ,2.39);
       
   return ret;
 }
@@ -162,7 +166,7 @@ int nucmass_frdm::fit_fun(size_t nv, const ubvector &x) {
   return 0;
 
 }
-
+    
 int nucmass_frdm::guess_fun(size_t nv, ubvector &x) {
   x[0]=K/200.0;
   x[1]=r0;
@@ -191,8 +195,8 @@ double nucmass_frdm::drip_binding_energy_d
 }
 
 double nucmass_frdm::drip_mass_excess_d(double Z, double N,
-				     double np_out, double nn_out,
-				     double chi) {
+					double np_out, double nn_out,
+					double chi) {
   double ret;
       
   double dN=N;
@@ -300,6 +304,9 @@ double nucmass_frdm::drip_mass_excess_d(double Z, double N,
 
 nucmass_mnmsk::nucmass_mnmsk() {
   n=0;
+  m_amu=931.5014;
+  //m_neut=Mn+m_amu;
+  //m_prot=m_amu+MH-m_elec;
 }
 
 nucmass_mnmsk::~nucmass_mnmsk() {

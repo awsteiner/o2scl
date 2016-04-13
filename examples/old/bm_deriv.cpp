@@ -25,9 +25,9 @@
 #include <config.h>
 #endif
 
-#include <o2scl/cern_deriv.h>
-#include <o2scl/gsl_deriv.h>
-#include <o2scl/gsl_rnga.h>
+#include <o2scl/deriv_cern.h>
+#include <o2scl/deriv_gsl.h>
+#include <o2scl/rng_gsl.h>
 #include <o2scl/test_mgr.h>
 
 using namespace std;
@@ -51,11 +51,11 @@ int main(void) {
   t.set_output_level(2);
   double pa, x, gres, cres;
   size_t tmp, t1;
-  gsl_rnga gr;
+  rng_gsl gr;
   
-  funct_fptr_noerr<double> tf(testfun);
-  cern_deriv<double,funct<double> > cd;
-  gsl_deriv<double,funct<double> > gd;
+  funct11 tf=std::bind(testfun,std::placeholders::_1,pa);
+  deriv_cern<> cd;
+  deriv_gsl<> gd;
   gd.h=1.0e-4;
   
   cout.setf(ios::scientific);
@@ -70,8 +70,8 @@ int main(void) {
     n2[i]=0;
   }
   double acc;
-  const size_t NX=10;
-  const size_t N=1000;
+  const size_t NX=100;
+  const size_t N=10000;
   
   for(size_t j=0;j<20;j++) {
     
@@ -79,19 +79,18 @@ int main(void) {
 
     acc=0.0;
     tmp=clock();
-
+    
     for(size_t ix=0;ix<NX;ix++) {
       pa=gr.random();
       x=gr.random();
       for(size_t k=0;k<N;k++) {
-	gres=gd.calc(x,pa,tf);
+	gres=gd.deriv(x,tf);
       }
       double ex=exact(x,pa);
-      cout << j << " " << fabs((gres-ex)/ex) << endl;
       acc+=fabs((gres-ex)/ex);
     }
     acc/=((double)NX);
-    t1=(clock()-tmp)/10000;
+    t1=(clock()-tmp)/((double)N);
     int ix=tti(acc);
     cout << gd.h << " " << acc << " " << ix << endl;
     if (ix>=0 && ix<max_index) {
@@ -102,7 +101,7 @@ int main(void) {
   }
   cout << endl;
 
- cout << "Accuracy   gsl_deriv   deriv" << endl;
+ cout << "Accuracy   deriv_gsl   deriv" << endl;
   cout << "--------------------------------------------------" << endl;
   for(int j=0;j<max_index;j++) {
     if (n[j]>0) {

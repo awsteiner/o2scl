@@ -84,7 +84,7 @@ int main(void) {
   vector<bool> has_data2(h.size());
   vector<bool> has_data3(h.size());
   
-  funct_fptr ff(func);
+  funct11 ff=func;
   std::pair<double,double> res;
   std::function<double (double)> f2=func;
   double x0,x1,x2,min;

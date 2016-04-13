@@ -240,7 +240,8 @@ namespace o2scl {
       
 	iter++;
 	iterate(f);
-	status=gsl_root_test_interval(x_lower,x_upper,0.0,this->tol_abs);
+	status=gsl_root_test_interval(x_lower,x_upper,
+				      this->tol_abs,this->tol_rel);
       
 	if (this->verbose>0) {
 	  double y;
@@ -266,8 +267,6 @@ namespace o2scl {
 
 	if (fabs(y)<this->tol_rel) status=o2scl::success;
       
-	//status=gsl_root_test_interval(x_lower,x_upper,0.0,this->tol_abs);
-      
 	if (this->verbose>0) {
 	  this->print_iter(root,y,iter,fabs(y),this->tol_rel,
 			   "root_brent_gsl (rel)");
@@ -284,7 +283,8 @@ namespace o2scl {
       
 	iter++;
 	iterate(f);
-	status=gsl_root_test_interval(x_lower,x_upper,0.0,this->tol_abs);
+	status=gsl_root_test_interval(x_lower,x_upper,
+				      this->tol_abs,this->tol_rel);
       
 	if (status==o2scl::success) {
 	  double y=f(root);

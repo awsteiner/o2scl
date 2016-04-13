@@ -126,7 +126,8 @@ namespace o2scl {
     std::map<std::string,int,std::greater<std::string> > element_table;
     
     /// A convenient typedef for an iterator for element_table
-    typedef std::map<std::string,int,std::greater<std::string> >::iterator table_it;
+    typedef std::map<std::string,int,std::greater<std::string> >::iterator
+      table_it;
     
     /// The list of elements organized by proton number
     std::string element_list[nelements];
@@ -163,7 +164,7 @@ namespace o2scl {
       m_amu . By default, this are assigned to the values in \ref
       o2scl_mks times \ref o2scl_const::hc_mev_fm , but these default
       values are modified in the constructors of some children
-      classes.
+      classes. 
 
       Total masses, as returned by \ref total_mass() and \ref
       total_mass_d() , are the mass of the nuclide without the
@@ -320,7 +321,6 @@ namespace o2scl {
       Generally, descendants of this class only need to provide an
       implementation of \ref mass_excess() and possibly a version
       of \ref nucmass::is_included()
-      
   */
   class nucmass_table : public nucmass {
     

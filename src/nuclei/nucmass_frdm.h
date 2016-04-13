@@ -42,6 +42,21 @@ namespace o2scl {
       
       The spherically-symmetric, macroscopic part of the finite-range
       droplet model from \ref Moller95 .
+
+      The constructor sets \ref nucmass::m_amu and \ref nucmass::m_neut to 
+      the values from \ref Moller95. 
+      \comment
+      The value of 
+      \ref nucmass::m_prot is set so that
+      \f[
+      m_{\mathrm{prot}} + m_{\mathrm{elec}} = m_{\mathrm{amu}} + m_{H}
+      \f]
+      where \f$ m_H \f$ is the hydrogen atom mass excess from
+      \ref Moller95 .
+      \todo This is a hack. We should set m_prot to a value 
+      consistent with both \ref nucmass::electron_binding() 
+      and the value of <tt>MH</tt>.
+      \endcomment
   
       Using the relations
       \f[
@@ -94,14 +109,14 @@ namespace o2scl {
       with \f$ r_0 = 1.16 \f$ fm, then 
       \f$ n_0 = 0.152946 \mathrm{fm}^{-3} \f$.
 
-      \todo Fix pairing energy and double vs. int
-      \todo Document drip_binding_energy(), etc.
-      \todo Decide on number of fit parameters (10 or 12?) or
-      let the user decide
-      \todo Document the protected variables
-      \todo Set the neutron and proton masses and hbarc to Moller et al.'s 
-      values
+      \note The function \ref mass_excess_d() directly casts its
+      arguments to integers before calling \ref mass_excess(), thus
+      the user must be careful about roundoff error.
 
+      \todo Document drip_binding_energy(), etc.
+      \todo Document the protected variables
+
+      \future Allow the user to fit <tt>rmac</tt> and <tt>h</tt> as well.
       \future Add microscopic part.
   */
   class nucmass_frdm : public nucmass_fit_base {
@@ -172,12 +187,12 @@ namespace o2scl {
     double Rp;
 
     /// Given \c Z and \c N, return the mass excess in MeV
-    virtual double mass_excess_d(double Z, double N);
-
-    /// Given \c Z and \c N, return the mass excess in MeV
-    virtual double mass_excess(int Z, int N) {
-      return mass_excess_d(Z,N);
+    virtual double mass_excess_d(double Z, double N) {
+      return mass_excess(((int)Z),((int)N));
     }
+    
+    /// Given \c Z and \c N, return the mass excess in MeV
+    virtual double mass_excess(int Z, int N);
 
     /// Fix parameters from an array for fitting
     virtual int fit_fun(size_t nv, const ubvector &x);

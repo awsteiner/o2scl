@@ -629,7 +629,7 @@ void test_quartic_complex(quartic_complex *po, string str,
 		      abs(ce-cep)*abs(ce-cep));
 	      q2=sqrt(abs(czo1)*abs(czo1)+abs(czo2)*abs(czo2)+
 		      abs(czo3)*abs(czo3)+abs(czo4)*abs(czo4));
-	      if (!o2scl::is_finite(q1)) {
+	      if (!finite(q1)) {
 		cout << cr1 << " " << cr2 << " " << cr3 << " " << cr4 << endl;
 		exit(-1);
 	      }

@@ -156,6 +156,7 @@ namespace o2scl {
      */
     root_cern<> def_psi_root;
 
+    /// Return string denoting type ("boson_eff")
     virtual const char *type() { return "boson_eff"; }
 
 #ifndef DOXYGEN_INTERNAL

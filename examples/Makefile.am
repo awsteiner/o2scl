@@ -29,9 +29,10 @@ help:
 SUBDIRS = plot
 
 if O2SCL_EOSLIB
-BENCHMARK_PRGS = bm_poly.scr bm_mmin.scr 
-	bm_mroot.scr bm_rkck.scr bm_mroot2.scr bm_lu.scr \
-	bm_part.scr bm_part2.scr bm_root.scr bm_min.scr
+BENCHMARK_PRGS = bm_poly.scr bm_root.scr bm_min.scr
+#	bm_mroot.scr bm_rkck.scr bm_mroot2.scr bm_lu.scr \
+#	bm_part.scr bm_part2.scr 
+# bm_mmin.scr
 EXAMPLE_PRGS = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 	ex_nstar_cold.scr ex_mroot.scr ex_mmin.scr ex_eos_had_apr.scr \
 	ex_inte.scr ex_deriv.scr ex_part.scr ex_ode.scr ex_anneal.scr \
@@ -45,9 +46,10 @@ EXAMPLE_PRGS = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 
 else
 
-BENCHMARK_PRGS = bm_poly.scr bm_mmin.scr \
-	bm_mroot.scr bm_rkck.scr bm_mroot2.scr bm_lu.scr \
-	bm_root.scr bm_min.scr
+BENCHMARK_PRGS = bm_poly.scr bm_root.scr bm_min.scr
+#	bm_mroot.scr bm_rkck.scr bm_mroot2.scr bm_lu.scr \
+#bm_mmin.scr 
+
 EXAMPLE_PRGS = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 	ex_mroot.scr ex_mmin.scr ex_inte.scr ex_deriv.scr \
 	ex_ode.scr ex_anneal.scr ex_mcarlo.scr ex_string.scr ex_mmin_fix.scr \
@@ -149,18 +151,18 @@ EXTRA_PROGRAMS = \
 	ex_conmin \
 	ex_nucleus_rmf \
 	ex_lambda \
-	bm_lu \
-	bm_deriv \
-	bm_mmin \
-	bm_mroot2 \
-	bm_mroot \
 	bm_root \
 	bm_min \
-	bm_part \
-	bm_poly \
-	bm_rk8pd \
-	bm_rkck \
-	bm_part2 
+	bm_poly 
+#	bm_lu \
+#	bm_deriv \
+#	bm_mmin \
+#	bm_mroot2 \
+#	bm_mroot \
+#	bm_part \
+#	bm_rk8pd \
+#	bm_rkck \
+#	bm_part2 
 
 else
 
@@ -189,16 +191,17 @@ EXTRA_PROGRAMS = ex_fptr \
 	ex_poly \
 	ex_conmin \
 	ex_lambda \
-	bm_lu \
-	bm_deriv \
-	bm_mmin \
-	bm_mroot2 \
 	bm_root \
 	bm_min \
-	bm_mroot \
-	bm_poly \
-	bm_rk8pd \
-	bm_rkck 
+	bm_poly 
+
+#	bm_lu \
+#	bm_deriv \
+#	bm_mmin \
+#	bm_mroot2 \
+#	bm_mroot \
+#	bm_rk8pd \
+#	bm_rkck 
 
 endif
 
@@ -381,25 +384,25 @@ ex_nucleus_rmf.scr: ex_nucleus_rmf
 # benchmark rule
 # -------------------------------------------------------------
 
-bm_deriv_LDADD = $(OOLIBS) $(OOLIBSTWO)
-bm_deriv_SOURCES = bm_deriv.cpp
-bm_deriv.scr: bm_deriv bm_deriv.cpp
-	./bm_deriv > bm_deriv.scr
+# bm_deriv_LDADD = $(OOLIBS) $(OOLIBSTWO)
+# bm_deriv_SOURCES = bm_deriv.cpp
+# bm_deriv.scr: bm_deriv bm_deriv.cpp
+# 	./bm_deriv > bm_deriv.scr
 
-bm_mmin_LDADD = $(OOLIBS) $(OOLIBSTWO)
-bm_mmin_SOURCES = bm_mmin.cpp
-bm_mmin.scr: bm_mmin bm_mmin.cpp
-	./bm_mmin > bm_mmin.scr
+# bm_mmin_LDADD = $(OOLIBS) $(OOLIBSTWO)
+# bm_mmin_SOURCES = bm_mmin.cpp
+# bm_mmin.scr: bm_mmin bm_mmin.cpp
+# 	./bm_mmin > bm_mmin.scr
 
-bm_lu_LDADD = $(OOLIBS) $(OOLIBSTWO)
-bm_lu_SOURCES = bm_lu.cpp
-bm_lu.scr: bm_lu bm_lu.cpp
-	./bm_lu > bm_lu.scr
+# bm_lu_LDADD = $(OOLIBS) $(OOLIBSTWO)
+# bm_lu_SOURCES = bm_lu.cpp
+# bm_lu.scr: bm_lu bm_lu.cpp
+# 	./bm_lu > bm_lu.scr
 
-bm_mroot2_LDADD = $(OOLIBS) $(OOLIBSTWO)
-bm_mroot2_SOURCES = bm_mroot2.cpp
-bm_mroot2.scr: bm_mroot2 bm_mroot2.cpp
-	./bm_mroot2 > bm_mroot2.scr
+# bm_mroot2_LDADD = $(OOLIBS) $(OOLIBSTWO)
+# bm_mroot2_SOURCES = bm_mroot2.cpp
+# bm_mroot2.scr: bm_mroot2 bm_mroot2.cpp
+# 	./bm_mroot2 > bm_mroot2.scr
 
 bm_root_LDADD = $(OOLIBS) $(OOLIBSTWO)
 bm_root_SOURCES = bm_root.cpp
@@ -411,35 +414,35 @@ bm_min_SOURCES = bm_min.cpp
 bm_min.scr: bm_min bm_min.cpp
 	./bm_min > bm_min.scr
 
-bm_mroot_LDADD = $(OOLIBS) $(OOLIBSTWO)
-bm_mroot_SOURCES = bm_mroot.cpp
-bm_mroot.scr: bm_mroot bm_mroot.cpp
-	./bm_mroot > bm_mroot.scr
+# bm_mroot_LDADD = $(OOLIBS) $(OOLIBSTWO)
+# bm_mroot_SOURCES = bm_mroot.cpp
+# bm_mroot.scr: bm_mroot bm_mroot.cpp
+# 	./bm_mroot > bm_mroot.scr
 
-bm_part_LDADD = $(OOLIBS) $(OOLIBSTWO)
-bm_part_SOURCES = bm_part.cpp
-bm_part.scr: bm_part bm_part.cpp
-	./bm_part > bm_part.scr
+# bm_part_LDADD = $(OOLIBS) $(OOLIBSTWO)
+# bm_part_SOURCES = bm_part.cpp
+# bm_part.scr: bm_part bm_part.cpp
+# 	./bm_part > bm_part.scr
 
-bm_part2_LDADD = $(OOLIBS) $(OOLIBSTWO)
-bm_part2_SOURCES = bm_part2.cpp
-bm_part2.scr: bm_part2 bm_part2.cpp
-	./bm_part2 > bm_part2.scr
+# bm_part2_LDADD = $(OOLIBS) $(OOLIBSTWO)
+# bm_part2_SOURCES = bm_part2.cpp
+# bm_part2.scr: bm_part2 bm_part2.cpp
+# 	./bm_part2 > bm_part2.scr
 
 bm_poly_LDADD = $(OOLIBS) $(OOLIBSTWO)
 bm_poly_SOURCES = bm_poly.cpp
 bm_poly.scr: bm_poly bm_poly.cpp
 	./bm_poly > bm_poly.scr
 
-bm_rk8pd_LDADD = $(OOLIBS) $(OOLIBSTWO)
-bm_rk8pd_SOURCES = bm_rk8pd.cpp
-bm_rk8pd.scr: bm_rk8pd bm_rk8pd.cpp
-	./bm_rk8pd > bm_rk8pd.scr
+# bm_rk8pd_LDADD = $(OOLIBS) $(OOLIBSTWO)
+# bm_rk8pd_SOURCES = bm_rk8pd.cpp
+# bm_rk8pd.scr: bm_rk8pd bm_rk8pd.cpp
+# 	./bm_rk8pd > bm_rk8pd.scr
 
-bm_rkck_LDADD = $(OOLIBS) $(OOLIBSTWO)
-bm_rkck_SOURCES = bm_rkck.cpp
-bm_rkck.scr: bm_rkck bm_rkck.cpp
-	./bm_rkck > bm_rkck.scr
+# bm_rkck_LDADD = $(OOLIBS) $(OOLIBSTWO)
+# bm_rkck_SOURCES = bm_rkck.cpp
+# bm_rkck.scr: bm_rkck bm_rkck.cpp
+# 	./bm_rkck > bm_rkck.scr
 
 # clean
 
