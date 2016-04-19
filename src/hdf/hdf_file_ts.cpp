@@ -84,7 +84,7 @@ int main(void) {
 
     // Re-open the file, change the string values
 
-    hf.open("hdf_file.o2");
+    hf.open("hdf_file.o2",true);
     s="Test two.";
     hf.sets("tests",s);
     hf.sets_fixed("testsb","Texst.");
@@ -92,7 +92,7 @@ int main(void) {
 
     // Re-open the file, get the scalar values
     
-    hf.open("hdf_file.o2");
+    hf.open("hdf_file.o2",true);
     hf.getc("testc",c2);
     hf.getd("testd",d2);
     hf.get_szt("testu",u2);
@@ -139,7 +139,7 @@ int main(void) {
     
     // Open a file, set the vector values
 
-    hf.open("hdf_file.o2");
+    hf.open("hdf_file.o2",true);
     hf.setc_arr_fixed("testca",4,c);
     hf.setd_arr_fixed("testda",4,d);
     hf.setf_arr_fixed("testfa",4,f);
@@ -207,7 +207,7 @@ int main(void) {
     
     // Open a file, set the vector values
 
-    hf.open("hdf_file.o2");
+    hf.open("hdf_file.o2",true);
     hf.setc_arr("testca2",4,c);
     hf.setd_arr("testda2",4,d);
     hf.setf_arr("testfa2",4,f);
@@ -225,7 +225,7 @@ int main(void) {
 
     // Extend the vectors
 
-    hf.open("hdf_file.o2");
+    hf.open("hdf_file.o2",true);
     hf.setc_arr("testca2",6,c);
     hf.setd_arr("testda2",6,d);
     hf.setf_arr("testfa2",6,f);
@@ -296,7 +296,7 @@ int main(void) {
     // Create the vector datasets
     
     hdf_file hf;
-    hf.open("hdf_file.o2");
+    hf.open("hdf_file.o2",true);
 
     hf.setd_vec("vec1",v1a);
     hf.setd_vec_copy("vec2",v2a);
@@ -320,7 +320,7 @@ int main(void) {
 
     // Extend the vector datasets
     
-    hf.open("hdf_file.o2");
+    hf.open("hdf_file.o2",true);
 
     hf.setd_vec("vec1",v1b);
     hf.setd_vec_copy("vec2",v2b);
@@ -367,7 +367,7 @@ int main(void) {
     // Create the vector datasets
     
     hdf_file hf;
-    hf.open("hdf_file.o2");
+    hf.open("hdf_file.o2",true);
 
     hf.setd_mat_copy("mat1",m1a);
     hf.setd_mat_copy("mat2",m2a);
@@ -387,7 +387,7 @@ int main(void) {
 
     // Extend the vector datasets
     
-    hf.open("hdf_file.o2");
+    hf.open("hdf_file.o2",true);
 
     hf.setd_mat_copy("mat1",m1b);
     hf.setd_mat_copy("mat2",m2b);

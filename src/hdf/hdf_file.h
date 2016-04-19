@@ -128,6 +128,9 @@ namespace o2scl_hdf {
       return ch;
     }
     
+    /// If true, then the file has read and write access 
+    bool write_access;
+    
 #endif
     
   public:
@@ -150,7 +153,8 @@ namespace o2scl_hdf {
 	o2scl::exc_efilenotfound. If the open succeeds, this function
 	returns \ref o2scl::success.
      */
-    int open(std::string fname, bool err_on_fail=true);
+    int open(std::string fname, bool write_access=false,
+	     bool err_on_fail=true);
     
     /// Open a file named \c fname or create if it doesn't already exist
     void open_or_create(std::string fname);

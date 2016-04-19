@@ -39,6 +39,7 @@ hdf_file::hdf_file() {
   current=0;
   file_open=false;
   compr_type=0;
+  write_access=false;
 }
 
 hdf_file::~hdf_file() {
@@ -47,11 +48,15 @@ hdf_file::~hdf_file() {
   }
 }
 
-int hdf_file::open(std::string fname, bool err_on_fail) {
+int hdf_file::open(std::string fname, bool allow_write, bool err_on_fail) {
       
   H5E_BEGIN_TRY
     {
-      file=H5Fopen(fname.c_str(),H5F_ACC_RDWR,H5P_DEFAULT);
+      if (allow_write) {
+	file=H5Fopen(fname.c_str(),H5F_ACC_RDWR,H5P_DEFAULT);
+      } else {
+	file=H5Fopen(fname.c_str(),H5F_ACC_RDONLY,H5P_DEFAULT);
+      }
     } 
   H5E_END_TRY
     if (file<0) {
@@ -61,6 +66,7 @@ int hdf_file::open(std::string fname, bool err_on_fail) {
       }
       return exc_efilenotfound;
     }
+  write_access=allow_write;
   file_open=true;
   current=file;
   return success;
@@ -81,6 +87,7 @@ void hdf_file::open_or_create(std::string fname) {
 	       "' failed in hdf_file::open_or_create().").c_str(),
 	      exc_efilenotfound);
   }
+  write_access=true;
   file_open=true;
   current=file;
   return;
@@ -114,6 +121,10 @@ void hdf_file::set_current_id(hid_t cur) {
 }
 
 void hdf_file::setc(std::string name, char c) { 
+
+  if (write_access==false) {
+    O2SCL_ERR("File not opened with write access.",exc_efailed);
+  }
   
   hid_t dset, space=0;
   bool space_alloc=false;
@@ -166,6 +177,10 @@ void hdf_file::setc(std::string name, char c) {
     
 void hdf_file::setd(std::string name, double d) { 
 
+  if (write_access==false) {
+    O2SCL_ERR("File not opened with write access.",exc_efailed);
+  }
+
   hid_t dset, space=0;
   bool space_alloc=false;
 
@@ -210,6 +225,10 @@ void hdf_file::setd(std::string name, double d) {
     
 void hdf_file::setf(std::string name, float f) { 
 
+  if (write_access==false) {
+    O2SCL_ERR("File not opened with write access.",exc_efailed);
+  }
+
   hid_t dset, space=0;
   bool space_alloc=false;
 
@@ -253,6 +272,10 @@ void hdf_file::setf(std::string name, float f) {
     
 void hdf_file::seti(std::string name, int i) { 
 
+  if (write_access==false) {
+    O2SCL_ERR("File not opened with write access.",exc_efailed);
+  }
+
   hid_t dset, space=0;
   bool space_alloc=false;
 
@@ -295,6 +318,10 @@ void hdf_file::seti(std::string name, int i) {
 }
 
 void hdf_file::set_szt(std::string name, size_t u) { 
+
+  if (write_access==false) {
+    O2SCL_ERR("File not opened with write access.",exc_efailed);
+  }
 
   hid_t dset, space=0;
   bool space_alloc=false;
@@ -344,11 +371,19 @@ void hdf_file::set_szt(std::string name, size_t u) {
 }
     
 void hdf_file::sets(std::string name, std::string s) { 
+  if (write_access==false) {
+    O2SCL_ERR("File not opened with write access.",exc_efailed);
+  }
+
   setc_arr(name,s.length(),s.c_str());
   return;
 }
     
 void hdf_file::sets_fixed(std::string name, std::string s) { 
+
+  if (write_access==false) {
+    O2SCL_ERR("File not opened with write access.",exc_efailed);
+  }
 
   hid_t dset, space=0, filetype=0;
   hsize_t str_size=0;
@@ -943,6 +978,10 @@ int hdf_file::gets_def(std::string name, std::string def, std::string &s) {
 
 int hdf_file::setc_arr_fixed(std::string name, size_t n, const char *c) { 
 
+  if (write_access==false) {
+    O2SCL_ERR("File not opened with write access.",exc_efailed);
+  }
+
   if (n==0) {
     O2SCL_ERR("Tried to call setc_arr_fixed() with n=0.",exc_einval);
   }
@@ -998,6 +1037,10 @@ int hdf_file::setc_arr_fixed(std::string name, size_t n, const char *c) {
 }
 
 int hdf_file::setd_arr_fixed(std::string name, size_t n, const double *d) { 
+
+  if (write_access==false) {
+    O2SCL_ERR("File not opened with write access.",exc_efailed);
+  }
 
   if (n==0) {
     O2SCL_ERR("Tried to call setd_arr_fixed() with n=0.",exc_einval);
@@ -1055,6 +1098,10 @@ int hdf_file::setd_arr_fixed(std::string name, size_t n, const double *d) {
 
 int hdf_file::setf_arr_fixed(std::string name, size_t n, const float *f) { 
 
+  if (write_access==false) {
+    O2SCL_ERR("File not opened with write access.",exc_efailed);
+  }
+
   if (n==0) {
     O2SCL_ERR("Tried to call setf_arr_fixed() with n=0.",exc_einval);
   }
@@ -1110,6 +1157,10 @@ int hdf_file::setf_arr_fixed(std::string name, size_t n, const float *f) {
 }
 
 int hdf_file::seti_arr_fixed(std::string name, size_t n, const int *i) { 
+
+  if (write_access==false) {
+    O2SCL_ERR("File not opened with write access.",exc_efailed);
+  }
 
   if (n==0) {
     O2SCL_ERR("Tried to call seti_arr_fixed() with n=0.",exc_einval);
@@ -1167,6 +1218,10 @@ int hdf_file::seti_arr_fixed(std::string name, size_t n, const int *i) {
     
 int hdf_file::setc_arr(std::string name, size_t n, const char *c) { 
   
+  if (write_access==false) {
+    O2SCL_ERR("File not opened with write access.",exc_efailed);
+  }
+
   hid_t dset, space, dcpl=0;
   bool chunk_alloc=false;
 
@@ -1244,6 +1299,10 @@ int hdf_file::setc_arr(std::string name, size_t n, const char *c) {
 
 int hdf_file::setd_arr(std::string name, size_t n, const double *d) { 
   
+  if (write_access==false) {
+    O2SCL_ERR("File not opened with write access.",exc_efailed);
+  }
+
   hid_t dset, space, dcpl=0;
   bool chunk_alloc=false;
 
@@ -1319,6 +1378,10 @@ int hdf_file::setd_arr(std::string name, size_t n, const double *d) {
 
 int hdf_file::setd_arr_comp(std::string name, size_t n, const double *d) {
   
+  if (write_access==false) {
+    O2SCL_ERR("File not opened with write access.",exc_efailed);
+  }
+
   hid_t dset, space, dcpl=0;
   bool chunk_alloc=false;
 
@@ -1404,6 +1467,10 @@ int hdf_file::setd_arr_comp(std::string name, size_t n, const double *d) {
 
 int hdf_file::setf_arr(std::string name, size_t n, const float *f) { 
   
+  if (write_access==false) {
+    O2SCL_ERR("File not opened with write access.",exc_efailed);
+  }
+
   hid_t dset, space, dcpl=0;
   bool chunk_alloc=false;
 
@@ -1479,6 +1546,10 @@ int hdf_file::setf_arr(std::string name, size_t n, const float *f) {
 
 int hdf_file::seti_arr(std::string name, size_t n, const int *i) { 
   
+  if (write_access==false) {
+    O2SCL_ERR("File not opened with write access.",exc_efailed);
+  }
+
   hid_t dset, space, dcpl=0;
   bool chunk_alloc=false;
 
@@ -1554,6 +1625,10 @@ int hdf_file::seti_arr(std::string name, size_t n, const int *i) {
 
 int hdf_file::set_szt_arr(std::string name, size_t n, const size_t *u) { 
   
+  if (write_access==false) {
+    O2SCL_ERR("File not opened with write access.",exc_efailed);
+  }
+
   hid_t dset, space, dcpl=0;
   bool chunk_alloc=false;
 
@@ -1860,6 +1935,10 @@ hid_t hdf_file::open_group(std::string path) {
     }
   H5E_END_TRY 
     if (group<0) {
+      if (write_access==false) {
+	O2SCL_ERR("File not opened with write access and group not found.",
+		  exc_efailed);
+      }
       group=H5Gcreate(current,path.c_str(),H5P_DEFAULT,
 		      H5P_DEFAULT,H5P_DEFAULT);
     }
@@ -1878,6 +1957,10 @@ hid_t hdf_file::open_group(hid_t init_id, std::string path) {
     }
   H5E_END_TRY 
     if (group<0) {
+      if (write_access==false) {
+	O2SCL_ERR("File not opened with write access and group not found.",
+		  exc_efailed);
+      }
       group=H5Gcreate(current,path.c_str(),H5P_DEFAULT,
 		      H5P_DEFAULT,H5P_DEFAULT);
     }
@@ -1889,6 +1972,9 @@ hid_t hdf_file::open_group(hid_t init_id, std::string path) {
 }
 
 int hdf_file::setd_vec(std::string name, const std::vector<double> &v) {
+  if (write_access==false) {
+    O2SCL_ERR("File not opened with write access.",exc_efailed);
+  }
   if (v.size()==0) {
     return setd_arr(name,0,0);
   }
@@ -1896,6 +1982,9 @@ int hdf_file::setd_vec(std::string name, const std::vector<double> &v) {
 }
 
 int hdf_file::seti_vec(std::string name, const std::vector<int> &v) {
+  if (write_access==false) {
+    O2SCL_ERR("File not opened with write access.",exc_efailed);
+  }
   if (v.size()==0) {
     return seti_arr(name,0,0);
   }
@@ -1903,6 +1992,9 @@ int hdf_file::seti_vec(std::string name, const std::vector<int> &v) {
 }
 
 int hdf_file::set_szt_vec(std::string name, const std::vector<size_t> &v) {
+  if (write_access==false) {
+    O2SCL_ERR("File not opened with write access.",exc_efailed);
+  }
   if (v.size()==0) {
     return set_szt_arr(name,0,0);
   }
@@ -2074,6 +2166,10 @@ int hdf_file::gets_vec(std::string name, std::vector<std::string> &s) {
 
 int hdf_file::sets_vec(std::string name, std::vector<std::string> &s) {
 
+  if (write_access==false) {
+    O2SCL_ERR("File not opened with write access.",exc_efailed);
+  }
+
   // Create the group
   hid_t top=current;
   hid_t group=open_group(name);
@@ -2130,6 +2226,10 @@ int hdf_file::sets_vec(std::string name, std::vector<std::string> &s) {
 
 int hdf_file::setd_mat_copy(std::string name, const ubmatrix &m) {
   
+  if (write_access==false) {
+    O2SCL_ERR("File not opened with write access.",exc_efailed);
+  }
+
   // Copy to a C-style array
   double *d=new double[m.size1()*m.size2()];
   for(size_t i=0;i<m.size1();i++) {
@@ -2245,6 +2345,10 @@ int hdf_file::getd_mat_copy(std::string name, ubmatrix &m) {
 
 int hdf_file::seti_mat_copy(std::string name, const ubmatrix_int &m) {
   
+  if (write_access==false) {
+    O2SCL_ERR("File not opened with write access.",exc_efailed);
+  }
+
   int *d=new int[m.size1()*m.size2()];
   for(size_t i=0;i<m.size1();i++) {
     for(size_t j=0;j<m.size2();j++) {
@@ -2360,6 +2464,10 @@ int hdf_file::setd_ten(std::string name,
 		       const o2scl::tensor<std::vector<double>,
 					   std::vector<size_t> > &t) {
   
+  if (write_access==false) {
+    O2SCL_ERR("File not opened with write access.",exc_efailed);
+  }
+
   hid_t dset, space, dcpl=0;
   bool chunk_alloc=false;
 
