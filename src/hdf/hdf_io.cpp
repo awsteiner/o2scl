@@ -32,6 +32,11 @@ using namespace o2scl_hdf;
 
 void o2scl_hdf::hdf_output(hdf_file &hf, o2scl::table<> &t, std::string name) {
   
+  if (hf.has_write_access()==false) {
+    O2SCL_ERR2("File not opened with write access in hdf_output",
+	       "(hdf_file,table<>,string).",exc_efailed);
+  }
+  
   // Start group
   hid_t top=hf.get_current_id();
   hid_t group=hf.open_group(name);
@@ -54,6 +59,11 @@ void o2scl_hdf::hdf_output(hdf_file &hf, o2scl::table<> &t, std::string name) {
 
 void o2scl_hdf::hdf_output(hdf_file &hf, o2scl::table_units<> &t, 
 			   std::string name) {
+
+  if (hf.has_write_access()==false) {
+    O2SCL_ERR2("File not opened with write access in hdf_output",
+	       "(hdf_file,table_units<>,string).",exc_efailed);
+  }
 
   // Start group
   hid_t top=hf.get_current_id();
@@ -169,6 +179,11 @@ void o2scl_hdf::hdf_output_data(hdf_file &hf, o2scl::table<> &t) {
 
 void o2scl_hdf::hdf_output(hdf_file &hf, hist &h, std::string name) {
   
+  if (hf.has_write_access()==false) {
+    O2SCL_ERR2("File not opened with write access in hdf_output",
+	       "(hdf_file,hist,string).",exc_efailed);
+  }
+
   // Start group
   hid_t top=hf.get_current_id();
   hid_t group=hf.open_group(name);
@@ -287,6 +302,11 @@ void o2scl_hdf::hdf_input(hdf_file &hf, hist &h, std::string name) {
 
 void o2scl_hdf::hdf_output(hdf_file &hf, hist_2d &h, std::string name) {
   
+  if (hf.has_write_access()==false) {
+    O2SCL_ERR2("File not opened with write access in hdf_output",
+	       "(hdf_file,hist_2d,string).",exc_efailed);
+  }
+
   // Start group
   hid_t top=hf.get_current_id();
   hid_t group=hf.open_group(name);
@@ -406,6 +426,11 @@ void o2scl_hdf::hdf_input(hdf_file &hf, hist_2d &h, std::string name) {
 
 void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf, table3d &t, 
 			   std::string name) {
+
+  if (hf.has_write_access()==false) {
+    O2SCL_ERR2("File not opened with write access in hdf_output",
+	       "(hdf_file,table3d,string).",exc_efailed);
+  }
 
   // Start group
   hid_t top=hf.get_current_id();
@@ -597,6 +622,11 @@ void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, table3d &t,
 void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf, expval_scalar &sev,
 			   std::string hdf_name) {
 
+  if (hf.has_write_access()==false) {
+    O2SCL_ERR2("File not opened with write access in hdf_output",
+	       "(hdf_file,expval_scalar,string).",exc_efailed);
+  }
+
   // Start group
   hid_t top=hf.get_current_id();
   hid_t group=hf.open_group(hdf_name);
@@ -658,6 +688,11 @@ void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, expval_scalar &sev,
 
 void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf, expval_vector &vev,
 			   std::string hdf_name) {
+
+  if (hf.has_write_access()==false) {
+    O2SCL_ERR2("File not opened with write access in hdf_output",
+	       "(hdf_file,expval_vector,string).",exc_efailed);
+  }
 
   // Start group
   hid_t top=hf.get_current_id();
@@ -722,6 +757,11 @@ void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, expval_vector &vev,
 
 void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf, expval_matrix &mev, 
 			   std::string hdf_name) {
+
+  if (hf.has_write_access()==false) {
+    O2SCL_ERR2("File not opened with write access in hdf_output",
+	       "(hdf_file,expval_matrix,string).",exc_efailed);
+  }
 
   // Start group
   hid_t top=hf.get_current_id();
@@ -788,6 +828,11 @@ void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, expval_matrix &mev,
 
 void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf, uniform_grid<double> &ug, 
 			   std::string hdf_name) {
+
+  if (hf.has_write_access()==false) {
+    O2SCL_ERR2("File not opened with write access in hdf_output",
+	       "(hdf_file,uniform_grid<double>,string).",exc_efailed);
+  }
 
   // Start group
   hid_t top=hf.get_current_id();
@@ -858,6 +903,11 @@ void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, uniform_grid<double> &ug,
 
 void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf, vector<contour_line> &cl, 
 			   std::string hdf_name) {
+
+  if (hf.has_write_access()==false) {
+    O2SCL_ERR2("File not opened with write access in hdf_output",
+	       "(hdf_file,vector<contour_line>,string).",exc_efailed);
+  }
 
   // Start group
   hid_t top=hf.get_current_id();
@@ -953,6 +1003,11 @@ void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, vector<contour_line> &cl,
 void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf, vector<edge_crossings> &ec, 
 			   std::string hdf_name) {
 
+  if (hf.has_write_access()==false) {
+    O2SCL_ERR2("File not opened with write access in hdf_output",
+	       "(hdf_file,vector<edge_crossings>,string).",exc_efailed);
+  }
+
   // Start group
   hid_t top=hf.get_current_id();
   hid_t group=hf.open_group(hdf_name);
@@ -1045,6 +1100,12 @@ void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, vector<edge_crossings> &ec,
 void o2scl_hdf::hdf_output(hdf_file &hf, o2scl::tensor_grid<std::vector<double>,
 			   std::vector<size_t>> &t, std::string name) {
   
+  if (hf.has_write_access()==false) {
+    O2SCL_ERR2("File not opened with write access in hdf_output(hdf_file,",
+	       "tensor_grid<vector<double>,vector<size_t> >,string).",
+	       exc_efailed);
+  }
+
   // Start group
   hid_t top=hf.get_current_id();
   hid_t group=hf.open_group(name);

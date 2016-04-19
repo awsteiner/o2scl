@@ -139,6 +139,11 @@ namespace o2scl_hdf {
 
     virtual ~hdf_file();
 
+    /// If true, then the file has read and write access 
+    bool has_write_access() {
+    return write_access;
+  }
+    
     /// Desc
     int compr_type;
 
