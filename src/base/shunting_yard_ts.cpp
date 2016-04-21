@@ -129,6 +129,26 @@ int main(void) {
   cout << calc.RPN_to_string() << endl;
   t.test_gen(calc.eval(0)==pow(exp(0.2),2.0)*sin(4),"calc28");
 
+  // Test new functions
+  calc.compile("asin(sin(0.5))",0);
+  cout << calc.RPN_to_string() << endl;
+  t.test_rel(calc.eval(0),0.5,1.0e-14,"calc29");
+  calc.compile("acos(cos(0.5))",0);
+  cout << calc.RPN_to_string() << endl;
+  t.test_rel(calc.eval(0),0.5,1.0e-14,"calc30");
+  calc.compile("atan(tan(0.5))",0);
+  cout << calc.RPN_to_string() << endl;
+  t.test_rel(calc.eval(0),0.5,1.0e-14,"calc31");
+  calc.compile("asinh(sinh(0.5))",0);
+  cout << calc.RPN_to_string() << endl;
+  t.test_rel(calc.eval(0),0.5,1.0e-14,"calc32");
+  calc.compile("acosh(cosh(0.5))",0);
+  cout << calc.RPN_to_string() << endl;
+  t.test_rel(calc.eval(0),0.5,1.0e-14,"calc33");
+  calc.compile("atanh(tanh(0.5))",0);
+  cout << calc.RPN_to_string() << endl;
+  t.test_rel(calc.eval(0),0.5,1.0e-14,"calc34");
+
   t.report();
   return 0;
 }

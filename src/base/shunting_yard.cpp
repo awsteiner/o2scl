@@ -66,29 +66,39 @@ std::map<std::string, int> calculator::buildOpPrecedence() {
   // Create the operator precedence map based on C++ default
   // precedence order as described on cppreference website:
   // http://en.cppreference.com/w/c/language/operator_precedence
-  opp["sin"]  = 2;
-  opp["cos"]  = 2;
-  opp["tan"]  = 2;
-  opp["sqrt"]  = 2;
-  opp["log"]  = 2;
-  opp["exp"]  = 2;
-  opp["^"]  = 2;
-  opp["*"]  = 3;
-  opp["/"]  = 3;
-  opp["%"] = 3;
-  opp["+"]  = 4;
-  opp["-"]  = 4;
-  opp["<<"] = 5;
-  opp[">>"] = 5;
-  opp["<"]  = 6;
-  opp["<="] = 6;
-  opp[">="] = 6;
-  opp[">"] = 6;
-  opp["=="] = 7;
-  opp["!="] = 7;
-  opp["&&"] = 11;
-  opp["||"] = 12;
-  opp["("]  = 16;
+  opp["sin"]=2;
+  opp["cos"]=2;
+  opp["tan"]=2;
+  opp["sqrt"]=2;
+  opp["log"]=2;
+  opp["exp"]=2;
+  opp["abs"]=2;
+  opp["asin"]=2;
+  opp["acos"]=2;
+  opp["atan"]=2;
+  opp["sinh"]=2;
+  opp["cosh"]=2;
+  opp["tanh"]=2;
+  opp["asinh"]=2;
+  opp["acosh"]=2;
+  opp["atanh"]=2;
+  opp["^"]=2;
+  opp["*"]=3;
+  opp["/"]=3;
+  opp["%"]=3;
+  opp["+"]=4;
+  opp["-"]=4;
+  opp["<<"]=5;
+  opp[">>"]=5;
+  opp["<"]=6;
+  opp["<="]=6;
+  opp[">="]=6;
+  opp[">"]=6;
+  opp["=="]=7;
+  opp["!="]=7;
+  opp["&&"]=11;
+  opp["||"]=12;
+  opp["("]=16;
 
   return opp;
 }
@@ -162,6 +172,36 @@ TokenQueue_t calculator::toRPN(const char* expr,
 	lastTokenWasOp=true;
       } else if (key=="exp") {
 	operatorStack.push("exp");
+	lastTokenWasOp=true;
+      } else if (key=="abs") {
+	operatorStack.push("abs");
+	lastTokenWasOp=true;
+      } else if (key=="asin") {
+	operatorStack.push("asin");
+	lastTokenWasOp=true;
+      } else if (key=="acos") {
+	operatorStack.push("acos");
+	lastTokenWasOp=true;
+      } else if (key=="atan") {
+	operatorStack.push("atan");
+	lastTokenWasOp=true;
+      } else if (key=="sinh") {
+	operatorStack.push("sinh");
+	lastTokenWasOp=true;
+      } else if (key=="cosh") {
+	operatorStack.push("cosh");
+	lastTokenWasOp=true;
+      } else if (key=="tanh") {
+	operatorStack.push("tanh");
+	lastTokenWasOp=true;
+      } else if (key=="asinh") {
+	operatorStack.push("asinh");
+	lastTokenWasOp=true;
+      } else if (key=="acosh") {
+	operatorStack.push("acosh");
+	lastTokenWasOp=true;
+      } else if (key=="atanh") {
+	operatorStack.push("atanh");
 	lastTokenWasOp=true;
       } else {
 	
@@ -319,6 +359,26 @@ double calculator::calculate(TokenQueue_t rpn,
 	evaluation.push(log(right));
       } else if (!str.compare("exp")) {
 	evaluation.push(exp(right));
+      } else if (!str.compare("abs")) {
+	evaluation.push(abs(right));
+      } else if (!str.compare("asin")) {
+	evaluation.push(asin(right));
+      } else if (!str.compare("acos")) {
+	evaluation.push(acos(right));
+      } else if (!str.compare("atan")) {
+	evaluation.push(atan(right));
+      } else if (!str.compare("sinh")) {
+	evaluation.push(sinh(right));
+      } else if (!str.compare("cosh")) {
+	evaluation.push(cosh(right));
+      } else if (!str.compare("tanh")) {
+	evaluation.push(tanh(right));
+      } else if (!str.compare("asinh")) {
+	evaluation.push(asinh(right));
+      } else if (!str.compare("acosh")) {
+	evaluation.push(acosh(right));
+      } else if (!str.compare("atanh")) {
+	evaluation.push(atanh(right));
       } else {
 	double left  = evaluation.top();
 	evaluation.pop();
