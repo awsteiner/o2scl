@@ -392,18 +392,16 @@ int acol_manager::setup_help() {
   dsc+="3. Long options may be preceeded by two dashes.\n\n";
   dsc+="4. In order to avoid confusion between arguments and functions,\n";
   dsc+="   use \"(-x*2)\" not \"-x*2\"\n\n";
-  //dsc+="5. The select command assumes that the first equals sign indicates\n";
-  //dsc+="   renaming, so use \"eq=if(x=3,1,0)\" not \"if(x=3,1,0)\".\n\n";
   dsc+="Known operators:\n() ^ * / % + - == != < > && || << >> >= <=\n\n";
   dsc+="Known functions:\n";
   dsc+="exp(x) log(x) sin(x) cos(x) tan(x) sqrt(x) abs(x)\n";
   dsc+="asin(x) acos(x) atan(x) sinh(x) cosh(x) tanh(x)\n";
   dsc+="asinh(x) acosh(x) atanh(x)\n\n";
   /*
-    dsc+="abs(x) acos(x) acosh(x) asin(x) asinh(x) atan(x) atan2(x,y)\n";
-    dsc+="atanh(x) ceil(x) cos(x) cosh(x) cot(x) csc(x) eval(...) exp(x)\n";
-    dsc+="floor(x) if(x,y,z) int(x) log(x) log10(x) max(x,y) min(x,y)\n";
-    dsc+="sec(x) sin(x) sinh(x) sqrt(x) tan(x) tanh(x)\n\n";
+    dsc+="log10(x) atan2(x,y)\n";
+    dsc+="if(x,y,z)\n";
+    dsc+="cot(x) csc(x) sec(x)\n";
+    dsc+="ceil(x) floor(x) int(x) max(x,y) min(x,y)\n";
   */
   
   dsc+=((string)"Compiled at ")+((string)__TIME__)+" on "+
