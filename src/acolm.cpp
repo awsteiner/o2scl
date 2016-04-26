@@ -394,12 +394,11 @@ int acol_manager::setup_help() {
   dsc+="   use \"(-x*2)\" not \"-x*2\"\n\n";
   dsc+="Known operators:\n() ^ * / % + - == != < > && || << >> >= <=\n\n";
   dsc+="Known functions:\n";
-  dsc+="exp(x) log(x) sin(x) cos(x) tan(x) sqrt(x) abs(x)\n";
+  dsc+="exp(x) log(x) log10(x) sin(x) cos(x) tan(x) sqrt(x) abs(x)\n";
   dsc+="asin(x) acos(x) atan(x) sinh(x) cosh(x) tanh(x)\n";
   dsc+="asinh(x) acosh(x) atanh(x)\n\n";
   /*
-    dsc+="log10(x) atan2(x,y)\n";
-    dsc+="if(x,y,z)\n";
+    dsc+="atan2(x,y) if(x,y,z)\n";
     dsc+="cot(x) csc(x) sec(x)\n";
     dsc+="ceil(x) floor(x) int(x) max(x,y) min(x,y)\n";
   */

@@ -73,6 +73,7 @@ std::map<std::string, int> calculator::buildOpPrecedence() {
   opp["log"]=2;
   opp["exp"]=2;
   opp["abs"]=2;
+  opp["log10"]=2;
   opp["asin"]=2;
   opp["acos"]=2;
   opp["atan"]=2;
@@ -175,6 +176,9 @@ TokenQueue_t calculator::toRPN(const char* expr,
 	lastTokenWasOp=true;
       } else if (key=="abs") {
 	operatorStack.push("abs");
+	lastTokenWasOp=true;
+      } else if (key=="log10") {
+	operatorStack.push("log10");
 	lastTokenWasOp=true;
       } else if (key=="asin") {
 	operatorStack.push("asin");
@@ -361,6 +365,8 @@ double calculator::calculate(TokenQueue_t rpn,
 	evaluation.push(exp(right));
       } else if (!str.compare("abs")) {
 	evaluation.push(abs(right));
+      } else if (!str.compare("log10")) {
+	evaluation.push(log10(right));
       } else if (!str.compare("asin")) {
 	evaluation.push(asin(right));
       } else if (!str.compare("acos")) {
