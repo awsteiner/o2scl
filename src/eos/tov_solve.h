@@ -600,6 +600,21 @@ namespace o2scl {
     std::shared_ptr<table_units<> > get_results() {
       return out_table;
     }
+
+    /** \brief Return the results data table
+
+	This function immediately adds four constants to the table,
+	<tt>schwarz, Msun, pi</tt> and <tt>mproton</tt>.
+     */
+    void set_table(std::shared_ptr<table_units<> > t) {
+      out_table=t;
+      // Add native constants
+      out_table->add_constant("schwarz",schwarz_km);
+      out_table->add_constant("Msun",o2scl_mks::solar_mass);
+      out_table->add_constant("pi",o2scl_const::pi);
+      out_table->add_constant("mproton",o2scl_mks::mass_proton);
+      return;
+    }
     //@}
     
     /// \name Convergence information flags

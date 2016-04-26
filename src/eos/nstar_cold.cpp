@@ -46,8 +46,6 @@ nstar_cold::nstar_cold() : eost(new table_units<>) {
   mu.init(o2scl_settings.get_convert_units().convert
 	  ("kg","1/fm",o2scl_mks::mass_muon),2.0);
   
-  eost->inc_maxlines(1000);
-  
   def_tov.verbose=1;
   def_eos_tov.verbose=1;
 

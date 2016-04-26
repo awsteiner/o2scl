@@ -265,7 +265,17 @@ namespace o2scl {
     /// Verbosity parameter (default 0)
     int verbose;
 
-    /** \brief Get the eos table (after having called calc_eos())
+    /** \brief Return the results data table
+
+	This function immediately adds four constants to the table,
+	<tt>schwarz, Msun, pi</tt> and <tt>mproton</tt>.
+     */
+    void set_eos_table(std::shared_ptr<table_units<> > t) {
+      eost=t;
+      return;
+    }
+
+      /** \brief Get the eos table (after having called calc_eos())
      */
     std::shared_ptr<table_units<> > get_eos_results() {
       return eost;

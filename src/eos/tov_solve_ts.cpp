@@ -152,6 +152,8 @@ int main(void) {
   // The tov_solve object
 
   tov_solve at;
+  std::shared_ptr<table_units<> > user_tab(new table_units<>);
+  at.set_table(user_tab);
   at.def_solver.tol_rel*=10.0;
   at.def_solver.tol_abs*=10.0;
   at.calc_gpot=true;
