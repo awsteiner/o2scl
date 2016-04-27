@@ -134,6 +134,59 @@ def get_str_array(dset):
         word_counter=word_counter+1
     return list
     
+def parse_arguments(argv):
+    verbose=0
+    list=[]
+    unproc_list=[]
+    if verbose>1:
+        print 'Number of arguments:', len(argv), 'arguments.'
+        print 'Argument List:', str(argv)
+    ix=1
+    while ix<len(argv):
+        if verbose>1:
+            print 'Processing index',ix,'with value',argv[ix],'.'
+        # Find first option, at index ix
+        initial_ix_done=0
+        while initial_ix_done==0:
+            if ix==len(argv):
+                initial_ix_done=1
+            elif argv[ix][0]=='-':
+                initial_ix_done=1
+            else:
+                if verbose>1:
+                     print 'Adding',argv[ix],' to unprocessed list.'
+                unproc_list.append(argv[ix])
+                ix=ix+1
+        # If there is an option, then ix is its index
+        if ix<len(argv):
+            list_one=[]
+            # Strip single and double dashes
+            cmd_name=argv[ix][1:]
+            if cmd_name[0]=='-':
+                cmd_name=cmd_name[1:]
+            # Add command name to list
+            list_one.append(cmd_name)
+            if verbose>1:
+                print 'Found option',cmd_name,'at index',ix
+            # Set ix_next to the next option, or to the end if
+            # there is no next option
+            ix_next=ix+1
+            ix_next_done=0
+            while ix_next_done==0:
+                if ix_next==len(argv):
+                    ix_next_done=1
+                elif argv[ix_next][0]=='-':
+                    ix_next_done=1
+                else:
+                    if verbose>1:
+                        print ('Adding '+argv[ix_next]+' with index '+
+                               str(ix_next)+' to list for '+cmd_name)
+                    list_one.append(argv[ix_next])
+                    ix_next=ix_next+1
+            list.append(list_one)
+            ix=ix_next
+    return (list,unproc_list)
+                    
 class plotter:
     
     logx=0
