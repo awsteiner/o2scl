@@ -216,7 +216,7 @@ void o2scl_hdf::hdf_input(hdf_file &hf, hist &h, std::string name) {
   
   // If no name specified, find name of first group of specified type
   if (name.length()==0) {
-    hf.find_group_by_type(hf,"hist",name);
+    hf.find_group_by_type("hist",name);
     if (name.length()==0) {
       O2SCL_ERR2("No object of type hist found in o2scl_hdf::hdf_",
 		 "input(hdf_file &,hist &,string &).",exc_efailed);
@@ -349,7 +349,7 @@ void o2scl_hdf::hdf_input(hdf_file &hf, hist_2d &h, std::string name) {
 
   // If no name specified, find name of first group of specified type
   if (name.length()==0) {
-    hf.find_group_by_type(hf,"hist_2d",name);
+    hf.find_group_by_type("hist_2d",name);
     if (name.length()==0) {
       O2SCL_ERR2("No object of type hist_2d found in ",
 		 "o2scl_hdf::hdf_input().",exc_efailed);
@@ -520,7 +520,7 @@ void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, table3d &t,
 
   // If no name specified, find name of first group of specified type
   if (name.length()==0) {
-    hf.find_group_by_type(hf,"table3d",name);
+    hf.find_group_by_type("table3d",name);
     if (name.length()==0) {
       O2SCL_ERR2("No object of type table found in ",
 		 "o2scl_hdf::hdf_input().",exc_efailed);
@@ -657,7 +657,7 @@ void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, expval_scalar &sev,
   
   // If no name specified, find name of first group of specified type
   if (hdf_name.length()==0) {
-    hf.find_group_by_type(hf,"expval_scalar",hdf_name);
+    hf.find_group_by_type("expval_scalar",hdf_name);
     if (hdf_name.length()==0) {
       O2SCL_ERR2("No object of type expval_scalar found in ",
 		 "o2scl_hdf::hdf_input().",exc_efailed);
@@ -725,7 +725,7 @@ void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, expval_vector &vev,
   
   // If no name specified, find name of first group of specified type
   if (hdf_name.length()==0) {
-    hf.find_group_by_type(hf,"expval_vector",hdf_name);
+    hf.find_group_by_type("expval_vector",hdf_name);
     if (hdf_name.length()==0) {
       O2SCL_ERR2("No object of type expval_vector found in ",
 		 "o2scl_hdf::hdf_input().",exc_efailed);
@@ -795,7 +795,7 @@ void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, expval_matrix &mev,
   
   // If no name specified, find name of first group of specified type
   if (hdf_name.length()==0) {
-    hf.find_group_by_type(hf,"expval_matrix",hdf_name);
+    hf.find_group_by_type("expval_matrix",hdf_name);
     if (hdf_name.length()==0) {
       O2SCL_ERR2("No object of type expval_matrix found in ",
 		 "o2scl_hdf::hdf_input().",exc_efailed);
@@ -867,7 +867,7 @@ void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, uniform_grid<double> &ug,
   
   // If no name specified, find name of first group of specified type
   if (hdf_name.length()==0) {
-    hf.find_group_by_type(hf,"uniform_grid<double>",hdf_name);
+    hf.find_group_by_type("uniform_grid<double>",hdf_name);
     if (hdf_name.length()==0) {
       O2SCL_ERR2("No object of type uniform_grid<double> found in ",
 		 "o2scl_hdf::hdf_input().",exc_efailed);
@@ -952,7 +952,7 @@ void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, vector<contour_line> &cl,
   
   // If no name specified, find name of first group of specified type
   if (hdf_name.length()==0) {
-    hf.find_group_by_type(hf,"vector<contour_line>",hdf_name);
+    hf.find_group_by_type("vector<contour_line>",hdf_name);
     if (hdf_name.length()==0) {
       O2SCL_ERR2("No object of type vector<contour_line> found in ",
 		 "o2scl_hdf::hdf_input().",exc_efailed);
@@ -1050,7 +1050,7 @@ void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, vector<edge_crossings> &ec,
   
   // If no name specified, find name of first group of specified type
   if (hdf_name.length()==0) {
-    hf.find_group_by_type(hf,"vector<edge_crossings>",hdf_name);
+    hf.find_group_by_type("vector<edge_crossings>",hdf_name);
     if (hdf_name.length()==0) {
       O2SCL_ERR2("No object of type vector<edge_crossings> found in ",
 		 "o2scl_hdf::hdf_input().",exc_efailed);
@@ -1156,7 +1156,7 @@ void o2scl_hdf::hdf_input(hdf_file &hf, o2scl::tensor_grid<std::vector<double>,
     
   // If no name specified, find name of first group of specified type
   if (name.length()==0) {
-    hf.find_group_by_type(hf,"tensor_grid",name);
+    hf.find_group_by_type("tensor_grid",name);
     if (name.length()==0) {
       O2SCL_ERR2("No object of type tensor_grid found in ",
 		 "tensor::hdf_input().",o2scl::exc_efailed);

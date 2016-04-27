@@ -653,7 +653,7 @@ namespace o2scl_hdf {
 	This function returns 0 if an object of type \c type is found
 	and \ref o2scl::exc_enoprog if it fails.
     */
-    int find_group_by_type(hdf_file &hf, std::string type,
+    int find_group_by_type(std::string type,
 			   std::string &group_name, int verbose=0);
 
     /** \brief Look in hdf_file \c hf for an \o2 object with name 
@@ -662,7 +662,7 @@ namespace o2scl_hdf {
 	This function returns 0 if an object with name \c name is
 	found and \ref o2scl::exc_enoprog if it fails.
     */
-    int find_group_by_name(hdf_file &hf, std::string name,
+    int find_group_by_name(std::string name,
 			   std::string &type, int verbose=0);
     //@}
 

@@ -1042,7 +1042,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
     if (verbose>2) {
       cout << "Looking for object with name '" << i2 << "'." << endl;
     }
-    ret=hf.find_group_by_name(hf,i2,type,verbose);
+    ret=hf.find_group_by_name(i2,type,verbose);
     if (ret==exc_enotfound) {
       cout << "Could not find object named '" << i2 
 	   << "' in file '" << i1 << "'." << endl;
@@ -1105,7 +1105,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
   if (verbose>2) {
     cout << "Looking for table." << endl;
   }
-  ret=hf.find_group_by_type(hf,"table",i2,verbose);
+  ret=hf.find_group_by_type("table",i2,verbose);
   if (ret==success) {
     tabp=new table_units<>;
     hdf_input(hf,*tabp,i2);
@@ -1117,7 +1117,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
   if (verbose>2) {
     cout << "Looking for table3d." << endl;
   }
-  ret=hf.find_group_by_type(hf,"table3d",i2,verbose);
+  ret=hf.find_group_by_type("table3d",i2,verbose);
   if (ret==success) {
     t3p=new table3d;
     hdf_input(hf,*t3p,i2);
@@ -1129,7 +1129,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
   if (verbose>2) {
     cout << "Looking for hist." << endl;
   }
-  ret=hf.find_group_by_type(hf,"hist",i2,verbose);
+  ret=hf.find_group_by_type("hist",i2,verbose);
   if (ret==success) {
     hist h;
     hdf_input(hf,h,i2);
@@ -1147,7 +1147,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
   if (verbose>2) {
     cout << "Looking for hist_2d." << endl;
   }
-  ret=hf.find_group_by_type(hf,"hist_2d",i2,verbose);
+  ret=hf.find_group_by_type("hist_2d",i2,verbose);
   if (ret==success) {
     hist_2d h;
     hdf_input(hf,h,i2);

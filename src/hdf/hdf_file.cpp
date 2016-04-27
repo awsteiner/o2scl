@@ -2798,10 +2798,10 @@ int o2scl_hdf::iterate_match_name(hid_t loc, const char *name,
   return 0;
 }
 
-int hdf_file::find_group_by_type(hdf_file &hf, std::string type,
+int hdf_file::find_group_by_type(std::string type,
 				 std::string &group_name, int verbose) {
-  iterate_parms ip={&hf,type,"",false,verbose};
-  H5Literate(hf.get_current_id(),H5_INDEX_NAME,H5_ITER_NATIVE,
+  iterate_parms ip={this,type,"",false,verbose};
+  H5Literate(get_current_id(),H5_INDEX_NAME,H5_ITER_NATIVE,
              0,iterate_match_type,&ip);
   if (ip.found) {
     group_name=ip.group_name;
@@ -2810,10 +2810,10 @@ int hdf_file::find_group_by_type(hdf_file &hf, std::string type,
   return exc_enotfound;
 }
 
-int hdf_file::find_group_by_name(hdf_file &hf, std::string name,
+int hdf_file::find_group_by_name(std::string name,
 				 std::string &type, int verbose) {
-  iterate_parms ip={&hf,"",name,false,verbose};
-  H5Literate(hf.get_current_id(),H5_INDEX_NAME,H5_ITER_NATIVE,
+  iterate_parms ip={this,"",name,false,verbose};
+  H5Literate(get_current_id(),H5_INDEX_NAME,H5_ITER_NATIVE,
              0,iterate_match_name,&ip);
   if (ip.found) {
     type=ip.type;
