@@ -56,21 +56,29 @@ int eos_had_schematic::calc_e(fermion &ln, fermion &lp, thermo &lth) {
   } else {
     xp=lp.n/barn;
   }
-  
+
+  // Symmetry energy
   sym=a*pow(barn/n0,2.0/3.0)+b*pow(barn/n0,gamma);
   
-  // The derivative of the symmetry energy w.r.t. (barn/n0)
+  // Derivative of the symmetry energy w.r.t. (barn/n0)
   symp=a*2.0/3.0*pow(barn/n0,-1.0/3.0)+b*gamma*pow(barn/n0,gamma-1.0);
   
+  // Energy density
   lth.ed=ln.m*ln.n+lp.m*lp.n+barn*
     (eoa+comp/18.0*pow((barn/n0-1.0),2.0)+
      sym*pow((1-2*xp),2.0)+kprime/162.0*pow(barn/n0-1.0,3.0)+
      kpp/1944.0*pow(barn/n0-1.0,4.0));
-  ln.mu=lth.ed/barn+barn/n0*
+
+  // Neutron chemical potential
+  ln.mu=ln.m+(lth.ed-ln.m*ln.n-lp.m*lp.n)/barn+barn/n0*
     (comp/9.0*(barn/n0-1)+kprime/54.0*pow(barn/n0-1.0,2.0)+
      kpp/486.0*pow(barn/n0-1.0,3.0)+
      pow(1-2.0*xp,2.0)*symp)+xp*4.0*(1-2.0*xp)*sym;
-  lp.mu=ln.mu-4.0*(1.0-2.0*xp)*sym;
+
+  // Proton chemical potential
+  lp.mu=lp.m+ln.mu-ln.m-4.0*(1.0-2.0*xp)*sym;
+
+  // Pressure
   lth.pr=-lth.ed+ln.mu*ln.n+lp.mu*lp.n;
 
   return 0;

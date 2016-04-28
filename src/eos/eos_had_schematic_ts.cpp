@@ -50,6 +50,10 @@ int main(void) {
   thermo th;
   fermion n(939.0/hc_mev_fm,2.0), p(939.0/hc_mev_fm,2.0);
 
+  // Temporarily change the proton mass to ensure derivatives
+  // work when m_n \neq m_p
+  p.m=900.0/hc_mev_fm;
+
   double mund, mupd, munde, mupde;
 
   n.n=0.159;
@@ -84,14 +88,15 @@ int main(void) {
   t.test_abs(n.mu,mund,fabs(munde),"neutron chem pot. nuc. mat. 2*n0");
   t.test_abs(p.mu,mupd,fabs(mupde),"proton chem pot. nuc. mat. 2*n0");
 
+  // Return the proton mass to the original value
+  p.m=939.0/hc_mev_fm;
+
   se.eoa=-16.0/hc_mev_fm;
   se.comp=200.0/hc_mev_fm;
   se.a=18.0/hc_mev_fm;
   se.b=12.0/hc_mev_fm;
   se.kprime=-2000.0/hc_mev_fm;
   se.n0=0.16;
-
-  cout.setf(ios::scientific);
 
   n0=se.fn0(0.0,dtemp);
   t.test_rel(n0,0.16,1.0e-8,"n0");
