@@ -60,13 +60,6 @@ namespace o2scl {
 
       Empty tensors have zero rank.
 
-      Slices of tensors are subsets obtained from fixing the index of
-      several dimensions, while letting other dimensions vary. For a
-      slice with one dimension not fixed, see \ref vector_slice(). 
-      \comment
-      For a slice with two dimensions not fixed, see \ref matrix_slice().
-      \endcomment
-
       The type <tt>vec_t</tt> can be any vector type with
       <tt>operator[]</tt>, <tt>size()</tt> and <tt>resize()</tt>
       methods. The type <tt>vec_size_t</tt> can be any integer-like
@@ -91,8 +84,11 @@ namespace o2scl {
       the distance between two elements \f$(i_0,i_1,i_2,i_3)\f$ and
       \f$ (i_0,i_1,i_2,i_3+1) \f$ is just unity.
 
-      \note The \ref o2scl::tensor::vector_slice() function should
-      clearly work for uBlas vectors, and seems to work with
+      \note Slices of tensors are subsets obtained from fixing the
+      index of several dimensions, while letting other dimensions
+      vary. For a slice with one dimension not fixed, see \ref
+      vector_slice(). The \ref o2scl::tensor::vector_slice() function
+      should clearly work for uBlas vectors, and seems to work with
       std::vector objects also, but latter use has not been fully
       tested.
 
@@ -301,8 +297,6 @@ namespace o2scl {
   }
   //@}
     
-#ifndef O2SCL_NEVER_DEFINED
-  
   typedef boost::numeric::ublas::vector_slice<
   boost::numeric::ublas::vector<double> > ubvector_slice;
   typedef boost::numeric::ublas::slice slice;
@@ -352,15 +346,13 @@ namespace o2scl {
   }
   //@}
 
-#endif
 #ifdef O2SCL_NEVER_DEFINED
 
   /** \brief Fix all but two indices to create a matrix
 
       One could use ublas::make_matrix_from_pointer() and
       then ublas matrix slicing to perform this operation, but
-      only if data was guaranteed to have contiguous storage.
-      Currently, since data is a ubvector, this doesn't work. 
+      only if the template types are built on ublas objects.
   */
   template<class size_vec_t> ubmatrix_array matrix_slice() {
   }

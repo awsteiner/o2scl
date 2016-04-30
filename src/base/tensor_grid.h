@@ -706,7 +706,7 @@ namespace o2scl {
 
     /// \name Interpolation
     //@{
-    /// Set interpolation type
+    /// Set interpolation type for \ref interpolate()
     void set_interp_type(size_t interp_type) {
       itype=interp_type;
       return;
@@ -715,22 +715,11 @@ namespace o2scl {
     /** \brief Interpolate values \c vals into the tensor, 
 	returning the result
 
-	\comment
-	\warning This is being deprecated and may be removed
-	or completely rewritten in later versions. 
-	12/10/15: This function is certainly obtuse, but it's
-	still useful to have around, so for now I removed the
-	warning above.
-	\endcomment
-      
 	This is a quick and dirty implementation of n-dimensional
 	interpolation by recursive application of the 1-dimensional
-	routine from \ref interp_vec, using the base
-	interpolation object specified in the template parameter \c
-	base_interp_t. This will be slow for sufficiently large data
-	sets.
-
-	\future Maybe make this a template as well?
+	routine from \ref interp_vec, using the base interpolation
+	object specified in the template parameter \c base_interp_t.
+	This will be very slow for sufficiently large data sets.
 
 	\future It should be straightforward to improve the scaling of
 	this algorithm significantly by creating a "window" of local
@@ -832,7 +821,7 @@ namespace o2scl {
 	It then calls \ref interp_linear_power_two() to perform the
 	interpolation in that hypercube.
     */
-    template<class vec2_t> double interp_linear(vec2_t &v) {
+    template<class vec2_size_t> double interp_linear(vec2_size_t &v) {
 
       // Find the the corner of the hypercube containing v
       size_t rgs=0;
@@ -878,8 +867,12 @@ namespace o2scl {
 	size \f$ 2^{\mathrm{rank}} \f$ into a hypercube of size \f$
 	2^{\mathrm{rank-1}} \f$ performing linear interpolation for
 	each pair of points.
+
+	\note This is principally a function for internal use
+	by \ref interp_linear().
     */
-    template<class vec2_t> double interp_linear_power_two(vec2_t &v) {
+    template<class vec2_size_t>
+      double interp_linear_power_two(vec2_size_t &v) {
 
       if (this->rk==1) {
 	return this->data[0]+(this->data[1]-this->data[0])/
@@ -905,12 +898,124 @@ namespace o2scl {
 	double val_hi=this->get(index);
 	tnew.set(index,val_lo+frac*(val_hi-val_lo));
       }
-      
+
       // Recursively interpolate the smaller tensor
       return tnew.interp_linear_power_two(v);
     }
-    //@}
 
+    /** \brief Perform a linear interpolation of <tt>v[1]</tt>
+	to <tt>v[n-1]</tt> resulting in a vector
+	
+	This performs multi-dimensional linear interpolation (or
+	extrapolation) in the last <tt>n-1</tt> indices of the
+	rank-<tt>n</tt> tensor leaving the first index free and places
+	the results in the vector \c res.
+    */
+    template<class vec2_size_t, class vec2_t>
+      void interp_linear_vec(vec2_size_t &v, vec2_t &res) {
+
+      // Find the the corner of the hypercube containing v
+      size_t rgs=0;
+      std::vector<size_t> loc(this->rk);
+      std::vector<double> gnew;
+      for(size_t i=0;i<this->size[0];i++) {
+	gnew.push_back(grid[i]);
+      }
+      rgs=this->size[0];
+      loc[0]=0;
+      for(size_t i=1;i<this->rk;i++) {
+	std::vector<double> grid_unpacked(this->size[i]);
+	for(size_t j=0;j<this->size[i];j++) {
+	  grid_unpacked[j]=grid[j+rgs];
+	}
+	search_vec<std::vector<double> > sv(this->size[i],grid_unpacked);
+	loc[i]=sv.find(v[i]);
+	gnew.push_back(grid_unpacked[loc[i]]);
+	gnew.push_back(grid_unpacked[loc[i]+1]);
+	rgs+=this->size[i];
+      }
+
+      // Now construct a 2^{rk}-sized tensor containing only that 
+      // hypercube
+      std::vector<size_t> snew(this->rk);
+      snew[0]=this->size[0];
+      for(size_t i=1;i<this->rk;i++) {
+	snew[i]=2;
+      }
+      tensor_grid tnew(this->rk,snew);
+      tnew.set_grid_packed(gnew);
+      
+      // Copy over the relevant data
+      for(size_t i=0;i<tnew.total_size();i++) {
+	std::vector<size_t> index_new(this->rk), index_old(this->rk);
+	tnew.unpack_indices(i,index_new);
+	for(size_t j=0;j<this->rk;j++) {
+	  index_old[j]=index_new[j]+loc[j];
+	}
+	tnew.set(index_new,this->get(index_old));
+      }
+
+      // Now use interp_power_two_vec()
+      tnew.interp_linear_power_two_vec(v,res);
+
+      return;
+    }
+
+    /** \brief Perform linear interpolation assuming that the last
+	<tt>n-1</tt> indices can take only two values
+	
+	This function performs linear interpolation assuming that the
+	last <tt>n-1</tt> indices can take only two values and placing
+	the result into <tt>res</tt>.
+
+	\note This is principally a function for internal use
+	by \ref interp_linear_vec().
+    */
+    template<class vec2_size_t, class vec2_t>
+      void interp_linear_power_two_vec(vec2_size_t &v, vec2_t &res) {
+      
+      if (this->rk==2) {
+	size_t n=this->size[0];
+	res.resize(n);
+	vec_size_t ix0(2), ix1(2);
+	ix0[1]=0;
+	ix1[1]=1;
+	for(size_t i=0;i<n;i++) {
+	  ix0[0]=i;
+	  ix1[0]=i;
+	  res[i]=this->get(ix0)+(this->get(ix1)-this->get(ix0))/
+	    (grid[n+1]-grid[n])*(v[1]-grid[n]);
+	}
+	return;
+      }
+
+      size_t last=this->rk-1;
+      double frac=(v[last]-get_grid(last,0))/
+	(get_grid(last,1)-get_grid(last,0));
+
+      // Create new size vector and grid
+      tensor_grid tnew(this->rk-1,this->size);
+      tnew.set_grid_packed(grid);
+      
+      // Create data in new tensor, removing the last index through
+      // linear interpolation
+      for(size_t i=0;i<tnew.total_size();i++) {
+	std::vector<size_t> index(this->rk);
+	tnew.unpack_indices(i,index);
+	index[this->rk-1]=0;
+	double val_lo=this->get(index);
+	index[this->rk-1]=1;
+	double val_hi=this->get(index);
+	tnew.set(index,val_lo+frac*(val_hi-val_lo));
+      }
+      
+      // Recursively interpolate the smaller tensor
+      tnew.interp_linear_power_two_vec(v,res);
+
+      return;
+    }
+    //@}
+    
     template<class vecf_t, class vecf_size_t> friend void o2scl_hdf::hdf_output
       (o2scl_hdf::hdf_file &hf, tensor_grid<vecf_t,vecf_size_t> &t, 
        std::string name);
