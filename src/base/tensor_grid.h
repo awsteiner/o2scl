@@ -820,6 +820,13 @@ namespace o2scl {
 	hypercube of size \f$ 2^{\mathrm{rank}} \f$ containing \c v.
 	It then calls \ref interp_linear_power_two() to perform the
 	interpolation in that hypercube.
+
+	\future This starts with a small copy, which can be eliminated
+	by creating a new version of interp_linear_power_two
+	which accepts an offset vector parameter so that the 
+	first interpolation is offset. Remaining interpolations
+	don't need to be offset because the tensor has to be
+	created from the previous interpolation round.
     */
     template<class vec2_size_t> double interp_linear(vec2_size_t &v) {
 
@@ -912,7 +919,7 @@ namespace o2scl {
 	the results in the vector \c res.
     */
     template<class vec2_size_t, class vec2_t>
-      void interp_linear_vec(vec2_size_t &v, vec2_t &res) {
+      void interp_linear_vec0(vec2_size_t &v, vec2_t &res) {
 
       // Find the the corner of the hypercube containing v
       size_t rgs=0;
@@ -934,8 +941,8 @@ namespace o2scl {
 	gnew.push_back(grid_unpacked[loc[i]+1]);
 	rgs+=this->size[i];
       }
-
-      // Now construct a 2^{rk}-sized tensor containing only that 
+      
+      // Now construct a n*2^{rk-1}-sized tensor containing only that
       // hypercube
       std::vector<size_t> snew(this->rk);
       snew[0]=this->size[0];
@@ -955,8 +962,8 @@ namespace o2scl {
 	tnew.set(index_new,this->get(index_old));
       }
 
-      // Now use interp_power_two_vec()
-      tnew.interp_linear_power_two_vec(v,res);
+      // Now use interp_power_two_vec0()
+      tnew.interp_linear_power_two_vec0(v,res);
 
       return;
     }
@@ -969,10 +976,10 @@ namespace o2scl {
 	the result into <tt>res</tt>.
 
 	\note This is principally a function for internal use
-	by \ref interp_linear_vec().
+	by \ref interp_linear_vec0().
     */
     template<class vec2_size_t, class vec2_t>
-      void interp_linear_power_two_vec(vec2_size_t &v, vec2_t &res) {
+      void interp_linear_power_two_vec0(vec2_size_t &v, vec2_t &res) {
       
       if (this->rk==2) {
 	size_t n=this->size[0];
@@ -1010,7 +1017,102 @@ namespace o2scl {
       }
       
       // Recursively interpolate the smaller tensor
-      tnew.interp_linear_power_two_vec(v,res);
+      tnew.interp_linear_power_two_vec0(v,res);
+
+      return;
+    }
+
+    // experimental (not working)
+    template<class vec2_size_t, class vec2_t>
+      void interp_linear_vec(vec2_size_t &v, size_t ifree, vec2_t &res) {
+
+      size_t n=this->size[ifree];
+      std::cout << "n: " << n << std::endl;
+      
+      // Find the the corner of the hypercube containing v
+      size_t rgs=0;
+      std::vector<size_t> loc(this->rk);
+      std::vector<double> gnew;
+      loc[ifree]=0;
+      for(size_t i=0;i<this->rk;i++) {
+	std::vector<double> grid_unpacked(this->size[i]);
+        for(size_t j=0;j<this->size[i];j++) {
+          grid_unpacked[j]=grid[j+rgs];
+        }
+	if (i==ifree) {
+	  for(size_t j=0;j<n;j++) {
+	    gnew.push_back(get_grid(ifree,j));
+	  }
+	}
+	if (i!=ifree) {
+	  for(size_t j=0;j<this->size[i];j++) {
+	    grid_unpacked[j]=grid[j+rgs];
+	  }
+	  search_vec<std::vector<double> > sv(this->size[i],grid_unpacked);
+	  loc[i]=sv.find(v[i]);
+	  gnew.push_back(grid_unpacked[loc[i]]);
+	  gnew.push_back(grid_unpacked[loc[i]+1]);
+	}
+	rgs+=this->size[i];
+      }
+      
+      // Now construct a 2^{rk}-sized tensor containing only that 
+      // hypercube
+      std::vector<size_t> snew, map;
+      snew.push_back(n);
+      map.push_back(ifree);
+      for(size_t i=0;i<this->rk;i++) {
+	if (i!=ifree) {
+	  snew.push_back(2);
+	  map.push_back(i);
+	}
+      }
+      tensor_grid tnew(this->rk,snew);
+      tnew.set_grid_packed(gnew);
+
+      std::cout << "gnew: ";
+      vector_out(std::cout,gnew);
+      std::cout << std::endl;
+      std::cout << "snew: ";
+      vector_out(std::cout,snew);
+      std::cout << std::endl;
+      std::cout << "map: ";
+      vector_out(std::cout,map);
+      std::cout << std::endl;
+
+      // Copy over the relevant data
+      for(size_t i=0;i<tnew.total_size();i++) {
+	std::vector<size_t> index_new(this->rk), index_old(this->rk);
+	tnew.unpack_indices(i,index_new);
+	for(size_t j=0;j<this->rk;j++) {
+	  index_old[map[j]]=index_new[j]+loc[map[j]];
+	}
+	tnew.set(index_new,this->get(index_old));
+      }
+
+      std::cout << "tnew: ";
+      vector_out(std::cout,tnew.get_data());
+      std::cout << std::endl;
+
+      // Now use interp_power_two_vec()
+      //std::vector<double> res;
+      tnew.interp_linear_power_two_vec0(v,res);
+
+      /*
+	std::cout << "res2: ";
+	vector_out(std::cout,res2);
+	std::cout << std::endl;
+	
+	// Rearrange
+	res.resize(n);
+	for(size_t j=0;j<n;j++) {
+	res[map[j]]=res2[j];
+	}
+      */
+
+      std::cout << "res: ";
+      vector_out(std::cout,res);
+      std::cout << std::endl;
 
       return;
     }

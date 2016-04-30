@@ -171,23 +171,63 @@ int main(void) {
       }
     }
 
-    ubvector v(3), res(4);
+    ubvector v(3), res, res3;
+    v[0]=3.1;
     v[1]=2.2;
     v[2]=1.3;
-    m3u.interp_linear_vec(v,res);
+
+    m3u.interp_linear_vec0(v,res);
+    m3u.interp_linear_vec(v,0,res3);
     double res2;
     v[0]=1.0;
     res2=m3u.interp_linear(v);
-    t.test_rel(res[0],res2,1.0e-12,"interp_linear_vec 1");
+    t.test_rel(res[0],res2,1.0e-12,"interp_linear_vec0 1");
+    t.test_rel(res3[0],res2,1.0e-12,"interp_linear_vec0 1");
     v[0]=2.0;
     res2=m3u.interp_linear(v);
-    t.test_rel(res[1],res2,1.0e-12,"interp_linear_vec 2");
+    t.test_rel(res[1],res2,1.0e-12,"interp_linear_vec0 2");
+    t.test_rel(res3[1],res2,1.0e-12,"interp_linear_vec0 2");
     v[0]=3.0;
     res2=m3u.interp_linear(v);
-    t.test_rel(res[2],res2,1.0e-12,"interp_linear_vec 3");
+    t.test_rel(res[2],res2,1.0e-12,"interp_linear_vec0 3");
+    t.test_rel(res3[2],res2,1.0e-12,"interp_linear_vec0 3");
     v[0]=4.0;
     res2=m3u.interp_linear(v);
-    t.test_rel(res[3],res2,1.0e-12,"interp_linear_vec 4");
+    t.test_rel(res[3],res2,1.0e-12,"interp_linear_vec0 4");
+    t.test_rel(res3[3],res2,1.0e-12,"interp_linear_vec0 4");
+
+    if (false) {
+      v[0]=3.1;
+      v[1]=2.2;
+      v[2]=1.3;
+
+      m3u.interp_linear_vec(v,1,res3);
+      v[1]=1.0;
+      res2=m3u.interp_linear(v);
+      t.test_rel(res3[0],res2,1.0e-12,"interp_linear_vec0 1");
+      v[1]=2.0;
+      res2=m3u.interp_linear(v);
+      t.test_rel(res3[1],res2,1.0e-12,"interp_linear_vec0 2");
+      v[1]=3.0;
+      res2=m3u.interp_linear(v);
+      t.test_rel(res3[2],res2,1.0e-12,"interp_linear_vec0 3");
+
+      v[0]=3.1;
+      v[1]=2.2;
+      v[2]=1.3;
+
+      m3u.interp_linear_vec(v,2,res3);
+      v[2]=1.0;
+      res2=m3u.interp_linear(v);
+      t.test_rel(res3[0],res2,1.0e-12,"interp_linear_vec0 1");
+      v[2]=2.0;
+      res2=m3u.interp_linear(v);
+      t.test_rel(res3[1],res2,1.0e-12,"interp_linear_vec0 2");
+      v[2]=3.0;
+      res2=m3u.interp_linear(v);
+      t.test_rel(res3[2],res2,1.0e-12,"interp_linear_vec0 3");
+      exit(-1);
+    }
     
     typedef boost::numeric::ublas::vector_slice<ubvector> ubvector_slice;
 
