@@ -22,7 +22,11 @@
     \section mintp_subsect Multi-dimensional interpolation
 
     Multi-dimensional interpolation for table defined on a grid 
-    is possible with \ref o2scl::tensor_grid.
+    is possible with \ref o2scl::tensor_grid. See the documentation
+    for \ref o2scl::tensor_grid::interpolate() and 
+    \ref o2scl::tensor_grid::interp_linear() . Also, if you want
+    to interpolate <tt>rank-1</tt> indices to get a vector result,
+    you can use \ref o2scl::tensor_grid::interp_linear_vec() .
 
     If the data is not on a grid, then nearest-neighbor interpolation
     is provided by \ref o2scl::interpm_neigh and inverse distance

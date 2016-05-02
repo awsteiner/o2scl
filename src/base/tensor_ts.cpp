@@ -132,6 +132,110 @@ int main(void) {
   }
 
   // -------------------------------------------------------
+  // Test interpolation with a tensor object
+  // built upon std:: vectors
+
+  {
+
+    // Create a sample tensor_grid object with a grid
+    tensor_grid<> m3;
+    size_t i3[3], j3[3], k3[3];
+    i3[0]=4;
+    i3[1]=3;
+    i3[2]=3;
+    m3.resize(3,i3);
+    std::vector<double> grid;
+    size_t j4[3];
+    grid.push_back(1.0);
+    grid.push_back(2.0);
+    grid.push_back(3.0);
+    grid.push_back(4.0);
+    grid.push_back(1.0);
+    grid.push_back(2.0);
+    grid.push_back(3.0);
+    grid.push_back(1.0);
+    grid.push_back(2.0);
+    grid.push_back(3.0);
+    m3.set_grid_packed(grid);
+    for(size_t i=0;i<i3[0];i++) {
+      for(size_t j=0;j<i3[1];j++) {
+	for(size_t k=0;k<i3[2];k++) {
+	  double x=m3.get_grid(0,i);
+	  double y=m3.get_grid(1,j);
+	  double z=m3.get_grid(2,k);
+	  j3[0]=i;
+	  j3[1]=j;
+	  j3[2]=k;
+	  m3.set(j3,2.0*x*x-y-3.0*z*z);
+	}
+      }
+    }
+
+    std::vector<double> v(3), res, res3;
+    double res2;
+
+    v[0]=3.1;
+    v[1]=2.2;
+    v[2]=1.3;
+
+    if (true) {
+      m3.interp_linear_vec0(v,res);
+      m3.interp_linear_vec(v,0,res3);
+      v[0]=1.0;
+      res2=m3.interp_linear(v);
+      t.test_rel(res[0],res2,1.0e-12,"interp_linear_vec0 1");
+      t.test_rel(res3[0],res2,1.0e-12,"interp_linear_vec 1");
+      v[0]=2.0;
+      res2=m3.interp_linear(v);
+      t.test_rel(res[1],res2,1.0e-12,"interp_linear_vec0 2");
+      t.test_rel(res3[1],res2,1.0e-12,"interp_linear_vec 2");
+      v[0]=3.0;
+      res2=m3.interp_linear(v);
+      t.test_rel(res[2],res2,1.0e-12,"interp_linear_vec0 3");
+      t.test_rel(res3[2],res2,1.0e-12,"interp_linear_vec 3");
+      v[0]=4.0;
+      res2=m3.interp_linear(v);
+      t.test_rel(res[3],res2,1.0e-12,"interp_linear_vec0 4");
+      t.test_rel(res3[3],res2,1.0e-12,"interp_linear_vec 4");
+    }
+
+    v[0]=3.1;
+    v[1]=2.2;
+    v[2]=1.3;
+
+    if (true) {
+      m3.interp_linear_vec(v,1,res3);
+      v[1]=1.0;
+      res2=m3.interp_linear(v);
+      t.test_rel(res3[0],res2,1.0e-12,"interp_linear_vec 5");
+      v[1]=2.0;
+      res2=m3.interp_linear(v);
+      t.test_rel(res3[1],res2,1.0e-12,"interp_linear_vec 6");
+      v[1]=3.0;
+      res2=m3.interp_linear(v);
+      t.test_rel(res3[2],res2,1.0e-12,"interp_linear_vec 7");
+    }
+
+    v[0]=3.1;
+    v[1]=2.2;
+    v[2]=1.3;
+
+    if (true) {
+      m3.interp_linear_vec(v,2,res3);
+      v[2]=1.0;
+      res2=m3.interp_linear(v);
+      t.test_rel(res3[0],res2,1.0e-12,"interp_linear_vec 8");
+      v[2]=2.0;
+      res2=m3.interp_linear(v);
+      t.test_rel(res3[1],res2,1.0e-12,"interp_linear_vec 9");
+      v[2]=3.0;
+      res2=m3.interp_linear(v);
+      t.test_rel(res3[2],res2,1.0e-12,"interp_linear_vec 10");
+    }
+
+  }
+
+  // -------------------------------------------------------
   // Test slicing and interpolation with a tensor object
   // built upon ublas vectors
 
@@ -172,59 +276,66 @@ int main(void) {
     }
 
     ubvector v(3), res, res3;
-    v[0]=3.1;
-    v[1]=2.2;
-    v[2]=1.3;
-
-    m3u.interp_linear_vec0(v,res);
-    m3u.interp_linear_vec(v,0,res3);
     double res2;
-    v[0]=1.0;
-    res2=m3u.interp_linear(v);
-    t.test_rel(res[0],res2,1.0e-12,"interp_linear_vec0 1");
-    t.test_rel(res3[0],res2,1.0e-12,"interp_linear_vec 1");
-    v[0]=2.0;
-    res2=m3u.interp_linear(v);
-    t.test_rel(res[1],res2,1.0e-12,"interp_linear_vec0 2");
-    t.test_rel(res3[1],res2,1.0e-12,"interp_linear_vec 2");
-    v[0]=3.0;
-    res2=m3u.interp_linear(v);
-    t.test_rel(res[2],res2,1.0e-12,"interp_linear_vec0 3");
-    t.test_rel(res3[2],res2,1.0e-12,"interp_linear_vec 3");
-    v[0]=4.0;
-    res2=m3u.interp_linear(v);
-    t.test_rel(res[3],res2,1.0e-12,"interp_linear_vec0 4");
-    t.test_rel(res3[3],res2,1.0e-12,"interp_linear_vec 4");
 
     v[0]=3.1;
     v[1]=2.2;
     v[2]=1.3;
-    
-    m3u.interp_linear_vec(v,1,res3);
-    v[1]=1.0;
-    res2=m3u.interp_linear(v);
-    t.test_rel(res3[0],res2,1.0e-12,"interp_linear_vec 5");
-    v[1]=2.0;
-    res2=m3u.interp_linear(v);
-    t.test_rel(res3[1],res2,1.0e-12,"interp_linear_vec 6");
-    v[1]=3.0;
-    res2=m3u.interp_linear(v);
-    t.test_rel(res3[2],res2,1.0e-12,"interp_linear_vec 7");
+
+    if (true) {
+      m3u.interp_linear_vec0(v,res);
+      m3u.interp_linear_vec(v,0,res3);
+      v[0]=1.0;
+      res2=m3u.interp_linear(v);
+      t.test_rel(res[0],res2,1.0e-12,"u interp_linear_vec0 1");
+      t.test_rel(res3[0],res2,1.0e-12,"u interp_linear_vec 1");
+      v[0]=2.0;
+      res2=m3u.interp_linear(v);
+      t.test_rel(res[1],res2,1.0e-12,"u interp_linear_vec0 2");
+      t.test_rel(res3[1],res2,1.0e-12,"u interp_linear_vec 2");
+      v[0]=3.0;
+      res2=m3u.interp_linear(v);
+      t.test_rel(res[2],res2,1.0e-12,"u interp_linear_vec0 3");
+      t.test_rel(res3[2],res2,1.0e-12,"u interp_linear_vec 3");
+      v[0]=4.0;
+      res2=m3u.interp_linear(v);
+      t.test_rel(res[3],res2,1.0e-12,"u interp_linear_vec0 4");
+      t.test_rel(res3[3],res2,1.0e-12,"u interp_linear_vec 4");
+    }
 
     v[0]=3.1;
     v[1]=2.2;
     v[2]=1.3;
-    
-    m3u.interp_linear_vec(v,2,res3);
-    v[2]=1.0;
-    res2=m3u.interp_linear(v);
-    t.test_rel(res3[0],res2,1.0e-12,"interp_linear_vec 8");
-    v[2]=2.0;
-    res2=m3u.interp_linear(v);
-    t.test_rel(res3[1],res2,1.0e-12,"interp_linear_vec 9");
-    v[2]=3.0;
-    res2=m3u.interp_linear(v);
-    t.test_rel(res3[2],res2,1.0e-12,"interp_linear_vec 10");
+
+    if (true) {
+      m3u.interp_linear_vec(v,1,res3);
+      v[1]=1.0;
+      res2=m3u.interp_linear(v);
+      t.test_rel(res3[0],res2,1.0e-12,"u interp_linear_vec 5");
+      v[1]=2.0;
+      res2=m3u.interp_linear(v);
+      t.test_rel(res3[1],res2,1.0e-12,"u interp_linear_vec 6");
+      v[1]=3.0;
+      res2=m3u.interp_linear(v);
+      t.test_rel(res3[2],res2,1.0e-12,"u interp_linear_vec 7");
+    }
+
+    v[0]=3.1;
+    v[1]=2.2;
+    v[2]=1.3;
+
+    if (true) {
+      m3u.interp_linear_vec(v,2,res3);
+      v[2]=1.0;
+      res2=m3u.interp_linear(v);
+      t.test_rel(res3[0],res2,1.0e-12,"u interp_linear_vec 8");
+      v[2]=2.0;
+      res2=m3u.interp_linear(v);
+      t.test_rel(res3[1],res2,1.0e-12,"u interp_linear_vec 9");
+      v[2]=3.0;
+      res2=m3u.interp_linear(v);
+      t.test_rel(res3[2],res2,1.0e-12,"u interp_linear_vec 10");
+    }
     
     typedef boost::numeric::ublas::vector_slice<ubvector> ubvector_slice;
 

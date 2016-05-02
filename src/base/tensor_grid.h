@@ -721,6 +721,16 @@ namespace o2scl {
 	object specified in the template parameter \c base_interp_t.
 	This will be very slow for sufficiently large data sets.
 
+ 	\note This function requires a range objects to obtain ranges
+ 	of vector objects. In ublas, this is done with
+ 	<tt>ublas::vector_range</tt> objects, so this function will
+ 	certainly work for \ref tensor_grid objects built on ublas
+ 	vector types. There is no corresponding <tt>std::range</tt>,
+ 	but you may be able to use either <tt>ublas::vector_range</tt>
+ 	or <tt>Boost.Range</tt> in order to call this function with
+ 	\ref tensor_grid objects built on <tt>std::vector</tt>.
+ 	However, this is not fully tested at the moment.
+
 	\future It should be straightforward to improve the scaling of
 	this algorithm significantly by creating a "window" of local
 	points around the point of interest. This could be done easily
@@ -912,6 +922,9 @@ namespace o2scl {
 
     /** \brief Perform a linear interpolation of <tt>v[1]</tt>
 	to <tt>v[n-1]</tt> resulting in a vector
+
+	\note The type <tt>vec2_t</tt> for the vector <tt>res</tt>
+	must have a <tt>resize()</tt> method.
 	
 	This performs multi-dimensional linear interpolation (or
 	extrapolation) in the last <tt>n-1</tt> indices of the
@@ -975,8 +988,9 @@ namespace o2scl {
 	last <tt>n-1</tt> indices can take only two values and placing
 	the result into <tt>res</tt>.
 
-	\note This is principally a function for internal use
-	by \ref interp_linear_vec0().
+	\note The type <tt>vec2_t</tt> for the vector <tt>res</tt>
+ 	must have a <tt>resize()</tt> method. This is principally a
+ 	function for internal use by \ref interp_linear_vec0().
     */
     template<class vec2_size_t, class vec2_t>
       void interp_linear_power_two_vec0(vec2_size_t &v, vec2_t &res) {
@@ -1049,14 +1063,14 @@ namespace o2scl {
 
       // Find the the corner of the hypercube containing v
       size_t rgs=0;
-      std::vector<size_t> loc(this->rk);
+      vec_size_t loc(this->rk);
       loc[ifree]=0;
       for(size_t i=0;i<this->rk;i++) {
-	std::vector<double> grid_unpacked(this->size[i]);
+	vec_t grid_unpacked(this->size[i]);
 	for(size_t j=0;j<this->size[i];j++) {
           grid_unpacked[j]=grid[j+rgs];
         }
-	search_vec<std::vector<double> > sv(this->size[i],grid_unpacked);
+	search_vec<vec_t> sv(this->size[i],grid_unpacked);
 	if (i!=ifree) {
 	  loc[i]=sv.find(v[i]);
 	}
@@ -1070,7 +1084,7 @@ namespace o2scl {
 	  if (map[new_ix]==old_ix) {
 	    vnew.push_back(v[old_ix]);
 	    if (old_ix==ifree) {
-	      for(size_t j=0;j<this->size(old_ix);j++) {
+	      for(size_t j=0;j<this->size[old_ix];j++) {
 		gnew.push_back(this->get_grid(old_ix,j));
 	      }
 	    } else {
