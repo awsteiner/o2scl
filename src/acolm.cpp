@@ -61,11 +61,18 @@ int acol_manager::setup_options() {
   const int cl_param=cli::comm_option_cl_param;
   const int both=cli::comm_option_both;
 
-  static const int narr=42;
+  static const int narr=43;
 
   // Options, sorted by long name. We allow 0 parameters in many of these
   // options so they can be requested from the user in interactive mode. 
   comm_option_s options_arr[narr]={
+    {0,"add","Add the data from two table3d objects.",0,3,
+     "<file 1> <file 2> <sum file>",((string)"Read the two equally-")+
+     "sized table3d objects in <file 1> and <file 2> and construct a "+
+     "new table where each data slice represents the sum of the data "+
+     "from each of the original files. Store this sum in <sum file>.",
+     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_add),
+     both},
     {'a',"assign","Assign a constant, e.g. assign pi acos(-1)",
      0,2,"<name> [val]",
      ((string)"Assign a constant value to a name for the present table. ")+
@@ -79,6 +86,13 @@ int acol_manager::setup_options() {
      "Results are given at the current precision.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_calc),
      both},
+    {0,"convert-unit","Convert a column to a new unit",0,2,
+     "<column> <new_unit>",((string)"(This command only works if ")+
+     "the GNU 'units' command is installed and available in the current "+
+     "path.) Convert the units of a column to <new unit>, multipliying "+
+     "all entries in that column by the appropriate factor.",
+     new comm_option_mfptr<acol_manager>
+     (this,&acol_manager::comm_convert_unit),both},
     {'c',"create","Create a table from uniform grid.",
      0,4,"<name> <low> <hi> <step>",
      ((string)"Create a new table with one column whose entries ")+
@@ -89,7 +103,7 @@ int acol_manager::setup_options() {
      "If a table is currently in memory, it is deallocated beforehand. ",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_create),
      both},
-    {0,"delete-col","Delete a column (2d only).",0,1,"<name>",
+    {0,"delete-col","Delete a column (table3d only).",0,1,"<name>",
      "Delete the entire column named <name>.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_delete_col),
      both},
@@ -98,17 +112,17 @@ int acol_manager::setup_options() {
      "which a function evaluates to a number greater than 0.5. "+
      "For example, 'delete-rows if(col1+col2>10,1,0)' will delete "+
      "all columns where the sum of the entries in 'col1' and 'col2' "+
-     "is larger than 10 (2d only).",
+     "is larger than 10 (table3d only).",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_delete_rows),
      both},
     {'D',"deriv",
-     "Derivative of a function defined by two columns (2d only).",
+     "Derivative of a function defined by two columns (table3d only).",
      0,3,"<x> <y> <name>",
      ((string)"Create a new column named <name> filled with the ")+
      "derivative of the function y(x) obtained from columns <x> and <y>. ",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv),
      both},
-    {0,"deriv2","Second derivative (2d only).",0,3,"<name> <x> <y>",
+    {0,"deriv2","Second derivative (table3d only).",0,3,"<name> <x> <y>",
      ((string)"Create a new column named <name> filled with the second ")+
      "derivative of the function y(x) obtained from columns <x> and <y>. ",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv2),
@@ -119,7 +133,7 @@ int acol_manager::setup_options() {
      "gives the type and name of the object stored in that HDF5 group.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_filelist),
      both},
-    {0,"find-row","Find a row which maximizes a function (2d only).",
+    {0,"find-row","Find a row which maximizes a function (table3d only).",
      0,2,"<func> or find-row <col> <val>",
      ((string)"If one argument is given, then find-row finds the row ")+
      "which maximizes the value of the "+
@@ -129,7 +143,7 @@ int acol_manager::setup_options() {
      "See command 'get-row' to get a row by it's index.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_find_row),
      both},
-    {0,"fit","Fit two columns to a function (experimental, 2d only).",0,7,
+    {0,"fit","Fit two columns to a function (experimental, table3d only).",0,7,
      "<x> <y> <yerr> <ynew> <par names> <func> <vals>","",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_fit),
      both},
@@ -142,7 +156,7 @@ int acol_manager::setup_options() {
      "difference of columns 'c1' and 'c2'.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_function),
      both},
-    {'g',"generic","Read in a generic data file (2d only).",0,1,"<file>",
+    {'g',"generic","Read in a generic data file (table3d only).",0,1,"<file>",
      ((string)"Read a generic data file with the given filename. ")+
      "The first line of the file is assumed to contain column names "+
      "separated by white space, without carriage returns, except for "+
@@ -154,6 +168,15 @@ int acol_manager::setup_options() {
      ((string)"Desc ")+"Desc2",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_gen3_list),
      both},
+    {0,"get-conv","Get a unit conversion factor.",0,2,
+     "<old unit> <new unit>",((string)"(This command only works if ")+
+     "the GNU 'units' command is installed and available in the current "+
+     "path.) For example, 'get-conv MeV erg' returns 1.602e-6 and 1 MeV "+
+     "is equivalent to 1.602e-6 erg. The conversion factor is output "+
+     "at the current precision, but is always internally stored with "+
+     "full double precision.",
+     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_conv),
+     both},
     {0,"get-row","Get a row by index.",
      0,1,"<index>",((string)"Get a row by index. The first row ")+
      "has index 0, and the last row has index n-1, where n "+
@@ -163,11 +186,14 @@ int acol_manager::setup_options() {
      "a specified function, use 'find-row'.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_row),
      both},
-    {'H',"html","Create a file in HTML (2d only).",0,1,"<file>",
+    {0,"get-unit","Get the units for a specified column.",0,1,"<column>","",
+     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_unit),
+     both},
+    {'H',"html","Create a file in HTML (table3d only).",0,1,"<file>",
      "Output the current table in HTML mode to the specified file. ",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_html),
      both},
-    {'N',"index","Add a column containing the row numbers (2d only).",0,1,
+    {'N',"index","Add a column containing the row numbers (table3d only).",0,1,
      "[column name]",
      ((string)"Define a new column named [column name] and fill ")+
      "the column with the row indexes, beginning with zero. If "+
@@ -185,7 +211,8 @@ int acol_manager::setup_options() {
      "[newy] if the additional argument is given. ",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_insert),
      both},
-    {0,"insert-full","Interpolate a table from another file (2d only).",0,3,
+    {0,"insert-full",
+     "Interpolate a table from another file (table3d only).",0,3,
      "<fname> <oldx> <newx>",
      ((string)"Insert all columns from file <fname> interpolating it ")+
      "into the current table. The column <oldy> is the "+
@@ -194,7 +221,8 @@ int acol_manager::setup_options() {
      "The new column are given the same names as in the file. ",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
      both},
-    {'I',"integ","Integrate a function specified by two columns (2d only).",
+    {'I',"integ",
+     "Integrate a function specified by two columns (table3d only).",
      0,3,"<x> <y> <name>",
      ((string)"Create a new column named <name> filled with the ")+
      "integral of the function y(x) obtained from columns <x> and <y>. ",
@@ -272,7 +300,7 @@ int acol_manager::setup_options() {
      "named using '='. ",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_select),
      both},
-    {0,"select-rows","Select rows for a new table (2d only).",
+    {0,"select-rows","Select rows for a new table (table3d only).",
      0,1,"<row_spec>","",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_select_rows),
      both},
@@ -286,9 +314,6 @@ int acol_manager::setup_options() {
      "(<x value>,<y value>) to the value <val>.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_set_data),
      both},
-    {0,"get-unit","Get the units for a specified column.",0,1,"<column>","",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_unit),
-     both},
     {0,"set-unit","Set the units for a specified column.",0,2,
      "<column> <unit>","",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_set_unit),
@@ -299,21 +324,9 @@ int acol_manager::setup_options() {
      "in the unit cache.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_show_units),
      both},
-    {0,"convert-unit","Convert a column to a new unit",0,2,
-     "<column> <new_unit>",((string)"(This command only works if ")+
-     "the GNU 'units' command is installed and available in the current "+
-     "path.) Convert the units of a column to <new unit>, multipliying "+
-     "all entries in that column by the appropriate factor.",
-     new comm_option_mfptr<acol_manager>
-     (this,&acol_manager::comm_convert_unit),both},
-    {0,"get-conv","Get a unit conversion factor.",0,2,
-     "<old unit> <new unit>",((string)"(This command only works if ")+
-     "the GNU 'units' command is installed and available in the current "+
-     "path.) For example, 'get-conv MeV erg' returns 1.602e-6 and 1 MeV "+
-     "is equivalent to 1.602e-6 erg. The conversion factor is output "+
-     "at the current precision, but is always internally stored with "+
-     "full double precision.",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_conv),
+    {0,"slice","Construct a slice (table3d only)",2,2,"<x or y> <value>",
+     ((string)""),
+     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_slice),
      both},
     {'S',"sort","Sort the entire table by a column (2d only).",0,1,"<col>",
      "Sorts the entire table by the column specified in <col>. ",
@@ -325,13 +338,6 @@ int acol_manager::setup_options() {
      both},
     {'v',"version","Print version information.",0,0,"",
      "",new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_version),
-     both},
-    {0,"add","Add the data from two table3d objects.",0,3,
-     "<file 1> <file 2> <sum file>",((string)"Read the two equally-")+
-     "sized table3d objects in <file 1> and <file 2> and construct a "+
-     "new table where each data slice represents the sum of the data "+
-     "from each of the original files. Store this sum in <sum file>.",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_add),
      both}
   };
   /*
@@ -1347,6 +1353,40 @@ int acol_manager::comm_max(std::vector<std::string> &sv, bool itive_com) {
   vector_max(tabp->get_nlines(),(*tabp)[i1],ix,max);
   cout << "Maximum value of column '" << i1 << "' is: " 
        << max << " at row with index " << ix << "." << endl;
+  
+  return 0;
+}
+
+int acol_manager::comm_slice(std::vector<std::string> &sv, bool itive_com) {
+
+  if (!threed) {
+    cerr << "Slice does not work with table objects." << endl;
+  }
+  
+  if (t3p==0 || t3p->get_nslices()==0) {
+    cerr << "No table3d with slices to find the maximum value of." << endl;
+    return exc_efailed;
+  }
+
+  vector<string> in, pr;
+  pr.push_back("Slice in 'x' or 'y' direction");
+  pr.push_back("Value to interpolate in for slice");
+  int ret=get_input(sv,pr,in,"slice",itive_com);
+  if (ret!=0) return ret;
+  
+  if (sv[1]=="x") {
+    tabp=new table_units<>;
+    t3p->extract_x(std::stod(sv[2]),*tabp);
+    delete t3p;
+    threed=false;
+  } else if (sv[1]=="y") {
+    tabp=new table_units<>;
+    t3p->extract_y(std::stod(sv[2]),*tabp);
+    delete t3p;
+    threed=false;
+  } else {
+    cerr << "Invalid first argument to 'slice'." << endl;
+  }
   
   return 0;
 }

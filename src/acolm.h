@@ -279,6 +279,9 @@ namespace o2scl_acol {
     /// Print out an entire row
     virtual int comm_get_row(std::vector<std::string> &sv, bool itive_com);
 
+    /// Desc
+    virtual int comm_slice(std::vector<std::string> &sv, bool itive_com);
+
     /// Fit two columns to a function
     virtual int comm_fit(std::vector<std::string> &sv, bool itive_com);
     
