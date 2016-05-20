@@ -82,10 +82,10 @@ void prob_dens_hist::init(hist &h) {
   return;
 }
 
-double prob_dens_hist::sample() const {
+double prob_dens_hist::operator()() const {
   
   if (n==0) {
-    O2SCL_ERR("No data specified in prob_dens_hist::sample().",
+    O2SCL_ERR("No data specified in prob_dens_hist::operator().",
 	      exc_efailed);
   }
   
@@ -99,10 +99,10 @@ double prob_dens_hist::sample() const {
   return x;
 }
 
-double prob_dens_hist::operator()(double r) const {
+double prob_dens_hist::function(double r) const {
 
   if (n==0) {
-    O2SCL_ERR("No data specified in prob_dens_hist::operator().",exc_efailed);
+    O2SCL_ERR("No data specified in prob_dens_hist::function().",exc_efailed);
   }
   
   if (r<range[0]) return 0.0;

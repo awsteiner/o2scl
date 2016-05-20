@@ -35,6 +35,7 @@
 #include <o2scl/hist.h>
 #include <o2scl/rng_gsl.h>
 #include <o2scl/search_vec.h>
+#include <o2scl/cholesky.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -52,10 +53,10 @@ namespace o2scl {
   public:
     
     /// Sample from the specified density
-    virtual double sample() const=0;
+    virtual double operator()() const=0;
     
     /// The normalized density 
-    virtual double operator()(double x) const=0;
+    virtual double function(double x) const=0;
     
     /// The cumulative distribution function (from the lower tail)
     virtual double cdf(double x) const=0;
@@ -161,12 +162,12 @@ namespace o2scl {
     }
 
     /// Get the center
-    double get_center() {
+    double mean() {
       return cent_;
     }
 
     /// Get the Gaussian width
-    double get_sigma() {
+    double stddev() {
       if (sigma_<0.0) {
 	O2SCL_ERR2("Width not set in prob_dens_gaussian::",
 		   "get_sigma().",exc_einval);
@@ -175,19 +176,19 @@ namespace o2scl {
     }
 
     /// Sample from the specified density
-    virtual double sample() const {
+    virtual double operator()() const {
       if (sigma_<0.0) {
 	O2SCL_ERR2("Width not set in prob_dens_gaussian::",
-		   "sample().",exc_einval);
+		   "operator().",exc_einval);
       }
       return cent_+gsl_ran_gaussian(r,sigma_);
     }
     
     /// The normalized density 
-    virtual double operator()(double x) const {
+    virtual double function(double x) const {
       if (sigma_<0.0) {
 	O2SCL_ERR2("Width not set in prob_dens_gaussian::",
-		   "operator().",exc_einval);
+		   "function().",exc_einval);
       }
       return gsl_ran_gaussian_pdf(x-cent_,sigma_);
     }
@@ -345,20 +346,20 @@ namespace o2scl {
       return ul;
     }
 
-    /// Sample from the specified density
-    virtual double sample() const {
+    /// Operator from the specified density
+    virtual double operator()() const {
       if (ll>ul) {
 	O2SCL_ERR2("Limits not set in prob_dens_uniform::",
-		   "sample().",exc_einval);
+		   "operator().",exc_einval);
       }
       return gsl_ran_flat(r,ll,ul);
     }
     
     /// The normalized density 
-    virtual double operator()(double x) const {
+    virtual double function(double x) const {
       if (ll>ul) {
 	O2SCL_ERR2("Limits not set in prob_dens_uniform::",
-		   "operator().",exc_einval);
+		   "function().",exc_einval);
       }
       if (x<ll || x>ul) return 0.0;
       return gsl_ran_flat_pdf(x,ll,ul);
@@ -501,12 +502,12 @@ namespace o2scl {
     }
 
     /// Sample from the specified density
-    virtual double sample() const {
+    virtual double operator()() const {
       return gsl_ran_lognormal(r,mu_,sigma_);
     }
     
     /// The normalized density 
-    virtual double operator()(double x) const {
+    virtual double function(double x) const {
       if (x<0.0) {
 	return 0.0;
       }
@@ -584,7 +585,7 @@ namespace o2scl {
     void init(hist &h);
 
     /// Generate a sample
-    virtual double sample() const;
+    virtual double operator()() const;
 
     /// Lower limit of the range
     virtual double lower_limit() const;
@@ -593,7 +594,7 @@ namespace o2scl {
     virtual double upper_limit() const;
 
     /// The normalized density 
-    virtual double operator()(double x) const;
+    virtual double function(double x) const;
     
     /// Cumulative distribution function (from the lower tail)
     virtual double cdf(double x) const;
@@ -608,6 +609,134 @@ namespace o2scl {
     
   };
 
+  /** \brief A multi-dimensional probability density function
+
+      This class is experimental.
+   */
+  template<class vec_t=boost::numeric::ublas::vector<double> >
+  class prob_dens_mdim {
+    
+  public:
+    
+    /// Return the probability density
+    virtual double function(vec_t &x) const=0;
+    
+  /// Sample the distribution
+  virtual void operator()(vec_t &x) const=0;
+
+  };
+
+  /** \brief A multidimensional distribution formed by the product
+      of several one-dimensional distributions
+  */
+  template<class vec_t=boost::numeric::ublas::vector<double> >
+    class prob_dens_mdim_factor : public prob_dens_mdim<vec_t> {
+    
+    /// Vector of one-dimensional distributions
+    std::vector<prob_dens_func> list;
+    
+  public:
+
+  prob_dens_mdim_factor(std::vector<prob_dens_func> &p_list) {
+    list=p_list;
+  }
+  
+  /// Return the probability density
+    virtual double function(vec_t &x) const {
+      double ret=1.0;
+      for(size_t i=0;i<list.size();i++) ret*=list[i].function(x[i]);
+      return ret;
+    }
+  
+  /// Sample the distribution
+    virtual void operator()(vec_t &x) const {
+      for(size_t i=0;i<list.size();i++) x[i]=list[i]();
+      return;
+    }
+  
+  };
+  
+  /** \brief A multi-dimensional probability density function
+
+      This class is experimental.
+  */
+  template<class vec_t=boost::numeric::ublas::vector<double>,
+    class mat_t=boost::numeric::ublas::matrix<double> >
+    class prob_dens_mdim_gauss : public prob_dens_mdim<vec_t> {
+    
+  protected:
+
+  /// Cholesky decomposition
+    mat_t chol;
+
+  /// Inverse of the covariance matrix
+    mat_t covar_inv;
+
+  /// Location of the peak
+    vec_t peak;
+
+  /// Normalization factor
+    double norm;
+
+  /// Number of dimensions
+    size_t ndim;
+
+  /// Temporary storage 1
+    mutable vec_t q;
+
+  /// Temporary storage 2
+    mutable vec_t vtmp;
+
+  /// Standard normal
+    o2scl::prob_dens_gaussian pdg;
+    
+  public:
+  
+  /** \brief Create a distribution from the covariance matrix
+   */
+    prob_dens_mdim_gauss(size_t p_ndim, vec_t &p_peak, mat_t &covar) {
+      ndim=p_ndim;
+      norm=1.0;
+      peak.resize(ndim);
+      for(size_t i=0;i<ndim;i++) peak[i]=p_peak[i];
+      q.resize(ndim);
+      vtmp.resize(ndim);
+
+      // Perform the Cholesky decomposition
+      chol=covar;
+      o2scl_linalg::cholesky_decomp(ndim,chol);
+      
+      // Find the inverse
+      covar_inv=chol;
+      o2scl_linalg::cholesky_invert<mat_t>(ndim,covar_inv);
+      
+      // Force chol to be lower triangular
+      for(size_t i=0;i<ndim;i++) {
+	for(size_t j=0;j<ndim;j++) {
+	  if (i<j) chol(i,j)=0.0;
+	}
+      }
+    }
+
+    /// Return the probability density
+    virtual double function(vec_t &x) const {
+      double ret=norm;
+      for(size_t i=0;i<ndim;i++) q[i]=x[i]-peak[i];
+      vtmp=prod(covar_inv,q);
+      ret*=exp(-0.5*inner_prod(q,vtmp));
+      return ret;
+    }
+
+    /// Sample the distribution
+    virtual void operator()(vec_t &x) const {
+      for(size_t i=0;i<ndim;i++) q[i]=pdg();
+      vtmp=prod(chol,q);
+      for(size_t i=0;i<ndim;i++) x[i]=peak[i]+vtmp[i];
+      return;
+    }
+
+  };
+  
 #ifndef DOXYGEN_NO_O2NS
 }
 #endif

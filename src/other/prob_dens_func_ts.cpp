@@ -33,6 +33,9 @@
 using namespace std;
 using namespace o2scl;
 
+typedef boost::numeric::ublas::vector<double> ubvector;
+typedef boost::numeric::ublas::matrix<double> ubmatrix;
+  
 int main(void) {
 
   cout.setf(ios::scientific);
@@ -75,27 +78,25 @@ int main(void) {
     gsl_rng_free(r);
   }
 
-  prob_dens_gaussian(1.0,2.0);
-  prob_dens_lognormal(1.0,2.0);
-  prob_dens_uniform(1.0,2.0);
-  
+  hist h2;
   {
-    hist h, h2;
+    hist h;
+
     uniform_grid_end<> ug(0.0,1.0,10);
     h.set_bin_edges(ug);
     h2.set_bin_edges(ug);
-
+    
     for(size_t i=0;i<10000;i++) {
       if (sin((double)i)>=0.0) {
 	h.update(sin((double)i));
       }
     }
-
+    
     prob_dens_hist p;
     p.init(h);
-
+    
     for(size_t i=0;i<10000;i++) {
-      double x=p.sample();
+      double x=p();
       h2.update(x);
     }
     
@@ -103,9 +104,54 @@ int main(void) {
       cout << i << " " << h2[i] << endl;
     }
     cout << endl;
+  }
+
+  hist h4;
+  {
+    hist h3;
+
+    std::random_device rd;
+    std::normal_distribution<double> normdist(1.0,2.0);
+    
+    uniform_grid_end<> ug(0.0,1.0,10);
+    h3.set_bin_edges(ug);
+    h4.set_bin_edges(ug);
+
+    for(size_t i=0;i<10000;i++) {
+      if (sin((double)i)>=0.0) {
+	h3.update(sin((double)i));
+      }
+    }
+
+    prob_dens_hist p2;
+    p2.init(h3);
+    
+    for(size_t i=0;i<10000;i++) {
+      double x=p2();
+      h4.update(x);
+    }
+    
+    for(size_t i=0;i<10;i++) {
+      cout << i << " " << h4[i] << endl;
+    }
+    cout << endl;
 
   }
 
+  for(size_t i=0;i<10;i++) {
+    t.test_rel(h2[i],h4[i],1.0e-10,"o2scl vs std::normal");
+  }
+
+  ubvector cent(2);
+  ubmatrix covar(2,2);
+  cent[0]=2.0;
+  cent[1]=3.0;
+  covar(0,0)=1.0;
+  covar(1,1)=4.0;
+  covar(0,1)=-1.0;
+  covar(1,0)=-1.0;
+  prob_dens_mdim_gauss<> pdmg(2,cent,covar);
+  
   t.report();
 
   return 0;
