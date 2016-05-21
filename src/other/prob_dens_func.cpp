@@ -99,10 +99,10 @@ double prob_dens_hist::operator()() const {
   return x;
 }
 
-double prob_dens_hist::function(double r) const {
+double prob_dens_hist::pdf(double r) const {
 
   if (n==0) {
-    O2SCL_ERR("No data specified in prob_dens_hist::function().",exc_efailed);
+    O2SCL_ERR("No data specified in prob_dens_hist::pdf().",exc_efailed);
   }
   
   if (r<range[0]) return 0.0;

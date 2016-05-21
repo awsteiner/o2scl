@@ -46,9 +46,8 @@ namespace o2scl {
       This class is experimental.
 
       \future Give functions for mean, median, mode, variance, etc?
-   */
+  */
   class prob_dens_func {
-    //: public funct {
     
   public:
     
@@ -56,7 +55,7 @@ namespace o2scl {
     virtual double operator()() const=0;
     
     /// The normalized density 
-    virtual double function(double x) const=0;
+    virtual double pdf(double x) const=0;
     
     /// The cumulative distribution function (from the lower tail)
     virtual double cdf(double x) const=0;
@@ -78,7 +77,7 @@ namespace o2scl {
       \f]
 
       This class is experimental.
-   */
+  */
   class prob_dens_gaussian : public prob_dens_func {
     
   protected:
@@ -90,11 +89,11 @@ namespace o2scl {
     /** \brief Width parameter 
 
 	A value of -1 indicates it is yet unspecified.
-     */
+    */
     double sigma_;
     
     /// Base GSL random number generator
-    gsl_rng *r;
+    gsl_rng r;
     
   public:
     
@@ -103,13 +102,12 @@ namespace o2scl {
     prob_dens_gaussian() {
       cent_=0.0;
       sigma_=1.0;
-      r=gsl_rng_alloc(gsl_rng_mt19937);
     }
 
     /** \brief Create a Gaussian distribution with width \c sigma
 
 	The value of \c sigma must be larger than zero.
-     */
+    */
     prob_dens_gaussian(double cent, double sigma) {
       if (sigma<0.0) {
 	O2SCL_ERR2("Tried to create a Gaussian dist. with sigma",
@@ -118,47 +116,50 @@ namespace o2scl {
       }
       cent_=cent;
       sigma_=sigma;
-      r=gsl_rng_alloc(gsl_rng_mt19937);
     }
-
+    
     virtual ~prob_dens_gaussian() {
-      gsl_rng_free(r);
     }
 
     /// Copy constructor
   prob_dens_gaussian(const prob_dens_gaussian &pdg) : prob_dens_func() {
       cent_=pdg.cent_;
       sigma_=pdg.sigma_;
-      r=gsl_rng_alloc(gsl_rng_mt19937);
+      r=pdg.r;
     }
 
     /// Copy constructor with operator=
     prob_dens_gaussian &operator=(const prob_dens_gaussian &pdg) {
       // Check for self-assignment
-      if (this==&pdg) return *this;
-      cent_=pdg.cent_;
-      sigma_=pdg.sigma_;
+      if (this!=&pdg) {
+	cent_=pdg.cent_;
+	sigma_=pdg.sigma_;
+	r=pdg.r;
+      }
       return *this;
     }
 
     /// Set the seed
-    void set_seed(unsigned long int s) { 
-      gsl_rng_set(r,s);
+    void set_seed(unsigned long int s) {
+      r.set_seed(s);
+      return;
     }
 
     /// Set the center
     void set_center(double cent) {
       cent_=cent;
+      return;
     }
 
-    /// Set the Gaussian width
+    /// Set the Gaussian width (must be positive)
     void set_sigma(double sigma) {
       if (sigma<0.0) {
-	O2SCL_ERR2("Tried to set sigma negative",
+	O2SCL_ERR2("Tried to set negative sigma ",
 		   "in prob_dens_gaussian::prob_dens_gaussian().",
 		   exc_einval);
       }
       sigma_=sigma;
+      return;
     }
 
     /// Get the center
@@ -185,10 +186,10 @@ namespace o2scl {
     }
     
     /// The normalized density 
-    virtual double function(double x) const {
+    virtual double pdf(double x) const {
       if (sigma_<0.0) {
 	O2SCL_ERR2("Width not set in prob_dens_gaussian::",
-		   "function().",exc_einval);
+		   "pdf().",exc_einval);
       }
       return gsl_ran_gaussian_pdf(x-cent_,sigma_);
     }
@@ -230,7 +231,7 @@ namespace o2scl {
       a finite range
 
       This class is experimental.
-   */
+  */
   class prob_dens_frange : public prob_dens_func {
 
   public:
@@ -251,7 +252,7 @@ namespace o2scl {
       upper limit.
 
       This class is experimental.
-   */
+  */
   class prob_dens_uniform : public prob_dens_frange {
     
   protected:
@@ -356,10 +357,10 @@ namespace o2scl {
     }
     
     /// The normalized density 
-    virtual double function(double x) const {
+    virtual double pdf(double x) const {
       if (ll>ul) {
 	O2SCL_ERR2("Limits not set in prob_dens_uniform::",
-		   "function().",exc_einval);
+		   "pdf().",exc_einval);
       }
       if (x<ll || x>ul) return 0.0;
       return gsl_ran_flat_pdf(x,ll,ul);
@@ -418,7 +419,7 @@ namespace o2scl {
       \f]
 
       This class is experimental.
-   */
+  */
   class prob_dens_lognormal : public prob_dens_positive {
 
   protected:
@@ -426,13 +427,13 @@ namespace o2scl {
     /** \brief Width parameter 
 
 	A value of -1 indicates it is yet unspecified.
-     */
+    */
     double sigma_;
     
     /** \brief Central value
 
 	A value of -1 indicates it is yet unspecified.
-     */
+    */
     double mu_;
 
     /// The GSL random number generator
@@ -507,7 +508,7 @@ namespace o2scl {
     }
     
     /// The normalized density 
-    virtual double function(double x) const {
+    virtual double pdf(double x) const {
       if (x<0.0) {
 	return 0.0;
       }
@@ -545,7 +546,7 @@ namespace o2scl {
   /** \brief Probability density function based on a histogram
 
       This class is experimental.
-   */
+  */
   class prob_dens_hist : public prob_dens_frange {
     
   public:
@@ -563,13 +564,13 @@ namespace o2scl {
     /** \brief Normalized partial sum of histogram bins
 	
 	This vector has size \ref n plus one.
-     */
+    */
     ubvector sum;
   
     /** \brief Vector specifying original histogram bins
 	
 	This vector has size \ref n plus one.
-     */
+    */
     ubvector range;
   
     /// Random number generator
@@ -594,7 +595,7 @@ namespace o2scl {
     virtual double upper_limit() const;
 
     /// The normalized density 
-    virtual double function(double x) const;
+    virtual double pdf(double x) const;
     
     /// Cumulative distribution function (from the lower tail)
     virtual double cdf(double x) const;
@@ -612,18 +613,21 @@ namespace o2scl {
   /** \brief A multi-dimensional probability density function
 
       This class is experimental.
-   */
+  */
   template<class vec_t=boost::numeric::ublas::vector<double> >
-  class prob_dens_mdim {
+    class prob_dens_mdim {
     
   public:
-    
-    /// Return the probability density
-    virtual double function(vec_t &x) const=0;
-    
+  
+  /// Return the dimensionality
+  virtual size_t dim() const=0;
+  
+  /// Return the probability density
+  virtual double pdf(vec_t &x) const=0;
+  
   /// Sample the distribution
   virtual void operator()(vec_t &x) const=0;
-
+  
   };
 
   /** \brief A multidimensional distribution formed by the product
@@ -636,19 +640,24 @@ namespace o2scl {
     std::vector<prob_dens_func> list;
     
   public:
-
-  prob_dens_mdim_factor(std::vector<prob_dens_func> &p_list) {
-    list=p_list;
-  }
+    
+    prob_dens_mdim_factor(std::vector<prob_dens_func> &p_list) {
+      list=p_list;
+    }
   
-  /// Return the probability density
-    virtual double function(vec_t &x) const {
+    /// Return the dimensionality
+    virtual size_t dim() const {
+      return list.size();
+    }
+  
+    /// Return the probability density
+    virtual double pdf(vec_t &x) const {
       double ret=1.0;
-      for(size_t i=0;i<list.size();i++) ret*=list[i].function(x[i]);
+      for(size_t i=0;i<list.size();i++) ret*=list[i].pdf(x[i]);
       return ret;
     }
   
-  /// Sample the distribution
+    /// Sample the distribution
     virtual void operator()(vec_t &x) const {
       for(size_t i=0;i<list.size();i++) x[i]=list[i]();
       return;
@@ -667,73 +676,73 @@ namespace o2scl {
   protected:
 
   /// Cholesky decomposition
-    mat_t chol;
+  mat_t chol;
 
   /// Inverse of the covariance matrix
-    mat_t covar_inv;
+  mat_t covar_inv;
 
   /// Location of the peak
-    vec_t peak;
+  vec_t peak;
 
   /// Normalization factor
-    double norm;
+  double norm;
 
   /// Number of dimensions
-    size_t ndim;
+  size_t ndim;
 
   /// Temporary storage 1
-    mutable vec_t q;
+  mutable vec_t q;
 
   /// Temporary storage 2
-    mutable vec_t vtmp;
+  mutable vec_t vtmp;
 
   /// Standard normal
-    o2scl::prob_dens_gaussian pdg;
+  o2scl::prob_dens_gaussian pdg;
     
   public:
   
   /** \brief Create a distribution from the covariance matrix
    */
-    prob_dens_mdim_gauss(size_t p_ndim, vec_t &p_peak, mat_t &covar) {
-      ndim=p_ndim;
-      norm=1.0;
-      peak.resize(ndim);
-      for(size_t i=0;i<ndim;i++) peak[i]=p_peak[i];
-      q.resize(ndim);
-      vtmp.resize(ndim);
+  prob_dens_mdim_gauss(size_t p_ndim, vec_t &p_peak, mat_t &covar) {
+    ndim=p_ndim;
+    norm=1.0;
+    peak.resize(ndim);
+    for(size_t i=0;i<ndim;i++) peak[i]=p_peak[i];
+    q.resize(ndim);
+    vtmp.resize(ndim);
 
-      // Perform the Cholesky decomposition
-      chol=covar;
-      o2scl_linalg::cholesky_decomp(ndim,chol);
+    // Perform the Cholesky decomposition
+    chol=covar;
+    o2scl_linalg::cholesky_decomp(ndim,chol);
       
-      // Find the inverse
-      covar_inv=chol;
-      o2scl_linalg::cholesky_invert<mat_t>(ndim,covar_inv);
+    // Find the inverse
+    covar_inv=chol;
+    o2scl_linalg::cholesky_invert<mat_t>(ndim,covar_inv);
       
-      // Force chol to be lower triangular
-      for(size_t i=0;i<ndim;i++) {
-	for(size_t j=0;j<ndim;j++) {
-	  if (i<j) chol(i,j)=0.0;
-	}
+    // Force chol to be lower triangular
+    for(size_t i=0;i<ndim;i++) {
+      for(size_t j=0;j<ndim;j++) {
+	if (i<j) chol(i,j)=0.0;
       }
     }
+  }
 
-    /// Return the probability density
-    virtual double function(vec_t &x) const {
-      double ret=norm;
-      for(size_t i=0;i<ndim;i++) q[i]=x[i]-peak[i];
-      vtmp=prod(covar_inv,q);
-      ret*=exp(-0.5*inner_prod(q,vtmp));
-      return ret;
-    }
+  /// Return the probability density
+  virtual double pdf(vec_t &x) const {
+    double ret=norm;
+    for(size_t i=0;i<ndim;i++) q[i]=x[i]-peak[i];
+    vtmp=prod(covar_inv,q);
+    ret*=exp(-0.5*inner_prod(q,vtmp));
+    return ret;
+  }
 
-    /// Sample the distribution
-    virtual void operator()(vec_t &x) const {
-      for(size_t i=0;i<ndim;i++) q[i]=pdg();
-      vtmp=prod(chol,q);
-      for(size_t i=0;i<ndim;i++) x[i]=peak[i]+vtmp[i];
-      return;
-    }
+  /// Sample the distribution
+  virtual void operator()(vec_t &x) const {
+    for(size_t i=0;i<ndim;i++) q[i]=pdg();
+    vtmp=prod(chol,q);
+    for(size_t i=0;i<ndim;i++) x[i]=peak[i]+vtmp[i];
+    return;
+  }
 
   };
   

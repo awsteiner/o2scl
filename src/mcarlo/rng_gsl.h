@@ -56,13 +56,6 @@ namespace o2scl {
 	and the default seed 
     */
     rng_gsl(const gsl_rng_type *gtype=gsl_rng_mt19937);
-
-    rng_gsl(double ig1, double ig2) {
-      rng=gsl_rng_mt19937;
-      gr=gsl_rng_alloc(gsl_rng_mt19937);
-      gsl_rng_set(gr,0);
-      seed=time(0);
-    }
     
     /// Initialize the random number generator with \c seed 
     rng_gsl(unsigned long int seed, 
@@ -75,7 +68,7 @@ namespace o2scl {
 
     /** \brief Return a random number in \f$(0,1]\f$
      */
-    double operator()(int ignored) {
+    double operator()() {
       return random();
     }
     
@@ -103,21 +96,34 @@ namespace o2scl {
       seed=time(0);
       gsl_rng_set(gr,seed);
     }
+    
+    /// Copy constructor with equals operator
+    rng_gsl& operator=(const rng_gsl &rg) {
+      if (this!=&rg) {
+	seed=rg.seed;
+	rng=rg.rng;
+	gr=gsl_rng_clone(rg.gr);
+      }
+      return *this;
+    }
+
+    /// Copy constructor
+    rng_gsl(const rng_gsl &rg) {
+      seed=rg.seed;
+      rng=rg.rng;
+      gr=gsl_rng_clone(rg.gr);
+    }
+
+    /** \brief The GSL random number generator
+     */
+    gsl_rng *gr;
 
 #ifndef DOXYGEN_INTERNAL
     
-  private:
-    
-    rng_gsl(const rng_gsl &);
-    rng_gsl& operator=(const rng_gsl&);
-
   protected:
 
     /// The seed
     unsigned long int seed;
-
-    /// The GSL random number generator
-    gsl_rng *gr;
 
     /// The GSL random number generator type
     const gsl_rng_type *rng;

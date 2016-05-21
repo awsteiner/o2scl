@@ -32,47 +32,14 @@
 using namespace std;
 using namespace o2scl;
 
-#define N 20000
-
-class one {
-public:
-  rng_gsl gr;
-  
-  void fun() {
-    for(int i=0;i<N;i++) {
-      for(int j=0;j<N;j++) {
-	gr.random();
-      }
-    }
-    return;
-  }
-};
-
-template<class rng_t> class two {
- public:
-
-  rng_t gr;
-
-  void fun() {
-    for(int i=0;i<N;i++) {
-      for(int j=0;j<N;j++) {
-	gr.random();
-      }
-    }
-    return;
-  }
-
-};
-
 int main(void) {
-  double a1, a2;
   test_mgr t;
   t.set_output_level(2);
 
   rng_gsl nr(10);
 
-  a1=nr.random();
-  a2=nr.random();
+  double a1=nr.random();
+  double a2=nr.random();
 
   rng_gsl nr2(10);
 
@@ -81,20 +48,15 @@ int main(void) {
   t.test_rel(a1,nr2.random(),1.0e-14,"First random number.");
   t.test_rel(a2,nr2.random(),1.0e-14,"Second random number.");
 
+  rng_gsl nr3=nr;
+
+  t.test_rel(nr3.random(),nr.random(),1.0e-14,"Copy constructor.");
+
   cout << "Random integers [0,10): " << flush;
   for(int i=0;i<10;i++) {
     cout << nr2.random_int(10) << " " << flush;
   }
   cout << endl;
-
-  one t1;
-  two<rng_gsl> t2;
-
-  cout << clock() << endl;
-  t1.fun();
-  cout << clock() << endl;
-  t2.fun();
-  cout << clock() << endl;
 
   t.report();
   return 0;
