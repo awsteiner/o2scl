@@ -158,7 +158,7 @@ int main(void) {
   double xdat[40], y[40], sigma[40];
   for (size_t i=0;i<n;i++) {
     xdat[i]=((double)i);
-    y[i]=1.0+5*exp(-0.1*((double)i))+gauss.sample();
+    y[i]=1.0+5*exp(-0.1*((double)i))+gauss();
     sigma[i]=0.1;
   }
   struct data d={n,y,sigma};

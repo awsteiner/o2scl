@@ -54,6 +54,9 @@ int main(void) {
 
   rng_gsl nr2(10);
 
+  nr2.random();
+  nr2.random();
+
   // Test to make sure that given the same seed, we 
   // come up with the same numbers.
   t.test_rel(a1,nr2.random(),1.0e-14,"First random number.");

@@ -111,7 +111,7 @@ namespace o2scl {
   */
   template<class func_t=multi_funct11, 
     class vec_t=boost::numeric::ublas::vector<double>,
-    class rng_t=rng>
+    class rng_t=rng_gsl>
     class mcarlo_vegas : public mcarlo<func_t,vec_t,rng_t> {
     
     public:

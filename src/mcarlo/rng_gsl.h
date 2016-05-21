@@ -149,6 +149,15 @@ namespace o2scl {
   
   };
 
+  /** \brief Desc
+   */
+  class rng_gsl_uniform_real {
+  public:
+    double operator()(rng_gsl &r) {
+      return (r.type->get_double)(r.state);
+    }
+  };
+  
 #ifndef DOXYGEN_NO_O2NS
 }
 #endif

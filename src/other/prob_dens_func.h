@@ -613,13 +613,19 @@ namespace o2scl {
   public:
   
   /// Return the dimensionality
-  virtual size_t dim() const=0;
+  virtual size_t dim() const {
+    return 0;
+  }
   
   /// Return the probability density
-  virtual double pdf(vec_t &x) const=0;
+  virtual double pdf(vec_t &x) const {
+    return 0.0;
+  }
   
   /// Sample the distribution
-  virtual void operator()(vec_t &x) const=0;
+  virtual void operator()(vec_t &x) const {
+    return;
+  }
   
   };
 
@@ -664,7 +670,7 @@ namespace o2scl {
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
     class mat_t=boost::numeric::ublas::matrix<double> >
-    class prob_dens_mdim_gauss : public prob_dens_mdim<vec_t> {
+    class prob_dens_mdim_gaussian : public prob_dens_mdim<vec_t> {
     
   protected:
 
@@ -694,9 +700,14 @@ namespace o2scl {
     
   public:
   
+  /// Return the dimensionality
+  virtual size_t dim() const {
+    return ndim;
+  }
+  
   /** \brief Create a distribution from the covariance matrix
    */
-  prob_dens_mdim_gauss(size_t p_ndim, vec_t &p_peak, mat_t &covar) {
+  prob_dens_mdim_gaussian(size_t p_ndim, vec_t &p_peak, mat_t &covar) {
     ndim=p_ndim;
     norm=1.0;
     peak.resize(ndim);

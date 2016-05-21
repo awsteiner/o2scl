@@ -52,7 +52,7 @@ namespace o2scl {
 
   public:
   
-  mcarlo() : rng_dist(0.0,1.0) {
+  mcarlo() {
       n_points=1000;
     }
 
@@ -61,9 +61,10 @@ namespace o2scl {
     /** \brief Number of integration points (default 1000)
      */
     unsigned long n_points;
-
-  /// The random number distribution
-  std::uniform_real_distribution rng_dist;
+  
+  /** \brief The random number distribution
+   */
+  rng_gsl_uniform_real rng_dist;
       
     /// The random number generator
     rng_t rng;
