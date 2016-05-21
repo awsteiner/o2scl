@@ -59,8 +59,8 @@ namespace o2scl {
   */
   template<class func_t=multi_funct11,
     class vec_t=boost::numeric::ublas::vector<double>,
-    class rng_t=int, class rng_dist_t=rng_gsl >
-    class anneal_base : public mmin_base<func_t,func_t,vec_t> {
+    class rng_t=rng_gsl> class anneal_base :
+    public mmin_base<func_t,func_t,vec_t> {
       
 #ifdef O2SCL_NEVER_DEFINED
     }
@@ -69,7 +69,7 @@ namespace o2scl {
     
   public:
       
-    anneal_base() {
+  anneal_base() : dist(0.0,1.0) {
       this->ntrial=100;
     }
       
@@ -111,35 +111,33 @@ namespace o2scl {
       return 0;
     }
 
-    /// The default random number distribution
-    rng_dist_t rng_dist;
-      
     /// The default random number generator
     rng_t rng;
+
+    /// The random distribution object
+    std::uniform_real_distribution<> dist;
 
     /// Return string denoting type, \c "anneal_base".
     virtual const char *type() { return "anneal_base"; }
 
     /** \brief Copy constructor
      */
-    anneal_base<func_t,vec_t,rng_t,rng_dist_t>
-      (const anneal_base<func_t,vec_t,rng_t,rng_dist_t> &ab) : 
+    anneal_base<func_t,vec_t,rng_t>
+      (const anneal_base<func_t,vec_t,rng_t> &ab) : 
     mmin_base<func_t,func_t,vec_t>() {
       
       this->rng=ab.rng;
-      this->rng_dist=ab.rng_dist;
       
     }
     
     /** \brief Copy constructor from operator=
      */
-    anneal_base<func_t,vec_t,rng_t,rng_dist_t>& operator=
-      (const anneal_base<func_t,vec_t,rng_t,rng_dist_t> &ab) {
+    anneal_base<func_t,vec_t,rng_t>& operator=
+      (const anneal_base<func_t,vec_t,rng_t> &ab) {
 
       if (this != &ab) {
 	mmin_base<func_t,func_t,vec_t>::operator=(ab);
 	this->rng=ab.rng;
-	this->rng_dist=ab.rng_dist;
       }
       return *this;
     }

@@ -28,6 +28,9 @@
 
 #include <iostream>
 
+// For memcpy()
+#include <cstring>
+
 #ifdef O2SCL_NEEDS_TIME_H
 #include "time.h"
 #endif
@@ -40,17 +43,20 @@ namespace o2scl {
 
   /** \brief Random number generator (GSL)
 
+      This object is built on the <tt>gsl_rng</tt> struct and modeled
+      to look like a <tt>std::random_device</tt> object.
+
       If \c seed is zero, or is not given, then the default seed
       specific to the particular random number generator is used. 
-
-      An interesting application of this class to generate an
-      arbitrary distribution through a Markov chain Monte Carlo
-      method is in \ref ex_markov_sect.
+      
+      \future This will likely be completely replaced by the random
+      number generators in the standard library.
   */
-
-  class rng_gsl {
+  class rng_gsl : public gsl_rng {
 
   public:
+
+    typedef unsigned long int result_type;
 
     /** \brief Initialize the random number generator with type \c gtype 
 	and the default seed 
@@ -68,18 +74,29 @@ namespace o2scl {
 
     /** \brief Return a random number in \f$(0,1]\f$
      */
-    double operator()() {
-      return random();
+    result_type operator()() {
+      return gsl_rng_get(this);
     }
     
     /// Return a random number in \f$(0,1]\f$
     double random() {
-      return (gr->type->get_double)(gr->state);
+      return (this->type->get_double)(this->state);
+    }
+
+    /** \brief Return the entropy (0.0 since not applicable for
+	pseudo-random engines */
+    double entropy() {
+      return 0.0;
     }
 
     /// Return the maximum integer for random_int()
-    unsigned long int get_max() {
-      return gsl_rng_max(gr)-gsl_rng_min(gr);
+    unsigned long int max() {
+      return gsl_rng_max(this);
+    }
+
+    /// Return the minimum integer for random_int()
+    unsigned long int min() {
+      return gsl_rng_min(this);
     }
 
     /// Return random integer in \f$[0,\mathrm{max}-1]\f$.
@@ -88,13 +105,13 @@ namespace o2scl {
     /// Set the seed
     void set_seed(unsigned long int s) { 
       seed=s;
-      gsl_rng_set(gr,seed);
+      gsl_rng_set(this,seed);
     }
 
     /// Set the seed
     void clock_seed() {
       seed=time(0);
-      gsl_rng_set(gr,seed);
+      gsl_rng_set(this,seed);
     }
     
     /// Copy constructor with equals operator
@@ -102,7 +119,9 @@ namespace o2scl {
       if (this!=&rg) {
 	seed=rg.seed;
 	rng=rg.rng;
-	gr=gsl_rng_clone(rg.gr);
+	this->state=malloc(rg.type->size);
+	this->type=rg.type;
+	memcpy(this->state,rg.state,this->type->size);
       }
       return *this;
     }
@@ -111,12 +130,10 @@ namespace o2scl {
     rng_gsl(const rng_gsl &rg) {
       seed=rg.seed;
       rng=rg.rng;
-      gr=gsl_rng_clone(rg.gr);
+      this->state=malloc(rg.type->size);
+      this->type=rg.type;
+      memcpy(this->state,rg.state,this->type->size);
     }
-
-    /** \brief The GSL random number generator
-     */
-    gsl_rng *gr;
 
 #ifndef DOXYGEN_INTERNAL
     

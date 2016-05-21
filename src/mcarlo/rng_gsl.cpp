@@ -54,25 +54,31 @@ using namespace o2scl;
 
 rng_gsl::rng_gsl(const gsl_rng_type *gtype) {
   rng=gtype;
-  gr=gsl_rng_alloc(gtype);
-  gsl_rng_set(gr,0);
+  {
+    this->state=calloc(1,gtype->size);
+    this->type=gtype;
+    gsl_rng_set(this,0);
+  }
   seed=time(0);
 }
 
 rng_gsl::rng_gsl(unsigned long int lseed, const gsl_rng_type *gtype) {
   rng=gtype;
-  gr=gsl_rng_alloc(gtype);
+  {
+    this->state=calloc(1,gtype->size);
+    this->type=gtype;
+    gsl_rng_set(this,seed);
+  }
   seed=lseed;
-  gsl_rng_set(gr,seed);
 }
 
 rng_gsl::~rng_gsl() {
-  gsl_rng_free(gr);
+  free(this->state);
 }
 
 unsigned long int rng_gsl::random_int(unsigned long int n) {
-  unsigned long int offset = gr->type->min;
-  unsigned long int range = gr->type->max - offset;
+  unsigned long int offset = this->type->min;
+  unsigned long int range = this->type->max - offset;
   unsigned long int scale = range / n;
   unsigned long int k;
   
@@ -82,7 +88,7 @@ unsigned long int rng_gsl::random_int(unsigned long int n) {
   }
   
   do {
-    k = (((gr->type->get) (gr->state)) - offset) / scale;
+    k = (((this->type->get) (this->state)) - offset) / scale;
   } while (k >= n);
   
   return k;

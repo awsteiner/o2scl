@@ -144,8 +144,8 @@ namespace o2scl {
   */
   template<class func_t=multi_funct11,
     class vec_t=boost::numeric::ublas::vector<double>,
-    class rng_t=int, class rng_dist_t=rng_gsl>
-    class anneal_gsl : public anneal_base<func_t,vec_t,rng_t,rng_dist_t> {
+    class rng_t=rng_gsl> class anneal_gsl :
+    public anneal_base<func_t,vec_t,rng_t> {
     
   public:
   
@@ -225,7 +225,7 @@ namespace o2scl {
 	  E=new_E;
 	  nmoves++;
 	} else {
-	  double r=this->rng_dist(this->rng);
+	  double r=this->dist(this->rng);
 	  if (r < exp(-(new_E-E)/(boltz*T))) {
 	    for(j=0;j<nvar;j++) x[j]=new_x[j];
 	    E=new_E;
@@ -281,9 +281,9 @@ namespace o2scl {
 
   /** \brief Copy constructor
    */
-  anneal_gsl<func_t,vec_t,rng_t,rng_dist_t>
-  (const anneal_gsl<func_t,vec_t,rng_t,rng_dist_t> &ag) :
-  anneal_base<func_t,vec_t,rng_t,rng_dist_t>() {
+  anneal_gsl<func_t,vec_t,rng_t>
+  (const anneal_gsl<func_t,vec_t,rng_t> &ag) :
+  anneal_base<func_t,vec_t,rng_t>() {
     
     boltz=ag.boltz;
     T_start=ag.T_start;
@@ -300,10 +300,10 @@ namespace o2scl {
   
   /** \brief Copy constructor from operator=
    */
-  anneal_gsl<func_t,vec_t,rng_t,rng_dist_t>& operator=
-  (const anneal_gsl<func_t,vec_t,rng_t,rng_dist_t> &ag) {
+  anneal_gsl<func_t,vec_t,rng_t>& operator=
+  (const anneal_gsl<func_t,vec_t,rng_t> &ag) {
     if (this != &ag) {
-      anneal_base<func_t,vec_t,rng_t,rng_dist_t>::operator=(ag);
+      anneal_base<func_t,vec_t,rng_t>::operator=(ag);
       boltz=ag.boltz;
       T_start=ag.T_start;
       T_dec=ag.T_dec;
@@ -386,7 +386,7 @@ namespace o2scl {
   virtual int step(vec_t &sx, int nvar) {
     size_t nstep=step_vec.size();
     for(int i=0;i<nvar;i++) {
-      double u=this->rng_dist(this->rng);
+      double u=this->dist(this->rng);
 
       // Construct the step in the ith direction
       double step_i=step_norm*step_vec[i%nstep];

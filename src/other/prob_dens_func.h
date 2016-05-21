@@ -93,7 +93,7 @@ namespace o2scl {
     double sigma_;
     
     /// Base GSL random number generator
-    gsl_rng r;
+    rng_gsl r;
     
   public:
     
@@ -182,7 +182,7 @@ namespace o2scl {
 	O2SCL_ERR2("Width not set in prob_dens_gaussian::",
 		   "operator().",exc_einval);
       }
-      return cent_+gsl_ran_gaussian(r,sigma_);
+      return cent_+gsl_ran_gaussian(&r,sigma_);
     }
     
     /// The normalized density 
@@ -264,7 +264,7 @@ namespace o2scl {
     double ul;
 
     /// The GSL random number generator
-    gsl_rng *r;
+    rng_gsl r;
     
   public:
 
@@ -273,7 +273,6 @@ namespace o2scl {
     prob_dens_uniform() {
       ll=1.0;
       ul=0.0;
-      r=gsl_rng_alloc(gsl_rng_mt19937);
     }
 
     /** \brief Create a uniform distribution from \f$ a<x<b \f$ 
@@ -287,18 +286,15 @@ namespace o2scl {
       }
       ll=a;
       ul=b;
-      r=gsl_rng_alloc(gsl_rng_mt19937);
     }
 
     virtual ~prob_dens_uniform() {
-      gsl_rng_free(r);
     }
 
     /// Copy constructor
   prob_dens_uniform(const prob_dens_uniform &pdg) : prob_dens_frange() {
       ll=pdg.ll;
       ul=pdg.ul;
-      r=gsl_rng_alloc(gsl_rng_mt19937);
     }
 
     /// Copy constructor with operator=
@@ -311,8 +307,9 @@ namespace o2scl {
     }
 
     /// Set the seed
-    void set_seed(unsigned long int s) { 
-      gsl_rng_set(r,s);
+    void set_seed(unsigned long int s) {
+      r.set_seed(s);
+      return;
     }
 
     /** \brief Set the limits of the uniform distribution
@@ -353,7 +350,7 @@ namespace o2scl {
 	O2SCL_ERR2("Limits not set in prob_dens_uniform::",
 		   "operator().",exc_einval);
       }
-      return gsl_ran_flat(r,ll,ul);
+      return gsl_ran_flat(&r,ll,ul);
     }
     
     /// The normalized density 
@@ -437,7 +434,7 @@ namespace o2scl {
     double mu_;
 
     /// The GSL random number generator
-    gsl_rng *r;
+    rng_gsl r;
     
   public:
 
@@ -446,7 +443,6 @@ namespace o2scl {
     prob_dens_lognormal() {
       sigma_=-1.0;
       mu_=0.0;
-      r=gsl_rng_alloc(gsl_rng_mt19937);
     }
     
     /** \brief Create lognormal distribution with mean parameter \c mu
@@ -462,18 +458,15 @@ namespace o2scl {
       }
       mu_=mu;
       sigma_=sigma;
-      r=gsl_rng_alloc(gsl_rng_mt19937);
     }
 
     virtual ~prob_dens_lognormal() {
-      gsl_rng_free(r);
     }
 
     /// Copy constructor
   prob_dens_lognormal(const prob_dens_lognormal &pdg) : prob_dens_positive() {
       mu_=pdg.mu_;
       sigma_=pdg.sigma_;
-      r=gsl_rng_alloc(gsl_rng_mt19937);
     }
 
     /// Copy constructor with operator=
@@ -498,13 +491,13 @@ namespace o2scl {
     }
 
     /// Set the seed
-    void set_seed(unsigned long int s) { 
-      gsl_rng_set(r,s);
+    void set_seed(unsigned long int s) {
+      r.set_seed(s);
     }
 
     /// Sample from the specified density
     virtual double operator()() const {
-      return gsl_ran_lognormal(r,mu_,sigma_);
+      return gsl_ran_lognormal(&r,mu_,sigma_);
     }
     
     /// The normalized density 

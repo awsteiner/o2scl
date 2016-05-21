@@ -25,6 +25,7 @@
 #endif
 
 #include <iostream>
+#include <random>
 
 #include <o2scl/rng_gsl.h>
 #include <o2scl/test_mgr.h>
@@ -36,8 +37,18 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
 
+  std::random_device rd;
+  
+  std::uniform_int_distribution<int> dist(0, 9);
+
+  cout << dist(rd) << endl;
+  cout << dist(rd) << endl;
+  
   rng_gsl nr(10);
 
+  cout << dist(nr) << endl;
+  cout << dist(nr) << endl;
+  
   double a1=nr.random();
   double a2=nr.random();
 
