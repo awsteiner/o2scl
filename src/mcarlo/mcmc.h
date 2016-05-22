@@ -238,6 +238,8 @@ namespace o2scl {
     // ---------------------------------------------------
     // Compute initial point and initial weights
     
+    int meas_ret=0;
+      
     double q_current=0.0, q_next=0.0;
 
     if (aff_inv) {
@@ -263,6 +265,8 @@ namespace o2scl {
 	
 	  // Compute the weight
 	  w_current[ij]=func(nparams,current[ij]);
+	  meas_ret=meas(current[ij],w_current[ij],ij,true);
+	  
 	  if (verbose>=1) {
 	    std::cout << "mcmc: " << ij << " " << w_current[ij] << std::endl;
 	  }
@@ -291,6 +295,7 @@ namespace o2scl {
 
       // Compute weight for initial point
       w_current[0]=func(nparams,current[0]);
+      meas_ret=meas(current[0],w_current[0],0,true);
       if (verbose>=1) {
 	std::cout << "mcmc: " << w_current[0] << std::endl;
       }
@@ -312,6 +317,11 @@ namespace o2scl {
     
     }
 
+    if (meas_ret!=0) {
+      O2SCL_ERR2("Measurement function returned non-zero value ",
+		"for initial point",o2scl::exc_einval);
+    }
+    
     // ---------------------------------------------------
 
     // The MCMC is arbitrarily broken up into 20 'blocks', making
@@ -370,7 +380,7 @@ namespace o2scl {
 	    return 2;
 	  }
 
-	} while (in_bounds==false);
+	} while (in_bounds==false);	
 
       } else if (hg_mode>0) {
       
@@ -458,8 +468,6 @@ namespace o2scl {
 	}
       }
 
-      int meas_ret=0;
-      
       if (accept) {
 	  
 	n_accept++;
@@ -498,7 +506,13 @@ namespace o2scl {
 
       }
 
-      if (meas_ret!=0) main_done=true;
+      if (meas_ret!=0) {
+	main_done=true;
+	if (meas_ret!=-1 && err_nonconv) {
+	  O2SCL_ERR("Measurement function returned error value.",
+		    o2scl::exc_efailed);
+	}
+      }
       mcmc_iters++;
       
       // --------------------------------------------------------------
