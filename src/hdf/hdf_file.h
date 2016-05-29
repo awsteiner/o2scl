@@ -144,7 +144,7 @@ namespace o2scl_hdf {
     return write_access;
   }
     
-    /// Desc
+    /// Compression type (not yet supported)
     int compr_type;
 
     /// \name Open and close files

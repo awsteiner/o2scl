@@ -22,6 +22,7 @@
 */
 #include <o2scl/mcmc.h>
 #include <o2scl/vec_stats.h>
+#include <o2scl/test_mgr.h>
 
 using namespace std;
 using namespace o2scl;
@@ -53,6 +54,9 @@ int meas2(const ubvector &pars, double weight, size_t ix, bool new_meas) {
 int main(int argc, char *argv[]) {
   
   cout.setf(ios::scientific);
+
+  test_mgr tm;
+  tm.set_output_level(2);
   
   o2scl::multi_funct11 mf=point;
   measure_funct mf2=meas;
@@ -121,6 +125,8 @@ int main(int argc, char *argv[]) {
     cout << i << " " << t->get("mult",i) << " "
 	 << t->get("weight",i) << " " << t->get("x",i) << endl;
   }
+
+  tm.report();
   
   return 0;
 }

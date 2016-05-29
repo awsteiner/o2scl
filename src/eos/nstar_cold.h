@@ -47,69 +47,87 @@ namespace o2scl {
       matter and tov_solve::mvsr() to compute the mass versus
       radius curve.
 
-      The electron and muon are given masses \ref
-      o2scl_mks::mass_electron and \ref o2scl_mks::mass_muon,
+      The neutron, proton, electron and muon are given masses
+      according to their values in \ref o2scl_mks
       after a conversion to units of \f$ 1/\mathrm{fm} \f$.
 
       There is an example for the usage of this class given
       in the \ref ex_nstar_cold_sect.
 
+      If \ref err_nonconv is true and the solver fails,
+      the error handler is called. 
+      
       \hline
       \b EOS \b Output
 
       The function calc_eos() generates an object of type
       \ref table_units, which contains the following columns
       - \c ed in units of \f$ 1/\mathrm{fm}^4 \f$, the total energy 
-      density of neutron star matter
+      density of neutron star matter, \f$ \varepsilon \f$
       - \c pr in units of \f$ 1/\mathrm{fm}^4 \f$, the total pressure
-      of neutron star matter
+      of neutron star matter, \f$ P \f$
       - \c nb in units of \f$ 1/\mathrm{fm}^3 \f$, the baryon 
-      number density
+      number density, \f$ n_B \f$
       - \c mun in units of \f$ 1/\mathrm{fm} \f$, the neutron 
-      chemical potential
+      chemical potential, \f$ \mu_n \f$
       - \c mup in units of \f$ 1/\mathrm{fm} \f$, the proton chemical
-      potential
+      potential, \f$ \mu_p \f$
       - \c mue in units of \f$ 1/\mathrm{fm} \f$, the electron 
-      chemical potential
+      chemical potential, \f$ \mu_e \f$
       - \c nn in units of \f$ 1/\mathrm{fm}^3 \f$, the neutron number
-      density
+      density, \f$ n_n \f$
       - \c np in units of \f$ 1/\mathrm{fm}^3 \f$, the proton number
-      density
+      density, \f$ n_p \f$
       - \c ne in units of \f$ 1/\mathrm{fm}^3 \f$, the electron 
-      number density
+      number density, \f$ n_e \f$
       - \c kfn in units of \f$ 1/\mathrm{fm} \f$, the neutron Fermi
-      momentum
+      momentum, \f$ k_{F,n} \f$
       - \c kfp in units of \f$ 1/\mathrm{fm} \f$, the proton Fermi
-      momentum
+      momentum, \f$ k_{F,p} \f$
       - \c kfe in units of \f$ 1/\mathrm{fm} \f$, the electron 
-      Fermi momentum.
+      Fermi momentum, \f$ k_{F,e} \f$
+      - \c dednb_Ye in units of \f$ 1/\mathrm{fm} \f$, 
+      \f$ ( d \varepsilon / d n_B )_{Y_e} \f$ where
+      \f$ Y_e = n_e / n_B \f$ is the electron fraction
+      (computed using \ref eos_had_base::const_pf_derivs() )
+      - \c dPdnb_Ye in units of \f$ 1/\mathrm{fm} \f$, 
+      \f$ ( d P / d n_B )_{Y_e} \f$ .
+      - \c fcs2, the squared speed of sound at fixed electron
+      fraction, the ratio of the previous two quantities
 
       If \ref include_muons is true, the table has 
       additional columns
       - \c mumu in units of \f$ 1/\mathrm{fm} \f$, the muon chemical
-      potential
+      potential, \f$ \mu_{\mu} \f$
       - \c nmu in units of \f$ 1/\mathrm{fm}^3 \f$, the muon number
-      density
+      density, \f$ n_{\mu} \f$
       - \c kfmu in units of \f$ 1/\mathrm{fm} \f$, the muon Fermi 
-      momentum
+      momentum, \f$ k_{F,\mu} \f$
 
       If the energy density is always positive and increasing, and the
       pressure is always positive and increasing, then the EOS is
       well-formed and \ref well_formed is \c true. The variable \ref
-      pressure_flat records the lowest baryon density where the
-      pressure decreases with increasing density.
+      pressure_dec records the lowest baryon density where the
+      pressure decreases with increasing density. 
+      If \ref err_nonconv is true and the EOS is not well
+      formed, the error handler is called, and the remaining
+      columns below are not computed. 
       
       After computing the equation of state, \ref calc_eos()
       also adds the following columns
-      - \c cs2 (unitless), the squared speed of sound
-      - \c logp, the logarithm of the pressure stored in \c pr
-      - \c loge, the logarithm of the energy density 
+      - \c cs2 (unitless), the squared speed of sound divided by \f$ c^2 \f$
+      - \c logp, the natural logarithm of the pressure stored in \c pr
+      - \c loge, the natural logarithm of the energy density 
       stored in \c ed
       - \c s in units of \f$ 1/\mathrm{fm} \f$, 
-      the semi-perimeter of the Urca triangle 
+      the semi-perimeter of the Urca triangle
       - \c urca in units of \f$ 1/\mathrm{fm}^4 \f$, 
       the squared area of the Urca triangle
-      - \c ad_index, the adiabatic index
+      - \c ad_index, the adiabatic index, \f$ \Gamma \f$
+      If the eos is not well-formed and \ref well_formed is <tt>false</tt>,
+      then the columns <tt>cs2</tt>, <tt>logp</tt>, and <tt>loge</tt> 
+      are set to zero. The columns \c cs2 and \c ad_indes are computing
+      from derivatives using the current table interpolation type. 
 
       The condition for the direct Urca process is the area of the
       triangle formed by the neutron, proton, and electron Fermi
@@ -162,6 +180,9 @@ namespace o2scl {
       rid of the class variables h, hb, and l
 
       \future Warn if the EOS becomes pure neutron matter.
+      \future Some of the auxillary quantities can be computed
+      directly without using the table methods and the 
+      EOS calculation would be a bit faster.
   */
 
   class nstar_cold {
@@ -220,7 +241,7 @@ namespace o2scl {
 	the pressure does not decrease in the specified range
 	of baryon density
      */
-    double pressure_flat;
+    double pressure_dec;
 
     /** \brief The smallest density where Urca becomes allowed
 
@@ -307,21 +328,10 @@ namespace o2scl {
      */
     bool include_muons;
 
-    /// If true, throw an exception if the calculation fails (default true)
+    /** \brief If true, throw an exception if the solver fails
+	or if the EOS is not well-formed (default true)
+    */
     bool err_nonconv;
-
-    /** \brief Set the neutron and proton 
-	
-	The default objects are of type \ref fermion, with mass \ref
-	o2scl_mks::mass_neutron and \ref o2scl_mks::mass_proton. These
-	defaults will give incorrect results for non-relativistic
-	equations of state.
-     */
-    int set_n_and_p(fermion &n, fermion &p) {
-      np=&n;
-      pp=&p;
-      return 0;
-    }
 
     /** \brief Set the equation solver for the EOS
      */
@@ -345,10 +355,10 @@ namespace o2scl {
     /** \name Default objects */
     //@{
     /// The default neutron
-    fermion def_n;
+    fermion np;
 
     /// The default proton
-    fermion def_p;
+    fermion pp;
 
     /// Zero-temperature fermion thermodynamics
     fermion_zerot fzt;
@@ -388,12 +398,6 @@ namespace o2scl {
 
     /// A pointer to the equation of state
     eos_had_base *hep;
-
-    /// A pointer to the neutron
-    fermion *np;
-
-    /// A pointer to the proton
-    fermion *pp;
 
     /// A pointer to the TOV object
     tov_solve *tp;

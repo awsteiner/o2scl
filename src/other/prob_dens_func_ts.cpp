@@ -150,7 +150,7 @@ int main(void) {
   covar(1,1)=4.0;
   covar(0,1)=-1.0;
   covar(1,0)=-1.0;
-  prob_dens_mdim_gauss<> pdmg(2,cent,covar);
+  prob_dens_mdim_gaussian<> pdmg(2,cent,covar);
   
   t.report();
 

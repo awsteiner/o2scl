@@ -32,14 +32,12 @@ using namespace o2scl_const;
 
 nstar_cold::nstar_cold() : eost(new table_units<>) {
 
-  def_n.init(o2scl_settings.get_convert_units().convert
+  np.init(o2scl_settings.get_convert_units().convert
 	     ("kg","1/fm",o2scl_mks::mass_neutron),2.0);
-  def_p.init(o2scl_settings.get_convert_units().convert
+  pp.init(o2scl_settings.get_convert_units().convert
 	     ("kg","1/fm",o2scl_mks::mass_proton),2.0);
-  def_n.non_interacting=false;
-  def_p.non_interacting=false;
-  np=&def_n;
-  pp=&def_p;
+  np.non_interacting=false;
+  pp.non_interacting=false;
 
   e.init(o2scl_settings.get_convert_units().convert
 	 ("kg","1/fm",o2scl_mks::mass_electron),2.0);
@@ -54,7 +52,7 @@ nstar_cold::nstar_cold() : eost(new table_units<>) {
   tp=&def_tov;
 
   acausal=0.0;
-  pressure_flat=0.0;
+  pressure_dec=0.0;
   allow_urca=0.0;
   deny_urca=0.0;
 
@@ -79,14 +77,14 @@ nstar_cold::nstar_cold() : eost(new table_units<>) {
 double nstar_cold::solve_fun(double x) {
   double y;
   
-  np->n=x;
+  np.n=x;
   
-  pp->n=barn-np->n;
-  hep->calc_e(*np,*pp,hb);
+  pp.n=barn-np.n;
+  hep->calc_e(np,pp,hb);
 
-  e.mu=np->mu-pp->mu;
+  e.mu=np.mu-pp.mu;
   fzt.calc_mu_zerot(e);
-  y=pp->n-e.n;
+  y=pp.n-e.n;
   
   if (include_muons) {
     mu.mu=e.mu;
@@ -122,6 +120,8 @@ void nstar_cold::calc_eos(double np_0) {
   eost->set_unit("kfn","1/fm");
   eost->set_unit("kfp","1/fm");
   eost->set_unit("kfe","1/fm");
+  eost->set_unit("dednb_Ye","1/fm");
+  eost->set_unit("dPdnb_Ye","1/fm");
   if (include_muons) {
     eost->new_column("mumu");
     eost->new_column("nmu");
@@ -135,10 +135,9 @@ void nstar_cold::calc_eos(double np_0) {
   if (fabs(np_0)<1.0e-12) x=nb_start/3.0;
   else x=np_0;
   double oldpr=0.0;
-  pressure_flat=0.0;
+  pressure_dec=0.0;
   
-  funct11 sf=std::bind(std::mem_fn<double(double)>
-		       (&nstar_cold::solve_fun),
+  funct11 sf=std::bind(std::mem_fn<double(double)>(&nstar_cold::solve_fun),
 		       this,std::placeholders::_1);
   
   if (verbose>0) {
@@ -176,15 +175,21 @@ void nstar_cold::calc_eos(double np_0) {
 		      exc_efailed);
       }
     }
-    
-    // Compute dP/de at fixed Ye and Ymu. This code uses np->n and
-    // pp->n, so we'll have to recompute them below
+
+    // ------------------------------------------------------------
+    // Compute dP/de at fixed Ye and Ymu. This code uses np.n and
+    // pp.n, so we'll have to recompute them below.
+
+    // Compute the hadronic part
     double dednb_Yp, dPdnb_Yp;
-    hep->const_pf_derivs(barn,pp->n/barn,dednb_Yp,dPdnb_Yp);
+    hep->const_pf_derivs(barn,pp.n/barn,dednb_Yp,dPdnb_Yp);
+    // Compute the leptonic part
     double dne_dmue=sqrt(e.mu*e.mu-e.m*e.m)*e.mu/pi2;
     double dP_dne=e.n/dne_dmue;
+    // Put them together
     double numer=dPdnb_Yp+dP_dne*e.n/barn;
     double denom=dednb_Yp+e.mu*e.n/barn;
+    // Add the muon contribution
     if (include_muons && mu.n>0.0) {
       double dnmu_dmumu=sqrt(mu.mu*mu.mu-mu.m*mu.m)*mu.mu/pi2;
       double dP_dnmu=mu.n/dnmu_dmumu;
@@ -193,36 +198,38 @@ void nstar_cold::calc_eos(double np_0) {
     }
     double fcs2=numer/denom;
 
-    // Recompute np->n and pp->n
+    // ------------------------------------------------------------
+
+    // Recompute np.n and pp.n
     y=solve_fun(x);
 
     if (include_muons) {
 
       h=hb+e+mu;
       
-      double line[18]={h.ed,h.pr,barn,np->mu,pp->mu,e.mu,np->n,pp->n,e.n,
-		       np->kf,pp->kf,e.kf,fcs2,denom,numer,mu.mu,mu.n,mu.kf};
+      double line[18]={h.ed,h.pr,barn,np.mu,pp.mu,e.mu,np.n,pp.n,e.n,
+		       np.kf,pp.kf,e.kf,fcs2,denom,numer,mu.mu,mu.n,mu.kf};
       eost->line_of_data(18,line);
 
     } else {
 
       h=hb+e;
 
-      double line[15]={h.ed,h.pr,barn,np->mu,pp->mu,e.mu,np->n,pp->n,e.n,
-		       np->kf,pp->kf,e.kf,fcs2,denom,numer};
+      double line[15]={h.ed,h.pr,barn,np.mu,pp.mu,e.mu,np.n,pp.n,e.n,
+		       np.kf,pp.kf,e.kf,fcs2,denom,numer};
       eost->line_of_data(15,line);
 
     }
     
     if (verbose>0) {
       cout.precision(5);
-      cout << barn << " " << np->n << " " << pp->n << " " << e.n << " " 
+      cout << barn << " " << np.n << " " << pp.n << " " << e.n << " " 
 	   << h.ed << " " << h.pr << endl;
       cout.precision(6);
     }
     
-    if (barn>nb_start && pressure_flat<=0.0 && h.pr<oldpr) {
-      pressure_flat=barn;
+    if (barn>nb_start && pressure_dec<=0.0 && h.pr<oldpr) {
+      pressure_dec=barn;
     }
     oldpr=h.pr;
   }
@@ -237,9 +244,9 @@ void nstar_cold::calc_eos(double np_0) {
       cout << "Initial energy density is negative." << endl;
     }
   }
-  if (pressure_flat>nb_start) {
+  if (pressure_dec>nb_start) {
     if (verbose>0) {
-      cout << "Pressure is flat near a baryon density of " << pressure_flat
+      cout << "Pressure is flat near a baryon density of " << pressure_dec
 	   << " 1/fm^3." << endl;
     }
     well_formed=false;
@@ -397,8 +404,8 @@ double nstar_cold::calc_urca(double np_0) {
       success=false;
     }
     
-    double s=(np->kf+pp->kf+e.kf)/2.0;
-    urca=s*(s-np->kf)*(s-pp->kf)*(s-e.kf);
+    double s=(np.kf+pp.kf+e.kf)/2.0;
+    urca=s*(s-np.kf)*(s-pp.kf)*(s-e.kf);
     if (barn>nb_start && urca>0.0 && old_urca<0.0) {
       if (success==false) {
 	O2SCL_ERR("Solution failed in calc_urca().",exc_efailed);

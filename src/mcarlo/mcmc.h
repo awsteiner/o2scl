@@ -21,7 +21,8 @@
   -------------------------------------------------------------------
 */
 /** \file mcmc.h
-    \brief File for definition of \ref o2scl::mcmc
+    \brief File for definition of \ref o2scl::mcmc_base and 
+    \ref o2scl::mcmc_table
 */
 #ifndef O2SCL_MCMC_H
 #define O2SCL_MCMC_H
