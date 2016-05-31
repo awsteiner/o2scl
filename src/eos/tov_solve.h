@@ -114,10 +114,6 @@ namespace o2scl {
       - \c dbmdr, the derivative of the enclosed baryonic mass
       (if \ref eos_tov::baryon_column is true). \n
 
-      The remaining columns are given by the user-defined columns from
-      the equation of state as determined by \ref eos_tov::get_names_units()
-      and \ref eos_tov::get_aux().
-
       The function \ref tov_solve::mvsr() produces a different kind of
       output table corresponding to the mass versus radius curve. Some
       points on the curve may correspond to unstable branches.
@@ -299,8 +295,7 @@ namespace o2scl {
 	When this function is used by \ref mvsr(), \c mvsr_mode is set
 	to true. 
      */
-    void column_setup(size_t &naux, std::vector<std::string> &ext_names,
-		      bool mvsr_mode=false);
+    void column_setup(bool mvsr_mode=false);
 
     /** \brief If true, \ref integ_star() computes all the profile info,
 	otherwise it only computes the gravitational mass

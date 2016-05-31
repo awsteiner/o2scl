@@ -43,11 +43,6 @@ namespace o2scl {
 #endif
 
   /** \brief A EOS base class for the TOV solver
-
-      \comment
-      \future Make get_aux() and get_names() template functions with
-      generic vector types? No, because then they can't be virtual. 
-      \comment
   */
   class eos_tov {
 
@@ -70,26 +65,6 @@ namespace o2scl {
     /// Return true if a baryon density is available
     bool has_baryons() {
       return baryon_column;
-    }
-    
-    /** \brief Given the pressure, produce all the remaining quantities 
-	
-	The argument \c P should always be in \f$
-	M_{\odot}/\mathrm{km}^3 \f$ .
-    */
-    virtual void get_aux(double P, size_t &np, std::vector<double> &auxp) {
-      np=0;
-      return;
-    }
-    
-    /** \brief Fill a list with strings for the names of the remaining 
-	quanities
-    */
-    virtual void get_names_units(size_t &np, 
-				std::vector<std::string> &pnames,
-				std::vector<std::string> &punits) {
-      np=0;
-      return;
     }
     
     /** \brief Check that the baryon density is consistent 
@@ -640,10 +615,6 @@ namespace o2scl {
       read_table() to read a tabulated EOS stored in a \ref
       table_units object and optionally specify a separate crust EOS.
 
-      \note This stores a pointer to the user-specified table,
-      so if that pointer becomes invalid, the interpolation will
-      fail.
-
       Alternatively, the user can simply specify objects
       of type <tt>std::vector<double></tt> which store the energy
       density, pressure, and baryon density. 
@@ -753,13 +724,13 @@ namespace o2scl {
 	returned by \ref o2scl::o2scl_settings . If the units for any
 	of the columns are blank, then they are assumed to be the
 	native units for \ref o2scl::tov_solve .
-
+	
 	\note The input table must have at least 2 rows and 
 	the pressure column must be strictly increasing.
 
-	\warning If the user sends a table object instead of a
-	table_units object and so a temporary is constructed and then
-	that pointer is stored by this function.
+	This function copies the needed information from the
+	table so if it is modified then this function
+	needs to be called again to read a new table.
      */
     void read_table(table_units<> &eosat, std::string s_cole, 
 		    std::string s_colp, std::string s_colnb="");
@@ -830,20 +801,6 @@ namespace o2scl {
 	zero or \ref baryon_column should be set to false
     */
     virtual void ed_nb_from_pr(double pr, double &ed, double &nb);
-
-    /** \brief Given the pressure, produce all the remaining quantities 
-	
-	The argument \c P should always be in
-	\f$ M_{\odot}/\mathrm{km}^3 \f$ .
-    */
-    virtual void get_aux(double P, size_t &nv, std::vector<double> &auxp);
-    
-    /** \brief Fill a list with strings for the names of the remaining 
-	quanities
-    */
-    virtual void get_names_units(size_t &np, 
-				 std::vector<std::string> &pnames,
-				 std::vector<std::string> &punits);
     //@}
 
     /// \name Other functions
@@ -878,8 +835,6 @@ namespace o2scl {
     std::vector<double> full_vecp;
     /// Baryon densities from full EOS
     std::vector<double> full_vecnb;
-    /// Number of lines in full EOS
-    size_t full_nlines;
     //@}
 
 #ifndef DOXYGEN_INTERNAL
@@ -891,7 +846,7 @@ namespace o2scl {
      */
     void internal_read();
 
-    /// \name Crust EOS variables
+    /// \name Crust EOS
     //@{
     /// Set to true if we are using a crust EOS (default false)
     bool use_crust;
@@ -902,28 +857,18 @@ namespace o2scl {
     std::vector<double> crust_vecp;
     /// Baryon densities
     std::vector<double> crust_vecnb;
-    /// Number of EOS entries
-    size_t crust_nlines;
     //@}
     
-    /// \name User EOS
+    /// \name Core EOS
     //@{
-    /// True if core table has been specified
-    bool core_set;
-    /// Full user EOS table
-    table_units<> *core_table;
-    /// Column for energy density in EOS file
-    size_t cole;
-    /// Column for pressure in EOS file
-    size_t colp;
-    /// Column for baryon density in EOS file
-    size_t colnb;
-    /// True if an EOS has been specified
-    bool eos_read;
-    /// Number of additional columns in the core EOS
-    size_t core_auxp;
+    /// Energy densities
+    std::vector<double> core_vece;
+    /// Pressures
+    std::vector<double> core_vecp;
+    /// Baryon densities
+    std::vector<double> core_vecnb;
     //@}
-
+    
     /// \name Interpolation objects
     //@{
     interp_vec<std::vector<double> > pe_int;

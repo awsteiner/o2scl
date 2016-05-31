@@ -142,12 +142,6 @@ int main(void) {
   te.default_low_dens_eos();
   te.read_table(eos,"ed","pr","nb");
   
-  vector<string> auxp, auxu;
-  size_t np;
-  te.get_names_units(np,auxp,auxu);
-  t.test_gen(np==1,"One aux parm");
-  cout << endl;
-
   // --------------------------------------------------------------
   // The tov_solve object
 
@@ -174,7 +168,7 @@ int main(void) {
   at.verbose=1;
   at.fixed(1.4);
   at.verbose=0;
-
+  
   // The interpolations can fail if there are rows with duplicate
   // masses or radii, so we remove those here.
   for(size_t i=0;i<tab->get_nlines()-1;i++) {
@@ -198,7 +192,6 @@ int main(void) {
   t.test_rel(at.mass,1.4,1.0e-6,"APR Maximum mass.");
   t.test_rel(at.rad,11.4,0.03,"APR Radius of 1.4 solar mass star.");
   t.test_rel(at.bmass,1.58,0.02,"APR baryonic mass of 1.4 solar mass star.");
-  t.test_gen(tab->get_unit("mun")==((string)"MeV"),"Aux unit.");
   cout << endl;
 
   // Record radial location of two pressures for testing later
@@ -296,7 +289,6 @@ int main(void) {
   t.test_rel(at.mass,2.20,0.03,"APR Maximum mass.");
   t.test_rel(at.rad,10.0,0.02,"APR Radius of maximum mass star.");
   t.test_rel(at.bmass,2.68,0.01,"APR baryonic mass of 1.4 solar mass star.");
-  t.test_gen(tab->get_unit("mun")==((string)"MeV"),"Aux unit.");
   cout << endl;
 
   {
@@ -336,7 +328,6 @@ int main(void) {
     hf.close();
   }
 
-  t.test_gen(tab->get_unit("mun")==((string)"MeV"),"Aux unit.");
   cout << endl;
 
   // --------------------------------------------------------------

@@ -340,23 +340,14 @@ void eos_tov_linear::ed_nb_from_pr(double pr, double &ed, double &nb) {
 
 eos_tov_interp::eos_tov_interp() {
   
-  eos_read=false;
   use_crust=false;
   verbose=1;
-
-  cole=0;
-  colp=0;
-  colnb=0;
-
-  core_auxp=0;
 
   efactor=1.0;
   pfactor=1.0;
   nfactor=1.0;
   
   trans_width=1.0;
-  core_table=0;
-  core_set=false;
 
   transition_mode=smooth_trans;
 
@@ -366,63 +357,47 @@ eos_tov_interp::eos_tov_interp() {
 eos_tov_interp::~eos_tov_interp() {
 }
 
-void eos_tov_interp::get_names_units(size_t &np, 
-				     std::vector<std::string> &pnames,
-				     std::vector<std::string> &vs_units) {
-  np=0;
-  if (core_auxp>0) {
-    for(int i=0;i<((int)core_table->get_ncolumns());i++) {
-      if (i!=cole && i!=colp && i!=colnb) {
-	np++;
-	pnames.push_back(core_table->get_column_name(i));
-	vs_units.push_back
-	  (core_table->get_unit(core_table->get_column_name(i)));
-      }
-    }
-  }
-  return;
-}
-
 void eos_tov_interp::read_table(table_units<> &eosat, string s_cole, 
 				string s_colp, string s_colnb) {
   
-  core_table=&eosat;
-  size_t core_nlines=core_table->get_nlines();
-
-  if (verbose>1) cout << "Lines read from EOS file: " << core_nlines << endl;
-  
-  // ---------------------------------------------------------------
-  // Look for energy density, pressure, and baryon density columns
-
-  cole=core_table->lookup_column(s_cole);
-  colp=core_table->lookup_column(s_colp);
-  if (s_colnb!="") {
-    colnb=core_table->lookup_column(s_colnb);
-    baryon_column=true;
-  } else {
-    baryon_column=false;
-  }
+  size_t core_nlines=eosat.get_nlines();
 
   if (core_nlines<2) {
     O2SCL_ERR2("Size of table less than 2 rows in ",
 	       "eos_tov_interp::read_table().",exc_einval);
   }
-  if (core_table->get(s_colp,0)>core_table->get(s_colp,core_nlines-1)) {
+  if (eosat.get(s_colp,0)>eosat.get(s_colp,core_nlines-1)) {
     O2SCL_ERR2("Core table pressure decreasing in ",
 	       "eos_tov_interp::read_table().",exc_einval);
   }
-  
+
+  if (s_colnb!="") {
+    baryon_column=true;
+  } else {
+    baryon_column=false;
+  }
+
   // ---------------------------------------------------------------
-  // Set core_auxp
+  // Read table into vectors
 
-  if (baryon_column) core_auxp=core_table->get_ncolumns()-3;
-  else core_auxp=core_table->get_ncolumns()-2;
+  core_vece.clear();
+  core_vecnb.clear();
+  core_vecp.clear();
+  for(size_t i=0;i<eosat.get_nlines();i++) {
+    core_vece.push_back(eosat.get(s_cole,i));
+    core_vecp.push_back(eosat.get(s_colp,i));
+    if (s_colnb!="") {
+      core_vecnb.push_back(eosat.get(s_colnb,i));
+    }
+  }
 
+  if (verbose>1) cout << "Lines read from EOS file: " << core_nlines << endl;
+  
   // ---------------------------------------------------------------
   // Determine conversion factors from units
  
-  string eunits=core_table->get_unit(s_cole);
-  string punits=core_table->get_unit(s_colp);
+  string eunits=eosat.get_unit(s_cole);
+  string punits=eosat.get_unit(s_colp);
   if (eunits.length()==0 || eunits=="Msun/km^3" ||
       eunits=="solarmass/km^3") {
     efactor=1.0;
@@ -441,7 +416,7 @@ void eos_tov_interp::read_table(table_units<> &eosat, string s_cole,
 
   nfactor=1.0;
   if (baryon_column) {
-    string nunits=core_table->get_unit(s_colnb);
+    string nunits=eosat.get_unit(s_colnb);
     if (nunits=="1/cm^3") {
       nfactor=1.0e-39;
     } else if (nunits=="1/m^3") {
@@ -456,8 +431,6 @@ void eos_tov_interp::read_table(table_units<> &eosat, string s_cole,
     }
   }
 
-  core_set=true;
-
   internal_read();
 
   return;
@@ -465,12 +438,12 @@ void eos_tov_interp::read_table(table_units<> &eosat, string s_cole,
 
 void eos_tov_interp::internal_read() {
 
-  if (!core_set) {
+  if (core_vece.size()==0) {
     O2SCL_ERR("Core table not set in eos_tov_interp::internal_read().",
 	      exc_esanity);
   }
 
-  size_t core_nlines=core_table->get_nlines();
+  size_t core_nlines=core_vece.size();
 
   // ---------------------------------------------------------------
   // Construct full vectors
@@ -484,6 +457,7 @@ void eos_tov_interp::internal_read() {
     full_vecnb.clear();
   }
 
+  size_t crust_nlines=crust_vece.size();
   // Add lines of crust before transition
   if (verbose>1) {
     cout << "Crust: use_crust = " << use_crust << " crust_nlines = "
@@ -524,11 +498,11 @@ void eos_tov_interp::internal_read() {
 
     if (transition_mode==match_line) {
       ed_lo=gen_int.eval(pr_lo,crust_nlines,crust_vecp,crust_vece);
-      ed_hi=gen_int.eval(pr_hi/pfactor,core_nlines,(*core_table)[colp],
-			 (*core_table)[cole])*efactor;
+      ed_hi=gen_int.eval(pr_hi/pfactor,core_nlines,core_vecp,
+			 core_vece)*efactor;
       nb_lo=gen_int.eval(pr_lo,crust_nlines,crust_vecp,crust_vecnb);
-      nb_hi=gen_int.eval(pr_hi/pfactor,core_nlines,(*core_table)[colp],
-			 (*core_table)[colnb])*nfactor;
+      nb_hi=gen_int.eval(pr_hi/pfactor,core_nlines,core_vecp,
+			 core_vecnb)*nfactor;
     }
 
     double ed, nb=0.0;
@@ -539,14 +513,14 @@ void eos_tov_interp::internal_read() {
 
       if (transition_mode==smooth_trans) {
 	ed_lo=gen_int.eval(pr,crust_nlines,crust_vecp,crust_vece);
-	ed_hi=gen_int.eval(pr/pfactor,core_nlines,(*core_table)[colp],
-			   (*core_table)[cole])*efactor;
+	ed_hi=gen_int.eval(pr/pfactor,core_nlines,core_vecp,
+			   core_vece)*efactor;
 	ed=(1.0-chi)*ed_lo+chi*ed_hi;
       
 	if (baryon_column) {
 	  nb_lo=gen_int.eval(pr,crust_nlines,crust_vecp,crust_vecnb);
-	  nb_hi=gen_int.eval(pr/pfactor,core_nlines,(*core_table)[colp],
-			     (*core_table)[colnb])*nfactor;
+	  nb_hi=gen_int.eval(pr/pfactor,core_nlines,core_vecp,
+			     core_vecnb)*nfactor;
 	  nb=(1.0-chi)*nb_lo+chi*nb_hi;
 	}
       
@@ -585,9 +559,9 @@ void eos_tov_interp::internal_read() {
     cout << "Core: lines = " << core_nlines << endl;
   }
   for(size_t i=0;i<core_nlines;i++) {
-    double pt=((*core_table)[colp])[i]*pfactor;
-    double et=((*core_table)[cole])[i]*efactor;
-    double nt=((*core_table)[colnb])[i]*nfactor;
+    double pt=core_vecp[i]*pfactor;
+    double et=core_vece[i]*efactor;
+    double nt=core_vecnb[i]*efactor;
     if (pt>pr_hi) {
       full_vece.push_back(et);
       full_vecp.push_back(pt);
@@ -599,10 +573,10 @@ void eos_tov_interp::internal_read() {
 	if (baryon_column) {
 	  cout << nt << " ";
 	}
-	cout << ((*core_table)[cole])[i] << " ";
-	cout << ((*core_table)[colp])[i];
+	cout << core_vece[i] << " ";
+	cout << core_vecp[i];
 	if (baryon_column) {
-	  cout << " " << ((*core_table)[colnb])[i];
+	  cout << " " << core_vecnb[i];
 	}
 	cout << endl;
       }
@@ -612,13 +586,11 @@ void eos_tov_interp::internal_read() {
   // ---------------------------------------------------------------
   // Set 'eos_read', interpolators, and 'full_nlines'
 
-  full_nlines=full_vecp.size();
+  size_t full_nlines=full_vecp.size();
   pe_int.set(full_nlines,full_vecp,full_vece,itp_linear);
   if (baryon_column) {
     pnb_int.set(full_nlines,full_vecp,full_vecnb,itp_linear);
   }
-
-  eos_read=true;
 
   return;
 }
@@ -707,7 +679,7 @@ void eos_tov_interp::default_low_dens_eos() {
      4.50000000e-02,5.00000000e-02,5.50000000e-02,6.00000000e-02,
      6.50000000e-02,7.00000000e-02,7.50000000e-02,8.00000000e-02};
 
-  crust_nlines=nlines;
+  size_t crust_nlines=nlines;
   crust_vece.resize(crust_nlines);
   crust_vecp.resize(crust_nlines);
   crust_vecnb.resize(crust_nlines);
@@ -730,7 +702,7 @@ void eos_tov_interp::default_low_dens_eos() {
 
   use_crust=true;
   
-  if (core_set) internal_read();
+  if (core_vece.size()>0) internal_read();
     
   return;
 }
@@ -820,7 +792,7 @@ void eos_tov_interp::sho11_low_dens_eos() {
      3.349627e-02,3.758344e-02,4.216931e-02,4.731474e-02,
      5.308801e-02,5.956572e-02,6.683383e-02,7.498879e-02};
 
-  crust_nlines=nlines;
+  size_t crust_nlines=nlines;
   crust_vece.resize(crust_nlines);
   crust_vecp.resize(crust_nlines);
   crust_vecnb.resize(crust_nlines);
@@ -845,7 +817,7 @@ void eos_tov_interp::sho11_low_dens_eos() {
 
   use_crust=true;
     
-  if (core_set) internal_read();
+  if (core_vece.size()>0) internal_read();
     
   return;
 }
@@ -876,7 +848,7 @@ void eos_tov_interp::ngl13_low_dens_eos(double L, string model,
   hdf_input(hf,newton_eos,name);
   hf.close();
 
-  crust_nlines=newton_eos.get_ny();
+  size_t crust_nlines=newton_eos.get_ny();
   crust_vece.resize(crust_nlines);
   crust_vecp.resize(crust_nlines);
   crust_vecnb.resize(crust_nlines);
@@ -936,7 +908,7 @@ void eos_tov_interp::ngl13_low_dens_eos(double L, string model,
 
   o2scl::interp<std::vector<double> > itp(itp_linear);
   double nt=itp.eval(L,19,Lv,ntv);
-  trans_pres=itp.eval(nt,crust_nlines,crust_vecnb,crust_vecp);
+  trans_pres=itp.eval(nt,crust_vece.size(),crust_vecnb,crust_vecp);
 
   // The energy density and pressure are already in Msun/km^3 and the
   // baryon density is in fm^{-3}
@@ -954,7 +926,7 @@ void eos_tov_interp::ngl13_low_dens_eos(double L, string model,
 
   use_crust=true;
     
-  if (core_set) internal_read();
+  if (core_vece.size()>0) internal_read();
     
   return;
 }
@@ -1030,7 +1002,7 @@ void eos_tov_interp::ngl13_low_dens_eos2(double S, double L, double nt,
   nlow.set_interp_type(itp_linear);
   nhigh.set_interp_type(itp_linear);
 
-  crust_nlines=nlow.get_ny();
+  size_t crust_nlines=nlow.get_ny();
   crust_vece.resize(crust_nlines);
   crust_vecp.resize(crust_nlines);
   crust_vecnb.resize(crust_nlines);
@@ -1081,7 +1053,7 @@ void eos_tov_interp::ngl13_low_dens_eos2(double S, double L, double nt,
 
   use_crust=true;
     
-  if (core_set) internal_read();
+  if (core_vece.size()>0) internal_read();
     
   return;
 }
@@ -1097,17 +1069,8 @@ void eos_tov_interp::s12_low_dens_eos(string model, bool external) {
   }
   
   // --------------------------------------------------------------
-  // Load and process the data file containing the crusts
+  // Add ultra-low density part from FMT and BPS
 
-  ifstream fin;
-  fin.open(fname.c_str());
-  string stemp;
-  fin >> stemp >> stemp >> stemp;
-  double dtemp;
-
-  double factor=o2scl_settings.get_convert_units().convert
-    ("1/fm^4","Msun/km^3",1.0);
-  
   crust_vece.clear();
   crust_vecp.clear();
   crust_vecnb.clear();
@@ -1135,6 +1098,18 @@ void eos_tov_interp::s12_low_dens_eos(string model, bool external) {
     crust_vecnb.push_back(nb_arr[i]);
   }
 
+  // --------------------------------------------------------------
+  // Load and process the data file containing the crusts
+  
+  ifstream fin;
+  fin.open(fname.c_str());
+  string stemp;
+  fin >> stemp >> stemp >> stemp;
+  double dtemp;
+
+  double factor=o2scl_settings.get_convert_units().convert
+    ("1/fm^4","Msun/km^3",1.0);
+  
   while (fin >> dtemp) {
     double line[3];
     line[2]=dtemp;
@@ -1148,7 +1123,7 @@ void eos_tov_interp::s12_low_dens_eos(string model, bool external) {
   }
   fin.close();
 
-  crust_nlines=crust_vece.size();
+  size_t crust_nlines=crust_vece.size();
     
   // --------------------------------------------------------------
   // Manually set the transition pressure by interpolating 
@@ -1166,7 +1141,7 @@ void eos_tov_interp::s12_low_dens_eos(string model, bool external) {
 
   use_crust=true;
     
-  if (core_set) internal_read();
+  if (core_vece.size()>0) internal_read();
     
   return;
 }
@@ -1221,7 +1196,6 @@ void eos_tov_interp::gcp10_low_dens_eos(string model, bool external) {
   tab.swap_column_data("rho",crust_vece);
   tab.swap_column_data("P",crust_vecp);
   tab.swap_column_data("nb",crust_vecnb);
-  crust_nlines=tab.get_nlines();
 
   // --------------------------------------------------------------
   // Transition pressures from the table in Pearson12
@@ -1247,7 +1221,7 @@ void eos_tov_interp::gcp10_low_dens_eos(string model, bool external) {
 
   use_crust=true;
     
-  if (core_set) internal_read();
+  if (core_vece.size()>0) internal_read();
     
   return;
 }
@@ -1278,7 +1252,7 @@ double eos_tov_interp::ed_from_pr(double pr) {
 }
 
 double eos_tov_interp::ed_from_nb(double nb) {
-  return gen_int.eval(nb,full_nlines,full_vecnb,full_vece);
+  return gen_int.eval(nb,full_vece.size(),full_vecnb,full_vece);
 }
 
 double eos_tov_interp::nb_from_pr(double pr) {
@@ -1286,41 +1260,21 @@ double eos_tov_interp::nb_from_pr(double pr) {
 }
 
 double eos_tov_interp::nb_from_ed(double ed) {
-  return gen_int.eval(ed,full_nlines,full_vece,full_vecnb);
+  return gen_int.eval(ed,full_vece.size(),full_vece,full_vecnb);
 }
 
 double eos_tov_interp::pr_from_nb(double nb) {
-  return gen_int.eval(nb,full_nlines,full_vecnb,full_vecp);
+  return gen_int.eval(nb,full_vece.size(),full_vecnb,full_vecp);
 }
 
 double eos_tov_interp::pr_from_ed(double ed) {
-  return gen_int.eval(ed,full_nlines,full_vece,full_vecp);
+  return gen_int.eval(ed,full_vece.size(),full_vece,full_vecp);
 }
 
 void eos_tov_interp::get_eden_user(double pres, double &ed, double &nb) {
   ed=pe_int.eval(pres*pfactor)/efactor;
   if (baryon_column) {
     nb=pnb_int.eval(pres*pfactor)/nfactor;
-  }
-  return;
-}
-
-void eos_tov_interp::get_aux(double P, size_t &np, std::vector<double> &auxp) {
-  np=0;
-  if (core_auxp>0) {
-    double first_pres=(*core_table)[colp][0]/pfactor;
-    for(size_t i=0;i<((int)core_table->get_ncolumns());i++) {
-      if (i!=cole && i!=colp && i!=colnb) {
-	if (use_crust==true && P>=first_pres) {
-	  auxp[np]=0.0;
-	} else {
-	  // Convert P to user-units by dividing by pfactor
-	  auxp[np]=gen_int.eval(P/pfactor,core_table->get_nlines(),
-				(*core_table)[colp],(*core_table)[i]);
-	} 
-	np++;
-      }
-    }
   }
   return;
 }

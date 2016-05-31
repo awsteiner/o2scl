@@ -709,7 +709,51 @@ namespace o2scl {
 
       return 0;
     }
-
+    
+    /** \brief Insert columns from a source table into the new
+	table by interpolation (or extrapolation)
+    */
+    template<class vec2_t>
+      void insert_table(table_units<vec2_t> &source, std::string src_index,
+			bool allow_extrap=true, std::string dest_index="") {
+      
+      if (dest_index=="") dest_index=src_index;
+      
+      // Find limits to avoid extrapolation if necessary
+      double min=source.min(src_index);
+      double max=source.max(src_index);
+      if (allow_extrap==false) {
+	if (!std::isfinite(min) || !std::isfinite(max)) {
+	  O2SCL_ERR2("Minimum or maximum of source index not finite ",
+		     "in table_units::insert_table().",exc_einval);
+	}
+      }
+      
+      // Create list of columns to interpolate
+      std::vector<std::string> col_list;
+      for(size_t i=0;i<source.get_ncolumns();i++) {
+	std::string col=source.get_column_name(i);
+	if (col!=src_index && col!=dest_index &&
+	    this->is_column(col)==false) {
+	  col_list.push_back(col);
+	}
+      }
+      
+      // Create new columns and perform interpolation
+      for(size_t i=0;i<col_list.size();i++) {
+	this->new_column(col_list[i]);
+	set_unit(col_list[i],source.get_unit(col_list[i]));
+	for(size_t j=0;j<this->get_nlines();j++) {
+	  double val=this->get(dest_index,j);
+	  if (allow_extrap || (val>=min && val<=max)) {
+	    this->set(col_list[i],j,source.interp(src_index,val,col_list[i]));
+	  }
+	}
+      }
+      
+      return;
+    }
+    
     // ---------
     // Allow HDF I/O functions to access table_units data
     friend void o2scl_hdf::hdf_output

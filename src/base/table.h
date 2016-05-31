@@ -673,6 +673,10 @@ namespace o2scl {
       already contains data.
   */
   void new_column(std::string head) {
+    if (head.length()==0) {
+      O2SCL_ERR2("Cannot add column with empty name in ",
+		 "table::new_column().",exc_einval);
+    }
     if (is_column(head)==true) {
       O2SCL_ERR((((std::string)"Column '")+head+
 		 "' already present in table::new_column().").c_str(),
@@ -954,10 +958,6 @@ namespace o2scl {
       into \c src_index.  The interpolation objects from the \c
       source table will be used. If there is already a column in the
       present table named \c src_col, then this will fail.
-
-      If there is an error in the interpolation for any particular
-      row, then the value of \c src_col in that row will be set to
-      zero.
   */
   template<class vec2_t>
   void add_col_from_table(table<vec2_t> &source,
@@ -977,6 +977,48 @@ namespace o2scl {
     return;
   }
   //@}
+
+  /** \brief Insert columns from a source table into the new
+      table by interpolation (or extrapolation)
+   */
+  template<class vec2_t>
+  void insert_table(table<vec2_t> &source, std::string src_index,
+		    bool allow_extrap=true, std::string dest_index="") {
+
+    if (dest_index=="") dest_index=src_index;
+
+    // Find limits to avoid extrapolation if necessary
+    double min=source.min(src_index);
+    double max=source.max(src_index);
+    if (allow_extrap==false) {
+      if (!std::isfinite(min) || !std::isfinite(max)) {
+	O2SCL_ERR2("Minimum or maximum of source index not finite ",
+		   "in table::insert_table().",exc_einval);
+      }
+    }
+
+    // Create list of columns to interpolate
+    std::vector<std::string> col_list;
+    for(size_t i=0;i<source.get_ncolumns();i++) {
+      std::string col=source.get_column_name(i);
+      if (col!=src_index && col!=dest_index && is_column(col)==false) {
+	col_list.push_back(col);
+      }
+    }
+
+    // Create new columns and perform interpolation
+    for(size_t i=0;i<col_list.size();i++) {
+      new_column(col_list[i]);
+      for(size_t j=0;j<get_nlines();j++) {
+	double val=get(dest_index,j);
+	if (allow_extrap || (val>=min && val<=max)) {
+	  set(col_list[i],j,source.interp(src_index,val,col_list[i]));
+	}
+      }
+    }
+    
+    return;
+  }
   
   // --------------------------------------------------------
   /** \name Row maninpulation and data input */

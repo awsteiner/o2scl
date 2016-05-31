@@ -296,8 +296,7 @@ void tov_solve::make_unique_name(string &col, std::vector<string> &cnames) {
   return;
 }
 
-void tov_solve::column_setup(size_t &naux, vector<string> &ext_names,
-			     bool mvsr_mode) {
+void tov_solve::column_setup(bool mvsr_mode) {
 
   // ---------------------------------------------------------------
   // Add internal columns
@@ -362,34 +361,12 @@ void tov_solve::column_setup(size_t &naux, vector<string> &ext_names,
     line2+=inames[il];
     line2+=' ';
   }
-
-  // ---------------------------------------------------------------
-  // Add external column names and units
-
-  vector<string> ext_units;
-  te->get_names_units(naux,ext_names,ext_units);
-  for(size_t il=0;il<ext_names.size();il++) {
-    make_unique_name(ext_names[il],inames);
-  }
-
-  for(size_t il=0;il<ext_names.size();il++) {
-    line2+=ext_names[il];
-    line2+=' ';
-  }
+  
   out_table->line_of_names(line2);
-  for(size_t il=0;il<ext_names.size();il++) {
-    if (ext_units[il].length()>0) {
-      out_table->set_unit(ext_names[il],ext_units[il]);
-    }
-  }
-
-  // ---------------------------------------------------------------
-  // Add units
-
   for(size_t il=0;il<inames.size();il++) {
     out_table->set_unit(inames[il],iunits[il]);
   }
-
+  
   return;
 }
 
@@ -399,9 +376,7 @@ void tov_solve::make_table() {
   // Clear previously stored data and set up table
 
   out_table->clear_table();
-  size_t naux;
-  vector<string> ext_names;
-  column_setup(naux,ext_names);
+  column_setup();
 
   // ---------------------------------------------------------------
   // Create output file of profile for star
@@ -504,11 +479,6 @@ void tov_solve::make_table() {
     if (te->has_baryons()) {
       out_table->set("dbmdr",tix,rkdydx[bix][iv]);
       iv++;
-    }
-    
-    // Add extra EOS quantities to vector
-    for(size_t ik=0;ik<naux;ik++) {
-      out_table->set(ext_names[ik],tix,0.0);
     }
     
     // Check for non-finite values
@@ -858,9 +828,7 @@ int tov_solve::mvsr() {
   // Clear previously stored data and setup table
   
   out_table->clear_table();
-  size_t naux;
-  vector<string> ext_names;
-  column_setup(naux,ext_names,true);
+  column_setup(true);
 
   // ---------------------------------------------------------------
   // Main loop
@@ -983,13 +951,6 @@ int tov_solve::mvsr() {
       }
     }
 
-    // output remaining columns
-
-    std::vector<double> auxp;
-    if (naux>0) auxp.resize(naux);
-    te->get_aux(x[0],naux,auxp);
-    for(size_t ik=0;ik<naux;ik++) line.push_back(auxp[ik]);
-    
     // --------------------------------------------------------------
     // Copy line of data to table
     
@@ -1096,7 +1057,7 @@ int tov_solve::max() {
 
   // --------------------------------------------------------------
   // Output stellar profile
-  
+
   if (reformat_results) {
     make_table();
   }
@@ -1147,6 +1108,7 @@ int tov_solve::fixed(double target_mass, double pmax) {
      (&tov_solve::integ_star),
      this,std::placeholders::_1,std::placeholders::_2,
      std::placeholders::_3);
+
 
   if (err_nonconv==false) mroot_ptr->err_nonconv=false;
   integ_star_final=false;

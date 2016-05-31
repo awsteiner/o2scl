@@ -249,12 +249,6 @@ int main(void) {
   // Make sure baryon_column is set correctly
   //t.test_gen(te.baryon_column==true,"baryon column");
 
-  // Double check that get_names_units() correctly reports 0
-  vector<string> auxp, auxu;
-  size_t np;
-  te.get_names_units(np,auxp,auxu);
-  t.test_gen(np==0,"no aux parms");
-  
   double pr_low=2.0e-7;
   double pr_high=6.0e-7;
   double ed, nb, ed_old;
