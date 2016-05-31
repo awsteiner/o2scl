@@ -775,8 +775,9 @@ namespace o2scl {
 
     /** \brief Crust EOS from \ref Steiner12
 
-	Current acceptable values for \c model are <tt>APR</tt>,
-	<tt>Gs</tt>, <tt>Rs</tt> and <tt>SLy4</tt>.
+	This function uses the neutron star crust models from \ref
+	Steiner12 . The current acceptable values for \c model are
+	<tt>APR</tt>, <tt>Gs</tt>, <tt>Rs</tt> and <tt>SLy4</tt>.
     */
     void s12_low_dens_eos(std::string model="SLy4",
 			      bool external=false);

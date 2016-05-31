@@ -232,6 +232,8 @@ void nstar_cold::calc_eos(double np_0) {
       pressure_dec=barn;
     }
     oldpr=h.pr;
+
+    // Proceed to next baryon density
   }
 
   // Calculate the squared speed of sound. If the EOS becomes acausal,

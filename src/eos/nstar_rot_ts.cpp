@@ -49,6 +49,7 @@ int main(void) {
   nstar_rot nst;
 
   if (true) {
+    // Perform the RNS tests
     nst.constants_rns();
     nst.test1(t);
     nst.test2(t);
@@ -62,6 +63,8 @@ int main(void) {
   }
   
   if (true) {
+
+    // Test running with SLy4
     eos_had_skyrme sk;
     o2scl_hdf::skyrme_load(sk,"SLy4");
 

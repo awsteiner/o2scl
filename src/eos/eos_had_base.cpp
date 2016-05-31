@@ -381,12 +381,16 @@ void eos_had_base::const_pf_derivs(double nb, double pf,
   funct11 fmpp=std::bind(std::mem_fn<double(double,double)>
 			 (&eos_had_base::calc_pressure_nb),
 			 this,std::placeholders::_1,1.0-2.0*pf);
-  funct11 fmpe=std::bind(std::mem_fn<double(double,double)>
-			 (&eos_had_base::calc_edensity_nb),
-			 this,std::placeholders::_1,1.0-2.0*pf);
-
+  
   dPdnb_pf=-2.0*sat_deriv->deriv(nb,fmpp);
-  dednb_pf=-2.0*sat_deriv->deriv(nb,fmpe);
+
+  // The other derivative can be obtained simply from the
+  // chemical potentials
+  neutron->n=nb*(1.0-pf);
+  proton->n=nb*pf;
+  calc_e(*neutron,*proton,*eos_thermo);
+  dednb_pf=-2.0*(neutron->mu*(1.0-pf)+proton->mu*pf);
+  
   return;
 }
 

@@ -27,6 +27,8 @@
 #include <o2scl/test_mgr.h>
 #include <o2scl/mroot_hybrids.h>
 #include <o2scl/eos_had_potential.h>
+#include <o2scl/eos_had_skyrme.h>
+#include <o2scl/hdf_eos_io.h>
 #include <o2scl/nstar_cold.h>
 
 using namespace std;
@@ -81,7 +83,7 @@ int main(void) {
   t.test_rel(ed1,tr->interp("nb",0.16,"ed"),2.0e-3,"ed");
   t.test_rel(pr1,tr->interp("nb",0.16,"pr"),4.0e-3,"pr");
   t.test_rel(nn1,tr->interp("nb",0.16,"nn"),2.0e-3,"nn");
-  
+
   t.report();
   return 0;
 }

@@ -1112,6 +1112,29 @@ void eos_tov_interp::s12_low_dens_eos(string model, bool external) {
   crust_vecp.clear();
   crust_vecnb.clear();
 
+  // Read default EOS. 
+  static const size_t nlines=13;
+  double ed_arr[nlines]=
+    {3.89999984e-18,3.93000002e-18,3.95000001e-18,4.07499982e-18,
+     5.80000020e-18,8.20000023e-18,2.25500006e-17,1.05999999e-16,
+     5.75000005e-16,5.22000020e-15,1.31099999e-14,3.29349991e-14,
+     8.27000008e-14};
+  double pr_arr[nlines]=
+    {5.64869998e-32,5.64869986e-31,5.64869986e-30,5.64870017e-29,
+     6.76729990e-28,7.82989977e-27,9.50780029e-26,3.25500004e-24,
+     1.06260006e-22,5.44959997e-21,2.77850000e-20,1.35959994e-19,
+     6.43729996e-19};
+  double nb_arr[nlines]=
+    {4.00000001e-15,4.73000011e-15,4.75999990e-15,4.91000012e-15,
+     6.99000006e-15,9.89999996e-15,2.71999999e-14,1.27000000e-13,
+     6.93000019e-13,6.29500011e-12,1.58099991e-11,3.97200016e-11,
+     9.97599989e-11};
+  for(size_t i=0;i<13;i++) {
+    crust_vece.push_back(ed_arr[i]);
+    crust_vecp.push_back(pr_arr[i]);
+    crust_vecnb.push_back(nb_arr[i]);
+  }
+
   while (fin >> dtemp) {
     double line[3];
     line[2]=dtemp;
@@ -1125,8 +1148,10 @@ void eos_tov_interp::s12_low_dens_eos(string model, bool external) {
   }
   fin.close();
 
+  crust_nlines=crust_vece.size();
+    
   // --------------------------------------------------------------
-  // Manually set the transition density by interpolating 
+  // Manually set the transition pressure by interpolating 
 
   o2scl::interp<std::vector<double> > itp(itp_linear);
   trans_pres=itp.eval(0.08,crust_nlines,crust_vecnb,crust_vecp);

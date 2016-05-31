@@ -240,6 +240,7 @@ int main(void) {
   
   // Read APR EOS 
   eos_tov_interp te;
+  te.s12_low_dens_eos("APR");
   te.verbose=2;
   te.default_low_dens_eos();
   te.read_table(eos,"ed","pr","nb");
