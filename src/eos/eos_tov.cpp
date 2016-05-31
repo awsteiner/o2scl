@@ -561,7 +561,7 @@ void eos_tov_interp::internal_read() {
   for(size_t i=0;i<core_nlines;i++) {
     double pt=core_vecp[i]*pfactor;
     double et=core_vece[i]*efactor;
-    double nt=core_vecnb[i]*efactor;
+    double nt=core_vecnb[i]*nfactor;
     if (pt>pr_hi) {
       full_vece.push_back(et);
       full_vecp.push_back(pt);

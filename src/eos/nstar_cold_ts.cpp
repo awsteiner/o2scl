@@ -65,7 +65,6 @@ int main(void) {
   cout << "EOS results: " << endl;
   double ed1=te->interp("nb",0.16,"ed");
   double pr1=te->interp("nb",0.16,"pr");
-  //double nn1=te->interp("nb",0.16,"nn");
   te->summary(&cout);
   cout << endl;
 
@@ -82,7 +81,6 @@ int main(void) {
   // Check that EOS corresponds to result in M vs. R table
   t.test_rel(ed1,tr->interp("nb",0.16,"ed"),2.0e-3,"ed");
   t.test_rel(pr1,tr->interp("nb",0.16,"pr"),4.0e-3,"pr");
-  //t.test_rel(nn1,tr->interp("nb",0.16,"nn"),2.0e-3,"nn");
 
   t.report();
   return 0;

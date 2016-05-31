@@ -138,15 +138,6 @@ namespace o2scl {
       - \c dbmdr, the derivative of the enclosed baryonic mass
       (if \ref eos_tov::baryon_column is true). \n
 
-      The remaining columns are given by the user-defined columns from
-      the equation of state as determined by \ref eos_tov::get_names_units()
-      and \ref eos_tov::get_aux().
-
-      If the user-specified \ref eos_tov object contains columns which
-      are the same as the native columns created by \ref tov_solve as
-      listed above, then the user-specified columns in the output
-      table are renamed by appending underscores to the original name.
-
       <b>Unit systems</b>
 
       By default, this class operates with energy density and
