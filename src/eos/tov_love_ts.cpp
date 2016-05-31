@@ -65,9 +65,6 @@ int main(void) {
   
   std::shared_ptr<table_units<> > profile=ts.get_results();
 
-  // I'm not sure why cs2 isn't computed properly, so
-  // we have to recompute it here
-  profile->delete_column("cs2");
   profile->deriv("ed","pr","cs2");
   
   // Moment of inertia
