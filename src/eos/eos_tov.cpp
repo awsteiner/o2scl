@@ -360,6 +360,7 @@ eos_tov_interp::~eos_tov_interp() {
 void eos_tov_interp::read_table(table_units<> &eosat, string s_cole, 
 				string s_colp, string s_colnb) {
   
+
   size_t core_nlines=eosat.get_nlines();
 
   if (core_nlines<2) {
@@ -447,7 +448,7 @@ void eos_tov_interp::internal_read() {
 
   // ---------------------------------------------------------------
   // Construct full vectors
-
+  
   double pr_lo=trans_pres/trans_width;
   double pr_hi=trans_pres*trans_width;
 
@@ -458,6 +459,7 @@ void eos_tov_interp::internal_read() {
   }
 
   size_t crust_nlines=crust_vece.size();
+
   // Add lines of crust before transition
   if (verbose>1) {
     cout << "Crust: use_crust = " << use_crust << " crust_nlines = "
@@ -561,7 +563,10 @@ void eos_tov_interp::internal_read() {
   for(size_t i=0;i<core_nlines;i++) {
     double pt=core_vecp[i]*pfactor;
     double et=core_vece[i]*efactor;
-    double nt=core_vecnb[i]*nfactor;
+    double nt;
+    if (baryon_column) {
+      nt=core_vecnb[i]*nfactor;
+    }
     if (pt>pr_hi) {
       full_vece.push_back(et);
       full_vecp.push_back(pt);
