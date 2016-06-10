@@ -49,15 +49,12 @@ namespace o2scl {
   
   typedef boost::numeric::ublas::vector<double> ubvector;
   
-  typedef std::function<int(const ubvector &,double,
-			    size_t,bool)> measure_funct;
-  
   /** \brief A generic MCMC simulation class
 
       \note This class is experimental.
    */
-  template<class func_t=o2scl::multi_funct11,
-    class measure_t=measure_funct, class vec_t=ubvector> class mcmc_base {
+  template<class func_t, class measure_t,
+    class data_t, class vec_t=ubvector> class mcmc_base {
     
   protected:
   
@@ -79,8 +76,14 @@ namespace o2scl {
   /// Current points in parameter space
   std::vector<vec_t> current;
 
-  public:
+  /// Data array
+  std::vector<data_t> data_arr;
 
+  /// Data switch array
+  std::vector<bool> switch_arr;
+
+  public:
+  
   /// The number of Metropolis steps which were accepted
   size_t n_accept;
 
@@ -118,7 +121,6 @@ namespace o2scl {
       otherwise (default 1)
   */
   int nwalk;
-
   //@}
 
   /** \brief If true, call the error handler if msolve() or
@@ -160,7 +162,7 @@ namespace o2scl {
 
   /** \brief Desc
    */
-  virtual void best_point(ubvector &best, double w_best) {
+  virtual void best_point(ubvector &best, double w_best, data_t &dat) {
     return;
   }
   
@@ -200,24 +202,20 @@ namespace o2scl {
     warm_up=true;
     if (n_warm_up==0) warm_up=false;
 
-    current.resize(1);
-    std::vector<double> w_current(1);
+    // Allocate current point and current weight
+    current.resize(nwalk);
+    std::vector<double> w_current(nwalk);
     w_current[0]=0.0;
-    
-    // For stretch-moves, allocate for each walker
-    if (aff_inv) {
-      current.resize(nwalk);
-      w_current.resize(nwalk);
-      for(size_t i=0;i<nwalk;i++) {
-	w_current[i]=0.0;
-      }
-    }
-    
-    // Allocate memory for in all points
     for(size_t i=0;i<nwalk;i++) {
       current[i].resize(nparams);
+      w_current[i]=0.0;
     }
 
+    // Initialize data and switch arrays
+    data_arr.resize(2*nwalk);
+    switch_arr.resize(nwalk);
+    for(size_t i=0;i<switch_arr.size();i++) switch_arr[i]=false;
+    
     // Entry objects (Must be after read_input() since nsources is set
     // in that function.)
     vec_t next(nparams), best(nparams);
@@ -265,8 +263,7 @@ namespace o2scl {
 	  }
 	
 	  // Compute the weight
-	  w_current[ij]=func(nparams,current[ij]);
-	  meas_ret=meas(current[ij],w_current[ij],ij,true);
+	  w_current[ij]=func(nparams,current[ij],data_arr[ij]);
 	  
 	  if (verbose>=1) {
 	    std::cout << "mcmc: " << ij << " " << w_current[ij] << std::endl;
@@ -277,8 +274,10 @@ namespace o2scl {
 	  // Increment iteration count
 	  init_iters++;
 
-	  // If we have a good point, stop the loop
+	  // If we have a good point, call the measurement function and
+	  // stop the loop
 	  if (w_current[ij]>0.0) {
+	    meas_ret=meas(current[ij],w_current[ij],ij,true,data_arr[ij]);
 	    done=true;
 	  } else if (init_iters>max_bad_steps) {
 	    if (err_nonconv) {
@@ -295,8 +294,8 @@ namespace o2scl {
       // Normal or Metropolis-Hastings steps
 
       // Compute weight for initial point
-      w_current[0]=func(nparams,current[0]);
-      meas_ret=meas(current[0],w_current[0],0,true);
+      w_current[0]=func(nparams,current[0],data_arr[0]);
+      meas_ret=meas(current[0],w_current[0],0,true,data_arr[0]);
       if (verbose>=1) {
 	std::cout << "mcmc: " << w_current[0] << std::endl;
       }
@@ -309,7 +308,7 @@ namespace o2scl {
 
       best=current[0];
       w_best=w_current[0];
-      best_point(best,w_best);
+      best_point(best,w_best,data_arr[0]);
 
       // Compute the initial Hastings proposal weight
       if (hg_mode>0) {
@@ -415,11 +414,19 @@ namespace o2scl {
       // ---------------------------------------------------
       // Compute next weight
 
-      w_next=func(nparams,next);
+      if (switch_arr[ik]==false) {
+	w_next=func(nparams,next,data_arr[ik+nwalk]);
+      } else {
+	w_next=func(nparams,next,data_arr[ik]);
+      }
       if (w_next>w_best) {
 	best=next;
 	w_best=w_next;
-	best_point(best,w_best);
+	if (switch_arr[ik]==false) {
+	  best_point(best,w_best,data_arr[ik+nwalk]);
+	} else {
+	  best_point(best,w_best,data_arr[ik]);
+	}
       }
 
       // ---------------------------------------------------
@@ -475,21 +482,17 @@ namespace o2scl {
 	  
 	// Store results from new point
 	if (!warm_up) {
-	  if (aff_inv) {
-	    meas_ret=meas(next,w_next,ik,true);
+	  if (switch_arr[ik]==false) {
+	    meas_ret=meas(next,w_next,ik,true,data_arr[ik+nwalk]);
 	  } else {
-	    meas_ret=meas(next,w_next,0,true);
+	    meas_ret=meas(next,w_next,ik,true,data_arr[ik]);
 	  }
 	}
-	  
+
 	// Prepare for next point
-	if (aff_inv) {
-	  current[ik]=next;
-	  w_current[ik]=w_next;
-	} else {
-	  current[0]=next;
-	  w_current[0]=w_next;
-	}
+	current[ik]=next;
+	w_current[ik]=w_next;
+	switch_arr[ik]=!(switch_arr[ik]);
 	  
       } else {
 	    
@@ -498,10 +501,12 @@ namespace o2scl {
 
 	// Repeat measurement of old point
 	if (!warm_up) {
-	  if (aff_inv) {
-	    meas_ret=meas(current[ik],w_current[ik],ik,false);
+	  if (switch_arr[ik]==false) {
+	    meas_ret=meas(current[ik],w_current[ik],ik,false,
+			  data_arr[ik]);
 	  } else {
-	    meas_ret=meas(current[0],w_current[0],0,false);
+	    meas_ret=meas(current[ik],w_current[ik],ik,false,
+			  data_arr[ik+nwalk]);
 	  }
 	}
 
@@ -533,9 +538,8 @@ namespace o2scl {
       
       \note This class is experimental.
    */
-  template<class func_t=o2scl::multi_funct11,
-    class measure_t=measure_funct, class vec_t=ubvector>
-    class mcmc_table : public mcmc_base<func_t,measure_t,vec_t> {
+  template<class func_t, class measure_t, class data_t, class vec_t=ubvector>
+    class mcmc_table : public mcmc_base<func_t,measure_t,data_t,vec_t> {
     
   protected:
     
