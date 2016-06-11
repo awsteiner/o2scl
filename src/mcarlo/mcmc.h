@@ -601,7 +601,7 @@ namespace o2scl {
   /** \brief Fill \c line with data for insertion into the table
    */
   virtual void fill_line(const vec_t &pars, double weight, 
-			 std::vector<double> &line) {
+			 std::vector<double> &line, data_t &dat) {
     
     // Initial multiplier
     line.push_back(1.0);
@@ -621,14 +621,14 @@ namespace o2scl {
   /** \brief Desc
    */
   virtual int add_line(const vec_t &pars, double weight,
-			size_t ix, bool new_meas) {
+		       size_t ix, bool new_meas, data_t &dat) {
 
     // Test to see if we need to add a new line of data or
     // increment the weight on the previous line
     if (tab->get_nlines()<=(this->nwalk-1) || new_meas==true) {
 	
       std::vector<double> line;
-      fill_line(pars,weight,line);
+      fill_line(pars,weight,line,dat);
       tab->line_of_data(line.size(),line);
 	
     } else if (tab->get_nlines()>0) {

@@ -64,7 +64,7 @@ int meas2(const ubvector &pars, double weight, size_t ix, bool new_meas,
     cerr << "Failure 2." << endl;
     exit(-1);
   }
-  mct.add_line(pars,weight,ix,new_meas);
+  mct.add_line(pars,weight,ix,new_meas,dat);
   if (mct.get_table()->get_nlines()>=100) {
     return mcmc_base<point_funct,measure_funct,int,ubvector>::mcmc_done;
   }
