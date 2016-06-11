@@ -30,31 +30,44 @@ using namespace o2scl;
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 typedef std::function<int(const ubvector &,double,
-			  size_t,bool,std::array<double,2> &)> measure_funct;
+			  size_t,bool,std::array<double,1> &)> measure_funct;
 
 typedef std::function<double(size_t,const ubvector &,
-			     std::array<double,2> &)> point_funct;
+			     std::array<double,1> &)> point_funct;
 
 std::vector<double> arr_x;
 std::vector<double> arr_x2;
-mcmc_table<point_funct,measure_funct,std::array<double,2>,ubvector> mct;
+mcmc_table<point_funct,measure_funct,std::array<double,1>,ubvector> mct;
 
-double point(size_t nv, const ubvector &pars, std::array<double,2> &dat) {
+double point(size_t nv, const ubvector &pars, std::array<double,1> &dat) {
+  dat[0]=pars[0]*pars[0];
   return exp(-pars[0]*pars[0]/2.0);
 }
 
 int meas(const ubvector &pars, double weight, size_t ix, bool new_meas,
-	 std::array<double,2> &dat) {
+	 std::array<double,1> &dat) {
   arr_x.push_back(pars[0]);
-  arr_x2.push_back(pars[0]*pars[0]);
-  if (arr_x.size()==100) return -1;
+  arr_x2.push_back(dat[0]);
+  if ((pars[0]*pars[0]-dat[0])>1.0e-10) {
+    cerr << "Failure." << endl;
+    exit(-1);
+  }
+  if (arr_x.size()==100) {
+    return mcmc_base<point_funct,measure_funct,int,ubvector>::mcmc_done;
+  }
   return 0;
 }
 
 int meas2(const ubvector &pars, double weight, size_t ix, bool new_meas,
-	  std::array<double,2> &dat) {
+	  std::array<double,1> &dat) {
+  if ((pars[0]*pars[0]-dat[0])>1.0e-10) {
+    cerr << "Failure 2." << endl;
+    exit(-1);
+  }
   mct.add_line(pars,weight,ix,new_meas);
-  if (mct.get_table()->get_nlines()>=100) return -1;
+  if (mct.get_table()->get_nlines()>=100) {
+    return mcmc_base<point_funct,measure_funct,int,ubvector>::mcmc_done;
+  }
   return 0;
 }
 
@@ -69,7 +82,7 @@ int main(int argc, char *argv[]) {
   measure_funct mf2=meas;
   measure_funct mf3=meas2;
     
-  mcmc_base<point_funct,measure_funct,std::array<double,2>,ubvector> mc;
+  mcmc_base<point_funct,measure_funct,std::array<double,1>,ubvector> mc;
   ubvector init(1);
   ubvector low(1);
   ubvector high(1);

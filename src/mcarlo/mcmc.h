@@ -61,10 +61,7 @@ namespace o2scl {
   /// Random number generator
   o2scl::rng_gsl gr;
   
-  /// A Gaussian probability distribution
-  o2scl::prob_dens_gaussian pdg;
-
-  //// Desc
+  //// A Hastings distribution
   o2scl::prob_dens_mdim<vec_t> hast;
   
   /// If true, then use Metropolis-Hastings with a multivariate Gaussian
@@ -83,6 +80,9 @@ namespace o2scl {
   std::vector<bool> switch_arr;
 
   public:
+
+  /// Integer to indicate completion
+  static const int mcmc_done=-10;
   
   /// The number of Metropolis steps which were accepted
   size_t n_accept;
@@ -181,8 +181,9 @@ namespace o2scl {
 		   vec_t &low, vec_t &high, func_t &func,
 		   measure_t &meas) {
 
-    if (step_fac<1.0) {
-      step_fac=1.0;
+    // Fix 'step_fac' if it's less than or equal to zero
+    if (step_fac<=0.0) {
+      step_fac=10.0;
     }
     
     // Set RNG seed
@@ -191,7 +192,6 @@ namespace o2scl {
       seed=user_seed;
     }
     gr.set_seed(seed);
-    pdg.set_seed(seed);
 
     // Keep track of successful and failed MH moves
     n_accept=0;
@@ -210,23 +210,25 @@ namespace o2scl {
       current[i].resize(nparams);
       w_current[i]=0.0;
     }
+    double q_current=0.0;
 
     // Initialize data and switch arrays
     data_arr.resize(2*nwalk);
     switch_arr.resize(nwalk);
     for(size_t i=0;i<switch_arr.size();i++) switch_arr[i]=false;
     
-    // Entry objects (Must be after read_input() since nsources is set
-    // in that function.)
+    // Next and best points in parameter space
     vec_t next(nparams), best(nparams);
-
-    // Weights for each entry
-    double w_next=0.0, w_best=0.0;
-
+    double w_next=0.0, w_best=0.0, q_next=0.0;
+    
+    // Set current to initial point
     for(size_t i=0;i<nparams;i++) {
       current[0][i]=init[i];
     }
-    
+
+    // Return value of the measurement function
+    int meas_ret=0;
+
     // Run init() function
     int iret=mcmc_init();
     if (iret!=0) {
@@ -237,13 +239,9 @@ namespace o2scl {
     // ---------------------------------------------------
     // Compute initial point and initial weights
     
-    int meas_ret=0;
-      
-    double q_current=0.0, q_next=0.0;
-
     if (aff_inv) {
-      // Stretch-move steps
 
+      // Stretch-move steps
       size_t ij_best=0;
 
       // Initialize each walker in turn
@@ -299,6 +297,7 @@ namespace o2scl {
       if (verbose>=1) {
 	std::cout << "mcmc: " << w_current[0] << std::endl;
       }
+
       if (w_current[0]<=0.0) {
 	if (err_nonconv) {
 	  O2SCL_ERR("Initial weight vanished.",o2scl::exc_einval);
@@ -310,22 +309,22 @@ namespace o2scl {
       w_best=w_current[0];
       best_point(best,w_best,data_arr[0]);
 
+      if (meas_ret==mcmc_done) {
+	mcmc_cleanup();
+	return 0;
+      }
+
       // Compute the initial Hastings proposal weight
       if (hg_mode>0) {
 	q_current=hast.pdf(current[0]);
       }
     
     }
-
-    if (meas_ret!=0) {
-      O2SCL_ERR2("Measurement function returned non-zero value ",
-		"for initial point",o2scl::exc_einval);
-    }
     
     // ---------------------------------------------------
 
     // The MCMC is arbitrarily broken up into 20 'blocks', making
-    // it easier to keep track of progress and ensure file updates
+    // it easier to keep track of progress 
     size_t block_counter=0;
 
     bool main_done=false;
@@ -333,7 +332,7 @@ namespace o2scl {
     
     while (!main_done) {
 
-      // Walker to move for smove
+      // Walker to move (or zero when aff_inv is false)
       size_t ik=0;
       double smove_z=0.0;
     
@@ -514,7 +513,7 @@ namespace o2scl {
 
       if (meas_ret!=0) {
 	main_done=true;
-	if (meas_ret!=-1 && err_nonconv) {
+	if (meas_ret!=mcmc_done && err_nonconv) {
 	  O2SCL_ERR("Measurement function returned error value.",
 		    o2scl::exc_efailed);
 	}
