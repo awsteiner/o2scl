@@ -136,14 +136,18 @@ int main(int argc, char *argv[]) {
   vector<string> pnames={"x"};
   vector<string> punits={"MeV"};
   mct.set_names_units(pnames,punits);
+
   mct.mcmc(1,init,low,high,mf,mf3);
 
-  cout << vector_mean(mct.get_table()->get_column("x")) << endl;
+  cout << vector_mean(mct.get_table()->get_column("param_x")) << endl;
 
   shared_ptr<table_units<> > t=mct.get_table();
+  cout << "n_accept, n_reject, table lines: "
+       << mct.n_accept << " " << mct.n_reject << " "
+       << t->get_nlines() << endl;
   for(size_t i=0;i<t->get_nlines();i+=t->get_nlines()/10) {
     cout << i << " " << t->get("mult",i) << " "
-	 << t->get("weight",i) << " " << t->get("x",i) << endl;
+	 << t->get("weight",i) << " " << t->get("param_x",i) << endl;
   }
 
   tm.report();

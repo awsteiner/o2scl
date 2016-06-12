@@ -52,6 +52,8 @@ namespace o2scl {
   /** \brief A generic MCMC simulation class
 
       \note This class is experimental.
+      
+      \todo Fix Hastings steps and add better testing
    */
   template<class func_t, class measure_t,
     class data_t, class vec_t=ubvector> class mcmc_base {
@@ -65,7 +67,7 @@ namespace o2scl {
   o2scl::prob_dens_mdim<vec_t> hast;
   
   /// If true, then use Metropolis-Hastings with a multivariate Gaussian
-  int hg_mode;
+  bool hg_mode;
 
   /// If true, we are in the warm up phase
   bool warm_up;
@@ -134,7 +136,7 @@ namespace o2scl {
 
     // MC step parameters
     aff_inv=false;
-    hg_mode=0;
+    hg_mode=false;
     step_fac=10.0;
     nwalk=1;
     err_nonconv=true;
@@ -235,7 +237,18 @@ namespace o2scl {
       O2SCL_ERR("init function failed.",o2scl::exc_einval);
       return iret;
     }
-      
+
+    if (verbose>=1) {
+      if (aff_inv) {
+	std::cout << "mcmc: Affine-invariant step, nwalk=" << nwalk
+	<< std::endl;
+      } else if (hg_mode==true) {
+	std::cout << "mcmc: Metropolis-Hastings." << std::endl;
+      } else {
+	std::cout << "mcmc: Simple metropolis." << std::endl;
+      }
+    }
+    
     // ---------------------------------------------------
     // Compute initial point and initial weights
     
@@ -264,7 +277,12 @@ namespace o2scl {
 	  w_current[ij]=func(nparams,current[ij],data_arr[ij]);
 	  
 	  if (verbose>=1) {
-	    std::cout << "mcmc: " << ij << " " << w_current[ij] << std::endl;
+	    std::cout.precision(4);
+	    std::cout << "mcmc: ";
+	    std::cout.width((int)(1.0+log10((double)(nwalk-1))));
+	    std::cout << ij << " " << w_current[ij]
+		      << " (initial)" << std::endl;
+	    std::cout.precision(6);
 	  }
 
 	  // ------------------------------------------------
@@ -295,7 +313,9 @@ namespace o2scl {
       w_current[0]=func(nparams,current[0],data_arr[0]);
       meas_ret=meas(current[0],w_current[0],0,true,data_arr[0]);
       if (verbose>=1) {
-	std::cout << "mcmc: " << w_current[0] << std::endl;
+	std::cout.precision(4);
+	std::cout << "mcmc: " << w_current[0] << " (initial)" << std::endl;
+	std::cout.precision(6);
       }
 
       if (w_current[0]<=0.0) {
@@ -427,16 +447,16 @@ namespace o2scl {
 	  best_point(best,w_best,data_arr[ik]);
 	}
       }
-
+      
       // ---------------------------------------------------
     
       // Test to ensure new point is good
-      if (w_next<=0.0) {
-	if (err_nonconv) {
-	  O2SCL_ERR("Zero weight.",o2scl::exc_einval);
-	}
-	return 3;
-      }
+      //if (w_next<=0.0) {
+      //if (err_nonconv) {
+      //O2SCL_ERR("Zero weight.",o2scl::exc_einval);
+      //}
+      //return 3;
+      //}
 
       bool accept=false;
       double r=gr.random();
@@ -447,20 +467,26 @@ namespace o2scl {
 	  accept=true;
 	}
 	if (verbose>=1) {
-	  std::cout << "mcmc: " << w_current[ik] << " " << w_next << " "
+	  std::cout.precision(4);
+	  std::cout << "mcmc: ";
+	  std::cout.width((int)(1.0+log10((double)(nwalk-1))));
+	  std::cout << ik << " " << w_current[ik] << " " << w_next << " "
 		    << pow(smove_z,((double)nwalk)-1.0) << " ratio: "
 		    << pow(smove_z,((double)nwalk)-1.0)*w_next/w_current[ik]
 		    << " accept: " << accept << std::endl;
+	  std::cout.precision(6);
 	}
       } else if (hg_mode>0) {
 	if (r<w_next*q_current/w_current[0]/q_next) {
 	  accept=true;
 	}
 	if (verbose>=1) {
+	  std::cout.precision(4);
 	  std::cout << "mcmc: " << w_current[0] << " " << q_current
 		    << " " << w_next << " " << q_next << " ratio: "
 		    << w_next*q_current/w_current[0]/q_next
 		    << " accept: " << accept << std::endl;
+	  std::cout.precision(6);
 	}
       } else {
 	if (r<w_next/w_current[0]) {
@@ -514,7 +540,8 @@ namespace o2scl {
       if (meas_ret!=0) {
 	main_done=true;
 	if (meas_ret!=mcmc_done && err_nonconv) {
-	  O2SCL_ERR("Measurement function returned error value.",
+	  O2SCL_ERR((((std::string)"Measurement function returned ")+
+		     std::to_string(meas_ret)+" in mcmc::mcmc().").c_str(),
 		    o2scl::exc_efailed);
 	}
       }
@@ -552,23 +579,9 @@ namespace o2scl {
   /// Main data table for Markov chain
   std::shared_ptr<o2scl::table_units<> > tab;
     
-  /** \brief Create strings which contain column names and units
-   */
-  virtual void table_names_units(std::string &s, std::string &u) {
-    s="mult weight ";
-    u=". . ";
-    for(size_t i=0;i<param_names.size();i++) {
-      s+=this->param_names[i]+" ";
-      if (this->param_units[i].length()>0) {
-	u+=this->param_units[i]+" ";
-      } else {
-	u+=". ";
-      }
-    }
-    return;
-  }
+  /** \brief MCMC initialization function
 
-  /** \brief Desc
+      This function sets the column names and units.
    */
   virtual int mcmc_init() {
 
@@ -576,25 +589,24 @@ namespace o2scl {
     // Init table
       
     std::string s, u;
-    table_names_units(s,u);
-    std::cout << "Here: " << s << std::endl;
-    tab->line_of_names(s);
-      
-    {
-      size_t ctr=0;
-      std::string unit;
-      std::istringstream is(u);
-      while(is >> unit) {
-	if (unit!=((std::string)".")) {
-	  tab->set_unit(tab->get_column_name(ctr),unit);
-	}
-	ctr++;
-      } 
-      if (ctr!=tab->get_ncolumns()) {
-	O2SCL_ERR("Column/unit alignment in mcmc_table::mcmc().",
-		  o2scl::exc_esanity);
+    tab->new_column("mult");
+    tab->new_column("weight");
+    for(size_t i=0;i<param_names.size();i++) {
+      tab->new_column(((std::string)"param_")+param_names[i]);
+      if (param_units[i].length()>0) {
+	tab->set_unit(((std::string)"param_")+param_names[i],
+		      param_units[i]);
       }
     }
+      
+    if (this->verbose>=2) {
+      std::cout << "mcmc: Table column names and units: " << std::endl;
+      for(size_t i=0;i<tab->get_ncolumns();i++) {
+	std::cout << tab->get_column_name(i) << " "
+		  << tab->get_unit(tab->get_column_name(i)) << std::endl;
+      }
+    }
+    
     return 0;
   }
 
@@ -602,7 +614,7 @@ namespace o2scl {
    */
   virtual void fill_line(const vec_t &pars, double weight, 
 			 std::vector<double> &line, data_t &dat) {
-    
+
     // Initial multiplier
     line.push_back(1.0);
     line.push_back(weight);
@@ -618,7 +630,8 @@ namespace o2scl {
   mcmc_table() : tab(new o2scl::table_units<>) {
   }
     
-  /** \brief Desc
+  /** \brief A measurement function which adds the point to the
+      table
    */
   virtual int add_line(const vec_t &pars, double weight,
 		       size_t ix, bool new_meas, data_t &dat) {
@@ -629,6 +642,28 @@ namespace o2scl {
 	
       std::vector<double> line;
       fill_line(pars,weight,line,dat);
+
+      if (this->verbose>=2) {
+	if (line.size()!=tab->get_ncolumns()) {
+	  std::cout << "line: " << line.size() << " columns: "
+		    << tab->get_ncolumns() << std::endl;
+	  O2SCL_ERR("Table misalignment in mcmc_table().",exc_einval);
+	}
+	std::cout << "mcmc: Adding line:" << std::endl;
+	std::vector<std::string> sc_in, sc_out;
+	for(size_t k=0;k<line.size();k++) {
+	  sc_in.push_back(tab->get_column_name(k)+": "+
+			  o2scl::dtos(line[k]));
+	}
+	o2scl::screenify(line.size(),sc_in,sc_out);
+	for(size_t k=0;k<sc_out.size();k++) {
+	  std::cout << sc_out[k] << std::endl;
+	}
+	std::cout << "Press a key and enter to continue." << std::endl;
+	char ch;
+	std::cin >> ch;
+      }
+      
       tab->line_of_data(line.size(),line);
 	
     } else if (tab->get_nlines()>0) {
@@ -636,6 +671,25 @@ namespace o2scl {
       // Otherwise, just increment the multiplier on the previous line
       tab->set("mult",tab->get_nlines()-this->nwalk,
 	       tab->get("mult",tab->get_nlines()-this->nwalk)+1.0);
+
+      if (this->verbose>=2) {
+	std::cout << "mcmc: Updating line:" << std::endl;
+	std::vector<std::string> sc_in, sc_out;
+	for(size_t k=0;k<tab->get_ncolumns();k++) {
+	  sc_in.push_back
+	    (tab->get_column_name(k)+": "+
+	     o2scl::dtos(tab->get(tab->get_column_name(k),
+				  tab->get_nlines()-this->nwalk)));
+	}
+	o2scl::screenify(tab->get_ncolumns(),sc_in,sc_out);
+	for(size_t k=0;k<sc_out.size();k++) {
+	  std::cout << sc_out[k] << std::endl;
+	}
+	std::cout << "Press a key and enter to continue." << std::endl;
+	char ch;
+	std::cin >> ch;
+      }
+      
     }
       
     return 0;
