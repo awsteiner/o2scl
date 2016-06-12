@@ -334,7 +334,45 @@ namespace o2scl {
     b=(y1-y2-a*(x1*x1-x2*x2))/(x1-x2);
     c=y2-a*x2*x2-b*x2;
     
-    return -b/2/a;
+    return -b/2.0/a;
+  }
+
+  /** \brief Return values related to a quadratic defined by 
+      three \f$ (x,y) \f$ pairs
+      
+      This function provides the three coefficients of the 
+      quadratic, \c a, \c b, and \c c, and the denominator
+      \c den.
+
+      This function should work for any floating-point data type,
+      but will suffer from problems due to lack of precision in
+      some cases.
+  */
+  template<class data_t>
+    void quadratic_extremum_y_full(const data_t x1, const data_t x2, 
+				     const data_t x3, const data_t y1, 
+				     const data_t y2, const data_t y3,
+				     const data_t &xmin, const data_t &ymin,
+				     const data_t &a, const data_t &b,
+				     const data_t &c, const data_t &den) {
+
+    if (x1==x2 || x2==x3 || x1==x3) {
+      O2SCL_ERR2("Two abscissae cannot be equal in function ",
+		 "quadratic_extremum_y().",exc_einval);
+    }
+    
+    den=(x1*x1-x2*x2)*(x3-x2)-(x3*x3-x2*x2)*(x1-x2);
+    if (den==0.0) {
+      den=(x2*x2-x1*x1)*(x3-x1)-(x3*x3-x1*x1)*(x2-x1);
+      a=((x3-x1)*(y2-y1)-(x2-x2)*(y3-y1))/den;
+    } else {
+      a=((x3-x2)*(y1-y2)-(x1-x2)*(y3-y2))/den;
+    }
+    b=(y1-y2-a*(x1*x1-x2*x2))/(x1-x2);
+    c=y2-a*x2*x2-b*x2;
+    xmin=-b/2.0/a;
+    ymin=c-b*b/4.0/a;
+    return;
   }
 
   /** \brief Return the y value of the extremum of a quadratic defined by 
@@ -348,13 +386,13 @@ namespace o2scl {
     data_t quadratic_extremum_y(const data_t x1, const data_t x2, 
 				const data_t x3, const data_t y1, 
 				const data_t y2, const data_t y3) {
-
+    
     if (x1==x2 || x2==x3 || x1==x3) {
       O2SCL_ERR2("Two abscissae cannot be equal in function ",
 		 "quadratic_extremum_y().",exc_einval);
     }
     
-    double a,b,c,den=(x1*x1-x2*x2)*(x3-x2)-(x3*x3-x2*x2)*(x1-x2);
+    data_t a,b,c,den=(x1*x1-x2*x2)*(x3-x2)-(x3*x3-x2*x2)*(x1-x2);
     if (den==0.0) {
       den=(x2*x2-x1*x1)*(x3-x1)-(x3*x3-x1*x1)*(x2-x1);
       a=((x3-x1)*(y2-y1)-(x2-x2)*(y3-y1))/den;

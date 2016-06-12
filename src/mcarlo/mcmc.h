@@ -343,10 +343,6 @@ namespace o2scl {
     
     // ---------------------------------------------------
 
-    // The MCMC is arbitrarily broken up into 20 'blocks', making
-    // it easier to keep track of progress 
-    size_t block_counter=0;
-
     bool main_done=false;
     size_t mcmc_iters=0;
     
