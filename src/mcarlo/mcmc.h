@@ -234,7 +234,8 @@ namespace o2scl {
     // Run init() function
     int iret=mcmc_init();
     if (iret!=0) {
-      O2SCL_ERR("init function failed.",o2scl::exc_einval);
+      O2SCL_ERR("Function mcmc_init failed in mcmc_base::mcmc().",
+		o2scl::exc_einval);
       return iret;
     }
 
@@ -320,7 +321,8 @@ namespace o2scl {
 
       if (w_current[0]<=0.0) {
 	if (err_nonconv) {
-	  O2SCL_ERR("Initial weight vanished.",o2scl::exc_einval);
+	  O2SCL_ERR("Initial weight vanished in mcmc_base::mcmc().",
+		    o2scl::exc_einval);
 	}
 	return 2;
       }
@@ -391,7 +393,7 @@ namespace o2scl {
 	  step_iters++;
 	  if (step_iters==1000) {
 	    if (err_nonconv) {
-	      O2SCL_ERR("Failed to find suitable step.",
+	      O2SCL_ERR("Failed to find suitable step in mcmc_base::mcmc().",
 			o2scl::exc_einval);
 	    }
 	    return 2;
@@ -422,7 +424,8 @@ namespace o2scl {
 	  }
 	  
 	  if (next[k]<low[k] || next[k]>high[k]) {
-	    O2SCL_ERR("Sanity check in parameter step.",o2scl::exc_esanity);
+	    O2SCL_ERR("Sanity check in parameter step in mcmc_base::mcmc().",
+		      o2scl::exc_esanity);
 	  }
 	}
       
@@ -531,7 +534,7 @@ namespace o2scl {
 	main_done=true;
 	if (meas_ret!=mcmc_done && err_nonconv) {
 	  O2SCL_ERR((((std::string)"Measurement function returned ")+
-		     std::to_string(meas_ret)+" in mcmc::mcmc().").c_str(),
+		     std::to_string(meas_ret)+" in mcmc_base::mcmc().").c_str(),
 		    o2scl::exc_efailed);
 	}
       }
@@ -642,13 +645,15 @@ namespace o2scl {
 	
       std::vector<double> line;
       fill_line(pars,weight,line,dat);
-
+      
+      if (line.size()!=tab->get_ncolumns()) {
+	std::cout << "line: " << line.size() << " columns: "
+		  << tab->get_ncolumns() << std::endl;
+	O2SCL_ERR("Table misalignment in mcmc_table::add_line().",
+		  exc_einval);
+      }
+      
       if (this->verbose>=2) {
-	if (line.size()!=tab->get_ncolumns()) {
-	  std::cout << "line: " << line.size() << " columns: "
-		    << tab->get_ncolumns() << std::endl;
-	  O2SCL_ERR("Table misalignment in mcmc_table().",exc_einval);
-	}
 	std::cout << "mcmc: Adding line:" << std::endl;
 	std::vector<std::string> sc_in, sc_out;
 	for(size_t k=0;k<line.size();k++) {
