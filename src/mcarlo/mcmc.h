@@ -446,14 +446,6 @@ namespace o2scl {
       
       // ---------------------------------------------------
     
-      // Test to ensure new point is good
-      //if (w_next<=0.0) {
-      //if (err_nonconv) {
-      //O2SCL_ERR("Zero weight.",o2scl::exc_einval);
-      //}
-      //return 3;
-      //}
-
       bool accept=false;
       double r=gr.random();
 
@@ -542,6 +534,16 @@ namespace o2scl {
 	}
       }
       mcmc_iters++;
+
+      if (warm_up && mcmc_iters==n_warm_up) {
+	warm_up=false;
+	mcmc_iters=0;
+	n_accept=0;
+	n_reject=0;
+	if (verbose>=1) {
+	  std::cout << "Finished warmup." << std::endl;
+	}
+      }
       
       // --------------------------------------------------------------
       // End of main loop
