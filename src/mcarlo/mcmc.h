@@ -311,7 +311,7 @@ namespace o2scl {
 
       // Compute weight for initial point
       w_current[0]=func(nparams,current[0],data_arr[0]);
-      meas_ret=meas(current[0],w_current[0],0,true,data_arr[0]);
+
       if (verbose>=1) {
 	std::cout.precision(4);
 	std::cout << "mcmc: " << w_current[0] << " (initial)" << std::endl;
@@ -324,6 +324,8 @@ namespace o2scl {
 	}
 	return 2;
       }
+
+      meas_ret=meas(current[0],w_current[0],0,true,data_arr[0]);
 
       best=current[0];
       w_best=w_current[0];
