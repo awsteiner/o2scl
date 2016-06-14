@@ -106,7 +106,7 @@ namespace o2scl {
       \note Not to be confused with <tt>warm_up</tt>, which is 
       a boolean local variable in some functions not an int.
   */
-  int n_warm_up;
+  size_t n_warm_up;
 
   /** \brief If non-zero, use as the seed for the random number 
       generator (default 0)
@@ -117,12 +117,12 @@ namespace o2scl {
   int verbose;
 
   /// (default 1000)
-  int max_bad_steps;
+  size_t max_bad_steps;
 
   /** \brief Number of walkers for affine-invariant MC or 1 
       otherwise (default 1)
   */
-  int nwalk;
+  size_t nwalk;
   //@}
 
   /** \brief If true, call the error handler if msolve() or

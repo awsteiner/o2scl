@@ -352,6 +352,29 @@ namespace o2scl {
       
     };
 
+    /// Integer parameter for \ref o2scl::cli
+    class parameter_size_t : public parameter {
+
+    public:
+      
+      virtual ~parameter_size_t() {}
+
+      /// Parameter
+      size_t *s;
+
+      /// Set from string
+      virtual int set(std::string st) {
+	*s=o2scl::stoszt(st,false);
+	return 0;
+      }
+
+      /// Convert to string
+      virtual std::string get() {
+	return szttos(*s);
+      }
+      
+    };
+
     /// \name Parameter storage and associated iterator type
     //@{
     /// Parameter list
