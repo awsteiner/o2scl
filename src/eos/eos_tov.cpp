@@ -463,7 +463,7 @@ void eos_tov_interp::internal_read() {
   // Add lines of crust before transition
   if (verbose>1) {
     cout << "Crust: use_crust = " << use_crust << " crust_nlines = "
-	 << crust_nlines << endl;
+	 << crust_nlines << " core_nlines = " << core_nlines << endl;
   }
   if (use_crust) {
     for(size_t i=0;i<crust_nlines;i++) {
@@ -502,9 +502,11 @@ void eos_tov_interp::internal_read() {
       ed_lo=gen_int.eval(pr_lo,crust_nlines,crust_vecp,crust_vece);
       ed_hi=gen_int.eval(pr_hi/pfactor,core_nlines,core_vecp,
 			 core_vece)*efactor;
-      nb_lo=gen_int.eval(pr_lo,crust_nlines,crust_vecp,crust_vecnb);
-      nb_hi=gen_int.eval(pr_hi/pfactor,core_nlines,core_vecp,
-			 core_vecnb)*nfactor;
+      if (baryon_column) {
+	nb_lo=gen_int.eval(pr_lo,crust_nlines,crust_vecp,crust_vecnb);
+	nb_hi=gen_int.eval(pr_hi/pfactor,core_nlines,core_vecp,
+			   core_vecnb)*nfactor;
+      }
     }
 
     double ed, nb=0.0;
