@@ -183,6 +183,9 @@ namespace o2scl {
 		   vec_t &low, vec_t &high, func_t &func,
 		   measure_t &meas) {
 
+    // Fix the number of walkers if it is too small
+    if (aff_inv && nwalk<=1) nwalk=2;
+    
     // Fix 'step_fac' if it's less than or equal to zero
     if (step_fac<=0.0) {
       step_fac=10.0;
