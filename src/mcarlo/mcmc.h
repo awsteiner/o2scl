@@ -244,12 +244,14 @@ namespace o2scl {
 
     if (verbose>=1) {
       if (aff_inv) {
-	std::cout << "mcmc: Affine-invariant step, nwalk=" << nwalk
-	<< std::endl;
+	std::cout << "mcmc: Affine-invariant step, n_parameters="
+	<< nparams << " nwalk=" << nwalk << std::endl;
       } else if (hg_mode==true) {
-	std::cout << "mcmc: Metropolis-Hastings." << std::endl;
+	std::cout << "mcmc: Metropolis-Hastings, n_parameters="
+	<< nparams << std::endl;
       } else {
-	std::cout << "mcmc: Simple metropolis." << std::endl;
+	std::cout << "mcmc: Simple metropolis, n_parameters="
+	<< nparams << std::endl;
       }
     }
     
@@ -271,6 +273,13 @@ namespace o2scl {
 
 	  // Make a perturbation from the initial point
 	  for(size_t ik=0;ik<nparams;ik++) {
+	    if (init[ik]<low[ik] || init[ik]>high[ik]) {
+	      O2SCL_ERR((((std::string)"Parameter ")+std::to_string(ik)+
+			 " of "+std::to_string(nparams)+
+			 " out of range (value="+std::to_string(init[ik])+
+			 ") in mcmc_base::mcmc().").c_str(),
+			o2scl::exc_einval);
+	    }
 	    do {
 	      current[ij][ik]=init[ik]+(gr.random()*2.0-1.0)*
 		(high[ik]-low[ik])/100.0;
@@ -285,7 +294,7 @@ namespace o2scl {
 	    std::cout << "mcmc: ";
 	    std::cout.width((int)(1.0+log10((double)(nwalk-1))));
 	    std::cout << ij << " " << w_current[ij]
-		      << " (initial)" << std::endl;
+		      << " (initial; ai)" << std::endl;
 	    std::cout.precision(6);
 	  }
 
@@ -591,9 +600,13 @@ namespace o2scl {
    */
   virtual int mcmc_init() {
 
+    if (this->verbose>=2) {
+      std::cout << "Start mcmc_table::mcmc_init()." << std::endl;
+    }
+
     // -----------------------------------------------------------
     // Init table
-      
+
     std::string s, u;
     tab->new_column("mult");
     tab->new_column("weight");
@@ -613,6 +626,10 @@ namespace o2scl {
       }
     }
     
+    if (this->verbose>=2) {
+      std::cout << "End mcmc_table::mcmc_init()." << std::endl;
+    }
+
     return 0;
   }
 
