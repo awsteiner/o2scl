@@ -64,7 +64,7 @@ namespace o2scl {
   o2scl::rng_gsl gr;
   
   //// A Hastings distribution
-  o2scl::prob_dens_mdim<vec_t> hast;
+  o2scl::prob_cond_mdim<vec_t> hast;
   
   /// If true, then use Metropolis-Hastings with a multivariate Gaussian
   bool hg_mode;
@@ -122,7 +122,7 @@ namespace o2scl {
   /** \brief Number of walkers for affine-invariant MC or 1 
       otherwise (default 1)
   */
-  size_t nwalk;
+  size_t n_walk;
   //@}
 
   /** \brief If true, call the error handler if msolve() or
@@ -138,7 +138,7 @@ namespace o2scl {
     aff_inv=false;
     hg_mode=false;
     step_fac=10.0;
-    nwalk=1;
+    n_walk=1;
     err_nonconv=true;
     verbose=0;
     warm_up=false;
@@ -170,7 +170,7 @@ namespace o2scl {
   
   /** \brief Set the distribution for Metropolis-Hastings
    */
-  virtual void set_hastings(o2scl::prob_dens_mdim<vec_t> &p) {
+  virtual void set_hastings(o2scl::prob_cond_mdim<vec_t> &p) {
     hast=p;
     hg_mode=true;
     aff_inv=false;
@@ -184,7 +184,7 @@ namespace o2scl {
 		   measure_t &meas) {
 
     // Fix the number of walkers if it is too small
-    if (aff_inv && nwalk<=1) nwalk=2;
+    if (aff_inv && n_walk<=1) n_walk=2;
     
     // Fix 'step_fac' if it's less than or equal to zero
     if (step_fac<=0.0) {
@@ -208,23 +208,22 @@ namespace o2scl {
     if (n_warm_up==0) warm_up=false;
 
     // Allocate current point and current weight
-    current.resize(nwalk);
-    std::vector<double> w_current(nwalk);
+    current.resize(n_walk);
+    std::vector<double> w_current(n_walk);
     w_current[0]=0.0;
-    for(size_t i=0;i<nwalk;i++) {
+    for(size_t i=0;i<n_walk;i++) {
       current[i].resize(nparams);
       w_current[i]=0.0;
     }
-    double q_current=0.0;
 
     // Initialize data and switch arrays
-    data_arr.resize(2*nwalk);
-    switch_arr.resize(nwalk);
+    data_arr.resize(2*n_walk);
+    switch_arr.resize(n_walk);
     for(size_t i=0;i<switch_arr.size();i++) switch_arr[i]=false;
     
     // Next and best points in parameter space
     vec_t next(nparams), best(nparams);
-    double w_next=0.0, w_best=0.0, q_next=0.0;
+    double w_next=0.0, w_best=0.0, q_hast=0.0;
     
     // Set current to initial point
     for(size_t i=0;i<nparams;i++) {
@@ -245,7 +244,7 @@ namespace o2scl {
     if (verbose>=1) {
       if (aff_inv) {
 	std::cout << "mcmc: Affine-invariant step, n_parameters="
-	<< nparams << " nwalk=" << nwalk << std::endl;
+	<< nparams << " n_walk=" << n_walk << std::endl;
       } else if (hg_mode==true) {
 	std::cout << "mcmc: Metropolis-Hastings, n_parameters="
 	<< nparams << std::endl;
@@ -264,7 +263,7 @@ namespace o2scl {
       size_t ij_best=0;
 
       // Initialize each walker in turn
-      for(size_t ij=0;ij<nwalk;ij++) {
+      for(size_t ij=0;ij<n_walk;ij++) {
 
 	size_t init_iters=0;
 	bool done=false;
@@ -292,7 +291,7 @@ namespace o2scl {
 	  if (verbose>=1) {
 	    std::cout.precision(4);
 	    std::cout << "mcmc: ";
-	    std::cout.width((int)(1.0+log10((double)(nwalk-1))));
+	    std::cout.width((int)(1.0+log10((double)(n_walk-1))));
 	    std::cout << ij << " " << w_current[ij]
 		      << " (initial; ai)" << std::endl;
 	    std::cout.precision(6);
@@ -350,11 +349,6 @@ namespace o2scl {
 	return 0;
       }
 
-      // Compute the initial Hastings proposal weight
-      if (hg_mode>0) {
-	q_current=hast.pdf(current[0]);
-      }
-    
     }
     
     // ---------------------------------------------------
@@ -374,7 +368,7 @@ namespace o2scl {
       if (aff_inv) {
 
 	// Choose walker to move
-	ik=mcmc_iters % nwalk;
+	ik=mcmc_iters % n_walk;
       
 	bool in_bounds;
 	size_t step_iters=0;
@@ -386,8 +380,8 @@ namespace o2scl {
 	  // Choose jth walker
 	  size_t ij;
 	  do {
-	    ij=((size_t)(gr.random()*((double)nwalk)));
-	  } while (ij==ik || ij>=nwalk);
+	    ij=((size_t)(gr.random()*((double)n_walk)));
+	  } while (ij==ik || ij>=n_walk);
 	
 	  // Select z 
 	  double p=gr.random();
@@ -414,10 +408,10 @@ namespace o2scl {
 	} while (in_bounds==false);	
 
       } else if (hg_mode>0) {
-      
+	
 	// Make a Metropolis-Hastings step based on previous data
-	hast(next);
-	q_next=hast.pdf(next);
+	hast(current[0],next);
+	q_hast=hast.pdf(current[0],next)/hast.pdf(next,current[0]);
 
       } else {
 
@@ -447,7 +441,7 @@ namespace o2scl {
       // Compute next weight
 
       if (switch_arr[ik]==false) {
-	w_next=func(nparams,next,data_arr[ik+nwalk]);
+	w_next=func(nparams,next,data_arr[ik+n_walk]);
       } else {
 	w_next=func(nparams,next,data_arr[ik]);
       }
@@ -455,7 +449,7 @@ namespace o2scl {
 	best=next;
 	w_best=w_next;
 	if (switch_arr[ik]==false) {
-	  best_point(best,w_best,data_arr[ik+nwalk]);
+	  best_point(best,w_best,data_arr[ik+n_walk]);
 	} else {
 	  best_point(best,w_best,data_arr[ik]);
 	}
@@ -468,28 +462,28 @@ namespace o2scl {
 
       // Metropolis algorithm
       if (aff_inv) {
-	if (r<pow(smove_z,((double)nwalk)-1.0)*w_next/w_current[ik]) {
+	if (r<pow(smove_z,((double)n_walk)-1.0)*w_next/w_current[ik]) {
 	  accept=true;
 	}
 	if (verbose>=1) {
 	  std::cout.precision(4);
 	  std::cout << "mcmc: ";
-	  std::cout.width((int)(1.0+log10((double)(nwalk-1))));
+	  std::cout.width((int)(1.0+log10((double)(n_walk-1))));
 	  std::cout << ik << " " << w_current[ik] << " " << w_next << " "
-		    << pow(smove_z,((double)nwalk)-1.0) << " ratio: "
-		    << pow(smove_z,((double)nwalk)-1.0)*w_next/w_current[ik]
+		    << pow(smove_z,((double)n_walk)-1.0) << " ratio: "
+		    << pow(smove_z,((double)n_walk)-1.0)*w_next/w_current[ik]
 		    << " accept: " << accept << std::endl;
 	  std::cout.precision(6);
 	}
       } else if (hg_mode>0) {
-	if (r<w_next*q_current/w_current[0]/q_next) {
+	if (r<w_next/w_current[0]*q_hast) {
 	  accept=true;
 	}
 	if (verbose>=1) {
 	  std::cout.precision(4);
-	  std::cout << "mcmc: " << w_current[0] << " " << q_current
-		    << " " << w_next << " " << q_next << " ratio: "
-		    << w_next*q_current/w_current[0]/q_next
+	  std::cout << "mcmc: " << w_current[0] 
+		    << " " << w_next << " " << q_hast << " ratio: "
+		    << w_next/w_current[0]*q_hast
 		    << " accept: " << accept << std::endl;
 	  std::cout.precision(6);
 	}
@@ -513,7 +507,7 @@ namespace o2scl {
 	// Store results from new point
 	if (!warm_up) {
 	  if (switch_arr[ik]==false) {
-	    meas_ret=meas(next,w_next,ik,true,data_arr[ik+nwalk]);
+	    meas_ret=meas(next,w_next,ik,true,data_arr[ik+n_walk]);
 	  } else {
 	    meas_ret=meas(next,w_next,ik,true,data_arr[ik]);
 	  }
@@ -536,7 +530,7 @@ namespace o2scl {
 			  data_arr[ik]);
 	  } else {
 	    meas_ret=meas(current[ik],w_current[ik],ik,false,
-			  data_arr[ik+nwalk]);
+			  data_arr[ik+n_walk]);
 	  }
 	}
 
@@ -661,7 +655,7 @@ namespace o2scl {
 
     // Test to see if we need to add a new line of data or
     // increment the weight on the previous line
-    if (tab->get_nlines()<=(this->nwalk-1) || new_meas==true) {
+    if (tab->get_nlines()<=(this->n_walk-1) || new_meas==true) {
 	
       std::vector<double> line;
       fill_line(pars,weight,line,dat);
@@ -694,8 +688,8 @@ namespace o2scl {
     } else if (tab->get_nlines()>0) {
 	
       // Otherwise, just increment the multiplier on the previous line
-      tab->set("mult",tab->get_nlines()-this->nwalk,
-	       tab->get("mult",tab->get_nlines()-this->nwalk)+1.0);
+      tab->set("mult",tab->get_nlines()-this->n_walk,
+	       tab->get("mult",tab->get_nlines()-this->n_walk)+1.0);
 
       if (this->verbose>=2) {
 	std::cout << "mcmc: Updating line:" << std::endl;
@@ -704,7 +698,7 @@ namespace o2scl {
 	  sc_in.push_back
 	    (tab->get_column_name(k)+": "+
 	     o2scl::dtos(tab->get(tab->get_column_name(k),
-				  tab->get_nlines()-this->nwalk)));
+				  tab->get_nlines()-this->n_walk)));
 	}
 	o2scl::screenify(tab->get_ncolumns(),sc_in,sc_out);
 	for(size_t k=0;k<sc_out.size();k++) {

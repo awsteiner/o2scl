@@ -664,7 +664,7 @@ namespace o2scl {
   
   };
   
-  /** \brief A multi-dimensional probability density function
+  /** \brief A multi-dimensional Gaussian probability density function
 
       This class is experimental.
   */
@@ -749,6 +749,149 @@ namespace o2scl {
   }
 
   };
+
+  /** \brief A multi-dimensional conditional probability density function
+      
+      This class is experimental.
+  */
+  template<class vec_t=boost::numeric::ublas::vector<double> >
+    class prob_cond_mdim {
+    
+  public:
+  
+  /// Return the dimensionality
+  virtual size_t dim() const {
+    return 0;
+  }
+  
+  /// Return the probability density
+  virtual void pdf(const vec_t &x, const vec_t &x2) const {
+    return;
+  }
+  
+  /// Sample the distribution
+  virtual void operator()(const vec_t &x, vec_t &x2) const {
+    return;
+  }
+  
+  };
+
+  /** \brief A multi-dimensional conditional probability density function
+      independent of the input
+
+      This class is experimental.
+  */
+  template<class vec_t=boost::numeric::ublas::vector<double> >
+    class prob_cond_mdim_invar {
+
+  protected:
+  
+  prob_dens_mdim<vec_t> &base;
+  
+  public:
+
+  prob_cond_mdim_invar(prob_dens_mdim<vec_t> &out) : base(out) {
+  }
+  
+  /// Return the dimensionality
+  virtual size_t dim() const {
+    return base.dim();
+  }
+  
+  /// Return the probability density
+  virtual void pdf(const vec_t &x, const vec_t &x2) const {
+    return base.pdf(x2);
+  }
+  
+  /// Sample the distribution
+  virtual void operator()(const vec_t &x, vec_t &x2) const {
+    return base(x2);
+  }
+  
+  };
+  
+  /** \brief A multi-dimensional Gaussian conditional probability
+      density function
+
+      This class is experimental.
+  */
+  template<class vec_t=boost::numeric::ublas::vector<double>,
+    class mat_t=boost::numeric::ublas::matrix<double> >
+    class prob_cond_mdim_gaussian : public prob_cond_mdim<vec_t> {
+    
+  protected:
+
+  /// Cholesky decomposition
+  mat_t chol;
+
+  /// Inverse of the covariance matrix
+  mat_t covar_inv;
+
+  /// Normalization factor
+  double norm;
+
+  /// Number of dimensions
+  size_t ndim;
+
+  /// Temporary storage 1
+  mutable vec_t q;
+
+  /// Temporary storage 2
+  mutable vec_t vtmp;
+
+  /// Standard normal
+  o2scl::prob_dens_gaussian pdg;
+    
+  public:
+  
+  /// Return the dimensionality
+  virtual size_t dim() const {
+    return ndim;
+  }
+  
+  /** \brief Create a distribution from the covariance matrix
+   */
+  prob_cond_mdim_gaussian(size_t p_ndim, mat_t &covar) {
+    ndim=p_ndim;
+    norm=1.0;
+    q.resize(ndim);
+    vtmp.resize(ndim);
+
+    // Perform the Cholesky decomposition
+    chol=covar;
+    o2scl_linalg::cholesky_decomp(ndim,chol);
+      
+    // Find the inverse
+    covar_inv=chol;
+    o2scl_linalg::cholesky_invert<mat_t>(ndim,covar_inv);
+      
+    // Force chol to be lower triangular
+    for(size_t i=0;i<ndim;i++) {
+      for(size_t j=0;j<ndim;j++) {
+	if (i<j) chol(i,j)=0.0;
+      }
+    }
+  }
+
+  /// Return the probability density
+  virtual double pdf(const vec_t &x, const vec_t &x2) const {
+    double ret=norm;
+    for(size_t i=0;i<ndim;i++) q[i]=x2[i]-x[i];
+    vtmp=prod(covar_inv,q);
+    ret*=exp(-0.5*inner_prod(q,vtmp));
+    return ret;
+  }
+
+  /// Sample the distribution
+  virtual void operator()(const vec_t &x, vec_t &x2) const {
+    for(size_t i=0;i<ndim;i++) q[i]=pdg();
+    vtmp=prod(chol,q);
+    for(size_t i=0;i<ndim;i++) x2[i]=x[i]+vtmp[i];
+    return;
+  }
+
+  };
+
   
 #ifndef DOXYGEN_NO_O2NS
 }
