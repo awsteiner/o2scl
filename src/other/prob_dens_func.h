@@ -765,8 +765,8 @@ namespace o2scl {
   }
   
   /// Return the probability density
-  virtual void pdf(const vec_t &x, const vec_t &x2) const {
-    return;
+  virtual double pdf(const vec_t &x, const vec_t &x2) const {
+    return 0.0;
   }
   
   /// Sample the distribution
@@ -799,7 +799,7 @@ namespace o2scl {
   }
   
   /// Return the probability density
-  virtual void pdf(const vec_t &x, const vec_t &x2) const {
+  virtual double pdf(const vec_t &x, const vec_t &x2) const {
     return base.pdf(x2);
   }
   

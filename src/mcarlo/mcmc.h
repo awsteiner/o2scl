@@ -412,7 +412,7 @@ namespace o2scl {
 	// Make a Metropolis-Hastings step based on previous data
 	hast(current[0],next);
 	q_hast=hast.pdf(current[0],next)/hast.pdf(next,current[0]);
-
+	
       } else {
 
 	// Make a step, ensure that we're in bounds and that
@@ -733,7 +733,7 @@ namespace o2scl {
    */
   void set_table(std::shared_ptr<o2scl::table_units<> > &t) {
     tab=t;
-    return tab;
+    return;
   }
   
   };
