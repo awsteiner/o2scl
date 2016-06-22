@@ -102,7 +102,7 @@ int main(int argc, char *argv[]) {
   arr_x.clear();
   arr_x2.clear();
   mc.aff_inv=true;
-  mc.nwalk=10;
+  mc.n_walk=10;
   mc.step_fac=2.0;
 
   mc.mcmc(1,init,low,high,mf,mf2);
@@ -114,11 +114,9 @@ int main(int argc, char *argv[]) {
 
   arr_x.clear();
   arr_x2.clear();
-  ubvector peak(1);
-  peak[0]=0.0;
   ubmatrix covar(1,1);
   covar(0,0)=1.0;
-  prob_dens_mdim_gaussian<ubvector> pdmg(1,peak,covar);
+  prob_cond_mdim_gaussian<ubvector> pdmg(1,covar);
 
   mc.set_hastings(pdmg);
   mc.mcmc(1,init,low,high,mf,mf2);

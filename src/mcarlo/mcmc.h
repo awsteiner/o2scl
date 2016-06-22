@@ -486,6 +486,7 @@ namespace o2scl {
 		    << w_next/w_current[0]*q_hast
 		    << " accept: " << accept << std::endl;
 	  std::cout.precision(6);
+	  exit(-1);
 	}
       } else {
 	if (r<w_next/w_current[0]) {

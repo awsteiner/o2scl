@@ -618,7 +618,7 @@ namespace o2scl {
   }
   
   /// Return the probability density
-  virtual double pdf(vec_t &x) const {
+  virtual double pdf(const vec_t &x) const {
     return 0.0;
   }
   
@@ -650,7 +650,7 @@ namespace o2scl {
     }
   
     /// Return the probability density
-    virtual double pdf(vec_t &x) const {
+    virtual double pdf(const vec_t &x) const {
       double ret=1.0;
       for(size_t i=0;i<list.size();i++) ret*=list[i].pdf(x[i]);
       return ret;
@@ -705,9 +705,19 @@ namespace o2scl {
     return ndim;
   }
   
+  prob_dens_mdim_gaussian() {
+    ndim=0;
+  }
+
   /** \brief Create a distribution from the covariance matrix
    */
   prob_dens_mdim_gaussian(size_t p_ndim, vec_t &p_peak, mat_t &covar) {
+    set(p_ndim,p_peak,covar);
+  }
+
+  /** \brief Desc
+   */
+  void set(size_t p_ndim, vec_t &p_peak, mat_t &covar) {
     ndim=p_ndim;
     norm=1.0;
     peak.resize(ndim);
@@ -715,24 +725,32 @@ namespace o2scl {
     q.resize(ndim);
     vtmp.resize(ndim);
 
-    // Perform the Cholesky decomposition
+    // Perform the Cholesky decomposition of the covariance matrix
     chol=covar;
     o2scl_linalg::cholesky_decomp(ndim,chol);
       
     // Find the inverse
     covar_inv=chol;
     o2scl_linalg::cholesky_invert<mat_t>(ndim,covar_inv);
-      
-    // Force chol to be lower triangular
+
+    // Force chol to be lower triangular and compute the determinant
+    double det=1.0;
     for(size_t i=0;i<ndim;i++) {
+      det*=chol(i,i);
       for(size_t j=0;j<ndim;j++) {
 	if (i<j) chol(i,j)=0.0;
       }
     }
+
+    // Compute normalization
+    norm=pow(2.0*o2scl_const::pi,-((double)ndim)/2.0)/sqrt(det);
   }
 
   /// Return the probability density
-  virtual double pdf(vec_t &x) const {
+  virtual double pdf(const vec_t &x) const {
+    if (ndim==0) {
+      O2SCL_ERR("Not set.",o2scl::exc_einval);
+    }
     double ret=norm;
     for(size_t i=0;i<ndim;i++) q[i]=x[i]-peak[i];
     vtmp=prod(covar_inv,q);
@@ -742,6 +760,9 @@ namespace o2scl {
 
   /// Sample the distribution
   virtual void operator()(vec_t &x) const {
+    if (ndim==0) {
+      O2SCL_ERR("Not set.",o2scl::exc_einval);
+    }
     for(size_t i=0;i<ndim;i++) q[i]=pdg();
     vtmp=prod(chol,q);
     for(size_t i=0;i<ndim;i++) x[i]=peak[i]+vtmp[i];

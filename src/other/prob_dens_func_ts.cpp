@@ -24,18 +24,31 @@
 #include <config.h>
 #endif
 
+#include <random>
+
 #include <gsl/gsl_rng.h>
 #include <gsl/gsl_histogram.h>
 
 #include <o2scl/prob_dens_func.h>
 #include <o2scl/test_mgr.h>
+#include <o2scl/mcarlo_plain.h>
 
 using namespace std;
 using namespace o2scl;
 
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
-  
+
+prob_dens_mdim_gaussian<> pdmg;
+
+double test_fun(size_t nv, const ubvector &x) {
+  //cout << nv << " " << x[0] << " " << x[1] << " "
+  //<< pdmg.pdf(x) << endl;
+  //char ch;
+  //cin >> ch;
+  return pdmg.pdf(x);
+}
+
 int main(void) {
 
   cout.setf(ios::scientific);
@@ -150,9 +163,26 @@ int main(void) {
   covar(1,1)=4.0;
   covar(0,1)=-1.0;
   covar(1,0)=-1.0;
-  prob_dens_mdim_gaussian<> pdmg(2,cent,covar);
+  pdmg.set(2,cent,covar);
   
-  t.report();
+  mcarlo_plain<> gm;
+  
+  ubvector a(3), b(3);
+  a[0]=-10.0;
+  a[1]=-10.0;
+  a[2]=-10.0;
+  b[0]=10.0;
+  b[1]=10.0;
+  b[2]=10.0;
+
+  multi_funct11 tf=test_fun;
+
+  gm.n_points=100000;
+  double res, err;
+  gm.minteg_err(tf,3,a,b,res,err);
+  
+  cout << "O2scl res,err,rel: " 
+       << res << " " << err << endl;
 
   return 0;
 }
