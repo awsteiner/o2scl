@@ -57,6 +57,9 @@ namespace o2scl {
     /// The normalized density 
     virtual double pdf(double x) const=0;
     
+    /// The log of the normalized density 
+    virtual double log_pdf(double x) const=0;
+    
     /// The cumulative distribution function (from the lower tail)
     virtual double cdf(double x) const=0;
     
@@ -193,7 +196,16 @@ namespace o2scl {
       }
       return gsl_ran_gaussian_pdf(x-cent_,sigma_);
     }
-    
+
+    /// The normalized density 
+    virtual double log_pdf(double x) const {
+      if (sigma_<0.0) {
+	O2SCL_ERR2("Width not set in prob_dens_gaussian::",
+		   "pdf().",exc_einval);
+      }
+      return log(gsl_ran_gaussian_pdf(x-cent_,sigma_));
+    }
+
     /// The cumulative distribution function (from the lower tail)
     virtual double cdf(double x) const {
       if (sigma_<0.0) {
@@ -363,6 +375,16 @@ namespace o2scl {
       return gsl_ran_flat_pdf(x,ll,ul);
     }
     
+    /// The log of the normalized density 
+    virtual double log_pdf(double x) const {
+      if (ll>ul) {
+	O2SCL_ERR2("Limits not set in prob_dens_uniform::",
+		   "pdf().",exc_einval);
+      }
+      if (x<ll || x>ul) return 0.0;
+      return log(gsl_ran_flat_pdf(x,ll,ul));
+    }
+    
     /// The cumulative distribution function (from the lower tail)
     virtual double cdf(double x) const {
       if (ll>ul) {
@@ -508,6 +530,14 @@ namespace o2scl {
       return gsl_ran_lognormal_pdf(x,mu_,sigma_);
     }
     
+    /// The normalized density 
+    virtual double log_pdf(double x) const {
+      if (x<0.0) {
+	return 0.0;
+      }
+      return log(gsl_ran_lognormal_pdf(x,mu_,sigma_));
+    }
+    
     /// The cumulative distribution function (from the lower tail)
     virtual double cdf(double x) const {
       if (x<0.0) {
@@ -590,6 +620,9 @@ namespace o2scl {
     /// The normalized density 
     virtual double pdf(double x) const;
     
+    /// The normalized density 
+    virtual double log_pdf(double x) const;
+    
     /// Cumulative distribution function (from the lower tail)
     virtual double cdf(double x) const;
 
@@ -619,6 +652,11 @@ namespace o2scl {
   
   /// Return the probability density
   virtual double pdf(const vec_t &x) const {
+    return 0.0;
+  }
+  
+  /// Return the probability density
+  virtual double log_pdf(const vec_t &x) const {
     return 0.0;
   }
   
@@ -655,7 +693,14 @@ namespace o2scl {
       for(size_t i=0;i<list.size();i++) ret*=list[i].pdf(x[i]);
       return ret;
     }
-  
+
+    /// Return the probability density
+    virtual double log_pdf(const vec_t &x) const {
+      double ret=1.0;
+      for(size_t i=0;i<list.size();i++) ret*=list[i].pdf(x[i]);
+      return log(ret);
+    }
+    
     /// Sample the distribution
     virtual void operator()(vec_t &x) const {
       for(size_t i=0;i<list.size();i++) x[i]=list[i]();
@@ -764,6 +809,19 @@ namespace o2scl {
     return ret;
   }
 
+  /// Return the probability density
+  virtual double log_pdf(const vec_t &x) const {
+    if (ndim==0) {
+      O2SCL_ERR2("Distribution not set in prob_dens_mdim_gaussian::",
+		 "pdf().",o2scl::exc_einval);
+    }
+    double ret=log(norm);
+    for(size_t i=0;i<ndim;i++) q[i]=x[i]-peak[i];
+    vtmp=prod(covar_inv,q);
+    ret+=-0.5*inner_prod(q,vtmp);
+    return ret;
+  }
+
   /// Sample the distribution
   virtual void operator()(vec_t &x) const {
     if (ndim==0) {
@@ -795,6 +853,9 @@ namespace o2scl {
   /// Return the probability density
   virtual double pdf(const vec_t &x, const vec_t &x2) const=0;
   
+  /// Return the probability density
+  virtual double log_pdf(const vec_t &x, const vec_t &x2) const=0;
+  
   /// Sample the distribution
   virtual void operator()(const vec_t &x, vec_t &x2) const=0;
   
@@ -825,6 +886,11 @@ namespace o2scl {
   /// Return the probability density
   virtual double pdf(const vec_t &x, const vec_t &x2) const {
     return base.pdf(x2);
+  }
+  
+  /// Return the probability density
+  virtual double log_pdf(const vec_t &x, const vec_t &x2) const {
+    return base.log_pdf(x2);
   }
   
   /// Sample the distribution
@@ -927,6 +993,19 @@ namespace o2scl {
     for(size_t i=0;i<ndim;i++) q[i]=x2[i]-x[i];
     vtmp=prod(covar_inv,q);
     ret*=exp(-0.5*inner_prod(q,vtmp));
+    return ret;
+  }
+
+  /// Return the probability density
+  virtual double log_pdf(const vec_t &x, const vec_t &x2) const {
+    if (ndim==0) {
+      O2SCL_ERR2("Distribution not set in prob_cond_mdim_gaussian::",
+		 "pdf().",o2scl::exc_einval);
+    }
+    double ret=log(norm);
+    for(size_t i=0;i<ndim;i++) q[i]=x2[i]-x[i];
+    vtmp=prod(covar_inv,q);
+    ret+=-0.5*inner_prod(q,vtmp);
     return ret;
   }
 

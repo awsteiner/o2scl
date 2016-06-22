@@ -73,7 +73,7 @@ public:
   /// True if the EOS is acausal
   double acausal;
   /// True if the pressure is flat
-  double pressure_flat;
+  double pressure_dec;
   /// Quality of neutron matter
   double neut_qual;
   /// True if the maximum mass is large enough
@@ -175,13 +175,6 @@ public:
     // Ensure that this works without GNU units
     o2scl_settings.get_convert_units().use_gnu_units=false;
 
-    n.init(o2scl_settings.get_convert_units().convert
-	   ("kg","1/fm",o2scl_mks::mass_neutron),2.0);
-    p.init(o2scl_settings.get_convert_units().convert
-	   ("kg","1/fm",o2scl_mks::mass_proton),2.0);
-    n.non_interacting=false;
-    p.non_interacting=false;
-    nst.set_n_and_p(n,p);
     nst.set_eos(sk);
     nst.def_eos_tov.verbose=0;
     nst.def_tov.verbose=0;
@@ -466,11 +459,11 @@ public:
 
     // Find where the EOS becomes acausal
     res.acausal=nst.acausal;
-    res.pressure_flat=nst.pressure_flat;
-    if (nst.pressure_flat>0.0 && 
-	nst.pressure_flat<tr->get("nb",tr->lookup("gm",tr->max("gm")))) {
+    res.pressure_dec=nst.pressure_dec;
+    if (nst.pressure_dec>0.0 && 
+	nst.pressure_dec<tr->get("nb",tr->lookup("gm",tr->max("gm")))) {
       cout << "Pressure decreases in maximum mass star" << endl;
-      cout << "pressure_flat: " << nst.pressure_flat << endl;
+      cout << "pressure_dec: " << nst.pressure_dec << endl;
       res.success=false;
     }
     if (nst.acausal>0.0 &&
@@ -756,7 +749,7 @@ public:
     fouu << "Name, n0, B, K, ";
     fouu << "S, L, Mmax, ";
     fouu << "Rmax, nB_cent_max, R1.4, ";
-    fouu << "nB_cent_14, acausal, pressure_flat, ";
+    fouu << "nB_cent_14, acausal, pressure_dec, ";
     fouu << "neut_qual, max_mass_ok, ";
     fouu << "inc_pressure, pos_neut, good_sat, ";
     fouu << "pure_neut, other, success" << endl;
@@ -778,7 +771,7 @@ public:
     fout << "<td>R<sub>1.4</sub>&nbsp;&nbsp;&nbsp;&nbsp;</td>" << endl;
     fout << "<td>n<sub>B,cent,1.4</sub>&nbsp;&nbsp;&nbsp;&nbsp;</td>" << endl;
     fout << "<td>acausal&nbsp;&nbsp;&nbsp;&nbsp;</td>" << endl;
-    fout << "<td>pressure_flat&nbsp;&nbsp;&nbsp;&nbsp;</td>" << endl;
+    fout << "<td>pressure_dec&nbsp;&nbsp;&nbsp;&nbsp;</td>" << endl;
     fout << "<td>neut_qual&nbsp;&nbsp;&nbsp;&nbsp;</td>" << endl;
     fout << "<td>max_mass_ok&nbsp;&nbsp;&nbsp;&nbsp;</td>" << endl;
     fout << "<td>inc_pressure&nbsp;&nbsp;&nbsp;&nbsp;</td>" << endl;
@@ -880,7 +873,7 @@ public:
 	fout << "<td>" << fd.convert(res.r_14)  << "</td>";
 	fout << "<td>" << fd.convert(res.nb_14)  << "</td>";
 	fout << "<td>" << fd.convert(res.acausal)  << "</td>";
-	fout << "<td>" << fd.convert(res.pressure_flat)  << "</td>";
+	fout << "<td>" << fd.convert(res.pressure_dec)  << "</td>";
 	fout << "<td>" << fd.convert(res.neut_qual)  << "</td>";
 	if (res.max_mass_ok) fout << "<td>True</td>";
 	else fout << "<td>False</td>";
@@ -910,7 +903,7 @@ public:
 	fouu << res.r_14 << ", ";
 	fouu << res.nb_14 << ", ";
 	fouu << res.acausal << ", ";
-	fouu << res.pressure_flat << ", ";
+	fouu << res.pressure_dec << ", ";
 	fouu << res.neut_qual << ", ";
 	if (res.max_mass_ok) fouu << "True, ";
 	else fouu << "False, ";
