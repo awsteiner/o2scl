@@ -53,7 +53,7 @@ namespace o2scl {
 
       \note This class is experimental.
       
-      \todo Fix Hastings steps and add better testing
+      \todo Add better testing
    */
   template<class func_t, class measure_t,
     class data_t, class vec_t=ubvector> class mcmc_base {
@@ -63,11 +63,11 @@ namespace o2scl {
   /// Random number generator
   o2scl::rng_gsl gr;
   
-  //// A Hastings distribution
-  o2scl::prob_cond_mdim<vec_t> hast;
+  //// Proposal distribution
+  o2scl::prob_cond_mdim<vec_t> *prop_dist;
   
-  /// If true, then use Metropolis-Hastings with a multivariate Gaussian
-  bool hg_mode;
+  /// If true, then use the user-specified proposal distribution
+  bool pd_mode;
 
   /// If true, we are in the warm up phase
   bool warm_up;
@@ -97,7 +97,7 @@ namespace o2scl {
   /// If true, use affine-invariant Monte Carlo
   bool aff_inv;
   
-  /// MCMC stepsize factor (default 10.0)
+  /// Random-walk stepsize factor (default 10.0)
   double step_fac;
 
   /** \brief Number of warm up steps (successful steps not
@@ -136,7 +136,7 @@ namespace o2scl {
 
     // MC step parameters
     aff_inv=false;
-    hg_mode=false;
+    pd_mode=false;
     step_fac=10.0;
     n_walk=1;
     err_nonconv=true;
@@ -146,6 +146,7 @@ namespace o2scl {
 
     n_accept=0;
     n_reject=0;
+    prop_dist=0;
   }
   
   /// \name Interface customization
@@ -162,18 +163,31 @@ namespace o2scl {
     return;
   }
 
-  /** \brief Desc
+  /** \brief Function to run for the best point 
    */
   virtual void best_point(ubvector &best, double w_best, data_t &dat) {
     return;
   }
   
-  /** \brief Set the distribution for Metropolis-Hastings
+  /** \brief Set the proposal distribution
    */
-  virtual void set_hastings(o2scl::prob_cond_mdim<vec_t> &p) {
-    hast=p;
-    hg_mode=true;
+  virtual void set_proposal(o2scl::prob_cond_mdim<vec_t> &p) {
+    prop_dist=&p;
+    pd_mode=true;
     aff_inv=false;
+    n_walk=1;
+    return;
+  }
+
+  /** \brief Go back to random-walk Metropolis with a uniform distribution
+   */
+  virtual void unset_proposal() {
+    if (pd_mode) {
+      prop_dist=0;
+      pd_mode=false;
+    }
+    aff_inv=false;
+    n_walk=1;
     return;
   }
   
@@ -223,7 +237,7 @@ namespace o2scl {
     
     // Next and best points in parameter space
     vec_t next(nparams), best(nparams);
-    double w_next=0.0, w_best=0.0, q_hast=0.0;
+    double w_next=0.0, w_best=0.0, q_prop=0.0;
     
     // Set current to initial point
     for(size_t i=0;i<nparams;i++) {
@@ -245,11 +259,11 @@ namespace o2scl {
       if (aff_inv) {
 	std::cout << "mcmc: Affine-invariant step, n_parameters="
 	<< nparams << " n_walk=" << n_walk << std::endl;
-      } else if (hg_mode==true) {
-	std::cout << "mcmc: Metropolis-Hastings, n_parameters="
+      } else if (pd_mode==true) {
+	std::cout << "mcmc: With proposal distribution, n_parameters="
 	<< nparams << std::endl;
       } else {
-	std::cout << "mcmc: Simple metropolis, n_parameters="
+	std::cout << "mcmc: Random-walk with uniform dist., n_parameters="
 	<< nparams << std::endl;
       }
     }
@@ -319,7 +333,7 @@ namespace o2scl {
 
     } else {
 
-      // Normal or Metropolis-Hastings steps
+      // Uniform random-walk steps
 
       // Compute weight for initial point
       w_current[0]=func(nparams,current[0],data_arr[0]);
@@ -407,16 +421,21 @@ namespace o2scl {
 
 	} while (in_bounds==false);	
 
-      } else if (hg_mode>0) {
+      } else if (pd_mode) {
 	
-	// Make a Metropolis-Hastings step based on previous data
-	hast(current[0],next);
-	q_hast=hast.pdf(current[0],next)/hast.pdf(next,current[0]);
-	
+	// Use proposal distribution and compute associated weight
+	(*prop_dist)(current[0],next);
+	double numer=prop_dist->pdf(current[0],next);
+	double denom=prop_dist->pdf(next,current[0]);
+	if (denom==0.0) {
+	  O2SCL_ERR2("Proposal distribution denominator vanished in ",
+		     "mcmc_base::mcmc().",o2scl::exc_efailed);
+	}
+	q_prop=numer/denom;
+
       } else {
 
-	// Make a step, ensure that we're in bounds and that
-	// the masses are not too large
+	// Uniform random-walk step
 	for(size_t k=0;k<nparams;k++) {
 	  
 	  next[k]=current[0][k]+(gr.random()*2.0-1.0)*
@@ -475,18 +494,17 @@ namespace o2scl {
 		    << " accept: " << accept << std::endl;
 	  std::cout.precision(6);
 	}
-      } else if (hg_mode>0) {
-	if (r<w_next/w_current[0]*q_hast) {
+      } else if (pd_mode) {
+	if (r<w_next/w_current[0]*q_prop) {
 	  accept=true;
 	}
 	if (verbose>=1) {
 	  std::cout.precision(4);
 	  std::cout << "mcmc: " << w_current[0] 
-		    << " " << w_next << " " << q_hast << " ratio: "
-		    << w_next/w_current[0]*q_hast
+		    << " " << w_next << " " << q_prop << " ratio: "
+		    << w_next/w_current[0]*q_prop
 		    << " accept: " << accept << std::endl;
 	  std::cout.precision(6);
-	  exit(-1);
 	}
       } else {
 	if (r<w_next/w_current[0]) {

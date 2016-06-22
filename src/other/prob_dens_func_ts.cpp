@@ -164,25 +164,29 @@ int main(void) {
   covar(0,1)=-1.0;
   covar(1,0)=-1.0;
   pdmg.set(2,cent,covar);
-  
-  mcarlo_plain<> gm;
-  
-  ubvector a(3), b(3);
-  a[0]=-10.0;
-  a[1]=-10.0;
-  a[2]=-10.0;
-  b[0]=10.0;
-  b[1]=10.0;
-  b[2]=10.0;
 
-  multi_funct11 tf=test_fun;
+  // Test the gaussian PDF normalization
+  {
+    mcarlo_plain<> gm;
+    
+    ubvector a(2), b(2);
+    a[0]=-15.0;
+    a[1]=-15.0;
+    b[0]=15.0;
+    b[1]=15.0;
+    
+    multi_funct11 tf=test_fun;
+    
+    gm.n_points=100000;
+    double res, err;
+    gm.minteg_err(tf,2,a,b,res,err);
+    
+    cout << "O2scl res,err,rel: " 
+	 << res << " " << err << endl;
+    t.test_rel(res,1.0,err,"normalization");
+  }
 
-  gm.n_points=100000;
-  double res, err;
-  gm.minteg_err(tf,3,a,b,res,err);
-  
-  cout << "O2scl res,err,rel: " 
-       << res << " " << err << endl;
+  t.report();
 
   return 0;
 }

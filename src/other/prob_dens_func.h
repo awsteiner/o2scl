@@ -715,9 +715,13 @@ namespace o2scl {
     set(p_ndim,p_peak,covar);
   }
 
-  /** \brief Desc
+  /** \brief Set the peak and covariance matrix for the distribution
    */
   void set(size_t p_ndim, vec_t &p_peak, mat_t &covar) {
+    if (p_ndim==0) {
+      O2SCL_ERR("Zero dimension in prob_dens_mdim_gaussian::set().",
+		o2scl::exc_einval);
+    }
     ndim=p_ndim;
     norm=1.0;
     peak.resize(ndim);
@@ -741,6 +745,7 @@ namespace o2scl {
 	if (i<j) chol(i,j)=0.0;
       }
     }
+    det*=det;
 
     // Compute normalization
     norm=pow(2.0*o2scl_const::pi,-((double)ndim)/2.0)/sqrt(det);
@@ -749,7 +754,8 @@ namespace o2scl {
   /// Return the probability density
   virtual double pdf(const vec_t &x) const {
     if (ndim==0) {
-      O2SCL_ERR("Not set.",o2scl::exc_einval);
+      O2SCL_ERR2("Distribution not set in prob_dens_mdim_gaussian::",
+		 "pdf().",o2scl::exc_einval);
     }
     double ret=norm;
     for(size_t i=0;i<ndim;i++) q[i]=x[i]-peak[i];
@@ -761,7 +767,8 @@ namespace o2scl {
   /// Sample the distribution
   virtual void operator()(vec_t &x) const {
     if (ndim==0) {
-      O2SCL_ERR("Not set.",o2scl::exc_einval);
+      O2SCL_ERR2("Distribution not set in prob_dens_mdim_gaussian::",
+		 "operator().",o2scl::exc_einval);
     }
     for(size_t i=0;i<ndim;i++) q[i]=pdg();
     vtmp=prod(chol,q);
@@ -786,14 +793,10 @@ namespace o2scl {
   }
   
   /// Return the probability density
-  virtual double pdf(const vec_t &x, const vec_t &x2) const {
-    return 0.0;
-  }
+  virtual double pdf(const vec_t &x, const vec_t &x2) const=0;
   
   /// Sample the distribution
-  virtual void operator()(const vec_t &x, vec_t &x2) const {
-    return;
-  }
+  virtual void operator()(const vec_t &x, vec_t &x2) const=0;
   
   };
 
@@ -869,10 +872,24 @@ namespace o2scl {
   virtual size_t dim() const {
     return ndim;
   }
+
+  prob_cond_mdim_gaussian() {
+    ndim=0;
+  }
   
   /** \brief Create a distribution from the covariance matrix
    */
   prob_cond_mdim_gaussian(size_t p_ndim, mat_t &covar) {
+    set(p_ndim,covar);
+  }
+  
+  /** \brief Set the covariance matrix for the distribution
+   */
+  void set(size_t p_ndim, mat_t &covar) {
+    if (p_ndim==0) {
+      O2SCL_ERR("Zero dimension in prob_cond_mdim_gaussian::set().",
+		o2scl::exc_einval);
+    }
     ndim=p_ndim;
     norm=1.0;
     q.resize(ndim);
@@ -886,16 +903,26 @@ namespace o2scl {
     covar_inv=chol;
     o2scl_linalg::cholesky_invert<mat_t>(ndim,covar_inv);
       
-    // Force chol to be lower triangular
+    // Force chol to be lower triangular and compute the determinant
+    double det=1.0;
     for(size_t i=0;i<ndim;i++) {
+      det*=chol(i,i);
       for(size_t j=0;j<ndim;j++) {
 	if (i<j) chol(i,j)=0.0;
       }
     }
+    det*=det;
+
+    // Compute normalization
+    norm=pow(2.0*o2scl_const::pi,-((double)ndim)/2.0)/sqrt(det);
   }
 
   /// Return the probability density
   virtual double pdf(const vec_t &x, const vec_t &x2) const {
+    if (ndim==0) {
+      O2SCL_ERR2("Distribution not set in prob_cond_mdim_gaussian::",
+		 "pdf().",o2scl::exc_einval);
+    }
     double ret=norm;
     for(size_t i=0;i<ndim;i++) q[i]=x2[i]-x[i];
     vtmp=prod(covar_inv,q);
@@ -905,6 +932,10 @@ namespace o2scl {
 
   /// Sample the distribution
   virtual void operator()(const vec_t &x, vec_t &x2) const {
+    if (ndim==0) {
+      O2SCL_ERR2("Distribution not set in prob_cond_mdim_gaussian::",
+		 "operator().",o2scl::exc_einval);
+    }
     for(size_t i=0;i<ndim;i++) q[i]=pdg();
     vtmp=prod(chol,q);
     for(size_t i=0;i<ndim;i++) x2[i]=x[i]+vtmp[i];

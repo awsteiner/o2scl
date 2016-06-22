@@ -118,7 +118,7 @@ int main(int argc, char *argv[]) {
   covar(0,0)=1.0;
   prob_cond_mdim_gaussian<ubvector> pdmg(1,covar);
 
-  mc.set_hastings(pdmg);
+  mc.set_proposal(pdmg);
   mc.mcmc(1,init,low,high,mf,mf2);
 
   cout << vector_mean(arr_x) << endl;
