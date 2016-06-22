@@ -54,6 +54,7 @@ namespace o2scl {
       \note This class is experimental.
       
       \todo Add better testing
+      \todo Convert to work with the log of the distribution
    */
   template<class func_t, class measure_t,
     class data_t, class vec_t=ubvector> class mcmc_base {
