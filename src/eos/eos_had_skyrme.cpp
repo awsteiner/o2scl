@@ -204,12 +204,15 @@ int eos_had_skyrme::calc_e(fermion &ne, fermion &pr, thermo &locth) {
       "eos_had_skyrme::calc_e().";
   }
   if (fabs(ne.g-2.0)>1.0e-10 || fabs(pr.g-2.0)>1.0e-10) {
-    O2SCL_ERR2("Neutron or proton spin degeneracies wrong in ",
-	       "eos_had_skyrme::calc_e().",exc_einval);
+    O2SCL_ERR((((std::string)"Neutron (")+std::to_string(ne.g)+
+	       ") or proton ("+std::to_string(pr.g)+") spin deg"+
+	       "eneracies wrong in "+
+	       "eos_had_skyrme::calc_e().").c_str(),exc_einval);
   }
   if (fabs(ne.m-4.5)>1.0 || fabs(pr.m-4.5)>1.0) {
-    O2SCL_ERR2("Neutron or proton masses wrong in ",
-	       "eos_had_skyrme::calc_e().",exc_einval);
+    O2SCL_ERR((((std::string)"Neutron (")+std::to_string(ne.m)+
+	       ") or proton ("+std::to_string(pr.m)+") masses wrong "+
+	       "in eos_had_skyrme::calc_e().").c_str(),exc_einval);
   }
   if (ne.non_interacting==true || pr.non_interacting==true) {
     O2SCL_ERR2("Neutron or protons non-interacting in ",

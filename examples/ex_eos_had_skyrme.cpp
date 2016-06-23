@@ -175,6 +175,13 @@ public:
     // Ensure that this works without GNU units
     o2scl_settings.get_convert_units().use_gnu_units=false;
 
+    n.init(o2scl_settings.get_convert_units().convert
+	   ("kg","1/fm",o2scl_mks::mass_neutron),2.0);
+    p.init(o2scl_settings.get_convert_units().convert
+	   ("kg","1/fm",o2scl_mks::mass_proton),2.0);
+    n.non_interacting=false;
+    p.non_interacting=false;
+    
     nst.set_eos(sk);
     nst.def_eos_tov.verbose=0;
     nst.def_tov.verbose=0;
