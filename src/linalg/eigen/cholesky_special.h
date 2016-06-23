@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2016, Andrew W. Steiner
+  Copyright (C) 2015-2016, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -20,59 +20,18 @@
 
   -------------------------------------------------------------------
 */
-#ifndef O2SCL_CHOLESKY_H
-#define O2SCL_CHOLESKY_H
+#ifndef O2SCL_CHOLESKY_SPECIAL_H
+#define O2SCL_CHOLESKY_SPECIAL_H
 
-/** \file cholesky.h
-    \brief Header wrapper for \ref cholesky_base.h
-*/
-
-#include <o2scl/err_hnd.h>
-#include <o2scl/permutation.h>
-#include <o2scl/cblas.h>
-#include <o2scl/vector.h>
-
-namespace o2scl_linalg {
-  
-  using namespace o2scl_cblas;
-
-#define O2SCL_IX(V,i) V[i]
-#define O2SCL_IX2(M,i,j) M(i,j)
-#include <o2scl/cholesky_base.h>  
-#undef O2SCL_IX
-#undef O2SCL_IX2
-  
-}
-
-namespace o2scl_linalg_bracket {
-  
-  using namespace o2scl_cblas_bracket;
-  
-#define O2SCL_IX(V,i) V[i]
-#define O2SCL_IX2(M,i,j) M[i][j]
-#include <o2scl/cholesky_base.h>  
-#undef O2SCL_IX
-#undef O2SCL_IX2
-
-}
-
-#if defined (O2SCL_COND_FLAG) || defined (DOXYGEN)
-
-#if defined (O2SCL_EIGEN) || defined (DOXYGEN)
 #include <Eigen/Dense>
+
 namespace o2scl_linalg {
   
-  /** \brief Eigen specialization of \ref cholesky_decomp()
-   */
+  // (Eigen specialization)
   template<>
     void cholesky_decomp<Eigen::MatrixXd>
     (const size_t M, Eigen::MatrixXd &A);
      
 }
-#endif
-
-#else
-#include <o2scl/cholesky_special.h>
-#endif
 
 #endif

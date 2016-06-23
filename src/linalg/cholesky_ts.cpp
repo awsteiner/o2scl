@@ -81,6 +81,20 @@ int main(void) {
     gsl_linalg_cholesky_decomp(gm1);
     cholesky_decomp(5,om1);
       
+#ifdef O2SCL_EIGEN
+    
+    cout << "Performing eigen test." << endl;
+    Eigen::MatrixXd em1(5,5);
+    for(size_t i=0;i<5;i++) {
+      for(size_t j=0;j<5;j++) {
+	em1(i,j)=((double)(1))/(1.0+i+j);
+      }
+    }
+    cholesky_decomp(5,em1);
+    t.test_rel_mat(5,5,em1,om1,1.0e-11,"ch decomp");
+      
+#endif
+    
     t.test_rel_mat(5,5,om1,gsl_matrix_wrap(gm1),5.0e-12,"cholesky decomp");
       
     // Test solve 

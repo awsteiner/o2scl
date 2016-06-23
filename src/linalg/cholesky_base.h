@@ -288,6 +288,13 @@ namespace o2scl_linalg {
     return;
   }
 
+  /** \brief Cholesky decomposition with unit-diagonal triangular parts.
+      
+      A = L D L^T, where diag(L) = (1,1,...,1).
+      Upon exit, A contains L and L^T as for Cholesky, and
+      the diagonal of A is (1,1,...,1). The vector Dis set
+      to the diagonal elements of the diagonal matrix D.
+  */
   template<class mat_t, class vec_t>
     int cholesky_decomp_unit(const size_t N, mat_t &A, vec_t &D) {
   
