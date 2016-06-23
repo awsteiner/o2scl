@@ -99,6 +99,10 @@ double prob_dens_hist::operator()() const {
   return x;
 }
 
+double prob_dens_hist::log_pdf(double r) const {
+  return log(pdf(r));
+}
+
 double prob_dens_hist::pdf(double r) const {
 
   if (n==0) {

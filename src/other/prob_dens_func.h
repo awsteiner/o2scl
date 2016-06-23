@@ -197,7 +197,7 @@ namespace o2scl {
       return gsl_ran_gaussian_pdf(x-cent_,sigma_);
     }
 
-    /// The normalized density 
+    /// The log of the normalized density 
     virtual double log_pdf(double x) const {
       if (sigma_<0.0) {
 	O2SCL_ERR2("Width not set in prob_dens_gaussian::",
@@ -530,7 +530,7 @@ namespace o2scl {
       return gsl_ran_lognormal_pdf(x,mu_,sigma_);
     }
     
-    /// The normalized density 
+    /// The log of the normalized density 
     virtual double log_pdf(double x) const {
       if (x<0.0) {
 	return 0.0;
@@ -620,7 +620,7 @@ namespace o2scl {
     /// The normalized density 
     virtual double pdf(double x) const;
     
-    /// The normalized density 
+    /// The log of the normalized density 
     virtual double log_pdf(double x) const;
     
     /// Cumulative distribution function (from the lower tail)
@@ -650,12 +650,12 @@ namespace o2scl {
     return 0;
   }
   
-  /// Return the probability density
+  /// The normalized density 
   virtual double pdf(const vec_t &x) const {
     return 0.0;
   }
   
-  /// Return the probability density
+  /// The log of the normalized density 
   virtual double log_pdf(const vec_t &x) const {
     return 0.0;
   }
@@ -687,14 +687,14 @@ namespace o2scl {
       return list.size();
     }
   
-    /// Return the probability density
+  /// The normalized density 
     virtual double pdf(const vec_t &x) const {
       double ret=1.0;
       for(size_t i=0;i<list.size();i++) ret*=list[i].pdf(x[i]);
       return ret;
     }
 
-    /// Return the probability density
+    /// The log of the normalized density 
     virtual double log_pdf(const vec_t &x) const {
       double ret=1.0;
       for(size_t i=0;i<list.size();i++) ret*=list[i].pdf(x[i]);
@@ -745,7 +745,7 @@ namespace o2scl {
     
   public:
   
-  /// Return the dimensionality
+  /// The dimensionality
   virtual size_t dim() const {
     return ndim;
   }
@@ -796,7 +796,7 @@ namespace o2scl {
     norm=pow(2.0*o2scl_const::pi,-((double)ndim)/2.0)/sqrt(det);
   }
 
-  /// Return the probability density
+  /// The normalized density 
   virtual double pdf(const vec_t &x) const {
     if (ndim==0) {
       O2SCL_ERR2("Distribution not set in prob_dens_mdim_gaussian::",
@@ -809,7 +809,7 @@ namespace o2scl {
     return ret;
   }
 
-  /// Return the probability density
+  /// The log of the normalized density 
   virtual double log_pdf(const vec_t &x) const {
     if (ndim==0) {
       O2SCL_ERR2("Distribution not set in prob_dens_mdim_gaussian::",
@@ -845,19 +845,27 @@ namespace o2scl {
     
   public:
   
-  /// Return the dimensionality
+  /// The dimensionality
   virtual size_t dim() const {
     return 0;
   }
   
-  /// Return the probability density
+  /// The normalized density 
   virtual double pdf(const vec_t &x, const vec_t &x2) const=0;
   
-  /// Return the probability density
+  /// The log of the normalized density 
   virtual double log_pdf(const vec_t &x, const vec_t &x2) const=0;
   
   /// Sample the distribution
   virtual void operator()(const vec_t &x, vec_t &x2) const=0;
+
+  /** \brief Sample the distribution and return the 
+      log of the Metropolis-Hastings ratio
+  */
+  virtual double metrop_hast(const vec_t &x, vec_t &x2) const {
+    operator()(x,x2);
+    return log_pdf(x,x2)-log_pdf(x2,x);
+  }
   
   };
 
@@ -878,17 +886,17 @@ namespace o2scl {
   prob_cond_mdim_invar(prob_dens_mdim<vec_t> &out) : base(out) {
   }
   
-  /// Return the dimensionality
+  /// The dimensionality
   virtual size_t dim() const {
     return base.dim();
   }
   
-  /// Return the probability density
+  /// The normalized density 
   virtual double pdf(const vec_t &x, const vec_t &x2) const {
     return base.pdf(x2);
   }
   
-  /// Return the probability density
+  /// The log of the normalized density 
   virtual double log_pdf(const vec_t &x, const vec_t &x2) const {
     return base.log_pdf(x2);
   }
@@ -933,12 +941,9 @@ namespace o2scl {
   o2scl::prob_dens_gaussian pdg;
     
   public:
-  
-  /// Return the dimensionality
-  virtual size_t dim() const {
-    return ndim;
-  }
 
+  /** \brief Create an empty distribution 
+   */
   prob_cond_mdim_gaussian() {
     ndim=0;
   }
@@ -949,6 +954,11 @@ namespace o2scl {
     set(p_ndim,covar);
   }
   
+  /// The dimensionality
+  virtual size_t dim() const {
+    return ndim;
+  }
+
   /** \brief Set the covariance matrix for the distribution
    */
   void set(size_t p_ndim, mat_t &covar) {
@@ -983,7 +993,7 @@ namespace o2scl {
     norm=pow(2.0*o2scl_const::pi,-((double)ndim)/2.0)/sqrt(det);
   }
 
-  /// Return the probability density
+  /// The normalized density 
   virtual double pdf(const vec_t &x, const vec_t &x2) const {
     if (ndim==0) {
       O2SCL_ERR2("Distribution not set in prob_cond_mdim_gaussian::",
@@ -996,7 +1006,7 @@ namespace o2scl {
     return ret;
   }
 
-  /// Return the probability density
+  /// The log of the normalized density 
   virtual double log_pdf(const vec_t &x, const vec_t &x2) const {
     if (ndim==0) {
       O2SCL_ERR2("Distribution not set in prob_cond_mdim_gaussian::",
