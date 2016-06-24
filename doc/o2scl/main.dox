@@ -66,6 +66,7 @@
     - \subpage diff_section
     - \subpage inte_section
     - \subpage mcarlo_section
+    - \subpage mcmc_section
     - \subpage poly_section
     - \subpage solve_section
     - \subpage min_section

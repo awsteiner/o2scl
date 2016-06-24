@@ -65,7 +65,7 @@ namespace o2scl {
   /// Random number generator
   o2scl::rng_gsl gr;
   
-  //// Proposal distribution
+  /// Proposal distribution
   o2scl::prob_cond_mdim<vec_t> *prop_dist;
   
   /// If true, then use the user-specified proposal distribution
@@ -83,18 +83,42 @@ namespace o2scl {
   /// Data switch array
   std::vector<bool> switch_arr;
 
+  /// \name Interface customization
+  //@{
+  /** \brief Initializations before the MCMC 
+   */
+  virtual int mcmc_init() {
+    return 0;
+  }
+
+  /** \brief Cleanup after the MCMC
+   */
+  virtual void mcmc_cleanup() {
+    return;
+  }
+
+  /** \brief Function to run for the best point 
+   */
+  virtual void best_point(ubvector &best, double w_best, data_t &dat) {
+    return;
+  }
+  //@}
+
   public:
 
   /// Integer to indicate completion
   static const int mcmc_done=-10;
-  
+
+  /// \name Output quantities
+  //@{
   /// The number of Metropolis steps which were accepted
   size_t n_accept;
 
   /// The number of Metropolis steps which were rejected
   size_t n_reject;
+  //@}
 
-  /// \name settings
+  /// \name Settings
   //@{
   /// If true, use affine-invariant Monte Carlo
   bool aff_inv;
@@ -125,12 +149,12 @@ namespace o2scl {
       otherwise (default 1)
   */
   size_t n_walk;
-  //@}
 
   /** \brief If true, call the error handler if msolve() or
       msolve_de() does not converge (default true)
   */
   bool err_nonconv;
+  //@}
   
   mcmc_base() {
     user_seed=0;
@@ -151,49 +175,15 @@ namespace o2scl {
     prop_dist=0;
   }
   
-  /// \name Interface customization
+
+  /// \name Basic usage
   //@{
-  /** \brief Initializations before the MCMC 
-   */
-  virtual int mcmc_init() {
-    return 0;
-  }
+  /** \brief Perform an MCMC simulation
 
-  /** \brief Cleanup after the MCMC
-   */
-  virtual void mcmc_cleanup() {
-    return;
-  }
-
-  /** \brief Function to run for the best point 
-   */
-  virtual void best_point(ubvector &best, double w_best, data_t &dat) {
-    return;
-  }
-  
-  /** \brief Set the proposal distribution
-   */
-  virtual void set_proposal(o2scl::prob_cond_mdim<vec_t> &p) {
-    prop_dist=&p;
-    pd_mode=true;
-    aff_inv=false;
-    n_walk=1;
-    return;
-  }
-
-  /** \brief Go back to random-walk Metropolis with a uniform distribution
-   */
-  virtual void unset_proposal() {
-    if (pd_mode) {
-      prop_dist=0;
-      pd_mode=false;
-    }
-    aff_inv=false;
-    n_walk=1;
-    return;
-  }
-  
-  /** \brief The main MCMC function
+      Perform an MCMC simulation over \c nparams parameters starting
+      at initial point \c init, limiting the parameters to be between
+      \c low and \c high, using \c func as the objective function and
+      calling the measurement function \c meas at each MC point.
    */
   virtual int mcmc(size_t nparams, vec_t &init,
 		   vec_t &low, vec_t &high, func_t &func,
@@ -587,10 +577,37 @@ namespace o2scl {
     
     return 0;
   }
+  //@}
+
+  /// \name Proposal distribution
+  //@{
+  /** \brief Set the proposal distribution
+   */
+  virtual void set_proposal(o2scl::prob_cond_mdim<vec_t> &p) {
+    prop_dist=&p;
+    pd_mode=true;
+    aff_inv=false;
+    n_walk=1;
+    return;
+  }
+
+  /** \brief Go back to random-walk Metropolis with a uniform distribution
+   */
+  virtual void unset_proposal() {
+    if (pd_mode) {
+      prop_dist=0;
+      pd_mode=false;
+    }
+    aff_inv=false;
+    n_walk=1;
+    return;
+  }
+  //@}
 
   };
 
-  /** \brief A generic MCMC simulation class
+  /** \brief A generic MCMC simulation class writing data to a 
+      \ref o2scl::table_units object
       
       \note This class is experimental.
    */
@@ -604,7 +621,6 @@ namespace o2scl {
     
   /// Parameter units
   std::vector<std::string> param_units;
-  //@}
     
   /// Main data table for Markov chain
   std::shared_ptr<o2scl::table_units<> > tab;
@@ -661,11 +677,6 @@ namespace o2scl {
     }
       
     return;
-  }
-    
-  public:
-
-  mcmc_table() : tab(new o2scl::table_units<>) {
   }
     
   /** \brief A measurement function which adds the point to the
@@ -744,6 +755,11 @@ namespace o2scl {
     return;
   }
   
+  public:
+
+  mcmc_table() : tab(new o2scl::table_units<>) {
+  }
+    
   /** \brief Get the output table
    */
   std::shared_ptr<o2scl::table_units<> > get_table() {
