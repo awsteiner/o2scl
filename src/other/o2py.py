@@ -244,7 +244,6 @@ class plotter:
             print 'contour_plot',level,kwargs
         if self.canvas_flag==0:
             self.canvas()
-            self.canvas_flag=1
         n_lines=self.dset['n_lines'][0]
         for i in range(0,n_lines):
             line_level=self.dset['line_'+str(i)+'/level'][0]
@@ -265,38 +264,6 @@ class plotter:
                                   self.dset['line_'+str(i)+'/y'],**kwargs)
         return
  
-    def hist_plot(self,**kwargs):
-        if self.dtype!='hist':
-            print 'Wrong type for hist_plot.'
-            return
-        if self.verbose>2:
-            print 'hist_plot',kwargs
-        if self.canvas_flag==0:
-            self.canvas()
-            self.canvas_flag=1
-        size=dset['size'][0]
-        bins=dset['bins']
-        weights=dset['weights']
-        rmode=dset['rmode'][0]
-        reps=bins[0:size-1]
-        for i in range(0,size):
-            reps[i]=(bins[i]+bins[i+1])/2
-        if self.logx==1:
-            if self.logy==1:
-                plot.loglog(reps,weights,**kwargs)
-            else:
-                plot.semilogx(reps,weights,**kwargs)
-        else:
-            if self.logy==1:
-                plot.semilogy(reps,weights,**kwargs)
-            else:
-                plot.plot(reps,weights,**kwargs)
-        if self.xset==1:
-            plot.xlim([self.xlo,self.xhi])
-        if self.yset==1:
-            plot.ylim([self.ylo,self.yhi])
-        return
-        
     def points(self,colx,coly,**kwargs):
         if self.dtype!='table':
             print 'Wrong type for plot.'
@@ -305,7 +272,6 @@ class plotter:
             print 'plot',colx,coly,kwargs
         if self.canvas_flag==0:
             self.canvas()
-            self.canvas_flag=1
         if self.logx==1:
             if self.logy==1:
                 plot.loglog(self.dset['data/'+colx],
@@ -327,32 +293,52 @@ class plotter:
         return
 
     def plot(self,colx,coly,**kwargs):
-        if self.dtype!='table':
-            print 'Wrong type for plot.'
+        if self.dtype=='table':
+            if self.verbose>2:
+                print 'plot',colx,coly,kwargs
+            if self.canvas_flag==0:
+                self.canvas()
+            if self.logx==1:
+                if self.logy==1:
+                    plot.loglog(self.dset['data/'+colx],
+                                self.dset['data/'+coly],**kwargs)
+                else:
+                    plot.semilogx(self.dset['data/'+colx],
+                                  self.dset['data/'+coly],**kwargs)
+            else:
+                if self.logy==1:
+                    plot.semilogy(self.dset['data/'+colx],
+                                  self.dset['data/'+coly],**kwargs)
+                else:
+                    plot.plot(self.dset['data/'+colx],
+                              self.dset['data/'+coly],**kwargs)
+            if self.xset==1:
+                plot.xlim([self.xlo,self.xhi])
+            if self.yset==1:
+                plot.ylim([self.ylo,self.yhi])
+        else if self.dtype=='hist':
+            size=dset['size'][0]
+            bins=dset['bins']
+            weights=dset['weights']
+            rmode=dset['rmode'][0]
+            reps=bins[0:size-1]
+            for i in range(0,size):
+                reps[i]=(bins[i]+bins[i+1])/2
+            if self.logx==1:
+                if self.logy==1:
+                    plot.loglog(reps,weights,**kwargs)
+                else:
+                    plot.semilogx(reps,weights,**kwargs)
+            else:
+                if self.logy==1:
+                    plot.semilogy(reps,weights,**kwargs)
+                else:
+                    plot.plot(reps,weights,**kwargs)
+            if self.xset==1:
+                plot.xlim([self.xlo,self.xhi])
+            if self.yset==1:
+                plot.ylim([self.ylo,self.yhi])
             return
-        if self.verbose>2:
-            print 'plot',colx,coly,kwargs
-        if self.canvas_flag==0:
-            self.canvas()
-            self.canvas_flag=1
-        if self.logx==1:
-            if self.logy==1:
-                plot.loglog(self.dset['data/'+colx],
-                            self.dset['data/'+coly],**kwargs)
-            else:
-                plot.semilogx(self.dset['data/'+colx],
-                              self.dset['data/'+coly],**kwargs)
-        else:
-            if self.logy==1:
-                plot.semilogy(self.dset['data/'+colx],
-                              self.dset['data/'+coly],**kwargs)
-            else:
-                plot.plot(self.dset['data/'+colx],
-                          self.dset['data/'+coly],**kwargs)
-        if self.xset==1:
-            plot.xlim([self.xlo,self.xhi])
-        if self.yset==1:
-            plot.ylim([self.ylo,self.yhi])
         return
 
     def plot1(self,col,**kwargs):
@@ -363,7 +349,6 @@ class plotter:
             print 'plot1',col,kwargs
         if self.canvas_flag==0:
             self.canvas()
-            self.canvas_flag=1
         tlist=range(1,len(self.dset['data/'+col])+1)
         if self.logx==1:
             if self.logy==1:
@@ -383,11 +368,13 @@ class plotter:
 
     def hist(self,col,**kwargs):
         if self.verbose>2:
-            print 'hist',col,kwargs
+            print 'hist',kwargs
         if self.canvas_flag==0:
             self.canvas()
-            self.canvas_flag=1
-        plot.hist(self.dset['data/'+col],**kwargs)
+        if self.dtype=='table':
+            plot.hist(self.dset['data/'+col],**kwargs)
+        else
+            print 'Wrong type',self.dtype,'for hist()'
         return
 
     def hist2d(self,colx,coly,**kwargs):
@@ -395,7 +382,6 @@ class plotter:
             print 'hist',colx,coly,kwargs
         if self.canvas_flag==0:
             self.canvas()
-            self.canvas_flag=1
         plot.hist2d(self.dset['data/'+colx],self.dset['data/'+coly],**kwargs)
         return
 
@@ -404,7 +390,6 @@ class plotter:
             print 'Line',x1,y1,x2,y1
         if self.canvas_flag==0:
             self.canvas()
-            self.canvas_flag=1
         plot.plot([x1,x2],[y1,y2],**kwargs)
         return
 
@@ -547,7 +532,6 @@ class plotter:
             ygrid=self.dset['yval'].value
             if self.canvas_flag==0:
                 self.canvas()
-                self.canvas_flag=1
             if self.logx==1:
                 for i in range(0,len(xgrid)):
                     xgrid[i]=math.log(xgrid[i],10)
@@ -693,8 +677,7 @@ class plotter:
             print 'contour_plot(level,**kwargs)'
             print 'den_plot(slice_name,**kwargs)'
             print 'get(name)'
-            print 'hist(col,tbins,tcolor)'
-            print 'hist_plot(**kwargs)'
+            print 'hist([col],**kwargs)'
             print 'hist2d(colx,coly,**kwargs)'
             print 'line(x1,y1,x2,y2,**kwargs)'
             print 'list()'
@@ -717,7 +700,6 @@ class plotter:
     def text(self,tx,ty,str,**kwargs):
         if self.canvas_flag==0:
             self.canvas()
-            self.canvas_flag=1
         self.axes.text(tx,ty,str,transform=self.axes.transAxes,
                        fontsize=16,va='center',ha='center',**kwargs)
         return
@@ -902,6 +884,13 @@ class plotter:
                         print 'Not enough parameters for plot1 option.'
                     else:
                         self.plot1(argv[ix+1])
+                elif cmd_name=='hist':
+                    if self.verbose>2:
+                        print 'Process hist.'
+                    if ix_next-ix<2:
+                        print 'Not enough parameters for hist option.'
+                    else:
+                        self.hist(argv[ix+1])
                 elif cmd_name=='save':
                     if self.verbose>2:
                         print 'Process save.'

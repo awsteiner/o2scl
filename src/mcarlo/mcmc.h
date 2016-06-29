@@ -174,7 +174,6 @@ namespace o2scl {
     n_reject=0;
     prop_dist=0;
   }
-  
 
   /// \name Basic usage
   //@{
