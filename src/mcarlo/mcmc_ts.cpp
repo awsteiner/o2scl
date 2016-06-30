@@ -33,6 +33,9 @@ typedef boost::numeric::ublas::matrix<double> ubmatrix;
 typedef std::function<int(size_t,const ubvector &,double &,
 			  std::array<double,1> &)> point_funct;
 
+typedef std::function<int(const ubvector &,double,size_t,bool,
+			  std::array<double,1> &)> measure_funct;
+
 typedef std::function<int(const ubvector &,double,std::vector<double> &,
 			  std::array<double,1> &)> fill_funct;
 
@@ -47,10 +50,11 @@ int point(size_t nv, const ubvector &pars, double &ret,
   return o2scl::success;
 }
 
-int meas(const ubvector &pars, double weight, size_t ix, bool new_meas,
+int measure(const ubvector &pars, double weight, size_t ix, bool new_meas,
 	 std::array<double,1> &dat) {
   arr_x.push_back(pars[0]);
   arr_x2.push_back(dat[0]);
+  // Double check that the 'dat' object is correctly filled
   if ((pars[0]*pars[0]-dat[0])>1.0e-10) {
     cerr << "Failure." << endl;
     exit(-1);
@@ -61,7 +65,7 @@ int meas(const ubvector &pars, double weight, size_t ix, bool new_meas,
   return 0;
 }
 
-int fill(const ubvector &pars, double weight, std::vector<double> &line,
+int fill_func(const ubvector &pars, double weight, std::vector<double> &line,
 	 std::array<double,1> &dat) {
   line.push_back(dat[0]);
   return 0;
@@ -74,9 +78,9 @@ int main(int argc, char *argv[]) {
   test_mgr tm;
   tm.set_output_level(2);
 
-  point_funct mf=point;
-  measure_funct mf2=meas;
-  measure_funct mf3=meas2;
+  point_funct pf=point;
+  measure_funct mf=measure;
+  fill_funct ff=fill_func;
     
   mcmc_base<point_funct,measure_funct,std::array<double,1>,ubvector> mc;
   ubvector init(1);
@@ -88,7 +92,7 @@ int main(int argc, char *argv[]) {
   mc.verbose=1;
   mc.user_seed=1;
 
-  mc.mcmc(1,init,low,high,mf,mf2);
+  mc.mcmc(1,init,low,high,pf,mf);
 
   cout << vector_mean(arr_x) << endl;
   cout << vector_stddev(arr_x) << endl;
@@ -101,7 +105,7 @@ int main(int argc, char *argv[]) {
   mc.n_walk=10;
   mc.step_fac=2.0;
 
-  mc.mcmc(1,init,low,high,mf,mf2);
+  mc.mcmc(1,init,low,high,pf,mf);
 
   cout << vector_mean(arr_x) << endl;
   cout << vector_stddev(arr_x) << endl;
@@ -115,7 +119,7 @@ int main(int argc, char *argv[]) {
   prob_cond_mdim_gaussian<ubvector> pdmg(1,covar);
 
   mc.set_proposal(pdmg);
-  mc.mcmc(1,init,low,high,mf,mf2);
+  mc.mcmc(1,init,low,high,pf,mf);
 
   cout << vector_mean(arr_x) << endl;
   cout << vector_stddev(arr_x) << endl;
@@ -127,13 +131,13 @@ int main(int argc, char *argv[]) {
   mct.verbose=1;
   mct.user_seed=1;
 
-  vector<string> pnames={"x"};
-  vector<string> punits={"MeV"};
+  vector<string> pnames={"x","x2"};
+  vector<string> punits={"MeV","MeV^2"};
   mct.set_names_units(pnames,punits);
 
-  mct.mcmc(1,init,low,high,mf,mf3);
+  mct.mcmc(100,1,init,low,high,pf,ff);
 
-  cout << vector_mean(mct.get_table()->get_column("param_x")) << endl;
+  cout << vector_mean(mct.get_table()->get_column("x")) << endl;
 
   shared_ptr<table_units<> > t=mct.get_table();
   cout << "n_accept, n_reject, table lines: "
@@ -141,7 +145,7 @@ int main(int argc, char *argv[]) {
        << t->get_nlines() << endl;
   for(size_t i=0;i<t->get_nlines();i+=t->get_nlines()/10) {
     cout << i << " " << t->get("mult",i) << " "
-	 << t->get("weight",i) << " " << t->get("param_x",i) << endl;
+	 << t->get("weight",i) << " " << t->get("x",i) << endl;
   }
 
   tm.report();

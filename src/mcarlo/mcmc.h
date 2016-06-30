@@ -623,10 +623,14 @@ namespace o2scl {
     data_t,vec_t> {
 
   protected:
-    
+
+  /// Measurement functor type
   typedef std::function<int(const vec_t &,double,size_t,bool,data_t &)>
   internal_measure_t;
-    
+  
+  /// Type of parent class
+  typedef mcmc_base<func_t,internal_measure_t,data_t,vec_t> parent_t;
+
   /// Parameter names
   std::vector<std::string> col_names;
     
@@ -691,7 +695,11 @@ namespace o2scl {
     
     return;
   }
-    
+
+  /** \brief Desc
+   */
+  size_t n_iterations;
+  
   public:
 
   mcmc_table() : tab(new o2scl::table_units<>) {
@@ -704,16 +712,19 @@ namespace o2scl {
       \c low and \c high, using \c func as the objective function and
       calling the measurement function \c meas at each MC point.
   */
-  virtual int mcmc(size_t nparams, vec_t &init,
+  virtual int mcmc(size_t niters, size_t nparams, vec_t &init,
 		   vec_t &low, vec_t &high, func_t &func,
 		   fill_t &fill) {
 
+    n_iterations=niters;
+    
     internal_measure_t meas=std::bind
     (std::mem_fn<int(const vec_t &,double,size_t,bool,data_t &,fill_t &)>
      (&mcmc_table::add_line),this,std::placeholders::_1,
      std::placeholders::_2,std::placeholders::_3,std::placeholders::_4,
-     std::placeholders::_5,std::ref(fill_t));
-    return mcmc_base::mcmc(nparams,init,lw,high,func,meas,fill);
+     std::placeholders::_5,std::ref(fill));
+    
+    return parent_t::mcmc(nparams,init,low,high,func,meas);
   }
 
   /** \brief Get the output table
@@ -739,9 +750,11 @@ namespace o2scl {
     // Test to see if we need to add a new line of data or
     // increment the weight on the previous line
     if (tab->get_nlines()<=(this->n_walk-1) || new_meas==true) {
-	
+
+      if (tab->get_nlines()==n_iterations) return this->mcmc_done;
+      
       std::vector<double> line;
-      fill_line(pars,weight,line,dat);
+      fill_line(pars,weight,line,dat,fill);
       
       if (line.size()!=tab->get_ncolumns()) {
 	std::cout << "line: " << line.size() << " columns: "
