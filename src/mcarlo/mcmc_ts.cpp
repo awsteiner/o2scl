@@ -29,15 +29,16 @@ using namespace o2scl;
 
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
-typedef std::function<int(const ubvector &,double,
-			  size_t,bool,std::array<double,1> &)> measure_funct;
 
 typedef std::function<int(size_t,const ubvector &,double &,
-			     std::array<double,1> &)> point_funct;
+			  std::array<double,1> &)> point_funct;
+
+typedef std::function<int(const ubvector &,double,std::vector<double> &,
+			  std::array<double,1> &)> fill_funct;
 
 std::vector<double> arr_x;
 std::vector<double> arr_x2;
-mcmc_table<point_funct,measure_funct,std::array<double,1>,ubvector> mct;
+mcmc_table<point_funct,fill_funct,std::array<double,1>,ubvector> mct;
 
 int point(size_t nv, const ubvector &pars, double &ret,
 	  std::array<double,1> &dat) {
@@ -60,16 +61,9 @@ int meas(const ubvector &pars, double weight, size_t ix, bool new_meas,
   return 0;
 }
 
-int meas2(const ubvector &pars, double weight, size_t ix, bool new_meas,
-	  std::array<double,1> &dat) {
-  if ((pars[0]*pars[0]-dat[0])>1.0e-10) {
-    cerr << "Failure 2." << endl;
-    exit(-1);
-  }
-  mct.add_line(pars,weight,ix,new_meas,dat);
-  if (mct.get_table()->get_nlines()>=100) {
-    return mcmc_base<point_funct,measure_funct,int,ubvector>::mcmc_done;
-  }
+int fill(const ubvector &pars, double weight, std::vector<double> &line,
+	 std::array<double,1> &dat) {
+  line.push_back(dat[0]);
   return 0;
 }
 

@@ -617,16 +617,21 @@ namespace o2scl {
       
       \note This class is experimental.
   */
-  template<class func_t, class measure_t, class data_t, class vec_t=ubvector>
-    class mcmc_table : public mcmc_base<func_t,measure_t,data_t,vec_t> {
-    
+  template<class func_t, class fill_t, class data_t, class vec_t=ubvector>
+    class mcmc_table : public mcmc_base<func_t,
+    std::function<int(const vec_t &,double,size_t,bool,data_t &)>,
+    data_t,vec_t> {
+
   protected:
     
+  typedef std::function<int(const vec_t &,double,size_t,bool,data_t &)>
+  internal_measure_t;
+    
   /// Parameter names
-  std::vector<std::string> param_names;
+  std::vector<std::string> col_names;
     
   /// Parameter units
-  std::vector<std::string> param_units;
+  std::vector<std::string> col_units;
     
   /// Main data table for Markov chain
   std::shared_ptr<o2scl::table_units<> > tab;
@@ -645,13 +650,13 @@ namespace o2scl {
     // Init table
 
     std::string s, u;
+    tab->clear_table();
     tab->new_column("mult");
     tab->new_column("weight");
-    for(size_t i=0;i<param_names.size();i++) {
-      tab->new_column(((std::string)"param_")+param_names[i]);
-      if (param_units[i].length()>0) {
-	tab->set_unit(((std::string)"param_")+param_names[i],
-		      param_units[i]);
+    for(size_t i=0;i<col_names.size();i++) {
+      tab->new_column(col_names[i]);
+      if (col_units[i].length()>0) {
+	tab->set_unit(col_names[i],col_units[i]);
       }
     }
       
@@ -673,7 +678,8 @@ namespace o2scl {
   /** \brief Fill \c line with data for insertion into the table
    */
   virtual void fill_line(const vec_t &pars, double weight, 
-			 std::vector<double> &line, data_t &dat) {
+			 std::vector<double> &line, data_t &dat,
+			 fill_t &fill) {
 
     // Initial multiplier
     line.push_back(1.0);
@@ -681,7 +687,8 @@ namespace o2scl {
     for(size_t i=0;i<pars.size();i++) {
       line.push_back(pars[i]);
     }
-      
+    fill(pars,weight,line,dat);
+    
     return;
   }
     
@@ -689,7 +696,26 @@ namespace o2scl {
 
   mcmc_table() : tab(new o2scl::table_units<>) {
   }
-    
+  
+  /** \brief Perform an MCMC simulation
+
+      Perform an MCMC simulation over \c nparams parameters starting
+      at initial point \c init, limiting the parameters to be between
+      \c low and \c high, using \c func as the objective function and
+      calling the measurement function \c meas at each MC point.
+  */
+  virtual int mcmc(size_t nparams, vec_t &init,
+		   vec_t &low, vec_t &high, func_t &func,
+		   fill_t &fill) {
+
+    internal_measure_t meas=std::bind
+    (std::mem_fn<int(const vec_t &,double,size_t,bool,data_t &,fill_t &)>
+     (&mcmc_table::add_line),this,std::placeholders::_1,
+     std::placeholders::_2,std::placeholders::_3,std::placeholders::_4,
+     std::placeholders::_5,std::ref(fill_t));
+    return mcmc_base::mcmc(nparams,init,lw,high,func,meas,fill);
+  }
+
   /** \brief Get the output table
    */
   std::shared_ptr<o2scl::table_units<> > get_table() {
@@ -707,7 +733,8 @@ namespace o2scl {
       table
   */
   virtual int add_line(const vec_t &pars, double weight,
-		       size_t ix, bool new_meas, data_t &dat) {
+		       size_t ix, bool new_meas, data_t &dat,
+		       fill_t &fill) {
 
     // Test to see if we need to add a new line of data or
     // increment the weight on the previous line
@@ -774,8 +801,8 @@ namespace o2scl {
    */
   virtual void set_names_units(std::vector<std::string> names,
 			       std::vector<std::string> units) {
-    param_names=names;
-    param_units=units;
+    col_names=names;
+    col_units=units;
     return;
   }
   
