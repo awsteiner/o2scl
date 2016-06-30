@@ -32,16 +32,18 @@ typedef boost::numeric::ublas::matrix<double> ubmatrix;
 typedef std::function<int(const ubvector &,double,
 			  size_t,bool,std::array<double,1> &)> measure_funct;
 
-typedef std::function<double(size_t,const ubvector &,
+typedef std::function<int(size_t,const ubvector &,double &,
 			     std::array<double,1> &)> point_funct;
 
 std::vector<double> arr_x;
 std::vector<double> arr_x2;
 mcmc_table<point_funct,measure_funct,std::array<double,1>,ubvector> mct;
 
-double point(size_t nv, const ubvector &pars, std::array<double,1> &dat) {
+int point(size_t nv, const ubvector &pars, double &ret,
+	  std::array<double,1> &dat) {
   dat[0]=pars[0]*pars[0];
-  return exp(-pars[0]*pars[0]/2.0);
+  ret=exp(-pars[0]*pars[0]/2.0);
+  return o2scl::success;
 }
 
 int meas(const ubvector &pars, double weight, size_t ix, bool new_meas,

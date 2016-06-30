@@ -56,7 +56,7 @@ namespace o2scl {
       \todo Add better testing
       \todo Convert to work with the log of the distribution
       instead.
-   */
+  */
   template<class func_t, class measure_t,
     class data_t, class vec_t=ubvector> class mcmc_base {
     
@@ -183,7 +183,7 @@ namespace o2scl {
       at initial point \c init, limiting the parameters to be between
       \c low and \c high, using \c func as the objective function and
       calling the measurement function \c meas at each MC point.
-   */
+  */
   virtual int mcmc(size_t nparams, vec_t &init,
 		   vec_t &low, vec_t &high, func_t &func,
 		   measure_t &meas) {
@@ -241,7 +241,7 @@ namespace o2scl {
     // Run init() function
     int iret=mcmc_init();
     if (iret!=0) {
-      O2SCL_ERR("Function mcmc_init failed in mcmc_base::mcmc().",
+      O2SCL_ERR("Function mcmc_init() failed in mcmc_base::mcmc().",
 		o2scl::exc_einval);
       return iret;
     }
@@ -291,7 +291,7 @@ namespace o2scl {
 	  }
 	
 	  // Compute the weight
-	  w_current[ij]=func(nparams,current[ij],data_arr[ij]);
+	  int iret=func(nparams,current[ij],w_current[ij],data_arr[ij]);
 	  
 	  if (verbose>=1) {
 	    std::cout.precision(4);
@@ -309,7 +309,7 @@ namespace o2scl {
 
 	  // If we have a good point, call the measurement function and
 	  // stop the loop
-	  if (w_current[ij]>0.0) {
+	  if (iret==o2scl::success) {
 	    meas_ret=meas(current[ij],w_current[ij],ij,true,data_arr[ij]);
 	    done=true;
 	  } else if (init_iters>max_bad_steps) {
@@ -327,7 +327,7 @@ namespace o2scl {
       // Uniform random-walk steps
 
       // Compute weight for initial point
-      w_current[0]=func(nparams,current[0],data_arr[0]);
+      int iret=func(nparams,current[0],w_current[0],data_arr[0]);
 
       if (verbose>=1) {
 	std::cout.precision(4);
@@ -335,7 +335,7 @@ namespace o2scl {
 	std::cout.precision(6);
       }
 
-      if (w_current[0]<=0.0) {
+      if (iret!=o2scl::success) {
 	if (err_nonconv) {
 	  O2SCL_ERR("Initial weight vanished in mcmc_base::mcmc().",
 		    o2scl::exc_einval);
@@ -450,12 +450,13 @@ namespace o2scl {
       // ---------------------------------------------------
       // Compute next weight
 
+      int iret;
       if (switch_arr[ik]==false) {
-	w_next=func(nparams,next,data_arr[ik+n_walk]);
+	iret=func(nparams,next,w_next,data_arr[ik+n_walk]);
       } else {
-	w_next=func(nparams,next,data_arr[ik]);
+	iret=func(nparams,next,w_next,data_arr[ik]);
       }
-      if (w_next>w_best) {
+      if (iret==o2scl::success && w_next>w_best) {
 	best=next;
 	w_best=w_next;
 	if (switch_arr[ik]==false) {
@@ -468,46 +469,51 @@ namespace o2scl {
       // ---------------------------------------------------
     
       bool accept=false;
-      double r=gr.random();
 
-      // Metropolis algorithm
-      if (aff_inv) {
-	if (r<pow(smove_z,((double)n_walk)-1.0)*w_next/w_current[ik]) {
-	  accept=true;
+      if (iret==o2scl::success) {
+	double r=gr.random();
+	
+	// Metropolis algorithm
+	if (aff_inv) {
+	  if (r<pow(smove_z,((double)n_walk)-1.0)*w_next/w_current[ik]) {
+	    accept=true;
+	  }
+	  if (verbose>=1) {
+	    std::cout.precision(4);
+	    std::cout << "mcmc: ";
+	    std::cout.width((int)(1.0+log10((double)(n_walk-1))));
+	    std::cout << ik << " " << w_current[ik] << " " << w_next << " "
+		      << pow(smove_z,((double)n_walk)-1.0) << " ratio: "
+		      << pow(smove_z,((double)n_walk)-1.0)*w_next/w_current[ik]
+		      << " accept: " << accept << std::endl;
+	    std::cout.precision(6);
+	  }
+	} else if (pd_mode) {
+	  if (r<w_next/w_current[0]*q_prop) {
+	    accept=true;
+	  }
+	  if (verbose>=1) {
+	    std::cout.precision(4);
+	    std::cout << "mcmc: " << w_current[0] 
+		      << " " << w_next << " " << q_prop << " ratio: "
+		      << w_next/w_current[0]*q_prop
+		      << " accept: " << accept << std::endl;
+	    std::cout.precision(6);
+	  }
+	} else {
+	  if (r<w_next/w_current[0]) {
+	    accept=true;
+	  }
+	  if (verbose>=1) {
+	    std::cout.precision(4);
+	    std::cout << "mcmc: " << w_current[0] << " " << w_next
+		      << " ratio: " << w_next/w_current[0]
+		      << " accept: " << accept << std::endl;
+	    std::cout.precision(6);
+	  }
 	}
-	if (verbose>=1) {
-	  std::cout.precision(4);
-	  std::cout << "mcmc: ";
-	  std::cout.width((int)(1.0+log10((double)(n_walk-1))));
-	  std::cout << ik << " " << w_current[ik] << " " << w_next << " "
-		    << pow(smove_z,((double)n_walk)-1.0) << " ratio: "
-		    << pow(smove_z,((double)n_walk)-1.0)*w_next/w_current[ik]
-		    << " accept: " << accept << std::endl;
-	  std::cout.precision(6);
-	}
-      } else if (pd_mode) {
-	if (r<w_next/w_current[0]*q_prop) {
-	  accept=true;
-	}
-	if (verbose>=1) {
-	  std::cout.precision(4);
-	  std::cout << "mcmc: " << w_current[0] 
-		    << " " << w_next << " " << q_prop << " ratio: "
-		    << w_next/w_current[0]*q_prop
-		    << " accept: " << accept << std::endl;
-	  std::cout.precision(6);
-	}
-      } else {
-	if (r<w_next/w_current[0]) {
-	  accept=true;
-	}
-	if (verbose>=1) {
-	  std::cout.precision(4);
-	  std::cout << "mcmc: " << w_current[0] << " " << w_next
-		    << " ratio: " << w_next/w_current[0]
-		    << " accept: " << accept << std::endl;
-	  std::cout.precision(6);
-	}
+
+	// End of 'if (iret==o2scl::success)'
       }
 
       if (accept) {
@@ -554,6 +560,7 @@ namespace o2scl {
 		    o2scl::exc_efailed);
 	}
       }
+      
       mcmc_iters++;
 
       if (warm_up && mcmc_iters==n_warm_up) {
@@ -609,7 +616,7 @@ namespace o2scl {
       \ref o2scl::table_units object
       
       \note This class is experimental.
-   */
+  */
   template<class func_t, class measure_t, class data_t, class vec_t=ubvector>
     class mcmc_table : public mcmc_base<func_t,measure_t,data_t,vec_t> {
     
@@ -627,7 +634,7 @@ namespace o2scl {
   /** \brief MCMC initialization function
 
       This function sets the column names and units.
-   */
+  */
   virtual int mcmc_init() {
 
     if (this->verbose>=2) {
@@ -678,9 +685,27 @@ namespace o2scl {
     return;
   }
     
+  public:
+
+  mcmc_table() : tab(new o2scl::table_units<>) {
+  }
+    
+  /** \brief Get the output table
+   */
+  std::shared_ptr<o2scl::table_units<> > get_table() {
+    return tab;
+  }
+  
+  /** \brief Set the output table
+   */
+  void set_table(std::shared_ptr<o2scl::table_units<> > &t) {
+    tab=t;
+    return;
+  }
+  
   /** \brief A measurement function which adds the point to the
       table
-   */
+  */
   virtual int add_line(const vec_t &pars, double weight,
 		       size_t ix, bool new_meas, data_t &dat) {
 
@@ -751,24 +776,6 @@ namespace o2scl {
 			       std::vector<std::string> units) {
     param_names=names;
     param_units=units;
-    return;
-  }
-  
-  public:
-
-  mcmc_table() : tab(new o2scl::table_units<>) {
-  }
-    
-  /** \brief Get the output table
-   */
-  std::shared_ptr<o2scl::table_units<> > get_table() {
-    return tab;
-  }
-  
-  /** \brief Set the output table
-   */
-  void set_table(std::shared_ptr<o2scl::table_units<> > &t) {
-    tab=t;
     return;
   }
   
