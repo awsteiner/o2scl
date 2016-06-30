@@ -30,44 +30,28 @@ using namespace o2scl;
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
-typedef std::function<int(const ubvector &,double,
-			  size_t,bool,std::array<double,2> &)> measure_funct;
-
-typedef std::function<double(size_t,const ubvector &,
+typedef std::function<int(size_t,const ubvector &,double &,
 			     std::array<double,2> &)> point_funct;
 
-typedef mcmc_table<point_funct,measure_funct,std::array<double,2>,
-		   ubvector> child_t;
+typedef std::function<int(const ubvector &,double,std::vector<double> &,
+			  std::array<double,2> &)> fill_funct;
 
-class ex_mcmc : public child_t {
+int point(size_t nv, const ubvector &pars, double &weight,
+	  std::array<double,2> &dat) {
+  dat[0]=pars[0]*pars[0];
+  dat[1]=pars[0]*pars[1];
+  weight=exp(-((pars[0]-0.2)*(pars[0]-0.2)+
+	       (pars[1]-0.5)*(pars[1]-0.5))/2.0);
+  return 0;
+}
   
-public:
-  
-  virtual void fill_line(const vec_t &pars, double weight, 
-			 std::vector<double> &line, data_t &dat) {
-    child_t::fill_line(pars,weight,line,dat);
-    line.push_back(dat[0]);
-    line.push_back(dat[1]);
-  }
+int fill_line(const ubvector &pars, double weight, 
+	      std::vector<double> &line, std::array<double,2> &dat) {
+  line.push_back(dat[0]);
+  line.push_back(dat[1]);
+  return 0;
+}
 
-  double point(size_t nv, const ubvector &pars, std::array<double,2> &dat) {
-    dat[0]=pars[0]*pars[0];
-    dat[1]=pars[0]*pars[1];
-    return exp(-((pars[0]-0.2)*(pars[0]-0.2)+
-		 (pars[1]-0.5)*(pars[1]-0.5))/2.0);
-  }
-  
-  int meas(const ubvector &pars, double weight, size_t ix, bool new_meas,
-	   std::array<double,2> &dat) {
-    mct.add_line(pars,weight,ix,new_meas,dat);
-    if (mct.get_table()->get_nlines()>=10000) {
-      return mcmc_base<point_funct,measure_funct,int,ubvector>::mcmc_done;
-    }
-    return 0;
-  }
-
-};
-  
 int main(int argc, char *argv[]) {
   
   cout.setf(ios::scientific);
@@ -76,29 +60,64 @@ int main(int argc, char *argv[]) {
   tm.set_output_level(2);
 
   point_funct pf=point;
-  measure_funct mf=meas;
+  fill_funct ff=fill_line;
     
-  mct.verbose=1;
+  mcmc_table<point_funct,fill_funct,std::array<double,2>,ubvector> mct;
   mct.user_seed=1;
 
-  vector<string> pnames={"x"};
-  vector<string> punits={"MeV"};
+  // Table columns
+  vector<string> pnames={"x0","x1","x0x0","x0x1"};
+  vector<string> punits={"MeV","MeV","MeV^2","MeV^2"};
   mct.set_names_units(pnames,punits);
-  ubvector low(2)={0.0,0.0};
-  ubvector high(2)={1.0,1.0};
 
-  mct.mcmc(1,init,low,high,mf,mf3);
-
-  cout << vector_mean(mct.get_table()->get_column("param_x")) << endl;
-
+  // Parameter limits
+  ubvector low(2), high(2), init(2);
+  low[0]=0.0;
+  low[1]=0.0;
+  high[0]=1.0;
+  high[1]=1.0;
+  init[0]=0.5;
+  init[1]=0.5;
+  
   shared_ptr<table_units<> > t=mct.get_table();
+
+  // MCMC with a random walk of a fixed length
+  mct.step_fac=2.0;
+  mct.mcmc(10000,2,init,low,high,pf,ff);
+
   cout << "n_accept, n_reject, table lines: "
        << mct.n_accept << " " << mct.n_reject << " "
        << t->get_nlines() << endl;
+  cout.precision(4);
   for(size_t i=0;i<t->get_nlines();i+=t->get_nlines()/10) {
+    cout.width(4);
     cout << i << " " << t->get("mult",i) << " "
-	 << t->get("weight",i) << " " << t->get("param_x",i) << endl;
+	 << t->get("weight",i) << " " << t->get("x0",i) << " ";
+    cout << t->get("x1",i) << " " << t->get("x0x0",i) << " "
+	 << t->get("x0x1",i) << endl;
   }
+  cout.precision(6);
+  cout << endl;
+  
+  // MCMC with affine-invariant sampling
+  mct.aff_inv=true;
+  mct.n_walk=10;
+  mct.step_fac=2.0;
+
+  mct.mcmc(10000,2,init,low,high,pf,ff);
+
+  cout << "n_accept, n_reject, table lines: "
+       << mct.n_accept << " " << mct.n_reject << " "
+       << t->get_nlines() << endl;
+  cout.precision(4);
+  for(size_t i=0;i<t->get_nlines();i+=t->get_nlines()/10) {
+    cout.width(4);
+    cout << i << " " << t->get("mult",i) << " "
+	 << t->get("weight",i) << " " << t->get("x0",i) << " ";
+    cout << t->get("x1",i) << " " << t->get("x0x0",i) << " "
+	 << t->get("x0x1",i) << endl;
+  }
+  cout.precision(6);
 
   tm.report();
   

@@ -40,7 +40,7 @@ EXAMPLE_PRGS = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 	ex_mmin_fix.scr ex_nucmass_fit.scr ex_eos_had_rmf.scr\
 	ex_stiff.scr ex_markov.scr ex_chebapp.scr ex_poly.scr ex_conmin.scr \
 	ex_nucleus_rmf.scr ex_methast.scr ex_eos_had_skyrme.scr \
-	ex_nucmass.scr ex_tensor.scr
+	ex_nucmass.scr ex_tensor.scr ex_mcmc.scr
 
 # ex_ode_it.scr ex_gen_sn_eos.scr 
 
@@ -53,7 +53,7 @@ BENCHMARK_PRGS = bm_poly.scr bm_root.scr bm_min.scr
 EXAMPLE_PRGS = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 	ex_mroot.scr ex_mmin.scr ex_inte.scr ex_deriv.scr \
 	ex_ode.scr ex_anneal.scr ex_mcarlo.scr ex_string.scr ex_mmin_fix.scr \
-	ex_stiff.scr ex_markov.scr ex_tensor.scr \
+	ex_stiff.scr ex_markov.scr ex_tensor.scr ex_mcmc.scr \
 	ex_chebapp.scr ex_poly.scr ex_conmin.scr ex_methast.scr 
 
 # ex_ode_it.scr 
@@ -117,6 +117,7 @@ if O2SCL_EOSLIB
 
 EXTRA_PROGRAMS = \
 	ex_fptr \
+	ex_mcmc \
 	ex_diff \
 	ex_interp2 \
 	ex_table \
@@ -168,6 +169,7 @@ else
 
 EXTRA_PROGRAMS = ex_fptr \
 	ex_diff \
+	ex_mcmc \
 	ex_interp2 \
 	ex_table \
 	ex_mroot \
@@ -229,6 +231,11 @@ ex_fptr_LDADD = $(OOLIBS) $(OOLIBSTWO)
 ex_fptr_SOURCES = ex_fptr.cpp
 ex_fptr.scr: ex_fptr
 	./ex_fptr > ex_fptr.scr
+
+ex_mcmc_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_mcmc_SOURCES = ex_mcmc.cpp
+ex_mcmc.scr: ex_mcmc
+	./ex_mcmc > ex_mcmc.scr
 
 ex_interp2_LDADD = $(OOLIBS) $(OOLIBSTWO)
 ex_interp2_SOURCES = ex_interp2.cpp
