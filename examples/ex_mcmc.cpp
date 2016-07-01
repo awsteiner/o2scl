@@ -20,6 +20,12 @@
 
   -------------------------------------------------------------------
 */
+/* Example: ex_mcmc.cpp
+   -------------------------------------------------------------------
+
+   An example which demonstrates the generation of an arbitrary
+   distribution through Markov chain Monte Carlo.
+*/
 #include <o2scl/mcmc.h>
 #include <o2scl/vec_stats.h>
 #include <o2scl/test_mgr.h>
@@ -141,3 +147,4 @@ int main(int argc, char *argv[]) {
   
   return 0;
 }
+// End of example

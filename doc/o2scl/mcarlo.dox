@@ -81,33 +81,8 @@
     o2scl::mcarlo_vegas) have no significant autocorrelations by
     construction, so long as the random number generator does not have
     any.
-
-    \comment
-    --------------------------------------------------------------
-    \endcomment
-
-    \section ex_markov_sect Generate an arbitrary distribution
-
-    This examples creates a Markov chain for an aritrary distribution
-    using the Metropolis-Hastings algorithm. It generates the
-    one-dimensional distribution
-    \f[
-    f(x) = e^{-x^2} \left[ \sin(x-1.4)+1 \right]
-    \f]
-    for \f$ x \in [-5,5] \f$ and then computes the value of
-    \f$ \int x f(x)~dx / \int f(x)~dx \f$ using the Markov chain.
-
-    \dontinclude ex_markov.cpp
-    \skip Example:
-    \until End of example
-
-    Typical output is given below. Ignoring autocorrelations
-    underestimates the uncertainty. The \ref o2scl::expval_scalar
-    class includes the effect of autocorrelations by forming block
-    averages, and reports the correct uncertainty. (This is only the
-    output from one random seed. This same ordering will hold for most
-    but not all seeds.)
-
-    \verbinclude ex_markov.scr
+    
+    For Markov chain Monte Carlo, see the discussion in 
+    \ref mcmc_subsect.
 
 */

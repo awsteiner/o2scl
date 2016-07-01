@@ -51,6 +51,48 @@ namespace o2scl {
   
   /** \brief A generic MCMC simulation class
 
+      This class generates a Markov chain of a user-specified
+      function. The chain can be generated using the
+      Metropolis-Hastings algorithm with a user-specified proposal
+      distribution or using the affine-invariant sampling method of
+      Goodman and Weare.
+
+      By default, the Metropolis-Hastings algorithm is executed with a
+      simple walk, with steps in each dimension of size \f$
+      (\mathrm{high} - \mathrm{low})/\mathrm{step\_fac} \f$ with the
+      denominator specified in \ref step_fac.
+
+      The function type is a template type, \c func_t, which should
+      be of the form 
+      \code
+      int f(size_t num_of_parameters, const vec_t &parameters,
+            double &log_pdf, data_t &dat)
+      \endcode
+      which computes \c log_pdf, the natural logarithm of the function
+      value, for any point in parameter space (any point between \c
+      low and \c high ).
+
+      After each acceptance or rejection, a user-specified
+      "measurement" function (of type \c measure_t ) is called, which
+      can be used to store the results. In order to stop the
+      simulation, this function should return the value \ref mcmc_done
+
+      A generic proposal distribution can be specified 
+      in \ref set_proposal(). To go back to the default
+      random walk method, one can call the function
+      \ref unset_proposal().
+
+      If \ref aff_inv is set to true and the number of walkers, \ref
+      n_walk is set to a number larger than 1, then affine-invariant
+      sampling is used.
+
+      In order to store data at each point, the user can store this
+      data in any object of type \c data_t . If affine-invariant
+      sampling is used, then each chain has it's own data object. The
+      class keeps twice as many copies of these data object as would
+      otherwise be required, in order to avoid copying of data objects
+      in the case that the steps are accepted or rejected.
+
       \note This class is experimental.
       
       \todo Add better testing
@@ -121,7 +163,7 @@ namespace o2scl {
   /// If true, use affine-invariant Monte Carlo
   bool aff_inv;
   
-  /// Random-walk stepsize factor (default 10.0)
+  /// Stepsize factor (default 10.0)
   double step_fac;
 
   /** \brief Number of warm up steps (successful steps not
@@ -612,7 +654,34 @@ namespace o2scl {
 
   /** \brief A generic MCMC simulation class writing data to a 
       \ref o2scl::table_units object
-      
+
+      This class performs a MCMC simulation and stores the 
+      results in a \ref o2scl::table_units object. The
+      user must specify the column names and units in 
+      \ref set_names_units before \ref mcmc() is called.
+
+      The function \ref add_line is the measurement function of type
+      \c measure_t in the parent. The overloaded function \ref mcmc()
+      in this class works a bit differently in that it takes a
+      function object (type \c fill_t) of the form
+      \code
+      int fill_func(const vec_t &pars, double weight, 
+      std::vector<double> &line, data_t &dat);
+      \endcode
+      which should store any auxillary values stored in the data
+      object to \c line, in order to be added to the table.
+
+      The output table will contain the parameters, the logarithm of
+      the function (called "weight") and a multiplying factor called
+      "mult". This "fill" function is called only when a step is
+      accepted and the multiplier for that row is set to 1. If a
+      future step is rejected, then the multiplier is increased by
+      one, rather than adding the same row to the table again.
+
+      This class forms the basis of the MCMC used in the Bayesian
+      analysis of neutron star mass and radius in
+      http://github.com/awsteiner/bamr .
+
       \note This class is experimental.
   */
   template<class func_t, class fill_t, class data_t, class vec_t=ubvector>
@@ -622,7 +691,7 @@ namespace o2scl {
 
   protected:
 
-  /// Measurement functor type
+  /// Measurement functor type for the parent
   typedef std::function<int(const vec_t &,double,size_t,bool,data_t &)>
   internal_measure_t;
   
@@ -696,6 +765,17 @@ namespace o2scl {
 
   mcmc_table() : tab(new o2scl::table_units<>) {
   }
+
+  /// \name Basic usage
+  //@{
+  /** \brief Set the table names and units
+   */
+  virtual void set_names_units(std::vector<std::string> names,
+			       std::vector<std::string> units) {
+    col_names=names;
+    col_units=units;
+    return;
+  }
   
   /** \brief Perform an MCMC simulation
 
@@ -737,14 +817,18 @@ namespace o2scl {
 		       size_t ix, bool new_meas, data_t &dat,
 		       fill_t &fill) {
 
-    // Test to see if we need to add a new line of data or
-    // increment the weight on the previous line
+    // Test to see if we need to add a new line of data or increment
+    // the weight on the previous line
     if (tab->get_nlines()<=(this->n_walk-1) || new_meas==true) {
       
       std::vector<double> line;
       int fret=fill_line(pars,weight,line,dat,fill);
       
       if (fret!=o2scl::success) {
+	// If we're done, we stop before adding the last point to the
+	// table. This is important because otherwise the last line in
+	// the table will always only have unit multiplicity, which
+	// may or may not be correct.
 	if (this->verbose>=1) {
 	  std::cout << "Fill function returned " << fret
 		    << ". Stopping run." << std::endl;
@@ -805,16 +889,8 @@ namespace o2scl {
       
     return 0;
   }
+  //@}
     
-  /** \brief Set the table names and units
-   */
-  virtual void set_names_units(std::vector<std::string> names,
-			       std::vector<std::string> units) {
-    col_names=names;
-    col_units=units;
-    return;
-  }
-  
   };
   
   // End of namespace
