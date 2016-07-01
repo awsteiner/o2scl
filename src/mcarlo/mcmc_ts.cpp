@@ -46,7 +46,7 @@ mcmc_table<point_funct,fill_funct,std::array<double,1>,ubvector> mct;
 int point(size_t nv, const ubvector &pars, double &ret,
 	  std::array<double,1> &dat) {
   dat[0]=pars[0]*pars[0];
-  ret=exp(-pars[0]*pars[0]/2.0);
+  ret=-pars[0]*pars[0]/2.0;
   return o2scl::success;
 }
 

@@ -30,6 +30,8 @@
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_cdf.h>
 
+#include <random>
+
 #include <boost/numeric/ublas/vector.hpp>
 
 #include <o2scl/hist.h>
@@ -667,11 +669,13 @@ namespace o2scl {
   
   };
 
-  /** \brief A multidimensional distribution formed by the product
+    /** \brief A multidimensional distribution formed by the product
       of several one-dimensional distributions
   */
   template<class vec_t=boost::numeric::ublas::vector<double> >
     class prob_dens_mdim_factor : public prob_dens_mdim<vec_t> {
+    
+  protected:
     
     /// Vector of one-dimensional distributions
     std::vector<prob_dens_func> list;
@@ -865,6 +869,85 @@ namespace o2scl {
   virtual double metrop_hast(const vec_t &x, vec_t &x2) const {
     operator()(x,x2);
     return log_pdf(x,x2)-log_pdf(x2,x);
+  }
+  
+  };
+
+  /** \brief A constrained random walk in the shape of 
+      a hypercube
+   */
+  template<class vec_t=boost::numeric::ublas::vector<double> >
+    class prob_cond_mdim_rand_walk : public prob_cond_mdim<vec_t> {
+
+  protected:
+
+  /** \brief Desc
+   */
+  std::random_device rd;
+  
+  /** \brief Desc
+   */
+  std::vector<double> u_step;
+
+  /** \brief Desc
+   */
+  std::vector<double> u_low;
+
+  /** \brief Desc
+   */
+  std::vector<double> u_high;
+
+  double d_pdf;
+  
+  /** \brief Desc
+   */
+  std::uniform_real_distribution<double> unif;
+  
+  public:
+  
+  prob_cond_mdim_rand_walk() : unif(-1.0,1.0) {
+  }
+  
+  template<class=vec_t> prob_cond_mdim_rand_walk
+  (vec_t &step, vec_t &low, vec_t &high) : unif(-1.0,1.0) {
+    d_pdf=1.0;
+    for(size_t i=0;i<step.size();i++) {
+      u_step.push_back(step[i]);
+      if (low[i]>high[i]) {
+	double dtemp=low[i];
+	low[i]=high[i];
+	high[i]=dtemp;
+      }
+      u_low.push_back(low[i]);
+      u_high.push_back(high[i]);
+      d_pdf/=high[i]-low[i];
+    }
+  }
+
+  /// The dimensionality
+  virtual size_t dim() const {
+    return u_step.size();
+  }
+  
+  /// The normalized density 
+  virtual double pdf(const vec_t &x, const vec_t &x2) const {
+    return d_pdf;
+  }
+  
+  /// The log of the normalized density 
+  virtual double log_pdf(const vec_t &x, const vec_t &x2) const {
+    return log(d_pdf);
+  }
+  
+  /// Sample the distribution
+  virtual void operator()(const vec_t &x, vec_t &x2) const {
+    size_t nv=u_step.size();
+    for(size_t i=0;i<nv;i++) {
+      while (x2[i]<u_low[i] || x2[i]>u_high[i]) {
+	x2[i]=x[i]+u_step[i]*unif(rd);
+      }
+    }
+    return;
   }
   
   };

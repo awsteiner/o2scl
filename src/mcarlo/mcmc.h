@@ -28,10 +28,10 @@
 #define O2SCL_MCMC_H
 
 #include <iostream>
+#include <random>
 
 #include <boost/numeric/ublas/vector.hpp>
 
-#include <o2scl/rng_gsl.h>
 #include <o2scl/uniform_grid.h>
 #include <o2scl/table3d.h>
 #include <o2scl/hdf_file.h>
@@ -63,7 +63,7 @@ namespace o2scl {
   protected:
   
   /// Random number generator
-  o2scl::rng_gsl gr;
+  std::uniform_real_distribution<double> unif;
   
   /// Proposal distribution
   o2scl::prob_cond_mdim<vec_t> *prop_dist;
@@ -156,7 +156,7 @@ namespace o2scl {
   bool err_nonconv;
   //@}
   
-  mcmc_base() {
+  mcmc_base() : unif(0.0,1.0) {
     user_seed=0;
     n_warm_up=0;
 
@@ -201,7 +201,7 @@ namespace o2scl {
     if (user_seed!=0) {
       seed=user_seed;
     }
-    gr.set_seed(seed);
+    std::mt19937 rd(seed);
 
     // Keep track of successful and failed MH moves
     n_accept=0;
@@ -285,7 +285,7 @@ namespace o2scl {
 			o2scl::exc_einval);
 	    }
 	    do {
-	      current[ij][ik]=init[ik]+(gr.random()*2.0-1.0)*
+	      current[ij][ik]=init[ik]+(unif(rd)*2.0-1.0)*
 		(high[ik]-low[ik])/100.0;
 	    } while (current[ij][ik]>=high[ik] || current[ij][ik]<=low[ik]);
 	  }
@@ -385,11 +385,11 @@ namespace o2scl {
 	  // Choose jth walker
 	  size_t ij;
 	  do {
-	    ij=((size_t)(gr.random()*((double)n_walk)));
+	    ij=((size_t)(unif(rd)*((double)n_walk)));
 	  } while (ij==ik || ij>=n_walk);
 	
 	  // Select z 
-	  double p=gr.random();
+	  double p=unif(rd);
 	  double a=step_fac;
 	  smove_z=(1.0-2.0*p+2.0*a*p+p*p-2.0*a*p*p+a*a*p*p)/a;
 	
@@ -416,27 +416,26 @@ namespace o2scl {
 	
 	// Use proposal distribution and compute associated weight
 	(*prop_dist)(current[0],next);
-	double numer=prop_dist->pdf(current[0],next);
-	double denom=prop_dist->pdf(next,current[0]);
-	if (denom==0.0) {
-	  O2SCL_ERR2("Proposal distribution denominator vanished in ",
+	q_prop=prop_dist->log_pdf(current[0],next)-
+	  prop_dist->log_pdf(next,current[0]);
+	if (!std::isfinite(q_prop)) {
+	  O2SCL_ERR2("Proposal distribution not finite in ",
 		     "mcmc_base::mcmc().",o2scl::exc_efailed);
 	}
-	q_prop=numer/denom;
 
       } else {
 
 	// Uniform random-walk step
 	for(size_t k=0;k<nparams;k++) {
 	  
-	  next[k]=current[0][k]+(gr.random()*2.0-1.0)*
+	  next[k]=current[0][k]+(unif(rd)*2.0-1.0)*
 	    (high[k]-low[k])/step_fac;
 	
 	  // If it's out of range, redo step near boundary
 	  if (next[k]<low[k]) {
-	    next[k]=low[k]+gr.random()*(high[k]-low[k])/step_fac;
+	    next[k]=low[k]+unif(rd)*(high[k]-low[k])/step_fac;
 	  } else if (next[k]>high[k]) {
-	    next[k]=high[k]-gr.random()*(high[k]-low[k])/step_fac;
+	    next[k]=high[k]-unif(rd)*(high[k]-low[k])/step_fac;
 	  }
 	  
 	  if (next[k]<low[k] || next[k]>high[k]) {
@@ -471,11 +470,12 @@ namespace o2scl {
       bool accept=false;
 
       if (iret==o2scl::success) {
-	double r=gr.random();
+	double r=unif(rd);
 	
 	// Metropolis algorithm
 	if (aff_inv) {
-	  if (r<pow(smove_z,((double)n_walk)-1.0)*w_next/w_current[ik]) {
+	  if (r<pow(smove_z,((double)n_walk)-1.0)*
+	      exp(w_next-w_current[ik])) {
 	    accept=true;
 	  }
 	  if (verbose>=1) {
@@ -489,7 +489,7 @@ namespace o2scl {
 	    std::cout.precision(6);
 	  }
 	} else if (pd_mode) {
-	  if (r<w_next/w_current[0]*q_prop) {
+	  if (r<exp(w_next-w_current[0]+q_prop)) {
 	    accept=true;
 	  }
 	  if (verbose>=1) {
@@ -501,7 +501,7 @@ namespace o2scl {
 	    std::cout.precision(6);
 	  }
 	} else {
-	  if (r<w_next/w_current[0]) {
+	  if (r<exp(w_next-w_current[0])) {
 	    accept=true;
 	  }
 	  if (verbose>=1) {
