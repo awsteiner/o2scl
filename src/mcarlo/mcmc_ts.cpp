@@ -68,6 +68,9 @@ int measure(const ubvector &pars, double weight, size_t ix, bool new_meas,
 int fill_func(const ubvector &pars, double weight, std::vector<double> &line,
 	 std::array<double,1> &dat) {
   line.push_back(dat[0]);
+  if (mct.get_table()->get_nlines()==100) {
+    return mcmc_base<point_funct,measure_funct,int,ubvector>::mcmc_done;
+  }
   return 0;
 }
 
@@ -135,7 +138,7 @@ int main(int argc, char *argv[]) {
   vector<string> punits={"MeV","MeV^2"};
   mct.set_names_units(pnames,punits);
 
-  mct.mcmc(100,1,init,low,high,pf,ff);
+  mct.mcmc(1,init,low,high,pf,ff);
 
   cout << vector_mean(mct.get_table()->get_column("x")) << endl;
 

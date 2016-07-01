@@ -54,8 +54,6 @@ namespace o2scl {
       \note This class is experimental.
       
       \todo Add better testing
-      \todo Convert to work with the log of the distribution
-      instead.
   */
   template<class func_t, class measure_t,
     class data_t, class vec_t=ubvector> class mcmc_base {
@@ -696,10 +694,6 @@ namespace o2scl {
     return;
   }
 
-  /** \brief Desc
-   */
-  size_t n_iterations;
-  
   public:
 
   mcmc_table() : tab(new o2scl::table_units<>) {
@@ -712,12 +706,10 @@ namespace o2scl {
       \c low and \c high, using \c func as the objective function and
       calling the measurement function \c meas at each MC point.
   */
-  virtual int mcmc(size_t niters, size_t nparams, vec_t &init,
+  virtual int mcmc(size_t nparams, vec_t &init,
 		   vec_t &low, vec_t &high, func_t &func,
 		   fill_t &fill) {
 
-    n_iterations=niters;
-    
     internal_measure_t meas=std::bind
     (std::mem_fn<int(const vec_t &,double,size_t,bool,data_t &,fill_t &)>
      (&mcmc_table::add_line),this,std::placeholders::_1,
@@ -750,15 +742,21 @@ namespace o2scl {
     // Test to see if we need to add a new line of data or
     // increment the weight on the previous line
     if (tab->get_nlines()<=(this->n_walk-1) || new_meas==true) {
-
-      if (tab->get_nlines()==n_iterations) return this->mcmc_done;
       
       std::vector<double> line;
-      fill_line(pars,weight,line,dat,fill);
+      int fret=fill_line(pars,weight,line,dat,fill);
+      
+      if (fret!=o2scl::success) {
+	if (this->verbose>=1) {
+	  std::cout << "Fill function returned " << fret
+		    << ". Stopping run." << std::endl;
+	}
+	return this->mcmc_done;
+      }
       
       if (line.size()!=tab->get_ncolumns()) {
 	std::cout << "line: " << line.size() << " columns: "
-		  << tab->get_ncolumns() << std::endl;
+	<< tab->get_ncolumns() << std::endl;
 	O2SCL_ERR("Table misalignment in mcmc_table::add_line().",
 		  exc_einval);
       }
