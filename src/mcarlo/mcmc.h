@@ -679,7 +679,7 @@ namespace o2scl {
 
   /** \brief Fill \c line with data for insertion into the table
    */
-  virtual void fill_line(const vec_t &pars, double weight, 
+  virtual int fill_line(const vec_t &pars, double weight, 
 			 std::vector<double> &line, data_t &dat,
 			 fill_t &fill) {
 
@@ -689,9 +689,7 @@ namespace o2scl {
     for(size_t i=0;i<pars.size();i++) {
       line.push_back(pars[i]);
     }
-    fill(pars,weight,line,dat);
-    
-    return;
+    return fill(pars,weight,line,dat);
   }
 
   public:
