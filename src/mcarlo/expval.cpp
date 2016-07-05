@@ -230,8 +230,8 @@ void expval_scalar::add(double val) {
 }
 
 void expval_scalar::current_avg_stats(double &avg, double &std_dev, 
-				  double &avg_err, size_t &m_block,
-				  size_t &m_per_block) const {
+				      double &avg_err, size_t &m_block,
+				      size_t &m_per_block) const {
   
   // Only one block that is partially full
   if (iblock==0) {

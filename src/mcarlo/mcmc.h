@@ -72,19 +72,23 @@ namespace o2scl {
       value, for any point in parameter space (any point between \c
       low and \c high ).
 
-      After each acceptance or rejection, a user-specified
-      "measurement" function (of type \c measure_t ) is called, which
-      can be used to store the results. In order to stop the
-      simulation, this function should return the value \ref mcmc_done
+      If the function being simulated returns \ref mcmc_skip then the
+      point is automatically rejected. After each acceptance or
+      rejection, a user-specified "measurement" function (of type \c
+      measure_t ) is called, which can be used to store the results.
+      In order to stop the simulation, either this function or the
+      probability distribution being simulated should return the value
+      \ref mcmc_done .
 
-      A generic proposal distribution can be specified 
-      in \ref set_proposal(). To go back to the default
-      random walk method, one can call the function
-      \ref unset_proposal().
+      A generic proposal distribution can be specified in \ref
+      set_proposal(). To go back to the default random walk method,
+      one can call the function \ref unset_proposal().
 
       If \ref aff_inv is set to true and the number of walkers, \ref
       n_walk is set to a number larger than 1, then affine-invariant
-      sampling is used.
+      sampling is used. For affine-invariant sampling, the variable 
+      \ref step_fac represents the value of \f$ a \f$, the 
+      limits of the distribution for \f$ z \f$.
 
       In order to store data at each point, the user can store this
       data in any object of type \c data_t . If affine-invariant
@@ -94,8 +98,6 @@ namespace o2scl {
       in the case that the steps are accepted or rejected.
 
       \note This class is experimental.
-      
-      \todo Add better testing
   */
   template<class func_t, class measure_t,
     class data_t, class vec_t=ubvector> class mcmc_base {
@@ -148,6 +150,9 @@ namespace o2scl {
 
   /// Integer to indicate completion
   static const int mcmc_done=-10;
+
+  /// Integer to indicate rejection
+  static const int mcmc_skip=-20;
 
   /// \name Output quantities
   //@{
@@ -354,7 +359,8 @@ namespace o2scl {
 	    done=true;
 	  } else if (init_iters>max_bad_steps) {
 	    if (err_nonconv) {
-	      O2SCL_ERR("Initial walkers failed.",o2scl::exc_einval);
+	      O2SCL_ERR2("Initial walkers failed in ",
+			 "mcmc_base::mcmc().",o2scl::exc_einval);
 	    }
 	    return 1;
 	  }
@@ -414,44 +420,28 @@ namespace o2scl {
 
 	// Choose walker to move
 	ik=mcmc_iters % n_walk;
-      
-	bool in_bounds;
-	size_t step_iters=0;
-      
+	
+	// Choose jth walker
+	size_t ij;
 	do {
-
-	  in_bounds=true;
+	  ij=((size_t)(unif(rd)*((double)n_walk)));
+	} while (ij==ik || ij>=n_walk);
 	
-	  // Choose jth walker
-	  size_t ij;
-	  do {
-	    ij=((size_t)(unif(rd)*((double)n_walk)));
-	  } while (ij==ik || ij>=n_walk);
+	// Select z 
+	double p=unif(rd);
+	double a=step_fac;
+	smove_z=(1.0-2.0*p+2.0*a*p+p*p-2.0*a*p*p+a*a*p*p)/a;
 	
-	  // Select z 
-	  double p=unif(rd);
-	  double a=step_fac;
-	  smove_z=(1.0-2.0*p+2.0*a*p+p*p-2.0*a*p*p+a*a*p*p)/a;
+	if (verbose>=2) {
+	  std::cout << "j,k,p,z: " << ij << " " << ik << " "
+		    << p << " " << smove_z << std::endl;
+	}
 	
-	  // Create new trial point
-	  for(size_t i=0;i<nparams;i++) {
-	    next[i]=current[ij][i]+smove_z*(current[ik][i]-current[ij][i]);
-	    if (next[i]>=high[i] || next[i]<=low[i]) {
-	      in_bounds=false;
-	    }
-	  }
+	// Create new trial point
+	for(size_t i=0;i<nparams;i++) {
+	  next[i]=current[ij][i]+smove_z*(current[ik][i]-current[ij][i]);
+	}
 	
-	  step_iters++;
-	  if (step_iters==1000) {
-	    if (err_nonconv) {
-	      O2SCL_ERR("Failed to find suitable step in mcmc_base::mcmc().",
-			o2scl::exc_einval);
-	    }
-	    return 2;
-	  }
-
-	} while (in_bounds==false);	
-
       } else if (pd_mode) {
 	
 	// Use proposal distribution and compute associated weight
@@ -467,21 +457,8 @@ namespace o2scl {
 
 	// Uniform random-walk step
 	for(size_t k=0;k<nparams;k++) {
-	  
 	  next[k]=current[0][k]+(unif(rd)*2.0-1.0)*
 	    (high[k]-low[k])/step_fac;
-	
-	  // If it's out of range, redo step near boundary
-	  if (next[k]<low[k]) {
-	    next[k]=low[k]+unif(rd)*(high[k]-low[k])/step_fac;
-	  } else if (next[k]>high[k]) {
-	    next[k]=high[k]-unif(rd)*(high[k]-low[k])/step_fac;
-	  }
-	  
-	  if (next[k]<low[k] || next[k]>high[k]) {
-	    O2SCL_ERR("Sanity check in parameter step in mcmc_base::mcmc().",
-		      o2scl::exc_esanity);
-	  }
 	}
       
       }
@@ -495,13 +472,19 @@ namespace o2scl {
       } else {
 	iret=func(nparams,next,w_next,data_arr[ik]);
       }
-      if (iret==o2scl::success && w_next>w_best) {
-	best=next;
-	w_best=w_next;
-	if (switch_arr[ik]==false) {
-	  best_point(best,w_best,data_arr[ik+n_walk]);
-	} else {
-	  best_point(best,w_best,data_arr[ik]);
+      if (iret!=mcmc_done) {
+	// If it's out of bounds, ensure that the point is rejected
+	for(size_t k=0;k<nparams;k++) {
+	  if (next[k]<=low[k] || next[k]>=high[k]) iret=mcmc_skip;
+	}
+	if (iret==o2scl::success && w_best>w_next) {
+	  best=next;
+	  w_best=w_next;
+	  if (switch_arr[ik]==false) {
+	    best_point(best,w_best,data_arr[ik+n_walk]);
+	  } else {
+	    best_point(best,w_best,data_arr[ik]);
+	  }
 	}
       }
       
@@ -512,19 +495,19 @@ namespace o2scl {
       if (iret==o2scl::success) {
 	double r=unif(rd);
 	
-	// Metropolis algorithm
 	if (aff_inv) {
-	  if (r<pow(smove_z,((double)n_walk)-1.0)*
+	  if (r<pow(smove_z,((double)nparams)-1.0)*
 	      exp(w_next-w_current[ik])) {
 	    accept=true;
 	  }
 	  if (verbose>=1) {
 	    std::cout.precision(4);
 	    std::cout << "mcmc: ";
-	    std::cout.width((int)(1.0+log10((double)(n_walk-1))));
+	    std::cout.width((int)(1.0+log10((double)(nparams-1))));
 	    std::cout << ik << " " << w_current[ik] << " " << w_next << " "
-		      << pow(smove_z,((double)n_walk)-1.0) << " ratio: "
-		      << pow(smove_z,((double)n_walk)-1.0)*w_next/w_current[ik]
+		      << smove_z << " ratio: "
+		      << pow(smove_z,((double)nparams)-1.0)*
+	      exp(w_next-w_current[ik])
 		      << " accept: " << accept << std::endl;
 	    std::cout.precision(6);
 	  }
@@ -536,18 +519,20 @@ namespace o2scl {
 	    std::cout.precision(4);
 	    std::cout << "mcmc: " << w_current[0] 
 		      << " " << w_next << " " << q_prop << " ratio: "
-		      << w_next/w_current[0]*q_prop
+		      << exp(w_next-w_current[0]+q_prop)
 		      << " accept: " << accept << std::endl;
 	    std::cout.precision(6);
 	  }
 	} else {
+	  // Metropolis algorithm
 	  if (r<exp(w_next-w_current[0])) {
 	    accept=true;
 	  }
 	  if (verbose>=1) {
 	    std::cout.precision(4);
 	    std::cout << "mcmc: " << w_current[0] << " " << w_next
-		      << " ratio: " << w_next/w_current[0]
+		      << " ratio: "
+		      << exp(w_next-w_current[0])
 		      << " accept: " << accept << std::endl;
 	    std::cout.precision(6);
 	  }
@@ -592,24 +577,29 @@ namespace o2scl {
 
       }
 
-      if (meas_ret!=0) {
+      if (iret==mcmc_done) {
 	main_done=true;
-	if (meas_ret!=mcmc_done && err_nonconv) {
-	  O2SCL_ERR((((std::string)"Measurement function returned ")+
-		     std::to_string(meas_ret)+" in mcmc_base::mcmc().").c_str(),
-		    o2scl::exc_efailed);
+      } else {
+	if (meas_ret!=0) {
+	  main_done=true;
+	  if (meas_ret!=mcmc_done && err_nonconv) {
+	    O2SCL_ERR((((std::string)"Measurement function returned ")+
+		       std::to_string(meas_ret)+
+		       " in mcmc_base::mcmc().").c_str(),
+		      o2scl::exc_efailed);
+	  }
 	}
-      }
-      
-      mcmc_iters++;
-
-      if (warm_up && mcmc_iters==n_warm_up) {
-	warm_up=false;
-	mcmc_iters=0;
-	n_accept=0;
-	n_reject=0;
-	if (verbose>=1) {
-	  std::cout << "Finished warmup." << std::endl;
+	
+	mcmc_iters++;
+	
+	if (warm_up && mcmc_iters==n_warm_up) {
+	  warm_up=false;
+	  mcmc_iters=0;
+	  n_accept=0;
+	  n_reject=0;
+	  if (verbose>=1) {
+	    std::cout << "Finished warmup." << std::endl;
+	  }
 	}
       }
       
@@ -829,9 +819,16 @@ namespace o2scl {
 	// table. This is important because otherwise the last line in
 	// the table will always only have unit multiplicity, which
 	// may or may not be correct.
-	if (this->verbose>=1) {
-	  std::cout << "Fill function returned " << fret
-		    << ". Stopping run." << std::endl;
+	if (fret==this->mcmc_done) {
+	  if (this->verbose>=1) {
+	    std::cout << "Fill function returned mcmc_done. " 
+		      << "Stopping run." << std::endl;
+	  }
+	} else {
+	  if (this->verbose>=1) {
+	    std::cout << "Fill function returned " << fret
+		      << ". Stopping run." << std::endl;
+	  }
 	}
 	return this->mcmc_done;
       }
@@ -858,7 +855,7 @@ namespace o2scl {
 	char ch;
 	std::cin >> ch;
       }
-      
+
       tab->line_of_data(line.size(),line);
 	
     } else if (tab->get_nlines()>0) {
@@ -866,7 +863,7 @@ namespace o2scl {
       // Otherwise, just increment the multiplier on the previous line
       tab->set("mult",tab->get_nlines()-this->n_walk,
 	       tab->get("mult",tab->get_nlines()-this->n_walk)+1.0);
-
+      
       if (this->verbose>=2) {
 	std::cout << "mcmc: Updating line:" << std::endl;
 	std::vector<std::string> sc_in, sc_out;
