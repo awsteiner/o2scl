@@ -77,12 +77,29 @@ int fill_line(const ubvector &pars, double weight,
   return 0;
 }
 
+/** 
+ */
+int f_cub(unsigned ndim, size_t npt, const double *x, unsigned fdim,
+	  double *fval) {
+  for (size_t i=0;i<npt;i++) {
+    double *x2=x+i*ndim;
+    double *f2=fval+i*fdim;
+    f2[0]=exp(-((x2[0]-0.2)*(x2[0]-0.2)+
+		   (x2[1]-0.5)*(x2[1]-0.5)));
+  }
+  return 0;
+}
+
 int main(int argc, char *argv[]) {
   
   cout.setf(ios::scientific);
 
   test_mgr tm;
   tm.set_output_level(1);
+
+  typedef std::function<
+    int(unsigned,size_t,const double *,unsigned,double *)> cub_funct_arr;
+  inte_hcubature<cub_funct_arr> hc;
 
   // Exact results
   double res[3]={0.0,0.511498,0.344514};
@@ -121,7 +138,7 @@ int main(int argc, char *argv[]) {
     cout.width(5);
     cout << i << " " << t->get("mult",i) << " ";
     cout.setf(ios::showpos);
-    cout << t->get("weight",i) << " " << t->get("x0",i) << " ";
+    cout << t->get("log_wgt",i) << " " << t->get("x0",i) << " ";
     cout << t->get("x1",i) << " " << t->get("x0sq",i) << " "
 	 << t->get("x0sq_x1sq",i) << endl;
     cout.unsetf(ios::showpos);
@@ -129,8 +146,15 @@ int main(int argc, char *argv[]) {
   cout.precision(6);
   cout << endl;
 
+  /*
+    This function averages the table into 40 blocks to remove
+    autocorrelations. The autocorrelation length is not computed here
+    (but is small enough for this example).
+  */
+  mct.reblock(40);
+
+  // Compute and test the average values
   size_t n=t->get_nlines();
-  
   double t_avg=wvector_mean(n,t->get_column("x0sq"),
 			    t->get_column("mult"));
   double t_stddev=wvector_stddev(n,t->get_column("x0sq"),
@@ -140,9 +164,8 @@ int main(int argc, char *argv[]) {
   cout.setf(ios::showpos);
   cout << t_avg << " " << t_stddev << " " << t_avgerr << endl;
   cout.unsetf(ios::showpos);
-  // These tests don't work yet because I need to remove the
-  // autocorrelations
-  //tm.test_abs(t_avg,res[1],t_avgerr*10.0,"tab 1");
+
+  tm.test_abs(t_avg,res[1],t_avgerr*10.0,"tab 1");
 
   t_avg=wvector_mean(n,t->get_column("x0sq_x1sq"),
 		     t->get_column("mult"));
@@ -153,7 +176,7 @@ int main(int argc, char *argv[]) {
   cout.setf(ios::showpos);
   cout << t_avg << " " << t_stddev << " " << t_avgerr << endl;
   cout.unsetf(ios::showpos);
-  //tm.test_abs(t_avg,res[2],t_avgerr*10.0,"tab 2");
+  tm.test_abs(t_avg,res[2],t_avgerr*10.0,"tab 2");
   cout << endl;
 
   // MCMC with affine-invariant sampling
@@ -171,13 +194,15 @@ int main(int argc, char *argv[]) {
     cout.width(5);
     cout << i << " " << t->get("mult",i) << " ";
     cout.setf(ios::showpos);
-    cout << t->get("weight",i) << " " << t->get("x0",i) << " ";
+    cout << t->get("log_wgt",i) << " " << t->get("x0",i) << " ";
     cout << t->get("x1",i) << " " << t->get("x0sq",i) << " "
 	 << t->get("x0sq_x1sq",i) << endl;
     cout.unsetf(ios::showpos);
   }
   cout.precision(6);
   cout << endl;
+
+  mct.reblock(40);
 
   n=t->get_nlines();
 
@@ -190,7 +215,7 @@ int main(int argc, char *argv[]) {
   cout.setf(ios::showpos);
   cout << t_avg << " " << t_stddev << " " << t_avgerr << endl;
   cout.unsetf(ios::showpos);
-  //tm.test_abs(t_avg,res[1],t_avgerr*10.0,"tab 1");
+  tm.test_abs(t_avg,res[1],t_avgerr*10.0,"tab 1");
 
   t_avg=wvector_mean(n,t->get_column("x0sq_x1sq"),
 		     t->get_column("mult"));
@@ -201,7 +226,7 @@ int main(int argc, char *argv[]) {
   cout.setf(ios::showpos);
   cout << t_avg << " " << t_stddev << " " << t_avgerr << endl;
   cout.unsetf(ios::showpos);
-  //tm.test_abs(t_avg,res[2],t_avgerr*10.0,"tab 2");
+  tm.test_abs(t_avg,res[2],t_avgerr*10.0,"tab 2");
   cout << endl;
   
   tm.report();

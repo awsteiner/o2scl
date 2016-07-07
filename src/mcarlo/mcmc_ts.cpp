@@ -52,6 +52,7 @@ int point(size_t nv, const ubvector &pars, double &ret,
 	  std::array<double,1> &dat) {
   dat[0]=pars[0]*pars[0];
   ret=-pars[0]*pars[0]/2.0;
+  //cout << "Point: " << pars[0] << " " << ret << endl;
   return o2scl::success;
 }
 
@@ -71,7 +72,9 @@ int measure(const ubvector &pars, double weight, size_t ix, bool new_meas,
 	    std::array<double,1> &dat) {
   sev_x.add(pars[0]);
   sev_x2.add(dat[0]);
-  // Double check that the 'dat' object is correctly filled
+  //cout << "Measure: " << weight << " " << pars[0] << " "
+  //<< dat[0] << " " << endl;
+  // Check that the 'dat' object is correctly filled
   if ((pars[0]*pars[0]-dat[0])>1.0e-10) {
     cerr << "Failure." << endl;
     exit(-1);
@@ -86,11 +89,12 @@ int measure(const ubvector &pars, double weight, size_t ix, bool new_meas,
 int fill_func(const ubvector &pars, double weight, std::vector<double> &line,
 	 std::array<double,1> &dat) {
   line.push_back(dat[0]);
+  // Check that the 'dat' object is correctly filled
   if ((pars[0]*pars[0]-dat[0])>1.0e-10) {
     cerr << "Failure 2." << endl;
     exit(-1);
   }
-  if (mct.get_table()->get_nlines()==niters/3) {
+  if (mct.get_table()->get_nlines()==338066) {
     return mcmc_base<point_funct,measure_funct,int,ubvector>::mcmc_done;
   }
   return 0;
@@ -136,16 +140,20 @@ int main(int argc, char *argv[]) {
   ubvector init(1);
   init[0]=-0.01;
 
+  // Set up expectation value objects
   sev_x.set_blocks(40,niters/40);
   sev_x2.set_blocks(40,niters/40);
   double avg, std_dev, avg_err;
   size_t m_block, m_per_block;
 
-  it_count=0;
+  // Run MCMC
   
+  it_count=0;
+
   mc.step_fac=2.0;
   mc.mcmc(1,init,low,high,pf,mf);
 
+  // Output and test results
   cout << "Plain MCMC: " << endl;
   sev_x.current_avg_stats(avg,std_dev,avg_err,m_block,m_per_block);
   cout.setf(ios::showpos);
@@ -161,7 +169,8 @@ int main(int argc, char *argv[]) {
   cout << mc.n_accept << " " << mc.n_reject << endl;
   tm.test_abs(avg,res[2],avg_err*10.0,"plain 2");
   cout << endl;
-  
+
+  // Clear expectation value objects for next iteration
   sev_x.free();
   sev_x2.free();
 
@@ -172,6 +181,7 @@ int main(int argc, char *argv[]) {
   
   it_count=0;
   
+  mc.user_seed=10;
   mc.mcmc(1,init,low,high,pf,mf);
   
   sev_x.current_avg_stats(avg,std_dev,avg_err,m_block,m_per_block);
@@ -193,18 +203,19 @@ int main(int argc, char *argv[]) {
   sev_x2.free();
 
   cout << "Table-based version:" << endl;
-  if (1) {
-    mct.aff_inv=true;
-    mct.n_walk=10;
-    mct.step_fac=20.0;
-  }
+  mct.aff_inv=true;
+  mct.n_walk=10;
+  mct.step_fac=20.0;
 
   vector<string> pnames={"x","x2"};
   vector<string> punits={"MeV","MeV^2"};
   mct.set_names_units(pnames,punits);
 
   it_count=0;
+  mct.user_seed=10;
   mct.mcmc(1,init,low,high,pf,ff);
+
+  mct.reblock(40);
   
   shared_ptr<table_units<> > t=mct.get_table();
   size_t n=t->get_nlines();

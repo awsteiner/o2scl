@@ -79,7 +79,7 @@ namespace o2scl {
       In order to stop the simulation, either this function or the
       probability distribution being simulated should return the value
       \ref mcmc_done .
-
+      
       A generic proposal distribution can be specified in \ref
       set_proposal(). To go back to the default random walk method,
       one can call the function \ref unset_proposal().
@@ -146,6 +146,9 @@ namespace o2scl {
   }
   //@}
 
+  /// Index of the current walker
+  size_t curr_walker;
+  
   public:
 
   /// Integer to indicate completion
@@ -310,10 +313,9 @@ namespace o2scl {
     if (aff_inv) {
 
       // Stretch-move steps
-      size_t ij_best=0;
 
       // Initialize each walker in turn
-      for(size_t ij=0;ij<n_walk;ij++) {
+      for(curr_walker=0;curr_walker<n_walk;curr_walker++) {
 
 	size_t init_iters=0;
 	bool done=false;
@@ -321,28 +323,30 @@ namespace o2scl {
 	while (!done) {
 
 	  // Make a perturbation from the initial point
-	  for(size_t ik=0;ik<nparams;ik++) {
-	    if (init[ik]<low[ik] || init[ik]>high[ik]) {
-	      O2SCL_ERR((((std::string)"Parameter ")+std::to_string(ik)+
+	  for(size_t ipar=0;ipar<nparams;ipar++) {
+	    if (init[ipar]<low[ipar] || init[ipar]>high[ipar]) {
+	      O2SCL_ERR((((std::string)"Parameter ")+std::to_string(ipar)+
 			 " of "+std::to_string(nparams)+
-			 " out of range (value="+std::to_string(init[ik])+
+			 " out of range (value="+std::to_string(init[ipar])+
 			 ") in mcmc_base::mcmc().").c_str(),
 			o2scl::exc_einval);
 	    }
 	    do {
-	      current[ij][ik]=init[ik]+(unif(rd)*2.0-1.0)*
-		(high[ik]-low[ik])/100.0;
-	    } while (current[ij][ik]>=high[ik] || current[ij][ik]<=low[ik]);
+	      current[curr_walker][ipar]=init[ipar]+(unif(rd)*2.0-1.0)*
+		(high[ipar]-low[ipar])/100.0;
+	    } while (current[curr_walker][ipar]>=high[ipar] ||
+		     current[curr_walker][ipar]<=low[ipar]);
 	  }
 	
 	  // Compute the weight
-	  int iret=func(nparams,current[ij],w_current[ij],data_arr[ij]);
+	  int iret=func(nparams,current[curr_walker],
+			w_current[curr_walker],data_arr[curr_walker]);
 	  
 	  if (verbose>=1) {
 	    std::cout.precision(4);
 	    std::cout << "mcmc: ";
 	    std::cout.width((int)(1.0+log10((double)(n_walk-1))));
-	    std::cout << ij << " " << w_current[ij]
+	    std::cout << curr_walker << " " << w_current[curr_walker]
 		      << " (initial; ai)" << std::endl;
 	    std::cout.precision(6);
 	  }
@@ -355,7 +359,8 @@ namespace o2scl {
 	  // If we have a good point, call the measurement function and
 	  // stop the loop
 	  if (iret==o2scl::success) {
-	    meas_ret=meas(current[ij],w_current[ij],ij,true,data_arr[ij]);
+	    meas_ret=meas(current[curr_walker],w_current[curr_walker],
+			  curr_walker,true,data_arr[curr_walker]);
 	    done=true;
 	  } else if (init_iters>max_bad_steps) {
 	    if (err_nonconv) {
@@ -364,6 +369,13 @@ namespace o2scl {
 	    }
 	    return 1;
 	  }
+	  
+	  if (verbose>=2) {
+	    std::cout << "Press a key and type enter to continue. ";
+	    char ch;
+	    std::cin >> ch;
+	  }
+	  
 	}
 
       }
@@ -410,7 +422,7 @@ namespace o2scl {
     while (!main_done) {
 
       // Walker to move (or zero when aff_inv is false)
-      size_t ik=0;
+      curr_walker=0;
       double smove_z=0.0;
     
       // ---------------------------------------------------
@@ -419,27 +431,23 @@ namespace o2scl {
       if (aff_inv) {
 
 	// Choose walker to move
-	ik=mcmc_iters % n_walk;
+	curr_walker=mcmc_iters % n_walk;
 	
 	// Choose jth walker
 	size_t ij;
 	do {
 	  ij=((size_t)(unif(rd)*((double)n_walk)));
-	} while (ij==ik || ij>=n_walk);
+	} while (ij==curr_walker || ij>=n_walk);
 	
 	// Select z 
 	double p=unif(rd);
 	double a=step_fac;
 	smove_z=(1.0-2.0*p+2.0*a*p+p*p-2.0*a*p*p+a*a*p*p)/a;
 	
-	if (verbose>=2) {
-	  std::cout << "j,k,p,z: " << ij << " " << ik << " "
-		    << p << " " << smove_z << std::endl;
-	}
-	
 	// Create new trial point
 	for(size_t i=0;i<nparams;i++) {
-	  next[i]=current[ij][i]+smove_z*(current[ik][i]-current[ij][i]);
+	  next[i]=current[ij][i]+smove_z*(current[curr_walker][i]-
+					  current[ij][i]);
 	}
 	
       } else if (pd_mode) {
@@ -467,10 +475,10 @@ namespace o2scl {
       // Compute next weight
 
       int iret;
-      if (switch_arr[ik]==false) {
-	iret=func(nparams,next,w_next,data_arr[ik+n_walk]);
+      if (switch_arr[curr_walker]==false) {
+	iret=func(nparams,next,w_next,data_arr[curr_walker+n_walk]);
       } else {
-	iret=func(nparams,next,w_next,data_arr[ik]);
+	iret=func(nparams,next,w_next,data_arr[curr_walker]);
       }
       if (iret!=mcmc_done) {
 	// If it's out of bounds, ensure that the point is rejected
@@ -480,10 +488,10 @@ namespace o2scl {
 	if (iret==o2scl::success && w_best>w_next) {
 	  best=next;
 	  w_best=w_next;
-	  if (switch_arr[ik]==false) {
-	    best_point(best,w_best,data_arr[ik+n_walk]);
+	  if (switch_arr[curr_walker]==false) {
+	    best_point(best,w_best,data_arr[curr_walker+n_walk]);
 	  } else {
-	    best_point(best,w_best,data_arr[ik]);
+	    best_point(best,w_best,data_arr[curr_walker]);
 	  }
 	}
       }
@@ -497,17 +505,18 @@ namespace o2scl {
 	
 	if (aff_inv) {
 	  if (r<pow(smove_z,((double)nparams)-1.0)*
-	      exp(w_next-w_current[ik])) {
+	      exp(w_next-w_current[curr_walker])) {
 	    accept=true;
 	  }
 	  if (verbose>=1) {
 	    std::cout.precision(4);
 	    std::cout << "mcmc: ";
 	    std::cout.width((int)(1.0+log10((double)(nparams-1))));
-	    std::cout << ik << " " << w_current[ik] << " " << w_next << " "
+	    std::cout << curr_walker << " "
+		      << w_current[curr_walker] << " " << w_next << " "
 		      << smove_z << " ratio: "
 		      << pow(smove_z,((double)nparams)-1.0)*
-	      exp(w_next-w_current[ik])
+	      exp(w_next-w_current[curr_walker])
 		      << " accept: " << accept << std::endl;
 	    std::cout.precision(6);
 	  }
@@ -547,17 +556,19 @@ namespace o2scl {
 	  
 	// Store results from new point
 	if (!warm_up) {
-	  if (switch_arr[ik]==false) {
-	    meas_ret=meas(next,w_next,ik,true,data_arr[ik+n_walk]);
+	  if (switch_arr[curr_walker]==false) {
+	    meas_ret=meas(next,w_next,curr_walker,true,
+			  data_arr[curr_walker+n_walk]);
 	  } else {
-	    meas_ret=meas(next,w_next,ik,true,data_arr[ik]);
+	    meas_ret=meas(next,w_next,curr_walker,true,
+			  data_arr[curr_walker]);
 	  }
 	}
 
 	// Prepare for next point
-	current[ik]=next;
-	w_current[ik]=w_next;
-	switch_arr[ik]=!(switch_arr[ik]);
+	current[curr_walker]=next;
+	w_current[curr_walker]=w_next;
+	switch_arr[curr_walker]=!(switch_arr[curr_walker]);
 	  
       } else {
 	    
@@ -566,12 +577,12 @@ namespace o2scl {
 
 	// Repeat measurement of old point
 	if (!warm_up) {
-	  if (switch_arr[ik]==false) {
-	    meas_ret=meas(current[ik],w_current[ik],ik,false,
-			  data_arr[ik]);
+	  if (switch_arr[curr_walker]==false) {
+	    meas_ret=meas(current[curr_walker],w_current[curr_walker],
+			  curr_walker,false,data_arr[curr_walker]);
 	  } else {
-	    meas_ret=meas(current[ik],w_current[ik],ik,false,
-			  data_arr[ik+n_walk]);
+	    meas_ret=meas(current[curr_walker],w_current[curr_walker],
+			  curr_walker,false,data_arr[curr_walker+n_walk]);
 	  }
 	}
 
@@ -602,7 +613,13 @@ namespace o2scl {
 	  }
 	}
       }
-      
+
+      if (verbose>=2) {
+	std::cout << "Press a key and type enter to continue. ";
+	char ch;
+	std::cin >> ch;
+      }
+
       // --------------------------------------------------------------
       // End of main loop
     }
@@ -662,7 +679,7 @@ namespace o2scl {
       object to \c line, in order to be added to the table.
 
       The output table will contain the parameters, the logarithm of
-      the function (called "weight") and a multiplying factor called
+      the function (called "log_wgt") and a multiplying factor called
       "mult". This "fill" function is called only when a step is
       accepted and the multiplier for that row is set to 1. If a
       future step is rejected, then the multiplier is increased by
@@ -696,7 +713,7 @@ namespace o2scl {
     
   /// Main data table for Markov chain
   std::shared_ptr<o2scl::table_units<> > tab;
-    
+
   /** \brief MCMC initialization function
 
       This function sets the column names and units.
@@ -713,14 +730,19 @@ namespace o2scl {
     std::string s, u;
     tab->clear_table();
     tab->new_column("mult");
-    tab->new_column("weight");
+    tab->new_column("log_wgt");
     for(size_t i=0;i<col_names.size();i++) {
       tab->new_column(col_names[i]);
       if (col_units[i].length()>0) {
 	tab->set_unit(col_names[i],col_units[i]);
       }
     }
-      
+
+    walker_rows.resize(this->n_walk);
+    for(size_t i=0;i<this->n_walk;i++) {
+      walker_rows[i]=-1;
+    }
+    
     if (this->verbose>=2) {
       std::cout << "mcmc: Table column names and units: " << std::endl;
       for(size_t i=0;i<tab->get_ncolumns();i++) {
@@ -751,6 +773,11 @@ namespace o2scl {
     return fill(pars,weight,line,dat);
   }
 
+  /** \brief Record the last row in the table which corresponds
+      to each walker
+   */
+  std::vector<int> walker_rows;
+  
   public:
 
   mcmc_table() : tab(new o2scl::table_units<>) {
@@ -809,8 +836,8 @@ namespace o2scl {
 
     // Test to see if we need to add a new line of data or increment
     // the weight on the previous line
-    if (tab->get_nlines()<=(this->n_walk-1) || new_meas==true) {
-      
+    if (new_meas==true) {
+
       std::vector<double> line;
       int fret=fill_line(pars,weight,line,dat,fill);
       
@@ -851,18 +878,21 @@ namespace o2scl {
 	for(size_t k=0;k<sc_out.size();k++) {
 	  std::cout << sc_out[k] << std::endl;
 	}
-	std::cout << "Press a key and enter to continue." << std::endl;
-	char ch;
-	std::cin >> ch;
       }
 
+      walker_rows[this->curr_walker]=tab->get_nlines();
       tab->line_of_data(line.size(),line);
 	
     } else if (tab->get_nlines()>0) {
 	
       // Otherwise, just increment the multiplier on the previous line
-      tab->set("mult",tab->get_nlines()-this->n_walk,
-	       tab->get("mult",tab->get_nlines()-this->n_walk)+1.0);
+      if (walker_rows[this->curr_walker]<0 ||
+	  walker_rows[this->curr_walker]>=tab->get_nlines()) {
+	O2SCL_ERR2("Sanity in row counting in ",
+		   "mcmc_table::add_line().",o2scl::exc_esanity);
+      }
+      tab->set("mult",walker_rows[this->curr_walker],
+	       tab->get("mult",walker_rows[this->curr_walker]+1.0));
       
       if (this->verbose>=2) {
 	std::cout << "mcmc: Updating line:" << std::endl;
@@ -871,15 +901,12 @@ namespace o2scl {
 	  sc_in.push_back
 	    (tab->get_column_name(k)+": "+
 	     o2scl::dtos(tab->get(tab->get_column_name(k),
-				  tab->get_nlines()-this->n_walk)));
+				  walker_rows[this->curr_walker])));
 	}
 	o2scl::screenify(tab->get_ncolumns(),sc_in,sc_out);
 	for(size_t k=0;k<sc_out.size();k++) {
 	  std::cout << sc_out[k] << std::endl;
 	}
-	std::cout << "Press a key and enter to continue." << std::endl;
-	char ch;
-	std::cin >> ch;
       }
       
     }
@@ -887,7 +914,50 @@ namespace o2scl {
     return 0;
   }
   //@}
-    
+
+  /** \brief Reaverage the data into blocks of a fixed
+      size in order to avoid autocorrelations
+      
+      \note The number of blocks \c n_blocks must be larger than the
+      current table size. This function expects to find a column named
+      "mult" which contains the multiplicity of each column, as is the
+      case after a call to \ref mcmc_base::mcmc().
+      
+      This function is useful to remove autocorrelations to the table
+      so long as the autocorrelation length is shorter than the block
+      size. This function does not compute the autocorrelation length
+      to check that this is the case.
+  */
+  void reblock(size_t n_blocks) {
+    size_t n=tab->get_nlines();
+    if (n_blocks>n) {
+      O2SCL_ERR2("Cannot reblock. Not enough data in ",
+		"mcmc_table::reblock().",o2scl::exc_einval);
+    }
+    size_t n_block=n/n_blocks;
+    size_t m=tab->get_ncolumns();
+    for(size_t j=0;j<n_blocks;j++) {
+      double mult=0.0;
+      ubvector dat(m);
+      for(size_t i=0;i<m;i++) {
+	dat[i]=0.0;
+      }
+      for(size_t k=j*n_block;k<(j+1)*n_block;k++) {
+	mult+=(*tab)["mult"][k];
+	for(size_t i=1;i<m;i++) {
+	  dat[i]+=(*tab)[i][k]*(*tab)["mult"][k];
+	}
+      }
+      tab->set("mult",j,mult);
+      for(size_t i=1;i<m;i++) {
+	dat[i]/=mult;
+	tab->set(i,j,dat[i]);
+      }
+    }
+    tab->set_nlines(n_blocks);
+    return;
+  }
+  
   };
   
   // End of namespace

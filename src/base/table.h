@@ -314,7 +314,7 @@ namespace o2scl {
     return *this;
   }
   //@}
-    
+
   // --------------------------------------------------------
   /** \name Basic get and set methods */
   //@{
