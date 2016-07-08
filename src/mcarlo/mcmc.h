@@ -836,15 +836,17 @@ namespace o2scl {
 
     // Test to see if we need to add a new line of data or increment
     // the weight on the previous line
-    if (true || new_meas==true) {
+    if (new_meas==true) {
 
       if (new_meas==false) {
-	std::cout << pars[0] << " " << weight << std::endl;
 	size_t row=walker_rows[this->curr_walker];
-	std::cout << tab->get("x",row) << " "
-	<< tab->get("log_wgt",row) << std::endl;
-	char ch;
-	std::cin >> ch;
+	if (fabs((pars[0]-tab->get("x",row))/pars[0])>1.0e-12 ||
+	    fabs((weight-tab->get("log_wgt",row))/weight)>1.0e-12) {
+	  std::cout << pars[0] << " " << weight << std::endl;
+	  std::cout << tab->get("x",row) << " "
+	  << tab->get("log_wgt",row) << std::endl;
+	  exit(-1);
+	}
       }
 
       std::vector<double> line;

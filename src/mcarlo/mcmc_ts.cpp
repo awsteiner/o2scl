@@ -43,10 +43,12 @@ typedef std::function<int(const ubvector &,double,size_t,bool,
 typedef std::function<int(const ubvector &,double,std::vector<double> &,
 			  std::array<double,1> &)> fill_funct;
 
-static const int niters=1000000;
+//static const int niters=1000000;
+static const int niters=10000;
 int it_count;
 expval_scalar sev_x, sev_x2;
 mcmc_table<point_funct,fill_funct,std::array<double,1>,ubvector> mct;
+std::ofstream fout;
 
 int point(size_t nv, const ubvector &pars, double &ret,
 	  std::array<double,1> &dat) {
@@ -70,6 +72,7 @@ double f2(size_t nv, const ubvector &pars) {
 
 int measure(const ubvector &pars, double weight, size_t ix, bool new_meas,
 	    std::array<double,1> &dat) {
+  fout << pars[0] << " " << weight << endl;
   sev_x.add(pars[0]);
   sev_x2.add(dat[0]);
   //cout << "Measure: " << weight << " " << pars[0] << " "
@@ -94,7 +97,7 @@ int fill_func(const ubvector &pars, double weight, std::vector<double> &line,
     cerr << "Failure 2." << endl;
     exit(-1);
   }
-  if (mct.get_table()->get_nlines()==338066) {
+  if (mct.get_table()->get_nlines()==niters) {
     return mcmc_base<point_funct,measure_funct,int,ubvector>::mcmc_done;
   }
   return 0;
@@ -152,8 +155,13 @@ int main(int argc, char *argv[]) {
   cout << "Plain MCMC: " << endl;
   
   it_count=0;
+  fout.open("sev1.txt");
   mc.step_fac=2.0;
+  mc.user_seed=10;
+  if (argc==2) mc.verbose=2;
   mc.mcmc(1,init,low,high,pf,mf);
+  mc.verbose=0;
+  fout.close();
 
   sev_x.current_avg_stats(avg,std_dev,avg_err,m_block,m_per_block);
 
@@ -186,8 +194,9 @@ int main(int argc, char *argv[]) {
   mc.step_fac=20.0;
   
   it_count=0;
-  mc.user_seed=10;
+  fout.open("sev2.txt");
   mc.mcmc(1,init,low,high,pf,mf);
+  fout.close();
   
   sev_x.current_avg_stats(avg,std_dev,avg_err,m_block,m_per_block);
 
@@ -219,13 +228,25 @@ int main(int argc, char *argv[]) {
   mct.set_names_units(pnames,punits);
 
   it_count=0;
-  mct.user_seed=10;
   mct.step_fac=2.0;
+  if (argc==3) mct.verbose=2;
+  mct.user_seed=10;
   mct.mcmc(1,init,low,high,pf,ff);
 
+  shared_ptr<table_units<> > t=mct.get_table();
+
+  fout.open("tab1.txt");
+  cout << "Here: " << t->get_nlines() << endl;
+  for(size_t i=0;i<t->get_nlines();i++) {
+    cout << i << endl;
+    for(size_t j=0;j<((size_t)(t->get("mult",i)+1.0e-6));j++) {
+      fout << t->get("x",i) << " " << t->get("log_wgt",i) << endl;
+    }
+  }
+  fout.close();
+  
   mct.reblock(40);
   
-  shared_ptr<table_units<> > t=mct.get_table();
   size_t n=t->get_nlines();
 
   double t_avg=wvector_mean(n,t->get_column("x"),t->get_column("mult"));
@@ -260,7 +281,6 @@ int main(int argc, char *argv[]) {
   mct.step_fac=20.0;
 
   it_count=0;
-  mct.user_seed=10;
   mct.mcmc(1,init,low,high,pf,ff);
 
   mct.reblock(40);

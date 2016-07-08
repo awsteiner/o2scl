@@ -111,8 +111,9 @@ int main(int argc, char *argv[]) {
   init[0]=0.2;
   init[1]=0.5;
 
-  double dlow[2]={-2,-2};
-  double dhigh[2]={2,2};
+  // Use cubature to compute integrals
+  double dlow[2]={-2.0,-2.0};
+  double dhigh[2]={2.0,2.0};
   double dres[3], derr[3];
   typedef std::function<
     int(unsigned,size_t,const double *,unsigned,double *)> cub_funct_arr;
@@ -120,14 +121,14 @@ int main(int argc, char *argv[]) {
   inte_hcubature<cub_funct_arr> hc;
   inte_hcubature<cub_funct_arr>::error_norm enh=
     inte_hcubature<cub_funct_arr>::ERROR_INDIVIDUAL;
-  hc.integ(3,cfa,2,dlow,dhigh,10000,0,1.0e-4,enh,dres,derr);
-  cout << dres[0] << " " << dres[1] << " " << dres[2] << endl;
-  cout << derr[0] << " " << derr[1] << " " << derr[2] << endl;
-  cout << dres[1]/dres[2] << " " << 0.511498/0.344514 << endl;
-
-  // Exact results
-  double res[3]={0.0,0.511498,0.344514};
+  int ret=hc.integ(3,cfa,2,dlow,dhigh,10000,0.0,1.0e-4,enh,dres,derr);
+  tm.test_gen(ret==0,"cubature success.");
   
+  // Exact results
+  double exact_res[2];
+  exact_res[0]=dres[1]/dres[0];
+  exact_res[1]=dres[2]/dres[0];
+
   point_funct pf=point;
   fill_funct ff=fill_line;
 
@@ -180,7 +181,7 @@ int main(int argc, char *argv[]) {
   cout << t_avg << " " << t_stddev << " " << t_avgerr << endl;
   cout.unsetf(ios::showpos);
 
-  tm.test_abs(t_avg,res[1],t_avgerr*10.0,"tab 1");
+  tm.test_abs(t_avg,exact_res[0],t_avgerr*10.0,"tab 1");
 
   t_avg=wvector_mean(n,t->get_column("x0sq_x1sq"),
 		     t->get_column("mult"));
@@ -191,7 +192,7 @@ int main(int argc, char *argv[]) {
   cout.setf(ios::showpos);
   cout << t_avg << " " << t_stddev << " " << t_avgerr << endl;
   cout.unsetf(ios::showpos);
-  tm.test_abs(t_avg,res[2],t_avgerr*10.0,"tab 2");
+  tm.test_abs(t_avg,exact_res[1],t_avgerr*10.0,"tab 2");
   cout << endl;
 
   // MCMC with affine-invariant sampling
@@ -230,7 +231,7 @@ int main(int argc, char *argv[]) {
   cout.setf(ios::showpos);
   cout << t_avg << " " << t_stddev << " " << t_avgerr << endl;
   cout.unsetf(ios::showpos);
-  tm.test_abs(t_avg,res[1],t_avgerr*10.0,"tab 1");
+  tm.test_abs(t_avg,exact_res[0],t_avgerr*10.0,"tab 1");
 
   t_avg=wvector_mean(n,t->get_column("x0sq_x1sq"),
 		     t->get_column("mult"));
@@ -241,7 +242,7 @@ int main(int argc, char *argv[]) {
   cout.setf(ios::showpos);
   cout << t_avg << " " << t_stddev << " " << t_avgerr << endl;
   cout.unsetf(ios::showpos);
-  tm.test_abs(t_avg,res[2],t_avgerr*10.0,"tab 2");
+  tm.test_abs(t_avg,exact_res[1],t_avgerr*10.0,"tab 2");
   cout << endl;
   
   tm.report();
