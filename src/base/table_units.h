@@ -189,7 +189,7 @@ namespace o2scl {
 
     /// Copy with <tt>operator=</tt> from \ref table_units
     table_units &operator=(const table_units &t) {
-  
+
       if (this!=&t) {
 
 	this->clear_table();

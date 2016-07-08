@@ -838,17 +838,6 @@ namespace o2scl {
     // the weight on the previous line
     if (new_meas==true) {
 
-      if (new_meas==false) {
-	size_t row=walker_rows[this->curr_walker];
-	if (fabs((pars[0]-tab->get("x",row))/pars[0])>1.0e-12 ||
-	    fabs((weight-tab->get("log_wgt",row))/weight)>1.0e-12) {
-	  std::cout << pars[0] << " " << weight << std::endl;
-	  std::cout << tab->get("x",row) << " "
-	  << tab->get("log_wgt",row) << std::endl;
-	  exit(-1);
-	}
-      }
-
       std::vector<double> line;
       int fret=fill_line(pars,weight,line,dat,fill);
       
@@ -862,10 +851,11 @@ namespace o2scl {
 	    std::cout << "Fill function returned mcmc_done. " 
 		      << "Stopping run." << std::endl;
 	  }
-	} else {
+	}
+	else {
 	  if (this->verbose>=1) {
 	    std::cout << "Fill function returned " << fret
-		      << ". Stopping run." << std::endl;
+	    << ". Stopping run." << std::endl;
 	  }
 	}
 	return this->mcmc_done;
@@ -893,7 +883,7 @@ namespace o2scl {
 
       walker_rows[this->curr_walker]=tab->get_nlines();
       tab->line_of_data(line.size(),line);
-	
+
     } else if (tab->get_nlines()>0) {
 	
       // Otherwise, just increment the multiplier on the previous line
@@ -902,8 +892,9 @@ namespace o2scl {
 	O2SCL_ERR2("Sanity in row counting in ",
 		   "mcmc_table::add_line().",o2scl::exc_esanity);
       }
-      tab->set("mult",walker_rows[this->curr_walker],
-	       tab->get("mult",walker_rows[this->curr_walker]+1.0));
+
+      double mult_old=tab->get("mult",walker_rows[this->curr_walker]);
+      tab->set("mult",walker_rows[this->curr_walker],mult_old+1.0);
       
       if (this->verbose>=2) {
 	std::cout << "mcmc: Updating line:" << std::endl;

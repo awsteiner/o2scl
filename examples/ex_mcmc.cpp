@@ -78,7 +78,7 @@ int fill_line(const ubvector &pars, double weight,
   return 0;
 }
 
-/** 
+/** Function for exact integration
  */
 int f_cub(unsigned ndim, size_t npt, const double *x, unsigned fdim,
 	  double *fval) {
@@ -143,12 +143,18 @@ int main(int argc, char *argv[]) {
   shared_ptr<table_units<> > t=mct.get_table();
 
   // MCMC with a random walk of a fixed length
+  cout << "MCMC with random walk:\n" << endl;
+  // This step factor is chosen to give approximately equal number of
+  // accept/reject steps but will be different for different problems
   mct.step_fac=3.0;
   mct.mcmc(2,init,low,high,pf,ff);
 
+  // Output table and other information
   cout << "n_accept, n_reject, table lines: "
        << mct.n_accept << " " << mct.n_reject << " "
        << t->get_nlines() << endl;
+  cout << "    i mult        log_wgt     x0          x1          "
+       << "x0sq        x0sq_x1sq" << endl;
   cout.precision(4);
   for(size_t i=0;i<t->get_nlines();i+=t->get_nlines()/10) {
     cout.width(5);
@@ -196,15 +202,22 @@ int main(int argc, char *argv[]) {
   cout << endl;
 
   // MCMC with affine-invariant sampling
+  cout << "MCMC with affine-invariant sampling:\n" << endl;
+
   mct.aff_inv=true;
   mct.n_walk=10;
+  // This step factor is chosen to give approximately equal number
+  // of accept/reject steps but will be different for
+  // different problems
   mct.step_fac=5.0;
-
   mct.mcmc(2,init,low,high,pf,ff);
 
+  // Output table and other information
   cout << "n_accept, n_reject, table lines: "
        << mct.n_accept << " " << mct.n_reject << " "
        << t->get_nlines() << endl;
+  cout << "    i mult        log_wgt     x0          x1          "
+       << "x0sq        x0sq_x1sq" << endl;
   cout.precision(4);
   for(size_t i=0;i<t->get_nlines();i+=t->get_nlines()/10) {
     cout.width(5);
@@ -218,8 +231,10 @@ int main(int argc, char *argv[]) {
   cout.precision(6);
   cout << endl;
 
+  // Perform block averaging
   mct.reblock(40);
 
+  // Compute and test the average values
   n=t->get_nlines();
 
   t_avg=wvector_mean(n,t->get_column("x0sq"),
