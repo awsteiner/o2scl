@@ -839,8 +839,8 @@ namespace o2scl {
 				     unsigned fdim, func_t &f, 
 				     unsigned nR, region *R) {
 
-      static const double DBL_MIN=std::numeric_limits<double>::min();
-      static const double DBL_EPSILON=std::numeric_limits<double>::epsilon();
+      static const double cub_dbl_min=std::numeric_limits<double>::min();
+      static const double cub_dbl_eps=std::numeric_limits<double>::epsilon();
 
       /* Gauss quadrature weights and kronrod quadrature abscissae and
 	 weights as evaluated with 80 decimal digit arithmetic by
@@ -965,8 +965,8 @@ namespace o2scl {
 	    double scale = pow((200 * err / result_asc), 1.5);
 	    err = (scale < 1) ? result_asc * scale : result_asc;
 	  }
-	  if (result_abs > DBL_MIN / (50 * DBL_EPSILON)) {
-	    double min_err = 50 * DBL_EPSILON * result_abs;
+	  if (result_abs > cub_dbl_min / (50 * cub_dbl_eps)) {
+	    double min_err = 50 * cub_dbl_eps * result_abs;
 	    if (min_err > err) err = min_err;
 	  }
 	  R[iR].ee[k].err = err;

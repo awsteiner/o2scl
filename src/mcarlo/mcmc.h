@@ -836,7 +836,16 @@ namespace o2scl {
 
     // Test to see if we need to add a new line of data or increment
     // the weight on the previous line
-    if (new_meas==true) {
+    if (true || new_meas==true) {
+
+      if (new_meas==false) {
+	std::cout << pars[0] << " " << weight << std::endl;
+	size_t row=walker_rows[this->curr_walker];
+	std::cout << tab->get("x",row) << " "
+	<< tab->get("log_wgt",row) << std::endl;
+	char ch;
+	std::cin >> ch;
+      }
 
       std::vector<double> line;
       int fret=fill_line(pars,weight,line,dat,fill);

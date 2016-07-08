@@ -113,7 +113,7 @@ int main(int argc, char *argv[]) {
   low[0]=-5.0;
   high[0]=2.0;
 
-  // First, compute exact results
+  // Compute exact results
   mcarlo_miser<> mm;
   mm.n_points=100000;
   multi_funct11 mf0=f0;
@@ -146,16 +146,18 @@ int main(int argc, char *argv[]) {
   double avg, std_dev, avg_err;
   size_t m_block, m_per_block;
 
-  // Run MCMC
+  // ----------------------------------------------------------------
+  // Plain MCMC
+
+  cout << "Plain MCMC: " << endl;
   
   it_count=0;
-
   mc.step_fac=2.0;
   mc.mcmc(1,init,low,high,pf,mf);
 
-  // Output and test results
-  cout << "Plain MCMC: " << endl;
   sev_x.current_avg_stats(avg,std_dev,avg_err,m_block,m_per_block);
+
+  // Output and test results
   cout.setf(ios::showpos);
   cout << avg << " " << std_dev << " " << avg_err << " ";
   cout.unsetf(ios::showpos);
@@ -174,17 +176,22 @@ int main(int argc, char *argv[]) {
   sev_x.free();
   sev_x2.free();
 
+  // ----------------------------------------------------------------
+  // Affine-invariant MCMC
+
   cout << "Affine-invariant MCMC: " << endl;
+  
   mc.aff_inv=true;
   mc.n_walk=10;
   mc.step_fac=20.0;
   
   it_count=0;
-  
   mc.user_seed=10;
   mc.mcmc(1,init,low,high,pf,mf);
   
   sev_x.current_avg_stats(avg,std_dev,avg_err,m_block,m_per_block);
+
+  // Output and test results
   cout.setf(ios::showpos);
   cout << avg << " " << std_dev << " " << avg_err << " ";
   cout.unsetf(ios::showpos);
@@ -202,10 +209,10 @@ int main(int argc, char *argv[]) {
   sev_x.free();
   sev_x2.free();
 
-  cout << "Table-based version:" << endl;
-  mct.aff_inv=true;
-  mct.n_walk=10;
-  mct.step_fac=20.0;
+  // ----------------------------------------------------------------
+  // Plain MCMC with table
+
+  cout << "Plain MCMC with table:" << endl;
 
   vector<string> pnames={"x","x2"};
   vector<string> punits={"MeV","MeV^2"};
@@ -213,6 +220,7 @@ int main(int argc, char *argv[]) {
 
   it_count=0;
   mct.user_seed=10;
+  mct.step_fac=2.0;
   mct.mcmc(1,init,low,high,pf,ff);
 
   mct.reblock(40);
@@ -224,6 +232,7 @@ int main(int argc, char *argv[]) {
   double t_stddev=wvector_stddev(n,t->get_column("x"),t->get_column("mult"));
   double t_avgerr=t_stddev/sqrt((double)n);
   
+  // Output and test results
   cout.setf(ios::showpos);
   cout << t_avg << " " << t_stddev << " " << t_avgerr << endl;
   cout.unsetf(ios::showpos);
@@ -239,6 +248,47 @@ int main(int argc, char *argv[]) {
   tm.test_abs(t_avg,res[2],t_avgerr*10.0,"tab 1");
   
   cout << mct.n_accept << " " << mct.n_reject << endl;
+  cout << endl;
+  
+  // ----------------------------------------------------------------
+  // Affine-invariant MCMC with table
+
+  cout << "Affine-invariant MCMC with table: " << endl;
+
+  mct.aff_inv=true;
+  mct.n_walk=10;
+  mct.step_fac=20.0;
+
+  it_count=0;
+  mct.user_seed=10;
+  mct.mcmc(1,init,low,high,pf,ff);
+
+  mct.reblock(40);
+  
+  n=t->get_nlines();
+
+  t_avg=wvector_mean(n,t->get_column("x"),t->get_column("mult"));
+  t_stddev=wvector_stddev(n,t->get_column("x"),t->get_column("mult"));
+  t_avgerr=t_stddev/sqrt((double)n);
+  
+  // Output and test results
+  cout.setf(ios::showpos);
+  cout << t_avg << " " << t_stddev << " " << t_avgerr << endl;
+  cout.unsetf(ios::showpos);
+  tm.test_abs(t_avg,res[1],t_avgerr*10.0,"tab 1");
+  
+  t_avg=wvector_mean(n,t->get_column("x2"),t->get_column("mult"));
+  t_stddev=wvector_stddev(n,t->get_column("x2"),t->get_column("mult"));
+  t_avgerr=t_stddev/sqrt((double)n);
+  
+  cout.setf(ios::showpos);
+  cout << t_avg << " " << t_stddev << " " << t_avgerr << endl;
+  cout.unsetf(ios::showpos);
+  tm.test_abs(t_avg,res[2],t_avgerr*10.0,"tab 1");
+  
+  cout << mct.n_accept << " " << mct.n_reject << endl;
+
+  // ----------------------------------------------------------------
 
   tm.report();
   

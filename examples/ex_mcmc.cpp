@@ -30,6 +30,7 @@
 #include <o2scl/vec_stats.h>
 #include <o2scl/test_mgr.h>
 #include <o2scl/hdf_io.h>
+#include <o2scl/cubature.h>
 
 using namespace std;
 using namespace o2scl;
@@ -82,10 +83,14 @@ int fill_line(const ubvector &pars, double weight,
 int f_cub(unsigned ndim, size_t npt, const double *x, unsigned fdim,
 	  double *fval) {
   for (size_t i=0;i<npt;i++) {
-    double *x2=x+i*ndim;
+    const double *x2=x+i*ndim;
     double *f2=fval+i*fdim;
     f2[0]=exp(-((x2[0]-0.2)*(x2[0]-0.2)+
-		   (x2[1]-0.5)*(x2[1]-0.5)));
+		(x2[1]-0.5)*(x2[1]-0.5)));
+    f2[1]=exp(-((x2[0]-0.2)*(x2[0]-0.2)+
+		(x2[1]-0.5)*(x2[1]-0.5)))*x2[0]*x2[0];
+    f2[2]=exp(-((x2[0]-0.2)*(x2[0]-0.2)+
+		(x2[1]-0.5)*(x2[1]-0.5)))*x2[0]*x2[0]*x2[1]*x2[1];
   }
   return 0;
 }
@@ -97,9 +102,28 @@ int main(int argc, char *argv[]) {
   test_mgr tm;
   tm.set_output_level(1);
 
+  // Parameter limits and initial point
+  ubvector low(2), high(2), init(2);
+  low[0]=-2.0;
+  low[1]=-2.0;
+  high[0]=2.0;
+  high[1]=2.0;
+  init[0]=0.2;
+  init[1]=0.5;
+
+  double dlow[2]={-2,-2};
+  double dhigh[2]={2,2};
+  double dres[3], derr[3];
   typedef std::function<
     int(unsigned,size_t,const double *,unsigned,double *)> cub_funct_arr;
+  cub_funct_arr cfa=f_cub;
   inte_hcubature<cub_funct_arr> hc;
+  inte_hcubature<cub_funct_arr>::error_norm enh=
+    inte_hcubature<cub_funct_arr>::ERROR_INDIVIDUAL;
+  hc.integ(3,cfa,2,dlow,dhigh,10000,0,1.0e-4,enh,dres,derr);
+  cout << dres[0] << " " << dres[1] << " " << dres[2] << endl;
+  cout << derr[0] << " " << derr[1] << " " << derr[2] << endl;
+  cout << dres[1]/dres[2] << " " << 0.511498/0.344514 << endl;
 
   // Exact results
   double res[3]={0.0,0.511498,0.344514};
@@ -113,15 +137,6 @@ int main(int argc, char *argv[]) {
   vector<string> pnames={"x0","x1","x0sq","x0sq_x1sq"};
   vector<string> punits={"MeV","MeV","MeV^2","MeV^4"};
   mct.set_names_units(pnames,punits);
-
-  // Parameter limits and initial point
-  ubvector low(2), high(2), init(2);
-  low[0]=-2.0;
-  low[1]=-2.0;
-  high[0]=2.0;
-  high[1]=2.0;
-  init[0]=0.2;
-  init[1]=0.5;
 
   // Get a pointer to the results table
   shared_ptr<table_units<> > t=mct.get_table();
