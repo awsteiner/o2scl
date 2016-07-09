@@ -68,7 +68,7 @@ double f2(size_t nv, const ubvector &pars) {
   return exp(-pars[0]*pars[0]/2.0)*pars[0]*pars[0];
 }
 
-int measure(const ubvector &pars, double weight, size_t ix, bool new_meas,
+int measure(const ubvector &pars, double log_weight, size_t ix, bool new_meas,
 	    std::array<double,1> &dat) {
   sev_x.add(pars[0]);
   sev_x2.add(dat[0]);
@@ -84,8 +84,8 @@ int measure(const ubvector &pars, double weight, size_t ix, bool new_meas,
   return 0;
 }
 
-int fill_func(const ubvector &pars, double weight, std::vector<double> &line,
-	 std::array<double,1> &dat) {
+int fill_func(const ubvector &pars, double log_weight,
+	      std::vector<double> &line, std::array<double,1> &dat) {
   line.push_back(dat[0]);
   // Check that the 'dat' object is correctly filled
   if ((pars[0]*pars[0]-dat[0])>1.0e-10) {

@@ -382,6 +382,8 @@ namespace o2scl {
 
     } else {
 
+      curr_walker=0;
+      
       // Uniform random-walk steps
 
       // Compute weight for initial point
@@ -672,7 +674,7 @@ namespace o2scl {
       in this class works a bit differently in that it takes a
       function object (type \c fill_t) of the form
       \code
-      int fill_func(const vec_t &pars, double weight, 
+      int fill_func(const vec_t &pars, double log_weight, 
       std::vector<double> &line, data_t &dat);
       \endcode
       which should store any auxillary values stored in the data
@@ -760,17 +762,17 @@ namespace o2scl {
 
   /** \brief Fill \c line with data for insertion into the table
    */
-  virtual int fill_line(const vec_t &pars, double weight, 
+  virtual int fill_line(const vec_t &pars, double log_weight, 
 			 std::vector<double> &line, data_t &dat,
 			 fill_t &fill) {
 
     // Initial multiplier
     line.push_back(1.0);
-    line.push_back(weight);
+    line.push_back(log_weight);
     for(size_t i=0;i<pars.size();i++) {
       line.push_back(pars[i]);
     }
-    return fill(pars,weight,line,dat);
+    return fill(pars,log_weight,line,dat);
   }
 
   /** \brief Record the last row in the table which corresponds
@@ -830,7 +832,7 @@ namespace o2scl {
   /** \brief A measurement function which adds the point to the
       table
   */
-  virtual int add_line(const vec_t &pars, double weight,
+  virtual int add_line(const vec_t &pars, double log_weight,
 		       size_t ix, bool new_meas, data_t &dat,
 		       fill_t &fill) {
 
@@ -839,7 +841,7 @@ namespace o2scl {
     if (new_meas==true) {
 
       std::vector<double> line;
-      int fret=fill_line(pars,weight,line,dat,fill);
+      int fret=fill_line(pars,log_weight,line,dat,fill);
       
       if (fret!=o2scl::success) {
 	// If we're done, we stop before adding the last point to the
@@ -889,6 +891,10 @@ namespace o2scl {
       // Otherwise, just increment the multiplier on the previous line
       if (walker_rows[this->curr_walker]<0 ||
 	  walker_rows[this->curr_walker]>=tab->get_nlines()) {
+	std::cout << "nlines: " << tab->get_nlines() << std::endl;
+	std::cout << "walker: " << this->curr_walker << std::endl;
+	std::cout << "row: " << walker_rows[this->curr_walker]
+	<< std::endl;
 	O2SCL_ERR2("Sanity in row counting in ",
 		   "mcmc_table::add_line().",o2scl::exc_esanity);
       }

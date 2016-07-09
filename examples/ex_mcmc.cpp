@@ -49,15 +49,15 @@ mcmc_table<point_funct,fill_funct,std::array<double,2>,ubvector> mct;
 
 /** \brief The objective function for the MCMC
 
-    Here, the variable 'weight' stores the objective function based on
-    the parameters stored in \c pars. The object 'dat' stores any
-    auxillary quantities which can be computed at every point in
-    parameter space.
+    Here, the variable 'log_weight' stores the natural logarithm of
+    the objective function based on the parameters stored in \c pars.
+    The object 'dat' stores any auxillary quantities which can be
+    computed at every point in parameter space.
 */
-int point(size_t nv, const ubvector &pars, double &weight,
+int point(size_t nv, const ubvector &pars, double &log_weight,
 	  std::array<double,2> &dat) {
   
-  weight=-((pars[0]-0.2)*(pars[0]-0.2)+
+  log_weight=-((pars[0]-0.2)*(pars[0]-0.2)+
 	   (pars[1]-0.5)*(pars[1]-0.5));
   
   dat[0]=pars[0]*pars[0];
@@ -68,7 +68,7 @@ int point(size_t nv, const ubvector &pars, double &weight,
 /** \brief Add auxillary quantities to 'line' so they can be
     stored in the table
 */
-int fill_line(const ubvector &pars, double weight, 
+int fill_line(const ubvector &pars, double log_weight, 
 	      std::vector<double> &line, std::array<double,2> &dat) {
   line.push_back(dat[0]);
   line.push_back(dat[1]);
