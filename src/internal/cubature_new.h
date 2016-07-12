@@ -1444,18 +1444,19 @@ namespace o2scl {
     
     /** \brief Desc
      */
-    int integ(unsigned fdim, func_t &f,
-	      unsigned dim, const std::vector<double> &xmin,
+    int integ(unsigned fdim, func_t &f, unsigned dim,
+	      const std::vector<double> &xmin,
 	      const std::vector<double> &xmax, size_t maxEval,
-	      double reqAbsError,
-	      double reqRelError, error_norm norm, double *val,
-	      double *err) {
+	      double reqAbsError, double reqRelError, error_norm norm,
+	      std::vector<double> &val, std::vector<double> &err) {
+	      
       if (fdim == 0) {
 	/* nothing to do */     
 	return o2scl::success;
       }
       return cubature(fdim,f,dim,xmin,xmax,
-		      maxEval,reqAbsError,reqRelError,norm,val,err,0);
+		      maxEval,reqAbsError,reqRelError,norm,&(val[0]),
+		      &(err[0]),0);
     }
     
   };
@@ -1964,21 +1965,21 @@ namespace o2scl {
     
     /** \brief Desc
      */
-    int integ(unsigned fdim, func_t &f,
-	      unsigned dim, const vec_t &xmin, const vec_t &xmax,
-	      size_t maxEval, double reqAbsError, double reqRelError,
-	      error_norm norm, double *val, double *err) {
+    int integ(unsigned fdim, func_t &f, unsigned dim,
+	      const vec_t &xmin, const vec_t &xmax, size_t maxEval,
+	      double reqAbsError, double reqRelError, error_norm norm,
+	      std::vector<double> &val, std::vector<double> &err) {
       
       int ret;
       size_t nbuf = 0;
       unsigned m[MAXDIM];
       double *buf = 0;
 
-      memset(m, 0, sizeof(unsigned) * dim);
+      memset(m,0,sizeof(unsigned) * dim);
       /* max_nbuf > 0 to amortize function overhead */
-      ret = integ_v_buf(fdim, f, dim, xmin, xmax, 
-			maxEval, reqAbsError, reqRelError, norm,
-			m, &buf, &nbuf, 16, val, err);
+      ret = integ_v_buf(fdim,f,dim,xmin,xmax,
+			maxEval,reqAbsError,reqRelError,norm,
+			m,&buf,&nbuf,16,&(val[0]),&(err[0]));
       free(buf);
       return ret;
     }

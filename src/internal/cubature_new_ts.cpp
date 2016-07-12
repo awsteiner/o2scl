@@ -332,8 +332,9 @@ int main(void) {
   int tcnt=0;
   for(size_t test_iand=0;test_iand<8;test_iand++) {
 
-    double tol, val, err;
+    double tol;
     unsigned maxEval;
+    vector<double> vval(1), verr(1);
 
     tol=1.0e-2;
     maxEval=0;
@@ -343,20 +344,20 @@ int main(void) {
     if (test_iand!=2) {
 
       cub_count=0;
-      hc.integ(1,cfa,dim,xmin2,xmax2,maxEval,0,tol,enh,&val,&err);
+      hc.integ(1,cfa,dim,xmin2,xmax2,maxEval,0,tol,enh,vval,verr);
 	       
       cout << "# " << which_integrand << " " 
-	   << "integral " << val << " " << "est. error " << err << " " 
+	   << "integral " << vval[0] << " " << "est. error " << verr[0] << " " 
 	   << "true error " 
-	   << fabs(val-exact_integral(which_integrand,dim,xmax)) << endl;
+	   << fabs(vval[0]-exact_integral(which_integrand,dim,xmax)) << endl;
       cout << "evals " << cub_count << endl;
 
-      tmgr.test_gen(fabs(val-exact_integral(which_integrand,dim,xmax))<
-		    err*2.0,"hcub 2");
+      tmgr.test_gen(fabs(vval[0]-exact_integral(which_integrand,dim,xmax))<
+		    verr[0]*2.0,"hcub 2");
       tmgr.test_gen(test_n[tcnt]==cub_count,"cub_count");
-      tmgr.test_rel(val,test_vals[tcnt][0],5.0e-6,"val");
-      tmgr.test_rel(err,test_vals[tcnt][1],5.0e-6,"err");
-      tmgr.test_rel(fabs(val-exact_integral(which_integrand,dim,xmax)),
+      tmgr.test_rel(vval[0],test_vals[tcnt][0],5.0e-6,"val");
+      tmgr.test_rel(verr[0],test_vals[tcnt][1],5.0e-6,"err");
+      tmgr.test_rel(fabs(vval[0]-exact_integral(which_integrand,dim,xmax)),
 		    test_vals[tcnt][2],5.0e-6,"diff w/ exact");
       tcnt++;
 
@@ -366,20 +367,20 @@ int main(void) {
     if (test_iand!=3) {
 
       cub_count=0;
-      pc.integ(1,cfa,dim,xmin2,xmax2,maxEval,0,tol,enp,&val,&err);
+      pc.integ(1,cfa,dim,xmin2,xmax2,maxEval,0,tol,enp,vval,verr);
 	       
       cout << "# " << which_integrand << " " 
-	   << "integral " << val << " " << "est. error " << err << " " 
+	   << "integral " << vval[0] << " " << "est. error " << verr[0] << " " 
 	   << "true error " 
-	   << fabs(val-exact_integral(which_integrand,dim,xmax)) << endl;
+	   << fabs(vval[0]-exact_integral(which_integrand,dim,xmax)) << endl;
       cout << "evals " << cub_count << endl;
 
-      tmgr.test_gen(fabs(val-exact_integral(which_integrand,dim,xmax))<
-		    err*2.0,"pcub 2");
+      tmgr.test_gen(fabs(vval[0]-exact_integral(which_integrand,dim,xmax))<
+		    verr[0]*2.0,"pcub 2");
       tmgr.test_gen(test_n[tcnt]==cub_count,"cub_count");
-      tmgr.test_rel(val,test_vals[tcnt][0],5.0e-6,"val");
-      tmgr.test_rel(err,test_vals[tcnt][1],5.0e-6,"err");
-      tmgr.test_rel(fabs(val-exact_integral(which_integrand,dim,xmax)),
+      tmgr.test_rel(vval[0],test_vals[tcnt][0],5.0e-6,"val");
+      tmgr.test_rel(verr[0],test_vals[tcnt][1],5.0e-6,"err");
+      tmgr.test_rel(fabs(vval[0]-exact_integral(which_integrand,dim,xmax)),
 		    test_vals[tcnt][2],5.0e-6,"diff w/ exact");
       tcnt++;
       
@@ -414,8 +415,9 @@ int main(void) {
   
   for(size_t test_iand=0;test_iand<8;test_iand++) {
 
-    double tol, val, err;
+    double tol;
     unsigned maxEval;
+    vector<double> vval(1), verr(1);
 
     tol=1.0e-2;
     maxEval=0;
@@ -425,20 +427,20 @@ int main(void) {
     if (test_iand!=2) {
 
       cub_count=0;
-      hc.integ(1,cfa,dim,xmin2,xmax2,maxEval,0,tol,enh2,&val,&err);
+      hc.integ(1,cfa,dim,xmin2,xmax2,maxEval,0,tol,enh2,vval,verr);
 	       
       cout << "# " << which_integrand << " " 
-	   << "integral " << val << " " << "est. error " << err << " " 
+	   << "integral " << vval[0] << " " << "est. error " << verr[0] << " " 
 	   << "true error " 
-	   << fabs(val-exact_integral(which_integrand,dim,xmax)) << endl;
+	   << fabs(vval[0]-exact_integral(which_integrand,dim,xmax)) << endl;
       cout << "evals " << cub_count << endl;
 
-      tmgr.test_gen(fabs(val-exact_integral(which_integrand,dim,xmax))<
-		    err*2.0,"hcub 2");
+      tmgr.test_gen(fabs(vval[0]-exact_integral(which_integrand,dim,xmax))<
+		    verr[0]*2.0,"hcub 2");
       tmgr.test_gen(test_n2[tcnt]==cub_count,"cub_count");
-      tmgr.test_rel(val,test_vals2[tcnt][0],5.0e-6,"val");
-      tmgr.test_rel(err,test_vals2[tcnt][1],5.0e-6,"err");
-      tmgr.test_rel(fabs(val-exact_integral(which_integrand,dim,xmax)),
+      tmgr.test_rel(vval[0],test_vals2[tcnt][0],5.0e-6,"val");
+      tmgr.test_rel(verr[0],test_vals2[tcnt][1],5.0e-6,"err");
+      tmgr.test_rel(fabs(vval[0]-exact_integral(which_integrand,dim,xmax)),
 		    test_vals2[tcnt][2],5.0e-6,"diff w/ exact");
       tcnt++;
 
@@ -448,20 +450,20 @@ int main(void) {
     if (test_iand!=3) {
 
       cub_count=0;
-      pc.integ(1,cfa,dim,xmin2,xmax2,maxEval,0,tol,enp2,&val,&err);
+      pc.integ(1,cfa,dim,xmin2,xmax2,maxEval,0,tol,enp2,vval,verr);
 	       
       cout << "# " << which_integrand << " " 
-	   << "integral " << val << " " << "est. error " << err << " " 
+	   << "integral " << vval[0] << " " << "est. error " << verr[0] << " " 
 	   << "true error " 
-	   << fabs(val-exact_integral(which_integrand,dim,xmax)) << endl;
+	   << fabs(vval[0]-exact_integral(which_integrand,dim,xmax)) << endl;
       cout << "evals " << cub_count << endl;
 
-      tmgr.test_gen(fabs(val-exact_integral(which_integrand,dim,xmax))<
-		    err*2.0,"pcub 2");
+      tmgr.test_gen(fabs(vval[0]-exact_integral(which_integrand,dim,xmax))<
+		    verr[0]*2.0,"pcub 2");
       tmgr.test_gen(test_n2[tcnt]==cub_count,"cub_count");
-      tmgr.test_rel(val,test_vals2[tcnt][0],5.0e-6,"val");
-      tmgr.test_rel(err,test_vals2[tcnt][1],5.0e-6,"err");
-      tmgr.test_rel(fabs(val-exact_integral(which_integrand,dim,xmax)),
+      tmgr.test_rel(vval[0],test_vals2[tcnt][0],5.0e-6,"val");
+      tmgr.test_rel(verr[0],test_vals2[tcnt][1],5.0e-6,"err");
+      tmgr.test_rel(fabs(vval[0]-exact_integral(which_integrand,dim,xmax)),
 		    test_vals2[tcnt][2],5.0e-6,"diff w/ exact");
       tcnt++;
       
@@ -474,14 +476,12 @@ int main(void) {
   // function at a time
   
   {
-    double dlow[2]={-2.0,-2.0};
-    double dhigh[2]={2.0,2.0};
     vector<double> vlow(2), vhigh(2);
     vlow[0]=-2.0;
     vlow[1]=-2.0;
     vhigh[0]=2.0;
     vhigh[1]=2.0;
-    double dres[3], derr[3];
+    vector<double> dres(3), derr(3);
     cub_funct_arr cfa2=fv2;
     int ret=hc.integ(3,cfa2,2,vlow,vhigh,10000,0.0,1.0e-4,enh,dres,derr);
     tmgr.test_gen(ret==0,"hc mdim ret");
