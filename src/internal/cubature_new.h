@@ -1431,7 +1431,8 @@ namespace o2scl {
 		 const std::vector<double> &xmax, 
 		 size_t maxEval, double reqAbsError, double reqRelError, 
 		 error_norm norm,
-		 double *val, double *err, int parallel) {
+		 std::vector<double> &val, std::vector<double> &err,
+		 int parallel) {
 
       rule *r;
       hypercube h;
@@ -1444,7 +1445,7 @@ namespace o2scl {
       }
       if (dim == 0) {
 	/* trivial integration */
-	if (f(0, 1, &(xmin[0]), fdim, val)) return o2scl::gsl_failure;
+	if (f(0, 1, &(xmin[0]), fdim, &(val[0]))) return o2scl::gsl_failure;
 	for (i = 0; i < fdim; ++i) err[i] = 0;
 	return o2scl::success;
       }
@@ -1461,7 +1462,7 @@ namespace o2scl {
       status = !h.data ? o2scl::gsl_failure
 	: rulecubature(r, fdim, f, &h,
 		       maxEval, reqAbsError, reqRelError, norm,
-		       val, err, parallel);
+		       &(val[0]), &(err[0]), parallel);
       destroy_hypercube(&h);
       destroy_rule(r);
       return status;
@@ -1482,8 +1483,7 @@ namespace o2scl {
 	return o2scl::success;
       }
       return cubature(fdim,f,dim,xmin,xmax,
-		      maxEval,reqAbsError,reqRelError,norm,&(val[0]),
-		      &(err[0]),0);
+		      maxEval,reqAbsError,reqRelError,norm,val,err,0);
     }
     
   };
@@ -1887,9 +1887,9 @@ namespace o2scl {
     int integ_v_buf(unsigned fdim, func_t &f, 
 		    unsigned dim, const vec_t &xmin, const vec_t &xmax,
 		    size_t maxEval, double reqAbsError, double reqRelError,
-		    error_norm norm, unsigned *m,
+		    error_norm norm, std::vector<unsigned> &m,
 		    double **buf, size_t *nbuf, size_t max_nbuf,
-		    double *val, double *err) {
+		    std::vector<double> &val, std::vector<double> &err) {
 
       int ret = o2scl::gsl_failure;
       double V = 1;
@@ -1910,7 +1910,7 @@ namespace o2scl {
       /* trivial case */
       if (dim == 0) {
 	// AWS: this is one location where vector types need sync'ing
-	if (f(0, 1, &xmin[0], fdim, val)) return o2scl::gsl_failure;
+	if (f(0, 1, &xmin[0], fdim, &(val[0]))) return o2scl::gsl_failure;
 	for (i = 0; i < fdim; ++i) err[i] = 0;
 	return o2scl::success;
       }
@@ -1925,7 +1925,7 @@ namespace o2scl {
 	V *= (xmax[i] - xmin[i]) * 0.5; 
       }
 
-      new_nbuf = num_cacheval(m, dim, dim);
+      new_nbuf = num_cacheval(&(m[0]), dim, dim);
 
       if (max_nbuf < 1) max_nbuf = 1;
       if (new_nbuf > max_nbuf) new_nbuf = max_nbuf;
@@ -1940,17 +1940,18 @@ namespace o2scl {
       }
 
       /* start by evaluating the m=0 cubature rule */
-      if (add_cacheval(&vc, m, dim, fdim, f, dim, xmin, xmax, 
+      if (add_cacheval(&vc,&(m[0]), dim, fdim, f, dim, xmin, xmax, 
 		       *buf, *nbuf) != o2scl::success) {
 	  free_cachevals(&vc);
 	  return ret;
       }
-
       while (1) {
 	unsigned mi;
 
-	eval_integral(vc, m, fdim, dim, V, &mi, val, err, &(val1[0]));
-	if (converged(fdim, val, err, reqAbsError, reqRelError, norm)
+	eval_integral(vc,&(m[0]), fdim, dim, V, &mi,
+		      &(val[0]), &(err[0]), &(val1[0]));
+	if (converged(fdim, &(val[0]), &(err[0]),
+		      reqAbsError, reqRelError, norm)
 	    || (numEval > maxEval && maxEval)) {
 	  ret = o2scl::success;
 	  free_cachevals(&vc);
@@ -1963,7 +1964,7 @@ namespace o2scl {
 	  return ret;
 	}
 
-	new_nbuf = num_cacheval(m, mi, dim);
+	new_nbuf = num_cacheval(&(m[0]), mi, dim);
 	if (new_nbuf > *nbuf && *nbuf < max_nbuf) {
 	  *nbuf = new_nbuf;
 	  if (*nbuf > max_nbuf) *nbuf = max_nbuf;
@@ -1976,7 +1977,7 @@ namespace o2scl {
 	  }
 	}
 
-	if (add_cacheval(&vc, m, mi, fdim, f, 
+	if (add_cacheval(&vc,&(m[0]), mi, fdim, f, 
 			 dim, xmin, xmax, *buf, *nbuf) != o2scl::success) {
 	  /* FAILURE */
 	  free_cachevals(&vc);
@@ -2003,14 +2004,13 @@ namespace o2scl {
       
       int ret;
       size_t nbuf = 0;
-      unsigned m[MAXDIM];
+      std::vector<unsigned> m(dim);
       double *buf = 0;
 
-      memset(m,0,sizeof(unsigned) * dim);
       /* max_nbuf > 0 to amortize function overhead */
       ret = integ_v_buf(fdim,f,dim,xmin,xmax,
 			maxEval,reqAbsError,reqRelError,norm,
-			m,&buf,&nbuf,16,&(val[0]),&(err[0]));
+			m,&buf,&nbuf,16,val,err);
       free(buf);
       return ret;
     }
