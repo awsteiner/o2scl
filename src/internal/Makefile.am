@@ -99,6 +99,18 @@ mnk_parse: mnk_parse.o
 		-lo2scl_part -lo2scl -lgsl -lgslcblas -lo2scl_hdf -lhdf5 \
 		-lhdf5_hl
 
+cubature_new_ts: cubature_new_ts.o
+	$(CXX) $(CPPFLAGS) -L$(O2SCL_LIB) -L$(GSL_LIB) -L$(HDF5_LIB) \
+		-o cubature_new_ts cubature_new_ts.o \
+		-lo2scl_part -lo2scl -lgsl -lgslcblas -lo2scl_hdf -lhdf5 \
+		-lhdf5_hl
+
+cubature_new_ts.o: cubature_new_ts.cpp
+	$(CXX) $(CPPFLAGS) -Wno-ignored-attributes \
+		-Wno-deprecated-declarations \
+		-I$(O2SCL_INC) -I$(GSL_INC) -I$(EIGEN_INC) \
+		-o cubature_new_ts.o -c cubature_new_ts.cpp
+
 o2comm.o: o2comm.cpp
 	$(CXX) $(CPPFLAGS) -I../../include -DO2SCL_COND_FLAG \
 		-o o2comm.o -c o2comm.cpp

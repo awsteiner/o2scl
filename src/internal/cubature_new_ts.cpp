@@ -49,16 +49,13 @@
  */
 
 #include <iostream>
-#include <o2scl/cubature_new.h>
+#include <o2scl/cubature.h>
 #include <o2scl/test_mgr.h>
 
-typedef boost::numeric::ublas::vector<double> ubvector;
-typedef boost::numeric::ublas::vector_range<ubvector> ubvector_range;
+static const bool debug=false;
 
 using namespace std;
 using namespace o2scl;
-
-static const bool debug=true;
 
 int cub_count = 0;
 int which_integrand;
@@ -135,68 +132,6 @@ static double morokoff(unsigned dim, const double *x, void *params) {
   return prod;
 }
 
-/* Simple product function */
-double f02(unsigned dim, const ubvector &x, void *params) {
-  double prod = 1.0;
-  unsigned int i;
-  for (i = 0; i < dim; ++i)
-    prod *= 2.0 * x[i];
-  return prod;
-}
-
-#define K_2_SQRTPI 1.12837916709551257390
-
-/* Gaussian centered at 1/2. */
-double f12(unsigned dim, const ubvector &x, void *params) {
-  double a = *(double *)params;
-  double sum = 0.;
-  unsigned int i;
-  for (i = 0; i < dim; i++) {
-    double dx = x[i] - 0.5;
-    sum += dx * dx;
-  }
-  return (pow (K_2_SQRTPI / (2. * a), (double) dim) *
-	  exp (-sum / (a * a)));
-}
-
-/* double gaussian */
-double f22(unsigned dim, const ubvector &x, void *params) {
-  double a = *(double *)params;
-  double sum1 = 0.;
-  double sum2 = 0.;
-  unsigned int i;
-  for (i = 0; i < dim; i++) {
-    double dx1 = x[i] - 1. / 3.;
-    double dx2 = x[i] - 2. / 3.;
-    sum1 += dx1 * dx1;
-    sum2 += dx2 * dx2;
-  }
-  return 0.5 * pow (K_2_SQRTPI / (2. * a), dim) 
-    * (exp (-sum1 / (a * a)) + exp (-sum2 / (a * a)));
-}
-
-/* Tsuda's example */
-double f32(unsigned dim, const ubvector &x, void *params) {
-  double c = *(double *)params;
-  double prod = 1.;
-  unsigned int i;
-  for (i = 0; i < dim; i++)
-    prod *= c / (c + 1) * pow((c + 1) / (c + x[i]), 2.0);
-  return prod;
-}
-
-/* test integrand from W. J. Morokoff and R. E. Caflisch, "Quasi=
-   Monte Carlo integration," J. Comput. Phys 122, 218-230 (1995).
-   Designed for integration on [0,1]^dim, integral = 1. */
-static double morokoff2(unsigned dim, const ubvector &x, void *params) {
-  double p = 1.0 / dim;
-  double prod = pow(1 + p, dim);
-  unsigned int i;
-  for (i = 0; i < dim; i++)
-    prod *= pow(x[i], p);
-  return prod;
-}
-
 /*** end of GSL test functions ***/
 
 int f_test(unsigned dim, const double *x, void *data_,
@@ -261,70 +196,6 @@ int f_test(unsigned dim, const double *x, void *data_,
   return 0;
 }
 
-int f_test2(unsigned dim, const ubvector_range &x, 
-	    unsigned fdim, ubvector_range &retval) {
-  
-  cout << retval[0] << endl;
-  cout << x[0] << endl;
-  
-  double val;
-  unsigned i, j;
-  ++cub_count;
-  for (j = 0; j < 1; ++j) {
-    double fdata = which_integrand == 6 ? (1.0+sqrt (10.0))/9.0 : 0.1;
-    switch (which_integrand) {
-    case 0: /* simple smooth (separable) objective: prod. cos(x[i]). */
-      val = 1;
-      for (i = 0; i < dim; ++i)
-	val *= cos(x[i]);
-      break;
-    case 1: { /* integral of exp(-x^2), rescaled to (0,infinity) limits */
-      double scale = 1.0;
-      val = 0;
-      for (i = 0; i < dim; ++i) {
-	if (x[i] > 0) {
-	  double z = (1 - x[i]) / x[i];
-	  val += z * z;
-	  scale *= K_2_SQRTPI / (x[i] * x[i]);
-	}
-	else {
-	  scale = 0;
-	  break;
-	}
-      }
-      val = exp(-val) * scale;
-      break;
-    }
-    case 2: /* discontinuous objective: volume of hypersphere */
-      val = 0;
-      for (i = 0; i < dim; ++i)
-	val += x[i] * x[i];
-      val = val < radius * radius;
-      break;
-    case 3:
-      val = f02(dim, x, &fdata);
-      break;
-    case 4:
-      val = f12(dim, x, &fdata);
-      break;
-    case 5:
-      val = f22(dim, x, &fdata);
-      break;
-    case 6:
-      val = f32(dim, x, &fdata);
-      break;
-    case 7:
-      val = morokoff2(dim, x, &fdata);
-      break;
-    default:
-      cout << "Unknown integrand." << endl;
-      exit(-1);
-    }
-    retval[j] = val;
-  }
-  return 0;
-}
-
 #define K_PI 3.14159265358979323846
 
 /* surface area of n-dimensional unit hypersphere */
@@ -370,26 +241,14 @@ int fv(unsigned ndim, size_t npt, const double *x, unsigned fdim,
       return o2scl::gsl_failure;
     }
   }
-  return o2scl::success;
-}
-
-int fv2(unsigned ndim, size_t npt, const ubvector &x, unsigned fdim,
-	ubvector &fval) {
-  for (unsigned i = 0; i < npt; ++i) {
-    ubvector_range x_shift=vector_range(x,i*ndim,(i+1)*ndim);
-    ubvector_range fval_shift=vector_range(fval,i*fdim,(i+1)*fdim);
-    f_test2(ndim, x_shift, fdim, fval_shift);
-  }
   if (debug) {
     cout << ndim << " " << fdim << " " << npt << endl;
     for(unsigned i=0;i<npt;i++) {
-      ubvector x_shift=vector_range(x,i*ndim,(i+1)*ndim);
-      ubvector fval_shift=vector_range(fval,i*fdim,(i+1)*fdim);
       for(size_t k=0;k<ndim;k++) {
-	cout << x_shift[k] << " ";
+	cout << (x+i*ndim)[k] << " ";
       }
       for(size_t k=0;k<fdim;k++) {
-	cout << fval_shift[k] << " ";
+	cout << (fval+i*fdim)[k] << " ";
       }
       cout << endl;
     }
@@ -408,7 +267,7 @@ int main(void) {
 
   size_t dim=3;
   double xmin[3], xmax[3];
-  ubvector xmin2(3), xmax2(3);
+  std::vector<double> xmin2(3), xmax2(3);
   for (size_t i=0;i<dim;++i) {
     xmin[i]=0.0;
     xmax[i]=1.0;
@@ -418,14 +277,10 @@ int main(void) {
 
   typedef std::function<
     int(unsigned,size_t,const double *,unsigned,double *)> cub_funct_arr;
-  typedef std::function<
-    int(unsigned,size_t,const ubvector &,unsigned,ubvector &)>
-    cub_funct_arr2;
-  inte_hcubature_new<cub_funct_arr> hc;
-  inte_pcubature_new<cub_funct_arr2,ubvector > pc;
+  inte_hcubature<cub_funct_arr> hc;
+  inte_pcubature<cub_funct_arr,std::vector<double> > pc;
 
   cub_funct_arr cfa=fv;
-  cub_funct_arr2 cfa2=fv2;
 
   /*std::function<int(unsigned,const double *,unsigned,double *)> cfa=
     std::bind(f_test,std::placeholders::_1,std::placeholders::_2,0,
@@ -459,10 +314,10 @@ int main(void) {
     tol=1.0e-2;
     maxEval=0;
     
-    inte_hcubature_new<cub_funct_arr>::error_norm enh=
-      inte_hcubature_new<cub_funct_arr>::ERROR_INDIVIDUAL;
-    inte_pcubature_new<cub_funct_arr2,ubvector >::error_norm enp=
-      inte_pcubature_new<cub_funct_arr2,ubvector >::ERROR_INDIVIDUAL;
+    inte_hcubature<cub_funct_arr>::error_norm enh=
+      inte_hcubature<cub_funct_arr>::ERROR_INDIVIDUAL;
+    inte_pcubature<cub_funct_arr,std::vector<double> >::error_norm enp=
+      inte_pcubature<cub_funct_arr,std::vector<double> >::ERROR_INDIVIDUAL;
     
     which_integrand = test_iand; 
     
@@ -491,23 +346,21 @@ int main(void) {
 
     if (test_iand!=3) {
 
-      ubvector vval(1), verr(1);
-
       cub_count=0;
-      pc.integ(1,cfa2,dim,xmin2,xmax2,maxEval,0,tol,enp,vval,verr);
+      pc.integ(1,cfa,dim,xmin2,xmax2,maxEval,0,tol,enp,&val,&err);
 	       
       cout << "# " << which_integrand << " " 
-	   << "integral " << vval[0] << " " << "est. error " << verr[0] << " " 
+	   << "integral " << val << " " << "est. error " << err << " " 
 	   << "true error " 
-	   << fabs(vval[0]-exact_integral(which_integrand,dim,xmax)) << endl;
+	   << fabs(val-exact_integral(which_integrand,dim,xmax)) << endl;
       cout << "evals " << cub_count << endl;
 
-      tmgr.test_gen(fabs(vval[0]-exact_integral(which_integrand,dim,xmax))<
-		    verr[0]*2.0,"pcub 2");
+      tmgr.test_gen(fabs(val-exact_integral(which_integrand,dim,xmax))<
+		    err*2.0,"pcub 2");
       tmgr.test_gen(test_n[tcnt]==cub_count,"cub_count");
-      tmgr.test_rel(vval[0],test_vals[tcnt][0],5.0e-6,"val");
-      tmgr.test_rel(verr[0],test_vals[tcnt][1],5.0e-6,"err");
-      tmgr.test_rel(fabs(vval[0]-exact_integral(which_integrand,dim,xmax)),
+      tmgr.test_rel(val,test_vals[tcnt][0],5.0e-6,"val");
+      tmgr.test_rel(err,test_vals[tcnt][1],5.0e-6,"err");
+      tmgr.test_rel(fabs(val-exact_integral(which_integrand,dim,xmax)),
 		    test_vals[tcnt][2],5.0e-6,"diff w/ exact");
       tcnt++;
       
