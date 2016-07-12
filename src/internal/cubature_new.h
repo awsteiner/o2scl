@@ -1445,7 +1445,9 @@ namespace o2scl {
       }
       if (dim == 0) {
 	/* trivial integration */
-	if (f(0, 1, &(xmin[0]), fdim, &(val[0]))) return o2scl::gsl_failure;
+	if (f(0, 1, &(xmin[0]), fdim, &(val[0]))) {
+	  return o2scl::gsl_failure;
+	}
 	for (i = 0; i < fdim; ++i) err[i] = 0;
 	return o2scl::success;
       }
@@ -1785,37 +1787,43 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    int converged(unsigned fdim, const double *vals, const double *errs,
-		  double reqAbsError, double reqRelError,
-		  error_norm norm) {
+    template<class vec2_t>
+      int converged(unsigned fdim, const vec2_t &vals, const vec2_t &errs,
+		    double reqAbsError, double reqRelError, error_norm norm) {
 
-      unsigned j;
       switch (norm) {
+	
       case ERROR_INDIVIDUAL:
 
-	for (j = 0; j < fdim; ++j)
-	  if (errs[j] > reqAbsError && errs[j] > fabs(vals[j])*reqRelError)
+	for (unsigned j = 0; j < fdim; ++j) {
+	  if (errs[j] > reqAbsError && errs[j] > fabs(vals[j])*reqRelError) {
 	    return 0;
+	  }
+	}
 	return 1;
 	      
       case ERROR_PAIRED:
 
-	for (j = 0; j+1 < fdim; j += 2) {
-	  double maxerr, serr, err, maxval, sval, val;
-	  /* scale to avoid overflow/underflow */
-	  maxerr = errs[j] > errs[j+1] ? errs[j] : errs[j+1];
-	  maxval = vals[j] > vals[j+1] ? vals[j] : vals[j+1];
-	  serr = maxerr > 0 ? 1/maxerr : 1;
-	  sval = maxval > 0 ? 1/maxval : 1;
-	  err = sqrt(dsqr(errs[j]*serr) + dsqr(errs[j+1]*serr)) * maxerr;
-	  val = sqrt(dsqr(vals[j]*sval) + dsqr(vals[j+1]*sval)) * maxval;
-	  if (err > reqAbsError && err > val*reqRelError)
-	    return 0;
-	}
-	/* fdim is odd, do last dimension individually */
-	if (j < fdim) {
-	  if (errs[j] > reqAbsError && errs[j] > fabs(vals[j])*reqRelError) {
-	    return 0;
+	{
+	  unsigned j;
+
+	  for (j = 0; j+1 < fdim; j += 2) {
+	    double maxerr, serr, err, maxval, sval, val;
+	    /* scale to avoid overflow/underflow */
+	    maxerr = errs[j] > errs[j+1] ? errs[j] : errs[j+1];
+	    maxval = vals[j] > vals[j+1] ? vals[j] : vals[j+1];
+	    serr = maxerr > 0 ? 1/maxerr : 1;
+	    sval = maxval > 0 ? 1/maxval : 1;
+	    err = sqrt(dsqr(errs[j]*serr) + dsqr(errs[j+1]*serr)) * maxerr;
+	    val = sqrt(dsqr(vals[j]*sval) + dsqr(vals[j+1]*sval)) * maxval;
+	    if (err > reqAbsError && err > val*reqRelError)
+	      return 0;
+	  }
+	  /* fdim is odd, do last dimension individually */
+	  if (j < fdim) {
+	    if (errs[j] > reqAbsError && errs[j] > fabs(vals[j])*reqRelError) {
+	      return 0;
+	    }
 	  }
 	}
 	return 1;
@@ -1824,7 +1832,7 @@ namespace o2scl {
 
 	{
 	  double err = 0, val = 0;
-	  for (j = 0; j < fdim; ++j) {
+	  for (unsigned j = 0; j < fdim; ++j) {
 	    err += errs[j];
 	    val += fabs(vals[j]);
 	  }
@@ -1835,7 +1843,7 @@ namespace o2scl {
 
 	{
 	  double err = 0, val = 0;
-	  for (j = 0; j < fdim; ++j) {
+	  for (unsigned j = 0; j < fdim; ++j) {
 	    double absval = fabs(vals[j]);
 	    if (errs[j] > err) err = errs[j];
 	    if (absval > val) val = absval;
@@ -1848,14 +1856,14 @@ namespace o2scl {
 	{
 	  double maxerr = 0, maxval = 0, serr, sval, err = 0, val = 0;
 	  /* scale values by 1/max to avoid overflow/underflow */
-	  for (j = 0; j < fdim; ++j) {
+	  for (unsigned j = 0; j < fdim; ++j) {
 	    double absval = fabs(vals[j]);
 	    if (errs[j] > maxerr) maxerr = errs[j];
 	    if (absval > maxval) maxval = absval;
 	  }
 	  serr = maxerr > 0 ? 1/maxerr : 1;
 	  sval = maxval > 0 ? 1/maxval : 1;
-	  for (j = 0; j < fdim; ++j) {
+	  for (unsigned j = 0; j < fdim; ++j) {
 	    err += dsqr(errs[j] * serr);
 	    val += dsqr(fabs(vals[j]) * sval);
 	  }
@@ -1864,8 +1872,10 @@ namespace o2scl {
 	  return err <= reqAbsError || err <= val*reqRelError;
 	}
       }
-
-      return 1; /* unreachable */
+      
+      O2SCL_ERR("Improper value of 'norm' in cubature::converged().",
+		o2scl::exc_einval);
+      return 1;
     }
     
   public:
@@ -1888,9 +1898,9 @@ namespace o2scl {
 		    unsigned dim, const vec_t &xmin, const vec_t &xmax,
 		    size_t maxEval, double reqAbsError, double reqRelError,
 		    error_norm norm, std::vector<unsigned> &m,
-		    double **buf, size_t *nbuf, size_t max_nbuf,
+		    std::vector<double> &buf, size_t &nbuf, size_t max_nbuf,
 		    std::vector<double> &val, std::vector<double> &err) {
-
+      
       int ret = o2scl::gsl_failure;
       double V = 1;
       size_t numEval = 0, new_nbuf;
@@ -1929,19 +1939,13 @@ namespace o2scl {
 
       if (max_nbuf < 1) max_nbuf = 1;
       if (new_nbuf > max_nbuf) new_nbuf = max_nbuf;
-      if (*nbuf < new_nbuf) {
-	free(*buf);
-	*buf = (double *) malloc(sizeof(double) 
-				 * (*nbuf = new_nbuf) * dim);
-	if (!*buf) {
-	  free_cachevals(&vc);
-	  return ret;
-	}
+      if (nbuf < new_nbuf) {
+	buf.resize((nbuf=new_nbuf)*dim);
       }
 
       /* start by evaluating the m=0 cubature rule */
       if (add_cacheval(&vc,&(m[0]), dim, fdim, f, dim, xmin, xmax, 
-		       *buf, *nbuf) != o2scl::success) {
+		       &(buf[0]), nbuf) != o2scl::success) {
 	  free_cachevals(&vc);
 	  return ret;
       }
@@ -1965,20 +1969,14 @@ namespace o2scl {
 	}
 
 	new_nbuf = num_cacheval(&(m[0]), mi, dim);
-	if (new_nbuf > *nbuf && *nbuf < max_nbuf) {
-	  *nbuf = new_nbuf;
-	  if (*nbuf > max_nbuf) *nbuf = max_nbuf;
-	  free(*buf);
-	  *buf = (double *) malloc(sizeof(double) * *nbuf * dim);
-	  if (!*buf) {
-	    /* FAILURE */
-	  free_cachevals(&vc);
-	  return ret;
-	  }
+	if (new_nbuf > nbuf && nbuf < max_nbuf) {
+	  nbuf = new_nbuf;
+	  if (nbuf > max_nbuf) nbuf = max_nbuf;
+	  buf.resize(nbuf*dim);
 	}
 
 	if (add_cacheval(&vc,&(m[0]), mi, fdim, f, 
-			 dim, xmin, xmax, *buf, *nbuf) != o2scl::success) {
+			 dim, xmin, xmax, &(buf[0]), nbuf) != o2scl::success) {
 	  /* FAILURE */
 	  free_cachevals(&vc);
 	  return ret;
@@ -2005,13 +2003,13 @@ namespace o2scl {
       int ret;
       size_t nbuf = 0;
       std::vector<unsigned> m(dim);
-      double *buf = 0;
+      std::vector<double> buf;
 
       /* max_nbuf > 0 to amortize function overhead */
       ret = integ_v_buf(fdim,f,dim,xmin,xmax,
 			maxEval,reqAbsError,reqRelError,norm,
-			m,&buf,&nbuf,16,val,err);
-      free(buf);
+			m,buf,nbuf,16,val,err);
+
       return ret;
     }
 
