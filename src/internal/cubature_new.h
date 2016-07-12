@@ -439,8 +439,7 @@ namespace o2scl {
 
 	\note All regions must have same fdim 
     */
-    int eval_regions(unsigned nR, region *R, 
-		     func_t &f, rule *r) {
+    int eval_regions(unsigned nR, region *R, func_t &f, rule *r) {
 
       unsigned iR;
       if (nR == 0) {
@@ -665,8 +664,7 @@ namespace o2scl {
     /** \brief Desc
      */
     static int rule75genzmalik_evalError
-      (rule *r_, unsigned fdim, func_t &f, 
-       unsigned nR, region *R) {
+      (rule *r_, unsigned fdim, func_t &f, unsigned nR, region *R) {
     
       /* lambda2 = sqrt(9/70), lambda4 = sqrt(9/10), lambda5 = sqrt(9/19) */
       const double lambda2 = 0.3585685828003180919906451539079374954541;
@@ -848,9 +846,8 @@ namespace o2scl {
     /** \brief 1d 15-point Gaussian quadrature rule, based on qk15.c
 	and qk.c in GNU GSL (which in turn is based on QUADPACK).
     */
-    static int rule15gauss_evalError(rule *r,
-				     unsigned fdim, func_t &f, 
-				     unsigned nR, region *R) {
+    static int rule15gauss_evalError
+      (rule *r, unsigned fdim, func_t &f, unsigned nR, region *R) {
 
       static const double cub_dbl_min=std::numeric_limits<double>::min();
       static const double cub_dbl_eps=std::numeric_limits<double>::epsilon();
@@ -1274,7 +1271,7 @@ namespace o2scl {
       /* array of regions to evaluate */
       region *R = 0; 
       size_t nR_alloc = 0;
-      esterr *ee = 0;
+      std::vector<esterr> ee(fdim);
 
       /* norm is irrelevant */
       if (fdim <= 1) norm = ERROR_INDIVIDUAL; 
@@ -1283,15 +1280,6 @@ namespace o2scl {
 
       regions = heap_alloc(1, fdim);
       if (!regions.ee || !regions.items) {
-	free(ee);
-	heap_free(&regions);
-	free(R);
-	return o2scl::gsl_failure;
-      }
-
-      ee = (esterr *) malloc(sizeof(esterr) * fdim);
-      if (!ee) {
-	free(ee);
 	heap_free(&regions);
 	free(R);
 	return o2scl::gsl_failure;
@@ -1300,7 +1288,6 @@ namespace o2scl {
       nR_alloc = 2;
       R = (region *) malloc(sizeof(region) * nR_alloc);
       if (!R) {
-	free(ee);
 	heap_free(&regions);
 	free(R);
 	return o2scl::gsl_failure;
@@ -1308,7 +1295,6 @@ namespace o2scl {
       R[0] = make_region(h, fdim);
       if (!R[0].ee || eval_regions(1, R, f, r) ||
 	  heap_push(&regions, R[0])) {
-	free(ee);
 	heap_free(&regions);
 	free(R);
 	return o2scl::gsl_failure;
@@ -1357,7 +1343,6 @@ namespace o2scl {
 	      nR_alloc = (nR + 2) * 2;
 	      R = (region *) realloc(R, nR_alloc * sizeof(region));
 	      if (!R) {
-		free(ee);
 		heap_free(&regions);
 		free(R);
 		return o2scl::gsl_failure;
@@ -1366,14 +1351,13 @@ namespace o2scl {
 	    R[nR] = heap_pop(&regions);
 	    for (j = 0; j < fdim; ++j) ee[j].err -= R[nR].ee[j].err;
 	    if (cut_region(R+nR, R+nR+1)) {
-	      free(ee);
 	      heap_free(&regions);
 	      free(R);
 	      return o2scl::gsl_failure;
 	    }
 	    numEval += r->num_points * 2;
 	    nR += 2;
-	    if (converged(fdim, ee, reqAbsError, reqRelError, norm)) {
+	    if (converged(fdim, &(ee[0]), reqAbsError, reqRelError, norm)) {
 	      /* other regions have small errs */
 	      break; 
 	    }
@@ -1382,7 +1366,6 @@ namespace o2scl {
 
 	  if (eval_regions(nR, R, f, r)
 	      || heap_push_many(&regions, nR, R)) {
-	      free(ee);
 	      heap_free(&regions);
 	      free(R);
 	      return o2scl::gsl_failure;
@@ -1397,7 +1380,6 @@ namespace o2scl {
 	  if (cut_region(R, R+1)
 	      || eval_regions(2, R, f, r)
 	      || heap_push_many(&regions, 2, R)) {
-	    free(ee);
 	    heap_free(&regions);
 	    free(R);
 	    return o2scl::gsl_failure;
@@ -1416,8 +1398,6 @@ namespace o2scl {
 	destroy_region(&regions.items[i]);
       }
 
-      /* printf("regions.nalloc = %d\n", regions.nalloc); */
-      free(ee);
       heap_free(&regions);
       free(R);
 
