@@ -71,67 +71,6 @@
 
 namespace o2scl {
 
-#ifndef O2SCL_NEVER_DEFINED
-
-  /** \brief Desc
-   */
-  typedef std::function<
-    int(size_t,const boost::numeric::ublas::vector<double> &,
-	size_t,boost::numeric::ublas::vector<double> &) > cub_funct11;
-  
-  /** \brief Desc
-   */
-  typedef std::function<
-    int(size_t,size_t,const boost::numeric::ublas::vector<double> &,
-	size_t,boost::numeric::ublas::vector<double> &) > cub_vec_funct11;
-
-  /** \brief A simple wrapper for cubature functions when 
-      parallelism is not required
-   */
-  template<class vec_t, class func_t> class cub_wrapper {
-
-  private:
-
-    cub_wrapper(const cub_wrapper &c);
-
-    cub_wrapper &operator=(const cub_wrapper &c);
-    
-  protected:
-
-    /** \brief Pointer to the function
-     */
-    func_t *fp;
-    
-  public:
-
-    /** \brief Create a wrapper from function \c f
-     */
-    cub_wrapper(func_t &f) {
-      fp=&f;
-    }
-    
-    /** \brief The integration method
-
-	\comment 
-	7/12/16: I'm not sure this will be really useful until
-	vector types are completely generalized in the
-	cubature classes
-	\endcomment
-     */
-    int operator()(size_t ndim, size_t npts, const vec_t &x,
-		   size_t fdim, vec_t &fval) {
-      for (size_t i = 0; i < npts; i++) {
-	vec_t s=o2scl::vector_range<double>(x,i*ndim,(i+1)*ndim);
-	vec_t sf=o2scl::vector_range<double>(fval,i*fdim,(i+1)*fdim);
-	f(ndim,s,fdim,sf);
-      }
-      return o2scl::success;
-    }
-    
-  };
-
-#endif
-  
   /** \brief Base class for integration routines from the 
       Cubature library
   */
@@ -243,18 +182,18 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    double compute_vol(const hypercube *h) {
+    double compute_vol(const hypercube &h) {
       double vol = 1;
-      for (unsigned i = 0; i < h->dim; ++i) {
-	vol *= 2 * h->data[i + h->dim];
+      for (unsigned i = 0; i < h.dim; ++i) {
+	vol *= 2 * h.data[i + h.dim];
       }
       return vol;
     }
 
     /** \brief Desc
      */
-    hypercube make_hypercube(unsigned dim, const double *center,
-			     const double *halfwidth) {
+    hypercube make_hypercube(unsigned dim, const std::vector<double> &center,
+			     const std::vector<double> &halfwidth) {
 
       hypercube h;
       h.dim = dim;
@@ -265,32 +204,51 @@ namespace o2scl {
 	  h.data[i] = center[i];
 	  h.data[i + dim] = halfwidth[i];
 	}
-	h.vol = compute_vol(&h);
+	h.vol = compute_vol(h);
       }
       return h;
     }
 
     /** \brief Desc
      */
-    hypercube make_hypercube_range
-      (unsigned dim, const double *xmin, const double *xmax) {
+    hypercube make_hypercube2(unsigned dim, const double *center) {
 
-      hypercube h = make_hypercube(dim, xmin, xmax);
+      hypercube h;
+      h.dim = dim;
+      h.data = (double *) malloc(sizeof(double) * dim * 2);
+      h.vol = 0;
+      if (h.data) {
+	for (unsigned i = 0; i < dim; ++i) {
+	  h.data[i] = center[i];
+	  h.data[i + dim] = center[i+dim];
+	}
+	h.vol = compute_vol(h);
+      }
+      return h;
+    }
+    
+    /** \brief Desc
+     */
+    hypercube make_hypercube_range
+      (unsigned dim, const std::vector<double> &xmin,
+       const std::vector<double> &xmax) {
+
+      hypercube h = make_hypercube(dim,xmin,xmax);
       if (h.data) {
 	for (unsigned i = 0; i < dim; ++i) {
 	  h.data[i] = 0.5 * (xmin[i] + xmax[i]);
 	  h.data[i + dim] = 0.5 * (xmax[i] - xmin[i]);
 	}
-	h.vol = compute_vol(&h);
+	h.vol = compute_vol(h);
       }
       return h;
     }
 
     /** \brief Desc
      */
-    void destroy_hypercube(hypercube *h) {
-      free(h->data);
-      h->dim = 0;
+    void destroy_hypercube(hypercube &h) {
+      free(h.data);
+      h.dim = 0;
       return;
     }
 
@@ -314,10 +272,14 @@ namespace o2scl {
     region make_region(const hypercube *h, unsigned fdim) {
 
       region R;
-      R.h = make_hypercube(h->dim, h->data, h->data + h->dim);
+      R.h = make_hypercube2(h->dim, h->data);
       R.splitDim = 0;
       R.fdim = fdim;
-      R.ee = R.h.data ? (esterr *) malloc(sizeof(esterr) * fdim) : 0;
+      if (R.h.data) {
+	R.ee=(esterr *) malloc(sizeof(esterr) * fdim);
+      } else {
+	R.ee=0;
+      }
       R.errmax = HUGE_VAL;
 
       return R;
@@ -326,7 +288,7 @@ namespace o2scl {
     /** \brief Desc
      */
     void destroy_region(region *R) {
-      destroy_hypercube(&R->h);
+      destroy_hypercube(R->h);
       free(R->ee);
       R->ee = 0;
       return;
@@ -340,7 +302,7 @@ namespace o2scl {
       *R2 = *R;
       R->h.data[d + dim] *= 0.5;
       R->h.vol *= 0.5;
-      R2->h = make_hypercube(dim, R->h.data, R->h.data + dim);
+      R2->h = make_hypercube2(dim, R->h.data);
       if (!R2->h.data) return o2scl::gsl_failure;
       R->h.data[d] -= R->h.data[d + dim];
       R2->h.data[d] += R->h.data[d + dim];
@@ -1440,12 +1402,12 @@ namespace o2scl {
 	}
 	return o2scl::gsl_failure;
       }
-      h = make_hypercube_range(dim, &(xmin[0]), &(xmax[0]));
+      h = make_hypercube_range(dim,xmin,xmax);
       status = !h.data ? o2scl::gsl_failure
 	: rulecubature(r, fdim, f, &h,
 		       maxEval, reqAbsError, reqRelError, norm,
 		       &(val[0]), &(err[0]), parallel);
-      destroy_hypercube(&h);
+      destroy_hypercube(h);
       destroy_rule(r);
       return status;
     }
