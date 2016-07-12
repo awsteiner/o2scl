@@ -49,7 +49,7 @@
  */
 
 #include <iostream>
-#include <o2scl/cubature.h>
+#include "cubature_new.h"
 #include <o2scl/test_mgr.h>
 
 static const bool debug=false;
@@ -294,17 +294,17 @@ int main(void) {
 
   typedef std::function<
     int(unsigned,size_t,const double *,unsigned,double *)> cub_funct_arr;
-  inte_hcubature<cub_funct_arr> hc;
-  inte_pcubature<cub_funct_arr,std::vector<double> > pc;
+  inte_hcubature_new<cub_funct_arr> hc;
+  inte_pcubature_new<cub_funct_arr,std::vector<double> > pc;
 
-  inte_hcubature<cub_funct_arr>::error_norm enh=
-    inte_hcubature<cub_funct_arr>::ERROR_INDIVIDUAL;
-  inte_pcubature<cub_funct_arr,std::vector<double> >::error_norm enp=
-    inte_pcubature<cub_funct_arr,std::vector<double> >::ERROR_INDIVIDUAL;
-  inte_hcubature<cub_funct_arr>::error_norm enh2=
-    inte_hcubature<cub_funct_arr>::ERROR_L2;
-  inte_pcubature<cub_funct_arr,std::vector<double> >::error_norm enp2=
-    inte_pcubature<cub_funct_arr,std::vector<double> >::ERROR_L2;
+  inte_hcubature_new<cub_funct_arr>::error_norm enh=
+    inte_hcubature_new<cub_funct_arr>::ERROR_INDIVIDUAL;
+  inte_pcubature_new<cub_funct_arr,std::vector<double> >::error_norm enp=
+    inte_pcubature_new<cub_funct_arr,std::vector<double> >::ERROR_INDIVIDUAL;
+  inte_hcubature_new<cub_funct_arr>::error_norm enh2=
+    inte_hcubature_new<cub_funct_arr>::ERROR_L2;
+  inte_pcubature_new<cub_funct_arr,std::vector<double> >::error_norm enp2=
+    inte_pcubature_new<cub_funct_arr,std::vector<double> >::ERROR_L2;
   
   cub_funct_arr cfa=fv;
 

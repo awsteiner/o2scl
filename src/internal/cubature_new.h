@@ -52,8 +52,8 @@
     \brief File for definitions of \ref o2scl::inte_hcubature and 
     \ref o2scl::inte_pcubature
 */
-#ifndef O2SCL_CUBATURE_H
-#define O2SCL_CUBATURE_H
+#ifndef O2SCL_CUBATURE_NEW_H
+#define O2SCL_CUBATURE_NEW_H
 
 // For memcpy
 #include <cstring>
@@ -135,7 +135,7 @@ namespace o2scl {
   /** \brief Base class for integration routines from the 
       Cubature library
   */
-  class inte_cubature_base {
+  class inte_cubature_new_base {
     
   public:
     
@@ -205,8 +205,8 @@ namespace o2scl {
       \hline      
 
   */
-  template<class func_t> class inte_hcubature
-    : public inte_cubature_base {
+  template<class func_t> class inte_hcubature_new
+    : public inte_cubature_new_base {
     
   protected:
 
@@ -1477,8 +1477,8 @@ namespace o2scl {
 
       \hline      
   */
-  template<class func_t, class vec_t> class inte_pcubature
-    : public inte_cubature_base {
+  template<class func_t, class vec_t> class inte_pcubature_new
+    : public inte_cubature_new_base {
       
   protected:
       
