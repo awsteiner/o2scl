@@ -1400,7 +1400,8 @@ namespace o2scl {
     /** \brief Desc
      */
     int cubature(unsigned fdim, func_t &f, 
-		 unsigned dim, const double *xmin, const double *xmax, 
+		 unsigned dim, const std::vector<double> &xmin,
+		 const std::vector<double> &xmax, 
 		 size_t maxEval, double reqAbsError, double reqRelError, 
 		 error_norm norm,
 		 double *val, double *err, int parallel) {
@@ -1416,7 +1417,7 @@ namespace o2scl {
       }
       if (dim == 0) {
 	/* trivial integration */
-	if (f(0, 1, xmin, fdim, val)) return o2scl::gsl_failure;
+	if (f(0, 1, &(xmin[0]), fdim, val)) return o2scl::gsl_failure;
 	for (i = 0; i < fdim; ++i) err[i] = 0;
 	return o2scl::success;
       }
@@ -1429,7 +1430,7 @@ namespace o2scl {
 	}
 	return o2scl::gsl_failure;
       }
-      h = make_hypercube_range(dim, xmin, xmax);
+      h = make_hypercube_range(dim, &(xmin[0]), &(xmax[0]));
       status = !h.data ? o2scl::gsl_failure
 	: rulecubature(r, fdim, f, &h,
 		       maxEval, reqAbsError, reqRelError, norm,
@@ -1444,8 +1445,9 @@ namespace o2scl {
     /** \brief Desc
      */
     int integ(unsigned fdim, func_t &f,
-	      unsigned dim, const double *xmin,
-	      const double *xmax, size_t maxEval, double reqAbsError,
+	      unsigned dim, const std::vector<double> &xmin,
+	      const std::vector<double> &xmax, size_t maxEval,
+	      double reqAbsError,
 	      double reqRelError, error_norm norm, double *val,
 	      double *err) {
       if (fdim == 0) {

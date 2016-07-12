@@ -343,7 +343,7 @@ int main(void) {
     if (test_iand!=2) {
 
       cub_count=0;
-      hc.integ(1,cfa,dim,xmin,xmax,maxEval,0,tol,enh,&val,&err);
+      hc.integ(1,cfa,dim,xmin2,xmax2,maxEval,0,tol,enh,&val,&err);
 	       
       cout << "# " << which_integrand << " " 
 	   << "integral " << val << " " << "est. error " << err << " " 
@@ -425,7 +425,7 @@ int main(void) {
     if (test_iand!=2) {
 
       cub_count=0;
-      hc.integ(1,cfa,dim,xmin,xmax,maxEval,0,tol,enh2,&val,&err);
+      hc.integ(1,cfa,dim,xmin2,xmax2,maxEval,0,tol,enh2,&val,&err);
 	       
       cout << "# " << which_integrand << " " 
 	   << "integral " << val << " " << "est. error " << err << " " 
@@ -483,7 +483,7 @@ int main(void) {
     vhigh[1]=2.0;
     double dres[3], derr[3];
     cub_funct_arr cfa2=fv2;
-    int ret=hc.integ(3,cfa2,2,dlow,dhigh,10000,0.0,1.0e-4,enh,dres,derr);
+    int ret=hc.integ(3,cfa2,2,vlow,vhigh,10000,0.0,1.0e-4,enh,dres,derr);
     tmgr.test_gen(ret==0,"hc mdim ret");
     tmgr.test_rel(3.067993,dres[0],1.0e-6,"hc mdim val 0");
     tmgr.test_rel(1.569270,dres[1],1.0e-6,"hc mdim val 1");
