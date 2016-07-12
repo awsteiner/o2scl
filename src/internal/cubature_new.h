@@ -1282,18 +1282,36 @@ namespace o2scl {
       if (norm < 0 || norm > ERROR_LINF) return o2scl::gsl_failure; 
 
       regions = heap_alloc(1, fdim);
-      if (!regions.ee || !regions.items) goto bad;
+      if (!regions.ee || !regions.items) {
+	free(ee);
+	heap_free(&regions);
+	free(R);
+	return o2scl::gsl_failure;
+      }
 
       ee = (esterr *) malloc(sizeof(esterr) * fdim);
-      if (!ee) goto bad;
+      if (!ee) {
+	free(ee);
+	heap_free(&regions);
+	free(R);
+	return o2scl::gsl_failure;
+      }
      
       nR_alloc = 2;
       R = (region *) malloc(sizeof(region) * nR_alloc);
-      if (!R) goto bad;
+      if (!R) {
+	free(ee);
+	heap_free(&regions);
+	free(R);
+	return o2scl::gsl_failure;
+      }
       R[0] = make_region(h, fdim);
       if (!R[0].ee || eval_regions(1, R, f, r) ||
 	  heap_push(&regions, R[0])) {
-	goto bad;
+	free(ee);
+	heap_free(&regions);
+	free(R);
+	return o2scl::gsl_failure;
       }
       numEval += r->num_points;
      
@@ -1338,11 +1356,21 @@ namespace o2scl {
 	    if (nR + 2 > nR_alloc) {
 	      nR_alloc = (nR + 2) * 2;
 	      R = (region *) realloc(R, nR_alloc * sizeof(region));
-	      if (!R) goto bad;
+	      if (!R) {
+		free(ee);
+		heap_free(&regions);
+		free(R);
+		return o2scl::gsl_failure;
+	      }
 	    }
 	    R[nR] = heap_pop(&regions);
 	    for (j = 0; j < fdim; ++j) ee[j].err -= R[nR].ee[j].err;
-	    if (cut_region(R+nR, R+nR+1)) goto bad;
+	    if (cut_region(R+nR, R+nR+1)) {
+	      free(ee);
+	      heap_free(&regions);
+	      free(R);
+	      return o2scl::gsl_failure;
+	    }
 	    numEval += r->num_points * 2;
 	    nR += 2;
 	    if (converged(fdim, ee, reqAbsError, reqRelError, norm)) {
@@ -1354,7 +1382,10 @@ namespace o2scl {
 
 	  if (eval_regions(nR, R, f, r)
 	      || heap_push_many(&regions, nR, R)) {
-	    goto bad;
+	      free(ee);
+	      heap_free(&regions);
+	      free(R);
+	      return o2scl::gsl_failure;
 	  }
 
 	} else { 
@@ -1365,8 +1396,12 @@ namespace o2scl {
 	  R[0] = heap_pop(&regions); 
 	  if (cut_region(R, R+1)
 	      || eval_regions(2, R, f, r)
-	      || heap_push_many(&regions, 2, R))
-	    goto bad;
+	      || heap_push_many(&regions, 2, R)) {
+	    free(ee);
+	    heap_free(&regions);
+	    free(R);
+	    return o2scl::gsl_failure;
+	  }
 	  numEval += r->num_points * 2;
 	}
       }
@@ -1387,14 +1422,6 @@ namespace o2scl {
       free(R);
 
       return o2scl::success;
-
-    bad:
-      
-      free(ee);
-      heap_free(&regions);
-      free(R);
-
-      return o2scl::gsl_failure;
     }
     
     /** \brief Desc
@@ -1869,7 +1896,8 @@ namespace o2scl {
       size_t numEval = 0, new_nbuf;
       unsigned i;
       valcache vc = {0, 0};
-      double *val1 = 0;
+
+      std::vector<double> val1(fdim);
 
       /* norm is irrelevant */
       if (fdim <= 1) norm = ERROR_INDIVIDUAL;
@@ -1905,30 +1933,34 @@ namespace o2scl {
 	free(*buf);
 	*buf = (double *) malloc(sizeof(double) 
 				 * (*nbuf = new_nbuf) * dim);
-	if (!*buf) goto done;
+	if (!*buf) {
+	  free_cachevals(&vc);
+	  return ret;
+	}
       }
 
       /* start by evaluating the m=0 cubature rule */
       if (add_cacheval(&vc, m, dim, fdim, f, dim, xmin, xmax, 
 		       *buf, *nbuf) != o2scl::success) {
-	goto done;
+	  free_cachevals(&vc);
+	  return ret;
       }
-
-      val1 = (double *) malloc(sizeof(double) * fdim);
 
       while (1) {
 	unsigned mi;
 
-	eval_integral(vc, m, fdim, dim, V, &mi, val, err, val1);
+	eval_integral(vc, m, fdim, dim, V, &mi, val, err, &(val1[0]));
 	if (converged(fdim, val, err, reqAbsError, reqRelError, norm)
 	    || (numEval > maxEval && maxEval)) {
 	  ret = o2scl::success;
-	  goto done;
+	  free_cachevals(&vc);
+	  return ret;
 	}
 	m[mi] += 1;
 	if (m[mi] > clencurt_M) {
 	  /* FAILURE */
-	  goto done; 
+	  free_cachevals(&vc);
+	  return ret;
 	}
 
 	new_nbuf = num_cacheval(m, mi, dim);
@@ -1939,21 +1971,20 @@ namespace o2scl {
 	  *buf = (double *) malloc(sizeof(double) * *nbuf * dim);
 	  if (!*buf) {
 	    /* FAILURE */
-	    goto done; 
+	  free_cachevals(&vc);
+	  return ret;
 	  }
 	}
 
 	if (add_cacheval(&vc, m, mi, fdim, f, 
 			 dim, xmin, xmax, *buf, *nbuf) != o2scl::success) {
 	  /* FAILURE */
-	  goto done; 
+	  free_cachevals(&vc);
+	  return ret;
 	}
 	numEval += new_nbuf;
       }
 
-    done:
-
-      free(val1);
       free_cachevals(&vc);
       
       return ret;
