@@ -258,6 +258,23 @@ int fv(unsigned ndim, size_t npt, const double *x, unsigned fdim,
   return o2scl::success;
 }
 
+/** Test integrating a few functions at once
+ */
+int fv2(unsigned ndim, size_t npt, const double *x, unsigned fdim,
+	  double *fval) {
+  for (size_t i=0;i<npt;i++) {
+    const double *x2=x+i*ndim;
+    double *f2=fval+i*fdim;
+    f2[0]=exp(-((x2[0]-0.2)*(x2[0]-0.2)+
+		(x2[1]-0.5)*(x2[1]-0.5)));
+    f2[1]=exp(-((x2[0]-0.2)*(x2[0]-0.2)+
+		(x2[1]-0.5)*(x2[1]-0.5)))*x2[0]*x2[0];
+    f2[2]=exp(-((x2[0]-0.2)*(x2[0]-0.2)+
+		(x2[1]-0.5)*(x2[1]-0.5)))*x2[0]*x2[0]*x2[1]*x2[1];
+  }
+  return 0;
+}
+
 int main(void) {
 
   cout.setf(ios::scientific);
@@ -280,6 +297,11 @@ int main(void) {
   inte_hcubature<cub_funct_arr> hc;
   inte_pcubature<cub_funct_arr,std::vector<double> > pc;
 
+  inte_hcubature<cub_funct_arr>::error_norm enh=
+    inte_hcubature<cub_funct_arr>::ERROR_INDIVIDUAL;
+  inte_pcubature<cub_funct_arr,std::vector<double> >::error_norm enp=
+    inte_pcubature<cub_funct_arr,std::vector<double> >::ERROR_INDIVIDUAL;
+    
   cub_funct_arr cfa=fv;
 
   /*std::function<int(unsigned,const double *,unsigned,double *)> cfa=
@@ -313,11 +335,6 @@ int main(void) {
 
     tol=1.0e-2;
     maxEval=0;
-    
-    inte_hcubature<cub_funct_arr>::error_norm enh=
-      inte_hcubature<cub_funct_arr>::ERROR_INDIVIDUAL;
-    inte_pcubature<cub_funct_arr,std::vector<double> >::error_norm enp=
-      inte_pcubature<cub_funct_arr,std::vector<double> >::ERROR_INDIVIDUAL;
     
     which_integrand = test_iand; 
     
@@ -369,6 +386,28 @@ int main(void) {
     
   }
 
+  {
+    double dlow[2]={-2.0,-2.0};
+    double dhigh[2]={2.0,2.0};
+    vector<double> vlow(2), vhigh(2);
+    vlow[0]=-2.0;
+    vlow[1]=-2.0;
+    vhigh[0]=2.0;
+    vhigh[1]=2.0;
+    double dres[3], derr[3];
+    cub_funct_arr cfa2=fv2;
+    int ret=hc.integ(3,cfa2,2,dlow,dhigh,10000,0.0,1.0e-4,enh,dres,derr);
+    tmgr.test_gen(ret==0,"hc mdim ret");
+    tmgr.test_rel(3.067993,dres[0],1.0e-6,"hc mdim val 0");
+    tmgr.test_rel(1.569270,dres[1],1.0e-6,"hc mdim val 1");
+    tmgr.test_rel(1.056968,dres[2],1.0e-6,"hc mdim val 2");
+    ret=pc.integ(3,cfa2,2,vlow,vhigh,10000,0.0,1.0e-4,enp,dres,derr);
+    tmgr.test_gen(ret==0,"pc mdim ret");
+    tmgr.test_rel(3.067993,dres[0],1.0e-6,"pc mdim val 0");
+    tmgr.test_rel(1.569270,dres[1],1.0e-6,"pc mdim val 1");
+    tmgr.test_rel(1.056968,dres[2],1.0e-6,"pc mdim val 2");
+  }
+    
   tmgr.report();
   return 0;
 }
