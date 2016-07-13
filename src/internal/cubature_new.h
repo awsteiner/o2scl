@@ -151,12 +151,13 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    typedef struct {
+    class esterr {
+    public:
       /** \brief Desc */
       double val;
       /** \brief Desc */
       double err;
-    } esterr;
+    };
 
     /** \brief Desc
      */
@@ -171,14 +172,15 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    typedef struct {
+    class hypercube {
+    public:
       /** \brief Desc */
       unsigned dim;
       /** \brief length 2*dim = center followed by half-widths */
       double *data; 
       /** \brief cache volume = product of widths */
       double vol;   
-    } hypercube;
+    };
 
     /** \brief Desc
      */
@@ -254,7 +256,8 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    typedef struct {
+    class region {
+    public:
       /** \brief Desc */
       hypercube h;
       /** \brief Desc */
@@ -265,14 +268,14 @@ namespace o2scl {
       esterr *ee; 
       /** \brief max ee[k].err */
       double errmax; 
-    } region;
+    };
 
     /** \brief Desc
      */
-    region make_region(const hypercube *h, unsigned fdim) {
+    region make_region(const hypercube &h, unsigned fdim) {
 
       region R;
-      R.h = make_hypercube2(h->dim, h->data);
+      R.h = make_hypercube2(h.dim, h.data);
       R.splitDim = 0;
       R.fdim = fdim;
       if (R.h.data) {
@@ -574,7 +577,8 @@ namespace o2scl {
 	cubature rule of degree 7 (embedded rule degree 5) 
 	from \ref Genz83.
     */
-    typedef struct {
+    class rule75genzmalik {
+    public:
 
       /** \brief Desc */
       rule parent;
@@ -596,7 +600,7 @@ namespace o2scl {
       double weightE1;
       /** \brief Desc */
       double weightE3;
-    } rule75genzmalik;
+    };
     
     /** \brief Convert integer to double
      */
@@ -971,7 +975,8 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    typedef struct {
+    class heap {
+    public:
       /** \brief Desc */
       size_t n;
       /** \brief Desc */
@@ -982,19 +987,19 @@ namespace o2scl {
       unsigned fdim;
       /** array of length fdim of the total integrand & error */
       esterr *ee; 
-    } heap;
+    };
 
     /** \brief Desc
      */
-    void heap_resize(heap *h, size_t nalloc) {
+    void heap_resize(heap &h, size_t nalloc) {
 
-      h->nalloc = nalloc;
+      h.nalloc = nalloc;
       if (nalloc) {
-	h->items = (heap_item *) realloc(h->items, sizeof(heap_item)*nalloc);
+	h.items = (heap_item *) realloc(h.items, sizeof(heap_item)*nalloc);
       } else {
 	/* BSD realloc does not free for a zero-sized reallocation */
-	free(h->items);
-	h->items = 0;
+	free(h.items);
+	h.items = 0;
       }
       return;
     }
@@ -1011,25 +1016,25 @@ namespace o2scl {
       h.ee = (esterr *) malloc(sizeof(esterr) * fdim);
       if (h.ee) {
 	for (unsigned i = 0; i < fdim; ++i) h.ee[i].val = h.ee[i].err = 0;
-	heap_resize(&h, nalloc);
+	heap_resize(h, nalloc);
       }
       return h;
     }
 
     /** \brief Note that heap_free does not deallocate anything referenced by
 	the items */
-    void heap_free(heap *h) {
+    void heap_free(heap &h) {
 
-      h->n = 0;
+      h.n = 0;
       heap_resize(h, 0);
-      h->fdim = 0;
-      free(h->ee);
+      h.fdim = 0;
+      free(h.ee);
       return;
     }
 
     /** \brief Desc
      */
-    int heap_push(heap *h, heap_item hi) {
+    int heap_push(heap &h, heap_item hi) {
 
       /*
 	if (h->n>30) {
@@ -1045,27 +1050,27 @@ namespace o2scl {
       */
 
       int insert;
-      unsigned fdim = h->fdim;
+      unsigned fdim = h.fdim;
 
       for (unsigned i = 0; i < fdim; ++i) {
-	h->ee[i].val += hi.ee[i].val;
-	h->ee[i].err += hi.ee[i].err;
+	h.ee[i].val += hi.ee[i].val;
+	h.ee[i].err += hi.ee[i].err;
       }
-      insert = h->n;
-      if (++(h->n) > h->nalloc) {
-	heap_resize(h, h->n * 2);
-	if (!h->items) return o2scl::gsl_failure;
+      insert = h.n;
+      if (++(h.n) > h.nalloc) {
+	heap_resize(h, h.n * 2);
+	if (!h.items) return o2scl::gsl_failure;
       }
 
       while (insert) {
 	int parent = (insert - 1) / 2;
-	if (hi.errmax <= h->items[parent].errmax) {
+	if (hi.errmax <= h.items[parent].errmax) {
 	  break;
 	}
-	h->items[insert] = h->items[parent];
+	h.items[insert] = h.items[parent];
 	insert = parent;
       }
-      h->items[insert] = hi;
+      h.items[insert] = hi;
       return o2scl::success;
     }
 
@@ -1073,7 +1078,7 @@ namespace o2scl {
      */
     int heap_push_many(heap *h, size_t ni, heap_item *hi) {
       for (size_t i = 0; i < ni; ++i) {
-	if (heap_push(h, hi[i])) return o2scl::gsl_failure;
+	if (heap_push(*h, hi[i])) return o2scl::gsl_failure;
       }
       return o2scl::success;
     }
@@ -1241,7 +1246,7 @@ namespace o2scl {
 
       regions = heap_alloc(1, fdim);
       if (!regions.ee || !regions.items) {
-	heap_free(&regions);
+	heap_free(regions);
 	free(R);
 	return o2scl::gsl_failure;
       }
@@ -1249,14 +1254,14 @@ namespace o2scl {
       nR_alloc = 2;
       R = (region *) malloc(sizeof(region) * nR_alloc);
       if (!R) {
-	heap_free(&regions);
+	heap_free(regions);
 	free(R);
 	return o2scl::gsl_failure;
       }
-      R[0] = make_region(h, fdim);
+      R[0] = make_region(*h, fdim);
       if (!R[0].ee || eval_regions(1, R, f, r) ||
-	  heap_push(&regions, R[0])) {
-	heap_free(&regions);
+	  heap_push(regions, R[0])) {
+	heap_free(regions);
 	free(R);
 	return o2scl::gsl_failure;
       }
@@ -1304,7 +1309,7 @@ namespace o2scl {
 	      nR_alloc = (nR + 2) * 2;
 	      R = (region *) realloc(R, nR_alloc * sizeof(region));
 	      if (!R) {
-		heap_free(&regions);
+		heap_free(regions);
 		free(R);
 		return o2scl::gsl_failure;
 	      }
@@ -1312,7 +1317,7 @@ namespace o2scl {
 	    R[nR] = heap_pop(&regions);
 	    for (j = 0; j < fdim; ++j) ee[j].err -= R[nR].ee[j].err;
 	    if (cut_region(R+nR, R+nR+1)) {
-	      heap_free(&regions);
+	      heap_free(regions);
 	      free(R);
 	      return o2scl::gsl_failure;
 	    }
@@ -1327,7 +1332,7 @@ namespace o2scl {
 
 	  if (eval_regions(nR, R, f, r)
 	      || heap_push_many(&regions, nR, R)) {
-	      heap_free(&regions);
+	      heap_free(regions);
 	      free(R);
 	      return o2scl::gsl_failure;
 	  }
@@ -1341,7 +1346,7 @@ namespace o2scl {
 	  if (cut_region(R, R+1)
 	      || eval_regions(2, R, f, r)
 	      || heap_push_many(&regions, 2, R)) {
-	    heap_free(&regions);
+	    heap_free(regions);
 	    free(R);
 	    return o2scl::gsl_failure;
 	  }
@@ -1359,7 +1364,7 @@ namespace o2scl {
 	destroy_region(&regions.items[i]);
       }
 
-      heap_free(&regions);
+      heap_free(regions);
       free(R);
 
       return o2scl::success;
@@ -1473,23 +1478,25 @@ namespace o2scl {
 	m[mi]-1. (m[mi]-1 == -1 corresponds to the trivial grid of one
 	point in the center.) 
     */
-    typedef struct cacheval_s {
+    class cacheval {
+    public:
       /** \brief Desc */
       unsigned m[MAXDIM];
       /** \brief Desc */
       unsigned mi;
       /** \brief Desc */
       double *val;
-    } cacheval;
+    };
 
     /** \brief Desc  array of ncache cachevals c[i] 
      */
-    typedef struct valcache_s {
+    class valcache {
+    public:
       /** \brief Desc */
       size_t ncache;
       /** \brief Desc */
       cacheval *c;
-    } valcache;
+    };
 
     /** \brief Desc
      */
