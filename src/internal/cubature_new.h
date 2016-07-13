@@ -1041,19 +1041,6 @@ namespace o2scl {
      */
     int heap_push(heap &h, heap_item hi) {
 
-      /*
-	if (h->n>30) {
-	for(unsigned i=0;i<h->fdim;i++) {
-	std::cout << h->ee[i].val << " " << h->ee[i].err << std::endl;
-	}
-	for(unsigned i=0;i<h->n;i++) {
-	std::cout << h->items[i].errmax << std::endl;
-	}
-	std::cout << h->fdim << " " << h->n << " " << h->nalloc << std::endl;
-	exit(-1);
-	}
-      */
-
       int insert;
       unsigned fdim = h.fdim;
 
@@ -1523,23 +1510,24 @@ namespace o2scl {
 	cache entry: add each point to the buffer buf, evaluating all
 	at once whenever the buffer is full or when we are done
     */
-    int compute_cacheval(const unsigned *m, unsigned mi, 
-			 double *val, size_t *vali,
+    int compute_cacheval(const std::vector<unsigned> &m, unsigned mi, 
+			 double *val, size_t &vali,
 			 unsigned fdim, func_t &f, 
-			 unsigned dim, unsigned id, double *p,
+			 unsigned dim, unsigned id, std::vector<double> &p,
 			 const vec_t &xmin, const vec_t &xmax,
-			 double *buf, size_t nbuf, size_t *ibuf) {
+			 double *buf, size_t nbuf, size_t &ibuf) {
 
       if (id == dim) {
 	/* add point to buffer of points */
-	memcpy(buf + (*ibuf)++ * dim, p, sizeof(double) * dim);
-	if (*ibuf == nbuf) {
+	double *p2=&(p[0]);
+	memcpy(buf + (ibuf)++ * dim, p2, sizeof(double) * dim);
+	if (ibuf == nbuf) {
 	  /* flush buffer */
-	  if (f(dim, nbuf, buf, fdim, val + *vali)) {
+	  if (f(dim, nbuf, buf, fdim, val + vali)) {
 	    return o2scl::gsl_failure;
 	  }
-	  *vali += *ibuf * fdim;
-	  *ibuf = 0;
+	  vali += ibuf * fdim;
+	  ibuf = 0;
 	}
 
       } else {
@@ -1593,14 +1581,14 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    int add_cacheval(valcache *vc, const std::vector<unsigned> &m, unsigned mi,
-		     unsigned fdim, func_t &f,
-		     unsigned dim, const vec_t &xmin,
-		     const vec_t &xmax, double *buf, size_t nbuf) {
+    int add_cacheval(valcache *vc, const std::vector<unsigned> &m,
+		     unsigned mi, unsigned fdim, func_t &f, unsigned dim, 
+		     const vec_t &xmin, const vec_t &xmax,
+		     std::vector<double> &buf, size_t nbuf) {
       
       size_t ic = vc->ncache;
       size_t nval, vali = 0, ibuf = 0;
-      double p[MAXDIM];
+      std::vector<double> p(MAXDIM);
 
       vc->c = (cacheval *) realloc(vc->c, sizeof(cacheval) * ++(vc->ncache));
       if (!vc->c) return -1;
@@ -1613,14 +1601,14 @@ namespace o2scl {
       vc->c[ic].val = (double *) malloc(sizeof(double) * nval);
       if (!vc->c[ic].val) return o2scl::gsl_failure;
 
-      if (compute_cacheval(&(m[0]), mi, vc->c[ic].val, &vali, fdim, f,
-			   dim, 0, p, xmin, xmax, buf, nbuf, &ibuf)) {
+      if (compute_cacheval(m, mi, vc->c[ic].val, vali, fdim, f,
+			   dim, 0, p, xmin, xmax, &(buf[0]), nbuf, ibuf)) {
 	return o2scl::gsl_failure;
       }
 
       if (ibuf > 0) {
 	/* flush remaining buffer */
-	return f(dim, ibuf, buf, fdim, vc->c[ic].val + vali);
+	return f(dim, ibuf, &(buf[0]), fdim, vc->c[ic].val + vali);
       }
 
       return o2scl::success;
@@ -1637,7 +1625,7 @@ namespace o2scl {
     unsigned eval(const unsigned *cm, unsigned cmi, double *cval,
 		  const unsigned *m, unsigned md,
 		  unsigned fdim, unsigned dim, unsigned id,
-		  double weight, double *val) {
+		  double weight, std::vector<double> &val) {
 
       size_t voff = 0; /* amount caller should offset cval array afterwards */
       if (id == dim) {
@@ -1697,7 +1685,7 @@ namespace o2scl {
 	if (vc.c[i].mi >= dim ||
 	    vc.c[i].m[vc.c[i].mi] + (vc.c[i].mi == md) <= m[vc.c[i].mi]) {
 	  eval(vc.c[i].m, vc.c[i].mi, vc.c[i].val,
-	       &(m[0]), md, fdim, dim, 0, V, &(val[0]));
+	       &(m[0]), md, fdim, dim, 0, V, val);
 	}
       }
       return;
@@ -1905,7 +1893,7 @@ namespace o2scl {
 
       /* start by evaluating the m=0 cubature rule */
       if (add_cacheval(&vc,m, dim, fdim, f, dim, xmin, xmax, 
-		       &(buf[0]), nbuf) != o2scl::success) {
+		       buf, nbuf) != o2scl::success) {
 	  free_cachevals(&vc);
 	  return ret;
       }
@@ -1936,7 +1924,7 @@ namespace o2scl {
 	}
 
 	if (add_cacheval(&vc,m, mi, fdim, f, 
-			 dim, xmin, xmax, &(buf[0]), nbuf) != o2scl::success) {
+			 dim, xmin, xmax, buf, nbuf) != o2scl::success) {
 	  /* FAILURE */
 	  free_cachevals(&vc);
 	  return ret;
