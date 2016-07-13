@@ -4,9 +4,9 @@
 
 CUBATURE_SRCS = 
 
-HEADERS_VAR = clencurt.h cubature.h
+HEADERS_VAR = clencurt.h cubature.h cubature_orig.h
 
-TEST_VAR = cubature.scr 
+TEST_VAR = cubature.scr cubature_orig.scr
 
 # ------------------------------------------------------------
 # Includes
@@ -65,7 +65,7 @@ pkginclude_HEADERS = $(HEADERS_VAR)
 # libtool testing targets
 # ------------------------------------------------------------
 
-check_PROGRAMS = cubature_ts
+check_PROGRAMS = cubature_ts cubature_orig_ts
 
 check_SCRIPTS = o2scl-test
 
@@ -81,6 +81,13 @@ cubature.scr: cubature_ts$(EXEEXT)
 	./cubature_ts$(EXEEXT) > cubature.scr
 
 cubature_ts_SOURCES = cubature_ts.cpp
+
+cubature_orig_ts_LDADD = $(VCHECK_LIBS)
+
+cubature_orig.scr: cubature_orig_ts$(EXEEXT)
+	./cubature_orig_ts$(EXEEXT) > cubature_orig.scr
+
+cubature_orig_ts_SOURCES = cubature_orig_ts.cpp
 
 # ------------------------------------------------------------
 # No library o2scl_cubature

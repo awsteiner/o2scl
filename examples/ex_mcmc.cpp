@@ -112,9 +112,12 @@ int main(int argc, char *argv[]) {
   init[1]=0.5;
 
   // Use cubature to compute integrals
-  double dlow[2]={-2.0,-2.0};
-  double dhigh[2]={2.0,2.0};
-  double dres[3], derr[3];
+  std::vector<double> dlow(2), dhigh(2);
+  dlow[0]=-2.0;
+  dlow[1]=-2.0;
+  dhigh[0]=2.0;
+  dhigh[1]=2.0;
+  std::vector<double> dres(3), derr(3);
   typedef std::function<
     int(unsigned,size_t,const double *,unsigned,double *)> cub_funct_arr;
   cub_funct_arr cfa=f_cub;

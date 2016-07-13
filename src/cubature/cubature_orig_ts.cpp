@@ -49,113 +49,116 @@
  */
 
 #include <iostream>
-#include "cubature_new.h"
+#include <o2scl/cubature_orig.h>
 #include <o2scl/test_mgr.h>
-#include <o2scl/constants.h>
+
+static const bool debug=false;
 
 using namespace std;
 using namespace o2scl;
 
 int cub_count = 0;
 int which_integrand;
-static const double radius = 0.50124145262344534123412;
-static const double k_2_sqrtpi=2.0/sqrt(o2scl_const::pi);
+const double radius = 0.50124145262344534123412; /* random */
+
+/* Simple constant function */
+double fconst (double x[], size_t dim, void *params) {
+  return 1;
+}
 
 /*** f0, f1, f2, and f3 are test functions from the Monte-Carlo
      integration routines in GSL 1.6 (monte/test.c).  Copyright (c)
      1996-2000 Michael Booth, GNU GPL. ****/
 
 /* Simple product function */
-double f0 (size_t dim, const double *x) {
+double f0 (unsigned dim, const double *x, void *params) {
   double prod = 1.0;
-  size_t i;
-  for (i = 0; i < dim; ++i) {
+  unsigned int i;
+  for (i = 0; i < dim; ++i)
     prod *= 2.0 * x[i];
-  }
   return prod;
 }
 
+#define K_2_SQRTPI 1.12837916709551257390
+
 /* Gaussian centered at 1/2. */
-double f1 (size_t dim, const double *x, double a) {
+double f1 (unsigned dim, const double *x, void *params) {
+  double a = *(double *)params;
   double sum = 0.;
-  size_t i;
+  unsigned int i;
   for (i = 0; i < dim; i++) {
     double dx = x[i] - 0.5;
     sum += dx * dx;
   }
-  return (pow (k_2_sqrtpi / (2. * a), (double) dim) *
+  return (pow (K_2_SQRTPI / (2. * a), (double) dim) *
 	  exp (-sum / (a * a)));
 }
 
 /* double gaussian */
-double f2 (size_t dim, const double *x, double a) {
+double f2 (unsigned dim, const double *x, void *params) {
+  double a = *(double *)params;
   double sum1 = 0.;
   double sum2 = 0.;
-  size_t i;
+  unsigned int i;
   for (i = 0; i < dim; i++) {
     double dx1 = x[i] - 1. / 3.;
     double dx2 = x[i] - 2. / 3.;
     sum1 += dx1 * dx1;
     sum2 += dx2 * dx2;
   }
-  return 0.5 * pow (k_2_sqrtpi / (2. * a), dim) 
+  return 0.5 * pow (K_2_SQRTPI / (2. * a), dim) 
     * (exp (-sum1 / (a * a)) + exp (-sum2 / (a * a)));
 }
 
 /* Tsuda's example */
-double f3 (size_t dim, const double *x, double c) {
+double f3 (unsigned dim, const double *x, void *params) {
+  double c = *(double *)params;
   double prod = 1.;
-  size_t i;
-  for (i = 0; i < dim; i++) {
+  unsigned int i;
+  for (i = 0; i < dim; i++)
     prod *= c / (c + 1) * pow((c + 1) / (c + x[i]), 2.0);
-  }
   return prod;
 }
 
 /* test integrand from W. J. Morokoff and R. E. Caflisch, "Quasi=
    Monte Carlo integration," J. Comput. Phys 122, 218-230 (1995).
    Designed for integration on [0,1]^dim, integral = 1. */
-double morokoff(size_t dim, const double *x) {
+static double morokoff(unsigned dim, const double *x, void *params) {
   double p = 1.0 / dim;
   double prod = pow(1 + p, dim);
-  size_t i;
-  for (i = 0; i < dim; i++) {
+  unsigned int i;
+  for (i = 0; i < dim; i++)
     prod *= pow(x[i], p);
-  }
   return prod;
 }
 
-int f_test(size_t dim, const double *x, 
-	   size_t fdim, double *retval) {
+/*** end of GSL test functions ***/
+
+int f_test(unsigned dim, const double *x, void *data_,
+	   unsigned fdim, double *retval) {
   
   double val;
+  unsigned i, j;
   ++cub_count;
-
-  double fdata;
-  if (which_integrand==6) {
-    fdata=(1.0+sqrt(10.0))/9.0;
-  } else {
-    fdata=0.1;
-  }
-  switch (which_integrand) {
-  case 0:
-    /* simple smooth (separable) objective: prod. cos(x[i]). */
-    val = 1;
-    for (size_t i = 0; i < dim; ++i) {
-      val *= cos(x[i]);
-    }
-    break;
-  case 1:
-    {
-      /* integral of exp(-x^2), rescaled to (0,infinity) limits */
+  (void) data_; /* not used */
+  for (j = 0; j < 1; ++j) {
+    double fdata = which_integrand == 6 ? (1.0+sqrt (10.0))/9.0 : 0.1;
+    switch (which_integrand) {
+    case 0: /* simple smooth (separable) objective: prod. cos(x[i]). */
+      val = 1;
+      for (i = 0; i < dim; ++i)
+	val *= cos(x[i]);
+      break;
+    case 1: { /* integral of exp(-x^2), rescaled to (0,infinity) limits */
       double scale = 1.0;
       val = 0;
-      for (size_t i = 0; i < dim; ++i) {
+      for (i = 0; i < dim; ++i) {
 	if (x[i] > 0) {
 	  double z = (1 - x[i]) / x[i];
 	  val += z * z;
-	  scale *= k_2_sqrtpi / (x[i] * x[i]);
-	} else {
+	  scale *= K_2_SQRTPI / (x[i] * x[i]);
+	}
+	else {
 	  scale = 0;
 	  break;
 	}
@@ -163,64 +166,64 @@ int f_test(size_t dim, const double *x,
       val = exp(-val) * scale;
       break;
     }
-  case 2: /* discontinuous objective: volume of hypersphere */
-    val = 0;
-    for (size_t i = 0; i < dim; ++i) {
-      val += x[i] * x[i];
+    case 2: /* discontinuous objective: volume of hypersphere */
+      val = 0;
+      for (i = 0; i < dim; ++i)
+	val += x[i] * x[i];
+      val = val < radius * radius;
+      break;
+    case 3:
+      val = f0(dim, x, &fdata);
+      break;
+    case 4:
+      val = f1(dim, x, &fdata);
+      break;
+    case 5:
+      val = f2(dim, x, &fdata);
+      break;
+    case 6:
+      val = f3(dim, x, &fdata);
+      break;
+    case 7:
+      val = morokoff(dim, x, &fdata);
+      break;
+    default:
+      cout << "Unknown integrand." << endl;
+      exit(-1);
     }
-    val = val < radius * radius;
-    break;
-  case 3:
-    val = f0(dim, x);
-    break;
-  case 4:
-    val = f1(dim, x, fdata);
-    break;
-  case 5:
-    val = f2(dim, x, fdata);
-    break;
-  case 6:
-    val = f3(dim, x, fdata);
-    break;
-  case 7:
-    val = morokoff(dim, x);
-    break;
-  default:
-    cout << "Unknown integrand." << endl;
-    exit(-1);
+    retval[j] = val;
   }
-
-  retval[0] = val;
   return 0;
 }
 
+#define K_PI 3.14159265358979323846
+
 /* surface area of n-dimensional unit hypersphere */
-static double S(size_t n) {
+static double S(unsigned n) {
   double val;
   int fact = 1;
-  if (n % 2 == 0) {
-    /* n even */
-    val = 2 * pow(o2scl_const::pi, n * 0.5);
+  if (n % 2 == 0) { /* n even */
+    val = 2 * pow(K_PI, n * 0.5);
     n = n / 2;
     while (n > 1) fact *= (n -= 1);
     val /= fact;
-  } else {
-    /* n odd */
-    val = (1 << (n/2 + 1)) * pow(o2scl_const::pi, n/2);
+  }
+  else { /* n odd */
+    val = (1 << (n/2 + 1)) * pow(K_PI, n/2);
     while (n > 2) fact *= (n -= 2);
     val /= fact;
   }
   return val;
 }
 
-static double exact_integral(int which, size_t dim, const double *xmax) {
+static double exact_integral(int which, unsigned dim, const double *xmax) {
+  unsigned i;
   double val;
   switch(which) {
   case 0:
     val = 1;
-    for (size_t i = 0; i < dim; ++i) {
+    for (i = 0; i < dim; ++i)
       val *= sin(xmax[i]);
-    }
     break;
   case 2:
     val = dim == 0 ? 1 : S(dim) * pow(radius * 0.5, dim) / dim;
@@ -231,20 +234,34 @@ static double exact_integral(int which, size_t dim, const double *xmax) {
   return val;
 }
 
-int fv(size_t ndim, size_t npt, const double *x, size_t fdim,
+int fv(unsigned ndim, size_t npt, const double *x, unsigned fdim,
        double *fval) {
-  for (size_t i = 0; i < npt; ++i) {
-    if (f_test(ndim, x + i*ndim, fdim, fval + i*fdim)) {
+  for (unsigned i = 0; i < npt; ++i) {
+    if (f_test(ndim, x + i*ndim, 0, fdim, fval + i*fdim)) {
       return o2scl::gsl_failure;
     }
+  }
+  if (debug) {
+    cout << ndim << " " << fdim << " " << npt << endl;
+    for(unsigned i=0;i<npt;i++) {
+      for(size_t k=0;k<ndim;k++) {
+	cout << (x+i*ndim)[k] << " ";
+      }
+      for(size_t k=0;k<fdim;k++) {
+	cout << (fval+i*fdim)[k] << " ";
+      }
+      cout << endl;
+    }
+    char ch;
+    cin >> ch;
   }
   return o2scl::success;
 }
 
 /** Test integrating a few functions at once
  */
-int fv2(size_t ndim, size_t npt, const double *x, size_t fdim,
-	double *fval) {
+int fv2(unsigned ndim, size_t npt, const double *x, unsigned fdim,
+	  double *fval) {
   for (size_t i=0;i<npt;i++) {
     const double *x2=x+i*ndim;
     double *f2=fval+i*fdim;
@@ -276,18 +293,18 @@ int main(void) {
   }
 
   typedef std::function<
-    int(size_t,size_t,const double *,size_t,double *)> cub_funct_arr;
-  inte_hcubature_new<cub_funct_arr> hc;
-  inte_pcubature_new<cub_funct_arr,std::vector<double> > pc;
+    int(unsigned,size_t,const double *,unsigned,double *)> cub_funct_arr;
+  inte_hcubature_orig<cub_funct_arr> hc;
+  inte_pcubature_orig<cub_funct_arr,std::vector<double> > pc;
 
-  inte_hcubature_new<cub_funct_arr>::error_norm enh=
-    inte_hcubature_new<cub_funct_arr>::ERROR_INDIVIDUAL;
-  inte_pcubature_new<cub_funct_arr,std::vector<double> >::error_norm enp=
-    inte_pcubature_new<cub_funct_arr,std::vector<double> >::ERROR_INDIVIDUAL;
-  inte_hcubature_new<cub_funct_arr>::error_norm enh2=
-    inte_hcubature_new<cub_funct_arr>::ERROR_L2;
-  inte_pcubature_new<cub_funct_arr,std::vector<double> >::error_norm enp2=
-    inte_pcubature_new<cub_funct_arr,std::vector<double> >::ERROR_L2;
+  inte_hcubature_orig<cub_funct_arr>::error_norm enh=
+    inte_hcubature_orig<cub_funct_arr>::ERROR_INDIVIDUAL;
+  inte_pcubature_orig<cub_funct_arr,std::vector<double> >::error_norm enp=
+    inte_pcubature_orig<cub_funct_arr,std::vector<double> >::ERROR_INDIVIDUAL;
+  inte_hcubature_orig<cub_funct_arr>::error_norm enh2=
+    inte_hcubature_orig<cub_funct_arr>::ERROR_L2;
+  inte_pcubature_orig<cub_funct_arr,std::vector<double> >::error_norm enp2=
+    inte_pcubature_orig<cub_funct_arr,std::vector<double> >::ERROR_L2;
   
   cub_funct_arr cfa=fv;
 
@@ -300,12 +317,12 @@ int main(void) {
   double test_vals[14][3]={{5.958229e-01,3.519922e-06,3.523658e-07},
 			   {5.958236e-01,2.130785e-04,3.832854e-07},
 			   {1.002290e+00,9.980917e-03,2.290472e-03},
-			   {9.999119e-01,1.113448e-03,8.812269e-05},
-			   {6.514615e-02,6.405123e-04,7.924271e-04},
-			   {1.000000e+00,2.220446e-16,2.220446e-16},
-			   {1.000753e+00,9.612568e-03,7.526466e-04},
-			   {1.000000e+00,2.155111e-04,1.324296e-08},
-			   {9.852783e-01,9.774575e-03,1.472168e-02},
+			    {9.999119e-01,1.113448e-03,8.812269e-05},
+			    {6.514615e-02,6.405123e-04,7.924271e-04},
+			    {1.000000e+00,2.220446e-16,2.220446e-16},
+			    {1.000753e+00,9.612568e-03,7.526466e-04},
+			    {1.000000e+00,2.155111e-04,1.324296e-08},
+			    {9.852783e-01,9.774575e-03,1.472168e-02},
 			   {9.999963e-01,7.175992e-05,3.650226e-06},
 			   {9.998328e-01,7.738486e-03,1.671812e-04},
 			   {9.999948e-01,1.425689e-03,5.187945e-06},
@@ -315,9 +332,8 @@ int main(void) {
   int tcnt=0;
   for(size_t test_iand=0;test_iand<8;test_iand++) {
 
-    double tol;
-    size_t maxEval;
-    vector<double> vval(1), verr(1);
+    double tol, val, err;
+    unsigned maxEval;
 
     tol=1.0e-2;
     maxEval=0;
@@ -327,43 +343,47 @@ int main(void) {
     if (test_iand!=2) {
 
       cub_count=0;
-      hc.integ(1,cfa,dim,xmin2,xmax2,maxEval,0,tol,enh,vval,verr);
+      hc.integ(1,cfa,dim,xmin,xmax,maxEval,0,tol,enh,&val,&err);
 	       
       cout << "# " << which_integrand << " " 
-	   << "integral " << vval[0] << " " << "est. error " << verr[0] << " " 
+	   << "integral " << val << " " << "est. error " << err << " " 
 	   << "true error " 
-	   << fabs(vval[0]-exact_integral(which_integrand,dim,xmax)) << endl;
+	   << fabs(val-exact_integral(which_integrand,dim,xmax)) << endl;
       cout << "evals " << cub_count << endl;
 
-      tmgr.test_gen(fabs(vval[0]-exact_integral(which_integrand,dim,xmax))<
-		    verr[0]*2.0,"hcub 2");
+      tmgr.test_gen(fabs(val-exact_integral(which_integrand,dim,xmax))<
+		    err*2.0,"hcub 2");
       tmgr.test_gen(test_n[tcnt]==cub_count,"cub_count");
-      tmgr.test_rel(vval[0],test_vals[tcnt][0],5.0e-6,"val");
-      tmgr.test_rel(verr[0],test_vals[tcnt][1],5.0e-6,"err");
-      tmgr.test_rel(fabs(vval[0]-exact_integral(which_integrand,dim,xmax)),
+      tmgr.test_rel(val,test_vals[tcnt][0],5.0e-6,"val");
+      tmgr.test_rel(err,test_vals[tcnt][1],5.0e-6,"err");
+      tmgr.test_rel(fabs(val-exact_integral(which_integrand,dim,xmax)),
 		    test_vals[tcnt][2],5.0e-6,"diff w/ exact");
       tcnt++;
+
+      cout << endl;
     }
 
     if (test_iand!=3) {
 
       cub_count=0;
-      pc.integ(1,cfa,dim,xmin2,xmax2,maxEval,0,tol,enp,vval,verr);
+      pc.integ(1,cfa,dim,xmin2,xmax2,maxEval,0,tol,enp,&val,&err);
 	       
       cout << "# " << which_integrand << " " 
-	   << "integral " << vval[0] << " " << "est. error " << verr[0] << " " 
+	   << "integral " << val << " " << "est. error " << err << " " 
 	   << "true error " 
-	   << fabs(vval[0]-exact_integral(which_integrand,dim,xmax)) << endl;
+	   << fabs(val-exact_integral(which_integrand,dim,xmax)) << endl;
       cout << "evals " << cub_count << endl;
 
-      tmgr.test_gen(fabs(vval[0]-exact_integral(which_integrand,dim,xmax))<
-		    verr[0]*2.0,"pcub 2");
+      tmgr.test_gen(fabs(val-exact_integral(which_integrand,dim,xmax))<
+		    err*2.0,"pcub 2");
       tmgr.test_gen(test_n[tcnt]==cub_count,"cub_count");
-      tmgr.test_rel(vval[0],test_vals[tcnt][0],5.0e-6,"val");
-      tmgr.test_rel(verr[0],test_vals[tcnt][1],5.0e-6,"err");
-      tmgr.test_rel(fabs(vval[0]-exact_integral(which_integrand,dim,xmax)),
+      tmgr.test_rel(val,test_vals[tcnt][0],5.0e-6,"val");
+      tmgr.test_rel(err,test_vals[tcnt][1],5.0e-6,"err");
+      tmgr.test_rel(fabs(val-exact_integral(which_integrand,dim,xmax)),
 		    test_vals[tcnt][2],5.0e-6,"diff w/ exact");
       tcnt++;
+      
+      cout << endl;
     }
     
   }
@@ -394,9 +414,8 @@ int main(void) {
   
   for(size_t test_iand=0;test_iand<8;test_iand++) {
 
-    double tol;
-    size_t maxEval;
-    vector<double> vval(1), verr(1);
+    double tol, val, err;
+    unsigned maxEval;
 
     tol=1.0e-2;
     maxEval=0;
@@ -406,43 +425,47 @@ int main(void) {
     if (test_iand!=2) {
 
       cub_count=0;
-      hc.integ(1,cfa,dim,xmin2,xmax2,maxEval,0,tol,enh2,vval,verr);
+      hc.integ(1,cfa,dim,xmin,xmax,maxEval,0,tol,enh2,&val,&err);
 	       
       cout << "# " << which_integrand << " " 
-	   << "integral " << vval[0] << " " << "est. error " << verr[0] << " " 
+	   << "integral " << val << " " << "est. error " << err << " " 
 	   << "true error " 
-	   << fabs(vval[0]-exact_integral(which_integrand,dim,xmax)) << endl;
+	   << fabs(val-exact_integral(which_integrand,dim,xmax)) << endl;
       cout << "evals " << cub_count << endl;
 
-      tmgr.test_gen(fabs(vval[0]-exact_integral(which_integrand,dim,xmax))<
-		    verr[0]*2.0,"hcub 2");
+      tmgr.test_gen(fabs(val-exact_integral(which_integrand,dim,xmax))<
+		    err*2.0,"hcub 2");
       tmgr.test_gen(test_n2[tcnt]==cub_count,"cub_count");
-      tmgr.test_rel(vval[0],test_vals2[tcnt][0],5.0e-6,"val");
-      tmgr.test_rel(verr[0],test_vals2[tcnt][1],5.0e-6,"err");
-      tmgr.test_rel(fabs(vval[0]-exact_integral(which_integrand,dim,xmax)),
+      tmgr.test_rel(val,test_vals2[tcnt][0],5.0e-6,"val");
+      tmgr.test_rel(err,test_vals2[tcnt][1],5.0e-6,"err");
+      tmgr.test_rel(fabs(val-exact_integral(which_integrand,dim,xmax)),
 		    test_vals2[tcnt][2],5.0e-6,"diff w/ exact");
       tcnt++;
+
+      cout << endl;
     }
 
     if (test_iand!=3) {
 
       cub_count=0;
-      pc.integ(1,cfa,dim,xmin2,xmax2,maxEval,0,tol,enp2,vval,verr);
+      pc.integ(1,cfa,dim,xmin2,xmax2,maxEval,0,tol,enp2,&val,&err);
 	       
       cout << "# " << which_integrand << " " 
-	   << "integral " << vval[0] << " " << "est. error " << verr[0] << " " 
+	   << "integral " << val << " " << "est. error " << err << " " 
 	   << "true error " 
-	   << fabs(vval[0]-exact_integral(which_integrand,dim,xmax)) << endl;
+	   << fabs(val-exact_integral(which_integrand,dim,xmax)) << endl;
       cout << "evals " << cub_count << endl;
 
-      tmgr.test_gen(fabs(vval[0]-exact_integral(which_integrand,dim,xmax))<
-		    verr[0]*2.0,"pcub 2");
+      tmgr.test_gen(fabs(val-exact_integral(which_integrand,dim,xmax))<
+		    err*2.0,"pcub 2");
       tmgr.test_gen(test_n2[tcnt]==cub_count,"cub_count");
-      tmgr.test_rel(vval[0],test_vals2[tcnt][0],5.0e-6,"val");
-      tmgr.test_rel(verr[0],test_vals2[tcnt][1],5.0e-6,"err");
-      tmgr.test_rel(fabs(vval[0]-exact_integral(which_integrand,dim,xmax)),
+      tmgr.test_rel(val,test_vals2[tcnt][0],5.0e-6,"val");
+      tmgr.test_rel(err,test_vals2[tcnt][1],5.0e-6,"err");
+      tmgr.test_rel(fabs(val-exact_integral(which_integrand,dim,xmax)),
 		    test_vals2[tcnt][2],5.0e-6,"diff w/ exact");
       tcnt++;
+      
+      cout << endl;
     }
     
   }
@@ -451,14 +474,16 @@ int main(void) {
   // function at a time
   
   {
+    double dlow[2]={-2.0,-2.0};
+    double dhigh[2]={2.0,2.0};
     vector<double> vlow(2), vhigh(2);
     vlow[0]=-2.0;
     vlow[1]=-2.0;
     vhigh[0]=2.0;
     vhigh[1]=2.0;
-    vector<double> dres(3), derr(3);
+    double dres[3], derr[3];
     cub_funct_arr cfa2=fv2;
-    int ret=hc.integ(3,cfa2,2,vlow,vhigh,10000,0.0,1.0e-4,enh,dres,derr);
+    int ret=hc.integ(3,cfa2,2,dlow,dhigh,10000,0.0,1.0e-4,enh,dres,derr);
     tmgr.test_gen(ret==0,"hc mdim ret");
     tmgr.test_rel(3.067993,dres[0],1.0e-6,"hc mdim val 0");
     tmgr.test_rel(1.569270,dres[1],1.0e-6,"hc mdim val 1");
