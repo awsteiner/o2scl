@@ -1469,9 +1469,9 @@ namespace o2scl {
 	m[mi]-1. (m[mi]-1 == -1 corresponds to the trivial grid of one
 	point in the center.) 
     */
-    class cacheval {
+    class cache {
     public:
-      cacheval() {
+      cache() {
 	m.resize(MAXDIM);
       }
       /** \brief Desc */
@@ -1547,26 +1547,7 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    size_t num_cacheval(const std::vector<size_t> &m, size_t mi, size_t dim) {
-
-      size_t nval = 1;
-      for (size_t i = 0; i < dim; ++i) {
-	if (i == mi) {
-	  if (m[i]==0) {
-	    nval*=2;
-	  } else {
-	    nval*= (1 << (m[i]));
-	  }
-	} else {
-	  nval *= (1 << (m[i] + 1)) + 1;
-	}
-      }
-      return nval;
-    }
-
-    /** \brief Desc
-     */
-    size_t num_cacheval2(const std::vector<size_t> &m, size_t mi, size_t dim,
+    size_t num_cacheval(const std::vector<size_t> &m, size_t mi, size_t dim,
 			 size_t i_shift) {
 
       size_t nval = 1;
@@ -1586,7 +1567,7 @@ namespace o2scl {
     
     /** \brief Desc
      */
-    int add_cacheval(std::vector<cacheval> &vc, const std::vector<size_t> &m,
+    int add_cacheval(std::vector<cache> &vc, const std::vector<size_t> &m,
 		     size_t mi, size_t fdim, func_t &f, size_t dim, 
 		     const vec_t &xmin, const vec_t &xmax,
 		     std::vector<double> &buf, size_t nbuf) {
@@ -1601,7 +1582,7 @@ namespace o2scl {
       for(size_t j=0;j<dim;j++) {
 	vc[ic].m[j]=m[j];
       }
-      nval = fdim * num_cacheval(m,mi,dim);
+      nval = fdim * num_cacheval(m,mi,dim,0);
       vc[ic].val.resize(nval);
 
       if (compute_cacheval(m,mi,vc[ic].val,vali,fdim,f,
@@ -1627,10 +1608,9 @@ namespace o2scl {
     */
     size_t eval(const std::vector<size_t> &cm, size_t cmi,
 		std::vector<double> &cval,
-		  const std::vector<size_t> &m, size_t md,
-		  size_t fdim, size_t dim, size_t id,
-		double weight, std::vector<double> &val,
-		size_t voff2) {
+		const std::vector<size_t> &m, size_t md,
+		size_t fdim, size_t dim, size_t id,
+		double weight, std::vector<double> &val, size_t voff2) {
 
       size_t voff = 0; /* amount caller should offset cval array afterwards */
       if (id == dim) {
@@ -1645,7 +1625,7 @@ namespace o2scl {
 	/* using trivial rule for this dim */
 	voff = eval(cm, cmi, cval, m, md, fdim, dim, id+1, weight*2, val,voff2);
 	voff += fdim * (1 << cm[id]) * 2
-	  * num_cacheval2(cm, cmi - (id+1), dim - (id+1),id+1);
+	  * num_cacheval(cm, cmi - (id+1), dim - (id+1),id+1);
 
       } else {
       
@@ -1671,7 +1651,7 @@ namespace o2scl {
 	}
 
 	voff += (cnx - nx) * fdim * 2
-	  * num_cacheval2(cm, cmi - (id+1), dim - (id+1),id+1);
+	  * num_cacheval(cm, cmi - (id+1), dim - (id+1),id+1);
       }
       return voff;
     }
@@ -1681,7 +1661,7 @@ namespace o2scl {
 	Loop over all cache entries that contribute to the integral,
 	(with m[md] decremented by 1) 
     */
-    void evals(std::vector<cacheval> &vc, const std::vector<size_t> &m,
+    void evals(std::vector<cache> &vc, const std::vector<size_t> &m,
 	       size_t md,
 	       size_t fdim, size_t dim, double V,
 	       std::vector<double> &val) {
@@ -1706,7 +1686,7 @@ namespace o2scl {
 	estimate in err[], and the dimension to subdivide next (the
 	largest error contribution) in *mi
     */
-    void eval_integral(std::vector<cacheval> &vc, const std::vector<size_t> &m, 
+    void eval_integral(std::vector<cache> &vc, const std::vector<size_t> &m, 
 		       size_t fdim, size_t dim, double V,
 		       size_t &mi, std::vector<double> &val,
 		       std::vector<double> &err,
@@ -1735,7 +1715,7 @@ namespace o2scl {
 	if (emax > maxerr) {
 	  maxerr = emax;
 	  mi = i;
-	}
+v	}
       }
       /* printf("eval: %g +/- %g (dim %u)\n", val[0], err[0], *mi); */
       return;
@@ -1861,7 +1841,7 @@ namespace o2scl {
       double V = 1;
       size_t numEval = 0, new_nbuf;
       size_t i;
-      std::vector<cacheval> vc;
+      std::vector<cache> vc;
 
       std::vector<double> val1(fdim);
 
@@ -1891,7 +1871,7 @@ namespace o2scl {
 	V *= (xmax[i] - xmin[i]) * 0.5; 
       }
 
-      new_nbuf = num_cacheval(m,dim,dim);
+      new_nbuf = num_cacheval(m,dim,dim,0);
 
       if (max_nbuf < 1) max_nbuf = 1;
       if (new_nbuf > max_nbuf) new_nbuf = max_nbuf;
@@ -1920,7 +1900,7 @@ namespace o2scl {
 	  return ret;
 	}
 
-	new_nbuf = num_cacheval(m, mi, dim);
+	new_nbuf = num_cacheval(m, mi, dim,0);
 	if (new_nbuf > nbuf && nbuf < max_nbuf) {
 	  nbuf = new_nbuf;
 	  if (nbuf > max_nbuf) nbuf = max_nbuf;
