@@ -313,21 +313,24 @@ namespace o2scl {
       return R2->ee == 0;
     }
 
-    struct rule_s; /* forward declaration */
+    class rule;
 
     /** \brief Desc
      */
-    typedef int (*evalError_func)(struct rule_s *r, unsigned fdim,
+    typedef int (*evalError_func)(struct rule *r, unsigned fdim,
 				  func_t &f, 
 				  unsigned nR, region *R);
     
     /** \brief Desc
      */
-    typedef void (*destroy_func)(struct rule_s *r);
+    typedef void (*destroy_func)(struct rule *r);
 
     /** \brief Desc
      */
-    typedef struct rule_s {
+    class rule {
+
+    public:
+      
       /** \brief The dimensionality and the number of functions */
       unsigned dim, fdim;
       /** \brief The number of evaluation points */
@@ -342,7 +345,7 @@ namespace o2scl {
       evalError_func evalError;
       /** \brief Desc */
       destroy_func destroy;
-    } rule;
+    };
 
     /** \brief Desc
      */
@@ -474,8 +477,9 @@ namespace o2scl {
 
       /* We start with the point where r is ADDed in every coordinate
 	 (this implies signs=0). */
-      for (i = 0; i < dim; ++i)
+      for (i = 0; i < dim; ++i) {
 	p[i] = c[i] + r[i];
+      }
 
       /* Loop through the points in Gray-code ordering */
       for (i = 0;; ++i) {
@@ -578,6 +582,7 @@ namespace o2scl {
 	from \ref Genz83.
     */
     class rule75genzmalik {
+
     public:
 
       /** \brief Desc */
@@ -1076,56 +1081,56 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    int heap_push_many(heap *h, size_t ni, heap_item *hi) {
+    int heap_push_many(heap &h, size_t ni, heap_item *hi) {
       for (size_t i = 0; i < ni; ++i) {
-	if (heap_push(*h, hi[i])) return o2scl::gsl_failure;
+	if (heap_push(h, hi[i])) return o2scl::gsl_failure;
       }
       return o2scl::success;
     }
 
     /** \brief Desc
      */
-    heap_item heap_pop(heap *h) {
+    heap_item heap_pop(heap &h) {
 
       heap_item ret;
       int i, n, child;
 
-      if (!(h->n)) {
+      if (!(h.n)) {
 	O2SCL_ERR("Attempted to pop an empty heap in cubature.",
 		  o2scl::exc_esanity);
       }
 
-      ret = h->items[0];
-      h->items[i = 0] = h->items[n = --(h->n)];
+      ret = h.items[0];
+      h.items[i = 0] = h.items[n = --(h.n)];
 
       while ((child = i * 2 + 1) < n) {
 
 	int largest;
 	heap_item swap;
 
-	if (h->items[child].errmax <= h->items[i].errmax) {
+	if (h.items[child].errmax <= h.items[i].errmax) {
 	  largest = i;
 	} else {
 	  largest = child;
 	}
 	
-	if (++child < n && h->items[largest].errmax <
-	    h->items[child].errmax) {
+	if (++child < n && h.items[largest].errmax <
+	    h.items[child].errmax) {
 	  largest = child;
 	}
 	if (largest == i) {
 	  break;
 	}
-	swap = h->items[i];
-	h->items[i] = h->items[largest];
-	h->items[i = largest] = swap;
+	swap = h.items[i];
+	h.items[i] = h.items[largest];
+	h.items[i = largest] = swap;
       }
 
       {
-	unsigned i, fdim = h->fdim;
+	unsigned i, fdim = h.fdim;
 	for (i = 0; i < fdim; ++i) {
-	  h->ee[i].val -= ret.ee[i].val;
-	  h->ee[i].err -= ret.ee[i].err;
+	  h.ee[i].val -= ret.ee[i].val;
+	  h.ee[i].err -= ret.ee[i].err;
 	}
       }
       return ret;
@@ -1226,7 +1231,7 @@ namespace o2scl {
     /** \brief Desc
      */
     int rulecubature(rule *r, unsigned fdim, func_t &f, 
-		     const hypercube *h, size_t maxEval,
+		     const hypercube &h, size_t maxEval,
 		     double reqAbsError, double reqRelError,
 		     error_norm norm, double *val, double *err,
 		     int parallel) {
@@ -1258,7 +1263,7 @@ namespace o2scl {
 	free(R);
 	return o2scl::gsl_failure;
       }
-      R[0] = make_region(*h, fdim);
+      R[0] = make_region(h, fdim);
       if (!R[0].ee || eval_regions(1, R, f, r) ||
 	  heap_push(regions, R[0])) {
 	heap_free(regions);
@@ -1314,7 +1319,7 @@ namespace o2scl {
 		return o2scl::gsl_failure;
 	      }
 	    }
-	    R[nR] = heap_pop(&regions);
+	    R[nR] = heap_pop(regions);
 	    for (j = 0; j < fdim; ++j) ee[j].err -= R[nR].ee[j].err;
 	    if (cut_region(R+nR, R+nR+1)) {
 	      heap_free(regions);
@@ -1331,7 +1336,7 @@ namespace o2scl {
 	  } while (regions.n > 0 && (numEval < maxEval || !maxEval));
 
 	  if (eval_regions(nR, R, f, r)
-	      || heap_push_many(&regions, nR, R)) {
+	      || heap_push_many(regions, nR, R)) {
 	      heap_free(regions);
 	      free(R);
 	      return o2scl::gsl_failure;
@@ -1342,10 +1347,9 @@ namespace o2scl {
 	  /* minimize number of function evaluations */
 	  
 	  /* get worst region */
-	  R[0] = heap_pop(&regions); 
-	  if (cut_region(R, R+1)
-	      || eval_regions(2, R, f, r)
-	      || heap_push_many(&regions, 2, R)) {
+	  R[0] = heap_pop(regions); 
+	  if (cut_region(R, R+1) || eval_regions(2, R, f, r)
+	      || heap_push_many(regions, 2, R)) {
 	    heap_free(regions);
 	    free(R);
 	    return o2scl::gsl_failure;
@@ -1408,7 +1412,7 @@ namespace o2scl {
       }
       h = make_hypercube_range(dim,xmin,xmax);
       status = !h.data ? o2scl::gsl_failure
-	: rulecubature(r, fdim, f, &h,
+	: rulecubature(r, fdim, f, h,
 		       maxEval, reqAbsError, reqRelError, norm,
 		       &(val[0]), &(err[0]), parallel);
       destroy_hypercube(h);
