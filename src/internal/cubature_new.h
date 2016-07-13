@@ -1475,29 +1475,12 @@ namespace o2scl {
 	m.resize(MAXDIM);
       }
       /** \brief Desc */
-      std::vector<size_t> m;//[MAXDIM];
+      std::vector<size_t> m;
       /** \brief Desc */
       size_t mi;
       /** \brief Desc */
       std::vector<double> val;
     };
-
-    /** \brief Desc  array of ncache cachevals c[i] 
-     */
-    class valcache {
-    public:
-      /** \brief Desc */
-      std::vector<cacheval> c;
-    };
-
-    /** \brief Desc
-     */
-    void free_cachevals(valcache &v) {
-      if (v.c.size()>0) {
-	v.c.clear();
-      }
-      return;
-    }
 
     /** \brief Desc
 
@@ -1569,7 +1552,11 @@ namespace o2scl {
       size_t nval = 1;
       for (size_t i = 0; i < dim; ++i) {
 	if (i == mi) {
-	  nval *= m[i] == 0 ? 2 : (1 << (m[i]));
+	  if (m[i]==0) {
+	    nval*=2;
+	  } else {
+	    nval*= (1 << (m[i]));
+	  }
 	} else {
 	  nval *= (1 << (m[i] + 1)) + 1;
 	}
@@ -1577,34 +1564,52 @@ namespace o2scl {
       return nval;
     }
 
+    size_t num_cacheval2(const size_t *m, size_t mi, size_t dim,
+			 size_t i_shift) {
+
+      size_t nval = 1;
+      for (size_t i = 0; i < dim; ++i) {
+	if (i == mi) {
+	  if (m[i+i_shift]==0) {
+	    nval*=2;
+	  } else {
+	    nval*= (1 << (m[i+i_shift]));
+	  }
+	} else {
+	  nval *= (1 << (m[i+i_shift] + 1)) + 1;
+	}
+      }
+      return nval;
+    }
+    
     /** \brief Desc
      */
-    int add_cacheval(valcache &vc, const std::vector<size_t> &m,
+    int add_cacheval(std::vector<cacheval> &vc, const std::vector<size_t> &m,
 		     size_t mi, size_t fdim, func_t &f, size_t dim, 
 		     const vec_t &xmin, const vec_t &xmax,
 		     std::vector<double> &buf, size_t nbuf) {
       
-      size_t ic = vc.c.size();
+      size_t ic = vc.size();
       size_t nval, vali = 0, ibuf = 0;
       std::vector<double> p(MAXDIM);
 
-      vc.c.resize(vc.c.size()+1);
+      vc.resize(vc.size()+1);
 
-      vc.c[ic].mi = mi;
+      vc[ic].mi = mi;
       for(size_t j=0;j<dim;j++) {
-	vc.c[ic].m[j]=m[j];
+	vc[ic].m[j]=m[j];
       }
       nval = fdim * num_cacheval(&(m[0]), mi, dim);
-      vc.c[ic].val.resize(nval);
+      vc[ic].val.resize(nval);
 
-      if (compute_cacheval(m,mi,vc.c[ic].val,vali,fdim,f,
+      if (compute_cacheval(m,mi,vc[ic].val,vali,fdim,f,
 			   dim,0,p,xmin,xmax,buf,nbuf,ibuf)) {
 	return o2scl::gsl_failure;
       }
 
       if (ibuf > 0) {
 	/* flush remaining buffer */
-	return f(dim, ibuf, &(buf[0]), fdim, &((vc.c[ic].val)[0]) + vali);
+	return f(dim, ibuf, &(buf[0]), fdim, &((vc[ic].val)[0]) + vali);
       }
 
       return o2scl::success;
@@ -1634,7 +1639,7 @@ namespace o2scl {
 	/* using trivial rule for this dim */
 	voff = eval(cm, cmi, cval, m, md, fdim, dim, id+1, weight*2, val);
 	voff += fdim * (1 << cm[id]) * 2
-	  * num_cacheval(cm + id+1, cmi - (id+1), dim - (id+1));
+	  * num_cacheval2(cm, cmi - (id+1), dim - (id+1),id+1);
 
       } else {
       
@@ -1660,7 +1665,7 @@ namespace o2scl {
 	}
 
 	voff += (cnx - nx) * fdim * 2
-	  * num_cacheval(cm + id+1, cmi - (id+1), dim - (id+1));
+	  * num_cacheval2(cm, cmi - (id+1), dim - (id+1),id+1);
       }
       return voff;
     }
@@ -1670,17 +1675,18 @@ namespace o2scl {
 	Loop over all cache entries that contribute to the integral,
 	(with m[md] decremented by 1) 
     */
-    void evals(valcache &vc, const std::vector<size_t> &m, size_t md,
+    void evals(std::vector<cacheval> &vc, const std::vector<size_t> &m,
+	       size_t md,
 	       size_t fdim, size_t dim, double V,
 	       std::vector<double> &val) {
 
       for(size_t k=0;k<fdim;k++) {
 	val[k]=0.0;
       }
-      for (size_t i = 0; i < vc.c.size(); ++i) {
-	if (vc.c[i].mi >= dim ||
-	    vc.c[i].m[vc.c[i].mi] + (vc.c[i].mi == md) <= m[vc.c[i].mi]) {
-	  eval(&((vc.c[i].m)[0]), vc.c[i].mi, &((vc.c[i].val)[0]),
+      for (size_t i = 0; i < vc.size(); ++i) {
+	if (vc[i].mi >= dim ||
+	    vc[i].m[vc[i].mi] + (vc[i].mi == md) <= m[vc[i].mi]) {
+	  eval(&((vc[i].m)[0]), vc[i].mi, &((vc[i].val)[0]),
 	       &(m[0]), md, fdim, dim, 0, V, val);
 	}
       }
@@ -1694,7 +1700,7 @@ namespace o2scl {
 	estimate in err[], and the dimension to subdivide next (the
 	largest error contribution) in *mi
     */
-    void eval_integral(valcache &vc, const std::vector<size_t> &m, 
+    void eval_integral(std::vector<cacheval> &vc, const std::vector<size_t> &m, 
 		       size_t fdim, size_t dim, double V,
 		       size_t &mi, std::vector<double> &val,
 		       std::vector<double> &err,
@@ -1849,7 +1855,7 @@ namespace o2scl {
       double V = 1;
       size_t numEval = 0, new_nbuf;
       size_t i;
-      valcache vc;
+      std::vector<cacheval> vc;
 
       std::vector<double> val1(fdim);
 
@@ -1890,7 +1896,6 @@ namespace o2scl {
       /* start by evaluating the m=0 cubature rule */
       if (add_cacheval(vc,m, dim, fdim, f, dim, xmin, xmax, 
 		       buf, nbuf) != o2scl::success) {
-	  free_cachevals(vc);
 	  return ret;
       }
       while (1) {
@@ -1901,13 +1906,11 @@ namespace o2scl {
 	if (converged(fdim,val,err,reqAbsError, reqRelError, norm) ||
 	    (numEval > maxEval && maxEval)) {
 	  ret = o2scl::success;
-	  free_cachevals(vc);
 	  return ret;
 	}
 	m[mi] += 1;
 	if (m[mi] > clencurt_M) {
 	  /* FAILURE */
-	  free_cachevals(vc);
 	  return ret;
 	}
 
@@ -1921,14 +1924,11 @@ namespace o2scl {
 	if (add_cacheval(vc,m, mi, fdim, f, 
 			 dim, xmin, xmax, buf, nbuf) != o2scl::success) {
 	  /* FAILURE */
-	  free_cachevals(vc);
 	  return ret;
 	}
 	numEval += new_nbuf;
       }
 
-      free_cachevals(vc);
-      
       return ret;
     }
 
