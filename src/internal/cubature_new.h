@@ -1625,23 +1625,25 @@ namespace o2scl {
 	(cm,cmi,cval). id is the current loop dimension (from 0 to
 	dim-1).
     */
-    size_t eval(const std::vector<size_t> &cm, size_t cmi, double *cval,
+    size_t eval(const std::vector<size_t> &cm, size_t cmi,
+		std::vector<double> &cval,
 		  const std::vector<size_t> &m, size_t md,
 		  size_t fdim, size_t dim, size_t id,
-		  double weight, std::vector<double> &val) {
+		double weight, std::vector<double> &val,
+		size_t voff2) {
 
       size_t voff = 0; /* amount caller should offset cval array afterwards */
       if (id == dim) {
 	size_t i;
 	for (i = 0; i < fdim; ++i) {
-	  val[i] += cval[i] * weight;
+	  val[i] += cval[i+voff2] * weight;
 	}
 	voff = fdim;
 
       } else if (m[id] == 0 && id == md) {
 
 	/* using trivial rule for this dim */
-	voff = eval(cm, cmi, cval, m, md, fdim, dim, id+1, weight*2, val);
+	voff = eval(cm, cmi, cval, m, md, fdim, dim, id+1, weight*2, val,voff2);
 	voff += fdim * (1 << cm[id]) * 2
 	  * num_cacheval2(cm, cmi - (id+1), dim - (id+1),id+1);
 
@@ -1658,14 +1660,14 @@ namespace o2scl {
 
 	if (id != cmi) {
 	  voff = eval(cm, cmi, cval, m, md, fdim, dim, id + 1,
-		      weight * w[0], val);
+		      weight * w[0], val,voff2);
 	  ++w;
 	}
 	for (i = 0; i < nx; ++i) {
-	  voff += eval(cm, cmi, cval + voff, m, md, fdim, dim, id + 1,
-		       weight * w[i], val);
-	  voff += eval(cm, cmi, cval + voff, m, md, fdim, dim, id + 1,
-		       weight * w[i], val);
+	  voff += eval(cm, cmi, cval, m, md, fdim, dim, id + 1,
+		       weight * w[i], val,voff+voff2);
+	  voff += eval(cm, cmi, cval, m, md, fdim, dim, id + 1,
+		       weight * w[i], val,voff+voff2);
 	}
 
 	voff += (cnx - nx) * fdim * 2
@@ -1690,8 +1692,8 @@ namespace o2scl {
       for (size_t i = 0; i < vc.size(); ++i) {
 	if (vc[i].mi >= dim ||
 	    vc[i].m[vc[i].mi] + (vc[i].mi == md) <= m[vc[i].mi]) {
-	  eval(vc[i].m, vc[i].mi, &((vc[i].val)[0]),
-	       m, md, fdim, dim, 0, V, val);
+	  eval(vc[i].m, vc[i].mi, vc[i].val,
+	       m, md, fdim, dim, 0, V, val,0);
 	}
       }
       return;
