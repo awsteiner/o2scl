@@ -648,17 +648,16 @@ namespace o2scl {
 
       for (iR = 0; iR < nR; ++iR) {
 	const double *center = R[iR].h.data;
-	const double *halfwidth = R[iR].h.data + dim;
           
 	for (i = 0; i < dim; ++i) {
 	  r->p[i] = center[i];
 	}
           
 	for (i = 0; i < dim; ++i) {
-	  r->widthLambda2[i] = halfwidth[i] * lambda2;
+	  r->widthLambda2[i] = center[i+dim] * lambda2;
 	}
 	for (i = 0; i < dim; ++i) {
-	  r->widthLambda[i] = halfwidth[i] * lambda4;
+	  r->widthLambda[i] = center[i+dim] * lambda4;
 	}
 
 	/* Evaluate points in the center, in (lambda2,0,...,0) and
@@ -673,7 +672,7 @@ namespace o2scl {
 
 	/* Calculate points for (lambda5, lambda5, ..., lambda5) */
 	for (i = 0; i < dim; ++i) {
-	  r->widthLambda[i] = halfwidth[i] * lambda5;
+	  r->widthLambda[i] = center[i+dim] * lambda5;
 	}
 	evalR_Rfs(pts + npts*dim, dim, r->p, center, r->widthLambda);
 	npts += numR_Rfs(dim);
