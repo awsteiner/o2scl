@@ -1513,15 +1513,17 @@ namespace o2scl {
 			 size_t fdim, func_t &f, 
 			 size_t dim, size_t id, std::vector<double> &p,
 			 const vec_t &xmin, const vec_t &xmax,
-			 double *buf, size_t nbuf, size_t &ibuf) {
+			 std::vector<double> &buf, size_t nbuf, size_t &ibuf) {
 
       if (id == dim) {
 	/* add point to buffer of points */
-	double *p2=&(p[0]);
-	memcpy(buf + (ibuf)++ * dim, p2, sizeof(double) * dim);
+	for(size_t k=0;k<dim;k++) {
+	  buf[k+ibuf*dim]=p[k];
+	}
+	ibuf++;
 	if (ibuf == nbuf) {
 	  /* flush buffer */
-	  if (f(dim, nbuf, buf, fdim, val + vali)) {
+	  if (f(dim, nbuf, &(buf[0]), fdim, val + vali)) {
 	    return o2scl::gsl_failure;
 	  }
 	  vali += ibuf * fdim;
@@ -1598,8 +1600,8 @@ namespace o2scl {
       vc->c[ic].val = (double *) malloc(sizeof(double) * nval);
       if (!vc->c[ic].val) return o2scl::gsl_failure;
 
-      if (compute_cacheval(m, mi, vc->c[ic].val, vali, fdim, f,
-			   dim, 0, p, xmin, xmax, &(buf[0]), nbuf, ibuf)) {
+      if (compute_cacheval(m,mi,vc->c[ic].val,vali,fdim,f,
+			   dim,0,p,xmin,xmax,buf,nbuf,ibuf)) {
 	return o2scl::gsl_failure;
       }
 
@@ -1900,9 +1902,8 @@ namespace o2scl {
 
 	eval_integral(vc,m,fdim,dim,V,mi,val,err,val1);
 	
-	if (converged(fdim, &(val[0]), &(err[0]),
-		      reqAbsError, reqRelError, norm)
-	    || (numEval > maxEval && maxEval)) {
+	if (converged(fdim,val,err,reqAbsError, reqRelError, norm) ||
+	    (numEval > maxEval && maxEval)) {
 	  ret = o2scl::success;
 	  free_cachevals(vc);
 	  return ret;
