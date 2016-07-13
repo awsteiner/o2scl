@@ -1547,7 +1547,7 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    size_t num_cacheval(const size_t *m, size_t mi, size_t dim) {
+    size_t num_cacheval(const std::vector<size_t> &m, size_t mi, size_t dim) {
 
       size_t nval = 1;
       for (size_t i = 0; i < dim; ++i) {
@@ -1564,7 +1564,9 @@ namespace o2scl {
       return nval;
     }
 
-    size_t num_cacheval2(const size_t *m, size_t mi, size_t dim,
+    /** \brief Desc
+     */
+    size_t num_cacheval2(const std::vector<size_t> &m, size_t mi, size_t dim,
 			 size_t i_shift) {
 
       size_t nval = 1;
@@ -1599,7 +1601,7 @@ namespace o2scl {
       for(size_t j=0;j<dim;j++) {
 	vc[ic].m[j]=m[j];
       }
-      nval = fdim * num_cacheval(&(m[0]), mi, dim);
+      nval = fdim * num_cacheval(m,mi,dim);
       vc[ic].val.resize(nval);
 
       if (compute_cacheval(m,mi,vc[ic].val,vali,fdim,f,
@@ -1623,15 +1625,17 @@ namespace o2scl {
 	(cm,cmi,cval). id is the current loop dimension (from 0 to
 	dim-1).
     */
-    size_t eval(const size_t *cm, size_t cmi, double *cval,
-		  const size_t *m, size_t md,
+    size_t eval(const std::vector<size_t> &cm, size_t cmi, double *cval,
+		  const std::vector<size_t> &m, size_t md,
 		  size_t fdim, size_t dim, size_t id,
 		  double weight, std::vector<double> &val) {
 
       size_t voff = 0; /* amount caller should offset cval array afterwards */
       if (id == dim) {
 	size_t i;
-	for (i = 0; i < fdim; ++i) val[i] += cval[i] * weight;
+	for (i = 0; i < fdim; ++i) {
+	  val[i] += cval[i] * weight;
+	}
 	voff = fdim;
 
       } else if (m[id] == 0 && id == md) {
@@ -1686,8 +1690,8 @@ namespace o2scl {
       for (size_t i = 0; i < vc.size(); ++i) {
 	if (vc[i].mi >= dim ||
 	    vc[i].m[vc[i].mi] + (vc[i].mi == md) <= m[vc[i].mi]) {
-	  eval(&((vc[i].m)[0]), vc[i].mi, &((vc[i].val)[0]),
-	       &(m[0]), md, fdim, dim, 0, V, val);
+	  eval(vc[i].m, vc[i].mi, &((vc[i].val)[0]),
+	       m, md, fdim, dim, 0, V, val);
 	}
       }
       return;
@@ -1885,7 +1889,7 @@ namespace o2scl {
 	V *= (xmax[i] - xmin[i]) * 0.5; 
       }
 
-      new_nbuf = num_cacheval(&(m[0]), dim, dim);
+      new_nbuf = num_cacheval(m,dim,dim);
 
       if (max_nbuf < 1) max_nbuf = 1;
       if (new_nbuf > max_nbuf) new_nbuf = max_nbuf;
@@ -1914,7 +1918,7 @@ namespace o2scl {
 	  return ret;
 	}
 
-	new_nbuf = num_cacheval(&(m[0]), mi, dim);
+	new_nbuf = num_cacheval(m, mi, dim);
 	if (new_nbuf > nbuf && nbuf < max_nbuf) {
 	  nbuf = new_nbuf;
 	  if (nbuf > max_nbuf) nbuf = max_nbuf;
