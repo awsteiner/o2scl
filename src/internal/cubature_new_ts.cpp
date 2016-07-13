@@ -360,8 +360,6 @@ int main(void) {
       tmgr.test_rel(fabs(vval[0]-exact_integral(which_integrand,dim,xmax)),
 		    test_vals[tcnt][2],5.0e-6,"diff w/ exact");
       tcnt++;
-
-      cout << endl;
     }
 
     if (test_iand!=3) {
@@ -383,8 +381,6 @@ int main(void) {
       tmgr.test_rel(fabs(vval[0]-exact_integral(which_integrand,dim,xmax)),
 		    test_vals[tcnt][2],5.0e-6,"diff w/ exact");
       tcnt++;
-      
-      cout << endl;
     }
     
   }
@@ -443,8 +439,6 @@ int main(void) {
       tmgr.test_rel(fabs(vval[0]-exact_integral(which_integrand,dim,xmax)),
 		    test_vals2[tcnt][2],5.0e-6,"diff w/ exact");
       tcnt++;
-
-      cout << endl;
     }
 
     if (test_iand!=3) {
@@ -466,8 +460,6 @@ int main(void) {
       tmgr.test_rel(fabs(vval[0]-exact_integral(which_integrand,dim,xmax)),
 		    test_vals2[tcnt][2],5.0e-6,"diff w/ exact");
       tcnt++;
-      
-      cout << endl;
     }
     
   }

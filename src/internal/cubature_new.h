@@ -1593,7 +1593,7 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    int add_cacheval(valcache *vc, const unsigned *m, unsigned mi,
+    int add_cacheval(valcache *vc, const std::vector<unsigned> &m, unsigned mi,
 		     unsigned fdim, func_t &f,
 		     unsigned dim, const vec_t &xmin,
 		     const vec_t &xmax, double *buf, size_t nbuf) {
@@ -1606,12 +1606,14 @@ namespace o2scl {
       if (!vc->c) return -1;
 
       vc->c[ic].mi = mi;
-      memcpy(vc->c[ic].m, m, sizeof(unsigned) * dim);
-      nval = fdim * num_cacheval(m, mi, dim);
+      for(size_t j=0;j<dim;j++) {
+	vc->c[ic].m[j]=m[j];
+      }
+      nval = fdim * num_cacheval(&(m[0]), mi, dim);
       vc->c[ic].val = (double *) malloc(sizeof(double) * nval);
       if (!vc->c[ic].val) return o2scl::gsl_failure;
 
-      if (compute_cacheval(m, mi, vc->c[ic].val, &vali, fdim, f,
+      if (compute_cacheval(&(m[0]), mi, vc->c[ic].val, &vali, fdim, f,
 			   dim, 0, p, xmin, xmax, buf, nbuf, &ibuf)) {
 	return o2scl::gsl_failure;
       }
@@ -1684,15 +1686,18 @@ namespace o2scl {
 	Loop over all cache entries that contribute to the integral,
 	(with m[md] decremented by 1) 
     */
-    void evals(valcache vc, const unsigned *m, unsigned md,
-	       unsigned fdim, unsigned dim, double V, double *val) {
-      
-      memset(val, 0, sizeof(double) * fdim);
+    void evals(valcache vc, const std::vector<unsigned> &m, unsigned md,
+	       unsigned fdim, unsigned dim, double V,
+	       std::vector<double> &val) {
+
+      for(size_t k=0;k<fdim;k++) {
+	val[k]=0.0;
+      }
       for (size_t i = 0; i < vc.ncache; ++i) {
 	if (vc.c[i].mi >= dim ||
 	    vc.c[i].m[vc.c[i].mi] + (vc.c[i].mi == md) <= m[vc.c[i].mi]) {
 	  eval(vc.c[i].m, vc.c[i].mi, vc.c[i].val,
-	       m, md, fdim, dim, 0, V, val);
+	       &(m[0]), md, fdim, dim, 0, V, &(val[0]));
 	}
       }
       return;
@@ -1705,10 +1710,11 @@ namespace o2scl {
 	estimate in err[], and the dimension to subdivide next (the
 	largest error contribution) in *mi
     */
-    void eval_integral(valcache vc, const unsigned *m, 
+    void eval_integral(valcache vc, const std::vector<unsigned> &m, 
 		       unsigned fdim, unsigned dim, double V,
-		       unsigned *mi, double *val, double *err,
-		       double *val1) {
+		       unsigned &mi, std::vector<double> &val,
+		       std::vector<double> &err,
+		       std::vector<double> &val1) {
 
       double maxerr = 0;
       unsigned i, j;
@@ -1718,8 +1724,10 @@ namespace o2scl {
       /* error estimates along each dimension by comparing val with
 	 lower-order rule in that dimension; overall (conservative)
 	 error estimate from maximum error of lower-order rules. */
-      memset(err, 0, sizeof(double) * fdim);
-      *mi = 0;
+      for(size_t j=0;j<fdim;j++) {
+	err[j]=0.0;
+      }
+      mi = 0;
       for (i = 0; i < dim; ++i) {
 	double emax = 0;
 	evals(vc, m, i, fdim, dim, V, val1);
@@ -1730,7 +1738,7 @@ namespace o2scl {
 	}
 	if (emax > maxerr) {
 	  maxerr = emax;
-	  *mi = i;
+	  mi = i;
 	}
       }
       /* printf("eval: %g +/- %g (dim %u)\n", val[0], err[0], *mi); */
@@ -1896,7 +1904,7 @@ namespace o2scl {
       }
 
       /* start by evaluating the m=0 cubature rule */
-      if (add_cacheval(&vc,&(m[0]), dim, fdim, f, dim, xmin, xmax, 
+      if (add_cacheval(&vc,m, dim, fdim, f, dim, xmin, xmax, 
 		       &(buf[0]), nbuf) != o2scl::success) {
 	  free_cachevals(&vc);
 	  return ret;
@@ -1904,8 +1912,8 @@ namespace o2scl {
       while (1) {
 	unsigned mi;
 
-	eval_integral(vc,&(m[0]), fdim, dim, V, &mi,
-		      &(val[0]), &(err[0]), &(val1[0]));
+	eval_integral(vc,m,fdim,dim,V,mi,val,err,val1);
+	
 	if (converged(fdim, &(val[0]), &(err[0]),
 		      reqAbsError, reqRelError, norm)
 	    || (numEval > maxEval && maxEval)) {
@@ -1927,7 +1935,7 @@ namespace o2scl {
 	  buf.resize(nbuf*dim);
 	}
 
-	if (add_cacheval(&vc,&(m[0]), mi, fdim, f, 
+	if (add_cacheval(&vc,m, mi, fdim, f, 
 			 dim, xmin, xmax, &(buf[0]), nbuf) != o2scl::success) {
 	  /* FAILURE */
 	  free_cachevals(&vc);
