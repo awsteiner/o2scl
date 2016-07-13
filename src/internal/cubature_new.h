@@ -1486,21 +1486,19 @@ namespace o2scl {
       /** \brief Desc */
       size_t ncache;
       /** \brief Desc */
-      cacheval *c;
+      std::vector<cacheval> c;
     };
 
     /** \brief Desc
      */
-    void free_cachevals(valcache *v) {
-      if (!v) return;
-      if (v->c) {
-	for (size_t i = 0; i < v->ncache; ++i) {
-	  free(v->c[i].val);
+    void free_cachevals(valcache &v) {
+      if (v.c.size()>0) {
+	for (size_t i = 0; i < v.ncache; ++i) {
+	  free(v.c[i].val);
 	}
-	free(v->c);
-	v->c = 0;
+	v.c.clear();
       }
-      v->ncache = 0;
+      v.ncache = 0;
       return;
     }
 
@@ -1590,8 +1588,7 @@ namespace o2scl {
       size_t nval, vali = 0, ibuf = 0;
       std::vector<double> p(MAXDIM);
 
-      vc->c = (cacheval *) realloc(vc->c, sizeof(cacheval) * ++(vc->ncache));
-      if (!vc->c) return -1;
+      vc->c.resize(++(vc->ncache));
 
       vc->c[ic].mi = mi;
       for(size_t j=0;j<dim;j++) {
@@ -1853,7 +1850,8 @@ namespace o2scl {
       double V = 1;
       size_t numEval = 0, new_nbuf;
       size_t i;
-      valcache vc = {0, 0};
+      valcache vc;
+      vc.ncache=0;
 
       std::vector<double> val1(fdim);
 
@@ -1894,7 +1892,7 @@ namespace o2scl {
       /* start by evaluating the m=0 cubature rule */
       if (add_cacheval(&vc,m, dim, fdim, f, dim, xmin, xmax, 
 		       buf, nbuf) != o2scl::success) {
-	  free_cachevals(&vc);
+	  free_cachevals(vc);
 	  return ret;
       }
       while (1) {
@@ -1906,13 +1904,13 @@ namespace o2scl {
 		      reqAbsError, reqRelError, norm)
 	    || (numEval > maxEval && maxEval)) {
 	  ret = o2scl::success;
-	  free_cachevals(&vc);
+	  free_cachevals(vc);
 	  return ret;
 	}
 	m[mi] += 1;
 	if (m[mi] > clencurt_M) {
 	  /* FAILURE */
-	  free_cachevals(&vc);
+	  free_cachevals(vc);
 	  return ret;
 	}
 
@@ -1926,13 +1924,13 @@ namespace o2scl {
 	if (add_cacheval(&vc,m, mi, fdim, f, 
 			 dim, xmin, xmax, buf, nbuf) != o2scl::success) {
 	  /* FAILURE */
-	  free_cachevals(&vc);
+	  free_cachevals(vc);
 	  return ret;
 	}
 	numEval += new_nbuf;
       }
 
-      free_cachevals(&vc);
+      free_cachevals(vc);
       
       return ret;
     }
