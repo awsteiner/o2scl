@@ -1476,7 +1476,7 @@ namespace o2scl {
       /** \brief Desc */
       size_t mi;
       /** \brief Desc */
-      double *val;
+      std::vector<double> val;
     };
 
     /** \brief Desc  array of ncache cachevals c[i] 
@@ -1494,7 +1494,7 @@ namespace o2scl {
     void free_cachevals(valcache &v) {
       if (v.c.size()>0) {
 	for (size_t i = 0; i < v.ncache; ++i) {
-	  free(v.c[i].val);
+	  v.c[i].val.clear();
 	}
 	v.c.clear();
       }
@@ -1597,17 +1597,16 @@ namespace o2scl {
 	vc->c[ic].m[j]=m[j];
       }
       nval = fdim * num_cacheval(&(m[0]), mi, dim);
-      vc->c[ic].val = (double *) malloc(sizeof(double) * nval);
-      if (!vc->c[ic].val) return o2scl::gsl_failure;
+      vc->c[ic].val.resize(nval);
 
-      if (compute_cacheval(m,mi,vc->c[ic].val,vali,fdim,f,
+      if (compute_cacheval(m,mi,&((vc->c[ic].val)[0]),vali,fdim,f,
 			   dim,0,p,xmin,xmax,buf,nbuf,ibuf)) {
 	return o2scl::gsl_failure;
       }
 
       if (ibuf > 0) {
 	/* flush remaining buffer */
-	return f(dim, ibuf, &(buf[0]), fdim, vc->c[ic].val + vali);
+	return f(dim, ibuf, &(buf[0]), fdim, &((vc->c[ic].val)[0]) + vali);
       }
 
       return o2scl::success;
@@ -1683,7 +1682,7 @@ namespace o2scl {
       for (size_t i = 0; i < vc.ncache; ++i) {
 	if (vc.c[i].mi >= dim ||
 	    vc.c[i].m[vc.c[i].mi] + (vc.c[i].mi == md) <= m[vc.c[i].mi]) {
-	  eval(vc.c[i].m, vc.c[i].mi, vc.c[i].val,
+	  eval(vc.c[i].m, vc.c[i].mi, &((vc.c[i].val)[0]),
 	       &(m[0]), md, fdim, dim, 0, V, val);
 	}
       }
