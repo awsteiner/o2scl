@@ -66,9 +66,9 @@ static const double k_2_sqrtpi=2.0/sqrt(o2scl_const::pi);
      1996-2000 Michael Booth, GNU GPL. ****/
 
 /* Simple product function */
-double f0 (unsigned dim, const double *x) {
+double f0 (size_t dim, const double *x) {
   double prod = 1.0;
-  unsigned int i;
+  size_t i;
   for (i = 0; i < dim; ++i) {
     prod *= 2.0 * x[i];
   }
@@ -76,9 +76,9 @@ double f0 (unsigned dim, const double *x) {
 }
 
 /* Gaussian centered at 1/2. */
-double f1 (unsigned dim, const double *x, double a) {
+double f1 (size_t dim, const double *x, double a) {
   double sum = 0.;
-  unsigned int i;
+  size_t i;
   for (i = 0; i < dim; i++) {
     double dx = x[i] - 0.5;
     sum += dx * dx;
@@ -88,10 +88,10 @@ double f1 (unsigned dim, const double *x, double a) {
 }
 
 /* double gaussian */
-double f2 (unsigned dim, const double *x, double a) {
+double f2 (size_t dim, const double *x, double a) {
   double sum1 = 0.;
   double sum2 = 0.;
-  unsigned int i;
+  size_t i;
   for (i = 0; i < dim; i++) {
     double dx1 = x[i] - 1. / 3.;
     double dx2 = x[i] - 2. / 3.;
@@ -103,9 +103,9 @@ double f2 (unsigned dim, const double *x, double a) {
 }
 
 /* Tsuda's example */
-double f3 (unsigned dim, const double *x, double c) {
+double f3 (size_t dim, const double *x, double c) {
   double prod = 1.;
-  unsigned int i;
+  size_t i;
   for (i = 0; i < dim; i++) {
     prod *= c / (c + 1) * pow((c + 1) / (c + x[i]), 2.0);
   }
@@ -115,18 +115,18 @@ double f3 (unsigned dim, const double *x, double c) {
 /* test integrand from W. J. Morokoff and R. E. Caflisch, "Quasi=
    Monte Carlo integration," J. Comput. Phys 122, 218-230 (1995).
    Designed for integration on [0,1]^dim, integral = 1. */
-double morokoff(unsigned dim, const double *x) {
+double morokoff(size_t dim, const double *x) {
   double p = 1.0 / dim;
   double prod = pow(1 + p, dim);
-  unsigned int i;
+  size_t i;
   for (i = 0; i < dim; i++) {
     prod *= pow(x[i], p);
   }
   return prod;
 }
 
-int f_test(unsigned dim, const double *x, 
-	   unsigned fdim, double *retval) {
+int f_test(size_t dim, const double *x, 
+	   size_t fdim, double *retval) {
   
   double val;
   ++cub_count;
@@ -141,7 +141,7 @@ int f_test(unsigned dim, const double *x,
   case 0:
     /* simple smooth (separable) objective: prod. cos(x[i]). */
     val = 1;
-    for (unsigned i = 0; i < dim; ++i) {
+    for (size_t i = 0; i < dim; ++i) {
       val *= cos(x[i]);
     }
     break;
@@ -150,7 +150,7 @@ int f_test(unsigned dim, const double *x,
       /* integral of exp(-x^2), rescaled to (0,infinity) limits */
       double scale = 1.0;
       val = 0;
-      for (unsigned i = 0; i < dim; ++i) {
+      for (size_t i = 0; i < dim; ++i) {
 	if (x[i] > 0) {
 	  double z = (1 - x[i]) / x[i];
 	  val += z * z;
@@ -165,7 +165,7 @@ int f_test(unsigned dim, const double *x,
     }
   case 2: /* discontinuous objective: volume of hypersphere */
     val = 0;
-    for (unsigned i = 0; i < dim; ++i) {
+    for (size_t i = 0; i < dim; ++i) {
       val += x[i] * x[i];
     }
     val = val < radius * radius;
@@ -195,7 +195,7 @@ int f_test(unsigned dim, const double *x,
 }
 
 /* surface area of n-dimensional unit hypersphere */
-static double S(unsigned n) {
+static double S(size_t n) {
   double val;
   int fact = 1;
   if (n % 2 == 0) {
@@ -213,12 +213,12 @@ static double S(unsigned n) {
   return val;
 }
 
-static double exact_integral(int which, unsigned dim, const double *xmax) {
+static double exact_integral(int which, size_t dim, const double *xmax) {
   double val;
   switch(which) {
   case 0:
     val = 1;
-    for (unsigned i = 0; i < dim; ++i) {
+    for (size_t i = 0; i < dim; ++i) {
       val *= sin(xmax[i]);
     }
     break;
@@ -231,9 +231,9 @@ static double exact_integral(int which, unsigned dim, const double *xmax) {
   return val;
 }
 
-int fv(unsigned ndim, size_t npt, const double *x, unsigned fdim,
+int fv(size_t ndim, size_t npt, const double *x, size_t fdim,
        double *fval) {
-  for (unsigned i = 0; i < npt; ++i) {
+  for (size_t i = 0; i < npt; ++i) {
     if (f_test(ndim, x + i*ndim, fdim, fval + i*fdim)) {
       return o2scl::gsl_failure;
     }
@@ -243,7 +243,7 @@ int fv(unsigned ndim, size_t npt, const double *x, unsigned fdim,
 
 /** Test integrating a few functions at once
  */
-int fv2(unsigned ndim, size_t npt, const double *x, unsigned fdim,
+int fv2(size_t ndim, size_t npt, const double *x, size_t fdim,
 	double *fval) {
   for (size_t i=0;i<npt;i++) {
     const double *x2=x+i*ndim;
@@ -276,7 +276,7 @@ int main(void) {
   }
 
   typedef std::function<
-    int(unsigned,size_t,const double *,unsigned,double *)> cub_funct_arr;
+    int(size_t,size_t,const double *,size_t,double *)> cub_funct_arr;
   inte_hcubature_new<cub_funct_arr> hc;
   inte_pcubature_new<cub_funct_arr,std::vector<double> > pc;
 
@@ -316,7 +316,7 @@ int main(void) {
   for(size_t test_iand=0;test_iand<8;test_iand++) {
 
     double tol;
-    unsigned maxEval;
+    size_t maxEval;
     vector<double> vval(1), verr(1);
 
     tol=1.0e-2;
@@ -395,7 +395,7 @@ int main(void) {
   for(size_t test_iand=0;test_iand<8;test_iand++) {
 
     double tol;
-    unsigned maxEval;
+    size_t maxEval;
     vector<double> vval(1), verr(1);
 
     tol=1.0e-2;

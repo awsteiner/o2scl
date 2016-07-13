@@ -161,10 +161,10 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    double errMax(unsigned fdim, const esterr *ee) {
+    double errMax(size_t fdim, const esterr *ee) {
 
       double errmax = 0;
-      for (unsigned k = 0; k < fdim; ++k) {
+      for (size_t k = 0; k < fdim; ++k) {
 	if (ee[k].err > errmax) errmax = ee[k].err;
       }
       return errmax;
@@ -175,7 +175,7 @@ namespace o2scl {
     class hypercube {
     public:
       /** \brief Desc */
-      unsigned dim;
+      size_t dim;
       /** \brief length 2*dim = center followed by half-widths */
       double *data; 
       /** \brief cache volume = product of widths */
@@ -186,7 +186,7 @@ namespace o2scl {
      */
     double compute_vol(const hypercube &h) {
       double vol = 1;
-      for (unsigned i = 0; i < h.dim; ++i) {
+      for (size_t i = 0; i < h.dim; ++i) {
 	vol *= 2 * h.data[i + h.dim];
       }
       return vol;
@@ -194,7 +194,7 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    hypercube make_hypercube(unsigned dim, const std::vector<double> &center,
+    hypercube make_hypercube(size_t dim, const std::vector<double> &center,
 			     const std::vector<double> &halfwidth) {
 
       hypercube h;
@@ -202,7 +202,7 @@ namespace o2scl {
       h.data = (double *) malloc(sizeof(double) * dim * 2);
       h.vol = 0;
       if (h.data) {
-	for (unsigned i = 0; i < dim; ++i) {
+	for (size_t i = 0; i < dim; ++i) {
 	  h.data[i] = center[i];
 	  h.data[i + dim] = halfwidth[i];
 	}
@@ -213,14 +213,14 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    hypercube make_hypercube2(unsigned dim, const double *center) {
+    hypercube make_hypercube2(size_t dim, const double *center) {
 
       hypercube h;
       h.dim = dim;
       h.data = (double *) malloc(sizeof(double) * dim * 2);
       h.vol = 0;
       if (h.data) {
-	for (unsigned i = 0; i < dim; ++i) {
+	for (size_t i = 0; i < dim; ++i) {
 	  h.data[i] = center[i];
 	  h.data[i + dim] = center[i+dim];
 	}
@@ -232,12 +232,12 @@ namespace o2scl {
     /** \brief Desc
      */
     hypercube make_hypercube_range
-      (unsigned dim, const std::vector<double> &xmin,
+      (size_t dim, const std::vector<double> &xmin,
        const std::vector<double> &xmax) {
 
       hypercube h = make_hypercube(dim,xmin,xmax);
       if (h.data) {
-	for (unsigned i = 0; i < dim; ++i) {
+	for (size_t i = 0; i < dim; ++i) {
 	  h.data[i] = 0.5 * (xmin[i] + xmax[i]);
 	  h.data[i + dim] = 0.5 * (xmax[i] - xmin[i]);
 	}
@@ -261,9 +261,9 @@ namespace o2scl {
       /** \brief Desc */
       hypercube h;
       /** \brief Desc */
-      unsigned splitDim;
+      size_t splitDim;
       /** \brief dimensionality of vector integrand */
-      unsigned fdim; 
+      size_t fdim; 
       /** \brief array of length fdim */
       esterr *ee; 
       /** \brief max ee[k].err */
@@ -272,7 +272,7 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    region make_region(const hypercube &h, unsigned fdim) {
+    region make_region(const hypercube &h, size_t fdim) {
 
       region R;
       R.h = make_hypercube2(h.dim, h.data);
@@ -301,7 +301,7 @@ namespace o2scl {
      */
     int cut_region(region *R, region *R2) {
 
-      unsigned d = R->splitDim, dim = R->h.dim;
+      size_t d = R->splitDim, dim = R->h.dim;
       *R2 = *R;
       R->h.data[d + dim] *= 0.5;
       R->h.vol *= 0.5;
@@ -317,9 +317,9 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    typedef int (*evalError_func)(struct rule *r, unsigned fdim,
+    typedef int (*evalError_func)(struct rule *r, size_t fdim,
 				  func_t &f, 
-				  unsigned nR, region *R);
+				  size_t nR, region *R);
     
     /** \brief Desc
      */
@@ -332,11 +332,11 @@ namespace o2scl {
     public:
       
       /** \brief The dimensionality and the number of functions */
-      unsigned dim, fdim;
+      size_t dim, fdim;
       /** \brief The number of evaluation points */
-      unsigned num_points;
+      size_t num_points;
       /** \brief The max number of regions evaluated at once */
-      unsigned num_regions;
+      size_t num_regions;
       /** \brief points to eval: num_regions * num_points * dim */
       double *pts;
       /** \brief num_regions * num_points * fdim */
@@ -360,7 +360,7 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    static int alloc_rule_pts(rule *r, unsigned num_regions) {
+    static int alloc_rule_pts(rule *r, size_t num_regions) {
       if (num_regions > r->num_regions) {
 	free(r->pts);
 	r->pts = r->vals = 0;
@@ -385,7 +385,7 @@ namespace o2scl {
     /** \brief Desc
      */
     rule *make_rule(size_t sz, /* >= sizeof(rule) */
-		    unsigned dim, unsigned fdim, unsigned num_points,
+		    size_t dim, size_t fdim, size_t num_points,
 		    evalError_func evalError, destroy_func destroy) {
       
       rule *r;
@@ -407,9 +407,9 @@ namespace o2scl {
 
 	\note All regions must have same fdim 
     */
-    int eval_regions(unsigned nR, region *R, func_t &f, rule *r) {
+    int eval_regions(size_t nR, region *R, func_t &f, rule *r) {
 
-      unsigned iR;
+      size_t iR;
       if (nR == 0) {
 	/* nothing to evaluate */
 	return o2scl::success;
@@ -428,13 +428,13 @@ namespace o2scl {
 	ls0 returns the least-significant 0 bit of n (e.g. it returns
 	0 if the LSB is 0, it returns 1 if the 2 LSBs are 01, etcetera).
     */
-    static unsigned ls0(unsigned n) {
+    static size_t ls0(size_t n) {
 
 #if defined(__GNUC__) &&                                        \
   ((__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || __GNUC__ > 3)
       return __builtin_ctz(~n); /* gcc builtin for version >= 3.4 */
 #else
-      const unsigned bits[256] = {
+      const size_t bits[256] = {
 	0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4,
 	0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 5,
 	0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4,
@@ -452,7 +452,7 @@ namespace o2scl {
 	0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4,
 	0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 8,
       };
-      unsigned bit = 0;
+      size_t bit = 0;
       while ((n & 0xff) == 0xff) {
 	n >>= 8;
 	bit += 8;
@@ -468,12 +468,12 @@ namespace o2scl {
 	coordinate updates in p, although this doesn't matter as much
 	now that we are saving all pts.
     */
-    static void evalR_Rfs(double *pts, unsigned dim, double *p,
+    static void evalR_Rfs(double *pts, size_t dim, double *p,
 			  const double *c, const double *r) {
       
-      unsigned i;
+      size_t i;
       /* 0/1 bit = +/- for corresponding element of r[] */
-      unsigned signs = 0; 
+      size_t signs = 0; 
 
       /* We start with the point where r is ADDed in every coordinate
 	 (this implies signs=0). */
@@ -483,7 +483,7 @@ namespace o2scl {
 
       /* Loop through the points in Gray-code ordering */
       for (i = 0;; ++i) {
-	unsigned mask, d;
+	size_t mask, d;
 	
 	memcpy(pts, p, sizeof(double) * dim);
 	pts += dim;
@@ -503,12 +503,12 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    static void evalRR0_0fs(double *pts, unsigned dim, double *p,
+    static void evalRR0_0fs(double *pts, size_t dim, double *p,
 			    const double *c, const double *r) {
       
-      for (unsigned i = 0; i < dim - 1; ++i) {
+      for (size_t i = 0; i < dim - 1; ++i) {
 	p[i] = c[i] - r[i];
-	for (unsigned j = i + 1; j < dim; ++j) {
+	for (size_t j = i + 1; j < dim; ++j) {
 	  p[j] = c[j] - r[j];
 	  memcpy(pts, p, sizeof(double) * dim);
 	  pts += dim;
@@ -534,13 +534,13 @@ namespace o2scl {
     /** \brief Desc
      */
     static void evalR0_0fs4d
-      (double *pts, unsigned dim, double *p, const double *c,
+      (double *pts, size_t dim, double *p, const double *c,
        const double *r1, const double *r2) {
       
       memcpy(pts, p, sizeof(double) * dim);
       pts += dim;
 
-      for (unsigned i = 0; i < dim; i++) {
+      for (size_t i = 0; i < dim; i++) {
 	p[i] = c[i] - r1[i];
 	memcpy(pts, p, sizeof(double) * dim);
 	pts += dim;
@@ -635,7 +635,7 @@ namespace o2scl {
     /** \brief Desc
      */
     static int rule75genzmalik_evalError
-      (rule *r_, unsigned fdim, func_t &f, unsigned nR, region *R) {
+      (rule *r_, size_t fdim, func_t &f, size_t nR, region *R) {
     
       /* lambda2 = sqrt(9/70), lambda4 = sqrt(9/10), lambda5 = sqrt(9/19) */
       const double lambda2 = 0.3585685828003180919906451539079374954541;
@@ -648,7 +648,7 @@ namespace o2scl {
       const double ratio = (lambda2 * lambda2) / (lambda4 * lambda4);
 
       rule75genzmalik *r = (rule75genzmalik *) r_;
-      unsigned i, j, iR, dim = r_->dim;
+      size_t i, j, iR, dim = r_->dim;
       size_t npts = 0;
       double *diff, *pts, *vals;
 
@@ -705,7 +705,7 @@ namespace o2scl {
 	for (iR = 0; iR < nR; ++iR) {
 	  double result, res5th;
 	  double val0, sum2=0, sum3=0, sum4=0, sum5=0;
-	  unsigned k, k0 = 0;
+	  size_t k, k0 = 0;
 	  /* accumulate j-th function values into j-th integrals
 	     NOTE: this relies on the ordering of the eval functions
 	     above, as well as on the internal structure of
@@ -757,7 +757,7 @@ namespace o2scl {
       /* figure out dimension to split: */
       for (iR = 0; iR < nR; ++iR) {
 	double maxdiff = 0;
-	unsigned dimDiffMax = 0;
+	size_t dimDiffMax = 0;
   
 	for (i = 0; i < dim; ++i) {
 	  if (diff[iR*dim + i] > maxdiff) {
@@ -776,18 +776,18 @@ namespace o2scl {
     
     /** \brief Desc
      */
-    rule *make_rule75genzmalik(unsigned dim, unsigned fdim) {
+    rule *make_rule75genzmalik(size_t dim, size_t fdim) {
 
       rule75genzmalik *r;
       
       if (dim < 2) return 0; /* this rule does not support 1d integrals */
       
       /* Because of the use of a bit-field in evalR_Rfs, we are limited
-	 to be < 32 dimensions (or however many bits are in unsigned).
+	 to be < 32 dimensions (or however many bits are in size_t).
 	 This is not a practical limitation...long before you reach
 	 32 dimensions, the Genz-Malik cubature becomes excruciatingly
 	 slow and is superseded by other methods (e.g. Monte-Carlo). */
-      if (dim >= sizeof(unsigned) * 8) return 0;
+      if (dim >= sizeof(size_t) * 8) return 0;
       
       r = (rule75genzmalik *) make_rule(sizeof(rule75genzmalik),
 					dim, fdim,
@@ -817,7 +817,7 @@ namespace o2scl {
 	and qk.c in GNU GSL (which in turn is based on QUADPACK).
     */
     static int rule15gauss_evalError
-      (rule *r, unsigned fdim, func_t &f, unsigned nR, region *R) {
+      (rule *r, size_t fdim, func_t &f, size_t nR, region *R) {
 
       static const double cub_dbl_min=std::numeric_limits<double>::min();
       static const double cub_dbl_eps=std::numeric_limits<double>::epsilon();
@@ -825,7 +825,7 @@ namespace o2scl {
       /* Gauss quadrature weights and kronrod quadrature abscissae and
 	 weights as evaluated with 80 decimal digit arithmetic by
 	 L. W. Fullerton, Bell Labs, Nov. 1981. */
-      const unsigned n = 8;
+      const size_t n = 8;
       const double xgk[8] = {  /* abscissae of the 15-point kronrod rule */
 	0.991455371120812639206854697526329,
 	0.949107912342758524526189684047851,
@@ -854,7 +854,7 @@ namespace o2scl {
 	0.204432940075298892414161999234649,
 	0.209482141084727828012999174891714
       };
-      unsigned j, k, iR;
+      size_t j, k, iR;
       size_t npts = 0;
       double *pts, *vals;
 
@@ -960,7 +960,7 @@ namespace o2scl {
      
     /** \brief Desc
      */
-    rule *make_rule15gauss(unsigned dim, unsigned fdim) {
+    rule *make_rule15gauss(size_t dim, size_t fdim) {
 
       if (dim != 1) return 0; /* this rule is only for 1d integrals */
        
@@ -989,7 +989,7 @@ namespace o2scl {
       /** \brief Desc */
       heap_item *items;
       /** \brief Desc */
-      unsigned fdim;
+      size_t fdim;
       /** array of length fdim of the total integrand & error */
       esterr *ee; 
     };
@@ -1011,7 +1011,7 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    heap heap_alloc(size_t nalloc, unsigned fdim) {
+    heap heap_alloc(size_t nalloc, size_t fdim) {
 
       heap h;
       h.n = 0;
@@ -1020,7 +1020,7 @@ namespace o2scl {
       h.fdim = fdim;
       h.ee = (esterr *) malloc(sizeof(esterr) * fdim);
       if (h.ee) {
-	for (unsigned i = 0; i < fdim; ++i) h.ee[i].val = h.ee[i].err = 0;
+	for (size_t i = 0; i < fdim; ++i) h.ee[i].val = h.ee[i].err = 0;
 	heap_resize(h, nalloc);
       }
       return h;
@@ -1042,9 +1042,9 @@ namespace o2scl {
     int heap_push(heap &h, heap_item hi) {
 
       int insert;
-      unsigned fdim = h.fdim;
+      size_t fdim = h.fdim;
 
-      for (unsigned i = 0; i < fdim; ++i) {
+      for (size_t i = 0; i < fdim; ++i) {
 	h.ee[i].val += hi.ee[i].val;
 	h.ee[i].err += hi.ee[i].err;
       }
@@ -1114,7 +1114,7 @@ namespace o2scl {
       }
 
       {
-	unsigned i, fdim = h.fdim;
+	size_t i, fdim = h.fdim;
 	for (i = 0; i < fdim; ++i) {
 	  h.ee[i].val -= ret.ee[i].val;
 	  h.ee[i].err -= ret.ee[i].err;
@@ -1126,11 +1126,11 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    int converged(unsigned fdim, const esterr *ee,
+    int converged(size_t fdim, const esterr *ee,
 		  double reqAbsError, double reqRelError,
 		  error_norm norm) {
 
-      unsigned j;
+      size_t j;
 
       switch (norm) {
 	
@@ -1217,7 +1217,7 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    int rulecubature(rule *r, unsigned fdim, func_t &f, 
+    int rulecubature(rule *r, size_t fdim, func_t &f, 
 		     const hypercube &h, size_t maxEval,
 		     double reqAbsError, double reqRelError,
 		     error_norm norm, double *val, double *err,
@@ -1225,7 +1225,7 @@ namespace o2scl {
       
       size_t numEval = 0;
       heap regions;
-      unsigned i, j;
+      size_t i, j;
       /* array of regions to evaluate */
       region *R = 0; 
       size_t nR_alloc = 0;
@@ -1363,8 +1363,8 @@ namespace o2scl {
     
     /** \brief Desc
      */
-    int cubature(unsigned fdim, func_t &f, 
-		 unsigned dim, const std::vector<double> &xmin,
+    int cubature(size_t fdim, func_t &f, 
+		 size_t dim, const std::vector<double> &xmin,
 		 const std::vector<double> &xmax, 
 		 size_t maxEval, double reqAbsError, double reqRelError, 
 		 error_norm norm,
@@ -1374,7 +1374,7 @@ namespace o2scl {
       rule *r;
       hypercube h;
       int status;
-      unsigned i;
+      size_t i;
       
       if (fdim == 0) {
 	/* nothing to do */
@@ -1411,7 +1411,7 @@ namespace o2scl {
     
     /** \brief Desc
      */
-    int integ(unsigned fdim, func_t &f, unsigned dim,
+    int integ(size_t fdim, func_t &f, size_t dim,
 	      const std::vector<double> &xmin,
 	      const std::vector<double> &xmax, size_t maxEval,
 	      double reqAbsError, double reqRelError, error_norm norm,
@@ -1472,9 +1472,9 @@ namespace o2scl {
     class cacheval {
     public:
       /** \brief Desc */
-      unsigned m[MAXDIM];
+      size_t m[MAXDIM];
       /** \brief Desc */
-      unsigned mi;
+      size_t mi;
       /** \brief Desc */
       double *val;
     };
@@ -1510,10 +1510,10 @@ namespace o2scl {
 	cache entry: add each point to the buffer buf, evaluating all
 	at once whenever the buffer is full or when we are done
     */
-    int compute_cacheval(const std::vector<unsigned> &m, unsigned mi, 
+    int compute_cacheval(const std::vector<size_t> &m, size_t mi, 
 			 double *val, size_t &vali,
-			 unsigned fdim, func_t &f, 
-			 unsigned dim, unsigned id, std::vector<double> &p,
+			 size_t fdim, func_t &f, 
+			 size_t dim, size_t id, std::vector<double> &p,
 			 const vec_t &xmin, const vec_t &xmax,
 			 double *buf, size_t nbuf, size_t &ibuf) {
 
@@ -1536,7 +1536,7 @@ namespace o2scl {
 	double r = (xmax[id] - xmin[id]) * 0.5;
 	const double *x = clencurt_x 
 	  + ((id == mi) ? (m[id] ? (1 << (m[id] - 1)) : 0) : 0);
-	unsigned i, nx = (id == mi ? (m[id] ? (1 << (m[id] - 1)) : 1)
+	size_t i, nx = (id == mi ? (m[id] ? (1 << (m[id] - 1)) : 1)
 			  : (1 << (m[id])));
 	if (id != mi) {
 	  p[id] = c;
@@ -1566,10 +1566,10 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    size_t num_cacheval(const unsigned *m, unsigned mi, unsigned dim) {
+    size_t num_cacheval(const size_t *m, size_t mi, size_t dim) {
 
       size_t nval = 1;
-      for (unsigned i = 0; i < dim; ++i) {
+      for (size_t i = 0; i < dim; ++i) {
 	if (i == mi) {
 	  nval *= m[i] == 0 ? 2 : (1 << (m[i]));
 	} else {
@@ -1581,8 +1581,8 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    int add_cacheval(valcache *vc, const std::vector<unsigned> &m,
-		     unsigned mi, unsigned fdim, func_t &f, unsigned dim, 
+    int add_cacheval(valcache *vc, const std::vector<size_t> &m,
+		     size_t mi, size_t fdim, func_t &f, size_t dim, 
 		     const vec_t &xmin, const vec_t &xmax,
 		     std::vector<double> &buf, size_t nbuf) {
       
@@ -1622,14 +1622,14 @@ namespace o2scl {
 	(cm,cmi,cval). id is the current loop dimension (from 0 to
 	dim-1).
     */
-    unsigned eval(const unsigned *cm, unsigned cmi, double *cval,
-		  const unsigned *m, unsigned md,
-		  unsigned fdim, unsigned dim, unsigned id,
+    size_t eval(const size_t *cm, size_t cmi, double *cval,
+		  const size_t *m, size_t md,
+		  size_t fdim, size_t dim, size_t id,
 		  double weight, std::vector<double> &val) {
 
       size_t voff = 0; /* amount caller should offset cval array afterwards */
       if (id == dim) {
-	unsigned i;
+	size_t i;
 	for (i = 0; i < fdim; ++i) val[i] += cval[i] * weight;
 	voff = fdim;
 
@@ -1642,14 +1642,14 @@ namespace o2scl {
 
       } else {
       
-	unsigned i;
+	size_t i;
 	/* order of C-C rule */
-	unsigned mid = m[id] - (id == md); 
+	size_t mid = m[id] - (id == md); 
 	const double *w = clencurt_w + mid + (1 << mid) - 1
 	  + (id == cmi ? (cm[id] ? 1 + (1 << (cm[id]-1)) : 1) : 0);
-	unsigned cnx = (id == cmi ? (cm[id] ? (1 << (cm[id]-1)) : 1)
+	size_t cnx = (id == cmi ? (cm[id] ? (1 << (cm[id]-1)) : 1)
 			: (1 << (cm[id])));
-	unsigned nx = cm[id] <= mid ? cnx : (1 << mid);
+	size_t nx = cm[id] <= mid ? cnx : (1 << mid);
 
 	if (id != cmi) {
 	  voff = eval(cm, cmi, cval, m, md, fdim, dim, id + 1,
@@ -1674,8 +1674,8 @@ namespace o2scl {
 	Loop over all cache entries that contribute to the integral,
 	(with m[md] decremented by 1) 
     */
-    void evals(valcache vc, const std::vector<unsigned> &m, unsigned md,
-	       unsigned fdim, unsigned dim, double V,
+    void evals(valcache vc, const std::vector<size_t> &m, size_t md,
+	       size_t fdim, size_t dim, double V,
 	       std::vector<double> &val) {
 
       for(size_t k=0;k<fdim;k++) {
@@ -1698,14 +1698,14 @@ namespace o2scl {
 	estimate in err[], and the dimension to subdivide next (the
 	largest error contribution) in *mi
     */
-    void eval_integral(valcache vc, const std::vector<unsigned> &m, 
-		       unsigned fdim, unsigned dim, double V,
-		       unsigned &mi, std::vector<double> &val,
+    void eval_integral(valcache vc, const std::vector<size_t> &m, 
+		       size_t fdim, size_t dim, double V,
+		       size_t &mi, std::vector<double> &val,
 		       std::vector<double> &err,
 		       std::vector<double> &val1) {
 
       double maxerr = 0;
-      unsigned i, j;
+      size_t i, j;
      
       evals(vc, m, dim, fdim, dim, V, val);
 
@@ -1736,14 +1736,14 @@ namespace o2scl {
     /** \brief Desc
      */
     template<class vec2_t>
-      int converged(unsigned fdim, const vec2_t &vals, const vec2_t &errs,
+      int converged(size_t fdim, const vec2_t &vals, const vec2_t &errs,
 		    double reqAbsError, double reqRelError, error_norm norm) {
 
       switch (norm) {
 	
       case ERROR_INDIVIDUAL:
 
-	for (unsigned j = 0; j < fdim; ++j) {
+	for (size_t j = 0; j < fdim; ++j) {
 	  if (errs[j] > reqAbsError && errs[j] > fabs(vals[j])*reqRelError) {
 	    return 0;
 	  }
@@ -1753,7 +1753,7 @@ namespace o2scl {
       case ERROR_PAIRED:
 
 	{
-	  unsigned j;
+	  size_t j;
 
 	  for (j = 0; j+1 < fdim; j += 2) {
 	    double maxerr, serr, err, maxval, sval, val;
@@ -1780,7 +1780,7 @@ namespace o2scl {
 
 	{
 	  double err = 0, val = 0;
-	  for (unsigned j = 0; j < fdim; ++j) {
+	  for (size_t j = 0; j < fdim; ++j) {
 	    err += errs[j];
 	    val += fabs(vals[j]);
 	  }
@@ -1791,7 +1791,7 @@ namespace o2scl {
 
 	{
 	  double err = 0, val = 0;
-	  for (unsigned j = 0; j < fdim; ++j) {
+	  for (size_t j = 0; j < fdim; ++j) {
 	    double absval = fabs(vals[j]);
 	    if (errs[j] > err) err = errs[j];
 	    if (absval > val) val = absval;
@@ -1804,14 +1804,14 @@ namespace o2scl {
 	{
 	  double maxerr = 0, maxval = 0, serr, sval, err = 0, val = 0;
 	  /* scale values by 1/max to avoid overflow/underflow */
-	  for (unsigned j = 0; j < fdim; ++j) {
+	  for (size_t j = 0; j < fdim; ++j) {
 	    double absval = fabs(vals[j]);
 	    if (errs[j] > maxerr) maxerr = errs[j];
 	    if (absval > maxval) maxval = absval;
 	  }
 	  serr = maxerr > 0 ? 1/maxerr : 1;
 	  sval = maxval > 0 ? 1/maxval : 1;
-	  for (unsigned j = 0; j < fdim; ++j) {
+	  for (size_t j = 0; j < fdim; ++j) {
 	    err += dsqr(errs[j] * serr);
 	    val += dsqr(fabs(vals[j]) * sval);
 	  }
@@ -1842,17 +1842,17 @@ namespace o2scl {
 	for the rule, which upon return will hold the final degrees.  The
 	number of points in each dimension i is 2^(m[i]+1) + 1. 
     */
-    int integ_v_buf(unsigned fdim, func_t &f, 
-		    unsigned dim, const vec_t &xmin, const vec_t &xmax,
+    int integ_v_buf(size_t fdim, func_t &f, 
+		    size_t dim, const vec_t &xmin, const vec_t &xmax,
 		    size_t maxEval, double reqAbsError, double reqRelError,
-		    error_norm norm, std::vector<unsigned> &m,
+		    error_norm norm, std::vector<size_t> &m,
 		    std::vector<double> &buf, size_t &nbuf, size_t max_nbuf,
 		    std::vector<double> &val, std::vector<double> &err) {
       
       int ret = o2scl::gsl_failure;
       double V = 1;
       size_t numEval = 0, new_nbuf;
-      unsigned i;
+      size_t i;
       valcache vc = {0, 0};
 
       std::vector<double> val1(fdim);
@@ -1898,7 +1898,7 @@ namespace o2scl {
 	  return ret;
       }
       while (1) {
-	unsigned mi;
+	size_t mi;
 
 	eval_integral(vc,m,fdim,dim,V,mi,val,err,val1);
 	
@@ -1943,14 +1943,14 @@ namespace o2scl {
     
     /** \brief Desc
      */
-    int integ(unsigned fdim, func_t &f, unsigned dim,
+    int integ(size_t fdim, func_t &f, size_t dim,
 	      const vec_t &xmin, const vec_t &xmax, size_t maxEval,
 	      double reqAbsError, double reqRelError, error_norm norm,
 	      std::vector<double> &val, std::vector<double> &err) {
       
       int ret;
       size_t nbuf = 0;
-      std::vector<unsigned> m(dim);
+      std::vector<size_t> m(dim);
       std::vector<double> buf;
 
       /* max_nbuf > 0 to amortize function overhead */
