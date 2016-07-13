@@ -1471,8 +1471,11 @@ namespace o2scl {
     */
     class cacheval {
     public:
+      cacheval() {
+	m.resize(MAXDIM);
+      }
       /** \brief Desc */
-      size_t m[MAXDIM];
+      std::vector<size_t> m;//[MAXDIM];
       /** \brief Desc */
       size_t mi;
       /** \brief Desc */
@@ -1484,8 +1487,6 @@ namespace o2scl {
     class valcache {
     public:
       /** \brief Desc */
-      size_t ncache;
-      /** \brief Desc */
       std::vector<cacheval> c;
     };
 
@@ -1493,12 +1494,8 @@ namespace o2scl {
      */
     void free_cachevals(valcache &v) {
       if (v.c.size()>0) {
-	for (size_t i = 0; i < v.ncache; ++i) {
-	  v.c[i].val.clear();
-	}
 	v.c.clear();
       }
-      v.ncache = 0;
       return;
     }
 
@@ -1509,11 +1506,11 @@ namespace o2scl {
 	at once whenever the buffer is full or when we are done
     */
     int compute_cacheval(const std::vector<size_t> &m, size_t mi, 
-			 double *val, size_t &vali,
-			 size_t fdim, func_t &f, 
-			 size_t dim, size_t id, std::vector<double> &p,
-			 const vec_t &xmin, const vec_t &xmax,
-			 std::vector<double> &buf, size_t nbuf, size_t &ibuf) {
+			 std::vector<double> &val, size_t &vali,
+			 size_t fdim, func_t &f, size_t dim, size_t id,
+			 std::vector<double> &p, const vec_t &xmin,
+			 const vec_t &xmax, std::vector<double> &buf,
+			 size_t nbuf, size_t &ibuf) {
 
       if (id == dim) {
 	/* add point to buffer of points */
@@ -1523,7 +1520,7 @@ namespace o2scl {
 	ibuf++;
 	if (ibuf == nbuf) {
 	  /* flush buffer */
-	  if (f(dim, nbuf, &(buf[0]), fdim, val + vali)) {
+	  if (f(dim, nbuf, &(buf[0]), fdim, &(val[0]) + vali)) {
 	    return o2scl::gsl_failure;
 	  }
 	  vali += ibuf * fdim;
@@ -1536,7 +1533,8 @@ namespace o2scl {
 	double r = (xmax[id] - xmin[id]) * 0.5;
 	const double *x = clencurt_x 
 	  + ((id == mi) ? (m[id] ? (1 << (m[id] - 1)) : 0) : 0);
-	size_t i, nx = (id == mi ? (m[id] ? (1 << (m[id] - 1)) : 1)
+	size_t i;
+	size_t nx = (id == mi ? (m[id] ? (1 << (m[id] - 1)) : 1)
 			  : (1 << (m[id])));
 	if (id != mi) {
 	  p[id] = c;
@@ -1581,32 +1579,32 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    int add_cacheval(valcache *vc, const std::vector<size_t> &m,
+    int add_cacheval(valcache &vc, const std::vector<size_t> &m,
 		     size_t mi, size_t fdim, func_t &f, size_t dim, 
 		     const vec_t &xmin, const vec_t &xmax,
 		     std::vector<double> &buf, size_t nbuf) {
       
-      size_t ic = vc->ncache;
+      size_t ic = vc.c.size();
       size_t nval, vali = 0, ibuf = 0;
       std::vector<double> p(MAXDIM);
 
-      vc->c.resize(++(vc->ncache));
+      vc.c.resize(vc.c.size()+1);
 
-      vc->c[ic].mi = mi;
+      vc.c[ic].mi = mi;
       for(size_t j=0;j<dim;j++) {
-	vc->c[ic].m[j]=m[j];
+	vc.c[ic].m[j]=m[j];
       }
       nval = fdim * num_cacheval(&(m[0]), mi, dim);
-      vc->c[ic].val.resize(nval);
+      vc.c[ic].val.resize(nval);
 
-      if (compute_cacheval(m,mi,&((vc->c[ic].val)[0]),vali,fdim,f,
+      if (compute_cacheval(m,mi,vc.c[ic].val,vali,fdim,f,
 			   dim,0,p,xmin,xmax,buf,nbuf,ibuf)) {
 	return o2scl::gsl_failure;
       }
 
       if (ibuf > 0) {
 	/* flush remaining buffer */
-	return f(dim, ibuf, &(buf[0]), fdim, &((vc->c[ic].val)[0]) + vali);
+	return f(dim, ibuf, &(buf[0]), fdim, &((vc.c[ic].val)[0]) + vali);
       }
 
       return o2scl::success;
@@ -1672,17 +1670,17 @@ namespace o2scl {
 	Loop over all cache entries that contribute to the integral,
 	(with m[md] decremented by 1) 
     */
-    void evals(valcache vc, const std::vector<size_t> &m, size_t md,
+    void evals(valcache &vc, const std::vector<size_t> &m, size_t md,
 	       size_t fdim, size_t dim, double V,
 	       std::vector<double> &val) {
 
       for(size_t k=0;k<fdim;k++) {
 	val[k]=0.0;
       }
-      for (size_t i = 0; i < vc.ncache; ++i) {
+      for (size_t i = 0; i < vc.c.size(); ++i) {
 	if (vc.c[i].mi >= dim ||
 	    vc.c[i].m[vc.c[i].mi] + (vc.c[i].mi == md) <= m[vc.c[i].mi]) {
-	  eval(vc.c[i].m, vc.c[i].mi, &((vc.c[i].val)[0]),
+	  eval(&((vc.c[i].m)[0]), vc.c[i].mi, &((vc.c[i].val)[0]),
 	       &(m[0]), md, fdim, dim, 0, V, val);
 	}
       }
@@ -1696,7 +1694,7 @@ namespace o2scl {
 	estimate in err[], and the dimension to subdivide next (the
 	largest error contribution) in *mi
     */
-    void eval_integral(valcache vc, const std::vector<size_t> &m, 
+    void eval_integral(valcache &vc, const std::vector<size_t> &m, 
 		       size_t fdim, size_t dim, double V,
 		       size_t &mi, std::vector<double> &val,
 		       std::vector<double> &err,
@@ -1852,7 +1850,6 @@ namespace o2scl {
       size_t numEval = 0, new_nbuf;
       size_t i;
       valcache vc;
-      vc.ncache=0;
 
       std::vector<double> val1(fdim);
 
@@ -1891,7 +1888,7 @@ namespace o2scl {
       }
 
       /* start by evaluating the m=0 cubature rule */
-      if (add_cacheval(&vc,m, dim, fdim, f, dim, xmin, xmax, 
+      if (add_cacheval(vc,m, dim, fdim, f, dim, xmin, xmax, 
 		       buf, nbuf) != o2scl::success) {
 	  free_cachevals(vc);
 	  return ret;
@@ -1921,7 +1918,7 @@ namespace o2scl {
 	  buf.resize(nbuf*dim);
 	}
 
-	if (add_cacheval(&vc,m, mi, fdim, f, 
+	if (add_cacheval(vc,m, mi, fdim, f, 
 			 dim, xmin, xmax, buf, nbuf) != o2scl::success) {
 	  /* FAILURE */
 	  free_cachevals(vc);
