@@ -299,18 +299,18 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    int cut_region(region *R, region *R2) {
+    int cut_region(region &R, region &R2) {
 
-      size_t d = R->splitDim, dim = R->h.dim;
-      *R2 = *R;
-      R->h.data[d + dim] *= 0.5;
-      R->h.vol *= 0.5;
-      R2->h = make_hypercube2(dim, R->h.data);
-      if (!R2->h.data) return o2scl::gsl_failure;
-      R->h.data[d] -= R->h.data[d + dim];
-      R2->h.data[d] += R->h.data[d + dim];
-      R2->ee = (esterr *) malloc(sizeof(esterr) * R2->fdim);
-      return R2->ee == 0;
+      size_t d = R.splitDim, dim = R.h.dim;
+      R2=R;
+      R.h.data[d + dim] *= 0.5;
+      R.h.vol *= 0.5;
+      R2.h = make_hypercube2(dim, R.h.data);
+      if (!R2.h.data) return o2scl::gsl_failure;
+      R.h.data[d] -= R.h.data[d + dim];
+      R2.h.data[d] += R.h.data[d + dim];
+      R2.ee = (esterr *) malloc(sizeof(esterr) * R2.fdim);
+      return R2.ee == 0;
     }
 
     class rule;
@@ -1306,7 +1306,7 @@ namespace o2scl {
 	    }
 	    R[nR] = heap_pop(regions);
 	    for (j = 0; j < fdim; ++j) ee[j].err -= R[nR].ee[j].err;
-	    if (cut_region(R+nR, R+nR+1)) {
+	    if (cut_region(R[nR], R[nR+1])) {
 	      heap_free(regions);
 	      free(R);
 	      return o2scl::gsl_failure;
@@ -1333,7 +1333,7 @@ namespace o2scl {
 	  
 	  /* get worst region */
 	  R[0] = heap_pop(regions); 
-	  if (cut_region(R, R+1) || eval_regions(2, R, f, r)
+	  if (cut_region(R[0], R[1]) || eval_regions(2, R, f, r)
 	      || heap_push_many(regions, 2, R)) {
 	    heap_free(regions);
 	    free(R);
