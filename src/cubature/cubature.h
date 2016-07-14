@@ -78,18 +78,6 @@ namespace o2scl {
     
   public:
     
-    /** \brief Square an integer
-     */
-    int isqr(int x) {
-      return x*x;
-    }
-    
-    /** \brief Square an double-precision floating-point number
-     */
-    double dsqr(double x) {
-      return x*x;
-    }
-
     /** \brief Different ways of measuring the absolute and 
 	relative error
 
@@ -593,18 +581,6 @@ namespace o2scl {
       double weightE3;
     };
     
-    /** \brief Convert integer to double
-     */
-    static double real(int x) {
-      return ((double)(x));
-    }
-    
-    /** \brief Convert double to intger
-     */
-    static int to_int(double n) {
-      return ((int)(n));
-    }
-    
     /** \brief Desc
      */
     static void destroy_rule75genzmalik(rule *r_)
@@ -783,13 +759,11 @@ namespace o2scl {
 					destroy_rule75genzmalik);
       if (!r) return 0;
 
-      r->weight1 = (real(12824 - 9120 * to_int(dim) + 400 * isqr(to_int(dim)))
-		    / real(19683));
-      r->weight3 = real(1820 - 400 * to_int(dim)) / real(19683);
-      r->weight5 = real(6859) / real(19683) / real(1U << dim);
-      r->weightE1 = (real(729 - 950 * to_int(dim) + 50 * isqr(to_int(dim)))
-		     / real(729));
-      r->weightE3 = real(265 - 100 * to_int(dim)) / real(1458);
+      r->weight1=(12824.0-9120.0*dim+400.0*dim*dim)/19683.0;
+      r->weight3=(1820.0-400.0*dim)/19683.0;
+      r->weight5=6859.0/19683.0/((double)(1U << dim));
+      r->weightE1=(729.0-950.0*dim+50.0*dim*dim)/729.0;
+      r->weightE3=(265.0-100.0*dim)/1458.0;
 
       r->p = (double *) malloc(sizeof(double) * dim * 3);
       if (!r->p) { destroy_rule((rule *) r); return 0; }
@@ -1137,8 +1111,8 @@ namespace o2scl {
 	  maxval = ee[j].val > ee[j+1].val ? ee[j].val : ee[j+1].val;
 	  serr = maxerr > 0 ? 1/maxerr : 1;
 	  sval = maxval > 0 ? 1/maxval : 1;
-	  err = sqrt(dsqr(ee[j].err*serr) + dsqr(ee[j+1].err*serr)) * maxerr;
-	  val = sqrt(dsqr(ee[j].val*sval) + dsqr(ee[j+1].val*sval)) * maxval;
+	  err=std::hypot(ee[j].err*serr,ee[j+1].err*serr)*maxerr;
+	  val=std::hypot(ee[j].val*sval,ee[j+1].val*sval)*maxval;
 	  if (err > reqAbsError && err > val*reqRelError) {
 	    return 0;
 	  }
@@ -1187,8 +1161,8 @@ namespace o2scl {
 	  serr = maxerr > 0 ? 1/maxerr : 1;
 	  sval = maxval > 0 ? 1/maxval : 1;
 	  for (j = 0; j < fdim; ++j) {
-	    err += dsqr(ee[j].err * serr);
-	    val += dsqr(fabs(ee[j].val) * sval);
+	    err += (ee[j].err * serr)*(ee[j].err * serr);
+	    val += fabs(ee[j].val) * sval*fabs(ee[j].val) * sval;
 	  }
 	  err = sqrt(err) * maxerr;
 	  val = sqrt(val) * maxval;
@@ -1277,11 +1251,6 @@ namespace o2scl {
 	    }
 	    R[nR] = heap_pop(regions);
 	    for (j = 0; j < fdim; ++j) ee[j].err -= R[nR].ee[j].err;
-	    if (cut_region(R[nR], R[nR+1])) {
-	      heap_free(regions);
-	      free(R);
-	      return o2scl::gsl_failure;
-	    }
 	    numEval += r->num_points * 2;
 	    nR += 2;
 	    if (converged(fdim, ee, reqAbsError, reqRelError, norm)) {
@@ -1332,14 +1301,13 @@ namespace o2scl {
     
     /** \brief Desc
      */
-    int cubature(size_t fdim, func_t &f, 
-		 size_t dim, const std::vector<double> &xmin,
+    int cubature(size_t fdim, func_t &f, size_t dim,
+		 const std::vector<double> &xmin,
 		 const std::vector<double> &xmax, 
 		 size_t maxEval, double reqAbsError, double reqRelError, 
-		 error_norm norm,
-		 std::vector<double> &val, std::vector<double> &err,
-		 int parallel) {
-
+		 error_norm norm, std::vector<double> &val,
+		 std::vector<double> &err, int parallel) {
+      
       rule *r;
       hypercube h;
       int status;
@@ -1717,10 +1685,11 @@ namespace o2scl {
 	maxval = vals[j] > vals[j+1] ? vals[j] : vals[j+1];
 	serr = maxerr > 0 ? 1/maxerr : 1;
 	sval = maxval > 0 ? 1/maxval : 1;
-	err = sqrt(dsqr(errs[j]*serr) + dsqr(errs[j+1]*serr)) * maxerr;
-	val = sqrt(dsqr(vals[j]*sval) + dsqr(vals[j+1]*sval)) * maxval;
-	if (err > reqAbsError && err > val*reqRelError)
+	err=std::hypot(errs[j]*serr,errs[j+1]*serr)*maxerr;
+	val=std::hypot(vals[j]*sval,vals[j+1]*sval)*maxval;
+	if (err > reqAbsError && err > val*reqRelError) {
 	  return 0;
+	}
       }
       /* fdim is odd, do last dimension individually */
       if (j < fdim) {
@@ -1767,8 +1736,8 @@ namespace o2scl {
       serr = maxerr > 0 ? 1/maxerr : 1;
       sval = maxval > 0 ? 1/maxval : 1;
       for (size_t j = 0; j < fdim; ++j) {
-	err += dsqr(errs[j] * serr);
-	val += dsqr(fabs(vals[j]) * sval);
+	err += (errs[j] * serr)*(errs[j] * serr);
+	val += (fabs(vals[j]) * sval)*(fabs(vals[j]) * sval);
       }
       err = sqrt(err) * maxerr;
       val = sqrt(val) * maxval;
