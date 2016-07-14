@@ -1293,9 +1293,9 @@ namespace o2scl {
 
 	  if (eval_regions(nR, R, f, r)
 	      || heap_push_many(regions, nR, R)) {
-	      heap_free(regions);
-	      free(R);
-	      return o2scl::gsl_failure;
+	    heap_free(regions);
+	    free(R);
+	    return o2scl::gsl_failure;
 	  }
 
 	} else { 
@@ -1412,503 +1412,502 @@ namespace o2scl {
       using products of Clenshaw-Curtis rules. This algorithm may be
       superior to Genz-Malik for smooth integrands lacking
       strongly-localized features, in moderate dimensions.
-
+      
       \hline      
   */
-  template<class func_t, class vec_t> class inte_pcubature
-    : public inte_cubature_base {
-      
+  template<class func_t, class vec_t=std::vector<double> >
+    class inte_pcubature : public inte_cubature_base {
+    
   protected:
-      
-    /** \brief Maximum integral dimension
-     */
-    static const size_t MAXDIM=20;
-    
-    /** \brief Cache of the values for the m[dim] grid.  
+  
+  /** \brief Maximum integral dimension
+   */
+  static const size_t MAXDIM=20;
+  
+  /** \brief Cache of the values for the m[dim] grid.  
 
-	For adaptive cubature, thanks to the nesting of the C-C rules, we
-	can re-use the values from coarser grids for finer grids, and the
-	coarser grids are also used for error estimation. 
+      For adaptive cubature, thanks to the nesting of the C-C rules, we
+      can re-use the values from coarser grids for finer grids, and the
+      coarser grids are also used for error estimation. 
 	
-	A grid is determined by an m[dim] array, where m[i] denotes
-	2^(m[i]+1)+1 points in the i-th dimension.
+      A grid is determined by an m[dim] array, where m[i] denotes
+      2^(m[i]+1)+1 points in the i-th dimension.
 
-	If mi < dim, then we only store the values corresponding to
-	the difference between the m grid and the grid with m[mi] ->
-	m[mi]-1. (m[mi]-1 == -1 corresponds to the trivial grid of one
-	point in the center.) 
-    */
-    class cache {
-    public:
-      cache() {
-	m.resize(MAXDIM);
-      }
-      /** \brief Desc */
-      std::vector<size_t> m;
-      /** \brief Desc */
-      size_t mi;
-      /** \brief Desc */
-      std::vector<double> val;
-    };
-
-    /** \brief Desc
-
-	recursive loop over all cubature points for the given (m,mi)
-	cache entry: add each point to the buffer buf, evaluating all
-	at once whenever the buffer is full or when we are done
-    */
-    int compute_cacheval(const std::vector<size_t> &m, size_t mi, 
-			 std::vector<double> &val, size_t &vali,
-			 size_t fdim, func_t &f, size_t dim, size_t id,
-			 std::vector<double> &p, const vec_t &xmin,
-			 const vec_t &xmax, std::vector<double> &buf,
-			 size_t nbuf, size_t &ibuf) {
-
-      if (id == dim) {
-	/* add point to buffer of points */
-	for(size_t k=0;k<dim;k++) {
-	  buf[k+ibuf*dim]=p[k];
-	}
-	ibuf++;
-	if (ibuf == nbuf) {
-	  /* flush buffer */
-	  if (f(dim, nbuf, &(buf[0]), fdim, &(val[0]) + vali)) {
-	    return o2scl::gsl_failure;
-	  }
-	  vali += ibuf * fdim;
-	  ibuf = 0;
-	}
-
-      } else {
-      
-	double c = (xmin[id] + xmax[id]) * 0.5;
-	double r = (xmax[id] - xmin[id]) * 0.5;
-	const double *x = clencurt_x 
-	  + ((id == mi) ? (m[id] ? (1 << (m[id] - 1)) : 0) : 0);
-	size_t i;
-	size_t nx = (id == mi ? (m[id] ? (1 << (m[id] - 1)) : 1)
-			  : (1 << (m[id])));
-	if (id != mi) {
-	  p[id] = c;
-	  if (compute_cacheval(m, mi, val, vali, fdim, f,
-			       dim, id + 1, p,
-			       xmin, xmax, buf, nbuf, ibuf)) {
-	    return o2scl::gsl_failure;
-	  }
-	}
-	for (i = 0; i < nx; ++i) {
-	  p[id] = c + r * x[i];
-	  if (compute_cacheval(m, mi, val, vali, fdim, f,
-			       dim, id + 1, p,
-			       xmin, xmax, buf, nbuf, ibuf)) {
-	    return o2scl::gsl_failure;
-	  }
-	  p[id] = c - r * x[i];
-	  if (compute_cacheval(m, mi, val, vali, fdim, f,
-			       dim, id + 1, p,
-			       xmin, xmax, buf, nbuf, ibuf)) {
-	    return o2scl::gsl_failure;
-	  }
-	}
-      }
-      return o2scl::success;
+      If mi < dim, then we only store the values corresponding to
+      the difference between the m grid and the grid with m[mi] ->
+      m[mi]-1. (m[mi]-1 == -1 corresponds to the trivial grid of one
+      point in the center.) 
+  */
+  class cache {
+  public:
+    cache() {
+      m.resize(MAXDIM);
     }
+    /** \brief Desc */
+    std::vector<size_t> m;
+    /** \brief Desc */
+    size_t mi;
+    /** \brief Desc */
+    std::vector<double> val;
+  };
 
-    /** \brief Desc
-     */
-    size_t num_cacheval(const std::vector<size_t> &m, size_t mi, size_t dim,
-			 size_t i_shift) {
+  /** \brief Desc
 
-      size_t nval = 1;
-      for (size_t i = 0; i < dim; ++i) {
-	if (i == mi) {
-	  if (m[i+i_shift]==0) {
-	    nval*=2;
-	  } else {
-	    nval*= (1 << (m[i+i_shift]));
-	  }
+      recursive loop over all cubature points for the given (m,mi)
+      cache entry: add each point to the buffer buf, evaluating all
+      at once whenever the buffer is full or when we are done
+  */
+  int compute_cacheval(const std::vector<size_t> &m, size_t mi, 
+		       std::vector<double> &val, size_t &vali,
+		       size_t fdim, func_t &f, size_t dim, size_t id,
+		       std::vector<double> &p, const vec_t &xmin,
+		       const vec_t &xmax, std::vector<double> &buf,
+		       size_t nbuf, size_t &ibuf) {
+
+    if (id == dim) {
+      /* add point to buffer of points */
+      for(size_t k=0;k<dim;k++) {
+	buf[k+ibuf*dim]=p[k];
+      }
+      ibuf++;
+      if (ibuf == nbuf) {
+	/* flush buffer */
+	if (f(dim, nbuf, &(buf[0]), fdim, &(val[0]) + vali)) {
+	  return o2scl::gsl_failure;
+	}
+	vali += ibuf * fdim;
+	ibuf = 0;
+      }
+
+    } else {
+      
+      double c = (xmin[id] + xmax[id]) * 0.5;
+      double r = (xmax[id] - xmin[id]) * 0.5;
+      const double *x = clencurt_x 
+	+ ((id == mi) ? (m[id] ? (1 << (m[id] - 1)) : 0) : 0);
+      size_t i;
+      size_t nx = (id == mi ? (m[id] ? (1 << (m[id] - 1)) : 1)
+		   : (1 << (m[id])));
+      if (id != mi) {
+	p[id] = c;
+	if (compute_cacheval(m, mi, val, vali, fdim, f,
+			     dim, id + 1, p,
+			     xmin, xmax, buf, nbuf, ibuf)) {
+	  return o2scl::gsl_failure;
+	}
+      }
+      for (i = 0; i < nx; ++i) {
+	p[id] = c + r * x[i];
+	if (compute_cacheval(m, mi, val, vali, fdim, f,
+			     dim, id + 1, p,
+			     xmin, xmax, buf, nbuf, ibuf)) {
+	  return o2scl::gsl_failure;
+	}
+	p[id] = c - r * x[i];
+	if (compute_cacheval(m, mi, val, vali, fdim, f,
+			     dim, id + 1, p,
+			     xmin, xmax, buf, nbuf, ibuf)) {
+	  return o2scl::gsl_failure;
+	}
+      }
+    }
+    return o2scl::success;
+  }
+
+  /** \brief Desc
+   */
+  size_t num_cacheval(const std::vector<size_t> &m, size_t mi, size_t dim,
+		      size_t i_shift) {
+
+    size_t nval = 1;
+    for (size_t i = 0; i < dim; ++i) {
+      if (i == mi) {
+	if (m[i+i_shift]==0) {
+	  nval*=2;
 	} else {
-	  nval *= (1 << (m[i+i_shift] + 1)) + 1;
+	  nval*= (1 << (m[i+i_shift]));
 	}
-      }
-      return nval;
-    }
-    
-    /** \brief Desc
-     */
-    int add_cacheval(std::vector<cache> &vc, const std::vector<size_t> &m,
-		     size_t mi, size_t fdim, func_t &f, size_t dim, 
-		     const vec_t &xmin, const vec_t &xmax,
-		     std::vector<double> &buf, size_t nbuf) {
-      
-      size_t ic = vc.size();
-      size_t nval, vali = 0, ibuf = 0;
-      std::vector<double> p(MAXDIM);
-
-      vc.resize(vc.size()+1);
-
-      vc[ic].mi = mi;
-      for(size_t j=0;j<dim;j++) {
-	vc[ic].m[j]=m[j];
-      }
-      nval = fdim * num_cacheval(m,mi,dim,0);
-      vc[ic].val.resize(nval);
-
-      if (compute_cacheval(m,mi,vc[ic].val,vali,fdim,f,
-			   dim,0,p,xmin,xmax,buf,nbuf,ibuf)) {
-	return o2scl::gsl_failure;
-      }
-
-      if (ibuf > 0) {
-	/* flush remaining buffer */
-	return f(dim, ibuf, &(buf[0]), fdim, &((vc[ic].val)[0]) + vali);
-      }
-
-      return o2scl::success;
-    }
-    
-    /** \brief Desc
-	
-	Recursive loop to evaluate the integral contribution from the
-	cache entry c, accumulating in val, for the given m[] except
-	with m[md] -> m[md] - 1 if md < dim, using the cached values
-	(cm,cmi,cval). id is the current loop dimension (from 0 to
-	dim-1).
-    */
-    size_t eval(const std::vector<size_t> &cm, size_t cmi,
-		std::vector<double> &cval,
-		const std::vector<size_t> &m, size_t md,
-		size_t fdim, size_t dim, size_t id,
-		double weight, std::vector<double> &val, size_t voff2) {
-
-      size_t voff = 0; /* amount caller should offset cval array afterwards */
-      if (id == dim) {
-	size_t i;
-	for (i = 0; i < fdim; ++i) {
-	  val[i] += cval[i+voff2] * weight;
-	}
-	voff = fdim;
-
-      } else if (m[id] == 0 && id == md) {
-
-	/* using trivial rule for this dim */
-	voff = eval(cm, cmi, cval, m, md, fdim, dim, id+1, weight*2, val,voff2);
-	voff += fdim * (1 << cm[id]) * 2
-	  * num_cacheval(cm, cmi - (id+1), dim - (id+1),id+1);
-
       } else {
+	nval *= (1 << (m[i+i_shift] + 1)) + 1;
+      }
+    }
+    return nval;
+  }
+    
+  /** \brief Desc
+   */
+  int add_cacheval(std::vector<cache> &vc, const std::vector<size_t> &m,
+		   size_t mi, size_t fdim, func_t &f, size_t dim, 
+		   const vec_t &xmin, const vec_t &xmax,
+		   std::vector<double> &buf, size_t nbuf) {
       
-	size_t i;
-	/* order of C-C rule */
-	size_t mid = m[id] - (id == md); 
-	const double *w = clencurt_w + mid + (1 << mid) - 1
-	  + (id == cmi ? (cm[id] ? 1 + (1 << (cm[id]-1)) : 1) : 0);
-	size_t cnx = (id == cmi ? (cm[id] ? (1 << (cm[id]-1)) : 1)
-			: (1 << (cm[id])));
-	size_t nx = cm[id] <= mid ? cnx : (1 << mid);
+    size_t ic = vc.size();
+    size_t nval, vali = 0, ibuf = 0;
+    std::vector<double> p(MAXDIM);
 
-	if (id != cmi) {
-	  voff = eval(cm, cmi, cval, m, md, fdim, dim, id + 1,
-		      weight * w[0], val,voff2);
-	  ++w;
-	}
-	for (i = 0; i < nx; ++i) {
-	  voff += eval(cm, cmi, cval, m, md, fdim, dim, id + 1,
-		       weight * w[i], val,voff+voff2);
-	  voff += eval(cm, cmi, cval, m, md, fdim, dim, id + 1,
-		       weight * w[i], val,voff+voff2);
-	}
+    vc.resize(vc.size()+1);
 
-	voff += (cnx - nx) * fdim * 2
-	  * num_cacheval(cm, cmi - (id+1), dim - (id+1),id+1);
-      }
-      return voff;
+    vc[ic].mi = mi;
+    for(size_t j=0;j<dim;j++) {
+      vc[ic].m[j]=m[j];
+    }
+    nval = fdim * num_cacheval(m,mi,dim,0);
+    vc[ic].val.resize(nval);
+
+    if (compute_cacheval(m,mi,vc[ic].val,vali,fdim,f,
+			 dim,0,p,xmin,xmax,buf,nbuf,ibuf)) {
+      return o2scl::gsl_failure;
     }
 
-    /** \brief Desc
-
-	Loop over all cache entries that contribute to the integral,
-	(with m[md] decremented by 1) 
-    */
-    void evals(std::vector<cache> &vc, const std::vector<size_t> &m,
-	       size_t md,
-	       size_t fdim, size_t dim, double V,
-	       std::vector<double> &val) {
-
-      for(size_t k=0;k<fdim;k++) {
-	val[k]=0.0;
-      }
-      for (size_t i = 0; i < vc.size(); ++i) {
-	if (vc[i].mi >= dim ||
-	    vc[i].m[vc[i].mi] + (vc[i].mi == md) <= m[vc[i].mi]) {
-	  eval(vc[i].m, vc[i].mi, vc[i].val,
-	       m, md, fdim, dim, 0, V, val,0);
-	}
-      }
-      return;
+    if (ibuf > 0) {
+      /* flush remaining buffer */
+      return f(dim, ibuf, &(buf[0]), fdim, &((vc[ic].val)[0]) + vali);
     }
 
-    /** \brief Desc
+    return o2scl::success;
+  }
+    
+  /** \brief Desc
+	
+      Recursive loop to evaluate the integral contribution from the
+      cache entry c, accumulating in val, for the given m[] except
+      with m[md] -> m[md] - 1 if md < dim, using the cached values
+      (cm,cmi,cval). id is the current loop dimension (from 0 to
+      dim-1).
+  */
+  size_t eval(const std::vector<size_t> &cm, size_t cmi,
+	      std::vector<double> &cval,
+	      const std::vector<size_t> &m, size_t md,
+	      size_t fdim, size_t dim, size_t id,
+	      double weight, vec_t &val, size_t voff2) {
 
-	Evaluate the integrals for the given m[] using the cached
-	values in vc, storing the integrals in val[], the error
-	estimate in err[], and the dimension to subdivide next (the
-	largest error contribution) in *mi
-    */
-    void eval_integral(std::vector<cache> &vc, const std::vector<size_t> &m, 
-		       size_t fdim, size_t dim, double V,
-		       size_t &mi, std::vector<double> &val,
-		       std::vector<double> &err,
-		       std::vector<double> &val1) {
+    size_t voff = 0; /* amount caller should offset cval array afterwards */
+    if (id == dim) {
+      size_t i;
+      for (i = 0; i < fdim; ++i) {
+	val[i] += cval[i+voff2] * weight;
+      }
+      voff = fdim;
 
-      double maxerr = 0;
-      size_t i, j;
+    } else if (m[id] == 0 && id == md) {
+
+      /* using trivial rule for this dim */
+      voff = eval(cm, cmi, cval, m, md, fdim, dim, id+1, weight*2, val,voff2);
+      voff += fdim * (1 << cm[id]) * 2
+      * num_cacheval(cm, cmi - (id+1), dim - (id+1),id+1);
+
+    } else {
+      
+      size_t i;
+      /* order of C-C rule */
+      size_t mid = m[id] - (id == md); 
+      const double *w = clencurt_w + mid + (1 << mid) - 1
+      + (id == cmi ? (cm[id] ? 1 + (1 << (cm[id]-1)) : 1) : 0);
+      size_t cnx = (id == cmi ? (cm[id] ? (1 << (cm[id]-1)) : 1)
+		    : (1 << (cm[id])));
+      size_t nx = cm[id] <= mid ? cnx : (1 << mid);
+
+      if (id != cmi) {
+	voff = eval(cm, cmi, cval, m, md, fdim, dim, id + 1,
+		    weight * w[0], val,voff2);
+	++w;
+      }
+      for (i = 0; i < nx; ++i) {
+	voff += eval(cm, cmi, cval, m, md, fdim, dim, id + 1,
+		     weight * w[i], val,voff+voff2);
+	voff += eval(cm, cmi, cval, m, md, fdim, dim, id + 1,
+		     weight * w[i], val,voff+voff2);
+      }
+
+      voff += (cnx - nx) * fdim * 2
+      * num_cacheval(cm, cmi - (id+1), dim - (id+1),id+1);
+    }
+    return voff;
+  }
+
+  /** \brief Desc
+
+      Loop over all cache entries that contribute to the integral,
+      (with m[md] decremented by 1) 
+  */
+  void evals(std::vector<cache> &vc, const std::vector<size_t> &m,
+	     size_t md,
+	     size_t fdim, size_t dim, double V,
+	     vec_t &val) {
+
+    for(size_t k=0;k<fdim;k++) {
+      val[k]=0.0;
+    }
+    for (size_t i = 0; i < vc.size(); ++i) {
+      if (vc[i].mi >= dim ||
+	  vc[i].m[vc[i].mi] + (vc[i].mi == md) <= m[vc[i].mi]) {
+	eval(vc[i].m, vc[i].mi, vc[i].val,
+	     m, md, fdim, dim, 0, V, val,0);
+      }
+    }
+    return;
+  }
+
+  /** \brief Desc
+
+      Evaluate the integrals for the given m[] using the cached
+      values in vc, storing the integrals in val[], the error
+      estimate in err[], and the dimension to subdivide next (the
+      largest error contribution) in *mi
+  */
+  void eval_integral(std::vector<cache> &vc, const std::vector<size_t> &m, 
+		     size_t fdim, size_t dim, double V,
+		     size_t &mi, vec_t &val,
+		     vec_t &err, vec_t &val1) {
+
+    double maxerr = 0;
+    size_t i, j;
      
-      evals(vc, m, dim, fdim, dim, V, val);
+    evals(vc, m, dim, fdim, dim, V, val);
 
-      /* error estimates along each dimension by comparing val with
-	 lower-order rule in that dimension; overall (conservative)
-	 error estimate from maximum error of lower-order rules. */
-      for(size_t j=0;j<fdim;j++) {
-	err[j]=0.0;
-      }
-      mi = 0;
-      for (i = 0; i < dim; ++i) {
-	double emax = 0;
-	evals(vc, m, i, fdim, dim, V, val1);
-	for (j = 0; j < fdim; ++j) {
-	  double e = fabs(val[j] - val1[j]);
-	  if (e > emax) emax = e;
-	  if (e > err[j]) err[j] = e;
-	}
-	if (emax > maxerr) {
-	  maxerr = emax;
-	  mi = i;
-	}
-      }
-      return;
+    /* error estimates along each dimension by comparing val with
+       lower-order rule in that dimension; overall (conservative)
+       error estimate from maximum error of lower-order rules. */
+    for(size_t j=0;j<fdim;j++) {
+      err[j]=0.0;
     }
+    mi = 0;
+    for (i = 0; i < dim; ++i) {
+      double emax = 0;
+      evals(vc, m, i, fdim, dim, V, val1);
+      for (j = 0; j < fdim; ++j) {
+	double e = fabs(val[j] - val1[j]);
+	if (e > emax) emax = e;
+	if (e > err[j]) err[j] = e;
+      }
+      if (emax > maxerr) {
+	maxerr = emax;
+	mi = i;
+      }
+    }
+    return;
+  }
 
-    /** \brief Desc
-     */
-    template<class vec2_t>
-      int converged(size_t fdim, const vec2_t &vals, const vec2_t &errs,
-		    double reqAbsError, double reqRelError, error_norm norm) {
+  /** \brief Desc
+   */
+  template<class vec2_t>
+  int converged(size_t fdim, const vec2_t &vals, const vec2_t &errs,
+		double reqAbsError, double reqRelError, error_norm norm) {
 
-      switch (norm) {
+    switch (norm) {
 	
-      case ERROR_INDIVIDUAL:
+    case ERROR_INDIVIDUAL:
 
-	for (size_t j = 0; j < fdim; ++j) {
-	  if (errs[j] > reqAbsError && errs[j] > fabs(vals[j])*reqRelError) {
-	    return 0;
-	  }
-	}
-	return 1;
+    for (size_t j = 0; j < fdim; ++j) {
+      if (errs[j] > reqAbsError && errs[j] > fabs(vals[j])*reqRelError) {
+	return 0;
+      }
+    }
+    return 1;
 	      
-      case ERROR_PAIRED:
+    case ERROR_PAIRED:
 
-	{
-	  size_t j;
+    {
+      size_t j;
 
-	  for (j = 0; j+1 < fdim; j += 2) {
-	    double maxerr, serr, err, maxval, sval, val;
-	    /* scale to avoid overflow/underflow */
-	    maxerr = errs[j] > errs[j+1] ? errs[j] : errs[j+1];
-	    maxval = vals[j] > vals[j+1] ? vals[j] : vals[j+1];
-	    serr = maxerr > 0 ? 1/maxerr : 1;
-	    sval = maxval > 0 ? 1/maxval : 1;
-	    err = sqrt(dsqr(errs[j]*serr) + dsqr(errs[j+1]*serr)) * maxerr;
-	    val = sqrt(dsqr(vals[j]*sval) + dsqr(vals[j+1]*sval)) * maxval;
-	    if (err > reqAbsError && err > val*reqRelError)
-	      return 0;
-	  }
-	  /* fdim is odd, do last dimension individually */
-	  if (j < fdim) {
-	    if (errs[j] > reqAbsError && errs[j] > fabs(vals[j])*reqRelError) {
-	      return 0;
-	    }
-	  }
-	}
-	return 1;
-
-      case ERROR_L1:
-
-	{
-	  double err = 0, val = 0;
-	  for (size_t j = 0; j < fdim; ++j) {
-	    err += errs[j];
-	    val += fabs(vals[j]);
-	  }
-	  return err <= reqAbsError || err <= val*reqRelError;
-	}
-	
-      case ERROR_LINF:
-
-	{
-	  double err = 0, val = 0;
-	  for (size_t j = 0; j < fdim; ++j) {
-	    double absval = fabs(vals[j]);
-	    if (errs[j] > err) err = errs[j];
-	    if (absval > val) val = absval;
-	  }
-	  return err <= reqAbsError || err <= val*reqRelError;
-	}
-	
-      case ERROR_L2:
-
-	{
-	  double maxerr = 0, maxval = 0, serr, sval, err = 0, val = 0;
-	  /* scale values by 1/max to avoid overflow/underflow */
-	  for (size_t j = 0; j < fdim; ++j) {
-	    double absval = fabs(vals[j]);
-	    if (errs[j] > maxerr) maxerr = errs[j];
-	    if (absval > maxval) maxval = absval;
-	  }
-	  serr = maxerr > 0 ? 1/maxerr : 1;
-	  sval = maxval > 0 ? 1/maxval : 1;
-	  for (size_t j = 0; j < fdim; ++j) {
-	    err += dsqr(errs[j] * serr);
-	    val += dsqr(fabs(vals[j]) * sval);
-	  }
-	  err = sqrt(err) * maxerr;
-	  val = sqrt(val) * maxval;
-	  return err <= reqAbsError || err <= val*reqRelError;
+      for (j = 0; j+1 < fdim; j += 2) {
+	double maxerr, serr, err, maxval, sval, val;
+	/* scale to avoid overflow/underflow */
+	maxerr = errs[j] > errs[j+1] ? errs[j] : errs[j+1];
+	maxval = vals[j] > vals[j+1] ? vals[j] : vals[j+1];
+	serr = maxerr > 0 ? 1/maxerr : 1;
+	sval = maxval > 0 ? 1/maxval : 1;
+	err = sqrt(dsqr(errs[j]*serr) + dsqr(errs[j+1]*serr)) * maxerr;
+	val = sqrt(dsqr(vals[j]*sval) + dsqr(vals[j+1]*sval)) * maxval;
+	if (err > reqAbsError && err > val*reqRelError)
+	  return 0;
+      }
+      /* fdim is odd, do last dimension individually */
+      if (j < fdim) {
+	if (errs[j] > reqAbsError && errs[j] > fabs(vals[j])*reqRelError) {
+	  return 0;
 	}
       }
-      
-      O2SCL_ERR("Improper value of 'norm' in cubature::converged().",
-		o2scl::exc_einval);
-      return 1;
     }
+    return 1;
+
+    case ERROR_L1:
+
+    {
+      double err = 0, val = 0;
+      for (size_t j = 0; j < fdim; ++j) {
+	err += errs[j];
+	val += fabs(vals[j]);
+      }
+      return err <= reqAbsError || err <= val*reqRelError;
+    }
+	
+    case ERROR_LINF:
+
+    {
+      double err = 0, val = 0;
+      for (size_t j = 0; j < fdim; ++j) {
+	double absval = fabs(vals[j]);
+	if (errs[j] > err) err = errs[j];
+	if (absval > val) val = absval;
+      }
+      return err <= reqAbsError || err <= val*reqRelError;
+    }
+	
+    case ERROR_L2:
+
+    {
+      double maxerr = 0, maxval = 0, serr, sval, err = 0, val = 0;
+      /* scale values by 1/max to avoid overflow/underflow */
+      for (size_t j = 0; j < fdim; ++j) {
+	double absval = fabs(vals[j]);
+	if (errs[j] > maxerr) maxerr = errs[j];
+	if (absval > maxval) maxval = absval;
+      }
+      serr = maxerr > 0 ? 1/maxerr : 1;
+      sval = maxval > 0 ? 1/maxval : 1;
+      for (size_t j = 0; j < fdim; ++j) {
+	err += dsqr(errs[j] * serr);
+	val += dsqr(fabs(vals[j]) * sval);
+      }
+      err = sqrt(err) * maxerr;
+      val = sqrt(val) * maxval;
+      return err <= reqAbsError || err <= val*reqRelError;
+    }
+    }
+      
+    O2SCL_ERR("Improper value of 'norm' in cubature::converged().",
+	      o2scl::exc_einval);
+    return 1;
+  }
     
   public:
     
-    static const bool debug=false;
+  static const bool debug=false;
     
-    /** \brief Desc
+  /** \brief Desc
 
-	Vectorized version with user-supplied buffer to store points
-	and values. The buffer *buf should be of length *nbuf * dim on
-	entry (these parameters are changed upon return to the final
-	buffer and length that was used). The buffer length will be
-	kept <= max(max_nbuf, 1) * dim.
+      Vectorized version with user-supplied buffer to store points
+      and values. The buffer *buf should be of length *nbuf * dim on
+      entry (these parameters are changed upon return to the final
+      buffer and length that was used). The buffer length will be
+      kept <= max(max_nbuf, 1) * dim.
 
-	Also allows the caller to specify an array m[dim] of starting degrees
-	for the rule, which upon return will hold the final degrees.  The
-	number of points in each dimension i is 2^(m[i]+1) + 1. 
-    */
-    int integ_v_buf(size_t fdim, func_t &f, 
-		    size_t dim, const vec_t &xmin, const vec_t &xmax,
-		    size_t maxEval, double reqAbsError, double reqRelError,
-		    error_norm norm, std::vector<size_t> &m,
-		    std::vector<double> &buf, size_t &nbuf, size_t max_nbuf,
-		    std::vector<double> &val, std::vector<double> &err) {
+      Also allows the caller to specify an array m[dim] of starting degrees
+      for the rule, which upon return will hold the final degrees.  The
+      number of points in each dimension i is 2^(m[i]+1) + 1. 
+  */
+  int integ_v_buf(size_t fdim, func_t &f, 
+		  size_t dim, const vec_t &xmin, const vec_t &xmax,
+		  size_t maxEval, double reqAbsError, double reqRelError,
+		  error_norm norm, std::vector<size_t> &m,
+		  std::vector<double> &buf, size_t &nbuf, size_t max_nbuf,
+		  vec_t &val, vec_t &err) {
       
-      int ret = o2scl::gsl_failure;
-      double V = 1;
-      size_t numEval = 0, new_nbuf;
-      size_t i;
-      std::vector<cache> vc;
+    int ret = o2scl::gsl_failure;
+    double V = 1;
+    size_t numEval = 0, new_nbuf;
+    size_t i;
+    std::vector<cache> vc;
 
-      std::vector<double> val1(fdim);
+    vec_t val1(fdim);
 
-      /* norm is irrelevant */
-      if (fdim <= 1) norm = ERROR_INDIVIDUAL;
-      /* invalid norm */
-      if (norm < 0 || norm > ERROR_LINF) return o2scl::gsl_failure; 
-      /* nothing to do */
-      if (fdim == 0) return o2scl::success; 
-      /* unsupported */
-      if (dim > MAXDIM) return o2scl::gsl_failure; 
-      /* trivial case */
-      if (dim == 0) {
-	// AWS: this is one location where vector types need sync'ing
-	if (f(0, 1, &xmin[0], fdim, &(val[0]))) return o2scl::gsl_failure;
-	for (i = 0; i < fdim; ++i) err[i] = 0;
-	return o2scl::success;
-      }
+    /* norm is irrelevant */
+    if (fdim <= 1) norm = ERROR_INDIVIDUAL;
+    /* invalid norm */
+    if (norm < 0 || norm > ERROR_LINF) return o2scl::gsl_failure; 
+    /* nothing to do */
+    if (fdim == 0) return o2scl::success; 
+    /* unsupported */
+    if (dim > MAXDIM) return o2scl::gsl_failure; 
+    /* trivial case */
+    if (dim == 0) {
+      // AWS: this is one location where vector types need sync'ing
+      if (f(0, 1, &xmin[0], fdim, &(val[0]))) return o2scl::gsl_failure;
+      for (i = 0; i < fdim; ++i) err[i] = 0;
+      return o2scl::success;
+    }
 
-      for (i = 0; i < fdim; ++i) {
-	val[i] = 0;
-	err[i] = HUGE_VAL;
-      }
+    for (i = 0; i < fdim; ++i) {
+      val[i] = 0;
+      err[i] = HUGE_VAL;
+    }
 
-      for (i = 0; i < dim; ++i) {
-	/* scale factor for C-C volume */
-	V *= (xmax[i] - xmin[i]) * 0.5; 
-      }
+    for (i = 0; i < dim; ++i) {
+      /* scale factor for C-C volume */
+      V *= (xmax[i] - xmin[i]) * 0.5; 
+    }
 
-      new_nbuf = num_cacheval(m,dim,dim,0);
+    new_nbuf = num_cacheval(m,dim,dim,0);
 
-      if (max_nbuf < 1) max_nbuf = 1;
-      if (new_nbuf > max_nbuf) new_nbuf = max_nbuf;
-      if (nbuf < new_nbuf) {
-	buf.resize((nbuf=new_nbuf)*dim);
-      }
+    if (max_nbuf < 1) max_nbuf = 1;
+    if (new_nbuf > max_nbuf) new_nbuf = max_nbuf;
+    if (nbuf < new_nbuf) {
+      buf.resize((nbuf=new_nbuf)*dim);
+    }
 
-      /* start by evaluating the m=0 cubature rule */
-      if (add_cacheval(vc,m, dim, fdim, f, dim, xmin, xmax, 
-		       buf, nbuf) != o2scl::success) {
-	  return ret;
-      }
-      while (1) {
-	size_t mi;
+    /* start by evaluating the m=0 cubature rule */
+    if (add_cacheval(vc,m, dim, fdim, f, dim, xmin, xmax, 
+		     buf, nbuf) != o2scl::success) {
+      return ret;
+    }
+    while (1) {
+      size_t mi;
 
-	eval_integral(vc,m,fdim,dim,V,mi,val,err,val1);
+      eval_integral(vc,m,fdim,dim,V,mi,val,err,val1);
 	
-	if (converged(fdim,val,err,reqAbsError, reqRelError, norm) ||
-	    (numEval > maxEval && maxEval)) {
-	  ret = o2scl::success;
-	  return ret;
-	}
-	m[mi] += 1;
-	if (m[mi] > clencurt_M) {
-	  /* FAILURE */
-	  return ret;
-	}
-
-	new_nbuf = num_cacheval(m, mi, dim,0);
-	if (new_nbuf > nbuf && nbuf < max_nbuf) {
-	  nbuf = new_nbuf;
-	  if (nbuf > max_nbuf) nbuf = max_nbuf;
-	  buf.resize(nbuf*dim);
-	}
-
-	if (add_cacheval(vc,m, mi, fdim, f, 
-			 dim, xmin, xmax, buf, nbuf) != o2scl::success) {
-	  /* FAILURE */
-	  return ret;
-	}
-	numEval += new_nbuf;
+      if (converged(fdim,val,err,reqAbsError, reqRelError, norm) ||
+	  (numEval > maxEval && maxEval)) {
+	ret = o2scl::success;
+	return ret;
+      }
+      m[mi] += 1;
+      if (m[mi] > clencurt_M) {
+	/* FAILURE */
+	return ret;
       }
 
-      return ret;
+      new_nbuf = num_cacheval(m, mi, dim,0);
+      if (new_nbuf > nbuf && nbuf < max_nbuf) {
+	nbuf = new_nbuf;
+	if (nbuf > max_nbuf) nbuf = max_nbuf;
+	buf.resize(nbuf*dim);
+      }
+
+      if (add_cacheval(vc,m, mi, fdim, f, 
+		       dim, xmin, xmax, buf, nbuf) != o2scl::success) {
+	/* FAILURE */
+	return ret;
+      }
+      numEval += new_nbuf;
     }
 
-    /** \brief Desc
-     */
-    static const size_t DEFAULT_MAX_NBUF=(1U << 20);
+    return ret;
+  }
+
+  /** \brief Desc
+   */
+  static const size_t DEFAULT_MAX_NBUF=(1U << 20);
     
-    /** \brief Desc
-     */
-    int integ(size_t fdim, func_t &f, size_t dim,
-	      const vec_t &xmin, const vec_t &xmax, size_t maxEval,
-	      double reqAbsError, double reqRelError, error_norm norm,
-	      std::vector<double> &val, std::vector<double> &err) {
+  /** \brief Desc
+   */
+  int integ(size_t fdim, func_t &f, size_t dim,
+	    const vec_t &xmin, const vec_t &xmax, size_t maxEval,
+	    double reqAbsError, double reqRelError, error_norm norm,
+	    vec_t &val, vec_t &err) {
       
-      int ret;
-      size_t nbuf = 0;
-      std::vector<size_t> m(dim);
-      std::vector<double> buf;
+    int ret;
+    size_t nbuf = 0;
+    std::vector<size_t> m(dim);
+    std::vector<double> buf;
 
-      /* max_nbuf > 0 to amortize function overhead */
-      ret = integ_v_buf(fdim,f,dim,xmin,xmax,
-			maxEval,reqAbsError,reqRelError,norm,
-			m,buf,nbuf,16,val,err);
+    /* max_nbuf > 0 to amortize function overhead */
+    ret = integ_v_buf(fdim,f,dim,xmin,xmax,
+		      maxEval,reqAbsError,reqRelError,norm,
+		      m,buf,nbuf,16,val,err);
 
-      return ret;
-    }
+    return ret;
+  }
 
   };
 
