@@ -194,10 +194,9 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    hypercube make_hypercube(size_t dim, const std::vector<double> &center,
-			     const std::vector<double> &halfwidth) {
+    void make_hypercube(size_t dim, const std::vector<double> &center,
+			const std::vector<double> &halfwidth, hypercube &h) {
 
-      hypercube h;
       h.dim = dim;
       h.data = (double *) malloc(sizeof(double) * dim * 2);
       h.vol = 0;
@@ -208,14 +207,13 @@ namespace o2scl {
 	}
 	h.vol = compute_vol(h);
       }
-      return h;
+      return;
     }
 
     /** \brief Desc
      */
-    hypercube make_hypercube2(size_t dim, const double *center) {
+    void make_hypercube2(size_t dim, const double *center, hypercube &h) {
 
-      hypercube h;
       h.dim = dim;
       h.data = (double *) malloc(sizeof(double) * dim * 2);
       h.vol = 0;
@@ -226,16 +224,16 @@ namespace o2scl {
 	}
 	h.vol = compute_vol(h);
       }
-      return h;
+      return;
     }
     
     /** \brief Desc
      */
-    hypercube make_hypercube_range
+    void make_hypercube_range
       (size_t dim, const std::vector<double> &xmin,
-       const std::vector<double> &xmax) {
+       const std::vector<double> &xmax, hypercube &h) {
 
-      hypercube h = make_hypercube(dim,xmin,xmax);
+      make_hypercube(dim,xmin,xmax,h);
       if (h.data) {
 	for (size_t i = 0; i < dim; ++i) {
 	  h.data[i] = 0.5 * (xmin[i] + xmax[i]);
@@ -243,7 +241,7 @@ namespace o2scl {
 	}
 	h.vol = compute_vol(h);
       }
-      return h;
+      return;
     }
 
     /** \brief Desc
@@ -272,10 +270,9 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    region make_region(const hypercube &h, size_t fdim) {
+    void make_region(const hypercube &h, size_t fdim, region &R) {
 
-      region R;
-      R.h = make_hypercube2(h.dim, h.data);
+      make_hypercube2(h.dim, h.data,R.h);
       R.splitDim = 0;
       R.fdim = fdim;
       if (R.h.data) {
@@ -285,7 +282,7 @@ namespace o2scl {
       }
       R.errmax = HUGE_VAL;
 
-      return R;
+      return;
     }
 
     /** \brief Desc
@@ -305,7 +302,7 @@ namespace o2scl {
       R2=R;
       R.h.data[d + dim] *= 0.5;
       R.h.vol *= 0.5;
-      R2.h = make_hypercube2(dim, R.h.data);
+      make_hypercube2(dim, R.h.data,R2.h);
       if (!R2.h.data) return o2scl::gsl_failure;
       R.h.data[d] -= R.h.data[d + dim];
       R2.h.data[d] += R.h.data[d + dim];
@@ -1248,7 +1245,7 @@ namespace o2scl {
 	free(R);
 	return o2scl::gsl_failure;
       }
-      R[0] = make_region(h, fdim);
+      make_region(h, fdim, R[0]);
       if (!R[0].ee || eval_regions(1, R, f, r) ||
 	  heap_push(regions, R[0])) {
 	heap_free(regions);
@@ -1395,7 +1392,7 @@ namespace o2scl {
 	}
 	return o2scl::gsl_failure;
       }
-      h = make_hypercube_range(dim,xmin,xmax);
+      make_hypercube_range(dim,xmin,xmax,h);
       status = !h.data ? o2scl::gsl_failure
 	: rulecubature(r, fdim, f, h,
 		       maxEval, reqAbsError, reqRelError, norm,
