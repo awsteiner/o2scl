@@ -200,13 +200,11 @@ namespace o2scl {
       h.dim = dim;
       h.data = (double *) malloc(sizeof(double) * dim * 2);
       h.vol = 0;
-      if (h.data) {
-	for (size_t i = 0; i < dim; ++i) {
-	  h.data[i] = center[i];
-	  h.data[i + dim] = halfwidth[i];
-	}
-	h.vol = compute_vol(h);
+      for (size_t i = 0; i < dim; ++i) {
+	h.data[i] = center[i];
+	h.data[i + dim] = halfwidth[i];
       }
+      h.vol = compute_vol(h);
       return;
     }
 
@@ -217,13 +215,11 @@ namespace o2scl {
       h.dim = dim;
       h.data = (double *) malloc(sizeof(double) * dim * 2);
       h.vol = 0;
-      if (h.data) {
-	for (size_t i = 0; i < dim; ++i) {
-	  h.data[i] = center[i];
-	  h.data[i + dim] = center[i+dim];
-	}
-	h.vol = compute_vol(h);
+      for (size_t i = 0; i < dim; ++i) {
+	h.data[i] = center[i];
+	h.data[i + dim] = center[i+dim];
       }
+      h.vol = compute_vol(h);
       return;
     }
     
@@ -234,13 +230,11 @@ namespace o2scl {
        const std::vector<double> &xmax, hypercube &h) {
 
       make_hypercube(dim,xmin,xmax,h);
-      if (h.data) {
-	for (size_t i = 0; i < dim; ++i) {
-	  h.data[i] = 0.5 * (xmin[i] + xmax[i]);
-	  h.data[i + dim] = 0.5 * (xmax[i] - xmin[i]);
-	}
-	h.vol = compute_vol(h);
+      for (size_t i = 0; i < dim; ++i) {
+	h.data[i] = 0.5 * (xmin[i] + xmax[i]);
+	h.data[i + dim] = 0.5 * (xmax[i] - xmin[i]);
       }
+      h.vol = compute_vol(h);
       return;
     }
 
@@ -275,11 +269,7 @@ namespace o2scl {
       make_hypercube2(h.dim, h.data,R.h);
       R.splitDim = 0;
       R.fdim = fdim;
-      if (R.h.data) {
-	R.ee=(esterr *) malloc(sizeof(esterr) * fdim);
-      } else {
-	R.ee=0;
-      }
+      R.ee=(esterr *) malloc(sizeof(esterr) * fdim);
       R.errmax = HUGE_VAL;
 
       return;
@@ -303,11 +293,10 @@ namespace o2scl {
       R.h.data[d + dim] *= 0.5;
       R.h.vol *= 0.5;
       make_hypercube2(dim, R.h.data,R2.h);
-      if (!R2.h.data) return o2scl::gsl_failure;
       R.h.data[d] -= R.h.data[d + dim];
       R2.h.data[d] += R.h.data[d + dim];
       R2.ee = (esterr *) malloc(sizeof(esterr) * R2.fdim);
-      return R2.ee == 0;
+      return 0;
     }
 
     class rule;
@@ -1232,19 +1221,9 @@ namespace o2scl {
       if (norm < 0 || norm > ERROR_LINF) return o2scl::gsl_failure; 
 
       regions = heap_alloc(1, fdim);
-      if (regions.ee.size()==0 || !regions.items) {
-	heap_free(regions);
-	free(R);
-	return o2scl::gsl_failure;
-      }
      
       nR_alloc = 2;
       R = (region *) malloc(sizeof(region) * nR_alloc);
-      if (!R) {
-	heap_free(regions);
-	free(R);
-	return o2scl::gsl_failure;
-      }
       make_region(h, fdim, R[0]);
       if (!R[0].ee || eval_regions(1, R, f, r) ||
 	  heap_push(regions, R[0])) {
@@ -1295,11 +1274,6 @@ namespace o2scl {
 	    if (nR + 2 > nR_alloc) {
 	      nR_alloc = (nR + 2) * 2;
 	      R = (region *) realloc(R, nR_alloc * sizeof(region));
-	      if (!R) {
-		heap_free(regions);
-		free(R);
-		return o2scl::gsl_failure;
-	      }
 	    }
 	    R[nR] = heap_pop(regions);
 	    for (j = 0; j < fdim; ++j) ee[j].err -= R[nR].ee[j].err;
