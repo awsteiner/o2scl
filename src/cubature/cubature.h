@@ -991,7 +991,7 @@ namespace o2scl {
       /** \brief Desc */
       size_t fdim;
       /** array of length fdim of the total integrand & error */
-      esterr *ee; 
+      std::vector<esterr> ee;
     };
 
     /** \brief Desc
@@ -1018,11 +1018,9 @@ namespace o2scl {
       h.nalloc = 0;
       h.items = 0;
       h.fdim = fdim;
-      h.ee = (esterr *) malloc(sizeof(esterr) * fdim);
-      if (h.ee) {
-	for (size_t i = 0; i < fdim; ++i) h.ee[i].val = h.ee[i].err = 0;
-	heap_resize(h, nalloc);
-      }
+      h.ee.resize(fdim);
+      for (size_t i = 0; i < fdim; ++i) h.ee[i].val = h.ee[i].err = 0;
+      heap_resize(h, nalloc);
       return h;
     }
 
@@ -1033,7 +1031,7 @@ namespace o2scl {
       h.n = 0;
       heap_resize(h, 0);
       h.fdim = 0;
-      free(h.ee);
+      h.ee.clear();
       return;
     }
 
@@ -1126,7 +1124,7 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    int converged(size_t fdim, const esterr *ee,
+    int converged(size_t fdim, const std::vector<esterr> &ee,
 		  double reqAbsError, double reqRelError,
 		  error_norm norm) {
 
@@ -1237,7 +1235,7 @@ namespace o2scl {
       if (norm < 0 || norm > ERROR_LINF) return o2scl::gsl_failure; 
 
       regions = heap_alloc(1, fdim);
-      if (!regions.ee || !regions.items) {
+      if (regions.ee.size()==0 || !regions.items) {
 	heap_free(regions);
 	free(R);
 	return o2scl::gsl_failure;
@@ -1315,7 +1313,7 @@ namespace o2scl {
 	    }
 	    numEval += r->num_points * 2;
 	    nR += 2;
-	    if (converged(fdim, &(ee[0]), reqAbsError, reqRelError, norm)) {
+	    if (converged(fdim, ee, reqAbsError, reqRelError, norm)) {
 	      /* other regions have small errs */
 	      break; 
 	    }
