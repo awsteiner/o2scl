@@ -895,7 +895,7 @@ namespace o2scl {
       /** \brief Desc */
       size_t nalloc;
       /** \brief Desc */
-      heap_item *items;
+      std::vector<heap_item> items;
       /** \brief Desc */
       size_t fdim;
       /** array of length fdim of the total integrand & error */
@@ -908,11 +908,7 @@ namespace o2scl {
 
       h.nalloc = nalloc;
       if (nalloc) {
-	h.items = (heap_item *) realloc(h.items, sizeof(heap_item)*nalloc);
-      } else {
-	/* BSD realloc does not free for a zero-sized reallocation */
-	free(h.items);
-	h.items = 0;
+	h.items.resize(nalloc);
       }
       return;
     }
@@ -924,7 +920,6 @@ namespace o2scl {
       heap h;
       h.n = 0;
       h.nalloc = 0;
-      h.items = 0;
       h.fdim = fdim;
       h.ee.resize(fdim);
       for (size_t i = 0; i < fdim; ++i) {
@@ -960,7 +955,6 @@ namespace o2scl {
       insert = h.n;
       if (++(h.n) > h.nalloc) {
 	heap_resize(h, h.n * 2);
-	if (!h.items) return o2scl::gsl_failure;
       }
 
       while (insert) {
