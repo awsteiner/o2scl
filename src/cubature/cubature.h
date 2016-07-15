@@ -1472,7 +1472,8 @@ namespace o2scl {
     size_t nval, vali = 0, ibuf = 0;
     std::vector<double> p(MAXDIM);
 
-    vc.resize(vc.size()+1);
+    cache c;
+    vc.push_back(c);
 
     vc[ic].mi = mi;
     for(size_t j=0;j<dim;j++) {
