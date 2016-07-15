@@ -347,9 +347,7 @@ namespace o2scl {
       
       rule *r;
 
-      if (sz < sizeof(rule)) return 0;
       r = (rule *) malloc(sz);
-      if (!r) return 0;
       r->pts = r->vals = 0;
       r->num_regions = 0;
       r->dim = dim;
@@ -440,8 +438,8 @@ namespace o2scl {
       /* Loop through the points in Gray-code ordering */
       for (i = 0;; ++i) {
 	size_t mask, d;
-	
-	memcpy(pts, p, sizeof(double) * dim);
+
+	for(size_t k=0;k<dim;k++) pts[k]=p[k];
 	pts += dim;
 
 	d = ls0(i); /* which coordinate to flip */
@@ -466,16 +464,16 @@ namespace o2scl {
 	p[i] = c[i] - r[i];
 	for (size_t j = i + 1; j < dim; ++j) {
 	  p[j] = c[j] - r[j];
-	  memcpy(pts, p, sizeof(double) * dim);
+	  for(size_t k=0;k<dim;k++) pts[k]=p[k];
 	  pts += dim;
 	  p[i] = c[i] + r[i];
-	  memcpy(pts, p, sizeof(double) * dim);
+	  for(size_t k=0;k<dim;k++) pts[k]=p[k];
 	  pts += dim;
 	  p[j] = c[j] + r[j];
-	  memcpy(pts, p, sizeof(double) * dim);
+	  for(size_t k=0;k<dim;k++) pts[k]=p[k];
 	  pts += dim;
 	  p[i] = c[i] - r[i];
-	  memcpy(pts, p, sizeof(double) * dim);
+	  for(size_t k=0;k<dim;k++) pts[k]=p[k];
 	  pts += dim;
 
 	  // Done with j -> Restore p[j]
@@ -493,24 +491,24 @@ namespace o2scl {
       (double *pts, size_t dim, double *p, const double *c,
        const double *r1, const double *r2) {
       
-      memcpy(pts, p, sizeof(double) * dim);
+      for(size_t k=0;k<dim;k++) pts[k]=p[k];
       pts += dim;
 
       for (size_t i = 0; i < dim; i++) {
 	p[i] = c[i] - r1[i];
-	memcpy(pts, p, sizeof(double) * dim);
+	for(size_t k=0;k<dim;k++) pts[k]=p[k];
 	pts += dim;
 
 	p[i] = c[i] + r1[i];
-	memcpy(pts, p, sizeof(double) * dim);
+	for(size_t k=0;k<dim;k++) pts[k]=p[k];
 	pts += dim;
 
 	p[i] = c[i] - r2[i];
-	memcpy(pts, p, sizeof(double) * dim);
+	for(size_t k=0;k<dim;k++) pts[k]=p[k];
 	pts += dim;
 
 	p[i] = c[i] + r2[i];
-	memcpy(pts, p, sizeof(double) * dim);
+	for(size_t k=0;k<dim;k++) pts[k]=p[k];
 	pts += dim;
 
 	p[i] = c[i];
@@ -726,7 +724,6 @@ namespace o2scl {
 					num0_0(dim) + 2 * numR0_0fs(dim)
 					+ numRR0_0fs(dim) + numR_Rfs(dim),
 					rule75genzmalik_evalError);
-      if (!r) return 0;
 
       r->weight1=(12824.0-9120.0*dim+400.0*dim*dim)/19683.0;
       r->weight3=(1820.0-400.0*dim)/19683.0;
@@ -890,7 +887,9 @@ namespace o2scl {
      */
     rule *make_rule15gauss(size_t dim, size_t fdim) {
 
-      if (dim != 1) return 0; /* this rule is only for 1d integrals */
+      if (dim != 1) {
+	O2SCL_ERR("this rule is only for 1d integrals.",o2scl::exc_esanity);
+      }
        
       return make_rule(sizeof(rule),dim,fdim,15,
 		       rule15gauss_evalError);
@@ -1143,7 +1142,7 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    int rulecubature(rule *r, size_t fdim, func_t &f, 
+    int rulecubature(rule &r, size_t fdim, func_t &f, 
 		     const hypercube &h, size_t maxEval,
 		     double reqAbsError, double reqRelError,
 		     error_norm norm, double *val, double *err,
@@ -1167,13 +1166,13 @@ namespace o2scl {
       nR_alloc = 2;
       R = (region *) malloc(sizeof(region) * nR_alloc);
       make_region(h, fdim, R[0]);
-      if (!R[0].ee || eval_regions(1, R, f, r) ||
+      if (!R[0].ee || eval_regions(1, R, f, &r) ||
 	  heap_push(regions, R[0])) {
 	heap_free(regions);
 	free(R);
 	return o2scl::gsl_failure;
       }
-      numEval += r->num_points;
+      numEval += r.num_points;
      
       while (numEval < maxEval || !maxEval) {
 
@@ -1219,7 +1218,7 @@ namespace o2scl {
 	    }
 	    R[nR] = heap_pop(regions);
 	    for (j = 0; j < fdim; ++j) ee[j].err -= R[nR].ee[j].err;
-	    numEval += r->num_points * 2;
+	    numEval += r.num_points * 2;
 	    nR += 2;
 	    if (converged(fdim, ee, reqAbsError, reqRelError, norm)) {
 	      /* other regions have small errs */
@@ -1228,7 +1227,7 @@ namespace o2scl {
 	    
 	  } while (regions.n > 0 && (numEval < maxEval || !maxEval));
 
-	  if (eval_regions(nR, R, f, r)
+	  if (eval_regions(nR, R, f, &r)
 	      || heap_push_many(regions, nR, R)) {
 	    heap_free(regions);
 	    free(R);
@@ -1241,13 +1240,13 @@ namespace o2scl {
 	  
 	  /* get worst region */
 	  R[0] = heap_pop(regions); 
-	  if (cut_region(R[0], R[1]) || eval_regions(2, R, f, r)
+	  if (cut_region(R[0], R[1]) || eval_regions(2, R, f, &r)
 	      || heap_push_many(regions, 2, R)) {
 	    heap_free(regions);
 	    free(R);
 	    return o2scl::gsl_failure;
 	  }
-	  numEval += r->num_points * 2;
+	  numEval += r.num_points * 2;
 	}
       }
 
@@ -1294,24 +1293,23 @@ namespace o2scl {
 	return o2scl::success;
       }
       if (dim==1) {
-	r=make_rule15gauss(dim, fdim);
+	r=make_rule15gauss(dim,fdim);
       } else {
-	r=make_rule75genzmalik(dim, fdim);
+	r=make_rule75genzmalik(dim,fdim);
       }
       make_hypercube_range(dim,xmin,xmax,h);
-      status = !h.data ? o2scl::gsl_failure
-	: rulecubature(r, fdim, f, h,
+      status = rulecubature(*r, fdim, f, h,
 		       maxEval, reqAbsError, reqRelError, norm,
 		       &(val[0]), &(err[0]), parallel);
       destroy_hypercube(h);
-      if (r) {
-	if (dim==1) {
-	  rule75genzmalik *r2=(rule75genzmalik *)r;
-	  free(r2->p);
-	}
-	free(r->pts);
-	free(r);
+
+      if (dim==1) {
+	rule75genzmalik *r2=(rule75genzmalik *)r;
+	free(r2->p);
       }
+      free(r->pts);
+      free(r);
+
       return status;
     }
     
