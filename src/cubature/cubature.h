@@ -1260,10 +1260,7 @@ namespace o2scl {
 		 error_norm norm, std::vector<double> &val,
 		 std::vector<double> &err, int parallel) {
       
-      rule *r;
       hypercube h;
-      int status;
-      size_t i;
       
       if (fdim == 0) {
 	/* nothing to do */
@@ -1274,28 +1271,29 @@ namespace o2scl {
 	if (f(0, 1, &(xmin[0]), fdim, &(val[0]))) {
 	  return o2scl::gsl_failure;
 	}
-	for (i = 0; i < fdim; ++i) err[i] = 0;
+	for (size_t i = 0; i < fdim; ++i) err[i] = 0;
 	return o2scl::success;
       }
+      int status;
       if (dim==1) {
-	r=new rule;
-	make_rule15gauss(dim,fdim,r);
+	rule r;
+	make_rule15gauss(dim,fdim,&r);
+	make_hypercube_range(dim,xmin,xmax,h);
+	status = rulecubature(r, fdim, f, h,
+			      maxEval, reqAbsError, reqRelError, norm,
+			      &(val[0]), &(err[0]), parallel);
+	free(r.pts);
       } else {
-	r=new rule75genzmalik;
-	make_rule75genzmalik(dim,fdim,r);
+	rule75genzmalik r;
+	make_rule75genzmalik(dim,fdim,&r);
+	make_hypercube_range(dim,xmin,xmax,h);
+	status = rulecubature(r, fdim, f, h,
+			      maxEval, reqAbsError, reqRelError, norm,
+			      &(val[0]), &(err[0]), parallel);
+	free(r.p);
+	free(r.pts);
       }
-      make_hypercube_range(dim,xmin,xmax,h);
-      status = rulecubature(*r, fdim, f, h,
-			    maxEval, reqAbsError, reqRelError, norm,
-			    &(val[0]), &(err[0]), parallel);
       destroy_hypercube(h);
-
-      if (dim==1) {
-	rule75genzmalik *r2=(rule75genzmalik *)r;
-	free(r2->p);
-      }
-      free(r->pts);
-      delete r;
 
       return status;
     }
