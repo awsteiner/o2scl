@@ -55,9 +55,6 @@
 #ifndef O2SCL_CUBATURE_H
 #define O2SCL_CUBATURE_H
 
-// For memcpy
-#include <cstring>
-
 #include <cmath>
 #include <functional>
 #include <boost/numeric/ublas/vector.hpp>
@@ -278,8 +275,6 @@ namespace o2scl {
       return 0;
     }
 
-    class rule;
-
     /** \brief Desc
      */
     class rule {
@@ -300,11 +295,11 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    static void alloc_rule_pts(rule *r, size_t num_regions) {
-      if (num_regions > r->num_regions) {
-	free(r->pts);
-	r->pts = r->vals = 0;
-	r->num_regions = 0;
+    void alloc_rule_pts(rule &r, size_t num_regions) {
+      if (num_regions > r.num_regions) {
+	free(r.pts);
+	r.pts = r.vals = 0;
+	r.num_regions = 0;
 
 	/* Allocate extra so that repeatedly calling alloc_rule_pts
 	   with growing num_regions only needs a logarithmic number of
@@ -312,11 +307,11 @@ namespace o2scl {
 	*/
 	num_regions *= 2; 
 
-	r->pts = (double *) malloc(sizeof(double) * 
-				   (num_regions
-				    * r->num_points * (r->dim + r->fdim)));
-	r->vals = r->pts + num_regions * r->num_points * r->dim;
-	r->num_regions = num_regions;
+	r.pts = (double *) malloc(sizeof(double) * 
+				  (num_regions
+				   * r.num_points * (r.dim + r.fdim)));
+	r.vals = r.pts + num_regions * r.num_points * r.dim;
+	r.num_regions = num_regions;
       }
       return;
     }
@@ -410,8 +405,8 @@ namespace o2scl {
 	coordinate updates in p, although this doesn't matter as much
 	now that we are saving all pts.
     */
-    static void evalR_Rfs(double *pts, size_t dim, double *p,
-			  const double *c, const double *r) {
+    void evalR_Rfs(double *pts, size_t dim, double *p,
+		   const double *c, const double *r) {
       
       size_t i;
       /* 0/1 bit = +/- for corresponding element of r[] */
@@ -445,8 +440,8 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    static void evalRR0_0fs(double *pts, size_t dim, double *p,
-			    const double *c, const double *r) {
+    void evalRR0_0fs(double *pts, size_t dim, double *p,
+		     const double *c, const double *r) {
       
       for (size_t i = 0; i < dim - 1; ++i) {
 	p[i] = c[i] - r[i];
@@ -475,7 +470,7 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    static void evalR0_0fs4d
+    void evalR0_0fs4d
       (double *pts, size_t dim, double *p, const double *c,
        const double *r1, const double *r2) {
       
@@ -506,16 +501,16 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    static size_t num0_0(size_t dim) { return 1; }
+    size_t num0_0(size_t dim) { return 1; }
     /** \brief Desc
      */
-    static size_t numR0_0fs(size_t dim) { return 2*dim; }
+    size_t numR0_0fs(size_t dim) { return 2*dim; }
     /** \brief Desc
      */
-    static size_t numRR0_0fs(size_t dim) { return 2*dim*(dim-1); }
+    size_t numRR0_0fs(size_t dim) { return 2*dim*(dim-1); }
     /** \brief Desc
      */
-    static size_t numR_Rfs(size_t dim) { return 1U << dim; }
+    size_t numR_Rfs(size_t dim) { return 1U << dim; }
       
     /** \brief Desc
 
@@ -552,7 +547,7 @@ namespace o2scl {
     
     /** \brief Desc
      */
-    static int rule75genzmalik_evalError
+    int rule75genzmalik_evalError
       (rule *r_, size_t fdim, func_t &f, size_t nR, region *R) {
     
       /* lambda2 = sqrt(9/70), lambda4 = sqrt(9/10), lambda5 = sqrt(9/19) */
@@ -570,7 +565,7 @@ namespace o2scl {
       size_t npts = 0;
       double *diff, *pts, *vals;
 
-      alloc_rule_pts(r_, nR);
+      alloc_rule_pts(*r_, nR);
       pts = r_->pts; vals = r_->vals;
 
       for (iR = 0; iR < nR; ++iR) {
@@ -728,7 +723,7 @@ namespace o2scl {
     /** \brief 1d 15-point Gaussian quadrature rule, based on qk15.c
 	and qk.c in GNU GSL (which in turn is based on QUADPACK).
     */
-    static int rule15gauss_evalError
+    int rule15gauss_evalError
       (rule *r, size_t fdim, func_t &f, size_t nR, region *R) {
 
       static const double cub_dbl_min=std::numeric_limits<double>::min();
@@ -770,7 +765,7 @@ namespace o2scl {
       size_t npts = 0;
       double *pts, *vals;
 
-      alloc_rule_pts(r, nR);
+      alloc_rule_pts(*r, nR);
       pts = r->pts; vals = r->vals;
 
       for (iR = 0; iR < nR; ++iR) {
@@ -1289,8 +1284,8 @@ namespace o2scl {
       }
       make_hypercube_range(dim,xmin,xmax,h);
       status = rulecubature(*r, fdim, f, h,
-		       maxEval, reqAbsError, reqRelError, norm,
-		       &(val[0]), &(err[0]), parallel);
+			    maxEval, reqAbsError, reqRelError, norm,
+			    &(val[0]), &(err[0]), parallel);
       destroy_hypercube(h);
 
       if (dim==1) {
@@ -1710,8 +1705,6 @@ namespace o2scl {
   }
     
   public:
-    
-  static const bool debug=false;
     
   /** \brief Desc
 
