@@ -297,10 +297,6 @@ namespace o2scl {
     
     /** \brief Desc
      */
-    typedef void (*destroy_func)(rule *r);
-
-    /** \brief Desc
-     */
     class rule {
 
     public:
@@ -317,20 +313,7 @@ namespace o2scl {
       double *vals;
       /** \brief Desc */
       evalError_func evalError;
-      /** \brief Desc */
-      destroy_func destroy;
     };
-
-    /** \brief Desc
-     */
-    void destroy_rule(rule *r) {
-      if (r) {
-	if (r->destroy) r->destroy(r);
-	free(r->pts);
-	free(r);
-      }
-      return;
-    }
 
     /** \brief Desc
      */
@@ -360,7 +343,7 @@ namespace o2scl {
      */
     rule *make_rule(size_t sz, /* >= sizeof(rule) */
 		    size_t dim, size_t fdim, size_t num_points,
-		    evalError_func evalError, destroy_func destroy) {
+		    evalError_func evalError) {
       
       rule *r;
 
@@ -373,7 +356,6 @@ namespace o2scl {
       r->fdim = fdim;
       r->num_points = num_points;
       r->evalError = evalError;
-      r->destroy = destroy;
       return r;
     }
 
@@ -578,15 +560,6 @@ namespace o2scl {
       double weightE3;
     };
     
-    /** \brief Desc
-     */
-    static void destroy_rule75genzmalik(rule *r_)
-    {
-      rule75genzmalik *r = (rule75genzmalik *) r_;
-      free(r->p);
-      return;
-    }
-    
 #ifdef O2SCL_NEVER_DEFINED
   }{
 #endif
@@ -752,8 +725,7 @@ namespace o2scl {
 					dim, fdim,
 					num0_0(dim) + 2 * numR0_0fs(dim)
 					+ numRR0_0fs(dim) + numR_Rfs(dim),
-					rule75genzmalik_evalError,
-					destroy_rule75genzmalik);
+					rule75genzmalik_evalError);
       if (!r) return 0;
 
       r->weight1=(12824.0-9120.0*dim+400.0*dim*dim)/19683.0;
@@ -921,7 +893,7 @@ namespace o2scl {
       if (dim != 1) return 0; /* this rule is only for 1d integrals */
        
       return make_rule(sizeof(rule),dim,fdim,15,
-		       rule15gauss_evalError,0);
+		       rule15gauss_evalError);
     }
 
     /** \name Binary heap implementation
@@ -1333,7 +1305,10 @@ namespace o2scl {
 		       &(val[0]), &(err[0]), parallel);
       destroy_hypercube(h);
       if (r) {
-	if (r->destroy) r->destroy(r);
+	if (dim==1) {
+	  rule75genzmalik *r2=(rule75genzmalik *)r;
+	  free(r2->p);
+	}
 	free(r->pts);
 	free(r);
       }
