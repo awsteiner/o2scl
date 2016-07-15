@@ -890,7 +890,7 @@ namespace o2scl {
 	
       // Otherwise, just increment the multiplier on the previous line
       if (walker_rows[this->curr_walker]<0 ||
-	  walker_rows[this->curr_walker]>=tab->get_nlines()) {
+	  walker_rows[this->curr_walker]>=((int)(tab->get_nlines()))) {
 	std::cout << "nlines: " << tab->get_nlines() << std::endl;
 	std::cout << "walker: " << this->curr_walker << std::endl;
 	std::cout << "row: " << walker_rows[this->curr_walker]
