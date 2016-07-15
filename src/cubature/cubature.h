@@ -318,18 +318,14 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    rule *make_rule(size_t sz, /* >= sizeof(rule) */
-		    size_t dim, size_t fdim, size_t num_points) {
+    void make_rule(size_t dim, size_t fdim, size_t num_points, rule *r) {
       
-      rule *r;
-
-      r = (rule *) malloc(sz);
       r->pts = r->vals = 0;
       r->num_regions = 0;
       r->dim = dim;
       r->fdim = fdim;
       r->num_points = num_points;
-      return r;
+      return;
     }
 
     /** \brief Desc
@@ -689,23 +685,28 @@ namespace o2scl {
     
     /** \brief Desc
      */
-    rule *make_rule75genzmalik(size_t dim, size_t fdim) {
+    void make_rule75genzmalik(size_t dim, size_t fdim, rule *r2) {
 
-      rule75genzmalik *r;
+      rule75genzmalik *r=(rule75genzmalik *)r2;
       
-      if (dim < 2) return 0; /* this rule does not support 1d integrals */
+      if (dim < 2) {
+	O2SCL_ERR("this rule does not support 1d integrals",
+		  o2scl::exc_esanity);
+      }
       
       /* Because of the use of a bit-field in evalR_Rfs, we are limited
 	 to be < 32 dimensions (or however many bits are in size_t).
 	 This is not a practical limitation...long before you reach
 	 32 dimensions, the Genz-Malik cubature becomes excruciatingly
 	 slow and is superseded by other methods (e.g. Monte-Carlo). */
-      if (dim >= sizeof(size_t) * 8) return 0;
+      if (dim >= sizeof(size_t) * 8) {
+	O2SCL_ERR("this rule does not support large dims",
+		  o2scl::exc_esanity);
+	return;
+      }
       
-      r = (rule75genzmalik *) make_rule(sizeof(rule75genzmalik),
-					dim, fdim,
-					num0_0(dim) + 2 * numR0_0fs(dim)
-					+ numRR0_0fs(dim) + numR_Rfs(dim));
+      make_rule(dim, fdim,num0_0(dim) + 2 * numR0_0fs(dim)
+		+ numRR0_0fs(dim) + numR_Rfs(dim),r2);
 
       r->weight1=(12824.0-9120.0*dim+400.0*dim*dim)/19683.0;
       r->weight3=(1820.0-400.0*dim)/19683.0;
@@ -717,7 +718,7 @@ namespace o2scl {
       r->widthLambda = r->p + dim;
       r->widthLambda2 = r->p + 2 * dim;
 
-      return (rule *) r;
+      return;
     }
 
     /** \brief 1d 15-point Gaussian quadrature rule, based on qk15.c
@@ -867,13 +868,13 @@ namespace o2scl {
      
     /** \brief Desc
      */
-    rule *make_rule15gauss(size_t dim, size_t fdim) {
+    void make_rule15gauss(size_t dim, size_t fdim, rule *r) {
 
       if (dim != 1) {
 	O2SCL_ERR("this rule is only for 1d integrals.",o2scl::exc_esanity);
       }
        
-      return make_rule(sizeof(rule),dim,fdim,15);
+      return make_rule(dim,fdim,15,r);
     }
 
     /** \name Binary heap implementation
@@ -1277,9 +1278,11 @@ namespace o2scl {
 	return o2scl::success;
       }
       if (dim==1) {
-	r=make_rule15gauss(dim,fdim);
+	r=new rule;
+	make_rule15gauss(dim,fdim,r);
       } else {
-	r=make_rule75genzmalik(dim,fdim);
+	r=new rule75genzmalik;
+	make_rule75genzmalik(dim,fdim,r);
       }
       make_hypercube_range(dim,xmin,xmax,h);
       status = rulecubature(*r, fdim, f, h,
@@ -1292,7 +1295,7 @@ namespace o2scl {
 	free(r2->p);
       }
       free(r->pts);
-      free(r);
+      delete r;
 
       return status;
     }
