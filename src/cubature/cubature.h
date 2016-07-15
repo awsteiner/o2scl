@@ -291,13 +291,13 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    typedef int (*evalError_func)(struct rule *r, size_t fdim,
+    typedef int (*evalError_func)(rule *r, size_t fdim,
 				  func_t &f, 
 				  size_t nR, region *R);
     
     /** \brief Desc
      */
-    typedef void (*destroy_func)(struct rule *r);
+    typedef void (*destroy_func)(rule *r);
 
     /** \brief Desc
      */
@@ -555,13 +555,10 @@ namespace o2scl {
 	cubature rule of degree 7 (embedded rule degree 5) 
 	from \ref Genz83.
     */
-    class rule75genzmalik {
+    class rule75genzmalik : public rule {
 
     public:
 
-      /** \brief Desc */
-      rule parent;
-      
       /** \brief temporary arrays of length dim */
       double *widthLambda;
       /** \brief Desc */
@@ -766,7 +763,6 @@ namespace o2scl {
       r->weightE3=(265.0-100.0*dim)/1458.0;
 
       r->p = (double *) malloc(sizeof(double) * dim * 3);
-      if (!r->p) { destroy_rule((rule *) r); return 0; }
       r->widthLambda = r->p + dim;
       r->widthLambda2 = r->p + 2 * dim;
 
@@ -1325,14 +1321,10 @@ namespace o2scl {
 	for (i = 0; i < fdim; ++i) err[i] = 0;
 	return o2scl::success;
       }
-      r = dim == 1 ? make_rule15gauss(dim, fdim)
-	: make_rule75genzmalik(dim, fdim);
-      if (!r) { 
-	for (i = 0; i < fdim; ++i) {
-	  val[i] = 0;
-	  err[i] = HUGE_VAL; 
-	}
-	return o2scl::gsl_failure;
+      if (dim==1) {
+	r=make_rule15gauss(dim, fdim);
+      } else {
+	r=make_rule75genzmalik(dim, fdim);
       }
       make_hypercube_range(dim,xmin,xmax,h);
       status = !h.data ? o2scl::gsl_failure
@@ -1340,7 +1332,11 @@ namespace o2scl {
 		       maxEval, reqAbsError, reqRelError, norm,
 		       &(val[0]), &(err[0]), parallel);
       destroy_hypercube(h);
-      destroy_rule(r);
+      if (r) {
+	if (r->destroy) r->destroy(r);
+	free(r->pts);
+	free(r);
+      }
       return status;
     }
     
