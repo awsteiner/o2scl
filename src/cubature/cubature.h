@@ -365,7 +365,7 @@ namespace o2scl {
 	ls0 returns the least-significant 0 bit of n (e.g. it returns
 	0 if the LSB is 0, it returns 1 if the 2 LSBs are 01, etcetera).
     */
-    static size_t ls0(size_t n) {
+    size_t ls0(size_t n) {
 
 #if defined(__GNUC__) &&                                        \
   ((__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || __GNUC__ > 3)
@@ -927,7 +927,10 @@ namespace o2scl {
       h.items = 0;
       h.fdim = fdim;
       h.ee.resize(fdim);
-      for (size_t i = 0; i < fdim; ++i) h.ee[i].val = h.ee[i].err = 0;
+      for (size_t i = 0; i < fdim; ++i) {
+	h.ee[i].val = 0.0;
+	h.ee[i].err = 0.0;
+      }
       heap_resize(h, nalloc);
       return h;
     }
@@ -1147,8 +1150,7 @@ namespace o2scl {
       nR_alloc = 2;
       R = (region *) malloc(sizeof(region) * nR_alloc);
       make_region(h, fdim, R[0]);
-      if (!R[0].ee || eval_regions(1, R, f, &r) ||
-	  heap_push(regions, R[0])) {
+      if (eval_regions(1, R, f, &r) || heap_push(regions, R[0])) {
 	heap_free(regions);
 	free(R);
 	return o2scl::gsl_failure;
@@ -1232,7 +1234,10 @@ namespace o2scl {
       }
 
       /* re-sum integral and errors */
-      for (j = 0; j < fdim; ++j) val[j] = err[j] = 0;  
+      for (j = 0; j < fdim; ++j) {
+	val[j] = 0.0;
+	err[j] = 0.0;
+      }
       for (i = 0; i < regions.n; ++i) {
 	for (j = 0; j < fdim; ++j) { 
 	  val[j] += regions.items[i].ee[j].val;
