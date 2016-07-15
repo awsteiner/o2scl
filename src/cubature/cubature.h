@@ -198,14 +198,14 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    void make_hypercube2(size_t dim, const double *center, hypercube &h) {
+    void make_hypercube2(size_t dim, const double *dat, hypercube &h) {
 
       h.dim = dim;
       h.data = (double *) malloc(sizeof(double) * dim * 2);
       h.vol = 0;
       for (size_t i = 0; i < dim; ++i) {
-	h.data[i] = center[i];
-	h.data[i + dim] = center[i+dim];
+	h.data[i] = dat[i];
+	h.data[i + dim] = dat[i+dim];
       }
       h.vol = compute_vol(h);
       return;
@@ -265,15 +265,6 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    void destroy_region(region *R) {
-      destroy_hypercube(R->h);
-      free(R->ee);
-      R->ee = 0;
-      return;
-    }
-
-    /** \brief Desc
-     */
     int cut_region(region &R, region &R2) {
 
       size_t d = R.splitDim, dim = R.h.dim;
@@ -291,12 +282,6 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    typedef int (*evalError_func)(rule *r, size_t fdim,
-				  func_t &f, 
-				  size_t nR, region *R);
-    
-    /** \brief Desc
-     */
     class rule {
 
     public:
@@ -311,13 +296,11 @@ namespace o2scl {
       double *pts;
       /** \brief num_regions * num_points * fdim */
       double *vals;
-      /** \brief Desc */
-      evalError_func evalError;
     };
 
     /** \brief Desc
      */
-    static int alloc_rule_pts(rule *r, size_t num_regions) {
+    static void alloc_rule_pts(rule *r, size_t num_regions) {
       if (num_regions > r->num_regions) {
 	free(r->pts);
 	r->pts = r->vals = 0;
@@ -332,18 +315,16 @@ namespace o2scl {
 	r->pts = (double *) malloc(sizeof(double) * 
 				   (num_regions
 				    * r->num_points * (r->dim + r->fdim)));
-	if (r->fdim + r->dim > 0 && !r->pts) return o2scl::gsl_failure;
 	r->vals = r->pts + num_regions * r->num_points * r->dim;
 	r->num_regions = num_regions;
       }
-      return o2scl::success;
+      return;
     }
 
     /** \brief Desc
      */
     rule *make_rule(size_t sz, /* >= sizeof(rule) */
-		    size_t dim, size_t fdim, size_t num_points,
-		    evalError_func evalError) {
+		    size_t dim, size_t fdim, size_t num_points) {
       
       rule *r;
 
@@ -353,7 +334,6 @@ namespace o2scl {
       r->dim = dim;
       r->fdim = fdim;
       r->num_points = num_points;
-      r->evalError = evalError;
       return r;
     }
 
@@ -368,7 +348,15 @@ namespace o2scl {
 	/* nothing to evaluate */
 	return o2scl::success;
       }
-      if (r->evalError(r, R->fdim, f, nR, R)) return o2scl::gsl_failure;
+      if (r->dim==1) {
+	if (rule15gauss_evalError(r, R->fdim, f, nR, R)) {
+	  return o2scl::gsl_failure;
+	}
+      } else {
+	if (rule75genzmalik_evalError(r, R->fdim, f, nR, R)) {
+	  return o2scl::gsl_failure;
+	}
+      }
       for (iR = 0; iR < nR; ++iR) {
 	R[iR].errmax = errMax(R->fdim, R[iR].ee);
       }
@@ -582,7 +570,7 @@ namespace o2scl {
       size_t npts = 0;
       double *diff, *pts, *vals;
 
-      if (alloc_rule_pts(r_, nR)) return o2scl::gsl_failure;
+      alloc_rule_pts(r_, nR);
       pts = r_->pts; vals = r_->vals;
 
       for (iR = 0; iR < nR; ++iR) {
@@ -722,8 +710,7 @@ namespace o2scl {
       r = (rule75genzmalik *) make_rule(sizeof(rule75genzmalik),
 					dim, fdim,
 					num0_0(dim) + 2 * numR0_0fs(dim)
-					+ numRR0_0fs(dim) + numR_Rfs(dim),
-					rule75genzmalik_evalError);
+					+ numRR0_0fs(dim) + numR_Rfs(dim));
 
       r->weight1=(12824.0-9120.0*dim+400.0*dim*dim)/19683.0;
       r->weight3=(1820.0-400.0*dim)/19683.0;
@@ -783,7 +770,7 @@ namespace o2scl {
       size_t npts = 0;
       double *pts, *vals;
 
-      if (alloc_rule_pts(r, nR)) return o2scl::gsl_failure;
+      alloc_rule_pts(r, nR);
       pts = r->pts; vals = r->vals;
 
       for (iR = 0; iR < nR; ++iR) {
@@ -891,8 +878,7 @@ namespace o2scl {
 	O2SCL_ERR("this rule is only for 1d integrals.",o2scl::exc_esanity);
       }
        
-      return make_rule(sizeof(rule),dim,fdim,15,
-		       rule15gauss_evalError);
+      return make_rule(sizeof(rule),dim,fdim,15);
     }
 
     /** \name Binary heap implementation
@@ -1257,7 +1243,11 @@ namespace o2scl {
 	  val[j] += regions.items[i].ee[j].val;
 	  err[j] += regions.items[i].ee[j].err;
 	}
-	destroy_region(&regions.items[i]);
+	{
+	  destroy_hypercube(regions.items[i].h);
+	  free(regions.items[i].ee);
+	  regions.items[i].ee = 0;
+	}
       }
 
       heap_free(regions);
