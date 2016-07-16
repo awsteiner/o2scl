@@ -281,8 +281,10 @@ namespace o2scl {
 
     public:
       
-      /** \brief The dimensionality and the number of functions */
-      size_t dim, fdim;
+      /** \brief The dimensionality */
+      size_t dim;
+      /** \brief The number of functions */
+      size_t fdim;
       /** \brief The number of evaluation points */
       size_t num_points;
       /** \brief The max number of regions evaluated at once */
@@ -525,7 +527,7 @@ namespace o2scl {
       /** \brief Desc */
       double *widthLambda2;
       /** \brief Desc */
-      double *p;
+      std::vector<double> p;
       
       /** \brief dimension-dependent constants */
       double weight1;
@@ -582,19 +584,19 @@ namespace o2scl {
 
 	/* Evaluate points in the center, in (lambda2,0,...,0) and
 	   (lambda3=lambda4, 0,...,0).  */
-	evalR0_0fs4d(pts + npts*dim, dim, r->p, center, 
+	evalR0_0fs4d(pts + npts*dim, dim, &((r->p)[0]), center, 
 		     r->widthLambda2, r->widthLambda);
 	npts += num0_0(dim) + 2 * numR0_0fs(dim);
 
 	/* Calculate points for (lambda4, lambda4, 0, ...,0) */
-	evalRR0_0fs(pts + npts*dim, dim, r->p, center, r->widthLambda);
+	evalRR0_0fs(pts + npts*dim, dim, &((r->p)[0]), center, r->widthLambda);
 	npts += numRR0_0fs(dim);
 
 	/* Calculate points for (lambda5, lambda5, ..., lambda5) */
 	for (i = 0; i < dim; ++i) {
 	  r->widthLambda[i] = center[i+dim] * lambda5;
 	}
-	evalR_Rfs(pts + npts*dim, dim, r->p, center, r->widthLambda);
+	evalR_Rfs(pts + npts*dim, dim, &((r->p)[0]), center, r->widthLambda);
 	npts += numR_Rfs(dim);
       }
 
@@ -715,9 +717,9 @@ namespace o2scl {
       r.weightE1=(729.0-950.0*dim+50.0*dim*dim)/729.0;
       r.weightE3=(265.0-100.0*dim)/1458.0;
 
-      r.p = (double *) malloc(sizeof(double) * dim * 3);
-      r.widthLambda = r.p + dim;
-      r.widthLambda2 = r.p + 2 * dim;
+      r.p.resize(dim*3);
+      r.widthLambda = &((r.p)[0]) + dim;
+      r.widthLambda2 = &((r.p)[0]) + 2 * dim;
 
       return;
     }
@@ -1291,7 +1293,6 @@ namespace o2scl {
 	status = rulecubature(r, fdim, f, h,
 			      maxEval, reqAbsError, reqRelError, norm,
 			      &(val[0]), &(err[0]), parallel);
-	free(r.p);
 	free(r.pts);
       }
       destroy_hypercube(h);
