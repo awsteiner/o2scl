@@ -333,19 +333,19 @@ namespace o2scl {
 
 	\note All regions must have same fdim 
     */
-    int eval_regions(size_t nR, region *R, func_t &f, rule *r) {
+    int eval_regions(size_t nR, region *R, func_t &f, rule &r) {
 
       size_t iR;
       if (nR == 0) {
 	/* nothing to evaluate */
 	return o2scl::success;
       }
-      if (r->dim==1) {
-	if (rule15gauss_evalError(r, R->fdim, f, nR, R)) {
+      if (r.dim==1) {
+	if (rule15gauss_evalError(&r, R->fdim, f, nR, R)) {
 	  return o2scl::gsl_failure;
 	}
       } else {
-	if (rule75genzmalik_evalError(r, R->fdim, f, nR, R)) {
+	if (rule75genzmalik_evalError(&r, R->fdim, f, nR, R)) {
 	  return o2scl::gsl_failure;
 	}
       }
@@ -1146,7 +1146,7 @@ namespace o2scl {
       nR_alloc = 2;
       R = (region *) malloc(sizeof(region) * nR_alloc);
       make_region(h, fdim, R[0]);
-      if (eval_regions(1, R, f, &r) || heap_push(regions, R[0])) {
+      if (eval_regions(1, R, f, r) || heap_push(regions, R[0])) {
 	heap_free(regions);
 	free(R);
 	return o2scl::gsl_failure;
@@ -1206,7 +1206,7 @@ namespace o2scl {
 	    
 	  } while (regions.n > 0 && (numEval < maxEval || !maxEval));
 
-	  if (eval_regions(nR, R, f, &r)
+	  if (eval_regions(nR, R, f, r)
 	      || heap_push_many(regions, nR, R)) {
 	    heap_free(regions);
 	    free(R);
@@ -1219,7 +1219,7 @@ namespace o2scl {
 	  
 	  /* get worst region */
 	  R[0] = heap_pop(regions); 
-	  if (cut_region(R[0], R[1]) || eval_regions(2, R, f, &r)
+	  if (cut_region(R[0], R[1]) || eval_regions(2, R, f, r)
 	      || heap_push_many(regions, 2, R)) {
 	    heap_free(regions);
 	    free(R);
