@@ -290,7 +290,7 @@ namespace o2scl {
       /** \brief The max number of regions evaluated at once */
       size_t num_regions;
       /** \brief points to eval: num_regions * num_points * dim */
-      double *pts;
+      std::vector<double> pts;
       /** \brief num_regions * num_points * fdim */
       double *vals;
     };
@@ -299,8 +299,6 @@ namespace o2scl {
      */
     void alloc_rule_pts(rule &r, size_t num_regions) {
       if (num_regions > r.num_regions) {
-	free(r.pts);
-	r.pts = 0;
 	r.vals = 0;
 	r.num_regions = 0;
 
@@ -310,10 +308,9 @@ namespace o2scl {
 	*/
 	num_regions *= 2; 
 
-	r.pts = (double *) malloc(sizeof(double) * 
-				  (num_regions
-				   * r.num_points * (r.dim + r.fdim)));
-	r.vals = r.pts + num_regions * r.num_points * r.dim;
+	r.pts.resize((num_regions
+		      * r.num_points * (r.dim + r.fdim)));
+	r.vals = &((r.pts)[0]) + num_regions * r.num_points * r.dim;
 	r.num_regions = num_regions;
       }
       return;
@@ -323,7 +320,6 @@ namespace o2scl {
      */
     void make_rule(size_t dim, size_t fdim, size_t num_points, rule &r) {
       
-      r.pts =0;
       r.vals = 0;
       r.num_regions = 0;
       r.dim = dim;
@@ -566,7 +562,7 @@ namespace o2scl {
       double *diff, *pts, *vals;
 
       alloc_rule_pts(r_, nR);
-      pts = r_.pts; vals = r_.vals;
+      pts = &((r_.pts)[0]); vals = r_.vals;
 
       for (iR = 0; iR < nR; ++iR) {
 	const double *center = R[iR].h.data;
@@ -770,7 +766,8 @@ namespace o2scl {
       double *pts, *vals;
 
       alloc_rule_pts(r, nR);
-      pts = r.pts; vals = r.vals;
+      pts = &((r.pts)[0]);
+      vals = r.vals;
 
       for (iR = 0; iR < nR; ++iR) {
 	const double center = R[iR].h.data[0];
@@ -1285,7 +1282,6 @@ namespace o2scl {
 	status = rulecubature(r, fdim, f, h,
 			      maxEval, reqAbsError, reqRelError, norm,
 			      &(val[0]), &(err[0]), parallel);
-	free(r.pts);
       } else {
 	rule75genzmalik r;
 	make_rule75genzmalik(dim,fdim,r);
@@ -1293,7 +1289,6 @@ namespace o2scl {
 	status = rulecubature(r, fdim, f, h,
 			      maxEval, reqAbsError, reqRelError, norm,
 			      &(val[0]), &(err[0]), parallel);
-	free(r.pts);
       }
       destroy_hypercube(h);
 
