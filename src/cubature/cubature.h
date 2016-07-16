@@ -318,13 +318,14 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    void make_rule(size_t dim, size_t fdim, size_t num_points, rule *r) {
+    void make_rule(size_t dim, size_t fdim, size_t num_points, rule &r) {
       
-      r->pts = r->vals = 0;
-      r->num_regions = 0;
-      r->dim = dim;
-      r->fdim = fdim;
-      r->num_points = num_points;
+      r.pts =0;
+      r.vals = 0;
+      r.num_regions = 0;
+      r.dim = dim;
+      r.fdim = fdim;
+      r.num_points = num_points;
       return;
     }
 
@@ -685,9 +686,9 @@ namespace o2scl {
     
     /** \brief Desc
      */
-    void make_rule75genzmalik(size_t dim, size_t fdim, rule *r2) {
+    void make_rule75genzmalik(size_t dim, size_t fdim, rule &r2) {
 
-      rule75genzmalik *r=(rule75genzmalik *)r2;
+      rule75genzmalik *r=(rule75genzmalik *)(&r2);
       
       if (dim < 2) {
 	O2SCL_ERR("this rule does not support 1d integrals",
@@ -868,7 +869,7 @@ namespace o2scl {
      
     /** \brief Desc
      */
-    void make_rule15gauss(size_t dim, size_t fdim, rule *r) {
+    void make_rule15gauss(size_t dim, size_t fdim, rule &r) {
 
       if (dim != 1) {
 	O2SCL_ERR("this rule is only for 1d integrals.",o2scl::exc_esanity);
@@ -1277,7 +1278,7 @@ namespace o2scl {
       int status;
       if (dim==1) {
 	rule r;
-	make_rule15gauss(dim,fdim,&r);
+	make_rule15gauss(dim,fdim,r);
 	make_hypercube_range(dim,xmin,xmax,h);
 	status = rulecubature(r, fdim, f, h,
 			      maxEval, reqAbsError, reqRelError, norm,
@@ -1285,7 +1286,7 @@ namespace o2scl {
 	free(r.pts);
       } else {
 	rule75genzmalik r;
-	make_rule75genzmalik(dim,fdim,&r);
+	make_rule75genzmalik(dim,fdim,r);
 	make_hypercube_range(dim,xmin,xmax,h);
 	status = rulecubature(r, fdim, f, h,
 			      maxEval, reqAbsError, reqRelError, norm,

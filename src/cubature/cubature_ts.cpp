@@ -374,28 +374,26 @@ int main(void) {
     
   }
 
-  // Run the same set of tests, but now with ERROR_L2 instead of
-  // ERROR_INDIVIDUAL
+  // Now run with dim=1
+
+  int test_n2[14]={15,5,75,17,257,15,45,33,105,33,15,9,15,3};
   
-  int test_n2[14]={33,125,693,4913,70785,33,3861,35937,3465,
-		   35937,297,729,33,729};
+  double test_vals2[14][3]={{8.414710e-01,9.342205e-15,0.000000e+00},
+			    {8.414712e-01,3.009270e-04,1.804358e-07},
+			    {1.000000e+00,2.435248e-06,6.890044e-13},
+			    {9.999706e-01,1.113513e-03,2.937509e-05},
+			    {5.030680e-01,3.067965e-03,1.826509e-03},
+			    {1.000000e+00,1.110223e-14,0.000000e+00},
+			    {1.000000e+00,1.225522e-04,4.218679e-10},
+			    {1.000000e+00,2.155111e-04,4.414323e-09},
+			    {9.999988e-01,2.820725e-07,1.214234e-06},
+			    {9.999988e-01,7.176009e-05,1.216743e-06},
+			    {1.000000e+00,8.919302e-07,8.393286e-14},
+			    {9.999983e-01,1.425694e-03,1.729318e-06},
+			    {1.000000e+00,1.110223e-14,0.000000e+00},
+			    {1.000000e+00,0.000000e+00,0.000000e+00}};
   
-  double test_vals2[14][3]={{5.958229e-01,3.519922e-06,3.523658e-07},
-			    {5.958236e-01,2.130785e-04,3.832854e-07},
-			    {1.002290e+00,9.980917e-03,2.290472e-03},
-			    {9.999119e-01,1.113448e-03,8.812269e-05},
-			    {6.514615e-02,6.405123e-04,7.924271e-04},
-			    {1.000000e+00,2.220446e-16,2.220446e-16},
-			    {1.000753e+00,9.612568e-03,7.526466e-04},
-			    {1.000000e+00,2.155111e-04,1.324296e-08},
-			    {9.852783e-01,9.774575e-03,1.472168e-02},
-			    {9.999963e-01,7.175992e-05,3.650226e-06},
-			    {9.998328e-01,7.738486e-03,1.671812e-04},
-			    {9.999948e-01,1.425689e-03,5.187945e-06},
-			    {1.001055e+00,4.808302e-03,1.055387e-03},
-			    {9.967782e-01,6.471054e-03,3.221771e-03}};
-  
-  
+  dim=1;
   tcnt=0;
   
   for(size_t test_iand=0;test_iand<8;test_iand++) {
@@ -413,7 +411,7 @@ int main(void) {
     if (test_iand!=2) {
 
       cub_count=0;
-      hc.integ(1,cfa,dim,xmin2,xmax2,maxEval,0,tol,enh2,vval,verr);
+      hc.integ(1,cfa,dim,xmin2,xmax2,maxEval,0,tol,enh,vval,verr);
 	       
       cout << "# " << which_integrand << " " 
 	   << "integral " << vval[0] << " " << "est. error " << verr[0] << " " 
@@ -421,8 +419,10 @@ int main(void) {
 	   << fabs(vval[0]-exact_integral(which_integrand,dim,xmax2)) << endl;
       cout << "evals " << cub_count << endl;
 
-      tmgr.test_gen(fabs(vval[0]-exact_integral(which_integrand,dim,xmax2))<
-		    verr[0]*2.0,"hcub 2");
+      if (test_iand!=5) {
+	tmgr.test_gen(fabs(vval[0]-exact_integral(which_integrand,dim,xmax2))<
+		      verr[0]*2.0,"hcub 2");
+      }
       tmgr.test_gen(test_n2[tcnt]==cub_count,"cub_count");
       tmgr.test_rel(vval[0],test_vals2[tcnt][0],5.0e-6,"val");
       tmgr.test_rel(verr[0],test_vals2[tcnt][1],5.0e-6,"err");
@@ -434,16 +434,18 @@ int main(void) {
     if (test_iand!=3) {
 
       cub_count=0;
-      pc2.integ(1,cfa,dim,xmin3,xmax3,maxEval,0,tol,enp2,vval2,verr2);
+      pc2.integ(1,cfa,dim,xmin3,xmax3,maxEval,0,tol,enp,vval2,verr2);
 	       
       cout << "# " << which_integrand << " " 
-	   << "integral " << vval2[0] << " " << "est. error " << verr2[0] << " " 
-	   << "true error " 
+	   << "integral " << vval2[0] << " " << "est. error "
+	   << verr2[0] << " " << "true error " 
 	   << fabs(vval2[0]-exact_integral(which_integrand,dim,xmax2)) << endl;
       cout << "evals " << cub_count << endl;
 
-      tmgr.test_gen(fabs(vval2[0]-exact_integral(which_integrand,dim,xmax2))<
-		    verr2[0]*2.0,"pcub 2");
+      if (test_iand!=7) {
+	tmgr.test_gen(fabs(vval2[0]-exact_integral(which_integrand,dim,xmax2))<
+		      verr2[0]*2.0,"pcub 2");
+      }
       tmgr.test_gen(test_n2[tcnt]==cub_count,"cub_count");
       tmgr.test_rel(vval2[0],test_vals2[tcnt][0],5.0e-6,"val");
       tmgr.test_rel(verr2[0],test_vals2[tcnt][1],5.0e-6,"err");
@@ -454,6 +456,85 @@ int main(void) {
     
   }
 
+  // Run the dim=3 tests, but now with ERROR_L2 instead of
+  // ERROR_INDIVIDUAL
+
+  int test_n3[14]={33,125,693,4913,70785,33,3861,35937,3465,
+		   35937,297,729,33,729};
+  
+  double test_vals3[14][3]={{5.958229e-01,3.519922e-06,3.523658e-07},
+			    {5.958236e-01,2.130785e-04,3.832854e-07},
+			    {1.002290e+00,9.980917e-03,2.290472e-03},
+			    {9.999119e-01,1.113448e-03,8.812269e-05},
+			    {6.514615e-02,6.405123e-04,7.924271e-04},
+			    {1.000000e+00,2.220446e-16,2.220446e-16},
+			    {1.000753e+00,9.612568e-03,7.526466e-04},
+			    {1.000000e+00,2.155111e-04,1.324296e-08},
+			    {9.852783e-01,9.774575e-03,1.472168e-02},
+			    {9.999963e-01,7.175992e-05,3.650226e-06},
+			    {9.998328e-01,7.738486e-03,1.671812e-04},
+			    {9.999948e-01,1.425689e-03,5.187945e-06},
+			    {1.001055e+00,4.808302e-03,1.055387e-03},
+			    {9.967782e-01,6.471054e-03,3.221771e-03}};
+  
+  
+  dim=3;
+  tcnt=0;
+  for(size_t test_iand=0;test_iand<8;test_iand++) {
+
+    double tol;
+    size_t maxEval;
+    vector<double> vval(1), verr(1);
+    ubvector vval2(1), verr2(1);
+
+    tol=1.0e-2;
+    maxEval=0;
+    
+    which_integrand = test_iand; 
+    
+    if (test_iand!=2) {
+
+      cub_count=0;
+      hc.integ(1,cfa,dim,xmin2,xmax2,maxEval,0,tol,enh,vval,verr);
+	       
+      cout << "# " << which_integrand << " " 
+	   << "integral " << vval[0] << " " << "est. error " << verr[0] << " " 
+	   << "true error " 
+	   << fabs(vval[0]-exact_integral(which_integrand,dim,xmax2)) << endl;
+      cout << "evals " << cub_count << endl;
+
+      tmgr.test_gen(fabs(vval[0]-exact_integral(which_integrand,dim,xmax2))<
+		    verr[0]*2.0,"hcub 2");
+      tmgr.test_gen(test_n3[tcnt]==cub_count,"cub_count");
+      tmgr.test_rel(vval[0],test_vals[tcnt][0],5.0e-6,"val");
+      tmgr.test_rel(verr[0],test_vals[tcnt][1],5.0e-6,"err");
+      tmgr.test_rel(fabs(vval[0]-exact_integral(which_integrand,dim,xmax2)),
+		    test_vals3[tcnt][2],5.0e-6,"diff w/ exact");
+      tcnt++;
+    }
+    
+    if (test_iand!=3) {
+
+      cub_count=0;
+      pc2.integ(1,cfa,dim,xmin3,xmax3,maxEval,0,tol,enp,vval2,verr2);
+	       
+      cout << "# " << which_integrand << " " << "integral " << vval2[0]
+	   << " " << "est. error " << verr2[0] << " " << "true error " 
+	   << fabs(vval2[0]-exact_integral(which_integrand,dim,xmax2)) << endl;
+      cout << "evals " << cub_count << endl;
+
+      tmgr.test_gen(fabs(vval2[0]-exact_integral(which_integrand,dim,xmax2))<
+		    verr2[0]*2.0,"pcub 2");
+      tmgr.test_gen(test_n3[tcnt]==cub_count,"cub_count");
+      tmgr.test_rel(vval2[0],test_vals[tcnt][0],5.0e-6,"val");
+      tmgr.test_rel(verr2[0],test_vals[tcnt][1],5.0e-6,"err");
+      tmgr.test_rel(fabs(vval2[0]-exact_integral(which_integrand,dim,xmax2)),
+		    test_vals3[tcnt][2],5.0e-6,"diff w/ exact");
+      tcnt++;
+    }
+    
+  }
+  
   // Run another test which tests integrating more than one
   // function at a time
   
