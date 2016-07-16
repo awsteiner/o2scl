@@ -298,7 +298,8 @@ namespace o2scl {
     void alloc_rule_pts(rule &r, size_t num_regions) {
       if (num_regions > r.num_regions) {
 	free(r.pts);
-	r.pts = r.vals = 0;
+	r.pts = 0;
+	r.vals = 0;
 	r.num_regions = 0;
 
 	/* Allocate extra so that repeatedly calling alloc_rule_pts
@@ -341,11 +342,11 @@ namespace o2scl {
 	return o2scl::success;
       }
       if (r.dim==1) {
-	if (rule15gauss_evalError(&r, R->fdim, f, nR, R)) {
+	if (rule15gauss_evalError(r, R->fdim, f, nR, R)) {
 	  return o2scl::gsl_failure;
 	}
       } else {
-	if (rule75genzmalik_evalError(&r, R->fdim, f, nR, R)) {
+	if (rule75genzmalik_evalError(r, R->fdim, f, nR, R)) {
 	  return o2scl::gsl_failure;
 	}
       }
@@ -545,7 +546,7 @@ namespace o2scl {
     /** \brief Desc
      */
     int rule75genzmalik_evalError
-      (rule *r_, size_t fdim, func_t &f, size_t nR, region *R) {
+      (rule &r_, size_t fdim, func_t &f, size_t nR, region *R) {
     
       /* lambda2 = sqrt(9/70), lambda4 = sqrt(9/10), lambda5 = sqrt(9/19) */
       const double lambda2 = 0.3585685828003180919906451539079374954541;
@@ -557,13 +558,13 @@ namespace o2scl {
       const double weightE4 = 25. / 729.;
       const double ratio = (lambda2 * lambda2) / (lambda4 * lambda4);
 
-      rule75genzmalik *r = (rule75genzmalik *) r_;
-      size_t i, j, iR, dim = r_->dim;
+      rule75genzmalik *r = (rule75genzmalik *) (&r_);
+      size_t i, j, iR, dim = r_.dim;
       size_t npts = 0;
       double *diff, *pts, *vals;
 
-      alloc_rule_pts(*r_, nR);
-      pts = r_->pts; vals = r_->vals;
+      alloc_rule_pts(r_, nR);
+      pts = r_.pts; vals = r_.vals;
 
       for (iR = 0; iR < nR; ++iR) {
 	const double *center = R[iR].h.data;
@@ -660,7 +661,7 @@ namespace o2scl {
 	  R[iR].ee[j].val = result;
 	  R[iR].ee[j].err = fabs(res5th - result);
     
-	  v += r_->num_points * fdim;
+	  v += r_.num_points * fdim;
 	}
       }
 
@@ -686,10 +687,9 @@ namespace o2scl {
     
     /** \brief Desc
      */
-    void make_rule75genzmalik(size_t dim, size_t fdim, rule &r2) {
+    void make_rule75genzmalik(size_t dim, size_t fdim,
+			      rule75genzmalik &r) {
 
-      rule75genzmalik *r=(rule75genzmalik *)(&r2);
-      
       if (dim < 2) {
 	O2SCL_ERR("this rule does not support 1d integrals",
 		  o2scl::exc_esanity);
@@ -707,17 +707,17 @@ namespace o2scl {
       }
       
       make_rule(dim, fdim,num0_0(dim) + 2 * numR0_0fs(dim)
-		+ numRR0_0fs(dim) + numR_Rfs(dim),r2);
+		+ numRR0_0fs(dim) + numR_Rfs(dim),r);
 
-      r->weight1=(12824.0-9120.0*dim+400.0*dim*dim)/19683.0;
-      r->weight3=(1820.0-400.0*dim)/19683.0;
-      r->weight5=6859.0/19683.0/((double)(1U << dim));
-      r->weightE1=(729.0-950.0*dim+50.0*dim*dim)/729.0;
-      r->weightE3=(265.0-100.0*dim)/1458.0;
+      r.weight1=(12824.0-9120.0*dim+400.0*dim*dim)/19683.0;
+      r.weight3=(1820.0-400.0*dim)/19683.0;
+      r.weight5=6859.0/19683.0/((double)(1U << dim));
+      r.weightE1=(729.0-950.0*dim+50.0*dim*dim)/729.0;
+      r.weightE3=(265.0-100.0*dim)/1458.0;
 
-      r->p = (double *) malloc(sizeof(double) * dim * 3);
-      r->widthLambda = r->p + dim;
-      r->widthLambda2 = r->p + 2 * dim;
+      r.p = (double *) malloc(sizeof(double) * dim * 3);
+      r.widthLambda = r.p + dim;
+      r.widthLambda2 = r.p + 2 * dim;
 
       return;
     }
@@ -726,7 +726,7 @@ namespace o2scl {
 	and qk.c in GNU GSL (which in turn is based on QUADPACK).
     */
     int rule15gauss_evalError
-      (rule *r, size_t fdim, func_t &f, size_t nR, region *R) {
+      (rule &r, size_t fdim, func_t &f, size_t nR, region *R) {
 
       static const double cub_dbl_min=std::numeric_limits<double>::min();
       static const double cub_dbl_eps=std::numeric_limits<double>::epsilon();
@@ -767,8 +767,8 @@ namespace o2scl {
       size_t npts = 0;
       double *pts, *vals;
 
-      alloc_rule_pts(*r, nR);
-      pts = r->pts; vals = r->vals;
+      alloc_rule_pts(r, nR);
+      pts = r.pts; vals = r.vals;
 
       for (iR = 0; iR < nR; ++iR) {
 	const double center = R[iR].h.data[0];
