@@ -183,7 +183,7 @@ namespace o2scl {
 			const std::vector<double> &halfwidth, hypercube &h) {
 
       h.dim = dim;
-      h.data = (double *) malloc(sizeof(double) * dim * 2);
+      h.data = new double[dim*2];
       h.vol = 0;
       for (size_t i = 0; i < dim; ++i) {
 	h.data[i] = center[i];
@@ -198,7 +198,7 @@ namespace o2scl {
     void make_hypercube2(size_t dim, const double *dat, hypercube &h) {
 
       h.dim = dim;
-      h.data = (double *) malloc(sizeof(double) * dim * 2);
+      h.data = new double[dim*2];
       h.vol = 0;
       for (size_t i = 0; i < dim; ++i) {
 	h.data[i] = dat[i];
@@ -226,7 +226,7 @@ namespace o2scl {
     /** \brief Desc
      */
     void destroy_hypercube(hypercube &h) {
-      free(h.data);
+      delete h.data;
       h.dim = 0;
       return;
     }
@@ -254,7 +254,7 @@ namespace o2scl {
       make_hypercube2(h.dim, h.data,R.h);
       R.splitDim = 0;
       R.fdim = fdim;
-      R.ee=(esterr *) malloc(sizeof(esterr) * fdim);
+      R.ee=new esterr[fdim];
       R.errmax = HUGE_VAL;
 
       return;
@@ -271,7 +271,7 @@ namespace o2scl {
       make_hypercube2(dim, R.h.data,R2.h);
       R.h.data[d] -= R.h.data[d + dim];
       R2.h.data[d] += R.h.data[d + dim];
-      R2.ee = (esterr *) malloc(sizeof(esterr) * R2.fdim);
+      R2.ee = new esterr[R2.fdim];
       return 0;
     }
 
@@ -1143,11 +1143,11 @@ namespace o2scl {
       regions = heap_alloc(1, fdim);
      
       nR_alloc = 2;
-      R = (region *) malloc(sizeof(region) * nR_alloc);
+      R = new region[nR_alloc];
       make_region(h, fdim, R[0]);
       if (eval_regions(1, R, f, r) || heap_push(regions, R[0])) {
 	heap_free(regions);
-	free(R);
+	delete R;
 	return o2scl::gsl_failure;
       }
       numEval += r.num_points;
@@ -1208,7 +1208,7 @@ namespace o2scl {
 	  if (eval_regions(nR, R, f, r)
 	      || heap_push_many(regions, nR, R)) {
 	    heap_free(regions);
-	    free(R);
+	    delete R;
 	    return o2scl::gsl_failure;
 	  }
 
@@ -1221,7 +1221,7 @@ namespace o2scl {
 	  if (cut_region(R[0], R[1]) || eval_regions(2, R, f, r)
 	      || heap_push_many(regions, 2, R)) {
 	    heap_free(regions);
-	    free(R);
+	    delete R;
 	    return o2scl::gsl_failure;
 	  }
 	  numEval += r.num_points * 2;
@@ -1240,13 +1240,13 @@ namespace o2scl {
 	}
 	{
 	  destroy_hypercube(regions.items[i].h);
-	  free(regions.items[i].ee);
+	  delete regions.items[i].ee;
 	  regions.items[i].ee = 0;
 	}
       }
 
       heap_free(regions);
-      free(R);
+      delete R;
 
       return o2scl::success;
     }
