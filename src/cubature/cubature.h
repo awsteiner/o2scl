@@ -146,7 +146,7 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    double errMax(size_t fdim, const esterr *ee) {
+    double errMax(size_t fdim, const std::vector<esterr> &ee) {
 
       double errmax = 0;
       for (size_t k = 0; k < fdim; ++k) {
@@ -162,7 +162,7 @@ namespace o2scl {
       /** \brief Desc */
       size_t dim;
       /** \brief length 2*dim = center followed by half-widths */
-      double *data; 
+      std::vector<double> data; 
       /** \brief cache volume = product of widths */
       double vol;   
     };
@@ -183,7 +183,7 @@ namespace o2scl {
 			const std::vector<double> &halfwidth, hypercube &h) {
 
       h.dim = dim;
-      h.data = new double[dim*2];
+      h.data.resize(dim*2);
       h.vol = 0;
       for (size_t i = 0; i < dim; ++i) {
 	h.data[i] = center[i];
@@ -195,10 +195,11 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    void make_hypercube2(size_t dim, const double *dat, hypercube &h) {
+    void make_hypercube2(size_t dim, const std::vector<double> &dat,
+			 hypercube &h) {
 
       h.dim = dim;
-      h.data = new double[dim*2];
+      h.data.resize(dim*2);
       h.vol = 0;
       for (size_t i = 0; i < dim; ++i) {
 	h.data[i] = dat[i];
@@ -226,7 +227,7 @@ namespace o2scl {
     /** \brief Desc
      */
     void destroy_hypercube(hypercube &h) {
-      delete h.data;
+      h.data.clear();
       h.dim = 0;
       return;
     }
@@ -242,7 +243,7 @@ namespace o2scl {
       /** \brief dimensionality of vector integrand */
       size_t fdim; 
       /** \brief array of length fdim */
-      esterr *ee; 
+      std::vector<esterr> ee; 
       /** \brief max ee[k].err */
       double errmax; 
     };
@@ -254,7 +255,7 @@ namespace o2scl {
       make_hypercube2(h.dim, h.data,R.h);
       R.splitDim = 0;
       R.fdim = fdim;
-      R.ee=new esterr[fdim];
+      R.ee.resize(fdim);
       R.errmax = HUGE_VAL;
 
       return;
@@ -271,7 +272,7 @@ namespace o2scl {
       make_hypercube2(dim, R.h.data,R2.h);
       R.h.data[d] -= R.h.data[d + dim];
       R2.h.data[d] += R.h.data[d + dim];
-      R2.ee = new esterr[R2.fdim];
+      R2.ee.resize(R2.fdim);
       return 0;
     }
 
@@ -565,7 +566,7 @@ namespace o2scl {
       pts = &((r_.pts)[0]); vals = r_.vals;
 
       for (iR = 0; iR < nR; ++iR) {
-	const double *center = R[iR].h.data;
+	const double *center = &((R[iR].h.data)[0]);
           
 	for (i = 0; i < dim; ++i) {
 	  r->p[i] = center[i];
@@ -1147,7 +1148,7 @@ namespace o2scl {
       make_region(h, fdim, R[0]);
       if (eval_regions(1, R, f, r) || heap_push(regions, R[0])) {
 	heap_free(regions);
-	delete R;
+	//delete R;
 	return o2scl::gsl_failure;
       }
       numEval += r.num_points;
@@ -1208,7 +1209,7 @@ namespace o2scl {
 	  if (eval_regions(nR, R, f, r)
 	      || heap_push_many(regions, nR, R)) {
 	    heap_free(regions);
-	    delete R;
+	    //delete R;
 	    return o2scl::gsl_failure;
 	  }
 
@@ -1221,7 +1222,7 @@ namespace o2scl {
 	  if (cut_region(R[0], R[1]) || eval_regions(2, R, f, r)
 	      || heap_push_many(regions, 2, R)) {
 	    heap_free(regions);
-	    delete R;
+	    //delete R;
 	    return o2scl::gsl_failure;
 	  }
 	  numEval += r.num_points * 2;
@@ -1240,13 +1241,12 @@ namespace o2scl {
 	}
 	{
 	  destroy_hypercube(regions.items[i].h);
-	  delete regions.items[i].ee;
-	  regions.items[i].ee = 0;
+	  regions.items[i].ee.clear();
 	}
       }
 
       heap_free(regions);
-      delete R;
+      //delete R;
 
       return o2scl::success;
     }
