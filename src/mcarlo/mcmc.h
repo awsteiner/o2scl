@@ -190,7 +190,9 @@ namespace o2scl {
   /// Output control (default 0)
   int verbose;
 
-  /// (default 1000)
+  /** \brief Maximum number of failed steps when generating initial points
+      with affine-invariant sampling (default 1000)
+  */
   size_t max_bad_steps;
 
   /** \brief Number of walkers for affine-invariant MC or 1 
