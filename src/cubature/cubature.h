@@ -944,7 +944,7 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    int heap_push(heap &h, heap_item hi) {
+    int heap_push(heap &h, heap_item &hi) {
 
       int insert;
       size_t fdim = h.fdim;
