@@ -293,14 +293,13 @@ namespace o2scl {
       /** \brief points to eval: num_regions * num_points * dim */
       std::vector<double> pts;
       /** \brief num_regions * num_points * fdim */
-      double *vals;
+      size_t vals_ix;
     };
 
     /** \brief Desc
      */
     void alloc_rule_pts(rule &r, size_t num_regions) {
       if (num_regions > r.num_regions) {
-	r.vals = 0;
 	r.num_regions = 0;
 
 	/* Allocate extra so that repeatedly calling alloc_rule_pts
@@ -311,7 +310,7 @@ namespace o2scl {
 
 	r.pts.resize((num_regions
 		      * r.num_points * (r.dim + r.fdim)));
-	r.vals = &((r.pts)[0]) + num_regions * r.num_points * r.dim;
+	r.vals_ix=num_regions * r.num_points * r.dim;
 	r.num_regions = num_regions;
       }
       return;
@@ -320,8 +319,8 @@ namespace o2scl {
     /** \brief Desc
      */
     void make_rule(size_t dim, size_t fdim, size_t num_points, rule &r) {
-      
-      r.vals = 0;
+
+      r.vals_ix=0;
       r.num_regions = 0;
       r.dim = dim;
       r.fdim = fdim;
@@ -563,7 +562,8 @@ namespace o2scl {
       double *diff, *pts, *vals;
 
       alloc_rule_pts(r_, nR);
-      pts = &((r_.pts)[0]); vals = r_.vals;
+      pts = &((r_.pts)[0]);
+      vals = &(r_.pts[r_.vals_ix]);
 
       for (iR = 0; iR < nR; ++iR) {
 	const double *center = &((R[iR].h.data)[0]);
@@ -768,7 +768,7 @@ namespace o2scl {
 
       alloc_rule_pts(r, nR);
       pts = &((r.pts)[0]);
-      vals = r.vals;
+      vals = &(r.pts[r.vals_ix]);
 
       for (iR = 0; iR < nR; ++iR) {
 	const double center = R[iR].h.data[0];
