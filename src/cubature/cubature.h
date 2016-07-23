@@ -129,417 +129,464 @@ namespace o2scl {
       \hline      
 
   */
-  template<class func_t> class inte_hcubature
-    : public inte_cubature_base {
+  template<class func_t, class vec_t=std::vector<double> >
+    class inte_hcubature : public inte_cubature_base {
     
   protected:
+  
+  /** \brief A value and error
+   */
+  class esterr {
+  public:
+  esterr() {
+    val=0.0;
+    err=0.0;
+  }
+  esterr(const esterr &e) {
+    val=e.val;
+    err=e.err;
+  }
+  esterr &operator=(const esterr &e) {
+    val=e.val;
+    err=e.err;
+  }
+  /** \brief Desc */
+  double val;
+  /** \brief Desc */
+  double err;
+  };
 
-    /** \brief A value and error
-     */
-    class esterr {
-    public:
-      /** \brief Desc */
-      double val;
-      /** \brief Desc */
-      double err;
-    };
+  /** \brief Return the maximum error from \c ee
+   */
+  double errMax(const std::vector<esterr> &ee) {
 
-    /** \brief Return the maximum error from \c ee
-     */
-    double errMax(const std::vector<esterr> &ee) {
-
-      double errmax = 0;
-      for (size_t k = 0; k < ee.size(); ++k) {
-	if (ee[k].err > errmax) errmax = ee[k].err;
-      }
-      return errmax;
+    double errmax = 0;
+    for (size_t k = 0; k < ee.size(); ++k) {
+      if (ee[k].err > errmax) errmax = ee[k].err;
     }
+    return errmax;
+  }
 
-    /** \brief Desc
-     */
-    class hypercube {
-    public:
-      /** \brief Desc */
-      size_t dim;
-      /** \brief length 2*dim = center followed by half-widths */
-      std::vector<double> data; 
-      /** \brief cache volume = product of widths */
-      double vol;   
-    };
-
-    /** \brief Desc
-     */
-    double compute_vol(const hypercube &h) {
-      double vol = 1;
-      for (size_t i = 0; i < h.dim; ++i) {
-	vol *= 2 * h.data[i + h.dim];
-      }
-      return vol;
+  /** \brief Desc
+   */
+  class hypercube {
+  public:
+  hypercube() {
+    dim=0;
+    vol=0.0;
+  }
+  hypercube(const hypercube &e) {
+    dim=e.dim;
+    data=e.data;
+    vol=e.vol;
+  }
+  hypercube &operator=(const hypercube &e) {
+    if (this!=&e) {
+      dim=e.dim;
+      data=e.data;
+      vol=e.vol;
     }
+  }
+  /** \brief Desc */
+  size_t dim;
+  /** \brief length 2*dim = center followed by half-widths */
+  std::vector<double> data; 
+  /** \brief cache volume = product of widths */
+  double vol;   
+  };
 
-    /** \brief Desc
-     */
-    void make_hypercube(size_t dim, const std::vector<double> &center,
-			const std::vector<double> &halfwidth, hypercube &h) {
-
-      h.dim = dim;
-      h.data.resize(dim*2);
-      h.vol = 0;
-      for (size_t i = 0; i < dim; ++i) {
-	h.data[i] = center[i];
-	h.data[i + dim] = halfwidth[i];
-      }
-      h.vol = compute_vol(h);
-      return;
+  /** \brief Desc
+   */
+  double compute_vol(const hypercube &h) {
+    double vol = 1;
+    for (size_t i = 0; i < h.dim; ++i) {
+      vol *= 2 * h.data[i + h.dim];
     }
+    return vol;
+  }
 
-    /** \brief Desc
-     */
-    void make_hypercube2(size_t dim, const std::vector<double> &dat,
-			 hypercube &h) {
+  /** \brief Desc
+   */
+  void make_hypercube(size_t dim, const std::vector<double> &center,
+		      const std::vector<double> &halfwidth, hypercube &h) {
 
-      h.dim = dim;
-      h.data.resize(dim*2);
-      h.vol = 0;
-      for (size_t i = 0; i < dim; ++i) {
-	h.data[i] = dat[i];
-	h.data[i + dim] = dat[i+dim];
-      }
-      h.vol = compute_vol(h);
-      return;
+    h.dim = dim;
+    h.data.resize(dim*2);
+    h.vol = 0;
+    for (size_t i = 0; i < dim; ++i) {
+      h.data[i] = center[i];
+      h.data[i + dim] = halfwidth[i];
     }
+    h.vol = compute_vol(h);
+    return;
+  }
+
+  /** \brief Desc
+   */
+  void make_hypercube2(size_t dim, const std::vector<double> &dat,
+		       hypercube &h) {
+
+    h.dim = dim;
+    h.data.resize(dim*2);
+    h.vol = 0;
+    for (size_t i = 0; i < dim; ++i) {
+      h.data[i] = dat[i];
+      h.data[i + dim] = dat[i+dim];
+    }
+    h.vol = compute_vol(h);
+    return;
+  }
     
-    /** \brief Desc
-     */
-    void make_hypercube_range
-      (size_t dim, const std::vector<double> &xmin,
-       const std::vector<double> &xmax, hypercube &h) {
+  /** \brief Desc
+   */
+  void make_hypercube_range
+  (size_t dim, const std::vector<double> &xmin,
+   const std::vector<double> &xmax, hypercube &h) {
 
-      make_hypercube(dim,xmin,xmax,h);
-      for (size_t i = 0; i < dim; ++i) {
-	h.data[i] = 0.5 * (xmin[i] + xmax[i]);
-	h.data[i + dim] = 0.5 * (xmax[i] - xmin[i]);
-      }
-      h.vol = compute_vol(h);
-      return;
+    make_hypercube(dim,xmin,xmax,h);
+    for (size_t i = 0; i < dim; ++i) {
+      h.data[i] = 0.5 * (xmin[i] + xmax[i]);
+      h.data[i + dim] = 0.5 * (xmax[i] - xmin[i]);
     }
+    h.vol = compute_vol(h);
+    return;
+  }
 
-    /** \brief Desc
-     */
-    void destroy_hypercube(hypercube &h) {
-      h.data.clear();
-      h.dim = 0;
-      return;
-    }
+  /** \brief Desc
+   */
+  void destroy_hypercube(hypercube &h) {
+    h.data.clear();
+    h.dim = 0;
+    return;
+  }
 
-    /** \brief Desc
-     */
-    class region {
-    public:
-      /** \brief Desc */
-      hypercube h;
-      /** \brief Desc */
-      size_t splitDim;
-      /** \brief dimensionality of vector integrand */
-      size_t fdim; 
-      /** \brief array of length fdim */
-      std::vector<esterr> ee; 
-      /** \brief max ee[k].err */
-      double errmax; 
-    };
+  /** \brief Desc
+   */
+  class region {
+  public:
+  region() {
+    splitDim=0;
+    fdim=0;
+    errmax=0.0;
+  }
+  region(const region &e) {
+    h=e.h;
+    splitDim=e.splitDim;
+    fdim=e.fdim;
+    ee=e.ee;
+    errmax=e.errmax;
+  }
+  region &operator=(const region &e) {
+    h=e.h;
+    splitDim=e.splitDim;
+    fdim=e.fdim;
+    ee=e.ee;
+    errmax=e.errmax;
+  }
+  /** \brief Desc */
+  hypercube h;
+  /** \brief Desc */
+  size_t splitDim;
+  /** \brief dimensionality of vector integrand */
+  size_t fdim; 
+  /** \brief array of length fdim */
+  std::vector<esterr> ee; 
+  /** \brief max ee[k].err */
+  double errmax; 
+  };
 
-    /** \brief Desc
-     */
-    void make_region(const hypercube &h, size_t fdim, region &R) {
+  /** \brief Desc
+   */
+  void make_region(const hypercube &h, size_t fdim, region &R) {
 
-      make_hypercube2(h.dim, h.data,R.h);
-      R.splitDim = 0;
-      R.fdim = fdim;
-      R.ee.resize(fdim);
-      R.errmax = HUGE_VAL;
+    make_hypercube2(h.dim, h.data,R.h);
+    R.splitDim = 0;
+    R.fdim = fdim;
+    R.ee.resize(fdim);
+    R.errmax = HUGE_VAL;
 
-      return;
-    }
+    return;
+  }
 
-    /** \brief Desc
-     */
-    int cut_region(region &R, region &R2) {
+  /** \brief Desc
+   */
+  int cut_region(region &R, region &R2) {
 
-      size_t d = R.splitDim, dim = R.h.dim;
-      R2=R;
-      R.h.data[d + dim] *= 0.5;
-      R.h.vol *= 0.5;
-      make_hypercube2(dim, R.h.data,R2.h);
-      R.h.data[d] -= R.h.data[d + dim];
-      R2.h.data[d] += R.h.data[d + dim];
-      R2.ee.resize(R2.fdim);
-      return 0;
-    }
+    size_t d = R.splitDim, dim = R.h.dim;
+    R2=R;
+    R.h.data[d + dim] *= 0.5;
+    R.h.vol *= 0.5;
+    make_hypercube2(dim, R.h.data,R2.h);
+    R.h.data[d] -= R.h.data[d + dim];
+    R2.h.data[d] += R.h.data[d + dim];
+    R2.ee.resize(R2.fdim);
+    return 0;
+  }
 
-    /** \brief Desc
-     */
-    class rule {
+  /** \brief Desc
+   */
+  class rule {
 
-    public:
+  public:
       
-      /** \brief The dimensionality */
-      size_t dim;
-      /** \brief The number of functions */
-      size_t fdim;
-      /** \brief The number of evaluation points */
-      size_t num_points;
-      /** \brief The max number of regions evaluated at once */
-      size_t num_regions;
-      /** \brief points to eval: num_regions * num_points * dim */
-      std::vector<double> pts;
-      /** \brief num_regions * num_points * fdim */
-      size_t vals_ix;
-    };
+  /** \brief The dimensionality */
+  size_t dim;
+  /** \brief The number of functions */
+  size_t fdim;
+  /** \brief The number of evaluation points */
+  size_t num_points;
+  /** \brief The max number of regions evaluated at once */
+  size_t num_regions;
+  /** \brief points to eval: num_regions * num_points * dim */
+  std::vector<double> pts;
+  /** \brief num_regions * num_points * fdim */
+  size_t vals_ix;
+  };
 
-    /** \brief Desc
-     */
-    void alloc_rule_pts(rule &r, size_t num_regions) {
-      if (num_regions > r.num_regions) {
-	r.num_regions = 0;
-
-	/* Allocate extra so that repeatedly calling alloc_rule_pts
-	   with growing num_regions only needs a logarithmic number of
-	   allocations 
-	*/
-	num_regions *= 2; 
-
-	r.pts.resize((num_regions
-		      * r.num_points * (r.dim + r.fdim)));
-	r.vals_ix=num_regions * r.num_points * r.dim;
-	r.num_regions = num_regions;
-      }
-      return;
-    }
-
-    /** \brief Desc
-     */
-    void make_rule(size_t dim, size_t fdim, size_t num_points, rule &r) {
-
-      r.vals_ix=0;
+  /** \brief Desc
+   */
+  void alloc_rule_pts(rule &r, size_t num_regions) {
+    if (num_regions > r.num_regions) {
       r.num_regions = 0;
-      r.dim = dim;
-      r.fdim = fdim;
-      r.num_points = num_points;
-      return;
+
+      /* Allocate extra so that repeatedly calling alloc_rule_pts
+	 with growing num_regions only needs a logarithmic number of
+	 allocations 
+      */
+      num_regions *= 2; 
+
+      r.pts.resize((num_regions
+		    * r.num_points * (r.dim + r.fdim)));
+      r.vals_ix=num_regions * r.num_points * r.dim;
+      r.num_regions = num_regions;
     }
+    return;
+  }
 
-    /** \brief Desc
+  /** \brief Desc
+   */
+  void make_rule(size_t dim, size_t fdim, size_t num_points, rule &r) {
 
-	\note All regions must have same fdim 
-    */
-    int eval_regions(size_t nR, region *R, func_t &f, rule &r) {
+    r.vals_ix=0;
+    r.num_regions = 0;
+    r.dim = dim;
+    r.fdim = fdim;
+    r.num_points = num_points;
+    return;
+  }
 
-      size_t iR;
-      if (nR == 0) {
-	/* nothing to evaluate */
-	return o2scl::success;
-      }
-      if (r.dim==1) {
-	if (rule15gauss_evalError(r, R->fdim, f, nR, R)) {
-	  return o2scl::gsl_failure;
-	}
-      } else {
-	if (rule75genzmalik_evalError(r, R->fdim, f, nR, R)) {
-	  return o2scl::gsl_failure;
-	}
-      }
-      for (iR = 0; iR < nR; ++iR) {
-	R[iR].errmax = errMax(R[iR].ee);
-      }
+  /** \brief Desc
+
+      \note All regions must have same fdim 
+  */
+  int eval_regions(size_t nR, region *R, func_t &f, rule &r) {
+
+    size_t iR;
+    if (nR == 0) {
+      /* nothing to evaluate */
       return o2scl::success;
     }
+    if (r.dim==1) {
+      if (rule15gauss_evalError(r, R->fdim, f, nR, R)) {
+	return o2scl::gsl_failure;
+      }
+    } else {
+      if (rule75genzmalik_evalError(r, R->fdim, f, nR, R)) {
+	return o2scl::gsl_failure;
+      }
+    }
+    for (iR = 0; iR < nR; ++iR) {
+      R[iR].errmax = errMax(R[iR].ee);
+    }
+    return o2scl::success;
+  }
 
-    /** \brief Functions to loop over points in a hypercube.
+  /** \brief Functions to loop over points in a hypercube.
     
-	Based on orbitrule.cpp in HIntLib-0.0.10
+      Based on orbitrule.cpp in HIntLib-0.0.10
     
-	ls0 returns the least-significant 0 bit of n (e.g. it returns
-	0 if the LSB is 0, it returns 1 if the 2 LSBs are 01, etcetera).
-    */
-    size_t ls0(size_t n) {
+      ls0 returns the least-significant 0 bit of n (e.g. it returns
+      0 if the LSB is 0, it returns 1 if the 2 LSBs are 01, etcetera).
+  */
+  size_t ls0(size_t n) {
 
 #if defined(__GNUC__) &&                                        \
   ((__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || __GNUC__ > 3)
-      return __builtin_ctz(~n); /* gcc builtin for version >= 3.4 */
+    return __builtin_ctz(~n); /* gcc builtin for version >= 3.4 */
 #else
-      const size_t bits[256] = {
-	0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4,
-	0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 5,
-	0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4,
-	0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 6,
-	0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4,
-	0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 5,
-	0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4,
-	0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 7,
-	0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4,
-	0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 5,
-	0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4,
-	0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 6,
-	0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4,
-	0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 5,
-	0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4,
-	0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 8,
-      };
-      size_t bit = 0;
-      while ((n & 0xff) == 0xff) {
-	n >>= 8;
-	bit += 8;
-      }
-      return bit + bits[n & 0xff];
+    const size_t bits[256] = {
+      0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4,
+      0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 5,
+      0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4,
+      0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 6,
+      0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4,
+      0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 5,
+      0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4,
+      0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 7,
+      0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4,
+      0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 5,
+      0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4,
+      0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 6,
+      0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4,
+      0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 5,
+      0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4,
+      0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 8,
+    };
+    size_t bit = 0;
+    while ((n & 0xff) == 0xff) {
+      n >>= 8;
+      bit += 8;
+    }
+    return bit + bits[n & 0xff];
 #endif
+  }
+
+  /** \brief Evaluate the integration points for all \f$ 2^n \f$ points 
+      (+/-r,...+/-r)
+	
+      A Gray-code ordering is used to minimize the number of
+      coordinate updates in p, although this doesn't matter as much
+      now that we are saving all pts.
+  */
+  void evalR_Rfs2(std::vector<double> &pts, size_t pts_ix, size_t dim,
+		  std::vector<double> &p, size_t p_ix,
+		  const std::vector<double> &c, size_t c_ix,
+		  const std::vector<double> &r, size_t r_ix) {
+      
+    size_t i;
+    /* 0/1 bit = +/- for corresponding element of r[] */
+    size_t signs = 0; 
+
+    /* We start with the point where r is ADDed in every coordinate
+       (this implies signs=0). */
+    for (i = 0; i < dim; ++i) {
+      p[p_ix+i] = c[c_ix+i] + r[r_ix+i];
     }
 
-    /** \brief Evaluate the integration points for all \f$ 2^n \f$ points 
-	(+/-r,...+/-r)
-	
-	A Gray-code ordering is used to minimize the number of
-	coordinate updates in p, although this doesn't matter as much
-	now that we are saving all pts.
-    */
-    void evalR_Rfs2(std::vector<double> &pts, size_t pts_ix, size_t dim,
+    /* Loop through the points in Gray-code ordering */
+    for (i = 0;; ++i) {
+      size_t mask, d;
+
+      for(size_t k=0;k<dim;k++) pts[pts_ix+k]=p[p_ix+k];
+      pts_ix+=dim;
+
+      d = ls0(i); /* which coordinate to flip */
+      if (d >= dim) {
+	break;
+      }
+
+      /* flip the d-th bit and add/subtract r[d] */
+      mask = 1U << d;
+      signs ^= mask;
+      p[p_ix+d] = (signs & mask) ? c[c_ix+d] - r[r_ix+d] :
+      c[c_ix+d] + r[r_ix+d];
+    }
+    return;
+  }
+    
+  /** \brief Desc
+   */
+  void evalRR0_0fs2(std::vector<double> &pts, size_t pts_ix, size_t dim,
 		    std::vector<double> &p, size_t p_ix,
 		    const std::vector<double> &c, size_t c_ix,
 		    const std::vector<double> &r, size_t r_ix) {
       
-      size_t i;
-      /* 0/1 bit = +/- for corresponding element of r[] */
-      size_t signs = 0; 
-
-      /* We start with the point where r is ADDed in every coordinate
-	 (this implies signs=0). */
-      for (i = 0; i < dim; ++i) {
+    for (size_t i = 0; i < dim - 1; ++i) {
+      p[p_ix+i] = c[c_ix+i] - r[r_ix+i];
+      for (size_t j = i + 1; j < dim; ++j) {
+	p[p_ix+j] = c[c_ix+j] - r[r_ix+j];
+	for(size_t k=0;k<dim;k++) pts[pts_ix+k]=p[p_ix+k];
+	pts_ix+=dim;
 	p[p_ix+i] = c[c_ix+i] + r[r_ix+i];
-      }
-
-      /* Loop through the points in Gray-code ordering */
-      for (i = 0;; ++i) {
-	size_t mask, d;
-
+	for(size_t k=0;k<dim;k++) pts[pts_ix+k]=p[p_ix+k];
+	pts_ix+=dim;
+	p[p_ix+j] = c[c_ix+j] + r[r_ix+j];
+	for(size_t k=0;k<dim;k++) pts[pts_ix+k]=p[p_ix+k];
+	pts_ix+=dim;
+	p[p_ix+i] = c[c_ix+i] - r[r_ix+i];
 	for(size_t k=0;k<dim;k++) pts[pts_ix+k]=p[p_ix+k];
 	pts_ix+=dim;
 
-	d = ls0(i); /* which coordinate to flip */
-	if (d >= dim) {
-	  break;
-	}
-
-	/* flip the d-th bit and add/subtract r[d] */
-	mask = 1U << d;
-	signs ^= mask;
-	p[p_ix+d] = (signs & mask) ? c[c_ix+d] - r[r_ix+d] :
-	  c[c_ix+d] + r[r_ix+d];
+	// Done with j -> Restore p[j]
+	p[p_ix+j] = c[c_ix+j];      
       }
-      return;
+      // Done with i -> Restore p[i]
+      p[p_ix+i] = c[c_ix+i];                
     }
+    return;
+  }
     
-    /** \brief Desc
-     */
-    void evalRR0_0fs2(std::vector<double> &pts, size_t pts_ix, size_t dim,
-		      std::vector<double> &p, size_t p_ix,
-		      const std::vector<double> &c, size_t c_ix,
-		      const std::vector<double> &r, size_t r_ix) {
+  /** \brief Desc
+   */
+  void evalR0_0fs4d2
+  (std::vector<double> &pts, size_t pts_ix, size_t dim,
+   std::vector<double> &p, size_t p_ix,
+   const std::vector<double> &c, size_t c_ix,
+   const std::vector<double> &r1, size_t r1_ix,
+   const std::vector<double> &r2, size_t r2_ix) {
       
-      for (size_t i = 0; i < dim - 1; ++i) {
-	p[p_ix+i] = c[c_ix+i] - r[r_ix+i];
-	for (size_t j = i + 1; j < dim; ++j) {
-	  p[p_ix+j] = c[c_ix+j] - r[r_ix+j];
-	  for(size_t k=0;k<dim;k++) pts[pts_ix+k]=p[p_ix+k];
-	  pts_ix+=dim;
-	  p[p_ix+i] = c[c_ix+i] + r[r_ix+i];
-	  for(size_t k=0;k<dim;k++) pts[pts_ix+k]=p[p_ix+k];
-	  pts_ix+=dim;
-	  p[p_ix+j] = c[c_ix+j] + r[r_ix+j];
-	  for(size_t k=0;k<dim;k++) pts[pts_ix+k]=p[p_ix+k];
-	  pts_ix+=dim;
-	  p[p_ix+i] = c[c_ix+i] - r[r_ix+i];
-	  for(size_t k=0;k<dim;k++) pts[pts_ix+k]=p[p_ix+k];
-	  pts_ix+=dim;
+    for(size_t k=0;k<dim;k++) pts[pts_ix+k]=p[p_ix+k];
+    pts_ix+=dim;
 
-	  // Done with j -> Restore p[j]
-	  p[p_ix+j] = c[c_ix+j];      
-	}
-	// Done with i -> Restore p[i]
-	p[p_ix+i] = c[c_ix+i];                
-      }
-      return;
-    }
-    
-    /** \brief Desc
-     */
-    void evalR0_0fs4d2
-      (std::vector<double> &pts, size_t pts_ix, size_t dim,
-       std::vector<double> &p, size_t p_ix,
-       const std::vector<double> &c, size_t c_ix,
-       const std::vector<double> &r1, size_t r1_ix,
-       const std::vector<double> &r2, size_t r2_ix) {
-      
+    for (size_t i = 0; i < dim; i++) {
+      p[p_ix+i] = c[c_ix+i] - r1[r1_ix+i];
       for(size_t k=0;k<dim;k++) pts[pts_ix+k]=p[p_ix+k];
       pts_ix+=dim;
 
-      for (size_t i = 0; i < dim; i++) {
-	p[p_ix+i] = c[c_ix+i] - r1[r1_ix+i];
-	for(size_t k=0;k<dim;k++) pts[pts_ix+k]=p[p_ix+k];
-	pts_ix+=dim;
+      p[p_ix+i] = c[c_ix+i] + r1[r1_ix+i];
+      for(size_t k=0;k<dim;k++) pts[pts_ix+k]=p[p_ix+k];
+      pts_ix+=dim;
 
-	p[p_ix+i] = c[c_ix+i] + r1[r1_ix+i];
-	for(size_t k=0;k<dim;k++) pts[pts_ix+k]=p[p_ix+k];
-	pts_ix+=dim;
+      p[p_ix+i] = c[c_ix+i] - r2[r2_ix+i];
+      for(size_t k=0;k<dim;k++) pts[pts_ix+k]=p[p_ix+k];
+      pts_ix+=dim;
 
-	p[p_ix+i] = c[c_ix+i] - r2[r2_ix+i];
-	for(size_t k=0;k<dim;k++) pts[pts_ix+k]=p[p_ix+k];
-	pts_ix+=dim;
+      p[p_ix+i] = c[c_ix+i] + r2[r2_ix+i];
+      for(size_t k=0;k<dim;k++) pts[pts_ix+k]=p[p_ix+k];
+      pts_ix+=dim;
 
-	p[p_ix+i] = c[c_ix+i] + r2[r2_ix+i];
-	for(size_t k=0;k<dim;k++) pts[pts_ix+k]=p[p_ix+k];
-	pts_ix+=dim;
-
-	p[p_ix+i] = c[c_ix+i];
-      }
-      return;
+      p[p_ix+i] = c[c_ix+i];
     }
+    return;
+  }
 
-    /** \brief Desc
-     */
-    size_t num0_0(size_t dim) { return 1; }
-    /** \brief Desc
-     */
-    size_t numR0_0fs(size_t dim) { return 2*dim; }
-    /** \brief Desc
-     */
-    size_t numRR0_0fs(size_t dim) { return 2*dim*(dim-1); }
-    /** \brief Desc
-     */
-    size_t numR_Rfs(size_t dim) { return 1U << dim; }
+  /** \brief Desc
+   */
+  size_t num0_0(size_t dim) { return 1; }
+  /** \brief Desc
+   */
+  size_t numR0_0fs(size_t dim) { return 2*dim; }
+  /** \brief Desc
+   */
+  size_t numRR0_0fs(size_t dim) { return 2*dim*(dim-1); }
+  /** \brief Desc
+   */
+  size_t numR_Rfs(size_t dim) { return 1U << dim; }
       
-    /** \brief Desc
+  /** \brief Desc
 
-	Based on rule75genzmalik.cpp in HIntLib-0.0.10: An embedded
-	cubature rule of degree 7 (embedded rule degree 5) 
-	from \ref Genz83.
-    */
-    class rule75genzmalik : public rule {
+      Based on rule75genzmalik.cpp in HIntLib-0.0.10: An embedded
+      cubature rule of degree 7 (embedded rule degree 5) 
+      from \ref Genz83.
+  */
+  class rule75genzmalik : public rule {
 
-    public:
+  public:
 
-      /** \brief Desc */
-      std::vector<double> p;
+  /** \brief Desc */
+  std::vector<double> p;
       
-      /** \brief dimension-dependent constants */
-      double weight1;
-      /** \brief Desc */
-      double weight3;
-      /** \brief Desc */
-      double weight5;
-      /** \brief Desc */
-      double weightE1;
-      /** \brief Desc */
-      double weightE3;
-    };
+  /** \brief dimension-dependent constants */
+  double weight1;
+  /** \brief Desc */
+  double weight3;
+  /** \brief Desc */
+  double weight5;
+  /** \brief Desc */
+  double weightE1;
+  /** \brief Desc */
+  double weightE3;
+  };
     
 #ifdef O2SCL_NEVER_DEFINED
   }{
@@ -1195,7 +1242,7 @@ namespace o2scl {
 
 	    if (nR + 2 > nR_alloc) {
 	      nR_alloc = (nR + 2) * 2;
-	      R = (region *) realloc(R, nR_alloc * sizeof(region));
+	      R=new region[nR_alloc];
 	    }
 	    R[nR] = heap_pop(regions);
 	    for (j = 0; j < fdim; ++j) ee[j].err -= R[nR].ee[j].err;
