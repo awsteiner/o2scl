@@ -134,7 +134,7 @@ namespace o2scl {
     
   protected:
 
-    /** \brief Desc
+    /** \brief A value and error
      */
     class esterr {
     public:
@@ -144,12 +144,12 @@ namespace o2scl {
       double err;
     };
 
-    /** \brief Desc
+    /** \brief Return the maximum error from \c ee
      */
-    double errMax(size_t fdim, const std::vector<esterr> &ee) {
+    double errMax(const std::vector<esterr> &ee) {
 
       double errmax = 0;
-      for (size_t k = 0; k < fdim; ++k) {
+      for (size_t k = 0; k < ee.size(); ++k) {
 	if (ee[k].err > errmax) errmax = ee[k].err;
       }
       return errmax;
@@ -349,7 +349,7 @@ namespace o2scl {
 	}
       }
       for (iR = 0; iR < nR; ++iR) {
-	R[iR].errmax = errMax(R->fdim, R[iR].ee);
+	R[iR].errmax = errMax(R[iR].ee);
       }
       return o2scl::success;
     }
@@ -401,39 +401,6 @@ namespace o2scl {
 	coordinate updates in p, although this doesn't matter as much
 	now that we are saving all pts.
     */
-    void evalR_Rfs(double *pts, size_t dim, double *p,
-		   const double *c, const double *r) {
-      
-      size_t i;
-      /* 0/1 bit = +/- for corresponding element of r[] */
-      size_t signs = 0; 
-
-      /* We start with the point where r is ADDed in every coordinate
-	 (this implies signs=0). */
-      for (i = 0; i < dim; ++i) {
-	p[i] = c[i] + r[i];
-      }
-
-      /* Loop through the points in Gray-code ordering */
-      for (i = 0;; ++i) {
-	size_t mask, d;
-
-	for(size_t k=0;k<dim;k++) pts[k]=p[k];
-	pts += dim;
-
-	d = ls0(i); /* which coordinate to flip */
-	if (d >= dim) {
-	  break;
-	}
-
-	/* flip the d-th bit and add/subtract r[d] */
-	mask = 1U << d;
-	signs ^= mask;
-	p[d] = (signs & mask) ? c[d] - r[d] : c[d] + r[d];
-      }
-      return;
-    }
-
     void evalR_Rfs2(std::vector<double> &pts, size_t pts_ix, size_t dim,
 		    std::vector<double> &p, size_t p_ix,
 		    const std::vector<double> &c, size_t c_ix,
@@ -472,34 +439,6 @@ namespace o2scl {
     
     /** \brief Desc
      */
-    void evalRR0_0fs(double *pts, size_t dim, double *p,
-		     const double *c, const double *r) {
-      
-      for (size_t i = 0; i < dim - 1; ++i) {
-	p[i] = c[i] - r[i];
-	for (size_t j = i + 1; j < dim; ++j) {
-	  p[j] = c[j] - r[j];
-	  for(size_t k=0;k<dim;k++) pts[k]=p[k];
-	  pts += dim;
-	  p[i] = c[i] + r[i];
-	  for(size_t k=0;k<dim;k++) pts[k]=p[k];
-	  pts += dim;
-	  p[j] = c[j] + r[j];
-	  for(size_t k=0;k<dim;k++) pts[k]=p[k];
-	  pts += dim;
-	  p[i] = c[i] - r[i];
-	  for(size_t k=0;k<dim;k++) pts[k]=p[k];
-	  pts += dim;
-
-	  // Done with j -> Restore p[j]
-	  p[j] = c[j];      
-	}
-	// Done with i -> Restore p[i]
-	p[i] = c[i];                
-      }
-      return;
-    }
-
     void evalRR0_0fs2(std::vector<double> &pts, size_t pts_ix, size_t dim,
 		      std::vector<double> &p, size_t p_ix,
 		      const std::vector<double> &c, size_t c_ix,
@@ -532,31 +471,34 @@ namespace o2scl {
     
     /** \brief Desc
      */
-    void evalR0_0fs4d
-      (double *pts, size_t dim, double *p, const double *c,
-       const double *r1, const double *r2) {
+    void evalR0_0fs4d2
+      (std::vector<double> &pts, size_t pts_ix, size_t dim,
+       std::vector<double> &p, size_t p_ix,
+       const std::vector<double> &c, size_t c_ix,
+       const std::vector<double> &r1, size_t r1_ix,
+       const std::vector<double> &r2, size_t r2_ix) {
       
-      for(size_t k=0;k<dim;k++) pts[k]=p[k];
-      pts += dim;
+      for(size_t k=0;k<dim;k++) pts[pts_ix+k]=p[p_ix+k];
+      pts_ix+=dim;
 
       for (size_t i = 0; i < dim; i++) {
-	p[i] = c[i] - r1[i];
-	for(size_t k=0;k<dim;k++) pts[k]=p[k];
-	pts += dim;
+	p[p_ix+i] = c[c_ix+i] - r1[r1_ix+i];
+	for(size_t k=0;k<dim;k++) pts[pts_ix+k]=p[p_ix+k];
+	pts_ix+=dim;
 
-	p[i] = c[i] + r1[i];
-	for(size_t k=0;k<dim;k++) pts[k]=p[k];
-	pts += dim;
+	p[p_ix+i] = c[c_ix+i] + r1[r1_ix+i];
+	for(size_t k=0;k<dim;k++) pts[pts_ix+k]=p[p_ix+k];
+	pts_ix+=dim;
 
-	p[i] = c[i] - r2[i];
-	for(size_t k=0;k<dim;k++) pts[k]=p[k];
-	pts += dim;
+	p[p_ix+i] = c[c_ix+i] - r2[r2_ix+i];
+	for(size_t k=0;k<dim;k++) pts[pts_ix+k]=p[p_ix+k];
+	pts_ix+=dim;
 
-	p[i] = c[i] + r2[i];
-	for(size_t k=0;k<dim;k++) pts[k]=p[k];
-	pts += dim;
+	p[p_ix+i] = c[c_ix+i] + r2[r2_ix+i];
+	for(size_t k=0;k<dim;k++) pts[pts_ix+k]=p[p_ix+k];
+	pts_ix+=dim;
 
-	p[i] = c[i];
+	p[p_ix+i] = c[c_ix+i];
       }
       return;
     }
@@ -610,7 +552,7 @@ namespace o2scl {
     /** \brief Desc
      */
     int rule75genzmalik_evalError
-      (rule &r_, size_t fdim, func_t &f, size_t nR, region *R) {
+      (rule &runder, size_t fdim, func_t &f, size_t nR, region *R) {
     
       /* lambda2 = sqrt(9/70), lambda4 = sqrt(9/10), lambda5 = sqrt(9/19) */
       const double lambda2 = 0.3585685828003180919906451539079374954541;
@@ -622,16 +564,17 @@ namespace o2scl {
       const double weightE4 = 25. / 729.;
       const double ratio = (lambda2 * lambda2) / (lambda4 * lambda4);
 
-      rule75genzmalik *r = (rule75genzmalik *) (&r_);
-      size_t i, j, iR, dim = r_.dim;
+      rule75genzmalik *r = (rule75genzmalik *) (&runder);
+      size_t i, j, iR, dim = runder.dim;
       size_t npts = 0;
       double *diff, *pts, *vals;
 
-      alloc_rule_pts(r_, nR);
-      pts = &((r_.pts)[0]);
-      vals = &(r_.pts[r_.vals_ix]);
+      alloc_rule_pts(runder, nR);
+      pts = &((runder.pts)[0]);
+      vals = &(runder.pts[runder.vals_ix]);
 
       for (iR = 0; iR < nR; ++iR) {
+	std::vector<double> &center2=R[iR].h.data;
 	const double *center = &((R[iR].h.data)[0]);
           
 	for (i = 0; i < dim; ++i) {
@@ -639,27 +582,27 @@ namespace o2scl {
 	}
           
 	for (i = 0; i < dim; ++i) {
-	  r->widthLambda2[i] = center[i+dim] * lambda2;
+	  r->p[i+2*dim] = center[i+dim] * lambda2;
 	}
 	for (i = 0; i < dim; ++i) {
-	  r->widthLambda[i] = center[i+dim] * lambda4;
+	  r->p[i+dim] = center[i+dim] * lambda4;
 	}
 
 	/* Evaluate points in the center, in (lambda2,0,...,0) and
 	   (lambda3=lambda4, 0,...,0).  */
-	evalR0_0fs4d(pts + npts*dim, dim, &((r->p)[0]), center, 
-		     r->widthLambda2, r->widthLambda);
+	evalR0_0fs4d2(runder.pts,npts*dim, dim, r->p,0,center2,0,
+		      r->p,2*dim,r->p,dim);
 	npts += num0_0(dim) + 2 * numR0_0fs(dim);
 
 	/* Calculate points for (lambda4, lambda4, 0, ...,0) */
-	evalRR0_0fs(pts + npts*dim, dim, &((r->p)[0]), center, r->widthLambda);
+	evalRR0_0fs2(runder.pts,npts*dim,dim,r->p,0,center2,0,r->p,dim);
 	npts += numRR0_0fs(dim);
 
 	/* Calculate points for (lambda5, lambda5, ..., lambda5) */
 	for (i = 0; i < dim; ++i) {
-	  r->widthLambda[i] = center[i+dim] * lambda5;
+	  r->p[i+dim] = center[i+dim] * lambda5;
 	}
-	evalR_Rfs(pts + npts*dim, dim, &((r->p)[0]), center, r->widthLambda);
+	evalR_Rfs2(runder.pts,npts*dim,dim,r->p,0,center2,0,r->p,dim);
 	npts += numR_Rfs(dim);
       }
 
@@ -726,7 +669,7 @@ namespace o2scl {
 	  R[iR].ee[j].val = result;
 	  R[iR].ee[j].err = fabs(res5th - result);
     
-	  v += r_.num_points * fdim;
+	  v += runder.num_points * fdim;
 	}
       }
 
