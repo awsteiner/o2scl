@@ -526,10 +526,6 @@ namespace o2scl {
 
     public:
 
-      /** \brief temporary arrays of length dim */
-      double *widthLambda;
-      /** \brief Desc */
-      double *widthLambda2;
       /** \brief Desc */
       std::vector<double> p;
       
@@ -575,17 +571,16 @@ namespace o2scl {
 
       for (iR = 0; iR < nR; ++iR) {
 	std::vector<double> &center2=R[iR].h.data;
-	const double *center = &((R[iR].h.data)[0]);
           
 	for (i = 0; i < dim; ++i) {
-	  r->p[i] = center[i];
+	  r->p[i] = center2[i];
 	}
           
 	for (i = 0; i < dim; ++i) {
-	  r->p[i+2*dim] = center[i+dim] * lambda2;
+	  r->p[i+2*dim] = center2[i+dim] * lambda2;
 	}
 	for (i = 0; i < dim; ++i) {
-	  r->p[i+dim] = center[i+dim] * lambda4;
+	  r->p[i+dim] = center2[i+dim] * lambda4;
 	}
 
 	/* Evaluate points in the center, in (lambda2,0,...,0) and
@@ -600,7 +595,7 @@ namespace o2scl {
 
 	/* Calculate points for (lambda5, lambda5, ..., lambda5) */
 	for (i = 0; i < dim; ++i) {
-	  r->p[i+dim] = center[i+dim] * lambda5;
+	  r->p[i+dim] = center2[i+dim] * lambda5;
 	}
 	evalR_Rfs2(runder.pts,npts*dim,dim,r->p,0,center2,0,r->p,dim);
 	npts += numR_Rfs(dim);
@@ -724,8 +719,6 @@ namespace o2scl {
       r.weightE3=(265.0-100.0*dim)/1458.0;
 
       r.p.resize(dim*3);
-      r.widthLambda = &((r.p)[0]) + dim;
-      r.widthLambda2 = &((r.p)[0]) + 2 * dim;
 
       return;
     }
@@ -1134,7 +1127,7 @@ namespace o2scl {
     int rulecubature(rule &r, size_t fdim, func_t &f, 
 		     const hypercube &h, size_t maxEval,
 		     double reqAbsError, double reqRelError,
-		     error_norm norm, double *val, double *err,
+		     error_norm norm, std::vector<double> &val, std::vector<double> &err,
 		     int parallel) {
       
       size_t numEval = 0;
@@ -1290,14 +1283,14 @@ namespace o2scl {
 	make_hypercube_range(dim,xmin,xmax,h);
 	status = rulecubature(r, fdim, f, h,
 			      maxEval, reqAbsError, reqRelError, norm,
-			      &(val[0]), &(err[0]), parallel);
+			      val,err,parallel);
       } else {
 	rule75genzmalik r;
 	make_rule75genzmalik(dim,fdim,r);
 	make_hypercube_range(dim,xmin,xmax,h);
 	status = rulecubature(r, fdim, f, h,
 			      maxEval, reqAbsError, reqRelError, norm,
-			      &(val[0]), &(err[0]), parallel);
+			      val,err,parallel);
       }
       destroy_hypercube(h);
 
