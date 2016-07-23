@@ -434,6 +434,42 @@ namespace o2scl {
       return;
     }
 
+    void evalR_Rfs2(std::vector<double> &pts, size_t pts_ix, size_t dim,
+		    std::vector<double> &p, size_t p_ix,
+		    const std::vector<double> &c, size_t c_ix,
+		    const std::vector<double> &r, size_t r_ix) {
+      
+      size_t i;
+      /* 0/1 bit = +/- for corresponding element of r[] */
+      size_t signs = 0; 
+
+      /* We start with the point where r is ADDed in every coordinate
+	 (this implies signs=0). */
+      for (i = 0; i < dim; ++i) {
+	p[p_ix+i] = c[c_ix+i] + r[r_ix+i];
+      }
+
+      /* Loop through the points in Gray-code ordering */
+      for (i = 0;; ++i) {
+	size_t mask, d;
+
+	for(size_t k=0;k<dim;k++) pts[pts_ix+k]=p[p_ix+k];
+	pts_ix+=dim;
+
+	d = ls0(i); /* which coordinate to flip */
+	if (d >= dim) {
+	  break;
+	}
+
+	/* flip the d-th bit and add/subtract r[d] */
+	mask = 1U << d;
+	signs ^= mask;
+	p[p_ix+d] = (signs & mask) ? c[c_ix+d] - r[r_ix+d] :
+	  c[c_ix+d] + r[r_ix+d];
+      }
+      return;
+    }
+    
     /** \brief Desc
      */
     void evalRR0_0fs(double *pts, size_t dim, double *p,
@@ -464,6 +500,36 @@ namespace o2scl {
       return;
     }
 
+    void evalRR0_0fs2(std::vector<double> &pts, size_t pts_ix, size_t dim,
+		      std::vector<double> &p, size_t p_ix,
+		      const std::vector<double> &c, size_t c_ix,
+		      const std::vector<double> &r, size_t r_ix) {
+      
+      for (size_t i = 0; i < dim - 1; ++i) {
+	p[p_ix+i] = c[c_ix+i] - r[r_ix+i];
+	for (size_t j = i + 1; j < dim; ++j) {
+	  p[p_ix+j] = c[c_ix+j] - r[r_ix+j];
+	  for(size_t k=0;k<dim;k++) pts[pts_ix+k]=p[p_ix+k];
+	  pts_ix+=dim;
+	  p[p_ix+i] = c[c_ix+i] + r[r_ix+i];
+	  for(size_t k=0;k<dim;k++) pts[pts_ix+k]=p[p_ix+k];
+	  pts_ix+=dim;
+	  p[p_ix+j] = c[c_ix+j] + r[r_ix+j];
+	  for(size_t k=0;k<dim;k++) pts[pts_ix+k]=p[p_ix+k];
+	  pts_ix+=dim;
+	  p[p_ix+i] = c[c_ix+i] - r[r_ix+i];
+	  for(size_t k=0;k<dim;k++) pts[pts_ix+k]=p[p_ix+k];
+	  pts_ix+=dim;
+
+	  // Done with j -> Restore p[j]
+	  p[p_ix+j] = c[c_ix+j];      
+	}
+	// Done with i -> Restore p[i]
+	p[p_ix+i] = c[c_ix+i];                
+      }
+      return;
+    }
+    
     /** \brief Desc
      */
     void evalR0_0fs4d
