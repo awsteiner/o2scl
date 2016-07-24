@@ -147,8 +147,10 @@ namespace o2scl {
     err=e.err;
   }
   esterr &operator=(const esterr &e) {
-    val=e.val;
-    err=e.err;
+    if (this!=&e) {
+      val=e.val;
+      err=e.err;
+    }
   }
   /** \brief Desc */
   double val;
@@ -277,11 +279,13 @@ namespace o2scl {
     errmax=e.errmax;
   }
   region &operator=(const region &e) {
-    h=e.h;
-    splitDim=e.splitDim;
-    fdim=e.fdim;
-    ee=e.ee;
-    errmax=e.errmax;
+    if (this!=&e) {
+      h=e.h;
+      splitDim=e.splitDim;
+      fdim=e.fdim;
+      ee=e.ee;
+      errmax=e.errmax;
+    }
   }
   /** \brief Desc */
   hypercube h;
@@ -328,6 +332,31 @@ namespace o2scl {
   class rule {
 
   public:
+  rule() {
+    dim=0;
+    fdim=0;
+    num_points=0;
+    num_regions=0;
+    vals_ix=0;
+  }
+  rule(const rule &e) {
+    dim=e.dim;
+    fdim=e.fdim;
+    num_points=e.num_points;
+    num_regions=e.num_regions;
+    pts=e.pts;
+    vals_ix=e.vals_ix;
+  }
+  rule &operator=(const rule &e) {
+    if (this!=&e) {
+      dim=e.dim;
+      fdim=e.fdim;
+      num_points=e.num_points;
+      num_regions=e.num_regions;
+      pts=e.pts;
+      vals_ix=e.vals_ix;
+    }
+  }
       
   /** \brief The dimensionality */
   size_t dim;
@@ -387,11 +416,11 @@ namespace o2scl {
       return o2scl::success;
     }
     if (r.dim==1) {
-      if (rule15gauss_evalError(r, R->fdim, f, nR, R)) {
+      if (rule15gauss_evalError(r, R[0].fdim, f, nR, R)) {
 	return o2scl::gsl_failure;
       }
     } else {
-      if (rule75genzmalik_evalError(r, R->fdim, f, nR, R)) {
+      if (rule75genzmalik_evalError(r, R[0].fdim, f, nR, R)) {
 	return o2scl::gsl_failure;
       }
     }
@@ -572,6 +601,39 @@ namespace o2scl {
   class rule75genzmalik : public rule {
 
   public:
+
+  rule75genzmalik() : rule() {
+  }
+  rule75genzmalik(const rule75genzmalik &e) {
+    this->dim=e.dim;
+    this->fdim=e.fdim;
+    this->num_points=e.num_points;
+    this->num_regions=e.num_regions;
+    this->pts=e.pts;
+    this->vals_ix=e.vals_ix;
+    p=e.p;
+    weight1=e.weight1;
+    weight3=e.weight3;
+    weight5=e.weight5;
+    weightE1=e.weightE1;
+    weightE3=e.weightE3;
+  }
+  rule75genzmalik &operator=(const rule75genzmalik &e) {
+    if (this!=&e) {
+      this->dim=e.dim;
+      this->fdim=e.fdim;
+      this->num_points=e.num_points;
+      this->num_regions=e.num_regions;
+      this->pts=e.pts;
+      this->vals_ix=e.vals_ix;
+      p=e.p;
+      weight1=e.weight1;
+      weight3=e.weight3;
+      weight5=e.weight5;
+      weightE1=e.weightE1;
+      weightE3=e.weightE3;
+    }
+  }
 
   /** \brief Desc */
   std::vector<double> p;
@@ -941,6 +1003,27 @@ namespace o2scl {
      */
     class heap {
     public:
+      heap() {
+	n=0;
+	nalloc=0;
+	fdim=0;
+      }
+      heap(const heap &e) {
+	n=e.n;
+	nalloc=e.nalloc;
+	items=e.items;
+	fdim=e.fdim;
+	ee=e.ee;
+      }
+      heap &operator=(const heap &e) {
+	if (this!=&e) {
+	  n=e.n;
+	  nalloc=e.nalloc;
+	  items=e.items;
+	  fdim=e.fdim;
+	  ee=e.ee;
+	}
+      }
       /** \brief Desc */
       size_t n;
       /** \brief Desc */
@@ -1410,6 +1493,19 @@ namespace o2scl {
   public:
     cache() {
       m.resize(MAXDIM);
+      mi=0;
+    }
+    cache(const cache &e) {
+      m=e.m;
+      mi=e.mi;
+      val=e.val;
+    }
+    cache &operator=(const cache &e) {
+      if (this!=&e) {
+	m=e.m;
+	mi=e.mi;
+	val=e.val;
+      }
     }
     /** \brief Desc */
     std::vector<size_t> m;
