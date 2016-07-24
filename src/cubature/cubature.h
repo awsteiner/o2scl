@@ -610,10 +610,10 @@ namespace o2scl {
       rule75genzmalik *r = (rule75genzmalik *) (&runder);
       size_t i, j, iR, dim = runder.dim;
       size_t npts = 0;
-      double *diff, *pts, *vals;
+      double *vals;
+      std::vector<double> &pts2=runder.pts;
 
       alloc_rule_pts(runder, nR);
-      pts = &((runder.pts)[0]);
       vals = &(runder.pts[runder.vals_ix]);
 
       for (iR = 0; iR < nR; ++iR) {
@@ -649,15 +649,15 @@ namespace o2scl {
       }
 
       /* Evaluate the integrand function(s) at all the points */
-      if (f(dim, npts, pts, fdim, vals)) {
+      if (f(dim, npts, &(pts2[0]), fdim, vals)) {
 	return o2scl::gsl_failure;
       }
 
       /* we are done with the points, and so we can re-use the pts
 	 array to store the maximum difference diff[i] in each dimension 
 	 for each hypercube */
-      diff = pts;
-      for (i = 0; i < dim * nR; ++i) diff[i] = 0;
+      //diff = pts;
+      for (i = 0; i < dim * nR; ++i) pts2[i] = 0;
       
       for (j = 0; j < fdim; ++j) {
     
@@ -672,7 +672,7 @@ namespace o2scl {
 	     above, as well as on the internal structure of
 	     the evalR0_0fs4d function */
 
-	  val0 = v[fdim*(0)]; /* central point */
+	  val0 = v[0]; /* central point */
 	  k0 += 1;
 
 	  for (k = 0; k < dim; ++k) {
@@ -684,7 +684,7 @@ namespace o2scl {
 	    sum2 += v0 + v1;
 	    sum3 += v2 + v3;
     
-	    diff[iR * dim + k] += 
+	    pts2[iR * dim + k] += 
 	      fabs(v0 + v1 - 2*val0 - ratio * (v2 + v3 - 2*val0));
 	  }
 #ifdef O2SCL_NEVER_DEFINED
@@ -721,8 +721,8 @@ namespace o2scl {
 	size_t dimDiffMax = 0;
   
 	for (i = 0; i < dim; ++i) {
-	  if (diff[iR*dim + i] > maxdiff) {
-	    maxdiff = diff[iR*dim + i];
+	  if (pts2[iR*dim + i] > maxdiff) {
+	    maxdiff = pts2[iR*dim + i];
 	    dimDiffMax = i;
 	  }
 	}
