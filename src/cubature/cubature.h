@@ -132,6 +132,11 @@ namespace o2scl {
   template<class func_t>
     class inte_hcubature : public inte_cubature_base {
     
+  public:
+    
+    typedef boost::numeric::ublas::vector<double> ubvector;
+    typedef boost::numeric::ublas::vector_range<ubvector> ubvector_range;
+    
   protected:
   
   /** \brief A value and error
@@ -208,9 +213,9 @@ namespace o2scl {
 
   /** \brief Desc
    */
-    template<class vec_t>
-  void make_hypercube(size_t dim, const vec_t &center,
-		      const vec_t &halfwidth, hypercube &h) {
+  template<class vec_t>
+    void make_hypercube(size_t dim, const vec_t &center,
+			const vec_t &halfwidth, hypercube &h) {
 
     h.dim = dim;
     h.data.resize(dim*2);
@@ -241,10 +246,9 @@ namespace o2scl {
     
   /** \brief Desc
    */
-    template<class vec_t>
-  void make_hypercube_range
-  (size_t dim, const vec_t &xmin,
-   const vec_t &xmax, hypercube &h) {
+  template<class vec_t>
+    void make_hypercube_range
+    (size_t dim, const vec_t &xmin, const vec_t &xmax, hypercube &h) {
 
     make_hypercube(dim,xmin,xmax,h);
     for (size_t i = 0; i < dim; ++i) {
@@ -368,7 +372,7 @@ namespace o2scl {
   /** \brief The max number of regions evaluated at once */
   size_t num_regions;
   /** \brief points to eval: num_regions * num_points * dim */
-  std::vector<double> pts;
+  ubvector pts;
   /** \brief num_regions * num_points * fdim */
   size_t vals_ix;
   };
@@ -478,7 +482,7 @@ namespace o2scl {
       coordinate updates in p, although this doesn't matter as much
       now that we are saving all pts.
   */
-  void evalR_Rfs2(std::vector<double> &pts, size_t pts_ix, size_t dim,
+  void evalR_Rfs2(ubvector &pts, size_t pts_ix, size_t dim,
 		  std::vector<double> &p, size_t p_ix,
 		  const std::vector<double> &c, size_t c_ix,
 		  const std::vector<double> &r, size_t r_ix) {
@@ -516,7 +520,7 @@ namespace o2scl {
     
   /** \brief Desc
    */
-  void evalRR0_0fs2(std::vector<double> &pts, size_t pts_ix, size_t dim,
+  void evalRR0_0fs2(ubvector &pts, size_t pts_ix, size_t dim,
 		    std::vector<double> &p, size_t p_ix,
 		    const std::vector<double> &c, size_t c_ix,
 		    const std::vector<double> &r, size_t r_ix) {
@@ -549,7 +553,7 @@ namespace o2scl {
   /** \brief Desc
    */
   void evalR0_0fs4d2
-  (std::vector<double> &pts, size_t pts_ix, size_t dim,
+  (ubvector &pts, size_t pts_ix, size_t dim,
    std::vector<double> &p, size_t p_ix,
    const std::vector<double> &c, size_t c_ix,
    const std::vector<double> &r1, size_t r1_ix,
@@ -675,7 +679,7 @@ namespace o2scl {
       size_t i, j, iR, dim = runder.dim;
       size_t npts = 0;
       double *vals;
-      std::vector<double> &pts2=runder.pts;
+      ubvector &pts2=runder.pts;
 
       alloc_rule_pts(runder, nR);
       vals = &(runder.pts[runder.vals_ix]);
