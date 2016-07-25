@@ -129,7 +129,7 @@ namespace o2scl {
       \hline      
 
   */
-  template<class func_t, class vec_t=std::vector<double> >
+  template<class func_t>
     class inte_hcubature : public inte_cubature_base {
     
   protected:
@@ -208,8 +208,9 @@ namespace o2scl {
 
   /** \brief Desc
    */
-  void make_hypercube(size_t dim, const std::vector<double> &center,
-		      const std::vector<double> &halfwidth, hypercube &h) {
+    template<class vec_t>
+  void make_hypercube(size_t dim, const vec_t &center,
+		      const vec_t &halfwidth, hypercube &h) {
 
     h.dim = dim;
     h.data.resize(dim*2);
@@ -240,9 +241,10 @@ namespace o2scl {
     
   /** \brief Desc
    */
+    template<class vec_t>
   void make_hypercube_range
-  (size_t dim, const std::vector<double> &xmin,
-   const std::vector<double> &xmax, hypercube &h) {
+  (size_t dim, const vec_t &xmin,
+   const vec_t &xmax, hypercube &h) {
 
     make_hypercube(dim,xmin,xmax,h);
     for (size_t i = 0; i < dim; ++i) {
@@ -1254,12 +1256,12 @@ namespace o2scl {
 
     /** \brief Desc
      */
+    template<class vec_t>
     int rulecubature(rule &r, size_t fdim, func_t &f, 
 		     const hypercube &h, size_t maxEval,
 		     double reqAbsError, double reqRelError,
-		     error_norm norm, std::vector<double> &val,
-		     std::vector<double> &err,
-		     int parallel) {
+		     error_norm norm, vec_t &val,
+		     vec_t &err, int parallel) {
       
       size_t numEval = 0;
       heap regions;
@@ -1386,12 +1388,11 @@ namespace o2scl {
     
     /** \brief Desc
      */
-    int cubature(size_t fdim, func_t &f, size_t dim,
-		 const std::vector<double> &xmin,
-		 const std::vector<double> &xmax, 
-		 size_t maxEval, double reqAbsError, double reqRelError, 
-		 error_norm norm, std::vector<double> &val,
-		 std::vector<double> &err, int parallel) {
+    template<class vec_t>
+      int cubature(size_t fdim, func_t &f, size_t dim, const vec_t &xmin,
+		   const vec_t &xmax, size_t maxEval, double reqAbsError,
+		   double reqRelError, error_norm norm, vec_t &val,
+		   vec_t &err, int parallel) {
       
       hypercube h;
       
@@ -1412,16 +1413,14 @@ namespace o2scl {
 	rule r;
 	make_rule15gauss(dim,fdim,r);
 	make_hypercube_range(dim,xmin,xmax,h);
-	status = rulecubature(r, fdim, f, h,
-			      maxEval, reqAbsError, reqRelError, norm,
-			      val,err,parallel);
+	status = rulecubature(r,fdim,f,h,maxEval,reqAbsError,
+			      reqRelError,norm,val,err,parallel);
       } else {
 	rule75genzmalik r;
 	make_rule75genzmalik(dim,fdim,r);
 	make_hypercube_range(dim,xmin,xmax,h);
-	status = rulecubature(r, fdim, f, h,
-			      maxEval, reqAbsError, reqRelError, norm,
-			      val,err,parallel);
+	status = rulecubature(r,fdim,f,h,maxEval,reqAbsError,
+			      reqRelError,norm,val,err,parallel);
       }
       destroy_hypercube(h);
 
@@ -1432,18 +1431,19 @@ namespace o2scl {
     
     /** \brief Desc
      */
-    int integ(size_t fdim, func_t &f, size_t dim,
-	      const std::vector<double> &xmin,
-	      const std::vector<double> &xmax, size_t maxEval,
-	      double reqAbsError, double reqRelError, error_norm norm,
-	      std::vector<double> &val, std::vector<double> &err) {
-	      
+    template<class vec_t>
+      int integ(size_t fdim, func_t &f, size_t dim,
+		const vec_t &xmin, const vec_t &xmax, size_t maxEval,
+		double reqAbsError, double reqRelError, error_norm norm,
+		vec_t &val, vec_t &err) {
+      
       if (fdim == 0) {
 	/* nothing to do */     
 	return o2scl::success;
       }
-      return cubature(fdim,f,dim,xmin,xmax,
-		      maxEval,reqAbsError,reqRelError,norm,val,err,0);
+      return cubature(fdim,f,dim,xmin,xmax,maxEval,reqAbsError,
+		      reqRelError,norm,val,err,0);
+		      
     }
     
   };
@@ -1860,9 +1860,10 @@ namespace o2scl {
       buffer and length that was used). The buffer length will be
       kept <= max(max_nbuf, 1) * dim.
 
-      Also allows the caller to specify an array m[dim] of starting degrees
-      for the rule, which upon return will hold the final degrees.  The
-      number of points in each dimension i is 2^(m[i]+1) + 1. 
+      Also allows the caller to specify an array m[dim] of starting
+      degrees for the rule, which upon return will hold the final
+      degrees. The number of points in each dimension i is 2^(m[i]+1)
+      + 1.
   */
   template<class vec_t>
   int integ_v_buf(size_t fdim, func_t &f, 
