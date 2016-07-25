@@ -161,8 +161,7 @@ namespace o2scl {
   /** \brief Return the maximum error from \c ee
    */
   double errMax(const std::vector<esterr> &ee) {
-
-    double errmax = 0;
+    double errmax = 0.0;
     for (size_t k = 0; k < ee.size(); ++k) {
       if (ee[k].err > errmax) errmax = ee[k].err;
     }
@@ -1258,7 +1257,8 @@ namespace o2scl {
     int rulecubature(rule &r, size_t fdim, func_t &f, 
 		     const hypercube &h, size_t maxEval,
 		     double reqAbsError, double reqRelError,
-		     error_norm norm, std::vector<double> &val, std::vector<double> &err,
+		     error_norm norm, std::vector<double> &val,
+		     std::vector<double> &err,
 		     int parallel) {
       
       size_t numEval = 0;
@@ -1467,7 +1467,7 @@ namespace o2scl {
       
       \hline      
   */
-  template<class func_t, class vec_t=std::vector<double> >
+  template<class func_t>
     class inte_pcubature : public inte_cubature_base {
     
   protected:
@@ -1522,6 +1522,7 @@ namespace o2scl {
       cache entry: add each point to the buffer buf, evaluating all
       at once whenever the buffer is full or when we are done
   */
+  template<class vec_t>
   int compute_cacheval(const std::vector<size_t> &m, size_t mi, 
 		       std::vector<double> &val, size_t &vali,
 		       size_t fdim, func_t &f, size_t dim, size_t id,
@@ -1601,6 +1602,7 @@ namespace o2scl {
     
   /** \brief Desc
    */
+  template<class vec_t>
   int add_cacheval(std::vector<cache> &vc, const std::vector<size_t> &m,
 		   size_t mi, size_t fdim, func_t &f, size_t dim, 
 		   const vec_t &xmin, const vec_t &xmax,
@@ -1641,6 +1643,7 @@ namespace o2scl {
       (cm,cmi,cval). id is the current loop dimension (from 0 to
       dim-1).
   */
+  template<class vec_t>
   size_t eval(const std::vector<size_t> &cm, size_t cmi,
 	      std::vector<double> &cval,
 	      const std::vector<size_t> &m, size_t md,
@@ -1696,10 +1699,9 @@ namespace o2scl {
       Loop over all cache entries that contribute to the integral,
       (with m[md] decremented by 1) 
   */
+  template<class vec_t>
   void evals(std::vector<cache> &vc, const std::vector<size_t> &m,
-	     size_t md,
-	     size_t fdim, size_t dim, double V,
-	     vec_t &val) {
+	     size_t md, size_t fdim, size_t dim, double V, vec_t &val) {
 
     for(size_t k=0;k<fdim;k++) {
       val[k]=0.0;
@@ -1721,10 +1723,10 @@ namespace o2scl {
       estimate in err[], and the dimension to subdivide next (the
       largest error contribution) in *mi
   */
+  template<class vec_t>
   void eval_integral(std::vector<cache> &vc, const std::vector<size_t> &m, 
 		     size_t fdim, size_t dim, double V,
-		     size_t &mi, vec_t &val,
-		     vec_t &err, vec_t &val1) {
+		     size_t &mi, vec_t &val, vec_t &err, vec_t &val1) {
 
     double maxerr = 0;
     size_t i, j;
@@ -1862,6 +1864,7 @@ namespace o2scl {
       for the rule, which upon return will hold the final degrees.  The
       number of points in each dimension i is 2^(m[i]+1) + 1. 
   */
+  template<class vec_t>
   int integ_v_buf(size_t fdim, func_t &f, 
 		  size_t dim, const vec_t &xmin, const vec_t &xmax,
 		  size_t maxEval, double reqAbsError, double reqRelError,
@@ -1956,6 +1959,7 @@ namespace o2scl {
     
   /** \brief Desc
    */
+  template<class vec_t>
   int integ(size_t fdim, func_t &f, size_t dim,
 	    const vec_t &xmin, const vec_t &xmax, size_t maxEval,
 	    double reqAbsError, double reqRelError, error_norm norm,

@@ -284,7 +284,7 @@ int main(void) {
     int(size_t,size_t,const double *,size_t,double *)> cub_funct_arr;
   inte_hcubature<cub_funct_arr> hc;
   inte_pcubature<cub_funct_arr> pc;
-  inte_pcubature<cub_funct_arr,ubvector> pc2;
+  inte_pcubature<cub_funct_arr> pc2;
 
   inte_hcubature<cub_funct_arr>::error_norm enh=
     inte_hcubature<cub_funct_arr>::ERROR_INDIVIDUAL;
