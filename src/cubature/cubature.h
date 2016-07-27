@@ -1633,7 +1633,7 @@ namespace o2scl {
 
     if (ibuf > 0) {
       /* flush remaining buffer */
-      return f(dim, ibuf, &(buf[0]), fdim, &((vc[ic].val)[0]) + vali);
+      return f(dim, ibuf, &(buf[0]), fdim, &((vc[ic].val)[vali]));
     }
 
     return o2scl::success;

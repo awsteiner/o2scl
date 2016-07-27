@@ -36,6 +36,7 @@ using namespace o2scl;
 
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::vector_range<ubvector> ubvector_range;
+typedef boost::numeric::ublas::vector_range<ubvector_range> ubvector_range_range;
 typedef boost::numeric::ublas::vector_range<const ubvector> c_ubvector_range;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 typedef boost::numeric::ublas::matrix_row<ubmatrix> ubmatrix_row;
@@ -60,6 +61,37 @@ int main(void) {
     // Show that changing xr modifies x
     t.test_rel(x[1],9.0,1.0e-15,"vector_range ubvector 1.");
     t.test_rel(x[2],2.0,1.0e-15,"vector_range ubvector 2.");
+
+    // Range of a range
+    ubvector_range_range xr2=vector_range(xr,1,2);
+    xr2[0]=6.0;
+    t.test_gen(xr2.size()==1,"vector_range_range ubvector 0");
+    // Show that changing xr modifies x
+    t.test_rel(x[2],6.0,1.0e-15,"vector_range_range ubvector 1.");
+  }
+
+  {
+    // Test vector_range_gen with ubvector
+    ubvector x(5);
+    x[0]=3.0;
+    x[1]=1.0;
+    x[2]=4.0;
+    x[3]=1.0;
+    x[4]=5.0;
+    vector_range_gen<ubvector> xr=vector_range(x,1,3);
+    xr[0]=9.0;
+    xr[1]=2.0;
+    t.test_gen(xr.size()==2,"vector_range ubvector 0");
+    // Show that changing xr modifies x
+    t.test_rel(x[1],9.0,1.0e-15,"vector_range ubvector 1.");
+    t.test_rel(x[2],2.0,1.0e-15,"vector_range ubvector 2.");
+
+    // Range of a range
+    vector_range_gen<ubvector> xr2=vector_range(xr,1,2);
+    xr2[0]=6.0;
+    t.test_gen(xr2.size()==1,"vector_range_range ubvector 0");
+    // Show that changing xr modifies x
+    t.test_rel(x[2],6.0,1.0e-15,"vector_range_range ubvector 1.");
   }
   
   {

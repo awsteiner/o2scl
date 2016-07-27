@@ -2107,68 +2107,6 @@ namespace o2scl {
     return;
   }
 
-  /** \brief Vector range function for pointers
-
-      \note In this case, the return type is the same as the
-      type of the first parameter. 
-   */
-  template<class dat_t> dat_t *vector_range
-    (dat_t *v, size_t start, size_t last) {
-    return v+start;
-  }
-  
-  /** \brief Vector range function template for ublas vectors
-
-      \note In this case, the return type is not the same as the
-      type of the first parameter. 
-   */
-  template<class dat_t> boost::numeric::ublas::vector_range
-    <boost::numeric::ublas::vector<dat_t> >
-    vector_range(boost::numeric::ublas::vector<dat_t> &v,
-		 size_t start, size_t last) {
-    return boost::numeric::ublas::vector_range
-      <boost::numeric::ublas::vector<dat_t> >
-      (v,boost::numeric::ublas::range(start,last));
-  }
-
-  /** \brief Vector range function template for const ublas vectors
-
-      \note In this case, the return type is not the same as the
-      type of the first parameter. 
-   */
-  template<class dat_t> const boost::numeric::ublas::vector_range
-    <const boost::numeric::ublas::vector<dat_t> >
-    vector_range(const boost::numeric::ublas::vector<dat_t> &v,
-		  size_t start, size_t last) {
-    return boost::numeric::ublas::vector_range
-      <const boost::numeric::ublas::vector<dat_t> >
-      (v,boost::numeric::ublas::range(start,last));
-  }
-  
-  /** \brief Vector range function template for <tt>std::vector</tt>
-      
-      \note In this case, the return type is the same as the
-      type of the first parameter. 
-      \note Unlike the ublas and pointer cases, this forces
-      a copy. 
-   */
-  template<class dat_t> std::vector<dat_t>
-    vector_range(std::vector<dat_t> &v, size_t start, size_t last) {
-    return std::vector<dat_t> (v.begin()+start,v.begin()+last);
-  }
-
-  /** \brief Const vector range function template for <tt>std::vector</tt>
-      
-      \note In this case, the return type is the same as the
-      type of the first parameter. 
-      \note Unlike the ublas and pointer cases, this forces
-      a copy. 
-   */
-  template<class dat_t> const std::vector<dat_t>
-    vector_range(const std::vector<dat_t> &v, size_t start, size_t last) {
-    return std::vector<dat_t> (v.begin()+start,v.begin()+last);
-  }
-
   /** \brief Construct a row of a matrix
 
       This class template works with combinations of ublas
@@ -2193,14 +2131,22 @@ namespace o2scl {
   /** \brief Generic object which represents a row of a matrix
 
       \note This class is experimental.
+
+      This class is used in <tt>o2scl::eos_sn_base::slice</tt>
+      to construct a row of a matrix object of type
+      \code 
+      std::function<double &(size_t,size_t)>
+      \endcode
   */
   template<class mat_t> class matrix_row_gen {
 
-  public:
+  protected:
 
     mat_t &m_;
 
     size_t row_;
+
+  public:
 
     /// Create a row object from row \c row of matrix \c m 
   matrix_row_gen(mat_t &m, size_t row) : m_(m), row_(row) {
@@ -2240,12 +2186,19 @@ namespace o2scl {
 
   /** \brief Generic object which represents a column of a matrix
 
-      \note This class is experimental.
-   */
+      \note This class is experimental. 
+
+      This class is used in <tt>o2scl::eos_sn_base::slice</tt>
+      to construct a row of a matrix object of type
+      \code 
+      std::function<double &(size_t,size_t)>
+      \endcode
+  */
   template<class mat_t> class matrix_column_gen {
-  public:
+  protected:
     mat_t &m_;
     size_t column_;
+  public:
   matrix_column_gen(mat_t &m, size_t column) : m_(m), column_(column) {
     }
     double &operator[](size_t i) {
@@ -2324,6 +2277,190 @@ namespace o2scl {
       }
     }
   }
+  //@}
+
+  /// \name Vector range classes and functions
+  //@{
+  /** \brief Vector range function for pointers
+
+      \note In this case, the return type is the same as the
+      type of the first parameter. 
+   */
+  template<class dat_t> dat_t *vector_range
+    (dat_t *v, size_t start, size_t last) {
+    return v+start;
+  }
+
+  /** \brief Vector range function template for ublas vectors
+
+      The element with index \c start in the original vector
+      will become the first argument in the new vector, and
+      the new vector will have size <tt>last-start</tt> .
+
+      \note In this case, the return type is not the same as the
+      type of the first parameter. 
+   */
+  template<class dat_t> boost::numeric::ublas::vector_range
+    <boost::numeric::ublas::vector<dat_t> >
+    vector_range(boost::numeric::ublas::vector<dat_t> &v,
+		 size_t start, size_t last) {
+    return boost::numeric::ublas::vector_range
+      <boost::numeric::ublas::vector<dat_t> >
+      (v,boost::numeric::ublas::range(start,last));
+  }
+
+  /** \brief Vector range function template for ublas vector
+      ranges
+
+      The element with index \c start in the original vector
+      will become the first argument in the new vector, and
+      the new vector will have size <tt>last-start</tt> .
+
+      \note In this case, the return type is not the same as the
+      type of the first parameter. 
+   */
+  template<class dat_t>
+    boost::numeric::ublas::vector_range
+    <boost::numeric::ublas::vector_range
+    <boost::numeric::ublas::vector<dat_t> > >
+    vector_range
+    (boost::numeric::ublas::vector_range
+     <boost::numeric::ublas::vector<dat_t> > &v,
+     size_t start, size_t last) {
+    return boost::numeric::ublas::vector_range
+      <boost::numeric::ublas::vector_range
+      <boost::numeric::ublas::vector<dat_t> > >
+      (v,boost::numeric::ublas::range(start,last));
+  }
+  
+  /** \brief Vector range function template for const ublas vectors
+
+      The element with index \c start in the original vector
+      will become the first argument in the new vector, and
+      the new vector will have size <tt>last-start</tt> .
+
+      \note In this case, the return type is not the same as the
+      type of the first parameter. 
+   */
+  template<class dat_t> const boost::numeric::ublas::vector_range
+    <const boost::numeric::ublas::vector<dat_t> >
+    vector_range(const boost::numeric::ublas::vector<dat_t> &v,
+		  size_t start, size_t last) {
+    return boost::numeric::ublas::vector_range
+      <const boost::numeric::ublas::vector<dat_t> >
+      (v,boost::numeric::ublas::range(start,last));
+  }
+  
+  /** \brief Vector range function template for ublas vector
+      ranges
+
+      The element with index \c start in the original vector
+      will become the first argument in the new vector, and
+      the new vector will have size <tt>last-start</tt> .
+
+      \note In this case, the return type is not the same as the
+      type of the first parameter. 
+   */
+  template<class dat_t>
+    const boost::numeric::ublas::vector_range
+    <const boost::numeric::ublas::vector_range
+    <const boost::numeric::ublas::vector<dat_t> > >
+    vector_range
+    (const boost::numeric::ublas::vector_range
+     <boost::numeric::ublas::vector<dat_t> > &v,
+     size_t start, size_t last) {
+    return boost::numeric::ublas::vector_range
+      <const boost::numeric::ublas::vector_range
+      <const boost::numeric::ublas::vector<dat_t> > >
+      (v,boost::numeric::ublas::range(start,last));
+  }
+
+  /** \brief Vector range function template for <tt>std::vector</tt>
+      
+      The element with index \c start in the original vector
+      will become the first argument in the new vector, and
+      the new vector will have size <tt>last-start</tt> .
+
+      \note In this case, the return type is the same as the
+      type of the first parameter. 
+      \note Unlike the ublas and pointer cases, this forces
+      a copy. 
+   */
+  template<class dat_t> std::vector<dat_t>
+    vector_range_copy(std::vector<dat_t> &v, size_t start, size_t last) {
+    return std::vector<dat_t> (v.begin()+start,v.begin()+last);
+  }
+
+  /** \brief Const vector range function template for <tt>std::vector</tt>
+      
+      The element with index \c start in the original vector
+      will become the first argument in the new vector, and
+      the new vector will have size <tt>last-start</tt> .
+
+      \note In this case, the return type is the same as the
+      type of the first parameter. 
+      \note Unlike the ublas and pointer cases, this forces
+      a copy. 
+  */
+  template<class dat_t> const std::vector<dat_t>
+    vector_range_copy(const std::vector<dat_t> &v, size_t start, size_t last) {
+    return std::vector<dat_t> (v.begin()+start,v.begin()+last);
+  }
+
+  /** \brief Experimental vector range object
+   */
+  template<class vec_t> class vector_range_gen {
+    
+  protected:
+
+    /// A reference to the original vector
+    vec_t &v_;
+
+    /// The index offset
+    size_t start_;
+
+    /// The end() iterator
+    size_t last_;
+    
+  public:
+
+    /// Create an object starting with index \c start in vector \c v
+  vector_range_gen(vec_t &v, size_t start, size_t last) : v_(v), start_(start),
+      last_(last) {
+    }
+
+    /// Create an object from a previously constructed range object
+  vector_range_gen(vector_range_gen &v2, size_t start, size_t last) :
+    v_(v2.v_), start_(start+v2.start_), last_(last) {
+    }
+    
+    /// Return a reference ith element
+    double &operator[](size_t i) {
+      return v_(i+start_);
+    }
+    
+    /// Return a const reference ith element
+    const double &operator[](size_t i) const {
+      return v_(i+start_);
+    }
+  };
+
+  /** \brief Create a \ref o2scl::vector_range_gen object through
+      a <tt>vector_range()</tt> function 
+   */
+  template<class vec_t> vector_range_gen<vec_t>
+    vector_range(vec_t &v, size_t start, size_t last) {
+    return vector_range_gen<vec_t>(v,start);
+  }
+
+  /** \brief Recursively create a \ref o2scl::vector_range_gen object 
+      from a vector range through a <tt>vector_range()</tt> function 
+   */
+  template<class vec_t> vector_range_gen<vec_t>
+    vector_range(vector_range_gen<vec_t> &v, size_t start, size_t last) {
+    return vector_range_gen<vec_t>(v,start);
+  }
+
   //@}
   
 }
