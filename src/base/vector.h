@@ -67,7 +67,7 @@ namespace o2scl {
 
       \warning This uses typecasts on externally allocated GSL 
       pointers and is not safe or fully const-correct. 
-   */
+  */
   class gsl_vector_wrap {
     const double *d;
     size_t sz;
@@ -331,7 +331,7 @@ namespace o2scl {
   
   /** \brief Make a matrix lower triangular by setting the upper
       triangular entries to zero
-   */
+  */
   template<class mat_t> void matrix_make_lower(mat_t &src) {
     size_t m=src.size1();
     size_t n=src.size2();
@@ -359,7 +359,7 @@ namespace o2scl {
 
   /** \brief Simple test that a matrix is lower triangular
       for the first \c m rows and \c n columns
-   */
+  */
   template<class mat_t> bool matrix_is_lower(size_t m, size_t n, 
 					     mat_t &src) {
     bool ret=true;
@@ -373,7 +373,7 @@ namespace o2scl {
 
   /** \brief Simple test that a matrix is upper triangular
       for the first \c m rows and \c n columns
-   */
+  */
   template<class mat_t> bool matrix_is_upper(size_t m, size_t n, 
 					     mat_t &src) {
     bool ret=true;
@@ -387,7 +387,7 @@ namespace o2scl {
   
   /** \brief Make the first \c m rows and \c n columns of a matrix
       lower triangular by setting the upper triangular entries to zero
-   */
+  */
   template<class mat_t> void matrix_make_lower(size_t m, size_t n, 
 					       mat_t &src) {
     for(size_t i=0;i<m;i++) {
@@ -504,7 +504,7 @@ namespace o2scl {
       than this function, which is provided only in cases where
       one knows one is going to be forced to use a vector type
       without a properly defined <tt>std::swap</tt> method.
-   */
+  */
   template<class vec_t, class vec2_t>
     void vector_swap_double(vec_t &v1, vec2_t &v2) {
     return vector_swap<vec_t,vec2_t,double>(v1,v2);
@@ -514,7 +514,7 @@ namespace o2scl {
       
       This function swaps the element \c i and element \c j of vector
       \c v1. 
-   */
+  */
   template<class vec_t, class data_t> 
     void vector_swap(vec_t &v, size_t i, size_t j) {
     data_t temp=v[i];
@@ -648,7 +648,7 @@ namespace o2scl {
   /// \name Sorting vectors
   //@{
   /** \brief Provide a downheap() function for vector_sort()
-  */
+   */
   template<class vec_t, class data_t>
     void sort_downheap(vec_t &data, size_t n, size_t k) {
     
@@ -780,7 +780,7 @@ namespace o2scl {
       permutation order(n);
       vector_sort_index(n,data,order);
       for(size_t i=0;i<n;i++) {
-        cout << data[order[i]] << endl;
+      cout << data[order[i]] << endl;
       }
       \endcode
 
@@ -872,7 +872,7 @@ namespace o2scl {
 
       If \c k is zero, then this function does nothing and
       returns \ref o2scl::success .
-   */
+  */
   template<class vec_t, class data_t>
     void vector_smallest(size_t n, vec_t &data, size_t k, vec_t &smallest) {
     if (k>n) {
@@ -923,7 +923,7 @@ namespace o2scl {
 
       If \c k is zero, then this function does nothing and
       returns \ref o2scl::success .
-   */
+  */
   template<class vec_t, class data_t>
     void vector_smallest(vec_t &data, size_t k, vec_t &smallest) {
     size_t n=data.size();
@@ -946,7 +946,7 @@ namespace o2scl {
 
       If \c k is zero, then this function does nothing and
       returns \ref o2scl::success .
-   */
+  */
   template<class vec_t, class data_t>
     void vector_largest(size_t n, vec_t &data, size_t k, vec_t &largest) {
     if (k>n) {
@@ -1045,7 +1045,7 @@ namespace o2scl {
 
   /** \brief Compute the index which holds the 
       maximum of the first \c n elements of a vector
-   */
+  */
   template<class vec_t, class data_t>
     size_t vector_max_index(size_t n, const vec_t &data) {
     
@@ -1120,7 +1120,7 @@ namespace o2scl {
 
   /** \brief Compute the index which holds the 
       minimum of the first \c n elements of a vector
-   */
+  */
   template<class vec_t, class data_t>
     size_t vector_min_index(size_t n, const vec_t &data) {
     
@@ -1163,7 +1163,7 @@ namespace o2scl {
   */
   template<class vec_t, class data_t>
     void vector_minmax_value(size_t n, vec_t &data, 
-			    data_t &min, data_t &max) {
+			     data_t &min, data_t &max) {
     
     if (n==0) {
       O2SCL_ERR("Sent size=0 to vector_min().",exc_efailed);
@@ -1213,8 +1213,8 @@ namespace o2scl {
   */
   template<class vec_t, class data_t>
     void vector_minmax(size_t n, vec_t &data, 
-		      size_t &ix_min, data_t &min, 
-		      size_t &ix_max, data_t &max) {
+		       size_t &ix_min, data_t &min, 
+		       size_t &ix_max, data_t &max) {
     
     if (n==0) {
       O2SCL_ERR("Sent size=0 to vector_min().",exc_efailed);
@@ -1261,7 +1261,7 @@ namespace o2scl {
     size_t ix=vector_max_index<vec_t,data_t>(n,y);
     if (ix==0 || ix==n-1) return y[ix];
     return quadratic_extremum_y<data_t>(x[ix-1],x[ix],x[ix+1],
-				y[ix-1],y[ix],y[ix+1]);
+					y[ix-1],y[ix],y[ix+1]);
   }
 
   /** \brief Location of vector maximum by quadratic fit
@@ -1271,7 +1271,7 @@ namespace o2scl {
     size_t ix=vector_max_index<vec_t,data_t>(n,y);
     if (ix==0 || ix==n-1) return y[ix];
     return quadratic_extremum_x<data_t>(x[ix-1],x[ix],x[ix+1],
-				y[ix-1],y[ix],y[ix+1]);
+					y[ix-1],y[ix],y[ix+1]);
   }
 
   /** \brief Minimum of vector by quadratic fit
@@ -1296,7 +1296,7 @@ namespace o2scl {
     size_t ix=vector_min_index<vec_t,data_t>(n,y);
     if (ix==0 || ix==n-1) return y[ix];
     return quadratic_extremum_y<data_t>(x[ix-1],x[ix],x[ix+1],
-				y[ix-1],y[ix],y[ix+1]);
+					y[ix-1],y[ix],y[ix+1]);
   }
 
   /** \brief Location of vector minimum by quadratic fit
@@ -1306,7 +1306,7 @@ namespace o2scl {
     size_t ix=vector_min_index<vec_t,data_t>(n,y);
     if (ix==0 || ix==n-1) return y[ix];
     return quadratic_extremum_x<data_t>(x[ix-1],x[ix],x[ix+1],
-				y[ix-1],y[ix],y[ix+1]);
+					y[ix-1],y[ix],y[ix+1]);
   }
   //@}
 
@@ -1382,7 +1382,7 @@ namespace o2scl {
 
   /** \brief Compute the maximum of a matrix and return 
       the indices of the maximum element
-   */
+  */
   template<class mat_t, class data_t>
     void matrix_max_index(size_t m, size_t n, const mat_t &data,
 			  size_t &i_max, size_t &j_max, data_t &max) {
@@ -1410,7 +1410,7 @@ namespace o2scl {
 
   /** \brief Compute the maximum of a matrix and return 
       the indices of the maximum element
-   */
+  */
   template<class mat_t, class data_t>
     void matrix_max_index(const mat_t &data,
 			  size_t &i_max, size_t &j_max, data_t &max) {
@@ -1570,7 +1570,7 @@ namespace o2scl {
    */
   template<class mat_t, class data_t>
     void matrix_minmax(size_t n, size_t m, const mat_t &data,
-		      data_t &min, data_t &max) {
+		       data_t &min, data_t &max) {
     
     if (n==0 || m==0) {
       O2SCL_ERR("Sent size=0 to matrix_min().",exc_efailed);
@@ -1591,7 +1591,7 @@ namespace o2scl {
 
   /** \brief Compute the minimum and maximum of a matrix and
       return their locations
-   */
+  */
   template<class mat_t, class data_t>
     void matrix_minmax_index(size_t n, size_t m, const mat_t &data,
 			     size_t &i_min, size_t &j_min, data_t &min, 
@@ -1685,7 +1685,7 @@ namespace o2scl {
 
       Return the location <tt>(i,j)</tt> of the element closest to 
       \c x0. 
-   */
+  */
   template<class mat_t>
     void matrix_lookup(size_t m, size_t n, const mat_t &A, 
 		       double x0, size_t &i, size_t &j) {
@@ -1724,7 +1724,7 @@ namespace o2scl {
 
       Return the location <tt>(i,j)</tt> of the element closest to 
       \c x0. 
-   */
+  */
   template<class mat_t>
     void matrix_lookup(const mat_t &A, 
 		       double x0, size_t &i, size_t &j) {
@@ -2003,7 +2003,7 @@ namespace o2scl {
   }
 
   /** \brief Compute the norm of a vector of double precision numbers
-  */
+   */
   template<class vec_t> double vector_norm_double(const vec_t &x) {
     return vector_norm_double<vec_t>(x.size(),x);
   }
@@ -2122,7 +2122,7 @@ namespace o2scl {
 
       \note The template parameters must be explicitly specified
       when calling this template function. 
-   */
+  */
   template<class mat_t, class mat_row_t>
     mat_row_t matrix_row(mat_t &M, size_t row) {
     return mat_row_t(M,row);
@@ -2178,7 +2178,7 @@ namespace o2scl {
 
       \note The template parameters must be explicitly specified
       when calling this template function.
-   */
+  */
   template<class mat_t, class mat_column_t>
     mat_column_t matrix_column(mat_t &M, size_t column) {
     return mat_column_t(M,column);
@@ -2285,7 +2285,7 @@ namespace o2scl {
 
       \note In this case, the return type is the same as the
       type of the first parameter. 
-   */
+  */
   template<class dat_t> dat_t *vector_range
     (dat_t *v, size_t start, size_t last) {
     return v+start;
@@ -2299,7 +2299,7 @@ namespace o2scl {
 
       \note In this case, the return type is not the same as the
       type of the first parameter. 
-   */
+  */
   template<class dat_t> boost::numeric::ublas::vector_range
     <boost::numeric::ublas::vector<dat_t> >
     vector_range(boost::numeric::ublas::vector<dat_t> &v,
@@ -2318,7 +2318,7 @@ namespace o2scl {
 
       \note In this case, the return type is not the same as the
       type of the first parameter. 
-   */
+  */
   template<class dat_t>
     boost::numeric::ublas::vector_range
     <boost::numeric::ublas::vector_range
@@ -2341,11 +2341,11 @@ namespace o2scl {
 
       \note In this case, the return type is not the same as the
       type of the first parameter. 
-   */
+  */
   template<class dat_t> const boost::numeric::ublas::vector_range
     <const boost::numeric::ublas::vector<dat_t> >
     vector_range(const boost::numeric::ublas::vector<dat_t> &v,
-		  size_t start, size_t last) {
+		 size_t start, size_t last) {
     return boost::numeric::ublas::vector_range
       <const boost::numeric::ublas::vector<dat_t> >
       (v,boost::numeric::ublas::range(start,last));
@@ -2360,14 +2360,14 @@ namespace o2scl {
 
       \note In this case, the return type is not the same as the
       type of the first parameter. 
-   */
+  */
   template<class dat_t>
     const boost::numeric::ublas::vector_range
     <const boost::numeric::ublas::vector_range
     <const boost::numeric::ublas::vector<dat_t> > >
     vector_range
     (const boost::numeric::ublas::vector_range
-     <boost::numeric::ublas::vector<dat_t> > &v,
+     <const boost::numeric::ublas::vector<dat_t> > &v,
      size_t start, size_t last) {
     return boost::numeric::ublas::vector_range
       <const boost::numeric::ublas::vector_range
@@ -2393,168 +2393,176 @@ namespace o2scl {
   public:
 
     /// Create an object starting with index \c start in vector \c v
-  vector_range_gen(vec_t &v, size_t start, size_t last) : v_(v), start_(start),
-      last_(last) {
-#if !O2SCL_NO_RANGE_CHECK
-	if (last<start) {
-	  O2SCL_ERR2("End before beginning in vector_range_gen::",
-		     "vector_range_gen(vec_t,size_t,size_t)",
-		     o2scl::exc_einval);
-	}
-#endif
-      }
-
-    /// Create an object from a previously constructed range object
-  vector_range_gen(vector_range_gen &v2, size_t start, size_t last) :
-    v_(v2.v_), start_(start+v2.start_), last_(last) {
+  vector_range_gen(vec_t &v, size_t start, size_t last) :
+    v_(v), start_(start), last_(last) {
 #if !O2SCL_NO_RANGE_CHECK
       if (last<start) {
-	O2SCL_ERR2("End before beginning in vector_range_gen::",
-		   "vector_range_gen(vector_range_gen,size_t,size_t)",
-		   o2scl::exc_einval);
-      }
-      if (last>v2.last_) {
-	O2SCL_ERR2("End beyond end of previous vector in vector_range_gen::",
-		   "vector_range_gen(vector_range_gen,size_t,size_t)",
-		   o2scl::exc_einval);
-      }
+      O2SCL_ERR2("End before beginning in vector_range_gen::",
+	"vector_range_gen(vec_t,size_t,size_t)",
+	o2scl::exc_einval);
+    }
 #endif
     }
-
-    /// Return the vector size
-    size_t size() {
+      
+      /// Create an object from a previously constructed range object
+    vector_range_gen(vector_range_gen &v2, size_t start, size_t last) :
+      v_(v2.v_), start_(start+v2.start_), last_(last) {
+#if !O2SCL_NO_RANGE_CHECK
+      if (last<start) {
+      O2SCL_ERR2("End before beginning in vector_range_gen::",
+	"vector_range_gen(vector_range_gen,size_t,size_t)",
+	o2scl::exc_einval);
+    }
+      if (last>v2.last_) {
+      O2SCL_ERR2("End beyond end of previous vector in vector_range_gen::",
+	"vector_range_gen(vector_range_gen,size_t,size_t)",
+	o2scl::exc_einval);
+    }
+#endif
+    }
+      
+      /// Return the vector size
+      size_t size() const {
       return last_-start_;
     }
     
-    /// Return a reference ith element
-    double &operator[](size_t i) {
+      /// Return a reference ith element
+      double &operator[](size_t i) {
 #if !O2SCL_NO_RANGE_CHECK
       if (i+start_>=last_) {
-	O2SCL_ERR("Index out of range in vector_range_gen::operator[].",
-		  o2scl::exc_einval);
-      }
+      O2SCL_ERR("Index out of range in vector_range_gen::operator[].",
+	o2scl::exc_einval);
+    }
 #endif
       return v_[i+start_];
     }
     
-    /// Return a const reference ith element
-    const double &operator[](size_t i) const {
+      /// Return a const reference ith element
+      const double &operator[](size_t i) const {
 #if !O2SCL_NO_RANGE_CHECK
       if (i+start_>=last_) {
-	O2SCL_ERR2("Index out of range in ",
-		  "vector_range_gen::operator[] const.",o2scl::exc_einval);
-      }
+      O2SCL_ERR2("Index out of range in ",
+	"vector_range_gen::operator[] const.",o2scl::exc_einval);
+    }
 #endif
       return v_[i+start_];
     }
-  };
+    };
 
-  /** \brief Create a \ref o2scl::vector_range_gen object 
-      from a <tt>std::vector</tt>
-   */
-  template<class data_t> vector_range_gen<std::vector<data_t> >
-    vector_range(std::vector<data_t> &v, size_t start, size_t last) {
-    return vector_range_gen<std::vector<data_t> >(v,start,last);
-  }
+      /** \brief Create a \ref o2scl::vector_range_gen object 
+	  from a <tt>std::vector</tt>
+      */
+      template<class data_t> vector_range_gen<std::vector<data_t> >
+	vector_range(std::vector<data_t> &v, size_t start, size_t last) {
+      return vector_range_gen<std::vector<data_t> >(v,start,last);
+    }
 
-  /** \brief Recursively create a \ref o2scl::vector_range_gen object 
-      from a vector range through a <tt>vector_range()</tt> function 
-   */
-  template<class vec_t> vector_range_gen<vec_t>
-    vector_range(vector_range_gen<vec_t> &v, size_t start, size_t last) {
-    return vector_range_gen<vec_t>(v,start,last);
-  }
+      /** \brief Create a \ref o2scl::vector_range_gen object 
+	  from a <tt>std::vector</tt>
+      */
+      template<class data_t> const vector_range_gen<const std::vector<data_t> >
+	vector_range(const std::vector<data_t> &v, size_t start, size_t last) {
+      return vector_range_gen<std::vector<data_t> >(v,start,last);
+    }
 
-  /** \brief Vector range function template for <tt>std::vector</tt>
+      /** \brief Recursively create a \ref o2scl::vector_range_gen object 
+	  from a vector range through a <tt>vector_range()</tt> function 
+      */
+      template<class vec_t> vector_range_gen<vec_t>
+	vector_range(vector_range_gen<vec_t> &v, size_t start, size_t last) {
+      return vector_range_gen<vec_t>(v,start,last);
+    }
+
+      /** \brief Vector range function template for <tt>std::vector</tt>
       
-      The element with index \c start in the original vector
-      will become the first argument in the new vector, and
-      the new vector will have size <tt>last-start</tt> .
+	  The element with index \c start in the original vector
+	  will become the first argument in the new vector, and
+	  the new vector will have size <tt>last-start</tt> .
 
-      \note In this case, the return type is the same as the
-      type of the first parameter. 
-      \note Unlike the ublas and pointer cases, this forces
-      a copy. 
-   */
-  template<class dat_t> std::vector<dat_t>
-    vector_range_copy(std::vector<dat_t> &v, size_t start, size_t last) {
-    return std::vector<dat_t> (v.begin()+start,v.begin()+last);
-  }
+	  \note In this case, the return type is the same as the
+	  type of the first parameter. 
+	  \note Unlike the ublas and pointer cases, this forces
+	  a copy. 
+      */
+      template<class dat_t> std::vector<dat_t>
+	vector_range_copy(std::vector<dat_t> &v, size_t start, size_t last) {
+      return std::vector<dat_t> (v.begin()+start,v.begin()+last);
+    }
 
-  /** \brief Const vector range function template for <tt>std::vector</tt>
+      /** \brief Const vector range function template for <tt>std::vector</tt>
       
-      The element with index \c start in the original vector
-      will become the first argument in the new vector, and
-      the new vector will have size <tt>last-start</tt> .
+	  The element with index \c start in the original vector
+	  will become the first argument in the new vector, and
+	  the new vector will have size <tt>last-start</tt> .
 
-      \note In this case, the return type is the same as the
-      type of the first parameter. 
-      \note Unlike the ublas and pointer cases, this forces
-      a copy. 
-  */
-  template<class dat_t> const std::vector<dat_t>
-    vector_range_copy(const std::vector<dat_t> &v, size_t start, size_t last) {
-    return std::vector<dat_t> (v.begin()+start,v.begin()+last);
-  }
+	  \note In this case, the return type is the same as the
+	  type of the first parameter. 
+	  \note Unlike the ublas and pointer cases, this forces
+	  a copy. 
+      */
+      template<class dat_t> const std::vector<dat_t>
+	vector_range_copy(const std::vector<dat_t> &v, size_t start, size_t last) {
+      return std::vector<dat_t> (v.begin()+start,v.begin()+last);
+    }
 
-  //@}
+      //@}
   
-}
+    }
 
 #if defined (O2SCL_COND_FLAG) || defined (DOXYGEN)
 
 #if defined (O2SCL_ARMA) || defined (DOXYGEN)
 #include <armadillo>
-namespace o2scl {
+      namespace o2scl {
 
-  /// \name Armadillo specializations
-  //@{
-  /// Armadillo version of \ref matrix_max()
-  double matrix_max(const arma::mat &data);
+      /// \name Armadillo specializations
+      //@{
+      /// Armadillo version of \ref matrix_max()
+      double matrix_max(const arma::mat &data);
 
-    /// Armadillo version of \ref matrix_min()
-  double matrix_min(const arma::mat &data);
+      /// Armadillo version of \ref matrix_min()
+      double matrix_min(const arma::mat &data);
 
-  /// Armadillo version of \ref matrix_row()
-  template<> arma::subview_row<double>  
-    matrix_row<arma::mat,arma::subview_row<double> >
-    (arma::mat &M, size_t row);
+      /// Armadillo version of \ref matrix_row()
+      template<> arma::subview_row<double>  
+	matrix_row<arma::mat,arma::subview_row<double> >
+	(arma::mat &M, size_t row);
 
-  /// Armadillo version of \ref matrix_column()
-  template<> arma::subview_col<double>  
-    matrix_column<arma::mat,arma::subview_col<double> >
-    (arma::mat &M, size_t column);
-  //@}
+      /// Armadillo version of \ref matrix_column()
+      template<> arma::subview_col<double>  
+	matrix_column<arma::mat,arma::subview_col<double> >
+	(arma::mat &M, size_t column);
+      //@}
 
-}
+    }
 
 #endif
 
 #if defined (O2SCL_EIGEN) || defined (DOXYGEN)
 #include <Eigen/Dense>
 
-namespace o2scl {
+      namespace o2scl {
 
-  /// \name Eigen specializations
-  //@{
-  /// Eigen version of \ref matrix_max()
-  double matrix_max(const Eigen::MatrixXd &data);
+	/// \name Eigen specializations
+	//@{
+	/// Eigen version of \ref matrix_max()
+	double matrix_max(const Eigen::MatrixXd &data);
 
-  /// Eigen version of \ref matrix_min()
-  double matrix_min(const Eigen::MatrixXd &data);
+	/// Eigen version of \ref matrix_min()
+	double matrix_min(const Eigen::MatrixXd &data);
 
-  /// Eigen version of \ref matrix_row()
-  template<> Eigen::MatrixXd::RowXpr 
-    matrix_row<Eigen::MatrixXd,Eigen::MatrixXd::RowXpr>
-    (Eigen::MatrixXd &M, size_t row);
+	/// Eigen version of \ref matrix_row()
+	template<> Eigen::MatrixXd::RowXpr 
+	  matrix_row<Eigen::MatrixXd,Eigen::MatrixXd::RowXpr>
+	  (Eigen::MatrixXd &M, size_t row);
 
-  /// Eigen version of \ref matrix_column()
-  template<> Eigen::MatrixXd::ColXpr 
-    matrix_column<Eigen::MatrixXd,Eigen::MatrixXd::ColXpr>
-    (Eigen::MatrixXd &M, size_t column);
-  //@}
+	/// Eigen version of \ref matrix_column()
+	template<> Eigen::MatrixXd::ColXpr 
+	  matrix_column<Eigen::MatrixXd,Eigen::MatrixXd::ColXpr>
+	  (Eigen::MatrixXd &M, size_t column);
+	//@}
 
-}
+      }
 
 #endif
 
@@ -2562,58 +2570,58 @@ namespace o2scl {
 
 #include <o2scl/vector_special.h>
 
-// End of "#if defined (O2SCL_COND_FLAG) || defined (DOXYGEN)"
+      // End of "#if defined (O2SCL_COND_FLAG) || defined (DOXYGEN)"
 #endif
 
 #ifdef DOXYGEN
-/** \brief Placeholder documentation of some related Boost objects
-*/
-namespace boost {
-  /** \brief Documentation of Boost::numeric objects
-   */
-  namespace numeric {
-    /** \brief Documentation of uBlas objects
-     */
-    namespace ublas {
-      /** \brief The default vector type from uBlas 
-
-	  The uBlas types aren't documented here, but the full documentation 
-	  is available at
-	  http://www.boost.org/doc/libs/release/libs/numeric/ublas/doc/index.htm
-
-	  Internally in \o2, this is often typedef'd using
-	  \code
-	  typedef boost::numeric::ublas::vector<double> ubvector;
-	  typedef boost::numeric::ublas::vector<size_t> ubvector_size_t;
-	  typedef boost::numeric::ublas::vector<int> ubvector_int;
-	  \endcode
-
-	  This is documented in \ref vector.h .
+      /** \brief Placeholder documentation of some related Boost objects
        */
-      template<class T, class A> class vector {
-      };
-      /** \brief The default matrix type from uBlas 
+      namespace boost {
+	/** \brief Documentation of Boost::numeric objects
+	 */
+	namespace numeric {
+	  /** \brief Documentation of uBlas objects
+	   */
+	  namespace ublas {
+	    /** \brief The default vector type from uBlas 
+
+		The uBlas types aren't documented here, but the full documentation 
+		is available at
+		http://www.boost.org/doc/libs/release/libs/numeric/ublas/doc/index.htm
+
+		Internally in \o2, this is often typedef'd using
+		\code
+		typedef boost::numeric::ublas::vector<double> ubvector;
+		typedef boost::numeric::ublas::vector<size_t> ubvector_size_t;
+		typedef boost::numeric::ublas::vector<int> ubvector_int;
+		\endcode
+
+		This is documented in \ref vector.h .
+	    */
+	    template<class T, class A> class vector {
+	    };
+	    /** \brief The default matrix type from uBlas 
 	  
-	  The uBlas types aren't documented here, but the full documentation 
-	  is available at
-	  http://www.boost.org/doc/libs/release/libs/numeric/ublas/doc/index.htm
+		The uBlas types aren't documented here, but the full documentation 
+		is available at
+		http://www.boost.org/doc/libs/release/libs/numeric/ublas/doc/index.htm
 
-	  Internally in \o2, this is often typedef'd using
-	  \code
-	  typedef boost::numeric::ublas::matrix<double> ubmatrix;
-	  typedef boost::numeric::ublas::matrix<size_t> ubmatrix_size_t;
-	  typedef boost::numeric::ublas::matrix<int> ubmatrix_int;
-	  \endcode
+		Internally in \o2, this is often typedef'd using
+		\code
+		typedef boost::numeric::ublas::matrix<double> ubmatrix;
+		typedef boost::numeric::ublas::matrix<size_t> ubmatrix_size_t;
+		typedef boost::numeric::ublas::matrix<int> ubmatrix_int;
+		\endcode
 
-	  This is documented in \ref vector.h .
-       */
-      template<class T, class F, class A> class matrix {
-      };
-    }
-  }
-}
-// End of "#ifdef DOXYGEN"
+		This is documented in \ref vector.h .
+	    */
+	    template<class T, class F, class A> class matrix {
+	    };
+	  }
+	}
+      }
+      // End of "#ifdef DOXYGEN"
 #endif
 
-// End of "#ifndef O2SCL_VECTOR_H"
+      // End of "#ifndef O2SCL_VECTOR_H"
 #endif
