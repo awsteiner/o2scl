@@ -52,7 +52,7 @@
 #include <vector>
 
 #include <boost/numeric/ublas/vector.hpp>
-#include <boost/numeric/ublas/matrix_proxy.hpp>
+#include <boost/numeric/ublas/vector_proxy.hpp>
 
 #include <o2scl/test_mgr.h>
 #include <o2scl/constants.h>
@@ -256,6 +256,25 @@ int fv(size_t ndim, size_t npt, const double *x, size_t fdim,
   return o2scl::success;
 }
 
+int fv_new(size_t ndim, size_t npt, const c_ubvector_range &x, size_t fdim,
+	   ubvector_range &fval) {
+  
+  double *x2=new double[x.size()];
+  double *fv2=new double[fval.size()];
+  o2scl::vector_copy(x.size(),x,x2);
+  o2scl::vector_copy(fval.size(),fval,fv2);
+  
+  for (size_t i=0;i<npt;i++) {
+    if (f_test(ndim,x2+i*dim,fdim,fv2+i*fdim)) {
+      return o2scl::gsl_failure;
+    }
+  }
+  delete x2[];
+  delete fv2[];
+  
+  return o2scl::success;
+}
+
 /** Test integrating a few functions at once
  */
 int fv2(size_t ndim, size_t npt, const double *x, size_t fdim,
@@ -277,19 +296,14 @@ int fv2_new(size_t ndim, size_t npt, const c_ubvector_range &x, size_t fdim,
 	    ubvector_range &fval) {
 
   for (size_t i=0;i<npt;i++) {
-    ubvector x3;
-    ubvector_range x4;
-    ubvector_range_range x5;
-    /*
-      const c_ubvector_range_range x2=vector_range(x,i*ndim,(i+1)*ndim);
-      ubvector_range_range f2=vector_range(fval,i*fdim,(i+1)*fdim);
-      f2[0]=exp(-((x2[0]-0.2)*(x2[0]-0.2)+
-      (x2[1]-0.5)*(x2[1]-0.5)));
-      f2[1]=exp(-((x2[0]-0.2)*(x2[0]-0.2)+
-      (x2[1]-0.5)*(x2[1]-0.5)))*x2[0]*x2[0];
-      f2[2]=exp(-((x2[0]-0.2)*(x2[0]-0.2)+
-      (x2[1]-0.5)*(x2[1]-0.5)))*x2[0]*x2[0]*x2[1]*x2[1];
-    */
+    ubvector_range_range f2=vector_range(fval,i*fdim,(i+1)*fdim);
+    const c_ubvector_range_range x2=vector_range(x,i*ndim,(i+1)*ndim);
+    f2[0]=exp(-((x2[0]-0.2)*(x2[0]-0.2)+
+		(x2[1]-0.5)*(x2[1]-0.5)));
+    f2[1]=exp(-((x2[0]-0.2)*(x2[0]-0.2)+
+		(x2[1]-0.5)*(x2[1]-0.5)))*x2[0]*x2[0];
+    f2[2]=exp(-((x2[0]-0.2)*(x2[0]-0.2)+
+		(x2[1]-0.5)*(x2[1]-0.5)))*x2[0]*x2[0]*x2[1]*x2[1];
   }
   return 0;
 }
@@ -310,8 +324,12 @@ int main(void) {
 
   typedef std::function<
     int(size_t,size_t,const double *,size_t,double *)> cub_funct_arr;
+  typedef std::function<
+    int(size_t,size_t,const c_ubvector_range &,size_t,ubvector_range &)>
+    cub_funct_ub;
   inte_hcubature<cub_funct_arr> hc;
-  inte_pcubature<cub_funct_arr> pc;
+  inte_pcubature<cub_funct_arr,ubvector,c_ubvector_range,
+		 ubvector_range> pc;
 
   inte_hcubature<cub_funct_arr>::error_norm enh=
     inte_hcubature<cub_funct_arr>::ERROR_INDIVIDUAL;
@@ -323,6 +341,7 @@ int main(void) {
     inte_pcubature<cub_funct_arr>::ERROR_L2;
   
   cub_funct_arr cfa=fv;
+  cub_funct_arr cfa_new=fv_new;
 
   // Test both hcubature and pcubature with several integrands
   // and compare with original cubature testing results
@@ -382,7 +401,7 @@ int main(void) {
     if (test_iand!=3) {
 
       cub_count=0;
-      pc.integ(1,cfa,dim,xmin,xmax,maxEval,0,tol,enp,vval,verr);
+      pc.integ(1,cfa_new,dim,xmin,xmax,maxEval,0,tol,enp,vval,verr);
 	       
       cout << "# " << which_integrand << " " << "integral " << vval[0]
 	   << " " << "est. error " << verr[0] << " " << "true error " 
@@ -461,7 +480,7 @@ int main(void) {
     if (test_iand!=3) {
 
       cub_count=0;
-      pc.integ(1,cfa,dim,xmin,xmax,maxEval,0,tol,enp,vval,verr);
+      pc.integ(1,cfa_new,dim,xmin,xmax,maxEval,0,tol,enp,vval,verr);
 	       
       cout << "# " << which_integrand << " " 
 	   << "integral " << vval[0] << " " << "est. error "
@@ -543,7 +562,7 @@ int main(void) {
     if (test_iand!=3) {
 
       cub_count=0;
-      pc.integ(1,cfa,dim,xmin,xmax,maxEval,0,tol,enp,vval,verr);
+      pc.integ(1,cfa_new,dim,xmin,xmax,maxEval,0,tol,enp,vval,verr);
 	       
       cout << "# " << which_integrand << " " << "integral " << vval[0]
 	   << " " << "est. error " << verr[0] << " " << "true error " 
@@ -579,12 +598,13 @@ int main(void) {
     vector<double> dres(3), derr(3);
     ubvector dres2(3), derr2(3);
     cub_funct_arr cfa2=fv2;
+    cub_funct_ub cfa2_new=fv2_new;
     int ret=hc.integ(3,cfa2,2,vlow,vhigh,10000,0.0,1.0e-4,enh,dres,derr);
     tmgr.test_gen(ret==0,"hc mdim ret");
     tmgr.test_rel(3.067993,dres[0],1.0e-6,"hc mdim val 0");
     tmgr.test_rel(1.569270,dres[1],1.0e-6,"hc mdim val 1");
     tmgr.test_rel(1.056968,dres[2],1.0e-6,"hc mdim val 2");
-    ret=pc.integ(3,cfa2,2,vlow2,vhigh2,10000,0.0,1.0e-4,enp,dres2,derr2);
+    ret=pc.integ(3,cfa2_new,2,vlow2,vhigh2,10000,0.0,1.0e-4,enp,dres2,derr2);
     tmgr.test_gen(ret==0,"pc mdim ret");
     tmgr.test_rel(3.067993,dres2[0],1.0e-6,"pc mdim val 0");
     tmgr.test_rel(1.569270,dres2[1],1.0e-6,"pc mdim val 1");
