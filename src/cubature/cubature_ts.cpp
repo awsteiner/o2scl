@@ -52,10 +52,17 @@
 #include <o2scl/cubature.h>
 #include <o2scl/test_mgr.h>
 #include <o2scl/constants.h>
+#include <o2scl/vector.h>
 
 #include <boost/numeric/ublas/vector.hpp>
 
 typedef boost::numeric::ublas::vector<double> ubvector;
+typedef boost::numeric::ublas::vector_range<ubvector> ubvector_range;
+typedef boost::numeric::ublas::vector_range<ubvector_range>
+ubvector_range_range;
+typedef boost::numeric::ublas::vector_range<const ubvector> c_ubvector_range;
+typedef boost::numeric::ublas::vector_range<const c_ubvector_range>
+c_ubvector_range_range;
 
 using namespace std;
 using namespace o2scl;
@@ -262,6 +269,23 @@ int fv2(size_t ndim, size_t npt, const double *x, size_t fdim,
   }
   return 0;
 }
+
+/*
+int fv2_new(size_t ndim, size_t npt, const c_ubvector_range &x, size_t fdim,
+	    ubvector_range &fval) {
+  for (size_t i=0;i<npt;i++) {
+    const c_ubvector_range_range x2=vector_range(x,i*ndim,(i+1)*ndim);
+    ubvector_range_range f2=vector_range(fval,i*fdim,(i+1)*fdim);
+    f2[0]=exp(-((x2[0]-0.2)*(x2[0]-0.2)+
+		(x2[1]-0.5)*(x2[1]-0.5)));
+    f2[1]=exp(-((x2[0]-0.2)*(x2[0]-0.2)+
+		(x2[1]-0.5)*(x2[1]-0.5)))*x2[0]*x2[0];
+    f2[2]=exp(-((x2[0]-0.2)*(x2[0]-0.2)+
+		(x2[1]-0.5)*(x2[1]-0.5)))*x2[0]*x2[0]*x2[1]*x2[1];
+  }
+  return 0;
+}
+*/
 
 int main(void) {
 

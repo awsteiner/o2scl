@@ -1494,7 +1494,7 @@ namespace o2scl {
       m[mi]-1. (m[mi]-1 == -1 corresponds to the trivial grid of one
       point in the center.) 
   */
-  class cache {
+  template<class vec_t> class cache {
   public:
     cache() {
       m.resize(MAXDIM);
@@ -1517,7 +1517,7 @@ namespace o2scl {
     /** \brief Desc */
     size_t mi;
     /** \brief Desc */
-    std::vector<double> val;
+    vec_t val;
   };
 
   /** \brief Desc
@@ -1527,12 +1527,11 @@ namespace o2scl {
       at once whenever the buffer is full or when we are done
   */
   template<class vec_t>
-  int compute_cacheval(const std::vector<size_t> &m, size_t mi, 
-		       std::vector<double> &val, size_t &vali,
-		       size_t fdim, func_t &f, size_t dim, size_t id,
-		       std::vector<double> &p, const vec_t &xmin,
-		       const vec_t &xmax, std::vector<double> &buf,
-		       size_t nbuf, size_t &ibuf) {
+  int compute_cacheval(const std::vector<size_t> &m, size_t mi, vec_t &val, 
+		       size_t &vali, size_t fdim, func_t &f, size_t dim,
+		       size_t id, std::vector<double> &p, const vec_t &xmin,
+		       const vec_t &xmax, vec_t &buf, size_t nbuf,
+		       size_t &ibuf) {
 
     if (id == dim) {
       /* add point to buffer of points */
@@ -1607,16 +1606,17 @@ namespace o2scl {
   /** \brief Desc
    */
   template<class vec_t>
-  int add_cacheval(std::vector<cache> &vc, const std::vector<size_t> &m,
+  int add_cacheval(std::vector<cache<vec_t> > &vc,
+		   const std::vector<size_t> &m,
 		   size_t mi, size_t fdim, func_t &f, size_t dim, 
-		   const vec_t &xmin, const vec_t &xmax,
-		   std::vector<double> &buf, size_t nbuf) {
+		   const vec_t &xmin, const vec_t &xmax, vec_t &buf,
+		   size_t nbuf) {
       
     size_t ic = vc.size();
     size_t nval, vali = 0, ibuf = 0;
     std::vector<double> p(MAXDIM);
 
-    cache c;
+    cache<vec_t> c;
     vc.push_back(c);
 
     vc[ic].mi = mi;
@@ -1649,8 +1649,7 @@ namespace o2scl {
   */
   template<class vec_t>
   size_t eval(const std::vector<size_t> &cm, size_t cmi,
-	      std::vector<double> &cval,
-	      const std::vector<size_t> &m, size_t md,
+	      vec_t &cval, const std::vector<size_t> &m, size_t md,
 	      size_t fdim, size_t dim, size_t id,
 	      double weight, vec_t &val, size_t voff2) {
 
@@ -1704,7 +1703,7 @@ namespace o2scl {
       (with m[md] decremented by 1) 
   */
   template<class vec_t>
-  void evals(std::vector<cache> &vc, const std::vector<size_t> &m,
+  void evals(std::vector<cache<vec_t> > &vc, const std::vector<size_t> &m,
 	     size_t md, size_t fdim, size_t dim, double V, vec_t &val) {
 
     for(size_t k=0;k<fdim;k++) {
@@ -1728,7 +1727,8 @@ namespace o2scl {
       largest error contribution) in *mi
   */
   template<class vec_t>
-  void eval_integral(std::vector<cache> &vc, const std::vector<size_t> &m, 
+  void eval_integral(std::vector<cache<vec_t> > &vc,
+		     const std::vector<size_t> &m, 
 		     size_t fdim, size_t dim, double V,
 		     size_t &mi, vec_t &val, vec_t &err, vec_t &val1) {
 
@@ -1870,18 +1870,17 @@ namespace o2scl {
       + 1.
   */
   template<class vec_t>
-  int integ_v_buf(size_t fdim, func_t &f, 
-		  size_t dim, const vec_t &xmin, const vec_t &xmax,
-		  size_t maxEval, double reqAbsError, double reqRelError,
-		  error_norm norm, std::vector<size_t> &m,
-		  std::vector<double> &buf, size_t &nbuf, size_t max_nbuf,
-		  vec_t &val, vec_t &err) {
+  int integ_v_buf(size_t fdim, func_t &f, size_t dim, const vec_t &xmin,
+		  const vec_t &xmax, size_t maxEval, double reqAbsError,
+		  double reqRelError, error_norm norm, std::vector<size_t> &m,
+		  vec_t &buf, size_t &nbuf, size_t max_nbuf, vec_t &val,
+		  vec_t &err) {
       
     int ret = o2scl::gsl_failure;
     double V = 1;
     size_t numEval = 0, new_nbuf;
     size_t i;
-    std::vector<cache> vc;
+    std::vector<cache<vec_t> > vc;
 
     vec_t val1(fdim);
 
@@ -1973,7 +1972,7 @@ namespace o2scl {
     int ret;
     size_t nbuf = 0;
     std::vector<size_t> m(dim);
-    std::vector<double> buf;
+    vec_t buf;
 
     /* max_nbuf > 0 to amortize function overhead */
     ret = integ_v_buf(fdim,f,dim,xmin,xmax,
