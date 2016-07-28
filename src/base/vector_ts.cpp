@@ -35,7 +35,6 @@ using namespace std;
 using namespace o2scl;
 
 typedef boost::numeric::ublas::vector<double> ubvector;
-typedef boost::numeric::ublas::vector_range<ubvector> ubvector_range;
 typedef boost::numeric::ublas::vector_range<ubvector_range>
 ubvector_range_range;
 typedef boost::numeric::ublas::vector_range<const ubvector> c_ubvector_range;

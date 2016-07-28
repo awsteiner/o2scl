@@ -2495,7 +2495,7 @@ namespace o2scl {
       a copy. 
   */
   template<class dat_t> std::vector<dat_t>
-    vector_range_copy(std::vector<dat_t> &v, size_t start, size_t last) {
+    vector_range_copy(const std::vector<dat_t> &v, size_t start, size_t last) {
     return std::vector<dat_t> (v.begin()+start,v.begin()+last);
   }
 
