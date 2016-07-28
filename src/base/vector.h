@@ -2405,8 +2405,8 @@ namespace o2scl {
     }
       
       /// Create an object from a previously constructed range object
-    vector_range_gen(vector_range_gen &v2, size_t start, size_t last) :
-      v_(v2.v_), start_(start+v2.start_), last_(last) {
+    vector_range_gen(const vector_range_gen &v2, size_t start, size_t last) :
+      v_(v2.v_), start_(start+v2.start_), last_(last+v2.start_) {
 #if !O2SCL_NO_RANGE_CHECK
       if (last<start) {
       O2SCL_ERR2("End before beginning in vector_range_gen::",
@@ -2429,10 +2429,10 @@ namespace o2scl {
       /// Return a reference ith element
       double &operator[](size_t i) {
 #if !O2SCL_NO_RANGE_CHECK
-      if (i+start_>=last_) {
-      O2SCL_ERR("Index out of range in vector_range_gen::operator[].",
-	o2scl::exc_einval);
-    }
+	if (i+start_>=last_) {
+	  O2SCL_ERR("Index out of range in vector_range_gen::operator[].",
+		    o2scl::exc_einval);
+	}
 #endif
       return v_[i+start_];
     }
@@ -2462,14 +2462,23 @@ namespace o2scl {
       */
       template<class data_t> const vector_range_gen<const std::vector<data_t> >
 	vector_range(const std::vector<data_t> &v, size_t start, size_t last) {
-      return vector_range_gen<std::vector<data_t> >(v,start,last);
-    }
-
+	return vector_range_gen<const std::vector<data_t> >(v,start,last);
+      }
+      
       /** \brief Recursively create a \ref o2scl::vector_range_gen object 
 	  from a vector range through a <tt>vector_range()</tt> function 
       */
       template<class vec_t> vector_range_gen<vec_t>
 	vector_range(vector_range_gen<vec_t> &v, size_t start, size_t last) {
+      return vector_range_gen<vec_t>(v,start,last);
+    }
+
+      /** \brief Recursively create a \ref o2scl::vector_range_gen object 
+	  from a vector range through a <tt>vector_range()</tt> function 
+      */
+      template<class vec_t> const vector_range_gen<vec_t>
+	vector_range(const vector_range_gen<vec_t> &v,
+		     size_t start, size_t last) {
       return vector_range_gen<vec_t>(v,start,last);
     }
 

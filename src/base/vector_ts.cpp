@@ -155,17 +155,15 @@ int main(void) {
     // Show that changing xr modifies x
     t.test_rel(x[1],9.0,1.0e-15,"vector_range vector<double> 1.");
     t.test_rel(x[2],2.0,1.0e-15,"vector_range vector<double> 2.");
-
-    /*
+    
     // Range of a range
     vector_range_gen<std::vector<double> > xr2=vector_range(xr,1,2);
     xr2[0]=6.0;
     // Show that changing xr2 modifies x
     t.test_rel(x[2],6.0,1.0e-15,"vector_range_range vector<double> 1.");
-    */
+    t.test_gen(xr2.size()==1,"vector_range_range vector<double> size.");
   }
 
-  /*
   {
     // Test vector_range with const vector<double>
     std::vector<double> x(5);
@@ -176,18 +174,17 @@ int main(void) {
     x[4]=5.0;
     const std::vector<double> xc=x;
     const vector_range_gen<const std::vector<double> > xr=vector_range(xc,1,3);
-    t.test_gen(xr.size()==2,"vector_range const vector<double> 0");
+    t.test_gen(xr.size()==2,"vector_r_r const vector<double> 0");
 
     // Show that xr reflects x
-    t.test_rel(xr[0],9.0,1.0e-15,"vector_range const vector<double> 1.");
-    t.test_rel(xr[1],2.0,1.0e-15,"vector_range const vector<double> 2.");
+    t.test_rel(xr[0],1.0,1.0e-15,"vector_r_r const vector<double> 1.");
+    t.test_rel(xr[1],4.0,1.0e-15,"vector_r_r const vector<double> 2.");
 
     // Range of a range
     const vector_range_gen<const std::vector<double> > xr2=vector_range(xr,1,2);
     // Show that xr2 reflects x
-    t.test_rel(xr2[0],4.0,1.0e-15,"vector_range_range const vector<double> 1.");
+    t.test_rel(xr2[0],4.0,1.0e-15,"vector_r_r const vector<double> 1.");
   }
-  */
 
   {
     ubmatrix ub1(3,3);
