@@ -38,9 +38,13 @@ typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::vector_range<ubvector> ubvector_range;
 typedef boost::numeric::ublas::vector_range<ubvector_range>
 ubvector_range_range;
-typedef boost::numeric::ublas::vector_range<const ubvector> c_ubvector_range;
-typedef boost::numeric::ublas::vector_range<const c_ubvector_range>
-c_ubvector_range_range;
+
+typedef boost::numeric::ublas::vector_range<const ubvector> ubvector_crange;
+typedef boost::numeric::ublas::vector_range<const ubvector_range>
+ubvector_crange_range;
+typedef boost::numeric::ublas::vector_range<const ubvector_crange>
+ubvector_crange_crange;
+
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 typedef boost::numeric::ublas::matrix_row<ubmatrix> ubmatrix_row;
 typedef boost::numeric::ublas::matrix_column<ubmatrix> ubmatrix_column;
@@ -50,52 +54,6 @@ int main(void) {
   t.set_output_level(2);
 
   {
-    // Test vector_range with ubvector
-    ubvector x(5);
-    x[0]=3.0;
-    x[1]=1.0;
-    x[2]=4.0;
-    x[3]=1.0;
-    x[4]=5.0;
-    ubvector_range xr=vector_range(x,1,3);
-    xr[0]=9.0;
-    xr[1]=2.0;
-    t.test_gen(xr.size()==2,"vector_range ubvector 0");
-    // Show that changing xr modifies x
-    t.test_rel(x[1],9.0,1.0e-15,"vector_range ubvector 1.");
-    t.test_rel(x[2],2.0,1.0e-15,"vector_range ubvector 2.");
-
-    // Range of a range
-    ubvector_range_range xr2=vector_range(xr,1,2);
-    xr2[0]=6.0;
-    t.test_gen(xr2.size()==1,"vector_range_range ubvector 0");
-    // Show that changing xr2 modifies x
-    t.test_rel(x[2],6.0,1.0e-15,"vector_range_range ubvector 1.");
-  }
-
-  {
-    // Test vector_range with const ubvector
-    ubvector x(5);
-    x[0]=3.0;
-    x[1]=1.0;
-    x[2]=4.0;
-    x[3]=1.0;
-    x[4]=5.0;
-    const ubvector cx=x;
-    const c_ubvector_range xr=vector_range(cx,1,3);
-    t.test_gen(xr.size()==2,"vector_range ubvector 0");
-    // Show that xr reflects values in x
-    t.test_rel(xr[0],1.0,1.0e-15,"vector_range ubvector 1.");
-    t.test_rel(xr[1],4.0,1.0e-15,"vector_range ubvector 2.");
-
-    // Range of a range
-    const c_ubvector_range_range xr2=vector_range(xr,1,2);
-    t.test_gen(xr2.size()==1,"vector_range_range ubvector 0");
-    // Show that xr2 reflects the original vector
-    t.test_rel(xr2[0],4.0,1.0e-15,"vector_range_range ubvector 1.");
-  }
-  
-  {
     // Test vector_range with double *
     double x[5];
     x[0]=3.0;
@@ -103,6 +61,11 @@ int main(void) {
     x[2]=4.0;
     x[3]=1.0;
     x[4]=5.0;
+
+    // Const version
+    const double *xc=&(x[0]);
+
+    // Range of a vector
     double *xr=vector_range(x,1,3);
     xr[0]=9.0;
     xr[1]=2.0;
@@ -111,81 +74,170 @@ int main(void) {
     t.test_rel(x[1],9.0,1.0e-15,"vector_range double* 1.");
     t.test_rel(x[2],2.0,1.0e-15,"vector_range double* 2.");
 
-    // Range of a range
+    // Const range of a vector
+    const double *xrc=const_vector_range(x,1,3);
+    // (No size() method for this case.)
+    // Show that xrc reflects x
+    t.test_rel(xrc[0],9.0,1.0e-15,"vector_range double* 3.");
+    t.test_rel(xrc[1],2.0,1.0e-15,"vector_range double* 4.");
+
+    // Const range of a const vector
+    const double *xrc3=const_vector_range(xc,1,3);
+    // Show that xrc3 reflects x
+    t.test_rel(xrc3[0],9.0,1.0e-15,"vector_range double* 5.");
+    t.test_rel(xrc3[1],2.0,1.0e-15,"vector_range double* 6.");
+
+    // Range of a range of a vector
     double *xr2=vector_range(xr,1,2);
     xr2[0]=6.0;
     // Show that changing xr2 modifies x
     t.test_rel(x[2],6.0,1.0e-15,"vector_range_range double* 1.");
+
+    // Const range of a range of a vector
+    const double *xrc5=const_vector_range(xr,1,2);
+    // Show that xrc5 reflects xr
+    t.test_rel(xrc5[0],6.0,1.0e-15,"vector_range_range double* 2.");
+
+    // Const range of a const range of a vector
+    const double *xrc2=const_vector_range(xrc,1,2);
+    // Show that xrc2 reflects xrc
+    t.test_rel(xrc2[0],6.0,1.0e-15,"vector_range_range double* 3.");
+
+    // Const range of a const range of a const vector
+    const double *xrc4=const_vector_range(xrc3,1,2);
+    // Show that xrc4 reflects xrc3
+    t.test_rel(xrc4[0],6.0,1.0e-15,"vector_range_range double* 4.");
   }
   
   {
-    // Test vector_range with const double *
-    double x[5];
+    // Test vector_range with ubvector
+    ubvector x(5);
     x[0]=3.0;
     x[1]=1.0;
     x[2]=4.0;
     x[3]=1.0;
     x[4]=5.0;
-    const double *xc=&(x[0]);
-    const double *xr=vector_range(xc,1,3);
-    // Show that xr reflects x
-    t.test_rel(xr[0],1.0,1.0e-15,"vector_range const double* 1.");
-    t.test_rel(xr[1],4.0,1.0e-15,"vector_range const double* 2.");
 
-    // Range of a range
-    const double *xr2=vector_range(xr,1,2);
-    // Show that xr2 reflects x
-    t.test_rel(xr2[0],4.0,1.0e-15,"vector_range_range const double* 1.");
-  }
-  
-  {
-    // Test vector_range with vector<double>
-    std::vector<double> x(5);
-    x[0]=3.0;
-    x[1]=1.0;
-    x[2]=4.0;
-    x[3]=1.0;
-    x[4]=5.0;
-    vector_range_gen<std::vector<double> > xr=vector_range(x,1,3);
-    t.test_gen(xr.size()==2,"vector_range vector<double> 0");
+    // Const version
+    const ubvector &xc=x;
 
+    // Range of a vector
+    ubvector_range xr=vector_range(x,1,3);
     xr[0]=9.0;
     xr[1]=2.0;
-    t.test_gen(xr.size()==2,"vector_range vector<double> 0");
+    t.test_gen(xr.size()==2,"vector_range ubvector 0");
     // Show that changing xr modifies x
-    t.test_rel(x[1],9.0,1.0e-15,"vector_range vector<double> 1.");
-    t.test_rel(x[2],2.0,1.0e-15,"vector_range vector<double> 2.");
-    
-    // Range of a range
-    vector_range_gen<std::vector<double> > xr2=vector_range(xr,1,2);
+    t.test_rel(x[1],9.0,1.0e-15,"vector_range ubvector 1.");
+    t.test_rel(x[2],2.0,1.0e-15,"vector_range ubvector 2.");
+
+    // Const range of a vector
+    const ubvector_range xrc=const_vector_range(x,1,3);
+    t.test_gen(xrc.size()==2,"vector_range ubvector 3");
+    // Show that changing xr modifies x
+    t.test_rel(xrc[0],9.0,1.0e-15,"vector_range ubvector 4.");
+    t.test_rel(xrc[1],2.0,1.0e-15,"vector_range ubvector 5.");
+
+    // Const range of a const vector
+    const ubvector_crange xrc3=const_vector_range(xc,1,3);
+    t.test_gen(xrc3.size()==2,"vector_range ubvector 6");
+    // Show that xrc3 reflects x
+    t.test_rel(xrc3[0],9.0,1.0e-15,"vector_range ubvector 7.");
+    t.test_rel(xrc3[1],2.0,1.0e-15,"vector_range ubvector 8.");
+
+    // Range of a range of a vector
+    ubvector_range_range xr2=vector_range(xr,1,2);
     xr2[0]=6.0;
+    t.test_gen(xr2.size()==1,"vector_range_range ubvector 0");
     // Show that changing xr2 modifies x
-    t.test_rel(x[2],6.0,1.0e-15,"vector_range_range vector<double> 1.");
-    t.test_gen(xr2.size()==1,"vector_range_range vector<double> size.");
+    t.test_rel(x[2],6.0,1.0e-15,"vector_range_range ubvector 1.");
+    
+    // Const range of a range of a vector
+    const ubvector_range_range xrc5=const_vector_range(xr,1,2);
+    t.test_gen(xrc5.size()==1,"vector_range_range ubvector 2");
+    // Show that xrc5 reflects xr
+    t.test_rel(xrc5[0],6.0,1.0e-15,"vector_range_range ubvector 3.");
+
+    // Const range of a const range of a vector
+    const ubvector_crange_range xrc2=const_vector_range(xrc,1,2);
+    t.test_gen(xrc2.size()==1,"vector_range_range ubvector 4");
+    // Show that xrc2 reflects xrc
+    t.test_rel(xrc2[0],6.0,1.0e-15,"vector_range_range ubvector 5.");
+
+    // Const range of a const range of a const vector
+    const ubvector_crange_crange xrc4=const_vector_range(xrc3,1,2);
+    t.test_gen(xrc4.size()==1,"vector_range_range ubvector 6");
+    // Show that xrc4 reflects xrc3
+    t.test_rel(xrc4[0],6.0,1.0e-15,"vector_range_range ubvector 7.");
+    
   }
 
   {
-    // Test vector_range with const vector<double>
+    // Test vector_range with std::vector<double>
     std::vector<double> x(5);
     x[0]=3.0;
     x[1]=1.0;
     x[2]=4.0;
     x[3]=1.0;
     x[4]=5.0;
-    const std::vector<double> xc=x;
-    const vector_range_gen<const std::vector<double> > xr=vector_range(xc,1,3);
-    t.test_gen(xr.size()==2,"vector_r_r const vector<double> 0");
 
-    // Show that xr reflects x
-    t.test_rel(xr[0],1.0,1.0e-15,"vector_r_r const vector<double> 1.");
-    t.test_rel(xr[1],4.0,1.0e-15,"vector_r_r const vector<double> 2.");
+    // Const version
+    const std::vector<double> &xc=x;
 
-    // Range of a range
-    const vector_range_gen<const std::vector<double> > xr2=vector_range(xr,1,2);
-    // Show that xr2 reflects x
-    t.test_rel(xr2[0],4.0,1.0e-15,"vector_r_r const vector<double> 1.");
+    // Range of a vector
+    vector_range_gen<std::vector<double> > xr=vector_range(x,1,3);
+    xr[0]=9.0;
+    xr[1]=2.0;
+    t.test_gen(xr.size()==2,"vector_range std::vector<double> 0");
+    // Show that changing xr modifies x
+    t.test_rel(x[1],9.0,1.0e-15,"vector_range std::vector<double> 1.");
+    t.test_rel(x[2],2.0,1.0e-15,"vector_range std::vector<double> 2.");
+
+    // Const range of a vector
+    const const_vector_range_gen<std::vector<double> > xrc=
+      const_vector_range(x,1,3);
+    t.test_gen(xr.size()==2,"vector_range std::vector<double> 3");
+    // Show that changing xr modifies x
+    t.test_rel(xrc[0],9.0,1.0e-15,"vector_range std::vector<double> 4.");
+    t.test_rel(xrc[1],2.0,1.0e-15,"vector_range std::vector<double> 5.");
+
+    // Const range of a const vector
+    const const_vector_range_gen<std::vector<double> > xrc3=
+      const_vector_range(xc,1,3);
+    t.test_gen(xrc3.size()==2,"vector_range std::vector<double> 6");
+    // Show that xrc3 reflects x
+    t.test_rel(xrc3[0],9.0,1.0e-15,"vector_range std::vector<double> 7.");
+    t.test_rel(xrc3[1],2.0,1.0e-15,"vector_range std::vector<double> 8.");
+
+    // Range of a range of a vector
+    vector_range_gen<std::vector<double> > xr2=vector_range(xr,1,2);
+    xr2[0]=6.0;
+    t.test_gen(xr2.size()==1,"vector_range_range std::vector<double> 0");
+    // Show that changing xr2 modifies x
+    t.test_rel(x[2],6.0,1.0e-15,"vector_range_range std::vector<double> 1.");
+    
+    // Const range of a range of a vector
+    const const_vector_range_gen<std::vector<double> > xrc5=
+      const_vector_range(xr,1,2);
+    t.test_gen(xrc5.size()==1,"vector_range_range std::vector<double> 2");
+    // Show that xrc5 reflects xr
+    t.test_rel(xrc5[0],6.0,1.0e-15,"vector_range_range std::vector<double> 3.");
+
+    // Const range of a const range of a vector
+    const const_vector_range_gen<std::vector<double> > xrc2=
+      const_vector_range(xrc,1,2);
+    t.test_gen(xrc2.size()==1,"vector_range_range std::vector<double> 4");
+    // Show that xrc2 reflects xrc
+    t.test_rel(xrc2[0],6.0,1.0e-15,"vector_range_range std::vector<double> 5.");
+
+    // Const range of a const range of a const vector
+    const const_vector_range_gen<std::vector<double> > xrc4=
+      const_vector_range(xrc3,1,2);
+    t.test_gen(xrc4.size()==1,"vector_range_range std::vector<double> 6");
+    // Show that xrc4 reflects xrc3
+    t.test_rel(xrc4[0],6.0,1.0e-15,"vector_range_range std::vector<double> 7.");
+    
   }
-
+  
   {
     ubmatrix ub1(3,3);
     ub1(0,0)=0.0;
@@ -308,7 +360,7 @@ int main(void) {
     ub1(2,1)=3.0;
     ub1(2,2)=4.0;
     Eigen::MatrixXd::RowXpr r1=
-    matrix_row<Eigen::MatrixXd,Eigen::MatrixXd::RowXpr>(ub1,2);
+      matrix_row<Eigen::MatrixXd,Eigen::MatrixXd::RowXpr>(ub1,2);
     cout << r1[0] << " " << r1[1] << " " << r1[2] << endl;
     t.test_rel(r1[0],2.0,1.0e-12,"matrix row 1");
     t.test_rel(r1[1],3.0,1.0e-12,"matrix row 2");

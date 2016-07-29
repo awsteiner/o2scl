@@ -2290,7 +2290,12 @@ namespace o2scl {
     (dat_t *v, size_t start, size_t last) {
     return v+start;
   }
-
+  
+  template<class dat_t> const dat_t *const_vector_range
+    (const dat_t *v, size_t start, size_t last) {
+    return v+start;
+  }
+  
   /** \brief Vector range function template for ublas vectors
 
       The element with index \c start in the original vector
@@ -2309,8 +2314,45 @@ namespace o2scl {
       (v,boost::numeric::ublas::range(start,last));
   }
 
+  /** \brief Const vector range function template for ublas vectors
+
+      The element with index \c start in the original vector
+      will become the first argument in the new vector, and
+      the new vector will have size <tt>last-start</tt> .
+
+      \note In this case, the return type is not the same as the
+      type of the first parameter. 
+  */
+  template<class dat_t> const boost::numeric::ublas::vector_range
+    <boost::numeric::ublas::vector<dat_t> >
+    const_vector_range(boost::numeric::ublas::vector<dat_t> &v,
+		       size_t start, size_t last) {
+    return boost::numeric::ublas::vector_range
+      <boost::numeric::ublas::vector<dat_t> >
+      (v,boost::numeric::ublas::range(start,last));
+  }
+  
+  /** \brief Const vector range function template for const ublas 
+      vectors
+      
+      The element with index \c start in the original vector
+      will become the first argument in the new vector, and
+      the new vector will have size <tt>last-start</tt> .
+
+      \note In this case, the return type is not the same as the
+      type of the first parameter. 
+  */
+  template<class dat_t> const boost::numeric::ublas::vector_range
+    <const boost::numeric::ublas::vector<dat_t> >
+    const_vector_range(const boost::numeric::ublas::vector<dat_t> &v,
+		 size_t start, size_t last) {
+    return boost::numeric::ublas::vector_range
+      <const boost::numeric::ublas::vector<dat_t> >
+      (v,boost::numeric::ublas::range(start,last));
+  }
+  
   /** \brief Vector range function template for ublas vector
-      ranges
+      ranges of ublas vectors
 
       The element with index \c start in the original vector
       will become the first argument in the new vector, and
@@ -2333,7 +2375,8 @@ namespace o2scl {
       (v,boost::numeric::ublas::range(start,last));
   }
   
-  /** \brief Vector range function template for const ublas vectors
+  /** \brief Const vector range function template for ublas vector
+      ranges of ublas vectors
 
       The element with index \c start in the original vector
       will become the first argument in the new vector, and
@@ -2342,17 +2385,46 @@ namespace o2scl {
       \note In this case, the return type is not the same as the
       type of the first parameter. 
   */
-  template<class dat_t> const boost::numeric::ublas::vector_range
-    <const boost::numeric::ublas::vector<dat_t> >
-    vector_range(const boost::numeric::ublas::vector<dat_t> &v,
-		 size_t start, size_t last) {
+  template<class dat_t>
+    const boost::numeric::ublas::vector_range
+    <boost::numeric::ublas::vector_range
+    <boost::numeric::ublas::vector<dat_t> > >
+    const_vector_range
+    (boost::numeric::ublas::vector_range
+     <boost::numeric::ublas::vector<dat_t> > &v,
+     size_t start, size_t last) {
     return boost::numeric::ublas::vector_range
-      <const boost::numeric::ublas::vector<dat_t> >
+      <boost::numeric::ublas::vector_range
+      <boost::numeric::ublas::vector<dat_t> > >
       (v,boost::numeric::ublas::range(start,last));
   }
-  
-  /** \brief Vector range function template for ublas vector
-      ranges
+
+  /** \brief Const vector range function template for const 
+      ublas vector ranges of ublas vectors
+
+      The element with index \c start in the original vector
+      will become the first argument in the new vector, and
+      the new vector will have size <tt>last-start</tt> .
+
+      \note In this case, the return type is not the same as the
+      type of the first parameter. 
+  */
+  template<class dat_t>
+    const boost::numeric::ublas::vector_range
+    <const boost::numeric::ublas::vector_range
+    <boost::numeric::ublas::vector<dat_t> > >
+    const_vector_range
+    (const boost::numeric::ublas::vector_range
+     <boost::numeric::ublas::vector<dat_t> > &v,
+     size_t start, size_t last) {
+    return boost::numeric::ublas::vector_range
+      <const boost::numeric::ublas::vector_range
+      <boost::numeric::ublas::vector<dat_t> > >
+      (v,boost::numeric::ublas::range(start,last));
+  }
+
+  /** \brief Const vector range function template for const 
+      ublas vector ranges of const ublas vectors
 
       The element with index \c start in the original vector
       will become the first argument in the new vector, and
@@ -2365,7 +2437,7 @@ namespace o2scl {
     const boost::numeric::ublas::vector_range
     <const boost::numeric::ublas::vector_range
     <const boost::numeric::ublas::vector<dat_t> > >
-    vector_range
+    const_vector_range
     (const boost::numeric::ublas::vector_range
      <const boost::numeric::ublas::vector<dat_t> > &v,
      size_t start, size_t last) {
@@ -2375,11 +2447,16 @@ namespace o2scl {
       (v,boost::numeric::ublas::range(start,last));
   }
 
+  // Forward definition for friendship
+  template<class vec_t> class const_vector_range_gen;
+  
   /** \brief Experimental vector range object
    */
   template<class vec_t> class vector_range_gen {
     
   protected:
+
+    friend class const_vector_range_gen<vec_t>;
 
     /// A reference to the original vector
     vec_t &v_;
@@ -2450,6 +2527,88 @@ namespace o2scl {
     }
   };
 
+  /** \brief Experimental const vector range object
+   */
+  template<class vec_t> class const_vector_range_gen {
+    
+  protected:
+
+    /// A reference to the original vector
+    const vec_t &v_;
+
+    /// The index offset
+    size_t start_;
+
+    /// The end() iterator
+    size_t last_;
+    
+  public:
+    
+    /// Create an object starting with index \c start in vector \c v
+  const_vector_range_gen(const vec_t &v, size_t start, size_t last) : v_(v), 
+      start_(start), last_(last) {
+#if !O2SCL_NO_RANGE_CHECK
+      if (last<start) {
+	O2SCL_ERR2("End before beginning in vector_range_gen::",
+		   "vector_range_gen(vec_t,size_t,size_t)",
+		   o2scl::exc_einval);
+      }
+#endif
+    }
+    
+    /// Create an object from a previously constructed range object
+  const_vector_range_gen(const const_vector_range_gen &v2, size_t start,
+			 size_t last) : v_(v2.v_), 
+      start_(start+v2.start_), last_(last+v2.start_) {
+#if !O2SCL_NO_RANGE_CHECK
+      if (last<start) {
+	O2SCL_ERR2("End before beginning in vector_range_gen::",
+		   "vector_range_gen(vector_range_gen,size_t,size_t)",
+		   o2scl::exc_einval);
+      }
+      if (last>v2.last_) {
+	O2SCL_ERR2("End beyond end of previous vector in vector_range_gen::",
+		   "vector_range_gen(vector_range_gen,size_t,size_t)",
+		   o2scl::exc_einval);
+      }
+#endif
+    }
+      
+    /// Create an object from a previously constructed range object
+  const_vector_range_gen(const vector_range_gen<vec_t> &v2, size_t start,
+			 size_t last) : v_(v2.v_), 
+      start_(start+v2.start_), last_(last+v2.start_) {
+#if !O2SCL_NO_RANGE_CHECK
+      if (last<start) {
+	O2SCL_ERR2("End before beginning in vector_range_gen::",
+		   "vector_range_gen(vector_range_gen,size_t,size_t)",
+		   o2scl::exc_einval);
+      }
+      if (last>v2.last_) {
+	O2SCL_ERR2("End beyond end of previous vector in vector_range_gen::",
+		   "vector_range_gen(vector_range_gen,size_t,size_t)",
+		   o2scl::exc_einval);
+      }
+#endif
+    }
+      
+    /// Return the vector size
+    size_t size() const {
+      return last_-start_;
+    }
+    
+    /// Return a const reference ith element
+    const double &operator[](size_t i) const {
+#if !O2SCL_NO_RANGE_CHECK
+      if (i+start_>=last_) {
+	O2SCL_ERR2("Index out of range in ",
+		   "vector_range_gen::operator[] const.",o2scl::exc_einval);
+      }
+#endif
+      return v_[i+start_];
+    }
+  };
+
   /** \brief Create a \ref o2scl::vector_range_gen object 
       from a <tt>std::vector</tt>
   */
@@ -2461,28 +2620,56 @@ namespace o2scl {
   /** \brief Create a \ref o2scl::vector_range_gen object 
       from a <tt>std::vector</tt>
   */
-  template<class data_t> const vector_range_gen<const std::vector<data_t> >
-    vector_range(const std::vector<data_t> &v, size_t start, size_t last) {
-    return vector_range_gen<const std::vector<data_t> >(v,start,last);
+  template<class data_t> const const_vector_range_gen<std::vector<data_t> >
+    const_vector_range(const std::vector<data_t> &v, size_t start,
+		       size_t last) {
+    return const_vector_range_gen<std::vector<data_t> >(v,start,last);
+  }
+      
+  /** \brief Create a \ref o2scl::vector_range_gen object 
+      from a <tt>std::vector</tt>
+  */
+  template<class data_t> const const_vector_range_gen<std::vector<data_t> >
+    const_vector_range(std::vector<data_t> &v, size_t start,
+		       size_t last) {
+    return const_vector_range_gen<std::vector<data_t> >(v,start,last);
   }
       
   /** \brief Recursively create a \ref o2scl::vector_range_gen object 
-      from a vector range through a <tt>vector_range()</tt> function 
+      from a vector range
   */
   template<class vec_t> vector_range_gen<vec_t>
     vector_range(vector_range_gen<vec_t> &v, size_t start, size_t last) {
     return vector_range_gen<vec_t>(v,start,last);
   }
 
-  /** \brief Recursively create a \ref o2scl::vector_range_gen object 
-      from a vector range through a <tt>vector_range()</tt> function 
+  /** \brief Recursively create a const \ref o2scl::vector_range_gen
+      object from a vector range
   */
-  template<class vec_t> const vector_range_gen<vec_t>
-    vector_range(const vector_range_gen<vec_t> &v,
-		 size_t start, size_t last) {
-    return vector_range_gen<vec_t>(v,start,last);
+  template<class vec_t> const const_vector_range_gen<vec_t>
+    const_vector_range(vector_range_gen<vec_t> &v,
+		       size_t start, size_t last) {
+    return const_vector_range_gen<vec_t>(v,start,last);
   }
 
+  /** \brief Recursively create a const \ref o2scl::vector_range_gen
+      object from a const vector range
+  */
+  template<class vec_t> const const_vector_range_gen<vec_t>
+    const_vector_range(const vector_range_gen<vec_t> &v,
+		       size_t start, size_t last) {
+    return const_vector_range_gen<vec_t>(v,start,last);
+  }
+  
+  /** \brief Recursively create a const \ref o2scl::vector_range_gen
+      object from a const vector range
+  */
+  template<class vec_t> const const_vector_range_gen<vec_t>
+    const_vector_range(const const_vector_range_gen<vec_t> &v,
+		       size_t start, size_t last) {
+    return const_vector_range_gen<vec_t>(v,start,last);
+  }
+  
   /** \brief Vector range function template for <tt>std::vector</tt>
       
       The element with index \c start in the original vector
