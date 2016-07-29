@@ -306,8 +306,8 @@ int main(void) {
   typedef std::function<
     int(size_t,size_t,const double *,size_t,double *)> cub_funct_arr;
   inte_hcubature<cub_funct_arr> hc;
-  inte_pcubature<cub_funct_arr,ubvector,std::vector<double>,
-		 std::vector<double > > pc;
+  inte_pcubature<cub_funct_arr,ubvector,c_ubvector_range,
+		 ubvector_range> pc;
 
   inte_cubature_base::error_norm en=inte_cubature_base::ERROR_INDIVIDUAL;
   
