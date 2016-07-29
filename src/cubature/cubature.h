@@ -132,11 +132,13 @@ namespace o2scl {
   template<class func_t>
     class inte_hcubature : public inte_cubature_base {
     
-  protected:
-  
+  public:
+    
     typedef boost::numeric::ublas::vector<double> ubvector;
     typedef boost::numeric::ublas::vector_range<ubvector> ubvector_range;
     
+  protected:
+  
   /** \brief A value and error
    */
   class esterr {
@@ -1469,14 +1471,14 @@ namespace o2scl {
       
       \hline      
   */
-  template<class func_t, class vec_t, class vec_crange_t, class vec_range_t>
+  template<class func_t>
     class inte_pcubature : public inte_cubature_base {
     
   protected:
-    
-    /** \brief Maximum integral dimension
-     */
-    static const size_t MAXDIM=20;
+  
+  /** \brief Maximum integral dimension
+   */
+  static const size_t MAXDIM=20;
   
   /** \brief Cache of the values for the m[dim] grid.  
 
@@ -1539,9 +1541,7 @@ namespace o2scl {
       ibuf++;
       if (ibuf == nbuf) {
 	/* flush buffer */
-	vec_crange_t buf2=o2scl::vector_range(buf,0,buf.size());
-	vec_range_t val2=o2scl::vector_range(val,vali,val.size());
-	if (f(dim, nbuf, buf2, fdim, val2)) {
+	if (f(dim, nbuf, &(buf[0]), fdim, &(val[0]) + vali)) {
 	  return o2scl::gsl_failure;
 	}
 	vali += ibuf * fdim;
@@ -1633,9 +1633,7 @@ namespace o2scl {
 
     if (ibuf > 0) {
       /* flush remaining buffer */
-      vec_crange_t buf2=o2scl::vector_range(buf,0,buf.size());
-      vec_range_t val2=o2scl::vector_range(vc[ic].val,vali,val.size());
-      return f(dim, ibuf, buf2, fdim, val2);
+      return f(dim, ibuf, &(buf[0]), fdim, &((vc[ic].val)[vali]));
     }
 
     return o2scl::success;
@@ -1897,11 +1895,7 @@ namespace o2scl {
     /* trivial case */
     if (dim == 0) {
       // AWS: this is one location where vector types need sync'ing
-      vec_crange_t xmin2=o2scl::vector_range(xmin,0,xmin.size());
-      vec_range_t val2=o2scl::vector_range(val,0,val.size());
-      if (f(0, 1, xmin2, fdmi, val2)) {
-	return o2scl::gsl_failure;
-      }
+      if (f(0, 1, &xmin[0], fdim, &(val[0]))) return o2scl::gsl_failure;
       for (i = 0; i < fdim; ++i) err[i] = 0;
       return o2scl::success;
     }
