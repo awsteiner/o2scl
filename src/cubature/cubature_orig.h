@@ -1440,6 +1440,13 @@ namespace o2scl {
     }
     
   public:
+
+    inte_hcubature_orig() {
+      use_parallel=0;
+    }
+    
+    /// Desc
+    int use_parallel;
     
     /** \brief Desc
      */
@@ -1453,7 +1460,7 @@ namespace o2scl {
 	return o2scl::success;
       }
       return cubature(fdim,f,dim,xmin,xmax,
-		      maxEval,reqAbsError,reqRelError,norm,val,err,0);
+		      maxEval,reqAbsError,reqRelError,norm,val,err,1);
     }
     
   };

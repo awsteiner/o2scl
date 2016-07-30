@@ -326,7 +326,8 @@ int main(void) {
   typedef std::function<
     int(size_t,size_t,const double *,size_t,double *)> cub_funct_arr;
   typedef std::function<
-    int(size_t,size_t,const ubvector_crange,size_t,ubvector)> cub_funct_ub;
+    int(size_t,size_t,const ubvector_crange &,size_t,
+	ubvector_range &)> cub_funct_ub;
   inte_hcubature<cub_funct_arr> hc;
   inte_pcubature<cub_funct_arr,ubvector,ubvector_crange,
 		 ubvector_range> pc;
@@ -334,7 +335,7 @@ int main(void) {
   inte_cubature_base::error_norm en=inte_cubature_base::ERROR_INDIVIDUAL;
   
   cub_funct_arr cfa=fv;
-  //cub_funct_ub cfa_new=fv_new;
+  cub_funct_ub cfa_new=fv_new;
 
   // Test both hcubature and pcubature with several integrands
   // and compare with original cubature testing results
@@ -512,7 +513,7 @@ int main(void) {
     vector<double> dres(3), derr(3);
     ubvector dres2(3), derr2(3);
     cub_funct_arr cfa2=fv2;
-    //cub_funct_ub cfa2_new=fv2_new;
+    cub_funct_ub cfa2_new=fv2_new;
     int ret=hc.integ(3,cfa2,2,vlow,vhigh,10000,0.0,1.0e-4,en,dres,derr);
     tmgr.test_gen(ret==0,"hc mdim ret");
     tmgr.test_rel(3.067993,dres[0],1.0e-6,"hc mdim val 0");
