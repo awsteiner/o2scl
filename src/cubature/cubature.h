@@ -1342,7 +1342,6 @@ namespace o2scl {
 	      /* other regions have small errs */
 	      break; 
 	    }
-	    
 	  } while (regions.n > 0 && (numEval < maxEval || !maxEval));
 
 	  if (eval_regions(nR, R, f, r)
@@ -1352,6 +1351,7 @@ namespace o2scl {
 	    return o2scl::gsl_failure;
 	  }
 
+	  // End of 'if (parallel)'
 	} else { 
 
 	  /* minimize number of function evaluations */
@@ -1432,7 +1432,14 @@ namespace o2scl {
     }
     
   public:
+
+    /// Desc
+    int use_parallel;
     
+    inte_hcubature() {
+      use_parallel=0;
+    }
+
     /** \brief Desc
      */
     template<class vec_t>
@@ -1446,7 +1453,7 @@ namespace o2scl {
 	return o2scl::success;
       }
       return cubature(fdim,f,dim,xmin,xmax,maxEval,reqAbsError,
-		      reqRelError,norm,val,err,0);
+		      reqRelError,norm,val,err,use_parallel);
 		      
     }
     

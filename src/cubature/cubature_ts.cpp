@@ -414,7 +414,56 @@ int main(void) {
     
   }
 
-  // Now run with dim=1
+  // With parallelism for hcubature
+  hc.use_parallel=1;
+
+  if (false) {
+
+    tcnt=0;
+    for(size_t test_iand=0;test_iand<8;test_iand++) {
+
+      double tol;
+      size_t maxEval;
+      ubvector vval(1), verr(1);
+
+      tol=1.0e-2;
+      maxEval=0;
+    
+      which_integrand = test_iand; 
+    
+      if (test_iand!=2) {
+
+	cub_count=0;
+	hc.integ(1,cfa,dim,xmin,xmax,maxEval,0,tol,en,vval,verr);
+	       
+	cout << "# " << which_integrand << " " 
+	     << "integral " << vval[0] << " "
+	     << "est. error " << verr[0] << " " 
+	     << "true error " 
+	     << fabs(vval[0]-exact_integral(which_integrand,dim,xmax)) << endl;
+	cout << "evals " << cub_count << endl;
+
+	tmgr.test_gen(fabs(vval[0]-exact_integral(which_integrand,dim,xmax))<
+		      verr[0]*2.0,"hcub 2");
+	tmgr.test_gen(test_n[tcnt]==cub_count,"cub_count");
+	tmgr.test_rel(vval[0],test_vals[tcnt][0],5.0e-6,"val");
+	tmgr.test_rel(verr[0],test_vals[tcnt][1],5.0e-6,"err");
+	tmgr.test_rel(fabs(vval[0]-exact_integral(which_integrand,dim,xmax)),
+		      test_vals[tcnt][2],5.0e-6,"diff w/ exact");
+	tcnt++;
+      }
+    
+      if (test_iand!=3) {
+	tcnt++;
+      }
+    
+    }
+
+  }
+
+  // Now run with dim=1 (without parallelism)
+
+  hc.use_parallel=0;
 
   int test_n2[14]={15,5,75,17,257,15,45,33,105,33,15,9,15,3};
   
