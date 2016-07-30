@@ -63,9 +63,12 @@ typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::vector_range<ubvector> ubvector_range;
 typedef boost::numeric::ublas::vector_range<ubvector_range>
 ubvector_range_range;
-typedef boost::numeric::ublas::vector_range<const ubvector> c_ubvector_range;
-typedef boost::numeric::ublas::vector_range<const c_ubvector_range>
-c_ubvector_range_range;
+
+typedef boost::numeric::ublas::vector_range<const ubvector> ubvector_crange;
+typedef boost::numeric::ublas::vector_range<const ubvector_range>
+ubvector_crange_range;
+typedef boost::numeric::ublas::vector_range<const ubvector_crange>
+ubvector_crange_crange;
 
 using namespace std;
 using namespace o2scl;
@@ -256,6 +259,23 @@ int fv(size_t ndim, size_t npt, const double *x, size_t fdim,
   return o2scl::success;
 }
 
+int fv_new(size_t ndim, size_t npt, const ubvector_crange &x, size_t fdim,
+	   ubvector_range &fval) {
+  double *x2=new double[ndim];
+  double *f2=new double[fdim];
+  for (size_t i = 0; i < npt; ++i) {
+    const double *xp=&(x[i*ndim]);
+    vector_copy(ndim,xp,x2);
+    if (f_test(ndim,x2,fdim,f2)) {
+      return o2scl::gsl_failure;
+    }
+    double *fp=&(fval[i*fdim]);
+    vector_copy(fdim,f2,fp);
+  }
+  delete[] x2;
+  delete[] f2;
+}
+
 /** Test integrating a few functions at once
  */
 int fv2(size_t ndim, size_t npt, const double *x, size_t fdim,
@@ -273,11 +293,11 @@ int fv2(size_t ndim, size_t npt, const double *x, size_t fdim,
   return 0;
 }
 
-int fv2_new(size_t ndim, size_t npt, const c_ubvector_range &x, size_t fdim,
+int fv2_new(size_t ndim, size_t npt, const ubvector_crange &x, size_t fdim,
 	    ubvector_range &fval) {
-
+  
   for (size_t i=0;i<npt;i++) {
-    const c_ubvector_range_range x2=vector_range(x,i*ndim,(i+1)*ndim);
+    const ubvector_crange_crange x2=const_vector_range(x,i*ndim,(i+1)*ndim);
     ubvector_range_range f2=vector_range(fval,i*fdim,(i+1)*fdim);
     f2[0]=exp(-((x2[0]-0.2)*(x2[0]-0.2)+
 		(x2[1]-0.5)*(x2[1]-0.5)));
@@ -305,13 +325,16 @@ int main(void) {
 
   typedef std::function<
     int(size_t,size_t,const double *,size_t,double *)> cub_funct_arr;
+  typedef std::function<
+    int(size_t,size_t,const ubvector_crange,size_t,ubvector)> cub_funct_ub;
   inte_hcubature<cub_funct_arr> hc;
-  inte_pcubature<cub_funct_arr,ubvector,c_ubvector_range,
+  inte_pcubature<cub_funct_arr,ubvector,ubvector_crange,
 		 ubvector_range> pc;
 
   inte_cubature_base::error_norm en=inte_cubature_base::ERROR_INDIVIDUAL;
   
   cub_funct_arr cfa=fv;
+  //cub_funct_ub cfa_new=fv_new;
 
   // Test both hcubature and pcubature with several integrands
   // and compare with original cubature testing results
@@ -489,6 +512,7 @@ int main(void) {
     vector<double> dres(3), derr(3);
     ubvector dres2(3), derr2(3);
     cub_funct_arr cfa2=fv2;
+    //cub_funct_ub cfa2_new=fv2_new;
     int ret=hc.integ(3,cfa2,2,vlow,vhigh,10000,0.0,1.0e-4,en,dres,derr);
     tmgr.test_gen(ret==0,"hc mdim ret");
     tmgr.test_rel(3.067993,dres[0],1.0e-6,"hc mdim val 0");

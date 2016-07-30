@@ -1539,6 +1539,9 @@ namespace o2scl {
       }
       ibuf++;
       if (ibuf == nbuf) {
+	const vec_crange_t buf2=o2scl::const_vector_range
+	  (((const vec_t &)buf),0,buf.size());
+	vec_range_t val2=o2scl::vector_range(val,vali,val.size());
 	/* flush buffer */
 	if (f(dim, nbuf, &(buf[0]), fdim, &(val[0]) + vali)) {
 	  return o2scl::gsl_failure;
@@ -1631,6 +1634,9 @@ namespace o2scl {
 
     if (ibuf > 0) {
       /* flush remaining buffer */
+      const vec_crange_t buf2=o2scl::const_vector_range
+	(((const vec_t &)buf),0,buf.size());
+      vec_range_t val2=o2scl::vector_range(vc[ic].val,vali,vc[ic].val.size());
       return f(dim, ibuf, &(buf[0]), fdim, &((vc[ic].val)[vali]));
     }
 
@@ -1889,6 +1895,8 @@ namespace o2scl {
     /* trivial case */
     if (dim == 0) {
       // AWS: this is one location where vector types need sync'ing
+      const vec_crange_t xmin2=o2scl::const_vector_range(xmin,0,xmin.size());
+      vec_range_t val2=o2scl::vector_range(val,0,val.size());
       if (f(0, 1, &xmin[0], fdim, &(val[0]))) return o2scl::gsl_failure;
       for (i = 0; i < fdim; ++i) err[i] = 0;
       return o2scl::success;

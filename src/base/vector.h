@@ -124,7 +124,7 @@ namespace o2scl {
       <tt>size()</tt>, and <tt>resize()</tt> methods.
   */
   template<class vec_t, class vec2_t> 
-    void vector_copy(vec_t &src, vec2_t &dest) {
+    void vector_copy(const vec_t &src, vec2_t &dest) {
     size_t N=src.size();
     if (dest.size()<N) dest.resize(N);
     size_t i, m=N%4;
@@ -153,7 +153,7 @@ namespace o2scl {
       element.
   */
   template<class vec_t, class vec2_t> 
-    void vector_copy(size_t N, vec_t &src, vec2_t &dest) {
+    void vector_copy(size_t N, const vec_t &src, vec2_t &dest) {
     size_t i, m=N%4;
     for(i=0;i<m;i++) {
       dest[i]=src[i];
