@@ -28,9 +28,10 @@
 
 #include <cmath>
 #include <o2scl/err_hnd.h>
+#include <o2scl/hdf_file.h>
 
 #ifndef DOXYGEN_NO_O2NS
-namespace o2scl {
+namespace o2scl_hdf {
 #endif
 
   /** \brief Desc
@@ -38,12 +39,24 @@ namespace o2scl {
   class cloud_file {
 
   public:
-
+    
+    /** \brief Desc
+     */
     bool allow_wget;
+    /** \brief Desc
+     */
     bool allow_curl;
+    /** \brief Desc
+     */
     bool force_subdir;
+    /** \brief Desc
+     */
     int verbose;
+    /** \brief Desc
+     */
     bool throw_on_fail;
+    /** \brief Desc
+     */
     std::string env_var;
     
     cloud_file() {
@@ -55,55 +68,29 @@ namespace o2scl {
       env_var="O2SCL_DATA";
     }
     
-    int get(std::string file, std::string subdir, std::string url,
-	    std::string dir="") {
-
-      /*
-if len(sys.argv)>=3 and sys.argv[1]=='-data':
-    data_dir=sys.argv[2]
-    method='cl'
-elif 'BHSP_DATA' in os.environ:
-    data_dir=os.environ['BHSP_DATA']
-    method='ev'
-if data_dir=='':
-    data_dir=input('Data directory not set. Enter data directory: ')
-    if data_dir!='':
-        method='ui'
-if data_dir=='' or method=='':
-    print('Failed to obtain data directory.')
-    quit()
-if method=='cl':
-    print('Data directory set (by command-line) to:',data_dir)
-elif method=='ev':
-    print('Data directory set (by environment variable) to:',data_dir)
-else:
-    print('Data directory set (by user input) to:',data_dir)
-subdir=data_dir+'/16/05/02'
-if os.path.isdir(fname)==False:
-    cmd='mkdir -p '+subdir
-    ret=os.system(cmd)
-    if ret!=0:
-        print('Correct subdirectory does not exist and failed to create.')
-        quit()
-fname=subdir+'/carbonlargecooling.aws'
-if os.path.isfile(fname)==False:
-    response=input('Data file not found. Download (y/Y/n/N)? ')
-    ret=1
-    if response=='y' or response=='Y':
-        print('Trying wget:')
-        cmd=('cd '+data_dir+'; wget http://isospin.roam.utk.edu'+
-             '/data/16/05/02/carbonlargecooling.aws')
-        ret=os.system(cmd)
-        if ret!=0:
-            print('Trying curl:')
-            cmd=('cd '+data_dir+'; curl http://isospin.roam.utk.edu'+
-                 '/data/16/05/02/carbonlargecooling.aws')
-            ret=os.system(cmd)
-    if ret!=0:
-        print('Failed to obtain data file.')
-        quit()
-       */
-
+    /** \brief Desc
+     */
+    int hdf5_open(hdf_file &hf, std::string file, std::string subdir,
+		  std::string url, std::string dir="") {
+      get_file(file,subdir,url,dir);
+      hf.open(file);
+      return 0;
+    }
+    
+    /** \brief Desc
+     */
+    int hdf5_open_or_create(hdf_file &hf, std::string file, std::string subdir,
+			    std::string url, std::string dir="") {
+      get_file(file,subdir,url,dir);
+      hf.open_or_create(file);
+      return 0;
+    }
+    
+    /** \brief Desc
+     */
+    int get_file(std::string file, std::string subdir, std::string url,
+		 std::string dir="") {
+      
       if (dir=="") {
 	char *dir_ptr=getenv(env_var.c_str());
 	if (dir_ptr!=0) {
