@@ -40,7 +40,7 @@ namespace o2scl_hdf {
 
   public:
     
-    /** \brief Desc
+    /** \brief If true, allow the use of \c wget to download the file
      */
     bool allow_wget;
     /** \brief Desc
@@ -87,9 +87,20 @@ namespace o2scl_hdf {
     }
     
     /** \brief Desc
-     */
-    int get_file(std::string file, std::string subdir, std::string url,
-		 std::string dir="") {
+	
+	This function attempts to find a file named \c file in
+	subdirectory \c subdir of the data directory \c dir. If \c dir
+	is empty, it attempts to set it equal to the value of the
+	environment variable \ref env_var. If that environment
+	variable is not present, the user is prompted for the correct
+	data directory. If the file is not found, then this function
+	uses curl (or wget if curl was unsuccessful) to download the
+	file from \c url. If this process was successful at finding or
+	downloading the file, then the full filename is returned.
+	Otherwise, an exception is thrown.
+    */
+    int get_file(std::string &file, std::string subdir, std::string url,
+			 std::string dir="") {
       
       if (dir=="") {
 	char *dir_ptr=getenv(env_var.c_str());
@@ -106,7 +117,12 @@ namespace o2scl_hdf {
 	std::cin >> dir;
 	if (dir.length()==0 || stat(dir.c_str(),&sb)!=0 ||
 	    !S_ISDIR(sb.st_mode)) {
-	  O2SCL_ERR("Could not find correct directory.",o2scl::exc_efailed);
+	  if (throw_on_fail) {
+	    O2SCL_ERR("Could not find correct directory.",
+		      o2scl::exc_efilenotfound);
+	  } else {
+	    return o2scl::exc_efilenotfound;
+	  }
 	}
       }
 
@@ -116,13 +132,17 @@ namespace o2scl_hdf {
       if (full_dir.length()==0 || stat(full_dir.c_str(),&sb)!=0 ||
 	  !S_ISDIR(sb.st_mode)) {
 	if (verbose>0) {
-	  std::cout << "Directory did not exist. Trying mkidr."
+	  std::cout << "Directory did not exist. Trying mkdir."
 		    << std::endl;
 	}
 	std::string cmd=((std::string)"mkdir -p ")+full_dir;
 	int ret=system(cmd.c_str());
 	if (ret!=0) {
-	  O2SCL_ERR("Failed to create directory.",o2scl::exc_efailed);
+	  if (throw_on_fail) {
+	    O2SCL_ERR("Failed to create directory.",o2scl::exc_efilenotfound);
+	  } else {
+	    return o2scl::exc_efilenotfound;
+	  }
 	}
 	full_dir_present=false;
       }
@@ -148,10 +168,15 @@ namespace o2scl_hdf {
 	  ret=system(cmd.c_str());
 	}
 	if (ret!=0) {
-	  O2SCL_ERR("Failed to download file.",o2scl::exc_efailed);
+	  if (throw_on_fail) {
+	    O2SCL_ERR("Failed to download file.",o2scl::exc_efilenotfound);
+	  } else {
+	    return o2scl::exc_efilenotfound;
+	  }
 	}
       }
-      
+
+      file=fname;
       return o2scl::success;
     }
     

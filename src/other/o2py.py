@@ -29,6 +29,17 @@ import getopt, sys, h5py, math, os
 import matplotlib.pyplot as plot
 from matplotlib.colors import LinearSegmentedColormap
 
+"""
+This function attempts to find a file named 'fname_orig' in
+subdirectory 'subdir_orig' of the data directory 'data_dir'. If
+'data_dir' is empty, it attempts to set it equal to the value of the
+environment variable 'env_var'. If that environment variable is not
+present, the user is prompted for the correct data directory. If the
+file is not found, then this function uses curl (or wget if curl was
+unsuccessful) to download the file from 'url'. If this process was
+successful at finding or downloading the file, then the full filename
+is returned. Otherwise, an exception is thrown.
+"""
 def download_data_file(env_var,data_dir,subdir_orig,fname_orig,url):
 
     # First obtain the data directory
@@ -54,7 +65,7 @@ def download_data_file(env_var,data_dir,subdir_orig,fname_orig,url):
 
     # Now test for the existence of the subdirectory and create it if
     # necessary
-    subdir=data_dir+subdir_orig
+    subdir=data_dir+'/'+subdir_orig
     if os.path.isdir(subdir)==False:
         cmd='mkdir -p '+subdir
         ret=os.system(cmd)
@@ -63,7 +74,7 @@ def download_data_file(env_var,data_dir,subdir_orig,fname_orig,url):
                                     'not exist and failed to create.')
     
     # Now download the file if it's not already present
-    fname=subdir+fname_orig
+    fname=subdir+'/'+fname_orig
     if os.path.isfile(fname)==False:
         response=input('Data file '+fname+' not found. Download (y/Y/n/N)? ')
         ret=1
@@ -77,7 +88,9 @@ def download_data_file(env_var,data_dir,subdir_orig,fname_orig,url):
                 ret=os.system(cmd)
         if ret!=0:
             raise ConnectionError('Failed to obtain data file.')
-    return        
+
+    # Return the final filename
+    return fname
 
 list_of_dsets=[]
 search_type=''
