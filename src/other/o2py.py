@@ -25,9 +25,59 @@
   - Be able to close HDF5 file and retain data set?
 """
 
-import getopt, sys, h5py, math
+import getopt, sys, h5py, math, os
 import matplotlib.pyplot as plot
 from matplotlib.colors import LinearSegmentedColormap
+
+def download_data_file(env_var,data_dir,subdir_orig,fname_orig,url):
+
+    # First obtain the data directory
+    method=''
+    if data_dir!='':
+        method='arg'
+    else:
+        if env_var in os.environ:
+            data_dir=os.environ[env_var]
+            method='ev'
+        if data_dir=='':
+            data_dir=input('Data directory not set. Enter data directory: ')
+            if data_dir!='':
+                method='ui'
+    if data_dir=='' or method=='':
+        raise ValueError('Failed to obtain data directory.')
+    if method=='arg':
+        print('Data directory set (by function argument) to:',data_dir)
+    elif method=='ev':
+        print('Data directory set (by environment variable) to:',data_dir)
+    else:
+        print('Data directory set (by user input) to:',data_dir)
+
+    # Now test for the existence of the subdirectory and create it if
+    # necessary
+    subdir=data_dir+subdir_orig
+    if os.path.isdir(subdir)==False:
+        cmd='mkdir -p '+subdir
+        ret=os.system(cmd)
+        if ret!=0:
+            raise FileNotFoundError('Correct subdirectory does '+
+                                    'not exist and failed to create.')
+    
+    # Now download the file if it's not already present
+    fname=subdir+fname_orig
+    if os.path.isfile(fname)==False:
+        response=input('Data file '+fname+' not found. Download (y/Y/n/N)? ')
+        ret=1
+        if response=='y' or response=='Y':
+            print('Trying wget:')
+            cmd=('cd '+subdir+'; wget '+url)
+            ret=os.system(cmd)
+            if ret!=0:
+                print('Trying curl:')
+                cmd=('cd '+subdir+'; curl '+url)
+                ret=os.system(cmd)
+        if ret!=0:
+            raise ConnectionError('Failed to obtain data file.')
+    return        
 
 list_of_dsets=[]
 search_type=''
@@ -38,6 +88,7 @@ def hdf5_is_object_type(name,obj):
             o2scl_type_dset=obj['o2scl_type']
             if o2scl_type_dset.__getitem__(0) == search_type:
                 list_of_dsets.append(name)
+    return
 
 # This is probably best replaced by get_str_array() below
 #
