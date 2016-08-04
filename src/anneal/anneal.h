@@ -69,7 +69,7 @@ namespace o2scl {
     
   public:
     
-    anneal_base() {
+  anneal_base() : dist(0.0,1.0) {
       this->ntrial=100;
     }
       
