@@ -26,15 +26,26 @@
 #ifndef O2SCL_CLOUD_FILE_H
 #define O2SCL_CLOUD_FILE_H
 
-#include <cmath>
+#include <iostream>
+// For getenv() 
+#include <cstdlib>
+// For struct stat
+#include <sys/stat.h>
 #include <o2scl/err_hnd.h>
 #include <o2scl/hdf_file.h>
+#include <boost/filesystem.hpp>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl_hdf {
 #endif
 
   /** \brief Desc
+
+      \note This function requires POSIX I/O calls and a system call
+      which uses <tt>mkdir -p</tt>, thus will probably only work on
+      unix-like systems.
+
+      \todo Convert to use boost::filesystem .
   */
   class cloud_file {
 
@@ -109,6 +120,10 @@ namespace o2scl_hdf {
 	}
       }
 
+      path p(dir.c_str());
+      std::cout << boost::filesystem::is_directory(p) << std::endl;
+      std::cout << boost::filesystem::is_regular_file(p) << std::endl;
+      
       struct stat sb;
       if (dir.length()==0 || stat(dir.c_str(),&sb)!=0 ||
 	  !S_ISDIR(sb.st_mode)) {
