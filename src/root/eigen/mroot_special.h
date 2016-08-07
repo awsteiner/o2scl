@@ -23,7 +23,7 @@
 #ifndef O2SCL_MROOT_SPECIAL_H
 #define O2SCL_MROOT_SPECIAL_H
 
-#include <Eigen/Dense>
+#include <eigen3/Eigen/Dense>
 namespace o2scl {
   /** \brief A version of \ref mroot_hybrids
       which uses Eigen for the QR decomposition

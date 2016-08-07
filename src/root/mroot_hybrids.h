@@ -1132,7 +1132,7 @@ namespace o2scl {
 }
 #endif
 #if defined (O2SCL_HAVE_EIGEN) || defined (DOXYGEN)
-#include <Eigen/Dense>
+#include <eigen3/Eigen/Dense>
 namespace o2scl {
   /** \brief A version of \ref mroot_hybrids
       which uses Eigen for the QR decomposition

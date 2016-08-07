@@ -23,7 +23,7 @@
 #ifndef O2SCL_CHOLESKY_SPECIAL_H
 #define O2SCL_CHOLESKY_SPECIAL_H
 
-#include <Eigen/Dense>
+#include <eigen3/Eigen/Dense>
 
 namespace o2scl_linalg {
   

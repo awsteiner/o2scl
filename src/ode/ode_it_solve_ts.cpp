@@ -33,7 +33,7 @@
 #include <armadillo>
 #endif
 #ifdef O2SCL_EIGEN
-#include <Eigen/Dense>
+#include <eigen3/Eigen/Dense>
 #endif
 
 #include <o2scl/ode_it_solve.h>

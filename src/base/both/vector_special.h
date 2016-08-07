@@ -24,7 +24,7 @@
 #define O2SCL_VECTOR_SPECIAL_H
 
 #include <armadillo>
-#include <Eigen/Dense>
+#include <eigen3/Eigen/Dense>
 
 #if !defined (O2SCL_COND_FLAG) || defined (O2SCL_ARMA)
 #include <armadillo>
@@ -43,7 +43,7 @@ namespace o2scl_linalg {
 #endif
 
 #if !defined (O2SCL_COND_FLAG) || defined (O2SCL_EIGEN)
-#include <Eigen/Dense>
+#include <eigen3/Eigen/Dense>
 namespace o2scl_linalg {
 
   /// Eigen version of \ref matrix_max()

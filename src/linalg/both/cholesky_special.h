@@ -24,7 +24,7 @@
 #define O2SCL_CHOLESKY_SPECIAL_H
 
 #if !defined (O2SCL_COND_FLAG) || defined (O2SCL_EIGEN)
-#include <Eigen/Dense>
+#include <eigen3/Eigen/Dense>
 
 namespace o2scl_linalg {
   

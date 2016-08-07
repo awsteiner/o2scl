@@ -26,7 +26,7 @@
 #include <o2scl/mmin_simp2.h>
 #include <o2scl/test_mgr.h>
 #ifdef O2SCL_EIGEN
-#include <Eigen/Dense>
+#include <eigen3/Eigen/Dense>
 #endif
 
 using namespace std;

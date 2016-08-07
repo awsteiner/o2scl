@@ -100,7 +100,7 @@ protected:
 #endif
 
 #ifdef O2SCL_EIGEN
-#include <Eigen/Dense>
+#include <eigen3/Eigen/Dense>
 
 template<class vec_t, class mat_t>
 class fit_linear_eigen : public fit_linear<vec_t,mat_t> {

@@ -2737,7 +2737,7 @@ namespace o2scl {
 #endif
 
 #if defined (O2SCL_EIGEN) || defined (DOXYGEN)
-#include <Eigen/Dense>
+#include <eigen3/Eigen/Dense>
 
 namespace o2scl {
 

@@ -59,7 +59,7 @@ namespace o2scl_linalg_bracket {
 #if defined (O2SCL_COND_FLAG) || defined (DOXYGEN)
 
 #if defined (O2SCL_EIGEN) || defined (DOXYGEN)
-#include <Eigen/Dense>
+#include <eigen3/Eigen/Dense>
 namespace o2scl_linalg {
   
   /** \brief Eigen specialization of \ref cholesky_decomp()
