@@ -83,7 +83,6 @@ namespace o2scl_hdf {
      */
     int hdf5_open(hdf_file &hf, std::string file, std::string subdir,
 		  std::string url, std::string dir="") {
-      std::cout << "Herem1." << std::endl;
       get_file(file,subdir,url,dir);
       hf.open(file);
       return 0;
@@ -114,26 +113,22 @@ namespace o2scl_hdf {
     int get_file(std::string &file, std::string subdir, std::string url,
 			 std::string dir="") {
 
-      std::cout << "Here0." << std::endl;
       if (dir=="") {
-	std::cout << "Here1." << std::endl;
 	char *dir_ptr=getenv(env_var.c_str());
-	std::cout << "Here2." << std::endl;
 	if (dir_ptr!=0) {
-	  std::cout << "Here3." << std::endl;
 	  dir=dir_ptr;
-	  std::cout << "Here4." << std::endl;
 	}
-	std::cout << "Here5." << std::endl;
 	if (verbose>1) {
 	  std::cout << "Obtained directory from environment variable "
 		    << env_var << ": " << dir << std::endl;
 	}
       }
-      
+
       std::cout << "Here6 " << dir << std::endl;
       boost::filesystem::path p(dir.c_str());
       std::cout << "Here7." << std::endl;
+      std::cout << boost::filesystem::exists(p) << std::endl;
+      std::cout << "Here7b." << std::endl;
       std::cout << boost::filesystem::is_directory(p) << std::endl;
       std::cout << "Here8." << std::endl;
       std::cout << boost::filesystem::is_regular_file(p) << std::endl;
