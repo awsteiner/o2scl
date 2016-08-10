@@ -92,14 +92,46 @@ def download_data_file(env_var,data_dir,subdir_orig,fname_orig,url):
     # Return the final filename
     return fname
 
+class hdf5_reader:
+
+    list_of_dsets=[]
+    search_type=''
+
+    def hdf5_is_object_type(self,name,obj):
+        # Convert search_type to a bytes object
+        search_type_bytes=bytes(self.search_type,'utf-8')
+        if isinstance(obj,h5py.Group):
+            if 'o2scl_type' in obj.keys():
+                o2scl_type_dset=obj['o2scl_type']
+                if o2scl_type_dset.__getitem__(0) == search_type_bytes:
+                    self.list_of_dsets.append(name)
+        return
+
+    def h5read_first_type(self,fname,loc_type):
+        del self.list_of_dsets[:]
+        self.search_type=loc_type
+        file=h5py.File(fname,'r')
+        file.visititems(self.hdf5_is_object_type)
+        if len(self.list_of_dsets)==0:
+            str='Could not object of type '+loc_type+' in file '+fname+'.'
+            raise RuntimeError(str)
+        return file[self.list_of_dsets[0]]
+
+
 list_of_dsets=[]
 search_type=''
 
 def hdf5_is_object_type(name,obj):
+    global search_type
+    global list_of_dsets
+    print('Herex',name,isinstance(obj,h5py.Group))
     if isinstance(obj,h5py.Group):
-         if 'o2scl_type' in obj.keys():
+        if 'o2scl_type' in obj.keys():
+            print('Herey',search_type)
             o2scl_type_dset=obj['o2scl_type']
             if o2scl_type_dset.__getitem__(0) == search_type:
+                print('Herez',search_type)
+                print('Appending:',name)
                 list_of_dsets.append(name)
     return
 
@@ -121,11 +153,14 @@ def hdf5_is_object_type(name,obj):
 #     return clist
 
 def h5read_first_type(fname,loc_type):
-    del list_of_dsets[:]
     global search_type
+    global list_of_dsets
+    del list_of_dsets[:]
     search_type=loc_type
     file=h5py.File(fname,'r')
+    print('Here')
     file.visititems(hdf5_is_object_type)
+    print('Here2')
     if len(list_of_dsets)==0:
         str='Could not object of type '+loc_type+' in file '+fname+'.'
         raise RuntimeError(str)
@@ -183,7 +218,7 @@ def get_str_array(dset):
                 list.append('')
             else:
                 done=1
-        col=col+str(unichr(data[ix]))
+        col=col+str(chr(data[ix]))
         if char_counter==counter[word_counter]:
             list.append(col)
             col=''
@@ -252,7 +287,8 @@ def parse_arguments(argv):
     return (list,unproc_list)
                     
 class plotter:
-    
+
+    h5r=hdf5_reader()
     logx=0
     logy=0
     logz=0
@@ -527,7 +563,7 @@ class plotter:
     def read(self,filename):
         if self.verbose>0:
             print('Reading file',filename,'.')
-        self.dset=h5read_first_type(filename,'table')
+        self.dset=self.h5r.h5read_first_type(filename,'table')
         self.dtype='table'
         return
 
