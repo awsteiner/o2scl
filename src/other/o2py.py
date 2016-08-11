@@ -29,6 +29,7 @@ import getopt, sys, h5py, math, os
 import matplotlib.pyplot as plot
 from matplotlib.colors import LinearSegmentedColormap
 
+def download_data_file(env_var,data_dir,subdir_orig,fname_orig,url):
 """
 This function attempts to find a file named 'fname_orig' in
 subdirectory 'subdir_orig' of the data directory 'data_dir'. If
@@ -40,8 +41,6 @@ unsuccessful) to download the file from 'url'. If this process was
 successful at finding or downloading the file, then the full filename
 is returned. Otherwise, an exception is thrown.
 """
-def download_data_file(env_var,data_dir,subdir_orig,fname_orig,url):
-
     # First obtain the data directory
     method=''
     if data_dir!='':
@@ -98,6 +97,10 @@ class hdf5_reader:
     search_type=''
 
     def hdf5_is_object_type(self,name,obj):
+        """
+        If object 'obj' named 'name' is of type 'search_type', then add
+        that name to 'list_of_dsets'
+        """
         # Convert search_type to a bytes object
         search_type_bytes=bytes(self.search_type,'utf-8')
         if isinstance(obj,h5py.Group):
@@ -108,6 +111,9 @@ class hdf5_reader:
         return
 
     def h5read_first_type(self,fname,loc_type):
+        """
+        Read the first object of type 'loc_type' from file named 'fname'
+        """
         del self.list_of_dsets[:]
         self.search_type=loc_type
         file=h5py.File(fname,'r')
@@ -117,23 +123,30 @@ class hdf5_reader:
             raise RuntimeError(str)
         return file[self.list_of_dsets[0]]
 
-
-list_of_dsets=[]
-search_type=''
-
-def hdf5_is_object_type(name,obj):
-    global search_type
-    global list_of_dsets
-    print('Herex',name,isinstance(obj,h5py.Group))
-    if isinstance(obj,h5py.Group):
-        if 'o2scl_type' in obj.keys():
-            print('Herey',search_type)
-            o2scl_type_dset=obj['o2scl_type']
-            if o2scl_type_dset.__getitem__(0) == search_type:
-                print('Herez',search_type)
-                print('Appending:',name)
-                list_of_dsets.append(name)
-    return
+    def h5read_name(self,fname,name):
+        """
+        Read object named 'name' from file named 'fname'
+        """
+        file=h5py.File(fname,'r')
+        obj=file[name]
+        o2scl_type_dset=obj['o2scl_type']
+        loc_type=o2scl_type_dset.__getitem__(0)
+        return (obj,loc_type)
+    
+    def h5read_type_named(self,fname,loc_type,name):
+        """
+        Read object of type 'loc_type' named 'name' from file named 'fname'
+        """
+        del self.list_of_dsets[:]
+        self.search_type=loc_type
+        file=h5py.File(fname,'r')
+        file.visititems(self.hdf5_is_object_type)
+        if name in self.list_of_dsets:
+            return file[name]
+        str='No object of type '+loc_type+' named '+name+' in file '+fname+'.'
+        raise RuntimeError(str)
+        return
+    
 
 # This is probably best replaced by get_str_array() below
 #
@@ -152,40 +165,10 @@ def hdf5_is_object_type(name,obj):
 #         clist.append(column)
 #     return clist
 
-def h5read_first_type(fname,loc_type):
-    global search_type
-    global list_of_dsets
-    del list_of_dsets[:]
-    search_type=loc_type
-    file=h5py.File(fname,'r')
-    print('Here')
-    file.visititems(hdf5_is_object_type)
-    print('Here2')
-    if len(list_of_dsets)==0:
-        str='Could not object of type '+loc_type+' in file '+fname+'.'
-        raise RuntimeError(str)
-    return file[list_of_dsets[0]]
-
-def h5read_name(fname,name):
-    file=h5py.File(fname,'r')
-    obj=file[name]
-    o2scl_type_dset=obj['o2scl_type']
-    loc_type=o2scl_type_dset.__getitem__(0)
-    return (obj,loc_type)
-
-def h5read_type_named(fname,loc_type,name):
-    del list_of_dsets[:]
-    global search_type
-    search_type=loc_type
-    file=h5py.File(fname,'r')
-    file.visititems(hdf5_is_object_type)
-    if name in list_of_dsets:
-        return file[name]
-    str='No object of type '+loc_type+' named '+name+' in file '+fname+'.'
-    raise RuntimeError(str)
-    return
-
 def default_plot(lmar=0.14,bmar=0.12,rmar=0.04,tmar=0.04):
+    """
+    My preferred plot defaults
+    """
     plot.rc('text',usetex=True)
     plot.rc('font',family='serif')
     plot.rcParams['lines.linewidth']=0.5
@@ -199,6 +182,9 @@ def default_plot(lmar=0.14,bmar=0.12,rmar=0.04,tmar=0.04):
     return (fig,ax)
     
 def get_str_array(dset):
+    """
+    Extract a string array from O2scl HDF5 dataset dset as a list
+    """
     nw=dset['nw'][0]
     nc=dset['nc'][0]
     data=dset['data']
@@ -233,8 +219,10 @@ def get_str_array(dset):
         word_counter=word_counter+1
     return list
     
-def parse_arguments(argv):
-    verbose=0
+def parse_arguments(argv,verbose=0):
+    """
+    Parse command
+    """
     list=[]
     unproc_list=[]
     if verbose>1:
@@ -570,14 +558,14 @@ class plotter:
     def read_type(self,filename,loc_type):
         if self.verbose>0:
             print('Reading file',filename,'for type',loc_type,'.')
-        self.dset=h5read_first_type(filename,loc_type)
+        self.dset=self.h5r.h5read_first_type(filename,loc_type)
         self.dtype=loc_type
         return
 
     def read_name(self,filename,name):
         if self.verbose>0:
             print('Reading file',filename,'for name',name,'.')
-        atuple=h5read_name(filename,name)
+        atuple=self.h5r.h5read_name(filename,name)
         self.dset=atuple[0]
         self.dtype=atuple[1]
         return
