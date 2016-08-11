@@ -36,6 +36,7 @@
 #include <o2scl/multi_funct.h>
 #include <o2scl/mmin.h>
 #include <o2scl/rng_gsl.h>
+#include <o2scl/prob_dens_func.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -115,7 +116,8 @@ namespace o2scl {
     rng_t rng;
 
     /// The random distribution object
-    std::uniform_real_distribution<> dist;
+    o2scl::prob_dens_uniform dist;
+    //std::uniform_real_distribution<> dist;
 
     /// Return string denoting type, \c "anneal_base".
     virtual const char *type() { return "anneal_base"; }
