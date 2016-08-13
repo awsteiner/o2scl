@@ -40,6 +40,9 @@ file is not found, then this function uses curl (or wget if curl was
 unsuccessful) to download the file from 'url'. If this process was
 successful at finding or downloading the file, then the full filename
 is returned. Otherwise, an exception is thrown.
+
+Warning: this function has several potential security issues 
+and should not be used without due care.
 """
     # First obtain the data directory
     method=''

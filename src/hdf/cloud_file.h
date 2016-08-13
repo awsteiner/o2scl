@@ -46,6 +46,9 @@ namespace o2scl_hdf {
       unix-like systems.
 
       \todo Convert to use boost::filesystem .
+
+      \warning This class has several potential security issues 
+      and should not be used without due care.
   */
   class cloud_file {
     
