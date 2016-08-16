@@ -40,7 +40,7 @@ EXAMPLE_PRGS = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 	ex_mmin_fix.scr ex_nucmass_fit.scr ex_eos_had_rmf.scr\
 	ex_stiff.scr ex_chebapp.scr ex_poly.scr ex_conmin.scr \
 	ex_nucleus_rmf.scr ex_methast.scr ex_eos_had_skyrme.scr \
-	ex_nucmass.scr ex_tensor.scr ex_mcmc.scr
+	ex_nucmass.scr ex_tensor.scr ex_mcmc.scr ex_nstar_rot.scr 
 
 # ex_ode_it.scr ex_gen_sn_eos.scr 
 
@@ -122,6 +122,7 @@ EXTRA_PROGRAMS = \
 	ex_interp2 \
 	ex_table \
 	ex_nstar_cold \
+	ex_nstar_rot \
 	ex_mroot \
 	ex_mmin \
 	ex_inte \
@@ -249,6 +250,11 @@ ex_nstar_cold_LDADD = $(OOLIBS) $(OOLIBSTWO)
 ex_nstar_cold_SOURCES = ex_nstar_cold.cpp
 ex_nstar_cold.scr: ex_nstar_cold
 	./ex_nstar_cold > ex_nstar_cold.scr
+
+ex_nstar_rot_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_nstar_rot_SOURCES = ex_nstar_rot.cpp
+ex_nstar_rot.scr: ex_nstar_rot
+	./ex_nstar_rot > ex_nstar_rot.scr
 
 ex_mroot_LDADD = $(OOLIBS) $(OOLIBSTWO)
 ex_mroot_SOURCES = ex_mroot.cpp

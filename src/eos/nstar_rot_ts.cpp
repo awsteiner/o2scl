@@ -199,49 +199,36 @@ int main(void) {
     nst.fix_cent_eden_axis_rat(ed_cent,0.7);
     t.test_rel(nst.r_ratio,0.7,1.0e-6,"correct ratio");
 
-    // The old method for finding the configuration rotating at the
-    // Keplerian frequency
-    nst.eq_radius_tol_rel=1.0e-5;
+    // Compare the original RNS solvers with the new alt()
+    // functions 
     nst.fix_cent_eden_with_kepler(ed_cent);
     t.test_rel(nst.Omega_K,nst.Omega,1.0e-4,"kepler 1");
 
-    // The new method for finding the configuration rotating at the
-    // Keplerian frequency. This appears to be faster and more
-    // accurate
-    nst.eq_radius_tol_rel=1.0e-7;
     nst.fix_cent_eden_with_kepler_alt(ed_cent);
     t.test_rel(nst.Omega_K,nst.Omega,1.0e-8,"kepler 2");
 
-    nst.eq_radius_tol_rel=1.0e-5;
     nst.fix_cent_eden_grav_mass(ed_cent,3.072e33/nst.MSUN);
     t.test_rel(3.072e33,nst.Mass,1.0e-4,"gmass 1");
     
-    nst.eq_radius_tol_rel=1.0e-9;
     nst.fix_cent_eden_grav_mass_alt(ed_cent,3.072e33/nst.MSUN);
     t.test_rel(3.072e33,nst.Mass,1.0e-9,"gmass 2");
     
-    nst.eq_radius_tol_rel=1.0e-5;
     nst.fix_cent_eden_bar_mass(ed_cent,3.373e33/nst.MSUN);
     t.test_rel(3.373e33,nst.Mass,1.0e-1,"bmass 1");
     
-    nst.eq_radius_tol_rel=1.0e-9;
     nst.fix_cent_eden_bar_mass_alt(ed_cent,3.373e33/nst.MSUN);
     t.test_rel(3.373e33,nst.Mass,1.0e-1,"bmass 2");
     
-    nst.eq_radius_tol_rel=1.0e-5;
     nst.fix_cent_eden_ang_vel(ed_cent,1.131e4);
     t.test_rel(1.131e4,nst.Omega,1.0e-4,"ang_vel 1");
     
-    nst.eq_radius_tol_rel=1.0e-9;
     nst.fix_cent_eden_ang_vel_alt(ed_cent,1.131e4);
     t.test_rel(1.131e4,nst.Omega,1.0e-9,"ang_vel 2");
-
+    
     double J0=nst.G*nst.MSUN*nst.MSUN/nst.C;
-    nst.eq_radius_tol_rel=1.0e-5;
     nst.fix_cent_eden_ang_mom(ed_cent,1.059e49/J0);
     t.test_rel(1.059e49,nst.J,1.0e-4,"ang_mom 1");
 
-    nst.eq_radius_tol_rel=1.0e-9;
     nst.fix_cent_eden_ang_mom_alt(ed_cent,1.059e49/J0);
     t.test_rel(1.059e49,nst.J,1.0e-8,"ang_mom 2");
   }

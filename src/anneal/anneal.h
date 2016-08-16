@@ -57,6 +57,10 @@ namespace o2scl {
 
       The number of iterations at each temperature is controlled by
       \ref o2scl::mmin_base::ntrial which defaults to 100.
+
+      \todo I'm having trouble with std::uniform_real_distribution
+      on clang at the moment, so this class uses 
+      \ref o2scl::prob_dens_uniform for the moment.
   */
   template<class func_t=multi_funct11,
     class vec_t=boost::numeric::ublas::vector<double>,

@@ -41,10 +41,14 @@ namespace o2scl {
       particles
       
       Virial EOS from \ref Horowitz06 and \ref Horowitz06b .
+
+      \note This class likely fails for temperatures 
+      smaller than 1 MeV and larger than 20 MeV.
       
-      \warning This class is implemented as a eos_had_base object
-      because it might be helpful to be able to use \ref
-      o2scl::eos_had_temp_base::calc_temp_e(), but because of the
+      \warning This class is implemented as a \ref
+      o2scl::eos_had_temp_pres_base object because it might be helpful
+      to be able to use \ref
+      o2scl::eos_had_temp_pres_base::calc_temp_e(), but because of the
       alpha particles and deuterons, some of the other \ref
       o2scl::eos_had_base methods don't have the correct
       interpretation.
@@ -53,7 +57,7 @@ namespace o2scl {
 
   protected:
 
-    /// \name Interpolation for virial coefficients
+    /// \name Interpolation objects for virial coefficients
     //@{
     std::vector<double> Tv, bnv, Tbnpv, bpnv, Tbpnpv;
     std::vector<double> banv, Tbanpv, bav, Tbapv;
@@ -82,9 +86,13 @@ namespace o2scl {
     }
 
     /** \name The virial coefficients and their temperature derivatives
-
-	These functions assume that the temperature is specified in MeV
-     */
+	
+	These functions assume that the temperature is specified in
+	MeV. Note that the temperature derivative functions are
+	multiplied by the temperature after taking the derivative to
+	make them unitless (as in \ref Horowitz06), thus all of
+	these functions return values without units. 
+    */
     //@{
     virtual double bn(double T);
     virtual double ban(double T);
@@ -98,6 +106,11 @@ namespace o2scl {
 
     /** \brief Equation of state as a function of the chemical potentials
 	at finite temperature
+
+	As in \ref o2scl::eos_had_temp_base::calc_temp_p() the
+	temperature argument should be in \f$ \mathrm{fm}^{-1} \f$,
+	even though the virial coefficient functions take their
+	temperature arguments in MeV.
     */
     virtual int calc_temp_p(fermion &n, fermion &p, double T, 
 			    thermo &th);
@@ -108,8 +121,8 @@ namespace o2scl {
     */
     virtual int calc_temp_p_alpha(fermion &n, fermion &p, boson &d, boson &a, 
 				  double T, thermo &th);
-
-    /// Desc
+    
+    /// Fit the virial coefficients to analytical functions
     void fit();
     
   };

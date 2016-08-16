@@ -98,6 +98,9 @@ namespace o2scl {
   };
   
   /** \brief Create a tabulated EOS for \ref nstar_rot using interpolation
+
+      \todo There is a fixme entry in nstar_rot.h to explain an
+      undocumented value of 3.0
    */
   class eos_nstar_rot_interp : public eos_nstar_rot {
     
@@ -298,6 +301,7 @@ namespace o2scl {
 	}
 	log_n0_tab[i+1]=log10(nst_arr[i][2]);
       }
+      // FIXME: what is this value of 3.0 here?
       log_h_tab[1]=log_h_tab[2]-3.0;
 
       for(size_t i=0;i<n;i++) {
@@ -402,16 +406,18 @@ namespace o2scl {
       and \ref Stergioulas03 .
 
       \todo Better documentation is needed everywhere.
+      \todo Test the resize() function
 
       \future Rework EOS interface and implement better 
       integration with the other \o2e EOSs. 
-      \future Fix unit-indexed arrays.
+      \future Remove the unit-indexed arrays.
       \future Try moving some of the storage to the heap?
       \future Some of the arrays seem larger than necessary.
       \future The function \ref o2scl::nstar_rot::new_search() is
       inefficient because it has to handle the boundary conditions
       separately. This could be improved.
-      \future Give the user more control over the initial guess.
+      \future Make the solvers more robust. The ang_vel() and ang_vel_alt()
+      functions appear particularly unstable.
 
       <b>Draft documentation</b> 
 
@@ -520,14 +526,22 @@ namespace o2scl {
     /// Resize the grid
     void resize(int MDIV_new, int SDIV_new, int LMAX_new,
 		int RDIV_new);
+    
+    /** \brief Default solver
+     */
+    o2scl::mroot_hybrids<> def_mroot;
 
-    /** \brief Solver
-
-	\note Temporarily public
-    */
-    o2scl::mroot_hybrids<> mh;
+    /** \brief Set new solver
+     */
+    int set_solver(o2scl::mroot<> &m) {
+      mrootp=&m;
+      return 0;
+    }
     
   protected:
+
+    /// Solver
+    o2scl::mroot<> *mrootp;
 
     /// Solve for the Keplerian velocity
     int solve_kepler(size_t nv, const ubvector &x, ubvector &y);
@@ -998,7 +1012,7 @@ namespace o2scl {
 
     /** \brief Main iteration function
      */
-    int iterate(double r_ratio);
+    int iterate(double r_ratio, double tol_rel);
 
     /// \name EOS member variables
     //@{ 
@@ -1021,6 +1035,8 @@ namespace o2scl {
     
   public:
 
+    nstar_rot();
+
     /** \brief Relative accuracy for the equatorial radius,
 	\f$ r_e \f$ (default \f$ 10^{-5} \f$) 
 
@@ -1028,7 +1044,10 @@ namespace o2scl {
     */
     double eq_radius_tol_rel;                    
 
-    nstar_rot();
+    /** \brief Accuracy for equatorial radius using alternate
+	solvers (default \f$ 10^{-9} \f$) 
+     */
+    double alt_tol_rel;                    
 
     /** \brief Verbosity parameter
      */

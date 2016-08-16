@@ -456,7 +456,8 @@ nstar_rot::nstar_rot() {
 
   // set program defaults
   cf=1.0;
-  eq_radius_tol_rel=1.0e-5;    
+  eq_radius_tol_rel=1.0e-5;
+  alt_tol_rel=1.0e-9;
   tol_abs=1.0e-4;   
  
   scaled_polytrope=false;
@@ -474,6 +475,7 @@ nstar_rot::nstar_rot() {
   */
   comp_f_P();
 
+  mrootp=&def_mroot;
 }
 
 void nstar_rot::constants_rns() {
@@ -1649,8 +1651,10 @@ void nstar_rot::comp() {
     } else {
       sqrt_v=0.0;
       if (s_gp[s]>=s_e) {
-	string str=((string)"Velocity imaginary at ")+
-	  std::to_string(s)+" "+std::to_string(s_gp[s])+" " +
+	cout << rho(s,1) << " " << d_omega_s << " " << d_rho_s << " "
+	     << d_gamma_s << " " << r_e << " " << s1 << endl;
+	string str=((string)"Velocity imaginary at s=")+
+	  std::to_string(s)+", s_gp[s]="+std::to_string(s_gp[s])+", s_e="+
 	  std::to_string(s_e)+" .";
 	O2SCL_ERR(str.c_str(),o2scl::exc_efailed);
       }
@@ -2556,7 +2560,7 @@ void nstar_rot::spherical_star() {
   return;
 }
 
-int nstar_rot::iterate(double r_ratio_loc) {
+int nstar_rot::iterate(double r_ratio_loc, double tol_rel) {
 
   int s_temp;
   if (SMAX==1.0) {
@@ -2581,14 +2585,9 @@ int nstar_rot::iterate(double r_ratio_loc) {
 
   int n_of_it=0;
   // Difference | r_e_old -r_e |
-  double r_e_diff=1.0;             
+  double r_e_diff=1.0;
 
-  while (r_e_diff>eq_radius_tol_rel || n_of_it<2) { 
-
-    if (verbose>1) {
-      cout << "r_e_diff, n_of_it, eq_radius_tol_rel: "
-	   << r_e_diff << " " << n_of_it << " " << eq_radius_tol_rel << endl;
-    }
+  while (r_e_diff>tol_rel || n_of_it<2) { 
 
     /* Rescale potentials and construct arrays with the potentials
        along the equatorial and polar directions.
@@ -2905,6 +2904,12 @@ int nstar_rot::iterate(double r_ratio_loc) {
       return 1;
     }
 
+    // AWS, 8/15/16: A new test I found useful in helping diagnose
+    // convergence difficulties
+    if (!std::isfinite(rho(2,1))) {
+      return 2;
+    }
+
     // Treat spherical case
 
     if (r_ratio_loc==1.0) {
@@ -3017,7 +3022,7 @@ int nstar_rot::iterate(double r_ratio_loc) {
 
 	alpha(s,m)+=-alpha(s,MDIV)+0.5*(gamma(s,MDIV)-rho(s,MDIV));
 	if (alpha(s,m)>=300.0) {
-	  return 2;
+	  return 3;
 	}
 	
 	omega(s,m)/=r_e;
@@ -3033,8 +3038,21 @@ int nstar_rot::iterate(double r_ratio_loc) {
     r_e_diff=fabs(r_e_old-r_e)/r_e;
     n_of_it++;
 
+    // AWS, 8/15/16: A new test I found useful in helping diagnose
+    // convergence difficulties
+    if (!std::isfinite(r_e_diff)) {
+      return 4;
+    }
+
+    if (verbose>1) {
+      cout << "r_e_diff, n_of_it, tol_rel: "
+	   << r_e_diff << " " << n_of_it << " " << tol_rel << endl;
+    }
+
     // end of while (r_e_diff<eq_radius_tol_rel || n_of_it<2)
-  }   
+  }
+
+  // AWS: Copy guess for next iteration
 
   for(int s=1;s<=SDIV;s++) {
     for(int m=1;m<=MDIV;m++) {
@@ -3099,15 +3117,15 @@ int nstar_rot::fix_cent_eden_axis_rat(double cent_eden, double axis_rat,
     spherical_star();
     
     if (r_ratio<0.8) {
-      iterate(0.8);
+      iterate(0.8,eq_radius_tol_rel);
     }
     
     if (r_ratio<0.6) {
-      iterate(0.6);
+      iterate(0.6,eq_radius_tol_rel);
     }
   }
   
-  iterate(r_ratio);
+  iterate(r_ratio,eq_radius_tol_rel);
   comp();
 
   return 0;
@@ -3203,7 +3221,7 @@ int nstar_rot::solve_kepler(size_t nv, const ubvector &x,
   if (r_ratio>1.0 || r_ratio<0.1) {
     return 3;
   }
-  int ret=iterate(r_ratio);
+  int ret=iterate(r_ratio,alt_tol_rel);
   if (ret!=0) return ret;
   comp_omega();
   y[0]=(Omega-Omega_K)/fabs(Omega);
@@ -3216,7 +3234,7 @@ int nstar_rot::solve_grav_mass(size_t nv, const ubvector &x,
   if (r_ratio>1.0 || r_ratio<0.1) {
     return 3;
   }
-  int ret=iterate(r_ratio);
+  int ret=iterate(r_ratio,alt_tol_rel);
   if (ret!=0) return ret;
   comp_M_J();
   y[0]=(Mass-grav_mass)/grav_mass;
@@ -3229,7 +3247,7 @@ int nstar_rot::solve_bar_mass(size_t nv, const ubvector &x,
   if (r_ratio>1.0 || r_ratio<0.1) {
     return 3;
   }
-  int ret=iterate(r_ratio);
+  int ret=iterate(r_ratio,alt_tol_rel);
   if (ret!=0) return ret;
   comp_M_J();
   y[0]=(Mass_0-bar_mass)/bar_mass;
@@ -3242,7 +3260,7 @@ int nstar_rot::solve_ang_vel(size_t nv, const ubvector &x,
   if (r_ratio>1.0 || r_ratio<0.1) {
     return 3;
   }
-  int ret=iterate(r_ratio);
+  int ret=iterate(r_ratio,alt_tol_rel);
   if (ret!=0) return ret;
   comp_omega();
   y[0]=(Omega-ang_vel)/ang_vel;
@@ -3255,7 +3273,7 @@ int nstar_rot::solve_ang_mom(size_t nv, const ubvector &x,
   if (r_ratio>1.0 || r_ratio<0.1) {
     return 3;
   }
-  int ret=iterate(r_ratio);
+  int ret=iterate(r_ratio,alt_tol_rel);
   if (ret!=0) return ret;
   comp_M_J();
   y[0]=(J-ang_mom)/ang_mom;
@@ -3270,15 +3288,13 @@ int nstar_rot::fix_cent_eden_with_kepler_alt(double cent_eden,
 	       "nstar_rot::fix_cent_eden_with_kepler_alt().",exc_einval);
   }
 
-  double e_min=cent_eden;
-
   if (scaled_polytrope==false) {
     // set default values for star with tabulated eos
     e_surface=7.8*C*C*KSCALE;
     p_surface=1.01e8*KSCALE;
     enthalpy_min=1.0/(C*C);
     r_ratio=0.75;
-    e_min*=C*C*KSCALE;
+    cent_eden*=C*C*KSCALE;
   } else {
     // set default values for polytropic star 
     e_surface=0.0;
@@ -3288,10 +3304,10 @@ int nstar_rot::fix_cent_eden_with_kepler_alt(double cent_eden,
     Gamma_P=1.0+1.0/n_P;
   }
 
-  e_center=e_min;
+  e_center=cent_eden;
+  make_center(e_center);
   
   if (use_guess==false) {
-    make_center(e_center);
     spherical_star();
     r_ratio=0.75;
   }
@@ -3303,7 +3319,7 @@ int nstar_rot::fix_cent_eden_with_kepler_alt(double cent_eden,
      (&nstar_rot::solve_kepler),this,std::placeholders::_1,
      std::placeholders::_2,std::placeholders::_3);
 
-  mh.msolve(1,x,nf);
+  mrootp->msolve(1,x,nf);
 
   comp();
   
@@ -3371,7 +3387,7 @@ int nstar_rot::fix_cent_eden_with_kepler(double cent_eden) {
       dr/=(-2.0);              
     } 
     r_ratio -= dr; 
-    int ret=iterate(r_ratio);
+    int ret=iterate(r_ratio,eq_radius_tol_rel);
 
     if (ret!=0) {
       d_Omega=-1.0;
@@ -3431,7 +3447,7 @@ int nstar_rot::fix_cent_eden_non_rot(double cent_eden) {
   e_center=e_min;
   make_center(e_center);
   spherical_star();
-  iterate(r_ratio);
+  iterate(r_ratio,eq_radius_tol_rel);
   comp();
   
   return 0;
@@ -3465,9 +3481,9 @@ int nstar_rot::fix_cent_eden_grav_mass_alt(double cent_eden,
   }
 
   e_center=e_min;
+  make_center(e_center);
 
   if (use_guess==false) {
-    make_center(e_center);
     spherical_star();
     r_ratio=0.75;
   }
@@ -3479,7 +3495,7 @@ int nstar_rot::fix_cent_eden_grav_mass_alt(double cent_eden,
      (&nstar_rot::solve_grav_mass),this,std::placeholders::_1,
      std::placeholders::_2,std::placeholders::_3,grav_mass*MSUN);
 
-  mh.msolve(1,x,nf);
+  mrootp->msolve(1,x,nf);
 
   comp();
   
@@ -3540,7 +3556,7 @@ int nstar_rot::fix_cent_eden_grav_mass(double cent_eden, double grav_mass) {
 
     make_center(e_center);
     spherical_star();
-    int ret=iterate(r_ratio);
+    int ret=iterate(r_ratio,eq_radius_tol_rel);
     double sign;
     if (ret!=0) {
       diff_M=-1.0;
@@ -3566,7 +3582,7 @@ int nstar_rot::fix_cent_eden_grav_mass(double cent_eden, double grav_mass) {
 	dr/=(-2.0);
       }
       r_ratio -= dr;
-      int ret=iterate(r_ratio);
+      int ret=iterate(r_ratio,eq_radius_tol_rel);
       if (ret!=0) {
 	diff_M=-1.0;
       } else { 
@@ -3612,9 +3628,9 @@ int nstar_rot::fix_cent_eden_bar_mass_alt(double cent_eden,
   }
 
   e_center=e_min;
+  make_center(e_center);
 
   if (use_guess==false) {
-    make_center(e_center);
     spherical_star();             
     r_ratio=0.75;
   }
@@ -3626,7 +3642,7 @@ int nstar_rot::fix_cent_eden_bar_mass_alt(double cent_eden,
      (&nstar_rot::solve_bar_mass),this,std::placeholders::_1,
      std::placeholders::_2,std::placeholders::_3,bar_mass*MSUN);
 
-  mh.msolve(1,x,nf);
+  mrootp->msolve(1,x,nf);
 
   comp();
   
@@ -3688,7 +3704,7 @@ int nstar_rot::fix_cent_eden_bar_mass(double cent_eden, double bar_mass) {
 
     make_center(e_center);
     spherical_star();
-    int ret=iterate(r_ratio);
+    int ret=iterate(r_ratio,eq_radius_tol_rel);
     double sign;
     if (ret!=0) {
       diff_M_0=-1.0;
@@ -3715,7 +3731,7 @@ int nstar_rot::fix_cent_eden_bar_mass(double cent_eden, double bar_mass) {
 	dr/=(-2.0);
       }
       r_ratio -= dr;
-      int ret=iterate(r_ratio);
+      int ret=iterate(r_ratio,eq_radius_tol_rel);
       if (ret!=0) {
 	diff_M_0=-1.0;
       } else { 
@@ -3762,9 +3778,9 @@ int nstar_rot::fix_cent_eden_ang_vel_alt(double cent_eden,
   }
 
   e_center=e_min;
+  make_center(e_center);
 
-  if (use_guess) {
-    make_center(e_center);
+  if (use_guess==false) {
     spherical_star();             
     r_ratio=0.75;
   }
@@ -3776,7 +3792,7 @@ int nstar_rot::fix_cent_eden_ang_vel_alt(double cent_eden,
      (&nstar_rot::solve_ang_vel),this,std::placeholders::_1,
      std::placeholders::_2,std::placeholders::_3,ang_vel);
 
-  mh.msolve(1,x,nf);
+  mrootp->msolve(1,x,nf);
 
   comp();
   
@@ -3836,7 +3852,7 @@ int nstar_rot::fix_cent_eden_ang_vel(double cent_eden, double ang_vel) {
 
     make_center(e_center);
     spherical_star();
-    int ret=iterate(r_ratio);
+    int ret=iterate(r_ratio,eq_radius_tol_rel);
 
     double sign;
     if (ret!=0) {
@@ -3864,7 +3880,7 @@ int nstar_rot::fix_cent_eden_ang_vel(double cent_eden, double ang_vel) {
       }
       r_ratio -= dr;
 
-      int ret=iterate(r_ratio);
+      int ret=iterate(r_ratio,eq_radius_tol_rel);
 
       if (ret!=0) {
 	diff_Omega=-1.0;
@@ -3912,9 +3928,9 @@ int nstar_rot::fix_cent_eden_ang_mom_alt(double cent_eden,
   }
 
   e_center=e_min;
-
+  make_center(e_center);
+  
   if (use_guess==false) {
-    make_center(e_center);
     spherical_star();             
     r_ratio=0.75;
   }
@@ -3927,7 +3943,7 @@ int nstar_rot::fix_cent_eden_ang_mom_alt(double cent_eden,
      (&nstar_rot::solve_ang_mom),this,std::placeholders::_1,
      std::placeholders::_2,std::placeholders::_3,ang_mom*J0);
 
-  mh.msolve(1,x,nf);
+  mrootp->msolve(1,x,nf);
 
   comp();
   
@@ -3988,7 +4004,7 @@ int nstar_rot::fix_cent_eden_ang_mom(double cent_eden, double ang_mom) {
 
     make_center(e_center);
     spherical_star();
-    int ret=iterate(r_ratio);
+    int ret=iterate(r_ratio,eq_radius_tol_rel);
     double sign;
     if (ret!=0) {
       diff_J=-1.0;
@@ -4017,7 +4033,7 @@ int nstar_rot::fix_cent_eden_ang_mom(double cent_eden, double ang_mom) {
 	dr/=(-2.0);
       }
       r_ratio -= dr;
-      int ret=iterate(r_ratio);
+      int ret=iterate(r_ratio,eq_radius_tol_rel);
       if (ret!=0) {
 	diff_J=-1.0;
       } else { 

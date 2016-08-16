@@ -21,7 +21,7 @@
   -------------------------------------------------------------------
 */
 /** \file cloud_file.h
-    \brief File for definition of \ref o2scl::cloud_file
+    \brief File for definition of \ref o2scl_hdf::cloud_file
 */
 #ifndef O2SCL_CLOUD_FILE_H
 #define O2SCL_CLOUD_FILE_H
@@ -60,9 +60,6 @@ namespace o2scl_hdf {
     /** \brief If true, allow the use of \c curl to download the file
      */
     bool allow_curl;
-    /** \brief (currently unused)
-     */
-    bool force_subdir;
     /** \brief Verbosity parameter
      */
     int verbose;
@@ -104,7 +101,6 @@ namespace o2scl_hdf {
   cloud_file::cloud_file() {
     allow_wget=true;
     allow_curl=true;
-    force_subdir=true;
     verbose=1;
     throw_on_fail=true;
     env_var="";
@@ -175,49 +171,54 @@ namespace o2scl_hdf {
       std::cout << "Directory " << dir << " found." << std::endl;
     }
 
-    // Now look for subdirectory
-    std::string full_dir=dir+"/"+subdir;
-    if (verbose>1) {
-      std::cout << "Set full_dir to: " << full_dir << std::endl;
-    }
-    bool full_dir_present=false;
-    sret=stat(full_dir.c_str(),&sb);
-    if (sret==0) {
-      full_dir_present=S_ISDIR(sb.st_mode);
-    }
-      
-    if (full_dir.length()==0 || sret!=0 || full_dir_present==false) {
-      // If not found, try to make it with 'mkdir'
-      std::string cmd=((std::string)"mkdir -p ")+full_dir;
-      if (verbose>0) {
-	std::cout << "Directory did not exist. Trying mkdir with "
-		  << "command:\n\t" << cmd << std::endl;
+    // The full local directory and subdirectory
+    std::string full_dir=dir;
+
+    if (subdir.length()>0) {
+      // Subdirectory was specified, so look for it on the filesystem
+      std::string full_dir=dir+"/"+subdir;
+      if (verbose>1) {
+	std::cout << "Set full_dir to: " << full_dir << std::endl;
       }
-      int ret=system(cmd.c_str());
-      if (ret!=0) {
-	if (throw_on_fail) {
-	  O2SCL_ERR("Failed to create directory.",o2scl::exc_efilenotfound);
-	} else {
-	  return o2scl::exc_efilenotfound;
-	}
-      }
-      // Check again
-      full_dir_present=false;
+      bool full_dir_present=false;
       sret=stat(full_dir.c_str(),&sb);
       if (sret==0) {
 	full_dir_present=S_ISDIR(sb.st_mode);
       }
-      // If that failed, then give up
+      
       if (full_dir.length()==0 || sret!=0 || full_dir_present==false) {
-	if (throw_on_fail) {
-	  O2SCL_ERR("Could not create full directory.",
-		    o2scl::exc_efilenotfound);
-	} else {
-	  return o2scl::exc_efilenotfound;
+	// If not found, try to make it with 'mkdir'
+	std::string cmd=((std::string)"mkdir -p ")+full_dir;
+	if (verbose>0) {
+	  std::cout << "Directory did not exist. Trying mkdir with "
+		    << "command:\n\t" << cmd << std::endl;
 	}
+	int ret=system(cmd.c_str());
+	if (ret!=0) {
+	  if (throw_on_fail) {
+	    O2SCL_ERR("Failed to create directory.",o2scl::exc_efilenotfound);
+	  } else {
+	    return o2scl::exc_efilenotfound;
+	  }
+	}
+	// Check again
+	full_dir_present=false;
+	sret=stat(full_dir.c_str(),&sb);
+	if (sret==0) {
+	  full_dir_present=S_ISDIR(sb.st_mode);
+	}
+	// If that failed, then give up
+	if (full_dir.length()==0 || sret!=0 || full_dir_present==false) {
+	  if (throw_on_fail) {
+	    O2SCL_ERR("Could not create full directory.",
+		      o2scl::exc_efilenotfound);
+	  } else {
+	    return o2scl::exc_efilenotfound;
+	  }
+	}
+      } else if (verbose>1) {
+	std::cout << "Full directory " << full_dir << " found." << std::endl;
       }
-    } else if (verbose>1) {
-      std::cout << "Full directory " << full_dir << " found." << std::endl;
     }
 
     // Now look for the full data file

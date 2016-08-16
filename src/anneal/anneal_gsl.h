@@ -225,7 +225,7 @@ namespace o2scl {
 	  E=new_E;
 	  nmoves++;
 	} else {
-	  double r=this->dist(this->rng);
+	  double r=this->dist();
 	  if (r < exp(-(new_E-E)/(boltz*T))) {
 	    for(j=0;j<nvar;j++) x[j]=new_x[j];
 	    E=new_E;
@@ -386,7 +386,7 @@ namespace o2scl {
   virtual int step(vec_t &sx, int nvar) {
     size_t nstep=step_vec.size();
     for(int i=0;i<nvar;i++) {
-      double u=this->dist(this->rng);
+      double u=this->dist();
 
       // Construct the step in the ith direction
       double step_i=step_norm*step_vec[i%nstep];
