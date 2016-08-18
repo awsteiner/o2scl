@@ -99,8 +99,10 @@ namespace o2scl {
   
   /** \brief Create a tabulated EOS for \ref nstar_rot using interpolation
 
-      \todo There is a fixme entry in nstar_rot.h to explain an
-      undocumented value of 3.0
+      \todo Document what the \ref nstar_rot code requirements are
+      for the low-density part of the EOS.
+
+      \future Replace arrays with vectors
    */
   class eos_nstar_rot_interp : public eos_nstar_rot {
     
@@ -154,7 +156,7 @@ namespace o2scl {
   public:
     
     eos_nstar_rot_interp();
-    
+
     /** \brief Set the EOS from four vectors in the native unit system
      */
     template<class vec1_t, class vec2_t, class vec3_t, class vec4_t>
@@ -301,8 +303,10 @@ namespace o2scl {
 	}
 	log_n0_tab[i+1]=log10(nst_arr[i][2]);
       }
-      // FIXME: what is this value of 3.0 here?
-      log_h_tab[1]=log_h_tab[2]-3.0;
+      // This shift of 8.0 approximately reproduces the results
+      // implied by the internal RNS EOSs. It is not clear how
+      // sensitive the code is to the low-density part of the EOS
+      log_h_tab[1]=log_h_tab[2]-8.0;
 
       for(size_t i=0;i<n;i++) {
 	log_e_tab[i+n_crust+1]=log10(eden[i]*conv1*C*C*KSCALE);
@@ -360,6 +364,23 @@ namespace o2scl {
 	If \ref baryon_column is false, then \c nb is unmodified.
     */
     virtual void ed_nb_from_pr(double pr, double &ed, double &nb);
+
+    /** \brief Output EOS table to screen
+
+	\comment 
+	This is mostly for testing and should be replaced once
+	the arrays are properly replaced with vectors
+	\endcomment
+     */
+    void output() {
+      for(int i=n_tab;i>=1;i--) {
+	std::cout << log_e_tab[i] << " " << log_p_tab[i] << " "
+		  << log_h_tab[i] << " " << log_n0_tab[i] << std::endl;
+      }
+      std::cout << std::endl;
+      return;
+    }
+    
   };
   
   /** \brief Tabulated EOS for \ref nstar_rot from \ref Bethe74
@@ -408,6 +429,7 @@ namespace o2scl {
       \todo Better documentation is needed everywhere.
       \todo Test the resize() function
 
+      \future Make a GSL-like set() function
       \future Rework EOS interface and implement better 
       integration with the other \o2e EOSs. 
       \future Remove the unit-indexed arrays.

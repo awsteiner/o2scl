@@ -365,7 +365,7 @@ eos_nstar_rot_L::eos_nstar_rot_L(bool rns_constants) {
     log_n0_tab[i]=log10(n0);
 
   }
-  
+
 }
 
 nstar_rot::nstar_rot() {
@@ -3258,11 +3258,18 @@ int nstar_rot::solve_ang_vel(size_t nv, const ubvector &x,
 			       ubvector &y, double ang_vel) {
   r_ratio=x[0];
   if (r_ratio>1.0 || r_ratio<0.1) {
+    if (verbose>0) {
+      cout << "solve_ang_vel: " << r_ratio << endl;
+    }
     return 3;
   }
   int ret=iterate(r_ratio,alt_tol_rel);
   if (ret!=0) return ret;
   comp_omega();
+  if (verbose>0) {
+    cout << "solve_ang_vel: " << r_ratio << " " << Omega << " "
+	 << ang_vel << endl;
+  }
   y[0]=(Omega-ang_vel)/ang_vel;
   return 0;
 }

@@ -138,10 +138,17 @@ namespace o2scl {
 	ret=test_abs(result,expected,rel_error,description);
 	return ret;
       } else {
-	ret=((fabs(expected-result))/fabs(expected)<rel_error);	
-	description=dtos(result)+" vs. "+dtos(expected)+
-          " is "+dtos(fabs(expected-result)/fabs(expected))+
-    	  " > "+dtos(rel_error)+"\n "+description;
+	double obs_err=fabs(expected-result)/fabs(expected);
+	ret=(obs_err<rel_error);
+	if (ret) {
+	  description=dtos(result)+" vs. "+dtos(expected)+
+	    " : "+dtos(obs_err)+
+	    " < "+dtos(rel_error)+"\n "+description;
+	} else {
+	  description=dtos(result)+" vs. "+dtos(expected)+
+	    " : "+dtos(obs_err)+
+	    " > "+dtos(rel_error)+"\n "+description;
+	}
       }
       
       process_test(ret,"relative",description);
@@ -165,9 +172,15 @@ namespace o2scl {
 	  "\n "+description;
       } else {
 	ret=(fabs(expected-result)<abs_error);
-	description=dtos(result)+" vs. "+ dtos(expected)+" is "
-	  +dtos(fabs(expected-result))+" > "+dtos(abs_error)+
-	  "\n "+description;
+	if (ret) {
+	  description=dtos(result)+" vs. "+ dtos(expected)+" : "
+	    +dtos(fabs(expected-result))+" < "+dtos(abs_error)+
+	    "\n "+description;
+	} else {
+	  description=dtos(result)+" vs. "+ dtos(expected)+" : "
+	    +dtos(fabs(expected-result))+" > "+dtos(abs_error)+
+	    "\n "+description;
+	}
       }
   
       process_test(ret,"absolute",description);
