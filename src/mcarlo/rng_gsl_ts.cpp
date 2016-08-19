@@ -50,33 +50,34 @@ int main(void) {
     AWS 8/19/16: Unfortunately this doesn't work with clang at the
     moment so I have removed it.
   */
-  if (false) {
-    cout << dist(nr) << endl;
-    cout << dist(nr) << endl;
-    
-    double a1=nr.random();
-    double a2=nr.random();
-    
-    rng_gsl nr2(10);
-    
-    nr2.random();
-    nr2.random();
-    
-    // Test to make sure that given the same seed, we 
-    // come up with the same numbers.
-    t.test_rel(a1,nr2.random(),1.0e-14,"First random number.");
-    t.test_rel(a2,nr2.random(),1.0e-14,"Second random number.");
 
-    rng_gsl nr3=nr;
+#ifdef O2SCL_NEVER_DEFINED
+  cout << dist(nr) << endl;
+  cout << dist(nr) << endl;
     
-    t.test_rel(nr3.random(),nr.random(),1.0e-14,"Copy constructor.");
+  double a1=nr.random();
+  double a2=nr.random();
     
-    cout << "Random integers [0,10): " << flush;
-    for(int i=0;i<10;i++) {
-      cout << nr2.random_int(10) << " " << flush;
-    }
-    cout << endl;
+  rng_gsl nr2(10);
+    
+  nr2.random();
+  nr2.random();
+    
+  // Test to make sure that given the same seed, we 
+  // come up with the same numbers.
+  t.test_rel(a1,nr2.random(),1.0e-14,"First random number.");
+  t.test_rel(a2,nr2.random(),1.0e-14,"Second random number.");
+
+  rng_gsl nr3=nr;
+    
+  t.test_rel(nr3.random(),nr.random(),1.0e-14,"Copy constructor.");
+    
+  cout << "Random integers [0,10): " << flush;
+  for(int i=0;i<10;i++) {
+    cout << nr2.random_int(10) << " " << flush;
   }
+  cout << endl;
+#endif
 
   t.report();
   return 0;
