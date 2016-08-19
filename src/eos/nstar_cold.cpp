@@ -299,8 +299,9 @@ void nstar_cold::calc_eos(double np_0) {
   }
 
   if (verbose>0) {
-    cout << "acausal: " << acausal << " " << acausal_ed << " "
-	 << acausal_pr << endl;
+    cout << "The EOS is acausal at nb=" << acausal << ", ed="
+	 << acausal_ed << ", pr="
+	 << acausal_pr << " ." << endl;
   }
     
   // Naively fix the equation of state so that it is not acausal
@@ -336,7 +337,7 @@ void nstar_cold::calc_eos(double np_0) {
   }
 
   if (verbose>0) {
-    cout << "Going to adiabatic index: " << endl;
+    cout << "Computing adiabatic index: " << endl;
   }
   
   if (well_formed) {
@@ -363,11 +364,10 @@ void nstar_cold::calc_eos(double np_0) {
   deny_urca=0.0;
   allow_urca=0.0;
   for(size_t i=0;i<eost->get_nlines()-1;i++) {
-    if (deny_urca<0.001 && eost->get("urca",i)>0.0 && 
+    if (deny_urca<0.0001 && eost->get("urca",i)>0.0 && 
 	eost->get("urca",i+1)<0.0) {
       deny_urca=eost->get("nb",i);
-    } else if (allow_urca<0.001 && eost->get("urca",i)<0.0 &&
-	       eost->get("urca",i+1)>0.0) {
+    } else if (allow_urca<0.0001 && eost->get("urca",i)>0.0) {
       /// Use linear interpolation to improve the urca estimate
       allow_urca=eost->get("nb",i)+
 	(-eost->get("urca",i))*(eost->get("nb",i+1)-eost->get("nb",i))/
