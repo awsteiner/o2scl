@@ -477,26 +477,26 @@ namespace o2scl {
 
       // ---------------------------------------------------
       // Compute next weight
-
-      int iret;
-      if (switch_arr[curr_walker]==false) {
-	iret=func(nparams,next,w_next,data_arr[curr_walker+n_walk]);
-      } else {
-	iret=func(nparams,next,w_next,data_arr[curr_walker]);
+      
+      int iret=o2scl::success;
+      // If the next point out of bounds, ensure that the point is rejected
+      for(size_t k=0;k<nparams;k++) {
+	if (next[k]<=low[k] || next[k]>=high[k]) iret=mcmc_skip;
       }
-      if (iret!=mcmc_done) {
-	// If it's out of bounds, ensure that the point is rejected
-	for(size_t k=0;k<nparams;k++) {
-	  if (next[k]<=low[k] || next[k]>=high[k]) iret=mcmc_skip;
+      if (iret!=mcmc_skip) {
+	if (switch_arr[curr_walker]==false) {
+	  iret=func(nparams,next,w_next,data_arr[curr_walker+n_walk]);
+	} else {
+	  iret=func(nparams,next,w_next,data_arr[curr_walker]);
 	}
-	if (iret==o2scl::success && w_best>w_next) {
-	  best=next;
-	  w_best=w_next;
-	  if (switch_arr[curr_walker]==false) {
-	    best_point(best,w_best,data_arr[curr_walker+n_walk]);
-	  } else {
-	    best_point(best,w_best,data_arr[curr_walker]);
-	  }
+      }
+      if (iret==o2scl::success && w_best>w_next) {
+	best=next;
+	w_best=w_next;
+	if (switch_arr[curr_walker]==false) {
+	  best_point(best,w_best,data_arr[curr_walker+n_walk]);
+	} else {
+	  best_point(best,w_best,data_arr[curr_walker]);
 	}
       }
       
