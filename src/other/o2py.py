@@ -30,20 +30,22 @@ import matplotlib.pyplot as plot
 from matplotlib.colors import LinearSegmentedColormap
 
 def download_data_file(env_var,data_dir,subdir_orig,fname_orig,url):
-"""
-This function attempts to find a file named 'fname_orig' in
-subdirectory 'subdir_orig' of the data directory 'data_dir'. If
-'data_dir' is empty, it attempts to set it equal to the value of the
-environment variable 'env_var'. If that environment variable is not
-present, the user is prompted for the correct data directory. If the
-file is not found, then this function uses curl (or wget if curl was
-unsuccessful) to download the file from 'url'. If this process was
-successful at finding or downloading the file, then the full filename
-is returned. Otherwise, an exception is thrown.
+    """
+    This function attempts to find a file named 'fname_orig' in
+    subdirectory 'subdir_orig' of the data directory 'data_dir'. If
+    'data_dir' is empty, it attempts to set it equal to the value of
+    the environment variable 'env_var'. If that environment variable
+    is not present, the user is prompted for the correct data
+    directory. If the file is not found, then this function uses curl
+    (or wget if curl was unsuccessful) to download the file from
+    'url'. If this process was successful at finding or downloading
+    the file, then the full filename is returned. Otherwise, an
+    exception is thrown.
+    
+    Warning: this function has several potential security issues 
+    and should not be used without due care.
 
-Warning: this function has several potential security issues 
-and should not be used without due care.
-"""
+    """
     # First obtain the data directory
     method=''
     if data_dir!='':
@@ -170,7 +172,7 @@ class hdf5_reader:
 
 def default_plot(lmar=0.14,bmar=0.12,rmar=0.04,tmar=0.04):
     """
-    My preferred plot defaults
+    Common plot defaults
     """
     plot.rc('text',usetex=True)
     plot.rc('font',family='serif')
@@ -384,7 +386,7 @@ class plotter:
         return
 
     def plot(self,colx,coly,**kwargs):
-        if self.dtype=='table':
+        if self.type==b'table':
             if self.verbose>2:
                 print('plot',colx,coly,kwargs)
             if self.canvas_flag==0:
@@ -407,7 +409,7 @@ class plotter:
                 plot.xlim([self.xlo,self.xhi])
             if self.yset==1:
                 plot.ylim([self.ylo,self.yhi])
-        elif self.dtype=='hist':
+        elif self.type==b'hist':
             size=dset['size'][0]
             bins=dset['bins']
             weights=dset['weights']
@@ -462,7 +464,7 @@ class plotter:
             print('hist',kwargs)
         if self.canvas_flag==0:
             self.canvas()
-        if self.dtype=='table':
+        if self.type==b'table':
             plot.hist(self.dset['data/'+col],**kwargs)
         else:
             print('Wrong type',self.dtype,'for hist()')
@@ -574,7 +576,7 @@ class plotter:
         return
 
     def list(self):
-        if self.dtype=='table':
+        if self.type==b'table':
             col_list=get_str_array(self.dset['col_names'])
             if self.verbose>2:
                 print('-----------------------')
@@ -597,7 +599,7 @@ class plotter:
             print(self.dset['nlines'][0],'lines.')
             if self.verbose>2:
                 print('Done in list')
-        elif self.dtype=='table3d':
+        elif self.type==b'table3d':
             sl_list=get_str_array(self.dset['slice_names'])
             print(len(sl_list),'slices.')
             for ix in range(0,len(sl_list)):
@@ -615,7 +617,7 @@ class plotter:
         return
 
     def den_plot(self,slice_name,**kwargs):
-        if self.dtype=='table3d':
+        if self.dtype==b'table3d':
             name='data/'+slice_name
             sl=self.dset[name].value
             sl=sl.transpose()
@@ -954,7 +956,8 @@ class plotter:
                     elif ix_next-ix<4:
                         self.plot(argv[ix+1],argv[ix+2])
                     else:
-                        print('plot parse_argv',argv[ix+1],argv[ix+2],argv[ix+3])
+                        print('plot parse_argv',argv[ix+1],argv[ix+2],
+                              argv[ix+3])
                         self.plot(argv[ix+1],argv[ix+2],eval(argv[ix+3]))
                 elif cmd_name=='points':
                     if self.verbose>2:
