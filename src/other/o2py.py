@@ -521,7 +521,6 @@ class plotter:
         if self.yset==1:
             plot.ylim([self.ylo,self.yhi])
         # Titles
-        print('Titles:',self.xtitle,self.ytitle)
         if self.xtitle!='':
             plot.xlabel(self.xtitle,fontsize=16)
         if self.ytitle!='':
@@ -562,14 +561,15 @@ class plotter:
 
     def read_type(self,filename,loc_type):
         if self.verbose>0:
-            print('Reading file',filename,'for type',loc_type,'.')
+            print('Reading object of type',loc_type,
+                  'in file',filename,'.')
         self.dset=self.h5r.h5read_first_type(filename,loc_type)
         self.dtype=loc_type
         return
 
     def read_name(self,filename,name):
         if self.verbose>0:
-            print('Reading file',filename,'for name',name,'.')
+            print('Reading object named',name,'in file',filename,'.')
         atuple=self.h5r.h5read_name(filename,name)
         self.dset=atuple[0]
         self.dtype=atuple[1]
