@@ -54,7 +54,7 @@ nucmass_info::nucmass_info() {
      // 101-110
      "Md","No","Lr","Rf","Db","Sg","Bh","Hs","Mt","Ds",
      // 111-118
-     "Rg","Cn","Uut","Fl","Uup","Lv","Uus","Uuo"};
+     "Rg","Cn","Nj","Fl","Mc","Lv","Ts","Og"};
 
 #ifdef O2SCL_NEVER_DEFINED
   std::string namelist[119]={
@@ -93,8 +93,8 @@ nucmass_info::nucmass_info() {
     "Mendelevium","Nobelium","Lawrencium","Rutherfordium","Dubnium",
     "Seaborgium","Bohrium","Hassium","Meitnerium","Darmstadtium",
     // 111-118
-    "Roentgenium","Copernicium","Ununtrium","Flerovium","Ununpentium",
-    "Livermorium","Ununseptium","Ununoctium"};
+    "Roentgenium","Copernicium","Nihonium","Flerovium","Moscovium",
+    "Livermorium","Tennessine","Oganesson"};
 #endif
     
   for(int i=0;i<nelements;i++) {
