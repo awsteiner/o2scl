@@ -386,7 +386,7 @@ class plotter:
         return
 
     def plot(self,colx,coly,**kwargs):
-        if self.type==b'table':
+        if self.dtype==b'table':
             if self.verbose>2:
                 print('plot',colx,coly,kwargs)
             if self.canvas_flag==0:
