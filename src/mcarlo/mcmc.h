@@ -141,7 +141,7 @@ namespace o2scl {
 
   /** \brief Function to run for the best point 
    */
-  virtual void best_point(ubvector &best, double w_best, data_t &dat) {
+  virtual void best_point(vec_t &best, double w_best, data_t &dat) {
     return;
   }
   //@}
