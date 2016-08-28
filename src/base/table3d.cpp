@@ -691,12 +691,21 @@ double table3d::interp(double x, double y, std::string name) {
   ubvector icol(numy);
   for(size_t i=0;i<numy;i++) {
     ubmatrix_column col(list[z],i);
-    itp.set(numx,xval,col,itype);
-    icol[i]=itp.eval(x);
+    // If we don't need to interpolate, just perform the lookup
+    if (numx==1 && x==xval[0]) {
+      icol[i]=col[0];
+    } else {
+      itp.set(numx,xval,col,itype);
+      icol[i]=itp.eval(x);
+    }
   }
-      
-  interp_vec<ubvector> siy(numy,yval,icol,itype);
-  result=siy.eval(y);
+
+  if (numy==1 && y==yval[0]) {
+    result=icol[0];
+  } else {
+    interp_vec<ubvector> siy(numy,yval,icol,itype);
+    result=siy.eval(y);
+  }
 
   return result;
 }
@@ -946,6 +955,16 @@ double table3d::get_constant(std::string name) {
 }
 
 void table3d::extract_x(double x, table<> &t) {
+
+  if (get_ny()==0) {
+    O2SCL_ERR2("Cannot extract slice from table with zero y-grid size ",
+	       "in table3d::extract_x().",exc_einval);
+  }
+  if (get_nx()<2) {
+    O2SCL_ERR2("Cannot extract slice from table with x-grid size<2 ",
+	       "in table3d::extract_x().",exc_einval);
+  }
+  
   t.clear_table();
   
   string s=yname+" ";
@@ -967,6 +986,16 @@ void table3d::extract_x(double x, table<> &t) {
 }
 
 void table3d::extract_y(double y, table<> &t) {
+  
+  if (get_nx()==0) {
+    O2SCL_ERR2("Cannot extract slice from table with zero x-grid size ",
+	       "in table3d::extract_x().",exc_einval);
+  }
+  if (get_ny()<2) {
+    O2SCL_ERR2("Cannot extract slice from table with y-grid size<2 ",
+	       "in table3d::extract_x().",exc_einval);
+  }
+  
   t.clear_table();
   
   string s=xname+" ";
