@@ -48,28 +48,47 @@ namespace o2scl {
       This class is experimental.
 
       \future Give functions for mean, median, mode, variance, etc?
+
+      \comment
+      For now, there aren't any pure virtual functions,
+      since this causes problems in creating an
+      std::vector<prob_dens_func> object below (especially
+      with intel compilers)
+      \endcomment
   */
   class prob_dens_func {
     
   public:
     
     /// Sample from the specified density
-    virtual double operator()() const=0;
+    virtual double operator()() const {
+      return 0.0;
+    }
     
     /// The normalized density 
-    virtual double pdf(double x) const=0;
+    virtual double pdf(double x) const {
+      return 0.0;
+    }
     
     /// The log of the normalized density 
-    virtual double log_pdf(double x) const=0;
+    virtual double log_pdf(double x) const {
+      return 0.0;
+    }
     
     /// The cumulative distribution function (from the lower tail)
-    virtual double cdf(double x) const=0;
+    virtual double cdf(double x) const {
+      return 0.0;
+    }
     
     /// The inverse cumulative distribution function
-    virtual double invert_cdf(double cdf) const=0;
+    virtual double invert_cdf(double cdf) const {
+      return 0.0;
+    }
 
     /// Entropy of the distribution (\f$ - \int f \ln f \f$ )
-    virtual double entropy() const=0;
+    virtual double entropy() const {
+      return 0.0;
+    }
     
   };
   
@@ -98,7 +117,7 @@ namespace o2scl {
     double sigma_;
     
     /// Base GSL random number generator
-    rng_gsl r;
+    o2scl::rng_gsl r;
     
   public:
     
@@ -875,6 +894,12 @@ namespace o2scl {
 
   /** \brief A constrained random walk in the shape of 
       a hypercube
+
+      \comment
+      I had previously used std::uniform_real_distribution
+      instead of rng_gsl, but this caused problems with
+      intel compilers.
+      \endcomment
    */
   template<class vec_t=boost::numeric::ublas::vector<double> >
     class prob_cond_mdim_rand_walk : public prob_cond_mdim<vec_t> {
@@ -901,15 +926,15 @@ namespace o2scl {
   
   /** \brief Desc
    */
-  std::uniform_real_distribution<double> unif;
+  rng_gsl rg;
   
   public:
   
-  prob_cond_mdim_rand_walk() : unif(-1.0,1.0) {
+  prob_cond_mdim_rand_walk() {
   }
   
   template<class=vec_t> prob_cond_mdim_rand_walk
-  (vec_t &step, vec_t &low, vec_t &high) : unif(-1.0,1.0) {
+  (vec_t &step, vec_t &low, vec_t &high) {
     d_pdf=1.0;
     for(size_t i=0;i<step.size();i++) {
       u_step.push_back(step[i]);
@@ -944,7 +969,7 @@ namespace o2scl {
     size_t nv=u_step.size();
     for(size_t i=0;i<nv;i++) {
       while (x2[i]<u_low[i] || x2[i]>u_high[i]) {
-	x2[i]=x[i]+u_step[i]*unif(rd);
+	x2[i]=x[i]+u_step[i]*(rg.random()*2.0-1.0);
       }
     }
     return;

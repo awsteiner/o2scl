@@ -1654,8 +1654,9 @@ void nstar_rot::comp() {
 	cout << rho(s,1) << " " << d_omega_s << " " << d_rho_s << " "
 	     << d_gamma_s << " " << r_e << " " << s1 << endl;
 	string str=((string)"Velocity imaginary at s=")+
-	  std::to_string(s)+", s_gp[s]="+std::to_string(s_gp[s])+", s_e="+
-	  std::to_string(s_e)+" .";
+	  o2scl::itos(s)+", s_gp[s]="+
+	  o2scl::dtos(s_gp[s])+", s_e="+
+	  o2scl::dtos(s_e)+" .";
 	O2SCL_ERR(str.c_str(),o2scl::exc_efailed);
       }
     }

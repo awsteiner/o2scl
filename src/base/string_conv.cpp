@@ -43,11 +43,37 @@ bool o2scl::has_minus_sign(double *x) {
 }
 
 string o2scl::itos(int x) {
-  return std::to_string(x);
+  /*
+    For some reason I'm having trouble with std::to_string(int) on
+    intel compilers, so this is a fallback version
+  */
+  ostringstream strout;
+  
+  if (strout << x) {
+    return strout.str();
+  } 
+  
+  O2SCL_ERR("Conversion from int to string failed in itos(int).",
+	    exc_einval);
+  return "";
+  //return std::to_string(x);
 }
 
 string o2scl::szttos(size_t x) {
-  return std::to_string(x);
+  /*
+    For some reason I'm having trouble with std::to_string(int) on
+    intel compilers, so this is a fallback version
+  */
+  ostringstream strout;
+  
+  if (strout << x) {
+    return strout.str();
+  } 
+  
+  O2SCL_ERR("Conversion from size_t to string failed in szttos(size_t).",
+	    exc_einval);
+  return "";
+  //return std::to_string(x);
 }
 
 string o2scl::ptos(void *p) {

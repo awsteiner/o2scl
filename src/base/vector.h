@@ -76,7 +76,7 @@ namespace o2scl {
       d=(const double *)m->data;
       sz=m->size;
     }
-    const double operator[](size_t i) const {
+    double operator[](size_t i) const {
       return d[i];
     }
     size_t size() {
@@ -101,7 +101,7 @@ namespace o2scl {
       sz2=m->size2;
       tda=m->tda;
     }
-    const double operator()(size_t i, size_t j) const {
+    double operator()(size_t i, size_t j) const {
       return *(d+i*tda+j);
     }
     size_t size1() {
@@ -1319,7 +1319,7 @@ namespace o2scl {
     
     if (m==0 || n==0) {
       std::string str=((std::string)"Matrix with zero size (")+
-	std::to_string(m)+","+std::to_string(n)+") in "+
+	o2scl::itos(m)+","+o2scl::itos(n)+") in "+
 	"matrix_max_value().";
       O2SCL_ERR(str.c_str(),exc_einval);
     }
@@ -1342,7 +1342,7 @@ namespace o2scl {
     size_t n=data.size2();
     if (m==0 || n==0) {
       std::string str=((std::string)"Matrix with zero size (")+
-	std::to_string(m)+","+std::to_string(n)+") in "+
+	o2scl::szttos(m)+","+o2scl::szttos(n)+") in "+
 	"matrix_max_value().";
       O2SCL_ERR(str.c_str(),exc_einval);
     }
@@ -1365,7 +1365,7 @@ namespace o2scl {
     size_t n=data.size2();
     if (m==0 || n==0) {
       std::string str=((std::string)"Matrix with zero size (")+
-	std::to_string(m)+","+std::to_string(n)+") in "+
+	o2scl::szttos(m)+","+o2scl::szttos(n)+") in "+
 	"matrix_max_value_double().";
       O2SCL_ERR(str.c_str(),exc_einval);
     }
@@ -1389,7 +1389,7 @@ namespace o2scl {
     
     if (m==0 || n==0) {
       std::string str=((std::string)"Matrix with zero size (")+
-	std::to_string(m)+","+std::to_string(n)+") in "+
+	o2scl::szttos(m)+","+o2scl::szttos(n)+") in "+
 	"matrix_max_index().";
       O2SCL_ERR(str.c_str(),exc_einval);
     }
@@ -1419,7 +1419,7 @@ namespace o2scl {
     size_t n=data.size2();
     if (m==0 || n==0) {
       std::string str=((std::string)"Matrix with zero size (")+
-	std::to_string(m)+","+std::to_string(n)+") in "+
+	o2scl::szttos(m)+","+o2scl::szttos(n)+") in "+
 	"matrix_max_index().";
       O2SCL_ERR(str.c_str(),exc_einval);
     }
@@ -1445,7 +1445,7 @@ namespace o2scl {
     
     if (m==0 || n==0) {
       std::string str=((std::string)"Matrix with zero size (")+
-	std::to_string(m)+","+std::to_string(n)+") in "+
+	o2scl::szttos(m)+","+o2scl::szttos(n)+") in "+
 	"matrix_min_value().";
       O2SCL_ERR(str.c_str(),exc_einval);
     }
@@ -1469,7 +1469,7 @@ namespace o2scl {
     size_t n=data.size2();
     if (m==0 || n==0) {
       std::string str=((std::string)"Matrix with zero size (")+
-	std::to_string(m)+","+std::to_string(n)+") in "+
+	o2scl::szttos(m)+","+o2scl::szttos(n)+") in "+
 	"matrix_min_value().";
       O2SCL_ERR(str.c_str(),exc_einval);
     }
@@ -1493,7 +1493,7 @@ namespace o2scl {
     size_t n=data.size2();
     if (m==0 || n==0) {
       std::string str=((std::string)"Matrix with zero size (")+
-	std::to_string(m)+","+std::to_string(n)+") in "+
+	o2scl::szttos(m)+","+o2scl::szttos(n)+") in "+
 	"matrix_min_value().";
       O2SCL_ERR(str.c_str(),exc_einval);
     }
@@ -1517,7 +1517,7 @@ namespace o2scl {
     
     if (m==0 || n==0) {
       std::string str=((std::string)"Matrix with zero size (")+
-	std::to_string(m)+","+std::to_string(n)+") in "+
+	o2scl::szttos(m)+","+o2scl::szttos(n)+") in "+
 	"matrix_min_index().";
       O2SCL_ERR(str.c_str(),exc_einval);
     }
@@ -1547,7 +1547,7 @@ namespace o2scl {
     size_t n=data.size2();
     if (m==0 || n==0) {
       std::string str=((std::string)"Matrix with zero size (")+
-	std::to_string(m)+","+std::to_string(n)+") in "+
+	o2scl::szttos(m)+","+o2scl::szttos(n)+") in "+
 	"matrix_min_index().";
       O2SCL_ERR(str.c_str(),exc_einval);
     }
