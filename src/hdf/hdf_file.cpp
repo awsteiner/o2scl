@@ -1952,8 +1952,10 @@ hid_t hdf_file::open_group(std::string path) {
   H5E_END_TRY 
     if (group<0) {
       if (write_access==false) {
-	O2SCL_ERR2("File not opened with write access and group not found",
-		   "in hdf_file::open_group(std::string).",exc_efailed);
+	std::string str=((std::string)"File not opened with write access ")+
+	  "and group with path '"+path+"' not found in hdf_file::"+
+	  "open_group(std::string).";
+	O2SCL_ERR(str.c_str(),exc_efailed);
       }
       group=H5Gcreate(current,path.c_str(),H5P_DEFAULT,
 		      H5P_DEFAULT,H5P_DEFAULT);

@@ -25,76 +25,107 @@
   - Be able to close HDF5 file and retain data set?
 """
 
-import getopt, sys, h5py, math, os
+import getopt, sys, h5py, math, os, hashlib
 import matplotlib.pyplot as plot
 from matplotlib.colors import LinearSegmentedColormap
 
-def download_data_file(env_var,data_dir,subdir_orig,fname_orig,url):
-    """
-    This function attempts to find a file named 'fname_orig' in
-    subdirectory 'subdir_orig' of the data directory 'data_dir'. If
-    'data_dir' is empty, it attempts to set it equal to the value of
-    the environment variable 'env_var'. If that environment variable
-    is not present, the user is prompted for the correct data
-    directory. If the file is not found, then this function uses curl
-    (or wget if curl was unsuccessful) to download the file from
-    'url'. If this process was successful at finding or downloading
-    the file, then the full filename is returned. Otherwise, an
-    exception is thrown.
-    
-    Warning: this function has several potential security issues 
-    and should not be used without due care.
+class cloud_file:
 
-    """
-    # First obtain the data directory
-    method=''
-    if data_dir!='':
-        method='arg'
-    else:
-        if env_var in os.environ:
-            data_dir=os.environ[env_var]
-            method='ev'
-        if data_dir=='':
-            data_dir=input('Data directory not set. Enter data directory: ')
-            if data_dir!='':
-                method='ui'
-    if data_dir=='' or method=='':
-        raise ValueError('Failed to obtain data directory.')
-    if method=='arg':
-        print('Data directory set (by function argument) to:',data_dir)
-    elif method=='ev':
-        print('Data directory set (by environment variable) to:',data_dir)
-    else:
-        print('Data directory set (by user input) to:',data_dir)
-
-    # Now test for the existence of the subdirectory and create it if
-    # necessary
-    subdir=data_dir+'/'+subdir_orig
-    if os.path.isdir(subdir)==False:
-        cmd='mkdir -p '+subdir
-        ret=os.system(cmd)
-        if ret!=0:
-            raise FileNotFoundError('Correct subdirectory does '+
-                                    'not exist and failed to create.')
+    force_subdir=False
+    env_var=''
+    username=''
+    password=''
     
-    # Now download the file if it's not already present
-    fname=subdir+'/'+fname_orig
-    if os.path.isfile(fname)==False:
-        response=input('Data file '+fname+' not found. Download (y/Y/n/N)? ')
-        ret=1
-        if response=='y' or response=='Y':
-            print('Trying wget:')
-            cmd=('cd '+subdir+'; wget '+url)
+    def md5(fname):
+        """
+        Compute the md5 hash of the specified file. This function
+        reads 4k bytes at a time and updates the hash for each
+        read in order to prevent from having to read the entire
+        file in memory at once.
+        """
+        hash_md5 = hashlib.md5()
+        with open(fname, "rb") as f:
+            for chunk in iter(lambda: f.read(4096), b""):
+                hash_md5.update(chunk)
+        return hash_md5.hexdigest()
+    
+    def download_data_file(self,data_dir,subdir_orig,fname_orig,url):
+        """
+        This function attempts to find a file named 'fname_orig' in
+        subdirectory 'subdir_orig' of the data directory 'data_dir'. If
+        'data_dir' is empty, it attempts to set it equal to the value of
+        the environment variable 'env_var'. If that environment variable
+        is not present, the user is prompted for the correct data
+        directory. If the file is not found, then this function uses curl
+        (or wget if curl was unsuccessful) to download the file from
+        'url'. If this process was successful at finding or downloading
+        the file, then the full filename is returned. Otherwise, an
+        exception is thrown.
+        
+        Warning: this function has several potential security issues 
+        and should not be used without due care.
+    
+        """
+        # First obtain the data directory
+        method=''
+        if data_dir!='':
+            method='arg'
+        else:
+            if self.env_var in os.environ:
+                data_dir=os.environ[self.env_var]
+                method='ev'
+            if data_dir=='':
+                data_dir=input('Data directory not set. Enter data directory: ')
+                if data_dir!='':
+                    method='ui'
+        if data_dir=='' or method=='':
+            raise ValueError('Failed to obtain data directory.')
+        if method=='arg':
+            print('Data directory set (by function argument) to:',data_dir)
+        elif method=='ev':
+            print('Data directory set (by environment variable) to:',data_dir)
+        else:
+            print('Data directory set (by user input) to:',data_dir)
+    
+        # Now test for the existence of the subdirectory and create it if
+        # necessary
+        subdir=data_dir+'/'+subdir_orig
+        if os.path.isdir(subdir)==False:
+            cmd='mkdir -p '+subdir
             ret=os.system(cmd)
             if ret!=0:
-                print('Trying curl:')
-                cmd=('cd '+subdir+'; curl '+url)
-                ret=os.system(cmd)
-        if ret!=0:
-            raise ConnectionError('Failed to obtain data file.')
+                raise FileNotFoundError('Correct subdirectory does '+
+                                        'not exist and failed to create.')
+        
+        # Now download the file if it's not already present
+        fname=subdir+'/'+fname_orig
+        if os.path.isfile(fname)==False:
+            response=input('Data file '+fname+
+                           ' not found. Download (y/Y/n/N)? ')
+            ret=1
+            if response=='y' or response=='Y':
+                print('Trying wget:')
+                cmd=''
+                if len(self.username>0):
+                    if len(self.password>0):
+                        cmd=('cd '+subdir+'; wget http://'+
+                             self.username+':'+self.password+'@'+url)
+                    else:
+                        cmd=('cd '+subdir+'; wget http://'+
+                             self.username+'@'+url)
+                else
+                cmd=('cd '+subdir+'; wget '+url)
 
-    # Return the final filename
-    return fname
+                ret=os.system(cmd)
+                if ret!=0:
+                    print('Trying curl:')
+                    cmd=('cd '+subdir+'; curl '+url)
+                    ret=os.system(cmd)
+            if ret!=0:
+                raise ConnectionError('Failed to obtain data file.')
+    
+        # Return the final filename
+        return fname
 
 class hdf5_reader:
 
