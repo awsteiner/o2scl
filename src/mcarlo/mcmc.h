@@ -105,7 +105,7 @@ namespace o2scl {
   protected:
   
   /// Random number generator
-  std::uniform_real_distribution<double> unif;
+  rng_gsl rg;
   
   /// Proposal distribution
   o2scl::prob_cond_mdim<vec_t> *prop_dist;
@@ -206,7 +206,7 @@ namespace o2scl {
   bool err_nonconv;
   //@}
   
-  mcmc_base() : unif(0.0,1.0) {
+  mcmc_base() {
     user_seed=0;
     n_warm_up=0;
 
@@ -327,14 +327,14 @@ namespace o2scl {
 	  // Make a perturbation from the initial point
 	  for(size_t ipar=0;ipar<nparams;ipar++) {
 	    if (init[ipar]<low[ipar] || init[ipar]>high[ipar]) {
-	      O2SCL_ERR((((std::string)"Parameter ")+std::to_string(ipar)+
-			 " of "+std::to_string(nparams)+
-			 " out of range (value="+std::to_string(init[ipar])+
+	      O2SCL_ERR((((std::string)"Parameter ")+o2scl::szttos(ipar)+
+			 " of "+o2scl::szttos(nparams)+
+			 " out of range (value="+o2scl::dtos(init[ipar])+
 			 ") in mcmc_base::mcmc().").c_str(),
 			o2scl::exc_einval);
 	    }
 	    do {
-	      current[curr_walker][ipar]=init[ipar]+(unif(rd)*2.0-1.0)*
+	      current[curr_walker][ipar]=init[ipar]+(rg()*2.0-1.0)*
 		(high[ipar]-low[ipar])/100.0;
 	    } while (current[curr_walker][ipar]>=high[ipar] ||
 		     current[curr_walker][ipar]<=low[ipar]);
@@ -440,11 +440,11 @@ namespace o2scl {
 	// Choose jth walker
 	size_t ij;
 	do {
-	  ij=((size_t)(unif(rd)*((double)n_walk)));
+	  ij=((size_t)(rg()*((double)n_walk)));
 	} while (ij==curr_walker || ij>=n_walk);
 	
 	// Select z 
-	double p=unif(rd);
+	double p=rg();
 	double a=step_fac;
 	smove_z=(1.0-2.0*p+2.0*a*p+p*p-2.0*a*p*p+a*a*p*p)/a;
 	
@@ -469,7 +469,7 @@ namespace o2scl {
 
 	// Uniform random-walk step
 	for(size_t k=0;k<nparams;k++) {
-	  next[k]=current[0][k]+(unif(rd)*2.0-1.0)*
+	  next[k]=current[0][k]+(rg()*2.0-1.0)*
 	    (high[k]-low[k])/step_fac;
 	}
       
@@ -505,7 +505,7 @@ namespace o2scl {
       bool accept=false;
 
       if (iret==o2scl::success) {
-	double r=unif(rd);
+	double r=rg();
 	
 	if (aff_inv) {
 	  if (r<pow(smove_z,((double)nparams)-1.0)*
@@ -599,7 +599,7 @@ namespace o2scl {
 	  main_done=true;
 	  if (meas_ret!=mcmc_done && err_nonconv) {
 	    O2SCL_ERR((((std::string)"Measurement function returned ")+
-		       std::to_string(meas_ret)+
+		       o2scl::dtos(meas_ret)+
 		       " in mcmc_base::mcmc().").c_str(),
 		      o2scl::exc_efailed);
 	  }
