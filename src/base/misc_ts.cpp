@@ -84,6 +84,11 @@ int main(void) {
   remove_whitespace(ss);
   t.test_gen(ss=="Thisisatest","remove_whitespace()");
 
+#ifndef O2SCL_OLDER_COMPILER
+
+  // vec_index doesn't work in older compilers, so
+  // we comment this out for now.
+  
   vec_index vi;
   vi.append("a1");
   vi.append("c1");
@@ -97,6 +102,8 @@ int main(void) {
   t.test_gen(vi2[2]==((string)"b1"),"vec_index 6");
   t.test_gen(vi2("a1")==0,"vec_index 7");
   t.test_gen(vi2("b1")==2,"vec_index 8");
+  
+#endif
   
   t.report();
   return 0;

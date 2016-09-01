@@ -470,10 +470,8 @@ namespace o2scl {
     return;
   }
 
-#ifdef O2SCL_NEVER_DEFINED
-  // This is commented out for now because I'm having a hard
-  // time with it on Intel compilers
-
+#ifndef O2SCL_OLDER_COMPILER
+  
   /** \brief A class to assign string labels to array indices
    */
   class vec_index {

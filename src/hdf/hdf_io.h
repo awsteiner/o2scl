@@ -102,7 +102,7 @@ namespace o2scl_hdf {
     hf.gets_fixed("o2scl_type",type2);
     if (type2!="table") {
       O2SCL_ERR2("Typename in HDF group does not match ",
-		 "class in o2scl_hdf::hdf_input().",o2scl::exc_einval);
+		 "class in o2scl_hdf::hdf_input_data().",o2scl::exc_einval);
     }
 
     // Storage
@@ -115,7 +115,7 @@ namespace o2scl_hdf {
     hf.getd_vec_copy("con_values",cvalues);
     if (cnames.size()!=cvalues.size()) {
       O2SCL_ERR2("Size mismatch between constant names and values ",
-		 "in o2scl_hdf::hdf_input().",o2scl::exc_einval);
+		 "in o2scl_hdf::hdf_input_data().",o2scl::exc_einval);
     }
     for(size_t i=0;i<cnames.size();i++) {
       t.add_constant(cnames[i],cvalues[i]);
@@ -216,7 +216,7 @@ namespace o2scl_hdf {
     // Input base table object
     o2scl::table<vec_t> *tbase=dynamic_cast<o2scl::table_units<vec_t> *>(&t);
     if (tbase==0) {
-      O2SCL_ERR2("Cast failed in hdf_output_data",
+      O2SCL_ERR2("Cast failed in hdf_input_data",
 		 "(hdf_file &, table_units &).",o2scl::exc_efailed);
     }
     hdf_input_data(hf,*tbase);
