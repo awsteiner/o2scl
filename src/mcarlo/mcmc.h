@@ -334,7 +334,7 @@ namespace o2scl {
 			o2scl::exc_einval);
 	    }
 	    do {
-	      current[curr_walker][ipar]=init[ipar]+(rg()*2.0-1.0)*
+	      current[curr_walker][ipar]=init[ipar]+(rg.random()*2.0-1.0)*
 		(high[ipar]-low[ipar])/100.0;
 	    } while (current[curr_walker][ipar]>=high[ipar] ||
 		     current[curr_walker][ipar]<=low[ipar]);
@@ -440,11 +440,11 @@ namespace o2scl {
 	// Choose jth walker
 	size_t ij;
 	do {
-	  ij=((size_t)(rg()*((double)n_walk)));
+	  ij=((size_t)(rg.random()*((double)n_walk)));
 	} while (ij==curr_walker || ij>=n_walk);
 	
 	// Select z 
-	double p=rg();
+	double p=rg.random();
 	double a=step_fac;
 	smove_z=(1.0-2.0*p+2.0*a*p+p*p-2.0*a*p*p+a*a*p*p)/a;
 	
@@ -469,7 +469,7 @@ namespace o2scl {
 
 	// Uniform random-walk step
 	for(size_t k=0;k<nparams;k++) {
-	  next[k]=current[0][k]+(rg()*2.0-1.0)*
+	  next[k]=current[0][k]+(rg.random()*2.0-1.0)*
 	    (high[k]-low[k])/step_fac;
 	}
       
@@ -489,6 +489,20 @@ namespace o2scl {
 	} else {
 	  iret=func(nparams,next,w_next,data_arr[curr_walker]);
 	}
+      } else if (verbose>=2) {
+	std::cout << "Parameter(s) out of range: " << std::endl;
+	std::cout.setf(std::ios::showpos);
+	for(size_t k=0;k<nparams;k++) {
+	  std::cout << k << " " << low[k] << " " << next[k] << " "
+		    << high[k];
+	  if (next[k]<=low[k] || next[k]>=high[k]) {
+	    std::cout << " <-";
+	  }
+	  std::cout << std::endl;
+	}
+	std::cout.unsetf(std::ios::showpos);
+	char ch;
+	std::cin >> ch;
       }
       if (iret==o2scl::success && w_best>w_next) {
 	best=next;
@@ -505,7 +519,7 @@ namespace o2scl {
       bool accept=false;
 
       if (iret==o2scl::success) {
-	double r=rg();
+	double r=rg.random();
 	
 	if (aff_inv) {
 	  if (r<pow(smove_z,((double)nparams)-1.0)*

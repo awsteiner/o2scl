@@ -926,7 +926,7 @@ namespace o2scl {
   
   /** \brief Desc
    */
-  rng_gsl rg;
+  mutable rng_gsl rg;
   
   public:
   

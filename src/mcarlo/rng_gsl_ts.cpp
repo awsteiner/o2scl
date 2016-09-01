@@ -45,7 +45,7 @@ int main(void) {
   cout << dist(rd) << endl;
 
   rng_gsl nr(10);
-    
+
   /*
     AWS 8/19/16: Unfortunately this doesn't work with clang at the
     moment so I have removed it.
