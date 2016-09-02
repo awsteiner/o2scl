@@ -238,6 +238,14 @@ namespace o2scl {
 		   vec_t &low, vec_t &high, func_t &func,
 		   measure_t &meas) {
 
+    bool valid_guess=true;
+    for(size_t k=0;k<nparams;k++) {
+      if (init[k]<low[k] || init[k]>high[k]) valid_guess=false;
+    }
+    if (!valid_guess) {
+      O2SCL_ERR("Invalid guess in mcmc_base::mcmc().",o2scl::exc_einval);
+    }
+    
     // Fix the number of walkers if it is too small
     if (aff_inv && n_walk<=1) n_walk=2;
     
@@ -417,7 +425,7 @@ namespace o2scl {
       }
 
     }
-    
+
     // ---------------------------------------------------
 
     bool main_done=false;
@@ -489,13 +497,21 @@ namespace o2scl {
 	} else {
 	  iret=func(nparams,next,w_next,data_arr[curr_walker]);
 	}
+	if (verbose>=1 && iret!=o2scl::success && iret!=mcmc_skip) {
+	  std::cout << "Function returned failure " << iret
+		    << " at point ";
+	  for(size_t k=0;k<nparams;k++) {
+	    std::cout << next[k] << " ";
+	  }
+	  std::cout << std::endl;
+	}
       } else if (verbose>=2) {
 	std::cout << "Parameter(s) out of range: " << std::endl;
 	std::cout.setf(std::ios::showpos);
 	for(size_t k=0;k<nparams;k++) {
 	  std::cout << k << " " << low[k] << " " << next[k] << " "
 		    << high[k];
-	  if (next[k]<=low[k] || next[k]>=high[k]) {
+	  if (next[k]<low[k] || next[k]>high[k]) {
 	    std::cout << " <-";
 	  }
 	  std::cout << std::endl;
