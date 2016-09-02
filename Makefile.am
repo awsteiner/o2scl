@@ -34,7 +34,8 @@ help:
 	@echo "o2scl-doc:        Make HTML documentation"
 	@echo "clean-doc:        Remove generated doc files"
 	@echo "blank-doc:        Create blank documentation"
-	@echo "dist-nodoc:       Make a distribution w/o the documentation"
+	@echo "move-doc:         Move documentation to a separate directory"
+	@echo "restore-doc:      Restore documentation after move"
 	@echo "sf-sync-doc:      Upload current documentation to SourceForge"
 	@echo "emacs-clean:      Remove files ending with a tilde"
 	@echo 
@@ -45,27 +46,18 @@ latest:
 		~/wcs/int3/web/utk/o2scl/o2scl-0.920.sha256
 	cd ~/wcs/int3/web; $(MAKE) puto
 
-# Create a distribution without documentation (not recently tested)
-dist-nodoc:
+move-doc:
 	cd doc/o2scl/html; mkdir ../htdir; mv -i *.html *.png ../htdir; 
-	cd doc/o2scl/html; touch index.html
-	cd doc/o2scl/latex; mkdir tmpdir; mv -i *.tex *.eps *.pdf tmpdir
-	cd doc/o2scl/latex; touch refman.pdf
+	cd doc/o2scl/html; touch index.html blank.png
 	cd doc/o2scl/eos/html; mkdir ../htdir; mv -i *.html *.png ../htdir; 
-	cd doc/o2scl/eos/html; touch index.html
-	cd doc/o2scl/eos/latex; mkdir tmpdir; mv -i *.tex *.eps *.pdf tmpdir
-	cd doc/o2scl/eos/latex; touch refman.pdf
+	cd doc/o2scl/eos/html; touch index.html blank.png
 	cd doc/o2scl/part/html; mkdir ../htdir; mv -i *.html *.png ../htdir; 
-	cd doc/o2scl/part/html; touch index.html
-	cd doc/o2scl/part/latex; mkdir tmpdir; mv -i *.tex *.eps *.pdf tmpdir
-	cd doc/o2scl/part/latex; touch refman.pdf
-	make dist
+	cd doc/o2scl/part/html; touch index.html blank.png
+
+restore-doc:
 	cd doc/o2scl/html; mv ../htdir/* .; rmdir ../htdir
-	cd doc/o2scl/latex; mv tmpdir/* .; rmdir tmpdir
 	cd doc/o2scl/eos/html; mv ../htdir/* .; rmdir ../htdir
-	cd doc/o2scl/eos/latex; mv tmpdir/* .; rmdir tmpdir
 	cd doc/o2scl/part/html; mv ../htdir/* .; rmdir ../htdir
-	cd doc/o2scl/part/latex; mv tmpdir/* .; rmdir tmpdir
 
 # Compile and run all examples
 o2scl-examples:
