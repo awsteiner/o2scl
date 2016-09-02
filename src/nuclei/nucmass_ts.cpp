@@ -48,12 +48,6 @@ int main(void) {
   {
     nucmass_info nmi;
     int tN, tZ, tA; 
-    nmi.parse_elstring("Uuo300",tZ,tN,tA);
-    t.test_gen(tZ==118,"parse1");
-    t.test_gen(tA==300,"parse2");
-    tN=0;
-    tZ=0;
-    tA=0;
     nmi.parse_elstring("Pb208",tZ,tN,tA);
     t.test_gen(tZ==82,"parse3");
     t.test_gen(tA==208,"parse4");
