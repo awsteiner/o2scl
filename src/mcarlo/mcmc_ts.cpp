@@ -31,6 +31,14 @@
 using namespace std;
 using namespace o2scl;
 
+#ifdef O2SCL_OLDER_COMPILER
+int main(void) {
+  test_mgr t;
+  t.report();
+  return 0;
+}
+#else
+
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
@@ -289,3 +297,4 @@ int main(int argc, char *argv[]) {
   
   return 0;
 }
+#endif

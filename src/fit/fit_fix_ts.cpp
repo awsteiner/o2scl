@@ -217,7 +217,7 @@ int main(void) {
     
     t.test_rel(par_21[0],par_22[0],1.0e-9,"par_21/22 1");
     t.test_rel(par_21[1],par_22[2],1.0e-9,"par_21/22 2");
-    if (k==0) t.test_rel_mat(2,2,covar_21,covar_22,1.0e-9,"covar_21/22");
+    if (k==0) t.test_rel_mat(2,2,covar_21,covar_22,1.0e-8,"covar_21/22");
     t.test_rel(chi2_21,chi2_22,1.0e-9,"chi2_21/22");
 
   }

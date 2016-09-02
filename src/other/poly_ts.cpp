@@ -835,7 +835,7 @@ int main(void) {
   test_cubic_real_coeff(ne,&c1,"cern_real_coeff",1.0,
 			1.0e0,1.0e6,1.0e1,1.0e7);
   test_cubic_real_coeff(ne,&c2,"cubic_real_coeff_gsl",1.0,
-			1.0e-2,1.0e-2,1.0e1,8.0e0);
+			1.0e-1,1.0e-2,1.0e1,8.0e0);
   test_cubic_real_coeff(ne,&c3,"cubic_complex_std",1.0,
 			1.0e-1,1.0e-2,1.0e1,1.0e1);
   test_cubic_real_coeff(ne,&p3,"poly_real_coeff_gsl",1.0,

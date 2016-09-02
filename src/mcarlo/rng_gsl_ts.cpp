@@ -37,6 +37,8 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
 
+#ifndef O2SCL_OLDER_COMPILER
+
   std::random_device rd;
   
   std::uniform_int_distribution<int> dist(0, 9);
@@ -46,12 +48,12 @@ int main(void) {
 
   rng_gsl nr(10);
 
+#ifdef O2SCL_NEVER_DEFINED
   /*
     AWS 8/19/16: Unfortunately this doesn't work with clang at the
     moment so I have removed it.
   */
 
-#ifdef O2SCL_NEVER_DEFINED
   cout << dist(nr) << endl;
   cout << dist(nr) << endl;
     
@@ -77,6 +79,9 @@ int main(void) {
     cout << nr2.random_int(10) << " " << flush;
   }
   cout << endl;
+
+#endif
+
 #endif
 
   t.report();

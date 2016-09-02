@@ -118,17 +118,17 @@ int main(void) {
       t.test_rel(it2.deriv_xy(x0,y0),fxy(x0,y0),tol,"cspline M=N dyx");
       t.test_rel(it2.deriv_xx(x0,y0),f2x(x0,y0),tol2,"cspline M=N d2x");
       t.test_rel(it2.deriv_yy(x0,y0),f2y(x0,y0),tol2,"cspline M=N d2y");
-      t.test_rel(it2.eval(x0,y0),it.eval(x0,y0),5.0e-10,
+      t.test_rel(it2.eval(x0,y0),it.eval(x0,y0),1.0e-9,
 		 "cspline M=N it2 vs. it");
-      t.test_rel(it2.deriv_x(x0,y0),it.deriv_x(x0,y0),5.0e-10,
+      t.test_rel(it2.deriv_x(x0,y0),it.deriv_x(x0,y0),1.0e-9,
 		 "cspline M=N it2 vs. it");
-      t.test_rel(it2.deriv_y(x0,y0),it.deriv_y(x0,y0),5.0e-10,
+      t.test_rel(it2.deriv_y(x0,y0),it.deriv_y(x0,y0),1.0e-9,
 		 "cspline M=N it2 vs. it");
-      t.test_rel(it2.deriv_xy(x0,y0),it.deriv_xy(x0,y0),5.0e-10,
+      t.test_rel(it2.deriv_xy(x0,y0),it.deriv_xy(x0,y0),1.0e-9,
 		 "cspline M=N it2 vs. it");
-      t.test_rel(it2.deriv_xx(x0,y0),it.deriv_xx(x0,y0),5.0e-10,
+      t.test_rel(it2.deriv_xx(x0,y0),it.deriv_xx(x0,y0),1.0e-9,
 		 "cspline M=N it2 vs. it");
-      t.test_rel(it2.deriv_yy(x0,y0),it.deriv_yy(x0,y0),5.0e-10,
+      t.test_rel(it2.deriv_yy(x0,y0),it.deriv_yy(x0,y0),1.0e-9,
 		 "cspline M=N it2 vs. it");
     }
 
@@ -176,17 +176,17 @@ int main(void) {
       t.test_rel(it2.deriv_xy(x0,y0),fxy(x0,y0),tol,"cspline M>N dyx");
       t.test_rel(it2.deriv_xx(x0,y0),f2x(x0,y0),tol2,"cspline M>N d2x");
       t.test_rel(it2.deriv_yy(x0,y0),f2y(x0,y0),tol2,"cspline M>N d2y");
-      t.test_rel(it2.eval(x0,y0),it.eval(x0,y0),5.0e-10,
+      t.test_rel(it2.eval(x0,y0),it.eval(x0,y0),1.0e-9,
 		 "cspline M>N it2 vs. it");
-      t.test_rel(it2.deriv_x(x0,y0),it.deriv_x(x0,y0),5.0e-10,
+      t.test_rel(it2.deriv_x(x0,y0),it.deriv_x(x0,y0),1.0e-9,
 		 "cspline M>N it2 vs. it");
-      t.test_rel(it2.deriv_y(x0,y0),it.deriv_y(x0,y0),5.0e-10,
+      t.test_rel(it2.deriv_y(x0,y0),it.deriv_y(x0,y0),1.0e-9,
 		 "cspline M>N it2 vs. it");
-      t.test_rel(it2.deriv_xy(x0,y0),it.deriv_xy(x0,y0),5.0e-10,
+      t.test_rel(it2.deriv_xy(x0,y0),it.deriv_xy(x0,y0),1.0e-9,
 		 "cspline M>N it2 vs. it");
-      t.test_rel(it2.deriv_xx(x0,y0),it.deriv_xx(x0,y0),5.0e-10,
+      t.test_rel(it2.deriv_xx(x0,y0),it.deriv_xx(x0,y0),1.0e-9,
 		 "cspline M>N it2 vs. it");
-      t.test_rel(it2.deriv_yy(x0,y0),it.deriv_yy(x0,y0),5.0e-10,
+      t.test_rel(it2.deriv_yy(x0,y0),it.deriv_yy(x0,y0),1.0e-9,
 		 "cspline M>N it2 vs. it");
     }
 
@@ -235,17 +235,17 @@ int main(void) {
       t.test_rel(it2.deriv_xy(x0,y0),fxy(x0,y0),tol,"cspline M<N dyx");
       t.test_rel(it2.deriv_xx(x0,y0),f2x(x0,y0),tol2,"cspline M<N d2x");
       t.test_rel(it2.deriv_yy(x0,y0),f2y(x0,y0),tol2,"cspline M<N d2y");
-      t.test_rel(it2.eval(x0,y0),it.eval(x0,y0),5.0e-10,
+      t.test_rel(it2.eval(x0,y0),it.eval(x0,y0),1.0e-9,
 		 "cspline M<N it2 vs. it");
-      t.test_rel(it2.deriv_x(x0,y0),it.deriv_x(x0,y0),5.0e-10,
+      t.test_rel(it2.deriv_x(x0,y0),it.deriv_x(x0,y0),1.0e-9,
 		 "cspline M<N it2 vs. it");
-      t.test_rel(it2.deriv_y(x0,y0),it.deriv_y(x0,y0),5.0e-10,
+      t.test_rel(it2.deriv_y(x0,y0),it.deriv_y(x0,y0),1.0e-9,
 		 "cspline M<N it2 vs. it");
-      t.test_rel(it2.deriv_xy(x0,y0),it.deriv_xy(x0,y0),5.0e-10,
+      t.test_rel(it2.deriv_xy(x0,y0),it.deriv_xy(x0,y0),1.0e-9,
 		 "cspline M<N it2 vs. it");
-      t.test_rel(it2.deriv_xx(x0,y0),it.deriv_xx(x0,y0),5.0e-10,
+      t.test_rel(it2.deriv_xx(x0,y0),it.deriv_xx(x0,y0),1.0e-9,
 		 "cspline M<N it2 vs. it");
-      t.test_rel(it2.deriv_yy(x0,y0),it.deriv_yy(x0,y0),5.0e-10,
+      t.test_rel(it2.deriv_yy(x0,y0),it.deriv_yy(x0,y0),1.0e-9,
 		 "cspline M<N it2 vs. it");
     }
 
@@ -291,17 +291,17 @@ int main(void) {
       t.test_rel(it2.deriv_x(x0,y0),fx(x0,y0),tol,"linear dx");
       t.test_rel(it2.deriv_y(x0,y0),fy(x0,y0),tol,"linear dy");
       t.test_rel(it2.deriv_xy(x0,y0),fxy(x0,y0),1.5,"linear dyx");
-      t.test_rel(it2.eval(x0,y0),it.eval(x0,y0),5.0e-10,
+      t.test_rel(it2.eval(x0,y0),it.eval(x0,y0),1.0e-9,
 		 "linear it2 vs. it");
-      t.test_rel(it2.deriv_x(x0,y0),it.deriv_x(x0,y0),5.0e-10,
+      t.test_rel(it2.deriv_x(x0,y0),it.deriv_x(x0,y0),1.0e-9,
 		 "linear it2 vs. it");
-      t.test_rel(it2.deriv_y(x0,y0),it.deriv_y(x0,y0),5.0e-10,
+      t.test_rel(it2.deriv_y(x0,y0),it.deriv_y(x0,y0),1.0e-9,
 		 "linear it2 vs. it");
-      t.test_rel(it2.deriv_xy(x0,y0),it.deriv_xy(x0,y0),5.0e-10,
+      t.test_rel(it2.deriv_xy(x0,y0),it.deriv_xy(x0,y0),1.0e-9,
 		 "linear it2 vs. it");
-      t.test_rel(it2.deriv_xx(x0,y0),it.deriv_xx(x0,y0),5.0e-10,
+      t.test_rel(it2.deriv_xx(x0,y0),it.deriv_xx(x0,y0),1.0e-9,
 		 "linear it2 vs. it");
-      t.test_rel(it2.deriv_yy(x0,y0),it.deriv_yy(x0,y0),5.0e-10,
+      t.test_rel(it2.deriv_yy(x0,y0),it.deriv_yy(x0,y0),1.0e-9,
 		 "linear it2 vs. it");
     }
 
