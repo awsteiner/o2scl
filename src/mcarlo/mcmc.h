@@ -259,7 +259,7 @@ namespace o2scl {
     if (user_seed!=0) {
       seed=user_seed;
     }
-    std::mt19937 rd(seed);
+    rg.set_seed(seed);
 
     // Keep track of successful and failed MH moves
     n_accept=0;
