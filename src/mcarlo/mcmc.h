@@ -225,6 +225,19 @@ namespace o2scl {
     prop_dist=0;
   }
 
+  /** \brief Default method for setting the random seed
+   */
+  virtual void set_seed() {
+    // Set RNG seed
+    unsigned long int seed=time(0);
+    if (user_seed!=0) {
+      seed=user_seed;
+    }
+    rg.set_seed(seed);
+
+    return;
+  }
+
   /// \name Basic usage
   //@{
   /** \brief Perform an MCMC simulation
@@ -253,14 +266,9 @@ namespace o2scl {
     if (step_fac<=0.0) {
       step_fac=10.0;
     }
-    
-    // Set RNG seed
-    unsigned long int seed=time(0);
-    if (user_seed!=0) {
-      seed=user_seed;
-    }
-    rg.set_seed(seed);
 
+    set_seed();
+    
     // Keep track of successful and failed MH moves
     n_accept=0;
     n_reject=0;
