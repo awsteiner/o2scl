@@ -28,6 +28,7 @@
 import getopt, sys, h5py, math, os, hashlib
 import matplotlib.pyplot as plot
 from matplotlib.colors import LinearSegmentedColormap
+import urllib.request
 
 class cloud_file:
 
@@ -35,6 +36,7 @@ class cloud_file:
     env_var=''
     username=''
     password=''
+    verbose=1
     
     def md5(fname):
         """
@@ -49,7 +51,16 @@ class cloud_file:
                 hash_md5.update(chunk)
         return hash_md5.hexdigest()
     
-    def download_data_file(self,data_dir,subdir_orig,fname_orig,url):
+    def download_file(self,data_dir,fname_orig,url,mhash):
+        force_subdir_val=self.force_subdir
+        self.force_subdir=False
+        fname=self.download_file_subdir(data_dir,'',fname_orig,url,
+                                        mhash)
+        self.force_subdir=force_subdir_val
+        return fname
+
+    def download_file_subdir(self,data_dir,subdir_orig,fname_orig,url,
+                             mhash):
         """
         This function attempts to find a file named 'fname_orig' in
         subdirectory 'subdir_orig' of the data directory 'data_dir'. If
@@ -81,11 +92,15 @@ class cloud_file:
         if data_dir=='' or method=='':
             raise ValueError('Failed to obtain data directory.')
         if method=='arg':
-            print('Data directory set (by function argument) to:',data_dir)
+            if verbose>0:
+                print('Data directory set (by function argument) to:',data_dir)
         elif method=='ev':
-            print('Data directory set (by environment variable) to:',data_dir)
+            if verbose>0:
+                print('Data directory set (by environment variable) to:',
+                      data_dir)
         else:
-            print('Data directory set (by user input) to:',data_dir)
+            if verbose>0:
+                print('Data directory set (by user input) to:',data_dir)
     
         # Now test for the existence of the subdirectory and create it if
         # necessary
@@ -93,6 +108,9 @@ class cloud_file:
         if self.force_subdir==True:
             subdir=data_dir+'/'+subdir_orig
             if os.path.isdir(subdir)==False:
+                if verbose>0:
+                    print('Directory not found and force_subdir is true.')
+                    print('Trying to automatically create using "mkdir -p"')
                 cmd='mkdir -p '+subdir
                 ret=os.system(cmd)
                 if ret!=0:
@@ -100,30 +118,34 @@ class cloud_file:
                                             'not exist and failed to create.')
         else:
             subdir=data_dir
-        
-        # Now download the file if it's not already present
+
+        # The local filename
         fname=subdir+'/'+fname_orig
-        if os.path.isfile(fname)==False:
-            response=input('Data file '+fname+
+        hash_match=False
+        if os.path.isfile(fname)==True:
+            mhash2=mda5(fname)
+            if mhash==mhash2:
+                hash_match=True
+            elif verbose>0:
+                print('Hash of file',fname,'did not match',mhash)
+        elif verbose>0:
+            print('Could not find file',fname)
+            
+        # Now download the file if it's not already present
+        if hash_match==False or os.path.isfile(fname)==False:
+            response=input('Hash did not match or data file '+fname+
                            ' not found. Download (y/Y/n/N)? ')
             ret=1
             if response=='y' or response=='Y':
-                print('Trying wget:')
-                cmd=''
-                if len(self.username>0):
-                    if len(self.password>0):
-                        cmd=('cd '+subdir+'; wget http://'+
-                             self.username+':'+self.password+'@'+url)
-                    else:
-                        cmd=('cd '+subdir+'; wget http://'+
-                             self.username+'@'+url)
-                else:
-                    cmd=('cd '+subdir+'; wget '+url)
-                ret=os.system(cmd)
-                if ret!=0:
-                    print('Trying curl:')
-                    cmd=('cd '+subdir+'; curl '+url)
-                    ret=os.system(cmd)
+                if verbose>0:
+                    print('Trying two download:')
+                urllib.request.urlretrieve(url,fname)
+                ret=0
+            if ret==0:
+                mhash2=mda5(fname)
+                if mhash!=mhash2:
+                    raise ConnectionError('Downloaded file but '+
+                                          'has does not match.')
             if ret!=0:
                 raise ConnectionError('Failed to obtain data file.')
     
