@@ -89,13 +89,17 @@ class cloud_file:
     
         # Now test for the existence of the subdirectory and create it if
         # necessary
-        subdir=data_dir+'/'+subdir_orig
-        if os.path.isdir(subdir)==False:
-            cmd='mkdir -p '+subdir
-            ret=os.system(cmd)
-            if ret!=0:
-                raise FileNotFoundError('Correct subdirectory does '+
-                                        'not exist and failed to create.')
+        subdir=''
+        if self.force_subdir==True:
+            subdir=data_dir+'/'+subdir_orig
+            if os.path.isdir(subdir)==False:
+                cmd='mkdir -p '+subdir
+                ret=os.system(cmd)
+                if ret!=0:
+                    raise FileNotFoundError('Correct subdirectory does '+
+                                            'not exist and failed to create.')
+        else:
+            subdir=data_dir
         
         # Now download the file if it's not already present
         fname=subdir+'/'+fname_orig
@@ -113,9 +117,8 @@ class cloud_file:
                     else:
                         cmd=('cd '+subdir+'; wget http://'+
                              self.username+'@'+url)
-                else
-                cmd=('cd '+subdir+'; wget '+url)
-
+                else:
+                    cmd=('cd '+subdir+'; wget '+url)
                 ret=os.system(cmd)
                 if ret!=0:
                     print('Trying curl:')
