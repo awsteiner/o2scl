@@ -707,7 +707,7 @@ namespace o2scl {
       This class performs a MCMC simulation and stores the 
       results in a \ref o2scl::table_units object. The
       user must specify the column names and units in 
-      \ref set_names_units before \ref mcmc() is called.
+      \ref set_names_units() before \ref mcmc() is called.
 
       The function \ref add_line is the measurement function of type
       \c measure_t in the parent. The overloaded function \ref mcmc()
@@ -747,10 +747,10 @@ namespace o2scl {
   /// Type of parent class
   typedef mcmc_base<func_t,internal_measure_t,data_t,vec_t> parent_t;
 
-  /// Parameter names
+  /// Column names
   std::vector<std::string> col_names;
     
-  /// Parameter units
+  /// Column units
   std::vector<std::string> col_units;
     
   /// Main data table for Markov chain
