@@ -515,6 +515,59 @@ class plotter:
             plot.ylim([self.ylo,self.yhi])
         return
 
+    def plot1m(self,col,files,**kwargs):
+        if self.verbose>2:
+            print('plot1m',col,kwargs)
+        if self.canvas_flag==0:
+            self.canvas()
+        for i in range(0,len(files)):
+            self.dset=self.h5r.h5read_first_type(files[i],'table')
+            self.dtype='table'
+            tlist=range(1,len(self.dset['data/'+col])+1)
+            if self.logx==1:
+                if self.logy==1:
+                    plot.loglog(tlist,self.dset['data/'+col],**kwargs)
+                else:
+                    plot.semilogx(tlist,self.dset['data/'+col],**kwargs)
+            else:
+                if self.logy==1:
+                    plot.semilogy(tlist,self.dset['data/'+col],**kwargs)
+                else:
+                    plot.plot(tlist,self.dset['data/'+col],**kwargs)
+        if self.xset==1:
+            plot.xlim([self.xlo,self.xhi])
+        if self.yset==1:
+            plot.ylim([self.ylo,self.yhi])
+        return
+    
+    def plotm(self,colx,coly,files,**kwargs):
+        if self.verbose>2:
+            print('plotm',colx,coly,kwargs)
+        if self.canvas_flag==0:
+            self.canvas()
+        for i in range(0,len(files)):
+            self.dset=self.h5r.h5read_first_type(files[i],'table')
+            self.dtype='table'
+            if self.logx==1:
+                if self.logy==1:
+                    plot.loglog(self.dset['data/'+colx],
+                                self.dset['data/'+coly],**kwargs)
+                else:
+                    plot.semilogx(self.dset['data/'+colx],
+                                  self.dset['data/'+coly],**kwargs)
+            else:
+                if self.logy==1:
+                    plot.semilogy(self.dset['data/'+colx],
+                                  self.dset['data/'+coly],**kwargs)
+                else:
+                    plot.plot(self.dset['data/'+colx],
+                              self.dset['data/'+colx],**kwargs)
+        if self.xset==1:
+            plot.xlim([self.xlo,self.xhi])
+        if self.yset==1:
+            plot.ylim([self.ylo,self.yhi])
+        return
+    
     def hist(self,col,**kwargs):
         if self.verbose>2:
             print('hist',kwargs)
@@ -1034,6 +1087,32 @@ class plotter:
                         print('Not enough parameters for plot1 option.')
                     else:
                         self.plot1(argv[ix+1])
+                elif cmd_name=='plot1m':
+                    if self.verbose>2:
+                        print('Process plot1m.')
+                    if ix_next-ix<2:
+                        print('Not enough parameters for plot1m option.')
+                    else:
+                        files=[]
+                        for i in range(ix+2,len(argv)):
+                            if argv[i][0]!='-':
+                                files.append(argv[i])
+                            else:
+                                i=len(argv)
+                        self.plot1m(argv[ix+1],files)
+                elif cmd_name=='plotm':
+                    if self.verbose>2:
+                        print('Process plotm.')
+                    if ix_next-ix<3:
+                        print('Not enough parameters for plot1 option.')
+                    else:
+                        files=[]
+                        for i in range(ix+3,len(argv)):
+                            if argv[i][0]!='-':
+                                files.append(argv[i])
+                            else:
+                                i=len(argv)
+                        self.plotm(argv[ix+1],argv[ix+2],files)
                 elif cmd_name=='hist':
                     if self.verbose>2:
                         print('Process hist.')
