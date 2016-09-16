@@ -22,6 +22,10 @@
 */
 #include <o2scl/qr.h>
 
+void blank_func3() {
+  return;
+}
+
 #ifdef O2SCL_ARMA
   
 // (Armadillo specialization)

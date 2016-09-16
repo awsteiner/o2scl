@@ -22,6 +22,10 @@
 */
 #include <o2scl/cholesky.h>
 
+void blank_func2() {
+  return;
+}
+
 #ifdef O2SCL_EIGEN
   
 // (Eigen specialization)

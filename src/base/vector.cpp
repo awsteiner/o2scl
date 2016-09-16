@@ -25,6 +25,10 @@
 using namespace std;
 using namespace o2scl;
 
+void blank_func1() {
+  return;
+}
+
 #ifdef O2SCL_ARMA
 
 template<> arma::subview_row<double> 
