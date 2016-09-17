@@ -70,7 +70,6 @@ nstar_cold::nstar_cold() : eost(new table_units<>) {
   verbose=0;
 
   err_nonconv=true;
-  solver_success=true;
   well_formed=true;
 }
 
@@ -95,7 +94,7 @@ double nstar_cold::solve_fun(double x) {
   return y;
 }
 
-void nstar_cold::calc_eos(double np_0) {
+int nstar_cold::calc_eos(double np_0) {
 
   if (verbose>0) {
     cout << "Starting calc_eos()." << endl;
@@ -160,20 +159,19 @@ void nstar_cold::calc_eos(double np_0) {
     }
   }
   
-  solver_success=true;
   for(barn=nb_start;barn<=nb_end+dnb/10.0;barn+=dnb) {
     
     int ret=rp->solve(x,sf);
     double y=solve_fun(x);
     
     if (ret!=0 || fabs(y)>solver_tol) {
-      solver_success=false;
       // We don't use the CONV macro here because we
       // want to return only if err_nonconv is true
       if (err_nonconv) {
 	O2SCL_ERR("Solver failed in nstar_cold::calc_eos().",
 		      exc_efailed);
       }
+      return o2scl::exc_efailed;
     }
 
     // ------------------------------------------------------------
@@ -381,7 +379,7 @@ void nstar_cold::calc_eos(double np_0) {
     cout << "Done with calc_eos()." << endl;
   }
   
-  return;
+  return 0;
 }
 
 double nstar_cold::calc_urca(double np_0) {
@@ -425,25 +423,21 @@ double nstar_cold::calc_urca(double np_0) {
   return 0.0;
 }
 
-void nstar_cold::calc_nstar() {
+int nstar_cold::calc_nstar() {
   def_eos_tov.read_table(*eost,"ed","pr","nb");
   
   tp->set_units("1/fm^4","1/fm^4","1/fm^3");
   tp->set_eos(def_eos_tov);
   
-  tp->mvsr();
-  
-  return;
+  return tp->mvsr();
 }
 
-void nstar_cold::fixed(double target_mass) {
+int nstar_cold::fixed(double target_mass) {
   def_eos_tov.read_table(*eost,"ed","pr","nb");
   
   tp->set_units("1/fm^4","1/fm^4","1/fm^3");
   tp->set_eos(def_eos_tov);
   
-  tp->fixed(target_mass);
-  
-  return;
+  return tp->fixed(target_mass);
 }
 

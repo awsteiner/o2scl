@@ -205,7 +205,7 @@ namespace o2scl {
 
     /** \brief Calculate the given equation of state
      */
-    void calc_eos(double np_0=0.0);
+    int calc_eos(double np_0=0.0);
     
     /** \brief Compute the density at which the direct Urca process is allowe
 
@@ -217,18 +217,15 @@ namespace o2scl {
 
     /** \brief Calculate the M vs. R curve
      */
-    void calc_nstar();
+    int calc_nstar();
 
     /** \brief Calculate the profile for a fixed gravitational mass
      */
-    void fixed(double target_mass);
+    int fixed(double target_mass);
     //@}
 
     /// \name Output 
     //@{
-    /// If true, the last call of calc_eos() succeeded.
-    bool solver_success;
-    
     /** \brief If true, the energy density of the EOS is monotonically 
 	increasing and the pressure is always positive
     */
