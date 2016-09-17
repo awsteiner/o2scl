@@ -796,7 +796,7 @@ class plotter:
         elif name=='cmap':
             self.cmap=value
         elif name=='colbar':
-            self.colbar=value
+            self.colbar=int(value)
         else:
             print('No variable named',name)
         return
