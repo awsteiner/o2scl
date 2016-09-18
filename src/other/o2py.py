@@ -442,7 +442,8 @@ class plotter:
         return
 
     def plot(self,colx,coly,**kwargs):
-        if self.dtype==b'table':
+        
+        if bytes(self.dtype,'utf-8')==b'table':
             if self.verbose>2:
                 print('plot',colx,coly,kwargs)
             if self.canvas_flag==0:
@@ -465,7 +466,7 @@ class plotter:
                 plot.xlim([self.xlo,self.xhi])
             if self.yset==1:
                 plot.ylim([self.ylo,self.yhi])
-        elif self.type==b'hist':
+        elif bytes(self.dtype,'utf-8')==b'hist':
             size=dset['size'][0]
             bins=dset['bins']
             weights=dset['weights']
@@ -685,7 +686,7 @@ class plotter:
         return
 
     def list(self):
-        if self.type==b'table':
+        if bytes(self.dtype,'utf-8')==b'table':
             col_list=get_str_array(self.dset['col_names'])
             if self.verbose>2:
                 print('-----------------------')
@@ -708,7 +709,7 @@ class plotter:
             print(self.dset['nlines'][0],'lines.')
             if self.verbose>2:
                 print('Done in list')
-        elif self.type==b'table3d':
+        elif self.dtype==b'table3d':
             sl_list=get_str_array(self.dset['slice_names'])
             print(len(sl_list),'slices.')
             for ix in range(0,len(sl_list)):
@@ -1059,7 +1060,6 @@ class plotter:
                 elif cmd_name=='plot':
                     if self.verbose>2:
                         print('Process plot.')
-                        print(ix,ix_next)
                     if ix_next-ix<3:
                         print('Not enough parameters for plot option.')
                     elif ix_next-ix<4:
