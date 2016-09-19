@@ -29,6 +29,7 @@ import getopt, sys, h5py, math, os, hashlib
 import matplotlib.pyplot as plot
 from matplotlib.colors import LinearSegmentedColormap
 import urllib.request
+import numpy
 
 class cloud_file:
 
@@ -443,7 +444,7 @@ class plotter:
 
     def plot(self,colx,coly,**kwargs):
         
-        if bytes(self.dtype,'utf-8')==b'table':
+        if self.force_bytes(self.dtype)==b'table':
             if self.verbose>2:
                 print('plot',colx,coly,kwargs)
             if self.canvas_flag==0:
@@ -466,7 +467,7 @@ class plotter:
                 plot.xlim([self.xlo,self.xhi])
             if self.yset==1:
                 plot.ylim([self.ylo,self.yhi])
-        elif bytes(self.dtype,'utf-8')==b'hist':
+        elif self.force_bytes(self.dtype)==b'hist':
             size=dset['size'][0]
             bins=dset['bins']
             weights=dset['weights']
@@ -492,7 +493,7 @@ class plotter:
         return
 
     def plot1(self,col,**kwargs):
-        if self.dtype!='table':
+        if self.force_bytes(self.dtype)!=b'table':
             print('Wrong type for plot1.')
             return
         if self.verbose>2:
@@ -574,7 +575,7 @@ class plotter:
             print('hist',kwargs)
         if self.canvas_flag==0:
             self.canvas()
-        if self.type==b'table':
+        if self.force_bytes(self.dtype)==b'table':
             plot.hist(self.dset['data/'+col],**kwargs)
         else:
             print('Wrong type',self.dtype,'for hist()')
@@ -685,8 +686,18 @@ class plotter:
         self.dtype=atuple[1]
         return
 
+    def force_bytes(self,obj):
+        """
+        In cases where we're unsure whether or not obj is
+        a string or bytes object, we ensure it's a bytes
+        object by converting if necessary.
+        """
+        if isinstance(obj,numpy.bytes_)==False:
+            return bytes(obj,'utf-8')
+        return obj
+    
     def list(self):
-        if bytes(self.dtype,'utf-8')==b'table':
+        if self.force_bytes(self.dtype)==b'table':
             col_list=get_str_array(self.dset['col_names'])
             if self.verbose>2:
                 print('-----------------------')
@@ -709,7 +720,7 @@ class plotter:
             print(self.dset['nlines'][0],'lines.')
             if self.verbose>2:
                 print('Done in list')
-        elif self.dtype==b'table3d':
+        elif self.force_bytes(self.dtype)==b'table3d':
             sl_list=get_str_array(self.dset['slice_names'])
             print(len(sl_list),'slices.')
             for ix in range(0,len(sl_list)):
@@ -727,7 +738,7 @@ class plotter:
         return
 
     def den_plot(self,slice_name,**kwargs):
-        if self.dtype==b'table3d':
+        if self.force_bytes(self.dtype)==b'table3d':
             name='data/'+slice_name
             sl=self.dset[name].value
             sl=sl.transpose()
