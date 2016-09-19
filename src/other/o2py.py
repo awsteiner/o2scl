@@ -563,7 +563,7 @@ class plotter:
                                   self.dset['data/'+coly],**kwargs)
                 else:
                     plot.plot(self.dset['data/'+colx],
-                              self.dset['data/'+colx],**kwargs)
+                              self.dset['data/'+coly],**kwargs)
         if self.xset==1:
             plot.xlim([self.xlo,self.xhi])
         if self.yset==1:
