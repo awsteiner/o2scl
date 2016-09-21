@@ -361,6 +361,7 @@ class plotter:
     dtype=''
     cmap='jet'
     colbar=0
+    text_color='black'
 
     def myreds(self):
         cdict={'red': ((0.0,1.0,1.0),(1.0,1.0,1.0)),
@@ -807,6 +808,8 @@ class plotter:
             self.verbose=int(value)
         elif name=='cmap':
             self.cmap=value
+        elif name=='text_color':
+            self.text_color=value
         elif name=='colbar':
             self.colbar=int(value)
         else:
@@ -907,14 +910,23 @@ class plotter:
             print('set(name,value)')
             print('show()')
             print('text(x,y,string,**kwargs)')
+            print('ttext(x,y,string,**kwargs)')
             print('xlimits(xlow,xhigh)')
             print('ylimits(ylow,yhigh)')
+        return
+
+    def ttext(self,tx,ty,str,**kwargs):
+        if self.canvas_flag==0:
+            self.canvas()
+        self.axes.text(tx,ty,str,transform=self.axes.transAxes,
+                       fontsize=16,va='center',ha='center',
+                       color=self.text_color,**kwargs)
         return
 
     def text(self,tx,ty,str,**kwargs):
         if self.canvas_flag==0:
             self.canvas()
-        self.axes.text(tx,ty,str,transform=self.axes.transAxes,
+        self.axes.text(tx,ty,str,color=self.text_color,
                        fontsize=16,va='center',ha='center',**kwargs)
         return
 
@@ -949,6 +961,10 @@ class plotter:
             print('The value of verbose is',self.verbose)
         elif name=='cmap':
             print('The value of cmap is',self.cmap)
+        elif name=='colbar':
+            print('The value of colbar is',self.colbar)
+        elif name=='text_color':
+            print('The value of text_color is',self.text_color)
         else:
             print('No variable named',name)
         return
@@ -1012,6 +1028,13 @@ class plotter:
                         print('Not enough parameters for text option.')
                     else:
                         self.text(argv[ix+1],argv[ix+2],argv[ix+3])
+                elif cmd_name=='ttext':
+                    if self.verbose>2:
+                        print('Process ttext.')
+                    if ix_next-ix<4:
+                        print('Not enough parameters for ttext option.')
+                    else:
+                        self.ttext(argv[ix+1],argv[ix+2],argv[ix+3])
                 elif cmd_name=='read':
                     if self.verbose>2:
                         print('Process read.')

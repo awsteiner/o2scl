@@ -1200,54 +1200,176 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
     hf.set_current_id(top);
 
     if (otype.length()!=0) {
-      cout << "O2scl object '" << name << "' of type " 
-	   << otype << "." << endl;
+      if (otype==((string)"string[]")) {
+	  cout << "O2scl object \"" << name << "\" of type " 
+	       << otype << "." << endl;
+      } else {
+	  cout << "O2scl object \"" << name << "\" of type " 
+	       << otype << "." << endl;
+      }
     } else {
-      cout << "Group '" << name << "'." << endl;
+      cout << "Group \"" << name << "\"." << endl;
     }
 
   } else if (infobuf.type==H5O_TYPE_DATASET) {
-    cout << "Dataset '" << name << "' of type ";
+    cout << "Dataset \"" << name << "\" of type ";
+
+    // Open data set
     hid_t dset=H5Dopen(loc,name,H5P_DEFAULT);
+    // Get type information
     hid_t type_id=H5Dget_type(dset);
     hid_t nat_id=H5Tget_native_type(type_id,H5T_DIR_ASCEND);
+    // Get dataspace information
+    hid_t space_id = H5Dget_space(dset);
+    hsize_t dims[100];
+    int ndims=H5Sget_simple_extent_dims(space_id,dims,0);
+    
     if (H5Tequal(nat_id,H5T_NATIVE_CHAR)) {
-      cout << "char of size (";
+      if (ndims==1) {
+	cout << "char with value=\"";
+	std::string s;
+	hf.gets(name,s);
+	if (dims[0]<20) {
+	  cout << s;
+	} else {
+	  cout << s[0] << s[1] << s[2] << s[3] << s[4] << s[5]
+	       << " ... "
+	       << s[dims[0]-6] << s[dims[0]-5] << s[dims[0]-4]
+	       << s[dims[0]-3] << s[dims[0]-2] << s[dims[0]-1];
+	}
+	cout << "\".";
+      } else {
+	cout << "char of size (";
+	for(int i=0;i<ndims-1;i++) {
+	  cout << dims[i] << ",";
+	}
+	cout << dims[ndims-1] << ").";
+      }
     } else if (H5Tequal(nat_id,H5T_NATIVE_SHORT)) {
       cout << "short of size (";
+      for(int i=0;i<ndims-1;i++) {
+	cout << dims[i] << ",";
+      }
+      cout << dims[ndims-1] << ").";
     } else if (H5Tequal(nat_id,H5T_NATIVE_INT)) {
-      cout << "int of size (";
+      if (ndims==1 && dims[0]>0) {
+	cout << "int with value=";
+	std::vector<int> iarr;
+	hf.geti_vec(name,iarr);
+	if (dims[0]==1) {
+	  cout << iarr[0];
+	} else if (dims[0]==2) {
+	  cout << iarr[0] << ", " << iarr[1];
+	} else {
+	  cout << iarr[0] << ", " << iarr[1] << ", ..., " << iarr[dims[0]-1];
+	}
+	cout << ".";
+      } else {
+	cout << "int of size (";
+	for(int i=0;i<ndims-1;i++) {
+	  cout << dims[i] << ",";
+	}
+	cout << dims[ndims-1] << ").";
+      }
     } else if (H5Tequal(nat_id,H5T_NATIVE_LONG)) {
       cout << "long of size (";
+      for(int i=0;i<ndims-1;i++) {
+	cout << dims[i] << ",";
+      }
+      cout << dims[ndims-1] << ").";
     } else if (H5Tequal(nat_id,H5T_NATIVE_LLONG)) {
       cout << "llong of size (";
+      for(int i=0;i<ndims-1;i++) {
+	cout << dims[i] << ",";
+      }
+      cout << dims[ndims-1] << ").";
     } else if (H5Tequal(nat_id,H5T_NATIVE_UCHAR)) {
       cout << "uchar of size (";
+      for(int i=0;i<ndims-1;i++) {
+	cout << dims[i] << ",";
+      }
+      cout << dims[ndims-1] << ").";
     } else if (H5Tequal(nat_id,H5T_NATIVE_USHORT)) {
       cout << "ushort of size (";
+      for(int i=0;i<ndims-1;i++) {
+	cout << dims[i] << ",";
+      }
+      cout << dims[ndims-1] << ").";
     } else if (H5Tequal(nat_id,H5T_NATIVE_UINT)) {
       cout << "uint of size (";
+      for(int i=0;i<ndims-1;i++) {
+	cout << dims[i] << ",";
+      }
+      cout << dims[ndims-1] << ").";
     } else if (H5Tequal(nat_id,H5T_NATIVE_ULONG)) {
-      cout << "unsigned long int of size (";
+      if (ndims==1 && dims[0]>0) {
+	cout << "unsigned_long_int with value=";
+	std::vector<size_t> sarr;
+	hf.get_szt_vec(name,sarr);
+	if (dims[0]==1) {
+	  cout << sarr[0];
+	} else if (dims[0]==2) {
+	  cout << sarr[0] << ", " << sarr[1];
+	} else {
+	  cout << sarr[0] << ", " << sarr[1] << ", ..., " << sarr[dims[0]-1];
+	}
+	cout << ".";
+      } else {
+	cout << "unsigned_long_int of size (";
+	for(int i=0;i<ndims-1;i++) {
+	  cout << dims[i] << ",";
+	}
+	cout << dims[ndims-1] << ").";
+      }
     } else if (H5Tequal(nat_id,H5T_NATIVE_ULLONG)) {
       cout << "ullong of size (";
+      for(int i=0;i<ndims-1;i++) {
+	cout << dims[i] << ",";
+      }
+      cout << dims[ndims-1] << ").";
     } else if (H5Tequal(nat_id,H5T_NATIVE_FLOAT)) {
       cout << "float of size (";
+      for(int i=0;i<ndims-1;i++) {
+	cout << dims[i] << ",";
+      }
+      cout << dims[ndims-1] << ").";
     } else if (H5Tequal(nat_id,H5T_NATIVE_DOUBLE)) {
-      cout << "double of size (";
+      if (ndims==1 && dims[0]>0) {
+	cout << "double with value=";
+	std::vector<double> darr;
+	hf.getd_vec(name,darr);
+	if (dims[0]==1) {
+	  cout << darr[0];
+	} else if (dims[0]==2) {
+	  cout << darr[0] << ", " << darr[1];
+	} else {
+	  cout << "\n\t"
+	       << darr[0] << ", " << darr[1] << ", ..., " << darr[dims[0]-1];
+	}
+	cout << ".";
+      } else {
+	cout << "double of size (";
+	for(int i=0;i<ndims-1;i++) {
+	  cout << dims[i] << ",";
+	}
+	cout << dims[ndims-1] << ").";
+      }
     } else if (H5Tequal(nat_id,H5T_NATIVE_LDOUBLE)) {
       cout << "ldouble of size (";
+      for(int i=0;i<ndims-1;i++) {
+	cout << dims[i] << ",";
+      }
+      cout << dims[ndims-1] << ").";
     }
-    hid_t sid = H5Dget_space(dset);
-    hsize_t dims[100];
-    int ndims=H5Sget_simple_extent_dims(sid,dims,0);
-    for(int i=0;i<ndims-1;i++) {
-      cout << dims[i] << ",";
-    }
-    cout << dims[ndims-1] << ")." << endl;
+    cout << endl;
+
+    H5Sclose(space_id);
+    H5Tclose(nat_id);
+    H5Tclose(type_id);
     H5Dclose(dset);
+    
   } else if (infobuf.type==H5O_TYPE_NAMED_DATATYPE) {
-    cout << "Named type '" << name << "'." << endl;
+    cout << "Named type \"" << name << "\"." << endl;
   } else {
     cout << "Unexpected HDF type. " << endl;
   }
@@ -2887,7 +3009,7 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
     size_t nx, ny;
     t3p->get_size(nx,ny);
     new_table3d->set_xy(t3p->get_x_name(),nx,t3p->get_x_data(),
-		 t3p->get_y_name(),ny,t3p->get_y_data());
+			t3p->get_y_name(),ny,t3p->get_y_data());
 	
     // ----------------------------------------
     // Copy constants from old to new table3d
