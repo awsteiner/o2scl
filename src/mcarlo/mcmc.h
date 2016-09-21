@@ -124,7 +124,10 @@ namespace o2scl {
 
   /// Data switch array
   std::vector<bool> switch_arr;
-
+  
+  /// Return value counters
+  std::vector<size_t> ret_value_counts;
+  
   /// \name Interface customization
   //@{
   /** \brief Initializations before the MCMC 
@@ -377,6 +380,9 @@ namespace o2scl {
 	  // If we have a good point, call the measurement function and
 	  // stop the loop
 	  if (iret==o2scl::success) {
+	    if (iret>=0 && iret<ret_value_counts.size()) {
+	      ret_value_counts[iret]++;
+	    }
 	    meas_ret=meas(current[curr_walker],w_current[curr_walker],
 			  curr_walker,true,data_arr[curr_walker]);
 	    done=true;
@@ -421,6 +427,9 @@ namespace o2scl {
 	return 2;
       }
 
+      if (iret>=0 && iret<ret_value_counts.size()) {
+	ret_value_counts[iret]++;
+      }
       meas_ret=meas(current[0],w_current[0],0,true,data_arr[0]);
 
       best=current[0];
@@ -504,6 +513,9 @@ namespace o2scl {
 	  iret=func(nparams,next,w_next,data_arr[curr_walker+n_walk]);
 	} else {
 	  iret=func(nparams,next,w_next,data_arr[curr_walker]);
+	}
+	if (iret>=0 && iret<ret_value_counts.size()) {
+	  ret_value_counts[iret]++;
 	}
 	if (verbose>=1 && iret!=o2scl::success && iret!=mcmc_skip) {
 	  std::cout << "Function returned failure " << iret

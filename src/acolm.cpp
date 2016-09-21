@@ -1303,7 +1303,7 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
       cout << dims[ndims-1] << ").";
     } else if (H5Tequal(nat_id,H5T_NATIVE_ULONG)) {
       if (ndims==1 && dims[0]>0) {
-	cout << "unsigned_long_int with value=";
+	cout << "unsigned long int with value=";
 	std::vector<size_t> sarr;
 	hf.get_szt_vec(name,sarr);
 	if (dims[0]==1) {
@@ -1315,7 +1315,7 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	}
 	cout << ".";
       } else {
-	cout << "unsigned_long_int of size (";
+	cout << "unsigned long int of size (";
 	for(int i=0;i<ndims-1;i++) {
 	  cout << dims[i] << ",";
 	}
