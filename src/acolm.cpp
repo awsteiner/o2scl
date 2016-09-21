@@ -1208,6 +1208,9 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 
   } else if (infobuf.type==H5O_TYPE_DATASET) {
     cout << "Dataset named '" << name << "'." << endl;
+    //hid_t dset=H5Dopen(loc,name,H5P_DEFAULT);
+    //    cout << "Type: " << H5Dget_type(dset) << " " << H5T_NATIVE_DOUBLE << " "
+    //<< H5T_NATIVE_INT << endl;
   } else if (infobuf.type==H5O_TYPE_NAMED_DATATYPE) {
     cout << "Named type with name '" << name << "'." << endl;
   } else {
