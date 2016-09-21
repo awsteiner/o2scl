@@ -1200,19 +1200,54 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
     hf.set_current_id(top);
 
     if (otype.length()!=0) {
-      cout << "O2scl object named '" << name << "' of type " 
+      cout << "O2scl object '" << name << "' of type " 
 	   << otype << "." << endl;
     } else {
-      cout << "Group named '" << name << "'." << endl;
+      cout << "Group '" << name << "'." << endl;
     }
 
   } else if (infobuf.type==H5O_TYPE_DATASET) {
-    cout << "Dataset named '" << name << "'." << endl;
-    //hid_t dset=H5Dopen(loc,name,H5P_DEFAULT);
-    //    cout << "Type: " << H5Dget_type(dset) << " " << H5T_NATIVE_DOUBLE << " "
-    //<< H5T_NATIVE_INT << endl;
+    cout << "Dataset '" << name << "' of type ";
+    hid_t dset=H5Dopen(loc,name,H5P_DEFAULT);
+    hid_t type_id=H5Dget_type(dset);
+    hid_t nat_id=H5Tget_native_type(type_id,H5T_DIR_ASCEND);
+    if (H5Tequal(nat_id,H5T_NATIVE_CHAR)) {
+      cout << "char of size (";
+    } else if (H5Tequal(nat_id,H5T_NATIVE_SHORT)) {
+      cout << "short of size (";
+    } else if (H5Tequal(nat_id,H5T_NATIVE_INT)) {
+      cout << "int of size (";
+    } else if (H5Tequal(nat_id,H5T_NATIVE_LONG)) {
+      cout << "long of size (";
+    } else if (H5Tequal(nat_id,H5T_NATIVE_LLONG)) {
+      cout << "llong of size (";
+    } else if (H5Tequal(nat_id,H5T_NATIVE_UCHAR)) {
+      cout << "uchar of size (";
+    } else if (H5Tequal(nat_id,H5T_NATIVE_USHORT)) {
+      cout << "ushort of size (";
+    } else if (H5Tequal(nat_id,H5T_NATIVE_UINT)) {
+      cout << "uint of size (";
+    } else if (H5Tequal(nat_id,H5T_NATIVE_ULONG)) {
+      cout << "unsigned long int of size (";
+    } else if (H5Tequal(nat_id,H5T_NATIVE_ULLONG)) {
+      cout << "ullong of size (";
+    } else if (H5Tequal(nat_id,H5T_NATIVE_FLOAT)) {
+      cout << "float of size (";
+    } else if (H5Tequal(nat_id,H5T_NATIVE_DOUBLE)) {
+      cout << "double of size (";
+    } else if (H5Tequal(nat_id,H5T_NATIVE_LDOUBLE)) {
+      cout << "ldouble of size (";
+    }
+    hid_t sid = H5Dget_space(dset);
+    hsize_t dims[100];
+    int ndims=H5Sget_simple_extent_dims(sid,dims,0);
+    for(int i=0;i<ndims-1;i++) {
+      cout << dims[i] << ",";
+    }
+    cout << dims[ndims-1] << ")." << endl;
+    H5Dclose(dset);
   } else if (infobuf.type==H5O_TYPE_NAMED_DATATYPE) {
-    cout << "Named type with name '" << name << "'." << endl;
+    cout << "Named type '" << name << "'." << endl;
   } else {
     cout << "Unexpected HDF type. " << endl;
   }
