@@ -170,6 +170,9 @@ public:
   /// Prefix for output files
   string file_prefix;
 
+  /// If true, output JSON
+  bool json_mode;
+
   ex_eos_had_skyrme() {
 
     // Ensure that this works without GNU units
@@ -192,6 +195,8 @@ public:
 
     output_files=false;
     file_prefix="skyrme_";
+
+    json_mode=false;
   }
 
   /** \brief Generate a table comparing neutron matter and neutron 
@@ -336,7 +341,15 @@ public:
     res.alt_S=sk.fesym_diff(sk.n0)*hc_mev_fm;
     res.L=sk.fesym_slope(sk.n0)*hc_mev_fm;
 
-    if (verbose>0) {
+    if (json_mode) {
+      cout << "{\"n0\":" sk.n0 << "," << endl;
+      cout << "\"EoA\":" sk.eoa*hc_mev_fm << "," << endl;
+      cout << "\"K\":" sk.comp*hc_mev_fm << "," << endl;
+      cout << "\"msom\":" sk.msom << "," << endl;
+      cout << "\"S\":" sk.esym*hc_mev_fm << "," << endl;
+      cout << "\"S2\":" res.alt_S << "," << endl;
+      cout << "\"L\":" res.L << "}" << endl;
+    } else if (verbose>0) {
       cout << "Saturation: " << endl;
       cout << "n_0=" << sk.n0 << " fm^-3" << endl;
       cout << "E_B=" << sk.eoa*hc_mev_fm << " MeV" << endl;
@@ -484,6 +497,38 @@ public:
       cout << endl;
     }
 
+    return 0;
+  }
+
+  /// Summarize the results of one model
+  int json(vector<string> &sv, bool itive_com) {
+    if (sv.size()<1) {
+      cout << "No model to summarize." << endl;
+      return exc_einval;
+    }
+
+    cout << "Model: " << sv[1] << endl;
+    cout << "-----------------------------------------------------" 
+	 << "-----------------------" << endl;
+    cout << endl;
+
+    skyrme_load(sk,sv[1]);
+    name=sv[1];
+    res.name=sv[1];
+    
+    W0hc=sk.W0*hc_mev_fm;
+    t0hc=sk.t0*hc_mev_fm;
+    t1hc=sk.t1*hc_mev_fm;
+    t2hc=sk.t2*hc_mev_fm;
+    t3hc=sk.t3*hc_mev_fm;
+
+    nst.verbose=0;
+    nst.nb_end=1.18;
+
+    json_mode=true;
+    saturation_prop();
+    json_mode=false;
+    
     return 0;
   }
 
@@ -977,6 +1022,10 @@ int main(int argv, char *argc[]) {
     {'u',"summary","Summarize the properties of a Skyrme model.",
      1,1,"<model>","",
      new comm_option_mfptr<ex_eos_had_skyrme>(&se,&ex_eos_had_skyrme::summary),
+     comm_option_both},
+    {'j',"json","Summarize the properties of a Skyrme model.",
+     1,1,"<model>","",
+     new comm_option_mfptr<ex_eos_had_skyrme>(&se,&ex_eos_had_skyrme::json),
      comm_option_both}
   };
 
