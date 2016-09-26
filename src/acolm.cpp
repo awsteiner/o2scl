@@ -1103,6 +1103,26 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
       }
       h.copy_to_table(*t3p,"x","y","weights");
       return 0;
+    } else if (type==((string)"string[]")) {
+      vector<string> vs;
+      hf.gets_vec(i2,vs);
+      if (vs.size()==0) {
+	cout << "String vector empty." << endl;
+      } else if (vs.size()==1) {
+	cout << vs[0] << endl;
+      } else {
+	string str=vs[0];
+	for(size_t kk=1;kk<vs.size();kk++) {
+	  str+=" ";
+	  str+=vs[kk];
+	}
+	vector<string> vs2;
+	o2scl::rewrap(str,vs2);
+	for(size_t kk=0;kk<vs2.size();kk++) {
+	  cout << vs2[kk] << endl;
+	}
+      }
+      return 0;
     }
     cout << "Incompatible type '" << i2 << "'." << endl;
     return exc_efailed;

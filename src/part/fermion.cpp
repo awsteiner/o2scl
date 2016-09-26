@@ -288,7 +288,9 @@ double fermion_eval_thermo::calibrate
   hdf_file hf;
   hf.open(fname);
   string name;
+#ifndef O2SCL_OLDER_COMPILER  
   hdf_input(hf,tab,name);
+#endif
   hf.close();
   
   if (tab.get_nlines()==0) {

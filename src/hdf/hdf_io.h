@@ -47,6 +47,7 @@ namespace o2scl_hdf {
    */
   void hdf_output(hdf_file &hf, o2scl::table<> &t, std::string name);
 
+#ifndef O2SCL_OLDER_COMPILER  
   /** \brief Input a \ref o2scl::table object from a \ref hdf_file
 
       \comment
@@ -82,6 +83,7 @@ namespace o2scl_hdf {
 
     return;
   }
+#endif
 
   /** \brief Internal function for outputting a \ref o2scl::table object
    */
@@ -162,7 +164,7 @@ namespace o2scl_hdf {
 
     return;
   }
-
+  
   /** \brief Output a \ref o2scl::table_units object to a \ref hdf_file
    */
   void hdf_output(hdf_file &hf, o2scl::table_units<> &t, 
