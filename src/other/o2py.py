@@ -388,8 +388,8 @@ class plotter:
         self.cmap='MyBlues'
         
     def contour_plot(self,level,**kwargs):
-        if self.dtype!='vector<contour_line>':
-            print('Wrong type for contour_plot.')
+        if self.force_bytes(self.dtype)!=b'vector<contour_line>':
+            print('Wrong type for contour_plotx.')
             return
         if self.verbose>2:
             print('contour_plot',level,kwargs)
@@ -416,7 +416,7 @@ class plotter:
         return
  
     def points(self,colx,coly,**kwargs):
-        if self.dtype!='table':
+        if self.force_bytes(self.dtype)==b'table':
             print('Wrong type for plot.')
             return
         if self.verbose>2:
