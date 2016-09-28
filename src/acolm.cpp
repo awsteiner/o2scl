@@ -454,7 +454,7 @@ int acol_manager::setup_parameters() {
   return 0;
 }
 
-int acol_manager::run(int argv, char *argc[]) {
+int acol_manager::run(int argc, char *argv[]) {
   
   //---------------------------------------
   // Default to scientific mode
@@ -510,11 +510,11 @@ int acol_manager::run(int argv, char *argc[]) {
 
   if (verbose>2) {
     cout << "Process command-line options" << endl;
-    cl->process_args(argv,argc,ca,1);
+    cl->process_args(argc,argv,ca,1);
   } else {
-    cl->process_args(argv,argc,ca);
+    cl->process_args(argc,argv,ca);
   }
-  if (argv<2) {
+  if (argc<2) {
     post_interactive=true;
   }
 
