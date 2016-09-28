@@ -995,7 +995,7 @@ namespace o2scl {
 
     /** \name Binary heap implementation
 	
-	Based on \ref Cormen and used as a priority queue of
+	Based on \ref Cormen09 and used as a priority queue of
 	regions to integrate.
     */
     //@{
