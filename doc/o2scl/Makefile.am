@@ -66,3 +66,8 @@ clean-doc-noform:
 		installdox tab*.gif tabs.css
 	rm -f o2scl.tag
 
+refs:
+	cat refs_head.txt > refs.dox
+	btmanip -p ../../data/o2scl/o2scl.bib -dox /tmp/btmanip
+	cat /tmp/btmanip >> refs.dox
+	cat refs_foot.txt >> refs.dox

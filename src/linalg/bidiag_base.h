@@ -59,7 +59,7 @@ namespace o2scl_linalg {
       respectively.
 
       Adapted from the GSL version which was based on algorithm 5.4.2
-      in \ref GolubXX.
+      in \ref Golub96.
   */
   template<class mat_t, class vec_t, class vec2_t> 
     int bidiag_decomp(size_t M, size_t N, mat_t &A, 

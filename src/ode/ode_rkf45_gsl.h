@@ -56,7 +56,7 @@ namespace o2scl {
 
   /** \brief Runge-Kutta-Fehlberg embedded Runge-Kutta ODE stepper (GSL)
 
-      Based on \ref Hairer00 .
+      Based on \ref Hairer09 .
 
       \todo Check this because it may not give exact dydt_out.
    */
