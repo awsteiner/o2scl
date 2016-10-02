@@ -17,10 +17,10 @@ commands
 # ------------------------------------------------------------
 create x 0 1 0.1
 # ------------------------------------------------------------
-# Use 'formula' to apply a formula to create a new column
+# Use 'function' to apply a function to create a new column
 # ------------------------------------------------------------
-formula sin(x) s
-formula sqrt(1-s*s) c
+function sin(x) s
+function sqrt(1-s*s) c
 # ------------------------------------------------------------
 # The 'deriv' command computes derivatives
 # ------------------------------------------------------------
@@ -33,6 +33,12 @@ output
 # Or give 'output' command an argument to output to a file
 # ------------------------------------------------------------
 output test.txt
+# ------------------------------------------------------------
+# Change the output precision using set
+# ------------------------------------------------------------
+set precision 4
+output
+set precision 6
 # ------------------------------------------------------------
 # Shell commands are proceeded by an '!'
 # ------------------------------------------------------------
@@ -47,9 +53,9 @@ internal test.o2
 generic test.txt
 output
 # ------------------------------------------------------------
-# Files in the internal format can be read with 'file'
+# Files in the internal format can be read with 'read'
 # ------------------------------------------------------------
-file test.o2
+read test.o2
 output
 # ------------------------------------------------------------
 # Tables also contain constant values in addition to data
@@ -62,7 +68,7 @@ list
 # ------------------------------------------------------------
 # Constants can be used in expressions
 # ------------------------------------------------------------
-formula x*pi/2 x2
+function x*pi/2 x2
 # ------------------------------------------------------------
 # Columns can be renamed. Legal column names contain letters
 # numbers and underscores, and begin with a letter.

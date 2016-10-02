@@ -86,17 +86,6 @@
     the ublas vector types from ublas, but for many applications they
     are also faster (and they are always at least as fast).
 
-    \section typecase_subsect Type-casting in vector and matrix design
-
-    \o2 uses a GSL-like approach where viewing const double *
-    arrays is performed by explicitly casting aways const'ness
-    internally and then preventing the user from changing the data. 
-
-    In GSL, the preprocessor output for \c vector/view_source.c is:
-    \include gsl_vector_doc.cpp
-    Note the explicit cast from const double * to double *. This
-    is similar to what is done in \c src/base/ovector_tlate.h.
-
     \section define_subsect Define constants and macros
 
     There are a couple define constants and macros that \o2

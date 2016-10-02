@@ -1047,6 +1047,9 @@ int cli::comm_option_run(vector<string> &sv, bool itive_com) {
       if (sw[0][0]=='!') {
 
 	if (shell_cmd_allowed) {
+	  if (verbose>0) {
+	    cout << "> " << entry << endl;
+	  }
 	  entry=entry.substr(1,entry.length()-1);
 	  if (verbose>0) {
 	    cout << cmd_name << ": Executing system command: " 
@@ -1068,8 +1071,10 @@ int cli::comm_option_run(vector<string> &sv, bool itive_com) {
 	  // Find the command
 	  if (string_equal_dash(clist[i].lng,sw[0]) && 
 	      clist[i].type!=comm_option_cl_param) {
-	    
-	    cout << "Running command: " << entry << endl;
+
+	    if (verbose>0) {
+	      cout << "> " << entry << endl;
+	    }
 	    
 	    // If there is an associated function
 	    if (clist[i].func!=0) {
@@ -1090,14 +1095,14 @@ int cli::comm_option_run(vector<string> &sv, bool itive_com) {
 
 	if (found==false && entry!="exit" && entry!="quit") {
 	  suc=false;
-
-	  if (sv.size()==1) {
+	  
+	  if (sw.size()==1) {
 
 	    // Check if the user gave a parameter
-	    par_t it=par_list.find(sv[0]);
+	    par_t it=par_list.find(sw[0]);
 	    if (it!=par_list.end()) {
 	      suc=true;
-	      cout << "The value of '" << sv[0] 
+	      cout << "The value of '" << sw[0] 
 		   << "' is: " << (it->second)->get() 
 		   << endl;
 	    }
@@ -1108,7 +1113,7 @@ int cli::comm_option_run(vector<string> &sv, bool itive_com) {
 	    
 	  } else {
 
-	    par_t it=par_list.find(sv[0]);
+	    par_t it=par_list.find(sw[0]);
 	    if (it!=par_list.end()) {
 	      suc=true;
 	      // We output here even if verbose is 0, because we want
@@ -1116,14 +1121,14 @@ int cli::comm_option_run(vector<string> &sv, bool itive_com) {
 	      // that they're setting a variable without using
 	      // 'set'. To ensure no output, the user should use the
 	      // full form with the 'set' command.
-	      cout << "Setting variable '" << sv[0] 
-		   << "' to " << sv[1] << endl;
+	      cout << "Setting variable '" << sw[0] 
+		   << "' to " << sw[1] << endl;
 	      
-	      it->second->set(sv[1]);
+	      it->second->set(sw[1]);
 
-	      sv.insert(sv.begin(),"set");
+	      sw.insert(sw.begin(),"set");
 	      if (user_set_func!=0) {
-		(*user_set_func)(sv,itive_com);
+		(*user_set_func)(sw,itive_com);
 	      }
 
 	    }
@@ -1136,7 +1141,7 @@ int cli::comm_option_run(vector<string> &sv, bool itive_com) {
 	}
 	
 	if (found==false && entry!="exit" && entry!="quit" && suc==false) {
-	  cout << "Command '" << sv[0] << "' not found." << endl;
+	  cout << "Command '" << sw[0] << "' not found." << endl;
 	}
 
 

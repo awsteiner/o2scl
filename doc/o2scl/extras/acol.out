@@ -3,54 +3,63 @@
 # This file documents the use of the 'acol' command.
 # There is a generic help command:
 # ------------------------------------------------------------
-Running command: help
-acol: A data table viewing and processing program for O2scl_ext.
+> help
+acol: A data table viewing and processing program for O2scl.
 
 List of commands:
 
-alias       Create a command alias.                                 
-assign      Assign a constant, e.g. -a hc=197.33                    
-binary      Output to a file in internal binary format.             
-calc        Compute the value of a constant expression.             
-commands    Output the list of commands.                            
-create      Create a table from uniform grid.                       
-delete-col  Delete a column.                                        
-delete-rows Delete rows.                                            
-deriv       The derivative of a function specified by two columns   
-deriv2      Second derivative.                                      
-exit        Exit (synonymous with 'quit').                          
-file        Read a table from a file.                               
-find-row    Find a row.                                             
-fit         Fit two columns to a formula.                           
-formula     Create a new column from a formula.                     
-generic     Read in a generic data file                             
-get         Get the value of a parameter.                           
-get-row     Get a row by index.                                     
-help        Show help information.                                  
-html        Create a file in HTML                                   
-index       Output row numbers, defining the column 'N'.            
-insert      Interpolate a column from another file                  
-insert-full Interpolate a table from another file                   
-integ       Integrate a function specified by two columns.          
-internal    Output in the internal text format.                     
-interp      Interpolate a number into a column.                     
-license     Show license information.                               
-list        List the constants, column names and the number of rows.
-max         Find the maximum value of a column.                     
-min         Find the minimum value of a column.                     
-no-intro    Don't print introductory text.                          
-output      Output the present table.                               
-preview     Preview the present table                               
-quit        Quit (synonymous with 'exit').                          
-rename      Rename a column.                                        
-run         Run a file containing a list of commands.               
-select      Select columns for a new table.                         
-select-rows Select rows for a new table.                            
-set         Set the value of a parameter.                           
-set-data    Set the entries of a column.                            
-sort        Sort the entire table by a column.                      
-version     Print version                                           
-warranty    Show warranty information.                              
+add          Add the data from two table3d objects.                         
+alias        Create a command alias.                                        
+assign       Assign a constant, e.g. assign pi acos(-1)                     
+calc         Compute the value of a constant expression.                    
+commands     List all available commands.                                   
+convert-unit Convert a column to a new unit                                 
+create       Create a table from uniform grid.                              
+delete-col   Delete a column (table3d only).                                
+delete-rows  Delete rows selected by a function.                            
+deriv        Derivative of a function defined by two columns (table3d only).
+deriv2       Second derivative (table3d only).                              
+exit         Exit (synonymous with 'quit').                                 
+filelist     List objects in a HDF5 file.                                   
+find-row     Find a row which maximizes a function (table3d only).          
+fit          Fit two columns to a function (experimental, table3d only).    
+function     Create a new column or slice from a function.                  
+gen3-list    Read in a generic data file (3d only).                         
+generic      Read in a generic data file (table3d only).                    
+get          Get the value of a parameter.                                  
+get-conv     Get a unit conversion factor.                                  
+get-row      Get a row by index.                                            
+get-unit     Get the units for a specified column.                          
+help         Show help information.                                         
+html         Create a file in HTML (table3d only).                          
+index        Add a column containing the row numbers (table3d only).        
+insert       Interpolate a column from another file.                        
+insert-full  Interpolate a table from another file (table3d only).          
+integ        Integrate a function specified by two columns (table3d only).  
+internal     Output in the internal HDF5 format.                            
+interp       Interpolate a number into a column or slice.                   
+interp-type  Get/set the current interpolation type.                        
+license      Show license information.                                      
+list         List the constants, column/slice names and other info.         
+max          Find the maximum value of a column or slice.                   
+min          Find the minimum value of a column or slice.                   
+output       Output the current table.                                      
+preview      Preview the current table                                      
+quit         Quit (synonymous with 'exit').                                 
+read         Read a table or table3d from a file.                           
+rename       Rename a column or slice.                                      
+run          Run a file containing a list of commands.                      
+select       Select columns or slices for a new table.                      
+select-rows  Select rows for a new table (table3d only).                    
+set          Set the value of a parameter.                                  
+set-data     Set the entries of a column.                                   
+set-unit     Set the units for a specified column.                          
+show-units   Show the unit conversion table.                                
+slice        Construct a slice (table3d only)                               
+sort         Sort the entire table by a column (2d only).                   
+stats        Show column statistics (2d only).                              
+version      Print version information.                                     
+warranty     Show warranty information.                                     
 
 Notes:
 
@@ -62,63 +71,65 @@ Notes:
 
 3. Long options may be preceeded by two dashes.
 
-4. In order to avoid argument confusion use "(-x*2)", not "-x*2"
+4. In order to avoid confusion between arguments and functions,
+   use "(-x*2)" not "-x*2"
 
 Known operators:
-() - ^ * / % + - = < > & |
+() ^ * / % + - == != < > && || << >> >= <=
 
 Known functions:
-abs(x) acos(x) acosh(x) asin(x) asinh(x) atan(x) atan2(x,y)
-atanh(x) ceil(x) cos(x) cosh(x) cot(x) csc(x) eval(...) exp(x)
-floor(x) if(x,y,z) int(x) log(x) log10(x) max(x,y) min(x,y)
-sec(x) sin(x) sinh(x) sqrt(x) tan(x) tanh(x)
+exp(x) log(x) log10(x) sin(x) cos(x) tan(x) sqrt(x) abs(x)
+asin(x) acos(x) atan(x) sinh(x) cosh(x) tanh(x)
+asinh(x) acosh(x) atanh(x)
 
-Compiled at 16:30:21 on May 15 2008 for o2scl_ext, version 0.102.
+Compiled at 11:38:17 on Oct  2 2016 for o2scl, version 0.920.
 
 # ------------------------------------------------------------
 # You can also get help on the commands individually, e.g.
 # ------------------------------------------------------------
-Running command: help create
+> help create
 Usage: create <name> <low> <hi> <step>
 
 Create a table from uniform grid.
 
-Create a new table with one column whose entries are an evenly-spaced grid.
-This takes four arguments, the name of the column, the first value, the
-increment between successive values and the maximum value. Note that finite
-precision arithmetic may cause small deviations from the expected
-result. 
+Create a new table with one column whose entries are an evenly-spaced grid. 
+This takes four arguments, the name of the column, the first value, the 
+increment between successive values and the maximum possible value. Note that 
+finite precision arithmetic may cause small deviations from the expected 
+result. If a table is currently in memory, it is deallocated beforehand. 
 # ------------------------------------------------------------
 # The full command list is given with 'commands'
 # ------------------------------------------------------------
-Running command: commands
+> commands
 Command list:
 
-alias       delete-rows generic     insert-full min         set-data    
-assign      deriv       get         integ       output      sort        
-binary      deriv2      get-row     internal    preview     version     
-calc        file        help        interp      rename      warranty    
-commands    find-row    html        license     select      
-create      fit         index       list        select-rows 
-delete-col  formula     insert      max         set         
+add          deriv        get          integ        no-intro     set          
+alias        deriv2       get-conv     interactive  output       set-data     
+assign       exit         get-row      internal     preview      set-unit     
+calc         filelist     get-unit     interp       quit         show-units   
+commands     find-row     help         interp-type  read         slice        
+convert-unit fit          html         license      rename       sort         
+create       function     index        list         run          stats        
+delete-col   gen3-list    insert       max          select       version      
+delete-rows  generic      insert-full  min          select-rows  warranty     
 
 # ------------------------------------------------------------
 # Use 'create' to create a table with one column
 # ------------------------------------------------------------
-Running command: create x 0 1 0.1
+> create x 0 1 0.1
 # ------------------------------------------------------------
-# Use 'formula' to apply a formula to create a new column
+# Use 'function' to apply a function to create a new column
 # ------------------------------------------------------------
-Running command: formula sin(x) s
-Running command: formula sqrt(1-s*s) c
+> function sin(x) s
+> function sqrt(1-s*s) c
 # ------------------------------------------------------------
 # The 'deriv' command computes derivatives
 # ------------------------------------------------------------
-Running command: deriv x s c2
+> deriv x s c2
 # ------------------------------------------------------------
 # Use 'output' to see the results
 # ------------------------------------------------------------
-Running command: output
+> output
  x             s             c             c2           
  0.000000e+00  0.000000e+00  1.000000e+00  9.999995e-01 
  1.000000e-01  9.983342e-02  9.950042e-01  9.950034e-01 
@@ -134,10 +145,29 @@ Running command: output
 # ------------------------------------------------------------
 # Or give 'output' command an argument to output to a file
 # ------------------------------------------------------------
-Running command: output test.txt
+> output test.txt
+# ------------------------------------------------------------
+# Change the output precision using set
+# ------------------------------------------------------------
+> set precision 4
+> output
+ x           s           c           c2         
+ 0.0000e+00  0.0000e+00  1.0000e+00  1.0000e+00 
+ 1.0000e-01  9.9833e-02  9.9500e-01  9.9500e-01 
+ 2.0000e-01  1.9867e-01  9.8007e-01  9.8007e-01 
+ 3.0000e-01  2.9552e-01  9.5534e-01  9.5533e-01 
+ 4.0000e-01  3.8942e-01  9.2106e-01  9.2107e-01 
+ 5.0000e-01  4.7943e-01  8.7758e-01  8.7755e-01 
+ 6.0000e-01  5.6464e-01  8.2534e-01  8.2546e-01 
+ 7.0000e-01  6.4422e-01  7.6484e-01  7.6437e-01 
+ 8.0000e-01  7.1736e-01  6.9671e-01  6.9845e-01 
+ 9.0000e-01  7.8333e-01  6.2161e-01  6.1510e-01 
+ 1.0000e+00  8.4147e-01  5.4030e-01  5.6461e-01 
+> set precision 6
 # ------------------------------------------------------------
 # Shell commands are proceeded by an '!'
 # ------------------------------------------------------------
+> !cat test.txt
 acol: Executing system command: cat test.txt
  x             s             c             c2           
  0.000000e+00  0.000000e+00  1.000000e+00  9.999995e-01 
@@ -151,16 +181,16 @@ acol: Executing system command: cat test.txt
  8.000000e-01  7.173561e-01  6.967067e-01  6.984518e-01 
  9.000000e-01  7.833269e-01  6.216100e-01  6.150954e-01 
  1.000000e+00  8.414710e-01  5.403023e-01  5.646134e-01 
-acol: Done with system command.
+acol: Done with system command (returned 0).
 # ------------------------------------------------------------
 # Or store the results in the internal format 
 # ------------------------------------------------------------
-Running command: internal test.o2
+> internal test.o2
 # ------------------------------------------------------------
 # Generic test files can be read using the 'generic' command
 # ------------------------------------------------------------
-Running command: generic test.txt
-Running command: output
+> generic test.txt
+> output
  x             s             c             c2           
  0.000000e+00  0.000000e+00  1.000000e+00  9.999995e-01 
  1.000000e-01  9.983342e-02  9.950042e-01  9.950034e-01 
@@ -174,10 +204,13 @@ Running command: output
  9.000000e-01  7.833269e-01  6.216100e-01  6.150954e-01 
  1.000000e+00  8.414710e-01  5.403023e-01  5.646134e-01 
 # ------------------------------------------------------------
-# Files in the internal format can be read with 'file'
+# Files in the internal format can be read with 'read'
 # ------------------------------------------------------------
-Running command: file test.o2
-Running command: output
+> read test.o2
+Found group with name acol.
+Group has o2scl_type table.
+Found type table.
+> output
  x             s             c             c2           
  0.000000e+00  0.000000e+00  1.000000e+00  9.999995e-01 
  1.000000e-01  9.983342e-02  9.950042e-01  9.950034e-01 
@@ -193,11 +226,11 @@ Running command: output
 # ------------------------------------------------------------
 # Tables also contain constant values in addition to data
 # ------------------------------------------------------------
-Running command: assign pi acos(-1.0)
+> assign pi acos(-1.0)
 # ------------------------------------------------------------
 # The 'list' command lists the column and constant names
 # ------------------------------------------------------------
-Running command: list
+> list
 Table name: acol
 1 constant:
 pi 3.141593e+00
@@ -207,14 +240,15 @@ pi 3.141593e+00
 # ------------------------------------------------------------
 # Constants can be used in expressions
 # ------------------------------------------------------------
-Running command: formula x*pi/2 x2
+> function x*pi/2 x2
 # ------------------------------------------------------------
 # Columns can be renamed. Legal column names contain letters
 # numbers and underscores, and begin with a letter.
 # ------------------------------------------------------------
-Running command: rename x2 x_2
-Running command: output
+> rename x2 x_2
+> output
  x             s             c             c2            x_2          
+ []            []            []            []            []           
  0.000000e+00  0.000000e+00  1.000000e+00  9.999995e-01  0.000000e+00 
  1.000000e-01  9.983342e-02  9.950042e-01  9.950034e-01  1.570796e-01 
  2.000000e-01  1.986693e-01  9.800666e-01  9.800667e-01  3.141593e-01 
@@ -229,7 +263,9 @@ Running command: output
 # ------------------------------------------------------------
 # (Remove test files created earlier.)
 # ------------------------------------------------------------
+> !rm test.txt
 acol: Executing system command: rm test.txt
-acol: Done with system command.
+acol: Done with system command (returned 0).
+> !rm test.o2
 acol: Executing system command: rm test.o2
-acol: Done with system command.
+acol: Done with system command (returned 0).

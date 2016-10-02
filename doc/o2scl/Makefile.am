@@ -49,6 +49,7 @@ o2scl-doc-recursive: o2scl-doc
 	cd part && $(MAKE) o2scl-doc
 
 o2scl-doc:
+	cd extras; acol -run acol.scr > acol.out
 	doxygen doxyfile > doxygen.scr
 	cat doxygen.log
 
