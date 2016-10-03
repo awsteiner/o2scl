@@ -58,7 +58,7 @@ namespace o2scl {
       s = \frac{5 \varepsilon}{3 T} - \frac{n \mu}{T}
       \f]
       These relations can be verified with an integration by
-      parts. See, e.g. \ref Callen pg. 403 or \ref Landau pg. 164.
+      parts. See, e.g. \ref Callen85 pg. 403 or \ref Landau80 pg. 164.
       
       The functions \ref pair_density() and \ref pair_mu() have not 
       been implemented and just call the error handler.

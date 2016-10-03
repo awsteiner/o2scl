@@ -22,8 +22,9 @@
 */
 #include <o2scl/nucmass.h>
 #include <o2scl/nucmass_ktuy.h>
-#include <o2scl/hdf_nucmass_io.h>
+#include <o2scl/hdf_file.h>
 #include <o2scl/hdf_io.h>
+#include <o2scl/hdf_nucmass_io.h>
 
 using namespace std;
 using namespace o2scl;
@@ -49,7 +50,9 @@ nucmass_ktuy::nucmass_ktuy(std::string model, bool external) {
   o2scl_hdf::hdf_file hf;
   hf.open(fname);
   string name;
+#ifndef O2SCL_NO_HDF_INPUT  
   hdf_input(hf,data,name);
+#endif
   hf.close();
   
   n=data.get_nlines();

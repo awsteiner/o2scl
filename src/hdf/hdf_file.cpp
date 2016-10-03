@@ -1767,13 +1767,15 @@ int hdf_file::getd_arr(std::string name, size_t n, double *d) {
     unsigned flags, filter_info;
     H5Z_filter_t filter_type=H5Pget_filter2
       (plist_id,0,&flags,&n_elements,NULL,0,NULL,&filter_info);
-    if (filter_type==H5Z_FILTER_DEFLATE) {
+    /*
+      if (filter_type==H5Z_FILTER_DEFLATE) {
       cout << "deflate." << endl;
-    } else if (filter_type==H5Z_FILTER_SZIP) {
+      } else if (filter_type==H5Z_FILTER_SZIP) {
       cout << "szip." << endl;
-    } else {
+      } else {
       cout << "unknown." << endl;
-    }
+      }
+    */
   }
 
   // Get space requirements, to make sure they coincide

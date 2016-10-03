@@ -126,7 +126,7 @@
 
     \section ferm_ndeg_sect Nondegenerate Expansion
 
-    There is a useful identity (\ref Chandrasekhar39 and \ref Tooper69)
+    There is a useful identity (\ref Chandrasekhar10 and \ref Tooper69)
     \f[
     \int_0^{\infty} \frac{x^4 \left(x^2+z^2\right)^{-1/2}~dx}
     {1+e^{\sqrt{x^2+z^2}-\phi}} = 

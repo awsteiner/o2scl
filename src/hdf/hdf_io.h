@@ -47,7 +47,7 @@ namespace o2scl_hdf {
    */
   void hdf_output(hdf_file &hf, o2scl::table<> &t, std::string name);
 
-#ifndef O2SCL_OLDER_COMPILER  
+#ifndef O2SCL_NO_HDF_INPUT  
   /** \brief Input a \ref o2scl::table object from a \ref hdf_file
 
       \comment

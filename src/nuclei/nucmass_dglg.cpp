@@ -21,6 +21,8 @@
   -------------------------------------------------------------------
 */
 #include <o2scl/nucmass_dglg.h>
+#include <o2scl/hdf_file.h>
+#include <o2scl/hdf_io.h>
 #include <o2scl/hdf_nucmass_io.h>
 
 using namespace std;
@@ -42,7 +44,9 @@ nucmass_dglg::nucmass_dglg(std::string model, bool external) {
   o2scl_hdf::hdf_file hf;
   hf.open(fname);
   string name;
+#ifndef O2SCL_NO_HDF_INPUT  
   hdf_input(hf,data,name);
+#endif
   hf.close();
   
   n=data.get_nlines();

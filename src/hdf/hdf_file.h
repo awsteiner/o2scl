@@ -570,6 +570,7 @@ namespace o2scl_hdf {
     /// Set a double array named \c name of size \c n to value \c d
     int setd_arr(std::string name, size_t n, const double *d);
 
+    /// Set a double array with compression
     int setd_arr_comp(std::string name, size_t n, const double *d);
     
     /// Set a float array named \c name of size \c n to value \c f

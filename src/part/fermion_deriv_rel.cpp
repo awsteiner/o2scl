@@ -922,7 +922,7 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
   hdf_file hf;
   hf.open(fname);
   string name;
-#ifndef O2SCL_OLDER_COMPILER  
+#ifndef O2SCL_NO_HDF_INPUT  
   hdf_input(hf,tab,name);
 #endif
   hf.close();
