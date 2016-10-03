@@ -1,0 +1,7 @@
+// This page is automatically generated. Do not edit.
+/** \page partref_section Bibliography
+
+    Some of the references which contain links should direct you to
+    the work referred to directly through <tt>dx.doi.org</tt> for journal
+    articles or <tt>worldcat.org</tt> for books.
+

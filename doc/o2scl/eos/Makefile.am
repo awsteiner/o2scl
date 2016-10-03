@@ -13,3 +13,9 @@ clean-doc:
 o2scl-doc:
 	doxygen doxyfile > doxygen.scr
 	cat doxygen.log
+
+refs:
+	cat refs_head.txt > refs.dox
+	btmanip -p ../../data/o2scl/o2scl.bib -dox /tmp/btmanip
+	cat /tmp/btmanip >> refs.dox
+	cat refs_foot.txt >> refs.dox
