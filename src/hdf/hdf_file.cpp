@@ -1015,6 +1015,7 @@ int hdf_file::setc_arr_fixed(std::string name, size_t n, const char *c) {
     // Arguments to H5Screate_simple are (rank,current_dims,max_dims)
     // and if max_dims is 0 then max_dims=current_dims
     space=H5Screate_simple(1,&dims,0);
+
     dset=H5Dcreate(current,name.c_str(),H5T_STD_I8LE,space,H5P_DEFAULT,
       H5P_DEFAULT,H5P_DEFAULT);
     space_alloc=true;
@@ -1076,6 +1077,7 @@ int hdf_file::setd_arr_fixed(std::string name, size_t n, const double *d) {
     // Arguments to H5Screate_simple are (rank,current_dims,max_dims)
     // and if max_dims is 0 then max_dims=current_dims
     space=H5Screate_simple(1,&dims,0);
+
     dset=H5Dcreate(current,name.c_str(),H5T_IEEE_F64LE,space,H5P_DEFAULT,
       H5P_DEFAULT,H5P_DEFAULT);
     space_alloc=true;
@@ -1137,6 +1139,7 @@ int hdf_file::setf_arr_fixed(std::string name, size_t n, const float *f) {
     // Arguments to H5Screate_simple are (rank,current_dims,max_dims)
     // and if max_dims is 0 then max_dims=current_dims
     space=H5Screate_simple(1,&dims,0);
+
     dset=H5Dcreate(current,name.c_str(),H5T_IEEE_F32LE,space,H5P_DEFAULT,
       H5P_DEFAULT,H5P_DEFAULT);
     space_alloc=true;
@@ -1198,6 +1201,7 @@ int hdf_file::seti_arr_fixed(std::string name, size_t n, const int *i) {
     // Arguments to H5Screate_simple are (rank,current_dims,max_dims)
     // and if max_dims is 0 then max_dims=current_dims
     space=H5Screate_simple(1,&dims,0);
+
     dset=H5Dcreate(current,name.c_str(),H5T_STD_I32LE,space,H5P_DEFAULT,
       H5P_DEFAULT,H5P_DEFAULT);
     space_alloc=true;
@@ -1259,6 +1263,18 @@ int hdf_file::setc_arr(std::string name, size_t n, const char *c) {
     dcpl=H5Pcreate(H5P_DATASET_CREATE);
     hsize_t chunk=def_chunk(n);
     int status2=H5Pset_chunk(dcpl,1,&chunk);
+
+#ifdef O2SCL_HDF5_COMP    
+    // Compression part
+    if (compr_type==1) {
+      int status3=H5Pset_deflate(dcpl,6);
+    } else if (compr_type==2) {
+      int status3=H5Pset_szip(dcpl,H5_SZIP_NN_OPTION_MASK,16);
+    } else if (compr_type!=0) {
+      O2SCL_ERR2("Invalid compression type in ",
+		"hdf_file::setd_arr_comp().",exc_einval);
+    }
+#endif
 
     // Create the dataset
     dset=H5Dcreate(current,name.c_str(),H5T_STD_I8LE,space,H5P_DEFAULT,
@@ -1342,6 +1358,18 @@ int hdf_file::setd_arr(std::string name, size_t n, const double *d) {
     hsize_t chunk=def_chunk(n);
     int status2=H5Pset_chunk(dcpl,1,&chunk);
 
+#ifdef O2SCL_HDF5_COMP    
+    // Compression part
+    if (compr_type==1) {
+      int status3=H5Pset_deflate(dcpl,6);
+    } else if (compr_type==2) {
+      int status3=H5Pset_szip(dcpl,H5_SZIP_NN_OPTION_MASK,16);
+    } else if (compr_type!=0) {
+      O2SCL_ERR2("Invalid compression type in ",
+		"hdf_file::setd_arr_comp().",exc_einval);
+    }
+#endif
+
     // Create the dataset
     dset=H5Dcreate(current,name.c_str(),H5T_IEEE_F64LE,space,H5P_DEFAULT,
 		   dcpl,H5P_DEFAULT);
@@ -1388,6 +1416,7 @@ int hdf_file::setd_arr(std::string name, size_t n, const double *d) {
   return 0;
 }
 
+#ifdef O2SCL_NEVER_DEFINED
 int hdf_file::setd_arr_comp(std::string name, size_t n, const double *d) {
   
   if (write_access==false) {
@@ -1477,6 +1506,7 @@ int hdf_file::setd_arr_comp(std::string name, size_t n, const double *d) {
       
   return 0;
 }
+#endif
 
 int hdf_file::setf_arr(std::string name, size_t n, const float *f) { 
   
@@ -1511,6 +1541,18 @@ int hdf_file::setf_arr(std::string name, size_t n, const float *f) {
     dcpl=H5Pcreate(H5P_DATASET_CREATE);
     hsize_t chunk=def_chunk(n);
     int status2=H5Pset_chunk(dcpl,1,&chunk);
+
+#ifdef O2SCL_HDF5_COMP    
+    // Compression part
+    if (compr_type==1) {
+      int status3=H5Pset_deflate(dcpl,6);
+    } else if (compr_type==2) {
+      int status3=H5Pset_szip(dcpl,H5_SZIP_NN_OPTION_MASK,16);
+    } else if (compr_type!=0) {
+      O2SCL_ERR2("Invalid compression type in ",
+		"hdf_file::setd_arr_comp().",exc_einval);
+    }
+#endif
 
     // Create the dataset
     dset=H5Dcreate(current,name.c_str(),H5T_IEEE_F32LE,space,H5P_DEFAULT,
@@ -1592,6 +1634,18 @@ int hdf_file::seti_arr(std::string name, size_t n, const int *i) {
     hsize_t chunk=def_chunk(n);
     int status2=H5Pset_chunk(dcpl,1,&chunk);
 
+#ifdef O2SCL_HDF5_COMP    
+    // Compression part
+    if (compr_type==1) {
+      int status3=H5Pset_deflate(dcpl,6);
+    } else if (compr_type==2) {
+      int status3=H5Pset_szip(dcpl,H5_SZIP_NN_OPTION_MASK,16);
+    } else if (compr_type!=0) {
+      O2SCL_ERR2("Invalid compression type in ",
+		"hdf_file::setd_arr_comp().",exc_einval);
+    }
+#endif
+
     // Create the dataset
     dset=H5Dcreate(current,name.c_str(),H5T_STD_I32LE,space,H5P_DEFAULT,
 		   dcpl,H5P_DEFAULT);
@@ -1671,6 +1725,18 @@ int hdf_file::set_szt_arr(std::string name, size_t n, const size_t *u) {
     dcpl=H5Pcreate(H5P_DATASET_CREATE);
     hsize_t chunk=def_chunk(n);
     int status2=H5Pset_chunk(dcpl,1,&chunk);
+
+#ifdef O2SCL_HDF5_COMP    
+    // Compression part
+    if (compr_type==1) {
+      int status3=H5Pset_deflate(dcpl,6);
+    } else if (compr_type==2) {
+      int status3=H5Pset_szip(dcpl,H5_SZIP_NN_OPTION_MASK,16);
+    } else if (compr_type!=0) {
+      O2SCL_ERR2("Invalid compression type in ",
+		"hdf_file::setd_arr_comp().",exc_einval);
+    }
+#endif
 
     // Create the dataset
     dset=H5Dcreate(current,name.c_str(),H5T_STD_U64LE,space,H5P_DEFAULT,
@@ -2290,6 +2356,18 @@ int hdf_file::setd_mat_copy(std::string name, const ubmatrix &m) {
     hsize_t chunk[2]={def_chunk(m.size1()),def_chunk(m.size2())};
     int status2=H5Pset_chunk(dcpl,2,chunk);
 
+#ifdef O2SCL_HDF5_COMP    
+    // Compression part
+    if (compr_type==1) {
+      int status3=H5Pset_deflate(dcpl,6);
+    } else if (compr_type==2) {
+      int status3=H5Pset_szip(dcpl,H5_SZIP_NN_OPTION_MASK,16);
+    } else if (compr_type!=0) {
+      O2SCL_ERR2("Invalid compression type in ",
+		"hdf_file::setd_arr_comp().",exc_einval);
+    }
+#endif
+
     // Create the dataset
     dset=H5Dcreate(current,name.c_str(),H5T_IEEE_F64LE,space,H5P_DEFAULT,
 		   dcpl,H5P_DEFAULT);
@@ -2408,6 +2486,18 @@ int hdf_file::seti_mat_copy(std::string name, const ubmatrix_int &m) {
     dcpl=H5Pcreate(H5P_DATASET_CREATE);
     hsize_t chunk[2]={def_chunk(m.size1()),def_chunk(m.size2())};
     int status2=H5Pset_chunk(dcpl,2,chunk);
+
+#ifdef O2SCL_HDF5_COMP    
+    // Compression part
+    if (compr_type==1) {
+      int status3=H5Pset_deflate(dcpl,6);
+    } else if (compr_type==2) {
+      int status3=H5Pset_szip(dcpl,H5_SZIP_NN_OPTION_MASK,16);
+    } else if (compr_type!=0) {
+      O2SCL_ERR2("Invalid compression type in ",
+		"hdf_file::setd_arr_comp().",exc_einval);
+    }
+#endif
 
     // Create the dataset
     dset=H5Dcreate(current,name.c_str(),H5T_STD_I32LE,space,H5P_DEFAULT,
@@ -2532,6 +2622,18 @@ int hdf_file::setd_ten(std::string name,
     dcpl=H5Pcreate(H5P_DATASET_CREATE);
     int status2=H5Pset_chunk(dcpl,ndims,chunk);
     
+#ifdef O2SCL_HDF5_COMP    
+    // Compression part
+    if (compr_type==1) {
+      int status3=H5Pset_deflate(dcpl,6);
+    } else if (compr_type==2) {
+      int status3=H5Pset_szip(dcpl,H5_SZIP_NN_OPTION_MASK,16);
+    } else if (compr_type!=0) {
+      O2SCL_ERR2("Invalid compression type in ",
+		"hdf_file::setd_arr_comp().",exc_einval);
+    }
+#endif
+
     // Create the dataset
     dset=H5Dcreate(current,name.c_str(),H5T_IEEE_F64LE,space,H5P_DEFAULT,
 		   dcpl,H5P_DEFAULT);
