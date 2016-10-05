@@ -44,9 +44,9 @@ utk-sync-doc:
 	cp extras/bootstrap-responsive.css $(HOME)/wcs/int3/web/utk/o2scl
 	cp extras/jquery-2.0.3.min.js $(HOME)/wcs/int3/web/utk/o2scl
 
-o2scl-doc-recursive: o2scl-doc
-	cd eos && $(MAKE) o2scl-doc
-	cd part && $(MAKE) o2scl-doc
+o2scl-doc-recursive: refs o2scl-doc
+	cd eos && $(MAKE) refs o2scl-doc
+	cd part && $(MAKE) refs o2scl-doc
 
 o2scl-doc:
 	cd extras; acol -run acol.scr > acol.out
