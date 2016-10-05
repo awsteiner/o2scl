@@ -16,6 +16,6 @@ o2scl-doc:
 
 refs:
 	cat refs_head.txt > refs.dox
-	btmanip -p ../../data/o2scl/o2scl.bib -dox /tmp/btmanip
+	btmanip -p ../../../data/o2scl/o2scl_eos.bib -dox /tmp/btmanip
 	cat /tmp/btmanip >> refs.dox
 	cat refs_foot.txt >> refs.dox

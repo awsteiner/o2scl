@@ -6,9 +6,9 @@
     articles or <tt>worldcat.org</tt> for books.
 
     \anchor Bader83 Bader83:
-    <a href="http://dx.doi.org/10.1007/BF01418331">
+    <a href="http://dx.doi.org10.1007/BF01418331">
     G. Bader and P. Deuflhard</a>,
-    Numer. Math. \b 41 (1983) 373.
+    Numer. Math.  \b 41 (1983) 373.
 
     \anchor Berntsen91 Berntsen91:
     J. Berntsen, T. O. Espelid, and A. Genz,
@@ -19,15 +19,15 @@
     \endcomment
 
     \anchor Birgin00 Birgin00:
-    <a href="http://dx.doi.org/10.1137/S1052623497330963">
+    <a href="http://dx.doi.org10.1137/S1052623497330963">
     E. G. Birgin, J. M. Martinez, and M. Raydan</a>,
-    SIAM J. Optim. \b 10 (2000) 1196.
+    SIAM J. Optim \b 10 (2000) 1196.
     \comment
     Title: Nonmonotone Spectral Projected Gradient Methods on Convex Sets
     \endcomment
 
     \anchor Brest06 Brest06:
-    <a href="http://dx.doi.org/10.1109/TEVC.2006.872133">
+    <a href="http://dx.doi.org10.1109/TEVC.2006.872133">
     J. Brest, S. Greiner, B. Boskovic, M. Mernik, and V. Zumer</a>,
     IEEE Trans. on Evol. Comp. \b 10 (2006) 646.
     \comment
@@ -36,7 +36,7 @@
     \endcomment
 
     \anchor Broyden65 Broyden65:
-    <a href="http://dx.doi.org/10.1090/S0025-5718-1965-0198670-6">
+    <a href="http://dx.doi.org10.1090/S0025-5718-1965-0198670-6">
     C. G. Broyden</a>,
     Math. Comp. \b 19 (1965) 577.
     \comment
@@ -44,14 +44,14 @@
     \endcomment
 
     \anchor Bus75 Bus75:
-    <a href="http://dx.doi.org/10.1145/355656.355659">
+    <a href="http://dx.doi.org10.1145/355656.355659">
     J. C. P. Bus and T. J. Dekker</a>,
     ACM Trans. Math. Soft. \b 1 (1975) 330.
 
     \anchor Cash90 Cash90:
-    <a href="http://dx.doi.org/10.1145/79505.79507">
+    <a href="http://dx.doi.org10.1145/79505.79507">
     J. R. Cash and A. H. Karp</a>,
-    ACM Trans. Math. Soft. \b 16 (1990) 201.
+    ACM Trans. Math. Soft.  \b 16 (1990) 201.
 
     \anchor Cormen09 Cormen09:
     T. H. Cormen, C. E. Leiserson, R. L. Rivest, and C. Stein,
@@ -78,7 +78,8 @@
     \anchor Galassi09 Galassi09:
     M. Galassi, J. Davies, J. Theiler, B. Gough, G. Jungman, P. Alken, M. Booth, and F. Rossi,
     <a href="http://www.worldcat.org/isbn/9780954612078">
-    GNU Scientific Library Reference Manual - Third Edition</a>,
+    GNU Scientific Library Reference Manual - Third
+                  Edition</a>,
     (2009) Network Theory, Bristol.
 
     \anchor Garbow80 Garbow80:
@@ -87,7 +88,7 @@
     (1980) Argonne Natl. Lab.
 
     \anchor Genz80 Genz80:
-    <a href="http://dx.doi.org/10.1016/0771-050X(80)90039-X">
+    <a href="http://dx.doi.org10.1016/0771-050X(80)90039-X">
     A. C. Genz and A. A. Malik</a>,
     J. Comp. Appl. Math. \b 6 (1980) 295.
     \comment
@@ -96,7 +97,7 @@
     \endcomment
 
     \anchor Genz83 Genz83:
-    <a href="http://dx.doi.org/10.1137/0720038">
+    <a href="http://dx.doi.org10.1137/0720038">
     A. C. Genz and A. A. Malik</a>,
     SIAM J. Numer. Anal. \b 20 (1983) 580.
     \comment
@@ -112,7 +113,8 @@
     \anchor Hairer09 Hairer09:
     E. Hairer and G. Norsett S. P. and Wanner,
     <a href="http://www.worldcat.org/isbn/9783642051630">
-    Solving ordinary differential equations I, Nonstiff Problems</a>,
+    Solving ordinary differential equations I, Nonstiff
+                  Problems</a>,
     (2009) Springer, 2nd edition.
 
     \anchor Kelley99 Kelley99:
@@ -124,13 +126,14 @@
     \anchor Krabs83 Krabs83:
     W. Krabs,
     <a href="http://www.worldcat.org/isbn/9783519029526">
-    Einf&uuml;hrung in die lineare und nichtlineare Optimierung f&uuml;r Ingenieure</a>,
+    Einf&uuml;hrung in die lineare und nichtlineare
+                  Optimierung f&uuml;r Ingenieure</a>,
     (1983) Teubner, Stuttgart, p. 84.
 
     \anchor Lepage78 Lepage78:
-    <a href="http://dx.doi.org/10.1016/0021-9991(78)90004-9">
+    <a href="http://dx.doi.org10.1016/0021-9991(78)90004-9">
     G. P. Lepage</a>,
-    J. Comput. Phys. \b 27 (1978) 192.
+    J. Comp. Phys. \b 27 (1978) 192.
 
     \anchor Lewin81 Lewin81:
     L Lewin,
@@ -139,55 +142,56 @@
     (1981) North Holland, New York.
 
     \anchor Longman58 Longman58:
-    <a href="http://dx.doi.org/10.2307/2002022">
+    <a href="http://dx.doi.org10.2307/2002022">
     I. M. Longman</a>,
-    Math. Tables Other Aids \b 12 (1958) 205.
+    Math. Tables Other Aids Comput. \b 12 (1958) 205.
 
     \anchor Luzum11 Luzum11:
-    <a href="http://dx.doi.org/10.1007/s10569-011-9352-4">
+    <a href="http://dx.doi.org10.1007/s10569-011-9352-4">
     B. Luzum and (none) et al.</a>,
     Celest. Mech. and Dyn. Astron. \b 110 (2011) 293.
 
     \anchor Mohr12 Mohr12:
-    <a href="http://dx.doi.org/10.1103/RevModPhys.84.1527">
+    <a href="http://dx.doi.org10.1103/RevModPhys.84.1527">
     P. J. Mohr, B. N. Taylor, and D. B. Newell</a>,
     Rev. Mod. Phys. \b 84 (2012) 1527.
 
     \anchor More79 More79:
-    <a href="http://dx.doi.org/10.1145/355815.355820">
+    <a href="http://dx.doi.org10.1145/355815.355820">
     M. Mor\'{e} J. and Cosnard</a>,
-    ACM Trans. Math. Soft. \b 5 (1979) 64.
+    ACM Trans. Math. Software \b 5 (1979) 64.
 
     \anchor More80 More80:
-    <a href="http://dx.doi.org/10.1145/355887.355898">
+    <a href="http://dx.doi.org10.1145/355887.355898">
     J. Mor\'{e} and M. Cosnard</a>,
-    ACM Trans. Math. Soft. \b 6 (1980) 240.
+    ACM Trans. Math. Software \b 6 (1980) 240.
 
     \anchor Nelder65 Nelder65:
     J. A. Nelder and R. Mead,
-    Comput. J. \b 7 (1965) 308.
+    Computer Journal \b 7 (1965) 308.
 
     \anchor Piessens83 Piessens83:
     R. Piessens, E. de Doncker-Kapenga, C. Uberhuber, and D. Kahaner,
     <a href="http://www.worldcat.org/isbn/9783540125532">
-    QUADPACK, A Subroutine Package for Automatic Integration</a>,
+    QUADPACK, A Subroutine Package for Automatic
+                  Integration</a>,
     (1983) Springer-Verlag, Berlin.
 
     \anchor Press90 Press90:
     W. H. Farrar, G. R. Press,
-    Comput. Phys. \b 4 (1990) 190.
+    Computers in Physics \b 4 (1990) 190.
     \comment
     Title: Recursive Stratified Sampling for Multidimensional Monte Carlo
     Integration
     \endcomment
 
     \anchor Prince81 Prince81:
-    <a href="http://dx.doi.org/10.1016/0771-050X(81)90010-3">
+    <a href="http://dx.doi.org10.1016/0771-050X(81)90010-3">
     P. J. Prince and J. R. Dormand</a>,
     J. Comp. Appl. Math. \b 7 (1981) 67.
 
     \anchor Rutishauser63 Rutishauser63:
-    <a href="http://dx.doi.org/10.1007/BF01385877">
+    <a href="http://dx.doi.org10.1007/BF01385877">
     H. Rutishauser</a>,
     Numer. Math. \b 5 (1963) 48.
     \comment
@@ -198,12 +202,12 @@
     \anchor Steffen90 Steffen90:
     <a href="http://adsabs.harvard.edu/abs/1990A&A...239..443S">
     M. Steffen</a>,
-    Astron. Astrophys. Suppl. \b 239 (1990) 443.
+    Astron. Astrophys. \b 239 (1990) 443.
 
     \anchor Storn97 Storn97:
-    <a href="http://dx.doi.org/10.1023/A:1008202821328">
+    <a href="http://dx.doi.org10.1023/A:1008202821328">
     R. Storn and K. Price</a>,
-    J. Global. Optim. \b 11 (1997) 341.
+    Jour. of Global Optim. \b 11 (1997) 341.
     \comment
     Title: Differential evolution - a simple and efficient heuristic for global
     optimization over continuous spaces
@@ -213,10 +217,12 @@
     G. P. Tolstov,
     Fourier Series,
     (1962) Prentice Hall, Englewood Cliffs, NJ
-    (I don't have a link for the 1962 version, but a 1976 reprinting is available at http://www.worldcat.org/isbn/9780486633176).
+    (I don't have a link for the 1962 version, but a
+                  1976 reprinting is available at
+                  http://www.worldcat.org/isbn/9780486633176).
 
     \anchor Wynn56 Wynn56:
-    <a href="http://dx.doi.org/10.2307/2002183">
+    <a href="http://dx.doi.org10.2307/2002183">
     P. Wynn</a>,
     Math. Tables Other Aids \b 10 (1956) 91.
     \comment
