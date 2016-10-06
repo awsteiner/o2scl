@@ -285,7 +285,13 @@ double eos_had_base::fn0(double delta, double &leoa) {
   
   sat_root->solve(nb,fmf);
   calc_pressure_nb(nb);
-  leoa=eos_thermo->ed/nb-(neutron->m+proton->m)/2.0;
+  leoa=eos_thermo->ed/nb;
+  if (neutron->inc_rest_mass) {
+    leoa-=neutron->m/2.0;
+  }
+  if (proton->inc_rest_mass) {
+    leoa-=proton->m/2.0;
+  }
   
   return nb;
 }

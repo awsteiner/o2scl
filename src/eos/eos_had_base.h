@@ -331,7 +331,9 @@ namespace o2scl {
 
     virtual ~eos_had_base() {};
 
-    /// Binding energy in \f$ \mathrm{fm}^{-1} \f$
+    /** \brief Binding energy (without the rest mass) in 
+	\f$ \mathrm{fm}^{-1} \f$
+     */
     double eoa;
 
     /// Compression modulus in \f$ \mathrm{fm}^{-1} \f$

@@ -342,13 +342,13 @@ public:
     res.L=sk.fesym_slope(sk.n0)*hc_mev_fm;
 
     if (json_mode) {
-      cout << "{\"n0\":" sk.n0 << "," << endl;
-      cout << "\"EoA\":" sk.eoa*hc_mev_fm << "," << endl;
-      cout << "\"K\":" sk.comp*hc_mev_fm << "," << endl;
-      cout << "\"msom\":" sk.msom << "," << endl;
-      cout << "\"S\":" sk.esym*hc_mev_fm << "," << endl;
-      cout << "\"S2\":" res.alt_S << "," << endl;
-      cout << "\"L\":" res.L << "}" << endl;
+      cout << "{\"n0\":" << sk.n0 << "," << endl;
+      cout << "\"EoA\":" << sk.eoa*hc_mev_fm << "," << endl;
+      cout << "\"K\":" << sk.comp*hc_mev_fm << "," << endl;
+      cout << "\"msom\":" << sk.msom << "," << endl;
+      cout << "\"S\":" << sk.esym*hc_mev_fm << "," << endl;
+      cout << "\"S2\":" << res.alt_S << "," << endl;
+      cout << "\"L\":" << res.L << "}" << endl;
     } else if (verbose>0) {
       cout << "Saturation: " << endl;
       cout << "n_0=" << sk.n0 << " fm^-3" << endl;
@@ -621,7 +621,7 @@ public:
   int unedf(vector<string> &sv, bool itive_com) {
 
     test_mgr t;
-    t.set_output_level(2);
+    t.set_output_level(1);
 
     /*
       These couplings are in the supplemental material
@@ -643,24 +643,11 @@ public:
       {0.0,0.0,-65.9030310445938028}
     };
 
-    /*
-      UNEDF0 and UNEDF1 from Kortelainen et al. PRC 85 (2012) 024304
-      t0 -1883.68781034 -2078.32802326
-      t1 277.50021224 239.40081204
-      t2 608.43090559 1575.11954190
-      t3 13901.94834463 14263.64624708
-      x0 0.00974375 0.05375692
-      x1 -1.77784395 -5.07723238
-      x2 -1.67699035 -1.36650561
-      x3 -0.38079041 -0.16249117
-      b4 125.16100000 38.36807206
-      b4p -91.2604000 71.31652223
-    */
-    
     sk.def_neutron.m=hc_mev_fm/20.73553/2.0;
     sk.def_proton.m=hc_mev_fm/20.73553/2.0;
-
+    
     for(size_t i=0;i<3;i++) {
+      cout << "UNEDF" << i << ":" << endl;
 
       // Convert to O2scl units
       for(size_t j=0;j<13;j++) {
@@ -674,7 +661,6 @@ public:
 			coups[9][i],coups[10][i],coups[6][i]);
 
       // Test coefficients from Kortelainen et al. PRC 85 (2012) 024304
-
       if (i==0) {
 	t.test_rel(sk.t0*hc_mev_fm,-1883.68781034,1.0e-4,"");
 	t.test_rel(sk.t1*hc_mev_fm,277.50021224,1.0e-4,"");
@@ -706,36 +692,41 @@ public:
 	   coups[8][i],coups[9][i],coups[10][i]);
 	
 	sk.saturation();
-	cout << sk.n0 << endl;
-	cout << sk.eoa*hc_mev_fm << endl;
-	cout << sk.comp*hc_mev_fm << endl;
-	cout << sk.esym*hc_mev_fm << endl;
-	cout << endl;
-	cout << sk.f_effm_neut(sk.n0) << endl;
-	cout << sk.f_effm_prot(sk.n0) << endl;
-	cout << 1.0/sk.f_effm_scalar(sk.n0) << endl;
-	cout << 1.0/sk.f_effm_vector(sk.n0) << endl;
-	cout << endl;
-	cout << sk.fesym_slope(sk.n0)*hc_mev_fm << endl;
-	cout << sk.alpha << endl;
+	cout << "n0: " << sk.n0 << endl;
+	cout << "E/A: " << sk.eoa*hc_mev_fm << endl;
+	cout << "K: " << sk.comp*hc_mev_fm << endl;
+	cout << "Esym: " << sk.esym*hc_mev_fm << endl;
+	cout << "M_n^*: " << sk.f_effm_neut(sk.n0) << endl;
+	cout << "M_p^*: " << sk.f_effm_prot(sk.n0) << endl;
+	cout << "1/M_s^*: " << 1.0/sk.f_effm_scalar(sk.n0) << endl;
+	cout << "1/M_v^*: " << 1.0/sk.f_effm_vector(sk.n0) << endl;
+	cout << "L: " << sk.fesym_slope(sk.n0)*hc_mev_fm << endl;
+	cout << "alpha: " << sk.alpha << endl;
       }
 
       sk.saturation();
 
-      cout << "Testing n_0 and L" << endl;
+      // These numbers from Table IV in Kortelainen et al. (2014)
       if (i==0) {
-	t.test_rel(sk.n0,0.16053,1.0e-4,"sat 0");
+	t.test_rel(sk.n0,0.16053,1.0e-4,"n0 0");
       } else if (i==1) {
-	t.test_rel(sk.n0,0.15871,1.0e-4,"sat 1");
+	t.test_rel(sk.n0,0.15871,1.0e-4,"n0 1");
       } else {
-	t.test_rel(sk.n0,0.15631,1.0e-4,"sat 2");
+	t.test_rel(sk.n0,0.15631,1.0e-4,"n0 2");
       }
       if (i==0) {
-	t.test_rel(sk.fesym_slope(sk.n0)*hc_mev_fm,45.080,1.0e-4,"sat 0");
+	t.test_rel(sk.eoa*hc_mev_fm,-16.056,1.0e-4,"eoa 0");
       } else if (i==1) {
-	t.test_rel(sk.fesym_slope(sk.n0)*hc_mev_fm,40.005,1.0e-4,"sat 1");
+	t.test_rel(sk.eoa*hc_mev_fm,-15.8,1.0e-4,"eoa 1");
       } else {
-	t.test_rel(sk.fesym_slope(sk.n0)*hc_mev_fm,40.0,1.0e-4,"sat 2");
+	t.test_rel(sk.eoa*hc_mev_fm,-15.8,1.0e-4,"eoa 2");
+      }
+      if (i==0) {
+	t.test_rel(sk.fesym_slope(sk.n0)*hc_mev_fm,45.080,1.0e-4,"L 0");
+      } else if (i==1) {
+	t.test_rel(sk.fesym_slope(sk.n0)*hc_mev_fm,40.005,1.0e-4,"L 1");
+      } else {
+	t.test_rel(sk.fesym_slope(sk.n0)*hc_mev_fm,40.0,1.0e-4,"L 2");
       }
       
       if (i==0) {
@@ -758,6 +749,7 @@ public:
       hf.open_or_create(((string)"UNEDF")+szttos(i)+".o2");
       skyrme_write(hf,sk,((string)"UNEDF")+szttos(i));
       hf.close();
+      cout << endl;
     }
 
     t.report();
@@ -1002,7 +994,7 @@ int main(int argv, char *argc[]) {
   int comm_option_cl_param=1;
   int comm_option_both=2;
 
-  static const int narr=6;
+  static const int narr=7;
   comm_option_s options_arr[narr]={
     {0,"run-all","Run all internally stored Skyrme models.",0,0,"","",
      new comm_option_mfptr<ex_eos_had_skyrme>(&se,&ex_eos_had_skyrme::run_all),

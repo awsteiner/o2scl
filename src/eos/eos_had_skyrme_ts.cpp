@@ -461,20 +461,24 @@ int main(void) {
   // Test alt_params_saturation
   // -----------------------------------------------------------
 
-  sk.def_neutron.m=0.5/20.73553*o2scl_const::hc_mev_fm;
-  sk.def_proton.m=0.5/20.73553*o2scl_const::hc_mev_fm;
-  cout << sk.def_neutron.m << endl;
-
   // Test alt_params_saturation() with the UNEDF2 couplings from
   // Kortelainen et al. (2014)
-  sk.alt_params_saturation(0.15631,(939.0-15.8)/hc_mev_fm,239.93/hc_mev_fm,
+  sk.alt_params_saturation(0.15631,(-15.8)/hc_mev_fm,239.93/hc_mev_fm,
 			   1.0/1.074,29.131/hc_mev_fm,40.0/hc_mev_fm,
 			   1.0/1.249,-46.831/hc_mev_fm,-113.164/hc_mev_fm,
 			   -64.309/hc_mev_fm,-38.650/hc_mev_fm);
+  
   sk.saturation();
   cout << sk.n0 << " " << sk.eoa*hc_mev_fm << " " << sk.comp*hc_mev_fm
        << " " << sk.esym*hc_mev_fm << " " << 1.0/sk.msom << " "
        << sk.fesym_slope(sk.n0)*hc_mev_fm << endl;
+  t.test_rel(sk.n0,0.15631,1.0e-4,"n0");
+  t.test_rel(sk.eoa*hc_mev_fm,-15.8,1.0e-4,"eoa");
+  t.test_rel(sk.comp*hc_mev_fm,239.93,1.0e-4,"comp");
+  t.test_rel(sk.msom,1.0/1.074,1.0e-4,"msom");
+  t.test_rel(sk.esym*hc_mev_fm,29.131,1.0e-4,"esym");
+  t.test_rel(sk.fesym_slope(sk.n0)*hc_mev_fm,40.0,1.0e-4,"L");
+  t.test_rel(sk.f_effm_vector(sk.n0),1.0/1.249,1.0e-4,"Mv*");
 
   t.report();
 
