@@ -457,6 +457,25 @@ int main(void) {
   cout << sk.fesym_T(0.16,3.0/hc_mev_fm)*hc_mev_fm << endl;
   cout << sk.fesym_T(0.16,10.0/hc_mev_fm)*hc_mev_fm << endl;
 
+  // -----------------------------------------------------------
+  // Test alt_params_saturation
+  // -----------------------------------------------------------
+
+  sk.def_neutron.m=0.5/20.73553*o2scl_const::hc_mev_fm;
+  sk.def_proton.m=0.5/20.73553*o2scl_const::hc_mev_fm;
+  cout << sk.def_neutron.m << endl;
+
+  // Test alt_params_saturation() with the UNEDF2 couplings from
+  // Kortelainen et al. (2014)
+  sk.alt_params_saturation(0.15631,(939.0-15.8)/hc_mev_fm,239.93/hc_mev_fm,
+			   1.0/1.074,29.131/hc_mev_fm,40.0/hc_mev_fm,
+			   1.0/1.249,-46.831/hc_mev_fm,-113.164/hc_mev_fm,
+			   -64.309/hc_mev_fm,-38.650/hc_mev_fm);
+  sk.saturation();
+  cout << sk.n0 << " " << sk.eoa*hc_mev_fm << " " << sk.comp*hc_mev_fm
+       << " " << sk.esym*hc_mev_fm << " " << 1.0/sk.msom << " "
+       << sk.fesym_slope(sk.n0)*hc_mev_fm << endl;
+
   t.report();
 
   return 0;

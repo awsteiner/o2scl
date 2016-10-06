@@ -211,7 +211,7 @@ namespace o2scl {
       \todo
       - Convert W0 to b4 and b4p everywhere
       - Remove use of mnuc in calparfun()?
-      - Document load() file format.
+      - Document \ref o2scl_hdf::skyrme_load() file format.
       - Update reference list.
 
       \future
@@ -360,10 +360,9 @@ namespace o2scl {
 	respectively.
       
 	\todo Does this work for both 'a' and 'b' non-zero?
-      
-	\todo Compare to similar formulae from \ref Margueron02
+	
+	\todo Compare to similar formulas in \ref Margueron02
     */
-
     int calpar(double gt0=-10.0, double gt3=70.0, double galpha=0.2,
 	       double gt1=2.0, double gt2=-1.0);
 
@@ -437,6 +436,23 @@ namespace o2scl {
         C^{\rho \nabla J}_{0} &=& -b_4 -b_4^{\prime}/2 \nonumber \\
         C^{\rho \nabla J}_{1} &=& -b_4^{\prime}/2
 	\f}
+
+	The parameters should have the following units
+	- <tt>Crr00</tt>: \f$ \mathrm{fm}^2 \f$
+	- <tt>Crr10</tt>: \f$ \mathrm{fm}^2 \f$
+	- <tt>Crr0D</tt>: \f$ \mathrm{fm}^{3 \alpha+2} \f$
+	- <tt>Crr1D</tt>: \f$ \mathrm{fm}^{3 \alpha+2} \f$
+	- <tt>Crt0</tt>: \f$ \mathrm{fm}^4 \f$
+	- <tt>Crt1</tt>: \f$ \mathrm{fm}^4 \f$
+	- <tt>CrDr0</tt>: \f$ \mathrm{fm}^4 \f$
+	- <tt>CrDr1</tt>: \f$ \mathrm{fm}^4 \f$
+	- <tt>CrnJ0</tt>: \f$ \mathrm{fm}^{-1} \f$
+	- <tt>CrnJ1</tt>: \f$ \mathrm{fm}^{-1} \f$
+	- <tt>alpha2</tt>: unitless
+
+	\todo These expressions are not exactly the same
+	as those in \ref Bender03, so I need to find out why
+	and make this more clear.
     */
     void alt_params_set
       (double Crr00, double Crr10, double Crr0D, double Crr1D, 
@@ -445,6 +461,19 @@ namespace o2scl {
 
     /** \brief Get alternate parameterization
 	
+	The parameters will have the following units
+	- <tt>Crr00</tt>: \f$ \mathrm{fm}^2 \f$
+	- <tt>Crr10</tt>: \f$ \mathrm{fm}^2 \f$
+	- <tt>Crr0D</tt>: \f$ \mathrm{fm}^{3 \alpha+2} \f$
+	- <tt>Crr1D</tt>: \f$ \mathrm{fm}^{3 \alpha+2} \f$
+	- <tt>Crt0</tt>: \f$ \mathrm{fm}^4 \f$
+	- <tt>Crt1</tt>: \f$ \mathrm{fm}^4 \f$
+	- <tt>CrDr0</tt>: \f$ \mathrm{fm}^4 \f$
+	- <tt>CrDr1</tt>: \f$ \mathrm{fm}^4 \f$
+	- <tt>CrnJ0</tt>: \f$ \mathrm{fm}^{-1} \f$
+	- <tt>CrnJ1</tt>: \f$ \mathrm{fm}^{-1} \f$
+	- <tt>alpha2</tt>: unitless
+
 	See \ref eos_had_skyrme::alt_params_set().
     */
     void alt_params_get
@@ -452,6 +481,32 @@ namespace o2scl {
        double &Crt0, double &Crt1, double &CrDr0, double &CrDr1, 
        double &CrnJ0, double &CrnJ1, double &alpha2);
 
+    /** \brief Use the specified saturation properties and couplings
+	and the function \ref alt_params_set() to set the 
+	Skyrme coefficients
+
+	This function uses the relations in \ref Kortelainen10 .
+	The parameters should have the following units
+	- <tt>n0</tt>: \f$ \mathrm{fm}^{-3} \f$
+	- <tt>EoA</tt>: \f$ \mathrm{fm}^{-1} \f$
+	- <tt>K</tt>: \f$ \mathrm{fm}^{-1} \f$
+	- <tt>Ms_star</tt>: unitless
+	- <tt>a</tt>: \f$ \mathrm{fm}^{-1} \f$
+	- <tt>L</tt>: \f$ \mathrm{fm}^{-1} \f$
+	- <tt>Mv_star</tt>: unitless
+	- <tt>CrDr0</tt>: \f$ \mathrm{fm}^{-3} \f$
+	- <tt>CrDr1</tt>: \f$ \mathrm{fm}^{-3} \f$
+	- <tt>CrnJ0</tt>: \f$ \mathrm{fm}^{-3} \f$
+	- <tt>CrnJ1</tt>: \f$ \mathrm{fm}^{-3} \f$
+
+	\ref Kortelainen10 assumed equal neutron and proton masses, so
+	this function uses \f$ \hbar^2/(2m) = \hbar^2/(m_n+m_p) \f$
+	and the neutron and proton masses in \ref
+	eos_had_base::def_neutron and \ref eos_had_base::def_proton,
+	respectively. To obtain the results in the original paper, set
+	neutron and proton masses to ensure that \f$ \hbar^2/(2m) =
+	20.73553~\mathrm{MeV}~\mathrm{fm}^2 \f$ .
+    */
     void alt_params_saturation
       (double n0, double EoA, double K, double Ms_star, double a, double L,
        double Mv_star, double CrDr0, double CrDr1, double CrnJ0, double CrnJ1);

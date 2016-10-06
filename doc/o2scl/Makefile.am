@@ -44,6 +44,15 @@ utk-sync-doc:
 	cp extras/bootstrap-responsive.css $(HOME)/wcs/int3/web/utk/o2scl
 	cp extras/jquery-2.0.3.min.js $(HOME)/wcs/int3/web/utk/o2scl
 
+isospin-sync-doc:
+	cp -r $(HOME)/install/o2scl-0.920/doc/o2scl \
+		$(HOME)/data
+	cp extras/index.html $(HOME)/data/o2scl
+	cp extras/bootstrap.css $(HOME)/data/o2scl
+	cp extras/bootstrap.js $(HOME)/data/o2scl
+	cp extras/bootstrap-responsive.css $(HOME)/data/o2scl
+	cp extras/jquery-2.0.3.min.js $(HOME)/data/o2scl
+
 o2scl-doc-recursive: refs o2scl-doc
 	cd eos && $(MAKE) refs o2scl-doc
 	cd part && $(MAKE) refs o2scl-doc

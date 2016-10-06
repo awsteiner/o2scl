@@ -624,7 +624,7 @@ public:
     t.set_output_level(2);
 
     /*
-      These copulings are in the supplemental material
+      These couplings are in the supplemental material
       for Kortelainen et al. PRC 89 (2014)
      */
     double coups[13][3]={

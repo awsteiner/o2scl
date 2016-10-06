@@ -574,21 +574,33 @@ void eos_had_skyrme::landau_neutron
 void eos_had_skyrme::alt_params_saturation
 (double n0, double EoA, double K, double Ms_star, double a, double L,
  double Mv_star, double CrDr0, double CrDr1, double CrnJ0, double CrnJ1) {
-  
-  double h2o2m=20.73553/197.33;
+
+  // This quantity has units of fm
+  double h2o2m=1.0/(def_neutron.m+def_proton.m);
+  // This quantity is unitless
   double C_k=0.6*pow(1.5*pi2,2.0/3.0);
+  // This quantity has units of fm^{-2}
   double tau_c=C_k*pow(n0,2.0/3.0);
+  // This quantity is unitless
   double alpha2=(tau_c*(4.0/Ms_star-3.0)*h2o2m-K-9.0*EoA)/
     (tau_c*(6.0/Ms_star-9.0)*h2o2m+9.0*EoA);
+  // This quantity has units of fm^2
   double Crr00=(((2.0-3.0*alpha2)/Ms_star-3.0)*tau_c*h2o2m+
 		3.0*(1.0+alpha2)*EoA)/(3.0*alpha2*n0);
+  // This quantity has units of fm^{3*alpha+2}, where
+  // alpha is referred to as "gamma" in Kortelainen et al. (2010)
   double Crr0D=((3.0-2.0/Ms_star)*tau_c*h2o2m-3.0*EoA)/
     (3.0*alpha2*pow(n0,1.0+alpha2));
+  // This quantity has units of fm^4
   double Crt0=(1.0/Ms_star-1.0)/n0*h2o2m;
+  // This quantity has units of fm^4
   double Crt1=Crt0-(1.0/Mv_star-1.0)/n0*h2o2m;
+  // This quantity has units of fm^2
   double Crr10=(27.0*(1.0+alpha2)*a-9.0*L+5.0*tau_c*(2.0-3.0*alpha2)*
 		(Crt0+3.0*Crt1)*n0-5.0*tau_c*(1.0+3.0*alpha2)*h2o2m)/
     (27.0*alpha2*n0);
+  // This quantity has units of fm^{3*alpha+2}, where
+  // alpha is referred to as "gamma" in Kortelainen et al. (2010)
   double Crr1D=(-27.0*a+9.0*L+5.0*(h2o2m-2.0*n0*(Crt0+3.0*Crt1))*
 		tau_c)/(27.0*alpha2*pow(n0,1.0+alpha2));
   

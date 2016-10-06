@@ -46,6 +46,12 @@ namespace o2scl {
 
   /** \brief Hadronic equation of state [abstract base]
 
+      \note This class and all of its children expect the neutron and
+      proton properties to be specified in powers of \f$ \mathrm{fm}
+      \f$ so that masses and chemical potentials are in powers of \f$
+      \mathrm{fm}^{-1} \f$ and energy densities and pressures are in
+      powers of \f$ \mathrm{fm}^{-4} \f$ .
+
       Denote the number density of neutrons as \f$ n_n \f$, the number
       density of protons as \f$ n_p \f$, the total baryon density \f$
       n_B = n_n + n_p \f$, the asymmetry \f$ \delta \equiv
@@ -302,10 +308,12 @@ namespace o2scl {
       \left(\eta -1\right)\right]
       \f]
 
+      \future Replace fmsom() with f_effm_scalar(). This has to wait
+      until f_effm_scalar() has a sensible definition when mn is
+      not equal to mp
       \future Could write a function to compute the "symmetry free energy"
       or the "symmetry entropy"
       \future Compute the speed of sound or the number susceptibilities?
-      \future Compute isoscalar and isovector effective masses
       \future A lot of the numerical derivatives here might possibly
       request negative number densities for the nucleons, which 
       may cause exceptions, espescially at very low densities. 
@@ -323,22 +331,22 @@ namespace o2scl {
 
     virtual ~eos_had_base() {};
 
-    /// Binding energy
+    /// Binding energy in \f$ \mathrm{fm}^{-1} \f$
     double eoa;
 
-    /// Compression modulus
+    /// Compression modulus in \f$ \mathrm{fm}^{-1} \f$
     double comp;
 
-    /// Symmetry energy
+    /// Symmetry energy in \f$ \mathrm{fm}^{-1} \f$
     double esym;
   
-    /// Saturation density
+    /// Saturation density in \f$ \mathrm{fm}^{-3} \f$
     double n0;
 
     /// Effective mass (neutron)
     double msom;
 
-    /// Skewness
+    /// Skewness in \f$ \mathrm{fm}^{-1} \f$
     double kprime;
     
     /// \name Equation of state
@@ -398,7 +406,7 @@ namespace o2scl {
     virtual double fesym(double nb, double delta=0.0);
 
     /** \brief Calculate symmetry energy of matter and its
-	uncertainty
+	uncertainty in \f$ \mathrm{fm}^{-1} \f$ 
 
 	This estimates the uncertainty due to the numerical
 	differentiation, assuming that difference betwen the neutron
@@ -408,6 +416,7 @@ namespace o2scl {
     virtual double fesym_err(double nb, double delta, double &unc);
     
     /** \brief The symmetry energy slope parameter
+	in \f$ \mathrm{fm}^{-1} \f$ 
 	
 	This returns the value of the "slope parameter" of the
 	symmetry energy as a function of baryon density \c nb and
@@ -417,15 +426,18 @@ namespace o2scl {
     virtual double fesym_slope(double nb, double delta=0.0);
 
     /** \brief The curvature of the symmetry energy
-     */
+	in \f$ \mathrm{fm}^{-1} \f$ 
+    */
     virtual double fesym_curve(double nb, double delta=0.0);
 
     /** \brief The skewness of the symmetry energy
-     */
+	in \f$ \mathrm{fm}^{-1} \f$ 
+    */
     virtual double fesym_skew(double nb, double delta=0.0);
 
     /** \brief Calculate symmetry energy of matter as energy of 
-	neutron matter minus the energy of nuclear matter
+	neutron matter minus the energy of nuclear matter 
+	in \f$ \mathrm{fm}^{-1} \f$ 
 
 	This function returns the energy per baryon of neutron matter
 	minus the energy per baryon of nuclear matter. This will
@@ -445,7 +457,8 @@ namespace o2scl {
     */
     virtual double feta_prime(double nb);
 
-    /** \brief Calculate skewness of nuclear matter using calc_e()
+    /** \brief Calculate skewness of nuclear matter 
+	in \f$ \mathrm{fm}^{-1} \f$ using calc_e()
 
 	The skewness is defined to be 
 	\f$ 27 n^3 d^3 (\varepsilon/n)/(d n^3) = 
@@ -471,9 +484,11 @@ namespace o2scl {
     /** \brief Neutron (reduced) effective mass
      */
     virtual double f_effm_neut(double nb, double delta=0.0);
+
     /** \brief Proton (reduced) effective mass
      */
     virtual double f_effm_prot(double nb, double delta=0.0);
+
     /** \brief Scalar effective mass
 
 	Given the reduced nucleon effective masses, \f$ m_n^{*} \f$
@@ -500,6 +515,7 @@ namespace o2scl {
 	\f]
     */
     virtual double f_effm_scalar(double nb, double delta=0.0);
+    
     /** \brief Vector effective mass
 	
 	See documentation for \ref eos_had_base::f_effm_scalar().
