@@ -45,8 +45,7 @@ utk-sync-doc:
 	cp extras/jquery-2.0.3.min.js $(HOME)/wcs/int3/web/utk/o2scl
 
 isospin-sync-doc:
-	cp -r $(HOME)/install/o2scl-0.920/doc/o2scl \
-		$(HOME)/data
+	cp -r /usr/local/doc/o2scl $(HOME)/data
 	cp extras/index.html $(HOME)/data/o2scl
 	cp extras/bootstrap.css $(HOME)/data/o2scl
 	cp extras/bootstrap.js $(HOME)/data/o2scl
