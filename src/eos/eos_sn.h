@@ -834,7 +834,7 @@ namespace o2scl {
       See also the documentation at \ref eos_sn_base and the
       \ref sneos_section section of the User's guide.
 
-      See \ref Hempel10 and \ref Hempel11.
+      See \ref Hempel10 and \ref Hempel12.
   */
   class eos_sn_hfsl : public eos_sn_base {
 

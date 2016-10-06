@@ -40,7 +40,7 @@ namespace o2scl {
   /** \brief Baym-Pethick-Sutherland equation of state
     
       This calculates the equation of state of electrons and nuclei
-      using the approach of \ref Baym71 (based on the discussion in
+      using the approach of \ref Baym71tg (based on the discussion in
       \ref Shapiro83) between about \f$8 \times 10^{6}
       ~\mathrm{g}/\mathrm{cm}^3\f$ and \f$4.3 \times 10^{11}
       ~\mathrm{g}/\mathrm{cm}^3\f$. Below these densities, more
@@ -70,7 +70,7 @@ namespace o2scl {
       This is Eq. 2.7.2 in \ref Shapiro83. The rest mass energy of
       the nucleons is included in the energy density. 
       
-      The original results from \ref Baym71 are stored as a \ref table
+      The original results from \ref Baym71tg are stored as a \ref table
       in file <tt>data/o2scl/bps.eos</tt>. The testing code for this
       class compares the calculations to the table and matches to
       within .2 percent for the energy density and 9 percent for the

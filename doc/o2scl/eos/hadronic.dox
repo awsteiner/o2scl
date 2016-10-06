@@ -21,7 +21,7 @@
     This example computes the APR EOS with \ref o2scl::eos_had_apr. It
     computes nuclear and neutron matter and then matter in
     beta-equilibrium with both a Maxwell construction (as done in the
-    \ref Akmal98) and a Gibbs construction to match the low- and
+    \ref Akmal98eo) and a Gibbs construction to match the low- and
     high-density phases. Afterwards it computes the properties of
     neutron stars from the EOS. Most of the data is stored in \ref
     o2scl::table_units objects and then written to HDF files in the

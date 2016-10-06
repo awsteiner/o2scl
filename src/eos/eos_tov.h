@@ -738,7 +738,7 @@ namespace o2scl {
     
     /// \name Crust EOS functions
     //@{
-    /// Default crust EOS from \ref Negele73 and \ref Baym71
+    /// Default crust EOS from \ref Negele73 and \ref Baym71tg
     void default_low_dens_eos();
 
     /// Crust EOS from \ref Shen11b

@@ -180,7 +180,7 @@ namespace o2scl {
       partly on \ref Brack85.
       
       Models are taken from the references: \ref Bartel79, \ref
-      Beiner75, \ref Chabanat95, \ref Chabanat97, \ref Danielewicz08,
+      Beiner75, \ref Chabanat95, \ref Chabanat97, \ref Danielewicz09,
       \ref Dobaczewski94, \ref Dutta86, \ref Friedrich86, \ref Onsi94,
       \ref Reinhard95, and \ref Tondeur84, and \ref VanGiai81 .
       

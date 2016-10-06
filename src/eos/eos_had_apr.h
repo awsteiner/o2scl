@@ -39,7 +39,7 @@ namespace o2scl {
   /** \brief EOS from Akmal, Pandharipande, and Ravenhall
 
       The EOS of Akmal, Pandharipande, and Ravenhall, from \ref
-      Akmal98 (APR).
+      Akmal98eo (APR).
 
       The Hamiltonian is:
       \f[

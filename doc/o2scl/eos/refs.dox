@@ -5,10 +5,13 @@
     the work referred to directly through <tt>dx.doi.org</tt> for journal
     articles or <tt>worldcat.org</tt> for books.
 
-    \anchor Akmal98 Akmal98:
+    \anchor Akmal98eo Akmal98eo:
     <a href="http://dx.doi.org/10.1103/PhysRevC.58.1805">
     A. Akmal, V. R. Pandharipande, and D. G. Ravenhall</a>,
     Phys. Rev. C \b 58 (1998) 1804.
+    \comment
+    Title: Equation of state of nucleon matter and neutron star structure
+    \endcomment
 
     \anchor Bartel79 Bartel79:
     <a href="http://dx.doi.org/10.1016/0375-9474(82)90403-1">
@@ -19,10 +22,14 @@
     critical study of the SkM force
     \endcomment
 
-    \anchor Baym71 Baym71:
+    \anchor Baym71tg Baym71tg:
     <a href="http://dx.doi.org/10.1086/151216">
     G. Baym, C. J. Pethick, and P. Sutherland</a>,
     Astrophys. J. \b 170 (1971) 299.
+    \comment
+    Title: The Ground State of Matter at High Densities: Equation of State and
+    Stellar Models
+    \endcomment
 
     \anchor Beiner75 Beiner75:
     <a href="http://dx.doi.org/10.1016/0375-9474(75)90338-3">
@@ -72,6 +79,10 @@
     <a href="http://dx.doi.org/10.1016/0370-1573(86)90078-5">
     M. Brack, C. Guet, and H.-B. H&aring;kansso</a>,
     Phys. Rep. \b 123 (1985) 275.
+    \comment
+    Title: Self-consistent Semiclassical Description of Average Nuclear
+    Properties - A Link Between Microscopic and Macroscopic Models
+    \endcomment
 
     \anchor Buballa04 Buballa04:
     <a href="http://dx.doi.org/10.1016/j.physrep.2004.11.004">
@@ -87,6 +98,9 @@
     <a href="http://dx.doi.org/10.1088/0031-8949/1995/T56/034">
     E. Chabanat, P. Bonche, P. Haensel, and R. Meyer J. and Schaeffer</a>,
     Phys. Scr. \b T56 (1995) 231.
+    \comment
+    Title: New Skyrme effective forces for supernovae and neutron rich nuclei
+    \endcomment
 
     \anchor Chabanat97 Chabanat97:
     <a href="http://dx.doi.org/10.1016/S0375-9474(97)00596-4">
@@ -117,10 +131,13 @@
     G. B. Cook, S. L. Shapiro, and S. A. Teukolsky</a>,
     Astrophys. J. \b 422 (1994) 227.
 
-    \anchor Danielewicz08 Danielewicz08:
+    \anchor Danielewicz09 Danielewicz09:
     <a href="http://dx.doi.org/10.1016/j.nuclphysa.2008.11.007">
     P. Danielewicz and J. Lee</a>,
     Nucl. Phys. A \b 818 (2009) 36.
+    \comment
+    Title: Symmetry Energy I: Semi-Infinite Matter
+    \endcomment
 
     \anchor Das03 Das03:
     <a href="http://dx.doi.org/10.1103/PhysRevC.67.034611">
@@ -182,10 +199,14 @@
     T. Hatsuda and T. Kunihiro</a>,
     Phys. Rep. \b 247 (1994) 221.
 
-    \anchor Hebeler13 Hebeler13:
+    \anchor Hebeler13eo Hebeler13eo:
     <a href="http://dx.doi.org/10.1088/0004-637X/773/1/11">
     K. Hebeler, J. M. Lattimer, C. J. Pethick, and A. Schwenk</a>,
     Astrophys. J. \b 773 (2013) 11.
+    \comment
+    Title: Equation of state and neutron star properties constrained by nuclear
+    physics and observation
+    \endcomment
 
     \anchor Heide94 Heide94:
     <a href="http://dx.doi.org/10.1016/0375-9474(94)90717-X">
@@ -196,11 +217,17 @@
     <a href="http://dx.doi.org/10.1016/j.nuclphysa.2010.02.010">
     M. Hempel and J. Schaffner-Bielich</a>,
     Nucl. Phys. A \b 837 (2010) 210.
+    \comment
+    Title: A statistical model for a complete supernova equation of state
+    \endcomment
 
-    \anchor Hempel11 Hempel11:
+    \anchor Hempel12 Hempel12:
     <a href="http://dx.doi.org/10.1088/0004-637X/748/1/70">
     M. Hempel, T. Fischer, J. Schaffner-Bielich, and M. Liebendorfer</a>,
     Astrophys. J. \b 748 (2012) 70.
+    \comment
+    Title: New Equations of State in Simulations of Core-collapse Supernovae
+    \endcomment
 
     \anchor Hinderer10 Hinderer10:
     T. Hinderer, B. D. Lackey, R. N. Lang, and J. S. Read,
@@ -215,6 +242,9 @@
     <a href="http://dx.doi.org10.1016/j.physletb.2006.05.055">
     C. J. Horowitz and A. Schwenk</a>,
     Phys. Lett. B \b 638 (2006) 153.
+    \comment
+    Title: The virial equation of state of low-density neutron matter
+    \endcomment
 
     \anchor Horowitz06b Horowitz06b:
     <a href="http://dx.doi.org/10.1016/j.nuclphysa.2006.05.009">
@@ -281,8 +311,12 @@
     Nucl. Phys. A \b 606 (1996) 508.
 
     \anchor Negele73 Negele73:
-    J. W. Negele and D. Vautherin,
+    <a href="http://dx.doi.org/10.1016/0375-9474(73)90349-7">
+    J. W. Negele and D. Vautherin</a>,
     Nucl. Phys. A \b 207 (1973) 298.
+    \comment
+    Title: Neutron star matter at sub-nuclear densities
+    \endcomment
 
     \anchor Newton13 Newton13:
     (none) W.G. Newton and M. Gearheart and B.-A. Li,
@@ -372,13 +406,11 @@
     Phys. Rev. C \b 60 (1999) 014316.
 
     \anchor Shapiro83 Shapiro83:
-    <a href="http://dx.doi.org/t.org/isbn/0471873179">
-    S. L. Shapiro and S. A. Teukolsky</a>,
-(1983) .
-    \comment
-    Title: Black Holes and White Dwarfs and Neutron Stars: The Physics of
-    Compact Objects
-    \endcomment
+    S. L. Shapiro and S. A. Teukolsky,
+    <a href="http://www.worldcat.org/isbn/0471873179">
+    Black Holes and White Dwarfs and Neutron Stars: The
+                  Physics of Compact Objects</a>,
+    (1983) John Wiley and Sons.
 
     \anchor Shen10a Shen10a:
     <a href="http://dx.doi.org/10.1103/PhysRevC.82.015806">
@@ -389,6 +421,10 @@
     <a href="http://dx.doi.org/10.1103/PhysRevC.82.045802">
     G. Shen, C. J. Horowitz, and S. Teige</a>,
     Phys. Rev. C \b 82 (2010) 045802.
+    \comment
+    Title: Equation of state of nuclear matter in a virial expansion of nucleons
+    and nuclei
+    \endcomment
 
     \anchor Shen11 Shen11:
     <a href="http://dx.doi.org/10.1103/PhysRevC.83.035802">

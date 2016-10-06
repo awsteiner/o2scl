@@ -113,15 +113,26 @@
     <a href="http://dx.doi.org/10.1006/adnd.1995.1002">
     P. Nix, J. R. Myers, W. D. Moller and W. J. Switecki</a>,
     Atom. Data Nucl. Data Tabl. \b 59 (1995) 185.
+    \comment
+    Title: Nuclear {Ground-State} Masses and Deformations
+    \endcomment
 
     \anchor Moller97 Moller97:
     <a href="http://dx.doi.org/10.1006/adnd.1997.0746">
     P. Moller, J. R. Nix, and K.-L. Kratz</a>,
     Atom. Data Nucl. Data Tabl. \b 66 (1997) 131.
+    \comment
+    Title: Nuclear properties for astrophysical and radioactive-ion-beam
+    applications
+    \endcomment
 
     \anchor Samyn04 Samyn04:
     M. Samyn, S. Goriely, M. Bender, and J. M. Pearson,
     Phys. Rev. C \b 70 (2004) 044309.
+    \comment
+    Title: Further Explorations of Skyrme-Hartree-Fock-Bogoliubov mass formulas.
+    III. Role of particle-number projection
+    \endcomment
 
     \anchor Stoitsov03 Stoitsov03:
     Phys. Rev. C \b 68 (2003) 054312.
