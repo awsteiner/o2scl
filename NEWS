@@ -1,3 +1,30 @@
+Notes for 0.920 release:
+
+A new set of Markov chain Monte Carlo classes has been created.
+
+Experimental conditional and multidimensional probability
+distributions haven't been added.
+
+A new experimental class cloud_file has been created which
+assists in using and downloading files from URLs.
+
+A new helper class vector_range has been created for vector
+objects which don't already have associated range types. 
+
+The command-line option 'acol -filelist' has been updated to be
+more informative.
+
+Error handling in nstar_cold has been improved.
+
+The cubature classes have been improved. 
+
+The associated python code in o2py.py has been improved in
+several places and updated to python3.
+
+Several documentation improvements everywhere.
+
+------------------------------------------------------------------------
+
 Notes for 0.919 release:
 
 The old "FunctionParser" class has been replaced by a much nicer
