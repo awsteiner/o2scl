@@ -889,9 +889,13 @@ namespace o2scl {
 		       fill_t &fill) {
 
     // Test to see if we need to add a new line of data or increment
-    // the weight on the previous line
-    if (new_meas==true) {
-
+    // the weight on the previous line. If the fill function has reset
+    // the table data, then the walker_rows will refer to a row which
+    // doesn't currently exist, so we have to add a new line of data.
+    if (new_meas==true ||
+	walker_rows[this->curr_walker]<0 ||
+	walker_rows[this->curr_walker]>=((int)(tab->get_nlines()))) {
+      
       std::vector<double> line;
       int fret=fill_line(pars,log_weight,line,dat,fill);
       
@@ -938,18 +942,15 @@ namespace o2scl {
       walker_rows[this->curr_walker]=tab->get_nlines();
       tab->line_of_data(line.size(),line);
 
-    } else if (tab->get_nlines()>0) {
+    } else {
 	
       // Otherwise, just increment the multiplier on the previous line
-      if (walker_rows[this->curr_walker]<0 ||
-	  walker_rows[this->curr_walker]>=((int)(tab->get_nlines()))) {
-	std::cout << "nlines: " << tab->get_nlines() << std::endl;
-	std::cout << "walker: " << this->curr_walker << std::endl;
-	std::cout << "row: " << walker_rows[this->curr_walker]
-	<< std::endl;
-	O2SCL_ERR2("Sanity in row counting in ",
-		   "mcmc_table::add_line().",o2scl::exc_esanity);
-      }
+      //std::cout << "nlines: " << tab->get_nlines() << std::endl;
+      //std::cout << "walker: " << this->curr_walker << std::endl;
+      //std::cout << "row: " << walker_rows[this->curr_walker]
+      //<< std::endl;
+      //O2SCL_ERR2("Sanity in row counting in ",
+      //"mcmc_table::add_line().",o2scl::exc_esanity);
 
       double mult_old=tab->get("mult",walker_rows[this->curr_walker]);
       tab->set("mult",walker_rows[this->curr_walker],mult_old+1.0);
@@ -970,7 +971,7 @@ namespace o2scl {
       }
       
     }
-      
+    
     return 0;
   }
   //@}
