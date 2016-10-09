@@ -389,7 +389,7 @@ class plotter:
         
     def contour_plot(self,level,**kwargs):
         if self.force_bytes(self.dtype)!=b'vector<contour_line>':
-            print('Wrong type for contour_plotx.')
+            print('Wrong type',self.dtype,'for contour_plotx.')
             return
         if self.verbose>2:
             print('contour_plot',level,kwargs)
@@ -417,7 +417,7 @@ class plotter:
  
     def points(self,colx,coly,**kwargs):
         if self.force_bytes(self.dtype)==b'table':
-            print('Wrong type for plot.')
+            print('Wrong type',self.dtype,'for plot.')
             return
         if self.verbose>2:
             print('plot',colx,coly,kwargs)
@@ -495,7 +495,7 @@ class plotter:
 
     def plot1(self,col,**kwargs):
         if self.force_bytes(self.dtype)!=b'table':
-            print('Wrong type for plot1.')
+            print('Wrong type',self.dtype,'for plot1.')
             return
         if self.verbose>2:
             print('plot1',col,kwargs)
