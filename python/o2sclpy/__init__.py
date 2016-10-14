@@ -335,7 +335,19 @@ def parse_arguments(argv,verbose=0):
             list.append(list_one)
             ix=ix_next
     return (list,unproc_list)
-                    
+
+def string_to_dict(s):
+    # First split into keyword = value pairs
+    arr=s.split(',')
+    # Create empty dictionary
+    dct={}
+    for i in range(0,len(arr)):
+        # For each pair, split keyword and value...
+        arr2=arr[i].split('=')
+        # ...then assign to dictionary
+        dct[arr2[0]]=arr2[1]
+    return dct
+
 class plotter:
 
     h5r=hdf5_reader()
@@ -361,7 +373,6 @@ class plotter:
     dtype=''
     cmap='jet'
     colbar=0
-    text_color='black'
 
     def myreds(self):
         cdict={'red': ((0.0,1.0,1.0),(1.0,1.0,1.0)),
@@ -808,8 +819,6 @@ class plotter:
             self.verbose=int(value)
         elif name=='cmap':
             self.cmap=value
-        elif name=='text_color':
-            self.text_color=value
         elif name=='colbar':
             self.colbar=int(value)
         else:
@@ -821,29 +830,23 @@ class plotter:
             print('canvas()')
         elif arg=='plot':
             print('---------------------------------------------------------')
-            print('plot(x,y,**kwargs)')
+            print('plot <x> <y> [kwargs]')
             print('---------------------------------------------------------')
             print('Useful kwargs:')
             print('color or c                   matplotlib color')
-            temp=str('dashes                       '+
-                     'sequence of on/off ink in points')
-            print(temp)
-            temp=str("fillstyle                    "+
-                     "['full' | 'left' | 'right' | 'bottom' | 'top'")
-            print(temp)
+            print('dashes                       '+
+                  'sequence of on/off ink in points')
+            print("fillstyle                    "+
+                  "['full' | 'left' | 'right' | 'bottom' | 'top'")
             print("                              | 'none']")
-            temp=str("label                        "+
-                     "string or anything printable with '%s' conversion.")
-            print(temp)
-            temp=str("linestyle or ls              "+
-                     "['-' | '--' | '-.' | ':' | 'None' | ' ' | '']")
-            print(temp)
-            temp=str("                              "+
-                     "and any drawstyle in combination with a")
-            print(temp)
-            temp=str("                              "+
-                     "linestyle, e.g., 'steps--'.")
-            print(temp)
+            print("label                        "+
+                  "string or anything printable with '%s' conversion.")
+            print("linestyle or ls              "+
+                  "['-' | '--' | '-.' | ':' | 'None' | ' ' | '']")
+            print("                              "+
+                  "and any drawstyle in combination with a")
+            print("                              "+
+                  "linestyle, e.g., 'steps--'.")
             print("linewidth or lw              float value in points")
             print('marker                       marker type')
             print('markeredgecolor or mec       matplotlib color')
@@ -852,67 +855,109 @@ class plotter:
             print('markerfacecoloralt or mfcalt matplotlib color')
             print('markersize or ms             float')
             print('---------------------------------------------------------')
-        elif arg=='den_plot':
-            print('den_plot(slice_name)')
+        elif arg=='den-plot':
+            print('---------------------------------------------------------')
+            print('den_plot <slice name>')
+            print('---------------------------------------------------------')
         elif arg=='get':
-            print('get(name)')
-            print('')
-            print('logx,logy,xtitle,ytitle,xlo,xhi,xset,ylo,yhi,yset')
+            print('---------------------------------------------------------')
+            print('get <name>')
+            print('---------------------------------------------------------')
+            print('Name can be any of: logx,logy,xtitle,ytitle,xlo,'+
+                  'xhi,xset,ylo,yhi,yset,')
             print('zlo,zhi,zset,verbose,cmap,colbar')
         elif arg=='line':
-            print('line(x1,y1,x2,y2,color,lstyle)')
+            print('---------------------------------------------------------')
+            print('line <x1> <y1> <x2> <y2>')
+            print('---------------------------------------------------------')
+            print('Useful kwargs:')
+            print('color or c                   matplotlib color')
+            print('dashes                       '+
+                  'sequence of on/off ink in points')
+            print("linestyle or ls              "+
+                  "['-' | '--' | '-.' | ':' | 'None' | ' ' | '']")
+            print("                              "+
+                  "linestyle, e.g., 'steps--'.")
+            print("linewidth or lw              float value in points")
+            print('---------------------------------------------------------')
         elif arg=='list':
-            print('list()')
-        elif arg=='move_labels':
-            print('move_labels()')
+            print('---------------------------------------------------------')
+            print('list')
+            print('---------------------------------------------------------')
+        elif arg=='move-labels':
+            print('---------------------------------------------------------')
+            print('move_labels')
+            print('---------------------------------------------------------')
         elif arg=='read':
-            print('read(filename)')
-        elif arg=='read_name':
-            print('read_name(filename,name)')
-        elif arg=='read_type':
-            print('read_type(filename,type)')
-        elif arg=='reset_xlimits':
-            print('reset_xlimits()')
-        elif arg=='reset_ylimits':
-            print('reset_ylimits()')
+            print('---------------------------------------------------------')
+            print('read <filename>')
+            print('---------------------------------------------------------')
+        elif arg=='read-name':
+            print('---------------------------------------------------------')
+            print('read-name <filename> <name>')
+            print('---------------------------------------------------------')
+        elif arg=='read-type':
+            print('---------------------------------------------------------')
+            print('read_type <filename> <type>')
+            print('---------------------------------------------------------')
+        elif arg=='reset-xlimits':
+            print('---------------------------------------------------------')
+            print('reset-xlimits')
+            print('---------------------------------------------------------')
+        elif arg=='reset-ylimits':
+            print('---------------------------------------------------------')
+            print('reset-ylimits')
+            print('---------------------------------------------------------')
         elif arg=='set':
-            print('set(name,value)')
-            print('')
-            print('logx,logy,xtitle,ytitle,xlo,xhi,xset,ylo,yhi,yset')
-            print('zlo,zhi,zset,verbose,cmap')
+            print('---------------------------------------------------------')
+            print('set <name> <value>')
+            print('---------------------------------------------------------')
+            print('Name can be any of: logx,logy,xtitle,ytitle,xlo,'+
+                  'xhi,xset,ylo,yhi,yset,')
+            print('zlo,zhi,zset,verbose,cmap,colbar')
         elif arg=='show':
-            print('show()')
+            print('---------------------------------------------------------')
+            print('show')
+            print('---------------------------------------------------------')
         elif arg=='text':
-            print('text(x,y,string,color)')
+            print('---------------------------------------------------------')
+            print('text <x> <y> <string>')
+            print('---------------------------------------------------------')
         elif arg=='xlimits':
-            print('xlimits(xlow,xhigh)')
+            print('---------------------------------------------------------')
+            print('xlimits <xlow> <xhigh>')
+            print('---------------------------------------------------------')
         elif arg=='ylimits':
-            print('ylimits(ylow,yhigh)')
+            print('---------------------------------------------------------')
+            print('ylimits <ylow> <yhigh>')
+            print('---------------------------------------------------------')
         else:
-            print('Methods:')
-            print('canvas()')
-            print('contour_plot(level,**kwargs)')
-            print('den_plot(slice_name,**kwargs)')
-            print('get(name)')
-            print('hist([col],**kwargs)')
-            print('hist2d(colx,coly,**kwargs)')
-            print('line(x1,y1,x2,y2,**kwargs)')
-            print('list()')
-            print('move_labels()')
-            print('parse_argv(argv)')
-            print('plot(colx,coly,**kwargs)')
-            print('read(filename)')
-            print('read_name(filename,name)')
-            print('read_type(filename,type)')
-            print('reds()')
-            print('reset_xlimits()')
-            print('reset_ylimits()')
-            print('set(name,value)')
-            print('show()')
-            print('text(x,y,string,**kwargs)')
-            print('ttext(x,y,string,**kwargs)')
-            print('xlimits(xlow,xhigh)')
-            print('ylimits(ylow,yhigh)')
+            print('o2graph: A plotting script for O2scl data files')
+            print('---------------------------------------------------------')
+            print('Commands:')
+            print('---------------------------------------------------------')
+            print('canvas')
+            print('contour-plot <level> [kwargs)')
+            print('den-plot <slice_name> [kwargs]')
+            print('get <name>')
+            print('hist <col> [kwargs]')
+            print('hist2d <colx> <coly> [kwargs]')
+            print('line <x1> <y1> <x2> <y2> [kwargs]')
+            print('list')
+            print('move-labels')
+            print('plot <colx> <coly> [kwargs]')
+            print('read <filename>')
+            print('read-name <filename> <name>')
+            print('read-type <filename> <type>')
+            print('reds')
+            print('reset-xlimits')
+            print('reset-ylimits')
+            print('set <name> <value>')
+            print('show')
+            print('text <x> <y> <string> [kwargs]')
+            print('ttext <x> <y> <string> [kwargs]')
+            print('xlimits <xlow> <xhigh>')
+            print('ylimits <ylow> <yhigh>')
         return
 
     def ttext(self,tx,ty,str,**kwargs):
@@ -920,58 +965,56 @@ class plotter:
             self.canvas()
         self.axes.text(tx,ty,str,transform=self.axes.transAxes,
                        fontsize=16,va='center',ha='center',
-                       color=self.text_color,**kwargs)
+                       **kwargs)
         return
 
     def text(self,tx,ty,str,**kwargs):
         if self.canvas_flag==0:
             self.canvas()
-        self.axes.text(tx,ty,str,color=self.text_color,
+        self.axes.text(tx,ty,str,
                        fontsize=16,va='center',ha='center',**kwargs)
         return
 
     def get(self,name):
         if name=='logx':
-            print('The value of logx is',self.logx)
+            print('The value of logx is',self.logx,'.')
         elif name=='logy':
-            print('The value of logy is',self.logy)
+            print('The value of logy is',self.logy,'.')
         elif name=='xtitle':
-            print('The value of xtitle is',self.xtitle)
+            print('The value of xtitle is',self.xtitle,'.')
         elif name=='ytitle':
-            print('The value of ytitle is',self.ytitle)
+            print('The value of ytitle is',self.ytitle,'.')
         elif name=='xlo':
-            print('The value of xlo is',self.xlo)
+            print('The value of xlo is',self.xlo,'.')
         elif name=='xhi':
-            print('The value of xhi is',self.xhi)
+            print('The value of xhi is',self.xhi,'.')
         elif name=='xset':
-            print('The value of xset is',self.xset)
+            print('The value of xset is',self.xset,'.')
         elif name=='ylo':
-            print('The value of ylo is',self.ylo)
+            print('The value of ylo is',self.ylo,'.')
         elif name=='yhi':
-            print('The value of yhi is',self.yhi)
+            print('The value of yhi is',self.yhi,'.')
         elif name=='yset':
-            print('The value of yset is',self.yset)
+            print('The value of yset is',self.yset,'.')
         elif name=='zlo':
-            print('The value of zlo is',self.zlo)
+            print('The value of zlo is',self.zlo,'.')
         elif name=='zhi':
-            print('The value of zhi is',self.zhi)
+            print('The value of zhi is',self.zhi,'.')
         elif name=='zset':
-            print('The value of zset is',self.zset)
+            print('The value of zset is',self.zset,'.')
         elif name=='verbose':
-            print('The value of verbose is',self.verbose)
+            print('The value of verbose is',self.verbose,'.')
         elif name=='cmap':
-            print('The value of cmap is',self.cmap)
+            print('The value of cmap is',self.cmap,'.')
         elif name=='colbar':
-            print('The value of colbar is',self.colbar)
-        elif name=='text_color':
-            print('The value of text_color is',self.text_color)
+            print('The value of colbar is',self.colbar,'.')
         else:
-            print('No variable named',name)
+            print('No variable named',name,'.')
         return
 
     def parse_argv(self,argv):
         if self.verbose>2:
-            print('Number of arguments:', len(argv), 'arguments.')
+            print('Number of arguments:',len(argv),'arguments.')
             print('Argument List:', str(argv))
         ix=0
         while ix<len(argv):
@@ -1026,15 +1069,21 @@ class plotter:
                         print('Process text.')
                     if ix_next-ix<4:
                         print('Not enough parameters for text option.')
-                    else:
+                    elif ix_next-ix<5:
                         self.text(argv[ix+1],argv[ix+2],argv[ix+3])
+                    else:
+                        self.text(argv[ix+1],argv[ix+2],argv[ix+3],
+                                  **string_to_dict(argv[ix+4]))
                 elif cmd_name=='ttext':
                     if self.verbose>2:
                         print('Process ttext.')
                     if ix_next-ix<4:
                         print('Not enough parameters for ttext option.')
-                    else:
+                    elif ix_next-ix<5:
                         self.ttext(argv[ix+1],argv[ix+2],argv[ix+3])
+                    else:
+                        self.ttext(argv[ix+1],argv[ix+2],argv[ix+3],
+                                   **string_to_dict(argv[ix+4]))
                 elif cmd_name=='read':
                     if self.verbose>2:
                         print('Process read.')
@@ -1061,8 +1110,10 @@ class plotter:
                         print('Process den-plot.')
                     if ix_next-ix<2:
                         print('Not enough parameters for den-plot option.')
-                    else:
+                    elif ix_next-ix<3:
                         self.den_plot(argv[ix+1])
+                    else:
+                        self.den_plot(argv[ix+1],**string_to_dict(argv[ix+2]))
                 elif cmd_name=='read-name':
                     if self.verbose>2:
                         print('Process read.')
@@ -1099,9 +1150,8 @@ class plotter:
                     elif ix_next-ix<4:
                         self.plot(argv[ix+1],argv[ix+2])
                     else:
-                        print('plot parse_argv',argv[ix+1],argv[ix+2],
-                              argv[ix+3])
-                        self.plot(argv[ix+1],argv[ix+2],eval(argv[ix+3]))
+                        self.plot(argv[ix+1],argv[ix+2],
+                                  **string_to_dict(argv[ix+3]))
                 elif cmd_name=='points':
                     if self.verbose>2:
                         print('Process points.')
@@ -1111,16 +1161,17 @@ class plotter:
                     elif ix_next-ix<4:
                         self.points(argv[ix+1],argv[ix+2])
                     else:
-                        print('points parse_argv',argv[ix+1],argv[ix+2],
-                              argv[ix+3])
-                        self.points(argv[ix+1],argv[ix+2],eval(argv[ix+3]))
+                        self.points(argv[ix+1],argv[ix+2],
+                                    **string_to_dict(argv[ix+3]))
                 elif cmd_name=='plot1':
                     if self.verbose>2:
                         print('Process plot1.')
                     if ix_next-ix<2:
                         print('Not enough parameters for plot1 option.')
-                    else:
+                    elif ix_next-ix<2:
                         self.plot1(argv[ix+1])
+                    else:
+                        self.plot1(argv[ix+1],**string_to_dict(argv[ix+2]))
                 elif cmd_name=='plot1m':
                     if self.verbose>2:
                         print('Process plot1m.')
@@ -1152,8 +1203,10 @@ class plotter:
                         print('Process hist.')
                     if ix_next-ix<2:
                         print('Not enough parameters for hist option.')
-                    else:
+                    elif ix_next-ix<2:
                         self.hist(argv[ix+1])
+                    else:
+                        self.hist(argv[ix+1],**string_to_dict(argv[ix+2]))
                 elif cmd_name=='save':
                     if self.verbose>2:
                         print('Process save.')
@@ -1166,10 +1219,11 @@ class plotter:
                         print('Process line.')
                     if ix_next-ix<5:
                         print('Not enough parameters for line option.')
-                    else:
-                        # Attempt to include keyword arguments.
-                        # Doesn't work yet.
+                    elif ix_next-ix<6:
                         self.line(argv[ix+1],argv[ix+2],argv[ix+3],argv[ix+4])
+                    else:
+                        self.line(argv[ix+1],argv[ix+2],argv[ix+3],argv[ix+4],
+                                  **string_to_dict(argv[ix+5]))
                 elif cmd_name=='list':
                     if self.verbose>2:
                         print('Process list.')
