@@ -595,7 +595,7 @@ class plotter:
 
     def hist2d(self,colx,coly,**kwargs):
         if self.verbose>2:
-            print('hist',colx,coly,kwargs)
+            print('hist2d',colx,coly,kwargs)
         if self.canvas_flag==0:
             self.canvas()
         plot.hist2d(self.dset['data/'+colx],self.dset['data/'+coly],**kwargs)
@@ -1168,7 +1168,7 @@ class plotter:
                         print('Process plot1.')
                     if ix_next-ix<2:
                         print('Not enough parameters for plot1 option.')
-                    elif ix_next-ix<2:
+                    elif ix_next-ix<3:
                         self.plot1(argv[ix+1])
                     else:
                         self.plot1(argv[ix+1],**string_to_dict(argv[ix+2]))
@@ -1203,10 +1203,20 @@ class plotter:
                         print('Process hist.')
                     if ix_next-ix<2:
                         print('Not enough parameters for hist option.')
-                    elif ix_next-ix<2:
+                    elif ix_next-ix<3:
                         self.hist(argv[ix+1])
                     else:
                         self.hist(argv[ix+1],**string_to_dict(argv[ix+2]))
+                elif cmd_name=='hist2d':
+                    if self.verbose>2:
+                        print('Process hist2d.')
+                    if ix_next-ix<3:
+                        print('Not enough parameters for hist2d option.')
+                    elif ix_next-ix<4:
+                        self.hist2d(argv[ix+1],argv[ix+2])
+                    else:
+                        self.hist2d(argv[ix+1],argv[ix+2],
+                                    **string_to_dict(argv[ix+2]))
                 elif cmd_name=='save':
                     if self.verbose>2:
                         print('Process save.')
