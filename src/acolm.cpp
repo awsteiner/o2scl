@@ -367,9 +367,13 @@ int acol_manager::setup_cli() {
   
   char *hd=getenv("HOME");
   std::string histfile;
-  histfile=hd;
-  histfile+="/.acol_hist";
-  
+  if (hd) {
+    histfile=hd;
+    histfile+="/.acol_hist";
+  } else {
+    histfile=".acol_hist";
+  }
+    
   //---------------------------------------
   // Specify command-line option object
   
@@ -505,8 +509,8 @@ int acol_manager::run(int argc, char *argv[]) {
   // Process command-line options
 
   // Note that it's ok that this appears early in the code because it
-  // just processes the arguments, it doesn't really try to do
-  // any execution based on those arguments
+  // just processes the arguments, it doesn't do any execution based
+  // on those arguments until later.
 
   if (verbose>2) {
     cout << "Process command-line options" << endl;

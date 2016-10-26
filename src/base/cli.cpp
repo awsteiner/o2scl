@@ -160,7 +160,7 @@ cli::cli() {
   c_quit.desc="Quit (synonymous with 'exit').";
   c_quit.help="";
   c_quit.parm_desc="";
-  c_set.type=comm_option_both;
+  c_quit.type=comm_option_both;
       
   c_exit.shrt=0;
   c_exit.lng="exit";

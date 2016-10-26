@@ -55,9 +55,6 @@
 
 namespace o2scl {
   
-  typedef boost::numeric::ublas::vector<double> ubvector;
-  typedef boost::numeric::ublas::matrix<double> ubmatrix;
-  
   /** \brief MCMC with MPI and HDF5 table I/O 
 
       The parent, \ref o2scl::mcmc_table assembles the MCMC data into
@@ -66,11 +63,13 @@ namespace o2scl {
       run time on several processors via MPI.
    */
   template<class func_t, class fill_t, class data_t,
-    class vec_t=ubvector> class mcmc_mpi :
+    class vec_t=boost::numeric::ublas::vector<double> > class mcmc_mpi :
     public o2scl::mcmc_table<func_t,fill_t,data_t,vec_t> {
     
   protected:
 
+  typedef boost::numeric::ublas::vector<double> ubvector;
+  typedef boost::numeric::ublas::matrix<double> ubmatrix;
   typedef o2scl::mcmc_table<func_t,fill_t,data_t,vec_t> parent_t;
   
   /// \name MPI properties
@@ -499,7 +498,7 @@ namespace o2scl {
     return;
   }
   
-#ifdef NEVER_DEFINED
+#ifdef O2SCL_NEVER_DEFINED
   /** \brief Choose a Metropolis-Hastings step
    */
   virtual int hastings(std::vector<std::string> &sv, 
@@ -771,11 +770,13 @@ namespace o2scl {
   /** \brief MCMC class with a command-line interface
    */
   template<class func_t, class fill_t, class data_t,
-    class vec_t=ubvector> class mcmc_cli :
+    class vec_t=boost::numeric::ublas::vector<double> > class mcmc_cli :
     public o2scl::mcmc_mpi<func_t,fill_t,data_t,vec_t> {
 
   protected:
     
+  typedef boost::numeric::ublas::vector<double> ubvector;
+  typedef boost::numeric::ublas::matrix<double> ubmatrix;
   typedef o2scl::mcmc_mpi<func_t,fill_t,data_t,vec_t> parent_t;
 
 #ifdef O2SCL_READLINE
