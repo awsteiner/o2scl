@@ -3,7 +3,7 @@
 # This file documents the use of the 'acol' command.
 # There is a generic help command:
 # ------------------------------------------------------------
-Running command: help
+> help
 acol: A data table viewing and processing program for O2scl.
 
 List of commands:
@@ -82,12 +82,12 @@ exp(x) log(x) log10(x) sin(x) cos(x) tan(x) sqrt(x) abs(x)
 asin(x) acos(x) atan(x) sinh(x) cosh(x) tanh(x)
 asinh(x) acosh(x) atanh(x)
 
-Compiled at 10:40:22 on Sep 26 2016 for o2scl, version 0.920.
+Compiled at 20:35:39 on Oct 20 2016 for o2scl, version 0.920.
 
 # ------------------------------------------------------------
 # You can also get help on the commands individually, e.g.
 # ------------------------------------------------------------
-Running command: help create
+> help create
 Usage: create <name> <low> <hi> <step>
 
 Create a table from uniform grid.
@@ -100,7 +100,7 @@ result. If a table is currently in memory, it is deallocated beforehand.
 # ------------------------------------------------------------
 # The full command list is given with 'commands'
 # ------------------------------------------------------------
-Running command: commands
+> commands
 Command list:
 
 add          deriv        get          integ        no-intro     set          
@@ -116,20 +116,20 @@ delete-rows  generic      insert-full  min          select-rows  warranty
 # ------------------------------------------------------------
 # Use 'create' to create a table with one column
 # ------------------------------------------------------------
-Running command: create x 0 1 0.1
+> create x 0 1 0.1
 # ------------------------------------------------------------
 # Use 'function' to apply a function to create a new column
 # ------------------------------------------------------------
-Running command: function sin(x) s
-Running command: function sqrt(1-s*s) c
+> function sin(x) s
+> function sqrt(1-s*s) c
 # ------------------------------------------------------------
 # The 'deriv' command computes derivatives
 # ------------------------------------------------------------
-Running command: deriv x s c2
+> deriv x s c2
 # ------------------------------------------------------------
 # Use 'output' to see the results
 # ------------------------------------------------------------
-Running command: output
+> output
  x             s             c             c2           
  0.000000e+00  0.000000e+00  1.000000e+00  9.999995e-01 
  1.000000e-01  9.983342e-02  9.950042e-01  9.950034e-01 
@@ -145,12 +145,12 @@ Running command: output
 # ------------------------------------------------------------
 # Or give 'output' command an argument to output to a file
 # ------------------------------------------------------------
-Running command: output test.txt
+> output test.txt
 # ------------------------------------------------------------
 # Change the output precision using set
 # ------------------------------------------------------------
-Running command: set precision 4
-Running command: output
+> set precision 4
+> output
  x           s           c           c2         
  0.0000e+00  0.0000e+00  1.0000e+00  1.0000e+00 
  1.0000e-01  9.9833e-02  9.9500e-01  9.9500e-01 
@@ -163,10 +163,11 @@ Running command: output
  8.0000e-01  7.1736e-01  6.9671e-01  6.9845e-01 
  9.0000e-01  7.8333e-01  6.2161e-01  6.1510e-01 
  1.0000e+00  8.4147e-01  5.4030e-01  5.6461e-01 
-Running command: set precision 6
+> set precision 6
 # ------------------------------------------------------------
 # Shell commands are proceeded by an '!'
 # ------------------------------------------------------------
+> !cat test.txt
 acol: Executing system command: cat test.txt
  x             s             c             c2           
  0.000000e+00  0.000000e+00  1.000000e+00  9.999995e-01 
@@ -184,12 +185,12 @@ acol: Done with system command (returned 0).
 # ------------------------------------------------------------
 # Or store the results in the internal format 
 # ------------------------------------------------------------
-Running command: internal test.o2
+> internal test.o2
 # ------------------------------------------------------------
 # Generic test files can be read using the 'generic' command
 # ------------------------------------------------------------
-Running command: generic test.txt
-Running command: output
+> generic test.txt
+> output
  x             s             c             c2           
  0.000000e+00  0.000000e+00  1.000000e+00  9.999995e-01 
  1.000000e-01  9.983342e-02  9.950042e-01  9.950034e-01 
@@ -205,11 +206,11 @@ Running command: output
 # ------------------------------------------------------------
 # Files in the internal format can be read with 'read'
 # ------------------------------------------------------------
-Running command: read test.o2
+> read test.o2
 Found group with name acol.
 Group has o2scl_type table.
 Found type table.
-Running command: output
+> output
  x             s             c             c2           
  0.000000e+00  0.000000e+00  1.000000e+00  9.999995e-01 
  1.000000e-01  9.983342e-02  9.950042e-01  9.950034e-01 
@@ -225,11 +226,11 @@ Running command: output
 # ------------------------------------------------------------
 # Tables also contain constant values in addition to data
 # ------------------------------------------------------------
-Running command: assign pi acos(-1.0)
+> assign pi acos(-1.0)
 # ------------------------------------------------------------
 # The 'list' command lists the column and constant names
 # ------------------------------------------------------------
-Running command: list
+> list
 Table name: acol
 1 constant:
 pi 3.141593e+00
@@ -239,13 +240,13 @@ pi 3.141593e+00
 # ------------------------------------------------------------
 # Constants can be used in expressions
 # ------------------------------------------------------------
-Running command: function x*pi/2 x2
+> function x*pi/2 x2
 # ------------------------------------------------------------
 # Columns can be renamed. Legal column names contain letters
 # numbers and underscores, and begin with a letter.
 # ------------------------------------------------------------
-Running command: rename x2 x_2
-Running command: output
+> rename x2 x_2
+> output
  x             s             c             c2            x_2          
  []            []            []            []            []           
  0.000000e+00  0.000000e+00  1.000000e+00  9.999995e-01  0.000000e+00 
@@ -262,7 +263,9 @@ Running command: output
 # ------------------------------------------------------------
 # (Remove test files created earlier.)
 # ------------------------------------------------------------
+> !rm test.txt
 acol: Executing system command: rm test.txt
 acol: Done with system command (returned 0).
+> !rm test.o2
 acol: Executing system command: rm test.o2
 acol: Done with system command (returned 0).

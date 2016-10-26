@@ -5,10 +5,10 @@
 MCARLO_SRCS = expval.cpp rng_gsl.cpp
 
 HEADER_VARS = mcarlo_miser.h mcarlo_plain.h mcarlo_vegas.h mcarlo.h \
-	expval.h rng_gsl.h mcmc.h
+	expval.h rng_gsl.h mcmc.h mcmc_mpi.h
 
 TEST_VAR = mcarlo_plain.scr mcarlo_miser.scr mcarlo_vegas.scr \
-	expval.scr rng_gsl.scr mcmc.scr
+	expval.scr rng_gsl.scr mcmc.scr mcmc_mpi.scr
 
 # fit_bayes.scr
 
@@ -70,7 +70,7 @@ pkginclude_HEADERS = $(HEADER_VARS)
 # ------------------------------------------------------------
 
 check_PROGRAMS = mcarlo_miser_ts mcarlo_vegas_ts mcarlo_plain_ts expval_ts \
-	rng_gsl_ts mcmc_ts
+	rng_gsl_ts mcmc_ts mcmc_mpi_ts
 
 check_SCRIPTS = o2scl-test
 
@@ -86,6 +86,7 @@ mcarlo_plain_ts_LDADD = $(VCHECK_LIBS)
 mcarlo_vegas_ts_LDADD = $(VCHECK_LIBS)
 expval_ts_LDADD = $(VCHECK_LIBS)
 mcmc_ts_LDADD = $(VCHECK_LIBS)
+mcmc_mpi_ts_LDADD = $(VCHECK_LIBS)
 
 mcarlo_miser.scr: mcarlo_miser_ts$(EXEEXT)
 	./mcarlo_miser_ts$(EXEEXT) > mcarlo_miser.scr
@@ -99,6 +100,8 @@ expval.scr: expval_ts$(EXEEXT)
 	./expval_ts$(EXEEXT) > expval.scr
 mcmc.scr: mcmc_ts$(EXEEXT)
 	./mcmc_ts$(EXEEXT) > mcmc.scr
+mcmc_mpi.scr: mcmc_mpi_ts$(EXEEXT)
+	./mcmc_mpi_ts$(EXEEXT) -exit > mcmc_mpi.scr
 
 mcarlo_miser_ts_SOURCES = mcarlo_miser_ts.cpp
 rng_gsl_ts_SOURCES = rng_gsl_ts.cpp
@@ -106,6 +109,7 @@ mcarlo_plain_ts_SOURCES = mcarlo_plain_ts.cpp
 mcarlo_vegas_ts_SOURCES = mcarlo_vegas_ts.cpp
 expval_ts_SOURCES = expval_ts.cpp
 mcmc_ts_SOURCES = mcmc_ts.cpp
+mcmc_mpi_ts_SOURCES = mcmc_mpi_ts.cpp
 
 # ------------------------------------------------------------
 # Library o2scl_mcarlo
