@@ -32,6 +32,55 @@
 using namespace std;
 using namespace o2scl;
 
+int o2scl::pipe_cmd_string(std::string cmd, std::string &result,
+			   int nmax) {
+  
+#ifdef HAVE_POPEN
+  
+  FILE *ps_pipe=popen(cmd.c_str(),"r");
+  if (!ps_pipe) {
+    return 1;
+  }
+  
+  char char_arr[nmax];
+  
+  // Variable 'cret' is unused, but put here to avoid
+  // unused return value errors
+  char *cret=fgets(char_arr,nmax,ps_pipe);
+  if (cret==0) {
+    return 2;
+  }
+  
+  result=char_arr;
+  
+#else
+
+  return 3;
+  
+#endif
+  
+  return 0;
+}
+
+std::string o2scl::pipe_cmd_string(std::string cmd, int nmax) {
+  std::string result;
+  int ret=pipe_cmd_string(cmd,result,nmax);
+  if (ret==1) {
+    O2SCL_ERR("Pipe could not be opened in pipe_cmd_string().",
+	      o2scl::exc_efailed);
+  } else if (ret==2) {
+    O2SCL_ERR("Null pointer returned by fgets in pipe_cmd_string().",
+	      o2scl::exc_efailed);
+  } else if (ret==3) {
+    O2SCL_ERR("Compiled without popen support in pipe_cmd_string().",
+	      o2scl::exc_efailed);
+  } else if (ret!=0) {
+    O2SCL_ERR("Unknown return value in pipe_cmd_string().",
+	      o2scl::exc_efailed);
+  }
+  return result;
+}
+
 std::string o2scl::binary_to_hex(std::string s) {
   std::string t="";
   char nums[16]={'0','1','2','3','4','5','6','7',

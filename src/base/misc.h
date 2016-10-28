@@ -62,6 +62,16 @@ namespace o2scl {
   */
   double fermi_function(double E, double mu, double T, double limit=40.0);
 
+  /** \brief Store the first line from the output of the shell
+      command \c cmd up to \c nmax characters in \c result
+  */
+  int pipe_cmd_string(std::string cmd, std::string &result, int nmax=80);
+
+  /** \brief Return the first line from the output of the shell
+      command \c cmd up to \c nmax characters
+  */
+  std::string pipe_cmd_string(std::string cmd, int nmax=80);
+  
   /** \brief Reformat the columns for output of width \c size 
 
       Given a string array \c in_cols of size \c nin, screenify()
