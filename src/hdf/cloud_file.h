@@ -33,7 +33,9 @@
 #include <sys/stat.h>
 #include <o2scl/err_hnd.h>
 #include <o2scl/hdf_file.h>
+#ifndef O2SCL_LEGACY_IO
 #include <boost/filesystem.hpp>
+#endif
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl_hdf {
