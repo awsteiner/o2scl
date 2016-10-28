@@ -73,7 +73,7 @@ namespace o2scl_hdf {
     std::string env_var;
   
     cloud_file();
-    
+
     /** \brief Open an HDF file named \c file in directory \c dir
 	in subdirectory \c subdir, downloading from URL \c url if
 	necessary
@@ -100,6 +100,9 @@ namespace o2scl_hdf {
   
   };
 
+  // -------------------------------------------------------------------
+  // Class cloud_file function definitions
+  
   cloud_file::cloud_file() {
     allow_wget=true;
     allow_curl=true;
@@ -139,6 +142,9 @@ namespace o2scl_hdf {
     // Return value of stat()
     int sret=1;
 
+    // -------------------------------------------------------
+    // Main directory section
+
     // Look for directory 
     bool dir_present=false;
     if (dir.length()>0) {
@@ -146,10 +152,29 @@ namespace o2scl_hdf {
       if (sret==0) {
 	dir_present=S_ISDIR(sb.st_mode);
       }
-    }
+      if (dir_present==false) {
+	if (verbose>1) {
+	  std::cout << "Directory specified but not present in filesystem."
+		    << std::endl;
+	  std::cout << "Trying to create with 'mkdir'." << std::endl;
+	}
+	// If not found, try to make it with 'mkdir'
+	std::string cmd=((std::string)"mkdir -p ")+dir;
+	int mret=system(cmd.c_str());
+	if (mret!=0) {
+	  if (verbose>1) {
+	    std::cout << "Command to make directory '" << cmd
+		      << "' failed." << std::endl;
+	  }
+	} else {
+	  dir_present=true;
+	}
+      }
+    } 
     if (dir.length()==0 || sret!=0 || dir_present==false) {
       // If not found, prompt user for it
-      std::cout << "No directory specified. Please enter directory."
+      std::cout << "No directory specified or could not create "
+		<< "directory. Please enter directory name."
 		<< std::endl;
       std::cin >> dir;
       // Check again
@@ -169,13 +194,21 @@ namespace o2scl_hdf {
 	  return o2scl::exc_efilenotfound;
 	}
       }
-    } else if (verbose>1) {
+    } 
+
+    if (verbose>1) {
       std::cout << "Directory " << dir << " found." << std::endl;
     }
+
+    // End of main directory section
+    // -------------------------------------------------------
 
     // The full local directory and subdirectory
     std::string full_dir=dir;
 
+    // -------------------------------------------------------
+    // Subdirectory section
+    
     if (subdir.length()>0) {
       // Subdirectory was specified, so look for it on the filesystem
       std::string full_dir=dir+"/"+subdir;
@@ -223,6 +256,10 @@ namespace o2scl_hdf {
       }
     }
 
+    // End of subdirectory section
+    // -------------------------------------------------------
+    // Start of file section
+    
     // Now look for the full data file
     fname=full_dir+"/"+file;
     bool file_present=false;
@@ -235,7 +272,7 @@ namespace o2scl_hdf {
       // If it couldn't be found, try to download it
       int ret=1;
       if (allow_curl) {
-	std::string cmd=((std::string)"cd ")+full_dir+"; curl "+url;
+	std::string cmd=((std::string)"cd ")+full_dir+"; curl -o "+file++url;
 	if (verbose>0) {
 	  std::cout << "File did not exist. Trying curl command:\n\t"
 		    << cmd << std::endl;
@@ -243,7 +280,8 @@ namespace o2scl_hdf {
 	ret=system(cmd.c_str());
       }
       if (allow_wget && ret!=0) {
-	std::string cmd=((std::string)"cd ")+full_dir+"; wget "+url;
+	std::string cmd=((std::string)"cd ")+full_dir+"; wget -O "+file+
+	  url;
 	if (verbose>0) {
 	  std::cout << "File did not exist. Trying wget command:\n\t"
 		    << cmd << std::endl;
@@ -296,6 +334,9 @@ namespace o2scl_hdf {
       
     return o2scl::success;
   }
+
+  // End of cloud_file function definitions
+  // -------------------------------------------------------------------
   
 #ifndef DOXYGEN_NO_O2NS
 }
