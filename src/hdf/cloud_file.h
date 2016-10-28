@@ -76,6 +76,13 @@ namespace o2scl_hdf {
 	(default "")
      */
     std::string env_var;
+    /// \name Specify hash type
+    //@{
+    /// Current hash type (default sha256)
+    int hash_type;
+    static const int sha256=0;
+    static const int md5=1;
+    //@}
   
     cloud_file();
 
@@ -86,10 +93,10 @@ namespace o2scl_hdf {
 		  std::string url, std::string dir="");
     
     /** \brief Open an HDF file named \c file in directory \c dir
-	with SHA256 hash \c sha, downloading from URL \c url if
+	with hash \c hash, downloading from URL \c url if
 	necessary
     */
-    int hdf5_open_sha(hdf_file &hf, std::string file, std::string sha,
+    int hdf5_open_hash(hdf_file &hf, std::string file, std::string hash,
 		      std::string url, std::string dir="");
 
     /** \brief Open an HDF file named \c file in directory \c dir
@@ -100,10 +107,10 @@ namespace o2scl_hdf {
 			 std::string url, std::string dir="");
 
     /** \brief Open an HDF file named \c file in directory \c dir
-	in subdirectory \c subdir with SHA256 hash \c sha, 
+	in subdirectory \c subdir with hash \c hash, 
 	downloading from URL \c url if necessary
     */
-    int hdf5_open_sha_subdir(hdf_file &hf, std::string file, std::string sha,
+    int hdf5_open_hash_subdir(hdf_file &hf, std::string file, std::string hash,
 			     std::string subdir, std::string url,
 			     std::string dir="");
 			     
@@ -117,7 +124,7 @@ namespace o2scl_hdf {
     /** \brief Get file named \c file in directory \c dir 
 	in subdirectory \c subdir from url \c url
      */
-    int get_file_sha(std::string file, std::string sha, std::string url,
+    int get_file_hash(std::string file, std::string hash, std::string url,
 		 std::string &fname, std::string dir="");
     
     /** \brief Get file named \c file in directory \c dir 
@@ -140,7 +147,7 @@ namespace o2scl_hdf {
 	downloading the file, then the full filename is returned.
 	Otherwise, an exception is thrown.
     */
-    int get_file_sha_subdir(std::string file, std::string sha,
+    int get_file_hash_subdir(std::string file, std::string hash,
 			    std::string subdir, std::string url,
 			    std::string &fname, std::string dir="");
 
@@ -155,36 +162,37 @@ namespace o2scl_hdf {
     verbose=1;
     throw_on_fail=true;
     env_var="";
+    hash_type=sha256;
   }
 
-  int cloud_file::hdf5_open_sha_subdir
-    (o2scl_hdf::hdf_file &hf, std::string file, std::string sha,
+  int cloud_file::hdf5_open_hash_subdir
+    (o2scl_hdf::hdf_file &hf, std::string file, std::string hash,
      std::string subdir, std::string url, std::string dir) {
     std::string fname;
-    get_file_sha_subdir(file,sha,subdir,url,fname,dir);
+    get_file_hash_subdir(file,hash,subdir,url,fname,dir);
     hf.open(fname);
     return 0;
   }
     
   int cloud_file::hdf5_open(o2scl_hdf::hdf_file &hf, std::string file,
 			    std::string url, std::string dir) {
-    return hdf5_open_sha_subdir(hf,file,"","",url,dir);
+    return hdf5_open_hash_subdir(hf,file,"","",url,dir);
   }
   
-  int cloud_file::hdf5_open_sha
-    (o2scl_hdf::hdf_file &hf, std::string file, std::string sha,
+  int cloud_file::hdf5_open_hash
+    (o2scl_hdf::hdf_file &hf, std::string file, std::string hash,
      std::string url, std::string dir) {
-    return hdf5_open_sha_subdir(hf,file,sha,"",url,dir);
+    return hdf5_open_hash_subdir(hf,file,hash,"",url,dir);
   }
   
   int cloud_file::hdf5_open_subdir
     (o2scl_hdf::hdf_file &hf, std::string file, std::string subdir,
      std::string url, std::string dir) {
-    return hdf5_open_sha_subdir(hf,file,"",subdir,url,dir);
+    return hdf5_open_hash_subdir(hf,file,"",subdir,url,dir);
   }
 
-  int cloud_file::cloud_file::get_file_sha_subdir
-    (std::string file, std::string sha, std::string subdir,
+  int cloud_file::cloud_file::get_file_hash_subdir
+    (std::string file, std::string hash, std::string subdir,
      std::string url, std::string &fname, std::string dir) {
 
     if (dir=="" && env_var.length()>0) {
@@ -330,19 +338,64 @@ namespace o2scl_hdf {
     // Now look for the full data file
     fname=full_dir+"/"+file;
     bool file_present=false;
+    bool valid_hash=false;
     sret=stat(fname.c_str(),&sb);
     if (sret==0) {
       file_present=S_ISREG(sb.st_mode);
     }
+
+    // If there's no hash, assume it's valid
+    if (hash.length()==0) valid_hash=true;
+    
+    // If the file was found, check the hash
+    if (sret==0 && file_present && hash.length()>0) {
+      std::string cmd;
+      if (hash_type==sha256) {
+	cmd=((std::string)"openssl dgst -sha256 ")+fname+
+	  " > /tmp/o2scl_hash.txt";
+      } else {
+	cmd=((std::string)"md5 ")+fname+
+	  " > /tmp/o2scl_hash.txt";
+      }
+      if (verbose>1) {
+	std::cout << "Checking hash with command:\n\t" << cmd
+		  << std::endl;
+      }
+      int hret=system(cmd.c_str());
+      if (hret==0) {
+	std::ifstream fin;
+	std::string s1, s2, s3, s4;
+	fin.open("/tmp/o2scl_hash.txt");
+	if (hash_type==sha256) {
+	  fin >> s1 >> s2;
+	  s4=s2;
+	} else {
+	  fin >> s1 >> s2 >> s3 >> s4;
+	}
+	fin.close();
+	if (s4==hash) {
+	  valid_hash=true;
+	  if (verbose>1) {
+	    std::cout << "Hash valid." << std::endl;
+	  }
+	} else {
+	  if (verbose>1) {
+	    std::cout << "Invalid hash." << std::endl;
+	  }
+	}
+      }
+    }
       
-    if (sret!=0 || file_present==false) {
+    if (sret!=0 || file_present==false || valid_hash==false) {
       // If it couldn't be found, try to download it
       int ret=1;
       if (allow_curl) {
 	std::string cmd=((std::string)"cd ")+full_dir+"; curl -o "+
 	  file+" "+url;
 	if (verbose>0) {
-	  std::cout << "File did not exist. Trying curl command:\n\t"
+	  std::cout << "File did not exist or read failed or invalid hash."
+		    << std::endl;
+	  std::cout << "Trying curl command:\n\t"
 		    << cmd << std::endl;
 	}
 	ret=system(cmd.c_str());
@@ -351,7 +404,9 @@ namespace o2scl_hdf {
 	std::string cmd=((std::string)"cd ")+full_dir+"; wget -O "+file+
 	  " "+url;
 	if (verbose>0) {
-	  std::cout << "File did not exist. Trying wget command:\n\t"
+	  std::cout << "File did not exist or read failed or invalid hash."
+		    << std::endl;
+	  std::cout << "Trying wget command:\n\t"
 		    << cmd << std::endl;
 	}
 	ret=system(cmd.c_str());
@@ -380,7 +435,48 @@ namespace o2scl_hdf {
       }
     }
 
+    // -------------------------------------------------------
+    // Check hash if specified by the caller and it was originally
+    // invalid
+    
+    if (hash.length()>0 && valid_hash==false) {
+      std::string cmd;
+      if (hash_type==sha256) {
+	cmd=((std::string)"openssl dgst -sha256 ")+fname+
+	  " > /tmp/o2scl_hash.txt";
+      } else {
+	cmd=((std::string)"md5 ")+fname+
+	  " > /tmp/o2scl_hash.txt";
+      }
+      if (verbose>1) {
+	std::cout << "Checking hash with command:\n\t" << cmd
+		  << std::endl;
+      }
+      int hret=system(cmd.c_str());
+      if (hret==0) {
+	std::ifstream fin;
+	std::string s1, s2, s3, s4;
+	fin.open("/tmp/o2scl_hash.txt");
+	if (hash_type==sha256) {
+	  fin >> s1 >> s2;
+	  s4=s2;
+	} else {
+	  fin >> s1 >> s2 >> s3 >> s4;
+	}
+	fin.close();
+	if (s4!=hash) {
+	  O2SCL_ERR("Invalid hash after download in cloud_file.",
+		    o2scl::exc_efailed);
+	}
+      } else {
+	O2SCL_ERR("Invalid hash (hash command failed) in cloud_file.",
+		  o2scl::exc_efailed);
+      }
+    }
+
+    // -------------------------------------------------------
     // Output full filename
+    
     if (verbose>1) {
       std::cout << "Success with file named '" << fname
 		<< "'" << std::endl;
@@ -406,19 +502,19 @@ namespace o2scl_hdf {
 
   int cloud_file::get_file(std::string file, std::string url,
 			   std::string &fname, std::string dir) {
-    return get_file_sha_subdir(file,"","",url,fname,dir);
+    return get_file_hash_subdir(file,"","",url,fname,dir);
   }
     
-  int cloud_file::get_file_sha(std::string file, std::string sha,
+  int cloud_file::get_file_hash(std::string file, std::string hash,
 			       std::string url, std::string &fname,
 			       std::string dir) {
-    return get_file_sha_subdir(file,sha,"",url,fname,dir);
+    return get_file_hash_subdir(file,hash,"",url,fname,dir);
   }
       
   int cloud_file::get_file_subdir(std::string file, std::string subdir,
 				  std::string url,
 				  std::string &fname, std::string dir) {
-    return get_file_sha_subdir(file,"",subdir,url,fname,dir);
+    return get_file_hash_subdir(file,"",subdir,url,fname,dir);
   }
 
   // End of cloud_file function definitions
