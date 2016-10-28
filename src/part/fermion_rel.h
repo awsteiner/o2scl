@@ -298,9 +298,6 @@ namespace o2scl {
     /// The solver for calc_density()
     std::shared_ptr<root<> > density_root;
 
-    /// The backup solver for calc_density()
-    std::shared_ptr<root<> > density_root2;
-    
     /// Return string denoting type ("fermion_rel")
     virtual const char *type() { return "fermion_rel"; }
 

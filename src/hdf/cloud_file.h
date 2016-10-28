@@ -31,11 +31,13 @@
 #include <cstdlib>
 // For struct stat and associated functions
 #include <sys/stat.h>
-#include <o2scl/err_hnd.h>
-#include <o2scl/hdf_file.h>
+
 #ifndef O2SCL_LEGACY_IO
 #include <boost/filesystem.hpp>
 #endif
+
+#include <o2scl/err_hnd.h>
+#include <o2scl/hdf_file.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl_hdf {
@@ -43,7 +45,7 @@ namespace o2scl_hdf {
 
   /** \brief Read a file and download from a URL if necessary
       
-      \note This function requires POSIX I/O calls and a system call
+      \note This class requires POSIX I/O calls and a system call
       which uses <tt>mkdir -p</tt>, thus will probably only work on
       unix-like systems.
 
@@ -57,29 +59,72 @@ namespace o2scl_hdf {
   public:
   
     /** \brief If true, allow the use of \c wget to download the file
+	(default true)
      */
     bool allow_wget;
     /** \brief If true, allow the use of \c curl to download the file
+	(default true)
      */
     bool allow_curl;
-    /** \brief Verbosity parameter
+    /** \brief Verbosity parameter (default 1)
      */
     int verbose;
-    /** \brief If true, throw an exception on failure
+    /** \brief If true, throw an exception on failure (default true)
      */
     bool throw_on_fail;
     /** \brief The environment variable which stores the directory
+	(default "")
      */
     std::string env_var;
   
     cloud_file();
 
     /** \brief Open an HDF file named \c file in directory \c dir
+	downloading from URL \c url if necessary
+    */
+    int hdf5_open(hdf_file &hf, std::string file, 
+		  std::string url, std::string dir="");
+    
+    /** \brief Open an HDF file named \c file in directory \c dir
+	with SHA256 hash \c sha, downloading from URL \c url if
+	necessary
+    */
+    int hdf5_open_sha(hdf_file &hf, std::string file, std::string sha,
+		      std::string url, std::string dir="");
+
+    /** \brief Open an HDF file named \c file in directory \c dir
 	in subdirectory \c subdir, downloading from URL \c url if
 	necessary
     */
-    int hdf5_open(hdf_file &hf, std::string file, std::string subdir,
-		  std::string url, std::string dir="");
+    int hdf5_open_subdir(hdf_file &hf, std::string file, std::string subdir,
+			 std::string url, std::string dir="");
+
+    /** \brief Open an HDF file named \c file in directory \c dir
+	in subdirectory \c subdir with SHA256 hash \c sha, 
+	downloading from URL \c url if necessary
+    */
+    int hdf5_open_sha_subdir(hdf_file &hf, std::string file, std::string sha,
+			     std::string subdir, std::string url,
+			     std::string dir="");
+			     
+
+    /** \brief Get file named \c file in directory \c dir 
+	in subdirectory \c subdir from url \c url
+    */
+    int get_file(std::string file, std::string url,
+		 std::string &fname, std::string dir="");
+    
+    /** \brief Get file named \c file in directory \c dir 
+	in subdirectory \c subdir from url \c url
+     */
+    int get_file_sha(std::string file, std::string sha, std::string url,
+		 std::string &fname, std::string dir="");
+    
+    /** \brief Get file named \c file in directory \c dir 
+	in subdirectory \c subdir from url \c url
+     */
+    int get_file_subdir(std::string file, std::string subdir, std::string url,
+		 std::string &fname, std::string dir="");
     
     /** \brief Get file named \c file in directory \c dir 
 	in subdirectory \c subdir from url \c url
@@ -95,9 +140,10 @@ namespace o2scl_hdf {
 	downloading the file, then the full filename is returned.
 	Otherwise, an exception is thrown.
     */
-    int get_file(std::string file, std::string subdir, std::string url,
-		 std::string &fname, std::string dir="");
-  
+    int get_file_sha_subdir(std::string file, std::string sha,
+			    std::string subdir, std::string url,
+			    std::string &fname, std::string dir="");
+
   };
 
   // -------------------------------------------------------------------
@@ -111,18 +157,35 @@ namespace o2scl_hdf {
     env_var="";
   }
 
-  int cloud_file::hdf5_open(hdf_file &hf, std::string file,
-			    std::string subdir, std::string url,
-			    std::string dir) {
+  int cloud_file::hdf5_open_sha_subdir
+    (o2scl_hdf::hdf_file &hf, std::string file, std::string sha,
+     std::string subdir, std::string url, std::string dir) {
     std::string fname;
-    get_file(file,subdir,url,fname,dir);
+    get_file_sha_subdir(file,sha,subdir,url,fname,dir);
     hf.open(fname);
     return 0;
   }
     
-  int cloud_file::get_file(std::string file, std::string subdir,
-			   std::string url, std::string &fname,
-			   std::string dir) {
+  int cloud_file::hdf5_open(o2scl_hdf::hdf_file &hf, std::string file,
+			    std::string url, std::string dir) {
+    return hdf5_open_sha_subdir(hf,file,"","",url,dir);
+  }
+  
+  int cloud_file::hdf5_open_sha
+    (o2scl_hdf::hdf_file &hf, std::string file, std::string sha,
+     std::string url, std::string dir) {
+    return hdf5_open_sha_subdir(hf,file,sha,"",url,dir);
+  }
+  
+  int cloud_file::hdf5_open_subdir
+    (o2scl_hdf::hdf_file &hf, std::string file, std::string subdir,
+     std::string url, std::string dir) {
+    return hdf5_open_sha_subdir(hf,file,"",subdir,url,dir);
+  }
+
+  int cloud_file::cloud_file::get_file_sha_subdir
+    (std::string file, std::string sha, std::string subdir,
+     std::string url, std::string &fname, std::string dir) {
 
     if (dir=="" && env_var.length()>0) {
       char *dir_ptr=getenv(env_var.c_str());
@@ -153,13 +216,14 @@ namespace o2scl_hdf {
 	dir_present=S_ISDIR(sb.st_mode);
       }
       if (dir_present==false) {
+	// If not found, try to make it with 'mkdir'
+	std::string cmd=((std::string)"mkdir -p ")+dir;
 	if (verbose>1) {
 	  std::cout << "Directory specified but not present in filesystem."
 		    << std::endl;
-	  std::cout << "Trying to create with 'mkdir'." << std::endl;
+	  std::cout << "Trying to create with command:\n\t"
+		    << cmd << std::endl;
 	}
-	// If not found, try to make it with 'mkdir'
-	std::string cmd=((std::string)"mkdir -p ")+dir;
 	int mret=system(cmd.c_str());
 	if (mret!=0) {
 	  if (verbose>1) {
@@ -167,7 +231,10 @@ namespace o2scl_hdf {
 		      << "' failed." << std::endl;
 	  }
 	} else {
-	  dir_present=true;
+	  sret=stat(dir.c_str(),&sb);
+	  if (sret==0) {
+	    dir_present=S_ISDIR(sb.st_mode);
+	  }
 	}
       }
     } 
@@ -272,7 +339,8 @@ namespace o2scl_hdf {
       // If it couldn't be found, try to download it
       int ret=1;
       if (allow_curl) {
-	std::string cmd=((std::string)"cd ")+full_dir+"; curl -o "+file++url;
+	std::string cmd=((std::string)"cd ")+full_dir+"; curl -o "+
+	  file+" "+url;
 	if (verbose>0) {
 	  std::cout << "File did not exist. Trying curl command:\n\t"
 		    << cmd << std::endl;
@@ -281,7 +349,7 @@ namespace o2scl_hdf {
       }
       if (allow_wget && ret!=0) {
 	std::string cmd=((std::string)"cd ")+full_dir+"; wget -O "+file+
-	  url;
+	  " "+url;
 	if (verbose>0) {
 	  std::cout << "File did not exist. Trying wget command:\n\t"
 		    << cmd << std::endl;
@@ -314,7 +382,8 @@ namespace o2scl_hdf {
 
     // Output full filename
     if (verbose>1) {
-      std::cout << "Success with file named " << fname << std::endl;
+      std::cout << "Success with file named '" << fname
+		<< "'" << std::endl;
     }
 
 #else
@@ -333,6 +402,23 @@ namespace o2scl_hdf {
 #endif      
       
     return o2scl::success;
+  }
+
+  int cloud_file::get_file(std::string file, std::string url,
+			   std::string &fname, std::string dir) {
+    return get_file_sha_subdir(file,"","",url,fname,dir);
+  }
+    
+  int cloud_file::get_file_sha(std::string file, std::string sha,
+			       std::string url, std::string &fname,
+			       std::string dir) {
+    return get_file_sha_subdir(file,sha,"",url,fname,dir);
+  }
+      
+  int cloud_file::get_file_subdir(std::string file, std::string subdir,
+				  std::string url,
+				  std::string &fname, std::string dir) {
+    return get_file_sha_subdir(file,"",subdir,url,fname,dir);
   }
 
   // End of cloud_file function definitions
