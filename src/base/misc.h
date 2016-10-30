@@ -64,11 +64,19 @@ namespace o2scl {
 
   /** \brief Store the first line from the output of the shell
       command \c cmd up to \c nmax characters in \c result
+      
+      \note This function uses popen() and may not work properly on
+      some systems. If HAVE_POPEN was not defined during O2scl's
+      compilation, then this function will throw an exception (or if
+      \c err_on_fail is false, it will return a nonzero value).
   */
-  int pipe_cmd_string(std::string cmd, std::string &result, int nmax=80);
+  int pipe_cmd_string(std::string cmd, std::string &result,
+		      bool err_on_fail=true, int nmax=80);
 
   /** \brief Return the first line from the output of the shell
       command \c cmd up to \c nmax characters
+
+      This function always throws exceptions if it fails.
   */
   std::string pipe_cmd_string(std::string cmd, int nmax=80);
   

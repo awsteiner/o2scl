@@ -33,12 +33,16 @@ using namespace std;
 using namespace o2scl;
 
 int o2scl::pipe_cmd_string(std::string cmd, std::string &result,
-			   int nmax) {
+			   bool err_on_fail, int nmax) {
   
 #ifdef HAVE_POPEN
   
   FILE *ps_pipe=popen(cmd.c_str(),"r");
   if (!ps_pipe) {
+    if (err_on_fail) {
+      O2SCL_ERR("Pipe could not be opened in o2scl::pipe_cmd_string().",
+		o2scl::exc_efailed);
+    }
     return 1;
   }
   
@@ -48,13 +52,30 @@ int o2scl::pipe_cmd_string(std::string cmd, std::string &result,
   // unused return value errors
   char *cret=fgets(char_arr,nmax,ps_pipe);
   if (cret==0) {
+    if (err_on_fail) {
+      O2SCL_ERR("Null pointer returned by fgets in o2scl::pipe_cmd_string().",
+		o2scl::exc_efailed);
+    }
     return 2;
   }
   
   result=char_arr;
   
+  int pret=pclose(ps_pipe);
+  if (pret!=0) {
+    if (err_on_fail) {
+      O2SCL_ERR("Close pipe returned non-zero in o2scl::pipe_cmd_string().",
+		o2scl::exc_efailed);
+    }
+    return 4;
+  }
+  
 #else
-
+  
+  if (err_on_fail) {
+    O2SCL_ERR("Compiled without popen support in o2scl::pipe_cmd_string().",
+	      o2scl::exc_efailed);
+  }
   return 3;
   
 #endif
@@ -64,20 +85,7 @@ int o2scl::pipe_cmd_string(std::string cmd, std::string &result,
 
 std::string o2scl::pipe_cmd_string(std::string cmd, int nmax) {
   std::string result;
-  int ret=pipe_cmd_string(cmd,result,nmax);
-  if (ret==1) {
-    O2SCL_ERR("Pipe could not be opened in pipe_cmd_string().",
-	      o2scl::exc_efailed);
-  } else if (ret==2) {
-    O2SCL_ERR("Null pointer returned by fgets in pipe_cmd_string().",
-	      o2scl::exc_efailed);
-  } else if (ret==3) {
-    O2SCL_ERR("Compiled without popen support in pipe_cmd_string().",
-	      o2scl::exc_efailed);
-  } else if (ret!=0) {
-    O2SCL_ERR("Unknown return value in pipe_cmd_string().",
-	      o2scl::exc_efailed);
-  }
+  pipe_cmd_string(cmd,result,true,nmax);
   return result;
 }
 
