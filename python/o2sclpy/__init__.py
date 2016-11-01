@@ -351,6 +351,14 @@ def string_to_dict(s):
 class plotter:
 
     h5r=hdf5_reader()
+    dset=0
+    axes=0
+    fig=0
+    canvas_flag=0
+    dtype=''
+
+    # Quantities modified by set/get
+    
     logx=0
     logy=0
     logz=0
@@ -366,11 +374,6 @@ class plotter:
     zhi=0
     zset=0
     verbose=1
-    dset=0
-    axes=0
-    fig=0
-    canvas_flag=0
-    dtype=''
     cmap='jet'
     colbar=0
 
@@ -426,34 +429,6 @@ class plotter:
                                   self.dset['line_'+str(i)+'/y'],**kwargs)
         return
  
-    def points(self,colx,coly,**kwargs):
-        if self.force_bytes(self.dtype)==b'table':
-            print('Wrong type',self.dtype,'for plot.')
-            return
-        if self.verbose>2:
-            print('plot',colx,coly,kwargs)
-        if self.canvas_flag==0:
-            self.canvas()
-        if self.logx==1:
-            if self.logy==1:
-                plot.loglog(self.dset['data/'+colx],
-                            self.dset['data/'+coly],lw=0,marker='.',**kwargs)
-            else:
-                plot.semilogx(self.dset['data/'+colx],
-                              self.dset['data/'+coly],lw=0,marker='.',**kwargs)
-        else:
-            if self.logy==1:
-                plot.semilogy(self.dset['data/'+colx],
-                              self.dset['data/'+coly],lw=0,marker='.',**kwargs)
-            else:
-                plot.plot(self.dset['data/'+colx],
-                          self.dset['data/'+coly],lw=0,marker='.',**kwargs)
-        if self.xset==1:
-            plot.xlim([self.xlo,self.xhi])
-        if self.yset==1:
-            plot.ylim([self.ylo,self.yhi])
-        return
-
     def plot(self,colx,coly,**kwargs):
         
         if self.force_bytes(self.dtype)==b'table':
@@ -826,12 +801,51 @@ class plotter:
         return
 
     def help(self,arg=''):
+        #border='---------------------------------------------------------'
+        border=' '
         if arg=='canvas':
             print('canvas()')
+        elif arg=='den-plot':
+            print(border)
+            print('den_plot <slice name>')
+            print(border)
+        elif arg=='get':
+            print(border)
+            print('get [name]')
+            print(border)
+            print('Name can be any of: logx, logy, xtitle, ytitle, xlo,'+
+                  'xhi, xset, ylo, yhi, yset,')
+            print('zlo, zhi, zset, verbose, cmap, colbar')
+        elif arg=='line':
+            print(border)
+            print('line <x1> <y1> <x2> <y2>')
+            print(border)
+            print('Plot a line from (x1,y1) to (x2,y2).\n')
+            print('Useful kwargs:')
+            print('color or c                   matplotlib color')
+            print('dashes                       '+
+                  'sequence of on/off ink in points')
+            print("linestyle or ls              "+
+                  "['-' | '--' | '-.' | ':' | 'None' | ' ' | '']")
+            print("                              "+
+                  "linestyle, e.g., 'steps--'.")
+            print("linewidth or lw              float value in points")
+            print(border)
+        elif arg=='list':
+            print(border)
+            print('list')
+            print(border)
+            print('List the column or slice names for table or table3d')
+            print('objects.')
+        elif arg=='move-labels':
+            print(border)
+            print('move-labels')
+            print(border)
         elif arg=='plot':
-            print('---------------------------------------------------------')
+            print(border)
             print('plot <x> <y> [kwargs]')
-            print('---------------------------------------------------------')
+            print(border)
+            print('Plot data from columns x and y.\n')
             print('Useful kwargs:')
             print('color or c                   matplotlib color')
             print('dashes                       '+
@@ -854,108 +868,145 @@ class plotter:
             print('markerfacecolor or mfc       matplotlib color')
             print('markerfacecoloralt or mfcalt matplotlib color')
             print('markersize or ms             float')
-            print('---------------------------------------------------------')
-        elif arg=='den-plot':
-            print('---------------------------------------------------------')
-            print('den_plot <slice name>')
-            print('---------------------------------------------------------')
-        elif arg=='get':
-            print('---------------------------------------------------------')
-            print('get <name>')
-            print('---------------------------------------------------------')
-            print('Name can be any of: logx,logy,xtitle,ytitle,xlo,'+
-                  'xhi,xset,ylo,yhi,yset,')
-            print('zlo,zhi,zset,verbose,cmap,colbar')
-        elif arg=='line':
-            print('---------------------------------------------------------')
-            print('line <x1> <y1> <x2> <y2>')
-            print('---------------------------------------------------------')
+            print(border)
+        elif arg=='plotm':
+            print(border)
+            print('plot <x> <y> <file1> [file2] ...')
+            print(border)
+            print('Plot data from columns x and y from several files.\n')
+        elif arg=='plot1':
+            print(border)
+            print('plot <x> [kwargs]')
+            print(border)
+            print('Plot data from column x.\n')
             print('Useful kwargs:')
             print('color or c                   matplotlib color')
             print('dashes                       '+
                   'sequence of on/off ink in points')
+            print("fillstyle                    "+
+                  "['full' | 'left' | 'right' | 'bottom' | 'top'")
+            print("                              | 'none']")
+            print("label                        "+
+                  "string or anything printable with '%s' conversion.")
             print("linestyle or ls              "+
                   "['-' | '--' | '-.' | ':' | 'None' | ' ' | '']")
             print("                              "+
+                  "and any drawstyle in combination with a")
+            print("                              "+
                   "linestyle, e.g., 'steps--'.")
             print("linewidth or lw              float value in points")
-            print('---------------------------------------------------------')
-        elif arg=='list':
-            print('---------------------------------------------------------')
-            print('list')
-            print('---------------------------------------------------------')
-        elif arg=='move-labels':
-            print('---------------------------------------------------------')
-            print('move_labels')
-            print('---------------------------------------------------------')
+            print('marker                       marker type')
+            print('markeredgecolor or mec       matplotlib color')
+            print('markeredgewidth or mew       float value in points')
+            print('markerfacecolor or mfc       matplotlib color')
+            print('markerfacecoloralt or mfcalt matplotlib color')
+            print('markersize or ms             float')
+            print(border)
+        elif arg=='plot1m':
+            print(border)
+            print('plot <x> <file1> [file2] ...')
+            print(border)
+            print('Plot data from column x in several files.\n')
         elif arg=='read':
-            print('---------------------------------------------------------')
+            print(border)
             print('read <filename>')
-            print('---------------------------------------------------------')
+            print(border)
+            print("Read the first object of type 'table' from <filename>.")
         elif arg=='read-name':
-            print('---------------------------------------------------------')
+            print(border)
             print('read-name <filename> <name>')
-            print('---------------------------------------------------------')
+            print(border)
+            print('Read object with name <name> in file <filename>.')
         elif arg=='read-type':
-            print('---------------------------------------------------------')
+            print(border)
             print('read_type <filename> <type>')
-            print('---------------------------------------------------------')
+            print(border)
+            print("Read the first object of type <type> from <filename>.")
         elif arg=='reset-xlimits':
-            print('---------------------------------------------------------')
+            print(border)
             print('reset-xlimits')
-            print('---------------------------------------------------------')
+            print(border)
+            print('Let matplotlib adjust x-axis limits in next plot.')
         elif arg=='reset-ylimits':
-            print('---------------------------------------------------------')
+            print(border)
             print('reset-ylimits')
-            print('---------------------------------------------------------')
+            print(border)
+            print('Let matplotlib adjust y-axis limits in next plot.')
+        elif arg=='save':
+            print(border)
+            print('save <filename>')
+            print(border)
+            print("Save current plot to file named 'filename'.")
         elif arg=='set':
-            print('---------------------------------------------------------')
+            print(border)
             print('set <name> <value>')
-            print('---------------------------------------------------------')
-            print('Name can be any of: logx,logy,xtitle,ytitle,xlo,'+
-                  'xhi,xset,ylo,yhi,yset,')
-            print('zlo,zhi,zset,verbose,cmap,colbar')
+            print(border)
+            print('Name can be any of: logx, logy, xtitle, ytitle, xlo,'+
+                  'xhi, xset, ylo, yhi, yset,')
+            print('zlo, zhi, zset, verbose, cmap, colbar')
         elif arg=='show':
-            print('---------------------------------------------------------')
+            print(border)
             print('show')
-            print('---------------------------------------------------------')
+            print(border)
+            print('Show plot in a window.')
         elif arg=='text':
-            print('---------------------------------------------------------')
+            print(border)
             print('text <x> <y> <string>')
-            print('---------------------------------------------------------')
+            print(border)
+            print('Place string at location (x,y) in the canvas coordinate')
+            print('system.')
+        elif arg=='ttext':
+            print(border)
+            print('ttext <x> <y> <string>')
+            print(border)
+            print('Place string at location (x,y) in the plotted coordinate')
+            print('system.')
+        elif arg=='type':
+            print(border)
+            print('type')
+            print(border)
+            print('Print current object type.')
         elif arg=='xlimits':
-            print('---------------------------------------------------------')
+            print(border)
             print('xlimits <xlow> <xhigh>')
-            print('---------------------------------------------------------')
+            print(border)
+            print('Set limits on x-axis.')
         elif arg=='ylimits':
-            print('---------------------------------------------------------')
+            print(border)
             print('ylimits <ylow> <yhigh>')
-            print('---------------------------------------------------------')
+            print(border)
+            print('Set limits on y-axis.')
         else:
             print('o2graph: A plotting script for O2scl data files')
-            print('---------------------------------------------------------')
+            print(border)
             print('Commands:')
-            print('---------------------------------------------------------')
+            print(border)
             print('canvas')
             print('contour-plot <level> [kwargs)')
             print('den-plot <slice_name> [kwargs]')
             print('get <name>')
+            print('help')
             print('hist <col> [kwargs]')
             print('hist2d <colx> <coly> [kwargs]')
             print('line <x1> <y1> <x2> <y2> [kwargs]')
             print('list')
             print('move-labels')
             print('plot <colx> <coly> [kwargs]')
+            print('plotm <colx> <coly> <file1> [file2] ...')
+            print('plot1 <colx> [kwargs]')
+            print('plot1m <colx> <file1> [file2] ...')
             print('read <filename>')
             print('read-name <filename> <name>')
             print('read-type <filename> <type>')
             print('reds')
             print('reset-xlimits')
             print('reset-ylimits')
+            print('save <filename>')
             print('set <name> <value>')
             print('show')
             print('text <x> <y> <string> [kwargs]')
             print('ttext <x> <y> <string> [kwargs]')
+            print('type')
             print('xlimits <xlow> <xhigh>')
             print('ylimits <ylow> <yhigh>')
         return
@@ -976,40 +1027,38 @@ class plotter:
         return
 
     def get(self,name):
-        if name=='logx':
-            print('The value of logx is',self.logx,'.')
-        elif name=='logy':
-            print('The value of logy is',self.logy,'.')
-        elif name=='xtitle':
-            print('The value of xtitle is',self.xtitle,'.')
-        elif name=='ytitle':
-            print('The value of ytitle is',self.ytitle,'.')
-        elif name=='xlo':
-            print('The value of xlo is',self.xlo,'.')
-        elif name=='xhi':
-            print('The value of xhi is',self.xhi,'.')
-        elif name=='xset':
-            print('The value of xset is',self.xset,'.')
-        elif name=='ylo':
-            print('The value of ylo is',self.ylo,'.')
-        elif name=='yhi':
-            print('The value of yhi is',self.yhi,'.')
-        elif name=='yset':
-            print('The value of yset is',self.yset,'.')
-        elif name=='zlo':
-            print('The value of zlo is',self.zlo,'.')
-        elif name=='zhi':
-            print('The value of zhi is',self.zhi,'.')
-        elif name=='zset':
-            print('The value of zset is',self.zset,'.')
-        elif name=='verbose':
-            print('The value of verbose is',self.verbose,'.')
-        elif name=='cmap':
+        if name=='cmap' or name=='':
             print('The value of cmap is',self.cmap,'.')
-        elif name=='colbar':
+        if name=='colbar' or name=='':
             print('The value of colbar is',self.colbar,'.')
-        else:
-            print('No variable named',name,'.')
+        if name=='logx' or name=='':
+            print('The value of logx is',self.logx,'.')
+        if name=='logy' or name=='':
+            print('The value of logy is',self.logy,'.')
+        if name=='verbose' or name=='':
+            print('The value of verbose is',self.verbose,'.')
+        if name=='xhi' or name=='':
+            print('The value of xhi is',self.xhi,'.')
+        if name=='xlo' or name=='':
+            print('The value of xlo is',self.xlo,'.')
+        if name=='xset' or name=='':
+            print('The value of xset is',self.xset,'.')
+        if name=='xtitle' or name=='':
+            print('The value of xtitle is',self.xtitle,'.')
+        if name=='yhi' or name=='':
+            print('The value of yhi is',self.yhi,'.')
+        if name=='ylo' or name=='':
+            print('The value of ylo is',self.ylo,'.')
+        if name=='yset' or name=='':
+            print('The value of yset is',self.yset,'.')
+        if name=='ytitle' or name=='':
+            print('The value of ytitle is',self.ytitle,'.')
+        if name=='zhi' or name=='':
+            print('The value of zhi is',self.zhi,'.')
+        if name=='zlo' or name=='':
+            print('The value of zlo is',self.zlo,'.')
+        if name=='zset' or name=='':
+            print('The value of zset is',self.zset,'.')
         return
 
     def parse_argv(self,argv):
@@ -1061,7 +1110,7 @@ class plotter:
                     if self.verbose>2:
                         print('Process get.')
                     if ix_next-ix<2:
-                        print('Not enough parameters for get option.')
+                        self.get('')
                     else:
                         self.get(argv[ix+1])
                 elif cmd_name=='text':
@@ -1114,20 +1163,6 @@ class plotter:
                         self.den_plot(argv[ix+1])
                     else:
                         self.den_plot(argv[ix+1],**string_to_dict(argv[ix+2]))
-                elif cmd_name=='read-name':
-                    if self.verbose>2:
-                        print('Process read.')
-                    if ix_next-ix<3:
-                        print('Not enough parameters for read option.')
-                    else:
-                        self.read_name(argv[ix+1],argv[ix+2])
-                elif cmd_name=='read-type':
-                    if self.verbose>2:
-                        print('Process read.')
-                    if ix_next-ix<3:
-                        print('Not enough parameters for read option.')
-                    else:
-                        self.read_type(argv[ix+1],argv[ix+2])
                 elif cmd_name=='xlimits':
                     if self.verbose>2:
                         print('Process xlimits.')
@@ -1152,17 +1187,6 @@ class plotter:
                     else:
                         self.plot(argv[ix+1],argv[ix+2],
                                   **string_to_dict(argv[ix+3]))
-                elif cmd_name=='points':
-                    if self.verbose>2:
-                        print('Process points.')
-                        print(ix,ix_next)
-                    if ix_next-ix<3:
-                        print('Not enough parameters for points option.')
-                    elif ix_next-ix<4:
-                        self.points(argv[ix+1],argv[ix+2])
-                    else:
-                        self.points(argv[ix+1],argv[ix+2],
-                                    **string_to_dict(argv[ix+3]))
                 elif cmd_name=='plot1':
                     if self.verbose>2:
                         print('Process plot1.')
