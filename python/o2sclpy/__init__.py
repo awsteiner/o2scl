@@ -562,6 +562,9 @@ class plotter:
             print('hist',kwargs)
         if self.canvas_flag==0:
             self.canvas()
+        for key in kwargs:
+            if key=='bins':
+                kwargs[key]=int(kwargs[key])
         if self.force_bytes(self.dtype)==b'table':
             plot.hist(self.dset['data/'+col],**kwargs)
         else:
@@ -573,6 +576,9 @@ class plotter:
             print('hist2d',colx,coly,kwargs)
         if self.canvas_flag==0:
             self.canvas()
+        for key in kwargs:
+            if key=='bins':
+                kwargs[key]=int(kwargs[key])
         plot.hist2d(self.dset['data/'+colx],self.dset['data/'+coly],**kwargs)
         return
 
@@ -1240,7 +1246,7 @@ class plotter:
                         self.hist2d(argv[ix+1],argv[ix+2])
                     else:
                         self.hist2d(argv[ix+1],argv[ix+2],
-                                    **string_to_dict(argv[ix+2]))
+                                    **string_to_dict(argv[ix+3]))
                 elif cmd_name=='save':
                     if self.verbose>2:
                         print('Process save.')
