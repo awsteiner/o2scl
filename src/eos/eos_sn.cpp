@@ -290,7 +290,7 @@ void eos_sn_base::compute_eg() {
 	       "eos_sn_base::compute_eg().",exc_einval);
   }
 
-  for(size_t i=0;i<n_nB;i++) {
+  for(int i=n_nB-1;i>=0;i--) {
     if (verbose>0 && i%5==0) {
       cout << (i+1) << "/" << n_nB << endl;
     }
@@ -302,17 +302,24 @@ void eos_sn_base::compute_eg() {
 	ye1=E.get_grid(1,j);
 	T1=E.get_grid(2,k);
 
-	double deg=nb1/pow(T1/hc_mev_fm,3.0);
-
 	photon.massless_calc(T1/hc_mev_fm);
 	electron.n=nb1*ye1;
 
 	// AWS: 11/1/16: I had problems with the electron calculation
-	// not working becasuse of a bad initial guess for the
-	// chemical potential. Setting the chemical potential equal to
-	// the mass as initial guess here worked to fix it.
-	electron.mu=electron.m;
-
+	// not working, presumably because of a bad initial guess for the
+	// chemical potential. It would be better if the initial guess
+	// code is implemented in the fermion_rel class.
+	{
+	  electron.mu=electron.m;
+	  
+	  double deg=nb1/pow(T1/hc_mev_fm,3.0);
+	  if (deg>10.0) {
+	    // If it's very degenerate, start with a guess
+	    // without positrons
+	    relf.calc_density(electron,T1/hc_mev_fm);
+	  }
+	}
+	
 	relf.pair_density(electron,T1/hc_mev_fm);
 
 	if (include_muons) {

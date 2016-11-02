@@ -237,6 +237,13 @@ protected:
   /** \brief Desc
    */
   int eg(std::vector<std::string> &sv, bool itive_com) {
+    if (true) {
+      genp->relf.upper_limit_fac=40.0;
+      genp->relf.dit->tol_abs=1.0e-11;
+      genp->relf.dit->tol_rel=1.0e-11;
+      genp->relf.nit->tol_abs=1.0e-11;
+      genp->relf.nit->tol_rel=1.0e-11;
+    }
     genp->compute_eg();
     return 0;
   }

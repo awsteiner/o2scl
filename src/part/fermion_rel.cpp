@@ -732,7 +732,7 @@ int fermion_rel::pair_density(fermion &f, double temper) {
   // -----------------------------------------------------------------
   // If the chemical potential is too small, then the solver
   // will fail
-
+  
   // Find the larger of either the temperature or the mass
   double lg=temper;
   if (f.ms>lg) lg=temper;
