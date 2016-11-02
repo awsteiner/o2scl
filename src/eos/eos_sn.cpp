@@ -307,18 +307,13 @@ void eos_sn_base::compute_eg() {
 	photon.massless_calc(T1/hc_mev_fm);
 	electron.n=nb1*ye1;
 
-	// The electron calculation doesn't work well with
-	// sufficiently bad initial guess for the chemical potential.
-	// Setting the chemical potential equal to the mass is good
-	// enough.
+	// AWS: 11/1/16: I had problems with the electron calculation
+	// not working becasuse of a bad initial guess for the
+	// chemical potential. Setting the chemical potential equal to
+	// the mass as initial guess here worked to fix it.
 	electron.mu=electron.m;
 
-	// AWS: 11/1/16: I originally had a flag here avoiding
-	// computing the electrons in the nondegenerate limit, but
-	// that was wrong and is now fixed.
-	relf.density_root->err_nonconv=false;
 	relf.pair_density(electron,T1/hc_mev_fm);
-	relf.density_root->err_nonconv=true;
 
 	if (include_muons) {
 	  muon.mu=electron.mu;

@@ -32,7 +32,7 @@
 // For struct stat and associated functions
 #include <sys/stat.h>
 
-#ifndef O2SCL_LEGACY_IO
+#ifdef O2SCL_USE_BOOST_FILESYSTEM
 #include <boost/filesystem.hpp>
 #endif
 
@@ -52,7 +52,7 @@ namespace o2scl_hdf {
       \todo Convert to use boost::filesystem .
 
       \warning This class has several potential security issues 
-      and should not be used without due care.
+      and should not be used without due care. 
   */
   class cloud_file {
     
@@ -207,7 +207,7 @@ namespace o2scl_hdf {
       }
     }
 
-#ifdef O2SCL_LEGACY_IO
+#ifndef O2SCL_USE_BOOST_FILESYSTEM
 
     // File status object
     struct stat sb;
@@ -366,6 +366,7 @@ namespace o2scl_hdf {
 		  << std::endl;
       }
       std::string hash2=o2scl::pipe_cmd_string(cmd);
+      o2scl::remove_whitespace(hash2);
       if (hash2==hash) {
 	valid_hash=true;
 	if (verbose>1) {
@@ -448,6 +449,7 @@ namespace o2scl_hdf {
 		  << std::endl;
       }
       std::string hash2=o2scl::pipe_cmd_string(cmd);
+      o2scl::remove_whitespace(hash2);
       if (hash2!=hash) {
 	O2SCL_ERR("Invalid hash after download in cloud_file.",
 		  o2scl::exc_efailed);

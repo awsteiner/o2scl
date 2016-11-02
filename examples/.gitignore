@@ -1,3 +1,4 @@
+ex_eos_sn
 ex_nstar_rot
 ex_mcmc
 ex_tensor
@@ -49,3 +50,4 @@ testlist
 ex_interp_twod
 ex_gen_sn_eos
 ex_interp2
+.o2scl_data

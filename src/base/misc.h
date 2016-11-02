@@ -69,6 +69,9 @@ namespace o2scl {
       some systems. If HAVE_POPEN was not defined during O2scl's
       compilation, then this function will throw an exception (or if
       \c err_on_fail is false, it will return a nonzero value).
+
+      \note The result string may contain a carriage return at
+      the end.
   */
   int pipe_cmd_string(std::string cmd, std::string &result,
 		      bool err_on_fail=true, int nmax=80);
@@ -77,6 +80,9 @@ namespace o2scl {
       command \c cmd up to \c nmax characters
 
       This function always throws exceptions if it fails.
+
+      \note The result string may contain a carriage return at
+      the end.
   */
   std::string pipe_cmd_string(std::string cmd, int nmax=80);
   

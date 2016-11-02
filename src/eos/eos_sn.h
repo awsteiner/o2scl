@@ -249,21 +249,6 @@ namespace o2scl {
 	The electron contribution to the internal energy and free
 	energy computed by this function includes the electron rest
 	mass.
-
-	\todo This function doesn't work unless the default
-	settings in the \ref o2scl::fermion_rel object are 
-	changed to 
-	\code
-	relf.upper_limit_fac=40.0;
-	relf.dit->tol_abs=1.0e-11;
-	relf.dit->tol_rel=1.0e-11;
-	relf.nit->tol_abs=1.0e-11;
-	relf.nit->tol_rel=1.0e-11;
-	relf.density_root->err_nonconv=false;
-	relf.err_nonconv=false;
-	\endcode
-	This should be fixed, and the setting of err_nonconv
-	to false in the function should be fixed as well.
     */
     virtual void compute_eg();
 

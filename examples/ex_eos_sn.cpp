@@ -23,10 +23,11 @@
 #include <iostream>
 #include <o2scl/test_mgr.h>
 #include <o2scl/constants.h>
-#include <o2scl/gen_sn_eos.h>
+#include <o2scl/eos_sn.h>
 #include <o2scl/cli.h>
 #include <o2scl/hdf_file.h>
 #include <o2scl/hdf_io.h>
+#include <o2scl/cloud_file.h>
 
 using namespace std;
 using namespace o2scl;
@@ -35,7 +36,7 @@ using namespace o2scl_const;
 
 /** \brief Desc
  */
-class gen_sn_eos_test {
+class ex_eos_sn {
 
 protected:
 
@@ -49,15 +50,15 @@ protected:
   string name;
 
   /// Generic EOS pointer
-  gen_sn_eos *genp;
+  o2scl::eos_sn_base *genp;
 
   /// \name The supernova EOS objects
   //@{
-  ls_eos ls;  
-  sht_eos sht;  
-  stos_eos stos;  
-  hfsl_eos hfsl;  
-  oo_eos oo;  
+  o2scl::eos_sn_ls ls;  
+  o2scl::eos_sn_sht sht;  
+  o2scl::eos_sn_stos stos;  
+  o2scl::eos_sn_hfsl hfsl;  
+  o2scl::eos_sn_oo oo;  
   //@}
 
   /** \brief Desc
@@ -160,7 +161,7 @@ protected:
     }
     
     stos.verbose=verbose;
-    stos.load(fname);
+    stos.load(fname,0);
     genp=&stos;
     
     return 0;
@@ -179,26 +180,26 @@ protected:
       fname+="FSU1.7eos1.01.dat";
       fname2+="FSU1.7eosb1.01.dat";
       name="sht_fsu17";
-      sht.load(fname,sht_eos::mode_17);
-      cout << sht.A.interp(0.02,0.5,1.0) << " ";
-      cout << sht.E.interp(0.02,0.5,1.0) << endl;
-      sht.load(fname2,sht_eos::mode_17b);
-      cout << sht.A.interp(0.02,0.5,1.0) << " ";
-      cout << sht.E.interp(0.02,0.5,1.0) << " ";
-      cout << sht.Eint.interp(0.02,0.5,1.0) << endl;
+      sht.load(fname,eos_sn_sht::mode_17);
+      //cout << sht.A.interp(0.02,0.5,1.0) << " ";
+      //cout << sht.E.interp(0.02,0.5,1.0) << endl;
+      sht.load(fname2,eos_sn_sht::mode_17b);
+      //cout << sht.A.interp(0.02,0.5,1.0) << " ";
+      //cout << sht.E.interp(0.02,0.5,1.0) << " ";
+      //cout << sht.Eint.interp(0.02,0.5,1.0) << endl;
       exit(-1);
     } else if (sv[1]=="fsu21") {
       fname+="FSU2.1eos1.01.dat";
       fname2+="FSU2.1eosb1.01.dat";
       name="sht_fsu21";
-      sht.load(fname,sht_eos::mode_21);
-      sht.load(fname2,sht_eos::mode_21b);
+      sht.load(fname,eos_sn_sht::mode_21);
+      sht.load(fname2,eos_sn_sht::mode_21b);
     } else if (sv[1]=="nl3") {
       fname+="NL3eos1.03.dat";
       fname2+="NL3eosb1.03.dat";
       name="sht_nl3";
-      sht.load(fname,sht_eos::mode_NL3);
-      sht.load(fname2,sht_eos::mode_NL3b);
+      sht.load(fname,eos_sn_sht::mode_NL3);
+      sht.load(fname2,eos_sn_sht::mode_NL3b);
     } else {
       O2SCL_ERR("Need EOS type.",exc_efailed);
     }
@@ -235,74 +236,193 @@ protected:
 
   /** \brief Desc
    */
+  int eg(std::vector<std::string> &sv, bool itive_com) {
+    genp->compute_eg();
+    return 0;
+  }
+  
+  /** \brief Desc
+   */
+  int interp(std::vector<std::string> &sv, bool itive_com) {
+    
+    if (sv.size()<4) {
+      cerr << "Not enough arguments specified in 'interp'." << endl;
+      return 1;
+    }
+    if (genp==0 || genp->is_loaded()==false) {
+      cerr << "No EOS table loaded in 'interp'." << endl;
+      return 1;
+    }
+
+    double nB=o2scl::stod(sv[1]);
+    double Ye=o2scl::stod(sv[2]);
+    double T=o2scl::stod(sv[3]);
+    
+    cout << "nB= " << nB << " 1/fm^3" << endl;
+    cout << "Ye= " << Ye << endl;
+    cout << "T= " << T << " MeV" << endl;
+    if (genp->data_with_leptons()) {
+      cout << "F= " << genp->F.interp_linear(nB,Ye,T) << " MeV" << endl;
+      cout << "E= " << genp->E.interp_linear(nB,Ye,T) << " MeV" << endl;
+      cout << "P= " << genp->P.interp_linear(nB,Ye,T) << " MeV/fm^3" << endl;
+      cout << "S= " << genp->S.interp_linear(nB,Ye,T) << endl;
+    }
+    if (genp->data_baryons_only()) {
+      cout << "Fint= " << genp->Fint.interp_linear(nB,Ye,T) << " MeV" << endl;
+      cout << "Eint= " << genp->Eint.interp_linear(nB,Ye,T) << " MeV" << endl;
+      cout << "Pint= " << genp->Pint.interp_linear(nB,Ye,T) << " MeV/fm^3" 
+	   << endl;
+      cout << "Sint= " << genp->Sint.interp_linear(nB,Ye,T) << endl;
+    }
+    cout << "mun= " << genp->mun.interp_linear(nB,Ye,T) << " MeV" << endl;
+    cout << "mup= " << genp->mup.interp_linear(nB,Ye,T) << " MeV" << endl;
+    cout << "Z= " << genp->Z.interp_linear(nB,Ye,T) << endl;
+    cout << "A= " << genp->A.interp_linear(nB,Ye,T) << endl;
+    cout << "Xn= " << genp->Xn.interp_linear(nB,Ye,T) << endl;
+    cout << "Xp= " << genp->Xp.interp_linear(nB,Ye,T) << endl;
+    cout << "Xalpha= " << genp->Xalpha.interp_linear(nB,Ye,T) << endl;
+    cout << "Xnuclei= " << genp->Xnuclei.interp_linear(nB,Ye,T) << endl;
+    cout << endl;
+    
+    for(size_t i=0;i<(genp->n_oth);i++) {
+      cout << genp->oth_names[i] << "= " 
+	   << genp->other[i].interp_linear(nB,Ye,T) << endl;
+    }
+    cout << endl;
+
+    return 0;
+  }
+
+  /** \brief Desc
+   */
   int oo_fun(std::vector<std::string> &sv, bool itive_com) {
 
     string fname=directory;
     size_t mode;
 
     if (sv[1]=="fsu17") {
+      cloud_file cf;
+      cf.verbose=2;
       fname+="GShenFSU_1.7EOS_rho280_temp180_ye52_version_1.1_20120817.h5";
+      std::string sha=((std::string)"57aec0f5011caf0333fc93ea818c786b0e2")+
+	"180e975425e1f4d90a3458b46f131";
+      cf.hash_type=cloud_file::sha256;
+      cf.get_file_hash("LS180_234r_136t_50y_analmu_20091212_SVNr26.h5",
+		       sha,((string)"https://isospin.roam.utk.edu/")+
+		       "public/eos_tables/scollapse/LS180_234r_136t_50y_"+
+		       "analmu_20091212_SVNr26.h5",fname,".o2scl_data");
       name="fsu17";
     } else if (sv[1]=="fsu21") {
+      cloud_file cf;
+      cf.verbose=2;
       fname+="GShenFSU_2.1EOS_rho280_temp180_ye52_version_1.1_20120824.h5";
+      std::string sha=((std::string)"cdf857d69884f2661c857c6bcce501af75d")+
+	"48e51bb14a5fab89872df5ed834f6";
+      cf.hash_type=cloud_file::sha256;
+      cf.get_file_hash("LS180_234r_136t_50y_analmu_20091212_SVNr26.h5",
+		       sha,((string)"https://isospin.roam.utk.edu/")+
+		       "public/eos_tables/scollapse/LS180_234r_136t_50y_"+
+		       "analmu_20091212_SVNr26.h5",fname,".o2scl_data");
       name="fsu21";
     } else if (sv[1]=="sht_nl3") {
+      cloud_file cf;
+      cf.verbose=2;
       fname+="GShen_NL3EOS_rho280_temp180_ye52_version_1.1_20120817.h5";
+      std::string sha=((std::string)"982cd2249e08895a3580dc4969ab79add72")+
+	"d1d7ce4464e946c18f9950edb7bfe";
+      cf.hash_type=cloud_file::sha256;
+      cf.get_file_hash("LS180_234r_136t_50y_analmu_20091212_SVNr26.h5",
+		       sha,((string)"https://isospin.roam.utk.edu/")+
+		       "public/eos_tables/scollapse/LS180_234r_136t_50y_"+
+		       "analmu_20091212_SVNr26.h5",fname,".o2scl_data");
       name="sht_nl3";
     } else if (sv[1]=="stos") {
+      cloud_file cf;
+      cf.verbose=2;
       fname+="HShenEOS_rho220_temp180_ye65_version_1.1_20120817.h5";
+      std::string sha=((std::string)"3b7c598bf56ec12d734e13a97daf1eeb1f5")+
+	"8f59849c5f65c4f9f72dd292b177c";
+      cf.hash_type=cloud_file::sha256;
+      cf.get_file_hash("LS180_234r_136t_50y_analmu_20091212_SVNr26.h5",
+		       sha,((string)"https://isospin.roam.utk.edu/")+
+		       "public/eos_tables/scollapse/LS180_234r_136t_50y_"+
+		       "analmu_20091212_SVNr26.h5",fname,".o2scl_data");
       name="stos";
-      mode=oo_eos::stos_mode;
+      mode=eos_sn_oo::stos_mode;
     } else if (sv[1]=="stos_hyp") {
       fname+="HShen_HyperonEOS_rho220_temp180_ye65_version_1.1_20131007.h5";
       name="stos_hyp";
-      mode=oo_eos::stos_mode;
+      mode=eos_sn_oo::stos_mode;
     } else if (sv[1]=="dd2") {
       fname+="Hempel_DD2EOS_rho234_temp180_ye60_version_1.1_20120817.h5";
       name="dd2";
-      mode=oo_eos::hfsl_mode;
+      mode=eos_sn_oo::hfsl_mode;
     } else if (sv[1]=="fsg") {
       fname+="Hempel_FSGEOS_rho234_temp180_ye60_version_1.1_20120817.h5";
       name="fsg";
-      mode=oo_eos::hfsl_mode;
+      mode=eos_sn_oo::hfsl_mode;
     } else if (sv[1]=="hfsl_nl3") {
       fname+="Hempel_NL3EOS_rho234_temp180_ye60_version_1.1_20120817.h5";
       name="hfsl_nl3";
-      mode=oo_eos::hfsl_mode;
+      mode=eos_sn_oo::hfsl_mode;
     } else if (sv[1]=="sfho") {
       fname+="Hempel_SFHoEOS_rho222_temp180_ye60_version_1.1_20120817.h5";
       name="sfho";
-      mode=oo_eos::hfsl_mode;
+      mode=eos_sn_oo::hfsl_mode;
     } else if (sv[1]=="sfhx") {
       fname+="Hempel_SFHxEOS_rho234_temp180_ye60_version_1.1_20120817.h5";
       name="sfhx";
-      mode=oo_eos::hfsl_mode;
+      mode=eos_sn_oo::hfsl_mode;
     } else if (sv[1]=="tm1") {
       fname+="Hempel_TM1EOS_rho234_temp180_ye60_version_1.1_20120817.h5";
       name="tm1";
-      mode=oo_eos::hfsl_mode;
+      mode=eos_sn_oo::hfsl_mode;
     } else if (sv[1]=="tma") {
       fname+="Hempel_TMAEOS_rho234_temp180_ye60_version_1.1_20120817.h5";
       name="tma";
-      mode=oo_eos::hfsl_mode;
+      mode=eos_sn_oo::hfsl_mode;
     } else if (sv[1]=="ls180") {
-      fname+="LS180_234r_136t_50y_analmu_20091212_SVNr26.h5";
+      cloud_file cf;
+      cf.verbose=2;
+      std::string sha=((std::string)"3172f0f7b542fa1bd2e7a46f1b2e62c848f")+
+	"0d9a979e546902ad3f3b6285e27ca";
+      cf.hash_type=cloud_file::sha256;
+      cf.get_file_hash("LS180_234r_136t_50y_analmu_20091212_SVNr26.h5",
+		       sha,((string)"https://isospin.roam.utk.edu/")+
+		       "public/eos_tables/scollapse/LS180_234r_136t_50y_"+
+		       "analmu_20091212_SVNr26.h5",fname,".o2scl_data");
       name="ls180";
-      mode=oo_eos::ls_mode;
+      mode=eos_sn_oo::ls_mode;
     } else if (sv[1]=="ls220") {
-      fname+="LS220_234r_136t_50y_analmu_20091212_SVNr26.h5";
+      cloud_file cf;
+      cf.verbose=2;
+      std::string sha=((std::string)"d8c4d4f1315942a663e96fc6452f66d90fc")+
+	"87f283e0ed552c8141d1ddba34c19";
+      cf.hash_type=cloud_file::sha256;
+      cf.get_file_hash("LS220_234r_136t_50y_analmu_20091212_SVNr26.h5",
+		       sha,((string)"https://isospin.roam.utk.edu/")+
+		       "public/eos_tables/scollapse/LS220_234r_136t_50y_"+
+		       "analmu_20091212_SVNr26.h5",fname,".o2scl_data");
       name="ls220";
-      mode=oo_eos::ls_mode;
+      mode=eos_sn_oo::ls_mode;
     } else if (sv[1]=="ls375") {
-      fname+="LS375_234r_136t_50y_analmu_20091212_SVNr26.h5";
+      cloud_file cf;
+      cf.verbose=2;
+      std::string sha=((std::string)"13d31df4944b968f1de799e5fc37881eae9")+
+	"8cd3f2d3bc14648698661cef35bdd";
+      cf.hash_type=cloud_file::sha256;
+      cf.get_file_hash("LS375_234r_136t_50y_analmu_20091212_SVNr26.h5",
+		       sha,((string)"https://isospin.roam.utk.edu/")+
+		       "public/eos_tables/scollapse/LS375_234r_136t_50y_"+
+		       "analmu_20091212_SVNr26.h5",fname,".o2scl_data");
       name="ls375";
-      mode=oo_eos::ls_mode;
+      mode=eos_sn_oo::ls_mode;
     } else {
       O2SCL_ERR("Need EOS type.",exc_efailed);
     }
     
     oo.verbose=verbose;
-    oo.load(fname);
+    oo.load(fname,mode);
     genp=&oo;
     //test_mgr t;
     //ls.check_eg(t);
@@ -315,7 +435,7 @@ protected:
   
 public:
   
-  gen_sn_eos_test() {
+  ex_eos_sn() {
     directory=".";
     verbose=1;
     genp=0;
@@ -329,37 +449,45 @@ public:
     // Specify command-line option object
     
     cli cl;
-    cl.prompt="ex_gen_sn_eos> ";
+    cl.prompt="ex_eos_sn> ";
     cl.gnu_intro=false;
 
     // ---------------------------------------
     // Set options
     
-    static const int nopt=6;
+    static const int nopt=8;
     comm_option_s options[nopt]={
       {0,"ls","short desc",
        1,1,"",((string)"long ")+"desc.",
-       new comm_option_mfptr<gen_sn_eos_test>(this,&gen_sn_eos_test::ls_fun),
+       new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::ls_fun),
        cli::comm_option_both},
       {0,"oo","short desc",
        1,1,"",((string)"long ")+"desc.",
-       new comm_option_mfptr<gen_sn_eos_test>(this,&gen_sn_eos_test::oo_fun),
+       new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::oo_fun),
        cli::comm_option_both},
       {0,"sht","short desc",
        1,1,"",((string)"long ")+"desc.",
-       new comm_option_mfptr<gen_sn_eos_test>(this,&gen_sn_eos_test::sht_fun),
+       new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::sht_fun),
        cli::comm_option_both},
       {0,"stos","short desc",
        1,1,"",((string)"long ")+"desc.",
-       new comm_option_mfptr<gen_sn_eos_test>(this,&gen_sn_eos_test::stos_fun),
+       new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::stos_fun),
        cli::comm_option_both},
       {0,"hfsl","short desc",
        1,1,"",((string)"long ")+"desc.",
-       new comm_option_mfptr<gen_sn_eos_test>(this,&gen_sn_eos_test::hfsl_fun),
+       new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::hfsl_fun),
        cli::comm_option_both},
       {0,"slices","short desc",
        0,0,"",((string)"long ")+"desc.",
-       new comm_option_mfptr<gen_sn_eos_test>(this,&gen_sn_eos_test::slices),
+       new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::slices),
+       cli::comm_option_both},
+      {0,"interp","short desc",
+       3,3,"",((string)"long ")+"desc.",
+       new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::interp),
+       cli::comm_option_both},
+      {0,"eg","short desc",
+       0,0,"",((string)"long ")+"desc.",
+       new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::eg),
        cli::comm_option_both}
     };
     cl.set_comm_option_vec(nopt,options);
@@ -392,7 +520,7 @@ int main(int argc, char *argv[]) {
 
   cout.setf(ios::scientific);
 
-  gen_sn_eos_test gset;
+  ex_eos_sn gset;
   gset.run(argc,argv);
   
   return 0;
