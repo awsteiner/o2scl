@@ -1,7 +1,7 @@
 snt:
-	ex_gen_sn_eos -set directory ../../../../../pkgs/oo_eos/ \
+	ex_ex_eos_sn -set directory ../../../../../pkgs/oo_eos/ \
 		-oo fsu17 -slices
-	ex_gen_sn_eos -set directory ../../../../../pkgs/sht_eos/ \
+	ex_ex_eos_sn -set directory ../../../../../pkgs/sht_eos/ \
 		-sht fsu17 -slices
 
 # -------------------------------------------------------------
@@ -42,7 +42,7 @@ EXAMPLE_PRGS = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 	ex_nucleus_rmf.scr ex_methast.scr ex_eos_had_skyrme.scr \
 	ex_nucmass.scr ex_tensor.scr ex_mcmc.scr ex_nstar_rot.scr 
 
-# ex_ode_it.scr ex_gen_sn_eos.scr 
+# ex_ode_it.scr ex_ex_eos_sn.scr 
 
 else
 
@@ -133,7 +133,7 @@ EXTRA_PROGRAMS = \
 	ex_anneal \
 	ex_mcarlo \
 	ex_string \
-	ex_gen_sn_eos \
+	ex_ex_eos_sn \
 	ex_contour \
 	ex_tensor \
 	ex_eos_crust \
@@ -216,10 +216,10 @@ ex_lambda_SOURCES = ex_lambda.cpp
 ex_lambda.scr: ex_lambda
 	./ex_lambda > ex_lambda.scr
 
-ex_gen_sn_eos_LDADD = $(OOLIBS) $(OOLIBSTWO)
-ex_gen_sn_eos_SOURCES = ex_gen_sn_eos.cpp
-ex_gen_sn_eos.scr: ex_gen_sn_eos
-	./ex_gen_sn_eos -help > ex_gen_sn_eos.scr
+ex_ex_eos_sn_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_ex_eos_sn_SOURCES = ex_ex_eos_sn.cpp
+ex_ex_eos_sn.scr: ex_ex_eos_sn
+	./ex_ex_eos_sn -help > ex_ex_eos_sn.scr
 
 ex_hydrogen_LDADD = $(OOLIBS) $(OOLIBSTWO)
 ex_hydrogen_SOURCES = ex_hydrogen.cpp

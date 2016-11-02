@@ -82,6 +82,7 @@ namespace o2scl_hdf {
     int hash_type;
     static const int sha256=0;
     static const int md5=1;
+    static const int md5sum=2;
     //@}
   
     cloud_file();
@@ -352,36 +353,27 @@ namespace o2scl_hdf {
       std::string cmd;
       if (hash_type==sha256) {
 	cmd=((std::string)"openssl dgst -sha256 ")+fname+
-	  " > /tmp/o2scl_hash.txt";
+	  " | awk '{print $2}'";
+      } else if (hash_type==md5sum) {
+	cmd=((std::string)"md5sum ")+fname+
+	  " | awk '{print $1}'";
       } else {
 	cmd=((std::string)"md5 ")+fname+
-	  " > /tmp/o2scl_hash.txt";
+	  " | awk '{print $4}'";
       }
       if (verbose>1) {
 	std::cout << "Checking hash with command:\n\t" << cmd
 		  << std::endl;
       }
-      int hret=system(cmd.c_str());
-      if (hret==0) {
-	std::ifstream fin;
-	std::string s1, s2, s3, s4;
-	fin.open("/tmp/o2scl_hash.txt");
-	if (hash_type==sha256) {
-	  fin >> s1 >> s2;
-	  s4=s2;
-	} else {
-	  fin >> s1 >> s2 >> s3 >> s4;
+      std::string hash2=o2scl::pipe_cmd_string(cmd);
+      if (hash2==hash) {
+	valid_hash=true;
+	if (verbose>1) {
+	  std::cout << "Hash valid." << std::endl;
 	}
-	fin.close();
-	if (s4==hash) {
-	  valid_hash=true;
-	  if (verbose>1) {
-	    std::cout << "Hash valid." << std::endl;
-	  }
-	} else {
-	  if (verbose>1) {
-	    std::cout << "Invalid hash." << std::endl;
-	  }
+      } else {
+	if (verbose>1) {
+	  std::cout << "Invalid hash." << std::endl;
 	}
       }
     }
@@ -443,33 +435,21 @@ namespace o2scl_hdf {
       std::string cmd;
       if (hash_type==sha256) {
 	cmd=((std::string)"openssl dgst -sha256 ")+fname+
-	  " > /tmp/o2scl_hash.txt";
+	  " | awk '{print $2}'";
+      } else if (hash_type==md5sum) {
+	cmd=((std::string)"md5sum ")+fname+
+	  " | awk '{print $1}'";
       } else {
 	cmd=((std::string)"md5 ")+fname+
-	  " > /tmp/o2scl_hash.txt";
+	  " | awk '{print $4}'";
       }
       if (verbose>1) {
 	std::cout << "Checking hash with command:\n\t" << cmd
 		  << std::endl;
       }
-      int hret=system(cmd.c_str());
-      if (hret==0) {
-	std::ifstream fin;
-	std::string s1, s2, s3, s4;
-	fin.open("/tmp/o2scl_hash.txt");
-	if (hash_type==sha256) {
-	  fin >> s1 >> s2;
-	  s4=s2;
-	} else {
-	  fin >> s1 >> s2 >> s3 >> s4;
-	}
-	fin.close();
-	if (s4!=hash) {
-	  O2SCL_ERR("Invalid hash after download in cloud_file.",
-		    o2scl::exc_efailed);
-	}
-      } else {
-	O2SCL_ERR("Invalid hash (hash command failed) in cloud_file.",
+      std::string hash2=o2scl::pipe_cmd_string(cmd);
+      if (hash2!=hash) {
+	O2SCL_ERR("Invalid hash after download in cloud_file.",
 		  o2scl::exc_efailed);
       }
     }
