@@ -4,7 +4,7 @@
 
 HEADER_VAR = hdf_file.h hdf_io.h cloud_file.h
 
-HDF_SRCS = hdf_file.cpp hdf_io.cpp
+HDF_SRCS = hdf_file.cpp hdf_io.cpp cloud_file.cpp
 
 TEST_VAR = hdf_file.scr hdf_io.scr
 
