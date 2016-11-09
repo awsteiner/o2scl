@@ -13,6 +13,9 @@ os:
   - linux
   - osx
 
+dist: trusty
+sudo: required
+
 # 
 # Prepare autotools and install dependencies before installation
 #
@@ -25,22 +28,10 @@ before_install:
       autoreconf -i ;
     fi
   # 
-  # Install GSL and Boost
+  # Install GSL, Boost, HDF5, readline, ncurses
   # 
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-      sudo apt-get install libgsl0-dev && sudo apt-get install libboost-all-dev;
-    fi
-  # 
-  # The ubuntu HDF5 package cannot be used because it is configured to
-  # be compatibile only the with older API. Newer versions of the
-  # Ubuntu HDF5 package do not have this problem, but Travis uses
-  # 12.04 LTS (but is upgrading to 14.04 soon). For now, the script
-  # compiles HDF5 manually from source.
-  # 
-  - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-      wget http://www.hdfgroup.org/ftp/HDF5/current/src/hdf5-1.8.16.tar.gz ;
-      tar -xzf hdf5-1.8.16.tar.gz ;
-      cd hdf5-1.8.16 && ./configure --build=x86_64-unknown-linux-gnu --prefix=/usr && make > /dev/null 2> /dev/null && sudo make install && cd .. ;
+      sudo apt-get install libgsl0-dev && sudo apt-get install libboost-all-dev libhdf5-dev libreadline-dev libncurses-dev;
     fi
 
 #
@@ -64,7 +55,7 @@ script:
   # 'acol --version' is used to double check that the install worked.
   # 
   - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
-      brew update && brew install homebrew/science/hdf5 && brew tap awsteiner/science && which autoconf && brew install o2scl --with-check --HEAD && acol --version ;
+      brew update && brew install eigen && brew install homebrew/science/hdf5 && brew tap awsteiner/science && which autoconf && brew install o2scl --with-eigen --with-check --with-examples --HEAD && acol --version ;
     fi
 
 notifications:
