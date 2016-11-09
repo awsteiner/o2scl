@@ -48,14 +48,15 @@ script:
   # 'make install' does not fail. 
   # 
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-      ./configure && make blank-doc && make && sudo make install && make check;
+      ./configure && make blank-doc && make && sudo make install && make check && make o2scl-examples;
     fi
   # 
   # Use homebrew to install the HEAD version on OSX. At the end,
   # 'acol --version' is used to double check that the install worked.
+  # We need to use '-v' for brew install so that the build doesn't timeout.
   # 
   - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
-      brew update && brew install eigen && brew install homebrew/science/hdf5 && brew tap awsteiner/science && which autoconf && brew install o2scl --with-eigen --with-check --with-examples --HEAD && acol --version ;
+      brew update && brew install eigen && brew install homebrew/science/hdf5 && brew tap awsteiner/science && which autoconf && brew install o2scl --with-eigen --with-check --with-examples --HEAD -v && acol --version ;
     fi
 
 notifications:
