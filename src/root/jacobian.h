@@ -413,6 +413,37 @@ namespace o2scl {
     return 0;
   }
 
+  /** \brief Compute the Jacobian and its uncertainty
+      from the numerical differentiation
+   */
+  virtual int jac_err(size_t nx, vec_t &x, size_t ny, vec_t &y, 
+		      mat_t &jac, mat_t &err) {
+
+    double h,temp;
+
+    ej_parms ejp;
+    ejp.nx=nx;
+    ejp.ny=ny;
+    ejp.x=&x;
+    ejp.y=&y;
+    
+    funct11 dfnp=std::bind(std::mem_fn<double(double,ej_parms &)>
+			   (&jacobian_exact::dfn),
+			   this,std::placeholders::_1,std::ref(ejp));
+
+    for (size_t j=0;j<nx;j++) {
+      ejp.xj=j;
+      for (size_t i=0;i<ny;i++) {
+	ejp.yi=i;
+	double tmp=(*ejp.x)[j];
+	dptr->deriv_err(tmp,dfnp,jac(i,j),err(i,j));
+	(*ejp.x)[j]=tmp;
+      }
+    }
+    
+    return 0;
+  }
+  
 #ifndef DOXYGEN_INTERNAL
 
   protected:

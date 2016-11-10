@@ -380,7 +380,7 @@ namespace o2scl {
 	  // If we have a good point, call the measurement function and
 	  // stop the loop
 	  if (iret==o2scl::success) {
-	    if (iret>=0 && iret<ret_value_counts.size()) {
+	    if (iret>=0 && iret<((int)ret_value_counts.size())) {
 	      ret_value_counts[iret]++;
 	    }
 	    meas_ret=meas(current[curr_walker],w_current[curr_walker],
@@ -427,7 +427,7 @@ namespace o2scl {
 	return 2;
       }
 
-      if (iret>=0 && iret<ret_value_counts.size()) {
+      if (iret>=0 && iret<((int)ret_value_counts.size())) {
 	ret_value_counts[iret]++;
       }
       meas_ret=meas(current[0],w_current[0],0,true,data_arr[0]);
@@ -514,7 +514,7 @@ namespace o2scl {
 	} else {
 	  iret=func(nparams,next,w_next,data_arr[curr_walker]);
 	}
-	if (iret>=0 && iret<ret_value_counts.size()) {
+	if (iret>=0 && iret<((int)ret_value_counts.size())) {
 	  ret_value_counts[iret]++;
 	}
 	if (verbose>=1 && iret!=o2scl::success && iret!=mcmc_skip) {
