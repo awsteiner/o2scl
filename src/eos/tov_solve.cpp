@@ -330,7 +330,7 @@ void tov_solve::column_setup(bool mvsr_mode) {
     iunits.push_back(nunits);
   }
   inames.push_back("sg");
-  iunits.push_back("g/cm^2");
+  iunits.push_back("1/km");
   inames.push_back("rs");
   iunits.push_back("");
   inames.push_back("dmdr");
