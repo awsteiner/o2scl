@@ -103,7 +103,10 @@ int main(void) {
   he.etaL=(3*(L-3.0*S)+C*(2.0+9.0*(he.gamma-1.0)*he.eta))/den;
 
   t.test_rel(he.fesym_slope(0.16)*hc_mev_fm,50.0,1.0e-4,"L");
-
+  cout << he.alphaL << " " << he.etaL << endl;
+  he.fix_SL(939.0/hc_mev_fm,S,L);
+  cout << he.alphaL << " " << he.etaL << endl;
+	    
   t.report();
   return 0;
 }

@@ -95,6 +95,10 @@ namespace o2scl {
     */
     void fix_neutron_matter(double M, double Eneut, double dEneut);
 
+    /** \brief
+     */
+    void fix_SL(double M, double S, double L);
+    
     /** \brief Equation of state as a function of density
     */
     virtual int calc_e(fermion &ln, fermion &lp, 

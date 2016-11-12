@@ -228,6 +228,14 @@ void eos_had_hlps::fix_neutron_matter
   return;
 }
 
+void eos_had_hlps::fix_SL(double M, double S, double L) {
+  double C=pow(1.5*n0*pi2,2.0/3.0)/4.0/M;
+  etaL=(3.0*(L-3.0*S)+C*(2.0+9.0*(gamma-1.0)*eta))/(18.0*C*(gamma-1.0));
+  alphaL=(C*(-4.0+9.0*alpha*(gamma-1.0)+6.0*gamma)+3.0*(L-3.0*S*gamma))/
+    (18.0*C*(gamma-1.0));
+  return;
+}
+
 int eos_had_hlps::calc_e(fermion &ln, fermion &lp, thermo &lth) {
   double xp, barn;
   
