@@ -506,7 +506,7 @@ namespace o2scl {
       int iret=o2scl::success;
       // If the next point out of bounds, ensure that the point is rejected
       for(size_t k=0;k<nparams;k++) {
-	if (next[k]<=low[k] || next[k]>=high[k]) iret=mcmc_skip;
+	if (next[k]<low[k] || next[k]>high[k]) iret=mcmc_skip;
       }
       if (iret!=mcmc_skip) {
 	if (switch_arr[curr_walker]==false) {
