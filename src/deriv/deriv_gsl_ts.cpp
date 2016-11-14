@@ -34,6 +34,10 @@ double testfun(double x) {
   return sin(x);
 }
 
+double testfun2(double x) {
+  return sqrt(x);
+}
+
 class tempc {
 public:
   double operator()(double x) {
@@ -57,6 +61,7 @@ int main(void) {
   deriv_gsl<tempc> de2;
 
   funct11 tf=testfun;
+  funct11 tf2=testfun2;
 
   de.h=1.0e-4;
 
@@ -79,9 +84,15 @@ int main(void) {
   t.test_rel(res,-cos(0.5),1.0e-2,"third derivative");
   cout << endl;
 
+  // Test a derivative where the step size initially
+  // takes the function into non-finite values
   de.verbose=1;
-  res=de.deriv(0.5,tf);
-
+  res=de.deriv(1.0e-6,tf2);
+  cout << "First derivative: " << endl;
+  cout << res << " " << de.get_err() 
+       << " " << 1.0/2.0/sqrt(1.0e-6) << endl;
+  t.test_rel(res,1.0/2.0/sqrt(1.0e-6),1.0e-7,"first, non-finite");
+  
   t.report();
   return 0;
 }

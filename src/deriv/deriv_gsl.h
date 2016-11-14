@@ -56,6 +56,7 @@
 
 #include <o2scl/deriv.h>
 #include <o2scl/funct.h>
+#include <o2scl/err_hnd.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -70,14 +71,24 @@ namespace o2scl {
       the new stepsize equal to the optimized stepsize from the
       previous differentiation, by setting \ref h to \ref h_opt.
 
-      The derivative computation will never fail, but the results
-      will be incorrect for sufficiently difficult functions or if
-      the step size is not properly chosen. 
+      The results will be incorrect for sufficiently difficult
+      functions or if the step size is not properly chosen.
 
       Some successive derivative computations can be made more
       efficient by using the optimized stepsize in \ref
       deriv_gsl::h_opt , which is set by the most recent last
       derivative computation.
+
+      If the function returns a non-finite value, or if \ref func_max
+      is greater than zero and the absolute value of the function is
+      larger than \ref func_max, then this class attempts to decrease
+      the step size by a factor of 10 in order to compute the
+      derivative. The class gives up after 20 reductions of the
+      step size. 
+
+      If \ref h is negative or zero, the initial step size is chosen
+      to be \f$ 10^{-4} |x| \f$ or if \f$x=0\f$, then the initial step
+      size is chosen to be \f$ 10^{-4} \f$ .
 
       Setting \ref deriv_base::verbose to a number greater than zero
       results in output for each call to \ref central_deriv() which 
@@ -94,9 +105,9 @@ namespace o2scl {
       (<tt>rnd</tt>). If \ref deriv_base::verbose is greater than 1, a
       keypress is required after each iteration.
 
-      Computing first derivatives requires either 1 or 2 calls to \ref
-      central_deriv() and thus either 4 or 8 function calls. This
-      class never calls the error handler.
+      If the function always returns a finite value, then computing
+      first derivatives requires either 1 or 2 calls to \ref
+      central_deriv() and thus either 4 or 8 function calls.
 
       \note Second and third derivatives are computed by naive nested
       applications of the formula for the first derivative. No
@@ -117,6 +128,7 @@ namespace o2scl {
   deriv_gsl() {
     h=0.0;
     h_opt=0.0;
+    func_max=-1.0;
   }
 
   virtual ~deriv_gsl() {}
@@ -124,10 +136,16 @@ namespace o2scl {
   /** \brief Initial stepsize 
 	
       This should be specified before a call to deriv() or
-      deriv_err(). If it is zero, then \f$ x 10^{-4} \f$ will used,
-      or if \c x is zero, then \f$ 10^{-4} \f$ will be used.
+      deriv_err(). If it is less than or equal to zero, then \f$ x
+      10^{-4} \f$ will used, or if \c x is zero, then \f$ 10^{-4} \f$
+      will be used.
   */
   double h;
+
+  /** \brief Maximum absolute value of function, or 
+      a negative value for no maximum (default -1)
+  */
+  double func_max;
 
   /** \brief The last value of the optimized stepsize
 
@@ -155,36 +173,64 @@ namespace o2scl {
   template<class func2_t> int deriv_tlate(double x, func2_t &func, 
 					double &dfdx, double &err) {
     double hh;
-    if (h==0.0) {
+    if (h<=0.0) {
       if (x==0.0) hh=1.0e-4;
-      else hh=1.0e-4*x;
+      else hh=1.0e-4*fabs(x);
     } else {
       hh=h;
     }
 
     double r_0, round, trunc, error;
-
-    central_deriv(x,h,r_0,round,trunc,func);
-    error = round + trunc;
       
-    if (round < trunc && (round > 0 && trunc > 0)) {
-      double r_opt, round_opt, trunc_opt, error_opt;
+    size_t it_count=0;
+    bool fail=true;
+    while (fail && it_count<20) {
+      
+      fail=false;
+      
+      int cret=central_deriv(x,hh,r_0,round,trunc,func);
+      if (cret!=0) fail=true;
+
+      error = round + trunc;
+      
+      if (fail==false && round < trunc && (round > 0 && trunc > 0)) {
+	double r_opt, round_opt, trunc_opt, error_opt;
 	
-      /* Compute an optimised stepsize to minimize the total error,
-	 using the scaling of the truncation error (O(h^2)) and
-	 rounding error (O(1/h)). */
+	/* Compute an optimised stepsize to minimize the total error,
+	   using the scaling of the truncation error (O(h^2)) and
+	   rounding error (O(1/h)). */
 	
-      h_opt = h * pow (round / (2.0 * trunc), 1.0 / 3.0);
-      central_deriv(x,h_opt,r_opt,round_opt,trunc_opt,func);
-      error_opt = round_opt + trunc_opt;
+	h_opt = hh * pow (round / (2.0 * trunc), 1.0 / 3.0);
+	cret=central_deriv(x,h_opt,r_opt,round_opt,trunc_opt,func);
+	if (cret!=0) fail=true;
+	error_opt = round_opt + trunc_opt;
 	
-      /* Check that the new error is smaller, and that the new derivative
-	 is consistent with the error bounds of the original estimate. */
+	/* Check that the new error is smaller, and that the new derivative
+	   is consistent with the error bounds of the original estimate. */
 	
-      if (error_opt < error && fabs (r_opt - r_0) < 4.0 * error) {
-	r_0 = r_opt;
-	error = error_opt;
+	if (fail==false && error_opt < error &&
+	    fabs (r_opt - r_0) < 4.0 * error) {
+	  r_0 = r_opt;
+	  error = error_opt;
+	}
       }
+
+      it_count++;
+      if (fail==true) {
+	hh/=10.0;
+	if (this->verbose>0) {
+	  std::cout << "Function deriv_gsl::deriv_tlate out of range. "
+		    << "Decreasing step." << std::endl;
+	}
+      }
+    }
+
+    if (fail==true || it_count>=20) {
+      if (this->err_nonconv) {
+	O2SCL_ERR2("Failed to find finite derivative in ",
+		   "deriv_gsl::deriv_tlate<>.",o2scl::exc_efailed);
+      }
+      return o2scl::exc_efailed;
     }
       
     dfdx=r_0;
@@ -226,6 +272,26 @@ namespace o2scl {
     fmh=func(x-hh/2);
     fph=func(x+hh/2);
 
+    if (this->verbose>0) {
+      std::cout << "deriv_gsl: " << std::endl;
+      std::cout << "step: " << hh << std::endl;
+      std::cout << "abscissas: " << x-hh/2 << " " << x-hh << " " 
+		<< x+hh/2 << " " << x+hh << std::endl;
+      std::cout << "ordinates: " << fm1 << " " << fmh << " " << fph << " " 
+		<< fp1 << std::endl;
+    }
+
+    if (!std::isfinite(fm1) ||
+	!std::isfinite(fp1) ||
+	!std::isfinite(fmh) ||
+	!std::isfinite(fph) ||
+	func_max>0.0 && (fabs(fm1)>func_max ||
+			  fabs(fp1)>func_max ||
+			  fabs(fmh)>func_max ||
+			  fabs(fph)>func_max)) {
+      return 1;
+    }
+
     double r3 = 0.5 * (fp1 - fm1);
     double r5 = (4.0 / 3.0) * (fph - fmh) - (1.0 / 3.0) * r3;
       
@@ -249,12 +315,6 @@ namespace o2scl {
     abserr_round = fabs (e5 / hh) + dy;   
       
     if (this->verbose>0) {
-      std::cout << "deriv_gsl: " << std::endl;
-      std::cout << "step: " << hh << std::endl;
-      std::cout << "abscissas: " << x-hh/2 << " " << x-hh << " " 
-		<< x+hh/2 << " " << x+hh << std::endl;
-      std::cout << "ordinates: " << fm1 << " " << fmh << " " << fph << " " 
-		<< fp1 << std::endl;
       std::cout << "res: " << result << " trc: " << abserr_trunc 
 		<< " rnd: " << abserr_round << std::endl;
       if (this->verbose>1) {

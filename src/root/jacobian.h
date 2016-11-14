@@ -66,10 +66,14 @@ namespace o2scl {
   public:
     
   jacobian() {
+    err_nonconv=true;
   };
     
   virtual ~jacobian() {};
     
+  /// If true, call the error handler if the routine does not converge
+  bool err_nonconv;
+
   /// Set the function to compute the Jacobian of
   virtual int set_function(func_t &f) {
     func=f;
@@ -175,7 +179,6 @@ namespace o2scl {
   jacobian_gsl() {
     epsrel=sqrt(std::numeric_limits<double>::epsilon());
     epsmin=0.0;
-    err_nonconv=true;
     mem_size_x=0;
     mem_size_y=0;
     max_shrink_iters=10;
@@ -233,9 +236,6 @@ namespace o2scl {
     return;
   }
   
-  /// If true, call the error handler if the routine does not "converge"
-  bool err_nonconv;
-
   /** \brief The operator()
    */
   virtual int operator()(size_t nx, vec_t &x, size_t ny, vec_t &y, 
@@ -323,13 +323,12 @@ namespace o2scl {
   /** \brief A direct calculation of the jacobian using a \ref
       deriv_base object
       
-      Note that it is most often wasteful to use this Jacobian in a
-      root-finding routine and using more approximate Jacobians is
-      more efficient. This class is mostly useful for demonstration
-      and testing purposes.
-
       By default, the stepsize, \ref deriv_gsl::h is set to \f$
       10^{-4} \f$ in the \ref jacobian_exact constructor.
+
+      Note that it is most often wasteful to use this Jacobian in a
+      root-finding routine and using more approximate Jacobians is
+      more efficient. 
 
       Default template arguments
       - \c func_t - \ref mm_funct11
@@ -388,7 +387,11 @@ namespace o2scl {
   virtual int operator()(size_t nx, vec_t &x, size_t ny, vec_t &y, 
 			 mat_t &jac) {
 
-    double h,temp;
+    // The function return value
+    int ret=0;
+
+    // Temporary storage fo the derivative uncertainty
+    double err;
 
     ej_parms ejp;
     ejp.nx=nx;
@@ -405,12 +408,19 @@ namespace o2scl {
       for (size_t i=0;i<ny;i++) {
 	ejp.yi=i;
 	double tmp=(*ejp.x)[j];
-	jac(i,j)=dptr->deriv(tmp,dfnp);
+	int dret=dptr->deriv_err(tmp,dfnp,jac(i,j),err);
+	if (dret!=0) {
+	  if (this->err_nonconv==true) {
+	    O2SCL_ERR2("Derivative object tailed in jacobian_exact::",
+		      "operator().",o2scl::exc_efailed);
+	  }
+	  ret=1;
+	}
 	(*ejp.x)[j]=tmp;
       }
     }
     
-    return 0;
+    return ret;
   }
 
   /** \brief Compute the Jacobian and its uncertainty
@@ -419,7 +429,8 @@ namespace o2scl {
   virtual int jac_err(size_t nx, vec_t &x, size_t ny, vec_t &y, 
 		      mat_t &jac, mat_t &err) {
 
-    double h,temp;
+    // The function return value
+    int ret=0;
 
     ej_parms ejp;
     ejp.nx=nx;
@@ -436,12 +447,19 @@ namespace o2scl {
       for (size_t i=0;i<ny;i++) {
 	ejp.yi=i;
 	double tmp=(*ejp.x)[j];
-	dptr->deriv_err(tmp,dfnp,jac(i,j),err(i,j));
+	int dret=dptr->deriv_err(tmp,dfnp,jac(i,j),err(i,j));
+	if (dret!=0) {
+	  if (this->err_nonconv==true) {
+	    O2SCL_ERR2("Derivative object tailed in jacobian_exact::",
+		       "jac_err().",o2scl::exc_efailed);
+	  }
+	  ret=1;
+	}
 	(*ejp.x)[j]=tmp;
       }
     }
     
-    return 0;
+    return ret;
   }
   
 #ifndef DOXYGEN_INTERNAL

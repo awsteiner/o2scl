@@ -37,9 +37,9 @@ namespace o2scl {
 
   /** \brief Numerical differentiation base [abstract base]
       
-      This base class does not perform any actual differentiation.
-      Use one of the children \ref o2scl::deriv_cern, \ref o2scl::deriv_gsl, 
-      or \ref o2scl::deriv_eqi instead. 
+      This base class does not perform any actual differentiation. Use
+      one of the children \ref o2scl::deriv_cern, \ref
+      o2scl::deriv_gsl, or \ref o2scl::deriv_eqi instead.
 
       This base class contains some code to automatically apply
       the first derivative routines to compute second or third
@@ -48,7 +48,15 @@ namespace o2scl {
       
       \note Because this class template aims to automatically provide
       second and third derivatives, one must overload either both
-      calc() and calc_int() or both calc_err() and calc_err_int().
+      deriv() and deriv_int() or both deriv_err() and deriv_err_int().
+
+      \note If \ref err_nonconv is set to false, and the derivative
+      computation fails, then the functions \ref deriv(),
+      \ref deriv2() and \ref deriv3() may return the wrong result
+      without warning. Similarly, if \ref err_nonconv is set to
+      false, it is the user's responsibility to check the
+      return value from \ref deriv_err(), \ref deriv2_err(), and
+      \ref deriv3_err() to see if an error occurred.
       
       \future Improve the methods for second and third derivatives
   */
@@ -152,16 +160,14 @@ namespace o2scl {
     */
     virtual int deriv2_err(double x, func_t &func, 
 			  double &d2fdx2, double &err) {
-      int ret;
-
       funct11 mf=
       std::bind(std::mem_fn<double(double,func_t *)>(&deriv_base::derivfun),
 		this,std::placeholders::_1,&func);
 
-      ret=deriv_err_int(x,mf,d2fdx2,err);
+      int ret=deriv_err_int(x,mf,d2fdx2,err);
       // The error estimate is unavailable, so we set it to zero 
       err=0.0;
-      return 0;
+      return ret;
     }
     
     /** \brief Calculate the third derivative of \c func w.r.t. x and the
@@ -169,16 +175,14 @@ namespace o2scl {
     */
     virtual int deriv3_err(double x, func_t &func, 
 			  double &d3fdx3, double &err) {
-      int ret;
-
       funct11 mf=
       std::bind(std::mem_fn<double(double,func_t *)>(&deriv_base::derivfun2),
 		this,std::placeholders::_1,&func);
       
-      ret=deriv_err_int(x,mf,d3fdx3,err);
+      int ret=deriv_err_int(x,mf,d3fdx3,err);
       // The error estimate is unavailable, so we set it to zero 
       err=0.0;
-      return 0;
+      return ret;
     }
   
 #ifdef O2SCL_NEVER_DEFINED
