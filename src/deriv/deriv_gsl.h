@@ -191,7 +191,7 @@ namespace o2scl {
       int cret=central_deriv(x,hh,r_0,round,trunc,func);
       if (cret!=0) fail=true;
 
-      error = round + trunc;
+      error=round+trunc;
       
       if (fail==false && round < trunc && (round > 0 && trunc > 0)) {
 	double r_opt, round_opt, trunc_opt, error_opt;
@@ -200,18 +200,18 @@ namespace o2scl {
 	   using the scaling of the truncation error (O(h^2)) and
 	   rounding error (O(1/h)). */
 	
-	h_opt = hh * pow (round / (2.0 * trunc), 1.0 / 3.0);
+	h_opt=hh*pow(round/(2.0*trunc),1.0/3.0);
 	cret=central_deriv(x,h_opt,r_opt,round_opt,trunc_opt,func);
 	if (cret!=0) fail=true;
-	error_opt = round_opt + trunc_opt;
+	error_opt=round_opt+trunc_opt;
 	
 	/* Check that the new error is smaller, and that the new derivative
 	   is consistent with the error bounds of the original estimate. */
 	
 	if (fail==false && error_opt < error &&
-	    fabs (r_opt - r_0) < 4.0 * error) {
-	  r_0 = r_opt;
-	  error = error_opt;
+	    fabs (r_opt-r_0) < 4.0*error) {
+	  r_0=r_opt;
+	  error=error_opt;
 	}
       }
 
@@ -285,20 +285,20 @@ namespace o2scl {
 	!std::isfinite(fp1) ||
 	!std::isfinite(fmh) ||
 	!std::isfinite(fph) ||
-	func_max>0.0 && (fabs(fm1)>func_max ||
+	(func_max>0.0 && (fabs(fm1)>func_max ||
 			  fabs(fp1)>func_max ||
 			  fabs(fmh)>func_max ||
-			  fabs(fph)>func_max)) {
+			  fabs(fph)>func_max))) {
       return 1;
     }
 
-    double r3 = 0.5 * (fp1 - fm1);
-    double r5 = (4.0 / 3.0) * (fph - fmh) - (1.0 / 3.0) * r3;
+    double r3=0.5*(fp1-fm1);
+    double r5=(4.0/3.0)*(fph-fmh)-(1.0/3.0)*r3;
       
-    double e3 = (fabs (fp1) + fabs (fm1)) * eps;
-    double e5 = 2.0 * (fabs (fph) + fabs (fmh)) * eps + e3;
+    double e3=(fabs(fp1)+fabs(fm1))*eps;
+    double e5=2.0*(fabs(fph)+fabs(fmh))*eps+e3;
       
-    /* The next term is due to finite precision in x+h = O (eps * x) */
+    /* The next term is due to finite precision in x+h=O (eps*x) */
       
     double dy=GSL_MAX(fabs(r3/hh),fabs(r5/hh))*fabs(x/hh)*eps;
       
@@ -308,11 +308,11 @@ namespace o2scl {
        the actual truncation error in r5. 
     */
       
-    result = r5 / hh;
+    result=r5/hh;
     /* Estimated truncation error O(h^2) */
-    abserr_trunc = fabs ((r5 - r3) / hh); 
+    abserr_trunc=fabs((r5-r3)/hh); 
     /* Rounding error (cancellations) */
-    abserr_round = fabs (e5 / hh) + dy;   
+    abserr_round=fabs(e5/hh)+dy;   
       
     if (this->verbose>0) {
       std::cout << "res: " << result << " trc: " << abserr_trunc 
