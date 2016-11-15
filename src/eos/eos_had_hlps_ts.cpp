@@ -104,7 +104,7 @@ int main(void) {
 
   t.test_rel(he.fesym_slope(0.16)*hc_mev_fm,50.0,1.0e-4,"L");
   cout << he.alphaL << " " << he.etaL << endl;
-  he.fix_SL(939.0/hc_mev_fm,S,L);
+  he.fix_SL(939.0/hc_mev_fm,0.16,S,L);
   cout << he.alphaL << " " << he.etaL << endl;
 	    
   t.report();

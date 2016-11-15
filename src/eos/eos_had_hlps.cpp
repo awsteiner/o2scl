@@ -181,13 +181,13 @@ void eos_had_hlps::fix_comp(double K) {
 
 #endif
 
-void eos_had_hlps::fix_coeffs(double M, double B, double K) {
+void eos_had_hlps::fix_coeffs(double M, double local_n0, double B, double K) {
 
   double lastg;
   for(size_t i=0;i<100;i++) {
 
     // First fix eta and alpha from B, M, and n0
-    double p=20.0*cbrt(3.0)*B*M/cbrt(n0)/cbrt(n0);
+    double p=20.0*cbrt(3.0)*B*M/cbrt(local_n0)/cbrt(local_n0);
     double q=3.0*cbrt(2.0*pi2*pi2);
     double C=cbrt(4.0/pi2/pi2)/15.0/(gamma-1.0);
     eta=C*(q-p);
@@ -195,7 +195,7 @@ void eos_had_hlps::fix_coeffs(double M, double B, double K) {
     lastg=gamma;
 
     // Now compute new gamma from K, M and n0
-    double C2=4.0*K*M/3.0*cbrt(4.0/9.0/n0/n0/pi2/pi2);
+    double C2=4.0*K*M/3.0*cbrt(4.0/9.0/local_n0/local_n0/pi2/pi2);
     double a0=4.0-C2-6.0*alpha;
     double a1=3.0*eta;
     double a2=3.0*eta;
@@ -220,16 +220,17 @@ void eos_had_hlps::fix_coeffs(double M, double B, double K) {
 }
 
 void eos_had_hlps::fix_neutron_matter
-(double M, double Eneut, double dEneut) {
-  double C=cbrt(4.0/n0/n0/pi2/pi2)/5.0/(gamma-1.0);
-  etaL=C*(-10.0*Eneut*M+10.0*dEneut*M*n0+cbrt(9.0*n0*n0*pi2*pi2))/cbrt(9.0);
-  alphaL=C*(10.0*cbrt(3.0)*dEneut*M*n0-10.0*cbrt(3.0)*Eneut*M*gamma+
-	    3.0*cbrt(n0*n0*pi2*pi2)*(3.0*gamma-2.0))/3.0;
+(double M, double local_n0, double Eneut, double dEneut) {
+  double C=cbrt(4.0/local_n0/local_n0/pi2/pi2)/5.0/(gamma-1.0);
+  etaL=C*(-10.0*Eneut*M+10.0*dEneut*M*local_n0+
+	  cbrt(9.0*local_n0*local_n0*pi2*pi2))/cbrt(9.0);
+  alphaL=C*(10.0*cbrt(3.0)*dEneut*M*local_n0-10.0*cbrt(3.0)*Eneut*M*gamma+
+	    3.0*cbrt(local_n0*local_n0*pi2*pi2)*(3.0*gamma-2.0))/3.0;
   return;
 }
 
-void eos_had_hlps::fix_SL(double M, double S, double L) {
-  double C=pow(1.5*n0*pi2,2.0/3.0)/4.0/M;
+void eos_had_hlps::fix_SL(double M, double local_n0, double S, double L) {
+  double C=pow(1.5*local_n0*pi2,2.0/3.0)/4.0/M;
   etaL=(3.0*(L-3.0*S)+C*(2.0+9.0*(gamma-1.0)*eta))/(18.0*C*(gamma-1.0));
   alphaL=(C*(-4.0+9.0*alpha*(gamma-1.0)+6.0*gamma)+3.0*(L-3.0*S*gamma))/
     (18.0*C*(gamma-1.0));

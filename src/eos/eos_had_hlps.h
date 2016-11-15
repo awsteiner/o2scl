@@ -84,7 +84,7 @@ namespace o2scl {
 	All inputs must be in \f$ \mathrm{fm}^{-1} \f$. This employs a
 	simple iterative method that may not always converge.
     */
-    void fix_coeffs(double M, double B, double K);
+    void fix_coeffs(double M, double local_n0, double B, double K);
 
     /** \brief Fix 'alphaL' and 'etaL' from neutron matter EOS and its
 	derivative
@@ -93,11 +93,12 @@ namespace o2scl {
 	\f$ \mathrm{fm}^{-1} \f$ and \c dEneut must be in 
 	\f$ \mathrm{fm}^{2} \f$
     */
-    void fix_neutron_matter(double M, double Eneut, double dEneut);
+    void fix_neutron_matter(double M, double local_n0,
+			    double Eneut, double dEneut);
 
     /** \brief
      */
-    void fix_SL(double M, double S, double L);
+    void fix_SL(double M, double local_n0, double S, double L);
     
     /** \brief Equation of state as a function of density
     */
