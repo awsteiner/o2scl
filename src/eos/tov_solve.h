@@ -427,7 +427,7 @@ namespace o2scl {
     */
     double domega_rat;
     /** \brief Maximum value for central pressure in 
-	\f$ \mathrm{M}_{\odot}/\mathrm{km} \f$ (default \f$ 10^{20} \f$ )
+	\f$ \mathrm{M}_{\odot}/\mathrm{km}^3 \f$ (default \f$ 10^{20} \f$ )
 	
 	This variable is set by the <tt>mvsr()</tt> and <tt>max()</tt>
 	functions and used in \ref integ_star() .
@@ -478,18 +478,18 @@ namespace o2scl {
     //@}
 
     /** \brief Default value of maximum pressure for maximum mass star
-	in \f$ \mathrm{M}_{\odot}/\mathrm{km} \f$
+	in \f$ \mathrm{M}_{\odot}/\mathrm{km}^3 \f$
      */
     double pmax_default;
 
     /// \name Mass versus radius parameters
     //@{
     /** \brief Beginning pressure in 
-	\f$ \mathrm{M}_{\odot}/\mathrm{km} \f$ (default 7.0e-7)
+	\f$ \mathrm{M}_{\odot}/\mathrm{km}^3 \f$ (default 7.0e-7)
     */
     double prbegin;
     /** \brief Ending pressure in 
-	\f$ \mathrm{M}_{\odot}/\mathrm{km} \f$ (default 8.0e-3)
+	\f$ \mathrm{M}_{\odot}/\mathrm{km}^3 \f$ (default 8.0e-3)
     */
     double prend;
     /// Increment factor for pressure (default 1.1)
@@ -510,7 +510,7 @@ namespace o2scl {
     /// \name Fixed mass parameter
     //@{
     /** \brief Guess for central pressure in 
-	\f$ \mathrm{M}_{\odot}/\mathrm{km} \f$
+	\f$ \mathrm{M}_{\odot}/\mathrm{km}^3 \f$
 	(default \f$ 5.2 \times 10^{-5} \f$)
 
 	This guess is used in the functions fixed().
@@ -558,7 +558,7 @@ namespace o2scl {
 	to 1.95 solar mass configuration.
 
 	The variable \c pmax is the maximum allowable central pressure
-	in \f$ \mathrm{M}_{\odot}/\mathrm{km} \f$, i.e. the central
+	in \f$ \mathrm{M}_{\odot}/\mathrm{km}^3 \f$, i.e. the central
 	pressure of the maximum mass star. This ensures that the
 	function does not unintentionally select a configuration on an
 	unstable branch. If \c pmax is greater than or equal to the
@@ -567,6 +567,8 @@ namespace o2scl {
     */
     virtual int fixed(double target_mass, double pmax=1.0e20);
 
+    virtual int fixed_pr(double pcent, double pmax=1.0e20);
+    
     /** \brief Calculate the profile of the maximum mass star
      */
     virtual int max();

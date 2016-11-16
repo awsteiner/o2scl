@@ -1065,6 +1065,67 @@ int tov_solve::max() {
   return info;
 }
 
+int tov_solve::fixed_pr(double pcent, double pmax) {
+
+  int info=0;
+
+  // --------------------------------------------------------------
+  // Handle basic exceptions
+
+  if (eos_set==false) {
+    O2SCL_ERR2("EOS not specified in ",
+	       "tov_solve::fixed_pr().",exc_efailed);
+  }
+  if (ang_vel && !calc_gpot) {
+    O2SCL_ERR2("Requested rotation without potential in ",
+	       "tov_solve::fixed_pr().",exc_efailed);
+  }
+
+  // --------------------------------------------------------------
+  
+  if (verbose>0) {
+    cout << "Central pressure " << pcent << " (" << punits << ") "
+	 << pcent*pfactor << " (Msun/km^3) mode." << endl;
+  }
+  pcent*=pfactor;
+  
+  // --------------------------------------------------------------
+
+  // Compute maximum mass star if necessary, and set pmax_cent
+  if (pmax>=pmax_default) {
+    max();
+  } else if (pmax<pmax_default) {
+    pcent_max=pmax;
+  }
+
+  // Stellar integration
+
+  ubvector x(1), y(1);
+  x[0]=pcent;
+  integ_star_final=true;
+  int ret=integ_star(1,x,y);
+  if (ret!=0) {
+    info+=fixed_integ_star_failed+ret;
+    O2SCL_CONV("Failed to integrate star in tov_solve::fixed_pr().",
+	       exc_efailed,err_nonconv);
+  }
+
+  if (verbose>0) {
+    cout << "Gravitational mass is: " << mass << endl;
+    cout << "Radius is: " << rad << endl;
+    if (te->has_baryons()) {
+      cout << "Baryon mass is: " << bmass << endl;
+    }
+  }
+
+  if (reformat_results) {
+    // Output stellar profile
+    make_table();
+  }
+  
+  return info;
+}
+
 int tov_solve::fixed(double target_mass, double pmax) {
 
   int info=0;
@@ -1073,7 +1134,7 @@ int tov_solve::fixed(double target_mass, double pmax) {
   // Handle basic exceptions
 
   if (eos_set==false) {
-    O2SCL_ERR2("EOS not specified and/or memory not allocated in ",
+    O2SCL_ERR2("EOS not specified in ",
 	       "tov_solve::fixed().",exc_efailed);
   }
   if (ang_vel && !calc_gpot) {
