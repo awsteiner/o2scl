@@ -355,8 +355,8 @@ namespace o2scl {
 	    do {
 	      current[curr_walker][ipar]=init[ipar]+(rg.random()*2.0-1.0)*
 		(high[ipar]-low[ipar])/100.0;
-	    } while (current[curr_walker][ipar]>=high[ipar] ||
-		     current[curr_walker][ipar]<=low[ipar]);
+	    } while (current[curr_walker][ipar]>high[ipar] ||
+		     current[curr_walker][ipar]<low[ipar]);
 	  }
 	
 	  // Compute the weight
