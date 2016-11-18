@@ -48,7 +48,7 @@ script:
   # 'make install' does not fail. 
   # 
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-      ./configure && make blank-doc && make && sudo make install && make check && make o2scl-examples;
+      ./configure --enable-gsl2 && make blank-doc && make && sudo make install && make check && make o2scl-examples;
     fi
   # 
   # Use homebrew to install the HEAD version on OSX. At the end,

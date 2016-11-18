@@ -206,7 +206,8 @@ AC_CHECK_LIB([hdf5_hl], [H5TBread_table], [],
 ])
 
 # ----------------------------------------------
-# Enable or disable FFTW support
+# Enable or disable FFTW support (included here
+# for later use)
 # ----------------------------------------------
 
 AC_ARG_ENABLE(fftw,
@@ -308,6 +309,20 @@ AC_ARG_ENABLE(openmp,
 	esac],[openmp=false])
 
 AM_CONDITIONAL(O2SCL_OPENMP, test x$openmp = xtrue)
+
+# ----------------------------------------------
+# Enable or disable python support
+# ----------------------------------------------
+
+AC_ARG_ENABLE(python,
+	[  --enable-python         Include Python support @<:@default=no@:>@],
+	[case "${enableval}" in
+	yes) python=true ;;
+	no)  python=false ;;
+	*) AC_MSG_ERROR(bad value ${enableval} for --enable-python) ;;
+	esac],[python=false])
+
+AM_CONDITIONAL(O2SCL_PYTHON, test x$python = xtrue)
 
 # ----------------------------------------------
 
