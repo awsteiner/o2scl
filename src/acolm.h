@@ -327,8 +327,11 @@ namespace o2scl_acol {
     /// Preview the table
     virtual int comm_preview(std::vector<std::string> &sv, bool itive_com);
 
-    /// Add two table3d objects
-    virtual int comm_add(std::vector<std::string> &sv, bool itive_com);
+    /// Concatenate two table/table3d objects
+    virtual int comm_cat(std::vector<std::string> &sv, bool itive_com);
+
+    /// Sum two table/table3d objects
+    virtual int comm_sum(std::vector<std::string> &sv, bool itive_com);
 
     /// Rename a column
     virtual int comm_rename(std::vector<std::string> &sv, bool itive_com);

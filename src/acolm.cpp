@@ -61,17 +61,27 @@ int acol_manager::setup_options() {
   const int cl_param=cli::comm_option_cl_param;
   const int both=cli::comm_option_both;
 
-  static const int narr=43;
+  static const int narr=44;
 
   // Options, sorted by long name. We allow 0 parameters in many of these
   // options so they can be requested from the user in interactive mode. 
   comm_option_s options_arr[narr]={
-    {0,"add","Add the data from two table/table3d objects.",0,5,
-     "<file 1> <file 2> <sum file>",((string)"Read the two equally-")+
-     "sized table3d objects in <file 1> and <file 2> and construct a "+
-     "new table where each data slice represents the sum of the data "+
-     "from each of the original files. Store this sum in <sum file>.",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_add),
+    {0,"cat","Concatenate data from two table objects.",1,2,
+     "<file 2> [name 2]",((string)"For table objects, add a ")+
+     "second table to the end of the first, creating new columns "+
+     "if necessary. For table3d objects, add all slices from the "+
+     "second table3d object which aren't already present in the "+
+     "current table3d object.",
+     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_cat),
+     both},
+    {0,"sum","Add data from two table/table3d objects.",1,2,
+     "<file 2> [name 2]",((string)"For table objects, add all columns ")+
+     "from the second table to their corresponding columns in the "+
+     "current table, creating new columns if necessary. For table3d "+
+     "objects, add all slides from the second table to their "+
+     "corresponding slices in the current table3d, creating new slices "+
+     "if necessary.",
+     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sum),
      both},
     {'a',"assign","Assign a constant, e.g. assign pi acos(-1)",
      0,2,"<name> [val]",
@@ -848,88 +858,11 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
 
-int acol_manager::comm_add(std::vector<std::string> &sv, bool itive_com) {
+int acol_manager::comm_cat(std::vector<std::string> &sv, bool itive_com) {
 
   if (threed) {
-    
-    if (sv.size()<6) {
-      cerr << "Not enough arguments to add." << endl;
-      return exc_efailed;
-    }
 
-    string s1=sv[1];
-    string name1=sv[2];
-    string s2=sv[3];
-    string name2=sv[4];
-    string sum=sv[5];
-
-    table3d t1;
-    table3d t2;
-    table3d tsum;
-
-    hdf_file hf;
-    hf.open(s1);
-    hdf_input(hf,t1,name1);
-    hf.close();
-    hf.open(s2);
-    hdf_input(hf,t2,name2);
-    hf.close();
-  
-    if (t1.get_nx()!=t2.get_nx() ||
-	t1.get_ny()!=t2.get_ny()) {
-      cerr << "First table3d object has nx,ny: " 
-	   << t1.get_nx() << " " << t1.get_ny() << endl;
-      cerr << "Second table3d object has nx,ny: " 
-	   << t2.get_nx() << " " << t2.get_ny() << endl;
-      cerr << "Tables not compatible. Command 'add' canceled." << endl;
-      return exc_efailed;
-    }
-
-    // Copy constants over
-    for(size_t i=0;i<t1.get_nconsts();i++) {
-      string tnam;
-      double tval;
-      t1.get_constant(i,tnam,tval);
-      if (verbose>2) {
-	cout << "Adding constant " << tnam << " = " << tval << endl;
-      }
-      tsum.add_constant(tnam,tval);
-    }
-    for(size_t i=0;i<t2.get_nconsts();i++) {
-      string tnam;
-      double tval;
-      t2.get_constant(i,tnam,tval);
-      if (tsum.is_constant(tnam)==false) {
-	if (verbose>2) {
-	  cout << "Adding constant " << tnam << " = " << tval << endl;
-	}
-	tsum.add_constant(tnam,tval);
-      }
-    }
-
-    tsum.set_interp_type(t1.get_interp_type());
-  
-    size_t nx=t1.get_nx();
-    size_t ny=t1.get_ny();
-    string sx=t1.get_x_name();
-    string sy=t1.get_y_name();
-    const ubvector &xg=t1.get_x_data();
-    const ubvector &yg=t1.get_y_data();
-  
-    tsum.set_xy(sx,nx,xg,sy,ny,yg);
-    for(size_t k=0;k<t1.get_nslices();k++) {
-      string slname=t1.get_slice_name(k);
-      tsum.new_slice(slname);
-      for(size_t i=0;i<nx;i++) {
-	for(size_t j=0;j<ny;j++) {
-	  tsum.set(i,j,slname,t1.get(i,j,slname)+t2.get(i,j,slname));
-	}
-      }
-    }
-  
-    hf.open(sum);
-    hdf_output(hf,tsum,name1);
-    hf.close();
+    O2SCL_ERR("Not implemented yet.",o2scl::exc_eunimpl);
 
   } else {
 
@@ -947,6 +880,8 @@ int acol_manager::comm_add(std::vector<std::string> &sv, bool itive_com) {
 
     hdf_file hf;
     std::string name2;
+    if (sv.size()>=3) name2=sv[2];
+
     hf.open(file2);
     hdf_input(hf,tab2,name2);
     hf.close();
@@ -958,12 +893,100 @@ int acol_manager::comm_add(std::vector<std::string> &sv, bool itive_com) {
       std::string col_name=tab2.get_column_name(j);
       if (!tabp->is_column(col_name)) {
 	tabp->new_column(col_name);
+	for(size_t i=0;i<n1+n2;i++) tabp->set(col_name,i,0.0);
       }
       for(size_t i=0;i<n2;i++) {
 	tabp->set(col_name,i+n1,tab2.get(col_name,i));
       }
     }
-      
+    
+  }
+  
+  return 0;
+}
+
+int acol_manager::comm_sum(std::vector<std::string> &sv, bool itive_com) {
+
+  if (threed) {
+    
+    if (sv.size()<2) {
+      cerr << "Not enough arguments to sum." << endl;
+      return exc_efailed;
+    }
+
+    string s2=sv[1];
+    string name2;
+    if (sv.size()>=3) name2=sv[2];
+
+    table3d t2;
+
+    hdf_file hf;
+    hf.open(s2);
+    hdf_input(hf,t2,name2);
+    hf.close();
+  
+    size_t nx=t2.get_nx();
+    size_t ny=t2.get_ny();
+    const ubvector &xg=t2.get_x_data();
+    const ubvector &yg=t2.get_y_data();
+  
+    for(size_t k=0;k<t2.get_nslices();k++) {
+      string slname=t2.get_slice_name(k);
+      size_t slix;
+      if (t3p->is_slice(slname,slix)==false) {
+	t3p->new_slice(slname);
+	t3p->set_slice_all(slname,0.0);
+      }
+      for(size_t i=0;i<nx;i++) {
+	for(size_t j=0;j<ny;j++) {
+	  double x=xg[i];
+	  double y=yg[j];
+	  t3p->set_val(x,y,slname,t3p->get_val(x,y,slname)+t2.get(i,j,slname));
+	}
+      }
+    }
+
+  } else {
+
+    if (sv.size()<2) {
+      cerr << "Not enough arguments to add." << endl;
+      return exc_efailed;
+    }
+    if (tabp==0) {
+      cerr << "No table to add to." << endl;
+      return exc_efailed;
+    }
+
+    string file2=sv[1];
+    std::string name2;
+    if (sv.size()>=3) name2=sv[2];
+    table_units<> tab2;
+
+    hdf_file hf;
+    hf.open(file2);
+    hdf_input(hf,tab2,name2);
+    hf.close();
+
+    size_t n1=tabp->get_nlines();
+    size_t n2=tab2.get_nlines();
+    if (n2>n1) {
+      tabp->set_nlines(n1+n2);
+      for(size_t j=0;j<tabp->get_ncolumns();j++) {
+	for(size_t i=n1;i<n1+n2;i++) {
+	  tabp->set(j,i,0.0);
+	}
+      }
+    }
+    for(size_t j=0;j<tab2.get_ncolumns();j++) {
+      std::string col_name=tab2.get_column_name(j);
+      if (!tabp->is_column(col_name)) {
+	tabp->new_column(col_name);
+	for(size_t i=0;i<tabp->get_nlines();i++) tabp->set(col_name,i,0.0);
+      }
+      for(size_t i=0;i<n2;i++) {
+	tabp->set(col_name,i,tab2.get(col_name,i)+tabp->get(col_name,i));
+      }
+    }
     
   }
   
