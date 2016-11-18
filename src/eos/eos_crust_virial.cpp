@@ -35,9 +35,10 @@ eos_crust_virial::eos_crust_virial() {
   deuteron.init(o2scl_settings.get_convert_units().convert
 		("kg","1/fm",o2scl_mks::mass_deuteron),1.0);
 
-  // Data from the tables in Horowitz05. The rows for T<=10 MeV
-  // are from Table 1 and Table 2 and the rows for T>10 MeV are
-  // from Table 3.
+  // Data from the tables in Horowitz and Schwenk (2006a). The rows
+  // for T<=10 MeV are from Table 1 and Table 2 and the rows for T>10
+  // MeV are from Table 3.
+  
   double arr[16][9]={
     {0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0},
     {1,0.288,0.032,19.4,-43.8,1.51,1.21,2.55,1.59},
