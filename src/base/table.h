@@ -2174,7 +2174,6 @@ namespace o2scl {
     double data;
     std::string line;
     std::string cname;
-    
 
     // Read first line and into list
     std::vector<std::string> onames, nnames;

@@ -66,7 +66,7 @@ int acol_manager::setup_options() {
   // Options, sorted by long name. We allow 0 parameters in many of these
   // options so they can be requested from the user in interactive mode. 
   comm_option_s options_arr[narr]={
-    {0,"add","Add the data from two table3d objects.",0,3,
+    {0,"add","Add the data from two table/table3d objects.",0,5,
      "<file 1> <file 2> <sum file>",((string)"Read the two equally-")+
      "sized table3d objects in <file 1> and <file 2> and construct a "+
      "new table where each data slice represents the sum of the data "+
@@ -850,84 +850,122 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_add(std::vector<std::string> &sv, bool itive_com) {
 
-  if (sv.size()<6) {
-    cerr << "Not enough arguments to add." << endl;
-    return exc_efailed;
-  }
-
-  string s1=sv[1];
-  string name1=sv[2];
-  string s2=sv[3];
-  string name2=sv[4];
-  string sum=sv[5];
-
-  table3d t1;
-  table3d t2;
-  table3d tsum;
-
-  hdf_file hf;
-  hf.open(s1);
-  hdf_input(hf,t1,name1);
-  hf.close();
-  hf.open(s2);
-  hdf_input(hf,t2,name2);
-  hf.close();
-  
-  if (t1.get_nx()!=t2.get_nx() ||
-      t1.get_ny()!=t2.get_ny()) {
-    cerr << "First table3d object has nx,ny: " 
-	 << t1.get_nx() << " " << t1.get_ny() << endl;
-    cerr << "Second table3d object has nx,ny: " 
-	 << t2.get_nx() << " " << t2.get_ny() << endl;
-    cerr << "Tables not compatible. Command 'add' canceled." << endl;
-    return exc_efailed;
-  }
-
-  // Copy constants over
-  for(size_t i=0;i<t1.get_nconsts();i++) {
-    string tnam;
-    double tval;
-    t1.get_constant(i,tnam,tval);
-    if (verbose>2) {
-      cout << "Adding constant " << tnam << " = " << tval << endl;
+  if (threed) {
+    
+    if (sv.size()<6) {
+      cerr << "Not enough arguments to add." << endl;
+      return exc_efailed;
     }
-    tsum.add_constant(tnam,tval);
-  }
-  for(size_t i=0;i<t2.get_nconsts();i++) {
-    string tnam;
-    double tval;
-    t2.get_constant(i,tnam,tval);
-    if (tsum.is_constant(tnam)==false) {
+
+    string s1=sv[1];
+    string name1=sv[2];
+    string s2=sv[3];
+    string name2=sv[4];
+    string sum=sv[5];
+
+    table3d t1;
+    table3d t2;
+    table3d tsum;
+
+    hdf_file hf;
+    hf.open(s1);
+    hdf_input(hf,t1,name1);
+    hf.close();
+    hf.open(s2);
+    hdf_input(hf,t2,name2);
+    hf.close();
+  
+    if (t1.get_nx()!=t2.get_nx() ||
+	t1.get_ny()!=t2.get_ny()) {
+      cerr << "First table3d object has nx,ny: " 
+	   << t1.get_nx() << " " << t1.get_ny() << endl;
+      cerr << "Second table3d object has nx,ny: " 
+	   << t2.get_nx() << " " << t2.get_ny() << endl;
+      cerr << "Tables not compatible. Command 'add' canceled." << endl;
+      return exc_efailed;
+    }
+
+    // Copy constants over
+    for(size_t i=0;i<t1.get_nconsts();i++) {
+      string tnam;
+      double tval;
+      t1.get_constant(i,tnam,tval);
       if (verbose>2) {
 	cout << "Adding constant " << tnam << " = " << tval << endl;
       }
       tsum.add_constant(tnam,tval);
     }
-  }
-
-  tsum.set_interp_type(t1.get_interp_type());
-  
-  size_t nx=t1.get_nx();
-  size_t ny=t1.get_ny();
-  string sx=t1.get_x_name();
-  string sy=t1.get_y_name();
-  const ubvector &xg=t1.get_x_data();
-  const ubvector &yg=t1.get_y_data();
-  
-  tsum.set_xy(sx,nx,xg,sy,ny,yg);
-  for(size_t k=0;k<t1.get_nslices();k++) {
-    string slname=t1.get_slice_name(k);
-    tsum.new_slice(slname);
-    for(size_t i=0;i<nx;i++) {
-      for(size_t j=0;j<ny;j++) {
-	tsum.set(i,j,slname,t1.get(i,j,slname)+t2.get(i,j,slname));
+    for(size_t i=0;i<t2.get_nconsts();i++) {
+      string tnam;
+      double tval;
+      t2.get_constant(i,tnam,tval);
+      if (tsum.is_constant(tnam)==false) {
+	if (verbose>2) {
+	  cout << "Adding constant " << tnam << " = " << tval << endl;
+	}
+	tsum.add_constant(tnam,tval);
       }
     }
-  }
+
+    tsum.set_interp_type(t1.get_interp_type());
   
-  hf.open(sum);
-  hdf_output(hf,tsum,name1);
-  hf.close();
+    size_t nx=t1.get_nx();
+    size_t ny=t1.get_ny();
+    string sx=t1.get_x_name();
+    string sy=t1.get_y_name();
+    const ubvector &xg=t1.get_x_data();
+    const ubvector &yg=t1.get_y_data();
+  
+    tsum.set_xy(sx,nx,xg,sy,ny,yg);
+    for(size_t k=0;k<t1.get_nslices();k++) {
+      string slname=t1.get_slice_name(k);
+      tsum.new_slice(slname);
+      for(size_t i=0;i<nx;i++) {
+	for(size_t j=0;j<ny;j++) {
+	  tsum.set(i,j,slname,t1.get(i,j,slname)+t2.get(i,j,slname));
+	}
+      }
+    }
+  
+    hf.open(sum);
+    hdf_output(hf,tsum,name1);
+    hf.close();
+
+  } else {
+
+    if (sv.size()<2) {
+      cerr << "Not enough arguments to add." << endl;
+      return exc_efailed;
+    }
+    if (tabp==0) {
+      cerr << "No table to add to." << endl;
+      return exc_efailed;
+    }
+
+    string file2=sv[1];
+    table_units<> tab2;
+
+    hdf_file hf;
+    std::string name2;
+    hf.open(file2);
+    hdf_input(hf,tab2,name2);
+    hf.close();
+
+    size_t n1=tabp->get_nlines();
+    size_t n2=tab2.get_nlines();
+    tabp->set_nlines(n1+n2);
+    for(size_t j=0;j<tab2.get_ncolumns();j++) {
+      std::string col_name=tab2.get_column_name(j);
+      if (!tabp->is_column(col_name)) {
+	tabp->new_column(col_name);
+      }
+      for(size_t i=0;i<n2;i++) {
+	tabp->set(col_name,i+n1,tab2.get(col_name,i));
+      }
+    }
+      
+    
+  }
   
   return 0;
 }
@@ -1225,11 +1263,11 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 
     if (otype.length()!=0) {
       if (otype==((string)"string[]")) {
-	  cout << "O2scl object \"" << name << "\" of type " 
-	       << otype << "." << endl;
+	cout << "O2scl object \"" << name << "\" of type " 
+	     << otype << "." << endl;
       } else {
-	  cout << "O2scl object \"" << name << "\" of type " 
-	       << otype << "." << endl;
+	cout << "O2scl object \"" << name << "\" of type " 
+	     << otype << "." << endl;
       }
     } else {
       cout << "Group \"" << name << "\"." << endl;
@@ -2697,10 +2735,13 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
 
   // Input a generic file
   ifstream ifs;
-  ifs.open(sv[1].c_str());
-  if (!(ifs)) {
-    cerr << "Read failed. Non-existent file?" << endl;
-    return exc_efailed;
+  if (sv[1]!=((std::string)"cin")) {
+    ifs.open(sv[1].c_str());
+    if (!(ifs)) {
+      cerr << "Read of file named '" << sv[1]
+	   << "' failed. Non-existent file?" << endl;
+      return exc_efailed;
+    }
   }
 
   // Delete previous table
@@ -2714,9 +2755,12 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
   }
 
   tabp=new table_units<>(100);
-  tabp->read_generic(ifs,verbose);
-  
-  ifs.close();
+  if (sv[1]!=((std::string)"cin")) {
+    tabp->read_generic(ifs,verbose);
+    ifs.close();
+  } else {
+    tabp->read_generic(std::cin,verbose);
+  }
 
   return 0;
 }
