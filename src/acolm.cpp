@@ -66,23 +66,6 @@ int acol_manager::setup_options() {
   // Options, sorted by long name. We allow 0 parameters in many of these
   // options so they can be requested from the user in interactive mode. 
   comm_option_s options_arr[narr]={
-    {0,"cat","Concatenate data from two table objects.",1,2,
-     "<file 2> [name 2]",((string)"For table objects, add a ")+
-     "second table to the end of the first, creating new columns "+
-     "if necessary. For table3d objects, add all slices from the "+
-     "second table3d object which aren't already present in the "+
-     "current table3d object.",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_cat),
-     both},
-    {0,"sum","Add data from two table/table3d objects.",1,2,
-     "<file 2> [name 2]",((string)"For table objects, add all columns ")+
-     "from the second table to their corresponding columns in the "+
-     "current table, creating new columns if necessary. For table3d "+
-     "objects, add all slides from the second table to their "+
-     "corresponding slices in the current table3d, creating new slices "+
-     "if necessary.",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sum),
-     both},
     {'a',"assign","Assign a constant, e.g. assign pi acos(-1)",
      0,2,"<name> [val]",
      ((string)"Assign a constant value to a name for the present table. ")+
@@ -95,6 +78,15 @@ int acol_manager::setup_options() {
      " <expr>. Examples are 'calc acos(-1)' or 'calc 2+1/sqrt(2.0e4)'. "+
      "Results are given at the current precision.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_calc),
+     both},
+    {0,"cat",
+     "Concatenate data from a second table object onto current table.",0,2,
+     "<file> [name]",((string)"For table objects, add a ")+
+     "second table to the end of the first, creating new columns "+
+     "if necessary. For table3d objects, add all slices from the "+
+     "second table3d object which aren't already present in the "+
+     "current table3d object.",
+     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_cat),
      both},
     {0,"convert-unit","Convert a column to a new unit",0,2,
      "<column> <new_unit>",((string)"(This command only works if ")+
@@ -210,7 +202,7 @@ int acol_manager::setup_options() {
      "no argument is given, the new column is named 'N'.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_index),
      both},
-    {0,"insert","Interpolate a column from another file.",0,6,
+    {0,"insert","Interpolate a column/slice from another file.",0,6,
      ((string)"2D: <file> <table> <oldx> <oldy> <newx> [newy],\n\t\t")+
      "3D: <file> <table> <old> [new]",
      ((string)"Insert a column from file <fname> interpolating it ")+
@@ -278,8 +270,9 @@ int acol_manager::setup_options() {
      both},
     {0,"interp-type","Get/set the current interpolation type.",0,1,"[type]",
      ((string)"Get or set the current object's interpolation type. ")+
-     "Values are 0 (linear), 1 (cubic spline), 2 (cubic spline, periodic) "+
-     "3 (Akima spline), and 4 (Akima spline, periodic).",
+     "Values are 1 (linear), 2 (cubic spline), 3 (cubic spline, periodic) "+
+     "4 (Akima spline), 5 (Akima spline, periodic), 6 (monotonicity-"+
+     "preserving), and 7 (Steffen's monotonic).",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_interp_type),
      both},
     {'P',"preview","Preview the current table",0,1,"[nlines]",
@@ -346,6 +339,15 @@ int acol_manager::setup_options() {
      "Output the average, std. dev, max and min of <col>. ",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_stats),
      both},
+    {0,"sum","Add data from a second table object to current table.",
+     0,2,"<file> [name]",((string)"For table objects, add all columns ")+
+     "from the second table to their corresponding columns in the "+
+     "current table, creating new columns if necessary. For table3d "+
+     "objects, add all slides from the second table to their "+
+     "corresponding slices in the current table3d, creating new slices "+
+     "if necessary.",
+     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sum),
+     both},
     {'v',"version","Print version information.",0,0,"",
      "",new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_version),
      both}
@@ -372,7 +374,7 @@ int acol_manager::setup_options() {
 
 int acol_manager::setup_cli() {
 
-  //---------------------------------------
+  //---------------------------------------------------------------------
   // Get HOME directory and command history
   
   char *hd=getenv("HOME");
@@ -384,7 +386,7 @@ int acol_manager::setup_cli() {
     histfile=".acol_hist";
   }
     
-  //---------------------------------------
+  //--------------------------------------------------------------------
   // Specify command-line option object
   
 #ifdef O2SCL_READLINE
@@ -470,7 +472,7 @@ int acol_manager::setup_parameters() {
 
 int acol_manager::run(int argc, char *argv[]) {
   
-  //---------------------------------------
+  //--------------------------------------------------------------------
   // Default to scientific mode
 
   cout.setf(ios::scientific);
@@ -497,7 +499,7 @@ int acol_manager::run(int argc, char *argv[]) {
   comm_option_mfptr<acol_manager> cset(this,&acol_manager::comm_set);
   cl->set_function(cset);
 
-  //----------------------------------------------------------------
+  //-------------------------------------------------------------------
   // Process default options
 
   if (verbose>2) {
@@ -532,7 +534,7 @@ int acol_manager::run(int argc, char *argv[]) {
     post_interactive=true;
   }
 
-  //----------------------------------------------------------------
+  //-------------------------------------------------------------------
   // Try to get screen width
   
   int ncol=80;
@@ -547,7 +549,7 @@ int acol_manager::run(int argc, char *argv[]) {
   //
   setup_parameters();
 
-  //----------------------------------------------------------------
+  //------------------------------------------------------------------
   // Main execution
   
   int ret=0, ret2=0;
@@ -570,7 +572,7 @@ int acol_manager::run(int argc, char *argv[]) {
     ret2=cl->run_interactive();
   }
 
-  //---------------------------------------
+  //--------------------------------------------------------------------
   // Notify user if error occurred
 
   if (ret!=0 || ret2!=0) {
@@ -589,13 +591,13 @@ int acol_manager::comm_interp_type(std::vector<std::string> &sv,
   if (threed) {
     
     if (t3p==0) {
-      cout << "No table to get interpolation type of." << endl;
+      cout << "No table to get interpolation type of in 'interp-type'." << endl;
       return exc_efailed;
     }
 
     if (sv.size()>1) {
-      if (o2scl::stoi(sv[1])>4 || o2scl::stoi(sv[1])<0) {
-	cout << "Invalid interpolation type in interp-type." << endl;
+      if (o2scl::stoi(sv[1])>7 || o2scl::stoi(sv[1])<0) {
+	cout << "Invalid interpolation type in 'interp-type'." << endl;
 	return exc_efailed;
       }
       t3p->set_interp_type(o2scl::stoi(sv[1]));
@@ -604,19 +606,30 @@ int acol_manager::comm_interp_type(std::vector<std::string> &sv,
     if (sv.size()==1 || verbose>0) {
       size_t itype=t3p->get_interp_type();
       cout << "Current interpolation type is " << itype;
-      if (itype<2) {
-	if (itype==0) {
-	  cout << " (linear)." << endl;
+      
+      if (itype<4) {
+	if (itype<3) {
+	  if (itype==1) {
+	    cout << " (linear)." << endl;
+	  } else {
+	    cout << " (cubic spline)." << endl;
+	  }
 	} else {
-	  cout << " (cubic spline)." << endl;
+	  cout << " (cubic spline, periodic)." << endl;
 	}
       } else {
-	if (itype==2) {
-	  cout << " (cubic spline, periodic)." << endl;
-	} else if (itype==3) {
-	  cout << " (Akima spline)." << endl;
+	if (itype<6) {
+	  if (itype<5) {
+	    cout << " (Akima spline)." << endl;
+	  } else {
+	    cout << " (Akima spline, periodic)." << endl;
+	  }
 	} else {
-	  cout << " (Akima spline, periodic)." << endl;
+	  if (itype<7) {
+	    cout << " (Monotonicity-preserving)." << endl;
+	  } else {
+	    cout << " (Steffen's monotonic)." << endl;
+	  }
 	}
       }
     }
@@ -630,7 +643,7 @@ int acol_manager::comm_interp_type(std::vector<std::string> &sv,
   }
 
   if (sv.size()>1) {
-    if (o2scl::stoi(sv[1])>4 || o2scl::stoi(sv[1])<0) {
+    if (o2scl::stoi(sv[1])>7 || o2scl::stoi(sv[1])<0) {
       cout << "Invalid interpolation type in interp-type." << endl;
       return exc_efailed;
     }
@@ -640,19 +653,30 @@ int acol_manager::comm_interp_type(std::vector<std::string> &sv,
   if (sv.size()==1 || verbose>0) {
     size_t itype=tabp->get_interp_type();
     cout << "Current interpolation type is " << itype;
-    if (itype<2) {
-      if (itype==0) {
-	cout << " (linear)." << endl;
+    
+    if (itype<4) {
+      if (itype<3) {
+	if (itype==1) {
+	  cout << " (linear)." << endl;
+	} else {
+	  cout << " (cubic spline)." << endl;
+	}
       } else {
-	cout << " (cubic spline)." << endl;
+	cout << " (cubic spline, periodic)." << endl;
       }
     } else {
-      if (itype==2) {
-	cout << " (cubic spline, periodic)." << endl;
-      } else if (itype==3) {
-	cout << " (Akima spline)." << endl;
+      if (itype<6) {
+	if (itype<5) {
+	  cout << " (Akima spline)." << endl;
+	} else {
+	  cout << " (Akima spline, periodic)." << endl;
+	}
       } else {
-	cout << " (Akima spline, periodic)." << endl;
+	if (itype<7) {
+	  cout << " (Monotonicity-preserving)." << endl;
+	} else {
+	  cout << " (Steffen's monotonic)." << endl;
+	}
       }
     }
   }
@@ -665,7 +689,7 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
   if (threed) {
     
     if (t3p==0) {
-      cerr << "No table3d to output." << endl;
+      cerr << "No table3d to output in command 'output'." << endl;
       return exc_efailed;
     }
 
@@ -728,7 +752,7 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
     return exc_efailed;
   }
 
-  //---------------------------------------
+  //--------------------------------------------------------------------
   // Create stream
 
   ostream *fout;
@@ -741,7 +765,7 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
     fout=&ffout;
   }
 
-  //---------------------------------------
+  //--------------------------------------------------------------------
   // Output formatting
 
   if (scientific) fout->setf(ios::scientific);
@@ -750,7 +774,7 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
 
   if (tabp->get_ncolumns()>0) {
 
-    //---------------------------------------
+    //--------------------------------------------------------------------
     // Count column widths
 
     vector<size_t> col_wids(tabp->get_ncolumns());
@@ -770,7 +794,7 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
       }
     }
 
-    //---------------------------------------
+    //--------------------------------------------------------------------
     // Output column names
       
     if (names_out==true) {
@@ -797,7 +821,7 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
       (*fout) << endl;
     }
       
-    //---------------------------------------
+    //--------------------------------------------------------------------
     // Output units
     
     if (tabp->get_nunits()>0 && names_out==true) {
@@ -825,7 +849,7 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
       (*fout) << endl;
     }
       
-    //---------------------------------------
+    //--------------------------------------------------------------------
     // Output data
       
     for(int i=0;i<((int)tabp->get_nlines());i++) {
@@ -847,7 +871,7 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
       }
       (*fout) << endl;
       
-      //---------------------------------------
+      //--------------------------------------------------------------------
       // Continue to next row
     }
     
@@ -860,22 +884,76 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_cat(std::vector<std::string> &sv, bool itive_com) {
 
+  if (sv.size()<2) {
+    cerr << "Not enough arguments to cat." << endl;
+    return exc_efailed;
+  }
+  string file2=sv[1];
+  
   if (threed) {
 
-    O2SCL_ERR("Not implemented yet.",o2scl::exc_eunimpl);
+    if (t3p==0) {
+      cerr << "No table3d to add to in command 'cat'." << endl;
+      return exc_efailed;
+    }
+
+    // ---------------------------------------------------------------------
+    // Read the new table3d
+    
+    table3d tab2;
+
+    hdf_file hf;
+    std::string name2;
+    if (sv.size()>=3) name2=sv[2];
+
+    hf.open(file2);
+    hdf_input(hf,tab2,name2);
+    hf.close();
+
+    // ---------------------------------------------------------------------
+    // Copy constants from the new table3d
+
+    for(size_t i=0;i<tab2.get_nconsts();i++) {
+      string tnam;
+      double tval;
+      tab2.get_constant(i,tnam,tval);
+      if (verbose>2) {
+	cout << "Adding constant " << tnam << " = " << tval << endl;
+      }
+      t3p->add_constant(tnam,tval);
+    }
+
+    // ---------------------------------------------------------------------
+    // Copy slices over if not already present in the current table3d
+
+    const ubvector &xg=tab2.get_x_data();
+    const ubvector &yg=tab2.get_y_data();
+
+    for(size_t k=0;k<tab2.get_nslices();k++) {
+      std::string sl_name=tab2.get_slice_name(k);
+      size_t slix;
+      if (!t3p->is_slice(sl_name,slix)) {
+	t3p->new_slice(sl_name);
+	for(size_t i=0;i<tab2.get_nx();i++) {
+	  for(size_t j=0;j<tab2.get_ny();j++) {
+	    double x=xg[i];
+	    double y=yg[j];
+	    t3p->set_val(x,y,sl_name,tab2.get(i,j,sl_name));
+	  }
+	}
+      }
+    }
 
   } else {
 
-    if (sv.size()<2) {
-      cerr << "Not enough arguments to add." << endl;
-      return exc_efailed;
-    }
     if (tabp==0) {
-      cerr << "No table to add to." << endl;
+      cerr << "No table to add to in command 'cat'." << endl;
       return exc_efailed;
     }
 
-    string file2=sv[1];
+    // ---------------------------------------------------------------------
+    // Read the new table 
+
     table_units<> tab2;
 
     hdf_file hf;
@@ -885,6 +963,21 @@ int acol_manager::comm_cat(std::vector<std::string> &sv, bool itive_com) {
     hf.open(file2);
     hdf_input(hf,tab2,name2);
     hf.close();
+
+    // ---------------------------------------------------------------------
+    // Copy constants from the new table
+
+    for(size_t i=0;i<tab2.get_nconsts();i++) {
+      string tnam;
+      double tval;
+      tab2.get_constant(i,tnam,tval);
+      if (verbose>2) {
+	cout << "Adding constant " << tnam << " = " << tval << endl;
+      }
+      tabp->add_constant(tnam,tval);
+    }
+
+    // ---------------------------------------------------------------------
 
     size_t n1=tabp->get_nlines();
     size_t n2=tab2.get_nlines();
@@ -1954,7 +2047,7 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
     return exc_efailed;
   }
   
-  //---------------------------------------
+  //--------------------------------------------------------------------
   // Compute number of screen columns
 
   if (user_ncols<=0) {
@@ -1964,12 +2057,12 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
     ncols=user_ncols;
   }
 
-  //---------------------------------------
+  //--------------------------------------------------------------------
   // Temporary storage strings for names and data
 
   vector<string> row_names, row_data;
 
-  //---------------------------------------
+  //--------------------------------------------------------------------
   // Process and/or output names
 
   if (names_out==true) {
@@ -2021,7 +2114,7 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
     }
   }
   
-  //---------------------------------------
+  //--------------------------------------------------------------------
   // Process and/or output data
   
   if (pretty) {
@@ -2061,7 +2154,7 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
     row_data.push_back(str->str());
     delete str;
     
-    //---------------------------------------
+    //--------------------------------------------------------------------
     // Now output both names and data to cout
 
     if (row_names.size()!=row_data.size()) {
@@ -2414,7 +2507,7 @@ int acol_manager::comm_html(std::vector<std::string> &sv, bool itive_com) {
   
   (*fout) << "<html><head></head><body>" << endl;
   
-  //---------------------------------------
+  //--------------------------------------------------------------------
   // Output constants
   
   for(size_t i=0;i<tabp->get_nconsts();i++) {
@@ -2429,7 +2522,7 @@ int acol_manager::comm_html(std::vector<std::string> &sv, bool itive_com) {
     
     (*fout) << "<table border=\"0\">" << endl;
     
-    //---------------------------------------
+    //--------------------------------------------------------------------
     // Output column names
     
     (*fout) << "<tr bgcolor=\"#dddddd\">";
@@ -2438,7 +2531,7 @@ int acol_manager::comm_html(std::vector<std::string> &sv, bool itive_com) {
     }
     (*fout) << "</tr>" << endl;
       
-    //---------------------------------------
+    //--------------------------------------------------------------------
     // Output data
       
     for(int i=0;i<((int)tabp->get_nlines());i++) {
@@ -2558,13 +2651,13 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     int inr;
     int inc;
 
-    //-----------------------------------------
+    //----------------------------------------------------------------------
     // Compute number of columns which will fit
 
     size_t max_cols=(ncols)/(8+prec);
     if (max_cols>tabp->get_ncolumns()) max_cols=tabp->get_ncolumns();
     
-    //---------------------------------------
+    //--------------------------------------------------------------------
     // Compute column and row increment
     
     if (sv.size()==2) {
@@ -2578,14 +2671,14 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     inc=(tabp->get_ncolumns()+(1))/max_cols;
     if (inc<1) inc=1;
     
-    //---------------------------------------
+    //--------------------------------------------------------------------
     // Get last row number if necessary
       
     if (pretty==true) {
       nlast=itos(tabp->get_nlines()-1);
     }
 
-    //---------------------------------------
+    //--------------------------------------------------------------------
     // Output column names
     
     if (names_out==true) {
@@ -2615,7 +2708,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
       cout << endl;
     }
       
-    //---------------------------------------
+    //--------------------------------------------------------------------
     // Output units
     
     if (names_out==true && tabp->get_nunits()>0) {
@@ -2647,7 +2740,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
       cout << endl;
     }
       
-    //---------------------------------------
+    //--------------------------------------------------------------------
     // Output data
       
     for(size_t i=0;i<tabp->get_nlines();i+=inr) {
@@ -2674,7 +2767,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
       }
       cout << endl;
       
-      //---------------------------------------
+      //--------------------------------------------------------------------
       // Continue to next row
     }
     
@@ -3092,9 +3185,9 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
       return exc_efailed;
     }
     
-    // ----------------------------------------
+    // ---------------------------------------------------------------------
     // Create new table3d and copy grid over
-    // ----------------------------------------
+    // ---------------------------------------------------------------------
 
     table3d *new_table3d=new table3d;
     size_t nx, ny;
@@ -3102,9 +3195,9 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
     new_table3d->set_xy(t3p->get_x_name(),nx,t3p->get_x_data(),
 			t3p->get_y_name(),ny,t3p->get_y_data());
 	
-    // ----------------------------------------
+    // ---------------------------------------------------------------------
     // Copy constants from old to new table3d
-    // ----------------------------------------
+    // ---------------------------------------------------------------------
 
     for(size_t i=0;i<t3p->get_nconsts();i++) {
       string tnam;
@@ -3116,9 +3209,9 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
       new_table3d->add_constant(tnam,tval);
     }
   
-    // ----------------------------------------
+    // ---------------------------------------------------------------------
     // Add slides and data to new table3d
-    // ----------------------------------------
+    // ---------------------------------------------------------------------
 
     std::vector<bool> matched(t3p->get_nslices());
     for(size_t i=0;i<t3p->get_nslices();i++) {
@@ -3184,18 +3277,18 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
       return exc_efailed;
     }
 
-    // ----------------------------------------
+    // ---------------------------------------------------------------------
     // Create new table
-    // ----------------------------------------
+    // ---------------------------------------------------------------------
   
     table_units<> *new_table;
     new_table=new table_units<>(tabp->get_nlines());
   
     new_table->set_nlines(tabp->get_nlines());
 
-    // ----------------------------------------
+    // ---------------------------------------------------------------------
     // Copy constants from old to new table
-    // ----------------------------------------
+    // ---------------------------------------------------------------------
 
     for(size_t i=0;i<tabp->get_nconsts();i++) {
       string tnam;
@@ -3204,9 +3297,9 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
       new_table->add_constant(tnam,tval);
     }
   
-    // ----------------------------------------
+    // ---------------------------------------------------------------------
     // Add columns and data to new table
-    // ----------------------------------------
+    // ---------------------------------------------------------------------
 
     std::vector<bool> matched(tabp->get_ncolumns());
     for(size_t i=0;i<tabp->get_ncolumns();i++) {
@@ -3342,15 +3435,15 @@ int acol_manager::comm_select_rows(std::vector<std::string> &sv,
     return exc_efailed;
   }
     
-  // ----------------------------------------
+  // ---------------------------------------------------------------------
   // Create new table
-  // ----------------------------------------
+  // ---------------------------------------------------------------------
   
   table_units<> *new_table=new table_units<>;
   
-  // ----------------------------------------
+  // ---------------------------------------------------------------------
   // Copy constants from old to new table
-  // ----------------------------------------
+  // ---------------------------------------------------------------------
 
   for(size_t i=0;i<tabp->get_nconsts();i++) {
     string tnam;
@@ -3359,17 +3452,17 @@ int acol_manager::comm_select_rows(std::vector<std::string> &sv,
     new_table->add_constant(tnam,tval);
   }
   
-  // ----------------------------------------
+  // ---------------------------------------------------------------------
   // Add column names to new table
-  // ----------------------------------------
+  // ---------------------------------------------------------------------
 
   for(int i=0;i<((int)tabp->get_ncolumns());i++) {
     new_table->new_column(tabp->get_column_name(i));
   }
 
-  // ----------------------------------------
+  // ---------------------------------------------------------------------
   // Copy data from selected rows
-  // ----------------------------------------
+  // ---------------------------------------------------------------------
 
   int new_lines=0;
   for(int i=0;i<((int)tabp->get_nlines());i++) {
@@ -3592,12 +3685,12 @@ int acol_manager::comm_insert_full(std::vector<std::string> &sv,
 				   bool itive_com) {
 
   if (threed) {
-    cout << "Not implemented for table3d." << endl;
+    cout << "Command 'insert-full' not implemented for table3d." << endl;
     return 0;
   }
 
   if (tabp==0) {
-    cerr << "No table to insert columns into." << endl;
+    cerr << "No table to insert columns into in command 'insert-full'." << endl;
     return exc_efailed;
   }
 
@@ -3619,7 +3712,7 @@ int acol_manager::comm_insert_full(std::vector<std::string> &sv,
 	}
       }
     } else {
-      cerr << "Not enough arguments to 'insert'" << endl;
+      cerr << "Not enough arguments to command 'insert'" << endl;
       return exc_efailed;
     }
   }
@@ -3673,7 +3766,7 @@ int acol_manager::comm_interp(std::vector<std::string> &sv, bool itive_com) {
 	  }
 	}
       } else {
-	cerr << "Not enough arguments to 'interp'" << endl;
+	cerr << "Not enough arguments to command 'interp'" << endl;
 	return exc_efailed;
       }
     }
