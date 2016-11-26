@@ -207,6 +207,10 @@ namespace o2scl {
       msolve_de() does not converge (default true)
   */
   bool err_nonconv;
+
+  /** \brief If true, accept all steps
+   */
+  bool always_accept;
   //@}
   
   mcmc_base() {
@@ -226,6 +230,7 @@ namespace o2scl {
     n_accept=0;
     n_reject=0;
     prop_dist=0;
+    always_accept=false;
   }
 
   /** \brief Default method for setting the random seed
@@ -552,7 +557,7 @@ namespace o2scl {
       
       // ---------------------------------------------------
     
-      bool accept=false;
+      bool accept=always_accept;
 
       if (iret==o2scl::success) {
 	double r=rg.random();
