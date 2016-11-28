@@ -572,7 +572,8 @@ namespace o2scl {
       
       // ---------------------------------------------------
     
-      bool accept=always_accept;
+      bool accept=false;
+      if (always_accept && iret==success) accept=true;
 
       if (iret==o2scl::success) {
 	double r=rg.random();
