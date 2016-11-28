@@ -905,7 +905,7 @@ namespace o2scl {
       table
   */
   virtual int add_line(const vec_t &pars, double log_weight,
-		       size_t ix, bool new_meas, data_t &dat,
+		       size_t walker_ix, bool new_meas, data_t &dat,
 		       fill_t &fill) {
 
     // Test to see if we need to add a new line of data or increment
