@@ -211,6 +211,10 @@ namespace o2scl {
   /** \brief If true, accept all steps
    */
   bool always_accept;
+
+  /** \brief Desc
+   */
+  double ai_initial_step;
   //@}
   
   mcmc_base() {
@@ -231,6 +235,7 @@ namespace o2scl {
     n_reject=0;
     prop_dist=0;
     always_accept=false;
+    ai_initial_step=0.1;
   }
 
   /** \brief Default method for setting the random seed
@@ -359,7 +364,7 @@ namespace o2scl {
 	    }
 	    do {
 	      current[curr_walker][ipar]=init[ipar]+(rg.random()*2.0-1.0)*
-		(high[ipar]-low[ipar])/100.0;
+		(high[ipar]-low[ipar])*ai_initial_step;
 	    } while (current[curr_walker][ipar]>high[ipar] ||
 		     current[curr_walker][ipar]<low[ipar]);
 	  }
@@ -373,7 +378,7 @@ namespace o2scl {
 	    std::cout << "mcmc: ";
 	    std::cout.width((int)(1.0+log10((double)(n_walk-1))));
 	    std::cout << curr_walker << " " << w_current[curr_walker]
-		      << " (initial; ai)" << std::endl;
+		      << " " << iret << << " (initial; ai)" << std::endl;
 	    std::cout.precision(6);
 	  }
 
