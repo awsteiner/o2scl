@@ -378,7 +378,7 @@ namespace o2scl {
 	    std::cout << "mcmc: ";
 	    std::cout.width((int)(1.0+log10((double)(n_walk-1))));
 	    std::cout << curr_walker << " " << w_current[curr_walker]
-		      << " " << iret << << " (initial; ai)" << std::endl;
+		      << " " << iret << " (initial; ai)" << std::endl;
 	    std::cout.precision(6);
 	  }
 
