@@ -317,7 +317,10 @@ namespace o2scl {
     // Return value of the measurement function
     int meas_ret=0;
 
-    // Run init() function
+    // Run mcmc_init() function. The initial point, stored in
+    // current[0] can be modified by this function. Note that the
+    // local variable 'init' is not accessible to the mcmc_init()
+    // function.
     int iret=mcmc_init();
     if (iret!=0) {
       O2SCL_ERR("Function mcmc_init() failed in mcmc_base::mcmc().",
@@ -345,6 +348,13 @@ namespace o2scl {
 
       // Stretch-move steps
 
+      // The mcmc_init() function may have changed the
+      // initial point, so we copy back to init here for
+      // temporary storage
+      for(size_t ipar=0;ipar<nparams;ipar++) {
+	init[ipar]=current[0][ipar];
+      }
+      
       // Initialize each walker in turn
       for(curr_walker=0;curr_walker<n_walk;curr_walker++) {
 
