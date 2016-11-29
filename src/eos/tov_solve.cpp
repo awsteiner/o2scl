@@ -1173,6 +1173,17 @@ int tov_solve::fixed(double target_mass, double pmax) {
 
   if (err_nonconv==false) mroot_ptr->err_nonconv=false;
   integ_star_final=false;
+
+  // Before trying to solve, evaluate the initial guess
+  if (integ_star(1,x,y)!=o2scl::success) {
+    // If it failed, we must return (otherwise the
+    // solver might throw an exception)
+    info+=fixed_solver_failed;
+    O2SCL_CONV("Initial guess failed in tov_solve::fixed().",
+	       exc_efailed,err_nonconv);
+    return info;
+  }
+  
   int ret=mroot_ptr->msolve(1,x,fmf);
   if (ret!=0) {
     info+=fixed_solver_failed;
