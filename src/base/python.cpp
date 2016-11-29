@@ -44,13 +44,11 @@ static PyObject* py_myOtherFunction(PyObject* self, PyObject* args)
   return Py_BuildValue("d", x*y);
 }
 
-/*
-  static PyMethodDef myModule_methods[] = {
+static PyMethodDef myModule_methods[] = {
   {"myFunction", py_myFunction, METH_VARARGS},
   {"myOtherFunction", py_myOtherFunction, METH_VARARGS},
   {NULL, NULL}
-  };
-*/
+};
 
 void initmyModule()
 {

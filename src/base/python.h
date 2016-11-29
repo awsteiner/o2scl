@@ -30,28 +30,30 @@
   
 #include <Python.h>
 
-/** \brief Function to be called from Python
- */
-extern "C" PyObject* py_myFunction(PyObject* self, PyObject* args);
+extern "C" {
 
-/** \brief Another function to be called from Python
- */
-static PyObject* py_myOtherFunction(PyObject* self, PyObject* args);
+  /** \brief Function to be called from Python
+   */
+  static PyObject* py_myFunction(PyObject* self, PyObject* args);
+
+  /** \brief Another function to be called from Python
+   */
+  static PyObject* py_myOtherFunction(PyObject* self, PyObject* args);
   
-/*
-  Bind Python function names to our C functions
-*/
-/*
+  /*
+    Bind Python function names to our C functions
+  */
   static PyMethodDef myModule_methods[] = {
-  {"myFunction", py_myFunction, METH_VARARGS},
-  {"myOtherFunction", py_myOtherFunction, METH_VARARGS},
-  {NULL, NULL}
+    {"myFunction", py_myFunction, METH_VARARGS},
+    {"myOtherFunction", py_myOtherFunction, METH_VARARGS},
+    {0,0}
   };
-*/
 
-/** \brief Python calls this to let us initialize our module
- */
-void initmyModule();
+  /** \brief Python calls this to let us initialize our module
+   */
+  void initmyModule();
+
+}
 
 #endif
   
