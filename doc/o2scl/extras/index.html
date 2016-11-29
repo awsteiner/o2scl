@@ -20,7 +20,7 @@
 	  <h1>Why O<sub>2</sub>scl?
 	  </h1>
 	  <p>
-	  A brief discussion about the
+	  A brief discussion of the context of this
 	  object-oriented scientific computing library.
 	  </p>
 	</div>
@@ -42,6 +42,12 @@
 
 	<div class="col-sm-3">
 <!-- style="background-color: #eeeeee;"> -->
+
+	  <p>
+	    <h2><a href="#resgroup">No reinventing the wheel</a></h2>
+	  </p>
+
+	  <hr>
 
 	  <p>
 	    <h2><a href="#scicomp">Scientific computing is changing</a></h2>
@@ -70,6 +76,26 @@
 	</div>
 
 	<div class="col-sm-9">
+
+	  <div class="alert alert-success">
+	    <a name="resgroup"></a>
+	    <h2>I needed to provide a computing framework for
+	      my research group. <small>(Necessity is the
+		mother of invention.)</small> </h2>
+	  </div>
+	  <p>
+	    <h4>I want my students and colleagues to be able
+	      to have a head start.
+	    </h4>
+	  </p>
+	  <ul>
+	    <p>
+	      <li>There is little point in forcing a student
+		to rewrite old code over again when there
+		are so many great new codes to be written.
+	      </li>
+	    </p>
+	  </ul>
 
 	  <div class="alert alert-success">
 	    <a name="scicomp"></a>
@@ -103,18 +129,16 @@ cout &lt;&lt; a &lt;&lt; endl;
                  example)
 	    </p>
 	    <p>
-	      <li><em>Template-based classes can operate on functions
-		  faster than old C-style function pointers.</em></li>
+	      <li><em>Sometimes the best solution is a combination
+		  of several different languages and libraries.</em></li>
 	    </p>
 	    <p>
-	      C-style scientific libraries like GSL accept functions
-	      based on function pointers, which means that the 
-	      code inside the function is not known at compile-time.
-	      For C++ classes like <tt>o2scl::root_brent_gsl</tt>
-	      above, because the function type is a template parameter,
-	      the C++ compiler can know which function is being
-	      solved <em>at compile time</em>, which allows for
-	      more optimizations.
+	      Python has enabled fast development, but
+	      we still want fast execution from C++. GSL
+	      is great for many problems, but Fourier
+	      transforms are better done in FFTW and
+	      linear algebra is better implemented
+	      in uBlas, Eigen, or Armadillo.
 	    </p>
 	  </ul>
 	  
