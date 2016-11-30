@@ -40,6 +40,10 @@
 
 #include <o2scl/err_hnd.h>
 
+extern "C" {
+  int o2scl_python_test(int x);
+}
+
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
 #endif
