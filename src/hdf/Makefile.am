@@ -2,9 +2,9 @@
 # Basic variables
 # ------------------------------------------------------------
 
-HEADER_VAR = hdf_file.h hdf_io.h cloud_file.h
+HEADER_VAR = hdf_file.h hdf_io.h cloud_file.h acolm.h
 
-HDF_SRCS = hdf_file.cpp hdf_io.cpp cloud_file.cpp
+HDF_SRCS = hdf_file.cpp hdf_io.cpp cloud_file.cpp acolm.cpp
 
 TEST_VAR = hdf_file.scr hdf_io.scr
 
