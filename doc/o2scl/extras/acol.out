@@ -8,10 +8,10 @@ acol: A data table viewing and processing program for O2scl.
 
 List of commands:
 
-add          Add the data from two table3d objects.                         
 alias        Create a command alias.                                        
 assign       Assign a constant, e.g. assign pi acos(-1)                     
 calc         Compute the value of a constant expression.                    
+cat          Concatenate data from a second table object onto current table.
 commands     List all available commands.                                   
 convert-unit Convert a column to a new unit                                 
 create       Create a table from uniform grid.                              
@@ -33,7 +33,7 @@ get-unit     Get the units for a specified column.
 help         Show help information.                                         
 html         Create a file in HTML (table3d only).                          
 index        Add a column containing the row numbers (table3d only).        
-insert       Interpolate a column from another file.                        
+insert       Interpolate a column/slice from another file.                  
 insert-full  Interpolate a table from another file (table3d only).          
 integ        Integrate a function specified by two columns (table3d only).  
 internal     Output in the internal HDF5 format.                            
@@ -58,6 +58,7 @@ show-units   Show the unit conversion table.
 slice        Construct a slice (table3d only)                               
 sort         Sort the entire table by a column (2d only).                   
 stats        Show column statistics (2d only).                              
+sum          Add data from a second table object to current table.          
 version      Print version information.                                     
 warranty     Show warranty information.                                     
 
@@ -82,7 +83,7 @@ exp(x) log(x) log10(x) sin(x) cos(x) tan(x) sqrt(x) abs(x)
 asin(x) acos(x) atan(x) sinh(x) cosh(x) tanh(x)
 asinh(x) acosh(x) atanh(x)
 
-Compiled at 08:43:15 on Nov 14 2016 for o2scl, version 0.920.
+Compiled at 10:29:28 on Dec  1 2016 for o2scl, version 0.920.
 
 # ------------------------------------------------------------
 # You can also get help on the commands individually, e.g.
@@ -103,15 +104,16 @@ result. If a table is currently in memory, it is deallocated beforehand.
 > commands
 Command list:
 
-add          deriv        get          integ        no-intro     set          
-alias        deriv2       get-conv     interactive  output       set-data     
-assign       exit         get-row      internal     preview      set-unit     
-calc         filelist     get-unit     interp       quit         show-units   
-commands     find-row     help         interp-type  read         slice        
-convert-unit fit          html         license      rename       sort         
-create       function     index        list         run          stats        
-delete-col   gen3-list    insert       max          select       version      
-delete-rows  generic      insert-full  min          select-rows  warranty     
+alias        deriv2       get-row      interp       read         sort         
+assign       exit         get-unit     interp-type  rename       stats        
+calc         filelist     help         license      run          sum          
+cat          find-row     html         list         select       version      
+commands     fit          index        max          select-rows  warranty     
+convert-unit function     insert       min          set          
+create       gen3-list    insert-full  no-intro     set-data     
+delete-col   generic      integ        output       set-unit     
+delete-rows  get          interactive  preview      show-units   
+deriv        get-conv     internal     quit         slice        
 
 # ------------------------------------------------------------
 # Use 'create' to create a table with one column

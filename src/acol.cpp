@@ -24,7 +24,7 @@
 #include <config.h>
 #endif
 
-#include "acolm.h"
+#include "base/acolm.h"
 
 using namespace std;
 using namespace o2scl;

@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2012, Andrew W. Steiner
+  Copyright (C) 2006-2016, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -20,6 +20,9 @@
 
   -------------------------------------------------------------------
 */
+#ifndef O2SCL_ACOLM_H
+#define O2SCL_ACOLM_H
+
 /** \file acolm.h
     \brief The \ref o2scl_acol::acol_manager class header
 */
@@ -389,8 +392,105 @@ namespace o2scl_acol {
 
     /// An internal command for prompting the user for one command argument
     int get_input_one(std::vector<std::string> &sv, std::string directions,
-		   std::string &in, std::string comm_name,
-		   bool itive_com);
+		      std::string &in, std::string comm_name,
+		      bool itive_com);
   };
 
 }
+
+extern "C" {
+
+  /** \brief Desc
+   */
+  void *o2scl_create_acol_manager() {
+    o2scl_acol::acol_manager *amp=new o2scl_acol::acol_manager;
+    return amp;
+  }
+  
+  /** \brief Desc
+   */
+  void o2scl_free_acol_manager(void *vp) {
+    o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
+    delete amp;
+    return;
+  }
+
+  /** \brief Desc
+   */
+  std::vector<std::string> o2scl_acol_parse_arrays
+  (int n_entries, int *sizes, char *str) {
+    std::vector<std::string> list;
+    size_t ix=0;
+    for(int i=0;i<n_entries;i++) {
+      std::string tmp;
+      for(int j=0;j<sizes[i];j++) {
+	tmp+=str[ix];
+	ix++;
+      }
+      list.push_back(tmp);
+    }
+    return list;
+  }
+  
+  /** \brief Desc
+   */
+  void o2scl_acol_select(void *vp, int n_entries, int *sizes, 
+			 char *str) {
+    std::vector<std::string> args=o2scl_acol_parse_arrays(n_entries,sizes,str);
+    o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
+    amp->comm_select(args,false);
+    return;
+  }
+
+  /** \brief Desc
+   */
+  void o2scl_acol_read(void *vp, int n_entries, int *sizes, 
+		       char *str) {
+    std::vector<std::string> args=o2scl_acol_parse_arrays(n_entries,sizes,str);
+    o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
+    amp->comm_read(args,false);
+    return;
+  }
+
+  /** \brief Desc
+   */
+  void o2scl_acol_output(void *vp, int n_entries, int *sizes, 
+			 char *str) {
+    std::vector<std::string> args=o2scl_acol_parse_arrays(n_entries,sizes,str);
+    o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
+    amp->comm_output(args,false);
+    return;
+  }
+  /** \brief Desc
+   */
+  void o2scl_acol_internal(void *vp, int n_entries, int *sizes, 
+			   char *str) {
+    std::vector<std::string> args=o2scl_acol_parse_arrays(n_entries,sizes,str);
+    o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
+    amp->comm_internal(args,false);
+    return;
+  }
+
+  /** \brief Desc
+   */
+  void o2scl_acol_list(void *vp, int n_entries, int *sizes, 
+		       char *str) {
+    std::vector<std::string> args=o2scl_acol_parse_arrays(n_entries,sizes,str);
+    o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
+    amp->comm_list(args,false);
+    return;
+  }
+
+  /** \brief Desc
+   */
+  void o2scl_acol_preview(void *vp, int n_entries, int *sizes, 
+			  char *str) {
+    std::vector<std::string> args=o2scl_acol_parse_arrays(n_entries,sizes,str);
+    o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
+    amp->comm_preview(args,false);
+    return;
+  }
+  
+}
+
+#endif

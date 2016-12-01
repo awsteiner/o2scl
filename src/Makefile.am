@@ -143,9 +143,7 @@ if O2SCL_HDF
 
 bin_PROGRAMS = acol 
 
-acol_SOURCES = acol.cpp acolm.cpp 
-
-pkginclude_HEADERS = acolm.h
+acol_SOURCES = acol.cpp 
 
 if O2SCL_READLINE
 RLIB = -lreadline -lncurses

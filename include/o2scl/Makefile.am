@@ -25,12 +25,6 @@ header-links: remove-links
 	  BASENAME=`basename $$h`; \
 	  test -r $$BASENAME || ln -s $$h $$BASENAME; \
 	done
-# Also take care of links for src/acolm.h
-	HEADERLIST2="$(top_srcdir)/src/*.h"; \
-	for h in $$HEADERLIST2; do \
-	  BASENAME=`basename $$h`; \
-	  test -r $$BASENAME || ln -s $$h $$BASENAME; \
-	done
 
 remove-links: 
 	rm -f *.h
