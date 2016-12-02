@@ -404,6 +404,7 @@ extern "C" {
    */
   void *o2scl_create_acol_manager() {
     o2scl_acol::acol_manager *amp=new o2scl_acol::acol_manager;
+    std::cout << "Created: " << amp << std::endl;
     return amp;
   }
   
