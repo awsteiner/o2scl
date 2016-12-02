@@ -598,6 +598,9 @@ namespace o2scl {
     */
     int process_args(int argc, char *argv[], 
 		     std::vector<cmd_line_arg> &ca, int debug=0);
+
+    int process_args(std::vector<std::string> &sv,
+		     std::vector<cmd_line_arg> &ca, int debug);
     
     /** \brief Process command-line arguments from a string
 

@@ -585,6 +585,72 @@ int acol_manager::run(int argc, char *argv[]) {
 
 }
 
+int acol_manager::run_base() {
+  
+  //--------------------------------------------------------------------
+  // Default to scientific mode
+
+  cout.setf(ios::scientific);
+
+  // 
+  if (verbose>2) {
+    cout << "Setup cli class." << endl;
+  }
+  setup_cli();
+
+  // 
+  if (verbose>2) {
+    cout << "Setup options." << endl;
+  }
+  setup_options();
+
+  // 
+  if (verbose>2) {
+    cout << "Setup help." << endl;
+  }
+  setup_help();
+
+  // 
+  comm_option_mfptr<acol_manager> cset(this,&acol_manager::comm_set);
+  cl->set_function(cset);
+
+  //-------------------------------------------------------------------
+  // Process default options
+
+  if (verbose>2) {
+    cout << "Process default options" << endl;
+  }
+  std::vector<cmd_line_arg> ca;
+  
+  char *dc=getenv(env_var_name.c_str());
+  if (dc) {
+    def_args=dc;
+    if (verbose>2) {
+      cl->process_args(dc,ca,1);
+    } else {
+      cl->process_args(dc,ca);
+    }
+  }
+  
+  //-------------------------------------------------------------------
+  // Try to get screen width
+  
+  int ncol=80;
+  char *ncstring=getenv("COLUMNS");
+  if (ncstring) ncol=o2scl::stoi(ncstring);
+  
+  set_swidth(ncol);
+
+  if (verbose>2) {
+    cout << "Setup parameters: " << endl;
+  }
+  //
+  setup_parameters();
+  
+  return 0;
+
+}
+
 int acol_manager::comm_interp_type(std::vector<std::string> &sv, 
 				   bool itive_com) {
 

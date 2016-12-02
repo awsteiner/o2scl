@@ -95,13 +95,6 @@ namespace o2scl_acol {
   protected:
 
 #ifdef DOXYGEN
-    /// A pointer to the table
-    table_units<> *tabp;
-#else
-    o2scl::table_units<> *tabp;
-#endif
-
-#ifdef DOXYGEN
     /// The number formatter for html output
     format_float ffl;
 #else
@@ -164,6 +157,17 @@ namespace o2scl_acol {
     /// Number of columns in screen
     int ncols;
 
+#endif
+
+  public:
+
+#ifdef DOXYGEN
+    /// A pointer to the table
+    table_units<> *tabp;
+#else
+    o2scl::table_units<> *tabp;
+#endif
+
     /// If true, the \table is 3d
     bool threed;
 
@@ -173,10 +177,6 @@ namespace o2scl_acol {
 #else
     o2scl::cli *cl;
 #endif
-
-#endif
-
-  public:
 
     acol_manager();
 
@@ -211,6 +211,8 @@ namespace o2scl_acol {
     */
     virtual int run(int argv, char *argc[]);
 
+    virtual int run_base();
+    
     /// Create the cli object (with readline support if available)
     virtual int setup_cli();
 
@@ -404,7 +406,7 @@ extern "C" {
    */
   void *o2scl_create_acol_manager() {
     o2scl_acol::acol_manager *amp=new o2scl_acol::acol_manager;
-    std::cout << "Created: " << amp << std::endl;
+    amp->run_base();
     return amp;
   }
   
@@ -435,61 +437,34 @@ extern "C" {
   
   /** \brief Desc
    */
-  void o2scl_acol_select(void *vp, int n_entries, int *sizes, 
-			 char *str) {
+  void o2scl_acol_parse(void *vp, int n_entries, int *sizes, 
+			char *str) {
     std::vector<std::string> args=o2scl_acol_parse_arrays(n_entries,sizes,str);
     o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
-    amp->comm_select(args,false);
+    std::vector<o2scl::cmd_line_arg> ca;
+    amp->cl->process_args(args,ca,0);
+    amp->cl->call_args(ca);
     return;
   }
 
   /** \brief Desc
    */
-  void o2scl_acol_read(void *vp, int n_entries, int *sizes, 
-		       char *str) {
-    std::vector<std::string> args=o2scl_acol_parse_arrays(n_entries,sizes,str);
+  int o2scl_acol_get_column(void *vp, std::string col_name,
+			    int &n, double *ptr) {
     o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
-    amp->comm_read(args,false);
-    return;
-  }
-
-  /** \brief Desc
-   */
-  void o2scl_acol_output(void *vp, int n_entries, int *sizes, 
-			 char *str) {
-    std::vector<std::string> args=o2scl_acol_parse_arrays(n_entries,sizes,str);
-    o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
-    amp->comm_output(args,false);
-    return;
-  }
-  /** \brief Desc
-   */
-  void o2scl_acol_internal(void *vp, int n_entries, int *sizes, 
-			   char *str) {
-    std::vector<std::string> args=o2scl_acol_parse_arrays(n_entries,sizes,str);
-    o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
-    amp->comm_internal(args,false);
-    return;
-  }
-
-  /** \brief Desc
-   */
-  void o2scl_acol_list(void *vp, int n_entries, int *sizes, 
-		       char *str) {
-    std::vector<std::string> args=o2scl_acol_parse_arrays(n_entries,sizes,str);
-    o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
-    amp->comm_list(args,false);
-    return;
-  }
-
-  /** \brief Desc
-   */
-  void o2scl_acol_preview(void *vp, int n_entries, int *sizes, 
-			  char *str) {
-    std::vector<std::string> args=o2scl_acol_parse_arrays(n_entries,sizes,str);
-    o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
-    amp->comm_preview(args,false);
-    return;
+    if (amp->threed) {
+      std::cout << "Cannot get column for table3d object."
+		<< std::endl;
+      return 1;
+    }
+    if (amp->tabp==0) {
+      std::cerr << "No table loaded." << std::endl;
+      return 2;
+    }
+    n=amp->tabp->get_nlines();
+    const std::vector<double> &col=amp->tabp->get_column(col_name);
+    ptr=(double *)&col[0];
+    return 0;
   }
   
 }

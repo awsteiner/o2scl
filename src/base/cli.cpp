@@ -346,6 +346,24 @@ int cli::process_args(string s, vector<cmd_line_arg> &ca,
   return ret;
 }
 
+int cli::process_args(std::vector<std::string> &sv,
+		      std::vector<cmd_line_arg> &ca, int debug) {
+
+  std::string s="acol";
+  int argc=sv.size()+1;
+  char **argv=new char *[argc];
+  argv[0]=(char *)s.c_str();
+  for(int i=0;i<argc;i++) argv[i+1]=(char *)(sv[i].c_str());
+  
+  // Process arguments from the (argc,argv) format
+  int ret=process_args(argc,argv,ca,debug);
+
+  // Delete allocated memory
+  delete[] argv;
+
+  return ret;
+}
+
 int cli::process_args(int argc, char *argv[], 
 		      vector<cmd_line_arg> &ca, int debug) {
 
