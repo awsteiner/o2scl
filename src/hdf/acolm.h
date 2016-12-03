@@ -402,7 +402,7 @@ namespace o2scl_acol {
 
 extern "C" {
 
-  /** \brief Desc
+  /** \brief Create an \ref o2scl_acol::acol_manager object
    */
   void *o2scl_create_acol_manager() {
     o2scl_acol::acol_manager *amp=new o2scl_acol::acol_manager;
@@ -410,7 +410,8 @@ extern "C" {
     return amp;
   }
   
-  /** \brief Desc
+  /** \brief Free memory associated with a \ref
+      o2scl_acol::acol_manager object
    */
   void o2scl_free_acol_manager(void *vp) {
     o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
@@ -418,7 +419,8 @@ extern "C" {
     return;
   }
 
-  /** \brief Desc
+  /** \brief Construct a string vector from the data in 
+      \c n_entries, \c sizes, and \c str
    */
   std::vector<std::string> o2scl_acol_parse_arrays
   (int n_entries, int *sizes, char *str) {
@@ -435,7 +437,8 @@ extern "C" {
     return list;
   }
   
-  /** \brief Desc
+  /** \brief Parse the set of commands in \c n_entries, \c sizes
+      and \c str
    */
   void o2scl_acol_parse(void *vp, int n_entries, int *sizes, 
 			char *str) {
@@ -447,10 +450,11 @@ extern "C" {
     return;
   }
 
-  /** \brief Desc
+  /** \brief Return the size and a pointer to the column
+      named \c col_name in a table object
    */
-  int o2scl_acol_get_column(void *vp, std::string col_name,
-			    int &n, double *ptr) {
+  int o2scl_acol_get_column(void *vp, char *col_name,
+			    int &n, double *&ptr) {
     o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
     if (amp->threed) {
       std::cout << "Cannot get column for table3d object."
@@ -462,7 +466,8 @@ extern "C" {
       return 2;
     }
     n=amp->tabp->get_nlines();
-    const std::vector<double> &col=amp->tabp->get_column(col_name);
+    std::string stmp=col_name;
+    const std::vector<double> &col=amp->tabp->get_column(stmp);
     ptr=(double *)&col[0];
     return 0;
   }
