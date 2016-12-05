@@ -384,6 +384,10 @@ namespace o2scl_acol {
       return 0;
     }
 
+    virtual int comm_none(std::vector<std::string> &sv, bool itive_com) {
+      return 0;
+    }
+
   protected:
     
     /// An internal command for prompting the user for command arguments
@@ -397,7 +401,7 @@ namespace o2scl_acol {
 		      std::string &in, std::string comm_name,
 		      bool itive_com);
   };
-
+  
 }
 
 extern "C" {
