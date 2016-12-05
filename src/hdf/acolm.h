@@ -211,7 +211,9 @@ namespace o2scl_acol {
     */
     virtual int run(int argv, char *argc[]);
 
-    virtual int run_base();
+    /** \brief For o2graph in o2sclpy
+     */
+    virtual int run_o2graph();
     
     /// Create the cli object (with readline support if available)
     virtual int setup_cli();
@@ -410,7 +412,7 @@ extern "C" {
    */
   void *o2scl_create_acol_manager() {
     o2scl_acol::acol_manager *amp=new o2scl_acol::acol_manager;
-    amp->run_base();
+    amp->run_o2graph();
     return amp;
   }
   

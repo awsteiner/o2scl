@@ -585,7 +585,7 @@ int acol_manager::run(int argc, char *argv[]) {
 
 }
 
-int acol_manager::run_base() {
+int acol_manager::run_o2graph() {
 
   //--------------------------------------------------------------------
   // Default to scientific mode
@@ -651,6 +651,11 @@ int acol_manager::run_base() {
 
   if (true) {
     
+    this->cl->cmd_name="o2graph";
+    
+    this->cl->desc=((string)"o2graph: A data viewing and ")+
+      "processing program for O2scl.\n";
+  
     const int cl_param=o2scl::cli::comm_option_cl_param;
     const int both=o2scl::cli::comm_option_both;
     
