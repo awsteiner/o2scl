@@ -101,13 +101,6 @@ namespace o2scl_acol {
     o2scl::format_float ffl;
 #endif
 
-#ifdef DOXYGEN
-    /// Pointer to the three dimensional table
-    table3d *t3p;
-#else
-    o2scl::table3d *t3p;
-#endif
-
     /// Convert units object (initialized by constructor to global object)
     o2scl::convert_units &cng;
 
@@ -161,6 +154,10 @@ namespace o2scl_acol {
 
   public:
 
+    acol_manager();
+
+    virtual ~acol_manager() {}
+
 #ifdef DOXYGEN
     /// A pointer to the table
     table_units<> *tabp;
@@ -178,9 +175,12 @@ namespace o2scl_acol {
     o2scl::cli *cl;
 #endif
 
-    acol_manager();
-
-    virtual ~acol_manager() {}
+#ifdef DOXYGEN
+    /// Pointer to the three dimensional table
+    table3d *t3p;
+#else
+    o2scl::table3d *t3p;
+#endif
 
     /** \brief True if we should run interactive mode after parsing
 	the command-line
@@ -402,6 +402,15 @@ namespace o2scl_acol {
     int get_input_one(std::vector<std::string> &sv, std::string directions,
 		      std::string &in, std::string comm_name,
 		      bool itive_com);
+    
+  public:
+    
+    /// \name Temporary storage for get slice
+    //@{
+    std::vector<double> xtemp;
+    std::vector<double> ytemp;
+    std::vector<double> stemp;
+    //@}
   };
   
 }
@@ -475,6 +484,47 @@ extern "C" {
     std::string stmp=col_name;
     const std::vector<double> &col=amp->tabp->get_column(stmp);
     ptr=(double *)&col[0];
+    return 0;
+  }
+
+  /** \brief Return the size and a pointer to the column
+      named \c col_name in a table object
+   */
+  int o2scl_acol_get_slice(void *vp, char *slice_name,
+			   int &nx, double *&xptr,
+			   int &ny, double *&yptr,
+			   double *&data) {
+    o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
+    if (!amp->threed) {
+      std::cout << "No table3d object loaded."
+		<< std::endl;
+      return 1;
+    }
+    if (amp->t3p==0) {
+      std::cerr << "No table3d object loaded." << std::endl;
+      return 2;
+    }
+
+    nx=amp->t3p->get_nx();
+    amp->xtemp.resize(nx);
+    o2scl::vector_copy(amp->t3p->get_x_data(),amp->xtemp);
+    xptr=(double *)&amp->xtemp[0];
+
+    ny=amp->t3p->get_ny();
+    amp->ytemp.resize(ny);
+    o2scl::vector_copy(amp->t3p->get_y_data(),amp->ytemp);
+    yptr=(double *)&amp->ytemp[0];
+
+    amp->stemp.resize(nx*ny);
+    std::string stmp=slice_name;
+    typedef boost::numeric::ublas::matrix<double> ubmatrix;
+    const ubmatrix &m=amp->t3p->get_slice(stmp);
+    for(size_t i=0;i<nx;i++) {
+      for(size_t j=0;j<ny;j++) {
+	amp->stemp[i*ny+j]=m(i,j);
+      }
+    }
+    data=(double *)&amp->stemp[0];
     return 0;
   }
   
