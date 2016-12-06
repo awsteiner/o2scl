@@ -495,7 +495,6 @@ int acol_manager::run(int argc, char *argv[]) {
   }
   setup_help();
 
-  // 
   comm_option_mfptr<acol_manager> cset(this,&acol_manager::comm_set);
   cl->set_function(cset);
 
@@ -610,9 +609,13 @@ int acol_manager::run_o2graph() {
   }
   setup_help();
 
-  // 
-  comm_option_mfptr<acol_manager> cset(this,&acol_manager::comm_set);
-  cl->set_function(cset);
+  //-------------------------------------------------------------------
+
+  // 12/5/16: This isn't necessary, and causes problems because it's a
+  // local variable
+  
+  //comm_option_mfptr<acol_manager> cset(this,&acol_manager::comm_set);
+  //cl->set_function(cset);
 
   //-------------------------------------------------------------------
   // Process default options
@@ -649,91 +652,179 @@ int acol_manager::run_o2graph() {
 
   //-------------------------------------------------------------------
 
-  if (true) {
+  this->cl->cmd_name="o2graph";
     
-    this->cl->cmd_name="o2graph";
-    
-    this->cl->desc=((string)"o2graph: A data viewing and ")+
-      "processing program for O2scl.\n";
+  this->cl->desc=((string)"o2graph: A data viewing and ")+
+    "processing program for O2scl.\n";
   
-    const int cl_param=o2scl::cli::comm_option_cl_param;
-    const int both=o2scl::cli::comm_option_both;
+  const int cl_param=o2scl::cli::comm_option_cl_param;
+  const int both=o2scl::cli::comm_option_both;
     
-    static const size_t narr=17;
-    o2scl::comm_option_s options_arr[narr]={
-      {0,"myreds","Select a red/white gradient color map.",0,0,"","",
-       new o2scl::comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_none),
-       both},
-      {0,"plot","Plot the specified columns.",0,0,"","",
-       new o2scl::comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_none),
-       both},
-      {0,"plot1","Plot the specified column.",0,0,"","",
-       new o2scl::comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_none),
-       both},
-      {0,"plotm","Plot the specified columns from multiple files.",0,0,"","",
-       new o2scl::comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_none),
-       both},
-      {0,"plot1m","Plot the specified column from multiple files.",0,0,"","",
-       new o2scl::comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_none),
-       both},
-      {0,"contour-plot","Create a contour plot.",0,0,"","",
-       new o2scl::comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_none),
-       both},
-      {0,"hist","Create a histogram plot.",0,0,"","",
-       new o2scl::comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_none),
-       both},
-      {0,"hist2d","Create a 2-D histogram plot.",0,0,"","",
-       new o2scl::comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_none),
-       both},
-      {0,"xlimits","Set the x-axis limits",0,0,"","",
-       new o2scl::comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_none),
-       both},
-      {0,"reset-xlim","Reset the x-axis limits",0,0,"","",
-       new o2scl::comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_none),
-       both},
-      {0,"ylimits","Set the y-axis limits.",0,0,"","",
-       new o2scl::comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_none),
-       both},
-      {0,"reset-ylim","Reset the y-axis limits.",0,0,"","",
-       new o2scl::comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_none),
-       both},
-      {0,"canvas","Create a plotting canvas.",0,0,"","",
-       new o2scl::comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_none),
-       both},
-      {0,"move-labels","Move the labels.",0,0,"","",
-       new o2scl::comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_none),
-       both},
-      {0,"show","Show the current plot.",0,0,"","",
-       new o2scl::comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_none),
-       both},
-      {0,"save","Save the current plot in a file.",0,0,"","",
-       new o2scl::comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_none),
-       both},
-      {0,"den-plot","Create a density plot.",0,0,"","",
-       new o2scl::comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_none),
-       both}
-    };
+  static const size_t narr=19;
+  o2scl::comm_option_s options_arr[narr]={
+    {0,"line","Plot a line.",4,5,"<x1> <y1> <x2> <y2> [kwargs]",
+     ((std::string)"Plot a line from (x1,y1) to (xy,y2). Useful ")+
+     "kwargs are color (c), dashes, linestyle (ls), linewidth (lw).",
+     new o2scl::comm_option_mfptr<acol_manager>
+     (this,&acol_manager::comm_none),
+     both},
+    {0,"myreds","Select a red/white gradient color map.",0,0,"","",
+     new o2scl::comm_option_mfptr<acol_manager>
+     (this,&acol_manager::comm_none),
+     both},
+    {0,"plot","Plot the specified columns.",2,3,"<x> <y> [kwargs]","",
+     new o2scl::comm_option_mfptr<acol_manager>
+     (this,&acol_manager::comm_none),
+     both},
+    {0,"plot1","Plot the specified column.",1,2,"<y> [kwargs]","",
+     new o2scl::comm_option_mfptr<acol_manager>
+     (this,&acol_manager::comm_none),
+     both},
+    {0,"plotm","Plot the specified columns from multiple files.",
+     2,2,"<x> <y>","",
+     new o2scl::comm_option_mfptr<acol_manager>
+     (this,&acol_manager::comm_none),
+     both},
+    {0,"plot1m","Plot the specified column from multiple files.",
+     1,1,"<y>","",new o2scl::comm_option_mfptr<acol_manager>
+     (this,&acol_manager::comm_none),
+     both},
+    {0,"contour-plot","Create a contour plot.",0,0,"","",
+     new o2scl::comm_option_mfptr<acol_manager>
+     (this,&acol_manager::comm_none),
+     both},
+    {0,"hist","Create a histogram plot.",0,0,"","",
+     new o2scl::comm_option_mfptr<acol_manager>
+     (this,&acol_manager::comm_none),
+     both},
+    {0,"hist2d","Create a 2-D histogram plot.",0,0,"","",
+     new o2scl::comm_option_mfptr<acol_manager>
+     (this,&acol_manager::comm_none),
+     both},
+    {0,"xlimits","Set the x-axis limits.",2,2,"<low> <high>","",
+     new o2scl::comm_option_mfptr<acol_manager>
+     (this,&acol_manager::comm_none),
+     both},
+    {0,"reset-xlim","Reset the x-axis limits.",0,0,"","",
+     new o2scl::comm_option_mfptr<acol_manager>
+     (this,&acol_manager::comm_none),
+     both},
+    {0,"ylimits","Set the y-axis limits.",2,2,"<low> <high>","",
+     new o2scl::comm_option_mfptr<acol_manager>
+     (this,&acol_manager::comm_none),
+     both},
+    {0,"reset-ylim","Reset the y-axis limits.",0,0,"","",
+     new o2scl::comm_option_mfptr<acol_manager>
+     (this,&acol_manager::comm_none),
+     both},
+    {0,"canvas","Create a plotting canvas.",0,0,"","",
+     new o2scl::comm_option_mfptr<acol_manager>
+     (this,&acol_manager::comm_none),
+     both},
+    {0,"move-labels","Move the labels.",0,0,"","",
+     new o2scl::comm_option_mfptr<acol_manager>
+     (this,&acol_manager::comm_none),
+     both},
+    {0,"show","Show the current plot.",0,0,"","",
+     new o2scl::comm_option_mfptr<acol_manager>
+     (this,&acol_manager::comm_none),
+     both},
+    {0,"save","Save the current plot in a file.",1,1,"<filename>","",
+     new o2scl::comm_option_mfptr<acol_manager>
+     (this,&acol_manager::comm_none),
+     both},
+    {0,"den-plot","Create a density plot.",1,1,"<slice name>","",
+     new o2scl::comm_option_mfptr<acol_manager>
+     (this,&acol_manager::comm_none),
+     both},
+    {0,"plot-files","Specify a list of files for 'plotm' and 'plot1m'.",1,-1,
+     "<file 1> [file 2] ...","",
+     new o2scl::comm_option_mfptr<acol_manager>
+     (this,&acol_manager::comm_none),
+     both}
+  };
       
-    this->cl->set_comm_option_vec(narr,options_arr);
-  }
-  
+  this->cl->set_comm_option_vec(narr,options_arr);
+
+  this->cl->addl_help_cmd="";
+  this->cl->addl_help_cli="";
+
+  cmap="";
+  xtitle="";
+  ytitle="";
+  xlo=0.0;
+  xhi=0.0;
+  ylo=0.0;
+  yhi=0.0;
+  zlo=0.0;
+  zhi=0.0;
+  xset=false;
+  yset=false;
+  zset=false;
+  colbar=false;
+  logx=false;
+  logy=false;
+    
+  p_cmap.str=&cmap;
+  p_cmap.help="Name of the color map.";
+  cl->par_list.insert(make_pair("cmap",&p_cmap));
+      
+  p_xtitle.str=&xtitle;
+  p_xtitle.help="X-axis title.";
+  cl->par_list.insert(make_pair("xtitle",&p_xtitle));
+      
+  p_ytitle.str=&ytitle;
+  p_ytitle.help="Y-axis title.";
+  cl->par_list.insert(make_pair("ytitle",&p_ytitle));
+      
+  p_xlo.d=&xlo;
+  p_xlo.help="Lower limit for x-axis.";
+  cl->par_list.insert(make_pair("xlo",&p_xlo));
+
+  p_xhi.d=&xhi;
+  p_xhi.help="Upper limit for x-axis.";
+  cl->par_list.insert(make_pair("xhi",&p_xhi));
+
+  p_ylo.d=&ylo;
+  p_ylo.help="Lower limit for y-axis.";
+  cl->par_list.insert(make_pair("ylo",&p_ylo));
+
+  p_yhi.d=&yhi;
+  p_yhi.help="Upper limit for y-axis.";
+  cl->par_list.insert(make_pair("yhi",&p_yhi));
+
+  p_zlo.d=&zlo;
+  p_zlo.help="Lower limit for z-axis.";
+  cl->par_list.insert(make_pair("zlo",&p_zlo));
+
+  p_zhi.d=&zhi;
+  p_zhi.help="Upper limit for z-axis.";
+  cl->par_list.insert(make_pair("zhi",&p_zhi));
+
+  p_xset.b=&xset;
+  p_xset.help="If true, x-axis limits have been set.";
+  cl->par_list.insert(make_pair("xset",&p_xset));
+
+  p_yset.b=&yset;
+  p_yset.help="If true, y-axis limits have been set.";
+  cl->par_list.insert(make_pair("yset",&p_yset));
+
+  p_zset.b=&zset;
+  p_zset.help="If true, z-axis limits have been set.";
+  cl->par_list.insert(make_pair("zset",&p_zset));
+
+  p_colbar.b=&colbar;
+  p_colbar.help="If true, den-plot adds a color legend.";
+  cl->par_list.insert(make_pair("colbar",&p_colbar));
+
+  p_logx.b=&logx;
+  p_logx.help="If true, use a logarithmic x-axis.";
+  cl->par_list.insert(make_pair("logx",&p_logx));
+
+  p_logy.b=&logy;
+  p_logy.help="If true, use a logarithmic y-axis.";
+  cl->par_list.insert(make_pair("logy",&p_logy));
+    
   return 0;
   
 }
