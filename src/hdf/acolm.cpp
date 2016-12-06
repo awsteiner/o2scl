@@ -66,7 +66,7 @@ int acol_manager::setup_options() {
   // Options, sorted by long name. We allow 0 parameters in many of these
   // options so they can be requested from the user in interactive mode. 
   comm_option_s options_arr[narr]={
-    {'a',"assign","Assign a constant, e.g. assign pi acos(-1)",
+    {'a',"assign","Assign a constant., e.g. assign pi acos(-1)",
      0,2,"<name> [val]",
      ((string)"Assign a constant value to a name for the present table. ")+
      "Valid constant values are things like 1.618 or acos(-1.0) or sin(4^5). "
@@ -88,7 +88,7 @@ int acol_manager::setup_options() {
      "current table3d object.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_cat),
      both},
-    {0,"convert-unit","Convert a column to a new unit",0,2,
+    {0,"convert-unit","Convert a column to a new unit.",0,2,
      "<column> <new_unit>",((string)"(This command only works if ")+
      "the GNU 'units' command is installed and available in the current "+
      "path.) Convert the units of a column to <new unit>, multipliying "+
@@ -275,7 +275,7 @@ int acol_manager::setup_options() {
      "preserving), and 7 (Steffen's monotonic).",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_interp_type),
      both},
-    {'P',"preview","Preview the current table",0,1,"[nlines]",
+    {'P',"preview","Preview the current table.",0,1,"[nlines]",
      ((string)"Print out [nlines] lines of data for as many columns as ")+
      "will fit on the screen. The value of [nlines] defaults to 10. ",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_preview),
@@ -327,7 +327,7 @@ int acol_manager::setup_options() {
      "in the unit cache.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_show_units),
      both},
-    {0,"slice","Construct a slice (table3d only)",2,2,"<x or y> <value>",
+    {0,"slice","Construct a slice (table3d only).",2,2,"<x or y> <value>",
      ((string)""),
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_slice),
      both},
