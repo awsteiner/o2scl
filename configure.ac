@@ -159,6 +159,22 @@ AC_ARG_ENABLE(readline,
 AM_CONDITIONAL(O2SCL_READLINE, test x$readline = xtrue)
 
 # ----------------------------------------------
+# If enabled, check for the readline library
+# ----------------------------------------------
+
+AS_IF([test "x$enable_readline" != "xno"], [
+
+AC_CHECK_LIB([readline], [add_history], [],
+	[echo ""
+        echo "Readline not found. "
+	echo ""
+	echo -n " The present value of LDFLAGS is: "
+	echo $LDFLAGS
+	],[])
+
+])
+
+# ----------------------------------------------
 # Enable or disable HDF5 support
 # ----------------------------------------------
 
