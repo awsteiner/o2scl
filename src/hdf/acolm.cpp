@@ -61,7 +61,7 @@ int acol_manager::setup_options() {
   const int cl_param=cli::comm_option_cl_param;
   const int both=cli::comm_option_both;
 
-  static const int narr=44;
+  static const int narr=45;
 
   // Options, sorted by long name. We allow 0 parameters in many of these
   // options so they can be requested from the user in interactive mode. 
@@ -104,6 +104,11 @@ int acol_manager::setup_options() {
      "arithmetic may cause small deviations from the expected result. "+
      "If a table is currently in memory, it is deallocated beforehand. ",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_create),
+     both},
+    {0,"create3","Create a table3d object.",
+     0,10,((std::string)"<x name> <x lo> <x hi> <x step> ")+
+     "<y name> <y lo> <y hi> <y step> <slice name> <slice function>","",
+     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_create3),
      both},
     {0,"delete-col","Delete a column (table3d only).",0,1,"<name>",
      "Delete the entire column named <name>.",
@@ -660,33 +665,60 @@ int acol_manager::run_o2graph() {
   const int cl_param=o2scl::cli::comm_option_cl_param;
   const int both=o2scl::cli::comm_option_both;
     
-  static const size_t narr=19;
+  static const size_t narr=20;
   o2scl::comm_option_s options_arr[narr]={
     {0,"line","Plot a line.",4,5,"<x1> <y1> <x2> <y2> [kwargs]",
-     ((std::string)"Plot a line from (x1,y1) to (xy,y2). Useful ")+
-     "kwargs are color (c), dashes, linestyle (ls), linewidth (lw).",
+     ((std::string)"Plot a line from (x1,y1) to (xy,y2). Some useful ")+
+     "kwargs are color (c), dashes, linestyle (ls), linewidth (lw), "+
+     "marker, markeredgecolor (mec), markeredgewidth (mew), "+
+     "markerfacecolor (mfc), markerfacecoloralt (mfcalt), markersize "+
+     "(ms). For example: o2graph -line 0.05 0.05 0.95 0.95 "+
+     "lw=0,marker='+' -show",
      new o2scl::comm_option_mfptr<acol_manager>
-     (this,&acol_manager::comm_none),
-     both},
+     (this,&acol_manager::comm_none),both},
     {0,"myreds","Select a red/white gradient color map.",0,0,"","",
      new o2scl::comm_option_mfptr<acol_manager>
-     (this,&acol_manager::comm_none),
-     both},
-    {0,"plot","Plot the specified columns.",2,3,"<x> <y> [kwargs]","",
+     (this,&acol_manager::comm_none),both},
+    {0,"plot","Plot the specified columns.",2,3,"<x> <y> [kwargs]",
+     ((std::string)"Plot column <y> versus column <x>. Some useful ")+
+     "kwargs are color (c), dashes, linestyle (ls), linewidth (lw), "+
+     "marker, markeredgecolor (mec), markeredgewidth (mew), "+
+     "markerfacecolor (mfc), markerfacecoloralt (mfcalt), markersize "+
+     "(ms). For example: o2graph -create x 0 10 0.2 -function \"sin(x)\" "+
+     "y -plot x y lw=0,marker='+' -show",
      new o2scl::comm_option_mfptr<acol_manager>
-     (this,&acol_manager::comm_none),
-     both},
-    {0,"plot1","Plot the specified column.",1,2,"<y> [kwargs]","",
+     (this,&acol_manager::comm_none),both},
+    {0,"plot1","Plot the specified column.",1,2,"<y> [kwargs]",
+     ((std::string)"Plot column <y> versus row number. Some useful ")+
+     "kwargs are color (c), dashes, linestyle (ls), linewidth (lw), "+
+     "marker, markeredgecolor (mec), markeredgewidth (mew), "+
+     "markerfacecolor (mfc), markerfacecoloralt (mfcalt), markersize "+
+     "(ms). For example: o2 -create x 0 10 0.2 -function \"sin(x)\" "+
+     "y -plot1 y ls='--',marker='o' -show",
      new o2scl::comm_option_mfptr<acol_manager>
-     (this,&acol_manager::comm_none),
-     both},
+     (this,&acol_manager::comm_none),both},
     {0,"plotm","Plot the specified columns from multiple files.",
-     2,2,"<x> <y>","",
+     2,2,"<x> <y>",((std::string)"After using -plot-files to specify ")+
+     "a list of files, plot column <y> versus column <x> for all "+
+     "of the specified files. Some useful "+
+     "kwargs are color (c), dashes, linestyle (ls), linewidth (lw), "+
+     "marker, markeredgecolor (mec), markeredgewidth (mew), "+
+     "markerfacecolor (mfc), markerfacecoloralt (mfcalt), markersize "+
+     "(ms). For example: o2graph -plot-files file1.o2 file2.o "+
+     "-plotm xcol ycol lw=0,marker='+' -show",
      new o2scl::comm_option_mfptr<acol_manager>
      (this,&acol_manager::comm_none),
      both},
     {0,"plot1m","Plot the specified column from multiple files.",
-     1,1,"<y>","",new o2scl::comm_option_mfptr<acol_manager>
+     1,1,"<y>",((std::string)"After using -plot-files to specify ")+
+     "a list of files, plot column <y> versus row numberfor all "+
+     "of the specified files. Some useful "+
+     "kwargs are color (c), dashes, linestyle (ls), linewidth (lw), "+
+     "marker, markeredgecolor (mec), markeredgewidth (mew), "+
+     "markerfacecolor (mfc), markerfacecoloralt (mfcalt), markersize "+
+     "(ms). For example: o2graph -plot-files file1.o2 file2.o "+
+     "-plot1m ycol lw=0,marker='+' -show",
+     new o2scl::comm_option_mfptr<acol_manager>
      (this,&acol_manager::comm_none),
      both},
     {0,"contour-plot","Create a contour plot.",0,0,"","",
@@ -701,23 +733,45 @@ int acol_manager::run_o2graph() {
      new o2scl::comm_option_mfptr<acol_manager>
      (this,&acol_manager::comm_none),
      both},
-    {0,"xlimits","Set the x-axis limits.",2,2,"<low> <high>","",
+    {0,"xlimits","Set the x-axis limits.",2,2,"<low> <high>",
+     ((std::string)"Set 'xlo' and 'xhi' to the specified limits, ")+
+     "and set 'xset' to true. If a plotting canvas is currently open, then "+
+     "the x-limits on that plot are modified. Future plots are also "+
+     "set with the specified x-limits.",
      new o2scl::comm_option_mfptr<acol_manager>
      (this,&acol_manager::comm_none),
      both},
-    {0,"reset-xlim","Reset the x-axis limits.",0,0,"","",
+    {0,"reset-xlim","Reset the x-axis limits.",0,0,"",
+     ((std::string)"This is an alias for 'set xset 0', and indicates ")+
+     "that the values of 'xlo' and 'xhi' are to be ignored until the "
+     "next call to 'xlimits'.",
      new o2scl::comm_option_mfptr<acol_manager>
      (this,&acol_manager::comm_none),
      both},
-    {0,"ylimits","Set the y-axis limits.",2,2,"<low> <high>","",
+    {0,"ylimits","Set the y-axis limits.",2,2,"<low> <high>",
+     ((std::string)"Set 'ylo' and 'yhi' to the specified limits, ")+
+     "and set 'yset' to true. If a plotting canvas is currently open, then "+
+     "the y-limits on that plot are modified. Future plots are also "+
+     "set with the specified y-limits.",
      new o2scl::comm_option_mfptr<acol_manager>
      (this,&acol_manager::comm_none),
      both},
-    {0,"reset-ylim","Reset the y-axis limits.",0,0,"","",
+    {0,"reset-ylim","Reset the y-axis limits.",0,0,"",
+     ((std::string)"This is an alias for 'set yset 0', and indicates ")+
+     "that the values of 'ylo' and 'yhi' are to be ignored until the "
+     "neyt call to 'ylimits'.",
      new o2scl::comm_option_mfptr<acol_manager>
      (this,&acol_manager::comm_none),
      both},
-    {0,"canvas","Create a plotting canvas.",0,0,"","",
+    {0,"canvas","Create a plotting canvas.",0,0,"",
+     "Create an empty plotting canvas. For example 'o2graph -canvas -show'.",
+     new o2scl::comm_option_mfptr<acol_manager>
+     (this,&acol_manager::comm_none),both},
+    {0,"backend","Select the matplotlib backend to use.",1,1,"<backend>",
+     ((std::string)"This selects the matplotlib backend. ")+
+     "Typical values are 'Agg', 'TkAgg', 'WX', 'QTAgg', 'QT4Agg'. "+
+     "Use -backend Agg to save the plot to a file without "+
+     "opening a window.",
      new o2scl::comm_option_mfptr<acol_manager>
      (this,&acol_manager::comm_none),
      both},
@@ -725,14 +779,19 @@ int acol_manager::run_o2graph() {
      new o2scl::comm_option_mfptr<acol_manager>
      (this,&acol_manager::comm_none),
      both},
-    {0,"show","Show the current plot.",0,0,"","",
+    {0,"show","Show the current plot.",0,0,"",
+     ((std::string)"Show the current plot on the screen and begin ")+
+     "the graphical user interface. This is similar to plot.show().",
      new o2scl::comm_option_mfptr<acol_manager>
      (this,&acol_manager::comm_none),
      both},
-    {0,"save","Save the current plot in a file.",1,1,"<filename>","",
-     new o2scl::comm_option_mfptr<acol_manager>
-     (this,&acol_manager::comm_none),
-     both},
+    {0,"save","Save the current plot in a file.",1,1,"<filename>",
+     ((std::string)"Save the current plot in a file similar ")+
+     "to plot.savefig(). The action of this command depends on "+
+     "which backend was selected. File type depends on the "+
+     "extension, typically either .png, .pdf, .eps, .jpg, .raw, .svg, "+
+     "and .tif .",new o2scl::comm_option_mfptr<acol_manager>
+     (this,&acol_manager::comm_none),both},
     {0,"den-plot","Create a density plot.",1,1,"<slice name>","",
      new o2scl::comm_option_mfptr<acol_manager>
      (this,&acol_manager::comm_none),
@@ -766,15 +825,28 @@ int acol_manager::run_o2graph() {
   logy=false;
     
   p_cmap.str=&cmap;
-  p_cmap.help="Name of the color map.";
+  p_cmap.help=((std::string)"Name of the color map for 'den-plot'. ")+
+    "Perceptually uniform sequential maps are 'viridis', 'inferno', "+
+    "'plasma', and 'magma'. Sequential maps are 'Blues', 'BuGn', 'BuPu', "+
+    "'GnBu', 'Greens', 'Greys', 'Oranges', 'OrRd', 'PuBu', 'PuBuGn', "+
+    "'PuRd', 'Purples', 'RdPu', 'Reds', 'YlGn', 'YlGnBu', 'YlOrBr', "+
+    "'YlOrRd', 'afmhot', 'autumn', 'bone', 'cool', 'copper', "+
+    "'gist_heat', 'gray', 'hot', 'pink', 'spring', 'summer', and 'winter'. "+
+    "Diverging maps are 'BrBG', 'bwr', 'coolwarm', 'PiYG', 'PRGn', 'PuOr', "+
+    "'RdBu', 'RdGy', 'RdYlBu', 'RdYlGn', 'Spectral', and 'seismic'. "+
+    "Qualitative maps are 'Accent', 'Dark2', 'Paired', 'Pastel1', "+
+    "'Pastel2', 'Set1', 'Set2', and 'Set3'. Miscellaneous maps are "+
+    "'gist_earth', 'terrain', 'ocean', 'gist_stern', 'brg', 'CMRmap', "+
+    "'cubehelix', 'gnuplot', 'gnuplot2', 'gist_ncar', 'nipy_spectral', "+
+    "'jet', 'rainbow', 'gist_rainbow', 'hsv', 'flag', 'prism'.";
   cl->par_list.insert(make_pair("cmap",&p_cmap));
       
   p_xtitle.str=&xtitle;
-  p_xtitle.help="X-axis title.";
+  p_xtitle.help="X-axis title. Latex works, e.g. '$\\phi$' and '$\\hat{x}$'.";
   cl->par_list.insert(make_pair("xtitle",&p_xtitle));
-      
+  
   p_ytitle.str=&ytitle;
-  p_ytitle.help="Y-axis title.";
+  p_ytitle.help="Y-axis title. Latex works, e.g. '$\\phi$' and '$\\hat{x}$'.";
   cl->par_list.insert(make_pair("ytitle",&p_ytitle));
       
   p_xlo.d=&xlo;
@@ -3759,6 +3831,80 @@ int acol_manager::comm_delete_col(std::vector<std::string> &sv,
 
   tabp->delete_column(i1);
 
+  return 0;
+}
+
+int acol_manager::comm_create3(std::vector<std::string> &sv,
+			       bool itive_com) {
+
+  std::string in[10], pr[10]=
+    {"Enter x-axis name (or blank to stop): ",
+     "Enter x-axis lower limit (or blank to stop): ",
+     "Enter x-axis upper limit (or blank to stop): ",
+     "Enter x-axis step size (or blank to stop): ",
+     "Enter y-axis name (or blank to stop): ",
+     "Enter y-axis lower limit (or blank to stop): ",
+     "Enter y-axis upper limit (or blank to stop): ",
+     "Enter y-axis step size (or blank to stop): ",
+     "Enter slice name (or blank to stop): ",
+     "Enter slice function (or blank to stop): "};
+  
+  if (sv.size()>10) {
+    in[0]=sv[1];
+    in[1]=sv[2];
+    in[2]=sv[3];
+    in[3]=sv[4];
+    in[4]=sv[5];
+    in[5]=sv[6];
+    in[6]=sv[7];
+    in[7]=sv[8];
+    in[8]=sv[9];
+    in[9]=sv[10];
+  } else {
+    if (itive_com) {
+      for(size_t is=0;is<10;is++) {
+	in[is]=cl->cli_gets(pr[is].c_str());
+	if (in[is].length()==0) {
+	  cout << "Command 'create3' cancelled." << endl;
+	  return 0;
+	}
+      }
+    } else {
+      cerr << "Not enough arguments to 'create3'" << endl;
+      return exc_efailed;
+    }
+  }
+  
+  if (tabp!=0) {
+    delete tabp;
+    tabp=0;
+  }
+  if (t3p!=0) {
+    delete t3p;
+    t3p=0;
+  }
+  threed=true;
+  t3p=new table3d;
+
+  std::string xname=in[0];
+  double x0=function_to_double(in[1]);
+  double x1=function_to_double(in[2]);
+  double dx=function_to_double(in[3]);
+  uniform_grid_end<double> ugx(x0,x1,((size_t)(x1-x0)/(dx*(1.0-1.0e-14))));
+  
+  std::string yname=in[4];
+  double y0=function_to_double(in[5]);
+  double y1=function_to_double(in[6]);
+  double dy=function_to_double(in[7]);
+  uniform_grid_end<double> ugy(y0,y1,((size_t)(y1-y0)/(dy*(1.0-1.0e-14))));
+
+  std::string zname=in[8];
+  std::string zfunc=in[9];
+
+  t3p->set_xy(xname,ugx,yname,ugy);
+
+  t3p->function_slice(zfunc,zname);
+  
   return 0;
 }
 

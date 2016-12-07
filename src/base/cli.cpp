@@ -807,7 +807,7 @@ int cli::output_param_list() {
 	string bufx;
 	for(size_t j=0;j<desc2.size();j++) {
 	  if (j!=0 && bufx.length()+desc2[j].length()>78) {
-	    cout << bufx << endl;
+	    cout << bufx << endl << " ";
 	    bufx="";
 	  }
 	  bufx+=desc2[j]+" ";

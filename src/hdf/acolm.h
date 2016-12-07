@@ -236,6 +236,9 @@ namespace o2scl_acol {
     /// Create a table from a column of equally spaced values
     virtual int comm_create(std::vector<std::string> &sv, bool itive_com);
 
+    /// Create a table3d object
+    virtual int comm_create3(std::vector<std::string> &sv, bool itive_com);
+
     /// Delete a column
     virtual int comm_delete_col(std::vector<std::string> &sv, bool itive_com);
 
