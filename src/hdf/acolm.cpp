@@ -670,7 +670,7 @@ int acol_manager::run_o2graph() {
   const int cl_param=o2scl::cli::comm_option_cl_param;
   const int both=o2scl::cli::comm_option_both;
     
-  static const size_t narr=20;
+  static const size_t narr=22;
   o2scl::comm_option_s options_arr[narr]={
     {0,"line","Plot a line.",4,5,"<x1> <y1> <x2> <y2> [kwargs]",
      ((std::string)"Plot a line from (x1,y1) to (xy,y2). Some useful ")+
