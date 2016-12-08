@@ -931,6 +931,53 @@ namespace o2scl {
     return vector_smallest(n,data,k,smallest);
   }
 
+  template<class vec_t, class data_t, class vec_size_t>
+    void vector_smallest_index(size_t n, vec_t &data, size_t k,
+			       vec_size_t &index) {
+    if (k>n) {
+      O2SCL_ERR2("Subset length greater than size in ",
+		 "function vector_smallest_index().",exc_einval);
+    }
+    if (k==0 || n==0) {
+      O2SCL_ERR2("Vector size zero or k zero in ",
+		 "function vector_smallest_index().",exc_einval);
+    }
+
+    index.resize(k);
+
+    // [GSL] Take the first element
+    size_t j=1;
+    data_t xbound=data[0];
+    index[0]=0;
+
+    // [GSL] Examine the remaining elements
+    for(size_t i=1;i<n;i++) {
+      data_t xi=data[i];
+      if (j<k) {
+	j++;
+      } else if (xi>=xbound) {
+	continue;
+      }
+      size_t i1;
+      for(i1=j-1;i1>0;i1--) {
+	if (xi>data[index[i1-1]]) break;
+	index[i1]=index[i1-1];
+      }
+      index[i1]=i;
+      xbound=data[index[j-1]];
+    }
+    return;
+  }
+
+  template<class vec_t, class data_t, class vec_size_t>
+    void vector_smallest_index(vec_t &data, size_t k,
+			       vec_size_t &index) {
+    size_t n=data.size();
+    if (index.size()<k) index.resize(k);
+    return o2scl::vector_smallest_index<vec_t,data_t,vec_size_t>
+      (n,data,k,index);
+  }
+
   /** \brief Find the k largest entries of the first \c n elements
       of a vector
 

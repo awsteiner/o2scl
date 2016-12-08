@@ -45,7 +45,7 @@ namespace o2scl {
 
       This class performs interpolation on a multi-dimensional data
       set specified as a series of scattered points using the inverse
-      distance-weighted average of the nearest three points. The
+      distance-weighted average of nearby points. The
       function \ref set_data() takes as input: the number of
       dimensions, the number of points which specify the data, and a
       "vector of vectors", e.g. <tt>std::vector<std::vector<double>
@@ -62,165 +62,221 @@ namespace o2scl {
       data_set=false;
       scales.resize(1);
       scales[0]=1.0;
+      order=3;
     }
 
-    /// Distance scales for each coordinate
-    ubvector scales;
+    /** \brief Set the number of closest points to use
+	for each interpolation (default 3)
+    */
+    void set_order(size_t n) {
+      if (n==0) {
+	O2SCL_ERR("Order cannot be zero in interpm_idw.",
+		  o2scl::exc_einval);
+      }
+      order=n;
+      return;
+    }
 
-    /** \brief Initialize the data for the interpolation
-
-	The object \c vecs should be a vector (of size <tt>dim+1</tt>)
-	of vectors (all of size <tt>n_points</tt>). It may have any
-	type for which the data can be accessed through 
-	<tt>operator[][]</tt>. 
+    /** \brief Set the scales for the distance metric
      */
+    template<class vec2_t> void set_scales(size_t n, vec2_t &v) {
+      if (n==0) {
+	O2SCL_ERR("Scale vector size cannot be zero in interpm_idw.",
+		  o2scl::exc_einval);
+      }
+      scales.resize(n);
+      o2scl::vector_copy(n,v,scales);
+      return;
+    }
+    
+      /** \brief Initialize the data for the interpolation
+
+	The object \c vecs should be a vector (of size <tt>n_in+n_out</tt>)
+	of vectors (all of size <tt>n_points</tt>). It may have be
+	any time which allows the use of <tt>std::swap</tt> for
+	each vector in the list. 
+    */
     template<class vec_vec_t>
-      void set_data(size_t dim, size_t n_points, vec_vec_t &vecs) {
+      void set_data(size_t n_in, size_t n_out, size_t n_points,
+		    vec_vec_t &vecs, bool auto_scale=true) {
 
       if (n_points<3) {
 	O2SCL_ERR2("Must provide at least three points in ",
-		       "interpm_idw::set_data()",exc_efailed);
+		   "interpm_idw::set_data()",exc_efailed);
+      }
+      if (n_in<1) {
+	O2SCL_ERR2("Must provide at least one input column in ",
+		   "interpm_idw::set_data()",exc_efailed);
+      }
+      if (n_out<1) {
+	O2SCL_ERR2("Must provide at least one output column in ",
+		   "interpm_idw::set_data()",exc_efailed);
       }
       np=n_points;
-      nd=dim;
-      ptrs.resize(dim+1);
-      for(size_t i=0;i<dim+1;i++) {
-	ptrs[i]=&vecs[i];
+      nd_in=n_in;
+      nd_out=n_out;
+      ptrs.resize(n_in+n_out);
+      for(size_t i=0;i<n_in+n_out;i++) {
+	std::swap(ptrs[i],vecs[i]);
       }
       data_set=true;
+
+      if (auto_scale) {
+	scales.resize(n_in);
+	for(size_t i=0;i<n_in;i++) {
+	  scales[i]=fabs(o2scl::vector_max_value<vec_t,double>(ptrs[i])-
+			 o2scl::vector_min_value<vec_t,double>(ptrs[i]));
+	}
+      }
 
       return;
     }
 
-    /** \brief Perform the interpolation 
+      /** \brief Initialize the data for the interpolation
+
+	The object \c vecs should be a vector (of size <tt>n_in+1</tt>)
+	of vectors (all of size <tt>n_points</tt>). It may have be
+	any time which allows the use of <tt>std::swap</tt> for
+	each vector in the list. 
     */
-    template<class vec2_t> double operator()(vec2_t &x) const {
+    template<class vec_vec_t>
+      void set_data(size_t n_in, size_t n_points,
+		    vec_vec_t &vecs, bool auto_scale=true) {
+      set_data(n_in,1,n_points,vecs,auto_scale);
+	return;
+    }
+
+    /** \brief Perform the interpolation over the first function
+     */
+    template<class vec2_t> double operator()(const vec2_t &x) const {
       return eval(x);
     }
 
-    /** \brief Perform the interpolation 
-    */
-    template<class vec2_t> double eval(vec2_t &x) const {
+    /** \brief Perform the interpolation over the first function
+     */
+    template<class vec2_t> double eval(const vec2_t &x) const {
+    
+    if (data_set==false) {
+    O2SCL_ERR("Data not set in interpm_idw::eval().",
+      exc_einval);
+  }
+    
+    // Compute distances
+    std::vector<double> dists(np);
+    for(size_t i=0;i<np;i++) {
+    dists[i]=dist(i,x);
+  }
+
+    // Find closest points
+    std::vector<size_t> index;
+    o2scl::vector_smallest_index<std::vector<double>,double,
+      std::vector<size_t> >(dists,order,index);
+
+    // Check if the closest distance is zero
+    if (dists[index[0]]<=0.0) {
+    return ptrs[nd_in][index[0]];
+  }
+
+    // Compute normalization
+    double norm=0.0;
+    for(size_t i=0;i<order;i++) {
+    norm+=1.0/dists[index[i]];
+  }
+
+    // Compute the inverse-distance weighted average
+    double ret=0.0;
+    for(size_t i=0;i<order;i++) {
+    ret+=ptrs[nd_in][index[i]]/dists[index[i]];
+  }
+    ret/=norm;
+
+    // Return the average
+    return ret;
+  }
+    
+    /** \brief Perform the interpolation over all the functions,
+	storing the result in \c y
+     */
+    template<class vec2_t, class vec3_t>
+      void eval(vec2_t &x, vec3_t &y) const {
       
-      if (data_set==false) {
-	O2SCL_ERR("Data not set in interpm_idw::eval_points().",
-		  exc_einval);
-      }
+    if (data_set==false) {
+    O2SCL_ERR("Data not set in interpm_idw::eval().",
+      exc_einval);
+  }
 
-      // Find the three closest points by
-      // exhaustively searching the data
-      
-      // Put in initial points
-      size_t i1=0; 
-      size_t i2=1; 
-      size_t i3=2;
-      double c1=dist(i1,x);
-      double c2=dist(i2,x);
-      double c3=dist(i3,x);
+    // Compute distances
+    std::vector<double> dists(np);
+    for(size_t i=0;i<np;i++) {
+    dists[i]=dist(i,x);
+  }
 
-      // Sort initial points
-      if (c2<c1) {
-	if (c3<c2) {
-	  // 321
-	  swap(i1,c1,i3,c3);
-	} else if (c3<c1) {
-	  // 231
-	  swap(i1,c1,i2,c2);
-	  swap(i2,c2,i3,c3);
-	} else {
-	  // 213
-	  swap(i1,c1,i2,c2);
-	}
-      } else {
-	if (c3<c1) {
-	  // 312
-	  swap(i1,c1,i3,c3);
-	  swap(i2,c2,i3,c3);
-	} else if (c3<c2) {
-	  // 132
-	  swap(i3,c3,i2,c2);
-	}
-	// 123
-      }
+    // Find closest points
+    std::vector<size_t> index;
+    o2scl::vector_smallest_index<std::vector<double>,double,
+      std::vector<size_t> >(dists,order,index);
 
-      // Go through remaining points and sort accordingly
-      for(size_t j=3;j<np;j++) {
-	size_t i4=j;
-	double c4=dist(i4,x);
-	if (c4<c1) {
-	  swap(i4,c4,i3,c3);
-	  swap(i3,c3,i2,c2);
-	  swap(i2,c2,i1,c1);
-	} else if (c4<c2) {
-	  swap(i4,c4,i3,c3);
-	  swap(i3,c3,i2,c2);
-	} else if (c4<c3) {
-	  swap(i4,c4,i3,c3);
-	}
-      }
+    // Check if the closest distance is zero
+    if (dists[index[0]]<=0.0) {
+    for(size_t i=0;i<nd_out;i++) {
+    y[i]=ptrs[index[0]][nd_in+i];
+  }
+  }
 
-      // The function values of the three-closest points
-      double f1=(*(ptrs[nd]))[i1];
-      double f2=(*(ptrs[nd]))[i2];
-      double f3=(*(ptrs[nd]))[i3];
+    // Compute normalization
+    double norm=0.0;
+    for(size_t i=0;i<order;i++) {
+    norm+=1.0/dists[index[i]];
+  }
 
-      // Check if any of the distances is zero
-      if (c1==0.0) {
-	return f1;
-      } else if (c2==0.0) {
-	return f2;
-      } else if (c3==0.0) {
-	return f3;
-      }
+    // Compute the inverse-distance weighted averages
+    for(size_t j=0;j<nd_out;j++) {
+    y[j]=0.0;
+    for(size_t i=0;i<order;i++) {
+    y[j]+=ptrs[nd_in][index[i]]/dists[index[i]];
+  }
+    y[j]/=norm;
+  }
 
-      // Return the inverse-distance weighed average
-      double norm=1.0/c1+1.0/c2+1.0/c3;
-      return (f1/c1+f2/c2+f3/c3)/norm;
-    }
+    return;
+  }
     
 #ifndef DOXYGEN_INTERNAL
 
   protected:
     
+    /// Distance scales for each coordinate
+    ubvector scales;
+
     /// The number of points
     size_t np;
-    /// The number of dimensions
-    size_t nd;
+    /// The number of dimensions of the inputs
+    size_t nd_in;
+    /// The number of dimensions of the outputs
+    size_t nd_out;
     /// A vector of pointers holding the data
-    std::vector<vec_t *> ptrs;
+    std::vector<vec_t> ptrs;
     /// True if the data has been specified
     bool data_set;
+    /// Number of points to include in each interpolation (default 3)
+    size_t order;
     
     /// Compute the distance between \c x and the point at index \c index
-    template<class vec2_t> double dist(size_t index, vec2_t &x) const {
-      double ret=0.0;
-      size_t nscales=scales.size();
-      for(size_t i=0;i<nd;i++) {
-	ret+=pow((x[i]-(*(ptrs[i]))[index])/scales[i%nscales],2.0);
-      }
-      return sqrt(ret);
-    }
+    template<class vec2_t> double dist(size_t index, const vec2_t &x) const {
+    double ret=0.0;
+    size_t nscales=scales.size();
+    for(size_t i=0;i<nd_in;i++) {
+    ret+=pow((x[i]-ptrs[i][index])/scales[i%nscales],2.0);
+  }
+    return sqrt(ret);
+  }
 
-    /// Swap points 1 and 2
-    int swap(size_t &index_1, double &dist_1, size_t &index_2, 
-	     double &dist_2) const {
-
-      size_t index_temp;
-      double dist_temp;
-      
-      index_temp=index_1; dist_temp=dist_1;
-      index_1=index_2; dist_1=dist_2;
-      index_2=index_temp; dist_2=dist_temp;
-      
-      return 0;
-    }
-    
 #endif
 
   };
   
 #ifndef DOXYGEN_NO_O2NS
-}
+  }
 #endif
 
 #endif

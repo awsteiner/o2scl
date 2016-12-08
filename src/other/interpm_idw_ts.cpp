@@ -63,7 +63,7 @@ int main(void) {
   dat[1]=y;
   dat[2]=dp;
 
-  imi.set_data(2,8,dat);
+  imi.set_data(2,1,8,dat);
   i2n.set_data(8,x,y,dp);
   i2p.set_data(8,x,y,dp);
 
@@ -75,6 +75,7 @@ int main(void) {
   cout << i2p.eval(0.4,0.5) << endl;
   t.test_rel(imi.eval(point),i2n.eval(0.4,0.5),8.0e-2,"imi vs. i2n 1");
   t.test_rel(imi.eval(point),i2p.eval(0.4,0.5),4.0e-2,"imi vs. i2p 1");
+  cout << endl;
 
   point[0]=0.03;
   point[1]=1.0;
