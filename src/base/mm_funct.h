@@ -113,10 +113,10 @@ namespace o2scl {
       
   protected:
       
-    /// The function parser
+    /// The function parsers
     std::vector<calculator> calc;
       
-    /// Desc
+    /// External variables to include in the function parsing
     std::map<std::string,double> vars;
       
     /// The expressions
@@ -125,7 +125,7 @@ namespace o2scl {
     /// The variables
     std::vector<std::string> st_vars;
       
-    /// Desc
+    /// The number of variables
     int st_nv;
       
     mm_funct11_strings() {};

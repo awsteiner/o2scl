@@ -57,7 +57,7 @@ namespace o2scl {
 			    vec_string_t &var_arr) {
     
       st_nv=nv;
-      st_form=expr;
+      st_funct=expr;
       st_vars.resize(nv);
       for (int i=0;i<nv;i++) {
 	calc.compile(expr.c_str(),&vars);
@@ -71,7 +71,7 @@ namespace o2scl {
       void set_function(std::string expr, int nv, vec_string_t &var_arr) {
 
       st_nv=nv;
-      st_form=expr;
+      st_funct=expr;
       st_vars.resize(nv);
       for (int i=0;i<nv;i++) {
 	calc.compile(expr.c_str(),&vars);
@@ -108,15 +108,18 @@ namespace o2scl {
 
   protected:
 
+    /// The function parser
     calculator calc;
-    /// Desc
+
+    /// External variables to include in the function parsing
     std::map<std::string,double> vars;
 
     /// The number of variables
     int st_nv;
 
-    /// The expr string
-    std::string st_form;
+    /// The function string
+    std::string st_funct;
+    
     /// The variable string
     std::vector<std::string> st_vars;
   

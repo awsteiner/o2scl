@@ -180,11 +180,7 @@ int table3d::read_gen3_list(std::istream &fin, int verbose) {
     }
 
     for(size_t i=2;i<onames.size();i++) {
-      std::cout << "Here: " << onames.size() << std::endl;
-      std::cout << "Here2: " << nnames.size() << std::endl;
       nnames.push_back(((std::string)"s")+szttos(i-1));
-      std::cout << "Here: " << onames.size() << std::endl;
-      std::cout << "Here2: " << nnames.size() << std::endl;
       if (verbose>0) std::cout << nnames[i-2] << " ";
 	  
     }

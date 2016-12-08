@@ -171,8 +171,8 @@ int acol_manager::setup_options() {
      "to contain data. ",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_generic),
      both},
-    {0,"gen3-list","Read in a generic data file (3d only).",0,1,"<file>",
-     ((string)"Desc ")+"Desc2",
+    {0,"gen3-list","Read in a generic data file (table3d only).",0,1,"<file>",
+     ((string)"This function reads in a generic data file ")+"Desc2",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_gen3_list),
      both},
     {0,"get-conv","Get a unit conversion factor.",0,2,
@@ -332,15 +332,20 @@ int acol_manager::setup_options() {
      "in the unit cache.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_show_units),
      both},
-    {0,"slice","Construct a slice (table3d only).",2,2,"<x or y> <value>",
-     ((string)""),
+    {0,"slice","Construct a slice (table3d only).",2,2,
+     "<\"x\" or \"y\"> <value>",
+     ((string)"Extract a slice of a table3d object at fixed x or fixed y ")+
+     "to create a new table object. This function uses interpolation "+
+     "with the current interpolation type to interpolate all of the "+
+     "slices in the table3d object to create a table with a column "+
+     "for each slice.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_slice),
      both},
-    {'S',"sort","Sort the entire table by a column (2d only).",0,1,"<col>",
+    {'S',"sort","Sort the entire table by a column (table only).",0,1,"<col>",
      "Sorts the entire table by the column specified in <col>. ",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sort),
      both},
-    {0,"stats","Show column statistics (2d only).",0,1,"<col>",
+    {0,"stats","Show column statistics (table only).",0,1,"<col>",
      "Output the average, std. dev, max and min of <col>. ",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_stats),
      both},
@@ -782,6 +787,16 @@ int acol_manager::run_o2graph() {
     {0,"show","Show the current plot.",0,0,"",
      ((std::string)"Show the current plot on the screen and begin ")+
      "the graphical user interface. This is similar to plot.show().",
+     new o2scl::comm_option_mfptr<acol_manager>
+     (this,&acol_manager::comm_none),
+     both},
+    {0,"text","Plot text in the canvas coordinate system.",3,4,
+     "<x> <y> <text> [kwargs]","",
+     new o2scl::comm_option_mfptr<acol_manager>
+     (this,&acol_manager::comm_none),
+     both},
+    {0,"ttext","Plot text in the transformed coordinate system.",3,4,
+     "<x> <y> <text> [kwargs]","",
      new o2scl::comm_option_mfptr<acol_manager>
      (this,&acol_manager::comm_none),
      both},

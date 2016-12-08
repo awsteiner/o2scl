@@ -95,7 +95,18 @@ namespace o2scl {
      */
     table3d(o2scl::table_units<> &t, std::string colx, std::string coly);
 
-    /** \brief Desc
+    /** \brief Read a generic table3d object specified as a 
+	text file
+
+	This function reads a set of columns of numerical values,
+	presuming that the first column is the x-grid value, the
+	second column is the y-grid value, and the remaining columns
+	are slices to be added. 
+
+	\todo A bit more documentation needs to be added here.
+
+	\future It would be great to add a function which generates
+	a text file in this format as well. 
      */
     int read_gen3_list(std::istream &fin, int verbose=0);
     
@@ -330,11 +341,13 @@ namespace o2scl {
     */
     const double &get_val_ret(double &x, double &y, size_t z) const;
 
-    /** \brief Desc
-     */
+    /** \brief This function adds a slice from a different table3d
+	object, interpolating the results into the current 
+	table3d object
+    */
     void add_slice_from_table(table3d &source, std::string slice,
 			      std::string dest_slice="") {
-
+      
       if (dest_slice.length()==0) dest_slice=slice;
 
       if (xy_set==false) {
