@@ -66,6 +66,10 @@ namespace o2scl {
       brute-force search to find the closest points. 
 
       \future Make a parent class for this and \ref o2scl::interp2_planar.
+
+      \future Maybe interpm_idw subsumes this functionality and 
+      makes this class obsolete? Or is this specialization
+      particularly efficient?
   */
   template<class vec_t> class interp2_neigh {
 

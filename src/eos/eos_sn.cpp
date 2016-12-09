@@ -265,6 +265,8 @@ void eos_sn_base::free() {
     }
   }
   loaded=false;
+  oth_names.clear();
+  oth_units.clear();
   return;
 }
 

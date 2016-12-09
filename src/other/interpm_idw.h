@@ -31,11 +31,14 @@
 #include <string>
 #include <cmath>
 
+#include <boost/numeric/ublas/matrix.hpp>
+
 #include <gsl/gsl_combination.h>
 
 #include <o2scl/err_hnd.h>
 #include <o2scl/vector.h>
 #include <o2scl/vec_stats.h>
+#include <o2scl/linear_solver.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -46,17 +49,53 @@ namespace o2scl {
 
       This class performs interpolation on a multi-dimensional data
       set specified as a series of scattered points using the inverse
-      distance-weighted average of nearby points. The
-      function \ref set_data() takes as input: the number of
-      dimensions, the number of points which specify the data, and a
-      "vector of vectors", e.g. <tt>std::vector<std::vector<double>
-      ></tt> which contains the data for all the points.
+      distance-weighted average of nearby points. The function \ref
+      set_data() takes as input: the number of input dimensions, the
+      number of output functions, the number of points which specify
+      the data, and a "vector of vectors" which contains the data for
+      all the points. The vector of vectors must be of a type which
+      allows std::swap on individual elements (which are of type
+      <tt>vec_t</tt>).
+
+      The "order" of the interpolation, i.e. the number of nearby
+      points which are averaged, defaults to 3 and can be changed
+      by \ref set_order(). To obtain interpolation uncertainties,
+      this class finds the nearest <tt>order+1</tt> points and 
+      returns the standard deviation of the interpolated value
+      over all of the subsets of <tt>order</tt> points.
+      The value <tt>order=1</tt> corresponds to nearest-neighbor
+      interpolation.
+
+      This class requires a distance metric to weight the
+      interpolation, and a Euclidean distance is used. By default, the
+      length scales in each direction are automatically determined by
+      extent of the data (absolute value of max minus min in each
+      direction), but the user can specify the length scales manually
+      in \ref set_scales() .
+
+      First derivatives can be obtained using \ref derivs_err() , but
+      these derivatives are not obtained from the same approximation
+      used in the interpolation. That is, the derivatives returned are
+      not equal to exact derivatives from the interpolated function
+      (as is the case in, e.g., cubic spline interpolation in one
+      dimension). This will typically only be particularly noticable
+      near discontinuities.
+
+      If the user specifies an array of pointers, the data can be
+      changed between calls to the interpolation, but data points
+      cannot be added (as set data separately stores the total number
+      of data points) without a new call to \ref set_data(). Also, the
+      automatically-determined length scales may need to be recomputed
+      by calling \ref auto_scale().
+
+      \future Design a <tt>get_data()</tt> function.
   */
   template<class vec_t> class interpm_idw {
 
   public:
 
     typedef boost::numeric::ublas::vector<double> ubvector;
+    typedef boost::numeric::ublas::matrix<double> ubmatrix;
     typedef boost::numeric::ublas::vector<size_t> ubvector_size_t;
     
     interpm_idw() {
@@ -99,7 +138,7 @@ namespace o2scl {
     */
     template<class vec_vec_t>
       void set_data(size_t n_in, size_t n_out, size_t n_points,
-		    vec_vec_t &vecs, bool auto_scale=true) {
+		    vec_vec_t &vecs, bool auto_scale_flag=true) {
 
       if (n_points<3) {
 	O2SCL_ERR2("Must provide at least three points in ",
@@ -122,17 +161,25 @@ namespace o2scl {
       }
       data_set=true;
 
-      if (auto_scale) {
-	scales.resize(n_in);
-	for(size_t i=0;i<n_in;i++) {
-	  scales[i]=fabs(o2scl::vector_max_value<vec_t,double>(ptrs[i])-
-			 o2scl::vector_min_value<vec_t,double>(ptrs[i]));
-	}
+      if (auto_scale_flag) {
+	auto_scale();
       }
 
       return;
     }
 
+    /** \brief Automatically determine the length scales from the
+	data
+    */
+    void auto_scale() {
+      scales.resize(nd_in);
+      for(size_t i=0;i<nd_in;i++) {
+	scales[i]=fabs(o2scl::vector_max_value<vec_t,double>(np,ptrs[i])-
+		       o2scl::vector_min_value<vec_t,double>(np,ptrs[i]));
+      }
+      return;
+    }
+    
     /** \brief Initialize the data for the interpolation
 
 	The object \c vecs should be a vector (of size <tt>n_in+1</tt>)
@@ -358,8 +405,12 @@ namespace o2scl {
 	    vals[j]/=norm;
 	    
 	  }
-	  
+
+	  // Instead of using the average, we report the
+	  // value as the last element in the array, which
+	  // is the interpolated value from the closest points
 	  val[k]=vals[order];
+	  
 	  err[k]=o2scl::vector_stddev(vals);
 	  
 	}
@@ -369,11 +420,23 @@ namespace o2scl {
       return;
     }
 
-#ifdef O2SCL_NEVER_DEFINED
-    
+    /** \brief For one of the functions, compute the partial
+	derivatives (and uncertainties) with respect to all of the
+	inputs at one point
+
+	\note This function ignores the order chosen by \ref
+	set_order() and always chooses to average derivative
+	calculations determined from \c n_in+1 combinations of \c n_in
+	points .
+
+	This function computes the interpolated function
+	value \c f as a by-product using \c n_in points for 
+	the interpolation.
+
+    */
     template<class vec2_t, class vec3_t>
-      void derivs_err(const vec2_t &x, size_t ix,
-		      vec3_t &derivs, vec3_t &errs) const {
+      void f_derivs_err(const vec2_t &x, size_t ix, double &f,
+			vec3_t &derivs, vec3_t &errs) const {
       
       if (data_set==false) {
 	O2SCL_ERR("Data not set in interpm_idw::eval_err().",
@@ -398,6 +461,22 @@ namespace o2scl {
 		  o2scl::exc_einval);
       }
 
+      // The algorithm needs the function value at point 'x',
+      // so we compute that first
+      
+      // Compute normalization
+      double norm=0.0;
+      for(size_t i=0;i<nd_in;i++) {
+	norm+=1.0/dists[index[i]];
+      }
+      
+      // Compute the inverse-distance weighted average
+      f=0.0;
+      for(size_t i=0;i<nd_in;i++) {
+	f+=ptrs[ix+nd_in][index[i]]/dists[index[i]];
+      }
+      f/=norm;
+      
       // Unit vector storage
       std::vector<ubvector> units(nd_in+1);
       // Difference vector norms
@@ -412,7 +491,7 @@ namespace o2scl {
 	}
 
 	// Normalize the unit vectors
-	diff_norms[i]=o2scl::vector_norm(units[i]);
+	diff_norms[i]=o2scl::vector_norm<ubvector,double>(units[i]);
 	for(size_t j=0;j<nd_in;j++) {
 	  units[i][j]/=diff_norms[i];
 	}
@@ -435,7 +514,7 @@ namespace o2scl {
 	    for(size_t k=0;k<nd_in;k++) {
 	      m(jj,k)=units[j][k];
 	    }
-	    v[jj]=(ptrs[ix+nd_in][index[i]]-f[i])/diff_norms[jj];
+	    v[jj]=(ptrs[ix+nd_in][index[i]]-f)/diff_norms[jj];
 	  }
 	  jj++;
 	}
@@ -463,8 +542,6 @@ namespace o2scl {
       
       return;
     }
-    
-#endif
     
 #ifndef DOXYGEN_INTERNAL
 

@@ -88,7 +88,24 @@ int main(void) {
   cout << i2p.eval(0.03,1.0) << endl;
   t.test_rel(imi.eval(point),i2n.eval(0.03,1.0),4.0e-2,"imi vs. i2n 2");
   t.test_rel(imi.eval(point),i2p.eval(0.03,1.0),1.0e-2,"imi vs. i2p 2");
+  cout << endl;
 
+  // Show how to swap a pointer instead
+  std::vector<double> x2, y2, dp2;//=x, y2=y, dp2=dp;
+  o2scl::vector_copy(x,x2);
+  o2scl::vector_copy(y,y2);
+  o2scl::vector_copy(dp,dp2);
+  interpm_idw<double *> imi2;
+
+  std::vector<double *> dat2(3);
+  dat2[0]=&(x2[0]);
+  dat2[1]=&(y2[0]);
+  dat2[2]=&(dp2[0]);
+  imi2.set_data(2,1,8,dat2);
+  imi.eval_err(point,val,err);
+  cout << imi.eval(point) << " " << val << " " << err << endl;
+  cout << endl;
+  
   t.report();
   return 0;
 }

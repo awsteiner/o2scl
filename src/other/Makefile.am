@@ -10,14 +10,14 @@ OTHER_SRCS = series_acc.cpp poly.cpp polylog.cpp \
 HEADER_VAR = contour.h cheb_approx.h \
 	series_acc.h interp2_planar.h poly.h polylog.h \
 	interp2_direct.h interp2_eqi.h pinside.h bin_size.h \
-	vec_stats.h smooth_gsl.h hist.h interpm_neigh.h \
+	vec_stats.h smooth_gsl.h hist.h \
 	hist_2d.h prob_dens_func.h interp2_seq.h interp2_neigh.h \
 	interpm_idw.h interp2.h
 
 TEST_VAR = series_acc.scr interp2_planar.scr contour.scr \
 	poly.scr polylog.scr cheb_approx.scr vec_stats.scr smooth_gsl.scr \
 	hist.scr hist_2d.scr prob_dens_func.scr interp2_direct.scr \
-	pinside.scr interp2_seq.scr interp2_neigh.scr interpm_neigh.scr \
+	pinside.scr interp2_seq.scr interp2_neigh.scr \
 	interpm_idw.scr
 
 # ------------------------------------------------------------
@@ -81,7 +81,7 @@ check_PROGRAMS = series_acc_ts interp2_planar_ts \
 	contour_ts poly_ts polylog_ts pinside_ts \
 	interp2_direct_ts vec_stats_ts cheb_approx_ts \
 	smooth_gsl_ts hist_ts hist_2d_ts interp2_seq_ts \
-	prob_dens_func_ts interp2_neigh_ts interpm_neigh_ts \
+	prob_dens_func_ts interp2_neigh_ts \
 	interpm_idw_ts
 
 check_SCRIPTS = o2scl-test
@@ -96,7 +96,6 @@ smooth_gsl_ts_LDADD = $(VCHECK_LIBS)
 series_acc_ts_LDADD = $(VCHECK_LIBS)
 interp2_planar_ts_LDADD = $(VCHECK_LIBS)
 interp2_neigh_ts_LDADD = $(VCHECK_LIBS)
-interpm_neigh_ts_LDADD = $(VCHECK_LIBS)
 interpm_idw_ts_LDADD = $(VCHECK_LIBS)
 contour_ts_LDADD = $(VCHECK_LIBS)
 poly_ts_LDADD = $(VCHECK_LIBS)
@@ -118,8 +117,6 @@ interp2_planar.scr: interp2_planar_ts$(EXEEXT)
 	./interp2_planar_ts$(EXEEXT) > interp2_planar.scr
 interp2_neigh.scr: interp2_neigh_ts$(EXEEXT) 
 	./interp2_neigh_ts$(EXEEXT) > interp2_neigh.scr
-interpm_neigh.scr: interpm_neigh_ts$(EXEEXT) 
-	./interpm_neigh_ts$(EXEEXT) > interpm_neigh.scr
 interpm_idw.scr: interpm_idw_ts$(EXEEXT) 
 	./interpm_idw_ts$(EXEEXT) > interpm_idw.scr
 contour.scr: contour_ts$(EXEEXT) 
@@ -151,7 +148,6 @@ series_acc_ts_SOURCES = series_acc_ts.cpp
 hist_ts_SOURCES = hist_ts.cpp
 hist_2d_ts_SOURCES = hist_2d_ts.cpp
 interp2_neigh_ts_SOURCES = interp2_neigh_ts.cpp
-interpm_neigh_ts_SOURCES = interpm_neigh_ts.cpp
 interpm_idw_ts_SOURCES = interpm_idw_ts.cpp
 interp2_planar_ts_SOURCES = interp2_planar_ts.cpp
 interp2_seq_ts_SOURCES = interp2_seq_ts.cpp
