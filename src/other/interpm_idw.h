@@ -35,6 +35,7 @@
 
 #include <o2scl/err_hnd.h>
 #include <o2scl/vector.h>
+#include <o2scl/vec_stats.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -89,7 +90,7 @@ namespace o2scl {
       return;
     }
     
-      /** \brief Initialize the data for the interpolation
+    /** \brief Initialize the data for the interpolation
 
 	The object \c vecs should be a vector (of size <tt>n_in+n_out</tt>)
 	of vectors (all of size <tt>n_points</tt>). It may have be
@@ -132,7 +133,7 @@ namespace o2scl {
       return;
     }
 
-      /** \brief Initialize the data for the interpolation
+    /** \brief Initialize the data for the interpolation
 
 	The object \c vecs should be a vector (of size <tt>n_in+1</tt>)
 	of vectors (all of size <tt>n_points</tt>). It may have be
@@ -143,7 +144,7 @@ namespace o2scl {
       void set_data(size_t n_in, size_t n_points,
 		    vec_vec_t &vecs, bool auto_scale=true) {
       set_data(n_in,1,n_points,vecs,auto_scale);
-	return;
+      return;
     }
 
     /** \brief Perform the interpolation over the first function
@@ -156,90 +157,217 @@ namespace o2scl {
      */
     template<class vec2_t> double eval(const vec2_t &x) const {
     
-    if (data_set==false) {
-    O2SCL_ERR("Data not set in interpm_idw::eval().",
-      exc_einval);
-  }
+      if (data_set==false) {
+	O2SCL_ERR("Data not set in interpm_idw::eval().",
+		  exc_einval);
+      }
     
-    // Compute distances
-    std::vector<double> dists(np);
-    for(size_t i=0;i<np;i++) {
-    dists[i]=dist(i,x);
-  }
+      // Compute distances
+      std::vector<double> dists(np);
+      for(size_t i=0;i<np;i++) {
+	dists[i]=dist(i,x);
+      }
 
-    // Find closest points
-    std::vector<size_t> index;
-    o2scl::vector_smallest_index<std::vector<double>,double,
-      std::vector<size_t> >(dists,order,index);
+      // Find closest points
+      std::vector<size_t> index;
+      o2scl::vector_smallest_index<std::vector<double>,double,
+	std::vector<size_t> >(dists,order,index);
 
-    // Check if the closest distance is zero
-    if (dists[index[0]]<=0.0) {
-    return ptrs[nd_in][index[0]];
-  }
+      // Check if the closest distance is zero
+      if (dists[index[0]]<=0.0) {
+	return ptrs[nd_in][index[0]];
+      }
 
-    // Compute normalization
-    double norm=0.0;
-    for(size_t i=0;i<order;i++) {
-    norm+=1.0/dists[index[i]];
-  }
+      // Compute normalization
+      double norm=0.0;
+      for(size_t i=0;i<order;i++) {
+	norm+=1.0/dists[index[i]];
+      }
 
-    // Compute the inverse-distance weighted average
-    double ret=0.0;
-    for(size_t i=0;i<order;i++) {
-    ret+=ptrs[nd_in][index[i]]/dists[index[i]];
-  }
-    ret/=norm;
+      // Compute the inverse-distance weighted average
+      double ret=0.0;
+      for(size_t i=0;i<order;i++) {
+	ret+=ptrs[nd_in][index[i]]/dists[index[i]];
+      }
+      ret/=norm;
 
-    // Return the average
-    return ret;
-  }
+      // Return the average
+      return ret;
+    }
+    
+    /** \brief Perform the interpolation over the first function
+	with uncertainty
+     */
+    template<class vec2_t> void eval_err(const vec2_t &x, double &val,
+					 double &err) const {
+      
+      if (data_set==false) {
+	O2SCL_ERR("Data not set in interpm_idw::eval_err().",
+		  exc_einval);
+      }
+      
+      // Compute distances
+      std::vector<double> dists(np);
+      for(size_t i=0;i<np;i++) {
+	dists[i]=dist(i,x);
+      }
+
+      // Find closest points
+      std::vector<size_t> index;
+      o2scl::vector_smallest_index<std::vector<double>,double,
+	std::vector<size_t> >(dists,order+1,index);
+
+      if (dists[index[0]]<=0.0) {
+
+	// If the closest distance is zero, just set the value
+	val=ptrs[nd_in][index[0]];
+	err=0.0;
+	return;
+
+      } else {
+
+	std::vector<double> vals(order+1);
+
+	for(size_t j=0;j<order+1;j++) {
+
+	  // Compute normalization
+	  double norm=0.0;
+	  for(size_t i=0;i<order+1;i++) {
+	    if (i!=j) norm+=1.0/dists[index[i]];
+	  }
+	  
+	  // Compute the inverse-distance weighted average
+	  vals[j]=0.0;
+	  for(size_t i=0;i<order+1;i++) {
+	    if (i!=j) {
+	      vals[j]+=ptrs[nd_in][index[i]]/dists[index[i]];
+	    }
+	  }
+	  vals[j]/=norm;
+
+	}
+
+	val=vals[order];
+	err=o2scl::vector_stddev(vals);
+
+      }
+
+      return;
+    }
     
     /** \brief Perform the interpolation over all the functions,
 	storing the result in \c y
-     */
+    */
     template<class vec2_t, class vec3_t>
       void eval(vec2_t &x, vec3_t &y) const {
       
-    if (data_set==false) {
-    O2SCL_ERR("Data not set in interpm_idw::eval().",
-      exc_einval);
-  }
+      if (data_set==false) {
+	O2SCL_ERR("Data not set in interpm_idw::eval().",
+		  exc_einval);
+      }
 
-    // Compute distances
-    std::vector<double> dists(np);
-    for(size_t i=0;i<np;i++) {
-    dists[i]=dist(i,x);
-  }
+      // Compute distances
+      std::vector<double> dists(np);
+      for(size_t i=0;i<np;i++) {
+	dists[i]=dist(i,x);
+      }
 
-    // Find closest points
-    std::vector<size_t> index;
-    o2scl::vector_smallest_index<std::vector<double>,double,
-      std::vector<size_t> >(dists,order,index);
+      // Find closest points
+      std::vector<size_t> index;
+      o2scl::vector_smallest_index<std::vector<double>,double,
+	std::vector<size_t> >(dists,order,index);
 
-    // Check if the closest distance is zero
-    if (dists[index[0]]<=0.0) {
-    for(size_t i=0;i<nd_out;i++) {
-    y[i]=ptrs[index[0]][nd_in+i];
-  }
-  }
+      // Check if the closest distance is zero
+      if (dists[index[0]]<=0.0) {
+	for(size_t i=0;i<nd_out;i++) {
+	  y[i]=ptrs[index[0]][nd_in+i];
+	}
+      }
 
-    // Compute normalization
-    double norm=0.0;
-    for(size_t i=0;i<order;i++) {
-    norm+=1.0/dists[index[i]];
-  }
+      // Compute normalization
+      double norm=0.0;
+      for(size_t i=0;i<order;i++) {
+	norm+=1.0/dists[index[i]];
+      }
 
-    // Compute the inverse-distance weighted averages
-    for(size_t j=0;j<nd_out;j++) {
-    y[j]=0.0;
-    for(size_t i=0;i<order;i++) {
-    y[j]+=ptrs[nd_in][index[i]]/dists[index[i]];
-  }
-    y[j]/=norm;
-  }
+      // Compute the inverse-distance weighted averages
+      for(size_t j=0;j<nd_out;j++) {
+	y[j]=0.0;
+	for(size_t i=0;i<order;i++) {
+	  y[j]+=ptrs[nd_in][index[i]]/dists[index[i]];
+	}
+	y[j]/=norm;
+      }
 
-    return;
-  }
+      return;
+    }
+    
+    /** \brief Perform the interpolation over all the functions
+	with uncertainties
+     */
+    template<class vec2_t, class vec3_t>
+      void eval_err(const vec2_t &x, vec3_t &val, vec3_t &err) const {
+      
+      if (data_set==false) {
+	O2SCL_ERR("Data not set in interpm_idw::eval_err().",
+		  exc_einval);
+      }
+      
+      // Compute distances
+      std::vector<double> dists(np);
+      for(size_t i=0;i<np;i++) {
+	dists[i]=dist(i,x);
+      }
+
+      // Find closest points
+      std::vector<size_t> index;
+      o2scl::vector_smallest_index<std::vector<double>,double,
+	std::vector<size_t> >(dists,order+1,index);
+
+      if (dists[index[0]]<=0.0) {
+
+	// If the closest distance is zero, just set the values and
+	// errors
+	for(size_t k=0;k<nd_out;k++) {
+	  val[k]=ptrs[nd_in+k][index[0]];
+	  err[k]=0.0;
+	}
+	return;
+
+      } else {
+	
+	for(size_t k=0;k<nd_out;k++) {
+	  
+	  std::vector<double> vals(order+1);
+	  
+	  for(size_t j=0;j<order+1;j++) {
+	    
+	    // Compute normalization
+	    double norm=0.0;
+	    for(size_t i=0;i<order+1;i++) {
+	      if (i!=j) norm+=1.0/dists[index[i]];
+	    }
+	    
+	    // Compute the inverse-distance weighted average
+	    vals[j]=0.0;
+	    for(size_t i=0;i<order+1;i++) {
+	      if (i!=j) {
+		vals[j]+=ptrs[nd_in+k][index[i]]/dists[index[i]];
+	      }
+	    }
+	    vals[j]/=norm;
+	    
+	  }
+	  
+	  val[k]=vals[order];
+	  err[k]=o2scl::vector_stddev(vals);
+	  
+	}
+
+      }
+
+      return;
+    }
     
 #ifndef DOXYGEN_INTERNAL
 
@@ -263,20 +391,20 @@ namespace o2scl {
     
     /// Compute the distance between \c x and the point at index \c index
     template<class vec2_t> double dist(size_t index, const vec2_t &x) const {
-    double ret=0.0;
-    size_t nscales=scales.size();
-    for(size_t i=0;i<nd_in;i++) {
-    ret+=pow((x[i]-ptrs[i][index])/scales[i%nscales],2.0);
-  }
-    return sqrt(ret);
-  }
+      double ret=0.0;
+      size_t nscales=scales.size();
+      for(size_t i=0;i<nd_in;i++) {
+	ret+=pow((x[i]-ptrs[i][index])/scales[i%nscales],2.0);
+      }
+      return sqrt(ret);
+    }
 
 #endif
 
   };
   
 #ifndef DOXYGEN_NO_O2NS
-  }
+}
 #endif
 
 #endif

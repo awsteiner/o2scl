@@ -67,10 +67,13 @@ int main(void) {
   i2n.set_data(8,x,y,dp);
   i2p.set_data(8,x,y,dp);
 
+  double val, err;
+
   ubvector point(2);
   point[0]=0.4;
   point[1]=0.5;
-  cout << imi.eval(point) << " ";
+  imi.eval_err(point,val,err);
+  cout << imi.eval(point) << " " << val << " " << err << " ";
   cout << i2n.eval(0.4,0.5) << " ";
   cout << i2p.eval(0.4,0.5) << endl;
   t.test_rel(imi.eval(point),i2n.eval(0.4,0.5),8.0e-2,"imi vs. i2n 1");
@@ -79,7 +82,8 @@ int main(void) {
 
   point[0]=0.03;
   point[1]=1.0;
-  cout << imi.eval(point) << " ";
+  imi.eval_err(point,val,err);
+  cout << imi.eval(point) << " " << val << " " << err << " ";
   cout << i2n.eval(0.03,1.0) << " ";
   cout << i2p.eval(0.03,1.0) << endl;
   t.test_rel(imi.eval(point),i2n.eval(0.03,1.0),4.0e-2,"imi vs. i2n 2");
