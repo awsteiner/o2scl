@@ -826,7 +826,6 @@ int acol_manager::run_o2graph() {
   this->cl->addl_help_cmd="";
   this->cl->addl_help_cli="";
 
-  cmap="";
   xtitle="";
   ytitle="";
   xlo=0.0;
@@ -841,8 +840,8 @@ int acol_manager::run_o2graph() {
   colbar=false;
   logx=false;
   logy=false;
-    
-  p_cmap.str=&cmap;
+
+  /*
   p_cmap.help=((std::string)"Name of the color map for 'den-plot'. ")+
     "Perceptually uniform sequential maps are 'viridis', 'inferno', "+
     "'plasma', and 'magma'. Sequential maps are 'Blues', 'BuGn', 'BuPu', "+
@@ -857,7 +856,7 @@ int acol_manager::run_o2graph() {
     "'gist_earth', 'terrain', 'ocean', 'gist_stern', 'brg', 'CMRmap', "+
     "'cubehelix', 'gnuplot', 'gnuplot2', 'gist_ncar', 'nipy_spectral', "+
     "'jet', 'rainbow', 'gist_rainbow', 'hsv', 'flag', 'prism'.";
-  cl->par_list.insert(make_pair("cmap",&p_cmap));
+  */
       
   p_xtitle.str=&xtitle;
   p_xtitle.help="X-axis title. Latex works, e.g. '$\\phi$' and '$\\hat{x}$'.";
