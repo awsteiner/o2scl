@@ -61,7 +61,7 @@ int acol_manager::setup_options() {
   const int cl_param=cli::comm_option_cl_param;
   const int both=cli::comm_option_both;
 
-  static const int narr=45;
+  static const int narr=46;
 
   // Options, sorted by long name. We allow 0 parameters in many of these
   // options so they can be requested from the user in interactive mode. 
@@ -360,6 +360,9 @@ int acol_manager::setup_options() {
      both},
     {'v',"version","Print version information.",0,0,"",
      "",new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_version),
+     both},
+    {0,"nlines","Add 'nlines' as a constant to a table object.",0,0,"",
+     "",new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_nlines),
      both}
   };
   /*
@@ -914,6 +917,23 @@ int acol_manager::run_o2graph() {
     
   return 0;
   
+}
+
+int acol_manager::comm_nlines(std::vector<std::string> &sv, 
+			      bool itive_com) {
+  if (threed || tabp==0) {
+    cerr << "No table in 'nlines'." << endl;
+    return 1;
+  }
+
+  if (tabp->is_constant("nlines")) {
+    cerr << "Constant 'nlines' already exists." << endl;
+    return 2;
+  }
+
+  tabp->add_constant("nlines",tabp->get_nlines());
+  
+  return 0;
 }
 
 int acol_manager::comm_interp_type(std::vector<std::string> &sv, 
