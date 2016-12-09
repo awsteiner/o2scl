@@ -368,6 +368,103 @@ namespace o2scl {
 
       return;
     }
+
+#ifdef O2SCL_NEVER_DEFINED
+    
+    template<class vec2_t, class vec3_t>
+      void derivs_err(const vec2_t &x, size_t ix,
+		      vec3_t &derivs, vec3_t &errs) const {
+      
+      if (data_set==false) {
+	O2SCL_ERR("Data not set in interpm_idw::eval_err().",
+		  exc_einval);
+      }
+
+      o2scl_linalg::linear_solver_HH<> lshh;
+      
+      // Compute distances
+      std::vector<double> dists(np);
+      for(size_t i=0;i<np;i++) {
+	dists[i]=dist(i,x);
+      }
+
+      // Find nd_in+1 closest points
+      std::vector<size_t> index;
+      o2scl::vector_smallest_index<std::vector<double>,double,
+	std::vector<size_t> >(dists,nd_in+1,index);
+
+      if (dist[0]<=0.0) {
+	O2SCL_ERR("Derivative algorithm fails if a distance is zero.",
+		  o2scl::exc_einval);
+      }
+
+      // Unit vector storage
+      std::vector<ubvector> units(nd_in+1);
+      // Difference vector norms
+      std::vector<double> diff_norms(nd_in+1);
+
+      for(size_t i=0;i<nd_in+1;i++) {
+
+	// Assign unit vector elements
+	units[i].resize(nd_in);
+	for(size_t j=0;j<nd_in;j++) {
+	  units[i][j]=ptrs[j][index[i]]-x[j];
+	}
+
+	// Normalize the unit vectors
+	diff_norms[i]=o2scl::vector_norm(units[i]);
+	for(size_t j=0;j<nd_in;j++) {
+	  units[i][j]/=diff_norms[i];
+	}
+
+      }
+
+      std::vector<ubvector> ders(nd_in+1);
+      
+      // Go through each set of points
+      for(size_t i=0;i<nd_in+1;i++) {
+
+	ders[i].resize(nd_in);
+
+	// Construct the matrix and vector for the solver
+	ubmatrix m(nd_in,nd_in);
+	ubvector v(nd_in);
+	size_t jj=0;
+	for(size_t j=0;j<nd_in+1;j++) {
+	  if (j!=i) {
+	    for(size_t k=0;k<nd_in;k++) {
+	      m(jj,k)=units[j][k];
+	    }
+	    v[jj]=(ptrs[ix+nd_in][index[i]]-f[i])/diff_norms[jj];
+	  }
+	  jj++;
+	}
+
+	// Solve to compute the derivatives
+	lshh.solve(nd_in,m,v,ders[i]);
+	
+      }
+
+      // Rearranged derivative object
+      std::vector<ubvector> ders2(nd_in);
+      
+      for(size_t i=0;i<nd_in;i++) {
+
+	// Rearrange derivatives
+	ders2[i].resize(nd_in+1);
+	for(size_t j=0;j<nd_in+1;j++) {
+	  ders2[i][j]=ders[j][i];
+	}
+
+	// Compute mean and standard deviation
+	derivs[i]=o2scl::vector_mean(ders[i]);
+	errs[i]=o2scl::vector_stddev(ders[i]);
+      }
+      
+      return;
+    }
+    
+#endif
     
 #ifndef DOXYGEN_INTERNAL
 
