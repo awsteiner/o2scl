@@ -103,7 +103,12 @@ namespace o2scl {
       scales.resize(1);
       scales[0]=1.0;
       order=3;
+      verbose=0;
     }
+
+    /** \brief Desc
+     */
+    int verbose;
 
     /** \brief Set the number of closest points to use
 	for each interpolation (default 3)
@@ -455,8 +460,8 @@ namespace o2scl {
       std::vector<size_t> index;
       o2scl::vector_smallest_index<std::vector<double>,double,
 	std::vector<size_t> >(dists,nd_in+1,index);
-
-      if (dist[0]<=0.0) {
+      
+      if (dists[0]<=0.0) {
 	O2SCL_ERR("Derivative algorithm fails if a distance is zero.",
 		  o2scl::exc_einval);
       }
@@ -476,7 +481,7 @@ namespace o2scl {
 	f+=ptrs[ix+nd_in][index[i]]/dists[index[i]];
       }
       f/=norm;
-      
+
       // Unit vector storage
       std::vector<ubvector> units(nd_in+1);
       // Difference vector norms
@@ -498,6 +503,22 @@ namespace o2scl {
 
       }
 
+      if (verbose>0) {
+	std::cout << "Point: ";
+	for(size_t i=0;i<nd_in;i++) {
+	  std::cout << x[i] << " ";
+	}
+	std::cout << f << std::endl;
+	for(size_t j=0;j<nd_in+1;j++) {
+	  std::cout << "Closest: " << j << " ";
+	  for(size_t i=0;i<nd_in;i++) {
+	    std::cout << ptrs[i][index[j]] << " ";
+	  }
+	  std::cout << ptrs[ix+nd_in][index[j]] << " "
+		    << diff_norms[j] << std::endl;
+	}
+      }
+
       std::vector<ubvector> ders(nd_in+1);
       
       // Go through each set of points
@@ -514,16 +535,22 @@ namespace o2scl {
 	    for(size_t k=0;k<nd_in;k++) {
 	      m(jj,k)=units[j][k];
 	    }
-	    v[jj]=(ptrs[ix+nd_in][index[i]]-f)/diff_norms[jj];
+	    v[jj]=(ptrs[ix+nd_in][index[j]]-f)/diff_norms[j];
+	    jj++;
 	  }
-	  jj++;
 	}
 
 	// Solve to compute the derivatives
 	lshh.solve(nd_in,m,v,ders[i]);
-	
+	if (verbose>0) {
+	  std::cout << "Derivs: " << i << " ";
+	  for(size_t j=0;j<nd_in;j++) {
+	    std::cout << ders[i][j] << " ";
+	  }
+	  std::cout << std::endl;
+	}
       }
-
+      
       // Rearranged derivative object
       std::vector<ubvector> ders2(nd_in);
       
@@ -536,8 +563,8 @@ namespace o2scl {
 	}
 
 	// Compute mean and standard deviation
-	derivs[i]=o2scl::vector_mean(ders[i]);
-	errs[i]=o2scl::vector_stddev(ders[i]);
+	derivs[i]=o2scl::vector_mean(ders2[i]);
+	errs[i]=o2scl::vector_stddev(ders2[i]);
       }
       
       return;
