@@ -63,7 +63,8 @@ namespace o2scl_acol {
       but it might be ok.
       \endcomment
 
-      \future Stack-like operations (push, pop, swap, stack-list, etc.)
+      \future Stack-like operations (push, pop, swap, 
+      stack-list, etc.)?
 
       \future Use get_input() in comm_create?
 
@@ -83,8 +84,8 @@ namespace o2scl_acol {
       Function cli::expand_tilde() is written but not yet
       implemented.)
       
-      \future New 3d commands: extract, transpose, contours, find_grid_x,
-      find_grid_y, create-3d, etc.
+      \future New 3d commands: transpose (for table3d), contours, 
+      find_grid_x, find_grid_y.
 
       \hline
   */
@@ -165,9 +166,23 @@ namespace o2scl_acol {
     o2scl::table_units<> *tabp;
 #endif
 
-    /// If true, the \table is 3d
-    bool threed;
+#ifdef DOXYGEN
+    /// A pointer to the hist
+    hist *hp;
+#else
+    o2scl::hist *hp;
+#endif
 
+#ifdef DOXYGEN
+    /// A pointer to the hist
+    hist_2d *h2p;
+#else
+    o2scl::hist_2d *h2p;
+#endif
+
+    /// String designating the current type
+    std::string type;
+    
     /// Dummy cli object for cli::cli_gets()
 #ifdef DOXYGEN
     cli *cl;
@@ -498,7 +513,7 @@ extern "C" {
   int o2scl_acol_get_column(void *vp, char *col_name,
 			    int &n, double *&ptr) {
     o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
-    if (amp->threed) {
+    if (amp->type=="table3d") {
       std::cout << "Cannot get column for table3d object."
 		<< std::endl;
       return 1;
@@ -522,7 +537,7 @@ extern "C" {
 			   int &ny, double *&yptr,
 			   double *&data) {
     o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
-    if (!amp->threed) {
+    if (amp->type!="table3d") {
       std::cout << "No table3d object loaded."
 		<< std::endl;
       return 1;

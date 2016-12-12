@@ -51,7 +51,7 @@ acol_manager::acol_manager() : cng(o2scl_settings.get_convert_units()) {
 
   ffl.html_mode();
 
-  threed=false;
+  type="";
 
   env_var_name="ACOL_DEFAULTS";
 }
@@ -920,7 +920,7 @@ int acol_manager::run_o2graph() {
 
 int acol_manager::comm_nlines(std::vector<std::string> &sv, 
 			      bool itive_com) {
-  if (threed || tabp==0) {
+  if (type!="table") {
     cerr << "No table in 'nlines'." << endl;
     return 1;
   }
@@ -938,7 +938,7 @@ int acol_manager::comm_nlines(std::vector<std::string> &sv,
 int acol_manager::comm_interp_type(std::vector<std::string> &sv, 
 				   bool itive_com) {
 
-  if (threed) {
+  if (type=="table3d") {
     
     if (t3p==0) {
       cout << "No table to get interpolation type of in 'interp-type'." << endl;
@@ -1036,7 +1036,7 @@ int acol_manager::comm_interp_type(std::vector<std::string> &sv,
 
 int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
 
-  if (threed) {
+  if (type=="table3d") {
     
     if (t3p==0) {
       cerr << "No table3d to output in command 'output'." << endl;
@@ -1240,7 +1240,7 @@ int acol_manager::comm_cat(std::vector<std::string> &sv, bool itive_com) {
   }
   string file2=sv[1];
   
-  if (threed) {
+  if (type=="table3d") {
 
     if (t3p==0) {
       cerr << "No table3d to add to in command 'cat'." << endl;
@@ -1350,7 +1350,7 @@ int acol_manager::comm_cat(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_sum(std::vector<std::string> &sv, bool itive_com) {
 
-  if (threed) {
+  if (type=="table3d") {
     
     if (sv.size()<2) {
       cerr << "Not enough arguments to sum." << endl;
@@ -1530,11 +1530,12 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
   }
 
   // Delete previous table
-  if (threed && t3p!=0) {
-    threed=0;
+  if (type=="table3d" && t3p!=0) {
+    type="";
     delete t3p;
     t3p=0;
   } else if (tabp!=0) {
+    type="";
     delete tabp;
     tabp=0;
   }
@@ -1572,7 +1573,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
       tabp=new table_units<>;
       hdf_input(hf,*tabp,i2);
       table_name=i2;
-      threed=false;
+      type="table";
       return 0;
     } else if (type=="table3d") {
       if (verbose>2) {
@@ -1581,35 +1582,39 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
       t3p=new table3d;
       hdf_input(hf,*t3p,i2);
       table_name=i2;
-      threed=true;
+      type="table3d";
       return 0;
     } else if (type=="hist") {
       if (verbose>2) {
 	cout << "Reading hist." << endl;
       }
-      threed=false;
-      tabp=new table_units<>;
-      hist h;
-      hdf_input(hf,h,i2);
-      if (verbose>0) {
+      type="hist";
+      //tabp=new table_units<>;
+      hdf_input(hf,*hp,i2);
+      /*
+	if (verbose>0) {
 	cout << "Creating a table from the histogram with columns named\n";
 	cout << "'bins', 'low', 'high', and 'weights'." << endl;
-      }
-      h.copy_to_table(*tabp,"bins","low","high","weights");
+	}
+	h.copy_to_table(*tabp,"bins","low","high","weights");
+      */
       return 0;
     } else if (type=="hist_2d") {
       if (verbose>2) {
 	cout << "Reading hist_2d." << endl;
       }
-      threed=true;
-      t3p=new table3d;
-      hist_2d h;
-      hdf_input(hf,h,i2);
-      if (verbose>0) {
+      type="hist_2d";
+      //threed=true;
+      //t3p=new table3d;
+      //hist_2d h;
+      hdf_input(hf,*h2p,i2);
+      /*
+	if (verbose>0) {
 	cout << "Creating a table3d from the histogram with slice named\n";
 	cout << "'weights'." << endl;
-      }
-      h.copy_to_table(*t3p,"x","y","weights");
+	}
+	h.copy_to_table(*t3p,"x","y","weights");
+      */
       return 0;
     } else if (type==((string)"string[]")) {
       vector<string> vs;
@@ -1644,7 +1649,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
     tabp=new table_units<>;
     hdf_input(hf,*tabp,i2);
     table_name=i2;
-    threed=false;
+    type="table";
     return 0;
   }
 
@@ -1656,7 +1661,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
     t3p=new table3d;
     hdf_input(hf,*t3p,i2);
     table_name=i2;
-    threed=true;
+    type="table3d";
     return 0;
   }
 
@@ -1665,16 +1670,18 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
   }
   ret=hf.find_group_by_type("hist",i2,verbose);
   if (ret==success) {
-    hist h;
-    hdf_input(hf,h,i2);
-    tabp=new table_units<>;
+    //hist h;
+    hdf_input(hf,*hp,i2);
+    //tabp=new table_units<>;
+    /*
     if (verbose>0) {
       cout << "Creating a table from the histogram with columns named\n";
       cout << "'bins', 'low', 'high', and 'weights'." << endl;
     }
     h.copy_to_table(*tabp,"bins","low","high","weights");
+    */
     table_name=i2;
-    threed=false;
+    type="hist";
     return 0;
   }
   
@@ -1683,16 +1690,19 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
   }
   ret=hf.find_group_by_type("hist_2d",i2,verbose);
   if (ret==success) {
-    hist_2d h;
-    hdf_input(hf,h,i2);
+    //hist_2d h;
+    hdf_input(hf,*h2p,i2);
+    /*
     t3p=new table3d;
     if (verbose>0) {
       cout << "Creating a table3d from the histogram with slice named\n";
       cout << "'weights'." << endl;
     }
     h.copy_to_table(*t3p,"x","y","weights");
+    */
     table_name=i2;
-    threed=true;
+    //threed=true;
+    type="hist_2d";
     return 0;
   }
 
@@ -1990,7 +2000,7 @@ int acol_manager::get_input(vector<string> &sv, vector<string> &directions,
 
 int acol_manager::comm_max(std::vector<std::string> &sv, bool itive_com) {
 
-  if (threed) {
+  if (type=="table3d") {
 
     if (t3p==0 || t3p->get_nslices()==0) {
       cerr << "No table3d with slices to find the maximum value of." << endl;
@@ -2047,7 +2057,7 @@ int acol_manager::comm_max(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_slice(std::vector<std::string> &sv, bool itive_com) {
 
-  if (!threed) {
+  if (type=="table") {
     cerr << "Slice does not work with table objects." << endl;
   }
   
@@ -2066,12 +2076,12 @@ int acol_manager::comm_slice(std::vector<std::string> &sv, bool itive_com) {
     tabp=new table_units<>;
     t3p->extract_x(std::stod(sv[2]),*tabp);
     delete t3p;
-    threed=false;
+    type="table";
   } else if (sv[1]=="y") {
     tabp=new table_units<>;
     t3p->extract_y(std::stod(sv[2]),*tabp);
     delete t3p;
-    threed=false;
+    type="table";
   } else {
     cerr << "Invalid first argument to 'slice'." << endl;
   }
@@ -2081,7 +2091,7 @@ int acol_manager::comm_slice(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_min(std::vector<std::string> &sv, bool itive_com) {
 
-  if (threed) {
+  if (type=="table3d") {
 
     if (t3p==0 || t3p->get_nslices()==0) {
       cerr << "No table3d with slices to find the minimum value of." << endl;
@@ -2138,7 +2148,7 @@ int acol_manager::comm_min(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_set_data(std::vector<std::string> &sv, bool itive_com) {
 
-  if (threed) {
+  if (type=="table3d") {
 
     if (t3p==0) {
       cerr << "No table3d with data to set." << endl;
@@ -2186,7 +2196,7 @@ int acol_manager::comm_set_data(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_set_unit(std::vector<std::string> &sv, bool itive_com) {
 
-  if (threed) {
+  if (type=="table3d") {
     cerr << "Not implemented for 3d." << endl;
     return exc_efailed;
   }
@@ -2227,7 +2237,7 @@ int acol_manager::comm_show_units(std::vector<std::string> &sv,
 int acol_manager::comm_convert_unit
 (std::vector<std::string> &sv, bool itive_com) {
   
-  if (threed) {
+  if (type=="table3d") {
     cerr << "Not implemented for 3d." << endl;
     return exc_efailed;
   }
@@ -2284,7 +2294,7 @@ int acol_manager::comm_get_conv
 
 int acol_manager::comm_get_unit(std::vector<std::string> &sv, bool itive_com) {
 
-  if (threed) {
+  if (type=="table3d") {
     cerr << "Not implemented for 3d." << endl;
     return exc_efailed;
   }
@@ -2312,7 +2322,7 @@ int acol_manager::comm_get_unit(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_find_row(std::vector<std::string> &sv, bool itive_com) {
 
-  if (threed) {
+  if (type=="table3d") {
     cerr << "Not implemented for table3d." << endl;
     return exc_efailed;
   }
@@ -2376,7 +2386,7 @@ int acol_manager::comm_find_row(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
 
-  if (threed) {
+  if (type=="table3d") {
     cout << "Not implemented for table3d." << endl;
     return 0;
   }
@@ -2530,7 +2540,7 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_rename(std::vector<std::string> &sv, bool itive_com) {
 
-  if (threed) {
+  if (type=="table3d") {
 
     vector<string> pr, in;
     pr.push_back("Enter slice to be renamed");
@@ -2566,7 +2576,7 @@ int acol_manager::comm_rename(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_deriv(std::vector<std::string> &sv, bool itive_com) {
 
-  if (threed) {
+  if (type=="table3d") {
     cout << "Not implemented for table3d." << endl;
     return 0;
   }
@@ -2599,7 +2609,7 @@ int acol_manager::comm_deriv(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_deriv2(std::vector<std::string> &sv, bool itive_com) {
 
-  if (threed) {
+  if (type=="table3d") {
     cout << "Not implemented for table3d." << endl;
     return 0;
   }
@@ -2630,7 +2640,7 @@ int acol_manager::comm_deriv2(std::vector<std::string> &sv, bool itive_com) {
 }
 
 int acol_manager::comm_integ(std::vector<std::string> &sv, bool itive_com) {
-  if (threed) {
+  if (type=="table3d") {
     cout << "Not implemented for table3d." << endl;
     return 0;
   }
@@ -2662,7 +2672,7 @@ int acol_manager::comm_integ(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_internal(std::vector<std::string> &sv, bool itive_com) {
 
-  if (threed) {
+  if (type=="table3d") {
     if (t3p==0) {
       cerr << "No table3d to write to a file." << endl;
       return exc_efailed;
@@ -2708,7 +2718,7 @@ int acol_manager::comm_internal(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_function(std::vector<std::string> &sv, bool itive_com) {
 
-  if (threed) {
+  if (type=="table3d") {
     
     if (t3p==0) {
       cerr << "No table3d to add a slice to." << endl;
@@ -2769,7 +2779,7 @@ int acol_manager::comm_function(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
 
-  if (threed) {
+  if (type=="table3d") {
     cout << "Not implemented for table3d." << endl;
     return 0;
   }
@@ -2798,7 +2808,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_index(std::vector<std::string> &sv, bool itive_com) {
 
-  if (threed) {
+  if (type=="table3d") {
     cout << "Not implemented for table3d." << endl;
     return 0;
   }
@@ -2818,7 +2828,7 @@ int acol_manager::comm_index(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_html(std::vector<std::string> &sv, bool itive_com) {
 
-  if (threed) {
+  if (type=="table3d") {
     cout << "Not implemented for table3d." << endl;
     return 0;
   }
@@ -2910,7 +2920,7 @@ int acol_manager::comm_html(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 
-  if (threed) {
+  if (type=="table3d") {
     if (t3p==0) {
       cerr << "No table3d to preview." << endl;
       return exc_efailed;
@@ -3174,18 +3184,19 @@ int acol_manager::comm_gen3_list(std::vector<std::string> &sv,
     return exc_efailed;
   }
   // Delete previous table
-  if (threed && t3p!=0) {
-    threed=0;
+  if (type=="table3d" && t3p!=0) {
+    type="";
     delete t3p;
     t3p=0;
   } else if (tabp!=0) {
     delete tabp;
     tabp=0;
+    type="";
   }
 
-  threed=1;
   t3p=new table3d;
   t3p->read_gen3_list(ifs,verbose);
+  type="table3d";
 
   ifs.close();
 
@@ -3211,13 +3222,14 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
   }
 
   // Delete previous table
-  if (threed && t3p!=0) {
-    threed=0;
+  if (type=="table3d" && t3p!=0) {
+    type="";
     delete t3p;
     t3p=0;
   } else if (tabp!=0) {
     delete tabp;
     tabp=0;
+    type="";
   }
 
   tabp=new table_units<>(100);
@@ -3227,6 +3239,7 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
   } else {
     tabp->read_generic(std::cin,verbose);
   }
+  type="table";
 
   return 0;
 }
@@ -3261,12 +3274,8 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
 }
 
 int acol_manager::comm_assign(std::vector<std::string> &sv, bool itive_com) {
-  if (!threed && tabp==0) {
-    cerr << "No table to add a constant to." << endl;
-    return exc_efailed;
-  }
-  if (threed && t3p==0) {
-    cerr << "No table3d to add a constant to." << endl;
+  if (type!="table" && type!="table3d") {
+    cerr << "No table/table3d object to add a constant to." << endl;
     return exc_efailed;
   }
 
@@ -3274,7 +3283,7 @@ int acol_manager::comm_assign(std::vector<std::string> &sv, bool itive_com) {
     if (verbose>0) {
       cout << "Removing constant named '" << sv[1] << "'." << endl;
     }
-    if (threed) {
+    if (type=="table3d") {
       t3p->remove_constant(sv[1]);
     } else {
       tabp->remove_constant(sv[1]);
@@ -3288,7 +3297,7 @@ int acol_manager::comm_assign(std::vector<std::string> &sv, bool itive_com) {
   int ret=get_input(sv,pr,in,"assign",itive_com);
   if (ret!=0) return ret;
   
-  if (threed) {
+  if (type=="table3d") {
     t3p->add_constant(sv[1],function_to_double(sv[2]));
   } else {
     tabp->add_constant(sv[1],function_to_double(sv[2]));
@@ -3298,11 +3307,11 @@ int acol_manager::comm_assign(std::vector<std::string> &sv, bool itive_com) {
 }
 
 int acol_manager::comm_list(std::vector<std::string> &sv, bool itive_com) {
-  if (threed && t3p!=0) {
+  if (type=="table3d" && t3p!=0) {
     cout.precision(prec);
     cout << "Table3d name: " << table_name << endl;
     t3p->summary(&cout,ncols);
-  } else if (tabp!=0) {
+  } else if (type=="table" && tabp!=0) {
     cout.precision(prec);
     cout << "Table name: " << table_name << endl;
     if (tabp->get_nunits()>0) {
@@ -3318,7 +3327,7 @@ int acol_manager::comm_list(std::vector<std::string> &sv, bool itive_com) {
 }
 
 int acol_manager::comm_sort(std::vector<std::string> &sv, bool itive_com) {
-  if (threed) {
+  if (type=="table3d") {
     cout << "Not implemented for table3d." << endl;
     return 0;
   }
@@ -3359,7 +3368,7 @@ int acol_manager::comm_sort(std::vector<std::string> &sv, bool itive_com) {
 }
 
 int acol_manager::comm_stats(std::vector<std::string> &sv, bool itive_com) {
-  if (threed) {
+  if (type=="table3d") {
     cout << "Not implemented for table3d." << endl;
     return 0;
   }
@@ -3528,7 +3537,7 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
     }
   }
 
-  if (threed) {
+  if (type=="table3d") {
 
     if (t3p==0) {
       cerr << "No table3d to select from." << endl;
@@ -3729,7 +3738,7 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_delete_rows(std::vector<std::string> &sv, 
 				   bool itive_com) {
-  if (threed) {
+  if (type=="table3d") {
     cout << "Not implemented for table3d." << endl;
     return 0;
   }
@@ -3761,7 +3770,7 @@ int acol_manager::comm_delete_rows(std::vector<std::string> &sv,
 int acol_manager::comm_select_rows(std::vector<std::string> &sv, 
 				   bool itive_com) {
 
-  if (threed) {
+  if (type=="table3d") {
     cout << "Not implemented for table3d." << endl;
     return 0;
   }
@@ -3834,7 +3843,7 @@ int acol_manager::comm_select_rows(std::vector<std::string> &sv,
 
 int acol_manager::comm_delete_col(std::vector<std::string> &sv, 
 				  bool itive_com) {
-  if (threed) {
+  if (type=="table3d") {
     cout << "Not implemented for table3d." << endl;
     return 0;
   }
@@ -3917,8 +3926,8 @@ int acol_manager::comm_create3(std::vector<std::string> &sv,
     delete t3p;
     t3p=0;
   }
-  threed=true;
   t3p=new table3d;
+  type="table3d";
 
   std::string xname=in[0];
   double x0=function_to_double(in[1]);
@@ -3994,7 +4003,7 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_insert(std::vector<std::string> &sv, bool itive_com) {
 
-  if (threed) {
+  if (type=="table3d") {
 
     std::string in[4], pr[4]=
       {"Enter filename of external table (or blank to stop): ",
@@ -4108,7 +4117,7 @@ int acol_manager::comm_insert(std::vector<std::string> &sv, bool itive_com) {
 int acol_manager::comm_insert_full(std::vector<std::string> &sv, 
 				   bool itive_com) {
 
-  if (threed) {
+  if (type=="table3d") {
     cout << "Command 'insert-full' not implemented for table3d." << endl;
     return 0;
   }
@@ -4162,7 +4171,7 @@ int acol_manager::comm_insert_full(std::vector<std::string> &sv,
 
 int acol_manager::comm_interp(std::vector<std::string> &sv, bool itive_com) {
 
-  if (threed) {
+  if (type=="table3d") {
 
     // --------------------------------------------------------------
     // 3d table interpolation
@@ -4264,7 +4273,7 @@ int acol_manager::comm_fit(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 
 #ifdef O2SCL_NEVER_DEFINED
-  if (threed) {
+  if (type=="table3d") {
     cout << "Not implemented for table3d." << endl;
     return 0;
   }

@@ -100,6 +100,14 @@ void hist::set_reps_auto() {
   return;
 }
 
+double hist::bin_sum() {
+  double sum=0.0;
+  for(size_t i=0;i<hsize;i++) {
+    sum+=uwgt[i];
+  }
+  return sum;
+}
+
 void hist::normalize(double new_sum) {
 #if !O2SCL_NO_RANGE_CHECK
   is_valid();

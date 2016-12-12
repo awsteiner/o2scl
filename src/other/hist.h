@@ -166,6 +166,76 @@ namespace o2scl {
     /// Copy constructor
     hist &operator=(const hist &h);
 
+    /// Create from a vectors of data
+    template<class vec_t> hist(size_t nv, const vec_t &v, size_t n_bins) {
+			       
+      itype=1;
+      rmode=rmode_avg;
+      hsize=0;
+      extend_lhs=true;
+      extend_rhs=true;
+      
+      double min, max;
+      o2scl::vector_minmax_value(nv,v,min,max);
+      uniform_grid<double> ug=uniform_grid_end<double>(min,max,n_bins);
+      set_bin_edges(ug);
+
+      for(size_t i=0;i<nv;i++) {
+	update(v[i]);
+      }
+      return;
+    }
+    
+    /// Create from a vectors of data
+    template<class vec_t, class vec2_t>
+      hist(size_t nv, const vec_t &v,
+	   const vec2_t &v2, size_t n_bins) {
+      
+      itype=1;
+      rmode=rmode_avg;
+      hsize=0;
+      extend_lhs=true;
+      extend_rhs=true;
+      
+      double min, max;
+      o2scl::vector_minmax_value(nv,v,min,max);
+      uniform_grid<double> ug=uniform_grid_end<double>(min,max,n_bins);
+      set_bin_edges(ug);
+
+      for(size_t i=0;i<nv;i++) {
+	update(v[i],v2[i]);
+      }
+      return;
+    }
+    
+    /// Create from vectors of data
+    template<class vec_t, class vec2_t> hist(const vec_t &v, size_t n_bins) {
+      size_t nv=v.size();
+      hist(nv,v,n_bins);
+      return;
+    }
+
+    /// Create from vectors of data
+    template<class vec_t, class vec2_t> hist
+      (const vec_t &v, const vec2_t &v2, size_t n_bins) {
+					     
+      size_t nv=v.size();
+      hist(nv,v,v2,n_bins);
+      return;
+    }
+
+    // Create from a table
+    hist(o2scl::table<> &t, std::string colx, 
+	 size_t n_bins) {
+      hist(t.get_nlines(),t.get_column(colx),n_bins);
+    }
+    
+    // Create from a table
+    hist(o2scl::table<> &t, std::string colx, std::string coly,
+	 size_t n_bins) {
+      hist(t.get_nlines(),t.get_column(colx),t.get_column(coly),n_bins);
+    }
+    
     /// The histogram size
     size_t size() const {
       return hsize;
@@ -449,6 +519,8 @@ namespace o2scl {
 
     /// \name Other functions
     //@{
+    double bin_sum();
+    
     /** \brief Renormalize the weights to fix the integral
 	
 	This computes the integral using \ref integ() and so the

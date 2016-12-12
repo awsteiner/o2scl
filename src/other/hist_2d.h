@@ -168,6 +168,80 @@ namespace o2scl {
     /// Copy from <tt>operator=()</tt>
     hist_2d &operator=(const hist_2d &h);
     
+    /// Create from vectors of data
+    template<class vec_t, class vec2_t> hist_2d
+      (size_t nv, const vec_t &v, const vec2_t &v2, size_t n_bins_x,
+       size_t n_bins_y) {
+
+      hist_2d();
+      
+      double min_x, max_x, min_y, max_y;
+      o2scl::vector_minmax_value(nv,v,min_x,max_x);
+      o2scl::vector_minmax_value(nv,v2,min_y,max_y);
+      uniform_grid<double> ugx=uniform_grid_end<double>(min_x,max_x,n_bins_x);
+      uniform_grid<double> ugy=uniform_grid_end<double>(min_y,max_y,n_bins_y);
+      set_bin_edges(ugx,ugy);
+      
+      for(size_t i=0;i<nv;i++) {
+    update(v[i],v2[i]);
+  }
+      return;
+  }
+    
+    /// Create from vectors of data
+    template<class vec_t, class vec2_t, class vec3_t> hist_2d
+      (size_t nv, const vec_t &v, const vec2_t &v2, const vec3_t &v3,
+       size_t n_bins_x, size_t n_bins_y) {
+    
+    hist_2d();
+    
+    double min_x, max_x, min_y, max_y;
+    o2scl::vector_minmax_value(nv,v,min_x,max_x);
+    o2scl::vector_minmax_value(nv,v2,min_y,max_y);
+    uniform_grid<double> ugx=uniform_grid_end<double>(min_x,max_x,n_bins_x);
+    uniform_grid<double> ugy=uniform_grid_end<double>(min_y,max_y,n_bins_y);
+    set_bin_edges(ugx,ugy);
+    
+    for(size_t i=0;i<nv;i++) {
+    update(v[i],v2[i],v3[i]);
+  }
+    return;
+  }
+    
+    /// Create from vectors of data
+    template<class vec_t, class vec2_t> hist_2d
+      (const vec_t &v, const vec2_t &v2, size_t n_bins_x,
+       size_t n_bins_y) {
+      
+      hist_2d(v.size(),v,v2,n_bins_x,n_bins_y);
+      
+      return;
+  }
+    
+    /// Create from vectors of data
+    template<class vec_t, class vec2_t, class vec3_t> hist_2d
+      (const vec_t &v, const vec2_t &v2, const vec3_t &v3, size_t n_bins_x,
+       size_t n_bins_y) {
+    
+      hist_2d(v.size(),v,v2,v3,n_bins_x,n_bins_y);
+
+      return;
+    }
+    
+    // Create from a table
+    hist_2d(o2scl::table<> &t, std::string colx, std::string coly,
+	    size_t n_bins_x, size_t n_bins_y) {
+      hist_2d(t.get_nlines(),t.get_column(colx),t.get_column(coly),
+	      n_bins_x,n_bins_y);
+    }
+    
+    // Create from a table
+    hist_2d(o2scl::table<> &t, std::string colx, std::string coly,
+	    std::string colz, size_t n_bins_x, size_t n_bins_y) {
+      hist_2d(t.get_nlines(),t.get_column(colx),t.get_column(coly),
+	      t.get_column(colz),n_bins_x,n_bins_y);
+    }
+    
     /** \brief If true, allow abcissa larger than largest bin limit
 	to correspond to the highest bin (default false).
     */

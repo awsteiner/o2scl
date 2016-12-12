@@ -62,6 +62,16 @@ int main(void) {
     t.test_rel(h(x),h.interp(x),1.0e-10,"func and interp");
   }
   cout << endl;
+
+  vector<double> x;
+  for(size_t i=0;i<1000;i++) {
+    x.push_back(sin(gr.random()));
+  }
+  hist h2(x.size(),x,10);
+  for(size_t i=0;i<10;i++) {
+    cout << i << " " << h2.get_rep_i(i) << " " << h2[i] << endl;
+  }
+  cout << h2.bin_sum() << endl;
   
   t.report();
   return 0;
