@@ -172,8 +172,14 @@ namespace o2scl {
     template<class vec_t, class vec2_t> hist_2d
       (size_t nv, const vec_t &v, const vec2_t &v2, size_t n_bins_x,
        size_t n_bins_y) {
-
-      hist_2d();
+      
+      xrmode=rmode_avg;
+      yrmode=rmode_avg;
+      extend_rhs=false;
+      extend_lhs=false;
+      hsize_x=0;
+      hsize_y=0;
+      itype=1;
 
       double min_x, max_x, min_y, max_y;
       o2scl::vector_minmax_value(nv,v,min_x,max_x);
@@ -192,8 +198,14 @@ namespace o2scl {
     template<class vec_t, class vec2_t, class vec3_t> hist_2d
       (size_t nv, const vec_t &v, const vec2_t &v2, const vec3_t &v3,
        size_t n_bins_x, size_t n_bins_y) {
-    
-      hist_2d();
+      
+      xrmode=rmode_avg;
+      yrmode=rmode_avg;
+      extend_rhs=false;
+      extend_lhs=false;
+      hsize_x=0;
+      hsize_y=0;
+      itype=1;
     
       double min_x, max_x, min_y, max_y;
       o2scl::vector_minmax_value(nv,v,min_x,max_x);

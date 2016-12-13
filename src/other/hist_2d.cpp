@@ -547,23 +547,43 @@ void hist_2d::set_wgt_i(size_t i, size_t j, double val) {
 void hist_2d::is_valid() const {
   if ((hsize_x==0 && hsize_y>0) || 
       (hsize_y==0 && hsize_x>0)) {
-    O2SCL_ERR2("Semi-empty histogram in ",
-	       "hist_2d::is_valid().",exc_efailed);
+    std::string str=((std::string)"Semi-empty histogram (size_x=")+
+      o2scl::szttos(hsize_x)+", size_y="+o2scl::szttos(hsize_x)+
+      ") in hist_2d::is_valid().";
+    O2SCL_ERR(str.c_str(),exc_efailed);
   }
   if (hsize_x==0) {
     if (xa.size()>0 || ya.size()>0 || wgt.size1()>0 || wgt.size2()>0 || 
 	xrep.size()>0 || yrep.size()>0 || user_xrep.size()>0 || 
 	user_yrep.size()>0) {
-      O2SCL_ERR2("Histogram size is zero but vectors are not ",
-		 "empty in hist_2d::is_valid().",exc_efailed);
+      std::string str=((std::string)"Histogram size is zero but ")+
+	"vectors are not empty:"+
+	" xa.size()="+o2scl::szttos(xa.size())+
+	", ya.size()="+o2scl::szttos(ya.size())+
+	", wgt.size1()="+o2scl::szttos(wgt.size1())+
+	", wgt.size2()="+o2scl::szttos(wgt.size2())+
+	", xrep.size()="+o2scl::szttos(xrep.size())+
+	", yrep.size()="+o2scl::szttos(yrep.size())+
+	" in hist_2d::is_valid().";
+      O2SCL_ERR(str.c_str(),exc_efailed);
     }
   } else {
     if (xa.size()!=hsize_x+1 || ya.size()!=hsize_y+1 || 
 	wgt.size1()!=hsize_x || wgt.size2()!=hsize_y ||
 	(xrep.size()>0 && xrep.size()!=hsize_x) ||
 	(yrep.size()>0 && yrep.size()!=hsize_y)) {
-      O2SCL_ERR2("Vector/matrix sizes don't match histogram sizes ",
-		 "in hist_2d::is_valid().",exc_efailed);
+      std::string str=((std::string)"Vector/matrix sizes do not match ")+
+	"histogram sizes:"+
+	" hsize_x="+o2scl::szttos(hsize_x)+
+	", hsize_y="+o2scl::szttos(hsize_y)+
+	", xa.size()="+o2scl::szttos(xa.size())+
+	", ya.size()="+o2scl::szttos(ya.size())+
+	", wgt.size1()="+o2scl::szttos(wgt.size1())+
+	", wgt.size2()="+o2scl::szttos(wgt.size2())+
+	", xrep.size()="+o2scl::szttos(xrep.size())+
+	", yrep.size()="+o2scl::szttos(yrep.size())+
+	" in hist_2d::is_valid().";
+      O2SCL_ERR(str.c_str(),exc_efailed);
     }
     if (xrmode!=rmode_user && user_xrep.size()>0) {
       O2SCL_ERR2("Rep. mode for x is not user mode but user rep vector ",

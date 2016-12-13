@@ -549,6 +549,43 @@ extern "C" {
   /** \brief Return the size and a pointer to the column
       named \c col_name in a table object
    */
+  int o2scl_acol_get_hist_reps(void *vp, int &n, double *&ptr) {
+    o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
+    n=amp->hist_obj.size();
+    amp->xtemp.resize(n);
+    for(size_t i=0;i<n;i++) amp->xtemp[i]=amp->hist_obj.get_rep_i(i);
+    ptr=&(amp->xtemp[0]);
+    return 0;
+  }
+
+  /** \brief Return the size and a pointer to the column
+      named \c col_name in a table object
+   */
+  int o2scl_acol_get_hist_wgts(void *vp, int &n, double *&ptr) {
+    o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
+    n=amp->hist_obj.size();
+    amp->ytemp.resize(n);
+    for(size_t i=0;i<n;i++) amp->ytemp[i]=amp->hist_obj.get_wgt_i(i);
+    ptr=&(amp->ytemp[0]);
+    return 0;
+  }
+
+  /** \brief Desc
+   */
+  void o2scl_acol_get_type(void *vp, int &n, char *&str) {
+    o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
+    n=amp->type.length();
+    if (n>0) {
+      str=(char *)(amp->type.c_str());
+    } else {
+      str=0;
+    }
+    return;
+  }
+
+  /** \brief Return the size and a pointer to the column
+      named \c col_name in a table object
+   */
   int o2scl_acol_get_slice(void *vp, char *slice_name,
 			   int &nx, double *&xptr,
 			   int &ny, double *&yptr,

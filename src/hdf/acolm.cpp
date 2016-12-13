@@ -3157,7 +3157,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     
   if (type=="table3d") {
     
-    size_t lmar=table3d_obj.get_x_name().length()+1;
+    size_t lmar=table3d_obj.get_y_name().length()+1;
     
     size_t nx, ny;
     table3d_obj.get_size(nx,ny);
@@ -3178,37 +3178,40 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 	// and lmar for the left margin which has the x label
 	if (ncols<=prec+lmar+12) ncls=1;
 	else ncls=(ncols-prec-12-lmar)/(prec+8);
+	std::cout << "Screen width: " << ncols << " prec: " << prec
+		  << " lmar: " << lmar << " flag: " << (ncols<=prec+lmar+12)
+		  << " ncols: " << ncls << endl;
       }
       if (((size_t)ncls)>ny) ncls=ny;
-      size_t dx=nx/nrows;
-      size_t dy=ny/ncls;
+      size_t dx=nx/ncls;
+      size_t dy=ny/nrows;
       if (dx==0) dx=1;
       if (dy==0) dy=1;
 
       cout << "x: " << table3d_obj.get_x_name() << " [";
-      if (table3d_obj.get_nx()<4) {
-	for(size_t i=0;i<table3d_obj.get_nx()-1;i++) {
+      if (nx<4) {
+	for(size_t i=0;i<nx-1;i++) {
 	  cout << table3d_obj.get_grid_x(i) << " ";
 	}
-	cout << table3d_obj.get_grid_x(table3d_obj.get_nx()-1) << "] ";
+	cout << table3d_obj.get_grid_x(nx-1) << "] ";
       } else {
 	cout << table3d_obj.get_grid_x(0) << " ";
 	cout << table3d_obj.get_grid_x(1) << " ... ";
-	cout << table3d_obj.get_grid_x(table3d_obj.get_nx()-2) << " ";
-	cout << table3d_obj.get_grid_x(table3d_obj.get_nx()-1) << "] ";
+	cout << table3d_obj.get_grid_x(nx-2) << " ";
+	cout << table3d_obj.get_grid_x(nx-1) << "] ";
       }
       cout << endl;
       cout << "y: " << table3d_obj.get_y_name() << " [";
-      if (table3d_obj.get_ny()<4) {
-	for(size_t i=0;i<table3d_obj.get_ny()-1;i++) {
+      if (ny<4) {
+	for(size_t i=0;i<ny-1;i++) {
 	  cout << table3d_obj.get_grid_y(i) << " ";
 	}
-	cout << table3d_obj.get_grid_y(table3d_obj.get_ny()-1) << "] ";
+	cout << table3d_obj.get_grid_y(ny-1) << "] ";
       } else {
 	cout << table3d_obj.get_grid_y(0) << " ";
 	cout << table3d_obj.get_grid_y(1) << " ... ";
-	cout << table3d_obj.get_grid_y(table3d_obj.get_ny()-2) << " ";
-	cout << table3d_obj.get_grid_y(table3d_obj.get_ny()-1) << "] ";
+	cout << table3d_obj.get_grid_y(ny-2) << " ";
+	cout << table3d_obj.get_grid_y(ny-1) << "] ";
       }
       cout << endl;
       
@@ -3221,7 +3224,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 
 	  // Label row
 	  for(size_t i=0;i<lmar+14;i++) cout << " ";
-	  cout << "   " << table3d_obj.get_y_name() << endl;
+	  cout << "   " << table3d_obj.get_x_name() << endl;
 
 	  // Set showpos
 	  cout.setf(ios::showpos);
@@ -3231,7 +3234,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 	  cout << "| ";
 	  
 	  for(size_t i=0;i<((size_t)ncls);i++) {
-	    cout << table3d_obj.get_grid_y(i*dy) << " ";
+	    cout << table3d_obj.get_grid_x(i*dx) << " ";
 	  }
 	  cout << endl;
 
@@ -3245,15 +3248,15 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 	  cout << endl;
 
 	  // Data output
-	  for(size_t j=0;j<((size_t)nrows);j++) {
-	    if (j==0) {
-	      cout << table3d_obj.get_x_name() << " ";
+	  for(int j=((int)nrows)-1;j>=0;j--) {
+	    if (j==((int)nrows)-1) {
+	      cout << table3d_obj.get_y_name() << " ";
 	    } else {
 	      for(size_t i=0;i<lmar;i++) cout << " ";
 	    }
-	    cout << table3d_obj.get_grid_x(j*dx) << " | ";
+	    cout << table3d_obj.get_grid_y(j*dy) << " | ";
 	    for(size_t i=0;i<((size_t)ncls);i++) {
-	      cout << table3d_obj.get(j*dx,i*dy,k) << " ";
+	      cout << table3d_obj.get(i*dx,j*dy,k) << " ";
 	    }
 	    cout << endl;
 	  }
@@ -3313,22 +3316,97 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 
   } else if (type=="hist_2d") {
 
-    int nrows=3, ncols=3;
-    if (sv.size()>=2) {
-      nrows=o2scl::stoi(sv[1]);
-    }
-    if (sv.size()>=3) {
-      ncols=o2scl::stoi(sv[2]);
-    }
-    int inr=(hist_2d_obj.size_x()+(nrows-1))/(nrows);
-    if (inr<1) inr=1;
-    int inc=(hist_2d_obj.size_y()+(ncols-1))/(ncols);
-    if (inc<1) inc=1;
+    size_t nx=hist_2d_obj.size_x(), ny=hist_2d_obj.size_y();
+    if (nx==0 || ny==0) {
+      cout << "No size set. Blank hist_2d." << endl;
+    } else {
 
-    cout << "hist_2d output." << endl;
+      int nrows, ncls;
+      if (sv.size()>=2) {
+	nrows=o2scl::stoi(sv[1]);
+      } else {
+	nrows=10;
+      }
+      if (((size_t)nrows)>nx) nrows=nx;
+      if (sv.size()>=3) {
+	ncls=o2scl::stoi(sv[2]);
+      } else {
+	// 8+prec for the grid point, 3 for extra spacing,
+	if (ncols<=prec+11) ncls=1;
+	else ncls=(ncols-prec-11)/(prec+8);
+	std::cout << "Screen width: " << ncols << " prec: " << prec
+		  << " flag: " << (ncols<=prec+11)
+		  << " ncols: " << ncls << endl;
+      }
+      if (((size_t)ncls)>ny) ncls=ny;
+      size_t dx=nx/ncls;
+      size_t dy=ny/nrows;
+      if (dx==0) dx=1;
+      if (dy==0) dy=1;
+
+      cout << "x: [";
+      if (nx<3) {
+	for(size_t i=0;i<nx;i++) {
+	  cout << hist_2d_obj.get_x_low_i(i) << " ";
+	}
+	cout << hist_2d_obj.get_x_high_i(nx-1) << "] ";
+      } else {
+	cout << hist_2d_obj.get_x_low_i(0) << " ";
+	cout << hist_2d_obj.get_x_low_i(1) << " ... ";
+	cout << hist_2d_obj.get_x_high_i(nx-2) << " ";
+	cout << hist_2d_obj.get_x_high_i(nx-1) << "] ";
+      }
+      cout << endl;
+      cout << "y: [";
+      if (ny<3) {
+	for(size_t i=0;i<ny;i++) {
+	  cout << hist_2d_obj.get_y_low_i(i) << " ";
+	}
+	cout << hist_2d_obj.get_y_high_i(ny-1) << "] ";
+      } else {
+	cout << hist_2d_obj.get_y_low_i(0) << " ";
+	cout << hist_2d_obj.get_y_low_i(1) << " ... ";
+	cout << hist_2d_obj.get_y_high_i(ny-2) << " ";
+	cout << hist_2d_obj.get_y_high_i(ny-1) << "] ";
+      }
+      cout << endl;
+      
+      // Set showpos
+      cout.setf(ios::showpos);
+      
+      // Grid row
+      for(size_t i=0;i<((size_t)prec)+8;i++) cout << " ";
+      cout << "| ";
+      
+      for(size_t i=0;i<((size_t)ncls);i++) {
+	cout << hist_2d_obj.get_x_rep_i(i*dx) << " ";
+      }
+      cout << endl;
+      
+      // Divider row
+      for(size_t i=0;i<((size_t)prec)+8;i++) cout << "-";
+      cout << "|";
+      for(size_t i=0;i<((size_t)ncls)*(prec+8);i++) {
+	cout << "-";
+      }
+      cout << endl;
+      
+      // Data output
+      for(int j=((int)nrows)-1;j>=0;j--) {
+	cout << hist_2d_obj.get_y_rep_i(j*dy) << " | ";
+	for(size_t i=0;i<((size_t)ncls);i++) {
+	  cout << hist_2d_obj.get_wgt_i(i*dx,j*dy) << " ";
+	}
+	cout << endl;
+      }
+      
+      // Unset showpos
+      cout.unsetf(ios::showpos);
+      
+    }
     
     return 0;
-
+    
   } else if (type=="table") {
     
     if (table_obj.get_nlines()==0) {
