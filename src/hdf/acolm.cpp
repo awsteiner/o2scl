@@ -59,7 +59,7 @@ int acol_manager::setup_options() {
   const int cl_param=cli::comm_option_cl_param;
   const int both=cli::comm_option_both;
 
-  static const int narr=47;
+  static const int narr=48;
 
   // Options, sorted by long name. We allow 0 parameters in many of these
   // options so they can be requested from the user in interactive mode. 
@@ -361,6 +361,9 @@ int acol_manager::setup_options() {
      both},
     {0,"nlines","Add 'nlines' as a constant to a table object.",0,0,"",
      "",new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_nlines),
+     both},
+    {0,"to-hist","Convert a table/table3d to a hist/hist_2d",0,3,"",
+     "",new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_to_hist),
      both},
     {0,"contours","Create contour lines from a table3d or hist_2d.",
      0,4,"<value> <slice-name (if table3d)> [file] [name]","",
@@ -844,7 +847,7 @@ int acol_manager::run_o2graph() {
   logy=false;
 
   /*
-  p_cmap.help=((std::string)"Name of the color map for 'den-plot'. ")+
+    p_cmap.help=((std::string)"Name of the color map for 'den-plot'. ")+
     "Perceptually uniform sequential maps are 'viridis', 'inferno', "+
     "'plasma', and 'magma'. Sequential maps are 'Blues', 'BuGn', 'BuPu', "+
     "'GnBu', 'Greens', 'Greys', 'Oranges', 'OrRd', 'PuBu', 'PuBuGn', "+
@@ -918,6 +921,36 @@ int acol_manager::run_o2graph() {
     
   return 0;
   
+}
+
+int acol_manager::comm_to_hist(std::vector<std::string> &sv, 
+			       bool itive_com) {
+
+  if (type=="table") {
+
+    vector<string> in, pr;
+    pr.push_back("Column name");
+    pr.push_back("Number of bins");
+    int ret=get_input(sv,pr,in,"to-hist",itive_com);
+    if (ret!=0) return ret;
+    
+    std::string col2=cl->cli_gets
+      ("Column for weights (or blank for none): ");
+
+    if (col2.length()==0) {
+      hist_obj.from_table(table_obj,in[0],o2scl::stod(in[1]));
+    } else {
+      hist_obj.from_table(table_obj,in[0],col2,o2scl::stod(in[1]));
+    }
+    type="hist";
+
+    return 0;
+  } 
+
+  cerr << "Cannot convert object of type " << type << " to histogram."
+       << endl;
+  
+  return 1;
 }
 
 int acol_manager::comm_nlines(std::vector<std::string> &sv, 
@@ -1426,10 +1459,13 @@ int acol_manager::comm_sum(std::vector<std::string> &sv, bool itive_com) {
       std::string col_name=tab2.get_column_name(j);
       if (!table_obj.is_column(col_name)) {
 	table_obj.new_column(col_name);
-	for(size_t i=0;i<table_obj.get_nlines();i++) table_obj.set(col_name,i,0.0);
+	for(size_t i=0;i<table_obj.get_nlines();i++) {
+	  table_obj.set(col_name,i,0.0);
+	}
       }
       for(size_t i=0;i<n2;i++) {
-	table_obj.set(col_name,i,tab2.get(col_name,i)+table_obj.get(col_name,i));
+	table_obj.set(col_name,i,tab2.get(col_name,i)+
+		      table_obj.get(col_name,i));
       }
     }
     
@@ -1542,7 +1578,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
 
   // Use hdf_file to open the file
   hdf_file hf;
-  string type;
+  string type2;
   int ret;
 
   ret=hf.open(i1.c_str(),false);
@@ -1557,16 +1593,16 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
     if (verbose>2) {
       cout << "Looking for object with name '" << i2 << "'." << endl;
     }
-    ret=hf.find_group_by_name(i2,type,verbose);
+    ret=hf.find_group_by_name(i2,type2,verbose);
     if (ret==exc_enotfound) {
       cout << "Could not find object named '" << i2 
 	   << "' in file '" << i1 << "'." << endl;
       return exc_efailed;
     }
     if (verbose>2) {
-      cout << "Found object with type '" << type << "'." << endl;
+      cout << "Found object with type '" << type2 << "'." << endl;
     }
-    if (type=="table") {
+    if (type2=="table") {
       if (verbose>2) {
 	cout << "Reading table." << endl;
       }
@@ -1574,7 +1610,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
       table_name=i2;
       type="table";
       return 0;
-    } else if (type=="table3d") {
+    } else if (type2=="table3d") {
       if (verbose>2) {
 	cout << "Reading table3d." << endl;
       }
@@ -1582,13 +1618,13 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
       table_name=i2;
       type="table3d";
       return 0;
-    } else if (type=="hist") {
+    } else if (type2=="hist") {
       if (verbose>2) {
 	cout << "Reading hist." << endl;
       }
       type="hist";
       //table_obj=new table_units<>;
-      hdf_input(hf,*hp,i2);
+      hdf_input(hf,hist_obj,i2);
       /*
 	if (verbose>0) {
 	cout << "Creating a table from the histogram with columns named\n";
@@ -1597,7 +1633,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
 	h.copy_to_table(table_obj,"bins","low","high","weights");
       */
       return 0;
-    } else if (type=="hist_2d") {
+    } else if (type2=="hist_2d") {
       if (verbose>2) {
 	cout << "Reading hist_2d." << endl;
       }
@@ -1605,7 +1641,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
       //threed=true;
       //table3d_obj=new table3d;
       //hist_2d h;
-      hdf_input(hf,*h2p,i2);
+      hdf_input(hf,hist_2d_obj,i2);
       /*
 	if (verbose>0) {
 	cout << "Creating a table3d from the histogram with slice named\n";
@@ -1614,7 +1650,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
 	h.copy_to_table(table3d_obj,"x","y","weights");
       */
       return 0;
-    } else if (type==((string)"string[]")) {
+    } else if (type2==((string)"string[]")) {
       vector<string> vs;
       hf.gets_vec(i2,vs);
       if (vs.size()==0) {
@@ -1667,13 +1703,13 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
   ret=hf.find_group_by_type("hist",i2,verbose);
   if (ret==success) {
     //hist h;
-    hdf_input(hf,*hp,i2);
+    hdf_input(hf,hist_obj,i2);
     /*
-    if (verbose>0) {
+      if (verbose>0) {
       cout << "Creating a table from the histogram with columns named\n";
       cout << "'bins', 'low', 'high', and 'weights'." << endl;
-    }
-    h.copy_to_table(table_obj,"bins","low","high","weights");
+      }
+      h.copy_to_table(table_obj,"bins","low","high","weights");
     */
     table_name=i2;
     type="hist";
@@ -1686,14 +1722,14 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
   ret=hf.find_group_by_type("hist_2d",i2,verbose);
   if (ret==success) {
     //hist_2d h;
-    hdf_input(hf,*h2p,i2);
+    hdf_input(hf,hist_2d_obj,i2);
     /*
-    table3d_obj=new table3d;
-    if (verbose>0) {
+      table3d_obj=new table3d;
+      if (verbose>0) {
       cout << "Creating a table3d from the histogram with slice named\n";
       cout << "'weights'." << endl;
-    }
-    h.copy_to_table(table3d_obj,"x","y","weights");
+      }
+      h.copy_to_table(table3d_obj,"x","y","weights");
     */
     table_name=i2;
     //threed=true;
@@ -2157,7 +2193,7 @@ int acol_manager::comm_set_data(std::vector<std::string> &sv, bool itive_com) {
     if (ret!=0) return ret;
     
     table3d_obj.set_val(o2scl::stod(in[0]),o2scl::stod(in[1]),in[2],
-		 o2scl::stod(in[3]));
+			o2scl::stod(in[3]));
     return 0;
   }
 
@@ -2218,7 +2254,7 @@ int acol_manager::comm_set_unit(std::vector<std::string> &sv, bool itive_com) {
 int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
 
   if (type!="table3d" || type!="hist_2d") {
-    cerr << "Not implemented for type " << type << endl;
+    cerr << "Not implemented for type " << type << " ." << endl;
     return exc_efailed;
   }
   
@@ -2268,11 +2304,9 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
 	table3d_obj.clear_table();
 	type="";
       } else if (type=="hist") {
-	delete hp;
-	hp=0;
+	hist_obj.clear();
       } else if (type=="hist_2d") {
-	delete h2p;
-	h2p=0;
+	hist_2d_obj.clear();
       }
       table3d_obj.slice_contours(slice,1,levs,cont_obj);
       type="vector<contour_line>";
@@ -2303,15 +2337,16 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
     size_t nlev=1;
     contour co;
     co.set_levels(nlev,levs);
-    ubvector xreps(h2p->size_x());
-    for (size_t i=0;i<h2p->size_x();i++) {
-      xreps[i]=h2p->get_x_rep_i(i);
+    ubvector xreps(hist_2d_obj.size_x());
+    for (size_t i=0;i<hist_2d_obj.size_x();i++) {
+      xreps[i]=hist_2d_obj.get_x_rep_i(i);
     }
-    ubvector yreps(h2p->size_y());
-    for (size_t i=0;i<h2p->size_y();i++) {
-      yreps[i]=h2p->get_y_rep_i(i);
+    ubvector yreps(hist_2d_obj.size_y());
+    for (size_t i=0;i<hist_2d_obj.size_y();i++) {
+      yreps[i]=hist_2d_obj.get_y_rep_i(i);
     }
-    co.set_data(h2p->size_x(),h2p->size_y(),xreps,yreps,h2p->get_wgts());
+    co.set_data(hist_2d_obj.size_x(),hist_2d_obj.size_y(),xreps,yreps,
+		hist_2d_obj.get_wgts());
 
     if (file.length()>0) {
       std::vector<contour_line> clines;
@@ -2326,13 +2361,10 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
 	table_obj.clear_all();
       } else if (type=="table3d") {
 	table3d_obj.clear_table();
-	type="";
       } else if (type=="hist") {
-	delete hp;
-	hp=0;
+	hist_obj.clear();
       } else if (type=="hist_2d") {
-	delete h2p;
-	h2p=0;
+	hist_2d_obj.clear();
       }
       co.calc_contours(cont_obj);
       type="vector<contour_line>";
@@ -2359,7 +2391,7 @@ int acol_manager::comm_convert_unit
 (std::vector<std::string> &sv, bool itive_com) {
   
   if (type=="table3d") {
-    cerr << "Not implemented for 3d." << endl;
+    cerr << "Not implemented for table3d objects." << endl;
     return exc_efailed;
   }
   
@@ -2551,9 +2583,10 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
     if (pretty) {
 
       size_t running_width=0;
-      ostringstream *str=new ostringstream;
-      str->setf(ios::scientific);
-      str->precision(prec);
+      ostringstream str;
+      // Clear ostringstream with str.str(""); and str.clear();
+      str.setf(ios::scientific);
+      str.precision(prec);
       
       for(size_t i=0;i<table_obj.get_ncolumns();i++) {
 
@@ -2566,22 +2599,23 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
 	if (num_spaces>0) this_col+=num_spaces;
 	// See if there will be space
 	if (running_width>0 && ((int)(running_width+this_col))>=ncols) {
-	  row_names.push_back(str->str());
-	  delete str;
-	  str=new ostringstream;
-	  str->setf(ios::scientific);
-	  str->precision(prec);
+	  row_names.push_back(str.str());
+	  str.str("");
+	  str.clear();
+	  str.setf(ios::scientific);
+	  str.precision(prec);
 	  running_width=0;
 	}
 	// Output this column name
-	(*str) << ' ' << table_obj.get_column_name(i) << ' ';
+	str << ' ' << table_obj.get_column_name(i) << ' ';
 	for(int j=0;j<num_spaces;j++) {
-	  (*str) << ' ';
+	  str << ' ';
 	}
 	running_width+=this_col;
       }
-      row_names.push_back(str->str());
-      delete str;
+      row_names.push_back(str.str());
+      str.str("");
+      str.clear();
       
     } else {
       
@@ -2601,9 +2635,9 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
   if (pretty) {
     
     size_t running_width=0;
-    ostringstream *str=new ostringstream;
-    str->setf(ios::scientific);
-    str->precision(prec);
+    ostringstream str;
+    str.setf(ios::scientific);
+    str.precision(prec);
     
     for(size_t i=0;i<table_obj.get_ncolumns();i++) {
       
@@ -2614,26 +2648,27 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
       if (num_spaces>0) this_col+=num_spaces;
       // See if there will be space
       if (running_width>0 && ((int)(running_width+this_col))>=ncols) {
-	row_data.push_back(str->str());
-	delete str;
-	str=new ostringstream;
-	str->setf(ios::scientific);
-	str->precision(prec);
+	row_data.push_back(str.str());
+	str.str("");
+	str.clear();
+	str.setf(ios::scientific);
+	str.precision(prec);
 	running_width=0;
       }
       // Output the data
       if (table_obj.get(i,ix)>=0.0) {
-	(*str) << ' ' << table_obj.get(i,ix) << ' ';
+	str << ' ' << table_obj.get(i,ix) << ' ';
       } else {
-	(*str) << table_obj.get(i,ix) << ' ';
+	str << table_obj.get(i,ix) << ' ';
       }
       for(int j=0;j<num_spaces;j++) {
-	(*str) << ' ';
+	str << ' ';
       }
       running_width+=this_col;
     }
-    row_data.push_back(str->str());
-    delete str;
+    row_data.push_back(str.str());
+    str.str("");
+    str.clear();
     
     //--------------------------------------------------------------------
     // Now output both names and data to cout
@@ -3084,7 +3119,8 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
       size_t nt=table3d_obj.get_nslices(); 
       if (nt!=0) {
 	for(size_t k=0;k<nt;k++) {
-	  cout << "Slice " << k << ": " << table3d_obj.get_slice_name(k) << endl;
+	  cout << "Slice " << k << ": "
+	       << table3d_obj.get_slice_name(k) << endl;
 	  
 	  cout.setf(ios::showpos);
 	  for(size_t i=0;i<((size_t)prec)+8;i++) cout << " ";
@@ -3106,153 +3142,220 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
       }
     }
     return 0;
-  }
 
-  if (table_obj.get_nlines()==0) {
-    cerr << "No table to preview." << endl;
-    return exc_efailed;
-  }
+  } else if (type=="hist") {
 
-  if (scientific) cout.setf(ios::scientific);
-  else cout.unsetf(ios::scientific);
-
-  if (user_ncols<=0) {
-    char *ncstring=getenv("COLUMNS");
-    if (ncstring) ncols=o2scl::stoi(ncstring);
-  } else {
-    ncols=user_ncols;
-  }
-
-  cout.precision(prec);
-
-  if (table_obj.get_ncolumns()>0) {
-
-    string nlast;
-    int inr;
-    int inc;
-
-    //----------------------------------------------------------------------
-    // Compute number of columns which will fit
-
-    size_t max_cols=(ncols)/(8+prec);
-    if (max_cols>table_obj.get_ncolumns()) max_cols=table_obj.get_ncolumns();
-    
-    //--------------------------------------------------------------------
-    // Compute column and row increment
-    
-    if (sv.size()==2) {
-      int nrows=o2scl::stoi(sv[1]);
-      inr=(table_obj.get_nlines()+(nrows-1))/(nrows);
-      if (inr<1) inr=1;
-    } else {
-      inr=(table_obj.get_nlines()+9)/10;
-      if (inr<1) inr=1;
+    int nrows=10;
+    if (sv.size()>=2) {
+      nrows=o2scl::stoi(sv[1]);
     }
-    inc=(table_obj.get_ncolumns()+(1))/max_cols;
+    int inr=(hist_obj.size()+(nrows-1))/(nrows);
+    if (inr<1) inr=1;
+
+    cout.precision(prec);
+
+    cout.setf(ios::left);
+    cout.width(prec+8);
+    cout << " low";
+    cout.width(prec+8);
+    cout << " high";
+    cout.width(prec+8);
+    cout << " weight" << endl;
+    cout.unsetf(ios::left);
+
+    for(int i=0;i<hist_obj.size();i+=inr) {
+      double val=hist_obj.get_bin_low_i(i);
+      if (val<0.0) {
+	cout << val << " ";
+      } else {
+	cout << " " << val << " ";
+      }
+      val=hist_obj.get_bin_high_i(i);
+      if (val<0.0) {
+	cout << val << " ";
+      } else {
+	cout << " " << val << " ";
+      }
+      val=hist_obj.get_wgt_i(i);
+      if (val<0.0) {
+	cout << val << endl;
+      } else {
+	cout << " " << val << endl;
+      }
+    }
+    
+    return 0;
+
+  } else if (type=="hist_2d") {
+
+    int nrows=3, ncols=3;
+    if (sv.size()>=2) {
+      nrows=o2scl::stoi(sv[1]);
+    }
+    if (sv.size()>=3) {
+      ncols=o2scl::stoi(sv[2]);
+    }
+    int inr=(hist_2d_obj.size_x()+(nrows-1))/(nrows);
+    if (inr<1) inr=1;
+    int inc=(hist_2d_obj.size_y()+(ncols-1))/(ncols);
     if (inc<1) inc=1;
+
+    cout << "hist_2d output." << endl;
     
-    //--------------------------------------------------------------------
-    // Get last row number if necessary
-      
-    if (pretty==true) {
-      nlast=itos(table_obj.get_nlines()-1);
-    }
+    return 0;
 
-    //--------------------------------------------------------------------
-    // Output column names
+  } else if (type=="table") {
     
-    if (names_out==true) {
-
-      for(size_t ki=0;ki<max_cols;ki++) {
-
-	size_t i=ki*inc;
-	if (i>=table_obj.get_ncolumns()) i=table_obj.get_ncolumns()-1;
-	  
-	// Preceeding space
-	if (pretty==true) {
-	  cout << ' ';
-	}
-	  
-	// Column name
-	cout << table_obj.get_column_name(i) << " ";
-	  
-	// Trailing spaces
-	if (pretty==true) {
-	  int nsp=prec+6-((int)(table_obj.get_column_name(i).size()));
-	  for(int j=0;j<nsp;j++) cout << ' ';
-	} else {
-	  for(size_t kk=1;kk<nlast.length();kk++) cout << ' ';
-	}
-	
-      }
-      cout << endl;
+    if (table_obj.get_nlines()==0) {
+      cerr << "No table to preview." << endl;
+      return exc_efailed;
     }
-      
-    //--------------------------------------------------------------------
-    // Output units
     
-    if (names_out==true && table_obj.get_nunits()>0) {
-
-      for(size_t ki=0;ki<max_cols;ki++) {
-
-	size_t i=ki*inc;
-	if (i>=table_obj.get_ncolumns()) i=table_obj.get_ncolumns()-1;
-	  
-	// Preceeding space
-	if (pretty==true) {
-	  cout << ' ';
-	}
-	  
-	// Column name
-	string cunit=table_obj.get_unit(table_obj.get_column_name(i));
-	cout << '[' << cunit << "] ";
-	  
-	// Trailing spaces
-	if (pretty==true) {
-	  int nsp=prec+6-cunit.size()-2;
-	  if (nsp<0) nsp=0;
-	  for(int j=0;j<nsp;j++) cout << ' ';
-	} else {
-	  for(size_t kk=1;kk<nlast.length();kk++) cout << ' ';
-	}
-	
-      }
-      cout << endl;
+    if (scientific) cout.setf(ios::scientific);
+    else cout.unsetf(ios::scientific);
+    
+    if (user_ncols<=0) {
+      char *ncstring=getenv("COLUMNS");
+      if (ncstring) ncols=o2scl::stoi(ncstring);
+    } else {
+      ncols=user_ncols;
     }
+    
+    cout.precision(prec);
+    
+    if (table_obj.get_ncolumns()>0) {
       
-    //--------------------------------------------------------------------
-    // Output data
+      string nlast;
+      int inr;
+      int inc;
       
-    for(size_t i=0;i<table_obj.get_nlines();i+=inr) {
+      //----------------------------------------------------------------------
+      // Compute number of columns which will fit
       
-      for(size_t kj=0;kj<max_cols;kj++) {
-
-	size_t j=kj*inc;
-	if (j>=table_obj.get_ncolumns()) j=table_obj.get_ncolumns()-1;
-
-	if (pretty==true) {
-	  double d=table_obj.get(j,i);
-	  if (!has_minus_sign(&d)) {
-	    cout << ' ';
-	  }
-	}
-	cout << table_obj.get(j,i) << ' ';
-	if (pretty==true) {
-	  for(int kk=0;kk<((int)(table_obj.get_column_name(j).size()-
-				 prec-6));kk++) {
-	    cout << ' ';
-	  }
-	}
-	
-      }
-      cout << endl;
+      size_t max_cols=(ncols)/(8+prec);
+      if (max_cols>table_obj.get_ncolumns()) max_cols=table_obj.get_ncolumns();
       
       //--------------------------------------------------------------------
-      // Continue to next row
+      // Compute column and row increment
+      
+      if (sv.size()==2) {
+	int nrows=o2scl::stoi(sv[1]);
+	inr=(table_obj.get_nlines()+(nrows-1))/(nrows);
+	if (inr<1) inr=1;
+      } else {
+	inr=(table_obj.get_nlines()+9)/10;
+	if (inr<1) inr=1;
+      }
+      inc=(table_obj.get_ncolumns()+(1))/max_cols;
+      if (inc<1) inc=1;
+      
+      //--------------------------------------------------------------------
+      // Get last row number if necessary
+      
+      if (pretty==true) {
+	nlast=itos(table_obj.get_nlines()-1);
+      }
+      
+      //--------------------------------------------------------------------
+      // Output column names
+      
+      if (names_out==true) {
+	
+	for(size_t ki=0;ki<max_cols;ki++) {
+	  
+	  size_t i=ki*inc;
+	  if (i>=table_obj.get_ncolumns()) i=table_obj.get_ncolumns()-1;
+	  
+	  // Preceeding space
+	  if (pretty==true) {
+	    cout << ' ';
+	  }
+	  
+	  // Column name
+	  cout << table_obj.get_column_name(i) << " ";
+	  
+	  // Trailing spaces
+	  if (pretty==true) {
+	    int nsp=prec+6-((int)(table_obj.get_column_name(i).size()));
+	    for(int j=0;j<nsp;j++) cout << ' ';
+	  } else {
+	    for(size_t kk=1;kk<nlast.length();kk++) cout << ' ';
+	  }
+	  
+	}
+	cout << endl;
+      }
+      
+      //--------------------------------------------------------------------
+      // Output units
+      
+      if (names_out==true && table_obj.get_nunits()>0) {
+	
+	for(size_t ki=0;ki<max_cols;ki++) {
+	  
+	  size_t i=ki*inc;
+	  if (i>=table_obj.get_ncolumns()) i=table_obj.get_ncolumns()-1;
+	  
+	  // Preceeding space
+	  if (pretty==true) {
+	    cout << ' ';
+	  }
+	  
+	  // Column name
+	  string cunit=table_obj.get_unit(table_obj.get_column_name(i));
+	  cout << '[' << cunit << "] ";
+	  
+	  // Trailing spaces
+	  if (pretty==true) {
+	    int nsp=prec+6-cunit.size()-2;
+	    if (nsp<0) nsp=0;
+	    for(int j=0;j<nsp;j++) cout << ' ';
+	  } else {
+	    for(size_t kk=1;kk<nlast.length();kk++) cout << ' ';
+	  }
+	  
+	}
+	cout << endl;
+      }
+      
+      //--------------------------------------------------------------------
+      // Output data
+      
+      for(size_t i=0;i<table_obj.get_nlines();i+=inr) {
+	
+	for(size_t kj=0;kj<max_cols;kj++) {
+	  
+	  size_t j=kj*inc;
+	  if (j>=table_obj.get_ncolumns()) j=table_obj.get_ncolumns()-1;
+	  
+	  if (pretty==true) {
+	    double d=table_obj.get(j,i);
+	    if (!has_minus_sign(&d)) {
+	      cout << ' ';
+	    }
+	  }
+	  cout << table_obj.get(j,i) << ' ';
+	  if (pretty==true) {
+	    for(int kk=0;kk<((int)(table_obj.get_column_name(j).size()-
+				   prec-6));kk++) {
+	      cout << ' ';
+	    }
+	  }
+	  
+	}
+	cout << endl;
+	
+	//--------------------------------------------------------------------
+	// Continue to next row
+      }
+      
     }
     
+    return 0;
+
   }
 
+  cerr << "Cannot preview type " << type << " ." << endl;
   return 0;
 }
 

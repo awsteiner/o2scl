@@ -224,16 +224,19 @@ namespace o2scl {
       return;
     }
 
-    // Create from a table
-    hist(o2scl::table<> &t, std::string colx, 
-	 size_t n_bins) {
-      hist(t.get_nlines(),t.get_column(colx),n_bins);
+    // Create a histogram from a \ref o2scl::table object
+    void from_table(o2scl::table<> &t, std::string colx, 
+		    size_t n_bins) {
+      *this=hist(t.get_nlines(),t.get_column(colx),n_bins);
+      return;
     }
     
-    // Create from a table
-    hist(o2scl::table<> &t, std::string colx, std::string coly,
-	 size_t n_bins) {
-      hist(t.get_nlines(),t.get_column(colx),t.get_column(coly),n_bins);
+    // Create a histogram from a \ref o2scl::table object
+    void from_table(o2scl::table<> &t, std::string colx, std::string coly,
+		    size_t n_bins) {
+      *this=hist(t.get_nlines(),t.get_column(colx),t.get_column(coly),
+		 n_bins);
+      return;
     }
     
     /// The histogram size

@@ -169,16 +169,16 @@ namespace o2scl_acol {
 
 #ifdef DOXYGEN
     /// A pointer to the hist
-    hist *hp;
+    hist hist_obj;
 #else
-    o2scl::hist *hp;
+    o2scl::hist hist_obj;
 #endif
 
 #ifdef DOXYGEN
     /// A pointer to the hist
-    hist_2d *h2p;
+    hist_2d hist_2d_obj;
 #else
-    o2scl::hist_2d *h2p;
+    o2scl::hist_2d hist_2d_obj;
 #endif
 
     /// String designating the current type
@@ -296,6 +296,9 @@ namespace o2scl_acol {
 
     /// Desc
     virtual int comm_nlines(std::vector<std::string> &sv, bool itive_com);
+
+    /// Desc
+    virtual int comm_to_hist(std::vector<std::string> &sv, bool itive_com);
     
     /// Find a row from a function
     virtual int comm_find_row(std::vector<std::string> &sv, bool itive_com);
