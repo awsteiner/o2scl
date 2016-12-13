@@ -363,6 +363,10 @@ int acol_manager::setup_options() {
      both},
     {0,"nlines","Add 'nlines' as a constant to a table object.",0,0,"",
      "",new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_nlines),
+     both},
+    {0,"contours","Create contour lines from a table3d or hist_2d.",
+     0,4,"<value> <slice-name (if table3d)> [file] [name]","",
+     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_contours),
      both}
   };
   /*
@@ -2219,6 +2223,99 @@ int acol_manager::comm_set_unit(std::vector<std::string> &sv, bool itive_com) {
 
   tabp->set_unit(in[0],in[1]);
 
+  return 0;
+}
+
+int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
+
+  if (type!="table3d" || type!="hist_2d") {
+    cerr << "Not implemented for type " << type << endl;
+    return exc_efailed;
+  }
+  
+  std::string svalue, file, name="contours";
+  
+  if (type=="table3d") {
+
+    std::string slice;
+
+    if (sv.size()<3) {
+      svalue=cl->cli_gets("Contour value (or blank to cancel): ");
+      slice=cl->cli_gets("Slice (or blank to cancel): ");
+      if (svalue.length()==0) return 1;
+      file=cl->cli_gets("Filename (or blank to keep): ");
+      if (file.length()>0) {
+	cl->cli_gets("Object name (or blank for \"contours\"): ");
+      }
+    } else if (sv.size()==3) {
+      svalue=sv[1];
+      slice=sv[2];
+    } else if (sv.size()==4) {
+      svalue=sv[1];
+      slice=sv[2];
+      file=sv[3];
+    } else {
+      svalue=sv[1];
+      slice=sv[2];
+      file=sv[3];
+      name=sv[4];
+    }
+
+    ubvector levs(1)={o2scl::stod(svalue)};
+    size_t nlev=1;
+    std::vector<contour_line> clines;
+    t3p->slice_contours(slice,1,levs,clines);
+    hdf_file hf;
+    hf.open_or_create(file);
+    hdf_output(hf,clines,name);
+    hf.close();
+    
+  } else if (type=="hist_2d") {
+
+    if (sv.size()<2) {
+      svalue=cl->cli_gets("Contour value (or blank to cancel): ");
+      if (svalue.length()==0) return 1;
+      file=cl->cli_gets("Filename (or blank to keep): ");
+      if (file.length()>0) {
+	cl->cli_gets("Object name (or blank for \"contours\"): ");
+      }
+    } else if (sv.size()==2) {
+      svalue=sv[1];
+    } else if (sv.size()==3) {
+      svalue=sv[1];
+      file=sv[2];
+    } else {
+      svalue=sv[1];
+      file=sv[2];
+      name=sv[3];
+    }
+
+    ubvector levs(1)={o2scl::stod(svalue)};
+    size_t nlev=1;
+    std::vector<contour_line> clines;
+    contour co;
+    co.set_levels(nlev,levs);
+    ubvector xreps(h2p->size_x());
+    for (size_t i=0;i<h2p->size_x();i++) {
+      xreps[i]=h2p->get_x_rep_i(i);
+    }
+    ubvector yreps(h2p->size_y());
+    for (size_t i=0;i<h2p->size_y();i++) {
+      yreps[i]=h2p->get_y_rep_i(i);
+    }
+    co.set_data(h2p->size_x(),h2p->size_y(),xreps,yreps,h2p->get_wgts());
+    co.calc_contours(clines);
+
+    hdf_file hf;
+    hf.open_or_create(file);
+    hdf_output(hf,clines,name);
+    hf.close();
+    
+  }
+  
+  
+
+  
   return 0;
 }
 

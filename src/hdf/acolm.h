@@ -379,6 +379,9 @@ namespace o2scl_acol {
     /// Set units of a column
     virtual int comm_set_unit(std::vector<std::string> &sv, bool itive_com);
     
+    /// Desc
+    virtual int comm_contours(std::vector<std::string> &sv, bool itive_com);
+    
     /// Set units of a column
     virtual int comm_show_units(std::vector<std::string> &sv, bool itive_com);
     
