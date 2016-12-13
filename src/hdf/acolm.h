@@ -43,6 +43,7 @@
 #include <o2scl/hdf_file.h>
 #include <o2scl/hdf_io.h>
 #include <o2scl/lib_settings.h>
+#include <o2scl/contour.h>
 
 #ifdef O2SCL_READLINE
 #include <o2scl/cli_readline.h>
@@ -161,9 +162,9 @@ namespace o2scl_acol {
 
 #ifdef DOXYGEN
     /// A pointer to the table
-    table_units<> *tabp;
+    table_units<> table_obj;
 #else
-    o2scl::table_units<> *tabp;
+    o2scl::table_units<> table_obj;
 #endif
 
 #ifdef DOXYGEN
@@ -192,11 +193,15 @@ namespace o2scl_acol {
 
 #ifdef DOXYGEN
     /// Pointer to the three dimensional table
-    table3d *t3p;
+    table3d table3d_obj;
 #else
-    o2scl::table3d *t3p;
+    o2scl::table3d table3d_obj;
 #endif
 
+    /** \brief Contour lines object
+     */
+    std::vector<o2scl::contour_line> cont_obj;
+    
     /** \brief True if we should run interactive mode after parsing
 	the command-line
     */
@@ -521,13 +526,13 @@ extern "C" {
 		<< std::endl;
       return 1;
     }
-    if (amp->tabp==0) {
+    if (amp->type!="table") {
       std::cerr << "No table loaded." << std::endl;
       return 2;
     }
-    n=amp->tabp->get_nlines();
+    n=amp->table_obj.get_nlines();
     std::string stmp=col_name;
-    const std::vector<double> &col=amp->tabp->get_column(stmp);
+    const std::vector<double> &col=amp->table_obj.get_column(stmp);
     ptr=(double *)&col[0];
     return 0;
   }
@@ -545,25 +550,21 @@ extern "C" {
 		<< std::endl;
       return 1;
     }
-    if (amp->t3p==0) {
-      std::cerr << "No table3d object loaded." << std::endl;
-      return 2;
-    }
 
-    nx=amp->t3p->get_nx();
+    nx=amp->table3d_obj.get_nx();
     amp->xtemp.resize(nx);
-    o2scl::vector_copy(amp->t3p->get_x_data(),amp->xtemp);
+    o2scl::vector_copy(amp->table3d_obj.get_x_data(),amp->xtemp);
     xptr=(double *)&amp->xtemp[0];
 
-    ny=amp->t3p->get_ny();
+    ny=amp->table3d_obj.get_ny();
     amp->ytemp.resize(ny);
-    o2scl::vector_copy(amp->t3p->get_y_data(),amp->ytemp);
+    o2scl::vector_copy(amp->table3d_obj.get_y_data(),amp->ytemp);
     yptr=(double *)&amp->ytemp[0];
 
     amp->stemp.resize(nx*ny);
     std::string stmp=slice_name;
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
-    const ubmatrix &m=amp->t3p->get_slice(stmp);
+    const ubmatrix &m=amp->table3d_obj.get_slice(stmp);
     for(size_t i=0;i<nx;i++) {
       for(size_t j=0;j<ny;j++) {
 	amp->stemp[i*ny+j]=m(i,j);

@@ -28,8 +28,7 @@
     to interpolate <tt>rank-1</tt> indices to get a vector result,
     you can use \ref o2scl::tensor_grid::interp_linear_vec() .
 
-    If the data is not on a grid, then nearest-neighbor interpolation
-    is provided by \ref o2scl::interpm_neigh and inverse distance
+    If the data is not on a grid, then inverse distance
     weighted interpolation is performed by \ref o2scl::interpm_idw.
 
     \section ex_interp2_sect Interpolation on a rectangular grid

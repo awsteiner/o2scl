@@ -36,8 +36,6 @@ typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
 acol_manager::acol_manager() : cng(o2scl_settings.get_convert_units()) {
   table_name="acol";
-  tabp=0;
-  t3p=0;
   verbose=1;
   pretty=true;
   names_out=true;
@@ -61,7 +59,7 @@ int acol_manager::setup_options() {
   const int cl_param=cli::comm_option_cl_param;
   const int both=cli::comm_option_both;
 
-  static const int narr=46;
+  static const int narr=47;
 
   // Options, sorted by long name. We allow 0 parameters in many of these
   // options so they can be requested from the user in interactive mode. 
@@ -929,12 +927,12 @@ int acol_manager::comm_nlines(std::vector<std::string> &sv,
     return 1;
   }
 
-  if (tabp->is_constant("nlines")) {
+  if (table_obj.is_constant("nlines")) {
     cerr << "Constant 'nlines' already exists." << endl;
     return 2;
   }
 
-  tabp->add_constant("nlines",tabp->get_nlines());
+  table_obj.add_constant("nlines",table_obj.get_nlines());
   
   return 0;
 }
@@ -944,7 +942,7 @@ int acol_manager::comm_interp_type(std::vector<std::string> &sv,
 
   if (type=="table3d") {
     
-    if (t3p==0) {
+    if (type!="table3d") {
       cout << "No table to get interpolation type of in 'interp-type'." << endl;
       return exc_efailed;
     }
@@ -954,11 +952,11 @@ int acol_manager::comm_interp_type(std::vector<std::string> &sv,
 	cout << "Invalid interpolation type in 'interp-type'." << endl;
 	return exc_efailed;
       }
-      t3p->set_interp_type(o2scl::stoi(sv[1]));
+      table3d_obj.set_interp_type(o2scl::stoi(sv[1]));
     }
     
     if (sv.size()==1 || verbose>0) {
-      size_t itype=t3p->get_interp_type();
+      size_t itype=table3d_obj.get_interp_type();
       cout << "Current interpolation type is " << itype;
       
       if (itype<4) {
@@ -991,7 +989,7 @@ int acol_manager::comm_interp_type(std::vector<std::string> &sv,
     return 0;
   }
   
-  if (tabp==0) {
+  if (table_obj.get_nlines()==0) {
     cout << "No table to get interpolation type of." << endl;
     return exc_efailed;
   }
@@ -1001,11 +999,11 @@ int acol_manager::comm_interp_type(std::vector<std::string> &sv,
       cout << "Invalid interpolation type in interp-type." << endl;
       return exc_efailed;
     }
-    tabp->set_interp_type(o2scl::stoi(sv[1]));
+    table_obj.set_interp_type(o2scl::stoi(sv[1]));
   }
 
   if (sv.size()==1 || verbose>0) {
-    size_t itype=tabp->get_interp_type();
+    size_t itype=table_obj.get_interp_type();
     cout << "Current interpolation type is " << itype;
     
     if (itype<4) {
@@ -1042,7 +1040,7 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
 
   if (type=="table3d") {
     
-    if (t3p==0) {
+    if (type!="table3d") {
       cerr << "No table3d to output in command 'output'." << endl;
       return exc_efailed;
     }
@@ -1063,31 +1061,31 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
     fout->precision(prec);
 
     size_t nx, ny;
-    t3p->get_size(nx,ny);
+    table3d_obj.get_size(nx,ny);
     if (nx!=0 && ny!=0) {
 
       (*fout) << "Grid x: ";
       for(size_t i=0;i<((size_t)nx);i++) {
-	(*fout) << t3p->get_grid_x(i) << " ";
+	(*fout) << table3d_obj.get_grid_x(i) << " ";
       }
       (*fout) << endl;
       (*fout) << "Grid y: ";
       for(size_t i=0;i<((size_t)ny);i++) {
-	(*fout) << t3p->get_grid_y(i) << " ";
+	(*fout) << table3d_obj.get_grid_y(i) << " ";
       }
       (*fout) << endl;
 
-      size_t nt=t3p->get_nslices(); 
+      size_t nt=table3d_obj.get_nslices(); 
       if (nt!=0) {
 	for(size_t k=0;k<nt;k++) {
-	  (*fout) << "Slice " << k << ": " << t3p->get_slice_name(k) << endl;
+	  (*fout) << "Slice " << k << ": " << table3d_obj.get_slice_name(k) << endl;
 	  if (k==0) {
 	    (*fout) << "Outer loops over x grid, inner loop over y grid." 
 		    << endl;
 	  }
 	  for(size_t i=0;i<nx;i++) {
 	    for(size_t j=0;j<ny;j++) {
-	      (*fout) << t3p->get(i,j,k) << " ";
+	      (*fout) << table3d_obj.get(i,j,k) << " ";
 	    }
 	    (*fout) << endl;
 	  }
@@ -1101,7 +1099,7 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
     return 0;
   }
 
-  if (tabp==0) {
+  if (table_obj.get_nlines()==0) {
     cerr << "No table to output." << endl;
     return exc_efailed;
   }
@@ -1126,24 +1124,24 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
   else fout->unsetf(ios::scientific);
   fout->precision(prec);
 
-  if (tabp->get_ncolumns()>0) {
+  if (table_obj.get_ncolumns()>0) {
 
     //--------------------------------------------------------------------
     // Count column widths
 
-    vector<size_t> col_wids(tabp->get_ncolumns());
+    vector<size_t> col_wids(table_obj.get_ncolumns());
 
-    for(size_t i=0;i<tabp->get_ncolumns();i++) {
+    for(size_t i=0;i<table_obj.get_ncolumns();i++) {
       col_wids[i]=prec+6;
     }
 
     if (names_out==true) {
-      for(size_t i=0;i<tabp->get_ncolumns();i++) {
-	if (tabp->get_column_name(i).size()>col_wids[i]) {
-	  col_wids[i]=tabp->get_column_name(i).size();
+      for(size_t i=0;i<table_obj.get_ncolumns();i++) {
+	if (table_obj.get_column_name(i).size()>col_wids[i]) {
+	  col_wids[i]=table_obj.get_column_name(i).size();
 	}
-	if (tabp->get_unit(tabp->get_column_name(i)).size()+2>col_wids[i]) {
-	  col_wids[i]=tabp->get_unit(tabp->get_column_name(i)).size()+2;
+	if (table_obj.get_unit(table_obj.get_column_name(i)).size()+2>col_wids[i]) {
+	  col_wids[i]=table_obj.get_unit(table_obj.get_column_name(i)).size()+2;
 	}
       }
     }
@@ -1152,7 +1150,7 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
     // Output column names
       
     if (names_out==true) {
-      for(size_t i=0;i<tabp->get_ncolumns();i++) {
+      for(size_t i=0;i<table_obj.get_ncolumns();i++) {
 	  
 	// Preceeding space
 	if (pretty==true) {
@@ -1160,11 +1158,11 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
 	}
 	  
 	// Column name
-	(*fout) << tabp->get_column_name(i) << " ";
+	(*fout) << table_obj.get_column_name(i) << " ";
 	  
 	// Trailing spaces
 	if (pretty==true) {
-	  int nsp=col_wids[i]-tabp->get_column_name(i).size();
+	  int nsp=col_wids[i]-table_obj.get_column_name(i).size();
 	  if (nsp<0) {
 	    O2SCL_ERR("Column size anomaly (col names).",exc_efailed);
 	  }
@@ -1178,8 +1176,8 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
     //--------------------------------------------------------------------
     // Output units
     
-    if (tabp->get_nunits()>0 && names_out==true) {
-      for(size_t i=0;i<tabp->get_ncolumns();i++) {
+    if (table_obj.get_nunits()>0 && names_out==true) {
+      for(size_t i=0;i<table_obj.get_ncolumns();i++) {
 
 	// Preceeding space
 	if (pretty==true) {
@@ -1187,12 +1185,12 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
 	}
 	
 	// Unit name
-	(*fout) << '[' << tabp->get_unit(tabp->get_column_name(i)) << "] ";
+	(*fout) << '[' << table_obj.get_unit(table_obj.get_column_name(i)) << "] ";
 	
 	// Trailing spaces
 	if (pretty==true) {
 	  int nsp=col_wids[i]-
-	    tabp->get_unit(tabp->get_column_name(i)).size()-2;
+	    table_obj.get_unit(table_obj.get_column_name(i)).size()-2;
 	  if (nsp<0) {
 	    O2SCL_ERR("Column size anomaly (units).",exc_efailed);
 	  }
@@ -1206,17 +1204,17 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
     //--------------------------------------------------------------------
     // Output data
       
-    for(int i=0;i<((int)tabp->get_nlines());i++) {
+    for(int i=0;i<((int)table_obj.get_nlines());i++) {
 	
-      for(size_t j=0;j<tabp->get_ncolumns();j++) {
+      for(size_t j=0;j<table_obj.get_ncolumns();j++) {
 	  
 	// Otherwise, for normal output
-	if (pretty==true && tabp->get(j,i)>=0.0) {
+	if (pretty==true && table_obj.get(j,i)>=0.0) {
 	  (*fout) << ' ';
 	}
-	(*fout) << tabp->get(j,i) << ' ';
+	(*fout) << table_obj.get(j,i) << ' ';
 	if (pretty==true) {
-	  int nsp=((int)(tabp->get_column_name(j).size()-prec-6));
+	  int nsp=((int)(table_obj.get_column_name(j).size()-prec-6));
 	  for(int kk=0;kk<nsp;kk++) {
 	    (*fout) << ' ';
 	  }
@@ -1246,7 +1244,7 @@ int acol_manager::comm_cat(std::vector<std::string> &sv, bool itive_com) {
   
   if (type=="table3d") {
 
-    if (t3p==0) {
+    if (type!="table3d") {
       cerr << "No table3d to add to in command 'cat'." << endl;
       return exc_efailed;
     }
@@ -1274,7 +1272,7 @@ int acol_manager::comm_cat(std::vector<std::string> &sv, bool itive_com) {
       if (verbose>2) {
 	cout << "Adding constant " << tnam << " = " << tval << endl;
       }
-      t3p->add_constant(tnam,tval);
+      table3d_obj.add_constant(tnam,tval);
     }
 
     // ---------------------------------------------------------------------
@@ -1286,13 +1284,13 @@ int acol_manager::comm_cat(std::vector<std::string> &sv, bool itive_com) {
     for(size_t k=0;k<tab2.get_nslices();k++) {
       std::string sl_name=tab2.get_slice_name(k);
       size_t slix;
-      if (!t3p->is_slice(sl_name,slix)) {
-	t3p->new_slice(sl_name);
+      if (!table3d_obj.is_slice(sl_name,slix)) {
+	table3d_obj.new_slice(sl_name);
 	for(size_t i=0;i<tab2.get_nx();i++) {
 	  for(size_t j=0;j<tab2.get_ny();j++) {
 	    double x=xg[i];
 	    double y=yg[j];
-	    t3p->set_val(x,y,sl_name,tab2.get(i,j,sl_name));
+	    table3d_obj.set_val(x,y,sl_name,tab2.get(i,j,sl_name));
 	  }
 	}
       }
@@ -1300,7 +1298,7 @@ int acol_manager::comm_cat(std::vector<std::string> &sv, bool itive_com) {
 
   } else {
 
-    if (tabp==0) {
+    if (table_obj.get_nlines()==0) {
       cerr << "No table to add to in command 'cat'." << endl;
       return exc_efailed;
     }
@@ -1328,22 +1326,22 @@ int acol_manager::comm_cat(std::vector<std::string> &sv, bool itive_com) {
       if (verbose>2) {
 	cout << "Adding constant " << tnam << " = " << tval << endl;
       }
-      tabp->add_constant(tnam,tval);
+      table_obj.add_constant(tnam,tval);
     }
 
     // ---------------------------------------------------------------------
 
-    size_t n1=tabp->get_nlines();
+    size_t n1=table_obj.get_nlines();
     size_t n2=tab2.get_nlines();
-    tabp->set_nlines(n1+n2);
+    table_obj.set_nlines(n1+n2);
     for(size_t j=0;j<tab2.get_ncolumns();j++) {
       std::string col_name=tab2.get_column_name(j);
-      if (!tabp->is_column(col_name)) {
-	tabp->new_column(col_name);
-	for(size_t i=0;i<n1+n2;i++) tabp->set(col_name,i,0.0);
+      if (!table_obj.is_column(col_name)) {
+	table_obj.new_column(col_name);
+	for(size_t i=0;i<n1+n2;i++) table_obj.set(col_name,i,0.0);
       }
       for(size_t i=0;i<n2;i++) {
-	tabp->set(col_name,i+n1,tab2.get(col_name,i));
+	table_obj.set(col_name,i+n1,tab2.get(col_name,i));
       }
     }
     
@@ -1380,15 +1378,15 @@ int acol_manager::comm_sum(std::vector<std::string> &sv, bool itive_com) {
     for(size_t k=0;k<t2.get_nslices();k++) {
       string slname=t2.get_slice_name(k);
       size_t slix;
-      if (t3p->is_slice(slname,slix)==false) {
-	t3p->new_slice(slname);
-	t3p->set_slice_all(slname,0.0);
+      if (table3d_obj.is_slice(slname,slix)==false) {
+	table3d_obj.new_slice(slname);
+	table3d_obj.set_slice_all(slname,0.0);
       }
       for(size_t i=0;i<nx;i++) {
 	for(size_t j=0;j<ny;j++) {
 	  double x=xg[i];
 	  double y=yg[j];
-	  t3p->set_val(x,y,slname,t3p->get_val(x,y,slname)+t2.get(i,j,slname));
+	  table3d_obj.set_val(x,y,slname,table3d_obj.get_val(x,y,slname)+t2.get(i,j,slname));
 	}
       }
     }
@@ -1399,7 +1397,7 @@ int acol_manager::comm_sum(std::vector<std::string> &sv, bool itive_com) {
       cerr << "Not enough arguments to add." << endl;
       return exc_efailed;
     }
-    if (tabp==0) {
+    if (table_obj.get_nlines()==0) {
       cerr << "No table to add to." << endl;
       return exc_efailed;
     }
@@ -1414,24 +1412,24 @@ int acol_manager::comm_sum(std::vector<std::string> &sv, bool itive_com) {
     hdf_input(hf,tab2,name2);
     hf.close();
 
-    size_t n1=tabp->get_nlines();
+    size_t n1=table_obj.get_nlines();
     size_t n2=tab2.get_nlines();
     if (n2>n1) {
-      tabp->set_nlines(n1+n2);
-      for(size_t j=0;j<tabp->get_ncolumns();j++) {
+      table_obj.set_nlines(n1+n2);
+      for(size_t j=0;j<table_obj.get_ncolumns();j++) {
 	for(size_t i=n1;i<n1+n2;i++) {
-	  tabp->set(j,i,0.0);
+	  table_obj.set(j,i,0.0);
 	}
       }
     }
     for(size_t j=0;j<tab2.get_ncolumns();j++) {
       std::string col_name=tab2.get_column_name(j);
-      if (!tabp->is_column(col_name)) {
-	tabp->new_column(col_name);
-	for(size_t i=0;i<tabp->get_nlines();i++) tabp->set(col_name,i,0.0);
+      if (!table_obj.is_column(col_name)) {
+	table_obj.new_column(col_name);
+	for(size_t i=0;i<table_obj.get_nlines();i++) table_obj.set(col_name,i,0.0);
       }
       for(size_t i=0;i<n2;i++) {
-	tabp->set(col_name,i,tab2.get(col_name,i)+tabp->get(col_name,i));
+	table_obj.set(col_name,i,tab2.get(col_name,i)+table_obj.get(col_name,i));
       }
     }
     
@@ -1534,14 +1532,12 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
   }
 
   // Delete previous table
-  if (type=="table3d" && t3p!=0) {
+  if (type=="table3d") {
     type="";
-    delete t3p;
-    t3p=0;
-  } else if (tabp!=0) {
+    table3d_obj.clear_table();
+  } else if (type=="table") {
     type="";
-    delete tabp;
-    tabp=0;
+    table_obj.clear_all();
   }
 
   // Use hdf_file to open the file
@@ -1574,8 +1570,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
       if (verbose>2) {
 	cout << "Reading table." << endl;
       }
-      tabp=new table_units<>;
-      hdf_input(hf,*tabp,i2);
+      hdf_input(hf,table_obj,i2);
       table_name=i2;
       type="table";
       return 0;
@@ -1583,8 +1578,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
       if (verbose>2) {
 	cout << "Reading table3d." << endl;
       }
-      t3p=new table3d;
-      hdf_input(hf,*t3p,i2);
+      hdf_input(hf,table3d_obj,i2);
       table_name=i2;
       type="table3d";
       return 0;
@@ -1593,14 +1587,14 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
 	cout << "Reading hist." << endl;
       }
       type="hist";
-      //tabp=new table_units<>;
+      //table_obj=new table_units<>;
       hdf_input(hf,*hp,i2);
       /*
 	if (verbose>0) {
 	cout << "Creating a table from the histogram with columns named\n";
 	cout << "'bins', 'low', 'high', and 'weights'." << endl;
 	}
-	h.copy_to_table(*tabp,"bins","low","high","weights");
+	h.copy_to_table(table_obj,"bins","low","high","weights");
       */
       return 0;
     } else if (type=="hist_2d") {
@@ -1609,7 +1603,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
       }
       type="hist_2d";
       //threed=true;
-      //t3p=new table3d;
+      //table3d_obj=new table3d;
       //hist_2d h;
       hdf_input(hf,*h2p,i2);
       /*
@@ -1617,7 +1611,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
 	cout << "Creating a table3d from the histogram with slice named\n";
 	cout << "'weights'." << endl;
 	}
-	h.copy_to_table(*t3p,"x","y","weights");
+	h.copy_to_table(table3d_obj,"x","y","weights");
       */
       return 0;
     } else if (type==((string)"string[]")) {
@@ -1650,8 +1644,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
   }
   ret=hf.find_group_by_type("table",i2,verbose);
   if (ret==success) {
-    tabp=new table_units<>;
-    hdf_input(hf,*tabp,i2);
+    hdf_input(hf,table_obj,i2);
     table_name=i2;
     type="table";
     return 0;
@@ -1662,8 +1655,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
   }
   ret=hf.find_group_by_type("table3d",i2,verbose);
   if (ret==success) {
-    t3p=new table3d;
-    hdf_input(hf,*t3p,i2);
+    hdf_input(hf,table3d_obj,i2);
     table_name=i2;
     type="table3d";
     return 0;
@@ -1676,13 +1668,12 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
   if (ret==success) {
     //hist h;
     hdf_input(hf,*hp,i2);
-    //tabp=new table_units<>;
     /*
     if (verbose>0) {
       cout << "Creating a table from the histogram with columns named\n";
       cout << "'bins', 'low', 'high', and 'weights'." << endl;
     }
-    h.copy_to_table(*tabp,"bins","low","high","weights");
+    h.copy_to_table(table_obj,"bins","low","high","weights");
     */
     table_name=i2;
     type="hist";
@@ -1697,12 +1688,12 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
     //hist_2d h;
     hdf_input(hf,*h2p,i2);
     /*
-    t3p=new table3d;
+    table3d_obj=new table3d;
     if (verbose>0) {
       cout << "Creating a table3d from the histogram with slice named\n";
       cout << "'weights'." << endl;
     }
-    h.copy_to_table(*t3p,"x","y","weights");
+    h.copy_to_table(table3d_obj,"x","y","weights");
     */
     table_name=i2;
     //threed=true;
@@ -2006,7 +1997,7 @@ int acol_manager::comm_max(std::vector<std::string> &sv, bool itive_com) {
 
   if (type=="table3d") {
 
-    if (t3p==0 || t3p->get_nslices()==0) {
+    if (type!="table3d" || table3d_obj.get_nslices()==0) {
       cerr << "No table3d with slices to find the maximum value of." << endl;
       return exc_efailed;
     }
@@ -2017,25 +2008,25 @@ int acol_manager::comm_max(std::vector<std::string> &sv, bool itive_com) {
     if (ret!=0) return ret;
 
     size_t ix;
-    if (!t3p->is_slice(i1,ix)) {
+    if (!table3d_obj.is_slice(i1,ix)) {
       cerr << "No slice named '" << i1 << "'." << endl;
       return exc_efailed;
     }
     
-    const ubmatrix &mat=t3p->get_slice(ix);
+    const ubmatrix &mat=table3d_obj.get_slice(ix);
     size_t i, j;
     double max;
     matrix_max_index(mat,i,j,max);
 
     cout << "Maximum value of slice '" << i1 << "' is: " 
 	 << max << " at indices (" << i << "," << j << ")\n  and grid "
-	 << "point (" << t3p->get_grid_x(i) << ","
-	 << t3p->get_grid_y(j) << ")." << endl;
+	 << "point (" << table3d_obj.get_grid_x(i) << ","
+	 << table3d_obj.get_grid_y(j) << ")." << endl;
 
     return 0;
   }
   
-  if (tabp==0) {
+  if (table_obj.get_nlines()==0) {
     cerr << "No table with columns to find the maximum value of." << endl;
     return exc_efailed;
   }
@@ -2045,14 +2036,14 @@ int acol_manager::comm_max(std::vector<std::string> &sv, bool itive_com) {
 			i1,"max",itive_com);
   if (ret!=0) return ret;
   
-  if (tabp->is_column(i1)==false) {
+  if (table_obj.is_column(i1)==false) {
     cerr << "Couldn't find column named '" << i1 << "'." << endl;
     return exc_efailed;
   }
 
   double max;
   size_t ix;
-  vector_max(tabp->get_nlines(),(*tabp)[i1],ix,max);
+  vector_max(table_obj.get_nlines(),(table_obj)[i1],ix,max);
   cout << "Maximum value of column '" << i1 << "' is: " 
        << max << " at row with index " << ix << "." << endl;
   
@@ -2065,7 +2056,7 @@ int acol_manager::comm_slice(std::vector<std::string> &sv, bool itive_com) {
     cerr << "Slice does not work with table objects." << endl;
   }
   
-  if (t3p==0 || t3p->get_nslices()==0) {
+  if (type!="table3d" || table3d_obj.get_nslices()==0) {
     cerr << "No table3d with slices to find the maximum value of." << endl;
     return exc_efailed;
   }
@@ -2077,14 +2068,12 @@ int acol_manager::comm_slice(std::vector<std::string> &sv, bool itive_com) {
   if (ret!=0) return ret;
   
   if (sv[1]=="x") {
-    tabp=new table_units<>;
-    t3p->extract_x(std::stod(sv[2]),*tabp);
-    delete t3p;
+    table3d_obj.extract_x(std::stod(sv[2]),table_obj);
+    table3d_obj.clear_table();
     type="table";
   } else if (sv[1]=="y") {
-    tabp=new table_units<>;
-    t3p->extract_y(std::stod(sv[2]),*tabp);
-    delete t3p;
+    table3d_obj.extract_y(std::stod(sv[2]),table_obj);
+    table3d_obj.clear_table();
     type="table";
   } else {
     cerr << "Invalid first argument to 'slice'." << endl;
@@ -2097,7 +2086,7 @@ int acol_manager::comm_min(std::vector<std::string> &sv, bool itive_com) {
 
   if (type=="table3d") {
 
-    if (t3p==0 || t3p->get_nslices()==0) {
+    if (type!="table3d" || table3d_obj.get_nslices()==0) {
       cerr << "No table3d with slices to find the minimum value of." << endl;
       return exc_efailed;
     }
@@ -2108,25 +2097,25 @@ int acol_manager::comm_min(std::vector<std::string> &sv, bool itive_com) {
     if (ret!=0) return ret;
 
     size_t ix;
-    if (!t3p->is_slice(i1,ix)) {
+    if (!table3d_obj.is_slice(i1,ix)) {
       cerr << "No slice named '" << i1 << "'." << endl;
       return exc_efailed;
     }
     
-    const ubmatrix &mat=t3p->get_slice(ix);
+    const ubmatrix &mat=table3d_obj.get_slice(ix);
     size_t i, j;
     double min;
     matrix_min_index(mat,i,j,min);
 
     cout << "Minimum value of slice '" << i1 << "' is: " 
 	 << min << " at indices (" << i << "," << j << ")\n  and grid "
-	 << "point (" << t3p->get_grid_x(i) << ","
-	 << t3p->get_grid_y(j) << ")." << endl;
+	 << "point (" << table3d_obj.get_grid_x(i) << ","
+	 << table3d_obj.get_grid_y(j) << ")." << endl;
 
     return 0;
   }
   
-  if (tabp==0) {
+  if (table_obj.get_nlines()==0) {
     cerr << "No table with columns to find the minimum value of." << endl;
     return exc_efailed;
   }
@@ -2136,14 +2125,14 @@ int acol_manager::comm_min(std::vector<std::string> &sv, bool itive_com) {
 			i1,"min",itive_com);
   if (ret!=0) return ret;
   
-  if (tabp->is_column(i1)==false) {
+  if (table_obj.is_column(i1)==false) {
     cerr << "Couldn't find column named '" << i1 << "'." << endl;
     return exc_efailed;
   }
 
   double min;
   size_t ix;
-  vector_min(tabp->get_nlines(),(*tabp)[i1],ix,min);
+  vector_min(table_obj.get_nlines(),(table_obj)[i1],ix,min);
   cout << "Minimum value of column '" << i1 << "' is: " 
        << min << " at row with index " << ix << "." << endl;
   
@@ -2154,25 +2143,25 @@ int acol_manager::comm_set_data(std::vector<std::string> &sv, bool itive_com) {
 
   if (type=="table3d") {
 
-    if (t3p==0) {
+    if (type!="table3d") {
       cerr << "No table3d with data to set." << endl;
       return exc_efailed;
     }
     
     vector<string> in, pr;
-    pr.push_back(t3p->get_x_name()+" value of point to set");
-    pr.push_back(t3p->get_y_name()+" value of point to set");
+    pr.push_back(table3d_obj.get_x_name()+" value of point to set");
+    pr.push_back(table3d_obj.get_y_name()+" value of point to set");
     pr.push_back("Slice name to set");
     pr.push_back("New value");
     int ret=get_input(sv,pr,in,"set-data",itive_com);
     if (ret!=0) return ret;
     
-    t3p->set_val(o2scl::stod(in[0]),o2scl::stod(in[1]),in[2],
+    table3d_obj.set_val(o2scl::stod(in[0]),o2scl::stod(in[1]),in[2],
 		 o2scl::stod(in[3]));
     return 0;
   }
 
-  if (tabp==0) {
+  if (table_obj.get_nlines()==0) {
     cerr << "No table to insert columns into." << endl;
     return exc_efailed;
   }
@@ -2184,14 +2173,14 @@ int acol_manager::comm_set_data(std::vector<std::string> &sv, bool itive_com) {
   int ret=get_input(sv,pr,in,"set-data",itive_com);
   if (ret!=0) return ret;
   
-  if (tabp->is_column(in[1])==false) {
+  if (table_obj.is_column(in[1])==false) {
     cerr << "Couldn't find column named '" << in[1] << "'." << endl;
     return exc_efailed;
   }
 
-  for(size_t i=0;i<tabp->get_nlines();i++) {
-    if (tabp->row_function(in[0],i)>0.5) {
-      tabp->set(in[1],i,tabp->row_function(in[2],i));
+  for(size_t i=0;i<table_obj.get_nlines();i++) {
+    if (table_obj.row_function(in[0],i)>0.5) {
+      table_obj.set(in[1],i,table_obj.row_function(in[2],i));
     }
   }
 
@@ -2205,7 +2194,7 @@ int acol_manager::comm_set_unit(std::vector<std::string> &sv, bool itive_com) {
     return exc_efailed;
   }
 
-  if (tabp==0) {
+  if (table_obj.get_nlines()==0) {
     cerr << "No table to set units of." << endl;
     return exc_efailed;
   }
@@ -2216,12 +2205,12 @@ int acol_manager::comm_set_unit(std::vector<std::string> &sv, bool itive_com) {
   int ret=get_input(sv,pr,in,"set-unit",itive_com);
   if (ret!=0) return ret;
   
-  if (tabp->is_column(in[0])==false) {
+  if (table_obj.is_column(in[0])==false) {
     cerr << "Couldn't find column named '" << in[0] << "'." << endl;
     return exc_efailed;
   }
 
-  tabp->set_unit(in[0],in[1]);
+  table_obj.set_unit(in[0],in[1]);
 
   return 0;
 }
@@ -2261,14 +2250,33 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
       name=sv[4];
     }
 
-    ubvector levs(1)={o2scl::stod(svalue)};
+    ubvector levs(1);
+    levs[0]=o2scl::stod(svalue);
     size_t nlev=1;
-    std::vector<contour_line> clines;
-    t3p->slice_contours(slice,1,levs,clines);
-    hdf_file hf;
-    hf.open_or_create(file);
-    hdf_output(hf,clines,name);
-    hf.close();
+
+    if (file.length()>0) {
+      std::vector<contour_line> clines;
+      table3d_obj.slice_contours(slice,1,levs,clines);
+      hdf_file hf;
+      hf.open_or_create(file);
+      hdf_output(hf,clines,name);
+      hf.close();
+    } else {
+      if (type=="table") {
+	table_obj.clear_all();
+      } else if (type=="table3d") {
+	table3d_obj.clear_table();
+	type="";
+      } else if (type=="hist") {
+	delete hp;
+	hp=0;
+      } else if (type=="hist_2d") {
+	delete h2p;
+	h2p=0;
+      }
+      table3d_obj.slice_contours(slice,1,levs,cont_obj);
+      type="vector<contour_line>";
+    }
     
   } else if (type=="hist_2d") {
 
@@ -2290,9 +2298,9 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
       name=sv[3];
     }
 
-    ubvector levs(1)={o2scl::stod(svalue)};
+    ubvector levs(1);
+    levs[0]=o2scl::stod(svalue);
     size_t nlev=1;
-    std::vector<contour_line> clines;
     contour co;
     co.set_levels(nlev,levs);
     ubvector xreps(h2p->size_x());
@@ -2304,17 +2312,33 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
       yreps[i]=h2p->get_y_rep_i(i);
     }
     co.set_data(h2p->size_x(),h2p->size_y(),xreps,yreps,h2p->get_wgts());
-    co.calc_contours(clines);
 
-    hdf_file hf;
-    hf.open_or_create(file);
-    hdf_output(hf,clines,name);
-    hf.close();
+    if (file.length()>0) {
+      std::vector<contour_line> clines;
+      co.calc_contours(clines);
+      
+      hdf_file hf;
+      hf.open_or_create(file);
+      hdf_output(hf,clines,name);
+      hf.close();
+    } else {
+      if (type=="table") {
+	table_obj.clear_all();
+      } else if (type=="table3d") {
+	table3d_obj.clear_table();
+	type="";
+      } else if (type=="hist") {
+	delete hp;
+	hp=0;
+      } else if (type=="hist_2d") {
+	delete h2p;
+	h2p=0;
+      }
+      co.calc_contours(cont_obj);
+      type="vector<contour_line>";
+    }
     
   }
-  
-  
-
   
   return 0;
 }
@@ -2339,7 +2363,7 @@ int acol_manager::comm_convert_unit
     return exc_efailed;
   }
   
-  if (tabp==0) {
+  if (table_obj.get_nlines()==0) {
     cerr << "No table to convert units in." << endl;
     return exc_efailed;
   }
@@ -2350,7 +2374,7 @@ int acol_manager::comm_convert_unit
   int ret=get_input(sv,pr,in,"convert-unit",itive_com);
   if (ret!=0) return ret;
   
-  if (tabp->is_column(in[0])==false) {
+  if (table_obj.is_column(in[0])==false) {
     cerr << "Couldn't find column named '" << in[0] << "'." << endl;
     return exc_efailed;
   }
@@ -2358,7 +2382,7 @@ int acol_manager::comm_convert_unit
   if (unit_fname.length()>0) {
     cng.units_cmd_string=((string)"units -f ")+unit_fname;
   }
-  ret=tabp->convert_to_unit(in[0],in[1],false);
+  ret=table_obj.convert_to_unit(in[0],in[1],false);
   if (ret!=0) {
     cerr << "Could not find column or column does not have unit." << endl;
   }
@@ -2396,7 +2420,7 @@ int acol_manager::comm_get_unit(std::vector<std::string> &sv, bool itive_com) {
     return exc_efailed;
   }
 
-  if (tabp==0) {
+  if (table_obj.get_nlines()==0) {
     cerr << "No table to get units for." << endl;
     return exc_efailed;
   }
@@ -2406,13 +2430,13 @@ int acol_manager::comm_get_unit(std::vector<std::string> &sv, bool itive_com) {
   int ret=get_input(sv,pr,in,"get-unit",itive_com);
   if (ret!=0) return ret;
   
-  if (tabp->is_column(in[0])==false) {
+  if (table_obj.is_column(in[0])==false) {
     cerr << "Couldn't find column named '" << in[0] << "'." << endl;
     return exc_efailed;
   }
 
   cout << "Units of column " << in[0] << " are: " 
-       << tabp->get_unit(in[0]) << endl;
+       << table_obj.get_unit(in[0]) << endl;
 
   return 0;
 }
@@ -2424,7 +2448,7 @@ int acol_manager::comm_find_row(std::vector<std::string> &sv, bool itive_com) {
     return exc_efailed;
   }
 
-  if (tabp==0 || tabp->get_nlines()==0) {
+  if (table_obj.get_nlines()==0 || table_obj.get_nlines()==0) {
     cerr << "No table or empty table in find-row." << endl;
     return exc_efailed;
   }
@@ -2454,8 +2478,8 @@ int acol_manager::comm_find_row(std::vector<std::string> &sv, bool itive_com) {
     // If they specified two parameters, then it is presumed that they
     // specified a column and a value
     
-    if (tabp->is_column(sv[1])) {
-      size_t row=tabp->lookup(sv[1],o2scl::stod(sv[2]));
+    if (table_obj.is_column(sv[1])) {
+      size_t row=table_obj.lookup(sv[1],o2scl::stod(sv[2]));
       
       // Call get_row() for the row that was found
       std::vector<std::string> sc;
@@ -2470,7 +2494,7 @@ int acol_manager::comm_find_row(std::vector<std::string> &sv, bool itive_com) {
   // Otherwise, they specified a function to be maximized.
 
   // Find the appropriate row
-  size_t row=tabp->function_find_row(sv[1]);
+  size_t row=table_obj.function_find_row(sv[1]);
   
   // Call get_row() for the row that was found
   std::vector<std::string> sc;
@@ -2488,7 +2512,7 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
     return 0;
   }
   
-  if (tabp==0 || tabp->get_nlines()==0) {
+  if (table_obj.get_nlines()==0 || table_obj.get_nlines()==0) {
     cerr << "No table or empty table in get-row." << endl;
     return exc_efailed;
   }
@@ -2499,7 +2523,7 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
   if (ret!=0) return ret;
   size_t ix=o2scl::stoi(i1);
   
-  if (ix>tabp->get_nlines()-1) {
+  if (ix>table_obj.get_nlines()-1) {
     cerr << "Requested row beyond end of table in get-row." << endl;
     return exc_efailed;
   }
@@ -2531,14 +2555,14 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
       str->setf(ios::scientific);
       str->precision(prec);
       
-      for(size_t i=0;i<tabp->get_ncolumns();i++) {
+      for(size_t i=0;i<table_obj.get_ncolumns();i++) {
 
 	// Count for space between columns and sign
 	size_t this_col=2;
 	// Count column name
-	this_col+=tabp->get_column_name(i).size();
+	this_col+=table_obj.get_column_name(i).size();
 	// Count extra spaces to format number
-	int num_spaces=prec+6-((int)(tabp->get_column_name(i).size()));
+	int num_spaces=prec+6-((int)(table_obj.get_column_name(i).size()));
 	if (num_spaces>0) this_col+=num_spaces;
 	// See if there will be space
 	if (running_width>0 && ((int)(running_width+this_col))>=ncols) {
@@ -2550,7 +2574,7 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
 	  running_width=0;
 	}
 	// Output this column name
-	(*str) << ' ' << tabp->get_column_name(i) << ' ';
+	(*str) << ' ' << table_obj.get_column_name(i) << ' ';
 	for(int j=0;j<num_spaces;j++) {
 	  (*str) << ' ';
 	}
@@ -2563,8 +2587,8 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
       
       cout.precision(prec);
   
-      for(size_t i=0;i<tabp->get_ncolumns();i++) {
-	cout << tabp->get_column_name(i) << ' ';
+      for(size_t i=0;i<table_obj.get_ncolumns();i++) {
+	cout << table_obj.get_column_name(i) << ' ';
       }
       cout << endl;
 
@@ -2581,12 +2605,12 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
     str->setf(ios::scientific);
     str->precision(prec);
     
-    for(size_t i=0;i<tabp->get_ncolumns();i++) {
+    for(size_t i=0;i<table_obj.get_ncolumns();i++) {
       
       // Count space for number
       size_t this_col=prec+8;
       // Count extra spaces if necessary
-      int num_spaces=((int)(tabp->get_column_name(i).size())-prec-6);
+      int num_spaces=((int)(table_obj.get_column_name(i).size())-prec-6);
       if (num_spaces>0) this_col+=num_spaces;
       // See if there will be space
       if (running_width>0 && ((int)(running_width+this_col))>=ncols) {
@@ -2598,10 +2622,10 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
 	running_width=0;
       }
       // Output the data
-      if (tabp->get(i,ix)>=0.0) {
-	(*str) << ' ' << tabp->get(i,ix) << ' ';
+      if (table_obj.get(i,ix)>=0.0) {
+	(*str) << ' ' << table_obj.get(i,ix) << ' ';
       } else {
-	(*str) << tabp->get(i,ix) << ' ';
+	(*str) << table_obj.get(i,ix) << ' ';
       }
       for(int j=0;j<num_spaces;j++) {
 	(*str) << ' ';
@@ -2625,8 +2649,8 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
     
   } else {
     
-    for(size_t i=0;i<tabp->get_ncolumns();i++) {
-      cout << tabp->get(i,ix) << ' ';
+    for(size_t i=0;i<table_obj.get_ncolumns();i++) {
+      cout << table_obj.get(i,ix) << ' ';
     }
     cout << endl;
     
@@ -2646,7 +2670,7 @@ int acol_manager::comm_rename(std::vector<std::string> &sv, bool itive_com) {
     int ret=get_input(sv,pr,in,"rename",itive_com);
     if (ret!=0) return ret;
     
-    t3p->rename_slice(in[0],in[1]);
+    table3d_obj.rename_slice(in[0],in[1]);
     
     return 0;
   }
@@ -2658,15 +2682,15 @@ int acol_manager::comm_rename(std::vector<std::string> &sv, bool itive_com) {
   int ret=get_input(sv,pr,in,"rename",itive_com);
   if (ret!=0) return ret;
   
-  if (tabp->is_column(in[0])==false) {
+  if (table_obj.is_column(in[0])==false) {
     cerr << "Couldn't find column named '" << in[0] << "'." << endl;
     return exc_efailed;
   }
 
-  tabp->new_column(in[1]);
+  table_obj.new_column(in[1]);
 
-  tabp->copy_column(in[0],in[1]);
-  tabp->delete_column(in[0]);
+  table_obj.copy_column(in[0],in[1]);
+  table_obj.delete_column(in[0]);
 
   return 0;
 }
@@ -2678,7 +2702,7 @@ int acol_manager::comm_deriv(std::vector<std::string> &sv, bool itive_com) {
     return 0;
   }
 
-  if (tabp==0) {
+  if (table_obj.get_nlines()==0) {
     cerr << "No table with columns to take derivatives of." << endl;
     return exc_efailed;
   }
@@ -2690,16 +2714,16 @@ int acol_manager::comm_deriv(std::vector<std::string> &sv, bool itive_com) {
   int ret=get_input(sv,pr,in,"deriv",itive_com);
   if (ret!=0) return ret;
 
-  if (tabp->is_column(in[0])==false) {
+  if (table_obj.is_column(in[0])==false) {
     cerr << "Couldn't find column named '" << in[0] << "'." << endl;
     return exc_efailed;
   }
-  if (tabp->is_column(in[1])==false) {
+  if (table_obj.is_column(in[1])==false) {
     cerr << "Couldn't find column named '" << in[1] << "'." << endl;
     return exc_efailed;
   }
 
-  tabp->deriv(in[0],in[1],in[2]);
+  table_obj.deriv(in[0],in[1],in[2]);
 
   return 0;
 }
@@ -2711,7 +2735,7 @@ int acol_manager::comm_deriv2(std::vector<std::string> &sv, bool itive_com) {
     return 0;
   }
 
-  if (tabp==0) {
+  if (table_obj.get_nlines()==0) {
     cout << "No table with columns to take derivatives of." << endl;
     return exc_efailed;
   }
@@ -2722,16 +2746,16 @@ int acol_manager::comm_deriv2(std::vector<std::string> &sv, bool itive_com) {
   int ret=get_input(sv,pr,in,"deriv2",itive_com);
   if (ret!=0) return ret;
 
-  if (tabp->is_column(in[0])==false) {
+  if (table_obj.is_column(in[0])==false) {
     cerr << "Couldn't find column named '" << in[0] << "'." << endl;
     return exc_efailed;
   }
-  if (tabp->is_column(in[1])==false) {
+  if (table_obj.is_column(in[1])==false) {
     cerr << "Couldn't find column named '" << in[1] << "'." << endl;
     return exc_efailed;
   }
 
-  tabp->deriv2(in[0],in[1],in[2]);
+  table_obj.deriv2(in[0],in[1],in[2]);
 
   return 0;
 }
@@ -2742,7 +2766,7 @@ int acol_manager::comm_integ(std::vector<std::string> &sv, bool itive_com) {
     return 0;
   }
 
-  if (tabp==0) {
+  if (table_obj.get_nlines()==0) {
     cerr << "No table with columns to integrate." << endl;
     return exc_efailed;
   }
@@ -2753,16 +2777,16 @@ int acol_manager::comm_integ(std::vector<std::string> &sv, bool itive_com) {
   int ret=get_input(sv,pr,in,"integ",itive_com);
   if (ret!=0) return ret;
 
-  if (tabp->is_column(in[0])==false) {
+  if (table_obj.is_column(in[0])==false) {
     cerr << "Couldn't find column named '" << in[0] << "'." << endl;
     return exc_efailed;
   }
-  if (tabp->is_column(in[1])==false) {
+  if (table_obj.is_column(in[1])==false) {
     cerr << "Couldn't find column named '" << in[1] << "'." << endl;
     return exc_efailed;
   }
 
-  tabp->integ(in[0],in[1],in[2]);
+  table_obj.integ(in[0],in[1],in[2]);
 
   return 0;
 }
@@ -2770,7 +2794,7 @@ int acol_manager::comm_integ(std::vector<std::string> &sv, bool itive_com) {
 int acol_manager::comm_internal(std::vector<std::string> &sv, bool itive_com) {
 
   if (type=="table3d") {
-    if (t3p==0) {
+    if (type!="table3d") {
       cerr << "No table3d to write to a file." << endl;
       return exc_efailed;
     }
@@ -2785,14 +2809,13 @@ int acol_manager::comm_internal(std::vector<std::string> &sv, bool itive_com) {
 
     hdf_file hf;
     hf.open_or_create(i1);
-    table3d *tp=(table3d *)t3p;
-    hdf_output(hf,*tp,table_name);
+    hdf_output(hf,table3d_obj,table_name);
     hf.close();
   
     return 0;
   }
 
-  if (tabp==0) {
+  if (table_obj.get_nlines()==0) {
     cerr << "No table to write to a file." << endl;
     return exc_efailed;
   }
@@ -2807,7 +2830,7 @@ int acol_manager::comm_internal(std::vector<std::string> &sv, bool itive_com) {
 
   hdf_file hf;
   hf.open_or_create(i1);
-  hdf_output(hf,*tabp,table_name);
+  hdf_output(hf,table_obj,table_name);
   hf.close();
   
   return 0;
@@ -2817,7 +2840,7 @@ int acol_manager::comm_function(std::vector<std::string> &sv, bool itive_com) {
 
   if (type=="table3d") {
     
-    if (t3p==0) {
+    if (type!="table3d") {
       cerr << "No table3d to add a slice to." << endl;
       return exc_efailed;
     }
@@ -2833,7 +2856,7 @@ int acol_manager::comm_function(std::vector<std::string> &sv, bool itive_com) {
       in[0]=in[0].substr(1,in[0].size()-2);
     }
     
-    t3p->function_slice(in[0],in[1]);
+    table3d_obj.function_slice(in[0],in[1]);
     if (ret!=0) {
       cerr << "Function make_slice() failed." << endl;
       return exc_efailed;
@@ -2842,7 +2865,7 @@ int acol_manager::comm_function(std::vector<std::string> &sv, bool itive_com) {
     return 0;
   }
 
-  if (tabp==0) {
+  if (table_obj.get_nlines()==0) {
     cerr << "No table to add a column to." << endl;
     return exc_efailed;
   }
@@ -2859,12 +2882,12 @@ int acol_manager::comm_function(std::vector<std::string> &sv, bool itive_com) {
     in[0]=in[0].substr(1,in[0].size()-2);
   }
 
-  if (tabp->is_column(in[1])==true) {
+  if (table_obj.is_column(in[1])==true) {
     cerr << "Already a column named '" << in[1] << "'." << endl;
     return exc_efailed;
   }
   
-  tabp->function_column(in[0],in[1]);
+  table_obj.function_column(in[0],in[1]);
   
   if (ret!=0) {
     cerr << "Function make_col() failed." << endl;
@@ -2910,15 +2933,15 @@ int acol_manager::comm_index(std::vector<std::string> &sv, bool itive_com) {
     return 0;
   }
 
-  if (tabp==0) {
+  if (table_obj.get_nlines()==0) {
     cerr << "No table to add line numbers to." << endl;
     return exc_efailed;
   }
 
   std::string i1="N";
   if (sv.size()>1) i1=sv[1];
-  tabp->new_column(i1);
-  for(size_t i=0;i<tabp->get_nlines();i++) tabp->set(i1,i,((double)i));
+  table_obj.new_column(i1);
+  for(size_t i=0;i<table_obj.get_nlines();i++) table_obj.set(i1,i,((double)i));
 
   return 0;
 }
@@ -2930,7 +2953,7 @@ int acol_manager::comm_html(std::vector<std::string> &sv, bool itive_com) {
     return 0;
   }
 
-  if (tabp==0) {
+  if (table_obj.get_nlines()==0) {
     cerr << "No table to output." << endl;
     return exc_efailed;
   }
@@ -2967,15 +2990,15 @@ int acol_manager::comm_html(std::vector<std::string> &sv, bool itive_com) {
   //--------------------------------------------------------------------
   // Output constants
   
-  for(size_t i=0;i<tabp->get_nconsts();i++) {
+  for(size_t i=0;i<table_obj.get_nconsts();i++) {
     if (i==0) (*fout) << "<b>Constants:</b><br />" << endl;
     string tnam;
     double tval;
-    tabp->get_constant(i,tnam,tval);
+    table_obj.get_constant(i,tnam,tval);
     (*fout) << tnam << " = " << tval << "<br />" << endl;
   }
   
-  if (tabp->get_ncolumns()>0) {
+  if (table_obj.get_ncolumns()>0) {
     
     (*fout) << "<table border=\"0\">" << endl;
     
@@ -2983,19 +3006,19 @@ int acol_manager::comm_html(std::vector<std::string> &sv, bool itive_com) {
     // Output column names
     
     (*fout) << "<tr bgcolor=\"#dddddd\">";
-    for(size_t i=0;i<tabp->get_ncolumns();i++) {
-      (*fout) << "<td><b>" << tabp->get_column_name(i) << "</b></td>";
+    for(size_t i=0;i<table_obj.get_ncolumns();i++) {
+      (*fout) << "<td><b>" << table_obj.get_column_name(i) << "</b></td>";
     }
     (*fout) << "</tr>" << endl;
       
     //--------------------------------------------------------------------
     // Output data
       
-    for(int i=0;i<((int)tabp->get_nlines());i++) {
+    for(int i=0;i<((int)table_obj.get_nlines());i++) {
       if (i%5==4) (*fout) << "<tr bgcolor=\"#dddddd\">";
       else (*fout) << "<tr>";
-      for(size_t j=0;j<tabp->get_ncolumns();j++) {
-	(*fout) << "<td>" << ffl.convert(tabp->get(j,i)) << "</td>";
+      for(size_t j=0;j<table_obj.get_ncolumns();j++) {
+	(*fout) << "<td>" << ffl.convert(table_obj.get(j,i)) << "</td>";
       }
       (*fout) << "</tr>" << endl;
     }
@@ -3018,7 +3041,7 @@ int acol_manager::comm_html(std::vector<std::string> &sv, bool itive_com) {
 int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 
   if (type=="table3d") {
-    if (t3p==0) {
+    if (type!="table3d") {
       cerr << "No table3d to preview." << endl;
       return exc_efailed;
     }
@@ -3036,7 +3059,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     cout.precision(prec);
 
     size_t nx, ny;
-    t3p->get_size(nx,ny);
+    table3d_obj.get_size(nx,ny);
     if (nx==0 || ny==0) {
       cout << "No size set. Blank table3d." << endl;
     } else {
@@ -3058,23 +3081,23 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
       if (dx==0) dx=1;
       if (dy==0) dy=1;
 
-      size_t nt=t3p->get_nslices(); 
+      size_t nt=table3d_obj.get_nslices(); 
       if (nt!=0) {
 	for(size_t k=0;k<nt;k++) {
-	  cout << "Slice " << k << ": " << t3p->get_slice_name(k) << endl;
+	  cout << "Slice " << k << ": " << table3d_obj.get_slice_name(k) << endl;
 	  
 	  cout.setf(ios::showpos);
 	  for(size_t i=0;i<((size_t)prec)+8;i++) cout << " ";
 	  
 	  for(size_t i=0;i<((size_t)ncls);i++) {
-	    cout << t3p->get_grid_y(i*dy) << " ";
+	    cout << table3d_obj.get_grid_y(i*dy) << " ";
 	  }
 	  cout << endl;
 
 	  for(size_t j=0;j<((size_t)nrows);j++) {
-	    cout << t3p->get_grid_x(j*dx) << " ";
+	    cout << table3d_obj.get_grid_x(j*dx) << " ";
 	    for(size_t i=0;i<((size_t)ncls);i++) {
-	      cout << t3p->get(j*dx,i*dy,k) << " ";
+	      cout << table3d_obj.get(j*dx,i*dy,k) << " ";
 	    }
 	    cout << endl;
 	  }
@@ -3085,7 +3108,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     return 0;
   }
 
-  if (tabp==0) {
+  if (table_obj.get_nlines()==0) {
     cerr << "No table to preview." << endl;
     return exc_efailed;
   }
@@ -3102,7 +3125,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 
   cout.precision(prec);
 
-  if (tabp->get_ncolumns()>0) {
+  if (table_obj.get_ncolumns()>0) {
 
     string nlast;
     int inr;
@@ -3112,27 +3135,27 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     // Compute number of columns which will fit
 
     size_t max_cols=(ncols)/(8+prec);
-    if (max_cols>tabp->get_ncolumns()) max_cols=tabp->get_ncolumns();
+    if (max_cols>table_obj.get_ncolumns()) max_cols=table_obj.get_ncolumns();
     
     //--------------------------------------------------------------------
     // Compute column and row increment
     
     if (sv.size()==2) {
       int nrows=o2scl::stoi(sv[1]);
-      inr=(tabp->get_nlines()+(nrows-1))/(nrows);
+      inr=(table_obj.get_nlines()+(nrows-1))/(nrows);
       if (inr<1) inr=1;
     } else {
-      inr=(tabp->get_nlines()+9)/10;
+      inr=(table_obj.get_nlines()+9)/10;
       if (inr<1) inr=1;
     }
-    inc=(tabp->get_ncolumns()+(1))/max_cols;
+    inc=(table_obj.get_ncolumns()+(1))/max_cols;
     if (inc<1) inc=1;
     
     //--------------------------------------------------------------------
     // Get last row number if necessary
       
     if (pretty==true) {
-      nlast=itos(tabp->get_nlines()-1);
+      nlast=itos(table_obj.get_nlines()-1);
     }
 
     //--------------------------------------------------------------------
@@ -3143,7 +3166,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
       for(size_t ki=0;ki<max_cols;ki++) {
 
 	size_t i=ki*inc;
-	if (i>=tabp->get_ncolumns()) i=tabp->get_ncolumns()-1;
+	if (i>=table_obj.get_ncolumns()) i=table_obj.get_ncolumns()-1;
 	  
 	// Preceeding space
 	if (pretty==true) {
@@ -3151,11 +3174,11 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 	}
 	  
 	// Column name
-	cout << tabp->get_column_name(i) << " ";
+	cout << table_obj.get_column_name(i) << " ";
 	  
 	// Trailing spaces
 	if (pretty==true) {
-	  int nsp=prec+6-((int)(tabp->get_column_name(i).size()));
+	  int nsp=prec+6-((int)(table_obj.get_column_name(i).size()));
 	  for(int j=0;j<nsp;j++) cout << ' ';
 	} else {
 	  for(size_t kk=1;kk<nlast.length();kk++) cout << ' ';
@@ -3168,12 +3191,12 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     //--------------------------------------------------------------------
     // Output units
     
-    if (names_out==true && tabp->get_nunits()>0) {
+    if (names_out==true && table_obj.get_nunits()>0) {
 
       for(size_t ki=0;ki<max_cols;ki++) {
 
 	size_t i=ki*inc;
-	if (i>=tabp->get_ncolumns()) i=tabp->get_ncolumns()-1;
+	if (i>=table_obj.get_ncolumns()) i=table_obj.get_ncolumns()-1;
 	  
 	// Preceeding space
 	if (pretty==true) {
@@ -3181,7 +3204,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 	}
 	  
 	// Column name
-	string cunit=tabp->get_unit(tabp->get_column_name(i));
+	string cunit=table_obj.get_unit(table_obj.get_column_name(i));
 	cout << '[' << cunit << "] ";
 	  
 	// Trailing spaces
@@ -3200,22 +3223,22 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     //--------------------------------------------------------------------
     // Output data
       
-    for(size_t i=0;i<tabp->get_nlines();i+=inr) {
+    for(size_t i=0;i<table_obj.get_nlines();i+=inr) {
       
       for(size_t kj=0;kj<max_cols;kj++) {
 
 	size_t j=kj*inc;
-	if (j>=tabp->get_ncolumns()) j=tabp->get_ncolumns()-1;
+	if (j>=table_obj.get_ncolumns()) j=table_obj.get_ncolumns()-1;
 
 	if (pretty==true) {
-	  double d=tabp->get(j,i);
+	  double d=table_obj.get(j,i);
 	  if (!has_minus_sign(&d)) {
 	    cout << ' ';
 	  }
 	}
-	cout << tabp->get(j,i) << ' ';
+	cout << table_obj.get(j,i) << ' ';
 	if (pretty==true) {
-	  for(int kk=0;kk<((int)(tabp->get_column_name(j).size()-
+	  for(int kk=0;kk<((int)(table_obj.get_column_name(j).size()-
 				 prec-6));kk++) {
 	    cout << ' ';
 	  }
@@ -3281,18 +3304,14 @@ int acol_manager::comm_gen3_list(std::vector<std::string> &sv,
     return exc_efailed;
   }
   // Delete previous table
-  if (type=="table3d" && t3p!=0) {
-    type="";
-    delete t3p;
-    t3p=0;
-  } else if (tabp!=0) {
-    delete tabp;
-    tabp=0;
-    type="";
+  if (type=="table3d") {
+    table3d_obj.clear_table();
+  } else if (type=="table") {
+    table_obj.clear_all();
   }
-
-  t3p=new table3d;
-  t3p->read_gen3_list(ifs,verbose);
+  type="";
+  
+  table3d_obj.read_gen3_list(ifs,verbose);
   type="table3d";
 
   ifs.close();
@@ -3319,22 +3338,18 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
   }
 
   // Delete previous table
-  if (type=="table3d" && t3p!=0) {
-    type="";
-    delete t3p;
-    t3p=0;
-  } else if (tabp!=0) {
-    delete tabp;
-    tabp=0;
-    type="";
+  if (type=="table3d") {
+    table3d_obj.clear_table();
+  } else if (type=="table") {
+    table_obj.clear_all();
   }
+  type="";
 
-  tabp=new table_units<>(100);
   if (sv[1]!=((std::string)"cin")) {
-    tabp->read_generic(ifs,verbose);
+    table_obj.read_generic(ifs,verbose);
     ifs.close();
   } else {
-    tabp->read_generic(std::cin,verbose);
+    table_obj.read_generic(std::cin,verbose);
   }
   type="table";
 
@@ -3381,9 +3396,9 @@ int acol_manager::comm_assign(std::vector<std::string> &sv, bool itive_com) {
       cout << "Removing constant named '" << sv[1] << "'." << endl;
     }
     if (type=="table3d") {
-      t3p->remove_constant(sv[1]);
+      table3d_obj.remove_constant(sv[1]);
     } else {
-      tabp->remove_constant(sv[1]);
+      table_obj.remove_constant(sv[1]);
     }
     return 0;
   }
@@ -3395,26 +3410,26 @@ int acol_manager::comm_assign(std::vector<std::string> &sv, bool itive_com) {
   if (ret!=0) return ret;
   
   if (type=="table3d") {
-    t3p->add_constant(sv[1],function_to_double(sv[2]));
+    table3d_obj.add_constant(sv[1],function_to_double(sv[2]));
   } else {
-    tabp->add_constant(sv[1],function_to_double(sv[2]));
+    table_obj.add_constant(sv[1],function_to_double(sv[2]));
   }
 
   return ret;
 }
 
 int acol_manager::comm_list(std::vector<std::string> &sv, bool itive_com) {
-  if (type=="table3d" && t3p!=0) {
+  if (type=="table3d") {
     cout.precision(prec);
     cout << "Table3d name: " << table_name << endl;
-    t3p->summary(&cout,ncols);
-  } else if (type=="table" && tabp!=0) {
+    table3d_obj.summary(&cout,ncols);
+  } else if (type=="table") {
     cout.precision(prec);
     cout << "Table name: " << table_name << endl;
-    if (tabp->get_nunits()>0) {
-      tabp->summary(&cout,ncols);
+    if (table_obj.get_nunits()>0) {
+      table_obj.summary(&cout,ncols);
     } else {
-      tabp->table<std::vector<double> >::summary(&cout,ncols);
+      table_obj.table<std::vector<double> >::summary(&cout,ncols);
     }
   } else {
     cerr << "No table to list columns for." << endl;
@@ -3431,7 +3446,7 @@ int acol_manager::comm_sort(std::vector<std::string> &sv, bool itive_com) {
   
   std::string i1;
 
-  if (tabp==0) {
+  if (table_obj.get_nlines()==0) {
     cerr << "No table to sort." << endl;
     return exc_efailed;
   }
@@ -3451,7 +3466,7 @@ int acol_manager::comm_sort(std::vector<std::string> &sv, bool itive_com) {
     }
   }
 
-  if (tabp->is_column(i1)==false) {
+  if (table_obj.is_column(i1)==false) {
     cerr << "Couldn't find column named '" << i1 << "'." << endl;
     return exc_efailed;
   }
@@ -3459,7 +3474,7 @@ int acol_manager::comm_sort(std::vector<std::string> &sv, bool itive_com) {
   if (verbose>1) {
     cout << "Sorting by column " << i1 << endl; 
   }
-  tabp->sort_table(i1);
+  table_obj.sort_table(i1);
   
   return 0;
 }
@@ -3472,7 +3487,7 @@ int acol_manager::comm_stats(std::vector<std::string> &sv, bool itive_com) {
   
   std::string i1;
 
-  if (tabp==0) {
+  if (table_obj.get_nlines()==0) {
     cerr << "No table to analyze." << endl;
     return exc_efailed;
   }
@@ -3492,26 +3507,26 @@ int acol_manager::comm_stats(std::vector<std::string> &sv, bool itive_com) {
     }
   }
 
-  if (tabp->is_column(i1)==false) {
+  if (table_obj.is_column(i1)==false) {
     cerr << "Couldn't find column named '" << i1 << "'." << endl;
     return exc_efailed;
   }
 
-  const vector<double> &cref=tabp->get_column(i1);
-  cout << "N        : " << tabp->get_nlines() << endl;
-  cout << "Sum      : " << vector_mean(tabp->get_nlines(),cref)*
-    tabp->get_nlines() << endl;
-  cout << "Mean     : " << vector_mean(tabp->get_nlines(),cref) << endl;
-  cout << "Std. dev.: " << vector_stddev(tabp->get_nlines(),cref) << endl;
+  const vector<double> &cref=table_obj.get_column(i1);
+  cout << "N        : " << table_obj.get_nlines() << endl;
+  cout << "Sum      : " << vector_mean(table_obj.get_nlines(),cref)*
+    table_obj.get_nlines() << endl;
+  cout << "Mean     : " << vector_mean(table_obj.get_nlines(),cref) << endl;
+  cout << "Std. dev.: " << vector_stddev(table_obj.get_nlines(),cref) << endl;
   size_t ix;
   double val;
-  vector_min(tabp->get_nlines(),cref,ix,val);
+  vector_min(table_obj.get_nlines(),cref,ix,val);
   cout << "Min      : " << val << " at index: " << ix << endl;
-  vector_max(tabp->get_nlines(),cref,ix,val);
+  vector_max(table_obj.get_nlines(),cref,ix,val);
   cout << "Max      : " << val << " at index: " << ix << endl;
 
   size_t dup=0, inc=0, dec=0;
-  for(size_t i=0;i<tabp->get_nlines()-1;i++) {
+  for(size_t i=0;i<table_obj.get_nlines()-1;i++) {
     if (cref[i+1]==cref[i]) dup++;
     if (cref[i]<cref[i+1]) inc++;
     if (cref[i]>cref[i+1]) dec++;
@@ -3534,7 +3549,7 @@ int acol_manager::comm_stats(std::vector<std::string> &sv, bool itive_com) {
     cout << "Non-monotonic (" << inc << " increasing, " << dec 
 	 << " decreasing, and " << dup << " duplicates)." << endl;
   }
-  if ((dup+inc+dec)!=(tabp->get_nlines()-1)) {
+  if ((dup+inc+dec)!=(table_obj.get_nlines()-1)) {
     cout << "Counting mismatch from non-finite values or signed zeros." << endl;
   }
   
@@ -3636,7 +3651,7 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
 
   if (type=="table3d") {
 
-    if (t3p==0) {
+    if (type!="table3d") {
       cerr << "No table3d to select from." << endl;
       return exc_efailed;
     }
@@ -3647,18 +3662,18 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
 
     table3d *new_table3d=new table3d;
     size_t nx, ny;
-    t3p->get_size(nx,ny);
-    new_table3d->set_xy(t3p->get_x_name(),nx,t3p->get_x_data(),
-			t3p->get_y_name(),ny,t3p->get_y_data());
+    table3d_obj.get_size(nx,ny);
+    new_table3d->set_xy(table3d_obj.get_x_name(),nx,table3d_obj.get_x_data(),
+			table3d_obj.get_y_name(),ny,table3d_obj.get_y_data());
 	
     // ---------------------------------------------------------------------
     // Copy constants from old to new table3d
     // ---------------------------------------------------------------------
 
-    for(size_t i=0;i<t3p->get_nconsts();i++) {
+    for(size_t i=0;i<table3d_obj.get_nconsts();i++) {
       string tnam;
       double tval;
-      t3p->get_constant(i,tnam,tval);
+      table3d_obj.get_constant(i,tnam,tval);
       if (verbose>2) {
 	cout << "Adding constant " << tnam << " = " << tval << endl;
       }
@@ -3669,8 +3684,8 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
     // Add slides and data to new table3d
     // ---------------------------------------------------------------------
 
-    std::vector<bool> matched(t3p->get_nslices());
-    for(size_t i=0;i<t3p->get_nslices();i++) {
+    std::vector<bool> matched(table3d_obj.get_nslices());
+    for(size_t i=0;i<table3d_obj.get_nslices();i++) {
       matched[i]=false;
     }
 
@@ -3685,7 +3700,7 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
 	
         // Return an error if the slice doesn't exist
 	size_t ix;
-        if (names[i]==args[i] && t3p->is_slice(args[i],ix)==false) {
+        if (names[i]==args[i] && table3d_obj.is_slice(args[i],ix)==false) {
           cerr << "Slice '" << args[i] << "' is not in the table." << endl;
           return exc_einval;
         }
@@ -3695,40 +3710,39 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
 
         // Fill slice with the new data
         ubmatrix mat(nx,ny);
-        t3p->function_matrix(args[i],mat,false);
+        table3d_obj.function_matrix(args[i],mat,false);
         new_table3d->copy_to_slice(mat,names[i]);
 
       } else {
 	
         // Find the matching slices
-        for(size_t j=0;j<t3p->get_nslices();j++) {
+        for(size_t j=0;j<table3d_obj.get_nslices();j++) {
 	  
           if (matched[j]==false &&  
               fnmatch(args[i].c_str(),
-                      t3p->get_slice_name(j).c_str(),0)==0) {
+                      table3d_obj.get_slice_name(j).c_str(),0)==0) {
 	    
             // If we've found a match, add it to the new table
             matched[j]=true;
 	    
             // Add the new slice to the new table
-            new_table3d->new_slice(t3p->get_slice_name(j));
+            new_table3d->new_slice(table3d_obj.get_slice_name(j));
 	    
             // Fill it with the new data
 	    ubmatrix mat(nx,ny);
-	    t3p->function_matrix(args[i],mat,false);
-	    new_table3d->copy_to_slice(mat,t3p->get_slice_name(j));
+	    table3d_obj.function_matrix(args[i],mat,false);
+	    new_table3d->copy_to_slice(mat,table3d_obj.get_slice_name(j));
           }
         }
       }
     }
     
     // Delete the old table3d and copy the new one over
-    delete t3p;
-    t3p=new_table3d;
+    table3d_obj.clear_table();
     
   } else {
 
-    if (tabp==0) {
+    if (table_obj.get_nlines()==0) {
       cerr << "No table to select from." << endl;
       return exc_efailed;
     }
@@ -3738,18 +3752,18 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
     // ---------------------------------------------------------------------
   
     table_units<> *new_table;
-    new_table=new table_units<>(tabp->get_nlines());
+    new_table=new table_units<>(table_obj.get_nlines());
   
-    new_table->set_nlines(tabp->get_nlines());
+    new_table->set_nlines(table_obj.get_nlines());
 
     // ---------------------------------------------------------------------
     // Copy constants from old to new table
     // ---------------------------------------------------------------------
 
-    for(size_t i=0;i<tabp->get_nconsts();i++) {
+    for(size_t i=0;i<table_obj.get_nconsts();i++) {
       string tnam;
       double tval;
-      tabp->get_constant(i,tnam,tval);
+      table_obj.get_constant(i,tnam,tval);
       new_table->add_constant(tnam,tval);
     }
   
@@ -3757,8 +3771,8 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
     // Add columns and data to new table
     // ---------------------------------------------------------------------
 
-    std::vector<bool> matched(tabp->get_ncolumns());
-    for(size_t i=0;i<tabp->get_ncolumns();i++) {
+    std::vector<bool> matched(table_obj.get_ncolumns());
+    for(size_t i=0;i<table_obj.get_ncolumns();i++) {
       matched[i]=false;
     }
 
@@ -3771,7 +3785,7 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
       if (is_pattern[i]==false) {
       
 	// Return an error if the column doesn't exist
-	if (names[i]==args[i] && tabp->is_column(args[i])==false) {
+	if (names[i]==args[i] && table_obj.is_column(args[i])==false) {
 	  cerr << "Column '" << args[i] << "' is not in the table." << endl;
 	  return exc_einval;
 	}
@@ -3780,48 +3794,47 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
 	new_table->new_column(names[i]);
 
 	// If necessary, set units
-	if (names[i]==args[i] && tabp->get_unit(args[i]).length()!=0) {
-	  new_table->set_unit(names[i],tabp->get_unit(args[i]));
+	if (names[i]==args[i] && table_obj.get_unit(args[i]).length()!=0) {
+	  new_table->set_unit(names[i],table_obj.get_unit(args[i]));
 	}
 
 	// Fill column with the new data
-	ubvector vec(tabp->get_nlines());
-	tabp->function_vector(args[i],vec,false);
+	ubvector vec(table_obj.get_nlines());
+	table_obj.function_vector(args[i],vec,false);
 	new_table->copy_to_column(vec,names[i]);
 
       } else {
 
 	// Find the matching columns
-	for(size_t j=0;j<tabp->get_ncolumns();j++) {
+	for(size_t j=0;j<table_obj.get_ncolumns();j++) {
 
 	  if (matched[j]==false &&  
 	      fnmatch(args[i].c_str(),
-		      tabp->get_column_name(j).c_str(),0)==0) {
+		      table_obj.get_column_name(j).c_str(),0)==0) {
 
 	    // If we've found a match, add it to the new table
 	    matched[j]=true;
 
 	    // Add the new column to the new table
-	    new_table->new_column(tabp->get_column_name(j));
+	    new_table->new_column(table_obj.get_column_name(j));
 
 	    // If necessary, set units
-	    string tmp=tabp->get_column_name(j);
-	    if (tabp!=0 && tabp->get_unit(tmp).length()!=0) {
-	      new_table->set_unit(tmp,tabp->get_unit(tmp));
+	    string tmp=table_obj.get_column_name(j);
+	    if (table_obj.get_unit(tmp).length()!=0) {
+	      new_table->set_unit(tmp,table_obj.get_unit(tmp));
 	    }
 
 	    // Fill it with the new data
-	    ubvector vec(tabp->get_nlines());
-	    tabp->function_vector(tabp->get_column_name(j),vec,false);
-	    new_table->copy_to_column(vec,tabp->get_column_name(j));
+	    ubvector vec(table_obj.get_nlines());
+	    table_obj.function_vector(table_obj.get_column_name(j),vec,false);
+	    new_table->copy_to_column(vec,table_obj.get_column_name(j));
 	  }
 	}
       }
     }
 
     // Replace the old table with the new one
-    delete tabp;
-    tabp=new_table;
+    table_obj.clear_all();
 
   }
 
@@ -3840,7 +3853,7 @@ int acol_manager::comm_delete_rows(std::vector<std::string> &sv,
     return 0;
   }
 
-  if (tabp==0) {
+  if (table_obj.get_nlines()==0) {
     cerr << "No table to delete rows from." << endl;
     return exc_efailed;
   }
@@ -3859,7 +3872,7 @@ int acol_manager::comm_delete_rows(std::vector<std::string> &sv,
     return exc_efailed;
   }
   
-  tabp->delete_rows(i1);
+  table_obj.delete_rows(i1);
 
   return 0;
 }
@@ -3872,7 +3885,7 @@ int acol_manager::comm_select_rows(std::vector<std::string> &sv,
     return 0;
   }
 
-  if (tabp==0) {
+  if (table_obj.get_nlines()==0) {
     cerr << "No table to select rows from." << endl;
     return exc_efailed;
   }
@@ -3901,10 +3914,10 @@ int acol_manager::comm_select_rows(std::vector<std::string> &sv,
   // Copy constants from old to new table
   // ---------------------------------------------------------------------
 
-  for(size_t i=0;i<tabp->get_nconsts();i++) {
+  for(size_t i=0;i<table_obj.get_nconsts();i++) {
     string tnam;
     double tval;
-    tabp->get_constant(i,tnam,tval);
+    table_obj.get_constant(i,tnam,tval);
     new_table->add_constant(tnam,tval);
   }
   
@@ -3912,8 +3925,8 @@ int acol_manager::comm_select_rows(std::vector<std::string> &sv,
   // Add column names to new table
   // ---------------------------------------------------------------------
 
-  for(int i=0;i<((int)tabp->get_ncolumns());i++) {
-    new_table->new_column(tabp->get_column_name(i));
+  for(int i=0;i<((int)table_obj.get_ncolumns());i++) {
+    new_table->new_column(table_obj.get_column_name(i));
   }
 
   // ---------------------------------------------------------------------
@@ -3921,19 +3934,18 @@ int acol_manager::comm_select_rows(std::vector<std::string> &sv,
   // ---------------------------------------------------------------------
 
   int new_lines=0;
-  for(int i=0;i<((int)tabp->get_nlines());i++) {
-    if (tabp->row_function(i1,i)>0.5) {
+  for(int i=0;i<((int)table_obj.get_nlines());i++) {
+    if (table_obj.row_function(i1,i)>0.5) {
       new_table->set_nlines(new_lines+1);
-      for(int j=0;j<((int)tabp->get_ncolumns());j++) {
-	new_table->set(j,new_lines,tabp->get(j,i));
+      for(int j=0;j<((int)table_obj.get_ncolumns());j++) {
+	new_table->set(j,new_lines,table_obj.get(j,i));
       }
       new_lines++;
     }
   }
   
   // Replace the old table with the new one
-  delete tabp;
-  tabp=new_table;
+  table_obj.clear_all();
 
   return 0;
 }
@@ -3945,7 +3957,7 @@ int acol_manager::comm_delete_col(std::vector<std::string> &sv,
     return 0;
   }
 
-  if (tabp==0) {
+  if (table_obj.get_nlines()==0) {
     cerr << "No table to delete columns from." << endl;
     return exc_efailed;
   }
@@ -3964,12 +3976,12 @@ int acol_manager::comm_delete_col(std::vector<std::string> &sv,
     return exc_efailed;
   }
     
-  if (tabp->is_column(i1)==false) {
+  if (table_obj.is_column(i1)==false) {
     cerr << "Couldn't find column named '" << i1 << "'." << endl;
     return exc_efailed;
   }
 
-  tabp->delete_column(i1);
+  table_obj.delete_column(i1);
 
   return 0;
 }
@@ -4015,15 +4027,12 @@ int acol_manager::comm_create3(std::vector<std::string> &sv,
     }
   }
   
-  if (tabp!=0) {
-    delete tabp;
-    tabp=0;
+  if (type=="table") {
+    table_obj.clear_all();
   }
-  if (t3p!=0) {
-    delete t3p;
-    t3p=0;
+  if (type=="table3d") {
+    table3d_obj.clear_table();
   }
-  t3p=new table3d;
   type="table3d";
 
   std::string xname=in[0];
@@ -4041,9 +4050,9 @@ int acol_manager::comm_create3(std::vector<std::string> &sv,
   std::string zname=in[8];
   std::string zfunc=in[9];
 
-  t3p->set_xy(xname,ugx,yname,ugy);
+  table3d_obj.set_xy(xname,ugx,yname,ugy);
 
-  t3p->function_slice(zfunc,zname);
+  table3d_obj.function_slice(zfunc,zname);
   
   return 0;
 }
@@ -4087,12 +4096,12 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
   double d4=function_to_double(i4);
   d3+=d4/1.0e4;
   int cnl=((int)((d3-d2)/d4))+1;
-  tabp=new table_units<>(cnl);
   
-  tabp->line_of_names(i1);
+  table_obj.line_of_names(i1);
+  table_obj.set_nlines(cnl);
 
   for(int li=0;li<cnl;li++) {
-    tabp->set(i1,li,o2scl::stod(i2)+((double)li)*o2scl::stod(i4));
+    table_obj.set(i1,li,o2scl::stod(i2)+((double)li)*o2scl::stod(i4));
   }
 
   return 0;
@@ -4146,12 +4155,12 @@ int acol_manager::comm_insert(std::vector<std::string> &sv, bool itive_com) {
     hdf_input(hf,tmp,tmp_name);
     hf.close();
 
-    t3p->add_slice_from_table(tmp,in[2],in[3]);
+    table3d_obj.add_slice_from_table(tmp,in[2],in[3]);
 
     return 0;
   }
 
-  if (tabp==0) {
+  if (table_obj.get_nlines()==0) {
     cerr << "No table to insert columns into." << endl;
     return exc_efailed;
   }
@@ -4205,7 +4214,7 @@ int acol_manager::comm_insert(std::vector<std::string> &sv, bool itive_com) {
   hdf_input(hf,tmp,tmp_name);
   hf.close();
 
-  tabp->add_col_from_table(tmp,in[2],in[3],in[4],in[5]);
+  table_obj.add_col_from_table(tmp,in[2],in[3],in[4],in[5]);
 
   return 0;
 
@@ -4219,7 +4228,7 @@ int acol_manager::comm_insert_full(std::vector<std::string> &sv,
     return 0;
   }
 
-  if (tabp==0) {
+  if (table_obj.get_nlines()==0) {
     cerr << "No table to insert columns into in command 'insert-full'." << endl;
     return exc_efailed;
   }
@@ -4255,7 +4264,7 @@ int acol_manager::comm_insert_full(std::vector<std::string> &sv,
 
   for (size_t j=0;j<tmp->get_ncolumns();j++) {
     string ty=tmp->get_column_name(j);
-    int tret=tabp->add_col_from_table(in[1],*tmp,in[2],ty,ty);
+    int tret=table_obj.add_col_from_table(in[1],*tmp,in[2],ty,ty);
     if (tret!=0) {
       cerr << "Adding column " << ty << " failed." << endl;
       ret=tret;
@@ -4273,7 +4282,7 @@ int acol_manager::comm_interp(std::vector<std::string> &sv, bool itive_com) {
     // --------------------------------------------------------------
     // 3d table interpolation
     
-    if (t3p==0) {
+    if (type!="table3d") {
       cerr << "No table to interpolate into." << endl;
       return exc_efailed;
     }
@@ -4301,8 +4310,8 @@ int acol_manager::comm_interp(std::vector<std::string> &sv, bool itive_com) {
       }
     }
   
-    double ret=t3p->interp(function_to_double(in[1]),
-			   function_to_double(in[2]),in[0]);
+    double ret=table3d_obj.interp(function_to_double(in[1]),
+				  function_to_double(in[2]),in[0]);
     if (err_hnd->get_errno()!=0) {
       cerr << "Interpolation failed." << endl;
       return exc_efailed;
@@ -4316,7 +4325,7 @@ int acol_manager::comm_interp(std::vector<std::string> &sv, bool itive_com) {
   // --------------------------------------------------------------
   // 2d table interpolation
 
-  if (tabp==0) {
+  if (table_obj.get_nlines()==0) {
     cerr << "No table to interpolate into." << endl;
     return exc_efailed;
   }
@@ -4344,16 +4353,16 @@ int acol_manager::comm_interp(std::vector<std::string> &sv, bool itive_com) {
     }
   }
   
-  if (tabp->is_column(in[0])==false) {
+  if (table_obj.is_column(in[0])==false) {
     cerr << "Couldn't find column named '" << in[0] << "'." << endl;
     return exc_efailed;
   }
-  if (tabp->is_column(in[2])==false) {
+  if (table_obj.is_column(in[2])==false) {
     cerr << "Couldn't find column named '" << in[2] << "'." << endl;
     return exc_efailed;
   }
 
-  double ret=tabp->interp(in[0],function_to_double(in[1]),in[2]);
+  double ret=table_obj.interp(in[0],function_to_double(in[1]),in[2]);
   if (err_hnd->get_errno()!=0) {
     cerr << "Interpolation failed." << endl;
     return exc_efailed;
@@ -4375,7 +4384,7 @@ int acol_manager::comm_fit(std::vector<std::string> &sv, bool itive_com) {
     return 0;
   }
 
-  if (tabp==0) {
+  if (table_obj.get_nlines()==0) {
     cerr << "No table with data to fit." << endl;
     return exc_efailed;
   }
@@ -4413,12 +4422,12 @@ int acol_manager::comm_fit(std::vector<std::string> &sv, bool itive_com) {
   }
   
   // Create data to fit to
-  size_t ndat=tabp->get_nlines();
+  size_t ndat=table_obj.get_nlines();
   ubvector xdat(ndat), ydat(ndat), yerr(ndat);
   for(size_t i=0;i<ndat;i++) {
-    xdat[i]=tabp->get(in[0],i);
-    ydat[i]=tabp->get(in[1],i);
-    yerr[i]=tabp->get(in[2],i);
+    xdat[i]=table_obj.get(in[0],i);
+    ydat[i]=table_obj.get(in[1],i);
+    yerr[i]=table_obj.get(in[2],i);
   }
   if (verbose>=2) {
     cout << "Data summary:" << endl;
@@ -4467,9 +4476,9 @@ int acol_manager::comm_fit(std::vector<std::string> &sv, bool itive_com) {
   }
 
   // Create and fill the new fitted value column
-  tabp->new_column(in[3]);
-  for(int k=0;k<((int)tabp->get_nlines());k++) {
-    tabp->set(in[3],k,ffs(n_parms,params,(xdat)[k]));
+  table_obj.new_column(in[3]);
+  for(int k=0;k<((int)table_obj.get_nlines());k++) {
+    table_obj.set(in[3],k,ffs(n_parms,params,(xdat)[k]));
   }
   
   // Output results to cout

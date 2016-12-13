@@ -61,7 +61,7 @@
     the same size. A vector of vectors can also be used to specify a
     scattered list of points in a multi-dimensional space. Thus, a
     vector of vectors is what is used for the argument of \ref
-    o2scl::interpm_neigh and \ref o2scl::interpm_idw.
+    o2scl::interpm_idw.
 
     The word "tensor" is used for a generic object which has rank \c n
     and then has \c n associated indices. A vector is just a \tensor

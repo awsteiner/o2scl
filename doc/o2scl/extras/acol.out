@@ -9,12 +9,13 @@ acol: A data table viewing and processing program for O2scl.
 List of commands:
 
 alias        Create a command alias.                                        
-assign       Assign a constant, e.g. assign pi acos(-1)                     
+assign       Assign a constant., e.g. assign pi acos(-1)                    
 calc         Compute the value of a constant expression.                    
 cat          Concatenate data from a second table object onto current table.
 commands     List all available commands.                                   
-convert-unit Convert a column to a new unit                                 
+convert-unit Convert a column to a new unit.                                
 create       Create a table from uniform grid.                              
+create3      Create a table3d object.                                       
 delete-col   Delete a column (table3d only).                                
 delete-rows  Delete rows selected by a function.                            
 deriv        Derivative of a function defined by two columns (table3d only).
@@ -24,7 +25,7 @@ filelist     List objects in a HDF5 file.
 find-row     Find a row which maximizes a function (table3d only).          
 fit          Fit two columns to a function (experimental, table3d only).    
 function     Create a new column or slice from a function.                  
-gen3-list    Read in a generic data file (3d only).                         
+gen3-list    Read in a generic data file (table3d only).                    
 generic      Read in a generic data file (table3d only).                    
 get          Get the value of a parameter.                                  
 get-conv     Get a unit conversion factor.                                  
@@ -43,8 +44,9 @@ license      Show license information.
 list         List the constants, column/slice names and other info.         
 max          Find the maximum value of a column or slice.                   
 min          Find the minimum value of a column or slice.                   
+nlines       Add 'nlines' as a constant to a table object.                  
 output       Output the current table.                                      
-preview      Preview the current table                                      
+preview      Preview the current table.                                     
 quit         Quit (synonymous with 'exit').                                 
 read         Read a table or table3d from a file.                           
 rename       Rename a column or slice.                                      
@@ -55,9 +57,9 @@ set          Set the value of a parameter.
 set-data     Set the entries of a column.                                   
 set-unit     Set the units for a specified column.                          
 show-units   Show the unit conversion table.                                
-slice        Construct a slice (table3d only)                               
-sort         Sort the entire table by a column (2d only).                   
-stats        Show column statistics (2d only).                              
+slice        Construct a slice (table3d only).                              
+sort         Sort the entire table by a column (table only).                
+stats        Show column statistics (table only).                           
 sum          Add data from a second table object to current table.          
 version      Print version information.                                     
 warranty     Show warranty information.                                     
@@ -83,7 +85,7 @@ exp(x) log(x) log10(x) sin(x) cos(x) tan(x) sqrt(x) abs(x)
 asin(x) acos(x) atan(x) sinh(x) cosh(x) tanh(x)
 asinh(x) acosh(x) atanh(x)
 
-Compiled at 10:29:28 on Dec  1 2016 for o2scl, version 0.920.
+Compiled at 15:45:30 on Dec  9 2016 for o2scl, version 0.920.
 
 # ------------------------------------------------------------
 # You can also get help on the commands individually, e.g.
@@ -104,16 +106,16 @@ result. If a table is currently in memory, it is deallocated beforehand.
 > commands
 Command list:
 
-alias        deriv2       get-row      interp       read         sort         
-assign       exit         get-unit     interp-type  rename       stats        
-calc         filelist     help         license      run          sum          
-cat          find-row     html         list         select       version      
-commands     fit          index        max          select-rows  warranty     
-convert-unit function     insert       min          set          
-create       gen3-list    insert-full  no-intro     set-data     
-delete-col   generic      integ        output       set-unit     
-delete-rows  get          interactive  preview      show-units   
-deriv        get-conv     internal     quit         slice        
+alias        deriv        get-conv     internal     preview      show-units   
+assign       deriv2       get-row      interp       quit         slice        
+calc         exit         get-unit     interp-type  read         sort         
+cat          filelist     help         license      rename       stats        
+commands     find-row     html         list         run          sum          
+convert-unit fit          index        max          select       version      
+create       function     insert       min          select-rows  warranty     
+create3      gen3-list    insert-full  nlines       set          
+delete-col   generic      integ        no-intro     set-data     
+delete-rows  get          interactive  output       set-unit     
 
 # ------------------------------------------------------------
 # Use 'create' to create a table with one column
