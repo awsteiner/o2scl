@@ -78,7 +78,7 @@ namespace o2scl {
 
       This is commented out for now. The \ref twod_intp
       object stores a reference to xrep and yrep, and thus 
-       can't be used since xrep and yrep don't always exist.
+      can't be used since xrep and yrep don't always exist.
 
       Interpolation for \ref hist_2d objects is performed by creating
       a \ref twod_intp object from the internal histogram data. This
@@ -99,7 +99,7 @@ namespace o2scl {
       two-dimensional interpolation using the weights and the
       representatives. Currently neither is implemented, but maybe
       both should be implemented instead?
-   */
+  */
   class hist_2d {
 
   public:
@@ -174,7 +174,7 @@ namespace o2scl {
        size_t n_bins_y) {
 
       hist_2d();
-      
+
       double min_x, max_x, min_y, max_y;
       o2scl::vector_minmax_value(nv,v,min_x,max_x);
       o2scl::vector_minmax_value(nv,v2,min_y,max_y);
@@ -183,30 +183,30 @@ namespace o2scl {
       set_bin_edges(ugx,ugy);
       
       for(size_t i=0;i<nv;i++) {
-    update(v[i],v2[i]);
-  }
+	update(v[i],v2[i]);
+      }
       return;
-  }
+    }
     
     /// Create from vectors of data
     template<class vec_t, class vec2_t, class vec3_t> hist_2d
       (size_t nv, const vec_t &v, const vec2_t &v2, const vec3_t &v3,
        size_t n_bins_x, size_t n_bins_y) {
     
-    hist_2d();
+      hist_2d();
     
-    double min_x, max_x, min_y, max_y;
-    o2scl::vector_minmax_value(nv,v,min_x,max_x);
-    o2scl::vector_minmax_value(nv,v2,min_y,max_y);
-    uniform_grid<double> ugx=uniform_grid_end<double>(min_x,max_x,n_bins_x);
-    uniform_grid<double> ugy=uniform_grid_end<double>(min_y,max_y,n_bins_y);
-    set_bin_edges(ugx,ugy);
+      double min_x, max_x, min_y, max_y;
+      o2scl::vector_minmax_value(nv,v,min_x,max_x);
+      o2scl::vector_minmax_value(nv,v2,min_y,max_y);
+      uniform_grid<double> ugx=uniform_grid_end<double>(min_x,max_x,n_bins_x);
+      uniform_grid<double> ugy=uniform_grid_end<double>(min_y,max_y,n_bins_y);
+      set_bin_edges(ugx,ugy);
     
-    for(size_t i=0;i<nv;i++) {
-    update(v[i],v2[i],v3[i]);
-  }
-    return;
-  }
+      for(size_t i=0;i<nv;i++) {
+	update(v[i],v2[i],v3[i]);
+      }
+      return;
+    }
     
     /// Create from vectors of data
     template<class vec_t, class vec2_t> hist_2d
@@ -216,7 +216,7 @@ namespace o2scl {
       hist_2d(v.size(),v,v2,n_bins_x,n_bins_y);
       
       return;
-  }
+    }
     
     /// Create from vectors of data
     template<class vec_t, class vec2_t, class vec3_t> hist_2d
@@ -229,17 +229,19 @@ namespace o2scl {
     }
     
     // Create from a table
-    hist_2d(o2scl::table<> &t, std::string colx, std::string coly,
-	    size_t n_bins_x, size_t n_bins_y) {
-      hist_2d(t.get_nlines(),t.get_column(colx),t.get_column(coly),
-	      n_bins_x,n_bins_y);
+    void from_table(o2scl::table<> &t, std::string colx, std::string coly,
+		    size_t n_bins_x, size_t n_bins_y) {
+      *this=hist_2d(t.get_nlines(),t.get_column(colx),t.get_column(coly),
+		    n_bins_x,n_bins_y);
+      return;
     }
     
     // Create from a table
-    hist_2d(o2scl::table<> &t, std::string colx, std::string coly,
-	    std::string colz, size_t n_bins_x, size_t n_bins_y) {
-      hist_2d(t.get_nlines(),t.get_column(colx),t.get_column(coly),
-	      t.get_column(colz),n_bins_x,n_bins_y);
+    void from_table(o2scl::table<> &t, std::string colx, std::string coly,
+		    std::string colz, size_t n_bins_x, size_t n_bins_y) {
+      *this=hist_2d(t.get_nlines(),t.get_column(colx),t.get_column(coly),
+		    t.get_column(colz),n_bins_x,n_bins_y);
+      return;
     }
     
     /** \brief If true, allow abcissa larger than largest bin limit
@@ -259,12 +261,12 @@ namespace o2scl {
 
     /// Set the bins from a vector
     template<class vec_t> void set_bin_edges(size_t nx, vec_t &vx,
-					    size_t ny, vec_t &vy) {
+					     size_t ny, vec_t &vy) {
       if (nx!=hsize_x+1 || ny!=hsize_y+1) {
 	if (hsize_x!=0 || hsize_y!=0) {
 	  O2SCL_ERR2("Requested binning change in non-empty ",
-			 "histogram in hist_2d::set_bin_edges().",
-			 exc_efailed);
+		     "histogram in hist_2d::set_bin_edges().",
+		     exc_efailed);
 	}
 	allocate(nx-1,ny-1);
       }
@@ -517,7 +519,7 @@ namespace o2scl {
 	Note that this function returns a value and not a reference.
 	This is because we can't return a reference to the internally
 	computed representatives, since they don't always exist.
-     */
+    */
     double get_x_rep_i(size_t i);
 
     /** \brief Return the rep of bin of index \c j
@@ -525,7 +527,7 @@ namespace o2scl {
 	Note that this function returns a value and not a reference.
 	This is because we can't return a reference to the internally
 	computed representatives, since they don't always exist.
-     */
+    */
     double get_y_rep_i(size_t j);
     //@}
 

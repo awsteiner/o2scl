@@ -299,6 +299,12 @@ namespace o2scl_acol {
 
     /// Desc
     virtual int comm_to_hist(std::vector<std::string> &sv, bool itive_com);
+
+    /// Desc
+    virtual int comm_to_hist_2d(std::vector<std::string> &sv, bool itive_com);
+
+    /// Desc
+    virtual int comm_type(std::vector<std::string> &sv, bool itive_com);
     
     /// Find a row from a function
     virtual int comm_find_row(std::vector<std::string> &sv, bool itive_com);

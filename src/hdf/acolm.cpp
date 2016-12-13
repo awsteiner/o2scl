@@ -59,7 +59,7 @@ int acol_manager::setup_options() {
   const int cl_param=cli::comm_option_cl_param;
   const int both=cli::comm_option_both;
 
-  static const int narr=48;
+  static const int narr=50;
 
   // Options, sorted by long name. We allow 0 parameters in many of these
   // options so they can be requested from the user in interactive mode. 
@@ -278,9 +278,11 @@ int acol_manager::setup_options() {
      "preserving), and 7 (Steffen's monotonic).",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_interp_type),
      both},
-    {'P',"preview","Preview the current table.",0,1,"[nlines]",
+    {'P',"preview","Preview the current table.",0,2,
+     "[nlines] [ncols (for table3d/hist_2d)]",
      ((string)"Print out [nlines] lines of data for as many columns as ")+
-     "will fit on the screen. The value of [nlines] defaults to 10. ",
+     "will fit on the screen. The value of [nlines] defaults to 10 "+
+     "for table objects.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_preview),
      both},
     {'r',"read","Read a table or table3d from a file.",0,2,
@@ -362,9 +364,15 @@ int acol_manager::setup_options() {
     {0,"nlines","Add 'nlines' as a constant to a table object.",0,0,"",
      "",new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_nlines),
      both},
-    {0,"to-hist","Convert a table/table3d to a hist/hist_2d",0,3,"",
+    {0,"to-hist","Convert a table to a histogram.",0,3,"",
      "",new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_to_hist),
      both},
+    {0,"type","Show current type.",0,0,"",
+     "",new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_type),
+     both},
+    {0,"to-hist-2d","Convert a table to a 2D histogram.",0,4,"",
+     "",new comm_option_mfptr<acol_manager>
+     (this,&acol_manager::comm_to_hist_2d),both},
     {0,"contours","Create contour lines from a table3d or hist_2d.",
      0,4,"<value> <slice-name (if table3d)> [file] [name]","",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_contours),
@@ -934,15 +942,62 @@ int acol_manager::comm_to_hist(std::vector<std::string> &sv,
     int ret=get_input(sv,pr,in,"to-hist",itive_com);
     if (ret!=0) return ret;
     
-    std::string col2=cl->cli_gets
-      ("Column for weights (or blank for none): ");
-
+    std::string col2;
+    if (sv.size()>3) {
+      col2=sv[3];
+    } else if (itive_com) {
+      col2=cl->cli_gets("Column for weights (or blank for none): ");
+    }
+    
     if (col2.length()==0) {
-      hist_obj.from_table(table_obj,in[0],o2scl::stod(in[1]));
+      hist_obj.from_table(table_obj,in[0],o2scl::stoszt(in[1]));
     } else {
-      hist_obj.from_table(table_obj,in[0],col2,o2scl::stod(in[1]));
+      hist_obj.from_table(table_obj,in[0],col2,o2scl::stoszt(in[1]));
     }
     type="hist";
+
+    return 0;
+  } 
+
+  cerr << "Cannot convert object of type " << type << " to histogram."
+       << endl;
+  
+  return 1;
+}
+
+int acol_manager::comm_type(std::vector<std::string> &sv, 
+			       bool itive_com) {
+  cout << "Type is " << type << endl;
+  return 0;
+}
+int acol_manager::comm_to_hist_2d(std::vector<std::string> &sv, 
+			       bool itive_com) {
+
+  if (type=="table") {
+
+    vector<string> in, pr;
+    pr.push_back("Column name for x-axis");
+    pr.push_back("Column name for y-axis");
+    pr.push_back("Number of bins in x direction");
+    pr.push_back("Number of bins in y direction");
+    int ret=get_input(sv,pr,in,"to-hist-2d",itive_com);
+    if (ret!=0) return ret;
+    
+    std::string col2;
+    if (sv.size()>5) {
+      col2=sv[5];
+    } else if (itive_com) {
+      col2=cl->cli_gets("Column for weights (or blank for none): ");
+    }
+
+    if (col2.length()==0) {
+      hist_2d_obj.from_table(table_obj,in[0],in[1],o2scl::stoszt(in[2]),
+			     o2scl::stoszt(in[3]));
+    } else {
+      hist_2d_obj.from_table(table_obj,in[0],in[1],col2,o2scl::stoszt(in[2]),
+			     o2scl::stoszt(in[3]));
+    }
+    type="hist_2d";
 
     return 0;
   } 
@@ -1979,6 +2034,9 @@ int acol_manager::comm_filelist(std::vector<std::string> &sv,
 int acol_manager::get_input_one(vector<string> &sv, string directions,
 				string &in, string comm_name,
 				bool itive_com) {
+
+  // If there are enough arguments, then just fill 'in' with the
+  // correct values from 'sv'
   if (sv.size()>1) {
     in=sv[1];
     return 0;
@@ -2006,22 +2064,30 @@ int acol_manager::get_input(vector<string> &sv, vector<string> &directions,
 
   size_t ni=directions.size();
 
+  // If there are enough arguments, then just fill the vector
+  // 'in' with the correct values from 'sv'
   if (sv.size()>ni) {
     for(size_t i=0;i<ni;i++) {
       in.push_back(sv[i+1]);
     }
     return 0;
   }
+
+  // Otherwise, if we're in interactive mode
   if (itive_com) {
+    // Prompt the user for the correct arguments
     for(size_t i=0;i<ni;i++) {
       string temp=directions[i]+" (or blank to stop): ";
       in.push_back(cl->cli_gets(temp.c_str()));
+      // If the user just pressed 'enter', then cancel
       if (in[i].length()==0) {
 	cout << "Command '" << comm_name << "' cancelled." << endl;
 	return exc_efailed;
       }
     }
   } else {
+    // We don't have enough arguments and we're not in interactive
+    // mode, so we fail
     cerr << "Not enough arguments to '" << comm_name << "'." << endl;
     return exc_efailed;
   }
@@ -2252,8 +2318,8 @@ int acol_manager::comm_set_unit(std::vector<std::string> &sv, bool itive_com) {
 }
 
 int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
-
-  if (type!="table3d" || type!="hist_2d") {
+  
+  if (type!="table3d" && type!="hist_2d") {
     cerr << "Not implemented for type " << type << " ." << endl;
     return exc_efailed;
   }
@@ -2270,7 +2336,8 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
       if (svalue.length()==0) return 1;
       file=cl->cli_gets("Filename (or blank to keep): ");
       if (file.length()>0) {
-	cl->cli_gets("Object name (or blank for \"contours\"): ");
+	name=cl->cli_gets("Object name (or blank for \"contours\"): ");
+	if (name.length()==0) name="contours";
       }
     } else if (sv.size()==3) {
       svalue=sv[1];
@@ -2319,7 +2386,8 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
       if (svalue.length()==0) return 1;
       file=cl->cli_gets("Filename (or blank to keep): ");
       if (file.length()>0) {
-	cl->cli_gets("Object name (or blank for \"contours\"): ");
+	name=cl->cli_gets("Object name (or blank for \"contours\"): ");
+	if (name.length()==0) name="contours";
       }
     } else if (sv.size()==2) {
       svalue=sv[1];
@@ -3075,24 +3143,22 @@ int acol_manager::comm_html(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 
+  if (scientific) cout.setf(ios::scientific);
+  else cout.unsetf(ios::scientific);
+  
+  cout.precision(prec);
+  
+  if (user_ncols<=0) {
+    char *ncstring=getenv("COLUMNS");
+    if (ncstring) ncols=o2scl::stoi(ncstring);
+  } else {
+    ncols=user_ncols;
+  }
+    
   if (type=="table3d") {
-    if (type!="table3d") {
-      cerr << "No table3d to preview." << endl;
-      return exc_efailed;
-    }
-
-    if (scientific) cout.setf(ios::scientific);
-    else cout.unsetf(ios::scientific);
     
-    if (user_ncols<=0) {
-      char *ncstring=getenv("COLUMNS");
-      if (ncstring) ncols=o2scl::stoi(ncstring);
-    } else {
-      ncols=user_ncols;
-    }
+    size_t lmar=table3d_obj.get_x_name().length()+1;
     
-    cout.precision(prec);
-
     size_t nx, ny;
     table3d_obj.get_size(nx,ny);
     if (nx==0 || ny==0) {
@@ -3102,13 +3168,16 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
       if (sv.size()>=2) {
 	nrows=o2scl::stoi(sv[1]);
       } else {
-	nrows=nx;
+	nrows=10;
       }
       if (((size_t)nrows)>nx) nrows=nx;
       if (sv.size()>=3) {
 	ncls=o2scl::stoi(sv[2]);
       } else {
-	ncls=ny;
+	// 8+prec for the grid point, 4 for extra spacing,
+	// and lmar for the left margin which has the x label
+	if (ncols<=prec+lmar+12) ncls=1;
+	else ncls=(ncols-prec-12-lmar)/(prec+8);
       }
       if (((size_t)ncls)>ny) ncls=ny;
       size_t dx=nx/nrows;
@@ -3116,28 +3185,84 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
       if (dx==0) dx=1;
       if (dy==0) dy=1;
 
+      cout << "x: " << table3d_obj.get_x_name() << " [";
+      if (table3d_obj.get_nx()<4) {
+	for(size_t i=0;i<table3d_obj.get_nx()-1;i++) {
+	  cout << table3d_obj.get_grid_x(i) << " ";
+	}
+	cout << table3d_obj.get_grid_x(table3d_obj.get_nx()-1) << "] ";
+      } else {
+	cout << table3d_obj.get_grid_x(0) << " ";
+	cout << table3d_obj.get_grid_x(1) << " ... ";
+	cout << table3d_obj.get_grid_x(table3d_obj.get_nx()-2) << " ";
+	cout << table3d_obj.get_grid_x(table3d_obj.get_nx()-1) << "] ";
+      }
+      cout << endl;
+      cout << "y: " << table3d_obj.get_y_name() << " [";
+      if (table3d_obj.get_ny()<4) {
+	for(size_t i=0;i<table3d_obj.get_ny()-1;i++) {
+	  cout << table3d_obj.get_grid_y(i) << " ";
+	}
+	cout << table3d_obj.get_grid_y(table3d_obj.get_ny()-1) << "] ";
+      } else {
+	cout << table3d_obj.get_grid_y(0) << " ";
+	cout << table3d_obj.get_grid_y(1) << " ... ";
+	cout << table3d_obj.get_grid_y(table3d_obj.get_ny()-2) << " ";
+	cout << table3d_obj.get_grid_y(table3d_obj.get_ny()-1) << "] ";
+      }
+      cout << endl;
+      
       size_t nt=table3d_obj.get_nslices(); 
       if (nt!=0) {
 	for(size_t k=0;k<nt;k++) {
+	  // Slice name
 	  cout << "Slice " << k << ": "
 	       << table3d_obj.get_slice_name(k) << endl;
-	  
+
+	  // Label row
+	  for(size_t i=0;i<lmar+14;i++) cout << " ";
+	  cout << "   " << table3d_obj.get_y_name() << endl;
+
+	  // Set showpos
 	  cout.setf(ios::showpos);
-	  for(size_t i=0;i<((size_t)prec)+8;i++) cout << " ";
+
+	  // Grid row
+	  for(size_t i=0;i<((size_t)prec)+8+lmar;i++) cout << " ";
+	  cout << "| ";
 	  
 	  for(size_t i=0;i<((size_t)ncls);i++) {
 	    cout << table3d_obj.get_grid_y(i*dy) << " ";
 	  }
 	  cout << endl;
 
+	  // Divider row
+	  for(size_t i=0;i<lmar;i++) cout << " ";
+	  for(size_t i=0;i<((size_t)prec)+8;i++) cout << "-";
+	  cout << "|";
+	  for(size_t i=0;i<((size_t)ncls)*(prec+8);i++) {
+	    cout << "-";
+	  }
+	  cout << endl;
+
+	  // Data output
 	  for(size_t j=0;j<((size_t)nrows);j++) {
-	    cout << table3d_obj.get_grid_x(j*dx) << " ";
+	    if (j==0) {
+	      cout << table3d_obj.get_x_name() << " ";
+	    } else {
+	      for(size_t i=0;i<lmar;i++) cout << " ";
+	    }
+	    cout << table3d_obj.get_grid_x(j*dx) << " | ";
 	    for(size_t i=0;i<((size_t)ncls);i++) {
 	      cout << table3d_obj.get(j*dx,i*dy,k) << " ";
 	    }
 	    cout << endl;
 	  }
+
+	  // Unset showpos
 	  cout.unsetf(ios::showpos);
+
+	  // Newline between slices
+	  cout << endl;
 	}
       }
     }
@@ -3353,6 +3478,18 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     
     return 0;
 
+  } else if (type=="vector<contour_line>") {
+
+    for(size_t i=0;i<cont_obj.size();i++) {
+      cout << "Value: " << cont_obj[i].level << endl;
+      for(size_t j=0;j<cont_obj[i].x.size();j++) {
+	cout << cont_obj[i].x[j] << " ";
+	cout << cont_obj[i].y[j] << endl;
+      }
+      cout << endl;
+    }
+    
+    return 0;
   }
 
   cerr << "Cannot preview type " << type << " ." << endl;
