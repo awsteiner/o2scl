@@ -36,7 +36,6 @@ hist_2d::hist_2d() {
   extend_lhs=false;
   hsize_x=0;
   hsize_y=0;
-  itype=1;
 #if !O2SCL_NO_RANGE_CHECK
   is_valid();
 #endif

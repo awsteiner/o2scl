@@ -35,7 +35,7 @@ typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
 acol_manager::acol_manager() : cng(o2scl_settings.get_convert_units()) {
-  table_name="acol";
+  obj_name="acol";
   verbose=1;
   pretty=true;
   names_out=true;
@@ -271,13 +271,6 @@ int acol_manager::setup_options() {
      "argument is specified, to a file. ",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_output),
      both},
-    {0,"interp-type","Get/set the current interpolation type.",0,1,"[type]",
-     ((string)"Get or set the current object's interpolation type. ")+
-     "Values are 1 (linear), 2 (cubic spline), 3 (cubic spline, periodic) "+
-     "4 (Akima spline), 5 (Akima spline, periodic), 6 (monotonicity-"+
-     "preserving), and 7 (Steffen's monotonic).",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_interp_type),
-     both},
     {'P',"preview","Preview the current table.",0,2,
      "[nlines] [ncols (for table3d/hist_2d)]",
      ((string)"Print out [nlines] lines of data for as many columns as ")+
@@ -286,10 +279,10 @@ int acol_manager::setup_options() {
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_preview),
      both},
     {'r',"read","Read a table or table3d from a file.",0,2,
-     "<file> [table name]",
+     "<file> [object name]",
      ((string)"Read the internally-formatted (either text or binary) ")+
      "file with the specified filename and make it the current table. " +
-     "If the [table name] argument is specified, then read the table "+
+     "If the [object name] argument is specified, then read the table "+
      "with the specified name in a file with more than one table.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_read),
      both},
@@ -364,17 +357,15 @@ int acol_manager::setup_options() {
     {0,"nlines","Add 'nlines' as a constant to a table object.",0,0,"",
      "",new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_nlines),
      both},
-    {0,"to-hist","Convert a table to a histogram.",0,3,"",
+    {0,"to-hist","Convert a table to a histogram.",0,6,
+     "[\"2d\"] <col 1> <col_2 (2d only)> <x_bins> <y_bins (2d only)> [wgts]",
      "",new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_to_hist),
      both},
     {0,"type","Show current type.",0,0,"",
      "",new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_type),
      both},
-    {0,"to-hist-2d","Convert a table to a 2D histogram.",0,4,"",
-     "",new comm_option_mfptr<acol_manager>
-     (this,&acol_manager::comm_to_hist_2d),both},
     {0,"contours","Create contour lines from a table3d or hist_2d.",
-     0,4,"<value> <slice-name (if table3d)> [file] [name]","",
+     0,4,"[\"frac\"] <value> <slice-name (if table3d)> [file] [name]","",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_contours),
      both}
   };
@@ -463,32 +454,35 @@ int acol_manager::setup_help() {
 
 int acol_manager::setup_parameters() {
   
-  p_table_name.str=&table_name;
+  p_obj_name.str=&obj_name;
   p_unit_fname.str=&unit_fname;
   p_def_args.str=&def_args;
   p_verbose.i=&verbose;
   p_prec.i=&prec;
   p_ncols.i=&ncols;
+  p_interp_type.i=&interp_type;
   p_scientific.b=&scientific;
   p_pretty.b=&pretty;
   p_names_out.b=&names_out;
   
-  p_table_name.help="The current table name";
+  p_obj_name.help="The current object name";
   p_unit_fname.help="The unit filename";
   p_def_args.help="The default arguments from the environment";
   p_prec.help="The numerical precision";
   p_verbose.help="Control the amount of output";
   p_ncols.help="The number of output columns";
+  p_interp_type.help="The interpolation type";
   p_names_out.help="If true, output column names at top";
   p_pretty.help="If true, align the columns using spaces";
   p_scientific.help="If true, output in scientific mode";
   
-  cl->par_list.insert(make_pair("table_name",&p_table_name));
+  cl->par_list.insert(make_pair("obj_name",&p_obj_name));
   cl->par_list.insert(make_pair("unit_fname",&p_unit_fname));
   cl->par_list.insert(make_pair("def_args",&p_def_args));
   cl->par_list.insert(make_pair("precision",&p_prec));
   cl->par_list.insert(make_pair("verbose",&p_verbose));
   cl->par_list.insert(make_pair("ncols",&p_ncols));
+  cl->par_list.insert(make_pair("interp_type",&p_interp_type));
   cl->par_list.insert(make_pair("names_out",&p_names_out));
   cl->par_list.insert(make_pair("pretty",&p_pretty));
   cl->par_list.insert(make_pair("scientific",&p_scientific));
@@ -934,27 +928,81 @@ int acol_manager::run_o2graph() {
 int acol_manager::comm_to_hist(std::vector<std::string> &sv, 
 			       bool itive_com) {
 
+  std::string i1;
+  std::vector<std::string> blank;
+  
   if (type=="table") {
 
-    vector<string> in, pr;
-    pr.push_back("Column name");
-    pr.push_back("Number of bins");
-    int ret=get_input(sv,pr,in,"to-hist",itive_com);
-    if (ret!=0) return ret;
+    bool twod_mode=false;
+    size_t icurr=1;
     
-    std::string col2;
-    if (sv.size()>3) {
-      col2=sv[3];
-    } else if (itive_com) {
-      col2=cl->cli_gets("Column for weights (or blank for none): ");
+    if (sv.size()>=2 && sv[1]=="2d") {
+      twod_mode=true;
+      icurr=2;
+    }
+    if (sv.size()<2 && itive_com) {
+      if (get_input_one(blank,((string)"Enter \"2d\" for 2d histogram ")+
+			+"and \"1d\" for 1d histogram",i1,"to-hist",
+			itive_com)==0) {
+	return ret;
+      }
+      if (i1.length()==0) return 1;
+      if (i1=="2d") twod_mode=true;
     }
     
-    if (col2.length()==0) {
-      hist_obj.from_table(table_obj,in[0],o2scl::stoszt(in[1]));
+    if (twod_mode==false) {
+      std::string cname, sbins, wname;
+      if (sv.size()>=3) {
+      
+      vector<string> in, pr;
+      pr.push_back("Column name");
+      pr.push_back("Number of bins");
+      int ret=get_input(sv,pr,in,"to-hist",itive_com);
+      if (ret!=0) return ret;
+      
+      std::string col2;
+      if (sv.size()>3) {
+	col2=sv[3];
+      } else if (itive_com) {
+	col2=cl->cli_gets("Column for weights (or blank for none): ");
+      }
+      
+      if (col2.length()==0) {
+	hist_obj.from_table(table_obj,in[0],o2scl::stoszt(in[1]));
+      } else {
+	hist_obj.from_table(table_obj,in[0],col2,o2scl::stoszt(in[1]));
+      }
+      type="hist";
+
     } else {
-      hist_obj.from_table(table_obj,in[0],col2,o2scl::stoszt(in[1]));
+
+      vector<string> in, pr;
+      pr.push_back("Column name for x-axis");
+      pr.push_back("Column name for y-axis");
+      pr.push_back("Number of bins in x direction");
+      pr.push_back("Number of bins in y direction");
+      int ret=get_input(sv,pr,in,"to-hist-2d",itive_com);
+      if (ret!=0) return ret;
+      
+      std::string col2;
+      if (sv.size()>5) {
+	col2=sv[5];
+      } else if (itive_com) {
+	col2=cl->cli_gets("Column for weights (or blank for none): ");
+      }
+      
+      if (col2.length()==0) {
+	hist_2d_obj.from_table(table_obj,in[0],in[1],
+			       o2scl::stoszt(in[2]),
+			       o2scl::stoszt(in[3]));
+      } else {
+	hist_2d_obj.from_table(table_obj,in[0],in[1],col2,
+			       o2scl::stoszt(in[2]),
+			       o2scl::stoszt(in[3]));
+      }
+      type="hist_2d";
+      
     }
-    type="hist";
 
     return 0;
   } 
@@ -966,46 +1014,9 @@ int acol_manager::comm_to_hist(std::vector<std::string> &sv,
 }
 
 int acol_manager::comm_type(std::vector<std::string> &sv, 
-			       bool itive_com) {
+			    bool itive_com) {
   cout << "Type is " << type << endl;
   return 0;
-}
-int acol_manager::comm_to_hist_2d(std::vector<std::string> &sv, 
-			       bool itive_com) {
-
-  if (type=="table") {
-
-    vector<string> in, pr;
-    pr.push_back("Column name for x-axis");
-    pr.push_back("Column name for y-axis");
-    pr.push_back("Number of bins in x direction");
-    pr.push_back("Number of bins in y direction");
-    int ret=get_input(sv,pr,in,"to-hist-2d",itive_com);
-    if (ret!=0) return ret;
-    
-    std::string col2;
-    if (sv.size()>5) {
-      col2=sv[5];
-    } else if (itive_com) {
-      col2=cl->cli_gets("Column for weights (or blank for none): ");
-    }
-
-    if (col2.length()==0) {
-      hist_2d_obj.from_table(table_obj,in[0],in[1],o2scl::stoszt(in[2]),
-			     o2scl::stoszt(in[3]));
-    } else {
-      hist_2d_obj.from_table(table_obj,in[0],in[1],col2,o2scl::stoszt(in[2]),
-			     o2scl::stoszt(in[3]));
-    }
-    type="hist_2d";
-
-    return 0;
-  } 
-
-  cerr << "Cannot convert object of type " << type << " to histogram."
-       << endl;
-  
-  return 1;
 }
 
 int acol_manager::comm_nlines(std::vector<std::string> &sv, 
@@ -1025,104 +1036,106 @@ int acol_manager::comm_nlines(std::vector<std::string> &sv,
   return 0;
 }
 
-int acol_manager::comm_interp_type(std::vector<std::string> &sv, 
-				   bool itive_com) {
+/*
+  int acol_manager::comm_interp_type(std::vector<std::string> &sv, 
+  bool itive_com) {
 
   if (type=="table3d") {
     
-    if (type!="table3d") {
-      cout << "No table to get interpolation type of in 'interp-type'." << endl;
-      return exc_efailed;
-    }
-
-    if (sv.size()>1) {
-      if (o2scl::stoi(sv[1])>7 || o2scl::stoi(sv[1])<0) {
-	cout << "Invalid interpolation type in 'interp-type'." << endl;
-	return exc_efailed;
-      }
-      table3d_obj.set_interp_type(o2scl::stoi(sv[1]));
-    }
-    
-    if (sv.size()==1 || verbose>0) {
-      size_t itype=table3d_obj.get_interp_type();
-      cout << "Current interpolation type is " << itype;
-      
-      if (itype<4) {
-	if (itype<3) {
-	  if (itype==1) {
-	    cout << " (linear)." << endl;
-	  } else {
-	    cout << " (cubic spline)." << endl;
-	  }
-	} else {
-	  cout << " (cubic spline, periodic)." << endl;
-	}
-      } else {
-	if (itype<6) {
-	  if (itype<5) {
-	    cout << " (Akima spline)." << endl;
-	  } else {
-	    cout << " (Akima spline, periodic)." << endl;
-	  }
-	} else {
-	  if (itype<7) {
-	    cout << " (Monotonicity-preserving)." << endl;
-	  } else {
-	    cout << " (Steffen's monotonic)." << endl;
-	  }
-	}
-      }
-    }
-    
-    return 0;
-  }
-  
-  if (table_obj.get_nlines()==0) {
-    cout << "No table to get interpolation type of." << endl;
-    return exc_efailed;
+  if (type!="table3d") {
+  cout << "No table to get interpolation type of in 'interp-type'." << endl;
+  return exc_efailed;
   }
 
   if (sv.size()>1) {
-    if (o2scl::stoi(sv[1])>7 || o2scl::stoi(sv[1])<0) {
-      cout << "Invalid interpolation type in interp-type." << endl;
-      return exc_efailed;
-    }
-    table_obj.set_interp_type(o2scl::stoi(sv[1]));
+  if (o2scl::stoi(sv[1])>7 || o2scl::stoi(sv[1])<0) {
+  cout << "Invalid interpolation type in 'interp-type'." << endl;
+  return exc_efailed;
+  }
+  table3d_obj.set_interp_type(o2scl::stoi(sv[1]));
+  }
+    
+  if (sv.size()==1 || verbose>0) {
+  size_t itype=table3d_obj.get_interp_type();
+  cout << "Current interpolation type is " << itype;
+      
+  if (itype<4) {
+  if (itype<3) {
+  if (itype==1) {
+  cout << " (linear)." << endl;
+  } else {
+  cout << " (cubic spline)." << endl;
+  }
+  } else {
+  cout << " (cubic spline, periodic)." << endl;
+  }
+  } else {
+  if (itype<6) {
+  if (itype<5) {
+  cout << " (Akima spline)." << endl;
+  } else {
+  cout << " (Akima spline, periodic)." << endl;
+  }
+  } else {
+  if (itype<7) {
+  cout << " (Monotonicity-preserving)." << endl;
+  } else {
+  cout << " (Steffen's monotonic)." << endl;
+  }
+  }
+  }
+  }
+    
+  return 0;
+  }
+  
+  if (table_obj.get_nlines()==0) {
+  cout << "No table to get interpolation type of." << endl;
+  return exc_efailed;
+  }
+
+  if (sv.size()>1) {
+  if (o2scl::stoi(sv[1])>7 || o2scl::stoi(sv[1])<0) {
+  cout << "Invalid interpolation type in interp-type." << endl;
+  return exc_efailed;
+  }
+  table_obj.set_interp_type(o2scl::stoi(sv[1]));
   }
 
   if (sv.size()==1 || verbose>0) {
-    size_t itype=table_obj.get_interp_type();
-    cout << "Current interpolation type is " << itype;
+  size_t itype=table_obj.get_interp_type();
+  cout << "Current interpolation type is " << itype;
     
-    if (itype<4) {
-      if (itype<3) {
-	if (itype==1) {
-	  cout << " (linear)." << endl;
-	} else {
-	  cout << " (cubic spline)." << endl;
-	}
-      } else {
-	cout << " (cubic spline, periodic)." << endl;
-      }
-    } else {
-      if (itype<6) {
-	if (itype<5) {
-	  cout << " (Akima spline)." << endl;
-	} else {
-	  cout << " (Akima spline, periodic)." << endl;
-	}
-      } else {
-	if (itype<7) {
-	  cout << " (Monotonicity-preserving)." << endl;
-	} else {
-	  cout << " (Steffen's monotonic)." << endl;
-	}
-      }
-    }
+  if (itype<4) {
+  if (itype<3) {
+  if (itype==1) {
+  cout << " (linear)." << endl;
+  } else {
+  cout << " (cubic spline)." << endl;
+  }
+  } else {
+  cout << " (cubic spline, periodic)." << endl;
+  }
+  } else {
+  if (itype<6) {
+  if (itype<5) {
+  cout << " (Akima spline)." << endl;
+  } else {
+  cout << " (Akima spline, periodic)." << endl;
+  }
+  } else {
+  if (itype<7) {
+  cout << " (Monotonicity-preserving)." << endl;
+  } else {
+  cout << " (Steffen's monotonic)." << endl;
+  }
+  }
+  }
   }
   
   return 0;
-}
+  }
+*/
 
 int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
 
@@ -1662,7 +1675,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
 	cout << "Reading table." << endl;
       }
       hdf_input(hf,table_obj,i2);
-      table_name=i2;
+      obj_name=i2;
+      interp_type=table_obj.get_interp_type();
       type="table";
       return 0;
     } else if (type2=="table3d") {
@@ -1670,7 +1684,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
 	cout << "Reading table3d." << endl;
       }
       hdf_input(hf,table3d_obj,i2);
-      table_name=i2;
+      obj_name=i2;
+      interp_type=table3d_obj.get_interp_type();
       type="table3d";
       return 0;
     } else if (type2=="hist") {
@@ -1736,8 +1751,9 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
   ret=hf.find_group_by_type("table",i2,verbose);
   if (ret==success) {
     hdf_input(hf,table_obj,i2);
-    table_name=i2;
+    obj_name=i2;
     type="table";
+    interp_type=table_obj.get_interp_type();
     return 0;
   }
 
@@ -1747,7 +1763,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
   ret=hf.find_group_by_type("table3d",i2,verbose);
   if (ret==success) {
     hdf_input(hf,table3d_obj,i2);
-    table_name=i2;
+    obj_name=i2;
+    interp_type=table3d_obj.get_interp_type();
     type="table3d";
     return 0;
   }
@@ -1766,7 +1783,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
       }
       h.copy_to_table(table_obj,"bins","low","high","weights");
     */
-    table_name=i2;
+    obj_name=i2;
     type="hist";
     return 0;
   }
@@ -1786,7 +1803,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
       }
       h.copy_to_table(table3d_obj,"x","y","weights");
     */
-    table_name=i2;
+    obj_name=i2;
     //threed=true;
     type="hist_2d";
     return 0;
@@ -2324,8 +2341,21 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
     return exc_efailed;
   }
   
-  std::string svalue, file, name="contours";
+  bool frac_mode=false;
   
+  if (sv.size()>=2 && sv[1]=="frac") {
+    frac_mode=true;
+  }
+  if (sv.size()<2 && itive_com) {
+    string temp=((string)"Enter \"frac\" for fractions of total sum and ")
+      +"\"abs\" for absolute scale (or blank to stop): ";
+    std::string in=cl->cli_gets(temp.c_str());
+    if (in.length()==0) return 1;
+    if (in=="frac") frac_mode=true;
+  }
+    
+  std::string svalue, file, name="contours";
+
   if (type=="table3d") {
 
     std::string slice;
@@ -2895,47 +2925,42 @@ int acol_manager::comm_integ(std::vector<std::string> &sv, bool itive_com) {
 }
 
 int acol_manager::comm_internal(std::vector<std::string> &sv, bool itive_com) {
-
-  if (type=="table3d") {
-    if (type!="table3d") {
-      cerr << "No table3d to write to a file." << endl;
-      return exc_efailed;
-    }
-
-    std::string i1;
-    int ret=get_input_one(sv,"Enter filename",i1,"internal",itive_com);
-    if (ret!=0) return ret;
-
-    if (verbose>2) {
-      cout << "Creating O2scl file: " <<  i1 << endl;
-    }
-
-    hdf_file hf;
-    hf.open_or_create(i1);
-    hdf_output(hf,table3d_obj,table_name);
-    hf.close();
   
-    return 0;
-  }
-
-  if (table_obj.get_nlines()==0) {
-    cerr << "No table to write to a file." << endl;
-    return exc_efailed;
-  }
-
   std::string i1;
   int ret=get_input_one(sv,"Enter filename",i1,"internal",itive_com);
   if (ret!=0) return ret;
-
+  
   if (verbose>2) {
-    cout << "Creating O2scl file: " <<  i1 << endl;
+    cout << "Opening O2scl file: " << i1 << endl;
   }
-
+  
   hdf_file hf;
   hf.open_or_create(i1);
-  hdf_output(hf,table_obj,table_name);
-  hf.close();
   
+  if (type=="table3d") {
+    
+    hdf_output(hf,table3d_obj,obj_name);
+    
+  } else if (type=="table") {
+    
+    hdf_output(hf,table_obj,obj_name);
+
+  } else if (type=="hist") {
+
+    hdf_output(hf,hist_obj,obj_name);
+    
+  } else if (type=="hist_2d") {
+
+    hdf_output(hf,hist_2d_obj,obj_name);
+    
+  } else if (type=="vector<contour_line>") {
+
+    hdf_output(hf,cont_obj,obj_name);
+    
+  }
+
+  hf.close();
+    
   return 0;
 }
 
@@ -3782,11 +3807,11 @@ int acol_manager::comm_assign(std::vector<std::string> &sv, bool itive_com) {
 int acol_manager::comm_list(std::vector<std::string> &sv, bool itive_com) {
   if (type=="table3d") {
     cout.precision(prec);
-    cout << "Table3d name: " << table_name << endl;
+    cout << "Table3d name: " << obj_name << endl;
     table3d_obj.summary(&cout,ncols);
   } else if (type=="table") {
     cout.precision(prec);
-    cout << "Table name: " << table_name << endl;
+    cout << "Table name: " << obj_name << endl;
     if (table_obj.get_nunits()>0) {
       table_obj.summary(&cout,ncols);
     } else {

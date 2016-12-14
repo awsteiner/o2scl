@@ -522,7 +522,37 @@ namespace o2scl {
 
     /// \name Other functions
     //@{
-    double bin_sum();
+    /// Desc
+    double sum_wgts();
+
+    /// Desc
+    double integ_wgts();
+
+    /** \brief Desc
+     */
+    template<class vec_t> void copy_reps(vec_t &v) {
+#if !O2SCL_NO_RANGE_CHECK
+      is_valid();
+#endif
+      // If we're in user mode, just return the user value
+      if (rmode==rmode_user) {
+	for(size_t i=0;i<hsize;i++) {
+	  v[i]=user_rep[i];
+	}
+	return;
+      }
+      // Check if the internal reps are not already computed
+      if (urep.size()==0) set_reps_auto();
+      // Copy the data over
+      for(size_t i=0;i<hsize;i++) {
+	v[i]=urep[i];
+      }
+      return;
+    }
+
+    /** \brief Desc
+     */
+    void swap_reps(ubvector &v);
     
     /** \brief Renormalize the weights to fix the integral
 	

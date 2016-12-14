@@ -142,9 +142,6 @@ namespace o2scl {
     /// Rep mode for y
     size_t yrmode;
 
-    /// Interpolation type
-    size_t itype;
-
     /** \brief Allocate for a histogram of size \c nx, \c ny
 	
 	This function also sets all the weights to zero.
@@ -179,7 +176,6 @@ namespace o2scl {
       extend_lhs=false;
       hsize_x=0;
       hsize_y=0;
-      itype=1;
 
       double min_x, max_x, min_y, max_y;
       o2scl::vector_minmax_value(nv,v,min_x,max_x);
@@ -205,7 +201,6 @@ namespace o2scl {
       extend_lhs=false;
       hsize_x=0;
       hsize_y=0;
-      itype=1;
     
       double min_x, max_x, min_y, max_y;
       o2scl::vector_minmax_value(nv,v,min_x,max_x);

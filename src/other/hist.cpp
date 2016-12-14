@@ -100,12 +100,16 @@ void hist::set_reps_auto() {
   return;
 }
 
-double hist::bin_sum() {
+double hist::sum_wgts() {
   double sum=0.0;
   for(size_t i=0;i<hsize;i++) {
     sum+=uwgt[i];
   }
   return sum;
+}
+
+double hist::integ_wgts() {
+  return integ(ubin[0],ubin[hsize]);
 }
 
 void hist::normalize(double new_sum) {
@@ -323,6 +327,24 @@ void hist::set_rep_mode(size_t mode) {
     rmode=mode;
     if (urep.size()>0) urep.resize(0);
   }
+  return;
+}
+
+void hist::swap_reps(ubvector &v) {
+  // Make sure the vector is properly sized
+  if (v.size()!=hsize) v.resize(hsize);
+  // If we're in user mode, fall back to a copy
+  if (rmode==rmode_user) {
+    for(size_t i=0;i<hsize;i++) {
+      v[i]=user_rep[i];
+    }
+    return;
+  }
+  // Check if the internal reps are not already computed
+  if (urep.size()==0) set_reps_auto();
+  // Perform the swap
+  std::swap(urep,v);
+  urep.clear();
   return;
 }
 

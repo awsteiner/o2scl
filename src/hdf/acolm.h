@@ -121,7 +121,7 @@ namespace o2scl_acol {
     bool names_out;
 
     /// The name of the table
-    std::string table_name;
+    std::string obj_name;
   
     /// Filename for units command
     std::string unit_fname;
@@ -132,18 +132,22 @@ namespace o2scl_acol {
     /// The number of columns requested by the user
     int user_ncols;
 
+    /// The interpolation type
+    int interp_type;
+
     /// True for scientific output mode
     bool scientific;
     //@}
 
     /// \name The parameter objects
     //@{
-    o2scl::cli::parameter_string p_table_name;
+    o2scl::cli::parameter_string p_obj_name;
     o2scl::cli::parameter_string p_unit_fname;
     o2scl::cli::parameter_string p_def_args;
     o2scl::cli::parameter_int p_verbose;
     o2scl::cli::parameter_int p_prec;
     o2scl::cli::parameter_int p_ncols;
+    o2scl::cli::parameter_int p_interp_type;
     o2scl::cli::parameter_bool p_scientific;
     o2scl::cli::parameter_bool p_pretty;
     o2scl::cli::parameter_bool p_names_out;
@@ -301,9 +305,6 @@ namespace o2scl_acol {
     virtual int comm_to_hist(std::vector<std::string> &sv, bool itive_com);
 
     /// Desc
-    virtual int comm_to_hist_2d(std::vector<std::string> &sv, bool itive_com);
-
-    /// Desc
     virtual int comm_type(std::vector<std::string> &sv, bool itive_com);
     
     /// Find a row from a function
@@ -362,9 +363,6 @@ namespace o2scl_acol {
 
     /// Output to screen or file
     virtual int comm_output(std::vector<std::string> &sv, bool itive_com);
-
-    /// Get or set the current interpolation type
-    virtual int comm_interp_type(std::vector<std::string> &sv, bool itive_com);
 
     /// Preview the table
     virtual int comm_preview(std::vector<std::string> &sv, bool itive_com);
