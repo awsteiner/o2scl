@@ -3344,30 +3344,73 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
       if (dx==0) dx=1;
       if (dy==0) dy=1;
 
-      cout << "x: [";
-      if (nx<3) {
-	for(size_t i=0;i<nx;i++) {
+      cout << "nx: " << nx << " ny: " << ny << endl;
+      if (nx<=4) {
+	cout << "x: [";
+	for(size_t i=0;i<nx-1;i++) {
 	  cout << hist_2d_obj.get_x_low_i(i) << " ";
 	}
-	cout << hist_2d_obj.get_x_high_i(nx-1) << "] ";
+	cout << hist_2d_obj.get_x_low_i(nx-1) << "]" << endl;
+	cout << "   [";
+	for(size_t i=0;i<nx-1;i++) {
+	  cout << hist_2d_obj.get_x_rep_i(i) << " ";
+	}
+	cout << hist_2d_obj.get_x_rep_i(nx-1) << "]" << endl;
+	cout << "   [";
+	for(size_t i=0;i<nx-1;i++) {
+	  cout << hist_2d_obj.get_x_high_i(i) << " ";
+	}
+	cout << hist_2d_obj.get_x_high_i(nx-1) << "]" << endl;
       } else {
+	cout << "x: [";
 	cout << hist_2d_obj.get_x_low_i(0) << " ";
 	cout << hist_2d_obj.get_x_low_i(1) << " ... ";
+	cout << hist_2d_obj.get_x_low_i(nx-2) << " ";
+	cout << hist_2d_obj.get_x_low_i(nx-1) << "]" << endl;
+	cout << "   [";
+	cout << hist_2d_obj.get_x_rep_i(0) << " ";
+	cout << hist_2d_obj.get_x_rep_i(1) << " ... ";
+	cout << hist_2d_obj.get_x_rep_i(nx-2) << " ";
+	cout << hist_2d_obj.get_x_rep_i(nx-1) << "]" << endl;
+	cout << "   [";
+	cout << hist_2d_obj.get_x_high_i(0) << " ";
+	cout << hist_2d_obj.get_x_high_i(1) << " ... ";
 	cout << hist_2d_obj.get_x_high_i(nx-2) << " ";
-	cout << hist_2d_obj.get_x_high_i(nx-1) << "] ";
+	cout << hist_2d_obj.get_x_high_i(nx-1) << "]" << endl;
       }
       cout << endl;
-      cout << "y: [";
-      if (ny<3) {
-	for(size_t i=0;i<ny;i++) {
+      if (ny<=4) {
+	cout << "y: [";
+	for(size_t i=0;i<ny-1;i++) {
 	  cout << hist_2d_obj.get_y_low_i(i) << " ";
 	}
-	cout << hist_2d_obj.get_y_high_i(ny-1) << "] ";
+	cout << hist_2d_obj.get_y_low_i(ny-1) << "]" << endl;
+	cout << "   [";
+	for(size_t i=0;i<ny-1;i++) {
+	  cout << hist_2d_obj.get_y_rep_i(i) << " ";
+	}
+	cout << hist_2d_obj.get_y_rep_i(ny-1) << "]" << endl;
+	cout << "   [";
+	for(size_t i=0;i<ny-1;i++) {
+	  cout << hist_2d_obj.get_y_high_i(i) << " ";
+	}
+	cout << hist_2d_obj.get_y_high_i(ny-1) << "]" << endl;
       } else {
+	cout << "y: [";
 	cout << hist_2d_obj.get_y_low_i(0) << " ";
 	cout << hist_2d_obj.get_y_low_i(1) << " ... ";
+	cout << hist_2d_obj.get_y_low_i(ny-2) << " ";
+	cout << hist_2d_obj.get_y_low_i(ny-1) << "]" << endl;
+	cout << "   [";
+	cout << hist_2d_obj.get_y_rep_i(0) << " ";
+	cout << hist_2d_obj.get_y_rep_i(1) << " ... ";
+	cout << hist_2d_obj.get_y_rep_i(ny-2) << " ";
+	cout << hist_2d_obj.get_y_rep_i(ny-1) << "]" << endl;
+	cout << "   [";
+	cout << hist_2d_obj.get_y_high_i(0) << " ";
+	cout << hist_2d_obj.get_y_high_i(1) << " ... ";
 	cout << hist_2d_obj.get_y_high_i(ny-2) << " ";
-	cout << hist_2d_obj.get_y_high_i(ny-1) << "] ";
+	cout << hist_2d_obj.get_y_high_i(ny-1) << "]" << endl;
       }
       cout << endl;
       

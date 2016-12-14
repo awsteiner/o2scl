@@ -572,6 +572,25 @@ extern "C" {
 
   /** \brief Desc
    */
+  int o2scl_acol_contours_n(void *vp) {
+    o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
+    return amp->cont_obj.size();
+  }
+
+  /** \brief Desc
+   */
+  double o2scl_acol_contours_line(void *vp, int i, int &n, double *&ptrx,
+				  double *&ptry) {
+    o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
+    double lev=amp->cont_obj[i].level;
+    n=amp->cont_obj[i].x.size();
+    ptrx=&(amp->cont_obj[i].x[0]);
+    ptry=&(amp->cont_obj[i].y[0]);
+    return lev;
+  }
+
+  /** \brief Desc
+   */
   void o2scl_acol_get_type(void *vp, int &n, char *&str) {
     o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
     n=amp->type.length();
