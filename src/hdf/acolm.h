@@ -222,6 +222,9 @@ namespace o2scl_acol {
 
   protected:
 
+    /// Desc
+    void clear_obj();
+    
     /// Ensure \c col is unique from entries in \c cnames
     int make_unique_name(std::string &col, std::vector<std::string> &cnames);
 

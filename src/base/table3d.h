@@ -662,9 +662,9 @@ namespace o2scl {
     */
     void zero_table();
 
-    /** \brief Clear the table and the slice names
+    /** \brief Clear everything
      */
-    void clear_table();
+    void clear();
 
     /** \brief Remove all of the data by setting the number
 	of lines to zero

@@ -1923,9 +1923,10 @@ namespace o2scl {
 
   /** \brief Clear everything
    */
-  void clear_all() {
+  void clear() {
     clear_table();
     clear_constants();
+    return;
   }
 
   /** \brief Clear the table and the column names (but leave constants)
@@ -1938,7 +1939,6 @@ namespace o2scl {
       delete si;
       intp_set=false;
     }
-
     return;
   }
 
@@ -1960,6 +1960,7 @@ namespace o2scl {
   /// CLear all constants
   void clear_constants() {
     constants.clear();
+    return;
   }
   //@}
 

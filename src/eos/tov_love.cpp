@@ -134,7 +134,7 @@ void tov_love::calc_y(double &yR, double &beta, double &k2,
   y[0]=2.0;
 
   if (tabulate) {
-    results.clear_all();
+    results.clear();
     results.line_of_names("r y dydr");
     results.set_unit("r","km");
     results.set_unit("dydr","1/km");

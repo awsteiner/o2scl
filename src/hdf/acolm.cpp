@@ -54,12 +54,28 @@ acol_manager::acol_manager() : cng(o2scl_settings.get_convert_units()) {
   env_var_name="ACOL_DEFAULTS";
 }
 
+void acol_manager::clear_obj() {
+  if (type=="table") {
+    table_obj.clear();
+  } else if (type=="table3d") {
+    table3d_obj.clear();
+  } else if (type=="hist") {
+    hist_obj.clear();
+  } else if (type=="hist_2d") {
+    hist_2d_obj.clear();
+  } else if (type=="vector<contour_line>") {
+    cont_obj.clear();
+  }
+  type="";
+  return;
+}
+
 int acol_manager::setup_options() {
 
   const int cl_param=cli::comm_option_cl_param;
   const int both=cli::comm_option_both;
 
-  static const int narr=50;
+  static const int narr=48;
 
   // Options, sorted by long name. We allow 0 parameters in many of these
   // options so they can be requested from the user in interactive mode. 
@@ -929,30 +945,26 @@ int acol_manager::comm_to_hist(std::vector<std::string> &sv,
 			       bool itive_com) {
 
   std::string i1;
-  std::vector<std::string> blank;
-  
+
   if (type=="table") {
 
     bool twod_mode=false;
-    size_t icurr=1;
     
     if (sv.size()>=2 && sv[1]=="2d") {
       twod_mode=true;
-      icurr=2;
+      std::vector<std::string>::iterator it=sv.begin();
+      it++;
+      sv.erase(it);
     }
     if (sv.size()<2 && itive_com) {
-      if (get_input_one(blank,((string)"Enter \"2d\" for 2d histogram ")+
-			+"and \"1d\" for 1d histogram",i1,"to-hist",
-			itive_com)==0) {
-	return ret;
-      }
-      if (i1.length()==0) return 1;
+      int ret=get_input_one(sv,((string)"Enter \"2d\" for 2d histogram ")+
+			    +"and \"1d\" for 1d histogram",i1,"to-hist",
+			    itive_com);
+      if (ret!=0) return ret;
       if (i1=="2d") twod_mode=true;
     }
     
     if (twod_mode==false) {
-      std::string cname, sbins, wname;
-      if (sv.size()>=3) {
       
       vector<string> in, pr;
       pr.push_back("Column name");
@@ -1635,14 +1647,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
     }
   }
 
-  // Delete previous table
-  if (type=="table3d") {
-    type="";
-    table3d_obj.clear_table();
-  } else if (type=="table") {
-    type="";
-    table_obj.clear_all();
-  }
+  // Delete previous object
+  clear_obj();
 
   // Use hdf_file to open the file
   hdf_file hf;
@@ -2061,7 +2067,7 @@ int acol_manager::get_input_one(vector<string> &sv, string directions,
   if (itive_com) {
     string temp=directions+" (or blank to stop): ";
     in=cl->cli_gets(temp.c_str());
-    if (in.length()==0) {
+    if (in.length()==0 || o2scl::count_words(in)==0) {
       if (verbose>0) {
 	cout << "Command '" << comm_name << "' cancelled." << endl;
       }
@@ -2097,7 +2103,7 @@ int acol_manager::get_input(vector<string> &sv, vector<string> &directions,
       string temp=directions[i]+" (or blank to stop): ";
       in.push_back(cl->cli_gets(temp.c_str()));
       // If the user just pressed 'enter', then cancel
-      if (in[i].length()==0) {
+      if (in[i].length()==0 || count_words(in[i])==0) {
 	cout << "Command '" << comm_name << "' cancelled." << endl;
 	return exc_efailed;
       }
@@ -2188,11 +2194,11 @@ int acol_manager::comm_slice(std::vector<std::string> &sv, bool itive_com) {
   
   if (sv[1]=="x") {
     table3d_obj.extract_x(std::stod(sv[2]),table_obj);
-    table3d_obj.clear_table();
+    table3d_obj.clear();
     type="table";
   } else if (sv[1]=="y") {
     table3d_obj.extract_y(std::stod(sv[2]),table_obj);
-    table3d_obj.clear_table();
+    table3d_obj.clear();
     type="table";
   } else {
     cerr << "Invalid first argument to 'slice'." << endl;
@@ -2335,7 +2341,7 @@ int acol_manager::comm_set_unit(std::vector<std::string> &sv, bool itive_com) {
 }
 
 int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
-  
+
   if (type!="table3d" && type!="hist_2d") {
     cerr << "Not implemented for type " << type << " ." << endl;
     return exc_efailed;
@@ -2345,13 +2351,16 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
   
   if (sv.size()>=2 && sv[1]=="frac") {
     frac_mode=true;
+    std::vector<std::string>::iterator it=sv.begin();
+    it++;
+    sv.erase(it);
   }
   if (sv.size()<2 && itive_com) {
     string temp=((string)"Enter \"frac\" for fractions of total sum and ")
-      +"\"abs\" for absolute scale (or blank to stop): ";
-    std::string in=cl->cli_gets(temp.c_str());
-    if (in.length()==0) return 1;
-    if (in=="frac") frac_mode=true;
+      +"\"abs\" for absolute scale", i1;
+    int ret=get_input_one(sv,temp,i1,"contours",itive_com);
+    if (ret!=0) return ret;
+    if (i1=="frac") frac_mode=true;
   }
     
   std::string svalue, file, name="contours";
@@ -2395,16 +2404,7 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
       hdf_output(hf,clines,name);
       hf.close();
     } else {
-      if (type=="table") {
-	table_obj.clear_all();
-      } else if (type=="table3d") {
-	table3d_obj.clear_table();
-	type="";
-      } else if (type=="hist") {
-	hist_obj.clear();
-      } else if (type=="hist_2d") {
-	hist_2d_obj.clear();
-      }
+      clear_obj();
       table3d_obj.slice_contours(slice,1,levs,cont_obj);
       type="vector<contour_line>";
     }
@@ -2455,15 +2455,7 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
       hdf_output(hf,clines,name);
       hf.close();
     } else {
-      if (type=="table") {
-	table_obj.clear_all();
-      } else if (type=="table3d") {
-	table3d_obj.clear_table();
-      } else if (type=="hist") {
-	hist_obj.clear();
-      } else if (type=="hist_2d") {
-	hist_2d_obj.clear();
-      }
+      clear_obj();
       co.calc_contours(cont_obj);
       type="vector<contour_line>";
     }
@@ -3689,13 +3681,8 @@ int acol_manager::comm_gen3_list(std::vector<std::string> &sv,
     cerr << "Read failed. Non-existent file?" << endl;
     return exc_efailed;
   }
-  // Delete previous table
-  if (type=="table3d") {
-    table3d_obj.clear_table();
-  } else if (type=="table") {
-    table_obj.clear_all();
-  }
-  type="";
+  // Delete previous object
+  clear_obj();
   
   table3d_obj.read_gen3_list(ifs,verbose);
   type="table3d";
@@ -3723,13 +3710,8 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
     }
   }
 
-  // Delete previous table
-  if (type=="table3d") {
-    table3d_obj.clear_table();
-  } else if (type=="table") {
-    table_obj.clear_all();
-  }
-  type="";
+  // Delete previous object
+  clear_obj();
 
   if (sv[1]!=((std::string)"cin")) {
     table_obj.read_generic(ifs,verbose);
@@ -4124,7 +4106,7 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
     }
     
     // Delete the old table3d and copy the new one over
-    table3d_obj.clear_table();
+    table3d_obj.clear();
     
   } else {
 
@@ -4220,7 +4202,7 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
     }
 
     // Replace the old table with the new one
-    table_obj.clear_all();
+    table_obj.clear();
 
   }
 
@@ -4331,7 +4313,7 @@ int acol_manager::comm_select_rows(std::vector<std::string> &sv,
   }
   
   // Replace the old table with the new one
-  table_obj.clear_all();
+  table_obj.clear();
 
   return 0;
 }
@@ -4412,13 +4394,10 @@ int acol_manager::comm_create3(std::vector<std::string> &sv,
       return exc_efailed;
     }
   }
+
+  // Delete previous object
+  clear_obj();
   
-  if (type=="table") {
-    table_obj.clear_all();
-  }
-  if (type=="table3d") {
-    table3d_obj.clear_table();
-  }
   type="table3d";
 
   std::string xname=in[0];

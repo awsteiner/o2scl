@@ -501,7 +501,7 @@ void nstar_rot::constants_o2scl() {
 }
 
 void nstar_rot::output_table(o2scl::table3d &t) {
-  t.clear_table();
+  t.clear();
   std::vector<double> s_grid, m_grid;
   for(int i=1;i<=SDIV;i++) {
     s_grid.push_back(s_gp[i]);

@@ -817,7 +817,7 @@ void table3d::zero_table() {
   return;
 }
 
-void table3d::clear_table() {
+void table3d::clear() {
   clear_data();
   xval.clear();
   yval.clear();

@@ -606,7 +606,7 @@ void hist_2d::is_valid() const {
 void hist_2d::copy_to_table(table3d &t, std::string xreps_name,
 			    std::string yreps_name, std::string weights) {
   
-  t.clear_table();
+  t.clear();
 
   // Set the grid
   ubvector xreps(size_x()), yreps(size_y());

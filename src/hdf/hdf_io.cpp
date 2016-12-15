@@ -516,7 +516,7 @@ void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, table3d &t,
   typedef std::vector<double> ubvector;
 
   // Clear previous data
-  t.clear_table();
+  t.clear();
 
   // If no name specified, find name of first group of specified type
   if (name.length()==0) {
