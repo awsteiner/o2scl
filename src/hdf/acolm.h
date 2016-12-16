@@ -222,11 +222,13 @@ namespace o2scl_acol {
 
   protected:
 
-    /// Desc
+    /** \brief Clear memory associated with the current object and set
+	type to ""
+    */
     void clear_obj();
     
-    /// Ensure \c col is unique from entries in \c cnames
-    int make_unique_name(std::string &col, std::vector<std::string> &cnames);
+    // Ensure \c col is unique from entries in \c cnames
+    //int make_unique_name(std::string &col, std::vector<std::string> &cnames);
 
   public:
     
@@ -330,9 +332,11 @@ namespace o2scl_acol {
 
     /// Fit two columns to a function
     virtual int comm_fit(std::vector<std::string> &sv, bool itive_com);
-    
-    /// Create an html file
-    virtual int comm_html(std::vector<std::string> &sv, bool itive_com);
+
+#ifdef O2SCL_NEVER_DEFINED
+    // Create an html file
+    //virtual int comm_html(std::vector<std::string> &sv, bool itive_com);
+#endif
 
     /// Insert a column from an external table using interpolation
     virtual int comm_insert(std::vector<std::string> &sv, bool itive_com);
