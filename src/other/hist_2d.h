@@ -261,6 +261,14 @@ namespace o2scl {
     */
     bool extend_lhs;
 
+    /** \brief Desc
+     */
+    double sum_wgts();
+    
+    /** \brief Desc
+     */
+    double integ_wgts();
+
     /// \name Initial bin setup
     //@{
     /// Set the bins from two \ref uniform_grid objects

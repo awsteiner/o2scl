@@ -535,7 +535,7 @@ namespace o2scl {
     
     /// Return a constant reference to a slice
     ubmatrix &get_slice(size_t iz);
-    
+
     /** \brief Return a constant reference to all the slice data
 
 	\comment

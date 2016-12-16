@@ -640,6 +640,43 @@ extern "C" {
     return 0;
   }
   
+  int o2scl_acol_get_hist_2d(void *vp, 
+			     int &nx, double *&xptr,
+			     int &ny, double *&yptr,
+			     double *&data) {
+    o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
+    if (amp->type!="hist_2d") {
+      std::cout << "No hist_2d object loaded."
+		<< std::endl;
+      return 1;
+    }
+
+    nx=amp->hist_2d_obj.size_x();
+    amp->xtemp.resize(nx);
+    for(int i=0;i<nx;i++) {
+      amp->xtemp[i]=amp->hist_2d_obj.get_x_rep_i(i);
+    }
+    xptr=(double *)&amp->xtemp[0];
+
+    ny=amp->hist_2d_obj.size_y();
+    amp->ytemp.resize(ny);
+    for(int i=0;i<ny;i++) {
+      amp->ytemp[i]=amp->hist_2d_obj.get_y_rep_i(i);
+    }
+    yptr=(double *)&amp->ytemp[0];
+
+    amp->stemp.resize(nx*ny);
+    typedef boost::numeric::ublas::matrix<double> ubmatrix;
+    const ubmatrix &m=amp->hist_2d_obj.get_wgts();
+    for(size_t i=0;i<nx;i++) {
+      for(size_t j=0;j<ny;j++) {
+	amp->stemp[i*ny+j]=m(i,j);
+      }
+    }
+    data=(double *)&amp->stemp[0];
+    return 0;
+  }
+  
 }
 
 #endif

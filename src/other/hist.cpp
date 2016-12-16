@@ -109,7 +109,11 @@ double hist::sum_wgts() {
 }
 
 double hist::integ_wgts() {
-  return integ(ubin[0],ubin[hsize]);
+  double sum=0.0;
+  for(size_t i=0;i<hsize;i++) {
+    sum+=uwgt[i]*(ubin[i+1]-ubin[i]);
+  }
+  return sum;
 }
 
 void hist::normalize(double new_sum) {

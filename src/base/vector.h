@@ -1636,6 +1636,15 @@ namespace o2scl {
     return;
   }
 
+  /** \brief Compute the minimum and maximum of a matrix
+   */
+  template<class mat_t, class data_t>
+    void matrix_minmax(const mat_t &data,
+		       data_t &min, data_t &max) {
+    return matrix_minmax<mat_t,data_t>
+      (data.size1(),data.size2(),data,min,max);
+  }
+    
   /** \brief Compute the minimum and maximum of a matrix and
       return their locations
   */
@@ -1668,6 +1677,27 @@ namespace o2scl {
       }
     }
     return;
+  }
+
+  /** \brief Compute the sum of matrix elements
+   */
+  template<class mat_t, class data_t>
+    data_t matrix_sum(size_t m, size_t n, const mat_t &data) {
+    
+    data_t sum=0.0;
+    for(size_t i=0;i<m;i++) {
+      for(size_t j=0;j<n;j++) {
+	sum+=data(i,j);
+      }
+    }
+    return sum;
+  }
+
+  /** \brief Compute the sum of matrix elements
+   */
+  template<class mat_t, class data_t>
+    data_t matrix_sum(const mat_t &data) {
+    return matrix_sum<mat_t,data_t>(data.size1(),data.size2(),data);
   }
   //@}
 

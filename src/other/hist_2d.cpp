@@ -155,6 +155,26 @@ void hist_2d::allocate(size_t nx, size_t ny) {
   return;
 }
 
+double hist_2d::sum_wgts() {
+  double sum=0.0;
+  for(size_t i=0;i<hsize_x;i++) {
+    for(size_t j=0;j<hsize_y;j++) {
+      sum+=wgt(i,j);
+    }
+  }
+  return sum;
+}
+
+double hist_2d::integ_wgts() {
+  double sum=0.0;
+  for(size_t i=0;i<hsize_x;i++) {
+    for(size_t j=0;j<hsize_y;j++) {
+      sum+=wgt(i,j)*(xa[i+1]-xa[i])*(ya[j+1]-ya[j]);
+    }
+  }
+  return sum;
+}
+
 void hist_2d::set_reps_auto() {
   if (xrmode!=rmode_user) {
     xrep.resize(hsize_x);

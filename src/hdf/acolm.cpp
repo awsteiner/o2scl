@@ -999,7 +999,9 @@ int acol_manager::comm_to_hist(std::vector<std::string> &sv,
       std::string col2;
       if (sv.size()>5) {
 	col2=sv[5];
-      } else if (itive_com) {
+	// We don't want to prompt for weights if the user has given
+	// enough arguments to proceed, so we test for sv.size()<5
+      } else if (itive_com && sv.size()<5) {
 	col2=cl->cli_gets("Column for weights (or blank for none): ");
       }
       
@@ -2396,17 +2398,21 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
     levs[0]=o2scl::stod(svalue);
     size_t nlev=1;
 
-    if (file.length()>0) {
-      std::vector<contour_line> clines;
-      table3d_obj.slice_contours(slice,1,levs,clines);
-      hdf_file hf;
-      hf.open_or_create(file);
-      hdf_output(hf,clines,name);
-      hf.close();
+    if (frac_mode) {
+      
     } else {
-      clear_obj();
-      table3d_obj.slice_contours(slice,1,levs,cont_obj);
-      type="vector<contour_line>";
+      if (file.length()>0) {
+	std::vector<contour_line> clines;
+	table3d_obj.slice_contours(slice,1,levs,clines);
+	hdf_file hf;
+	hf.open_or_create(file);
+	hdf_output(hf,clines,name);
+	hf.close();
+      } else {
+	clear_obj();
+	table3d_obj.slice_contours(slice,1,levs,cont_obj);
+	type="vector<contour_line>";
+      }
     }
     
   } else if (type=="hist_2d") {
@@ -2430,11 +2436,90 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
       name=sv[3];
     }
 
+    
     ubvector levs(1);
     levs[0]=o2scl::stod(svalue);
     size_t nlev=1;
+
+    if (frac_mode) {
+
+      // Get references to the histogram data
+      size_t nx=hist_2d_obj.size_x();
+      size_t ny=hist_2d_obj.size_y();
+      const ubmatrix &m=hist_2d_obj.get_wgts();
+      const ubvector &xbins=hist_2d_obj.get_x_bins();
+      const ubvector &ybins=hist_2d_obj.get_y_bins();
+
+      // Compute the total integral and the target fraction
+      double min, max;
+      o2scl::matrix_minmax(m,min,max);
+      double sum=hist_2d_obj.integ_wgts();
+      for(size_t i=0;i<nx;i++) {
+	for(size_t j=0;j<ny;j++) {
+	  sum-=min*(xbins[i+1]-xbins[i])*(ybins[j+1]-ybins[j]);
+	}
+      }
+      double target=levs[0]*sum;
+      if (verbose>1) {
+	cout << "sum,target: " << sum << " " << target << endl;
+      }
+
+      // Setup the vectors to interpolate the target integral
+      uniform_grid_end<double> ug(min,max,100);
+      ubvector integx, integy;
+      ug.vector(integx);
+      size_t N=integx.size();
+      if (verbose>1) {
+	cout << "N integx[0] integx[1]: " << N << " "
+	     << integx[0] << " " << integx[1] << endl;
+      }
+      integy.resize(N);
+
+      // Fill the interpolation vectors
+      for(size_t k=0;k<N;k++) {
+	integy[k]=0.0;
+	for(size_t i=0;i<nx;i++) {
+	  for(size_t j=0;j<ny;j++) {
+	    if (m(i,j)>integx[k]) {
+	      integy[k]+=(m(i,j)-min)*(xbins[i+1]-xbins[i])*
+		(ybins[j+1]-ybins[j]);
+	    }
+	  }
+	}
+	if (verbose>1) {
+	  cout << k << " " << integx[k] << " " << integy[k] << endl;
+	}
+      }
+
+      // Perform the interpolation
+      bool found=false;
+      double level;
+      for(size_t k=0;k<N-1;k++) {
+	if (integy[k]>target && integy[k+1]<target) {
+	  found=true;
+	  level=integx[k]+(integx[k+1]-integx[k])*(target-integy[k])/
+	    (integy[k+1]-integy[k]);
+	}
+      }
+      if (verbose>1) {
+	cout << "found: " << level << endl;
+      }
+
+      // Return if the interpolation failed
+      if (found==false) {
+	cerr << "Failed to find a level matching requested fraction."
+	     << endl;
+	return 2;
+      }
+
+      // Set level from interpolated value
+      levs[0]=level;
+      
+    }
+
     contour co;
     co.set_levels(nlev,levs);
+    
     ubvector xreps(hist_2d_obj.size_x());
     for (size_t i=0;i<hist_2d_obj.size_x();i++) {
       xreps[i]=hist_2d_obj.get_x_rep_i(i);
