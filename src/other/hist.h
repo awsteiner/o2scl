@@ -209,7 +209,7 @@ namespace o2scl {
     }
     
     /// Create from vectors of data
-    template<class vec_t, class vec2_t> hist(const vec_t &v, size_t n_bins) {
+    template<class vec_t> hist(const vec_t &v, size_t n_bins) {
       size_t nv=v.size();
       hist(nv,v,n_bins);
       return;
