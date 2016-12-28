@@ -212,7 +212,7 @@ namespace o2scl {
    */
   bool always_accept;
 
-  /** \brief Desc
+  /** \brief Initial step fraction for affine-invariance sampling walkers
    */
   double ai_initial_step;
   //@}
