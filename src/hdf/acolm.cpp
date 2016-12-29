@@ -2764,8 +2764,9 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
   int ret=get_input_one(sv,"Enter row number to get",
 			i1,"get-row",itive_com);
   if (ret!=0) return ret;
-  size_t ix=o2scl::stoi(i1);
 
+  int ix=((int)(o2scl::function_to_double(i1)));
+  
   // If negative, view as distance from end
   if (ix<0) ix+=table_obj.get_nlines();
 
