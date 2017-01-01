@@ -13,6 +13,7 @@ assign       Assign a constant., e.g. assign pi acos(-1)
 calc         Compute the value of a constant expression.                    
 cat          Concatenate data from a second table object onto current table.
 commands     List all available commands.                                   
+contours     Create contour lines from a table3d or hist_2d object.         
 convert-unit Convert a column to a new unit.                                
 create       Create a table from uniform grid.                              
 create3      Create a table3d object.                                       
@@ -32,20 +33,18 @@ get-conv     Get a unit conversion factor.
 get-row      Get a row by index.                                            
 get-unit     Get the units for a specified column.                          
 help         Show help information.                                         
-html         Create a file in HTML (table3d only).                          
 index        Add a column containing the row numbers (table3d only).        
 insert       Interpolate a column/slice from another file.                  
 insert-full  Interpolate a table from another file (table3d only).          
 integ        Integrate a function specified by two columns (table3d only).  
 internal     Output in the internal HDF5 format.                            
 interp       Interpolate a number into a column or slice.                   
-interp-type  Get/set the current interpolation type.                        
 license      Show license information.                                      
 list         List the constants, column/slice names and other info.         
 max          Find the maximum value of a column or slice.                   
 min          Find the minimum value of a column or slice.                   
 nlines       Add 'nlines' as a constant to a table object.                  
-output       Output the current table.                                      
+output       Output the full object as text.                                
 preview      Preview the current table.                                     
 quit         Quit (synonymous with 'exit').                                 
 read         Read a table or table3d from a file.                           
@@ -61,6 +60,8 @@ slice        Construct a slice (table3d only).
 sort         Sort the entire table by a column (table only).                
 stats        Show column statistics (table only).                           
 sum          Add data from a second table object to current table.          
+to-hist      Convert a table to a histogram.                                
+type         Show current object type.                                      
 version      Print version information.                                     
 warranty     Show warranty information.                                     
 
@@ -85,7 +86,7 @@ exp(x) log(x) log10(x) sin(x) cos(x) tan(x) sqrt(x) abs(x)
 asin(x) acos(x) atan(x) sinh(x) cosh(x) tanh(x)
 asinh(x) acosh(x) atanh(x)
 
-Compiled at 15:45:30 on Dec  9 2016 for o2scl, version 0.920.
+Compiled at 17:19:50 on Jan  1 2017 for o2scl, version 0.920.
 
 # ------------------------------------------------------------
 # You can also get help on the commands individually, e.g.
@@ -106,16 +107,16 @@ result. If a table is currently in memory, it is deallocated beforehand.
 > commands
 Command list:
 
-alias        deriv        get-conv     internal     preview      show-units   
-assign       deriv2       get-row      interp       quit         slice        
-calc         exit         get-unit     interp-type  read         sort         
-cat          filelist     help         license      rename       stats        
-commands     find-row     html         list         run          sum          
-convert-unit fit          index        max          select       version      
-create       function     insert       min          select-rows  warranty     
-create3      gen3-list    insert-full  nlines       set          
-delete-col   generic      integ        no-intro     set-data     
-delete-rows  get          interactive  output       set-unit     
+alias        delete-rows  get          internal     quit         slice        
+assign       deriv        get-conv     interp       read         sort         
+calc         deriv2       get-row      license      rename       stats        
+cat          exit         get-unit     list         run          sum          
+commands     filelist     help         max          select       to-hist      
+contours     find-row     index        min          select-rows  type         
+convert-unit fit          insert       nlines       set          version      
+create       function     insert-full  no-intro     set-data     warranty     
+create3      gen3-list    integ        output       set-unit     
+delete-col   generic      interactive  preview      show-units   
 
 # ------------------------------------------------------------
 # Use 'create' to create a table with one column
@@ -134,18 +135,6 @@ delete-rows  get          interactive  output       set-unit
 # Use 'output' to see the results
 # ------------------------------------------------------------
 > output
- x             s             c             c2           
- 0.000000e+00  0.000000e+00  1.000000e+00  9.999995e-01 
- 1.000000e-01  9.983342e-02  9.950042e-01  9.950034e-01 
- 2.000000e-01  1.986693e-01  9.800666e-01  9.800667e-01 
- 3.000000e-01  2.955202e-01  9.553365e-01  9.553335e-01 
- 4.000000e-01  3.894183e-01  9.210610e-01  9.210695e-01 
- 5.000000e-01  4.794255e-01  8.775826e-01  8.775485e-01 
- 6.000000e-01  5.646425e-01  8.253356e-01  8.254605e-01 
- 7.000000e-01  6.442177e-01  7.648422e-01  7.643741e-01 
- 8.000000e-01  7.173561e-01  6.967067e-01  6.984518e-01 
- 9.000000e-01  7.833269e-01  6.216100e-01  6.150954e-01 
- 1.000000e+00  8.414710e-01  5.403023e-01  5.646134e-01 
 # ------------------------------------------------------------
 # Or give 'output' command an argument to output to a file
 # ------------------------------------------------------------
@@ -155,37 +144,13 @@ delete-rows  get          interactive  output       set-unit
 # ------------------------------------------------------------
 > set precision 4
 > output
- x           s           c           c2         
- 0.0000e+00  0.0000e+00  1.0000e+00  1.0000e+00 
- 1.0000e-01  9.9833e-02  9.9500e-01  9.9500e-01 
- 2.0000e-01  1.9867e-01  9.8007e-01  9.8007e-01 
- 3.0000e-01  2.9552e-01  9.5534e-01  9.5533e-01 
- 4.0000e-01  3.8942e-01  9.2106e-01  9.2107e-01 
- 5.0000e-01  4.7943e-01  8.7758e-01  8.7755e-01 
- 6.0000e-01  5.6464e-01  8.2534e-01  8.2546e-01 
- 7.0000e-01  6.4422e-01  7.6484e-01  7.6437e-01 
- 8.0000e-01  7.1736e-01  6.9671e-01  6.9845e-01 
- 9.0000e-01  7.8333e-01  6.2161e-01  6.1510e-01 
- 1.0000e+00  8.4147e-01  5.4030e-01  5.6461e-01 
 > set precision 6
 # ------------------------------------------------------------
 # Shell commands are proceeded by an '!'
 # ------------------------------------------------------------
 > !cat test.txt
 acol: Executing system command: cat test.txt
- x             s             c             c2           
- 0.000000e+00  0.000000e+00  1.000000e+00  9.999995e-01 
- 1.000000e-01  9.983342e-02  9.950042e-01  9.950034e-01 
- 2.000000e-01  1.986693e-01  9.800666e-01  9.800667e-01 
- 3.000000e-01  2.955202e-01  9.553365e-01  9.553335e-01 
- 4.000000e-01  3.894183e-01  9.210610e-01  9.210695e-01 
- 5.000000e-01  4.794255e-01  8.775826e-01  8.775485e-01 
- 6.000000e-01  5.646425e-01  8.253356e-01  8.254605e-01 
- 7.000000e-01  6.442177e-01  7.648422e-01  7.643741e-01 
- 8.000000e-01  7.173561e-01  6.967067e-01  6.984518e-01 
- 9.000000e-01  7.833269e-01  6.216100e-01  6.150954e-01 
- 1.000000e+00  8.414710e-01  5.403023e-01  5.646134e-01 
-acol: Done with system command (returned 0).
+acol: Done with system command (returned 256).
 # ------------------------------------------------------------
 # Or store the results in the internal format 
 # ------------------------------------------------------------
@@ -195,38 +160,12 @@ acol: Done with system command (returned 0).
 # ------------------------------------------------------------
 > generic test.txt
 > output
- x             s             c             c2           
- 0.000000e+00  0.000000e+00  1.000000e+00  9.999995e-01 
- 1.000000e-01  9.983342e-02  9.950042e-01  9.950034e-01 
- 2.000000e-01  1.986693e-01  9.800666e-01  9.800667e-01 
- 3.000000e-01  2.955202e-01  9.553365e-01  9.553335e-01 
- 4.000000e-01  3.894183e-01  9.210610e-01  9.210695e-01 
- 5.000000e-01  4.794255e-01  8.775826e-01  8.775485e-01 
- 6.000000e-01  5.646425e-01  8.253356e-01  8.254605e-01 
- 7.000000e-01  6.442177e-01  7.648422e-01  7.643741e-01 
- 8.000000e-01  7.173561e-01  6.967067e-01  6.984518e-01 
- 9.000000e-01  7.833269e-01  6.216100e-01  6.150954e-01 
- 1.000000e+00  8.414710e-01  5.403023e-01  5.646134e-01 
 # ------------------------------------------------------------
 # Files in the internal format can be read with 'read'
 # ------------------------------------------------------------
 > read test.o2
-Found group with name acol.
-Group has o2scl_type table.
-Found type table.
+Could not find object of any readable type in file 'test.o2'.
 > output
- x             s             c             c2           
- 0.000000e+00  0.000000e+00  1.000000e+00  9.999995e-01 
- 1.000000e-01  9.983342e-02  9.950042e-01  9.950034e-01 
- 2.000000e-01  1.986693e-01  9.800666e-01  9.800667e-01 
- 3.000000e-01  2.955202e-01  9.553365e-01  9.553335e-01 
- 4.000000e-01  3.894183e-01  9.210610e-01  9.210695e-01 
- 5.000000e-01  4.794255e-01  8.775826e-01  8.775485e-01 
- 6.000000e-01  5.646425e-01  8.253356e-01  8.254605e-01 
- 7.000000e-01  6.442177e-01  7.648422e-01  7.643741e-01 
- 8.000000e-01  7.173561e-01  6.967067e-01  6.984518e-01 
- 9.000000e-01  7.833269e-01  6.216100e-01  6.150954e-01 
- 1.000000e+00  8.414710e-01  5.403023e-01  5.646134e-01 
 # ------------------------------------------------------------
 # Tables also contain constant values in addition to data
 # ------------------------------------------------------------
@@ -235,12 +174,6 @@ Found type table.
 # The 'list' command lists the column and constant names
 # ------------------------------------------------------------
 > list
-Table name: acol
-1 constant:
-pi 3.141593e+00
-4 columns: 
-0. x  1. s  2. c  3. c2 
-11 lines of data.
 # ------------------------------------------------------------
 # Constants can be used in expressions
 # ------------------------------------------------------------
@@ -251,25 +184,12 @@ pi 3.141593e+00
 # ------------------------------------------------------------
 > rename x2 x_2
 > output
- x             s             c             c2            x_2          
- []            []            []            []            []           
- 0.000000e+00  0.000000e+00  1.000000e+00  9.999995e-01  0.000000e+00 
- 1.000000e-01  9.983342e-02  9.950042e-01  9.950034e-01  1.570796e-01 
- 2.000000e-01  1.986693e-01  9.800666e-01  9.800667e-01  3.141593e-01 
- 3.000000e-01  2.955202e-01  9.553365e-01  9.553335e-01  4.712389e-01 
- 4.000000e-01  3.894183e-01  9.210610e-01  9.210695e-01  6.283185e-01 
- 5.000000e-01  4.794255e-01  8.775826e-01  8.775485e-01  7.853982e-01 
- 6.000000e-01  5.646425e-01  8.253356e-01  8.254605e-01  9.424778e-01 
- 7.000000e-01  6.442177e-01  7.648422e-01  7.643741e-01  1.099557e+00 
- 8.000000e-01  7.173561e-01  6.967067e-01  6.984518e-01  1.256637e+00 
- 9.000000e-01  7.833269e-01  6.216100e-01  6.150954e-01  1.413717e+00 
- 1.000000e+00  8.414710e-01  5.403023e-01  5.646134e-01  1.570796e+00 
 # ------------------------------------------------------------
 # (Remove test files created earlier.)
 # ------------------------------------------------------------
 > !rm test.txt
 acol: Executing system command: rm test.txt
-acol: Done with system command (returned 0).
+acol: Done with system command (returned 256).
 > !rm test.o2
 acol: Executing system command: rm test.o2
 acol: Done with system command (returned 0).
