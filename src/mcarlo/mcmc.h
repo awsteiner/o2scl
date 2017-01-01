@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2012-2016, Andrew W. Steiner
+  Copyright (C) 2012-2017, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -151,6 +151,9 @@ namespace o2scl {
 
   /// Index of the current walker
   size_t curr_walker;
+
+  /// Number of initial points specified by the user;
+  size_t n_init_points;
   
   public:
 
@@ -236,6 +239,8 @@ namespace o2scl {
     prop_dist=0;
     always_accept=false;
     ai_initial_step=0.1;
+
+    n_init_points=0;
   }
 
   /** \brief Default method for setting the random seed
@@ -344,9 +349,8 @@ namespace o2scl {
     // ---------------------------------------------------
     // Compute initial point and initial weights
     
+    // Stretch-move algorithm
     if (aff_inv) {
-
-      // Stretch-move steps
 
       // The mcmc_init() function may have changed the
       // initial point, so we copy back to init here for
@@ -361,6 +365,35 @@ namespace o2scl {
 	size_t init_iters=0;
 	bool done=false;
 
+	// If we already have a guess, use that
+	if (curr_walker<n_init_points) {
+
+	  // Compute the weight
+	  int iret=func(nparams,current[curr_walker],
+			w_current[curr_walker],data_arr[curr_walker]);
+	  
+	  if (verbose>=1) {
+	    std::cout.precision(4);
+	    std::cout << "mcmc: ";
+	    std::cout.width((int)(1.0+log10((double)(n_walk-1))));
+	    std::cout << curr_walker << " " << w_current[curr_walker]
+		      << " " << iret << " (initial; ai)" << std::endl;
+	    std::cout.precision(6);
+	  }
+
+	  // ------------------------------------------------
+	  // If we have a good point, call the measurement function 
+
+	  if (iret==o2scl::success) {
+	    if (iret>=0 && iret<((int)ret_value_counts.size())) {
+	      ret_value_counts[iret]++;
+	    }
+	    meas_ret=meas(current[curr_walker],w_current[curr_walker],
+			  curr_walker,true,data_arr[curr_walker]);
+	    done=true;
+	  }
+	}
+	
 	while (!done) {
 
 	  // Make a perturbation from the initial point
