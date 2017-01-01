@@ -31,6 +31,7 @@
   - create table3d output that can be read by gen3-list?
   - fix o2graph -version
   - fix fit
+  - use swap instead of copy in 'select' for table objects
 */
 
 #include <boost/numeric/ublas/vector.hpp>
@@ -1789,11 +1790,11 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
     return exc_efailed;
   } 
 
-  if (verbose>2) {
-    cout << "Looking for table." << endl;
-  }
   ret=hf.find_group_by_type("table",i2,verbose);
   if (ret==success) {
+    if (verbose>0) {
+      cout << "No name specified, reading first table object." << endl;
+    }
     hdf_input(hf,table_obj,i2);
     obj_name=i2;
     type="table";
@@ -1801,11 +1802,11 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
     return 0;
   }
 
-  if (verbose>2) {
-    cout << "Looking for table3d." << endl;
-  }
   ret=hf.find_group_by_type("table3d",i2,verbose);
   if (ret==success) {
+    if (verbose>0) {
+      cout << "No name specified, reading first table3d object." << endl;
+    }
     hdf_input(hf,table3d_obj,i2);
     obj_name=i2;
     interp_type=table3d_obj.get_interp_type();
@@ -1813,11 +1814,11 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
     return 0;
   }
 
-  if (verbose>2) {
-    cout << "Looking for hist." << endl;
-  }
   ret=hf.find_group_by_type("hist",i2,verbose);
   if (ret==success) {
+    if (verbose>0) {
+      cout << "No name specified, reading first hist object." << endl;
+    }
     //hist h;
     hdf_input(hf,hist_obj,i2);
     /*
@@ -1832,11 +1833,11 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
     return 0;
   }
   
-  if (verbose>2) {
-    cout << "Looking for hist_2d." << endl;
-  }
   ret=hf.find_group_by_type("hist_2d",i2,verbose);
   if (ret==success) {
+    if (verbose>0) {
+      cout << "No name specified, reading first hist_2d object." << endl;
+    }
     //hist_2d h;
     hdf_input(hf,hist_2d_obj,i2);
     /*
@@ -4254,8 +4255,8 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
       }
     }
     
-    // Delete the old table3d and copy the new one over
-    table3d_obj.clear();
+    // Todo: Replace this copy with std::swap
+    table3d_obj=*new_table3d;
     
   } else {
 
@@ -4268,10 +4269,9 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
     // Create new table
     // ---------------------------------------------------------------------
   
-    table_units<> *new_table;
-    new_table=new table_units<>(table_obj.get_nlines());
+    table_units<> new_table;
   
-    new_table->set_nlines(table_obj.get_nlines());
+    new_table.set_nlines(table_obj.get_nlines());
 
     // ---------------------------------------------------------------------
     // Copy constants from old to new table
@@ -4281,7 +4281,7 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
       string tnam;
       double tval;
       table_obj.get_constant(i,tnam,tval);
-      new_table->add_constant(tnam,tval);
+      new_table.add_constant(tnam,tval);
     }
   
     // ---------------------------------------------------------------------
@@ -4308,17 +4308,17 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
 	}
 
 	// Add the new column to the new table
-	new_table->new_column(names[i]);
+	new_table.new_column(names[i]);
 
 	// If necessary, set units
 	if (names[i]==args[i] && table_obj.get_unit(args[i]).length()!=0) {
-	  new_table->set_unit(names[i],table_obj.get_unit(args[i]));
+	  new_table.set_unit(names[i],table_obj.get_unit(args[i]));
 	}
 
 	// Fill column with the new data
 	ubvector vec(table_obj.get_nlines());
 	table_obj.function_vector(args[i],vec,false);
-	new_table->copy_to_column(vec,names[i]);
+	new_table.copy_to_column(vec,names[i]);
 
       } else {
 
@@ -4333,25 +4333,25 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
 	    matched[j]=true;
 
 	    // Add the new column to the new table
-	    new_table->new_column(table_obj.get_column_name(j));
+	    new_table.new_column(table_obj.get_column_name(j));
 
 	    // If necessary, set units
 	    string tmp=table_obj.get_column_name(j);
 	    if (table_obj.get_unit(tmp).length()!=0) {
-	      new_table->set_unit(tmp,table_obj.get_unit(tmp));
+	      new_table.set_unit(tmp,table_obj.get_unit(tmp));
 	    }
 
 	    // Fill it with the new data
 	    ubvector vec(table_obj.get_nlines());
 	    table_obj.function_vector(table_obj.get_column_name(j),vec,false);
-	    new_table->copy_to_column(vec,table_obj.get_column_name(j));
+	    new_table.copy_to_column(vec,table_obj.get_column_name(j));
 	  }
 	}
       }
     }
 
-    // Replace the old table with the new one
-    table_obj.clear();
+    // Todo: Replace this copy with std::swap
+    table_obj=new_table;
 
   }
 

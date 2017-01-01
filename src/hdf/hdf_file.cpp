@@ -2837,7 +2837,7 @@ int o2scl_hdf::iterate_match_type(hid_t loc, const char *name,
   // If it's a group
   if (infobuf.type==H5O_TYPE_GROUP) {
     
-    if (verbose>0) {
+    if (verbose>1) {
       cout << "Found group with name " << name << "." << endl;
     }
 
@@ -2849,12 +2849,12 @@ int o2scl_hdf::iterate_match_type(hid_t loc, const char *name,
     hf.close_group(group);
     hf.set_current_id(top);
     
-    if (verbose>0 && otype.length()!=0) {
+    if (verbose>1 && otype.length()!=0) {
       cout << "Group has o2scl_type " << otype << "." << endl;
     }
 
     if (otype.length()!=0 && otype==type) {
-      if (verbose>0) {
+      if (verbose>1) {
 	cout << "Found type " << type << "." << endl;
       }
       ip->found=true;
@@ -2881,7 +2881,7 @@ int o2scl_hdf::iterate_match_name(hid_t loc, const char *name,
   // If it's a group with the correct name
   if (infobuf.type==H5O_TYPE_GROUP && ((string)name)==ip->group_name) {
     
-    if (verbose>0) {
+    if (verbose>1) {
       cout << "Found group with name " << name << "." << endl;
     }
 
@@ -2894,7 +2894,7 @@ int o2scl_hdf::iterate_match_name(hid_t loc, const char *name,
     hf.set_current_id(top);
     
     ip->type=otype;
-    if (verbose>0 && otype.length()!=0) {
+    if (verbose>1 && otype.length()!=0) {
       cout << "Group has o2scl_type " << otype << "." << endl;
     }
 
