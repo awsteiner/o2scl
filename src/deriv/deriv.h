@@ -102,7 +102,9 @@ namespace o2scl {
 	\ref get_err().
     */
     virtual double deriv(double x, func_t &func) {
-      double dx;
+      // There were some uninitialized variable warnings on OSX, so we
+      // prevent those by setting the derivative equal to zero.
+      double dx=0.0;
       from_deriv=true;
       deriv_err(x,func,dx,derr);
       from_deriv=false;

@@ -49,6 +49,13 @@ lib_settings_class::lib_settings_class() {
   def_cu.insert_cache("MeV","eV",1.0e6);
   def_cu.insert_cache("keV","eV",1.0e3);
 
+  // Joules and Kelvin
+  
+  def_cu.insert_cache("eV","J",o2scl_mks::electron_volt);
+  def_cu.insert_cache("K","J",o2scl_mks::boltzmann);
+  def_cu.insert_cache("K","kg",o2scl_mks::boltzmann/
+		      pow(o2scl_mks::speed_of_light,2.0));
+
   // For the TOV solver
 
   def_cu.insert_cache("g/cm^3","Msun/km^3",1.0e12/o2scl_mks::solar_mass);
