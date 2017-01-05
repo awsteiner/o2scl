@@ -94,7 +94,6 @@ int main(void) {
   cout << "nucmass_ldrop_pair fit:" << endl;
   nucmass_fit mf;
   nucdist_set(mf.dist,au);
-  //mf.set_exp_mass(au);
   mf.even_even=false;
   mf.def_mmin.ntrial*=10;
 
@@ -102,14 +101,14 @@ int main(void) {
   ld.n1=0.0;
   ld.surften=1.1;
   ld.coul_coeff=1.0;
-  cout << "Before: " << endl;
+  cout << "Parameters before: ";
   cout << ld.n1 << " " << ld.n0 << " " << ld.surften << " " 
        << ld.coul_coeff << " " << ld.doi << "\n "
        << ld.ss << " " << ld.Epair << endl;
   
   mf.fit(ld,qual);
   mf.eval(ld,qual);
-  cout << "After: " << endl;
+  cout << "Paramters after: ";
   cout << ld.n1 << " " << ld.n0 << " " << ld.surften << " " 
        << ld.coul_coeff << " " << ld.doi << "\n "
        << ld.ss << " " << ld.Epair << endl;
@@ -129,9 +128,9 @@ int main(void) {
   ld2.ss=ld.ss;
   ld2.Epair=ld.Epair;
 
-  cout << "nucmass_nucmass_ldrop_shell2 fit:" << endl;
+  cout << "nucmass_nucmass_ldrop_shell fit:" << endl;
 
-  cout << "Before: " << endl;
+  cout << "Paramters before: ";
   cout << ld2.n1 << " " << ld2.n0 << " " << ld2.surften << " " 
        << ld2.coul_coeff << " " << ld2.doi << "\n "
        << ld2.ss << " " << ld2.Epair << endl;
@@ -145,7 +144,7 @@ int main(void) {
     mf.fit(ld2,qual);
     mf.eval(ld2,qual);
     
-    cout << "After: " << endl;
+    cout << "Paramters after: ";
     cout << ld2.n1 << " " << ld2.n0 << " " << ld2.surften << " " 
 	 << ld2.coul_coeff << " " << ld2.doi << "\n "
 	 << ld2.ss << " " << ld2.Epair << endl;
@@ -159,6 +158,7 @@ int main(void) {
 
   cout << "-------------------------------------------------\n" << endl;
 
+  cout << "nucmass_frdm_shell fit:" << endl;
   nucmass_frdm_shell fs;
 
   mf.eval(fs,qual);
@@ -171,29 +171,33 @@ int main(void) {
   t.test_rel(qual,0.96559,1.0e-2,"fs post-fit");
   cout << endl;
 
-  if (false) {
-    ubvector xdm(10);
-    nucmass_dvi dm;
-    dm.guess_fun(10,xdm);
+  cout << "-------------------------------------------------\n" << endl;
+
+  cout << "nucmass_dvi fit:" << endl;
+  ubvector xdvi(10);
+  nucmass_dvi dvi;
+  dvi.guess_fun(10,xdvi);
     
-    nucmass_ame_exp ame13;
-    ame_load(ame13);
-    nucdist_set(mf.dist,ame13);
-    //mf.set_exp_mass(ame13);
-    mf.eval(dm,qual);
-    vector_out(cout,10,xdm);
-    cout << endl;
-    //t.test_rel(qual,10.671,1.0e-3,"dm pre-fit");
+  nucmass_ame_exp ame13;
+  ame_load(ame13);
+  nucdist_set(mf.dist,ame13);
+  mf.eval(dvi,qual);
+  cout << "Parameters before: ";
+  vector_out(cout,10,xdvi);
+  cout << endl;
+  t.test_rel(qual,24.99316,1.0e-3,"dvi pre-fit");
+  cout << "Quality: " << qual << endl;
+  for(size_t i=0;i<3;i++) {
+    mf.fit(dvi,qual);
     cout << "Quality: " << qual << endl;
-    for(size_t i=0;i<3;i++) {
-      mf.fit(dm,qual);
-      cout << "Quality: " << qual << endl;
-    }
-    dm.guess_fun(10,xdm);
-    vector_out(cout,10,xdm);
-    cout << endl;
-    //t.test_rel(qual,0.96559,1.0e-2,"dm post-fit");
   }
+  dvi.guess_fun(10,xdvi);
+  cout << "Parameters after: ";
+  vector_out(cout,10,xdvi);
+  cout << endl;
+  // This is a little better fit than FRDM above, but maybe
+  // because only the experimental masses are used
+  t.test_rel(qual,0.8850699,1.0e-2,"dvi post-fit");
 
   /*
     int max_iso=30;
