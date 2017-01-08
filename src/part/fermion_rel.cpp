@@ -271,7 +271,31 @@ int fermion_rel::nu_from_n(fermion &f, double temper) {
   funct11 mf=std::bind(std::mem_fn<double(double,fermion &,double)>
 		       (&fermion_rel::solve_fun),
 		       this,std::placeholders::_1,std::ref(f),temper);
+
+  bool drec=density_root->err_nonconv;
+  density_root->err_nonconv=false;
   int ret=density_root->solve(nex,mf);
+
+  if (ret!=0) {
+
+    // If it fails, try to make the integrators more accurate
+    double tol1=dit->tol_rel, tol2=dit->tol_abs;
+    double tol3=nit->tol_rel, tol4=nit->tol_abs;
+    dit->tol_rel/=1.0e2;
+    dit->tol_abs/=1.0e2;
+    nit->tol_rel/=1.0e2;
+    nit->tol_abs/=1.0e2;
+    ret=density_root->solve(nex,mf);
+
+    // Return tolerances to their original values
+    dit->tol_rel=tol1;
+    dit->tol_abs=tol2;
+    nit->tol_rel=tol3;
+    nit->tol_abs=tol4;
+  }
+
+  density_root->err_nonconv=drec;
+
   if (ret!=0) {
     O2SCL_CONV2_RET("Density solver failed in ",
 		    "fermion_rel::nu_from_n().",exc_efailed,this->err_nonconv);
@@ -753,8 +777,7 @@ int fermion_rel::pair_density(fermion &f, double temper) {
 
   if (ret!=0) {
 
-    // If it fails, try to increase the tolerances on the 
-    // integrators
+    // If it fails, try to make the integrators more accurate
     double tol1=dit->tol_rel, tol2=dit->tol_abs;
     double tol3=nit->tol_rel, tol4=nit->tol_abs;
     dit->tol_rel/=1.0e2;
@@ -763,19 +786,20 @@ int fermion_rel::pair_density(fermion &f, double temper) {
     nit->tol_abs/=1.0e2;
     ret=density_root->solve(nex,mf);
 
+    // Function in log units
     funct11 lmf=std::bind(std::mem_fn<double(double,fermion &,double,bool)>
 			  (&fermion_rel::pair_fun),
 			  this,std::placeholders::_1,std::ref(f),temper,true);
-
+    
     if (ret!=0) {
-      // Try working in log units
+      // If that failed, try working in log units
       nex=log(nex);
       ret=density_root->solve(nex,lmf);
       nex=exp(nex);
     }
     
     if (ret!=0) {
-      // Try a different solver
+      // If that failed, try a different solver
       root_brent_gsl<> rbg;
       rbg.err_nonconv=false;
       nex=log(nex);
