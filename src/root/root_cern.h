@@ -290,6 +290,11 @@ namespace o2scl {
 	if (difit<=this->tol_abs*xnorm && lcv) info=2;
 	if (fnorm<=this->tol_rel && info==2) info=3;
 	if (info!=0) {
+	  if (!std::isfinite(ux)) {
+	    O2SCL_CONV2_RET("Solver converged to non-finite value ",
+			    "in root_cern::solve().",exc_erange,
+			    this->err_nonconv);
+	  }
 	  return 0;
 	}
 
@@ -328,7 +333,12 @@ namespace o2scl {
 	if (info!=0) return exc_efailed;
 	  
       }
-	
+      
+      if (!std::isfinite(ux)) {
+	O2SCL_CONV2_RET("Solver converged to non-finite value ",
+			"in root_cern::solve() (2).",exc_erange,
+			this->err_nonconv);
+      }
       return 0;
     }
       

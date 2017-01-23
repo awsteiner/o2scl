@@ -189,7 +189,7 @@ void fermion_nonrel::nu_from_n(fermion &f, double temper) {
   } else {
     f.nu=-nex*temper;
   }
-  
+
   return;
 }
 
@@ -267,9 +267,9 @@ double fermion_nonrel::solve_fun(double x, double nog, double msT) {
   // If the argument to gsl_sf_fermi_dirac_half() is less
   // than GSL_LOG_DBL_MIN (which is about -708), then 
   // an underflow occurs. We just set nden to zero in this 
-  // case
+  // case, as this helps the solver find the right root.
   
-  if (x>fabs(GSL_LOG_DBL_MIN)) nden=0.0;
+  if (((-x)<GSL_LOG_DBL_MIN) || !std::isfinite(x)) nden=0.0;
   else nden=gsl_sf_fermi_dirac_half(-x)*sqrt(pi)/2.0;
   
   nden*=pow(2.0*msT,1.5)/4.0/pi2;
