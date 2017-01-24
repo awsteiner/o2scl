@@ -274,7 +274,9 @@ namespace o2scl {
       if (init[k]<low[k] || init[k]>high[k]) valid_guess=false;
     }
     if (!valid_guess) {
-      O2SCL_ERR("Invalid guess in mcmc_base::mcmc().",o2scl::exc_einval);
+      O2SCL_ERR2("Initial guess outside of user-specified ",
+		 "lower and upper bounds in mcmc_base::mcmc().",
+		 o2scl::exc_einval);
     }
     
     // Fix the number of walkers if it is too small
@@ -831,7 +833,7 @@ namespace o2scl {
     if (this->verbose>=2) {
       std::cout << "Start mcmc_table::mcmc_init()." << std::endl;
     }
-
+    
     // -----------------------------------------------------------
     // Init table
 
