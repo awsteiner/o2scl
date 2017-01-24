@@ -31,6 +31,7 @@
 
 #include <o2scl/string_conv.h>
 #include <o2scl/misc.h>
+#include <o2scl/table_units.h>
 
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_sys.h>
@@ -334,7 +335,7 @@ namespace o2scl {
     //@{
     /** \brief Test for \f$|\mathrm{result}-\mathrm{expected}|/
 	\mathrm{expected}<\mathrm{rel\_error}\f$ over each element
-	of an array
+	in a matrix
     */
     template<class mat_t, class mat2_t, class data_t>
       bool test_rel_mat(int nr, int nc, const mat_t &result, 
@@ -371,6 +372,51 @@ namespace o2scl {
       description=((std::string)"max=")+o2scl::dtos(max)+
 	"\n "+description;
       process_test(ret,"relative matrix",description);
+      
+      return ret;
+      
+    }
+    
+    /** \brief Test for \f$|\mathrm{result}-\mathrm{expected}|/
+	\mathrm{expected}<\mathrm{rel\_error}\f$ over each element
+	in a matrix larger than a specified tolerance
+    */
+    template<class mat_t, class mat2_t, class data_t>
+      bool test_rel_nonzero_mat(int nr, int nc, const mat_t &result, 
+				const mat2_t &expected, 
+				data_t error, data_t zero_tol,
+				std::string description) {
+      bool ret=true;
+      double max=0.0;
+      int i, j;
+  
+      for(i=0;i<nr;i++) {
+	for(j=0;j<nc;j++) {
+	  if (std::isnan(expected(i,j))) {
+	    ret=(ret && (std::isnan(expected(i,j))==
+			 std::isnan(result(i,j))));
+	  } else if (std::isinf(expected(i,j))) {
+	    ret=(ret && (std::isinf(expected(i,j))==
+			 std::isinf(result(i,j))));
+	  } else if (expected(i,j)<zero_tol) {
+	    ret=(ret && test_abs(result(i,j),expected(i,j),error,
+				 description));
+	    if (fabs(result(i,j)-expected(i,j))>max) {
+	      max=fabs(result(i,j)-expected(i,j));
+	    }
+	  } else {
+	    ret=(ret && ((fabs(expected(i,j)-result(i,j)))/
+			 fabs(expected(i,j))<error));
+	    if (fabs(expected(i,j)-result(i,j))/fabs(expected(i,j))>max) {
+	      max=fabs(expected(i,j)-result(i,j))/fabs(expected(i,j));
+	    }
+	  }
+	}
+      }
+      
+      description=((std::string)"max=")+o2scl::dtos(max)+
+	"\n "+description;
+      process_test(ret,"rel_nonzero matrix",description);
       
       return ret;
       
@@ -419,6 +465,53 @@ namespace o2scl {
       
     }
     //@}
+
+    /** \brief Desc
+     */
+    template<class vec_t, class data_t>
+      bool test_rel_nonzero_table(const table_units<vec_t> &result,
+				  const table_units<vec_t> &expected,
+				  data_t error, data_t zero_tol,
+				  std::string description) {
+      bool ret=true;
+      double max=0.0;
+      int i, j;
+      int nr=result.get_nlines();
+      int nc=result.get_ncolumns();
+      
+      for(i=0;i<nc;i++) {
+	for(j=0;j<nr;j++) {
+	  if (std::isnan(expected.get(i,j))) {
+	    ret=(ret && (std::isnan(expected.get(i,j))==
+			 std::isnan(result.get(i,j))));
+	  } else if (std::isinf(expected.get(i,j))) {
+	    ret=(ret && (std::isinf(expected.get(i,j))==
+			 std::isinf(result.get(i,j))));
+	  } else if (expected.get(i,j)<zero_tol) {
+	    ret=(ret && test_abs(result.get(i,j),expected.get(i,j),error,
+				 description));
+	    if (fabs(result.get(i,j)-expected.get(i,j))>max) {
+	      max=fabs(result.get(i,j)-expected.get(i,j));
+	    }
+	  } else {
+	    ret=(ret && ((fabs(expected.get(i,j)-result.get(i,j)))/
+			 fabs(expected.get(i,j))<error));
+	    if (fabs(expected.get(i,j)-result.get(i,j))/
+		fabs(expected.get(i,j))>max) {
+	      max=fabs(expected.get(i,j)-result.get(i,j))/
+		fabs(expected.get(i,j));
+	    }
+	  }
+	}
+      }
+      
+      description=((std::string)"max=")+o2scl::dtos(max)+
+	"\n "+description;
+      process_test(ret,"rel_nonzero table",description);
+      
+      return ret;
+      
+    }
 
     /** \brief Add two test_mgr objects (if either failed, the sum fails)
 
