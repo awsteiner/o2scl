@@ -45,15 +45,17 @@ script:
   # 
   # Perform the installation on linux. Since there is no documentation,
   # 'make blank-doc' is used to create dummy documentation so that
-  # 'make install' does not fail. 
+  # 'make install' does not fail. Note that the GSL installation in
+  # trusty is 1.6, so we leave out --enable-gsl2
   # 
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-      ./configure --enable-gsl2 && make blank-doc && make && sudo make install && make check && make o2scl-examples;
+      ./configure && make blank-doc && make && sudo make install && make check && make o2scl-examples;
     fi
-  # 
-  # Use homebrew to install the HEAD version on OSX. At the end,
-  # 'acol --version' is used to double check that the install worked.
-  # We need to use '-v' for brew install so that the build doesn't timeout.
+  #
+  # Use homebrew to install the HEAD version on OSX. At the end, 'acol
+  # --version' is used to double check that the install worked. We
+  # need to use '-v' for brew install so that the build doesn't
+  # timeout.
   # 
   - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
       brew update && brew install eigen && brew install homebrew/science/hdf5 && brew tap awsteiner/science && which autoconf && brew install o2scl --with-eigen --with-check --with-examples --HEAD -v && acol --version ;

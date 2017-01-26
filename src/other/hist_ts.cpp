@@ -71,7 +71,7 @@ int main(void) {
   for(size_t i=0;i<10;i++) {
     cout << i << " " << h2.get_rep_i(i) << " " << h2[i] << endl;
   }
-  cout << h2.bin_sum() << endl;
+  cout << h2.sum_wgts() << endl;
   
   t.report();
   return 0;
