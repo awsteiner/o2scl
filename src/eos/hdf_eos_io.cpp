@@ -65,6 +65,11 @@ void o2scl_hdf::rmf_load(o2scl::eos_had_rmf &rmf, std::string model,
   } else {
     fname=dir+"/rmfdata/"+model+".o2";
   }
+
+  // Some debugging code to see why travis fails to run examples
+  cout << "Function rmf_load() looking for file name: " << fname << endl;
+  string cmd="ls "+dir+"/rmfdata";
+  system(cmd.c_str());
   
   hdf_file hf;
   hf.open(fname);
