@@ -151,7 +151,9 @@ else
 RLIB = 
 endif
 
-acol_LDFLAGS = $(RLIB)
+# Homebrew's superenv moves the libraries around, so we have to
+# find them in pkglibdir
+acol_LDFLAGS = $(RLIB) -L\"${pkglibdir}\"
 
 acol_LDADD = -L. -Lhdf -lo2scl_hdf -lo2scl -lhdf5 -lgsl -lgslcblas 
 

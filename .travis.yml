@@ -32,7 +32,7 @@ before_install:
   # Install GSL, Boost, HDF5, readline, ncurses
   # 
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-      sudo apt-get install libgsl0-dev && sudo apt-get install libboost-all-dev libhdf5-dev libreadline-dev libncurses-dev;
+      sudo apt-get install libgsl0-dev && sudo apt-get install libboost-all-dev  libreadline-dev libncurses-dev;
     fi
     
   # The ubuntu HDF5 package cannot be used because it is configured to

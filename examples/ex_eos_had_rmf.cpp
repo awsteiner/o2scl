@@ -74,9 +74,11 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
 
-  string cmd=((string)"cp ")+o2scl_settings.get_data_dir()+
+  /*
+    string cmd=((string)"cp ")+o2scl_settings.get_data_dir()+
     "/rmfdata/FSUGold.o2 temp.o2";
-  int ret=system(cmd.c_str());
+    int ret=system(cmd.c_str());
+  */
 
   eos_had_rmf re;
 
@@ -98,7 +100,9 @@ int main(void) {
   cout << "FSUGold: " << re.n0 << endl;
   cout << "FSUGold: " << re.esym*hc_mev_fm << endl;
   cout << endl;
-  
+
+#ifdef O2SCL_NEVER_DEFINED
+
   hdf_file hf;
   hf.open_or_create("temp.o2");
   double gs2=112.1996;
@@ -226,6 +230,8 @@ int main(void) {
   cout << re.def_thermo.ed/nb*hc_mev_fm-939.0 << endl;
   cout << endl;
 
+#endif
+  
   t.report();
 
   return 0;
