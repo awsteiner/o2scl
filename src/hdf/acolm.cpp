@@ -3884,6 +3884,7 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << "Armadillo support: " << o2scl_settings.armadillo_support() << endl;
   cout << "Eigen support: " << o2scl_settings.eigen_support() << endl;
   cout << "GSL V2.0+ support: " << o2scl_settings.gsl2_support() << endl;
+  cout << "OpenMP support: " << o2scl_settings.openmp_support() << endl;
   cout << "Data directory: " << o2scl_settings.get_data_dir() << endl;
   cout << endl;
   cout << "o2scl_name: " << o2scl_settings.o2scl_name() << endl;
