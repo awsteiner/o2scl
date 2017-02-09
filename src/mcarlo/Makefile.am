@@ -2,13 +2,17 @@
 # Basic variables
 # ------------------------------------------------------------
 
+if O2SCL_OPENMP
+TEST_VAR = mcarlo_plain.scr mcarlo_miser.scr mcarlo_vegas.scr \
+	expval.scr rng_gsl.scr mcmc.scr mcmc_mpi.scr mcmc_omp.scr
+else
+TEST_VAR = mcarlo_plain.scr mcarlo_miser.scr mcarlo_vegas.scr \
+	expval.scr rng_gsl.scr mcmc.scr mcmc_mpi.scr
+endif
 MCARLO_SRCS = expval.cpp rng_gsl.cpp
 
 HEADER_VARS = mcarlo_miser.h mcarlo_plain.h mcarlo_vegas.h mcarlo.h \
-	expval.h rng_gsl.h mcmc.h mcmc_mpi.h
-
-TEST_VAR = mcarlo_plain.scr mcarlo_miser.scr mcarlo_vegas.scr \
-	expval.scr rng_gsl.scr mcmc.scr mcmc_mpi.scr
+	expval.h rng_gsl.h mcmc.h mcmc_mpi.h mcmc_omp.h
 
 # fit_bayes.scr
 
@@ -69,8 +73,13 @@ pkginclude_HEADERS = $(HEADER_VARS)
 # libtool testing targets
 # ------------------------------------------------------------
 
+if O2SCL_OPENMP
+check_PROGRAMS = mcarlo_miser_ts mcarlo_vegas_ts mcarlo_plain_ts expval_ts \
+	rng_gsl_ts mcmc_ts mcmc_mpi_ts mcmc_omp_ts
+else
 check_PROGRAMS = mcarlo_miser_ts mcarlo_vegas_ts mcarlo_plain_ts expval_ts \
 	rng_gsl_ts mcmc_ts mcmc_mpi_ts
+endif
 
 check_SCRIPTS = o2scl-test
 
@@ -87,6 +96,10 @@ mcarlo_vegas_ts_LDADD = $(VCHECK_LIBS)
 expval_ts_LDADD = $(VCHECK_LIBS)
 mcmc_ts_LDADD = $(VCHECK_LIBS)
 mcmc_mpi_ts_LDADD = $(VCHECK_LIBS)
+if O2SCL_OPENMP
+mcmc_omp_ts_LDFLAGS = -fopenmp
+mcmc_omp_ts_LDADD = $(VCHECK_LIBS)
+endif
 
 mcarlo_miser.scr: mcarlo_miser_ts$(EXEEXT)
 	./mcarlo_miser_ts$(EXEEXT) > mcarlo_miser.scr
@@ -102,6 +115,10 @@ mcmc.scr: mcmc_ts$(EXEEXT)
 	./mcmc_ts$(EXEEXT) > mcmc.scr
 mcmc_mpi.scr: mcmc_mpi_ts$(EXEEXT)
 	./mcmc_mpi_ts$(EXEEXT) -exit > mcmc_mpi.scr
+if O2SCL_OPENMP
+mcmc_omp.scr: mcmc_omp_ts$(EXEEXT)
+	./mcmc_omp_ts$(EXEEXT) -exit > mcmc_omp.scr
+endif
 
 mcarlo_miser_ts_SOURCES = mcarlo_miser_ts.cpp
 rng_gsl_ts_SOURCES = rng_gsl_ts.cpp
@@ -110,6 +127,9 @@ mcarlo_vegas_ts_SOURCES = mcarlo_vegas_ts.cpp
 expval_ts_SOURCES = expval_ts.cpp
 mcmc_ts_SOURCES = mcmc_ts.cpp
 mcmc_mpi_ts_SOURCES = mcmc_mpi_ts.cpp
+if O2SCL_OPENMP
+mcmc_omp_ts_SOURCES = mcmc_omp_ts.cpp
+endif
 
 # ------------------------------------------------------------
 # Library o2scl_mcarlo

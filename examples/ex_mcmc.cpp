@@ -47,6 +47,10 @@ typedef std::function<int(const ubvector &,double,std::vector<double> &,
 /// The MCMC object
 mcmc_table<point_funct,fill_funct,std::array<double,2>,ubvector> mct;
 
+class exc {
+
+public:
+  
 /** \brief The objective function for the MCMC
 
     Here, the variable 'log_weight' stores the natural logarithm of
@@ -78,6 +82,15 @@ int fill_line(const ubvector &pars, double log_weight,
   return 0;
 }
 
+  exc(int i) {
+  }
+  
+private:
+
+  exc();
+  
+};
+
 /** Function for exact integration
  */
 int f_cub(unsigned ndim, size_t npt, const double *x, unsigned fdim,
@@ -99,6 +112,8 @@ int main(int argc, char *argv[]) {
   
   cout.setf(ios::scientific);
 
+  exc e(2);
+  
   test_mgr tm;
   tm.set_output_level(1);
 
@@ -132,8 +147,21 @@ int main(int argc, char *argv[]) {
   exact_res[0]=dres[1]/dres[0];
   exact_res[1]=dres[2]/dres[0];
 
-  point_funct pf=point;
-  fill_funct ff=fill_line;
+  point_funct pf=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,double &,
+		     std::array<double,2> &)>(&exc::point),&e,
+     std::placeholders::_1,std::placeholders::_2,std::placeholders::_3,
+     std::placeholders::_4);
+  fill_funct ff=std::bind
+    (std::mem_fn<int(const ubvector &,double,std::vector<double> &,
+			  std::array<double,2> &)>(&exc::fill_line),&e,
+     std::placeholders::_1,std::placeholders::_2,std::placeholders::_3,
+     std::placeholders::_4);
+
+  vector<point_funct> vpf;
+  vpf.push_back(pf);
+  vector<fill_funct> vff;
+  vff.push_back(ff);
 
   // Table column names and units. We must specify first the names for
   // the parameters first and then the names of the auxillary
@@ -150,7 +178,7 @@ int main(int argc, char *argv[]) {
   // This step factor is chosen to give approximately equal number of
   // accept/reject steps but will be different for different problems
   mct.step_fac=3.0;
-  mct.mcmc(2,init,low,high,pf,ff);
+  mct.mcmc(2,init,low,high,vpf[0],vff[0]);
 
   // Output table and other information
   cout << "n_accept, n_reject, table lines: "
@@ -213,7 +241,7 @@ int main(int argc, char *argv[]) {
   // of accept/reject steps but will be different for
   // different problems
   mct.step_fac=5.0;
-  mct.mcmc(2,init,low,high,pf,ff);
+  mct.mcmc(2,init,low,high,vpf[0],vff[0]);
 
   // Output table and other information
   cout << "n_accept, n_reject, table lines: "
