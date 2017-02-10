@@ -48,7 +48,7 @@ typedef std::function<int(size_t,const ubvector &,double &,
 typedef std::function<int(const ubvector &,double,size_t,bool,
 			  std::array<double,1> &)> measure_funct;
 
-static const int niters=1000000;
+int niters=1000000;
 int it_count;
 expval_scalar sev_x, sev_x2;
 mcmc_omp_base<point_funct,measure_funct,std::array<double,1>,ubvector> mc;
@@ -82,6 +82,7 @@ int measure(const ubvector &pars, double log_weight, size_t ix, bool new_meas,
     exit(-1);
   }
   if (it_count==niters-1) {
+    cout << "Returning mcmc_done." << endl;
     return mcmc_omp_base<point_funct,measure_funct,int,ubvector>::mcmc_done;
   }
   it_count++;
@@ -123,11 +124,11 @@ int main(int argc, char *argv[]) {
   point_funct pf=point;
   measure_funct mf=measure;
 
-  size_t nthreads=omp_get_max_threads();
+  size_t n_threads=2;
 
-  vector<point_funct> vpf(nthreads);
-  vector<measure_funct> vmf(nthreads);
-  for(size_t i=0;i<nthreads;i++) {
+  vector<point_funct> vpf(n_threads);
+  vector<measure_funct> vmf(n_threads);
+  for(size_t i=0;i<n_threads;i++) {
     vpf[i]=pf;
     vmf[i]=mf;
   }
@@ -148,9 +149,12 @@ int main(int argc, char *argv[]) {
   
   it_count=0;
   mc.step_fac=2.0;
-  mc.nthreads=nthreads;
-  cout << "nthreads: " << nthreads << endl;
+  mc.verbose=2;
+  mc.n_threads=2;
+  niters=20;
+  cout << "n_threads: " << n_threads << endl;
   mc.mcmc(1,init,low,high,vpf,vmf);
+  exit(-1);
 
   sev_x.current_avg_stats(avg,std_dev,avg_err,m_block,m_per_block);
 
@@ -165,7 +169,7 @@ int main(int argc, char *argv[]) {
   cout << avg << " " << std_dev << " " << avg_err << " ";
   cout.unsetf(ios::showpos);
   cout << m_block << " " << m_per_block << endl;
-  cout << mc.n_accept << " " << mc.n_reject << endl;
+  cout << mc.n_accept[0] << " " << mc.n_reject[0] << endl;
   tm.test_abs(avg,res[2],avg_err*10.0,"plain 2");
   cout << endl;
 
@@ -199,7 +203,7 @@ int main(int argc, char *argv[]) {
   cout << avg << " " << std_dev << " " << avg_err << " ";
   cout.unsetf(ios::showpos);
   cout << m_block << " " << m_per_block << endl;
-  cout << mc.n_accept << " " << mc.n_reject << endl;
+  cout << mc.n_accept[0] << " " << mc.n_reject[0] << endl;
   tm.test_abs(avg,res[2],avg_err*10.0,"ai 2");
   cout << endl;
   

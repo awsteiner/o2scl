@@ -27,12 +27,15 @@
 #ifndef O2SCL_MCMC_OMP_H
 #define O2SCL_MCMC_OMP_H
 
+#include <iostream>
+#include <random>
+
 #ifdef O2SCL_OPENMP
 #include <omp.h>
 #endif
-
-#include <iostream>
-#include <random>
+#ifdef O2SCL_MPI
+#include <mpi.h>
+#endif
 
 #include <boost/numeric/ublas/vector.hpp>
 
@@ -70,7 +73,7 @@ namespace o2scl {
       be of the form 
       \code
       int f(size_t num_of_parameters, const vec_t &parameters,
-            double &log_pdf, data_t &dat)
+      double &log_pdf, data_t &dat)
       \endcode
       which computes \c log_pdf, the natural logarithm of the function
       value, for any point in parameter space (any point between \c
@@ -82,7 +85,7 @@ namespace o2scl {
       measure_t ) is called, which can be used to store the results.
       In order to stop the simulation, either this function or the
       probability distribution being simulated should return the value
-      \ref mcmc_done .
+      \ref mcmc_done . 
       
       A generic proposal distribution can be specified in \ref
       set_proposal(). To go back to the default random walk method,
@@ -108,8 +111,20 @@ namespace o2scl {
     
   protected:
   
-  /// Random number generator
-  rng_gsl rg;
+  /// \name MPI properties
+  //@{
+  /// The MPI processor rank
+  int mpi_rank;
+
+  /// The MPI number of processors
+  int mpi_nprocs;
+
+  /// The MPI starting time
+  double mpi_start_time;
+  //@}
+  
+  /// Random number generators
+  std::vector<rng_gsl> rg;
   
   /// Proposal distribution
   o2scl::prob_cond_mdim<vec_t> *prop_dist;
@@ -170,10 +185,10 @@ namespace o2scl {
   /// \name Output quantities
   //@{
   /// The number of Metropolis steps which were accepted in each thread
-  vector<size_t> n_accept;
+  std::vector<size_t> n_accept;
   
   /// The number of Metropolis steps which were rejected in each thread
-  vector<size_t> n_reject;
+  std::vector<size_t> n_reject;
   //@}
 
   /// \name Settings
@@ -244,19 +259,18 @@ namespace o2scl {
 
     n_init_points=0;
     n_threads=1;
-  }
 
-  /** \brief Default method for setting the random seed
-   */
-  virtual void set_seed() {
-    // Set RNG seed
-    unsigned long int seed=time(0);
-    if (user_seed!=0) {
-      seed=user_seed;
-    }
-    rg.set_seed(seed);
+    // Initial values for MPI paramers
+    mpi_nprocs=1;
+    mpi_rank=0;
+    mpi_start_time=0.0;
 
-    return;
+#ifdef O2SCL_MPI
+    // Get MPI rank, etc.
+    MPI_Comm_rank(MPI_COMM_WORLD,&this->mpi_rank);
+    MPI_Comm_size(MPI_COMM_WORLD,&this->mpi_nprocs);
+#endif
+    
   }
 
   /// Requested number of threads
@@ -292,6 +306,13 @@ namespace o2scl {
     n_threads=1;
 #endif
 
+    // Set starting time
+#ifdef O2SCL_MPI
+    mpi_start_time=MPI_Wtime();
+#else
+    mpi_start_time=time(0);
+#endif
+
     // Storage for return values from each thread
     std::vector<int> func_ret(n_threads), meas_ret(n_threads);
       
@@ -307,7 +328,16 @@ namespace o2scl {
       else step_fac=10.0;
     }
     
-    set_seed();
+    // Set RNGs with a different seed for each thread and rank
+    rg.resize(n_threads);
+    unsigned long int seed=time(0);
+    if (this->user_seed!=0) {
+      seed=this->user_seed;
+    }
+    for(size_t it=0;it<n_threads;it++) {
+      seed*=(mpi_rank*n_threads+it+1);
+      rg[it].set_seed(seed);
+    }
     
     // Keep track of successful and failed MH moves
     n_accept.resize(n_threads);
@@ -352,8 +382,9 @@ namespace o2scl {
     vec_t best(nparams);
     double w_best;
 
-    // Flags to indicate if any of the threads returned mcmc_done
-    vector<bool> mcmc_done_flag(n_threads);
+    // Generally, these flags are are true for any thread if func_ret
+    // or meas_ret is equal to mcmc_done.
+    std::vector<bool> mcmc_done_flag(n_threads);
     for(size_t it=0;it<n_threads;it++) {
       mcmc_done_flag[it]=false;
     }
@@ -379,15 +410,18 @@ namespace o2scl {
     // Initial verbose output
     if (verbose>=1) {
       if (aff_inv) {
-	std::cout << "mcmc: Affine-invariant step, n_parameters="
+	std::cout << "mcmc: Affine-invariant step, n_params="
 		  << nparams << " n_walk=" << n_walk
-		  << " n_threads=" << n_threads << std::endl;
+		  << ", n_threads=" << n_threads << ", n_ranks="
+		  << mpi_nprocs << std::endl;
       } else if (pd_mode==true) {
-	std::cout << "mcmc: With proposal distribution, n_parameters="
-	<< nparams << " n_threads=" << n_threads << std::endl;
+	std::cout << "mcmc: With proposal distribution, n_params="
+		  << nparams << ", n_threads=" << n_threads << ", n_ranks="
+		  << mpi_nprocs << std::endl;
       } else {
-	std::cout << "mcmc: Random-walk with uniform dist., n_parameters="
-	<< nparams << " n_threads=" << n_threads << std::endl;
+	std::cout << "mcmc: Random-walk w/uniform dist., n_params="
+		  << nparams << ", n_threads=" << n_threads << ", n_ranks="
+		  << mpi_nprocs << std::endl;
       }
     }
     
@@ -456,7 +490,7 @@ namespace o2scl {
 			    o2scl::exc_einval);
 		}
 		do {
-		  current[sindex][ipar]=init[ipar]+(rg.random()*2.0-1.0)*
+		  current[sindex][ipar]=init[ipar]+(rg[it].random()*2.0-1.0)*
 		    (high[ipar]-low[ipar])*ai_initial_step;
 		} while (current[sindex][ipar]>high[ipar] ||
 			 current[sindex][ipar]<low[ipar]);
@@ -504,7 +538,7 @@ namespace o2scl {
       for(size_t it=0;it<n_threads;it++) {
 	if (mcmc_done_flag[it]==true) {
 	  if (verbose>=1) {
-	    std::cout << "mcmc: Thread " << it << " returned mcmc_done "
+	    std::cout << "mcmc (" << it << "): Returned mcmc_done "
 		      << "(initial; ai)." << std::endl;
 	  }
 	  stop_early=true;
@@ -528,10 +562,10 @@ namespace o2scl {
 	}
       }
       best=current[best_index];
-      best_point(best,w_best,data_arr[sindex]);
+      best_point(best,w_best,data_arr[best_index]);
 
       // Verbose output
-      if (verbose>=1) {
+      if (verbose>=2) {
 	for(size_t it=0;it<n_threads;it++) {
 	  for(curr_walker=0;curr_walker<n_walk;curr_walker++) {
 	    size_t sindex=n_walk*it+curr_walker;
@@ -595,7 +629,7 @@ namespace o2scl {
       for(size_t it=0;it<n_threads;it++) {
 	if (mcmc_done_flag[it]==true) {
 	  if (verbose>=1) {
-	    std::cout << "mcmc: Thread " << it << " returned mcmc_done "
+	    std::cout << "mcmc (" << it << "): Returned mcmc_done "
 		      << "(initial)." << std::endl;
 	  }
 	  stop_early=true;
@@ -611,15 +645,16 @@ namespace o2scl {
       w_best=w_current[0];
       best_point(best,w_best,data_arr[0]);
 
-      if (verbose>=1) {
+      if (verbose>=2) {
 	std::cout.precision(4);
-	std::cout << "mcmc: " << w_current[0] << " (initial)" << std::endl;
+	std::cout << "mcmc (0): "
+		  << w_current[0] << " (initial)" << std::endl;
 	std::cout.precision(6);
       }
       
     }
 
-    if (verbose>=2) {
+    if (verbose>=3) {
       std::cout << "Press a key and type enter to continue. ";
       char ch;
       std::cin >> ch;
@@ -635,7 +670,7 @@ namespace o2scl {
 
       // Walker to move (or zero when aff_inv is false)
       curr_walker=0;
-      vector<double> smove_z(nthreads);
+      std::vector<double> smove_z(n_threads);
       for(size_t it=0;it<n_threads;it++) {
 	smove_z[it]=0.0;
       }
@@ -657,11 +692,11 @@ namespace o2scl {
 	    // Choose jth walker
 	    size_t ij;
 	    do {
-	      ij=((size_t)(rg.random()*((double)n_walk)));
+	      ij=((size_t)(rg[it].random()*((double)n_walk)));
 	    } while (ij==curr_walker || ij>=n_walk);
 	    
 	    // Select z 
-	    double p=rg.random();
+	    double p=rg[it].random();
 	    double a=step_fac;
 	    smove_z[it]=(1.0-2.0*p+2.0*a*p+p*p-2.0*a*p*p+a*a*p*p)/a;
 	    
@@ -687,7 +722,7 @@ namespace o2scl {
 	    
 	    // Uniform random-walk step
 	    for(size_t k=0;k<nparams;k++) {
-	      next[it][k]=current[it][k]+(rg.random()*2.0-1.0)*
+	      next[it][k]=current[it][k]+(rg[it].random()*2.0-1.0)*
 		(high[k]-low[k])/step_fac;
 	    }
 	    
@@ -724,45 +759,140 @@ namespace o2scl {
       }
       // End of parallel region
 
-      // -----------------------------------------------------------
-      // Done to here
-      
       // Handle verbose output serially
       if (verbose>=1) {
 	for(size_t it=0;it<n_threads;it++) {
-	  if (func_ret[it]!=o2scl::success) {
-	    if (func_ret[it]==mcmc_done) {
-	      std::cout << "(" << it << "): Function returned mcmc_done." 
-			<< std::endl;
-	    } else if (func_ret[it]!=mcmc_skip) {
-	      std::cout << "(" << it << "): Function returned failure " 
+	  if (func_ret[it]==mcmc_done) {
+	    std::cout << "mcmc (" << it << "): Returned mcmc_done." 
+		      << std::endl;
+	  } else if (func_ret[it]==mcmc_skip && verbose>=3) {
+	    std::cout << "mcmc (" << it
+		      << "): Parameter(s) out of range: " << std::endl;
+	    std::cout.setf(std::ios::showpos);
+	    for(size_t k=0;k<nparams;k++) {
+	      std::cout << k << " " << low[k] << " "
+			<< next[it][k] << " " << high[k];
+	      if (next[it][k]<low[k] || next[it][k]>high[k]) {
+		std::cout << " <-";
+	      }
+	      std::cout << std::endl;
+	    }
+	    std::cout.unsetf(std::ios::showpos);
+	  } else if (func_ret[it]!=o2scl::success &&
+		     func_ret[it]!=mcmc_skip) {
+	    if (verbose>=2) {
+	      std::cout << "mcmc (" << it << "): Function returned failure " 
 			<< func_ret[it] << " at point ";
 	      for(size_t k=0;k<nparams;k++) {
 		std::cout << next[it][k] << " ";
 	      }
 	      std::cout << std::endl;
-	    } else if (verbose>=2) {
-	      std::cout << "Parameter(s) out of range: " << std::endl;
-	      std::cout.setf(std::ios::showpos);
-	      for(size_t k=0;k<nparams;k++) {
-		std::cout << k << " " << low[k] << " "
-			  << next[it][k] << " " << high[k];
-		if (next[it][k]<low[k] || next[it][k]>high[k]) {
-		  std::cout << " <-";
-		}
-		std::cout << std::endl;
-	      }
-	      std::cout.unsetf(std::ios::showpos);
 	    }
 	  }
 	}
-	if (verbose>=2) {
+	if (verbose>=3) {
 	  std::cout << "Press a key and type enter to continue. ";
 	  char ch;
 	  std::cin >> ch;
 	}
       }
 
+#pragma omp parallel default(shared)
+      {
+#pragma omp for
+	for(size_t it=0;it<n_threads;it++) {
+	  
+	  // Index in storage
+	  size_t sindex=n_walk*it+curr_walker;
+	  
+	  // ---------------------------------------------------
+	  // Accept or reject
+    
+	  bool accept=false;
+	  if (always_accept && func_ret[it]==success) accept=true;
+
+	  if (func_ret[it]==o2scl::success) {
+	    double r=rg[it].random();
+	    
+	    if (aff_inv) {
+	      double ai_ratio=pow(smove_z[it],((double)nparams)-1.0)*
+		exp(w_next[it]-w_current[sindex]);
+	      if (r<ai_ratio) {
+		accept=true;
+	      }
+	    } else if (pd_mode) {
+	      if (r<exp(w_next[it]-w_current[sindex]+q_prop)) {
+		accept=true;
+	      }
+	    } else {
+	      // Metropolis algorithm
+	      if (r<exp(w_next[it]-w_current[sindex])) {
+		accept=true;
+	      }
+	    }
+
+	    // End of 'if (func_ret[it]==o2scl::success)'
+	  }
+
+	  if (accept) {
+	  
+	    n_accept[it]++;
+	  
+	    // Store results from new point
+	    if (!warm_up) {
+	      if (switch_arr[sindex]==false) {
+		meas_ret[it]=meas[it](next[it],w_next[it],curr_walker,true,
+				      data_arr[sindex+n_threads*n_walk]);
+	      } else {
+		meas_ret[it]=meas[it](next[it],w_next[it],curr_walker,true,
+				      data_arr[sindex]);
+	      }
+	    }
+
+	    // Prepare for next point
+	    current[sindex]=next[it];
+	    w_current[sindex]=w_next[it];
+	    switch_arr[sindex]=!(switch_arr[sindex]);
+	  
+	  } else {
+	    
+	    // Point was rejected
+	    n_reject[it]++;
+
+	    // Repeat measurement of old point
+	    if (!warm_up) {
+	      if (switch_arr[sindex]==false) {
+		meas_ret[it]=meas[it](current[sindex],
+				      w_current[sindex],
+				      curr_walker,false,data_arr[sindex]);
+	      } else {
+		meas_ret[it]=meas[it](current[sindex],
+				      w_current[sindex],
+				      curr_walker,false,
+				      data_arr[sindex+n_walk*n_threads]);
+	      }
+	    }
+
+	  }
+
+	}
+      }
+      // End of parallel region
+
+      // Verbose output
+      if (verbose>=2) {
+	for(size_t it=0;it<n_threads;it++) {
+	  size_t sindex=n_walk*it+curr_walker;
+	  std::cout.precision(4);
+	  std::cout << "mcmc (" << it << "): ";
+	  std::cout.width((int)(1.0+log10((double)(nparams-1))));
+	  std::cout << mcmc_iters << " "
+		    << curr_walker << " " << w_current[sindex]
+		    << std::endl;
+	  std::cout.precision(6);
+	}
+      }
+      
       // Collect best point
       for(size_t it=0;it<n_threads;it++) {
 	if (func_ret[it]==o2scl::success && w_best>w_next[it]) {
@@ -775,138 +905,43 @@ namespace o2scl {
 	  }
 	}
       }
-      
-#pragma omp parallel default(shared)
-      {
-#pragma omp for
-	for(size_t it=0;it<n_threads;it++) {
 
-	  // ---------------------------------------------------
-	  // Accept or reject
-    
-      bool accept=false;
-      if (always_accept && func_ret[0]==success) accept=true;
-
-      if (func_ret[0]==o2scl::success) {
-	double r=rg.random();
-	
-	if (aff_inv) {
-	  if (r<pow(smove_z,((double)nparams)-1.0)*
-	      exp(w_next[0]-w_current[curr_walker])) {
-	    accept=true;
-	  }
-	  if (verbose>=1) {
-	    std::cout.precision(4);
-	    std::cout << "mcmc: ";
-	    std::cout.width((int)(1.0+log10((double)(nparams-1))));
-	    std::cout << curr_walker << " "
-	      //    << w_current[curr_walker] << " " << w_next << " "
-		      << smove_z << " ratio: "
-	      //<< pow(smove_z,((double)nparams)-1.0)*
-	      //exp(w_next-w_current[curr_walker])
-		      << " accept: " << accept << std::endl;
-	    std::cout.precision(6);
-	  }
-	} else if (pd_mode) {
-	  if (r<exp(w_next[it]-w_current[it]+q_prop)) {
-	    accept=true;
-	  }
-	  if (verbose>=1) {
-	    std::cout.precision(4);
-	    std::cout << "mcmc: " << w_current[it] 
-		      << " " << w_next[it] << " " << q_prop << " ratio: "
-		      << exp(w_next[it]-w_current[it]+q_prop)
-		      << " accept: " << accept << std::endl;
-	    std::cout.precision(6);
-	  }
-	} else {
-	  // Metropolis algorithm
-	  if (r<exp(w_next[it]-w_current[it])) {
-	    accept=true;
-	  }
-	  if (verbose>=1) {
-	    std::cout.precision(4);
-	    std::cout << "mcmc: " << w_current[it] << " " << w_next[it]
-		      << " ratio: "
-		      << exp(w_next[it]-w_current[it])
-		      << " accept: " << accept << std::endl;
-	    std::cout.precision(6);
-	  }
-	}
-
-	// End of 'if (func_ret[it]==o2scl::success)'
-      }
-
-      if (accept) {
-	  
-	n_accept++;
-	  
-	// Store results from new point
-	if (!warm_up) {
-	  if (switch_arr[curr_walker]==false) {
-	    meas_ret[it]=meas[it](next[it],w_next[it],curr_walker,true,
-				  data_arr[curr_walker+n_walk]);
-	  } else {
-	    meas_ret[it]=meas[it](next[it],w_next[it],curr_walker,true,
-				  data_arr[curr_walker]);
-	  }
-	}
-
-	// Prepare for next point
-	current[curr_walker]=next[it];
-	w_current[curr_walker]=w_next[it];
-	switch_arr[curr_walker]=!(switch_arr[curr_walker]);
-	  
-      } else {
-	    
-	// Point was rejected
-	n_reject++;
-
-	// Repeat measurement of old point
-	if (!warm_up) {
-	  if (switch_arr[curr_walker]==false) {
-	    meas_ret[it]=meas[0](current[curr_walker],w_current[curr_walker],
-				 curr_walker,false,data_arr[curr_walker]);
-	  } else {
-	    meas_ret[it]=meas[0](current[curr_walker],w_current[curr_walker],
-				 curr_walker,false,
-				 data_arr[curr_walker+n_walk]);
-	  }
-	}
-
-      }
-
-	}
-      }
-      // End of parallel region
-
-      if (meas_ret[0]==mcmc_done) {
-	main_done=true;
-      } else {
-	if (meas_ret[0]!=0) {
+      // Check to see if mcmc_done was returned or if meas_ret
+      // returned an error
+      for(size_t it=0;it<n_threads;it++) {
+	if (meas_ret[it]==mcmc_done || func_ret[it]==mcmc_done) {
 	  main_done=true;
-	  if (meas_ret[0]!=mcmc_done && err_nonconv) {
+	}
+	if (meas_ret[it]!=mcmc_done && meas_ret[it]!=o2scl::success) {
+	  if (err_nonconv) {
 	    O2SCL_ERR((((std::string)"Measurement function returned ")+
-		       o2scl::dtos(meas_ret[0])+
+		       o2scl::dtos(meas_ret[it])+
 		       " in mcmc_omp_base::mcmc().").c_str(),
 		      o2scl::exc_efailed);
 	  }
+	  main_done=true;
 	}
+      }
+
+      if (main_done==false) {
 	
 	mcmc_iters++;
 	
 	if (warm_up && mcmc_iters==n_warm_up) {
 	  warm_up=false;
 	  mcmc_iters=0;
-	  n_accept=0;
-	  n_reject=0;
+	  for(size_t it=0;it<n_threads;it++) {
+	    n_accept[it]=0;
+	    n_reject[it]=0;
+	  }
 	  if (verbose>=1) {
 	    std::cout << "Finished warmup." << std::endl;
 	  }
+	  
 	}
       }
-
-      if (verbose>=2) {
+      
+      if (verbose>=3) {
 	std::cout << "Press a key and type enter to continue. ";
 	char ch;
 	std::cin >> ch;
@@ -950,318 +985,6 @@ namespace o2scl {
   //@}
 
   };
-
-#ifdef O2SCL_NEVER_DEFINED
-  
-  /** \brief A generic MCMC simulation class writing data to a 
-      \ref o2scl::table_units object
-
-      This class performs a MCMC simulation and stores the 
-      results in a \ref o2scl::table_units object. The
-      user must specify the column names and units in 
-      \ref set_names_units() before \ref mcmc() is called.
-
-      The function \ref add_line is the measurement function of type
-      \c measure_t in the parent. The overloaded function \ref mcmc()
-      in this class works a bit differently in that it takes a
-      function object (type \c fill_t) of the form
-      \code
-      int fill_func(const vec_t &pars, double log_weight, 
-      std::vector<double> &line, data_t &dat);
-      \endcode
-      which should store any auxillary values stored in the data
-      object to \c line, in order to be added to the table.
-
-      The output table will contain the parameters, the logarithm of
-      the function (called "log_wgt") and a multiplying factor called
-      "mult". This "fill" function is called only when a step is
-      accepted and the multiplier for that row is set to 1. If a
-      future step is rejected, then the multiplier is increased by
-      one, rather than adding the same row to the table again.
-
-      This class forms the basis of the MCMC used in the Bayesian
-      analysis of neutron star mass and radius in
-      http://github.com/awsteiner/bamr .
-
-      \note This class is experimental.
-  */
-  template<class func_t, class fill_t, class data_t, class vec_t=ubvector>
-    class mcmc_omp_table : public mcmc_omp_base<func_t,
-    std::function<int(const vec_t &,double,size_t,bool,data_t &)>,
-    data_t,vec_t> {
-
-  protected:
-
-  /// Measurement functor type for the parent
-  typedef std::function<int(const vec_t &,double,size_t,bool,data_t &)>
-  internal_measure_t;
-  
-  /// Type of parent class
-  typedef mcmc_omp_base<func_t,internal_measure_t,data_t,vec_t> parent_t;
-
-  /// Column names
-  std::vector<std::string> col_names;
-    
-  /// Column units
-  std::vector<std::string> col_units;
-    
-  /// Main data table for Markov chain
-  std::shared_ptr<o2scl::table_units<> > tab;
-
-  /** \brief MCMC initialization function
-
-      This function sets the column names and units.
-  */
-  virtual int mcmc_init() {
-
-    if (this->verbose>=2) {
-      std::cout << "Start mcmc_table::mcmc_init()." << std::endl;
-    }
-    
-    // -----------------------------------------------------------
-    // Init table
-
-    std::string s, u;
-    tab->clear_table();
-    tab->new_column("mult");
-    tab->new_column("log_wgt");
-    for(size_t i=0;i<col_names.size();i++) {
-      tab->new_column(col_names[i]);
-      if (col_units[i].length()>0) {
-	tab->set_unit(col_names[i],col_units[i]);
-      }
-    }
-
-    walker_rows.resize(this->n_walk);
-    for(size_t i=0;i<this->n_walk;i++) {
-      walker_rows[i]=-1;
-    }
-    
-    if (this->verbose>=2) {
-      std::cout << "mcmc: Table column names and units: " << std::endl;
-      for(size_t i=0;i<tab->get_ncolumns();i++) {
-	std::cout << tab->get_column_name(i) << " "
-		  << tab->get_unit(tab->get_column_name(i)) << std::endl;
-      }
-    }
-    
-    if (this->verbose>=2) {
-      std::cout << "End mcmc_omp_table::mcmc_init()." << std::endl;
-    }
-
-    return 0;
-  }
-
-  /** \brief Fill \c line with data for insertion into the table
-   */
-  virtual int fill_line(const vec_t &pars, double log_weight, 
-			 std::vector<double> &line, data_t &dat,
-			 fill_t &fill) {
-
-    // Initial multiplier
-    line.push_back(1.0);
-    line.push_back(log_weight);
-    for(size_t i=0;i<pars.size();i++) {
-      line.push_back(pars[i]);
-    }
-    return fill(pars,log_weight,line,dat);
-  }
-
-  /** \brief Record the last row in the table which corresponds
-      to each walker
-   */
-  std::vector<int> walker_rows;
-  
-  public:
-
-  mcmc_omp_table() : tab(new o2scl::table_units<>) {
-  }
-
-  /// \name Basic usage
-  //@{
-  /** \brief Set the table names and units
-   */
-  virtual void set_names_units(std::vector<std::string> names,
-			       std::vector<std::string> units) {
-    col_names=names;
-    col_units=units;
-    return;
-  }
-  
-  /** \brief Perform an MCMC simulation
-
-      Perform an MCMC simulation over \c nparams parameters starting
-      at initial point \c init, limiting the parameters to be between
-      \c low and \c high, using \c func as the objective function and
-      calling the measurement function \c meas at each MC point.
-  */
-  virtual int mcmc(size_t nparams, vec_t &init,
-		   vec_t &low, vec_t &high, func_t &func,
-		   fill_t &fill) {
-
-    internal_measure_t meas=std::bind
-    (std::mem_fn<int(const vec_t &,double,size_t,bool,data_t &,fill_t &)>
-     (&mcmc_omp_table::add_line),this,std::placeholders::_1,
-     std::placeholders::_2,std::placeholders::_3,std::placeholders::_4,
-     std::placeholders::_5,std::ref(fill));
-    
-    return parent_t::mcmc(nparams,init,low,high,func,meas);
-  }
-
-  /** \brief Get the output table
-   */
-  std::shared_ptr<o2scl::table_units<> > get_table() {
-    return tab;
-  }
-  
-  /** \brief Set the output table
-   */
-  void set_table(std::shared_ptr<o2scl::table_units<> > &t) {
-    tab=t;
-    return;
-  }
-  
-  /** \brief A measurement function which adds the point to the
-      table
-  */
-  virtual int add_line(const vec_t &pars, double log_weight,
-		       size_t walker_ix, bool new_meas, data_t &dat,
-		       fill_t &fill) {
-
-    // Test to see if we need to add a new line of data or increment
-    // the weight on the previous line. If the fill function has reset
-    // the table data, then the walker_rows will refer to a row which
-    // doesn't currently exist, so we have to add a new line of data.
-    if (new_meas==true ||
-	walker_rows[this->curr_walker]<0 ||
-	walker_rows[this->curr_walker]>=((int)(tab->get_nlines()))) {
-      
-      std::vector<double> line;
-      int fret=fill_line(pars,log_weight,line,dat,fill);
-      
-      if (fret!=o2scl::success) {
-	// If we're done, we stop before adding the last point to the
-	// table. This is important because otherwise the last line in
-	// the table will always only have unit multiplicity, which
-	// may or may not be correct.
-	if (fret==this->mcmc_done) {
-	  if (this->verbose>=1) {
-	    std::cout << "Fill function returned mcmc_done. " 
-		      << "Stopping run." << std::endl;
-	  }
-	}
-	else {
-	  if (this->verbose>=1) {
-	    std::cout << "Fill function returned " << fret
-	    << ". Stopping run." << std::endl;
-	  }
-	}
-	return this->mcmc_done;
-      }
-      
-      if (line.size()!=tab->get_ncolumns()) {
-	std::cout << "line: " << line.size() << " columns: "
-	<< tab->get_ncolumns() << std::endl;
-	O2SCL_ERR("Table misalignment in mcmc_omp_table::add_line().",
-		  exc_einval);
-      }
-      
-      if (this->verbose>=2) {
-	std::cout << "mcmc: Adding line:" << std::endl;
-	std::vector<std::string> sc_in, sc_out;
-	for(size_t k=0;k<line.size();k++) {
-	  sc_in.push_back(tab->get_column_name(k)+": "+
-			  o2scl::dtos(line[k]));
-	}
-	o2scl::screenify(line.size(),sc_in,sc_out);
-	for(size_t k=0;k<sc_out.size();k++) {
-	  std::cout << sc_out[k] << std::endl;
-	}
-      }
-
-      walker_rows[this->curr_walker]=tab->get_nlines();
-      tab->line_of_data(line.size(),line);
-
-    } else {
-	
-      // Otherwise, just increment the multiplier on the previous line
-      //std::cout << "nlines: " << tab->get_nlines() << std::endl;
-      //std::cout << "walker: " << this->curr_walker << std::endl;
-      //std::cout << "row: " << walker_rows[this->curr_walker]
-      //<< std::endl;
-      //O2SCL_ERR2("Sanity in row counting in ",
-      //"mcmc_omp_table::add_line().",o2scl::exc_esanity);
-
-      double mult_old=tab->get("mult",walker_rows[this->curr_walker]);
-      tab->set("mult",walker_rows[this->curr_walker],mult_old+1.0);
-      
-      if (this->verbose>=2) {
-	std::cout << "mcmc: Updating line:" << std::endl;
-	std::vector<std::string> sc_in, sc_out;
-	for(size_t k=0;k<tab->get_ncolumns();k++) {
-	  sc_in.push_back
-	    (tab->get_column_name(k)+": "+
-	     o2scl::dtos(tab->get(tab->get_column_name(k),
-				  walker_rows[this->curr_walker])));
-	}
-	o2scl::screenify(tab->get_ncolumns(),sc_in,sc_out);
-	for(size_t k=0;k<sc_out.size();k++) {
-	  std::cout << sc_out[k] << std::endl;
-	}
-      }
-      
-    }
-    
-    return 0;
-  }
-  //@}
-
-  /** \brief Reaverage the data into blocks of a fixed
-      size in order to avoid autocorrelations
-      
-      \note The number of blocks \c n_blocks must be larger than the
-      current table size. This function expects to find a column named
-      "mult" which contains the multiplicity of each column, as is the
-      case after a call to \ref mcmc_omp_base::mcmc().
-      
-      This function is useful to remove autocorrelations to the table
-      so long as the autocorrelation length is shorter than the block
-      size. This function does not compute the autocorrelation length
-      to check that this is the case.
-  */
-  void reblock(size_t n_blocks) {
-    size_t n=tab->get_nlines();
-    if (n_blocks>n) {
-      O2SCL_ERR2("Cannot reblock. Not enough data in ",
-		"mcmc_omp_table::reblock().",o2scl::exc_einval);
-    }
-    size_t n_block=n/n_blocks;
-    size_t m=tab->get_ncolumns();
-    for(size_t j=0;j<n_blocks;j++) {
-      double mult=0.0;
-      ubvector dat(m);
-      for(size_t i=0;i<m;i++) {
-	dat[i]=0.0;
-      }
-      for(size_t k=j*n_block;k<(j+1)*n_block;k++) {
-	mult+=(*tab)["mult"][k];
-	for(size_t i=1;i<m;i++) {
-	  dat[i]+=(*tab)[i][k]*(*tab)["mult"][k];
-	}
-      }
-      tab->set("mult",j,mult);
-      for(size_t i=1;i<m;i++) {
-	dat[i]/=mult;
-	tab->set(i,j,dat[i]);
-      }
-    }
-    tab->set_nlines(n_blocks);
-    return;
-  }
-  
-  };
-  
-#endif
 
   // End of namespace
 }
