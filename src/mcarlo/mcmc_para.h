@@ -20,12 +20,12 @@
 
   -------------------------------------------------------------------
 */
-/** \file mcmc_omp.h
-    \brief File for definition of \ref o2scl::mcmc_omp_base and 
-    \ref o2scl::mcmc_omp_table
+/** \file mcmc_para.h
+    \brief File for definition of \ref o2scl::mcmc_para_base and 
+    \ref o2scl::mcmc_para_table
 */
-#ifndef O2SCL_MCMC_OMP_H
-#define O2SCL_MCMC_OMP_H
+#ifndef O2SCL_MCMC_PARA_H
+#define O2SCL_MCMC_PARA_H
 
 #include <iostream>
 #include <random>
@@ -50,7 +50,7 @@
 
 /** \brief Main namespace
     
-    This file is documented in mcmc_omp.h .
+    This file is documented in mcmc_para.h .
 */
 namespace o2scl {
   
@@ -58,11 +58,11 @@ namespace o2scl {
   
   /** \brief A generic MCMC simulation class
 
-      This class generates a Markov chain of a user-specified
-      function. The chain can be generated using the
+      This class performs a Markov chain Monte Carlo simulation of a
+      user-specified function using OpenMP/MPI. Either the
       Metropolis-Hastings algorithm with a user-specified proposal
-      distribution or using the affine-invariant sampling method of
-      Goodman and Weare.
+      distribution or the affine-invariant sampling method of Goodman
+      and Weare can be used.
 
       By default, the Metropolis-Hastings algorithm is executed with a
       simple walk, with steps in each dimension of size \f$
@@ -107,7 +107,7 @@ namespace o2scl {
       \note This class is experimental.
   */
   template<class func_t, class measure_t,
-    class data_t, class vec_t=ubvector> class mcmc_omp_base {
+    class data_t, class vec_t=ubvector> class mcmc_para_base {
     
   protected:
   
@@ -123,6 +123,13 @@ namespace o2scl {
   double mpi_start_time;
   //@}
   
+  /** \brief Time in seconds (default is 0)
+   */
+  double max_time;
+
+  /// The screen output file
+  std::ofstream scr_out;
+  
   /// Random number generators
   std::vector<rng_gsl> rg;
   
@@ -135,7 +142,7 @@ namespace o2scl {
   /// If true, we are in the warm up phase
   bool warm_up;
 
-  /// Current points in parameter space
+  /// Current points in parameter space for each walker and each thread
   std::vector<vec_t> current;
 
   /// Data array
@@ -152,12 +159,25 @@ namespace o2scl {
   /** \brief Initializations before the MCMC 
    */
   virtual int mcmc_init() {
+    if (verbose>0) {
+      // Open main output file for this rank
+      scr_out.open((prefix+"_"+
+		    o2scl::itos(mpi_rank)+"_scr").c_str());
+      scr_out.setf(std::ios::scientific);
+    }
     return 0;
   }
 
   /** \brief Cleanup after the MCMC
    */
   virtual void mcmc_cleanup() {
+    if (verbose>0) {
+      for(size_t it=0;it<n_threads;it++) {
+	scr_out << "mcmc (" << it << "): accept=" << n_accept[it]
+	<< " reject=" << n_reject[it] << std::endl;
+      }
+      scr_out.close();
+    }
     return;
   }
 
@@ -175,6 +195,10 @@ namespace o2scl {
   size_t n_init_points;
   
   public:
+
+  /** \brief Prefix for output filenames
+   */
+  std::string prefix;
 
   /// Integer to indicate completion
   static const int mcmc_done=-10;
@@ -239,7 +263,7 @@ namespace o2scl {
   double ai_initial_step;
   //@}
   
-  mcmc_omp_base() {
+  mcmc_para_base() {
     user_seed=0;
     n_warm_up=0;
 
@@ -271,6 +295,8 @@ namespace o2scl {
     MPI_Comm_size(MPI_COMM_WORLD,&this->mpi_nprocs);
 #endif
     
+    prefix="mcmc";
+    max_time=0.0;
   }
 
   /// Requested number of threads
@@ -285,18 +311,13 @@ namespace o2scl {
       \c low and \c high, using \c func as the objective function and
       calling the measurement function \c meas at each MC point.
   */
-  virtual int mcmc(size_t nparams, vec_t &init,
-		   vec_t &low, vec_t &high, std::vector<func_t> &func,
-		   std::vector<measure_t> &meas) {
-
-    bool valid_guess=true;
+  virtual int mcmc(size_t nparams, vec_t &low, vec_t &high,
+		   std::vector<func_t> &func, std::vector<measure_t> &meas) {
+    
+    // Setup initial guess
+    std::vector<double> init(nparams);
     for(size_t k=0;k<nparams;k++) {
-      if (init[k]<low[k] || init[k]>high[k]) valid_guess=false;
-    }
-    if (!valid_guess) {
-      O2SCL_ERR2("Initial guess outside of user-specified ",
-		 "lower and upper bounds in mcmc_base::mcmc_omp().",
-		 o2scl::exc_einval);
+      init[k]=(low[k]+high[k])/2.0;
     }
     
     // Set number of threads
@@ -410,16 +431,16 @@ namespace o2scl {
     // Initial verbose output
     if (verbose>=1) {
       if (aff_inv) {
-	std::cout << "mcmc: Affine-invariant step, n_params="
+	scr_out << "mcmc: Affine-invariant step, n_params="
 		  << nparams << " n_walk=" << n_walk
 		  << ", n_threads=" << n_threads << ", n_ranks="
 		  << mpi_nprocs << std::endl;
       } else if (pd_mode==true) {
-	std::cout << "mcmc: With proposal distribution, n_params="
+	scr_out << "mcmc: With proposal distribution, n_params="
 		  << nparams << ", n_threads=" << n_threads << ", n_ranks="
 		  << mpi_nprocs << std::endl;
       } else {
-	std::cout << "mcmc: Random-walk w/uniform dist., n_params="
+	scr_out << "mcmc: Random-walk w/uniform dist., n_params="
 		  << nparams << ", n_threads=" << n_threads << ", n_ranks="
 		  << mpi_nprocs << std::endl;
       }
@@ -524,7 +545,7 @@ namespace o2scl {
 		  done=true;
 		} else if (init_iters>max_bad_steps) {
 		  O2SCL_ERR2("Initial walkers failed in ",
-			     "mcmc_omp_base::mcmc().",o2scl::exc_einval);
+			     "mcmc_para_base::mcmc().",o2scl::exc_einval);
 		}
 	      }
 	    }
@@ -538,7 +559,7 @@ namespace o2scl {
       for(size_t it=0;it<n_threads;it++) {
 	if (mcmc_done_flag[it]==true) {
 	  if (verbose>=1) {
-	    std::cout << "mcmc (" << it << "): Returned mcmc_done "
+	    scr_out << "mcmc (" << it << "): Returned mcmc_done "
 		      << "(initial; ai)." << std::endl;
 	  }
 	  stop_early=true;
@@ -569,12 +590,12 @@ namespace o2scl {
 	for(size_t it=0;it<n_threads;it++) {
 	  for(curr_walker=0;curr_walker<n_walk;curr_walker++) {
 	    size_t sindex=n_walk*it+curr_walker;
-	    std::cout.precision(4);
-	    std::cout << "mcmc: ";
-	    std::cout.width((int)(1.0+log10((double)(n_walk-1))));
-	    std::cout << it << " " << curr_walker << " "
+	    scr_out.precision(4);
+	    scr_out << "mcmc (";
+	    scr_out.width((int)(1.0+log10((double)(n_walk-1))));
+	    scr_out << it << "): " << curr_walker << " "
 		      << w_current[sindex] << " (initial; ai)" << std::endl;
-	    std::cout.precision(6);
+	    scr_out.precision(6);
 	  }
 	}
       }
@@ -585,14 +606,16 @@ namespace o2scl {
 
       func_ret[0]=func[0](nparams,current[0],w_current[0],data_arr[0]);
       if (func_ret[0]==mcmc_done) {
-	std::cout << "mcmc: Initial point returned mcmc_done."
+	if (verbose>=1) {
+	  scr_out << "mcmc: Initial point returned mcmc_done."
 		  << std::endl;
+	}
 	mcmc_cleanup();
 	return 0;
       }
       if (func_ret[0]!=o2scl::success) {
 	if (err_nonconv) {
-	  O2SCL_ERR("Initial weight vanished in mcmc_omp_base::mcmc().",
+	  O2SCL_ERR("Initial weight vanished in mcmc_para_base::mcmc().",
 		    o2scl::exc_einval);
 	}
 	return 2;
@@ -629,7 +652,7 @@ namespace o2scl {
       for(size_t it=0;it<n_threads;it++) {
 	if (mcmc_done_flag[it]==true) {
 	  if (verbose>=1) {
-	    std::cout << "mcmc (" << it << "): Returned mcmc_done "
+	    scr_out << "mcmc (" << it << "): Returned mcmc_done "
 		      << "(initial)." << std::endl;
 	  }
 	  stop_early=true;
@@ -646,10 +669,10 @@ namespace o2scl {
       best_point(best,w_best,data_arr[0]);
 
       if (verbose>=2) {
-	std::cout.precision(4);
-	std::cout << "mcmc (0): "
+	scr_out.precision(4);
+	scr_out << "mcmc (0): "
 		  << w_current[0] << " (initial)" << std::endl;
-	std::cout.precision(6);
+	scr_out.precision(6);
       }
       
     }
@@ -715,7 +738,7 @@ namespace o2scl {
 	      prop_dist->log_pdf(next[it],current[it]);
 	    if (!std::isfinite(q_prop)) {
 	      O2SCL_ERR2("Proposal distribution not finite in ",
-			 "mcmc_omp_base::mcmc().",o2scl::exc_efailed);
+			 "mcmc_para_base::mcmc().",o2scl::exc_efailed);
 	    }
 	    
 	  } else {
@@ -763,30 +786,30 @@ namespace o2scl {
       if (verbose>=1) {
 	for(size_t it=0;it<n_threads;it++) {
 	  if (func_ret[it]==mcmc_done) {
-	    std::cout << "mcmc (" << it << "): Returned mcmc_done." 
+	    scr_out << "mcmc (" << it << "): Returned mcmc_done." 
 		      << std::endl;
 	  } else if (func_ret[it]==mcmc_skip && verbose>=3) {
-	    std::cout << "mcmc (" << it
+	    scr_out << "mcmc (" << it
 		      << "): Parameter(s) out of range: " << std::endl;
-	    std::cout.setf(std::ios::showpos);
+	    scr_out.setf(std::ios::showpos);
 	    for(size_t k=0;k<nparams;k++) {
-	      std::cout << k << " " << low[k] << " "
+	      scr_out << k << " " << low[k] << " "
 			<< next[it][k] << " " << high[k];
 	      if (next[it][k]<low[k] || next[it][k]>high[k]) {
-		std::cout << " <-";
+		scr_out << " <-";
 	      }
-	      std::cout << std::endl;
+	      scr_out << std::endl;
 	    }
-	    std::cout.unsetf(std::ios::showpos);
+	    scr_out.unsetf(std::ios::showpos);
 	  } else if (func_ret[it]!=o2scl::success &&
 		     func_ret[it]!=mcmc_skip) {
 	    if (verbose>=2) {
-	      std::cout << "mcmc (" << it << "): Function returned failure " 
+	      scr_out << "mcmc (" << it << "): Function returned failure " 
 			<< func_ret[it] << " at point ";
 	      for(size_t k=0;k<nparams;k++) {
-		std::cout << next[it][k] << " ";
+		scr_out << next[it][k] << " ";
 	      }
-	      std::cout << std::endl;
+	      scr_out << std::endl;
 	    }
 	  }
 	}
@@ -883,13 +906,13 @@ namespace o2scl {
       if (verbose>=2) {
 	for(size_t it=0;it<n_threads;it++) {
 	  size_t sindex=n_walk*it+curr_walker;
-	  std::cout.precision(4);
-	  std::cout << "mcmc (" << it << "): ";
-	  std::cout.width((int)(1.0+log10((double)(nparams-1))));
-	  std::cout << mcmc_iters << " "
+	  scr_out.precision(4);
+	  scr_out << "mcmc (" << it << "): ";
+	  scr_out.width((int)(1.0+log10((double)(nparams-1))));
+	  scr_out << mcmc_iters << " "
 		    << curr_walker << " " << w_current[sindex]
 		    << std::endl;
-	  std::cout.precision(6);
+	  scr_out.precision(6);
 	}
       }
       
@@ -916,7 +939,7 @@ namespace o2scl {
 	  if (err_nonconv) {
 	    O2SCL_ERR((((std::string)"Measurement function returned ")+
 		       o2scl::dtos(meas_ret[it])+
-		       " in mcmc_omp_base::mcmc().").c_str(),
+		       " in mcmc_para_base::mcmc().").c_str(),
 		      o2scl::exc_efailed);
 	  }
 	  main_done=true;
@@ -935,7 +958,7 @@ namespace o2scl {
 	    n_reject[it]=0;
 	  }
 	  if (verbose>=1) {
-	    std::cout << "Finished warmup." << std::endl;
+	    scr_out << "Finished warmup." << std::endl;
 	  }
 	  
 	}
@@ -945,6 +968,20 @@ namespace o2scl {
 	std::cout << "Press a key and type enter to continue. ";
 	char ch;
 	std::cin >> ch;
+      }
+
+      // Check to see if we're out of time
+#ifdef O2SCL_MPI
+      double elapsed=MPI_Wtime()-mpi_start_time;
+#else
+      double elapsed=time(0)-mpi_start_time;
+#endif
+      if (max_time>0.0 && elapsed>max_time) {
+	if (verbose>=0) {
+	  scr_out << "mcmc (0): Stopping because elapsed > max_time."
+		  << std::endl;
+	}
+	main_done=true;
       }
 
       // --------------------------------------------------------------
