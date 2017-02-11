@@ -1226,7 +1226,6 @@ namespace o2scl {
 #endif
     
     size_t windex=i_thread*this->n_walk+this->curr_walker;
-    std::
     
     // Test to see if we need to add a new line of data or increment
     // the weight on the previous line. If the fill function has reset
