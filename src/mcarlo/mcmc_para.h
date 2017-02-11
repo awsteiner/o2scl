@@ -432,17 +432,17 @@ namespace o2scl {
     if (verbose>=1) {
       if (aff_inv) {
 	scr_out << "mcmc: Affine-invariant step, n_params="
-		  << nparams << " n_walk=" << n_walk
-		  << ", n_threads=" << n_threads << ", n_ranks="
-		  << mpi_nprocs << std::endl;
+		<< nparams << " n_walk=" << n_walk
+		<< ", n_threads=" << n_threads << ", n_ranks="
+		<< mpi_nprocs << std::endl;
       } else if (pd_mode==true) {
 	scr_out << "mcmc: With proposal distribution, n_params="
-		  << nparams << ", n_threads=" << n_threads << ", n_ranks="
-		  << mpi_nprocs << std::endl;
+		<< nparams << ", n_threads=" << n_threads << ", n_ranks="
+		<< mpi_nprocs << std::endl;
       } else {
 	scr_out << "mcmc: Random-walk w/uniform dist., n_params="
-		  << nparams << ", n_threads=" << n_threads << ", n_ranks="
-		  << mpi_nprocs << std::endl;
+		<< nparams << ", n_threads=" << n_threads << ", n_ranks="
+		<< mpi_nprocs << std::endl;
       }
     }
     
@@ -560,7 +560,7 @@ namespace o2scl {
 	if (mcmc_done_flag[it]==true) {
 	  if (verbose>=1) {
 	    scr_out << "mcmc (" << it << "): Returned mcmc_done "
-		      << "(initial; ai)." << std::endl;
+		    << "(initial; ai)." << std::endl;
 	  }
 	  stop_early=true;
 	}
@@ -594,7 +594,7 @@ namespace o2scl {
 	    scr_out << "mcmc (";
 	    scr_out.width((int)(1.0+log10((double)(n_walk-1))));
 	    scr_out << it << "): " << curr_walker << " "
-		      << w_current[sindex] << " (initial; ai)" << std::endl;
+		    << w_current[sindex] << " (initial; ai)" << std::endl;
 	    scr_out.precision(6);
 	  }
 	}
@@ -653,7 +653,7 @@ namespace o2scl {
 	if (mcmc_done_flag[it]==true) {
 	  if (verbose>=1) {
 	    scr_out << "mcmc (" << it << "): Returned mcmc_done "
-		      << "(initial)." << std::endl;
+		    << "(initial)." << std::endl;
 	  }
 	  stop_early=true;
 	}
@@ -671,7 +671,7 @@ namespace o2scl {
       if (verbose>=2) {
 	scr_out.precision(4);
 	scr_out << "mcmc (0): "
-		  << w_current[0] << " (initial)" << std::endl;
+		<< w_current[0] << " (initial)" << std::endl;
 	scr_out.precision(6);
       }
       
@@ -787,14 +787,14 @@ namespace o2scl {
 	for(size_t it=0;it<n_threads;it++) {
 	  if (func_ret[it]==mcmc_done) {
 	    scr_out << "mcmc (" << it << "): Returned mcmc_done." 
-		      << std::endl;
+		    << std::endl;
 	  } else if (func_ret[it]==mcmc_skip && verbose>=3) {
 	    scr_out << "mcmc (" << it
-		      << "): Parameter(s) out of range: " << std::endl;
+		    << "): Parameter(s) out of range: " << std::endl;
 	    scr_out.setf(std::ios::showpos);
 	    for(size_t k=0;k<nparams;k++) {
 	      scr_out << k << " " << low[k] << " "
-			<< next[it][k] << " " << high[k];
+		      << next[it][k] << " " << high[k];
 	      if (next[it][k]<low[k] || next[it][k]>high[k]) {
 		scr_out << " <-";
 	      }
@@ -805,7 +805,7 @@ namespace o2scl {
 		     func_ret[it]!=mcmc_skip) {
 	    if (verbose>=2) {
 	      scr_out << "mcmc (" << it << "): Function returned failure " 
-			<< func_ret[it] << " at point ";
+		      << func_ret[it] << " at point ";
 	      for(size_t k=0;k<nparams;k++) {
 		scr_out << next[it][k] << " ";
 	      }
@@ -910,8 +910,8 @@ namespace o2scl {
 	  scr_out << "mcmc (" << it << "): ";
 	  scr_out.width((int)(1.0+log10((double)(nparams-1))));
 	  scr_out << mcmc_iters << " "
-		    << curr_walker << " " << w_current[sindex]
-		    << std::endl;
+		  << curr_walker << " " << w_current[sindex]
+		  << std::endl;
 	  scr_out.precision(6);
 	}
       }
@@ -1023,6 +1023,352 @@ namespace o2scl {
 
   };
 
+  /** \brief A generic MCMC simulation class writing data to a 
+      \ref o2scl::table_units object
+
+      This class performs a MCMC simulation and stores the 
+      results in a \ref o2scl::table_units object. The
+      user must specify the column names and units in 
+      \ref set_names_units() before \ref mcmc() is called.
+
+      The function \ref add_line is the measurement function of type
+      \c measure_t in the parent. The overloaded function \ref mcmc()
+      in this class works a bit differently in that it takes a
+      function object (type \c fill_t) of the form
+      \code
+      int fill_func(const vec_t &pars, double log_weight, 
+      std::vector<double> &line, data_t &dat);
+      \endcode
+      which should store any auxillary values stored in the data
+      object to \c line, in order to be added to the table.
+
+      The output table will contain the parameters, the logarithm of
+      the function (called "log_wgt") and a multiplying factor called
+      "mult". This "fill" function is called only when a step is
+      accepted and the multiplier for that row is set to 1. If a
+      future step is rejected, then the multiplier is increased by
+      one, rather than adding the same row to the table again.
+
+      This class forms the basis of the MCMC used in the Bayesian
+      analysis of neutron star mass and radius in
+      http://github.com/awsteiner/bamr .
+
+      \note This class is experimental.
+  */
+  template<class func_t, class fill_t, class data_t, class vec_t=ubvector>
+    class mcmc_para_table : public mcmc_para_base<func_t,
+    std::function<int(const vec_t &,double,size_t,bool,data_t &)>,
+    data_t,vec_t> {
+
+  protected:
+
+  /// Measurement functor type for the parent
+  typedef std::function<int(const vec_t &,double,size_t,bool,data_t &)>
+  internal_measure_t;
+  
+  /// Type of parent class
+  typedef mcmc_para_base<func_t,internal_measure_t,data_t,vec_t> parent_t;
+
+  /// Column names
+  std::vector<std::string> col_names;
+    
+  /// Column units
+  std::vector<std::string> col_units;
+    
+  /// Main data table for Markov chain
+  std::vector<std::shared_ptr<o2scl::table_units<> > > tables;
+  
+  /** \brief MCMC initialization function
+
+      This function sets the column names and units.
+  */
+  virtual int mcmc_init() {
+
+    /*
+      if (this->verbose>=2) {
+      std::cout << "Start mcmc_para_table::mcmc_init()." << std::endl;
+      }
+    */
+    
+    // -----------------------------------------------------------
+    // Init tables
+    
+    tables.resize(this->n_threads);
+    
+    for(size_t itab=0;itab<this->n_threads;itab) {
+      tables[itab]=
+	std::shared_ptr<o2scl::table_units<> >(new o2scl::table_units<>);
+      tables[itab]->clear();
+      tables[itab]->new_column("mult");
+      tables[itab]->new_column("log_wgt");
+      for(size_t i=0;i<col_names.size();i++) {
+	tables[itab]->new_column(col_names[i]);
+	if (col_units[i].length()>0) {
+	  tables[itab]->set_unit(col_names[i],col_units[i]);
+	}
+      }
+
+    }
+    
+    walker_rows.resize(this->n_walk*this->n_threads);
+    for(size_t i=0;i<this->n_walk*this->n_threads;i++) {
+      walker_rows[i]=-1;
+    }
+
+    /*
+      if (this->verbose>=2) {
+      std::cout << "mcmc: Table column names and units: " << std::endl;
+      for(size_t i=0;i<tab->get_ncolumns();i++) {
+      std::cout << tab->get_column_name(i) << " "
+      << tab->get_unit(tab->get_column_name(i)) << std::endl;
+      }
+      }
+      
+      if (this->verbose>=2) {
+      std::cout << "End mcmc_para_table::mcmc_init()." << std::endl;
+      }
+    */
+    
+    return 0;
+  }
+  
+  /** \brief Fill \c line with data for insertion into the table
+   */
+  virtual int fill_line(const vec_t &pars, double log_weight, 
+			std::vector<double> &line, data_t &dat,
+			fill_t &fill) {
+    
+    // Initial multiplier
+    line.push_back(1.0);
+    line.push_back(log_weight);
+    for(size_t i=0;i<pars.size();i++) {
+      line.push_back(pars[i]);
+    }
+    return fill(pars,log_weight,line,dat);
+  }
+  
+  /** \brief Record the last row in the table which corresponds
+      to each walker
+  */
+  std::vector<int> walker_rows;
+  
+  public:
+  
+  mcmc_para_table() {
+  }
+  
+  /// \name Basic usage
+  //@{
+  /** \brief Set the table names and units
+   */
+  virtual void set_names_units(std::vector<std::string> names,
+			       std::vector<std::string> units) {
+    col_names=names;
+    col_units=units;
+    return;
+  }
+  
+  /** \brief Perform an MCMC simulation
+      
+      Perform an MCMC simulation over \c nparams parameters starting
+      at initial point \c init, limiting the parameters to be between
+      \c low and \c high, using \c func as the objective function and
+      calling the measurement function \c meas at each MC point.
+  */
+  virtual int mcmc(size_t nparams, 
+		   vec_t &low, vec_t &high, std::vector<func_t> &func,
+		   std::vector<fill_t> &fill) {
+    
+    // Set number of threads
+#ifdef O2SCL_OPENMP
+    omp_set_num_threads(this->n_threads);
+#else
+    this->n_threads=1;
+#endif
+
+    std::vector<internal_measure_t> meas(this->n_threads);
+    for(size_t it=0;it<this->n_threads;it++) {
+      meas[it]=std::bind
+	(std::mem_fn<int(const vec_t &,double,size_t,bool,
+			 data_t &, fill_t &)>
+	 (&mcmc_para_table::add_line),this,std::placeholders::_1,
+	 std::placeholders::_2,std::placeholders::_3,std::placeholders::_4,
+	 std::placeholders::_5,std::ref(fill[it]));
+    }
+    
+    return parent_t::mcmc(nparams,low,high,func,meas);
+  }
+  
+  /** \brief Get the output table
+   */
+  std::shared_ptr<o2scl::table_units<> > get_table(size_t i_thread) {
+    return tables[i_thread];
+  }
+  
+  /** \brief Set the output table
+   */
+  void set_table(std::shared_ptr<o2scl::table_units<> > &t, size_t i_thread) {
+    tables[i_thread]=t;
+    return;
+  }
+  
+  /** \brief A measurement function which adds the point to the
+      table
+  */
+  virtual int add_line(const vec_t &pars, double log_weight,
+		       size_t walker_ix, bool new_meas, data_t &dat,
+		       fill_t &fill) {
+
+#ifdef O2SCL_OPENMP
+    size_t i_thread=omp_get_thread_num();
+#else
+    size_t i_thread=0;
+#endif
+    
+    size_t windex=i_thread*this->n_walk+this->curr_walker;
+    std::
+    
+    // Test to see if we need to add a new line of data or increment
+    // the weight on the previous line. If the fill function has reset
+    // the table data, then the walker_rows will refer to a row which
+    // doesn't currently exist, so we have to add a new line of data.
+    
+    if (new_meas==true ||
+	walker_rows[windex]<0 ||
+	walker_rows[windex]>=((int)(tables[i_thread]->get_nlines()))) {
+      
+      std::vector<double> line;
+	int fret=fill_line(pars,log_weight,line,dat,fill);
+	
+	if (fret!=o2scl::success) {
+	  // If we're done, we stop before adding the last point to the
+	  // table. This is important because otherwise the last line in
+	  // the table will always only have unit multiplicity, which
+	  // may or may not be correct.
+	  if (fret==this->mcmc_done) {
+	    if (this->verbose>=1) {
+	      std::cout << "Fill function returned mcmc_done. " 
+			<< "Stopping run." << std::endl;
+	    }
+	  } else {
+	    if (this->verbose>=1) {
+	      std::cout << "Fill function returned " << fret
+			<< ". Stopping run." << std::endl;
+	    }
+	  }
+	  return this->mcmc_done;
+	}
+	
+	if (line.size()!=tables[i_thread]->get_ncolumns()) {
+	  std::cout << "line: " << line.size() << " columns: "
+		    << tables[i_thread]->get_ncolumns() << std::endl;
+	  O2SCL_ERR("Table misalignment in mcmc_para_table::add_line().",
+		    exc_einval);
+	}
+	
+	if (this->verbose>=2) {
+	  std::cout << "mcmc: Adding line:" << std::endl;
+	  std::vector<std::string> sc_in, sc_out;
+	  for(size_t k=0;k<line.size();k++) {
+	    sc_in.push_back(tables[i_thread]->get_column_name(k)+": "+
+			    o2scl::dtos(line[k]));
+	  }
+	  o2scl::screenify(line.size(),sc_in,sc_out);
+	  for(size_t k=0;k<sc_out.size();k++) {
+	    std::cout << sc_out[k] << std::endl;
+	  }
+	}
+	
+	walker_rows[windex]=tables[i_thread]->get_nlines();
+	tables[i_thread]->line_of_data(line.size(),line);
+	
+      } else {
+	
+	// Otherwise, just increment the multiplier on the previous line
+	//std::cout << "nlines: " << tables[i_thread]->get_nlines()
+	//<< std::endl;
+	//std::cout << "walker: " << this->curr_walker << std::endl;
+	//std::cout << "row: " << walker_rows[windex]
+	//<< std::endl;
+	//O2SCL_ERR2("Sanity in row counting in ",
+	//"mcmc_para_table::add_line().",o2scl::exc_esanity);
+	
+	double mult_old=tables[i_thread]->get("mult",walker_rows[windex]);
+	tables[i_thread]->set("mult",walker_rows[windex],mult_old+1.0);
+	
+	if (this->verbose>=2) {
+	  std::cout << "mcmc: Updating line:" << std::endl;
+	  std::vector<std::string> sc_in, sc_out;
+	  for(size_t k=0;k<tables[i_thread]->get_ncolumns();k++) {
+	    std::string cname=tables[i_thread]->get_column_name(k);
+	    sc_in.push_back
+	      (cname+": "+
+	       o2scl::dtos(tables[i_thread]->get(cname,
+						 walker_rows[windex])));
+	  }
+	  o2scl::screenify(tables[i_thread]->get_ncolumns(),sc_in,sc_out);
+	  for(size_t k=0;k<sc_out.size();k++) {
+	    std::cout << sc_out[k] << std::endl;
+	  }
+	}
+
+      }
+
+    return 0;
+  }
+  //@}
+  
+  /** \brief Reaverage the data into blocks of a fixed
+      size in order to avoid autocorrelations
+      
+      \note The number of blocks \c n_blocks must be larger than the
+      current table size. This function expects to find a column named
+      "mult" which contains the multiplicity of each column, as is the
+      case after a call to \ref mcmc_para_base::mcmc().
+      
+      This function is useful to remove autocorrelations to the table
+      so long as the autocorrelation length is shorter than the block
+      size. This function does not compute the autocorrelation length
+      to check that this is the case.
+  */
+  void reblock(size_t n_blocks) {
+    
+    for(size_t it=0;it<this->n_threads;it++) {
+      
+      size_t n=tables[it]->get_nlines();
+      if (n_blocks>n) {
+	O2SCL_ERR2("Cannot reblock. Not enough data in ",
+		   "mcmc_para_table::reblock().",o2scl::exc_einval);
+      }
+      size_t n_block=n/n_blocks;
+      size_t m=tables[it]->get_ncolumns();
+      for(size_t j=0;j<n_blocks;j++) {
+	double mult=0.0;
+	ubvector dat(m);
+	for(size_t i=0;i<m;i++) {
+	  dat[i]=0.0;
+	}
+	for(size_t k=j*n_block;k<(j+1)*n_block;k++) {
+	  mult+=(*tables[it])["mult"][k];
+	  for(size_t i=1;i<m;i++) {
+	    dat[i]+=(*tables[it])[i][k]*(*tables[it])["mult"][k];
+	  }
+	}
+	tables[it]->set("mult",j,mult);
+	for(size_t i=1;i<m;i++) {
+	  dat[i]/=mult;
+	  tables[it]->set(i,j,dat[i]);
+	}
+      }
+      tables[it]->set_nlines(n_blocks);
+
+    }
+    
+    return;
+  }
+  
+  };
+  
   // End of namespace
 }
 
