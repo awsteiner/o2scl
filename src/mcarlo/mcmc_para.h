@@ -1076,7 +1076,7 @@ namespace o2scl {
   std::vector<std::string> col_units;
     
   /// Main data table for Markov chain
-  std::vector<std::shared_ptr<o2scl::table_units<> > > tables;
+  std::shared_ptr<o2scl::table_units<> > table;
   
   /** \brief MCMC initialization function
 
@@ -1093,21 +1093,17 @@ namespace o2scl {
     // -----------------------------------------------------------
     // Init tables
     
-    tables.resize(this->n_threads);
-    
-    for(size_t itab=0;itab<this->n_threads;itab) {
-      tables[itab]=
-	std::shared_ptr<o2scl::table_units<> >(new o2scl::table_units<>);
-      tables[itab]->clear();
-      tables[itab]->new_column("mult");
-      tables[itab]->new_column("log_wgt");
-      for(size_t i=0;i<col_names.size();i++) {
-	tables[itab]->new_column(col_names[i]);
-	if (col_units[i].length()>0) {
-	  tables[itab]->set_unit(col_names[i],col_units[i]);
-	}
+    table=std::shared_ptr<o2scl::table_units<> >(new o2scl::table_units<>);
+    table->clear();
+    table->new_column("thread");
+    table->new_column("walker");
+    table->new_column("mult");
+    table->new_column("log_wgt");
+    for(size_t i=0;i<col_names.size();i++) {
+      table->new_column(col_names[i]);
+      if (col_units[i].length()>0) {
+	table->set_unit(col_names[i],col_units[i]);
       }
-
     }
     
     walker_rows.resize(this->n_walk*this->n_threads);
@@ -1137,7 +1133,17 @@ namespace o2scl {
   virtual int fill_line(const vec_t &pars, double log_weight, 
 			std::vector<double> &line, data_t &dat,
 			fill_t &fill) {
-    
+
+#ifdef O2SCL_OPENMP
+    size_t i_thread=omp_get_thread_num();
+#else
+    size_t i_thread=0;
+#endif
+
+    // Thread
+    line.push_back(i_thread);
+    // Walker (set later)
+    line.push_back(0.0);
     // Initial multiplier
     line.push_back(1.0);
     line.push_back(log_weight);
@@ -1186,14 +1192,15 @@ namespace o2scl {
     this->n_threads=1;
 #endif
 
+    // Setup the vector of measure functions
     std::vector<internal_measure_t> meas(this->n_threads);
     for(size_t it=0;it<this->n_threads;it++) {
       meas[it]=std::bind
 	(std::mem_fn<int(const vec_t &,double,size_t,bool,
-			 data_t &, fill_t &)>
+			 data_t &, size_t, fill_t &)>
 	 (&mcmc_para_table::add_line),this,std::placeholders::_1,
 	 std::placeholders::_2,std::placeholders::_3,std::placeholders::_4,
-	 std::placeholders::_5,std::ref(fill[it]));
+	 std::placeholders::_5,it,std::ref(fill[it]));
     }
     
     return parent_t::mcmc(nparams,low,high,func,meas);
@@ -1201,14 +1208,14 @@ namespace o2scl {
   
   /** \brief Get the output table
    */
-  std::shared_ptr<o2scl::table_units<> > get_table(size_t i_thread) {
-    return tables[i_thread];
+  std::shared_ptr<o2scl::table_units<> > get_table() {
+    return table;
   }
   
   /** \brief Set the output table
    */
-  void set_table(std::shared_ptr<o2scl::table_units<> > &t, size_t i_thread) {
-    tables[i_thread]=t;
+  void set_table(std::shared_ptr<o2scl::table_units<> > &t) {
+    table=t;
     return;
   }
   
@@ -1217,15 +1224,32 @@ namespace o2scl {
   */
   virtual int add_line(const vec_t &pars, double log_weight,
 		       size_t walker_ix, bool new_meas, data_t &dat,
-		       fill_t &fill) {
+		       size_t i_thread, fill_t &fill) {
 
-#ifdef O2SCL_OPENMP
-    size_t i_thread=omp_get_thread_num();
-#else
-    size_t i_thread=0;
-#endif
-    
+    // The combined walker/thread index 
     size_t windex=i_thread*this->n_walk+this->curr_walker;
+
+    // The table row index
+    size_t tindex=mcmc_iters*this->n_threads*this->n_walk+windex;
+    
+    // If there's not enough space in the table for this iteration,
+    // create it but make sure only one thread is doing this at a time
+#pragma omp critical o2scl_mcmc_para_table_add_line
+    {
+      if (table->get_nlines()<=windex) {
+#ifdef O2SCL_OPENMP
+	size_t istart=table->get_nlines();
+	table->set_nlines(table->get_nlines()+this->n_threads*this->n_walk);
+	for(size_t i=0;i<this->n_walk;i++) {
+	  for(size_t j=0;j<this->n_threads;j++) {
+	    table->set("thread",istart+i*n_walk+j,j);
+	    table->set("walker",istart+i*n_walk+j,i);
+	    table->set("mult",istart+i*n_walk+j,0.0);
+	    table->set("log_wgt",istart+i*n_walk+j,-1.0);
+	  }
+	}
+      }
+    }
     
     // Test to see if we need to add a new line of data or increment
     // the weight on the previous line. If the fill function has reset
@@ -1234,7 +1258,7 @@ namespace o2scl {
     
     if (new_meas==true ||
 	walker_rows[windex]<0 ||
-	walker_rows[windex]>=((int)(tables[i_thread]->get_nlines()))) {
+	walker_rows[windex]>=((int)(table->get_nlines()))) {
       
       std::vector<double> line;
 	int fret=fill_line(pars,log_weight,line,dat,fill);
@@ -1258,9 +1282,9 @@ namespace o2scl {
 	  return this->mcmc_done;
 	}
 	
-	if (line.size()!=tables[i_thread]->get_ncolumns()) {
+	if (line.size()!=table->get_ncolumns()) {
 	  std::cout << "line: " << line.size() << " columns: "
-		    << tables[i_thread]->get_ncolumns() << std::endl;
+		    << table->get_ncolumns() << std::endl;
 	  O2SCL_ERR("Table misalignment in mcmc_para_table::add_line().",
 		    exc_einval);
 	}
@@ -1269,7 +1293,7 @@ namespace o2scl {
 	  std::cout << "mcmc: Adding line:" << std::endl;
 	  std::vector<std::string> sc_in, sc_out;
 	  for(size_t k=0;k<line.size();k++) {
-	    sc_in.push_back(tables[i_thread]->get_column_name(k)+": "+
+	    sc_in.push_back(table->get_column_name(k)+": "+
 			    o2scl::dtos(line[k]));
 	  }
 	  o2scl::screenify(line.size(),sc_in,sc_out);
@@ -1278,13 +1302,13 @@ namespace o2scl {
 	  }
 	}
 	
-	walker_rows[windex]=tables[i_thread]->get_nlines();
-	tables[i_thread]->line_of_data(line.size(),line);
+	walker_rows[windex]=table->get_nlines();
+	table->line_of_data(line.size(),line);
 	
       } else {
 	
 	// Otherwise, just increment the multiplier on the previous line
-	//std::cout << "nlines: " << tables[i_thread]->get_nlines()
+	//std::cout << "nlines: " << table->get_nlines()
 	//<< std::endl;
 	//std::cout << "walker: " << this->curr_walker << std::endl;
 	//std::cout << "row: " << walker_rows[windex]
@@ -1292,20 +1316,20 @@ namespace o2scl {
 	//O2SCL_ERR2("Sanity in row counting in ",
 	//"mcmc_para_table::add_line().",o2scl::exc_esanity);
 	
-	double mult_old=tables[i_thread]->get("mult",walker_rows[windex]);
-	tables[i_thread]->set("mult",walker_rows[windex],mult_old+1.0);
+	double mult_old=table->get("mult",walker_rows[windex]);
+	table->set("mult",walker_rows[windex],mult_old+1.0);
 	
 	if (this->verbose>=2) {
 	  std::cout << "mcmc: Updating line:" << std::endl;
 	  std::vector<std::string> sc_in, sc_out;
-	  for(size_t k=0;k<tables[i_thread]->get_ncolumns();k++) {
-	    std::string cname=tables[i_thread]->get_column_name(k);
+	  for(size_t k=0;k<table->get_ncolumns();k++) {
+	    std::string cname=table->get_column_name(k);
 	    sc_in.push_back
 	      (cname+": "+
-	       o2scl::dtos(tables[i_thread]->get(cname,
+	       o2scl::dtos(table->get(cname,
 						 walker_rows[windex])));
 	  }
-	  o2scl::screenify(tables[i_thread]->get_ncolumns(),sc_in,sc_out);
+	  o2scl::screenify(table->get_ncolumns(),sc_in,sc_out);
 	  for(size_t k=0;k<sc_out.size();k++) {
 	    std::cout << sc_out[k] << std::endl;
 	  }
@@ -1334,13 +1358,13 @@ namespace o2scl {
     
     for(size_t it=0;it<this->n_threads;it++) {
       
-      size_t n=tables[it]->get_nlines();
+      size_t n=table->get_nlines();
       if (n_blocks>n) {
 	O2SCL_ERR2("Cannot reblock. Not enough data in ",
 		   "mcmc_para_table::reblock().",o2scl::exc_einval);
       }
       size_t n_block=n/n_blocks;
-      size_t m=tables[it]->get_ncolumns();
+      size_t m=table->get_ncolumns();
       for(size_t j=0;j<n_blocks;j++) {
 	double mult=0.0;
 	ubvector dat(m);
@@ -1348,18 +1372,18 @@ namespace o2scl {
 	  dat[i]=0.0;
 	}
 	for(size_t k=j*n_block;k<(j+1)*n_block;k++) {
-	  mult+=(*tables[it])["mult"][k];
+	  mult+=(*table)["mult"][k];
 	  for(size_t i=1;i<m;i++) {
-	    dat[i]+=(*tables[it])[i][k]*(*tables[it])["mult"][k];
+	    dat[i]+=(*table)[i][k]*(*table)["mult"][k];
 	  }
 	}
-	tables[it]->set("mult",j,mult);
+	table->set("mult",j,mult);
 	for(size_t i=1;i<m;i++) {
 	  dat[i]/=mult;
-	  tables[it]->set(i,j,dat[i]);
+	  table->set(i,j,dat[i]);
 	}
       }
-      tables[it]->set_nlines(n_blocks);
+      table->set_nlines(n_blocks);
 
     }
     
