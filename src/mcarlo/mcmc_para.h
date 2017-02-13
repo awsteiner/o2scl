@@ -47,6 +47,7 @@
 #include <o2scl/cholesky.h>
 #include <o2scl/vector.h>
 #include <o2scl/multi_funct.h>
+#include <o2scl/interpm_idw.h>
 
 /** \brief Main namespace
     
@@ -196,6 +197,9 @@ namespace o2scl {
   
   public:
 
+  /// If non-zero, the maximum number of MCMC iterations (default 0)
+  size_t max_iters;
+  
   /** \brief Prefix for output filenames
    */
   std::string prefix;
@@ -297,6 +301,7 @@ namespace o2scl {
     
     prefix="mcmc";
     max_time=0.0;
+    max_iters=0;
   }
 
   /// Requested number of threads
@@ -458,9 +463,13 @@ namespace o2scl {
 	init[ipar]=current[0][ipar];
       }
 
+#ifdef O2SCL_OPENMP
 #pragma omp parallel default(shared)
+#endif
       {
+#ifdef O2SCL_OPENMP
 #pragma omp for
+#endif
 	for(size_t it=0;it<n_threads;it++) {
 	  
 	  // Initialize each walker in turn
@@ -553,7 +562,7 @@ namespace o2scl {
 	}
       }
       // End of parallel region
-
+      
       // Stop early if mcmc_done was returned
       bool stop_early=false;
       for(size_t it=0;it<n_threads;it++) {
@@ -602,6 +611,11 @@ namespace o2scl {
 
     } else {
 
+      // Note that this value is used (e.g. in
+      // mcmc_para_table::add_line() ) even if aff_inv is false, so we
+      // set it to zero here.
+      curr_walker=0;
+
       // Initial point and weights without stretch-move
 
       func_ret[0]=func[0](nparams,current[0],w_current[0],data_arr[0]);
@@ -621,9 +635,13 @@ namespace o2scl {
 	return 2;
       }
       
+#ifdef O2SCL_OPENMP
 #pragma omp parallel default(shared)
+#endif
       {
+#ifdef O2SCL_OPENMP
 #pragma omp for
+#endif
 	for(size_t it=0;it<n_threads;it++) {
 	  // Copy the results over from the initial point
 	  if (it!=0) {
@@ -646,7 +664,7 @@ namespace o2scl {
 	}
       }
       // End of parallel region
-
+      
       // Stop early if mcmc_done was returned
       bool stop_early=false;
       for(size_t it=0;it<n_threads;it++) {
@@ -703,9 +721,13 @@ namespace o2scl {
 	curr_walker=mcmc_iters % n_walk;
       }
       
+#ifdef O2SCL_OPENMP
 #pragma omp parallel default(shared)
+#endif
       {
+#ifdef O2SCL_OPENMP
 #pragma omp for
+#endif
 	for(size_t it=0;it<n_threads;it++) {
 	  
 	  // ---------------------------------------------------
@@ -781,7 +803,7 @@ namespace o2scl {
 	}
       }
       // End of parallel region
-
+      
       // Handle verbose output serially
       if (verbose>=1) {
 	for(size_t it=0;it<n_threads;it++) {
@@ -820,9 +842,13 @@ namespace o2scl {
 	}
       }
 
+#ifdef O2SCL_OPENMP
 #pragma omp parallel default(shared)
+#endif
       {
+#ifdef O2SCL_OPENMP
 #pragma omp for
+#endif
 	for(size_t it=0;it<n_threads;it++) {
 	  
 	  // Index in storage
@@ -963,25 +989,34 @@ namespace o2scl {
 	  
 	}
       }
-      
+
       if (verbose>=3) {
 	std::cout << "Press a key and type enter to continue. ";
 	char ch;
 	std::cin >> ch;
       }
 
-      // Check to see if we're out of time
-#ifdef O2SCL_MPI
-      double elapsed=MPI_Wtime()-mpi_start_time;
-#else
-      double elapsed=time(0)-mpi_start_time;
-#endif
-      if (max_time>0.0 && elapsed>max_time) {
-	if (verbose>=0) {
-	  scr_out << "mcmc (0): Stopping because elapsed > max_time."
-		  << std::endl;
-	}
+      if (main_done==false && warm_up==false && max_iters>0 &&
+	  mcmc_iters==max_iters) {
+	scr_out << "mcmc (0): Stopping because number of iterations "
+		<< " equal to 'max_iters'." << std::endl;
 	main_done=true;
+      }
+      
+      if (main_done==false) {
+	// Check to see if we're out of time
+#ifdef O2SCL_MPI
+	double elapsed=MPI_Wtime()-mpi_start_time;
+#else
+	double elapsed=time(0)-mpi_start_time;
+#endif
+	if (max_time>0.0 && elapsed>max_time) {
+	  if (verbose>=0) {
+	    scr_out << "mcmc (0): Stopping because elapsed > max_time."
+		    << std::endl;
+	  }
+	  main_done=true;
+	}
       }
 
       // --------------------------------------------------------------
@@ -1093,8 +1128,9 @@ namespace o2scl {
     // -----------------------------------------------------------
     // Init tables
     
+    std::cout << "Here0." << std::endl;
     table=std::shared_ptr<o2scl::table_units<> >(new o2scl::table_units<>);
-    table->clear();
+    std::cout << "Here1." << std::endl;
     table->new_column("thread");
     table->new_column("walker");
     table->new_column("mult");
@@ -1110,6 +1146,7 @@ namespace o2scl {
     for(size_t i=0;i<this->n_walk*this->n_threads;i++) {
       walker_rows[i]=-1;
     }
+    std::cout << "Here2 " << walker_rows.size() << std::endl;
 
     /*
       if (this->verbose>=2) {
@@ -1140,6 +1177,7 @@ namespace o2scl {
     size_t i_thread=0;
 #endif
 
+    std::cout << "Kere" << std::endl;
     // Thread
     line.push_back(i_thread);
     // Walker (set later)
@@ -1150,6 +1188,7 @@ namespace o2scl {
     for(size_t i=0;i<pars.size();i++) {
       line.push_back(pars[i]);
     }
+    std::cout << "Kere2" << std::endl;
     return fill(pars,log_weight,line,dat);
   }
   
@@ -1157,10 +1196,17 @@ namespace o2scl {
       to each walker
   */
   std::vector<int> walker_rows;
+
+  /// Likelihood estimator
+  interpm_idw<double *> esti;
   
   public:
+
+  /// If true, allow estimates of the weight
+  bool allow_estimates;
   
   mcmc_para_table() {
+    allow_estimates=false;
   }
   
   /// \name Basic usage
@@ -1185,7 +1231,9 @@ namespace o2scl {
 		   vec_t &low, vec_t &high, std::vector<func_t> &func,
 		   std::vector<fill_t> &fill) {
     
-    // Set number of threads
+    // Set number of threads (this is done in the child as well, but
+    // we need this number to set up the vector of measure functions
+    // below).
 #ifdef O2SCL_OPENMP
     omp_set_num_threads(this->n_threads);
 #else
@@ -1193,7 +1241,9 @@ namespace o2scl {
 #endif
 
     // Setup the vector of measure functions
+    std::cout << "Jere0" << std::endl;
     std::vector<internal_measure_t> meas(this->n_threads);
+    std::cout << "Jere1" << std::endl;
     for(size_t it=0;it<this->n_threads;it++) {
       meas[it]=std::bind
 	(std::mem_fn<int(const vec_t &,double,size_t,bool,
@@ -1202,6 +1252,7 @@ namespace o2scl {
 	 std::placeholders::_2,std::placeholders::_3,std::placeholders::_4,
 	 std::placeholders::_5,it,std::ref(fill[it]));
     }
+    std::cout << "Jere2" << std::endl;
     
     return parent_t::mcmc(nparams,low,high,func,meas);
   }
@@ -1226,117 +1277,103 @@ namespace o2scl {
 		       size_t walker_ix, bool new_meas, data_t &dat,
 		       size_t i_thread, fill_t &fill) {
 
+    std::cout << "Lere0" << std::endl;
+    
     // The combined walker/thread index 
     size_t windex=i_thread*this->n_walk+this->curr_walker;
 
-    // The table row index
-    size_t tindex=mcmc_iters*this->n_threads*this->n_walk+windex;
+    // The total number of walkers * threads
+    size_t ntot=this->n_threads*this->n_walk;
+
+    std::cout << "Lere0b " << i_thread << " " << this->n_walk << " "
+    << this->curr_walker << std::endl;
+    std::cout << "Lere0b " << windex << " " << ntot << std::endl;
+
+    // For the first iteration, immediately set the correct row
+    if (walker_rows[windex]<0) walker_rows[windex]=windex;
     
+    std::cout << "Lere1" << std::endl;
+
     // If there's not enough space in the table for this iteration,
-    // create it but make sure only one thread is doing this at a time
-#pragma omp critical o2scl_mcmc_para_table_add_line
-    {
-      if (table->get_nlines()<=windex) {
+    // create it but make sure only one thread is doing this at a
+    // time.
 #ifdef O2SCL_OPENMP
+#pragma omp critical (o2scl_mcmc_para_table_add_line)
+#endif
+    {
+      if (table->get_nlines()<=walker_rows[windex]+ntot) {
 	size_t istart=table->get_nlines();
-	table->set_nlines(table->get_nlines()+this->n_threads*this->n_walk);
+	// Create enough space
+	table->set_nlines(table->get_nlines()+ntot);
+	// Now additionally initialize the first four colums
 	for(size_t i=0;i<this->n_walk;i++) {
 	  for(size_t j=0;j<this->n_threads;j++) {
-	    table->set("thread",istart+i*n_walk+j,j);
-	    table->set("walker",istart+i*n_walk+j,i);
-	    table->set("mult",istart+i*n_walk+j,0.0);
-	    table->set("log_wgt",istart+i*n_walk+j,-1.0);
+	    table->set("thread",istart+i*this->n_walk+j,j);
+	    table->set("walker",istart+i*this->n_walk+j,i);
+	    table->set("mult",istart+i*this->n_walk+j,0.0);
+	    table->set("log_wgt",istart+i*this->n_walk+j,-1.0);
 	  }
 	}
       }
     }
+    // End of parallel region
     
+    std::cout << "Lere2" << std::endl;
+
     // Test to see if we need to add a new line of data or increment
     // the weight on the previous line. If the fill function has reset
     // the table data, then the walker_rows will refer to a row which
     // doesn't currently exist, so we have to add a new line of data.
-    
-    if (new_meas==true ||
-	walker_rows[windex]<0 ||
-	walker_rows[windex]>=((int)(table->get_nlines()))) {
-      
-      std::vector<double> line;
-	int fret=fill_line(pars,log_weight,line,dat,fill);
-	
-	if (fret!=o2scl::success) {
-	  // If we're done, we stop before adding the last point to the
-	  // table. This is important because otherwise the last line in
-	  // the table will always only have unit multiplicity, which
-	  // may or may not be correct.
-	  if (fret==this->mcmc_done) {
-	    if (this->verbose>=1) {
-	      std::cout << "Fill function returned mcmc_done. " 
-			<< "Stopping run." << std::endl;
-	    }
-	  } else {
-	    if (this->verbose>=1) {
-	      std::cout << "Fill function returned " << fret
-			<< ". Stopping run." << std::endl;
-	    }
-	  }
-	  return this->mcmc_done;
-	}
-	
-	if (line.size()!=table->get_ncolumns()) {
-	  std::cout << "line: " << line.size() << " columns: "
-		    << table->get_ncolumns() << std::endl;
-	  O2SCL_ERR("Table misalignment in mcmc_para_table::add_line().",
-		    exc_einval);
-	}
-	
-	if (this->verbose>=2) {
-	  std::cout << "mcmc: Adding line:" << std::endl;
-	  std::vector<std::string> sc_in, sc_out;
-	  for(size_t k=0;k<line.size();k++) {
-	    sc_in.push_back(table->get_column_name(k)+": "+
-			    o2scl::dtos(line[k]));
-	  }
-	  o2scl::screenify(line.size(),sc_in,sc_out);
-	  for(size_t k=0;k<sc_out.size();k++) {
-	    std::cout << sc_out[k] << std::endl;
-	  }
-	}
-	
-	walker_rows[windex]=table->get_nlines();
-	table->line_of_data(line.size(),line);
-	
-      } else {
-	
-	// Otherwise, just increment the multiplier on the previous line
-	//std::cout << "nlines: " << table->get_nlines()
-	//<< std::endl;
-	//std::cout << "walker: " << this->curr_walker << std::endl;
-	//std::cout << "row: " << walker_rows[windex]
-	//<< std::endl;
-	//O2SCL_ERR2("Sanity in row counting in ",
-	//"mcmc_para_table::add_line().",o2scl::exc_esanity);
-	
-	double mult_old=table->get("mult",walker_rows[windex]);
-	table->set("mult",walker_rows[windex],mult_old+1.0);
-	
-	if (this->verbose>=2) {
-	  std::cout << "mcmc: Updating line:" << std::endl;
-	  std::vector<std::string> sc_in, sc_out;
-	  for(size_t k=0;k<table->get_ncolumns();k++) {
-	    std::string cname=table->get_column_name(k);
-	    sc_in.push_back
-	      (cname+": "+
-	       o2scl::dtos(table->get(cname,
-						 walker_rows[windex])));
-	  }
-	  o2scl::screenify(table->get_ncolumns(),sc_in,sc_out);
-	  for(size_t k=0;k<sc_out.size();k++) {
-	    std::cout << sc_out[k] << std::endl;
-	  }
-	}
 
+    if (new_meas==true || walker_rows[windex]<0) {
+
+      std::cout << "Lere4a" << std::endl;
+      
+      // We need to create a new measurement, so update the
+      // row corresponding to this index
+      walker_rows[windex]+=ntot;
+      
+      if (walker_rows[windex]>=((int)(table->get_nlines()))) {
+	O2SCL_ERR("Not enough space in table.",o2scl::exc_esanity);
       }
 
+      std::vector<double> line;
+      int fret=fill_line(pars,log_weight,line,dat,fill);
+      
+      if (fret!=o2scl::success) {
+	// If we're done, we stop before adding the last point to the
+	// table. This is important because otherwise the last line in
+	// the table will always only have unit multiplicity, which
+	// may or may not be correct.
+	return this->mcmc_done;
+      }
+      
+      if (line.size()!=table->get_ncolumns()) {
+	std::cout << "line: " << line.size() << " columns: "
+	<< table->get_ncolumns() << std::endl;
+	O2SCL_ERR("Table misalignment in mcmc_para_table::add_line().",
+		  exc_einval);
+      }
+      
+      std::cout << "Lere4b" << std::endl;
+
+      table->set_row(((size_t)walker_rows[windex]),line);
+      
+      std::cout << "Lere4c" << std::endl;
+      
+    } else {
+	
+      // Otherwise, just increment the multiplier on the previous line
+      
+      std::cout << "Lere5a" << std::endl;
+      double mult_old=table->get("mult",walker_rows[windex]);
+      table->set("mult",walker_rows[windex],mult_old+1.0);
+      std::cout << "Lere5b" << std::endl;
+      
+    }
+
+    std::cout << "Lere3" << std::endl;
+    
     return 0;
   }
   //@}

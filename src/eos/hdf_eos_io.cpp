@@ -69,7 +69,11 @@ void o2scl_hdf::rmf_load(o2scl::eos_had_rmf &rmf, std::string model,
   // Some debugging code to see why travis fails to run examples
   cout << "Function rmf_load() looking for file name: " << fname << endl;
   string cmd="ls "+dir+"/rmfdata";
-  system(cmd.c_str());
+  int sret=system(cmd.c_str());
+  if (sret!=0) {
+    O2SCL_ERR2("System call failed in o2scl_hdf::rmf_load().",
+	       " File not found?",o2scl::exc_efilenotfound);
+  }
   
   hdf_file hf;
   hf.open(fname);

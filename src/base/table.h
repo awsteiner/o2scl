@@ -395,6 +395,21 @@ namespace o2scl {
     return;
   }
 
+  /** \brief Set an entire row of data
+
+      The type <tt>size_vec_t</tt> must be a type which has a
+      <tt>size()</tt> method.
+   */
+  template<class size_vec_t> void set_row(size_t row, size_vec_t &v) {
+    if (row>=get_nlines()) {
+      O2SCL_ERR("Row not found in table::set_line().",o2scl::exc_einval);
+    }
+    for(size_t i=0;i<get_ncolumns() && i<v.size();i++) {
+      alist[i]->second.dat[row]=v[i];
+    }
+    return;
+  }
+
   /** \brief Get value from row \c row of column named \c col.
       \f$ {\cal O}(\log(C)) \f$
   */
