@@ -106,8 +106,6 @@ namespace o2scl {
       in the case that the steps are accepted or rejected.
 
       \note This class is experimental.
-      
-      This is a test 2.
   */
   template<class func_t, class measure_t,
     class data_t, class vec_t=ubvector> class mcmc_para_base {
@@ -1259,6 +1257,27 @@ namespace o2scl {
     return;
   }
   
+  /** \brief Determine the chain sizes
+   */
+  void get_chain_sizes(std::vector<size_t> &csizes) {
+
+    size_t ntot=this->n_threads*this->n_walk;
+    csizes.resize(ntot);
+    
+    for(size_t it=0;it<this->n_threads;it++) {
+      for(size_t iw=0;iw<this->n_walk;iw++) {
+	size_t ix=it*this->n_walk+iw;
+	size_t istart=ix;
+	csizes[ix]=0;
+	for(size_t j=istart;j<table->get_nlines();j+=ntot) {
+	  if (table->get("mult",j)>0.5) csizes[ix]++;
+	}
+      }
+    }
+    
+    return;
+  }
+  
   /** \brief A measurement function which adds the point to the
       table
   */
@@ -1284,7 +1303,8 @@ namespace o2scl {
 
       // If there's not enough space in the table for this iteration,
       // create it
-      if (table->get_nlines()<=walker_rows[windex]+ntot) {
+      if (walker_rows[windex]<0 ||
+	  table->get_nlines()<=walker_rows[windex]+ntot) {
 	size_t istart=table->get_nlines();
 	// Create enough space
 	table->set_nlines(table->get_nlines()+ntot);
@@ -1308,7 +1328,7 @@ namespace o2scl {
 
 	// We need to create a new measurement, so update the
 	// row corresponding to this index
-	if (walker_rows[windex]>0) {
+	if (walker_rows[windex]>=0) {
 	  walker_rows[windex]+=ntot;
 	} else {
 	  walker_rows[windex]=windex;
@@ -1337,6 +1357,14 @@ namespace o2scl {
 	  }
 	  
 	  table->set_row(((size_t)walker_rows[windex]),line);
+	  /*
+	    if (i_thread==0) {
+	    std::cout << "Setting: "
+	    << walker_rows[windex] << " "
+	    << line[0] << " " << line[1] << " " << line[2] << " "
+	    << line[3] << std::endl;
+	    }
+	  */
 	  
 	}
       
