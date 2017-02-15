@@ -189,8 +189,13 @@ namespace o2scl {
   }
   //@}
 
-  /// Index of the current walker
-  size_t curr_walker;
+  /** \brief Index of the current walker
+
+      This quantity has to be a vector because different threads
+      may have different values for the current walker during
+      the initialization phase for the affine sampling algorithm.
+   */
+  std::vector<size_t> curr_walker;
 
   /// Number of initial points specified by the user;
   size_t n_init_points;
@@ -263,6 +268,7 @@ namespace o2scl {
   bool always_accept;
 
   /** \brief Initial step fraction for affine-invariance sampling walkers
+      (default 0.1)
    */
   double ai_initial_step;
   //@}
@@ -389,8 +395,9 @@ namespace o2scl {
       w_current[i]=0.0;
     }
 
-    // Allocate ret_value_counts
+    // Allocate ret_value_counts and curr_walker
     ret_value_counts.resize(n_threads);
+    curr_walker.resize(n_threads);
 
     // Initialize data and switch arrays
     data_arr.resize(2*ssize);
@@ -473,15 +480,15 @@ namespace o2scl {
 	for(size_t it=0;it<n_threads;it++) {
 	  
 	  // Initialize each walker in turn
-	  for(curr_walker=0;curr_walker<n_walk &&
-		mcmc_done_flag[it]==false;curr_walker++) {
+	  for(curr_walker[it]=0;curr_walker[it]<n_walk &&
+		mcmc_done_flag[it]==false;curr_walker[it]++) {
 
 	    // Index in storage
-	    size_t sindex=n_walk*it+curr_walker;
+	    size_t sindex=n_walk*it+curr_walker[it];
 	    
 	    size_t init_iters=0;
 	    bool done=false;
-	    
+
 	    // If we already have a guess, try to use that
 	    if (sindex<n_init_points) {
 	      
@@ -500,14 +507,14 @@ namespace o2scl {
 		  ret_value_counts[it][func_ret[it]]++;
 		}
 		meas_ret[it]=meas[it](current[sindex],w_current[sindex],
-				      curr_walker,true,data_arr[sindex]);
+				      curr_walker[it],true,data_arr[sindex]);
 		if (meas_ret[it]==mcmc_done) {
 		  mcmc_done_flag[it]=true;
 		}
 		done=true;
 	      }
 	    }
-	    
+
 	    while (!done && !mcmc_done_flag[it]) {
 	      
 	      // Make a perturbation from the initial point
@@ -522,6 +529,11 @@ namespace o2scl {
 		do {
 		  current[sindex][ipar]=init[ipar]+(rg[it].random()*2.0-1.0)*
 		    (high[ipar]-low[ipar])*ai_initial_step;
+		  if (it==1) {
+		    std::cout << "H: " << it << " " << curr_walker[it] << " "
+			      << current[sindex][0] << " " << sindex
+			      << std::endl;
+		  }
 		} while (current[sindex][ipar]>high[ipar] ||
 			 current[sindex][ipar]<low[ipar]);
 	      }
@@ -532,7 +544,7 @@ namespace o2scl {
 		
 	      // ------------------------------------------------
 	      
-	      // Increment iteration count
+	    // Increment iteration count
 	      init_iters++;
 	      
 	      if (func_ret[it]==mcmc_done) {
@@ -547,7 +559,8 @@ namespace o2scl {
 		  }
 		  if (meas_ret[it]!=mcmc_done) {
 		    meas_ret[it]=meas[it](current[sindex],w_current[sindex],
-					  curr_walker,true,data_arr[sindex]);
+					  curr_walker[it],true,
+					  data_arr[sindex]);
 		  } else {
 		    mcmc_done_flag[it]=true;
 		  }
@@ -583,8 +596,8 @@ namespace o2scl {
       w_best=w_current[0];
       size_t best_index=0;
       for(size_t it=0;it<n_threads;it++) {
-	for(curr_walker=0;curr_walker<n_walk;curr_walker++) {
-	  size_t sindex=n_walk*it+curr_walker;
+	for(curr_walker[it]=0;curr_walker[it]<n_walk;curr_walker[it]++) {
+	  size_t sindex=n_walk*it+curr_walker[it];
 	  if (w_current[sindex]>w_current[0]) {
 	    best_index=sindex;
 	    w_best=w_current[sindex];
@@ -597,13 +610,13 @@ namespace o2scl {
       // Verbose output
       if (verbose>=2) {
 	for(size_t it=0;it<n_threads;it++) {
-	  for(curr_walker=0;curr_walker<n_walk;curr_walker++) {
-	    size_t sindex=n_walk*it+curr_walker;
+	  for(curr_walker[it]=0;curr_walker[it]<n_walk;curr_walker[it]++) {
+	    size_t sindex=n_walk*it+curr_walker[it];
 	    scr_out.precision(4);
-	    scr_out << "mcmc (";
+	    scr_out << "mcmc (" << it << "): ";
 	    scr_out.width((int)(1.0+log10((double)(n_walk-1))));
-	    scr_out << it << "): " << curr_walker << " "
-		    << w_current[sindex] << " (initial; ai)" << std::endl;
+	    scr_out << curr_walker[it] << " " << w_current[sindex]
+		    << " (initial; ai)" << std::endl;
 	    scr_out.precision(6);
 	  }
 	}
@@ -614,7 +627,9 @@ namespace o2scl {
       // Note that this value is used (e.g. in
       // mcmc_para_table::add_line() ) even if aff_inv is false, so we
       // set it to zero here.
-      curr_walker=0;
+      for(size_t it=0;it<n_threads;it++) {
+	curr_walker[it]=0;
+      }
 
       // Initial point and weights without stretch-move
 
@@ -710,15 +725,14 @@ namespace o2scl {
     while (!main_done) {
 
       // Walker to move (or zero when aff_inv is false)
-      curr_walker=0;
       std::vector<double> smove_z(n_threads);
       for(size_t it=0;it<n_threads;it++) {
+	curr_walker[it]=0;
 	smove_z[it]=0.0;
-      }
-      
-      // Choose walker to move (same for all threads)
-      if (aff_inv) {
-	curr_walker=mcmc_iters % n_walk;
+	// Choose walker to move (same for all threads)
+	if (aff_inv) {
+	  curr_walker[it]=mcmc_iters % n_walk;
+	}
       }
       
 #ifdef O2SCL_OPENMP
@@ -738,7 +752,7 @@ namespace o2scl {
 	    size_t ij;
 	    do {
 	      ij=((size_t)(rg[it].random()*((double)n_walk)));
-	    } while (ij==curr_walker || ij>=n_walk);
+	    } while (ij==curr_walker[it] || ij>=n_walk);
 	    
 	    // Select z 
 	    double p=rg[it].random();
@@ -748,7 +762,7 @@ namespace o2scl {
 	    // Create new trial point
 	    for(size_t i=0;i<nparams;i++) {
 	      next[it][i]=current[n_walk*it+ij][i]+
-		smove_z[it]*(current[n_walk*it+curr_walker][i]-
+		smove_z[it]*(current[n_walk*it+curr_walker[it]][i]-
 			     current[n_walk*it+ij][i]);
 	    }
 	    
@@ -852,7 +866,7 @@ namespace o2scl {
 	for(size_t it=0;it<n_threads;it++) {
 	  
 	  // Index in storage
-	  size_t sindex=n_walk*it+curr_walker;
+	  size_t sindex=n_walk*it+curr_walker[it];
 	  
 	  // ---------------------------------------------------
 	  // Accept or reject
@@ -890,10 +904,10 @@ namespace o2scl {
 	    // Store results from new point
 	    if (!warm_up) {
 	      if (switch_arr[sindex]==false) {
-		meas_ret[it]=meas[it](next[it],w_next[it],curr_walker,true,
+		meas_ret[it]=meas[it](next[it],w_next[it],curr_walker[it],true,
 				      data_arr[sindex+n_threads*n_walk]);
 	      } else {
-		meas_ret[it]=meas[it](next[it],w_next[it],curr_walker,true,
+		meas_ret[it]=meas[it](next[it],w_next[it],curr_walker[it],true,
 				      data_arr[sindex]);
 	      }
 	    }
@@ -913,11 +927,11 @@ namespace o2scl {
 	      if (switch_arr[sindex]==false) {
 		meas_ret[it]=meas[it](current[sindex],
 				      w_current[sindex],
-				      curr_walker,false,data_arr[sindex]);
+				      curr_walker[it],false,data_arr[sindex]);
 	      } else {
 		meas_ret[it]=meas[it](current[sindex],
 				      w_current[sindex],
-				      curr_walker,false,
+				      curr_walker[it],false,
 				      data_arr[sindex+n_walk*n_threads]);
 	      }
 	    }
@@ -931,12 +945,12 @@ namespace o2scl {
       // Verbose output
       if (verbose>=2) {
 	for(size_t it=0;it<n_threads;it++) {
-	  size_t sindex=n_walk*it+curr_walker;
+	  size_t sindex=n_walk*it+curr_walker[it];
 	  scr_out.precision(4);
 	  scr_out << "mcmc (" << it << "): ";
 	  scr_out.width((int)(1.0+log10((double)(nparams-1))));
 	  scr_out << mcmc_iters << " "
-		  << curr_walker << " " << w_current[sindex]
+		  << curr_walker[it] << " " << w_current[sindex]
 		  << std::endl;
 	  scr_out.precision(6);
 	}
@@ -947,10 +961,10 @@ namespace o2scl {
 	if (func_ret[it]==o2scl::success && w_best>w_next[it]) {
 	  best=next[it];
 	  w_best=w_next[it];
-	  if (switch_arr[curr_walker]==false) {
-	    best_point(best,w_best,data_arr[curr_walker+n_walk]);
+	  if (switch_arr[curr_walker[it]]==false) {
+	    best_point(best,w_best,data_arr[curr_walker[it]+n_walk]);
 	  } else {
-	    best_point(best,w_best,data_arr[curr_walker]);
+	    best_point(best,w_best,data_arr[curr_walker[it]]);
 	  }
 	}
       }
@@ -999,7 +1013,7 @@ namespace o2scl {
       if (main_done==false && warm_up==false && max_iters>0 &&
 	  mcmc_iters==max_iters) {
 	scr_out << "mcmc (0): Stopping because number of iterations "
-		<< " equal to 'max_iters'." << std::endl;
+		<< "equal to 'max_iters'." << std::endl;
 	main_done=true;
       }
       
@@ -1286,11 +1300,13 @@ namespace o2scl {
 		       size_t i_thread, fill_t &fill) {
 
     // The combined walker/thread index 
-    size_t windex=i_thread*this->n_walk+this->curr_walker;
+    size_t windex=i_thread*this->n_walk+this->curr_walker[i_thread];
 
     // The total number of walkers * threads
     size_t ntot=this->n_threads*this->n_walk;
 
+    std::cout << (walker_ix==this->curr_walker[i_thread]) << std::endl;
+    
     int ret_value=o2scl::success;
     
     // Make sure only one thread writes to the table at a time by
