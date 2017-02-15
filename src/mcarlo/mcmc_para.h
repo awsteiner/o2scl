@@ -106,6 +106,8 @@ namespace o2scl {
       in the case that the steps are accepted or rejected.
 
       \note This class is experimental.
+      
+      This is a test 2.
   */
   template<class func_t, class measure_t,
     class data_t, class vec_t=ubvector> class mcmc_para_base {
