@@ -1201,7 +1201,7 @@ namespace o2scl {
   
   public:
 
-  /// If true, allow estimates of the weight
+  /// If true, allow estimates of the weight (default false)
   bool allow_estimates;
   
   mcmc_para_table() {
