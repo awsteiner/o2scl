@@ -529,11 +529,6 @@ namespace o2scl {
 		do {
 		  current[sindex][ipar]=init[ipar]+(rg[it].random()*2.0-1.0)*
 		    (high[ipar]-low[ipar])*ai_initial_step;
-		  if (it==1) {
-		    std::cout << "H: " << it << " " << curr_walker[it] << " "
-			      << current[sindex][0] << " " << sindex
-			      << std::endl;
-		  }
 		} while (current[sindex][ipar]>high[ipar] ||
 			 current[sindex][ipar]<low[ipar]);
 	      }
@@ -1300,13 +1295,11 @@ namespace o2scl {
 		       size_t i_thread, fill_t &fill) {
 
     // The combined walker/thread index 
-    size_t windex=i_thread*this->n_walk+this->curr_walker[i_thread];
+    size_t windex=i_thread*this->n_walk+walker_ix;
 
     // The total number of walkers * threads
     size_t ntot=this->n_threads*this->n_walk;
 
-    std::cout << (walker_ix==this->curr_walker[i_thread]) << std::endl;
-    
     int ret_value=o2scl::success;
     
     // Make sure only one thread writes to the table at a time by
@@ -1319,7 +1312,7 @@ namespace o2scl {
 
       // If there's not enough space in the table for this iteration,
       // create it
-      if (walker_rows[windex]<0 ||
+      if ((walker_rows[windex]<0 && table->get_nlines()<ntot) ||
 	  table->get_nlines()<=walker_rows[windex]+ntot) {
 	size_t istart=table->get_nlines();
 	// Create enough space
@@ -1327,10 +1320,10 @@ namespace o2scl {
 	// Now additionally initialize the first four colums
 	for(size_t i=0;i<this->n_walk;i++) {
 	  for(size_t j=0;j<this->n_threads;j++) {
-	    table->set("thread",istart+i*this->n_walk+j,j);
-	    table->set("walker",istart+i*this->n_walk+j,i);
-	    table->set("mult",istart+i*this->n_walk+j,0.0);
-	    table->set("log_wgt",istart+i*this->n_walk+j,-1.0);
+	    table->set("thread",istart+j*this->n_walk+i,j);
+	    table->set("walker",istart+j*this->n_walk+i,i);
+	    table->set("mult",istart+j*this->n_walk+i,0.0);
+	    table->set("log_wgt",istart+j*this->n_walk+i,-1.0);
 	  }
 	}
       }
@@ -1356,6 +1349,10 @@ namespace o2scl {
 
 	std::vector<double> line;
 	int fret=fill_line(pars,log_weight,line,dat,fill);
+
+	// The fill_line() function doesn't set the walker index,
+	// so we do this here
+	line[1]=walker_ix;
       
 	if (fret!=o2scl::success) {
 	  // If we're done, we stop before adding the last point to the
@@ -1396,7 +1393,7 @@ namespace o2scl {
     }
     // End of parallel region
     
-    return 0;
+    return ret_value;
   }
   //@}
   
