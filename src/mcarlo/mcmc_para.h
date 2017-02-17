@@ -444,7 +444,7 @@ namespace o2scl {
     if (verbose>=1) {
       if (aff_inv) {
 	scr_out << "mcmc: Affine-invariant step, n_params="
-		<< nparams << " n_walk=" << n_walk
+		<< nparams << ", n_walk=" << n_walk
 		<< ", n_threads=" << n_threads << ", n_ranks="
 		<< mpi_nprocs << std::endl;
       } else if (pd_mode==true) {
@@ -608,10 +608,10 @@ namespace o2scl {
 	  for(curr_walker[it]=0;curr_walker[it]<n_walk;curr_walker[it]++) {
 	    size_t sindex=n_walk*it+curr_walker[it];
 	    scr_out.precision(4);
-	    scr_out << "mcmc (" << it << "): ";
+	    scr_out << "mcmc (" << it << "): i_walk: ";
 	    scr_out.width((int)(1.0+log10((double)(n_walk-1))));
-	    scr_out << curr_walker[it] << " " << w_current[sindex]
-		    << " (initial; ai)" << std::endl;
+	    scr_out << curr_walker[it] << " log_wgt: "
+		    << w_current[sindex] << " (initial; ai)" << std::endl;
 	    scr_out.precision(6);
 	  }
 	}
@@ -944,11 +944,11 @@ namespace o2scl {
 	for(size_t it=0;it<n_threads;it++) {
 	  size_t sindex=n_walk*it+curr_walker[it];
 	  scr_out.precision(4);
-	  scr_out << "mcmc (" << it << "): ";
+	  scr_out << "mcmc (" << it << "): iter: ";
 	  scr_out.width((int)(1.0+log10((double)(nparams-1))));
-	  scr_out << mcmc_iters << " "
-		  << curr_walker[it] << " " << w_current[sindex]
-		  << std::endl;
+	  scr_out << mcmc_iters << " i_walk: "
+		  << curr_walker[it] << " log_wgt: "
+		  << w_current[sindex] << std::endl;
 	  scr_out.precision(6);
 	}
       }
