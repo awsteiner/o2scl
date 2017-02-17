@@ -539,7 +539,7 @@ namespace o2scl {
 		
 	      // ------------------------------------------------
 	      
-	    // Increment iteration count
+	      // Increment iteration count
 	      init_iters++;
 	      
 	      if (func_ret[it]==mcmc_done) {
@@ -793,11 +793,13 @@ namespace o2scl {
 	    }
 	  }
 	  if (func_ret[it]!=mcmc_skip) {
-	    if (switch_arr[it]==false) {
+	    if (switch_arr[n_walk*it+curr_walker[it]]==false) {
 	      func_ret[it]=func[it](nparams,next[it],w_next[it],
-				    data_arr[it+n_threads*n_walk]);
+				    data_arr[it*n_walk+curr_walker[it]+
+					     n_walk*n_threads]);
 	    } else {
-	      func_ret[it]=func[it](nparams,next[it],w_next[it],data_arr[it]);
+	      func_ret[it]=func[it](nparams,next[it],w_next[it],
+				    data_arr[it*n_walk+curr_walker[it]]);
 	    }
 	    if (func_ret[it]==mcmc_done) {
 	      mcmc_done_flag[it]=true;
@@ -956,10 +958,11 @@ namespace o2scl {
 	if (func_ret[it]==o2scl::success && w_best>w_next[it]) {
 	  best=next[it];
 	  w_best=w_next[it];
-	  if (switch_arr[curr_walker[it]]==false) {
-	    best_point(best,w_best,data_arr[curr_walker[it]+n_walk]);
+	  if (switch_arr[n_walk*it+curr_walker[it]]==false) {
+	    best_point(best,w_best,data_arr[curr_walker[it]+n_walk*it+
+					    n_threads*n_walk]);
 	  } else {
-	    best_point(best,w_best,data_arr[curr_walker[it]]);
+	    best_point(best,w_best,data_arr[curr_walker[it]+n_walk*it]);
 	  }
 	}
       }
@@ -1318,8 +1321,8 @@ namespace o2scl {
 	// Create enough space
 	table->set_nlines(table->get_nlines()+ntot);
 	// Now additionally initialize the first four colums
-	for(size_t i=0;i<this->n_walk;i++) {
-	  for(size_t j=0;j<this->n_threads;j++) {
+	for(size_t j=0;j<this->n_threads;j++) {
+	  for(size_t i=0;i<this->n_walk;i++) {
 	    table->set("thread",istart+j*this->n_walk+i,j);
 	    table->set("walker",istart+j*this->n_walk+i,i);
 	    table->set("mult",istart+j*this->n_walk+i,0.0);
@@ -1327,7 +1330,7 @@ namespace o2scl {
 	  }
 	}
       }
-    
+
       // Test to see if we need to add a new line of data or increment
       // the weight on the previous line. If the fill function has reset
       // the table data, then the walker_rows will refer to a row which
@@ -1370,14 +1373,6 @@ namespace o2scl {
 	  }
 	  
 	  table->set_row(((size_t)walker_rows[windex]),line);
-	  /*
-	    if (i_thread==0) {
-	    std::cout << "Setting: "
-	    << walker_rows[windex] << " "
-	    << line[0] << " " << line[1] << " " << line[2] << " "
-	    << line[3] << std::endl;
-	    }
-	  */
 	  
 	}
       
@@ -1396,6 +1391,24 @@ namespace o2scl {
     return ret_value;
   }
   //@}
+  
+  virtual void mcmc_cleanup() {
+
+    // This section removes empty rows at the end of the
+    // table that were allocated but not used
+    int i;
+    bool done=false;
+    for(i=table->get_nlines()-1;i>=0 && done==false;i--) {
+      done=true;
+      if (table->get("mult",i)<1.0e-10) {
+	done=false;
+      } 
+    }
+    if (i+2<((int)table->get_nlines())) {
+      table->set_nlines(i+2);
+    }
+    return parent_t::mcmc_cleanup();
+  }
   
   /** \brief Reaverage the data into blocks of a fixed
       size in order to avoid autocorrelations
