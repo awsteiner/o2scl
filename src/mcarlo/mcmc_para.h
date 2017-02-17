@@ -208,9 +208,6 @@ namespace o2scl {
    */
   std::vector<size_t> curr_walker;
 
-  /// Number of initial points specified by the user;
-  size_t n_init_points;
-  
   public:
 
   /// If non-zero, the maximum number of MCMC iterations (default 0)
@@ -306,7 +303,6 @@ namespace o2scl {
     always_accept=false;
     ai_initial_step=0.1;
 
-    n_init_points=0;
     n_threads=1;
 
     // Initial values for MPI paramers
@@ -328,8 +324,12 @@ namespace o2scl {
   /// Number of OpenMP threads
   size_t n_threads;
   
-  /// The first point in the parameter space
-  ubvector initial_point;
+  /** \brief Initial points in parameter space
+
+      To fully specify all of the initial points, this should be 
+      a vector of size \ref n_walk times \ref n_threads .
+   */
+  std::vector<ubvector> initial_points;
     
   /// \name Basic usage
   //@{
@@ -342,14 +342,27 @@ namespace o2scl {
   */
   virtual int mcmc(size_t nparams, vec_t &low, vec_t &high,
 		   std::vector<func_t> &func, std::vector<measure_t> &meas) {
-    
-    // Setup initial guess
-    std::vector<double> init(nparams);
-    for(size_t k=0;k<nparams;k++) {
-      if (initial_point.size()>k) {
-	init[k]=initial_point[k];
-      } else {
-	init[k]=(low[k]+high[k])/2.0;
+
+    if (initial_points.size()==0) {
+      // Setup initial guess if not specified
+      initial_points.resize(1);
+      for(size_t k=0;k<nparams;k++) {
+	initial_points[0][k]=(low[k]+high[k])/2.0;
+      }
+    } else {
+      // If initial points are specified, make sure they're within
+      // the user-specified limits
+      for(size_t iip=0;iip<initial_point.size();iip++) {
+	for(size_t ipar=0;ipar<nparams;ipar++) {
+	  if (initial_points[iip][ipar]<low[ipar] ||
+	      initial_points[iip][ipar]>high[ipar]) {
+	    O2SCL_ERR((((std::string)"Parameter ")+o2scl::szttos(ipar)+
+		       " of "+o2scl::szttos(nparams)+" out of range (value="+
+		       o2scl::dtos(initial_points[iip][ipar])+
+		       ") in mcmc_base::mcmc().").c_str(),
+		      o2scl::exc_einval);
+	  }
+	}
       }
     }
     
@@ -448,11 +461,6 @@ namespace o2scl {
     // Proposal weight
     double q_prop;
     
-    // Set current[0] to user-specified initial point
-    for(size_t i=0;i<nparams;i++) {
-      current[0][i]=init[i];
-    }
-
     // Run mcmc_init() function. The initial point, stored in
     // current[0] can be modified by this function and the local
     // variable 'init' is not accessible to the mcmc_init() function.
@@ -487,12 +495,6 @@ namespace o2scl {
     // Initial point and weights for stretch-move algorithm
     if (aff_inv) {
       
-      // The mcmc_init() function may have changed the
-      // initial point, so we copy back to init here
-      for(size_t ipar=0;ipar<nparams;ipar++) {
-	init[ipar]=current[0][ipar];
-      }
-
 #ifdef O2SCL_OPENMP
 #pragma omp parallel default(shared)
 #endif
@@ -513,7 +515,12 @@ namespace o2scl {
 	    bool done=false;
 
 	    // If we already have a guess, try to use that
-	    if (sindex<n_init_points) {
+	    if (sindex<initial_points.size()) {
+
+	      // Copy from the initial points array
+	      for(size_t ipar=0;ipar<nparams;ipar++) {
+		current[sindex][ipar]=initial_points[sindex][ipar];
+	      }
 	      
 	      // Compute the weight
 	      func_ret[it]=func[it](nparams,current[sindex],
@@ -542,15 +549,10 @@ namespace o2scl {
 	      
 	      // Make a perturbation from the initial point
 	      for(size_t ipar=0;ipar<nparams;ipar++) {
-		if (init[ipar]<low[ipar] || init[ipar]>high[ipar]) {
-		  O2SCL_ERR((((std::string)"Parameter ")+o2scl::szttos(ipar)+
-			     " of "+o2scl::szttos(nparams)+
-			     " out of range (value="+o2scl::dtos(init[ipar])+
-			     ") in mcmc_base::mcmc().").c_str(),
-			    o2scl::exc_einval);
-		}
 		do {
-		  current[sindex][ipar]=init[ipar]+(rg[it].random()*2.0-1.0)*
+		  current[sindex][ipar]=
+		    initial_points[sindex % initial_points.size()][ipar]+
+		    (rg[it].random()*2.0-1.0)*
 		    (high[ipar]-low[ipar])*ai_initial_step;
 		} while (current[sindex][ipar]>high[ipar] ||
 			 current[sindex][ipar]<low[ipar]);
@@ -648,7 +650,12 @@ namespace o2scl {
       for(size_t it=0;it<n_threads;it++) {
 	curr_walker[it]=0;
       }
-
+      
+      // Copy from the initial points array
+      for(size_t ipar=0;ipar<nparams;ipar++) {
+	current[0][ipar]=initial_points[0][ipar];
+      }
+      
       // Initial point and weights without stretch-move
 
       func_ret[0]=func[0](nparams,current[0],w_current[0],data_arr[0]);
@@ -1147,6 +1154,8 @@ namespace o2scl {
     
   /// Main data table for Markov chain
   std::shared_ptr<o2scl::table_units<> > table;
+
+  bool first_write;
   
   /** \brief MCMC initialization function
 
@@ -1227,11 +1236,69 @@ namespace o2scl {
   
   public:
 
+  /** \brief Write MCMC tables to files
+   */
+  virtual void write_files() {
+
+#ifdef O2SCL_MPI
+    // Ensure that multiple threads aren't writing to the
+    // filesystem at the same time
+    int tag=0, buffer=0;
+    if (mpi_nprocs>1 && mpi_rank>0) {
+      MPI_Recv(&buffer,1,MPI_INT,mpi_rank-1,tag,MPI_COMM_WORLD,
+	       MPI_STATUS_IGNORE);
+    }
+#endif
+    
+    hdf_file hf;
+    std::string fname=prefix+"_"+o2scl::itos(mpi_rank)+"_out";
+    hf.open_or_create(fname);
+
+    if (first_write==false) {
+      hf.set_szt("max_iters",max_iters);
+      hf.sets("prefix",prefix);
+      hf.seti("aff_inv",aff_inv);
+      hf.setd("step_fac",step_fac);
+      hf.setd("ai_initial_step",ai_initial_step);
+      hf.set_szt("n_warm_up",n_warm_up);
+      hf.seti("user_seed",user_seed);
+      hf.seti("verbose",verbose);
+      hf.set_szt("max_bad_steps",max_bad_steps);
+      hf.set_szt("n_walk",n_walk);
+      hf.set_szt("n_threads",n_threads);
+      hf.seti("always_accept",always_accept);
+      hf.seti("allow_estimates",allow_estimates);
+      first_write=true;
+    }
+    
+    hf.set_szt_vec("n_accept",this->n_accept);
+    hf.set_szt_vec("n_reject",this->n_reject);
+    hf.set_szt_arr2d_copy("ret_value_counts",this->ret_value_counts.size(),
+			  this_ret_value_counts[0].size(),
+			  this->ret_value_counts);
+    hf.setd_arr2d_copy("initial_points",this->initial_points.size(),
+		       this_initial_points[0].size(),
+		       this->initial_points);
+    
+    hdf_output(hf,*table,"markov_chain0");
+    
+    hf.close();
+    
+#ifdef O2SCL_MPI
+    if (mpi_nprocs>1 && mpi_rank>0) {
+      MPI_Send(&buffer,1,MPI_INT,mpi_rank+1,tag,MPI_COMM_WORLD);
+    }
+#endif
+    
+    return;
+  }
+  
   /// If true, allow estimates of the weight (default false)
   bool allow_estimates;
   
   mcmc_para_table() {
     allow_estimates=false;
+    first_write;
   }
   
   /// \name Basic usage

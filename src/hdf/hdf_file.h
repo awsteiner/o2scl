@@ -448,9 +448,307 @@ namespace o2scl_hdf {
     /** \brief Set matrix dataset named \c name with \c m
     */
     int setd_mat_copy(std::string name, const ubmatrix &m);
-    int seti_mat_copy(std::string name, const ubmatrix_int &m);
-    //@}
 
+    int seti_mat_copy(std::string name, const ubmatrix_int &m);
+
+    template<class arr2d_t>
+      int hdf_file::setd_arr2d_copy(std::string name, size_t r,
+				    size_t c, const arr2d &a2d) {
+      
+      if (write_access==false) {
+	O2SCL_ERR2("File not opened with write access ",
+		   "in hdf_file::setd_mat_copy().",exc_efailed);
+      }
+      
+      // Copy to a C-style array
+      double *d=new double[r*c];
+      for(size_t i=0;i<r;i++) {
+	for(size_t j=0;j<c;j++) {
+	  d[i*c+j]=a2d[i][j];
+	}
+      }
+      
+      hid_t dset, space, dcpl=0;
+      bool chunk_alloc=false;
+      
+      H5E_BEGIN_TRY
+	{
+	  // See if the dataspace already exists first
+	  dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+	} 
+      H5E_END_TRY 
+#ifdef O2SCL_NEVER_DEFINED
+	{
+	}
+#endif
+      
+      // If it doesn't exist, create it
+      if (dset<0) {
+	
+	// Create the dataspace
+	hsize_t dims[2]={r,c};
+	hsize_t max[2]={H5S_UNLIMITED,H5S_UNLIMITED};
+	space=H5Screate_simple(2,dims,max);
+	
+	// Set chunk with size determined by def_chunk()
+	dcpl=H5Pcreate(H5P_DATASET_CREATE);
+	hsize_t chunk[2]={def_chunk(m.size1()),def_chunk(m.size2())};
+	int status2=H5Pset_chunk(dcpl,2,chunk);
+	
+#ifdef O2SCL_HDF5_COMP    
+	// Compression part
+	if (compr_type==1) {
+	  int status3=H5Pset_deflate(dcpl,6);
+	} else if (compr_type==2) {
+	  int status3=H5Pset_szip(dcpl,H5_SZIP_NN_OPTION_MASK,16);
+	} else if (compr_type!=0) {
+	  O2SCL_ERR2("Invalid compression type in ",
+		     "hdf_file::setd_arr_comp().",exc_einval);
+	}
+#endif
+	
+	// Create the dataset
+	dset=H5Dcreate(current,name.c_str(),H5T_IEEE_F64LE,space,H5P_DEFAULT,
+		       dcpl,H5P_DEFAULT);
+	chunk_alloc=true;
+	
+      } else {
+	
+	// Get current dimensions
+	space=H5Dget_space(dset);  
+	hsize_t dims[2];
+	int ndims=H5Sget_simple_extent_dims(space,dims,0);
+	
+	// Set error if this dataset is more than 1-dimensional
+	if (ndims!=2) {
+	  O2SCL_ERR2("Tried to set a non-matrix dataset with a ",
+		     "matrix in hdf_file::setd_mat().",exc_einval);
+	}
+	
+	// If necessary, extend the dataset
+	if (r!=dims[0] || c!=dims[1]) {
+	  hsize_t new_dims[2]={r,c};
+	  int status3=H5Dset_extent(dset,new_dims);
+	}
+	
+      }
+      
+      // Write the data 
+      int status;
+      status=H5Dwrite(dset,H5T_NATIVE_DOUBLE,H5S_ALL,
+		      H5S_ALL,H5P_DEFAULT,d);
+      
+      status=H5Dclose(dset);
+      status=H5Sclose(space);
+      if (chunk_alloc) {
+	status=H5Pclose(dcpl);
+      }
+      
+      // Free the C-style array
+      delete[] d;
+      
+      return 0;
+    }
+
+    template<class arr2d_t>
+      int hdf_file::seti_arr2d_copy(std::string name, size_t r,
+				    size_t c, const arr2d &a2d) {
+      
+      if (write_access==false) {
+	O2SCL_ERR2("File not opened with write access ",
+		   "in hdf_file::setd_mat_copy().",exc_efailed);
+      }
+      
+      // Copy to a C-style array
+      int *d=new int[r*c];
+      for(size_t i=0;i<r;i++) {
+	for(size_t j=0;j<c;j++) {
+	  d[i*c+j]=a2d[i][j];
+	}
+      }
+      
+      hid_t dset, space, dcpl=0;
+      bool chunk_alloc=false;
+      
+      H5E_BEGIN_TRY
+	{
+	  // See if the dataspace already exists first
+	  dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+	} 
+      H5E_END_TRY 
+#ifdef O2SCL_NEVER_DEFINED
+	{
+	}
+#endif
+      
+      // If it doesn't exist, create it
+      if (dset<0) {
+	
+	// Create the dataspace
+	hsize_t dims[2]={r,c};
+	hsize_t max[2]={H5S_UNLIMITED,H5S_UNLIMITED};
+	space=H5Screate_simple(2,dims,max);
+	
+	// Set chunk with size determined by def_chunk()
+	dcpl=H5Pcreate(H5P_DATASET_CREATE);
+	hsize_t chunk[2]={def_chunk(m.size1()),def_chunk(m.size2())};
+	int status2=H5Pset_chunk(dcpl,2,chunk);
+	
+#ifdef O2SCL_HDF5_COMP    
+	// Compression part
+	if (compr_type==1) {
+	  int status3=H5Pset_deflate(dcpl,6);
+	} else if (compr_type==2) {
+	  int status3=H5Pset_szip(dcpl,H5_SZIP_NN_OPTION_MASK,16);
+	} else if (compr_type!=0) {
+	  O2SCL_ERR2("Invalid compression type in ",
+		     "hdf_file::setd_arr_comp().",exc_einval);
+	}
+#endif
+	
+	// Create the dataset
+	dset=H5Dcreate(current,name.c_str(),H5T_STD_I32LE,space,H5P_DEFAULT,
+		       dcpl,H5P_DEFAULT);
+	chunk_alloc=true;
+	
+      } else {
+	
+	// Get current dimensions
+	space=H5Dget_space(dset);  
+	hsize_t dims[2];
+	int ndims=H5Sget_simple_extent_dims(space,dims,0);
+	
+	// Set error if this dataset is more than 1-dimensional
+	if (ndims!=2) {
+	  O2SCL_ERR2("Tried to set a non-matrix dataset with a ",
+		     "matrix in hdf_file::setd_mat().",exc_einval);
+	}
+	
+	// If necessary, extend the dataset
+	if (r!=dims[0] || c!=dims[1]) {
+	  hsize_t new_dims[2]={r,c};
+	  int status3=H5Dset_extent(dset,new_dims);
+	}
+	
+      }
+      
+      // Write the data 
+      int status;
+      status=H5Dwrite(dset,H5T_NATIVE_INT,H5S_ALL,
+		      H5S_ALL,H5P_DEFAULT,d);
+      
+      status=H5Dclose(dset);
+      status=H5Sclose(space);
+      if (chunk_alloc) {
+	status=H5Pclose(dcpl);
+      }
+      
+      // Free the C-style array
+      delete[] d;
+      
+      return 0;
+    }
+    
+    template<class arr2d_t>
+      int hdf_file::set_szt_arr2d_copy(std::string name, size_t r,
+				    size_t c, const arr2d &a2d) {
+      
+      if (write_access==false) {
+	O2SCL_ERR2("File not opened with write access ",
+		   "in hdf_file::setd_mat_copy().",exc_efailed);
+      }
+      
+      // Copy to a C-style array
+      size_t *d=new size_t[r*c];
+      for(size_t i=0;i<r;i++) {
+	for(size_t j=0;j<c;j++) {
+	  d[i*c+j]=a2d[i][j];
+	}
+      }
+      
+      hid_t dset, space, dcpl=0;
+      bool chunk_alloc=false;
+      
+      H5E_BEGIN_TRY
+	{
+	  // See if the dataspace already exists first
+	  dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+	} 
+      H5E_END_TRY 
+#ifdef O2SCL_NEVER_DEFINED
+	{
+	}
+#endif
+      
+      // If it doesn't exist, create it
+      if (dset<0) {
+	
+	// Create the dataspace
+	hsize_t dims[2]={r,c};
+	hsize_t max[2]={H5S_UNLIMITED,H5S_UNLIMITED};
+	space=H5Screate_simple(2,dims,max);
+	
+	// Set chunk with size determined by def_chunk()
+	dcpl=H5Pcreate(H5P_DATASET_CREATE);
+	hsize_t chunk[2]={def_chunk(m.size1()),def_chunk(m.size2())};
+	int status2=H5Pset_chunk(dcpl,2,chunk);
+	
+#ifdef O2SCL_HDF5_COMP    
+	// Compression part
+	if (compr_type==1) {
+	  int status3=H5Pset_deflate(dcpl,6);
+	} else if (compr_type==2) {
+	  int status3=H5Pset_szip(dcpl,H5_SZIP_NN_OPTION_MASK,16);
+	} else if (compr_type!=0) {
+	  O2SCL_ERR2("Invalid compression type in ",
+		     "hdf_file::setd_arr_comp().",exc_einval);
+	}
+#endif
+	
+	// Create the dataset
+	dset=H5Dcreate(current,name.c_str(),H5T_STD_U64LE,space,H5P_DEFAULT,
+		       dcpl,H5P_DEFAULT);
+	chunk_alloc=true;
+	
+      } else {
+	
+	// Get current dimensions
+	space=H5Dget_space(dset);  
+	hsize_t dims[2];
+	int ndims=H5Sget_simple_extent_dims(space,dims,0);
+	
+	// Set error if this dataset is more than 1-dimensional
+	if (ndims!=2) {
+	  O2SCL_ERR2("Tried to set a non-matrix dataset with a ",
+		     "matrix in hdf_file::setd_mat().",exc_einval);
+	}
+	
+	// If necessary, extend the dataset
+	if (r!=dims[0] || c!=dims[1]) {
+	  hsize_t new_dims[2]={r,c};
+	  int status3=H5Dset_extent(dset,new_dims);
+	}
+	
+      }
+      
+      // Write the data 
+      int status;
+      status=H5Dwrite(dset,H5T_NATIVE_HSIZE,H5S_ALL,
+		      H5S_ALL,H5P_DEFAULT,d);
+      
+      status=H5Dclose(dset);
+      status=H5Sclose(space);
+      if (chunk_alloc) {
+	status=H5Pclose(dcpl);
+      }
+      
+      // Free the C-style array
+      delete[] d;
+      
+      return 0;
+    }
+//@}
+    
     /// \name Tensor I/O functions
     //@{
     /** \brief Get a tensor from an HDF file
