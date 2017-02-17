@@ -44,15 +44,10 @@
 #include <o2scl/hdf_file.h>
 #include <o2scl/exception.h>
 #include <o2scl/prob_dens_func.h>
-#include <o2scl/cholesky.h>
 #include <o2scl/vector.h>
 #include <o2scl/multi_funct.h>
 #include <o2scl/interpm_idw.h>
 
-/** \brief Main namespace
-    
-    This file is documented in mcmc_para.h .
-*/
 namespace o2scl {
   
   typedef boost::numeric::ublas::vector<double> ubvector;
@@ -143,16 +138,32 @@ namespace o2scl {
   /// If true, we are in the warm up phase
   bool warm_up;
 
-  /// Current points in parameter space for each walker and each thread
+  /** \brief Current points in parameter space for each walker and 
+      each OpenMP thread
+
+      This is an array of size \ref n_threads times \ref n_walk initial
+      guesses, indexed by <tt>thread_index*n_walk+walker_index</tt> .
+  */
   std::vector<vec_t> current;
 
-  /// Data array
+  /** \brief Data array
+
+      This is an array of size 2 times \ref n_threads times \ref
+      n_walk . The two copies of data objects are indexed by
+      <tt>i_copy*n_walk*n_threads+thread_index*n_walk+walker_index</tt>
+      .
+   */
   std::vector<data_t> data_arr;
 
-  /// Data switch array
+  /** \brief Data switch array for each walker and each OpenMP thread
+
+      This is an array of size \ref n_threads times \ref n_walk initial
+      guesses, indexed by <tt>thread_index*n_walk+walker_index</tt> .
+   */
   std::vector<bool> switch_arr;
   
-  /// Return value counters
+  /** \brief Return value counters, one vector for each OpenMP thread
+   */
   std::vector<std::vector<size_t> > ret_value_counts;
   
   /// \name Interface customization
@@ -190,7 +201,7 @@ namespace o2scl {
   //@}
 
   /** \brief Index of the current walker
-
+      
       This quantity has to be a vector because different threads
       may have different values for the current walker during
       the initialization phase for the affine sampling algorithm.
@@ -217,10 +228,14 @@ namespace o2scl {
 
   /// \name Output quantities
   //@{
-  /// The number of Metropolis steps which were accepted in each thread
+  /** \brief The number of Metropolis steps which were accepted in 
+      each thread (summed over all walkers)
+  */
   std::vector<size_t> n_accept;
   
-  /// The number of Metropolis steps which were rejected in each thread
+  /** \brief The number of Metropolis steps which were rejected in 
+      each thread (summed over all walkers)
+  */
   std::vector<size_t> n_reject;
   //@}
 
@@ -310,9 +325,12 @@ namespace o2scl {
     max_iters=0;
   }
 
-  /// Requested number of threads
+  /// Number of OpenMP threads
   size_t n_threads;
   
+  /// The first point in the parameter space
+  ubvector initial_point;
+    
   /// \name Basic usage
   //@{
   /** \brief Perform an MCMC simulation
@@ -328,12 +346,17 @@ namespace o2scl {
     // Setup initial guess
     std::vector<double> init(nparams);
     for(size_t k=0;k<nparams;k++) {
-      init[k]=(low[k]+high[k])/2.0;
+      if (initial_point.size()>k) {
+	init[k]=initial_point[k];
+      } else {
+	init[k]=(low[k]+high[k])/2.0;
+      }
     }
     
     // Set number of threads
 #ifdef O2SCL_OPENMP
     omp_set_num_threads(n_threads);
+    n_threads=omp_get_num_threads();
 #else
     n_threads=1;
 #endif
@@ -1172,7 +1195,7 @@ namespace o2scl {
    */
   virtual int fill_line(const vec_t &pars, double log_weight, 
 			std::vector<double> &line, data_t &dat,
-			fill_t &fill) {
+			size_t i_walker, fill_t &fill) {
 
 #ifdef O2SCL_OPENMP
     size_t i_thread=omp_get_thread_num();
@@ -1183,7 +1206,7 @@ namespace o2scl {
     // Thread
     line.push_back(i_thread);
     // Walker (set later)
-    line.push_back(0.0);
+    line.push_back(i_walker);
     // Initial multiplier
     line.push_back(1.0);
     line.push_back(log_weight);
@@ -1238,6 +1261,7 @@ namespace o2scl {
     // below).
 #ifdef O2SCL_OPENMP
     omp_set_num_threads(this->n_threads);
+    this->n_threads=omp_get_num_threads();
 #else
     this->n_threads=1;
 #endif
@@ -1351,11 +1375,11 @@ namespace o2scl {
 	}
 
 	std::vector<double> line;
-	int fret=fill_line(pars,log_weight,line,dat,fill);
+	int fret=fill_line(pars,log_weight,line,dat,walker_ix,fill);
 
 	// The fill_line() function doesn't set the walker index,
 	// so we do this here
-	line[1]=walker_ix;
+	//line[1]=walker_ix;
       
 	if (fret!=o2scl::success) {
 	  // If we're done, we stop before adding the last point to the
