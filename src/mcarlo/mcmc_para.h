@@ -352,7 +352,7 @@ namespace o2scl {
     } else {
       // If initial points are specified, make sure they're within
       // the user-specified limits
-      for(size_t iip=0;iip<initial_point.size();iip++) {
+      for(size_t iip=0;iip<initial_points.size();iip++) {
 	for(size_t ipar=0;ipar<nparams;ipar++) {
 	  if (initial_points[iip][ipar]<low[ipar] ||
 	      initial_points[iip][ipar]>high[ipar]) {
@@ -1244,29 +1244,31 @@ namespace o2scl {
     // Ensure that multiple threads aren't writing to the
     // filesystem at the same time
     int tag=0, buffer=0;
-    if (mpi_nprocs>1 && mpi_rank>0) {
-      MPI_Recv(&buffer,1,MPI_INT,mpi_rank-1,tag,MPI_COMM_WORLD,
+    if (this->mpi_nprocs>1 && this->mpi_rank>0) {
+      MPI_Recv(&buffer,1,MPI_INT,this->mpi_rank-1,tag,MPI_COMM_WORLD,
 	       MPI_STATUS_IGNORE);
     }
 #endif
     
-    hdf_file hf;
-    std::string fname=prefix+"_"+o2scl::itos(mpi_rank)+"_out";
+    o2scl_hdf::hdf_file hf;
+    std::string fname=this->prefix+"_"+o2scl::itos(this->mpi_rank)+"_out";
     hf.open_or_create(fname);
 
     if (first_write==false) {
-      hf.set_szt("max_iters",max_iters);
-      hf.sets("prefix",prefix);
-      hf.seti("aff_inv",aff_inv);
-      hf.setd("step_fac",step_fac);
-      hf.setd("ai_initial_step",ai_initial_step);
-      hf.set_szt("n_warm_up",n_warm_up);
-      hf.seti("user_seed",user_seed);
-      hf.seti("verbose",verbose);
-      hf.set_szt("max_bad_steps",max_bad_steps);
-      hf.set_szt("n_walk",n_walk);
-      hf.set_szt("n_threads",n_threads);
-      hf.seti("always_accept",always_accept);
+      hf.set_szt("max_iters",this->max_iters);
+      hf.sets("prefix",this->prefix);
+      hf.seti("aff_inv",this->aff_inv);
+      hf.setd("step_fac",this->step_fac);
+      hf.setd("ai_initial_step",this->ai_initial_step);
+      hf.set_szt("n_warm_up",this->n_warm_up);
+      hf.seti("user_seed",this->user_seed);
+      hf.seti("mpi_rank",this->mpi_rank);
+      hf.seti("mpi_nprocs",this->mpi_nprocs);
+      hf.seti("verbose",this->verbose);
+      hf.set_szt("max_bad_steps",this->max_bad_steps);
+      hf.set_szt("n_walk",this->n_walk);
+      hf.set_szt("n_threads",this->n_threads);
+      hf.seti("always_accept",this->always_accept);
       hf.seti("allow_estimates",allow_estimates);
       first_write=true;
     }
@@ -1274,10 +1276,10 @@ namespace o2scl {
     hf.set_szt_vec("n_accept",this->n_accept);
     hf.set_szt_vec("n_reject",this->n_reject);
     hf.set_szt_arr2d_copy("ret_value_counts",this->ret_value_counts.size(),
-			  this_ret_value_counts[0].size(),
+			  this->ret_value_counts[0].size(),
 			  this->ret_value_counts);
     hf.setd_arr2d_copy("initial_points",this->initial_points.size(),
-		       this_initial_points[0].size(),
+		       this->initial_points[0].size(),
 		       this->initial_points);
     
     hdf_output(hf,*table,"markov_chain0");
@@ -1285,8 +1287,8 @@ namespace o2scl {
     hf.close();
     
 #ifdef O2SCL_MPI
-    if (mpi_nprocs>1 && mpi_rank>0) {
-      MPI_Send(&buffer,1,MPI_INT,mpi_rank+1,tag,MPI_COMM_WORLD);
+    if (this->mpi_nprocs>1 && this->mpi_rank>0) {
+      MPI_Send(&buffer,1,MPI_INT,this->mpi_rank+1,tag,MPI_COMM_WORLD);
     }
 #endif
     

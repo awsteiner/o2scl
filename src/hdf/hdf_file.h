@@ -141,8 +141,8 @@ namespace o2scl_hdf {
 
     /// If true, then the file has read and write access 
     bool has_write_access() {
-    return write_access;
-  }
+      return write_access;
+    }
     
     /// Compression type (not yet supported)
     int compr_type;
@@ -157,7 +157,7 @@ namespace o2scl_hdf {
 	nothing is done and the function returns the value \ref
 	o2scl::exc_efilenotfound. If the open succeeds, this function
 	returns \ref o2scl::success.
-     */
+    */
     int open(std::string fname, bool write_access=false,
 	     bool err_on_fail=true);
     
@@ -217,7 +217,7 @@ namespace o2scl_hdf {
 
     /** \brief Get a fixed-length string named \c name with default 
 	value \c s
-     */
+    */
     int gets_def_fixed(std::string name, std::string def, std::string &s);
     //@}
 
@@ -302,7 +302,7 @@ namespace o2scl_hdf {
 	that the vector occupies a continuous chunk of memory
 	like std::vector<> now does.
 	\endcomment
-     */
+    */
     template<class vec_t>
       int getd_vec_copy(std::string name, vec_t &v) {
       std::vector<double> v2;
@@ -446,18 +446,22 @@ namespace o2scl_hdf {
     */
     //@{
     /** \brief Set matrix dataset named \c name with \c m
-    */
+     */
     int setd_mat_copy(std::string name, const ubmatrix &m);
 
+    /** \brief Set matrix dataset named \c name with \c m
+     */
     int seti_mat_copy(std::string name, const ubmatrix_int &m);
 
+    /** \brief Set a two-dimensional array dataset named \c name with \c m
+     */
     template<class arr2d_t>
-      int hdf_file::setd_arr2d_copy(std::string name, size_t r,
-				    size_t c, const arr2d &a2d) {
+      int setd_arr2d_copy(std::string name, size_t r,
+			  size_t c, const arr2d_t &a2d) {
       
       if (write_access==false) {
 	O2SCL_ERR2("File not opened with write access ",
-		   "in hdf_file::setd_mat_copy().",exc_efailed);
+		   "in hdf_file::setd_arr2d_copy().",o2scl::exc_efailed);
       }
       
       // Copy to a C-style array
@@ -492,7 +496,7 @@ namespace o2scl_hdf {
 	
 	// Set chunk with size determined by def_chunk()
 	dcpl=H5Pcreate(H5P_DATASET_CREATE);
-	hsize_t chunk[2]={def_chunk(m.size1()),def_chunk(m.size2())};
+	hsize_t chunk[2]={def_chunk(r),def_chunk(c)};
 	int status2=H5Pset_chunk(dcpl,2,chunk);
 	
 #ifdef O2SCL_HDF5_COMP    
@@ -503,7 +507,7 @@ namespace o2scl_hdf {
 	  int status3=H5Pset_szip(dcpl,H5_SZIP_NN_OPTION_MASK,16);
 	} else if (compr_type!=0) {
 	  O2SCL_ERR2("Invalid compression type in ",
-		     "hdf_file::setd_arr_comp().",exc_einval);
+		     "hdf_file::setd_arr2d_copy().",o2scl::exc_einval);
 	}
 #endif
 	
@@ -522,7 +526,8 @@ namespace o2scl_hdf {
 	// Set error if this dataset is more than 1-dimensional
 	if (ndims!=2) {
 	  O2SCL_ERR2("Tried to set a non-matrix dataset with a ",
-		     "matrix in hdf_file::setd_mat().",exc_einval);
+		     "matrix in hdf_file::setd_arr2d_copy().",
+		     o2scl::exc_einval);
 	}
 	
 	// If necessary, extend the dataset
@@ -550,13 +555,15 @@ namespace o2scl_hdf {
       return 0;
     }
 
+    /** \brief Set a two-dimensional array dataset named \c name with \c m
+     */
     template<class arr2d_t>
-      int hdf_file::seti_arr2d_copy(std::string name, size_t r,
-				    size_t c, const arr2d &a2d) {
+      int seti_arr2d_copy(std::string name, size_t r,
+			  size_t c, const arr2d_t &a2d) {
       
       if (write_access==false) {
 	O2SCL_ERR2("File not opened with write access ",
-		   "in hdf_file::setd_mat_copy().",exc_efailed);
+		   "in hdf_file::seti_arr2d_copy().",o2scl::exc_efailed);
       }
       
       // Copy to a C-style array
@@ -591,7 +598,7 @@ namespace o2scl_hdf {
 	
 	// Set chunk with size determined by def_chunk()
 	dcpl=H5Pcreate(H5P_DATASET_CREATE);
-	hsize_t chunk[2]={def_chunk(m.size1()),def_chunk(m.size2())};
+	hsize_t chunk[2]={def_chunk(r),def_chunk(c)};
 	int status2=H5Pset_chunk(dcpl,2,chunk);
 	
 #ifdef O2SCL_HDF5_COMP    
@@ -602,7 +609,7 @@ namespace o2scl_hdf {
 	  int status3=H5Pset_szip(dcpl,H5_SZIP_NN_OPTION_MASK,16);
 	} else if (compr_type!=0) {
 	  O2SCL_ERR2("Invalid compression type in ",
-		     "hdf_file::setd_arr_comp().",exc_einval);
+		     "hdf_file::seti_arr2d_copy().",o2scl::exc_einval);
 	}
 #endif
 	
@@ -621,7 +628,8 @@ namespace o2scl_hdf {
 	// Set error if this dataset is more than 1-dimensional
 	if (ndims!=2) {
 	  O2SCL_ERR2("Tried to set a non-matrix dataset with a ",
-		     "matrix in hdf_file::setd_mat().",exc_einval);
+		     "matrix in hdf_file::seti_arr2d_copy().",
+		     o2scl::exc_einval);
 	}
 	
 	// If necessary, extend the dataset
@@ -649,13 +657,15 @@ namespace o2scl_hdf {
       return 0;
     }
     
+    /** \brief Set a two-dimensional array dataset named \c name with \c m
+     */
     template<class arr2d_t>
-      int hdf_file::set_szt_arr2d_copy(std::string name, size_t r,
-				    size_t c, const arr2d &a2d) {
+      int set_szt_arr2d_copy(std::string name, size_t r,
+			     size_t c, const arr2d_t &a2d) {
       
       if (write_access==false) {
 	O2SCL_ERR2("File not opened with write access ",
-		   "in hdf_file::setd_mat_copy().",exc_efailed);
+		   "in hdf_file::set_szt_arr2d_copy().",o2scl::exc_efailed);
       }
       
       // Copy to a C-style array
@@ -690,7 +700,7 @@ namespace o2scl_hdf {
 	
 	// Set chunk with size determined by def_chunk()
 	dcpl=H5Pcreate(H5P_DATASET_CREATE);
-	hsize_t chunk[2]={def_chunk(m.size1()),def_chunk(m.size2())};
+	hsize_t chunk[2]={def_chunk(r),def_chunk(c)};
 	int status2=H5Pset_chunk(dcpl,2,chunk);
 	
 #ifdef O2SCL_HDF5_COMP    
@@ -701,7 +711,7 @@ namespace o2scl_hdf {
 	  int status3=H5Pset_szip(dcpl,H5_SZIP_NN_OPTION_MASK,16);
 	} else if (compr_type!=0) {
 	  O2SCL_ERR2("Invalid compression type in ",
-		     "hdf_file::setd_arr_comp().",exc_einval);
+		     "hdf_file::set_szt_arr2d_copy().",o2scl::exc_einval);
 	}
 #endif
 	
@@ -720,7 +730,8 @@ namespace o2scl_hdf {
 	// Set error if this dataset is more than 1-dimensional
 	if (ndims!=2) {
 	  O2SCL_ERR2("Tried to set a non-matrix dataset with a ",
-		     "matrix in hdf_file::setd_mat().",exc_einval);
+		     "matrix in hdf_file::set_szt_arr2d_copy().",
+		     o2scl::exc_einval);
 	}
 	
 	// If necessary, extend the dataset
@@ -747,14 +758,14 @@ namespace o2scl_hdf {
       
       return 0;
     }
-//@}
+    //@}
     
     /// \name Tensor I/O functions
     //@{
     /** \brief Get a tensor from an HDF file
 
 	This version does not require a full copy of the tensor.
-     */
+    */
     int getd_ten(std::string name, 
 		 o2scl::tensor<std::vector<double>,std::vector<size_t> > &t);
 
@@ -997,10 +1008,10 @@ namespace o2scl_hdf {
   /** \brief Look at location \c loc in an HDF file for an \o2 object
       of a specified type
      
-     This is used by \ref hdf_file::find_group_by_type() where \c
-     op_data is a pointer to an object of type \ref iterate_parms to
-     look for \o2 objects of a specified type without knowing the
-     group name.
+      This is used by \ref hdf_file::find_group_by_type() where \c
+      op_data is a pointer to an object of type \ref iterate_parms to
+      look for \o2 objects of a specified type without knowing the
+      group name.
   */
   int iterate_match_type(hid_t loc, const char *name, 
 			 const H5L_info_t *inf, void *op_data);
@@ -1008,10 +1019,10 @@ namespace o2scl_hdf {
   /** \brief Look at location \c loc in an HDF file for an \o2 object
       with a specified name
      
-     This is used by \ref hdf_file::find_group_by_name() where \c
-     op_data is a pointer to an object of type \ref iterate_parms to
-     look for \o2 objects with a specified name without knowing the
-     type.
+      This is used by \ref hdf_file::find_group_by_name() where \c
+      op_data is a pointer to an object of type \ref iterate_parms to
+      look for \o2 objects with a specified name without knowing the
+      type.
   */
   int iterate_match_name(hid_t loc, const char *name, 
 			 const H5L_info_t *inf, void *op_data);
