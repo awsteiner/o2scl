@@ -47,6 +47,7 @@
 #include <o2scl/vector.h>
 #include <o2scl/multi_funct.h>
 #include <o2scl/interpm_idw.h>
+#include <o2scl/vec_stats.h>
 
 namespace o2scl {
   
@@ -1485,7 +1486,7 @@ namespace o2scl {
   }
   //@}
   
-  /** \brief
+  /** \brief Desc
    */
   virtual void mcmc_cleanup() {
 
@@ -1503,6 +1504,67 @@ namespace o2scl {
       table->set_nlines(i+2);
     }
     return parent_t::mcmc_cleanup();
+  }
+
+  /** \brief Desc
+   */
+  virtual void ac_coeffs(size_t ncols, ubmatrix &ac_coeffs) {
+    std::vector<size_t> csizes;
+    get_chain_sizes(csizes);
+    size_t min_size=csizes[0];
+    for(size_t i=1;i<csizes.size();i++) {
+      if (csizes[i]<min_size) min_size=csizes[i];
+    }
+    size_t N_max=min_size/2;
+    ac_coeffs.resize(ncols,N_max-1);
+    for(size_t i=0;i<ncols;i++) {
+      for(size_t ell=1;ell<N_max;ell++) {
+	ac_coeffs(i,ell-1)=0.0;
+      }
+    }
+    size_t n_tot=n_threads*n_walk;
+    size_t table_row=0;
+    size_t cstart=table->lookup_column("log_wgt")+1;
+    for(size_t i=0;i<ncols;i++) {
+      for(size_t j=0;j<n_threads;j++) {
+	for(size_t k=0;k<n_walk;k++) {
+	  size_t tindex=j*n_walk+k;
+	  for(size_t ell=1;ell<N_max;ell++) {
+	    double mean=o2scl::vector_mean_double
+	      (csizes[tindex]+1,&((*table)[cstart+i][table_row]));
+	    ac_coeffs(i,ell-1)+=o2scl::vector_lagk_autocorr
+	      (csizes[tindex]+1,&((*table)[cstart+i][table_row]),
+	       ell,mean);
+	  }
+	  table_row+=csizes[tindex]+1;
+	}
+      }
+      for(size_t ell=1;ell<N_max;ell++) {
+	ac_coeffs(i,ell-1)/=((double)n_tot);
+      }
+    }
+    return;
+  }
+
+  /** \brief Desc
+   */
+  virtual void ac_lengths(size_t ncols, ubmatrix &ac_coeffs_cols,
+			  ubvector &ac_lengths) {
+    size_t N_max=ac_coeffs_cols.size2();
+    ac_lengths.resize(ncols);
+    for(size_t icol=0;icol<ncols;icol++) {
+      std::vector<double> tau(N_max);
+      for(size_t i=5;i<N_max;i++) {
+	double sum=0.0;
+	for(size_t j=0;j<i;j++) {
+	  sum+=ac_coeffs_cols(icol,j);
+	}
+	tau[i]=1.0+2.0*sum;
+	std::cout << tau[i] << " " << ((double)i)/5.0 << std::endl;
+      }
+      std::cout << std::endl;
+    }
+    return;
   }
   
   /** \brief Reorder the table by thread and walker index
