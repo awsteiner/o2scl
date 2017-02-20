@@ -299,6 +299,37 @@ namespace o2scl {
     }
     //@}
 
+    /** \brief Copy all rows matching a particular condition to
+	a new table
+    */
+    template<class vec2_t>
+      void copy_rows(std::string func, table_units<vec2_t> &dest) {
+
+      // Set up columns
+      for(size_t i=0;i<this->get_ncolumns();i++) {
+	std::string cname=this->get_column_name(i);
+	if (dest.is_column(cname)==false) {
+	  dest.new_column(cname);
+	}
+	dest.set_unit(get_unit(cname));
+      }
+    
+      size_t new_lines=dest.get_nlines();
+      for(size_t i=0;i<this->get_nlines();i++) {
+	double val=this->row_function(func,i);
+	if (val>0.5) {
+	  this->set_nlines_auto(new_lines+1);
+	  for(size_t j=0;j<this->get_ncolumns();j++) {
+	    std::string cname=this->get_column_name(j);
+	    dest.set(cname,new_lines);
+	  }
+	  new_lines++;
+	}
+      }
+
+      return;
+    }
+
     /// \name Unit manipulation
     //@{
     /// Get the unit for column \c scol
@@ -318,6 +349,15 @@ namespace o2scl {
       }
 
       return it->second;
+    }
+
+    /** \brief Get the unit for column with index i
+	
+	\future Is there a way to make this function have O(1) time
+	rather than searching?
+    */
+    std::string get_unit(size_t i) const {
+      return get_unit(this->get_column_name(i));
     }
 
     /// Remove the unit for column \c scol
@@ -367,8 +407,8 @@ namespace o2scl {
       if (it==utree.end()) {
 	if (err_on_fail) {
 	  O2SCL_ERR((((std::string)"Column '")+scol+"' not found in "+
-			 "table_units::convert_to_unit().").c_str(),
-			exc_enotfound);
+		     "table_units::convert_to_unit().").c_str(),
+		    exc_enotfound);
 	} else {
 	  return exc_enotfound;
 	}
@@ -382,8 +422,8 @@ namespace o2scl {
       if (at==this->atree.end()) {
 	if (err_on_fail) {
 	  O2SCL_ERR((((std::string)"Column '")+scol+"' not found in "+
-			 "table_units::convert_to_unit().").c_str(),
-			exc_enotfound);
+		     "table_units::convert_to_unit().").c_str(),
+		    exc_enotfound);
 	} else {
 	  return exc_enotfound;
 	}

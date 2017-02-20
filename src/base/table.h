@@ -135,7 +135,7 @@ namespace o2scl {
       structure so that finding a column by its index, using either of
       \code
       std::string table::get_column_name(size_t index);
-      ubvector &table::get_column(int index);
+      ubvector &table::operator[](size_t index);
       \endcode
       takes only constant time, and finding a column by its name
       using either of
@@ -751,10 +751,16 @@ namespace o2scl {
   }
 
   /** \brief Returns the name of column \c col \f$ {\cal O}(1) \f$
+
+      This will throw if \c icol is larger than or equal to
+      the number of columns.
    */
   std::string get_column_name(size_t icol) const {
     if (icol+1>atree.size()) {
-      return "";
+      O2SCL_ERR((((std::string)"Index '")+o2scl::itos(icol)+
+		 " larger than number of "+
+		 "columns in table::get_column_name().").c_str(),
+		exc_enotfound);
     }
     return alist[icol]->first;
   }
@@ -1131,6 +1137,36 @@ namespace o2scl {
       delete si;
       intp_set=false;
     }
+    return;
+  }
+
+  /** \brief Copy all rows matching a particular condition to
+      a new table
+  */
+  template<class vec2_t>
+  void copy_rows(std::string func, table<vec2_t> &dest) {
+
+    // Set up columns
+    for(size_t i=0;i<get_ncolumns();i++) {
+      std::string cname=get_column_name(i);
+      if (dest.is_column(cname)==false) {
+	dest.new_column(cname);
+      }
+    }
+
+    size_t new_lines=dest.get_nlines();
+    for(size_t i=0;i<nlines;i++) {
+      double val=row_function(func,i);
+      if (val>0.5) {
+	dest.set_nlines_auto(new_lines+1);
+	for(size_t j=0;j<get_ncolumns();j++) {
+	  std::string cname=get_column_name(j);
+	  dest.set(cname,new_lines);
+	}
+	new_lines++;
+      }
+    }
+
     return;
   }
 

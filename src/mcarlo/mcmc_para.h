@@ -55,7 +55,7 @@ namespace o2scl {
   /** \brief A generic MCMC simulation class
 
       This class performs a Markov chain Monte Carlo simulation of a
-      user-specified function using OpenMP/MPI. Either the
+      user-specified function using OpenMP and/or MPI. Either the
       Metropolis-Hastings algorithm with a user-specified proposal
       distribution or the affine-invariant sampling method of Goodman
       and Weare can be used.
@@ -1485,6 +1485,8 @@ namespace o2scl {
   }
   //@}
   
+  /** \brief
+   */
   virtual void mcmc_cleanup() {
 
     // This section removes empty rows at the end of the
@@ -1501,6 +1503,25 @@ namespace o2scl {
       table->set_nlines(i+2);
     }
     return parent_t::mcmc_cleanup();
+  }
+  
+  /** \brief Reorder the table by thread and walker index
+   */
+  virtual void reorder_table() {
+
+    // Create a new table
+    std::shared_ptr<o2scl::table_units<> > table2=
+    std::shared_ptr<o2scl::table_units<> >(new o2scl::table_units<>);
+
+    for(size_t i=0;i<n_threads;i++) {
+      for(size_t j=0;j<n_walk;j++) {
+	std::string func=std::string("abs(walker-")+o2scl::szttos(j)+
+	  ")<0.1 && abs(thread-"+o2scl::szttos(i)+")<0.1";
+	table->copy_rows(func,*table2);
+      }
+    }
+    
+    return;
   }
   
   /** \brief Reaverage the data into blocks of a fixed
