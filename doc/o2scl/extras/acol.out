@@ -1,96 +1,9 @@
 #
-# ------------------------------------------------------------
-# This file documents the use of the 'acol' command.
-# There is a generic help command:
-# ------------------------------------------------------------
-> help
-acol: A data table viewing and processing program for O2scl.
-
-List of commands:
-
-alias        Create a command alias.                                        
-assign       Assign a constant., e.g. assign pi acos(-1)                    
-calc         Compute the value of a constant expression.                    
-cat          Concatenate data from a second table object onto current table.
-commands     List all available commands.                                   
-contours     Create contour lines from a table3d or hist_2d object.         
-convert-unit Convert a column to a new unit.                                
-create       Create a table from uniform grid.                              
-create3      Create a table3d object.                                       
-delete-col   Delete a column (table3d only).                                
-delete-rows  Delete rows selected by a function.                            
-deriv        Derivative of a function defined by two columns (table3d only).
-deriv2       Second derivative (table3d only).                              
-exit         Exit (synonymous with 'quit').                                 
-filelist     List objects in a HDF5 file.                                   
-find-row     Find a row which maximizes a function (table3d only).          
-fit          Fit two columns to a function (experimental, table3d only).    
-function     Create a new column or slice from a function.                  
-gen3-list    Read in a generic data file (table3d only).                    
-generic      Read in a generic data file (table3d only).                    
-get          Get the value of a parameter.                                  
-get-conv     Get a unit conversion factor.                                  
-get-row      Get a row by index.                                            
-get-unit     Get the units for a specified column.                          
-help         Show help information.                                         
-index        Add a column containing the row numbers (table3d only).        
-insert       Interpolate a column/slice from another file.                  
-insert-full  Interpolate a table from another file (table3d only).          
-integ        Integrate a function specified by two columns (table3d only).  
-internal     Output in the internal HDF5 format.                            
-interp       Interpolate a number into a column or slice.                   
-license      Show license information.                                      
-list         List the constants, column/slice names and other info.         
-max          Find the maximum value of a column or slice.                   
-min          Find the minimum value of a column or slice.                   
-nlines       Add 'nlines' as a constant to a table object.                  
-output       Output the full object as text.                                
-preview      Preview the current table.                                     
-quit         Quit (synonymous with 'exit').                                 
-read         Read a table or table3d from a file.                           
-rename       Rename a column or slice.                                      
-run          Run a file containing a list of commands.                      
-select       Select columns or slices for a new table.                      
-select-rows  Select rows for a new table (table3d only).                    
-set          Set the value of a parameter.                                  
-set-data     Set the entries of a column.                                   
-set-unit     Set the units for a specified column.                          
-show-units   Show the unit conversion table.                                
-slice        Construct a slice (table3d only).                              
-sort         Sort the entire table by a column (table only).                
-stats        Show column statistics (table only).                           
-sum          Add data from a second table object to current table.          
-to-hist      Convert a table to a histogram.                                
-type         Show current object type.                                      
-version      Print version information.                                     
-warranty     Show warranty information.                                     
-
-Notes:
-
-1. Help for individual commands may be obtained with 'help command'.
-   Required arguments are surrounded by <>'s and optional arguments are
-   surrounded by []'s.
-
-2. Options may also be specified in the environment variable ACOL_DEFAULTS.
-
-3. Long options may be preceeded by two dashes.
-
-4. In order to avoid confusion between arguments and functions,
-   use "(-x*2)" not "-x*2"
-
-Known operators:
-() ^ * / % + - == != < > && || << >> >= <=
-
-Known functions:
-exp(x) log(x) log10(x) sin(x) cos(x) tan(x) sqrt(x) abs(x)
-asin(x) acos(x) atan(x) sinh(x) cosh(x) tanh(x)
-asinh(x) acosh(x) atanh(x)
-
-Compiled at 17:19:50 on Jan  1 2017 for o2scl, version 0.920.
-
-# ------------------------------------------------------------
-# You can also get help on the commands individually, e.g.
-# ------------------------------------------------------------
+# -----------------------------------------------------------------
+# This file documents the use of the 'acol' command. The command
+# 'help' provides the full help text. You can also get help on the
+# commands individually, e.g.
+# -----------------------------------------------------------------
 > help create
 Usage: create <name> <low> <hi> <step>
 
@@ -101,9 +14,9 @@ This takes four arguments, the name of the column, the first value, the
 increment between successive values and the maximum possible value. Note that 
 finite precision arithmetic may cause small deviations from the expected 
 result. If a table is currently in memory, it is deallocated beforehand. 
-# ------------------------------------------------------------
+# -----------------------------------------------------------------
 # The full command list is given with 'commands'
-# ------------------------------------------------------------
+# -----------------------------------------------------------------
 > commands
 Command list:
 
@@ -118,75 +31,75 @@ create       function     insert-full  no-intro     set-data     warranty
 create3      gen3-list    integ        output       set-unit     
 delete-col   generic      interactive  preview      show-units   
 
-# ------------------------------------------------------------
+# -----------------------------------------------------------------
 # Use 'create' to create a table with one column
-# ------------------------------------------------------------
+# -----------------------------------------------------------------
 > create x 0 1 0.1
-# ------------------------------------------------------------
+# -----------------------------------------------------------------
 # Use 'function' to apply a function to create a new column
-# ------------------------------------------------------------
+# -----------------------------------------------------------------
 > function sin(x) s
 > function sqrt(1-s*s) c
-# ------------------------------------------------------------
+# -----------------------------------------------------------------
 # The 'deriv' command computes derivatives
-# ------------------------------------------------------------
+# -----------------------------------------------------------------
 > deriv x s c2
-# ------------------------------------------------------------
+# -----------------------------------------------------------------
 # Use 'output' to see the results
-# ------------------------------------------------------------
+# -----------------------------------------------------------------
 > output
-# ------------------------------------------------------------
+# -----------------------------------------------------------------
 # Or give 'output' command an argument to output to a file
-# ------------------------------------------------------------
+# -----------------------------------------------------------------
 > output test.txt
-# ------------------------------------------------------------
+# -----------------------------------------------------------------
 # Change the output precision using set
-# ------------------------------------------------------------
+# -----------------------------------------------------------------
 > set precision 4
 > output
 > set precision 6
-# ------------------------------------------------------------
+# -----------------------------------------------------------------
 # Shell commands are proceeded by an '!'
-# ------------------------------------------------------------
+# -----------------------------------------------------------------
 > !cat test.txt
 acol: Executing system command: cat test.txt
 acol: Done with system command (returned 256).
-# ------------------------------------------------------------
+# -----------------------------------------------------------------
 # Or store the results in the internal format 
-# ------------------------------------------------------------
+# -----------------------------------------------------------------
 > internal test.o2
-# ------------------------------------------------------------
+# -----------------------------------------------------------------
 # Generic test files can be read using the 'generic' command
-# ------------------------------------------------------------
+# -----------------------------------------------------------------
 > generic test.txt
 > output
-# ------------------------------------------------------------
+# -----------------------------------------------------------------
 # Files in the internal format can be read with 'read'
-# ------------------------------------------------------------
+# -----------------------------------------------------------------
 > read test.o2
 Could not find object of any readable type in file 'test.o2'.
 > output
-# ------------------------------------------------------------
+# -----------------------------------------------------------------
 # Tables also contain constant values in addition to data
-# ------------------------------------------------------------
+# -----------------------------------------------------------------
 > assign pi acos(-1.0)
-# ------------------------------------------------------------
+# -----------------------------------------------------------------
 # The 'list' command lists the column and constant names
-# ------------------------------------------------------------
+# -----------------------------------------------------------------
 > list
-# ------------------------------------------------------------
+# -----------------------------------------------------------------
 # Constants can be used in expressions
-# ------------------------------------------------------------
+# -----------------------------------------------------------------
 > function x*pi/2 x2
-# ------------------------------------------------------------
+# -----------------------------------------------------------------
 # Columns can be renamed. Legal column names contain letters
 # numbers and underscores, and begin with a letter.
-# ------------------------------------------------------------
+# -----------------------------------------------------------------
 > rename x2 x_2
 > output
-# ------------------------------------------------------------
+# -----------------------------------------------------------------
 # (Remove test files created earlier.)
-# ------------------------------------------------------------
+# -----------------------------------------------------------------
 > !rm test.txt
 acol: Executing system command: rm test.txt
 acol: Done with system command (returned 256).
