@@ -522,13 +522,20 @@ namespace o2scl {
 
     /// \name Other functions
     //@{
-    /// Desc
+    /// Return the sum of all of the weights
     double sum_wgts();
 
-    /// Desc
+    /** \brief Return the integral under the histogram using trapezoids
+	
+	This function returns the sum of
+	\f[
+	w_i ( \mathrm{high}_i - \mathrm{low}_i) \, .
+	\f]
+     */
     double integ_wgts();
 
-    /** \brief Desc
+    /** \brief This function copies all bin representative values to
+	the vector \c v, presuming that it has already been allocated
      */
     template<class vec_t> void copy_reps(vec_t &v) {
 #if !O2SCL_NO_RANGE_CHECK
@@ -550,7 +557,10 @@ namespace o2scl {
       return;
     }
 
-    /** \brief Desc
+    /** \brief Get the representative values for the bins
+	and store them in vector \c v using <tt>std::swap</tt> .
+
+	This function resizes the vector \c v if necessary.
      */
     void swap_reps(ubvector &v);
     

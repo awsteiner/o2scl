@@ -1142,6 +1142,12 @@ namespace o2scl {
 
   /** \brief Copy all rows matching a particular condition to
       a new table
+
+      This function begins by ensuring that all columns in the current
+      table are present in \c dest, creating new columns in \c dest if
+      necessary. It then copies all rows where \c func evaluates to a
+      number greater than 0.5 to table \c dest by adding rows at
+      the end of the table.
   */
   template<class vec2_t>
   void copy_rows(std::string func, table<vec2_t> &dest) {

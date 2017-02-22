@@ -466,7 +466,14 @@ namespace o2scl {
     }
     //@}
 
-    /** \brief Desc
+    /** \brief Compare entries in \c expected to see if they match
+	those in table \c result.
+
+	If the numbers in the \c expected table have an absolute value
+	less than \c zero_tol, then the absolute value of the
+	difference is used for the comparison. Otherwise, the absolute
+	value of the relative difference is used to make the
+	comparison.
      */
     template<class vec_t, class data_t>
       bool test_rel_nonzero_table(const table_units<vec_t> &result,
