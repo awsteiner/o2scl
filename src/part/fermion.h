@@ -427,7 +427,7 @@ namespace o2scl {
     /// A pointer to the solver for massless fermions
     root<> *massless_root;
 
-    /// Desc
+    /// Solve for the chemical potential for massless fermions
     double massless_solve_fun(double x, fermion &f, double temper);
 
 #endif

@@ -525,7 +525,7 @@ namespace o2scl {
     /// Return the sum of all of the weights
     double sum_wgts();
 
-    /** \brief Return the integral under the histogram using trapezoids
+    /** \brief Return the integral under the histogram 
 	
 	This function returns the sum of
 	\f[

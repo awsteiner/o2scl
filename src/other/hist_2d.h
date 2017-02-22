@@ -261,11 +261,17 @@ namespace o2scl {
     */
     bool extend_lhs;
 
-    /** \brief Desc
+    /** \brief Return the sum of all of the weights
      */
     double sum_wgts();
     
-    /** \brief Desc
+    /** \brief Return the integral under the histogram 
+	
+	This function returns the sum of
+	\f[
+	w_{i,j} ( \mathrm{x,high}_i - \mathrm{x,low}_i)
+	( \mathrm{y,high}_j - \mathrm{y,low}_j) \, .
+	\f]
      */
     double integ_wgts();
 
