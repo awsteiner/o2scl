@@ -439,170 +439,23 @@ namespace o2scl {
     
     /** \brief For one of the functions, compute the partial
 	derivatives (and uncertainties) with respect to all of the
-	inputs at one point
-	
-	\note This function ignores the order chosen by \ref
-	set_order() and always chooses to average derivative
-	calculations determined from \c n_in+1 combinations of \c n_in
-	points .
-	
-	This function computes the interpolated function
-	value \c f as a by-product using \c n_in points for 
-	the interpolation.
-    */
-    template<class vec2_t, class vec3_t, class vec4_t>
-      void f_derivs_err(const vec2_t &x, size_t ix, double &f,
-			vec3_t &derivs, vec4_t &errs) const {
-    
-      o2scl_linalg::linear_solver_HH<> lshh;
-    
-      if (data_set==false) {
-	O2SCL_ERR("Data not set in interpm_idw::eval_err().",
-		  exc_einval);
-      }
-    
-      // Compute distances
-      std::vector<double> dists(np);
-      for(size_t i=0;i<np;i++) {
-	dists[i]=dist(i,x);
-      }
-  
-      // Find nd_in+1 closest points
-      std::vector<size_t> index;
-      o2scl::vector_smallest_index<std::vector<double>,double,
-	std::vector<size_t> >(dists,nd_in+1,index);
-      
-      if (dists[0]<=0.0) {
-	O2SCL_ERR("Derivative algorithm fails if a distance is zero.",
-		  o2scl::exc_einval);
-      }
-
-      // The algorithm needs the function value at point 'x',
-      // so we compute that first
-      
-      // Compute normalization
-      double norm=0.0;
-      for(size_t i=0;i<nd_in;i++) {
-	norm+=1.0/dists[index[i]];
-      }
-      
-      // Compute the inverse-distance weighted average
-      f=0.0;
-      for(size_t i=0;i<nd_in;i++) {
-	f+=ptrs[ix+nd_in][index[i]]/dists[index[i]];
-      }
-      f/=norm;
-
-      // Unit vector storage
-      std::vector<ubvector> units(nd_in+1);
-      // Difference vector norms
-      std::vector<double> diff_norms(nd_in+1);
-
-      for(size_t i=0;i<nd_in+1;i++) {
-
-	// Assign unit vector elements
-	units[i].resize(nd_in);
-	for(size_t j=0;j<nd_in;j++) {
-	  units[i][j]=ptrs[j][index[i]]-x[j];
-	}
-
-	// Normalize the unit vectors
-	diff_norms[i]=o2scl::vector_norm<ubvector,double>(units[i]);
-	for(size_t j=0;j<nd_in;j++) {
-	  units[i][j]/=diff_norms[i];
-	}
-
-      }
-
-      if (verbose>0) {
-	std::cout << "Point: ";
-	for(size_t i=0;i<nd_in;i++) {
-	  std::cout << x[i] << " ";
-	}
-	std::cout << f << std::endl;
-	for(size_t j=0;j<nd_in+1;j++) {
-	  std::cout << "Closest: " << j << " ";
-	  for(size_t i=0;i<nd_in;i++) {
-	    std::cout << ptrs[i][index[j]] << " ";
-	  }
-	  std::cout << ptrs[ix+nd_in][index[j]] << " "
-		    << diff_norms[j] << std::endl;
-	}
-      }
-    
-      std::vector<ubvector> ders(nd_in+1);
-      
-      // Go through each set of points
-      for(size_t i=0;i<nd_in+1;i++) {
-
-	ders[i].resize(nd_in);
-
-	// Construct the matrix and vector for the solver
-	ubmatrix m(nd_in,nd_in);
-	ubvector v(nd_in);
-	size_t jj=0;
-	for(size_t j=0;j<nd_in+1;j++) {
-	  if (j!=i) {
-	    for(size_t k=0;k<nd_in;k++) {
-	      m(jj,k)=units[j][k];
-	    }
-	    v[jj]=(ptrs[ix+nd_in][index[j]]-f)/diff_norms[j];
-	    jj++;
-	  }
-	}
-
-	// Solve to compute the derivatives
-	lshh.solve(nd_in,m,v,ders[i]);
-	if (verbose>0) {
-	  std::cout << "Derivs: " << i << " ";
-	  for(size_t j=0;j<nd_in;j++) {
-	    std::cout << ders[i][j] << " ";
-	  }
-	  std::cout << std::endl;
-	}
-      }
-      
-      // Rearranged derivative object
-      std::vector<ubvector> ders2(nd_in);
-      
-      for(size_t i=0;i<nd_in;i++) {
-
-	// Rearrange derivatives
-	ders2[i].resize(nd_in+1);
-	for(size_t j=0;j<nd_in+1;j++) {
-	  ders2[i][j]=ders[j][i];
-	}
-
-	// Compute mean and standard deviation
-	derivs[i]=o2scl::vector_mean(ders2[i]);
-	errs[i]=o2scl::vector_stddev(ders2[i]);
-      }
-      
-      return;
-    }
-    
-    /** \brief For one of the functions, compute the partial
-	derivatives (and uncertainties) with respect to all of the
-	inputs at one point
+	inputs at one data point
 
 	\note This function ignores the order chosen by \ref
 	set_order() and always chooses to average derivative
 	calculations determined from \c n_in+1 combinations of \c n_in
 	points .
 
-	This function computes the interpolated function
-	value \c f as a by-product using \c n_in points for 
-	the interpolation.
     */
     template<class vec3_t>
-      void f_derivs_err2(size_t ix, size_t jx, 
+      void f_derivs_err(size_t func_index, size_t point_index, 
 			 vec3_t &derivs, vec3_t &errs) const {
 
       vec3_t x(nd_in);
       for(size_t i=0;i<nd_in;i++) {
-	x[i]=ptrs[i][jx];
+	x[i]=ptrs[i][point_index];
       }
-      double f=ptrs[nd_in+ix][jx];
+      double f=ptrs[nd_in+func_index][point_index];
 
       o2scl_linalg::linear_solver_HH<> lshh;
     
@@ -617,7 +470,8 @@ namespace o2scl {
 	dists[i]=dist(i,x);
       }
   
-      // Find nd_in+1 closest points
+      // Find nd_in+2 closest points (we'll ignore the point at
+      // point_index which is the same and thus has zero distance)
       std::vector<size_t> index;
       o2scl::vector_smallest_index<std::vector<double>,double,
 	std::vector<size_t> >(dists,nd_in+2,index);
@@ -655,7 +509,7 @@ namespace o2scl {
       }
 
       if (verbose>0) {
-	std::cout << "Point:   ";
+	std::cout << "Point:     ";
 	for(size_t i=0;i<nd_in;i++) {
 	  std::cout << x[i] << " ";
 	}
@@ -666,9 +520,9 @@ namespace o2scl {
 	    std::cout << ptrs[i][index[j]] << " ";
 	  }
 	  if (j==0) {
-	    std::cout << ptrs[ix+nd_in][index[j]] << std::endl;
+	    std::cout << ptrs[func_index+nd_in][index[j]] << std::endl;
 	  } else {
-	    std::cout << ptrs[ix+nd_in][index[j]] << " "
+	    std::cout << ptrs[func_index+nd_in][index[j]] << " "
 		      << diff_norms[j-1] << std::endl;
 	  }
 	}
@@ -690,7 +544,7 @@ namespace o2scl {
 	    for(size_t k=0;k<nd_in;k++) {
 	      m(jj,k)=units[j][k];
 	    }
-	    v[jj]=(ptrs[ix+nd_in][index[j+1]]-f)/diff_norms[j];
+	    v[jj]=(ptrs[func_index+nd_in][index[j+1]]-f)/diff_norms[j];
 	    jj++;
 	  }
 	}
@@ -698,7 +552,7 @@ namespace o2scl {
 	// Solve to compute the derivatives
 	lshh.solve(nd_in,m,v,ders[i]);
 	if (verbose>0) {
-	  std::cout << "Derivs: " << i << " ";
+	  std::cout << "Derivs:  " << i << " ";
 	  for(size_t j=0;j<nd_in;j++) {
 	    std::cout << ders[i][j] << " ";
 	  }
@@ -751,17 +605,6 @@ namespace o2scl {
       size_t nscales=scales.size();
       for(size_t i=0;i<nd_in;i++) {
 	ret+=pow((x[i]-ptrs[i][index])/scales[i%nscales],2.0);
-      }
-      return sqrt(ret);
-    }
-    
-    /// Compute the distance between \c x and the point at index \c index
-    template<class vec2_t> double dist_index
-      (size_t index1, size_t index2) const {
-      double ret=0.0;
-      size_t nscales=scales.size();
-      for(size_t i=0;i<nd_in;i++) {
-	ret+=pow((ptrs[i][index2]-ptrs[i][index1])/scales[i%nscales],2.0);
       }
       return sqrt(ret);
     }
