@@ -148,6 +148,7 @@ int main(void) {
     imi3.eval_err(p3,val,err);
     cout.width(6);
     cout << N << " " << val << " " << err << " " << fabs(val-3.0) << endl;
+    t.test_rel(val,3.0,10.0*err,"interp");
   }
   cout << endl;
 
@@ -181,7 +182,10 @@ int main(void) {
     imi3.set_data(3,1,N,dat3);
     cout.width(6);
     cout << N << endl;
-    imi3.f_derivs_err(0,0,derivs,errs);
+    imi3.derivs_err(0,0,derivs,errs);
+    t.test_rel(derivs[0],-1.8,errs[0]*100.0,"derivs 1");
+    t.test_rel(derivs[1],1.4,errs[1]*100.0,"derivs 2");
+    t.test_rel(derivs[2],0.4,errs[2]*100.0,"derivs 3");
     cout << "\t" << -1.8 << " " << 1.4 << " " << 0.4 << endl;
     cout << "\t" << derivs[0] << " " << derivs[1] << " " << derivs[2] << endl;
     cout << "\t" << errs[0] << " " << errs[1] << " " << errs[2] << endl;

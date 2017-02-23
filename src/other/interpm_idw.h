@@ -87,8 +87,6 @@ namespace o2scl {
       of data points) without a new call to \ref set_data(). Also, the
       automatically-determined length scales may need to be recomputed
       by calling \ref auto_scale().
-
-      \future Design a <tt>get_data()</tt> function.
   */
   template<class vec_t> class interpm_idw {
 
@@ -108,7 +106,7 @@ namespace o2scl {
       verbose=0;
     }
 
-    /** \brief Verbosity parameter
+    /** \brief Verbosity parameter (default 0)
      */
     int verbose;
 
@@ -184,6 +182,26 @@ namespace o2scl {
       return;
     }
 
+    /** \brief Get the data used for interpolation
+     */
+    template<class vec_vec_t>
+      void get_data(size_t &n_in, size_t &n_out, size_t &n_points,
+		    vec_vec_t &vecs) {
+      n_points=np;
+      n_in=nd_in;
+      n_out=nd_out;
+      vecs.resize(n_in+n_out);
+      for(size_t i=0;i<n_in+n_out;i++) {
+	std::swap(ptrs[i],vecs[i]);
+      }
+      data_set=false;
+      n_points=0;
+      n_in=0;
+      n_out=0;
+      ptrs.clear();
+      return;
+    }
+    
     /** \brief Automatically determine the length scales from the
 	data
     */
@@ -446,23 +464,28 @@ namespace o2scl {
 	calculations determined from \c n_in+1 combinations of \c n_in
 	points .
 
+	\future This function requires an extra copy from
+	"ders" to "ders2" which could be removed.
     */
     template<class vec3_t>
-      void f_derivs_err(size_t func_index, size_t point_index, 
-			 vec3_t &derivs, vec3_t &errs) const {
-
-      vec3_t x(nd_in);
+      void derivs_err(size_t func_index, size_t point_index, 
+		      vec3_t &derivs, vec3_t &errs) const {
+      
+      if (data_set==false) {
+	O2SCL_ERR("Data not set in interpm_idw::derivs_err().",
+		  exc_einval);
+      }
+      
+      // Set x equal to the specified point
+      ubvector x(nd_in);
       for(size_t i=0;i<nd_in;i++) {
 	x[i]=ptrs[i][point_index];
       }
+      // Set f equal to the value of the function at the specified point
       double f=ptrs[nd_in+func_index][point_index];
 
+      // The linear solver
       o2scl_linalg::linear_solver_HH<> lshh;
-    
-      if (data_set==false) {
-	O2SCL_ERR("Data not set in interpm_idw::eval_err().",
-		  exc_einval);
-      }
     
       // Compute distances
       std::vector<double> dists(np);
@@ -491,7 +514,15 @@ namespace o2scl {
       std::vector<ubvector> units(nd_in+1);
       // Difference vector norms
       std::vector<double> diff_norms(nd_in+1);
-
+      // Storage for the derivative estimates
+      std::vector<ubvector> ders(nd_in+1);
+      // Matrix of unit vectors
+      ubmatrix m(nd_in,nd_in);
+      // Vector of function value differences
+      ubvector v(nd_in);
+      // Rearranged derivative object
+      std::vector<ubvector> ders2(nd_in);
+      
       for(size_t i=0;i<nd_in+1;i++) {
 
 	// Assign unit vector elements
@@ -508,6 +539,7 @@ namespace o2scl {
 
       }
 
+      // Verbose output of the closest points and their norms
       if (verbose>0) {
 	std::cout << "Point:     ";
 	for(size_t i=0;i<nd_in;i++) {
@@ -526,18 +558,15 @@ namespace o2scl {
 		      << diff_norms[j-1] << std::endl;
 	  }
 	}
+	// End of verbose output
       }
     
-      std::vector<ubvector> ders(nd_in+1);
-      
       // Go through each set of points
       for(size_t i=0;i<nd_in+1;i++) {
 
 	ders[i].resize(nd_in);
 
 	// Construct the matrix and vector for the solver
-	ubmatrix m(nd_in,nd_in);
-	ubvector v(nd_in);
 	size_t jj=0;
 	for(size_t j=0;j<nd_in+1;j++) {
 	  if (j!=i) {
@@ -558,10 +587,9 @@ namespace o2scl {
 	  }
 	  std::cout << std::endl;
 	}
+
+	// Go to next derivative estimate
       }
-      
-      // Rearranged derivative object
-      std::vector<ubvector> ders2(nd_in);
       
       for(size_t i=0;i<nd_in;i++) {
 
@@ -600,7 +628,8 @@ namespace o2scl {
     size_t order;
     
     /// Compute the distance between \c x and the point at index \c index
-    template<class vec2_t> double dist(size_t index, const vec2_t &x) const {
+    template<class vec2_t> double dist(size_t index,
+				       const vec2_t &x) const {
       double ret=0.0;
       size_t nscales=scales.size();
       for(size_t i=0;i<nd_in;i++) {
