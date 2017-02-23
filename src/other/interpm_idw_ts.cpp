@@ -33,13 +33,19 @@ using namespace o2scl;
 
 typedef boost::numeric::ublas::vector<double> ubvector;
 
+double ft(double x, double y, double z) {
+  return 3.0-2.0*x*x+7.0*y*z-5.0*z*x;
+}
+
 int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
   cout.setf(ios::scientific);
 
-  // Construct the data
+    rng_gsl rg;
+
+    // Construct the data
   ubvector x(8), y(8), dp(8);
   
   x[0]=1.04; y[0]=0.02; 
@@ -121,15 +127,43 @@ int main(void) {
     // Create a random data set
     interpm_idw<std::vector<double> > imi3;
     std::vector<double> x3, y3, z3, f3;
-    rng_gsl rg;
     double scale=10.0;
     for(size_t i=0;i<N;i++) {
       x3.push_back(0.2+(2.0*rg.random()-1.0)/scale);
       y3.push_back(0.2+(2.0*rg.random()-1.0)/scale);
       z3.push_back(0.2+(2.0*rg.random()-1.0)/scale);
-      f3.push_back(3.0-2.0*x3[i]*x3[i]+7.0*y3[i]*z3[i]-5.0*z3[i]*x3[i]);
+      f3.push_back(ft(x3[i],y3[i],z3[i]));
     }
-    
+
+    std::vector<double> p3={0.2,0.2,0.2};
+    std::vector<std::vector<double> > dat3(4);
+    std::vector<double> derivs(3), errs(3);
+    double f;
+    dat3[0]=x3;
+    dat3[1]=y3;
+    dat3[2]=z3;
+    dat3[3]=f3;
+    //imi3.verbose=1;
+    imi3.set_data(3,1,N,dat3);
+    imi3.eval_err(p3,val,err);
+    cout.width(6);
+    cout << N << " " << val << " " << err << " " << fabs(val-3.0) << endl;
+  }
+  cout << endl;
+
+  cout << "f_derivs_err: " << endl;
+  for(size_t N=10;N<1000000;N*=10) {
+    // Create a random data set
+    interpm_idw<std::vector<double> > imi3;
+    std::vector<double> x3, y3, z3, f3;
+    double scale=10.0;
+    for(size_t i=0;i<N;i++) {
+      x3.push_back(0.2+(2.0*rg.random()-1.0)/scale);
+      y3.push_back(0.2+(2.0*rg.random()-1.0)/scale);
+      z3.push_back(0.2+(2.0*rg.random()-1.0)/scale);
+      f3.push_back(ft(x3[i],y3[i],z3[i]));
+    }
+
     std::vector<double> p3={0.2,0.2,0.2};
     std::vector<std::vector<double> > dat3(4);
     std::vector<double> derivs(3), errs(3);
@@ -140,19 +174,52 @@ int main(void) {
     dat3[3]=f3;
     imi3.verbose=1;
     imi3.set_data(3,1,N,dat3);
-    imi3.eval_err(p3,val,err);
     cout.width(6);
-    cout << N << " " << val << " " << err << " " << fabs(val-3.0) << endl;
+    cout << N << endl;
+    imi3.f_derivs_err(p3,0,f,derivs,errs);
+    cout << "\t" << -1.8 << " " << 1.4 << " " << 0.4 << endl;
+    cout << "\t" << derivs[0] << " " << derivs[1] << " " << derivs[2] << endl;
+    cout << "\t" << errs[0] << " " << errs[1] << " " << errs[2] << endl;
+    cout << endl;
+  }
+  cout << endl;
+  
+  cout << "f_derivs_err2: " << endl;
+  for(size_t N=10;N<1000000;N*=10) {
+    // Create a random data set
+    interpm_idw<std::vector<double> > imi3;
+    std::vector<double> x3, y3, z3, f3;
+    double scale=10.0;
+    x3.push_back(0.2);
+    y3.push_back(0.2);
+    z3.push_back(0.2);
+    f3.push_back(ft(0.2,0.2,0.2));
+    for(size_t i=0;i<N;i++) {
+      x3.push_back(0.2+(2.0*rg.random()-1.0)/scale);
+      y3.push_back(0.2+(2.0*rg.random()-1.0)/scale);
+      z3.push_back(0.2+(2.0*rg.random()-1.0)/scale);
+      f3.push_back(ft(x3[i+1],y3[i+1],z3[i+1]));
+    }
+
+    std::vector<double> p3={0.2,0.2,0.2};
+    std::vector<std::vector<double> > dat3(4);
+    std::vector<double> derivs(3), errs(3);
+    double f;
+    dat3[0]=x3;
+    dat3[1]=y3;
+    dat3[2]=z3;
+    dat3[3]=f3;
+    imi3.verbose=1;
+    imi3.set_data(3,1,N,dat3);
+    cout.width(6);
+    cout << N << endl;
+    imi3.f_derivs_err2(0,0,derivs,errs);
+    cout << "\t" << -1.8 << " " << 1.4 << " " << 0.4 << endl;
+    cout << "\t" << derivs[0] << " " << derivs[1] << " " << derivs[2] << endl;
+    cout << "\t" << errs[0] << " " << errs[1] << " " << errs[2] << endl;
+    cout << endl;
   }
 
-
-  /*
-    imi3.f_derivs_err(p3,0,f,derivs,errs);
-    cout << derivs[0] << " " << derivs[1] << " " << derivs[2] << endl;
-    cout << errs[0] << " " << errs[1] << " " << errs[2] << endl;
-    cout << endl;
-  */
-  
   t.report();
   return 0;
 }

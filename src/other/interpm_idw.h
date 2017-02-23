@@ -108,7 +108,7 @@ namespace o2scl {
       verbose=0;
     }
 
-    /** \brief Desc
+    /** \brief Verbosity parameter
      */
     int verbose;
 
@@ -125,11 +125,20 @@ namespace o2scl {
     }
 
     /** \brief Set the scales for the distance metric
-     */
+	
+	All the scales must be positive and non-zero. The size of the
+	vector \c (specified in \c n) must be larger than zero.
+    */
     template<class vec2_t> void set_scales(size_t n, vec2_t &v) {
       if (n==0) {
 	O2SCL_ERR("Scale vector size cannot be zero in interpm_idw.",
 		  o2scl::exc_einval);
+      }
+      for(size_t i=0;i<n;i++) {
+	if (v[i]<=0.0) {
+	  O2SCL_ERR("Scale must be positive and non-zero in interpm_idw.",
+		    o2scl::exc_einval);
+	}
       }
       scales.resize(n);
       o2scl::vector_copy(n,v,scales);
@@ -188,6 +197,7 @@ namespace o2scl {
     }
     
     /** \brief Initialize the data for the interpolation
+	for only one output function
 
 	The object \c vecs should be a vector (of size <tt>n_in+1</tt>)
 	of vectors (all of size <tt>n_points</tt>). It may be
@@ -251,7 +261,7 @@ namespace o2scl {
     
     /** \brief Perform the interpolation over the first function
 	with uncertainty
-     */
+    */
     template<class vec2_t> void eval_err(const vec2_t &x, double &val,
 					 double &err) const {
       
@@ -358,9 +368,9 @@ namespace o2scl {
     
     /** \brief Perform the interpolation over all the functions
 	with uncertainties
-     */
-    template<class vec2_t, class vec3_t>
-      void eval_err(const vec2_t &x, vec3_t &val, vec3_t &err) const {
+    */
+    template<class vec2_t, class vec3_t, class vec4_t>
+      void eval_err(const vec2_t &x, vec3_t &val, vec4_t &err) const {
       
       if (data_set==false) {
 	O2SCL_ERR("Data not set in interpm_idw::eval_err().",
@@ -423,40 +433,40 @@ namespace o2scl {
 	}
 
       }
-
+      
       return;
     }
-
+    
     /** \brief For one of the functions, compute the partial
 	derivatives (and uncertainties) with respect to all of the
 	inputs at one point
-
+	
 	\note This function ignores the order chosen by \ref
 	set_order() and always chooses to average derivative
 	calculations determined from \c n_in+1 combinations of \c n_in
 	points .
-
+	
 	This function computes the interpolated function
 	value \c f as a by-product using \c n_in points for 
 	the interpolation.
     */
-    template<class vec2_t, class vec3_t>
+    template<class vec2_t, class vec3_t, class vec4_t>
       void f_derivs_err(const vec2_t &x, size_t ix, double &f,
-			vec3_t &derivs, vec3_t &errs) const {
-      
+			vec3_t &derivs, vec4_t &errs) const {
+    
       o2scl_linalg::linear_solver_HH<> lshh;
     
       if (data_set==false) {
 	O2SCL_ERR("Data not set in interpm_idw::eval_err().",
 		  exc_einval);
       }
-
+    
       // Compute distances
       std::vector<double> dists(np);
       for(size_t i=0;i<np;i++) {
 	dists[i]=dist(i,x);
       }
-
+  
       // Find nd_in+1 closest points
       std::vector<size_t> index;
       o2scl::vector_smallest_index<std::vector<double>,double,
@@ -519,7 +529,7 @@ namespace o2scl {
 		    << diff_norms[j] << std::endl;
 	}
       }
-
+    
       std::vector<ubvector> ders(nd_in+1);
       
       // Go through each set of points
@@ -571,8 +581,152 @@ namespace o2scl {
       return;
     }
     
-#ifndef DOXYGEN_INTERNAL
+    /** \brief For one of the functions, compute the partial
+	derivatives (and uncertainties) with respect to all of the
+	inputs at one point
 
+	\note This function ignores the order chosen by \ref
+	set_order() and always chooses to average derivative
+	calculations determined from \c n_in+1 combinations of \c n_in
+	points .
+
+	This function computes the interpolated function
+	value \c f as a by-product using \c n_in points for 
+	the interpolation.
+    */
+    template<class vec3_t>
+      void f_derivs_err2(size_t ix, size_t jx, 
+			 vec3_t &derivs, vec3_t &errs) const {
+
+      vec3_t x(nd_in);
+      for(size_t i=0;i<nd_in;i++) {
+	x[i]=ptrs[i][jx];
+      }
+      double f=ptrs[nd_in+ix][jx];
+
+      o2scl_linalg::linear_solver_HH<> lshh;
+    
+      if (data_set==false) {
+	O2SCL_ERR("Data not set in interpm_idw::eval_err().",
+		  exc_einval);
+      }
+    
+      // Compute distances
+      std::vector<double> dists(np);
+      for(size_t i=0;i<np;i++) {
+	dists[i]=dist(i,x);
+      }
+  
+      // Find nd_in+1 closest points
+      std::vector<size_t> index;
+      o2scl::vector_smallest_index<std::vector<double>,double,
+	std::vector<size_t> >(dists,nd_in+2,index);
+      
+      if (dists[1]<=0.0) {
+	O2SCL_ERR("Derivative algorithm fails if a distance is zero.",
+		  o2scl::exc_einval);
+      }
+
+      // Compute normalization
+      double norm=0.0;
+      for(size_t i=0;i<nd_in;i++) {
+	norm+=1.0/dists[index[i+1]];
+      }
+      
+      // Unit vector storage
+      std::vector<ubvector> units(nd_in+1);
+      // Difference vector norms
+      std::vector<double> diff_norms(nd_in+1);
+
+      for(size_t i=0;i<nd_in+1;i++) {
+
+	// Assign unit vector elements
+	units[i].resize(nd_in);
+	for(size_t j=0;j<nd_in;j++) {
+	  units[i][j]=ptrs[j][index[i+1]]-x[j];
+	}
+
+	// Normalize the unit vectors
+	diff_norms[i]=o2scl::vector_norm<ubvector,double>(units[i]);
+	for(size_t j=0;j<nd_in;j++) {
+	  units[i][j]/=diff_norms[i];
+	}
+
+      }
+
+      if (verbose>0) {
+	std::cout << "Point:   ";
+	for(size_t i=0;i<nd_in;i++) {
+	  std::cout << x[i] << " ";
+	}
+	std::cout << f << std::endl;
+	for(size_t j=0;j<nd_in+2;j++) {
+	  std::cout << "Closest: " << j << " ";
+	  for(size_t i=0;i<nd_in;i++) {
+	    std::cout << ptrs[i][index[j]] << " ";
+	  }
+	  if (j==0) {
+	    std::cout << ptrs[ix+nd_in][index[j]] << std::endl;
+	  } else {
+	    std::cout << ptrs[ix+nd_in][index[j]] << " "
+		      << diff_norms[j-1] << std::endl;
+	  }
+	}
+      }
+    
+      std::vector<ubvector> ders(nd_in+1);
+      
+      // Go through each set of points
+      for(size_t i=0;i<nd_in+1;i++) {
+
+	ders[i].resize(nd_in);
+
+	// Construct the matrix and vector for the solver
+	ubmatrix m(nd_in,nd_in);
+	ubvector v(nd_in);
+	size_t jj=0;
+	for(size_t j=0;j<nd_in+1;j++) {
+	  if (j!=i) {
+	    for(size_t k=0;k<nd_in;k++) {
+	      m(jj,k)=units[j][k];
+	    }
+	    v[jj]=(ptrs[ix+nd_in][index[j+1]]-f)/diff_norms[j];
+	    jj++;
+	  }
+	}
+
+	// Solve to compute the derivatives
+	lshh.solve(nd_in,m,v,ders[i]);
+	if (verbose>0) {
+	  std::cout << "Derivs: " << i << " ";
+	  for(size_t j=0;j<nd_in;j++) {
+	    std::cout << ders[i][j] << " ";
+	  }
+	  std::cout << std::endl;
+	}
+      }
+      
+      // Rearranged derivative object
+      std::vector<ubvector> ders2(nd_in);
+      
+      for(size_t i=0;i<nd_in;i++) {
+
+	// Rearrange derivatives
+	ders2[i].resize(nd_in+1);
+	for(size_t j=0;j<nd_in+1;j++) {
+	  ders2[i][j]=ders[j][i];
+	}
+
+	// Compute mean and standard deviation
+	derivs[i]=o2scl::vector_mean(ders2[i]);
+	errs[i]=o2scl::vector_stddev(ders2[i]);
+      }
+      
+      return;
+    }
+    
+#ifndef DOXYGEN_INTERNAL
+    
   protected:
     
     /// Distance scales for each coordinate
@@ -600,15 +754,26 @@ namespace o2scl {
       }
       return sqrt(ret);
     }
-
+    
+    /// Compute the distance between \c x and the point at index \c index
+    template<class vec2_t> double dist_index
+      (size_t index1, size_t index2) const {
+      double ret=0.0;
+      size_t nscales=scales.size();
+      for(size_t i=0;i<nd_in;i++) {
+	ret+=pow((ptrs[i][index2]-ptrs[i][index1])/scales[i%nscales],2.0);
+      }
+      return sqrt(ret);
+    }
+    
 #endif
-
+    
   };
-  
+    
 #ifndef DOXYGEN_NO_O2NS
 }
 #endif
-
+    
 #endif
 
 
