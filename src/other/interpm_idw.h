@@ -92,6 +92,8 @@ namespace o2scl {
   */
   template<class vec_t> class interpm_idw {
 
+  protected:
+
   public:
 
     typedef boost::numeric::ublas::vector<double> ubvector;
@@ -188,8 +190,8 @@ namespace o2scl {
     /** \brief Initialize the data for the interpolation
 
 	The object \c vecs should be a vector (of size <tt>n_in+1</tt>)
-	of vectors (all of size <tt>n_points</tt>). It may have be
-	any time which allows the use of <tt>std::swap</tt> for
+	of vectors (all of size <tt>n_points</tt>). It may be
+	any type which allows the use of <tt>std::swap</tt> for
 	each vector in the list. 
     */
     template<class vec_vec_t>
@@ -437,19 +439,18 @@ namespace o2scl {
 	This function computes the interpolated function
 	value \c f as a by-product using \c n_in points for 
 	the interpolation.
-
     */
     template<class vec2_t, class vec3_t>
       void f_derivs_err(const vec2_t &x, size_t ix, double &f,
 			vec3_t &derivs, vec3_t &errs) const {
       
+      o2scl_linalg::linear_solver_HH<> lshh;
+    
       if (data_set==false) {
 	O2SCL_ERR("Data not set in interpm_idw::eval_err().",
 		  exc_einval);
       }
 
-      o2scl_linalg::linear_solver_HH<> lshh;
-      
       // Compute distances
       std::vector<double> dists(np);
       for(size_t i=0;i<np;i++) {
