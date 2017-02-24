@@ -178,11 +178,11 @@ int main(void) {
     dat3[1]=y3;
     dat3[2]=z3;
     dat3[3]=f3;
-    imi3.verbose=1;
+    imi3.verbose=2;
     imi3.set_data(3,1,N,dat3);
     cout.width(6);
-    cout << N << endl;
     imi3.derivs_err(0,0,derivs,errs);
+    cout << N << endl;
     t.test_rel(derivs[0],-1.8,errs[0]*100.0,"derivs 1");
     t.test_rel(derivs[1],1.4,errs[1]*100.0,"derivs 2");
     t.test_rel(derivs[2],0.4,errs[2]*100.0,"derivs 3");

@@ -493,21 +493,46 @@ namespace o2scl {
 	dists[i]=dist(i,x);
       }
   
-      // Find nd_in+2 closest points (we'll ignore the point at
-      // point_index which is the same and thus has zero distance)
+      // Find closest (but not identical) points
+
       std::vector<size_t> index;
-      o2scl::vector_smallest_index<std::vector<double>,double,
-	std::vector<size_t> >(dists,nd_in+2,index);
+      size_t max_smallest=(nd_in+2)*2;
+      if (max_smallest>np) max_smallest=np;
+      if (max_smallest<nd_in+1) {
+	O2SCL_ERR("Couldn't find enough nearby points.",o2scl::exc_einval);
+      }
+
+      if (verbose>0) {
+	std::cout << "max_smallest: " << max_smallest << std::endl;
+      }
       
-      if (dists[1]<=0.0) {
-	O2SCL_ERR("Derivative algorithm fails if a distance is zero.",
+      o2scl::vector_smallest_index<std::vector<double>,double,
+	std::vector<size_t> >(dists,max_smallest,index);
+
+      if (verbose>0) {
+	for(size_t i=0;i<index.size();i++) {
+	  std::cout << "index[" << i << "] = " << index[i] << " "
+		    << dists[index[i]] << std::endl;
+	}
+      }
+      
+      std::vector<size_t> index2;
+      for(size_t i=0;i<max_smallest;i++) {
+	if (dists[index[i]]>0.0) {
+	  index2.push_back(index[i]);
+	  if (index2.size()==nd_in+1) i=max_smallest;
+	}
+      }
+      if (index2.size()<nd_in+1) {
+	O2SCL_ERR("Couldn't find enough nearby points (2).",
 		  o2scl::exc_einval);
       }
 
-      // Compute normalization
-      double norm=0.0;
-      for(size_t i=0;i<nd_in;i++) {
-	norm+=1.0/dists[index[i+1]];
+      if (verbose>0) {
+	for(size_t i=0;i<index2.size();i++) {
+	  std::cout << "index2[" << i << "] = " << index2[i] << " "
+		    << dists[index2[i]] << std::endl;
+	}
       }
       
       // Unit vector storage
@@ -528,7 +553,7 @@ namespace o2scl {
 	// Assign unit vector elements
 	units[i].resize(nd_in);
 	for(size_t j=0;j<nd_in;j++) {
-	  units[i][j]=ptrs[j][index[i+1]]-x[j];
+	  units[i][j]=ptrs[j][index2[i]]-x[j];
 	}
 
 	// Normalize the unit vectors
@@ -546,21 +571,21 @@ namespace o2scl {
 	  std::cout << x[i] << " ";
 	}
 	std::cout << f << std::endl;
-	for(size_t j=0;j<nd_in+2;j++) {
-	  std::cout << "Closest: " << j << " ";
+	for(size_t j=0;j<nd_in+1;j++) {
+	  std::cout << "Closest: " << j << " " << index2[j] << " ";
 	  for(size_t i=0;i<nd_in;i++) {
-	    std::cout << ptrs[i][index[j]] << " ";
+	    std::cout << ptrs[i][index2[j]] << " ";
 	  }
-	  if (j==0) {
-	    std::cout << ptrs[func_index+nd_in][index[j]] << std::endl;
-	  } else {
-	    std::cout << ptrs[func_index+nd_in][index[j]] << " "
-		      << diff_norms[j-1] << std::endl;
-	  }
+	  std::cout << ptrs[func_index+nd_in][index2[j]] << " "
+		    << diff_norms[j] << std::endl;
+	}
+	for(size_t j=0;j<nd_in+1;j++) {
+	  std::cout << "diff_norm: " << j << " " << diff_norms[j]
+		    << std::endl;
 	}
 	// End of verbose output
       }
-    
+
       // Go through each set of points
       for(size_t i=0;i<nd_in+1;i++) {
 
@@ -573,18 +598,26 @@ namespace o2scl {
 	    for(size_t k=0;k<nd_in;k++) {
 	      m(jj,k)=units[j][k];
 	    }
-	    v[jj]=(ptrs[func_index+nd_in][index[j+1]]-f)/diff_norms[j];
+	    v[jj]=(ptrs[func_index+nd_in][index2[j]]-f)/diff_norms[j];
 	    jj++;
 	  }
 	}
 
 	// Solve to compute the derivatives
+	if (verbose>0) {
+	  std::cout << "m:" << std::endl;
+	  o2scl::matrix_out(std::cout,nd_in,nd_in,m);
+	  std::cout << "v:" << std::endl;
+	  o2scl::vector_out(std::cout,nd_in,v,true);
+	}
 	lshh.solve(nd_in,m,v,ders[i]);
 	if (verbose>0) {
 	  std::cout << "Derivs:  " << i << " ";
+	  std::cout.setf(std::ios::showpos);
 	  for(size_t j=0;j<nd_in;j++) {
 	    std::cout << ders[i][j] << " ";
 	  }
+	  std::cout.unsetf(std::ios::showpos);
 	  std::cout << std::endl;
 	}
 
