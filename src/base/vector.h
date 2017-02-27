@@ -931,6 +931,21 @@ namespace o2scl {
     return vector_smallest(n,data,k,smallest);
   }
 
+  /** \brief Find the indexes of the k smallest entries among the
+      first \c n entries of a vector
+
+      Given a vector \c data, this function sets the first \c k
+      entries of the vector \c smallest equal to the indexes of the k
+      smallest entries from vector \c data in ascending order. The
+      vector \c smallest is resized if necessary to hold at least \c k
+      elements.
+
+      \note This \f$ {\cal O}(k N) \f$ algorithm is useful only when 
+      \f$ k << N \f$.
+
+      If \c k is zero or \c n is zero or \f$ k &gt; n\f$, then this
+      function calls the error handler.
+  */
   template<class vec_t, class data_t, class vec_size_t>
     void vector_smallest_index(size_t n, vec_t &data, size_t k,
 			       vec_size_t &index) {
@@ -969,6 +984,8 @@ namespace o2scl {
     return;
   }
 
+  /** \brief Find the indexes of the k smallest entries of a vector
+  */
   template<class vec_t, class data_t, class vec_size_t>
     void vector_smallest_index(vec_t &data, size_t k,
 			       vec_size_t &index) {

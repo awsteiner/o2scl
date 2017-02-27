@@ -348,6 +348,14 @@ namespace o2scl {
 		  exc_einval);
       }
 
+      if (verbose>0) {
+	std::cout << "interpm_idw: input: ";
+	for(size_t k=0;k<nd_in;k++) {
+	  std::cout << x[k] << " ";
+	}
+	std::cout << std::endl;
+      }
+      
       // Compute distances
       std::vector<double> dists(np);
       for(size_t i=0;i<np;i++) {
@@ -358,12 +366,29 @@ namespace o2scl {
       std::vector<size_t> index;
       o2scl::vector_smallest_index<std::vector<double>,double,
 	std::vector<size_t> >(dists,order,index);
-
-      // Check if the closest distance is zero
+      if (verbose>0) {
+	for(size_t i=0;i<order;i++) {
+	  std::cout << "interpm_idw: closest point: ";
+	  for(size_t k=0;k<nd_in;k++) {
+	    std::cout << ptrs[k][index[i]] << " ";
+	  }
+	  std::cout << std::endl;
+	}
+      }
+      
+      // Check if the closest distance is zero, if so, just
+      // return the value
       if (dists[index[0]]<=0.0) {
 	for(size_t i=0;i<nd_out;i++) {
-	  y[i]=ptrs[index[0]][nd_in+i];
+	  y[i]=ptrs[nd_in+i][index[0]];
 	}
+	if (verbose>0) {
+	  std::cout << "interpm_idw: distance zero. "
+		    << "Returning values at index: " << index[0] << std::endl;
+	  std::cout << "\t";
+	  o2scl::vector_out(std::cout,nd_out,y,true);
+	}
+	return;
       }
 
       // Compute normalization
@@ -371,15 +396,37 @@ namespace o2scl {
       for(size_t i=0;i<order;i++) {
 	norm+=1.0/dists[index[i]];
       }
+      if (verbose>0) {
+	std::cout << "interpm_idw: norm is " << norm << std::endl;
+      }
 
       // Compute the inverse-distance weighted averages
       for(size_t j=0;j<nd_out;j++) {
 	y[j]=0.0;
 	for(size_t i=0;i<order;i++) {
-	  y[j]+=ptrs[nd_in][index[i]]/dists[index[i]];
+	  if (j==0 && verbose>0) {
+	    std::cout << "interpm_idw: Point: ";
+	    for(size_t k=0;k<nd_in;k++) {
+	      std::cout << ptrs[k][index[i]] << " ";
+	    }
+	    std::cout << std::endl;
+	  }
+	  y[j]+=ptrs[nd_in+j][index[i]]/dists[index[i]];
+	  if (verbose>0) {
+	    std::cout << "interpm_idw: j,order,value,1/dist: "
+		      << j << " " << i << " "
+		      << ptrs[nd_in+j][index[i]] << " "
+		      << 1.0/dists[index[i]] << std::endl;
+	  }
 	}
 	y[j]/=norm;
+	if (verbose>0) {
+	  std::cout << "interpm_idw: y[" << j << "]: " << y[j]
+		    << std::endl;
+	}
       }
+
+      
 
       return;
     }
