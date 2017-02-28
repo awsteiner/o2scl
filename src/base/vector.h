@@ -523,7 +523,7 @@ namespace o2scl {
     return;
   }
   
-  /** \brief Swap two elements in a vector
+  /** \brief Swap two elements in a double-precision vector
       
       This function swaps the element \c i and element \c j of vector
       \c v1. 
@@ -555,7 +555,7 @@ namespace o2scl {
   }
 
   /** \brief Swap of the first \f$ (M,N) \f$ elements in two
-      matrices
+      double-precision matrices
       
       This function swaps the elements of \c m1 and \c m2, one element
       at a time.
@@ -578,7 +578,7 @@ namespace o2scl {
     return;
   }
   
-  /** \brief Swap two elements in a matrix
+  /** \brief Swap two elements in a double-precision matrix
       
       This function swaps the element \c i and element \c j of matrix
       \c v1. 
@@ -943,7 +943,7 @@ namespace o2scl {
       \note This \f$ {\cal O}(k N) \f$ algorithm is useful only when 
       \f$ k << N \f$.
 
-      If \c k is zero or \c n is zero or \f$ k &gt; n\f$, then this
+      If \c k is zero or \c n is zero or \f$ k > n\f$, then this
       function calls the error handler.
   */
   template<class vec_t, class data_t, class vec_size_t>
@@ -1775,7 +1775,7 @@ namespace o2scl {
     return vector_lookup(x.size(),x,x0);
   }
 
-  /** \brief Lookup an element in a matrix
+  /** \brief Lookup an element in the first $(m,n)$ entries in a matrix
 
       Return the location <tt>(i,j)</tt> of the element closest to 
       \c x0. 
@@ -2385,6 +2385,11 @@ namespace o2scl {
     return v+start;
   }
   
+  /** \brief Vector range function for const pointers
+
+      \note In this case, the return type is the same as the
+      type of the first parameter. 
+  */
   template<class dat_t> const dat_t *const_vector_range
     (const dat_t *v, size_t start, size_t last) {
     return v+start;

@@ -178,10 +178,8 @@ namespace o2scl {
       in <tt>examples/ex_table.cpp</tt>.
 
       \future 
-      - Create a delete_columns(std::string) function
-      - Return the empty column in the operator[] functions
-      as is done for the get_column() functions.
-      - A "delete rows" method to delete a range of several rows
+      - Create a sort_column_names() or a function to 
+      arbitrarily rearrange the columns
       - The present structure, \c
       std::map<std::string,col,string_comp> atree and \c
       std::vector<aiter> alist; could be replaced with \c
@@ -651,6 +649,7 @@ namespace o2scl {
 		 " in table::operator[size_t] const. Size: "+
 		 szttos(atree.size())+
 		 " (index should be less than size).").c_str(),exc_eindex);
+      return empty_col;
     }
 #endif
     return (alist[icol]->second.dat);
@@ -676,6 +675,7 @@ namespace o2scl {
     if (it==atree.end()) {
       O2SCL_ERR((((std::string)"Column '")+scol+"' not found in table::"+
 		 "operator[string] const.").c_str(),exc_enotfound);
+      return empty_col;
     }
 #endif
     return (it->second.dat);
@@ -778,7 +778,7 @@ namespace o2scl {
     aiter its=atree.find(scol);
     if (its==atree.end()) {
       O2SCL_ERR((((std::string)"Column '")+scol+
-		 " not found in table::delete_column().").c_str(),
+		 " not found in table::swap_column_data().").c_str(),
 		exc_enotfound);
       return;
     }
@@ -797,7 +797,7 @@ namespace o2scl {
     aiter its=atree.find(src);
     if (its==atree.end()) {
       O2SCL_ERR((((std::string)"Column '")+src+
-		 " not found in table::delete_column().").c_str(),
+		 " not found in table::rename_column().").c_str(),
 		exc_enotfound);
       return;
     }

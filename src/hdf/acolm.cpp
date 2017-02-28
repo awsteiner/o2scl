@@ -4620,6 +4620,7 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
   for(int li=0;li<cnl;li++) {
     table_obj.set(i1,li,o2scl::stod(i2)+((double)li)*o2scl::stod(i4));
   }
+  type="table";
 
   return 0;
 }
