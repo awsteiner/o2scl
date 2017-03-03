@@ -48,7 +48,6 @@ int main(void) {
 
     t.test_str(at.get_column_name(0),"col1","get_column_name() (1)");
     t.test_str(at.get_column_name(1),"col2","get_column_name() (2)");
-    t.test_str(at.get_column_name(2),"","get_column_name() (3)");
 
     double line1[2]={1.0,2.5};
     double line2[2]={3.0,4.5};
@@ -131,7 +130,6 @@ int main(void) {
 
     t.test_str(at.get_column_name(0),"col1","get_column_name() (1)");
     t.test_str(at.get_column_name(1),"col2","get_column_name() (2)");
-    t.test_str(at.get_column_name(2),"","get_column_name() (3)");
 
     double line1[2]={1.0,2.5};
     double line2[2]={3.0,4.5};

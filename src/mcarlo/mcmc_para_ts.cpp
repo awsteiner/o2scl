@@ -95,7 +95,9 @@ int main(int argc, char *argv[]) {
 
   test_mgr tm;
   tm.set_output_level(1);
-
+  
+#ifdef O2SCL_NEVER_DEFINED
+  
   // Domain limits
   ubvector low(1);
   ubvector high(1);
@@ -210,6 +212,8 @@ int main(int argc, char *argv[]) {
   sev_x.free();
   sev_x2.free();
 
+#endif
+  
   tm.report();
   
   return 0;
