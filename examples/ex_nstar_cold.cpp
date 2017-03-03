@@ -54,7 +54,10 @@ int main(void) {
   // Initialize EOS
   eos_had_rmf rmf;
   load_nl3(rmf);
-  
+
+  rmf.def_neutron.mu=5.0;
+  rmf.def_proton.mu=5.0;
+  rmf.set_fields(0.2,0.1,-0.05);
   rmf.saturation();
   cout << "Saturation density: " << rmf.n0 << endl;
   cout << "Binding energy: " << rmf.eoa*hc_mev_fm << endl;
