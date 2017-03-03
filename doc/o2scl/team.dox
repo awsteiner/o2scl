@@ -1,8 +1,10 @@
 /** \page team_section Development Team
     
     The current O2scl development team is:
-    - Andrew W. Steiner (Lead dev.)
+    - Andrew W. Steiner
+    \comment
     - Jerry Gagelman
     - Edwin van Leeuwen
+    \endcomment
 
 */
