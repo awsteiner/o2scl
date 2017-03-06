@@ -436,7 +436,8 @@ namespace o2scl {
 	with uncertainties
     */
     template<class vec2_t, class vec3_t, class vec4_t>
-      void eval_err(const vec2_t &x, vec3_t &val, vec4_t &err) const {
+      void eval_err_index(const vec2_t &x, vec3_t &val, vec4_t &err,
+			  std::vector<size_t> &index) const {
       
       if (data_set==false) {
 	O2SCL_ERR("Data not set in interpm_idw::eval_err().",
@@ -450,7 +451,6 @@ namespace o2scl {
       }
 
       // Find closest points
-      std::vector<size_t> index;
       o2scl::vector_smallest_index<std::vector<double>,double,
 	std::vector<size_t> >(dists,order+1,index);
 
@@ -501,6 +501,15 @@ namespace o2scl {
       }
       
       return;
+    }
+    
+    /** \brief Perform the interpolation over all the functions
+	with uncertainties
+    */
+    template<class vec2_t, class vec3_t, class vec4_t>
+      void eval_err(const vec2_t &x, vec3_t &val, vec4_t &err) const {
+      std::vector<size_t> index;
+      return eval_err_index(x,val,err,index);
     }
     
     /** \brief For one of the functions, compute the partial
