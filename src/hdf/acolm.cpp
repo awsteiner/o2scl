@@ -90,7 +90,7 @@ int acol_manager::setup_options() {
   const int cl_param=cli::comm_option_cl_param;
   const int both=cli::comm_option_both;
 
-  static const int narr=47;
+  static const int narr=48;
 
   // Options, sorted by long name. We allow 0 parameters in many of these
   // options so they can be requested from the user in interactive mode. 
@@ -224,6 +224,10 @@ int acol_manager::setup_options() {
      both},
     {0,"get-unit","Get the units for a specified column.",0,1,"<column>","",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_unit),
+     both},
+    {0,"entry","Get a single entry in a table.",0,3,
+     "<column/slice> <index> [index2]","",
+     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_entry),
      both},
     /*    
 	  {'H',"html","Create a file in HTML (table3d only).",0,1,"<file>",
@@ -3093,14 +3097,31 @@ int acol_manager::comm_internal(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
 
+int acol_manager::comm_entry(std::vector<std::string> &sv, bool itive_com) {
+
+  if (type=="table") {
+
+    vector<string> pr, in;
+    pr.push_back("Enter column name");
+    pr.push_back("Enter row index");
+    int ret=get_input(sv,pr,in,"function",itive_com);
+    if (ret!=0) return ret;
+    
+    cout << "Entry for column " << in[0] << " at row " << in[1] << " is "
+	 << table_obj.get(in[0],o2scl::stoi(in[1])) << endl;
+    
+  } else {
+    cerr << "Command 'entry' not implemented for type " << type << " ." << endl;
+    return exc_efailed;
+  }
+
+  return 0;
+}
+
 int acol_manager::comm_function(std::vector<std::string> &sv, bool itive_com) {
 
   if (type=="table3d") {
     
-    if (type!="table3d") {
-      cerr << "No table3d to add a slice to." << endl;
-      return exc_efailed;
-    }
     vector<string> pr, in;
     pr.push_back("Enter function for new slice");
     pr.push_back("Enter name for new slice");

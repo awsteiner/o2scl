@@ -398,7 +398,7 @@ namespace o2scl_acol {
     /// Set units of a column
     virtual int comm_set_unit(std::vector<std::string> &sv, bool itive_com);
     
-    /// Desc
+    /// Compute contour lines
     virtual int comm_contours(std::vector<std::string> &sv, bool itive_com);
     
     /// Set units of a column
@@ -406,6 +406,9 @@ namespace o2scl_acol {
     
     /// Get units of a column
     virtual int comm_get_unit(std::vector<std::string> &sv, bool itive_com);
+    
+    /// Get an entry
+    virtual int comm_entry(std::vector<std::string> &sv, bool itive_com);
     
     /// Convert units of a column
     virtual int comm_convert_unit(std::vector<std::string> &sv, 
