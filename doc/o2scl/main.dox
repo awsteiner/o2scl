@@ -83,6 +83,7 @@
     - \subpage unitconv_section
     - \subpage hdf_section
     - \subpage acol_section
+    - \subpage o2scl_python_section
     - \subpage para_section
     - \subpage other_section
     - \subpage lset_section

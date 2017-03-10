@@ -484,6 +484,9 @@ namespace o2scl_acol {
 
 extern "C" {
 
+  // (remember that \ref's don't work in \name groups)
+  /// \name Functions to integrate o2scl_acol::acol_manager with python
+  //@{
   /** \brief Create an \ref o2scl_acol::acol_manager object
    */
   void *o2scl_create_acol_manager() {
@@ -494,7 +497,7 @@ extern "C" {
   
   /** \brief Free memory associated with a \ref
       o2scl_acol::acol_manager object
-   */
+  */
   void o2scl_free_acol_manager(void *vp) {
     o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
     delete amp;
@@ -503,7 +506,7 @@ extern "C" {
 
   /** \brief Construct a string vector from the data in 
       \c n_entries, \c sizes, and \c str
-   */
+  */
   std::vector<std::string> o2scl_acol_parse_arrays
   (int n_entries, int *sizes, char *str) {
     std::vector<std::string> list;
@@ -578,15 +581,18 @@ extern "C" {
     return 0;
   }
 
-  /** \brief Desc
+  /** \brief Return the number of contour lines associated with
+      the current contour line vector object
    */
   int o2scl_acol_contours_n(void *vp) {
     o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
     return amp->cont_obj.size();
   }
 
-  /** \brief Desc
-   */
+  /** \brief For the current contour line vector object, set the
+      pointers to the x- and y-values in the contour lines and return
+      the contour level
+  */
   double o2scl_acol_contours_line(void *vp, int i, int &n, double *&ptrx,
 				  double *&ptry) {
     o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
@@ -597,7 +603,7 @@ extern "C" {
     return lev;
   }
 
-  /** \brief Desc
+  /** \brief Return the type of the current object 
    */
   void o2scl_acol_get_type(void *vp, int &n, char *&str) {
     o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
@@ -647,6 +653,9 @@ extern "C" {
     return 0;
   }
   
+  /** \brief For a two-dimensional histogram, return the bin edges,
+      number of bins in both directions, and the weights in each bin
+   */
   int o2scl_acol_get_hist_2d(void *vp, 
 			     int &nx, double *&xptr,
 			     int &ny, double *&yptr,
@@ -683,6 +692,7 @@ extern "C" {
     data=(double *)&amp->stemp[0];
     return 0;
   }
+  //@}
   
 }
 

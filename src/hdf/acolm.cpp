@@ -719,7 +719,7 @@ int acol_manager::run_o2graph() {
   const int cl_param=o2scl::cli::comm_option_cl_param;
   const int both=o2scl::cli::comm_option_both;
     
-  static const size_t narr=22;
+  static const size_t narr=23;
   o2scl::comm_option_s options_arr[narr]={
     {0,"line","Plot a line.",4,5,"<x1> <y1> <x2> <y2> [kwargs]",
      ((std::string)"Plot a line from (x1,y1) to (xy,y2). Some useful ")+
@@ -740,6 +740,11 @@ int acol_manager::run_o2graph() {
      "markerfacecolor (mfc), markerfacecoloralt (mfcalt), markersize "+
      "(ms). For example: o2graph -create x 0 10 0.2 -function \"sin(x)\" "+
      "y -plot x y lw=0,marker='+' -show",
+     new o2scl::comm_option_mfptr<acol_manager>
+     (this,&acol_manager::comm_none),both},
+    {0,"errorbar","Plot the specified columns with errobars.",4,5,
+     "<x> <y> <yerr> <xerr> [kwargs]",
+     ((std::string)"Plot column <y> versus column <x> with errorbars."),
      new o2scl::comm_option_mfptr<acol_manager>
      (this,&acol_manager::comm_none),both},
     {0,"plot1","Plot the specified column.",1,2,"<y> [kwargs]",

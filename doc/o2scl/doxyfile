@@ -811,7 +811,7 @@ INPUT += constants.dox funct.dox table.dox string.dox deriv.dox
 INPUT += inte.dox poly.dox solve.dox min.dox con_min.dox mcarlo.dox
 INPUT += anneal.dox fit.dox ode.dox rng.dox tintp.dox cheb.dox 
 INPUT += unit.dox hdf.dox other.dox lset.dox examples.dox team.dox
-INPUT += design.dox license.dox ack.dox refs.dox dev_guide.dox 
+INPUT += design.dox license.dox ack.dox refs.dox dev_guide.dox python.dox
 INPUT += dl_page.dox hist.dox algebraic.dox acol.dox mpi.dox mcmc.dox
 
 # This tag can be used to specify the character encoding of the source files
