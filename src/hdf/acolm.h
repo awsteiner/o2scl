@@ -488,6 +488,11 @@ extern "C" {
   /// \name Functions to integrate o2scl_acol::acol_manager with python
   //@{
   /** \brief Create an \ref o2scl_acol::acol_manager object
+      
+      This function creates an object of type
+      \ref o2scl_acol::acol_manager with the <tt>new</tt>
+      operator and then calls the function
+      \ref o2scl_acol::acol_manager::run_o2graph() .
    */
   void *o2scl_create_acol_manager() {
     o2scl_acol::acol_manager *amp=new o2scl_acol::acol_manager;
@@ -497,6 +502,10 @@ extern "C" {
   
   /** \brief Free memory associated with a \ref
       o2scl_acol::acol_manager object
+
+      This function uses <tt>delete</tt> to free the
+      memory associated with an object of type
+      \ref o2scl_acol::acol_manager .
   */
   void o2scl_free_acol_manager(void *vp) {
     o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;

@@ -7,8 +7,8 @@
     e.g. <tt>pip3 install o2sclpy</tt> or obtained from
     https://pypi.python.org/pypi/o2sclpy .
 
-    There are several global functions with extern "C" linkage
-    used to communicate between python and the \ref acol_manager
+    There are several global functions with extern "C" linkage used to
+    communicate between python and the \ref o2scl_acol::acol_manager
     class defined in \ref acolm.h .
 
 */
