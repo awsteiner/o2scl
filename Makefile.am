@@ -118,6 +118,8 @@ blank-doc:
 	touch doc/o2scl/html/jquery.js
 	touch doc/o2scl/html/tabs.css
 	touch doc/o2scl/html/dynsections.js
+	touch doc/o2scl/html/menu.js
+	touch doc/o2scl/html/menudata.js
 	touch doc/o2scl/eos/html/blank.html
 	touch doc/o2scl/eos/html/blank.png
 	touch doc/o2scl/eos/html/doxygen.css
@@ -125,6 +127,8 @@ blank-doc:
 	touch doc/o2scl/eos/html/jquery.js
 	touch doc/o2scl/eos/html/tabs.css
 	touch doc/o2scl/eos/html/dynsections.js
+	touch doc/o2scl/eos/html/menu.js
+	touch doc/o2scl/eos/html/menudata.js
 	touch doc/o2scl/part/html/blank.html
 	touch doc/o2scl/part/html/blank.png
 	touch doc/o2scl/part/html/doxygen.css
@@ -132,3 +136,5 @@ blank-doc:
 	touch doc/o2scl/part/html/jquery.js
 	touch doc/o2scl/part/html/tabs.css
 	touch doc/o2scl/part/html/dynsections.js
+	touch doc/o2scl/part/html/menu.js
+	touch doc/o2scl/part/html/menudata.js
