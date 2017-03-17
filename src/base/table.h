@@ -1214,6 +1214,49 @@ namespace o2scl {
     return;
   }
 
+  /** \brief Delete all rows in a specified list
+   */
+  template<class vec2_size_t> 
+  void delete_rows(vec2_size_t &row_list) {
+    size_t new_nlines=0;
+    for(size_t i=0;i<nlines;i++) {
+      bool found=false;
+      for(size_t j=0;j<row_list.size();j++) {
+	if (row_list[j]==i) found=true;
+      }
+      if (found==false) {
+	for(aiter it=atree.begin();it!=atree.end();it++) {
+	  it->second.dat[new_nlines]=it->second.dat[i];
+	}
+	new_nlines++;
+      }
+    }
+    nlines=new_nlines;
+    if (intp_set==true) {
+      delete si;
+      intp_set=false;
+    }
+    return;
+  }
+
+  /** \brief Delete all rows which are identical to
+      adjacent rows in a specified list
+   */
+  void delete_idadj_rows() {
+    std::vector<size_t> row_list;
+    if (nlines>=2) {
+      for(size_t i=0;i<nlines-1;i++) {
+	bool match=true;
+	for(aiter it=atree.begin();it!=atree.end() && match==true;it++) {
+	  if (it->second.dat[i+1]!=it->second.dat[i]) match=false;
+	}
+	if (match) row_list.push_back(i+1);
+      }
+    }
+    delete_rows(row_list);
+    return;
+  }
+  
   /** \brief Read a new set of names from \c newheads
 
       This function reads a set of white-space delimited column

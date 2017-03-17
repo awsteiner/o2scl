@@ -818,6 +818,9 @@ namespace o2scl {
     // Compute normalization
     norm=pow(2.0*o2scl_const::pi,-((double)ndim)/2.0)/sqrt(det);
   }
+  
+  //void set_invcovar_det(size_t p_ndim, vec_t &p_peak, mat_t &covar) {
+  //}
 
   /// The normalized density 
   virtual double pdf(const vec_t &x) const {
@@ -1141,6 +1144,84 @@ namespace o2scl {
 
   };
 
+/** \brief A multidimensional normal distribution from
+    a Gaussian process
+
+    \future The linear algebra only works with ublas and is
+    not optimized.
+*/
+template<class vec_t=boost::numeric::ublas::vector<double>,
+  class mat_t=boost::numeric::ublas::matrix<double>,
+  class mat_col_t=boost::numeric::ublas::matrix_column<mat_t> >
+  class prob_dens_mdim_gproc :
+  public o2scl::prob_dens_mdim_gaussian<vec_t> {
+
+ public:
+  
+ /** \brief Given a data set and a covariance function, construct
+     a Gaussian process probability distribution
+ */
+ template<class vec_vec_t, class func_t> 
+ prob_dens_mdim_gproc(size_t n_dim, size_t n_init, size_t n_new,
+		      vec_vec_t &x, vec_t &y, func_t &fcovar) {
+   
+   // Construct the four covariance matrices
+   
+   mat_t KXsX(n_new,n_init);
+   for(size_t irow=n_init;irow<n_new+n_init;irow++) {
+     for(size_t icol=0;icol<n_init;icol++) {
+       KXsX(irow-n_init,icol)=fcovar(x[irow],x[icol]);
+     }
+   }
+
+   mat_t KXXs=boost::numeric::ublas::trans(KXsX);
+   
+   mat_t KXX(n_init,n_init);
+   for(size_t irow=0;irow<n_init;irow++) {
+     for(size_t icol=0;icol<n_init;icol++) {
+       if (irow>icol) {
+	 KXX(irow,icol)=KXX(icol,irow);
+       } else {
+	 KXX(irow,icol)=fcovar(x[irow],x[icol]);
+       }
+     }
+   }
+   
+   mat_t KXsXs(n_new,n_new);
+   for(size_t irow=n_init;irow<n_new+n_init;irow++) {
+     for(size_t icol=n_init;icol<n_new+n_init;icol++) {
+       if (irow>icol) {
+	 KXsXs(irow-n_init,icol-n_init)=KXsXs(icol-n_init,irow-n_init);
+       } else {
+	 KXsXs(irow-n_init,icol-n_init)=fcovar(x[irow],x[icol]);
+       }
+     }
+   }
+
+   // Construct the inverse of KXX
+   mat_t inv_KXX(n_init,n_init);
+   o2scl::permutation p;
+   int signum;
+   o2scl_linalg::LU_decomp(n_init,KXX,p,signum);
+   o2scl_linalg::LU_invert<mat_t,mat_t,mat_col_t>(n_init,KXX,p,inv_KXX);
+   
+   // Compute the mean vector
+   vec_t prod(n_init), mean(n_new);
+   boost::numeric::ublas::axpy_prod(inv_KXX,y,prod,true);
+   boost::numeric::ublas::axpy_prod(KXsX,prod,mean,true);
+   
+   // Compute the covariance matrix
+   mat_t covar(n_new,n_new), prod2(n_init,n_new), prod3(n_new,n_new);
+   boost::numeric::ublas::axpy_prod(inv_KXX,KXXs,prod2,true);
+   boost::numeric::ublas::axpy_prod(KXsX,prod2,prod3,true);
+   covar=KXsXs-prod3;
+   
+   // Now use set() in the parent class
+   this->set(n_new,mean,covar);
+   
+ }
+ 
+};    
   
 #ifndef DOXYGEN_NO_O2NS
 }

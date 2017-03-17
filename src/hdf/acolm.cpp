@@ -371,7 +371,8 @@ int acol_manager::setup_options() {
      "for each slice.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_slice),
      both},
-    {'S',"sort","Sort the entire table by a column (table only).",0,1,"<col>",
+    {'S',"sort","Sort the entire table by a column (table only).",0,2,
+     "<col> [unique]",
      "Sorts the entire table by the column specified in <col>. ",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sort),
      both},
@@ -3983,14 +3984,17 @@ int acol_manager::comm_sort(std::vector<std::string> &sv, bool itive_com) {
     return 0;
   }
   
-  std::string i1;
+  std::string i1, i2;
 
   if (table_obj.get_nlines()==0) {
     cerr << "No table to sort." << endl;
     return exc_efailed;
   }
-  
-  if (sv.size()>1) {
+
+  if (sv.size()>2) {
+    i1=sv[1];
+    i2=sv[2];
+  } else if (sv.size()>1) {
     i1=sv[1];
   } else {
     if (itive_com) {
@@ -4005,6 +4009,9 @@ int acol_manager::comm_sort(std::vector<std::string> &sv, bool itive_com) {
     }
   }
 
+  bool unique=false;
+  if (i2==((std::string)"unique")) unique=true;
+  
   if (table_obj.is_column(i1)==false) {
     cerr << "Couldn't find column named '" << i1 << "'." << endl;
     return exc_efailed;
@@ -4014,6 +4021,12 @@ int acol_manager::comm_sort(std::vector<std::string> &sv, bool itive_com) {
     cout << "Sorting by column " << i1 << endl; 
   }
   table_obj.sort_table(i1);
+
+  if (unique) {
+    std::cout << "Going to dir." << std::endl;
+    table_obj.delete_idadj_rows();
+    std::cout << "Done in dir." << std::endl;
+  }
   
   return 0;
 }

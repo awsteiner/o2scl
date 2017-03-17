@@ -294,11 +294,11 @@ namespace o2scl_linalg {
   /** \brief Compute the inverse of a matrix from its LU decomposition
 
       These functions compute the inverse of a matrix A from its LU
-      decomposition (LU,p), storing the result in the matrix inverse.
-      The inverse is computed by solving the system A x = b for each
-      column of the identity matrix. It is preferable to avoid direct
-      use of the inverse whenever possible, as the linear solver
-      functions can obtain the same result more efficiently and
+      decomposition (LU,p), storing the result in the matrix \c
+      inverse. The inverse is computed by solving the system A x = b
+      for each column of the identity matrix. It is preferable to
+      avoid direct use of the inverse whenever possible, as the linear
+      solver functions can obtain the same result more efficiently and
       reliably.
 
       \future Could rewrite to avoid mat_col_t, (9/16/09 - However,
