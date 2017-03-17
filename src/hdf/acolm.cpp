@@ -373,7 +373,9 @@ int acol_manager::setup_options() {
      both},
     {'S',"sort","Sort the entire table by a column (table only).",0,2,
      "<col> [unique]",
-     "Sorts the entire table by the column specified in <col>. ",
+     ((string)"Sorts the entire table by the column specified in <col>. ")+
+     "If the word \"unique\" is specified as the second argument, then "+
+     "delete duplicate rows after sorting.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sort),
      both},
     {0,"stats","Show column statistics (table only).",0,1,"<col>",

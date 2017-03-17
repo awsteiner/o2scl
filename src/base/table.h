@@ -1213,11 +1213,26 @@ namespace o2scl {
     }
     return;
   }
-
+  
   /** \brief Delete all rows in a specified list
+      
+      Given a list of rows in \c row_list, this function deletes all
+      of the specified rows. If a row beyond the end of the table is
+      in the list, the error handler is called.
    */
-  template<class vec2_size_t> 
-  void delete_rows(vec2_size_t &row_list) {
+  template<class vec_size_t> 
+  void delete_rows(vec_size_t &row_list) {
+
+    // First, check that they're all valid rows
+    for(size_t j=0;j<row_list.size();j++) {
+      if (row_list[j]>nlines) {
+	O2SCL_ERR("Invalid row in table<>::delete_rows(vec_size_t &)",
+		  o2scl::exc_einval);
+      }
+    }
+
+    // Copy the data over, ensuring rows which are to be
+    // deleted are skipped
     size_t new_nlines=0;
     for(size_t i=0;i<nlines;i++) {
       bool found=false;
@@ -1231,20 +1246,27 @@ namespace o2scl {
 	new_nlines++;
       }
     }
+    
+    // Set the new line number and reset the interpolator
     nlines=new_nlines;
     if (intp_set==true) {
       delete si;
       intp_set=false;
     }
+    
     return;
   }
 
   /** \brief Delete all rows which are identical to
-      adjacent rows in a specified list
-   */
+      adjacent rows
+
+      This function does silently does nothing if there are
+      less than 2 rows in the table.
+  */
   void delete_idadj_rows() {
-    std::vector<size_t> row_list;
     if (nlines>=2) {
+      // Find duplicate rows
+      std::vector<size_t> row_list;
       for(size_t i=0;i<nlines-1;i++) {
 	bool match=true;
 	for(aiter it=atree.begin();it!=atree.end() && match==true;it++) {
@@ -1252,8 +1274,9 @@ namespace o2scl {
 	}
 	if (match) row_list.push_back(i+1);
       }
+      // Delete duplicates
+      delete_rows(row_list);
     }
-    delete_rows(row_list);
     return;
   }
   
@@ -1292,8 +1315,11 @@ namespace o2scl {
       a vector and store as a new row in the table
 
       The type <tt>vec2_t</tt> can be any type with an
-      <tt>operator[]</tt> method.
-   */
+      <tt>operator[]</tt> method. Note that this function does not
+      verify that \c nv is equal to the number of columns, so some of
+      the columns may be uninitialized in the new row which is
+      created.
+  */
   template<class vec2_t> void line_of_data(size_t nv, const vec2_t &v) {
     if (maxlines==0) inc_maxlines(1);
     if (nlines>=maxlines) inc_maxlines(maxlines);
@@ -1321,7 +1347,10 @@ namespace o2scl {
       table
 
       The type <tt>vec2_t</tt> can be any type with an
-      <tt>operator[]</tt> method.
+      <tt>operator[]</tt> method. Note that this function does not
+      verify that the vector size is equal to the number of columns,
+      so some of the columns may be uninitialized in the new row which
+      is created.
    */
   template<class vec2_t> void line_of_data(const vec2_t &v) {
     line_of_data(v.size(),v);
