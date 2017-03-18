@@ -629,6 +629,12 @@ namespace o2scl {
     /// Initialize with histogram \c h
     void init(hist &h);
 
+    /// Get reference to partial sums
+    const ubvector &partial_sums() { return sum; }
+    
+    /// Get reference to bin ranges
+    const ubvector &bin_ranges() { return range; }
+    
     /// Generate a sample
     virtual double operator()() const;
 
@@ -658,7 +664,7 @@ namespace o2scl {
   };
 
   /** \brief A multi-dimensional probability density function
-
+      
       This class is experimental.
   */
   template<class vec_t=boost::numeric::ublas::vector<double> >
@@ -735,6 +741,9 @@ namespace o2scl {
   /** \brief A multi-dimensional Gaussian probability density function
 
       This class is experimental.
+
+      \future Create alternate versions based on other
+      decompositions?
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
     class mat_t=boost::numeric::ublas::matrix<double> >
@@ -772,7 +781,8 @@ namespace o2scl {
   virtual size_t dim() const {
     return ndim;
   }
-  
+
+  /// Create an empty distribution
   prob_dens_mdim_gaussian() {
     ndim=0;
   }
@@ -819,9 +829,101 @@ namespace o2scl {
     norm=pow(2.0*o2scl_const::pi,-((double)ndim)/2.0)/sqrt(det);
   }
   
-  //void set_invcovar_det(size_t p_ndim, vec_t &p_peak, mat_t &covar) {
-  //}
+  /** \brief Alternate set function for use when covariance matrix
+      has already been decomposed and inverted
+  */
+  void set_alt(size_t p_ndim, vec_t &p_peak, mat_t &p_chol,
+	       mat_t &p_covar_inv, double p_norm) {
+    n_dim=p_ndim;
+    peak=p_peak;
+    chol=p_chol;
+    covar_inv=p_covar_inv;
+    norm=p_norm;
+    return;
+  }
 
+  /** \brief Given a data set and a covariance function, construct
+      probability distribution based on a Gaussian process which
+      includes noise
+  */
+  template<class vec_vec_t, class func_t> 
+  void set_gproc_noise(size_t n_dim, size_t n_init, 
+		       vec_vec_t &x, vec_t &y, func_t &fcovar,
+		       vec_t &eps) {
+    
+    // Construct the four covariance matrices
+    
+    mat_t KXsX(n_dim,n_init);
+    for(size_t irow=n_init;irow<n_dim+n_init;irow++) {
+      for(size_t icol=0;icol<n_init;icol++) {
+	KXsX(irow-n_init,icol)=fcovar(x[irow],x[icol]);
+      }
+    }
+    
+    mat_t KXXs=boost::numeric::ublas::trans(KXsX);
+    
+    mat_t KXX(n_init,n_init);
+    for(size_t irow=0;irow<n_init;irow++) {
+      for(size_t icol=0;icol<n_init;icol++) {
+	if (irow>icol) {
+	  KXX(irow,icol)=KXX(icol,irow);
+	} else {
+	  if (irow==icol) {
+	    // Add the noise term along the diagonal
+	    KXX(irow,icol)=fcovar(x[irow],x[icol])+eps[irow];
+	  } else {
+	    KXX(irow,icol)=fcovar(x[irow],x[icol]);
+	  }
+	}
+      }
+    }
+    
+    mat_t KXsXs(n_dim,n_dim);
+    for(size_t irow=n_init;irow<n_dim+n_init;irow++) {
+      for(size_t icol=n_init;icol<n_dim+n_init;icol++) {
+	if (irow>icol) {
+	  KXsXs(irow-n_init,icol-n_init)=KXsXs(icol-n_init,irow-n_init);
+	} else {
+	  KXsXs(irow-n_init,icol-n_init)=fcovar(x[irow],x[icol]);
+	}
+      }
+    }
+    
+    // Construct the inverse of KXX
+    mat_t inv_KXX(n_init,n_init);
+    o2scl::permutation p;
+    int signum;
+    o2scl_linalg::LU_decomp(n_init,KXX,p,signum);
+    o2scl_linalg::LU_invert<mat_t,mat_t,mat_col_t>(n_init,KXX,p,inv_KXX);
+    
+    // Compute the mean vector
+    vec_t prod(n_init), mean(n_dim);
+    boost::numeric::ublas::axpy_prod(inv_KXX,y,prod,true);
+    boost::numeric::ublas::axpy_prod(KXsX,prod,mean,true);
+    
+    // Compute the covariance matrix
+    mat_t covar(n_dim,n_dim), prod2(n_init,n_dim), prod3(n_dim,n_dim);
+    boost::numeric::ublas::axpy_prod(inv_KXX,KXXs,prod2,true);
+    boost::numeric::ublas::axpy_prod(KXsX,prod2,prod3,true);
+    covar=KXsXs-prod3;
+    
+    // Now use set() in the parent class
+    this->set(n_dim,mean,covar);
+    
+  }
+
+  /** \brief Given a data set and a covariance function, construct
+      probability distribution based on a Gaussian process
+  */
+  template<class vec_vec_t, class func_t> 
+  void set_gproc(size_t n_dim, size_t n_init, 
+		 vec_vec_t &x, vec_t &y, func_t &fcovar) {
+    // Just call the noise function with zero noise
+    vec_t eps(n_init);
+    for(size_t k=0;k<n_init;k++) eps[k]=0.0;
+    return set_gproc_noise(n_dim,n_init,x,y,fcovar,eps);
+  }
+    
   /// The normalized density 
   virtual double pdf(const vec_t &x) const {
     if (ndim==0) {
@@ -1144,82 +1246,20 @@ namespace o2scl {
 
   };
 
-/** \brief A multidimensional normal distribution from
-    a Gaussian process
-
-    \future The linear algebra only works with ublas and is
-    not optimized.
-*/
-template<class vec_t=boost::numeric::ublas::vector<double>,
-  class mat_t=boost::numeric::ublas::matrix<double>,
-  class mat_col_t=boost::numeric::ublas::matrix_column<mat_t> >
-  class prob_dens_mdim_gproc :
-  public o2scl::prob_dens_mdim_gaussian<vec_t> {
-
- public:
+  /** \brief A multidimensional normal distribution from
+      a Gaussian process
+      
+      \future The linear algebra only works with ublas and is
+      not optimized.
+  */
+  template<class vec_t=boost::numeric::ublas::vector<double>,
+    class mat_t=boost::numeric::ublas::matrix<double>,
+    class mat_col_t=boost::numeric::ublas::matrix_column<mat_t> >
+    class prob_dens_mdim_gproc :
+    public o2scl::prob_dens_mdim_gaussian<vec_t> {
+    
+  public:
   
- /** \brief Given a data set and a covariance function, construct
-     a Gaussian process probability distribution
- */
- template<class vec_vec_t, class func_t> 
- prob_dens_mdim_gproc(size_t n_dim, size_t n_init, size_t n_new,
-		      vec_vec_t &x, vec_t &y, func_t &fcovar) {
-   
-   // Construct the four covariance matrices
-   
-   mat_t KXsX(n_new,n_init);
-   for(size_t irow=n_init;irow<n_new+n_init;irow++) {
-     for(size_t icol=0;icol<n_init;icol++) {
-       KXsX(irow-n_init,icol)=fcovar(x[irow],x[icol]);
-     }
-   }
-
-   mat_t KXXs=boost::numeric::ublas::trans(KXsX);
-   
-   mat_t KXX(n_init,n_init);
-   for(size_t irow=0;irow<n_init;irow++) {
-     for(size_t icol=0;icol<n_init;icol++) {
-       if (irow>icol) {
-	 KXX(irow,icol)=KXX(icol,irow);
-       } else {
-	 KXX(irow,icol)=fcovar(x[irow],x[icol]);
-       }
-     }
-   }
-   
-   mat_t KXsXs(n_new,n_new);
-   for(size_t irow=n_init;irow<n_new+n_init;irow++) {
-     for(size_t icol=n_init;icol<n_new+n_init;icol++) {
-       if (irow>icol) {
-	 KXsXs(irow-n_init,icol-n_init)=KXsXs(icol-n_init,irow-n_init);
-       } else {
-	 KXsXs(irow-n_init,icol-n_init)=fcovar(x[irow],x[icol]);
-       }
-     }
-   }
-
-   // Construct the inverse of KXX
-   mat_t inv_KXX(n_init,n_init);
-   o2scl::permutation p;
-   int signum;
-   o2scl_linalg::LU_decomp(n_init,KXX,p,signum);
-   o2scl_linalg::LU_invert<mat_t,mat_t,mat_col_t>(n_init,KXX,p,inv_KXX);
-   
-   // Compute the mean vector
-   vec_t prod(n_init), mean(n_new);
-   boost::numeric::ublas::axpy_prod(inv_KXX,y,prod,true);
-   boost::numeric::ublas::axpy_prod(KXsX,prod,mean,true);
-   
-   // Compute the covariance matrix
-   mat_t covar(n_new,n_new), prod2(n_init,n_new), prod3(n_new,n_new);
-   boost::numeric::ublas::axpy_prod(inv_KXX,KXXs,prod2,true);
-   boost::numeric::ublas::axpy_prod(KXsX,prod2,prod3,true);
-   covar=KXsXs-prod3;
-   
-   // Now use set() in the parent class
-   this->set(n_new,mean,covar);
-   
- }
  
 };    
   
