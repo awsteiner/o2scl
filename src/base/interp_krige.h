@@ -31,9 +31,13 @@
 #include <string>
 
 #include <boost/numeric/ublas/vector.hpp>
+#include <boost/numeric/ublas/matrix.hpp>
+#include <boost/numeric/ublas/operation.hpp>
 #include <boost/numeric/ublas/vector_proxy.hpp>
 
 #include <o2scl/interp.h>
+#include <o2scl/lu.h>
+#include <o2scl/columnify.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -42,37 +46,52 @@ namespace o2scl {
   /** \brief Interpolation by Kriging
       
       See also the \ref intp_section section of the \o2 User's guide. 
+
+      \note This class is experimental.
   */
-  template<class vec_t, class vec2_t=vec_t, class covar_func_t>
+  template<class vec_t, class vec2_t=vec_t,
+    class covar_func_t=std::function<double(double,double)> >
     class interp_krige : public interp_base<vec_t,vec2_t> {
     
 #ifdef O2SCL_NEVER_DEFINED
   }{
 #endif
 
+  public:
+
+    typedef boost::numeric::ublas::vector<double> ubvector;
+    typedef boost::numeric::ublas::matrix<double> ubmatrix;
+    typedef boost::numeric::ublas::matrix_column<ubmatrix> ubmatrix_column;
+    
   protected:
 
-    /** \brief Desc
+    /** \brief Inverse covariance matrix times function vector
      */
     ubvector Kinvf;
 
-    /** \brief Desc
+    /** \brief Pointer to user-specified covariance function
      */
     covar_func_t *f;
     
   public:
     
-    interp_linear() {
+    interp_krige() {
       this->min_size=2;
     }
     
     virtual ~interp_krige() {}
     
     /// Initialize interpolation routine
-    virtual void set(size_t n_dim, vec_t &x, vec_t &y, func_t &fcovar) {
+    virtual void set(size_t n_dim, const vec_t &x, const vec_t &y) {
+      return;
+    }
+    
+    /// Initialize interpolation routine assuming noise
+    virtual void set_noise(size_t n_dim, const vec_t &x, const vec_t &y,
+			   covar_func_t &fcovar, const vec_t &var) {
       
-      if (size<this->min_size) {
-	O2SCL_ERR((((std::string)"Vector size, ")+szttos(size)+", is less"+
+      if (n_dim<this->min_size) {
+	O2SCL_ERR((((std::string)"Vector size, ")+szttos(n_dim)+", is less"+
 		   " than "+szttos(this->min_size)+" in interp_krige::"+
 		   "set().").c_str(),exc_einval);
       }
@@ -81,11 +100,13 @@ namespace o2scl {
       f=&fcovar;
       
       // Construct the KXX matrix
-      mat_t KXX(n_dim,n_dim);
+      ubmatrix KXX(n_dim,n_dim);
       for(size_t irow=0;irow<n_dim;irow++) {
 	for(size_t icol=0;icol<n_dim;icol++) {
 	  if (irow>icol) {
 	    KXX(irow,icol)=KXX(icol,irow);
+	  } else if (irow==icol) {
+	    KXX(irow,icol)=fcovar(x[irow],x[icol])+var[irow];
 	  } else {
 	    KXX(irow,icol)=fcovar(x[irow],x[icol]);
 	  }
@@ -93,19 +114,30 @@ namespace o2scl {
       }
       
       // Construct the inverse of KXX
-      inv_KXX.resize(n_dim,n_dim);
+      ubmatrix inv_KXX(n_dim,n_dim);
       o2scl::permutation p;
       int signum;
       o2scl_linalg::LU_decomp(n_dim,KXX,p,signum);
-      o2scl_linalg::LU_invert<mat_t,mat_t,mat_col_t>(n_dim,KXX,p,inv_KXX);
+      o2scl_linalg::LU_invert<ubmatrix,ubmatrix,ubmatrix_column>
+	(n_dim,KXX,p,inv_KXX);
       
+      // Inverse covariance matrix times function vector
       Kinvf.resize(n_dim);
       boost::numeric::ublas::axpy_prod(inv_KXX,y,Kinvf,true);
-      
+
+      // Set parent data members
       this->px=&x;
       this->py=&y;
-      this->sz=size;
+      this->sz=n_dim;
       return;
+    }
+    
+    /// Initialize interpolation routine
+    virtual void set(size_t n_dim, const vec_t &x, const vec_t &y,
+		     covar_func_t &fcovar) {
+      ubvector var(n_dim);
+      for(size_t i=0;i<n_dim;i++) var[i]=0.0;
+      set_noise(n_dim,x,y,fcovar,var);
     }
     
     /// Give the value of the function \f$ y(x=x_0) \f$ .
@@ -113,7 +145,7 @@ namespace o2scl {
 
       double ret;
       for(size_t i=0;i<this->sz;i++) {
-	ret+=(*f)(x0,(*this->px)[icol])*((*this->py)[i]);
+	ret+=(*f)(x0,(*this->px)[i])*Kinvf[i];
       }
 
       return ret;
@@ -143,8 +175,10 @@ namespace o2scl {
 
   private:
 
-    interp_krige<vec_t,vec2_t>(const interp_krige<vec_t,vec2_t> &);
-    interp_krige<vec_t,vec2_t>& operator=(const interp_krige<vec_t,vec2_t>&);
+    interp_krige<vec_t,vec2_t,covar_func_t>
+      (const interp_krige<vec_t,vec2_t,covar_func_t> &);
+    interp_krige<vec_t,vec2_t,covar_func_t>& operator=
+      (const interp_krige<vec_t,vec2_t,covar_func_t>&);
 
 #endif
 

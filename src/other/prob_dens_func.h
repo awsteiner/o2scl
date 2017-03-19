@@ -33,11 +33,13 @@
 #include <random>
 
 #include <boost/numeric/ublas/vector.hpp>
+#include <boost/numeric/ublas/operation.hpp>
 
 #include <o2scl/hist.h>
 #include <o2scl/rng_gsl.h>
 #include <o2scl/search_vec.h>
 #include <o2scl/cholesky.h>
+#include <o2scl/lu.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -834,7 +836,7 @@ namespace o2scl {
   */
   void set_alt(size_t p_ndim, vec_t &p_peak, mat_t &p_chol,
 	       mat_t &p_covar_inv, double p_norm) {
-    n_dim=p_ndim;
+    ndim=p_ndim;
     peak=p_peak;
     chol=p_chol;
     covar_inv=p_covar_inv;
@@ -846,7 +848,7 @@ namespace o2scl {
       probability distribution based on a Gaussian process which
       includes noise
   */
-  template<class vec_vec_t, class func_t> 
+  template<class vec_vec_t, class mat_col_t, class func_t> 
   void set_gproc_noise(size_t n_dim, size_t n_init, 
 		       vec_vec_t &x, vec_t &y, func_t &fcovar,
 		       vec_t &eps) {
@@ -915,13 +917,14 @@ namespace o2scl {
   /** \brief Given a data set and a covariance function, construct
       probability distribution based on a Gaussian process
   */
-  template<class vec_vec_t, class func_t> 
+  template<class vec_vec_t, class mat_col_t, class func_t> 
   void set_gproc(size_t n_dim, size_t n_init, 
 		 vec_vec_t &x, vec_t &y, func_t &fcovar) {
     // Just call the noise function with zero noise
     vec_t eps(n_init);
     for(size_t k=0;k<n_init;k++) eps[k]=0.0;
-    return set_gproc_noise(n_dim,n_init,x,y,fcovar,eps);
+    return set_gproc_noise<vec_vec_t,mat_col_t,func_t>
+    (n_dim,n_init,x,y,fcovar,eps);
   }
     
   /// The normalized density 

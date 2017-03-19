@@ -8,7 +8,7 @@ BASE_HEADER_VAR =  err_hnd.h misc.h test_mgr.h table.h \
 	cli.h columnify.h convert_units.h string_conv.h \
 	tensor.h vector.h table3d.h cli_readline.h tensor_grid.h \
 	format_float.h table_units.h exception.h uniform_grid.h \
-	shunting_yard.h
+	shunting_yard.h interp_krige.h
 
 HEADER_VAR = $(BASE_HEADER_VAR)
 
@@ -22,7 +22,7 @@ BASE_SRCS = $(BASE_BASE_SRCS)
 
 BASE_TEST_VAR = err_hnd.scr funct.scr table3d.scr \
 	lib_settings.scr misc.scr mm_funct.scr multi_funct.scr \
-	search_vec.scr table.scr vector.scr \
+	search_vec.scr table.scr vector.scr interp_krige.scr \
 	interp.scr columnify.scr convert_units.scr \
 	string_conv.scr tensor.scr shunting_yard.scr \
 	format_float.scr table_units.scr exception.scr uniform_grid.scr 
@@ -103,7 +103,7 @@ am__pkginclude_HEADERS_DIST = $(HEADER_VAR)
 CPVAR = err_hnd_ts funct_ts convert_units_ts \
 	lib_settings_ts misc_ts mm_funct_ts \
 	multi_funct_ts search_vec_ts table_ts interp_ts \
-	columnify_ts shunting_yard_ts \
+	columnify_ts shunting_yard_ts interp_krige_ts \
 	string_conv_ts tensor_ts vector_ts table3d_ts \
 	format_float_ts table_units_ts exception_ts uniform_grid_ts 
 
@@ -118,6 +118,7 @@ VCHECK_LIBS = ../libo2scl.la
 endif
 
 if O2SCL_OPENMP
+interp_krige_ts_LDFLAGS = -fopenmp
 err_hnd_ts_LDFLAGS = -fopenmp
 convert_units_ts_LDFLAGS = -fopenmp
 funct_ts_LDFLAGS = -fopenmp
@@ -140,6 +141,7 @@ uniform_grid_ts_LDFLAGS = -fopenmp
 shunting_yard_ts_LDFLAGS = -fopenmp
 endif
 
+interp_krige_ts_LDADD = $(VCHECK_LIBS)
 err_hnd_ts_LDADD = $(VCHECK_LIBS)
 convert_units_ts_LDADD = $(VCHECK_LIBS)
 funct_ts_LDADD = $(VCHECK_LIBS)
@@ -161,6 +163,8 @@ exception_ts_LDADD = $(VCHECK_LIBS)
 uniform_grid_ts_LDADD = $(VCHECK_LIBS)
 shunting_yard_ts_LDADD = $(VCHECK_LIBS)
 
+interp_krige.scr: interp_krige_ts$(EXEEXT) 
+	./interp_krige_ts$(EXEEXT) > interp_krige.scr
 err_hnd.scr: err_hnd_ts$(EXEEXT) 
 	./err_hnd_ts$(EXEEXT) > err_hnd.scr
 convert_units.scr: convert_units_ts$(EXEEXT) 
@@ -202,6 +206,7 @@ uniform_grid.scr: uniform_grid_ts$(EXEEXT)
 shunting_yard.scr: shunting_yard_ts$(EXEEXT) 
 	./shunting_yard_ts$(EXEEXT) > shunting_yard.scr
 
+interp_krige_ts_SOURCES = interp_krige_ts.cpp
 err_hnd_ts_SOURCES = err_hnd_ts.cpp
 convert_units_ts_SOURCES = convert_units_ts.cpp
 funct_ts_SOURCES = funct_ts.cpp

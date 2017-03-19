@@ -20,13 +20,17 @@
 
   -------------------------------------------------------------------
 */
-#include <o2scl/interp.h>
+#include <o2scl/interp_krige.h>
 #include <o2scl/test_mgr.h>
 
 using namespace std;
 using namespace o2scl;
 
 typedef boost::numeric::ublas::vector<double> ubvector;
+
+double covar(double x, double y) {
+  return exp(-2.0*(x-y)*(x-y));
+}
 
 int main(void) {
 
@@ -38,38 +42,45 @@ int main(void) {
   // ---------------------------------------------------------------
   // Create test data
 
-  ubvector x(5), y(5), rx(5), ry(5);
-  double xa[5], ya[5], rxa[5], rya[5];
-  for(size_t i=0;i<5;i++) {
-    x[i]=((double)i);
-    y[i]=((double)i*i);
-    rx[4-i]=((double)i);
-    ry[4-i]=((double)i*i);
-    xa[i]=((double)i);
-    ya[i]=((double)i*i);
-    rxa[4-i]=((double)i);
-    rya[4-i]=((double)i*i);
+  ubvector x(4), y(4);
+  for(size_t i=0;i<4;i++) {
+    x[i]=((double)i)+1.0;
   }
+  y[0]=5.0;
+  y[1]=6.0;
+  y[2]=2.0;
+  y[3]=3.0;
 
   // ---------------------------------------------------------------
   //
 
-  interp_krige<> gi(itp_linear);
+  interp_krige<ubvector> ik;
+  std::function<double(double,double)> f=covar;
 
   // ---------------------------------------------------------------
   // Test normal interpolation
 
-  double x0=2.5;
-  double y0;
-  
-  y0=gi.eval(x0,5,x,y);
-  t.test_rel(y0,6.5,1.0e-5,"intp 1a.");
-  y0=gi.deriv(x0,5,x,y);
-  t.test_rel(y0,5.0,1.0e-5,"intp 1b.");
-  y0=gi.deriv2(x0,5,x,y);
-  t.test_rel(y0,0.0,1.0e-5,"intp 1c.");
-  y0=gi.integ(x0,3.5,5,x,y);
-  t.test_rel(y0,9.25,1.0e-5,"intp 1d.");
+  ik.set(4,x,y,f);
+  cout << ik.eval(1.0) << endl;
+  cout << ik.eval(1.5) << endl;
+  cout << ik.eval(2.5) << endl;
+  cout << ik.eval(3.5) << endl;
+  cout << endl;
+
+  // ---------------------------------------------------------------
+  // Test interpolation with noise
+
+  ubvector var(4);
+  var[0]=0.5;
+  var[1]=0.5;
+  var[2]=0.5;
+  var[3]=0.5;
+  ik.set_noise(4,x,y,f,var);
+  cout << ik.eval(1.0) << endl;
+  cout << ik.eval(1.5) << endl;
+  cout << ik.eval(2.5) << endl;
+  cout << ik.eval(3.5) << endl;
+  cout << endl;
 
   t.report();
 
