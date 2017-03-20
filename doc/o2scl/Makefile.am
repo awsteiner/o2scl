@@ -43,7 +43,7 @@ utk-sync-doc:
 	cp extras/bootstrap-responsive.css $(HOME)/wcs/int3/web/utk/o2scl
 	cp extras/jquery-2.0.3.min.js $(HOME)/wcs/int3/web/utk/o2scl
 
-isospin-sync-doc:
+prerelease-sync-doc:
 	cp -r /usr/local/doc/o2scl $(HOME)/data
 	cp extras/index.html $(HOME)/data/o2scl
 	cp extras/bootstrap.css $(HOME)/data/o2scl

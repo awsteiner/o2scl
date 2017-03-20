@@ -22,28 +22,31 @@ help:
 	@echo "Additional package-specific targets"
 	@echo "-------------------------------------------------------------"
 	@echo "help:             Show this help file"
-	@echo "install:          Install"
 	@echo "sinstall:         Install headers and libraries only"
-	@echo "o2scl-test:       Test installation"
+	@echo "o2scl-test:       Test installation ('make check' works also)"
 	@echo "o2scl-examples:   Compile and run examples"
-	@echo "o2scl-benchmarks: Compile and run benchmarks"
 	@echo "test-clean:       Clean files created by tests"
 	@echo 
 	@echo "Developer targets"
 	@echo "-------------------------------------------------------------"
 	@echo "o2scl-doc:        Make HTML documentation"
-	@echo "clean-doc:        Remove generated doc files"
-	@echo "blank-doc:        Create blank documentation"
+	@echo "clean-doc:        Remove generated documentation files"
+	@echo "blank-doc:        Create blank documentation (used in "
+	@echo "  the homebrew recipe and the travis script)"
+	@echo "utk-sync-doc:     Copy docs from /usr/local on isospin"
+	@echo "  to the web page repository for uploading"
+	@echo "prerelease-sync-doc: Copy docs from /usr/local on isospin"
+	@echo "  to the the internal web directory."
+	@echo "emacs-clean:      Remove files ending with a tilde"
 	@echo "move-doc:         Move documentation to a separate directory"
 	@echo "restore-doc:      Restore documentation after move"
-	@echo "sf-sync-doc:      Upload current documentation to SourceForge"
-	@echo "emacs-clean:      Remove files ending with a tilde"
+	@echo "o2scl-benchmarks: Compile and run benchmarks (not working)"
 	@echo 
 
 latest:
-	cp o2scl-0.920.tar.gz ~/wcs/int3/web/utk/o2scl
-	openssl dgst -sha256 o2scl-0.920.tar.gz > \
-		~/wcs/int3/web/utk/o2scl/o2scl-0.920.sha256
+	cp o2scl-0.921.tar.gz ~/wcs/int3/web/utk/o2scl
+	openssl dgst -sha256 o2scl-0.921.tar.gz > \
+		~/wcs/int3/web/utk/o2scl/o2scl-0.921.sha256
 	cd ~/wcs/int3/web; $(MAKE) puto
 
 move-doc:
@@ -96,9 +99,11 @@ emacs-clean:
 	rm -v -f */*/*/*~
 	rm -v -f */*/*/*/*~
 
-# Upload docs to UTK
 utk-sync-doc:
 	cd doc/o2scl && $(MAKE) utk-sync-doc
+
+prerelease-sync-doc:
+	cd doc/o2scl && $(MAKE) prerelease-sync-doc
 
 # Run doxygen to create documentation
 o2scl-doc:
