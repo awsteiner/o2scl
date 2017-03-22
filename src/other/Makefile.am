@@ -18,7 +18,7 @@ TEST_VAR = series_acc.scr interp2_planar.scr contour.scr \
 	poly.scr polylog.scr cheb_approx.scr vec_stats.scr smooth_gsl.scr \
 	hist.scr hist_2d.scr prob_dens_func.scr interp2_direct.scr \
 	pinside.scr interp2_seq.scr interp2_neigh.scr \
-	interpm_idw.scr
+	interpm_idw.scr interpm_krige.scr
 
 # ------------------------------------------------------------
 # Includes
@@ -82,7 +82,7 @@ check_PROGRAMS = series_acc_ts interp2_planar_ts \
 	interp2_direct_ts vec_stats_ts cheb_approx_ts \
 	smooth_gsl_ts hist_ts hist_2d_ts interp2_seq_ts \
 	prob_dens_func_ts interp2_neigh_ts \
-	interpm_idw_ts
+	interpm_idw_ts interpm_krige_ts
 
 check_SCRIPTS = o2scl-test
 
@@ -97,6 +97,7 @@ series_acc_ts_LDADD = $(VCHECK_LIBS)
 interp2_planar_ts_LDADD = $(VCHECK_LIBS)
 interp2_neigh_ts_LDADD = $(VCHECK_LIBS)
 interpm_idw_ts_LDADD = $(VCHECK_LIBS)
+interpm_krige_ts_LDADD = $(VCHECK_LIBS)
 contour_ts_LDADD = $(VCHECK_LIBS)
 poly_ts_LDADD = $(VCHECK_LIBS)
 polylog_ts_LDADD = $(VCHECK_LIBS)
@@ -119,6 +120,8 @@ interp2_neigh.scr: interp2_neigh_ts$(EXEEXT)
 	./interp2_neigh_ts$(EXEEXT) > interp2_neigh.scr
 interpm_idw.scr: interpm_idw_ts$(EXEEXT) 
 	./interpm_idw_ts$(EXEEXT) > interpm_idw.scr
+interpm_krige.scr: interpm_krige_ts$(EXEEXT) 
+	./interpm_krige_ts$(EXEEXT) > interpm_krige.scr
 contour.scr: contour_ts$(EXEEXT) 
 	./contour_ts$(EXEEXT) > contour.scr
 poly.scr: poly_ts$(EXEEXT) 
@@ -149,6 +152,7 @@ hist_ts_SOURCES = hist_ts.cpp
 hist_2d_ts_SOURCES = hist_2d_ts.cpp
 interp2_neigh_ts_SOURCES = interp2_neigh_ts.cpp
 interpm_idw_ts_SOURCES = interpm_idw_ts.cpp
+interpm_krige_ts_SOURCES = interpm_krige_ts.cpp
 interp2_planar_ts_SOURCES = interp2_planar_ts.cpp
 interp2_seq_ts_SOURCES = interp2_seq_ts.cpp
 interp2_direct_ts_SOURCES = interp2_direct_ts.cpp
