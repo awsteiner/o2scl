@@ -850,8 +850,7 @@ namespace o2scl {
   */
   template<class vec_vec_t, class mat_col_t, class func_t> 
   void set_gproc_noise(size_t n_dim, size_t n_init, 
-		       vec_vec_t &x, vec_t &y, func_t &fcovar,
-		       vec_t &eps) {
+		       vec_vec_t &x, vec_t &y, func_t &fcovar) {
     
     // Construct the four covariance matrices
     
@@ -870,12 +869,7 @@ namespace o2scl {
 	if (irow>icol) {
 	  KXX(irow,icol)=KXX(icol,irow);
 	} else {
-	  if (irow==icol) {
-	    // Add the noise term along the diagonal
-	    KXX(irow,icol)=fcovar(x[irow],x[icol])+eps[irow];
-	  } else {
-	    KXX(irow,icol)=fcovar(x[irow],x[icol]);
-	  }
+	  KXX(irow,icol)=fcovar(x[irow],x[icol]);
 	}
       }
     }
@@ -914,19 +908,6 @@ namespace o2scl {
     
   }
 
-  /** \brief Given a data set and a covariance function, construct
-      probability distribution based on a Gaussian process
-  */
-  template<class vec_vec_t, class mat_col_t, class func_t> 
-  void set_gproc(size_t n_dim, size_t n_init, 
-		 vec_vec_t &x, vec_t &y, func_t &fcovar) {
-    // Just call the noise function with zero noise
-    vec_t eps(n_init);
-    for(size_t k=0;k<n_init;k++) eps[k]=0.0;
-    return set_gproc_noise<vec_vec_t,mat_col_t,func_t>
-    (n_dim,n_init,x,y,fcovar,eps);
-  }
-    
   /// The normalized density 
   virtual double pdf(const vec_t &x) const {
     if (ndim==0) {

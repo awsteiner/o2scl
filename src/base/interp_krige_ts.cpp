@@ -32,6 +32,11 @@ double covar(double x, double y) {
   return exp(-2.0*(x-y)*(x-y));
 }
 
+double covar_noise(double x, double y) {
+  if (x==y) return exp(-2.0*(x-y)*(x-y))+0.5;
+  return exp(-2.0*(x-y)*(x-y));    
+}
+
 int main(void) {
 
   cout.setf(ios::scientific);
@@ -56,6 +61,7 @@ int main(void) {
 
   interp_krige<ubvector> ik;
   std::function<double(double,double)> f=covar;
+  std::function<double(double,double)> f_noise=covar_noise;
 
   // ---------------------------------------------------------------
   // Test normal interpolation
@@ -70,12 +76,7 @@ int main(void) {
   // ---------------------------------------------------------------
   // Test interpolation with noise
 
-  ubvector var(4);
-  var[0]=0.5;
-  var[1]=0.5;
-  var[2]=0.5;
-  var[3]=0.5;
-  ik.set_noise(4,x,y,f,var);
+  ik.set(4,x,y,f_noise);
   cout << ik.eval(1.0) << endl;
   cout << ik.eval(1.5) << endl;
   cout << ik.eval(2.5) << endl;

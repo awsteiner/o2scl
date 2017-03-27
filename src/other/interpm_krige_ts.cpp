@@ -69,7 +69,7 @@ int main(void) {
   tmp[0]=0.03; tmp[1]=1.02; 
   x.push_back(tmp);
 
-  vector<ubvector> y, vars;
+  vector<ubvector> y;
   tmp.resize(8);
   for(size_t i=0;i<8;i++) {
     tmp[i]=ft(x[i][0],x[i][1]);
@@ -78,7 +78,7 @@ int main(void) {
 
   interpm_krige<ubvector,ubmatrix_column> ik;
   std::function<double(const ubvector &,const ubvector &)> f=covar;
-  ik.set_data_noise(2,1,8,x,y,vars,f);
+  ik.set_data_noise(2,1,8,x,y,f);
   
   cout << "Interpolate at a point and compare the three methods:" << endl;
   ubvector point(2);

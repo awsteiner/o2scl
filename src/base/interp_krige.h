@@ -82,13 +82,13 @@ namespace o2scl {
     virtual ~interp_krige() {}
     
     /// Initialize interpolation routine
-    virtual void set(size_t n_dim, const vec_t &x, const vec_t &y) {
+    virtual void set(size_t size, const vec_t &x, const vec2_t &y) {
       return;
     }
-    
-    /// Initialize interpolation routine assuming noise
-    virtual void set_noise(size_t n_dim, const vec_t &x, const vec_t &y,
-			   covar_func_t &fcovar, const vec_t &var) {
+
+    /// Initialize interpolation routine
+    virtual void set(size_t n_dim, const vec_t &x, const vec_t &y,
+			   covar_func_t &fcovar) {
       
       if (n_dim<this->min_size) {
 	O2SCL_ERR((((std::string)"Vector size, ")+szttos(n_dim)+", is less"+
@@ -105,8 +105,6 @@ namespace o2scl {
 	for(size_t icol=0;icol<n_dim;icol++) {
 	  if (irow>icol) {
 	    KXX(irow,icol)=KXX(icol,irow);
-	  } else if (irow==icol) {
-	    KXX(irow,icol)=fcovar(x[irow],x[icol])+var[irow];
 	  } else {
 	    KXX(irow,icol)=fcovar(x[irow],x[icol]);
 	  }
@@ -130,14 +128,6 @@ namespace o2scl {
       this->py=&y;
       this->sz=n_dim;
       return;
-    }
-    
-    /// Initialize interpolation routine
-    virtual void set(size_t n_dim, const vec_t &x, const vec_t &y,
-		     covar_func_t &fcovar) {
-      ubvector var(n_dim);
-      for(size_t i=0;i<n_dim;i++) var[i]=0.0;
-      set_noise(n_dim,x,y,fcovar,var);
     }
     
     /// Give the value of the function \f$ y(x=x_0) \f$ .
