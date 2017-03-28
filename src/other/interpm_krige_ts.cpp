@@ -78,7 +78,7 @@ int main(void) {
 
   interpm_krige<ubvector,ubmatrix_column> ik;
   std::function<double(const ubvector &,const ubvector &)> f=covar;
-  ik.set_data_noise(2,1,8,x,y,f);
+  ik.set_data(2,1,8,x,y,f);
   
   cout << "Interpolate at a point and compare the three methods:" << endl;
   ubvector point(2);

@@ -81,10 +81,10 @@ namespace o2scl {
 
   /** \brief Initialize the data for the interpolation
    */
-  template<class vec_vec_t, class vec_vec2_t, class vec_vec3_t>
+  template<class vec_vec_t, class vec_vec2_t>
   void set_data(size_t n_in, size_t n_out, size_t n_points,
-		      vec_vec_t &x, vec_vec2_t &y, 
-		      covar_func_t &fcovar) {
+		vec_vec_t &x, vec_vec2_t &y, 
+		covar_func_t &fcovar) {
 
     if (n_points<3) {
       O2SCL_ERR2("Must provide at least three points in ",
@@ -270,14 +270,15 @@ namespace o2scl {
     // Find points closest to requested point
     ubvector dists(np);
     for(size_t ip=0;ip<np;ip++) {
-      dists[i]=(*f)(x,ptrs_x[ipoints]);
+      dists[ip]=(*f)(x,ptrs_x[ip]);
     }
 
-    ubvector index(np);
-    vector_smallest_index(np,data,norder,index);
+    ubvector_size_t index(np);
+    o2scl::vector_smallest_index<ubvector,double,ubvector_size_t>
+    (np,dists,norder,index);
 
     // Loop over all output functions
-    for(size_t iout=0;iout<n_out;iout++) {
+    for(size_t iout=0;iout<nd_out;iout++) {
 	
       // Construct subset of function values for nearest neighbors
       ubvector func(norder);
