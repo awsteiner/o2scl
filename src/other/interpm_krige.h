@@ -108,14 +108,18 @@ namespace o2scl {
     nd_out=n_out;
     ptrs_x.resize(n_points);
     for(size_t i=0;i<n_points;i++) {
+      if (x[i].size()!=n_in) {
+	O2SCL_ERR2("Size of x not correct in ",
+		   "interpm_krige::set_data().",o2scl::exc_efailed);
+      }
       std::swap(ptrs_x[i],x[i]);
     }
     data_set=true;
     
     if (verbose>0) {
-      std::cout << "interpm_krige::set_data() " << n_points
-		<< " points with " << nd_in << " input variables and "
-		<< nd_out " << output_variables." << std::endl;
+      std::cout << "interpm_krige::set_data() : Using " << n_points
+		<< " points with " << nd_in << " input variables and\n\t"
+		<< nd_out << " output variables." << std::endl;
     }
 
     Kinvf.resize(n_out);
@@ -142,6 +146,11 @@ namespace o2scl {
       ubmatrix inv_KXX(n_points,n_points);
       o2scl::permutation p(n_points);
       int signum;
+      if (verbose>0) {
+	std::cout << "interpm_krige::set_data() : "
+		  << "LU decompose and invert " << iout+1 << " of " << n_out
+		  << std::endl;
+      }
       o2scl_linalg::LU_decomp(n_points,KXX,p,signum);
       if (o2scl_linalg::diagonal_has_zero(n_points,KXX)) {
 	O2SCL_ERR2("KXX matrix is singular in ",
@@ -254,10 +263,18 @@ namespace o2scl {
     ptrs_x.resize(n_points);
     norder=order;
     for(size_t i=0;i<n_points;i++) {
+      if (x[i].size()!=n_in) {
+	O2SCL_ERR2("Size of x not correct in ",
+		   "interpm_krige_nn::set_data().",o2scl::exc_efailed);
+      }
       std::swap(ptrs_x[i],x[i]);
     }
     ptrs_y.resize(n_out);
     for(size_t i=0;i<n_out;i++) {
+      if (y[i].size()!=n_points) {
+	O2SCL_ERR2("Size of y not correct in ",
+		   "interpm_krige_nn::set_data().",o2scl::exc_efailed);
+      }
       std::swap(ptrs_y[i],y[i]);
     }
     data_set=true;
@@ -265,100 +282,174 @@ namespace o2scl {
     // Store pointer to covariance function array
     f=&fcovar;
       
+    if (verbose>0) {
+      std::cout << "interpm_krige_nn::set_data() : Using " << n_points
+		<< " points with " << nd_in << " input variables and\n\t"
+		<< nd_out << " output variables and order "
+		<< norder << " ." << std::endl;
+    }
+
     return;
   }
 
-#ifdef O2SCL_NEVER_DEFINED
-  }{
-#endif
-    
-    /** \brief Perform the interpolation
-     */
-    template<class vec2_t, class vec3_t>
-      void eval(const vec2_t &x, vec3_t &y) const {
+  /** \brief Perform the interpolation
+   */
+  template<class vec2_t, class vec3_t>
+  void eval(const vec2_t &x, vec3_t &y) const {
       
-      if (data_set==false) {
-	O2SCL_ERR("Data not set in interpm_krige::eval().",
-		  exc_einval);
+    if (data_set==false) {
+      O2SCL_ERR("Data not set in interpm_krige::eval().",
+		exc_einval);
+    }
+      
+    y.resize(nd_out);
+    
+    // Loop over all output functions
+    for(size_t iout=0;iout<nd_out;iout++) {
+	
+      // Find points closest to requested point, as defined
+      // by the negative covariance for this output function
+      ubvector dists(np);
+      for(size_t ip=0;ip<np;ip++) {
+	dists[ip]=-(*f)[iout](x,ptrs_x[ip]);
       }
       
-      y.resize(nd_out);
-    
-      // Loop over all output functions
-      for(size_t iout=0;iout<nd_out;iout++) {
-	
-	// Find points closest to requested point, as defined
-	// by the negative covariance for this output function
-	ubvector dists(np);
-	for(size_t ip=0;ip<np;ip++) {
-	  dists[ip]=-(*f)[iout](x,ptrs_x[ip]);
-	}
-      
-	// Empty index vector (resized by the vector_smallest_index
-	// function)
-	ubvector_size_t index;
-	o2scl::vector_smallest_index<ubvector,double,ubvector_size_t>
-	  (np,dists,norder,index);
+      // Empty index vector (resized by the vector_smallest_index
+      // function)
+      ubvector_size_t index;
+      o2scl::vector_smallest_index<ubvector,double,ubvector_size_t>
+	(np,dists,norder,index);
 
-	// Construct subset of function values for nearest neighbors
-	ubvector func(norder);
-	for(size_t io=0;io<norder;io++) {
-	  func[io]=ptrs_y[iout][index[io]];
-	}
+      // Construct subset of function values for nearest neighbors
+      ubvector func(norder);
+      for(size_t io=0;io<norder;io++) {
+	func[io]=ptrs_y[iout][index[io]];
+      }
       
-	// Construct the nearest neighbor KXX matrix
-	ubmatrix KXX(norder,norder);
-	for(size_t irow=0;irow<norder;irow++) {
-	  for(size_t icol=0;icol<norder;icol++) {
-	    if (irow>icol) {
-	      KXX(irow,icol)=KXX(icol,irow);
-	    } else {
-	      KXX(irow,icol)=(*f)[iout](ptrs_x[index[irow]],
-					ptrs_x[index[icol]]);
-	    }
+      // Construct the nearest neighbor KXX matrix
+      ubmatrix KXX(norder,norder);
+      for(size_t irow=0;irow<norder;irow++) {
+	for(size_t icol=0;icol<norder;icol++) {
+	  if (irow>icol) {
+	    KXX(irow,icol)=KXX(icol,irow);
+	  } else {
+	    KXX(irow,icol)=(*f)[iout](ptrs_x[index[irow]],
+				      ptrs_x[index[icol]]);
 	  }
 	}
-	
-	// Construct the inverse of KXX
-	ubmatrix inv_KXX(norder,norder);
-	o2scl::permutation p(norder);
-	int signum;
-	o2scl_linalg::LU_decomp(norder,KXX,p,signum);
-	if (o2scl_linalg::diagonal_has_zero(norder,KXX)) {
-	  O2SCL_ERR2("KXX matrix is singular in ",
-		     "interpm_krige_nn::eval().",
-		     o2scl::exc_efailed);
-	}
-	o2scl_linalg::LU_invert<ubmatrix,ubmatrix,mat_col_t>
-	  (norder,KXX,p,inv_KXX);
-      
-	// Inverse covariance matrix times function vector
-	ubvector Kinvf(norder);
-	boost::numeric::ublas::axpy_prod(inv_KXX,func,Kinvf,true);
-
-	// Comput the final result
-	y[iout]=0.0;
-	for(size_t ipoints=0;ipoints<norder;ipoints++) {
-	  y[iout]+=-dists[index[ipoints]]*Kinvf[ipoints];
-	}
-      
       }
+	
+      // Construct the inverse of KXX
+      ubmatrix inv_KXX(norder,norder);
+      o2scl::permutation p(norder);
+      int signum;
+      o2scl_linalg::LU_decomp(norder,KXX,p,signum);
+      if (o2scl_linalg::diagonal_has_zero(norder,KXX)) {
+	O2SCL_ERR2("KXX matrix is singular in ",
+		   "interpm_krige_nn::eval().",
+		   o2scl::exc_efailed);
+      }
+      o2scl_linalg::LU_invert<ubmatrix,ubmatrix,mat_col_t>
+	(norder,KXX,p,inv_KXX);
+      
+      // Inverse covariance matrix times function vector
+      ubvector Kinvf(norder);
+      boost::numeric::ublas::axpy_prod(inv_KXX,func,Kinvf,true);
 
-      return;
+      // Comput the final result
+      y[iout]=0.0;
+      for(size_t ipoints=0;ipoints<norder;ipoints++) {
+	y[iout]+=-dists[index[ipoints]]*Kinvf[ipoints];
+      }
       
     }
+
+    return;
+      
+  }
+  
+  /** \brief Perform the interpolation
+   */
+  template<class vec2_t>
+  double eval(const vec2_t &x, size_t iout) const {
+      
+    if (data_set==false) {
+      O2SCL_ERR("Data not set in interpm_krige::eval().",
+		exc_einval);
+    }
+
+    double ret;
     
-    /** \brief Use jackknife to match interpolated to real function 
-	values
-    */
-    template<class vec2_t, class vec3_t>
-      void eval_jackknife(const vec2_t &x, vec3_t &qual) const {
+      // Find points closest to requested point, as defined
+      // by the negative covariance for this output function
+      ubvector dists(np);
+      for(size_t ip=0;ip<np;ip++) {
+	dists[ip]=-(*f)[iout](x,ptrs_x[ip]);
+      }
+      
+      // Empty index vector (resized by the vector_smallest_index
+      // function)
+      ubvector_size_t index;
+      o2scl::vector_smallest_index<ubvector,double,ubvector_size_t>
+	(np,dists,norder,index);
+
+      // Construct subset of function values for nearest neighbors
+      ubvector func(norder);
+      for(size_t io=0;io<norder;io++) {
+	func[io]=ptrs_y[iout][index[io]];
+      }
+      
+      // Construct the nearest neighbor KXX matrix
+      ubmatrix KXX(norder,norder);
+      for(size_t irow=0;irow<norder;irow++) {
+	for(size_t icol=0;icol<norder;icol++) {
+	  if (irow>icol) {
+	    KXX(irow,icol)=KXX(icol,irow);
+	  } else {
+	    KXX(irow,icol)=(*f)[iout](ptrs_x[index[irow]],
+				      ptrs_x[index[icol]]);
+	  }
+	}
+      }
+	
+      // Construct the inverse of KXX
+      ubmatrix inv_KXX(norder,norder);
+      o2scl::permutation p(norder);
+      int signum;
+      o2scl_linalg::LU_decomp(norder,KXX,p,signum);
+      if (o2scl_linalg::diagonal_has_zero(norder,KXX)) {
+	O2SCL_ERR2("KXX matrix is singular in ",
+		   "interpm_krige_nn::eval().",
+		   o2scl::exc_efailed);
+      }
+      o2scl_linalg::LU_invert<ubmatrix,ubmatrix,mat_col_t>
+	(norder,KXX,p,inv_KXX);
+      
+      // Inverse covariance matrix times function vector
+      ubvector Kinvf(norder);
+      boost::numeric::ublas::axpy_prod(inv_KXX,func,Kinvf,true);
+
+      // Comput the final result
+      ret=0.0;
+      for(size_t ipoints=0;ipoints<norder;ipoints++) {
+	ret+=-dists[index[ipoints]]*Kinvf[ipoints];
+      }
+      
+    return ret;
+      
+  }
+  
+  /** \brief Use jackknife to match interpolated to real function 
+      values
+  */
+  template<class vec2_t, class vec3_t>
+  void eval_jackknife(const vec2_t &x, vec3_t &qual) const {
     
     if (data_set==false) {
-    O2SCL_ERR("Data not set in interpm_krige::eval().",
-       exc_einval);
-  }
-    
+      O2SCL_ERR("Data not set in interpm_krige::eval().",
+		exc_einval);
+    }
+      
     qual.resize(nd_out);
     
     // Interpolated function value inside jackknife loop
@@ -367,87 +458,87 @@ namespace o2scl {
     // Loop over all output functions
     for(size_t iout=0;iout<nd_out;iout++) {
 	
-    qual[iout]=0.0;
+      qual[iout]=0.0;
 	
-    // Find points closest to requested point, as defined
-    // by the negative covariance for this output function
-    ubvector dists(np);
-    for(size_t ip=0;ip<np;ip++) {
-    dists[ip]=-(*f)[iout](x,ptrs_x[ip]);
-  }
+      // Find points closest to requested point, as defined
+      // by the negative covariance for this output function
+      ubvector dists(np);
+      for(size_t ip=0;ip<np;ip++) {
+	dists[ip]=-(*f)[iout](x,ptrs_x[ip]);
+      }
     
-    // Empty index vector (resized by the vector_smallest_index
-    // function)
-    ubvector_size_t index;
-    o2scl::vector_smallest_index<ubvector,double,ubvector_size_t>
-      (np,dists,norder,index);
+      // Empty index vector (resized by the vector_smallest_index
+      // function)
+      ubvector_size_t index;
+      o2scl::vector_smallest_index<ubvector,double,ubvector_size_t>
+	(np,dists,norder,index);
 	
-    // The jackknife loop
-    for(size_t jk=0;jk<norder;jk++) {
+      // The jackknife loop
+      for(size_t jk=0;jk<norder;jk++) {
 	  
-    ubvector_size_t index_jk;
-    vector_copy_jackknife(index,jk,index_jk);
+	ubvector_size_t index_jk;
+	vector_copy_jackknife(index,jk,index_jk);
 	  
-    // Construct subset of function values for nearest neighbors
-    ubvector func(norder-1);
-    for(size_t io=0;io<norder-1;io++) {
-    func[io]=ptrs_y[iout][index_jk[io]];
-  }
+	// Construct subset of function values for nearest neighbors
+	ubvector func(norder-1);
+	for(size_t io=0;io<norder-1;io++) {
+	  func[io]=ptrs_y[iout][index_jk[io]];
+	}
 	  
-    // Construct the nearest neighbor KXX matrix
-    ubmatrix KXX(norder-1,norder-1);
-    for(size_t irow=0;irow<norder-1;irow++) {
-    for(size_t icol=0;icol<norder-1;icol++) {
-    if (irow>icol) {
-    KXX(irow,icol)=KXX(icol,irow);
-  } else {
-    KXX(irow,icol)=(*f)[iout](ptrs_x[index_jk[irow]],
-      ptrs_x[index_jk[icol]]);
-  }
-  }
-  }
+	// Construct the nearest neighbor KXX matrix
+	ubmatrix KXX(norder-1,norder-1);
+	for(size_t irow=0;irow<norder-1;irow++) {
+	  for(size_t icol=0;icol<norder-1;icol++) {
+	    if (irow>icol) {
+	      KXX(irow,icol)=KXX(icol,irow);
+	    } else {
+	      KXX(irow,icol)=(*f)[iout](ptrs_x[index_jk[irow]],
+					ptrs_x[index_jk[icol]]);
+	    }
+	  }
+	}
 	  
-    // Construct the inverse of KXX
-    ubmatrix inv_KXX(norder-1,norder-1);
-    o2scl::permutation p(norder-1);
-    int signum;
-    o2scl_linalg::LU_decomp(norder-1,KXX,p,signum);
-    o2scl_linalg::LU_invert<ubmatrix,ubmatrix,mat_col_t>
-      (norder-1,KXX,p,inv_KXX);
+	// Construct the inverse of KXX
+	ubmatrix inv_KXX(norder-1,norder-1);
+	o2scl::permutation p(norder-1);
+	int signum;
+	o2scl_linalg::LU_decomp(norder-1,KXX,p,signum);
+	o2scl_linalg::LU_invert<ubmatrix,ubmatrix,mat_col_t>
+	  (norder-1,KXX,p,inv_KXX);
 	  
-    // Inverse covariance matrix times function vector
-    ubvector Kinvf(norder-1);
-    boost::numeric::ublas::axpy_prod(inv_KXX,func,Kinvf,true);
+	// Inverse covariance matrix times function vector
+	ubvector Kinvf(norder-1);
+	boost::numeric::ublas::axpy_prod(inv_KXX,func,Kinvf,true);
 	  
-    // Comput the final result
-    ytmp=0.0;
-    for(size_t ipoints=0;ipoints<norder-1;ipoints++) {
-    ytmp+=-dists[index_jk[ipoints]]*Kinvf[ipoints];
-  }
+	// Comput the final result
+	ytmp=0.0;
+	for(size_t ipoints=0;ipoints<norder-1;ipoints++) {
+	  ytmp+=-dists[index_jk[ipoints]]*Kinvf[ipoints];
+	}
 
-    // Add the squared deviation to y[iout]
-    qual[iout]+=pow(ptrs_y[iout][index[jk]]-ytmp,2.0);
+	// Add the squared deviation to y[iout]
+	qual[iout]+=pow(ptrs_y[iout][index[jk]]-ytmp,2.0);
 
-  }
+      }
 	  
-  }
+    }
 
     return;
       
   }
     
-    /** \brief Use jackknife to match interpolated to real function 
-	values
-    */
-    template<class vec2_t>
-      double eval_jackknife(const vec2_t &x, size_t iout) const {
+  /** \brief Use jackknife to match interpolated to real function 
+      values
+  */
+  template<class vec2_t>
+  double eval_jackknife(const vec2_t &x, size_t iout) const {
     
     double qual;
     
     if (data_set==false) {
-    O2SCL_ERR("Data not set in interpm_krige::eval().",
-      exc_einval);
-  }
+      O2SCL_ERR("Data not set in interpm_krige::eval().",
+		exc_einval);
+    }
   
     // Interpolated function value inside jackknife loop
     double ytmp=0.0;
@@ -458,62 +549,67 @@ namespace o2scl {
     // by the negative covariance for this output function
     ubvector dists(np);
     for(size_t ip=0;ip<np;ip++) {
-    dists[ip]=-(*f)[iout](x,ptrs_x[ip]);
-  }
+      dists[ip]=-(*f)[iout](x,ptrs_x[ip]);
+    }
       
     // Empty index vector (resized by the vector_smallest_index
     // function)
     ubvector_size_t index;
     o2scl::vector_smallest_index<ubvector,double,ubvector_size_t>
-      (np,dists,norder,index);
+    (np,dists,norder,index);
 	
     // The jackknife loop
     for(size_t jk=0;jk<norder;jk++) {
-	  
-    ubvector_size_t index_jk;
-    vector_copy_jackknife(index,jk,index_jk);
-	  
-    // Construct subset of function values for nearest neighbors
-    ubvector func(norder-1);
-    for(size_t io=0;io<norder-1;io++) {
-    func[io]=ptrs_y[iout][index_jk[io]];
-  }
-	  
-    // Construct the nearest neighbor KXX matrix
-    ubmatrix KXX(norder-1,norder-1);
-    for(size_t irow=0;irow<norder-1;irow++) {
-    for(size_t icol=0;icol<norder-1;icol++) {
-    if (irow>icol) {
-    KXX(irow,icol)=KXX(icol,irow);
-  } else {
-    KXX(irow,icol)=(*f)[iout](ptrs_x[index_jk[irow]],
-      ptrs_x[index_jk[icol]]);
-  }
-  }
-  }
-	  
-    // Construct the inverse of KXX
-    ubmatrix inv_KXX(norder-1,norder-1);
-    o2scl::permutation p(norder-1);
-    int signum;
-    o2scl_linalg::LU_decomp(norder-1,KXX,p,signum);
-    o2scl_linalg::LU_invert<ubmatrix,ubmatrix,mat_col_t>
-      (norder-1,KXX,p,inv_KXX);
-	  
-    // Inverse covariance matrix times function vector
-    ubvector Kinvf(norder-1);
-    boost::numeric::ublas::axpy_prod(inv_KXX,func,Kinvf,true);
-	  
-    // Comput the final result
-    ytmp=0.0;
-    for(size_t ipoints=0;ipoints<norder-1;ipoints++) {
-    ytmp+=-dists[index_jk[ipoints]]*Kinvf[ipoints];
-  }
 
-    // Add the squared deviation to y[iout]
-    qual+=pow(ptrs_y[iout][index[jk]]-ytmp,2.0);
+      ubvector_size_t index_jk;
+      vector_copy_jackknife(index,jk,index_jk);
+	  
+      // Construct subset of function values for nearest neighbors
+      ubvector func(norder-1);
+      for(size_t io=0;io<norder-1;io++) {
+	func[io]=ptrs_y[iout][index_jk[io]];
+      }
+	  
+      // Construct the nearest neighbor KXX matrix
+      ubmatrix KXX(norder-1,norder-1);
+      for(size_t irow=0;irow<norder-1;irow++) {
+	for(size_t icol=0;icol<norder-1;icol++) {
+	  if (irow>icol) {
+	    KXX(irow,icol)=KXX(icol,irow);
+	  } else {
+	    KXX(irow,icol)=(*f)[iout](ptrs_x[index_jk[irow]],
+				      ptrs_x[index_jk[icol]]);
+	  }
+	}
+      }
 
-  }
+      // Construct the inverse of KXX
+      ubmatrix inv_KXX(norder-1,norder-1);
+      o2scl::permutation p(norder-1);
+      int signum;
+      if (verbose>0) {
+	std::cout << "interpm_krige_nn::eval_jackknife() "
+		  << "LU decompose and invert " << jk+1 << " of "
+		  << norder << std::endl;
+      }
+      o2scl_linalg::LU_decomp(norder-1,KXX,p,signum);
+      o2scl_linalg::LU_invert<ubmatrix,ubmatrix,mat_col_t>
+	(norder-1,KXX,p,inv_KXX);
+	  
+      // Inverse covariance matrix times function vector
+      ubvector Kinvf(norder-1);
+      boost::numeric::ublas::axpy_prod(inv_KXX,func,Kinvf,true);
+	  
+      // Comput the final result
+      ytmp=0.0;
+      for(size_t ipoints=0;ipoints<norder-1;ipoints++) {
+	ytmp+=-dists[index_jk[ipoints]]*Kinvf[ipoints];
+      }
+
+      // Add the squared deviation to y[iout]
+      qual+=pow(ptrs_y[iout][index[jk]]-ytmp,2.0);
+
+    }
 	  
       
 
@@ -525,26 +621,26 @@ namespace o2scl {
     
   protected:
   
-    /** \brief Pointer to user-specified covariance function array
-     */
-    std::vector<covar_func_t> *f;
+  /** \brief Pointer to user-specified covariance function array
+   */
+  std::vector<covar_func_t> *f;
     
-    /// Desc
-    size_t norder;
-    /// The number of points
-    size_t np;
-    /// The number of dimensions of the inputs
-    size_t nd_in;
-    /// The number of dimensions of the outputs
-    size_t nd_out;
-    /// A vector of pointers holding the data
-    std::vector<vec_t> ptrs_x;
-    /// A vector of pointers holding the data
-    std::vector<vec_t> ptrs_y;
-    /// True if the data has been specified
-    bool data_set;
-    /// Number of points to include in each interpolation (default 3)
-    size_t order;
+  /// Desc
+  size_t norder;
+  /// The number of points
+  size_t np;
+  /// The number of dimensions of the inputs
+  size_t nd_in;
+  /// The number of dimensions of the outputs
+  size_t nd_out;
+  /// A vector of pointers holding the data
+  std::vector<vec_t> ptrs_x;
+  /// A vector of pointers holding the data
+  std::vector<vec_t> ptrs_y;
+  /// True if the data has been specified
+  bool data_set;
+  /// Number of points to include in each interpolation (default 3)
+  size_t order;
     
 #endif
     
