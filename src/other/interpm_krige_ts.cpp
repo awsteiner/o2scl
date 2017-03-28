@@ -48,49 +48,98 @@ int main(void) {
   t.set_output_level(1);
 
   cout.setf(ios::scientific);
-  
-  // Construct the data
-  vector<ubvector> x;
-  ubvector tmp(2);
-  tmp[0]=1.04; tmp[1]=0.02;
-  x.push_back(tmp);
-  tmp[0]=0.03; tmp[1]=1.01; 
-  x.push_back(tmp);
-  tmp[0]=0.81; tmp[1]=0.23; 
-  x.push_back(tmp);
-  tmp[0]=0.03; tmp[1]=0.83; 
-  x.push_back(tmp);
-  tmp[0]=0.03; tmp[1]=0.99; 
-  x.push_back(tmp);
-  tmp[0]=0.82; tmp[1]=0.84; 
-  x.push_back(tmp);
-  tmp[0]=0.03; tmp[1]=0.24; 
-  x.push_back(tmp);
-  tmp[0]=0.03; tmp[1]=1.02; 
-  x.push_back(tmp);
 
-  vector<ubvector> y;
-  tmp.resize(8);
-  for(size_t i=0;i<8;i++) {
-    tmp[i]=ft(x[i][0],x[i][1]);
+  {
+    // Construct the data
+    vector<ubvector> x;
+    ubvector tmp(2);
+    tmp[0]=1.04; tmp[1]=0.02;
+    x.push_back(tmp);
+    tmp[0]=0.03; tmp[1]=1.01; 
+    x.push_back(tmp);
+    tmp[0]=0.81; tmp[1]=0.23; 
+    x.push_back(tmp);
+    tmp[0]=0.03; tmp[1]=0.83; 
+    x.push_back(tmp);
+    tmp[0]=0.03; tmp[1]=0.99; 
+    x.push_back(tmp);
+    tmp[0]=0.82; tmp[1]=0.84; 
+    x.push_back(tmp);
+    tmp[0]=0.03; tmp[1]=0.24; 
+    x.push_back(tmp);
+    tmp[0]=0.03; tmp[1]=1.02; 
+    x.push_back(tmp);
+
+    vector<ubvector> y;
+    tmp.resize(8);
+    for(size_t i=0;i<8;i++) {
+      tmp[i]=ft(x[i][0],x[i][1]);
+    }
+    y.push_back(tmp);
+
+    interpm_krige<ubvector,ubmatrix_column> ik;
+    vector<function<double(const ubvector &,const ubvector &)> > fa={covar};
+    ik.set_data(2,1,8,x,y,fa);
+  
+    cout << "Interpolate at a point and compare the three methods:" << endl;
+    ubvector point(2);
+    ubvector out(1);
+    point[0]=0.4;
+    point[1]=0.5;
+    ik.eval(point,out);
+    cout << out[0] << " " << ft(point[0],point[1]) << endl;
+    point[0]=0.0301;
+    point[1]=0.9901;
+    ik.eval(point,out);
+    cout << out[0] << " " << ft(point[0],point[1]) << endl;
+
   }
-  y.push_back(tmp);
 
-  interpm_krige<ubvector,ubmatrix_column> ik;
-  std::function<double(const ubvector &,const ubvector &)> f=covar;
-  ik.set_data(2,1,8,x,y,f);
+  {
+    // Construct the data
+    vector<ubvector> x;
+    ubvector tmp(2);
+    tmp[0]=1.04; tmp[1]=0.02;
+    x.push_back(tmp);
+    tmp[0]=0.03; tmp[1]=1.01; 
+    x.push_back(tmp);
+    tmp[0]=0.81; tmp[1]=0.23; 
+    x.push_back(tmp);
+    tmp[0]=0.03; tmp[1]=0.83; 
+    x.push_back(tmp);
+    tmp[0]=0.03; tmp[1]=0.99; 
+    x.push_back(tmp);
+    tmp[0]=0.82; tmp[1]=0.84; 
+    x.push_back(tmp);
+    tmp[0]=0.03; tmp[1]=0.24; 
+    x.push_back(tmp);
+    tmp[0]=0.03; tmp[1]=1.02; 
+    x.push_back(tmp);
+
+    vector<ubvector> y;
+    tmp.resize(8);
+    for(size_t i=0;i<8;i++) {
+      tmp[i]=ft(x[i][0],x[i][1]);
+    }
+    y.push_back(tmp);
+
+    interpm_krige_nn<ubvector,ubmatrix_column> ik;
+    vector<function<double(const ubvector &,const ubvector &)> > fa={covar};
+    ik.set_data(2,1,8,x,y,fa,4);
   
-  cout << "Interpolate at a point and compare the three methods:" << endl;
-  ubvector point(2);
-  ubvector out(1);
-  point[0]=0.4;
-  point[1]=0.5;
-  ik.eval(point,out);
-  cout << out[0] << " " << ft(point[0],point[1]) << endl;
-  point[0]=0.0301;
-  point[1]=0.9901;
-  ik.eval(point,out);
-  cout << out[0] << " " << ft(point[0],point[1]) << endl;
+    cout << "Interpolate at a point and compare the three methods:" << endl;
+    ubvector point(2);
+    ubvector out(1);
+    point[0]=0.4;
+    point[1]=0.5;
+    ik.eval(point,out);
+    cout << out[0] << " " << ft(point[0],point[1]) << endl;
+    point[0]=0.0301;
+    point[1]=0.9901;
+    ik.eval(point,out);
+    cout << out[0] << " " << ft(point[0],point[1]) << endl;
+
+  }
 
   t.report();
   return 0;

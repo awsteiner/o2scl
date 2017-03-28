@@ -2105,6 +2105,46 @@ namespace o2scl {
 
   /// \name Other vector and matrix functions
   //@{
+  /** \brief Set the first N entries in a vector to a particular value
+   */
+  template<class vec_t, class data_t> 
+    void vector_set_all(size_t N, vec_t &src, data_t &val) {
+    for(size_t i=0;i<N;i++) {
+      src[i]=val;
+    }
+    return;
+  }
+  
+  /** \brief Set all entries in a vector to a particular value
+   */
+  template<class vec_t, class data_t> 
+    void vector_set_all(vec_t &src, data_t &val) {
+    o2scl::vector_set_all(src.size(),src,val);
+    return;
+  }
+  
+  /** \brief From a given vector, create a new vector by removing a
+      specified element
+   */
+  template<class vec_t, class vec2_t> 
+    void vector_copy_jackknife(const vec_t &src, size_t iout, vec2_t &dest) {
+    if (src.size()==0) {
+      O2SCL_ERR("Empty source vector.",o2scl::exc_einval);
+    }
+    if (iout>=src.size()) {
+      O2SCL_ERR("Requested element beyond end.",o2scl::exc_einval);
+    }
+    dest.resize(src.size()-1);
+    size_t j=0;
+    for(size_t i=0;i<src.size();i++) {
+      if (i!=iout) {
+	dest[j]=src[i];
+	j++;
+      }
+    }
+    return;
+  }
+
   /** \brief "Rotate" a vector so that the kth element is now the beginning
 
       This is a generic template function which will work for

@@ -849,8 +849,8 @@ namespace o2scl {
       includes noise
   */
   template<class vec_vec_t, class mat_col_t, class func_t> 
-  void set_gproc_noise(size_t n_dim, size_t n_init, 
-		       vec_vec_t &x, vec_t &y, func_t &fcovar) {
+  void set_gproc(size_t n_dim, size_t n_init, 
+		 vec_vec_t &x, vec_t &y, func_t &fcovar) {
     
     // Construct the four covariance matrices
     
@@ -890,6 +890,11 @@ namespace o2scl {
     o2scl::permutation p;
     int signum;
     o2scl_linalg::LU_decomp(n_init,KXX,p,signum);
+    if (o2scl_linalg::diagonal_has_zero(n_dim,KXX)) {
+      O2SCL_ERR2("KXX matrix is singular in ",
+		 "prob_dens_mdim_gaussian::set_gproc().",
+		 o2scl::exc_efailed);
+    }
     o2scl_linalg::LU_invert<mat_t,mat_t,mat_col_t>(n_init,KXX,p,inv_KXX);
     
     // Compute the mean vector

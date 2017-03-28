@@ -83,6 +83,8 @@ namespace o2scl {
     
     /// Initialize interpolation routine
     virtual void set(size_t size, const vec_t &x, const vec2_t &y) {
+      O2SCL_ERR2("Function set(size_t,vec_t,vec_t) unimplemented ",
+		 "in interp_krige.",o2scl::exc_eunimpl);
       return;
     }
 
@@ -116,6 +118,10 @@ namespace o2scl {
       o2scl::permutation p;
       int signum;
       o2scl_linalg::LU_decomp(n_dim,KXX,p,signum);
+      if (o2scl_linalg::diagonal_has_zero(n_dim,KXX)) {
+	O2SCL_ERR("KXX matrix is singular in interp_krige::set().",
+		  o2scl::exc_efailed);
+      }
       o2scl_linalg::LU_invert<ubmatrix,ubmatrix,ubmatrix_column>
 	(n_dim,KXX,p,inv_KXX);
       
