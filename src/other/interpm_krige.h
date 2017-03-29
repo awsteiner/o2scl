@@ -503,6 +503,11 @@ namespace o2scl {
 	o2scl::permutation p(norder-1);
 	int signum;
 	o2scl_linalg::LU_decomp(norder-1,KXX,p,signum);
+	if (o2scl_linalg::diagonal_has_zero(norder-1,KXX)) {
+	  O2SCL_ERR2("KXX matrix is singular in ",
+		     "interpm_krige_nn::eval_jackknife(vec_t &,vec_t &).",
+		     o2scl::exc_efailed);
+	}
 	o2scl_linalg::LU_invert<ubmatrix,ubmatrix,mat_col_t>
 	  (norder-1,KXX,p,inv_KXX);
 	  
@@ -592,7 +597,15 @@ namespace o2scl {
 		  << "LU decompose and invert " << jk+1 << " of "
 		  << norder << std::endl;
       }
+      o2scl::matrix_out(std::cout,KXX);
+      std::cout << std::endl;
       o2scl_linalg::LU_decomp(norder-1,KXX,p,signum);
+      o2scl::matrix_out(std::cout,KXX);
+      if (o2scl_linalg::diagonal_has_zero(norder-1,KXX)) {
+	O2SCL_ERR2("KXX matrix is singular in ",
+		   "interpm_krige_nn::eval_jackknife(vec2_t &,size_t).",
+		   o2scl::exc_efailed);
+      }
       o2scl_linalg::LU_invert<ubmatrix,ubmatrix,mat_col_t>
 	(norder-1,KXX,p,inv_KXX);
 	  
