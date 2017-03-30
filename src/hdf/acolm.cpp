@@ -733,7 +733,7 @@ int acol_manager::run_o2graph() {
      "lw=0,marker='+' -show",
      new o2scl::comm_option_mfptr<acol_manager>
      (this,&acol_manager::comm_none),both},
-    {0,"myreds","Select a red/white gradient color map.",0,0,"","",
+    {0,"new-cmaps","Define new color maps.",0,0,"","",
      new o2scl::comm_option_mfptr<acol_manager>
      (this,&acol_manager::comm_none),both},
     {0,"plot","Plot the specified columns.",2,3,"<x> <y> [kwargs]",
