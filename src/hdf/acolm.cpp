@@ -467,10 +467,10 @@ int acol_manager::setup_help() {
   string dsc="\nNotes:\n\n";
   dsc+="1. Help for individual commands may be obtained with 'help ";
   dsc+="command'.\n   Required arguments are surrounded by <>'s and ";
-  dsc+="optional arguments are\n   surrounded by []'s.\n\n";
+  dsc+="optional arguments are\n   surrounded by []'s.\n";
   dsc+="2. Options may also be specified in the environment variable ";
-  dsc+="ACOL_DEFAULTS.\n\n";
-  dsc+="3. Long options may be preceeded by two dashes.\n\n";
+  dsc+="ACOL_DEFAULTS.\n";
+  dsc+="3. Long options may be preceeded by two dashes.\n";
   dsc+="4. In order to avoid confusion between arguments and functions,\n";
   dsc+="   use \"(-x*2)\" not \"-x*2\"\n\n";
   dsc+="Known operators:\n() ^ * / % + - == != < > && || << >> >= <=\n\n";
@@ -877,8 +877,15 @@ int acol_manager::run_o2graph() {
       
   this->cl->set_comm_option_vec(narr,options_arr);
 
-  this->cl->addl_help_cmd="";
-  this->cl->addl_help_cli="";
+  string addl="\nNotes:\n\n";
+  addl+="1. Use parenthesis to indicate functions for setting axis limits.\n";
+  addl+="   For example, -set xlo \"(-1)\".\n";
+  addl+="2. Use a space after $'s in title strings to avoid confusion\n";
+  addl+="   with shell variables, e.g. -set xtitle '$ n$'.\n";
+  addl+="3. Options may be preceeded by two dashes instead of one.\n";
+    
+  this->cl->addl_help_cmd=addl;
+  this->cl->addl_help_cli=addl;
 
   xtitle="";
   ytitle="";
@@ -921,23 +928,23 @@ int acol_manager::run_o2graph() {
   cl->par_list.insert(make_pair("ytitle",&p_ytitle));
       
   p_xlo.d=&xlo;
-  p_xlo.help="Lower limit for x-axis.";
+  p_xlo.help="Lower limit for x-axis (function if starts with '(').";
   cl->par_list.insert(make_pair("xlo",&p_xlo));
 
   p_xhi.d=&xhi;
-  p_xhi.help="Upper limit for x-axis.";
+  p_xhi.help="Upper limit for x-axis (function if starts with '(').";
   cl->par_list.insert(make_pair("xhi",&p_xhi));
 
   p_ylo.d=&ylo;
-  p_ylo.help="Lower limit for y-axis.";
+  p_ylo.help="Lower limit for y-axis (function if starts with '(').";
   cl->par_list.insert(make_pair("ylo",&p_ylo));
 
   p_yhi.d=&yhi;
-  p_yhi.help="Upper limit for y-axis.";
+  p_yhi.help="Upper limit for y-axis (function if starts with '(').";
   cl->par_list.insert(make_pair("yhi",&p_yhi));
 
   p_zlo.d=&zlo;
-  p_zlo.help="Lower limit for z-axis.";
+  p_zlo.help="Lower limit for z-axis (function if starts with '(').";
   cl->par_list.insert(make_pair("zlo",&p_zlo));
 
   p_zhi.d=&zhi;

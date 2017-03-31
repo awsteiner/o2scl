@@ -103,6 +103,9 @@ namespace o2scl {
       http://www.daniweb.com/software-development/cpp/code/427500/calculator-using-shunting-yard-algorithm .
 
       The original code has been modified for use in \o2 .
+
+      \future Add functions atan2, cot, csc, ceil, floor, int, max, min,
+      and maybe if?
    */
   class calculator {
 
