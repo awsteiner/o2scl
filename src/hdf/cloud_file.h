@@ -49,7 +49,10 @@ namespace o2scl_hdf {
       which uses <tt>mkdir -p</tt>, thus will probably only work on
       unix-like systems.
 
-      \todo Convert to use boost::filesystem .
+      \note This class uses system calls to <tt>curl</tt> or
+      <tt>wget</tt> which must be installed separatley.
+
+      \future Convert to use boost::filesystem .
 
       \warning This class has several potential security issues 
       and should not be used without due care. 

@@ -281,6 +281,11 @@ namespace o2scl {
 #define O2SCL_ERR2(d,d2,n) o2scl::set_err_fn((std::string(d)+d2).c_str(), \
 					     __FILE__,__LINE__,n);
   
+  /** \brief Set an error, three-string version
+   */
+#define O2SCL_ERR3(d,d2,d3,n) o2scl::set_err_fn(\
+  (std::string(d)+d2+d3).c_str(),__FILE__,__LINE__,n);
+  
   /** \brief Set a "convergence" error, two-string version
    */
 #define O2SCL_CONV2(d,d2,n,b) {if (b)					\
