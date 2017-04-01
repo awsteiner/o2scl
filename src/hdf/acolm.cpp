@@ -1068,7 +1068,7 @@ int acol_manager::comm_to_hist(std::vector<std::string> &sv,
 	col2=cl->cli_gets("Column for weights (or blank for none): ");
       }
 
-      int nbinsx, nbinsy;
+      size_t nbinsx, nbinsy;
       int sret=o2scl::stoszt_nothrow(in[2],nbinsx);
       if (sret!=0 || nbinsx==0) {
 	cerr << "Failed to interpret " << in[2]
@@ -2501,8 +2501,8 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
 	hdf_output(hf,clines,name);
 	hf.close();
       } else {
-	clear_obj();
 	table3d_obj.slice_contours(slice,1,levs,cont_obj);
+	clear_obj();
 	type="vector<contour_line>";
       }
     }
