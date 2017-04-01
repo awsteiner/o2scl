@@ -1036,7 +1036,7 @@ int acol_manager::comm_to_hist(std::vector<std::string> &sv,
       }
 
       size_t nbins;
-      int sret=o2scl::stoszt(in[1],nbins);
+      int sret=o2scl::stoszt_nothrow(in[1],nbins);
       if (sret!=0 || nbins==0) {
 	cerr << "Failed to interpret " << in[1]
 	     << " as a positive number of bins." << endl;
@@ -1069,13 +1069,13 @@ int acol_manager::comm_to_hist(std::vector<std::string> &sv,
       }
 
       int nbinsx, nbinsy;
-      int sret=o2scl::stoszt(in[2],nbinsx);
+      int sret=o2scl::stoszt_nothrow(in[2],nbinsx);
       if (sret!=0 || nbinsx==0) {
 	cerr << "Failed to interpret " << in[2]
 	     << " as a positive number of bins." << endl;
 	return exc_einval;
       }
-      sret=o2scl::stoszt(in[3],nbinsy);
+      sret=o2scl::stoszt_nothrow(in[3],nbinsy);
       if (sret!=0 || nbinsy==0) {
 	cerr << "Failed to interpret " << in[2]
 	     << " as a positive number of bins." << endl;
@@ -3168,8 +3168,8 @@ int acol_manager::comm_entry(std::vector<std::string> &sv, bool itive_com) {
     if (ret!=0) return ret;
 
     int row;
-    int ret=o2scl::stoi_nothrow(in[1],row);
-    if (ret!=0) {
+    int ret2=o2scl::stoi_nothrow(in[1],row);
+    if (ret2!=0) {
       std::cerr << "Failed to convert " << in[1]
 		<< " to a number." << endl;
       return exc_efailed;
@@ -3269,7 +3269,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     cerr << "No expression to compute in 'calc'." << endl;
     return exc_efailed;
   }
-  double d=o2scl::function_to_double(i1,false);
+  double d=o2scl::function_to_double(i1);
   if (scientific) cout.setf(ios::scientific);
   else cout.unsetf(ios::scientific);
   cout.precision(prec);
