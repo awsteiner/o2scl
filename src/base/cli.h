@@ -315,7 +315,7 @@ namespace o2scl {
       /// Set from string
       virtual int set(std::string s) {
 	if (parse_strings) {
-	  *d=function_to_double(s,false);
+	  *d=function_to_double(s);
 	} else {
 	  *d=o2scl::stod(s);
 	}
@@ -364,8 +364,7 @@ namespace o2scl {
 
       /// Set from string
       virtual int set(std::string st) {
-	*s=o2scl::stoszt(st,false);
-	return 0;
+	return o2scl::stoszt_nothrow(st,*s);
       }
 
       /// Convert to string

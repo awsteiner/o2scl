@@ -146,21 +146,35 @@ string o2scl::dtos(double x, int prec, bool auto_prec) {
   return "";
 }
 
-int o2scl::stoi(string s, bool err_on_fail) {
+int o2scl::stoi(string s) {
   return std::stoi(s);
 }
 
-size_t o2scl::stoszt(string s, bool err_on_fail) {
+int o2scl::stoi_nothrow(string s, int &result) {
+  istringstream ins(s);
+  if (ins >> result) {
+    return 0;
+  }
+  return exc_einval;
+}
+
+size_t o2scl::stoszt(string s) {
   size_t ret;
   istringstream ins(s);
   if (ins >> ret) {
     return ret;
   }
-  if (err_on_fail) {
-    O2SCL_ERR("Conversion from string to size_t failed in stoszt().",
-	      exc_einval);
-  }
+  O2SCL_ERR("Conversion from string to size_t failed in stoszt().",
+	    exc_einval);
   return 0;
+}
+
+int o2scl::stoszt_nothrow(string s, size_t &result) {
+  istringstream ins(s);
+  if (ins >> result) {
+    return 0;
+  }
+  return exc_einval;
 }
 
 bool o2scl::stob(string s, bool err_on_fail) {
@@ -207,7 +221,17 @@ bool o2scl::is_number(std::string s) {
   return false;
 }
 
-double o2scl::function_to_double(std::string s, bool err_on_fail) {
+double o2scl::function_to_double(std::string s) {
+  // Remove quotes and apostrophes
+  for(size_t i=0;i<s.length();i++) {
+    if (s[i]=='\"' || s[i]=='\'') {
+      string t;
+      if (i>0) t+=s.substr(0,i);
+      if (i<s.length()-1) t+=s.substr(i+1,s.length()-i-1);
+      s=t;
+      i=0;
+    }
+  }
   calculator calc;
   calc.compile(s.c_str(),0);
   double dat=calc.eval(0);

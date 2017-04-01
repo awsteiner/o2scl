@@ -88,18 +88,14 @@ namespace o2scl {
 
   /** \brief Convert a string to an integer 
       
-      If \c err_on_fail is true and the conversion fails, this
-      function calls the error handler, otherwise this function just
-      returns zero.
-
-      If \o2 is compiled with C++11 support, this function is
-      just a wrapper for <tt>std::stoi</tt>. 
-
-      \warning Because of the presence of <tt>std::stoi()</tt> in 
-      C++11, you may have to explicitly provide the
-      namespace, i.e. <tt>o2scl::stoi()</tt> in your code.
+      This function is now just a wrapper for <tt>std::stoi</tt>.
   */
-  int stoi(std::string s, bool err_on_fail=true);
+  int stoi(std::string s);
+
+  /** \brief Convert a string to an integer without throwing an 
+      exception
+   */
+  int stoi_nothrow(std::string s, int &result);
 
   /** \brief Convert a string to a size_t
       
@@ -107,7 +103,16 @@ namespace o2scl {
       function calls the error handler, otherwise this function just
       returns zero.
   */
-  size_t stoszt(std::string s, bool err_on_fail=true);
+  size_t stoszt(std::string s);
+
+  /** \brief Convert a string to a size_t without throwing an
+      exception
+      
+      If \c err_on_fail is true and the conversion fails, this
+      function calls the error handler, otherwise this function just
+      returns zero.
+  */
+  int stoszt_nothrow(std::string s, size_t &result);
 
   /** \brief Convert a string to a boolean value
       
@@ -155,11 +160,12 @@ namespace o2scl {
 
   /** \brief Convert a formula to a double 
       
-      This uses \ref o2scl::calculator to convert strings like
+      This function removes all quotes and apostrophes from the string
+      and then uses \ref o2scl::calculator to convert strings like
       "-1.0e-3", "1.0/3.0" and "exp(cos(-1.0e-2))" to floating point
       numbers.
   */
-  double function_to_double(std::string s, bool err_on_fail=true);
+  double function_to_double(std::string s);
 
   /** \brief Split a string into words using whitespace for delimiters
       and (partially) respecting quotes

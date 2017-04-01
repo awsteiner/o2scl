@@ -600,7 +600,16 @@ int acol_manager::run(int argc, char *argv[]) {
   
   int ncol=80;
   char *ncstring=getenv("COLUMNS");
-  if (ncstring) ncol=o2scl::stoi(ncstring);
+  if (ncstring) {
+    int nc2;
+    int sret=o2scl::stoi_nothrow(ncstring,nc2);
+    if (sret==0 && nc2>0) {
+      ncol=nc2;
+    } else {
+      cerr << "Failed to interpret COLUMNS value " << ncstring
+	   << " as a positive number of columns." << endl;
+    }
+  }
   
   set_swidth(ncol);
 
@@ -702,8 +711,17 @@ int acol_manager::run_o2graph() {
   
   int ncol=80;
   char *ncstring=getenv("COLUMNS");
-  if (ncstring) ncol=o2scl::stoi(ncstring);
-  
+  if (ncstring) {
+    int nc2;
+    int sret=o2scl::stoi_nothrow(ncstring,nc2);
+    if (sret==0 && nc2>0) {
+      ncol=nc2;
+    } else {
+      cerr << "Failed to interpret COLUMNS value " << ncstring
+	   << " as a positive number of columns." << endl;
+    }
+  }
+
   set_swidth(ncol);
 
   if (verbose>2) {
@@ -1016,11 +1034,18 @@ int acol_manager::comm_to_hist(std::vector<std::string> &sv,
       } else if (itive_com) {
 	col2=cl->cli_gets("Column for weights (or blank for none): ");
       }
-      
+
+      size_t nbins;
+      int sret=o2scl::stoszt(in[1],nbins);
+      if (sret!=0 || nbins==0) {
+	cerr << "Failed to interpret " << in[1]
+	     << " as a positive number of bins." << endl;
+	return exc_einval;
+      }
       if (col2.length()==0) {
-	hist_obj.from_table(table_obj,in[0],o2scl::stoszt(in[1]));
+	hist_obj.from_table(table_obj,in[0],nbins);
       } else {
-	hist_obj.from_table(table_obj,in[0],col2,o2scl::stoszt(in[1]));
+	hist_obj.from_table(table_obj,in[0],col2,nbins);
       }
       type="hist";
 
@@ -1042,15 +1067,26 @@ int acol_manager::comm_to_hist(std::vector<std::string> &sv,
       } else if (itive_com && sv.size()<5) {
 	col2=cl->cli_gets("Column for weights (or blank for none): ");
       }
-      
+
+      int nbinsx, nbinsy;
+      int sret=o2scl::stoszt(in[2],nbinsx);
+      if (sret!=0 || nbinsx==0) {
+	cerr << "Failed to interpret " << in[2]
+	     << " as a positive number of bins." << endl;
+	return exc_einval;
+      }
+      sret=o2scl::stoszt(in[3],nbinsy);
+      if (sret!=0 || nbinsy==0) {
+	cerr << "Failed to interpret " << in[2]
+	     << " as a positive number of bins." << endl;
+	return exc_einval;
+      }
+
       if (col2.length()==0) {
-	hist_2d_obj.from_table(table_obj,in[0],in[1],
-			       o2scl::stoszt(in[2]),
-			       o2scl::stoszt(in[3]));
+	hist_2d_obj.from_table(table_obj,in[0],in[1],nbinsx,nbinsy);
       } else {
 	hist_2d_obj.from_table(table_obj,in[0],in[1],col2,
-			       o2scl::stoszt(in[2]),
-			       o2scl::stoszt(in[3]));
+			       nbinsx,nbinsy);
       }
       type="hist_2d";
       
@@ -2804,7 +2840,16 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
 
   if (user_ncols<=0) {
     char *ncstring=getenv("COLUMNS");
-    if (ncstring) ncols=o2scl::stoi(ncstring);
+    if (ncstring) {
+      int nc2;
+      int sret=o2scl::stoi_nothrow(ncstring,nc2);
+      if (sret==0 && nc2>0) {
+	ncols=nc2;
+      } else {
+	cerr << "Failed to interpret COLUMNS value " << ncstring
+	     << " as a positive number of columns." << endl;
+      }
+    }
   } else {
     ncols=user_ncols;
   }
@@ -3121,9 +3166,22 @@ int acol_manager::comm_entry(std::vector<std::string> &sv, bool itive_com) {
     pr.push_back("Enter row index");
     int ret=get_input(sv,pr,in,"function",itive_com);
     if (ret!=0) return ret;
+
+    int row;
+    int ret=o2scl::stoi_nothrow(in[1],row);
+    if (ret!=0) {
+      std::cerr << "Failed to convert " << in[1]
+		<< " to a number." << endl;
+      return exc_efailed;
+    }
+    if (row<0) {
+      std::cerr << "Conversion of " << in[1]
+		<< " resulted in, " << row << ", a negative number." << endl;
+      return exc_efailed;
+    }
     
     cout << "Entry for column " << in[0] << " at row " << in[1] << " is "
-	 << table_obj.get(in[0],o2scl::stoi(in[1])) << endl;
+	 << table_obj.get(in[0],row) << endl;
     
   } else {
     cerr << "Command 'entry' not implemented for type " << type << " ." << endl;
@@ -3343,7 +3401,16 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
   
   if (user_ncols<=0) {
     char *ncstring=getenv("COLUMNS");
-    if (ncstring) ncols=o2scl::stoi(ncstring);
+    if (ncstring) {
+      int nc2;
+      int sret=o2scl::stoi_nothrow(ncstring,nc2);
+      if (sret==0 && nc2>0) {
+	ncols=nc2;
+      } else {
+	cerr << "Failed to interpret COLUMNS value " << ncstring
+	     << " as a positive number of columns." << endl;
+      }
+    }
   } else {
     ncols=user_ncols;
   }
@@ -3359,13 +3426,23 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     } else {
       int nrows, ncls;
       if (sv.size()>=2) {
-	nrows=o2scl::stoi(sv[1]);
+	int sret=o2scl::stoi_nothrow(sv[1],nrows);
+	if (sret!=0 || nrows<=0) {
+	  cerr << "Failed to interpret " << sv[1]
+	       << "as a positive number of rows." << endl;
+	  return exc_einval;
+	}
       } else {
 	nrows=10;
       }
       if (((size_t)nrows)>nx) nrows=nx;
       if (sv.size()>=3) {
-	ncls=o2scl::stoi(sv[2]);
+	int sret=o2scl::stoi_nothrow(sv[2],ncls);
+	if (sret!=0 || nrows<=0) {
+	  cerr << "Failed to interpret " << sv[2]
+	       << "as a positive number of rows." << endl;
+	  return exc_einval;
+	}
       } else {
 	// 8+prec for the grid point, 4 for extra spacing,
 	// and lmar for the left margin which has the x label
@@ -3468,7 +3545,12 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 
     int nrows=10;
     if (sv.size()>=2) {
-      nrows=o2scl::stoi(sv[1]);
+      int sret=o2scl::stoi_nothrow(sv[1],nrows);
+      if (sret!=0 || nrows<=0) {
+	cerr << "Failed to interpret " << sv[1]
+	     << "as a positive number of rows." << endl;
+	return exc_einval;
+      }
     }
     int inr=(hist_obj.size()+(nrows-1))/(nrows);
     if (inr<1) inr=1;
@@ -3516,13 +3598,23 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 
       int nrows, ncls;
       if (sv.size()>=2) {
-	nrows=o2scl::stoi(sv[1]);
+	int sret=o2scl::stoi_nothrow(sv[1],nrows);
+	if (sret!=0 || nrows<=0) {
+	  cerr << "Failed to interpret " << sv[1]
+	       << "as a positive number of rows." << endl;
+	  return exc_einval;
+	}
       } else {
 	nrows=10;
       }
       if (((size_t)nrows)>nx) nrows=nx;
       if (sv.size()>=3) {
-	ncls=o2scl::stoi(sv[2]);
+	int sret=o2scl::stoi_nothrow(sv[2],ncls);
+	if (sret!=0 || ncls<=0) {
+	  cerr << "Failed to interpret " << sv[2]
+	       << "as a positive number of columns.." << endl;
+	  return exc_einval;
+	}
       } else {
 	// 8+prec for the grid point, 3 for extra spacing,
 	if (ncols<=prec+11) ncls=1;
@@ -3655,7 +3747,16 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     
     if (user_ncols<=0) {
       char *ncstring=getenv("COLUMNS");
-      if (ncstring) ncols=o2scl::stoi(ncstring);
+      if (ncstring) {
+	int nc2;
+	int sret=o2scl::stoi_nothrow(ncstring,nc2);
+	if (sret==0 && nc2>0) {
+	  ncols=nc2;
+	} else {
+	  cerr << "Failed to interpret COLUMNS value " << ncstring
+	       << " as a positive number of columns." << endl;
+	}
+      }
     } else {
       ncols=user_ncols;
     }
@@ -3678,7 +3779,13 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
       // Compute column and row increment
       
       if (sv.size()==2) {
-	int nrows=o2scl::stoi(sv[1]);
+	int nrows;
+	int ret=o2scl::stoi_nothrow(sv[1],nrows);
+	if (ret!=0 || nrows<=0) {
+	  std::cerr << "Couldn't interpret " << sv[1]
+		    << " as a positive and nonzero number of rows." << endl;
+	  return exc_efailed;
+	}
 	inr=(table_obj.get_nlines()+(nrows-1))/(nrows);
 	if (inr<1) inr=1;
       } else {
@@ -4624,7 +4731,7 @@ int acol_manager::comm_create3(std::vector<std::string> &sv,
 
 int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
   std::string i1, i2, i3, i4;
-  
+
   if (sv.size()>=5) {
     i1=sv[1];
     i2=sv[2];
@@ -4661,12 +4768,12 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
   double d4=function_to_double(i4);
   d3+=d4/1.0e4;
   int cnl=((int)((d3-d2)/d4))+1;
-  
+
   table_obj.line_of_names(i1);
   table_obj.set_nlines(cnl);
 
   for(int li=0;li<cnl;li++) {
-    table_obj.set(i1,li,o2scl::stod(i2)+((double)li)*o2scl::stod(i4));
+    table_obj.set(i1,li,d2+((double)li)*d4);
   }
   type="table";
 
