@@ -1164,24 +1164,32 @@ namespace o2scl {
     return vector_chi_squared<vec_t,vec2_t,vec3_t>(obs.size(),obs,exp,err);
   }
 
-  /** \brief Optimal bin size using Scott's method
-      
-      This function computes the optimal bin size \f$ \Delta_b \$ of 
-      a histogram using the expression
-      \f[
-      \Delta_b = \frac{3.5 \sigma}{n^{1/3}}
-      \f]
-
-      From Scott 1979 Biometricka 66 (3): 605-610
-
-      \note If <tt>n</tt> is less than or equal to 1, this
-      function returns 0.0 without calling the error handler.
-   */
+  /** \brief Optimal bin size using Scott's method for the
+      first <tt>n</tt> elements
+  */
   template<class vec_t> double vector_bin_size_scott
     (size_t n, const vec_t &v) {
     if (n<=1) return 0.0;
     double ret=3.5*vector_stddev(n,v)/cbrt(((double)n));
     return ret;
+  }
+
+  /** \brief Optimal bin size using Scott's method
+      
+      This function computes the optimal bin size \f$ \Delta_b \f$ of 
+      a histogram using the expression
+      \f[
+      \Delta_b = \frac{3.5 \sigma}{n^{1/3}}
+      \f]
+
+      From \ref Scott79 .
+
+      \note If <tt>n</tt> is less than or equal to 1, this
+      function returns 0.0 without calling the error handler.
+  */
+  template<class vec_t> double vector_bin_size_scott
+    (const vec_t &v) {
+    return vector_bin_size_scott(v.size(),v);
   }
   
   /** \brief Obtain a quantile from a sorted vector
@@ -1220,24 +1228,7 @@ namespace o2scl {
   }
   
   /** \brief Optimal bin size using the Freedman-Diaconis rule
-      
-      This function computes the optimal bin size \f$ \Delta_b \$ of 
-      a histogram using the expression
-      where \f$ q_{i} \f$ is the \f$ i \f$ quantile 
-      of the data (note this is quantile not quartile).
-      This function sorts the vector in order to obtain
-      the result.
-
-      From Freedman and Diaconis (1981)  
-      Probability Theory and Related Fields 57 (4): 453-476
-
-      \note If <tt>n</tt> is less than or equal to 1, this
-      function returns 0.0 without calling the error handler.
-  */
-  /*
-    \f[
-    \Delta_b = \frac{2\left(q_{0.75}-q_{0.25}\right)}{n^{1/3}}
-    \f]
+      for the first <tt>n</tt> elements      
   */
   template<class vec_t> double vector_bin_size_freedman
     (size_t n, vec_t &v) {
@@ -1245,6 +1236,28 @@ namespace o2scl {
     double ret=2.0*(vector_sorted_quantile(n,v,0.75)-
 		    vector_sorted_quantile(n,v,0.25))/cbrt(((double)n));
     return ret;
+  }
+  
+  /** \brief Optimal bin size using the Freedman-Diaconis rule
+      
+      This function computes the optimal bin size \f$ \Delta_b \f$ of 
+      a histogram using the expression
+      \f[
+      \Delta_b = \frac{2\left(q_{0.75}-q_{0.25}\right)}{n^{1/3}}
+      \f]
+      where \f$ q_{i} \f$ is the \f$ i \f$ quantile 
+      of the data (note this is quantile not quartile).
+      This function sorts the vector in order to obtain
+      the result.
+
+      From \ref Freedman81 .
+
+      \note If <tt>n</tt> is less than or equal to 1, this
+      function returns 0.0 without calling the error handler.
+  */
+  template<class vec_t> double vector_bin_size_freedman
+    (vec_t &v) {
+    return vector_bin_size_freedman(v.size(),v);
   }
   //@}
 

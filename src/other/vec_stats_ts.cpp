@@ -20,9 +20,10 @@
 
   -------------------------------------------------------------------
 */
+#include <gsl/gsl_statistics.h>
 #include <o2scl/test_mgr.h>
 #include <o2scl/vec_stats.h>
-#include <gsl/gsl_statistics.h>
+#include <o2scl/prob_dens_func.h>
 
 using namespace std;
 using namespace o2scl;
@@ -156,6 +157,16 @@ int main(void) {
 	     gsl_stats_wkurtosis_m_sd(w,1,x,1,N,wmean,wsdtmp),1.0e-8,
 	     "wkurtosis 2");
 
+  // Sample a standard Gaussian
+  prob_dens_gaussian pdg;
+  std::vector<double> btest;
+  for(size_t i=0;i<1000;i++) btest.push_back(pdg());
+  // Examine bin sizes
+  cout << vector_min_value<vector<double>,double>(btest) << endl;
+  cout << vector_max_value<vector<double>,double>(btest) << endl;
+  cout << vector_bin_size_scott(btest) << endl;
+  cout << vector_bin_size_freedman(btest) << endl;
+  
   t.report();
   
   return 0;

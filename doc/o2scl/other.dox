@@ -10,7 +10,6 @@
     <b>Three-dimensional data tables</b> - \ref o2scl::table3d \n
     \b Series \b acceleration - \ref o2scl::series_acc \n
     \b Command-line \b interface - \ref o2scl::cli \n
-    \b Automatic \b bin \b sizing - \ref o2scl::bin_size \n
     \b Polylogarithms - \ref o2scl::polylog \n
 
 */
