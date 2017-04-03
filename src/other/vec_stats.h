@@ -1163,6 +1163,88 @@ namespace o2scl {
 			      const vec3_t &err) {
     return vector_chi_squared<vec_t,vec2_t,vec3_t>(obs.size(),obs,exp,err);
   }
+
+  /** \brief Optimal bin size using Scott's method
+      
+      This function computes the optimal bin size \f$ \Delta_b \$ of 
+      a histogram using the expression
+      \f[
+      \Delta_b = \frac{3.5 \sigma}{n^{1/3}}
+      \f]
+
+      From Scott 1979 Biometricka 66 (3): 605-610
+
+      \note If <tt>n</tt> is less than or equal to 1, this
+      function returns 0.0 without calling the error handler.
+   */
+  template<class vec_t> double vector_bin_size_scott
+    (size_t n, const vec_t &v) {
+    if (n<=1) return 0.0;
+    double ret=3.5*vector_stddev(n,v)/cbrt(((double)n));
+    return ret;
+  }
+  
+  /** \brief Obtain a quantile from a sorted vector
+
+      This is a generic version of 
+      <tt>gsl_stats_quantile_from_sorted_data()</tt>.
+
+      If <tt>f</tt> is less than 0 or greater than 1, the error
+      handler is called. If <tt>n</tt> is zero, this function returns
+      zero without calling the error handler.
+   */
+  template<class vec_t> double vector_sorted_quantile
+    (size_t n, const vec_t &v, double f) {
+
+    if (f<0.0 || f>1.0) {
+      O2SCL_ERR("Invalid fraction for vector_sorted_quantile",
+		o2scl::exc_einval);
+    }
+    
+    double index=f*(n-1);
+    size_t lhs=(int)index;
+    double delta=index-lhs;
+    double result;
+    
+    if (n == 0) {
+      return 0.0;
+    }
+    
+    if (lhs == n-1) {
+      result=sorted_data[lhs];
+    } else {
+      result=(1-delta)*sorted_data[lhs]+
+	delta*sorted_data[(lhs+1)] ;
+    }
+    
+    return result;
+  }
+  
+  /** \brief Optimal bin size using the Freedman-Diaconis rule
+      
+      This function computes the optimal bin size \f$ \Delta_b \$ of 
+      a histogram using the expression
+      \f[
+      \Delta_b = \frac{2\left(q_{0.75}-q_{0.25}\right)}{n^{1/3}}
+      \f]
+      where \f$ q_{i} \f$ is the \f$ i \f$ quantile 
+      of the data (note this is quantile not quartile).
+      This function sorts the vector in order to obtain
+      the result.
+
+      From Freedman and Diaconis (1981)  
+      Probability Theory and Related Fields 57 (4): 453-476
+
+      \note If <tt>n</tt> is less than or equal to 1, this
+      function returns 0.0 without calling the error handler.
+  */
+  template<class vec_t> double vector_bin_size_freedman
+    (size_t n, vec_t &v) {
+    vector_sort<vec_t,double>(n,v);
+    double ret=2.0*(vector_sorted_quantile(n,v,0.75)-
+		    vector_sorted_quantile(n,v,0.25))/cbrt(((double)n));
+    return ret;
+  }
   //@}
 
   /// \name Weighted vector functions

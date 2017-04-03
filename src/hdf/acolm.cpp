@@ -740,7 +740,7 @@ int acol_manager::run_o2graph() {
   const int cl_param=o2scl::cli::comm_option_cl_param;
   const int both=o2scl::cli::comm_option_both;
     
-  static const size_t narr=23;
+  static const size_t narr=22;
   o2scl::comm_option_s options_arr[narr]={
     {0,"line","Plot a line.",4,5,"<x1> <y1> <x2> <y2> [kwargs]",
      ((std::string)"Plot a line from (x1,y1) to (xy,y2). Some useful ")+
@@ -751,12 +751,22 @@ int acol_manager::run_o2graph() {
      "lw=0,marker='+' -show",
      new o2scl::comm_option_mfptr<acol_manager>
      (this,&acol_manager::comm_none),both},
-    {0,"new-cmaps","Define new color maps.",0,0,"","",
+    {0,"new-cmaps","Define new color maps.",0,0,"",
+     ((std::string)"Define new color maps, 'jet2', 'pastel2' ")+
+     "'reds2', 'greens2', and 'blues2'.",
      new o2scl::comm_option_mfptr<acol_manager>
      (this,&acol_manager::comm_none),both},
-    {0,"plot","Plot the specified columns.",2,3,"<x> <y> [kwargs]",
-     ((std::string)"Plot column <y> versus column <x>. Some useful ")+
-     "kwargs are color (c), dashes, linestyle (ls), linewidth (lw), "+
+    {0,"plot",
+     "Plot hist, vector<contour_line> or columns in a table.",0,3,
+     "<x and y for table> [kwargs]",
+     ((std::string)"If the current object is a table, then plot ")+
+     "column <y> versus column <x>. If the current object is a "+
+     "one-dimensional histogram, then plot the histogram weights "+
+     "as a function of the bin representative valus. If the "+
+     "current object is a set of contour lines, then plot the "+
+     "full set of contour lines. "+
+     "Some useful kwargs (which apply for all three object types) "+
+     "are color (c), dashes, linestyle (ls), linewidth (lw), "+
      "marker, markeredgecolor (mec), markeredgewidth (mew), "+
      "markerfacecolor (mfc), markerfacecoloralt (mfcalt), markersize "+
      "(ms). For example: o2graph -create x 0 10 0.2 -function \"sin(x)\" "+
@@ -801,14 +811,11 @@ int acol_manager::run_o2graph() {
      new o2scl::comm_option_mfptr<acol_manager>
      (this,&acol_manager::comm_none),
      both},
-    {0,"contour-plot","Create a contour plot.",0,0,"","",
+    {0,"hist","Create a histogram plot.",0,0,"",
+     ((std::string)"For a histogram object, plot the weights ")+
+     " versus the bin representative values in a bar plot.",
      new o2scl::comm_option_mfptr<acol_manager>
-     (this,&acol_manager::comm_none),
-     both},
-    {0,"hist","Create a histogram plot.",0,0,"","",
-     new o2scl::comm_option_mfptr<acol_manager>
-     (this,&acol_manager::comm_none),
-     both},
+     (this,&acol_manager::comm_none),both},
     {0,"hist2d","Create a 2-D histogram plot.",0,0,"","",
      new o2scl::comm_option_mfptr<acol_manager>
      (this,&acol_manager::comm_none),
@@ -882,7 +889,13 @@ int acol_manager::run_o2graph() {
      "extension, typically either .png, .pdf, .eps, .jpg, .raw, .svg, "+
      "and .tif .",new o2scl::comm_option_mfptr<acol_manager>
      (this,&acol_manager::comm_none),both},
-    {0,"den-plot","Create a density plot.",1,1,"<slice name>","",
+    {0,"den-plot","Create a density plot from a hist_2d or table3d object.",
+     0,1,"<slice name for table3d>",
+     ((std::string)"If the current object is of type table3d, then ")+
+     "'den-plot' creates a density plot from the specified slice name. "+
+     "If the current object is of type hist_2d, then 'den-plot' creates "+
+     "a density plot from the current histogram (assuming equally-"+
+     "spaced bins).",
      new o2scl::comm_option_mfptr<acol_manager>
      (this,&acol_manager::comm_none),
      both},
