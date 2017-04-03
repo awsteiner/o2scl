@@ -1211,10 +1211,9 @@ namespace o2scl {
     }
     
     if (lhs == n-1) {
-      result=sorted_data[lhs];
+      result=v[lhs];
     } else {
-      result=(1-delta)*sorted_data[lhs]+
-	delta*sorted_data[(lhs+1)] ;
+      result=(1-delta)*v[lhs]+delta*v[(lhs+1)];
     }
     
     return result;
@@ -1224,9 +1223,6 @@ namespace o2scl {
       
       This function computes the optimal bin size \f$ \Delta_b \$ of 
       a histogram using the expression
-      \f[
-      \Delta_b = \frac{2\left(q_{0.75}-q_{0.25}\right)}{n^{1/3}}
-      \f]
       where \f$ q_{i} \f$ is the \f$ i \f$ quantile 
       of the data (note this is quantile not quartile).
       This function sorts the vector in order to obtain
@@ -1237,6 +1233,11 @@ namespace o2scl {
 
       \note If <tt>n</tt> is less than or equal to 1, this
       function returns 0.0 without calling the error handler.
+  */
+  /*
+    \f[
+    \Delta_b = \frac{2\left(q_{0.75}-q_{0.25}\right)}{n^{1/3}}
+    \f]
   */
   template<class vec_t> double vector_bin_size_freedman
     (size_t n, vec_t &v) {

@@ -3,13 +3,13 @@
 # ------------------------------------------------------------
 
 OTHER_SRCS = series_acc.cpp poly.cpp polylog.cpp \
-	interp2_eqi.cpp pinside.cpp bin_size.cpp \
+	interp2_eqi.cpp pinside.cpp \
 	contour.cpp smooth_gsl.cpp hist.cpp \
 	hist_2d.cpp prob_dens_func.cpp
 
 HEADER_VAR = contour.h cheb_approx.h \
 	series_acc.h interp2_planar.h poly.h polylog.h \
-	interp2_direct.h interp2_eqi.h pinside.h bin_size.h \
+	interp2_direct.h interp2_eqi.h pinside.h \
 	vec_stats.h smooth_gsl.h hist.h \
 	hist_2d.h prob_dens_func.h interp2_seq.h interp2_neigh.h \
 	interpm_idw.h interp2.h interpm_krige.h
