@@ -71,6 +71,14 @@
     Practical Methods of Optimization</a>,
     (1987) John Wiley & Sons, Chichester, p. 39.
 
+    \anchor Freedman81 Freedman81:
+    <a href="http://dx.doi.org/10.1007/BF01025868">
+    D. Freedman and P. Diaconis</a>,
+    Probability Theory and Related Fields \b 57 (1981) 453.
+    \comment
+    Title: On the histogram as a density estimator: L2 theory
+    \endcomment
+
     \anchor Fritsch80 Fritsch80:
     F. N. Fritsch and R. E. Carlson,
     SIAM J. Numer. Anal. \b 17 (1980) 238.
@@ -199,6 +207,14 @@
     Principle)
     \endcomment
 
+    \anchor Scott79 Scott79:
+    <a href="http://dx.doi.org/10.1093/biomet/66.3.605">
+    D. W. Scott</a>,
+    Biometrika \b 66 (1979) 605.
+    \comment
+    Title: On optimal and data-based histograms
+    \endcomment
+
     \anchor Steffen90 Steffen90:
     <a href="http://adsabs.harvard.edu/abs/1990A&A...239..443S">
     M. Steffen</a>,
@@ -217,8 +233,8 @@
     G. P. Tolstov,
     Fourier Series,
     (1962) Prentice Hall, Englewood Cliffs, NJ
-    (I don't have a link for the 1962 version, but a
-                  1976 reprinting is available at
+    (I don't have a link for the 1962 version, but a 1976
+                  reprinting is available at
                   http://www.worldcat.org/isbn/9780486633176).
 
     \anchor Wynn56 Wynn56:
