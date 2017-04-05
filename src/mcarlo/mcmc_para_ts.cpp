@@ -20,7 +20,7 @@
 
   -------------------------------------------------------------------
 */
-#include <o2scl/mcmc_omp.h>
+#include <o2scl/mcmc_para.h>
 #include <o2scl/vec_stats.h>
 #include <o2scl/test_mgr.h>
 #include <o2scl/mcarlo_miser.h>

@@ -4,7 +4,8 @@
 
 if O2SCL_OPENMP
 TEST_VAR = mcarlo_plain.scr mcarlo_miser.scr mcarlo_vegas.scr \
-	expval.scr rng_gsl.scr mcmc.scr mcmc_mpi.scr mcmc_para.scr
+	expval.scr rng_gsl.scr mcmc.scr mcmc_mpi.scr
+# mcmc_para.scr
 else
 TEST_VAR = mcarlo_plain.scr mcarlo_miser.scr mcarlo_vegas.scr \
 	expval.scr rng_gsl.scr mcmc.scr mcmc_mpi.scr
