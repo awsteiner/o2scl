@@ -51,11 +51,11 @@ int main(int argc, char *argv[]) {
 
   {
 
-    anneal_gsl<multi_funct11,ubvector> ga;
+    anneal_gsl<multi_funct,ubvector> ga;
     double result;
     ubvector init(2);
     
-    multi_funct11 fx=funx;
+    multi_funct fx=funx;
     
     /// 1d to vectors
     
@@ -78,11 +78,11 @@ int main(int argc, char *argv[]) {
   // Try with std random numbers
   {
 
-    anneal_gsl<multi_funct11,ubvector,std::random_device> ga;
+    anneal_gsl<multi_funct,ubvector,std::random_device> ga;
     double result;
     ubvector init(2);
     
-    multi_funct11 fx=funx;
+    multi_funct fx=funx;
     
     /// 1d to vectors
     

@@ -44,7 +44,7 @@ namespace o2scl {
       taken to be \f$ - \log_{10}(t) \f$ where \f$ t \f$ is
       the value of \ref o2scl::min_base::tol_rel .
   */
-  template<class func_t=funct11> class min_brent_boost : 
+  template<class func_t=funct> class min_brent_boost : 
   public min_bkt_base<func_t> {
     
   public:

@@ -61,9 +61,9 @@ namespace o2scl {
       If the population converges prematurely, then \ref diff_evo::f
       and \ref pop_size should be increased.
   */
-    template<class func_t=multi_funct11, 
+    template<class func_t=multi_funct, 
       class vec_t=boost::numeric::ublas::vector<double> , 
-      class init_funct_t=mm_funct11> class diff_evo : 
+      class init_funct_t=mm_funct> class diff_evo : 
       public mmin_base<func_t,func_t,vec_t> {
       
     public:

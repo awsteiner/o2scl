@@ -189,15 +189,15 @@ int main(void) {
     ubvector rhs(10), dy(10);
     fc1 f1;
 
-    ode_it_funct11 f_derivs=std::bind
+    ode_it_funct f_derivs=std::bind
       (std::mem_fn<double(size_t,double,ubmatrix_row &)>
        (&fc1::derivs),&f1,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
-    ode_it_funct11 f_left=std::bind
+    ode_it_funct f_left=std::bind
       (std::mem_fn<double(size_t,double,ubmatrix_row &)>
        (&fc1::left),&f1,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
-    ode_it_funct11 f_right=std::bind
+    ode_it_funct f_right=std::bind
       (std::mem_fn<double(size_t,double,ubmatrix_row &)>
        (&fc1::right),&f1,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
@@ -221,15 +221,15 @@ int main(void) {
     ubvector rhs(22), dy(22);
     fc1 f1;
 
-    ode_it_funct11 f_derivs=std::bind
+    ode_it_funct f_derivs=std::bind
       (std::mem_fn<double(size_t,double,ubmatrix_row &)>
        (&fc1::derivs),&f1,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
-    ode_it_funct11 f_left=std::bind
+    ode_it_funct f_left=std::bind
       (std::mem_fn<double(size_t,double,ubmatrix_row &)>
        (&fc1::left),&f1,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
-    ode_it_funct11 f_right=std::bind
+    ode_it_funct f_right=std::bind
       (std::mem_fn<double(size_t,double,ubmatrix_row &)>
        (&fc1::right),&f1,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
@@ -282,15 +282,15 @@ int main(void) {
 
     fc2 f2;
 
-    ode_it_funct11 f_derivs=std::bind
+    ode_it_funct f_derivs=std::bind
       (std::mem_fn<double(size_t,double,ubmatrix_row &)>
        (&fc2::derivs),&f2,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
-    ode_it_funct11 f_left=std::bind
+    ode_it_funct f_left=std::bind
       (std::mem_fn<double(size_t,double,ubmatrix_row &)>
        (&fc2::left),&f2,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
-    ode_it_funct11 f_right=std::bind
+    ode_it_funct f_right=std::bind
       (std::mem_fn<double(size_t,double,ubmatrix_row &)>
        (&fc2::right),&f2,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
@@ -341,15 +341,15 @@ int main(void) {
     ubvector rhs4(15), dy(15);
     fc3 f3;
 
-    ode_it_funct11 ofm3d=std::bind
+    ode_it_funct ofm3d=std::bind
       (std::mem_fn<double(size_t,double,ubmatrix_row &)>
        (&fc3::derivs),&f3,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
-    ode_it_funct11 ofm3l=std::bind
+    ode_it_funct ofm3l=std::bind
       (std::mem_fn<double(size_t,double,ubmatrix_row &)>
        (&fc3::left),&f3,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
-    ode_it_funct11 ofm3r=std::bind
+    ode_it_funct ofm3r=std::bind
       (std::mem_fn<double(size_t,double,ubmatrix_row &)>
        (&fc3::right),&f3,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
@@ -382,15 +382,15 @@ int main(void) {
 
     fc4 f4;
 
-    ode_it_funct11 ofm4d=std::bind
+    ode_it_funct ofm4d=std::bind
       (std::mem_fn<double(size_t,double,ubmatrix_row &)>
        (&fc4::derivs),&f4,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
-    ode_it_funct11 ofm4l=std::bind
+    ode_it_funct ofm4l=std::bind
       (std::mem_fn<double(size_t,double,ubmatrix_row &)>
        (&fc4::left),&f4,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
-    ode_it_funct11 ofm4r=std::bind
+    ode_it_funct ofm4r=std::bind
       (std::mem_fn<double(size_t,double,ubmatrix_row &)>
        (&fc4::right),&f4,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
@@ -420,20 +420,20 @@ int main(void) {
     ubvector rhs(22), dy(22);
     fc1 f1;
 
-    ode_it_funct11 f_derivs=std::bind
+    ode_it_funct f_derivs=std::bind
       (std::mem_fn<double(size_t,double,ubmatrix_row &)>
        (&fc1::derivs),&f1,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
-    ode_it_funct11 f_left=std::bind
+    ode_it_funct f_left=std::bind
       (std::mem_fn<double(size_t,double,ubmatrix_row &)>
        (&fc1::left),&f1,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
-    ode_it_funct11 f_right=std::bind
+    ode_it_funct f_right=std::bind
       (std::mem_fn<double(size_t,double,ubmatrix_row &)>
        (&fc1::right),&f1,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
 
-    ode_it_solve<ode_it_funct11,ubvector,ubmatrix,
+    ode_it_solve<ode_it_funct,ubvector,ubmatrix,
 		 ubmatrix_row,ubvector,ubcomp_matrix> oit;
     oit.solve(11,2,1,x,y,f_derivs,f_left,f_right,A,rhs,dy);
 
@@ -472,20 +472,20 @@ int main(void) {
   {
     fc1 f1;
 
-    ode_it_funct11 f_derivs=std::bind
+    ode_it_funct f_derivs=std::bind
       (std::mem_fn<double(size_t,double,arma::rowvec &)>
        (&fc1::derivsa),&f1,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
-    ode_it_funct11 f_left=std::bind
+    ode_it_funct f_left=std::bind
       (std::mem_fn<double(size_t,double,arma::rowvec &)>
        (&fc1::lefta),&f1,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
-    ode_it_funct11 f_right=std::bind
+    ode_it_funct f_right=std::bind
       (std::mem_fn<double(size_t,double,arma::rowvec &)>
        (&fc1::righta),&f1,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
 
-    ode_it_solve<ode_it_funct11,arma::colvec,arma::mat,
+    ode_it_solve<ode_it_funct,arma::colvec,arma::mat,
 		 arma::rowvec,arma::colvec,arma::mat> oit;
     
     arma::colvec x(11);
@@ -537,16 +537,16 @@ int main(void) {
       (std::mem_fn<double(size_t,double,ubmatrix_row &)>
        (&fc1::derivsa),&f1,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
-    ode_it_funct11 f_left=std::bind
+    ode_it_funct f_left=std::bind
       (std::mem_fn<double(size_t,double,ubmatrix_row &)>
        (&fc1::lefta),&f1,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
-    ode_it_funct11 f_right=std::bind
+    ode_it_funct f_right=std::bind
       (std::mem_fn<double(size_t,double,ubmatrix_row &)>
        (&fc1::righta),&f1,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);       
 
-    ode_it_solve<ode_it_funct11,arma::colvec,arma::mat,
+    ode_it_solve<ode_it_funct,arma::colvec,arma::mat,
 		 arma::rowvec,arma::colvec,arma::sp_mat> oit;
     
     arma::colvec x(11);

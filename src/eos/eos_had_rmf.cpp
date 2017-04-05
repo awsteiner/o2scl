@@ -259,7 +259,7 @@ int eos_had_rmf::calc_p(fermion &ne, fermion &pr, thermo &lth) {
     x[2]=-0.05;
   }
   
-  mm_funct11 fmf=std::bind
+  mm_funct fmf=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
      (&eos_had_rmf::field_eqs),
      this,std::placeholders::_1,std::placeholders::_2,
@@ -313,7 +313,7 @@ int eos_had_rmf::calc_temp_p(fermion &ne, fermion &pr, const double T,
     x[2]=-0.05;
   }
   
-  mm_funct11 fmf=std::bind
+  mm_funct fmf=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
      (&eos_had_rmf::field_eqsT),
      this,std::placeholders::_1,std::placeholders::_2,
@@ -379,7 +379,7 @@ int eos_had_rmf::calc_e(fermion &ne, fermion &pr, thermo &lth) {
   n_baryon=ne.n+pr.n;
   n_charge=pr.n;
   
-  mm_funct11 fmf=std::bind
+  mm_funct fmf=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
      (&eos_had_rmf::calc_e_solve_fun),
      this,std::placeholders::_1,std::placeholders::_2,
@@ -536,7 +536,7 @@ int eos_had_rmf::calc_temp_e(fermion &ne, fermion &pr, const double T,
   n_baryon=ne.n+pr.n;
   n_charge=pr.n;
   
-  mm_funct11 fmf=std::bind
+  mm_funct fmf=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
      (&eos_had_rmf::calc_temp_e_solve_fun),
      this,std::placeholders::_1,std::placeholders::_2,
@@ -862,7 +862,7 @@ int eos_had_rmf::fix_saturation(double gcs, double gcw, double gb, double gc) {
   x[2]=gb;
   x[3]=gc;
 
-  mm_funct11 fmf=std::bind
+  mm_funct fmf=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
      (&eos_had_rmf::fix_saturation_fun),
      this,std::placeholders::_1,std::placeholders::_2,
@@ -919,7 +919,7 @@ void eos_had_rmf::saturation() {
   ubvector x(5), y(5);
   int test;
 
-  mm_funct11 fmf=std::bind
+  mm_funct fmf=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
      (&eos_had_rmf::zero_pressure),
      this,std::placeholders::_1,std::placeholders::_2,

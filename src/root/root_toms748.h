@@ -78,7 +78,7 @@ namespace o2scl {
       This class currently uses \ref o2scl::gsl_tolerance as a test,
       since this works even when the root is zero.
    */
-  template<class func_t=funct11> class root_toms748 : 
+  template<class func_t=funct> class root_toms748 : 
   public root_bkt<func_t> {
     
   public:

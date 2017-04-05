@@ -40,18 +40,18 @@ namespace o2scl {
   /// Array of multi-dimensional functions typedef
   typedef std::function<
     int(size_t,const boost::numeric::ublas::vector<double> &,
-	boost::numeric::ublas::vector<double> &) > mm_funct11;
+	boost::numeric::ublas::vector<double> &) > mm_funct;
 
   /** \brief Array of multi-dimensional functions in an array of strings
    */
-  class mm_funct11_strings {
+  class mm_funct_strings {
 
   public:
       
     /** \brief Specify the strings
      */
     template<class vec_string_t=std::vector<std::string> >
-      mm_funct11_strings(int nv, vec_string_t &exprs,
+      mm_funct_strings(int nv, vec_string_t &exprs,
 			 vec_string_t &var_arr) {
 
       st_nv=nv;
@@ -65,7 +65,7 @@ namespace o2scl {
       }
     }
       
-    virtual ~mm_funct11_strings() {
+    virtual ~mm_funct_strings() {
     };
       
     /** \brief Set the values of the auxilliary parameters that were
@@ -128,19 +128,19 @@ namespace o2scl {
     /// The number of variables
     int st_nv;
       
-    mm_funct11_strings() {};
+    mm_funct_strings() {};
       
   private:
       
-    mm_funct11_strings(const mm_funct11_strings &);
-    mm_funct11_strings& operator=(const mm_funct11_strings&);
+    mm_funct_strings(const mm_funct_strings &);
+    mm_funct_strings& operator=(const mm_funct_strings&);
       
 #endif
       
   };
     
 #ifdef O2SCL_NEVER_DEFINED
-  /** \brief A wrapper to specify \ref o2scl::mm_funct11-like objects 
+  /** \brief A wrapper to specify \ref o2scl::mm_funct-like objects 
       to GSL
   */
   template<class vec_t>

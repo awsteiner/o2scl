@@ -106,7 +106,7 @@ int fermion_deriv_nr::nu_from_n(fermion_deriv &f, double temper) {
     O2SCL_ERR("guess_from_nu==false not implemented in fermion_deriv_nr.",
 	      exc_eunimpl);
   }
-  funct11 mf=std::bind(std::mem_fn<double(double,fermion_deriv &,double)>
+  funct mf=std::bind(std::mem_fn<double(double,fermion_deriv &,double)>
 		       (&fermion_deriv_nr::solve_fun),
 		       this,std::placeholders::_1,std::ref(f),temper);
     
@@ -178,7 +178,7 @@ int fermion_deriv_nr::pair_density(fermion_deriv &f, double temper) {
   if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
   
   nex=f.nu/temper;
-  funct11 mf=std::bind(std::mem_fn<double(double,fermion_deriv &,double)>
+  funct mf=std::bind(std::mem_fn<double(double,fermion_deriv &,double)>
 		       (&fermion_deriv_nr::pair_fun),
 		       this,std::placeholders::_1,std::ref(f),temper);
 

@@ -56,13 +56,13 @@ void boson_rel::calc_mu(boson &b, double temper) {
   }
   if (b.non_interacting==true) { b.nu=b.mu; b.ms=b.m; }
 
-  funct11 fd=std::bind(std::mem_fn<double(double,boson &,double)>
+  funct fd=std::bind(std::mem_fn<double(double,boson &,double)>
 		       (&boson_rel::deg_density_fun),
 		       this,std::placeholders::_1,std::ref(b),temper);
-  funct11 fe=std::bind(std::mem_fn<double(double,boson &,double)>
+  funct fe=std::bind(std::mem_fn<double(double,boson &,double)>
 		       (&boson_rel::deg_energy_fun),
 		       this,std::placeholders::_1,std::ref(b),temper);
-  funct11 fs=std::bind(std::mem_fn<double(double,boson &,double)>
+  funct fs=std::bind(std::mem_fn<double(double,boson &,double)>
 		       (&boson_rel::deg_entropy_fun),
 		       this,std::placeholders::_1,std::ref(b),temper);
 
@@ -82,7 +82,7 @@ void boson_rel::nu_from_n(boson &b, double temper) {
   double nex;
 
   nex=b.nu/temper;
-  funct11 mf=std::bind(std::mem_fn<double(double,boson &,double)>
+  funct mf=std::bind(std::mem_fn<double(double,boson &,double)>
 		       (&boson_rel::solve_fun),
 		       this,std::placeholders::_1,std::ref(b),temper);
   density_root->solve(nex,mf);
@@ -101,10 +101,10 @@ void boson_rel::calc_density(boson &b, double temper) {
 
   nu_from_n(b,temper);
 
-  funct11 fe=std::bind(std::mem_fn<double(double,boson &,double)>
+  funct fe=std::bind(std::mem_fn<double(double,boson &,double)>
 		       (&boson_rel::deg_energy_fun),
 		       this,std::placeholders::_1,std::ref(b),temper);
-  funct11 fs=std::bind(std::mem_fn<double(double,boson &,double)>
+  funct fs=std::bind(std::mem_fn<double(double,boson &,double)>
 		       (&boson_rel::deg_entropy_fun),
 		       this,std::placeholders::_1,std::ref(b),temper);
 
@@ -183,7 +183,7 @@ double boson_rel::entropy_fun(double u, boson &b, double T) {
 double boson_rel::solve_fun(double x, boson &b, double T) {
   double nden, yy;
   
-  funct11 fd=std::bind(std::mem_fn<double(double,boson &b,double)>
+  funct fd=std::bind(std::mem_fn<double(double,boson &b,double)>
 		       (&boson_rel::deg_density_fun),
 		       this,std::placeholders::_1,std::ref(b),T);
   

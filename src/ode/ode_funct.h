@@ -43,19 +43,19 @@ namespace o2scl {
   typedef std::function<int(double,size_t,
 			    const boost::numeric::ublas::vector<double> &,
 			    boost::numeric::ublas::vector<double> &)> 
-    ode_funct11;
+    ode_funct;
   
   /** \brief One-dimensional function from strings
       \nothing
   */
-  class ode_funct11_strings {
+  class ode_funct_strings {
     
   public:
     
     /** \brief Specify the string and the parameters
      */
     template<class vec_string_t=std::vector<std::string> >
-      ode_funct11_strings(size_t nv, vec_string_t &exprs,
+      ode_funct_strings(size_t nv, vec_string_t &exprs,
 			  vec_string_t &funcs, std::string var) {
       
       calc.resize(nv);
@@ -70,7 +70,7 @@ namespace o2scl {
       st_var=var;
     }
     
-    virtual ~ode_funct11_strings() {
+    virtual ~ode_funct_strings() {
     }
     
     /** \brief Specify the string and the parameters
@@ -132,12 +132,12 @@ namespace o2scl {
     /// The function names
     std::vector<std::string> st_funcs;
 
-    ode_funct11_strings() {};
+    ode_funct_strings() {};
 
     private:
 
-    ode_funct11_strings(const ode_funct11_strings &);
-    ode_funct11_strings& operator=(const ode_funct11_strings&);
+    ode_funct_strings(const ode_funct_strings &);
+    ode_funct_strings& operator=(const ode_funct_strings&);
 
 #endif
 

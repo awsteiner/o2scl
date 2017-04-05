@@ -44,7 +44,7 @@ namespace o2scl {
       \future Maybe consider allowing the user to specify
       the stream to which 'verbose' information is sent.
   */
-  template<class func_t=funct11, class dfunc_t=func_t> class root {
+  template<class func_t=funct, class dfunc_t=func_t> class root {
     
   public:
   
@@ -142,7 +142,7 @@ namespace o2scl {
   /** \brief One-dimensional bracketing solver [abstract base]
       
   */
-  template<class func_t=funct11, class dfunc_t=func_t> class root_bkt :
+  template<class func_t=funct, class dfunc_t=func_t> class root_bkt :
   public root<func_t,dfunc_t> {
 
   public:
@@ -382,7 +382,7 @@ namespace o2scl {
       \future Implement the functions solve() and solve_bkt() 
       for derivative solvers.
   */
-  template<class func_t=funct11, class dfunc_t=func_t> 
+  template<class func_t=funct, class dfunc_t=func_t> 
     class root_de : public root<func_t> {
     
   public:

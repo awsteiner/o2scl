@@ -31,6 +31,9 @@
     If the data is not on a grid, then inverse distance
     weighted interpolation is performed by \ref o2scl::interpm_idw.
 
+    An experimental class for multidimensional-dimensional kriging is also 
+    provided in \ref o2scl::interpm_krige .
+    
     \section ex_interp2_sect Interpolation on a rectangular grid
 
     \dontinclude ex_interp2.cpp

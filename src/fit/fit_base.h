@@ -39,21 +39,21 @@ namespace o2scl {
   /// Array of multi-dimensional functions typedef (C++11 version)
   typedef std::function<
     double(size_t,const boost::numeric::ublas::vector<double> &, 
-	   double)> fit_funct11;
+	   double)> fit_funct;
   
   /** \brief String fitting function
       
       Default template arguments
       - \c vec_t - \ref boost::numeric::ublas::vector \< double \>
   */
-  class fit_funct11_strings {
+  class fit_funct_strings {
     
   public:
     
     /** \brief Specify a fitting function through a string
      */
     template<class vec_string_t=std::vector<std::string> >
-      fit_funct11_strings(std::string expr, vec_string_t &parms, 
+      fit_funct_strings(std::string expr, vec_string_t &parms, 
 			  std::string var) {
       calc.compile(expr.c_str(),&vars);
       st_form=expr;
@@ -109,7 +109,7 @@ namespace o2scl {
     /// The variable
     std::string st_var; 
 
-    fit_funct11_strings() {};
+    fit_funct_strings() {};
 
     /// Specify the strings which define the fitting function
     int set_function(std::string expr, std::string parms, 
@@ -117,8 +117,8 @@ namespace o2scl {
 
     private:
     
-    fit_funct11_strings(const fit_funct11_strings &);
-    fit_funct11_strings& operator=(const fit_funct11_strings&);
+    fit_funct_strings(const fit_funct_strings &);
+    fit_funct_strings& operator=(const fit_funct_strings&);
 
 #endif
 
@@ -173,7 +173,7 @@ namespace o2scl {
       Jacobian (in \ref jac()) for a fitting class like \ref fit_nonlin.
       It assumes a one-dimensional data set with no uncertainty in the
       abcissae and a fitting function specified in a form similar to
-      \ref fit_funct11.
+      \ref fit_funct.
       \comment
       For some reason the reference to operator() above doesn't work
       in doxygen.
@@ -188,7 +188,7 @@ namespace o2scl {
       Default template arguments
       - \c vec_t - \ref boost::numeric::ublas::vector \< double \>
       - \c mat_t - \ref boost::numeric::ublas::matrix \< double \>
-      - \c func_t - \ref fit_funct11
+      - \c func_t - \ref fit_funct
 
       \future Allow a user-specified Jacobian or make that into
       a separate class?
@@ -196,7 +196,7 @@ namespace o2scl {
   */
   template<class vec_t=boost::numeric::ublas::vector<double>, 
     class mat_t=boost::numeric::ublas::matrix<double>, 
-    class fit_func_t=fit_funct11> class chi_fit_funct : 
+    class fit_func_t=fit_funct> class chi_fit_funct : 
     public gen_fit_funct<vec_t,mat_t> {
     
   public:
@@ -287,7 +287,7 @@ namespace o2scl {
   
   protected:
 
-  /// Reformulate <tt>operator()</tt> into a \ref mm_funct11 object
+  /// Reformulate <tt>operator()</tt> into a \ref mm_funct object
   int jac_mm_funct(size_t np, const vec_t &p, vec_t &f) {
     operator()(np,p,ndat_,f);
     return 0;
@@ -322,7 +322,7 @@ namespace o2scl {
 
   /** \brief Non-linear least-squares fitting [abstract base]
    */
-  template<class func_t=fit_funct11,
+  template<class func_t=fit_funct,
     class vec_t=boost::numeric::ublas::vector<double>, 
     class mat_t=boost::numeric::ublas::matrix<double> > class fit_base {
 

@@ -586,7 +586,7 @@ namespace o2scl {
     //@{
     /** \brief Set class mroot object for use calculating saturation density
      */
-    virtual int set_sat_mroot(mroot<mm_funct11,ubvector,jac_funct11> &mrx) {
+    virtual int set_sat_mroot(mroot<mm_funct,ubvector,jac_funct> &mrx) {
       sat_mroot=&mrx;
       return 0;
     }
@@ -796,7 +796,7 @@ namespace o2scl {
     bool guess_set;
 
     /// The solver to compute saturation properties
-    mroot<mm_funct11,ubvector,jac_funct11> *sat_mroot;
+    mroot<mm_funct,ubvector,jac_funct> *sat_mroot;
     
     /// The function for fix_saturation()
     int fix_saturation_fun(size_t nv, const ubvector &x, ubvector &y);

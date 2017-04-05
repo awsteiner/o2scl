@@ -27,7 +27,7 @@
     o2scl::mmin_constr_gencan requires a Hessian vector product and
     the user can specify this product for the minimization by using
     \ref o2scl::mmin_constr::mmin_hess(). The Hessian product function
-    can be specified as an object of type \ref o2scl::ool_hfunct11 in a
+    can be specified as an object of type \ref o2scl::ool_hfunct in a
     similar way to the other function objects in \o2.
 
     There are five error codes defined in \ref o2scl::mmin_constr

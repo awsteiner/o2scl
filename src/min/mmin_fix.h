@@ -69,7 +69,7 @@ namespace o2scl {
       fixed.
       \endcomment
   */
-  template<class func_t=multi_funct11, 
+  template<class func_t=multi_funct, 
     class vec_t=boost::numeric::ublas::vector<double> > 
     class mmin_fix_params : public mmin_base<func_t,func_t,vec_t> {
     
@@ -166,7 +166,7 @@ namespace o2scl {
   */
   template<class bool_vec_t>
   int mmin_fix(size_t nvar, ubvector &x, double &fmin, 
-	       bool_vec_t &fix, multi_funct11 &func) {
+	       bool_vec_t &fix, multi_funct &func) {
     
     fixp.resize(nvar);
     for(size_t i=0;i<nvar;i++) fixp[i]=fix[i];

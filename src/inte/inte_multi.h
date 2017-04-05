@@ -42,7 +42,7 @@ namespace o2scl {
       limits. For more general regions of integration, use children of
       the class \ref inte_gen.
   */
-  template<class func_t=multi_funct11, 
+  template<class func_t=multi_funct, 
     class vec_t=boost::numeric::ublas::vector<double> > class inte_multi {
       
       public:

@@ -276,7 +276,7 @@ namespace o2scl {
   protected:
 
     /// ODE function object
-    ode_funct11 ofm;
+    ode_funct ofm;
 
     /// Interpolation object for listed radii in \ref mvsr()
     interp<ubvector> iop;
@@ -373,13 +373,13 @@ namespace o2scl {
     /// \name Numerical methods
     //@{
     /// The solver
-    mroot<mm_funct11,ubvector,jac_funct11> *mroot_ptr;
+    mroot<mm_funct,ubvector,jac_funct> *mroot_ptr;
 
     /// The minimizer
     min_base<> *min_ptr;
     
     /// The adaptive stepper
-    astep_base<ubvector,ubvector,ubvector,ode_funct11> *as_ptr;
+    astep_base<ubvector,ubvector,ubvector,ode_funct> *as_ptr;
     //@}
 
     /// The ODE step function
@@ -640,7 +640,7 @@ namespace o2scl {
     //@{
     /** \brief Set solver
     */
-    void set_mroot(mroot<mm_funct11,ubvector,jac_funct11> &s_mrp) {
+    void set_mroot(mroot<mm_funct,ubvector,jac_funct> &s_mrp) {
       mroot_ptr=&s_mrp; 
       return;
     };
@@ -654,7 +654,7 @@ namespace o2scl {
 
     /** \brief Set the adaptive stepper
      */
-    void set_stepper(astep_base<ubvector,ubvector,ubvector,ode_funct11> &sap) {
+    void set_stepper(astep_base<ubvector,ubvector,ubvector,ode_funct> &sap) {
       as_ptr=&sap; 
       return;
     };
@@ -666,10 +666,10 @@ namespace o2scl {
     min_brent_gsl<> def_min;
     
     /// The default solver
-    mroot_hybrids<mm_funct11,ubvector,ubmatrix,jac_funct11> def_solver;
+    mroot_hybrids<mm_funct,ubvector,ubmatrix,jac_funct> def_solver;
 
     /// The default adaptive stepper
-    astep_gsl<ubvector,ubvector,ubvector,ode_funct11> def_stepper;
+    astep_gsl<ubvector,ubvector,ubvector,ode_funct> def_stepper;
     //@}
 
   };

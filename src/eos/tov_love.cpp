@@ -140,7 +140,7 @@ void tov_love::calc_y(double &yR, double &beta, double &k2,
     results.set_unit("dydr","1/km");
   }
 
-  ode_funct11 od=std::bind
+  ode_funct od=std::bind
     (std::mem_fn<int(double,size_t,const ubvector &,ubvector &)>
      (&tov_love::y_derivs),
      this,std::placeholders::_1,std::placeholders::_2,
@@ -188,7 +188,7 @@ void tov_love::calc_H(double &yR, double &beta, double &k2,
   y[0]=r*r;
   y[1]=2.0*r;
 
-  ode_funct11 od2=std::bind
+  ode_funct od2=std::bind
     (std::mem_fn<int(double,size_t,const ubvector &,ubvector &)>
      (&tov_love::H_derivs),
      this,std::placeholders::_1,std::placeholders::_2,

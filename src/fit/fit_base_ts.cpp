@@ -42,7 +42,7 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
   
-  fit_funct11 f1=func;
+  fit_funct f1=func;
 
   ubvector par(2);
   par[0]=0.5;

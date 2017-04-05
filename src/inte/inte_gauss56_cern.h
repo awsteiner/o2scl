@@ -45,7 +45,7 @@ namespace o2scl {
       http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/d106/top.html
 
   */
-  template<class func_t=funct11> class inte_gauss56_cern : public inte<func_t>  {
+  template<class func_t=funct> class inte_gauss56_cern : public inte<func_t>  {
 
   public:
   

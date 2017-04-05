@@ -49,6 +49,11 @@ namespace o2scl {
 
   /** \brief Multi-dimensional interpolation by kriging
 
+      \note This class assumes that the function specified in the
+      call to set_data() is the same as that passed to the
+      eval() functions. If this is not the case, the
+      behavior of this class is undefined.
+
       \note Experimental.
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
@@ -69,10 +74,6 @@ namespace o2scl {
    */
   std::vector<ubvector> Kinvf;
   
-  /** \brief Pointer to user-specified covariance function array
-   */
-  std::vector<covar_func_t> *f;
-    
   public:
 
   interpm_krige() {
@@ -124,9 +125,6 @@ namespace o2scl {
 
     Kinvf.resize(n_out);
 
-    // Store pointer to covariance function
-    f=&fcovar;
-
     // Loop over all output functions
     for(size_t iout=0;iout<n_out;iout++) {
 	
@@ -137,7 +135,7 @@ namespace o2scl {
 	  if (irow>icol) {
 	    KXX(irow,icol)=KXX(icol,irow);
 	  } else {
-	    KXX(irow,icol)=(*f)[iout](ptrs_x[irow],ptrs_x[icol]);
+	    KXX(irow,icol)=fcovar[iout](ptrs_x[irow],ptrs_x[icol]);
 	  }
 	}
       }
@@ -172,7 +170,8 @@ namespace o2scl {
   /** \brief Perform the interpolation
    */
   template<class vec2_t, class vec3_t>
-  void eval(const vec2_t &x, vec3_t &y) const {
+  void eval(const vec2_t &x, vec3_t &y,
+	    std::vector<covar_func_t> &fcovar) const {
     
     if (data_set==false) {
       O2SCL_ERR("Data not set in interpm_krige::eval().",
@@ -183,7 +182,7 @@ namespace o2scl {
     for(size_t iout=0;iout<nd_out;iout++) {
       y[iout]=0.0;
       for(size_t ipoints=0;ipoints<np;ipoints++) {
-	y[iout]+=(*f)[iout](x,ptrs_x[ipoints])*Kinvf[iout][ipoints];
+	y[iout]+=fcovar[iout](x,ptrs_x[ipoints])*Kinvf[iout][ipoints];
       }
     }
 
@@ -214,6 +213,11 @@ namespace o2scl {
     
   /** \brief Multi-dimensional interpolation by kriging with 
       nearest-neighbor 
+
+      \note This class assumes that the function specified in the
+      call to set_data() is the same as that passed to the
+      eval() functions. If this is not the case, the
+      behavior of this class is undefined.
 
       \note Experimental.
   */
@@ -278,9 +282,6 @@ namespace o2scl {
       std::swap(ptrs_y[i],y[i]);
     }
     data_set=true;
-
-    // Store pointer to covariance function array
-    f=&fcovar;
       
     if (verbose>0) {
       std::cout << "interpm_krige_nn::set_data() : Using " << n_points
@@ -295,7 +296,8 @@ namespace o2scl {
   /** \brief Perform the interpolation
    */
   template<class vec2_t, class vec3_t>
-  void eval(const vec2_t &x, vec3_t &y) const {
+  void eval(const vec2_t &x, vec3_t &y,
+	    std::vector<covar_func_t> &fcovar) const {
       
     if (data_set==false) {
       O2SCL_ERR("Data not set in interpm_krige::eval().",
@@ -311,7 +313,7 @@ namespace o2scl {
       // by the negative covariance for this output function
       ubvector dists(np);
       for(size_t ip=0;ip<np;ip++) {
-	dists[ip]=-(*f)[iout](x,ptrs_x[ip]);
+	dists[ip]=-fcovar[iout](x,ptrs_x[ip]);
       }
       
       // Empty index vector (resized by the vector_smallest_index
@@ -333,7 +335,7 @@ namespace o2scl {
 	  if (irow>icol) {
 	    KXX(irow,icol)=KXX(icol,irow);
 	  } else {
-	    KXX(irow,icol)=(*f)[iout](ptrs_x[index[irow]],
+	    KXX(irow,icol)=fcovar[iout](ptrs_x[index[irow]],
 				      ptrs_x[index[icol]]);
 	  }
 	}
@@ -371,7 +373,8 @@ namespace o2scl {
   /** \brief Perform the interpolation
    */
   template<class vec2_t>
-  double eval(const vec2_t &x, size_t iout) const {
+  double eval(const vec2_t &x, size_t iout,
+	      std::vector<covar_func_t> &fcovar) const {
       
     if (data_set==false) {
       O2SCL_ERR("Data not set in interpm_krige::eval().",
@@ -384,7 +387,7 @@ namespace o2scl {
     // by the negative covariance for this output function
     ubvector dists(np);
     for(size_t ip=0;ip<np;ip++) {
-      dists[ip]=-(*f)[iout](x,ptrs_x[ip]);
+      dists[ip]=-fcovar[iout](x,ptrs_x[ip]);
     }
       
     // Empty index vector (resized by the vector_smallest_index
@@ -406,7 +409,7 @@ namespace o2scl {
 	if (irow>icol) {
 	  KXX(irow,icol)=KXX(icol,irow);
 	} else {
-	  KXX(irow,icol)=(*f)[iout](ptrs_x[index[irow]],
+	  KXX(irow,icol)=fcovar[iout](ptrs_x[index[irow]],
 				    ptrs_x[index[icol]]);
 	}
       }
@@ -438,45 +441,14 @@ namespace o2scl {
     return ret;
       
   }
-  
-  /** \brief Use jackknife to match interpolated to real function 
-      values
-  */
-  template<class vec2_t>
-  double eval_jackknife(const vec2_t &x, size_t iout) const {
-    
-    if (data_set==false) {
-      O2SCL_ERR("Data not set in interpm_krige::eval().",
-		exc_einval);
-    }
 
-    double qual=0.0;
-    
-    // Interpolated function value inside jackknife loop
-    double ytmp=0.0;
-    
-    // For a distance measurement, just use the the negative
-    // covariance for this output function
-    ubvector dists(np);
-    for(size_t ip=0;ip<np;ip++) {
-      dists[ip]=-(*f)[iout](x,ptrs_x[ip]);
-    }
-    
-    // Create an index array which sorts by distance
-    ubvector_size_t index(np);
-    o2scl::vector_sort_index<ubvector,ubvector_size_t>(np,dists,index);
-    
-    // -------------------------------------------------------------
-    // Before the jackknife loop, we want to create a full
-    // set of norder linearly independent points
-    
-    // Vector for storing the indexes in the index array which
-    // will store the closest norder-1 points which are
-    // linearly independent
-    ubvector_size_t indep(norder);
-    for(size_t io=0;io<norder;io++) {
-      indep[io]=io;
-    }
+  /** \brief Find a set of linearly independent points 
+   */
+  template<class vec2_t>
+  void find_lin_indep(const vec2_t &x, size_t iout,
+		      std::vector<covar_func_t> &fcovar,
+		      ubvector_size_t &index,
+		      ubvector_size_t &indep) const {
     
     bool done=false;
     while (done==false) {
@@ -494,7 +466,7 @@ namespace o2scl {
 	  if (irow>icol) {
 	    KXX(irow,icol)=KXX(icol,irow);
 	  } else {
-	    KXX(irow,icol)=(*f)[iout](ptrs_x[index[indep[irow]]],
+	    KXX(irow,icol)=fcovar[iout](ptrs_x[index[indep[irow]]],
 				      ptrs_x[index[indep[icol]]]);
 	  }
 	}
@@ -538,6 +510,50 @@ namespace o2scl {
       }
       
     }
+    return;
+  }
+  
+  /** \brief Use jackknife to match interpolated to real function 
+      values
+  */
+  template<class vec2_t>
+  double eval_jackknife(const vec2_t &x, size_t iout,
+			std::vector<covar_func_t> &fcovar) const {
+    
+    if (data_set==false) {
+      O2SCL_ERR("Data not set in interpm_krige::eval().",
+		exc_einval);
+    }
+
+    double qual=0.0;
+    
+    // Interpolated function value inside jackknife loop
+    double ytmp=0.0;
+    
+    // For a distance measurement, just use the the negative
+    // covariance for this output function
+    ubvector dists(np);
+    for(size_t ip=0;ip<np;ip++) {
+      dists[ip]=-fcovar[iout](x,ptrs_x[ip]);
+    }
+    
+    // Create an index array which sorts by distance
+    ubvector_size_t index(np);
+    o2scl::vector_sort_index<ubvector,ubvector_size_t>(np,dists,index);
+    
+    // Vector for storing the indexes in the index array which
+    // will store the closest norder points which are
+    // linearly independent
+    ubvector_size_t indep(norder);
+    for(size_t io=0;io<norder;io++) {
+      indep[io]=io;
+    }
+    
+    // -------------------------------------------------------------
+    // Before the jackknife loop, we want to create a full
+    // set of norder linearly independent points
+
+    find_lin_indep(x,iout,fcovar,index,indep);
 
     // -------------------------------------------------------------
     // Now, the jackknife loop, removing one point at a time
@@ -565,8 +581,8 @@ namespace o2scl {
 	  if (irow>icol) {
 	    KXX(irow,icol)=KXX(icol,irow);
 	  } else {
-	    KXX(irow,icol)=(*f)[iout](ptrs_x[index[indep_jk[irow]]],
-				      ptrs_x[index[indep_jk[icol]]]);
+	    KXX(irow,icol)=fcovar[iout](ptrs_x[index[indep_jk[irow]]],
+					ptrs_x[index[indep_jk[icol]]]);
 	  }
 	}
       }
@@ -576,11 +592,16 @@ namespace o2scl {
       ubmatrix inv_KXX(norder-1,norder-1);
       int signum;
       o2scl_linalg::LU_decomp(norder-1,KXX,p,signum);
-      if (o2scl_linalg::diagonal_has_zero(norder-1,KXX)) {
-	O2SCL_ERR3("Failed to find set of independent points ",
-		   "in interpm_krige_nn::eval_jackknife",
-		   "(const vec2_t &, size_t).",
-		   o2scl::exc_efailed);
+      int cnt=0;
+      while (o2scl_linalg::diagonal_has_zero(norder-1,KXX)) {
+	find_lin_indep(x,iout,fcovar,index,indep);
+	cnt++;
+	if (cnt==10) {
+	  O2SCL_ERR3("Failed to find set of independent points ",
+		     "in interpm_krige_nn::eval_jackknife",
+		     "(const vec2_t &, size_t).",
+		     o2scl::exc_efailed);
+	}
       }
       o2scl_linalg::LU_invert<ubmatrix,ubmatrix,mat_col_t>
 	(norder-1,KXX,p,inv_KXX);
@@ -614,10 +635,6 @@ namespace o2scl {
 #ifndef DOXYGEN_INTERNAL
   
   protected:
-    
-  /** \brief Pointer to user-specified covariance function array
-   */
-  std::vector<covar_func_t> *f;
     
   /// Desc
   size_t norder;

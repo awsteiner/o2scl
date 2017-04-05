@@ -60,7 +60,7 @@ int main(void) {
   
   ode_rk8pd_gsl<> rk;
 
-  ode_funct11 od=derivs;
+  ode_funct od=derivs;
 
   double x=1.0;
   y[0]=1.0;

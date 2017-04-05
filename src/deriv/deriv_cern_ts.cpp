@@ -38,7 +38,7 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
   
-  funct11 tf=testfun;
+  funct tf=testfun;
   deriv_cern<> de;
   
   cout.setf(ios::scientific);

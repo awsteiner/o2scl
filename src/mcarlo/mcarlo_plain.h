@@ -59,7 +59,7 @@ namespace o2scl {
   
   /** \brief Multidimensional integration using plain Monte Carlo (GSL)
    */
-  template<class func_t=multi_funct11, 
+  template<class func_t=multi_funct, 
     class vec_t=boost::numeric::ublas::vector<double>,
     class rng_t=rng_gsl>
     class mcarlo_plain : public mcarlo<func_t,vec_t,rng_t> {

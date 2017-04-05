@@ -91,7 +91,7 @@ namespace o2scl {
       the coefficients for sizes other than 10)
       \endcomment
   */
-  template<class func_t=funct11> class deriv_cern : 
+  template<class func_t=funct> class deriv_cern : 
   public deriv_base<func_t> {
 
     public:
@@ -250,7 +250,7 @@ namespace o2scl {
 	This is an internal version of deriv() which is used in
 	computing second and third derivatives
      */
-    virtual int deriv_err_int(double x, funct11 &func, double &dfdx, 
+    virtual int deriv_err_int(double x, funct &func, double &dfdx, 
 			     double &err) {
       return deriv_tlate<>(x,func,dfdx,err);
     }

@@ -51,7 +51,7 @@ int main(void) {
   mmin_fix_params<> g;
   g.tol_abs/=1.0e2;
 
-  multi_funct11 mf=minfun;
+  multi_funct mf=minfun;
   
   // Test mmin() which doesn't fix any parameters
   x[0]=1.0;
@@ -95,7 +95,7 @@ int main(void) {
   fix[1]=false;
   
   // Test using a different minimizer
-  mmin_conf<mmin_fix_params<>,ubvector,grad_funct11,
+  mmin_conf<mmin_fix_params<>,ubvector,grad_funct,
     gradient<mmin_fix_params<>,ubvector>,
     gradient_gsl<mmin_fix_params<>,ubvector> > gmc;
 g.set_mmin(gmc);

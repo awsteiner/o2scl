@@ -30,7 +30,9 @@
     The class \ref o2scl::mcmc_base performs generic 
     MCMC simulations and the child class \ref o2scl::mcmc_table 
     performs MCMC simulations and stores the results in
-    a \ref o2scl::table_units object.
+    a \ref o2scl::table_units object. These classes will eventually
+    be replaced with \ref o2scl::mcmc_para_base and
+    its children which have better OpenMP/MPI support .
 
     \comment
     --------------------------------------------------------------

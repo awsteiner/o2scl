@@ -63,7 +63,7 @@ double quadpack_exact(double alpha) {
 int main(void) {
   test_mgr t;
   t.set_output_level(1);
-  inte_qag_gsl<funct11> it1;
+  inte_qag_gsl<funct> it1;
 
   double ans, exact;
   int vp=0;
@@ -71,7 +71,7 @@ int main(void) {
   cout.setf(ios::scientific);
   cout.precision(10);
 
-  funct11 tf2=test_func_1;
+  funct tf2=test_func_1;
 
   // Compare with the exact result
   ans=it1.integ(tf2,0.0,1.0);
@@ -130,8 +130,8 @@ int main(void) {
   double alpha=8.0;
   size_t limit=512;
 
-  inte_qag_gsl<funct11> Q;
-  funct11 f=std::bind(quadpack_func,std::placeholders::_1,alpha);
+  inte_qag_gsl<funct> Q;
+  funct f=std::bind(quadpack_func,std::placeholders::_1,alpha);
 	
   // setup GSL data
   gsl_integration_workspace *work=gsl_integration_workspace_alloc(limit);

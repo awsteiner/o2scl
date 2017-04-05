@@ -12,22 +12,22 @@
 
     Some template aliases are defined to save typing of the function
     types, e.g.
-    - \ref o2scl::funct11 : One function of one variable (used in 
+    - \ref o2scl::funct : One function of one variable (used in 
     one-dimensional solver and minimizer classes, derivative classes,
     integration classes, etc.)
-    - \ref o2scl::multi_funct11 : One function of several variables (used
+    - \ref o2scl::multi_funct : One function of several variables (used
     in minimizer and integration classes)
-    - \ref o2scl::mm_funct11 : \c n functions of \c n variables (used in 
+    - \ref o2scl::mm_funct : \c n functions of \c n variables (used in 
     solver classes)
-    - \ref o2scl::grad_funct11 : gradient function for minimizer classes
-    - \ref o2scl::ode_funct11 : \c n derivatives as a function of \c n
+    - \ref o2scl::grad_funct : gradient function for minimizer classes
+    - \ref o2scl::ode_funct : \c n derivatives as a function of \c n
     function values and the value of the independent variable
-    - \ref o2scl::ode_jac_funct11 : Jacobian function for ODE classes
-    - \ref o2scl::ode_it_funct11 : Function to specify ODEs for
+    - \ref o2scl::ode_jac_funct : Jacobian function for ODE classes
+    - \ref o2scl::ode_it_funct : Function to specify ODEs for
       iterative solution
-    - \ref o2scl::jac_funct11 : Jacobian function for solver and
+    - \ref o2scl::jac_funct : Jacobian function for solver and
       fitting classes
-    - \ref o2scl::ool_hfunct11 : Hessian matrix function for constrained
+    - \ref o2scl::ool_hfunct : Hessian matrix function for constrained
       minimization
 
     \section ex_lambda_sect Function object example

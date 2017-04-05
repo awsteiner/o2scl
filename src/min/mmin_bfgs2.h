@@ -59,11 +59,11 @@ namespace o2scl {
       This is a reimplmentation of the internal GSL wrapper for
       function calls in the BFGS minimizer
   */
-  template<class func_t=multi_funct11, 
+  template<class func_t=multi_funct, 
     class vec_t=boost::numeric::ublas::vector<double> , 
-    class dfunc_t=grad_funct11,
+    class dfunc_t=grad_funct,
     class auto_grad_t=
-    gradient<multi_funct11,boost::numeric::ublas::vector<double> > > 
+    gradient<multi_funct,boost::numeric::ublas::vector<double> > > 
     class mmin_wrapper_gsl : public mmin_wrap_gsl {
     
 #ifndef DOXYGEN_INTERNAL
@@ -356,9 +356,9 @@ namespace o2scl {
       vector_bfgs2.
 
       Default template arguments
-      - \c func_t - \ref multi_funct11
+      - \c func_t - \ref multi_funct
       - \c vec_t - \ref boost::numeric::ublas::vector \<double \> 
-      - \c dfunc_t - \ref mm_funct11
+      - \c dfunc_t - \ref mm_funct
       - \c auto_grad_t - \ref gradient\<func_t, 
       \ref boost::numeric::ublas::vector \<double \> \>
       - \c def_auto_grad_t - \ref gradient_gsl\<func_t,
@@ -377,13 +377,13 @@ namespace o2scl {
       function doesn't return the best minimum obtained so far.
       This is a bit confusing, and could be improved. 
   */
-  template<class func_t=multi_funct11, 
+  template<class func_t=multi_funct, 
     class vec_t=boost::numeric::ublas::vector<double> , 
-    class dfunc_t=grad_funct11,
+    class dfunc_t=grad_funct,
     class auto_grad_t=
-    gradient<multi_funct11,boost::numeric::ublas::vector<double> >,
+    gradient<multi_funct,boost::numeric::ublas::vector<double> >,
     class def_auto_grad_t=
-    gradient_gsl<multi_funct11,boost::numeric::ublas::vector<double> > > 
+    gradient_gsl<multi_funct,boost::numeric::ublas::vector<double> > > 
     class mmin_bfgs2 : public mmin_base<func_t,func_t,vec_t> {
     
 #ifndef DOXYGEN_INTERNAL

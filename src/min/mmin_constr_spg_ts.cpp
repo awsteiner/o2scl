@@ -64,11 +64,11 @@ int main(void) {
 
   size_t nv=100;
 
-  multi_funct11 mff=quadratic;
-  grad_funct11 gff=quadratic_df;
-  ool_hfunct11 ohf=quadratic_Hv;
+  multi_funct mff=quadratic;
+  grad_funct gff=quadratic_df;
+  ool_hfunct ohf=quadratic_Hv;
   
-  mmin_constr_spg<multi_funct11,grad_funct11,ubvector> omp;
+  mmin_constr_spg<multi_funct,grad_funct,ubvector> omp;
   
   ubvector c1(nv), c2(nv), x(nv);
 

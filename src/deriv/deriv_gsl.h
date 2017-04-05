@@ -120,7 +120,7 @@ namespace o2scl {
       These would be useful for EOS classes which run in to 
       trouble for negative densities.
   */
-  template<class func_t=funct11> class deriv_gsl : 
+  template<class func_t=funct> class deriv_gsl : 
   public deriv_base<func_t> {
     
   public:
@@ -243,7 +243,7 @@ namespace o2scl {
       and third derivatives
   */
   virtual int deriv_err_int
-  (double x, funct11 &func, double &dfdx, double &err) {
+  (double x, funct &func, double &dfdx, double &err) {
     return deriv_tlate<>(x,func,dfdx,err);
   }
     

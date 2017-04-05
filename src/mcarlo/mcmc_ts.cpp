@@ -122,9 +122,9 @@ int main(int argc, char *argv[]) {
   // Compute exact results
   mcarlo_miser<> mm;
   mm.n_points=100000;
-  multi_funct11 mf0=f0;
-  multi_funct11 mf1=f1;
-  multi_funct11 mf2=f2;
+  multi_funct mf0=f0;
+  multi_funct mf1=f1;
+  multi_funct mf2=f2;
 
   double res[3], err[3];
   mm.minteg_err(mf0,1,low,high,res[0],err[0]);

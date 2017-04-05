@@ -62,7 +62,7 @@ namespace o2scl {
       on clang at the moment, so this class uses 
       \ref o2scl::prob_dens_uniform for the moment.
   */
-  template<class func_t=multi_funct11,
+  template<class func_t=multi_funct,
     class vec_t=boost::numeric::ublas::vector<double>,
     class rng_t=rng_gsl> class anneal_base :
     public mmin_base<func_t,func_t,vec_t> {

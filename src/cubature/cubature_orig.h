@@ -77,13 +77,13 @@ namespace o2scl {
    */
   typedef std::function<
     int(size_t,const boost::numeric::ublas::vector<double> &,
-	size_t,boost::numeric::ublas::vector<double> &) > cub_funct11;
+	size_t,boost::numeric::ublas::vector<double> &) > cub_funct;
   
   /** \brief Desc
    */
   typedef std::function<
     int(size_t,size_t,const boost::numeric::ublas::vector<double> &,
-	size_t,boost::numeric::ublas::vector<double> &) > cub_vec_funct11;
+	size_t,boost::numeric::ublas::vector<double> &) > cub_vec_funct;
 
   /** \brief A simple wrapper for cubature functions when 
       parallelism is not required

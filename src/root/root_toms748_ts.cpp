@@ -38,7 +38,7 @@ int main(void) {
   t.set_output_level(1);
 
   double a, b;
-  funct11 f=gfn;
+  funct f=gfn;
 
   root_toms748<> rt;
   a=1.0e-5;

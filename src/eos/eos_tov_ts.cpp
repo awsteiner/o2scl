@@ -174,8 +174,8 @@ int main(void) {
   eos.set_unit("pr","Msun/km^3");
   eos.set_unit("nb","1/fm^3");
 
-  mroot_hybrids<mm_funct11> gmh;
-  mm_funct11 nf=std::bind
+  mroot_hybrids<mm_funct> gmh;
+  mm_funct nf=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
      (&simple_apr::nstarfun),&sa,std::placeholders::_1,std::placeholders::_2,
      std::placeholders::_3);

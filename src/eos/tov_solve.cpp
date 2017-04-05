@@ -1021,7 +1021,7 @@ int tov_solve::max() {
   // --------------------------------------------------------------
   // Full minimization
 
-  funct11 mm=std::bind(std::mem_fn<double(double)>
+  funct mm=std::bind(std::mem_fn<double(double)>
 		       (&tov_solve::max_fun),
 		       this,std::placeholders::_1);
   if (min_ptr->min(x[0],y[0],mm)!=0) {
@@ -1164,7 +1164,7 @@ int tov_solve::fixed(double target_mass, double pmax) {
   ubvector x(1), y(1);
   x[0]=fixed_pr_guess;
   
-  mm_funct11 fmf=std::bind
+  mm_funct fmf=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
      (&tov_solve::integ_star),
      this,std::placeholders::_1,std::placeholders::_2,

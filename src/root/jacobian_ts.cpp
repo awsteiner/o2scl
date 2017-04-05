@@ -40,13 +40,13 @@ int tfun(size_t nv, const ubvector &x, ubvector &y) {
 
 int main(void) {
 
-  jacobian_exact<mm_funct11> ej;
-  jacobian_gsl<mm_funct11> sj;
+  jacobian_exact<mm_funct> ej;
+  jacobian_gsl<mm_funct> sj;
 
   test_mgr t;
   t.set_output_level(2);
 
-  mm_funct11 mff=tfun;
+  mm_funct mff=tfun;
   
   ej.set_function(mff);
   sj.set_function(mff);

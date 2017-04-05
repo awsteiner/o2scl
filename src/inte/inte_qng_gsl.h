@@ -252,7 +252,7 @@ namespace o2scl {
       different. 
       \comment
   */
-  template<class func_t=funct11> class inte_qng_gsl : 
+  template<class func_t=funct> class inte_qng_gsl : 
   public inte<func_t>, public inte_gsl {
     
   public:

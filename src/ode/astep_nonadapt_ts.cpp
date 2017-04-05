@@ -47,7 +47,7 @@ int main(void) {
   
   astep_nonadapt<> na;
 
-  ode_funct11 od=derivs;
+  ode_funct od=derivs;
   
   // Test astep()
   x=1.0;
@@ -64,7 +64,7 @@ int main(void) {
 	 << fabs(y[0]-exp(x-1.0))/exp(x-1.0) << endl;
   }
 
-  ode_funct11 od11=derivs;
+  ode_funct od11=derivs;
   astep_nonadapt<> na11;
 
   // Test astep()

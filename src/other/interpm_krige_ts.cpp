@@ -86,11 +86,11 @@ int main(void) {
     ubvector out(1);
     point[0]=0.4;
     point[1]=0.5;
-    ik.eval(point,out);
+    ik.eval(point,out,fa);
     cout << out[0] << " " << ft(point[0],point[1]) << endl;
     point[0]=0.0301;
     point[1]=0.9901;
-    ik.eval(point,out);
+    ik.eval(point,out,fa);
     cout << out[0] << " " << ft(point[0],point[1]) << endl;
 
   }
@@ -132,11 +132,11 @@ int main(void) {
     ubvector out(1);
     point[0]=0.4;
     point[1]=0.5;
-    ik.eval(point,out);
+    ik.eval(point,out,fa);
     cout << out[0] << " " << ft(point[0],point[1]) << endl;
     point[0]=0.0301;
     point[1]=0.9901;
-    ik.eval(point,out);
+    ik.eval(point,out,fa);
     cout << out[0] << " " << ft(point[0],point[1]) << endl;
 
   }

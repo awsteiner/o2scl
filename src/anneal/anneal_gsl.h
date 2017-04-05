@@ -105,7 +105,7 @@ namespace o2scl {
 
       \comment
       The form of the user-specified function is as in \ref
-      multi_funct11 has a "function value" which is the value of the
+      multi_funct has a "function value" which is the value of the
       function (given in the third argument as a number of type \c
       double), and a "return value" (the integer return value). The
       initial function evaluation which is performed at the
@@ -142,7 +142,7 @@ namespace o2scl {
       \endcomment
       
   */
-  template<class func_t=multi_funct11,
+  template<class func_t=multi_funct,
     class vec_t=boost::numeric::ublas::vector<double>,
     class rng_t=rng_gsl> class anneal_gsl :
     public anneal_base<func_t,vec_t,rng_t> {

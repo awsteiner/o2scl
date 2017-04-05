@@ -214,7 +214,7 @@ void eos_crust_virial::fit() {
 
   vector<double> berr(16);
 
-  typedef fit_funct11_strings fit_func;
+  typedef fit_funct_strings fit_func;
 
   // Fitter class
   fit_nonlin<chi_fit_funct<vector<double>,ubmatrix,fit_func>,

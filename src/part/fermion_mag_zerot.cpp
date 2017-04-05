@@ -245,7 +245,7 @@ void fermion_mag_zerot::calc_density_zerot_mag
 
   if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
 
-  mm_funct11 mf=std::bind
+  mm_funct mf=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &,fermion &f)>
      (&fermion_mag_zerot::solve_fun),
      this,std::placeholders::_1,std::placeholders::_2,

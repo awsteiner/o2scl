@@ -99,7 +99,7 @@ namespace o2scl {
       \future Rework linear solver to be amenable to using
       a sparse matrix solver
   */
-  template<class func_t=ode_funct11, class jac_func_t=ode_jac_funct11, 
+  template<class func_t=ode_funct, class jac_func_t=ode_jac_funct, 
     class vec_t=boost::numeric::ublas::vector<double>, 
     class mat_t=boost::numeric::ublas::matrix<double> > class ode_bsimp_gsl {
 

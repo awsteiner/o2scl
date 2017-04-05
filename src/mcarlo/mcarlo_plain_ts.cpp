@@ -98,7 +98,7 @@ int main(void) {
     b[1]=M_PI;
     b[2]=M_PI;
 
-    multi_funct11 tf=test_fun;
+    multi_funct tf=test_fun;
 
     //    gm.verbose=0;
 

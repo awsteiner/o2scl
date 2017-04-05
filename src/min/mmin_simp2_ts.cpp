@@ -66,10 +66,10 @@ int main(void) {
 
   double min=0.0, min2;
   ubvector x(2), x2(2);
-  mmin_simp2<multi_funct11> g;
+  mmin_simp2<multi_funct> g;
   
-  multi_funct11 mf=minfun;
-  multi_funct11 mf2=minfun2;
+  multi_funct mf=minfun;
+  multi_funct mf2=minfun2;
   
   // Standard function
 

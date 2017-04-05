@@ -24,7 +24,7 @@
 #define O2SCL_MULTI_MIN_H
 
 /** \file mmin.h
-    \brief File defining \ref o2scl::mmin_base, \ref o2scl::grad_funct11,
+    \brief File defining \ref o2scl::mmin_base, \ref o2scl::grad_funct,
     \ref o2scl::gradient, and \ref o2scl::gradient_gsl
 */
 
@@ -39,7 +39,7 @@ namespace o2scl {
   /// Array of multi-dimensional functions typedef
   typedef std::function<int(size_t,boost::numeric::ublas::vector<double> &,
 			    boost::numeric::ublas::vector<double> &)> 
-    grad_funct11;
+    grad_funct;
   
   /** \brief Class for automatically computing gradients [abstract base]
 
@@ -160,7 +160,7 @@ namespace o2scl {
       and these pointers are not copied in child copy
       constructors. 
   */
-  template<class func_t=multi_funct11, class dfunc_t=func_t,
+  template<class func_t=multi_funct, class dfunc_t=func_t,
     class vec_t=boost::numeric::ublas::vector<double> > class mmin_base {
 
 #ifndef DOXYGEN_INTERNAL

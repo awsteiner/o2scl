@@ -92,7 +92,7 @@ namespace o2scl {
       \note There was a bug in this minimizer which was fixed for
       GSL-1.11 which has also been fixed here. 
   */
-  template<class func_t=funct11> class min_brent_gsl : 
+  template<class func_t=funct> class min_brent_gsl : 
   public min_bkt_base<func_t> {
     
 #ifndef DOXYGEN_INTERNAL

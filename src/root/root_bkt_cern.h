@@ -70,7 +70,7 @@ namespace o2scl {
       based on \ref Bus75 and is documented at
       http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/c200/top.html
   */
-  template<class func_t=funct11> class root_bkt_cern : 
+  template<class func_t=funct> class root_bkt_cern : 
     public root_bkt<func_t> {
     
 #ifndef DOXYGEN_INTERNAL

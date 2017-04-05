@@ -155,7 +155,7 @@ void boson_eff::calc_mu(boson &b, double temper) {
       xx[0]=sqrt(parma)*exp(1.0-psi);
     }
     
-    funct11 mfs=std::bind(std::mem_fn<double(double,double &)>
+    funct mfs=std::bind(std::mem_fn<double(double,double &)>
 			  (&boson_eff::solve_fun),
 			  this,std::placeholders::_1,psi);
     
@@ -231,7 +231,7 @@ void boson_eff::calc_density(boson &b, double temper) {
   // that -20 isn't large enough. This should be examined.
   if (psi<-20.0) psi=-20.0;
   
-  mm_funct11 mfd=std::bind
+  mm_funct mfd=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &,boson &,double)>
      (&boson_eff::density_fun),
      this,std::placeholders::_1,std::placeholders::_2,
@@ -373,7 +373,7 @@ void boson_eff::pair_density(boson &b, double temper) {
   }
   psi=(-b.nu-b.ms)/temper;
 
-  mm_funct11 mfd=std::bind
+  mm_funct mfd=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &,boson &,double)>
      (&boson_eff::pair_density_fun),
      this,std::placeholders::_1,std::placeholders::_2,

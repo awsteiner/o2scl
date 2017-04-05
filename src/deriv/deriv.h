@@ -60,7 +60,7 @@ namespace o2scl {
       
       \future Improve the methods for second and third derivatives
   */
-  template<class func_t=funct11> class deriv_base {
+  template<class func_t=funct> class deriv_base {
     
 #ifndef DOXYGEN_INTERNAL
     
@@ -116,7 +116,7 @@ namespace o2scl {
     virtual double deriv2(double x, func_t &func) {
       double val;
 
-      funct11 mf=
+      funct mf=
       std::bind(std::mem_fn<double(double,func_t *)>(&deriv_base::derivfun),
 		this,std::placeholders::_1,&func);
       
@@ -131,7 +131,7 @@ namespace o2scl {
     virtual double deriv3(double x, func_t &func) {
       double val;
 
-      funct11 mf=
+      funct mf=
       std::bind(std::mem_fn<double(double,func_t *)>(&deriv_base::derivfun2),
 		this,std::placeholders::_1,&func);
 
@@ -162,7 +162,7 @@ namespace o2scl {
     */
     virtual int deriv2_err(double x, func_t &func, 
 			  double &d2fdx2, double &err) {
-      funct11 mf=
+      funct mf=
       std::bind(std::mem_fn<double(double,func_t *)>(&deriv_base::derivfun),
 		this,std::placeholders::_1,&func);
 
@@ -177,7 +177,7 @@ namespace o2scl {
     */
     virtual int deriv3_err(double x, func_t &func, 
 			  double &d3fdx3, double &err) {
-      funct11 mf=
+      funct mf=
       std::bind(std::mem_fn<double(double,func_t *)>(&deriv_base::derivfun2),
 		this,std::placeholders::_1,&func);
       
@@ -203,7 +203,7 @@ namespace o2scl {
 	This is an internal version of deriv() which is used in
 	computing second and third derivatives
     */
-    virtual double deriv_int(double x, funct11 &func) {
+    virtual double deriv_int(double x, funct &func) {
       double dx;
       from_deriv=true;
       deriv_err_int(x,func,dx,derr);
@@ -217,7 +217,7 @@ namespace o2scl {
 	This is an internal version of deriv_err() which is used in
 	computing second and third derivatives
     */
-    virtual int deriv_err_int(double x, funct11 &func, 
+    virtual int deriv_err_int(double x, funct &func, 
 			      double &dfdx, double &err)=0;
     
     /// The uncertainity in the most recent derivative computation
@@ -230,7 +230,7 @@ namespace o2scl {
     
     /// The function for the third derivative
     double derivfun2(double x, func_t *fp) {
-      funct11 mf=
+      funct mf=
 	std::bind(std::mem_fn<double(double,func_t *)>(&deriv_base::derivfun),
 		  this,std::placeholders::_1,fp);
       double val=deriv_int(x,mf);

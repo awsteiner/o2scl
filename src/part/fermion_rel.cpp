@@ -106,13 +106,13 @@ void fermion_rel::calc_mu(fermion &f, double temper) {
     
     // If the temperature is large enough, perform the full integral
     
-    funct11 mfd=std::bind(std::mem_fn<double(double,fermion &,double)>
+    funct mfd=std::bind(std::mem_fn<double(double,fermion &,double)>
 			  (&fermion_rel::density_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
-    funct11 mfe=std::bind(std::mem_fn<double(double,fermion &,double)>
+    funct mfe=std::bind(std::mem_fn<double(double,fermion &,double)>
 			  (&fermion_rel::energy_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
-    funct11 mfs=std::bind(std::mem_fn<double(double,fermion &,double)>
+    funct mfs=std::bind(std::mem_fn<double(double,fermion &,double)>
 			  (&fermion_rel::entropy_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
       
@@ -142,13 +142,13 @@ void fermion_rel::calc_mu(fermion &f, double temper) {
     // Otherwise, apply a degenerate approximation, by making the
     // upper integration limit finite
     
-    funct11 mfd=std::bind(std::mem_fn<double(double,fermion &,double)>
+    funct mfd=std::bind(std::mem_fn<double(double,fermion &,double)>
 			  (&fermion_rel::deg_density_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
-    funct11 mfe=std::bind(std::mem_fn<double(double,fermion &,double)>
+    funct mfe=std::bind(std::mem_fn<double(double,fermion &,double)>
 			  (&fermion_rel::deg_energy_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
-    funct11 mfs=std::bind(std::mem_fn<double(double,fermion &,double)>
+    funct mfs=std::bind(std::mem_fn<double(double,fermion &,double)>
 			  (&fermion_rel::deg_entropy_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
 
@@ -268,7 +268,7 @@ int fermion_rel::nu_from_n(fermion &f, double temper) {
   }
 
   // Perform full solution
-  funct11 mf=std::bind(std::mem_fn<double(double,fermion &,double)>
+  funct mf=std::bind(std::mem_fn<double(double,fermion &,double)>
 		       (&fermion_rel::solve_fun),
 		       this,std::placeholders::_1,std::ref(f),temper);
 
@@ -388,10 +388,10 @@ int fermion_rel::calc_density(fermion &f, double temper) {
 
   if (!deg) {
     
-    funct11 mfe=std::bind(std::mem_fn<double(double,fermion &,double)>
+    funct mfe=std::bind(std::mem_fn<double(double,fermion &,double)>
 			  (&fermion_rel::energy_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
-    funct11 mfs=std::bind(std::mem_fn<double(double,fermion &,double)>
+    funct mfs=std::bind(std::mem_fn<double(double,fermion &,double)>
 			  (&fermion_rel::entropy_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
     
@@ -406,10 +406,10 @@ int fermion_rel::calc_density(fermion &f, double temper) {
 
   } else {
 
-    funct11 mfe=std::bind(std::mem_fn<double(double,fermion &,double)>
+    funct mfe=std::bind(std::mem_fn<double(double,fermion &,double)>
 			  (&fermion_rel::deg_energy_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
-    funct11 mfs=std::bind(std::mem_fn<double(double,fermion &,double)>
+    funct mfs=std::bind(std::mem_fn<double(double,fermion &,double)>
 			  (&fermion_rel::deg_entropy_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
       
@@ -646,7 +646,7 @@ double fermion_rel::solve_fun(double x, fermion &f, double T) {
   // Otherwise, directly perform the integration
   if (!deg) {
 
-    funct11 mfe=std::bind(std::mem_fn<double(double,fermion &,double)>
+    funct mfe=std::bind(std::mem_fn<double(double,fermion &,double)>
 			  (&fermion_rel::density_fun),
 			  this,std::placeholders::_1,std::ref(f),T);
     
@@ -658,7 +658,7 @@ double fermion_rel::solve_fun(double x, fermion &f, double T) {
 
   } else {
     
-    funct11 mfe=std::bind(std::mem_fn<double(double,fermion &,double)>
+    funct mfe=std::bind(std::mem_fn<double(double,fermion &,double)>
 			  (&fermion_rel::deg_density_fun),
 			  this,std::placeholders::_1,std::ref(f),T);
     
@@ -767,7 +767,7 @@ int fermion_rel::pair_density(fermion &f, double temper) {
     y=pair_fun(nex,f,temper,false);
   }
 
-  funct11 mf=std::bind(std::mem_fn<double(double,fermion &,double,bool)>
+  funct mf=std::bind(std::mem_fn<double(double,fermion &,double,bool)>
 		       (&fermion_rel::pair_fun),
 		       this,std::placeholders::_1,std::ref(f),temper,false);
 
@@ -787,7 +787,7 @@ int fermion_rel::pair_density(fermion &f, double temper) {
     ret=density_root->solve(nex,mf);
 
     // Function in log units
-    funct11 lmf=std::bind(std::mem_fn<double(double,fermion &,double,bool)>
+    funct lmf=std::bind(std::mem_fn<double(double,fermion &,double,bool)>
 			  (&fermion_rel::pair_fun),
 			  this,std::placeholders::_1,std::ref(f),temper,true);
     
@@ -919,7 +919,7 @@ double fermion_rel::pair_fun(double x, fermion &f, double T, bool log_mode) {
       
       // Nondegenerate case
       
-      funct11 mfe=std::bind(std::mem_fn<double(double,fermion &,double)>
+      funct mfe=std::bind(std::mem_fn<double(double,fermion &,double)>
 			    (&fermion_rel::density_fun),
 			    this,std::placeholders::_1,std::ref(f),T);
       
@@ -935,7 +935,7 @@ double fermion_rel::pair_fun(double x, fermion &f, double T, bool log_mode) {
       
       // Degenerate case
       
-      funct11 mfe=std::bind(std::mem_fn<double(double,fermion &,double)>
+      funct mfe=std::bind(std::mem_fn<double(double,fermion &,double)>
 			    (&fermion_rel::deg_density_fun),
 			    this,std::placeholders::_1,std::ref(f),T);
       
@@ -1017,7 +1017,7 @@ double fermion_rel::pair_fun(double x, fermion &f, double T, bool log_mode) {
       
       // Nondegenerate case
       
-      funct11 mf=std::bind(std::mem_fn<double(double,fermion &,double)>
+      funct mf=std::bind(std::mem_fn<double(double,fermion &,double)>
 			   (&fermion_rel::density_fun),
 			   this,std::placeholders::_1,std::ref(f),T);
       
@@ -1033,7 +1033,7 @@ double fermion_rel::pair_fun(double x, fermion &f, double T, bool log_mode) {
       
       // Degenerate case
       
-      funct11 mf=std::bind(std::mem_fn<double(double,fermion &,double)>
+      funct mf=std::bind(std::mem_fn<double(double,fermion &,double)>
 			   (&fermion_rel::deg_density_fun),
 			   this,std::placeholders::_1,std::ref(f),T);
       

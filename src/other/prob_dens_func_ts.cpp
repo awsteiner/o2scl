@@ -175,7 +175,7 @@ int main(void) {
     b[0]=15.0;
     b[1]=15.0;
     
-    multi_funct11 tf=test_fun;
+    multi_funct tf=test_fun;
     
     gm.n_points=100000;
     double res, err;

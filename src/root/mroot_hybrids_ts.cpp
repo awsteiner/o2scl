@@ -115,11 +115,11 @@ int main(void) {
   std::vector<double> resid_test, resid_test2;
 
   // 1 - Normal execution using a member function
-  mm_funct11 fmf=std::bind
+  mm_funct fmf=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
      (&cl::mfn),&acl,std::placeholders::_1,std::placeholders::_2,
      std::placeholders::_3);
-  mroot_hybrids<mm_funct11,ubvector,ubmatrix,jac_funct11> cr1;
+  mroot_hybrids<mm_funct,ubvector,ubmatrix,jac_funct> cr1;
   
   x[0]=0.5;
   x[1]=0.5;
@@ -128,7 +128,7 @@ int main(void) {
   t.test_rel(x[1],0.2,1.0e-6,"normal b");
 
   // 2 - Using the set(), iterate() interface
-  mroot_hybrids<mm_funct11,ubvector,ubmatrix,jac_funct11> cr2;
+  mroot_hybrids<mm_funct,ubvector,ubmatrix,jac_funct> cr2;
   
   x[0]=0.5;
   x[1]=0.5;
@@ -144,7 +144,7 @@ int main(void) {
   t.test_rel(cr2.x[1],0.2,1.0e-6,"set/iterate b");
 
   // 3 - Having specified the Jacobian
-  jac_funct11 fmfd=
+  jac_funct fmfd=
     std::bind(std::mem_fn<int(size_t,ubvector &,size_t,
 			      ubvector &,ubmatrix &)>(&cl::mfnd),
     &acl,std::placeholders::_1,std::placeholders::_2,
@@ -158,7 +158,7 @@ int main(void) {
   t.test_rel(x[1],0.2,1.0e-6,"jac b");
 
   // 4 - Using the set_de(), iterate() interface
-  mroot_hybrids<mm_funct11,ubvector,ubmatrix,jac_funct11> cr4;
+  mroot_hybrids<mm_funct,ubvector,ubmatrix,jac_funct> cr4;
 
   x[0]=0.5;
   x[1]=0.5;
@@ -184,7 +184,7 @@ int main(void) {
 
   // 6 - Using a global function pointer directly
   typedef int (*gfnt)(size_t, const ubvector &, ubvector &);
-  mroot_hybrids<gfnt,ubvector,ubmatrix,jac_funct11> cr6;
+  mroot_hybrids<gfnt,ubvector,ubmatrix,jac_funct> cr6;
   gfnt gfnv=&gfn;
 
   x[0]=0.5;
@@ -305,7 +305,7 @@ int main(void) {
 #endif
   
   // 1a - Member function with new C++11 extensions
-  mm_funct11 f_new=
+  mm_funct f_new=
     std::bind(std::mem_fn<int(size_t,const ubvector &,ubvector &)>(&cl::mfn),
 	      acl,std::placeholders::_1,std::placeholders::_2,
 	      std::placeholders::_3);
@@ -338,7 +338,7 @@ int main(void) {
   t.test_rel(cr2a.x[1],0.2,1.0e-6,"set/iterate c++11 b");
 
   // 3 - Having specified the Jacobian
-  jac_funct11 df_new=
+  jac_funct df_new=
     std::bind(std::mem_fn<int(size_t,ubvector &,size_t,
 			      ubvector &,ubmatrix &)>(&cl::mfnd),
     acl,std::placeholders::_1,std::placeholders::_2,

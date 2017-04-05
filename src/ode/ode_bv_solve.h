@@ -74,11 +74,11 @@ namespace o2scl {
       This class is experimental.
 
       Documentation links for default template arguments
-      - \c func_t - \ref ode_funct11 
+      - \c func_t - \ref ode_funct 
       - \c vec_t - \ref boost::numeric::ublas::vector \< double \>
       - \c vec_int_t - \ref boost::numeric::ublas::vector \< int \>
   */
-  template<class func_t=ode_funct11, 
+  template<class func_t=ode_funct, 
     class vec_t=boost::numeric::ublas::vector<double>, 
     class vec_int_t=boost::numeric::ublas::vector<int> > 
     class ode_bv_shoot : public ode_bv_solve {
@@ -346,7 +346,7 @@ namespace o2scl {
       This class is experimental.
 
       Default template arguments
-      - \c func_t - \ref ode_funct11
+      - \c func_t - \ref ode_funct
       - \c vec_t - \ref boost::numeric::ublas::vector \< double \>
       - \c vec_int_t - \ref boost::numeric::ublas::vector \< int \>
   */

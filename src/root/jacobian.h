@@ -41,13 +41,13 @@ namespace o2scl {
   typedef std::function<
     int(size_t,boost::numeric::ublas::vector<double> &,
 	size_t,boost::numeric::ublas::vector<double> &,
-	boost::numeric::ublas::matrix<double> &) > jac_funct11;
+	boost::numeric::ublas::matrix<double> &) > jac_funct;
 
   /** \brief Base for providing a numerical jacobian [abstract base]
       
       This is provides a Jacobian which is numerically determined
       by differentiating a user-specified function (typically 
-      of the form of \ref mm_funct11). 
+      of the form of \ref mm_funct). 
 
       By convention, the Jacobian is stored in the order
       <tt>J[i][j]</tt> (or <tt>J(i,j)</tt>) where the rows have index
@@ -55,11 +55,11 @@ namespace o2scl {
       index \c j with runs from 0 to <tt>nx-1</tt>.
 
       Default template arguments
-      - \c func_t - \ref mm_funct11
+      - \c func_t - \ref mm_funct
       - \c vec_t - boost::numeric::ublas::vector<double>
       - \c mat_t - boost::numeric::ublas::matrix<double>
   */
-  template<class func_t=mm_funct11, 
+  template<class func_t=mm_funct, 
     class vec_t=boost::numeric::ublas::vector<double>, 
     class mat_t=boost::numeric::ublas::matrix<double> > class jacobian {
     
@@ -134,11 +134,11 @@ namespace o2scl {
       to ensure they are commensurate. 
 
       Default template arguments
-      - \c func_t - \ref mm_funct11
+      - \c func_t - \ref mm_funct
       - \c vec_t - boost::numeric::ublas::vector<double>
       - \c mat_t - boost::numeric::ublas::matrix<double>
   */
-  template<class func_t=mm_funct11, 
+  template<class func_t=mm_funct, 
     class vec_t=boost::numeric::ublas::vector<double>, 
     class mat_t=boost::numeric::ublas::matrix<double> > 
     class jacobian_gsl : public jacobian<func_t,vec_t,mat_t> {
@@ -331,11 +331,11 @@ namespace o2scl {
       more efficient. 
 
       Default template arguments
-      - \c func_t - \ref mm_funct11
+      - \c func_t - \ref mm_funct
       - \c vec_t - boost::numeric::ublas::vector<double>
       - \c mat_t - boost::numeric::ublas::matrix<double>
   */
-  template<class func_t=mm_funct11, 
+  template<class func_t=mm_funct, 
     class vec_t=boost::numeric::ublas::vector<double>, 
     class mat_t=boost::numeric::ublas::matrix<double> > class jacobian_exact : 
   public jacobian<func_t,vec_t,mat_t> {
@@ -399,7 +399,7 @@ namespace o2scl {
     ejp.x=&x;
     ejp.y=&y;
     
-    funct11 dfnp=std::bind(std::mem_fn<double(double,ej_parms &)>
+    funct dfnp=std::bind(std::mem_fn<double(double,ej_parms &)>
 			   (&jacobian_exact::dfn),
 			   this,std::placeholders::_1,std::ref(ejp));
 
@@ -438,7 +438,7 @@ namespace o2scl {
     ejp.x=&x;
     ejp.y=&y;
     
-    funct11 dfnp=std::bind(std::mem_fn<double(double,ej_parms &)>
+    funct dfnp=std::bind(std::mem_fn<double(double,ej_parms &)>
 			   (&jacobian_exact::dfn),
 			   this,std::placeholders::_1,std::ref(ejp));
 

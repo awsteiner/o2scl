@@ -49,7 +49,7 @@ int main(void) {
   // Test fit_funct_fptr
   //----------------------------------------------------------------
 
-  fit_funct11 ff2(func2);
+  fit_funct ff2(func2);
   ubvector x_init(2);
   ubvector xdat(4), y(4), sigma(4);
   fit_min<> mf;

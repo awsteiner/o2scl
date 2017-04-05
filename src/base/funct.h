@@ -41,13 +41,13 @@ namespace o2scl {
 #endif
 
   /// One-dimensional function typedef
-  typedef std::function<double(double)> funct11;
+  typedef std::function<double(double)> funct;
 
   /** \brief One-dimensional function from a string
       
       For example,
       \code
-      funct11_string f("pi*r^2","r",1,"pi");
+      funct_string f("pi*r^2","r",1,"pi");
       ubvector par(1);
       par[0]=o2scl_const::pi;
       f.set_parms(par);
@@ -57,7 +57,7 @@ namespace o2scl {
       \endcode
       will print out the area of circles having radii between 1 and 2.
   */
-  class funct11_string {
+  class funct_string {
     
   public:
     
@@ -65,13 +65,13 @@ namespace o2scl {
 
     /** \brief Specify the string and the parameters
      */
-    funct11_string(std::string expr, std::string var) {
+    funct_string(std::string expr, std::string var) {
       calc.compile(expr.c_str(),&vars);
       st_form=expr;
       st_var=var;
     }
 
-    virtual ~funct11_string() {
+    virtual ~funct_string() {
     };
 
   
@@ -114,21 +114,21 @@ namespace o2scl {
     /// The variable
     std::string st_var;
 
-    funct11_string() {};
+    funct_string() {};
 
 #endif
 #ifndef DOXYGEN_NO_O2NS
 
   private:
 
-    funct11_string(const funct11_string &);
-    funct11_string& operator=(const funct11_string&);
+    funct_string(const funct_string &);
+    funct_string& operator=(const funct_string&);
 
 #endif
 
   };
 
-  /** \brief A wrapper to specify \ref o2scl::funct11 objects 
+  /** \brief A wrapper to specify \ref o2scl::funct objects 
       to GSL
    */
   class funct_gsl : public gsl_function {
@@ -137,14 +137,14 @@ namespace o2scl {
     
     /// The function wrapper
     static double funct_wrap(double x, void *params) {
-      funct11 *fp=(funct11 *)params;
+      funct *fp=(funct *)params;
       return (*fp)(x);
     }
 
   public:
 
     /// Create an object based on the specified function, \c f
-    funct_gsl(funct11 &f) {
+    funct_gsl(funct &f) {
       function=&funct_wrap;
       params=&f;
     }

@@ -88,7 +88,7 @@ namespace o2scl {
       // First minimize with the specified mmin object
       // ---------------------------------------------------
       
-      multi_funct11 mmf=std::bind(std::mem_fn<double(size_t, const vec_t &)>
+      multi_funct mmf=std::bind(std::mem_fn<double(size_t, const vec_t &)>
 				  (&fit_min::min_func),
 				  this,std::placeholders::_1,
 				  std::placeholders::_2);
@@ -156,14 +156,14 @@ namespace o2scl {
     /** \brief Set the mmin object to use (default is 
 	of type \ref o2scl::mmin_simp2)
      */
-    int set_mmin(mmin_base<multi_funct11> &mm) {
+    int set_mmin(mmin_base<multi_funct> &mm) {
       mmp=&mm;
       min_set=true;
       return 0;
     }
     
     /// The default minimizer
-    mmin_simp2<multi_funct11> def_mmin;
+    mmin_simp2<multi_funct> def_mmin;
 
     /// Return string denoting type ("fit_min")
     virtual const char *type() { return "fit_min"; }
@@ -179,7 +179,7 @@ namespace o2scl {
     func_t *func;
 
     /// The minimizer
-    mmin_base<multi_funct11> *mmp;
+    mmin_base<multi_funct> *mmp;
     
     /// True if the minimizer has been set by the user
     bool min_set;

@@ -77,7 +77,7 @@ namespace o2scl {
       possibly call these functions automatically depending on
       verbosity settings.
   */
-  template<class func_t=funct11> class inte_qag_gsl : 
+  template<class func_t=funct> class inte_qag_gsl : 
   public inte_kronrod_gsl<func_t> {
     
   public:

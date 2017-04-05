@@ -80,7 +80,7 @@ int main(void) {
     gsl_odeiv_system sys={expon_gsl,0,1,0};
 
     // O2scl function setup
-    ode_funct11 od=expon;
+    ode_funct od=expon;
 
     x=1.0;
     y[0]=1.0;
@@ -171,10 +171,10 @@ int main(void) {
     }
 
     typedef std::function<int(double,size_t,const vec1_t &,vec2_t &)> 
-      ode_funct11b;
+      ode_functb;
     
-    ode_rkck_gsl<vec1_t,vec2_t,vec3_t,ode_funct11b> rk11;
-    ode_funct11b f11=exponx;
+    ode_rkck_gsl<vec1_t,vec2_t,vec3_t,ode_functb> rk11;
+    ode_functb f11=exponx;
 
     x=1.0;
     y[0]=1.0;

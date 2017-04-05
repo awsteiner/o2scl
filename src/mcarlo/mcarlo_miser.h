@@ -88,7 +88,7 @@ namespace o2scl {
 
       Based on \ref Press90 .
   */
-  template<class func_t=multi_funct11, 
+  template<class func_t=multi_funct, 
     class vec_t=boost::numeric::ublas::vector<double>,
     class rng_t=rng_gsl>
     class mcarlo_miser : public mcarlo<func_t,vec_t,rng_t> {

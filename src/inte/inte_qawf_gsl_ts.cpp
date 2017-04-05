@@ -52,12 +52,12 @@ double exponential_exact(double alpha, double omega) {
 
 int main(void) {
   double a=3.0,calc,exact,diff;
-  inte_qawf_gsl_sin<funct11> cs;
-  inte_qawf_gsl_cos<funct11> cc;
+  inte_qawf_gsl_sin<funct> cs;
+  inte_qawf_gsl_cos<funct> cc;
   test_mgr t;
   t.set_output_level(2);
 
-  funct11 tf=quad_exp;
+  funct tf=quad_exp;
 
   cout.setf(ios::scientific);
   
@@ -94,9 +94,9 @@ int main(void) {
 	
   size_t limit=512, levels=10;
 	
-  inte_qawf_gsl_cos<funct11> Q;
+  inte_qawf_gsl_cos<funct> Q;
   Q.omega=omega;
-  funct11 f=std::bind(exponential,std::placeholders::_1,alpha);
+  funct f=std::bind(exponential,std::placeholders::_1,alpha);
 		
   // setup GSL data
   gsl_integration_workspace

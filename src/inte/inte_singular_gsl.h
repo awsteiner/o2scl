@@ -746,7 +746,7 @@ namespace o2scl {
       casual end-user should use the classes explained in the
       \ref inte_section section of the User's guide.
   */
-  template<class func_t=funct11> class inte_transform_gsl : 
+  template<class func_t=funct> class inte_transform_gsl : 
   public inte_singular_gsl<func_t> {
     
   public:
@@ -761,7 +761,7 @@ namespace o2scl {
   (func_t &func, double a, double b, 
    double *result, double *abserr, double *resabs, double *resasc) {
 
-    funct11 fmp=std::bind(std::mem_fn<double(double,func_t &)>
+    funct fmp=std::bind(std::mem_fn<double(double,func_t &)>
 			  (&inte_transform_gsl<func_t>::transform),
 			  this,std::placeholders::_1,func);
     

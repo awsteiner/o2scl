@@ -69,6 +69,9 @@
     are provided in \ref o2scl::interp_array and \ref
     o2scl::interp_array_vec. 
     
+    An experimental class for one-dimensional kriging is also 
+    provided in \ref o2scl::interp_krige .
+    
     \section search_subsect Lookup and binary search
 
     The classes \ref o2scl::search_vec and \ref o2scl::search_vec_ext
@@ -81,8 +84,8 @@
     o2scl::search_vec::ordered_lookup() .
 
     \comment
-
-    ** This section is commented out until interp_smart is fixed. **
+    
+    ** This section is commented out until interp_smart is rewritten. **
 
     \section smintp_subsect "Smart" interpolation
     

@@ -152,7 +152,6 @@ namespace o2scl {
       This is an array of size 2 times \ref n_threads times \ref
       n_walk . The two copies of data objects are indexed by
       <tt>i_copy*n_walk*n_threads+thread_index*n_walk+walker_index</tt>
-      .
    */
   std::vector<data_t> data_arr;
 

@@ -64,7 +64,7 @@ void nucmass_fit::fit(nucmass_fit_base &n, double &fmin) {
   ubvector mx(nv);
   nmf->guess_fun(nv,mx);
   
-  multi_funct11 mfm=
+  multi_funct mfm=
     std::bind(std::mem_fn<double(size_t,const ubvector &)>
 	      (&nucmass_fit::min_fun),
 	      this,std::placeholders::_1,std::placeholders::_2);

@@ -443,7 +443,7 @@ namespace o2scl {
   
     /// Set the stepper for the Dirac differential equation
     void set_step(ode_step<ubvector,ubvector,ubvector,
-      ode_funct11> &step) {
+      ode_funct> &step) {
       ostep=&step;
       return;
     }
@@ -744,11 +744,11 @@ namespace o2scl {
     
     /// The default stepper
     ode_rkck_gsl<ubvector,ubvector,ubvector,
-      ode_funct11> def_step;
+      ode_funct> def_step;
     
     /// The ODE stepper
     ode_step<ubvector,ubvector,ubvector,
-      ode_funct11> *ostep;
+      ode_funct> *ostep;
 
     /** \brief Integrate the Dirac equations using a simple 
 	inline 4th order Runge-Kutta

@@ -55,7 +55,7 @@ fermion_deriv_rel::fermion_deriv_rel() {
 fermion_deriv_rel::~fermion_deriv_rel() {
 }
 
-void fermion_deriv_rel::set_inte(inte<funct11> &l_nit, inte<funct11> &l_dit) {
+void fermion_deriv_rel::set_inte(inte<funct> &l_nit, inte<funct> &l_dit) {
   nit=&l_nit;
   dit=&l_dit;
   return;
@@ -103,7 +103,7 @@ int fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
 
     // The non-degenerate case
 
-    funct11 density_fun_f=
+    funct density_fun_f=
       std::bind(std::mem_fn<double(double,fermion_deriv &,double)>
 		(&fermion_deriv_rel::density_fun),
 		this,std::placeholders::_1,std::ref(f),temper);
@@ -115,7 +115,7 @@ int fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
     f.n*=prefac;
     unc.n*=prefac;
     
-    funct11 density_T_fun_f=
+    funct density_T_fun_f=
       std::bind(std::mem_fn<double(double,fermion_deriv &,double)>
 		(&fermion_deriv_rel::density_T_fun),
 		this,std::placeholders::_1,std::ref(f),temper);
@@ -128,7 +128,7 @@ int fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
     f.dndT*=prefac;
     unc.dndT*=prefac;
 
-    funct11 density_mu_fun_f=
+    funct density_mu_fun_f=
       std::bind(std::mem_fn<double(double,fermion_deriv &,double)>
 		(&fermion_deriv_rel::density_mu_fun),
 		this,std::placeholders::_1,std::ref(f),temper);
@@ -141,7 +141,7 @@ int fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
     f.dndmu*=prefac;
     unc.dndmu*=prefac;
     
-    funct11 energy_fun_f=
+    funct energy_fun_f=
       std::bind(std::mem_fn<double(double,fermion_deriv &,double)>
 		(&fermion_deriv_rel::energy_fun),
 		this,std::placeholders::_1,std::ref(f),temper);
@@ -154,7 +154,7 @@ int fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
     f.ed*=pow(temper,4.0);
     unc.ed*=prefac;
     
-    funct11 entropy_fun_f=
+    funct entropy_fun_f=
       std::bind(std::mem_fn<double(double,fermion_deriv &,double)>
 		(&fermion_deriv_rel::entropy_fun),
 		this,std::placeholders::_1,std::ref(f),temper);
@@ -166,7 +166,7 @@ int fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
     f.en*=prefac;
     unc.en*=prefac;
     
-    funct11 entropy_T_fun_f=
+    funct entropy_T_fun_f=
       std::bind(std::mem_fn<double(double,fermion_deriv &,double)>
 		(&fermion_deriv_rel::entropy_T_fun),
 		this,std::placeholders::_1,std::ref(f),temper);
@@ -236,7 +236,7 @@ int fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
       intl_method=method;
     }
     
-    funct11 deg_density_fun_f=std::bind
+    funct deg_density_fun_f=std::bind
       (std::mem_fn<double(double,fermion_deriv &,double)>
        (&fermion_deriv_rel::deg_density_fun),
        this,std::placeholders::_1,std::ref(f),temper);
@@ -248,7 +248,7 @@ int fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
     f.n*=prefac;
     unc.n*=prefac;
     
-    funct11 deg_density_mu_fun_f=
+    funct deg_density_mu_fun_f=
       std::bind(std::mem_fn<double(double,fermion_deriv &,double)>
 		(&fermion_deriv_rel::deg_density_mu_fun),
 		this,std::placeholders::_1,std::ref(f),temper);
@@ -266,7 +266,7 @@ int fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
     f.dndmu*=prefac;
     unc.dndmu*=prefac;
     
-    funct11 deg_density_T_fun_f=std::bind
+    funct deg_density_T_fun_f=std::bind
       (std::mem_fn<double(double,fermion_deriv &,double)>
        (&fermion_deriv_rel::deg_density_T_fun),
        this,std::placeholders::_1,std::ref(f),temper);
@@ -282,7 +282,7 @@ int fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
     f.dndT*=prefac;
     unc.dndT*=prefac;
 
-    funct11 deg_energy_fun_f=std::bind
+    funct deg_energy_fun_f=std::bind
       (std::mem_fn<double(double,fermion_deriv &,double)>
        (&fermion_deriv_rel::deg_energy_fun),
        this,std::placeholders::_1,std::ref(f),temper);
@@ -294,7 +294,7 @@ int fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
     f.ed*=prefac;
     unc.ed*=prefac;
 
-    funct11 deg_entropy_fun_f=std::bind
+    funct deg_entropy_fun_f=std::bind
       (std::mem_fn<double(double,fermion_deriv &,double)>
        (&fermion_deriv_rel::deg_entropy_fun),
        this,std::placeholders::_1,std::ref(f),temper);
@@ -310,7 +310,7 @@ int fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
     f.en*=prefac;
     unc.en*=prefac;
     
-    funct11 deg_entropy_T_fun_f=std::bind
+    funct deg_entropy_T_fun_f=std::bind
       (std::mem_fn<double(double,fermion_deriv &,double)>
        (&fermion_deriv_rel::deg_entropy_T_fun),
        this,std::placeholders::_1,std::ref(f),temper);
@@ -362,7 +362,7 @@ int fermion_deriv_rel::nu_from_n(fermion_deriv &f, double temper) {
   }
 
   // Perform full solution
-  funct11 mf=std::bind(std::mem_fn<double(double,fermion_deriv &,double)>
+  funct mf=std::bind(std::mem_fn<double(double,fermion_deriv &,double)>
 		       (&fermion_deriv_rel::solve_fun),
 		       this,std::placeholders::_1,std::ref(f),temper);
   int ret=density_root->solve(nex,mf);
@@ -717,11 +717,11 @@ double fermion_deriv_rel::solve_fun(double x, fermion_deriv &f, double T) {
     if ((f.nu+f.m-f.ms)/T<deg_limit) deg=false;
   }
   
-  funct11 density_fun_f=
+  funct density_fun_f=
     std::bind(std::mem_fn<double(double,fermion_deriv &,double)>
 	      (&fermion_deriv_rel::density_fun),
 	      this,std::placeholders::_1,std::ref(f),T);
-  funct11 deg_density_fun_f=
+  funct deg_density_fun_f=
     std::bind(std::mem_fn<double(double,fermion_deriv &,double)>
 	      (&fermion_deriv_rel::deg_density_fun),
 	      this,std::placeholders::_1,std::ref(f),T);
@@ -804,7 +804,7 @@ int fermion_deriv_rel::pair_density(fermion_deriv &f, double temper) {
   if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
   
   nex=f.nu/temper;
-  funct11 mf=std::bind(std::mem_fn<double(double,fermion_deriv &,double)>
+  funct mf=std::bind(std::mem_fn<double(double,fermion_deriv &,double)>
 		       (&fermion_deriv_rel::pair_fun),
 		       this,std::placeholders::_1,std::ref(f),temper);
   ret=density_root->solve(nex,mf);
@@ -836,11 +836,11 @@ double fermion_deriv_rel::pair_fun(double x, fermion_deriv &f, double T) {
     intl_method=method;
   }
 
-  funct11 density_fun_f=
+  funct density_fun_f=
     std::bind(std::mem_fn<double(double,fermion_deriv &,double)>
 	      (&fermion_deriv_rel::density_fun),
 	      this,std::placeholders::_1,std::ref(f),T);
-  funct11 deg_density_fun_f=
+  funct deg_density_fun_f=
     std::bind(std::mem_fn<double(double,fermion_deriv &,double)>
 	      (&fermion_deriv_rel::deg_density_fun),
 	      this,std::placeholders::_1,std::ref(f),T);

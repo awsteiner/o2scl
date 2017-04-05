@@ -3322,7 +3322,7 @@ int nstar_rot::fix_cent_eden_with_kepler_alt(double cent_eden,
   
   ubvector x(1), y(1);
   x[0]=r_ratio;
-  mm_funct11 nf=std::bind
+  mm_funct nf=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
      (&nstar_rot::solve_kepler),this,std::placeholders::_1,
      std::placeholders::_2,std::placeholders::_3);
@@ -3498,7 +3498,7 @@ int nstar_rot::fix_cent_eden_grav_mass_alt(double cent_eden,
   
   ubvector x(1), y(1);
   x[0]=r_ratio;
-  mm_funct11 nf=std::bind
+  mm_funct nf=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &,double)>
      (&nstar_rot::solve_grav_mass),this,std::placeholders::_1,
      std::placeholders::_2,std::placeholders::_3,grav_mass*MSUN);
@@ -3645,7 +3645,7 @@ int nstar_rot::fix_cent_eden_bar_mass_alt(double cent_eden,
   
   ubvector x(1), y(1);
   x[0]=r_ratio;
-  mm_funct11 nf=std::bind
+  mm_funct nf=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &,double)>
      (&nstar_rot::solve_bar_mass),this,std::placeholders::_1,
      std::placeholders::_2,std::placeholders::_3,bar_mass*MSUN);
@@ -3795,7 +3795,7 @@ int nstar_rot::fix_cent_eden_ang_vel_alt(double cent_eden,
   
   ubvector x(1), y(1);
   x[0]=r_ratio;
-  mm_funct11 nf=std::bind
+  mm_funct nf=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &,double)>
      (&nstar_rot::solve_ang_vel),this,std::placeholders::_1,
      std::placeholders::_2,std::placeholders::_3,ang_vel);
@@ -3946,7 +3946,7 @@ int nstar_rot::fix_cent_eden_ang_mom_alt(double cent_eden,
   ubvector x(1), y(1);
   x[0]=r_ratio;
   double J0=G*MSUN*MSUN/C;
-  mm_funct11 nf=std::bind
+  mm_funct nf=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &,double)>
      (&nstar_rot::solve_ang_mom),this,std::placeholders::_1,
      std::placeholders::_2,std::placeholders::_3,ang_mom*J0);

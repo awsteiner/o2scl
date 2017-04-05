@@ -54,7 +54,7 @@ eos_had_base::eos_had_base() {
 double eos_had_base::fcomp(double nb, double delta) {
   double lcomp, err;
   
-  funct11 fmn=std::bind(std::mem_fn<double(double,double)>
+  funct fmn=std::bind(std::mem_fn<double(double,double)>
 			(&eos_had_base::calc_pressure_nb),
 			this,std::placeholders::_1,delta);
 
@@ -66,7 +66,7 @@ double eos_had_base::fcomp(double nb, double delta) {
 double eos_had_base::fcomp_err(double nb, double delta, double &unc) {
   double lcomp;
   
-  funct11 fmn=std::bind(std::mem_fn<double(double,double)>
+  funct fmn=std::bind(std::mem_fn<double(double,double)>
 			(&eos_had_base::calc_pressure_nb),
 			this,std::placeholders::_1,delta);
 
@@ -92,7 +92,7 @@ double eos_had_base::feoa(double nb, double delta) {
 
 double eos_had_base::fesym(double nb, double delta) {
   
-  funct11 fmn=std::bind(std::mem_fn<double(double,double)>
+  funct fmn=std::bind(std::mem_fn<double(double,double)>
 			(&eos_had_base::calc_dmu_delta),
 			this,std::placeholders::_1,nb);
 
@@ -107,7 +107,7 @@ double eos_had_base::fesym(double nb, double delta) {
 double eos_had_base::fesym_err(double nb, double delta, 
 			       double &unc) {
 
-  funct11 fmn=std::bind(std::mem_fn<double(double,double)>
+  funct fmn=std::bind(std::mem_fn<double(double,double)>
 			(&eos_had_base::calc_dmu_delta),
 			this,std::placeholders::_1,nb);
 
@@ -126,14 +126,14 @@ double eos_had_base::fesym_slope(double nb, double delta) {
     // derivative, and may or may not be less accurate. It might be
     // good to make this a separate function, to allow the user to
     // choose which way to evaluate L.
-    funct11 fmn=std::bind(std::mem_fn<double(double,double)>
+    funct fmn=std::bind(std::mem_fn<double(double,double)>
 			  (&eos_had_base::calc_musum_delta),
 			  this,std::placeholders::_1,nb);
     
     return sat_deriv->deriv2(delta,fmn)*0.75-3.0*fesym(nb,delta);
   }
   
-  funct11 fmn=std::bind(std::mem_fn<double(double,double)>
+  funct fmn=std::bind(std::mem_fn<double(double,double)>
 			(&eos_had_base::fesym),
 			this,std::placeholders::_1,delta);
   return sat_deriv2->deriv(nb,fmn)*3.0*nb;
@@ -141,7 +141,7 @@ double eos_had_base::fesym_slope(double nb, double delta) {
 
 double eos_had_base::fesym_curve(double nb, double delta) {
   
-  funct11 fmn=std::bind(std::mem_fn<double(double,double)>
+  funct fmn=std::bind(std::mem_fn<double(double,double)>
 			(&eos_had_base::fesym),
 			this,std::placeholders::_1,delta);
   
@@ -150,7 +150,7 @@ double eos_had_base::fesym_curve(double nb, double delta) {
 
 double eos_had_base::fesym_skew(double nb, double delta) {
 
-  funct11 fmn=std::bind(std::mem_fn<double(double,double)>
+  funct fmn=std::bind(std::mem_fn<double(double,double)>
 			(&eos_had_base::fesym),
 			this,std::placeholders::_1,delta);
 
@@ -174,7 +174,7 @@ double eos_had_base::fesym_diff(double nb) {
 }
 
 double eos_had_base::feta_prime(double nb) {
-  funct11 fmn=std::bind(std::mem_fn<double(double)>
+  funct fmn=std::bind(std::mem_fn<double(double)>
 			(&eos_had_base::feta),
 			this,std::placeholders::_1);
   
@@ -206,7 +206,7 @@ double eos_had_base::fkprime(double nb, double delta) {
   double lkprime, err;
   int ret=0;
   
-  funct11 fmn=std::bind(std::mem_fn<double(double,double)>
+  funct fmn=std::bind(std::mem_fn<double(double,double)>
 			(&eos_had_base::calc_press_over_den2),
 			this,std::placeholders::_1,delta);
   
@@ -279,7 +279,7 @@ double eos_had_base::fn0(double delta, double &leoa) {
   // Initial guess
   nb=0.16;
   
-  funct11 fmf=std::bind(std::mem_fn<double(double,double)>
+  funct fmf=std::bind(std::mem_fn<double(double,double)>
 			(&eos_had_base::calc_pressure_nb),
 			this,std::placeholders::_1,delta);
   
@@ -318,10 +318,10 @@ void eos_had_base::gradient_qij(fermion &n, fermion &p, thermo &th,
   t1=t1_fun(barn);
   t2=t2_fun(barn);
     
-  funct11 t1fun=std::bind(std::mem_fn<double(double)>
+  funct t1fun=std::bind(std::mem_fn<double(double)>
 			  (&eos_had_base::t1_fun),
 			  this,std::placeholders::_1);
-  funct11 t2fun=std::bind(std::mem_fn<double(double)>
+  funct t2fun=std::bind(std::mem_fn<double(double)>
 			  (&eos_had_base::t2_fun),
 			  this,std::placeholders::_1);
 
@@ -384,7 +384,7 @@ void eos_had_base::const_pf_derivs(double nb, double pf,
 
   // Take derivatives w.r.t. delta and then multiply by -2 to get
   // derivatives w.r.t. x
-  funct11 fmpp=std::bind(std::mem_fn<double(double,double)>
+  funct fmpp=std::bind(std::mem_fn<double(double,double)>
 			 (&eos_had_base::calc_pressure_nb),
 			 this,std::placeholders::_1,1.0-2.0*pf);
   
@@ -424,19 +424,19 @@ void eos_had_base::f_number_suscept(double mun, double mup, double &dPdnn,
 				    double &dPdnp, double &dPdpp) {
 
   // For (d^2 P)/(d mun d mun)
-  funct11 fnn=std::bind
+  funct fnn=std::bind
     (std::mem_fn<double(double,double)>(&eos_had_base::calc_nn_p),
      this,std::placeholders::_1,mup);
   dPdnn=sat_deriv->deriv(mun,fnn);
   
   // For (d^2 P)/(d mun d mup)
-  funct11 fnp=std::bind
+  funct fnp=std::bind
     (std::mem_fn<double(double,double)>(&eos_had_base::calc_nn_p),
      this,mun,std::placeholders::_1);
   dPdnp=sat_deriv->deriv(mup,fnn);
 
   // For (d^2 P)/(d mup d mup)
-  funct11 fpp=std::bind
+  funct fpp=std::bind
     (std::mem_fn<double(double,double)>(&eos_had_base::calc_np_p),
      this,mun,std::placeholders::_1);
   dPdpp=sat_deriv->deriv(mup,fpp);
@@ -448,19 +448,19 @@ void eos_had_base::f_inv_number_suscept(double nn, double np, double &dednn,
 					double &dednp, double &dedpp) {
 
   // For (d^2 ed)/(d mun d mun)
-  funct11 fnn=std::bind
+  funct fnn=std::bind
     (std::mem_fn<double(double,double)>(&eos_had_base::calc_mun_e),
      this,std::placeholders::_1,np);
   dednn=sat_deriv->deriv(nn,fnn);
   
   // For (d^2 ed)/(d mun d mup)
-  funct11 fnp=std::bind
+  funct fnp=std::bind
     (std::mem_fn<double(double,double)>(&eos_had_base::calc_mun_e),
      this,nn,std::placeholders::_1);
   dednp=sat_deriv->deriv(np,fnn);
 
   // For (d^2 ed)/(d mup d mup)
-  funct11 fpp=std::bind
+  funct fpp=std::bind
     (std::mem_fn<double(double,double)>(&eos_had_base::calc_mup_e),
      this,nn,std::placeholders::_1);
   dedpp=sat_deriv->deriv(np,fpp);
@@ -602,24 +602,24 @@ void eos_had_base::set_n_and_p(fermion &n, fermion &p) {
   return;
 }
 
-void eos_had_base::set_mroot(mroot<mm_funct11,
+void eos_had_base::set_mroot(mroot<mm_funct,
 			     boost::numeric::ublas::vector<double>, 
-			     jac_funct11> &mr) {
+			     jac_funct> &mr) {
   eos_mroot=&mr;
   return;
 }
 
-void eos_had_base::set_sat_root(root<funct11> &mr) {
+void eos_had_base::set_sat_root(root<funct> &mr) {
   sat_root=&mr;
   return;
 }
 
-void eos_had_base::set_sat_deriv(deriv_base<funct11> &de) {
+void eos_had_base::set_sat_deriv(deriv_base<funct> &de) {
   sat_deriv=&de;
   return;
 }
 
-void eos_had_base::set_sat_deriv2(deriv_base<funct11> &de) {
+void eos_had_base::set_sat_deriv2(deriv_base<funct> &de) {
   sat_deriv2=&de;
   return;
 }
@@ -633,7 +633,7 @@ void eos_had_base::check_mu(fermion &n, fermion &p, thermo &th,
   double nn=n.n;
   double np=p.n;
 
-  funct11 fn=std::bind
+  funct fn=std::bind
     (std::mem_fn<double(double,double)>
      (&eos_had_base::calc_ed),this,std::placeholders::_1,p.n);
   sat_deriv->deriv_err(n.n,fn,mun_deriv,mun_err);
@@ -641,7 +641,7 @@ void eos_had_base::check_mu(fermion &n, fermion &p, thermo &th,
   n.n=nn;
   p.n=np;
 
-  funct11 fp=std::bind
+  funct fp=std::bind
     (std::mem_fn<double(double,double)>
      (&eos_had_base::calc_ed),this,n.n,std::placeholders::_1);
   sat_deriv->deriv_err(p.n,fp,mup_deriv,mup_err);
@@ -663,7 +663,7 @@ void eos_had_base::check_den(fermion &n, fermion &p, thermo &th,
   double mun=n.mu;
   double mup=p.mu;
 
-  funct11 fn=std::bind
+  funct fn=std::bind
     (std::mem_fn<double(double,double)>
      (&eos_had_base::calc_pr),this,std::placeholders::_1,p.mu);
   sat_deriv->deriv_err(n.mu,fn,nn_deriv,nn_err);
@@ -671,7 +671,7 @@ void eos_had_base::check_den(fermion &n, fermion &p, thermo &th,
   n.mu=mun;
   p.mu=mup;
 
-  funct11 fp=std::bind
+  funct fp=std::bind
     (std::mem_fn<double(double,double)>
      (&eos_had_base::calc_pr),this,n.mu,std::placeholders::_1);
   sat_deriv->deriv_err(p.mu,fp,np_deriv,np_err);
@@ -690,7 +690,7 @@ void eos_had_temp_base::check_en(fermion &n, fermion &p, double T, thermo &th,
   set_n_and_p(n,p);
   set_thermo(th);
 
-  funct11 fn=std::bind
+  funct fn=std::bind
     (std::mem_fn<double(double,double,double)>
      (&eos_had_temp_base::calc_fr),this,n.n,p.n,std::placeholders::_1);
   sat_deriv->deriv_err(T,fn,en_deriv,en_err);
@@ -710,7 +710,7 @@ void eos_had_temp_base::check_mu_T(fermion &n, fermion &p, double T, thermo &th,
   double nn=n.n;
   double np=p.n;
 
-  funct11 fn=std::bind
+  funct fn=std::bind
     (std::mem_fn<double(double,double,double)>
      (&eos_had_temp_base::calc_fr),this,std::placeholders::_1,p.n,T);
   sat_deriv->deriv_err(n.n,fn,mun_deriv,mun_err);
@@ -718,7 +718,7 @@ void eos_had_temp_base::check_mu_T(fermion &n, fermion &p, double T, thermo &th,
   n.n=nn;
   p.n=np;
 
-  funct11 fp=std::bind
+  funct fp=std::bind
     (std::mem_fn<double(double,double,double)>
      (&eos_had_temp_base::calc_fr),this,n.n,std::placeholders::_1,T);
   sat_deriv->deriv_err(p.n,fp,mup_deriv,mup_err);
@@ -741,7 +741,7 @@ int eos_had_eden_base::calc_p(fermion &n, fermion &p, thermo &th) {
   x[0]=n.n;
   x[1]=p.n;
     
-  mm_funct11 fmf=std::bind
+  mm_funct fmf=std::bind
     (std::mem_fn<int(size_t,const ubvector &, ubvector &, double, double)>
      (&eos_had_eden_base::nuc_matter_e),
     this,std::placeholders::_1,std::placeholders::_2,
@@ -769,7 +769,7 @@ int eos_had_pres_base::calc_e(fermion &n, fermion &p, thermo &th) {
   if (mu[1]<n.ms) mu[0]=n.ms+1.0e-4;
   if (mu[2]<p.ms) mu[1]=p.ms+1.0e-4;
     
-  mm_funct11 fmf=std::bind
+  mm_funct fmf=std::bind
     (std::mem_fn<int(size_t,const ubvector &, ubvector &, double, double)>
      (&eos_had_eden_base::nuc_matter_p),
      this,std::placeholders::_1,std::placeholders::_2,
@@ -805,7 +805,7 @@ int eos_had_temp_base::calc_liqgas_dens_temp_e
   x[1]=n2.n;
   x[2]=p2.n;
   
-  mm_funct11 fmf=std::bind
+  mm_funct fmf=std::bind
     (std::mem_fn<int(size_t, const ubvector &, ubvector &, fermion &,
 		     fermion &, fermion &, fermion &, 
 		     double, thermo &, thermo &)>
@@ -911,7 +911,7 @@ int eos_had_temp_base::calc_liqgas_temp_e
   x[3]=p2.n;
   x[4]=chi;
 
-  mm_funct11 fmf=std::bind
+  mm_funct fmf=std::bind
     (std::mem_fn<int(size_t, const ubvector &, ubvector &, fermion &,
 		     fermion &, fermion &, fermion &, 
 		     double, double, double, thermo &, thermo &)>
@@ -948,7 +948,7 @@ int eos_had_temp_base::calc_liqgas_beta_temp_e
   x[3]=p2.n;
   x[4]=chi;
 
-  mm_funct11 fmf=std::bind
+  mm_funct fmf=std::bind
     (std::mem_fn<int(size_t, const ubvector &, ubvector &, fermion &,
 		     fermion &, fermion &, fermion &, 
 		     double, double, thermo &, thermo &, fermion &)>
@@ -1018,21 +1018,21 @@ void eos_had_temp_base::f_number_suscept_T
  double &dPdpp) {
 
   // For (d^2 P)/(d mun d mun)
-  funct11 fnn=std::bind
+  funct fnn=std::bind
     (std::mem_fn<double(double,double,double)>
      (&eos_had_temp_base::calc_temp_nn_p),
      this,std::placeholders::_1,mup,T);
   dPdnn=sat_deriv->deriv(mun,fnn);
   
   // For (d^2 P)/(d mun d mup)
-  funct11 fnp=std::bind
+  funct fnp=std::bind
     (std::mem_fn<double(double,double,double)>
      (&eos_had_temp_base::calc_temp_nn_p),
      this,mun,std::placeholders::_1,T);
   dPdnp=sat_deriv->deriv(mup,fnn);
   
   // For (d^2 P)/(d mup d mup)
-  funct11 fpp=std::bind
+  funct fpp=std::bind
     (std::mem_fn<double(double,double,double)>
      (&eos_had_temp_base::calc_temp_np_p),
      this,mun,std::placeholders::_1,T);
@@ -1045,21 +1045,21 @@ void eos_had_temp_base::f_inv_number_suscept_T
 (double nn, double np, double T, double &dednn, double &dednp, double &dedpp) {
 
   // For (d^2 ed)/(d mun d mun)
-  funct11 fnn=std::bind
+  funct fnn=std::bind
     (std::mem_fn<double(double,double,double)>
      (&eos_had_temp_base::calc_temp_mun_e),
      this,std::placeholders::_1,np,T);
   dednn=sat_deriv->deriv(nn,fnn);
   
   // For (d^2 ed)/(d mun d mup)
-  funct11 fnp=std::bind
+  funct fnp=std::bind
     (std::mem_fn<double(double,double,double)>
      (&eos_had_temp_base::calc_temp_mun_e),
      this,nn,std::placeholders::_1,T);
   dednp=sat_deriv->deriv(np,fnn);
   
   // For (d^2 ed)/(d mup d mup)
-  funct11 fpp=std::bind
+  funct fpp=std::bind
     (std::mem_fn<double(double,double,double)>
      (&eos_had_temp_base::calc_temp_mup_e),
      this,nn,std::placeholders::_1,T);
@@ -1141,7 +1141,7 @@ double eos_had_temp_base::calc_dmu_delta_T(double delta, double nb,
 
 double eos_had_temp_base::fesym_T(double nb, double T, double delta) {
   
-  funct11 fmn=std::bind
+  funct fmn=std::bind
     (std::mem_fn<double(double,double,double)>
      (&eos_had_temp_base::calc_dmu_delta_T),this,std::placeholders::_1,
      nb,T);
@@ -1151,7 +1151,7 @@ double eos_had_temp_base::fesym_T(double nb, double T, double delta) {
 
 double eos_had_temp_base::fsyment_T(double nb, double T, double delta) {
   
-  funct11 fmn=std::bind
+  funct fmn=std::bind
     (std::mem_fn<double(double,double,double)>
      (&eos_had_temp_base::calc_entropy_delta),this,std::placeholders::_1,
      nb,T);
@@ -1169,7 +1169,7 @@ int eos_had_temp_eden_base::calc_p(fermion &n, fermion &p, thermo &th) {
   x[0]=n.n;
   x[1]=p.n;
 
-  mm_funct11 fmf=std::bind
+  mm_funct fmf=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &, double, double)>
      (&eos_had_eden_base::nuc_matter_e),
      
@@ -1201,7 +1201,7 @@ int eos_had_temp_eden_base::calc_temp_p(fermion &n, fermion &p,
   den[0]=n.n;
   den[1]=p.n;
   
-  mm_funct11 fmf=std::bind
+  mm_funct fmf=std::bind
     (std::mem_fn<int(size_t,const ubvector &,
 		     ubvector &, double, double, double)>
     (&eos_had_temp_eden_base::nuc_matter_temp_e),
@@ -1237,7 +1237,7 @@ int eos_had_temp_pres_base::calc_e(fermion &n, fermion &p, thermo &th) {
   if (mu[1]<n.ms) mu[0]=n.ms+1.0e-4;
   if (mu[2]<p.ms) mu[1]=p.ms+1.0e-4;
   
-  mm_funct11 fmf=std::bind
+  mm_funct fmf=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &, double, double)>
      (&eos_had_eden_base::nuc_matter_p),
      this,std::placeholders::_1,std::placeholders::_2,
@@ -1265,7 +1265,7 @@ int eos_had_temp_pres_base::calc_temp_e(fermion &n, fermion &p,
   mu[0]=n.mu;
   mu[1]=p.mu;
 
-  mm_funct11 fmf=std::bind
+  mm_funct fmf=std::bind
     (std::mem_fn<int(size_t,const ubvector &,
 		     ubvector &, double, double, double)>
     (&eos_had_temp_pres_base::nuc_matter_temp_p),

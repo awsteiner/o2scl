@@ -59,12 +59,12 @@ int main(int argc, char *argv[]) {
 
   cout.setf(ios::scientific);
 
-  diff_evo<multi_funct11> de;
+  diff_evo<multi_funct> de;
   double result;
   ubvector init(2);
   
-  multi_funct11 fx=func;
-  mm_funct11 init_f=init_function;
+  multi_funct fx=func;
+  mm_funct init_f=init_function;
   
   de.set_init_function(init_f);
   de.verbose = 1;

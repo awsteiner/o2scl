@@ -73,7 +73,7 @@ namespace o2scl {
       interpolation method from SLB13
       \future Build upon gen_fit_funct instead of fit_funct?
   */
-  template<class fit_func_t=fit_funct11, class multi_func_t=uniform_prior<>, 
+  template<class fit_func_t=fit_funct, class multi_func_t=uniform_prior<>, 
     class vec_t=boost::numeric::ublas::vector<double> > class fit_bayes {
 
   public:
@@ -146,7 +146,7 @@ namespace o2scl {
     lydat=&ydat;
     lyerr=&yerr;
     pri=&prior_fun;
-    multi_funct11 mfm=
+    multi_funct mfm=
       std::bind(std::mem_fn<double(size_t,const ubvector &)>
 		(&fit_bayes::integrand),
 		this,std::placeholders::_1,std::placeholders::_2);

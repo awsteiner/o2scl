@@ -1,4 +1,4 @@
-/** \page para_section Parallel programming with O2scl
+/** \page para_section Parallel Programming with O2scl
 
     Generally, \o2 objects are thread-safe in the same way that 
     classes like <tt>std::vector&lt;double&gt;</tt> are 
@@ -25,5 +25,11 @@
       return 0;
     }
     \endcode
+
+    \o2 also may support OpenMP in the future, enabled during
+    installation by <tt>--enable-openmp</tt>. The
+    \ref o2scl::mcmc_para_base class supports OpenMP but is header
+    only and thus does not require that \o2 was installed
+    with OpenMP support.
 
 */

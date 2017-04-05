@@ -72,12 +72,12 @@ int main(void) {
   for(int kk=0;kk<1;kk++) {
 
     // 1 - Non-templated access through a funct object 
-    mm_funct11 fmf=std::bind
+    mm_funct fmf=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
        (&cl::mfn),&acl,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);
 
-    mroot_cern<mm_funct11,ubvector,jac_funct11> cr1;
+    mroot_cern<mm_funct,ubvector,jac_funct> cr1;
     tmp=clock();
     for(int j=0;j<N;j++) {
       for(int k=0;k<N;k++) {
@@ -92,7 +92,7 @@ int main(void) {
     t.test_rel(x[1],0.2,1.0e-6,"1b");
 
     // Show that msolve_de() works
-    jac_funct11 fmfd=std::bind
+    jac_funct fmfd=std::bind
       (std::mem_fn<int(size_t,ubvector &,size_t,ubvector &,ubmatrix &)>
        (&cl::mfnd),&acl,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3,std::placeholders::_4,std::placeholders::_5);

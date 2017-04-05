@@ -49,8 +49,8 @@ int main(void) {
 	 << cont_lower_bound(x,100.0,20.0,1.0) << endl;
   }
   
-  min_cern<funct11> mi;
-  funct11 mf=minfun;
+  min_cern<funct> mi;
+  funct mf=minfun;
   int vp=0;
   double x1, x2, x3=0.0, f1=0.0, f2=0.0, f3=0.0;
   int ret;

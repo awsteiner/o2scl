@@ -63,7 +63,7 @@ namespace o2scl {
   */
   template<class vec_y_t=boost::numeric::ublas::vector<double>,
     class vec_dydx_t=vec_y_t, class vec_yerr_t=vec_y_t, 
-    class func_t=ode_funct11>
+    class func_t=ode_funct>
     class ode_rk8pd_gsl : public ode_step<vec_y_t,
     vec_dydx_t,vec_yerr_t,func_t> {
 

@@ -46,7 +46,7 @@ namespace o2scl {
   /// Function for iterative solving of ODEs
   typedef std::function<double
     (size_t,double,boost::numeric::ublas::matrix_row
-     <boost::numeric::ublas::matrix<double> > &)> ode_it_funct11;
+     <boost::numeric::ublas::matrix<double> > &)> ode_it_funct;
   
   /** \brief ODE solver using a generic linear solver to solve 
       finite-difference equations
@@ -58,7 +58,7 @@ namespace o2scl {
       \future Allow the user to ensure that the solver doesn't
       apply the full correction
   */
-  template <class func_t=ode_it_funct11,
+  template <class func_t=ode_it_funct,
     class vec_t=boost::numeric::ublas::vector<double>, 
     class mat_t=boost::numeric::ublas::matrix<double>, 
     class matrix_row_t=boost::numeric::ublas::matrix_row
@@ -143,17 +143,17 @@ namespace o2scl {
     
     /// Function derivatives for iterative solving of ODEs
     typedef std::function<double
-      (size_t,size_t,double,matrix_row_t &)> ode_it_dfunct11;
+      (size_t,size_t,double,matrix_row_t &)> ode_it_dfunct;
     
-    ode_it_dfunct11 d2_derivs=std::bind
+    ode_it_dfunct d2_derivs=std::bind
       (std::mem_fn<double(size_t,size_t,double,matrix_row_t &)>
        (&ode_it_solve::fd_derivs),this,std::placeholders::_1,
        std::placeholders::_2,std::placeholders::_3,std::placeholders::_4);
-    ode_it_dfunct11 d2_left=std::bind
+    ode_it_dfunct d2_left=std::bind
       (std::mem_fn<double(size_t,size_t,double,matrix_row_t &)>
        (&ode_it_solve::fd_left),this,std::placeholders::_1,
        std::placeholders::_2,std::placeholders::_3,std::placeholders::_4);
-    ode_it_dfunct11 d2_right=std::bind
+    ode_it_dfunct d2_right=std::bind
       (std::mem_fn<double(size_t,size_t,double,matrix_row_t &)>
        (&ode_it_solve::fd_right),this,std::placeholders::_1,
        std::placeholders::_2,std::placeholders::_3,std::placeholders::_4);

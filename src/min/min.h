@@ -39,7 +39,7 @@ namespace o2scl {
   
   /** \brief One-dimensional minimization [abstract base]
    */
-  template<class func_t=funct11, class dfunc_t=func_t> class min_base {
+  template<class func_t=funct, class dfunc_t=func_t> class min_base {
     
   public:
   

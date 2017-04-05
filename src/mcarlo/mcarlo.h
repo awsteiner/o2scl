@@ -45,7 +45,7 @@ namespace o2scl {
       random number generator. The default type for the random number
       generator is a \ref rng_gsl object. 
   */
-  template<class func_t=multi_funct11, 
+  template<class func_t=multi_funct, 
     class vec_t=boost::numeric::ublas::vector<double>,
     class rng_t=rng_gsl>
     class mcarlo : public inte_multi<func_t,vec_t> {

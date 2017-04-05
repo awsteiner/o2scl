@@ -50,7 +50,7 @@ namespace eos_quark_njl_ts_ns {
   thermo th;
   int dtype;
   
-  inte_qag_gsl<funct11> gl;
+  inte_qag_gsl<funct> gl;
   
   double temper=0.01;
 
@@ -99,8 +99,8 @@ int main(void) {
   t.set_output_level(2);
   int ret=0;
   
-  mroot_hybrids<mm_funct11> nd;
-  deriv_gsl<funct11> df;
+  mroot_hybrids<mm_funct> nd;
+  deriv_gsl<funct> df;
   int vpx=0;
 
   cout.setf(ios::scientific);
@@ -112,17 +112,17 @@ int main(void) {
   
   u.mu=2.5; d.mu=2.5; s.mu=2.5;
   
-  mm_funct11 fqq=std::bind
+  mm_funct fqq=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
      (&eos_quark_njl::gapfunqq),
      &nj,std::placeholders::_1,std::placeholders::_2,
      std::placeholders::_3);
-  mm_funct11 fms=std::bind
+  mm_funct fms=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
      (&eos_quark_njl::gapfunms),
      &nj,std::placeholders::_1,std::placeholders::_2,
      std::placeholders::_3);
-  funct11 fderiv=omfun;
+  funct fderiv=omfun;
   
   cout << "Feynman-Hellman theorem" << endl;
   cout << "Verify that (partial Omega)/(Partial qqu) = 0" << endl;
@@ -166,12 +166,12 @@ int main(void) {
   njt.set_thermo(th);
   njt.set_parameters();
   
-  mm_funct11 fqq2=std::bind
+  mm_funct fqq2=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
      (&eos_quark_njl::gapfunqq),
      &nj,std::placeholders::_1,std::placeholders::_2,
      std::placeholders::_3);
-  mm_funct11 fts=ftsolve;
+  mm_funct fts=ftsolve;
 
   u.mu=2.5;
   d.mu=2.5;

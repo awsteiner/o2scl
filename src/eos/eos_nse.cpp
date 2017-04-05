@@ -129,7 +129,7 @@ int eos_nse::direct_solve(double nn, double np, double T,
   x[0]=mun/T;
   x[1]=mup/T;
 
-  mm_funct11 mfm=std::bind
+  mm_funct mfm=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &,double,
 		     double,double,vector<nucleus> &)>
      (&eos_nse::solve_fun),this,std::placeholders::_1,std::placeholders::_2,
@@ -398,7 +398,7 @@ int eos_nse::density_min(double nn, double np, double T,
 			 double &mun, double &mup, o2scl::thermo &th, 
 			 std::vector<o2scl::nucleus> &nd) {
 
-  o2scl::multi_funct11 mf=std::bind
+  o2scl::multi_funct mf=std::bind
     (std::mem_fn<double(size_t,const ubvector &, double, double,
 			double, o2scl::thermo &,
 			std::vector<o2scl::nucleus> &)>

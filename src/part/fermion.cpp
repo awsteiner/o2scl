@@ -168,7 +168,7 @@ void fermion_eval_thermo::massless_calc_density(fermion &f, double temper) {
   double x, T=temper;
   
   x=f.ms+temper;
-  funct11 mf2=std::bind(std::mem_fn<double(double,fermion &,double)>
+  funct mf2=std::bind(std::mem_fn<double(double,fermion &,double)>
 			(&fermion_eval_thermo::massless_solve_fun),
 			this,std::placeholders::_1,std::ref(f),temper);
   massless_root->solve(x,mf2);

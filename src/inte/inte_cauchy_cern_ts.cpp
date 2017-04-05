@@ -46,13 +46,13 @@ double testfun3(double tx) {
 
 int main(void) {
   double a=3.0, calc, exact, diff;
-  inte_cauchy_cern<funct11> cc;
+  inte_cauchy_cern<funct> cc;
   test_mgr t;
   t.set_output_level(2);
 
-  funct11 tf=testfun;
-  funct11 tf2=testfun2;
-  funct11 tf3=testfun3;
+  funct tf=testfun;
+  funct tf2=testfun2;
+  funct tf3=testfun3;
 
   cout.setf(ios::scientific);
   cout.precision(10);

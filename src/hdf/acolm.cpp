@@ -5152,11 +5152,11 @@ int acol_manager::comm_fit(std::vector<std::string> &sv, bool itive_com) {
   }
 
   // Set up fitting function
-  fit_funct11_strings ffs(in[5],in[4],in[0]);
+  fit_funct_strings ffs(in[5],in[4],in[0]);
   ffs.set_aux_parms(params);
 
   // Fitting function object
-  chi_fit_funct<ubvector,ubmatrix,fit_funct11_strings<> > 
+  chi_fit_funct<ubvector,ubmatrix,fit_funct_strings<> > 
     cff(ndat,xdat,ydat,yerr,ffs);
   
   // Perform fit

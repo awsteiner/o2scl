@@ -57,8 +57,8 @@ int main(void) {
     quark d3(nj.down_default_mass,6.0);
     quark s3(nj.strange_default_mass,6.0);
   
-    mroot_hybrids<mm_funct11> nd;
-    inte_qng_gsl<funct11> gl, gl2;
+    mroot_hybrids<mm_funct> nd;
+    inte_qng_gsl<funct> gl, gl2;
     thermo th, th2, th3;
   
     nd.tol_rel/=100.0;
@@ -76,21 +76,21 @@ int main(void) {
     cfl.set_thermo(th3);
     cfl.set_parameters();
     
-    inte_qng_gsl<funct11> ngnew;
+    inte_qng_gsl<funct> ngnew;
 
     cfl.set_inte(ngnew);
 
-    mm_funct11 fqq=std::bind
+    mm_funct fqq=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
        (&eos_quark_njl::eos_quark_njl::gapfunqq),
        &nj,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);
-    mm_funct11 fqq2=std::bind
+    mm_funct fqq2=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
        (&eos_quark_njl::eos_quark_njl::gapfunqq),
        &njt,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);
-    mm_funct11 fqq3=std::bind
+    mm_funct fqq3=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
        (&eos_quark_njl::eos_quark_njl::gapfunqq),
        &cfl,std::placeholders::_1,std::placeholders::_2,

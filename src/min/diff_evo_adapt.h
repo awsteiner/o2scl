@@ -50,9 +50,9 @@ namespace o2scl {
       This is an adaptive version of \ref diff_evo as described in
       \ref Brest06 .
   */
-    template<class func_t=multi_funct11, 
+    template<class func_t=multi_funct, 
       class vec_t=boost::numeric::ublas::vector<double>, 
-      class init_funct_t=mm_funct11> 
+      class init_funct_t=mm_funct> 
       class diff_evo_adapt :  public diff_evo<func_t, vec_t, init_funct_t> 
       {
 

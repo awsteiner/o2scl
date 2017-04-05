@@ -48,7 +48,7 @@ namespace o2scl {
       See \ref gslinte_subsect in the User's guide for general
       information about the GSL integration classes.
   */
-  template<class func_t=funct11> class inte_qagiu_gsl : 
+  template<class func_t=funct> class inte_qagiu_gsl : 
   public inte_transform_gsl<func_t> {
       
 #ifndef DOXGYEN_INTERNAL

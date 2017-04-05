@@ -69,10 +69,10 @@ namespace o2scl {
       http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/d503/top.html
   */
 #ifdef DOXYGEN_NO_O2NS
-  template<class func_t=funct11> class min_cern : 
+  template<class func_t=funct> class min_cern : 
   public min_bkt_base
 #else
-    template<class func_t=funct11> class min_cern :
+    template<class func_t=funct> class min_cern :
   public min_bkt_base<func_t> 
 #endif
     {

@@ -303,13 +303,13 @@ namespace o2scl_acol {
     /// Read a file and list the O2scl objects
     virtual int comm_filelist(std::vector<std::string> &sv, bool itive_com);
 
-    /// Desc
+    /// Add 'nlines' as a constant to a \ref o2scl::table object
     virtual int comm_nlines(std::vector<std::string> &sv, bool itive_com);
 
-    /// Desc
+    /// Convert a \ref o2scl::table object to a \ref o2scl::hist object
     virtual int comm_to_hist(std::vector<std::string> &sv, bool itive_com);
 
-    /// Desc
+    /// Output the type of the current object to the screen
     virtual int comm_type(std::vector<std::string> &sv, bool itive_com);
     
     /// Find a row from a function
@@ -432,6 +432,9 @@ namespace o2scl_acol {
       return 0;
     }
 
+    /** \brief A placeholder function which is used for 
+	documenting <tt>o2graph</tt> commands
+     */
     virtual int comm_none(std::vector<std::string> &sv, bool itive_com) {
       return 0;
     }
@@ -458,6 +461,8 @@ namespace o2scl_acol {
     std::vector<double> stemp;
     //@}
 
+    /// \name Parameters for <tt>o2graph</tt> documentation
+    //@{
     o2scl::cli::parameter_string p_cmap;
     o2scl::cli::parameter_string p_xtitle;
     o2scl::cli::parameter_string p_ytitle;
@@ -477,6 +482,7 @@ namespace o2scl_acol {
     std::string cmap, xtitle, ytitle;
     double xlo, xhi, ylo, yhi, zlo, zhi;
     bool xset, yset, zset, colbar, logx, logy;
+    //@}
     
   };
   

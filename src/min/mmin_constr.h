@@ -63,7 +63,7 @@ namespace o2scl {
   typedef std::function<int
     (size_t, const boost::numeric::ublas::vector<double> &,
      const boost::numeric::ublas::vector<double> &,
-     boost::numeric::ublas::vector<double> &)> ool_hfunct11;
+     boost::numeric::ublas::vector<double> &)> ool_hfunct;
   
   /** \brief Constrained multidimensional minimization (OOL) [abstract base]
 

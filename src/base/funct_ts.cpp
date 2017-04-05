@@ -33,10 +33,10 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
 
-  funct11_string f("pi*r^2","r");
+  funct_string f("pi*r^2","r");
   f.set_parm("pi",o2scl_const::pi);
   for(double r=1.0;r<=2.0;r+=0.1) {
-    t.test_rel(f(r),o2scl_const::pi*r*r,1.0e-12,"funct11_string");
+    t.test_rel(f(r),o2scl_const::pi*r*r,1.0e-12,"funct_string");
   }
 
   t.report();

@@ -68,8 +68,8 @@ int main(void) {
   int deg=24;
   size_t limit=512;
 	
-  inte_qaws_gsl<funct11> Q;
-  funct11 f=std::bind(legendre,std::placeholders::_1,deg);
+  inte_qaws_gsl<funct> Q;
+  funct f=std::bind(legendre,std::placeholders::_1,deg);
 	
   double alpha=0.0, beta=0.0; 
   int mu=0, nu=0;

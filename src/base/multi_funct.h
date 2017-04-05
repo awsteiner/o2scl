@@ -42,18 +42,18 @@ namespace o2scl {
   /// Multi-dimensional function typedef
   typedef std::function<
     double(size_t,const boost::numeric::ublas::vector<double> &)>
-    multi_funct11;
+    multi_funct;
   
   /** \brief A multi-dimensional function from a string
    */
-  class multi_funct11_strings {
+  class multi_funct_strings {
     
   public:
   
     /** \brief Specify the string and the parameters
      */
     template<class vec_string_t=std::vector<std::string> >
-      multi_funct11_strings(std::string expr, int nv,
+      multi_funct_strings(std::string expr, int nv,
 			    vec_string_t &var_arr) {
     
       st_nv=nv;
@@ -80,7 +80,7 @@ namespace o2scl {
       return;
     }
 
-    virtual ~multi_funct11_strings() {
+    virtual ~multi_funct_strings() {
     };
   
     /** \brief Set the values of the auxilliary parameters that were
@@ -123,15 +123,15 @@ namespace o2scl {
     /// The variable string
     std::vector<std::string> st_vars;
   
-    multi_funct11_strings() {}
+    multi_funct_strings() {}
   
 #ifndef DOXYGEN_NO_O2NS
 #endif
 
   private:
 
-    multi_funct11_strings(const multi_funct11_strings &);
-    multi_funct11_strings& operator=(const multi_funct11_strings&);
+    multi_funct_strings(const multi_funct_strings &);
+    multi_funct_strings& operator=(const multi_funct_strings&);
 
 #endif
 

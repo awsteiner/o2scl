@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
   double result;
   ubvector init(2);
   
-  multi_funct11 fx=funx;
+  multi_funct fx=funx;
 
   /// 1d to vectors
   

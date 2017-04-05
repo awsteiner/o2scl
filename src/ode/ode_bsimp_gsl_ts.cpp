@@ -87,8 +87,8 @@ int main(void) {
   ubvector y2(2), dydx2(2), yout2(2), yerr2(2), dydx_out2(2);
   double y3[2], dydx3[2], yout3[2], yerr3[2], dydx_out3[2];
   
-  ode_rkck_gsl<ubvector,ubvector,ubvector,ode_funct11> rk;
-  ode_bsimp_gsl<ode_funct11,ode_jac_funct11> gb;
+  ode_rkck_gsl<ubvector,ubvector,ubvector,ode_funct> rk;
+  ode_bsimp_gsl<ode_funct,ode_jac_funct> gb;
 
 #ifdef O2SCL_NEVER_DEFINED
 }{
@@ -96,8 +96,8 @@ int main(void) {
   
   gsl_odeiv_step *s=gsl_odeiv_step_alloc(gsl_odeiv_step_bsimp,2);
   
-  ode_funct11 od=derivs;
-  ode_jac_funct11 oj=jac;
+  ode_funct od=derivs;
+  ode_jac_funct oj=jac;
   gsl_odeiv_system sys={derivs_gsl,jac_gsl,2,0};
   
   x1=1.0;

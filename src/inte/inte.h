@@ -41,7 +41,7 @@ namespace o2scl {
       classes report the number of function evaluations used
       in addition to the number of iterations which were taken
   */
-  template<class func_t=funct11> class inte {
+  template<class func_t=funct> class inte {
     
   public:
   

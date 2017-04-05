@@ -89,7 +89,7 @@ namespace o2scl {
       rather than in roots/brent.c . Thus, everything looks fine now.
       \endcomment
   */
-  template<class func_t=funct11> class root_brent_gsl : 
+  template<class func_t=funct> class root_brent_gsl : 
   public root_bkt<func_t> {
     
   public:

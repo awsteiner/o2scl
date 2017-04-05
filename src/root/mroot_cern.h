@@ -50,7 +50,7 @@ namespace o2scl {
       \mathrm{tol\_abs} \times \mathrm{max} | x_i |
       \f]
 
-      This routine treats the functions specified as a \ref mm_funct11
+      This routine treats the functions specified as a \ref mm_funct
       object slightly differently than \ref o2scl::mroot_hybrids. First
       the equations should be numbered (as much as is possible) in
       order of increasing nonlinearity. Also, instead of calculating
@@ -90,9 +90,9 @@ namespace o2scl {
       based on \ref More79 and \ref More80 and is documented at
       http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/c201/top.html
   */
-    template<class func_t=mm_funct11,
+    template<class func_t=mm_funct,
       class vec_t=boost::numeric::ublas::vector<double>, 
-      class jfunc_t=jac_funct11> class mroot_cern : 
+      class jfunc_t=jac_funct> class mroot_cern : 
       public mroot<func_t,vec_t,jfunc_t> {
 
 #ifndef DOXYGEN_INTERNAL

@@ -77,7 +77,7 @@ namespace o2scl {
       See \ref gslinte_subsect in the User's guide for general
       information about the GSL integration classes.
   */
-  template<class func_t=funct11> class inte_qaws_gsl : 
+  template<class func_t=funct> class inte_qaws_gsl : 
   public inte_cheb_gsl<func_t> {
     
 #ifndef DOXYGEN_INTERNAL
@@ -234,7 +234,7 @@ namespace o2scl {
 	     double &result, double &abserr, int &err_reliable) {
     
     // Transformed function object for inte_cheb_series()
-    funct11 fmp=
+    funct fmp=
     std::bind(std::mem_fn<double(double,func_t &)>
 	      (&inte_transform_gsl<func_t>::transform),
 	      this,std::placeholders::_1,func);

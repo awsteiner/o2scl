@@ -61,8 +61,8 @@ int main(void) {
 
   t.set_output_level(2);
 
-  mroot_broyden<mm_funct11> gmb1;
-  mm_funct11 fmf=gfn;
+  mroot_broyden<mm_funct> gmb1;
+  mm_funct fmf=gfn;
 
   // 1 - Normal execution using a member function
   x[0]=0.5;
@@ -129,7 +129,7 @@ int main(void) {
 #ifdef NEVER_DEFINED
 
   // 1 - Normal execution using a member function
-  mm_funct11 fmf=std::bind
+  mm_funct fmf=std::bind
     (std::mem_fn<int(size_t,const Eigen::VectorXd &,Eigen::VectorXd &)>
      (&cl::mfn),&acl,std::placeholders::_1,std::placeholders::_2,
      std::placeholders::_3);

@@ -55,7 +55,7 @@ double log_recip_exact(double alpha) {
 int main(void) {
   test_mgr t;
   t.set_output_level(2);
-  inte_qags_gsl<funct11> it;
+  inte_qags_gsl<funct> it;
 
   double ans,exact;
 
@@ -66,7 +66,7 @@ int main(void) {
   cout << endl;
 
   double alf=1.0, herr;
-  funct11 tf3=std::bind(log_over_sqrt,std::placeholders::_1,alf);
+  funct tf3=std::bind(log_over_sqrt,std::placeholders::_1,alf);
 
   exact=-4.0;
   it.verbose=1;
@@ -114,8 +114,8 @@ int main(void) {
   size_t limit=512;
   double alpha=-0.5;
 	
-  inte_qags_gsl<funct11> Q;
-  funct11 f=std::bind(log_recip,std::placeholders::_1,alpha);
+  inte_qags_gsl<funct> Q;
+  funct f=std::bind(log_recip,std::placeholders::_1,alpha);
 	
   // setup GSL data
   gsl_integration_workspace*

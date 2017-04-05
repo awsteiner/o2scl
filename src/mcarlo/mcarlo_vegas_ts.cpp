@@ -120,7 +120,7 @@ int main(void) {
 
       gm.mode=k;
 
-      multi_funct11 tf=test_fun;
+      multi_funct tf=test_fun;
 
       //gm.verbose=2;
 
@@ -153,7 +153,7 @@ int main(void) {
       b[1]=M_PI;
       b[2]=M_PI;
     
-    multi_funct11 tf=test_fun;
+    multi_funct tf=test_fun;
     
     mcarlo_vegas<> gm;
     gm.verbose=v;

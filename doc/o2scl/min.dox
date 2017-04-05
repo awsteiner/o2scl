@@ -47,7 +47,7 @@
     o2scl::mmin_bfgs2 are intended for use when the \gradient of the
     function is available, but they can also automaticallly compute
     the \gradient numerically. The standard way to provide the
-    \gradient is to use an object of type \ref o2scl::grad_funct11 .
+    \gradient is to use an object of type \ref o2scl::grad_funct .
     The user may specify the automatic gradient object of type \ref
     o2scl::gradient which is used by the minimizer to compute the
     gradient numerically when a function is not specified.

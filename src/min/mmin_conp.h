@@ -44,13 +44,13 @@ namespace o2scl {
       See an example for the usage of this class in 
       \ref ex_mmin_sect .
   */
-  template<class func_t = multi_funct11, 
+  template<class func_t = multi_funct, 
     class vec_t = boost::numeric::ublas::vector<double>, 
-    class dfunc_t = grad_funct11,
-    class auto_grad_t = gradient<multi_funct11,
+    class dfunc_t = grad_funct,
+    class auto_grad_t = gradient<multi_funct,
     boost::numeric::ublas::vector<double> >,
     class def_auto_grad_t = 
-    gradient_gsl<multi_funct11,boost::numeric::ublas::vector<double> > > 
+    gradient_gsl<multi_funct,boost::numeric::ublas::vector<double> > > 
     class mmin_conp : 
     public mmin_conf<func_t,vec_t,dfunc_t,auto_grad_t,def_auto_grad_t> {
     

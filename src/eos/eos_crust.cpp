@@ -86,7 +86,7 @@ double eos_crust::gibbs(int Z, int A) {
   ubvector nx(1);
   
   nx[0]=e.n;
-  mm_funct11 mff=std::bind
+  mm_funct mff=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &, int &)>
      (&eos_crust::eq274),this,std::placeholders::_1,std::placeholders::_2,
      std::placeholders::_3,Z);

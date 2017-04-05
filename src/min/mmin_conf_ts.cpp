@@ -100,8 +100,8 @@ int main(void) {
   
   cout.setf(ios::scientific);
 
-  multi_funct11 mf=minfun;
-  grad_funct11 mfd=minfund;
+  multi_funct mf=minfun;
+  grad_funct mfd=minfund;
 
   /*
     Note that the ubvector and array versions exactly match on my
@@ -126,9 +126,9 @@ int main(void) {
   cout << endl;
   
   // Show that we can use a user-specified automatic gradient object
-  mmin_conf<multi_funct11,ubvector,grad_funct11,
-    gradient<multi_funct11,ubvector>,
-    gradient_gsl_new<multi_funct11,ubvector> > g3;
+  mmin_conf<multi_funct,ubvector,grad_funct,
+    gradient<multi_funct,ubvector>,
+    gradient_gsl_new<multi_funct,ubvector> > g3;
  
 // Emacs has trouble with tabification
 #ifdef O2SCL_NEVER_DEFINED

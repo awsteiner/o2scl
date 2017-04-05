@@ -52,8 +52,8 @@ int main(void) {
   cl acl;
   double a, b, r;
 
-  funct11 fmg1=gfn;
-  funct11 fmg2=gfn2;
+  funct fmg1=gfn;
+  funct fmg2=gfn2;
   funct_gsl fg1(fmg1);
   funct_gsl fg2(fmg2);
 
@@ -127,7 +127,7 @@ int main(void) {
   }
 
   // Using a funct object and the solve_bkt() interface
-  funct11 fmf=std::bind(std::mem_fn<double(double)>
+  funct fmf=std::bind(std::mem_fn<double(double)>
 			(&cl::mfn),&acl,std::placeholders::_1);
   root_brent_gsl<> grb2;
   a=-1.0;

@@ -106,7 +106,7 @@ namespace o2scl {
       if the function goes out of bounds as in exc_mroot_hybrids.
       
   */
-  template<class func_t=funct11, class dfunc_t=func_t> class root_stef : 
+  template<class func_t=funct, class dfunc_t=func_t> class root_stef : 
   public root_de<func_t,dfunc_t> {
     
   protected:

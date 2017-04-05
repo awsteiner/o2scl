@@ -171,7 +171,7 @@ int main(void) {
   vector_copy(40,y,ay);
   vector_copy(40,sigma,asigma);
   
-  fit_funct11 fff=func;
+  fit_funct fff=func;
   chi_fit_funct<> cff(40,axdat,ay,asigma,fff);
   //cff.auto_jac.epsrel=GSL_SQRT_DBL_EPSILON;
   cff.auto_jac.set_epsrel(1.0e-4);
@@ -325,7 +325,7 @@ int main(void) {
     
     fit_nonlin<> gf;
     
-    fit_funct11 ff=func;
+    fit_funct ff=func;
 
     double chi2;
     ubmatrix mycovar(3,3);
@@ -360,7 +360,7 @@ int main(void) {
 
     fit_nonlin<> gf;
   
-    fit_funct11 ff=func;
+    fit_funct ff=func;
 
     double chi2;
     ubmatrix mycovar(3,3);
@@ -403,7 +403,7 @@ int main(void) {
     fit_nonlin<> gf;
     gf.use_scaled=false;
     
-    fit_funct11 ff=func;
+    fit_funct ff=func;
 
     double chi2;
     ubmatrix mycovar(3,3);
@@ -434,7 +434,7 @@ int main(void) {
     fit_nonlin<> gf;
     gf.use_scaled=false;
   
-    fit_funct11 ff=func;
+    fit_funct ff=func;
 
     double chi2;
     ubmatrix mycovar(3,3);

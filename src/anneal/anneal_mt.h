@@ -70,7 +70,7 @@ namespace o2scl {
       \future There may be a good way to remove the function indirection
       here to make this class a bit faster.
   */
-  template<class func_t=multi_funct11,
+  template<class func_t=multi_funct,
     class vec_t=boost::numeric::ublas::vector<double>,
     class rng_t=int, class rng_dist_t=rng_gsl>
     class anneal_mt : public anneal_base<func_t,vec_t,rng_t,rng_dist_t> {

@@ -310,8 +310,8 @@ int main(void) {
     cout << "O2scl nonlinear fit:" << endl;
     fit_nonlin<> gf;
     vector<string> vars={"a","b"};
-    fit_funct11_strings ffs("a*exp(x)+b*sqrt(x)",vars,"x");
-    chi_fit_funct<ubvector,ubmatrix,fit_funct11_strings> 
+    fit_funct_strings ffs("a*exp(x)+b*sqrt(x)",vars,"x");
+    chi_fit_funct<ubvector,ubmatrix,fit_funct_strings> 
       cff(ndat,xdat,ydat,yerr,ffs);
     cff.auto_jac.set_epsrel(1.0e-4);
     

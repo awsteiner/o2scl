@@ -98,9 +98,9 @@ int main(void) {
   cout << "----------------------------------------------------" << endl;
   cout << "Compute APR EOS for testing:" << endl;
 
-  mroot_hybrids<mm_funct11> gmh;
-  mroot_cern<mm_funct11> cm;
-  mm_funct11 nf=std::bind
+  mroot_hybrids<mm_funct> gmh;
+  mroot_cern<mm_funct> cm;
+  mm_funct nf=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
      (&simple_apr::nstarfun),&sa,std::placeholders::_1,std::placeholders::_2,
      std::placeholders::_3);

@@ -484,7 +484,7 @@ double nucmass_radius::eval_N(double Rfermi, double d, double rho0) {
 
 void nucmass_radius::eval_N_err(double Rfermi, double d, double rho0,
 				double &N, double &N_err) {
-  funct11 f=std::bind(std::mem_fn<double(double,double,double,double)>
+  funct f=std::bind(std::mem_fn<double(double,double,double,double)>
 		      (&nucmass_radius::iand2_new),
 		      this,std::placeholders::_1,Rfermi,d,rho0);
   it.integ_err(f,0.0,0.0,N,N_err);
@@ -503,7 +503,7 @@ double nucmass_radius::iand2(double r) {
 
 double nucmass_radius::solve(double x) {
   uRfermi=x;
-  funct11 it_fun2=std::bind(std::mem_fn<double(double)>
+  funct it_fun2=std::bind(std::mem_fn<double(double)>
 			    (&nucmass_radius::iand2),
 			    this,std::placeholders::_1);
   return it.integ(it_fun2,0.0,0.0)-uN;
@@ -522,13 +522,13 @@ void nucmass_radius::eval_rms_rho(double rho0, double N, double d,
   Rcd=cbrt(3.0*N/4.0/o2scl_const::pi/rho0);
       
   uRfermi=Rcd;
-  funct11 solve_fun=std::bind(std::mem_fn<double(double)>
+  funct solve_fun=std::bind(std::mem_fn<double(double)>
 			      (&nucmass_radius::solve),
 			      this,std::placeholders::_1);
   cr.solve(uRfermi,solve_fun);
   Rfermi=uRfermi;
 
-  funct11 it_fun=std::bind(std::mem_fn<double(double)>
+  funct it_fun=std::bind(std::mem_fn<double(double)>
 			    (&nucmass_radius::iand),
 			    this,std::placeholders::_1);
   Rrms=sqrt(it.integ(it_fun,0.0,0.0)/N);
@@ -544,7 +544,7 @@ void nucmass_radius::eval_rms_rsq(double Rfermi, double N, double d,
   
   uRfermi=Rfermi;
   urho0=1.0;
-  funct11 it_fun2=std::bind(std::mem_fn<double(double)>
+  funct it_fun2=std::bind(std::mem_fn<double(double)>
 			    (&nucmass_radius::iand2),
 			    this,std::placeholders::_1);
   rho0=N/it.integ(it_fun2,0.0,0.0);
@@ -552,7 +552,7 @@ void nucmass_radius::eval_rms_rsq(double Rfermi, double N, double d,
 
   Rcd=cbrt(3.0*N/4.0/o2scl_const::pi/rho0);
 
-  funct11 it_fun=std::bind(std::mem_fn<double(double)>
+  funct it_fun=std::bind(std::mem_fn<double(double)>
 			   (&nucmass_radius::iand),
 			   this,std::placeholders::_1);
   Rrms=sqrt(it.integ(it_fun,0.0,0.0)/N);

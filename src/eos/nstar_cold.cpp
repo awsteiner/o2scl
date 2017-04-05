@@ -136,7 +136,7 @@ int nstar_cold::calc_eos(double np_0) {
   double oldpr=0.0;
   pressure_dec=0.0;
   
-  funct11 sf=std::bind(std::mem_fn<double(double)>(&nstar_cold::solve_fun),
+  funct sf=std::bind(std::mem_fn<double(double)>(&nstar_cold::solve_fun),
 		       this,std::placeholders::_1);
   
   if (verbose>0) {
@@ -390,7 +390,7 @@ double nstar_cold::calc_urca(double np_0) {
   if (fabs(np_0)<1.0e-12) x=nb_start/3.0;
   else x=np_0;
 
-  funct11 sf=std::bind(std::mem_fn<double(double)>
+  funct sf=std::bind(std::mem_fn<double(double)>
 		       (&nstar_cold::solve_fun),
 		       this,std::placeholders::_1);
   

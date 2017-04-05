@@ -37,7 +37,7 @@ namespace o2scl {
   typedef std::function<
     int(double,size_t,const boost::numeric::ublas::vector<double> &,
 	boost::numeric::ublas::matrix<double> &,
-	boost::numeric::ublas::vector<double> &) > ode_jac_funct11;
+	boost::numeric::ublas::vector<double> &) > ode_jac_funct;
 
 #ifndef DOXYGEN_NO_O2NS
 }

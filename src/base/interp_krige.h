@@ -47,6 +47,10 @@ namespace o2scl {
       
       See also the \ref intp_section section of the \o2 User's guide. 
 
+      \note The function \ref set() stores a pointer to the covariance
+      function so it cannot go out of scope before any of the
+      interpolation functions are called.
+
       \note This class is experimental.
   */
   template<class vec_t, class vec2_t=vec_t,

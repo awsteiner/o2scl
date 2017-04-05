@@ -242,7 +242,7 @@ int eos_nse_full::calc_density_by_min(dense_matter &dm) {
     n_nuc2[i]=n_nuc[i]*1.01;
   }
 
-  multi_funct11 mf=std::bind
+  multi_funct mf=std::bind
     (std::mem_fn<double(const ubvector &,dense_matter &)>
      (&eos_nse_full::free_energy),
      this,std::placeholders::_2,std::ref(dm));
@@ -385,7 +385,7 @@ int eos_nse_full::calc_density_saha(dense_matter &dm) {
     }
     
     // Call solver
-    mm_funct11 mf=std::bind
+    mm_funct mf=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &,dense_matter &,
 		       bool)>(&eos_nse_full::solve_fixnp),
        this,std::placeholders::_1,std::placeholders::_2,
@@ -445,7 +445,7 @@ int eos_nse_full::calc_density_saha(dense_matter &dm) {
     }
 
     // Call solver
-    mm_funct11 mf=std::bind
+    mm_funct mf=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &,dense_matter &,
 		       bool)>(&eos_nse_full::solve_fixnp),
        this,std::placeholders::_1,std::placeholders::_2,
@@ -660,7 +660,7 @@ int eos_nse_full::bracket_mu_solve(double &mun_low, double &mun_high,
   rbg.verbose=2;
   
   // Call solver
-  o2scl::funct11 f11=std::bind
+  o2scl::funct f11=std::bind
     (std::mem_fn<double(double,double &,double &,o2scl::dense_matter &)>
      (&o2scl::eos_nse_full::mup_for_Ye),
      this,std::placeholders::_1,std::ref(mun_low),
@@ -901,7 +901,7 @@ double eos_nse_full::mup_for_Ye(double mup, double &mun_low,
   //rbg.verbose=1;
   
   // Call solver
-  o2scl::funct11 f11=std::bind
+  o2scl::funct f11=std::bind
     (std::mem_fn<double(double,o2scl::dense_matter &)>
      (&o2scl::eos_nse_full::solve_mun),
      this,std::placeholders::_1,std::ref(dm));
@@ -1324,7 +1324,7 @@ int eos_nse_full::calc_density_noneq(dense_matter &dm) {
     
     if (include_muons) {
 
-      funct11 f=std::bind
+      funct f=std::bind
 	(std::mem_fn<double(double,double,dense_matter &)>
 	 (&eos_nse_full::charge_neutrality),
 	 this,std::placeholders::_1,np_tot,std::ref(dm));

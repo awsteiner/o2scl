@@ -62,11 +62,11 @@ int main(void) {
   t.set_output_level(2);
 
   // 1 - Non-templated access through a funct object 
-  funct11 fmf=std::bind(std::mem_fn<double(double)>
+  funct fmf=std::bind(std::mem_fn<double(double)>
 			(&cl::mfn),&acl,std::placeholders::_1);
-  funct11 fmfd=std::bind(std::mem_fn<double(double)>
+  funct fmfd=std::bind(std::mem_fn<double(double)>
 			 (&cl::mfnd),&acl,std::placeholders::_1);
-  root_stef<funct11,funct11> cr1;
+  root_stef<funct,funct> cr1;
   a=1.0e-5;
   cr1.verbose=1;
   cr1.solve_de(a,fmf,fmfd);

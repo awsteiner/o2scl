@@ -47,8 +47,8 @@ int main(void) {
   t.set_output_level(2);
 
   double x, min;
-  funct11 f=minfun;
-  funct11 f2=minfun2;
+  funct f=minfun;
+  funct f2=minfun2;
   min_brent_boost<> mb;
   
   x=0.2;

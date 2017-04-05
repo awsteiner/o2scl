@@ -233,7 +233,7 @@ int eos_had_potential::calc_e(fermion &ne, fermion &pr,
   set_n_and_p(ne,pr);
   
   double tmp;
-  funct11 df=std::bind(std::mem_fn<double(double)>
+  funct df=std::bind(std::mem_fn<double(double)>
 		       (&eos_had_potential::energy),
 		       this,std::placeholders::_1);
 

@@ -40,7 +40,7 @@ namespace o2scl {
       This class is experimental.
 
       Default template arguments
-      - \c func_t - \ref ode_funct11 
+      - \c func_t - \ref ode_funct 
       - \c mat_t - \ref boost::numeric::ublas::matrix \< double \>
       - \c vec_t - \ref boost::numeric::ublas::vector \< double \>
       - \c vec_int_t - \ref boost::numeric::ublas::vector \< int \>
@@ -48,7 +48,7 @@ namespace o2scl {
       \future Make a class which performs an iterative linear
       solver which uses sparse matrices like ode_it_solve?
   */
-  template<class func_t=ode_funct11, 
+  template<class func_t=ode_funct, 
     class mat_t=boost::numeric::ublas::matrix<double>,
     class vec_t=boost::numeric::ublas::vector<double>, 
     class vec_int_t=boost::numeric::ublas::vector<int> > 

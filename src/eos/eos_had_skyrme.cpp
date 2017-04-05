@@ -418,12 +418,12 @@ int eos_had_skyrme::calpar(double gt0, double gt3, double galpha,
   x[1]=gt3;
   x[2]=galpha;
 
-  mm_funct11 fmf=std::bind
+  mm_funct fmf=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
      (&eos_had_skyrme::calparfun),
      this,std::placeholders::_1,std::placeholders::_2,
      std::placeholders::_3);
-  mm_funct11 fmf2=std::bind
+  mm_funct fmf2=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
      (&eos_had_skyrme::calparfun2),
      this,std::placeholders::_1,std::placeholders::_2,

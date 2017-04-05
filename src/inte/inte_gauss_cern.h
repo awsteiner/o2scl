@@ -93,7 +93,7 @@ namespace o2scl {
 
       \future Allow user to change \c cst?
   */
-  template<class func_t=funct11> class inte_gauss_cern : public inte<func_t> {
+  template<class func_t=funct> class inte_gauss_cern : public inte<func_t> {
 
     public:
   

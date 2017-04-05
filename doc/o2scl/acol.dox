@@ -2,8 +2,10 @@
 
     \o2 contains a command-line utility, \c acol, designed to
     facilitate the manipulation of two-dimensional data tables, either
-    stored in a generic text-file, or \ref o2scl::table objects stored
-    using the I/O facilities in \o2.
+    stored in a generic text-file, or objects (of type \ref
+    o2scl::table, \ref o2scl::hist, \ref o2scl::table3d, \ref
+    o2scl::hist_2d, and \ref o2scl::contour_line) stored using the
+    HDF5 I/O facilities in \o2.
 
     \c acol has a command, \c run, which allows you to run
     a set of commands which are given in a separate file. An example

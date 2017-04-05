@@ -92,7 +92,7 @@ int eos_quark_njl::set_parameters(double lambda, double fourferm,
   bx[1]=1.0;
   bx[2]=2.0;
   
-  mm_funct11 fmf=std::bind
+  mm_funct fmf=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
      (&eos_quark_njl::B0fun),
      this,std::placeholders::_1,std::placeholders::_2,
@@ -123,7 +123,7 @@ int eos_quark_njl::calc_p(quark &u, quark &d, quark &s, thermo &th) {
     x[1]=d.qq;
     x[2]=s.qq;
 
-    mm_funct11 fmf=std::bind
+    mm_funct fmf=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
        (&eos_quark_njl::gapfunqq),
        this,std::placeholders::_1,std::placeholders::_2,
@@ -137,7 +137,7 @@ int eos_quark_njl::calc_p(quark &u, quark &d, quark &s, thermo &th) {
     x[1]=d.ms;
     x[2]=s.ms;
 
-    mm_funct11 fmf=std::bind
+    mm_funct fmf=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
        (&eos_quark_njl::gapfunms),
        this,std::placeholders::_1,std::placeholders::_2,
@@ -170,7 +170,7 @@ int eos_quark_njl::calc_temp_p(quark &u, quark &d, quark &s,
     x[1]=d.qq;
     x[2]=s.qq;
 
-    mm_funct11 fmf=std::bind
+    mm_funct fmf=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
        (&eos_quark_njl::gapfunqqT),
        this,std::placeholders::_1,std::placeholders::_2,
@@ -184,7 +184,7 @@ int eos_quark_njl::calc_temp_p(quark &u, quark &d, quark &s,
     x[1]=d.ms;
     x[2]=s.ms;
 
-    mm_funct11 fmf=std::bind
+    mm_funct fmf=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
        (&eos_quark_njl::gapfunmsT),
        this,std::placeholders::_1,std::placeholders::_2,
@@ -571,7 +571,7 @@ int eos_quark_njl::calc_eq_temp_p(quark &u, quark &d, quark &s,
     pa.ms=u.ms;
     pa.mu=u.mu;
     pa.m=u.m;
-    funct11 fqq=std::bind(std::mem_fn<double(double,const njtp &)>
+    funct fqq=std::bind(std::mem_fn<double(double,const njtp &)>
 			  (&eos_quark_njl::iqq),
 			  this,std::placeholders::_1,pa);
     iret1=it->integ_err(fqq,0.0,L,u.qq,ierr);
@@ -579,13 +579,13 @@ int eos_quark_njl::calc_eq_temp_p(quark &u, quark &d, quark &s,
   }
 
   {
-  funct11 fde=std::bind(std::mem_fn<double(double,const njtp &)>
+  funct fde=std::bind(std::mem_fn<double(double,const njtp &)>
 			(&eos_quark_njl::ide),
 			this,std::placeholders::_1,pa);
-  funct11 fed=std::bind(std::mem_fn<double(double,const njtp &)>
+  funct fed=std::bind(std::mem_fn<double(double,const njtp &)>
 			(&eos_quark_njl::ied),
 			this,std::placeholders::_1,pa);
-  funct11 fpr=std::bind(std::mem_fn<double(double,const njtp &)>
+  funct fpr=std::bind(std::mem_fn<double(double,const njtp &)>
 			(&eos_quark_njl::ipr),
 			this,std::placeholders::_1,pa);
   iret2=it->integ_err(fde,0.0,L,u.n,ierr);
@@ -609,20 +609,20 @@ int eos_quark_njl::calc_eq_temp_p(quark &u, quark &d, quark &s,
     pa.ms=d.ms;
     pa.mu=d.mu;
     pa.m=d.m;
-    funct11 fqq=std::bind(std::mem_fn<double(double,const njtp &)>
+    funct fqq=std::bind(std::mem_fn<double(double,const njtp &)>
 			  (&eos_quark_njl::iqq),
 			  this,std::placeholders::_1,pa);
     iret1=it->integ_err(fqq,0.0,L,d.qq,ierr);
     d.qq-=L;
   }
   {
-  funct11 fde=std::bind(std::mem_fn<double(double,const njtp &)>
+  funct fde=std::bind(std::mem_fn<double(double,const njtp &)>
 			(&eos_quark_njl::ide),
 			this,std::placeholders::_1,pa);
-  funct11 fed=std::bind(std::mem_fn<double(double,const njtp &)>
+  funct fed=std::bind(std::mem_fn<double(double,const njtp &)>
 			(&eos_quark_njl::ied),
 			this,std::placeholders::_1,pa);
-  funct11 fpr=std::bind(std::mem_fn<double(double,const njtp &)>
+  funct fpr=std::bind(std::mem_fn<double(double,const njtp &)>
 			(&eos_quark_njl::ipr),
 			this,std::placeholders::_1,pa);
 
@@ -647,20 +647,20 @@ int eos_quark_njl::calc_eq_temp_p(quark &u, quark &d, quark &s,
     pa.ms=s.ms;
     pa.mu=s.mu;
     pa.m=s.m;
-    funct11 fqq=std::bind(std::mem_fn<double(double,const njtp &)>
+    funct fqq=std::bind(std::mem_fn<double(double,const njtp &)>
 			  (&eos_quark_njl::iqq),
 			  this,std::placeholders::_1,pa);
     iret1=it->integ_err(fqq,0.0,L,s.qq,ierr);
     s.qq-=L;
   }
   {
-  funct11 fde=std::bind(std::mem_fn<double(double,const njtp &)>
+  funct fde=std::bind(std::mem_fn<double(double,const njtp &)>
 			(&eos_quark_njl::ide),
 			this,std::placeholders::_1,pa);
-  funct11 fed=std::bind(std::mem_fn<double(double,const njtp &)>
+  funct fed=std::bind(std::mem_fn<double(double,const njtp &)>
 			(&eos_quark_njl::ied),
 			this,std::placeholders::_1,pa);
-  funct11 fpr=std::bind(std::mem_fn<double(double,const njtp &)>
+  funct fpr=std::bind(std::mem_fn<double(double,const njtp &)>
 			(&eos_quark_njl::ipr),
 			this,std::placeholders::_1,pa);
   iret2=it->integ_err(fde,0.0,L,s.n,ierr);
@@ -688,7 +688,7 @@ int eos_quark_njl::calc_eq_temp_p(quark &u, quark &d, quark &s,
     pa.mu=u.mu;
     pa.m=u.m;
     {
-      funct11 fqq=std::bind(std::mem_fn<double(double,const njtp &)>
+      funct fqq=std::bind(std::mem_fn<double(double,const njtp &)>
 			    (&eos_quark_njl::iqq),
 			    this,std::placeholders::_1,pa);
       iret1=it->integ_err(fqq,0.0,L,qqt,ierr);
@@ -699,7 +699,7 @@ int eos_quark_njl::calc_eq_temp_p(quark &u, quark &d, quark &s,
     pa.mu=d.mu;
     pa.m=d.m;
     {
-      funct11 fqq=std::bind(std::mem_fn<double(double,const njtp &)>
+      funct fqq=std::bind(std::mem_fn<double(double,const njtp &)>
 			    (&eos_quark_njl::iqq),
 			    this,std::placeholders::_1,pa);
       iret2=it->integ_err(fqq,0.0,L,qqt,ierr);
@@ -710,7 +710,7 @@ int eos_quark_njl::calc_eq_temp_p(quark &u, quark &d, quark &s,
     pa.mu=s.mu;
     pa.m=s.m;
     {
-      funct11 fqq=std::bind(std::mem_fn<double(double,const njtp &)>
+      funct fqq=std::bind(std::mem_fn<double(double,const njtp &)>
 			    (&eos_quark_njl::iqq),
 			    this,std::placeholders::_1,pa);
     iret3=it->integ_err(fqq,0.0,L,qqt,ierr);

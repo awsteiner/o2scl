@@ -66,8 +66,8 @@ int main(void) {
   cout.setf(ios::scientific);
   cout.precision(10);
   
-  inte_qagi_gsl<funct11> it;
-  funct11 tf=gaussian;
+  inte_qagi_gsl<funct> it;
+  funct tf=gaussian;
   exact=sqrt(o2scl_const::pi);
   it.verbose=1;
   ans=it.integ(tf,0.0,0.0);
@@ -112,8 +112,8 @@ int main(void) {
   // optional value of alpha from command line
   double alpha=1.0;
 	
-  inte_qagi_gsl<funct11> Q;
-  funct11 f=std::bind(defn_symmetric,std::placeholders::_1,alpha);
+  inte_qagi_gsl<funct> Q;
+  funct f=std::bind(defn_symmetric,std::placeholders::_1,alpha);
   
   // setup GSL data
   gsl_integration_workspace *work=gsl_integration_workspace_alloc(limit);

@@ -139,7 +139,7 @@ namespace o2scl {
       \right]
       \f}
   */
-  template<class func_t=funct11, 
+  template<class func_t=funct, 
     class vec_t=boost::numeric::ublas::vector<double> > 
     class deriv_eqi : public deriv_base<func_t> {
     public:
@@ -320,7 +320,7 @@ namespace o2scl {
 	this class since it computes higher-order derivatives directly.
     */
     virtual int deriv_err_int
-    (double x, funct11 &func, double &dfdx, double &err) {
+    (double x, funct &func, double &dfdx, double &err) {
       return success;
     }
     

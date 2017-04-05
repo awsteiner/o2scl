@@ -52,7 +52,7 @@ int main(void) {
   
   astep_gsl<> ga;
 
-  ode_funct11 od=derivs;
+  ode_funct od=derivs;
 
   // Test astep(). No need to compute the initial derivative
   x=1.0;
@@ -70,7 +70,7 @@ int main(void) {
     if (x>5.0-1.0e-4) i=50;
   }
 
-  ode_funct11 od11=derivs;
+  ode_funct od11=derivs;
   astep_gsl<> ga11;
 
   // Test astep(). No need to compute the initial derivative

@@ -57,7 +57,7 @@ int main(void) {
   double a, b;
 
   // 1 - Non-templated access through a funct object 
-  funct11 fmf=std::bind(std::mem_fn<double(double)>
+  funct fmf=std::bind(std::mem_fn<double(double)>
 			(&cl::mfn),&acl,std::placeholders::_1);
   root_bkt_cern<> cr1;
   a=1.0e-5;
@@ -67,7 +67,7 @@ int main(void) {
 
   // Use the bracketing algorithm. These are challenging because
   // the sqrt function is undefined over a large interval.
-  funct11 fmf2=std::bind(std::mem_fn<double(double)>
+  funct fmf2=std::bind(std::mem_fn<double(double)>
 			(&cl::mfn2),&acl,std::placeholders::_1);
   
   cr1.bracket_iters=40;
