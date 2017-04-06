@@ -556,17 +556,14 @@ extern "C" {
   int o2scl_acol_get_column(void *vp, char *col_name,
 			    int &n, double *&ptr) {
     o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
-    if (amp->type=="table3d") {
-      std::cout << "Cannot get column for table3d object."
-		<< std::endl;
-      return 1;
-    }
     if (amp->type!="table") {
-      std::cerr << "No table loaded." << std::endl;
-      return 2;
+      return 1;
     }
     n=amp->table_obj.get_nlines();
     std::string stmp=col_name;
+    if (amp->table_obj.is_column(stmp)==false) {
+      return 2;
+    }
     const std::vector<double> &col=amp->table_obj.get_column(stmp);
     ptr=(double *)&col[0];
     return 0;
@@ -640,8 +637,6 @@ extern "C" {
 			   double *&data) {
     o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
     if (amp->type!="table3d") {
-      std::cout << "No table3d object loaded."
-		<< std::endl;
       return 1;
     }
 
@@ -657,6 +652,10 @@ extern "C" {
 
     amp->stemp.resize(nx*ny);
     std::string stmp=slice_name;
+    size_t itmp;
+    if (!amp->table3d_obj.is_slice(stmp,itmp)) {
+      return 2;
+    }
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
     const ubmatrix &m=amp->table3d_obj.get_slice(stmp);
     for(size_t i=0;i<nx;i++) {
@@ -677,8 +676,6 @@ extern "C" {
 			     double *&data) {
     o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
     if (amp->type!="hist_2d") {
-      std::cout << "No hist_2d object loaded."
-		<< std::endl;
       return 1;
     }
 

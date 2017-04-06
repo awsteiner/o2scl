@@ -774,12 +774,20 @@ int acol_manager::run_o2graph() {
      new o2scl::comm_option_mfptr<acol_manager>
      (this,&acol_manager::comm_none),both},
     {0,"errorbar","Plot the specified columns with errobars.",4,5,
-     "<x> <y> <yerr> <xerr> [kwargs]",
-     ((std::string)"Plot column <y> versus column <x> with errorbars."),
+     "<x> <y> <xerr> <yerr> [kwargs]",
+     ((std::string)"For table objects, plot column <y> versus ")+
+     "column <x> with symmetric error bars "
+     "given in column <xerr> and <yerr>. For no uncertainty in either "+
+     "the x or y direction, just use \"0\" for <xerr> or <yerr>, "+
+     "respectively. New kwargs for the errorbar command are "+
+     "ecolor=None, elinewidth=None, capsize=None, barsabove=False, "+
+     "lolims=False, uplims=False, xlolims=False, xuplims=False, "+
+     "errorevery=1, capthick=None, hold=None",
      new o2scl::comm_option_mfptr<acol_manager>
      (this,&acol_manager::comm_none),both},
     {0,"plot1","Plot the specified column.",1,2,"<y> [kwargs]",
-     ((std::string)"Plot column <y> versus row number. Some useful ")+
+     ((std::string)"For table objects, plot column <y> versus ")+
+     "row number. Some useful "+
      "kwargs are color (c), dashes, linestyle (ls), linewidth (lw), "+
      "marker, markeredgecolor (mec), markeredgewidth (mew), "+
      "markerfacecolor (mfc), markerfacecoloralt (mfcalt), markersize "+
@@ -787,30 +795,28 @@ int acol_manager::run_o2graph() {
      "y -plot1 y ls='--',marker='o' -show",
      new o2scl::comm_option_mfptr<acol_manager>
      (this,&acol_manager::comm_none),both},
-    {0,"plotm","Plot the specified columns from multiple files.",
-     2,2,"<x> <y>",((std::string)"After using -plot-files to specify ")+
-     "a list of files, plot column <y> versus column <x> for all "+
-     "of the specified files. Some useful "+
+    {0,"plotm","Plot the specified columns from tables in multiple files.",
+     2,3,"<x> <y>",((std::string)"After using -plot-files to specify ")+
+     "a list of files, plot column <y> versus column <x> for the first "+
+     "table object in all of the specified files. Some useful "+
      "kwargs are color (c), dashes, linestyle (ls), linewidth (lw), "+
      "marker, markeredgecolor (mec), markeredgewidth (mew), "+
      "markerfacecolor (mfc), markerfacecoloralt (mfcalt), markersize "+
      "(ms). For example: o2graph -plot-files file1.o2 file2.o "+
      "-plotm xcol ycol lw=0,marker='+' -show",
      new o2scl::comm_option_mfptr<acol_manager>
-     (this,&acol_manager::comm_none),
-     both},
-    {0,"plot1m","Plot the specified column from multiple files.",
+     (this,&acol_manager::comm_none),both},
+    {0,"plot1m","Plot the specified column from tables in multiple files.",
      1,1,"<y>",((std::string)"After using -plot-files to specify ")+
-     "a list of files, plot column <y> versus row numberfor all "+
-     "of the specified files. Some useful "+
+     "a list of files, plot column <y> versus row number for the first "+
+     "table object in all of the specified files. Some useful "+
      "kwargs are color (c), dashes, linestyle (ls), linewidth (lw), "+
      "marker, markeredgecolor (mec), markeredgewidth (mew), "+
      "markerfacecolor (mfc), markerfacecoloralt (mfcalt), markersize "+
      "(ms). For example: o2graph -plot-files file1.o2 file2.o "+
      "-plot1m ycol lw=0,marker='+' -show",
      new o2scl::comm_option_mfptr<acol_manager>
-     (this,&acol_manager::comm_none),
-     both},
+     (this,&acol_manager::comm_none),both},
     {0,"hist","Create a histogram plot.",0,0,"",
      ((std::string)"For a histogram object, plot the weights ")+
      " versus the bin representative values in a bar plot.",
