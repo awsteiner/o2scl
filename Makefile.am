@@ -44,10 +44,10 @@ help:
 	@echo 
 
 latest:
-	cp o2scl-0.921.tar.gz ~/wcs/int3/web/utk/o2scl
+	cp o2scl-0.921.tar.gz ~/wcs/int4/web/utk/o2scl
 	openssl dgst -sha256 o2scl-0.921.tar.gz > \
-		~/wcs/int3/web/utk/o2scl/o2scl-0.921.sha256
-	cd ~/wcs/int3/web; $(MAKE) puto
+		~/wcs/int4/web/utk/o2scl/o2scl-0.921.sha256
+	cd ~/wcs/int4/web; $(MAKE) puto
 
 move-doc:
 	cd doc/o2scl/html; mkdir ../htdir; mv -i *.html *.png ../htdir; 
