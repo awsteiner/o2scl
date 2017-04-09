@@ -57,7 +57,7 @@ namespace o2scl {
 
   public:
     
-    cli_readline(std::string fname=".cli_hist", size_t max_size=100) {
+    cli_readline(std::string fname="", size_t max_size=100) {
       line_read=0;
       msize=max_size;
       
@@ -74,6 +74,16 @@ namespace o2scl {
       }
     }
 
+    /** \brief Set history file
+     */
+    void set_histfile(std::string fname) {
+      histfile=fname;
+      if (histfile.size()>0) {
+	read_history(histfile.c_str());
+      }
+      return;
+    }
+    
     /** \brief Function to get a string from the user
 	\nothing
     */
