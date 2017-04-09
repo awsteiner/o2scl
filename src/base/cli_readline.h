@@ -62,12 +62,16 @@ namespace o2scl {
       msize=max_size;
       
       histfile=fname;
-      read_history(histfile.c_str());
+      if (histfile.size()>0) {
+	read_history(histfile.c_str());
+      }
     }
     
     ~cli_readline() {
-      stifle_history(((int)msize));
-      write_history(histfile.c_str());
+      if (histfile.size()>0) {
+	stifle_history(((int)msize));
+	write_history(histfile.c_str());
+      }
     }
 
     /** \brief Function to get a string from the user
@@ -87,7 +91,7 @@ namespace o2scl {
     
       /* If the line has any text in it, save it on the history.
        */
-      if (line_read && *line_read) {
+      if (line_read && *line_read && histfile.size()>0) {
 	add_history(line_read);
       }
     

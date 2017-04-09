@@ -441,8 +441,6 @@ int acol_manager::setup_cli() {
   if (hd) {
     histfile=hd;
     histfile+="/.acol_hist";
-  } else {
-    histfile=".acol_hist";
   }
     
   //--------------------------------------------------------------------
