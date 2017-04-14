@@ -501,7 +501,7 @@ namespace o2scl {
 	      max++;
 	    } else {
 	      O2SCL_ERR3("Failed to find set of independent points ",
-			 "in interpm_krige_nn::eval_jackknife",
+			 "in interpm_krige_nn::find_lin_indep",
 			 "(const vec2_t &, size_t).",
 			 o2scl::exc_efailed);
 	    }
@@ -594,7 +594,9 @@ namespace o2scl {
       o2scl_linalg::LU_decomp(norder-1,KXX,p,signum);
       int cnt=0;
       while (o2scl_linalg::diagonal_has_zero(norder-1,KXX)) {
+	std::cout << "Second fli run starting." << std::endl;
 	find_lin_indep(x,iout,fcovar,index,indep);
+	std::cout << "Second fli run done." << std::endl;
 	cnt++;
 	if (cnt==10) {
 	  O2SCL_ERR3("Failed to find set of independent points ",
