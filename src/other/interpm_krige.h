@@ -370,78 +370,6 @@ namespace o2scl {
     
   }
   
-  /** \brief Perform the interpolation
-   */
-  template<class vec2_t>
-  double eval(const vec2_t &x, size_t iout,
-	      std::vector<covar_func_t> &fcovar) const {
-      
-    if (data_set==false) {
-      O2SCL_ERR("Data not set in interpm_krige::eval().",
-		exc_einval);
-    }
-
-    double ret;
-    
-    // Find points closest to requested point, as defined
-    // by the negative covariance for this output function
-    ubvector dists(np);
-    for(size_t ip=0;ip<np;ip++) {
-      dists[ip]=-fcovar[iout](x,ptrs_x[ip]);
-    }
-      
-    // Empty index vector (resized by the vector_smallest_index
-    // function)
-    ubvector_size_t index;
-    o2scl::vector_smallest_index<ubvector,double,ubvector_size_t>
-    (np,dists,norder,index);
-
-    // Construct subset of function values for nearest neighbors
-    ubvector func(norder);
-    for(size_t io=0;io<norder;io++) {
-      func[io]=ptrs_y[iout][index[io]];
-    }
-      
-    // Construct the nearest neighbor KXX matrix
-    ubmatrix KXX(norder,norder);
-    for(size_t irow=0;irow<norder;irow++) {
-      for(size_t icol=0;icol<norder;icol++) {
-	if (irow>icol) {
-	  KXX(irow,icol)=KXX(icol,irow);
-	} else {
-	  KXX(irow,icol)=fcovar[iout](ptrs_x[index[irow]],
-				    ptrs_x[index[icol]]);
-	}
-      }
-    }
-	
-    // Construct the inverse of KXX
-    ubmatrix inv_KXX(norder,norder);
-    o2scl::permutation p(norder);
-    int signum;
-    o2scl_linalg::LU_decomp(norder,KXX,p,signum);
-    if (o2scl_linalg::diagonal_has_zero(norder,KXX)) {
-      O2SCL_ERR2("KXX matrix is singular in ",
-		 "interpm_krige_nn::eval().",
-		 o2scl::exc_efailed);
-    }
-    o2scl_linalg::LU_invert<ubmatrix,ubmatrix,mat_col_t>
-    (norder,KXX,p,inv_KXX);
-      
-    // Inverse covariance matrix times function vector
-    ubvector Kinvf(norder);
-    boost::numeric::ublas::axpy_prod(inv_KXX,func,Kinvf,true);
-
-    // Comput the final result
-    ret=0.0;
-    for(size_t ipoints=0;ipoints<norder;ipoints++) {
-      ret+=-dists[index[ipoints]]*Kinvf[ipoints];
-    }
-      
-    return ret;
-      
-  }
-
   /** \brief Find a set of linearly independent points 
    */
   template<class vec2_t>
@@ -513,6 +441,88 @@ namespace o2scl {
     return;
   }
   
+  /** \brief Perform the interpolation
+   */
+  template<class vec2_t>
+  double eval(const vec2_t &x, size_t iout,
+	      std::vector<covar_func_t> &fcovar) const {
+      
+    if (data_set==false) {
+      O2SCL_ERR("Data not set in interpm_krige_nn::eval().",
+		exc_einval);
+    }
+
+    double ret;
+    
+    // Find points closest to requested point, as defined
+    // by the negative covariance for this output function
+    ubvector dists(np);
+    for(size_t ip=0;ip<np;ip++) {
+      dists[ip]=-fcovar[iout](x,ptrs_x[ip]);
+    }
+      
+    // Empty index vector (resized by the vector_smallest_index
+    // function)
+    ubvector_size_t index;
+    o2scl::vector_smallest_index<ubvector,double,ubvector_size_t>
+    (np,dists,norder,index);
+
+    // Vector for storing the indexes in the index array which
+    // will store the closest norder points which are
+    // linearly independent
+    ubvector_size_t indep(norder);
+    for(size_t io=0;io<norder;io++) {
+      indep[io]=io;
+    }
+
+    find_lin_indep(x,iout,fcovar,index,indep);
+    
+    // Construct subset of function values for nearest neighbors
+    ubvector func(norder);
+    for(size_t io=0;io<norder;io++) {
+      func[io]=ptrs_y[iout][index[indep[io]]];
+    }
+      
+    // Construct the nearest neighbor KXX matrix
+    ubmatrix KXX(norder,norder);
+    for(size_t irow=0;irow<norder;irow++) {
+      for(size_t icol=0;icol<norder;icol++) {
+	if (irow>icol) {
+	  KXX(irow,icol)=KXX(icol,irow);
+	} else {
+	  KXX(irow,icol)=fcovar[iout](ptrs_x[index[indep[irow]]],
+				      ptrs_x[index[indep[icol]]]);
+	}
+      }
+    }
+	
+    // Construct the inverse of KXX
+    ubmatrix inv_KXX(norder,norder);
+    o2scl::permutation p(norder);
+    int signum;
+    o2scl_linalg::LU_decomp(norder,KXX,p,signum);
+    if (o2scl_linalg::diagonal_has_zero(norder,KXX)) {
+      O2SCL_ERR2("KXX matrix is singular in ",
+		 "interpm_krige_nn::eval().",
+		 o2scl::exc_efailed);
+    }
+    o2scl_linalg::LU_invert<ubmatrix,ubmatrix,mat_col_t>
+    (norder,KXX,p,inv_KXX);
+      
+    // Inverse covariance matrix times function vector
+    ubvector Kinvf(norder);
+    boost::numeric::ublas::axpy_prod(inv_KXX,func,Kinvf,true);
+
+    // Comput the final result
+    ret=0.0;
+    for(size_t ipoints=0;ipoints<norder;ipoints++) {
+      ret+=-dists[index[indep[ipoints]]]*Kinvf[ipoints];
+    }
+      
+    return ret;
+      
+  }
+
   /** \brief Use jackknife to match interpolated to real function 
       values
   */
@@ -528,7 +538,7 @@ namespace o2scl {
     double qual=0.0;
     
     // Interpolated function value inside jackknife loop
-    double ytmp=0.0;
+    double ytmp;
     
     // For a distance measurement, just use the the negative
     // covariance for this output function
