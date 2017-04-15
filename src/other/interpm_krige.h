@@ -378,8 +378,13 @@ namespace o2scl {
 		      std::vector<covar_func_t> &fcovar,
 		      ubvector_size_t &index,
 		      ubvector_size_t &indep) const {
-
-    if (x.size()<norder || index.size()<np || indep.size()<norder) {
+    
+    if (x.size()<nd_in || index.size()<np || indep.size()<norder
+	|| iout>=nd_out) {
+      std::cout << x.size() << " " << nd_in << std::endl;
+      std::cout << index.size() << " " << np << std::endl;
+      std::cout << indep.size() << " " << norder << std::endl;
+      std::cout << iout << " " << nd_out << std::endl;
       O2SCL_ERR("Vectors not of correct size in find_lin_indep().",
 		o2scl::exc_einval);
     }
