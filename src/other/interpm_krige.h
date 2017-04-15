@@ -379,7 +379,7 @@ namespace o2scl {
 		      ubvector_size_t &index,
 		      ubvector_size_t &indep) const {
 
-    if (x.size()<norder || index.size()<norder || indep.size()<norder) {
+    if (x.size()<norder || index.size()<np || indep.size()<norder) {
       O2SCL_ERR("Vectors not of correct size in find_lin_indep().",
 		o2scl::exc_einval);
     }
