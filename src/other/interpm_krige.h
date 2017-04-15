@@ -309,6 +309,7 @@ namespace o2scl {
     // Loop over all output functions
     for(size_t iout=0;iout<nd_out;iout++) {
 
+
       // Find points closest to requested point, as defined
       // by the negative covariance for this output function
       ubvector dists(np);
@@ -377,6 +378,11 @@ namespace o2scl {
 		      std::vector<covar_func_t> &fcovar,
 		      ubvector_size_t &index,
 		      ubvector_size_t &indep) const {
+
+    if (x.size()<norder || index.size()<norder || indep.size()<norder) {
+      O2SCL_ERR("Vectors not of correct size in find_lin_indep().",
+		o2scl::exc_einval);
+    }
     
     bool done=false;
     while (done==false) {
@@ -461,11 +467,8 @@ namespace o2scl {
       dists[ip]=-fcovar[iout](x,ptrs_x[ip]);
     }
       
-    // Empty index vector (resized by the vector_smallest_index
-    // function)
-    ubvector_size_t index;
-    o2scl::vector_smallest_index<ubvector,double,ubvector_size_t>
-    (np,dists,norder,index);
+    ubvector_size_t index(np);
+    o2scl::vector_sort_index<ubvector,ubvector_size_t>(np,dists,index);
 
     // Vector for storing the indexes in the index array which
     // will store the closest norder points which are
