@@ -81,20 +81,46 @@ namespace o2scl {
     
     interp_krige() {
       this->min_size=2;
+      optimize=true;
     }
     
     virtual ~interp_krige() {}
     
     /// Initialize interpolation routine
     virtual void set(size_t size, const vec_t &x, const vec2_t &y) {
-      O2SCL_ERR2("Function set(size_t,vec_t,vec_t) unimplemented ",
-		 "in interp_krige.",o2scl::exc_eunimpl);
+
+      double var_min=o2scl::vector_variance(size,y);
+      std::vector<double> diff(size-1);
+      for(size_t i=0;i<size-1;i++) {
+	diff[i]=fabs(x[i+1]-x[i]);
+      }
+      double var_ratio=1.0e2;
+      double len_min=o2scl::vector_min_value(size-1,diff)/3.0;
+      double len_max=fabs(x[size-1]-x[0])*3.0;
+      double len_ratio=len_max/len_min;
+
+      double min_diff, var_opt, len_opt;
+      size_t nvar=10, nlen=10;
+      for(size_t i=0;i<nvar;i++) {
+	double var=var_min*pow(var_ratio,((double)i)/((double)nvar-1));
+	for(size_t j=0;j<nlen;j++) {
+	  double len=len_min*pow(len_ratio,((double)i)/((double)nlen-1));
+	}
+      }
+      
       return;
     }
 
     /// Initialize interpolation routine
     virtual void set(size_t n_dim, const vec_t &x, const vec_t &y,
-			   covar_func_t &fcovar) {
+		     covar_func_t &fcovar) {
+      set_noise(n_dim,x,y,fcovar,0.0);
+      return;
+    }
+
+    /// Initialize interpolation routine
+    virtual void set_noise(size_t n_dim, const vec_t &x, const vec_t &y,
+			   covar_func_t &fcovar, double noise_var) {
       
       if (n_dim<this->min_size) {
 	O2SCL_ERR((((std::string)"Vector size, ")+szttos(n_dim)+", is less"+
@@ -111,6 +137,8 @@ namespace o2scl {
 	for(size_t icol=0;icol<n_dim;icol++) {
 	  if (irow>icol) {
 	    KXX(irow,icol)=KXX(icol,irow);
+	  } else if (irow==icol) {
+	    KXX(irow,icol)=fcovar(x[irow],x[icol])+noise_var;
 	  } else {
 	    KXX(irow,icol)=fcovar(x[irow],x[icol]);
 	  }
