@@ -32,11 +32,6 @@ double covar(double x, double y) {
   return exp(-2.0*(x-y)*(x-y));
 }
 
-double covar_noise(double x, double y) {
-  if (x==y) return exp(-2.0*(x-y)*(x-y))+0.5;
-  return exp(-2.0*(x-y)*(x-y));    
-}
-
 int main(void) {
 
   cout.setf(ios::scientific);
@@ -61,12 +56,11 @@ int main(void) {
 
   interp_krige<ubvector> ik;
   std::function<double(double,double)> f=covar;
-  std::function<double(double,double)> f_noise=covar_noise;
 
   // ---------------------------------------------------------------
   // Test normal interpolation
 
-  ik.set(4,x,y,f);
+  ik.set_covar(4,x,y,f);
   cout << ik.eval(1.0) << endl;
   cout << ik.eval(1.5) << endl;
   cout << ik.eval(2.5) << endl;
@@ -75,14 +69,32 @@ int main(void) {
 
   // ---------------------------------------------------------------
   // Test interpolation with noise
-
-  ik.set(4,x,y,f_noise);
+  
+  ik.set_covar_noise(4,x,y,f,0.5);
   cout << ik.eval(1.0) << endl;
   cout << ik.eval(1.5) << endl;
   cout << ik.eval(2.5) << endl;
   cout << ik.eval(3.5) << endl;
   cout << endl;
 
+  // ---------------------------------------------------------------
+  // Second set of test data
+
+  ubvector x2(10), y2(10);
+  for(size_t i=0;i<10;i++) {
+    x2[i]=((double)i)/2.0;
+    y2[i]=sin(i);
+  }
+
+  interp_vec<ubvector> io;
+  io.set(10,x2,y2);
+  cout << io.eval(acos(-1.0)) << endl;
+  
+  interp_krige_optim<ubvector> iko;
+  iko.set(10,x2,y2);
+  cout << iko.eval(acos(-1.0)) << endl;
+
+  
   t.report();
 
   return 0;
