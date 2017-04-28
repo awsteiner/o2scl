@@ -80,20 +80,33 @@ int main(void) {
   // ---------------------------------------------------------------
   // Second set of test data
 
+  cout.setf(ios::showpos);
+  
   ubvector x2(10), y2(10);
   for(size_t i=0;i<10;i++) {
     x2[i]=((double)i)/2.0;
-    y2[i]=sin(i);
+    y2[i]=sin(x2[i]);
   }
-
+    
   interp_vec<ubvector> io;
   io.set(10,x2,y2);
-  cout << io.eval(acos(-1.0)) << endl;
+  cout << io.eval(1.01) << " " << sin(1.01) << " "
+       << fabs((io.eval(1.01)-sin(1.01))/sin(1.01)) << endl;
+  cout << io.eval(1.0) << " " << sin(1.0) << " "
+       << fabs((io.eval(1.0)-sin(1.0))/sin(1.0)) << endl;
+  cout << io.eval(acos(-1.0)) << " " << sin(acos(-1.0)) << " "
+       << fabs(io.eval(acos(-1.0))-sin(acos(-1.0))) << endl;
+  cout << endl;
   
   interp_krige_optim<ubvector> iko;
   iko.set(10,x2,y2);
-  cout << iko.eval(acos(-1.0)) << endl;
-
+  cout << iko.eval(1.01) << " " << sin(1.01) << " "
+       << fabs((iko.eval(1.01)-sin(1.01))/sin(1.01)) << endl;
+  cout << iko.eval(1.0) << " " << sin(1.0) << " "
+       << fabs((iko.eval(1.0)-sin(1.0))/sin(1.0)) << endl;
+  cout << iko.eval(acos(-1.0)) << " " << sin(acos(-1.0)) << " "
+       << fabs(iko.eval(acos(-1.0))-sin(acos(-1.0))) << endl;
+  cout << endl;
   
   t.report();
 

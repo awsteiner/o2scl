@@ -226,25 +226,45 @@ namespace o2scl {
     return var*exp(-pow((x1-x2)/len,2.0));
   }
     
+  std::function<double(double,double)> ff;
+  
   public:
+
+  /// Number of variance points to try
+  size_t nvar;
+
+  /// Number of length scale points to try
+  size_t nlen;
+  
+  interp_krige_optim() {
+    ff=std::bind(std::mem_fn<double(double,double)>
+		 (&interp_krige_optim<vec_t,vec2_t>::covar),this,
+		 std::placeholders::_1,std::placeholders::_2);
+    nvar=20;
+    nlen=20;
+  }
   
   /// Initialize interpolation routine
   virtual void set_noise(size_t size, const vec_t &x, const vec2_t &y,
 			 double noise_var) {
-    
+
+    // Range of the coefficient parameter
     double var_min=o2scl::vector_variance(size,y);
     std::vector<double> diff(size-1);
     for(size_t i=0;i<size-1;i++) {
       diff[i]=fabs(x[i+1]-x[i]);
     }
     double var_ratio=1.0e2;
+
+    // Range of the length parameter
     double len_min=o2scl::vector_min_value
     <std::vector<double>,double>(size-1,diff)/3.0;
     double len_max=fabs(x[size-1]-x[0])*3.0;
     double len_ratio=len_max/len_min;
 
     double min_qual, var_opt, len_opt;
-    size_t nvar=10, nlen=10;
+
+    // Loop over the full range, finding the optimum 
     for(size_t i=0;i<nvar;i++) {
       var=var_min*pow(var_ratio,((double)i)/((double)nvar-1));
       for(size_t j=0;j<nlen;j++) {
@@ -291,7 +311,7 @@ namespace o2scl {
 	  for(size_t i=0;i<size-1;i++) {
 	    ypred+=exp(-var*pow((x[k]-x2[i])/len,2.0))*this->Kinvf[i];
 	  }
-	    
+	  
 	  qual+=pow(yact-ypred,2.0);
 	    
 	}
@@ -299,6 +319,7 @@ namespace o2scl {
 	if ((i==0 && j==0) || qual<min_qual) {
 	  var_opt=var;
 	  len_opt=len;
+	  min_qual=qual;
 	}
       }
     }
@@ -307,11 +328,7 @@ namespace o2scl {
     // just use the parent class to interpolate
     var=var_opt;
     len=len_opt;
-      
-    std::function<double(double,double)> ff=
-    std::bind(std::mem_fn<double(double,double)>
-	      (&interp_krige_optim<vec_t,vec2_t>::covar),this,
-	      std::placeholders::_1,std::placeholders::_2);
+
     this->set_covar_noise(size,x,y,ff,noise_var);
       
     return;
