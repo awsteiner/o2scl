@@ -30,6 +30,8 @@
 #include <iostream>
 #include <string>
 
+#include <gsl/gsl_sf_erf.h>
+
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/operation.hpp>
@@ -40,6 +42,8 @@
 #include <o2scl/columnify.h>
 #include <o2scl/vector.h>
 #include <o2scl/vec_stats.h>
+#include <o2scl/mmin_bfgs2.h>
+#include <o2scl/constants.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -57,7 +61,8 @@ namespace o2scl {
       \note This class is experimental.
   */
   template<class vec_t, class vec2_t=vec_t,
-    class covar_func_t=std::function<double(double,double)> >
+    class covar_func_t=std::function<double(double,double)>,
+    class covar_integ_t=std::function<double(double,double,double)> >
     class interp_krige : public interp_base<vec_t,vec2_t> {
     
 #ifdef O2SCL_NEVER_DEFINED
@@ -80,6 +85,18 @@ namespace o2scl {
      */
     covar_func_t *f;
     
+    /** \brief Pointer to user-specified derivative
+     */
+    covar_func_t *df;
+    
+    /** \brief Pointer to user-specified second derivative
+     */
+    covar_func_t *df2;
+    
+    /** \brief Pointer to user-specified second derivative
+     */
+    covar_integ_t *intp;
+    
   public:
     
     interp_krige() {
@@ -92,6 +109,18 @@ namespace o2scl {
     virtual void set(size_t size, const vec_t &x, const vec2_t &y) {
       O2SCL_ERR2("Function set(size_t,vec_t,vec_t) unimplemented ",
 		 "in interp_krige.",o2scl::exc_eunimpl);
+      return;
+    }
+
+    /** \brief Initialize interpolation routine, specifying derivatives
+	and integrals
+    */
+    virtual void set_covar_di_noise(size_t n_dim, const vec_t &x,
+				    const vec_t &y, covar_func_t &fcovar,
+				    covar_func_t &fderiv,
+				    covar_func_t &fderiv2,
+				    covar_func_t &finteg,
+				    double noise_var) {
       return;
     }
     
@@ -187,10 +216,10 @@ namespace o2scl {
 
   private:
 
-    interp_krige<vec_t,vec2_t,covar_func_t>
-      (const interp_krige<vec_t,vec2_t,covar_func_t> &);
-    interp_krige<vec_t,vec2_t,covar_func_t>& operator=
-      (const interp_krige<vec_t,vec2_t,covar_func_t>&);
+    interp_krige<vec_t,vec2_t,covar_func_t,covar_integ_t>
+      (const interp_krige<vec_t,vec2_t,covar_func_t,covar_integ_t> &);
+    interp_krige<vec_t,vec2_t,covar_func_t,covar_integ_t>& operator=
+      (const interp_krige<vec_t,vec2_t,covar_func_t,covar_integ_t>&);
 
 #endif
 
@@ -221,12 +250,95 @@ namespace o2scl {
   /// The covariance function coefficient
   double var;
 
+  /// The quality factor of the optimization
+  double qual;
+  
   /// The covariance function
   double covar(double x1, double x2) {
-    return var*exp(-pow((x1-x2)/len,2.0));
+    return var*exp(-(x1-x2)*(x1-x2)/len/len);
   }
-    
+
+  /// The derivative of the covariance function
+  double deriv(double x1, double x2) {
+    return -2.0*var*exp(-(x1-x2)*(x1-x2)/len/len)/len/len*(x1-x2);
+  }
+
+  /// The second derivative of the covariance function
+  double deriv2(double x1, double x2) {
+    return (4.0*(x1-x2)*(x1-x2)-2.0*len*len)*
+    var*exp(-(x1-x2)*(x1-x2)/len/len)/len/len/len/len;
+  }
+
+  /// The integral of the covariance function
+  double integ(double x, double x1, double x2) {
+    return 0.5*len*sqrt(o2scl_const::pi)*var*
+    (gsl_sf_erf((x2-x)/len)+gsl_sf_erf((x-x1)/len));
+  }
+
+  /// Functor for the covariance function \ref covar()
   std::function<double(double,double)> ff;
+
+  /// Pointer to the user-specified minimizer
+  mmin_base<> *mp;
+  
+  /** \brief Function to optimize the covariance
+   */
+  double qual_fun(size_t nv, const ubvector &x) {
+
+    var=x[0];
+    len=x[1];
+
+    size_t size=this->sz;
+    
+    qual=0.0;
+    for(size_t k=0;k<size;k++) {
+      
+      ubvector x2(size-1);
+      o2scl::vector_copy_jackknife((*this->px),k,x2);
+      ubvector y2(size-1);
+      o2scl::vector_copy_jackknife((*this->py),k,y2);
+      
+      // Construct the KXX matrix
+      ubmatrix KXX(size-1,size-1);
+      for(size_t irow=0;irow<size-1;irow++) {
+	for(size_t icol=0;icol<size-1;icol++) {
+	  if (irow>icol) {
+	    KXX(irow,icol)=KXX(icol,irow);
+	  } else {
+	    KXX(irow,icol)=exp(-var*pow(((*this->px)[irow]-
+					 (*this->px)[icol])/len,2.0));
+	  }
+	}
+      }
+      
+      // Construct the inverse of KXX
+      ubmatrix inv_KXX(size-1,size-1);
+      o2scl::permutation p(size-1);
+      int signum;
+      o2scl_linalg::LU_decomp(size-1,KXX,p,signum);
+      if (o2scl_linalg::diagonal_has_zero(size-1,KXX)) {
+	O2SCL_ERR("KXX matrix is singular in interp_krige::set().",
+		  o2scl::exc_efailed);
+      }
+      o2scl_linalg::LU_invert<ubmatrix,ubmatrix,ubmatrix_column>
+	(size-1,KXX,p,inv_KXX);
+      
+      // Inverse covariance matrix times function vector
+      this->Kinvf.resize(size-1);
+      boost::numeric::ublas::axpy_prod(inv_KXX,y2,this->Kinvf,true);
+      
+      double ypred=0.0;
+      double yact=(*this->py)[k];
+      for(size_t i=0;i<size-1;i++) {
+	ypred+=exp(-var*pow(((*this->px)[k]-x2[i])/len,2.0))*this->Kinvf[i];
+      }
+      
+      qual+=pow(yact-ypred,2.0);
+      
+    }
+
+    return qual;
+  }
   
   public:
 
@@ -235,6 +347,12 @@ namespace o2scl {
 
   /// Number of length scale points to try
   size_t nlen;
+
+  /// Default minimizer
+  mmin_bfgs2<> def_mmin;
+
+  /// If true, use the full minimizer
+  bool full_min;
   
   interp_krige_optim() {
     ff=std::bind(std::mem_fn<double(double,double)>
@@ -242,92 +360,116 @@ namespace o2scl {
 		 std::placeholders::_1,std::placeholders::_2);
     nvar=20;
     nlen=20;
+    full_min=false;
+    mp=&def_mmin;
   }
-  
+
   /// Initialize interpolation routine
   virtual void set_noise(size_t size, const vec_t &x, const vec2_t &y,
 			 double noise_var) {
 
-    // Range of the coefficient parameter
-    double var_min=o2scl::vector_variance(size,y);
-    std::vector<double> diff(size-1);
-    for(size_t i=0;i<size-1;i++) {
-      diff[i]=fabs(x[i+1]-x[i]);
-    }
-    double var_ratio=1.0e2;
+    if (full_min) {
 
-    // Range of the length parameter
-    double len_min=o2scl::vector_min_value
-    <std::vector<double>,double>(size-1,diff)/3.0;
-    double len_max=fabs(x[size-1]-x[0])*3.0;
-    double len_ratio=len_max/len_min;
+      // Set parent data members
+      this->px=&x;
+      this->py=&y;
+      this->sz=size;
 
-    double min_qual, var_opt, len_opt;
+      ubvector p(2);
+      p[0]=o2scl::vector_variance(size,y);
+      p[1]=x[1]-x[0];
+      
+      multi_funct mf=std::bind
+      (std::mem_fn<double(size_t, const ubvector &)>
+       (&interp_krige_optim<vec_t,vec2_t>::qual_fun),this,
+       std::placeholders::_1,std::placeholders::_2);
+      
+      mp->mmin(2,p,qual,mf);
 
-    // Loop over the full range, finding the optimum 
-    for(size_t i=0;i<nvar;i++) {
-      var=var_min*pow(var_ratio,((double)i)/((double)nvar-1));
-      for(size_t j=0;j<nlen;j++) {
-	len=len_min*pow(len_ratio,((double)j)/((double)nlen-1));
-
-	double qual=0.0;
-	for(size_t k=0;k<size;k++) {
-
-	  ubvector x2(size-1);
-	  o2scl::vector_copy_jackknife(x,k,x2);
-	  ubvector y2(size-1);
-	  o2scl::vector_copy_jackknife(y,k,y2);
+    } else {
+      
+      // Range of the coefficient parameter
+      double var_min=o2scl::vector_variance(size,y);
+      std::vector<double> diff(size-1);
+      for(size_t i=0;i<size-1;i++) {
+	diff[i]=fabs(x[i+1]-x[i]);
+      }
+      double var_ratio=1.0e2;
+      
+      // Range of the length parameter
+      double len_min=o2scl::vector_min_value
+      <std::vector<double>,double>(size-1,diff)/3.0;
+      double len_max=fabs(x[size-1]-x[0])*3.0;
+      double len_ratio=len_max/len_min;
+      
+      double min_qual, var_opt, len_opt;
+      
+      // Loop over the full range, finding the optimum 
+      for(size_t i=0;i<nvar;i++) {
+	var=var_min*pow(var_ratio,((double)i)/((double)nvar-1));
+	for(size_t j=0;j<nlen;j++) {
+	  len=len_min*pow(len_ratio,((double)j)/((double)nlen-1));
+	  
+	  qual=0.0;
+	  for(size_t k=0;k<size;k++) {
 	    
-	  // Construct the KXX matrix
-	  ubmatrix KXX(size-1,size-1);
-	  for(size_t irow=0;irow<size-1;irow++) {
-	    for(size_t icol=0;icol<size-1;icol++) {
-	      if (irow>icol) {
-		KXX(irow,icol)=KXX(icol,irow);
-	      } else {
-		KXX(irow,icol)=exp(-var*pow((x[irow]-x[icol])/len,2.0));
+	    ubvector x2(size-1);
+	    o2scl::vector_copy_jackknife(x,k,x2);
+	    ubvector y2(size-1);
+	    o2scl::vector_copy_jackknife(y,k,y2);
+	    
+	    // Construct the KXX matrix
+	    ubmatrix KXX(size-1,size-1);
+	    for(size_t irow=0;irow<size-1;irow++) {
+	      for(size_t icol=0;icol<size-1;icol++) {
+		if (irow>icol) {
+		  KXX(irow,icol)=KXX(icol,irow);
+		} else {
+		  KXX(irow,icol)=exp(-var*pow((x[irow]-x[icol])/len,2.0));
+		}
 	      }
 	    }
-	  }
 	    
-	  // Construct the inverse of KXX
-	  ubmatrix inv_KXX(size-1,size-1);
-	  o2scl::permutation p(size-1);
-	  int signum;
-	  o2scl_linalg::LU_decomp(size-1,KXX,p,signum);
-	  if (o2scl_linalg::diagonal_has_zero(size-1,KXX)) {
-	    O2SCL_ERR("KXX matrix is singular in interp_krige::set().",
-		      o2scl::exc_efailed);
-	  }
-	  o2scl_linalg::LU_invert<ubmatrix,ubmatrix,ubmatrix_column>
-	    (size-1,KXX,p,inv_KXX);
+	    // Construct the inverse of KXX
+	    ubmatrix inv_KXX(size-1,size-1);
+	    o2scl::permutation p(size-1);
+	    int signum;
+	    o2scl_linalg::LU_decomp(size-1,KXX,p,signum);
+	    if (o2scl_linalg::diagonal_has_zero(size-1,KXX)) {
+	      O2SCL_ERR("KXX matrix is singular in interp_krige::set().",
+			o2scl::exc_efailed);
+	    }
+	    o2scl_linalg::LU_invert<ubmatrix,ubmatrix,ubmatrix_column>
+	      (size-1,KXX,p,inv_KXX);
 	    
-	  // Inverse covariance matrix times function vector
-	  this->Kinvf.resize(size-1);
-	  boost::numeric::ublas::axpy_prod(inv_KXX,y2,this->Kinvf,true);
-
-	  double ypred=0.0;
-	  double yact=y[k];
-	  for(size_t i=0;i<size-1;i++) {
-	    ypred+=exp(-var*pow((x[k]-x2[i])/len,2.0))*this->Kinvf[i];
+	    // Inverse covariance matrix times function vector
+	    this->Kinvf.resize(size-1);
+	    boost::numeric::ublas::axpy_prod(inv_KXX,y2,this->Kinvf,true);
+	    
+	    double ypred=0.0;
+	    double yact=y[k];
+	    for(size_t i=0;i<size-1;i++) {
+	      ypred+=exp(-var*pow((x[k]-x2[i])/len,2.0))*this->Kinvf[i];
+	    }
+	    
+	    qual+=pow(yact-ypred,2.0);
+	    
 	  }
 	  
-	  qual+=pow(yact-ypred,2.0);
-	    
-	}
-
-	if ((i==0 && j==0) || qual<min_qual) {
-	  var_opt=var;
-	  len_opt=len;
-	  min_qual=qual;
+	  if ((i==0 && j==0) || qual<min_qual) {
+	    var_opt=var;
+	    len_opt=len;
+	    min_qual=qual;
+	  }
 	}
       }
-    }
+      
+      // Now that we've optimized the covariance function,
+      // just use the parent class to interpolate
+      var=var_opt;
+      len=len_opt;
 
-    // Now that we've optimized the covariance function,
-    // just use the parent class to interpolate
-    var=var_opt;
-    len=len_opt;
+    }
 
     this->set_covar_noise(size,x,y,ff,noise_var);
       

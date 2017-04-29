@@ -22,6 +22,7 @@
 */
 #include <o2scl/interp_krige.h>
 #include <o2scl/test_mgr.h>
+#include <o2scl/rng_gsl.h>
 
 using namespace std;
 using namespace o2scl;
@@ -107,6 +108,60 @@ int main(void) {
   cout << iko.eval(acos(-1.0)) << " " << sin(acos(-1.0)) << " "
        << fabs(iko.eval(acos(-1.0))-sin(acos(-1.0))) << endl;
   cout << endl;
+
+  iko.full_min=true;
+  iko.set(10,x2,y2);
+  cout << iko.eval(1.01) << " " << sin(1.01) << " "
+       << fabs((iko.eval(1.01)-sin(1.01))/sin(1.01)) << endl;
+  cout << iko.eval(1.0) << " " << sin(1.0) << " "
+       << fabs((iko.eval(1.0)-sin(1.0))/sin(1.0)) << endl;
+  cout << iko.eval(acos(-1.0)) << " " << sin(acos(-1.0)) << " "
+       << fabs(iko.eval(acos(-1.0))-sin(acos(-1.0))) << endl;
+  cout << endl;
+
+  // ---------------------------------------------------------------
+  // Third set of test data
+
+  cout.setf(ios::showpos);
+  rng_gsl rg;
+
+  double err=1.0e-2;
+  ubvector x3(30), y3(30);
+  for(size_t i=0;i<30;i++) {
+    x3[i]=((double)i)/6.0;
+    y3[i]=sin(x3[i])+err*(2.0*rg.random()-1.0);
+  }
+    
+  io.set(30,x3,y3);
+  cout << io.eval(1.01) << " " << sin(1.01) << " "
+       << fabs((io.eval(1.01)-sin(1.01))/sin(1.01)) << endl;
+  cout << io.eval(1.0) << " " << sin(1.0) << " "
+       << fabs((io.eval(1.0)-sin(1.0))/sin(1.0)) << endl;
+  cout << io.eval(acos(-1.0)) << " " << sin(acos(-1.0)) << " "
+       << fabs(io.eval(acos(-1.0))-sin(acos(-1.0))) << endl;
+  cout << endl;
+
+  iko.full_min=false;
+  iko.set_noise(30,x3,y3,err*err);
+  cout << iko.eval(1.01) << " " << sin(1.01) << " "
+       << fabs((iko.eval(1.01)-sin(1.01))/sin(1.01)) << endl;
+  cout << iko.eval(1.0) << " " << sin(1.0) << " "
+       << fabs((iko.eval(1.0)-sin(1.0))/sin(1.0)) << endl;
+  cout << iko.eval(acos(-1.0)) << " " << sin(acos(-1.0)) << " "
+       << fabs(iko.eval(acos(-1.0))-sin(acos(-1.0))) << endl;
+  cout << endl;
+
+  /*
+    iko.full_min=true;
+    iko.set_noise(30,x3,y3,err*err);
+    cout << iko.eval(1.01) << " " << sin(1.01) << " "
+    << fabs((iko.eval(1.01)-sin(1.01))/sin(1.01)) << endl;
+    cout << iko.eval(1.0) << " " << sin(1.0) << " "
+    << fabs((iko.eval(1.0)-sin(1.0))/sin(1.0)) << endl;
+    cout << iko.eval(acos(-1.0)) << " " << sin(acos(-1.0)) << " "
+    << fabs(iko.eval(acos(-1.0))-sin(acos(-1.0))) << endl;
+    cout << endl;
+  */
   
   t.report();
 

@@ -763,7 +763,6 @@ namespace o2scl {
 	
     } while (status == gsl_continue && xiter < this->ntrial);
 
-    std::cout << "H: " << (*st_x)[0] << std::endl;
     for(size_t i=0;i<nn;i++) xx[i]=(*st_x)[i];
     fmin=st_f;
       
