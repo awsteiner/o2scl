@@ -606,7 +606,10 @@ int tov_solve::integ_star(size_t ndvar, const ubvector &ndx,
     test=as_ptr->astep_full(rkx[ix],rkx[ix]+step_max,rkx[ix_next],h,nvar,
 			    rky[ix],rkdydx[ix],rky[ix_next],yerr,
 			    rkdydx[ix_next],ofm);
-    std::cout << "Y3: " << rky[0] << " " << rky[1]  << std::endl;
+    if (it<5) {
+      std::cout << "Y3: " << rky[0][0] << " " << rky[0][1] << std::endl;
+      std::cout << "Y3: " << rky[1][0] << " " << rky[1][1] << std::endl;
+    }
     
     if (test!=0) {
       done=true;
