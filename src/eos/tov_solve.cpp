@@ -571,6 +571,8 @@ int tov_solve::integ_star(size_t ndvar, const ubvector &ndx,
     rky[0][iv]=0.0;
     iv++;
   }
+
+  std::cout << "Y2: " << log(ndx[0]) << std::endl;
   
   // ---------------------------------------------------------------
     
@@ -604,6 +606,7 @@ int tov_solve::integ_star(size_t ndvar, const ubvector &ndx,
     test=as_ptr->astep_full(rkx[ix],rkx[ix]+step_max,rkx[ix_next],h,nvar,
 			    rky[ix],rkdydx[ix],rky[ix_next],yerr,
 			    rkdydx[ix_next],ofm);
+    std::cout << "Y3: " << rky[0] << " " << rky[1]  << std::endl;
     
     if (test!=0) {
       done=true;
@@ -1183,6 +1186,9 @@ int tov_solve::fixed(double target_mass, double pmax) {
 	       exc_efailed,err_nonconv);
     return info;
   }
+
+  std::cout.precision(12);
+  std::cout << "Y1: " << x[0] << std::endl;
   
   int ret=mroot_ptr->msolve(1,x,fmf);
   if (ret!=0) {
