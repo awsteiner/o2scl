@@ -4713,9 +4713,7 @@ int acol_manager::comm_select_rows2(std::vector<std::string> &sv,
   vector<string> cols;
   for(size_t i=2;i<sv.size();i++) {
     cols.push_back(sv[i]);
-    vars[cols[i-2]]=0.0;
   }
-  calc.compile(i1.c_str(),&vars);
   
   int new_lines=0;
   for(int i=0;i<((int)table_obj.get_nlines());i++) {
@@ -4723,6 +4721,7 @@ int acol_manager::comm_select_rows2(std::vector<std::string> &sv,
     for(size_t j=0;j<cols.size();j++) {
       vars[cols[j]]=table_obj.get(cols[j],i);
     }
+    calc.compile(i1.c_str(),&vars);
     if (calc.eval(&vars)>0.5) {
       new_table->set_nlines(new_lines+1);
       for(int j=0;j<((int)table_obj.get_ncolumns());j++) {
