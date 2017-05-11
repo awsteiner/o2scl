@@ -90,7 +90,7 @@ int acol_manager::setup_options() {
   const int cl_param=cli::comm_option_cl_param;
   const int both=cli::comm_option_both;
 
-  static const int narr=48;
+  static const int narr=49;
 
   // Options, sorted by long name. We allow 0 parameters in many of these
   // options so they can be requested from the user in interactive mode. 
@@ -341,6 +341,10 @@ int acol_manager::setup_options() {
     {0,"select-rows","Select rows for a new table (table3d only).",
      0,1,"<row_spec>","",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_select_rows),
+     both},
+    {0,"select-rows2","Select rows for a new table (table3d only).",
+     0,-1,"<row_spec> [col1] [col2] ...","",
+     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_select_rows2),
      both},
     {0,"set-data","Set the entries of a column.",3,4,
      "2d: <row_spec> <col> <val_spec> 3d: <x value> <y value> <z name> <val>",
@@ -4641,7 +4645,98 @@ int acol_manager::comm_select_rows(std::vector<std::string> &sv,
   
   // Replace the old table with the new one
   table_obj.clear();
+  table_obj=*new_table;
+  delete new_table;
 
+  return 0;
+}
+
+int acol_manager::comm_select_rows2(std::vector<std::string> &sv, 
+				    bool itive_com) {
+
+  if (type!="table") {
+    cout << "Not implemented for type " << type << endl;
+    return 0;
+  }
+
+  if (table_obj.get_nlines()==0) {
+    cerr << "No table to select rows from." << endl;
+    return exc_efailed;
+  }
+
+  std::string i1;
+  if (sv.size()>=2) {
+    i1=sv[1];
+  } else if (itive_com==true) {
+    i1=cl->cli_gets("Function to specify rows (or blank to quit): ");
+    if (i1.length()==0) {
+      if (verbose>0) cout << "Command 'select_rows' cancelled." << endl;
+      return 0;
+    }
+  } else {
+    cerr << "No rows to delete." << endl;
+    return exc_efailed;
+  }
+    
+  // ---------------------------------------------------------------------
+  // Create new table
+  // ---------------------------------------------------------------------
+  
+  table_units<> *new_table=new table_units<>;
+  
+  // ---------------------------------------------------------------------
+  // Copy constants from old to new table
+  // ---------------------------------------------------------------------
+
+  for(size_t i=0;i<table_obj.get_nconsts();i++) {
+    string tnam;
+    double tval;
+    table_obj.get_constant(i,tnam,tval);
+    new_table->add_constant(tnam,tval);
+  }
+  
+  // ---------------------------------------------------------------------
+  // Add column names to new table
+  // ---------------------------------------------------------------------
+
+  for(int i=0;i<((int)table_obj.get_ncolumns());i++) {
+    new_table->new_column(table_obj.get_column_name(i));
+  }
+
+  // ---------------------------------------------------------------------
+  // Copy data from selected rows
+  // ---------------------------------------------------------------------
+
+  calculator calc;
+  std::map<std::string,double> vars;
+
+  vector<string> cols;
+  for(size_t i=2;i<sv.size();i++) {
+    cols.push_back(sv[i]);
+    vars[cols[i-2]]=0.0;
+  }
+  calc.compile(i1.c_str(),&vars);
+  
+  int new_lines=0;
+  for(int i=0;i<((int)table_obj.get_nlines());i++) {
+    if (i%10000==0) std::cout << "I: " << i << endl;
+    for(size_t j=0;j<cols.size();j++) {
+      vars[cols[j]]=table_obj.get(cols[j],i);
+    }
+    if (calc.eval(&vars)>0.5) {
+      new_table->set_nlines(new_lines+1);
+      for(int j=0;j<((int)table_obj.get_ncolumns());j++) {
+	new_table->set(j,new_lines,table_obj.get(j,i));
+      }
+      new_lines++;
+    }
+  }
+  
+  // Replace the old table with the new one
+  table_obj.clear();
+  table_obj=*new_table;
+  delete new_table;
+  
   return 0;
 }
 

@@ -387,7 +387,12 @@ namespace o2scl_acol {
     virtual int comm_select(std::vector<std::string> &sv, bool itive_com);
 
     /// Select several rows for a new table
-    virtual int comm_select_rows(std::vector<std::string> &sv, bool itive_com);
+    virtual int comm_select_rows(std::vector<std::string> &sv,
+				 bool itive_com);
+
+    /// Desc
+    virtual int comm_select_rows2(std::vector<std::string> &sv,
+				  bool itive_com);
 
     /// Post-processing for setting a value
     virtual int comm_set(std::vector<std::string> &sv, bool itive_com);
