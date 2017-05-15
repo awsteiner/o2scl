@@ -204,6 +204,8 @@ namespace o2scl {
     itype=itp_cspline;
   }
 
+  /** \brief Table destructor
+   */
   virtual ~table() {
     if (intp_set==true) {
       delete si;
@@ -1516,7 +1518,8 @@ namespace o2scl {
     return itype;
   }
 
-  /** \brief Interpolate \c x0 from \c sx into \c sy
+  /** \brief Interpolate value \c x0 from column named \c sx 
+      into column named \c sy
 
       This function is \f$ {\cal O}(\log(R) \log(C)) \f$
       but can be as bad as \f$ {\cal O}(C \log(R) \f$ if the
@@ -1550,7 +1553,8 @@ namespace o2scl {
     return ret;
   }
 
-  /** \brief Interpolate \c x0 from \c sx into \c sy
+  /** \brief Interpolate value \c x0 from column named \c sx 
+      into column named \c sy (const version)
 
       This function is \f$ {\cal O}(\log(R) \log(C)) \f$
       but can be as bad as \f$ {\cal O}(C \log(R) \f$ if the
@@ -1575,23 +1579,24 @@ namespace o2scl {
     return ret;
   }
     
-  /** \brief Interpolate \c x0 from \c ix into \c iy 
+  /** \brief Interpolate value \c x0 from column with index
+      \c ix into column with index \c iy 
       \f$ {\cal O}(\log(R)) \f$
   */
   double interp(size_t ix, double x0, size_t iy) {
     return interp(get_column_name(ix),x0,get_column_name(iy));
   }
 
-  /** \brief Interpolate \c x0 from \c ix into \c iy
-      \f$ {\cal O}(\log(R)) \f$
+  /** \brief Interpolate value \c x0 from column with index \c ix 
+      into column with index \c iy \f$ {\cal O}(\log(R)) \f$
   */
   double interp_const(size_t ix, double x0, size_t iy) const {
     return interp_const(get_column_name(ix),x0,get_column_name(iy));
   }
 
-  /** \brief Make a new column \c yp which is the 
-      derivative \f$ y^{\prime}(x) \f$ .
-      \f$ {\cal O}(R \log(C)) \f$
+  /** \brief Make a new column named \c yp which is the 
+      derivative \f$ y^{\prime}(x) \f$ formed from columns
+      named \c x and \c y \f$ {\cal O}(R \log(C)) \f$
   */
   void deriv(std::string x, std::string y, std::string yp) {
     aiter itx, ity, ityp;
@@ -1615,10 +1620,12 @@ namespace o2scl {
     return;
   }
 
-  /** \brief The first derivative of the function sy(sx) at sx=x0.
+  /** \brief Compute the first derivative of the function defined
+      by x-values stored in column named \c sx and y-values stored
+      in column named \c sy at the value \c x0
 
-      O(log(C)*log(R)) but can be as bad as O(log(C)*R) if 
-      the relevant columns are not well ordered.
+      This function is O(log(C)*log(R)) but can be as bad as
+      O(log(C)*R) if the relevant columns are not well ordered.
   */
   double deriv(std::string sx, double x0, std::string sy) {
     double ret;
@@ -1649,7 +1656,9 @@ namespace o2scl {
     return ret;
   }
 
-  /** \brief The first derivative of the function sy(sx) at sx=x0.
+  /** \brief Compute the first derivative of the function defined
+      by x-values stored in column named \c sx and y-values stored
+      in column named \c sy at the value \c x0 (const version)
 
       O(log(C)*log(R)) but can be as bad as O(log(C)*R) if 
       the relevant columns are not well ordered.
@@ -1673,7 +1682,9 @@ namespace o2scl {
     return ret;
   }
   
-  /** \brief The first derivative of the function iy(ix) at ix=x0.
+  /** \brief Compute the first derivative of the function defined
+      by x-values stored in column with index \c ix and y-values stored
+      in column with index \c iy at the value \c x0
       
       O(log(R)) but can be as bad as O(R) if the relevant columns
       are not well ordered.
@@ -1682,7 +1693,9 @@ namespace o2scl {
     return deriv(get_column_name(ix),x0,get_column_name(iy));
   }
 
-  /** \brief The first derivative of the function iy(ix) at ix=x0.
+  /** \brief Compute the first derivative of the function defined
+      by x-values stored in column with index \c ix and y-values stored
+      in column with index \c iy at the value \c x0 (const version)
       
       O(log(R)) but can be as bad as O(R) if 
       the relevant columns are not well ordered.
@@ -1691,7 +1704,10 @@ namespace o2scl {
     return deriv_const(get_column_name(ix),x0,get_column_name(iy));
   }
 
-  /** \brief Make a new column \c yp which is 
+  /** \brief Create a new column named \c yp which is 
+      equal to the second derivative of the function defined by 
+      x-values stored in column named \c x and y-values 
+      stored in column named \c y, i.e.
       \f$ y^{\prime \prime}(x) \f$ - O(log(C)*R).
   */
   void deriv2(std::string x, std::string y, std::string yp) {
@@ -1716,7 +1732,9 @@ namespace o2scl {
     return;
   }
 
-  /** \brief The second derivative of the function sy(sx) at sx=x0.
+  /** \brief Compute the second derivative of the function defined
+      by x-values stored in column named \c sx and y-values stored
+      in column named \c sy at the value \c x0
 
       O(log(C)*log(R)) but can be as bad as O(log(C)*R) if 
       the relevant columns are not well ordered.
@@ -1750,7 +1768,9 @@ namespace o2scl {
     return ret;
   }
 
-  /** \brief The second derivative of the function sy(sx) at sx=x0.
+  /** \brief The Compute the second derivative of the function defined
+      by x-values stored in column named \c sx and y-values stored
+      in column named \c sy at the value \c x0 (const version)
 
       O(log(C)*log(R)) but can be as bad as O(log(C)*R) if 
       the relevant columns are not well ordered.
@@ -1774,7 +1794,9 @@ namespace o2scl {
     return ret;
   }
 
-  /** \brief The second derivative of the function iy(ix) at ix=x0.
+  /** \brief Compute the second derivative of the function defined
+      by x-values stored in column with index \c ix and y-values stored
+      in column with index \c iy at the value \c x0
 
       O(log(R)) but can be as bad as O(R) if 
       the relevant columns are not well ordered.
@@ -1783,7 +1805,9 @@ namespace o2scl {
     return deriv2(get_column_name(ix),x0,get_column_name(iy));
   }
 
-  /** \brief The second derivative of the function iy(ix) at ix=x0.
+  /** \brief Compute the second derivative of the function defined
+      by x-values stored in column with index \c ix and y-values stored
+      in column with index \c iy at the value \c x0 (const version)
 
       O(log(R)) but can be as bad as O(R) if 
       the relevant columns are not well ordered.
@@ -1792,8 +1816,10 @@ namespace o2scl {
     return deriv2_const(get_column_name(ix),x0,get_column_name(iy));
   }
 
-  /** \brief The integral of the function sy(sx) from sx=x1 to sx=x2.
-	
+  /** \brief Compute the integral of the function defined
+      by x-values stored in column named \c sx and y-values stored
+      in column named \c sy between the values \c x1 and \c x2
+      
       O(log(C)*log(R)) but can be as bad as O(log(C)*R) if 
       the relevant columns are not well ordered.
   */
@@ -1827,7 +1853,10 @@ namespace o2scl {
     return ret;
   }
   
-  /** \brief The integral of the function sy(sx) from sx=x1 to sx=x2.
+  /** \brief Compute the integral of the function defined
+      by x-values stored in column named \c sx and y-values stored
+      in column named \c sy between the values \c x1 and \c x2 
+      (const version)
 	
       O(log(C)*log(R)) but can be as bad as O(log(C)*R) if 
       the relevant columns are not well ordered.
@@ -1852,7 +1881,9 @@ namespace o2scl {
     return ret;
   }
   
-  /** \brief The integral of the function iy(ix) from ix=x1 to ix=x2.
+  /** \brief Compute the integral of the function defined
+      by x-values stored in column with index \c ix and y-values stored
+      in column with index \c iy between the values \c x1 and \c x2 
 
       O(log(R)) but can be as bad as O(R) if 
       the relevant columns are not well ordered.
@@ -1862,7 +1893,10 @@ namespace o2scl {
 		 get_column_name(iy));
   }
 
-  /** \brief The integral of the function iy(ix) from ix=x1 to ix=x2.
+  /** \brief Compute the integral of the function defined
+      by x-values stored in column with index \c ix and y-values stored
+      in column with index \c iy between the values \c x1 and \c x2 
+      (const version)
 
       O(log(R)) but can be as bad as O(R) if 
       the relevant columns are not well ordered.
@@ -1872,10 +1906,13 @@ namespace o2scl {
 		       get_column_name(iy));
   }
 
-  /** \brief The integral of the function iy(ix) 
+  /** \brief Create a new column named \c ynew which is 
+      equal to the integral of the function defined by 
+      x-values stored in column named \c x and y-values 
+      stored in column named \c y
 
-      O(log(R)) but can be as bad as O(R) if the relevant columns
-      are not well ordered.
+      This function is O(log(R)) but can be as bad as O(R) if the
+      relevant columns are not well ordered.
   */
   void integ(std::string x, std::string y, std::string ynew) {
     aiter itx, ity, itynew;
@@ -1901,7 +1938,7 @@ namespace o2scl {
   }
 
   /** \brief Return column maximum. Makes no assumptions about 
-      ordering \f$ {\cal O}(R) \f$
+      ordering, \f$ {\cal O}(R) \f$
   */
   double max(std::string scol) const {
     double ret=0.0;
@@ -1932,7 +1969,7 @@ namespace o2scl {
   }
 
   /** \brief Return column minimum. Makes no assumptions about 
-      ordering \f$ {\cal O}(R) \f$
+      ordering, \f$ {\cal O}(R) \f$ 
   */
   double min(std::string scol) const {
     double ret=0.0;
