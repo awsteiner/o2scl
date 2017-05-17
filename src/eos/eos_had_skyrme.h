@@ -237,6 +237,11 @@ namespace o2scl {
     /// Destructor
     virtual ~eos_had_skyrme() {};
 
+    /** \brief Evaluate the effective masses for neutrons and
+	protons
+    */
+    void eff_mass(fermion &ne, fermion &pr);
+    
     /** \brief Equation of state as a function of densities
 
 	\note Runs the zero temperature code if \c temper is less

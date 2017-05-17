@@ -40,6 +40,16 @@ eos_had_skyrme::eos_had_skyrme() {
   fet=&nrf;
 }
 
+void eos_had_skyrme::eff_mass(fermion &ne, fermion &pr) {
+  // Landau effective masses
+  double nb=ne.n+pr.n;
+  double term=0.25*(t1*(1.0+x1/2.0)+t2*(1.0+x2/2.0));
+  double term2=0.25*(t2*(0.5+x2)-t1*(0.5+x1));
+  ne.ms=ne.m/(1.0+2.0*(nb*term+ne.n*term2)*ne.m);
+  pr.ms=pr.m/(1.0+2.0*(nb*term+pr.n*term2)*pr.m);
+  return;
+}
+
 int eos_had_skyrme::calc_temp_e(fermion &ne, fermion &pr, 
 				double ltemper, thermo &locth) {
   
@@ -115,7 +125,7 @@ int eos_had_skyrme::calc_temp_e(fermion &ne, fermion &pr,
   term2=0.25*(t2*(0.5+x2)-t1*(0.5+x1));
   ne.ms=ne.m/(1.0+2.0*(n*term+ne.n*term2)*ne.m);
   pr.ms=pr.m/(1.0+2.0*(n*term+pr.n*term2)*pr.m);
-  
+
   if (ne.ms<0.0 || pr.ms<0.0) {
     O2SCL_ERR2("Effective masses negative in ",
 	       "eos_had_skyrme::calc_temp_e().",exc_einval);
