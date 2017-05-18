@@ -194,32 +194,36 @@ AM_CONDITIONAL(O2SCL_HDF, test x$hdf = xtrue)
 
 AS_IF([test "x$enable_hdf" != "xno"], [
 	    
-AC_CHECK_LIB([hdf5], [H5Fopen], [],
-	[echo ""
-        echo "HDF5 not found. Either provide the location for "
-	echo "the hdf5 libraries or ensure that HDF5 support is "
-	echo "disabled with the --disable-hdf option to configure. "
-	echo ""
-	echo -n " The present value of LDFLAGS is: " 
-	echo $LDFLAGS
- 	],[])
+AC_CHECK_LIB([hdf5], [H5Fopen], [], [
+  AC_CHECK_LIB([hdf5_serial], [H5Fopen], [], [
+    echo ""
+    echo "HDF5 not found. Either provide the location for "
+    echo "the hdf5 libraries or ensure that HDF5 support is "
+    echo "disabled with the --disable-hdf option to configure. "
+    echo ""
+    echo -n " The present value of LDFLAGS is: " 
+    echo $LDFLAGS
+  ],[])
+],[])
+
+])
 
 # ----------------------------------------------
 # ... and for the HDF5 high-level library
 # ----------------------------------------------
 
-AC_CHECK_LIB([hdf5_hl], [H5TBread_table], [],
-	[echo ""
-        echo "High-level HDF5 interface not found. Either provide the "
-	echo "location for the hdf5_hl libraries or ensure that HDF5 "
-	echo "support is disabled with the --disable-hdf option to "
-	echo "configure. "
-	echo ""
-	echo -n " The present value of LDFLAGS is: " 
-	echo $LDFLAGS
- 	],[])
-
-])
+AC_CHECK_LIB([hdf5_hl], [H5TBread_table], [], [
+  AC_CHECK_LIB([hdf5_serial_hl], [H5TBread_table], [], [
+    echo ""
+    echo "High-level HDF5 interface not found. Either provide the "
+    echo "location for the hdf5_hl libraries or ensure that HDF5 "
+    echo "support is disabled with the --disable-hdf option to "
+    echo "configure. "
+    echo ""
+    echo -n " The present value of LDFLAGS is: " 
+    echo $LDFLAGS
+  ],[])
+],[])  
 
 # ----------------------------------------------
 # Enable or disable FFTW support (included here
