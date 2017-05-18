@@ -73,9 +73,8 @@ int eos_had_rmf_hyp::calc_eq_p
   if (ne.ms<0.0 || pr.ms<0.0 || lam.ms<0.0 || sigp.ms<0.0 || 
       (inc_cascade && casm.ms<0.0)) {
     O2SCL_ERR2("Hadron mass negative in ",
-	       "eos_had_rmf_hyp::calc_eq_p().",gsl_efailed);
+	       "eos_had_rmf_hyp::calc_eq_p().",o2scl::exc_efailed);
   }
-  
   
   ne.nu=ne.mu-gw*ome+0.5*gr*lrho;
   pr.nu=pr.mu-gw*ome-0.5*gr*lrho;
@@ -134,15 +133,24 @@ int eos_had_rmf_hyp::calc_eq_p
   
   us=b/3.0*ne.m*gs2*gs*sig2*sig+c/4.0*gs2*gs2*sig4;
   
-  if (inc_cascade) {
+  double ns_n=0.0;
+  double ns_p=0.0;
+  double ns_lam=0.0;
+  double ns_sigp=0.0;
+  double ns_sigz=0.0;
+  double ns_sigm=0.0;
+  double ns_casz=0.0;
+  double ns_casm=0.0;
 
-    f1=ms*ms*sig-gs*(nsn+nsp)+duds-gr2*rho2*
+  if (inc_cascade) {
+    
+    f1=ms*ms*sig-gs*(ns_n+ns_p)+duds-gr2*rho2*
       (a1+2.0*a2*sig+3.0*a3*sig2+4.0*a4*sig2*sig+
        5.0*a5*sig4+6.0*a6*sig4*sig)-
-      gss*(lam.ns+sigp.ns+sigz.ns+sigm.ns+casz.ns+casm.ns);
+      gss*(ns_lam+ns_sigp+ns_sigz+ns_sigm+ns_casz+ns_casm);
     f2=mw*mw*ome-gw*(ne.n+pr.n)+zeta*gw2*gw2*ome2*ome/6.0+gr2*rho2*
       (2.0*b1*ome+4.0*b2*ome2*ome+6.0*b3*ome4*ome)-
-      gws*(lam.n+sigp.n+sigz.n+sigm.n+casz.n+cas.m.n);
+      gws*(lam.n+sigp.n+sigz.n+sigm.n+casz.n+casm.n);
     f3=mr*mr*lrho-gr*(pr.n-ne.n)*0.5+xi*gr2*gr2*rho2*lrho/6.0+
       2.0*gr2*lrho*fun-grs*(sigp.n-sigm.n+0.5*(casz.n-casm.n));
     
@@ -165,7 +173,7 @@ int eos_had_rmf_hyp::calc_eq_p
     // Xi0 +1/2
 
     lth.ed=us+0.5*ms*ms*sig2-0.5*mw*mw*ome*ome-0.5*mr*mr*lrho*lrho+
-      ne.ed+pr.ed+lam.ed+sigp.ed+sigz.ed+sigm.ed+casz.ed+cas.med-
+      ne.ed+pr.ed+lam.ed+sigp.ed+sigz.ed+sigm.ed+casz.ed+casm.ed-
       zeta/24.0*gw2*gw2*ome4-xi/24.0*gr2*gr2*rho2*rho2-fun*gr2*rho2+
       gw*ome*(ne.n+pr.n+lam.n+sigp.n+sigz.n+sigm.n+casz.n+casm.n)-
       0.5*gr*lrho*(ne.n-pr.n)-grs*lrho*(sigm.n-sigp.n-0.5*
@@ -173,10 +181,10 @@ int eos_had_rmf_hyp::calc_eq_p
     
   } else {
 
-    f1=ms*ms*sig-gs*(nsn+nsp)+duds-gr2*rho2*
+    f1=ms*ms*sig-gs*(ns_n+ns_p)+duds-gr2*rho2*
       (a1+2.0*a2*sig+3.0*a3*sig2+4.0*a4*sig2*sig+
        5.0*a5*sig4+6.0*a6*sig4*sig)-
-      gss*(lam.ns+sigp.ns+sigz.ns+sigm.ns);
+      gss*(ns_lam+ns_sigp+ns_sigz+ns_sigm);
     f2=mw*mw*ome-gw*(ne.n+pr.n)+zeta*gw2*gw2*ome2*ome/6.0+gr2*rho2*
       (2.0*b1*ome+4.0*b2*ome2*ome+6.0*b3*ome4*ome)-
       gws*(lam.n+sigp.n+sigz.n+sigm.n);
@@ -199,7 +207,7 @@ int eos_had_rmf_hyp::calc_eq_p
     
   }
 
-  return gsl_success;
+  return 0;
 }
 
 void eos_had_rmf_hyp::calc_xs(double lam_be) {
@@ -213,7 +221,7 @@ void eos_had_rmf_hyp::calc_xs(double lam_be) {
 
   // Compute the fields at a fixed density
   thermo th;
-  calc_e_fields(def_neutron,def_proton,th,sigma,omega,rho);
+  //calc_e_fields(def_neutron,def_proton,th,sigma,omega,rho);
 
   // Now compute the proper value of xs
   double gs=ms*cs;
@@ -234,7 +242,7 @@ void eos_had_rmf_hyp::calc_xw(double lam_be) {
 
   // Compute the fields at a fixed density
   thermo th;
-  calc_e_fields(def_neutron,def_proton,th,sigma,omega,rho);
+  //calc_e_fields(def_neutron,def_proton,th,sigma,omega,rho);
 
   // Now compute the proper value of xw
   double gs=ms*cs;

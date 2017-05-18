@@ -29,9 +29,8 @@
 #include <o2scl/lib_settings.h>
 #include <o2scl/constants.h>
 #include <o2scl/mm_funct.h>
-
 #include <o2scl/part.h>
-#include <o2scl/hadronic_eos.h>
+#include <o2scl/eos_had_rmf.h>
 #include <o2scl/fermion.h>
 
 #ifndef DOXYGENP
