@@ -156,7 +156,7 @@ endif
 # so we look for them in pkglibdir
 acol_LDFLAGS = -L. -Lhdf -L${pkglibdir}
 
-acol_LDADD = -lo2scl_hdf -lo2scl -lhdf5 -lgsl -lgslcblas $(RLIB)
+acol_LDADD = -lo2scl_hdf -lo2scl -lgsl -lgslcblas $(RLIB)
 
 endif
 
