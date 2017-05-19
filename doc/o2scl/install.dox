@@ -38,7 +38,15 @@
     <tt>./configure</tt>, respectively. Note that HDF5 is currently
     required for the physics sub-libraries, so <tt>--disable-hdf</tt>
     should be accompanied by the <tt>--disable-eoslib</tt> and
-    <tt>--disable-partlib</tt> flags.
+    <tt>--disable-partlib</tt> flags. 
+
+    The Ubuntu HDF5 package installs its header files in a slightly
+    different location than on other operating systems, so 
+    on Ubuntu and other Linux OSs you man need to use the 
+    <tt>O2SCL_UBUNTU_HDF5</tt> flag, i.e.
+    \verbatim
+    CXXFLAGS="-DO2SCL_UBUNTU_HDF5" ./configure
+    \endverbatim
 
     After \c make \c install, you may test the library with \c make \c
     check or \c make \c o2scl-test. At the end, the phrase <tt>"All
@@ -59,13 +67,11 @@
     \section installlinux_subsect Compiling on Linux
 
     For example, to install \o2 on Ubuntu, begin by installing g++,
-    GSL (the <tt>libgsl0-dev</tt> package), Boost (the
+    GSL (the <tt>libgsl-dev</tt> package), Boost (the
     <tt>libboost-all-dev</tt> package), GNU readline (the
     <tt>libreadline-dev</tt> and <tt>libncurses-dev</tt> packages),
-    and HDF5 the <tt>libhdf5-dev</tt> package). In older versions of
-    Ubuntu, the HDF5 package only supports the older (and now
-    deprecated) HDF5 API. If you get HDF5 errors you may have to
-    install HDF5 from source. You can then install \o2 from one of the
+    and HDF5 the <tt>libhdf5-dev</tt> package). 
+    You can then install \o2 from one of the
     release distributions by using the standard GNU
     <tt>./configure</tt> script and then invoking <tt>make</tt> and
     <tt>make install</tt>.
