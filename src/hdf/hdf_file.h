@@ -28,7 +28,11 @@
 */
 #include <limits>
 
+#ifdef O2SCL_HDF_SERIAL_HEADER
+#include <hdf5/serial/hdf5.h>
+#else
 #include <hdf5.h>
+#endif
 
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
