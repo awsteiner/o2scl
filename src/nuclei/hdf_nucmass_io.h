@@ -33,6 +33,7 @@
 #include <hdf5/serial/hdf5_hl.h>
 #else
 #include <hdf5.h>
+#include <hdf5_hl.h>
 #endif
 
 #include <o2scl/constants.h>
