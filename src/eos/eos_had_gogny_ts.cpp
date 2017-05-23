@@ -55,7 +55,7 @@ int main(void) {
   cout.setf(ios::showpos);
 
   cout << "D1S: " << endl;
-  gogny_load(ge,"d1s");
+  gogny_load(ge,"d1s","../../data/o2scl/gogny.o2");
   cout << " nb            E_nuc         P_nuc         E_neut        P_neut"
        << endl;
   for(double nb=0.02;nb<0.2001;nb+=0.02) {
@@ -90,7 +90,7 @@ int main(void) {
   cout << endl;
   
   cout << "D1N: " << endl;
-  gogny_load(ge,"d1n");
+  gogny_load(ge,"d1n","../../data/o2scl/gogny.o2");
   cout << " nb            E_nuc         P_nuc         E_neut        P_neut"
        << endl;
   for(double nb=0.02;nb<0.2001;nb+=0.02) {

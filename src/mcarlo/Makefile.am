@@ -76,7 +76,8 @@ pkginclude_HEADERS = $(HEADER_VARS)
 
 if O2SCL_OPENMP
 check_PROGRAMS = mcarlo_miser_ts mcarlo_vegas_ts mcarlo_plain_ts expval_ts \
-	rng_gsl_ts mcmc_ts mcmc_mpi_ts mcmc_para_ts
+	rng_gsl_ts mcmc_ts mcmc_mpi_ts
+#mcmc_para_ts
 else
 check_PROGRAMS = mcarlo_miser_ts mcarlo_vegas_ts mcarlo_plain_ts expval_ts \
 	rng_gsl_ts mcmc_ts mcmc_mpi_ts
@@ -97,10 +98,10 @@ mcarlo_vegas_ts_LDADD = $(VCHECK_LIBS)
 expval_ts_LDADD = $(VCHECK_LIBS)
 mcmc_ts_LDADD = $(VCHECK_LIBS)
 mcmc_mpi_ts_LDADD = $(VCHECK_LIBS)
-if O2SCL_OPENMP
-mcmc_para_ts_LDFLAGS = -fopenmp
-mcmc_para_ts_LDADD = $(VCHECK_LIBS)
-endif
+#if O2SCL_OPENMP
+#mcmc_para_ts_LDFLAGS = -fopenmp
+#mcmc_para_ts_LDADD = $(VCHECK_LIBS)
+#endif
 
 mcarlo_miser.scr: mcarlo_miser_ts$(EXEEXT)
 	./mcarlo_miser_ts$(EXEEXT) > mcarlo_miser.scr

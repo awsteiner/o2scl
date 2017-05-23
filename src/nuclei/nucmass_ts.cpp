@@ -122,15 +122,18 @@ int main(void) {
   // Create an instance of all the various mass formulae
 
   nucmass_ame ame;
-  o2scl_hdf::ame_load(ame,"03");
+  o2scl_hdf::ame_load(ame,"../../data/o2scl/nucmass/ame03.o2","ame03.o2");
   nucmass_ame ame95rmd;
-  o2scl_hdf::ame_load(ame95rmd,"95rmd");
+  o2scl_hdf::ame_load(ame95rmd,"../../data/o2scl/nucmass/ame95rmd.o2",
+		      "ame95rmd.o2");
   nucmass_ame ame03round;
-  o2scl_hdf::ame_load(ame03round,"03round");
+  o2scl_hdf::ame_load(ame03round,"../../data/o2scl/nucmass/ame03round.o2",
+		      "ame03round.o2");
   nucmass_ame ame95exp;
-  o2scl_hdf::ame_load(ame95exp,"95exp");
+  o2scl_hdf::ame_load(ame95exp,"../../data/o2scl/nucmass/ame95exp.o2",
+		      "ame95exp.o2");
   nucmass_ame ame12;
-  o2scl_hdf::ame_load(ame12,"12");
+  o2scl_hdf::ame_load(ame12,"../../data/o2scl/nucmass/ame12.o2","ame12.o2");
 
   // Output the references
   cout << "References: " << endl;
@@ -142,53 +145,64 @@ int main(void) {
 
   nucmass_semi_empirical sm;
   nucmass_mnmsk m95;
-  o2scl_hdf::mnmsk_load(m95);
+  cout << "Here." << endl;
+  o2scl_hdf::mnmsk_load(m95,"../../data/o2scl/nucmass/");
+  cout << "Here2." << endl;
   
-  nucmass_ktuy kt("04");
-  nucmass_ktuy kt2("05");
+  nucmass_ktuy kt("../../data/o2scl/nucmass/ktuy04.o2",1);
+  nucmass_ktuy kt2("../../data/o2scl/nucmass/ktuy05.o2",1);
 
-  nucmass_wlw wlw1("WS3.2");
-  nucmass_wlw wlw2("WS3.3");
-  nucmass_wlw wlw3("WS3.6");
-  nucmass_wlw wlw4("WS3_RBF");
-  nucmass_wlw wlw5("WS4_RBF");
-
-  nucmass_sdnp sdnp1("sdnp03");
-  nucmass_sdnp sdnp2("sd_skp_04");
-  nucmass_sdnp sdnp3("sd_sly4_04");
+  cout << "Here2b1." << endl;
+  nucmass_wlw wlw1("../../data/o2scl/nucmass/wlw10.o2",1);
+  cout << "Here2b2." << endl;
+  nucmass_wlw wlw2("../../data/o2scl/nucmass/wllw10.o2",1);
+  cout << "Here2b3." << endl;
+  nucmass_wlw wlw3("../../data/o2scl/nucmass/lwdw11.o2",1);
+  cout << "Here2b4." << endl;
+  //nucmass_wlw wlw4("../../data/o2scl/nucmass/wl11.o2",1);
+  cout << "Here2b5." << endl;
+  //  nucmass_wlw wlw5("../../data/o2scl/nucmass/wlwm14.o2",1);
   
+  cout << "Here3." << endl;
+  nucmass_sdnp sdnp1("../../data/o2scl/nucmass/sdnp03.o2",1);
+  nucmass_sdnp sdnp2("../../data/o2scl/nucmass/sd_skp_04.o2",1);
+  nucmass_sdnp sdnp3("../../data/o2scl/nucmass/sd_sly4_04.o2",1);
+  
+  cout << "Here4." << endl;
   nucmass_hfb hfb2;
-  o2scl_hdf::hfb_load(hfb2,2);
+  o2scl_hdf::hfb_load(hfb2,2,"../../data/o2scl/nucmass/");
   nucmass_hfb hfb8;
-  o2scl_hdf::hfb_load(hfb8,8);
+  o2scl_hdf::hfb_load(hfb8,8,"../../data/o2scl/nucmass/");
   nucmass_hfb hfb14;
-  o2scl_hdf::hfb_load(hfb14,14);
+  o2scl_hdf::hfb_load(hfb14,14,"../../data/o2scl/nucmass/");
   nucmass_hfb hfb14_v0;
-  o2scl_hdf::hfb_load(hfb14_v0,15);
+  o2scl_hdf::hfb_load(hfb14_v0,15,"../../data/o2scl/nucmass/");
   nucmass_hfb_sp hfb17;
-  o2scl_hdf::hfb_sp_load(hfb17,17);
+  o2scl_hdf::hfb_sp_load(hfb17,17,"../../data/o2scl/nucmass/");
   nucmass_hfb_sp hfb21;
-  o2scl_hdf::hfb_sp_load(hfb21,21);
+  o2scl_hdf::hfb_sp_load(hfb21,21,"../../data/o2scl/nucmass/");
   nucmass_hfb_sp hfb22;
-  o2scl_hdf::hfb_sp_load(hfb22,22);
+  o2scl_hdf::hfb_sp_load(hfb22,22,"../../data/o2scl/nucmass/");
   nucmass_hfb_sp hfb23;
-  o2scl_hdf::hfb_sp_load(hfb23,23);
+  o2scl_hdf::hfb_sp_load(hfb23,23,"../../data/o2scl/nucmass/");
   nucmass_hfb_sp hfb24;
-  o2scl_hdf::hfb_sp_load(hfb24,24);
+  o2scl_hdf::hfb_sp_load(hfb24,24,"../../data/o2scl/nucmass/");
   nucmass_hfb_sp hfb25;
-  o2scl_hdf::hfb_sp_load(hfb25,25);
+  o2scl_hdf::hfb_sp_load(hfb25,25,"../../data/o2scl/nucmass/");
   nucmass_hfb_sp hfb26;
-  o2scl_hdf::hfb_sp_load(hfb26,26);
+  o2scl_hdf::hfb_sp_load(hfb26,26,"../../data/o2scl/nucmass/");
   nucmass_hfb_sp hfb27;
-  o2scl_hdf::hfb_sp_load(hfb27,27);
-  nucmass_dglg dglg;
+  o2scl_hdf::hfb_sp_load(hfb27,27,"../../data/o2scl/nucmass/");
+  cout << "Herey." << endl;
+  //nucmass_dglg dglg;
+  cout << "Herex." << endl;
 
   // Set up generic pointers for testing
   nucmass_table *nmd[27]={&ame,&ame95rmd,&ame03round,&ame95exp,
 			  &m95,&kt,&kt2,&hfb2,&hfb8,
 			  &hfb14,&hfb17,&hfb21,&hfb22,&hfb23,&hfb24,&hfb25,
-			  &hfb26,&hfb27,&dglg,&wlw1,&wlw2,&wlw3,&wlw4,
-			  &wlw5,&sdnp1,&sdnp2,&sdnp3};
+			  &hfb26,&hfb27,&wlw1,&wlw1,&wlw2,&wlw3,&wlw3,
+			  &wlw3,&sdnp1,&sdnp2,&sdnp3};
 
   // Test the spins obtained from mnmsk
 

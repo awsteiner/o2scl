@@ -43,11 +43,11 @@ int main(void) {
 
   // Nuclear masses
   nucmass_ame_exp ame;
-  o2scl_hdf::ame_load(ame,"12");
+  o2scl_hdf::ame_load(ame,"../../data/o2scl/nucmass/ame12.o2","ame12.o2");
 
   // Load Skyrme EOS
   eos_had_skyrme sk;
-  o2scl_hdf::skyrme_load(sk,"SLy4");
+  o2scl_hdf::skyrme_load(sk,"../../data/o2scl/skdata/SLy4.o2",1);
   nse.set_eos(sk);
 
   // Test nucmass_densmat

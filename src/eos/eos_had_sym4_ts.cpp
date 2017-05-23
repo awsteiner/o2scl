@@ -74,21 +74,21 @@ int main(void) {
   n.non_interacting=false;
   p.non_interacting=false;
 
-  o2scl_hdf::skyrme_load(sk,"SLy230a");
-  o2scl_hdf::skyrme_load(sk4,"SLy230a");
+  o2scl_hdf::skyrme_load(sk,"../../data/o2scl/skdata/SLy230a.o2",1);
+  o2scl_hdf::skyrme_load(sk4,"../../data/o2scl/skdata/SLy230a.o2",1);
 
   /// Initialize
 
-  o2scl_hdf::rmf_load(rmf,"NL4");
-  o2scl_hdf::rmf_load(rmf4,"NL4");
+  o2scl_hdf::rmf_load(rmf,"../../data/o2scl/rmfdata/NL4.o2",1);
+  o2scl_hdf::rmf_load(rmf4,"../../data/o2scl/rmfdata/NL4.o2",1);
   rmf.mnuc=939.0/197.33;
   rmf4.mnuc=939.0/197.33;
-  o2scl_hdf::rmf_load(rmf_b,"NL4");
-  o2scl_hdf::rmf_load(rmf4_b,"NL4");
+  o2scl_hdf::rmf_load(rmf_b,"../../data/o2scl/rmfdata/NL4.o2",1);
+  o2scl_hdf::rmf_load(rmf4_b,"../../data/o2scl/rmfdata/NL4.o2",1);
   rmf_b.mnuc=939.0/197.33;
   rmf4_b.mnuc=939.0/197.33;
-  o2scl_hdf::rmf_load(rmf_c,"NL4");
-  o2scl_hdf::rmf_load(rmf4_c,"NL4");
+  o2scl_hdf::rmf_load(rmf_c,"../../data/o2scl/rmfdata/NL4.o2",1);
+  o2scl_hdf::rmf_load(rmf4_c,"../../data/o2scl/rmfdata/NL4.o2",1);
   rmf_c.mnuc=939.0/197.33;
   rmf4_c.mnuc=939.0/197.33;
 
@@ -233,7 +233,7 @@ int main(void) {
   mdi4.Lambda=cbrt(1.5*pi2*mdi4.rho0);
   mdi4.form=mdi4.mdi_form;
   
-  o2scl_hdf::rmf_load(rnew,"NL3");
+  o2scl_hdf::rmf_load(rnew,"../../data/o2scl/rmfdata/NL3.o2",1);
 
   rnew.mnuc=939.0/197.33;
   rnew.esym=34.0/hc_mev_fm;
@@ -258,7 +258,7 @@ int main(void) {
   rnew.set_fields(0.1,0.07,-0.001);
   rnew.saturation();
 
-  o2scl_hdf::rmf_load(rlo,"NL3");
+  o2scl_hdf::rmf_load(rlo,"../../data/o2scl/rmfdata/NL3.o2",1);
 
   rlo.mnuc=939.0/197.33;
   rlo.esym=34.0/hc_mev_fm;
@@ -286,7 +286,7 @@ int main(void) {
   rlo.set_fields(0.1,0.07,-0.001);
   rlo.saturation();
 
-  o2scl_hdf::rmf_load(rhi,"NL3");
+  o2scl_hdf::rmf_load(rhi,"../../data/o2scl/rmfdata/NL3.o2",1);
 
   rhi.mnuc=939.0/197.33;
   rhi.esym=34.0/hc_mev_fm;

@@ -66,7 +66,7 @@ int main(void) {
 
     // Test running with SLy4
     eos_had_skyrme sk;
-    o2scl_hdf::skyrme_load(sk,"SLy4");
+    o2scl_hdf::skyrme_load(sk,"../../data/o2scl/skdata/SLy4.o2",1);
 
     nstar_cold nco;
     nco.def_tov.verbose=0;
@@ -152,7 +152,7 @@ int main(void) {
 
   {
     eos_had_rmf rmf;
-    o2scl_hdf::rmf_load(rmf,"RAPR");
+    o2scl_hdf::rmf_load(rmf,"../../data/o2scl/rmfdata/RAPR.o2",true);
 
     nstar_cold nco;
     nco.def_tov.verbose=0;
