@@ -39,22 +39,22 @@ int main(void) {
   // Load several mass formulae to make distributions out of
 
   nucmass_ame ame12;
-  o2scl_hdf::ame_load(ame12,"12");
+  o2scl_hdf::ame_load(ame12,"../../data/o2scl/nucmass/ame12.o2","ame12.o2");
 
   nucmass_ame_exp amex12;
-  o2scl_hdf::ame_load(amex12,"12");
+  o2scl_hdf::ame_load(amex12,"../../data/o2scl/nucmass/ame12.o2","ame12.o2");
 
   nucmass_mnmsk mth;
-  o2scl_hdf::mnmsk_load(mth,"");
+  o2scl_hdf::mnmsk_load(mth,"../../data/o2scl/nucmass/");
 
   nucmass_mnmsk_exp mexp;
-  o2scl_hdf::mnmsk_load(mexp,"");
+  o2scl_hdf::mnmsk_load(mexp,"../../data/o2scl/nucmass/");
 
   nucmass_ame ame03;
-  o2scl_hdf::ame_load(ame03,"03");
+  o2scl_hdf::ame_load(ame03,"../../data/o2scl/nucmass/ame03.o2","ame03.o2");
   
   nucmass_ame_exp amex03;
-  o2scl_hdf::ame_load(amex03,"03");
+  o2scl_hdf::ame_load(amex03,"../../data/o2scl/nucmass/ame03.o2","ame03.o2");
 
   vector<nucleus> fdx;
   nucdist_set(fdx,mth,"1",400,true);

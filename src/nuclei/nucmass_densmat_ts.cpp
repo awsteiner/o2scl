@@ -39,7 +39,7 @@ int main(void) {
 
   // Nuclear masses
   nucmass_ame_exp ame;
-  o2scl_hdf::ame_load(ame,"12");
+  o2scl_hdf::ame_load(ame,"../../data/o2scl/nucmass/ame12.o2","ame12.o2");
 
   // Test dense_matter
 

@@ -686,7 +686,7 @@ int main(void) {
   cout << endl;
   
   snf.method=fermion_deriv_rel::direct;
-  double val2=snf.deriv_calibrate(sfx,1);
+  double val2=snf.deriv_calibrate(sfx,1,"../../data/o2scl/fermion_cal.o2");
   cout << "Deriv_Calibrate: " << val2 << endl;
 
   cout << "----------------------------------------------------" << endl;
@@ -695,7 +695,7 @@ int main(void) {
   cout << endl;
 
   snf.method=fermion_deriv_rel::by_parts;
-  double val3=snf.deriv_calibrate(sfx,1);
+  double val3=snf.deriv_calibrate(sfx,1,"../../data/o2scl/fermion_cal.o2");
   cout << "Deriv_Calibrate: " << val3 << endl;
   cout << endl;
 
@@ -705,7 +705,7 @@ int main(void) {
   cout << endl;
 
   snf.method=fermion_deriv_rel::automatic;
-  double val4=snf.deriv_calibrate(sfx,1);
+  double val4=snf.deriv_calibrate(sfx,1,"../../data/o2scl/fermion_cal.o2");
   cout << "Deriv_Calibrate: " << val4 << endl;
   cout << endl;
 

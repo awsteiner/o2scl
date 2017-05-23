@@ -43,13 +43,13 @@ int main(void) {
   nucmass_fit mf;
 
   nucmass_ame ame;
-  o2scl_hdf::ame_load(ame,"12");
+  o2scl_hdf::ame_load(ame,"../../data/o2scl/nucmass/ame12.o2","ame12.o2");
   nucmass_ame_exp amex;
-  o2scl_hdf::ame_load(amex,"12");
+  o2scl_hdf::ame_load(amex,"../../data/o2scl/nucmass/ame12.o2","ame12.o2");
   nucmass_mnmsk_exp mexp;
-  o2scl_hdf::mnmsk_load(mexp);
+  o2scl_hdf::mnmsk_load(mexp,"../../data/o2scl/nucmass/");
   nucmass_mnmsk mm;
-  o2scl_hdf::mnmsk_load(mm);
+  o2scl_hdf::mnmsk_load(mm,"../../data/o2scl/nucmass/");
 
   nucdist_set(mf.dist,ame);
   mf.fit(sem,res);

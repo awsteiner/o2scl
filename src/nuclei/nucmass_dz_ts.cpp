@@ -39,14 +39,14 @@ int main(void) {
   cout.setf(ios::scientific);
 
   nucmass_ame ame;
-  o2scl_hdf::ame_load(ame,"12");
+  o2scl_hdf::ame_load(ame,"../../data/o2scl/nucmass/ame12.o2","ame12.o2");
   nucmass_ame_exp amex;
-  o2scl_hdf::ame_load(amex,"12");
+  o2scl_hdf::ame_load(amex,"../../data/o2scl/nucmass/ame12.o2","ame12.o2");
 
   nucmass_dz_fit dmf;
   nucmass_dz_fit_33 dmf33;
-  nucmass_dz_table dz("96");
-  nucmass_dz_table dz2("95");
+  nucmass_dz_table dz("../../data/o2scl/nucmass/du_zu_96.o2",1);
+  nucmass_dz_table dz2("../../data/o2scl/nucmass/du_zu_95.o2",1);
 
   // Compare the fits with numerical values from the original Fortran
   // code
