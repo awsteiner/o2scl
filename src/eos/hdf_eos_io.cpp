@@ -29,26 +29,20 @@ using namespace o2scl;
 using namespace o2scl;
 using namespace o2scl_hdf;
 
-void o2scl_hdf::gogny_load(o2scl::eos_had_gogny &ge, std::string model, 
-			   bool external) {
+void o2scl_hdf::gogny_load(o2scl::eos_had_gogny &ge, std::string model,
+			   std::string filename) {
+			   
   
-  std::string fname;
-  std::string dir=o2scl::o2scl_settings.get_data_dir();
-
   hdf_file hf;
 
-  if (external) {
-    fname=model;
-    hf.open(fname);
-    std::string table_name;
-    hdf_input(hf,ge.t3d,table_name);
+  if (filename.length()>0) {
+    hf.open(filename);
+    hdf_input(hf,ge.t3d,model);
     hf.close();
   } else {
-    fname=dir+"/gogny.o2";
-    hf.open(fname);
-    cout << "Reading." << endl;
+    filename=o2scl::o2scl_settings.get_data_dir()+"/gogny.o2";
+    hf.open(filename);
     hdf_input(hf,ge.t3d,model);
-    cout << "Done reading." << endl;
     hf.close();
   }
   

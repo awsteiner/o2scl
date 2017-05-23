@@ -263,7 +263,7 @@ int main(void) {
     t.test_rel(p.n,nbx/4.0,1.0e-6,"NL3 neutron-rich matter p.n");
   }
 
-  o2scl_hdf::rmf_load(re,"RAPR");
+  o2scl_hdf::rmf_load(re,"../../data/o2scl/rmfdata/RAPR.o2",true);
 
   // Nuclear matter (lower densities don't work)
   for(double nbx=1.0e-4;nbx<=1.29;nbx*=2.0) {

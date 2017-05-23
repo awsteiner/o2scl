@@ -202,7 +202,7 @@ int main(void) {
   nucleus_rmf el;
 
   eos_had_rmf rmf;
-  rmf_load(rmf,"NL4");
+  o2scl_hdf::rmf_load(rmf,"../../data/o2scl/rmfdata/NL4.o2",true);
   el.set_eos(rmf);
 
   el.init_run(82,126,2,2);

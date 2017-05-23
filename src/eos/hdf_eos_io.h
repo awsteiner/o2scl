@@ -53,8 +53,8 @@ namespace o2scl_hdf {
       model is taken to be the full pathname of the HDF5 file
       containing the EOS model data to be loaded.
   */
-  void gogny_load(o2scl::eos_had_gogny &ge, std::string model, 
-		  bool external=false);
+  void gogny_load(o2scl::eos_had_gogny &ge, std::string model,
+		  std::string filename="");
   
   /** \brief Input a \ref o2scl::eos_had_rmf object from an HDF file
 
