@@ -402,7 +402,9 @@ namespace o2scl {
    */
   template<class size_vec_t> void set_row(size_t row, size_vec_t &v) {
     if (row>=get_nlines()) {
-      O2SCL_ERR("Row not found in table::set_line().",o2scl::exc_einval);
+      std::string err=((std::string)"Row out of range, ")+
+      itos(row)+">="+itos(get_nlines())+", in table::set_row().";
+      O2SCL_ERR(err.c_str(),exc_einval);
     }
     for(size_t i=0;i<get_ncolumns() && i<v.size();i++) {
       alist[i]->second.dat[row]=v[i];
@@ -418,7 +420,7 @@ namespace o2scl {
     aciter it=atree.find(scol);
     if (it==atree.end()) {
       O2SCL_ERR((((std::string)"Column '")+scol+
-		 "' not found in table::get().").c_str(),
+		 "' not found in table::get(string,size_t).").c_str(),
 		exc_enotfound);
       tmp=0.0;
     } else {
@@ -438,7 +440,7 @@ namespace o2scl {
       return 0.0;
     }
     if (row>=nlines) {
-      std::string err=((std::string)"Column out of range, ")+
+      std::string err=((std::string)"Row out of range, ")+
       itos(row)+">="+itos(nlines)+", in table::get(size_t,size_t).";
       O2SCL_ERR(err.c_str(),exc_einval);
       return 0.0;
@@ -508,8 +510,8 @@ namespace o2scl {
       
     int irow=lookup(scol,val);
     if (irow==exc_enotfound) {
-      O2SCL_ERR((((std::string)"Column '")+scol+
-		 "' not found in table::get_row() const.").c_str(),
+      O2SCL_ERR((((std::string)"Column '")+scol+"' not found in "+
+		 "table::get_row(string,double,vec_t) const.").c_str(),
 		exc_enotfound);
       return;
     } 
@@ -534,7 +536,7 @@ namespace o2scl {
       
     if (irow+1>nlines) {
       O2SCL_ERR((((std::string)"Row '")+ itos(irow)+
-		 "' not found in table::get_row().").c_str(),
+		 "' not found in table::get_row(size_t,vec_t).").c_str(),
 		exc_enotfound);
       return;
     }
@@ -1607,7 +1609,8 @@ namespace o2scl {
     ityp=atree.find(yp);
 
     if (itx==atree.end() || ity==atree.end() || ityp==atree.end()) {
-      O2SCL_ERR("Column not found in table::deriv().",exc_enotfound);
+      O2SCL_ERR("Column not found in table::deriv(string,string,string).",
+		exc_enotfound);
       return;
     }
   
@@ -1632,12 +1635,13 @@ namespace o2scl {
     aiter itx=atree.find(sx), ity=atree.find(sy);
     if (itx==atree.end() || ity==atree.end()) {
       O2SCL_ERR((((std::string)"Columns '")+sx+"' or '"+sy+
-		 "' not found in table::deriv().").c_str(),
+		 "' not found in table::deriv(string,double,string).").c_str(),
 		exc_enotfound);
       return 0.0;
     }
     if (!std::isfinite(x0)) {
-      O2SCL_ERR("x0 not finite in table::deriv().",exc_einval);
+      O2SCL_ERR("x0 not finite in table::deriv(string,double,string).",
+		exc_einval);
       return exc_einval;
     }
     if (intp_set==false || sx!=intp_colx || sy!=intp_coly) {
@@ -1719,7 +1723,8 @@ namespace o2scl {
     ityp=atree.find(yp);
 
     if (itx==atree.end() || ity==atree.end() || ityp==atree.end()) {
-      O2SCL_ERR("Column not found in table::deriv2().",exc_enotfound);
+      O2SCL_ERR("Column not found in table::deriv2(string,string,string).",
+		exc_enotfound);
       return;
     }
   
@@ -1744,12 +1749,13 @@ namespace o2scl {
     aiter itx=atree.find(sx), ity=atree.find(sy);
     if (itx==atree.end() || ity==atree.end()) {
       O2SCL_ERR((((std::string)"Columns '")+sx+"' or '"+sy+
-		 "' not found in table::deriv2().").c_str(),
+		 "' not found in table::deriv2(string,double,string).").c_str(),
 		exc_enotfound);
       return 0.0;
     }
     if (!std::isfinite(x0)) {
-      O2SCL_ERR("x0 not finite in table::deriv2().",exc_einval);
+      O2SCL_ERR("x0 not finite in table::deriv2(string,double,string).",
+		exc_einval);
       return exc_einval;
     }
     if (intp_set==false || sx!=intp_colx || sy!=intp_coly) {
@@ -1828,13 +1834,13 @@ namespace o2scl {
     aiter itx=atree.find(sx), ity=atree.find(sy);
     if (itx==atree.end() || ity==atree.end()) {
       O2SCL_ERR((((std::string)"Columns '")+sx+"' or '"+sy+
-		 "' not found in table::integ().").c_str(),
+		 "' not found in table::integ(string,double,double,string).").c_str(),
 		exc_enotfound);
       return 0.0;
     }
     if (!std::isfinite(x1) || !std::isfinite(x2)) {
       std::string msg=((std::string)"Value x1=")+dtos(x1)+" or x2="+
-      dtos(x2)+" not finite in table.integ().";
+      dtos(x2)+" not finite in table.integ(string,double,double,string).";
       O2SCL_ERR(msg.c_str(),exc_einval);
     }
     if (intp_set==false || sx!=intp_colx || sy!=intp_coly) {
@@ -1923,7 +1929,8 @@ namespace o2scl {
     itynew=atree.find(ynew);
 
     if (itx==atree.end() || ity==atree.end() || itynew==atree.end()) {
-      O2SCL_ERR("Column not found in table::integ().",exc_enotfound);
+      O2SCL_ERR("Column not found in table::integ(string,string,string).",
+		exc_enotfound);
       return;
     }
   
@@ -2302,7 +2309,7 @@ namespace o2scl {
   virtual double get_constant(std::string name) const {
     if (constants.find(name)==constants.end()) {
       std::string err=((std::string)"No constant with name '")+name+
-      "' in table::get_constant().";
+      "' in table::get_constant(string).";
       O2SCL_ERR(err.c_str(),exc_einval);
     }
     return constants.find(name)->second;
@@ -2322,7 +2329,8 @@ namespace o2scl {
       val=cit->second;
       return;
     }
-    O2SCL_ERR("Index too large in table::get_constant().",exc_eindex);
+    O2SCL_ERR("Index too large in table::get_constant(size_t,string,double).",
+	      exc_eindex);
     return;
   }
 
