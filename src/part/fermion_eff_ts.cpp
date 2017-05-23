@@ -571,7 +571,8 @@ int main(void) {
   // -----------------------------------------------------------------
 
   fermion ec;
-  t.test_rel(ef2.calibrate(ec,1),0.0,0.5,"calibrate");
+  t.test_rel(ef2.calibrate(ec,1,"../../data/o2scl/fermion_cal.o2"),
+	     0.0,0.5,"calibrate");
   
   // -----------------------------------------------------------------
 
