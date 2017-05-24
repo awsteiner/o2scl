@@ -117,10 +117,10 @@ mcmc.scr: mcmc_ts$(EXEEXT)
 	./mcmc_ts$(EXEEXT) > mcmc.scr
 mcmc_mpi.scr: mcmc_mpi_ts$(EXEEXT)
 	./mcmc_mpi_ts$(EXEEXT) -exit > mcmc_mpi.scr
-if O2SCL_OPENMP
-mcmc_para.scr: mcmc_para_ts$(EXEEXT)
-	./mcmc_para_ts$(EXEEXT) -exit > mcmc_para.scr
-endif
+#if O2SCL_OPENMP
+#mcmc_para.scr: mcmc_para_ts$(EXEEXT)
+#	./mcmc_para_ts$(EXEEXT) -exit > mcmc_para.scr
+#endif
 
 mcarlo_miser_ts_SOURCES = mcarlo_miser_ts.cpp
 rng_gsl_ts_SOURCES = rng_gsl_ts.cpp
@@ -129,9 +129,9 @@ mcarlo_vegas_ts_SOURCES = mcarlo_vegas_ts.cpp
 expval_ts_SOURCES = expval_ts.cpp
 mcmc_ts_SOURCES = mcmc_ts.cpp
 mcmc_mpi_ts_SOURCES = mcmc_mpi_ts.cpp
-if O2SCL_OPENMP
-mcmc_para_ts_SOURCES = mcmc_para_ts.cpp
-endif
+#if O2SCL_OPENMP
+#mcmc_para_ts_SOURCES = mcmc_para_ts.cpp
+#endif
 
 # ------------------------------------------------------------
 # Library o2scl_mcarlo
