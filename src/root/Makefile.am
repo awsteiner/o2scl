@@ -6,7 +6,7 @@ ROOT_SRCS =
 
 HEADER_VAR = root_bkt_cern.h root.h root_cern.h mroot.h mroot_hybrids.h \
 	root_stef.h root_brent_gsl.h mroot_cern.h \
-	jacobian.h mroot_broyden.h root_toms748.h
+	jacobian.h mroot_broyden.h root_toms748.h root_robbins_monro.h
 
 TEST_VAR = root_bkt_cern.scr mroot_cern.scr mroot_hybrids.scr \
 	root_stef.scr root_cern.scr root_brent_gsl.scr \

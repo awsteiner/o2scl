@@ -8,7 +8,7 @@ ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = include src data doc examples
 
 # Extra files to add to the distribution
-EXTRA_DIST = autogen.sh TODOS README acinclude.m4 m4
+EXTRA_DIST = autogen.sh TODOS README acinclude.m4 m4 README.md .travis.yml
 
 # Output some assistance describing the usual make targets
 help:
