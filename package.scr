@@ -1,0 +1,11 @@
+cd /home/awsteiner/wcs/o2scl
+git archive master | tar -x -C ~/pack/o2scl
+cd /home/awsteiner/pack/o2scl
+bzr builddeb -S > /home/awsteiner/pack/builddeb.log \
+     2> /home/awsteiner/pack/builddeb.err
+cd ../build-area
+pbuilder-dist zesty build `ls *.dsc` > /home/awsteiner/pack/pb.log \
+     2) /home/awsteiner/pack/pb.err
+cd ../o2scl
+# bzr push lp:~awsteiner/+junk/o2scl-package
+# dput ppa:awsteiner/ppa `ls *.changes`
