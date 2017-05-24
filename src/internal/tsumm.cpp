@@ -98,9 +98,12 @@ int main(int argv, char *argc[]) {
 	  lines.push_back(ctmp);
 	}
       }
+      fclose(fp);
       if (lines.size()>=2) {
 	if (lines[lines.size()-1]!="All tests passed.\n") {
 	  cerr << "Some tests failed in file: " << (*it) << endl;
+	  string cmd=((string)"cat ")+*it;
+	  int sret=system(cmd.c_str());
 	  failed=true;
 	} else {
 	  istringstream ins(lines[lines.size()-2]);
@@ -110,9 +113,10 @@ int main(int argv, char *argc[]) {
 	}
       } else {
 	cerr << "Some tests failed in file: " << (*it) << endl;
+	string cmd=((string)"cat ")+*it;
+	int sret=system(cmd.c_str());
 	failed=true;
       }
-      fclose(fp);
     }
   }
 
