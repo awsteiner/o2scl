@@ -52,6 +52,7 @@
 namespace o2scl {
   
   typedef boost::numeric::ublas::vector<double> ubvector;
+  typedef boost::numeric::ublas::matrix<double> ubmatrix;
   
   /** \brief A generic MCMC simulation class
 
@@ -346,6 +347,7 @@ namespace o2scl {
     if (initial_points.size()==0) {
       // Setup initial guess if not specified
       initial_points.resize(1);
+      initial_points[0].resize(nparams);
       for(size_t k=0;k<nparams;k++) {
 	initial_points[0][k]=(low[k]+high[k])/2.0;
       }
@@ -1521,19 +1523,19 @@ namespace o2scl {
 	ac_coeffs(i,ell-1)=0.0;
       }
     }
-    size_t n_tot=n_threads*n_walk;
+    size_t n_tot=this->n_threads*this->n_walk;
     size_t table_row=0;
     size_t cstart=table->lookup_column("log_wgt")+1;
     for(size_t i=0;i<ncols;i++) {
-      for(size_t j=0;j<n_threads;j++) {
-	for(size_t k=0;k<n_walk;k++) {
-	  size_t tindex=j*n_walk+k;
+      for(size_t j=0;j<this->n_threads;j++) {
+	for(size_t k=0;k<this->n_walk;k++) {
+	  size_t tindex=j*this->n_walk+k;
 	  for(size_t ell=1;ell<N_max;ell++) {
-	    double mean=o2scl::vector_mean_double
-	      (csizes[tindex]+1,&((*table)[cstart+i][table_row]));
+	    const double &x=(*table)[cstart+i][table_row];
+	    double mean=o2scl::vector_mean<const double *>
+	      (csizes[tindex]+1,&x);
 	    ac_coeffs(i,ell-1)+=o2scl::vector_lagk_autocorr
-	      (csizes[tindex]+1,&((*table)[cstart+i][table_row]),
-	       ell,mean);
+	      <const double *>(csizes[tindex]+1,&x,ell,mean);
 	  }
 	  table_row+=csizes[tindex]+1;
 	}
@@ -1574,8 +1576,8 @@ namespace o2scl {
     std::shared_ptr<o2scl::table_units<> > table2=
     std::shared_ptr<o2scl::table_units<> >(new o2scl::table_units<>);
 
-    for(size_t i=0;i<n_threads;i++) {
-      for(size_t j=0;j<n_walk;j++) {
+    for(size_t i=0;i<this->n_threads;i++) {
+      for(size_t j=0;j<this->n_walk;j++) {
 	std::string func=std::string("abs(walker-")+o2scl::szttos(j)+
 	  ")<0.1 && abs(thread-"+o2scl::szttos(i)+")<0.1";
 	table->copy_rows(func,*table2);

@@ -318,7 +318,7 @@ namespace o2scl {
 	if (dest.is_column(cname)==false) {
 	  dest.new_column(cname);
 	}
-	dest.set_unit(get_unit(cname));
+	dest.set_unit(cname,get_unit(cname));
       }
     
       size_t new_lines=dest.get_nlines();
@@ -328,7 +328,7 @@ namespace o2scl {
 	  this->set_nlines_auto(new_lines+1);
 	  for(size_t j=0;j<this->get_ncolumns();j++) {
 	    std::string cname=this->get_column_name(j);
-	    dest.set(cname,new_lines);
+	    dest.set(cname,new_lines,this->get(cname,i));
 	  }
 	  new_lines++;
 	}
