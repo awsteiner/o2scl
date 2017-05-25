@@ -16,7 +16,7 @@ help:
 	@echo "emacs-clean:          Remove tilde files."
 	@echo 
 
-docdir = $(prefix)/doc/o2scl
+docdir = $(prefix)/share/doc/o2scl
 
 # These are the files installed by 'make install'
 dist_doc_DATA = doxyfile Makefile.am Makefile.in *.html

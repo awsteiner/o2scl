@@ -140,11 +140,19 @@ std::string lib_settings_class::o2scl_tarname() {
 }
 
 std::string lib_settings_class::date_compiled() {
+#ifdef O2SCL_UBUNTU_PKG
+  return "<package>";
+#else
   return __DATE__;
+#endif
 }
 
 std::string lib_settings_class::time_compiled() {
+#ifdef O2SCL_UBUNTU_PKG
+  return "<package>";
+#else
   return __TIME__;
+#endif
 }
 
 bool lib_settings_class::eos_installed() {

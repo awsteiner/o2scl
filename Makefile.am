@@ -99,6 +99,9 @@ emacs-clean:
 	rm -v -f */*/*/*~
 	rm -v -f */*/*/*/*~
 
+pack-sync:
+	git archive master | tar -x -C /home/awsteiner/pack/o2scl
+
 utk-sync-doc:
 	cd doc/o2scl && $(MAKE) utk-sync-doc
 

@@ -1,8 +1,14 @@
 cd /home/awsteiner/wcs/o2scl
-git archive master | tar -x -C ~/pack/o2scl
+make dist
+mv o2scl-0.921.tar.gz /home/awsteiner/pack
+make pack-sync
+cd /home/awsteiner/pack
+tar xvzf o2scl-0.921.tar.gz
 cd /home/awsteiner/pack/o2scl
-bzr builddeb -S > /home/awsteiner/pack/builddeb.log \
+bzr builddeb -- -nc -us -uc -j 4 > /home/awsteiner/pack/builddeb.log \
      2> /home/awsteiner/pack/builddeb.err
+bzr builddeb -S > /home/awsteiner/pack/builddeb2.log \
+     2> /home/awsteiner/pack/builddeb2.err
 cd ../build-area
 pbuilder-dist zesty build `ls *.dsc` > /home/awsteiner/pack/pb.log \
      2) /home/awsteiner/pack/pb.err
