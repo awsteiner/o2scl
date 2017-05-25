@@ -1,4 +1,4 @@
-docdir = $(prefix)/doc/o2scl/eos
+docdir = $(prefix)/share/doc/o2scl/eos
 dist_doc_DATA = doxyfile Makefile.am Makefile.in *.html
 
 EXTRA_DIST = *.dox o2scl_eos.tag

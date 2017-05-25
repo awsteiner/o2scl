@@ -1,4 +1,4 @@
-docextrasdir = $(prefix)/doc/o2scl/extras
+docextrasdir = $(prefix)/share/doc/o2scl/extras
 dist_docextras_DATA = *.png *.cpp *.html *.txt *.odg
 
 # *.eps 
