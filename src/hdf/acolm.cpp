@@ -1484,7 +1484,11 @@ int acol_manager::comm_cat(std::vector<std::string> &sv, bool itive_com) {
     std::string name2;
     if (sv.size()>=3) name2=sv[2];
 
-    hf.open(file2);
+    int hfret=hf.open(file2,false,false);
+    if (hfret!=0) {
+      cerr << "Failed to read file named " << file2 << endl;
+      return exc_efailed;
+    }
     hdf_input(hf,tab2,name2);
     hf.close();
 
@@ -1538,7 +1542,11 @@ int acol_manager::comm_cat(std::vector<std::string> &sv, bool itive_com) {
     std::string name2;
     if (sv.size()>=3) name2=sv[2];
 
-    hf.open(file2);
+    int hfret=hf.open(file2,false,false);
+    if (hfret!=0) {
+      cerr << "Failed to read file named " << file2 << endl;
+      return exc_efailed;
+    }
     hdf_input(hf,tab2,name2);
     hf.close();
 
@@ -1597,7 +1605,11 @@ int acol_manager::comm_sum(std::vector<std::string> &sv, bool itive_com) {
     table3d t2;
 
     hdf_file hf;
-    hf.open(s2);
+    int hfret=hf.open(s2,false,false);
+    if (hfret!=0) {
+      cerr << "Failed to read file named " << s2 << endl;
+      return exc_efailed;
+    }
     hdf_input(hf,t2,name2);
     hf.close();
   
@@ -1640,7 +1652,11 @@ int acol_manager::comm_sum(std::vector<std::string> &sv, bool itive_com) {
     table_units<> tab2;
 
     hdf_file hf;
-    hf.open(file2);
+    int hfret=hf.open(file2,false,false);
+    if (hfret!=0) {
+      cerr << "Failed to read file named " << file2 << endl;
+      return exc_efailed;
+    }
     hdf_input(hf,tab2,name2);
     hf.close();
 
@@ -1779,7 +1795,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
   string type2;
   int ret;
 
-  ret=hf.open(i1.c_str(),false);
+  ret=hf.open(i1.c_str(),false,false);
   if (ret!=0) {
     cerr << "Couldn't find file named '" << i1 << "'. Wrong file name?" 
 	 << endl;
@@ -2168,7 +2184,11 @@ int acol_manager::comm_filelist(std::vector<std::string> &sv,
 
   // Use hdf_file to open the file
   hdf_file hf;
-  hf.open(i1.c_str());
+  int hfret=hf.open(i1.c_str(),false,false);
+  if (hfret!=0) {
+    cerr << "Failed to read file named " << i1.c_str() << endl;
+    return exc_efailed;
+  }
 
   iter_parms ip={"",&hf,false,"",verbose};
 
@@ -4948,7 +4968,12 @@ int acol_manager::comm_insert(std::vector<std::string> &sv, bool itive_com) {
     // Read table from file
     hdf_file hf;
     table3d tmp;
-    hf.open(in[0]);
+    int hfret=hf.open(in[0],false,false);
+    if (hfret!=0) {
+      cerr << "Failed to read file named " << in[0] << endl;
+      return exc_efailed;
+    }
+    
     std::string tmp_name;
     if (in[1].length()>0) tmp_name=in[1];
     hdf_input(hf,tmp,tmp_name);
@@ -5007,7 +5032,11 @@ int acol_manager::comm_insert(std::vector<std::string> &sv, bool itive_com) {
   // Read table from file
   hdf_file hf;
   table_units<> tmp;
-  hf.open(in[0]);
+  int hfret=hf.open(in[0],false,false);
+  if (hfret!=0) {
+    cerr << "Failed to read file named " << in[0] << endl;
+    return exc_efailed;
+  }
   std::string tmp_name;
   if (in[1].length()>0) tmp_name=in[1];
   hdf_input(hf,tmp,tmp_name);

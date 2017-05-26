@@ -166,7 +166,7 @@ namespace o2scl_hdf {
 	     bool err_on_fail=true);
     
     /// Open a file named \c fname or create if it doesn't already exist
-    void open_or_create(std::string fname);
+    void open_or_create(std::string fname, bool parallel=false);
 
     /// Close the file
     void close();
@@ -881,7 +881,8 @@ namespace o2scl_hdf {
     int setc_arr(std::string name, size_t n, const char *c);
     
     /// Set a double array named \c name of size \c n to value \c d
-    int setd_arr(std::string name, size_t n, const double *d);
+    int setd_arr(std::string name, size_t n, const double *d,
+		 bool parallel=false);
 
     // Set a double array with compression
     //int setd_arr_comp(std::string name, size_t n, const double *d);

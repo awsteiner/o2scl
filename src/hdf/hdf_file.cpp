@@ -72,7 +72,7 @@ int hdf_file::open(std::string fname, bool allow_write, bool err_on_fail) {
   return success;
 }
 
-void hdf_file::open_or_create(std::string fname) {
+void hdf_file::open_or_create(std::string fname, bool parallel) {
       
   H5E_BEGIN_TRY
     {
@@ -80,7 +80,23 @@ void hdf_file::open_or_create(std::string fname) {
     } 
   H5E_END_TRY 
     if(file < 0) {
+#ifdef O2SCL_MPI
+      if (parallel) {
+	int mpi_size, mpi_rank;
+	MPI_Comm comm=MPI_COMM_WORLD;
+	MPI_Info info=MPI_INFO_NULL;
+	MPI_Comm_size(comm,&mpi_size);
+	MPI_Comm_rank(comm,&mpi_rank);  
+	hid_t plist_id=H5Pcreate(H5P_FILE_ACCESS);
+	H5Pset_fapl_mpio(plist_id,comm,info);
+	file=H5Fcreate(fname.c_str(),H5F_ACC_TRUNC,H5P_DEFAULT,plist_id);
+	H5Pclose(plist_id);
+      } else {
+	file=H5Fcreate(fname.c_str(),H5F_ACC_TRUNC,H5P_DEFAULT,H5P_DEFAULT);
+      }
+#else
       file=H5Fcreate(fname.c_str(),H5F_ACC_TRUNC,H5P_DEFAULT,H5P_DEFAULT);
+#endif
     }
   if (file<0) {
     O2SCL_ERR((((string)"Open or create file named '")+fname+
@@ -1324,7 +1340,8 @@ int hdf_file::setc_arr(std::string name, size_t n, const char *c) {
   return 0;
 }
 
-int hdf_file::setd_arr(std::string name, size_t n, const double *d) { 
+int hdf_file::setd_arr(std::string name, size_t n, const double *d,
+		       bool parallel) { 
   
   if (write_access==false) {
     O2SCL_ERR2("File not opened with write access in ",
@@ -1347,6 +1364,14 @@ int hdf_file::setd_arr(std::string name, size_t n, const double *d) {
       
   // If it doesn't exist, create it
   if (dset<0) {
+    
+#ifdef O2SCL_MPI
+    int mpi_size, mpi_rank;
+    MPI_Comm comm=MPI_COMM_WORLD;
+    MPI_Info info=MPI_INFO_NULL;
+    MPI_Comm_size(comm,&mpi_size);
+    MPI_Comm_rank(comm,&mpi_rank);
+#endif
     
     // Create the dataspace
     hsize_t dims=n;
