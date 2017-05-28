@@ -72,7 +72,7 @@ int hdf_file::open(std::string fname, bool allow_write, bool err_on_fail) {
   return success;
 }
 
-void hdf_file::open_or_create(std::string fname, bool parallel) {
+void hdf_file::open_or_create(std::string fname) {
       
   H5E_BEGIN_TRY
     {
@@ -80,7 +80,7 @@ void hdf_file::open_or_create(std::string fname, bool parallel) {
     } 
   H5E_END_TRY 
     if(file < 0) {
-#ifdef O2SCL_MPI
+#ifdef O2SCL_NEVER_DEFINED
       if (parallel) {
 	int mpi_size, mpi_rank;
 	MPI_Comm comm=MPI_COMM_WORLD;

@@ -166,7 +166,7 @@ namespace o2scl_hdf {
 	     bool err_on_fail=true);
     
     /// Open a file named \c fname or create if it doesn't already exist
-    void open_or_create(std::string fname, bool parallel=false);
+    void open_or_create(std::string fname);
 
     /// Close the file
     void close();
