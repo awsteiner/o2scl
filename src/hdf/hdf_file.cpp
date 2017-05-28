@@ -1340,8 +1340,7 @@ int hdf_file::setc_arr(std::string name, size_t n, const char *c) {
   return 0;
 }
 
-int hdf_file::setd_arr(std::string name, size_t n, const double *d,
-		       bool parallel) { 
+int hdf_file::setd_arr(std::string name, size_t n, const double *d) {
   
   if (write_access==false) {
     O2SCL_ERR2("File not opened with write access in ",
@@ -1365,7 +1364,7 @@ int hdf_file::setd_arr(std::string name, size_t n, const double *d,
   // If it doesn't exist, create it
   if (dset<0) {
     
-#ifdef O2SCL_MPI
+#ifdef O2SCL_NEVER_DEFINED
     int mpi_size, mpi_rank;
     MPI_Comm comm=MPI_COMM_WORLD;
     MPI_Info info=MPI_INFO_NULL;
