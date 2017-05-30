@@ -334,15 +334,32 @@ namespace o2scl {
     
   /// \name Basic usage
   //@{
-  /** \brief Perform an MCMC simulation
+  /** \brief Perform a MCMC simulation
 
-      Perform an MCMC simulation over \c nparams parameters starting
+      Perform a MCMC simulation over \c nparams parameters starting
       at initial point \c init, limiting the parameters to be between
       \c low and \c high, using \c func as the objective function and
       calling the measurement function \c meas at each MC point.
   */
   virtual int mcmc(size_t nparams, vec_t &low, vec_t &high,
 		   std::vector<func_t> &func, std::vector<measure_t> &meas) {
+
+    if (func.size()<n_threads) {
+      if (verbose>0) {
+	cout << "mcmc_para::mcmc(): Not enough functions for "
+	     << n_threads << " threads. Setting n_threads to "
+	     << func.size() << "." << endl;
+      }
+      n_threads=func.size();
+    }
+    if (meas.size()<n_threads) {
+      if (verbose>0) {
+	cout << "mcmc_para::mcmc(): Not enough measurment objects for "
+	     << n_threads << " threads. Setting n_threads to "
+	     << meas.size() << "." << endl;
+      }
+      n_threads=meas.size();
+    }
 
     if (initial_points.size()==0) {
       // Setup initial guess if not specified
@@ -1072,6 +1089,25 @@ namespace o2scl {
     mcmc_cleanup();
     
     return 0;
+  }
+
+  /** \brief Perform a MCMC simulation with a thread-safe function
+   */
+  virtual int mcmc(size_t nparams, vec_t &low, vec_t &high,
+		   func_t &func, meas_t &meas) {
+#ifdef O2SCL_OPENMP
+    omp_set_num_threads(n_threads);
+    n_threads=omp_get_num_threads();
+#else
+    n_threads=1;
+#endif
+    std::vector<func_t> vf(n_threads);
+    std::vector<meas_t> vm(n_threads);
+    for(size_t i=0;i<n_threads;i++) {
+      vf[i]=func;
+      vm[i]=meas;
+    }
+    return mcmc(nparams,low,high,func,meas);
   }
   //@}
 
