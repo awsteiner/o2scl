@@ -966,6 +966,7 @@ int tov_solve::mvsr() {
 
   }
 
+  // Find the row that refers to the maximum mass star
   size_t ix=out_table->lookup("gm",out_table->max("gm"));
   pcent_max=out_table->get("pr",ix);
 
@@ -1064,7 +1065,7 @@ int tov_solve::max() {
   return info;
 }
 
-int tov_solve::fixed_pr(double pcent, double pmax) {
+int tov_solve::fixed_pr(double pcent) {
 
   int info=0;
 
@@ -1089,13 +1090,6 @@ int tov_solve::fixed_pr(double pcent, double pmax) {
   pcent*=pfactor;
   
   // --------------------------------------------------------------
-
-  // Compute maximum mass star if necessary, and set pmax_cent
-  if (pmax>=pmax_default) {
-    max();
-  } else if (pmax<pmax_default) {
-    pcent_max=pmax;
-  }
 
   // Stellar integration
 

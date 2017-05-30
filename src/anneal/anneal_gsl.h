@@ -122,9 +122,6 @@ namespace o2scl {
       problems with sufficiently difficult functions or constraints.
       \endcomment
 
-      See also a multi-threaded version of this class in \ref
-      anneal_mt.
-
       \comment
       \future There's x0, old_x, new_x, best_x, and x? There's probably
       some duplication here which could be avoided.
@@ -172,19 +169,26 @@ namespace o2scl {
     
     if (nvar==0) {
       O2SCL_ERR2("Tried to minimize over zero variables ",
-		     " in anneal_gsl::mmin().",exc_einval);
+		 " in anneal_gsl::mmin().",exc_einval);
     }
     
     fmin=0.0;
 
     step_norm=1.0;
     
-    allocate(nvar);
-    
     double E, new_E, best_E, T, old_E;
     int i, iter=0;
     size_t j;
     
+    // Current point
+    vec_t x(nvar);
+    // Proposed next point
+    vec_t new_x(nvar);
+    // Optimum point over all iterations
+    vec_t best_x(nvar);
+    // Last point from previous iteration
+    vec_t old_x(nvar);
+
     for(j=0;j<nvar;j++) {
       x[j]=x0[j];
       best_x[j]=x0[j];
@@ -241,7 +245,7 @@ namespace o2scl {
       }
 	  
       // See if we're finished and proceed to the next step
-      next(nvar,old_x,old_E,x,E,T,nmoves,best_E,done);
+      next(nvar,old_x,old_E,x,E,T,nmoves,best_x,best_E,done);
       
     }
   
@@ -291,11 +295,6 @@ namespace o2scl {
     step_dec=ag.step_dec;
     min_step_ratio=ag.min_step_ratio;
     step_vec=ag.step_vec;
-    x=ag.x;
-    new_x=ag.new_x;
-    best_x=ag.best_x;
-    old_x=ag.old_x;
-
   }
   
   /** \brief Copy constructor from operator=
@@ -310,10 +309,6 @@ namespace o2scl {
       step_dec=ag.step_dec;
       min_step_ratio=ag.min_step_ratio;
       step_vec=ag.step_vec;
-      x=ag.x;
-      new_x=ag.new_x;
-      best_x=ag.best_x;
-      old_x=ag.old_x;
     }
     return *this;
   }
@@ -324,14 +319,6 @@ namespace o2scl {
       
   /// \name Storage for points in parameter space
   //@{
-  /// Current point
-  ubvector x;
-  /// Proposed next point
-  ubvector new_x;
-  /// Optimum point over all iterations
-  ubvector best_x;
-  /// Last point from previous iteration
-  ubvector old_x;
   //@}
 
   /// Normalization for step
@@ -343,7 +330,8 @@ namespace o2scl {
   /// Determine how to change the minimization for the next iteration
   virtual int next(size_t nvar, vec_t &x_old, double min_old, 
 		   vec_t &x_new, double min_new, double &T, 
-		   size_t n_moves, double best_E, bool &finished) {
+		   size_t n_moves, vec_t &best_x, double best_E, 
+		   bool &finished) {
     
     if (T/T_dec<this->tol_abs) {
       finished=true;
@@ -367,18 +355,6 @@ namespace o2scl {
   virtual int start(size_t nvar, double &T) {
     T=T_start;
     return success;
-  }
-
-  /** \brief Allocate memory for a minimizer over \c n dimensions
-      with stepsize \c step and Boltzmann factor \c boltz_factor 
-  */
-  virtual int allocate(size_t n, double boltz_factor=1.0) {
-    x.resize(n);
-    old_x.resize(n);
-    new_x.resize(n);
-    best_x.resize(n);
-    boltz=boltz_factor;
-    return 0;
   }
 
   /** \brief Make a step to a new attempted minimum
