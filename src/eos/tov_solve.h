@@ -137,6 +137,10 @@ namespace o2scl {
       - \c r, the radial coordinate in \f$ \mathrm{km} \f$
       - \c gp, the gravitational potential (unitless) when
       \ref calc_gpot is true
+      - \c rjw, the value of \f$ g \f$ (see definition below; present
+      if \ref ang_vel is true)
+      - \c omega_rat, the value of \f$ f \f$ (see definition below; 
+      present if \ref ang_vel is true)
       - \c bm, the baryonic mass in \f$ \mathrm{M}_{\odot} \f$ (when 
       \ref eos_tov::baryon_column is true). 
       - \c pr, the pressure in user-specified units
@@ -163,6 +167,10 @@ namespace o2scl {
       - \c r, the radius in \f$ \mathrm{km} \f$
       - \c gp, the gravitational potential in the center (unitless) when
       \ref calc_gpot is true
+      - \c rjw, the value of \f$ g \f$ at the surface
+      (see definition below; present if \ref ang_vel is true)
+      - \c omega_rat, the value of \f$ f \f$ at the surface
+      (see definition below; present if \ref ang_vel is true)
       - \c bm, total the baryonic mass in \f$ \mathrm{M}_{\odot} \f$ (when 
       \ref eos_tov::baryon_column is true). 
       - \c pr, the central pressure in user-specified units 
@@ -271,6 +279,14 @@ namespace o2scl {
       I = \frac{R^4}{6 G} \left.\frac{df}{dr}\right|_{r=R}
       \f]
       where the last fraction is stored in \ref domega_rat .
+      For an object named \c ts of type \ref tov_solve 
+      after a call to \ref fixed(), \ref max(), or
+      \ref fixed_pr(), the moment of inertia can be computed
+      with, e.g. 
+      \code
+      double schwarz_km=o2scl_cgs::schwarzchild_radius/1.0e5;
+      double I=ts.domega_rat*pow(ts.rad,4.0)/3.0/schwarz_km;
+      \endcode
       
       <b>Convergence details</b>
 
@@ -469,12 +485,12 @@ namespace o2scl {
     double bmass;
     /// Gravitational potential (when computed; unitless)
     double gpot;
-    /// The value of \f$ r^4 j df / dr \f$
+    /// The value of \f$ r^4 j df / dr \f$ at the surface
     double last_rjw;
-    /// The value of \f$ \bar{\omega} / \Omega \f$
+    /// The value of \f$ \bar{\omega} / \Omega \f$ at the surface
     double last_f;
     /** \brief The value of \f$ d (\bar{\omega}/\Omega)/dr \f$ 
-	at the surface (when computed)
+	at the surface (when \ref ang_vel is true)
     */
     double domega_rat;
     /** \brief Maximum value for central pressure in 

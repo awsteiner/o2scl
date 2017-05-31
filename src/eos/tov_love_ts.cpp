@@ -51,6 +51,7 @@ int main(void) {
   nst.calc_eos();
   
   std::shared_ptr<table_units<> > te=nst.get_eos_results();
+  nst.summary(&cout);
 
   eos_tov_interp eti;
   eti.default_low_dens_eos();
@@ -64,6 +65,7 @@ int main(void) {
   ts.fixed(1.4);
   
   std::shared_ptr<table_units<> > profile=ts.get_results();
+  profile->summary(&cout);
 
   profile->deriv("ed","pr","cs2");
   

@@ -617,7 +617,8 @@ namespace o2scl {
 
       Alternatively, the user can simply specify objects
       of type <tt>std::vector<double></tt> which store the energy
-      density, pressure, and baryon density. 
+      density, pressure, and baryon density (which should 
+      include the crust if necessary).
 
       There are two methods to handle the crust-core interface. The
       default, <tt>smooth_trans</tt> uses the crust below pressure \f$
