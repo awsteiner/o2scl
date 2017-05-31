@@ -123,7 +123,7 @@ namespace o2scl {
       \endcomment
 
       \comment
-      \future There's x0, old_x, new_x, best_x, and x? There's probably
+      \future There's x0, old_x, new_x, and x? There's probably
       some duplication here which could be avoided.
       9/19/14: Some better documentation now, and it looks like
       all four have some utility. 
@@ -176,7 +176,7 @@ namespace o2scl {
 
     step_norm=1.0;
     
-    double E, new_E, best_E, T, old_E;
+    double E, new_E, T, old_E;
     int i, iter=0;
     size_t j;
     
@@ -184,18 +184,17 @@ namespace o2scl {
     vec_t x(nvar);
     // Proposed next point
     vec_t new_x(nvar);
-    // Optimum point over all iterations
-    vec_t best_x(nvar);
     // Last point from previous iteration
     vec_t old_x(nvar);
 
     for(j=0;j<nvar;j++) {
       x[j]=x0[j];
-      best_x[j]=x0[j];
     }
     
     E=func(nvar,x);
-    best_E=E;
+
+    // We use x0 and fmin to store the best point found 
+    fmin=E;
 
     // Setup initial temperature and step sizes
     start(nvar,T);
@@ -217,9 +216,9 @@ namespace o2scl {
 	new_E=func(nvar,new_x);
 	
 	// Store best value obtained so far
-	if(new_E<=best_E){
-	  for(j=0;j<nvar;j++) best_x[j]=new_x[j];
-	  best_E=new_E;
+	if(new_E<=fmin) {
+	  for(j=0;j<nvar;j++) x0[j]=new_x[j];
+	  fmin=new_E;
 	}
 	
 	// Take the crucial step: see if the new point is accepted
@@ -240,18 +239,15 @@ namespace o2scl {
       }
 	  
       if (this->verbose>0) {
-	this->print_iter(nvar,best_x,best_E,iter,T,"anneal_gsl");
+	this->print_iter(nvar,x0,fmin,iter,T,"anneal_gsl");
 	iter++;
       }
 	  
       // See if we're finished and proceed to the next step
-      next(nvar,old_x,old_E,x,E,T,nmoves,best_x,best_E,done);
+      next(nvar,old_x,old_E,x,E,T,nmoves,x0,fmin,done);
       
     }
   
-    for(j=0;j<nvar;j++) x0[j]=best_x[j];
-    fmin=best_E;
-
     return 0;
   }
       
