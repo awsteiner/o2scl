@@ -31,24 +31,7 @@ namespace o2scl {
 #endif
   
   /** \brief Multidimensional minimization by simulated annealing 
-      (Boost multi-threaded version)
-
-      This header-only class additionally requires the Boost
-      libraries. It performs simulated annealing using an arbitrary
-      number of processors using <tt>boost::thread</tt>, which is
-      closely related to the standard Unix pthread library. It works
-      very similarly to \ref anneal_gsl, it performs \ref ntrial
-      evaluations over each processor, then applying the metropolis
-      algorithm to the results from all of the processors at the end.
-     
-      Because <tt>np</tt> function calls are happening simultaneously,
-      where <tt>np</tt> is the number of processors, <tt>np</tt>
-      copies of the function parameters of type <tt>param_t</tt> must
-      also be specified. The user-defined function to minimize must
-      also be thread-safe, allowing multiple threads to call the
-      function at once (albeit given different parameters). The
-      default type for these <tt>np</tt> copies of the parameters of
-      type <tt>param_t</tt> is <tt>std::vector<param_t></tt>.
+      (OpenMP/MPI version)
 
       This works particularly well for functions which are not trivial
       to evaluate, i.e. functions where the execution time is more
@@ -59,14 +42,10 @@ namespace o2scl {
       Verbose I/O for this class happens only outside the theads
       unless the user places I/O in the streams in the function that
       is specified.
-
-      \future There may be a good way to remove the function indirection
-      here to make this class a bit faster.
   */
   template<class func_t=multi_funct,
-    class vec_t=boost::numeric::ublas::vector<double>,
-    class rng_t=int, class rng_dist_t=rng_gsl>
-    class anneal_para : public anneal_gsl<func_t,vec_t,rng_t,rng_dist_t> {
+    class vec_t=boost::numeric::ublas::vector<double> >
+    class anneal_para : public anneal_gsl<func_t,vec_t> {
 
   public:
 
@@ -76,18 +55,39 @@ namespace o2scl {
   size_t n_threads;
   
   /// The MPI starting time
-  double mpi_start_time;
+  double start_time;
 
   /// The maximum time
-  double mpi_max_time;
+  double max_time;
   
   anneal_para() {
     n_threads=1;
-    mpi_start_time=0.0;
+    start_time=0.0;
     max_time=0.0;
   }
 
   virtual ~anneal_para() {
+  }
+
+  std::vector<rng_gsl> vrng;
+  
+  /** \brief Make a step to a new attempted minimum
+   */
+  virtual int step(vec_t &sx, int nvar, size_t ithread) {
+    size_t nstep=this->step_vec.size();
+    for(int i=0;i<nvar;i++) {
+      double u=vrng[ithread]();
+
+      // Construct the step in the ith direction
+      double step_i=this->step_norm*this->step_vec[i%nstep];
+      // Fix if the step is too small
+      if (step_i<this->tol_abs*this->min_step_ratio) {
+	step_i=this->tol_abs*this->min_step_ratio;
+      }
+      
+      sx[i]=(2.0*u-1.0)*step_i+sx[i];
+    }
+    return 0;
   }
 
   /// \name Basic usage
@@ -98,10 +98,10 @@ namespace o2scl {
 		   std::vector<func_t> &func) {
 
     if (func.size()<n_threads) {
-      if (verbose>0) {
-	cout << "mcmc_para::mcmc(): Not enough functions for "
+      if (this->verbose>0) {
+	std::cout << "mcmc_para::mcmc(): Not enough functions for "
 	<< n_threads << " threads. Setting n_threads to "
-	<< func.size() << "." << endl;
+	<< func.size() << "." << std::endl;
       }
       n_threads=func.size();
     }
@@ -116,28 +116,37 @@ namespace o2scl {
 
     // Set starting time
 #ifdef O2SCL_MPI
-    mpi_start_time=MPI_Wtime();
+    start_time=MPI_Wtime();
 #else
-    mpi_start_time=time(0);
+    start_time=time(0);
 #endif
 
-    if (nvar==0) {
+    if (nv==0) {
       O2SCL_ERR2("Tried to minimize over zero variables ",
 		 " in anneal_para::mmin().",exc_einval);
     }
     
     fmin=0.0;
 
-    step_norm=1.0;
+    this->step_norm=1.0;
 
-    vector<vec_t> x(n_threads), new_x(n_threads);
-    vector<vec_t> best_x(n_threads);
-    vec_t old_x(nvar);
+    std::vector<vec_t> x(n_threads), new_x(n_threads);
+    std::vector<vec_t> best_x(n_threads);
+    std::vector<vec_t> old_x(n_threads);
     
     ubvector E(n_threads), new_E(n_threads), best_E(n_threads);
     double T;
     ubvector old_E(n_threads), r(n_threads);
     int iter=0;
+
+    /// A different random number generator for each OpenMP threads
+    vrng.resize(n_threads);
+
+    // Seed the random number generators
+    unsigned long int s=time(0);
+    for(size_t it=1;it<n_threads;it++) {
+      vrng[it].set_seed(s+it);
+    }
 
 #ifdef O2SCL_OPENMP
 #pragma omp parallel default(shared)
@@ -149,25 +158,26 @@ namespace o2scl {
       for(size_t it=0;it<n_threads;it++) {
 
 	// Allocate space
-	x[it].resize(nvar);
-	new_x[it].resize(nvar);
-	best_x[it].resize(nvar);
+	x[it].resize(nv);
+	new_x[it].resize(nv);
+	best_x[it].resize(nv);
+	old_x[it].resize(nv);
 	
 	// Copy initial point
-	for(size_t j=0;j<nvar;j++) {
+	for(size_t j=0;j<nv;j++) {
 	  x[it][j]=x0[j];
 	  best_x[it][j]=x0[j];
 	}
 
 	// Perform first function evaluation
-	E[it]=func[it](nvar,x[it]);
+	E[it]=func[it](nv,x[it]);
 	best_E[it]=E[it];
       }
     }
     // End of parallel region
 
     // Setup initial temperature and step sizes
-    start(nvar,T);
+    this->start(nv,T);
     
     bool done=false;
 
@@ -185,48 +195,47 @@ namespace o2scl {
 	for(size_t it=0;it<n_threads;it++) {
 
 	  // Copy old value of x for next() function
-	  for(size_t j=0;j<nvar;j++) old_x[it][j]=x[it][j];
+	  for(size_t j=0;j<nv;j++) old_x[it][j]=x[it][j];
 	  old_E[it]=E[it];
 	  
 	  for (int i=0;i<this->ntrial;++i) {
-	    for (size_t j=0;j<nvar;j++) new_x[it][j]=x[it][j];
+	    for (size_t j=0;j<nv;j++) new_x[it][j]=x[it][j];
 
-	    // This requires that the step() function is threadsafe.
-	    // This is the case here because the parent step()
-	    // function reads class member data but doesn't write.
-	    step(new_x[it],nvar);
-	    new_E[it]=func[it](nvar,new_x[it]);
+	    step(new_x[it],nv,it);
+	    
+	    new_E[it]=func[it](nv,new_x[it]);
 #ifdef O2SCL_MPI
-	    double elapsed=MPI_Wtime()-mpi_start_time;
+	    double elapsed=MPI_Wtime()-start_time;
 #else
-	    double elapsed=time(0)-mpi_start_time;
+	    double elapsed=time(0)-start_time;
 #endif
 	    if (max_time>0.0 && elapsed>max_time) {
 	      i=this->ntrial;
 	      done=true;
 	    }
-	
+
 	    // Store best value obtained so far
 	    if(new_E[it]<=best_E[it]) {
-	      for(size_t j=0;j<nvar;j++) best_x[it][j]=new_x[it][j];
+	      for(size_t j=0;j<nv;j++) best_x[it][j]=new_x[it][j];
 	      best_E[it]=new_E[it];
 	    }
 	
-	    // Take the crucial step: see if the new point is accepted
-	    // or not, as determined by the Boltzmann probability
-	    if (new_E[it]<E[it]) {
-	      for(size_t j=0;j<nvar;j++) x[it][j]=new_x[it][j];
-	      E[it]=new_E[it];
-	      if (it==0) nmoves++;
-	    } else {
-	      double r[it]=this->dist();
-	      if (r[it] < exp(-(new_E[it]-E[it])/(boltz*T))) {
-		for(size_t j=0;j<nvar;j++) x[it][j]=new_x[it][j];
+	    if (done==false) {
+	      // Take the crucial step: see if the new point is accepted
+	      // or not, as determined by the Boltzmann probability
+	      if (new_E[it]<E[it]) {
+		for(size_t j=0;j<nv;j++) x[it][j]=new_x[it][j];
 		E[it]=new_E[it];
 		if (it==0) nmoves++;
+	      } else {
+		r[it]=vrng[it]();
+		if (r[it] < exp(-(new_E[it]-E[it])/(this->boltz*T))) {
+		  for(size_t j=0;j<nv;j++) x[it][j]=new_x[it][j];
+		  E[it]=new_E[it];
+		  if (it==0) nmoves++;
+		}
 	      }
 	    }
-
 	  }
 	  
 	}
@@ -235,25 +244,28 @@ namespace o2scl {
 
       // Find best point over all threads
       fmin=best_E[0];
-      for(size_t iv=0;iv<nvar;iv++) {
-	x0=best_x[0][iv];
+      for(size_t iv=0;iv<nv;iv++) {
+	x0[iv]=best_x[0][iv];
       }
       for(size_t i=1;i<n_threads;i++) {
 	if (best_E[i]<fmin) {
 	  fmin=best_E[i];
-	  for(size_t iv=0;iv<nvar;iv++) {
+	  for(size_t iv=0;iv<nv;iv++) {
 	    x0[iv]=best_x[i][iv];
 	  }
 	}
       }
       
       if (this->verbose>0) {
-	this->print_iter(nvar,best_overall,E_overall,iter,T,"anneal_gsl");
+	this->print_iter(nv,x0,fmin,iter,T,"anneal_gsl");
 	iter++;
       }
 	  
       // See if we're finished and proceed to the next step
       if (done==false) {
+	
+	std::vector<int> done_arr(n_threads);
+	
 #ifdef O2SCL_OPENMP
 #pragma omp parallel default(shared)
 #endif
@@ -261,21 +273,22 @@ namespace o2scl {
 #ifdef O2SCL_OPENMP
 #pragma omp for
 #endif
-	  vector<bool> done_arr(n_threads);
 	  for(size_t it=0;it<n_threads;it++) {
-	    next(nvar,old_x[it],old_E[it],x,E,T,nmoves,E_overall,done_arr[it]);
+	    done_arr[it]=0;
+	    next(nv,old_x[it],old_E[it],x[it],E[it],T,nmoves,
+		 x0,fmin,done_arr[it]);
 	  }
 	}
-      }
-      // End of parallel region
+	// End of parallel region
 
-      // Decrease the temperature
-      T/=T_dec;
-
-      // We're done when all threads report done
-      done=true;
-      for(size_t it=0;it<n_threads;it++) {
-	if (done_arr[it]==false) done=false;
+	// Decrease the temperature
+	T/=this->T_dec;
+	
+	// We're done when all threads report done
+	done=true;
+	for(size_t it=0;it<n_threads;it++) {
+	  if (done_arr[it]==0) done=false;
+	}
       }
       
     }
@@ -287,16 +300,16 @@ namespace o2scl {
   virtual int next(size_t nvar, vec_t &x_old, double min_old, 
 		   vec_t &x_new, double min_new, double &T, 
 		   size_t n_moves, vec_t &best_x, double best_E, 
-		   bool &finished) {
+		   int &finished) {
     
-    if (T/T_dec<this->tol_abs) {
-      finished=true;
+    if (T/this->T_dec<this->tol_abs) {
+      finished=1;
       return success;
     }
     if (n_moves==0) {
       // If we haven't made any progress, shrink the step by
       // decreasing step_norm
-      step_norm/=step_dec;
+      this->step_norm/=this->step_dec;
       // Also reset x to best value so far
       for(size_t i=0;i<nvar;i++) {
 	x_new[i]=best_x[i];

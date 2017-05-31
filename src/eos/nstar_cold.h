@@ -45,7 +45,8 @@ namespace o2scl {
       This uses eos_had_base::calc_e() to compute the equation of 
       state of zero-temperature beta-equilibrated neutron star
       matter and tov_solve::mvsr() to compute the mass versus
-      radius curve.
+      radius curve. By default the crust EOS is given by
+      that in \ref o2scl::eos_tov_interp::default_low_dens_eos() .
 
       The neutron, proton, electron and muon are given masses
       according to their values in \ref o2scl_mks

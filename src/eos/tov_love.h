@@ -125,13 +125,20 @@ namespace o2scl {
       and has units of \f$ \mathrm{km}^5 \f$ or can be converted to
       \f$ \mathrm{g}~\mathrm{cm}^2~\mathrm{s}^2 \f$ .
 
-      It is assumed that \ref tab has been specified before-hand
-      and has (at least) the following columns
-      - <tt>ed</tt> energy density in units of \f$ 1/\mathrm{fm}^4 \f$
-      - <tt>pr</tt> pressure in units of \f$ 1/\mathrm{fm}^4 \f$
+      It is assumed that \ref tab stores a stellar profile (such as
+      one computed with \ref tov_solve::fixed(), \ref
+      tov_solve::fixed_pr(), or \ref tov_solve::max() ) has been
+      specified before-hand and contains (at least) the following
+      columns
+      - <tt>ed</tt> energy density in units of 
+      \f$ \mathrm{M}_{\odot}/\mathrm{km}^3 \f$
+      - <tt>pr</tt> pressure in units of 
+      \f$ \mathrm{M}_{\odot}/\mathrm{km}^3 \f$
       - <tt>cs2</tt> sound speed squared (unitless)
       - <tt>gm</tt> gravitational mass in \f$ \mathrm{M}_{\odot} \f$
       - <tt>r</tt> radius in \f$ \mathrm{km} \f$
+      (Note that the \ref o2scl::tov_solve class doesn't automatically compute
+      the column <tt>cs2</tt>.)
 
       \future Use \ref o2scl::ode_iv_solve instead of several steps of
       type \ref o2scl::astep_gsl .
