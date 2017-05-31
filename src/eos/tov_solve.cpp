@@ -1164,7 +1164,13 @@ int tov_solve::fixed(double target_mass, double pmax) {
      std::placeholders::_3);
 
 
-  if (err_nonconv==false) mroot_ptr->err_nonconv=false;
+  bool save1, save2;
+  if (err_nonconv==false) {
+    save1=mroot_ptr->err_nonconv;
+    save2=def_solver.def_jac.err_nonconv;
+    mroot_ptr->err_nonconv=false;
+    def_solver.def_jac.err_nonconv=false;
+  }
   integ_star_final=false;
 
   // Before trying to solve, evaluate the initial guess
@@ -1180,6 +1186,11 @@ int tov_solve::fixed(double target_mass, double pmax) {
   int ret=mroot_ptr->msolve(1,x,fmf);
   if (ret!=0) {
     info+=fixed_solver_failed;
+  }
+
+  if (err_nonconv==false) {
+    mroot_ptr->err_nonconv=save1;
+    def_solver.def_jac.err_nonconv=save2;
   }
   
   // Calculate gravitational potential and enclosed baryon mass
