@@ -31,6 +31,10 @@
 #include <o2scl/anneal_para.h>
 #include <o2scl/test_mgr.h>
 
+#ifdef O2SCL_OPENMP
+#include <omp.h>
+#endif
+
 using namespace std;
 using namespace o2scl;
 
@@ -44,36 +48,31 @@ double funx(size_t nv, const ubvector &x) {
 }
 
 int main(int argc, char *argv[]) {
-  test_mgr t;
-  t.set_output_level(2);
 
   cout.setf(ios::scientific);
 
+  test_mgr t;
+  t.set_output_level(2);
+
   anneal_para<multi_funct,ubvector> ga;
+
 #ifdef O2SCL_OPENMP
   ga.n_threads=omp_get_max_threads();
 #endif
+  
   double result;
-  ubvector init(2);
+  ubvector init(1);
     
   multi_funct fx=funx;
     
-  /// 1d to vectors
-    
   init[0]=0.1;
-  init[1]=0.2;
+  ga.verbose=1;
   ga.tol_abs=1.0e-6;
   ga.mmin(1,init,result,fx);
   cout << init[0] << " " << result << endl;
   t.test_rel(init[0],2.0,1.0e-3,"another test - value");
   t.test_rel(result,-1.0,1.0e-3,"another test - min");
     
-  // Test verbose=1
-    
-  init[0]=15.5;
-  ga.verbose=1;
-  ga.mmin(1,init,result,fx);
-
   t.report();
   
   return 0;

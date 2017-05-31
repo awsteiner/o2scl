@@ -65,7 +65,11 @@ pkginclude_HEADERS = $(HEADER_VAR)
 # libtool testing targets
 # ------------------------------------------------------------
 
+if O2SCL_OPENMP
 check_PROGRAMS = anneal_gsl_ts anneal_para_ts
+else
+check_PROGRAMS = anneal_gsl_ts
+endif
 
 check_SCRIPTS = o2scl-test
 
@@ -82,12 +86,18 @@ anneal_gsl.scr: anneal_gsl_ts$(EXEEXT)
 
 anneal_gsl_ts_SOURCES = anneal_gsl_ts.cpp
 
+if O2SCL_OPENMP
+
 anneal_para_ts_LDADD = $(VCHECK_LIBS)
+anneal_para_ts_LDFLAGS = -fopenmp
+anneal_para_ts_CFLAGS = -DO2SCL_OPENMP
 
 anneal_para.scr: anneal_para_ts$(EXEEXT)
 	./anneal_para_ts$(EXEEXT) > anneal_para.scr
 
 anneal_para_ts_SOURCES = anneal_para_ts.cpp
+
+endif
 
 # ------------------------------------------------------------
 # No library o2scl_anneal

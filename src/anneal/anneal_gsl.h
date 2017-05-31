@@ -241,6 +241,10 @@ namespace o2scl {
       if (this->verbose>0) {
 	this->print_iter(nvar,x0,fmin,iter,T,"anneal_gsl");
 	iter++;
+	if (this->verbose>1) {
+	  char ch;
+	  std::cin >> ch;
+	}
       }
 	  
       // See if we're finished and proceed to the next step
