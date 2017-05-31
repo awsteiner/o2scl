@@ -40,10 +40,12 @@ lib_settings_class::lib_settings_class() {
   // conversions in by default rather than worrying about opening a
   // pipe, etc.
 
-  // Simple mass/energy conversions
-
+  // c=1 conversion
   def_cu.insert_cache("kg","1/fm",1.0e-15/o2scl_mks::plancks_constant_hbar*
 		      o2scl_mks::speed_of_light);
+  
+  // Simple mass/energy conversions
+
   def_cu.insert_cache("kg","MeV",pow(o2scl_mks::speed_of_light,2.0)/
 		      o2scl_mks::electron_volt*1.0e-6);
   def_cu.insert_cache("MeV","eV",1.0e6);
@@ -56,7 +58,8 @@ lib_settings_class::lib_settings_class() {
   def_cu.insert_cache("K","kg",o2scl_mks::boltzmann/
 		      pow(o2scl_mks::speed_of_light,2.0));
 
-  // For the TOV solver
+  // Energy density and pressure conversions (useful for the TOV
+  // solver)
 
   def_cu.insert_cache("g/cm^3","Msun/km^3",1.0e12/o2scl_mks::solar_mass);
   def_cu.insert_cache("erg/cm^3","Msun/km^3",1.0e12/o2scl_cgs::speed_of_light/
@@ -70,10 +73,12 @@ lib_settings_class::lib_settings_class() {
 		      o2scl_cgs::electron_volt/o2scl_cgs::speed_of_light/
 		      o2scl_cgs::speed_of_light/o2scl_mks::solar_mass*1.0e57);
 
+  // Inverse volume conversions
+  
   def_cu.insert_cache("1/fm^3","1/cm^3",1.0e39);
   def_cu.insert_cache("1/fm^3","1/m^3",1.0e45);
 
-  // Simple length conversions 
+  // Simple powers of length conversions 
 
   def_cu.insert_cache("pc","m",o2scl_mks::parsec);
   def_cu.insert_cache("kpc","m",o2scl_mks::parsec*1.0e3);

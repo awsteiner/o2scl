@@ -120,8 +120,8 @@
     \f$ and \f$ m_B \f$ is the mass one baryon (taken to be the mass
     of the proton by default and stored in \ref
     o2scl::tov_solve::baryon_mass). If the EOS specifies the baryon density
-    (i.e. if \ref o2scl::eos_tov::baryon_column is true), then this
-    class will compute the associated baryonic mass for you.
+    (i.e. if \ref o2scl::eos_tov::baryon_column is true), then \ref
+    o2scl::tov_solve will compute the associated baryonic mass for you.
 
     In the case of slow rigid rotation with angular velocity
     \f$ \Omega \f$, the moment of inertia is
@@ -162,4 +162,9 @@
     \f]
     The star's angular momentum is just \f$ J = I \Omega \f$.
 
+    The differential equations for slow rigid rotation are solved
+    by \ref o2scl::tov_solve if \ref o2scl::tov_solve::ang_vel is
+    set to <tt>true</tt>. Alternatively, \ref o2scl::nstar_rot
+    handles rotating neutron stars without the slowly rotating
+    approximation.
 */

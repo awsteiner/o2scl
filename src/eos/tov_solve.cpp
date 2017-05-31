@@ -119,7 +119,8 @@ tov_solve::tov_solve() : out_table(new table_units<>) {
   
   // Mass of a proton in kg
   baryon_mass=o2scl_mks::mass_proton;
-
+  
+  // Initialize ODE function pointer
   ofm=std::bind
     (std::mem_fn<int(double,size_t,const ubvector &,ubvector &)>
      (&tov_solve::derivs),

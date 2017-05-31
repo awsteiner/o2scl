@@ -91,12 +91,12 @@ namespace o2scl {
       for the correct central pressure. In order to ensure that the
       solver does not accidentally select a central pressure beyond
       the maximum mass neutron star, the profile with the maximum mass
-      is computed beforehand automatically. The intial guess to the
-      solver is always the value of \ref fixed_pr_guess, which
-      defaults to \f$ 5.2 \times 10^{-5}~\mathrm{Msun}/\mathrm{km}^3
-      \f$ . Alternatively, the user can specify the central pressure
-      of the maximum mass star so that it does not have to be
-      computed.
+      is computed beforehand automatically (using \ref max()). The
+      intial guess to the solver is always the value of \ref
+      fixed_pr_guess, which defaults to \f$ 5.2 \times
+      10^{-5}~\mathrm{Msun}/\mathrm{km}^3 \f$ . Alternatively, the
+      user can specify the central pressure of the maximum mass star
+      so that it does not have to be computed.
 
       In order to handle multiply-branched mass-radius relations, the
       value of \ref fixed_pr_guess must be specified in order to
@@ -112,10 +112,13 @@ namespace o2scl {
       
       <b>Profile for the maximum mass star</b>
 
-      This is provided by the function \ref max() .
-      Internally, this uses the minimizer specified
-      by \ref set_min() or the default minimizer, \ref def_min, 
-      to minimize the function \ref max_fun() .
+      This is provided by the function \ref max() . Internally, this
+      uses the minimizer specified by \ref set_min() or the default
+      minimizer, \ref def_min, to minimize the function \ref max_fun()
+      . In order to generate a good initial guess, the \ref max()
+      function begins by looping over central pressures from \ref
+      max_begin to \ref max_end and choosing the best guess from that
+      set of configurations.
 
       <b>Profile for a fixed central pressure</b>
 
@@ -126,7 +129,8 @@ namespace o2scl {
 
       <b>Output tables</b>
 
-      The functions \ref tov_solve::fixed() and \ref tov_solve::max()
+      The functions \ref tov_solve::fixed(), \ref tov_solve::fixed_pr(), 
+      and \ref tov_solve::max()
       produce output tables which represent the profile of the neutron
       star of the requested mass. The columns are
       - \c gm, the enclosed gravitational mass in \f$ \mathrm{M}_{\odot} \f$
@@ -174,7 +178,7 @@ namespace o2scl {
       - \c dgpdr, the derivative of the gravitational potential
       in \f$ 1/\mathrm{km} \f$ (if \ref calc_gpot is true)
       - \c dbmdr, the derivative of the enclosed baryonic mass
-      (if \ref eos_tov::baryon_column is true). \n
+      (if \ref eos_tov::baryon_column is true).
 
       <b>Unit systems</b>
 
@@ -189,6 +193,7 @@ namespace o2scl {
       always work:
       - <tt>"g/cm^3"</tt>,
       - <tt>"erg/cm^3"</tt>,
+      - <tt>"dyne/cm^2"</tt>,
       - <tt>"MeV/fm^3"</tt>,
       - <tt>"1/fm^4"</tt>, and
       - <tt>"Msun/km^3"</tt> (i.e. \f$ \mathrm{M}_{\odot}/\mathrm{km}^3 \f$ )
@@ -201,12 +206,12 @@ namespace o2scl {
       Other units choices will work if the conversion is either
       already added to the global unit conversion object (from
       <tt>o2scl_settings.get_convert_units()</tt> ) or the global unit
-      conversion object is able to compute them by a system call to
-      GNU <tt>units</tt> (see documentation in \ref convert_units).
-      Note that the choice of what units the tables are produced in
-      is independent of the unit system specified in the associated 
-      \ref eos_tov object, i.e. the input EOS and output EOS units
-      need not be the same. 
+      conversion object is able to compute them by a <tt>system()</tt>
+      call to GNU <tt>units</tt> (see documentation in \ref
+      convert_units). Note that the choice of what units the tables
+      are produced in is independent of the unit system specified in
+      the associated \ref eos_tov object, i.e. the input EOS and
+      output EOS units need not be the same.
 
       Alternatively, using \ref set_units(double,double,double) 
       allows one to specify the conversion factors directly without
@@ -276,6 +281,12 @@ namespace o2scl {
       \ref o2scl::tov_solve::max(), return an integer which gives some
       information about why the solver failed to converge.
 
+      If \ref err_nonconv is set to false, then the \ref fixed()
+      function temporarily sets the value of both \ref
+      o2scl::mroot::err_nonconv for the current solver and \ref
+      o2scl::jacobian::err_nonconv for the jacobian object, \ref
+      o2scl::mroot_hybrids::def_jac, of \ref def_solver equal to false.
+
       <b>Other details</b>
 
       The ODE solution is stored in a buffer which can be directly
@@ -299,6 +310,8 @@ namespace o2scl {
       <tt>gsl_efailed</tt> without calling the error handler in the
       case that the solver can recover gracefully from, for example, a
       negative pressure.
+
+      \future Convert to \ref o2scl::ode_iv_solve?
   */
   class tov_solve {
 
@@ -448,13 +461,13 @@ namespace o2scl {
 
     /// \name Basic properties
     //@{
-    /// Gravitational mass
+    /// Gravitational mass (in \f$ \mathrm{M}_{\odot} \f$)
     double mass;
-    /// Radius
+    /// Radius (in km)
     double rad;
-    /// Baryonic mass (when computed)
+    /// Baryonic mass (when computed; in \f$ \mathrm{M}_{\odot} \f$)
     double bmass;
-    /// Gravitational potential (when computed)
+    /// Gravitational potential (when computed; unitless)
     double gpot;
     /// The value of \f$ r^4 j df / dr \f$
     double last_rjw;
@@ -495,8 +508,7 @@ namespace o2scl {
     bool ang_vel;
     /// Apply general relativistic corrections (default true)
     bool gen_rel;
-    /** \brief calculate the gravitational potential and the enclosed 
-	baryon mass (default false)
+    /** \brief calculate the gravitational potential (default false)
     */
     bool calc_gpot;
     /// smallest allowed radial stepsize in km (default 1.0e-4)
@@ -516,7 +528,8 @@ namespace o2scl {
     //@}
 
     /** \brief Default value of maximum pressure for maximum mass star
-	in \f$ \mathrm{M}_{\odot}/\mathrm{km}^3 \f$
+	in \f$ \mathrm{M}_{\odot}/\mathrm{km}^3 \f$ 
+	(default \f$ 10^{20} \f$)
      */
     double pmax_default;
 
@@ -558,11 +571,17 @@ namespace o2scl {
 
     /// \name Maximum mass profile parameters
     //@{
-    /// Beginning pressure for maximum mass guess (default 7.0e-5)
+    /** \brief Beginning pressure for maximum mass guess in 
+	\f$ \mathrm{M}_{\odot}/\mathrm{km}^3 \f$ (default 7.0e-5)
+    */
     double max_begin;
-    /// Ending pressure for maximum mass guess (default 5.0e-3)
+    /** \brief Ending pressure for maximum mass guess in 
+	\f$ \mathrm{M}_{\odot}/\mathrm{km}^3 \f$ (default 5.0e-3)
+    */
     double max_end;
-    /// Increment for pressure for maximum mass guess (default 1.3)
+    /** \brief Increment for pressure for maximum mass guess 
+	(unitless; default 1.3)
+    */
     double max_inc;
     //@}
 
@@ -701,7 +720,7 @@ namespace o2scl {
     };
     //@}
 
-    /// \name Default numerical classes
+    /// \name Default numerical objects
     //@{
     /// The default minimizer
     min_brent_gsl<> def_min;
