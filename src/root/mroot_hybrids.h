@@ -1031,8 +1031,8 @@ namespace o2scl {
       
     status=ufunc(dim,ax,f);
     if (status!=0) {
-      O2SCL_ERR2("Function returned non-zero in ",
-		 "mroot_hybrids::set().",exc_ebadfunc);
+      O2SCL_CONV2_RET("Function returned non-zero in ",
+		      "mroot_hybrids::set().",exc_ebadfunc,this->err_nonconv);
     }
     
     if (jac_given) status=(*jac)(dim,ax,dim,f,J);
