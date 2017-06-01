@@ -90,7 +90,8 @@ int main(void) {
   cout << "Dimensionless tidal deformability (direct calculation, H): " 
        << lbar << endl;
 
-  // Compute the Correlation
+  // Compute the moment of inertia from the correlation in Yagi and
+  // Yunes, Science, 2013
   double l_lbar=log(lbar);
   double l_Ibar=1.47+0.0817*l_lbar+0.0149*l_lbar*l_lbar+
     2.87e-4*l_lbar*l_lbar*l_lbar-3.64e-5*l_lbar*l_lbar*l_lbar*l_lbar;

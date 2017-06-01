@@ -1,11 +1,12 @@
-/** \page cnstar Cold Neutron Stars
+/** \page cnstar Cold Neutron Star Structure
 
     The class \ref o2scl::nstar_cold computes the structure of
-    zero-temperature spherically-symmetric neutron stars. It uses \ref
-    o2scl::tov_solve to compute the structure, given a hadronic equation of
-    state (of type \ref o2scl::eos_had_base). It also computes the adiabatic
-    index, the speed of sound, and determines the possibility of the
-    direct Urca process as a function of density or radius.
+    non-rotating zero-temperature spherically-symmetric neutron stars.
+    It uses \ref o2scl::tov_solve to compute the structure, given a
+    hadronic equation of state (of type \ref o2scl::eos_had_base). It
+    also computes the adiabatic index, the speed of sound, and
+    determines the possibility of the direct Urca process as a
+    function of density or radius.
 
     \section ex_nstar_cold_sect Cold neutron star example
     

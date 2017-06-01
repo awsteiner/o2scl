@@ -1,4 +1,4 @@
-/** \page tovtoc Solution of the Tolman-Oppenheimer-Volkov equations
+/** \page tovtoc Solution of the Tolman-Oppenheimer-Volkov Equations
 
     The class \ref o2scl::tov_solve provides a solution to the
     Tolman-Oppenheimer-Volkov (TOV) equations given an equation of

@@ -35,8 +35,8 @@
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-  #endif
-
+#endif
+  
   /** \brief Determination of the neutron star Love number
 
       We use \f$ c=1 \f$ but keep factors of \f$ G \f$, which has
@@ -50,7 +50,7 @@ namespace o2scl {
       4 \pi G r P(r) - 4 \pi G r \varepsilon(r) \right]
       \right\} + H(r) Q(r) = 0 
       \f]
-      where (now surpressing the dependence on \f$ r \f$), 
+      where (now supressing the dependence on \f$ r \f$), 
       \f[
       \nu^{\prime} \equiv 2 G e^{\lambda} 
       \left(\frac{m+4 \pi P r^3}{r^2}\right) \,
@@ -140,9 +140,10 @@ namespace o2scl {
       (Note that the \ref o2scl::tov_solve class doesn't automatically compute
       the column <tt>cs2</tt>.)
 
-      \future Use \ref o2scl::ode_iv_solve instead of several steps of
-      type \ref o2scl::astep_gsl .
-
+      This class handles the inner boundary by starting from the small
+      non-zero radius stored in \ref eps instead of at \f$ r=0 \f$. The
+      value of \ref eps defaults to 0.2 km.
+      
   */
   class tov_love {
 
@@ -153,9 +154,6 @@ namespace o2scl {
 #ifndef DOXYGEN_INTERNAL
   
   protected:
-
-    /// The default ODE integrator
-    o2scl::ode_iv_solve<> def_ois;
 
     /// The ODE integrator
     o2scl::ode_iv_solve<> *oisp;
@@ -193,6 +191,9 @@ namespace o2scl {
 
     /// The first radial point in \f$ \mathrm{km} \f$ (default 0.02)
     double eps;
+
+    /// The default ODE integrator
+    o2scl::ode_iv_solve<> def_ois;
 
     /// Pointer to the input profile
     std::shared_ptr<o2scl::table_units<> > tab;
