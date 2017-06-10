@@ -115,7 +115,7 @@ namespace o2scl {
   int mpi_rank;
 
   /// The MPI number of processors
-  int mpi_nprocs;
+  int mpi_size;
 
   /// The MPI starting time
   double mpi_start_time;
@@ -307,14 +307,14 @@ namespace o2scl {
     n_threads=1;
 
     // Initial values for MPI paramers
-    mpi_nprocs=1;
+    mpi_size=1;
     mpi_rank=0;
     mpi_start_time=0.0;
 
 #ifdef O2SCL_MPI
     // Get MPI rank, etc.
     MPI_Comm_rank(MPI_COMM_WORLD,&this->mpi_rank);
-    MPI_Comm_size(MPI_COMM_WORLD,&this->mpi_nprocs);
+    MPI_Comm_size(MPI_COMM_WORLD,&this->mpi_size);
 #endif
     
     prefix="mcmc";
@@ -496,15 +496,15 @@ namespace o2scl {
 	scr_out << "mcmc: Affine-invariant step, n_params="
 		<< nparams << ", n_walk=" << n_walk
 		<< ", n_threads=" << n_threads << ", n_ranks="
-		<< mpi_nprocs << std::endl;
+		<< mpi_size << std::endl;
       } else if (pd_mode==true) {
 	scr_out << "mcmc: With proposal distribution, n_params="
 		<< nparams << ", n_threads=" << n_threads << ", n_ranks="
-		<< mpi_nprocs << std::endl;
+		<< mpi_size << std::endl;
       } else {
 	scr_out << "mcmc: Random-walk w/uniform dist., n_params="
 		<< nparams << ", n_threads=" << n_threads << ", n_ranks="
-		<< mpi_nprocs << std::endl;
+		<< mpi_size << std::endl;
       }
     }
     
@@ -1195,6 +1195,8 @@ namespace o2scl {
   std::shared_ptr<o2scl::table_units<> > table;
 
   bool first_write;
+
+  int table_io_chunk;
   
   /** \brief MCMC initialization function
 
@@ -1279,13 +1281,37 @@ namespace o2scl {
    */
   virtual void write_files() {
 
+    vector<table_units> tab_arr;
+    bool rank_sent=false;
+    
+#ifdef O2SCL_MPI
+    if (table_io_chunk>1) {
+      if (this->mpi_rank%table_io_chunk==0) {
+	// Parent ranks
+	for(size_t i=0;i<table_io_chunk-1;i++) {
+	  size_t child=this->mpi_rank+i+1;
+	  if (child<this->mpi_size) {
+	    table_units t;
+	    tab_arr.push_back(t);
+	    o2scl_table_mpi_recv(child,tab_arr[tab_arr.size()-1]);
+	  }
+	}
+      } else {
+	// Child ranks
+	size_t parent=this->mpi_rank-(this->mpi_rank%table_io_chunk);
+	o2scl_table_mpi_send(*table,parent);
+	rank_sent=true;
+      }
+    }
+#endif
+    
 #ifdef O2SCL_MPI
     // Ensure that multiple threads aren't writing to the
     // filesystem at the same time
     int tag=0, buffer=0;
-    if (this->mpi_nprocs>1 && this->mpi_rank>0) {
-      MPI_Recv(&buffer,1,MPI_INT,this->mpi_rank-1,tag,MPI_COMM_WORLD,
-	       MPI_STATUS_IGNORE);
+    if (this->mpi_size>1 && this->mpi_rank>=table_io_chunk) {
+      MPI_Recv(&buffer,1,MPI_INT,this->mpi_rank-table_io_chunk,
+	       tag,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
     }
 #endif
     
@@ -1302,7 +1328,7 @@ namespace o2scl {
       hf.set_szt("n_warm_up",this->n_warm_up);
       hf.seti("user_seed",this->user_seed);
       hf.seti("mpi_rank",this->mpi_rank);
-      hf.seti("mpi_nprocs",this->mpi_nprocs);
+      hf.seti("mpi_size",this->mpi_size);
       hf.seti("verbose",this->verbose);
       hf.set_szt("max_bad_steps",this->max_bad_steps);
       hf.set_szt("n_walk",this->n_walk);
@@ -1320,14 +1346,22 @@ namespace o2scl {
     hf.setd_arr2d_copy("initial_points",this->initial_points.size(),
 		       this->initial_points[0].size(),
 		       this->initial_points);
-    
-    hdf_output(hf,*table,"markov_chain0");
+
+    hf.seti("n_tables",tab_arr.size()+1);
+    if (rank_set==false) {
+      hdf_output(hf,*table,"markov_chain0");
+    }
+    for(size_t i=0;i<tab_arr.size();i++) {
+      string name=((string)"markov_chain")+szttos(i+1);
+      hdf_output(hf,tab_arr[i],name);
+    }
     
     hf.close();
     
 #ifdef O2SCL_MPI
-    if (this->mpi_nprocs>1 && this->mpi_rank>0) {
-      MPI_Send(&buffer,1,MPI_INT,this->mpi_rank+1,tag,MPI_COMM_WORLD);
+    if (this->mpi_size>1 && this->mpi_rank>0) {
+      MPI_Send(&buffer,1,MPI_INT,this->mpi_rank+table_io_chunk,
+	       tag,MPI_COMM_WORLD);
     }
 #endif
     
@@ -1339,7 +1373,8 @@ namespace o2scl {
   
   mcmc_para_table() {
     allow_estimates=false;
-    first_write;
+    first_write=false;
+    table_io_chunk=1;
   }
   
   /// \name Basic usage

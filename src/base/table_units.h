@@ -840,6 +840,239 @@ namespace o2scl {
 
   };
 
+#ifdef O2SCL_MPI
+
+  /** \brief Desc
+   */
+  void o2scl_table_mpi_send(table_units &t, size_t dest_rank) {
+
+    int tag;
+    int ibuffer;
+    vector<double> dbuffer;
+    string cbuffer;
+
+    // --------------------------------------------------------------
+    // Constant names and values
+  
+    for(size_t i=0;i<t.get_nconsts();i++) {
+      std::string name;
+      double val;
+      t.get_constant(i,name,val);
+      cbuffer+=name;
+      if (i<t.get_nconsts()-1) {
+	cbuffer+=' ';
+      }
+      dbuffer.push_back(val);
+    }
+
+    ibuffer=cbuffer.length();
+  
+    tag=0;
+    MPI_Send(&ibuffer,ibuffer.size(),MPI_INT,dest_rank,
+	     tag,MPI_COMM_WORLD);
+    tag=1;
+    MPI_Send(&(cbuffer[0]),cbuffer.length(),MPI_CHAR,dest_rank,
+	     tag,MPI_COMM_WORLD);
+    tag=2;
+    MPI_Send(&(dbuffer[0]),dbuffer.size(),MPI_DOUBLE,dest_rank,
+	     tag,MPI_COMM_WORLD);
+    cbuffer.clear();
+    dbuffer.clear();
+
+    // --------------------------------------------------------------
+    // Column names
+  
+    for(size_t i=0;i<t.get_ncolumns();i++) {
+      std::string name=t.get_column_name(i);
+      cbuffer+=name;
+      if (i<t.get_ncolumns()-1) {
+	cbuffer+=' ';
+      }
+    }
+
+    ibuffer=cbuffer.length();
+    tag=3;
+    MPI_Send(&ibuffer,ibuffer.size(),MPI_INT,dest_rank,
+	     tag,MPI_COMM_WORLD);
+    tag=4;
+    MPI_Send(&(cbuffer[0]),cbuffer.length(),MPI_CHAR,dest_rank,
+	     tag,MPI_COMM_WORLD);
+    cbuffer.clear();
+    
+    // --------------------------------------------------------------
+    // Column units
+  
+    for(size_t i=0;i<t.get_ncolumns();i++) {
+      std::string unit=t.get_unit(t.get_column_name(i));
+      cbuffer+=unit;
+      if (i<t.get_ncolumns()-1) {
+	cbuffer+=' ';
+      }
+    }
+
+    ibuffer=cbuffer.length();
+    tag=5;
+    MPI_Send(&ibuffer,ibuffer.size(),MPI_INT,dest_rank,
+	     tag,MPI_COMM_WORLD);
+    tag=6;
+    MPI_Send(&(cbuffer[0]),cbuffer.length(),MPI_CHAR,dest_rank,
+	     tag,MPI_COMM_WORLD);
+    cbuffer.clear();
+
+    // --------------------------------------------------------------
+    // Column data
+
+    ibuffer=t.get_nlines();
+    tag=7;
+    MPI_Send(&ibuffer,ibuffer.size(),MPI_INT,dest_rank,
+	     tag,MPI_COMM_WORLD);
+  
+    for(size_t i=0;i<t.get_ncolumns();i++) {
+      tag++;
+      MPI_Send(&(t[i][0]),t.get_nlines(),MPI_DOUBLE,dest_rank,
+	       tag,MPI_COMM_WORLD);
+    }
+
+    return;
+  }
+
+  /** \brief Desc
+   */
+  void o2scl_table_mpi_recv(size_t src_rank, table_units &t) {
+    int tag;
+    int ibuffer;
+    // Not std::string because we need to guarantee contiguous storage?!
+    vector<char> cbuffer;
+    vector<double> dbuffer;
+
+    vector<std::string> names;
+    std::string stemp;
+
+    // --------------------------------------------------------------
+    // Constants
+
+    // Names
+    tag=0;
+    MPI_Recv(&ibuffer,1,MPI_INT,src_rank,tag,MPI_COMM_WORLD,
+	     MPI_STATUS_IGNORE);
+    cbuffer.resize(ibuffer);
+    tag=1;
+    MPI_Recv(&(cbuffer[0]),ibuffer[0],MPI_char,src_rank,tag,MPI_COMM_WORLD,
+	     MPI_STATUS_IGNORE);
+
+    // Parse into vector<string>
+    for(size_t i=0;i<cbuffer.size();i++) {
+      if (cbuffer[i]!=' ') {
+	stemp+=cbuffer[i];
+      } else {
+	if (stemp.size()>0) {
+	  names.push_back(stemp);
+	  stemp="";
+	}
+      }
+    }
+    if (stemp.size()>0) {
+      names.push_back(stemp);
+    }
+    stemp="";
+
+    // Load values
+    dbuffer.resize(names.size());
+  
+    tag=2;
+    MPI_Recv(&(dbuffer[0]),dbuffer.size(),MPI_double,
+	     src_rank,tag,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+
+    // Set constants
+    for(size_t i=0;i<names.size();i++) {
+      t.add_constant(names[i],dbuffer[i]);
+    }
+    names.clear();
+    dbuffer.clear();
+  
+    // --------------------------------------------------------------
+    // Column names
+  
+    tag=3;
+    MPI_Recv(&ibuffer,1,MPI_INT,src_rank,tag,MPI_COMM_WORLD,
+	     MPI_STATUS_IGNORE);
+    cbuffer.resize(ibuffer);
+    tag=4;
+    MPI_Recv(&(cbuffer[0]),ibuffer[0],MPI_char,src_rank,tag,MPI_COMM_WORLD,
+	     MPI_STATUS_IGNORE);
+
+    // Parse into vector<string>
+    for(size_t i=0;i<cbuffer.size();i++) {
+      if (cbuffer[i]!=' ') {
+	stemp+=cbuffer[i];
+      } else {
+	if (stemp.size()>0) {
+	  names.push_back(stemp);
+	  stemp="";
+	}
+      }
+    }
+    if (stemp.size()>0) {
+      names.push_back(stemp);
+    }
+    stemp="";
+
+    for(size_t i=0;i<names.size();i++) {
+      t.new_column(names[i]);
+    }
+    names.clear();
+
+    // --------------------------------------------------------------
+    // Column units
+  
+    tag=5;
+    MPI_Recv(&ibuffer,1,MPI_INT,src_rank,tag,MPI_COMM_WORLD,
+	     MPI_STATUS_IGNORE);
+    cbuffer.resize(ibuffer);
+    tag=6;
+    MPI_Recv(&(cbuffer[0]),ibuffer[0],MPI_char,src_rank,tag,MPI_COMM_WORLD,
+	     MPI_STATUS_IGNORE);
+
+    // Parse into vector<string>
+    for(size_t i=0;i<cbuffer.size();i++) {
+      if (cbuffer[i]!=' ') {
+	stemp+=cbuffer[i];
+      } else {
+	if (stemp.size()>0) {
+	  names.push_back(stemp);
+	  stemp="";
+	}
+      }
+    }
+    if (stemp.size()>0) {
+      names.push_back(stemp);
+    }
+    stemp="";
+
+    for(size_t i=0;i<names.size();i++) {
+      t.set_unit(t.get_column_name(i),names[i]);
+    }
+    names.clear();
+
+    // --------------------------------------------------------------
+    // Column data
+
+    tag=7;
+    MPI_Recv(&ibuffer,1,MPI_INT,src_rank,tag,MPI_COMM_WORLD,
+	     MPI_STATUS_IGNORE);
+    t.set_nlines(ibuffer);
+
+    for(size_t i=0;i<t.get_ncolumns();i++) {
+      tag++;
+      MPI_Send(&(t[i][0]),ibuffer,MPI_DOUBLE,dest_rank,
+	       tag,MPI_COMM_WORLD);
+    }
+
+    return;
+  }
+  
+#endif  
+  
 #ifndef DOXYGEN_NO_O2NS
 }
 #endif
