@@ -1170,6 +1170,10 @@ namespace o2scl {
       http://github.com/awsteiner/bamr .
 
       \note This class is experimental.
+
+      \future Verbose output may need improvement
+      \future Use reorder_table() and possibly reblock()
+      to create a full post-processing function.
   */
   template<class func_t, class fill_t, class data_t, class vec_t=ubvector>
     class mcmc_para_table : public mcmc_para_base<func_t,
@@ -1194,9 +1198,10 @@ namespace o2scl {
   /// Main data table for Markov chain
   std::shared_ptr<o2scl::table_units<> > table;
 
+  /** \brief If true, the HDF5 I/O initial info has been written
+      to the file (set by \ref mcmc() )
+   */
   bool first_write;
-
-  int table_io_chunk;
   
   /** \brief MCMC initialization function
 
@@ -1277,6 +1282,10 @@ namespace o2scl {
   
   public:
 
+  /** \brief The number of tables to combine before I/O (default 1)
+   */
+  int table_io_chunk;
+  
   /** \brief Write MCMC tables to files
    */
   virtual void write_files() {
@@ -1373,7 +1382,6 @@ namespace o2scl {
   
   mcmc_para_table() {
     allow_estimates=false;
-    first_write=false;
     table_io_chunk=1;
   }
   
@@ -1398,6 +1406,8 @@ namespace o2scl {
   virtual int mcmc(size_t nparams, 
 		   vec_t &low, vec_t &high, std::vector<func_t> &func,
 		   std::vector<fill_t> &fill) {
+    
+    first_write=false;
     
     // Set number of threads (this is done in the child as well, but
     // we need this number to set up the vector of measure functions
@@ -1559,7 +1569,7 @@ namespace o2scl {
   }
   //@}
   
-  /** \brief Desc
+  /** \brief Perform cleanup after an MCMC simulation
    */
   virtual void mcmc_cleanup() {
 
@@ -1579,7 +1589,7 @@ namespace o2scl {
     return parent_t::mcmc_cleanup();
   }
 
-  /** \brief Desc
+  /** \brief Compute autocorrelation coefficients
    */
   virtual void ac_coeffs(size_t ncols, ubmatrix &ac_coeffs) {
     std::vector<size_t> csizes;
@@ -1619,7 +1629,7 @@ namespace o2scl {
     return;
   }
 
-  /** \brief Desc
+  /** \brief Compute autocorrelation lengths
    */
   virtual void ac_lengths(size_t ncols, ubmatrix &ac_coeffs_cols,
 			  ubvector &ac_lengths) {
