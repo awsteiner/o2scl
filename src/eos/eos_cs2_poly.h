@@ -71,7 +71,7 @@ namespace o2scl {
   
   public:
 
-    eos_cs2_poly {
+    eos_cs2_poly() {
       C1=0.0;
       C2=0.0;
     }

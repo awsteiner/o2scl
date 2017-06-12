@@ -56,6 +56,8 @@ int main(void) {
 	 << ecp.ed_from_nb(nb) << endl;
     t.test_rel(nb/ecp.mu_from_nb(nb)*dmudnb,
 	       ecp.cs2_from_nb(nb),eps*4.0,"cs2 vs. numerical.");
+    t.test_rel(ecp.mu_from_nb(nb),
+	       mu_test,eps*4.0,"mu vs. numerical.");
   }
 
   t.report();
