@@ -914,7 +914,7 @@ int eos_had_rmf::fix_saturation(double gcs, double gcw, double gb, double gc) {
   return exc_efailed;
 }
 
-void eos_had_rmf::saturation() {
+int eos_had_rmf::saturation() {
 
   ubvector x(5), y(5);
   int test;
@@ -959,7 +959,7 @@ void eos_had_rmf::saturation() {
     }
   } 
   if (it==max_it) {
-    O2SCL_CONV("Failed to make initial density finite in saturation()",
+    O2SCL_CONV_RET("Failed to make initial density finite in saturation()",
 	       exc_efailed,err_nonconv);
   }
   
@@ -975,8 +975,8 @@ void eos_had_rmf::saturation() {
   rho=x[4];
 
   if (test!=0) {
-    O2SCL_CONV("Solver failed in eos_had_rmf::saturation().",
-	       exc_efailed,err_nonconv);
+    O2SCL_CONV_RET("Solver failed in eos_had_rmf::saturation().",
+		   exc_efailed,err_nonconv);
   }
   
   if (verbose>0) {
@@ -997,7 +997,7 @@ void eos_had_rmf::saturation() {
   // fkprime_fields(x[2],x[3],n0,comp,kprime);
   // esym=fesym_fields(x[2],x[3],n0);
 
-  return;
+  return 0;
 }
 
 int eos_had_rmf::calc_e_solve_fun(size_t nv, const ubvector &ex, 

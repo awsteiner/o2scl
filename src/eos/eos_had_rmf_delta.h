@@ -141,7 +141,7 @@ namespace o2scl {
 	This requires initial guesses to the chemical 
 	potentials, etc.
     */
-    virtual void saturation();
+    virtual int saturation();
 
 #ifndef DOXYGEN_INTERNAL
 

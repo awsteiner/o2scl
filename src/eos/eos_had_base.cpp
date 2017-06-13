@@ -296,14 +296,14 @@ double eos_had_base::fn0(double delta, double &leoa) {
   return nb;
 }
 
-void eos_had_base::saturation() {
+int eos_had_base::saturation() {
   n0=fn0(0.0,eoa);
   comp=fcomp(n0);
   esym=fesym(n0);
   msom=fmsom(n0);
   kprime=fkprime(n0);
 
-  return;
+  return 0;
 }
 
 void eos_had_base::gradient_qij(fermion &n, fermion &p, thermo &th,

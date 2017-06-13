@@ -564,7 +564,7 @@ namespace o2scl {
 	\future It would be great to provide numerical uncertainties
 	in the saturation properties.
     */
-    virtual void saturation();
+    virtual int saturation();
     //@}
 
     /// \name Functions for calculating physical properties

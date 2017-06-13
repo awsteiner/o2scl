@@ -382,7 +382,7 @@ int eos_had_rmf_delta::calc_e_solve_fun(size_t nv, const ubvector &ex,
   return 0;
 }
 
-void eos_had_rmf_delta::saturation() {
+int eos_had_rmf_delta::saturation() {
   cout << "In saturation: " << endl;
   ubvector x(6);
   int test;
@@ -415,7 +415,8 @@ void eos_had_rmf_delta::saturation() {
   del=x[5];
 
   if (test!=0) {
-    O2SCL_ERR("Solver failed in eos_had_rmf_delta::saturation().",exc_efailed);
+    O2SCL_CONV_RET("Solver failed in eos_had_rmf_delta::saturation().",
+		   exc_efailed,this->err_nonconv);
   }
   
   n0=neutron->n+proton->n;
@@ -423,6 +424,6 @@ void eos_had_rmf_delta::saturation() {
   eoa=(eos_thermo->ed/n0-neutron->m);
   esym=fesym(n0);
   
-  return;
+  return 0;
 }
 

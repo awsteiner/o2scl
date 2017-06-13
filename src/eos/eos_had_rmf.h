@@ -500,7 +500,7 @@ namespace o2scl {
 	reports details on the initial iterations to get the initial
 	guess for the solver.
     */
-    virtual void saturation();
+    virtual int saturation();
   
     /** \brief Calculate symmetry energy assuming the field
 	equations have already been solved

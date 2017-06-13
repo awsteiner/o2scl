@@ -1289,8 +1289,8 @@ namespace o2scl {
   /** \brief Write MCMC tables to files
    */
   virtual void write_files() {
-
-    vector<table_units> tab_arr;
+    
+    std::vector<o2scl::table_units<> > tab_arr;
     bool rank_sent=false;
     
 #ifdef O2SCL_MPI
@@ -1357,11 +1357,11 @@ namespace o2scl {
 		       this->initial_points);
 
     hf.seti("n_tables",tab_arr.size()+1);
-    if (rank_set==false) {
+    if (rank_sent==false) {
       hdf_output(hf,*table,"markov_chain0");
     }
     for(size_t i=0;i<tab_arr.size();i++) {
-      string name=((string)"markov_chain")+szttos(i+1);
+      std::string name=((std::string)"markov_chain")+szttos(i+1);
       hdf_output(hf,tab_arr[i],name);
     }
     
@@ -1545,6 +1545,15 @@ namespace o2scl {
 	  if (line.size()!=table->get_ncolumns()) {
 	    std::cout << "line: " << line.size() << " columns: "
 		      << table->get_ncolumns() << std::endl;
+	    for(size_t k=0;k<table->get_ncolumns() || k<line.size();k++) {
+	      std::cout << k << ". ";
+	      if (k<table->get_ncolumns()) {
+		std::cout << table->get_column_name(k) << " ";
+		std::cout << table->get_unit(table->get_column_name(k)) << " ";
+	      }
+	      if (k<line.size()) std::cout << line[k] << " ";
+	      std::cout << std::endl;
+	    }
 	    O2SCL_ERR("Table misalignment in mcmc_para_table::add_line().",
 		      exc_einval);
 	  }

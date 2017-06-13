@@ -342,7 +342,7 @@ namespace o2scl {
 	if (ret!=0) {
 	  if (exit_on_fail) {
 	    O2SCL_ERR2("Adaptive stepper failed in ",
-			   "ode_iv_solve::solve_final_value()",ret);
+		       "ode_iv_solve::solve_final_value()",ret);
 	  } else if (first_ret!=0) {
 	    first_ret=ret;
 	  }

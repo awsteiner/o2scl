@@ -375,7 +375,11 @@ int nucleus_rmf::run_nucleus(int nucleus_Z, int nucleus_N,
 		     err_nonconv);
     }
     
-    iterate(nucleus_Z,nucleus_N,unocc_Z,unocc_N,iconverged);
+    int iret=iterate(nucleus_Z,nucleus_N,unocc_Z,unocc_N,iconverged);
+    if (iret!=0) {
+      O2SCL_CONV_RET("Function iterate() failed.",exc_efailed,
+		     err_nonconv);
+    }
     
     iteration++;
   }
@@ -489,8 +493,8 @@ void nucleus_rmf::init_run(int nucleus_Z, int nucleus_N,
   return;
 }
 
-void nucleus_rmf::iterate(int nucleus_Z, int nucleus_N,
-			  int unocc_Z, int unocc_N, int &iconverged) {
+int nucleus_rmf::iterate(int nucleus_Z, int nucleus_N,
+			 int unocc_Z, int unocc_N, int &iconverged) {
 
   iconverged=0;
   
@@ -560,6 +564,11 @@ void nucleus_rmf::iterate(int nucleus_Z, int nucleus_N,
     // scalar densities 
     double xnns=(xrho(i,0)-xrhosp[i])/x/x;
     double xpns=xrhosp[i]/x/x;
+
+    if (!std::isfinite(xn) ||
+	!std::isfinite(xp)) {
+      return 1;
+    }
     
     double line[10]={x,xp,xn,fields(i,0),fields(i,1),
 		     fields(i,2),fields(i,3),chden1[i],
@@ -590,7 +599,7 @@ void nucleus_rmf::iterate(int nucleus_Z, int nucleus_N,
     (*levp)[i].energy=(*levp)[i].eigen;
   }
 
-  return;
+  return 0;
 }
 
 int nucleus_rmf::post_converge(int nucleus_Z, int nucleus_N, int unocc_Z, 
@@ -806,7 +815,7 @@ void nucleus_rmf::center_mass_corr(double atot) {
     rhoq[i]=step_size*rhoq[i]*4.0*pi;
   }
 
-  // Multiply by correction e^{b^2 q^2/4/A} and transpform back
+  // Multiply by correction e^{b^2 q^2/4/A} and transform back
   // to position space
   for (i=0;i<grid_size;i++) {
     chdenc[i]=0.0;

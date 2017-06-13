@@ -307,7 +307,7 @@ namespace o2scl {
     void init_run(int nucleus_Z, int nucleus_N, int unocc_Z, int unocc_N);
     
     /// Perform an iteration
-    void iterate(int nucleus_Z, int nucleus_N, int unocc_Z, int unocc_N,
+    int iterate(int nucleus_Z, int nucleus_N, int unocc_Z, int unocc_N,
 		 int &iconverged);
     
     /// After convergence, make CM corrections, etc.
