@@ -72,7 +72,7 @@ namespace o2scl {
 
       \note This class can fail to solve the meson field equations or
       fail to solve for the nucleon densities. By default the error
-      handler is called when this happens. If \ref err_nonconv is
+      handler is called when this happens. If \ref eos_had_base::err_nonconv is
       false, then functions which don't converge (which also return
       <tt>int</tt>) will return a non-zero value. Note that the
       solvers (in \ref def_sat_mroot and \ref
@@ -89,6 +89,9 @@ namespace o2scl {
       explicit CONV_ERR calls in eos_had_rmf.cpp is that it makes the code
       easier to read. In any case err_nonconv should probably be
       pushed up to eos_had_base.
+      AWS: 6/14/17: Moved err_nonconv up to eos_had_base now because
+      I need it in eos_had_skyrme and it's needed in eos_had_eden_base
+      anyway, so it might as well be in the parent.
       \endcomment
 
       \hline

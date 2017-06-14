@@ -351,6 +351,8 @@ namespace o2scl {
     /// Skewness in \f$ \mathrm{fm}^{-1} \f$
     double kprime;
     
+    bool err_nonconv;
+
     /// \name Equation of state
     //@{
     /** \brief Equation of state as a function of the chemical potentials

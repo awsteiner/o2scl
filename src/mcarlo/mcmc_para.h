@@ -354,7 +354,7 @@ namespace o2scl {
     }
     if (meas.size()<n_threads) {
       if (verbose>0) {
-	std::cout << "mcmc_para::mcmc(): Not enough measurment objects for "
+	std::cout << "mcmc_para::mcmc(): Not enough measurement objects for "
 	     << n_threads << " threads. Setting n_threads to "
 		  << meas.size() << "." << std::endl;
       }
@@ -1559,6 +1559,16 @@ namespace o2scl {
 	  }
 	  
 	  table->set_row(((size_t)walker_rows[windex]),line);
+	  if (this->verbose>=2) {
+	    this->scr_out << "Setting data at row " << walker_rows[windex]
+			  << std::endl;
+	    for(size_t k=0;k<line.size();k++) {
+	      this->scr_out << k << ". ";
+	      this->scr_out << table->get_column_name(k) << " ";
+	      this->scr_out << table->get_unit(table->get_column_name(k));
+	      this->scr_out << " " << line[k] << std::endl;
+	    }
+	  }
 	  
 	}
       
@@ -1568,6 +1578,11 @@ namespace o2scl {
       
 	double mult_old=table->get("mult",walker_rows[windex]);
 	table->set("mult",walker_rows[windex],mult_old+1.0);
+	if (this->verbose>=2) {
+	  this->scr_out << "Updating mult of row " << walker_rows[windex]
+			<< " from " << mult_old << " to "
+			<< mult_old+1.0 << std::endl;
+	}
       
       }
 

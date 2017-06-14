@@ -79,7 +79,8 @@ double nstar_cold::solve_fun(double x) {
   np.n=x;
   
   pp.n=barn-np.n;
-  hep->calc_e(np,pp,hb);
+  int had_ret=hep->calc_e(np,pp,hb);
+  if (had_ret!=0) return had_ret;
 
   e.mu=np.mu-pp.mu;
   fzt.calc_mu_zerot(e);

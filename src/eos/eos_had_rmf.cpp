@@ -57,7 +57,6 @@ eos_had_rmf::eos_had_rmf() {
 
   zm_mode=false;
   guess_set=false;
-  err_nonconv=true;
   
   sat_mroot=&def_sat_mroot;
   verbose=0;
@@ -121,8 +120,9 @@ int eos_had_rmf::calc_eq_temp_p
   }
 
   if (ne.ms<0.0 || pr.ms<0.0) {
-    O2SCL_ERR2("Neutron or proton mass negative in ",
-	       "eos_had_rmf::calc_eq_temp_p().",exc_efailed);
+    O2SCL_CONV2_RET("Neutron or proton mass negative in ",
+		    "eos_had_rmf::calc_eq_temp_p().",exc_efailed,
+		    this->err_nonconv);
   }
   
   ne.non_interacting=false;
@@ -269,7 +269,7 @@ int eos_had_rmf::calc_p(fermion &ne, fermion &pr, thermo &lth) {
   ret=eos_mroot->msolve(3,x,fmf);
   if (ret!=0) {
     O2SCL_CONV_RET("Solver failed in eos_had_rmf::calc_p().",
-		   exc_efailed,err_nonconv);
+		   exc_efailed,this->err_nonconv);
   }
 
   sigma=x[0];
@@ -327,7 +327,7 @@ int eos_had_rmf::calc_temp_p(fermion &ne, fermion &pr, const double T,
 
   if (ret!=0) {
     O2SCL_CONV_RET("Solver failed in eos_had_rmf::calc_p().",
-		   exc_efailed,err_nonconv);
+		   exc_efailed,this->err_nonconv);
   }
 
   // 10/16/14: Final evaluation to store results in ne, pr, and lth
@@ -402,7 +402,7 @@ int eos_had_rmf::calc_e(fermion &ne, fermion &pr, thermo &lth) {
     int rt=calc_e_solve_fun(5,x,y);
     if (rt!=0) {
       O2SCL_CONV2_RET("Final solution failed (user guess) in ",
-		      "eos_had_rmf::calc_e().",exc_efailed,err_nonconv);
+		      "eos_had_rmf::calc_e().",exc_efailed,this->err_nonconv);
     }
     
   } else {
@@ -463,7 +463,7 @@ int eos_had_rmf::calc_e(fermion &ne, fermion &pr, thermo &lth) {
 	string s=((string)"Initial guess failed at (nn=")+
 	  dtos(neutron->n)+" and np="+dtos(proton->n)+") in "+
 	  "eos_had_rmf::calc_e().";
-	O2SCL_CONV_RET(s.c_str(),exc_efailed,err_nonconv);
+	O2SCL_CONV_RET(s.c_str(),exc_efailed,this->err_nonconv);
       }
       ret=eos_mroot->msolve(5,x,fmf);
       if (verbose>0.0) {
@@ -480,7 +480,7 @@ int eos_had_rmf::calc_e(fermion &ne, fermion &pr, thermo &lth) {
     int rt2=calc_e_solve_fun(5,x,y);
     if (rt2!=0) {
       O2SCL_CONV_RET("Final solution failed in eos_had_rmf::calc_e().",
-		     exc_efailed,err_nonconv);
+		     exc_efailed,this->err_nonconv);
     }
     
   }
@@ -495,7 +495,7 @@ int eos_had_rmf::calc_e(fermion &ne, fermion &pr, thermo &lth) {
   
   if (ret!=0) {
     O2SCL_CONV2_RET("Solver failed in eos_had_rmf::calc_e",
-		    "(fermion,fermion,thermo).",exc_efailed,err_nonconv);
+		    "(fermion,fermion,thermo).",exc_efailed,this->err_nonconv);
   }
   
   return 0;
@@ -648,7 +648,7 @@ int eos_had_rmf::calc_temp_e(fermion &ne, fermion &pr, const double T,
   
   if (ret!=0) {
     O2SCL_CONV2_RET("Solver failed in eos_had_rmf::calc_temp_e(fermion,",
-		    "fermion,double,thermo).",exc_efailed,err_nonconv);
+		    "fermion,double,thermo).",exc_efailed,this->err_nonconv);
   }
   
   return 0;
@@ -682,8 +682,9 @@ int eos_had_rmf::calc_eq_p(fermion &ne, fermion &pr, double sig, double ome,
   }
   
   if (ne.ms<0.0 || pr.ms<0.0) {
-    O2SCL_ERR2("Neutron or proton mass negative in ",
-	       "eos_had_rmf::calc_eq_p().",exc_efailed);
+    O2SCL_CONV2_RET("Neutron or proton mass negative in ",
+		    "eos_had_rmf::calc_eq_p().",exc_efailed,
+		    this->err_nonconv);
   }
 
   ne.nu=ne.mu-gw*ome+0.5*gr*lrho;
@@ -960,7 +961,7 @@ int eos_had_rmf::saturation() {
   } 
   if (it==max_it) {
     O2SCL_CONV_RET("Failed to make initial density finite in saturation()",
-	       exc_efailed,err_nonconv);
+	       exc_efailed,this->err_nonconv);
   }
   
   if (verbose>0) {
@@ -976,7 +977,7 @@ int eos_had_rmf::saturation() {
 
   if (test!=0) {
     O2SCL_CONV_RET("Solver failed in eos_had_rmf::saturation().",
-		   exc_efailed,err_nonconv);
+		   exc_efailed,this->err_nonconv);
   }
   
   if (verbose>0) {

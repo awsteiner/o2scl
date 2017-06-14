@@ -127,8 +127,9 @@ int eos_had_skyrme::calc_temp_e(fermion &ne, fermion &pr,
   pr.ms=pr.m/(1.0+2.0*(n*term+pr.n*term2)*pr.m);
 
   if (ne.ms<0.0 || pr.ms<0.0) {
-    O2SCL_ERR2("Effective masses negative in ",
-	       "eos_had_skyrme::calc_temp_e().",exc_einval);
+    O2SCL_CONV2_RET("Effective masses negative in ",
+		    "eos_had_skyrme::calc_temp_e().",
+		    exc_einval,this->err_nonconv);
   }
 
   if (ne.n>0.0) {
@@ -275,11 +276,9 @@ int eos_had_skyrme::calc_e(fermion &ne, fermion &pr, thermo &locth) {
   pr.ms=pr.m/(1.0+2.0*(n*term+pr.n*term2)*pr.m);
 
   if (ne.ms<0.0 || pr.ms<0.0) {
-    cout << "nn,np: " << ne.n << " " << pr.n << endl;
-    cout << "term,term2: " << term << " " << term2 << endl;
-    cout << "msn,msp: " << ne.ms << " " << pr.ms << endl;
-    O2SCL_ERR2("Effective masses negative in ",
-	       "eos_had_skyrme::calc_temp_e().",exc_einval);
+    O2SCL_CONV2_RET("Effective masses negative in ",
+		    "eos_had_skyrme::calc_temp_e().",exc_einval,
+		    this->err_nonconv);
   }
 
   // We don't record error values, since these functions usually

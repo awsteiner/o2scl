@@ -49,6 +49,8 @@ eos_had_base::eos_had_base() {
   
   eos_mroot=&def_mroot;
   sat_root=&def_sat_root;
+
+  err_nonconv=true;
 }
 
 double eos_had_base::fcomp(double nb, double delta) {
