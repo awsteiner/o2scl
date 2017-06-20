@@ -446,8 +446,8 @@ namespace o2scl {
     /** \brief Desc
      */
     void reset_interp(size_t n) {
-      pe_int.set(n,pr,ed,itp_linear);
-      ep_int.set(n,ed,pr,itp_linear);
+      pe_int.set(n,pr_vec,ed_vec,itp_linear);
+      ep_int.set(n,ed_vec,pr_vec,itp_linear);
       return;
     }
     
@@ -455,10 +455,10 @@ namespace o2scl {
      */
     void reset_interp_nb(size_t n) {
       reset_interp();
-      pn_int.set(n,pr,nb,itp_linear);
-      np_int.set(n,nb,pr,itp_linear);
-      en_int.set(n,ed,nb,itp_linear);
-      ne_int.set(n,nb,ed,itp_linear);
+      pn_int.set(n,pr_vec,nb_vec,itp_linear);
+      np_int.set(n,nb_vec,pr_vec,itp_linear);
+      en_int.set(n,ed_vec,nb_vec,itp_linear);
+      ne_int.set(n,nb_vec,ed_vec,itp_linear);
       return;
     }
     
@@ -472,9 +472,9 @@ namespace o2scl {
     */
     void read_vectors_swap(size_t user_n, vec_t &user_ed, vec_t &user_pr,
 			   vec_t &user_nb) {
-      std::swap(user_ed,ed);
-      std::swap(user_pr,pr);
-      std::swap(user_nb,nb);
+      std::swap(user_ed,ed_vec);
+      std::swap(user_pr,pr_vec);
+      std::swap(user_nb,nb_vec);
       this->baryon_column=true;
       reset_interp_nb(user_n);
       return;
@@ -487,8 +487,8 @@ namespace o2scl {
 	with internal storage.
     */
     void read_vectors_swap(size_t user_n, vec_t &user_ed, vec_t &user_pr) {
-      std::swap(user_ed,ed);
-      std::swap(user_pr,pr);
+      std::swap(user_ed,ed_vec);
+      std::swap(user_pr,pr_vec);
       this->baryon_column=false;
       reset_interp(user_n);
       return;
@@ -502,12 +502,12 @@ namespace o2scl {
     */
     void read_vectors_copy(size_t user_n, vec_t &user_ed, vec_t &user_pr,
 			   vec_t &user_nb) {
-      if (ed.size()!=user_n) ed.resize(user_n);
-      if (pr.size()!=user_n) pr.resize(user_n);
-      if (nb.size()!=user_n) nb.resize(user_n);
-      vector_copy(user_ed,ed);
-      vector_copy(user_pr,pr);
-      vector_copy(user_nb,nb);
+      if (ed_vec.size()!=user_n) ed_vec.resize(user_n);
+      if (pr_vec.size()!=user_n) pr_vec.resize(user_n);
+      if (nb_vec.size()!=user_n) nb_vec.resize(user_n);
+      vector_copy(user_ed,ed_vec);
+      vector_copy(user_pr,pr_vec);
+      vector_copy(user_nb,nb_vec);
       this->baryon_column=true;
       reset_interp_nb(user_n);
       return;
@@ -520,10 +520,10 @@ namespace o2scl {
 	to internal storage.
     */
     void read_vectors_copy(size_t user_n, vec_t &user_ed, vec_t &user_pr) {
-      if (ed.size()!=user_n) ed.resize(user_n);
-      if (pr.size()!=user_n) pr.resize(user_n);
-      vector_copy(user_ed,ed);
-      vector_copy(user_pr,pr);
+      if (ed_vec.size()!=user_n) ed_vec.resize(user_n);
+      if (pr_vec.size()!=user_n) pr_vec.resize(user_n);
+      vector_copy(user_ed,ed_vec);
+      vector_copy(user_pr,pr_vec);
       this->baryon_column=false;
       reset_interp(user_n);
       return;
@@ -540,7 +540,7 @@ namespace o2scl {
     /** \brief From the energy density, return the pressure
      */
     virtual double pr_from_ed(double ed) {
-      return ep_int.eval(pr);
+      return ep_int.eval(ed);
     }
     
     /** \brief From the energy density, return the baryon density
@@ -552,19 +552,19 @@ namespace o2scl {
     /** \brief From the pressure, return the baryon density
      */
     virtual double nb_from_pr(double pr) {
-      return pn_int.eval(ed);
+      return pn_int.eval(pr);
     }
     
     /** \brief From the baryon density, return the energy density
      */
     virtual double ed_from_nb(double nb) {
-      return ne_int.eval(ed);
+      return ne_int.eval(nb);
     }
     
     /** \brief From the baryon density, return the pressure
      */
     virtual double pr_from_nb(double nb) {
-      return np_int.eval(ed);
+      return np_int.eval(nb);
     }
 
     /** \brief Given the pressure, produce the energy and number densities
@@ -589,11 +589,11 @@ namespace o2scl {
     /// \name EOS storage
     //@{
     /// Energy densities from full EOS
-    vec_t ed;
+    vec_t ed_vec;
     /// Pressures from full EOS
-    vec_t pr;
+    vec_t pr_vec;
     /// Baryon densities from full EOS
-    vec_t nb;
+    vec_t nb_vec;
     //@}
 
     /// \name Interpolators

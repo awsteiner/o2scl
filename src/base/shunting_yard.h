@@ -83,8 +83,12 @@ namespace o2scl {
   public:
     
     /** \brief Create a token of type \c type with value \c t
+
+	\comment
+	AWS: renamed type to typex to prevent shadow warnings
+	\endcomment
      */
-  Token(T t, tokType type) : val(t) { this->type=type; }
+  Token(T t, tokType typex) : val(t) { this->type=typex; }
     
     /** \brief The actual value stored
      */
