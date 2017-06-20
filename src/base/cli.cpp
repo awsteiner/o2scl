@@ -353,7 +353,7 @@ int cli::process_args(std::vector<std::string> &sv,
   char **argv=new char *[argc];
   std::string s="acol";
   argv[0]=(char *)s.c_str();
-  for(int i=0;i<sv.size();i++) argv[i+1]=(char *)(sv[i].c_str());
+  for(size_t i=0;i<sv.size();i++) argv[i+1]=(char *)(sv[i].c_str());
 
   // Process arguments from the (argc,argv) format
   int ret=process_args(argc,argv,ca,debug);

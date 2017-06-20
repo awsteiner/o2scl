@@ -995,7 +995,7 @@ void contour::print_edges_yhoriz(edge_crossings &xedges,
   }
   cout << endl;
   for(int i=nx2-1;i>=0;i--) {
-    if (i<nx2-1) {
+    if (i<((int)(nx2))-1) {
       cout << " ";
       for(size_t j=0;j<ny2;j++) {
 	if (xedges.status(i,j)==empty) cout << "|";
@@ -1038,7 +1038,7 @@ void contour::print_edges_xhoriz(edge_crossings &xedges,
   }
   cout << endl;
   for(int j=ny2-1;j>=0;j--) {
-    if (j<ny2-1) {
+    if (j<((int)ny2)-1) {
       cout << " ";
       for(size_t i=0;i<nx2;i++) {
 	if (yedges.status(i,j)==empty) cout << "|";

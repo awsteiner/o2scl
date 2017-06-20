@@ -188,7 +188,8 @@ int fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
     } else {
       arg=pow(upper_limit_fac*temper+f.nu+f.m,2.0)-f.ms*f.ms;
     }
-    double ul;
+    // Set to zero to avoid uninit'ed var. warnings
+    double ul=0.0;
     if (arg>0.0) {
       ul=sqrt(arg);
     } else {

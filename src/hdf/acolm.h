@@ -581,7 +581,7 @@ extern "C" {
     o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
     n=amp->hist_obj.size();
     amp->xtemp.resize(n);
-    for(size_t i=0;i<n;i++) amp->xtemp[i]=amp->hist_obj.get_rep_i(i);
+    for(int i=0;i<n;i++) amp->xtemp[i]=amp->hist_obj.get_rep_i(i);
     ptr=&(amp->xtemp[0]);
     return 0;
   }
@@ -593,7 +593,7 @@ extern "C" {
     o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
     n=amp->hist_obj.size();
     amp->ytemp.resize(n);
-    for(size_t i=0;i<n;i++) amp->ytemp[i]=amp->hist_obj.get_wgt_i(i);
+    for(int i=0;i<n;i++) amp->ytemp[i]=amp->hist_obj.get_wgt_i(i);
     ptr=&(amp->ytemp[0]);
     return 0;
   }
@@ -663,8 +663,8 @@ extern "C" {
     }
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
     const ubmatrix &m=amp->table3d_obj.get_slice(stmp);
-    for(size_t i=0;i<nx;i++) {
-      for(size_t j=0;j<ny;j++) {
+    for(int i=0;i<nx;i++) {
+      for(int j=0;j<ny;j++) {
 	amp->stemp[i*ny+j]=m(i,j);
       }
     }
@@ -701,8 +701,8 @@ extern "C" {
     amp->stemp.resize(nx*ny);
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
     const ubmatrix &m=amp->hist_2d_obj.get_wgts();
-    for(size_t i=0;i<nx;i++) {
-      for(size_t j=0;j<ny;j++) {
+    for(int i=0;i<nx;i++) {
+      for(int j=0;j<ny;j++) {
 	amp->stemp[i*ny+j]=m(i,j);
       }
     }

@@ -2880,7 +2880,7 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
     cerr << "Requested negative row in 'get-row'." << endl;
     return exc_efailed;
   }
-  if (ix>table_obj.get_nlines()-1) {
+  if (ix>((int)table_obj.get_nlines())-1) {
     cerr << "Requested row beyond end of table in get-row." << endl;
     return exc_efailed;
   }
@@ -3467,7 +3467,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     
   if (type=="table3d") {
     
-    size_t lmar=table3d_obj.get_y_name().length()+1;
+    int lmar=table3d_obj.get_y_name().length()+1;
     
     size_t nx, ny;
     table3d_obj.get_size(nx,ny);
@@ -3503,8 +3503,8 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 		  << " ncols: " << ncls << endl;
       }
       if (((size_t)ncls)>ny) ncls=ny;
-      size_t dx=nx/ncls;
-      size_t dy=ny/nrows;
+      int dx=nx/ncls;
+      int dy=ny/nrows;
       if (dx==0) dx=1;
       if (dy==0) dy=1;
 
@@ -3543,7 +3543,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 	       << table3d_obj.get_slice_name(k) << endl;
 
 	  // Label row
-	  for(size_t i=0;i<lmar+14;i++) cout << " ";
+	  for(int i=0;i<lmar+14;i++) cout << " ";
 	  cout << "   " << table3d_obj.get_x_name() << endl;
 
 	  // Set showpos
@@ -3559,7 +3559,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 	  cout << endl;
 
 	  // Divider row
-	  for(size_t i=0;i<lmar;i++) cout << " ";
+	  for(int i=0;i<lmar;i++) cout << " ";
 	  for(size_t i=0;i<((size_t)prec)+8;i++) cout << "-";
 	  cout << "|";
 	  for(size_t i=0;i<((size_t)ncls)*(prec+8);i++) {
@@ -3572,7 +3572,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 	    if (j==((int)nrows)-1) {
 	      cout << table3d_obj.get_y_name() << " ";
 	    } else {
-	      for(size_t i=0;i<lmar;i++) cout << " ";
+	      for(int i=0;i<lmar;i++) cout << " ";
 	    }
 	    cout << table3d_obj.get_grid_y(j*dy) << " | ";
 	    for(size_t i=0;i<((size_t)ncls);i++) {
@@ -3616,7 +3616,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     cout << " weight" << endl;
     cout.unsetf(ios::left);
 
-    for(int i=0;i<hist_obj.size();i+=inr) {
+    for(int i=0;i<((int)hist_obj.size());i+=inr) {
       double val=hist_obj.get_bin_low_i(i);
       if (val<0.0) {
 	cout << val << " ";
@@ -4418,7 +4418,7 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
     // appropriately.
 
     // Copy the data over
-    for(size_t i=0;i<nargs;i++) {
+    for(int i=0;i<nargs;i++) {
 
       if (is_pattern[i]==false) {
 	
