@@ -103,7 +103,7 @@ namespace o2scl {
   vec_t vtemp, vtemp2, vtemp3, vtemp4;
   //@}
 
-  /// Desc
+  /// The size of the temporary vectors
   size_t mem_size;
 
   /// The adaptive stepper
