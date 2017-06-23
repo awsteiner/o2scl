@@ -496,7 +496,8 @@ void eos_tov_interp::internal_read() {
     }
     // Add transition lines
     double dpr=(pr_hi-pr_lo)/20.0;
-    double ed_lo, ed_hi, nb_lo, nb_hi;
+    // Set to zero to avoid uninit'ed variable warnings
+    double ed_lo=0.0, ed_hi=0.0, nb_lo=0.0, nb_hi=0.0;
 
     if (transition_mode==match_line) {
       ed_lo=gen_int.eval(pr_lo,crust_nlines,crust_vecp,crust_vece);

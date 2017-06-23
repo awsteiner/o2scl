@@ -1164,8 +1164,8 @@ int tov_solve::fixed(double target_mass, double pmax) {
      this,std::placeholders::_1,std::placeholders::_2,
      std::placeholders::_3);
 
-
-  bool save1, save2;
+  // Set to false to avoid uninit'ed variable warnings
+  bool save1=false, save2=false;
   if (err_nonconv==false) {
     save1=mroot_ptr->err_nonconv;
     save2=def_solver.def_jac.err_nonconv;

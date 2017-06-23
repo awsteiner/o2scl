@@ -443,7 +443,7 @@ namespace o2scl {
    */
   template<class vec_t> class eos_tov_vectors : public eos_tov {
 
-    /** \brief Desc
+    /** \brief Internal function to reset the interpolation
      */
     void reset_interp(size_t n) {
       pe_int.set(n,pr_vec,ed_vec,itp_linear);
@@ -451,10 +451,11 @@ namespace o2scl {
       return;
     }
     
-    /** \brief Desc
+    /** \brief Internal function to reset the interpolation
+	with baryon density
      */
     void reset_interp_nb(size_t n) {
-      reset_interp();
+      reset_interp(n);
       pn_int.set(n,pr_vec,nb_vec,itp_linear);
       np_int.set(n,nb_vec,pr_vec,itp_linear);
       en_int.set(n,ed_vec,nb_vec,itp_linear);
@@ -575,10 +576,10 @@ namespace o2scl {
 	
 	If \ref baryon_column is false, then \c nb is unmodified.
     */
-    virtual void ed_nb_from_pr(double pr, double &ed, double &nb) {
-      ed_from_pr(pr);
+    virtual void ed_nb_from_pr(double pr, double &ed, double &nb) {      
+      ed=ed_from_pr(pr);
       if (this->baryon_column) {
-	nb_from_pr(pr);
+	nb=nb_from_pr(pr);
       }
       return;
     }
@@ -598,12 +599,12 @@ namespace o2scl {
 
     /// \name Interpolators
     //@{
-    interp<vec_t> pe_int;
-    interp<vec_t> pn_int;
-    interp<vec_t> ep_int;
-    interp<vec_t> en_int;
-    interp<vec_t> np_int;
-    interp<vec_t> ne_int;
+    interp_vec<vec_t> pe_int;
+    interp_vec<vec_t> pn_int;
+    interp_vec<vec_t> ep_int;
+    interp_vec<vec_t> en_int;
+    interp_vec<vec_t> np_int;
+    interp_vec<vec_t> ne_int;
     //@}
 
   };
