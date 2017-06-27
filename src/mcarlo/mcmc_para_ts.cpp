@@ -51,7 +51,7 @@ typedef std::function<int(const ubvector &,double,size_t,bool,
 int niters=1000000;
 int it_count;
 expval_scalar sev_x, sev_x2;
-mcmc_omp_base<point_funct,measure_funct,std::array<double,1>,ubvector> mc;
+mcmc_para_base<point_funct,measure_funct,std::array<double,1>,ubvector> mc;
 
 int point(size_t nv, const ubvector &pars, double &ret,
 	  std::array<double,1> &dat) {
