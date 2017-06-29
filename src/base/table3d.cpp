@@ -677,7 +677,7 @@ size_t table3d::get_interp_type() const {
   return itype;
 }
 
-double table3d::interp(double x, double y, std::string name) {
+double table3d::interp(double x, double y, std::string name) const {
   double result;
   
   size_t z=lookup_slice(name);

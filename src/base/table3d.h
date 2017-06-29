@@ -82,7 +82,10 @@ namespace o2scl {
     typedef boost::numeric::ublas::vector<double> ubvector;
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
     typedef boost::numeric::ublas::matrix_row<ubmatrix> ubmatrix_row;
-    typedef boost::numeric::ublas::matrix_column<ubmatrix> ubmatrix_column;
+
+    // This is used for the interpolation classes
+    typedef boost::numeric::ublas::matrix_column<const ubmatrix>
+      ubmatrix_column;
   
     /** \brief Create a new 3D \table
      */
@@ -593,7 +596,7 @@ namespace o2scl {
     
     /** \brief Interpolate \c x and \c y in slice named \c name
      */
-    double interp(double x, double y, std::string name);
+    double interp(double x, double y, std::string name) const;
 
     /** \brief Interpolate the derivative of the data with respect to
 	the x grid at point \c x and \c y in slice named \c name

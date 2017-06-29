@@ -119,7 +119,6 @@ void o2scl_hdf::hdf_output_data(hdf_file &hf, o2scl::table<> &t) {
 
   // Restructure constants
   std::vector<std::string> cnames, cols;
-  typedef std::vector<double> ubvector;
   std::vector<double> cvalues;
       
   for(size_t i=0;i<t.get_nconsts();i++) {
@@ -445,7 +444,6 @@ void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf, table3d &t,
 
   // Restructure constants
   std::vector<std::string> cnames;
-  typedef std::vector<double> ubvector;
   std::vector<double> cvalues;
   
   for(size_t i=0;i<t.get_nconsts();i++) {
