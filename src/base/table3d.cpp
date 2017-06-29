@@ -706,7 +706,7 @@ double table3d::interp(double x, double y, std::string name) const {
   return result;
 }
 
-double table3d::deriv_x(double x, double y, std::string name) {
+double table3d::deriv_x(double x, double y, std::string name) const {
   double result;
   
   size_t z=lookup_slice(name);
@@ -726,7 +726,7 @@ double table3d::deriv_x(double x, double y, std::string name) {
   return result;
 }
 
-double table3d::deriv_y(double x, double y, std::string name) {
+double table3d::deriv_y(double x, double y, std::string name) const {
   double result;
   
   size_t z=lookup_slice(name);
@@ -746,7 +746,8 @@ double table3d::deriv_y(double x, double y, std::string name) {
   return result;
 }
 
-double table3d::integ_x(double x1, double x2, double y, std::string name) {
+double table3d::integ_x(double x1, double x2, double y,
+			std::string name) const {
   double result;
   
   size_t z=lookup_slice(name);
@@ -766,7 +767,8 @@ double table3d::integ_x(double x1, double x2, double y, std::string name) {
   return result;
 }
 
-double table3d::integ_y(double x, double y1, double y2, std::string name) {
+double table3d::integ_y(double x, double y1, double y2,
+			std::string name) const {
   double result;
   
   size_t z=lookup_slice(name);
@@ -786,7 +788,7 @@ double table3d::integ_y(double x, double y1, double y2, std::string name) {
   return result;
 }
 
-double table3d::deriv_xy(double x, double y, std::string name) {
+double table3d::deriv_xy(double x, double y, std::string name) const {
   double result;
   
   size_t z=lookup_slice(name);

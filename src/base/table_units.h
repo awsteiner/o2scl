@@ -920,10 +920,18 @@ namespace o2scl {
     cbuffer.clear();
 
     // --------------------------------------------------------------
+    // Interpolation type
+
+    tag=7;
+    ibuffer=t.get_interp_type();
+    MPI_Send(&ibuffer,ibuffer.size(),MPI_INT,dest_rank,
+	     tag,MPI_COMM_WORLD);
+    
+    // --------------------------------------------------------------
     // Column data
 
     ibuffer=t.get_nlines();
-    tag=7;
+    tag=8;
     MPI_Send(&ibuffer,ibuffer.size(),MPI_INT,dest_rank,
 	     tag,MPI_COMM_WORLD);
   
@@ -1058,6 +1066,14 @@ namespace o2scl {
     // Column data
 
     tag=7;
+    MPI_Recv(&ibuffer,1,MPI_INT,src_rank,tag,MPI_COMM_WORLD,
+	     MPI_STATUS_IGNORE);
+    t.set_interp_type(ibuffer);
+
+    // --------------------------------------------------------------
+    // Column data
+
+    tag=8;
     MPI_Recv(&ibuffer,1,MPI_INT,src_rank,tag,MPI_COMM_WORLD,
 	     MPI_STATUS_IGNORE);
     t.set_nlines(ibuffer);

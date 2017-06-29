@@ -68,8 +68,8 @@ namespace o2scl {
   /** \brief A data structure containing many slices of two-dimensional
       data points defined on a grid
 
-      \future Improve interpolation and derivative caching
-      \future Make a 'const' version of the interpolation functions
+      \future Improve interpolation and derivative caching, possibly
+      through non-const versions of the interpolation functions.
       \future Should there be a clear_grid() function separate from
       clear_data() and clear_table()?
       \future Allow the user to more clearly probe 'size_set' vs.
@@ -81,9 +81,9 @@ namespace o2scl {
     
     typedef boost::numeric::ublas::vector<double> ubvector;
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
-    typedef boost::numeric::ublas::matrix_row<ubmatrix> ubmatrix_row;
 
     // This is used for the interpolation classes
+    typedef boost::numeric::ublas::matrix_row<const ubmatrix> ubmatrix_row;
     typedef boost::numeric::ublas::matrix_column<const ubmatrix>
       ubmatrix_column;
   
@@ -601,27 +601,27 @@ namespace o2scl {
     /** \brief Interpolate the derivative of the data with respect to
 	the x grid at point \c x and \c y in slice named \c name
     */
-    double deriv_x(double x, double y, std::string name);
+    double deriv_x(double x, double y, std::string name) const;
 
     /** \brief Interpolate the derivative of the data with respect to
 	the y grid at point \c x and \c y in slice named \c name
     */
-    double deriv_y(double x, double y, std::string name);
+    double deriv_y(double x, double y, std::string name) const;
 
     /** \brief Interpolate the mixed second derivative of the data at
 	point \c x and \c y in slice named \c name
     */
-    double deriv_xy(double x, double y, std::string name);
+    double deriv_xy(double x, double y, std::string name) const;
 
     /** \brief Interpolate the integral of the data 
 	respect to the x grid 
     */
-    double integ_x(double x1, double x2, double y, std::string name);
+    double integ_x(double x1, double x2, double y, std::string name) const;
 
     /** \brief Interpolate the integral of the data 
 	respect to the y grid 
     */
-    double integ_y(double x, double y1, double y2, std::string name);
+    double integ_y(double x, double y1, double y2, std::string name) const;
 
     /** \brief Fill a vector of interpolated values from each slice at the
 	point <tt>x,y</tt>
@@ -836,15 +836,6 @@ namespace o2scl {
   protected:
 
 #ifndef DOXYGEN_INTERNAL
-    
-    /// \name Interpolation data
-    //@{
-    /// The array of interp_sm pointers 
-    interp_vec<ubvector> **si;
-
-    /// Matrices for interpolation
-    ubmatrix_column **aci;
-    //@}
     
     /// \name Iterator types
     //@{
