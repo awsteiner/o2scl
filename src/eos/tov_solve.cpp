@@ -380,6 +380,12 @@ void tov_solve::make_table() {
   column_setup();
 
   // ---------------------------------------------------------------
+  // Add constants for mass and radius
+  
+  out_table->add_constant("mass",mass);
+  out_table->add_constant("rad",rad);
+
+  // ---------------------------------------------------------------
   // Create output file of profile for star
 
   if (ix_last+1<=max_table_size) {

@@ -48,11 +48,7 @@
 #include <o2scl/multi_funct.h>
 #include <o2scl/interpm_idw.h>
 #include <o2scl/vec_stats.h>
-#ifdef O2SCL_READLINE
-#include <o2scl/cli_readline.h>
-#else
 #include <o2scl/cli.h>
-#endif
 
 namespace o2scl {
   
@@ -121,9 +117,6 @@ namespace o2scl {
 
   /// The MPI number of processors
   int mpi_size;
-
-  /// The MPI starting time
-  double mpi_start_time;
   //@}
   
   /** \brief Time in seconds (default is 0)
@@ -215,6 +208,15 @@ namespace o2scl {
   std::vector<size_t> curr_walker;
 
   public:
+
+  /** \brief The MPI starting time
+
+      This must be set by the user before mcmc() is called.
+      This isn't set by mcmc() because otherwise there would
+      no accounting for any possible initializations before
+      the MCMC starts.
+  */
+  double mpi_start_time;
 
   /// If non-zero, the maximum number of MCMC iterations (default 0)
   size_t max_iters;
@@ -396,13 +398,6 @@ namespace o2scl {
     n_threads=omp_get_num_threads();
 #else
     n_threads=1;
-#endif
-
-    // Set starting time
-#ifdef O2SCL_MPI
-    mpi_start_time=MPI_Wtime();
-#else
-    mpi_start_time=time(0);
 #endif
 
     // Storage for return values from each thread
@@ -1199,7 +1194,10 @@ namespace o2scl {
     
   /// Column units
   std::vector<std::string> col_units;
-    
+
+  /// Number of parameters
+  size_t n_params;
+  
   /// Main data table for Markov chain
   std::shared_ptr<o2scl::table_units<> > table;
 
@@ -1284,6 +1282,20 @@ namespace o2scl {
 
   /// Likelihood estimator
   interpm_idw<double *> esti;
+
+  /** \brief
+   */
+  virtual void file_header(o2scl_hdf::hdf_file &hf) {
+    return;
+  }
+  
+  /** \brief A copy of the lower limits for HDF5 output
+   */
+  vec_t low_copy;
+  
+  /** \brief A copy of the upper limits for HDF5 output
+   */
+  vec_t high_copy;
   
   public:
 
@@ -1347,8 +1359,12 @@ namespace o2scl {
       hf.set_szt("max_bad_steps",this->max_bad_steps);
       hf.set_szt("n_walk",this->n_walk);
       hf.set_szt("n_threads",this->n_threads);
+      hf.set_szt("n_params",this->n_params);
       hf.seti("always_accept",this->always_accept);
       hf.seti("allow_estimates",allow_estimates);
+      hf.setd_vec_copy("low",this->low_copy);
+      hf.setd_vec_copy("high",this->high_copy);
+      file_header(hf);
       first_write=true;
     }
     
@@ -1411,6 +1427,10 @@ namespace o2scl {
   virtual int mcmc(size_t nparams, 
 		   vec_t &low, vec_t &high, std::vector<func_t> &func,
 		   std::vector<fill_t> &fill) {
+
+    n_params=nparams;
+    low_copy=low;
+    high_copy=high;
     
     first_write=false;
     
@@ -1759,18 +1779,6 @@ namespace o2scl {
   
   typedef o2scl::mcmc_para_table<func_t,fill_t,data_t,vec_t> parent_t;
 
-#ifdef O2SCL_READLINE
-  /// Command-line interface
-  o2scl::cli_readline cl;
-#else
-  /// Command-line interface
-  o2scl::cli cl;
-#endif
-
-  /** \brief The arguments sent to the command-line
-   */
-  std::vector<std::string> cl_args;
-
   /// \name Parameter objects for the 'set' command
   //@{
   o2scl::cli::parameter_double p_step_fac;
@@ -1781,8 +1789,8 @@ namespace o2scl {
   o2scl::cli::parameter_bool p_aff_inv;
   o2scl::cli::parameter_double p_max_time;
   o2scl::cli::parameter_size_t p_max_iters;
-  o2scl::cli::parameter_int p_max_chain_size;
-  o2scl::cli::parameter_int p_file_update_iters;
+  //o2scl::cli::parameter_int p_max_chain_size;
+  //o2scl::cli::parameter_int p_file_update_iters;
   o2scl::cli::parameter_bool p_output_meas;
   o2scl::cli::parameter_string p_prefix;
   o2scl::cli::parameter_int p_verbose;
@@ -1790,112 +1798,91 @@ namespace o2scl {
   
   /** \brief Initial write to HDF5 file 
    */
-  virtual void first_update(o2scl_hdf::hdf_file &hf) {
-    parent_t::first_update(hf);
+  virtual void file_header(o2scl_hdf::hdf_file &hf) {
     hf.sets_vec("cl_args",this->cl_args);
     return;
   }
   
   public:
   
-  /// Main wrapper for parsing command-line arguments
-  virtual void run(int argc, char *argv[]) {
-      
-    // ---------------------------------------
-    // Process command-line arguments and run
-      
-    setup_cli();
-      
-#ifdef O2SCL_MPI
-    // Get MPI rank, etc.
-    MPI_Comm_rank(MPI_COMM_WORLD,&this->mpi_rank);
-    MPI_Comm_size(MPI_COMM_WORLD,&this->mpi_nprocs);
-#endif
-      
-    // Process arguments
-    for(int i=0;i<argc;i++) {
-      this->cl_args.push_back(argv[i]);
-    }
-      
-    this->cl.prompt="mcmc> ";
-    this->cl.run_auto(argc,argv);
-      
-    if (this->file_write) {
-      //Close main output file
-      this->scr_out.close();
-    }
-      
-    return;
-  }    
-    
+  /** \brief The arguments sent to the command-line
+   */
+  std::vector<std::string> cl_args;
+
   /// \name Customization functions
   //@{
   /** \brief Set up the 'cli' object
       
       This function just adds the four commands and the 'set' parameters
   */
-  virtual void setup_cli() {
-
+  virtual void setup_cli(cli &cl) {
+      
     // ---------------------------------------
     // Set commands/options
 
-    static const size_t nopt=1;
-    o2scl::comm_option_s options[nopt]={
-      {'i',"initial-point","Set the starting point in the parameter space",
-       1,-1,"<mode> [...]",
-       ((std::string)"Mode can be one of 'best', 'last', 'N', or ")+
-       "'values'. If mode is 'best', then it uses the point with the "+
-       "largest weight and the second argument specifies the file. If "+
-       "mode is 'last' then it uses the last point and the second "+
-       "argument specifies the file. If mode is 'N' then it uses the Nth "+
-       "point, the second argument specifies the value of N and the third "+
-       "argument specifies the file. If mode is 'values', then the "+
-       "remaining arguments specify all the parameter values. On the "+
-       "command-line, enclose negative values in quotes and parentheses, "+
-       "i.e. \"(-1.00)\" to ensure they do not get confused with other "+
-       "options.",new o2scl::comm_option_mfptr<mcmc_para_cli>
-       (this,&mcmc_para_cli::set_initial_point),
-       o2scl::cli::comm_option_both}
       /*
+	static const size_t nopt=1;
+	o2scl::comm_option_s options[nopt]={
+	{'i',"initial-point","Set the starting point in the parameter space",
+	1,-1,"<mode> [...]",
+	((std::string)"Mode can be one of 'best', 'last', 'N', or ")+
+	"'values'. If mode is 'best', then it uses the point with the "+
+	"largest weight and the second argument specifies the file. If "+
+	"mode is 'last' then it uses the last point and the second "+
+	"argument specifies the file. If mode is 'N' then it uses the Nth "+
+	"point, the second argument specifies the value of N and the third "+
+	"argument specifies the file. If mode is 'values', then the "+
+	"remaining arguments specify all the parameter values. On the "+
+	"command-line, enclose negative values in quotes and parentheses, "+
+	"i.e. \"(-1.00)\" to ensure they do not get confused with other "+
+	"options.",new o2scl::comm_option_mfptr<mcmc_para_cli>
+	(this,&mcmc_para_cli::set_initial_point),
+	o2scl::cli::comm_option_both}
 	{'s',"hastings","Specify distribution for M-H step",
 	1,1,"<filename>",
 	((string)"Desc. ")+"Desc2.",
 	new comm_option_mfptr<mcmc_mpi>(this,&mcmc_mpi::hastings),
 	cli::comm_option_both}
-      */
     };
     this->cl.set_comm_option_vec(nopt,options);
+      */
 
-    p_file_update_iters.i=&this->file_update_iters;
-    p_file_update_iters.help=((std::string)"Number of MCMC successes ")+
-    "between file upates (default 40, minimum value 1).";
-    this->cl.par_list.insert(std::make_pair("file_update_iters",
-					    &p_file_update_iters));
+    /*
+      p_file_update_iters.i=&this->file_update_iters;
+      p_file_update_iters.help=((std::string)"Number of MCMC successes ")+
+      "between file upates (default 40, minimum value 1).";
+      cl.par_list.insert(std::make_pair("file_update_iters",
+      &p_file_update_iters));
+    */
     
-    p_max_chain_size.i=&this->max_chain_size;
-    p_max_chain_size.help=((std::string)"Maximum Markov chain size ")+
-    "(default 10000).";
-    this->cl.par_list.insert(std::make_pair("max_chain_size",
-					    &p_max_chain_size));
+    /*
+      p_max_chain_size.i=&this->max_chain_size;
+      p_max_chain_size.help=((std::string)"Maximum Markov chain size ")+
+      "(default 10000).";
+      cl.par_list.insert(std::make_pair("max_chain_size",
+      &p_max_chain_size));
+    */
     
     p_max_time.d=&this->max_time;
     p_max_time.help=((std::string)"Maximum run time in seconds ")+
     "(default 86400 sec or 1 day).";
-    this->cl.par_list.insert(std::make_pair("max_time",&p_max_time));
+    cl.par_list.insert(std::make_pair("max_time",&p_max_time));
     
     p_max_iters.s=&this->max_iters;
     p_max_iters.help=((std::string)"If non-zero, limit the number of ")+
     "iterations to be less than the specified number (default zero).";
-    this->cl.par_list.insert(std::make_pair("max_iters",&p_max_iters));
+    cl.par_list.insert(std::make_pair("max_iters",&p_max_iters));
     
     p_prefix.str=&this->prefix;
     p_prefix.help="Output file prefix (default 'mcmc\').";
-    this->cl.par_list.insert(std::make_pair("prefix",&p_prefix));
-    
-    p_output_meas.b=&this->output_meas;
-    p_output_meas.help=((std::string)"If true, output next point ")+
-    "to the '_scr' file before calling TOV solver (default true).";
-    this->cl.par_list.insert(std::make_pair("output_meas",&p_output_meas));
+    cl.par_list.insert(std::make_pair("prefix",&p_prefix));
+
+    /*
+      p_output_meas.b=&this->output_meas;
+      p_output_meas.help=((std::string)"If true, output next point ")+
+      "to the '_scr' file before calling TOV solver (default true).";
+      cl.par_list.insert(std::make_pair("output_meas",&p_output_meas));
+    */
     
     p_step_fac.d=&this->step_fac;
     p_step_fac.help=((std::string)"MCMC step factor. The step size for ")+
@@ -1904,38 +1891,38 @@ namespace o2scl {
     "be increased if the acceptance rate is too small, but care must "+
     "be taken, e.g. if the conditional probability is multimodal. If "+
     "this step size is smaller than 1.0, it is reset to 1.0 .";
-    this->cl.par_list.insert(std::make_pair("step_fac",&p_step_fac));
+    cl.par_list.insert(std::make_pair("step_fac",&p_step_fac));
 
     p_n_warm_up.s=&this->n_warm_up;
     p_n_warm_up.help=((std::string)"Minimum number of warm up iterations ")+
     "(default 0).";
-    this->cl.par_list.insert(std::make_pair("n_warm_up",&p_n_warm_up));
+    cl.par_list.insert(std::make_pair("n_warm_up",&p_n_warm_up));
 
     p_verbose.i=&this->verbose;
     p_verbose.help=((std::string)"Verbosity parameter ")+
     "(default 0).";
-    this->cl.par_list.insert(std::make_pair("verbose",&p_verbose));
+    cl.par_list.insert(std::make_pair("verbose",&p_verbose));
 
     p_max_bad_steps.s=&this->max_bad_steps;
     p_max_bad_steps.help=((std::string)"Maximum number of bad steps ")+
     "(default 1000).";
-    this->cl.par_list.insert(std::make_pair("max_bad_steps",&p_max_bad_steps));
+    cl.par_list.insert(std::make_pair("max_bad_steps",&p_max_bad_steps));
 
     p_n_walk.s=&this->n_walk;
     p_n_walk.help=((std::string)"Number of walkers ")+
     "(default 1).";
-    this->cl.par_list.insert(std::make_pair("n_walk",&p_n_walk));
+    cl.par_list.insert(std::make_pair("n_walk",&p_n_walk));
 
     p_user_seed.i=&this->user_seed;
     p_user_seed.help=((std::string)"Seed for multiplier for random ")+
     "number generator. If zero is given (the default), then mcmc() "+
     "uses time(0) to generate a random seed.";
-    this->cl.par_list.insert(std::make_pair("user_seed",&p_user_seed));
+    cl.par_list.insert(std::make_pair("user_seed",&p_user_seed));
     
     p_aff_inv.b=&this->aff_inv;
     p_aff_inv.help=((std::string)"If true, then use affine-invariant ")+
     "sampling (default false).";
-    this->cl.par_list.insert(std::make_pair("aff_inv",&p_aff_inv));
+    cl.par_list.insert(std::make_pair("aff_inv",&p_aff_inv));
     
     return;
   }

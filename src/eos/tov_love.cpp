@@ -42,13 +42,25 @@ tov_love::tov_love() {
 }
 
 double tov_love::eval_k2(double beta, double yR) {
-  return (8.0/5.0*pow(beta,5.0)*pow(1.0-2.0*beta,2.0)*
-	  (2.0-yR+2.0*beta*(yR-1.0))/
-	  (2.0*beta*(6.0-3.0*yR+3.0*beta*(5.0*yR-8.0))+
-	   4.0*beta*beta*beta*(13.0-11.0*yR+beta*(3.0*yR-2.0)+2.0*
-			       beta*beta*(1.0+yR))+
-	   3.0*pow(1.0-2.0*beta,2.0)*(2.0-yR+2.0*beta*(yR-1.0))*
-	   log(1.0-2.0*beta)));
+  /*
+    This is a slightly reformatted but equivalent expression:
+    
+    double k2_new=8.0/5.0*pow(beta,5.0)*pow(1.0-2.0*beta,2.0)*
+    (2.0-yR+2.0*beta*(yR-1.0))/
+    (2.0*beta*(6.0-3.0*yR+3.0*beta*(5.0*yR-8.0)+
+    2.0*beta*beta*(13.0-11.0*yR+beta*(3.0*yR-2.0)+
+    2.0*beta*beta*(1.0+yR)))+
+    3.0*pow(1.0-2.0*beta,2.0)*(2.0-yR+2.0*beta*(yR-1.0))*
+    log(1.0-2.0*beta));
+  */
+  double k2=8.0/5.0*pow(beta,5.0)*pow(1.0-2.0*beta,2.0)*
+    (2.0-yR+2.0*beta*(yR-1.0))/
+    (2.0*beta*(6.0-3.0*yR+3.0*beta*(5.0*yR-8.0))+
+     4.0*beta*beta*beta*(13.0-11.0*yR+beta*(3.0*yR-2.0)+2.0*
+			 beta*beta*(1.0+yR))+
+     3.0*pow(1.0-2.0*beta,2.0)*(2.0-yR+2.0*beta*(yR-1.0))*
+     log(1.0-2.0*beta));
+  return k2;
 }
 
 int tov_love::y_derivs(double r, size_t nv, const ubvector &vals,
@@ -126,8 +138,8 @@ void tov_love::calc_y(double &yR, double &beta, double &k2,
   
   size_t count;
 
-  double R=tab->max("r");
-  double gm=tab->max("gm");
+  double R=tab->get_constant("rad");
+  double gm=tab->get_constant("mass");
 
   double r=eps, h=1.0e-1;
   ubvector y(1), dydx_out(1), yerr(1);
@@ -168,8 +180,6 @@ void tov_love::calc_y(double &yR, double &beta, double &k2,
     results.add_constant("lambda_cgs",lambda_cgs);
     results.add_constant("lambda_km5",lambda_km5);
   }
-
-  //std::cout << "Love number=" << lambda_cgs << std::endl;
 
   return;
 }
