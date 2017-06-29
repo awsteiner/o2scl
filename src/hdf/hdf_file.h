@@ -406,7 +406,7 @@ namespace o2scl_hdf {
 	the file.
     */
     template<class vec_size_t> 
-      int set_szt_vec_copy(std::string name, vec_size_t &v) {
+      int set_szt_vec_copy(std::string name, const vec_size_t &v) {
       if (v.size()==0) {
 	return set_szt_arr(name,0,0);
       }
@@ -426,7 +426,7 @@ namespace o2scl_hdf {
 	make each string extensible. The size of the vector \c s is
 	stored as an integer named <tt>nw</tt>.
     */
-    int sets_vec(std::string name, std::vector<std::string> &s);
+    int sets_vec(std::string name, const std::vector<std::string> &s);
     //@}
 
     /** \name Matrix get functions

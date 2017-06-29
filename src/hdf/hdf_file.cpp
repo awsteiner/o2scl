@@ -2277,7 +2277,7 @@ int hdf_file::gets_vec(std::string name, std::vector<std::string> &s) {
   return 0;
 }
 
-int hdf_file::sets_vec(std::string name, std::vector<std::string> &s) {
+int hdf_file::sets_vec(std::string name, const std::vector<std::string> &s) {
 
   if (write_access==false) {
     O2SCL_ERR2("File not opened with write access ",
