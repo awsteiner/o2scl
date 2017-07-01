@@ -354,7 +354,7 @@ namespace o2scl {
     if (func.size()<n_threads) {
       if (verbose>0) {
 	std::cout << "mcmc_para::mcmc(): Not enough functions for "
-	     << n_threads << " threads. Setting n_threads to "
+		  << n_threads << " threads. Setting n_threads to "
 		  << func.size() << "." << std::endl;
       }
       n_threads=func.size();
@@ -362,7 +362,7 @@ namespace o2scl {
     if (meas.size()<n_threads) {
       if (verbose>0) {
 	std::cout << "mcmc_para::mcmc(): Not enough measurement objects for "
-	     << n_threads << " threads. Setting n_threads to "
+		  << n_threads << " threads. Setting n_threads to "
 		  << meas.size() << "." << std::endl;
       }
       n_threads=meas.size();
@@ -395,9 +395,14 @@ namespace o2scl {
     // Set number of threads
 #ifdef O2SCL_OPENMP
     omp_set_num_threads(n_threads);
-    n_threads=omp_get_num_threads();
 #else
-    n_threads=1;
+    if (n_threads>1) {
+      std::cout << "mcmc_para::mcmc(): "
+		<< n_threads << " threads were requested but the "
+		<< "-DO2SCL_OPENMP flag was not used during "
+		<< "compilation. Setting n_threads to 1."
+		<< std::endl;
+      n_threads=1;
 #endif
 
     // Storage for return values from each thread
@@ -1098,7 +1103,6 @@ namespace o2scl {
     
 #ifdef O2SCL_OPENMP
     omp_set_num_threads(n_threads);
-    n_threads=omp_get_num_threads();
 #else
     n_threads=1;
 #endif
@@ -1317,7 +1321,7 @@ namespace o2scl {
 	for(size_t i=0;i<table_io_chunk-1;i++) {
 	  size_t child=this->mpi_rank+i+1;
 	  if (child<this->mpi_size) {
-	    table_units t;
+	    table_units<> t;
 	    tab_arr.push_back(t);
 	    o2scl_table_mpi_recv(child,tab_arr[tab_arr.size()-1]);
 	  }
@@ -1439,7 +1443,6 @@ namespace o2scl {
     // below).
 #ifdef O2SCL_OPENMP
     omp_set_num_threads(this->n_threads);
-    this->n_threads=omp_get_num_threads();
 #else
     this->n_threads=1;
 #endif

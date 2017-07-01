@@ -30,6 +30,11 @@
 #include <o2scl/table.h>
 #include <o2scl/lib_settings.h>
 
+// For the MPI table send and receive functions below
+#ifdef O2SCL_MPI
+#include <mpi.h>
+#endif
+
 #ifndef DOXYGEN_NO_O2NS
 
 // Forward definition of the table_units class for HDF I/O
@@ -842,14 +847,16 @@ namespace o2scl {
 
 #ifdef O2SCL_MPI
 
-  /** \brief Desc
+  /** \brief Send a \ref o2scl::table_units object to
+      MPI rank \c dest_rank
    */
-  void o2scl_table_mpi_send(table_units &t, size_t dest_rank) {
+  template<class vec_t>
+    void o2scl_table_mpi_send(o2scl::table_units<vec_t> &t, size_t dest_rank) {
 
     int tag;
     int ibuffer;
-    vector<double> dbuffer;
-    string cbuffer;
+    std::vector<double> dbuffer;
+    std::string cbuffer;
 
     // --------------------------------------------------------------
     // Constant names and values
@@ -868,7 +875,7 @@ namespace o2scl {
     ibuffer=cbuffer.length();
   
     tag=0;
-    MPI_Send(&ibuffer,ibuffer.size(),MPI_INT,dest_rank,
+    MPI_Send(&ibuffer,1,MPI_INT,dest_rank,
 	     tag,MPI_COMM_WORLD);
     tag=1;
     MPI_Send(&(cbuffer[0]),cbuffer.length(),MPI_CHAR,dest_rank,
@@ -892,7 +899,7 @@ namespace o2scl {
 
     ibuffer=cbuffer.length();
     tag=3;
-    MPI_Send(&ibuffer,ibuffer.size(),MPI_INT,dest_rank,
+    MPI_Send(&ibuffer,1,MPI_INT,dest_rank,
 	     tag,MPI_COMM_WORLD);
     tag=4;
     MPI_Send(&(cbuffer[0]),cbuffer.length(),MPI_CHAR,dest_rank,
@@ -912,7 +919,7 @@ namespace o2scl {
 
     ibuffer=cbuffer.length();
     tag=5;
-    MPI_Send(&ibuffer,ibuffer.size(),MPI_INT,dest_rank,
+    MPI_Send(&ibuffer,1,MPI_INT,dest_rank,
 	     tag,MPI_COMM_WORLD);
     tag=6;
     MPI_Send(&(cbuffer[0]),cbuffer.length(),MPI_CHAR,dest_rank,
@@ -924,7 +931,7 @@ namespace o2scl {
 
     tag=7;
     ibuffer=t.get_interp_type();
-    MPI_Send(&ibuffer,ibuffer.size(),MPI_INT,dest_rank,
+    MPI_Send(&ibuffer,1,MPI_INT,dest_rank,
 	     tag,MPI_COMM_WORLD);
     
     // --------------------------------------------------------------
@@ -932,7 +939,7 @@ namespace o2scl {
 
     ibuffer=t.get_nlines();
     tag=8;
-    MPI_Send(&ibuffer,ibuffer.size(),MPI_INT,dest_rank,
+    MPI_Send(&ibuffer,1,MPI_INT,dest_rank,
 	     tag,MPI_COMM_WORLD);
   
     for(size_t i=0;i<t.get_ncolumns();i++) {
@@ -944,16 +951,19 @@ namespace o2scl {
     return;
   }
 
-  /** \brief Desc
+  /** \brief Receive a \ref o2scl::table_units object from
+      MPI rank \c src_rank
    */
-  void o2scl_table_mpi_recv(size_t src_rank, table_units &t) {
+  template<class vec_t>
+    void o2scl_table_mpi_recv(size_t src_rank,
+			      o2scl::table_units<vec_t> &t) {
     int tag;
     int ibuffer;
     // Not std::string because we need to guarantee contiguous storage?!
-    vector<char> cbuffer;
-    vector<double> dbuffer;
+    std::vector<char> cbuffer;
+    std::vector<double> dbuffer;
 
-    vector<std::string> names;
+    std::vector<std::string> names;
     std::string stemp;
 
     // --------------------------------------------------------------
@@ -965,10 +975,10 @@ namespace o2scl {
 	     MPI_STATUS_IGNORE);
     cbuffer.resize(ibuffer);
     tag=1;
-    MPI_Recv(&(cbuffer[0]),ibuffer[0],MPI_char,src_rank,tag,MPI_COMM_WORLD,
+    MPI_Recv(&(cbuffer[0]),ibuffer,MPI_CHAR,src_rank,tag,MPI_COMM_WORLD,
 	     MPI_STATUS_IGNORE);
 
-    // Parse into vector<string>
+    // Parse into std::vector<string>
     for(size_t i=0;i<cbuffer.size();i++) {
       if (cbuffer[i]!=' ') {
 	stemp+=cbuffer[i];
@@ -988,7 +998,7 @@ namespace o2scl {
     dbuffer.resize(names.size());
   
     tag=2;
-    MPI_Recv(&(dbuffer[0]),dbuffer.size(),MPI_double,
+    MPI_Recv(&(dbuffer[0]),dbuffer.size(),MPI_DOUBLE,
 	     src_rank,tag,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
 
     // Set constants
@@ -1006,10 +1016,10 @@ namespace o2scl {
 	     MPI_STATUS_IGNORE);
     cbuffer.resize(ibuffer);
     tag=4;
-    MPI_Recv(&(cbuffer[0]),ibuffer[0],MPI_char,src_rank,tag,MPI_COMM_WORLD,
+    MPI_Recv(&(cbuffer[0]),ibuffer,MPI_CHAR,src_rank,tag,MPI_COMM_WORLD,
 	     MPI_STATUS_IGNORE);
 
-    // Parse into vector<string>
+    // Parse into std::vector<string>
     for(size_t i=0;i<cbuffer.size();i++) {
       if (cbuffer[i]!=' ') {
 	stemp+=cbuffer[i];
@@ -1038,10 +1048,10 @@ namespace o2scl {
 	     MPI_STATUS_IGNORE);
     cbuffer.resize(ibuffer);
     tag=6;
-    MPI_Recv(&(cbuffer[0]),ibuffer[0],MPI_char,src_rank,tag,MPI_COMM_WORLD,
+    MPI_Recv(&(cbuffer[0]),ibuffer,MPI_CHAR,src_rank,tag,MPI_COMM_WORLD,
 	     MPI_STATUS_IGNORE);
 
-    // Parse into vector<string>
+    // Parse into std::vector<string>
     for(size_t i=0;i<cbuffer.size();i++) {
       if (cbuffer[i]!=' ') {
 	stemp+=cbuffer[i];
@@ -1080,8 +1090,10 @@ namespace o2scl {
 
     for(size_t i=0;i<t.get_ncolumns();i++) {
       tag++;
-      MPI_Send(&(t[i][0]),ibuffer,MPI_DOUBLE,dest_rank,
-	       tag,MPI_COMM_WORLD);
+      std::vector<double> v(t.get_maxlines());
+      MPI_Recv(&(v[0]),ibuffer,MPI_DOUBLE,src_rank,
+	       tag,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+      t.swap_column_data(t.get_column_name(i),v);
     }
 
     return;
