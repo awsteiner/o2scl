@@ -1310,6 +1310,12 @@ namespace o2scl {
   /** \brief Write MCMC tables to files
    */
   virtual void write_files() {
+
+    if (this->verbose>=2) {
+      this->scr_out << "Start write_files() " << this->mpi_rank << " "
+		    << this->mpi_size <<  " "
+		    << table_io_chunk << std::endl;
+    }
     
     std::vector<o2scl::table_units<> > tab_arr;
     bool rank_sent=false;
@@ -1393,12 +1399,16 @@ namespace o2scl {
     hf.close();
     
 #ifdef O2SCL_MPI
-    if (this->mpi_size>1 && this->mpi_rank>0) {
+    if (this->mpi_size>1 && this->mpi_rank<this->mpi_size-1) {
       MPI_Send(&buffer,1,MPI_INT,this->mpi_rank+table_io_chunk,
 	       tag,MPI_COMM_WORLD);
     }
 #endif
     
+    if (this->verbose>=2) {
+      this->scr_out << "Done write_files()." << std::endl;
+    }
+
     return;
   }
   
@@ -1638,6 +1648,9 @@ namespace o2scl {
     if (i+2<((int)table->get_nlines())) {
       table->set_nlines(i+2);
     }
+
+    write_files();
+    
     return parent_t::mcmc_cleanup();
   }
 
