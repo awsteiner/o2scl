@@ -619,7 +619,7 @@ namespace o2scl {
 	}
       }
       // End of parallel region
-      
+
       // Stop early if mcmc_done was returned
       bool stop_early=false;
       for(size_t it=0;it<n_threads;it++) {
@@ -767,10 +767,11 @@ namespace o2scl {
 
     // End of initial point and weight section
     // ---------------------------------------------------
-
+    // Start of main loop
+    
     bool main_done=false;
     size_t mcmc_iters=0;
-    
+
     while (!main_done) {
 
       // Walker to move (or zero when aff_inv is false)
@@ -844,6 +845,17 @@ namespace o2scl {
 	  for(size_t k=0;k<nparams;k++) {
 	    if (next[it][k]<low[k] || next[it][k]>high[k]) {
 	      func_ret[it]=mcmc_skip;
+	      if (verbose>=3) {
+		if (next[it][k]<low[k]) {
+		  std::cout << "Parameter with index " << k
+			    << " and value " << next[it][k]
+			    << " smaller than limit " << low[k] << std::endl;
+		} else {
+		  std::cout << "Parameter with index " << k
+			    << " and value " << next[it][k]
+			    << " larger than limit " << high[k] << std::endl;
+		}
+	      }
 	    }
 	  }
 	  if (func_ret[it]!=mcmc_skip) {
@@ -869,7 +881,9 @@ namespace o2scl {
       }
       // End of parallel region
       
-      // Handle verbose output serially
+      // ---------------------------------------------------
+      // Post-function verbose output
+
       if (verbose>=1) {
 	for(size_t it=0;it<n_threads;it++) {
 	  if (func_ret[it]==mcmc_done) {
@@ -900,13 +914,12 @@ namespace o2scl {
 	    }
 	  }
 	}
-	if (verbose>=3) {
-	  std::cout << "Press a key and type enter to continue. ";
-	  char ch;
-	  std::cin >> ch;
-	}
       }
 
+      // ----------------------------------------------------------
+      // Parallel region to accept or reject, and call measurement
+      // function
+      
 #ifdef O2SCL_OPENMP
 #pragma omp parallel default(shared)
 #endif
@@ -943,6 +956,10 @@ namespace o2scl {
 	      if (r<exp(w_next[it]-w_current[sindex])) {
 		accept=true;
 	      }
+	      std::cout << "H: " << it << " "
+			<< r << " " << w_next[it] << " "
+			<< w_current[sindex] << " "
+			<< accept << std::endl;
 	    }
 
 	    // End of 'if (func_ret[it]==o2scl::success)'
@@ -993,7 +1010,9 @@ namespace o2scl {
       }
       // End of parallel region
 
-      // Verbose output
+      // ---------------------------------------------------
+      // Post-measurement verbose output
+      
       if (verbose>=2) {
 	for(size_t it=0;it<n_threads;it++) {
 	  size_t sindex=n_walk*it+curr_walker[it];
