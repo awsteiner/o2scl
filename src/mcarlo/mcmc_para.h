@@ -495,7 +495,9 @@ namespace o2scl {
       return init_ret;
     }
 
+    // ---------------------------------------------------
     // Initial verbose output
+    
     if (verbose>=1) {
       if (aff_inv) {
 	scr_out << "mcmc: Affine-invariant step, n_params="
@@ -513,10 +515,12 @@ namespace o2scl {
       }
     }
     
-    // ---------------------------------------------------
+    // --------------------------------------------------------
     // Compute initial point and initial weights
+
+    // --------------------------------------------------------
+    // Initial point and weights for affine-invariant sampling
     
-    // Initial point and weights for stretch-move algorithm
     if (aff_inv) {
       
 #ifdef O2SCL_OPENMP
@@ -666,7 +670,11 @@ namespace o2scl {
 	}
       }
 
+      // End of 'if (aff_inv)'
     } else {
+
+      // --------------------------------------------------------
+      // Initial point and weights when aff_inv is false .
 
       // Note that this value is used (e.g. in
       // mcmc_para_table::add_line() ) even if aff_inv is false, so we
@@ -759,6 +767,10 @@ namespace o2scl {
       
     }
 
+    // --------------------------------------------------------
+    // Require keypress after initial point if verbose is
+    // sufficiently large.
+
     if (verbose>=3) {
       std::cout << "Press a key and type enter to continue. ";
       char ch;
@@ -847,13 +859,13 @@ namespace o2scl {
 	      func_ret[it]=mcmc_skip;
 	      if (verbose>=3) {
 		if (next[it][k]<low[k]) {
-		  std::cout << "Parameter with index " << k
+		  scr_out << "Parameter with index " << k
 			    << " and value " << next[it][k]
 			    << " smaller than limit " << low[k] << std::endl;
 		} else {
-		  std::cout << "Parameter with index " << k
-			    << " and value " << next[it][k]
-			    << " larger than limit " << high[k] << std::endl;
+		  scr_out << "Parameter with index " << k
+			  << " and value " << next[it][k]
+			  << " larger than limit " << high[k] << std::endl;
 		}
 	      }
 	    }
@@ -881,8 +893,11 @@ namespace o2scl {
       }
       // End of parallel region
       
-      // ---------------------------------------------------
-      // Post-function verbose output
+      // ---------------------------------------------------------
+      // Post-function verbose output in case parameter was out of
+      // range, function returned "done" or a failure. More
+      // verbose output is performed below after the possible call
+      // to the measurement function.
 
       if (verbose>=1) {
 	for(size_t it=0;it<n_threads;it++) {
@@ -956,10 +971,6 @@ namespace o2scl {
 	      if (r<exp(w_next[it]-w_current[sindex])) {
 		accept=true;
 	      }
-	      std::cout << "H: " << it << " "
-			<< r << " " << w_next[it] << " "
-			<< w_current[sindex] << " "
-			<< accept << std::endl;
 	    }
 
 	    // End of 'if (func_ret[it]==o2scl::success)'
@@ -1010,8 +1021,9 @@ namespace o2scl {
       }
       // End of parallel region
 
-      // ---------------------------------------------------
-      // Post-measurement verbose output
+      // -----------------------------------------------------------
+      // Post-measurement verbose output of iteration count, weight,
+      // and walker index for each thread
       
       if (verbose>=2) {
 	for(size_t it=0;it<n_threads;it++) {
