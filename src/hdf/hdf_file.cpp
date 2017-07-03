@@ -2300,8 +2300,11 @@ int hdf_file::sets_vec(std::string name, const std::vector<std::string> &s) {
   seti("nc",nc);
   
   // Copy strings over to a contiguous char *, and count lengths
-  int *ip;
-  char *cp;
+
+  // Initialize these pointers to zero to avoid uninit'ed variable
+  // warnings
+  int *ip=0;
+  char *cp=0;
   if (s.size()>0) {
     ip=new int[s.size()];
   }

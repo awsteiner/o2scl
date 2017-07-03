@@ -65,7 +65,8 @@ int eos_nse::calc_density(double nn, double np, double T,
 			  vector<nucleus> &nd) {
 
   int mg_ret, ds_ret, dm_ret;
-  bool err_nonconv_save;
+  // Initialize to avoid uninit'ed var. warnings
+  bool err_nonconv_save=false;
 
   // First, use make_guess() to get close to the correct solution
   double fac=2.0;

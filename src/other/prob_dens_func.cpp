@@ -91,7 +91,8 @@ double prob_dens_hist::operator()() const {
   
   double r=rng.random();
   if (r==1.0) r=0.0;
-  size_t ix=sv.find_inc(r);
+  size_t cache=0;
+  size_t ix=sv.find_inc_const(r,cache);
   
   double delta=(r-sum[ix])/(sum[ix+1]-sum[ix]);
   double x=range[ix]+delta*(range[ix+1]-range[ix]);

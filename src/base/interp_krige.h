@@ -184,7 +184,8 @@ namespace o2scl {
     /// Give the value of the function \f$ y(x=x_0) \f$ .
     virtual double eval(double x0) const {
 
-      double ret;
+      // Initialize to zero to prevent uninit'ed var. warnings
+      double ret=0.0;
       for(size_t i=0;i<this->sz;i++) {
 	ret+=(*f)(x0,(*this->px)[i])*Kinvf[i];
       }
@@ -402,7 +403,8 @@ namespace o2scl {
       double len_max=fabs(x[size-1]-x[0])*3.0;
       double len_ratio=len_max/len_min;
       
-      double min_qual, var_opt, len_opt;
+      // Initialize to zero to prevent uninit'ed var. warnings
+      double min_qual=0.0, var_opt=0.0, len_opt=0.0;
       
       // Loop over the full range, finding the optimum 
       for(size_t i=0;i<nvar;i++) {

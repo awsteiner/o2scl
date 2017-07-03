@@ -82,13 +82,6 @@ namespace o2scl {
 
   protected:
 
-    /** \brief Storage for the most recent index
-	
-        \note This is marked mutable to ensure const-correctness is 
-	straightforward.
-    */
-    mutable size_t cache;
-
     /// The vector to be searched
     const vec_t *v;
     
@@ -112,7 +105,6 @@ namespace o2scl {
 	  o2scl::szttos(nn)+") in search_vec::search_vec().";
 	O2SCL_ERR(str.c_str(),exc_einval);
       }
-      cache=0;
     }
 
     /** \brief Set the vector to be searched 
@@ -123,7 +115,6 @@ namespace o2scl {
 	  o2scl::szttos(nn)+") in search_vec::set_vec().";
 	O2SCL_ERR(str.c_str(),exc_einval);
       }
-      cache=0;
       v=&x;
       n=nn;
     }
@@ -134,7 +125,8 @@ namespace o2scl {
 	This function is identical to find_inc() if the data is
 	increasing, and find_dec() if the data is decreasing. 
     */
-    size_t find(const double x0) const {
+    size_t find(const double x0) {
+      size_t cache=n/2;
 #if !O2SCL_NO_RANGE_CHECK
       if (cache>=n) {
 	O2SCL_ERR("Cache mis-alignment in search_vec::find().",
@@ -143,6 +135,17 @@ namespace o2scl {
 #endif
       if ((*v)[0]<(*v)[n-1]) return find_inc(x0);
       return find_dec(x0);
+    }
+
+    size_t find_const(const double x0, size_t &cache) const {
+#if !O2SCL_NO_RANGE_CHECK
+      if (cache>=n) {
+	O2SCL_ERR("Cache mis-alignment in search_vec::find().",
+		  exc_esanity);
+      }
+#endif
+      if ((*v)[0]<(*v)[n-1]) return find_inc_const(x0,cache);
+      return find_dec_const(x0,cache);
     }
 
     /** \brief Search an increasing vector for the interval
@@ -154,7 +157,23 @@ namespace o2scl {
 	misses. 
 
     */
-    size_t find_inc(const double x0) const {
+    size_t find_inc(const double x0) {
+      size_t cache=n/2;
+      if (x0<(*v)[cache]) {
+	cache=vector_bsearch_inc<vec_t,double>(x0,*v,0,cache);
+      } else if (x0>=(*v)[cache+1]) {
+	cache=vector_bsearch_inc<vec_t,double>(x0,*v,cache,n-1);
+      }
+#if !O2SCL_NO_RANGE_CHECK
+      if (cache>=n) {
+	O2SCL_ERR("Cache mis-alignment in search_vec::find_inc().",
+		  exc_esanity);
+      }
+#endif
+      return cache;
+    }
+
+    size_t find_inc_const(const double x0, size_t &cache) const {
       if (x0<(*v)[cache]) {
 	cache=vector_bsearch_inc<vec_t,double>(x0,*v,0,cache);
       } else if (x0>=(*v)[cache+1]) {
@@ -177,7 +196,23 @@ namespace o2scl {
 	not strictly monotonic, i.e. if some of the data elements are
 	equal. 
     */
-    size_t find_dec(const double x0) const {
+    size_t find_dec(const double x0) {
+      size_t cache=n/2;
+      if (x0>(*v)[cache]) {
+	cache=vector_bsearch_dec<vec_t,double>(x0,*v,0,cache);
+      } else if (x0<=(*v)[cache+1]) {
+	cache=vector_bsearch_dec<vec_t,double>(x0,*v,cache,n-1);
+      }
+#if !O2SCL_NO_RANGE_CHECK
+      if (cache>=n) {
+	O2SCL_ERR("Cache mis-alignment in search_vec::find_dec().",
+		  exc_esanity);
+      }
+#endif
+      return cache;
+    }
+
+    size_t find_dec_const(const double x0, size_t &cache) const {
       if (x0>(*v)[cache]) {
 	cache=vector_bsearch_dec<vec_t,double>(x0,*v,0,cache);
       } else if (x0<=(*v)[cache+1]) {
@@ -224,8 +259,9 @@ namespace o2scl {
 
 	if (x0>=(*v)[n-1]) {
 	  row=n-1;
-	} else { 
-	  row=find_inc(x0);
+	} else {
+	  size_t cache=0;
+	  row=find_inc_const(x0,cache);
 	  if (row<n-1 && fabs((*v)[row+1]-x0)<fabs((*v)[row]-x0)) row++;
 	}
     
@@ -236,7 +272,8 @@ namespace o2scl {
 	if (x0<=(*v)[n-1]) {
 	  row=n-1;
 	} else {
-	  row=find_dec(x0);
+	  size_t cache=0;
+	  row=find_dec_const(x0,cache);
 	  if (row<n-1 && fabs((*v)[row+1]-x0)<fabs((*v)[row]-x0)) row++;
 	}
       }
@@ -269,7 +306,7 @@ namespace o2scl {
         \note This is marked mutable to ensure const-correctness is 
 	straightforward.
     */
-    mutable size_t cache;
+    size_t cache;
 
     /// The vector to be searched
     const vec_t *v;
@@ -304,13 +341,13 @@ namespace o2scl {
 	  o2scl::szttos(nn)+") in search_vec_ext::search_vec_ext().";
 	O2SCL_ERR(str.c_str(),exc_einval);
       }
-      cache=0;
     }
     
     /** \brief Search an increasing or decreasing vector for the interval
 	containing <tt>x0</tt>
     */
-    size_t find(const double x0) const {
+    size_t find(const double x0) {
+      size_t cache=n/2;
 #if !O2SCL_NO_RANGE_CHECK
       if (this->cache>=this->n) {
 	O2SCL_ERR("Cache mis-alignment in search_vec_ext::find().",
@@ -324,7 +361,8 @@ namespace o2scl {
     /** \brief Search an increasing vector for the interval
 	containing <tt>x0</tt>
     */
-    size_t find_inc(const double x0) const {
+    size_t find_inc(const double x0) {
+      size_t cache=n/2;
       if (x0<(*this->v)[this->cache]) {
 	this->cache=vector_bsearch_inc<vec_t,double>
 	  (x0,*this->v,0,this->cache);
@@ -344,7 +382,8 @@ namespace o2scl {
     /** \brief Search a decreasing vector for the interval
 	containing <tt>x0</tt>
     */
-    size_t find_dec(const double x0) const {
+    size_t find_dec(const double x0) {
+      size_t cache=n/2;
       if (x0>(*this->v)[this->cache]) {
 	this->cache=vector_bsearch_dec<vec_t,double>
 	  (x0,*this->v,0,this->cache);

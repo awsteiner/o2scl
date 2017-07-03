@@ -236,7 +236,8 @@ namespace o2scl {
     /// Give the value of the function \f$ y(x=x_0) \f$ .
     virtual double eval(double x0) const {
 
-      size_t index=this->svx.find(x0);
+      size_t cache=0;
+      size_t index=this->svx.find_const(x0,cache);
       
       double x_lo=(*this->px)[index];
       double x_hi=(*this->px)[index+1];
@@ -250,7 +251,8 @@ namespace o2scl {
     /// Give the value of the derivative \f$ y^{\prime}(x=x_0) \f$ .
     virtual double deriv(double x0) const {
       
-      size_t index=this->svx.find(x0);
+      size_t cache=0;
+      size_t index=this->svx.find_const(x0,cache);
       
       double x_lo=(*this->px)[index];
       double x_hi=(*this->px)[index+1];
@@ -272,6 +274,7 @@ namespace o2scl {
     /// Give the value of the integral \f$ \int_a^{b}y(x)~dx \f$ .
     virtual double integ(double a, double b) const {
 
+      size_t cache=0;
       size_t i, index_a, index_b;
       
       bool flip=false;
@@ -283,8 +286,8 @@ namespace o2scl {
 	flip=true;
       }
 
-      index_a=this->svx.find(a);
-      index_b=this->svx.find(b);
+      index_a=this->svx.find_const(a,cache);
+      index_b=this->svx.find_const(b,cache);
       
       double result=0.0;
       for(i=index_a; i<=index_b; i++) {
@@ -462,8 +465,9 @@ namespace o2scl {
 
     /// Give the value of the function \f$ y(x=x_0) \f$ .
     virtual double eval(double x0) const {
-      
-      size_t index=this->svx.find(x0);
+
+      size_t cache=0;
+      size_t index=this->svx.find_const(x0,cache);
 
       double x_lo=(*this->px)[index];
       double x_hi=(*this->px)[index+1];
@@ -483,7 +487,8 @@ namespace o2scl {
     /// Give the value of the derivative \f$ y^{\prime}(x=x_0) \f$ .
     virtual double deriv(double x0) const {
 
-      size_t index=this->svx.find(x0);
+      size_t cache=0;
+      size_t index=this->svx.find_const(x0,cache);
   
       double x_lo=(*this->px)[index];
       double x_hi=(*this->px)[index+1];
@@ -505,7 +510,8 @@ namespace o2scl {
     */
     virtual double deriv2(double x0) const {
 
-      size_t index=this->svx.find(x0);
+      size_t cache=0;
+      size_t index=this->svx.find_const(x0,cache);
   
       double x_lo=(*this->px)[index];
       double x_hi=(*this->px)[index+1];
@@ -536,8 +542,9 @@ namespace o2scl {
 	flip=true;
       }
 
-      index_a=this->svx.find(a);
-      index_b=this->svx.find(b);
+      size_t cache=0;
+      index_a=this->svx.find_const(a,cache);
+      index_b=this->svx.find_const(b,cache);
 
       double result=0.0;
   
@@ -855,7 +862,8 @@ namespace o2scl {
     /// Give the value of the function \f$ y(x=x_0) \f$ .
     virtual double eval(double x0) const {
       
-      size_t index=this->svx.find(x0);
+      size_t cache=0;
+      size_t index=this->svx.find_const(x0,cache);
   
       double x_lo=(*this->px)[index];
       double delx=x0-x_lo;
@@ -869,7 +877,8 @@ namespace o2scl {
     /// Give the value of the derivative \f$ y^{\prime}(x=x_0) \f$ .
     virtual double deriv(double x0) const {
 
-      size_t index=this->svx.find(x0);
+      size_t cache=0;
+      size_t index=this->svx.find_const(x0,cache);
 
       double x_lo=(*this->px)[index];
       double delx=x0-x_lo;
@@ -885,7 +894,8 @@ namespace o2scl {
     */
     virtual double deriv2(double x0) const {
 
-      size_t index=this->svx.find(x0);
+      size_t cache=0;
+      size_t index=this->svx.find_const(x0,cache);
   
       double x_lo=(*this->px)[index];
       double delx=x0-x_lo;
@@ -909,8 +919,9 @@ namespace o2scl {
 	flip=true;
       }
 
-      index_a=this->svx.find(aa);
-      index_b=this->svx.find(bb);
+      size_t cache=0;
+      index_a=this->svx.find_const(aa,cache);
+      index_b=this->svx.find_const(bb,cache);
 
       double result=0.0;
   
@@ -1178,8 +1189,9 @@ namespace o2scl {
     
     /// Give the value of the function \f$ y(x=x_0) \f$ .
     virtual double eval(double x0) const {
-      
-      size_t index=this->svx.find(x0);
+
+      size_t cache=0;
+      size_t index=this->svx.find_const(x0,cache);
       double x_lo=(*this->px)[index];
       double delx=x0-x_lo;
       
@@ -1192,7 +1204,8 @@ namespace o2scl {
     /// Give the value of the derivative \f$ y^{\prime}(x=x_0) \f$ .
     virtual double deriv(double x0) const {
 
-      size_t index=this->svx.find(x0);
+      size_t cache=0;
+      size_t index=this->svx.find_const(x0,cache);
       double x_lo=(*this->px)[index];
       double delx=x0-x_lo;
 
@@ -1204,7 +1217,8 @@ namespace o2scl {
     */
     virtual double deriv2(double x0) const {
 
-      size_t index=this->svx.find(x0);
+      size_t cache=0;
+      size_t index=this->svx.find_const(x0,cache);
       double x_lo=(*this->px)[index];
       double delx=x0-x_lo;
 
@@ -1225,8 +1239,9 @@ namespace o2scl {
 	flip=true;
       }
 
-      index_a=this->svx.find(al);
-      index_b=this->svx.find(bl);
+      size_t cache=0;
+      index_a=this->svx.find_const(al,cache);
+      index_b=this->svx.find_const(bl,cache);
 
       double result=0.0;
   
@@ -1399,7 +1414,8 @@ namespace o2scl {
     /// Give the value of the function \f$ y(x=x_0) \f$ .
     virtual double eval(double x0) const {
 
-      size_t index=this->svx.find(x0);
+      size_t cache=0;
+      size_t index=this->svx.find_const(x0,cache);
       
       double x_lo=(*this->px)[index];
       double x_hi=(*this->px)[index+1];
@@ -1421,7 +1437,8 @@ namespace o2scl {
     /// Give the value of the derivative \f$ y^{\prime}(x=x_0) \f$ .
     virtual double deriv(double x0) const {
 
-      size_t index=this->svx.find(x0);
+      size_t cache=0;
+      size_t index=this->svx.find_const(x0,cache);
       
       double x_lo=(*this->px)[index];
       double x_hi=(*this->px)[index+1];
@@ -1446,7 +1463,8 @@ namespace o2scl {
     */
     virtual double deriv2(double x0) const {
 
-      size_t index=this->svx.find(x0);
+      size_t cache=0;
+      size_t index=this->svx.find_const(x0,cache);
       
       double x_lo=(*this->px)[index];
       double x_hi=(*this->px)[index+1];
@@ -1479,8 +1497,9 @@ namespace o2scl {
 	flip=true;
       }
 
-      index_a=this->svx.find(a);
-      index_b=this->svx.find(b);
+      size_t cache=0;
+      index_a=this->svx.find_const(a,cache);
+      index_b=this->svx.find_const(b,cache);
 
       double result=0.0;
   
