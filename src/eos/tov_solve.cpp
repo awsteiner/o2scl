@@ -376,7 +376,7 @@ void tov_solve::make_table() {
   // ---------------------------------------------------------------
   // Clear previously stored data and set up table
 
-  out_table->clear_table();
+  out_table->clear();
   column_setup();
 
   // ---------------------------------------------------------------
@@ -833,7 +833,7 @@ int tov_solve::mvsr() {
   // ---------------------------------------------------------------
   // Clear previously stored data and setup table
   
-  out_table->clear_table();
+  out_table->clear();
   column_setup(true);
 
   // ---------------------------------------------------------------

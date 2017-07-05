@@ -105,7 +105,7 @@ int nstar_cold::calc_eos(double np_0) {
     O2SCL_ERR("EOS not set in calc_eos().",exc_efailed);
   }
   
-  eost->clear_table();
+  eost->clear();
   eost->line_of_names(((string)"ed pr nb mun mup mue nn np ne kfn ")+
 		      "kfp kfe fcs2 dednb_Ye dPdnb_Ye");
   eost->set_unit("ed","1/fm^4");

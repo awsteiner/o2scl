@@ -1343,7 +1343,7 @@ namespace o2scl {
 	
       return;
     }
-      
+    
     O2SCL_ERR("Not enough lines or columns in line_of_data().",exc_einval);
     return;
   }
