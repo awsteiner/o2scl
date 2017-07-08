@@ -209,6 +209,7 @@ namespace o2scl {
 	
 	// Copy the columns and data
 	this->nlines=t.get_nlines();
+	this->maxlines=this->nlines;
 	for(size_t i=0;i<t.get_ncolumns();i++) {
 
 	  // Column name
@@ -269,6 +270,7 @@ namespace o2scl {
     
 	// Copy the columns and data
 	this->nlines=t.get_nlines();
+	this->maxlines=this->nlines;
 	for(size_t i=0;i<t.get_ncolumns();i++) {
 
 	  // Column name

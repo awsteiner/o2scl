@@ -279,9 +279,9 @@ namespace o2scl {
       nlines=t.get_nlines();
       maxlines=nlines;
       
-    // Copy interpolation type
-    itype=t.itype;
-    
+      // Copy interpolation type
+      itype=t.itype;
+      
       for(size_t i=0;i<t.get_ncolumns();i++) {
 	
 	// Column name
@@ -1343,7 +1343,7 @@ namespace o2scl {
 	
       return;
     }
-    
+
     O2SCL_ERR("Not enough lines or columns in line_of_data().",exc_einval);
     return;
   }
