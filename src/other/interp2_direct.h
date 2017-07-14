@@ -185,9 +185,11 @@ namespace o2scl {
       if (!data_set) {
 	O2SCL_ERR("Data not set in interp2_direct::eval().",exc_einval);
       }
-  
-      size_t xi=svx.find(x);
-      size_t yi=svy.find(y);
+
+      size_t cache=0;
+      size_t xi=svx.find_const(x,cache);
+      cache=0;
+      size_t yi=svy.find_const(y,cache);
 
       double xmin=(*this->xfun)[xi];
       double xmax=(*this->xfun)[xi+1];
@@ -289,8 +291,10 @@ namespace o2scl {
 	O2SCL_ERR("Data not set in interp2_direct::deriv_x().",exc_einval);
       }
 
-      size_t xi=svx.find(x);
-      size_t yi=svy.find(y);
+      size_t cache=0;
+      size_t xi=svx.find_const(x,cache);
+      cache=0;
+      size_t yi=svy.find_const(y,cache);
 
       double xmin=(*this->xfun)[xi];
       double xmax=(*this->xfun)[xi+1];
@@ -388,8 +392,10 @@ namespace o2scl {
 	return 0.0;
       }
   
-      size_t xi=svx.find(x);
-      size_t yi=svy.find(y);
+      size_t cache=0;
+      size_t xi=svx.find_const(x,cache);
+      cache=0;
+      size_t yi=svy.find_const(y,cache);
 
       double xmin=(*this->xfun)[xi];
       double xmax=(*this->xfun)[xi+1];
@@ -471,8 +477,10 @@ namespace o2scl {
 	O2SCL_ERR("Data not set in interp2_direct::deriv_y().",exc_einval);
       }
 
-      size_t xi=svx.find(x);
-      size_t yi=svy.find(y);
+      size_t cache=0;
+      size_t xi=svx.find_const(x,cache);
+      cache=0;
+      size_t yi=svy.find_const(y,cache);
 
       double xmin=(*this->xfun)[xi];
       double xmax=(*this->xfun)[xi+1];
@@ -570,8 +578,10 @@ namespace o2scl {
 	return 0.0;
       }
 
-      size_t xi=svx.find(x);
-      size_t yi=svy.find(y);
+      size_t cache=0;
+      size_t xi=svx.find_const(x,cache);
+      cache=0;
+      size_t yi=svy.find_const(y,cache);
 
       double xmin=(*this->xfun)[xi];
       double xmax=(*this->xfun)[xi+1];
@@ -654,8 +664,10 @@ namespace o2scl {
 	O2SCL_ERR("Data not set in interp2_direct::deriv_xy().",exc_einval);
       }
 
-      size_t xi=svx.find(x);
-      size_t yi=svy.find(y);
+      size_t cache=0;
+      size_t xi=svx.find_const(x,cache);
+      cache=0;
+      size_t yi=svy.find_const(y,cache);
 
       double xmin=(*this->xfun)[xi];
       double xmax=(*this->xfun)[xi+1];
