@@ -384,7 +384,7 @@ int main(void) {
   tcnt=0;
   for(size_t test_iand=0;test_iand<8;test_iand++) {
 
-    double tol, val, err;
+    double tol, val=0.0, err=0.0;
     unsigned maxEval;
 
     tol=1.0e-2;

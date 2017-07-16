@@ -44,7 +44,6 @@ int main(void) {
   size_t tmp;
 
   typedef boost::numeric::ublas::vector<double> ubvector;
-  typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
   static const size_t arr_size=50;
 

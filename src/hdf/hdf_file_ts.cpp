@@ -31,10 +31,6 @@ int main(void) {
 
   typedef boost::numeric::ublas::vector<double> ubvector;
   typedef boost::numeric::ublas::matrix<double> ubmatrix;
-  typedef boost::numeric::ublas::vector<int> ubvector_int;
-  typedef boost::numeric::ublas::matrix<int> ubmatrix_int;
-  typedef boost::numeric::ublas::vector<size_t> ubvector_size_t;
-  typedef boost::numeric::ublas::matrix<size_t> ubmatrix_size_t;
 
   cout.setf(ios::scientific);
   cout.precision(10);

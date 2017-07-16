@@ -156,6 +156,7 @@ namespace o2scl {
       val=e.val;
       err=e.err;
     }
+    return *this;
   }
   /** \brief Desc */
   double val;
@@ -192,6 +193,7 @@ namespace o2scl {
       data=e.data;
       vol=e.vol;
     }
+    return *this;
   }
   /** \brief Desc */
   size_t dim;
@@ -291,6 +293,7 @@ namespace o2scl {
       ee=e.ee;
       errmax=e.errmax;
     }
+    return *this;
   }
   /** \brief Desc */
   hypercube h;
@@ -1029,6 +1032,7 @@ namespace o2scl {
 	  fdim=e.fdim;
 	  ee=e.ee;
 	}
+	return *this;
       }
       /** \brief Desc */
       size_t n;

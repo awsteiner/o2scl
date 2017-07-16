@@ -274,6 +274,7 @@ int fv_new(size_t ndim, size_t npt, const ubvector_crange &x, size_t fdim,
   }
   delete[] x2;
   delete[] f2;
+  return 0;
 }
 
 /** Test integrating a few functions at once

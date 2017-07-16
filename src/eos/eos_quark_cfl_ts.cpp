@@ -129,9 +129,9 @@ int main(void) {
     ax[2]=s.ms;
     nj.fromqq=false;
     nj.gapfunms(3,ax,ay);
-    t.test_rel(y[0],0.0,5.0e-9,"zero T ungapped gap eqn 1");
-    t.test_rel(y[1],0.0,5.0e-9,"zero T ungapped gap eqn 2");
-    t.test_rel(y[2],0.0,1.0e-6,"zero T ungapped gap eqn 3");
+    t.test_rel(ay[0],0.0,5.0e-9,"zero T ungapped gap eqn 1");
+    t.test_rel(ay[1],0.0,5.0e-9,"zero T ungapped gap eqn 2");
+    t.test_rel(ay[2],0.0,1.0e-6,"zero T ungapped gap eqn 3");
 
     // Now compute the full EOS at T=0
   
