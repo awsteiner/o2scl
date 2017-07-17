@@ -413,7 +413,7 @@ namespace o2scl {
       \c [n_sol][n].  On exit, \c n_sol will will be number of points
       store, less than or equal to the original value of \c
       n_sol. This function avoids performing extra calls to the
-      adaptive stepper, and the table will be approximately evenly
+      adaptive stepper, and the solution will be approximately evenly
       spaced.
 
       This function is also designed to give the exactly the same
@@ -447,7 +447,7 @@ namespace o2scl {
     // Stepsize for next verbose output. Use nsteps_out-1 instead of
     // nsteps_out since the first point is always output below.
     double dx_verb=(x1-x0)/((double)(nsteps_out-1));
-    // Stepsize for next table entry
+    // Stepsize for next point for storage
     double dx_tab=(x1-x0)/((double)(n_sol-istart-1));
 
     double x_verb=x0+dx_verb;
@@ -476,14 +476,14 @@ namespace o2scl {
     // Initial derivative evaulation
     derivs(x0,n,ystart,dydx_start);
 
-    // Add first derivatives to table
+    // Add first derivatives to storage
     x_sol[istart]=x0;
     for(size_t j=0;j<n;j++) {
       dydx_sol(istart,j)=dydx_start[j];
       yerr_sol(istart,j)=0.0;
     }
 
-    // Copy first point to table again for first step
+    // Copy first point to storage again for first step
     size_t icurr=istart+1;
     x_sol[icurr]=x0;
     for(size_t j=0;j<n;j++) y_sol(icurr,j)=ystart[j];
@@ -540,7 +540,7 @@ namespace o2scl {
 	// Exit the loop
 	done=true;
 
-	// Store the final entry in the table
+	// Store the final entry
 	x_sol[icurr]=xnext;
 	for(size_t j=0;j<n;j++) {
 	  y_sol(icurr,j)=ystart[j];
@@ -548,7 +548,7 @@ namespace o2scl {
 	  yerr_sol(icurr,j)=yerr[j];
 	}
 
-	// Update the table size
+	// Update the solution size
 	n_sol=icurr+1;
 
       } else {
@@ -709,7 +709,7 @@ namespace o2scl {
   
   /** \brief Number of output points for verbose output (default 10)
       
-      This is used in functions solve_table() and solve_final_value()
+      This is used in functions solve_store() and solve_final_value()
       to control how often steps are output when verbose is greater
       than zero.
   */

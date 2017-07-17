@@ -63,11 +63,6 @@ namespace o2scl {
       Two adjacent data points should not be equal. This class does
       not verify that the user-specified data has these properties.
 
-      \note Because results are cached, this class is not thread-safe
-      and cannot be used simultaneously by different threads. (This
-      holds even for member functions marked const, because the cache 
-      data member is marked as mutable.)
-
       \note This class does not store a copy of the data, but only a
       pointer to it. This means that one can safely modify the data
       after the constructor is called, so long as one does not make
@@ -302,9 +297,6 @@ namespace o2scl {
   protected:
 
     /** \brief Storage for the most recent index
-	
-        \note This is marked mutable to ensure const-correctness is 
-	straightforward.
     */
     size_t cache;
 
@@ -347,7 +339,6 @@ namespace o2scl {
 	containing <tt>x0</tt>
     */
     size_t find(const double x0) {
-      size_t cache=n/2;
 #if !O2SCL_NO_RANGE_CHECK
       if (this->cache>=this->n) {
 	O2SCL_ERR("Cache mis-alignment in search_vec_ext::find().",
@@ -362,7 +353,6 @@ namespace o2scl {
 	containing <tt>x0</tt>
     */
     size_t find_inc(const double x0) {
-      size_t cache=n/2;
       if (x0<(*this->v)[this->cache]) {
 	this->cache=vector_bsearch_inc<vec_t,double>
 	  (x0,*this->v,0,this->cache);
@@ -383,7 +373,6 @@ namespace o2scl {
 	containing <tt>x0</tt>
     */
     size_t find_dec(const double x0) {
-      size_t cache=n/2;
       if (x0>(*this->v)[this->cache]) {
 	this->cache=vector_bsearch_dec<vec_t,double>
 	  (x0,*this->v,0,this->cache);

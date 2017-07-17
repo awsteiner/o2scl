@@ -27,8 +27,6 @@
 using namespace std;
 using namespace o2scl;
 
-typedef boost::numeric::ublas::vector<double> ubvector;
-
 tov_love::tov_love() {
   oisp=&def_ois;
   schwarz_km=o2scl_cgs::schwarzchild_radius/1.0e5;
@@ -63,8 +61,8 @@ double tov_love::eval_k2(double beta, double yR) {
   return k2;
 }
 
-int tov_love::y_derivs(double r, size_t nv, const ubvector &vals,
-			  ubvector &ders) {
+int tov_love::y_derivs(double r, size_t nv, const std::vector<double> &vals,
+			  std::vector<double> &ders) {
     
   double ed=tab->interp("r",r,"ed");
   double pr=tab->interp("r",r,"pr");
@@ -99,8 +97,8 @@ int tov_love::y_derivs(double r, size_t nv, const ubvector &vals,
   return 0;
 }
 
-int tov_love::H_derivs(double r, size_t nv, const ubvector &vals,
-			  ubvector &ders) {
+int tov_love::H_derivs(double r, size_t nv, const std::vector<double> &vals,
+			  std::vector<double> &ders) {
     
   double ed=tab->interp("r",r,"ed");
   double pr=tab->interp("r",r,"pr");
@@ -142,27 +140,41 @@ void tov_love::calc_y(double &yR, double &beta, double &k2,
   double gm=tab->get_constant("mass");
 
   double r=eps, h=1.0e-1;
-  ubvector y(1), dydx_out(1), yerr(1);
+  std::vector<double> y(1), dydx_out(1), yerr(1);
   y[0]=2.0;
 
+  // Storage for 'tabulate' option
+  std::vector<double> rt;
+  typedef boost::numeric::ublas::matrix<double> ubmatrix;
+  ubmatrix yt, dy, ye;
+  size_t n_sol=10000;
+
+  // If 'tabulate' is true, allocate space
   if (tabulate) {
-    results.clear();
-    results.line_of_names("r y dydr");
-    results.set_unit("r","km");
-    results.set_unit("dydr","1/km");
+    rt.resize(n_sol);
+    yt.resize(n_sol,1);
+    dy.resize(n_sol,1);
+    ye.resize(n_sol,1);
   }
 
-  ode_funct od=std::bind
-    (std::mem_fn<int(double,size_t,const ubvector &,ubvector &)>
+  ode_funct2 od=std::bind
+    (std::mem_fn<int(double,size_t,const std::vector<double> &,
+		     std::vector<double> &)>
      (&tov_love::y_derivs),
      this,std::placeholders::_1,std::placeholders::_2,
      std::placeholders::_3,std::placeholders::_4);
-
-    ubvector yout(1);
+  
+  if (tabulate) {
+    yt(0,0)=2.0;
+    oisp->solve_store(eps,R,h,1,n_sol,rt,yt,ye,dy,od,0);
+    yR=yt(n_sol-1,0);
+  } else {
+    std::vector<double> yout(1);
     oisp->solve_final_value(eps,R,h,1,y,yout,od);
     y[0]=yout[0];
+    yR=y[0];
+  }
 
-  yR=y[0];
   beta=schwarz_km/2.0*gm/R;
 
   k2=eval_k2(beta,yR);
@@ -176,9 +188,20 @@ void tov_love::calc_y(double &yR, double &beta, double &k2,
   lambda_cgs*=o2scl_cgs::solar_mass*1.0e10;
   
   if (tabulate) {
+    results.clear();
+
     results.add_constant("k2",k2);
     results.add_constant("lambda_cgs",lambda_cgs);
     results.add_constant("lambda_km5",lambda_km5);
+
+    results.line_of_names("r y dydr ye");
+    results.set_unit("r","km");
+    results.set_unit("dydr","1/km");
+    results.set_unit("ye","km");
+    for(size_t j=0;j<n_sol;j++) {
+      double line[4]={rt[j],yt(j,0),dy(j,0),ye(j,0)};
+      results.line_of_data(4,line);
+    }
   }
 
   return;
@@ -193,18 +216,19 @@ void tov_love::calc_H(double &yR, double &beta, double &k2,
   double gm=tab->max("gm");
 
   double r=eps, h=1.0e-1;
-  ubvector y(2), dydx_out(2), yerr(2);
+  std::vector<double> y(2), dydx_out(2), yerr(2);
 
   y[0]=r*r;
   y[1]=2.0*r;
 
-  ode_funct od2=std::bind
-    (std::mem_fn<int(double,size_t,const ubvector &,ubvector &)>
+  ode_funct2 od2=std::bind
+    (std::mem_fn<int(double,size_t,const std::vector<double> &,
+		     std::vector<double> &)>
      (&tov_love::H_derivs),
      this,std::placeholders::_1,std::placeholders::_2,
      std::placeholders::_3,std::placeholders::_4);
   
-  ubvector yout(2);
+  std::vector<double> yout(2);
 
   size_t N=10;
   for(size_t i=0;i<N;i++) {

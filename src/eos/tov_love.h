@@ -149,25 +149,27 @@ namespace o2scl {
 
   public:
 
-    typedef boost::numeric::ublas::vector<double> ubvector;
-
+    /// The ODE integrator
+    typedef std::function<int(double,size_t,
+			      const std::vector<double> &,
+			      std::vector<double> &)> ode_funct2;
+    
 #ifndef DOXYGEN_INTERNAL
   
   protected:
 
-    /// The ODE integrator
-    o2scl::ode_iv_solve<> *oisp;
+    o2scl::ode_iv_solve<ode_funct2,std::vector<double> > *oisp;
 
     /** \brief The derivative \f$ y^{\prime}(r) \f$
      */
-    int y_derivs(double r, size_t nv, const ubvector &vals,
-		 ubvector &ders);
+    int y_derivs(double r, size_t nv, const std::vector<double> &vals,
+		 std::vector<double> &ders);
 
     /** \brief The derivatives \f$ H^{\prime \prime}(r) \f$ and
 	\f$ H^{\prime}(r) \f$
     */
-    int H_derivs(double r, size_t nv, const ubvector &vals,
-		 ubvector &ders);
+    int H_derivs(double r, size_t nv, const std::vector<double> &vals,
+		 std::vector<double> &ders);
 
     /// Schwarzchild radius in km (set in constructor)
     double schwarz_km;
@@ -193,13 +195,14 @@ namespace o2scl {
     double eps;
 
     /// The default ODE integrator
-    o2scl::ode_iv_solve<> def_ois;
+    o2scl::ode_iv_solve<ode_funct2,std::vector<double> > def_ois;
 
     /// Pointer to the input profile
     std::shared_ptr<o2scl::table_units<> > tab;
 
     /// Set ODE integrator
-    void set_ODE(o2scl::ode_iv_solve<> &ois_new) {
+    void set_ODE(o2scl::ode_iv_solve<ode_funct2,std::vector<double> >
+		 &ois_new) {
       oisp=&ois_new;
     }
     
