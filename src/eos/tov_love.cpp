@@ -194,13 +194,20 @@ void tov_love::calc_y(double &yR, double &beta, double &k2,
     results.add_constant("lambda_cgs",lambda_cgs);
     results.add_constant("lambda_km5",lambda_km5);
 
-    results.line_of_names("r y dydr ye");
+    results.line_of_names("r y dydr ye ed pr cs2 gm");
     results.set_unit("r","km");
     results.set_unit("dydr","1/km");
     results.set_unit("ye","km");
+    results.set_unit("ed","Msun/km^3");
+    results.set_unit("pr","Msun/km^3");
+    results.set_unit("gm","Msun");
     for(size_t j=0;j<n_sol;j++) {
-      double line[4]={rt[j],yt(j,0),dy(j,0),ye(j,0)};
-      results.line_of_data(4,line);
+      double line[8]={rt[j],yt(j,0),dy(j,0),ye(j,0),
+		      tab->interp("r",rt[j],"ed"),
+		      tab->interp("r",rt[j],"pr"),
+		      tab->interp("r",rt[j],"cs2"),
+		      tab->interp("r",rt[j],"gm")};
+      results.line_of_data(8,line);
     }
   }
 
