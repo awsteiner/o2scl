@@ -57,9 +57,11 @@ namespace o2scl {
     public:
 
     /// Desc
-    int solve_grid_table(size_t n, vec_t &ystart, table<> &t, std::string x_col, 
-			 std::string y_prefix, std::string dydx_prefix, 
-			 std::string yerr_prefix, func_t &derivs) {
+    int solve_grid_table(size_t n, vec_t &ystart, table<> &t,
+			 std::string x_col, std::string y_prefix,
+			 std::string dydx_prefix, std::string yerr_prefix,
+			 func_t &derivs) {
+			 
       std::string cname;
 
       size_t n_sol=t.get_nlines();
