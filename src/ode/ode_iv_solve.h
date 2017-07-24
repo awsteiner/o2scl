@@ -84,7 +84,7 @@ namespace o2scl {
 
       \future The form of solve_final_value() is very similar to that
       of astep_base::astep_full(), but not quite the same. Maybe
-      should probably be made to be consistent with each other?
+      these functions should be consistent with each other?
   */
   template<class func_t=ode_funct, 
     class vec_t=boost::numeric::ublas::vector<double> > 
@@ -175,8 +175,6 @@ namespace o2scl {
       or approximately equal to \ref nsteps_out points will be written
       to \c std::cout. If \ref verbose is greater than one, a
       character will be required after each selected point.
-
-      \todo Document if yend can be the same as ystart.
   */
   int solve_final_value(double x0, double x1, double h, size_t n,
 			vec_t &ystart, vec_t &yend, func_t &derivs) {
@@ -450,7 +448,7 @@ namespace o2scl {
     double x_verb=x0+dx_verb;
     double x_tab=x0+dx_tab;
     
-    // Allocate space for errors and derivatives and storage
+    // Allocate space for errors and derivatives and extra storage
     allocate(n);
 
     // Create some references just to make the code easier
@@ -473,7 +471,7 @@ namespace o2scl {
     // Initial derivative evaulation
     derivs(x0,n,ystart,dydx_start);
 
-    // Add first derivatives to storage
+    // Add first derivatives to storage, and set the errors to zero
     x_sol[istart]=x0;
     for(size_t j=0;j<n;j++) {
       dydx_sol(istart,j)=dydx_start[j];
@@ -657,8 +655,6 @@ namespace o2scl {
 	
 	ret=astp->astep_full(x,xsol[i],xnext,h,n,ystart,dydx_start,
 	y_row,yerr_row,dydx_row,derivs);
-	//ret=gsl_astp2.astep_full(x,xsol[i],xnext,h,n,y_row,yerr_row,
-	//y_row,yerr_row,dydx_row,derivs);
 
 	nsteps++;
 	if (ret!=0) {
@@ -693,7 +689,7 @@ namespace o2scl {
 	    
       }
       
-      //if (verbose>0) print_iter(xsol[i],n,dydx_row);
+      if (verbose>0) print_iter(xsol[i],n,ystart);
 
     }
     
