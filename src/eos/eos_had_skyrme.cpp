@@ -83,6 +83,10 @@ int eos_had_skyrme::calc_temp_e(fermion &ne, fermion &pr,
     O2SCL_ERR2("Neutron or protons non-interacting in ",
 	       "eos_had_skyrme::calc_temp_e().",exc_einval);
   }
+  if (alpha<=0.0) {
+    O2SCL_ERR2("Parameter alpha negative in ",
+	       "eos_had_skyrme::calc_e().",exc_einval);
+  }
 #endif
 
   //---------------------------------------
@@ -229,6 +233,10 @@ int eos_had_skyrme::calc_e(fermion &ne, fermion &pr, thermo &locth) {
     O2SCL_ERR2("Neutron or protons non-interacting in ",
 	       "eos_had_skyrme::calc_e().",exc_einval);
   }
+  if (alpha<=0.0) {
+    O2SCL_ERR2("Parameter alpha negative in ",
+	       "eos_had_skyrme::calc_e().",exc_einval);
+  }
 #endif
 
   double x, n, hamk, ham, ham1, ham2, ham3, ham4, ham5, ham6;
@@ -327,6 +335,13 @@ int eos_had_skyrme::calc_e(fermion &ne, fermion &pr, thermo &locth) {
   locth.en=0.0;
 
   if (!std::isfinite(locth.pr)) {
+    std::cout << locth.ed << " " << common << " " << dhdnn << " "
+	      << dhdnp << " " << gn << " " << gp << " "
+	      << ne.ed << " " << ne.n << " " << pr.ed << " "
+	      << pr.m << std::endl;
+    std::cout << alpha << " " << na << " " << n << " " << ham1 << " "
+	      << ham2 << " " << ham3 << " " << ham4 << " "
+	      << ham5 << " " << ham6 << endl;
     O2SCL_ERR("Pressure not finite in calc_e()",exc_efailed);
   }
 
