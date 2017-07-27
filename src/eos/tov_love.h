@@ -149,7 +149,6 @@ namespace o2scl {
 
   public:
 
-    /// The ODE integrator
     typedef std::function<int(double,size_t,
 			      const std::vector<double> &,
 			      std::vector<double> &)> ode_funct2;
@@ -158,6 +157,7 @@ namespace o2scl {
   
   protected:
 
+    /// The ODE integrator
     o2scl::ode_iv_solve<ode_funct2,std::vector<double> > *oisp;
 
     /** \brief The derivative \f$ y^{\prime}(r) \f$
