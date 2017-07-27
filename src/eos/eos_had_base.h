@@ -351,6 +351,9 @@ namespace o2scl {
     /// Skewness in \f$ \mathrm{fm}^{-1} \f$
     double kprime;
     
+    /** \brief If true, call the error handler if msolve() or
+	msolve_de() does not converge (default true)
+    */
     bool err_nonconv;
 
     /// \name Equation of state

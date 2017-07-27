@@ -131,6 +131,14 @@
     G. B. Cook, S. L. Shapiro, and S. A. Teukolsky</a>,
     Astrophys. J. \b 422 (1994) 227.
 
+    \anchor Damour09 Damour09:
+    <a href="https://dx.doi.org/10.1103/PhysRevD.80.084035">
+    T. Damour and A. Nagar</a>,
+    Phys. Rev. D \b 80 (2009) 084035.
+    \comment
+    Title: Relativistic tidal properties of neutron stars
+    \endcomment
+
     \anchor Danielewicz09 Danielewicz09:
     <a href="http://dx.doi.org/10.1016/j.nuclphysa.2008.11.007">
     P. Danielewicz and J. Lee</a>,
@@ -230,7 +238,8 @@
     \endcomment
 
     \anchor Hinderer10 Hinderer10:
-    T. Hinderer, B. D. Lackey, R. N. Lang, and J. S. Read,
+    <a href="https://dx.doi.org/10.1103/PhysRevD.81.123016">
+    T. Hinderer, B. D. Lackey, R. N. Lang, and J. S. Read</a>,
     Phys. Rev. D \b 81 (2010) 123016.
 
     \anchor Horowitz01 Horowitz01:
@@ -327,7 +336,8 @@
     \endcomment
 
     \anchor Newton13 Newton13:
-    (none) W.G. Newton and M. Gearheart and B.-A. Li,
+    <a href="https://dx.doi.org/10.1088/0067-0049/204/1/9">
+    W. G. Newton, M. Gearheart, and B.-A. Li</a>,
     Astrophys. J. Suppl. Ser. \b 204 (2013) 9.
     \comment
     Title: A Survey of the Parameter Space of the Compressible Liquid Drop Model
@@ -375,7 +385,8 @@
     Phys. Rev. C \b 79 (2009) 054311.
 
     \anchor Postnikov10 Postnikov10:
-    S. Postnikov, M. Prakash, and J. M. Lattimer,
+    <a href="https://dx.doi.org/10.1103/PhysRevD.82.024016">
+    S. Postnikov, M. Prakash, and J. M. Lattimer</a>,
     Phys. Rev. D \b 82 (2010) 024016.
 
     \anchor Prakash87 Prakash87:

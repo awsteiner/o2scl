@@ -72,10 +72,10 @@ namespace o2scl {
 
       \note This class can fail to solve the meson field equations or
       fail to solve for the nucleon densities. By default the error
-      handler is called when this happens. If \ref eos_had_base::err_nonconv is
-      false, then functions which don't converge (which also return
-      <tt>int</tt>) will return a non-zero value. Note that the
-      solvers (in \ref def_sat_mroot and \ref
+      handler is called when this happens. If \ref
+      eos_had_base::err_nonconv is false, then functions which don't
+      converge (which also return <tt>int</tt>) will return a non-zero
+      value. Note that the solvers (in \ref def_sat_mroot and \ref
       o2scl::eos_had_base::def_mroot) also has its own data member
       indicating how to handle nonconvergence \ref
       o2scl::mroot::err_nonconv which is separate.
