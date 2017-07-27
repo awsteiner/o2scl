@@ -37,6 +37,7 @@ tov_love::tov_love() {
     oisp->gsl_astp.con.eps_abs=1.0e-10;
     oisp->ntrial*=10;
   */
+  delta=1.0e-4;
 }
 
 double tov_love::eval_k2(double beta, double yR) {
@@ -118,9 +119,9 @@ int tov_love::H_derivs(double r, size_t nv, const std::vector<double> &vals,
   double fact=1.0-schwarz_km*gm/r;
   ders[0]=dHdr;
   /*
-    Units of G (schwarz_km/2.0) is [km/Msun].
-    Units of d^2H/dr^2 are H/r/r, so to convert pressure to 1/r/r
-    we have to multiply by G. Same to convert radius*pressure to 1/r.
+    Units of G (schwarz_km/2.0) is [km/Msun]. Units of d^2H/dr^2 are
+    H/r/r, so to convert pressure to 1/r/r we have to multiply by G.
+    The same method is used to convert radius*pressure to 1/r.
   */
   ders[1]=2.0/fact*H*(-schwarz_km*pi*(5.0*ed+9.0*pr+(ed+pr)/cs2)+3.0/r/r
 		      +2.0/fact*pow(schwarz_km/2.0*gm/r/r+
@@ -134,6 +135,12 @@ void tov_love::calc_y(double &yR, double &beta, double &k2,
 		      double &lambda_km5, double &lambda_cgs,
 		      bool tabulate) {
   
+  if (disc.size()>0 && tabulate) {
+    O2SCL_ERR2("Function tov_love::calc_y() does not yet handle ",
+	       "discontinuities when tabulate is true.",
+	       o2scl::exc_eunimpl);
+  }
+
   size_t count;
 
   double R=tab->get_constant("rad");
@@ -165,13 +172,58 @@ void tov_love::calc_y(double &yR, double &beta, double &k2,
      std::placeholders::_3,std::placeholders::_4);
   
   if (tabulate) {
+    
     yt(0,0)=2.0;
     oisp->solve_store(eps,R,h,1,n_sol,rt,yt,ye,dy,od,0);
     yR=yt(n_sol-1,0);
+    
   } else {
+
+    if (disc.size()>0 && eps>disc[0]) {
+      O2SCL_ERR2("Discontinuity is at smaller radius than eps ",
+		 "in tov_love::calc_y().",o2scl::exc_einval);
+    }
     std::vector<double> yout(1);
-    oisp->solve_final_value(eps,R,h,1,y,yout,od);
-    y[0]=yout[0];
+
+    // Loop over intervals between discontinuities and the
+    // r=0 and r=R boundaries
+    double x0=eps, x1;
+
+    for(size_t j=0;j<disc.size()+1;j++) {
+
+      // Set the inner and outer radial boundaries for this interval
+      if (j!=0) {
+	x0=disc[j-1]+delta;
+      } 
+      if (j==disc.size()) {
+	x1=R;
+      } else {
+	// Make sure the discontinuity is not at the neutron
+	// star radius
+	if (disc[j]>=R) {
+	  O2SCL_ERR2("Discontinuity is at or past full radius ",
+		     "in tov_love::calc_y().",o2scl::exc_einval);
+	}
+	x1=disc[j]-delta;
+      }
+
+      // Solve the ODE in this interval
+      oisp->solve_final_value(x0,x1,h,1,y,yout,od);
+
+      // Add the correction at the discontinuity
+      if (j!=disc.size()) {
+	y[0]=yout[0]+(tab->interp("r",disc[j]+delta,"ed")-
+		      tab->interp("r",disc[j]-delta,"ed"))/
+	  (tab->interp("r",disc[j],"gm")+4.0*o2scl_const::pi+
+	   disc[j]*disc[j]*disc[j]*tab->interp("r",disc[j],"pr"));
+      } else {
+	y[0]=yout[0];
+      }
+
+      // Proceed to the next interval
+    }
+
+    // Set the final value of yR at the star's radius
     yR=y[0];
   }
 
@@ -217,8 +269,11 @@ void tov_love::calc_y(double &yR, double &beta, double &k2,
 void tov_love::calc_H(double &yR, double &beta, double &k2, 
 			 double &lambda_km5, double &lambda_cgs) {
 
-  // Try again, with Hinderer eqn.
-
+  if (disc.size()>0) {
+    O2SCL_ERR2("Function tov_love::calc_H() does not yet handle ",
+	       "discontinuities.",o2scl::exc_eunimpl);
+  }
+  
   double R=tab->max("r");
   double gm=tab->max("gm");
 

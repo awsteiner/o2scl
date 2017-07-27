@@ -144,6 +144,24 @@ namespace o2scl {
       non-zero radius stored in \ref eps instead of at \f$ r=0 \f$. The
       value of \ref eps defaults to 0.2 km.
       
+      If there is a discontinuity in the EOS (i.e. a jump in 
+      the energy density at some radius \f$ r_d \f$), then 
+      the function \f$ y(r) \f$ must satisfy (see \ref Damour09 
+      and \ref Postnikov10)
+      \f[
+      y(r_d+\delta) - y(r_d-\delta) =
+      \frac{ 
+      \rho(r_d+\delta)-\rho(r_d-\delta)}{m(r_d)/(4 \pi r_d^3) + 
+      p}
+      \f]
+      
+      \note The function \ref calc_H() cannot yet handle 
+      discontinuities (if there are any then the error handler
+      is called).
+
+      \note This class does not yet handle strange quark
+      stars which have an energy discontinuity at the surface
+      (this currently causes the error handler to be called).
   */
   class tov_love {
 
@@ -182,6 +200,9 @@ namespace o2scl {
     */
     double eval_k2(double beta, double yR);
 
+    /// List of discontinuities
+    std::vector<double> disc;
+    
 #endif
 
   public:
@@ -191,6 +212,11 @@ namespace o2scl {
     /// A table containing the solution to the differential equation(s)
     o2scl::table_units<> results;
 
+    /** \brief The radial step for resolving discontinuities in km 
+	(default \f$ 10^{-4} \f$)
+    */
+    double delta;
+    
     /// The first radial point in \f$ \mathrm{km} \f$ (default 0.02)
     double eps;
 
@@ -211,6 +237,18 @@ namespace o2scl {
     void calc_y(double &yR, double &beta, double &k2, double &lambda_km5,
 		double &lambda_cgs, bool tabulate=false);
 
+    /** \brief Add a discontinuity at radius \c rd (in km)
+     */
+    void add_disc(double rd) {
+      disc.push_back(rd);
+    }
+
+    /** \brief Remove all discontinuities
+     */
+    void clear_discs() {
+      disc.clear();
+    }
+    
     /** \brief Compute the love number using H
      */
     void calc_H(double &yR, double &beta, double &k2, double &lambda_km5,
