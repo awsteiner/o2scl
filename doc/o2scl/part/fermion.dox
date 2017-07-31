@@ -14,7 +14,7 @@
     gives better results for
     non-relativistic fermions because the mass is separated from the
     chemical potential in the definition of \f$\psi\f$, but I haven't
-    checked this). These replacements give
+    checked this.) These replacements give
     \f[
     P = \frac{g m^4}{2 \pi^2} 
     \int_0^{\infty} d\ell~\frac{\ell^4}{3 \sqrt{\ell^2+1}}
@@ -153,37 +153,46 @@
     \right\}
     \f]
     where the scaled Bessel function has been separated out.
-    Then terms in the expansion for the density are
+    The terms in the expansion for the density (without and
+    with antiparticles) are
     \f{eqnarray*}
     n_k &=& \frac{k}{t}{P_k}
     \nonumber \\
     \bar{n}_k &=& \frac{k}{t}{\bar{P}_k} 
     \mathrm{tanh} \left[k (x+1)/t\right]
     \f}
-    if antiparticles are included. The entropy is 
+    if antiparticles are included. The entropy terms are
     \f{eqnarray*}
-    s_k &=& \frac{g m^4}{2 \pi^2}
-    \sum_{k=1}^{\infty} \left \{
+    s_k &=& 
     \frac{2 P_k}{t} - \frac{k (x+1) P_k}{t^2} + 
     \frac{(-1)^{k+1}}{2k} e^{k x/t} e^{k/t}
-    \left[ K_1(k/t) + K_3(k/t)\right] \right\}
+    \left[ K_1(k/t) + K_3(k/t)\right] 
     \nonumber \\
-    \bar{s}_k &=& \frac{g m^4}{2 \pi^2}
-    \sum_{k=1}^{\infty} \left \{
+    \bar{s}_k &=& 
     \frac{2 \bar{P}_k}{t} + \frac{k \bar{P}_k}{t^2} -
     \frac{k (x+1) \bar{P}_k \mathrm{tanh}[k(x+1)/t]}{t^2} + 
     \frac{(-1)^{k+1}}{k} e^{-k/t} \mathrm{cosh}[k(x+1)/t] e^{k/t}
-    \left[ K_1(k/t) + K_3(k/t)\right] \right\}
+    \left[ K_1(k/t) + K_3(k/t)\right] 
     \f}
-    if antiparticles are included. The derivatives are
-    \f[
-    \frac{dn}{d\mu} = 
-    \frac{g m^2}{2 \pi^2} \sum_{k=1}^{\infty} \frac{k^2}{t^2}{P_k}
-    = \frac{g m^4}{2 \pi^2} \sum_{k=1}^{\infty} \frac{k^2}{T^2}{P_k}
-    \f]
-    \f[
-    \frac{dn}{dT} = 
-    \f]
+    if antiparticles are included. For the derivatives
+    \f{eqnarray*}
+    \left(\frac{dn}{d\mu}\right)_k &=& 
+    \frac{k^2}{t^2}{P_k} \\
+    \left(\frac{d\bar{n}}{d\mu}\right)_k &=&
+    \frac{k^2}{t^2}{\bar{P}_k} \\
+    \left(\frac{dn}{dT}\right)_k &=& P_k 
+    \left[ \frac{2 k t-k^2(x+1)}{t^3} \right] +
+    \frac{(-1)^{k+1}}{2t} e^{k x/t} e^{k/t}
+    \left[ K_1(k/t) + K_3(k/t)\right]  \\
+    \left(\frac{d\bar{n}}{dT}\right)_k &=& \bar{P}_k 
+    \mathrm{tanh} \left[ k (x+1)/t\right]
+    \left[ \frac{2 k t-k^2(x+1)}{t^3} \right] +
+    \frac{(-1)^{k+1}}{2t} e^{k x/t} e^{k/t}
+    \left[ K_1(k/t) + K_3(k/t)\right] \\
+    \left(\frac{ds}{dT}\right)_k &=& \ldots 
+    \\
+    \left(\frac{d\bar{s}}{dT}\right)_k &=& \ldots 
+    \f}
 
     These expansions are used in 
     \ref o2scl::fermion_eval_thermo::calc_mu_ndeg() .
