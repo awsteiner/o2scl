@@ -145,7 +145,7 @@
     wants to include antiparticles, the result is
     similar
     \f[
-    P = \frac{g m^4}{2 \pi^2} \sum_{k=1}^{\infty} Q_k \equiv 
+    P = \frac{g m^4}{2 \pi^2} \sum_{k=1}^{\infty} \bar{P}_k \equiv 
     \frac{g m^4}{2 \pi^2} \left\{ \sum_{k=1}^{\infty}
     \frac{2 t^2 (-1)^{k+1}}{k^2} e^{-k/t} \mathrm{cosh}
     \left[k(x+1)/t\right] \left[ e^{k/t} 
@@ -153,33 +153,28 @@
     \right\}
     \f]
     where the scaled Bessel function has been separated out.
-    The density is 
-    \f[
-    n = \frac{g m^3}{2 \pi^2} \sum_{k=1}^{\infty} \frac{k}{t}{P_k}
-    = \frac{g m^4}{2 \pi^2} \sum_{k=1}^{\infty} \frac{k}{T}{P_k}
-    \f]
-    and 
-    \f[
-    n = \frac{g m^4}{2 \pi^2} \sum_{k=1}^{\infty} \frac{k}{T}{Q_k} 
+    Then terms in the expansion for the density are
+    \f{eqnarray*}
+    n_k &=& \frac{k}{t}{P_k}
+    \nonumber \\
+    \bar{n}_k &=& \frac{k}{t}{\bar{P}_k} 
     \mathrm{tanh} \left[k (x+1)/t\right]
-    \f]
+    \f}
     if antiparticles are included. The entropy is 
-    \f[
-    s = \frac{g m^4}{2 \pi^2}
+    \f{eqnarray*}
+    s_k &=& \frac{g m^4}{2 \pi^2}
     \sum_{k=1}^{\infty} \left \{
     \frac{2 P_k}{t} - \frac{k (x+1) P_k}{t^2} + 
-    \frac{2 (-1)^{k+1}}{k} e^{k x/t} e^{k/t}
+    \frac{(-1)^{k+1}}{2k} e^{k x/t} e^{k/t}
     \left[ K_1(k/t) + K_3(k/t)\right] \right\}
-    \f]
-    and 
-    \f[
-    s = \frac{g m^4}{2 \pi^2}
+    \nonumber \\
+    \bar{s}_k &=& \frac{g m^4}{2 \pi^2}
     \sum_{k=1}^{\infty} \left \{
-    \frac{2 Q_k}{t} + \frac{k Q_k}{t^2} -
-    \frac{k (x+1) Q_k \mathrm{tanh}[k(x+1)/t]}{t^2} + 
+    \frac{2 \bar{P}_k}{t} + \frac{k \bar{P}_k}{t^2} -
+    \frac{k (x+1) \bar{P}_k \mathrm{tanh}[k(x+1)/t]}{t^2} + 
     \frac{(-1)^{k+1}}{k} e^{-k/t} \mathrm{cosh}[k(x+1)/t] e^{k/t}
     \left[ K_1(k/t) + K_3(k/t)\right] \right\}
-    \f] 
+    \f}
     if antiparticles are included. The derivatives are
     \f[
     \frac{dn}{d\mu} = 
