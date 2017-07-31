@@ -137,10 +137,10 @@
     \f[
     P = \frac{g m^4}{2 \pi^2} \sum_{k=1}^{\infty} P_k \equiv 
     \frac{g m^4}{2 \pi^2} \left[ \sum_{k=1}^{\infty}
-    \frac{t^2 (-1)^{k+1}}{k^2} e^{k \psi} e^{k/t} K_2\left(\frac{k}{t}\right)
+    \frac{t^2 (-1)^{k+1}}{k^2} e^{k x/t} e^{k/t} K_2\left(\frac{k}{t}\right)
     \right]
     \f]
-    The function \f$ e^{x} K_2(x) \f$ is implemented in GSL as
+    The function \f$ e^{y} K_2(y) \f$ is implemented in GSL as
     <tt>gsl_sf_bessel_Kn_scaled</tt>. In the case that one
     wants to include antiparticles, the result is
     similar
@@ -148,22 +148,47 @@
     P = \frac{g m^4}{2 \pi^2} \sum_{k=1}^{\infty} Q_k \equiv 
     \frac{g m^4}{2 \pi^2} \left\{ \sum_{k=1}^{\infty}
     \frac{2 t^2 (-1)^{k+1}}{k^2} e^{-k/t} \mathrm{cosh}
-    \left[k \mu/(t m)\right] \left[ e^{k/t} 
+    \left[k(x+1)/t\right] \left[ e^{k/t} 
     K_2\left(\frac{k}{t}\right) \right]
     \right\}
     \f]
     where the scaled Bessel function has been separated out.
     The density is 
     \f[
-    n = \frac{g m^4}{2 \pi^2} \sum_{k=1}^{\infty} \frac{k}{T}{P_k}
+    n = \frac{g m^3}{2 \pi^2} \sum_{k=1}^{\infty} \frac{k}{t}{P_k}
+    = \frac{g m^4}{2 \pi^2} \sum_{k=1}^{\infty} \frac{k}{T}{P_k}
     \f]
     and 
     \f[
     n = \frac{g m^4}{2 \pi^2} \sum_{k=1}^{\infty} \frac{k}{T}{Q_k} 
-    \mathrm{tanh} \left[k \mu/(t m)\right]
+    \mathrm{tanh} \left[k (x+1)/t\right]
     \f]
-    if antiparticles are included. The entropy density can
-    also be written down similarly. 
+    if antiparticles are included. The entropy is 
+    \f[
+    s = \frac{g m^4}{2 \pi^2}
+    \sum_{k=1}^{\infty} \left \{
+    \frac{2 P_k}{t} - \frac{k (x+1) P_k}{t^2} + 
+    \frac{2 (-1)^{k+1}}{k} e^{k x/t} e^{k/t}
+    \left[ K_1(k/t) + K_3(k/t)\right] \right\}
+    \f]
+    and 
+    \f[
+    s = \frac{g m^4}{2 \pi^2}
+    \sum_{k=1}^{\infty} \left \{
+    \frac{2 Q_k}{t} + \frac{k Q_k}{t^2} -
+    \frac{k (x+1) Q_k \mathrm{tanh}[k(x+1)/t]}{t^2} + 
+    \frac{(-1)^{k+1}}{k} e^{-k/t} \mathrm{cosh}[k(x+1)/t] e^{k/t}
+    \left[ K_1(k/t) + K_3(k/t)\right] \right\}
+    \f] 
+    if antiparticles are included. The derivatives are
+    \f[
+    \frac{dn}{d\mu} = 
+    \frac{g m^2}{2 \pi^2} \sum_{k=1}^{\infty} \frac{k^2}{t^2}{P_k}
+    = \frac{g m^4}{2 \pi^2} \sum_{k=1}^{\infty} \frac{k^2}{T^2}{P_k}
+    \f]
+    \f[
+    \frac{dn}{dT} = 
+    \f]
 
     These expansions are used in 
     \ref o2scl::fermion_eval_thermo::calc_mu_ndeg() .

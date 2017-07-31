@@ -48,7 +48,13 @@ namespace o2scl {
       \left(\frac{d s}{d T}\right)_{\mu,V}
       \f]
       respectively. All other first-order thermodynamic derivatives
-      can be expressed in terms of the first three derivatives. In the
+      can be expressed in terms of the first three derivatives. 
+
+      \comment
+
+      (This is no longer required)
+
+      In the
       case that the particle is interacting (i.e. \ref
       part::non_interacting is \c false), then the derivatives which
       are computed are
@@ -62,225 +68,8 @@ namespace o2scl {
       the bare mass is given, since classes cannot know how to relate
       the effective mass to the bare mass.
 
-      \hline
+      \endcomment
 
-      <b>Other derivatives with respect 
-      to chemical potential and temperature:</b>
-
-      There is a Maxwell relation
-      \f[
-      \left(\frac{d s}{d \mu}\right)_{T,V} =
-      \left(\frac{d n}{d T}\right)_{\mu,V}
-      \f]
-      The pressure derivatives are trivial
-      \f[
-      \left(\frac{d P}{d \mu}\right)_{T,V}=n, \quad
-      \left(\frac{d P}{d T}\right)_{\mu,V}=s
-      \f]
-      The energy density derivatives are related through the 
-      thermodynamic identity:
-      \f[
-      \left(\frac{d \varepsilon}{d \mu}\right)_{T,V}=
-      \mu \left(\frac{d n}{d \mu}\right)_{T,V}+
-      T \left(\frac{d s}{d \mu}\right)_{T,V}
-      \f]
-      \f[
-      \left(\frac{d \varepsilon}{d T}\right)_{\mu,V}=
-      \mu \left(\frac{d n}{d T}\right)_{\mu,V}+
-      T \left(\frac{d s}{d T}\right)_{\mu,V}
-      \f]
-
-      \hline
-
-      <b>Other derivatives:</b>
-
-      Note that the derivative of the entropy with respect to the
-      temperature above is not the specific heat per particle, \f$ c_V \f$.
-      The specific heat per particle is
-      \f[
-      c_V = \frac{T}{N} \left( \frac{\partial S}{\partial T} \right)_{V,N}
-      = \frac{T}{n} \left( \frac{\partial s}{\partial T} \right)_{V,n}
-      \f] 
-      As noted in \ref part_section in the User's Guide for \o2p, we
-      work in units so that \f$ \hbar = c = k_B = 1 \f$. In this case,
-      \f$ c_V \f$ is unitless as defined here. To compute \f$ c_V \f$
-      in terms of the derivatives above, note that the
-      descendants of part_deriv provide all of the thermodynamic
-      functions in terms of \f$ \mu, V \f$ and \f$ T \f$, so we have
-      \f[
-      s=s(\mu,T,V) \quad \mathrm{and} \quad n=n(\mu,T,V) \, .
-      \f]
-      We can then construct a function
-      \f[
-      s=s[\mu(n,T,V),T,V]
-      \f]
-      and then write the required derivative directly
-      \f[
-      \left(\frac{\partial s}{\partial T}\right)_{n,V} =
-      \left(\frac{\partial s}{\partial \mu}\right)_{T,V}
-      \left(\frac{\partial \mu}{\partial T}\right)_{n,V} +
-      \left(\frac{\partial s}{\partial T}\right)_{\mu,V} \, .
-      \f]
-      Now we use the identity
-      \f[
-      \left(\frac{\partial \mu}{\partial T}\right)_{n,V} = -
-      \left(\frac{\partial n}{\partial T}\right)_{\mu,V} 
-      \left(\frac{\partial n}{\partial \mu}\right)_{T,V}^{-1} \, ,
-      \f]
-      and the Maxwell relation above to give
-      \f[
-      C_V = \frac{T}{n}
-      \left[ 
-      \left(\frac{\partial s}{\partial T}\right)_{\mu,V}
-      -\left(\frac{\partial n}{\partial T}\right)_{\mu,V}^2
-      \left(\frac{\partial n}{\partial \mu}\right)_{T,V}^{-1}
-      \right]
-      \f]
-      which expresses the specific heat in terms of the three
-      derivatives which are given.
-
-      For, \f$ c_P \f$, defined as
-      \f[
-      c_P = \frac{T}{N} \left( \frac{\partial S}{\partial T} 
-      \right)_{N,P}
-      \f] 
-      (which is also unitless) we can write functions
-      \f[
-      S=S(N,T,V) \qquad \mathrm{and} \qquad V=V(N,P,T)
-      \f]
-      which imply
-      \f[
-      \left( \frac{\partial S}{\partial T} \right)_{N,P} =
-      \left( \frac{\partial S}{\partial T} \right)_{N,V} +
-      \left( \frac{\partial S}{\partial V} \right)_{N,T}
-      \left( \frac{\partial V}{\partial T} \right)_{N,P} \, .
-      \f]
-      Thus we require the derivatives
-      \f[
-      \left( \frac{\partial S}{\partial T} \right)_{N,V} ,
-      \left( \frac{\partial S}{\partial V} \right)_{N,T} ,
-      \qquad\mathrm{and}\qquad
-      \left( \frac{\partial V}{\partial T} \right)_{N,P}
-      \, .
-      \f]
-
-      To compute the new entropy derivatives, we can write
-      \f[
-      S=S(\mu(N,T,V),T,V)
-      \f]
-      to get
-      \f[
-      \left( \frac{\partial S}{\partial T} \right)_{N,V} =
-      \left( \frac{\partial S}{\partial \mu} \right)_{T,V}
-      \left( \frac{\partial \mu}{\partial T} \right)_{N,V} +
-      \left( \frac{\partial S}{\partial T} \right)_{\mu,V} \, ,
-      \f]
-      and
-      \f[
-      \left( \frac{\partial S}{\partial V} \right)_{N,T} =
-      \left( \frac{\partial S}{\partial \mu} \right)_{T,V}
-      \left( \frac{\partial \mu}{\partial V} \right)_{N,T} +
-      \left( \frac{\partial S}{\partial V} \right)_{\mu,T} \, .
-      \f]
-      These require the chemical potential derivatives which have
-      associated Maxwell relations
-      \f[
-      \left( \frac{\partial \mu}{\partial T} \right)_{N,V} =
-      -\left( \frac{\partial S}{\partial N} \right)_{T,V} 
-      \qquad\mathrm{and}\qquad
-      \left( \frac{\partial \mu}{\partial V} \right)_{N,T} =
-      -\left( \frac{\partial P}{\partial N} \right)_{T,V} \, .
-      \f]
-      Finally, we can rewrite the derivatives on the right hand sides
-      in terms of derivatives of functions of \f$ \mu, V \f$ and
-      \f$ T \f$,
-      \f[
-      \left( \frac{\partial S}{\partial N} \right)_{T,V} =
-      \left( \frac{\partial S}{\partial \mu} \right)_{T,V} 
-      \left( \frac{\partial N}{\partial \mu} \right)_{T,V}^{-1} \, ,
-      \f]
-      and
-      \f[
-      \left( \frac{\partial P}{\partial N} \right)_{T,V} =
-      \left( \frac{\partial P}{\partial \mu} \right)_{T,V} 
-      \left( \frac{\partial N}{\partial \mu} \right)_{T,V}^{-1} \, .
-      \f]
-
-      The volume derivative,
-      \f[
-      \left( \frac{\partial V}{\partial T} \right)_{N,P} \, ,
-      \f]
-      is related to the coefficient of thermal expansion, sometimes 
-      called \f$ \alpha \f$,
-      \f[
-      \alpha \equiv \frac{1}{V}
-      \left( \frac{\partial V}{\partial T} \right)_{N,P} \, .
-      \f]
-      We can rewrite the derivative 
-      \f[
-      \left( \frac{\partial V}{\partial T} \right)_{N,P} =
-      -\left( \frac{\partial P}{\partial T} \right)_{N,V} 
-      \left( \frac{\partial P}{\partial V} \right)_{N,T}^{-1} \, .
-      \f]
-      The first term can be computed from the Maxwell relation
-      \f[
-      \left( \frac{\partial P}{\partial T} \right)_{N,V} = 
-      \left( \frac{\partial S}{\partial V} \right)_{N,T} \, ,
-      \f]
-      where the entropy derivative was computed above. The second term
-      (related to the inverse of the isothermal compressibility, \f$
-      \kappa_T \equiv (-1/V) (\partial V/\partial P)_{T,N} \f$ can be
-      computed from the function \f$ P = P[\mu(N,V,T),V,T] \f$
-      \f[
-      \left( \frac{\partial P}{\partial V} \right)_{N,T} = 
-      \left( \frac{\partial P}{\partial \mu} \right)_{T,V} 
-      \left( \frac{\partial \mu}{\partial V} \right)_{N,T} +
-      \left( \frac{\partial P}{\partial V} \right)_{\mu,T} 
-      \f]
-      where the chemical potential derivative was computed above.
-
-      The results above can be collected to give
-      \f[
-      \left( \frac{\partial S}{\partial T} \right)_{N,P} =
-      \left( \frac{\partial S}{\partial T} \right)_{\mu,V} +
-      \frac{S^2}{N^2}
-      \left( \frac{\partial N}{\partial \mu} \right)_{T,V} -
-      \frac{2 S}{N}
-      \left( \frac{\partial N}{\partial T} \right)_{\mu,V} \, ,
-      \f]
-      which implies
-      \f[
-      c_P = 
-      \frac{T}{n}
-      \left( \frac{\partial s}{\partial T} \right)_{\mu,V} +
-      \frac{s^2 T}{n^3}
-      \left( \frac{\partial n}{\partial \mu} \right)_{T,V} -
-      \frac{2 s T}{n^2}
-      \left( \frac{\partial n}{\partial T} \right)_{\mu,V} \, ,
-      \f]
-
-      This derivation also gives the well-known relationship between
-      the specific heats at constant volume and constant pressure,
-      \f[
-      c_P = c_V + \frac{T \alpha^2}{n \kappa_T} \, .
-      \f]
-
-      In the case where the particle is interacting, the 
-      derivative of the density with respect to the effective mass is
-      \f[
-      \left(\frac{dn}{dm^{*}}\right)_{\mu,T} = 
-      \left(\frac{3 n}{m^{*}}\right) - 
-      \frac{T}{m^{*}} \left(\frac{dn}{dT}\right)_{m^{*},\mu} -
-      \frac{\nu}{m^{*}} \left(\frac{dn}{d\mu}\right)_{m^{*},T} 
-      \f]
-      This relation holds whether or not the mass is included in the
-      chemical potential \f$ \nu \f$, as the rest mass is held
-      constant even though the effective mass is varying. This
-      relation also holds in the case where the particle is
-      non-interacting, so long as one does not allow the rest mass in
-      the chemical potential to vary. This derivative is useful, for
-      example, in models of quark matter where the quark mass is
-      dynamically generated.
   */
   class part_deriv : public part {
     
@@ -437,9 +226,25 @@ namespace o2scl {
 
     /** \brief Calculate properties as a function of chemical 
 	potential using a degenerate expansion
+
+	\future There is some repetition of the code
+	for this function and the function
+	\ref o2scl::fermion_eval_thermo::calc_mu_deg() .
+	which could be avoided.
     */
     virtual bool calc_mu_deg(fermion_deriv &f, double temper,
 			     double prec);
+    
+    /** \brief Calculate properties as a function of chemical 
+	potential using a nondegenerate expansion
+
+	\future There is some repetition of the code
+	for this function and the function
+	\ref o2scl::fermion_eval_thermo::calc_mu_ndeg() .
+	which could be avoided.
+    */
+    virtual bool calc_mu_ndeg(fermion_deriv &f, double temper,
+			      double prec);
     
   };
 

@@ -279,7 +279,7 @@ int main(void) {
   // Test derivatives for pair() functions
   // -----------------------------------------------------------------
 
-  if (false) {
+  if (true) {
     cout << "Test derivatives (pair, \"non-degenerate\", direct): " << endl;
     snf.method=fermion_deriv_rel::direct;
     double d1, d2, eps=1.0e-4;

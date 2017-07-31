@@ -95,8 +95,10 @@ namespace o2scl {
 
       Uncertainties are given in \ref unc.
 
-      \todo This needs to be corrected to calculate \f$ \sqrt{k^2+m^{*
-      2}}-m \f$ gracefully when \f$ m^{*}\approx m \ll k \f$ .
+      \future This class may need more corrections to ensure
+      quantities like \f$ \sqrt{k^2+m^{*2}}-m \f$ are computed
+      accurately when \f$ m^{*}\approx m \ll k \f$ .
+      
       \todo Call error handler if inc_rest_mass is true or update
       to properly treat the case when inc_rest_mass is true.
       

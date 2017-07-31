@@ -132,3 +132,172 @@ bool fermion_deriv_thermo::calc_mu_deg
   return true;
 }
 
+bool fermion_deriv_thermo::calc_mu_ndeg
+(fermion_deriv &f, double temper, double prec) {
+
+  cout << "fermion_deriv_thermo::calc_mu_ndeg unfinished." << endl;
+  exit(-1);
+  
+  if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
+
+  // Compute psi and tt
+  double psi, psi_num;
+  if (f.inc_rest_mass) {
+    psi_num=f.nu-f.ms;
+  } else {
+    psi_num=f.nu+f.m-f.ms;
+  }
+  psi=psi_num/temper;
+  double tt=temper/f.ms;
+
+  // Return false immediately if we're degenerate
+  if (inc_antip==false && psi>-1.0) return false;
+
+  // Prefactor 'd' in Johns96
+  double prefac=f.g/2.0/pi2*pow(f.ms,4.0);
+
+  // One term is always used, so only values of max_term greater than
+  // 0 are useful.
+  static const size_t max_term=200;
+  
+  // Maximum argument for exponential
+  // double log_dbl_max=709.78;
+
+  // Return zero if psi+1/t is too small
+  if (psi+1.0/tt<-700.0) {
+    f.n=0.0;
+    f.ed=0.0;
+    f.pr=0.0;
+    f.en=0.0;
+    return true;
+  }
+
+  // -----------------------------------------------------
+  // Return early if the last term is going to be too large.
+  
+  // Ratio of last term to first term in the pressure expansion
+  double rat;
+  double dj1=((double)max_term), jot1=max_term/tt;
+  double dj2=1.0, jot2=1.0/tt;
+  if (inc_antip==false) {
+    rat=exp(dj1*psi)/jot1/jot1*gsl_sf_bessel_Kn_scaled(2.0,jot1);
+    rat/=exp(dj2*psi)/jot2/jot2*gsl_sf_bessel_Kn_scaled(2.0,jot2);
+  } else {
+    if (f.inc_rest_mass) {
+      rat=exp(-jot1)*2.0*cosh(dj1*f.nu/temper)/jot1/jot1*
+	gsl_sf_bessel_Kn_scaled(2.0,jot1);
+      rat/=exp(-jot2)*2.0*cosh(dj2*f.nu/temper)/jot2/jot2*
+	gsl_sf_bessel_Kn_scaled(2.0,jot2);
+    } else {
+      rat=exp(-jot1)*2.0*cosh(dj1*(f.nu+f.m)/temper)/jot1/jot1*
+	gsl_sf_bessel_Kn_scaled(2.0,jot1);
+      rat/=exp(-jot2)*2.0*cosh(dj2*(f.nu+f.m)/temper)/jot2/jot2*
+	gsl_sf_bessel_Kn_scaled(2.0,jot2);
+    }
+  }
+
+  // If the ratio between the last term and the first term is 
+  // not small enough, return false
+  if (std::isfinite(rat) && rat>prec) {
+    return false;
+  }
+  
+  double first_term=0.0;
+  f.pr=0.0;
+  f.n=0.0;
+  f.en=0.0;
+
+  double nu2=f.nu;
+  if (f.inc_rest_mass==false) nu2+=f.m;
+  
+  for(size_t j=1;j<=max_term;j++) {
+    
+    double dj=((double)j);
+    double jot=dj/tt;
+
+    double pterm, nterm, enterm;
+    double dndmu_term, double dndT_term, double dsdT_term;
+
+    if (inc_antip==false) {
+      pterm=exp(dj*psi)/jot/jot*gsl_sf_bessel_Kn_scaled(2.0,jot);
+      if (j%2==0) {
+	pterm*=-1.0;
+	enterm=(pterm*2.0/tt-pterm/tt/tt*dj-
+		exp(dj*psi)/2.0/dj*(gsl_sf_bessel_Kn_scaled(1.0,jot)+
+				    gsl_sf_bessel_Kn_scaled(3.0,jot)))/f.ms-
+	  pterm*dj*psi_num/temper/temper;
+      } else {
+	enterm=(pterm*2.0/tt-pterm/tt/tt*dj+
+		exp(dj*psi)/2.0/dj*(gsl_sf_bessel_Kn_scaled(1.0,jot)+
+				    gsl_sf_bessel_Kn_scaled(3.0,jot)))/f.ms-
+	  pterm*dj*psi_num/temper/temper;
+      }
+      nterm=pterm*dj/temper;
+      dndmu_term=nterm*dj/temper;
+      dndT_term=-dj*pterm/temper/temper+dj/temper*enterm;
+    } else {
+      if (f.inc_rest_mass) {
+	pterm=exp(-jot)*2.0*cosh(dj*f.nu/temper)/jot/jot*
+	  gsl_sf_bessel_Kn_scaled(2.0,jot);
+	if (j%2==0) {
+	  pterm*=-1.0;
+	}
+	nterm=pterm*tanh(dj*f.nu/temper)*dj/temper;
+      } else {
+	pterm=exp(-jot)*2.0*cosh(dj*(f.nu+f.m)/temper)/jot/jot*
+	  gsl_sf_bessel_Kn_scaled(2.0,jot);
+	if (j%2==0) {
+	  pterm*=-1.0;
+	}
+	nterm=pterm*tanh(dj*(f.nu+f.m)/temper)*dj/temper;
+      }
+      if (j%2==0) {
+	enterm=(pterm*2.0/tt-cosh(dj*nu2/temper)/dj*exp(-jot)*
+		(gsl_sf_bessel_Kn_scaled(1.0,jot)+
+		 gsl_sf_bessel_Kn_scaled(3.0,jot))+2.0*pterm*nu2*dj/tt/tt*
+		tanh(dj*nu2/temper)/f.ms)/f.ms;
+      } else {
+	enterm=(pterm*2.0/tt+cosh(dj*nu2/temper)/dj*exp(-jot)*
+		(gsl_sf_bessel_Kn_scaled(1.0,jot)+
+		 gsl_sf_bessel_Kn_scaled(3.0,jot))+2.0*pterm*nu2*dj/tt/tt*
+		tanh(dj*nu2/temper)/f.ms)/f.ms;
+      }
+      dndmu_term=pterm*dj*dj/temper/temper;
+    }
+    
+    if (j==1) first_term=pterm;
+    f.pr+=pterm;
+    f.n+=nterm;
+    f.en+=enterm;
+    f.dndmu+=dndmu_term;
+    f.dndT+=dndT_term;
+    f.dsdT+=dsdT_term;
+
+    // If the first term is zero, then the rest of the terms
+    // will be zero so just return early
+    if (first_term==0.0) {
+      f.pr=0.0;
+      f.n=0.0;
+      f.ed=0.0;
+      f.en=0.0;
+      return true;
+    }
+
+    // Stop if the last term is sufficiently small compared to
+    // the first term
+    if (j>1 && fabs(pterm)<prec*fabs(first_term)) {
+      f.pr*=prefac;
+      f.n*=prefac;
+      f.en*=prefac;
+      f.ed=-f.pr+f.nu*f.n+temper*f.en;
+      return true;
+    }
+
+    // End of 'for(size_t j=1;j<=max_term;j++)'
+  }
+
+  f.dndm=0.0;
+  
+  // We failed to add enough terms, so return false
+  return false;
+}
