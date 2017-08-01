@@ -244,7 +244,7 @@ namespace o2scl {
 	which could be avoided.
     */
     virtual bool calc_mu_ndeg(fermion_deriv &f, double temper,
-			      double prec);
+			      double prec, bool inc_antip=false);
     
   };
 

@@ -133,11 +133,8 @@ bool fermion_deriv_thermo::calc_mu_deg
 }
 
 bool fermion_deriv_thermo::calc_mu_ndeg
-(fermion_deriv &f, double temper, double prec) {
+(fermion_deriv &f, double temper, double prec, bool inc_antip) {
 
-  cout << "fermion_deriv_thermo::calc_mu_ndeg unfinished." << endl;
-  exit(-1);
-  
   if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
 
   // Compute psi and tt
@@ -149,6 +146,7 @@ bool fermion_deriv_thermo::calc_mu_ndeg
   }
   psi=psi_num/temper;
   double tt=temper/f.ms;
+  double xx=psi*tt;
 
   // Return false immediately if we're degenerate
   if (inc_antip==false && psi>-1.0) return false;
@@ -216,7 +214,7 @@ bool fermion_deriv_thermo::calc_mu_ndeg
     double jot=dj/tt;
 
     double pterm, nterm, enterm;
-    double dndmu_term, double dndT_term, double dsdT_term;
+    double dndmu_term, dndT_term, dsdT_term;
 
     if (inc_antip==false) {
       pterm=exp(dj*psi)/jot/jot*gsl_sf_bessel_Kn_scaled(2.0,jot);
@@ -235,6 +233,25 @@ bool fermion_deriv_thermo::calc_mu_ndeg
       nterm=pterm*dj/temper;
       dndmu_term=nterm*dj/temper;
       dndT_term=-dj*pterm/temper/temper+dj/temper*enterm;
+      if (j%2==0) {
+	dsdT_term=((xx+1.0)/2.0/tt/tt*exp(dj*xx/tt)*
+		   (gsl_sf_bessel_Kn_scaled(1.0,jot)+
+		    gsl_sf_bessel_Kn_scaled(3.0,jot))-
+		   1.0/4.0/tt/tt*exp(dj*xx/tt)*
+		   (gsl_sf_bessel_Kn_scaled(0.0,jot)+
+		    2.0*gsl_sf_bessel_Kn_scaled(2.0,jot)+
+		    gsl_sf_bessel_Kn_scaled(4.0,jot)))/f.ms/f.ms;
+      } else {
+	dsdT_term=(-(xx+1.0)/2.0/tt/tt*exp(dj*xx/tt)*
+		   (gsl_sf_bessel_Kn_scaled(1.0,jot)+
+		    gsl_sf_bessel_Kn_scaled(3.0,jot))+
+		   1.0/4.0/tt/tt*exp(dj*xx/tt)*
+		   (gsl_sf_bessel_Kn_scaled(0.0,jot)+
+		    2.0*gsl_sf_bessel_Kn_scaled(2.0,jot)+
+		    gsl_sf_bessel_Kn_scaled(4.0,jot)))/f.ms/f.ms;
+      }
+      dsdT_term+=(2.0*dj*(xx+1.0)-2.0*tt)/tt/temper/temper*pterm+
+	(2.0*tt-dj*(xx+1.0))/tt/temper*enterm;
     } else {
       if (f.inc_rest_mass) {
 	pterm=exp(-jot)*2.0*cosh(dj*f.nu/temper)/jot/jot*
@@ -263,6 +280,31 @@ bool fermion_deriv_thermo::calc_mu_ndeg
 		tanh(dj*nu2/temper)/f.ms)/f.ms;
       }
       dndmu_term=pterm*dj*dj/temper/temper;
+      dndT_term=(dj/temper*enterm-dj/temper/temper*pterm)*
+	tanh(dj*(xx+1.0)/tt)-dj*dj*(xx+1.0)/temper/temper*pterm/
+	pow(cosh(dj*(xx+1.0)/tt),2.0);
+      if (j%2==0) {
+	dsdT_term=-(xx+1.0)/2.0/tt/tt*exp(-dj/tt)*sinh(dj*(xx+1.0)/tt)*
+	  (gsl_sf_bessel_Kn_scaled(1.0,jot)+
+	   gsl_sf_bessel_Kn_scaled(3.0,jot))-
+	  1.0/2.0/dj*exp(-dj/tt)*cos(dj*(xx+1.0)/tt)*
+	  (gsl_sf_bessel_Kn_scaled(0.0,jot)+
+	   2.0*gsl_sf_bessel_Kn_scaled(2.0,jot)+
+	   gsl_sf_bessel_Kn_scaled(4.0,jot));
+      } else {
+	dsdT_term=(xx+1.0)/2.0/tt/tt*exp(-dj/tt)*sinh(dj*(xx+1.0)/tt)*
+	  (gsl_sf_bessel_Kn_scaled(1.0,jot)+
+	   gsl_sf_bessel_Kn_scaled(3.0,jot))+
+	  1.0/2.0/dj*exp(-dj/tt)*cos(dj*(xx+1.0)/tt)*
+	  (gsl_sf_bessel_Kn_scaled(0.0,jot)+
+	   2.0*gsl_sf_bessel_Kn_scaled(2.0,jot)+
+	   gsl_sf_bessel_Kn_scaled(4.0,jot));
+      }
+      dsdT_term+=(-2.0*tt+dj)/tt/tt/tt*pterm+(2.0*tt+dj)/tt/tt*enterm-
+	(dj*(xx+1.0)*enterm*tanh(dj*(xx+1.0)/tt))/tt/tt+
+	(dj*dj*(xx+1.0)*(xx+1.0)*pterm/pow(cosh(dj*(xx+1.0)/tt),2.0))/
+	pow(tt,4.0);
+      dsdT_term/=f.ms;
     }
     
     if (j==1) first_term=pterm;
@@ -280,6 +322,9 @@ bool fermion_deriv_thermo::calc_mu_ndeg
       f.n=0.0;
       f.ed=0.0;
       f.en=0.0;
+      f.dndmu=0.0;
+      f.dndT=0.0;
+      f.dsdT=0.0;
       return true;
     }
 
@@ -290,14 +335,15 @@ bool fermion_deriv_thermo::calc_mu_ndeg
       f.n*=prefac;
       f.en*=prefac;
       f.ed=-f.pr+f.nu*f.n+temper*f.en;
+      f.dndT*=prefac;
+      f.dndmu*=prefac;
+      f.dsdT*=prefac;
       return true;
     }
 
     // End of 'for(size_t j=1;j<=max_term;j++)'
   }
 
-  f.dndm=0.0;
-  
   // We failed to add enough terms, so return false
   return false;
 }

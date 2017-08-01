@@ -355,7 +355,20 @@ namespace o2scl {
     /// Return string denoting type ("fermion_deriv_rel")
     virtual const char *type() { return "fermion_deriv_rel"; };
 
-    /// Calibrate with more accurate tabulated results
+    /** \brief Calibrate with more accurate tabulated results
+
+	This compares the approximation to the exact results over a
+	grid with \f$ T = \left\{10^{-2},1,10^{2}\right\} \f$, \f$
+	\log_{10} (m/T) = \left\{ -3,-2,-1,0,1,2,3\right\} \f$, and
+	\f$ \log_{10} \psi = \left\{ -3,-2,-1,0,1\right\} \f$, where
+	\f$ \psi \equiv \left(\mu-m\right)/T \f$ using
+	calc_density() and calc_mu(), with both inc_rest_mass
+	taking both values <tt>true</tt> and <tt>false</tt>.
+	
+	The <tt>verbose</tt> parameter controls the amount of
+	output, and \c fname is the filename for the file
+	<tt>fermion_cal.o2</tt>.
+     */
     double deriv_calibrate(fermion_deriv &f, int verbose, 
 			   std::string fname="");
 

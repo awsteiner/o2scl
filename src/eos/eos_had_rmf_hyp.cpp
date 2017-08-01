@@ -57,7 +57,7 @@ int eos_had_rmf_hyp::calc_eq_p
   double gws=xw*gw;
   double gws2=gws*gws;
   double grs=xr*gr;
-  double grs2=grs*grs2;
+  double grs2=grs*grs;
 
   ne.ms=ne.m-gs*sig;
   pr.ms=pr.m-gs*sig;

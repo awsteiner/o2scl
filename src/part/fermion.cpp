@@ -358,22 +358,6 @@ double fermion_eval_thermo::calibrate
 	exact.pr*=pow(T,4.0);
 	exact.en*=pow(T,3.0);
 	
-	if (verbose>1) {
-	  cout << "T,m,mu: " << T << " " << f.m << " " << f.mu << endl;
-	  cout << "n,ed,pr,en: " << endl;
-	  cout << "approx: " << f.n << " " << f.ed << " " << f.pr << " " 
-	       << f.en << endl;
-	  cout << "exact : " << exact.n << " " << exact.ed << " " 
-	       << exact.pr << " " << exact.en << endl;
-	  cout << "bad   : " << bad.mu << " " << bad.ed << " " 
-	       << bad.pr << " " << bad.en << endl;
-	  cout << endl;
-	  if (verbose>2) {
-	    char ch;
-	    cin >> ch;
-	  }
-	}
-
 	dev.n+=fabs((f.n-exact.n)/exact.n);
 	dev.ed+=fabs((f.ed-exact.ed)/exact.ed);
 	dev.pr+=fabs((f.pr-exact.pr)/exact.pr);
@@ -422,6 +406,22 @@ double fermion_eval_thermo::calibrate
 	    mot_bad=mot;
 	    psi_bad=psi;
 	    ret=bad.en;
+	  }
+	}
+
+	if (verbose>1) {
+	  cout << "T,m,mu: " << T << " " << f.m << " " << f.mu << endl;
+	  cout << "n,ed,pr,en: " << endl;
+	  cout << "approx: " << f.n << " " << f.ed << " " << f.pr << " " 
+	       << f.en << endl;
+	  cout << "exact : " << exact.n << " " << exact.ed << " " 
+	       << exact.pr << " " << exact.en << endl;
+	  cout << "bad   : " << bad.mu << " " << bad.ed << " " 
+	       << bad.pr << " " << bad.en << endl;
+	  cout << endl;
+	  if (verbose>2) {
+	    char ch;
+	    cin >> ch;
 	  }
 	}
 
@@ -506,22 +506,6 @@ double fermion_eval_thermo::calibrate
 
 	calc_density(f,T);
 	
-	if (verbose>1) {
-	  cout << "T, m, n: " << T << " " << f.m << " " << f.n << endl;
-	  cout << "mu,ed,pr,en: " << endl;
-	  cout << "approx: " << f.mu << " " << f.ed << " " << f.pr << " " 
-	       << f.en << endl;
-	  cout << "exact : " << exact.mu << " " << exact.ed << " " 
-	       << exact.pr << " " << exact.en << endl;
-	  cout << "bad   : " << bad.mu << " " << bad.ed << " " 
-	       << bad.pr << " " << bad.en << endl;
-	  cout << endl;
-	  if (verbose>2) {
-	    char ch;
-	    cin >> ch;
-	  }
-	}
-
 	dev.mu+=fabs((f.mu-exact.mu)/exact.mu);
 	dev.ed+=fabs((f.ed-exact.ed)/exact.ed);
 	dev.pr+=fabs((f.pr-exact.pr)/exact.pr);
@@ -570,6 +554,22 @@ double fermion_eval_thermo::calibrate
 	    mot_bad=mot;
 	    psi_bad=psi;
 	    ret=bad.en;
+	  }
+	}
+
+	if (verbose>1) {
+	  cout << "T, m, n: " << T << " " << f.m << " " << f.n << endl;
+	  cout << "mu,ed,pr,en: " << endl;
+	  cout << "approx: " << f.mu << " " << f.ed << " " << f.pr << " " 
+	       << f.en << endl;
+	  cout << "exact : " << exact.mu << " " << exact.ed << " " 
+	       << exact.pr << " " << exact.en << endl;
+	  cout << "bad   : " << bad.mu << " " << bad.ed << " " 
+	       << bad.pr << " " << bad.en << endl;
+	  cout << endl;
+	  if (verbose>2) {
+	    char ch;
+	    cin >> ch;
 	  }
 	}
 

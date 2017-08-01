@@ -80,6 +80,21 @@ int fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
   else psi=(f.nu+f.m-f.ms)/temper;
   if (psi>deg_limit) deg=true;
 
+  // Try the non-degenerate expansion if psi is small enough
+  if (psi<-4.0) {
+    bool acc=calc_mu_ndeg(f,temper,1.0e-14);
+    if (acc) {
+      unc.n=f.n*1.0e-14;
+      unc.ed=f.ed*1.0e-14;
+      unc.pr=f.pr*1.0e-14;
+      unc.en=f.en*1.0e-14;
+      unc.dndT=f.dndT*1.0e-14;
+      unc.dsdT=f.dsdT*1.0e-14;
+      unc.dndmu=f.dndmu*1.0e-14;
+      return 0;
+    }
+  }
+
   // Try the degenerate expansion if psi is large enough
   if (psi>20.0) {
     bool acc=calc_mu_deg(f,temper,1.0e-14);
@@ -88,6 +103,9 @@ int fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
       unc.ed=f.ed*1.0e-14;
       unc.pr=f.pr*1.0e-14;
       unc.en=f.en*1.0e-14;
+      unc.dndT=f.dndT*1.0e-14;
+      unc.dsdT=f.dsdT*1.0e-14;
+      unc.dndmu=f.dndmu*1.0e-14;
       return 0;
     }
   }
@@ -947,7 +965,7 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
   // First pass, test calc_mu() 
 
   // k=0 is with rest mass, k=1 is without
-  for(size_t k=1;k<2;k++) {
+  for(size_t k=0;k<2;k++) {
 
     // Initialize storage
     dev.n=0.0; dev.ed=0.0; dev.pr=0.0; dev.en=0.0;
@@ -956,7 +974,7 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
     bad.dndT=0.0; bad.dndmu=0.0; bad.dsdT=0.0; 
     
     // Temperature loop
-    for(double T2=1.0e-2;T2<=1.001e2;T2*=1.0e2) {
+    for(double T=1.0e-2;T<=1.001e2;T*=1.0e2) {
 
       // Loop over each point in the data file
       for(size_t i=0;i<tab.get_nlines();i++) {
@@ -975,53 +993,32 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
 	  
 	  f.inc_rest_mass=true;
           
-	  f.m=mot*T2;
-	  f.mu=f.m+T2*psi;
+	  f.m=mot*T;
+	  f.mu=f.m+T*psi;
 	  
 	} else {
 	  
 	  f.inc_rest_mass=false;
 	  
-	  f.m=mot*T2;
-	  f.mu=T2*psi;
+	  f.m=mot*T;
+	  f.mu=T*psi;
 	  
 	}
 	
-	calc_mu(f,T2);
+	calc_mu(f,T);
 	
-	exact.n*=pow(T2,3.0);
+	exact.n*=pow(T,3.0);
 	if (k==0) {
-	  exact.ed*=pow(T2,4.0);
+	  exact.ed*=pow(T,4.0);
 	} else {
-	  exact.ed=exact.ed*pow(T2,4.0)-exact.n*f.m;
+	  exact.ed=exact.ed*pow(T,4.0)-exact.n*f.m;
 	}
-	exact.pr*=pow(T2,4.0);
-	exact.en*=pow(T2,3.0);
-	exact.dndT*=pow(T2,2.0);
-	exact.dndmu*=pow(T2,2.0);
-	exact.dsdT*=pow(T2,2.0);
+	exact.pr*=pow(T,4.0);
+	exact.en*=pow(T,3.0);
+	exact.dndT*=pow(T,2.0);
+	exact.dndmu*=pow(T,2.0);
+	exact.dsdT*=pow(T,2.0);
 	
-	if (verbose>1) {
-	  cout << "T,m,mu: " << T2 << " " << f.m << " " << f.mu << endl;
-	  cout << "n,ed,pr,en: " << endl;
-	  cout << "approx: " << f.n << " " << f.ed << " " << f.pr << " " 
-	       << f.en << endl;
-	  cout << "\t" << f.dndT << " " << f.dndmu << " " << f.dsdT << endl;
-	  cout << "exact : " << exact.n << " " << exact.ed << " " 
-	       << exact.pr << " " << exact.en << endl;
-	  cout << "\t" << exact.dndT << " " << exact.dndmu << " " 
-	       << exact.dsdT << endl;
-	  cout << "bad   : " << bad.n << " " << bad.ed << " " 
-	       << bad.pr << " " << bad.en << endl;
-	  cout << "\t" << bad.dndT << " " << bad.dndmu << " " 
-	       << bad.dsdT << endl;
-	  cout << endl;
-	  if (verbose>2) {
-	    char ch;
-	    cin >> ch;
-	  }
-	}
-
 	dev.n+=fabs((f.n-exact.n)/exact.n);
 	dev.ed+=fabs((f.ed-exact.ed)/exact.ed);
 	dev.pr+=fabs((f.pr-exact.pr)/exact.pr);
@@ -1036,7 +1033,7 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
 	  if (bad.n>ret) {
 	    mu_bad=f.mu;
 	    m_bad=f.m;
-	    T_bad=T2;
+	    T_bad=T;
 	    mot_bad=mot;
 	    psi_bad=psi;
 	    ret=bad.n;
@@ -1047,7 +1044,7 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
 	  if (bad.ed>ret) {
 	    mu_bad=f.mu;
 	    m_bad=f.m;
-	    T_bad=T2;
+	    T_bad=T;
 	    mot_bad=mot;
 	    psi_bad=psi;
 	    ret=bad.ed;
@@ -1058,7 +1055,7 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
 	  if (bad.pr>ret) {
 	    mu_bad=f.mu;
 	    m_bad=f.m;
-	    T_bad=T2;
+	    T_bad=T;
 	    mot_bad=mot;
 	    psi_bad=psi;
 	    ret=bad.pr;
@@ -1069,7 +1066,7 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
 	  if (bad.en>ret) {
 	    mu_bad=f.mu;
 	    m_bad=f.m;
-	    T_bad=T2;
+	    T_bad=T;
 	    mot_bad=mot;
 	    psi_bad=psi;
 	    ret=bad.en;
@@ -1080,7 +1077,7 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
 	  if (bad.dndT>ret) {
 	    mu_bad=f.mu;
 	    m_bad=f.m;
-	    T_bad=T2;
+	    T_bad=T;
 	    mot_bad=mot;
 	    psi_bad=psi;
 	    ret=bad.dndT;
@@ -1091,7 +1088,7 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
 	  if (bad.dndmu>ret) {
 	    mu_bad=f.mu;
 	    m_bad=f.m;
-	    T_bad=T2;
+	    T_bad=T;
 	    mot_bad=mot;
 	    psi_bad=psi;
 	    ret=bad.dndmu;
@@ -1102,13 +1099,34 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
 	  if (bad.dsdT>ret) {
 	    mu_bad=f.mu;
 	    m_bad=f.m;
-	    T_bad=T2;
+	    T_bad=T;
 	    mot_bad=mot;
 	    psi_bad=psi;
 	    ret=bad.dsdT;
 	  }
 	}
 
+	if (verbose>1) {
+	  cout << "T,m,mu: " << T << " " << f.m << " " << f.mu << endl;
+	  cout << "n,ed,pr,en,dndT,dndmu,dsdT: " << endl;
+	  cout << "approx.    : " << f.n << " " << f.ed << " " << f.pr << " " 
+	       << f.en << endl;
+	  cout << "\t" << f.dndT << " " << f.dndmu << " " << f.dsdT << endl;
+	  cout << "exact      : " << exact.n << " " << exact.ed << " " 
+	       << exact.pr << " " << exact.en << endl;
+	  cout << "\t" << exact.dndT << " " << exact.dndmu << " " 
+	       << exact.dsdT << endl;
+	  cout << "worst dev. : " << bad.n << " " << bad.ed << " " 
+	       << bad.pr << " " << bad.en << endl;
+	  cout << "\t" << bad.dndT << " " << bad.dndmu << " " 
+	       << bad.dsdT << endl;
+	  cout << endl;
+	  if (verbose>2) {
+	    char ch;
+	    cin >> ch;
+	  }
+	}
+	
 	// End of loop over points in data file
       }
       // End of temperature loop
@@ -1155,7 +1173,7 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
   // Second pass, test calc_density()
 
   // k=0 is with rest mass, k=1 is without
-  for(size_t k=1;k<2;k++) {
+  for(size_t k=0;k<2;k++) {
 
     // Initialize storage
     dev.n=0.0; dev.ed=0.0; dev.pr=0.0; dev.en=0.0;
@@ -1164,7 +1182,7 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
     bad.dndT=0.0; bad.dndmu=0.0; bad.dsdT=0.0; 
     
     // Temperature loop
-    for(double T2=1.0e-2;T2<=1.001e2;T2*=1.0e2) {
+    for(double T=1.0e-2;T<=1.001e2;T*=1.0e2) {
       
       // Loop over each point in the data file
       for(size_t i=0;i<tab.get_nlines();i++) {
@@ -1175,54 +1193,33 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
 	exact.ed=tab.get("ed",i);
 	exact.pr=tab.get("pr",i);
 	exact.en=tab.get("en",i);
-	exact.dndT*=pow(T2,2.0);
-	exact.dndmu*=pow(T2,2.0);
-	exact.dsdT*=pow(T2,2.0);
+	exact.dndT*=pow(T,2.0);
+	exact.dndmu*=pow(T,2.0);
+	exact.dsdT*=pow(T,2.0);
 
-	f.m=mot*T2;
+	f.m=mot*T;
 	if (k==0) {
 	  f.inc_rest_mass=true;
-	  exact.mu=f.m+T2*psi;
+	  exact.mu=f.m+T*psi;
 	} else {
 	  f.inc_rest_mass=false;
-	  exact.mu=T2*psi;
+	  exact.mu=T*psi;
 	}
 
-	f.n*=pow(T2,3.0);
+	f.n*=pow(T,3.0);
 	if (k==0) {
-	  exact.ed*=pow(T2,4.0);
+	  exact.ed*=pow(T,4.0);
 	} else {
-	  exact.ed=exact.ed*pow(T2,4.0)-f.n*f.m;
+	  exact.ed=exact.ed*pow(T,4.0)-f.n*f.m;
 	}
-	exact.pr*=pow(T2,4.0);
-	exact.en*=pow(T2,3.0);
+	exact.pr*=pow(T,4.0);
+	exact.en*=pow(T,3.0);
 
 	// Give it a guess for the chemical potential
 	f.mu=f.m;
 
-	calc_density(f,T2);
+	calc_density(f,T);
 	
-	if (verbose>1) {
-	  cout << "T2, m, n: " << T2 << " " << f.m << " " << f.n << endl;
-	  cout << "mu,ed,pr,en: " << endl;
-	  cout << "approx: " << f.mu << " " << f.ed << " " << f.pr << " " 
-	       << f.en << endl;
-	  cout << "\t" << f.dndT << " " << f.dndmu << " " << f.dsdT << endl;
-	  cout << "exact : " << exact.mu << " " << exact.ed << " " 
-	       << exact.pr << " " << exact.en << endl;
-	  cout << "\t" << exact.dndT << " " << exact.dndmu << " " 
-	       << exact.dsdT << endl;
-	  cout << "bad   : " << bad.mu << " " << bad.ed << " " 
-	       << bad.pr << " " << bad.en << endl;
-	  cout << "\t" << bad.dndT << " " << bad.dndmu << " " 
-	       << bad.dsdT << endl;
-	  cout << endl;
-	  if (verbose>2) {
-	    char ch;
-	    cin >> ch;
-	  }
-	}
-
 	dev.mu+=fabs((f.mu-exact.mu)/exact.mu);
 	dev.ed+=fabs((f.ed-exact.ed)/exact.ed);
 	dev.pr+=fabs((f.pr-exact.pr)/exact.pr);
@@ -1237,7 +1234,7 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
 	  if (bad.n>ret) {
 	    mu_bad=f.mu;
 	    m_bad=f.m;
-	    T_bad=T2;
+	    T_bad=T;
 	    mot_bad=mot;
 	    psi_bad=psi;
 	    ret=bad.n;
@@ -1248,7 +1245,7 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
 	  if (bad.ed>ret) {
 	    mu_bad=f.mu;
 	    m_bad=f.m;
-	    T_bad=T2;
+	    T_bad=T;
 	    mot_bad=mot;
 	    psi_bad=psi;
 	    ret=bad.ed;
@@ -1259,7 +1256,7 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
 	  if (bad.pr>ret) {
 	    mu_bad=f.mu;
 	    m_bad=f.m;
-	    T_bad=T2;
+	    T_bad=T;
 	    mot_bad=mot;
 	    psi_bad=psi;
 	    ret=bad.pr;
@@ -1270,7 +1267,7 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
 	  if (bad.en>ret) {
 	    mu_bad=f.mu;
 	    m_bad=f.m;
-	    T_bad=T2;
+	    T_bad=T;
 	    mot_bad=mot;
 	    psi_bad=psi;
 	    ret=bad.en;
@@ -1281,7 +1278,7 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
 	  if (bad.dndT>ret) {
 	    mu_bad=f.mu;
 	    m_bad=f.m;
-	    T_bad=T2;
+	    T_bad=T;
 	    mot_bad=mot;
 	    psi_bad=psi;
 	    ret=bad.dndT;
@@ -1292,7 +1289,7 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
 	  if (bad.dndmu>ret) {
 	    mu_bad=f.mu;
 	    m_bad=f.m;
-	    T_bad=T2;
+	    T_bad=T;
 	    mot_bad=mot;
 	    psi_bad=psi;
 	    ret=bad.dndmu;
@@ -1303,10 +1300,31 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
 	  if (bad.dsdT>ret) {
 	    mu_bad=f.mu;
 	    m_bad=f.m;
-	    T_bad=T2;
+	    T_bad=T;
 	    mot_bad=mot;
 	    psi_bad=psi;
 	    ret=bad.dsdT;
+	  }
+	}
+
+	if (verbose>1) {
+	  cout << "T,m,n: " << T << " " << f.m << " " << f.n << endl;
+	  cout << "n,ed,pr,en,dndT,dndmu,dsdT: " << endl;
+	  cout << "approx.    : " << f.n << " " << f.ed << " " << f.pr << " " 
+	       << f.en << endl;
+	  cout << "\t" << f.dndT << " " << f.dndmu << " " << f.dsdT << endl;
+	  cout << "exact      : " << exact.n << " " << exact.ed << " " 
+	       << exact.pr << " " << exact.en << endl;
+	  cout << "\t" << exact.dndT << " " << exact.dndmu << " " 
+	       << exact.dsdT << endl;
+	  cout << "worst dev. : " << bad.n << " " << bad.ed << " " 
+	       << bad.pr << " " << bad.en << endl;
+	  cout << "\t" << bad.dndT << " " << bad.dndmu << " " 
+	       << bad.dsdT << endl;
+	  cout << endl;
+	  if (verbose>2) {
+	    char ch;
+	    cin >> ch;
 	  }
 	}
 

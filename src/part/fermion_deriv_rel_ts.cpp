@@ -48,6 +48,19 @@ int main(void) {
   fermion_eff eff;
   
   t.test_rel(sf.m,5.0,1.0e-5,"mass_inheritance");
+
+  if (false) {
+    double psit=-10.0;
+    double Tt=5.0;
+    sf.mu=psit*Tt+sf.m;
+    snf.calc_mu(sf,Tt);
+    // 3.4516681584e-02 6.9032459031e-03 8.5396526330e-02
+    // 1.3806130168e-03 1.5698274512e-02 1.8229610760e-01
+    cout.precision(10);
+    cout << sf.pr << " " << sf.n << " " << sf.en << endl;
+    cout << sf.dndmu << " " << sf.dndT << " " << sf.dsdT << endl;
+    exit(-1);
+  }
   
   // -----------------------------------------------------------------
     
@@ -279,7 +292,7 @@ int main(void) {
   // Test derivatives for pair() functions
   // -----------------------------------------------------------------
 
-  if (true) {
+  if (false) {
     cout << "Test derivatives (pair, \"non-degenerate\", direct): " << endl;
     snf.method=fermion_deriv_rel::direct;
     double d1, d2, eps=1.0e-4;
@@ -630,7 +643,7 @@ int main(void) {
   // Test the specific heat of degenerate fermions (As a reminder,
   // note that the degenerate specific heat differs for relativistic
   // and non-relativistic particles by a factor of two. Below is the
-  // case for relativisitic particles.) The code below demonstrates
+  // case for relativistic particles.) The code below demonstrates
   // that the computation of the specific heat (and that of the
   // entropy and the pressure) fails for sufficiently low temperatures,
   // i.e. in the extremely degenerate case. [12/20/09 - This now
@@ -681,7 +694,7 @@ int main(void) {
   sfx.inc_rest_mass=false;
 
   cout << "----------------------------------------------------" << endl;
-  cout << "Function calibrate() method=direct." << endl;
+  cout << "Function deriv_calibrate() method=direct." << endl;
   cout << "----------------------------------------------------" << endl;
   cout << endl;
   
@@ -690,7 +703,7 @@ int main(void) {
   cout << "Deriv_Calibrate: " << val2 << endl;
 
   cout << "----------------------------------------------------" << endl;
-  cout << "Function calibrate() method=by_parts." << endl;
+  cout << "Function deriv_calibrate() method=by_parts." << endl;
   cout << "----------------------------------------------------" << endl;
   cout << endl;
 
@@ -700,7 +713,7 @@ int main(void) {
   cout << endl;
 
   cout << "----------------------------------------------------" << endl;
-  cout << "Function calibrate() method=automatic." << endl;
+  cout << "Function deriv_calibrate() method=automatic." << endl;
   cout << "----------------------------------------------------" << endl;
   cout << endl;
 
