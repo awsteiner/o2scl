@@ -153,7 +153,11 @@
     \right\}
     \f]
     where the scaled Bessel function has been separated out.
-    The terms in the expansion for the density (without and
+    Similarly defining
+    \f[
+    n = \frac{g m^3}{2 \pi^2} \sum_{k=1}^{\infty} n_k  \, ,
+    \f]
+    the terms in the expansion for the density (without and
     with antiparticles) are
     \f{eqnarray*}
     n_k &=& \frac{k}{t}{P_k}
@@ -161,7 +165,7 @@
     \bar{n}_k &=& \frac{k}{t}{\bar{P}_k} 
     \mathrm{tanh} \left[k (x+1)/t\right]
     \f}
-    if antiparticles are included. The entropy terms are
+    The entropy terms are
     \f{eqnarray*}
     s_k &=& 
     \frac{2 P_k}{t} - \frac{k (x+1) P_k}{t^2} + 
@@ -180,18 +184,31 @@
     \frac{k^2}{t^2}{P_k} \\
     \left(\frac{d\bar{n}}{d\mu}\right)_k &=&
     \frac{k^2}{t^2}{\bar{P}_k} \\
-    \left(\frac{dn}{dT}\right)_k &=& P_k 
-    \left[ \frac{2 k t-k^2(x+1)}{t^3} \right] +
-    \frac{(-1)^{k+1}}{2t} e^{k x/t} e^{k/t}
-    \left[ K_1(k/t) + K_3(k/t)\right]  \\
-    \left(\frac{d\bar{n}}{dT}\right)_k &=& \bar{P}_k 
-    \mathrm{tanh} \left[ k (x+1)/t\right]
-    \left[ \frac{2 k t-k^2(x+1)}{t^3} \right] +
-    \frac{(-1)^{k+1}}{2t} e^{k x/t} e^{k/t}
-    \left[ K_1(k/t) + K_3(k/t)\right] \\
-    \left(\frac{ds}{dT}\right)_k &=& \ldots 
-    \\
-    \left(\frac{d\bar{s}}{dT}\right)_k &=& \ldots 
+    \left(\frac{dn}{dT}\right)_k &=& 
+    \frac{k}{t} s_k - \frac{k}{t^2} P_k \\
+    \left(\frac{d\bar{n}}{dT}\right)_k &=& 
+    \left( \frac{k}{t} \bar{s}_k
+    - \frac{k}{t^2} \bar{P}_k \right) \mathrm{tanh}\left[k(x+1)/t\right]
+    - \frac{k^2(x+1)}{t^2} \bar{P}_k \mathrm{sech}^2
+    \left[k(x+1)/t\right] \\
+    \left(\frac{ds}{dT}\right)_k &=& 
+    \left[ \frac{2 k (x+1)-2 t}{t^3}\right] P_k
+    + \left[ \frac{2 t-k (x+1)}{t^2}\right] s_k \\
+    && - \frac{(x+1)(-1)^{k+1}}{2 t^2} 
+    e^{k x/t} e^{k/t} \left[ K_1(k/t)+K_3(k/t) \right]
+    - \frac{(-1)^{k+1}}{4 k} e^{k x/t} e^{k/t} 
+    \left[ K_0 (k/t) + 2 K_2 (k/t) + K_4 (k/t)\right] \\
+    \left(\frac{d\bar{s}}{dT}\right)_k &=& 
+    \left[ \frac{-2(t+k)}{t^3}\right] \bar{P}_k
+    + \left[ \frac{2 t+k}{t^2}\right] \bar{s}_k 
+    - \frac{k (x+1) \bar{s}_k \mathrm{tanh}[k(x+1)/t]}{t^2}
+    + \frac{k^2 (x+1)^2 \bar{P}_k \mathrm{sech}^2[k(x+1)/t]}{t^4} \\
+    && - \frac{(x+1)(-1)^{k+1}}{2 t^2} 
+    e^{-k/t} \mathrm{sinh}\left[k(x+1)/t\right]e^{k/t} 
+    \left[ K_1(k/t)+K_3(k/t) \right]
+    - \frac{(-1)^{k+1}}{2 k} e^{-k/t} \mathrm{cosh}\left[k(x+1)/t\right]
+    e^{k/t} 
+    \left[ K_0 (k/t) + 2 K_2 (k/t) + K_4 (k/t)\right]
     \f}
 
     These expansions are used in 
