@@ -375,8 +375,8 @@ int fermion_deriv_rel::nu_from_n(fermion_deriv &f, double temper) {
 
   // Perform full solution
   funct mf=std::bind(std::mem_fn<double(double,fermion_deriv &,double)>
-		       (&fermion_deriv_rel::solve_fun),
-		       this,std::placeholders::_1,std::ref(f),temper);
+		     (&fermion_deriv_rel::solve_fun),
+		     this,std::placeholders::_1,std::ref(f),temper);
   int ret=density_root->solve(nex,mf);
   if (ret!=0) {
     O2SCL_ERR("Solver failed in fermion_deriv_rel::nu_from_n().",exc_efailed);
@@ -413,7 +413,7 @@ double fermion_deriv_rel::deg_density_fun(double k, fermion_deriv &f,
 }
 
 double fermion_deriv_rel::deg_density_T_fun(double k, fermion_deriv &f, 
-double T) {
+					    double T) {
   double E, ret;
   if (f.inc_rest_mass) {
     E=gsl_hypot(k,f.ms);
@@ -806,8 +806,8 @@ int fermion_deriv_rel::pair_density(fermion_deriv &f, double temper) {
   
   nex=f.nu/temper;
   funct mf=std::bind(std::mem_fn<double(double,fermion_deriv &,double)>
-		       (&fermion_deriv_rel::pair_fun),
-		       this,std::placeholders::_1,std::ref(f),temper);
+		     (&fermion_deriv_rel::pair_fun),
+		     this,std::placeholders::_1,std::ref(f),temper);
   ret=density_root->solve(nex,mf);
   f.nu=nex*temper;
 
@@ -1366,6 +1366,224 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
     }
 
     // End of k loop
+  }
+
+  // ----------------------------------------------------------------
+  // Third pass, test pair_mu() 
+
+  if (false) {
+    
+    verbose=3;
+  
+    // k=0 is with rest mass, k=1 is without
+    for(size_t k=0;k<2;k++) {
+
+      // Initialize storage
+      dev.n=0.0; dev.ed=0.0; dev.pr=0.0; dev.en=0.0;
+      dev.dndT=0.0; dev.dndmu=0.0; dev.dsdT=0.0; 
+      bad.n=0.0; bad.ed=0.0; bad.pr=0.0; bad.en=0.0;
+      bad.dndT=0.0; bad.dndmu=0.0; bad.dsdT=0.0; 
+    
+      // Temperature loop
+      for(double T=1.0e-2;T<=1.001e2;T*=1.0e2) {
+
+	// Loop over each point in the data file
+	for(size_t i=0;i<tab.get_nlines();i++) {
+	
+	  double mot=tab.get("mot",i);
+	  double psi=tab.get("psi",i);
+	  exact.n=tab.get("pair_n",i);
+	  exact.ed=tab.get("pair_ed",i);
+	  exact.pr=tab.get("pair_pr",i);
+	  exact.en=tab.get("pair_en",i);
+	  exact.dndT=tab.get("pair_dndT",i);
+	  exact.dndmu=tab.get("pair_dndmu",i);
+	  exact.dsdT=tab.get("pair_dsdT",i);
+      
+	  if (k==0) {
+	  
+	    f.inc_rest_mass=true;
+          
+	    f.m=mot*T;
+	    f.mu=f.m+T*psi;
+	  
+	  } else {
+	  
+	    f.inc_rest_mass=false;
+	  
+	    f.m=mot*T;
+	    f.mu=T*psi;
+	  
+	  }
+	
+	  pair_mu(f,T);
+	
+	  exact.n*=pow(T,3.0);
+	  if (k==0) {
+	    exact.ed*=pow(T,4.0);
+	  } else {
+	    exact.ed=exact.ed*pow(T,4.0)-exact.n*f.m;
+	  }
+	  exact.pr*=pow(T,4.0);
+	  exact.en*=pow(T,3.0);
+	  exact.dndT*=pow(T,2.0);
+	  exact.dndmu*=pow(T,2.0);
+	  exact.dsdT*=pow(T,2.0);
+	
+	  dev.n+=fabs((f.n-exact.n)/exact.n);
+	  dev.ed+=fabs((f.ed-exact.ed)/exact.ed);
+	  dev.pr+=fabs((f.pr-exact.pr)/exact.pr);
+	  dev.en+=fabs((f.en-exact.en)/exact.en);
+	  dev.dndT+=fabs((f.dndT-exact.dndT)/exact.dndT);
+	  dev.dndmu+=fabs((f.dndmu-exact.dndmu)/exact.dndmu);
+	  dev.dsdT+=fabs((f.dsdT-exact.dsdT)/exact.dsdT);
+	
+	  cnt++;
+	  if (fabs((f.n-exact.n)/exact.n)>bad.n) {
+	    bad.n=fabs((f.n-exact.n)/exact.n);
+	    if (bad.n>ret) {
+	      mu_bad=f.mu;
+	      m_bad=f.m;
+	      T_bad=T;
+	      mot_bad=mot;
+	      psi_bad=psi;
+	      ret=bad.n;
+	    }
+	  }
+	  if (fabs((f.ed-exact.ed)/exact.ed)>bad.ed) {
+	    bad.ed=fabs((f.ed-exact.ed)/exact.ed);
+	    if (bad.ed>ret) {
+	      mu_bad=f.mu;
+	      m_bad=f.m;
+	      T_bad=T;
+	      mot_bad=mot;
+	      psi_bad=psi;
+	      ret=bad.ed;
+	    }
+	  }
+	  if (fabs((f.pr-exact.pr)/exact.pr)>bad.pr) {
+	    bad.pr=fabs((f.pr-exact.pr)/exact.pr);
+	    if (bad.pr>ret) {
+	      mu_bad=f.mu;
+	      m_bad=f.m;
+	      T_bad=T;
+	      mot_bad=mot;
+	      psi_bad=psi;
+	      ret=bad.pr;
+	    }
+	  }
+	  if (fabs((f.en-exact.en)/exact.en)>bad.en) {
+	    bad.en=fabs((f.en-exact.en)/exact.en);
+	    if (bad.en>ret) {
+	      mu_bad=f.mu;
+	      m_bad=f.m;
+	      T_bad=T;
+	      mot_bad=mot;
+	      psi_bad=psi;
+	      ret=bad.en;
+	    }
+	  }
+	  if (fabs((f.dndT-exact.dndT)/exact.dndT)>bad.dndT) {
+	    bad.dndT=fabs((f.dndT-exact.dndT)/exact.dndT);
+	    if (bad.dndT>ret) {
+	      mu_bad=f.mu;
+	      m_bad=f.m;
+	      T_bad=T;
+	      mot_bad=mot;
+	      psi_bad=psi;
+	      ret=bad.dndT;
+	    }
+	  }
+	  if (fabs((f.dndmu-exact.dndmu)/exact.dndmu)>bad.dndmu) {
+	    bad.dndmu=fabs((f.dndmu-exact.dndmu)/exact.dndmu);
+	    if (bad.dndmu>ret) {
+	      mu_bad=f.mu;
+	      m_bad=f.m;
+	      T_bad=T;
+	      mot_bad=mot;
+	      psi_bad=psi;
+	      ret=bad.dndmu;
+	    }
+	  }
+	  if (fabs((f.dsdT-exact.dsdT)/exact.dsdT)>bad.dsdT) {
+	    bad.dsdT=fabs((f.dsdT-exact.dsdT)/exact.dsdT);
+	    if (bad.dsdT>ret) {
+	      mu_bad=f.mu;
+	      m_bad=f.m;
+	      T_bad=T;
+	      mot_bad=mot;
+	      psi_bad=psi;
+	      ret=bad.dsdT;
+	    }
+	  }
+
+	  if (verbose>1) {
+	    cout.precision(5);
+	    cout << "T,m,mu,psi,mot: " << T << " " << f.m << " " << f.mu
+		 << " " << psi << " " << mot << endl;
+	    cout.precision(6);
+	    cout << "n,ed,pr,en,dndT,dndmu,dsdT: " << endl;
+	    cout << "approx.    : " << f.n << " " << f.ed << " " << f.pr << " " 
+		 << f.en << endl;
+	    cout << "\t" << f.dndT << " " << f.dndmu << " " << f.dsdT << endl;
+	    cout << "exact      : " << exact.n << " " << exact.ed << " " 
+		 << exact.pr << " " << exact.en << endl;
+	    cout << "\t" << exact.dndT << " " << exact.dndmu << " " 
+		 << exact.dsdT << endl;
+	    cout << "worst dev. : " << bad.n << " " << bad.ed << " " 
+		 << bad.pr << " " << bad.en << endl;
+	    cout << "\t" << bad.dndT << " " << bad.dndmu << " " 
+		 << bad.dsdT << endl;
+	    cout << endl;
+
+	    if (verbose>2) {
+	      char ch;
+	      cin >> ch;
+	    }
+	  }
+	
+	  // End of loop over points in data file
+	}
+	// End of temperature loop
+      }
+
+      dev.n/=cnt;
+      dev.ed/=cnt;
+      dev.pr/=cnt;
+      dev.en/=cnt;
+      dev.dndT/=cnt;
+      dev.dndmu/=cnt;
+      dev.dsdT/=cnt;
+
+      if (verbose>0) {
+	if (k==0) {
+	  cout << "Function pair_mu(), include rest mass:" << endl;
+	} else {
+	  cout << "Function pair_mu(), without rest mass:" << endl;
+	}
+
+	cout << "Average performance: " << endl;
+	cout << "n: " << dev.n << " ed: " << dev.ed << " pr: " 
+	     << dev.pr << " en: " << dev.en << endl;
+	cout << "dndT: " << dev.dndT << " dndmu: " << dev.dndmu 
+	     << " dsdT: " << dev.dsdT << endl;
+	cout << "Worst case: " << endl;
+	cout << "mu: " << mu_bad << " m: " << m_bad << " T: " << T_bad 
+	     << " mot: " << mot_bad << "\n\tpsi: " << psi_bad << endl;
+	cout << "n: " << bad.n << " ed: " << bad.ed << " pr: " 
+	     << bad.pr << " en: " << bad.en << endl;
+	cout << "dndT: " << bad.dndT << " dndmu: " << bad.dndmu 
+	     << " dsdT: " << bad.dsdT << endl;
+	cout << endl;
+	if (verbose>2) {
+	  char ch;
+	  cin >> ch;
+	}
+      }
+
+      // End of k loop
+    }
+
   }
 
   // ----------------------------------------------------------------
