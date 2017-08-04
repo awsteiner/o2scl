@@ -927,7 +927,7 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
   // Read data file
   
   if (fname=="") {
-    fname=o2scl_settings.get_data_dir()+"fermion_cal.o2";
+    fname=o2scl_settings.get_data_dir()+"fermion_cal2.o2";
   }
 
   if (verbose>1) {
@@ -1190,14 +1190,18 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
 	
 	double mot=tab.get("mot",i);
 	double psi=tab.get("psi",i);
-	f.n=tab.get("n",i);	
+	f.n=tab.get("n",i);
+
+	// Get exact results from table
+	exact.n=f.n;
 	exact.ed=tab.get("ed",i);
 	exact.pr=tab.get("pr",i);
 	exact.en=tab.get("en",i);
-	exact.dndT*=pow(T,2.0);
-	exact.dndmu*=pow(T,2.0);
-	exact.dsdT*=pow(T,2.0);
+	exact.dndT=tab.get("dndT",i);
+	exact.dndmu=tab.get("dndmu",i);
+	exact.dsdT=tab.get("dsdT",i);
 
+	// Compute mass, density and exact chemical potential
 	f.m=mot*T;
 	if (k==0) {
 	  f.inc_rest_mass=true;
@@ -1206,8 +1210,10 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
 	  f.inc_rest_mass=false;
 	  exact.mu=T*psi;
 	}
-
 	f.n*=pow(T,3.0);
+
+	// Rescale exact results to this temperature
+	exact.n*=pow(T,3.0);
 	if (k==0) {
 	  exact.ed*=pow(T,4.0);
 	} else {
@@ -1215,6 +1221,9 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
 	}
 	exact.pr*=pow(T,4.0);
 	exact.en*=pow(T,3.0);
+	exact.dndT*=pow(T,2.0);
+	exact.dndmu*=pow(T,2.0);
+	exact.dsdT*=pow(T,2.0);
 
 	// Give it a guess for the chemical potential
 	f.mu=f.m;
@@ -1309,16 +1318,19 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
 	}
 
 	if (verbose>1) {
-	  cout << "T,m,n: " << T << " " << f.m << " " << f.n << endl;
-	  cout << "n,ed,pr,en,dndT,dndmu,dsdT: " << endl;
-	  cout << "approx.    : " << f.n << " " << f.ed << " " << f.pr << " " 
+	  cout.precision(5);
+	  cout << "T,m,n,psi,mot: " << T << " " << f.m << " " << f.n
+	       << " " << psi << " " << mot << endl;
+	  cout.precision(6);
+	  cout << "mu,ed,pr,en,dndT,dndmu,dsdT: " << endl;
+	  cout << "approx.    : " << f.mu << " " << f.ed << " " << f.pr << " " 
 	       << f.en << endl;
 	  cout << "\t" << f.dndT << " " << f.dndmu << " " << f.dsdT << endl;
-	  cout << "exact      : " << exact.n << " " << exact.ed << " " 
+	  cout << "exact      : " << exact.mu << " " << exact.ed << " " 
 	       << exact.pr << " " << exact.en << endl;
 	  cout << "\t" << exact.dndT << " " << exact.dndmu << " " 
 	       << exact.dsdT << endl;
-	  cout << "worst dev. : " << bad.n << " " << bad.ed << " " 
+	  cout << "worst dev. : " << bad.mu << " " << bad.ed << " " 
 	       << bad.pr << " " << bad.en << endl;
 	  cout << "\t" << bad.dndT << " " << bad.dndmu << " " 
 	       << bad.dsdT << endl;

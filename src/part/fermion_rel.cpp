@@ -521,7 +521,7 @@ double fermion_rel::deg_entropy_fun(double k, fermion &f, double T) {
     
     cout << "There may be a typo here." << endl;
     cout << ret << endl;
-    nx=fermi_function(E,f.nu,T,exp_limit);
+    double nx=fermi_function(E,f.nu,T,exp_limit);
     ret=-k*k*(nx*log(nx)+(1.0-nx)*log(1.0-nx));
     cout << ret << endl;
 
