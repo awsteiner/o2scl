@@ -1,13 +1,312 @@
 /** \page ferm_section Fermions
 
-    The pressure for non-interacting fermions with degeneracy \f$ g \f$ is
+    \section ferm_integ_sect Fermion integrations
+
+    (Slowly moving the documentation from fermion_rel
+    and fermion_deriv_rel to this location.)
+
+    In many cases, the non-interacting expressions for
+    fermion thermodynamics can be used in interacting
+    systems as long as one replaces the mass with an 
+    effective mass, \f$ m^{*} \f$ and the chemical potential
+    with an effective chemical potential, \f$ \nu \f$ .
+    In the case where \f$ \nu \f$ includes the
+    rest mass (still denoted \f$ m \f$), the 
+    fermionic distribution function is 
+    \f[
+    f = \frac{1}{1+e^{(\sqrt{k^2+m^{* 2}}-\nu)/T}}
+    \quad ; \quad
+    f = \frac{1}{1+e^{(\sqrt{k^2+m^{* 2}}-\nu-m)/T}}
+    \f]
+    where the left expression is used when the chemical potential
+    includes the rest mass and the energy density includes the rest
+    mass energy density, (\ref o2scl::part::inc_rest_mass is
+    <tt>true</tt>) and the right expression is used when the rest mass
+    is not included (\ref o2scl::part::inc_rest_mass is
+    <tt>false</tt>). For convenience, we define
+    \f$ E^{*} \equiv \sqrt{k^2+m^{* 2}} \f$ .
+
+    \subsection ferm_ul_subsect Upper limits
+
+    The fermionic integrands vanish when the argument of
+    the exponential becomes large compared to a positive
+    number \f$ \zeta \f$.
+    This condition is
+    \f[
+    \sqrt{k^2+m^{* 2}}-\nu \gg \zeta T \quad ; \quad
+    \sqrt{k^2+m^{* 2}}-\nu-m \gg \zeta T
+    \f]
+    Thus solving
+    for the momentum, an upper limit, \f$ k_{\mathrm{ul}} \f$ is
+    \f[
+    k_{\mathrm{ul}} = \sqrt{\left(\zeta T + \nu\right)^2-m^{* 2}}
+    \quad ; \quad
+    k_{\mathrm{ul}} = \sqrt{\left(\zeta T + m + \nu\right)^2-m^{* 2}}
+    \f]
+    
+    The entropy is only significant at the Fermi surface, thus
+    in the degenerate case, the lower limit of the entropy
+    integral can be given be determined by the value of \f$ k \f$ 
+    which solves
+    \f[
+    - \zeta = \frac{\sqrt{k^2+m^{* 2}}-\nu}{T} 
+    \quad ; \quad
+    - \zeta = \frac{\sqrt{k^2+m^{* 2}}-\nu-m}{T} 
+    \f]
+    The solution is 
+    \f[
+    k_{\mathrm{ll}} = \sqrt{(-\zeta T+{\nu})^2-m^{*,2}}
+    \quad ; \quad
+    k_{\mathrm{ll}} = \sqrt{(-\zeta T + m +\nu)^2-m^{*,2}}
+    \f]
+    which is a valid lower limit only if the argument under
+    the square root is positive.
+
+    \subsection ferm_iand_subsect Integrands
+    
+    The energy density is
+    \f[
+    \varepsilon = \frac{g}{2 \pi^2} \int_0^{\infty} 
+    k^2~dk~\sqrt{k^2+m^{* 2}} f 
+    \quad ; \quad
+    \varepsilon = \frac{g}{2 \pi^2} \int_0^{\infty} 
+    k^2~dk~\left(\sqrt{k^2+m^{* 2}}-m\right) f \, ,
+    \f]
+    the number density is
+    \f[
+    n = \frac{g}{2 \pi^2} \int_0^{\infty} 
+    k^2~dk~f \, ,
+    \f]
+    and the entropy density is
+    \f[
+    s = \frac{g}{2 \pi^2} \int_0^{\infty} 
+    dk~(-k^2 {\cal S})
+    \f]
+    where
+    \f[
+    {\cal S}\equiv f \ln f +(1-f) \ln (1-f)
+    \quad ; \quad
+    \frac{\partial {\cal S}}{\partial f} = \ln 
+    \left(\frac{f}{1-f}\right) \, .
+    \f]
+    The derivative can also be written
+    \f[
+    \frac{\partial {\cal S}}{\partial f} = 
+    \left(\frac{\nu-E^{*}}{T}\right)
+    \quad ; \quad
+    \frac{\partial {\cal S}}{\partial f} = 
+    \left(\frac{\nu-E^{*}+m}{T}\right)
+    \f]
+    
+    In the degenerate regime, \f$ {\cal S}
+    \f$, can lose precision when \f$ (E^{*} - \nu)/T \f$ is negative
+    and sufficiently large in absolute magnitude. Thus when \f$ (E^{*}
+    - \nu)/T < \xi \f$ (for \f$ \xi \rightarrow - \infty \f$ ) 
+    an alternative expression
+    \f[
+    {\cal S} \approx 
+    e^{(E^{*}-\nu)/T}
+    \left( \frac{E^{*} -\nu-T}{T} \right)
+    \quad ; \quad
+    {\cal S} \approx 
+    e^{(E^{*}-\nu-m)/T}
+    \left( \frac{E^{*} -\nu-m-T}{T} \right)
+    \, 
+    \f]
+    can be used.
+    
+    <b>Non-degenerate integrands:</b>
+    
+    \comment
+    It's not at all clear that this dimensionless form is more
+    accurate than other potential alternatives. On the other hand,
+    it seems that the uncertainties in the integrations are larger
+    than the errors made by the integrand at present.
+    \endcomment
+
+    The integrands in the non-degenerate regime are written
+    in a dimensionless form, by defining \f$ u=(E^{*}-m^{*})/T \f$
+    (this choice ensures \f$ k=0 \f$ corresponds to \f$ u=0 \f$ ),
+    \f$ y \equiv \nu/ T \f$ (or \f$ y = (\nu+m)/T \f$ if the
+    chemical potential does not include the mass), and 
+    \f$ \eta \equiv m^{*}/T \f$. Then 
+    \f$ k/T = \sqrt{u^2+2 u \eta} \f$, 
+    \f$ (1/T) dk = E^{*}/k du = (u+\eta)/\sqrt{u^2+2 u \eta}~du \f$,
+    and \f$ f = 1/(1+e^{u+\eta-y}) \f$ .
+    The density is
+    \f[
+    n = \frac{g T^3}{2 \pi^2} \int_0^{\infty}~du~
+    \sqrt{u^2+2 u \eta} (u+\eta)
+    \left(1+e^{u+\eta-y}\right)^{-1}
+    \f]
+    the energy density is 
+    \f[
+    \varepsilon = \frac{g T^4}{2 \pi^2} \int_0^{\infty}~du~
+    \sqrt{u^2+2 u \eta} (u+\eta)^2
+    \left(1+e^{u+\eta-y}\right)^{-1}
+    \f]
+    and the entropy density is 
+    \f[
+    s = -\frac{g T^3}{2 \pi^2} \int_0^{\infty}~du~
+    \sqrt{u^2+2 u \eta} (u+\eta) {\cal S}
+    \f]
+    
+    \b Evaluation \b of \b the \b derivatives
+    
+    The relevant
+    derivatives of the distribution function are
+    \f[
+    \frac{\partial f}{\partial T}=
+    f(1-f)\frac{E^{*}-\nu}{T^2}
+    \quad ; \quad
+    \frac{\partial f}{\partial T}=
+    f(1-f)\frac{E^{*}-m-\nu}{T^2}
+    \f]
+    \f[
+    \frac{\partial f}{\partial \nu}=
+    f(1-f)\frac{1}{T}
+    \f]
+    \f[
+    \frac{\partial f}{\partial k}=
+    -f(1-f)\frac{k}{E^{*} T}
+    \f]
+    \f[
+    \frac{\partial f}{\partial m^{*}}=
+    -f(1-f)\frac{m^{*}}{E^{*} T}
+    \f]
+    
+    The derivatives can be integrated directly 
+    direct) or they may be converted to integrals over the
+    distribution function through an integration by parts
+    \f[
+    \int_a^b f(k) \frac{d g(k)}{dk} dk = \left.f(k) g(k)\right|_{k=a}^{k=b}
+    - \int_a^b g(k) \frac{d f(k)}{dk} dk 
+    \f]
+    using the distribution function for \f$ f(k) \f$ and 0 and 
+    \f$ \infty \f$ as the limits, we have
+    \f[
+    \frac{g}{2 \pi^2} \int_0^{\infty} \frac{d g(k)}{dk} f dk =
+    \frac{g}{2 \pi^2} \int_0^{\infty} g(k) f (1-f) \frac{k}{E^{*} T} dk 
+    \f]
+    as long as \f$ g(k) \f$ vanishes at \f$ k=0 \f$ .
+    Rewriting using \f$ g(k) = h(k) E^{*} T/k \f$ 
+    \f[
+    \frac{g}{2 \pi^2} \int_0^{\infty} h(k) f (1-f) dk =
+    \frac{g}{2 \pi^2} \int_0^{\infty} f \frac{T}{k} 
+    \left[ h^{\prime} E^{*}-\frac{h E^{*}}{k}+\frac{h k}{E^{*}} \right] dk
+    \f]
+    as long as \f$ h(k)/k \f$ vanishes at \f$ k=0 \f$ .
+    
+    \b Explicit \b forms
+    
+    1) The derivative of the density wrt the chemical potential
+    \f[
+    \left(\frac{d n}{d \mu}\right)_T = 
+    \frac{g}{2 \pi^2} \int_0^{\infty} \frac{k^2}{T} f (1-f) dk
+    \f]
+    Using \f$ h(k)=k^2/T \f$ we get
+    \f[
+    \left(\frac{d n}{d \mu}\right)_T = 
+    \frac{g}{2 \pi^2} \int_0^{\infty} 
+    \left(\frac{k^2+E^{*2}}{E^{*}}\right) f dk
+    \f]
+    
+    2) The derivative of the density wrt the temperature
+    \f[
+    \left(\frac{d n}{d T}\right)_{\mu} = 
+    \frac{g}{2 \pi^2} \int_0^{\infty} \frac{k^2(E^{*}-\nu)}{T^2} 
+    f (1-f) dk
+    \quad ; \quad
+    \left(\frac{d n}{d T}\right)_{\mu} = 
+    \frac{g}{2 \pi^2} \int_0^{\infty} \frac{k^2(E^{*}-m-\nu)}{T^2} 
+    f (1-f) dk
+    \f]
+    Using \f$ h(k)=k^2(E^{*}-\nu)/T^2 \f$ we get
+    \f[
+    \left(\frac{d n}{d T}\right)_{\mu} = 
+    \frac{g}{2 \pi^2} \int_0^{\infty} \frac{f}{T} 
+    \left[2 k^2+E^{*2}-E^{*} \nu -
+    k^2 \left(\frac{\nu}{E^{*}}\right)\right] dk
+    \quad ; \quad
+    \left(\frac{d n}{d T}\right)_{\mu} = 
+    \frac{g}{2 \pi^2} \int_0^{\infty} \frac{f}{T} 
+    \left[2 k^2+E^{*2}-E^{*}\left(\nu+m\right)-
+    k^2 \left(\frac{\nu+m}{E^{*}}\right)\right] dk
+    \f]
+    
+    3) The derivative of the entropy wrt the chemical potential
+    \f[
+    \left(\frac{d s}{d \mu}\right)_T = 
+    \frac{g}{2 \pi^2} \int_0^{\infty} k^2 f (1-f) 
+    \frac{(E^{*}-\nu)}{T^2} dk
+    \quad ; \quad
+    \left(\frac{d s}{d \mu}\right)_T = 
+    \frac{g}{2 \pi^2} \int_0^{\infty} k^2 f (1-f) 
+    \frac{(E^{*}-m-\nu)}{T^2} dk
+    \f]
+    This verifies the Maxwell relation
+    \f[
+    \left(\frac{d s}{d \mu}\right)_T =
+    \left(\frac{d n}{d T}\right)_{\mu}
+    \f]
+    
+    4) The derivative of the entropy wrt the temperature
+    \f[
+    \left(\frac{d s}{d T}\right)_{\mu} = 
+    \frac{g}{2 \pi^2} \int_0^{\infty} k^2 f (1-f) 
+    \frac{(E^{*}-\nu)^2}{T^3} dk
+    \quad ; \quad
+    \left(\frac{d s}{d T}\right)_{\mu} = 
+    \frac{g}{2 \pi^2} \int_0^{\infty} k^2 f (1-f) 
+    \frac{(E^{*}-m-\nu)^2}{T^3} dk
+    \f]
+    Using \f$ h(k)=k^2 (E^{*}-\nu)^2/T^3 \f$ 
+    \f[
+    \left(\frac{d s}{d T}\right)_{\mu} = 
+    \frac{g}{2 \pi^2} \int_0^{\infty} \frac{f(E^{*}-\nu)}{E^{*}T^2} 
+    \left[E^{* 3}+3 E^{*} k^2- (E^{* 2}+k^2)\nu\right] d k
+    \quad ; \quad
+    \left(\frac{d s}{d T}\right)_{\mu} = 
+    \frac{g}{2 \pi^2} \int_0^{\infty} \frac{f(E^{*}-m-\nu)}{E^{*}T^2} 
+    \left[E^{* 3}+3 E^{*} k^2- (E^{* 2}+k^2)(\nu+m)\right] d k
+    \f]
+    
+    5) The derivative of the density wrt the effective mass
+    \f[
+    \left(\frac{d n}{d m^{*}}\right)_{T,\mu} = 
+    -\frac{g}{2 \pi^2} \int_0^{\infty} 
+    \frac{k^2 m^{*}}{E^{*} T} f (1-f) dk
+    \f]
+    Using \f$ h(k)=-(k^2 m^{*})/(E^{*} T) \f$ we get
+    \f[
+    \left(\frac{d n}{d m^{*}}\right)_{T,\mu} = 
+    -\frac{g}{2 \pi^2} \int_0^{\infty} 
+    m^{*} f dk
+    \f]
+    \comment
+    This derivative may be written in terms of the 
+    others
+    \f[
+    \left(\frac{d n}{d m^{*}}\right)_{T,\mu} = \frac{3 n}{m^{*}}
+    - \frac{T}{m^{*}}\left[ \left(\frac{d n}{d T}\right)_{\mu}
+    +\frac{\mu}{T} \left(\frac{d n}{d \mu}\right)_{T}
+    \right] - \left(\frac{d n}{d \mu}\right)_{T}
+    \f]
+    \endcomment
+    
+    \section ferm_exp_sect Expansions for Fermions
+
+    Presuming the chemical potential includes the rest mass,
+    and \f$ E=\sqrt{k^2+m^2} \f$,
+    the pressure for non-interacting fermions with degeneracy \f$ g \f$ is
     \f[
     P = \frac{g T}{2 \pi^2} \int_0^{\infty} 
     k^2~dk~\ln \left[ 1 + e^{-(E-\mu)/T}\right] = 
     \frac{g}{2 \pi^2} \int_0^{\infty} k^2\left(\frac{k^2}{3 E}\right)~dk~
-    \frac{1}{1 + e^{-(E-\mu)/T}} \, ,
+    \frac{1}{1 + e^{(E-\mu)/T}} \, ,
     \f]
-    where the second form is obtained with an integration by parts. We
+    where the second form is obtained with an integration by parts. 
+    We
     use units where \f$\hbar=c=1\f$. The variable substitutions from
     \ref Johns96 are \f$ \ell = k/m \f$, \f$\psi = (\mu-m)/T\f$, and
     \f$t=T/m\f$. (Presumably this choice of variables 
@@ -35,7 +334,7 @@
     \f]
     where \f$x = \psi t = (\mu-m)/m\f$. 
 
-    \section ferm_deg_sect Degenerate expansion
+    \subsection ferm_deg_subsect Degenerate expansion
 
     The Sommerfeld expansion for \f$t \rightarrow 0\f$ is
     \f{eqnarray}
@@ -124,7 +423,7 @@
     \ref o2scl::fermion_eval_thermo::calc_mu_deg() and
     \ref o2scl::fermion_deriv_thermo::calc_mu_deg() .
 
-    \section ferm_ndeg_sect Nondegenerate Expansion
+    \subsection ferm_ndeg_subsect Nondegenerate Expansion
 
     There is a useful identity (\ref Chandrasekhar10 and \ref Tooper69)
     \f[

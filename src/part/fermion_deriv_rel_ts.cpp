@@ -694,7 +694,8 @@ int main(void) {
   sfx.inc_rest_mass=false;
 
   cout << "----------------------------------------------------" << endl;
-  cout << "Function deriv_calibrate() method=direct." << endl;
+  cout << "Function deriv_calibrate() method=direct, "
+       << "inc_rest_mass=false." << endl;
   cout << "----------------------------------------------------" << endl;
   cout << endl;
   

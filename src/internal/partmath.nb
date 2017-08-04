@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       145,          7]
-NotebookDataLength[     38031,        882]
-NotebookOptionsPosition[     36900,        845]
-NotebookOutlinePosition[     37240,        860]
-CellTagsIndexPosition[     37197,        857]
+NotebookDataLength[     38014,        875]
+NotebookOptionsPosition[     36794,        836]
+NotebookOutlinePosition[     37228,        853]
+CellTagsIndexPosition[     37185,        850]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -286,15 +286,15 @@ Cell[BoxData[
 
 Cell[BoxData[
  RowBox[{
-  RowBox[{"NIntegrate", "::", "\<\"precw\"\>"}], 
-  RowBox[{
-  ":", " "}], "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"The precision of the \
-argument function (\\\\\\\"\\\", \
-\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\\(p\\^2\\/\\(1 + \
-\[ExponentialE]\\^\\(\\(\\(-0.002`\\)\\) + \\@\\(1.`*^-6 + \\(\\(Power[\\(\\(\
-\[LeftSkeleton] 2 \[RightSkeleton]\\)\\)]\\)\\)\\)\\)\\)\\), \\\"MT\\\"]\\)\
-\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\") is less than WorkingPrecision (\\\\\
-\\\"\\\", \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\\(18.`\\), \
+  RowBox[{"NIntegrate", "::", "\<\"precw\"\>"}], ":", 
+  " ", "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"The precision of the argument \
+function (\\\\\\\"\\\", \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\\(p\\^2\
+\\/\\(1 + \[ExponentialE]\\^\\(\\(\\(-0.002`\\)\\) + \\@\\(1.`*^-6 + \
+\\(\\(Power[\\(\\(\[LeftSkeleton] 2 \
+\[RightSkeleton]\\)\\)]\\)\\)\\)\\)\\)\\), \
+\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\") is less than \
+WorkingPrecision (\\\\\\\"\\\", \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\
+\\(18.`\\), \
 \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\").\\\\\\\"\\\", \
 \\\"MT\\\"]\\) \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", \
 ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
@@ -305,10 +305,9 @@ ButtonData:>\\\"paclet:ref/message/General/precw\\\", ButtonNote -> \
 
 Cell[BoxData[
  RowBox[{
-  RowBox[{"NIntegrate", "::", "\<\"precw\"\>"}], 
-  RowBox[{
-  ":", " "}], "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"The precision of the \
-argument function (\\\\\\\"\\\", \
+  RowBox[{"NIntegrate", "::", "\<\"precw\"\>"}], ":", 
+  " ", "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"The precision of the argument \
+function (\\\\\\\"\\\", \
 \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\\(\\(p\\^2\\\\ \\@\\(1.`*^-6 + \
 p\\^2\\)\\)\\/\\(1 + \[ExponentialE]\\^\\(\\(\\(-0.002`\\)\\) + \\@\\(1.`*^-6 \
 + \\(\\(Power[\\(\\(\[LeftSkeleton] 2 \
@@ -326,33 +325,29 @@ ButtonData:>\\\"paclet:ref/message/General/precw\\\", ButtonNote -> \
 
 Cell[BoxData[
  RowBox[{
-  RowBox[{"NIntegrate", "::", "\<\"precw\"\>"}], 
-  RowBox[{
-  ":", " "}], "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"The precision of the \
-argument function (\\\\\\\"\\\", \
-\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\\(p\\^4\\/\\(3\\\\ \\(\\((1 + \
-\[ExponentialE]\\^\\(\\(\\(-0.002`\\)\\) + \\@\\(1.`*^-6 + \\(\\(Power[\\(\\(\
-\[LeftSkeleton] 2 \[RightSkeleton]\\)\\)]\\)\\)\\)\\))\\)\\)\\\\ \
-\\@\\(1.`*^-6 + p\\^2\\)\\)\\), \
-\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\") is less than \
-WorkingPrecision (\\\\\\\"\\\", \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\
-\\(18.`\\), \
-\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\").\\\\\\\"\\\", \
-\\\"MT\\\"]\\) \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", \
-ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
-ButtonData:>\\\"paclet:ref/message/General/precw\\\", ButtonNote -> \
-\\\"NIntegrate::precw\\\"]\\)\"\>"}]], "Message", "MSG",
+  RowBox[{"NIntegrate", "::", "\<\"precw\"\>"}], ":", 
+  " ", "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"The precision of the argument \
+function (\\\\\\\"\\\", \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\\(p\\^4\
+\\/\\(3\\\\ \\(\\((1 + \[ExponentialE]\\^\\(\\(\\(-0.002`\\)\\) + \
+\\@\\(1.`*^-6 + \\(\\(Power[\\(\\(\[LeftSkeleton] 2 \
+\[RightSkeleton]\\)\\)]\\)\\)\\)\\))\\)\\)\\\\ \\@\\(1.`*^-6 + \
+p\\^2\\)\\)\\), \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\") is \
+less than WorkingPrecision (\\\\\\\"\\\", \
+\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\\(18.`\\), \\\"MT\\\"]\\)\
+\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\").\\\\\\\"\\\", \\\"MT\\\"]\\) \\!\\(\
+\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/General/precw\\\", \
+ButtonNote -> \\\"NIntegrate::precw\\\"]\\)\"\>"}]], "Message", "MSG",
  CellChangeTimes->{3.529856106223386*^9, 3.529858491606441*^9, 
   3.529858646859302*^9, 3.5298648487097483`*^9, 3.529927928867777*^9}],
 
 Cell[BoxData[
  RowBox[{
-  RowBox[{"General", "::", "\<\"stop\"\>"}], 
-  RowBox[{
-  ":", " "}], "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"Further output of \\\\\\\"\\\
-\", \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\\(NIntegrate :: \\\"precw\\\
-\"\\), \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\" will be \
-suppressed during this calculation.\\\\\\\"\\\", \\\"MT\\\"]\\) \
+  RowBox[{"General", "::", "\<\"stop\"\>"}], ":", 
+  " ", "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"Further output of \\\\\\\"\\\", \
+\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\\(NIntegrate :: \
+\\\"precw\\\"\\), \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\" will \
+be suppressed during this calculation.\\\\\\\"\\\", \\\"MT\\\"]\\) \
 \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
 ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/General/stop\\\", \
 ButtonNote -> \\\"General::stop\\\"]\\)\"\>"}]], "Message", "MSG",
@@ -361,9 +356,8 @@ ButtonNote -> \\\"General::stop\\\"]\\)\"\>"}]], "Message", "MSG",
 
 Cell[BoxData[
  RowBox[{
-  RowBox[{"NIntegrate", "::", "\<\"inumr\"\>"}], 
-  RowBox[{
-  ":", " "}], "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"The integrand \\\\\\\"\\\", \
+  RowBox[{"NIntegrate", "::", "\<\"inumr\"\>"}], ":", 
+  " ", "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"The integrand \\\\\\\"\\\", \
 \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\\(p\\^2\\/\\(1 + \
 \[ExponentialE]\\^\\(\\(\\(-mot2\\)\\) - psi2 + \\@\\(\\(\\(Power[\\(\\(\
 \[LeftSkeleton] 2 \[RightSkeleton]\\)\\)]\\)\\) + \\(\\(Times[\\(\\(\
@@ -381,9 +375,8 @@ ButtonData:>\\\"paclet:ref/message/NIntegrate/inumr\\\", ButtonNote -> \
 
 Cell[BoxData[
  RowBox[{
-  RowBox[{"NIntegrate", "::", "\<\"inumr\"\>"}], 
-  RowBox[{
-  ":", " "}], "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"The integrand \\\\\\\"\\\", \
+  RowBox[{"NIntegrate", "::", "\<\"inumr\"\>"}], ":", 
+  " ", "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"The integrand \\\\\\\"\\\", \
 \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\\(p\\^2\\/\\(1 + \
 \[ExponentialE]\\^\\(\\(\\(-mot2\\)\\) - psi2 + \\@\\(\\(\\(Power[\\(\\(\
 \[LeftSkeleton] 2 \[RightSkeleton]\\)\\)]\\)\\) + \\(\\(Times[\\(\\(\
@@ -401,9 +394,8 @@ ButtonData:>\\\"paclet:ref/message/NIntegrate/inumr\\\", ButtonNote -> \
 
 Cell[BoxData[
  RowBox[{
-  RowBox[{"NIntegrate", "::", "\<\"inumr\"\>"}], 
-  RowBox[{
-  ":", " "}], "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"The integrand \\\\\\\"\\\", \
+  RowBox[{"NIntegrate", "::", "\<\"inumr\"\>"}], ":", 
+  " ", "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"The integrand \\\\\\\"\\\", \
 \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\\(p\\^2\\/\\(1 + \
 \[ExponentialE]\\^\\(\\(\\(-mot2\\)\\) - psi2 + \\@\\(\\(\\(Power[\\(\\(\
 \[LeftSkeleton] 2 \[RightSkeleton]\\)\\)]\\)\\) + \\(\\(Times[\\(\\(\
@@ -421,12 +413,11 @@ ButtonData:>\\\"paclet:ref/message/NIntegrate/inumr\\\", ButtonNote -> \
 
 Cell[BoxData[
  RowBox[{
-  RowBox[{"General", "::", "\<\"stop\"\>"}], 
-  RowBox[{
-  ":", " "}], "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"Further output of \\\\\\\"\\\
-\", \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\\(NIntegrate :: \\\"inumr\\\
-\"\\), \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\" will be \
-suppressed during this calculation.\\\\\\\"\\\", \\\"MT\\\"]\\) \
+  RowBox[{"General", "::", "\<\"stop\"\>"}], ":", 
+  " ", "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"Further output of \\\\\\\"\\\", \
+\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\\(NIntegrate :: \
+\\\"inumr\\\"\\), \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\" will \
+be suppressed during this calculation.\\\\\\\"\\\", \\\"MT\\\"]\\) \
 \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
 ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/General/stop\\\", \
 ButtonNote -> \\\"General::stop\\\"]\\)\"\>"}]], "Message", "MSG",
@@ -844,8 +835,10 @@ Cell[BoxData["\<\"partmath.dat\"\>"], "Output",
 }, Open  ]]
 },
 WindowSize->{1014, 750},
-WindowMargins->{{Automatic, -1713}, {Automatic, 0}},
-FrontEndVersion->"7.0 for Linux x86 (64-bit) (February 25, 2009)",
+WindowMargins->{{Automatic, 0}, {Automatic, 0}},
+PrivateNotebookOptions->{"VersionedStylesheet"->{"Default.nb"[8.] -> False}},
+FrontEndVersion->"10.0 for Mac OS X x86 (32-bit, 64-bit Kernel) (December 4, \
+2014)",
 StyleDefinitions->"Default.nb"
 ]
 (* End of Notebook Content *)
@@ -859,30 +852,30 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
-Cell[545, 20, 345, 9, 32, "Input"],
-Cell[893, 31, 528, 16, 32, "Input"],
-Cell[1424, 49, 601, 18, 32, "Input"],
-Cell[2028, 69, 806, 24, 32, "Input"],
-Cell[2837, 95, 863, 26, 32, "Input"],
-Cell[3703, 123, 1196, 35, 77, "Input"],
-Cell[4902, 160, 627, 18, 32, "Input"],
-Cell[5532, 180, 765, 21, 32, "Input"],
-Cell[6300, 203, 625, 18, 32, "Input"],
+Cell[545, 20, 345, 9, 28, "Input"],
+Cell[893, 31, 528, 16, 28, "Input"],
+Cell[1424, 49, 601, 18, 28, "Input"],
+Cell[2028, 69, 806, 24, 28, "Input"],
+Cell[2837, 95, 863, 26, 28, "Input"],
+Cell[3703, 123, 1196, 35, 63, "Input"],
+Cell[4902, 160, 627, 18, 28, "Input"],
+Cell[5532, 180, 765, 21, 28, "Input"],
+Cell[6300, 203, 625, 18, 28, "Input"],
 Cell[CellGroupData[{
-Cell[6950, 225, 2259, 59, 77, "Input"],
-Cell[9212, 286, 1004, 17, 64, "Message"],
-Cell[10219, 305, 1043, 19, 70, "Message"],
-Cell[11265, 326, 1057, 19, 112, "Message"],
-Cell[12325, 347, 726, 12, 24, "Message"],
-Cell[13054, 361, 1127, 18, 100, "Message"],
-Cell[14184, 381, 1125, 18, 100, "Message"],
-Cell[15312, 401, 1125, 18, 100, "Message"],
-Cell[16440, 421, 726, 12, 24, "Message"],
-Cell[17169, 435, 19321, 394, 731, "Output"]
+Cell[6950, 225, 2259, 59, 63, "Input"],
+Cell[9212, 286, 993, 17, 62, "Message"],
+Cell[10208, 305, 1030, 18, 67, "Message"],
+Cell[11241, 325, 1040, 16, 82, "Message"],
+Cell[12284, 343, 713, 11, 24, "Message"],
+Cell[13000, 356, 1114, 17, 72, "Message"],
+Cell[14117, 375, 1112, 17, 72, "Message"],
+Cell[15232, 394, 1112, 17, 72, "Message"],
+Cell[16347, 413, 713, 11, 24, "Message"],
+Cell[17063, 426, 19321, 394, 638, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[36527, 834, 194, 4, 32, "Input"],
-Cell[36724, 840, 160, 2, 31, "Output"]
+Cell[36421, 825, 194, 4, 28, "Input"],
+Cell[36618, 831, 160, 2, 28, "Output"]
 }, Open  ]]
 }
 ]

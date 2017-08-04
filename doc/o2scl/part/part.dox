@@ -47,9 +47,9 @@
     
     When \ref o2scl::part::inc_rest_mass is true, antiparticles are
     implemented by choosing the antiparticle chemical potential to be
-    \f$ - \mu \f$, and when inc_rest_mass is false, antiparticles are
-    implemented by choosing the chemical potential of the
-    antiparticles to be \f$ - \mu - 2 m \f$.
+    \f$ - \mu \f$, and when \ref o2scl::part::inc_rest_mass is false,
+    antiparticles are implemented by choosing the chemical potential
+    of the antiparticles to be \f$ - \mu - 2 m \f$.
 
     The thermodynamic identity used to compute the pressure for
     interacting particles is
@@ -136,9 +136,7 @@
     \left(\frac{d s}{d T}\right)_{\mu} \quad .
     \f]
     All other first derivatives of the thermodynamic functions can
-    be written in terms of these three. To see how to compute the
-    specific heat, for example, see the discussion in the documentation
-    of \ref o2scl::part_deriv.
+    be written in terms of these three. 
 
     \hline
     
@@ -207,7 +205,7 @@
     \f]
     and the Maxwell relation above to give
     \f[
-    C_V = \frac{T}{n}
+    c_V = \frac{T}{n}
     \left[ 
     \left(\frac{\partial s}{\partial T}\right)_{\mu,V}
     -\left(\frac{\partial n}{\partial T}\right)_{\mu,V}^2
@@ -342,6 +340,8 @@
     \f[
     c_P = c_V + \frac{T \alpha^2}{n \kappa_T} \, .
     \f]
+
+    \todo I think the expression below only works for fermions
 
     In the case where the particle is interacting, the 
     derivative of the density with respect to the effective mass is

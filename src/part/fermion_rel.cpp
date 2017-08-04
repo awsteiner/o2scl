@@ -518,6 +518,14 @@ double fermion_rel::deg_entropy_fun(double k, fermion &f, double T) {
   } else if (((E-f.nu)/T)<-deg_entropy_fac) {
     double arg=E/T-f.nu/T;
     ret=-k*k*arg*exp(arg);
+    
+    cout << "There may be a typo here." << endl;
+    cout << ret << endl;
+    nx=fermi_function(E,f.nu,T,exp_limit);
+    ret=-k*k*(nx*log(nx)+(1.0-nx)*log(1.0-nx));
+    cout << ret << endl;
+
+    O2SCL_ERR("Degenerate entropy issue.",o2scl::exc_esanity);
   } else {
     double nx=1.0/(1.0+exp(E/T-f.nu/T));
     ret=-k*k*(nx*log(nx)+(1.0-nx)*log(1.0-nx));
@@ -533,21 +541,21 @@ double fermion_rel::deg_entropy_fun(double k, fermion &f, double T) {
   
 double fermion_rel::density_fun(double u, fermion &f, double T) {
 
-  double ret, y, mx;
+  double ret, y, eta;
 
   if (f.inc_rest_mass) {
     y=f.nu/T;
   } else {
     y=(f.nu+f.m)/T;
   }
-  mx=f.ms/T;
+  eta=f.ms/T;
   
-  if (y-mx-u>exp_limit) {
-    ret=(mx+u)*sqrt(u*u+2.0*mx*u);
-  } else if (y>u+exp_limit && mx>u+exp_limit) {
-    ret=(mx+u)*sqrt(u*u+2.0*mx*u)/(exp(mx+u-y)+1.0);
+  if (y-eta-u>exp_limit) {
+    ret=(eta+u)*sqrt(u*u+2.0*eta*u);
+  } else if (y>u+exp_limit && eta>u+exp_limit) {
+    ret=(eta+u)*sqrt(u*u+2.0*eta*u)/(exp(eta+u-y)+1.0);
   } else {
-    ret=(mx+u)*sqrt(u*u+2.0*mx*u)*exp(y)/(exp(mx+u)+exp(y));
+    ret=(eta+u)*sqrt(u*u+2.0*eta*u)*exp(y)/(exp(eta+u)+exp(y));
   }
 
   if (!std::isfinite(ret)) {
@@ -558,19 +566,19 @@ double fermion_rel::density_fun(double u, fermion &f, double T) {
 }
 
 double fermion_rel::energy_fun(double u, fermion &f, double T) {
-  double ret, y, mx;
+  double ret, y, eta;
 
-  mx=f.ms/T;
+  eta=f.ms/T;
 
   if (f.inc_rest_mass) {
     y=f.nu/T;
   } else {
     y=(f.nu+f.m)/T;
   }
-  if (y>u+exp_limit && mx>u+exp_limit) {
-    ret=(mx+u)*(mx+u)*sqrt(u*u+2.0*mx*u)/(exp(mx+u-y)+1.0);
+  if (y>u+exp_limit && eta>u+exp_limit) {
+    ret=(eta+u)*(eta+u)*sqrt(u*u+2.0*eta*u)/(exp(eta+u-y)+1.0);
   } else {
-    ret=(mx+u)*(mx+u)*sqrt(u*u+2.0*mx*u)*exp(y)/(exp(mx+u)+exp(y));
+    ret=(eta+u)*(eta+u)*sqrt(u*u+2.0*eta*u)*exp(y)/(exp(eta+u)+exp(y));
   }
  
   if (!std::isfinite(ret)) {
@@ -581,18 +589,18 @@ double fermion_rel::energy_fun(double u, fermion &f, double T) {
 }
 
 double fermion_rel::entropy_fun(double u, fermion &f, double T) {
-  double ret, y, mx, term1, term2;
+  double ret, y, eta, term1, term2;
 
   if (f.inc_rest_mass) {
     y=f.nu/T;
   } else {
     y=(f.nu+f.m)/T;
   }
-  mx=f.ms/T;
+  eta=f.ms/T;
 
-  term1=log(1.0+exp(y-mx-u))/(1.0+exp(y-mx-u));
-  term2=log(1.0+exp(mx+u-y))/(1.0+exp(mx+u-y));
-  ret=(mx+u)*sqrt(u*u+2.0*mx*u)*(term1+term2);
+  term1=log(1.0+exp(y-eta-u))/(1.0+exp(y-eta-u));
+  term2=log(1.0+exp(eta+u-y))/(1.0+exp(eta+u-y));
+  ret=(eta+u)*sqrt(u*u+2.0*eta*u)*(term1+term2);
   
   if (!std::isfinite(ret)) {
     return 0.0;

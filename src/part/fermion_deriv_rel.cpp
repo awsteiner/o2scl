@@ -211,20 +211,13 @@ int fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
     if (arg>0.0) {
       ul=sqrt(arg);
     } else {
-      f.n=0.0;
-      f.ed=0.0;
-      f.pr=0.0;
-      f.en=0.0;
-      unc.n=0.0;
-      unc.ed=0.0;
-      unc.pr=0.0;
-      unc.en=0.0;
       O2SCL_ERR2("Zero density in degenerate limit in fermion_deriv_rel::",
 		 "calc_mu(). Variable deg_limit set improperly?",
 		 exc_efailed);
     }
     
-    // Compute the lower limit
+    // Compute the lower limit for the entropy and derivative
+    // integrations
     
     double ll;
     if (f.inc_rest_mass) {
@@ -502,6 +495,14 @@ double fermion_deriv_rel::deg_entropy_fun(double k, fermion_deriv &f,
     // Should this be E/T-nu/T or (E-nu)/T ?
     nm1=-exp(E/T-f.nu/T);
     ret=k*k*nm1*log(-nm1);
+    
+    cout << "There may be a typo here (2)." << endl;
+    cout << ret << endl;
+    nx=fermi_function(E,f.nu,T,exp_limit);
+    ret=-k*k*(nx*log(nx)+(1.0-nx)*log(1.0-nx));
+    cout << ret << endl;
+    
+    O2SCL_ERR("Degenerate entropy issue 2.",o2scl::exc_esanity);
   } else {
     nx=fermi_function(E,f.nu,T,exp_limit);
     if (nx==0.0) ret=0.0;
@@ -519,26 +520,22 @@ double fermion_deriv_rel::deg_entropy_fun(double k, fermion_deriv &f,
 double fermion_deriv_rel::deg_entropy_T_fun(double k, fermion_deriv &f, 
 					    double T) {
   double E, ret;
+  E=gsl_hypot(k,f.ms);
   if (f.inc_rest_mass) {
-    E=gsl_hypot(k,f.ms);
+    double ff=fermi_function(E,f.nu,T,exp_limit);
     if (intl_method==direct) {
-      double ff=fermi_function(E,f.nu,T,exp_limit);
       ret=k*k*ff*(1.0-ff)*pow(E-f.nu,2.0)/pow(T,3.0);
     } else {
       ret=(E-f.nu)/E/T/T*
-	(pow(E,3.0)+3.0*E*k*k-(E*E+k*k)*(f.nu))*
-	fermi_function(E,f.nu,T,exp_limit);
+	(pow(E,3.0)+3.0*E*k*k-(E*E+k*k)*f.nu)*ff;
     }
   } else {
-    E=gsl_hypot(k,f.ms);
+    double ff=fermi_function(E-f.m,f.nu,T,exp_limit);
     if (intl_method==direct) {
-      E-=f.m;
-      double ff=fermi_function(E,f.nu,T,exp_limit);
-      ret=k*k*ff*(1.0-ff)*pow(E-f.nu,2.0)/pow(T,3.0);
+      ret=k*k*ff*(1.0-ff)*pow(E-f.nu-f.m,2.0)/pow(T,3.0);
     } else {
       ret=(E-f.m-f.nu)/E/T/T*
-	(pow(E,3.0)+3.0*E*k*k-(E*E+k*k)*(f.nu+f.m))*
-	fermi_function(E-f.m,f.nu,T,exp_limit);
+	(pow(E,3.0)+3.0*E*k*k-(E*E+k*k)*(f.nu+f.m))*ff;
     }
   }
   return ret;
@@ -551,7 +548,7 @@ double fermion_deriv_rel::deg_density_ms_fun(double k, fermion_deriv &f,
     E=gsl_hypot(k,f.ms);
     if (intl_method==direct) {
       double ff=fermi_function(E,f.nu,T,exp_limit);
-      ret=-k*k*f.ms/(E)/T*ff*(1.0-ff);
+      ret=-k*k*f.ms/E/T*ff*(1.0-ff);
     } else {
       ret=-f.ms*fermi_function(E,f.nu,T,exp_limit);
     }
@@ -1107,7 +1104,10 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
 	}
 
 	if (verbose>1) {
-	  cout << "T,m,mu: " << T << " " << f.m << " " << f.mu << endl;
+	  cout.precision(5);
+	  cout << "T,m,mu,psi,mot: " << T << " " << f.m << " " << f.mu
+	       << " " << psi << " " << mot << endl;
+	  cout.precision(6);
 	  cout << "n,ed,pr,en,dndT,dndmu,dsdT: " << endl;
 	  cout << "approx.    : " << f.n << " " << f.ed << " " << f.pr << " " 
 	       << f.en << endl;
@@ -1121,6 +1121,7 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
 	  cout << "\t" << bad.dndT << " " << bad.dndmu << " " 
 	       << bad.dsdT << endl;
 	  cout << endl;
+
 	  if (verbose>2) {
 	    char ch;
 	    cin >> ch;

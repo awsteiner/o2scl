@@ -39,7 +39,7 @@
 namespace o2scl {
 #endif
 
-  /** \brief A class holding some useful thermodynamical variables (energy
+  /** \brief A class containing three thermodynamical variables (energy
       density, pressure, entropy density)
   */
   class thermo {
