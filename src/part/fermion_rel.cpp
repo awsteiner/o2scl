@@ -507,7 +507,7 @@ double fermion_rel::deg_entropy_fun(double k, fermion &f, double T) {
   
   double E=gsl_hypot(k,f.ms), ret;
   if (!f.inc_rest_mass) E-=f.m;
-  
+
   // If the argument to the exponential is really small, then the
   // value of the integrand is just zero
   if (((E-f.nu)/T)<-exp_limit) {
@@ -517,15 +517,7 @@ double fermion_rel::deg_entropy_fun(double k, fermion &f, double T) {
     // alternative:
   } else if (((E-f.nu)/T)<-deg_entropy_fac) {
     double arg=E/T-f.nu/T;
-    ret=-k*k*arg*exp(arg);
-    
-    cout << "There may be a typo here." << endl;
-    cout << ret << endl;
-    double nx=fermi_function(E,f.nu,T,exp_limit);
-    ret=-k*k*(nx*log(nx)+(1.0-nx)*log(1.0-nx));
-    cout << ret << endl;
-
-    O2SCL_ERR("Degenerate entropy issue.",o2scl::exc_esanity);
+    ret=-k*k*(-1.0+arg)*exp(arg);
   } else {
     double nx=1.0/(1.0+exp(E/T-f.nu/T));
     ret=-k*k*(nx*log(nx)+(1.0-nx)*log(1.0-nx));

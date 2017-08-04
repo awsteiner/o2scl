@@ -701,6 +701,7 @@ int main(void) {
   snf.method=fermion_deriv_rel::direct;
   double val2=snf.deriv_calibrate(sfx,1,"../../data/o2scl/fermion_cal2.o2");
   cout << "Deriv_Calibrate: " << val2 << endl;
+  t.test_rel(val2,0.0,8.0e-6,"deriv_calibrate direct");
 
   cout << "----------------------------------------------------" << endl;
   cout << "Function deriv_calibrate() method=by_parts." << endl;
@@ -710,6 +711,7 @@ int main(void) {
   snf.method=fermion_deriv_rel::by_parts;
   double val3=snf.deriv_calibrate(sfx,1,"../../data/o2scl/fermion_cal2.o2");
   cout << "Deriv_Calibrate: " << val3 << endl;
+  t.test_rel(val3,0.0,1.0e-6,"deriv_calibrate by parts");
   cout << endl;
 
   cout << "----------------------------------------------------" << endl;
@@ -720,6 +722,7 @@ int main(void) {
   snf.method=fermion_deriv_rel::automatic;
   double val4=snf.deriv_calibrate(sfx,1,"../../data/o2scl/fermion_cal2.o2");
   cout << "Deriv_Calibrate: " << val4 << endl;
+  t.test_rel(val4,0.0,1.0e-6,"deriv_calibrate auto");
   cout << endl;
 
   cout << "----------------------------------------------------" << endl;

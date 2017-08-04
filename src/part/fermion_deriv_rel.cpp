@@ -486,23 +486,8 @@ double fermion_deriv_rel::deg_entropy_fun(double k, fermion_deriv &f,
   
   // If the argument to the exponential is really small, then the
   // value of the integrand is just zero
-  if (((E-f.nu)/(T))<-200.0) {
+  if (((E-f.nu)/(T))<-exp_limit) {
     ret=0.0;
-    // Otherwise, if the argument to the exponential is still small,
-    // then addition of 1 makes us lose precision, so we use an
-    // alternative:
-  } else if (((E-f.nu)/T)<-exp_limit) {
-    // Should this be E/T-nu/T or (E-nu)/T ?
-    nm1=-exp(E/T-f.nu/T);
-    ret=k*k*nm1*log(-nm1);
-    
-    cout << "There may be a typo here (2)." << endl;
-    cout << ret << endl;
-    nx=fermi_function(E,f.nu,T,exp_limit);
-    ret=-k*k*(nx*log(nx)+(1.0-nx)*log(1.0-nx));
-    cout << ret << endl;
-    
-    O2SCL_ERR("Degenerate entropy issue 2.",o2scl::exc_esanity);
   } else {
     nx=fermi_function(E,f.nu,T,exp_limit);
     if (nx==0.0) ret=0.0;
