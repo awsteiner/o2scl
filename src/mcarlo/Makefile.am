@@ -2,14 +2,9 @@
 # Basic variables
 # ------------------------------------------------------------
 
-if O2SCL_OPENMP
 TEST_VAR = mcarlo_plain.scr mcarlo_miser.scr mcarlo_vegas.scr \
-	expval.scr rng_gsl.scr
-#mcmc_para.scr
-else
-TEST_VAR = mcarlo_plain.scr mcarlo_miser.scr mcarlo_vegas.scr \
-	expval.scr rng_gsl.scr 
-endif
+	expval.scr rng_gsl.scr mcmc_para.scr
+
 MCARLO_SRCS = expval.cpp rng_gsl.cpp
 
 HEADER_VARS = mcarlo_miser.h mcarlo_plain.h mcarlo_vegas.h mcarlo.h \
@@ -76,8 +71,7 @@ pkginclude_HEADERS = $(HEADER_VARS)
 
 if O2SCL_OPENMP
 check_PROGRAMS = mcarlo_miser_ts mcarlo_vegas_ts mcarlo_plain_ts expval_ts \
-	rng_gsl_ts
-#mcmc_para_ts
+	rng_gsl_ts mcmc_para_ts
 else
 check_PROGRAMS = mcarlo_miser_ts mcarlo_vegas_ts mcarlo_plain_ts expval_ts \
 	rng_gsl_ts 
@@ -96,10 +90,8 @@ rng_gsl_ts_LDADD = $(VCHECK_LIBS)
 mcarlo_plain_ts_LDADD = $(VCHECK_LIBS)
 mcarlo_vegas_ts_LDADD = $(VCHECK_LIBS)
 expval_ts_LDADD = $(VCHECK_LIBS)
-#if O2SCL_OPENMP
-#mcmc_para_ts_LDFLAGS = -fopenmp
-#mcmc_para_ts_LDADD = $(VCHECK_LIBS)
-#endif
+mcmc_para_ts_LDFLAGS = -fopenmp
+mcmc_para_ts_LDADD = $(VCHECK_LIBS)
 
 mcarlo_miser.scr: mcarlo_miser_ts$(EXEEXT)
 	./mcarlo_miser_ts$(EXEEXT) > mcarlo_miser.scr
@@ -111,19 +103,15 @@ mcarlo_vegas.scr: mcarlo_vegas_ts$(EXEEXT)
 	./mcarlo_vegas_ts$(EXEEXT) > mcarlo_vegas.scr
 expval.scr: expval_ts$(EXEEXT)
 	./expval_ts$(EXEEXT) > expval.scr
-#if O2SCL_OPENMP
-#mcmc_para.scr: mcmc_para_ts$(EXEEXT)
-#	./mcmc_para_ts$(EXEEXT) -exit > mcmc_para.scr
-#endif
+mcmc_para.scr: mcmc_para_ts$(EXEEXT)
+	./mcmc_para_ts$(EXEEXT) -exit > mcmc_para.scr
 
 mcarlo_miser_ts_SOURCES = mcarlo_miser_ts.cpp
 rng_gsl_ts_SOURCES = rng_gsl_ts.cpp
 mcarlo_plain_ts_SOURCES = mcarlo_plain_ts.cpp
 mcarlo_vegas_ts_SOURCES = mcarlo_vegas_ts.cpp
 expval_ts_SOURCES = expval_ts.cpp
-#if O2SCL_OPENMP
-#mcmc_para_ts_SOURCES = mcmc_para_ts.cpp
-#endif
+mcmc_para_ts_SOURCES = mcmc_para_ts.cpp
 
 # ------------------------------------------------------------
 # Library o2scl_mcarlo

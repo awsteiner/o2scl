@@ -405,373 +405,693 @@ namespace o2scl {
 		<< "compilation. Setting n_threads to 1."
 		<< std::endl;
       n_threads=1;
+    }
 #endif
 
-      // Storage for return values from each thread
-      std::vector<int> func_ret(n_threads), meas_ret(n_threads);
+    // Storage for return values from each thread
+    std::vector<int> func_ret(n_threads), meas_ret(n_threads);
       
-      // Fix the number of walkers if it is too small
-      if (aff_inv) {
-	if (n_walk<=1) n_walk=2;
-	if (n_walk<n_threads) n_walk=n_threads;
-      }
+    // Fix the number of walkers if it is too small
+    if (aff_inv) {
+      if (n_walk<=1) n_walk=2;
+      if (n_walk<n_threads) n_walk=n_threads;
+    }
     
-      // Fix 'step_fac' if it's less than or equal to zero
-      if (step_fac<=0.0) {
-	if (aff_inv) step_fac=2.0;
-	else step_fac=10.0;
-      }
+    // Fix 'step_fac' if it's less than or equal to zero
+    if (step_fac<=0.0) {
+      if (aff_inv) step_fac=2.0;
+      else step_fac=10.0;
+    }
     
-      // Set RNGs with a different seed for each thread and rank
-      rg.resize(n_threads);
-      unsigned long int seed=time(0);
-      if (this->user_seed!=0) {
-	seed=this->user_seed;
-      }
-      for(size_t it=0;it<n_threads;it++) {
-	seed*=(mpi_rank*n_threads+it+1);
-	rg[it].set_seed(seed);
-      }
+    // Set RNGs with a different seed for each thread and rank
+    rg.resize(n_threads);
+    unsigned long int seed=time(0);
+    if (this->user_seed!=0) {
+      seed=this->user_seed;
+    }
+    for(size_t it=0;it<n_threads;it++) {
+      seed*=(mpi_rank*n_threads+it+1);
+      rg[it].set_seed(seed);
+    }
     
-      // Keep track of successful and failed MH moves
-      n_accept.resize(n_threads);
-      n_reject.resize(n_threads);
-      for(size_t it=0;it<n_threads;it++) {
-	n_accept[it]=0;
-	n_reject[it]=0;
-      }
+    // Keep track of successful and failed MH moves
+    n_accept.resize(n_threads);
+    n_reject.resize(n_threads);
+    for(size_t it=0;it<n_threads;it++) {
+      n_accept[it]=0;
+      n_reject[it]=0;
+    }
 
-      // Warm-up flag, not to be confused with 'n_warm_up', i.e. the
-      // number of warm_up iterations.
-      warm_up=true;
-      if (n_warm_up==0) warm_up=false;
+    // Warm-up flag, not to be confused with 'n_warm_up', i.e. the
+    // number of warm_up iterations.
+    warm_up=true;
+    if (n_warm_up==0) warm_up=false;
 
-      // Storage size required
-      size_t ssize=n_walk*n_threads;
+    // Storage size required
+    size_t ssize=n_walk*n_threads;
 
-      // Allocate current point and current weight
-      current.resize(ssize);
-      std::vector<double> w_current(ssize);
-      for(size_t i=0;i<ssize;i++) {
-	current[i].resize(nparams);
-	w_current[i]=0.0;
-      }
+    // Allocate current point and current weight
+    current.resize(ssize);
+    std::vector<double> w_current(ssize);
+    for(size_t i=0;i<ssize;i++) {
+      current[i].resize(nparams);
+      w_current[i]=0.0;
+    }
 
-      // Allocate ret_value_counts and curr_walker
-      ret_value_counts.resize(n_threads);
-      curr_walker.resize(n_threads);
+    // Allocate ret_value_counts and curr_walker
+    ret_value_counts.resize(n_threads);
+    curr_walker.resize(n_threads);
 
-      // Initialize data and switch arrays
-      data_arr.resize(2*ssize);
-      switch_arr.resize(ssize);
-      for(size_t i=0;i<switch_arr.size();i++) switch_arr[i]=false;
+    // Initialize data and switch arrays
+    data_arr.resize(2*ssize);
+    switch_arr.resize(ssize);
+    for(size_t i=0;i<switch_arr.size();i++) switch_arr[i]=false;
     
-      // Next point and next weight for each thread
-      std::vector<vec_t> next(n_threads);
-      for(size_t it=0;it<n_threads;it++) {
-	next[it].resize(nparams);
-      }
-      std::vector<double> w_next(n_threads);
+    // Next point and next weight for each thread
+    std::vector<vec_t> next(n_threads);
+    for(size_t it=0;it<n_threads;it++) {
+      next[it].resize(nparams);
+    }
+    std::vector<double> w_next(n_threads);
 
-      // Best point over all threads
-      vec_t best(nparams);
-      double w_best;
+    // Best point over all threads
+    vec_t best(nparams);
+    double w_best;
 
-      // Generally, these flags are are true for any thread if func_ret
-      // or meas_ret is equal to mcmc_done.
-      std::vector<bool> mcmc_done_flag(n_threads);
-      for(size_t it=0;it<n_threads;it++) {
-	mcmc_done_flag[it]=false;
-      }
+    // Generally, these flags are are true for any thread if func_ret
+    // or meas_ret is equal to mcmc_done.
+    std::vector<bool> mcmc_done_flag(n_threads);
+    for(size_t it=0;it<n_threads;it++) {
+      mcmc_done_flag[it]=false;
+    }
 	  
-      // Proposal weight
-      double q_prop;
+    // Proposal weight
+    double q_prop;
     
-      // Run mcmc_init() function. The initial point, stored in
-      // current[0] can be modified by this function and the local
-      // variable 'init' is not accessible to the mcmc_init() function.
-      int init_ret=mcmc_init();
-      if (init_ret!=0) {
-	O2SCL_ERR("Function mcmc_init() failed in mcmc_base::mcmc().",
-		  o2scl::exc_einval);
-	return init_ret;
-      }
+    // Run mcmc_init() function. The initial point, stored in
+    // current[0] can be modified by this function and the local
+    // variable 'init' is not accessible to the mcmc_init() function.
+    int init_ret=mcmc_init();
+    if (init_ret!=0) {
+      O2SCL_ERR("Function mcmc_init() failed in mcmc_base::mcmc().",
+		o2scl::exc_einval);
+      return init_ret;
+    }
 
-      // ---------------------------------------------------
-      // Initial verbose output
+    // ---------------------------------------------------
+    // Initial verbose output
     
-      if (verbose>=1) {
-	if (aff_inv) {
-	  scr_out << "mcmc: Affine-invariant step, n_params="
-		  << nparams << ", n_walk=" << n_walk
-		  << ", n_threads=" << n_threads << ", n_ranks="
-		  << mpi_size << std::endl;
-	} else if (pd_mode==true) {
-	  scr_out << "mcmc: With proposal distribution, n_params="
-		  << nparams << ", n_threads=" << n_threads << ", n_ranks="
-		  << mpi_size << std::endl;
-	} else {
-	  scr_out << "mcmc: Random-walk w/uniform dist., n_params="
-		  << nparams << ", n_threads=" << n_threads << ", n_ranks="
-		  << mpi_size << std::endl;
-	}
-      }
-    
-      // --------------------------------------------------------
-      // Compute initial point and initial weights
-
-      // --------------------------------------------------------
-      // Initial point and weights for affine-invariant sampling
-    
+    if (verbose>=1) {
       if (aff_inv) {
+	scr_out << "mcmc: Affine-invariant step, n_params="
+		<< nparams << ", n_walk=" << n_walk
+		<< ", n_threads=" << n_threads << ", n_ranks="
+		<< mpi_size << std::endl;
+      } else if (pd_mode==true) {
+	scr_out << "mcmc: With proposal distribution, n_params="
+		<< nparams << ", n_threads=" << n_threads << ", n_ranks="
+		<< mpi_size << std::endl;
+      } else {
+	scr_out << "mcmc: Random-walk w/uniform dist., n_params="
+		<< nparams << ", n_threads=" << n_threads << ", n_ranks="
+		<< mpi_size << std::endl;
+      }
+    }
+    
+    // --------------------------------------------------------
+    // Compute initial point and initial weights
+
+    // --------------------------------------------------------
+    // Initial point and weights for affine-invariant sampling
+    
+    if (aff_inv) {
       
 #ifdef O2SCL_OPENMP
 #pragma omp parallel default(shared)
 #endif
-	{
+      {
 #ifdef O2SCL_OPENMP
 #pragma omp for
 #endif
-	  for(size_t it=0;it<n_threads;it++) {
+	for(size_t it=0;it<n_threads;it++) {
 	  
-	    // Initialize each walker in turn
-	    for(curr_walker[it]=0;curr_walker[it]<n_walk &&
-		  mcmc_done_flag[it]==false;curr_walker[it]++) {
+	  // Initialize each walker in turn
+	  for(curr_walker[it]=0;curr_walker[it]<n_walk &&
+		mcmc_done_flag[it]==false;curr_walker[it]++) {
 
-	      // Index in storage
-	      size_t sindex=n_walk*it+curr_walker[it];
+	    // Index in storage
+	    size_t sindex=n_walk*it+curr_walker[it];
 	    
-	      size_t init_iters=0;
-	      bool done=false;
+	    size_t init_iters=0;
+	    bool done=false;
 
-	      // If we already have a guess, try to use that
-	      if (sindex<initial_points.size()) {
+	    // If we already have a guess, try to use that
+	    if (sindex<initial_points.size()) {
 
-		// Copy from the initial points array
-		for(size_t ipar=0;ipar<nparams;ipar++) {
-		  current[sindex][ipar]=initial_points[sindex][ipar];
+	      // Copy from the initial points array
+	      for(size_t ipar=0;ipar<nparams;ipar++) {
+		current[sindex][ipar]=initial_points[sindex][ipar];
+	      }
+	      
+	      // Compute the weight
+	      func_ret[it]=func[it](nparams,current[sindex],
+				    w_current[sindex],data_arr[sindex]);
+	      
+	      if (func_ret[it]==mcmc_done) {
+		mcmc_done_flag[it]=true;
+	      } else if (func_ret[it]==o2scl::success) {
+
+		// If we have a good point, update ret_value_counts
+		// and call the measurement function 
+		if (func_ret[it]>=0 &&
+		    func_ret[it]<((int)ret_value_counts[it].size())) {
+		  ret_value_counts[it][func_ret[it]]++;
 		}
-	      
-		// Compute the weight
-		func_ret[it]=func[it](nparams,current[sindex],
-				      w_current[sindex],data_arr[sindex]);
-	      
-		if (func_ret[it]==mcmc_done) {
+		meas_ret[it]=meas[it](current[sindex],w_current[sindex],
+				      curr_walker[it],true,data_arr[sindex]);
+		if (meas_ret[it]==mcmc_done) {
 		  mcmc_done_flag[it]=true;
-		} else if (func_ret[it]==o2scl::success) {
+		}
+		done=true;
+	      }
+	    }
 
-		  // If we have a good point, update ret_value_counts
-		  // and call the measurement function 
+	    while (!done && !mcmc_done_flag[it]) {
+	      
+	      // Make a perturbation from the initial point
+	      for(size_t ipar=0;ipar<nparams;ipar++) {
+		do {
+		  current[sindex][ipar]=
+		    initial_points[sindex % initial_points.size()][ipar]+
+		    (rg[it].random()*2.0-1.0)*
+		    (high[ipar]-low[ipar])*ai_initial_step;
+		} while (current[sindex][ipar]>high[ipar] ||
+			 current[sindex][ipar]<low[ipar]);
+	      }
+	      
+	      // Compute the weight
+	      func_ret[it]=func[it](nparams,current[sindex],
+				    w_current[sindex],data_arr[sindex]);
+		
+	      // ------------------------------------------------
+	      
+	      // Increment iteration count
+	      init_iters++;
+	      
+	      if (func_ret[it]==mcmc_done) {
+		mcmc_done_flag[it]=true;
+	      } else {
+		// If we have a good point, update ret_value_counts,
+		// call the measurement function and stop the loop
+		if (func_ret[it]==o2scl::success) {
 		  if (func_ret[it]>=0 &&
 		      func_ret[it]<((int)ret_value_counts[it].size())) {
 		    ret_value_counts[it][func_ret[it]]++;
 		  }
-		  meas_ret[it]=meas[it](current[sindex],w_current[sindex],
-					curr_walker[it],true,data_arr[sindex]);
-		  if (meas_ret[it]==mcmc_done) {
+		  if (meas_ret[it]!=mcmc_done) {
+		    meas_ret[it]=meas[it](current[sindex],w_current[sindex],
+					  curr_walker[it],true,
+					  data_arr[sindex]);
+		  } else {
 		    mcmc_done_flag[it]=true;
 		  }
 		  done=true;
-		}
-	      }
-
-	      while (!done && !mcmc_done_flag[it]) {
-	      
-		// Make a perturbation from the initial point
-		for(size_t ipar=0;ipar<nparams;ipar++) {
-		  do {
-		    current[sindex][ipar]=
-		      initial_points[sindex % initial_points.size()][ipar]+
-		      (rg[it].random()*2.0-1.0)*
-		      (high[ipar]-low[ipar])*ai_initial_step;
-		  } while (current[sindex][ipar]>high[ipar] ||
-			   current[sindex][ipar]<low[ipar]);
-		}
-	      
-		// Compute the weight
-		func_ret[it]=func[it](nparams,current[sindex],
-				      w_current[sindex],data_arr[sindex]);
-		
-		// ------------------------------------------------
-	      
-		// Increment iteration count
-		init_iters++;
-	      
-		if (func_ret[it]==mcmc_done) {
-		  mcmc_done_flag[it]=true;
-		} else {
-		  // If we have a good point, update ret_value_counts,
-		  // call the measurement function and stop the loop
-		  if (func_ret[it]==o2scl::success) {
-		    if (func_ret[it]>=0 &&
-			func_ret[it]<((int)ret_value_counts[it].size())) {
-		      ret_value_counts[it][func_ret[it]]++;
-		    }
-		    if (meas_ret[it]!=mcmc_done) {
-		      meas_ret[it]=meas[it](current[sindex],w_current[sindex],
-					    curr_walker[it],true,
-					    data_arr[sindex]);
-		    } else {
-		      mcmc_done_flag[it]=true;
-		    }
-		    done=true;
-		  } else if (init_iters>max_bad_steps) {
-		    O2SCL_ERR2("Initial walkers failed in ",
-			       "mcmc_para_base::mcmc().",o2scl::exc_einval);
-		  }
+		} else if (init_iters>max_bad_steps) {
+		  O2SCL_ERR2("Initial walkers failed in ",
+			     "mcmc_para_base::mcmc().",o2scl::exc_einval);
 		}
 	      }
 	    }
 	  }
 	}
-	// End of parallel region
+      }
+      // End of parallel region
 
-	// Stop early if mcmc_done was returned
-	bool stop_early=false;
-	for(size_t it=0;it<n_threads;it++) {
-	  if (mcmc_done_flag[it]==true) {
-	    if (verbose>=1) {
-	      scr_out << "mcmc (" << it << "): Returned mcmc_done "
-		      << "(initial; ai)." << std::endl;
-	    }
-	    stop_early=true;
+      // Stop early if mcmc_done was returned
+      bool stop_early=false;
+      for(size_t it=0;it<n_threads;it++) {
+	if (mcmc_done_flag[it]==true) {
+	  if (verbose>=1) {
+	    scr_out << "mcmc (" << it << "): Returned mcmc_done "
+		    << "(initial; ai)." << std::endl;
+	  }
+	  stop_early=true;
+	}
+      }
+      if (stop_early) {
+	mcmc_cleanup();
+	return 0;
+      }
+
+      // Set initial values for best point
+      w_best=w_current[0];
+      size_t best_index=0;
+      for(size_t it=0;it<n_threads;it++) {
+	for(curr_walker[it]=0;curr_walker[it]<n_walk;curr_walker[it]++) {
+	  size_t sindex=n_walk*it+curr_walker[it];
+	  if (w_current[sindex]>w_current[0]) {
+	    best_index=sindex;
+	    w_best=w_current[sindex];
 	  }
 	}
-	if (stop_early) {
-	  mcmc_cleanup();
-	  return 0;
-	}
+      }
+      best=current[best_index];
+      best_point(best,w_best,data_arr[best_index]);
 
-	// Set initial values for best point
-	w_best=w_current[0];
-	size_t best_index=0;
+      // Verbose output
+      if (verbose>=2) {
 	for(size_t it=0;it<n_threads;it++) {
 	  for(curr_walker[it]=0;curr_walker[it]<n_walk;curr_walker[it]++) {
 	    size_t sindex=n_walk*it+curr_walker[it];
-	    if (w_current[sindex]>w_current[0]) {
-	      best_index=sindex;
-	      w_best=w_current[sindex];
-	    }
+	    scr_out.precision(4);
+	    scr_out << "mcmc (" << it << "): i_walk: ";
+	    scr_out.width((int)(1.0+log10((double)(n_walk-1))));
+	    scr_out << curr_walker[it] << " log_wgt: "
+		    << w_current[sindex] << " (initial; ai)" << std::endl;
+	    scr_out.precision(6);
 	  }
 	}
-	best=current[best_index];
-	best_point(best,w_best,data_arr[best_index]);
+      }
 
-	// Verbose output
-	if (verbose>=2) {
-	  for(size_t it=0;it<n_threads;it++) {
-	    for(curr_walker[it]=0;curr_walker[it]<n_walk;curr_walker[it]++) {
-	      size_t sindex=n_walk*it+curr_walker[it];
-	      scr_out.precision(4);
-	      scr_out << "mcmc (" << it << "): i_walk: ";
-	      scr_out.width((int)(1.0+log10((double)(n_walk-1))));
-	      scr_out << curr_walker[it] << " log_wgt: "
-		      << w_current[sindex] << " (initial; ai)" << std::endl;
-	      scr_out.precision(6);
-	    }
-	  }
-	}
+      // End of 'if (aff_inv)'
+    } else {
 
-	// End of 'if (aff_inv)'
-      } else {
+      // --------------------------------------------------------
+      // Initial point and weights when aff_inv is false .
 
-	// --------------------------------------------------------
-	// Initial point and weights when aff_inv is false .
-
-	// Note that this value is used (e.g. in
-	// mcmc_para_table::add_line() ) even if aff_inv is false, so we
-	// set it to zero here.
-	for(size_t it=0;it<n_threads;it++) {
-	  curr_walker[it]=0;
-	}
+      // Note that this value is used (e.g. in
+      // mcmc_para_table::add_line() ) even if aff_inv is false, so we
+      // set it to zero here.
+      for(size_t it=0;it<n_threads;it++) {
+	curr_walker[it]=0;
+      }
       
-	// Copy from the initial points array
-	for(size_t ipar=0;ipar<nparams;ipar++) {
-	  current[0][ipar]=initial_points[0][ipar];
-	}
+      // Copy from the initial points array
+      for(size_t ipar=0;ipar<nparams;ipar++) {
+	current[0][ipar]=initial_points[0][ipar];
+      }
       
-	// Initial point and weights without stretch-move
+      // Initial point and weights without stretch-move
 
-	func_ret[0]=func[0](nparams,current[0],w_current[0],data_arr[0]);
-	if (func_ret[0]==mcmc_done) {
-	  if (verbose>=1) {
-	    scr_out << "mcmc: Initial point returned mcmc_done."
-		    << std::endl;
-	  }
-	  mcmc_cleanup();
-	  return 0;
+      func_ret[0]=func[0](nparams,current[0],w_current[0],data_arr[0]);
+      if (func_ret[0]==mcmc_done) {
+	if (verbose>=1) {
+	  scr_out << "mcmc: Initial point returned mcmc_done."
+		  << std::endl;
 	}
-	if (func_ret[0]!=o2scl::success) {
-	  if (err_nonconv) {
-	    O2SCL_ERR("Initial weight vanished in mcmc_para_base::mcmc().",
-		      o2scl::exc_einval);
-	  }
-	  return 2;
+	mcmc_cleanup();
+	return 0;
+      }
+      if (func_ret[0]!=o2scl::success) {
+	if (err_nonconv) {
+	  O2SCL_ERR("Initial weight vanished in mcmc_para_base::mcmc().",
+		    o2scl::exc_einval);
 	}
+	return 2;
+      }
       
 #ifdef O2SCL_OPENMP
 #pragma omp parallel default(shared)
 #endif
-	{
+      {
 #ifdef O2SCL_OPENMP
 #pragma omp for
 #endif
-	  for(size_t it=0;it<n_threads;it++) {
-	    // Copy the results over from the initial point
-	    if (it!=0) {
-	      func_ret[it]=func_ret[0];
-	      current[it]=current[0];
-	      w_current[it]=w_current[0];
-	      data_arr[it]=data_arr[0];
-	    }
-	    // Update the return value count
-	    if (func_ret[it]>=0 &&
-		func_ret[it]<((int)ret_value_counts[it].size())) {
-	      ret_value_counts[it][func_ret[it]]++;
-	    }
-	    // Call the measurement function	  
-	    meas_ret[it]=meas[it](current[it],w_current[it],0,
-				  true,data_arr[it]);
-	    if (meas_ret[it]==mcmc_done) {
-	      mcmc_done_flag[it]=true;
-	    }
-	  }
-	}
-	// End of parallel region
-      
-	// Stop early if mcmc_done was returned
-	bool stop_early=false;
 	for(size_t it=0;it<n_threads;it++) {
-	  if (mcmc_done_flag[it]==true) {
-	    if (verbose>=1) {
-	      scr_out << "mcmc (" << it << "): Returned mcmc_done "
-		      << "(initial)." << std::endl;
-	    }
-	    stop_early=true;
+	  // Copy the results over from the initial point
+	  if (it!=0) {
+	    func_ret[it]=func_ret[0];
+	    current[it]=current[0];
+	    w_current[it]=w_current[0];
+	    data_arr[it]=data_arr[0];
+	  }
+	  // Update the return value count
+	  if (func_ret[it]>=0 &&
+	      func_ret[it]<((int)ret_value_counts[it].size())) {
+	    ret_value_counts[it][func_ret[it]]++;
+	  }
+	  // Call the measurement function	  
+	  meas_ret[it]=meas[it](current[it],w_current[it],0,
+				true,data_arr[it]);
+	  if (meas_ret[it]==mcmc_done) {
+	    mcmc_done_flag[it]=true;
 	  }
 	}
-	if (stop_early) {
-	  mcmc_cleanup();
-	  return 0;
-	}
-
-	// Set initial values for best point
-	best=current[0];
-	w_best=w_current[0];
-	best_point(best,w_best,data_arr[0]);
-
-	if (verbose>=2) {
-	  scr_out.precision(4);
-	  scr_out << "mcmc (0): "
-		  << w_current[0] << " (initial)" << std::endl;
-	  scr_out.precision(6);
-	}
+      }
+      // End of parallel region
       
+      // Stop early if mcmc_done was returned
+      bool stop_early=false;
+      for(size_t it=0;it<n_threads;it++) {
+	if (mcmc_done_flag[it]==true) {
+	  if (verbose>=1) {
+	    scr_out << "mcmc (" << it << "): Returned mcmc_done "
+		    << "(initial)." << std::endl;
+	  }
+	  stop_early=true;
+	}
+      }
+      if (stop_early) {
+	mcmc_cleanup();
+	return 0;
       }
 
-      // --------------------------------------------------------
-      // Require keypress after initial point if verbose is
-      // sufficiently large.
+      // Set initial values for best point
+      best=current[0];
+      w_best=w_current[0];
+      best_point(best,w_best,data_arr[0]);
+
+      if (verbose>=2) {
+	scr_out.precision(4);
+	scr_out << "mcmc (0): "
+		<< w_current[0] << " (initial)" << std::endl;
+	scr_out.precision(6);
+      }
+      
+    }
+
+    // --------------------------------------------------------
+    // Require keypress after initial point if verbose is
+    // sufficiently large.
+
+    if (verbose>=3) {
+      std::cout << "Press a key and type enter to continue. ";
+      char ch;
+      std::cin >> ch;
+    }
+
+    // End of initial point and weight section
+    // ---------------------------------------------------
+    // Start of main loop
+    
+    bool main_done=false;
+    size_t mcmc_iters=0;
+
+    while (!main_done) {
+
+      // Walker to move (or zero when aff_inv is false)
+      std::vector<double> smove_z(n_threads);
+      for(size_t it=0;it<n_threads;it++) {
+	curr_walker[it]=0;
+	smove_z[it]=0.0;
+	// Choose walker to move (same for all threads)
+	if (aff_inv) {
+	  curr_walker[it]=mcmc_iters % n_walk;
+	}
+      }
+      
+#ifdef O2SCL_OPENMP
+#pragma omp parallel default(shared)
+#endif
+      {
+#ifdef O2SCL_OPENMP
+#pragma omp for
+#endif
+	for(size_t it=0;it<n_threads;it++) {
+	  
+	  // ---------------------------------------------------
+	  // Select next point
+	  
+	  if (aff_inv) {
+	    // Choose jth walker
+	    size_t ij;
+	    do {
+	      ij=((size_t)(rg[it].random()*((double)n_walk)));
+	    } while (ij==curr_walker[it] || ij>=n_walk);
+	    
+	    // Select z 
+	    double p=rg[it].random();
+	    double a=step_fac;
+	    smove_z[it]=(1.0-2.0*p+2.0*a*p+p*p-2.0*a*p*p+a*a*p*p)/a;
+	    
+	    // Create new trial point
+	    for(size_t i=0;i<nparams;i++) {
+	      next[it][i]=current[n_walk*it+ij][i]+
+		smove_z[it]*(current[n_walk*it+curr_walker[it]][i]-
+			     current[n_walk*it+ij][i]);
+	    }
+	    
+	  } else if (pd_mode) {
+	    
+	    // Use proposal distribution and compute associated weight
+	    (*prop_dist)(current[it],next[it]);
+	    q_prop=prop_dist->log_pdf(current[it],next[it])-
+	      prop_dist->log_pdf(next[it],current[it]);
+	    if (!std::isfinite(q_prop)) {
+	      O2SCL_ERR2("Proposal distribution not finite in ",
+			 "mcmc_para_base::mcmc().",o2scl::exc_efailed);
+	    }
+	    
+	  } else {
+	    
+	    // Uniform random-walk step
+	    for(size_t k=0;k<nparams;k++) {
+	      next[it][k]=current[it][k]+(rg[it].random()*2.0-1.0)*
+		(high[k]-low[k])/step_fac;
+	    }
+	    
+	  }
+	  
+	  // ---------------------------------------------------
+	  // Compute next weight
+      
+	  func_ret[it]=o2scl::success;
+	  // If the next point out of bounds, ensure that the
+	  // point is rejected
+	  for(size_t k=0;k<nparams;k++) {
+	    if (next[it][k]<low[k] || next[it][k]>high[k]) {
+	      func_ret[it]=mcmc_skip;
+	      if (verbose>=3) {
+		if (next[it][k]<low[k]) {
+		  scr_out << "Parameter with index " << k
+			  << " and value " << next[it][k]
+			  << " smaller than limit " << low[k] << std::endl;
+		} else {
+		  scr_out << "Parameter with index " << k
+			  << " and value " << next[it][k]
+			  << " larger than limit " << high[k] << std::endl;
+		}
+	      }
+	    }
+	  }
+	  if (func_ret[it]!=mcmc_skip) {
+	    if (switch_arr[n_walk*it+curr_walker[it]]==false) {
+	      func_ret[it]=func[it](nparams,next[it],w_next[it],
+				    data_arr[it*n_walk+curr_walker[it]+
+					     n_walk*n_threads]);
+	    } else {
+	      func_ret[it]=func[it](nparams,next[it],w_next[it],
+				    data_arr[it*n_walk+curr_walker[it]]);
+	    }
+	    if (func_ret[it]==mcmc_done) {
+	      mcmc_done_flag[it]=true;
+	    } else {
+	      if (func_ret[it]>=0 &&
+		  func_ret[it]<((int)ret_value_counts[it].size())) {
+		ret_value_counts[it][func_ret[it]]++;
+	      }
+	    }
+
+	  }
+	}
+      }
+      // End of parallel region
+      
+      // ---------------------------------------------------------
+      // Post-function verbose output in case parameter was out of
+      // range, function returned "done" or a failure. More
+      // verbose output is performed below after the possible call
+      // to the measurement function.
+
+      if (verbose>=1) {
+	for(size_t it=0;it<n_threads;it++) {
+	  if (func_ret[it]==mcmc_done) {
+	    scr_out << "mcmc (" << it << "): Returned mcmc_done." 
+		    << std::endl;
+	  } else if (func_ret[it]==mcmc_skip && verbose>=3) {
+	    scr_out << "mcmc (" << it
+		    << "): Parameter(s) out of range: " << std::endl;
+	    scr_out.setf(std::ios::showpos);
+	    for(size_t k=0;k<nparams;k++) {
+	      scr_out << k << " " << low[k] << " "
+		      << next[it][k] << " " << high[k];
+	      if (next[it][k]<low[k] || next[it][k]>high[k]) {
+		scr_out << " <-";
+	      }
+	      scr_out << std::endl;
+	    }
+	    scr_out.unsetf(std::ios::showpos);
+	  } else if (func_ret[it]!=o2scl::success &&
+		     func_ret[it]!=mcmc_skip) {
+	    if (verbose>=2) {
+	      scr_out << "mcmc (" << it << "): Function returned failure " 
+		      << func_ret[it] << " at point ";
+	      for(size_t k=0;k<nparams;k++) {
+		scr_out << next[it][k] << " ";
+	      }
+	      scr_out << std::endl;
+	    }
+	  }
+	}
+      }
+
+      // ----------------------------------------------------------
+      // Parallel region to accept or reject, and call measurement
+      // function
+      
+#ifdef O2SCL_OPENMP
+#pragma omp parallel default(shared)
+#endif
+      {
+#ifdef O2SCL_OPENMP
+#pragma omp for
+#endif
+	for(size_t it=0;it<n_threads;it++) {
+	  
+	  // Index in storage
+	  size_t sindex=n_walk*it+curr_walker[it];
+	  
+	  // ---------------------------------------------------
+	  // Accept or reject
+    
+	  bool accept=false;
+	  if (always_accept && func_ret[it]==success) accept=true;
+
+	  if (func_ret[it]==o2scl::success) {
+	    double r=rg[it].random();
+	    
+	    if (aff_inv) {
+	      double ai_ratio=pow(smove_z[it],((double)nparams)-1.0)*
+		exp(w_next[it]-w_current[sindex]);
+	      if (r<ai_ratio) {
+		accept=true;
+	      }
+	    } else if (pd_mode) {
+	      if (r<exp(w_next[it]-w_current[sindex]+q_prop)) {
+		accept=true;
+	      }
+	    } else {
+	      // Metropolis algorithm
+	      if (r<exp(w_next[it]-w_current[sindex])) {
+		accept=true;
+	      }
+	    }
+
+	    // End of 'if (func_ret[it]==o2scl::success)'
+	  }
+
+	  if (accept) {
+	  
+	    n_accept[it]++;
+	  
+	    // Store results from new point
+	    if (!warm_up) {
+	      if (switch_arr[sindex]==false) {
+		meas_ret[it]=meas[it](next[it],w_next[it],
+				      curr_walker[it],true,
+				      data_arr[sindex+n_threads*n_walk]);
+	      } else {
+		meas_ret[it]=meas[it](next[it],w_next[it],
+				      curr_walker[it],true,
+				      data_arr[sindex]);
+	      }
+	    }
+
+	    // Prepare for next point
+	    current[sindex]=next[it];
+	    w_current[sindex]=w_next[it];
+	    switch_arr[sindex]=!(switch_arr[sindex]);
+	  
+	  } else {
+	    
+	    // Point was rejected
+	    n_reject[it]++;
+
+	    // Repeat measurement of old point
+	    if (!warm_up) {
+	      if (switch_arr[sindex]==false) {
+		meas_ret[it]=meas[it](current[sindex],
+				      w_current[sindex],
+				      curr_walker[it],false,data_arr[sindex]);
+	      } else {
+		meas_ret[it]=meas[it](current[sindex],
+				      w_current[sindex],
+				      curr_walker[it],false,
+				      data_arr[sindex+n_walk*n_threads]);
+	      }
+	    }
+
+	  }
+
+	}
+      }
+      // End of parallel region
+
+      // -----------------------------------------------------------
+      // Post-measurement verbose output of iteration count, weight,
+      // and walker index for each thread
+      
+      if (verbose>=2) {
+	for(size_t it=0;it<n_threads;it++) {
+	  size_t sindex=n_walk*it+curr_walker[it];
+	  scr_out.precision(4);
+	  scr_out << "mcmc (" << it << "): iter: ";
+	  scr_out.width((int)(1.0+log10((double)(nparams-1))));
+	  scr_out << mcmc_iters << " i_walk: "
+		  << curr_walker[it] << " log_wgt: "
+		  << w_current[sindex] << std::endl;
+	  scr_out.precision(6);
+	}
+      }
+      
+      // Collect best point
+      for(size_t it=0;it<n_threads;it++) {
+	if (func_ret[it]==o2scl::success && w_best>w_next[it]) {
+	  best=next[it];
+	  w_best=w_next[it];
+	  if (switch_arr[n_walk*it+curr_walker[it]]==false) {
+	    best_point(best,w_best,data_arr[curr_walker[it]+n_walk*it+
+					    n_threads*n_walk]);
+	  } else {
+	    best_point(best,w_best,data_arr[curr_walker[it]+n_walk*it]);
+	  }
+	}
+      }
+
+      // Check to see if mcmc_done was returned or if meas_ret
+      // returned an error
+      for(size_t it=0;it<n_threads;it++) {
+	if (meas_ret[it]==mcmc_done || func_ret[it]==mcmc_done) {
+	  main_done=true;
+	}
+	if (meas_ret[it]!=mcmc_done && meas_ret[it]!=o2scl::success) {
+	  if (err_nonconv) {
+	    O2SCL_ERR((((std::string)"Measurement function returned ")+
+		       o2scl::dtos(meas_ret[it])+
+		       " in mcmc_para_base::mcmc().").c_str(),
+		      o2scl::exc_efailed);
+	  }
+	  main_done=true;
+	}
+      }
+
+      if (main_done==false) {
+	
+	mcmc_iters++;
+	
+	if (warm_up && mcmc_iters==n_warm_up) {
+	  warm_up=false;
+	  mcmc_iters=0;
+	  for(size_t it=0;it<n_threads;it++) {
+	    n_accept[it]=0;
+	    n_reject[it]=0;
+	  }
+	  if (verbose>=1) {
+	    scr_out << "Finished warmup." << std::endl;
+	  }
+	  
+	}
+      }
 
       if (verbose>=3) {
 	std::cout << "Press a key and type enter to continue. ";
@@ -779,405 +1099,86 @@ namespace o2scl {
 	std::cin >> ch;
       }
 
-      // End of initial point and weight section
-      // ---------------------------------------------------
-      // Start of main loop
-    
-      bool main_done=false;
-      size_t mcmc_iters=0;
-
-      while (!main_done) {
-
-	// Walker to move (or zero when aff_inv is false)
-	std::vector<double> smove_z(n_threads);
-	for(size_t it=0;it<n_threads;it++) {
-	  curr_walker[it]=0;
-	  smove_z[it]=0.0;
-	  // Choose walker to move (same for all threads)
-	  if (aff_inv) {
-	    curr_walker[it]=mcmc_iters % n_walk;
-	  }
-	}
+      if (main_done==false && warm_up==false && max_iters>0 &&
+	  mcmc_iters==max_iters) {
+	scr_out << "mcmc (0): Stopping because number of iterations "
+		<< "equal to 'max_iters'." << std::endl;
+	main_done=true;
+      }
       
-#ifdef O2SCL_OPENMP
-#pragma omp parallel default(shared)
+      if (main_done==false) {
+	// Check to see if we're out of time
+#ifdef O2SCL_MPI
+	double elapsed=MPI_Wtime()-mpi_start_time;
+#else
+	double elapsed=time(0)-mpi_start_time;
 #endif
-	{
-#ifdef O2SCL_OPENMP
-#pragma omp for
-#endif
-	  for(size_t it=0;it<n_threads;it++) {
-	  
-	    // ---------------------------------------------------
-	    // Select next point
-	  
-	    if (aff_inv) {
-	      // Choose jth walker
-	      size_t ij;
-	      do {
-		ij=((size_t)(rg[it].random()*((double)n_walk)));
-	      } while (ij==curr_walker[it] || ij>=n_walk);
-	    
-	      // Select z 
-	      double p=rg[it].random();
-	      double a=step_fac;
-	      smove_z[it]=(1.0-2.0*p+2.0*a*p+p*p-2.0*a*p*p+a*a*p*p)/a;
-	    
-	      // Create new trial point
-	      for(size_t i=0;i<nparams;i++) {
-		next[it][i]=current[n_walk*it+ij][i]+
-		  smove_z[it]*(current[n_walk*it+curr_walker[it]][i]-
-			       current[n_walk*it+ij][i]);
-	      }
-	    
-	    } else if (pd_mode) {
-	    
-	      // Use proposal distribution and compute associated weight
-	      (*prop_dist)(current[it],next[it]);
-	      q_prop=prop_dist->log_pdf(current[it],next[it])-
-		prop_dist->log_pdf(next[it],current[it]);
-	      if (!std::isfinite(q_prop)) {
-		O2SCL_ERR2("Proposal distribution not finite in ",
-			   "mcmc_para_base::mcmc().",o2scl::exc_efailed);
-	      }
-	    
-	    } else {
-	    
-	      // Uniform random-walk step
-	      for(size_t k=0;k<nparams;k++) {
-		next[it][k]=current[it][k]+(rg[it].random()*2.0-1.0)*
-		  (high[k]-low[k])/step_fac;
-	      }
-	    
-	    }
-	  
-	    // ---------------------------------------------------
-	    // Compute next weight
-      
-	    func_ret[it]=o2scl::success;
-	    // If the next point out of bounds, ensure that the
-	    // point is rejected
-	    for(size_t k=0;k<nparams;k++) {
-	      if (next[it][k]<low[k] || next[it][k]>high[k]) {
-		func_ret[it]=mcmc_skip;
-		if (verbose>=3) {
-		  if (next[it][k]<low[k]) {
-		    scr_out << "Parameter with index " << k
-			    << " and value " << next[it][k]
-			    << " smaller than limit " << low[k] << std::endl;
-		  } else {
-		    scr_out << "Parameter with index " << k
-			    << " and value " << next[it][k]
-			    << " larger than limit " << high[k] << std::endl;
-		  }
-		}
-	      }
-	    }
-	    if (func_ret[it]!=mcmc_skip) {
-	      if (switch_arr[n_walk*it+curr_walker[it]]==false) {
-		func_ret[it]=func[it](nparams,next[it],w_next[it],
-				      data_arr[it*n_walk+curr_walker[it]+
-					       n_walk*n_threads]);
-	      } else {
-		func_ret[it]=func[it](nparams,next[it],w_next[it],
-				      data_arr[it*n_walk+curr_walker[it]]);
-	      }
-	      if (func_ret[it]==mcmc_done) {
-		mcmc_done_flag[it]=true;
-	      } else {
-		if (func_ret[it]>=0 &&
-		    func_ret[it]<((int)ret_value_counts[it].size())) {
-		  ret_value_counts[it][func_ret[it]]++;
-		}
-	      }
-
-	    }
+	if (max_time>0.0 && elapsed>max_time) {
+	  if (verbose>=0) {
+	    scr_out << "mcmc (0): Stopping because elapsed > max_time."
+		    << std::endl;
 	  }
-	}
-	// End of parallel region
-      
-	// ---------------------------------------------------------
-	// Post-function verbose output in case parameter was out of
-	// range, function returned "done" or a failure. More
-	// verbose output is performed below after the possible call
-	// to the measurement function.
-
-	if (verbose>=1) {
-	  for(size_t it=0;it<n_threads;it++) {
-	    if (func_ret[it]==mcmc_done) {
-	      scr_out << "mcmc (" << it << "): Returned mcmc_done." 
-		      << std::endl;
-	    } else if (func_ret[it]==mcmc_skip && verbose>=3) {
-	      scr_out << "mcmc (" << it
-		      << "): Parameter(s) out of range: " << std::endl;
-	      scr_out.setf(std::ios::showpos);
-	      for(size_t k=0;k<nparams;k++) {
-		scr_out << k << " " << low[k] << " "
-			<< next[it][k] << " " << high[k];
-		if (next[it][k]<low[k] || next[it][k]>high[k]) {
-		  scr_out << " <-";
-		}
-		scr_out << std::endl;
-	      }
-	      scr_out.unsetf(std::ios::showpos);
-	    } else if (func_ret[it]!=o2scl::success &&
-		       func_ret[it]!=mcmc_skip) {
-	      if (verbose>=2) {
-		scr_out << "mcmc (" << it << "): Function returned failure " 
-			<< func_ret[it] << " at point ";
-		for(size_t k=0;k<nparams;k++) {
-		  scr_out << next[it][k] << " ";
-		}
-		scr_out << std::endl;
-	      }
-	    }
-	  }
-	}
-
-	// ----------------------------------------------------------
-	// Parallel region to accept or reject, and call measurement
-	// function
-      
-#ifdef O2SCL_OPENMP
-#pragma omp parallel default(shared)
-#endif
-	{
-#ifdef O2SCL_OPENMP
-#pragma omp for
-#endif
-	  for(size_t it=0;it<n_threads;it++) {
-	  
-	    // Index in storage
-	    size_t sindex=n_walk*it+curr_walker[it];
-	  
-	    // ---------------------------------------------------
-	    // Accept or reject
-    
-	    bool accept=false;
-	    if (always_accept && func_ret[it]==success) accept=true;
-
-	    if (func_ret[it]==o2scl::success) {
-	      double r=rg[it].random();
-	    
-	      if (aff_inv) {
-		double ai_ratio=pow(smove_z[it],((double)nparams)-1.0)*
-		  exp(w_next[it]-w_current[sindex]);
-		if (r<ai_ratio) {
-		  accept=true;
-		}
-	      } else if (pd_mode) {
-		if (r<exp(w_next[it]-w_current[sindex]+q_prop)) {
-		  accept=true;
-		}
-	      } else {
-		// Metropolis algorithm
-		if (r<exp(w_next[it]-w_current[sindex])) {
-		  accept=true;
-		}
-	      }
-
-	      // End of 'if (func_ret[it]==o2scl::success)'
-	    }
-
-	    if (accept) {
-	  
-	      n_accept[it]++;
-	  
-	      // Store results from new point
-	      if (!warm_up) {
-		if (switch_arr[sindex]==false) {
-		  meas_ret[it]=meas[it](next[it],w_next[it],
-					curr_walker[it],true,
-					data_arr[sindex+n_threads*n_walk]);
-		} else {
-		  meas_ret[it]=meas[it](next[it],w_next[it],
-					curr_walker[it],true,
-					data_arr[sindex]);
-		}
-	      }
-
-	      // Prepare for next point
-	      current[sindex]=next[it];
-	      w_current[sindex]=w_next[it];
-	      switch_arr[sindex]=!(switch_arr[sindex]);
-	  
-	    } else {
-	    
-	      // Point was rejected
-	      n_reject[it]++;
-
-	      // Repeat measurement of old point
-	      if (!warm_up) {
-		if (switch_arr[sindex]==false) {
-		  meas_ret[it]=meas[it](current[sindex],
-					w_current[sindex],
-					curr_walker[it],false,data_arr[sindex]);
-		} else {
-		  meas_ret[it]=meas[it](current[sindex],
-					w_current[sindex],
-					curr_walker[it],false,
-					data_arr[sindex+n_walk*n_threads]);
-		}
-	      }
-
-	    }
-
-	  }
-	}
-	// End of parallel region
-
-	// -----------------------------------------------------------
-	// Post-measurement verbose output of iteration count, weight,
-	// and walker index for each thread
-      
-	if (verbose>=2) {
-	  for(size_t it=0;it<n_threads;it++) {
-	    size_t sindex=n_walk*it+curr_walker[it];
-	    scr_out.precision(4);
-	    scr_out << "mcmc (" << it << "): iter: ";
-	    scr_out.width((int)(1.0+log10((double)(nparams-1))));
-	    scr_out << mcmc_iters << " i_walk: "
-		    << curr_walker[it] << " log_wgt: "
-		    << w_current[sindex] << std::endl;
-	    scr_out.precision(6);
-	  }
-	}
-      
-	// Collect best point
-	for(size_t it=0;it<n_threads;it++) {
-	  if (func_ret[it]==o2scl::success && w_best>w_next[it]) {
-	    best=next[it];
-	    w_best=w_next[it];
-	    if (switch_arr[n_walk*it+curr_walker[it]]==false) {
-	      best_point(best,w_best,data_arr[curr_walker[it]+n_walk*it+
-					      n_threads*n_walk]);
-	    } else {
-	      best_point(best,w_best,data_arr[curr_walker[it]+n_walk*it]);
-	    }
-	  }
-	}
-
-	// Check to see if mcmc_done was returned or if meas_ret
-	// returned an error
-	for(size_t it=0;it<n_threads;it++) {
-	  if (meas_ret[it]==mcmc_done || func_ret[it]==mcmc_done) {
-	    main_done=true;
-	  }
-	  if (meas_ret[it]!=mcmc_done && meas_ret[it]!=o2scl::success) {
-	    if (err_nonconv) {
-	      O2SCL_ERR((((std::string)"Measurement function returned ")+
-			 o2scl::dtos(meas_ret[it])+
-			 " in mcmc_para_base::mcmc().").c_str(),
-			o2scl::exc_efailed);
-	    }
-	    main_done=true;
-	  }
-	}
-
-	if (main_done==false) {
-	
-	  mcmc_iters++;
-	
-	  if (warm_up && mcmc_iters==n_warm_up) {
-	    warm_up=false;
-	    mcmc_iters=0;
-	    for(size_t it=0;it<n_threads;it++) {
-	      n_accept[it]=0;
-	      n_reject[it]=0;
-	    }
-	    if (verbose>=1) {
-	      scr_out << "Finished warmup." << std::endl;
-	    }
-	  
-	  }
-	}
-
-	if (verbose>=3) {
-	  std::cout << "Press a key and type enter to continue. ";
-	  char ch;
-	  std::cin >> ch;
-	}
-
-	if (main_done==false && warm_up==false && max_iters>0 &&
-	    mcmc_iters==max_iters) {
-	  scr_out << "mcmc (0): Stopping because number of iterations "
-		  << "equal to 'max_iters'." << std::endl;
 	  main_done=true;
 	}
-      
-	if (main_done==false) {
-	  // Check to see if we're out of time
-#ifdef O2SCL_MPI
-	  double elapsed=MPI_Wtime()-mpi_start_time;
-#else
-	  double elapsed=time(0)-mpi_start_time;
-#endif
-	  if (max_time>0.0 && elapsed>max_time) {
-	    if (verbose>=0) {
-	      scr_out << "mcmc (0): Stopping because elapsed > max_time."
-		      << std::endl;
-	    }
-	    main_done=true;
-	  }
-	}
-
-	// --------------------------------------------------------------
-	// End of main loop
       }
-    
+
       // --------------------------------------------------------------
-    
-      mcmc_cleanup();
-      
-#endif
-    
-      return 0;
+      // End of main loop
     }
     
-    /** \brief Perform a MCMC simulation with a thread-safe function
-     */
-    virtual int mcmc(size_t nparams, vec_t &low, vec_t &high,
-		     func_t &func, measure_t &meas) {
+    // --------------------------------------------------------------
+    
+    mcmc_cleanup();
+      
+#endif
+
+    return 0;
+  }
+    
+  /** \brief Perform a MCMC simulation with a thread-safe function
+   */
+  virtual int mcmc(size_t nparams, vec_t &low, vec_t &high,
+		   func_t &func, measure_t &meas) {
     
 #ifdef O2SCL_OPENMP
-      omp_set_num_threads(n_threads);
+    omp_set_num_threads(n_threads);
 #else
-      n_threads=1;
+    n_threads=1;
 #endif
-      std::vector<func_t> vf(n_threads);
-      std::vector<measure_t> vm(n_threads);
-      for(size_t i=0;i<n_threads;i++) {
-	vf[i]=func;
-	vm[i]=meas;
-      }
-      return mcmc(nparams,low,high,func,meas);
+    std::vector<func_t> vf(n_threads);
+    std::vector<measure_t> vm(n_threads);
+    for(size_t i=0;i<n_threads;i++) {
+      vf[i]=func;
+      vm[i]=meas;
     }
-    //@}
+    return mcmc(nparams,low,high,func,meas);
+  }
+  //@}
 
-    /// \name Proposal distribution
-    //@{
-    /** \brief Set the proposal distribution
-     */
-    virtual void set_proposal(o2scl::prob_cond_mdim<vec_t> &p) {
-      prop_dist=&p;
-      pd_mode=true;
-      aff_inv=false;
-      n_walk=1;
-      return;
-    }
+  /// \name Proposal distribution
+  //@{
+  /** \brief Set the proposal distribution
+   */
+  virtual void set_proposal(o2scl::prob_cond_mdim<vec_t> &p) {
+    prop_dist=&p;
+    pd_mode=true;
+    aff_inv=false;
+    n_walk=1;
+    return;
+  }
 
-    /** \brief Go back to random-walk Metropolis with a uniform distribution
-     */
-    virtual void unset_proposal() {
-      if (pd_mode) {
-	prop_dist=0;
-	pd_mode=false;
-      }
-      aff_inv=false;
-      n_walk=1;
-      return;
+  /** \brief Go back to random-walk Metropolis with a uniform distribution
+   */
+  virtual void unset_proposal() {
+    if (pd_mode) {
+      prop_dist=0;
+      pd_mode=false;
     }
-    //@}
+    aff_inv=false;
+    n_walk=1;
+    return;
+  }
+  //@}
     
   };
 
@@ -1218,9 +1219,9 @@ namespace o2scl {
       to create a full post-processing function.
   */
   template<class func_t, class fill_t, class data_t, class vec_t=ubvector>
-  class mcmc_para_table : public mcmc_para_base<func_t,
-  std::function<int(const vec_t &,double,size_t,bool,data_t &)>,
-  data_t,vec_t> {
+    class mcmc_para_table : public mcmc_para_base<func_t,
+    std::function<int(const vec_t &,double,size_t,bool,data_t &)>,
+    data_t,vec_t> {
     
   protected:
   
@@ -1826,8 +1827,8 @@ namespace o2scl {
   /** \brief MCMC class with a command-line interface
    */
   template<class func_t, class fill_t, class data_t, class vec_t=ubvector>
-  class mcmc_para_cli : public mcmc_para_table<func_t,fill_t,
-  data_t,vec_t> {
+    class mcmc_para_cli : public mcmc_para_table<func_t,fill_t,
+    data_t,vec_t> {
     
   protected:
   
@@ -1984,6 +1985,6 @@ namespace o2scl {
   };
   
   // End of namespace
-  }
-  
+}
+
 #endif
