@@ -752,8 +752,20 @@ int main(void) {
   cout << "----------------------------------------------------" << endl;
   cout << endl;
   
-  double v1=rf.calibrate(e,1,"../../data/o2scl/fermion_cal.o2");
+  double v1=rf.calibrate(e,1,0,"../../data/o2scl/fermion_cal.o2");
   t.test_rel(v1,0.0,1.0e-6,"calibrate");
+
+  /* 
+     This doesn't work yet
+  
+  cout << "----------------------------------------------------" << endl;
+  cout << "Function calibrate() including antiparticles." << endl;
+  cout << "----------------------------------------------------" << endl;
+  cout << endl;
+  
+  double v1x=rf.calibrate(e,1,1,"../../data/o2scl/fermion_cal.o2");
+
+  */
 
   cout << "----------------------------------------------------" << endl;
   cout << "Function calibrate() with better limits." << endl;
@@ -769,7 +781,7 @@ int main(void) {
   rf.nit->tol_rel=1.0e-13;
   rf.density_root->tol_rel=1.0e-10;
 
-  double v2=rf.calibrate(e,1,"../../data/o2scl/fermion_cal.o2");
+  double v2=rf.calibrate(e,1,0,"../../data/o2scl/fermion_cal.o2");
   t.test_rel(v2,0.0,1.0e-10,"calibrate 2");
 
   // -----------------------------------------------------------------

@@ -418,7 +418,8 @@ namespace o2scl {
 	\future Also calibrate massless fermions?
 	\future Convert into separate class?
     */
-    virtual double calibrate(fermion &f, int verbose=0, std::string fname="");
+    virtual double calibrate(fermion &f, int verbose=0, bool test_pair=false,
+			     std::string fname="");
 
 #ifndef DOXYGEN_NO_O2NS
 
