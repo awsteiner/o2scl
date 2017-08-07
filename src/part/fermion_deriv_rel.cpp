@@ -964,12 +964,12 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
 	double mot=tab.get("mot",i);
 	double psi=tab.get("psi",i);
 	exact.n=tab.get("n",i);
-	exact.ed=tab.get("ed",i);
+	exact.ed=tab.get("ed_mot",i)*tab.get("mot",i);
 	exact.pr=tab.get("pr",i);
 	exact.en=tab.get("en",i);
 	exact.dndT=tab.get("dndT",i);
 	exact.dndmu=tab.get("dndmu",i);
-	exact.dsdT=tab.get("dsdT",i);
+	exact.dsdT=tab.get("dsdt",i);
       
 	if (k==0) {
 	  
@@ -1179,12 +1179,12 @@ double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose,
 
 	// Get exact results from table
 	exact.n=f.n;
-	exact.ed=tab.get("ed",i);
+	exact.ed=tab.get("ed_mot",i)*tab.get("mot",i);
 	exact.pr=tab.get("pr",i);
 	exact.en=tab.get("en",i);
 	exact.dndT=tab.get("dndT",i);
 	exact.dndmu=tab.get("dndmu",i);
-	exact.dsdT=tab.get("dsdT",i);
+	exact.dsdT=tab.get("dsdt",i);
 
 	// Compute mass, density and exact chemical potential
 	f.m=mot*T;

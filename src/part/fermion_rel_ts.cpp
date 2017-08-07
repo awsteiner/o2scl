@@ -757,14 +757,14 @@ int main(void) {
 
   /* 
      This doesn't work yet
-  
-  cout << "----------------------------------------------------" << endl;
-  cout << "Function calibrate() including antiparticles." << endl;
-  cout << "----------------------------------------------------" << endl;
-  cout << endl;
-  
-  double v1x=rf.calibrate(e,1,1,"../../data/o2scl/fermion_cal.o2");
-
+     
+     cout << "----------------------------------------------------" << endl;
+     cout << "Function calibrate() including antiparticles." << endl;
+     cout << "----------------------------------------------------" << endl;
+     cout << endl;
+     
+     double v1x=rf.calibrate(e,1,1,"../../data/o2scl/fermion_cal.o2");
+     
   */
 
   cout << "----------------------------------------------------" << endl;
