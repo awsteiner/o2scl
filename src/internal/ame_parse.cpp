@@ -100,17 +100,19 @@ int main(int argc, char *argv[]) {
     exit(-1);
   }
   string dir=argv[1];
-  string fnames[5]={"mass_exp.mas95","mass_rmd.mas95","mass.mas03",
-		    "mass.mas03round","mass.mas12"};
-  string outnames[5]={"ame95exp.o2","ame95rmd.o2","ame03.o2",
-		      "ame03round.o2","ame12.o2"};
-
+  string fnames[7]={"ame95/mass_exp.mas95","ame95/mass_rmd.mas95",
+		    "ame03/mass.mas03",
+		    "ame03/mass.mas03round","ame12/mass.mas12",
+		    "ame16/mass16.txt","ame16/mass16round.txt"};
+  string outnames[7]={"ame95exp.o2","ame95rmd.o2","ame03.o2",
+		      "ame03round.o2","ame12.o2","ame16.o2","ame16round.o2"};
+		      
   nucmass_info nmi;
   
   int count=0;
   const size_t output=1000;
 
-  for (size_t ik=0;ik<5;ik++) {
+  for (size_t ik=0;ik<7;ik++) {
     
     cout << "--------------------------------------------------------" << endl;
 
@@ -131,7 +133,7 @@ int main(int argc, char *argv[]) {
 
       ae.N=o2scl::stoi(tmp.substr(4,5));
       ae.Z=o2scl::stoi(tmp.substr(9,5));
-      if (ik!=3) {
+      if (ik!=3 && ik!=6) {
 	ae.NMZ=o2scl::stoi(tmp.substr(1,3));
 	ae.A=o2scl::stoi(tmp.substr(14,5));
 	if (ae.NMZ!=ae.N-ae.Z) {
@@ -295,7 +297,6 @@ int main(int argc, char *argv[]) {
 	     << ae.dbde << ", ," << ae.bde_acc << ", ,"
 	     << ae.amass << ", ," << ae.damass << ", ," 
 	     << ae.amass_acc << endl;
-	cout << endl;
 	//char ch;
 	//cin >> ch;
       }
@@ -304,7 +305,7 @@ int main(int argc, char *argv[]) {
     }
     cout << "count: " << count << endl;
 
-    if (true) {
+    if (ik<5) {
       cout << "Checking: " << endl;
       nucmass_ame ame12;
       string stmp2="12";
@@ -492,12 +493,19 @@ int main(int argc, char *argv[]) {
 			   H5P_DEFAULT,H5P_DEFAULT);
       
       hdf_file hf;
+
+      // Hack to create an hdf_file object with 'write_access=true'
+      hf.open_or_create("temp.o2");
+      hf.close();
+      
+      //hf.open_or_create(outnames[ik]);
       hf.set_current_id(file);
+      //hid_t file=hf.get_current_id();
       hf.seti("nrecords",list.size());
       hf.sets_fixed("comment",
-		    ((string)"HDF5 version of Audi, et al. ")+
-		    "mass data created for O2scl. "
-		    "See http://o2scl.sourceforge.net for details.");
+		    ((string)"HDF5 version of Atomic Mass Evaluation. ")+
+		    "data created for O2scl. "
+		    "See http://web.utk.edu/~asteine1/o2scl for details.");
 
       herr_t status;
       status=H5TBmake_table(fnames[ik].c_str(),file,
@@ -506,27 +514,27 @@ int main(int argc, char *argv[]) {
 			    names,offset,field_type,100,0,1,&list[0]);
 
       if (ik==0) {
-	hf.sets("orig_file","mass_exp.mas95");
+	hf.sets_fixed("orig_file","mass_exp.mas95");
 	hf.sets_fixed("reference",
 		((string)"G. Audi and A. H. Wapstra, ")+
 		"Nucl. Phys. A, 595 (1995) 409.");
       } else if (ik==1) {
-	hf.sets("orig_file","mass_rmd.mas95");
+	hf.sets_fixed("orig_file","mass_rmd.mas95");
 	hf.sets_fixed("reference",
 		((string)"G. Audi and A. H. Wapstra, ")+
 		"Nucl. Phys. A, 595 (1995) 409.");
       } else if (ik==2) {
-	hf.sets("orig_file","mass.mas03");
+	hf.sets_fixed("orig_file","mass.mas03");
 	hf.sets_fixed("reference",
 		((string)"G. Audi, A. H. Wapstra and C. Thibault, ")+
 		"Nucl. Phys. A, 729 (2003) 337.");
       } else if (ik==3) {
-	hf.sets("orig_file","mass.mas03round");
+	hf.sets_fixed("orig_file","mass.mas03round");
 	hf.sets_fixed("reference",
 		      ((string)"G. Audi, A. H. Wapstra and C. Thibault, ")+
 		      "Nucl. Phys. A, 729 (2003) 337.");
-      } else {
-	hf.sets("orig_file","mass.mas12");
+      } else if (ik==4) {
+	hf.sets_fixed("orig_file","mass.mas12");
 	hf.sets_fixed
 	  ("reference",((string)"G. Audi, M. Wang, A. H. Wapstra, ")+
 	   "F. G. Kondev, M. MacCormick, X. Xu, and B. Pfeiffer, "+
@@ -534,6 +542,24 @@ int main(int argc, char *argv[]) {
 	   "M. Wang, G. Audi, A. H. Wapstra, "+
 	   "F. G. Kondev, M. MacCormick, X. Xu, and B. Pfeiffer, "+
 	   "Chin. Phys. C, 36 (2012) 1603.");
+      } else if (ik==5) {
+	hf.sets_fixed("orig_file","mass16.txt");
+	hf.sets_fixed
+	  ("reference",((string)"W. J. Huang, G. Audi, M. Wang ")+
+	   "F. G. Kondev, S. Naimi, X. Xu, "
+	   "Chin. Phys. C, 41 (2017) 030002; "+
+	   "M. Wang, G. Audi, F. G. Kondev, "+
+	   "W. J. Huang, , S. Naimi, X. Xu, "
+	   "Chin. Phys. C, 41 (2017) 030003. ");
+      } else if (ik==6) {
+	hf.sets_fixed("orig_file","mass16round.txt");
+	hf.sets_fixed
+	  ("reference",((string)"W. J. Huang, G. Audi, M. Wang ")+
+	   "F. G. Kondev, S. Naimi, X. Xu, "
+	   "Chin. Phys. C, 41 (2017) 030002; "+
+	   "M. Wang, G. Audi, F. G. Kondev, "+
+	   "W. J. Huang, , S. Naimi, X. Xu, "
+	   "Chin. Phys. C, 41 (2017) 030003. ");
       }
       
       H5Tclose(string_type3);
