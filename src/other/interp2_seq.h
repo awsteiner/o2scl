@@ -350,7 +350,8 @@ namespace o2scl {
 	O2SCL_ERR("Data not set in interp2_seq::interp_gen().",exc_efailed);
 	return 0.0;
       }
-      double result;
+      // Initialize to prevent un'inited var. warnings
+      double result=0.0;
       ubvector icol(nx);
       for(size_t i=0;i<nx;i++) {
 	if (iy==-1) {

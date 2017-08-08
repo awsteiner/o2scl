@@ -109,10 +109,6 @@ int main(int argc, char *argv[]) {
   
   cout.setf(ios::scientific);
 
-#ifdef O2SCL_MPI  
-  MPI_Init(&argc,&argv);
-#endif
-  
   test_mgr tm;
   tm.set_output_level(1);
 
@@ -252,17 +248,10 @@ int main(int argc, char *argv[]) {
     tm.test_gen(1==1,"plain table n_iters");
   }
 
-  // Get MPI rank
-  int mpi_rank=0, mpi_nprocs=1;
-#ifdef O2SCL_MPI
-  MPI_Comm_rank(MPI_COMM_WORLD,&mpi_rank);
-  MPI_Comm_size(MPI_COMM_WORLD,&mpi_nprocs);
-#endif
-
   std::string fname;
   hdf_file hf;
   
-  fname=((std::string)"mcmct_")+o2scl::itos(mpi_rank)+"_out";
+  fname="mcmct_0_out";
   hf.open_or_create(fname);
   hdf_output(hf,*table,"mcmct");
   hf.set_szt_vec("chain_sizes",chain_sizes);
@@ -301,17 +290,13 @@ int main(int argc, char *argv[]) {
   }
 
   // Write results to file
-  fname=((std::string)"mcmct_ai_")+o2scl::itos(mpi_rank)+"_out";
+  fname="mcmct_ai_0_out";
   hf.open_or_create(fname);
   hdf_output(hf,*table,"mcmct");
   hf.set_szt_vec("chain_sizes",chain_sizes);
   hf.set_szt_vec("n_accept",mpc.mct.n_accept);
   hf.set_szt_vec("n_reject",mpc.mct.n_reject);
   hf.close();
-
-#ifdef O2SCL_MPI  
-  MPI_Finalize();
-#endif
 
   tm.report();
   
