@@ -27,12 +27,11 @@
 
     \section mcmc_subsect Markov chain Monte Carlo
 
-    The class \ref o2scl::mcmc_base performs generic 
-    MCMC simulations and the child class \ref o2scl::mcmc_table 
+    The class \ref o2scl::mcmc_para_base performs generic 
+    MCMC simulations and the child class \ref o2scl::mcmc_para_table 
     performs MCMC simulations and stores the results in
-    a \ref o2scl::table_units object. These classes will eventually
-    be replaced with \ref o2scl::mcmc_para_base and
-    its children which have better OpenMP/MPI support .
+    a \ref o2scl::table_units object. These classes contain
+    support for OpenMP and MPI (or both).
 
     \comment
     --------------------------------------------------------------

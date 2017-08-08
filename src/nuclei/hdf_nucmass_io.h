@@ -56,22 +56,7 @@ namespace o2scl_hdf {
 
   /** \brief Read data for \ref o2scl::nucmass_ame from an HDF table
       specified in a file
-
-      There are five data sets, selected by the specification of the
-      \c version string
-      - "95rmd" - "Recommended" data from \ref Audi95 (ame95rmd.o2)
-      - "95exp" - "Experimental" data from \ref Audi95 (ame95exp.o2)
-      - "03round" - "Rounded" data from \ref Audi03 (ame03round.o2)
-      - "03" - Data from \ref Audi03 (ame03.o2)
-      - "12" - Data from \ref Audi12 (ame12.o2)
       
-      If any string other than these five is used, the error handler
-      is called. If a data file has not been loaded, then
-      nucmass_ame::is_loaded() returns false.
-      
-      \comment
-      On ubuntu/doxygen-1.8.11, \ref o2scl_hdf fails here.
-      \endcomment
       \note This function is in the o2scl_hdf namespace,
       see \ref hdf_nucmass_io.h .
   */
@@ -86,19 +71,18 @@ namespace o2scl_hdf {
       - "95exp" - "Experimental" data from \ref Audi95 (ame95exp.o2)
       - "03round" - "Rounded" data from \ref Audi03 (ame03round.o2)
       - "03" - Data from \ref Audi03 (ame03.o2)
-      - "12" - Data from \ref Audi12 (ame12.o2, default)
+      - "12" - Data from \ref Audi12 and \ref Wang12 (ame12.o2)
+      - "16" - (default) Data from \ref Huang17 and \ref Wang17 (ame16.o2)
+      - "16round" - Data from \ref Huang17 and \ref Wang17 (ame16round.o2)
       
       If any string other than these five is used, the error handler
       is called. If a data file has not been loaded, then
       nucmass_ame::is_loaded() returns false.
       
-      \comment
-      On ubuntu/doxygen-1.8.11, \ref o2scl_hdf fails here.
-      \endcomment
       \note This function is in the o2scl_hdf namespace,
       see \ref hdf_nucmass_io.h .
    */
-  void ame_load(o2scl::nucmass_ame &ame, std::string name="12");
+  void ame_load(o2scl::nucmass_ame &ame, std::string name="16");
   
   /** \brief Read data for \ref o2scl::nucmass_mnmsk from an HDF table
 

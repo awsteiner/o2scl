@@ -10,7 +10,8 @@
 
     There are eleven mass table types currently included.
     - \ref o2scl::nucmass_ame and \ref o2scl::nucmass_ame_exp : data from 
-    \ref Audi95, \ref Audi03, or \ref Audi12 and \ref Wang12.
+    \ref Audi95, \ref Audi03, \ref Audi12 and \ref Wang12, or
+    \ref Huang17 and \ref Wang17 .
     - \ref o2scl::nucmass_mnmsk and \ref o2scl::nucmass_mnmsk_exp : 
     masses from \ref Moller95 and \ref Moller97
     - \ref o2scl::nucmass_hfb and \ref o2scl::nucmass_hfb_sp : masses from
