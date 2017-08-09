@@ -90,7 +90,7 @@ int acol_manager::setup_options() {
   const int cl_param=cli::comm_option_cl_param;
   const int both=cli::comm_option_both;
 
-  static const int narr=49;
+  static const int narr=50;
 
   // Options, sorted by long name. We allow 0 parameters in many of these
   // options so they can be requested from the user in interactive mode. 
@@ -101,6 +101,10 @@ int acol_manager::setup_options() {
      "Valid constant values are things like 1.618 or acos(-1.0) or sin(4^5). "
      "To remove an assignment, call assign with a blank value.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_assign),
+     both},
+    {0,"comment","Get/set the comment field",
+     1,2,"<file> [comment string]","",
+     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_comment),
      both},
     {0,"calc","Compute the value of a constant expression.",0,1,"<expr>",
      ((string)"This computes the value of the constant expression ")+
@@ -338,12 +342,20 @@ int acol_manager::setup_options() {
      "named using '='. ",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_select),
      both},
-    {0,"select-rows","Select rows for a new table (table3d only).",
-     0,1,"<row_spec>","",
+    {0,"select-rows","Select rows for a new table (table only).",
+     0,1,"<row_spec>",((std::string)"Select the rows from a table for ")+
+     "which the row specification in <row_spec> evaluates to a number "+
+     "greater than 0.5",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_select_rows),
      both},
-    {0,"select-rows2","Select rows for a new table (table3d only).",
-     0,-1,"<row_spec> [col1] [col2] ...","",
+    {0,"select-rows2",
+     "Select rows, with explicit column specification (table only).",
+     0,-1,"<row_spec> [col1] [col2] ...",
+     ((std::string)"Select the rows from a table for ")+
+     "which the row specification in <row_spec> evaluates to a number "+
+     "greater than 0.5 . All of the columns required to compute the row "+
+     "specification must be given in [col1] [col2] ... This can be "+
+     "faster than 'select-rows' for tables with many columns.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_select_rows2),
      both},
     {0,"set-data","Set the entries of a column.",3,4,
@@ -395,7 +407,7 @@ int acol_manager::setup_options() {
      "if necessary.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sum),
      both},
-    {'v',"version","Print version information.",0,0,"",
+    {'v',"version","Print version information and O2scl settings.",0,0,"",
      "",new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_version),
      both},
     {0,"nlines","Add 'nlines' as a constant to a table object.",0,0,"",
@@ -1025,6 +1037,61 @@ int acol_manager::run_o2graph() {
     
   return 0;
   
+}
+
+int acol_manager::comm_comment(std::vector<std::string> &sv, 
+			       bool itive_com) {
+
+  /*
+    TODO: This should work for both fixed-length strings and
+    variable-length strings but doesn't, because gets_def() throws an
+    error when it encounters a fixed length string. This should be
+    fixed, and maybe the hdf_file object needs a new gets() function
+    which works with both variable- and fixed-length strings.
+  */
+  
+  if (sv.size()==2) {
+    hdf_file hf;
+    hf.open(sv[1]);
+    std::string def, s;
+    hf.gets_def("comment",def,s);
+    if (s==def) {
+      hf.gets_def_fixed("comment",def,s);
+    }
+    if (s==def) {
+      cout << "No comment in file " << sv[1] << endl;
+    } else {
+      cout << "Comment in file " << sv[1] << " :" << endl;
+      cout << s << endl;
+    }
+    hf.close();
+  }
+  
+  hdf_file hf;
+  hf.open(sv[1]);
+  
+  // If it's already present as a fixed length string,
+  // then we need to double check
+  std::string def, s;
+  hf.gets_def_fixed("comment",def,s);
+  if (s!=def) {
+    size_t len=s.length();
+    if (sv[2].length()>len) {
+      cerr << "Size of new comment (" << sv[2].length()
+	   << ") longer than size of current "
+	   << "fixed length string " << len << "." << endl;
+      hf.close();
+      return 1;
+    }
+    while (sv[2].length()<len) sv[2]+=' ';
+    hf.sets_fixed("comment",sv[2]);
+  } else {
+    hf.sets("comment",sv[2]);
+  }
+  cout << "Set comment in file " << sv[1] << " to " << endl;
+  cout << sv[2] << endl;
+  hf.close();
+  return 0;
 }
 
 int acol_manager::comm_to_hist(std::vector<std::string> &sv, 
@@ -2147,6 +2214,8 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	cout << dims[i] << ",";
       }
       cout << dims[ndims-1] << ").";
+    } else {
+      cout << "<unknown>.";
     }
     cout << endl;
 

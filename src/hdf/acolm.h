@@ -259,6 +259,9 @@ namespace o2scl_acol {
     /// Assign a constant
     virtual int comm_assign(std::vector<std::string> &sv, bool itive_com);
 
+    /// Get or set comment field
+    virtual int comm_comment(std::vector<std::string> &sv, bool itive_com);
+
     /// Compute a scalar value
     virtual int comm_calc(std::vector<std::string> &sv, bool itive_com);
 
@@ -390,7 +393,9 @@ namespace o2scl_acol {
     virtual int comm_select_rows(std::vector<std::string> &sv,
 				 bool itive_com);
 
-    /// Desc
+    /** \brief A faster form of select rows which requires one to specify
+	the columns needed for the selection criteria first
+    */
     virtual int comm_select_rows2(std::vector<std::string> &sv,
 				  bool itive_com);
 
