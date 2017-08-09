@@ -1032,6 +1032,85 @@ int hdf_file::gets_def(std::string name, std::string def, std::string &s) {
     return success;
   }
 
+  {
+    // Determine if this is a fixed-length string, and if so, use
+    // gets_fixed() instead.
+    hid_t filetype=H5Dget_type(dset);
+    size_t str_size=H5Tget_size(filetype);
+    
+    hsize_t dims[3];
+    hid_t space=H5Dget_space(dset);
+    int ndims=H5Sget_simple_extent_dims(space,dims,0);
+    hid_t memtype=-1;
+    if (ndims==1 && dims[0]==1) {
+      memtype=H5Tcopy(H5T_C_S1);
+    }
+    if (memtype>0) {
+      int status=H5Tclose(memtype);
+      status=H5Sclose(space);
+      status=H5Tclose(filetype);
+      status=H5Dclose(dset);
+      return gets_fixed(name,s);
+    } else {
+      int status=H5Sclose(space);
+      status=H5Tclose(filetype);
+    }
+  }
+
+  // Get space requirements, to make sure they coincide
+  // with the size specified by the user
+  hid_t space=H5Dget_space(dset);  
+  hsize_t dims[1];
+  int ndims=H5Sget_simple_extent_dims(space,dims,0);
+  if (ndims!=1) {
+    O2SCL_ERR2("Dataspace has incorrect number of dimensions ",
+		   "in hdf_file::gets_def().",exc_einval);
+  }
+
+  // Allocate memory
+  char *c=new char[dims[0]];
+
+  // Read the data
+  int status=H5Dread(dset,H5T_NATIVE_CHAR,H5S_ALL,H5S_ALL,
+		     H5P_DEFAULT,c);
+  if (status<0) {
+    O2SCL_ERR("Could not read dataspace in hdf_file::gets_def().",
+		  exc_einval);
+  }
+
+  // Close the dataset
+  status=H5Dclose(dset);
+
+  // Copy to the string object
+  s="";
+  for(size_t i=0;i<dims[0];i++) s+=c[i];
+
+  // Delete char memory
+  delete[] c;
+
+  return 0;
+}
+
+int hdf_file::gets_var_def(std::string name, std::string def, std::string &s) {
+      
+  // Open the data space
+  hid_t dset=0;
+
+  H5E_BEGIN_TRY {
+      // See if the dataspace already exists first
+      dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+  }
+  H5E_END_TRY
+#ifdef O2SCL_NEVER_DEFINED
+    }{
+#endif
+
+  // Not found, return default
+  if (dset<0) {
+    s=def;
+    return success;
+  }
+
   // Get space requirements, to make sure they coincide
   // with the size specified by the user
   hid_t space=H5Dget_space(dset);  

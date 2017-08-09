@@ -944,6 +944,9 @@ namespace o2scl_hdf {
 
     /// Get a string named \c name
     int gets_def(std::string name, std::string def, std::string &s);
+
+    /// Get a variable length string named \c name
+    int gets_var_def(std::string name, std::string def, std::string &s);
     //@}
 
     /** \name Get functions with pre-allocated pointer
