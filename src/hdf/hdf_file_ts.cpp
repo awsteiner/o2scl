@@ -38,6 +38,23 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
+  {
+    // This section now checks that gets() now works with
+    // both fixed- and variable-length strings
+    cout << "Test gets() for fixed- and variable-length strings." << endl;
+    hdf_file hf;
+    hf.open_or_create("hdf_file_gets.o2");
+    hf.sets("str","string");
+    hf.sets_fixed("strf","fixed-length string");
+    hf.close();
+    hf.open("hdf_file_gets.o2");
+    string stmp;
+    hf.gets("str",stmp);
+    hf.gets("strf",stmp);
+    hf.close();
+    cout << endl;
+  }
+  
   // Uncompressed section
   {
   

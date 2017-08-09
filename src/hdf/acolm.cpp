@@ -2215,7 +2215,29 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
       }
       cout << dims[ndims-1] << ").";
     } else {
-      cout << "<unknown>.";
+      hid_t filetype=H5Dget_type(dset);
+      size_t str_size=H5Tget_size(filetype);
+      
+      hsize_t dims[3];
+      hid_t space=H5Dget_space(dset);
+      int ndims=H5Sget_simple_extent_dims(space,dims,0);
+      hid_t memtype=-1;
+      if (ndims==1 && dims[0]==1) {
+	memtype=H5Tcopy(H5T_C_S1);
+      }
+      if (memtype>0) {
+	status=H5Tclose(memtype);
+	status=H5Sclose(space);
+	status=H5Tclose(filetype);
+	cout << "fixed-length (" << str_size << ") string with value \"";
+	std::string s;
+	hf.gets_fixed(name,s);
+	cout << s << "\".";
+      } else {
+	cout << "<unknown>.";
+	status=H5Sclose(space);
+	status=H5Tclose(filetype);
+      }
     }
     cout << endl;
 

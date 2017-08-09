@@ -550,7 +550,7 @@ int main(int argc, char *argv[]) {
 	   "Chin. Phys. C, 41 (2017) 030002; "+
 	   "M. Wang, G. Audi, F. G. Kondev, "+
 	   "W. J. Huang, , S. Naimi, X. Xu, "
-	   "Chin. Phys. C, 41 (2017) 030003. ");
+	   "Chin. Phys. C, 41 (2017) 030003.");
       } else if (ik==6) {
 	hf.sets_fixed("orig_file","mass16round.txt");
 	hf.sets_fixed
@@ -559,7 +559,7 @@ int main(int argc, char *argv[]) {
 	   "Chin. Phys. C, 41 (2017) 030002; "+
 	   "M. Wang, G. Audi, F. G. Kondev, "+
 	   "W. J. Huang, , S. Naimi, X. Xu, "
-	   "Chin. Phys. C, 41 (2017) 030003. ");
+	   "Chin. Phys. C, 41 (2017) 030003.");
       }
       
       H5Tclose(string_type3);

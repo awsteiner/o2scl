@@ -214,6 +214,10 @@ namespace o2scl_hdf {
 	strings.
     */
     int gets(std::string name, std::string &s);
+
+    /** \brief Get a variable length string named \c name
+     */
+    int gets_var(std::string name, std::string &s);
     
     /** \brief Get a fixed-length string named \c name
      */
