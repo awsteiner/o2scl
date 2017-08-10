@@ -544,7 +544,9 @@ int acol_manager::setup_parameters() {
   p_prec.help="The numerical precision";
   p_verbose.help="Control the amount of output";
   p_ncols.help="The number of output columns";
-  p_interp_type.help="The interpolation type";
+  p_interp_type.help=((std::string)"The interpolation type ")+
+    "(1=linear, 2=cubic spline, 3=periodic cubic spline, 4=Akima, "+
+    "5=periodic Akima, 6=monotonic, 7=Steffen's monotonic)";
   p_names_out.help="If true, output column names at top";
   p_pretty.help="If true, align the columns using spaces";
   p_scientific.help="If true, output in scientific mode";

@@ -20,16 +20,17 @@ result. If a table is currently in memory, it is deallocated beforehand.
 > commands
 Command list:
 
-alias        delete-rows  generic      interactive  preview      set-unit     
-assign       deriv        get          internal     quit         show-units   
-calc         deriv2       get-conv     interp       read         slice        
-cat          entry        get-row      license      rename       sort         
-commands     exit         get-unit     list         run          stats        
-contours     filelist     help         max          select       sum          
-convert-unit find-row     index        min          select-rows  to-hist      
-create       fit          insert       nlines       select-rows2 type         
-create3      function     insert-full  no-intro     set          version      
-delete-col   gen3-list    integ        output       set-data     warranty     
+alias        delete-rows  get          interp       rename       stats        
+assign       deriv        get-conv     license      run          sum          
+calc         deriv2       get-row      list         select       to-hist      
+cat          entry        get-unit     max          select-rows  type         
+commands     exit         help         min          select-rows2 version      
+comment      filelist     index        nlines       set          warranty     
+contours     find-row     insert       no-intro     set-data     
+convert-unit fit          insert-full  output       set-unit     
+create       function     integ        preview      show-units   
+create3      gen3-list    interactive  quit         slice        
+delete-col   generic      internal     read         sort         
 
 # -----------------------------------------------------------------
 # Use 'create' to create a table with one column
