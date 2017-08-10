@@ -95,14 +95,14 @@ int acol_manager::setup_options() {
   // Options, sorted by long name. We allow 0 parameters in many of these
   // options so they can be requested from the user in interactive mode. 
   comm_option_s options_arr[narr]={
-    {'a',"assign","Assign a constant., e.g. assign pi acos(-1)",
+    {'a',"assign","Assign a constant, e.g. assign pi acos(-1) .",
      0,2,"<name> [val]",
      ((string)"Assign a constant value to a name for the present table. ")+
      "Valid constant values are things like 1.618 or acos(-1.0) or sin(4^5). "
      "To remove an assignment, call assign with a blank value.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_assign),
      both},
-    {0,"comment","Get/set the comment field",
+    {0,"comment","Get or set a string field named 'comment'.",
      1,2,"<file> [comment string]","",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_comment),
      both},
@@ -143,7 +143,7 @@ int acol_manager::setup_options() {
      "<y name> <y lo> <y hi> <y step> <slice name> <slice function>","",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_create3),
      both},
-    {0,"delete-col","Delete a column (table3d only).",0,1,"<name>",
+    {0,"delete-col","Delete a column (table only).",0,1,"<name>",
      "Delete the entire column named <name>.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_delete_col),
      both},
@@ -152,7 +152,7 @@ int acol_manager::setup_options() {
      "which a function evaluates to a number greater than 0.5. "+
      "For example, 'delete-rows if(col1+col2>10,1,0)' will delete "+
      "all columns where the sum of the entries in 'col1' and 'col2' "+
-     "is larger than 10 (table3d only).",
+     "is larger than 10 (table only). See also 'select-rows'.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_delete_rows),
      both},
     {'D',"deriv",
@@ -173,7 +173,7 @@ int acol_manager::setup_options() {
      "gives the type and name of the object stored in that HDF5 group.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_filelist),
      both},
-    {0,"find-row","Find a row which maximizes a function (table3d only).",
+    {0,"find-row","Find a row which maximizes a function (table only).",
      0,2,"<func> or find-row <col> <val>",
      ((string)"If one argument is given, then find-row finds the row ")+
      "which maximizes the value of the "+
@@ -183,7 +183,7 @@ int acol_manager::setup_options() {
      "See command 'get-row' to get a row by it's index.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_find_row),
      both},
-    {0,"fit","Fit two columns to a function (experimental, table3d only).",0,7,
+    {0,"fit","Fit two columns to a function (experimental, table only).",0,7,
      "<x> <y> <yerr> <ynew> <par names> <func> <vals>","",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_fit),
      both},
@@ -196,25 +196,37 @@ int acol_manager::setup_options() {
      "difference of columns 'c1' and 'c2'.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_function),
      both},
-    {'g',"generic","Read in a generic data file (table3d only).",0,1,"<file>",
+    {'g',"generic","Read in a generic data file (table only).",0,1,"<file>",
      ((string)"Read a generic data file with the given filename. ")+
-     "The first line of the file is assumed to contain column names "+
+     "The first line of the file must either contain numeric data or "+
+     "column names "+
      "separated by white space, without carriage returns, except for "+
      "the one at the end of the line. All remaining lines are assumed "+
-     "to contain data. ",
+     "to contain data with the same number of columns as the first line. ",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_generic),
      both},
     {0,"gen3-list","Read in a generic data file (table3d only).",0,1,"<file>",
-     ((string)"This function reads in a generic data file ")+"Desc2",
+     ((string)"This command reads in a generic data file ")+
+     "which specifies a table3d object. The data must be stored in columns "+
+     "where the first entry in each column is the x-axis grid point, "+
+     "the second, entry in each column is the y-axis grid point, "+
+     "and the remaining columns give the data for each slice at that "+
+     "point. Each grid point must correspond to a line in the file, but "+
+     "the lines need not be in any particular order. The columns may "+
+     "have one header line at top which specifies the names of the x- "+
+     "and y-grids and the names of each slice (in order).",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_gen3_list),
      both},
     {0,"get-conv","Get a unit conversion factor.",0,2,
-     "<old unit> <new unit>",((string)"(This command only works if ")+
+     "<old unit> <new unit>",((string)"This command gets a unit ")+
+     "conversion factor. It only works if the conversion is one of the "
+     "hard-coded O2scl conversions or if "+
      "the GNU 'units' command is installed and available in the current "+
-     "path.) For example, 'get-conv MeV erg' returns 1.602e-6 and 1 MeV "+
-     "is equivalent to 1.602e-6 erg. The conversion factor is output "+
+     "path. For example, 'get-conv MeV erg' returns 1.602176e-6 and 1 MeV "+
+     "is equivalent to 1.602176e-6 erg. The conversion factor is output "+
      "at the current precision, but is always internally stored with "+
-     "full double precision.",
+     "full double precision. (Note that the 'units' command shipped on OSX "+
+     "is not the same as the GNU version.)",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_conv),
      both},
     {0,"get-row","Get a row by index.",
@@ -239,7 +251,7 @@ int acol_manager::setup_options() {
 	  new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_html),
 	  both},
     */
-    {'N',"index","Add a column containing the row numbers (table3d only).",0,1,
+    {'N',"index","Add a column containing the row numbers (table only).",0,1,
      "[column name]",
      ((string)"Define a new column named [column name] and fill ")+
      "the column with the row indexes, beginning with zero. If "+
@@ -258,7 +270,7 @@ int acol_manager::setup_options() {
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_insert),
      both},
     {0,"insert-full",
-     "Interpolate a table from another file (table3d only).",0,3,
+     "Interpolate a table from another file (table only).",0,3,
      "<fname> <oldx> <newx>",
      ((string)"Insert all columns from file <fname> interpolating it ")+
      "into the current table. The column <oldy> is the "+
@@ -268,7 +280,7 @@ int acol_manager::setup_options() {
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
      both},
     {'I',"integ",
-     "Integrate a function specified by two columns (table3d only).",
+     "Integrate a function specified by two columns (table only).",
      0,3,"<x> <y> <name>",
      ((string)"Create a new column named <name> filled with the ")+
      "integral of the function y(x) obtained from columns <x> and <y>. ",
@@ -313,7 +325,7 @@ int acol_manager::setup_options() {
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_output),
      both},
     {'P',"preview","Preview the current table.",0,2,
-     "[nlines] [ncols (for table3d/hist_2d)]",
+     "[nlines] [ncols (for table/hist_2d)]",
      ((string)"Print out [nlines] lines of data for as many columns as ")+
      "will fit on the screen. The value of [nlines] defaults to 10 "+
      "for table objects.",
@@ -1042,22 +1054,11 @@ int acol_manager::run_o2graph() {
 int acol_manager::comm_comment(std::vector<std::string> &sv, 
 			       bool itive_com) {
 
-  /*
-    TODO: This should work for both fixed-length strings and
-    variable-length strings but doesn't, because gets_def() throws an
-    error when it encounters a fixed length string. This should be
-    fixed, and maybe the hdf_file object needs a new gets() function
-    which works with both variable- and fixed-length strings.
-  */
-  
   if (sv.size()==2) {
     hdf_file hf;
     hf.open(sv[1]);
     std::string def, s;
     hf.gets_def("comment",def,s);
-    if (s==def) {
-      hf.gets_def_fixed("comment",def,s);
-    }
     if (s==def) {
       cout << "No comment in file " << sv[1] << endl;
     } else {
@@ -1065,27 +1066,35 @@ int acol_manager::comm_comment(std::vector<std::string> &sv,
       cout << s << endl;
     }
     hf.close();
+    return 0;
   }
   
   hdf_file hf;
-  hf.open(sv[1]);
+  // Make sure to open with write access
+  hf.open(sv[1],1);
   
   // If it's already present as a fixed length string,
   // then we need to double check
   std::string def, s;
-  hf.gets_def_fixed("comment",def,s);
+  int iret=hf.gets_def_fixed("comment",def,s);
   if (s!=def) {
-    size_t len=s.length();
-    if (sv[2].length()>len) {
-      cerr << "Size of new comment (" << sv[2].length()
-	   << ") longer than size of current "
-	   << "fixed length string " << len << "." << endl;
-      hf.close();
-      return 1;
+    if (iret==1) {
+      size_t len=s.length();
+      if (sv[2].length()>len) {
+	cerr << "Size of new comment (" << sv[2].length()
+	     << ") longer than size of current "
+	     << "fixed length string " << len << "." << endl;
+	hf.close();
+	return 1;
+      } else {
+	while (sv[2].length()<len) sv[2]+=' ';
+      }
+      hf.sets_fixed("comment",sv[2]);
+    } else {
+      hf.sets("comment",sv[2]);
     }
-    while (sv[2].length()<len) sv[2]+=' ';
-    hf.sets_fixed("comment",sv[2]);
   } else {
+    // String is not present so just set
     hf.sets("comment",sv[2]);
   }
   cout << "Set comment in file " << sv[1] << " to " << endl;

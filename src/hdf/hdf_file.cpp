@@ -750,7 +750,8 @@ int hdf_file::gets(std::string name, std::string &s) {
       status=H5Sclose(space);
       status=H5Tclose(filetype);
       status=H5Dclose(dset);
-      return gets_fixed(name,s);
+      gets_fixed(name,s);
+      return 1;
     } else {
       int status=H5Sclose(space);
       status=H5Tclose(filetype);
@@ -1050,7 +1051,8 @@ int hdf_file::gets_def(std::string name, std::string def, std::string &s) {
       status=H5Sclose(space);
       status=H5Tclose(filetype);
       status=H5Dclose(dset);
-      return gets_fixed(name,s);
+      gets_fixed(name,s);
+      return 1;
     } else {
       int status=H5Sclose(space);
       status=H5Tclose(filetype);
