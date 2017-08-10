@@ -724,7 +724,7 @@ int hdf_file::get_szt(std::string name, size_t &u) {
 }
 
 int hdf_file::gets(std::string name, std::string &s) {
-      
+
   // Open the data space
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
   if (dset<0) {
@@ -732,7 +732,13 @@ int hdf_file::gets(std::string name, std::string &s) {
 		   "' not found in hdf_file::gets().").c_str(),exc_einval);
   }
 
-  {
+  if (false) {
+    /*
+      There's a problem here because this appears to 
+      improperly detect a 1 character variable length string as a 
+      fixed-length string.
+    */
+    
     // Determine if this is a fixed-length string, and if so, use
     // gets_fixed() instead.
     hid_t filetype=H5Dget_type(dset);
@@ -1033,7 +1039,13 @@ int hdf_file::gets_def(std::string name, std::string def, std::string &s) {
     return success;
   }
 
-  {
+  if (false) {
+    /*
+      There's a problem here because this appears to 
+      improperly detect a 1 character variable length string as a 
+      fixed-length string.
+    */
+
     // Determine if this is a fixed-length string, and if so, use
     // gets_fixed() instead.
     hid_t filetype=H5Dget_type(dset);
