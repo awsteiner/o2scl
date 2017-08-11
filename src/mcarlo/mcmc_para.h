@@ -486,7 +486,7 @@ namespace o2scl {
     }
 	  
     // Proposal weight
-    double q_prop;
+    double q_prop=0.0;
     
     // Run mcmc_init() function. The initial point, stored in
     // current[0] can be modified by this function and the local
