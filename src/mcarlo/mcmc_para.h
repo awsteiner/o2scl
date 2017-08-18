@@ -1363,8 +1363,8 @@ namespace o2scl {
     if (table_io_chunk>1) {
       if (this->mpi_rank%table_io_chunk==0) {
 	// Parent ranks
-	for(size_t i=0;i<table_io_chunk-1;i++) {
-	  size_t child=this->mpi_rank+i+1;
+	for(int i=0;i<table_io_chunk-1;i++) {
+	  int child=this->mpi_rank+i+1;
 	  if (child<this->mpi_size) {
 	    table_units<> t;
 	    tab_arr.push_back(t);
