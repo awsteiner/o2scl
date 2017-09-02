@@ -458,21 +458,28 @@ void eos_tov_interp::internal_read() {
     full_vecnb.clear();
   }
 
-  size_t crust_nlines=crust_vece.size();
-
-  // Add lines of crust before transition
-  if (verbose>1) {
-    cout << "Crust: use_crust = " << use_crust << " crust_nlines = "
-	 << crust_nlines << " core_nlines = " << core_nlines << endl;
-  }
   if (use_crust) {
+
+    size_t crust_nlines=crust_vece.size();
+
+    // Verbose output if use_crust is true
+    if (verbose>1) {
+      cout << "Crust: use_crust = " << use_crust << " crust_nlines = "
+	   << crust_nlines << " core_nlines = " << core_nlines << endl;
+    }
+
+    // Add crust EOS before transition to full_vece, full_vecp, and
+    // full_vecnb
     for(size_t i=0;i<crust_nlines;i++) {
+
       if (crust_vecp[i]<pr_lo) {
 	full_vece.push_back(crust_vece[i]);
 	full_vecp.push_back(crust_vecp[i]);
 	if (baryon_column) {
 	  full_vecnb.push_back(crust_vecnb[i]);
 	}
+
+	// Verbose output
 	if (verbose>1) {
 	  cout << crust_vece[i] << " " << crust_vecp[i] << " ";
 	  if (baryon_column) {
@@ -484,85 +491,94 @@ void eos_tov_interp::internal_read() {
 	  }
 	  cout << endl;
 	}
+	
       }
+    }
+
+    // Add EOS in the transition region to full_vece, full_vecp, and
+    // full_vecnb
+    if (trans_width>1.0) {
+
+      if (verbose>1) {
+	cout << "Transition: " << endl;
+      }
+      
+      // Add 21 transition points for the transition region
+      double dpr=(pr_hi-pr_lo)/20.0;
+      // Set to zero to avoid uninit'ed variable warnings
+      double ed_lo=0.0, ed_hi=0.0, nb_lo=0.0, nb_hi=0.0;
+
+      if (transition_mode==match_line) {
+	ed_lo=gen_int.eval(pr_lo,crust_nlines,crust_vecp,crust_vece);
+	ed_hi=gen_int.eval(pr_hi/pfactor,core_nlines,core_vecp,
+			   core_vece)*efactor;
+	if (baryon_column) {
+	  nb_lo=gen_int.eval(pr_lo,crust_nlines,crust_vecp,crust_vecnb);
+	  nb_hi=gen_int.eval(pr_hi/pfactor,core_nlines,core_vecp,
+			     core_vecnb)*nfactor;
+	}
+      }
+
+      double ed, nb=0.0;
+
+      for(double pr=pr_lo;pr<pr_hi+dpr/100.0;pr+=dpr) {
+
+	double chi=(pr-pr_lo)/(pr_hi-pr_lo);
+
+	if (transition_mode==smooth_trans) {
+	  ed_lo=gen_int.eval(pr,crust_nlines,crust_vecp,crust_vece);
+	  ed_hi=gen_int.eval(pr/pfactor,core_nlines,core_vecp,
+			     core_vece)*efactor;
+	  ed=(1.0-chi)*ed_lo+chi*ed_hi;
+      
+	  if (baryon_column) {
+	    nb_lo=gen_int.eval(pr,crust_nlines,crust_vecp,crust_vecnb);
+	    nb_hi=gen_int.eval(pr/pfactor,core_nlines,core_vecp,
+			       core_vecnb)*nfactor;
+	    nb=(1.0-chi)*nb_lo+chi*nb_hi;
+	  }
+      
+	} else {
+      
+	  ed=(ed_hi-ed_lo)*chi+ed_lo;
+	  if (baryon_column) {
+	    nb=(nb_hi-nb_lo)*chi+nb_lo;
+	  }
+      
+	}
+    
+	full_vecp.push_back(pr);
+	full_vece.push_back(ed);
+	if (baryon_column) {
+	  full_vecnb.push_back(nb);
+	}
+	if (verbose>1) {
+	  cout << ed << " " << pr << " ";
+	  if (baryon_column) {
+	    cout << nb << " ";
+	  }
+	  cout << ed/efactor << " " << pr/pfactor << " ";
+	  if (baryon_column) {
+	    cout << nb/nfactor;
+	  }
+	  cout << endl;
+	}
+
+      }    
+
+    }
+
+  } else {
+    // Verbose output if use_crust is false
+    if (verbose>1) {
+      cout << "Crust: use_crust = " << use_crust 
+	   << " core_nlines = " << core_nlines << endl;
     }
   }
   
-  if (trans_width>1.0) {
-
-    // Add transition lines
-    if (verbose>1) {
-      cout << "Transition: " << endl;
-    }
-    // Add transition lines
-    double dpr=(pr_hi-pr_lo)/20.0;
-    // Set to zero to avoid uninit'ed variable warnings
-    double ed_lo=0.0, ed_hi=0.0, nb_lo=0.0, nb_hi=0.0;
-
-    if (transition_mode==match_line) {
-      ed_lo=gen_int.eval(pr_lo,crust_nlines,crust_vecp,crust_vece);
-      ed_hi=gen_int.eval(pr_hi/pfactor,core_nlines,core_vecp,
-			 core_vece)*efactor;
-      if (baryon_column) {
-	nb_lo=gen_int.eval(pr_lo,crust_nlines,crust_vecp,crust_vecnb);
-	nb_hi=gen_int.eval(pr_hi/pfactor,core_nlines,core_vecp,
-			   core_vecnb)*nfactor;
-      }
-    }
-
-    double ed, nb=0.0;
-
-    for(double pr=pr_lo;pr<pr_hi+dpr/100.0;pr+=dpr) {
-
-      double chi=(pr-pr_lo)/(pr_hi-pr_lo);
-
-      if (transition_mode==smooth_trans) {
-	ed_lo=gen_int.eval(pr,crust_nlines,crust_vecp,crust_vece);
-	ed_hi=gen_int.eval(pr/pfactor,core_nlines,core_vecp,
-			   core_vece)*efactor;
-	ed=(1.0-chi)*ed_lo+chi*ed_hi;
-      
-	if (baryon_column) {
-	  nb_lo=gen_int.eval(pr,crust_nlines,crust_vecp,crust_vecnb);
-	  nb_hi=gen_int.eval(pr/pfactor,core_nlines,core_vecp,
-			     core_vecnb)*nfactor;
-	  nb=(1.0-chi)*nb_lo+chi*nb_hi;
-	}
-      
-      } else {
-      
-	ed=(ed_hi-ed_lo)*chi+ed_lo;
-	if (baryon_column) {
-	  nb=(nb_hi-nb_lo)*chi+nb_lo;
-	}
-      
-      }
-    
-      full_vecp.push_back(pr);
-      full_vece.push_back(ed);
-      if (baryon_column) {
-	full_vecnb.push_back(nb);
-      }
-      if (verbose>1) {
-	cout << ed << " " << pr << " ";
-	if (baryon_column) {
-	  cout << nb << " ";
-	}
-	cout << ed/efactor << " " << pr/pfactor << " ";
-	if (baryon_column) {
-	  cout << nb/nfactor;
-	}
-	cout << endl;
-      }
-
-    }    
-
-  }
-
-  // Add core lines
-  if (verbose>1) {
-    cout << "Core: lines = " << core_nlines << endl;
-  }
+  // Add core EOS to full_vece, full_vecp and full_vecnb,
+  // converting units if necessary
+  
   for(size_t i=0;i<core_nlines;i++) {
     double pt=core_vecp[i]*pfactor;
     double et=core_vece[i]*efactor;
@@ -570,7 +586,7 @@ void eos_tov_interp::internal_read() {
     if (baryon_column) {
       nt=core_vecnb[i]*nfactor;
     }
-    if (pt>pr_hi) {
+    if (!use_crust || pt>pr_hi) {
       full_vece.push_back(et);
       full_vecp.push_back(pt);
       if (baryon_column) {
@@ -592,7 +608,7 @@ void eos_tov_interp::internal_read() {
   }
 
   // ---------------------------------------------------------------
-  // Set 'eos_read', interpolators, and 'full_nlines'
+  // Set interpolators, and 'full_nlines'
 
   size_t full_nlines=full_vecp.size();
   pe_int.set(full_nlines,full_vecp,full_vece,itp_linear);

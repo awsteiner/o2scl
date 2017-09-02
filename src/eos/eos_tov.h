@@ -43,7 +43,7 @@ namespace o2scl {
 #endif
 
   /** \brief A EOS base class for the TOV solver
-  */
+   */
   class eos_tov {
 
   protected:
@@ -622,32 +622,50 @@ namespace o2scl {
       include the crust if necessary).
 
       There are two methods to handle the crust-core interface. The
-      default, <tt>smooth_trans</tt> uses the crust below pressure \f$
-      P_1 \f$ (equal to the value of \ref trans_pres divided by \ref
-      trans_width) and the core above pressure \f$ P_2 \f$ (the value
-      of \ref trans_pres times \ref trans_width) and then in between
-      uses
+      method labeled <tt>smooth_trans</tt> uses the crust below
+      pressure \f$ P_{\mathrm{lo}} \f$ (equal to the value of \ref
+      trans_pres divided by \ref trans_width) and the core above
+      pressure \f$ P_{\mathrm{hi}} \f$ (the value of \ref trans_pres
+      times \ref trans_width) and then in between uses
       \f[
       \varepsilon(P) = [1-\chi(P)] \varepsilon_{\mathrm{crust}}(P) + 
       \chi(P) \varepsilon_{\mathrm{core}}(P)
       \f]
       where the value \f$ \chi(P) \f$ is determined by
       \f[
-      \chi(P) = (P-P_1)/(P_2-P_1) \, .
+      \chi(P) = (P-P_{\mathrm{lo}})/
+      (P_{\mathrm{hi}}-P_{\mathrm{lo}}) \, .
       \f]
       This method is a bit more faithful to the original EOS tables,
       but the matching can result in pressures which decrease with
       increasing energy density. Alternatively the <tt>match_line</tt>
-      method uses
-      \f$ \varepsilon_1=\varepsilon_{\mathrm{crust}}(P_1) \f$ and 
-      \f$ \varepsilon_2=\varepsilon_{\mathrm{core}}(P_2) \f$ and
+      method uses \f$
+      \varepsilon_{\mathrm{lo}}=\varepsilon_{\mathrm{crust}}
+      (P_{\mathrm{lo}}) \f$ and \f$
+      \varepsilon_{\mathrm{hi}}=\varepsilon_{\mathrm{core}}
+      (P_{\mathrm{hi}}) \f$ and
       \f[
-      \varepsilon(P) = (\varepsilon_2 - \varepsilon_1) \chi 
-      + \varepsilon_1 \, .
+      \varepsilon(P) = (\varepsilon_{\mathrm{hi}} - 
+      \varepsilon_{\mathrm{lo}}) \chi 
+      + \varepsilon_{\mathrm{lo}} \, .
       \f]
       (using the same expression for \f$ \chi \f$ ). This method less
       frequently results in decreasing pressures, but can deviate
-      further from the original tables.
+      further from the original tables. For the baryon density,
+      expression similar to those used for \f$ \varepsilon(P) \f$
+      are used for \f$ n_B(P) \f$ .
+
+      By default, no crust EOS is used. If a crust EOS is specified
+      through one of the crust EOS functions, then by default \ref
+      trans_width is 1.0 and <tt>transition_mode</tt> is set equal
+      <tt>smooth_trans</tt>. This creates a discontinuous energy
+      density between the core and crust EOS at the transition
+      pressure. A smoother transition can be chosen by increasing \ref
+      trans_width to a value larger than 1. The crust EOS can be
+      changed after the core EOS is specified.
+
+      The value of \ref trans_pres is set either by \ref
+      set_transition(), or any of the crust EOS functions.
 
       Internally, energy and pressure are stored in units of \f$
       \mathrm{M}_{\odot}/\mathrm{km}^3 \f$ and baryon density is
