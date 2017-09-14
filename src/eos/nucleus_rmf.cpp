@@ -365,15 +365,15 @@ int nucleus_rmf::run_nucleus(int nucleus_Z, int nucleus_N,
   init_run(nucleus_Z,nucleus_N,unocc_Z,unocc_N);
 
   int iteration=1, iconverged=0;
+
   /*
     We allow the Dirac equations and meson field equations to 
     not converge temporarily, but require that they successfully
     converged by the time iconverged is nonzero.
   */
-  int dirac_converged, meson_converged;
+  int dirac_converged=0, meson_converged=0;
+  
   while (iconverged==0) {
-    
-    if (verbose>0) cout << "Iteration: " << iteration << endl;
     
     if (iteration>itmax) {
       O2SCL_CONV_RET((((string)"Failed to converge after ")+
@@ -383,6 +383,13 @@ int nucleus_rmf::run_nucleus(int nucleus_Z, int nucleus_N,
     
     int iret=iterate(nucleus_Z,nucleus_N,unocc_Z,unocc_N,iconverged,
 		     dirac_converged,meson_converged);
+
+    if (verbose>0) {
+      cout << "Iteration: " << iteration << " ret: " << iret
+	   << " dirac: " << dirac_converged
+	   << " meson: " << meson_converged << endl;
+    }
+    
     if (iret!=0) {
       O2SCL_CONV_RET("Function iterate() failed.",exc_efailed,
 		     err_nonconv);
@@ -415,7 +422,6 @@ void nucleus_rmf::init_run(int nucleus_Z, int nucleus_N,
   // The number of (occupied) neutron, proton, and total and
   // unoccupied states
   int nistate, pistate;
-
   nuolevels=unocc_Z+unocc_N;
   
   n.non_interacting=false;
@@ -423,8 +429,8 @@ void nucleus_rmf::init_run(int nucleus_Z, int nucleus_N,
 
   profiles->clear_data();
   chden_table->clear_data();
-  
-  //--------------------------------------------
+
+  //--------------------------------------------------------------
   // Assign the appropriate neutron and proton 
   // levels
 
@@ -454,7 +460,7 @@ void nucleus_rmf::init_run(int nucleus_Z, int nucleus_N,
 	       "nucleus_rmf::init_run().",exc_einval);
   }
   
-  //--------------------------------------------
+  //--------------------------------------------------------------
   // Assign unoccupied levels
   
   for(int ile=0;ile<unocc_Z;ile++) {
@@ -477,7 +483,7 @@ void nucleus_rmf::init_run(int nucleus_Z, int nucleus_N,
     }
   }
   
-  //--------------------------------------------
+  //--------------------------------------------------------------
   // Initialize some masses, coupling constants
   // and convergence parameters
   
@@ -486,7 +492,7 @@ void nucleus_rmf::init_run(int nucleus_Z, int nucleus_N,
 
   mnuc=rmf->mnuc;
   
-  //--------------------------------------------
+  //--------------------------------------------------------------
   // Initial guess for fields
 
   for (i=0;i<grid_size;i++) {
@@ -501,7 +507,7 @@ void nucleus_rmf::init_run(int nucleus_Z, int nucleus_N,
   }
   surf_index=((int)(ig.fermi_radius/step_size+1.0e-6));
   
-  //--------------------------------------------
+  //--------------------------------------------------------------
 
   // Initialize meson greens functions
   meson_init();
@@ -521,14 +527,14 @@ int nucleus_rmf::iterate(int nucleus_Z, int nucleus_N,
 	       "nucleus_rmf::iterate().",exc_efailed);
   }
   
-  //--------------------------------------------
+  //--------------------------------------------------------------
   // Calculate new fields, densities, and RHSs
 
   init_meson_density();
   
   levp=&levels;
 
-  //--------------------------------------------
+  //--------------------------------------------------------------
   // Solve Dirac equations
     
   if (verbose>1) cout << "Solving Dirac equations. " << endl;
@@ -538,20 +544,20 @@ int nucleus_rmf::iterate(int nucleus_Z, int nucleus_N,
     (*levp)[ilevel].eigenc=(*levp)[ilevel].eigen-(*levp)[ilevel].energy;
   }
     
-  //--------------------------------------------
-  // test for convergence
+  //--------------------------------------------------------------
+  // Test the Dirac equations for convergence
 	
   iconverged=1;
   for (int i=0;i<nlevels;i++) {
     if (fabs((*levp)[i].eigenc)>dirac_tol) iconverged=0;
   }
 
-  //--------------------------------------------
-  // Solve meson field equations
+  //--------------------------------------------------------------
+  // Solve the meson field equations
 
   meson_converged=meson_solve();
 
-  //--------------------------------------------
+  //--------------------------------------------------------------
   // Modify densities according to solution of
   // meson field equations
 
@@ -562,7 +568,7 @@ int nucleus_rmf::iterate(int nucleus_Z, int nucleus_N,
     xrho(i,2)=xrho(i,2)-xrhor[i]*xr;
   }
     
-  //--------------------------------------------
+  //--------------------------------------------------------------
   // Record iteration information
 
   profiles->clear_data();
@@ -596,7 +602,7 @@ int nucleus_rmf::iterate(int nucleus_Z, int nucleus_N,
     
   }
 
-  //--------------------------------------------
+  //--------------------------------------------------------------
   // Compute the energy, first by summing the single 
   // particle energies, and then by adding the mean-field
   // contribution
@@ -606,12 +612,13 @@ int nucleus_rmf::iterate(int nucleus_Z, int nucleus_N,
     sum_sp_energies+=(*levp)[i].twojp1*(*levp)[i].eigen;
   }
 
-  //--------------------------------------------
+  //--------------------------------------------------------------
+  // Compute total energy and radii
   
-  int eret=energies(nucleus_Z,nucleus_N,sum_sp_energies);
+  int eret=energy_radii(nucleus_Z,nucleus_N,sum_sp_energies);
   if (eret!=0) return eret;
       
-  //--------------------------------------------
+  //--------------------------------------------------------------
   // Set eigenvalues for next iteration
     
   for(int i=0;i<nlevels;i++) {
@@ -625,24 +632,24 @@ int nucleus_rmf::iterate(int nucleus_Z, int nucleus_N,
 int nucleus_rmf::post_converge(int nucleus_Z, int nucleus_N, int unocc_Z, 
 			       int unocc_N) {
 
-  //--------------------------------------------
+  //--------------------------------------------------------------
   // Correct for center of mass motion 
   
   center_mass_corr(nucleus_Z+nucleus_N);
   
-  //--------------------------------------------
-  // Unoccupied levels
+  //--------------------------------------------------------------
+  // Compute unoccupied levels
   
   if (nuolevels>0) {
 
     levp=&unocc_levels;
     
-    //--------------------------------------------
+    //--------------------------------------------------------------
     // Calculate new fields, densities, and RHSs
     
     init_meson_density();
     
-    //--------------------------------------------
+    //--------------------------------------------------------------
     // Solve Dirac equations
     
     if (verbose>1) cout << "Solving Dirac equations for unoccupied levels. " 
@@ -656,7 +663,7 @@ int nucleus_rmf::post_converge(int nucleus_Z, int nucleus_N, int unocc_Z,
 
   }
       
-  //--------------------------------------------
+  //--------------------------------------------------------------
   // Calculate surface tension
   
   // Old integration constants
@@ -744,7 +751,7 @@ int nucleus_rmf::meson_solve() {
   return 0;
 }
 
-int nucleus_rmf::energies(double xpro, double xnu, double e) {
+int nucleus_rmf::energy_radii(double xpro, double xnu, double e) {
 
   rprms=0.0;
   rnrms=0.0;
@@ -772,7 +779,7 @@ int nucleus_rmf::energies(double xpro, double xnu, double e) {
       // to converge, so we don't designate this as a fatal
       // error and only throw if err_nonconv is true.
       O2SCL_CONV2_RET("Energy contribution is not finite in ",
-		      "nucleus_rmf::energies().",exc_efailed,err_nonconv);
+		      "nucleus_rmf::energy_radii().",exc_efailed,err_nonconv);
     }
     rprms=rprms+x*x*xrho(i,3);
     rnrms=rnrms+x*x*(xrho(i,1)-xrho(i,3));
@@ -897,7 +904,7 @@ void nucleus_rmf::init_meson_density() {
 double nucleus_rmf::sigma_rhs(double sig, double ome, double rho) {
   double xm, ret, sig2, gs, dfdphi;
 
-  //--------------------------------------------
+  //--------------------------------------------------------------
   // The fields are in fm^{-1}
 
   gs=rmf->cs*rmf->ms;
@@ -919,7 +926,7 @@ double nucleus_rmf::sigma_rhs(double sig, double ome, double rho) {
 double nucleus_rmf::omega_rhs(double sig, double ome, double rho) {
   double ret, gw, omet, dfdome;
 
-  //--------------------------------------------
+  //--------------------------------------------------------------
   // The fields are in fm^{-1}
 
   gw=rmf->cw*rmf->mw;
@@ -937,7 +944,7 @@ double nucleus_rmf::omega_rhs(double sig, double ome, double rho) {
 double nucleus_rmf::rho_rhs(double sig, double ome, double rho) {
   double ret, f, sigt, omet, gs, gw;
 
-  //--------------------------------------------
+  //--------------------------------------------------------------
   // The fields are in fm^{-1}
 
   gs=rmf->cs*rmf->ms;
@@ -965,7 +972,7 @@ int nucleus_rmf::dirac(int ilevel) {
   }      
   (*levp)[ilevel].eigen=(*levp)[ilevel].energy;
 
-  //--------------------------------------------
+  //--------------------------------------------------------------
   // combine vector and rho fields plus photons
     
   for (i=0;i<grid_size;i++) {
@@ -977,7 +984,7 @@ int nucleus_rmf::dirac(int ilevel) {
   deltae=dirac_tol2*3.0;
   while (iturn<=dirac_itmax && fabs(deltae)>dirac_tol2) {
 
-    //--------------------------------------------
+    //--------------------------------------------------------------
     // Small r solutions
 
     g[0]=10.0*pow(step_size,-(*levp)[ilevel].kappa);
@@ -1005,13 +1012,13 @@ int nucleus_rmf::dirac(int ilevel) {
       g[i]=ode_y[1];
     }
     
-    //--------------------------------------------
+    //--------------------------------------------------------------
     // store end values for latter matching
   
     yfs=ode_y[0];
     ygs=ode_y[1];
   
-    //--------------------------------------------
+    //--------------------------------------------------------------
     // Large r solutions
     // here the code does not use coulomb wavefunctions
     // but simply uses assym. expansions in 1/r which seem
@@ -1040,7 +1047,7 @@ int nucleus_rmf::dirac(int ilevel) {
       g[i-1]=ode_y[1];
     }
   
-    //--------------------------------------------
+    //--------------------------------------------------------------
     // Match solutions
   
     scale=ode_y[1]/ygs;
@@ -1051,7 +1058,7 @@ int nucleus_rmf::dirac(int ilevel) {
       g[i]=g[i]*scale;
     }
 
-    //--------------------------------------------
+    //--------------------------------------------------------------
     // Compute normalization integral and count nodes
 
     no=0;
@@ -1062,7 +1069,7 @@ int nucleus_rmf::dirac(int ilevel) {
     }
     xnorm=xnorm*step_size;
 
-    //--------------------------------------------
+    //--------------------------------------------------------------
     // Adjust eigenvalue
 
     deltae=-g[jmatch-1]*(f[jmatch-1]-yfs*scale)*hc_mev_fm/xnorm;
@@ -1071,7 +1078,7 @@ int nucleus_rmf::dirac(int ilevel) {
 
     (*levp)[ilevel].eigen=(*levp)[ilevel].eigen+deltae;
 
-    //--------------------------------------------
+    //--------------------------------------------------------------
     // If the level is unbound, then set to a
     // default value.
 
@@ -1092,7 +1099,7 @@ int nucleus_rmf::dirac(int ilevel) {
 		    "nucleus_rmf::dirac().",exc_efailed,err_nonconv);
   }
 
-  //--------------------------------------------
+  //--------------------------------------------------------------
   // sum up the densities
   // rho = (2j+1)/norm(f*f+g*g)/(4pi*x*x)
   
@@ -1234,7 +1241,7 @@ void nucleus_rmf::meson_iter(double ic) {
       xf[2]*gout(grid_size-2,l)*xrho(grid_size-2,l)+
       xf[3]*gout(grid_size-3,l)*xrho(grid_size-3,l);
     
-    //--------------------------------------------
+    //--------------------------------------------------------------
     // start doing the inside and outside edges
 
     for (int i=1;i<3;i++) {

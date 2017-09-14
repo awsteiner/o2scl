@@ -693,7 +693,7 @@ namespace o2scl {
     void init_meson_density();
 
     /// Calculate the energy profile
-    int energies(double xpro, double xnu, double e);
+    int energy_radii(double xpro, double xnu, double e);
 
     /// Compute the center of mass correction
     void center_mass_corr(double atot);
