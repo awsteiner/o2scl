@@ -208,9 +208,10 @@ int main(void) {
   el.init_run(82,126,2,2);
 
   int iteration=1, iconverged=0;
+  int dirac_converged, meson_converged;
   while(iconverged==0) {
     
-    el.iterate(82,126,2,2,iconverged);
+    el.iterate(82,126,2,2,iconverged,dirac_converged,meson_converged);
 
     if (iteration==1) {
       for(int i=0;i<el.nlevels;i++) {

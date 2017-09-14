@@ -308,7 +308,7 @@ namespace o2scl {
     
     /// Perform an iteration
     int iterate(int nucleus_Z, int nucleus_N, int unocc_Z, int unocc_N,
-		 int &iconverged);
+		int &iconverged, int &dirac_converged, int &meson_converged);
     
     /// After convergence, make CM corrections, etc.
     int post_converge(int nucleus_Z, int nucleus_N, int unocc_Z, int unocc_N);
@@ -650,7 +650,7 @@ namespace o2scl {
     
     /** \brief Solve for the meson profiles
      */
-    void meson_solve();
+    int meson_solve();
 
     /** \brief The grid index corresponding to the nuclear surface 
 	(computed by init_run())
@@ -693,7 +693,7 @@ namespace o2scl {
     void init_meson_density();
 
     /// Calculate the energy profile
-    void energies(double xpro, double xnu, double e);
+    int energies(double xpro, double xnu, double e);
 
     /// Compute the center of mass correction
     void center_mass_corr(double atot);
@@ -729,8 +729,8 @@ namespace o2scl {
 	\times (f^{+}-f^{-})
 	\f]
     */
-    void dirac(int ilevel);
-  
+    int dirac(int ilevel);
+    
     /// Take a step in the Dirac equations
     void dirac_step(double &x, double h, double eigen,
 		    double kappa, ubvector &varr);

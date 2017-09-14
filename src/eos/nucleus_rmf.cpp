@@ -365,7 +365,13 @@ int nucleus_rmf::run_nucleus(int nucleus_Z, int nucleus_N,
   init_run(nucleus_Z,nucleus_N,unocc_Z,unocc_N);
 
   int iteration=1, iconverged=0;
-  while(iconverged==0) {
+  /*
+    We allow the Dirac equations and meson field equations to 
+    not converge temporarily, but require that they successfully
+    converged by the time iconverged is nonzero.
+  */
+  int dirac_converged, meson_converged;
+  while (iconverged==0) {
     
     if (verbose>0) cout << "Iteration: " << iteration << endl;
     
@@ -375,13 +381,25 @@ int nucleus_rmf::run_nucleus(int nucleus_Z, int nucleus_N,
 		     err_nonconv);
     }
     
-    int iret=iterate(nucleus_Z,nucleus_N,unocc_Z,unocc_N,iconverged);
+    int iret=iterate(nucleus_Z,nucleus_N,unocc_Z,unocc_N,iconverged,
+		     dirac_converged,meson_converged);
     if (iret!=0) {
       O2SCL_CONV_RET("Function iterate() failed.",exc_efailed,
 		     err_nonconv);
     }
     
     iteration++;
+  }
+
+  if (dirac_converged!=0) {
+    O2SCL_CONV2_RET("Dirac equations did not converge during final ",
+		    "iteration in nucleus_rmf::run_nucleus().",
+		    exc_efailed,err_nonconv);
+  }
+  if (meson_converged!=0) {
+    O2SCL_CONV2_RET("Meson field equations did not converge during final ",
+		    "iteration in nucleus_rmf::run_nucleus().",
+		    exc_efailed,err_nonconv);
   }
   
   post_converge(nucleus_Z,nucleus_N,unocc_Z,unocc_N);
@@ -494,8 +512,8 @@ void nucleus_rmf::init_run(int nucleus_Z, int nucleus_N,
 }
 
 int nucleus_rmf::iterate(int nucleus_Z, int nucleus_N,
-			 int unocc_Z, int unocc_N, int &iconverged) {
-
+			 int unocc_Z, int unocc_N, int &iconverged,
+			 int &dirac_converged, int &meson_converged) {
   iconverged=0;
   
   if (init_called==false) {
@@ -515,7 +533,8 @@ int nucleus_rmf::iterate(int nucleus_Z, int nucleus_N,
     
   if (verbose>1) cout << "Solving Dirac equations. " << endl;
   for (int ilevel=0;ilevel<nlevels;ilevel++) {
-    dirac(ilevel);
+    int dret=dirac(ilevel);
+    if (dret!=0) dirac_converged=dret;
     (*levp)[ilevel].eigenc=(*levp)[ilevel].eigen-(*levp)[ilevel].energy;
   }
     
@@ -530,7 +549,7 @@ int nucleus_rmf::iterate(int nucleus_Z, int nucleus_N,
   //--------------------------------------------
   // Solve meson field equations
 
-  meson_solve();
+  meson_converged=meson_solve();
 
   //--------------------------------------------
   // Modify densities according to solution of
@@ -589,7 +608,8 @@ int nucleus_rmf::iterate(int nucleus_Z, int nucleus_N,
 
   //--------------------------------------------
   
-  energies(nucleus_Z,nucleus_N,sum_sp_energies);
+  int eret=energies(nucleus_Z,nucleus_N,sum_sp_energies);
+  if (eret!=0) return eret;
       
   //--------------------------------------------
   // Set eigenvalues for next iteration
@@ -629,7 +649,8 @@ int nucleus_rmf::post_converge(int nucleus_Z, int nucleus_N, int unocc_Z,
 			<< endl;
     
     for (int ilevel=0;ilevel<nuolevels;ilevel++) {
-      dirac(ilevel);
+      int dret=dirac(ilevel);
+      if (dret!=0) return dret;
       (*levp)[ilevel].eigenc=(*levp)[ilevel].eigen-(*levp)[ilevel].energy;
     }
 
@@ -660,7 +681,7 @@ int nucleus_rmf::post_converge(int nucleus_Z, int nucleus_N, int unocc_Z,
   return 0;
 }
 
-void nucleus_rmf::meson_solve() {
+int nucleus_rmf::meson_solve() {
   int i;
 
   meson_iter(4);
@@ -714,17 +735,16 @@ void nucleus_rmf::meson_solve() {
 
     mesonfieldcount++;
     if (mesonfieldcount>meson_itmax) {
-      O2SCL_CONV2("Failed to solve meson field equations in ",
-		  "nucleus_rmf::meson_solve().",exc_efailed,err_nonconv);
-      return;
+      O2SCL_CONV2_RET("Failed to solve meson field equations in ",
+		      "nucleus_rmf::meson_solve().",exc_efailed,err_nonconv);
     }
 
   }
 
-  return;
+  return 0;
 }
 
-void nucleus_rmf::energies(double xpro, double xnu, double e) {
+int nucleus_rmf::energies(double xpro, double xnu, double e) {
 
   rprms=0.0;
   rnrms=0.0;
@@ -751,9 +771,8 @@ void nucleus_rmf::energies(double xpro, double xnu, double e) {
       // This quantity can become NaN if the computation fails
       // to converge, so we don't designate this as a fatal
       // error and only throw if err_nonconv is true.
-      O2SCL_CONV2("Energy contribution is not finite in ",
-		  "nucleus_rmf::energies().",exc_efailed,err_nonconv);
-      return;
+      O2SCL_CONV2_RET("Energy contribution is not finite in ",
+		      "nucleus_rmf::energies().",exc_efailed,err_nonconv);
     }
     rprms=rprms+x*x*xrho(i,3);
     rnrms=rnrms+x*x*(xrho(i,1)-xrho(i,3));
@@ -771,7 +790,7 @@ void nucleus_rmf::energies(double xpro, double xnu, double e) {
 	 << rnrms << " E/A=" << etot << " MeV " << endl;
   }
     
-  return;
+  return 0;
 }
 
 void nucleus_rmf::center_mass_corr(double atot) {
@@ -934,7 +953,7 @@ double nucleus_rmf::rho_rhs(double sig, double ome, double rho) {
   return ret;
 }
 
-void nucleus_rmf::dirac(int ilevel) {
+int nucleus_rmf::dirac(int ilevel) {
   int iturn, i, j, jmatch, jtop, no=0;
   double deltae, x, yfs, ygs, alpha, xk, v0, e;
   double scale, xnorm=0.0, factor, x1, x2, yf1, yf2, yg1, yg2;
@@ -1069,9 +1088,8 @@ void nucleus_rmf::dirac(int ilevel) {
       cout << "\tLevel: " << (*levp)[ilevel].state << ", deltae: " 
 	   << deltae << endl;
     }
-    O2SCL_CONV2("Dirac failed to converge in ",
-		"nucleus_rmf::dirac().",exc_efailed,err_nonconv);
-    return;
+    O2SCL_CONV2_RET("Dirac failed to converge in ",
+		    "nucleus_rmf::dirac().",exc_efailed,err_nonconv);
   }
 
   //--------------------------------------------
@@ -1094,7 +1112,7 @@ void nucleus_rmf::dirac(int ilevel) {
 
   }
 
-  return;
+  return 0;
 }
 
 double nucleus_rmf::dirac_rk4(double x, double g1, double f1, double &funt, 
