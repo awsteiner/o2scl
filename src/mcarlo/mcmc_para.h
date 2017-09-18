@@ -1248,6 +1248,10 @@ namespace o2scl {
       to the file (set by \ref mcmc() )
   */
   bool first_write;
+
+  /** \brief Iterations between file updates (default 0 for no file updates)
+   */
+  size_t file_update_iters;
   
   /** \brief MCMC initialization function
 
@@ -1326,7 +1330,7 @@ namespace o2scl {
   /// Likelihood estimator
   interpm_idw<double *> esti;
 
-  /** \brief
+  /** \brief Initial write to HDF5 file 
    */
   virtual void file_header(o2scl_hdf::hdf_file &hf) {
     return;
@@ -1457,6 +1461,7 @@ namespace o2scl {
   mcmc_para_table() {
     allow_estimates=false;
     table_io_chunk=1;
+    file_update_iters=0;
   }
   
   /// \name Basic usage
@@ -1845,7 +1850,7 @@ namespace o2scl {
   o2scl::cli::parameter_double p_max_time;
   o2scl::cli::parameter_size_t p_max_iters;
   //o2scl::cli::parameter_int p_max_chain_size;
-  //o2scl::cli::parameter_int p_file_update_iters;
+  o2scl::cli::parameter_int p_file_update_iters;
   o2scl::cli::parameter_bool p_output_meas;
   o2scl::cli::parameter_string p_prefix;
   o2scl::cli::parameter_int p_verbose;
@@ -1902,13 +1907,11 @@ namespace o2scl {
       this->cl.set_comm_option_vec(nopt,options);
     */
 
-    /*
-      p_file_update_iters.i=&this->file_update_iters;
-      p_file_update_iters.help=((std::string)"Number of MCMC successes ")+
-      "between file upates (default 40, minimum value 1).";
-      cl.par_list.insert(std::make_pair("file_update_iters",
-      &p_file_update_iters));
-    */
+    p_file_update_iters.i=&this->file_update_iters;
+    p_file_update_iters.help=((std::string)"Number of MCMC successes ")+
+      "between file upates (default 0 for no file updates).";
+    cl.par_list.insert(std::make_pair("file_update_iters",
+				      &p_file_update_iters));
     
     /*
       p_max_chain_size.i=&this->max_chain_size;
