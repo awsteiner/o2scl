@@ -1249,10 +1249,6 @@ namespace o2scl {
   */
   bool first_write;
 
-  /** \brief Iterations between file updates (default 0 for no file updates)
-   */
-  size_t file_update_iters;
-  
   /** \brief MCMC initialization function
 
       This function sets the column names and units.
@@ -1344,8 +1340,17 @@ namespace o2scl {
    */
   vec_t high_copy;
   
+  /** \brief Total number of MCMC acceptances over all threads at last
+      file write() (default 0)
+  */
+  size_t last_write;
+  
   public:
 
+  /** \brief Iterations between file updates (default 0 for no file updates)
+   */
+  size_t file_update_iters;
+  
   /** \brief The number of tables to combine before I/O (default 1)
    */
   int table_io_chunk;
@@ -1457,11 +1462,12 @@ namespace o2scl {
   
   /// If true, allow estimates of the weight (default false)
   bool allow_estimates;
-  
+
   mcmc_para_table() {
     allow_estimates=false;
     table_io_chunk=1;
     file_update_iters=0;
+    last_write=0;
   }
   
   /// \name Basic usage
@@ -1667,7 +1673,23 @@ namespace o2scl {
 	}
       
       }
-
+      
+      // If necessary, output to files
+      if (file_update_iters>0) {
+	size_t total_accept=0;
+	for(size_t it=0;it<this->n_threads;it++) {
+	  total_accept+=this->n_accept[it];
+	}
+	if (total_accept>=last_write+file_update_iters) {
+	  this->scr_out << "Writing to file. total_accept: "
+			<< total_accept << " file_update_iters: "
+			<< file_update_iters << " last_write: "
+			<< last_write << std::endl;
+	  write_files();
+	  last_write=total_accept;
+	}
+      }
+      
     }
     // End of parallel region
     
