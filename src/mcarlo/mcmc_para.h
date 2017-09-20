@@ -343,12 +343,12 @@ namespace o2scl {
   //@{
   /** \brief Perform a MCMC simulation
 
-      Perform a MCMC simulation over \c nparams parameters starting
+      Perform a MCMC simulation over \c n_params parameters starting
       at initial point \c init, limiting the parameters to be between
       \c low and \c high, using \c func as the objective function and
       calling the measurement function \c meas at each MC point.
   */
-  virtual int mcmc(size_t nparams, vec_t &low, vec_t &high,
+  virtual int mcmc(size_t n_params, vec_t &low, vec_t &high,
 		   std::vector<func_t> &func, std::vector<measure_t> &meas) {
 
 #ifndef DOXYGEN
@@ -373,19 +373,19 @@ namespace o2scl {
     if (initial_points.size()==0) {
       // Setup initial guess if not specified
       initial_points.resize(1);
-      initial_points[0].resize(nparams);
-      for(size_t k=0;k<nparams;k++) {
+      initial_points[0].resize(n_params);
+      for(size_t k=0;k<n_params;k++) {
 	initial_points[0][k]=(low[k]+high[k])/2.0;
       }
     } else {
       // If initial points are specified, make sure they're within
       // the user-specified limits
       for(size_t iip=0;iip<initial_points.size();iip++) {
-	for(size_t ipar=0;ipar<nparams;ipar++) {
+	for(size_t ipar=0;ipar<n_params;ipar++) {
 	  if (initial_points[iip][ipar]<low[ipar] ||
 	      initial_points[iip][ipar]>high[ipar]) {
 	    O2SCL_ERR((((std::string)"Parameter ")+o2scl::szttos(ipar)+
-		       " of "+o2scl::szttos(nparams)+" out of range (value="+
+		       " of "+o2scl::szttos(n_params)+" out of range (value="+
 		       o2scl::dtos(initial_points[iip][ipar])+
 		       ") in mcmc_base::mcmc().").c_str(),
 		      o2scl::exc_einval);
@@ -454,7 +454,7 @@ namespace o2scl {
     current.resize(ssize);
     std::vector<double> w_current(ssize);
     for(size_t i=0;i<ssize;i++) {
-      current[i].resize(nparams);
+      current[i].resize(n_params);
       w_current[i]=0.0;
     }
 
@@ -470,12 +470,12 @@ namespace o2scl {
     // Next point and next weight for each thread
     std::vector<vec_t> next(n_threads);
     for(size_t it=0;it<n_threads;it++) {
-      next[it].resize(nparams);
+      next[it].resize(n_params);
     }
     std::vector<double> w_next(n_threads);
 
     // Best point over all threads
-    vec_t best(nparams);
+    vec_t best(n_params);
     double w_best;
 
     // Generally, these flags are are true for any thread if func_ret
@@ -504,16 +504,16 @@ namespace o2scl {
     if (verbose>=1) {
       if (aff_inv) {
 	scr_out << "mcmc: Affine-invariant step, n_params="
-		<< nparams << ", n_walk=" << n_walk
+		<< n_params << ", n_walk=" << n_walk
 		<< ", n_threads=" << n_threads << ", n_ranks="
 		<< mpi_size << std::endl;
       } else if (pd_mode==true) {
 	scr_out << "mcmc: With proposal distribution, n_params="
-		<< nparams << ", n_threads=" << n_threads << ", n_ranks="
+		<< n_params << ", n_threads=" << n_threads << ", n_ranks="
 		<< mpi_size << std::endl;
       } else {
 	scr_out << "mcmc: Random-walk w/uniform dist., n_params="
-		<< nparams << ", n_threads=" << n_threads << ", n_ranks="
+		<< n_params << ", n_threads=" << n_threads << ", n_ranks="
 		<< mpi_size << std::endl;
       }
     }
@@ -549,12 +549,12 @@ namespace o2scl {
 	    if (sindex<initial_points.size()) {
 
 	      // Copy from the initial points array
-	      for(size_t ipar=0;ipar<nparams;ipar++) {
+	      for(size_t ipar=0;ipar<n_params;ipar++) {
 		current[sindex][ipar]=initial_points[sindex][ipar];
 	      }
 	      
 	      // Compute the weight
-	      func_ret[it]=func[it](nparams,current[sindex],
+	      func_ret[it]=func[it](n_params,current[sindex],
 				    w_current[sindex],data_arr[sindex]);
 	      
 	      if (func_ret[it]==mcmc_done) {
@@ -579,7 +579,7 @@ namespace o2scl {
 	    while (!done && !mcmc_done_flag[it]) {
 	      
 	      // Make a perturbation from the initial point
-	      for(size_t ipar=0;ipar<nparams;ipar++) {
+	      for(size_t ipar=0;ipar<n_params;ipar++) {
 		do {
 		  current[sindex][ipar]=
 		    initial_points[sindex % initial_points.size()][ipar]+
@@ -590,7 +590,7 @@ namespace o2scl {
 	      }
 	      
 	      // Compute the weight
-	      func_ret[it]=func[it](nparams,current[sindex],
+	      func_ret[it]=func[it](n_params,current[sindex],
 				    w_current[sindex],data_arr[sindex]);
 		
 	      // ------------------------------------------------
@@ -687,13 +687,13 @@ namespace o2scl {
       }
       
       // Copy from the initial points array
-      for(size_t ipar=0;ipar<nparams;ipar++) {
+      for(size_t ipar=0;ipar<n_params;ipar++) {
 	current[0][ipar]=initial_points[0][ipar];
       }
       
       // Initial point and weights without stretch-move
 
-      func_ret[0]=func[0](nparams,current[0],w_current[0],data_arr[0]);
+      func_ret[0]=func[0](n_params,current[0],w_current[0],data_arr[0]);
       if (func_ret[0]==mcmc_done) {
 	if (verbose>=1) {
 	  scr_out << "mcmc: Initial point returned mcmc_done."
@@ -763,7 +763,7 @@ namespace o2scl {
 
       if (verbose>=2) {
 	scr_out.precision(4);
-	scr_out << "mcmc (0): "
+	scr_out << "mcmc: "
 		<< w_current[0] << " (initial)" << std::endl;
 	scr_out.precision(6);
       }
@@ -825,7 +825,7 @@ namespace o2scl {
 	    smove_z[it]=(1.0-2.0*p+2.0*a*p+p*p-2.0*a*p*p+a*a*p*p)/a;
 	    
 	    // Create new trial point
-	    for(size_t i=0;i<nparams;i++) {
+	    for(size_t i=0;i<n_params;i++) {
 	      next[it][i]=current[n_walk*it+ij][i]+
 		smove_z[it]*(current[n_walk*it+curr_walker[it]][i]-
 			     current[n_walk*it+ij][i]);
@@ -845,7 +845,7 @@ namespace o2scl {
 	  } else {
 	    
 	    // Uniform random-walk step
-	    for(size_t k=0;k<nparams;k++) {
+	    for(size_t k=0;k<n_params;k++) {
 	      next[it][k]=current[it][k]+(rg[it].random()*2.0-1.0)*
 		(high[k]-low[k])/step_fac;
 	    }
@@ -858,16 +858,16 @@ namespace o2scl {
 	  func_ret[it]=o2scl::success;
 	  // If the next point out of bounds, ensure that the
 	  // point is rejected
-	  for(size_t k=0;k<nparams;k++) {
+	  for(size_t k=0;k<n_params;k++) {
 	    if (next[it][k]<low[k] || next[it][k]>high[k]) {
 	      func_ret[it]=mcmc_skip;
 	      if (verbose>=3) {
 		if (next[it][k]<low[k]) {
-		  scr_out << "Parameter with index " << k
+		  scr_out << "mcmc (" << it << "): Parameter with index " << k
 			  << " and value " << next[it][k]
 			  << " smaller than limit " << low[k] << std::endl;
 		} else {
-		  scr_out << "Parameter with index " << k
+		  scr_out << "mcmc (" << it << "): Parameter with index " << k
 			  << " and value " << next[it][k]
 			  << " larger than limit " << high[k] << std::endl;
 		}
@@ -876,11 +876,11 @@ namespace o2scl {
 	  }
 	  if (func_ret[it]!=mcmc_skip) {
 	    if (switch_arr[n_walk*it+curr_walker[it]]==false) {
-	      func_ret[it]=func[it](nparams,next[it],w_next[it],
+	      func_ret[it]=func[it](n_params,next[it],w_next[it],
 				    data_arr[it*n_walk+curr_walker[it]+
 					     n_walk*n_threads]);
 	    } else {
-	      func_ret[it]=func[it](nparams,next[it],w_next[it],
+	      func_ret[it]=func[it](n_params,next[it],w_next[it],
 				    data_arr[it*n_walk+curr_walker[it]]);
 	    }
 	    if (func_ret[it]==mcmc_done) {
@@ -912,7 +912,7 @@ namespace o2scl {
 	    scr_out << "mcmc (" << it
 		    << "): Parameter(s) out of range: " << std::endl;
 	    scr_out.setf(std::ios::showpos);
-	    for(size_t k=0;k<nparams;k++) {
+	    for(size_t k=0;k<n_params;k++) {
 	      scr_out << k << " " << low[k] << " "
 		      << next[it][k] << " " << high[k];
 	      if (next[it][k]<low[k] || next[it][k]>high[k]) {
@@ -926,7 +926,7 @@ namespace o2scl {
 	    if (verbose>=2) {
 	      scr_out << "mcmc (" << it << "): Function returned failure " 
 		      << func_ret[it] << " at point ";
-	      for(size_t k=0;k<nparams;k++) {
+	      for(size_t k=0;k<n_params;k++) {
 		scr_out << next[it][k] << " ";
 	      }
 	      scr_out << std::endl;
@@ -961,7 +961,7 @@ namespace o2scl {
 	    double r=rg[it].random();
 	    
 	    if (aff_inv) {
-	      double ai_ratio=pow(smove_z[it],((double)nparams)-1.0)*
+	      double ai_ratio=pow(smove_z[it],((double)n_params)-1.0)*
 		exp(w_next[it]-w_current[sindex]);
 	      if (r<ai_ratio) {
 		accept=true;
@@ -1036,7 +1036,7 @@ namespace o2scl {
 	  size_t sindex=n_walk*it+curr_walker[it];
 	  scr_out.precision(4);
 	  scr_out << "mcmc (" << it << "): iter: ";
-	  scr_out.width((int)(1.0+log10((double)(nparams-1))));
+	  scr_out.width((int)(1.0+log10((double)(n_params-1))));
 	  scr_out << mcmc_iters << " i_walk: "
 		  << curr_walker[it] << " log_wgt: "
 		  << w_current[sindex] << std::endl;
@@ -1087,7 +1087,7 @@ namespace o2scl {
 	    n_reject[it]=0;
 	  }
 	  if (verbose>=1) {
-	    scr_out << "Finished warmup." << std::endl;
+	    scr_out << "mcmc: Finished warmup." << std::endl;
 	  }
 	  
 	}
@@ -1101,8 +1101,9 @@ namespace o2scl {
 
       if (main_done==false && warm_up==false && max_iters>0 &&
 	  mcmc_iters==max_iters) {
-	scr_out << "mcmc (0): Stopping because number of iterations "
-		<< "equal to 'max_iters'." << std::endl;
+	scr_out << "mcmc: Stopping because number of iterations ("
+		<< mcmc_iters << ") equal to max_iters (" << max_iters
+		<< ")." << std::endl;
 	main_done=true;
       }
       
@@ -1115,7 +1116,8 @@ namespace o2scl {
 #endif
 	if (max_time>0.0 && elapsed>max_time) {
 	  if (verbose>=0) {
-	    scr_out << "mcmc (0): Stopping because elapsed > max_time."
+	    scr_out << "mcmc: Stopping because elapsed (" << elapsed
+		    << ") > max_time (" << max_time << ")."
 		    << std::endl;
 	  }
 	  main_done=true;
@@ -1137,7 +1139,7 @@ namespace o2scl {
     
   /** \brief Perform a MCMC simulation with a thread-safe function
    */
-  virtual int mcmc(size_t nparams, vec_t &low, vec_t &high,
+  virtual int mcmc(size_t n_params, vec_t &low, vec_t &high,
 		   func_t &func, measure_t &meas) {
     
 #ifdef O2SCL_OPENMP
@@ -1151,7 +1153,7 @@ namespace o2scl {
       vf[i]=func;
       vm[i]=meas;
     }
-    return mcmc(nparams,low,high,func,meas);
+    return mcmc(n_params,low,high,func,meas);
   }
   //@}
 
@@ -1360,8 +1362,9 @@ namespace o2scl {
   virtual void write_files() {
 
     if (this->verbose>=2) {
-      this->scr_out << "Start write_files() " << this->mpi_rank << " "
-		    << this->mpi_size <<  " "
+      this->scr_out << "mcmc: Start write_files(). mpi_rank: "
+		    << this->mpi_rank << " mpi_size: "
+		    << this->mpi_size <<  " table_io_chunk: "
 		    << table_io_chunk << std::endl;
     }
     
@@ -1454,7 +1457,7 @@ namespace o2scl {
 #endif
     
     if (this->verbose>=2) {
-      this->scr_out << "Done write_files()." << std::endl;
+      this->scr_out << "mcmc: Done write_files()." << std::endl;
     }
 
     return;
@@ -1480,19 +1483,67 @@ namespace o2scl {
     col_units=units;
     return;
   }
+
+  /** \brief Read initial points from the last points recorded in file
+      named \c fname
+  */
+  virtual void initial_points_file_last(std::string fname) {
+    size_t n_params;
+
+    hdf_file hf;
+    hf.open(fname);
+    hdf_input(hf,*table,"markov_chain0");
+    hf.getszt("n_threads",this->n_threads);
+    hf.getszt("n_walk",this->n_walk);
+    hf.getszt("n_params",this->n_params);
+    hf.close();
+    
+    // The total number of walkers * threads
+    size_t ntot=this->n_threads*this->n_walk;
+
+    // Obtain the size of each chain from the table
+    std::vector<size_t> chain_sizes;
+    get_chain_sizes(chain_sizes);
+    
+    initial_points.resize(ntot);
+    for(size_t it=0;it<this->n_threads;it++) {
+      for(size_t iw=0;iw<this->n_walk;iw++) {
+	
+	// The combined walker/thread index 
+	size_t windex=i_thread*this->n_walk+walker_ix;
+
+	// Ensure chain_size is nonzero
+	if (chain_sizes[windex]==0) {
+	  O2SCL_ERR2("Chain size zero in mcmc_para_table::",
+		     "initial_points_file_last().",o2scl::exc_einval);
+	}
+	
+	// Find the last row for this chain
+	size_t row=ntot*(chain_sizes[windex]-1)+windex;
+	
+	// Copy the entries from this row into the initial_points object
+	initial_points[windex].resize(n_params);
+	for(size_t ip=0;ip<n_params;ip++) {
+	  initial_points[windex][ip]=table->get(ip+4,row);
+	}
+      }
+    }
+
+    return;
+  }
   
   /** \brief Perform an MCMC simulation
       
-      Perform an MCMC simulation over \c nparams parameters starting
+      Perform an MCMC simulation over \c n_params parameters starting
       at initial point \c init, limiting the parameters to be between
       \c low and \c high, using \c func as the objective function and
       calling the measurement function \c meas at each MC point.
   */
-  virtual int mcmc(size_t nparams, 
+  virtual int mcmc(size_t n_params, 
 		   vec_t &low, vec_t &high, std::vector<func_t> &func,
 		   std::vector<fill_t> &fill) {
 
-    n_params=nparams;
+    n_params=n_params;
     low_copy=low;
     high_copy=high;
     
@@ -1518,7 +1569,7 @@ namespace o2scl {
 	 std::placeholders::_5,it,std::ref(fill[it]));
     }
     
-    return parent_t::mcmc(nparams,low,high,func,meas);
+    return parent_t::mcmc(n_params,low,high,func,meas);
   }
   
   /** \brief Get the output table
@@ -1535,19 +1586,23 @@ namespace o2scl {
   }
   
   /** \brief Determine the chain sizes
-   */
-  void get_chain_sizes(std::vector<size_t> &csizes) {
+
+      \future This algorithm could be improved by started from the end
+      of the table and going backwards instead of starting from the
+      front of the table and going forwards.
+  */
+  void get_chain_sizes(std::vector<size_t> &chain_sizes) {
 
     size_t ntot=this->n_threads*this->n_walk;
-    csizes.resize(ntot);
+    chain_sizes.resize(ntot);
     
     for(size_t it=0;it<this->n_threads;it++) {
       for(size_t iw=0;iw<this->n_walk;iw++) {
 	size_t ix=it*this->n_walk+iw;
 	size_t istart=ix;
-	csizes[ix]=0;
+	chain_sizes[ix]=0;
 	for(size_t j=istart;j<table->get_nlines();j+=ntot) {
-	  if (table->get("mult",j)>0.5) csizes[ix]++;
+	  if (table->get("mult",j)>0.5) chain_sizes[ix]++;
 	}
       }
     }
@@ -1648,7 +1703,7 @@ namespace o2scl {
 	  
 	  table->set_row(((size_t)walker_rows[windex]),line);
 	  if (this->verbose>=2) {
-	    this->scr_out << "Setting data at row " << walker_rows[windex]
+	    this->scr_out << "mcmc: Setting data at row " << walker_rows[windex]
 			  << std::endl;
 	    for(size_t k=0;k<line.size();k++) {
 	      this->scr_out << k << ". ";
@@ -1667,7 +1722,7 @@ namespace o2scl {
 	double mult_old=table->get("mult",walker_rows[windex]);
 	table->set("mult",walker_rows[windex],mult_old+1.0);
 	if (this->verbose>=2) {
-	  this->scr_out << "Updating mult of row " << walker_rows[windex]
+	  this->scr_out << "mcmc: Updating mult of row " << walker_rows[windex]
 			<< " from " << mult_old << " to "
 			<< mult_old+1.0 << std::endl;
 	}
@@ -1681,7 +1736,7 @@ namespace o2scl {
 	  total_accept+=this->n_accept[it];
 	}
 	if (total_accept>=last_write+file_update_iters) {
-	  this->scr_out << "Writing to file. total_accept: "
+	  this->scr_out << "mcmc: Writing to file. total_accept: "
 			<< total_accept << " file_update_iters: "
 			<< file_update_iters << " last_write: "
 			<< last_write << std::endl;
@@ -1691,7 +1746,7 @@ namespace o2scl {
       }
       
     }
-    // End of parallel region
+    // End of critical region
     
     return ret_value;
   }
@@ -1723,11 +1778,11 @@ namespace o2scl {
   /** \brief Compute autocorrelation coefficients
    */
   virtual void ac_coeffs(size_t ncols, ubmatrix &ac_coeffs) {
-    std::vector<size_t> csizes;
-    get_chain_sizes(csizes);
-    size_t min_size=csizes[0];
-    for(size_t i=1;i<csizes.size();i++) {
-      if (csizes[i]<min_size) min_size=csizes[i];
+    std::vector<size_t> chain_sizes;
+    get_chain_sizes(chain_sizes);
+    size_t min_size=chain_sizes[0];
+    for(size_t i=1;i<chain_sizes.size();i++) {
+      if (chain_sizes[i]<min_size) min_size=chain_sizes[i];
     }
     size_t N_max=min_size/2;
     ac_coeffs.resize(ncols,N_max-1);
@@ -1746,11 +1801,11 @@ namespace o2scl {
 	  for(size_t ell=1;ell<N_max;ell++) {
 	    const double &x=(*table)[cstart+i][table_row];
 	    double mean=o2scl::vector_mean<const double *>
-	      (csizes[tindex]+1,&x);
+	      (chain_sizes[tindex]+1,&x);
 	    ac_coeffs(i,ell-1)+=o2scl::vector_lagk_autocorr
-	      <const double *>(csizes[tindex]+1,&x,ell,mean);
+	      <const double *>(chain_sizes[tindex]+1,&x,ell,mean);
 	  }
-	  table_row+=csizes[tindex]+1;
+	  table_row+=chain_sizes[tindex]+1;
 	}
       }
       for(size_t ell=1;ell<N_max;ell++) {
