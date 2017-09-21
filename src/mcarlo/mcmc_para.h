@@ -1497,6 +1497,8 @@ namespace o2scl {
     hf.get_szt("n_walk",this->n_walk);
     hf.get_szt("n_params",this->n_params);
     hf.close();
+
+    std::cout << "Initial point last from file: " << fname << std::endl;
     
     // The total number of walkers * threads
     size_t ntot=this->n_threads*this->n_walk;
@@ -1520,6 +1522,11 @@ namespace o2scl {
 	
 	// Find the last row for this chain
 	size_t row=ntot*(chain_sizes[windex]-1)+windex;
+	
+	std::cout << "it: " << it << " iw: " << iw
+		  << " chain size: " << chain_sizes[windex] << " row: "
+		  << row << " log_wgt: " << table->get("log_wgt",row)
+		  << std::endl;
 	
 	// Copy the entries from this row into the initial_points object
 	this->initial_points[windex].resize(n_params);
