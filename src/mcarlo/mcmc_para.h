@@ -1490,12 +1490,12 @@ namespace o2scl {
   virtual void initial_points_file_last(std::string fname) {
     size_t n_params;
 
-    hdf_file hf;
+    o2scl_hdf::hdf_file hf;
     hf.open(fname);
     hdf_input(hf,*table,"markov_chain0");
-    hf.getszt("n_threads",this->n_threads);
-    hf.getszt("n_walk",this->n_walk);
-    hf.getszt("n_params",this->n_params);
+    hf.get_szt("n_threads",this->n_threads);
+    hf.get_szt("n_walk",this->n_walk);
+    hf.get_szt("n_params",this->n_params);
     hf.close();
     
     // The total number of walkers * threads
@@ -1505,12 +1505,12 @@ namespace o2scl {
     std::vector<size_t> chain_sizes;
     get_chain_sizes(chain_sizes);
     
-    initial_points.resize(ntot);
+    this->initial_points.resize(ntot);
     for(size_t it=0;it<this->n_threads;it++) {
       for(size_t iw=0;iw<this->n_walk;iw++) {
 	
 	// The combined walker/thread index 
-	size_t windex=i_thread*this->n_walk+walker_ix;
+	size_t windex=it*this->n_walk+iw;
 
 	// Ensure chain_size is nonzero
 	if (chain_sizes[windex]==0) {
@@ -1522,9 +1522,9 @@ namespace o2scl {
 	size_t row=ntot*(chain_sizes[windex]-1)+windex;
 	
 	// Copy the entries from this row into the initial_points object
-	initial_points[windex].resize(n_params);
+	this->initial_points[windex].resize(n_params);
 	for(size_t ip=0;ip<n_params;ip++) {
-	  initial_points[windex][ip]=table->get(ip+4,row);
+	  this->initial_points[windex][ip]=table->get(ip+4,row);
 	}
       }
     }
