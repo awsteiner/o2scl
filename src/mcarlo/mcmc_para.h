@@ -674,42 +674,13 @@ namespace o2scl {
       }
 
       // End of 'if (aff_inv)'
+      
     } else {
 
       // --------------------------------------------------------
-      // Initial point and weights when aff_inv is false .
+      // Initial point and weights when aff_inv is false.
 
-      // Note that this value is used (e.g. in
-      // mcmc_para_table::add_line() ) even if aff_inv is false, so we
-      // set it to zero here.
-      for(size_t it=0;it<n_threads;it++) {
-	curr_walker[it]=0;
-      }
-      
-      // Copy from the initial points array
-      for(size_t ipar=0;ipar<n_params;ipar++) {
-	current[0][ipar]=initial_points[0][ipar];
-      }
-      
-      // Initial point and weights without stretch-move
 
-      func_ret[0]=func[0](n_params,current[0],w_current[0],data_arr[0]);
-      if (func_ret[0]==mcmc_done) {
-	if (verbose>=1) {
-	  scr_out << "mcmc: Initial point returned mcmc_done."
-		  << std::endl;
-	}
-	mcmc_cleanup();
-	return 0;
-      }
-      if (func_ret[0]!=o2scl::success) {
-	if (err_nonconv) {
-	  O2SCL_ERR("Initial weight vanished in mcmc_para_base::mcmc().",
-		    o2scl::exc_einval);
-	}
-	return 2;
-      }
-      
 #ifdef O2SCL_OPENMP
 #pragma omp parallel default(shared)
 #endif
@@ -718,13 +689,73 @@ namespace o2scl {
 #pragma omp for
 #endif
 	for(size_t it=0;it<n_threads;it++) {
-	  // Copy the results over from the initial point
-	  if (it!=0) {
-	    func_ret[it]=func_ret[0];
-	    current[it]=current[0];
-	    w_current[it]=w_current[0];
-	    data_arr[it]=data_arr[0];
+	  
+	  // Note that this value is used (e.g. in
+	  // mcmc_para_table::add_line() ) even if aff_inv is false, so we
+	  // set it to zero here.
+	  curr_walker[it]=0;
+	  
+	  // Copy from the initial points array into current point
+	  size_t np_size=initial_points.size();
+	  for(size_t ipar=0;ipar<n_params;ipar++) {
+	    current[it][ipar]=initial_points[it%np_size][ipar];
 	  }
+
+	  if (it<np_size) {
+	    // If we have a new unique initial point, then
+	    // perform a function evaluation
+	    func_ret[it]=func[it](n_params,current[it],w_current[it],
+				  data_arr[it]);
+	  } else {
+	    func_ret[it]=0;
+	  }
+
+	}
+
+      }
+      // End of parallel region
+      
+      // Check return values from initial point function evaluations
+      for(size_t it=0;it<n_threads;it++) {
+	if (func_ret[it]==mcmc_done) {
+	  if (verbose>=1) {
+	    scr_out << "mcmc (" << it
+		    << "): Initial point returned mcmc_done."
+		    << std::endl;
+	  }
+	  mcmc_cleanup();
+	  return 0;
+	}
+	if (func_ret[it]!=o2scl::success) {
+	  if (err_nonconv) {
+	    O2SCL_ERR((((std::string)"Initial weight from thread ")+
+		       o2scl::szttos(it)+
+		       " vanished in mcmc_para_base::mcmc().").c_str(),
+		      o2scl::exc_einval);
+	  }
+	  return 2;
+	}
+      }
+
+#ifdef O2SCL_OPENMP
+#pragma omp parallel default(shared)
+#endif
+      {
+#ifdef O2SCL_OPENMP
+#pragma omp for
+#endif
+	for(size_t it=0;it<n_threads;it++) {
+	  
+	  size_t np_size=initial_points.size();
+	  if (it>=np_size) {
+	    // If no initial point was specified, copy one of
+	    // the other initial points
+	    func_ret[it]=func_ret[it % np_size];
+	    current[it]=current[it % np_size];
+	    w_current[it]=w_current[it % np_size];
+	    data_arr[it]=data_arr[it % np_size];
+	  }
+	  
 	  // Update the return value count
 	  if (func_ret[it]>=0 &&
 	      func_ret[it]<((int)ret_value_counts[it].size())) {
@@ -736,11 +767,16 @@ namespace o2scl {
 	  if (meas_ret[it]==mcmc_done) {
 	    mcmc_done_flag[it]=true;
 	  }
+
+	  // End of loop over threads
 	}
+
+	
       }
       // End of parallel region
       
-      // Stop early if mcmc_done was returned
+      // Stop early if mcmc_done was returned from one of the
+      // measurement function calls
       bool stop_early=false;
       for(size_t it=0;it<n_threads;it++) {
 	if (mcmc_done_flag[it]==true) {
@@ -760,6 +796,13 @@ namespace o2scl {
       best=current[0];
       w_best=w_current[0];
       best_point(best,w_best,data_arr[0]);
+      for(size_t it=1;it<n_threads;it++) {
+	if (w_current[it]<w_best) {
+	  best=current[it];
+	  w_best=w_current[it];
+	  best_point(best,w_best,data_arr[it]);
+	}
+      }
 
       if (verbose>=2) {
 	scr_out.precision(4);
@@ -767,7 +810,8 @@ namespace o2scl {
 		<< w_current[0] << " (initial)" << std::endl;
 	scr_out.precision(6);
       }
-      
+
+      // End of initial point region for 'aff_inv=false'
     }
 
     // --------------------------------------------------------
