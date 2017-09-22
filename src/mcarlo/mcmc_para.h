@@ -1488,8 +1488,9 @@ namespace o2scl {
       named \c fname
   */
   virtual void initial_points_file_last(std::string fname) {
-    size_t n_params;
 
+    table=std::shared_ptr<o2scl::table_units<> >(new o2scl::table_units<>);
+    
     o2scl_hdf::hdf_file hf;
     hf.open(fname);
     hdf_input(hf,*table,"markov_chain0");
@@ -1497,7 +1498,7 @@ namespace o2scl {
     hf.get_szt("n_walk",this->n_walk);
     hf.get_szt("n_params",this->n_params);
     hf.close();
-
+    
     std::cout << "Initial point last from file: " << fname << std::endl;
     
     // The total number of walkers * threads
@@ -1506,7 +1507,7 @@ namespace o2scl {
     // Obtain the size of each chain from the table
     std::vector<size_t> chain_sizes;
     get_chain_sizes(chain_sizes);
-    
+
     this->initial_points.resize(ntot);
     for(size_t it=0;it<this->n_threads;it++) {
       for(size_t iw=0;iw<this->n_walk;iw++) {
@@ -1522,15 +1523,15 @@ namespace o2scl {
 	
 	// Find the last row for this chain
 	size_t row=ntot*(chain_sizes[windex]-1)+windex;
-	
+
 	std::cout << "it: " << it << " iw: " << iw
 		  << " chain size: " << chain_sizes[windex] << " row: "
 		  << row << " log_wgt: " << table->get("log_wgt",row)
-		  << std::endl;
+		  << " n_params: " << this->n_params << std::endl;
 	
 	// Copy the entries from this row into the initial_points object
-	this->initial_points[windex].resize(n_params);
-	for(size_t ip=0;ip<n_params;ip++) {
+	this->initial_points[windex].resize(this->n_params);
+	for(size_t ip=0;ip<this->n_params;ip++) {
 	  this->initial_points[windex][ip]=table->get(ip+4,row);
 	}
       }
