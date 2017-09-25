@@ -21,8 +21,7 @@
   -------------------------------------------------------------------
 */
 /*
-  This code generates the O2scl HDF files original Audi et al. data
-  tables.
+  This code generates the O2scl HDF files original AME data tables
 
   6/3/14 - This code produces the HDF .o2 tables and compares
   the results to the internal .o2 files and found no differences.
@@ -50,6 +49,31 @@
   100 unused
   101-112 atomic mass (12)
   113-123 atomic mass unc. (11)
+
+  Columns in Nubase '16
+  1-3     A
+  4       Space
+  5-9     Z
+  10-11   Space
+  12-17   Element name 
+  18      Space
+  19-29   Mass excess
+  30-38   Mass excess uncertainty
+  39-55   Excitation energy and uncertainty (column 48 is mixed,
+          containing excitation energy or uncertainty)
+  57-59   Excitation energy origin code
+  60      Space
+  61-69   Half life
+  70-71   Half life unit
+  72-77   Half life uncertainty
+  80-92   Spin, parity, and isospin multiplet
+  93      Space
+  94-95   Year of ENSDF archive
+  96      Space
+  97-105  Reference
+  106-109 Year of discovery
+  110     Space
+  111-186 Decay mode and intensity
 */
 #include <iostream>
 #include <fstream>
@@ -64,6 +88,48 @@
 #include <o2scl/hdf_file.h>
 
 #include <hdf5_hl.h>
+
+struct nubase_entry {
+public:
+  /// Mass number
+  int A;
+  /// Proton number
+  int Z;
+  /// Note
+  char Znote;
+  /// Element name
+  char el[6];
+  /// Mass excess (in keV)
+  double mass;
+  /// Mass excess uncertainty (in keV)
+  double dmass;
+  /// Excitation energy
+  double eenergy;
+  /// Excitation energy uncertainty
+  double deenergy;
+  /// Excitation energy origin
+  char origin[3];
+  /// Half-life
+  double hlife;
+  /// Half-life unit
+  char hl_unit[2];
+  /// Half-life uncertainty
+  double dhlife;
+  /// Spin
+  int spin;
+  /// Parity
+  bool parity;
+  /// Isospin multiplet
+  int isospin;
+  /// Year appeared on archive
+  int archive_year;
+  /// Reference
+  char reference[9];
+  /// Discovery year
+  int discovery_year;
+  /// Decay mode and intensity
+  char decay[76];
+};
 
 using namespace std;
 using namespace o2scl;
@@ -96,23 +162,41 @@ int main(int argc, char *argv[]) {
 
   if (argc<2) {
     cout << "Usage: ame_parse <dir>, where <dir> is the directory\n"
-	 << "containing the original Audi et al. data files." << endl;
+	 << "containing the original AME data file." << endl;
     exit(-1);
   }
   string dir=argv[1];
-  string fnames[7]={"ame95/mass_exp.mas95","ame95/mass_rmd.mas95",
+  static const size_t n_files=8;
+  string fnames[n_files]={"ame95/mass_exp.mas95","ame95/mass_rmd.mas95",
 		    "ame03/mass.mas03",
 		    "ame03/mass.mas03round","ame12/mass.mas12",
-		    "ame16/mass16.txt","ame16/mass16round.txt"};
-  string outnames[7]={"ame95exp.o2","ame95rmd.o2","ame03.o2",
-		      "ame03round.o2","ame12.o2","ame16.o2","ame16round.o2"};
+		    "ame16/mass16.txt","ame16/mass16round.txt",
+		    "ame16/nubase2016.txt"};
+  string outnames[n_files]={"ame95exp.o2","ame95rmd.o2","ame03.o2",
+		      "ame03round.o2","ame12.o2","ame16.o2","ame16round.o2",
+		      "nubase16.o2"};
 		      
   nucmass_info nmi;
   
   int count=0;
   const size_t output=1000;
 
-  for (size_t ik=0;ik<7;ik++) {
+  if (true) {
+
+    cout << "--------------------------------------------------------" << endl;
+
+    string fname=dir+"/"+fnames[ik], tmp, tmp2;
+    ifstream fin(fname.c_str());
+    
+    vector<nucmass_nubase::entry> list;
+
+    while (getline(fin,tmp)) {
+      
+    }
+    
+  }
+  
+  for (size_t ik=0;ik<n_files;ik++) {
     
     cout << "--------------------------------------------------------" << endl;
 
