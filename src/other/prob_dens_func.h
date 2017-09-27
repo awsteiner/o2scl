@@ -1000,35 +1000,34 @@ namespace o2scl {
 
   protected:
 
-  /** \brief Desc
-   */
-  std::random_device rd;
-  
-  /** \brief Desc
+  /** \brief Step sizes
    */
   std::vector<double> u_step;
 
-  /** \brief Desc
+  /** \brief Lower limits
    */
   std::vector<double> u_low;
 
-  /** \brief Desc
+  /** \brief Upper limits
    */
   std::vector<double> u_high;
 
+  /** \brief Store the normalized density
+   */
   double d_pdf;
   
-  /** \brief Desc
+  /** \brief Internal random number generator
    */
   mutable rng_gsl rg;
   
-  public:
-  
-  prob_cond_mdim_rand_walk() {
-  }
-  
-  template<class=vec_t> prob_cond_mdim_rand_walk
-  (vec_t &step, vec_t &low, vec_t &high) {
+  /** \brief Internal set function
+
+      \comment
+      This can't be virtual because it needs to be called
+      by the constructor
+      \endcomment
+   */
+  int set_internal(vec_t &step, vec_t &low, vec_t &high) {
     d_pdf=1.0;
     for(size_t i=0;i<step.size();i++) {
       u_step.push_back(step[i]);
@@ -1041,6 +1040,25 @@ namespace o2scl {
       u_high.push_back(high[i]);
       d_pdf/=high[i]-low[i];
     }
+  }
+
+  public:
+  
+  prob_cond_mdim_rand_walk() {
+  }
+
+  /** \brief Desc
+   */
+  template<class=vec_t> prob_cond_mdim_rand_walk
+  (vec_t &step, vec_t &low, vec_t &high) {
+    set_internal(step,low,high);
+  }
+  
+  /** \brief Desc
+   */
+  virtual int set(vec_t &step, vec_t &low, vec_t &high) {
+    set_internal(step,low,high);
+    return 0;
   }
 
   /// The dimensionality

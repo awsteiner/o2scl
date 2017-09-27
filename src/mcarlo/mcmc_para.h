@@ -129,8 +129,8 @@ namespace o2scl {
   /// Random number generators
   std::vector<rng_gsl> rg;
   
-  /// Proposal distribution
-  o2scl::prob_cond_mdim<vec_t> *prop_dist;
+  /// Pointer to proposal distribution for each thread
+  std::vector<o2scl::prob_cond_mdim<vec_t> *> prop_dist;
   
   /// If true, then use the user-specified proposal distribution
   bool pd_mode;
@@ -184,7 +184,8 @@ namespace o2scl {
   virtual void mcmc_cleanup() {
     if (verbose>0) {
       for(size_t it=0;it<n_threads;it++) {
-	scr_out << "mcmc (" << it << "): accept=" << n_accept[it]
+	scr_out << "mcmc (" << it << "," << mpi_rank
+	<< "): accept=" << n_accept[it]
 	<< " reject=" << n_reject[it] << std::endl;
       }
       scr_out.close();
@@ -307,7 +308,6 @@ namespace o2scl {
     warm_up=false;
     max_bad_steps=1000;
 
-    prop_dist=0;
     always_accept=false;
     ai_initial_step=0.1;
 
@@ -486,7 +486,7 @@ namespace o2scl {
     }
 	  
     // Proposal weight
-    double q_prop=0.0;
+    std::vector<double> q_prop(n_threads);
     
     // Run mcmc_init() function. The initial point, stored in
     // current[0] can be modified by this function and the local
@@ -505,15 +505,18 @@ namespace o2scl {
       if (aff_inv) {
 	scr_out << "mcmc: Affine-invariant step, n_params="
 		<< n_params << ", n_walk=" << n_walk
-		<< ", n_threads=" << n_threads << ", n_ranks="
+		<< ", n_threads=" << n_threads << ", rank="
+		<< mpi_rank << ", n_ranks="
 		<< mpi_size << std::endl;
       } else if (pd_mode==true) {
 	scr_out << "mcmc: With proposal distribution, n_params="
-		<< n_params << ", n_threads=" << n_threads << ", n_ranks="
+		<< n_params << ", n_threads=" << n_threads << ", rank="
+		<< mpi_rank << ", n_ranks="
 		<< mpi_size << std::endl;
       } else {
 	scr_out << "mcmc: Random-walk w/uniform dist., n_params="
-		<< n_params << ", n_threads=" << n_threads << ", n_ranks="
+		<< n_params << ", n_threads=" << n_threads << ", rank="
+		<< mpi_rank << ", n_ranks="
 		<< mpi_size << std::endl;
       }
     }
@@ -632,7 +635,7 @@ namespace o2scl {
       for(size_t it=0;it<n_threads;it++) {
 	if (mcmc_done_flag[it]==true) {
 	  if (verbose>=1) {
-	    scr_out << "mcmc (" << it << "): Returned mcmc_done "
+	    scr_out << "mcmc (" << it << "," << mpi_rank << "): Returned mcmc_done "
 		    << "(initial; ai)." << std::endl;
 	  }
 	  stop_early=true;
@@ -664,7 +667,7 @@ namespace o2scl {
 	  for(curr_walker[it]=0;curr_walker[it]<n_walk;curr_walker[it]++) {
 	    size_t sindex=n_walk*it+curr_walker[it];
 	    scr_out.precision(4);
-	    scr_out << "mcmc (" << it << "): i_walk: ";
+	    scr_out << "mcmc (" << it << "," << mpi_rank << "): i_walk: ";
 	    scr_out.width((int)(1.0+log10((double)(n_walk-1))));
 	    scr_out << curr_walker[it] << " log_wgt: "
 		    << w_current[sindex] << " (initial; ai)" << std::endl;
@@ -781,7 +784,7 @@ namespace o2scl {
       for(size_t it=0;it<n_threads;it++) {
 	if (mcmc_done_flag[it]==true) {
 	  if (verbose>=1) {
-	    scr_out << "mcmc (" << it << "): Returned mcmc_done "
+	    scr_out << "mcmc (" << it << "," << mpi_rank << "): Returned mcmc_done "
 		    << "(initial)." << std::endl;
 	  }
 	  stop_early=true;
@@ -878,10 +881,10 @@ namespace o2scl {
 	  } else if (pd_mode) {
 	    
 	    // Use proposal distribution and compute associated weight
-	    (*prop_dist)(current[it],next[it]);
-	    q_prop=prop_dist->log_pdf(current[it],next[it])-
-	      prop_dist->log_pdf(next[it],current[it]);
-	    if (!std::isfinite(q_prop)) {
+	    (*prop_dist[it])(current[it],next[it]);
+	    q_prop[it]=prop_dist[it]->log_pdf(current[it],next[it])-
+	      prop_dist[it]->log_pdf(next[it],current[it]);
+	    if (!std::isfinite(q_prop[it])) {
 	      O2SCL_ERR2("Proposal distribution not finite in ",
 			 "mcmc_para_base::mcmc().",o2scl::exc_efailed);
 	    }
@@ -907,11 +910,11 @@ namespace o2scl {
 	      func_ret[it]=mcmc_skip;
 	      if (verbose>=3) {
 		if (next[it][k]<low[k]) {
-		  scr_out << "mcmc (" << it << "): Parameter with index " << k
+		  scr_out << "mcmc (" << it << "," << mpi_rank << "): Parameter with index " << k
 			  << " and value " << next[it][k]
 			  << " smaller than limit " << low[k] << std::endl;
 		} else {
-		  scr_out << "mcmc (" << it << "): Parameter with index " << k
+		  scr_out << "mcmc (" << it << "," << mpi_rank << "): Parameter with index " << k
 			  << " and value " << next[it][k]
 			  << " larger than limit " << high[k] << std::endl;
 		}
@@ -950,7 +953,7 @@ namespace o2scl {
       if (verbose>=1) {
 	for(size_t it=0;it<n_threads;it++) {
 	  if (func_ret[it]==mcmc_done) {
-	    scr_out << "mcmc (" << it << "): Returned mcmc_done." 
+	    scr_out << "mcmc (" << it << "," << mpi_rank << "): Returned mcmc_done." 
 		    << std::endl;
 	  } else if (func_ret[it]==mcmc_skip && verbose>=3) {
 	    scr_out << "mcmc (" << it
@@ -968,7 +971,7 @@ namespace o2scl {
 	  } else if (func_ret[it]!=o2scl::success &&
 		     func_ret[it]!=mcmc_skip) {
 	    if (verbose>=2) {
-	      scr_out << "mcmc (" << it << "): Function returned failure " 
+	      scr_out << "mcmc (" << it << "," << mpi_rank << "): Function returned failure " 
 		      << func_ret[it] << " at point ";
 	      for(size_t k=0;k<n_params;k++) {
 		scr_out << next[it][k] << " ";
@@ -1011,7 +1014,7 @@ namespace o2scl {
 		accept=true;
 	      }
 	    } else if (pd_mode) {
-	      if (r<exp(w_next[it]-w_current[sindex]+q_prop)) {
+	      if (r<exp(w_next[it]-w_current[sindex]+q_prop[it])) {
 		accept=true;
 	      }
 	    } else {
@@ -1079,7 +1082,7 @@ namespace o2scl {
 	for(size_t it=0;it<n_threads;it++) {
 	  size_t sindex=n_walk*it+curr_walker[it];
 	  scr_out.precision(4);
-	  scr_out << "mcmc (" << it << "): iter: ";
+	  scr_out << "mcmc (" << it << "," << mpi_rank << "): iter: ";
 	  scr_out.width((int)(1.0+log10((double)(n_params-1))));
 	  scr_out << mcmc_iters << " i_walk: "
 		  << curr_walker[it] << " log_wgt: "
@@ -1205,8 +1208,11 @@ namespace o2scl {
   //@{
   /** \brief Set the proposal distribution
    */
-  virtual void set_proposal(o2scl::prob_cond_mdim<vec_t> &p) {
-    prop_dist=&p;
+  template<class prob_vec_t> void set_proposal(prob_vec_t &pv) {
+    prop_dist.resize(pv.size());
+    for(size_t i=0;i<pv.size();i++) {
+      prop_dist[i]=&pv[i];
+    }
     pd_mode=true;
     aff_inv=false;
     n_walk=1;
@@ -1217,7 +1223,7 @@ namespace o2scl {
    */
   virtual void unset_proposal() {
     if (pd_mode) {
-      prop_dist=0;
+      prop_dist.clear();
       pd_mode=false;
     }
     aff_inv=false;
@@ -1305,6 +1311,7 @@ namespace o2scl {
     // Init tables
     
     table=std::shared_ptr<o2scl::table_units<> >(new o2scl::table_units<>);
+    table->new_column("rank");
     table->new_column("thread");
     table->new_column("walker");
     table->new_column("mult");
@@ -1568,7 +1575,7 @@ namespace o2scl {
 	// Find the last row for this chain
 	size_t row=ntot*(chain_sizes[windex]-1)+windex;
 
-	std::cout << "it: " << it << " iw: " << iw
+	std::cout << "it: " << it << "," << mpi_rank << " iw: " << iw
 		  << " chain size: " << chain_sizes[windex] << " row: "
 		  << row << " log_wgt: " << table->get("log_wgt",row)
 		  << " n_params: " << this->n_params << std::endl;
@@ -1576,7 +1583,7 @@ namespace o2scl {
 	// Copy the entries from this row into the initial_points object
 	this->initial_points[windex].resize(this->n_params);
 	for(size_t ip=0;ip<this->n_params;ip++) {
-	  this->initial_points[windex][ip]=table->get(ip+4,row);
+	  this->initial_points[windex][ip]=table->get(ip+5,row);
 	}
       }
     }
@@ -1591,11 +1598,11 @@ namespace o2scl {
       \c low and \c high, using \c func as the objective function and
       calling the measurement function \c meas at each MC point.
   */
-  virtual int mcmc(size_t n_params, 
+  virtual int mcmc(size_t n_params_local, 
 		   vec_t &low, vec_t &high, std::vector<func_t> &func,
 		   std::vector<fill_t> &fill) {
-
-    n_params=n_params;
+    
+    n_params=n_params_local;
     low_copy=low;
     high_copy=high;
     
@@ -1695,6 +1702,7 @@ namespace o2scl {
 	// Now additionally initialize the first four colums
 	for(size_t j=0;j<this->n_threads;j++) {
 	  for(size_t i=0;i<this->n_walk;i++) {
+	    table->set("rank",istart+j*this->n_walk+i,mpi_rank);
 	    table->set("thread",istart+j*this->n_walk+i,j);
 	    table->set("walker",istart+j*this->n_walk+i,i);
 	    table->set("mult",istart+j*this->n_walk+i,0.0);
