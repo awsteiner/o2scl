@@ -422,7 +422,7 @@ void acol_manager::command_switch(std::string new_type) {
     };
     cl->set_comm_option_vec(narr,options_arr);
   }
-  
+
   return;
 }
 
@@ -471,7 +471,7 @@ int acol_manager::setup_options() {
   const int cl_param=cli::comm_option_cl_param;
   const int both=cli::comm_option_both;
 
-  static const int narr=50;
+  static const int narr=16;
 
   // Options, sorted by long name. We allow 0 parameters in many of these
   // options so they can be requested from the user in interactive mode. 
@@ -571,6 +571,14 @@ int acol_manager::setup_options() {
      "will fit on the screen. The value of [nlines] defaults to 10 "+
      "for table objects.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_preview),
+     both},
+    {'r',"read","Read an object from a file.",0,2,
+     "<file> [object name]",
+     ((string)"Read the internally-formatted (either text or binary) ")+
+     "file with the specified filename and make it the current table. " +
+     "If the [object name] argument is specified, then read the table "+
+     "with the specified name in a file with more than one table.",
+     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_read),
      both},
     {0,"show-units","Show the unit conversion table.",0,0,"",
      ((string)"(This doesn't show all possible conversions, only ")+
@@ -742,41 +750,6 @@ int acol_manager::run(int argc, char *argv[]) {
   cl->set_function(cset);
 
   //-------------------------------------------------------------------
-  // Process default options
-
-  if (verbose>2) {
-    cout << "Process default options" << endl;
-  }
-  std::vector<cmd_line_arg> ca;
-  
-  char *dc=getenv(env_var_name.c_str());
-  if (dc) {
-    def_args=dc;
-    if (verbose>2) {
-      cl->process_args(dc,ca,1);
-    } else {
-      cl->process_args(dc,ca);
-    }
-  }
-  
-  //----------------------------------------------------------------
-  // Process command-line options
-
-  // Note that it's ok that this appears early in the code because it
-  // just processes the arguments, it doesn't do any execution based
-  // on those arguments until later.
-
-  if (verbose>2) {
-    cout << "Process command-line options" << endl;
-    cl->process_args(argc,argv,ca,1);
-  } else {
-    cl->process_args(argc,argv,ca);
-  }
-  if (argc<2) {
-    post_interactive=true;
-  }
-
-  //-------------------------------------------------------------------
   // Try to get screen width
   
   int ncol=80;
@@ -800,17 +773,45 @@ int acol_manager::run(int argc, char *argv[]) {
   //
   setup_parameters();
 
-  //------------------------------------------------------------------
-  // Main execution
-  
-  int ret=0, ret2=0;
+  //-------------------------------------------------------------------
+  // Process default options and call
 
-  if (ca.size()>0) {
-    if (verbose>2) {
-      cout << "Process default options and command-line arguments." << endl;
-    }
-    ret=cl->call_args(ca);
+  if (verbose>2) {
+    cout << "Process default options" << endl;
   }
+  std::vector<cmd_line_arg> ca;
+  
+  char *dc=getenv(env_var_name.c_str());
+  if (dc) {
+    def_args=dc;
+    if (verbose>2) {
+      cl->process_args(def_args,ca,1,true);
+    } else {
+      cl->process_args(def_args,ca,0,true);
+    }
+  }
+  
+  //----------------------------------------------------------------
+  // Process command-line options
+
+  // Note that it's ok that this appears early in the code because it
+  // just processes the arguments, it doesn't do any execution based
+  // on those arguments until later.
+
+  if (verbose>2) {
+    cout << "Process command-line options" << endl;
+    cl->process_args(argc,argv,ca,1,true);
+  } else {
+    cl->process_args(argc,argv,ca,0,true);
+  }
+  if (argc<2) {
+    post_interactive=true;
+  }
+
+  //------------------------------------------------------------------
+  // Post interactive
+  
+  int ret2=0;
 
   if (verbose>2) {
     cout << "Post_interactive: " << post_interactive << endl;
@@ -826,7 +827,7 @@ int acol_manager::run(int argc, char *argv[]) {
   //--------------------------------------------------------------------
   // Notify user if error occurred
 
-  if (ret!=0 || ret2!=0) {
+  if (ret2!=0) {
     cout << "An error occured." << endl;
   }
 
@@ -1303,8 +1304,8 @@ int acol_manager::comm_to_hist(std::vector<std::string> &sv,
       } else {
 	hist_obj.from_table(table_obj,in[0],col2,nbins);
       }
-      type="hist";
       command_switch("hist");
+      type="hist";
 
     } else {
 
@@ -1345,8 +1346,8 @@ int acol_manager::comm_to_hist(std::vector<std::string> &sv,
 	hist_2d_obj.from_table(table_obj,in[0],in[1],col2,
 			       nbinsx,nbinsy);
       }
-      type="hist_2d";
       command_switch("hist_2d");
+      type="hist_2d";
       
     }
 
@@ -2051,8 +2052,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
       hdf_input(hf,table_obj,i2);
       obj_name=i2;
       interp_type=table_obj.get_interp_type();
-      type="table";
       command_switch("table");
+      type="table";
       return 0;
     } else if (type2=="table3d") {
       if (verbose>2) {
@@ -2061,8 +2062,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
       hdf_input(hf,table3d_obj,i2);
       obj_name=i2;
       interp_type=table3d_obj.get_interp_type();
-      type="table3d";
       command_switch("table3d");
+      type="table3d";
       return 0;
     } else if (type2=="hist") {
       if (verbose>2) {
@@ -2084,8 +2085,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
       if (verbose>2) {
 	cout << "Reading hist_2d." << endl;
       }
-      type="hist_2d";
       command_switch("hist_2d");
+      type="hist_2d";
       //threed=true;
       //table3d_obj=new table3d;
       //hist_2d h;
@@ -2130,8 +2131,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
     }
     hdf_input(hf,table_obj,i2);
     obj_name=i2;
-    type="table";
     command_switch("table");
+    type="table";
     interp_type=table_obj.get_interp_type();
     return 0;
   }
@@ -2144,9 +2145,9 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
     hdf_input(hf,table3d_obj,i2);
     obj_name=i2;
     interp_type=table3d_obj.get_interp_type();
-    type="table3d";
-    
+
     command_switch("table3d");
+    type="table3d";
     
     return 0;
   }
@@ -2166,8 +2167,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
       h.copy_to_table(table_obj,"bins","low","high","weights");
     */
     obj_name=i2;
-    type="hist";
     command_switch("hist");
+    type="hist";
     return 0;
   }
   
@@ -2188,8 +2189,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
     */
     obj_name=i2;
     //threed=true;
-    type="hist_2d";
     command_switch("hist_2d");
+    type="hist_2d";
     return 0;
   }
 
@@ -2817,8 +2818,8 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
       } else {
 	table3d_obj.slice_contours(slice,1,levs,cont_obj);
 	clear_obj();
-	type="vector<contour_line>";
 	command_switch("vector<contour_line>");
+	type="vector<contour_line>";
       }
     }
     
@@ -2949,8 +2950,8 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
     } else {
       clear_obj();
       co.calc_contours(cont_obj);
-      type="vector<contour_line>";
       command_switch("vector<contour_line>");
+      type="vector<contour_line>";
     }
     
   }
@@ -4346,9 +4347,9 @@ int acol_manager::comm_gen3_list(std::vector<std::string> &sv,
   clear_obj();
   
   table3d_obj.read_gen3_list(ifs,verbose);
-  type="table3d";
 
   command_switch("table3d");
+  type="table3d";
   
   ifs.close();
 
@@ -4382,8 +4383,8 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
   } else {
     table_obj.read_generic(std::cin,verbose);
   }
-  type="table";
   command_switch("table");
+  type="table";
 
   return 0;
 }
@@ -5172,8 +5173,6 @@ int acol_manager::comm_create3(std::vector<std::string> &sv,
   // Delete previous object
   clear_obj();
   
-  type="table3d";
-
   std::string xname=in[0];
   double x0=function_to_double(in[1]);
   double x1=function_to_double(in[2]);
@@ -5194,6 +5193,8 @@ int acol_manager::comm_create3(std::vector<std::string> &sv,
   table3d_obj.function_slice(zfunc,zname);
 
   command_switch("table3d");
+  type="table3d";
+
   
   return 0;
 }
@@ -5245,8 +5246,8 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
   for(int li=0;li<cnl;li++) {
     table_obj.set(i1,li,d2+((double)li)*d4);
   }
-  type="table";
   command_switch("table");
+  type="table";
 
   return 0;
 }

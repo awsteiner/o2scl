@@ -327,7 +327,7 @@ int cli::comm_option_commands(vector<string> &sv, bool itive_com) {
 }
 
 int cli::process_args(string s, vector<cmd_line_arg> &ca, 
-		      int debug) {
+		      int debug, bool also_call_args) {
   
   // Reformat string s into the (argc,argv) format
   s="acol "+s;
@@ -338,7 +338,7 @@ int cli::process_args(string s, vector<cmd_line_arg> &ca,
   for(int i=0;i<argc;i++) argv[i]=(char *)(sv[i].c_str());
   
   // Process arguments from the (argc,argv) format
-  int ret=process_args(argc,argv,ca,debug);
+  int ret=process_args(argc,argv,ca,debug,also_call_args);
 
   // Delete allocated memory
   delete[] argv;
@@ -365,7 +365,8 @@ int cli::process_args(std::vector<std::string> &sv,
 }
 
 int cli::process_args(int argc, char *argv[], 
-		      vector<cmd_line_arg> &ca, int debug) {
+		      vector<cmd_line_arg> &ca, int debug,
+		      bool also_call_args) {
 
   int retval=0;
   
@@ -682,6 +683,19 @@ int cli::process_args(int argc, char *argv[],
 
     // Add argument to the list of arguments
     ca.push_back(c);
+
+    if (also_call_args && c.is_option && c.is_valid) {
+      vector<string> sv;
+      sv.push_back(c.arg);
+      for(size_t j=0;j<c.parms.size();j++) {
+	sv.push_back(c.parms[j]);
+      }
+      if (c.arg=="-quit" || c.arg=="-exit" ||
+	  c.arg=="--quit" || c.arg=="--exit") {
+	return 0;
+      }
+      (*(c.cop->func))(sv,false);
+    }
     
     if (current==argc) {
       done=true;

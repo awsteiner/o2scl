@@ -206,6 +206,11 @@ namespace o2scl_acol {
     o2scl::table3d table3d_obj;
 #endif
 
+    int int_obj;
+    double double_obj;
+    size_t size_t_obj;
+    std::string string_obj;
+    
     /** \brief Contour lines object
      */
     std::vector<o2scl::contour_line> cont_obj;

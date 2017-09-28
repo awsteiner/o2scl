@@ -600,7 +600,8 @@ namespace o2scl {
 	the name of the command, and should thus be ignored.
     */
     int process_args(int argc, char *argv[], 
-		     std::vector<cmd_line_arg> &ca, int debug=0);
+		     std::vector<cmd_line_arg> &ca, int debug=0,
+		     bool also_call_args=false);
 
     /** \brief Process command-line arguments from a vector of strings
 	
@@ -617,7 +618,7 @@ namespace o2scl {
 	from (const char *) which needs reworking.
      */
     int process_args(std::string s, std::vector<cmd_line_arg> &ca, 
-		     int debug=0);
+		     int debug=0, bool also_call_args=false);
 
     /** \brief Set verbosity
 	
