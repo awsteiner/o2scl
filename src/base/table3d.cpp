@@ -706,6 +706,50 @@ double table3d::interp(double x, double y, std::string name) const {
   return result;
 }
 
+void table3d::deriv_y(std::string fname, std::string fpname) {
+
+  size_t z=lookup_slice(fname);
+  size_t zp;
+  if (!is_slice(fpname,zp)) {
+    new_slice(fpname);
+    zp=lookup_slice(fpname);
+  }
+  
+  interp_vec<ubvector,ubmatrix_row> itp;
+
+  for(size_t i=0;i<numx;i++) {
+    ubmatrix_row row(list[z],i);
+    itp.set(numy,yval,row,itype);
+    for(size_t j=0;j<numy;j++) {
+      set(i,j,zp,itp.deriv(xval[i]));
+    }
+  }
+  
+  return;
+}
+
+void table3d::deriv_x(std::string fname, std::string fpname) {
+
+  size_t z=lookup_slice(fname);
+  size_t zp;
+  if (!is_slice(fpname,zp)) {
+    new_slice(fpname);
+    zp=lookup_slice(fpname);
+  }
+  
+  interp_vec<ubvector,ubmatrix_column> itp;
+
+  for(size_t i=0;i<numy;i++) {
+    ubmatrix_column col(list[z],i);
+    itp.set(numx,xval,col,itype);
+    for(size_t j=0;j<numx;j++) {
+      set(j,i,zp,itp.deriv(xval[j]));
+    }
+  }
+  
+  return;
+}
+
 double table3d::deriv_x(double x, double y, std::string name) const {
   double result;
   

@@ -637,6 +637,16 @@ namespace o2scl {
       return;
     }
 
+    /** \brief Create a new slice, named \c fpname, containing the 
+	derivative of \c fname with respect to the x coordinate
+     */
+    void deriv_x(std::string fname, std::string fpname);
+
+    /** \brief Create a new slice, named \c fpname, containing the 
+	derivative of \c fname with respect to the y coordinate
+     */
+    void deriv_y(std::string fname, std::string fpname);
+    
     //@}
 
     // --------------------------------------------------------

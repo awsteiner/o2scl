@@ -156,7 +156,7 @@ int acol_manager::setup_options() {
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_delete_rows),
      both},
     {'D',"deriv",
-     "Derivative of a function defined by two columns (table3d only).",
+     "Derivative of a function defined by two columns (table only).",
      0,3,"<x> <y> <name>",
      ((string)"Create a new column named <name> filled with the ")+
      "derivative of the function y(x) obtained from columns <x> and <y>. ",
@@ -3178,19 +3178,19 @@ int acol_manager::comm_deriv(std::vector<std::string> &sv, bool itive_com) {
     cerr << "Not implemented for type " << type << " ." << endl;
     return exc_efailed;
   }
-
+  
   if (table_obj.get_nlines()==0) {
     cerr << "No table with columns to take derivatives of." << endl;
     return exc_efailed;
   }
-
+  
   vector<string> pr, in;
   pr.push_back("Enter 'x' column");
   pr.push_back("Enter 'y' column");
   pr.push_back("Enter name of new column");
   int ret=get_input(sv,pr,in,"deriv",itive_com);
   if (ret!=0) return ret;
-
+  
   if (table_obj.is_column(in[0])==false) {
     cerr << "Couldn't find column named '" << in[0] << "'." << endl;
     return exc_efailed;
@@ -3199,8 +3199,32 @@ int acol_manager::comm_deriv(std::vector<std::string> &sv, bool itive_com) {
     cerr << "Couldn't find column named '" << in[1] << "'." << endl;
     return exc_efailed;
   }
-
+  
   table_obj.deriv(in[0],in[1],in[2]);
+  
+  /*
+    
+    New code for table3d deriv-x.
+    
+    if (table3d_obj.get_nlines()==0) {
+    cerr << "No table3d_obj with columns to take derivatives of." << endl;
+    return exc_efailed;
+    }
+    
+    vector<string> pr, in;
+    pr.push_back("Enter slice containing function");
+    pr.push_back("Enter name of new slice");
+    int ret=get_input(sv,pr,in,"deriv",itive_com);
+    if (ret!=0) return ret;
+    
+    if (table3d_obj.is_slice(in[0])==false) {
+    cerr << "Couldn't find slice named '" << in[0] << "'." << endl;
+    return exc_efailed;
+    }
+    
+    table3d_obj.deriv_x(in[0],in[1]);
+  */
+
 
   return 0;
 }
