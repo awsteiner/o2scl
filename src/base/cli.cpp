@@ -348,7 +348,7 @@ int cli::process_args(string s, vector<cmd_line_arg> &ca,
 
 int cli::process_args(std::vector<std::string> &sv,
 		      std::vector<cmd_line_arg> &ca, int debug) {
-
+  
   int argc=sv.size()+1;
   char **argv=new char *[argc];
   std::string s="acol";
@@ -1357,6 +1357,19 @@ int cli::run_interactive() {
   
   return 0;
 }
+
+void cli::remove_comm_option(std::string cmd) {
+  std::vector<comm_option_s>::iterator it;
+  
+  for(it=clist.begin();it!=clist.end();it++) {
+    if (it->lng==cmd) {
+      clist.erase(it);
+      return;
+    }
+  }
+  O2SCL_ERR2("Option not found in ",
+	    "cli::remove_comm_option().",o2scl::exc_einval);
+}  
 
 int cli::set_comm_option(comm_option_s &ic) {
   if (ic.lng.length()<2) {

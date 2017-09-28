@@ -72,6 +72,8 @@ void acol_manager::clear_obj() {
     table_obj.clear();
   } else if (type=="table3d") {
     table3d_obj.clear();
+    cl->remove_comm_option("deriv-x");
+    cl->remove_comm_option("deriv-y");
   } else if (type=="hist") {
     hist_obj.clear();
   } else if (type=="hist_2d") {
@@ -90,7 +92,7 @@ int acol_manager::setup_options() {
   const int cl_param=cli::comm_option_cl_param;
   const int both=cli::comm_option_both;
 
-  static const int narr=52;
+  static const int narr=50;
 
   // Options, sorted by long name. We allow 0 parameters in many of these
   // options so they can be requested from the user in interactive mode. 
@@ -167,18 +169,20 @@ int acol_manager::setup_options() {
      "derivative of the function y(x) obtained from columns <x> and <y>. ",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv2),
      both},
-    {0,"deriv-x","Derivative with respect to x (table3d only).",0,2,
-     "<f> <dfdx>",
-     ((string)"Create a new slice named <dfdx> filled with the ")+
-     "derivative of the function from the x grid and slice named <f>.",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv_x),
-     both},
-    {0,"deriv-y","Derivative with respect to y (table3d only).",0,2,
-     "<f> <dfdy>",
-     ((string)"Create a new slice named <dfdy> filled with the ")+
-     "derivative of the function from the y grid and slice named <f>.",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv_y),
-     both},
+    /*
+      {0,"deriv-x","Derivative with respect to x (table3d only).",0,2,
+      "<f> <dfdx>",
+      ((string)"Create a new slice named <dfdx> filled with the ")+
+      "derivative of the function from the x grid and slice named <f>.",
+      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv_x),
+      both},
+      {0,"deriv-y","Derivative with respect to y (table3d only).",0,2,
+      "<f> <dfdy>",
+      ((string)"Create a new slice named <dfdy> filled with the ")+
+      "derivative of the function from the y grid and slice named <f>.",
+      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv_y),
+      both},
+    */
     {0,"filelist","List objects in a HDF5 file.",0,1,"<file>",
      ((string)"This lists all the top-level datasets and groups in a ")+
      "HDF5 file and, for those groups which are in the O2scl format, "+
@@ -1426,118 +1430,118 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
     //--------------------------------------------------------------------
     // Output formatting
 
-  if (scientific) fout->setf(ios::scientific);
-  else fout->unsetf(ios::scientific);
-  fout->precision(prec);
+    if (scientific) fout->setf(ios::scientific);
+    else fout->unsetf(ios::scientific);
+    fout->precision(prec);
 
-  if (table_obj.get_ncolumns()>0) {
+    if (table_obj.get_ncolumns()>0) {
 
-    //--------------------------------------------------------------------
-    // Count column widths
+      //--------------------------------------------------------------------
+      // Count column widths
 
-    vector<size_t> col_wids(table_obj.get_ncolumns());
+      vector<size_t> col_wids(table_obj.get_ncolumns());
 
-    for(size_t i=0;i<table_obj.get_ncolumns();i++) {
-      col_wids[i]=prec+6;
-    }
-
-    if (names_out==true) {
       for(size_t i=0;i<table_obj.get_ncolumns();i++) {
-	if (table_obj.get_column_name(i).size()>col_wids[i]) {
-	  col_wids[i]=table_obj.get_column_name(i).size();
-	}
-	std::string tunit=table_obj.get_unit(table_obj.get_column_name(i));
-	if (tunit.size()+2>col_wids[i]) {
-	  col_wids[i]=tunit.size()+2;
-	}
+	col_wids[i]=prec+6;
       }
-    }
 
-    //--------------------------------------------------------------------
-    // Output column names
-      
-    if (names_out==true) {
-      for(size_t i=0;i<table_obj.get_ncolumns();i++) {
-	  
-	// Preceeding space
-	if (pretty==true) {
-	  (*fout) << ' ';
-	}
-	  
-	// Column name
-	(*fout) << table_obj.get_column_name(i) << " ";
-	  
-	// Trailing spaces
-	if (pretty==true) {
-	  int nsp=col_wids[i]-table_obj.get_column_name(i).size();
-	  if (nsp<0) {
-	    O2SCL_ERR("Column size anomaly (col names).",exc_efailed);
+      if (names_out==true) {
+	for(size_t i=0;i<table_obj.get_ncolumns();i++) {
+	  if (table_obj.get_column_name(i).size()>col_wids[i]) {
+	    col_wids[i]=table_obj.get_column_name(i).size();
 	  }
-	  for(int j=0;j<nsp;j++) (*fout) << ' ';
-	}
-	
-      }
-      (*fout) << endl;
-    }
-      
-    //--------------------------------------------------------------------
-    // Output units
-    
-    if (table_obj.get_nunits()>0 && names_out==true) {
-      for(size_t i=0;i<table_obj.get_ncolumns();i++) {
-
-	// Preceeding space
-	if (pretty==true) {
-	  (*fout) << ' ';
-	}
-	
-	// Unit name
-	(*fout) << '['
-		<< table_obj.get_unit(table_obj.get_column_name(i)) << "] ";
-	
-	// Trailing spaces
-	if (pretty==true) {
-	  int nsp=col_wids[i]-
-	    table_obj.get_unit(table_obj.get_column_name(i)).size()-2;
-	  if (nsp<0) {
-	    O2SCL_ERR("Column size anomaly (units).",exc_efailed);
+	  std::string tunit=table_obj.get_unit(table_obj.get_column_name(i));
+	  if (tunit.size()+2>col_wids[i]) {
+	    col_wids[i]=tunit.size()+2;
 	  }
-	  for(int j=0;j<nsp;j++) (*fout) << ' ';
 	}
-	
       }
-      (*fout) << endl;
-    }
+
+      //--------------------------------------------------------------------
+      // Output column names
       
-    //--------------------------------------------------------------------
-    // Output data
-      
-    for(int i=0;i<((int)table_obj.get_nlines());i++) {
-	
-      for(size_t j=0;j<table_obj.get_ncolumns();j++) {
+      if (names_out==true) {
+	for(size_t i=0;i<table_obj.get_ncolumns();i++) {
 	  
-	// Otherwise, for normal output
-	if (pretty==true && table_obj.get(j,i)>=0.0) {
-	  (*fout) << ' ';
-	}
-	(*fout) << table_obj.get(j,i) << ' ';
-	if (pretty==true) {
-	  int nsp=((int)(table_obj.get_column_name(j).size()-prec-6));
-	  for(int kk=0;kk<nsp;kk++) {
+	  // Preceeding space
+	  if (pretty==true) {
 	    (*fout) << ' ';
 	  }
-	}
+	  
+	  // Column name
+	  (*fout) << table_obj.get_column_name(i) << " ";
+	  
+	  // Trailing spaces
+	  if (pretty==true) {
+	    int nsp=col_wids[i]-table_obj.get_column_name(i).size();
+	    if (nsp<0) {
+	      O2SCL_ERR("Column size anomaly (col names).",exc_efailed);
+	    }
+	    for(int j=0;j<nsp;j++) (*fout) << ' ';
+	  }
 	
+	}
+	(*fout) << endl;
       }
-      (*fout) << endl;
       
       //--------------------------------------------------------------------
-      // Continue to next row
-    }
+      // Output units
     
-  }
+      if (table_obj.get_nunits()>0 && names_out==true) {
+	for(size_t i=0;i<table_obj.get_ncolumns();i++) {
 
-  ffout.close();
+	  // Preceeding space
+	  if (pretty==true) {
+	    (*fout) << ' ';
+	  }
+	
+	  // Unit name
+	  (*fout) << '['
+		  << table_obj.get_unit(table_obj.get_column_name(i)) << "] ";
+	
+	  // Trailing spaces
+	  if (pretty==true) {
+	    int nsp=col_wids[i]-
+	      table_obj.get_unit(table_obj.get_column_name(i)).size()-2;
+	    if (nsp<0) {
+	      O2SCL_ERR("Column size anomaly (units).",exc_efailed);
+	    }
+	    for(int j=0;j<nsp;j++) (*fout) << ' ';
+	  }
+	
+	}
+	(*fout) << endl;
+      }
+      
+      //--------------------------------------------------------------------
+      // Output data
+      
+      for(int i=0;i<((int)table_obj.get_nlines());i++) {
+	
+	for(size_t j=0;j<table_obj.get_ncolumns();j++) {
+	  
+	  // Otherwise, for normal output
+	  if (pretty==true && table_obj.get(j,i)>=0.0) {
+	    (*fout) << ' ';
+	  }
+	  (*fout) << table_obj.get(j,i) << ' ';
+	  if (pretty==true) {
+	    int nsp=((int)(table_obj.get_column_name(j).size()-prec-6));
+	    for(int kk=0;kk<nsp;kk++) {
+	      (*fout) << ' ';
+	    }
+	  }
+	
+	}
+	(*fout) << endl;
+      
+	//--------------------------------------------------------------------
+	// Continue to next row
+      }
+    
+    }
+
+    ffout.close();
 
   } else if (type=="hist") {
     cout << "Output hist." << endl;
@@ -1923,6 +1927,24 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
       obj_name=i2;
       interp_type=table3d_obj.get_interp_type();
       type="table3d";
+
+      const int both=cli::comm_option_both;
+      comm_option_s options_arr[2]={
+	{0,"deriv-x","Derivative with respect to x (table3d only).",0,2,
+	 "<f> <dfdx>",
+	 ((string)"Create a new slice named <dfdx> filled with the ")+
+	 "derivative of the function from the x grid and slice named <f>.",
+	 new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv_x),
+	 both},
+	{0,"deriv-y","Derivative with respect to y (table3d only).",0,2,
+	 "<f> <dfdy>",
+	 ((string)"Create a new slice named <dfdy> filled with the ")+
+	 "derivative of the function from the y grid and slice named <f>.",
+	 new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv_y),
+	 both}
+      };
+      cl->set_comm_option_vec(2,options_arr);
+      
       return 0;
     } else if (type2=="hist") {
       if (verbose>2) {
@@ -2002,6 +2024,24 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
     obj_name=i2;
     interp_type=table3d_obj.get_interp_type();
     type="table3d";
+
+    const int both=cli::comm_option_both;
+    comm_option_s options_arr[2]={
+      {0,"deriv-x","Derivative with respect to x (table3d only).",0,2,
+       "<f> <dfdx>",
+       ((string)"Create a new slice named <dfdx> filled with the ")+
+       "derivative of the function from the x grid and slice named <f>.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv_x),
+       both},
+      {0,"deriv-y","Derivative with respect to y (table3d only).",0,2,
+       "<f> <dfdy>",
+       ((string)"Create a new slice named <dfdy> filled with the ")+
+       "derivative of the function from the y grid and slice named <f>.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv_y),
+       both}
+    };
+    cl->set_comm_option_vec(2,options_arr);
+    
     return 0;
   }
 
@@ -2453,10 +2493,14 @@ int acol_manager::comm_slice(std::vector<std::string> &sv, bool itive_com) {
   if (sv[1]=="x") {
     table3d_obj.extract_x(std::stod(sv[2]),table_obj);
     table3d_obj.clear();
+    cl->remove_comm_option("deriv-x");
+    cl->remove_comm_option("deriv-y");
     type="table";
   } else if (sv[1]=="y") {
     table3d_obj.extract_y(std::stod(sv[2]),table_obj);
     table3d_obj.clear();
+    cl->remove_comm_option("deriv-x");
+    cl->remove_comm_option("deriv-y");
     type="table";
   } else {
     cerr << "Invalid first argument to 'slice'." << endl;
@@ -4196,6 +4240,23 @@ int acol_manager::comm_gen3_list(std::vector<std::string> &sv,
   table3d_obj.read_gen3_list(ifs,verbose);
   type="table3d";
 
+  const int both=cli::comm_option_both;
+  comm_option_s options_arr[2]={
+    {0,"deriv-x","Derivative with respect to x (table3d only).",0,2,
+     "<f> <dfdx>",
+     ((string)"Create a new slice named <dfdx> filled with the ")+
+     "derivative of the function from the x grid and slice named <f>.",
+     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv_x),
+     both},
+    {0,"deriv-y","Derivative with respect to y (table3d only).",0,2,
+     "<f> <dfdy>",
+     ((string)"Create a new slice named <dfdy> filled with the ")+
+     "derivative of the function from the y grid and slice named <f>.",
+     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv_y),
+     both}
+  };
+  cl->set_comm_option_vec(2,options_arr);
+  
   ifs.close();
 
   return 0;
@@ -5037,6 +5098,23 @@ int acol_manager::comm_create3(std::vector<std::string> &sv,
   table3d_obj.set_xy(xname,ugx,yname,ugy);
 
   table3d_obj.function_slice(zfunc,zname);
+
+  const int both=cli::comm_option_both;
+  comm_option_s options_arr[2]={
+    {0,"deriv-x","Derivative with respect to x (table3d only).",0,2,
+     "<f> <dfdx>",
+     ((string)"Create a new slice named <dfdx> filled with the ")+
+     "derivative of the function from the x grid and slice named <f>.",
+     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv_x),
+     both},
+    {0,"deriv-y","Derivative with respect to y (table3d only).",0,2,
+     "<f> <dfdy>",
+     ((string)"Create a new slice named <dfdy> filled with the ")+
+     "derivative of the function from the y grid and slice named <f>.",
+     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv_y),
+     both}
+  };
+  cl->set_comm_option_vec(2,options_arr);
   
   return 0;
 }

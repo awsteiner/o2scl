@@ -523,6 +523,10 @@ namespace o2scl {
 
     */
     int set_comm_option(comm_option_s &ic);
+
+    /** \brief Remove a command with long name \cmd
+     */
+    void remove_comm_option(std::string cmd);
     
     /// Add a vector containing new commands/options
     template<class vec_t> int set_comm_option_vec
@@ -598,6 +602,12 @@ namespace o2scl {
     int process_args(int argc, char *argv[], 
 		     std::vector<cmd_line_arg> &ca, int debug=0);
 
+    /** \brief Process command-line arguments from a vector of strings
+	
+        This doesn't actually execute the functions for the
+	corresponding options, but simply processes the arguments in
+	\c sv and packs the information into \c ca.
+    */
     int process_args(std::vector<std::string> &sv,
 		     std::vector<cmd_line_arg> &ca, int debug);
     
