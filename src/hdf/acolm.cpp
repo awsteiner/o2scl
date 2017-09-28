@@ -46,6 +46,202 @@ using namespace o2scl_acol;
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
+#ifdef O2SCL_NEVER_DEFINED
+
+void acol_manager::command_switch(std::string new_type) {
+
+  const int both=cli::comm_option_both;
+  
+  if (type=="table3d") {
+    cl->remove_comm_option("deriv-x");
+    cl->remove_comm_option("deriv-y");
+  }
+  
+  if (new_type=="table") {
+    static const size_t narr=21;
+    comm_option_s options_arr[narr]={
+      {0,"delete-col","Delete a column.",0,1,"<name>",
+       "Delete the entire column named <name>.",
+       new comm_option_mfptr<acol_manager>
+       (this,&acol_manager::comm_delete_col),both},
+      {'d',"delete-rows","Delete rows selected by a function.",
+       0,1,"<func>",((string)"Delete the set of rows for ")+
+       "which a function evaluates to a number greater than 0.5. "+
+       "For example, 'delete-rows if(col1+col2>10,1,0)' will delete "+
+       "all columns where the sum of the entries in 'col1' and 'col2' "+
+       "is larger than 10. See also 'select-rows'.",
+       new comm_option_mfptr<acol_manager>
+       (this,&acol_manager::comm_delete_rows),both},
+      {'D',"deriv",
+       "Derivative of a function defined by two columns.",
+       0,3,"<x> <y> <name>",
+       ((string)"Create a new column named <name> filled with the ")+
+       "derivative of the function y(x) obtained from columns <x> and <y>. ",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv),
+       both},
+      {0,"deriv2","Second derivative.",0,3,"<name> <x> <y>",
+       ((string)"Create a new column named <name> filled with the second ")+
+       "derivative of the function y(x) obtained from columns <x> and <y>. ",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv2),
+       both},
+      {0,"cat",
+       "Concatenate data from a second table object onto current table.",0,2,
+       "<file> [name]",((string)"For table objects, add a ")+
+       "second table to the end of the first, creating new columns "+
+       "if necessary. For table3d objects, add all slices from the "+
+       "second table3d object which aren't already present in the "+
+       "current table3d object.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_cat),
+       both},
+      {0,"convert-unit","Convert a column to a new unit.",0,2,
+       "<column> <new_unit>",((string)"(This command only works if ")+
+       "the GNU 'units' command is installed and available in the current "+
+       "path.) Convert the units of a column to <new unit>, multipliying "+
+       "all entries in that column by the appropriate factor.",
+       new comm_option_mfptr<acol_manager>
+       (this,&acol_manager::comm_convert_unit),both},
+      {0,"find-row","Find a row which maximizes a function (table only).",
+       0,2,"<func> or find-row <col> <val>",
+       ((string)"If one argument is given, then find-row finds the row ")+
+       "which maximizes the value of the "+
+       "expression given in <func>, and then output the entire row. "+
+       "Otherwise find-row finds the row for which the value in "+
+       "column named <col> is as close as possible to the value <val>. "+
+       "See command 'get-row' to get a row by it's index.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_find_row),
+       both},
+      {0,"fit","Fit two columns to a function (experimental, table only).",0,7,
+       "<x> <y> <yerr> <ynew> <par names> <func> <vals>","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_fit),
+       both},
+      {'f',"function","Create a new column or slice from a function.",0,2,
+       "<func> <name>",
+       ((string)"Create a new column named <name> from a function (in ")+
+       "<func>) in terms of the other columns. For example, for "+
+       "a table containing columns named 'c1' and 'c2', 'function "+
+       "c1-c2 c3' would create a new column c3 which contains the "+
+       "difference of columns 'c1' and 'c2'.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_function),
+       both},
+      {0,"get-row","Get a row by index.",
+       0,1,"<index>",((string)"Get a row by index. The first row ")+
+       "has index 0, and the last row has index n-1, where n "+
+       "is the total number of rows as returned by the 'list' command. "+
+       "The 'index' command creates a column of row indexes. "+
+       "To find a row which contains a particular value or maximizes "+
+       "a specified function, use 'find-row'.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_row),
+       both},
+      {0,"get-unit","Get the units for a specified column.",0,1,"<column>","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_unit),
+       both},
+      {0,"entry","Get a single entry in a table.",0,3,
+       "<column/slice> <index> [index2]","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_entry),
+       both},
+      {'N',"index","Add a column containing the row numbers (table only).",0,1,
+       "[column name]",
+       ((string)"Define a new column named [column name] and fill ")+
+       "the column with the row indexes, beginning with zero. If "+
+       "no argument is given, the new column is named 'N'.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_index),
+       both},
+      {0,"insert","Interpolate a column/slice from another file.",0,6,
+       ((string)"2D: <file> <table> <oldx> <oldy> <newx> [newy],\n\t\t")+
+       "3D: <file> <table> <old> [new]",
+       ((string)"Insert a column from file <fname> interpolating it ")+
+       "into the current table. The column <oldy> is the "+
+       "columns in the file which is to be inserted into the table, "+
+       "using the column <oldx> in the file and <newx> in the table. "+
+       "The new column in the table is named <oldy>, or it is named "+
+       "[newy] if the additional argument is given. ",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_insert),
+       both},
+      {0,"insert-full",
+       "Interpolate a table from another file (table only).",0,3,
+       "<fname> <oldx> <newx>",
+       ((string)"Insert all columns from file <fname> interpolating it ")+
+       "into the current table. The column <oldy> is the "+
+       "columns in the file which is to be inserted into the table, "+
+       "using the column <oldx> in the file and <newx> in the table. "+
+       "The new column are given the same names as in the file. ",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
+       both},
+      {'I',"integ",
+       "Integrate a function specified by two columns (table only).",
+       0,3,"<x> <y> <name>",
+       ((string)"Create a new column named <name> filled with the ")+
+       "integral of the function y(x) obtained from columns <x> and <y>. ",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_integ),
+       both},
+      {'i',"internal","Output in the internal HDF5 format.",0,1,"[file]",
+       ((string)"Output the current table in the internal HDF5 format. ")+
+       "If no argument is given, then output is sent to the screen, "+
+       "otherwise, output is sent to the specified file. ",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_internal),
+       both},
+      {0,"interp","Interpolate a number into a column or slice.",0,3,
+       "2d: <x name> <x value> <y name>, 3d: <z name> <x value> <y value> ",
+       ((string)"For a 2d table, interpolate <x value> from column ")+
+       "named <x name> into column named <y name>. For a 3d table "+
+       "interpolate (<x value>,<y value>) into the slice named <z name>.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_interp),
+       both},
+      {'l',"list","List the constants, column/slice names and other info.",
+       0,0,"","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
+       both},
+      {0,"max","Find the maximum value of a column or slice.",0,1,"<col>",
+       "Compute the maximum value of column <col>.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_max),
+       both},
+      {0,"min","Find the minimum value of a column or slice.",0,1,"<col>",
+       "Compute the minimum value of column <col>.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
+       both}
+    };
+    cl->set_comm_option_vec(narr,options_arr);
+  } else if (new_type=="table3d") {
+    static const size_t narr=4;
+    comm_option_s options_arr[narr]={
+      {0,"cat",
+       "Concatenate data from a second table object onto current table.",0,2,
+       "<file> [name]",((string)"For table objects, add a ")+
+       "second table to the end of the first, creating new columns "+
+       "if necessary. For table3d objects, add all slices from the "+
+       "second table3d object which aren't already present in the "+
+       "current table3d object.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_cat),
+       both},
+      {0,"deriv-x","Derivative with respect to x.",0,2,
+       "<f> <dfdx>",
+       ((string)"Create a new slice named <dfdx> filled with the ")+
+       "derivative of the function from the x grid and slice named <f>.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv_x),
+       both},
+      {0,"deriv-y","Derivative with respect to y.",0,2,
+       "<f> <dfdy>",
+       ((string)"Create a new slice named <dfdy> filled with the ")+
+       "derivative of the function from the y grid and slice named <f>.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv_y),
+       both},
+      {'f',"function","Create a new column or slice from a function.",0,2,
+       "<func> <name>",
+       ((string)"Create a new column named <name> from a function (in ")+
+       "<func>) in terms of the other columns. For example, for "+
+       "a table containing columns named 'c1' and 'c2', 'function "+
+       "c1-c2 c3' would create a new column c3 which contains the "+
+       "difference of columns 'c1' and 'c2'.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_function),
+       both}
+    };
+    cl->set_comm_option_vec(narr,options_arr);
+  }
+  
+  return;
+}
+#endif
+
 acol_manager::acol_manager() : cng(o2scl_settings.get_convert_units()) {
   obj_name="acol";
   verbose=1;
@@ -169,20 +365,6 @@ int acol_manager::setup_options() {
      "derivative of the function y(x) obtained from columns <x> and <y>. ",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv2),
      both},
-    /*
-      {0,"deriv-x","Derivative with respect to x (table3d only).",0,2,
-      "<f> <dfdx>",
-      ((string)"Create a new slice named <dfdx> filled with the ")+
-      "derivative of the function from the x grid and slice named <f>.",
-      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv_x),
-      both},
-      {0,"deriv-y","Derivative with respect to y (table3d only).",0,2,
-      "<f> <dfdy>",
-      ((string)"Create a new slice named <dfdy> filled with the ")+
-      "derivative of the function from the y grid and slice named <f>.",
-      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv_y),
-      both},
-    */
     {0,"filelist","List objects in a HDF5 file.",0,1,"<file>",
      ((string)"This lists all the top-level datasets and groups in a ")+
      "HDF5 file and, for those groups which are in the O2scl format, "+
@@ -212,7 +394,7 @@ int acol_manager::setup_options() {
      "difference of columns 'c1' and 'c2'.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_function),
      both},
-    {'g',"generic","Read in a generic data file (table only).",0,1,"<file>",
+    {'g',"generic","Read in a generic data file.",0,1,"<file>",
      ((string)"Read a generic data file with the given filename. ")+
      "The first line of the file must either contain numeric data or "+
      "column names "+
@@ -221,7 +403,7 @@ int acol_manager::setup_options() {
      "to contain data with the same number of columns as the first line. ",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_generic),
      both},
-    {0,"gen3-list","Read in a generic data file (table3d only).",0,1,"<file>",
+    {0,"gen3-list","Read in a generic data file.",0,1,"<file>",
      ((string)"This command reads in a generic data file ")+
      "which specifies a table3d object. The data must be stored in columns "+
      "where the first entry in each column is the x-axis grid point, "+
