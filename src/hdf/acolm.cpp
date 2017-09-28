@@ -90,7 +90,7 @@ int acol_manager::setup_options() {
   const int cl_param=cli::comm_option_cl_param;
   const int both=cli::comm_option_both;
 
-  static const int narr=50;
+  static const int narr=52;
 
   // Options, sorted by long name. We allow 0 parameters in many of these
   // options so they can be requested from the user in interactive mode. 
@@ -162,10 +162,22 @@ int acol_manager::setup_options() {
      "derivative of the function y(x) obtained from columns <x> and <y>. ",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv),
      both},
-    {0,"deriv2","Second derivative (table3d only).",0,3,"<name> <x> <y>",
+    {0,"deriv2","Second derivative (table only).",0,3,"<name> <x> <y>",
      ((string)"Create a new column named <name> filled with the second ")+
      "derivative of the function y(x) obtained from columns <x> and <y>. ",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv2),
+     both},
+    {0,"deriv-x","Derivative with respect to x (table3d only).",0,2,
+     "<f> <dfdx>",
+     ((string)"Create a new slice named <dfdx> filled with the ")+
+     "derivative of the function from the x grid and slice named <f>.",
+     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv_x),
+     both},
+    {0,"deriv-y","Derivative with respect to y (table3d only).",0,2,
+     "<f> <dfdy>",
+     ((string)"Create a new slice named <dfdy> filled with the ")+
+     "derivative of the function from the y grid and slice named <f>.",
+     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv_y),
      both},
     {0,"filelist","List objects in a HDF5 file.",0,1,"<file>",
      ((string)"This lists all the top-level datasets and groups in a ")+
@@ -3201,30 +3213,64 @@ int acol_manager::comm_deriv(std::vector<std::string> &sv, bool itive_com) {
   }
   
   table_obj.deriv(in[0],in[1],in[2]);
-  
-  /*
-    
-    New code for table3d deriv-x.
-    
-    if (table3d_obj.get_nlines()==0) {
-    cerr << "No table3d_obj with columns to take derivatives of." << endl;
+
+  return 0;
+}
+
+int acol_manager::comm_deriv_x(std::vector<std::string> &sv, bool itive_com) {
+
+  if (type!="table3d") {
+    cerr << "Not implemented for type " << type << " ." << endl;
     return exc_efailed;
-    }
-    
-    vector<string> pr, in;
-    pr.push_back("Enter slice containing function");
-    pr.push_back("Enter name of new slice");
-    int ret=get_input(sv,pr,in,"deriv",itive_com);
-    if (ret!=0) return ret;
-    
-    if (table3d_obj.is_slice(in[0])==false) {
+  }
+  
+  if (table3d_obj.get_nslices()==0) {
+    cerr << "No table3d with slices to take derivatives of." << endl;
+    return exc_efailed;
+  }
+  
+  vector<string> pr, in;
+  pr.push_back("Enter slice containing function");
+  pr.push_back("Enter name of new slice");
+  int ret=get_input(sv,pr,in,"deriv",itive_com);
+  if (ret!=0) return ret;
+
+  size_t iz;
+  if (table3d_obj.is_slice(in[0],iz)==false) {
     cerr << "Couldn't find slice named '" << in[0] << "'." << endl;
     return exc_efailed;
-    }
-    
-    table3d_obj.deriv_x(in[0],in[1]);
-  */
+  }
+  
+  table3d_obj.deriv_x(in[0],in[1]);
 
+  return 0;
+}
+
+int acol_manager::comm_deriv_y(std::vector<std::string> &sv, bool itive_com) {
+
+  if (type!="table3d") {
+    cerr << "Not implemented for type " << type << " ." << endl;
+    return exc_efailed;
+  }
+  
+  if (table3d_obj.get_nslices()==0) {
+    cerr << "No table3d with slices to take derivatives of." << endl;
+    return exc_efailed;
+  }
+  
+  vector<string> pr, in;
+  pr.push_back("Enter slice containing function");
+  pr.push_back("Enter name of new slice");
+  int ret=get_input(sv,pr,in,"deriv",itive_com);
+  if (ret!=0) return ret;
+  
+  size_t iz;
+  if (table3d_obj.is_slice(in[0],iz)==false) {
+    cerr << "Couldn't find slice named '" << in[0] << "'." << endl;
+    return exc_efailed;
+  }
+  
+  table3d_obj.deriv_y(in[0],in[1]);
 
   return 0;
 }

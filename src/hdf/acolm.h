@@ -280,6 +280,12 @@ namespace o2scl_acol {
     /// Create a column which is the derivative of another
     virtual int comm_deriv(std::vector<std::string> &sv, bool itive_com);
 
+    /// Create a slice which is the derivative wrt x of another
+    virtual int comm_deriv_x(std::vector<std::string> &sv, bool itive_com);
+
+    /// Create a slice which is the derivative wrt y of another
+    virtual int comm_deriv_y(std::vector<std::string> &sv, bool itive_com);
+
     /// Create a column which is the second derivative of another
     virtual int comm_deriv2(std::vector<std::string> &sv, bool itive_com);
 
