@@ -46,20 +46,67 @@ using namespace o2scl_acol;
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
-#ifdef O2SCL_NEVER_DEFINED
-
 void acol_manager::command_switch(std::string new_type) {
 
   const int both=cli::comm_option_both;
   
-  if (type=="table3d") {
+  if (type=="table") {
+    cl->remove_comm_option("assign");
+    cl->remove_comm_option("delete-col");
+    cl->remove_comm_option("delete-rows");
+    cl->remove_comm_option("deriv");
+    cl->remove_comm_option("deriv2");
+    cl->remove_comm_option("cat");
+    cl->remove_comm_option("convert-unit");
+    cl->remove_comm_option("find-row");
+    cl->remove_comm_option("fit");
+    cl->remove_comm_option("get-row");
+    cl->remove_comm_option("get-unit");
+    cl->remove_comm_option("entry");
+    cl->remove_comm_option("insert");
+    cl->remove_comm_option("insert-full");
+    cl->remove_comm_option("integ");
+    cl->remove_comm_option("list");
+    cl->remove_comm_option("max");
+    cl->remove_comm_option("min");
+    cl->remove_comm_option("rename");
+    cl->remove_comm_option("select-rows");
+    cl->remove_comm_option("select-rows2");
+    cl->remove_comm_option("set-data");
+    cl->remove_comm_option("set-unit");
+    cl->remove_comm_option("sort");
+    cl->remove_comm_option("stats");
+    cl->remove_comm_option("sum");
+    cl->remove_comm_option("nlines");
+    cl->remove_comm_option("to-hist");
+  } else if (type=="table3d") {
+    cl->remove_comm_option("cat");
+    cl->remove_comm_option("contours");
     cl->remove_comm_option("deriv-x");
     cl->remove_comm_option("deriv-y");
+    cl->remove_comm_option("function");
+    cl->remove_comm_option("entry");
+    cl->remove_comm_option("insert");
+    cl->remove_comm_option("interp");
+    cl->remove_comm_option("list");
+    cl->remove_comm_option("max");
+    cl->remove_comm_option("min");
+    cl->remove_comm_option("rename");
+    cl->remove_comm_option("set-data");
+    cl->remove_comm_option("slice");
+    cl->remove_comm_option("sum");
   }
   
   if (new_type=="table") {
-    static const size_t narr=21;
+    static const size_t narr=32;
     comm_option_s options_arr[narr]={
+      {'a',"assign","Assign a constant, e.g. assign pi acos(-1) .",
+       0,2,"<name> [val]",
+       ((string)"Assign a constant value to a name for the present table. ")+
+       "Valid constant values are things like 1.618 or acos(-1.0) or sin(4^5). "
+       "To remove an assignment, call assign with a blank value.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_assign),
+       both},
       {0,"delete-col","Delete a column.",0,1,"<name>",
        "Delete the entire column named <name>.",
        new comm_option_mfptr<acol_manager>
@@ -174,12 +221,6 @@ void acol_manager::command_switch(std::string new_type) {
        "integral of the function y(x) obtained from columns <x> and <y>. ",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_integ),
        both},
-      {'i',"internal","Output in the internal HDF5 format.",0,1,"[file]",
-       ((string)"Output the current table in the internal HDF5 format. ")+
-       "If no argument is given, then output is sent to the screen, "+
-       "otherwise, output is sent to the specified file. ",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_internal),
-       both},
       {0,"interp","Interpolate a number into a column or slice.",0,3,
        "2d: <x name> <x value> <y name>, 3d: <z name> <x value> <y value> ",
        ((string)"For a 2d table, interpolate <x value> from column ")+
@@ -198,11 +239,85 @@ void acol_manager::command_switch(std::string new_type) {
       {0,"min","Find the minimum value of a column or slice.",0,1,"<col>",
        "Compute the minimum value of column <col>.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
+       both},
+      {0,"rename","Rename a column or slice.",0,2,"<old> <new>",
+       "Rename a column from <old> to <new>. ",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_rename),
+       both},
+      {'s',"select","Select columns or slices for a new table.",-1,-1,"<cols>",
+       ((string)"Select creates a new table from the present table, ")+
+       "including only the columns specified in <cols>. The column "+
+       "specification is a list of column names, functions, or patterns "+
+       "which match "+
+       "the column names. Patterns must be preceeded by a colon ':' "+
+       "and can use wildcards like '*' and '?'. All of the rows of data "+
+       "are copied over. If functions are specified, the result can be "+
+       "named using '='. ",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_select),
+       both},
+      {0,"select-rows","Select rows for a new table (table only).",
+       0,1,"<row_spec>",((std::string)"Select the rows from a table for ")+
+       "which the row specification in <row_spec> evaluates to a number "+
+       "greater than 0.5",
+       new comm_option_mfptr<acol_manager>
+       (this,&acol_manager::comm_select_rows),both},
+      {0,"select-rows2",
+       "Select rows, with explicit column specification (table only).",
+       0,-1,"<row_spec> [col1] [col2] ...",
+       ((std::string)"Select the rows from a table for ")+
+       "which the row specification in <row_spec> evaluates to a number "+
+       "greater than 0.5 . All of the columns required to compute the row "+
+       "specification must be given in [col1] [col2] ... This can be "+
+       "faster than 'select-rows' for tables with many columns.",
+       new comm_option_mfptr<acol_manager>
+       (this,&acol_manager::comm_select_rows2),both},
+      {0,"set-data","Set the entries of a column.",3,4,
+       "2d: <row_spec> <col> <val_spec> 3d: <x value> <y value> <z name> <val>",
+       ((string)"For a 2d table, sfet the value of rows specifed by the ")+
+       "'row_spec' function in column 'col' to the value given by the "+
+       "'val_spec' function. Rows are chosen if row_spec evaluates to a "+
+       "number greater than 0.5. For a 3d table, just set the value of "+
+       "the slice named 'z name' at the grid point closest to "+
+       "(<x value>,<y value>) to the value <val>.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_set_data),
+       both},
+      {0,"set-unit","Set the units for a specified column.",0,2,
+       "<column> <unit>","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_set_unit),
+       both},
+      {'S',"sort","Sort the entire table by a column (table only).",0,2,
+       "<col> [unique]",
+       ((string)"Sorts the entire table by the column specified in <col>. ")+
+       "If the word \"unique\" is specified as the second argument, then "+
+       "delete duplicate rows after sorting.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sort),
+       both},
+      {0,"stats","Show column statistics (table only).",0,1,"<col>",
+       "Output the average, std. dev, max and min of <col>. ",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_stats),
+       both},
+      {0,"sum","Add data from a second table object to current table.",
+       0,2,"<file> [name]",((string)"For table objects, add all columns ")+
+       "from the second table to their corresponding columns in the "+
+       "current table, creating new columns if necessary. For table3d "+
+       "objects, add all slides from the second table to their "+
+       "corresponding slices in the current table3d, creating new slices "+
+       "if necessary.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sum),
+       both},
+      {0,"nlines","Add 'nlines' as a constant to a table object.",0,0,"",
+       "",new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_nlines),
+       both},
+      {0,"to-hist","Convert a table to a histogram.",0,6,
+       "[\"2d\"] <col 1> <col_2 (2d only)> <x_bins> <y_bins (2d only)> [wgts]",
+       "",new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_to_hist),
        both}
     };
     cl->set_comm_option_vec(narr,options_arr);
+    
   } else if (new_type=="table3d") {
-    static const size_t narr=4;
+    
+    static const size_t narr=15;
     comm_option_s options_arr[narr]={
       {0,"cat",
        "Concatenate data from a second table object onto current table.",0,2,
@@ -212,6 +327,10 @@ void acol_manager::command_switch(std::string new_type) {
        "second table3d object which aren't already present in the "+
        "current table3d object.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_cat),
+       both},
+      {0,"contours","Create contour lines from a table3d or hist_2d object.",
+       0,4,"[\"frac\"] <value> <slice-name (if table3d)> [file] [name]","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_contours),
        both},
       {0,"deriv-x","Derivative with respect to x.",0,2,
        "<f> <dfdx>",
@@ -233,6 +352,72 @@ void acol_manager::command_switch(std::string new_type) {
        "c1-c2 c3' would create a new column c3 which contains the "+
        "difference of columns 'c1' and 'c2'.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_function),
+       both},
+      {0,"entry","Get a single entry in a table.",0,3,
+       "<column/slice> <index> [index2]","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_entry),
+       both},
+      {0,"insert","Interpolate a column/slice from another file.",0,6,
+       ((string)"2D: <file> <table> <oldx> <oldy> <newx> [newy],\n\t\t")+
+       "3D: <file> <table> <old> [new]",
+       ((string)"Insert a column from file <fname> interpolating it ")+
+       "into the current table. The column <oldy> is the "+
+       "columns in the file which is to be inserted into the table, "+
+       "using the column <oldx> in the file and <newx> in the table. "+
+       "The new column in the table is named <oldy>, or it is named "+
+       "[newy] if the additional argument is given. ",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_insert),
+       both},
+      {0,"interp","Interpolate a number into a column or slice.",0,3,
+       "2d: <x name> <x value> <y name>, 3d: <z name> <x value> <y value> ",
+       ((string)"For a 2d table, interpolate <x value> from column ")+
+       "named <x name> into column named <y name>. For a 3d table "+
+       "interpolate (<x value>,<y value>) into the slice named <z name>.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_interp),
+       both},
+      {'l',"list","List the constants, column/slice names and other info.",
+       0,0,"","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
+       both},
+      {0,"max","Find the maximum value of a column or slice.",0,1,"<col>",
+       "Compute the maximum value of column <col>.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_max),
+       both},
+      {0,"min","Find the minimum value of a column or slice.",0,1,"<col>",
+       "Compute the minimum value of column <col>.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
+       both},
+      {0,"rename","Rename a column or slice.",0,2,"<old> <new>",
+       "Rename a column from <old> to <new>. ",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_rename),
+       both},
+      {0,"set-data","Set the entries of a column.",3,4,
+       "2d: <row_spec> <col> <val_spec> 3d: <x value> <y value> <z name> <val>",
+       ((string)"For a 2d table, sfet the value of rows specifed by the ")+
+       "'row_spec' function in column 'col' to the value given by the "+
+       "'val_spec' function. Rows are chosen if row_spec evaluates to a "+
+       "number greater than 0.5. For a 3d table, just set the value of "+
+       "the slice named 'z name' at the grid point closest to "+
+       "(<x value>,<y value>) to the value <val>.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_set_data),
+       both},
+      {0,"slice","Construct a slice (table3d only).",2,2,
+       "<\"x\" or \"y\"> <value>",
+       ((string)"Extract a slice of a table3d object at fixed x or fixed y ")+
+       "to create a new table object. This function uses interpolation "+
+       "with the current interpolation type to interpolate all of the "+
+       "slices in the table3d object to create a table with a column "+
+       "for each slice.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_slice),
+       both},
+      {0,"sum","Add data from a second table object to current table.",
+       0,2,"<file> [name]",((string)"For table objects, add all columns ")+
+       "from the second table to their corresponding columns in the "+
+       "current table, creating new columns if necessary. For table3d "+
+       "objects, add all slides from the second table to their "+
+       "corresponding slices in the current table3d, creating new slices "+
+       "if necessary.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sum),
        both}
     };
     cl->set_comm_option_vec(narr,options_arr);
@@ -240,7 +425,6 @@ void acol_manager::command_switch(std::string new_type) {
   
   return;
 }
-#endif
 
 acol_manager::acol_manager() : cng(o2scl_settings.get_convert_units()) {
   obj_name="acol";
@@ -264,12 +448,11 @@ acol_manager::acol_manager() : cng(o2scl_settings.get_convert_units()) {
 }
 
 void acol_manager::clear_obj() {
+  command_switch("");
   if (type=="table") {
     table_obj.clear();
   } else if (type=="table3d") {
     table3d_obj.clear();
-    cl->remove_comm_option("deriv-x");
-    cl->remove_comm_option("deriv-y");
   } else if (type=="hist") {
     hist_obj.clear();
   } else if (type=="hist_2d") {
@@ -293,13 +476,6 @@ int acol_manager::setup_options() {
   // Options, sorted by long name. We allow 0 parameters in many of these
   // options so they can be requested from the user in interactive mode. 
   comm_option_s options_arr[narr]={
-    {'a',"assign","Assign a constant, e.g. assign pi acos(-1) .",
-     0,2,"<name> [val]",
-     ((string)"Assign a constant value to a name for the present table. ")+
-     "Valid constant values are things like 1.618 or acos(-1.0) or sin(4^5). "
-     "To remove an assignment, call assign with a blank value.",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_assign),
-     both},
     {0,"comment","Get or set a string field named 'comment'.",
      1,2,"<file> [comment string]","",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_comment),
@@ -310,22 +486,6 @@ int acol_manager::setup_options() {
      "Results are given at the current precision.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_calc),
      both},
-    {0,"cat",
-     "Concatenate data from a second table object onto current table.",0,2,
-     "<file> [name]",((string)"For table objects, add a ")+
-     "second table to the end of the first, creating new columns "+
-     "if necessary. For table3d objects, add all slices from the "+
-     "second table3d object which aren't already present in the "+
-     "current table3d object.",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_cat),
-     both},
-    {0,"convert-unit","Convert a column to a new unit.",0,2,
-     "<column> <new_unit>",((string)"(This command only works if ")+
-     "the GNU 'units' command is installed and available in the current "+
-     "path.) Convert the units of a column to <new unit>, multipliying "+
-     "all entries in that column by the appropriate factor.",
-     new comm_option_mfptr<acol_manager>
-     (this,&acol_manager::comm_convert_unit),both},
     {'c',"create","Create a table from uniform grid.",
      0,4,"<name> <low> <hi> <step>",
      ((string)"Create a new table with one column whose entries ")+
@@ -341,58 +501,11 @@ int acol_manager::setup_options() {
      "<y name> <y lo> <y hi> <y step> <slice name> <slice function>","",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_create3),
      both},
-    {0,"delete-col","Delete a column (table only).",0,1,"<name>",
-     "Delete the entire column named <name>.",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_delete_col),
-     both},
-    {'d',"delete-rows","Delete rows selected by a function.",
-     0,1,"<func>",((string)"Delete the set of rows for ")+
-     "which a function evaluates to a number greater than 0.5. "+
-     "For example, 'delete-rows if(col1+col2>10,1,0)' will delete "+
-     "all columns where the sum of the entries in 'col1' and 'col2' "+
-     "is larger than 10 (table only). See also 'select-rows'.",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_delete_rows),
-     both},
-    {'D',"deriv",
-     "Derivative of a function defined by two columns (table only).",
-     0,3,"<x> <y> <name>",
-     ((string)"Create a new column named <name> filled with the ")+
-     "derivative of the function y(x) obtained from columns <x> and <y>. ",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv),
-     both},
-    {0,"deriv2","Second derivative (table only).",0,3,"<name> <x> <y>",
-     ((string)"Create a new column named <name> filled with the second ")+
-     "derivative of the function y(x) obtained from columns <x> and <y>. ",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv2),
-     both},
     {0,"filelist","List objects in a HDF5 file.",0,1,"<file>",
      ((string)"This lists all the top-level datasets and groups in a ")+
      "HDF5 file and, for those groups which are in the O2scl format, "+
      "gives the type and name of the object stored in that HDF5 group.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_filelist),
-     both},
-    {0,"find-row","Find a row which maximizes a function (table only).",
-     0,2,"<func> or find-row <col> <val>",
-     ((string)"If one argument is given, then find-row finds the row ")+
-     "which maximizes the value of the "+
-     "expression given in <func>, and then output the entire row. "+
-     "Otherwise find-row finds the row for which the value in "+
-     "column named <col> is as close as possible to the value <val>. "+
-     "See command 'get-row' to get a row by it's index.",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_find_row),
-     both},
-    {0,"fit","Fit two columns to a function (experimental, table only).",0,7,
-     "<x> <y> <yerr> <ynew> <par names> <func> <vals>","",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_fit),
-     both},
-    {'f',"function","Create a new column or slice from a function.",0,2,
-     "<func> <name>",
-     ((string)"Create a new column named <name> from a function (in ")+
-     "<func>) in terms of the other columns. For example, for "+
-     "a table containing columns named 'c1' and 'c2', 'function "+
-     "c1-c2 c3' would create a new column c3 which contains the "+
-     "difference of columns 'c1' and 'c2'.",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_function),
      both},
     {'g',"generic","Read in a generic data file.",0,1,"<file>",
      ((string)"Read a generic data file with the given filename. ")+
@@ -427,63 +540,12 @@ int acol_manager::setup_options() {
      "is not the same as the GNU version.)",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_conv),
      both},
-    {0,"get-row","Get a row by index.",
-     0,1,"<index>",((string)"Get a row by index. The first row ")+
-     "has index 0, and the last row has index n-1, where n "+
-     "is the total number of rows as returned by the 'list' command. "+
-     "The 'index' command creates a column of row indexes. "+
-     "To find a row which contains a particular value or maximizes "+
-     "a specified function, use 'find-row'.",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_row),
-     both},
-    {0,"get-unit","Get the units for a specified column.",0,1,"<column>","",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_unit),
-     both},
-    {0,"entry","Get a single entry in a table.",0,3,
-     "<column/slice> <index> [index2]","",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_entry),
-     both},
     /*    
 	  {'H',"html","Create a file in HTML (table3d only).",0,1,"<file>",
 	  "Output the current table in HTML mode to the specified file. ",
 	  new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_html),
 	  both},
     */
-    {'N',"index","Add a column containing the row numbers (table only).",0,1,
-     "[column name]",
-     ((string)"Define a new column named [column name] and fill ")+
-     "the column with the row indexes, beginning with zero. If "+
-     "no argument is given, the new column is named 'N'.",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_index),
-     both},
-    {0,"insert","Interpolate a column/slice from another file.",0,6,
-     ((string)"2D: <file> <table> <oldx> <oldy> <newx> [newy],\n\t\t")+
-     "3D: <file> <table> <old> [new]",
-     ((string)"Insert a column from file <fname> interpolating it ")+
-     "into the current table. The column <oldy> is the "+
-     "columns in the file which is to be inserted into the table, "+
-     "using the column <oldx> in the file and <newx> in the table. "+
-     "The new column in the table is named <oldy>, or it is named "+
-     "[newy] if the additional argument is given. ",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_insert),
-     both},
-    {0,"insert-full",
-     "Interpolate a table from another file (table only).",0,3,
-     "<fname> <oldx> <newx>",
-     ((string)"Insert all columns from file <fname> interpolating it ")+
-     "into the current table. The column <oldy> is the "+
-     "columns in the file which is to be inserted into the table, "+
-     "using the column <oldx> in the file and <newx> in the table. "+
-     "The new column are given the same names as in the file. ",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
-     both},
-    {'I',"integ",
-     "Integrate a function specified by two columns (table only).",
-     0,3,"<x> <y> <name>",
-     ((string)"Create a new column named <name> filled with the ")+
-     "integral of the function y(x) obtained from columns <x> and <y>. ",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_integ),
-     both},
     {'q',"interactive","Load the interactive interface.",
      0,0,"",((string)"If given as a command-line parameter, 'interactive' ")+
      "toggles the execution of the interactive mode after the "+
@@ -498,25 +560,6 @@ int acol_manager::setup_options() {
      "otherwise, output is sent to the specified file. ",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_internal),
      both},
-    {0,"interp","Interpolate a number into a column or slice.",0,3,
-     "2d: <x name> <x value> <y name>, 3d: <z name> <x value> <y value> ",
-     ((string)"For a 2d table, interpolate <x value> from column ")+
-     "named <x name> into column named <y name>. For a 3d table "+
-     "interpolate (<x value>,<y value>) into the slice named <z name>.",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_interp),
-     both},
-    {'l',"list","List the constants, column/slice names and other info.",
-     0,0,"","",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
-     both},
-    {0,"max","Find the maximum value of a column or slice.",0,1,"<col>",
-     "Compute the maximum value of column <col>.",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_max),
-     both},
-    {0,"min","Find the minimum value of a column or slice.",0,1,"<col>",
-     "Compute the minimum value of column <col>.",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
-     both},
     {'o',"output","Output the full object as text.",0,1,"[file]",
      ((string)"Output the table to the screen, or if the [file] ")+
      "argument is specified, to a file. ",
@@ -529,112 +572,19 @@ int acol_manager::setup_options() {
      "for table objects.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_preview),
      both},
-    {'r',"read","Read a table or table3d from a file.",0,2,
-     "<file> [object name]",
-     ((string)"Read the internally-formatted (either text or binary) ")+
-     "file with the specified filename and make it the current table. " +
-     "If the [object name] argument is specified, then read the table "+
-     "with the specified name in a file with more than one table.",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_read),
-     both},
-    {0,"rename","Rename a column or slice.",0,2,"<old> <new>",
-     "Rename a column from <old> to <new>. ",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_rename),
-     both},
-    {'s',"select","Select columns or slices for a new table.",-1,-1,"<cols>",
-     ((string)"Select creates a new table from the present table, ")+
-     "including only the columns specified in <cols>. The column "+
-     "specification is a list of column names, functions, or patterns "+
-     "which match "+
-     "the column names. Patterns must be preceeded by a colon ':' "+
-     "and can use wildcards like '*' and '?'. All of the rows of data "+
-     "are copied over. If functions are specified, the result can be "+
-     "named using '='. ",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_select),
-     both},
-    {0,"select-rows","Select rows for a new table (table only).",
-     0,1,"<row_spec>",((std::string)"Select the rows from a table for ")+
-     "which the row specification in <row_spec> evaluates to a number "+
-     "greater than 0.5",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_select_rows),
-     both},
-    {0,"select-rows2",
-     "Select rows, with explicit column specification (table only).",
-     0,-1,"<row_spec> [col1] [col2] ...",
-     ((std::string)"Select the rows from a table for ")+
-     "which the row specification in <row_spec> evaluates to a number "+
-     "greater than 0.5 . All of the columns required to compute the row "+
-     "specification must be given in [col1] [col2] ... This can be "+
-     "faster than 'select-rows' for tables with many columns.",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_select_rows2),
-     both},
-    {0,"set-data","Set the entries of a column.",3,4,
-     "2d: <row_spec> <col> <val_spec> 3d: <x value> <y value> <z name> <val>",
-     ((string)"For a 2d table, sfet the value of rows specifed by the ")+
-     "'row_spec' function in column 'col' to the value given by the "+
-     "'val_spec' function. Rows are chosen if row_spec evaluates to a "+
-     "number greater than 0.5. For a 3d table, just set the value of "+
-     "the slice named 'z name' at the grid point closest to "+
-     "(<x value>,<y value>) to the value <val>.",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_set_data),
-     both},
-    {0,"set-unit","Set the units for a specified column.",0,2,
-     "<column> <unit>","",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_set_unit),
-     both},
     {0,"show-units","Show the unit conversion table.",0,0,"",
      ((string)"(This doesn't show all possible conversions, only ")+
      "the conversions which have been previously used and are now stored "+
      "in the unit cache.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_show_units),
      both},
-    {0,"slice","Construct a slice (table3d only).",2,2,
-     "<\"x\" or \"y\"> <value>",
-     ((string)"Extract a slice of a table3d object at fixed x or fixed y ")+
-     "to create a new table object. This function uses interpolation "+
-     "with the current interpolation type to interpolate all of the "+
-     "slices in the table3d object to create a table with a column "+
-     "for each slice.",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_slice),
-     both},
-    {'S',"sort","Sort the entire table by a column (table only).",0,2,
-     "<col> [unique]",
-     ((string)"Sorts the entire table by the column specified in <col>. ")+
-     "If the word \"unique\" is specified as the second argument, then "+
-     "delete duplicate rows after sorting.",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sort),
-     both},
-    {0,"stats","Show column statistics (table only).",0,1,"<col>",
-     "Output the average, std. dev, max and min of <col>. ",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_stats),
-     both},
-    {0,"sum","Add data from a second table object to current table.",
-     0,2,"<file> [name]",((string)"For table objects, add all columns ")+
-     "from the second table to their corresponding columns in the "+
-     "current table, creating new columns if necessary. For table3d "+
-     "objects, add all slides from the second table to their "+
-     "corresponding slices in the current table3d, creating new slices "+
-     "if necessary.",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sum),
-     both},
     {'v',"version","Print version information and O2scl settings.",0,0,"",
      "",new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_version),
-     both},
-    {0,"nlines","Add 'nlines' as a constant to a table object.",0,0,"",
-     "",new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_nlines),
-     both},
-    {0,"to-hist","Convert a table to a histogram.",0,6,
-     "[\"2d\"] <col 1> <col_2 (2d only)> <x_bins> <y_bins (2d only)> [wgts]",
-     "",new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_to_hist),
      both},
     {0,"type","Show current object type.",0,0,"",
      ((string)"Show the current object type, either table, ")+
      "table3d, hist, hist_2d, or vector<contour_line>.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_type),
-     both},
-    {0,"contours","Create contour lines from a table3d or hist_2d object.",
-     0,4,"[\"frac\"] <value> <slice-name (if table3d)> [file] [name]","",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_contours),
      both}
   };
   /*
@@ -1354,6 +1304,7 @@ int acol_manager::comm_to_hist(std::vector<std::string> &sv,
 	hist_obj.from_table(table_obj,in[0],col2,nbins);
       }
       type="hist";
+      command_switch("hist");
 
     } else {
 
@@ -1395,6 +1346,7 @@ int acol_manager::comm_to_hist(std::vector<std::string> &sv,
 			       nbinsx,nbinsy);
       }
       type="hist_2d";
+      command_switch("hist_2d");
       
     }
 
@@ -2100,6 +2052,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
       obj_name=i2;
       interp_type=table_obj.get_interp_type();
       type="table";
+      command_switch("table");
       return 0;
     } else if (type2=="table3d") {
       if (verbose>2) {
@@ -2109,30 +2062,14 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
       obj_name=i2;
       interp_type=table3d_obj.get_interp_type();
       type="table3d";
-
-      const int both=cli::comm_option_both;
-      comm_option_s options_arr[2]={
-	{0,"deriv-x","Derivative with respect to x (table3d only).",0,2,
-	 "<f> <dfdx>",
-	 ((string)"Create a new slice named <dfdx> filled with the ")+
-	 "derivative of the function from the x grid and slice named <f>.",
-	 new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv_x),
-	 both},
-	{0,"deriv-y","Derivative with respect to y (table3d only).",0,2,
-	 "<f> <dfdy>",
-	 ((string)"Create a new slice named <dfdy> filled with the ")+
-	 "derivative of the function from the y grid and slice named <f>.",
-	 new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv_y),
-	 both}
-      };
-      cl->set_comm_option_vec(2,options_arr);
-      
+      command_switch("table3d");
       return 0;
     } else if (type2=="hist") {
       if (verbose>2) {
 	cout << "Reading hist." << endl;
       }
       type="hist";
+      command_switch("hist");
       //table_obj=new table_units<>;
       hdf_input(hf,hist_obj,i2);
       /*
@@ -2148,6 +2085,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
 	cout << "Reading hist_2d." << endl;
       }
       type="hist_2d";
+      command_switch("hist_2d");
       //threed=true;
       //table3d_obj=new table3d;
       //hist_2d h;
@@ -2193,6 +2131,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
     hdf_input(hf,table_obj,i2);
     obj_name=i2;
     type="table";
+    command_switch("table");
     interp_type=table_obj.get_interp_type();
     return 0;
   }
@@ -2206,23 +2145,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
     obj_name=i2;
     interp_type=table3d_obj.get_interp_type();
     type="table3d";
-
-    const int both=cli::comm_option_both;
-    comm_option_s options_arr[2]={
-      {0,"deriv-x","Derivative with respect to x (table3d only).",0,2,
-       "<f> <dfdx>",
-       ((string)"Create a new slice named <dfdx> filled with the ")+
-       "derivative of the function from the x grid and slice named <f>.",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv_x),
-       both},
-      {0,"deriv-y","Derivative with respect to y (table3d only).",0,2,
-       "<f> <dfdy>",
-       ((string)"Create a new slice named <dfdy> filled with the ")+
-       "derivative of the function from the y grid and slice named <f>.",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv_y),
-       both}
-    };
-    cl->set_comm_option_vec(2,options_arr);
+    
+    command_switch("table3d");
     
     return 0;
   }
@@ -2243,6 +2167,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
     */
     obj_name=i2;
     type="hist";
+    command_switch("hist");
     return 0;
   }
   
@@ -2264,6 +2189,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
     obj_name=i2;
     //threed=true;
     type="hist_2d";
+    command_switch("hist_2d");
     return 0;
   }
 
@@ -2675,14 +2601,12 @@ int acol_manager::comm_slice(std::vector<std::string> &sv, bool itive_com) {
   if (sv[1]=="x") {
     table3d_obj.extract_x(std::stod(sv[2]),table_obj);
     table3d_obj.clear();
-    cl->remove_comm_option("deriv-x");
-    cl->remove_comm_option("deriv-y");
+    command_switch("table");
     type="table";
   } else if (sv[1]=="y") {
     table3d_obj.extract_y(std::stod(sv[2]),table_obj);
     table3d_obj.clear();
-    cl->remove_comm_option("deriv-x");
-    cl->remove_comm_option("deriv-y");
+    command_switch("table");
     type="table";
   } else {
     cerr << "Invalid first argument to 'slice'." << endl;
@@ -2894,6 +2818,7 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
 	table3d_obj.slice_contours(slice,1,levs,cont_obj);
 	clear_obj();
 	type="vector<contour_line>";
+	command_switch("vector<contour_line>");
       }
     }
     
@@ -3025,6 +2950,7 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
       clear_obj();
       co.calc_contours(cont_obj);
       type="vector<contour_line>";
+      command_switch("vector<contour_line>");
     }
     
   }
@@ -4422,22 +4348,7 @@ int acol_manager::comm_gen3_list(std::vector<std::string> &sv,
   table3d_obj.read_gen3_list(ifs,verbose);
   type="table3d";
 
-  const int both=cli::comm_option_both;
-  comm_option_s options_arr[2]={
-    {0,"deriv-x","Derivative with respect to x (table3d only).",0,2,
-     "<f> <dfdx>",
-     ((string)"Create a new slice named <dfdx> filled with the ")+
-     "derivative of the function from the x grid and slice named <f>.",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv_x),
-     both},
-    {0,"deriv-y","Derivative with respect to y (table3d only).",0,2,
-     "<f> <dfdy>",
-     ((string)"Create a new slice named <dfdy> filled with the ")+
-     "derivative of the function from the y grid and slice named <f>.",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv_y),
-     both}
-  };
-  cl->set_comm_option_vec(2,options_arr);
+  command_switch("table3d");
   
   ifs.close();
 
@@ -4472,6 +4383,7 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
     table_obj.read_generic(std::cin,verbose);
   }
   type="table";
+  command_switch("table");
 
   return 0;
 }
@@ -5281,22 +5193,7 @@ int acol_manager::comm_create3(std::vector<std::string> &sv,
 
   table3d_obj.function_slice(zfunc,zname);
 
-  const int both=cli::comm_option_both;
-  comm_option_s options_arr[2]={
-    {0,"deriv-x","Derivative with respect to x (table3d only).",0,2,
-     "<f> <dfdx>",
-     ((string)"Create a new slice named <dfdx> filled with the ")+
-     "derivative of the function from the x grid and slice named <f>.",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv_x),
-     both},
-    {0,"deriv-y","Derivative with respect to y (table3d only).",0,2,
-     "<f> <dfdy>",
-     ((string)"Create a new slice named <dfdy> filled with the ")+
-     "derivative of the function from the y grid and slice named <f>.",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv_y),
-     both}
-  };
-  cl->set_comm_option_vec(2,options_arr);
+  command_switch("table3d");
   
   return 0;
 }
@@ -5349,6 +5246,7 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     table_obj.set(i1,li,d2+((double)li)*d4);
   }
   type="table";
+  command_switch("table");
 
   return 0;
 }

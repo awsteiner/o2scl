@@ -96,6 +96,10 @@ namespace o2scl_acol {
 
   protected:
 
+    /** \brief Desc
+     */
+    void command_switch(std::string new_type);
+    
 #ifdef DOXYGEN
     /// The number formatter for html output
     format_float ffl;
