@@ -635,7 +635,8 @@ namespace o2scl {
       for(size_t it=0;it<n_threads;it++) {
 	if (mcmc_done_flag[it]==true) {
 	  if (verbose>=1) {
-	    scr_out << "mcmc (" << it << "," << mpi_rank << "): Returned mcmc_done "
+	    scr_out << "mcmc (" << it << "," << mpi_rank
+		    << "): Returned mcmc_done "
 		    << "(initial; ai)." << std::endl;
 	  }
 	  stop_early=true;
@@ -784,7 +785,8 @@ namespace o2scl {
       for(size_t it=0;it<n_threads;it++) {
 	if (mcmc_done_flag[it]==true) {
 	  if (verbose>=1) {
-	    scr_out << "mcmc (" << it << "," << mpi_rank << "): Returned mcmc_done "
+	    scr_out << "mcmc (" << it << "," << mpi_rank
+		    << "): Returned mcmc_done "
 		    << "(initial)." << std::endl;
 	  }
 	  stop_early=true;
@@ -910,11 +912,13 @@ namespace o2scl {
 	      func_ret[it]=mcmc_skip;
 	      if (verbose>=3) {
 		if (next[it][k]<low[k]) {
-		  scr_out << "mcmc (" << it << "," << mpi_rank << "): Parameter with index " << k
+		  scr_out << "mcmc (" << it << ","
+			  << mpi_rank << "): Parameter with index " << k
 			  << " and value " << next[it][k]
 			  << " smaller than limit " << low[k] << std::endl;
 		} else {
-		  scr_out << "mcmc (" << it << "," << mpi_rank << "): Parameter with index " << k
+		  scr_out << "mcmc (" << it << "," << mpi_rank
+			  << "): Parameter with index " << k
 			  << " and value " << next[it][k]
 			  << " larger than limit " << high[k] << std::endl;
 		}
@@ -953,7 +957,8 @@ namespace o2scl {
       if (verbose>=1) {
 	for(size_t it=0;it<n_threads;it++) {
 	  if (func_ret[it]==mcmc_done) {
-	    scr_out << "mcmc (" << it << "," << mpi_rank << "): Returned mcmc_done." 
+	    scr_out << "mcmc (" << it << "," << mpi_rank
+		    << "): Returned mcmc_done." 
 		    << std::endl;
 	  } else if (func_ret[it]==mcmc_skip && verbose>=3) {
 	    scr_out << "mcmc (" << it
@@ -971,7 +976,8 @@ namespace o2scl {
 	  } else if (func_ret[it]!=o2scl::success &&
 		     func_ret[it]!=mcmc_skip) {
 	    if (verbose>=2) {
-	      scr_out << "mcmc (" << it << "," << mpi_rank << "): Function returned failure " 
+	      scr_out << "mcmc (" << it << "," << mpi_rank
+		      << "): Function returned failure " 
 		      << func_ret[it] << " at point ";
 	      for(size_t k=0;k<n_params;k++) {
 		scr_out << next[it][k] << " ";
