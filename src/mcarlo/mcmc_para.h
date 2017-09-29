@@ -1357,6 +1357,8 @@ namespace o2scl {
     size_t i_thread=0;
 #endif
 
+    // Rank
+    line.push_back(this->mpi_rank);
     // Thread
     line.push_back(i_thread);
     // Walker (set later)
@@ -1575,7 +1577,7 @@ namespace o2scl {
 	// Find the last row for this chain
 	size_t row=ntot*(chain_sizes[windex]-1)+windex;
 
-	std::cout << "it: " << it << "," << mpi_rank << " iw: " << iw
+	std::cout << "it: " << it << "," << this->mpi_rank << " iw: " << iw
 		  << " chain size: " << chain_sizes[windex] << " row: "
 		  << row << " log_wgt: " << table->get("log_wgt",row)
 		  << " n_params: " << this->n_params << std::endl;
@@ -1702,7 +1704,7 @@ namespace o2scl {
 	// Now additionally initialize the first four colums
 	for(size_t j=0;j<this->n_threads;j++) {
 	  for(size_t i=0;i<this->n_walk;i++) {
-	    table->set("rank",istart+j*this->n_walk+i,mpi_rank);
+	    table->set("rank",istart+j*this->n_walk+i,this->mpi_rank);
 	    table->set("thread",istart+j*this->n_walk+i,j);
 	    table->set("walker",istart+j*this->n_walk+i,i);
 	    table->set("mult",istart+j*this->n_walk+i,0.0);
@@ -1987,7 +1989,7 @@ namespace o2scl {
   o2scl::cli::parameter_double p_max_time;
   o2scl::cli::parameter_size_t p_max_iters;
   //o2scl::cli::parameter_int p_max_chain_size;
-  o2scl::cli::parameter_int p_file_update_iters;
+  o2scl::cli::parameter_size_t p_file_update_iters;
   o2scl::cli::parameter_bool p_output_meas;
   o2scl::cli::parameter_string p_prefix;
   o2scl::cli::parameter_int p_verbose;
@@ -2043,8 +2045,8 @@ namespace o2scl {
       };
       this->cl.set_comm_option_vec(nopt,options);
     */
-
-    p_file_update_iters.i=&this->file_update_iters;
+    
+    p_file_update_iters.s=&this->file_update_iters;
     p_file_update_iters.help=((std::string)"Number of MCMC successes ")+
       "between file upates (default 0 for no file updates).";
     cl.par_list.insert(std::make_pair("file_update_iters",
