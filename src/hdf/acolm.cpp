@@ -2242,17 +2242,25 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 
     // Open data set
     hid_t dset=H5Dopen(loc,name,H5P_DEFAULT);
+
     // Get type information
     hid_t type_id=H5Dget_type(dset);
     hid_t nat_id=H5Tget_native_type(type_id,H5T_DIR_ASCEND);
+
     // Get dataspace information
     hid_t space_id = H5Dget_space(dset);
     hsize_t dims[100];
-    int ndims=H5Sget_simple_extent_dims(space_id,dims,0);
+    hsize_t max_dims[100];
+    int ndims=H5Sget_simple_extent_dims(space_id,dims,max_dims);
     
     if (H5Tequal(nat_id,H5T_NATIVE_CHAR)) {
       if (ndims==1) {
-	cout << "char with value=\"";
+	if (max_dims[0]==H5S_UNLIMITED) {
+	  cout << "char[" << dims[0] << "/inf] with value=\"";
+	} else {
+	  cout << "char[" << dims[0] << "/" << max_dims[0]
+	       << "] with value=\"";
+	}
 	std::string s;
 	hf.gets(name,s);
 	if (dims[0]<20) {
@@ -2265,21 +2273,42 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	}
 	cout << "\".";
       } else {
-	cout << "char of size (";
+	cout << "char[";
 	for(int i=0;i<ndims-1;i++) {
-	  cout << dims[i] << ",";
+	  if (max_dims[i]==H5S_UNLIMITED) {
+	    cout << dims[i] << "/inf,";
+	  } else {
+	    cout << dims[i] << "/" << max_dims[i] << ",";
+	  }
 	}
-	cout << dims[ndims-1] << ").";
+	if (max_dims[ndims-1]==H5S_UNLIMITED) {
+	  cout << dims[ndims-1] << "/inf].";
+	} else {
+	  cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
+	}
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_SHORT)) {
-      cout << "short of size (";
+      cout << "short[";
       for(int i=0;i<ndims-1;i++) {
-	cout << dims[i] << ",";
+	if (max_dims[i]==H5S_UNLIMITED) {
+	  cout << dims[i] << "/inf,";
+	} else {
+	  cout << dims[i] << "/" << max_dims[i] << ",";
+	}
       }
-      cout << dims[ndims-1] << ").";
+      if (max_dims[ndims-1]==H5S_UNLIMITED) {
+	cout << dims[ndims-1] << "/inf].";
+      } else {
+	cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
+      }
     } else if (H5Tequal(nat_id,H5T_NATIVE_INT)) {
       if (ndims==1 && dims[0]>0) {
-	cout << "int with value=";
+	if (max_dims[0]==H5S_UNLIMITED) {
+	  cout << "int[" << dims[0] << "/"
+	       << max_dims[0] << " with value=";
+	} else {
+	  cout << "int[" << dims[0] << "/inf] with value=";
+	}
 	std::vector<int> iarr;
 	hf.geti_vec(name,iarr);
 	if (dims[0]==1) {
@@ -2291,45 +2320,98 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	}
 	cout << ".";
       } else {
-	cout << "int of size (";
+	cout << "int[";
 	for(int i=0;i<ndims-1;i++) {
-	  cout << dims[i] << ",";
+	  if (max_dims[i]==H5S_UNLIMITED) {
+	    cout << dims[i] << "/inf,";
+	  } else {
+	    cout << dims[i] << "/" << max_dims[i] << ",";
+	  }
 	}
-	cout << dims[ndims-1] << ").";
+	if (max_dims[ndims-1]==H5S_UNLIMITED) {
+	  cout << dims[ndims-1] << "/inf].";
+	} else {
+	  cout << dims[ndims-1] << "/" << max_dims[ndims-1] << ").";
+	}
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_LONG)) {
-      cout << "long of size (";
+      cout << "long[";
       for(int i=0;i<ndims-1;i++) {
-	cout << dims[i] << ",";
+	if (max_dims[i]==H5S_UNLIMITED) {
+	  cout << dims[i] << "/inf,";
+	} else {
+	  cout << dims[i] << "/" << max_dims[i] << ",";
+	}
       }
-      cout << dims[ndims-1] << ").";
+      if (max_dims[ndims-1]==H5S_UNLIMITED) {
+	cout << dims[ndims-1] << "/inf].";
+      } else {
+	cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
+      }
     } else if (H5Tequal(nat_id,H5T_NATIVE_LLONG)) {
-      cout << "llong of size (";
+      cout << "llong[";
       for(int i=0;i<ndims-1;i++) {
-	cout << dims[i] << ",";
+	if (max_dims[i]==H5S_UNLIMITED) {
+	  cout << dims[i] << "/inf,";
+	} else {
+	  cout << dims[i] << "/" << max_dims[i] << ",";
+	}
       }
-      cout << dims[ndims-1] << ").";
+      if (max_dims[ndims-1]==H5S_UNLIMITED) {
+	cout << dims[ndims-1] << "/inf].";
+      } else {
+	cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
+      }
     } else if (H5Tequal(nat_id,H5T_NATIVE_UCHAR)) {
-      cout << "uchar of size (";
+      cout << "uchar[";
       for(int i=0;i<ndims-1;i++) {
-	cout << dims[i] << ",";
+	if (max_dims[i]==H5S_UNLIMITED) {
+	  cout << dims[i] << "/inf,";
+	} else {
+	  cout << dims[i] << "/" << max_dims[i] << ",";
+	}
       }
-      cout << dims[ndims-1] << ").";
+      if (max_dims[ndims-1]==H5S_UNLIMITED) {
+	cout << dims[ndims-1] << "/inf].";
+      } else {
+	cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
+      }
     } else if (H5Tequal(nat_id,H5T_NATIVE_USHORT)) {
-      cout << "ushort of size (";
+      cout << "ushort[";
       for(int i=0;i<ndims-1;i++) {
-	cout << dims[i] << ",";
+	if (max_dims[i]==H5S_UNLIMITED) {
+	  cout << dims[i] << "/inf,";
+	} else {
+	  cout << dims[i] << "/" << max_dims[i] << ",";
+	}
       }
-      cout << dims[ndims-1] << ").";
+      if (max_dims[ndims-1]==H5S_UNLIMITED) {
+	cout << dims[ndims-1] << "/inf].";
+      } else {
+	cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
+      }
     } else if (H5Tequal(nat_id,H5T_NATIVE_UINT)) {
-      cout << "uint of size (";
+      cout << "uint[";
       for(int i=0;i<ndims-1;i++) {
-	cout << dims[i] << ",";
+	if (max_dims[i]==H5S_UNLIMITED) {
+	  cout << dims[i] << "/inf,";
+	} else {
+	  cout << dims[i] << "/" << max_dims[i] << ",";
+	}
       }
-      cout << dims[ndims-1] << ").";
+      if (max_dims[ndims-1]==H5S_UNLIMITED) {
+	cout << dims[ndims-1] << "/inf].";
+      } else {
+	cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
+      }
     } else if (H5Tequal(nat_id,H5T_NATIVE_ULONG)) {
       if (ndims==1 && dims[0]>0) {
-	cout << "unsigned long int with value=";
+	if (max_dims[0]==H5S_UNLIMITED) {
+	  cout << "unsigned long int[" << dims[0] << "/inf] with value=";
+	} else {
+	  cout << "unsigned long int[" << dims[0] << "/"
+	       << max_dims[0] << "] with value=";
+	}
 	std::vector<size_t> sarr;
 	hf.get_szt_vec(name,sarr);
 	if (dims[0]==1) {
@@ -2341,27 +2423,56 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	}
 	cout << ".";
       } else {
-	cout << "unsigned long int of size (";
+	cout << "unsigned long int[";
 	for(int i=0;i<ndims-1;i++) {
-	  cout << dims[i] << ",";
+	  if (max_dims[i]==H5S_UNLIMITED) {
+	    cout << dims[i] << "/inf,";
+	  } else {
+	    cout << dims[i] << "/" << max_dims[i] << ",";
+	  }
 	}
-	cout << dims[ndims-1] << ").";
+	if (max_dims[ndims-1]==H5S_UNLIMITED) {
+	  cout << dims[ndims-1] << "/inf].";
+	} else {
+	  cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
+	}
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_ULLONG)) {
-      cout << "ullong of size (";
+      cout << "ullong[";
       for(int i=0;i<ndims-1;i++) {
-	cout << dims[i] << ",";
+	if (max_dims[i]==H5S_UNLIMITED) {
+	  cout << dims[i] << "/inf,";
+	} else {
+	  cout << dims[i] << "/" << max_dims[i] << ",";
+	}
       }
-      cout << dims[ndims-1] << ").";
+      if (max_dims[ndims-1]==H5S_UNLIMITED) {
+	cout << dims[ndims-1] << "/inf].";
+      } else {
+	cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
+      }
     } else if (H5Tequal(nat_id,H5T_NATIVE_FLOAT)) {
-      cout << "float of size (";
+      cout << "float[";
       for(int i=0;i<ndims-1;i++) {
-	cout << dims[i] << ",";
+	if (max_dims[i]==H5S_UNLIMITED) {
+	  cout << dims[i] << "/inf,";
+	} else {
+	  cout << dims[i] << "/" << max_dims[i] << ",";
+	}
       }
-      cout << dims[ndims-1] << ").";
+      if (max_dims[ndims-1]==H5S_UNLIMITED) {
+	cout << dims[ndims-1] << "/inf].";
+      } else {
+	cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
+      }
     } else if (H5Tequal(nat_id,H5T_NATIVE_DOUBLE)) {
       if (ndims==1 && dims[0]>0) {
-	cout << "double with value=";
+	if (max_dims[0]==H5S_UNLIMITED) {
+	  cout << "double[" << dims[0] << "/inf] with value=";
+	} else {
+	  cout << "double[" << dims[0] << "/"
+	       << max_dims[0] << "] with value=";
+	}
 	std::vector<double> darr;
 	hf.getd_vec(name,darr);
 	if (dims[0]==1) {
@@ -2374,18 +2485,34 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	}
 	cout << ".";
       } else {
-	cout << "double of size (";
+	cout << "double[";
 	for(int i=0;i<ndims-1;i++) {
-	  cout << dims[i] << ",";
+	  if (max_dims[i]==H5S_UNLIMITED) {
+	    cout << dims[i] << "/inf,";
+	  } else {
+	    cout << dims[i] << "/" << max_dims[i] << ",";
+	  }
 	}
-	cout << dims[ndims-1] << ").";
+	if (max_dims[ndims-1]==H5S_UNLIMITED) {
+	  cout << dims[ndims-1] << "/inf].";
+	} else {
+	  cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
+	}
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_LDOUBLE)) {
-      cout << "ldouble of size (";
+      cout << "ldouble[";
       for(int i=0;i<ndims-1;i++) {
-	cout << dims[i] << ",";
+	if (max_dims[i]==H5S_UNLIMITED) {
+	  cout << dims[i] << "/inf]";
+	} else {
+	  cout << dims[i] << "/" << max_dims[i] << ",";
+	}
       }
-      cout << dims[ndims-1] << ").";
+      if (max_dims[ndims-1]==H5S_UNLIMITED) {
+	cout << dims[ndims-1] << "/inf].";
+      } else {
+	cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
+      }
     } else {
       hid_t filetype=H5Dget_type(dset);
       size_t str_size=H5Tget_size(filetype);
