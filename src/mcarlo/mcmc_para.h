@@ -883,6 +883,8 @@ namespace o2scl {
 	  } else if (pd_mode) {
 	    
 	    // Use proposal distribution and compute associated weight
+	    std::cout << "Here1: " << it << " " << this->mpi_rank
+		      << std::endl;
 	    (*prop_dist[it])(current[it],next[it]);
 	    q_prop[it]=prop_dist[it]->log_pdf(current[it],next[it])-
 	      prop_dist[it]->log_pdf(next[it],current[it]);
@@ -890,6 +892,8 @@ namespace o2scl {
 	      O2SCL_ERR2("Proposal distribution not finite in ",
 			 "mcmc_para_base::mcmc().",o2scl::exc_efailed);
 	    }
+	    std::cout << "Here2: " << it << " " << this->mpi_rank
+		      << " " << q_prop[it] << std::endl;
 	    
 	  } else {
 	    
@@ -1020,9 +1024,13 @@ namespace o2scl {
 		accept=true;
 	      }
 	    } else if (pd_mode) {
+	      std::cout << "Here3: " << it << " " << this->mpi_rank
+			<< std::endl;
 	      if (r<exp(w_next[it]-w_current[sindex]+q_prop[it])) {
 		accept=true;
 	      }
+	      std::cout << "Here4: " << it << " " << this->mpi_rank
+			<< std::endl;
 	    } else {
 	      // Metropolis algorithm
 	      if (r<exp(w_next[it]-w_current[sindex])) {

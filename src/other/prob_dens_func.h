@@ -1029,17 +1029,21 @@ namespace o2scl {
    */
   int set_internal(vec_t &step, vec_t &low, vec_t &high) {
     d_pdf=1.0;
+    u_step.resize(step.size());
+    u_low.resize(step.size());
+    u_high.resize(step.size());
     for(size_t i=0;i<step.size();i++) {
-      u_step.push_back(step[i]);
+      u_step[i]=step[i];
       if (low[i]>high[i]) {
-	double dtemp=low[i];
-	low[i]=high[i];
-	high[i]=dtemp;
+	u_high[i]=low[i];
+	u_low[i]=high[i];
+      } else {
+	u_low[i]=low[i];
+	u_high[i]=high[i];
       }
-      u_low.push_back(low[i]);
-      u_high.push_back(high[i]);
-      d_pdf/=high[i]-low[i];
+      d_pdf/=fabs(high[i]-low[i]);
     }
+    return 0;
   }
 
   public:
@@ -1051,12 +1055,32 @@ namespace o2scl {
    */
   template<class=vec_t> prob_cond_mdim_rand_walk
   (vec_t &step, vec_t &low, vec_t &high) {
+    if (step.size()!=low.size()) {
+      O2SCL_ERR2("Vectors 'step' and 'low' mismatched in ",
+		 "prob_cond_mdim_rand_walk constructor.",
+		 o2scl::exc_einval);
+    }
+    if (step.size()!=high.size()) {
+      O2SCL_ERR2("Vectors 'step' and 'high' mismatched in ",
+		 "prob_cond_mdim_rand_walk constructor.",
+		 o2scl::exc_einval);
+    }
     set_internal(step,low,high);
   }
   
   /** \brief Desc
    */
   virtual int set(vec_t &step, vec_t &low, vec_t &high) {
+    if (step.size()!=low.size()) {
+      O2SCL_ERR2("Vectors 'step' and 'low' mismatched in ",
+		 "prob_cond_mdim_rand_walk::set().",
+		 o2scl::exc_einval);
+    }
+    if (step.size()!=high.size()) {
+      O2SCL_ERR2("Vectors 'step' and 'high' mismatched in ",
+		 "prob_cond_mdim_rand_walk::set().",
+		 o2scl::exc_einval);
+    }
     set_internal(step,low,high);
     return 0;
   }
