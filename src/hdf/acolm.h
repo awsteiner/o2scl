@@ -305,6 +305,7 @@ namespace o2scl_acol {
       bool found;
       std::string type;
       int verbose;
+      int mode;
     } iter_parms;
 
     /// HDF object iteration function
@@ -320,6 +321,8 @@ namespace o2scl_acol {
 
     /// Read a file and list the O2scl objects
     virtual int comm_filelist(std::vector<std::string> &sv, bool itive_com);
+
+    virtual int comm_read2(std::vector<std::string> &sv, bool itive_com);
 
     /// Add 'nlines' as a constant to a \ref o2scl::table object
     virtual int comm_nlines(std::vector<std::string> &sv, bool itive_com);
