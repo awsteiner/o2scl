@@ -217,7 +217,25 @@ namespace o2scl {
       }
       return g_log;
     }
-    
+
+  /** \brief Desc
+   */
+  double get_start() {
+    return g_start;
+  }
+
+  /** \brief Desc
+   */
+  double get_end() {
+    return g_end;
+  }
+  
+  /** \brief Desc
+   */
+  double get_width() {
+    return g_width;
+  }
+  
     /** \brief Fill a vector with the specified grid
 
 	If the vector is not big enough to hold the grid, it is

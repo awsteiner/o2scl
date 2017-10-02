@@ -514,8 +514,16 @@ void acol_manager::clear_obj() {
     hist_2d_obj.clear();
   } else if (type=="vector<contour_line>") {
     cont_obj.clear();
-  } else if (type!="") {
-    O2SCL_ERR("Type sanity in acol.",o2scl::exc_esanity);
+  } else if (type!="string[]") {
+    stringv_obj.clear();
+  } else if (type!="int[]") {
+    intv_obj.clear();
+  } else if (type!="double[]") {
+    doublev_obj.clear();
+  } else if (type!="string") {
+    string_obj.clear();
+  } else if (type!="size_t[]") {
+    size_tv_obj.clear();
   }
   
   type="";
@@ -2571,7 +2579,7 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	  cout << "size_t[";
 	  for(int i=0;i<ndims-1;i++) {
 	    if (max_dims[i]==H5S_UNLIMITED) {
-	      cout << dims[i] << "/inf],";
+	      cout << dims[i] << "/inf,";
 	    } else {
 	      cout << dims[i] << "/" << max_dims[i] << ",";
 	    }
@@ -4897,6 +4905,59 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
       cout << endl;
     }
     
+    return 0;
+  } else if (type=="int") {
+    cout << "Value of " << obj_name << " is " << int_obj << endl;
+  } else if (type=="double") {
+    cout << "Value of " << obj_name << " is " << double_obj << endl;
+  } else if (type=="char") {
+    cout << "Value of " << obj_name << " is " << char_obj << endl;
+  } else if (type=="string") {
+    cout << "Value of " << obj_name << " is " << string_obj << endl;
+  } else if (type=="size_t") {
+    cout << "Value of " << obj_name << " is " << size_t_obj << endl;
+  } else if (type=="int[]") {
+    cout << "Value of " << obj_name << " is " << endl;
+    vector<string> inc, outc;
+    for(size_t i=0;i<intv_obj.size();i++) {
+      string tmp=o2scl::szttos(i)+". "+o2scl::itos(intv_obj[i]);
+      inc.push_back(tmp);
+    }
+    screenify(inc.size(),inc,outc);
+    for(size_t i=0;i<outc.size();i++) {
+      cout << outc[i] << endl;
+    }
+    return 0;
+  } else if (type=="double[]") {
+    cout << "Value of " << obj_name << " is " << endl;
+    vector<string> inc, outc;
+    for(size_t i=0;i<doublev_obj.size();i++) {
+      string tmp=o2scl::szttos(i)+". "+o2scl::dtos(doublev_obj[i]);
+      inc.push_back(tmp);
+    }
+    screenify(inc.size(),inc,outc);
+    for(size_t i=0;i<outc.size();i++) {
+      cout << outc[i] << endl;
+    }
+    return 0;
+  } else if (type=="size_t[]") {
+    cout << "Value of " << obj_name << " is " << endl;
+    vector<string> inc, outc;
+    for(size_t i=0;i<size_tv_obj.size();i++) {
+      string tmp=o2scl::szttos(i)+". "+o2scl::szttos(size_tv_obj[i]);
+      inc.push_back(tmp);
+    }
+    screenify(inc.size(),inc,outc);
+    for(size_t i=0;i<outc.size();i++) {
+      cout << outc[i] << endl;
+    }
+    return 0;
+  } else if (type=="uniform_grid<double>") {
+    cout << "Uniform grid " << obj_name << endl;
+    cout << "Number of bins: " << ug_obj.get_nbins() << endl;
+    cout << "Start: " << ug_obj.get_start() << endl;
+    cout << "End: " << ug_obj.get_end() << endl;
+    cout << "Width: " << ug_obj.get_width() << endl;
     return 0;
   }
 
