@@ -50,54 +50,52 @@ void acol_manager::command_switch(std::string new_type) {
 
   const int both=cli::comm_option_both;
   
-  if (type=="table") {
-    cl->remove_comm_option("assign");
-    cl->remove_comm_option("delete-col");
-    cl->remove_comm_option("delete-rows");
-    cl->remove_comm_option("deriv");
-    cl->remove_comm_option("deriv2");
-    cl->remove_comm_option("cat");
-    cl->remove_comm_option("convert-unit");
-    cl->remove_comm_option("find-row");
-    cl->remove_comm_option("fit");
-    cl->remove_comm_option("get-row");
-    cl->remove_comm_option("get-unit");
-    cl->remove_comm_option("entry");
-    cl->remove_comm_option("insert");
-    cl->remove_comm_option("insert-full");
-    cl->remove_comm_option("integ");
-    cl->remove_comm_option("list");
-    cl->remove_comm_option("max");
-    cl->remove_comm_option("min");
-    cl->remove_comm_option("rename");
-    cl->remove_comm_option("select-rows");
-    cl->remove_comm_option("select-rows2");
-    cl->remove_comm_option("set-data");
-    cl->remove_comm_option("set-unit");
-    cl->remove_comm_option("sort");
-    cl->remove_comm_option("stats");
-    cl->remove_comm_option("sum");
-    cl->remove_comm_option("nlines");
-    cl->remove_comm_option("to-hist");
-  } else if (type=="table3d") {
-    cl->remove_comm_option("cat");
-    cl->remove_comm_option("contours");
-    cl->remove_comm_option("deriv-x");
-    cl->remove_comm_option("deriv-y");
-    cl->remove_comm_option("function");
-    cl->remove_comm_option("entry");
-    cl->remove_comm_option("insert");
-    cl->remove_comm_option("interp");
-    cl->remove_comm_option("list");
-    cl->remove_comm_option("max");
-    cl->remove_comm_option("min");
-    cl->remove_comm_option("rename");
-    cl->remove_comm_option("set-data");
-    cl->remove_comm_option("slice");
-    cl->remove_comm_option("sum");
-  }
-  
-  if (new_type=="table") {
+  if (new_type=="int") {
+    static const size_t narr=1;
+    comm_option_s options_arr[narr]={
+      {0,"value","Get or set the value.",
+       0,1,"[new value]","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
+       both}
+    };
+    cl->set_comm_option_vec(narr,options_arr);
+  } else if (new_type=="double") {
+    static const size_t narr=1;
+    comm_option_s options_arr[narr]={
+      {0,"value","Get or set the value.",
+       0,1,"[new value]","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
+       both}
+    };
+    cl->set_comm_option_vec(narr,options_arr);
+  } else if (new_type=="char") {
+    static const size_t narr=1;
+    comm_option_s options_arr[narr]={
+      {0,"value","Get or set the value.",
+       0,1,"[new value]","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
+       both}
+    };
+    cl->set_comm_option_vec(narr,options_arr);
+  } else if (new_type=="size_t") {
+    static const size_t narr=1;
+    comm_option_s options_arr[narr]={
+      {0,"value","Get or set the value.",
+       0,1,"[new value]","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
+       both}
+    };
+    cl->set_comm_option_vec(narr,options_arr);
+  } else if (new_type=="string") {
+    static const size_t narr=1;
+    comm_option_s options_arr[narr]={
+      {0,"value","Get or set the value.",
+       0,1,"[new value]","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
+       both}
+    };
+    cl->set_comm_option_vec(narr,options_arr);
+  } else if (new_type=="table") {
     static const size_t narr=32;
     comm_option_s options_arr[narr]={
       {'a',"assign","Assign a constant, e.g. assign pi acos(-1) .",
@@ -422,7 +420,7 @@ void acol_manager::command_switch(std::string new_type) {
     };
     cl->set_comm_option_vec(narr,options_arr);
   }
-
+  
   return;
 }
 
@@ -448,7 +446,64 @@ acol_manager::acol_manager() : cng(o2scl_settings.get_convert_units()) {
 }
 
 void acol_manager::clear_obj() {
-  command_switch("");
+
+  if (type=="int") {
+    cl->remove_comm_option("value");
+  } else if (type=="double") {
+    cl->remove_comm_option("value");
+  } else if (type=="char") {
+    cl->remove_comm_option("value");
+  } else if (type=="size_t") {
+    cl->remove_comm_option("value");
+  } else if (type=="string") {
+    cl->remove_comm_option("value");
+  } else if (type=="table") {
+    cl->remove_comm_option("assign");
+    cl->remove_comm_option("delete-col");
+    cl->remove_comm_option("delete-rows");
+    cl->remove_comm_option("deriv");
+    cl->remove_comm_option("deriv2");
+    cl->remove_comm_option("cat");
+    cl->remove_comm_option("convert-unit");
+    cl->remove_comm_option("find-row");
+    cl->remove_comm_option("fit");
+    cl->remove_comm_option("get-row");
+    cl->remove_comm_option("get-unit");
+    cl->remove_comm_option("entry");
+    cl->remove_comm_option("insert");
+    cl->remove_comm_option("insert-full");
+    cl->remove_comm_option("integ");
+    cl->remove_comm_option("list");
+    cl->remove_comm_option("max");
+    cl->remove_comm_option("min");
+    cl->remove_comm_option("rename");
+    cl->remove_comm_option("select-rows");
+    cl->remove_comm_option("select-rows2");
+    cl->remove_comm_option("set-data");
+    cl->remove_comm_option("set-unit");
+    cl->remove_comm_option("sort");
+    cl->remove_comm_option("stats");
+    cl->remove_comm_option("sum");
+    cl->remove_comm_option("nlines");
+    cl->remove_comm_option("to-hist");
+  } else if (type=="table3d") {
+    cl->remove_comm_option("cat");
+    cl->remove_comm_option("contours");
+    cl->remove_comm_option("deriv-x");
+    cl->remove_comm_option("deriv-y");
+    cl->remove_comm_option("function");
+    cl->remove_comm_option("entry");
+    cl->remove_comm_option("insert");
+    cl->remove_comm_option("interp");
+    cl->remove_comm_option("list");
+    cl->remove_comm_option("max");
+    cl->remove_comm_option("min");
+    cl->remove_comm_option("rename");
+    cl->remove_comm_option("set-data");
+    cl->remove_comm_option("slice");
+    cl->remove_comm_option("sum");
+  }
+  
   if (type=="table") {
     table_obj.clear();
   } else if (type=="table3d") {
@@ -462,7 +517,9 @@ void acol_manager::clear_obj() {
   } else if (type!="") {
     O2SCL_ERR("Type sanity in acol.",o2scl::exc_esanity);
   }
+  
   type="";
+  
   return;
 }
 
@@ -2310,7 +2367,7 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	  cout << "char[";
 	  for(int i=0;i<ndims-1;i++) {
 	    if (max_dims[i]==H5S_UNLIMITED) {
-	      cout << dims[i] << "/inf],";
+	      cout << dims[i] << "/inf,";
 	    } else {
 	      cout << dims[i] << "/" << max_dims[i] << ",";
 	    }
@@ -2380,7 +2437,7 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	  cout << "int[";
 	  for(int i=0;i<ndims-1;i++) {
 	    if (max_dims[i]==H5S_UNLIMITED) {
-	      cout << dims[i] << "/inf],";
+	      cout << dims[i] << "/inf,";
 	    } else {
 	      cout << dims[i] << "/" << max_dims[i] << ",";
 	    }
@@ -2473,39 +2530,58 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	}
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_ULONG)) {
-      if (mode==0) {
       if (ndims==1 && dims[0]>0) {
 	if (max_dims[0]==H5S_UNLIMITED) {
-	  cout << "size_t[" << dims[0] << "/inf] with value=";
+	  if (mode==0) {
+	    cout << "size_t[" << dims[0] << "/inf] with value=";
+	  }
+	  if (mode==1 && name==tname) {
+	    ip->type="size_t[]";
+	    return 1;
+	  }
 	} else {
-	  cout << "size_t[" << dims[0] << "/"
-	       << max_dims[0] << "] with value=";
-	}
-	std::vector<size_t> sarr;
-	hf.get_szt_vec(name,sarr);
-	if (dims[0]==1) {
-	  cout << sarr[0];
-	} else if (dims[0]==2) {
-	  cout << sarr[0] << ", " << sarr[1];
-	} else {
-	  cout << sarr[0] << ", " << sarr[1] << ", ..., " << sarr[dims[0]-1];
-	}
-	cout << ".";
-      } else {
-	cout << "size_t[";
-	for(int i=0;i<ndims-1;i++) {
-	  if (max_dims[i]==H5S_UNLIMITED) {
-	    cout << dims[i] << "/inf],";
-	  } else {
-	    cout << dims[i] << "/" << max_dims[i] << ",";
+	  if (mode==0) {
+	    cout << "size_t[" << dims[0] << "/"
+		 << max_dims[0] << "] with value=";
+	  }
+	  if (mode==1 && name==tname) {
+	    if (dims[0]==1) {
+	      ip->type="size_t";
+	      return 1;
+	    } else {
+	      ip->type="size_t[fixed]";
+	      return 1;
+	    }
 	  }
 	}
-	if (max_dims[ndims-1]==H5S_UNLIMITED) {
-	  cout << dims[ndims-1] << "/inf].";
-	} else {
-	  cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
+	if (mode==0) {
+	  std::vector<size_t> sarr;
+	  hf.get_szt_vec(name,sarr);
+	  if (dims[0]==1) {
+	    cout << sarr[0];
+	  } else if (dims[0]==2) {
+	    cout << sarr[0] << ", " << sarr[1];
+	  } else {
+	    cout << sarr[0] << ", " << sarr[1] << ", ..., " << sarr[dims[0]-1];
+	  }
+	  cout << ".";
 	}
-      }
+      } else {
+	if (mode==0) {
+	  cout << "size_t[";
+	  for(int i=0;i<ndims-1;i++) {
+	    if (max_dims[i]==H5S_UNLIMITED) {
+	      cout << dims[i] << "/inf],";
+	    } else {
+	      cout << dims[i] << "/" << max_dims[i] << ",";
+	    }
+	  }
+	  if (max_dims[ndims-1]==H5S_UNLIMITED) {
+	    cout << dims[ndims-1] << "/inf].";
+	  } else {
+	    cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
+	  }
+	}
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_ULLONG)) {
       if (mode==0) {
@@ -2525,19 +2601,19 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_FLOAT)) {
       if (mode==0) {
-      cout << "float[";
-      for(int i=0;i<ndims-1;i++) {
-	if (max_dims[i]==H5S_UNLIMITED) {
-	  cout << dims[i] << "/inf],";
-	} else {
-	  cout << dims[i] << "/" << max_dims[i] << ",";
+	cout << "float[";
+	for(int i=0;i<ndims-1;i++) {
+	  if (max_dims[i]==H5S_UNLIMITED) {
+	    cout << dims[i] << "/inf],";
+	  } else {
+	    cout << dims[i] << "/" << max_dims[i] << ",";
+	  }
 	}
-      }
-      if (max_dims[ndims-1]==H5S_UNLIMITED) {
-	cout << dims[ndims-1] << "/inf].";
-      } else {
-	cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
-      }
+	if (max_dims[ndims-1]==H5S_UNLIMITED) {
+	  cout << dims[ndims-1] << "/inf].";
+	} else {
+	  cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
+	}
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_DOUBLE)) {
       if (ndims==1 && dims[0]>0) {
@@ -2582,7 +2658,7 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	  cout << "double[";
 	  for(int i=0;i<ndims-1;i++) {
 	    if (max_dims[i]==H5S_UNLIMITED) {
-	      cout << dims[i] << "/inf],";
+	      cout << dims[i] << "/inf,";
 	    } else {
 	      cout << dims[i] << "/" << max_dims[i] << ",";
 	    }
@@ -2700,41 +2776,251 @@ int acol_manager::comm_filelist(std::vector<std::string> &sv,
 }
 
 int acol_manager::comm_read2(std::vector<std::string> &sv, 
-				bool itive_com) {
+			     bool itive_com) {
   
-  std::string i1;
+  std::string i1, i2;
   if (sv.size()==1) {
     if (itive_com) {
       i1=cl->cli_gets("Enter filename (or blank to quit): ");
       if (i1.length()==0) {
-        if (verbose>0) cout << "Command 'filelist' cancelled." << endl;
+        if (verbose>0) cout << "Command 'read' cancelled." << endl;
         return 0;
       } 
+      i2=cl->cli_gets("Enter object name (or blank for first table): ");
     } else {
-      cout << "Filename not given for command 'filelist'." << endl;
+      cout << "Filename not given for command 'read'." << endl;
       return exc_efailed;
     }
   } else {
     i1=sv[1];
+    if (sv.size()>2) {
+      i2=sv[2];
+    }
   }
+
+  // Delete previous object
+  clear_obj();
 
   // Use hdf_file to open the file
   hdf_file hf;
-  int hfret=hf.open(i1.c_str(),false,false);
-  if (hfret!=0) {
-    cerr << "Failed to read file named " << i1.c_str() << endl;
+  string type2;
+  int ret;
+
+  ret=hf.open(i1.c_str(),false,false);
+  if (ret!=0) {
+    cerr << "Couldn't find file named '" << i1 << "'. Wrong file name?" 
+	 << endl;
     return exc_efailed;
   }
 
-  std::string name=sv[2];
-  iter_parms ip={name,&hf,false,type,verbose,1};
+  if (i2.length()!=0) {
+    
+    cout << "read2 name: " << i2 << endl;
+    
+    iter_parms ip={i2,&hf,false,type,verbose,1};
+    
+    H5Literate(hf.get_current_id(),H5_INDEX_NAME,H5_ITER_NATIVE,
+	       0,filelist_func,&ip);
+    
+    cout << "read2 type: " << ip.type << endl;
+    
+    if (ip.type=="table") {
+      if (verbose>2) {
+	cout << "Reading table." << endl;
+      }
+      hdf_input(hf,table_obj,i2);
+      obj_name=i2;
+      interp_type=table_obj.get_interp_type();
+      command_switch("table");
+      type="table";
+      return 0;
+    } else if (ip.type=="table3d") {
+      if (verbose>2) {
+	cout << "Reading table3d." << endl;
+      }
+      hdf_input(hf,table3d_obj,i2);
+      obj_name=i2;
+      interp_type=table3d_obj.get_interp_type();
+      command_switch("table3d");
+      type="table3d";
+      return 0;
+    } else if (ip.type=="hist") {
+      if (verbose>2) {
+	cout << "Reading hist." << endl;
+      }
+      hdf_input(hf,hist_obj,i2);
+      obj_name=i2;
+      command_switch("hist");
+      type="hist";
+      return 0;
+    } else if (ip.type=="hist_2d") {
+      if (verbose>2) {
+	cout << "Reading hist_2d." << endl;
+      }
+      hdf_input(hf,hist_2d_obj,i2);
+      obj_name=i2;
+      command_switch("hist_2d");
+      type="hist_2d";
+      return 0;
+    } else if (ip.type=="vector<contour_lines>") {
+      if (verbose>2) {
+	cout << "Reading vector<contour_lines>." << endl;
+      }
+      hdf_input(hf,cont_obj,i2);
+      obj_name=i2;
+      command_switch("vector<contour_lines>");
+      type="vector<contour_lines>";
+      return 0;
+    } else if (ip.type=="uniform_grid<double>") {
+      if (verbose>2) {
+	cout << "Reading uniform_grid<double>." << endl;
+      }
+      hdf_input(hf,ug_obj,i2);
+      obj_name=i2;
+      command_switch("uniform_grid<double>");
+      type="uniform_grid<double>";
+      return 0;
+    } else if (ip.type=="string[]") {
+      if (verbose>2) {
+	cout << "Reading string[]." << endl;
+      }
+      hf.gets_vec(i2,stringv_obj);
+      obj_name=i2;
+      command_switch("string[]");
+      type="string[]";
+      return 0;
+    } else if (ip.type=="int") {
+      if (verbose>2) {
+	cout << "Reading int." << endl;
+      }
+      hf.geti(i2,int_obj);
+      obj_name=i2;
+      command_switch("int");
+      type="int";
+      return 0;
+    } else if (ip.type=="char") {
+      if (verbose>2) {
+	cout << "Reading char." << endl;
+      }
+      hf.getc(i2,char_obj);
+      obj_name=i2;
+      command_switch("char");
+      type="char";
+      return 0;
+    } else if (ip.type=="string") {
+      if (verbose>2) {
+	cout << "Reading string." << endl;
+      }
+      hf.gets(i2,string_obj);
+      obj_name=i2;
+      command_switch("string");
+      type="string";
+      return 0;
+    } else if (ip.type=="double") {
+      if (verbose>2) {
+	cout << "Reading double." << endl;
+      }
+      hf.getd(i2,double_obj);
+      obj_name=i2;
+      command_switch("double");
+      type="double";
+      return 0;
+    } else if (ip.type=="size_t") {
+      if (verbose>2) {
+	cout << "Reading size_t." << endl;
+      }
+      hf.get_szt(i2,size_t_obj);
+      obj_name=i2;
+      command_switch("size_t");
+      type="size_t";
+      return 0;
+    } else if (ip.type=="int[]") {
+      if (verbose>2) {
+	cout << "Reading int[]." << endl;
+      }
+      hf.geti_vec(i2,intv_obj);
+      obj_name=i2;
+      command_switch("int[]");
+      type="int[]";
+      return 0;
+    } else if (ip.type=="double[]") {
+      if (verbose>2) {
+	cout << "Reading double[]." << endl;
+      }
+      hf.getd_vec(i2,doublev_obj);
+      obj_name=i2;
+      command_switch("double[]");
+      type="double[]";
+      return 0;
+    } else if (ip.type=="size_t[]") {
+      if (verbose>2) {
+	cout << "Reading size_t[]." << endl;
+      }
+      hf.get_szt_vec(i2,size_tv_obj);
+      obj_name=i2;
+      command_switch("size_t[]");
+      type="size_t[]";
+      return 0;
+    }
 
-  H5Literate(hf.get_current_id(),H5_INDEX_NAME,H5_ITER_NATIVE,
-	     0,filelist_func,&ip);
-
-  cout << "type: " << ip.type << endl;
+  }
   
-  return 0;
+  ret=hf.find_group_by_type("table",i2,verbose);
+  if (ret==success) {
+    if (verbose>0) {
+      cout << "No name specified, reading first table object." << endl;
+    }
+    hdf_input(hf,table_obj,i2);
+    obj_name=i2;
+    command_switch("table");
+    type="table";
+    interp_type=table_obj.get_interp_type();
+    return 0;
+  }
+    
+  ret=hf.find_group_by_type("table3d",i2,verbose);
+  if (ret==success) {
+    if (verbose>0) {
+      cout << "No name specified, reading first table3d object." << endl;
+    }
+    hdf_input(hf,table3d_obj,i2);
+    obj_name=i2;
+    interp_type=table3d_obj.get_interp_type();
+      
+    command_switch("table3d");
+    type="table3d";
+      
+    return 0;
+  }
+    
+  ret=hf.find_group_by_type("hist",i2,verbose);
+  if (ret==success) {
+    if (verbose>0) {
+      cout << "No name specified, reading first hist object." << endl;
+    }
+    hdf_input(hf,hist_obj,i2);
+    obj_name=i2;
+    command_switch("hist");
+    type="hist";
+    return 0;
+  }
+    
+  ret=hf.find_group_by_type("hist_2d",i2,verbose);
+  if (ret==success) {
+    if (verbose>0) {
+      cout << "No name specified, reading first hist_2d object." << endl;
+    }
+    hdf_input(hf,hist_2d_obj,i2);
+    obj_name=i2;
+    command_switch("hist_2d");
+    type="hist_2d";
+    return 0;
+  }
+  
+  cout << "Could not find object of any readable type in file '" << i1
+       << "'." << endl;
+  
+  return exc_efailed;
 }
 
 int acol_manager::get_input_one(vector<string> &sv, string directions,
@@ -3833,6 +4119,56 @@ int acol_manager::comm_entry(std::vector<std::string> &sv, bool itive_com) {
     
     cout << "Entry for column " << in[0] << " at row " << in[1] << " is "
 	 << table_obj.get(in[0],row) << endl;
+    
+  } else {
+    cerr << "Command 'entry' not implemented for type " << type << " ." << endl;
+    return exc_efailed;
+  }
+
+  return 0;
+}
+
+int acol_manager::comm_value(std::vector<std::string> &sv, bool itive_com) {
+
+  if (type=="int") {
+
+    if (sv.size()==2) {
+      int_obj=o2scl::stoi(sv[1]);
+    }
+    
+    cout << "Value of " << obj_name << " is " << int_obj << endl;
+    
+  } else if (type=="double") {
+
+    if (sv.size()==2) {
+      double_obj=o2scl::stod(sv[1]);
+    }
+    
+    cout << "Value of " << obj_name << " is " << double_obj << endl;
+    
+  } else if (type=="char") {
+
+    if (sv.size()==2) {
+      char_obj=sv[1][0];
+    }
+    
+    cout << "Value of " << obj_name << " is " << char_obj << endl;
+    
+  } else if (type=="size_t") {
+
+    if (sv.size()==2) {
+      size_t_obj=o2scl::stoszt(sv[1]);
+    }
+    
+    cout << "Value of " << obj_name << " is " << size_t_obj << endl;
+    
+  } else if (type=="string") {
+
+    if (sv.size()==2) {
+      string_obj=sv[1];
+    }
+    
+    cout << "Value of " << obj_name << " is " << string_obj << endl;
     
   } else {
     cerr << "Command 'entry' not implemented for type " << type << " ." << endl;

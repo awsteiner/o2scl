@@ -168,27 +168,6 @@ namespace o2scl_acol {
 
     virtual ~acol_manager() {}
 
-#ifdef DOXYGEN
-    /// A pointer to the table
-    table_units<> table_obj;
-#else
-    o2scl::table_units<> table_obj;
-#endif
-
-#ifdef DOXYGEN
-    /// A pointer to the hist
-    hist hist_obj;
-#else
-    o2scl::hist hist_obj;
-#endif
-
-#ifdef DOXYGEN
-    /// A pointer to the hist
-    hist_2d hist_2d_obj;
-#else
-    o2scl::hist_2d hist_2d_obj;
-#endif
-
     /// String designating the current type
     std::string type;
     
@@ -199,21 +178,27 @@ namespace o2scl_acol {
     o2scl::cli *cl;
 #endif
 
-#ifdef DOXYGEN
-    /// Pointer to the three dimensional table
-    table3d table3d_obj;
-#else
+    /// \name Object storage
+    //@{
+    o2scl::table_units<> table_obj;
     o2scl::table3d table3d_obj;
-#endif
+    o2scl::hist hist_obj;
+    o2scl::hist_2d hist_2d_obj;
 
     int int_obj;
+    char char_obj;
     double double_obj;
     size_t size_t_obj;
     std::string string_obj;
-    
-    /** \brief Contour lines object
-     */
+
     std::vector<o2scl::contour_line> cont_obj;
+    o2scl::uniform_grid<double> ug_obj;
+    
+    std::vector<int> intv_obj;
+    std::vector<double> doublev_obj;
+    std::vector<size_t> size_tv_obj;
+    std::vector<std::string> stringv_obj;
+    //@}
     
     /** \brief True if we should run interactive mode after parsing
 	the command-line
@@ -437,6 +422,7 @@ namespace o2scl_acol {
     
     /// Get an entry
     virtual int comm_entry(std::vector<std::string> &sv, bool itive_com);
+    virtual int comm_value(std::vector<std::string> &sv, bool itive_com);
     
     /// Convert units of a column
     virtual int comm_convert_unit(std::vector<std::string> &sv, 
