@@ -4952,6 +4952,18 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
       cout << outc[i] << endl;
     }
     return 0;
+  } else if (type=="string[]") {
+    cout << "Value of " << obj_name << " is " << endl;
+    vector<string> inc, outc;
+    for(size_t i=0;i<size_tv_obj.size();i++) {
+      string tmp=o2scl::szttos(i)+". "+stringv_obj[i];
+      inc.push_back(tmp);
+    }
+    screenify(inc.size(),inc,outc);
+    for(size_t i=0;i<outc.size();i++) {
+      cout << outc[i] << endl;
+    }
+    return 0;
   } else if (type=="uniform_grid<double>") {
     cout << "Uniform grid " << obj_name << endl;
     cout << "Number of bins: " << ug_obj.get_nbins() << endl;
@@ -4961,7 +4973,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     return 0;
   }
 
-  cerr << "Cannot preview type " << type << " ." << endl;
+  cerr << "Cannot preview type " << type << "." << endl;
   return 0;
 }
 
