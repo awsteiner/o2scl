@@ -2094,7 +2094,7 @@ int acol_manager::comm_read_old(std::vector<std::string> &sv, bool itive_com) {
 
   ret=hf.open(i1.c_str(),false,false);
   if (ret!=0) {
-    cerr << "Couldn't find file named '" << i1 << "'. Wrong file name?" 
+    cerr << "Could not find file named '" << i1 << "'. Wrong file name?" 
 	 << endl;
     return exc_efailed;
   }
@@ -2282,6 +2282,8 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 
   H5O_info_t infobuf;
   herr_t status=H5Oget_info_by_name(loc,name,&infobuf,H5P_DEFAULT);
+
+  ip->found=false;
   
   // If it's a group
   if (infobuf.type==H5O_TYPE_GROUP) {
@@ -2306,6 +2308,7 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
       }
       if (mode==1 && name==tname) {
 	ip->type=otype;
+	ip->found=true;
 	return 1;
       }
     } else {
@@ -2339,7 +2342,8 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	    cout << "char[" << dims[0] << "/inf] with value=\"";
 	  }
 	  if (mode==1 && name==tname) {
-	    ip->type="char[]";
+	    ip->type="string";
+	    ip->found=true;
 	    return 1;
 	  }
 	} else {
@@ -2350,9 +2354,11 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	  if (mode==1 && name==tname) {
 	    if (dims[0]==1) {
 	      ip->type="char";
+	      ip->found=true;
 	      return 1;
 	    } else {
-	      ip->type="char[fixed]";
+	      ip->type="string(fixed)";
+	      ip->found=true;
 	      return 1;
 	    }
 	  }
@@ -2411,6 +2417,7 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	  }
 	  if (mode==1 && name==tname) {
 	    ip->type="int[]";
+	    ip->found=true;
 	    return 1;
 	  }
 	} else {
@@ -2421,9 +2428,11 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	  if (mode==1 && name==tname) {
 	    if (dims[0]==1) {
 	      ip->type="int";
+	      ip->found=true;
 	      return 1;
 	    } else {
 	      ip->type="int[fixed]";
+	      ip->found=true;
 	      return 1;
 	    }
 	  }
@@ -2435,6 +2444,8 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	    cout << iarr[0];
 	  } else if (dims[0]==2) {
 	    cout << iarr[0] << ", " << iarr[1];
+	  } else if (dims[0]==3) {
+	    cout << iarr[0] << ", " << iarr[1] << ", " << iarr[2];
 	  } else {
 	    cout << iarr[0] << ", " << iarr[1] << ", ..., " << iarr[dims[0]-1];
 	  }
@@ -2545,6 +2556,7 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	  }
 	  if (mode==1 && name==tname) {
 	    ip->type="size_t[]";
+	    ip->found=true;
 	    return 1;
 	  }
 	} else {
@@ -2555,9 +2567,11 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	  if (mode==1 && name==tname) {
 	    if (dims[0]==1) {
 	      ip->type="size_t";
+	      ip->found=true;
 	      return 1;
 	    } else {
 	      ip->type="size_t[fixed]";
+	      ip->found=true;
 	      return 1;
 	    }
 	  }
@@ -2569,6 +2583,8 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	    cout << sarr[0];
 	  } else if (dims[0]==2) {
 	    cout << sarr[0] << ", " << sarr[1];
+	  } else if (dims[0]==3) {
+	    cout << sarr[0] << ", " << sarr[1] << ", " << sarr[2];
 	  } else {
 	    cout << sarr[0] << ", " << sarr[1] << ", ..., " << sarr[dims[0]-1];
 	  }
@@ -2631,6 +2647,7 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	  }
 	  if (mode==1 && name==tname) {
 	    ip->type="double[]";
+	    ip->found=true;
 	    return 1;
 	  }
 	} else {
@@ -2641,9 +2658,11 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	  if (mode==1 && name==tname) {
 	    if (dims[0]==1) {
 	      ip->type="double";
+	      ip->found=true;
 	      return 1;
 	    } else {
 	      ip->type="double[fixed]";
+	      ip->found=true;
 	      return 1;
 	    }
 	  }
@@ -2656,8 +2675,7 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	  } else if (dims[0]==2) {
 	    cout << darr[0] << ", " << darr[1];
 	  } else {
-	    cout << "\n\t"
-		 << darr[0] << ", " << darr[1] << ", ..., " << darr[dims[0]-1];
+	    cout << "\n\t" << darr[0] << ", ..., " << darr[dims[0]-1];
 	  }
 	  cout << ".";
 	}
@@ -2711,6 +2729,7 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	status=H5Tclose(filetype);
 	if (mode==1 && name==tname) {
 	  ip->type="char[fixed2]";
+	  ip->found=true;
 	  return 1;
 	}
 	if (mode==0) {
@@ -2816,21 +2835,27 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
 
   ret=hf.open(i1.c_str(),false,false);
   if (ret!=0) {
-    cerr << "Couldn't find file named '" << i1 << "'. Wrong file name?" 
+    cerr << "Could not find file named '" << i1 << "'. Wrong file name?" 
 	 << endl;
     return exc_efailed;
   }
 
   if (i2.length()!=0) {
     
-    cout << "read2 name: " << i2 << endl;
+    //cout << "read2 name: " << i2 << endl;
     
     iter_parms ip={i2,&hf,false,type,verbose,1};
     
     H5Literate(hf.get_current_id(),H5_INDEX_NAME,H5_ITER_NATIVE,
 	       0,filelist_func,&ip);
     
-    cout << "read2 type: " << ip.type << endl;
+    //cout << "read2 type: " << ip.type << endl;
+
+    if (ip.found==false) {
+      cerr << "Could not find readable object named " << i2
+	   << " in file " << i1 << endl;
+      return 1;
+    }
     
     if (ip.type=="table") {
       if (verbose>2) {
@@ -2971,6 +2996,10 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       return 0;
     }
 
+    cerr << "Found object with name " << i2
+	 << " in file " << i1 << " but type " << ip.type
+	 << " is not readable." << endl;
+    return 2;
   }
   
   ret=hf.find_group_by_type("table",i2,verbose);
@@ -3139,7 +3168,7 @@ int acol_manager::comm_max(std::vector<std::string> &sv, bool itive_com) {
   if (ret!=0) return ret;
   
   if (table_obj.is_column(i1)==false) {
-    cerr << "Couldn't find column named '" << i1 << "'." << endl;
+    cerr << "Could not find column named '" << i1 << "'." << endl;
     return exc_efailed;
   }
 
@@ -3230,7 +3259,7 @@ int acol_manager::comm_min(std::vector<std::string> &sv, bool itive_com) {
   if (ret!=0) return ret;
   
   if (table_obj.is_column(i1)==false) {
-    cerr << "Couldn't find column named '" << i1 << "'." << endl;
+    cerr << "Could not find column named '" << i1 << "'." << endl;
     return exc_efailed;
   }
 
@@ -3278,7 +3307,7 @@ int acol_manager::comm_set_data(std::vector<std::string> &sv, bool itive_com) {
   if (ret!=0) return ret;
   
   if (table_obj.is_column(in[1])==false) {
-    cerr << "Couldn't find column named '" << in[1] << "'." << endl;
+    cerr << "Could not find column named '" << in[1] << "'." << endl;
     return exc_efailed;
   }
 
@@ -3310,7 +3339,7 @@ int acol_manager::comm_set_unit(std::vector<std::string> &sv, bool itive_com) {
   if (ret!=0) return ret;
   
   if (table_obj.is_column(in[0])==false) {
-    cerr << "Couldn't find column named '" << in[0] << "'." << endl;
+    cerr << "Could not find column named '" << in[0] << "'." << endl;
     return exc_efailed;
   }
 
@@ -3561,7 +3590,7 @@ int acol_manager::comm_convert_unit
   if (ret!=0) return ret;
   
   if (table_obj.is_column(in[0])==false) {
-    cerr << "Couldn't find column named '" << in[0] << "'." << endl;
+    cerr << "Could not find column named '" << in[0] << "'." << endl;
     return exc_efailed;
   }
 
@@ -3617,7 +3646,7 @@ int acol_manager::comm_get_unit(std::vector<std::string> &sv, bool itive_com) {
   if (ret!=0) return ret;
   
   if (table_obj.is_column(in[0])==false) {
-    cerr << "Couldn't find column named '" << in[0] << "'." << endl;
+    cerr << "Could not find column named '" << in[0] << "'." << endl;
     return exc_efailed;
   }
 
@@ -3890,7 +3919,7 @@ int acol_manager::comm_rename(std::vector<std::string> &sv, bool itive_com) {
     if (ret!=0) return ret;
     
     if (table_obj.is_column(in[0])==false) {
-      cerr << "Couldn't find column named '" << in[0] << "'." << endl;
+      cerr << "Could not find column named '" << in[0] << "'." << endl;
       return exc_efailed;
     }
     
@@ -3927,11 +3956,11 @@ int acol_manager::comm_deriv(std::vector<std::string> &sv, bool itive_com) {
   if (ret!=0) return ret;
   
   if (table_obj.is_column(in[0])==false) {
-    cerr << "Couldn't find column named '" << in[0] << "'." << endl;
+    cerr << "Could not find column named '" << in[0] << "'." << endl;
     return exc_efailed;
   }
   if (table_obj.is_column(in[1])==false) {
-    cerr << "Couldn't find column named '" << in[1] << "'." << endl;
+    cerr << "Could not find column named '" << in[1] << "'." << endl;
     return exc_efailed;
   }
   
@@ -3960,7 +3989,7 @@ int acol_manager::comm_deriv_x(std::vector<std::string> &sv, bool itive_com) {
 
   size_t iz;
   if (table3d_obj.is_slice(in[0],iz)==false) {
-    cerr << "Couldn't find slice named '" << in[0] << "'." << endl;
+    cerr << "Could not find slice named '" << in[0] << "'." << endl;
     return exc_efailed;
   }
   
@@ -3989,7 +4018,7 @@ int acol_manager::comm_deriv_y(std::vector<std::string> &sv, bool itive_com) {
   
   size_t iz;
   if (table3d_obj.is_slice(in[0],iz)==false) {
-    cerr << "Couldn't find slice named '" << in[0] << "'." << endl;
+    cerr << "Could not find slice named '" << in[0] << "'." << endl;
     return exc_efailed;
   }
   
@@ -4017,11 +4046,11 @@ int acol_manager::comm_deriv2(std::vector<std::string> &sv, bool itive_com) {
   if (ret!=0) return ret;
 
   if (table_obj.is_column(in[0])==false) {
-    cerr << "Couldn't find column named '" << in[0] << "'." << endl;
+    cerr << "Could not find column named '" << in[0] << "'." << endl;
     return exc_efailed;
   }
   if (table_obj.is_column(in[1])==false) {
-    cerr << "Couldn't find column named '" << in[1] << "'." << endl;
+    cerr << "Could not find column named '" << in[1] << "'." << endl;
     return exc_efailed;
   }
 
@@ -4049,11 +4078,11 @@ int acol_manager::comm_integ(std::vector<std::string> &sv, bool itive_com) {
   if (ret!=0) return ret;
 
   if (table_obj.is_column(in[0])==false) {
-    cerr << "Couldn't find column named '" << in[0] << "'." << endl;
+    cerr << "Could not find column named '" << in[0] << "'." << endl;
     return exc_efailed;
   }
   if (table_obj.is_column(in[1])==false) {
-    cerr << "Couldn't find column named '" << in[1] << "'." << endl;
+    cerr << "Could not find column named '" << in[1] << "'." << endl;
     return exc_efailed;
   }
 
@@ -4389,6 +4418,11 @@ int acol_manager::comm_html(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 
+  if (type.length()==0) {
+    cerr << "No object to preview." << endl;
+    return 3;
+  }
+  
   if (scientific) cout.setf(ios::scientific);
   else cout.unsetf(ios::scientific);
   
@@ -4777,7 +4811,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 	int nrows;
 	int ret=o2scl::stoi_nothrow(sv[1],nrows);
 	if (ret!=0 || nrows<=0) {
-	  std::cerr << "Couldn't interpret " << sv[1]
+	  std::cerr << "Could not interpret " << sv[1]
 		    << " as a positive and nonzero number of rows." << endl;
 	  return exc_efailed;
 	}
@@ -4908,67 +4942,133 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     return 0;
   } else if (type=="int") {
     cout << "Value of " << obj_name << " is " << int_obj << endl;
+    return 0;
   } else if (type=="double") {
     cout << "Value of " << obj_name << " is " << double_obj << endl;
+    return 0;
   } else if (type=="char") {
     cout << "Value of " << obj_name << " is " << char_obj << endl;
+    return 0;
   } else if (type=="string") {
     cout << "Value of " << obj_name << " is " << string_obj << endl;
+    return 0;
   } else if (type=="size_t") {
     cout << "Value of " << obj_name << " is " << size_t_obj << endl;
+    return 0;
   } else if (type=="int[]") {
+
     cout << "Value of " << obj_name << " is " << endl;
     vector<string> inc, outc;
-    size_t delta_i=intv_obj.size()/40;
-    if (delta_i<1) delta_i=1;
-    for(size_t i=0;i<intv_obj.size();i+=delta_i) {
+    for(size_t i=0;i<intv_obj.size();i++) {
       string tmp=o2scl::szttos(i)+". "+o2scl::itos(intv_obj[i]);
       inc.push_back(tmp);
     }
     screenify(inc.size(),inc,outc);
-    for(size_t i=0;i<outc.size();i++) {
+    
+    int inr;
+    if (sv.size()==2) {
+      int nrows;
+      int ret=o2scl::stoi_nothrow(sv[1],nrows);
+      if (ret!=0 || nrows<=0) {
+	std::cerr << "Could not interpret " << sv[1]
+		  << " as a positive and nonzero number of rows." << endl;
+	return exc_efailed;
+      }
+      inr=(outc.size()+(nrows-1))/(nrows);
+      if (inr<1) inr=1;
+    } else {
+      inr=(outc.size()+9)/10;
+      if (inr<1) inr=1;
+    }
+
+    for(size_t i=0;i<outc.size();i+=inr) {
       cout << outc[i] << endl;
     }
     return 0;
   } else if (type=="double[]") {
     cout << "Value of " << obj_name << " is " << endl;
     vector<string> inc, outc;
-    size_t delta_i=intv_obj.size()/40;
-    if (delta_i<1) delta_i=1;
-    for(size_t i=0;i<doublev_obj.size();i+=delta_i) {
+    for(size_t i=0;i<doublev_obj.size();i++) {
       string tmp=o2scl::szttos(i)+". "+o2scl::dtos(doublev_obj[i]);
       inc.push_back(tmp);
     }
     screenify(inc.size(),inc,outc);
-    for(size_t i=0;i<outc.size();i++) {
+    
+    int inr;
+    if (sv.size()==2) {
+      int nrows;
+      int ret=o2scl::stoi_nothrow(sv[1],nrows);
+      if (ret!=0 || nrows<=0) {
+	std::cerr << "Could not interpret " << sv[1]
+		  << " as a positive and nonzero number of rows." << endl;
+	return exc_efailed;
+      }
+      inr=(outc.size()+(nrows-1))/(nrows);
+      if (inr<1) inr=1;
+    } else {
+      inr=(outc.size()+9)/10;
+      if (inr<1) inr=1;
+    }
+
+    for(size_t i=0;i<outc.size();i+=inr) {
       cout << outc[i] << endl;
     }
     return 0;
   } else if (type=="size_t[]") {
     cout << "Value of " << obj_name << " is " << endl;
     vector<string> inc, outc;
-    size_t delta_i=intv_obj.size()/40;
-    if (delta_i<1) delta_i=1;
-    for(size_t i=0;i<size_tv_obj.size();i+=delta_i) {
+    for(size_t i=0;i<size_tv_obj.size();i++) {
       string tmp=o2scl::szttos(i)+". "+o2scl::szttos(size_tv_obj[i]);
       inc.push_back(tmp);
     }
     screenify(inc.size(),inc,outc);
-    for(size_t i=0;i<outc.size();i++) {
+    
+    int inr;
+    if (sv.size()==2) {
+      int nrows;
+      int ret=o2scl::stoi_nothrow(sv[1],nrows);
+      if (ret!=0 || nrows<=0) {
+	std::cerr << "Could not interpret " << sv[1]
+		  << " as a positive and nonzero number of rows." << endl;
+	return exc_efailed;
+      }
+      inr=(outc.size()+(nrows-1))/(nrows);
+      if (inr<1) inr=1;
+    } else {
+      inr=(outc.size()+9)/10;
+      if (inr<1) inr=1;
+    }
+
+    for(size_t i=0;i<outc.size();i+=inr) {
       cout << outc[i] << endl;
     }
     return 0;
   } else if (type=="string[]") {
     cout << "Value of " << obj_name << " is " << endl;
     vector<string> inc, outc;
-    size_t delta_i=intv_obj.size()/40;
-    if (delta_i<1) delta_i=1;
-    for(size_t i=0;i<stringv_obj.size();i+=delta_i) {
-      string tmp=o2scl::szttos(i)+". "+stringv_obj[i];
+    for(size_t i=0;i<stringv_obj.size();i++) {
+      string tmp=o2scl::szttos(i)+". \""+stringv_obj[i]+"\"";
       inc.push_back(tmp);
     }
     screenify(inc.size(),inc,outc);
-    for(size_t i=0;i<outc.size();i++) {
+    
+    int inr;
+    if (sv.size()==2) {
+      int nrows;
+      int ret=o2scl::stoi_nothrow(sv[1],nrows);
+      if (ret!=0 || nrows<=0) {
+	std::cerr << "Could not interpret " << sv[1]
+		  << " as a positive and nonzero number of rows." << endl;
+	return exc_efailed;
+      }
+      inr=(outc.size()+(nrows-1))/(nrows);
+      if (inr<1) inr=1;
+    } else {
+      inr=(outc.size()+9)/10;
+      if (inr<1) inr=1;
+    }
+
+    for(size_t i=0;i<outc.size();i+=inr) {
       cout << outc[i] << endl;
     }
     return 0;
@@ -5200,7 +5300,7 @@ int acol_manager::comm_sort(std::vector<std::string> &sv, bool itive_com) {
   if (i2==((std::string)"unique")) unique=true;
   
   if (table_obj.is_column(i1)==false) {
-    cerr << "Couldn't find column named '" << i1 << "'." << endl;
+    cerr << "Could not find column named '" << i1 << "'." << endl;
     return exc_efailed;
   }
 
@@ -5248,7 +5348,7 @@ int acol_manager::comm_stats(std::vector<std::string> &sv, bool itive_com) {
   }
 
   if (table_obj.is_column(i1)==false) {
-    cerr << "Couldn't find column named '" << i1 << "'." << endl;
+    cerr << "Could not find column named '" << i1 << "'." << endl;
     return exc_efailed;
   }
 
@@ -5813,7 +5913,7 @@ int acol_manager::comm_delete_col(std::vector<std::string> &sv,
   }
     
   if (table_obj.is_column(i1)==false) {
-    cerr << "Couldn't find column named '" << i1 << "'." << endl;
+    cerr << "Could not find column named '" << i1 << "'." << endl;
     return exc_efailed;
   }
 
@@ -6211,11 +6311,11 @@ int acol_manager::comm_interp(std::vector<std::string> &sv, bool itive_com) {
   }
   
   if (table_obj.is_column(in[0])==false) {
-    cerr << "Couldn't find column named '" << in[0] << "'." << endl;
+    cerr << "Could not find column named '" << in[0] << "'." << endl;
     return exc_efailed;
   }
   if (table_obj.is_column(in[2])==false) {
-    cerr << "Couldn't find column named '" << in[2] << "'." << endl;
+    cerr << "Could not find column named '" << in[2] << "'." << endl;
     return exc_efailed;
   }
 
