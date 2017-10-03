@@ -645,8 +645,8 @@ int acol_manager::setup_options() {
      "with the specified name in a file with more than one table.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_read),
      both},
-    {0,"read2","Read an object from a file.",0,2,"","",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_read2),
+    {0,"read-old","Read an object from a file.",0,2,"","",
+     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_read_old),
      both},
     {0,"show-units","Show the unit conversion table.",0,0,"",
      ((string)"(This doesn't show all possible conversions, only ")+
@@ -2062,7 +2062,7 @@ herr_t acol_manager::iterate_func(hid_t loc, const char *name,
   return 0;
 }
 
-int acol_manager::comm_read(std::vector<std::string> &sv, bool itive_com) {
+int acol_manager::comm_read_old(std::vector<std::string> &sv, bool itive_com) {
   
   std::string i1, i2;
   if (sv.size()==1) {
@@ -2783,8 +2783,8 @@ int acol_manager::comm_filelist(std::vector<std::string> &sv,
   return 0;
 }
 
-int acol_manager::comm_read2(std::vector<std::string> &sv, 
-			     bool itive_com) {
+int acol_manager::comm_read(std::vector<std::string> &sv, 
+			    bool itive_com) {
   
   std::string i1, i2;
   if (sv.size()==1) {
@@ -4919,7 +4919,9 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
   } else if (type=="int[]") {
     cout << "Value of " << obj_name << " is " << endl;
     vector<string> inc, outc;
-    for(size_t i=0;i<intv_obj.size();i++) {
+    size_t delta_i=intv_obj.size()/40;
+    if (delta_i<1) delta_i=1;
+    for(size_t i=0;i<intv_obj.size();i+=delta_i) {
       string tmp=o2scl::szttos(i)+". "+o2scl::itos(intv_obj[i]);
       inc.push_back(tmp);
     }
@@ -4931,7 +4933,9 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
   } else if (type=="double[]") {
     cout << "Value of " << obj_name << " is " << endl;
     vector<string> inc, outc;
-    for(size_t i=0;i<doublev_obj.size();i++) {
+    size_t delta_i=intv_obj.size()/40;
+    if (delta_i<1) delta_i=1;
+    for(size_t i=0;i<doublev_obj.size();i+=delta_i) {
       string tmp=o2scl::szttos(i)+". "+o2scl::dtos(doublev_obj[i]);
       inc.push_back(tmp);
     }
@@ -4943,7 +4947,9 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
   } else if (type=="size_t[]") {
     cout << "Value of " << obj_name << " is " << endl;
     vector<string> inc, outc;
-    for(size_t i=0;i<size_tv_obj.size();i++) {
+    size_t delta_i=intv_obj.size()/40;
+    if (delta_i<1) delta_i=1;
+    for(size_t i=0;i<size_tv_obj.size();i+=delta_i) {
       string tmp=o2scl::szttos(i)+". "+o2scl::szttos(size_tv_obj[i]);
       inc.push_back(tmp);
     }
@@ -4955,7 +4961,9 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
   } else if (type=="string[]") {
     cout << "Value of " << obj_name << " is " << endl;
     vector<string> inc, outc;
-    for(size_t i=0;i<size_tv_obj.size();i++) {
+    size_t delta_i=intv_obj.size()/40;
+    if (delta_i<1) delta_i=1;
+    for(size_t i=0;i<stringv_obj.size();i+=delta_i) {
       string tmp=o2scl::szttos(i)+". "+stringv_obj[i];
       inc.push_back(tmp);
     }

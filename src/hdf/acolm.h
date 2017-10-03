@@ -301,13 +301,14 @@ namespace o2scl_acol {
     static herr_t filelist_func(hid_t loc, const char *name, 
 				const H5L_info_t *inf, void *op_data);
     
-    /// Read a file
-    virtual int comm_read(std::vector<std::string> &sv, bool itive_com);
+    /// Read an object from a file (old)
+    virtual int comm_read_old(std::vector<std::string> &sv, bool itive_com);
 
     /// Read a file and list the O2scl objects
     virtual int comm_filelist(std::vector<std::string> &sv, bool itive_com);
 
-    virtual int comm_read2(std::vector<std::string> &sv, bool itive_com);
+    /// Read an object from a file
+    virtual int comm_read(std::vector<std::string> &sv, bool itive_com);
 
     /// Add 'nlines' as a constant to a \ref o2scl::table object
     virtual int comm_nlines(std::vector<std::string> &sv, bool itive_com);
