@@ -29,7 +29,6 @@
   - index for table3d
   - merge generic with gen3-list using "-generic 3d"
   - create table3d output that can be read by gen3-list?
-  - fix o2graph -version
   - fix fit
   - use swap instead of copy in 'select' for table objects
 */
@@ -133,9 +132,7 @@ void acol_manager::command_switch(std::string new_type) {
        "Concatenate data from a second table object onto current table.",0,2,
        "<file> [name]",((string)"For table objects, add a ")+
        "second table to the end of the first, creating new columns "+
-       "if necessary. For table3d objects, add all slices from the "+
-       "second table3d object which aren't already present in the "+
-       "current table3d object.",
+       "if necessary.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_cat),
        both},
       {0,"convert-unit","Convert a column to a new unit.",0,2,
@@ -159,7 +156,7 @@ void acol_manager::command_switch(std::string new_type) {
        "<x> <y> <yerr> <ynew> <par names> <func> <vals>","",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_fit),
        both},
-      {'f',"function","Create a new column or slice from a function.",0,2,
+      {'f',"function","Create a new column from a function.",0,2,
        "<func> <name>",
        ((string)"Create a new column named <name> from a function (in ")+
        "<func>) in terms of the other columns. For example, for "+
@@ -181,7 +178,7 @@ void acol_manager::command_switch(std::string new_type) {
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_unit),
        both},
       {0,"entry","Get a single entry in a table.",0,3,
-       "<column/slice> <index> [index2]","",
+       "<column> <index> [index2]","",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_entry),
        both},
       {'N',"index","Add a column containing the row numbers (table only).",0,1,
@@ -191,7 +188,7 @@ void acol_manager::command_switch(std::string new_type) {
        "no argument is given, the new column is named 'N'.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_index),
        both},
-      {0,"insert","Interpolate a column/slice from another file.",0,6,
+      {0,"insert","Interpolate a column from another file.",0,6,
        ((string)"2D: <file> <table> <oldx> <oldy> <newx> [newy],\n\t\t")+
        "3D: <file> <table> <old> [new]",
        ((string)"Insert a column from file <fname> interpolating it ")+
@@ -219,30 +216,29 @@ void acol_manager::command_switch(std::string new_type) {
        "integral of the function y(x) obtained from columns <x> and <y>. ",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_integ),
        both},
-      {0,"interp","Interpolate a number into a column or slice.",0,3,
-       "2d: <x name> <x value> <y name>, 3d: <z name> <x value> <y value> ",
-       ((string)"For a 2d table, interpolate <x value> from column ")+
-       "named <x name> into column named <y name>. For a 3d table "+
-       "interpolate (<x value>,<y value>) into the slice named <z name>.",
+      {0,"interp","Interpolate a number into a column.",0,3,
+       "<x name> <x value> <y name>",
+       ((string)"Interpolate <x value> from column ")+
+       "named <x name> into column named <y name>.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_interp),
        both},
-      {'l',"list","List the constants, column/slice names and other info.",
+      {'l',"list","List the constants, column names and other info.",
        0,0,"","",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
        both},
-      {0,"max","Find the maximum value of a column or slice.",0,1,"<col>",
+      {0,"max","Find the maximum value of a column.",0,1,"<col>",
        "Compute the maximum value of column <col>.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_max),
        both},
-      {0,"min","Find the minimum value of a column or slice.",0,1,"<col>",
+      {0,"min","Find the minimum value of a column.",0,1,"<col>",
        "Compute the minimum value of column <col>.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
        both},
-      {0,"rename","Rename a column or slice.",0,2,"<old> <new>",
+      {0,"rename","Rename a column.",0,2,"<old> <new>",
        "Rename a column from <old> to <new>. ",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_rename),
        both},
-      {'s',"select","Select columns or slices for a new table.",-1,-1,"<cols>",
+      {'s',"select","Select columns for a new table.",-1,-1,"<cols>",
        ((string)"Select creates a new table from the present table, ")+
        "including only the columns specified in <cols>. The column "+
        "specification is a list of column names, functions, or patterns "+
@@ -270,37 +266,32 @@ void acol_manager::command_switch(std::string new_type) {
        new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_select_rows2),both},
       {0,"set-data","Set the entries of a column.",3,4,
-       "2d: <row_spec> <col> <val_spec> 3d: <x value> <y value> <z name> <val>",
-       ((string)"For a 2d table, sfet the value of rows specifed by the ")+
+       "<row_spec> <col> <val_spec>",
+       ((string)"Set the value of rows specifed by the ")+
        "'row_spec' function in column 'col' to the value given by the "+
        "'val_spec' function. Rows are chosen if row_spec evaluates to a "+
-       "number greater than 0.5. For a 3d table, just set the value of "+
-       "the slice named 'z name' at the grid point closest to "+
-       "(<x value>,<y value>) to the value <val>.",
+       "number greater than 0.5.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_set_data),
        both},
       {0,"set-unit","Set the units for a specified column.",0,2,
        "<column> <unit>","",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_set_unit),
        both},
-      {'S',"sort","Sort the entire table by a column (table only).",0,2,
+      {'S',"sort","Sort the entire table by a column.",0,2,
        "<col> [unique]",
        ((string)"Sorts the entire table by the column specified in <col>. ")+
        "If the word \"unique\" is specified as the second argument, then "+
        "delete duplicate rows after sorting.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sort),
        both},
-      {0,"stats","Show column statistics (table only).",0,1,"<col>",
+      {0,"stats","Show column statistics.",0,1,"<col>",
        "Output the average, std. dev, max and min of <col>. ",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_stats),
        both},
       {0,"sum","Add data from a second table object to current table.",
-       0,2,"<file> [name]",((string)"For table objects, add all columns ")+
+       0,2,"<file> [name]",((string)"Add all columns ")+
        "from the second table to their corresponding columns in the "+
-       "current table, creating new columns if necessary. For table3d "+
-       "objects, add all slides from the second table to their "+
-       "corresponding slices in the current table3d, creating new slices "+
-       "if necessary.",
+       "current table, creating new columns if necessary.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sum),
        both},
       {0,"nlines","Add 'nlines' as a constant to a table object.",0,0,"",
@@ -318,10 +309,8 @@ void acol_manager::command_switch(std::string new_type) {
     static const size_t narr=15;
     comm_option_s options_arr[narr]={
       {0,"cat",
-       "Concatenate data from a second table object onto current table.",0,2,
-       "<file> [name]",((string)"For table objects, add a ")+
-       "second table to the end of the first, creating new columns "+
-       "if necessary. For table3d objects, add all slices from the "+
+       "Concatenate data from a second table3d onto current table3d.",0,2,
+       "<file> [name]",((string)"Add all slices from the ")+
        "second table3d object which aren't already present in the "+
        "current table3d object.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_cat),
@@ -342,64 +331,52 @@ void acol_manager::command_switch(std::string new_type) {
        "derivative of the function from the y grid and slice named <f>.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv_y),
        both},
-      {'f',"function","Create a new column or slice from a function.",0,2,
+      {'f',"function","Create a new slice from a function.",0,2,
        "<func> <name>",
-       ((string)"Create a new column named <name> from a function (in ")+
-       "<func>) in terms of the other columns. For example, for "+
-       "a table containing columns named 'c1' and 'c2', 'function "+
-       "c1-c2 c3' would create a new column c3 which contains the "+
-       "difference of columns 'c1' and 'c2'.",
+       ((string)"Create a new slice named <name> from a function (in ")+
+       "<func>) in terms of the other slices. For example, for "+
+       "a table3d containing slices named 's1' and 's2', 'function "+
+       "s1-s2 s3' would create a new column 's3' which contains the "+
+       "difference of columns 's1' and 's2'.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_function),
        both},
-      {0,"entry","Get a single entry in a table.",0,3,
-       "<column/slice> <index> [index2]","",
+      {0,"entry","Get a single entry in a table3d.",0,3,
+       "<slice> <x index> <y index>","",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_entry),
        both},
-      {0,"insert","Interpolate a column/slice from another file.",0,6,
-       ((string)"2D: <file> <table> <oldx> <oldy> <newx> [newy],\n\t\t")+
-       "3D: <file> <table> <old> [new]",
-       ((string)"Insert a column from file <fname> interpolating it ")+
-       "into the current table. The column <oldy> is the "+
-       "columns in the file which is to be inserted into the table, "+
-       "using the column <oldx> in the file and <newx> in the table. "+
-       "The new column in the table is named <oldy>, or it is named "+
-       "[newy] if the additional argument is given. ",
+      {0,"insert","Interpolate a slice from another file.",0,6,
+       "<file> <table> <old> [new]","",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_insert),
        both},
-      {0,"interp","Interpolate a number into a column or slice.",0,3,
-       "2d: <x name> <x value> <y name>, 3d: <z name> <x value> <y value> ",
-       ((string)"For a 2d table, interpolate <x value> from column ")+
-       "named <x name> into column named <y name>. For a 3d table "+
-       "interpolate (<x value>,<y value>) into the slice named <z name>.",
+      {0,"interp","Interpolate a number into a slice.",0,3,
+       "<z name> <x value> <y value> ",
+       "Interpolate (<x value>,<y value>) into the slice named <z name>.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_interp),
        both},
-      {'l',"list","List the constants, column/slice names and other info.",
+      {'l',"list","List the constants, slice names and other info.",
        0,0,"","",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
        both},
-      {0,"max","Find the maximum value of a column or slice.",0,1,"<col>",
+      {0,"max","Find the maximum value of a slice.",0,1,"<slice>",
        "Compute the maximum value of column <col>.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_max),
        both},
-      {0,"min","Find the minimum value of a column or slice.",0,1,"<col>",
+      {0,"min","Find the minimum value of a slice.",0,1,"<slice>",
        "Compute the minimum value of column <col>.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
        both},
-      {0,"rename","Rename a column or slice.",0,2,"<old> <new>",
-       "Rename a column from <old> to <new>. ",
+      {0,"rename","Rename a slice.",0,2,"<old> <new>",
+       "Rename a slice from <old> to <new>. ",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_rename),
        both},
       {0,"set-data","Set the entries of a column.",3,4,
-       "2d: <row_spec> <col> <val_spec> 3d: <x value> <y value> <z name> <val>",
-       ((string)"For a 2d table, sfet the value of rows specifed by the ")+
-       "'row_spec' function in column 'col' to the value given by the "+
-       "'val_spec' function. Rows are chosen if row_spec evaluates to a "+
-       "number greater than 0.5. For a 3d table, just set the value of "+
+       "<x value> <y value> <z name> <val>",
+       ((string)"Set the value of ")+
        "the slice named 'z name' at the grid point closest to "+
        "(<x value>,<y value>) to the value <val>.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_set_data),
        both},
-      {0,"slice","Construct a slice (table3d only).",2,2,
+      {0,"slice","Construct a slice.",2,2,
        "<\"x\" or \"y\"> <value>",
        ((string)"Extract a slice of a table3d object at fixed x or fixed y ")+
        "to create a new table object. This function uses interpolation "+
@@ -408,11 +385,9 @@ void acol_manager::command_switch(std::string new_type) {
        "for each slice.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_slice),
        both},
-      {0,"sum","Add data from a second table object to current table.",
-       0,2,"<file> [name]",((string)"For table objects, add all columns ")+
-       "from the second table to their corresponding columns in the "+
-       "current table, creating new columns if necessary. For table3d "+
-       "objects, add all slides from the second table to their "+
+      {0,"sum","Add data from a second table3d object to current table3d.",
+       0,2,"<file> [name]",((string)"Add all slides from the ")+
+       "second table3d to their "+
        "corresponding slices in the current table3d, creating new slices "+
        "if necessary.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sum),
