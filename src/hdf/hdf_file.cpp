@@ -2571,7 +2571,7 @@ int hdf_file::setd_mat_copy(std::string name, const ubmatrix &m) {
     // Set error if this dataset is more than 1-dimensional
     if (ndims!=2) {
       O2SCL_ERR2("Tried to set a non-matrix dataset with a ",
-		     "matrix in hdf_file::setd_mat().",exc_einval);
+		     "matrix in hdf_file::setd_mat_copy().",exc_einval);
     }
 
     // If necessary, extend the dataset
@@ -2702,7 +2702,7 @@ int hdf_file::seti_mat_copy(std::string name, const ubmatrix_int &m) {
     // Set error if this dataset is more than 1-dimensional
     if (ndims!=2) {
       O2SCL_ERR2("Tried to set a non-matrix dataset with a ",
-		     "matrix in hdf_file::setd_mat().",exc_einval);
+		     "matrix in hdf_file::seti_mat_copy().",exc_einval);
     }
 
     // If necessary, extend the dataset

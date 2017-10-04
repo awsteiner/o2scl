@@ -98,6 +98,14 @@ namespace o2scl_acol {
 
     /** \brief Desc
      */
+    bool o2graph_mode;
+    
+    /** \brief Desc
+     */
+    o2scl::comm_option_mfptr<acol_manager> cset;
+    
+    /** \brief Add new commands for type \c new_type
+     */
     void command_switch(std::string new_type);
     
 #ifdef DOXYGEN
@@ -232,12 +240,8 @@ namespace o2scl_acol {
 	the operating system via getenv(), instantiate and call the
 	acol_manager object.
     */
-    virtual int run(int argv, char *argc[]);
+    virtual int run(int argv, char *argc[], bool set_o2graph_mode=false);
 
-    /** \brief For o2graph in o2sclpy
-     */
-    virtual int run_o2graph();
-    
     /// Create the cli object (with readline support if available)
     virtual int setup_cli();
 
@@ -517,7 +521,7 @@ extern "C" {
    */
   void *o2scl_create_acol_manager() {
     o2scl_acol::acol_manager *amp=new o2scl_acol::acol_manager;
-    amp->run_o2graph();
+    amp->run(0,0,true);
     return amp;
   }
   
