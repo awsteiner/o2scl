@@ -147,6 +147,9 @@ namespace o2scl_acol {
     /// The interpolation type
     int interp_type;
 
+    /// If set, try to compress
+    int compress;
+    
     /// True for scientific output mode
     bool scientific;
     //@}
@@ -157,6 +160,7 @@ namespace o2scl_acol {
     o2scl::cli::parameter_string p_unit_fname;
     o2scl::cli::parameter_string p_def_args;
     o2scl::cli::parameter_int p_verbose;
+    o2scl::cli::parameter_int p_compress;
     o2scl::cli::parameter_int p_prec;
     o2scl::cli::parameter_int p_ncols;
     o2scl::cli::parameter_int p_interp_type;
@@ -265,9 +269,6 @@ namespace o2scl_acol {
 
     /// Create a table from a column of equally spaced values
     virtual int comm_create(std::vector<std::string> &sv, bool itive_com);
-
-    /// Create a table3d object
-    virtual int comm_create3(std::vector<std::string> &sv, bool itive_com);
 
     /// Delete a column
     virtual int comm_delete_col(std::vector<std::string> &sv, bool itive_com);
@@ -427,7 +428,6 @@ namespace o2scl_acol {
     
     /// Get an entry
     virtual int comm_entry(std::vector<std::string> &sv, bool itive_com);
-    virtual int comm_value(std::vector<std::string> &sv, bool itive_com);
     
     /// Convert units of a column
     virtual int comm_convert_unit(std::vector<std::string> &sv, 

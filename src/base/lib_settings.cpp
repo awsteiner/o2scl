@@ -168,6 +168,14 @@ bool lib_settings_class::eos_installed() {
 #endif
 }
 
+bool lib_settings_class::hdf5_compression_support() {
+#ifdef O2SCL_HDF5_COMP
+  return true;
+#else
+  return false;
+#endif
+}
+
 bool lib_settings_class::part_installed() {
 #ifdef O2SCL_PART
   return true;

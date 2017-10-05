@@ -50,50 +50,10 @@ void acol_manager::command_switch(std::string new_type) {
   const int both=cli::comm_option_both;
   
   if (new_type=="int") {
-    static const size_t narr=1;
-    comm_option_s options_arr[narr]={
-      {0,"value","Get or set the value.",
-       0,1,"[new value]","",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
-       both}
-    };
-    cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="double") {
-    static const size_t narr=1;
-    comm_option_s options_arr[narr]={
-      {0,"value","Get or set the value.",
-       0,1,"[new value]","",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
-       both}
-    };
-    cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="char") {
-    static const size_t narr=1;
-    comm_option_s options_arr[narr]={
-      {0,"value","Get or set the value.",
-       0,1,"[new value]","",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
-       both}
-    };
-    cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="size_t") {
-    static const size_t narr=1;
-    comm_option_s options_arr[narr]={
-      {0,"value","Get or set the value.",
-       0,1,"[new value]","",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
-       both}
-    };
-    cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="string") {
-    static const size_t narr=1;
-    comm_option_s options_arr[narr]={
-      {0,"value","Get or set the value.",
-       0,1,"[new value]","",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
-       both}
-    };
-    cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="table") {
     static const size_t narr=32;
     comm_option_s options_arr[narr]={
@@ -427,8 +387,9 @@ void acol_manager::command_switch(std::string new_type) {
   return;
 }
 
-acol_manager::acol_manager() : cng(o2scl_settings.get_convert_units()),
-			       cset(this,&acol_manager::comm_set) {
+acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
+			       cng(o2scl_settings.get_convert_units()) {
+  
   obj_name="acol";
   verbose=1;
   pretty=true;
@@ -622,7 +583,7 @@ int acol_manager::setup_options() {
   const int cl_param=cli::comm_option_cl_param;
   const int both=cli::comm_option_both;
 
-  static const int narr=17;
+  static const int narr=16;
 
   // Options, sorted by long name. We allow 0 parameters in many of these
   // options so they can be requested from the user in interactive mode. 
@@ -646,11 +607,6 @@ int acol_manager::setup_options() {
      "arithmetic may cause small deviations from the expected result. "+
      "If a table is currently in memory, it is deallocated beforehand. ",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_create),
-     both},
-    {0,"create3","Create a table3d object.",
-     0,10,((std::string)"<x name> <x lo> <x hi> <x step> ")+
-     "<y name> <y lo> <y hi> <y step> <slice name> <slice function>","",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_create3),
      both},
     {0,"filelist","List objects in a HDF5 file.",0,1,"<file>",
      ((string)"This lists all the top-level datasets and groups in a ")+
@@ -762,7 +718,6 @@ int acol_manager::setup_options() {
     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_find_y),
     comm_option::both},
   */
-
 
   cl->set_comm_option_vec(narr,options_arr);
 
@@ -1043,6 +998,7 @@ int acol_manager::setup_parameters() {
   p_unit_fname.str=&unit_fname;
   p_def_args.str=&def_args;
   p_verbose.i=&verbose;
+  p_compress.i=&compress;
   p_prec.i=&prec;
   p_ncols.i=&ncols;
   p_interp_type.i=&interp_type;
@@ -1055,6 +1011,7 @@ int acol_manager::setup_parameters() {
   p_def_args.help="The default arguments from the environment";
   p_prec.help="The numerical precision";
   p_verbose.help="Control the amount of output";
+  p_compress.help="Compression";
   p_ncols.help="The number of output columns";
   p_interp_type.help=((std::string)"The interpolation type ")+
     "(1=linear, 2=cubic spline, 3=periodic cubic spline, 4=Akima, "+
@@ -1068,6 +1025,7 @@ int acol_manager::setup_parameters() {
   cl->par_list.insert(make_pair("def_args",&p_def_args));
   cl->par_list.insert(make_pair("precision",&p_prec));
   cl->par_list.insert(make_pair("verbose",&p_verbose));
+  cl->par_list.insert(make_pair("compress",&p_compress));
   cl->par_list.insert(make_pair("ncols",&p_ncols));
   cl->par_list.insert(make_pair("interp_type",&p_interp_type));
   cl->par_list.insert(make_pair("names_out",&p_names_out));
@@ -4118,9 +4076,22 @@ int acol_manager::comm_internal(std::vector<std::string> &sv, bool itive_com) {
   }
   
   hdf_file hf;
+  hf.compr_type=compress;
   hf.open_or_create(i1);
   
-  if (type=="table3d") {
+  if (type=="int") {
+
+    hf.seti(obj_name,int_obj);
+    
+  } else if (type=="double") {
+
+    hf.seti(obj_name,double_obj);
+    
+  } else if (type=="double[]") {
+
+    hf.setd_vec(obj_name,doublev_obj);
+    
+  } else if (type=="table3d") {
     
     hdf_output(hf,table3d_obj,obj_name);
     
@@ -4172,56 +4143,6 @@ int acol_manager::comm_entry(std::vector<std::string> &sv, bool itive_com) {
     
     cout << "Entry for column " << in[0] << " at row " << in[1] << " is "
 	 << table_obj.get(in[0],row) << endl;
-    
-  } else {
-    cerr << "Command 'entry' not implemented for type " << type << " ." << endl;
-    return exc_efailed;
-  }
-
-  return 0;
-}
-
-int acol_manager::comm_value(std::vector<std::string> &sv, bool itive_com) {
-
-  if (type=="int") {
-
-    if (sv.size()==2) {
-      int_obj=o2scl::stoi(sv[1]);
-    }
-    
-    cout << "Value of " << obj_name << " is " << int_obj << endl;
-    
-  } else if (type=="double") {
-
-    if (sv.size()==2) {
-      double_obj=o2scl::stod(sv[1]);
-    }
-    
-    cout << "Value of " << obj_name << " is " << double_obj << endl;
-    
-  } else if (type=="char") {
-
-    if (sv.size()==2) {
-      char_obj=sv[1][0];
-    }
-    
-    cout << "Value of " << obj_name << " is " << char_obj << endl;
-    
-  } else if (type=="size_t") {
-
-    if (sv.size()==2) {
-      size_t_obj=o2scl::stoszt(sv[1]);
-    }
-    
-    cout << "Value of " << obj_name << " is " << size_t_obj << endl;
-    
-  } else if (type=="string") {
-
-    if (sv.size()==2) {
-      string_obj=sv[1];
-    }
-    
-    cout << "Value of " << obj_name << " is " << string_obj << endl;
     
   } else {
     cerr << "Command 'entry' not implemented for type " << type << " ." << endl;
@@ -4459,7 +4380,9 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
   } else {
     ncols=user_ncols;
   }
-    
+
+  cout << "Type: " << type << " Name: " << obj_name << endl;
+  
   if (type=="table3d") {
     
     int lmar=table3d_obj.get_y_name().length()+1;
@@ -4957,23 +4880,22 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     
     return 0;
   } else if (type=="int") {
-    cout << "Value of " << obj_name << " is " << int_obj << endl;
+    cout << "Value is " << int_obj << endl;
     return 0;
   } else if (type=="double") {
-    cout << "Value of " << obj_name << " is " << double_obj << endl;
+    cout << "Value is " << double_obj << endl;
     return 0;
   } else if (type=="char") {
-    cout << "Value of " << obj_name << " is " << char_obj << endl;
+    cout << "Value is " << char_obj << endl;
     return 0;
   } else if (type=="string") {
-    cout << "Value of " << obj_name << " is " << string_obj << endl;
+    cout << "Value is " << string_obj << endl;
     return 0;
   } else if (type=="size_t") {
-    cout << "Value of " << obj_name << " is " << size_t_obj << endl;
+    cout << "Value is " << size_t_obj << endl;
     return 0;
   } else if (type=="int[]") {
-
-    cout << "Value of " << obj_name << " is " << endl;
+    
     vector<string> inc, outc;
     for(size_t i=0;i<intv_obj.size();i++) {
       string tmp=o2scl::szttos(i)+". "+o2scl::itos(intv_obj[i]);
@@ -5001,8 +4923,9 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
       cout << outc[i] << endl;
     }
     return 0;
+
   } else if (type=="double[]") {
-    cout << "Value of " << obj_name << " is " << endl;
+
     vector<string> inc, outc;
     for(size_t i=0;i<doublev_obj.size();i++) {
       string tmp=o2scl::szttos(i)+". "+o2scl::dtos(doublev_obj[i]);
@@ -5030,8 +4953,9 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
       cout << outc[i] << endl;
     }
     return 0;
+
   } else if (type=="size_t[]") {
-    cout << "Value of " << obj_name << " is " << endl;
+
     vector<string> inc, outc;
     for(size_t i=0;i<size_tv_obj.size();i++) {
       string tmp=o2scl::szttos(i)+". "+o2scl::szttos(size_tv_obj[i]);
@@ -5059,8 +4983,9 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
       cout << outc[i] << endl;
     }
     return 0;
+
   } else if (type=="string[]") {
-    cout << "Value of " << obj_name << " is " << endl;
+
     vector<string> inc, outc;
     for(size_t i=0;i<stringv_obj.size();i++) {
       string tmp=o2scl::szttos(i)+". \""+stringv_obj[i]+"\"";
@@ -5088,6 +5013,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
       cout << outc[i] << endl;
     }
     return 0;
+
   } else if (type=="uniform_grid<double>") {
     cout << "Uniform grid " << obj_name << endl;
     cout << "Number of bins: " << ug_obj.get_nbins() << endl;
@@ -5211,6 +5137,8 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << "EOS library: " << o2scl_settings.eos_installed() << endl;
   cout << "Particle library: " << o2scl_settings.part_installed() << endl;
   cout << "HDF support: " << o2scl_settings.hdf_support() << endl;
+  cout << "HDF5 compression support: "
+       << o2scl_settings.hdf5_compression_support() << endl;
   cout << "Armadillo support: " << o2scl_settings.armadillo_support() << endl;
   cout << "Eigen support: " << o2scl_settings.eigen_support() << endl;
   cout << "GSL V2.0+ support: " << o2scl_settings.gsl2_support() << endl;
@@ -5938,125 +5866,146 @@ int acol_manager::comm_delete_col(std::vector<std::string> &sv,
   return 0;
 }
 
-int acol_manager::comm_create3(std::vector<std::string> &sv,
-			       bool itive_com) {
-
-  std::string in[10], pr[10]=
-    {"Enter x-axis name (or blank to stop): ",
-     "Enter x-axis lower limit (or blank to stop): ",
-     "Enter x-axis upper limit (or blank to stop): ",
-     "Enter x-axis step size (or blank to stop): ",
-     "Enter y-axis name (or blank to stop): ",
-     "Enter y-axis lower limit (or blank to stop): ",
-     "Enter y-axis upper limit (or blank to stop): ",
-     "Enter y-axis step size (or blank to stop): ",
-     "Enter slice name (or blank to stop): ",
-     "Enter slice function (or blank to stop): "};
+int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
+  std::string ctype, tval;
   
-  if (sv.size()>10) {
-    in[0]=sv[1];
-    in[1]=sv[2];
-    in[2]=sv[3];
-    in[3]=sv[4];
-    in[4]=sv[5];
-    in[5]=sv[6];
-    in[6]=sv[7];
-    in[7]=sv[8];
-    in[8]=sv[9];
-    in[9]=sv[10];
-  } else {
-    if (itive_com) {
-      for(size_t is=0;is<10;is++) {
-	in[is]=cl->cli_gets(pr[is].c_str());
-	if (in[is].length()==0) {
-	  cout << "Command 'create3' cancelled." << endl;
-	  return 0;
-	}
-      }
-    } else {
-      cerr << "Not enough arguments to 'create3'" << endl;
-      return exc_efailed;
-    }
-  }
-
   // Delete previous object
   clear_obj();
   
-  std::string xname=in[0];
-  double x0=function_to_double(in[1]);
-  double x1=function_to_double(in[2]);
-  double dx=function_to_double(in[3]);
-  uniform_grid_end<double> ugx(x0,x1,((size_t)(x1-x0)/(dx*(1.0-1.0e-14))));
+  int ret=get_input_one(sv,"Enter type of object to create",ctype,"create",
+			itive_com);
+  if (ret!=0) return ret;
+
+  vector<string> sv2=sv;
+  vector<string>::iterator it=sv2.begin();
+  sv2.erase(it+1);
   
-  std::string yname=in[4];
-  double y0=function_to_double(in[5]);
-  double y1=function_to_double(in[6]);
-  double dy=function_to_double(in[7]);
-  uniform_grid_end<double> ugy(y0,y1,((size_t)(y1-y0)/(dy*(1.0-1.0e-14))));
+  if (ctype=="int") {
 
-  std::string zname=in[8];
-  std::string zfunc=in[9];
+    int ret=get_input_one(sv2,"Enter integer",tval,"create",
+			  itive_com);
+    if (ret!=0) return ret;
+    int_obj=o2scl::stoi(tval);
+    type="int";
+    command_switch("int");
+    obj_name="int";
+    
+  } else if (ctype=="size_t") {
 
-  table3d_obj.set_xy(xname,ugx,yname,ugy);
+    int ret=get_input_one(sv2,"Enter size_t",tval,"create",
+			  itive_com);
+    if (ret!=0) return ret;
+    size_t_obj=o2scl::stoi(tval);
+    type="size_t";
+    command_switch("size_t");
+    obj_name="size_t";
+    
+  } else if (ctype=="double") {
 
-  table3d_obj.function_slice(zfunc,zname);
+    int ret=get_input_one(sv2,"Enter double",tval,"create",
+			  itive_com);
+    if (ret!=0) return ret;
+    double_obj=o2scl::stod(tval);
+    type="double";
+    command_switch("double");
+    obj_name="double";
+    
+  } else if (ctype=="string") {
 
-  command_switch("table3d");
-  type="table3d";
+    int ret=get_input_one(sv2,"Enter string",tval,"create",
+			  itive_com);
+    if (ret!=0) return ret;
+    string_obj=tval;
+    type="string";
+    command_switch("string");
+    obj_name="string";
+    
+  } else if (ctype=="double[]") {
+    
+    vector<string> in, pr;
+    pr.push_back("Size");
+    pr.push_back("Function of i (starting with zero)");
+    int ret=get_input(sv2,pr,in,"create",itive_com);
+    if (ret!=0) return ret;
 
-  
-  return 0;
-}
-
-int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
-  std::string i1, i2, i3, i4;
-
-  if (sv.size()>=5) {
-    i1=sv[1];
-    i2=sv[2];
-    i3=sv[3];
-    i4=sv[4];
-  } else if (itive_com) {
-    i1=cl->cli_gets("Name of new column (or blank to quit): ");
-    if (i1.length()==0) {
-      if (verbose>0) cout << "Command 'create' cancelled." << endl;
-      return exc_efailed;
+    calculator calc;
+    std::map<std::string,double> vars;
+    std::map<std::string,double>::const_iterator mit;
+    size_t nn=o2scl::stoszt(in[0]);
+    doublev_obj.clear();
+    calc.compile(in[1].c_str(),&vars);
+    for(size_t i=0;i<nn;i++) {
+      vars["i"]=((double)i);
+      doublev_obj.push_back(calc.eval(&vars));
     }
-    i2=cl->cli_gets("Value for first row (or blank to quit): ");
-    if (i2.length()==0) {
-      if (verbose>0) cout << "Command 'create' cancelled." << endl;
-      return exc_efailed;
+    command_switch("double[]");
+    type="double[]";
+    
+  } else if (ctype=="table") {
+    
+    vector<string> in, pr;
+    pr.push_back("Name of new column");
+    pr.push_back("Value for first row");
+    pr.push_back("Maximum value");
+    pr.push_back("Increment");
+    int ret=get_input(sv2,pr,in,"create",itive_com);
+    if (ret!=0) return ret;
+    
+    double d2=function_to_double(in[1]);
+    double d3=function_to_double(in[2]);
+    double d4=function_to_double(in[3]);
+    d3+=d4/1.0e4;
+    int cnl=((int)((d3-d2)/d4))+1;
+    
+    table_obj.clear();
+    table_obj.line_of_names(in[0]);
+    table_obj.set_nlines(cnl);
+    
+    for(int li=0;li<cnl;li++) {
+      table_obj.set(in[0],li,d2+((double)li)*d4);
     }
-    i3=cl->cli_gets("Maximum value (or blank to quit): ");
-    if (i3.length()==0) {
-      if (verbose>0) cout << "Command 'create' cancelled." << endl;
-      return exc_efailed;
-    }
-    i4=cl->cli_gets("Increment (or blank to quit): ");
-    if (i4.length()==0) {
-      if (verbose>0) cout << "Command 'create' cancelled." << endl;
-      return exc_efailed;
-    }
-  } else {
-    cerr << "No arguments specified to 'create'." << endl;
-    return exc_efailed;
+    command_switch("table");
+    type="table";
+    
+  } else if (ctype=="table3d") {
+    
+    vector<string> in;
+    vector<string> pr=
+      {"Enter x-axis name (or blank to stop): ",
+       "Enter x-axis lower limit (or blank to stop): ",
+       "Enter x-axis upper limit (or blank to stop): ",
+       "Enter x-axis step size (or blank to stop): ",
+       "Enter y-axis name (or blank to stop): ",
+       "Enter y-axis lower limit (or blank to stop): ",
+       "Enter y-axis upper limit (or blank to stop): ",
+       "Enter y-axis step size (or blank to stop): ",
+       "Enter slice name (or blank to stop): ",
+       "Enter slice function (or blank to stop): "};
+    int ret=get_input(sv2,pr,in,"create",itive_com);
+    if (ret!=0) return ret;
+    
+    std::string xname=in[0];
+    double x0=function_to_double(in[1]);
+    double x1=function_to_double(in[2]);
+    double dx=function_to_double(in[3]);
+    uniform_grid_end<double> ugx(x0,x1,((size_t)(x1-x0)/(dx*(1.0-1.0e-14))));
+    
+    std::string yname=in[4];
+    double y0=function_to_double(in[5]);
+    double y1=function_to_double(in[6]);
+    double dy=function_to_double(in[7]);
+    uniform_grid_end<double> ugy(y0,y1,((size_t)(y1-y0)/(dy*(1.0-1.0e-14))));
+    
+    std::string zname=in[8];
+    std::string zfunc=in[9];
+    
+    table3d_obj.set_xy(xname,ugx,yname,ugy);
+    
+    table3d_obj.function_slice(zfunc,zname);
+    
+    command_switch("table3d");
+    type="table3d";
   }
-  
-  double d2=function_to_double(i2);
-  double d3=function_to_double(i3);
-  double d4=function_to_double(i4);
-  d3+=d4/1.0e4;
-  int cnl=((int)((d3-d2)/d4))+1;
-
-  table_obj.clear();
-  table_obj.line_of_names(i1);
-  table_obj.set_nlines(cnl);
-
-  for(int li=0;li<cnl;li++) {
-    table_obj.set(i1,li,d2+((double)li)*d4);
-  }
-  command_switch("table");
-  type="table";
 
   return 0;
 }

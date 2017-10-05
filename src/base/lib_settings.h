@@ -113,6 +113,9 @@ namespace o2scl {
     /// Return true if \o2 was installed with Eigen support
     bool eigen_support();
 
+    /// Return true if \o2 was installed with Eigen support
+    bool hdf5_compression_support();
+
     /** \brief Return true if range checking was turned on during 
 	installation (default true)
     */
