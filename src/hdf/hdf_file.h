@@ -841,6 +841,7 @@ namespace o2scl_hdf {
 	array in the HDF file.
     */
     int getd_arr(std::string name, size_t n, double *d);
+    int getd_arr(std::string name, size_t n, double *d, int &compr);
     
     /** \brief Get a float array named \c name of size \c n 
 

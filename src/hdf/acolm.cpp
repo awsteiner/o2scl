@@ -1404,6 +1404,10 @@ int acol_manager::comm_to_hist(std::vector<std::string> &sv,
 
 int acol_manager::comm_type(std::vector<std::string> &sv, 
 			    bool itive_com) {
+  if (type.length()==0) {
+    cerr << "No current object to display type of." << endl;
+    return 1;
+  }
   cout << "Type is " << type << endl;
   return 0;
 }

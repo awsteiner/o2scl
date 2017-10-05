@@ -2006,11 +2006,18 @@ int hdf_file::getc_arr(std::string name, size_t n, char *c) {
 }
 
 int hdf_file::getd_arr(std::string name, size_t n, double *d) {
+  int compr;
+  return getd_arr(name,n,d);
+}
+
+int hdf_file::getd_arr(std::string name, size_t n, double *d,
+		       int &compr) {
       
   // See if the dataspace already exists first
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
 
   // Get filter information
+  compr=0;
   hid_t plist_id=H5Dget_create_plist(dset);
   int num_filters=H5Pget_nfilters(plist_id);
   for(int i=0;i<num_filters;i++) {
@@ -2018,15 +2025,11 @@ int hdf_file::getd_arr(std::string name, size_t n, double *d) {
     unsigned flags, filter_info;
     H5Z_filter_t filter_type=H5Pget_filter2
       (plist_id,0,&flags,&n_elements,NULL,0,NULL,&filter_info);
-    /*
-      if (filter_type==H5Z_FILTER_DEFLATE) {
-      cout << "deflate." << endl;
-      } else if (filter_type==H5Z_FILTER_SZIP) {
-      cout << "szip." << endl;
-      } else {
-      cout << "unknown." << endl;
-      }
-    */
+    if (filter_type==H5Z_FILTER_DEFLATE) {
+      compr=1;
+    } else if (filter_type==H5Z_FILTER_SZIP) {
+      compr=2;
+    }
   }
 
   // Get space requirements, to make sure they coincide
