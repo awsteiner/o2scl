@@ -2736,15 +2736,19 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	status=H5Sclose(space);
 	status=H5Tclose(filetype);
 	if (mode==1 && name==tname) {
-	  ip->type="char[fixed2]";
+	  ip->type="char[fixed]";
 	  ip->found=true;
 	  return 1;
 	}
 	if (mode==0) {
-	  cout << "fixed-length (" << str_size << ") string with value \"";
-	  std::string s;
-	  hf.gets_fixed(name,s);
-	  cout << s << "\".";
+	  if (str_size==0) {
+	    cout << "Error. Fixed length-string with no space for null.";
+	  } else {
+	    cout << "fixed-length (" << str_size-1 << ") string with value \"";
+	    std::string s;
+	    hf.gets_fixed(name,s);
+	    cout << s << "\".";
+	  }
 	}
       } else {
 	if (mode==0) {

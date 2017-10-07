@@ -737,23 +737,17 @@ int hdf_file::gets(std::string name, std::string &s) {
 		   "' not found in hdf_file::gets().").c_str(),exc_einval);
   }
 
-  if (false) {
-    /*
-      There's a problem here because this appears to 
-      improperly detect a 1 character variable length string as a 
-      fixed-length string.
-    */
-    
+  if (true) {
     // Determine if this is a fixed-length string, and if so, use
     // gets_fixed() instead.
     hid_t filetype=H5Dget_type(dset);
     size_t str_size=H5Tget_size(filetype);
     
-    hsize_t dims[3];
+    hsize_t dims[3], maxdims[3];
     hid_t space=H5Dget_space(dset);
-    int ndims=H5Sget_simple_extent_dims(space,dims,0);
+    int ndims=H5Sget_simple_extent_dims(space,dims,maxdims);
     hid_t memtype=-1;
-    if (ndims==1 && dims[0]==1) {
+    if (ndims==1 && maxdims[0]!=H5S_UNLIMITED) {
       memtype=H5Tcopy(H5T_C_S1);
     }
     if (memtype>0) {
