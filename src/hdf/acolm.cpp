@@ -410,6 +410,12 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   interp_type=1;
 
   o2graph_mode=false;
+
+#ifdef O2SCL_HDF5_COMP
+  compress=1;
+#else
+  compress=0;
+#endif
 }
 
 void acol_manager::clear_obj() {
@@ -2307,6 +2313,30 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
     hid_t type_id=H5Dget_type(dset);
     hid_t nat_id=H5Tget_native_type(type_id,H5T_DIR_ASCEND);
 
+    // Get filter information
+    int compr=0;
+    hid_t plist_id=H5Dget_create_plist(dset);
+    int num_filters=H5Pget_nfilters(plist_id);
+    for(int i=0;i<num_filters;i++) {
+      size_t n_elements=0;
+      unsigned flags, filter_info;
+      H5Z_filter_t filter_type=H5Pget_filter2
+	(plist_id,0,&flags,&n_elements,0,0,0,&filter_info);
+      if (filter_type==H5Z_FILTER_DEFLATE) {
+	compr=1;
+      } else if (filter_type==H5Z_FILTER_SZIP) {
+	compr=2;
+      }
+    }
+
+    if (mode==0) {
+      if (compr==1) {
+	cout << "(1) ";
+      } else if (compr==2) {
+	cout << "(2) ";
+      }
+    }
+    
     // Get dataspace information
     hid_t space_id = H5Dget_space(dset);
     hsize_t dims[100];
