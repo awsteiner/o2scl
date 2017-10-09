@@ -96,11 +96,11 @@ namespace o2scl_acol {
 
   protected:
 
-    /** \brief Desc
+    /** \brief If true, then run in o2graph mode
      */
     bool o2graph_mode;
     
-    /** \brief Desc
+    /** \brief The object for the set function
      */
     o2scl::comm_option_mfptr<acol_manager> cset;
     
@@ -261,14 +261,14 @@ namespace o2scl_acol {
     /// Assign a constant
     virtual int comm_assign(std::vector<std::string> &sv, bool itive_com);
 
-    /// Get or set comment field
-    virtual int comm_comment(std::vector<std::string> &sv, bool itive_com);
-
     /// Compute a scalar value
     virtual int comm_calc(std::vector<std::string> &sv, bool itive_com);
 
     /// Create a table from a column of equally spaced values
     virtual int comm_create(std::vector<std::string> &sv, bool itive_com);
+
+    /// Download a file from a specified URL
+    virtual int comm_download(std::vector<std::string> &sv, bool itive_com);
 
     /// Delete a column
     virtual int comm_delete_col(std::vector<std::string> &sv, bool itive_com);

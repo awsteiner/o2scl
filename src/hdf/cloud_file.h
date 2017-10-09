@@ -120,7 +120,7 @@ namespace o2scl_hdf {
 			     
 
     /** \brief Get file named \c file in directory \c dir 
-	in subdirectory \c subdir from url \c url
+	from url \c url
     */
     int get_file(std::string file, std::string url,
 		 std::string &fname, std::string dir="");

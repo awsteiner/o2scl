@@ -22,6 +22,8 @@
 */
 #include "acolm.h"
 
+#include <o2scl/cloud_file.h>
+
 /*
   Todos: 
   - to-table 
@@ -271,9 +273,9 @@ void acol_manager::command_switch(std::string new_type) {
     cl->set_comm_option_vec(narr,options_arr);
 
     if (o2graph_mode) {
-      static const size_t narr2=1;
+      static const size_t narr2=5;
       comm_option_s options_arr2[narr2]={
-	{0,"plot","Plot columns.",0,3,"<x> <y> [kwargs]",
+	{0,"plot","Plot two columns from the table.",0,3,"<x> <y> [kwargs]",
 	 ((std::string)"If the current object is a table, then plot ")+
 	 "column <y> versus column <x>. If the current object is a "+
 	 "one-dimensional histogram, then plot the histogram weights "+
@@ -287,7 +289,38 @@ void acol_manager::command_switch(std::string new_type) {
 	 "(ms). For example: o2graph -create x 0 10 0.2 -function \"sin(x)\" "+
 	 "y -plot x y lw=0,marker='+' -show",
 	 new o2scl::comm_option_mfptr<acol_manager>
-	 (this,&acol_manager::comm_none),both}
+	 (this,&acol_manager::comm_none),both},
+	{0,"errorbar","Plot the specified columns with errobars.",4,5,
+	 "<x> <y> <xerr> <yerr> [kwargs]",
+	 ((std::string)"Plot column <y> versus column <x> with symmetric ")+
+	 "error bars given in column <xerr> and <yerr>. For no uncertainty "
+	 "in either the x or y direction, just use \"0\" for <xerr> "+
+	 "or <yerr>, respectively. New kwargs for the errorbar command are "+
+	 "ecolor=None, elinewidth=None, capsize=None, barsabove=False, "+
+	 "lolims=False, uplims=False, xlolims=False, xuplims=False, "+
+	 "errorevery=1, capthick=None, hold=None",
+	 new o2scl::comm_option_mfptr<acol_manager>
+	 (this,&acol_manager::comm_none),both},
+	{0,"plot1","Plot the specified column.",1,2,"<y> [kwargs]",
+	 ((std::string)"Plot column <y> versus row number. Some useful ")+
+	 "kwargs are color (c), dashes, linestyle (ls), linewidth (lw), "+
+	 "marker, markeredgecolor (mec), markeredgewidth (mew), "+
+	 "markerfacecolor (mfc), markerfacecoloralt (mfcalt), markersize "+
+	 "(ms). For example: o2 -create x 0 10 0.2 -function \"sin(x)\" "+
+	 "y -plot1 y ls='--',marker='o' -show",
+	 new o2scl::comm_option_mfptr<acol_manager>
+	 (this,&acol_manager::comm_none),both},
+	{0,"histplot","Create a histogram plot from a table.",0,1,"<col>",
+	 ((std::string)"For a table, create a histogram plot from the ")+
+	 "specified column.",
+	 new o2scl::comm_option_mfptr<acol_manager>
+	 (this,&acol_manager::comm_none),both},
+	{0,"hist2dplot","Create a 2-D histogram plot.",0,2,"<col x> <col y>",
+	 ((std::string)"For a table, create a 2D histogram plot from the ")+
+	 "specified columns.",
+	 new o2scl::comm_option_mfptr<acol_manager>
+	 (this,&acol_manager::comm_none),
+	 both}
       };
       cl->set_comm_option_vec(narr2,options_arr2);
     }
@@ -382,6 +415,77 @@ void acol_manager::command_switch(std::string new_type) {
        both}
     };
     cl->set_comm_option_vec(narr,options_arr);
+
+    if (o2graph_mode) {
+      static const size_t narr2=1;
+      comm_option_s options_arr2[narr2]={
+	{0,"den-plot","Create a density plot from a table3d object.",
+	 0,1,"<slice name for table3d>",
+	 ((std::string)"Creates a density plot from the specified slice. "),
+	 new o2scl::comm_option_mfptr<acol_manager>
+	 (this,&acol_manager::comm_none),
+	 both}
+      };
+      cl->set_comm_option_vec(narr2,options_arr2);
+    }
+
+  } else if (new_type=="hist") {
+
+    if (o2graph_mode) {
+      static const size_t narr2=1;
+      comm_option_s options_arr2[narr2]={
+	{0,"plot","Plot the histogram.",0,3,"[kwargs]",
+	 ((std::string)"Plot the histogram weights ")+
+	 "as a function of the bin representative values. "+
+	 "Some useful kwargs (which apply for all three object types) "+
+	 "are color (c), dashes, linestyle (ls), linewidth (lw), "+
+	 "marker, markeredgecolor (mec), markeredgewidth (mew), "+
+	 "markerfacecolor (mfc), markerfacecoloralt (mfcalt), markersize "+
+	 "(ms). For example: o2graph -create x 0 10 0.2 -function \"sin(x)\" "+
+	 "y -plot x y lw=0,marker='+' -show",
+	 new o2scl::comm_option_mfptr<acol_manager>
+	 (this,&acol_manager::comm_none),both},
+      };
+      cl->set_comm_option_vec(narr2,options_arr2);
+    }
+    
+  } else if (new_type=="vector<contour_line>") {
+
+    if (o2graph_mode) {
+      static const size_t narr2=1;
+      comm_option_s options_arr2[narr2]={
+	{0,"plot",
+	 "Plot the contour lines",0,1,"[kwargs]",
+	 ((std::string)"Plot the set of contour lines. ")+
+	 "Some useful kwargs (which apply for all three object types) "+
+	 "are color (c), dashes, linestyle (ls), linewidth (lw), "+
+	 "marker, markeredgecolor (mec), markeredgewidth (mew), "+
+	 "markerfacecolor (mfc), markerfacecoloralt (mfcalt), markersize "+
+	 "(ms). For example: o2graph -create x 0 10 0.2 -function \"sin(x)\" "+
+	 "y -plot x y lw=0,marker='+' -show",
+	 new o2scl::comm_option_mfptr<acol_manager>
+	 (this,&acol_manager::comm_none),both}
+      };
+      cl->set_comm_option_vec(narr2,options_arr2);
+    }
+    
+  } else if (new_type=="hist_2d") {
+
+    if (o2graph_mode) {
+      static const size_t narr2=1;
+      comm_option_s options_arr2[narr2]={
+	{0,"den-plot","Create a density plot from a hist_2d object.",
+	 0,1,"<slice name for table3d>",
+	 ((std::string)"Create ")+
+	 "a density plot from the current histogram (assuming equally-"+
+	 "spaced bins).",
+	 new o2scl::comm_option_mfptr<acol_manager>
+	 (this,&acol_manager::comm_none),
+	 both}
+      };
+      cl->set_comm_option_vec(narr2,options_arr2);
+    }
+
   }
   
   return;
@@ -462,14 +566,54 @@ void acol_manager::clear_obj() {
 
     if (o2graph_mode) {
       cl->remove_comm_option("plot");
+      cl->remove_comm_option("plot1");
+      cl->remove_comm_option("errorbar");
+      cl->remove_comm_option("histplot");
+      cl->remove_comm_option("hist2dplot");
     }
-    //cl->remove_comm_option("plot1");
-    //cl->remove_comm_option("hist");
-    //cl->remove_comm_option("hist2d");
-    //cl->remove_comm_option("errorbar");
+    
+  } else if (type=="table3d") {
+    
+    cl->remove_comm_option("cat");
+    cl->remove_comm_option("contours");
+    cl->remove_comm_option("deriv-x");
+    cl->remove_comm_option("deriv-y");
+    cl->remove_comm_option("function");
+    cl->remove_comm_option("entry");
+    cl->remove_comm_option("insert");
+    cl->remove_comm_option("interp");
+    cl->remove_comm_option("list");
+    cl->remove_comm_option("max");
+    cl->remove_comm_option("min");
+    cl->remove_comm_option("rename");
+    cl->remove_comm_option("set-data");
+    cl->remove_comm_option("slice");
+    cl->remove_comm_option("sum");
+
+    if (o2graph_mode) {
+      cl->remove_comm_option("den-plot");
+    }
+    
+  } else if (type=="hist_2d") {
+    /*
+      cl->remove_comm_option("contours");
+      cl->remove_comm_option("deriv-x");
+      cl->remove_comm_option("deriv-y");
+      cl->remove_comm_option("interp");
+      cl->remove_comm_option("max");
+      cl->remove_comm_option("min");
+      cl->remove_comm_option("set-data");
+      cl->remove_comm_option("sum");
+      
+      //cl->remove_comm_option("hist2d");
+      */
+    if (o2graph_mode) {
+      cl->remove_comm_option("den-plot");
+    }
+    
+  } else if (type=="hist") {
     
     /*
-      } else if (type=="hist") {
       cl->remove_comm_option("assign");
       cl->remove_comm_option("deriv");
       cl->remove_comm_option("deriv2");
@@ -489,39 +633,16 @@ void acol_manager::clear_obj() {
       cl->remove_comm_option("plot1");
       cl->remove_comm_option("hist");
     */
-  } else if (type=="table3d") {
-    cl->remove_comm_option("cat");
-    cl->remove_comm_option("contours");
-    cl->remove_comm_option("deriv-x");
-    cl->remove_comm_option("deriv-y");
-    cl->remove_comm_option("function");
-    cl->remove_comm_option("entry");
-    cl->remove_comm_option("insert");
-    cl->remove_comm_option("interp");
-    cl->remove_comm_option("list");
-    cl->remove_comm_option("max");
-    cl->remove_comm_option("min");
-    cl->remove_comm_option("rename");
-    cl->remove_comm_option("set-data");
-    cl->remove_comm_option("slice");
-    cl->remove_comm_option("sum");
     
-    //cl->remove_comm_option("den-plot");
+    if (o2graph_mode) {
+      cl->remove_comm_option("plot");
+    }
     
-    /*
-      } else if (type=="hist_2d") {
-      cl->remove_comm_option("contours");
-      cl->remove_comm_option("deriv-x");
-      cl->remove_comm_option("deriv-y");
-      cl->remove_comm_option("interp");
-      cl->remove_comm_option("max");
-      cl->remove_comm_option("min");
-      cl->remove_comm_option("set-data");
-      cl->remove_comm_option("sum");
-      
-      //cl->remove_comm_option("den-plot");
-      //cl->remove_comm_option("hist2d");
-      */
+  } else if (type=="vector<contour_line>") {
+
+    if (o2graph_mode) {
+      cl->remove_comm_option("plot");
+    }
     
     /*
       } else if (type=="double[]") {
@@ -594,10 +715,6 @@ int acol_manager::setup_options() {
   // Options, sorted by long name. We allow 0 parameters in many of these
   // options so they can be requested from the user in interactive mode. 
   comm_option_s options_arr[narr]={
-    {0,"comment","Get or set a string field named 'comment'.",
-     1,2,"<file> [comment string]","",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_comment),
-     both},
     {0,"calc","Compute the value of a constant expression.",0,1,"<expr>",
      ((string)"This computes the value of the constant expression ")+
      " <expr>. Examples are 'calc acos(-1)' or 'calc 2+1/sqrt(2.0e4)'. "+
@@ -613,6 +730,12 @@ int acol_manager::setup_options() {
      "arithmetic may cause small deviations from the expected result. "+
      "If a table is currently in memory, it is deallocated beforehand. ",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_create),
+     both},
+    {0,"download","Download file from specified URL.",
+     0,3,"<file> <hash file> <URL>",
+     ((string)"Check if a file matches a specified hash, and if not,")+
+     "attempt to download a fresh copy from the specified URL.",
+     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_download),
      both},
     {0,"filelist","List objects in a HDF5 file.",0,1,"<file>",
      ((string)"This lists all the top-level datasets and groups in a ")+
@@ -748,47 +871,6 @@ int acol_manager::setup_options() {
        "'reds2', 'greens2', and 'blues2'.",
        new o2scl::comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_none),both},
-      /*
-      {0,"plot",
-       "Plot hist, vector<contour_line> or columns in a table.",0,3,
-       "<x and y for table> [kwargs]",
-       ((std::string)"If the current object is a table, then plot ")+
-       "column <y> versus column <x>. If the current object is a "+
-       "one-dimensional histogram, then plot the histogram weights "+
-       "as a function of the bin representative valus. If the "+
-       "current object is a set of contour lines, then plot the "+
-       "full set of contour lines. "+
-       "Some useful kwargs (which apply for all three object types) "+
-       "are color (c), dashes, linestyle (ls), linewidth (lw), "+
-       "marker, markeredgecolor (mec), markeredgewidth (mew), "+
-       "markerfacecolor (mfc), markerfacecoloralt (mfcalt), markersize "+
-       "(ms). For example: o2graph -create x 0 10 0.2 -function \"sin(x)\" "+
-       "y -plot x y lw=0,marker='+' -show",
-       new o2scl::comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_none),both},
-      {0,"errorbar","Plot the specified columns with errobars.",4,5,
-       "<x> <y> <xerr> <yerr> [kwargs]",
-       ((std::string)"For table objects, plot column <y> versus ")+
-       "column <x> with symmetric error bars "
-       "given in column <xerr> and <yerr>. For no uncertainty in either "+
-       "the x or y direction, just use \"0\" for <xerr> or <yerr>, "+
-       "respectively. New kwargs for the errorbar command are "+
-       "ecolor=None, elinewidth=None, capsize=None, barsabove=False, "+
-       "lolims=False, uplims=False, xlolims=False, xuplims=False, "+
-       "errorevery=1, capthick=None, hold=None",
-       new o2scl::comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_none),both},
-      {0,"plot1","Plot the specified column.",1,2,"<y> [kwargs]",
-       ((std::string)"For table objects, plot column <y> versus ")+
-       "row number. Some useful "+
-       "kwargs are color (c), dashes, linestyle (ls), linewidth (lw), "+
-       "marker, markeredgecolor (mec), markeredgewidth (mew), "+
-       "markerfacecolor (mfc), markerfacecoloralt (mfcalt), markersize "+
-       "(ms). For example: o2 -create x 0 10 0.2 -function \"sin(x)\" "+
-       "y -plot1 y ls='--',marker='o' -show",
-       new o2scl::comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_none),both},
-      */
       {0,"plotm","Plot the specified columns from tables in multiple files.",
        2,3,"<x> <y>",((std::string)"After using -plot-files to specify ")+
        "a list of files, plot column <y> versus column <x> for the first "+
@@ -811,17 +893,6 @@ int acol_manager::setup_options() {
        "-plot1m ycol lw=0,marker='+' -show",
        new o2scl::comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_none),both},
-      /*
-      {0,"hist","Create a histogram plot.",0,0,"",
-       ((std::string)"For a histogram object, plot the weights ")+
-       " versus the bin representative values in a bar plot.",
-       new o2scl::comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_none),both},
-      {0,"hist2d","Create a 2-D histogram plot.",0,0,"","",
-       new o2scl::comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_none),
-       both},
-      */
       {0,"xlimits","Set the x-axis limits.",2,2,"<low> <high>",
        ((std::string)"Set 'xlo' and 'xhi' to the specified limits, ")+
        "and set 'xset' to true. If a plotting canvas is currently open, then "+
@@ -895,18 +966,6 @@ int acol_manager::setup_options() {
        "extension, typically either .png, .pdf, .eps, .jpg, .raw, .svg, "+
        "and .tif .",new o2scl::comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_none),both},
-      /*
-      {0,"den-plot","Create a density plot from a hist_2d or table3d object.",
-       0,1,"<slice name for table3d>",
-       ((std::string)"If the current object is of type table3d, then ")+
-       "'den-plot' creates a density plot from the specified slice name. "+
-       "If the current object is of type hist_2d, then 'den-plot' creates "+
-       "a density plot from the current histogram (assuming equally-"+
-       "spaced bins).",
-       new o2scl::comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_none),
-       both},
-      */
       {0,"plot-files","Specify a list of files for 'plotm' and 'plot1m'.",1,-1,
        "<file 1> [file 2] ...","",
        new o2scl::comm_option_mfptr<acol_manager>
@@ -1055,11 +1114,13 @@ int acol_manager::setup_parameters() {
     logy=false;
     
     p_xtitle.str=&xtitle;
-    p_xtitle.help="X-axis title. Latex works, e.g. '$\\phi$' and '$\\hat{x}$'.";
+    p_xtitle.help=((std::string)"X-axis title. Latex ")+
+      "works, e.g. '$\\phi$' and '$\\hat{x}$'.";
     cl->par_list.insert(make_pair("xtitle",&p_xtitle));
     
     p_ytitle.str=&ytitle;
-    p_ytitle.help="Y-axis title. Latex works, e.g. '$\\phi$' and '$\\hat{x}$'.";
+    p_ytitle.help=((std::string)"Y-axis title. Latex ")+
+      "works, e.g. '$\\phi$' and '$\\hat{x}$'.";
     cl->par_list.insert(make_pair("ytitle",&p_ytitle));
     
     p_xlo.d=&xlo;
@@ -1149,8 +1210,6 @@ int acol_manager::run(int argc, char *argv[], bool set_o2graph_mode) {
     cout << "Setup help." << endl;
   }
   setup_help();
-
-  //-------------------------------------------------------------------
 
   //-------------------------------------------------------------------
 
@@ -1250,6 +1309,7 @@ int acol_manager::run(int argc, char *argv[], bool set_o2graph_mode) {
 
 }
 
+#ifdef O2SCL_NEVER_DEFINED
 int acol_manager::comm_comment(std::vector<std::string> &sv, 
 			       bool itive_com) {
 
@@ -1301,6 +1361,7 @@ int acol_manager::comm_comment(std::vector<std::string> &sv,
   hf.close();
   return 0;
 }
+#endif
 
 int acol_manager::comm_to_hist(std::vector<std::string> &sv, 
 			       bool itive_com) {
@@ -3189,6 +3250,26 @@ int acol_manager::comm_max(std::vector<std::string> &sv, bool itive_com) {
   vector_max(table_obj.get_nlines(),(table_obj)[i1],ix,max);
   cout << "Maximum value of column '" << i1 << "' is: " 
        << max << " at row with index " << ix << "." << endl;
+  
+  return 0;
+}
+
+int acol_manager::comm_download(std::vector<std::string> &sv, bool itive_com) {
+
+  vector<string> in, pr;
+  pr.push_back("Destination filename");
+  pr.push_back("Hash");
+  pr.push_back("URL");
+  int ret=get_input(sv,pr,in,"download",itive_com);
+  if (ret!=0) return ret;
+
+  std::string file=in[0];
+  std::string hash=in[1];
+  std::string url=in[2];
+  std::string fname;
+  
+  cloud_file cf;
+  cf.get_file_hash(file,hash,url,fname);
   
   return 0;
 }
