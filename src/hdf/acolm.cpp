@@ -2898,6 +2898,11 @@ int acol_manager::comm_filelist(std::vector<std::string> &sv,
     return exc_efailed;
   }
 
+  // Set the proper output precision and mode
+  if (scientific) cout.setf(ios::scientific);
+  else cout.unsetf(ios::scientific);
+  cout.precision(prec);
+  
   iter_parms ip={"",&hf,false,"",verbose,0};
 
   H5Literate(hf.get_current_id(),H5_INDEX_NAME,H5_ITER_NATIVE,

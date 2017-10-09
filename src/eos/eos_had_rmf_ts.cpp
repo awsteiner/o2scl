@@ -264,6 +264,19 @@ int main(void) {
   }
 
   o2scl_hdf::rmf_load(re,"../../data/o2scl/rmfdata/RAPR.o2",true);
+  
+  if (false) {
+    re.mnuc=939.0/hc_mev_fm;
+    o2scl_hdf::rmf_load(re,"../../data/o2scl/rmfdata/SFHo.o2",true);
+    re.saturation();
+    cout << re.n0 << " " << re.eoa*hc_mev_fm << " "
+	 << re.esym*hc_mev_fm << endl;
+    o2scl_hdf::rmf_load(re,"../../data/o2scl/rmfdata/SFHx.o2",true);
+    re.saturation();
+    cout << re.n0 << " " << re.eoa*hc_mev_fm << " "
+	 << re.esym*hc_mev_fm << endl;
+    exit(-1);
+  }
 
   // Nuclear matter (lower densities don't work)
   for(double nbx=1.0e-4;nbx<=1.29;nbx*=2.0) {
