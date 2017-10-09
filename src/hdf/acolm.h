@@ -106,7 +106,7 @@ namespace o2scl_acol {
     
     /** \brief Add new commands for type \c new_type
      */
-    void command_switch(std::string new_type);
+    void command_add(std::string new_type);
     
 #ifdef DOXYGEN
     /// The number formatter for html output
@@ -232,6 +232,10 @@ namespace o2scl_acol {
 	type to ""
     */
     void clear_obj();
+
+    /** \brief Desc
+     */
+    void command_del();
     
     // Ensure \c col is unique from entries in \c cnames
     //int make_unique_name(std::string &col, std::vector<std::string> &cnames);
@@ -264,6 +268,14 @@ namespace o2scl_acol {
     /// Compute a scalar value
     virtual int comm_calc(std::vector<std::string> &sv, bool itive_com);
 
+    /** \brief Desc
+     */
+    virtual int comm_help(std::vector<std::string> &sv, bool itive_com);
+    
+    /** \brief Desc
+     */
+    virtual int comm_commands(std::vector<std::string> &sv, bool itive_com);
+    
     /// Create a table from a column of equally spaced values
     virtual int comm_create(std::vector<std::string> &sv, bool itive_com);
 

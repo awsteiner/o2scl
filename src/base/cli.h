@@ -403,19 +403,6 @@ namespace o2scl {
     /// Control screen output
     int verbose;
 
-    /// \name The hard-coded command functions
-    //@{
-    int comm_option_alias(std::vector<std::string> &sv, bool itive_com);
-    int comm_option_commands(std::vector<std::string> &sv, bool itive_com);
-    int comm_option_get(std::vector<std::string> &sv, bool itive_com);
-    int comm_option_help(std::vector<std::string> &sv, bool itive_com);
-    int comm_option_license(std::vector<std::string> &sv, bool itive_com);
-    int comm_option_no_intro(std::vector<std::string> &sv, bool itive_com);
-    int comm_option_run(std::vector<std::string> &sv, bool itive_com);
-    int comm_option_set(std::vector<std::string> &sv, bool itive_com);
-    int comm_option_warranty(std::vector<std::string> &sv, bool itive_com);
-    //@}
-
     /// Storage for getline
     char buf[300];
 
@@ -447,6 +434,19 @@ namespace o2scl {
     cli();
 
     virtual ~cli();
+
+    /// \name The hard-coded command functions
+    //@{
+    int comm_option_alias(std::vector<std::string> &sv, bool itive_com);
+    int comm_option_commands(std::vector<std::string> &sv, bool itive_com);
+    int comm_option_get(std::vector<std::string> &sv, bool itive_com);
+    int comm_option_help(std::vector<std::string> &sv, bool itive_com);
+    int comm_option_license(std::vector<std::string> &sv, bool itive_com);
+    int comm_option_no_intro(std::vector<std::string> &sv, bool itive_com);
+    int comm_option_run(std::vector<std::string> &sv, bool itive_com);
+    int comm_option_set(std::vector<std::string> &sv, bool itive_com);
+    int comm_option_warranty(std::vector<std::string> &sv, bool itive_com);
+    //@}
 
     /// String to replace tildes with
     std::string tilde_string;

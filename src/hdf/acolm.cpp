@@ -47,7 +47,7 @@ using namespace o2scl_acol;
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
-void acol_manager::command_switch(std::string new_type) {
+void acol_manager::command_add(std::string new_type) {
 
   const int both=cli::comm_option_both;
   
@@ -522,7 +522,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
 #endif
 }
 
-void acol_manager::clear_obj() {
+void acol_manager::command_del() {
 
   if (type=="int") {
     cl->remove_comm_option("value");
@@ -678,6 +678,11 @@ void acol_manager::clear_obj() {
 
   }
   
+  return;
+}
+
+void acol_manager::clear_obj() {
+
   if (type=="table") {
     table_obj.clear();
   } else if (type=="table3d") {
@@ -1215,6 +1220,26 @@ int acol_manager::run(int argc, char *argv[], bool set_o2graph_mode) {
 
   cl->set_function(cset);
 
+  static const int both=cli::comm_option_both;
+  cl->remove_comm_option("help");
+  cl->remove_comm_option("commands");
+  static const size_t narr2=2;
+  comm_option_s options_arr2[narr2]={
+    {'h',"help","Show help information.",0,2,"[type] <command>",
+     ((std::string)"Show generic help information, or, if an ")+
+     "argument is given "+
+     "give the documentation for the specified command. "+
+     "Note that required arguments are typically given inside "+
+     "angled brackes <> while optional arguments are given "+
+     "inside square brackets [].",
+     new o2scl::comm_option_mfptr<acol_manager>
+     (this,&acol_manager::comm_help),both},
+    {0,"commands","List commands",0,1,"[type]","",
+     new o2scl::comm_option_mfptr<acol_manager>
+     (this,&acol_manager::comm_commands),both}
+  };
+  cl->set_comm_option_vec(narr2,options_arr2);
+
   //-------------------------------------------------------------------
   // Try to get screen width
   
@@ -1413,7 +1438,7 @@ int acol_manager::comm_to_hist(std::vector<std::string> &sv,
       } else {
 	hist_obj.from_table(table_obj,in[0],col2,nbins);
       }
-      command_switch("hist");
+      command_add("hist");
       type="hist";
 
     } else {
@@ -1455,7 +1480,7 @@ int acol_manager::comm_to_hist(std::vector<std::string> &sv,
 	hist_2d_obj.from_table(table_obj,in[0],in[1],col2,
 			       nbinsx,nbinsy);
       }
-      command_switch("hist_2d");
+      command_add("hist_2d");
       type="hist_2d";
       
     }
@@ -2130,6 +2155,7 @@ int acol_manager::comm_read_old(std::vector<std::string> &sv, bool itive_com) {
   }
 
   // Delete previous object
+  command_del();
   clear_obj();
 
   // Use hdf_file to open the file
@@ -2165,7 +2191,7 @@ int acol_manager::comm_read_old(std::vector<std::string> &sv, bool itive_com) {
       hdf_input(hf,table_obj,i2);
       obj_name=i2;
       interp_type=table_obj.get_interp_type();
-      command_switch("table");
+      command_add("table");
       type="table";
       return 0;
     } else if (type2=="table3d") {
@@ -2175,7 +2201,7 @@ int acol_manager::comm_read_old(std::vector<std::string> &sv, bool itive_com) {
       hdf_input(hf,table3d_obj,i2);
       obj_name=i2;
       interp_type=table3d_obj.get_interp_type();
-      command_switch("table3d");
+      command_add("table3d");
       type="table3d";
       return 0;
     } else if (type2=="hist") {
@@ -2183,7 +2209,7 @@ int acol_manager::comm_read_old(std::vector<std::string> &sv, bool itive_com) {
 	cout << "Reading hist." << endl;
       }
       type="hist";
-      command_switch("hist");
+      command_add("hist");
       //table_obj=new table_units<>;
       hdf_input(hf,hist_obj,i2);
       /*
@@ -2198,7 +2224,7 @@ int acol_manager::comm_read_old(std::vector<std::string> &sv, bool itive_com) {
       if (verbose>2) {
 	cout << "Reading hist_2d." << endl;
       }
-      command_switch("hist_2d");
+      command_add("hist_2d");
       type="hist_2d";
       //threed=true;
       //table3d_obj=new table3d;
@@ -2244,7 +2270,7 @@ int acol_manager::comm_read_old(std::vector<std::string> &sv, bool itive_com) {
     }
     hdf_input(hf,table_obj,i2);
     obj_name=i2;
-    command_switch("table");
+    command_add("table");
     type="table";
     interp_type=table_obj.get_interp_type();
     return 0;
@@ -2259,7 +2285,7 @@ int acol_manager::comm_read_old(std::vector<std::string> &sv, bool itive_com) {
     obj_name=i2;
     interp_type=table3d_obj.get_interp_type();
 
-    command_switch("table3d");
+    command_add("table3d");
     type="table3d";
     
     return 0;
@@ -2280,7 +2306,7 @@ int acol_manager::comm_read_old(std::vector<std::string> &sv, bool itive_com) {
       h.copy_to_table(table_obj,"bins","low","high","weights");
     */
     obj_name=i2;
-    command_switch("hist");
+    command_add("hist");
     type="hist";
     return 0;
   }
@@ -2302,7 +2328,7 @@ int acol_manager::comm_read_old(std::vector<std::string> &sv, bool itive_com) {
     */
     obj_name=i2;
     //threed=true;
-    command_switch("hist_2d");
+    command_add("hist_2d");
     type="hist_2d";
     return 0;
   }
@@ -2899,6 +2925,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
   }
 
   // Delete previous object
+  command_del();
   clear_obj();
 
   // Use hdf_file to open the file
@@ -2937,7 +2964,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       hdf_input(hf,table_obj,i2);
       obj_name=i2;
       interp_type=table_obj.get_interp_type();
-      command_switch("table");
+      command_add("table");
       type="table";
       return 0;
     } else if (ip.type=="table3d") {
@@ -2947,7 +2974,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       hdf_input(hf,table3d_obj,i2);
       obj_name=i2;
       interp_type=table3d_obj.get_interp_type();
-      command_switch("table3d");
+      command_add("table3d");
       type="table3d";
       return 0;
     } else if (ip.type=="hist") {
@@ -2956,7 +2983,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       }
       hdf_input(hf,hist_obj,i2);
       obj_name=i2;
-      command_switch("hist");
+      command_add("hist");
       type="hist";
       return 0;
     } else if (ip.type=="hist_2d") {
@@ -2965,7 +2992,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       }
       hdf_input(hf,hist_2d_obj,i2);
       obj_name=i2;
-      command_switch("hist_2d");
+      command_add("hist_2d");
       type="hist_2d";
       return 0;
     } else if (ip.type=="vector<contour_lines>") {
@@ -2974,7 +3001,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       }
       hdf_input(hf,cont_obj,i2);
       obj_name=i2;
-      command_switch("vector<contour_lines>");
+      command_add("vector<contour_lines>");
       type="vector<contour_lines>";
       return 0;
     } else if (ip.type=="uniform_grid<double>") {
@@ -2983,7 +3010,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       }
       hdf_input(hf,ug_obj,i2);
       obj_name=i2;
-      command_switch("uniform_grid<double>");
+      command_add("uniform_grid<double>");
       type="uniform_grid<double>";
       return 0;
     } else if (ip.type=="string[]") {
@@ -2992,7 +3019,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       }
       hf.gets_vec(i2,stringv_obj);
       obj_name=i2;
-      command_switch("string[]");
+      command_add("string[]");
       type="string[]";
       return 0;
     } else if (ip.type=="int") {
@@ -3001,7 +3028,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       }
       hf.geti(i2,int_obj);
       obj_name=i2;
-      command_switch("int");
+      command_add("int");
       type="int";
       return 0;
     } else if (ip.type=="char") {
@@ -3010,7 +3037,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       }
       hf.getc(i2,char_obj);
       obj_name=i2;
-      command_switch("char");
+      command_add("char");
       type="char";
       return 0;
     } else if (ip.type=="string") {
@@ -3019,7 +3046,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       }
       hf.gets(i2,string_obj);
       obj_name=i2;
-      command_switch("string");
+      command_add("string");
       type="string";
       return 0;
     } else if (ip.type=="double") {
@@ -3028,7 +3055,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       }
       hf.getd(i2,double_obj);
       obj_name=i2;
-      command_switch("double");
+      command_add("double");
       type="double";
       return 0;
     } else if (ip.type=="size_t") {
@@ -3037,7 +3064,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       }
       hf.get_szt(i2,size_t_obj);
       obj_name=i2;
-      command_switch("size_t");
+      command_add("size_t");
       type="size_t";
       return 0;
     } else if (ip.type=="int[]") {
@@ -3046,7 +3073,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       }
       hf.geti_vec(i2,intv_obj);
       obj_name=i2;
-      command_switch("int[]");
+      command_add("int[]");
       type="int[]";
       return 0;
     } else if (ip.type=="double[]") {
@@ -3055,7 +3082,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       }
       hf.getd_vec(i2,doublev_obj);
       obj_name=i2;
-      command_switch("double[]");
+      command_add("double[]");
       type="double[]";
       return 0;
     } else if (ip.type=="size_t[]") {
@@ -3064,7 +3091,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       }
       hf.get_szt_vec(i2,size_tv_obj);
       obj_name=i2;
-      command_switch("size_t[]");
+      command_add("size_t[]");
       type="size_t[]";
       return 0;
     }
@@ -3082,7 +3109,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     }
     hdf_input(hf,table_obj,i2);
     obj_name=i2;
-    command_switch("table");
+    command_add("table");
     type="table";
     interp_type=table_obj.get_interp_type();
     return 0;
@@ -3097,7 +3124,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     obj_name=i2;
     interp_type=table3d_obj.get_interp_type();
       
-    command_switch("table3d");
+    command_add("table3d");
     type="table3d";
       
     return 0;
@@ -3110,7 +3137,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     }
     hdf_input(hf,hist_obj,i2);
     obj_name=i2;
-    command_switch("hist");
+    command_add("hist");
     type="hist";
     return 0;
   }
@@ -3122,7 +3149,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     }
     hdf_input(hf,hist_2d_obj,i2);
     obj_name=i2;
-    command_switch("hist_2d");
+    command_add("hist_2d");
     type="hist_2d";
     return 0;
   }
@@ -3294,12 +3321,12 @@ int acol_manager::comm_slice(std::vector<std::string> &sv, bool itive_com) {
   if (sv[1]=="x") {
     table3d_obj.extract_x(std::stod(sv[2]),table_obj);
     table3d_obj.clear();
-    command_switch("table");
+    command_add("table");
     type="table";
   } else if (sv[1]=="y") {
     table3d_obj.extract_y(std::stod(sv[2]),table_obj);
     table3d_obj.clear();
-    command_switch("table");
+    command_add("table");
     type="table";
   } else {
     cerr << "Invalid first argument to 'slice'." << endl;
@@ -3509,8 +3536,9 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
 	hf.close();
       } else {
 	table3d_obj.slice_contours(slice,1,levs,cont_obj);
+	command_del();
 	clear_obj();
-	command_switch("vector<contour_line>");
+	command_add("vector<contour_line>");
 	type="vector<contour_line>";
       }
     }
@@ -3640,9 +3668,10 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
       hdf_output(hf,clines,name);
       hf.close();
     } else {
+      command_del();
       clear_obj();
       co.calc_contours(cont_obj);
-      command_switch("vector<contour_line>");
+      command_add("vector<contour_line>");
       type="vector<contour_line>";
     }
     
@@ -5198,11 +5227,12 @@ int acol_manager::comm_gen3_list(std::vector<std::string> &sv,
   }
 
   // Delete previous object
+  command_del();
   clear_obj();
   
   table3d_obj.read_gen3_list(ifs,verbose);
 
-  command_switch("table3d");
+  command_add("table3d");
   type="table3d";
   
   ifs.close();
@@ -5229,6 +5259,7 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
   }
 
   // Delete previous object
+  command_del();
   clear_obj();
 
   if (sv[1]!=((std::string)"cin")) {
@@ -5237,7 +5268,7 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
   } else {
     table_obj.read_generic(std::cin,verbose);
   }
-  command_switch("table");
+  command_add("table");
   type="table";
 
   return 0;
@@ -5462,9 +5493,51 @@ int acol_manager::comm_stats(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_set(std::vector<std::string> &sv, bool itive_com) {
 
-  // This is taken care of inside cli
+  // This is currently taken care of inside cli
 
   return 0;
+}
+
+int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
+  if (sv.size()==3) {
+    string temp_type=sv[1];
+    string cur_type=type;
+
+    command_del();
+    command_add(temp_type);
+    
+    std::vector<std::string>::iterator it=sv.begin();
+    it++;
+    sv.erase(it);
+    
+    int ret=cl->comm_option_help(sv,itive_com);
+
+    command_del();
+    command_add(cur_type);
+    return ret;
+  }
+  
+  return cl->comm_option_help(sv,itive_com);
+}
+
+int acol_manager::comm_commands(std::vector<std::string> &sv, bool itive_com) {
+  if (sv.size()==2) {
+    string temp_type=sv[1];
+    string cur_type=type;
+
+    command_del();
+    command_add(temp_type);
+    
+    std::vector<std::string>::iterator it=sv.begin();
+    it++;
+    sv.erase(it);
+    int ret=cl->comm_option_commands(sv,itive_com);
+
+    command_del();
+    command_add(cur_type);
+    return ret;
+  }
+  return cl->comm_option_commands(sv,itive_com);
 }
 
 int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
@@ -5989,6 +6062,7 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
   std::string ctype, tval;
   
   // Delete previous object
+  command_del();
   clear_obj();
   
   int ret=get_input_one(sv,"Enter type of object to create",ctype,"create",
@@ -6006,7 +6080,7 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     if (ret!=0) return ret;
     int_obj=o2scl::stoi(tval);
     type="int";
-    command_switch("int");
+    command_add("int");
     obj_name="int";
     
   } else if (ctype=="size_t") {
@@ -6016,7 +6090,7 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     if (ret!=0) return ret;
     size_t_obj=o2scl::stoi(tval);
     type="size_t";
-    command_switch("size_t");
+    command_add("size_t");
     obj_name="size_t";
     
   } else if (ctype=="double") {
@@ -6026,7 +6100,7 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     if (ret!=0) return ret;
     double_obj=o2scl::stod(tval);
     type="double";
-    command_switch("double");
+    command_add("double");
     obj_name="double";
     
   } else if (ctype=="string") {
@@ -6036,7 +6110,7 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     if (ret!=0) return ret;
     string_obj=tval;
     type="string";
-    command_switch("string");
+    command_add("string");
     obj_name="string";
     
   } else if (ctype=="double[]") {
@@ -6057,7 +6131,7 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
       vars["i"]=((double)i);
       doublev_obj.push_back(calc.eval(&vars));
     }
-    command_switch("double[]");
+    command_add("double[]");
     type="double[]";
     
   } else if (ctype=="table") {
@@ -6083,7 +6157,7 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     for(int li=0;li<cnl;li++) {
       table_obj.set(in[0],li,d2+((double)li)*d4);
     }
-    command_switch("table");
+    command_add("table");
     type="table";
     
   } else if (ctype=="table3d") {
@@ -6122,7 +6196,7 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     
     table3d_obj.function_slice(zfunc,zname);
     
-    command_switch("table3d");
+    command_add("table3d");
     type="table3d";
   }
 
