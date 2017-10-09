@@ -29,10 +29,15 @@
   - to-table 
   - sum/max/min/output/interp/deriv/integ/deriv2 for hist, hist_2d, and v<c>
   - index for table3d
-  - merge generic with gen3-list using "-generic 3d"
+  - merge generic with gen3-list using "-generic table3d"
   - create table3d output that can be read by gen3-list?
   - fix fit
   - use swap instead of copy in 'select' for table objects
+  - Make sure get_input() is used more consistently
+  - Make sure preview, output, internal, generic, and create work for 
+  all types
+  - Add matrix types?
+
 */
 
 #include <boost/numeric/ublas/vector.hpp>
@@ -830,13 +835,13 @@ int acol_manager::setup_options() {
      "in the unit cache.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_show_units),
      both},
-    {'v',"version","Print version information and O2scl settings.",0,0,"",
-     "",new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_version),
-     both},
     {0,"type","Show current object type.",0,0,"",
      ((string)"Show the current object type, either table, ")+
      "table3d, hist, hist_2d, or vector<contour_line>.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_type),
+     both},
+    {'v',"version","Print version information and O2scl settings.",0,0,"",
+     "",new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_version),
      both}
   };
   /*
