@@ -1053,6 +1053,13 @@ namespace o2scl {
 
   /** \brief Desc
    */
+  void set_seed(unsigned long int s) {
+    rg.set_seed(s);
+    return;
+  }
+
+  /** \brief Desc
+   */
   template<class=vec_t> prob_cond_mdim_rand_walk
   (vec_t &step, vec_t &low, vec_t &high) {
     if (step.size()!=low.size()) {
