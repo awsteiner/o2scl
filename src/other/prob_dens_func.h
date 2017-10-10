@@ -1104,6 +1104,13 @@ namespace o2scl {
   virtual void operator()(const vec_t &x, vec_t &x2) const {
     size_t nv=u_step.size();
     for(size_t i=0;i<nv;i++) {
+      if (x[i]<u_low[i] || x[i]>u_high[i]) {
+	std::cout << "Herex: " << i << " " << x[i] << " "
+		  << u_low[i] << " " << u_high[i] << std::endl;
+	O2SCL_ERR("Input out of bounds in rand_walk::operator().",
+		  o2scl::exc_einval);
+      }
+      x2[i]=x[i]+u_step[i]*(rg.random()*2.0-1.0);
       while (x2[i]<u_low[i] || x2[i]>u_high[i]) {
 	x2[i]=x[i]+u_step[i]*(rg.random()*2.0-1.0);
       }

@@ -730,14 +730,17 @@ int acol_manager::setup_options() {
      "Results are given at the current precision.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_calc),
      both},
-    {'c',"create","Create a table from uniform grid.",
-     0,4,"<name> <low> <hi> <step>",
-     ((string)"Create a new table with one column whose entries ")+
-     "are an evenly-spaced grid. This takes four arguments, the name of "+
-     "the column, the first value, the increment between successive values "+
-     "and the maximum possible value. Note that finite precision "+
-     "arithmetic may cause small deviations from the expected result. "+
-     "If a table is currently in memory, it is deallocated beforehand. ",
+    {'c',"create","Create an object",
+     0,-1,"<type> [...]",
+     ((string)"Create a new object"),
+     /*
+       ((string)"Create a new table with one column whose entries ")+
+       "are an evenly-spaced grid. This takes four arguments, the name of "+
+       "the column, the first value, the increment between successive values "+
+       "and the maximum possible value. Note that finite precision "+
+       "arithmetic may cause small deviations from the expected result. "+
+       "If a table is currently in memory, it is deallocated beforehand. ",
+     */
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_create),
      both},
     {0,"download","Download file from specified URL.",
@@ -752,8 +755,8 @@ int acol_manager::setup_options() {
      "gives the type and name of the object stored in that HDF5 group.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_filelist),
      both},
-    {'g',"generic","Read in a generic data file.",0,1,"<file>",
-     ((string)"Read a generic data file with the given filename. ")+
+    {'g',"generic","Read in a generic text file.",0,1,"<type> <file>",
+     ((string)"Read an object froma text file with the given filename. ")+
      "The first line of the file must either contain numeric data or "+
      "column names "+
      "separated by white space, without carriage returns, except for "+
@@ -793,7 +796,7 @@ int acol_manager::setup_options() {
 	  new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_html),
 	  both},
     */
-    {'q',"interactive","Load the interactive interface.",
+    {'q',"interactive","Toggle the interactive interface.",
      0,0,"",((string)"If given as a command-line parameter, 'interactive' ")+
      "toggles the execution of the interactive mode after the "+
      "command-line parameters are processed. If zero arguments are given "+
@@ -802,43 +805,46 @@ int acol_manager::setup_options() {
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_interactive),
      cl_param},
     {'i',"internal","Output in the internal HDF5 format.",0,1,"[file]",
-     ((string)"Output the current table in the internal HDF5 format. ")+
+     ((string)"Output the current object in the internal HDF5 format. ")+
      "If no argument is given, then output is sent to the screen, "+
      "otherwise, output is sent to the specified file. ",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_internal),
      both},
     {'o',"output","Output the full object as text.",0,1,"[file]",
-     ((string)"Output the table to the screen, or if the [file] ")+
-     "argument is specified, to a file. ",
+     ((string)"Output the object to the screen, or if the [file] ")+
+     "argument is specified, to a file. This is the same format as "+
+     "can be read using the 'generic' command.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_output),
      both},
-    {'P',"preview","Preview the current table.",0,2,
-     "[nlines] [ncols (for table/hist_2d)]",
-     ((string)"Print out [nlines] lines of data for as many columns as ")+
-     "will fit on the screen. The value of [nlines] defaults to 10 "+
-     "for table objects.",
+    {'P',"preview","Preview the current object.",0,2,
+     "[number of lines] [number of columns]",
+     ((string)"Print out all or part of the current object in format ")+
+     "suitable for the screen.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_preview),
      both},
-    {'r',"read","Read an object from a file.",0,2,
+    {'r',"read","Read an object from an O2scl-style HDF5 file.",0,2,
      "<file> [object name]",
-     ((string)"Read the internally-formatted (either text or binary) ")+
-     "file with the specified filename and make it the current table. " +
-     "If the [object name] argument is specified, then read the table "+
-     "with the specified name in a file with more than one table.",
+     ((string)"Read an HDF5 file with the specified filename. ")+
+     "If the [object name] argument is specified, then read the object "+
+     "with the specified name. Otherwise, look for the first table object, "+
+     "and if not found, look for the first table3d object, and so on, "+
+     "attempting to find a readable O2scl object.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_read),
      both},
     {0,"read-old","Read an object from a file.",0,2,"","",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_read_old),
      both},
     {0,"show-units","Show the unit conversion table.",0,0,"",
-     ((string)"(This doesn't show all possible conversions, only ")+
+     ((string)"This command does not show all possible conversions, only ")+
      "the conversions which have been previously used and are now stored "+
      "in the unit cache.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_show_units),
      both},
     {0,"type","Show current object type.",0,0,"",
      ((string)"Show the current object type, either table, ")+
-     "table3d, hist, hist_2d, or vector<contour_line>.",
+     "table3d, hist, hist_2d, or vector<contour_line>, int, double, "+
+     "char, string, int[], double[], string[], size_t, size_t[], or "+
+     "uniform_grid<double>.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_type),
      both},
     {'v',"version","Print version information and O2scl settings.",0,0,"",
@@ -1823,11 +1829,97 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
     ffout.close();
 
   } else if (type=="hist") {
-    cout << "Output hist." << endl;
+    
+    cout << hist_obj.size() << endl;
+    for(size_t k=0;k<hist_obj.size();k++) {
+      cout << hist_obj.get_bin_low_i(k) << " ";
+      cout << hist_obj.get_wgt_i(k) << endl;
+    }
+    cout << hist_obj.get_bin_high_i(hist_obj.size()-1) << endl;
+    
+  } else if (type=="int") {
+    
+    cout << int_obj << endl;
+    
+  } else if (type=="char") {
+    
+    cout << char_obj << endl;
+    
+  } else if (type=="double") {
+    
+    cout << double_obj << endl;
+    
+   } else if (type=="size_t") {
+
+    cout << size_t_obj << endl;
+
+  } else if (type=="string") {
+
+    cout << string_obj << endl;
+
+  } else if (type=="int[]") {
+
+    cout << intv_obj.size() << endl;
+    for(size_t k=0;k<intv_obj.size();k++) {
+      cout << intv_obj[k] << " ";
+    }
+    cout << endl;
+
+  } else if (type=="double[]") {
+
+    cout << doublev_obj.size() << endl;
+    for(size_t k=0;k<doublev_obj.size();k++) {
+      cout << doublev_obj[k] << " ";
+    }
+    cout << endl;
+
+  } else if (type=="size_t[]") {
+
+    cout << size_tv_obj.size() << endl;
+    for(size_t k=0;k<size_tv_obj.size();k++) {
+      cout << size_tv_obj[k] << " ";
+    }
+    cout << endl;
+
+  } else if (type=="string[]") {
+
+    cout << stringv_obj.size() << endl;
+    for(size_t k=0;k<stringv_obj.size();k++) {
+      cout << stringv_obj[k] << endl;
+    }
+    cout << endl;
+
   } else if (type=="hist_2d") {
-    cout << "Output hist_2d." << endl;
+    
+    cout << hist_2d_obj.size_x() << " ";
+    for(size_t k=0;k<hist_2d_obj.size_x();k++) {
+      cout << hist_2d_obj.get_x_low_i(k) << " ";
+    }
+    cout << hist_2d_obj.get_x_high_i(hist_2d_obj.size_x()-1) << endl;
+
+    cout << hist_2d_obj.size_y() << " ";
+    for(size_t k=0;k<hist_2d_obj.size_y();k++) {
+      cout << hist_2d_obj.get_y_low_i(k) << " ";
+    }
+    cout << hist_2d_obj.get_y_high_i(hist_2d_obj.size_y()-1) << endl;
+
+    for(size_t ki=0;ki<hist_2d_obj.size_x();ki++) {
+      for(size_t kj=0;kj<hist_2d_obj.size_y();kj++) {
+	cout << hist_2d_obj.get_wgt_i(ki,kj) << " ";
+      }
+      cout << endl;
+    }
+
   } else if (type=="vector<contour_line>") {
-    cout << "Output vector<contour_line>." << endl;
+
+    cout << cont_obj.size() << endl;
+    for(size_t k=0;k<cont_obj.size();k++) {
+      cout << cont_obj[k].level << " " << cont_obj[k].x.size() << endl;
+      for(size_t kk=0;kk<cont_obj[k].x.size();kk++) {
+	cout << cont_obj[k].x[kk] << " ";
+	cout << cont_obj[k].y[kk] << endl;
+      }
+    }
   }
   
   return 0;

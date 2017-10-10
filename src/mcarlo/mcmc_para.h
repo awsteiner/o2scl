@@ -883,8 +883,8 @@ namespace o2scl {
 	  } else if (pd_mode) {
 	    
 	    // Use proposal distribution and compute associated weight
-	    std::cout << "Here1: " << it << " " << this->mpi_rank
-		      << std::endl;
+	    //std::cout << "Here1: " << it << " " << this->mpi_rank
+	    //<< std::endl;
 	    (*prop_dist[it])(current[it],next[it]);
 	    q_prop[it]=prop_dist[it]->log_pdf(current[it],next[it])-
 	      prop_dist[it]->log_pdf(next[it],current[it]);
@@ -892,8 +892,15 @@ namespace o2scl {
 	      O2SCL_ERR2("Proposal distribution not finite in ",
 			 "mcmc_para_base::mcmc().",o2scl::exc_efailed);
 	    }
-	    std::cout << "Here2: " << it << " " << this->mpi_rank
-		      << " " << q_prop[it] << std::endl;
+	    /*
+	      std::cout << "Here2: " << it << " " << this->mpi_rank
+	      << " " << q_prop[it] << std::endl;
+	      for(size_t kk=0;kk<n_params;kk++) {
+	      std::cout << kk << ". " << current[it][kk] << " "
+	      << low[kk] << " " 
+	      << next[it][kk] << " " << high[kk] << std::endl;
+	      }
+	    */
 	    
 	  } else {
 	    
@@ -916,11 +923,19 @@ namespace o2scl {
 	      func_ret[it]=mcmc_skip;
 	      if (verbose>=3) {
 		if (next[it][k]<low[k]) {
+		  std::cout << "mcmc (" << it << ","
+			  << mpi_rank << "): Parameter with index " << k
+			  << " and value " << next[it][k]
+			  << " smaller than limit " << low[k] << std::endl;
 		  scr_out << "mcmc (" << it << ","
 			  << mpi_rank << "): Parameter with index " << k
 			  << " and value " << next[it][k]
 			  << " smaller than limit " << low[k] << std::endl;
 		} else {
+		  std::cout << "mcmc (" << it << "," << mpi_rank
+			  << "): Parameter with index " << k
+			  << " and value " << next[it][k]
+			  << " larger than limit " << high[k] << std::endl;
 		  scr_out << "mcmc (" << it << "," << mpi_rank
 			  << "): Parameter with index " << k
 			  << " and value " << next[it][k]
@@ -951,6 +966,8 @@ namespace o2scl {
 	}
       }
       // End of parallel region
+
+      //std::cout << "Herex." << std::endl;
       
       // ---------------------------------------------------------
       // Post-function verbose output in case parameter was out of
@@ -996,6 +1013,8 @@ namespace o2scl {
       // Parallel region to accept or reject, and call measurement
       // function
       
+      //std::cout << "Herex2." << std::endl;
+
 #ifdef O2SCL_OPENMP
 #pragma omp parallel default(shared)
 #endif
@@ -1004,6 +1023,12 @@ namespace o2scl {
 #pragma omp for
 #endif
 	for(size_t it=0;it<n_threads;it++) {
+
+	  /*
+	    std::cout << "Herex3 " << it << " " << aff_inv << " "
+	    << pd_mode << " " << func_ret[it] << " "
+	    << mcmc_skip << std::endl;
+	  */
 	  
 	  // Index in storage
 	  size_t sindex=n_walk*it+curr_walker[it];
@@ -1024,13 +1049,22 @@ namespace o2scl {
 		accept=true;
 	      }
 	    } else if (pd_mode) {
-	      std::cout << "Here3: " << it << " " << this->mpi_rank
-			<< std::endl;
+	      //std::cout << "Here3: " << it << " " << this->mpi_rank
+	      //<< std::endl;
 	      if (r<exp(w_next[it]-w_current[sindex]+q_prop[it])) {
 		accept=true;
 	      }
-	      std::cout << "Here4: " << it << " " << this->mpi_rank
+	      /*
+	      std::cout << "Here4: " << accept << " " << it << " "
+			<< sindex << " "
+			<< w_next[it] << " " << w_current[sindex] << " "
+			<< exp(w_next[it]-w_current[sindex]+q_prop[it]) << " "
+			<< r << " "
+			<< it << " " << this->mpi_rank
 			<< std::endl;
+	      exit(-1);
+	      */
+	      
 	    } else {
 	      // Metropolis algorithm
 	      if (r<exp(w_next[it]-w_current[sindex])) {
@@ -1088,6 +1122,9 @@ namespace o2scl {
       }
       // End of parallel region
 
+      //std::cout << "Herex4 " << std::endl;
+      //exit(-1);
+      
       // -----------------------------------------------------------
       // Post-measurement verbose output of iteration count, weight,
       // and walker index for each thread
