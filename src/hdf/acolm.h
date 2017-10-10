@@ -345,9 +345,6 @@ namespace o2scl_acol {
     /// Read a generic data file
     virtual int comm_generic(std::vector<std::string> &sv, bool itive_com);
 
-    /// Read a generic data file
-    virtual int comm_gen3_list(std::vector<std::string> &sv, bool itive_com);
-
     /// Print out an entire row
     virtual int comm_get_row(std::vector<std::string> &sv, bool itive_com);
 

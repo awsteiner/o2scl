@@ -26,10 +26,9 @@
 
 /*
   Todos: 
-  - to-table 
+  - to-table for array types
   - sum/max/min/output/interp/deriv/integ/deriv2 for hist, hist_2d, and v<c>
-  - index for table3d
-  - merge generic with gen3-list using "-generic table3d"
+  - xindex and yindex for table3d
   - create table3d output that can be read by gen3-list?
   - fix fit
   - use swap instead of copy in 'select' for table objects
@@ -720,7 +719,7 @@ int acol_manager::setup_options() {
   const int cl_param=cli::comm_option_cl_param;
   const int both=cli::comm_option_both;
 
-  static const int narr=16;
+  static const int narr=15;
 
   // Options, sorted by long name. We allow 0 parameters in many of these
   // options so they can be requested from the user in interactive mode. 
@@ -762,6 +761,7 @@ int acol_manager::setup_options() {
      "to contain data with the same number of columns as the first line. ",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_generic),
      both},
+    /*
     {0,"gen3-list","Read in a generic data file.",0,1,"<file>",
      ((string)"This command reads in a generic data file ")+
      "which specifies a table3d object. The data must be stored in columns "+
@@ -774,6 +774,7 @@ int acol_manager::setup_options() {
      "and y-grids and the names of each slice (in order).",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_gen3_list),
      both},
+    */
     {0,"get-conv","Get a unit conversion factor.",0,2,
      "<old unit> <new unit>",((string)"This command gets a unit ")+
      "conversion factor. It only works if the conversion is one of the "
@@ -5220,66 +5221,164 @@ int acol_manager::make_unique_name(string &col, std::vector<string> &cnames) {
 }
 #endif
 
-int acol_manager::comm_gen3_list(std::vector<std::string> &sv,
-				 bool itive_com) {
-
-  if (sv.size()<2) {
-    cerr << "No file specified in 'gen3-list'." << endl;
-    return o2scl::exc_efailed;
-  }
-  
-  // Input a generic file
-  ifstream ifs;
-  ifs.open(sv[1].c_str());
-  if (!(ifs)) {
-    cerr << "Read failed. Non-existent file?" << endl;
-    return exc_efailed;
-  }
+int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
+  std::string ctype;
 
   // Delete previous object
   command_del();
   clear_obj();
   
-  table3d_obj.read_gen3_list(ifs,verbose);
+  int ret=get_input_one(sv,"Enter type of object to create",ctype,"create",
+			itive_com);
+  if (ret!=0) return ret;
 
-  command_add("table3d");
-  type="table3d";
+  vector<string> sv2=sv;
+  vector<string>::iterator it=sv2.begin();
+  sv2.erase(it+1);
   
-  ifs.close();
-
-  return 0;
-}
-
-int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
-
-  if (sv.size()<2) {
-    cerr << "No file specified in 'generic'." << endl;
-    return o2scl::exc_efailed;
-  }
-
-  // Input a generic file
+  // Open the file 
   ifstream ifs;
-  if (sv[1]!=((std::string)"cin")) {
-    ifs.open(sv[1].c_str());
+  if (sv2[1]!=((std::string)"cin")) {
+    ifs.open(sv2[1].c_str());
     if (!(ifs)) {
-      cerr << "Read of file named '" << sv[1]
+      cerr << "Read of file named '" << sv2[1]
 	   << "' failed. Non-existent file?" << endl;
       return exc_efailed;
     }
   }
+    
+  if (ctype=="table") {
+    
+    if (sv2[1]!=((std::string)"cin")) {
+      table_obj.read_generic(ifs,verbose);
+    } else {
+      table_obj.read_generic(std::cin,verbose);
+    }
 
-  // Delete previous object
-  command_del();
-  clear_obj();
+  } else if (ctype=="table3d") {
+    
+    if (sv2[1]!=((std::string)"cin")) {
+      table3d_obj.read_gen3_list(ifs,verbose);
+    } else {
+      table3d_obj.read_gen3_list(std::cin,verbose);
+    }
+    
+  } else if (ctype=="int") {
 
-  if (sv[1]!=((std::string)"cin")) {
-    table_obj.read_generic(ifs,verbose);
-    ifs.close();
-  } else {
-    table_obj.read_generic(std::cin,verbose);
+    if (sv2[1]!=((std::string)"cin")) {
+      ifs >> int_obj;
+    } else {
+      cin >> int_obj;
+    }
+    
+  } else if (ctype=="char") {
+
+    if (sv2[1]!=((std::string)"cin")) {
+      ifs >> char_obj;
+    } else {
+      cin >> char_obj;
+    }
+    
+  } else if (ctype=="double") {
+
+    if (sv2[1]!=((std::string)"cin")) {
+      ifs >> double_obj;
+    } else {
+      cin >> double_obj;
+    }
+    
+  } else if (ctype=="size_t") {
+
+    if (sv2[1]!=((std::string)"cin")) {
+      ifs >> size_t_obj;
+    } else {
+      cin >> size_t_obj;
+    }
+    
+  } else if (ctype=="string") {
+
+    if (sv2[1]!=((std::string)"cin")) {
+      getline(ifs,string_obj);
+    } else {
+      getline(cin,string_obj);
+    }
+    
+  } else if (ctype=="int[]") {
+
+    size_t n;
+    if (sv2[1]!=((std::string)"cin")) {
+      ifs >> n;
+      intv_obj.resize(n);
+      for(size_t i=0;i<n;i++) {
+	ifs >> intv_obj[i];
+      }
+    } else {
+      cin >> n;
+      intv_obj.resize(n);
+      for(size_t i=0;i<n;i++) {
+	cin >> intv_obj[i];
+      }
+    }
+    
+  } else if (ctype=="double[]") {
+
+    size_t n;
+    if (sv2[1]!=((std::string)"cin")) {
+      ifs >> n;
+      doublev_obj.resize(n);
+      for(size_t i=0;i<n;i++) {
+	ifs >> doublev_obj[i];
+      }
+    } else {
+      cin >> n;
+      doublev_obj.resize(n);
+      for(size_t i=0;i<n;i++) {
+	cin >> doublev_obj[i];
+      }
+    }
+    
+  } else if (ctype=="size_t[]") {
+
+    size_t n;
+    if (sv2[1]!=((std::string)"cin")) {
+      ifs >> n;
+      size_tv_obj.resize(n);
+      for(size_t i=0;i<n;i++) {
+	ifs >> size_tv_obj[i];
+      }
+    } else {
+      cin >> n;
+      size_tv_obj.resize(n);
+      for(size_t i=0;i<n;i++) {
+	cin >> size_tv_obj[i];
+      }
+    }
+    
+  } else if (ctype=="string[]") {
+
+    size_t n;
+    if (sv2[1]!=((std::string)"cin")) {
+      ifs >> n;
+      stringv_obj.resize(n);
+      for(size_t i=0;i<n;i++) {
+	getline(ifs,stringv_obj[i]);
+      }
+    } else {
+      cin >> n;
+      stringv_obj.resize(n);
+      for(size_t i=0;i<n;i++) {
+	getline(cin,stringv_obj[i]);
+      }
+    }
+    
   }
-  command_add("table");
-  type="table";
+
+  command_add(ctype);
+  type=ctype;
+  
+  if (sv2[1]!=((std::string)"cin")) {
+    ifs.close();
+  }
 
   return 0;
 }
