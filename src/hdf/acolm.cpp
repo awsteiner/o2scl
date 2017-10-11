@@ -4338,9 +4338,33 @@ int acol_manager::comm_internal(std::vector<std::string> &sv, bool itive_com) {
 
     hf.seti(obj_name,double_obj);
     
+  } else if (type=="char") {
+
+    hf.setc(obj_name,char_obj);
+    
+  } else if (type=="string") {
+
+    hf.sets(obj_name,string_obj);
+    
+  } else if (type=="size_t") {
+
+    hf.set_szt(obj_name,size_t_obj);
+    
   } else if (type=="double[]") {
 
     hf.setd_vec(obj_name,doublev_obj);
+    
+  } else if (type=="int[]") {
+
+    hf.seti_vec(obj_name,intv_obj);
+    
+  } else if (type=="size_t[]") {
+
+    hf.set_szt_vec(obj_name,size_tv_obj);
+    
+  } else if (type=="string[]") {
+
+    hf.sets_vec(obj_name,stringv_obj);
     
   } else if (type=="table3d") {
     
