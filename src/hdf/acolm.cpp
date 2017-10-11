@@ -529,15 +529,10 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
 void acol_manager::command_del() {
 
   if (type=="int") {
-    cl->remove_comm_option("value");
   } else if (type=="double") {
-    cl->remove_comm_option("value");
   } else if (type=="char") {
-    cl->remove_comm_option("value");
   } else if (type=="size_t") {
-    cl->remove_comm_option("value");
   } else if (type=="string") {
-    cl->remove_comm_option("value");
   } else if (type=="table") {
     cl->remove_comm_option("assign");
     cl->remove_comm_option("delete-col");
@@ -4336,7 +4331,7 @@ int acol_manager::comm_internal(std::vector<std::string> &sv, bool itive_com) {
     
   } else if (type=="double") {
 
-    hf.seti(obj_name,double_obj);
+    hf.setd(obj_name,double_obj);
     
   } else if (type=="char") {
 
@@ -5747,6 +5742,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_commands(std::vector<std::string> &sv, bool itive_com) {
   if (sv.size()==2) {
+    cout << "Commands argument: " << sv[1] << endl;
     string temp_type=sv[1];
     string cur_type=type;
 
@@ -6285,7 +6281,7 @@ int acol_manager::comm_delete_col(std::vector<std::string> &sv,
 
 int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
   std::string ctype, tval;
-  
+
   // Delete previous object
   command_del();
   clear_obj();
@@ -6313,10 +6309,20 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     int ret=get_input_one(sv2,"Enter size_t",tval,"create",
 			  itive_com);
     if (ret!=0) return ret;
-    size_t_obj=o2scl::stoi(tval);
+    size_t_obj=o2scl::stoszt(tval);
     type="size_t";
     command_add("size_t");
     obj_name="size_t";
+    
+  } else if (ctype=="char") {
+
+    int ret=get_input_one(sv2,"Enter char",tval,"create",
+			  itive_com);
+    if (ret!=0) return ret;
+    char_obj=tval[0];
+    type="char";
+    command_add("char");
+    obj_name="char";
     
   } else if (ctype=="double") {
 
@@ -6327,7 +6333,7 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     type="double";
     command_add("double");
     obj_name="double";
-    
+
   } else if (ctype=="string") {
 
     int ret=get_input_one(sv2,"Enter string",tval,"create",
@@ -6423,6 +6429,12 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     
     command_add("table3d");
     type="table3d";
+
+  } else {
+
+    cerr << "Cannot create object of type " << ctype << endl;
+    return 1;
+      
   }
 
   return 0;

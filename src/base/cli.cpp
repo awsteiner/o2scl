@@ -1381,8 +1381,10 @@ void cli::remove_comm_option(std::string cmd) {
       return;
     }
   }
-  O2SCL_ERR2("Option not found in ",
-	    "cli::remove_comm_option().",o2scl::exc_einval);
+  string str=((string)"Option ")+cmd+" not found in "+
+    "cli::remove_comm_option().";
+  O2SCL_ERR(str.c_str(),o2scl::exc_einval);
+  return;
 }  
 
 int cli::set_comm_option(comm_option_s &ic) {
