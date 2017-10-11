@@ -696,7 +696,7 @@ namespace o2scl {
   
   };
 
-    /** \brief A multidimensional distribution formed by the product
+  /** \brief A multidimensional distribution formed by the product
       of several one-dimensional distributions
   */
   template<class vec_t=boost::numeric::ublas::vector<double> >
@@ -704,39 +704,39 @@ namespace o2scl {
     
   protected:
     
-    /// Vector of one-dimensional distributions
-    std::vector<prob_dens_func> list;
+  /// Vector of one-dimensional distributions
+  std::vector<prob_dens_func> list;
     
   public:
     
-    prob_dens_mdim_factor(std::vector<prob_dens_func> &p_list) {
-      list=p_list;
-    }
+  prob_dens_mdim_factor(std::vector<prob_dens_func> &p_list) {
+    list=p_list;
+  }
   
-    /// Return the dimensionality
-    virtual size_t dim() const {
-      return list.size();
-    }
+  /// Return the dimensionality
+  virtual size_t dim() const {
+    return list.size();
+  }
   
   /// The normalized density 
-    virtual double pdf(const vec_t &x) const {
-      double ret=1.0;
-      for(size_t i=0;i<list.size();i++) ret*=list[i].pdf(x[i]);
-      return ret;
-    }
+  virtual double pdf(const vec_t &x) const {
+    double ret=1.0;
+    for(size_t i=0;i<list.size();i++) ret*=list[i].pdf(x[i]);
+    return ret;
+  }
 
-    /// The log of the normalized density 
-    virtual double log_pdf(const vec_t &x) const {
-      double ret=1.0;
-      for(size_t i=0;i<list.size();i++) ret*=list[i].pdf(x[i]);
-      return log(ret);
-    }
+  /// The log of the normalized density 
+  virtual double log_pdf(const vec_t &x) const {
+    double ret=1.0;
+    for(size_t i=0;i<list.size();i++) ret*=list[i].pdf(x[i]);
+    return log(ret);
+  }
     
-    /// Sample the distribution
-    virtual void operator()(vec_t &x) const {
-      for(size_t i=0;i<list.size();i++) x[i]=list[i]();
-      return;
-    }
+  /// Sample the distribution
+  virtual void operator()(vec_t &x) const {
+    for(size_t i=0;i<list.size();i++) x[i]=list[i]();
+    return;
+  }
   
   };
   
@@ -951,7 +951,7 @@ namespace o2scl {
     return;
   }
 
-  };
+    };
 
   /** \brief A multi-dimensional conditional probability density function
       
@@ -994,7 +994,7 @@ namespace o2scl {
       instead of rng_gsl, but this caused problems with
       intel compilers.
       \endcomment
-   */
+  */
   template<class vec_t=boost::numeric::ublas::vector<double> >
     class prob_cond_mdim_rand_walk : public prob_cond_mdim<vec_t> {
 
@@ -1026,7 +1026,7 @@ namespace o2scl {
       This can't be virtual because it needs to be called
       by the constructor
       \endcomment
-   */
+  */
   int set_internal(vec_t &step, vec_t &low, vec_t &high) {
     d_pdf=1.0;
     u_step.resize(step.size());
@@ -1289,8 +1289,9 @@ namespace o2scl {
     return;
   }
 
-  };
+    };
 
+#ifdef O2SCL_NEVER_DEFINED  
   /** \brief A multidimensional normal distribution from
       a Gaussian process
       
@@ -1305,8 +1306,8 @@ namespace o2scl {
     
   public:
   
- 
-};    
+    };
+#endif
   
 #ifndef DOXYGEN_NO_O2NS
 }

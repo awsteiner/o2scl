@@ -1631,28 +1631,25 @@ int acol_manager::comm_nlines(std::vector<std::string> &sv,
 
 int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
 
+  //--------------------------------------------------------------------
+  // Output formatting
+  
+  ostream *fout;
+  ofstream ffout;
+  
+  if (sv.size()==1) {
+    fout=&cout;
+  } else {
+    ffout.open(sv[1].c_str());
+    fout=&ffout;
+  }
+  
+  if (scientific) fout->setf(ios::scientific);
+  else fout->unsetf(ios::scientific);
+  fout->precision(prec);
+
   if (type=="table3d") {
     
-    if (type!="table3d") {
-      cerr << "No table3d to output in command 'output'." << endl;
-      return exc_efailed;
-    }
-
-    ostream *fout;
-    ofstream ffout;
-    
-    if (sv.size()==1) {
-      fout=&cout;
-    } else {
-      ffout.open(sv[1].c_str());
-      fout=&ffout;
-    }
-    
-    if (scientific) fout->setf(ios::scientific);
-    else fout->unsetf(ios::scientific);
-    
-    fout->precision(prec);
-
     size_t nx, ny;
     table3d_obj.get_size(nx,ny);
     if (nx!=0 && ny!=0) {
@@ -1667,12 +1664,12 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
 	(*fout) << table3d_obj.get_grid_y(i) << " ";
       }
       (*fout) << endl;
-
+      
       size_t nt=table3d_obj.get_nslices(); 
       if (nt!=0) {
 	for(size_t k=0;k<nt;k++) {
-	  (*fout) << "Slice " << k << ": "
-		  << table3d_obj.get_slice_name(k) << endl;
+	  (*fout) << "Slice " << k << ": ";
+	  (*fout) << table3d_obj.get_slice_name(k) << endl;
 	  if (k==0) {
 	    (*fout) << "Outer loops over x grid, inner loop over y grid." 
 		    << endl;
@@ -1688,32 +1685,10 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
       }
     }
 
-    ffout.close();
-
     return 0;
 
   } else if (type=="table") {
     
-    //--------------------------------------------------------------------
-    // Create stream
-    
-    ostream *fout;
-    ofstream ffout;
-    
-    if (sv.size()==1) {
-      fout=&cout;
-    } else {
-      ffout.open(sv[1].c_str());
-      fout=&ffout;
-    }
-    
-    //--------------------------------------------------------------------
-    // Output formatting
-
-    if (scientific) fout->setf(ios::scientific);
-    else fout->unsetf(ios::scientific);
-    fout->precision(prec);
-
     if (table_obj.get_ncolumns()>0) {
 
       //--------------------------------------------------------------------
@@ -1821,100 +1796,111 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
     
     }
 
-    ffout.close();
-
   } else if (type=="hist") {
     
-    cout << hist_obj.size() << endl;
     for(size_t k=0;k<hist_obj.size();k++) {
-      cout << hist_obj.get_bin_low_i(k) << " ";
-      cout << hist_obj.get_wgt_i(k) << endl;
+      (*fout) << hist_obj.get_bin_low_i(k) << " ";
     }
-    cout << hist_obj.get_bin_high_i(hist_obj.size()-1) << endl;
+    (*fout) << hist_obj.get_bin_high_i(hist_obj.size()-1) << endl;
+    for(size_t k=0;k<hist_obj.size();k++) {
+      (*fout) << hist_obj.get_wgt_i(k) << endl;
+    }
     
   } else if (type=="int") {
     
-    cout << int_obj << endl;
+    (*fout) << int_obj << endl;
     
   } else if (type=="char") {
     
-    cout << char_obj << endl;
+    (*fout) << char_obj << endl;
     
   } else if (type=="double") {
     
-    cout << double_obj << endl;
+    (*fout) << double_obj << endl;
     
    } else if (type=="size_t") {
 
-    cout << size_t_obj << endl;
+    (*fout) << size_t_obj << endl;
 
   } else if (type=="string") {
 
-    cout << string_obj << endl;
+    (*fout) << string_obj << endl;
 
   } else if (type=="int[]") {
 
-    cout << intv_obj.size() << endl;
     for(size_t k=0;k<intv_obj.size();k++) {
-      cout << intv_obj[k] << " ";
+      (*fout) << intv_obj[k] << " ";
     }
-    cout << endl;
+    (*fout) << endl;
 
   } else if (type=="double[]") {
 
-    cout << doublev_obj.size() << endl;
     for(size_t k=0;k<doublev_obj.size();k++) {
-      cout << doublev_obj[k] << " ";
+      (*fout) << doublev_obj[k] << " ";
     }
-    cout << endl;
+    (*fout) << endl;
 
   } else if (type=="size_t[]") {
 
-    cout << size_tv_obj.size() << endl;
     for(size_t k=0;k<size_tv_obj.size();k++) {
-      cout << size_tv_obj[k] << " ";
+      (*fout) << size_tv_obj[k] << " ";
     }
-    cout << endl;
+    (*fout) << endl;
 
   } else if (type=="string[]") {
 
-    cout << stringv_obj.size() << endl;
+    (*fout) << stringv_obj.size() << endl;
     for(size_t k=0;k<stringv_obj.size();k++) {
-      cout << stringv_obj[k] << endl;
+      (*fout) << stringv_obj[k] << endl;
     }
-    cout << endl;
+    (*fout) << endl;
 
   } else if (type=="hist_2d") {
     
-    cout << hist_2d_obj.size_x() << " ";
     for(size_t k=0;k<hist_2d_obj.size_x();k++) {
-      cout << hist_2d_obj.get_x_low_i(k) << " ";
+      (*fout) << hist_2d_obj.get_x_low_i(k) << " ";
     }
-    cout << hist_2d_obj.get_x_high_i(hist_2d_obj.size_x()-1) << endl;
+    (*fout) << hist_2d_obj.get_x_high_i(hist_2d_obj.size_x()-1) << endl;
 
-    cout << hist_2d_obj.size_y() << " ";
     for(size_t k=0;k<hist_2d_obj.size_y();k++) {
-      cout << hist_2d_obj.get_y_low_i(k) << " ";
+      (*fout) << hist_2d_obj.get_y_low_i(k) << " ";
     }
-    cout << hist_2d_obj.get_y_high_i(hist_2d_obj.size_y()-1) << endl;
+    (*fout) << hist_2d_obj.get_y_high_i(hist_2d_obj.size_y()-1) << endl;
 
     for(size_t ki=0;ki<hist_2d_obj.size_x();ki++) {
       for(size_t kj=0;kj<hist_2d_obj.size_y();kj++) {
-	cout << hist_2d_obj.get_wgt_i(ki,kj) << " ";
+	(*fout) << hist_2d_obj.get_wgt_i(ki,kj) << " ";
       }
-      cout << endl;
+      (*fout) << endl;
     }
 
   } else if (type=="vector<contour_line>") {
 
-    cout << cont_obj.size() << endl;
+    (*fout) << cont_obj.size() << endl;
     for(size_t k=0;k<cont_obj.size();k++) {
-      cout << cont_obj[k].level << " " << cont_obj[k].x.size() << endl;
+      (*fout) << cont_obj[k].level << " " << cont_obj[k].x.size() << endl;
       for(size_t kk=0;kk<cont_obj[k].x.size();kk++) {
-	cout << cont_obj[k].x[kk] << " ";
-	cout << cont_obj[k].y[kk] << endl;
+	(*fout) << cont_obj[k].x[kk] << " ";
+	(*fout) << cont_obj[k].y[kk] << endl;
       }
     }
+
+  } else if (type=="uniform_grid<double>") {
+
+    (*fout) << ug_obj.get_nbins() << " ";
+    (*fout) << ug_obj.get_start() << " ";
+    (*fout) << ug_obj.get_end() << " ";
+    (*fout) << ug_obj.get_width() << endl;
+
+  } else {
+
+    cerr << "Cannot output type " << type << endl;
+    return 2;
+    
+  }
+
+  if (sv.size()!=1) {
+    ffout.close();
   }
   
   return 0;
@@ -4381,6 +4367,10 @@ int acol_manager::comm_internal(std::vector<std::string> &sv, bool itive_com) {
 
     hdf_output(hf,cont_obj,obj_name);
     
+  } else if (type=="uniform_grid<double>") {
+
+    hdf_output(hf,ug_obj,obj_name);
+    
   }
 
   hf.close();
@@ -5416,53 +5406,68 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
     
   } else if (ctype=="int[]") {
 
-    size_t n;
     if (sv2[1]!=((std::string)"cin")) {
-      ifs >> n;
-      intv_obj.resize(n);
-      for(size_t i=0;i<n;i++) {
-	ifs >> intv_obj[i];
+      getline(ifs,string_obj);
+      std::istringstream is(string_obj);
+      int itmp;
+      intv_obj.clear();
+      while (is >> itmp) {
+	intv_obj.push_back(itmp);
       }
+      string_obj.clear();
     } else {
-      cin >> n;
-      intv_obj.resize(n);
-      for(size_t i=0;i<n;i++) {
-	cin >> intv_obj[i];
+      getline(cin,string_obj);
+      std::istringstream is(string_obj);
+      int itmp;
+      intv_obj.clear();
+      while (is >> itmp) {
+	intv_obj.push_back(itmp);
       }
+      string_obj.clear();
     }
     
   } else if (ctype=="double[]") {
 
-    size_t n;
     if (sv2[1]!=((std::string)"cin")) {
-      ifs >> n;
-      doublev_obj.resize(n);
-      for(size_t i=0;i<n;i++) {
-	ifs >> doublev_obj[i];
+      getline(ifs,string_obj);
+      std::istringstream is(string_obj);
+      double dtmp;
+      doublev_obj.clear();
+      while (is >> dtmp) {
+	doublev_obj.push_back(dtmp);
       }
+      string_obj.clear();
     } else {
-      cin >> n;
-      doublev_obj.resize(n);
-      for(size_t i=0;i<n;i++) {
-	cin >> doublev_obj[i];
+      getline(cin,string_obj);
+      std::istringstream is(string_obj);
+      double dtmp;
+      doublev_obj.clear();
+      while (is >> dtmp) {
+	doublev_obj.push_back(dtmp);
       }
+      string_obj.clear();
     }
     
   } else if (ctype=="size_t[]") {
-
-    size_t n;
+    
     if (sv2[1]!=((std::string)"cin")) {
-      ifs >> n;
-      size_tv_obj.resize(n);
-      for(size_t i=0;i<n;i++) {
-	ifs >> size_tv_obj[i];
+      getline(ifs,string_obj);
+      std::istringstream is(string_obj);
+      size_t sttmp;
+      size_tv_obj.clear();
+      while (is >> sttmp) {
+	size_tv_obj.push_back(sttmp);
       }
+      string_obj.clear();
     } else {
-      cin >> n;
-      size_tv_obj.resize(n);
-      for(size_t i=0;i<n;i++) {
-	cin >> size_tv_obj[i];
+      getline(cin,string_obj);
+      std::istringstream is(string_obj);
+      size_t sttmp;
+      size_tv_obj.clear();
+      while (is >> sttmp) {
+	size_tv_obj.push_back(sttmp);
       }
+      string_obj.clear();
     }
     
   } else if (ctype=="string[]") {
