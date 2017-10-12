@@ -882,12 +882,20 @@ namespace o2scl {
 	    
 	  } else if (pd_mode) {
 	    
+	    //virtual double metrop_hast(const vec_t &x, vec_t &x2) const {
+	    //operator()(x,x2);
+	    //return log_pdf(x,x2)-log_pdf(x2,x);
+
 	    // Use proposal distribution and compute associated weight
-	    //std::cout << "Here1: " << it << " " << this->mpi_rank
-	    //<< std::endl;
-	    (*prop_dist[it])(current[it],next[it]);
-	    q_prop[it]=prop_dist[it]->log_pdf(current[it],next[it])-
+	    q_prop[it]=prop_dist[it]->metrop_hast(current[it],next[it]);
+	    std::cout << q_prop[it] << std::endl;
+	    exit(-1);
+
+	    /*
+	      (*prop_dist[it])(current[it],next[it]);
+	      q_prop[it]=prop_dist[it]->log_pdf(current[it],next[it])-
 	      prop_dist[it]->log_pdf(next[it],current[it]);
+	    */
 	    if (!std::isfinite(q_prop[it])) {
 	      O2SCL_ERR2("Proposal distribution not finite in ",
 			 "mcmc_para_base::mcmc().",o2scl::exc_efailed);

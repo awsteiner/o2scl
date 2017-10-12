@@ -967,10 +967,10 @@ namespace o2scl {
     return 0;
   }
   
-  /// The normalized density 
+  /// The conditional probability
   virtual double pdf(const vec_t &x, const vec_t &x2) const=0;
   
-  /// The log of the normalized density 
+  /// The log of the conditional probability
   virtual double log_pdf(const vec_t &x, const vec_t &x2) const=0;
   
   /// Sample the distribution
@@ -993,10 +993,23 @@ namespace o2scl {
       I had previously used std::uniform_real_distribution
       instead of rng_gsl, but this caused problems with
       intel compilers.
+
+      The Metropolis step is
+      P(x')g(xt|x')
+      -------------
+      P(xt)g(x'|xt)
+
+      and if we do not include the g ratio, then the edges
+      will be undersampled because we don't properly include
+      the rejections 
+
+      For g(x'|xt), if xt is near the edge, then the cond. prob.
+      is larger, thus the g ratio is smaller than 1, encouraging
+      more rejections.
       \endcomment
   */
   template<class vec_t=boost::numeric::ublas::vector<double> >
-    class prob_cond_mdim_rand_walk : public prob_cond_mdim<vec_t> {
+    class prob_cond_mdim_fixed_step : public prob_cond_mdim<vec_t> {
 
   protected:
 
@@ -1012,10 +1025,6 @@ namespace o2scl {
    */
   std::vector<double> u_high;
 
-  /** \brief Store the normalized density
-   */
-  double d_pdf;
-  
   /** \brief Internal random number generator
    */
   mutable rng_gsl rg;
@@ -1028,7 +1037,6 @@ namespace o2scl {
       \endcomment
   */
   int set_internal(vec_t &step, vec_t &low, vec_t &high) {
-    d_pdf=1.0;
     u_step.resize(step.size());
     u_low.resize(step.size());
     u_high.resize(step.size());
@@ -1041,51 +1049,51 @@ namespace o2scl {
 	u_low[i]=low[i];
 	u_high[i]=high[i];
       }
-      d_pdf/=fabs(high[i]-low[i]);
     }
     return 0;
   }
 
   public:
   
-  prob_cond_mdim_rand_walk() {
+  prob_cond_mdim_fixed_step() {
   }
 
-  /** \brief Desc
+  /** \brief Set the random number generator seed
    */
   void set_seed(unsigned long int s) {
     rg.set_seed(s);
     return;
   }
 
-  /** \brief Desc
+  /** \brief Create a conditional probability object
+      with specified step sizes and limits
    */
-  template<class=vec_t> prob_cond_mdim_rand_walk
+  template<class=vec_t> prob_cond_mdim_fixed_step
   (vec_t &step, vec_t &low, vec_t &high) {
     if (step.size()!=low.size()) {
       O2SCL_ERR2("Vectors 'step' and 'low' mismatched in ",
-		 "prob_cond_mdim_rand_walk constructor.",
+		 "prob_cond_mdim_fixed_step constructor.",
 		 o2scl::exc_einval);
     }
     if (step.size()!=high.size()) {
       O2SCL_ERR2("Vectors 'step' and 'high' mismatched in ",
-		 "prob_cond_mdim_rand_walk constructor.",
+		 "prob_cond_mdim_fixed_step constructor.",
 		 o2scl::exc_einval);
     }
     set_internal(step,low,high);
   }
   
-  /** \brief Desc
+  /** \brief Set step sizes and limits
    */
   virtual int set(vec_t &step, vec_t &low, vec_t &high) {
     if (step.size()!=low.size()) {
       O2SCL_ERR2("Vectors 'step' and 'low' mismatched in ",
-		 "prob_cond_mdim_rand_walk::set().",
+		 "prob_cond_mdim_fixed_step::set().",
 		 o2scl::exc_einval);
     }
     if (step.size()!=high.size()) {
       O2SCL_ERR2("Vectors 'step' and 'high' mismatched in ",
-		 "prob_cond_mdim_rand_walk::set().",
+		 "prob_cond_mdim_fixed_step::set().",
 		 o2scl::exc_einval);
     }
     set_internal(step,low,high);
@@ -1097,14 +1105,31 @@ namespace o2scl {
     return u_step.size();
   }
   
-  /// The normalized density 
+  /// The conditional probability
   virtual double pdf(const vec_t &x, const vec_t &x2) const {
-    return d_pdf;
+    double vol1=1.0;
+    for(size_t i=0;i<u_step.size();i++) {
+      if (fabs(x2[i]-x[i])>u_step[i]) return 0.0;
+      if (x[i]-u_step[i]<u_low[i]) {
+	if (x[i]+u_step[i]>u_high[i]) {
+	  vol1*=u_high[i]-u_low[i];
+	} else {
+	  vol1*=x[i]+u_step[i]-u_low[i];
+	}
+      } else {
+	if (x[i]+u_step[i]>u_high[i]) {
+	  vol1*=u_high[i]-(x[i]-u_step[i]);
+	} else {
+	  vol1*=2.0*u_step[i];
+	}
+      }
+    }
+    return 1.0/vol1;
   }
   
-  /// The log of the normalized density 
+  /// The log of the conditional probability 
   virtual double log_pdf(const vec_t &x, const vec_t &x2) const {
-    return log(d_pdf);
+    return log(pdf(x,x2));
   }
   
   /// Sample the distribution
@@ -1114,7 +1139,7 @@ namespace o2scl {
       if (x[i]<u_low[i] || x[i]>u_high[i]) {
 	std::cout << "Herex: " << i << " " << x[i] << " "
 		  << u_low[i] << " " << u_high[i] << std::endl;
-	O2SCL_ERR("Input out of bounds in rand_walk::operator().",
+	O2SCL_ERR("Input out of bounds in fixed_step::operator().",
 		  o2scl::exc_einval);
       }
       x2[i]=x[i]+u_step[i]*(rg.random()*2.0-1.0);
@@ -1149,12 +1174,12 @@ namespace o2scl {
     return base.dim();
   }
   
-  /// The normalized density 
+  /// The conditional probability 
   virtual double pdf(const vec_t &x, const vec_t &x2) const {
     return base.pdf(x2);
   }
   
-  /// The log of the normalized density 
+  /// The log of the conditional probability 
   virtual double log_pdf(const vec_t &x, const vec_t &x2) const {
     return base.log_pdf(x2);
   }
@@ -1251,7 +1276,7 @@ namespace o2scl {
     norm=pow(2.0*o2scl_const::pi,-((double)ndim)/2.0)/sqrt(det);
   }
 
-  /// The normalized density 
+  /// The conditional probability 
   virtual double pdf(const vec_t &x, const vec_t &x2) const {
     if (ndim==0) {
       O2SCL_ERR2("Distribution not set in prob_cond_mdim_gaussian::",
@@ -1264,7 +1289,7 @@ namespace o2scl {
     return ret;
   }
 
-  /// The log of the normalized density 
+  /// The log of the conditional probability 
   virtual double log_pdf(const vec_t &x, const vec_t &x2) const {
     if (ndim==0) {
       O2SCL_ERR2("Distribution not set in prob_cond_mdim_gaussian::",

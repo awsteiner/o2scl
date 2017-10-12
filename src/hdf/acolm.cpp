@@ -30,11 +30,11 @@
   - sum/max/min/output/interp/deriv/integ/deriv2 for hist, hist_2d, and v<c>
   - xindex and yindex for table3d
   - create table3d output that can be read by gen3-list?
-  - fix fit
+  - fix fit for table
   - use swap instead of copy in 'select' for table objects
   - Make sure get_input() is used more consistently
   - Make sure preview, output, internal, generic, and create work for 
-  all types
+  all types.
   - Add matrix types?
 
 */
