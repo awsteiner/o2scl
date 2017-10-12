@@ -198,6 +198,12 @@ namespace o2scl {
   virtual void best_point(vec_t &best, double w_best, data_t &dat) {
     return;
   }
+
+  /** \brief Function to run after point evaluation and measurement steps
+   */
+  virtual void post_pointmeas() {
+    return;
+  }
   //@}
 
   /** \brief Index of the current walker
@@ -882,33 +888,13 @@ namespace o2scl {
 	    
 	  } else if (pd_mode) {
 	    
-	    //virtual double metrop_hast(const vec_t &x, vec_t &x2) const {
-	    //operator()(x,x2);
-	    //return log_pdf(x,x2)-log_pdf(x2,x);
-
 	    // Use proposal distribution and compute associated weight
 	    q_prop[it]=prop_dist[it]->metrop_hast(current[it],next[it]);
-	    std::cout << q_prop[it] << std::endl;
-	    exit(-1);
 
-	    /*
-	      (*prop_dist[it])(current[it],next[it]);
-	      q_prop[it]=prop_dist[it]->log_pdf(current[it],next[it])-
-	      prop_dist[it]->log_pdf(next[it],current[it]);
-	    */
 	    if (!std::isfinite(q_prop[it])) {
 	      O2SCL_ERR2("Proposal distribution not finite in ",
 			 "mcmc_para_base::mcmc().",o2scl::exc_efailed);
 	    }
-	    /*
-	      std::cout << "Here2: " << it << " " << this->mpi_rank
-	      << " " << q_prop[it] << std::endl;
-	      for(size_t kk=0;kk<n_params;kk++) {
-	      std::cout << kk << ". " << current[it][kk] << " "
-	      << low[kk] << " " 
-	      << next[it][kk] << " " << high[kk] << std::endl;
-	      }
-	    */
 	    
 	  } else {
 	    
@@ -975,8 +961,6 @@ namespace o2scl {
       }
       // End of parallel region
 
-      //std::cout << "Herex." << std::endl;
-      
       // ---------------------------------------------------------
       // Post-function verbose output in case parameter was out of
       // range, function returned "done" or a failure. More
@@ -1021,8 +1005,6 @@ namespace o2scl {
       // Parallel region to accept or reject, and call measurement
       // function
       
-      //std::cout << "Herex2." << std::endl;
-
 #ifdef O2SCL_OPENMP
 #pragma omp parallel default(shared)
 #endif
@@ -1032,12 +1014,6 @@ namespace o2scl {
 #endif
 	for(size_t it=0;it<n_threads;it++) {
 
-	  /*
-	    std::cout << "Herex3 " << it << " " << aff_inv << " "
-	    << pd_mode << " " << func_ret[it] << " "
-	    << mcmc_skip << std::endl;
-	  */
-	  
 	  // Index in storage
 	  size_t sindex=n_walk*it+curr_walker[it];
 	  
@@ -1057,21 +1033,9 @@ namespace o2scl {
 		accept=true;
 	      }
 	    } else if (pd_mode) {
-	      //std::cout << "Here3: " << it << " " << this->mpi_rank
-	      //<< std::endl;
 	      if (r<exp(w_next[it]-w_current[sindex]+q_prop[it])) {
 		accept=true;
 	      }
-	      /*
-	      std::cout << "Here4: " << accept << " " << it << " "
-			<< sindex << " "
-			<< w_next[it] << " " << w_current[sindex] << " "
-			<< exp(w_next[it]-w_current[sindex]+q_prop[it]) << " "
-			<< r << " "
-			<< it << " " << this->mpi_rank
-			<< std::endl;
-	      exit(-1);
-	      */
 	      
 	    } else {
 	      // Metropolis algorithm
@@ -1130,8 +1094,7 @@ namespace o2scl {
       }
       // End of parallel region
 
-      //std::cout << "Herex4 " << std::endl;
-      //exit(-1);
+      post_pointmeas();
       
       // -----------------------------------------------------------
       // Post-measurement verbose output of iteration count, weight,
@@ -1849,23 +1812,7 @@ namespace o2scl {
 	}
       
       }
-      
-      // If necessary, output to files
-      if (file_update_iters>0) {
-	size_t total_accept=0;
-	for(size_t it=0;it<this->n_threads;it++) {
-	  total_accept+=this->n_accept[it];
-	}
-	if (total_accept>=last_write+file_update_iters) {
-	  this->scr_out << "mcmc: Writing to file. total_accept: "
-			<< total_accept << " file_update_iters: "
-			<< file_update_iters << " last_write: "
-			<< last_write << std::endl;
-	  write_files();
-	  last_write=total_accept;
-	}
-      }
-      
+            
     }
     // End of critical region
     
@@ -1873,6 +1820,29 @@ namespace o2scl {
   }
   //@}
   
+  /** \brief Function to run after point evaluation and measurement steps
+   */
+  virtual void post_pointmeas() {
+
+    // If necessary, output to files
+    if (file_update_iters>0) {
+      size_t total_accept=0;
+      for(size_t it=0;it<this->n_threads;it++) {
+	total_accept+=this->n_accept[it];
+      }
+      if (total_accept>=last_write+file_update_iters) {
+	this->scr_out << "mcmc: Writing to file. total_accept: "
+	<< total_accept << " file_update_iters: "
+	<< file_update_iters << " last_write: "
+	<< last_write << std::endl;
+	write_files();
+	last_write=total_accept;
+      }
+    }
+    
+    return;
+  }
+
   /** \brief Perform cleanup after an MCMC simulation
    */
   virtual void mcmc_cleanup() {
