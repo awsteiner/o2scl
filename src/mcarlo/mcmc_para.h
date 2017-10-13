@@ -119,10 +119,6 @@ namespace o2scl {
   int mpi_size;
   //@}
   
-  /** \brief Time in seconds (default is 0)
-   */
-  double max_time;
-
   /// The screen output file
   std::ofstream scr_out;
   
@@ -228,6 +224,10 @@ namespace o2scl {
   /// If non-zero, the maximum number of MCMC iterations (default 0)
   size_t max_iters;
   
+  /** \brief Time in seconds (default is 0)
+   */
+  double max_time;
+
   /** \brief Prefix for output filenames
    */
   std::string prefix;
@@ -376,6 +376,13 @@ namespace o2scl {
       n_threads=meas.size();
     }
 
+    // Set start time
+#ifdef O2SCL_MPI
+    mpi_start_time=MPI_Wtime();
+#else
+    mpi_start_time=time(0);
+#endif
+    
     if (initial_points.size()==0) {
       // Setup initial guess if not specified
       initial_points.resize(1);
@@ -817,8 +824,11 @@ namespace o2scl {
 
       if (verbose>=2) {
 	scr_out.precision(4);
-	scr_out << "mcmc: "
-		<< w_current[0] << " (initial)" << std::endl;
+	scr_out << "mcmc: ";
+	for(size_t it=0;it<n_threads;it++) {
+	  scr_out << w_current[it] << " ";
+	}
+	scr_out << " (initial)" << std::endl;
 	scr_out.precision(6);
       }
 
@@ -1434,7 +1444,7 @@ namespace o2scl {
   
   /** \brief Write MCMC tables to files
    */
-  virtual void write_files(bool last_write=false) {
+  virtual void write_files(bool sync_write=false) {
 
     if (this->verbose>=2) {
       this->scr_out << "mcmc: Start write_files(). mpi_rank: "
@@ -1471,7 +1481,7 @@ namespace o2scl {
     // Ensure that multiple threads aren't writing to the
     // filesystem at the same time
     int tag=0, buffer=0;
-    if (last_write && this->mpi_size>1 &&
+    if (sync_write && this->mpi_size>1 &&
 	this->mpi_rank>=table_io_chunk) {
       MPI_Recv(&buffer,1,MPI_INT,this->mpi_rank-table_io_chunk,
 	       tag,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
@@ -1526,16 +1536,10 @@ namespace o2scl {
     hf.close();
     
 #ifdef O2SCL_MPI
-    if (last_write && this->mpi_size>1 &&
+    if (sync_write && this->mpi_size>1 &&
 	this->mpi_rank<this->mpi_size-1) {
-      this->scr_out << "Rank " << this->mpi_rank
-		    << " sending to "
-		    << this->mpi_rank+table_io_chunk << std::endl;
       MPI_Send(&buffer,1,MPI_INT,this->mpi_rank+table_io_chunk,
 	       tag,MPI_COMM_WORLD);
-      this->scr_out << "Rank " << this->mpi_rank
-		    << " done sending to "
-		    << this->mpi_rank+table_io_chunk << std::endl;
     }
 #endif
     
