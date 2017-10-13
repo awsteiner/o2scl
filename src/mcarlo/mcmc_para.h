@@ -1434,7 +1434,7 @@ namespace o2scl {
   
   /** \brief Write MCMC tables to files
    */
-  virtual void write_files() {
+  virtual void write_files(bool last_write=false) {
 
     if (this->verbose>=2) {
       this->scr_out << "mcmc: Start write_files(). mpi_rank: "
@@ -1471,15 +1471,10 @@ namespace o2scl {
     // Ensure that multiple threads aren't writing to the
     // filesystem at the same time
     int tag=0, buffer=0;
-    if (this->mpi_size>1 && this->mpi_rank>=table_io_chunk) {
-      this->scr_out << "Rank " << this->mpi_rank
-		    << " receiving from "
-		    << this->mpi_rank-table_io_chunk << std::endl;
+    if (last_write && this->mpi_size>1 &&
+	this->mpi_rank>=table_io_chunk) {
       MPI_Recv(&buffer,1,MPI_INT,this->mpi_rank-table_io_chunk,
 	       tag,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
-      this->scr_out << "Rank " << this->mpi_rank
-		    << " done receiving from "
-		    << this->mpi_rank-table_io_chunk << std::endl;
     }
 #endif
     
@@ -1531,7 +1526,8 @@ namespace o2scl {
     hf.close();
     
 #ifdef O2SCL_MPI
-    if (this->mpi_size>1 && this->mpi_rank<this->mpi_size-1) {
+    if (last_write && this->mpi_size>1 &&
+	this->mpi_rank<this->mpi_size-1) {
       this->scr_out << "Rank " << this->mpi_rank
 		    << " sending to "
 		    << this->mpi_rank+table_io_chunk << std::endl;
@@ -1847,7 +1843,7 @@ namespace o2scl {
 	<< total_accept << " file_update_iters: "
 	<< file_update_iters << " last_write: "
 	<< last_write << std::endl;
-	write_files();
+	write_files(false);
 	last_write=total_accept;
       }
     }
@@ -1873,7 +1869,7 @@ namespace o2scl {
       table->set_nlines(i+2);
     }
 
-    write_files();
+    write_files(true);
     
     return parent_t::mcmc_cleanup();
   }
