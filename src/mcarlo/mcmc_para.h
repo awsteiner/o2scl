@@ -1472,8 +1472,14 @@ namespace o2scl {
     // filesystem at the same time
     int tag=0, buffer=0;
     if (this->mpi_size>1 && this->mpi_rank>=table_io_chunk) {
+      this->scr_out << "Rank " << this->mpi_rank
+		    << " receiving from "
+		    << this->mpi_rank-table_io_chunk << std::endl;
       MPI_Recv(&buffer,1,MPI_INT,this->mpi_rank-table_io_chunk,
 	       tag,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+      this->scr_out << "Rank " << this->mpi_rank
+		    << " done receiving from "
+		    << this->mpi_rank-table_io_chunk << std::endl;
     }
 #endif
     
@@ -1526,8 +1532,14 @@ namespace o2scl {
     
 #ifdef O2SCL_MPI
     if (this->mpi_size>1 && this->mpi_rank<this->mpi_size-1) {
+      this->scr_out << "Rank " << this->mpi_rank
+		    << " sending to "
+		    << this->mpi_rank+table_io_chunk << std::endl;
       MPI_Send(&buffer,1,MPI_INT,this->mpi_rank+table_io_chunk,
 	       tag,MPI_COMM_WORLD);
+      this->scr_out << "Rank " << this->mpi_rank
+		    << " done sending to "
+		    << this->mpi_rank+table_io_chunk << std::endl;
     }
 #endif
     
