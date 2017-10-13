@@ -62,7 +62,7 @@ int main(void) {
     Perform the minimization the standard way, with the 
     simplex2 minimizer
   */
-  multi_funct11 f1c11=
+  multi_funct f1c11=
     std::bind(std::mem_fn<double(size_t,const ubvector &)>(&cl::mfn),
               acl,std::placeholders::_1,std::placeholders::_2);
   mmin_simp2<> gm1;

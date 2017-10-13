@@ -81,7 +81,7 @@ int main(void) {
   // static variables and functions and multiple inheritance at the
   // expense of a little overhead. We need to provide the address of
   // an instantiated object and the address of the member function.
-  funct11 function=std::bind(std::mem_fn<double(double,double &)>
+  funct function=std::bind(std::mem_fn<double(double,double &)>
 			     (&my_class::function_to_solve),
 			     &c,std::placeholders::_1,p);
 

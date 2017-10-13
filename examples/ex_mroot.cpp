@@ -112,7 +112,7 @@ int main(void) {
   /*
     Using a member function with ublas vectors
   */
-  mm_funct11 f1=std::bind
+  mm_funct f1=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &)>(&cl::mfn),
      &acl,std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
   mroot_hybrids<> cr1;
@@ -169,7 +169,7 @@ int main(void) {
     Now instead of using the automatic Jacobian, using 
     a user-specified Jacobian.
   */
-  jac_funct11 j4=std::bind
+  jac_funct j4=std::bind
     (std::mem_fn<int(size_t,ubvector &,size_t,ubvector &,ubmatrix &)>
      (&cl::mfnd),&acl,std::placeholders::_1,std::placeholders::_2,
      std::placeholders::_3,std::placeholders::_4,std::placeholders::_5);

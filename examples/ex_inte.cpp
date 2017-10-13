@@ -67,9 +67,9 @@ int main(void) {
 
   t.set_output_level(1);
 
-  funct11 f1=std::bind(std::mem_fn<double(double)>
+  funct f1=std::bind(std::mem_fn<double(double)>
 		       (&cl::integrand),&acl,std::placeholders::_1);
-  funct11 f2=std::bind(std::mem_fn<double(double)>
+  funct f2=std::bind(std::mem_fn<double(double)>
 		       (&cl::integrand2),&acl,std::placeholders::_1);
 
   // We don't need to specify the function type in the integration

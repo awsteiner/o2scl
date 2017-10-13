@@ -53,7 +53,7 @@ int main(void) {
 
   // The class and associated function
   cl acl;
-  funct11 f1=std::bind(std::mem_fn<double(double)>(&cl::function),
+  funct f1=std::bind(std::mem_fn<double(double)>(&cl::function),
 		       &acl,std::placeholders::_1);
   
   deriv_gsl<> gd;

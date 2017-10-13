@@ -26,7 +26,7 @@
    An example which demonstrates the generation of an arbitrary
    distribution through Markov chain Monte Carlo.
 */
-#include <o2scl/mcmc.h>
+#include <o2scl/mcmc_para.h>
 #include <o2scl/vec_stats.h>
 #include <o2scl/test_mgr.h>
 #include <o2scl/hdf_io.h>
@@ -45,7 +45,7 @@ typedef std::function<int(const ubvector &,double,std::vector<double> &,
 			  std::array<double,2> &)> fill_funct;
 
 /// The MCMC object
-mcmc_table<point_funct,fill_funct,std::array<double,2>,ubvector> mct;
+mcmc_para_table<point_funct,fill_funct,std::array<double,2>,ubvector> mct;
 
 class exc {
 
@@ -77,7 +77,7 @@ int fill_line(const ubvector &pars, double log_weight,
   line.push_back(dat[0]);
   line.push_back(dat[1]);
   if (mct.get_table()->get_nlines()==100000) {
-    return mcmc_base<point_funct,fill_funct,int,ubvector>::mcmc_done;
+    return mcmc_para_base<point_funct,fill_funct,int,ubvector>::mcmc_done;
   }
   return 0;
 }
@@ -178,11 +178,12 @@ int main(int argc, char *argv[]) {
   // This step factor is chosen to give approximately equal number of
   // accept/reject steps but will be different for different problems
   mct.step_fac=3.0;
-  mct.mcmc(2,init,low,high,vpf[0],vff[0]);
+  mct.max_iters=1000;
+  mct.mcmc(2,low,high,vpf,vff);
 
   // Output table and other information
   cout << "n_accept, n_reject, table lines: "
-       << mct.n_accept << " " << mct.n_reject << " "
+       << mct.n_accept[0] << " " << mct.n_reject[0] << " "
        << t->get_nlines() << endl;
   cout << "    i mult        log_wgt     x0          x1          "
        << "x0sq        x0sq_x1sq" << endl;
@@ -241,11 +242,11 @@ int main(int argc, char *argv[]) {
   // of accept/reject steps but will be different for
   // different problems
   mct.step_fac=5.0;
-  mct.mcmc(2,init,low,high,vpf[0],vff[0]);
+  mct.mcmc(2,low,high,vpf,vff);
 
   // Output table and other information
   cout << "n_accept, n_reject, table lines: "
-       << mct.n_accept << " " << mct.n_reject << " "
+       << mct.n_accept[0] << " " << mct.n_reject[0] << " "
        << t->get_nlines() << endl;
   cout << "    i mult        log_wgt     x0          x1          "
        << "x0sq        x0sq_x1sq" << endl;

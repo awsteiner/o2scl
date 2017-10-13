@@ -113,10 +113,10 @@ int main(void) {
   multi_funct_mfptr<cl> f1(&acl,&cl::spring_two);
   grad_funct_mfptr<cl> f1g(&acl,&cl::sgrad);
 #else
-  multi_funct11 f1=std::bind
+  multi_funct f1=std::bind
     (std::mem_fn<double(size_t,const ubvector &)>(&cl::spring_two),
      &acl,std::placeholders::_1,std::placeholders::_2);
-  grad_funct11 f1g=std::bind
+  grad_funct f1g=std::bind
     (std::mem_fn<int(size_t,ubvector &,ubvector &)>(&cl::sgrad),
      &acl,std::placeholders::_1,std::placeholders::_2,
      std::placeholders::_3);

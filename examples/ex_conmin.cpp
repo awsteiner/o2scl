@@ -62,8 +62,8 @@ int main(void) {
   static const size_t nv=2;
   
   // Specify the function to minimize and its gradient
-  multi_funct11 mff11=func;
-  grad_funct11 gff=dfunc;
+  multi_funct mff11=func;
+  grad_funct gff=dfunc;
   
   // The unconstrained minimizer
   mmin_simp2<> gm1;

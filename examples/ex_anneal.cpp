@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
   double result;
   ubvector init(2);
   
-  multi_funct11 fx=bessel_fun;
+  multi_funct fx=bessel_fun;
   
   ga.ntrial=4000;
   ga.verbose=1;

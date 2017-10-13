@@ -62,7 +62,7 @@ int main(void) {
   a[1]=0.0; b[1]=M_PI;
   a[2]=0.0; b[2]=M_PI;
 
-  multi_funct11 tf=test_fun;
+  multi_funct tf=test_fun;
 
   gm.n_points=100000;
   gm.minteg_err(tf,3,a,b,res,err);

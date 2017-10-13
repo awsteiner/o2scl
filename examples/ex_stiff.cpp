@@ -75,8 +75,8 @@ int main(void) {
   cout.precision(3);
 
   // Specification of the differential equations and the Jacobian
-  ode_funct11 od11=derivs;
-  ode_jac_funct11 oj=jac;
+  ode_funct od11=derivs;
+  ode_jac_funct oj=jac;
   
   table<> tab[2];
   tab[0].line_of_names("x calc exact rel_err rel_diff");

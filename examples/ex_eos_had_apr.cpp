@@ -634,35 +634,35 @@ public:
     ubvector x(7), y(7), xx(3), yy(3);
   
     // Function objects
-    mm_funct11 f_nucmixed=std::bind
+    mm_funct f_nucmixed=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
        (&ex_eos_had_apr::nucmixed),this,
        std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
-    mm_funct11 f_neutmixed=std::bind
+    mm_funct f_neutmixed=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
        (&ex_eos_had_apr::neutmixed),this,
        std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
-    mm_funct11 f_nstar_mixed=std::bind
+    mm_funct f_nstar_mixed=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
        (&ex_eos_had_apr::nstar_mixed),this,
        std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
-    mm_funct11 f_nstar_low=std::bind
+    mm_funct f_nstar_low=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
        (&ex_eos_had_apr::nstar_low),this,
        std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
-    mm_funct11 f_nstar_high=std::bind
+    mm_funct f_nstar_high=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
        (&ex_eos_had_apr::nstar_high),this,
        std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
-    mm_funct11 f_fig7fun=std::bind
+    mm_funct f_fig7fun=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
        (&ex_eos_had_apr::fig7fun),this,
        std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
-    mm_funct11 f_maxwell_fig7=std::bind
+    mm_funct f_maxwell_fig7=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
        (&ex_eos_had_apr::maxwell_fig7),this,
        std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
-    mm_funct11 f_mixedmaxwell=std::bind
+    mm_funct f_mixedmaxwell=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
        (&ex_eos_had_apr::mixedmaxwell),this,
        std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
@@ -1031,11 +1031,11 @@ public:
     cout << "\nEstimate of transition density." << endl;
   
     ubvector newx(12), newy(12);
-    mm_funct11 nuclei_f=std::bind
+    mm_funct nuclei_f=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
        (&ex_eos_had_apr::nucleimat),this,
        std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
-    mm_funct11 nucleip_f=std::bind
+    mm_funct nucleip_f=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
        (&ex_eos_had_apr::nucleimat_pdrip),this,
        std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
