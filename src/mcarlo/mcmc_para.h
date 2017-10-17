@@ -557,16 +557,17 @@ namespace o2scl {
 
 	    // Index in storage
 	    size_t sindex=n_walk*it+curr_walker[it];
+	    size_t ip_index=sindex % initial_points.size();
 	    
 	    size_t init_iters=0;
 	    bool done=false;
 
 	    // If we already have a guess, try to use that
-	    if (sindex<initial_points.size()) {
+	    if (initial_points.size()>0) {
 
 	      // Copy from the initial points array
 	      for(size_t ipar=0;ipar<n_params;ipar++) {
-		current[sindex][ipar]=initial_points[sindex][ipar];
+		current[sindex][ipar]=initial_points[ip_index][ipar];
 	      }
 	      
 	      // Compute the weight
@@ -598,7 +599,7 @@ namespace o2scl {
 	      for(size_t ipar=0;ipar<n_params;ipar++) {
 		do {
 		  current[sindex][ipar]=
-		    initial_points[sindex % initial_points.size()][ipar]+
+		    initial_points[ip_index][ipar]+
 		    (rg[it].random()*2.0-1.0)*
 		    (high[ipar]-low[ipar])*ai_initial_step;
 		} while (current[sindex][ipar]>high[ipar] ||
@@ -713,12 +714,12 @@ namespace o2scl {
 	  curr_walker[it]=0;
 	  
 	  // Copy from the initial points array into current point
-	  size_t np_size=initial_points.size();
+	  size_t ip_size=initial_points.size();
 	  for(size_t ipar=0;ipar<n_params;ipar++) {
-	    current[it][ipar]=initial_points[it%np_size][ipar];
+	    current[it][ipar]=initial_points[it % ip_size][ipar];
 	  }
-
-	  if (it<np_size) {
+	  
+	  if (it<ip_size) {
 	    // If we have a new unique initial point, then
 	    // perform a function evaluation
 	    func_ret[it]=func[it](n_params,current[it],w_current[it],
@@ -763,14 +764,14 @@ namespace o2scl {
 #endif
 	for(size_t it=0;it<n_threads;it++) {
 	  
-	  size_t np_size=initial_points.size();
-	  if (it>=np_size) {
+	  size_t ip_size=initial_points.size();
+	  if (it>=ip_size) {
 	    // If no initial point was specified, copy one of
 	    // the other initial points
-	    func_ret[it]=func_ret[it % np_size];
-	    current[it]=current[it % np_size];
-	    w_current[it]=w_current[it % np_size];
-	    data_arr[it]=data_arr[it % np_size];
+	    func_ret[it]=func_ret[it % ip_size];
+	    current[it]=current[it % ip_size];
+	    w_current[it]=w_current[it % ip_size];
+	    data_arr[it]=data_arr[it % ip_size];
 	  }
 	  
 	  // Update the return value count
@@ -1622,6 +1623,41 @@ namespace o2scl {
 	  this->initial_points[windex][ip]=table->get(ip+5,row);
 	}
       }
+    }
+
+    return;
+  }
+  
+  /** \brief Read initial points from the best points recorded in file
+      named \c fname
+  */
+  virtual void initial_points_file_best(std::string fname) {
+
+    table=std::shared_ptr<o2scl::table_units<> >(new o2scl::table_units<>);
+    
+    o2scl_hdf::hdf_file hf;
+    hf.open(fname);
+    hdf_input(hf,*table,"markov_chain0");
+    hf.get_szt("n_params",this->n_params);
+    hf.close();
+    
+    std::cout << "Initial point best from file: " << fname << std::endl;
+
+    // Find the row of the best point
+    size_t row=0;
+    double best_wgt=table->get("log_wgt",0);
+    for(size_t i=1;i<table->get_nlines();i++) {
+      if (table->get("mult",i)>0.5 && table->get("log_wgt",i)>best_wgt) {
+	best_wgt=table->get("log_wgt",i);
+	row=i;
+      }
+    }
+    
+    // Copy the entries from this row into the initial_points object
+    this->initial_points.resize(1);
+    this->initial_points[0].resize(this->n_params);
+    for(size_t ip=0;ip<this->n_params;ip++) {
+      this->initial_points[0][ip]=table->get(ip+5,row);
     }
 
     return;
