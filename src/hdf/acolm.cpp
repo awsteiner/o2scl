@@ -453,6 +453,63 @@ void acol_manager::command_add(std::string new_type) {
       cl->set_comm_option_vec(narr2,options_arr2);
     }
     
+  } else if (new_type=="double[]") {
+
+    if (o2graph_mode) {
+      static const size_t narr2=1;
+      comm_option_s options_arr2[narr2]={
+	{0,"plot1",
+	 "Plot the array",0,1,"[kwargs]",
+	 ((std::string)"Plot the array. ")+
+	 "Some useful kwargs (which apply for all three object types) "+
+	 "are color (c), dashes, linestyle (ls), linewidth (lw), "+
+	 "marker, markeredgecolor (mec), markeredgewidth (mew), "+
+	 "markerfacecolor (mfc), markerfacecoloralt (mfcalt), markersize "+
+	 "(ms).",
+	 new o2scl::comm_option_mfptr<acol_manager>
+	 (this,&acol_manager::comm_none),both}
+      };
+      cl->set_comm_option_vec(narr2,options_arr2);
+    }
+    
+  } else if (new_type=="int[]") {
+
+    if (o2graph_mode) {
+      static const size_t narr2=1;
+      comm_option_s options_arr2[narr2]={
+	{0,"plot1",
+	 "Plot the array",0,1,"[kwargs]",
+	 ((std::string)"Plot the array. ")+
+	 "Some useful kwargs (which apply for all three object types) "+
+	 "are color (c), dashes, linestyle (ls), linewidth (lw), "+
+	 "marker, markeredgecolor (mec), markeredgewidth (mew), "+
+	 "markerfacecolor (mfc), markerfacecoloralt (mfcalt), markersize "+
+	 "(ms).",
+	 new o2scl::comm_option_mfptr<acol_manager>
+	 (this,&acol_manager::comm_none),both}
+      };
+      cl->set_comm_option_vec(narr2,options_arr2);
+    }
+    
+  } else if (new_type=="size_t[]") {
+
+    if (o2graph_mode) {
+      static const size_t narr2=1;
+      comm_option_s options_arr2[narr2]={
+	{0,"plot1",
+	 "Plot the array",0,1,"[kwargs]",
+	 ((std::string)"Plot the array. ")+
+	 "Some useful kwargs (which apply for all three object types) "+
+	 "are color (c), dashes, linestyle (ls), linewidth (lw), "+
+	 "marker, markeredgecolor (mec), markeredgewidth (mew), "+
+	 "markerfacecolor (mfc), markerfacecoloralt (mfcalt), markersize "+
+	 "(ms).",
+	 new o2scl::comm_option_mfptr<acol_manager>
+	 (this,&acol_manager::comm_none),both}
+      };
+      cl->set_comm_option_vec(narr2,options_arr2);
+    }
+    
   } else if (new_type=="vector<contour_line>") {
 
     if (o2graph_mode) {
@@ -643,11 +700,13 @@ void acol_manager::command_del() {
       cl->remove_comm_option("plot");
     }
     
-    /*
-      } else if (type=="double[]") {
-      
-      //cl->remove_comm_option("plot1");
-      cl->remove_comm_option("deriv");
+  } else if (type=="double[]" || type=="int[]" || type=="size_t[]") {
+    
+    if (o2graph_mode) {
+      cl->remove_comm_option("plot1");
+    }
+
+    /*cl->remove_comm_option("deriv");
       cl->remove_comm_option("deriv2");
       cl->remove_comm_option("integ");
       cl->remove_comm_option("max");

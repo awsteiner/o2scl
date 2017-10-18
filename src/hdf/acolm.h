@@ -600,6 +600,30 @@ extern "C" {
   /** \brief Return the size and a pointer to the column
       named \c col_name in a table object
    */
+  int o2scl_acol_get_double_arr(void *vp, int &n, double *&ptr) {
+    o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
+    if (amp->type=="double[]") {
+      n=amp->doublev_obj.size();
+    } else if (amp->type=="int[]") {
+      n=amp->intv_obj.size();
+      amp->doublev_obj.resize(n);
+      for(int i=0;i<n;i++) {
+	amp->doublev_obj[i]=amp->intv_obj[i];
+      }
+    } else if (amp->type=="size_t[]") {
+      n=amp->size_tv_obj.size();
+      amp->doublev_obj.resize(n);
+      for(int i=0;i<n;i++) {
+	amp->doublev_obj[i]=amp->size_tv_obj[i];
+      }
+    }
+    ptr=&(amp->doublev_obj[0]);
+    return 0;
+  }
+
+  /** \brief Return the size and a pointer to the column
+      named \c col_name in a table object
+   */
   int o2scl_acol_get_hist_reps(void *vp, int &n, double *&ptr) {
     o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
     n=amp->hist_obj.size();
