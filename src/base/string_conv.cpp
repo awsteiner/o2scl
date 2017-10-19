@@ -177,6 +177,14 @@ int o2scl::stoszt_nothrow(string s, size_t &result) {
   return exc_einval;
 }
 
+int o2scl::stod_nothrow(string s, double &result) {
+  istringstream ins(s);
+  if (ins >> result) {
+    return 0;
+  }
+  return exc_einval;
+}
+
 bool o2scl::stob(string s, bool err_on_fail) {
   bool ret;
   // Read into a string stream to remove initial whitespace
@@ -197,10 +205,9 @@ bool o2scl::stob(string s, bool err_on_fail) {
   return false;
 }
 
-double o2scl::stod(string s, bool err_on_fail) {
+double o2scl::stod(string s) {
   return std::stod(s);
 }
-
 
 bool o2scl::is_number(std::string s) {
   // Number of non-number-like characters

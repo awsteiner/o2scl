@@ -139,6 +139,12 @@ namespace o2scl {
     */
     virtual double convert(std::string from, std::string to, double val);
 
+    /** \brief Return the value \c val after converting using units \c
+	from and \c to, returning a non-zero value on failure
+    */
+    virtual int convert_ret(std::string from, std::string to, double val,
+			    double &converted);
+
     /// Manually insert a unit conversion into the cache
     void insert_cache(std::string from, std::string to, double conv);
 

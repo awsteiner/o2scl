@@ -128,18 +128,18 @@ namespace o2scl {
 
   /** \brief Convert a string to a double 
 
-      If \c err_on_fail is true and the conversion fails, this
-      function calls the error handler, otherwise this function just
-      returns 0.0.
-
-      If \o2 is compiled with C++11 support, this function is
-      just a wrapper for <tt>std::stod</tt>. 
+      This function is now just a wrapper for <tt>std::stod</tt>. 
 
       \warning Because of the presence of <tt>std::stod()</tt> in 
       C++11, you may have to explicitly provide the
       namespace, i.e. <tt>o2scl::stod()</tt> in your code.
   */
-  double stod(std::string s, bool err_on_fail=true);
+  double stod(std::string s);
+
+  /** \brief Convert a string to a double returning non-zero
+      value for failure
+  */
+  int stod_nothrow(std::string s, double &result);
 
   /** \brief Find out if the number pointed to by \c x has a minus sign
       

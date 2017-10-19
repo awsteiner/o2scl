@@ -37,10 +37,28 @@ convert_units::convert_units() {
   combine_two_conv=true;
 }
 
-/** \brief Return the value \c val after converting using units \c
-    from and \c to
-*/
-double convert_units::convert(std::string from, std::string to, double val) {
+double convert_units::convert(std::string from, std::string to,
+			      double val)  {
+  double converted;
+  int ret=convert_ret(from,to,val,converted);
+  if (ret==exc_efilenotfound) {
+    O2SCL_ERR("Pipe could not be opened in convert_units::convert().",
+	      exc_efilenotfound);
+  }
+  if (ret==exc_efailed) {
+    O2SCL_ERR("Pipe could not be closed in convert_units::convert().",
+	      exc_efailed);
+  }
+  if (ret==exc_enotfound) {
+    string str=((string)"Conversion between ")+from+" and "+to+
+      " not found in convert_units::convert().";
+    O2SCL_ERR(str.c_str(),exc_enotfound);
+  }
+  return converted;
+}
+
+int convert_units::convert_ret(std::string from, std::string to, double val,
+			       double &converted) {
 
   // Remove whitespace
   remove_whitespace(from);
@@ -50,14 +68,16 @@ double convert_units::convert(std::string from, std::string to, double val) {
   std::string both=from+","+to;
   miter m3=mcache.find(both);
   if (m3!=mcache.end()) {
-    return val*m3->second.c;
+    converted=val*m3->second.c;
+    return 0;
   }
 
   // Look in cache for reverse conversion
   std::string both2=to+","+from;
   m3=mcache.find(both2);
   if (m3!=mcache.end()) {
-    return val/m3->second.c;
+    converted=val/m3->second.c;
+    return 0;
   }
 
   if (combine_two_conv) {
@@ -74,7 +94,8 @@ double convert_units::convert(std::string from, std::string to, double val) {
 	    std::cout << " (1)          and: " << m2->second.f << " , "
 		      << m2->second.t << " " << m2->second.c << std::endl;
 	  }
-	  return val*m->second.c*m2->second.c;
+	  converted=val*m->second.c*m2->second.c;
+	  return 0;
 	}
 	std::string b2=to+","+m->second.t;
 	miter m4=mcache.find(b2);
@@ -85,7 +106,8 @@ double convert_units::convert(std::string from, std::string to, double val) {
 	    std::cout << " (2)          and: " << m4->second.f << " , "
 		      << m4->second.t << std::endl;
 	  }
-	  return val*m->second.c/m4->second.c;
+	  converted=val*m->second.c/m4->second.c;
+	  return 0;
 	}
       } else if (m->second.t==from) {
 	std::string b=m->second.f+","+to;
@@ -97,7 +119,8 @@ double convert_units::convert(std::string from, std::string to, double val) {
 	    std::cout << " (3)          and: " << m2->second.f << " , "
 		      << m2->second.t << std::endl;
 	  }
-	  return val/m->second.c*m2->second.c;
+	  converted=val/m->second.c*m2->second.c;
+	  return 0;
 	}
       } else if (m->second.f==to) {
 	std::string b=m->second.t+","+from;
@@ -109,7 +132,8 @@ double convert_units::convert(std::string from, std::string to, double val) {
 	    std::cout << " (4)          and: " << m2->second.f << " , "
 		      << m2->second.t << std::endl;
 	  }
-	  return val/m->second.c/m2->second.c;
+	  converted=val/m->second.c/m2->second.c;
+	  return 0;
 	}
 	std::string b2=from+","+m->second.t;
 	miter m4=mcache.find(b2);
@@ -120,7 +144,8 @@ double convert_units::convert(std::string from, std::string to, double val) {
 	    std::cout << " (5)          and: " << m4->second.f << " , "
 		      << m4->second.t << std::endl;
 	  }
-	  return val/m->second.c*m4->second.c;
+	  converted=val/m->second.c*m4->second.c;
+	  return 0;
 	}
       } else if (m->second.t==to) {
 	std::string b=m->second.f+","+from;
@@ -132,7 +157,8 @@ double convert_units::convert(std::string from, std::string to, double val) {
 	    std::cout << " (6)          and: " << m2->second.f << " , "
 		      << m2->second.t << std::endl;
 	  }
-	  return val*m->second.c/m2->second.c;
+	  converted=val*m->second.c/m2->second.c;
+	  return 0;
 	}
       }
     }
@@ -160,10 +186,12 @@ double convert_units::convert(std::string from, std::string to, double val) {
     }
     
     FILE *ps_pipe=popen(cmd.c_str(),"r");
-    if (err_on_fail && !ps_pipe) {
-      O2SCL_ERR("Pipe could not be opened in convert_units::convert().",
-		exc_efailed);
-      return 0.0;
+    if (!ps_pipe) {
+      if (err_on_fail) {
+	O2SCL_ERR("Pipe could not be opened in convert_units::convert().",
+		  exc_efilenotfound);
+      }
+      return exc_efilenotfound;
     }
 
     char line1[80];
@@ -188,7 +216,16 @@ double convert_units::convert(std::string from, std::string to, double val) {
 		<< "Units string to convert is "
 		<< t2 << std::endl;
     }
-    double conv=o2scl::stod(t2);
+    double conv;
+    int sret=o2scl::stod_nothrow(t2,conv);
+    if (sret!=0) {
+      if (err_on_fail) {
+	string str=((string)"Conversion between ")+from+" and "+to+
+	  " not found in convert_units::convert().";
+	O2SCL_ERR(str.c_str(),exc_enotfound);
+      }
+      return exc_enotfound;
+    }
     if (verbose>0) {
       std::cout << "convert_units::convert(): "
 		<< "Converted value is "
@@ -196,10 +233,12 @@ double convert_units::convert(std::string from, std::string to, double val) {
     }
       
     // Cleanup
-    if (err_on_fail && pclose(ps_pipe)!=0) {
-      O2SCL_ERR("Pipe could not be closed in convert_units::convert().",
-		exc_efailed);
-      return 0.0;
+    if (pclose(ps_pipe)!=0) {
+      if (err_on_fail) {
+	O2SCL_ERR("Pipe could not be closed in convert_units::convert().",
+		  exc_efailed);
+      }
+      return exc_efailed;
     }
       
     // Add the newly computed conversion to the table
@@ -208,8 +247,9 @@ double convert_units::convert(std::string from, std::string to, double val) {
     ut.t=to;
     ut.c=conv;
     mcache.insert(make_pair(both,ut));
-      
-    return conv*val;
+
+    converted=conv*val;
+    return 0;
 
   } else {
     if (verbose>0) {
@@ -228,10 +268,10 @@ double convert_units::convert(std::string from, std::string to, double val) {
   if (err_on_fail) {
     string str=((string)"Conversion between ")+from+" and "+to+
       " not found in convert_units::convert().";
-    O2SCL_ERR(str.c_str(),exc_efailed);
+    O2SCL_ERR(str.c_str(),exc_enotfound);
   }
-
-  return 0.0;
+  
+  return exc_enotfound;
 }
 
 void convert_units::remove_cache(std::string from, std::string to) {
@@ -308,7 +348,7 @@ void convert_units::print_cache() {
 }
 
 void convert_units::make_units_dat(std::string fname, bool c_1, 
-				  bool hbar_1, bool K_1) {
+				   bool hbar_1, bool K_1) {
   
   std::ofstream fout(fname.c_str());
   fout.precision(14);

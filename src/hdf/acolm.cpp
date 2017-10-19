@@ -581,6 +581,8 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
 #else
   compress=0;
 #endif
+
+  cng.err_on_fail=false;
 }
 
 void acol_manager::command_del() {
@@ -3684,7 +3686,12 @@ int acol_manager::comm_get_conv
 
   // If cng.verbose is non-zero, then cng.convert may output
   // verbose information to cout
-  double val=cng.convert(in[0],in[1],1.0);
+  double val;
+  int cret=cng.convert_ret(in[0],in[1],1.0,val);
+  if (cret!=0) {
+    cerr << "Conversion failed." << endl;
+    return 1;
+  }
   
   cout << "Conversion factor is: " << val << endl;
   
