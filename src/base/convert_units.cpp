@@ -140,12 +140,15 @@ double convert_units::convert(std::string from, std::string to, double val) {
   }
 
 #ifdef HAVE_POPEN
+  if (verbose>0) std::cout << "popen is defined." << std::endl;
 
   if (use_gnu_units) {
+
+    if (verbose>0) std::cout << "Value of use_gnu_units is true." << std::endl;
     
     // Run the GNU 'units' command
     std::string cmd=units_cmd_string+" '"+from+"' '"+to+"'";
-    if (verbose>0) std::cout << "cmd: " << cmd << std::endl;
+    if (verbose>0) std::cout << "units command: " << cmd << std::endl;
     
     FILE *ps_pipe=popen(cmd.c_str(),"r");
     if (err_on_fail && !ps_pipe) {
@@ -160,7 +163,7 @@ double convert_units::convert(std::string from, std::string to, double val) {
     // Variable 'cret' is unused, but put here to avoid
     // unused return value errors
     char *cret=fgets(line1,80,ps_pipe);
-    if (verbose>0) std::cout << "output: " << line1 << std::endl;
+    if (verbose>0) std::cout << "units output: " << line1 << std::endl;
 
     // Read the output from the 'units' command and compute the 
     // conversion factor
@@ -168,7 +171,15 @@ double convert_units::convert(std::string from, std::string to, double val) {
     std::istringstream *ins=new std::istringstream(s);
     (*ins) >> t1 >> t2;
     delete ins;
+    if (verbose>0) {
+      std::cout << "units string to convert: "
+		<< t2 << std::endl;
+    }
     double conv=o2scl::stod(t2);
+    if (verbose>0) {
+      std::cout << "units converted value: "
+		<< conv << std::endl;
+    }
       
     // Cleanup
     if (err_on_fail && pclose(ps_pipe)!=0) {
@@ -185,8 +196,15 @@ double convert_units::convert(std::string from, std::string to, double val) {
     mcache.insert(make_pair(both,ut));
       
     return conv*val;
-  }
 
+  } else {
+    if (verbose>0) {
+      std::cout << "Value of use_gnu_units is false." << std::endl;
+    }
+  }    
+  
+#else
+  if (verbose>0) std::cout << "popen is not defined." << std::endl;
 #endif
       
   if (err_on_fail) {

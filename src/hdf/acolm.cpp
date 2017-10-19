@@ -773,7 +773,7 @@ int acol_manager::setup_options() {
   const int cl_param=cli::comm_option_cl_param;
   const int both=cli::comm_option_both;
 
-  static const int narr=15;
+  static const int narr=14;
 
   // Options, sorted by long name. We allow 0 parameters in many of these
   // options so they can be requested from the user in interactive mode. 
@@ -784,17 +784,16 @@ int acol_manager::setup_options() {
      "Results are given at the current precision.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_calc),
      both},
-    {'c',"create","Create an object",
-     0,-1,"<type> [...]",
-     ((string)"Create a new object"),
-     /*
-       ((string)"Create a new table with one column whose entries ")+
-       "are an evenly-spaced grid. This takes four arguments, the name of "+
-       "the column, the first value, the increment between successive values "+
-       "and the maximum possible value. Note that finite precision "+
-       "arithmetic may cause small deviations from the expected result. "+
-       "If a table is currently in memory, it is deallocated beforehand. ",
-     */
+    {'c',"create","Create an object",0,-1,"<type> [...]",
+     ((string)"Create a new object of type <type>. For types char, ")+
+     "double, int, size_t, and string, this takes one additional "+
+     "argument which holds the value. For type table, "+
+     "create a new table with one column whose entries "+
+     "are an evenly-spaced grid. This takes four arguments, the name of "+
+     "the column, the first value, the increment between successive values "+
+     "and the maximum possible value. Note that finite precision "+
+     "arithmetic may cause small deviations from the expected result. "+
+     "If a table is currently in memory, it is deallocated beforehand. ",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_create),
      both},
     {0,"download","Download file from specified URL.",
@@ -810,18 +809,13 @@ int acol_manager::setup_options() {
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_filelist),
      both},
     {'g',"generic","Read in a generic text file.",0,1,"<type> <file>",
-     ((string)"Read an object froma text file with the given filename. ")+
-     "The first line of the file must either contain numeric data or "+
-     "column names "+
+     ((string)"Read an object of type <type> from a text file named ")+
+     "<file>. The first line of the file must either contain numeric "+
+     "data or column names "+
      "separated by white space, without carriage returns, except for "+
      "the one at the end of the line. All remaining lines are assumed "+
-     "to contain data with the same number of columns as the first line. ",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_generic),
-     both},
-    /*
-    {0,"gen3-list","Read in a generic data file.",0,1,"<file>",
-     ((string)"This command reads in a generic data file ")+
-     "which specifies a table3d object. The data must be stored in columns "+
+     "to contain data with the same number of columns as the first line. "+
+     "The data must be stored in columns "+
      "where the first entry in each column is the x-axis grid point, "+
      "the second, entry in each column is the y-axis grid point, "+
      "and the remaining columns give the data for each slice at that "+
@@ -829,9 +823,8 @@ int acol_manager::setup_options() {
      "the lines need not be in any particular order. The columns may "+
      "have one header line at top which specifies the names of the x- "+
      "and y-grids and the names of each slice (in order).",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_gen3_list),
+     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_generic),
      both},
-    */
     {0,"get-conv","Get a unit conversion factor.",0,2,
      "<old unit> <new unit>",((string)"This command gets a unit ")+
      "conversion factor. It only works if the conversion is one of the "
@@ -858,13 +851,14 @@ int acol_manager::setup_options() {
      "automatically turned on.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_interactive),
      cl_param},
-    {'i',"internal","Output in the internal HDF5 format.",0,1,"[file]",
+    {'i',"internal","Output current object in the internal HDF5 format.",
+     0,1,"[file]",
      ((string)"Output the current object in the internal HDF5 format. ")+
      "If no argument is given, then output is sent to the screen, "+
      "otherwise, output is sent to the specified file. ",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_internal),
      both},
-    {'o',"output","Output the full object as text.",0,1,"[file]",
+    {'o',"output","Output the current object as text.",0,1,"[file]",
      ((string)"Output the object to the screen, or if the [file] ")+
      "argument is specified, to a file. This is the same format as "+
      "can be read using the 'generic' command.",
@@ -885,9 +879,6 @@ int acol_manager::setup_options() {
      "attempting to find a readable O2scl object.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_read),
      both},
-    {0,"read-old","Read an object from a file.",0,2,"","",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_read_old),
-     both},
     {0,"show-units","Show the unit conversion table.",0,0,"",
      ((string)"This command does not show all possible conversions, only ")+
      "the conversions which have been previously used and are now stored "+
@@ -896,7 +887,7 @@ int acol_manager::setup_options() {
      both},
     {0,"type","Show current object type.",0,0,"",
      ((string)"Show the current object type, either table, ")+
-     "table3d, hist, hist_2d, or vector<contour_line>, int, double, "+
+     "table3d, hist, hist_2d, vector<contour_line>, int, double, "+
      "char, string, int[], double[], string[], size_t, size_t[], or "+
      "uniform_grid<double>.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_type),
@@ -2268,213 +2259,6 @@ herr_t acol_manager::iterate_func(hid_t loc, const char *name,
     cout << "Unexpected HDF type. " << endl;
   }
   return 0;
-}
-
-int acol_manager::comm_read_old(std::vector<std::string> &sv, bool itive_com) {
-  
-  std::string i1, i2;
-  if (sv.size()==1) {
-    if (itive_com) {
-      i1=cl->cli_gets("Enter filename (or blank to quit): ");
-      if (i1.length()==0) {
-        if (verbose>0) cout << "Command 'read' cancelled." << endl;
-        return 0;
-      } 
-      i2=cl->cli_gets("Enter object name (or blank for first table): ");
-    } else {
-      cout << "Filename not given for command 'read'." << endl;
-      return exc_efailed;
-    }
-  } else {
-    i1=sv[1];
-    if (sv.size()>2) {
-      i2=sv[2];
-    }
-  }
-
-  // Delete previous object
-  command_del();
-  clear_obj();
-
-  // Use hdf_file to open the file
-  hdf_file hf;
-  string type2;
-  int ret;
-
-  ret=hf.open(i1.c_str(),false,false);
-  if (ret!=0) {
-    cerr << "Could not find file named '" << i1 << "'. Wrong file name?" 
-	 << endl;
-    return exc_efailed;
-  }
-
-  // If a name was specified, look for an object with that name
-  if (i2.length()>0) {
-    if (verbose>2) {
-      cout << "Looking for object with name '" << i2 << "'." << endl;
-    }
-    ret=hf.find_group_by_name(i2,type2,verbose);
-    if (ret==exc_enotfound) {
-      cout << "Could not find object named '" << i2 
-	   << "' in file '" << i1 << "'." << endl;
-      return exc_efailed;
-    }
-    if (verbose>2) {
-      cout << "Found object with type '" << type2 << "'." << endl;
-    }
-    if (type2=="table") {
-      if (verbose>2) {
-	cout << "Reading table." << endl;
-      }
-      hdf_input(hf,table_obj,i2);
-      obj_name=i2;
-      interp_type=table_obj.get_interp_type();
-      command_add("table");
-      type="table";
-      return 0;
-    } else if (type2=="table3d") {
-      if (verbose>2) {
-	cout << "Reading table3d." << endl;
-      }
-      hdf_input(hf,table3d_obj,i2);
-      obj_name=i2;
-      interp_type=table3d_obj.get_interp_type();
-      command_add("table3d");
-      type="table3d";
-      return 0;
-    } else if (type2=="hist") {
-      if (verbose>2) {
-	cout << "Reading hist." << endl;
-      }
-      type="hist";
-      command_add("hist");
-      //table_obj=new table_units<>;
-      hdf_input(hf,hist_obj,i2);
-      /*
-	if (verbose>0) {
-	cout << "Creating a table from the histogram with columns named\n";
-	cout << "'bins', 'low', 'high', and 'weights'." << endl;
-	}
-	h.copy_to_table(table_obj,"bins","low","high","weights");
-      */
-      return 0;
-    } else if (type2=="hist_2d") {
-      if (verbose>2) {
-	cout << "Reading hist_2d." << endl;
-      }
-      command_add("hist_2d");
-      type="hist_2d";
-      //threed=true;
-      //table3d_obj=new table3d;
-      //hist_2d h;
-      hdf_input(hf,hist_2d_obj,i2);
-      /*
-	if (verbose>0) {
-	cout << "Creating a table3d from the histogram with slice named\n";
-	cout << "'weights'." << endl;
-	}
-	h.copy_to_table(table3d_obj,"x","y","weights");
-      */
-      return 0;
-    } else if (type2==((string)"string[]")) {
-      vector<string> vs;
-      hf.gets_vec(i2,vs);
-      if (vs.size()==0) {
-	cout << "String vector empty." << endl;
-      } else if (vs.size()==1) {
-	cout << vs[0] << endl;
-      } else {
-	string str=vs[0];
-	for(size_t kk=1;kk<vs.size();kk++) {
-	  str+=" ";
-	  str+=vs[kk];
-	}
-	vector<string> vs2;
-	o2scl::rewrap(str,vs2);
-	for(size_t kk=0;kk<vs2.size();kk++) {
-	  cout << vs2[kk] << endl;
-	}
-      }
-      return 0;
-    }
-    cout << "Incompatible type '" << i2 << "'." << endl;
-    return exc_efailed;
-  } 
-
-  ret=hf.find_group_by_type("table",i2,verbose);
-  if (ret==success) {
-    if (verbose>0) {
-      cout << "No name specified, reading first table object." << endl;
-    }
-    hdf_input(hf,table_obj,i2);
-    obj_name=i2;
-    command_add("table");
-    type="table";
-    interp_type=table_obj.get_interp_type();
-    return 0;
-  }
-
-  ret=hf.find_group_by_type("table3d",i2,verbose);
-  if (ret==success) {
-    if (verbose>0) {
-      cout << "No name specified, reading first table3d object." << endl;
-    }
-    hdf_input(hf,table3d_obj,i2);
-    obj_name=i2;
-    interp_type=table3d_obj.get_interp_type();
-
-    command_add("table3d");
-    type="table3d";
-    
-    return 0;
-  }
-
-  ret=hf.find_group_by_type("hist",i2,verbose);
-  if (ret==success) {
-    if (verbose>0) {
-      cout << "No name specified, reading first hist object." << endl;
-    }
-    //hist h;
-    hdf_input(hf,hist_obj,i2);
-    /*
-      if (verbose>0) {
-      cout << "Creating a table from the histogram with columns named\n";
-      cout << "'bins', 'low', 'high', and 'weights'." << endl;
-      }
-      h.copy_to_table(table_obj,"bins","low","high","weights");
-    */
-    obj_name=i2;
-    command_add("hist");
-    type="hist";
-    return 0;
-  }
-  
-  ret=hf.find_group_by_type("hist_2d",i2,verbose);
-  if (ret==success) {
-    if (verbose>0) {
-      cout << "No name specified, reading first hist_2d object." << endl;
-    }
-    //hist_2d h;
-    hdf_input(hf,hist_2d_obj,i2);
-    /*
-      table3d_obj=new table3d;
-      if (verbose>0) {
-      cout << "Creating a table3d from the histogram with slice named\n";
-      cout << "'weights'." << endl;
-      }
-      h.copy_to_table(table3d_obj,"x","y","weights");
-    */
-    obj_name=i2;
-    //threed=true;
-    command_add("hist_2d");
-    type="hist_2d";
-    return 0;
-  }
-
-  cout << "Could not find object of any readable type in file '" << i1
-       << "'." << endl;
-  
-  return exc_efailed;
 }
 
 herr_t acol_manager::filelist_func(hid_t loc, const char *name, 
@@ -3881,14 +3665,28 @@ int acol_manager::comm_get_conv
   
   if (unit_fname.length()>0) {
     cng.units_cmd_string=((string)"units -f ")+unit_fname;
+    if (verbose>=2) {
+      cout << "Units command string: " << cng.units_cmd_string
+	   << endl;
+    }
   }
   
   // Set the proper output precision and mode
   if (scientific) cout.setf(ios::scientific);
   else cout.unsetf(ios::scientific);
   cout.precision(prec);
+
+  if (verbose>=2) {
+    cng.verbose=1;
+  } else {
+    cng.verbose=0;
+  }
+
+  // If cng.verbose is non-zero, then cng.convert may output
+  // verbose information to cout
+  double val=cng.convert(in[0],in[1],1.0);
   
-  cout << "Conversion factor is: " << cng.convert(in[0],in[1],1.0) << endl;
+  cout << "Conversion factor is: " << val << endl;
   
   return 0;
 }
@@ -6428,6 +6226,48 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     }
     command_add("double[]");
     type="double[]";
+    
+  } else if (ctype=="int[]") {
+    
+    vector<string> in, pr;
+    pr.push_back("Size");
+    pr.push_back("Function of i (starting with zero)");
+    int ret=get_input(sv2,pr,in,"create",itive_com);
+    if (ret!=0) return ret;
+
+    calculator calc;
+    std::map<std::string,double> vars;
+    std::map<std::string,double>::const_iterator mit;
+    size_t nn=o2scl::stoszt(in[0]);
+    intv_obj.clear();
+    calc.compile(in[1].c_str(),&vars);
+    for(size_t i=0;i<nn;i++) {
+      vars["i"]=((double)i);
+      intv_obj.push_back(((int)(calc.eval(&vars))));
+    }
+    command_add("int[]");
+    type="int[]";
+    
+  } else if (ctype=="size_t[]") {
+    
+    vector<string> in, pr;
+    pr.push_back("Size");
+    pr.push_back("Function of i (starting with zero)");
+    int ret=get_input(sv2,pr,in,"create",itive_com);
+    if (ret!=0) return ret;
+
+    calculator calc;
+    std::map<std::string,double> vars;
+    std::map<std::string,double>::const_iterator mit;
+    size_t nn=o2scl::stoszt(in[0]);
+    size_tv_obj.clear();
+    calc.compile(in[1].c_str(),&vars);
+    for(size_t i=0;i<nn;i++) {
+      vars["i"]=((double)i);
+      size_tv_obj.push_back(((size_t)(calc.eval(&vars))));
+    }
+    command_add("size_t[]");
+    type="size_t[]";
     
   } else if (ctype=="table") {
     
