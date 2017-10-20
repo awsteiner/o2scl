@@ -50,6 +50,9 @@ lib_settings_class::lib_settings_class() {
 		      o2scl_mks::electron_volt*1.0e-6);
   def_cu.insert_cache("MeV","eV",1.0e6);
   def_cu.insert_cache("keV","eV",1.0e3);
+  def_cu.insert_cache("Msun","kg",o2scl_mks::solar_mass);
+  def_cu.insert_cache("erg","kg",o2scl_mks::erg);
+
 
   // Joules and Kelvin
   
@@ -58,9 +61,20 @@ lib_settings_class::lib_settings_class() {
   def_cu.insert_cache("K","kg",o2scl_mks::boltzmann/
 		      pow(o2scl_mks::speed_of_light,2.0));
 
-  // Energy density and pressure conversions (useful for the TOV
-  // solver)
+  // Energy density and pressure conversions
 
+  def_cu.insert_cache("atm","bar",o2scl_mks::std_atmosphere/o2scl_mks::bar);
+  def_cu.insert_cache("atm","Pa",o2scl_mks::std_atmosphere);
+  def_cu.insert_cache("Pa","kg/m^3",1.0/o2scl_mks::speed_of_light/
+		      o2scl_mks::speed_of_light);
+  def_cu.insert_cache("Pa","g/cm^3",1.0/o2scl_cgs::speed_of_light/
+		      o2scl_cgs::speed_of_light);
+  def_cu.insert_cache("Pa","MeV/fm^3",10.0*1.0e12/o2scl_mks::solar_mass/
+		      o2scl_cgs::speed_of_light/o2scl_cgs::speed_of_light/
+		      (o2scl_cgs::electron_volt/o2scl_cgs::speed_of_light/
+		       o2scl_cgs::speed_of_light/o2scl_mks::solar_mass*
+		       1.0e57));
+  def_cu.insert_cache("Pa","erg/cm^3",10.0);
   def_cu.insert_cache("g/cm^3","Msun/km^3",1.0e12/o2scl_mks::solar_mass);
   def_cu.insert_cache("erg/cm^3","Msun/km^3",1.0e12/o2scl_cgs::speed_of_light/
 		      o2scl_cgs::speed_of_light/o2scl_mks::solar_mass);
