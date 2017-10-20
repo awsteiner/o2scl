@@ -67,13 +67,9 @@ lib_settings_class::lib_settings_class() {
   def_cu.insert_cache("atm","Pa",o2scl_mks::std_atmosphere);
   def_cu.insert_cache("Pa","kg/m^3",1.0/o2scl_mks::speed_of_light/
 		      o2scl_mks::speed_of_light);
-  def_cu.insert_cache("Pa","g/cm^3",1.0/o2scl_cgs::speed_of_light/
+  def_cu.insert_cache("Pa","g/cm^3",10.0/o2scl_cgs::speed_of_light/
 		      o2scl_cgs::speed_of_light);
-  def_cu.insert_cache("Pa","MeV/fm^3",10.0*1.0e12/o2scl_mks::solar_mass/
-		      o2scl_cgs::speed_of_light/o2scl_cgs::speed_of_light/
-		      (o2scl_cgs::electron_volt/o2scl_cgs::speed_of_light/
-		       o2scl_cgs::speed_of_light/o2scl_mks::solar_mass*
-		       1.0e57));
+  def_cu.insert_cache("Pa","MeV/fm^3",1.0e-44/o2scl_cgs::electron_volt);
   def_cu.insert_cache("Pa","erg/cm^3",10.0);
   def_cu.insert_cache("g/cm^3","Msun/km^3",1.0e12/o2scl_mks::solar_mass);
   def_cu.insert_cache("erg/cm^3","Msun/km^3",1.0e12/o2scl_cgs::speed_of_light/
