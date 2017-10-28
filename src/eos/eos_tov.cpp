@@ -368,6 +368,10 @@ void eos_tov_interp::read_table(table_units<> &eosat, string s_cole,
 	       "eos_tov_interp::read_table().",exc_einval);
   }
   if (eosat.get(s_colp,0)>eosat.get(s_colp,core_nlines-1)) {
+    eosat.summary(&std::cout);
+    cout << core_nlines << " " << s_colp << " ";
+    cout << eosat.get(s_colp,0) << " ";
+    cout << eosat.get(s_colp,core_nlines-1) << std::endl;
     O2SCL_ERR2("Core table pressure decreasing in ",
 	       "eos_tov_interp::read_table().",exc_einval);
   }
