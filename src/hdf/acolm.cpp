@@ -832,8 +832,8 @@ int acol_manager::setup_options() {
      "conversion factor. It only works if the conversion is one of the "
      "hard-coded O2scl conversions or if "+
      "the GNU 'units' command is installed and available in the current "+
-     "path. For example, 'get-conv MeV erg' returns 1.602176e-6 and 1 MeV "+
-     "is equivalent to 1.602176e-6 erg. The conversion factor is output "+
+     "path. For example, 'get-conv MeV erg' returns 1.782662e-23 and 1 MeV "+
+     "is equivalent to 1.782662e-23 erg. The conversion factor is output "+
      "at the current precision, but is always internally stored with "+
      "full double precision. (Note that the 'units' command shipped on OSX "+
      "is not the same as the GNU version.)",
