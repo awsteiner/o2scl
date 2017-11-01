@@ -1088,12 +1088,12 @@ namespace o2scl {
 	    // Repeat measurement of old point
 	    if (!warm_up) {
 	      if (switch_arr[sindex]==false) {
-		meas_ret[it]=meas[it](current[sindex],
-				      w_current[sindex],
+		meas_ret[it]=meas[it](next[sindex],
+				      w_next[sindex],
 				      curr_walker[it],false,data_arr[sindex]);
 	      } else {
-		meas_ret[it]=meas[it](current[sindex],
-				      w_current[sindex],
+		meas_ret[it]=meas[it](next[sindex],
+				      w_next[sindex],
 				      curr_walker[it],false,
 				      data_arr[sindex+n_walk*n_threads]);
 	      }
@@ -1356,9 +1356,13 @@ namespace o2scl {
       }
     }
     
-    walker_rows.resize(this->n_walk*this->n_threads);
+    walker_accept_rows.resize(this->n_walk*this->n_threads);
     for(size_t i=0;i<this->n_walk*this->n_threads;i++) {
-      walker_rows[i]=-1;
+      walker_accept_rows[i]=-1;
+    }
+    walker_reject_rows.resize(this->n_walk*this->n_threads);
+    for(size_t i=0;i<this->n_walk*this->n_threads;i++) {
+      walker_reject_rows[i]=-1;
     }
 
     /*
@@ -1406,10 +1410,15 @@ namespace o2scl {
     return tempi;
   }
   
-  /** \brief Record the last row in the table which corresponds
-      to each walker
+  /** \brief For each walker, record the last row in the table which 
+      corresponds to an accept
   */
-  std::vector<int> walker_rows;
+  std::vector<int> walker_accept_rows;
+
+  /** \brief For each walker, record the last row in the table which 
+      corresponds to an reject
+  */
+  std::vector<int> walker_reject_rows;
 
   /// Likelihood estimator
   interpm_idw<double *> esti;
@@ -1554,11 +1563,15 @@ namespace o2scl {
   /// If true, allow estimates of the weight (default false)
   bool allow_estimates;
 
+  /// If true, store MCMC rejections in the table
+  bool store_rejects;
+  
   mcmc_para_table() {
     allow_estimates=false;
     table_io_chunk=1;
     file_update_iters=0;
     last_write=0;
+    store_rejects=false;
   }
   
   /// \name Basic usage
@@ -1745,7 +1758,7 @@ namespace o2scl {
       table
   */
   virtual int add_line(const vec_t &pars, double log_weight,
-		       size_t walker_ix, bool new_meas, data_t &dat,
+		       size_t walker_ix, bool mcmc_accept, data_t &dat,
 		       size_t i_thread, fill_t &fill) {
 
     // The combined walker/thread index 
@@ -1753,8 +1766,20 @@ namespace o2scl {
 
     // The total number of walkers * threads
     size_t ntot=this->n_threads*this->n_walk;
-
+    
     int ret_value=o2scl::success;
+
+    // Determine the next row
+    int next_row;
+    if (mcmc_accept && walker_accept_rows[windex]<0) {
+      next_row=windex;
+    } else {
+      if (walker_accept_rows[windex]>walker_reject_rows[windex]) {
+	next_row=walker_accept_rows[windex]+ntot;
+      } else {
+	next_row=walker_reject_rows[windex]+ntot;
+      }
+    }
     
     // Make sure only one thread writes to the table at a time by
     // making this next region 'critical'. This is required because
@@ -1765,9 +1790,11 @@ namespace o2scl {
     {
 
       // If there's not enough space in the table for this iteration,
-      // create it
-      if ((walker_rows[windex]<0 && table->get_nlines()<ntot) ||
-	  table->get_nlines()<=walker_rows[windex]+ntot) {
+      // then create it. There is not enough space if any of the
+      // walker_accept_rows array entries is -1, if we have an
+      // acceptance but there isn't room to store it, or if
+      // we have a rejection and there isn't room to store it. 
+      if (next_row>=((int)table->get_nlines())) {
 	size_t istart=table->get_nlines();
 	// Create enough space
 	table->set_nlines(table->get_nlines()+ntot);
@@ -1778,48 +1805,41 @@ namespace o2scl {
 	    table->set("thread",istart+j*this->n_walk+i,j);
 	    table->set("walker",istart+j*this->n_walk+i,i);
 	    table->set("mult",istart+j*this->n_walk+i,0.0);
-	    table->set("log_wgt",istart+j*this->n_walk+i,-1.0);
+	    table->set("log_wgt",istart+j*this->n_walk+i,0.0);
 	  }
 	}
       }
 
-      // Test to see if we need to add a new line of data or increment
-      // the weight on the previous line. If the fill function has reset
-      // the table data, then the walker_rows will refer to a row which
-      // doesn't currently exist, so we have to add a new line of data.
-
-      if (new_meas==true || walker_rows[windex]<0) {
-
-	// We need to create a new measurement, so update the
-	// row corresponding to this index
-	if (walker_rows[windex]>=0) {
-	  walker_rows[windex]+=ntot;
-	} else {
-	  walker_rows[windex]=windex;
-	}
-      
-	if (walker_rows[windex]>=((int)(table->get_nlines()))) {
+      // If needed, add the line to the next row
+      if (mcmc_accept || store_rejects) {
+	
+	if (next_row>=((int)(table->get_nlines()))) {
 	  O2SCL_ERR("Not enough space in table.",o2scl::exc_esanity);
 	}
-
+	
 	std::vector<double> line;
 	int fret=fill_line(pars,log_weight,line,dat,walker_ix,fill);
 
-	// The fill_line() function doesn't set the walker index,
-	// so we do this here
-	//line[1]=walker_ix;
-      
+	// For rejections, set the multiplier to -1.0
+	if (store_rejects) {
+	  line[3]=-1.0;
+	}
+	
 	if (fret!=o2scl::success) {
+	  
 	  // If we're done, we stop before adding the last point to the
 	  // table. This is important because otherwise the last line in
 	  // the table will always only have unit multiplicity, which
 	  // may or may not be correct.
 	  ret_value=this->mcmc_done;
+	  
 	} else {
-      
+
+	  // First, double check that the table has the right
+	  // number of columns
 	  if (line.size()!=table->get_ncolumns()) {
 	    std::cout << "line: " << line.size() << " columns: "
-		      << table->get_ncolumns() << std::endl;
+	    << table->get_ncolumns() << std::endl;
 	    for(size_t k=0;k<table->get_ncolumns() || k<line.size();k++) {
 	      std::cout << k << ". ";
 	      if (k<table->get_ncolumns()) {
@@ -1832,10 +1852,13 @@ namespace o2scl {
 	    O2SCL_ERR("Table misalignment in mcmc_para_table::add_line().",
 		      exc_einval);
 	  }
-	  
-	  table->set_row(((size_t)walker_rows[windex]),line);
+
+	  // Set the row
+	  table->set_row(((size_t)next_row),line);
+
+	  // Verbose output
 	  if (this->verbose>=2) {
-	    this->scr_out << "mcmc: Setting data at row " << walker_rows[windex]
+	    this->scr_out << "mcmc: Setting data at row " << next_row
 			  << std::endl;
 	    for(size_t k=0;k<line.size();k++) {
 	      this->scr_out << k << ". ";
@@ -1844,25 +1867,36 @@ namespace o2scl {
 	      this->scr_out << " " << line[k] << std::endl;
 	    }
 	  }
-	  
+
 	}
-      
-      } else {
-	
-	// Otherwise, just increment the multiplier on the previous line
-      
-	double mult_old=table->get("mult",walker_rows[windex]);
-	table->set("mult",walker_rows[windex],mult_old+1.0);
+
+	// End of 'if (mcmc_accept || store_rejects)'
+      }
+
+      // If necessary, increment the multiplier on the previous point
+      if (ret_value==o2scl::success && mcmc_accept==false) {
+	double mult_old=table->get("mult",walker_accept_rows[windex]);
+	table->set("mult",walker_accept_rows[windex],mult_old+1.0);
 	if (this->verbose>=2) {
-	  this->scr_out << "mcmc: Updating mult of row " << walker_rows[windex]
+	  this->scr_out << "mcmc: Updating mult of row "
+			<< walker_accept_rows[windex]
 			<< " from " << mult_old << " to "
 			<< mult_old+1.0 << std::endl;
 	}
-      
+	
       }
-            
+
     }
     // End of critical region
+    
+    // Increment row counters if necessary
+    if (ret_value==o2scl::success) {
+      if (mcmc_accept) {
+	walker_accept_rows[windex]=next_row;
+      } else if (store_rejects) {
+	walker_reject_rows[windex]=next_row;
+      }
+    }
     
     return ret_value;
   }
