@@ -357,6 +357,8 @@ namespace o2scl {
   virtual int mcmc(size_t n_params, vec_t &low, vec_t &high,
 		   std::vector<func_t> &func, std::vector<measure_t> &meas) {
 
+    // Doxygen seems to have trouble reading the code, so we
+    // ensure it doesn't see it. 
 #ifndef DOXYGEN
     
     if (func.size()<n_threads) {
@@ -447,7 +449,7 @@ namespace o2scl {
       rg[it].set_seed(seed);
     }
     
-    // Keep track of successful and failed MH moves
+    // Keep track of successful and failed MH moves in each thread
     n_accept.resize(n_threads);
     n_reject.resize(n_threads);
     for(size_t it=0;it<n_threads;it++) {
@@ -455,7 +457,7 @@ namespace o2scl {
       n_reject[it]=0;
     }
 
-    // Warm-up flag, not to be confused with 'n_warm_up', i.e. the
+    // Warm-up flag, not to be confused with 'n_warm_up', the
     // number of warm_up iterations.
     warm_up=true;
     if (n_warm_up==0) warm_up=false;
@@ -855,7 +857,7 @@ namespace o2scl {
 
     while (!main_done) {
 
-      // Walker to move (or zero when aff_inv is false)
+      // Choose walker to move (or zero when aff_inv is false)
       std::vector<double> smove_z(n_threads);
       for(size_t it=0;it<n_threads;it++) {
 	curr_walker[it]=0;
@@ -921,8 +923,8 @@ namespace o2scl {
 	  // Compute next weight
       
 	  func_ret[it]=o2scl::success;
-	  // If the next point out of bounds, ensure that the
-	  // point is rejected
+	  // If the next point out of bounds, ensure that the point is
+	  // rejected without attempting to evaluate the function
 	  for(size_t k=0;k<n_params;k++) {
 	    if (next[it][k]<low[k] || next[it][k]>high[k]) {
 	      func_ret[it]=mcmc_skip;
@@ -949,6 +951,9 @@ namespace o2scl {
 	      }
 	    }
 	  }
+
+	  // Evaluate the function, set the 'done' flag if
+	  // necessary, and update the return value array
 	  if (func_ret[it]!=mcmc_skip) {
 	    if (switch_arr[n_walk*it+curr_walker[it]]==false) {
 	      func_ret[it]=func[it](n_params,next[it],w_next[it],
@@ -1088,12 +1093,10 @@ namespace o2scl {
 	    // Repeat measurement of old point
 	    if (!warm_up) {
 	      if (switch_arr[sindex]==false) {
-		meas_ret[it]=meas[it](next[sindex],
-				      w_next[sindex],
+		meas_ret[it]=meas[it](next[sindex],w_next[sindex],
 				      curr_walker[it],false,data_arr[sindex]);
 	      } else {
-		meas_ret[it]=meas[it](next[sindex],
-				      w_next[sindex],
+		meas_ret[it]=meas[it](next[sindex],w_next[sindex],
 				      curr_walker[it],false,
 				      data_arr[sindex+n_walk*n_threads]);
 	      }
@@ -1155,6 +1158,8 @@ namespace o2scl {
 	}
       }
 
+      // Update iteration count and reset counters for
+      // warm up iterations if necessary
       if (main_done==false) {
 	
 	mcmc_iters++;
@@ -1179,6 +1184,7 @@ namespace o2scl {
 	std::cin >> ch;
       }
 
+      // Stop if iterations greater than max
       if (main_done==false && warm_up==false && max_iters>0 &&
 	  mcmc_iters==max_iters) {
 	scr_out << "mcmc: Stopping because number of iterations ("
@@ -1536,7 +1542,7 @@ namespace o2scl {
 
     hf.seti("n_tables",tab_arr.size()+1);
     if (rank_sent==false) {
-      hdf_output(hf,*table,"markov_chain0");
+      hdf_output(hf,*table,"markov_chain_0");
     }
     for(size_t i=0;i<tab_arr.size();i++) {
       std::string name=((std::string)"markov_chain")+szttos(i+1);
@@ -1563,7 +1569,8 @@ namespace o2scl {
   /// If true, allow estimates of the weight (default false)
   bool allow_estimates;
 
-  /// If true, store MCMC rejections in the table
+  /** \brief If true, store MCMC rejections in the table
+   */
   bool store_rejects;
   
   mcmc_para_table() {
@@ -1591,15 +1598,32 @@ namespace o2scl {
   virtual void initial_points_file_last(std::string fname) {
 
     table=std::shared_ptr<o2scl::table_units<> >(new o2scl::table_units<>);
+
+#ifdef O2SCL_MPI
+    // Ensure that multiple threads aren't reading from the
+    // filesystem at the same time
+    int tag=0, buffer=0;
+    if (this->mpi_size>1 && this->mpi_rank>0) {
+      MPI_Recv(&buffer,1,MPI_INT,this->mpi_rank,
+	       tag,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+    }
+#endif
     
     o2scl_hdf::hdf_file hf;
     hf.open(fname);
-    hdf_input(hf,*table,"markov_chain0");
+    hdf_input(hf,*table,"markov_chain_0");
     hf.get_szt("n_threads",this->n_threads);
     hf.get_szt("n_walk",this->n_walk);
     hf.get_szt("n_params",this->n_params);
     hf.close();
     
+#ifdef O2SCL_MPI
+    if (this->mpi_size>1 && this->mpi_rank<this->mpi_size-1) {
+      MPI_Send(&buffer,1,MPI_INT,this->mpi_rank,
+	       tag,MPI_COMM_WORLD);
+    }
+#endif
+
     std::cout << "Initial point last from file: " << fname << std::endl;
     
     // The total number of walkers * threads
@@ -1648,29 +1672,69 @@ namespace o2scl {
 
     table=std::shared_ptr<o2scl::table_units<> >(new o2scl::table_units<>);
     
+    size_t n_walk_loc, n_threads_loc;
+
+#ifdef O2SCL_MPI
+    // Ensure that multiple threads aren't reading from the
+    // filesystem at the same time
+    int tag=0, buffer=0;
+    if (this->mpi_size>1 && this->mpi_rank>0) {
+      MPI_Recv(&buffer,1,MPI_INT,this->mpi_rank,
+	       tag,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+    }
+#endif
+    
     o2scl_hdf::hdf_file hf;
     hf.open(fname);
-    hdf_input(hf,*table,"markov_chain0");
+    hdf_input(hf,*table,"markov_chain_0");
     hf.get_szt("n_params",this->n_params);
+    hf.get_szt("n_walk",n_walk_loc);
+    hf.get_szt("n_threads",n_threads_loc);
     hf.close();
     
+#ifdef O2SCL_MPI
+    if (this->mpi_size>1 && this->mpi_rank<this->mpi_size-1) {
+      MPI_Send(&buffer,1,MPI_INT,this->mpi_rank,
+	       tag,MPI_COMM_WORLD);
+    }
+#endif
+
     std::cout << "Initial point best from file: " << fname << std::endl;
 
-    // Find the row of the best point
-    size_t row=0;
-    double best_wgt=table->get("log_wgt",0);
-    for(size_t i=1;i<table->get_nlines();i++) {
-      if (table->get("mult",i)>0.5 && table->get("log_wgt",i)>best_wgt) {
-	best_wgt=table->get("log_wgt",i);
-	row=i;
+    // It seems like a lot of effort to copy the column, but this is
+    // likely faster than trying to reorganize the table
+    std::vector<double> lws;
+    std::vector<size_t> rows;
+    for(size_t k=0;k<table->get_nlines();k++) {
+      if (table->get("mult",k)>0.5) {
+	lws.push_back(table->get("log_wgt",k));
+	rows.push_back(k);
       }
     }
+
+    // Check to see if we have enough
+    size_t n_points=n_walk_loc*n_threads_loc;
+    if (n_points<table->get_nlines()) {
+      O2SCL_ERR2("Could not find enough points in file in ",
+		 "mcmc_para::initial_points_file_best().",
+		 o2scl::exc_efailed);
+    }
+
+    // Remove rows 
+    
+    
+    // Find the largest entries in the log_wgt column
+    std::vector<size_t> largest;
+    o2scl::vector_largest<std::vector<double>,double>
+    (table->get_nlines(),lws,n_points,largest);
     
     // Copy the entries from this row into the initial_points object
-    this->initial_points.resize(1);
-    this->initial_points[0].resize(this->n_params);
-    for(size_t ip=0;ip<this->n_params;ip++) {
-      this->initial_points[0][ip]=table->get(ip+5,row);
+    this->initial_points.resize(n_points);
+    for(size_t k=0;k<n_points;k++) {
+      this->initial_points[k].resize(this->n_params);
+      for(size_t ip=0;ip<this->n_params;ip++) {
+	this->initial_points[k][ip]=table->get(ip+5,rows[largest[k]]);
+      }
     }
 
     return;
@@ -1820,8 +1884,9 @@ namespace o2scl {
 	std::vector<double> line;
 	int fret=fill_line(pars,log_weight,line,dat,walker_ix,fill);
 
-	// For rejections, set the multiplier to -1.0
-	if (store_rejects) {
+	// For rejections, set the multiplier to -1.0 (it was set to
+	// 1.0 in the fill_line() call above)
+	if (store_rejects && mcmc_accept==false) {
 	  line[3]=-1.0;
 	}
 	
