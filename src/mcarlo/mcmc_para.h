@@ -1699,7 +1699,13 @@ namespace o2scl {
     }
 #endif
 
-    std::cout << "Initial point best from file: " << fname << std::endl;
+    // Determine number of points
+    size_t n_points=n_walk_loc*n_threads_loc;
+
+    if (this->verbose>0) {
+      std::cout << "Initial points: best " << n_points
+		<< " points from file: " << fname << std::endl;
+    }
 
     // It seems like a lot of effort to copy the column, but this is
     // likely faster than trying to reorganize the table
@@ -1713,7 +1719,6 @@ namespace o2scl {
     }
 
     // Check to see if we have enough
-    size_t n_points=n_walk_loc*n_threads_loc;
     if (n_points<table->get_nlines()) {
       O2SCL_ERR2("Could not find enough points in file in ",
 		 "mcmc_para::initial_points_file_best().",
@@ -1727,6 +1732,14 @@ namespace o2scl {
     std::vector<size_t> largest;
     o2scl::vector_largest<std::vector<double>,double>
     (table->get_nlines(),lws,n_points,largest);
+    if (this->verbose>0) {
+      for(size_t k=0;k<n_points;k++) {
+	std::cout << "Choosing row " << rows[largest[k]] 
+		  << " from table with log_wgt: "
+		  << table->get("log_wgt",rows[largest[k]])
+		  << std::endl;
+      }
+    }
     
     // Copy the entries from this row into the initial_points object
     this->initial_points.resize(n_points);
