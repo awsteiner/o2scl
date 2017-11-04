@@ -167,6 +167,7 @@ namespace o2scl {
    */
   virtual int mcmc_init() {
     if (verbose>0) {
+      std::cout << "Prefix is: " << prefix << std::endl;
       // Open main output file for this rank
       scr_out.open((prefix+"_"+
 		    o2scl::itos(mpi_rank)+"_scr").c_str());
@@ -1604,7 +1605,7 @@ namespace o2scl {
     // filesystem at the same time
     int tag=0, buffer=0;
     if (this->mpi_size>1 && this->mpi_rank>0) {
-      MPI_Recv(&buffer,1,MPI_INT,this->mpi_rank,
+      MPI_Recv(&buffer,1,MPI_INT,this->mpi_rank-1,
 	       tag,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
     }
 #endif
@@ -1679,7 +1680,7 @@ namespace o2scl {
     // filesystem at the same time
     int tag=0, buffer=0;
     if (this->mpi_size>1 && this->mpi_rank>0) {
-      MPI_Recv(&buffer,1,MPI_INT,this->mpi_rank,
+      MPI_Recv(&buffer,1,MPI_INT,this->mpi_rank-1,
 	       tag,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
     }
 #endif
