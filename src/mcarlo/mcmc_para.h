@@ -1545,7 +1545,7 @@ namespace o2scl {
       hdf_output(hf,*table,"markov_chain_0");
     }
     for(size_t i=0;i<tab_arr.size();i++) {
-      std::string name=((std::string)"markov_chain")+szttos(i+1);
+      std::string name=((std::string)"markov_chain_")+szttos(i+1);
       hdf_output(hf,tab_arr[i],name);
     }
     
@@ -1686,7 +1686,7 @@ namespace o2scl {
     
     o2scl_hdf::hdf_file hf;
     hf.open(fname);
-    hdf_input(hf,*table,"markov_chain_0");
+    hdf_input(hf,*table,"markov_chain0");
     hf.get_szt("n_params",this->n_params);
     hf.get_szt("n_walk",n_walk_loc);
     hf.get_szt("n_threads",n_threads_loc);
@@ -1713,30 +1713,27 @@ namespace o2scl {
     std::vector<size_t> rows;
     for(size_t k=0;k<table->get_nlines();k++) {
       if (table->get("mult",k)>0.5) {
-	lws.push_back(table->get("log_wgt",k));
+	lws.push_back(-table->get("log_wgt",k));
 	rows.push_back(k);
       }
     }
 
     // Check to see if we have enough
-    if (n_points<table->get_nlines()) {
+    if (lws.size()<n_points) {
       O2SCL_ERR2("Could not find enough points in file in ",
 		 "mcmc_para::initial_points_file_best().",
 		 o2scl::exc_efailed);
     }
 
-    // Remove rows 
-    
-    
-    // Find the largest entries in the log_wgt column
-    std::vector<size_t> largest;
-    o2scl::vector_largest<std::vector<double>,double>
-    (table->get_nlines(),lws,n_points,largest);
+    // Find the smallest entries in the -log_wgt vector
+    std::vector<size_t> smallest;
+    o2scl::vector_smallest_index<std::vector<double>,double>
+    (lws.size(),lws,n_points,smallest);
     if (this->verbose>0) {
       for(size_t k=0;k<n_points;k++) {
-	std::cout << "Choosing row " << rows[largest[k]] 
+	std::cout << "Choosing row " << rows[smallest[k]] 
 		  << " from table with log_wgt: "
-		  << table->get("log_wgt",rows[largest[k]])
+		  << table->get("log_wgt",rows[smallest[k]])
 		  << std::endl;
       }
     }
@@ -1746,7 +1743,7 @@ namespace o2scl {
     for(size_t k=0;k<n_points;k++) {
       this->initial_points[k].resize(this->n_params);
       for(size_t ip=0;ip<this->n_params;ip++) {
-	this->initial_points[k][ip]=table->get(ip+5,rows[largest[k]]);
+	this->initial_points[k][ip]=table->get(ip+5,rows[smallest[k]]);
       }
     }
 
