@@ -1619,7 +1619,7 @@ namespace o2scl {
     
 #ifdef O2SCL_MPI
     if (this->mpi_size>1 && this->mpi_rank<this->mpi_size-1) {
-      MPI_Send(&buffer,1,MPI_INT,this->mpi_rank,
+      MPI_Send(&buffer,1,MPI_INT,this->mpi_rank+1,
 	       tag,MPI_COMM_WORLD);
     }
 #endif
@@ -1694,7 +1694,7 @@ namespace o2scl {
     
 #ifdef O2SCL_MPI
     if (this->mpi_size>1 && this->mpi_rank<this->mpi_size-1) {
-      MPI_Send(&buffer,1,MPI_INT,this->mpi_rank,
+      MPI_Send(&buffer,1,MPI_INT,this->mpi_rank+1,
 	       tag,MPI_COMM_WORLD);
     }
 #endif
