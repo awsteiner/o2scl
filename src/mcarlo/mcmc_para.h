@@ -1687,7 +1687,7 @@ namespace o2scl {
     
     o2scl_hdf::hdf_file hf;
     hf.open(fname);
-    hdf_input(hf,*table,"markov_chain0");
+    hdf_input(hf,*table,"markov_chain_0");
     hf.get_szt("n_params",this->n_params);
     hf.get_szt("n_walk",n_walk_loc);
     hf.get_szt("n_threads",n_threads_loc);
