@@ -327,13 +327,15 @@ namespace o2scl {
       exist.
   */
   void set(std::string scol, size_t row, double val) {
-    if (!std::isfinite(val)) {
+    /*
+      if (!std::isfinite(val)) {
       O2SCL_ERR((((std::string)"Value '")+dtos(val)+
-		 "' not finite for column '"+
-		 scol+"' in table::set(string,size_t,double)").c_str(),
-		exc_einval);
+      "' not finite for column '"+
+      scol+"' in table::set(string,size_t,double)").c_str(),
+      exc_einval);
       return;
-    }
+      }
+    */
     
     if (maxlines==0) inc_maxlines(row+1);
     while(row>maxlines-1) inc_maxlines(maxlines);
@@ -364,6 +366,7 @@ namespace o2scl {
       \f$ {\cal O}(1) \f$
   */
   void set(size_t icol, size_t row, double val) {
+    /*
     if (!std::isfinite(val)) {
       if (icol>=get_ncolumns()) {
 	O2SCL_ERR((((std::string)"Value '")+dtos(val)+
@@ -376,6 +379,7 @@ namespace o2scl {
 		 "' in table::set(size_t,size_t,double)").c_str(),
 		exc_einval);
     }
+    */
     if (icol>=atree.size()) {
       std::string err=((std::string)"Column out of range, ")+szttos(icol)+
       ">="+szttos(atree.size())+", in table::set(size_t,size_t,double).";
@@ -872,12 +876,14 @@ namespace o2scl {
       rows will have uninitialized values.
   */
   void init_column(std::string scol, double val) {
-    if (!std::isfinite(val)) {
+    /*
+      if (!std::isfinite(val)) {
       O2SCL_ERR((((std::string)"Value '")+dtos(val)+
-		 "' not finite for column '"+
-		 scol+"' in table::init_column()").c_str(),exc_einval);
+      "' not finite for column '"+
+      scol+"' in table::init_column()").c_str(),exc_einval);
       return;
-    }
+      }
+    */
     aiter it=atree.find(scol);
     if (it==atree.end()) {
       O2SCL_ERR((((std::string)"Column '")+scol+
