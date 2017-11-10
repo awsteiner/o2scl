@@ -286,6 +286,10 @@ namespace o2scl {
   */
   size_t n_walk;
 
+  /** \brief Number of walkers per thread (default 1)
+  */
+  size_t n_walk_per_thread;
+
   /** \brief If true, call the error handler if msolve() or
       msolve_de() does not converge (default true)
   */
@@ -319,6 +323,7 @@ namespace o2scl {
     ai_initial_step=0.1;
 
     n_threads=1;
+    n_walk=1;
 
     // Initial values for MPI paramers
     mpi_size=1;
@@ -429,14 +434,38 @@ namespace o2scl {
       
     // Fix the number of walkers if it is too small
     if (aff_inv) {
-      if (n_walk<=1) n_walk=2;
-      if (n_walk<n_threads) n_walk=n_threads;
+      if (n_walk<=1) {
+	std::cout << "mcmc_para::mcmc(): Requested only 1 walker, "
+		  << "forcing 2 walkers." << std::endl;
+	n_walk=2;
+      }
+#ifdef O2SCL_NEVER_DEFINED
+      if (n_walk/n_walk_per_thread>n_threads) {
+	std::cout << "mcmc_para::mcmc(): Not enough threads to "
+		  << "cover. Increasing n_walk_per_thread."
+		  << std::endl;
+	std::cout << "n_threads: " << n_threads << std::endl;
+	std::cout << "n_walk: " << n_walk << std::endl;
+	std::cout << "n_walk_per_thread: "
+		  << n_walk_per_thread << << std::endl;
+      }
+#else
+      n_walk_per_thread=n_walk;
+#endif
     }
     
     // Fix 'step_fac' if it's less than or equal to zero
     if (step_fac<=0.0) {
-      if (aff_inv) step_fac=2.0;
-      else step_fac=10.0;
+      if (aff_inv) {
+	std::cout << "mcmc_para::mcmc(): Requested negative or zero "
+		  << "step_fac with aff_inv=true. Setting to 2.0."
+		  << std::endl;
+	step_fac=2.0;
+      } else {
+	std::cout << "mcmc_para::mcmc(): Requested negative or zero "
+		  << "step_fac. Setting to 10.0." << std::endl;
+	step_fac=10.0;
+      }
     }
     
     // Set RNGs with a different seed for each thread and rank
@@ -668,7 +697,8 @@ namespace o2scl {
       w_best=w_current[0];
       size_t best_index=0;
       for(size_t it=0;it<n_threads;it++) {
-	for(curr_walker[it]=0;curr_walker[it]<n_walk;curr_walker[it]++) {
+	for(curr_walker[it]=0;curr_walker[it]<n_walk;
+	    curr_walker[it]++) {
 	  size_t sindex=n_walk*it+curr_walker[it];
 	  if (w_current[sindex]>w_current[0]) {
 	    best_index=sindex;
