@@ -5355,6 +5355,12 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
       }
     }
     
+  } else {
+
+    cerr << "Cannot read generic text file for object of type "
+	 << ctype << endl;
+    return 1;
+    
   }
 
   command_add(ctype);

@@ -523,7 +523,7 @@ extern "C" {
       This function creates an object of type
       \ref o2scl_acol::acol_manager with the <tt>new</tt>
       operator and then calls the function
-      \ref o2scl_acol::acol_manager::run_o2graph() .
+      \ref o2scl_acol::acol_manager::run() .
    */
   void *o2scl_create_acol_manager() {
     o2scl_acol::acol_manager *amp=new o2scl_acol::acol_manager;

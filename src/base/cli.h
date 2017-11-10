@@ -524,7 +524,7 @@ namespace o2scl {
     */
     int set_comm_option(comm_option_s &ic);
 
-    /** \brief Remove a command with long name \cmd
+    /** \brief Remove a command with long name \tt cmd
      */
     void remove_comm_option(std::string cmd);
     

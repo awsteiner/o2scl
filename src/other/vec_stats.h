@@ -781,6 +781,9 @@ namespace o2scl {
   }
 
   /** \brief Construct an autocorrelation vector
+
+      This constructs a vector \tt ac_vec for which
+      the kth entry stores the lag-k autocorrelation.
    */
   template<class vec_t, class resize_vec_t> void vector_autocorr_vector
     (const vec_t &data, resize_vec_t &ac_vec) {
@@ -813,7 +816,11 @@ namespace o2scl {
       and stores it in the <tt>five_tau_over_M</tt> vector and then
       returns the first value of \f$ M \f$ for which the vector
       is less than or equal to 1.0. If this function returns 0,
-      then there was no value of M found.
+      then all values are greater than 1.0 (this can be a sign that
+      the autocorrelation length is too long to accurately resolve).
+
+      On completion, the vector \tt five_tau_over_m will have
+      one less element than the vector \tt ac_vec .
   */
   template<class vec_t, class resize_vec_t> size_t vector_autocorr_tau
     (const vec_t &data, const vec_t &ac_vec, resize_vec_t &five_tau_over_M) {
