@@ -780,8 +780,63 @@ namespace o2scl {
     return vector_lagk_autocorr(data.size(),data,k);
   }
 
-  /** \brief Compute the covariance of two vectors
+  /** \brief Construct an autocorrelation vector
+   */
+  template<class vec_t, class resize_vec_t> void vector_autocorr_vector
+    (const vec_t &data, resize_vec_t &ac_vec) {
+    size_t kmax=data.size()/2;
+    double mean=vector_mean(data);
+    double variance=vector_variance_fmean(data,mean);
+    ac_vec.resize(kmax);
+    ac_vec[0]=1.0;
+    for(size_t k=1;k<kmax;k++) {
+      ac_vec[k]=vector_lagk_autocorr(data.size(),data,k,mean);
+    }
+    return;
+  }
 
+  /** \brief Use the Goodman method to compute the
+      autocorrelation length
+
+      Representing the lag-k correlation coefficient by
+      \f$ \hat{C}(k) \f$, Goodman defines
+      \f[
+      \hat{\tau}(M) = 1 + 2 \sum_{s=1}^{M} \frac{\hat{C}(k)}{\hat{C}(0)}
+      \f]
+      Then the autocorrelation length is the value of 
+      \f$ \hat{\tau}(M) \f$ for which 
+      \f[
+      5 \hat{\tau}(M)/M \leq 1
+      \f]
+
+      This function computes the value of \f$ 5 \hat{\tau}(M)/M \f$
+      and stores it in the <tt>five_tau_over_M</tt> vector and then
+      returns the first value of \f$ M \f$ for which the vector
+      is less than or equal to 1.0. If this function returns 0,
+      then there was no value of M found.
+  */
+  template<class vec_t, class resize_vec_t> size_t vector_autocorr_tau
+    (const vec_t &data, const vec_t &ac_vec, resize_vec_t &five_tau_over_M) {
+    five_tau_over_M.resize(0);
+    size_t len=0;
+    bool len_set=false;
+    for (size_t M=1;M<ac_vec.size();M++) {
+      double sum=0.0;
+      for(size_t s=1;s<=M;s++) {
+	sum+=ac_vec[s];
+      }
+      double val=(1.0+2.0*sum)/((double)M)*5.0;
+      if (len_set==false && val<=1.0) {
+	len=M;
+	len_set=true;
+      }
+      five_tau_over_M.push_back(val);
+    }
+    return len;
+  }
+  
+  /** \brief Compute the covariance of two vectors
+      
       This function computes
       \f[
       \frac{1}{n-1} \sum_i \left(x_i - {\bar{x}}\right)
