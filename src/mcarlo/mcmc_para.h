@@ -180,7 +180,7 @@ namespace o2scl {
    */
   virtual void mcmc_cleanup() {
     if (verbose>0) {
-      for(size_t it=0;it<n_threads;it++) {
+      for(size_t it=0;it<n_chains_per_rank;it++) {
 	scr_out << "mcmc (" << it << "," << mpi_rank
 	<< "): accept=" << n_accept[it]
 	<< " reject=" << n_reject[it] << std::endl;
@@ -210,6 +210,10 @@ namespace o2scl {
       the initialization phase for the affine sampling algorithm.
   */
   std::vector<size_t> curr_walker;
+
+  /** \brief Number of fully independent chains in each MPI rank
+   */
+  size_t n_chains_per_rank;
 
   public:
 
@@ -242,12 +246,16 @@ namespace o2scl {
   /// \name Output quantities
   //@{
   /** \brief The number of Metropolis steps which were accepted in 
-      each thread (summed over all walkers)
+      each independent chain (summed over all walkers)
+
+      This vector has a size equal to \ref n_chains_per_rank .
   */
   std::vector<size_t> n_accept;
   
   /** \brief The number of Metropolis steps which were rejected in 
-      each thread (summed over all walkers)
+      each independent chain (summed over all walkers)
+
+      This vector has a size equal to \ref n_chains_per_rank .
   */
   std::vector<size_t> n_reject;
   //@}
@@ -440,17 +448,24 @@ namespace o2scl {
 	n_walk=2;
       }
 #ifdef O2SCL_NEVER_DEFINED
-      if (n_walk/n_walk_per_thread>n_threads) {
-	std::cout << "mcmc_para::mcmc(): Not enough threads to "
-		  << "cover. Increasing n_walk_per_thread."
-		  << std::endl;
+      if (n_walk_per_thread>n_walk) {
+	O2SCL_ERR2("More walkers per thread than total walkers ",
+		   "in mcmc_para::mcmc().",o2scl::exc_einval);
+      }
+      n_chains_per_rank=n_walk_per_thread*n_threads/n_walk;
+      if (n_chains_per_walk*n_walk!=n_walk_per_thread*n_threads) {
+	std::cout << "mcmc_para::mcmc(): Could not evenly "
+		  << "organize threads and walkers." << std::endl;
 	std::cout << "n_threads: " << n_threads << std::endl;
 	std::cout << "n_walk: " << n_walk << std::endl;
 	std::cout << "n_walk_per_thread: "
 		  << n_walk_per_thread << << std::endl;
+	std::cout << "n_chains_per_rank: "
+		  << n_chains_per_rank << << std::endl;
       }
 #else
       n_walk_per_thread=n_walk;
+      n_chains_per_rank=n_threads;
 #endif
     }
     
@@ -479,10 +494,11 @@ namespace o2scl {
       rg[it].set_seed(seed);
     }
     
-    // Keep track of successful and failed MH moves in each thread
-    n_accept.resize(n_threads);
-    n_reject.resize(n_threads);
-    for(size_t it=0;it<n_threads;it++) {
+    // Keep track of successful and failed MH moves in each
+    // independent chain
+    n_accept.resize(n_chains_per_rank);
+    n_reject.resize(n_chains_per_rank);
+    for(size_t it=0;it<n_chains_per_rank;it++) {
       n_accept[it]=0;
       n_reject[it]=0;
     }
@@ -493,7 +509,7 @@ namespace o2scl {
     if (n_warm_up==0) warm_up=false;
 
     // Storage size required
-    size_t ssize=n_walk*n_threads;
+    size_t ssize=n_walk*n_chains_per_rank;
 
     // Allocate current point and current weight
     current.resize(ssize);
@@ -504,7 +520,7 @@ namespace o2scl {
     }
 
     // Allocate ret_value_counts and curr_walker
-    ret_value_counts.resize(n_threads);
+    ret_value_counts.resize(n_chains_per_rank);
     curr_walker.resize(n_threads);
 
     // Initialize data and switch arrays
@@ -1552,6 +1568,8 @@ namespace o2scl {
       hf.seti("verbose",this->verbose);
       hf.set_szt("max_bad_steps",this->max_bad_steps);
       hf.set_szt("n_walk",this->n_walk);
+      hf.set_szt("n_walk_per_thread",this->n_walk_per_thread);
+      hf.set_szt("n_chains_per_rank",this->n_chains_per_rank);
       hf.set_szt("n_threads",this->n_threads);
       hf.set_szt("n_params",this->n_params);
       hf.seti("always_accept",this->always_accept);
@@ -2015,7 +2033,7 @@ namespace o2scl {
     // If necessary, output to files
     if (file_update_iters>0) {
       size_t total_accept=0;
-      for(size_t it=0;it<this->n_threads;it++) {
+      for(size_t it=0;it<this->n_chains_per_rank;it++) {
 	total_accept+=this->n_accept[it];
       }
       if (total_accept>=last_write+file_update_iters) {
