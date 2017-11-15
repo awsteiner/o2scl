@@ -157,7 +157,7 @@ namespace o2scl {
   */
   std::vector<bool> switch_arr;
   
-  /** \brief Return value counters, one vector for each OpenMP thread
+  /** \brief Return value counters, one vector independent chain
    */
   std::vector<std::vector<size_t> > ret_value_counts;
   
@@ -448,6 +448,11 @@ namespace o2scl {
 	n_walk=2;
       }
 #ifdef O2SCL_NEVER_DEFINED
+      /*
+	n_walk is always greater than or equal to n_walk_per_thread,
+	and n_chains_per_rank * n_walk = n_walk_per_thread * n_threads
+	thus n_threads is always larger than n_chains_per_rank.
+       */
       if (n_walk_per_thread>n_walk) {
 	O2SCL_ERR2("More walkers per thread than total walkers ",
 		   "in mcmc_para::mcmc().",o2scl::exc_einval);
@@ -566,6 +571,8 @@ namespace o2scl {
       if (aff_inv) {
 	scr_out << "mcmc: Affine-invariant step, n_params="
 		<< n_params << ", n_walk=" << n_walk
+		<< ", n_chains_per_rank=" << n_chains_per_rank
+		<< ", n_walk_per_thread=" << n_walk_per_thread
 		<< ", n_threads=" << n_threads << ", rank="
 		<< mpi_rank << ", n_ranks="
 		<< mpi_size << std::endl;
@@ -600,11 +607,13 @@ namespace o2scl {
 	for(size_t it=0;it<n_threads;it++) {
 	  
 	  // Initialize each walker in turn
-	  for(curr_walker[it]=0;curr_walker[it]<n_walk &&
+	  for(curr_walker[it]=0;curr_walker[it]<n_walk_per_thread &&
 		mcmc_done_flag[it]==false;curr_walker[it]++) {
-
+	    
 	    // Index in storage
 	    size_t sindex=n_walk*it+curr_walker[it];
+
+	    // Index in initial_point specification
 	    size_t ip_index=sindex % initial_points.size();
 	    
 	    size_t init_iters=0;
