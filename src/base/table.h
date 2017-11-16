@@ -616,6 +616,50 @@ namespace o2scl {
 
     return;
   }
+
+  /** \brief Manually set the maximum number of lines
+
+      \note This function will call the error handler if
+      the argument <tt>llines</tt> is smaller than the
+      current number of lines in the table.
+   */
+  void set_maxlines(size_t llines) {
+
+    if (llines==maxlines) return;
+    if (llines<nlines) {
+      O2SCL_ERR2("Cannot set maximum number of lines to be smaller ",
+		 "than current size in table::set_maxlines().",
+		 o2scl::exc_einval);
+		 
+    }
+    
+    vec_t temp_col;
+    
+    // For the moment, we assume resizes are destructive, so
+    // we have to copy the data to a temporary and then
+    // copy it back
+    for(aiter it=atree.begin();it!=atree.end();it++) {
+	
+      // Copy data to temporary array
+      temp_col.resize(llines);
+      for(size_t j=0;j<nlines;j++) {
+	temp_col[j]=it->second.dat[j];
+      }
+
+      // Resize
+      it->second.dat.resize(llines);
+
+      // Copy data back to resized array
+      for(size_t j=0;j<nlines;j++) {
+	it->second.dat[j]=temp_col[j];
+      }
+	
+    }
+  
+    maxlines=llines;
+
+    return;
+  }
   //@}
 
   // --------------------------------------------------------

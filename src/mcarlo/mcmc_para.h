@@ -468,11 +468,11 @@ namespace o2scl {
 	std::cout << "n_chains_per_rank: "
 		  << n_chains_per_rank << << std::endl;
       }
-#else
-      n_walk_per_thread=n_walk;
-      n_chains_per_rank=n_threads;
 #endif
     }
+    
+    n_walk_per_thread=n_walk;
+    n_chains_per_rank=n_threads;
     
     // Fix 'step_fac' if it's less than or equal to zero
     if (step_fac<=0.0) {
@@ -1427,19 +1427,13 @@ namespace o2scl {
       walker_reject_rows[i]=-1;
     }
 
-    /*
-      if (this->verbose>=2) {
+    if (this->verbose>=2) {
       std::cout << "mcmc: Table column names and units: " << std::endl;
-      for(size_t i=0;i<tab->get_ncolumns();i++) {
-      std::cout << tab->get_column_name(i) << " "
-      << tab->get_unit(tab->get_column_name(i)) << std::endl;
+      for(size_t i=0;i<table->get_ncolumns();i++) {
+	std::cout << table->get_column_name(i) << " "
+		  << table->get_unit(table->get_column_name(i)) << std::endl;
       }
-      }
-      
-      if (this->verbose>=2) {
-      std::cout << "End mcmc_para_table::mcmc_init()." << std::endl;
-      }
-    */
+    }
     
     return parent_t::mcmc_init();
   }
