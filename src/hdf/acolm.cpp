@@ -3768,7 +3768,7 @@ int acol_manager::comm_find_row(std::vector<std::string> &sv, bool itive_com) {
     // specified a column and a value
     
     if (table_obj.is_column(sv[1])) {
-      size_t row=table_obj.lookup(sv[1],o2scl::stod(sv[2]));
+      size_t row=table_obj.lookup(sv[1],o2scl::function_to_double(sv[2]));
       
       // Call get_row() for the row that was found
       std::vector<std::string> sc;
