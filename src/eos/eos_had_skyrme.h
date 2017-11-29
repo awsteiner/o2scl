@@ -516,13 +516,13 @@ namespace o2scl {
       (double n0, double EoA, double K, double Ms_star, double a, double L,
        double Mv_star, double CrDr0, double CrDr1, double CrnJ0, double CrnJ1);
  
+    /// Thermodynamics of non-relativistic fermions
+    fermion_nonrel nrf;
+    
 #ifndef DOXYGEN_NO_O2NS
     
   protected:
 
-    /// Thermodynamics of non-relativistic fermions
-    fermion_nonrel nrf;
-    
     /// \name Functions and parameters for calpar()
     //@{
     int calparfun(size_t nv, const ubvector &x, ubvector &y);
