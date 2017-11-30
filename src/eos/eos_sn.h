@@ -406,9 +406,10 @@ namespace o2scl {
 	  in the form \f$ (T,Y_e) \f$
        */
       void set_T_Ye(tensor_grid3<> &tg3, size_t inB) {
+	/*
 	data=std::bind(std::mem_fn<double &(size_t,size_t,size_t)>
-		       (&tensor_grid3<>::get),tg3,inB,std::placeholders::_2,
-		       std::placeholders::_1);
+	(&tensor_grid3<>::get),tg3,inB,std::placeholders::_2,
+	std::placeholders::_1);
 	size_t nx=tg3.get_size(2);
 	grid_x.resize(nx);
 	for(size_t i=0;i<nx;i++) grid_x[i]=tg3.get_grid(2,i);
@@ -416,6 +417,7 @@ namespace o2scl {
 	grid_y.resize(ny);
 	for(size_t i=0;i<ny;i++) grid_y[i]=tg3.get_grid(1,i);
 	it.set_data(nx,ny,grid_x,grid_y,data);
+	*/
 	return;
       }
       
