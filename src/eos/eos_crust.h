@@ -159,7 +159,7 @@ namespace o2scl {
 
     /// Solve Equation 2.7.4 for a given pressure
     virtual int eq274(size_t nv, const ubvector &nx, ubvector &ny, 
-		      int &Zt);
+		      int Zt);
 
     /// The Gibbs free energy
     double gibbs(int Z, int A);

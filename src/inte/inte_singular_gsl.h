@@ -762,8 +762,8 @@ namespace o2scl {
    double *result, double *abserr, double *resabs, double *resasc) {
 
     funct fmp=std::bind(std::mem_fn<double(double,func_t &)>
-			  (&inte_transform_gsl<func_t>::transform),
-			  this,std::placeholders::_1,func);
+			(&inte_transform_gsl<func_t>::transform),
+			this,std::placeholders::_1,std::ref(func));
     
     return this->gauss_kronrod_base
       (fmp,a,b,result,abserr,resabs,resasc);

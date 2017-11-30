@@ -55,8 +55,8 @@ double eos_crust::mass_formula(int Z, int A) {
 }
 
 int eos_crust::eq274(size_t nv, const ubvector &nx, ubvector &ny, 
-		   int &Zt) {
-
+		     int Zt) {
+  
   // Lattice energy density and pressure
   double PL, epsL;
 
@@ -87,7 +87,7 @@ double eos_crust::gibbs(int Z, int A) {
   
   nx[0]=e.n;
   mm_funct mff=std::bind
-    (std::mem_fn<int(size_t,const ubvector &,ubvector &, int &)>
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &, int)>
      (&eos_crust::eq274),this,std::placeholders::_1,std::placeholders::_2,
      std::placeholders::_3,Z);
   gs.msolve(1,nx,mff);
