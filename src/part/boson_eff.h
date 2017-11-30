@@ -181,7 +181,7 @@ namespace o2scl {
     root<> *psi_root;
 
     /// The function which solves for \f$ h \f$ from \f$ \psi \f$.
-    double solve_fun(double x, double &psi);
+    double solve_fun(double x, double psi);
 
     /// Fix density for \ref calc_density()
     int density_fun(size_t nv, const ubvector &x, ubvector &y,

@@ -155,7 +155,7 @@ void boson_eff::calc_mu(boson &b, double temper) {
       xx[0]=sqrt(parma)*exp(1.0-psi);
     }
     
-    funct mfs=std::bind(std::mem_fn<double(double,double &)>
+    funct mfs=std::bind(std::mem_fn<double(double,double)>
 			  (&boson_eff::solve_fun),
 			  this,std::placeholders::_1,psi);
     
@@ -204,7 +204,7 @@ void boson_eff::calc_mu(boson &b, double temper) {
   return;
 }
 
-double boson_eff::solve_fun(double x, double &psi) {
+double boson_eff::solve_fun(double x, double psi) {
   double h, sqt, y;
 
   h=x;
