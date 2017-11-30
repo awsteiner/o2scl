@@ -241,7 +241,7 @@ namespace o2scl {
     root<> *density_root;
     
     /// The function which solves for \f$ f \f$ from \f$ \psi \f$.
-    double solve_fun(double x, double &psi);
+    double solve_fun(double x, double psi);
     
 #endif
 

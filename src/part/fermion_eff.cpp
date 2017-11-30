@@ -213,7 +213,7 @@ void fermion_eff::calc_mu(fermion &f, double temper) {
   }
 
   // Perform the solution
-  funct mfs=std::bind(std::mem_fn<double(double,double &)>
+  funct mfs=std::bind(std::mem_fn<double(double,double)>
 			(&fermion_eff::solve_fun),
 			this,std::placeholders::_1,psi);
   psi_root->solve(xx,mfs);
@@ -315,7 +315,7 @@ int fermion_eff::calc_density(fermion &f, double temper) {
   return 0;
 }
 
-double fermion_eff::solve_fun(double x, double &psi) {
+double fermion_eff::solve_fun(double x, double psi) {
   double ff, sqt, aarg, y;
 
   ff=x;
