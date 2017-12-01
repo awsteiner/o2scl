@@ -97,6 +97,7 @@ int main(void) {
 
   t.test_rel(x[0]*x[0]*x[0],3.0,1.0e-4,"x[0]");
   t.test_rel(x[0]*x[1],4.0,1.0e-4,"x[1]");
+  t.report();
   
   return 0;
 }
