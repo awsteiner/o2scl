@@ -20,7 +20,8 @@
 
   -------------------------------------------------------------------
 */
-#include "smooth_func.h"
+#include <o2scl/smooth_func.h>
+#include <o2scl/test_mgr.h>
 #include <o2scl/mm_funct.h>
 #include <o2scl/mroot_hybrids.h>
 #include <o2scl/rng_gsl.h>
@@ -51,6 +52,9 @@ public:
 int main(void) {
 
   cout.setf(ios::scientific);
+
+  test_mgr t;
+  t.set_output_level(2);
   
   ns_test nst;
 
@@ -90,6 +94,9 @@ int main(void) {
   mret=mh.msolve(2,x,sff);
   cout << "ret: " << mret << endl;
   cout << x[0]*x[0]*x[0] << " " << x[0]*x[1] << endl;
+
+  t.test_rel(x[0]*x[0]*x[0],3.0,1.0e-4,"x[0]");
+  t.test_rel(x[0]*x[1],4.0,1.0e-4,"x[1]");
   
   return 0;
 }
