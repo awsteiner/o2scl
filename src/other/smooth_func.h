@@ -27,6 +27,13 @@
 
 /** \brief Smooth a function by averaging in a neighborhood
     of points defined by a Sobol sequence
+
+    \warning The function \ref set_func() stores a pointer to the
+    function specified by the user, so the user must ensure that this
+    pointer is still valid when \ref smooth_func::operator() is called.
+
+    \future Move memory allocation outside of \ref
+    smooth_func::operator() .
  */
 template<class vec_t, class func_t> class smooth_func {
 
@@ -50,34 +57,55 @@ template<class vec_t, class func_t> class smooth_func {
     N=40;
     step.resize(1);
     step[0]=1.0e-2;
+    f=0;
   }
 
   /** \brief Set the base function
    */
-  int set_func(func_t &func) {
+  void set_func(func_t &func) {
     f=&func;
-    return 0;
+    return;
   }
 
   /** \brief Set the number of points to use in the average
+
+      If \c n_new is zero then the error handler will be called.
    */
-  int set_n(size_t n_new) {
+  void set_n(size_t n_new) {
+    if (n_new==0) {
+      O2SCL_ERR2("Cannot call set_n() with argument 0 in ",
+		 "smooth_func::set_n().",o2scl::exc_einval);
+    }
     N=n_new;
-    return 0;
+    return;
   }
   
   /** \brief Set the stepsize
    */
-  template<class vec2_t> int set_step(vec2_t &v) {
+  template<class vec2_t> void set_step(vec2_t &v) {
+    if (v.size()==0) {
+      O2SCL_ERR2("Sent an empty vector to ",
+		 "smooth_func::set_step().",o2scl::exc_einval);
+    }
     step.resize(v.size());
     o2scl::vector_copy(v.size(),v,step);
-    return 0;
+    return;
   }
 
   /** \brief Evaluate the smoothed function
+
+      If the user-specified function returns a non-zero value for any
+      point, then that contribution to the average is ignored. This
+      function will return a non-zero value if the user-specified
+      function returns a non-zero value for all of the points.
    */
   int operator()(size_t nv, const vec_t &x, vec_t &y) {
 
+    if (f==0) {
+      O2SCL_ERR2("Function not set in ",
+		 "smooth_func::operator().",o2scl::exc_einval);
+    }
+    
     // Allocate the Sobol object
     gsl_qrng *gq=gsl_qrng_alloc(gsl_qrng_sobol,nv);
     

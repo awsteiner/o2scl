@@ -782,7 +782,7 @@ namespace o2scl {
 
   /** \brief Construct an autocorrelation vector
 
-      This constructs a vector \tt ac_vec for which
+      This constructs a vector \c ac_vec for which
       the kth entry stores the lag-k autocorrelation.
    */
   template<class vec_t, class resize_vec_t> void vector_autocorr_vector
@@ -819,8 +819,8 @@ namespace o2scl {
       then all values are greater than 1.0 (this can be a sign that
       the autocorrelation length is too long to accurately resolve).
 
-      On completion, the vector \tt five_tau_over_m will have
-      one less element than the vector \tt ac_vec .
+      On completion, the vector \c five_tau_over_m will have
+      one less element than the vector \c ac_vec .
   */
   template<class vec_t, class resize_vec_t> size_t vector_autocorr_tau
     (const vec_t &data, const vec_t &ac_vec, resize_vec_t &five_tau_over_M) {

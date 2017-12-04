@@ -42,6 +42,9 @@ public:
   }
 
   int f(size_t nv, const ubvector &x, ubvector &y) {
+    // Generate deterministic noise from a high-frequency trig.
+    // function (if it was truly random the test result would
+    // be unpredictable).
     y[0]=x[0]*x[0]*x[0]-3.0+eps*sin(1.0e9*(x[0]+x[1]));
     y[1]=x[0]*x[1]-4.0+eps*cos(1.0e9*(x[0]+x[1]));
     return 0;
