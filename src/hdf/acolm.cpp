@@ -814,7 +814,7 @@ int acol_manager::setup_options() {
      "gives the type and name of the object stored in that HDF5 group.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_filelist),
      both},
-    {'g',"generic","Read in a generic text file.",0,1,"<type> <file>",
+    {'g',"generic","Read in a generic text file.",0,2,"<type> <file>",
      ((string)"Read an object of type <type> from a text file named ")+
      "<file>. The first line of the file must either contain numeric "+
      "data or column names "+
