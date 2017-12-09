@@ -739,6 +739,85 @@ namespace o2scl {
   }
   
   };
+
+  /** \brief Desc
+   */
+  template<class vec_t=boost::numeric::ublas::vector<double> >
+    class prob_dens_mdim_biv_gaussian : public prob_dens_mdim<vec_t> {
+  private:
+  /// The x coordinate of the centroid
+  double x0;
+  /// The y coordinate of the centroid
+  double y0;
+  /// The x standard deviation
+  double sig_x;
+  /// The y standard deviation
+  double sig_y;
+  /// The covariance
+  double rho;
+  public:
+  prob_dens_mdim_biv_gaussian() {
+  }
+  /** \brief Set the properties of the distribution
+   */
+  void set(double x_cent, double y_cent, double x_std, double y_std,
+	   double covar) {
+    x0=x_cent;
+    y0=y_cent;
+    sig_x=x_std;
+    sig_y=y_std;
+    rho=covar;
+    return;
+  }
+  /** \brief Compute the normalized probability density
+   */
+  virtual double pdf(const vec_t &v) const {
+    double x=v[0], y=v[1];
+    double arg=-((x-x0)*(x-x0)/sig_x/sig_x+
+		 (y-y0)*(y-y0)/sig_y/sig_y-
+		 2.0*rho*(x-x0)*(y-y0)/sig_x/sig_y)/2.0/(1.0-rho*rho);
+    double ret=exp(arg)/2.0/o2scl_const::pi/sig_x/sig_y/
+    sqrt(1.0-rho*rho);
+    return ret;
+  }
+  /** \brief Return the contour level corresponding to a fixed
+      integral
+  */
+  virtual double level_fixed_integral(double integral) {
+    // This comes from the cumulative distribution function
+    // for the chi-squared distribution for two degrees of
+    // of freedom, i.e. exp(-x/2)
+    double arg=-2.0*log(1.0-integral);
+    // Now compute the pdf for the fixed value of the
+    // squared Mahalanobis distance
+    return exp(-0.5*arg)/2.0/o2scl_const::pi/sig_x/
+    sig_y/sqrt(1.0-rho*rho);
+  }
+  /** \brief Return a point on the contour for a specified level
+      given an angle
+  */
+  virtual void contour(double level, double theta, vec_t &x) {
+    if (level<0.0) {
+      O2SCL_ERR2("Cannot produce contours for negative values in ",
+		 "prob_dens_mdim_biv_gaussian::contour().",
+		 o2scl::exc_einval);
+    }
+    double max=0.5/sig_x/sig_y/o2scl_const::pi/sqrt(1.0-rho*rho);
+    if (level>max) {
+      O2SCL_ERR2("Cannot produce contours larger than maximum in ",
+		 "prob_dens_mdim_biv_gaussian::contour().",
+		 o2scl::exc_einval);
+    }
+    double arg=-log(level*2.0*o2scl_const::pi*sig_x*sig_y*
+		    sqrt(1.0-rho*rho))*2.0*(1.0-rho*rho);
+    double r2=arg/(cos(theta)*cos(theta)/sig_x/sig_x+
+		   sin(theta)*sin(theta)/sig_y/sig_y-
+		   2.0*rho/sig_x/sig_y*cos(theta)*sin(theta));
+    x[0]=sqrt(r2)*cos(theta)+x0;
+    x[1]=sqrt(r2)*sin(theta)+y0;
+    return;
+  }
+  };
   
   /** \brief A multi-dimensional Gaussian probability density function
 

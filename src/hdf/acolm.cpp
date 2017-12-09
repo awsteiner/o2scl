@@ -340,8 +340,8 @@ void acol_manager::command_add(std::string new_type) {
        "current table3d object.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_cat),
        both},
-      {0,"contours","Create contour lines from a table3d or hist_2d object.",
-       0,4,"[\"frac\"] <value> <slice-name (if table3d)> [file] [name]","",
+      {0,"contours","Create contour lines from a table3d slice.",
+       0,4,"[\"frac\"] <value> <slice_name> [output file] [output name]","",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_contours),
        both},
       {0,"deriv-x","Derivative with respect to x.",0,2,
@@ -533,7 +533,7 @@ void acol_manager::command_add(std::string new_type) {
   } else if (new_type=="hist_2d") {
 
     if (o2graph_mode) {
-      static const size_t narr2=1;
+      static const size_t narr2=2;
       comm_option_s options_arr2[narr2]={
 	{0,"den-plot","Create a density plot from a hist_2d object.",
 	 0,1,"<slice name for table3d>",
@@ -542,6 +542,10 @@ void acol_manager::command_add(std::string new_type) {
 	 "spaced bins).",
 	 new o2scl::comm_option_mfptr<acol_manager>
 	 (this,&acol_manager::comm_none),
+	 both},
+	{0,"contours","Create contour lines from a table3d or hist_2d object.",
+	 0,4,"[\"frac\"] <value> [output file] [output name]","",
+	 new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_contours),
 	 both}
       };
       cl->set_comm_option_vec(narr2,options_arr2);
@@ -658,7 +662,6 @@ void acol_manager::command_del() {
     
   } else if (type=="hist_2d") {
     /*
-      cl->remove_comm_option("contours");
       cl->remove_comm_option("deriv-x");
       cl->remove_comm_option("deriv-y");
       cl->remove_comm_option("interp");
@@ -671,6 +674,7 @@ void acol_manager::command_del() {
       */
     if (o2graph_mode) {
       cl->remove_comm_option("den-plot");
+      cl->remove_comm_option("contours");
     }
     
   } else if (type=="hist") {
@@ -3411,10 +3415,13 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
   bool frac_mode=false;
   
   if (sv.size()>=2 && sv[1]=="frac") {
+    cout << "Fraction mode is true." << endl;
     frac_mode=true;
     std::vector<std::string>::iterator it=sv.begin();
     it++;
     sv.erase(it);
+  } else {
+    cout << "Fraction mode is true." << endl;
   }
   if (sv.size()<2 && itive_com) {
     string temp=((string)"Enter \"frac\" for fractions of total sum and ")
@@ -3456,9 +3463,9 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
     ubvector levs(1);
     levs[0]=o2scl::stod(svalue);
     size_t nlev=1;
-
+    
     if (frac_mode) {
-      
+      cout << "Fraction mode not implemented with table3d objects." << endl;
     } else {
       if (file.length()>0) {
 	std::vector<contour_line> clines;
