@@ -27,13 +27,14 @@
 
 /** \brief Smooth a function by averaging in a neighborhood
     of points defined by a Sobol sequence
-
-    \warning The function \ref set_func() stores a pointer to the
-    function specified by the user, so the user must ensure that this
-    pointer is still valid when \ref smooth_func::operator() is called.
+    
+    \warning The function \ref o2scl::smooth_func::set_func() stores a
+    pointer to the function specified by the user, so the user must
+    ensure that this pointer is still valid when \ref
+    o2scl::smooth_func::operator() is called.
 
     \future Move memory allocation outside of \ref
-    smooth_func::operator() .
+    o2scl::smooth_func::operator() .
  */
 template<class vec_t, class func_t> class smooth_func {
 

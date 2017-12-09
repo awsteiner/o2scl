@@ -740,24 +740,33 @@ namespace o2scl {
   
   };
 
-  /** \brief Desc
+  /** \brief A bivariate gaussian probability distribution
    */
   template<class vec_t=boost::numeric::ublas::vector<double> >
     class prob_dens_mdim_biv_gaussian : public prob_dens_mdim<vec_t> {
+
   private:
+
   /// The x coordinate of the centroid
   double x0;
+
   /// The y coordinate of the centroid
   double y0;
+
   /// The x standard deviation
   double sig_x;
+
   /// The y standard deviation
   double sig_y;
+
   /// The covariance
   double rho;
+  
   public:
+  
   prob_dens_mdim_biv_gaussian() {
   }
+  
   /** \brief Set the properties of the distribution
    */
   void set(double x_cent, double y_cent, double x_std, double y_std,
@@ -769,6 +778,7 @@ namespace o2scl {
     rho=covar;
     return;
   }
+  
   /** \brief Compute the normalized probability density
    */
   virtual double pdf(const vec_t &v) const {
@@ -780,19 +790,21 @@ namespace o2scl {
     sqrt(1.0-rho*rho);
     return ret;
   }
+  
   /** \brief Return the contour level corresponding to a fixed
       integral
   */
   virtual double level_fixed_integral(double integral) {
-    // This comes from the cumulative distribution function
-    // for the chi-squared distribution for two degrees of
-    // of freedom, i.e. exp(-x/2)
+    // This comes from inverting the cumulative distribution function
+    // for the chi-squared distribution for two degrees of of freedom,
+    // i.e. exp(-x/2)
     double arg=-2.0*log(1.0-integral);
     // Now compute the pdf for the fixed value of the
     // squared Mahalanobis distance
     return exp(-0.5*arg)/2.0/o2scl_const::pi/sig_x/
     sig_y/sqrt(1.0-rho*rho);
   }
+  
   /** \brief Return a point on the contour for a specified level
       given an angle
   */
@@ -817,6 +829,7 @@ namespace o2scl {
     x[1]=sqrt(r2)*sin(theta)+y0;
     return;
   }
+  
   };
   
   /** \brief A multi-dimensional Gaussian probability density function
