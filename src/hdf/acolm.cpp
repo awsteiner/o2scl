@@ -3421,7 +3421,7 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
     it++;
     sv.erase(it);
   } else {
-    cout << "Fraction mode is true." << endl;
+    cout << "Fraction mode is false." << endl;
   }
   if (sv.size()<2 && itive_com) {
     string temp=((string)"Enter \"frac\" for fractions of total sum and ")
