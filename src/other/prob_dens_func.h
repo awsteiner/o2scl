@@ -325,7 +325,7 @@ namespace o2scl {
 
     virtual ~prob_dens_uniform() {
     }
-
+    
     /// Copy constructor
   prob_dens_uniform(const prob_dens_uniform &pdg) : prob_dens_frange() {
       ll=pdg.ll;
@@ -741,6 +741,56 @@ namespace o2scl {
   };
 
   /** \brief A bivariate gaussian probability distribution
+
+      For a two-dimensional gaussian, given a mean 
+      \f$ ( \mu_x, \mu_y ) \f$ and a covariance matrix
+      \f[
+      \Sigma = \left( 
+      \begin{array}{cc}
+      \sigma_x^2 & \rho \sigma_x \sigma_y \\
+      \rho \sigma_x \sigma_y & \sigma_y^2 \\
+      \end{array}
+      \right)
+      \f]
+      the PDF is
+      \f[
+      pdf(x,y) = \left(2 \pi \sigma_x \sigma_y \sqrt{1-\rho^2}\right)^{-1}
+      \exp \left\{ - \frac{1}{2 (1-\rho^2)} 
+      \left[ \frac{(x-\mu_x)^2}{\sigma_x^2} + 
+      \frac{(y-\mu_y)^2}{\sigma_y^2} - 
+      \frac{2 \rho (x-\mu_x)(y-\mu_y)}{\sigma_x \sigma_y} \right]
+      \right\}
+      \f]
+      (taken from the Wikipedia page on the "Multivariate normal
+      distribution").
+      
+      The function \ref o2scl::prob_dens_mdim_biv_gaussian::contour()
+      gives a point on the contour line for a fixed value of the
+      PDF given an angle \f$ \theta \f$. In particular,
+      it solves 
+      \f[
+      c = pdf(r \cos \theta + \mu_x, r \sin \theta + \mu_y )
+      \f]
+      for the radius \f$ r \f$ and then stores the values 
+      \f$ r \cos \theta + \mu_x \f$ and \f$ r \sin \theta + \mu_y \f$
+      in the reference parameters named \c x and \c y . Thus
+      this function can be used to map out the full contour
+      by selecting values for \f$ \theta \in [0,2 \pi] \f$.
+      
+      The function \ref
+      o2scl::prob_dens_mdim_biv_gaussian::level_fixed_integral() gives
+      the value of the PDF for which the integral inside the
+      corresponding contour is some fraction of the total integral
+      (which is always 1). Given a fraction \f$ f \f$, the argument of
+      the exponential is related to the inverse of the cumulative
+      distribution function for the chi-squared probability
+      distribution for two degrees of freedom for \f$ 1-f \f$. For a
+      fraction \f$ f \f$, the value \f$ \chi^2 \f$ (i.e. the
+      Mahalanobis distance) is \f$ \chi^2 = -2 \log (1-f) \f$ and then
+      the value of the PDF for the corresponding contour is \f$
+      pdf(x,y) = \left(2 \pi \sigma_x \sigma_y
+      \sqrt{1-\rho^2}\right)^{-1} \exp (-\chi^2/2) \f$ .
+      
    */
   template<class vec_t=boost::numeric::ublas::vector<double> >
     class prob_dens_mdim_biv_gaussian : public prob_dens_mdim<vec_t> {
@@ -768,9 +818,17 @@ namespace o2scl {
   }
   
   /** \brief Set the properties of the distribution
+
+      \note If \f$ |\rho|\geq 1 \f$ this function will
+      call the error handler.
    */
   void set(double x_cent, double y_cent, double x_std, double y_std,
 	   double covar) {
+    if (fabs(covar)>=1.0) {
+      O2SCL_ERR2("Covariance cannot have magnitude equal or larger than ",
+		 "1 in prob_dens_mdim_biv_gaussian::set().",
+		 o2scl::exc_einval);
+    }
     x0=x_cent;
     y0=y_cent;
     sig_x=x_std;
