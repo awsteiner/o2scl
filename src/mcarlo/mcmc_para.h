@@ -1919,7 +1919,7 @@ namespace o2scl {
 	} else {
 	  next_row=walker_reject_rows[windex]+1;
 	}
-	while (next_row<table->get_nlines() &&
+	while (next_row<((int)table->get_nlines()) &&
 	       table->get("mult",next_row)>0.0) {
 	  next_row++;
 	}
@@ -2353,7 +2353,7 @@ namespace o2scl {
     cl.par_list.insert(std::make_pair("n_warm_up",&p_n_warm_up));
 
     p_verbose.i=&this->verbose;
-    p_verbose.help=((std::string)"Verbosity parameter ")+
+    p_verbose.help=((std::string)"MCMC verbosity parameter ")+
       "(default 0).";
     cl.par_list.insert(std::make_pair("mcmc_verbose",&p_verbose));
 
