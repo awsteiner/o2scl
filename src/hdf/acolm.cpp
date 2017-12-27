@@ -927,7 +927,7 @@ int acol_manager::setup_options() {
     const int cl_param=o2scl::cli::comm_option_cl_param;
     const int both=o2scl::cli::comm_option_both;
     
-    static const size_t narr2=17;
+    static const size_t narr2=18;
     o2scl::comm_option_s options_arr2[narr2]={
       {0,"line","Plot a line.",4,5,"<x1> <y1> <x2> <y2> [kwargs]",
        ((std::string)"Plot a line from (x1,y1) to (xy,y2). Some useful ")+
@@ -936,6 +936,10 @@ int acol_manager::setup_options() {
        "markerfacecolor (mfc), markerfacecoloralt (mfcalt), markersize "+
        "(ms). For example: o2graph -line 0.05 0.05 0.95 0.95 "+
        "lw=0,marker='+' -show",
+       new o2scl::comm_option_mfptr<acol_manager>
+       (this,&acol_manager::comm_none),both},
+      {0,"rect","Plot a rectangle.",4,5,"<x1> <y1> <x2> <y2> [kwargs]",
+       ((std::string)"Plot a rectange from (x1,y1) to (xy,y2)."),
        new o2scl::comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_none),both},
       {0,"new-cmaps","Define new color maps.",0,0,"",
