@@ -35,14 +35,15 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
+  test_mgr tm;
+  tm.set_output_level(2);
+
   std::vector<double> low={1.0,1.0};
   std::vector<double> high={2.0,2.0};
 
-  cout << "H1." << endl;
   prob_dens_mdim_amr<std::vector<double>,
 		     matrix_view_table<std::vector<double> > > amr(low,high);
 
-  cout << "H2." << endl;
   table<> t;
   t.line_of_names("x y z");
   {
@@ -57,11 +58,8 @@ int main(void) {
     double line[3]={1.2,1.31,3.0};
     t.line_of_data(3,line);
   }
-  cout << "H3." << endl;
   matrix_view_table<std::vector<double> > mvt(t,{"x","y","z"});
-  cout << "H4." << endl;
   amr.initial_parse(mvt);
-  cout << "H5." << endl;
   cout << amr.total_volume() << endl;
   vector<double> v1={1.21,1.31};
   cout << amr.pdf(v1) << endl;
@@ -80,5 +78,7 @@ int main(void) {
   hdf_output(hf,t2,"amr");
   hf.close();
 
+  tm.report();
+  
   return 0;
 }

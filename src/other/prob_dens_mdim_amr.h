@@ -149,8 +149,8 @@ namespace o2scl {
 
     /** \brief Set the hypercube information
      */
-    template<class vec_t>
-      void set(vec_t &l, vec_t &h, size_t in, double fvol, double wgt) {
+    template<class vec2_t>
+      void set(vec2_t &l, vec2_t &h, size_t in, double fvol, double wgt) {
       ndim=l.size();
       low.resize(l.size());
       high.resize(h.size());
@@ -198,7 +198,7 @@ namespace o2scl {
   
     /** \brief Test if point \c v is inside this hypercube
      */
-    template<class vec_t> bool is_inside(const vec_t &v) const {
+    template<class vec2_t> bool is_inside(const vec2_t &v) const {
       for(size_t i=0;i<ndim;i++) {
 	if (high[i]<v[i] || v[i]<low[i]) {
 	  return false;
