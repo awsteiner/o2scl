@@ -20,11 +20,11 @@
 
   -------------------------------------------------------------------
 */
-/** \file amr.h
+/** \file prob_dens_mdim_amr.h
     \brief Desc
 */
-#ifndef O2SCL_AMR_H
-#define O2SCL_AMR_H
+#ifndef O2SCL_PROB_DENS_MDIM_AMR_H
+#define O2SCL_PROB_DENS_MDIM_AMR_H
 
 #include <o2scl/table.h>
 #include <o2scl/err_hnd.h>
@@ -108,7 +108,15 @@ namespace o2scl {
     
   };
 
-  /** \brief A hypercube class for \ref o2scl::amr
+  /** \brief Probability distribution from an adaptive mesh
+      created using a matrix of points
+  */
+  template<class vec_t, class mat_t=matrix_view_table<vec_t> >
+    class prob_dens_mdim_amr : public o2scl::prob_dens_mdim<vec_t> {
+
+  protected:
+
+  /** \brief A hypercube class for \ref o2scl::prob_dens_mdim_amr
    */
   class hypercube {
 
@@ -200,11 +208,6 @@ namespace o2scl {
     }
   
   };
-
-  /** \brief Probability distribution from adaptive mesh
-   */
-  template<class vec_t, class mat_t=matrix_view_table<vec_t> >
-    class prob_dens_mdim_amr : public o2scl::prob_dens_mdim<vec_t> {
 
   public:
 

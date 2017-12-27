@@ -12,13 +12,14 @@ HEADER_VAR = contour.h cheb_approx.h \
 	interp2_direct.h interp2_eqi.h pinside.h \
 	vec_stats.h smooth_gsl.h hist.h smooth_func.h \
 	hist_2d.h prob_dens_func.h interp2_seq.h interp2_neigh.h \
-	interpm_idw.h interp2.h interpm_krige.h
+	interpm_idw.h interp2.h interpm_krige.h prob_dens_mdim_amr.h
 
 TEST_VAR = series_acc.scr interp2_planar.scr contour.scr \
 	poly.scr polylog.scr cheb_approx.scr vec_stats.scr smooth_gsl.scr \
 	hist.scr hist_2d.scr prob_dens_func.scr interp2_direct.scr \
 	pinside.scr interp2_seq.scr interp2_neigh.scr \
-	interpm_idw.scr interpm_krige.scr smooth_func.scr
+	interpm_idw.scr interpm_krige.scr smooth_func.scr \
+	prob_dens_mdim_amr.scr
 
 # ------------------------------------------------------------
 # Includes
@@ -82,7 +83,8 @@ check_PROGRAMS = series_acc_ts interp2_planar_ts \
 	interp2_direct_ts vec_stats_ts cheb_approx_ts \
 	smooth_gsl_ts hist_ts hist_2d_ts interp2_seq_ts \
 	prob_dens_func_ts interp2_neigh_ts \
-	interpm_idw_ts interpm_krige_ts smooth_func_ts
+	interpm_idw_ts interpm_krige_ts smooth_func_ts \
+	prob_dens_mdim_amr_ts
 
 check_SCRIPTS = o2scl-test
 
@@ -103,6 +105,7 @@ contour_ts_LDADD = $(VCHECK_LIBS)
 poly_ts_LDADD = $(VCHECK_LIBS)
 polylog_ts_LDADD = $(VCHECK_LIBS)
 interp2_seq_ts_LDADD = $(VCHECK_LIBS)
+prob_dens_mdim_amr_ts_LDADD = $(VCHECK_LIBS)
 interp2_direct_ts_LDADD = $(VCHECK_LIBS)
 cheb_approx_ts_LDADD = $(VCHECK_LIBS)
 pinside_ts_LDADD = $(VCHECK_LIBS)
@@ -133,6 +136,8 @@ polylog.scr: polylog_ts$(EXEEXT)
 	./polylog_ts$(EXEEXT) > polylog.scr
 interp2_seq.scr: interp2_seq_ts$(EXEEXT) 
 	./interp2_seq_ts$(EXEEXT) > interp2_seq.scr
+prob_dens_mdim_amr.scr: prob_dens_mdim_amr_ts$(EXEEXT) 
+	./prob_dens_mdim_amr_ts$(EXEEXT) > prob_dens_mdim_amr.scr
 interp2_direct.scr: interp2_direct_ts$(EXEEXT) 
 	./interp2_direct_ts$(EXEEXT) > interp2_direct.scr
 cheb_approx.scr: cheb_approx_ts$(EXEEXT) 
@@ -159,6 +164,7 @@ smooth_func_ts_SOURCES = smooth_func_ts.cpp
 interpm_krige_ts_SOURCES = interpm_krige_ts.cpp
 interp2_planar_ts_SOURCES = interp2_planar_ts.cpp
 interp2_seq_ts_SOURCES = interp2_seq_ts.cpp
+prob_dens_mdim_amr_ts_SOURCES = prob_dens_mdim_amr_ts.cpp
 interp2_direct_ts_SOURCES = interp2_direct_ts.cpp
 pinside_ts_SOURCES = pinside_ts.cpp
 poly_ts_SOURCES = poly_ts.cpp
