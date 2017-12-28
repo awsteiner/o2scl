@@ -254,6 +254,14 @@ namespace o2scl {
   void insert(size_t ir, mat_t &m) {
 
     if (mesh.size()==0) {
+      if (verbose>1) {
+	std::cout << "Creating cube with point ";
+	for(size_t k=0;k<ndim;k++) {
+	  std::cout << m(0,k) << " ";
+	}
+	std::cout << std::endl;
+      }
+      
       // Initialize the mesh with the first point
       mesh.resize(1);
       mesh[0].set(low,high,0,1.0,m(0,ndim));
@@ -286,15 +294,30 @@ namespace o2scl {
       O2SCL_ERR("Error 1.",o2scl::exc_esanity);
     }
     hypercube &h=mesh[jm];
+    if (verbose>1) {
+      std::cout << "Found cube " << jm << std::endl;
+    }
    
     // Find coordinate with largest relative variation
     size_t max_ip=0;
     double max_var=fabs(v[0]-m(h.inside[0],0))/(h.high[0]-h.low[0]);
+    if (verbose>1) {
+      std::cout << "Coordinate " << max_ip << " with variance "
+		<< max_var << std::endl;
+      std::cout << v[0] << " " << m(h.inside[0],0) << " "
+		<< h.high[0] << " " << h.low[0] << std::endl;
+    }
     for(size_t ip=1;ip<ndim;ip++) {
       double var=fabs(v[ip]-m(h.inside[0],ip))/(h.high[ip]-h.low[ip]);
       if (var>max_var) {
 	max_ip=ip;
 	max_var=var;
+	if (verbose>1) {
+	  std::cout << "Found coordinate " << max_ip << " with variance "
+		    << max_var << std::endl;
+	  std::cout << v[ip] << " " << m(h.inside[0],ip) << " "
+		    << h.high[ip] << " " << h.low[ip] << std::endl;
+	}
       }
     }
    
@@ -303,7 +326,16 @@ namespace o2scl {
     double old_vol=h.frac_vol;
     double old_low=h.low[max_ip];
     double old_high=h.high[max_ip];
-   
+
+    size_t old_inside=h.inside[0];
+
+    if (verbose>1) {
+      std::cout << "Old limits:" << std::endl;
+      for(size_t i=0;i<ndim;i++) {
+	std::cout << h.low[i] << " " << h.high[i] << std::endl;
+      }
+    }
+    
     // Set values for hypercube currently in mesh
     h.low[max_ip]=loc;
     h.high[max_ip]=old_high;
@@ -318,7 +350,33 @@ namespace o2scl {
     high_new[max_ip]=loc;
     double new_vol=old_vol*(loc-old_low)/(old_high-old_low);
     h_new.set(low_new,high_new,ir,new_vol,m(ir,ndim));
-   
+
+    // --------------------------------------------------------------
+    // Todo: this test is unnecessarily slow, and can be replaced by a
+    // simple comparison between v[max_ip], old_low, old_high, and
+    // m(h.inside[0],max_ip)
+    
+    if (h.is_inside(v)) {
+      h.inside[0]=ir;
+      h_new.inside[0]=old_inside;
+    } else {
+      h.inside[0]=old_inside;
+      h_new.inside[0]=ir;
+    }
+
+    // --------------------------------------------------------------
+    
+    if (verbose>1) {
+      std::cout << "New limits:" << std::endl;
+      for(size_t i=0;i<ndim;i++) {
+	std::cout << h.low[i] << " " << h.high[i] << std::endl;
+      }
+      std::cout << "New cube " << mesh.size() << std::endl;
+      for(size_t i=0;i<ndim;i++) {
+	std::cout << h_new.low[i] << " " << h_new.high[i] << std::endl;
+      }
+    }
+
     // Add new hypercube to mesh
     mesh.push_back(h_new);
    

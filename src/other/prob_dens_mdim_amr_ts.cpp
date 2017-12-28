@@ -82,7 +82,7 @@ int main(void) {
 
   rng_gsl r;
 
-  static const size_t N=4;
+  static const size_t N=20;
   
   table<> t3;
   t3.line_of_names("x y z");
@@ -99,6 +99,7 @@ int main(void) {
   prob_dens_mdim_amr<std::vector<double>,
 		     matrix_view_table<std::vector<double> > >
     amr2(low2,high2);
+  amr2.verbose=2;
   amr2.initial_parse(mvt2);
   tm.test_rel(amr2.total_volume(),1.0,1.0e-8,"total volume 2");
   cout << amr2.total_volume() << endl;
