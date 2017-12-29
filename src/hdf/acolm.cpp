@@ -938,8 +938,9 @@ int acol_manager::setup_options() {
        "lw=0,marker='+' -show",
        new o2scl::comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_none),both},
-      {0,"rect","Plot a rectangle.",4,5,"<x1> <y1> <x2> <y2> [kwargs]",
-       ((std::string)"Plot a rectange from (x1,y1) to (xy,y2)."),
+      {0,"rect","Plot a rectangle.",5,6,"<x1> <y1> <x2> <y2> <angle> [kwargs]",
+       ((std::string)"Plot a rectange from (x1,y1) to (xy,y2) with ")+
+       "rotation angle <angle>.",
        new o2scl::comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_none),both},
       {0,"new-cmaps","Define new color maps.",0,0,"",
