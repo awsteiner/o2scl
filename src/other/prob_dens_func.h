@@ -1100,10 +1100,23 @@ namespace o2scl {
     for(size_t i=0;i<ndim;i++) x[i]=peak[i]+vtmp[i];
     return;
   }
-
-    };
-
+  
+  };
+  
   /** \brief A multi-dimensional conditional probability density function
+
+      Note that conditional probabilities are typically written \f$
+      P(A|B) \f$, i.e. the probability of \f$ A \f$ given \f$ B \f$ ,
+      so when sampling the conditional probability density you specify
+      a vector in \f$ B \f$ (the "input") and get a randomly chosen
+      vector in \f$ A \f$ (the "output") . \o2 typically arranges
+      function parameters so that input parameters are first and
+      output parameters are last. In order to be consistent with this,
+      the first argument to the functions \ref
+      o2scl::prob_cond_mdim::pdf, \ref o2scl::prob_cond_mdim::log_pdf
+      \ref o2scl::prob_cond_mdim::operator()(), and \ref
+      o2scl::prob_cond_mdim::log_metrop_hast is a vector from \f$ B
+      \f$ as denoted above.
       
       This class is experimental.
   */
@@ -1118,45 +1131,73 @@ namespace o2scl {
   }
   
   /// The conditional probability
-  virtual double pdf(const vec_t &x, const vec_t &x2) const=0;
+  virtual double pdf(const vec_t &x_B, const vec_t &x_A) const=0;
   
   /// The log of the conditional probability
-  virtual double log_pdf(const vec_t &x, const vec_t &x2) const=0;
+  virtual double log_pdf(const vec_t &x_B, const vec_t &x_A) const=0;
   
   /// Sample the distribution
-  virtual void operator()(const vec_t &x, vec_t &x2) const=0;
+  virtual void operator()(const vec_t &x_B, vec_t &x_A) const=0;
 
   /** \brief Sample the distribution and return the 
       log of the Metropolis-Hastings ratio
+
+      The Metropolis-Hastings ratio for a step beginning at \f$ x \f$
+      and ending at \f$ x^{\prime} \f$ is 
+      obeys
+      \f[
+      \frac{P(x^{\prime})g(x|x^{\prime})}{P(x)g(x^{\prime}|x)}
+      \f]
+      thus this function computes 
+      \f[
+      \log \left( \frac{g(x|x^{\prime})}{g(x^{\prime}|x)} \right)
+      \f]
+      and thus this function takes <tt>x_B</tt> as input, obtains
+      a sample <tt>x_A</tt> and returns the value
+      \code
+      log_pdf(x_A,x_B)-log_pdf(x_B,x_A);
+      \endcode
   */
-  virtual double metrop_hast(const vec_t &x, vec_t &x2) const {
-    operator()(x,x2);
-    return log_pdf(x,x2)-log_pdf(x2,x);
+  virtual double log_metrop_hast(const vec_t &x_B, vec_t &x_A) const {
+    operator()(x_B,x_A);
+    return log_pdf(x_A,x_B)-log_pdf(x_B,x_A);
   }
   
   };
 
-  /** \brief A constrained random walk in the shape of 
-      a hypercube
+  /** \brief Conditional probability for a random walk inside a
+      hypercube
 
       \comment
       I had previously used std::uniform_real_distribution
       instead of rng_gsl, but this caused problems with
       intel compilers.
+      \endcomment
 
-      The Metropolis step is
-      P(x')g(xt|x')
-      -------------
-      P(xt)g(x'|xt)
+      For a step originating at point \f$ x \f$ of maximum
+      step size \f$ u \f$ to destination point \f$ x^{\prime} \f$,
+      the PDF is zero if \f$ x^{\prime} \f$ is unreachable
+      in a step of size \f$ u \f$, i.e. if
+      \f[
+      |x^{\prime}_i -x_i|>u_i
+      \f]
+      for any \f$ i \f$. If the limits of the hypercube
+      are \f$ \ell \f$ and \f$ h \f$, with \f$ h_i > \ell_i 
+      \forall i \f$ .
 
-      and if we do not include the g ratio, then the edges
+      The Metropolis step is accepted if \f$ r \in [0,1] \f$
+      obeys
+      \f[
+      r < \frac{P(x^{\prime})g(x|x^{\prime})}
+      {P(x)g(x^{\prime}|x)}
+      \f]
+      If we do not include the g ratio, then the edges
       will be undersampled because we don't properly include
       the rejections 
 
-      For g(x'|xt), if xt is near the edge, then the cond. prob.
-      is larger, thus the g ratio is smaller than 1, encouraging
-      more rejections.
-      \endcomment
+      For \f$ g(x^{\prime}|x) \f$, if x is near the edge, then the
+      cond. prob. is larger, thus the g ratio is smaller than 1,
+      encouraging more rejections.
   */
   template<class vec_t=boost::numeric::ublas::vector<double> >
     class prob_cond_mdim_fixed_step : public prob_cond_mdim<vec_t> {
@@ -1305,10 +1346,15 @@ namespace o2scl {
   /** \brief A multi-dimensional conditional probability density function
       independent of the input
 
+      The conditional probability, \f$ P(A|B) = P(A,B)/P(B) \f$. If
+      the joint probability is factorizable, i.e. \f$ P(A,B) = P(A)
+      P(B) \f$, then \f$ P(A|B) = P(A) \f$ and is independent of \f$ B
+      \f$. This class handles that particular case.
+      
       This class is experimental.
   */
   template<class vec_t=boost::numeric::ublas::vector<double> >
-    class prob_cond_mdim_invar {
+    class prob_cond_mdim_invar : public prob_cond_mdim<vec_t> {
 
   protected:
   
