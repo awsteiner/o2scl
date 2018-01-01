@@ -891,11 +891,30 @@ namespace o2scl {
   };
   
   /** \brief A multi-dimensional Gaussian probability density function
+      using a Cholesky decomposition
 
-      This class is experimental.
+      Given a (square) covariance matrix, \f$ \Sigma \f$, and a mean
+      vector \f$ \mu \f$ the PDF is
+      \f[
+      P(x) = \det \left( 2 \pi \Sigma \right)^{-1/2}
+      \exp \left[ -\frac{1}{2} (x-\mu)^T \Sigma^{-1} (x-\mu) \right]
+      \f]
+      
+      Given the Cholesky decomposition \f$ A A^{T} = \Sigma \f$,
+      and a vector, \f$ z \f$ of samples from the standard Gaussian
+      with 0 mean and unit variance, one can create a sample 
+      \f$ x \f$ from \f$ x = \mu + A z \f$ .
+
+      \note This class inverts the matrix, necessary for computing the
+      pdf, but not for sampling the distribution, so for large
+      matrices the inversion can be a waste of computation if the pdf
+      is not needed.
+
+      A separate class for the two-dimensional case is \ref
+      prob_dens_mdim_biv_gaussian .
 
       \future Create alternate versions based on other
-      decompositions?
+      matrix decompositions?
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
     class mat_t=boost::numeric::ublas::matrix<double> >
@@ -912,7 +931,7 @@ namespace o2scl {
   /// Location of the peak
   vec_t peak;
 
-  /// Normalization factor
+  /// Normalization factor, \f$ \det ( 2 \pi \Sigma)^{-1/2} \f$
   double norm;
 
   /// Number of dimensions
