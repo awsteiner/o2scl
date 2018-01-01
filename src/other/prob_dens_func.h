@@ -1109,9 +1109,9 @@ namespace o2scl {
       P(A|B) \f$, i.e. the probability of \f$ A \f$ given \f$ B \f$ ,
       so when sampling the conditional probability density you specify
       a vector in \f$ B \f$ (the "input") and get a randomly chosen
-      vector in \f$ A \f$ (the "output") . \o2 typically arranges
+      vector in \f$ A \f$ (the "output") . \o2 arranges
       function parameters so that input parameters are first and
-      output parameters are last. In order to be consistent with this,
+      output parameters are last, thus
       the first argument to the functions \ref
       o2scl::prob_cond_mdim::pdf, \ref o2scl::prob_cond_mdim::log_pdf
       \ref o2scl::prob_cond_mdim::operator()(), and \ref
@@ -1150,13 +1150,21 @@ namespace o2scl {
       \f]
       thus this function computes 
       \f[
-      \log \left( \frac{g(x|x^{\prime})}{g(x^{\prime}|x)} \right)
+      \log \left[ \frac{g(x|x^{\prime})}{g(x^{\prime}|x)} \right]
       \f]
       and thus this function takes <tt>x_B</tt> as input, obtains
       a sample <tt>x_A</tt> and returns the value
       \code
       log_pdf(x_A,x_B)-log_pdf(x_B,x_A);
       \endcode
+
+      To check this, imagine that \f$ g \f$ is independent
+      of the "input" argument, so we have
+      \f[
+      \log \left[ \frac{g(x)}{g(x^{\prime})} \right]
+      \f]
+      and then a Metropolis-Hastings step is more likely accepted
+      if \f$ g(x^{\prime}) \f$ is an underestimate. 
   */
   virtual double log_metrop_hast(const vec_t &x_B, vec_t &x_A) const {
     operator()(x_B,x_A);
@@ -1174,23 +1182,24 @@ namespace o2scl {
       intel compilers.
       \endcomment
 
-      For a step originating at point \f$ x \f$ of maximum
-      step size \f$ u \f$ to destination point \f$ x^{\prime} \f$,
-      the PDF is zero if \f$ x^{\prime} \f$ is unreachable
-      in a step of size \f$ u \f$, i.e. if
-      \f[
-      |x^{\prime}_i -x_i|>u_i
-      \f]
-      for any \f$ i \f$. If the limits of the hypercube
-      are \f$ \ell \f$ and \f$ h \f$, with \f$ h_i > \ell_i 
-      \forall i \f$ .
-
-      The Metropolis step is accepted if \f$ r \in [0,1] \f$
-      obeys
+      This conditional probability is most useful in providing a
+      Metropolis-Hastings distribution with a fixed step size which
+      properly handles a boundary. The Metropolis-Hastings step is
+      accepted if \f$ r \in [0,1] \f$ obeys
       \f[
       r < \frac{P(x^{\prime})g(x|x^{\prime})}
       {P(x)g(x^{\prime}|x)}
       \f]
+      The function \f$ g(x^{\prime}|x) = g(x^{\prime},x)/g(x) \f$, and
+      because of the fixed step size these probabilities are just
+      proportional to the inverse allowed volume, i.e. \f$ V(x)^{-1}
+      V^{-1}(x^{\prime}) / V(x)^{-1} = V^{-1}(x^{\prime}) \f$ . If \f$
+      x^{\prime} \f$ is near a boundary then \f$ V(x^{\prime}) \f$ is
+      decreased and the conditional probability increases accordingly.
+      If the distance between \f$ x \f$ and \f$ x^{\prime} \f$ is
+      unreachable in a step, then the PDF is zero.
+
+      \comment
       If we do not include the g ratio, then the edges
       will be undersampled because we don't properly include
       the rejections 
@@ -1198,6 +1207,7 @@ namespace o2scl {
       For \f$ g(x^{\prime}|x) \f$, if x is near the edge, then the
       cond. prob. is larger, thus the g ratio is smaller than 1,
       encouraging more rejections.
+      \endcomment
   */
   template<class vec_t=boost::numeric::ublas::vector<double> >
     class prob_cond_mdim_fixed_step : public prob_cond_mdim<vec_t> {
@@ -1227,12 +1237,19 @@ namespace o2scl {
       by the constructor
       \endcomment
   */
-  int set_internal(vec_t &step, vec_t &low, vec_t &high) {
-    u_step.resize(step.size());
-    u_low.resize(step.size());
-    u_high.resize(step.size());
-    for(size_t i=0;i<step.size();i++) {
+  int set_internal(size_t sz, vec_t &step, vec_t &low, vec_t &high) {
+    u_step.resize(sz);
+    u_low.resize(sz);
+    u_high.resize(sz);
+    for(size_t i=0;i<sz;i++) {
       u_step[i]=step[i];
+
+      if (!std::finite(low[i]) || !std::finite(high[i])) {
+	O2SCL_ERR2("Limit not finite in prob_cond_mdim_fixed_step::",
+		   "set_internal().",o2scl::exc_einval);
+      }
+      
+      // Force low and high to be properly ordered
       if (low[i]>high[i]) {
 	u_high[i]=low[i];
 	u_low[i]=high[i];
@@ -1271,7 +1288,7 @@ namespace o2scl {
 		 "prob_cond_mdim_fixed_step constructor.",
 		 o2scl::exc_einval);
     }
-    set_internal(step,low,high);
+    set_internal(step.size(),step,low,high);
   }
   
   /** \brief Set step sizes and limits
@@ -1287,7 +1304,7 @@ namespace o2scl {
 		 "prob_cond_mdim_fixed_step::set().",
 		 o2scl::exc_einval);
     }
-    set_internal(step,low,high);
+    set_internal(step.size(),step,low,high);
     return 0;
   }
 
@@ -1300,17 +1317,24 @@ namespace o2scl {
   virtual double pdf(const vec_t &x, const vec_t &x2) const {
     double vol1=1.0;
     for(size_t i=0;i<u_step.size();i++) {
+
       if (fabs(x2[i]-x[i])>u_step[i]) return 0.0;
+      
       if (x[i]-u_step[i]<u_low[i]) {
 	if (x[i]+u_step[i]>u_high[i]) {
+	  // If x+step is too large and x-step is too small
 	  vol1*=u_high[i]-u_low[i];
 	} else {
+	  // If x-step is too small
 	  vol1*=x[i]+u_step[i]-u_low[i];
 	}
       } else {
 	if (x[i]+u_step[i]>u_high[i]) {
+	  // If x+step is too large
 	  vol1*=u_high[i]-(x[i]-u_step[i]);
 	} else {
+	  // The normal case, where the volumes are both inside
+	  // of the boundaries
 	  vol1*=2.0*u_step[i];
 	}
       }
@@ -1333,10 +1357,9 @@ namespace o2scl {
 	O2SCL_ERR("Input out of bounds in fixed_step::operator().",
 		  o2scl::exc_einval);
       }
-      x2[i]=x[i]+u_step[i]*(rg.random()*2.0-1.0);
-      while (x2[i]<u_low[i] || x2[i]>u_high[i]) {
+      do {
 	x2[i]=x[i]+u_step[i]*(rg.random()*2.0-1.0);
-      }
+      } while (x2[i]<u_low[i] || x2[i]>u_high[i]);
     }
     return;
   }
@@ -1347,14 +1370,15 @@ namespace o2scl {
       independent of the input
 
       The conditional probability, \f$ P(A|B) = P(A,B)/P(B) \f$. If
-      the joint probability is factorizable, i.e. \f$ P(A,B) = P(A)
-      P(B) \f$, then \f$ P(A|B) = P(A) \f$ and is independent of \f$ B
-      \f$. This class handles that particular case.
+      the joint probability is factorizable because the events \f$ A
+      \f$ and \f$ B \f$ are independent, i.e. \f$ P(A,B) = P(A) P(B)
+      \f$, then \f$ P(A|B) = P(A) \f$ and is independent of \f$ B \f$.
+      This class handles that particular case.
       
       This class is experimental.
   */
   template<class vec_t=boost::numeric::ublas::vector<double> >
-    class prob_cond_mdim_invar : public prob_cond_mdim<vec_t> {
+    class prob_cond_mdim_indep : public prob_cond_mdim<vec_t> {
 
   protected:
   
@@ -1362,7 +1386,10 @@ namespace o2scl {
   
   public:
 
-  prob_cond_mdim_invar(prob_dens_mdim<vec_t> &out) : base(out) {
+  /** \brief Create a conditional probability distribution
+      based on the specified probability distribution
+  */
+  prob_cond_mdim_indep(prob_dens_mdim<vec_t> &out) : base(out) {
   }
   
   /// The dimensionality
@@ -1391,6 +1418,9 @@ namespace o2scl {
       density function
 
       This class is experimental.
+
+      \todo This should be a symmetric conditional probability, 
+      i.e. \f$ P(x|y) = P(y|x) \f$. Test this.
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
     class mat_t=boost::numeric::ublas::matrix<double> >
