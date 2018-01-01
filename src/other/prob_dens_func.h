@@ -1263,7 +1263,7 @@ namespace o2scl {
     for(size_t i=0;i<sz;i++) {
       u_step[i]=step[i];
 
-      if (!std::finite(low[i]) || !std::finite(high[i])) {
+      if (!std::isfinite(low[i]) || !std::isfinite(high[i])) {
 	O2SCL_ERR2("Limit not finite in prob_cond_mdim_fixed_step::",
 		   "set_internal().",o2scl::exc_einval);
       }
