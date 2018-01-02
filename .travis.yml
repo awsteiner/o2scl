@@ -69,9 +69,6 @@ script:
   # timeout.
   # 
   - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
-      brew install gcc || true
-    fi
-  - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
       brew update && brew install eigen && brew install hdf5 && brew tap awsteiner/science && which autoconf && brew install o2scl --with-eigen --with-check --with-examples --HEAD -v && acol --version ;
     fi
 
