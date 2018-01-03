@@ -182,16 +182,52 @@
 
     \section defconst_subsect Define constants
 
-    Various define constants used in \o2 :
+    Various define constants used in \o2 are listed below. Note
+    that, if <tt>acol</tt> is installed, <tt>acol -v</tt> reports
+    several details about how \o2 was compiled.
 
-    - O2SCL_CBLAS_NAMESPACE - Internally used by some of the headers
-    in the \c src/linalg directory to select between \ref o2scl_cblas
-    and \ref o2scl_cblas_bracket
+    - O2SCL_ARMA - Flag for Armadillo support. The end-user will
+    also need to define this for code based on \o2 functions which
+    use Armadillo routines.
+
+    - O2SCL_CBLAS_NAMESPACE - This flag is internally used by some of
+    the headers in the \c src/linalg directory to select between \ref
+    o2scl_cblas and \ref o2scl_cblas_bracket . The end-user should not
+    need to use this.
+
+    - O2SCL_COND_FLAG - Internally used to handle the option of compiling
+    with or without Armadillo or Eigen support. The end-user should not
+    need to use this.
 
     - O2SCL_DATA_DIR - Used by \o2 classes during installation to refer
     to the directory where data is stored. After installation, this
     is accessible through the global object named 
-    \ref o2scl::o2scl_settings.
+    \ref o2scl::o2scl_settings. The end-user should not
+    need to use this.
+
+    - O2SCL_EIGEN - Flag for Eigen support. The end-user will
+    also need to define this for code based on \o2 functions which
+    use Eigen routines.
+
+    - O2SCL_ENABLE_ACOL - Internal flag to tell the makefiles if
+    <tt>acol</tt> is to be compiled. This is set by default unless the
+    configure script is specified with <tt>--disable-acol</tt>.
+
+    - O2SCL_EOS - Internal flag to tell the makefiles if the \o2e
+    library is to be included. The end-user should not
+    need to use this.
+
+    - O2SCL_HDF - Internal flag to tell the makefiles if HDF5 support
+    is to be included. The end-user should not need to use this.
+
+    - O2SCL_HDF5_COMP - Define this flag when \o2 is compiled and
+    for code which uses \o2 to include support for HDF5
+    compression. 
+
+    - O2SCL_MPI - Flag to allow MPI functionality in O2scl classes
+    which contain MPI code (see also O2SCL_OPENMP). All current
+    MPI functionality in \o2 is header only, thus MPI support does 
+    not need to be specified to the <tt>configure</tt> script.
 
     - O2SCL_NEVER_DEFINED - Used internally to comment out large 
     sections of code. This should not be used by the end-user. 
@@ -212,11 +248,35 @@
     range checking can be turned off or on separate from what was done
     at installation.
 
+    - O2SCL_OLDER_COMPILER - A flag which can be defined both during
+    compilation of \o2 and compilation of code using \o2 for compilers
+    which do not have std::initializer_list, std::to_string,
+    std::uniform_distribution and cannot run <tt>mcmc_para_ts</tt>.
+
+    - O2SCL_OPENMP - Flag to allow OpenMP functionality in O2scl
+    classes which contain OpenMP code (see also O2SCL_MPI). This flag
+    is set during compilation if <tt>--enable-openmp</tt> is passed to
+    the configure script. The end-user must also define this flag to
+    enable OpenMP support in their code. While all current OpenMP
+    functionality in \o2 is header only, this may change in the
+    future.
+
+    - O2SCL_PART - Internal flag to tell the makefiles if the \o2p
+    library is to be included. This constant is automatically set by the
+    configure script depending on whether or not 
+    <tt>--disable-partlib</tt> is specified. End-user code which uses \o2p 
+    should not need to define this.
+
+    - O2SCL_PYTHON - Doesn't do anything (yet).
+
+    - O2SCL_READLINE - Internal flag to tell the makefiles if GNU
+    readline support should be included in <tt>acol</tt>. The end-user
+    should not need to use this.
+
+    - O2SCL_USE_BOOST_FILESYSTEM - Doesn't do anything (yet).
+
     - O2SCL_USE_GSL_HANDLER - If this is defined, then an object
     of type \ref o2scl::err_hnd_gsl is the default error handler. Used in
     <tt>src/base/exception.cpp</tt>.
-
-    - O2SCL_NO_TR1_MEMORY - If this is defined then boost 
-    shared pointers are used. (used in <tt>src/base/shared_ptr.h</tt>).
 
 */

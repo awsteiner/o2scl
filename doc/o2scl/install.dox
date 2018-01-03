@@ -40,14 +40,6 @@
     should be accompanied by the <tt>--disable-eoslib</tt> and
     <tt>--disable-partlib</tt> flags. 
 
-    The Ubuntu HDF5 package installs its header files in a slightly
-    different location than on other operating systems, so 
-    on Ubuntu and other Linux OSs you man need to use the 
-    <tt>O2SCL_UBUNTU_HDF5</tt> flag, i.e.
-    \verbatim
-    CXXFLAGS="-DO2SCL_UBUNTU_HDF5" ./configure
-    \endverbatim
-
     After \c make \c install, you may test the library with \c make \c
     check or \c make \c o2scl-test. At the end, the phrase <tt>"All
     O2scl tests passed"</tt> indicates that the testing was
@@ -75,6 +67,14 @@
     release distributions by using the standard GNU
     <tt>./configure</tt> script and then invoking <tt>make</tt> and
     <tt>make install</tt>.
+    
+    In some recent Ubuntu versions, the HDF5 package installs its
+    header files in a slightly different location than on other
+    operating systems, so you may need to use the
+    <tt>O2SCL_UBUNTU_HDF5</tt> flag, i.e.
+    \verbatim
+    CXXFLAGS="-DO2SCL_UBUNTU_HDF5" ./configure
+    \endverbatim
 
     If you want to install from source (without generating the
     documentation), then you must first install the
