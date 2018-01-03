@@ -94,9 +94,37 @@ int main(void) {
 
   // It turns out that FSUGold needs a better initial
   // guess than the default to get saturation right
-  re.set_fields(0.2,0.1,0.01);
-  re.saturation();
+  re.err_nonconv=false;
+  re.def_sat_mroot.err_nonconv=false;
+  re.def_sat_mroot.def_jac.err_nonconv=false;
+  re.def_mroot.err_nonconv=false;
+  re.def_mroot.def_jac.err_nonconv=false;
+  
+  int sret=re.saturation();
 
+  if (sret!=0) {
+    re.set_fields(0.2,0.1,0.01);
+    re.def_neutron.mu=5.0;
+    re.def_proton.mu=5.0;
+
+    re.err_nonconv=true;
+    re.def_sat_mroot.err_nonconv=true;
+    re.def_sat_mroot.def_jac.err_nonconv=true;
+    re.def_mroot.err_nonconv=true;
+    re.def_mroot.def_jac.err_nonconv=true;
+    
+    re.saturation();
+    
+  } else {
+    
+    re.err_nonconv=true;
+    re.def_sat_mroot.err_nonconv=true;
+    re.def_sat_mroot.def_jac.err_nonconv=true;
+    re.def_mroot.err_nonconv=true;
+    re.def_mroot.def_jac.err_nonconv=true;
+
+  }
+  
   cout << "FSUGold: " << re.n0 << endl;
   cout << "FSUGold: " << re.esym*hc_mev_fm << endl;
   cout << endl;
