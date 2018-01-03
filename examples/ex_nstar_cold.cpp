@@ -58,7 +58,38 @@ int main(void) {
   rmf.def_neutron.mu=5.0;
   rmf.def_proton.mu=5.0;
   rmf.set_fields(0.2,0.1,-0.05);
-  rmf.saturation();
+  
+  rmf.err_nonconv=false;
+  rmf.def_sat_mroot.err_nonconv=false;
+  rmf.def_sat_mroot.def_jac.err_nonconv=false;
+  rmf.def_mroot.err_nonconv=false;
+  rmf.def_mroot.def_jac.err_nonconv=false;
+  
+  int sret=rmf.saturation();
+
+  if (sret!=0) {
+    rmf.set_fields(0.1,0.07,0.0);
+    rmf.def_neutron.mu=5.0;
+    rmf.def_proton.mu=5.0;
+
+    rmf.err_nonconv=true;
+    rmf.def_sat_mroot.err_nonconv=true;
+    rmf.def_sat_mroot.def_jac.err_nonconv=true;
+    rmf.def_mroot.err_nonconv=true;
+    rmf.def_mroot.def_jac.err_nonconv=true;
+    
+    rmf.saturation();
+    
+  } else {
+    
+    rmf.err_nonconv=true;
+    rmf.def_sat_mroot.err_nonconv=true;
+    rmf.def_sat_mroot.def_jac.err_nonconv=true;
+    rmf.def_mroot.err_nonconv=true;
+    rmf.def_mroot.def_jac.err_nonconv=true;
+
+  }
+  
   cout << "Saturation density: " << rmf.n0 << endl;
   cout << "Binding energy: " << rmf.eoa*hc_mev_fm << endl;
   cout << "Effective mass: " << rmf.msom << endl;
