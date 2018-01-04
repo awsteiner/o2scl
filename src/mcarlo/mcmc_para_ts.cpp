@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2016-2017, Andrew W. Steiner
+  Copyright (C) 2016-2018, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -157,7 +157,10 @@ int main(int argc, char *argv[]) {
      std::placeholders::_1,std::placeholders::_2,std::placeholders::_3,
      std::placeholders::_4,std::placeholders::_5);
 
-  size_t n_threads=2;
+  size_t n_threads=1;
+#ifdef O2SCL_OPENMP
+  n_threads=2;
+#endif
 
   vector<point_funct> vpf(n_threads);
   vector<measure_funct> vmf(n_threads);
@@ -188,15 +191,15 @@ int main(int argc, char *argv[]) {
   
   mpc.mc.step_fac=-1.0;
   mpc.mc.verbose=2;
-  mpc.mc.n_threads=2;
+  mpc.mc.n_threads=n_threads;
   mpc.mc.max_iters=40;
   mpc.mc.mcmc(1,low,high,vpf,vmf);
-
-  if (mpc.mc.n_accept[0]+mpc.mc.n_reject[0]!=mpc.mc.max_iters &&
-      mpc.mc.n_accept[1]+mpc.mc.n_reject[1]!=mpc.mc.max_iters) {
-    tm.test_gen(1==0,"plain n_iters");
-  } else {
-    tm.test_gen(1==1,"plain n_iters");
+  
+  tm.test_gen(mpc.mc.n_accept[0]+mpc.mc.n_reject[0]==mpc.mc.max_iters,
+	      "plain n_iters 0");
+  if (n_threads>1) {
+    tm.test_gen(mpc.mc.n_accept[1]+mpc.mc.n_reject[1]==mpc.mc.max_iters,
+	      "plain n_iters 1");
   }
 
   // ----------------------------------------------------------------
@@ -212,11 +215,11 @@ int main(int argc, char *argv[]) {
   mpc.mc.prefix="mcmc_ai";
   mpc.mc.mcmc(1,low,high,vpf,vmf);
 
-  if (mpc.mc.n_accept[0]+mpc.mc.n_reject[0]!=mpc.mc.max_iters &&
-      mpc.mc.n_accept[1]+mpc.mc.n_reject[1]!=mpc.mc.max_iters) {
-    tm.test_gen(1==0,"aff_inv n_iters");
-  } else {
-    tm.test_gen(1==1,"aff_inc n_iters");
+  tm.test_gen(mpc.mc.n_accept[0]+mpc.mc.n_reject[0]==mpc.mc.max_iters,
+	      "aff_inv n_iters 0");
+  if (n_threads>1) {
+    tm.test_gen(mpc.mc.n_accept[1]+mpc.mc.n_reject[1]!=mpc.mc.max_iters,
+		"aff_inc n_iters 1");
   }
 
   // ----------------------------------------------------------------
@@ -230,7 +233,7 @@ int main(int argc, char *argv[]) {
 
   mpc.mct.step_fac=-1.0;
   mpc.mct.verbose=2;
-  mpc.mct.n_threads=2;
+  mpc.mct.n_threads=n_threads;
   mpc.mct.max_iters=40;
   mpc.mct.prefix="mcmct";
   mpc.mct.mcmc(1,low,high,vpf,vff);
@@ -240,14 +243,16 @@ int main(int argc, char *argv[]) {
 
   mpc.mct.get_chain_sizes(chain_sizes);
   tm.test_gen(chain_sizes[0]==mpc.mct.n_accept[0]+1,"plain table size 0");
-  tm.test_gen(chain_sizes[1]==mpc.mct.n_accept[1]+1,"plain table size 1");
-  if (mpc.mct.n_accept[0]+mpc.mct.n_reject[0]!=mpc.mct.max_iters &&
-      mpc.mct.n_accept[1]+mpc.mct.n_reject[1]!=mpc.mct.max_iters) {
-    tm.test_gen(1==0,"plain table n_iters");
-  } else {
-    tm.test_gen(1==1,"plain table n_iters");
+  if (n_threads>1) {
+    tm.test_gen(chain_sizes[1]==mpc.mct.n_accept[1]+1,"plain table size 1");
   }
-
+  tm.test_gen(mpc.mct.n_accept[0]+mpc.mct.n_reject[0]==mpc.mct.max_iters,
+	      "plain table n_iters 0");
+  if (n_threads>1) {
+    tm.test_gen(mpc.mct.n_accept[1]+mpc.mct.n_reject[1]==mpc.mct.max_iters,
+		"plain table n_iters 1");
+  }
+    
   std::string fname;
   hdf_file hf;
   
@@ -279,14 +284,16 @@ int main(int argc, char *argv[]) {
   // Test results
   tm.test_gen(vector_sum_double(mpc.mct.n_walk,chain_sizes)-mpc.mct.n_walk==
 	      mpc.mct.n_accept[0],"accept chain 0");
-  tm.test_gen(vector_sum_double(mpc.mct.n_walk*2,chain_sizes)-
-	      vector_sum_double(mpc.mct.n_walk,chain_sizes)-mpc.mct.n_walk==
-	      mpc.mct.n_accept[1],"accept chain 1");
-  if (mpc.mct.n_accept[0]+mpc.mct.n_reject[0]!=mpc.mct.max_iters &&
-      mpc.mct.n_accept[1]+mpc.mct.n_reject[1]!=mpc.mct.max_iters) {
-    tm.test_gen(1==0,"aff_inv table n_iters");
-  } else {
-    tm.test_gen(1==1,"aff_inv table n_iters");
+  if (n_threads>1) {
+    tm.test_gen(vector_sum_double(mpc.mct.n_walk*2,chain_sizes)-
+		vector_sum_double(mpc.mct.n_walk,chain_sizes)-mpc.mct.n_walk==
+		mpc.mct.n_accept[1],"accept chain 1");
+  }
+  tm.test_gen(mpc.mct.n_accept[0]+mpc.mct.n_reject[0]==mpc.mct.max_iters,
+	      "aff_inv table n_iters 0");
+  if (n_threads>1) {
+    tm.test_gen(mpc.mct.n_accept[1]+mpc.mct.n_reject[1]==mpc.mct.max_iters,
+		"aff_inv table n_iters 1");
   }
 
   // Write results to file

@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
 
-  Copyright (C) 2006-2017, Andrew W. Steiner
+  Copyright (C) 2006-2018, Andrew W. Steiner
 
   This file is part of O2scl.
   
@@ -631,19 +631,19 @@ int main(int argc, char *argv[]) {
 	hf.sets_fixed
 	  ("reference",((string)"W. J. Huang, G. Audi, M. Wang ")+
 	   "F. G. Kondev, S. Naimi, X. Xu, "
-	   "Chin. Phys. C, 41 (2017) 030002; "+
+	   "Chin. Phys. C, 41 (2018) 030002; "+
 	   "M. Wang, G. Audi, F. G. Kondev, "+
 	   "W. J. Huang, , S. Naimi, X. Xu, "
-	   "Chin. Phys. C, 41 (2017) 030003.");
+	   "Chin. Phys. C, 41 (2018) 030003.");
       } else if (ik==6) {
 	hf.sets_fixed("orig_file","mass16round.txt");
 	hf.sets_fixed
 	  ("reference",((string)"W. J. Huang, G. Audi, M. Wang ")+
 	   "F. G. Kondev, S. Naimi, X. Xu, "
-	   "Chin. Phys. C, 41 (2017) 030002; "+
+	   "Chin. Phys. C, 41 (2018) 030002; "+
 	   "M. Wang, G. Audi, F. G. Kondev, "+
 	   "W. J. Huang, , S. Naimi, X. Xu, "
-	   "Chin. Phys. C, 41 (2017) 030003.");
+	   "Chin. Phys. C, 41 (2018) 030003.");
       }
       
       H5Tclose(string_type3);

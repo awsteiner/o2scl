@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2012-2017, Andrew W. Steiner
+  Copyright (C) 2012-2018, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -186,6 +186,19 @@ int main(void) {
     t.test_rel(res,1.0,err,"normalization");
   }
 
+  {
+    ubvector xx(2);
+    prob_dens_mdim_biv_gaussian<ubvector> biv;
+    biv.set(2.0,3.0,1.0,0.5,-0.5);
+    xx[0]=2.0;
+    xx[1]=3.0;
+    cout << biv.pdf(xx) << endl;
+    biv.contour(0.3,0.0,xx);
+    cout << xx[0] << " " << xx[1] << endl;
+    cout << biv.pdf(xx) << endl;
+    t.test_rel(biv.pdf(xx),0.3,1.0e-6,"biv contour");
+  }
+  
   t.report();
 
   return 0;

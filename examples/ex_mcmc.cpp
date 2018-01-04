@@ -111,7 +111,7 @@ int f_cub(unsigned ndim, size_t npt, const double *x, unsigned fdim,
 int main(int argc, char *argv[]) {
   
   cout.setf(ios::scientific);
-
+  
   exc e(2);
   
   test_mgr tm;
@@ -170,9 +170,6 @@ int main(int argc, char *argv[]) {
   vector<string> punits={"MeV","MeV","MeV^2","MeV^4"};
   mct.set_names_units(pnames,punits);
 
-  // Get a pointer to the results table
-  shared_ptr<table_units<> > t=mct.get_table();
-
   // MCMC with a random walk of a fixed length
   cout << "MCMC with random walk:\n" << endl;
   // This step factor is chosen to give approximately equal number of
@@ -180,6 +177,9 @@ int main(int argc, char *argv[]) {
   mct.step_fac=3.0;
   mct.max_iters=1000;
   mct.mcmc(2,low,high,vpf,vff);
+
+  // Get a pointer to the results table
+  shared_ptr<table_units<> > t=mct.get_table();
 
   // Output table and other information
   cout << "n_accept, n_reject, table lines: "

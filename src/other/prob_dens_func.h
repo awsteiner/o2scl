@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2012-2017, Andrew W. Steiner
+  Copyright (C) 2012-2018, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -328,7 +328,7 @@ namespace o2scl {
 
     virtual ~prob_dens_uniform() {
     }
-
+    
     /// Copy constructor
   prob_dens_uniform(const prob_dens_uniform &pdg) : prob_dens_frange() {
       ll=pdg.ll;
@@ -742,12 +742,187 @@ namespace o2scl {
   }
   
   };
+
+  /** \brief A bivariate gaussian probability distribution
+
+      For a two-dimensional gaussian, given a mean 
+      \f$ ( \mu_x, \mu_y ) \f$ and a covariance matrix
+      \f[
+      \Sigma = \left( 
+      \begin{array}{cc}
+      \sigma_x^2 & \rho \sigma_x \sigma_y \\
+      \rho \sigma_x \sigma_y & \sigma_y^2 \\
+      \end{array}
+      \right)
+      \f]
+      the PDF is
+      \f[
+      pdf(x,y) = \left(2 \pi \sigma_x \sigma_y \sqrt{1-\rho^2}\right)^{-1}
+      \exp \left\{ - \frac{1}{2 (1-\rho^2)} 
+      \left[ \frac{(x-\mu_x)^2}{\sigma_x^2} + 
+      \frac{(y-\mu_y)^2}{\sigma_y^2} - 
+      \frac{2 \rho (x-\mu_x)(y-\mu_y)}{\sigma_x \sigma_y} \right]
+      \right\}
+      \f]
+      (taken from the Wikipedia page on the "Multivariate normal
+      distribution").
+      
+      The function \ref o2scl::prob_dens_mdim_biv_gaussian::contour()
+      gives a point on the contour line for a fixed value of the
+      PDF given an angle \f$ \theta \f$. In particular,
+      it solves 
+      \f[
+      c = pdf(r \cos \theta + \mu_x, r \sin \theta + \mu_y )
+      \f]
+      for the radius \f$ r \f$ and then stores the values 
+      \f$ r \cos \theta + \mu_x \f$ and \f$ r \sin \theta + \mu_y \f$
+      in the reference parameters named \c x and \c y . Thus
+      this function can be used to map out the full contour
+      by selecting values for \f$ \theta \in [0,2 \pi] \f$.
+      
+      The function \ref
+      o2scl::prob_dens_mdim_biv_gaussian::level_fixed_integral() gives
+      the value of the PDF for which the integral inside the
+      corresponding contour is some fraction of the total integral
+      (which is always 1). Given a fraction \f$ f \f$, the argument of
+      the exponential is related to the inverse of the cumulative
+      distribution function for the chi-squared probability
+      distribution for two degrees of freedom for \f$ 1-f \f$. For a
+      fraction \f$ f \f$, the value \f$ \chi^2 \f$ (i.e. the
+      Mahalanobis distance) is \f$ \chi^2 = -2 \log (1-f) \f$ and then
+      the value of the PDF for the corresponding contour is \f$
+      pdf(x,y) = \left(2 \pi \sigma_x \sigma_y
+      \sqrt{1-\rho^2}\right)^{-1} \exp (-\chi^2/2) \f$ .
+      
+   */
+  template<class vec_t=boost::numeric::ublas::vector<double> >
+    class prob_dens_mdim_biv_gaussian : public prob_dens_mdim<vec_t> {
+
+  private:
+
+  /// The x coordinate of the centroid
+  double x0;
+
+  /// The y coordinate of the centroid
+  double y0;
+
+  /// The x standard deviation
+  double sig_x;
+
+  /// The y standard deviation
+  double sig_y;
+
+  /// The covariance
+  double rho;
   
+  public:
+  
+  prob_dens_mdim_biv_gaussian() {
+  }
+  
+  /** \brief Set the properties of the distribution
+
+      \note If \f$ |\rho|\geq 1 \f$ this function will
+      call the error handler.
+   */
+  void set(double x_cent, double y_cent, double x_std, double y_std,
+	   double covar) {
+    if (fabs(covar)>=1.0) {
+      O2SCL_ERR2("Covariance cannot have magnitude equal or larger than ",
+		 "1 in prob_dens_mdim_biv_gaussian::set().",
+		 o2scl::exc_einval);
+    }
+    x0=x_cent;
+    y0=y_cent;
+    sig_x=x_std;
+    sig_y=y_std;
+    rho=covar;
+    return;
+  }
+  
+  /** \brief Compute the normalized probability density
+   */
+  virtual double pdf(const vec_t &v) const {
+    double x=v[0], y=v[1];
+    double arg=-((x-x0)*(x-x0)/sig_x/sig_x+
+		 (y-y0)*(y-y0)/sig_y/sig_y-
+		 2.0*rho*(x-x0)*(y-y0)/sig_x/sig_y)/2.0/(1.0-rho*rho);
+    double ret=exp(arg)/2.0/o2scl_const::pi/sig_x/sig_y/
+    sqrt(1.0-rho*rho);
+    return ret;
+  }
+  
+  /** \brief Return the contour level corresponding to a fixed
+      integral
+  */
+  virtual double level_fixed_integral(double integral) {
+    // This comes from inverting the cumulative distribution function
+    // for the chi-squared distribution for two degrees of of freedom,
+    // i.e. exp(-x/2)
+    double arg=-2.0*log(1.0-integral);
+    // Now compute the pdf for the fixed value of the
+    // squared Mahalanobis distance
+    return exp(-0.5*arg)/2.0/o2scl_const::pi/sig_x/
+    sig_y/sqrt(1.0-rho*rho);
+  }
+  
+  /** \brief Return a point on the contour for a specified level
+      given an angle
+  */
+  virtual void contour(double level, double theta, vec_t &x) {
+    if (level<0.0) {
+      O2SCL_ERR2("Cannot produce contours for negative values in ",
+		 "prob_dens_mdim_biv_gaussian::contour().",
+		 o2scl::exc_einval);
+    }
+    double max=0.5/sig_x/sig_y/o2scl_const::pi/sqrt(1.0-rho*rho);
+    if (level>max) {
+      O2SCL_ERR2("Cannot produce contours larger than maximum in ",
+		 "prob_dens_mdim_biv_gaussian::contour().",
+		 o2scl::exc_einval);
+    }
+    double arg=-log(level*2.0*o2scl_const::pi*sig_x*sig_y*
+		    sqrt(1.0-rho*rho))*2.0*(1.0-rho*rho);
+    double r2=arg/(cos(theta)*cos(theta)/sig_x/sig_x+
+		   sin(theta)*sin(theta)/sig_y/sig_y-
+		   2.0*rho/sig_x/sig_y*cos(theta)*sin(theta));
+    x[0]=sqrt(r2)*cos(theta)+x0;
+    x[1]=sqrt(r2)*sin(theta)+y0;
+    return;
+  }
+  
+  };
+  
+<<<<<<< HEAD
   template<class vec_t=boost::numeric::ublas::vector<double>,
     class mat_t=boost::numeric::ublas::matrix<double> >
     class prob_dens_mdim_biv_gaussian : public prob_dens_mdim<vec_t> {
 
   protected:
+=======
+  /** \brief A multi-dimensional Gaussian probability density function
+      using a Cholesky decomposition
+
+      Given a (square) covariance matrix, \f$ \Sigma \f$, and a mean
+      vector \f$ \mu \f$ the PDF is
+      \f[
+      P(x) = \det \left( 2 \pi \Sigma \right)^{-1/2}
+      \exp \left[ -\frac{1}{2} (x-\mu)^T \Sigma^{-1} (x-\mu) \right]
+      \f]
+      
+      Given the Cholesky decomposition \f$ A A^{T} = \Sigma \f$,
+      and a vector, \f$ z \f$ of samples from the standard Gaussian
+      with 0 mean and unit variance, one can create a sample 
+      \f$ x \f$ from \f$ x = \mu + A z \f$ .
+
+      \note This class inverts the matrix, necessary for computing the
+      pdf, but not for sampling the distribution, so for large
+      matrices the inversion can be a waste of computation if the pdf
+      is not needed.
+
+      A separate class for the two-dimensional case is \ref
+      prob_dens_mdim_biv_gaussian .
+>>>>>>> 9ac2bb17575187cf91208146c839336bcdb12712
 
   double x0;
 
@@ -816,7 +991,7 @@ namespace o2scl {
       This class is experimental.
       
       \future Create alternate versions based on other
-      decompositions?
+      matrix decompositions?
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
     class mat_t=boost::numeric::ublas::matrix<double> >
@@ -833,7 +1008,7 @@ namespace o2scl {
   /// Location of the peak
   vec_t peak;
 
-  /// Normalization factor
+  /// Normalization factor, \f$ \det ( 2 \pi \Sigma)^{-1/2} \f$
   double norm;
 
   /// Number of dimensions
@@ -1021,10 +1196,23 @@ namespace o2scl {
     for(size_t i=0;i<ndim;i++) x[i]=peak[i]+vtmp[i];
     return;
   }
-
-    };
-
+  
+  };
+  
   /** \brief A multi-dimensional conditional probability density function
+
+      Note that conditional probabilities are typically written \f$
+      P(A|B) \f$, i.e. the probability of \f$ A \f$ given \f$ B \f$ ,
+      so when sampling the conditional probability density you specify
+      a vector in \f$ B \f$ (the "input") and get a randomly chosen
+      vector in \f$ A \f$ (the "output") . \o2 arranges
+      function parameters so that input parameters are first and
+      output parameters are last, thus
+      the first argument to the functions \ref
+      o2scl::prob_cond_mdim::pdf, \ref o2scl::prob_cond_mdim::log_pdf
+      \ref o2scl::prob_cond_mdim::operator()(), and \ref
+      o2scl::prob_cond_mdim::log_metrop_hast is a vector from \f$ B
+      \f$ as denoted above.
       
       This class is experimental.
   */
@@ -1039,44 +1227,82 @@ namespace o2scl {
   }
   
   /// The conditional probability
-  virtual double pdf(const vec_t &x, const vec_t &x2) const=0;
+  virtual double pdf(const vec_t &x_B, const vec_t &x_A) const=0;
   
   /// The log of the conditional probability
-  virtual double log_pdf(const vec_t &x, const vec_t &x2) const=0;
+  virtual double log_pdf(const vec_t &x_B, const vec_t &x_A) const=0;
   
   /// Sample the distribution
-  virtual void operator()(const vec_t &x, vec_t &x2) const=0;
+  virtual void operator()(const vec_t &x_B, vec_t &x_A) const=0;
 
   /** \brief Sample the distribution and return the 
       log of the Metropolis-Hastings ratio
+
+      The Metropolis-Hastings ratio for a step beginning at \f$ x \f$
+      and ending at \f$ x^{\prime} \f$ is 
+      obeys
+      \f[
+      \frac{P(x^{\prime})g(x|x^{\prime})}{P(x)g(x^{\prime}|x)}
+      \f]
+      thus this function computes 
+      \f[
+      \log \left[ \frac{g(x|x^{\prime})}{g(x^{\prime}|x)} \right]
+      \f]
+      and thus this function takes <tt>x_B</tt> as input, obtains
+      a sample <tt>x_A</tt> and returns the value
+      \code
+      log_pdf(x_A,x_B)-log_pdf(x_B,x_A);
+      \endcode
+
+      To check this, imagine that \f$ g \f$ is independent
+      of the "input" argument, so we have
+      \f[
+      \log \left[ \frac{g(x)}{g(x^{\prime})} \right]
+      \f]
+      and then a Metropolis-Hastings step is more likely accepted
+      if \f$ g(x^{\prime}) \f$ is an underestimate. 
   */
-  virtual double metrop_hast(const vec_t &x, vec_t &x2) const {
-    operator()(x,x2);
-    return log_pdf(x,x2)-log_pdf(x2,x);
+  virtual double log_metrop_hast(const vec_t &x_B, vec_t &x_A) const {
+    operator()(x_B,x_A);
+    return log_pdf(x_A,x_B)-log_pdf(x_B,x_A);
   }
   
   };
 
-  /** \brief A constrained random walk in the shape of 
-      a hypercube
+  /** \brief Conditional probability for a random walk inside a
+      hypercube
 
       \comment
       I had previously used std::uniform_real_distribution
       instead of rng_gsl, but this caused problems with
       intel compilers.
+      \endcomment
 
-      The Metropolis step is
-      P(x')g(xt|x')
-      -------------
-      P(xt)g(x'|xt)
+      This conditional probability is most useful in providing a
+      Metropolis-Hastings distribution with a fixed step size which
+      properly handles a boundary. The Metropolis-Hastings step is
+      accepted if \f$ r \in [0,1] \f$ obeys
+      \f[
+      r < \frac{P(x^{\prime})g(x|x^{\prime})}
+      {P(x)g(x^{\prime}|x)}
+      \f]
+      The function \f$ g(x^{\prime}|x) = g(x^{\prime},x)/g(x) \f$, and
+      because of the fixed step size these probabilities are just
+      proportional to the inverse allowed volume, i.e. \f$ V(x)^{-1}
+      V^{-1}(x^{\prime}) / V(x)^{-1} = V^{-1}(x^{\prime}) \f$ . If \f$
+      x^{\prime} \f$ is near a boundary then \f$ V(x^{\prime}) \f$ is
+      decreased and the conditional probability increases accordingly.
+      If the distance between \f$ x \f$ and \f$ x^{\prime} \f$ is
+      unreachable in a step, then the PDF is zero.
 
-      and if we do not include the g ratio, then the edges
+      \comment
+      If we do not include the g ratio, then the edges
       will be undersampled because we don't properly include
       the rejections 
 
-      For g(x'|xt), if xt is near the edge, then the cond. prob.
-      is larger, thus the g ratio is smaller than 1, encouraging
-      more rejections.
+      For \f$ g(x^{\prime}|x) \f$, if x is near the edge, then the
+      cond. prob. is larger, thus the g ratio is smaller than 1,
+      encouraging more rejections.
       \endcomment
   */
   template<class vec_t=boost::numeric::ublas::vector<double> >
@@ -1107,12 +1333,19 @@ namespace o2scl {
       by the constructor
       \endcomment
   */
-  int set_internal(vec_t &step, vec_t &low, vec_t &high) {
-    u_step.resize(step.size());
-    u_low.resize(step.size());
-    u_high.resize(step.size());
-    for(size_t i=0;i<step.size();i++) {
+  int set_internal(size_t sz, vec_t &step, vec_t &low, vec_t &high) {
+    u_step.resize(sz);
+    u_low.resize(sz);
+    u_high.resize(sz);
+    for(size_t i=0;i<sz;i++) {
       u_step[i]=step[i];
+
+      if (!std::isfinite(low[i]) || !std::isfinite(high[i])) {
+	O2SCL_ERR2("Limit not finite in prob_cond_mdim_fixed_step::",
+		   "set_internal().",o2scl::exc_einval);
+      }
+      
+      // Force low and high to be properly ordered
       if (low[i]>high[i]) {
 	u_high[i]=low[i];
 	u_low[i]=high[i];
@@ -1151,7 +1384,7 @@ namespace o2scl {
 		 "prob_cond_mdim_fixed_step constructor.",
 		 o2scl::exc_einval);
     }
-    set_internal(step,low,high);
+    set_internal(step.size(),step,low,high);
   }
   
   /** \brief Set step sizes and limits
@@ -1167,7 +1400,7 @@ namespace o2scl {
 		 "prob_cond_mdim_fixed_step::set().",
 		 o2scl::exc_einval);
     }
-    set_internal(step,low,high);
+    set_internal(step.size(),step,low,high);
     return 0;
   }
 
@@ -1180,17 +1413,24 @@ namespace o2scl {
   virtual double pdf(const vec_t &x, const vec_t &x2) const {
     double vol1=1.0;
     for(size_t i=0;i<u_step.size();i++) {
+
       if (fabs(x2[i]-x[i])>u_step[i]) return 0.0;
+      
       if (x[i]-u_step[i]<u_low[i]) {
 	if (x[i]+u_step[i]>u_high[i]) {
+	  // If x+step is too large and x-step is too small
 	  vol1*=u_high[i]-u_low[i];
 	} else {
+	  // If x-step is too small
 	  vol1*=x[i]+u_step[i]-u_low[i];
 	}
       } else {
 	if (x[i]+u_step[i]>u_high[i]) {
+	  // If x+step is too large
 	  vol1*=u_high[i]-(x[i]-u_step[i]);
 	} else {
+	  // The normal case, where the volumes are both inside
+	  // of the boundaries
 	  vol1*=2.0*u_step[i];
 	}
       }
@@ -1213,10 +1453,9 @@ namespace o2scl {
 	O2SCL_ERR("Input out of bounds in fixed_step::operator().",
 		  o2scl::exc_einval);
       }
-      x2[i]=x[i]+u_step[i]*(rg.random()*2.0-1.0);
-      while (x2[i]<u_low[i] || x2[i]>u_high[i]) {
+      do {
 	x2[i]=x[i]+u_step[i]*(rg.random()*2.0-1.0);
-      }
+      } while (x2[i]<u_low[i] || x2[i]>u_high[i]);
     }
     return;
   }
@@ -1226,10 +1465,16 @@ namespace o2scl {
   /** \brief A multi-dimensional conditional probability density function
       independent of the input
 
+      The conditional probability, \f$ P(A|B) = P(A,B)/P(B) \f$. If
+      the joint probability is factorizable because the events \f$ A
+      \f$ and \f$ B \f$ are independent, i.e. \f$ P(A,B) = P(A) P(B)
+      \f$, then \f$ P(A|B) = P(A) \f$ and is independent of \f$ B \f$.
+      This class handles that particular case.
+      
       This class is experimental.
   */
   template<class vec_t=boost::numeric::ublas::vector<double> >
-    class prob_cond_mdim_invar {
+    class prob_cond_mdim_indep : public prob_cond_mdim<vec_t> {
 
   protected:
   
@@ -1237,7 +1482,10 @@ namespace o2scl {
   
   public:
 
-  prob_cond_mdim_invar(prob_dens_mdim<vec_t> &out) : base(out) {
+  /** \brief Create a conditional probability distribution
+      based on the specified probability distribution
+  */
+  prob_cond_mdim_indep(prob_dens_mdim<vec_t> &out) : base(out) {
   }
   
   /// The dimensionality
@@ -1266,6 +1514,9 @@ namespace o2scl {
       density function
 
       This class is experimental.
+
+      \todo This should be a symmetric conditional probability, 
+      i.e. \f$ P(x|y) = P(y|x) \f$. Test this.
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
     class mat_t=boost::numeric::ublas::matrix<double> >

@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2014, Andrew W. Steiner
+  Copyright (C) 2006-2018, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -22,7 +22,7 @@
 */
 /** \mainpage 
 
-    \section eos_user_guide O2scl Equation of State User's Guide (v0.921)
+    \section eos_user_guide O2scl Equation of State User's Guide (v1.0)
 
     \htmlonly
     <p><a href="../../html/dl_page.html">

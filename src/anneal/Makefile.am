@@ -6,7 +6,11 @@ ANNEAL_SRCS =
 
 HEADER_VAR = anneal.h anneal_gsl.h anneal_para.h
 
+if O2SCL_OPENMP
 TEST_VAR = anneal_gsl.scr anneal_para.scr
+else
+TEST_VAR = anneal_gsl.scr
+endif
 
 # ------------------------------------------------------------
 # Includes

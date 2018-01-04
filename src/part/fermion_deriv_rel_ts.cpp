@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2017, Andrew W. Steiner
+  Copyright (C) 2006-2018, Andrew W. Steiner
 
   This file is part of O2scl.
   
@@ -849,6 +849,7 @@ int main(void) {
   t.test_rel(sf.mu+sf.m,sf2.mu,1.0e-8,"calc_density by_parts ndeg");
   cout << endl;
 
+  if (false) {
   cout << "pair direct" << endl;
 
   snf.method=fermion_deriv_rel::direct;
@@ -903,6 +904,7 @@ int main(void) {
   snf.pair_density(sf2,1.0);
   t.test_rel(sf.mu+sf.m,sf2.mu,1.0e-7,"calc_density by_parts pair");
   cout << endl;
+  }
 
   cout << "------------------------------------------------------" << endl;
   {

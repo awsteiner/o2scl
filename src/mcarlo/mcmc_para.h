@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2012-2017, Andrew W. Steiner
+  Copyright (C) 2012-2018, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -958,7 +958,7 @@ namespace o2scl {
 	  } else if (pd_mode) {
 	    
 	    // Use proposal distribution and compute associated weight
-	    q_prop[it]=prop_dist[it]->metrop_hast(current[it],next[it]);
+	    q_prop[it]=prop_dist[it]->log_metrop_hast(current[it],next[it]);
 
 	    if (!std::isfinite(q_prop[it])) {
 	      O2SCL_ERR2("Proposal distribution not finite in ",
@@ -1500,6 +1500,12 @@ namespace o2scl {
   
   public:
 
+  /** \brief If true, ensure sure walkers and OpenMP threads are
+      written to the table with equal spacing between rows (default
+      true)
+   */
+  bool table_sequence;
+  
   /** \brief Iterations between file updates (default 0 for no file updates)
    */
   size_t file_update_iters;
@@ -1631,6 +1637,7 @@ namespace o2scl {
     file_update_iters=0;
     last_write=0;
     store_rejects=false;
+    table_sequence=true;
   }
   
   /// \name Basic usage
@@ -1900,10 +1907,22 @@ namespace o2scl {
     if (mcmc_accept && walker_accept_rows[windex]<0) {
       next_row=windex;
     } else {
-      if (walker_accept_rows[windex]>walker_reject_rows[windex]) {
-	next_row=walker_accept_rows[windex]+ntot;
+      if (table_sequence) {
+	if (walker_accept_rows[windex]>walker_reject_rows[windex]) {
+	  next_row=walker_accept_rows[windex]+ntot;
+	} else {
+	  next_row=walker_reject_rows[windex]+ntot;
+	}
       } else {
-	next_row=walker_reject_rows[windex]+ntot;
+	if (walker_accept_rows[windex]>walker_reject_rows[windex]) {
+	  next_row=walker_accept_rows[windex]+1;
+	} else {
+	  next_row=walker_reject_rows[windex]+1;
+	}
+	while (next_row<((int)table->get_nlines()) &&
+	       table->get("mult",next_row)>0.0) {
+	  next_row++;
+	}
       }
     }
     
@@ -2228,7 +2247,7 @@ namespace o2scl {
   o2scl::cli::parameter_size_t p_max_iters;
   //o2scl::cli::parameter_int p_max_chain_size;
   o2scl::cli::parameter_size_t p_file_update_iters;
-  o2scl::cli::parameter_bool p_output_meas;
+  //o2scl::cli::parameter_bool p_output_meas;
   o2scl::cli::parameter_string p_prefix;
   o2scl::cli::parameter_int p_verbose;
   //@}
@@ -2334,9 +2353,9 @@ namespace o2scl {
     cl.par_list.insert(std::make_pair("n_warm_up",&p_n_warm_up));
 
     p_verbose.i=&this->verbose;
-    p_verbose.help=((std::string)"Verbosity parameter ")+
+    p_verbose.help=((std::string)"MCMC verbosity parameter ")+
       "(default 0).";
-    cl.par_list.insert(std::make_pair("verbose",&p_verbose));
+    cl.par_list.insert(std::make_pair("mcmc_verbose",&p_verbose));
 
     p_max_bad_steps.s=&this->max_bad_steps;
     p_max_bad_steps.help=((std::string)"Maximum number of bad steps ")+

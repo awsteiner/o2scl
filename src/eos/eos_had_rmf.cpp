@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2017, Andrew W. Steiner
+  Copyright (C) 2006-2018, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -968,7 +968,7 @@ int eos_had_rmf::saturation() {
     cout << "eos_had_rmf::saturation() initial guess: \n\t" << x[0] << " "
 	 << x[1] << " " << x[2] << " " << x[3] << " " << x[4] << endl;
   }
-  
+
   test=sat_mroot->msolve(5,x,fmf);
   
   sigma=x[2];
