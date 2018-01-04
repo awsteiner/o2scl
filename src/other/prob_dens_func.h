@@ -893,13 +893,6 @@ namespace o2scl {
   
   };
   
-<<<<<<< HEAD
-  template<class vec_t=boost::numeric::ublas::vector<double>,
-    class mat_t=boost::numeric::ublas::matrix<double> >
-    class prob_dens_mdim_biv_gaussian : public prob_dens_mdim<vec_t> {
-
-  protected:
-=======
   /** \brief A multi-dimensional Gaussian probability density function
       using a Cholesky decomposition
 
@@ -922,73 +915,6 @@ namespace o2scl {
 
       A separate class for the two-dimensional case is \ref
       prob_dens_mdim_biv_gaussian .
->>>>>>> 9ac2bb17575187cf91208146c839336bcdb12712
-
-  double x0;
-
-  double y0;
-  
-  double sig_x;
-  
-  double sig_y;
-  
-  double rho;
-  
-  public:
-
-  /** \brief Set the central point, standard deviations, and covariance
-   */
-  void set(double x_cent, double y_cent, double std_x, double std_y,
-	   double covar) {
-    x0=x_cent;
-    y0=y_cent;
-    sig_x=std_x;
-    sig_y=std_y;
-    rho=covar;
-    return;
-  }
-
-  /// The normalized density 
-  virtual double pdf(const vec_t &x) const {
-    double arg=((x[0]-x0)*(x[0]-x0)/sig_x/sig_x+
-		(x[1]-y0)*(x[1]-y0)/sig_y/sig_y-
-		2.0*rho*(x[0]-x0)*(x[1]-y0)/sig_x/sig_y);
-    double ret=exp(-arg/2.0/(1.0-rho*rho))/2.0/o2scl_const::pi/sig_x/
-    sig_y/sqrt(1.0-rho*rho);
-    return ret;
-  }
-
-  /// The log of the normalized density 
-  virtual double log_pdf(const vec_t &x) const {
-    return log(pdf(x));
-  }
-
-  /// Sample the distribution
-  virtual void operator()(vec_t &x) const {
-    return;
-  }
-
-  /** \brief Compute the y values for a specified x for a specified
-      contour level
-  */
-  virtual void contour(double lev, double theta, double &x, double &y) {
-    double arg=-log(lev*2.0*o2scl_const::pi*sig_x*sig_y*
-		    sqrt(1.0-rho*rho))*2.0*(1.0-rho*rho);
-    double r2=1.0/(cos(theta)*cos(theta)/sig_x/sig_x+
-		   sin(theta)*sin(theta)/sig_x/sig_y-
-		   2.0*rho*cos(theta)*sin(theta)/sig_x/sig_y)*
-    (2.0*arg*(1.0-rho*rho));
-    double r=sqrt(r2);
-    x=x0+r*cos(theta);
-    y=y0+r*sin(theta);
-    return;
-  }
-  
-  };
-  
-  /** \brief A multi-dimensional Gaussian probability density function
-      
-      This class is experimental.
       
       \future Create alternate versions based on other
       matrix decompositions?
