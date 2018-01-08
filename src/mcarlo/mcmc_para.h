@@ -21,8 +21,8 @@
   -------------------------------------------------------------------
 */
 /** \file mcmc_para.h
-    \brief File for definition of \ref o2scl::mcmc_para_base and 
-    \ref o2scl::mcmc_para_table
+    \brief File for definition of \ref o2scl::mcmc_para_base,
+    \ref o2scl::mcmc_para_table and \ref o2scl::mcmc_para_cli
 */
 #ifndef O2SCL_MCMC_PARA_H
 #define O2SCL_MCMC_PARA_H
@@ -103,6 +103,23 @@ namespace o2scl {
       otherwise be required, in order to avoid copying of data objects
       in the case that the steps are accepted or rejected.
 
+      <b>Verbose output:</b> If verbose is 0, no output is generated
+      (the default). If verbose is 1, then output to <tt>cout</tt>
+      occurs only if the settings are somehow misconfigured and the
+      class attempts to recover from them, for example if not enough
+      functions are specified for the requested number of OpenMP
+      threads, or if more than one thread was requested but
+      O2SCL_OPENMP was not defined, or if a negative value for \ref
+      step_fac was requested. When verbose is 1, a couple things are
+      also output to \ref scr_out, including a summary of the number
+      of walkers, chains, and threads at the beginning of the MCMC
+      simulation, a message indicating why the MCMC simulation
+      stopped, a message when the warm up iterations are completed, a
+      message every time files are written to disk, and a message at
+      the end counting the number of acceptances and rejections.
+      If verbose is 2, then the file prefix is output to <tt>cout</tt>
+      during initialization.
+
       \note This class is experimental.
   */
   template<class func_t, class measure_t,
@@ -166,8 +183,10 @@ namespace o2scl {
   /** \brief Initializations before the MCMC 
    */
   virtual int mcmc_init() {
-    if (verbose>0) {
+    if (verbose>1) {
       std::cout << "Prefix is: " << prefix << std::endl;
+    }
+    if (verbose>0) {
       // Open main output file for this rank
       scr_out.open((prefix+"_"+
 		    o2scl::itos(mpi_rank)+"_scr").c_str());
@@ -1355,9 +1374,13 @@ namespace o2scl {
       future step is rejected, then the multiplier is increased by
       one, rather than adding the same row to the table again.
 
-      This class forms the basis of the MCMC used in the Bayesian
-      analysis of neutron star mass and radius in
-      http://github.com/awsteiner/bamr .
+      There is some output which occurs in addition to the output
+      from \ref o2scl::mcmc_para_base depending on the value 
+      of \ref o2scl::mcmc_para_base::verbose . If there is 
+      a misalignment between the number of columns in the 
+      table and the number of data points in any line, then
+      some debugging information is sent to <tt>cout</tt>.
+      When verbose is 2 or larger, 
 
       \note This class is experimental.
 
@@ -1683,7 +1706,9 @@ namespace o2scl {
     }
 #endif
 
-    std::cout << "Initial point last from file: " << fname << std::endl;
+    if (this->verbose>0) {
+      std::cout << "Initial point last from file: " << fname << std::endl;
+    }
     
     // The total number of walkers * threads
     size_t ntot=this->n_threads*this->n_walk;
@@ -2226,6 +2251,11 @@ namespace o2scl {
   };
 
   /** \brief MCMC class with a command-line interface
+
+      This class forms the basis of the MCMC used in the Bayesian
+      analysis of neutron star mass and radius in
+      http://github.com/awsteiner/bamr .
+
    */
   template<class func_t, class fill_t, class data_t, class vec_t=ubvector>
     class mcmc_para_cli : public mcmc_para_table<func_t,fill_t,
@@ -2243,6 +2273,8 @@ namespace o2scl {
   o2scl::cli::parameter_size_t p_max_bad_steps;
   o2scl::cli::parameter_size_t p_n_walk;
   o2scl::cli::parameter_bool p_aff_inv;
+  o2scl::cli::parameter_bool p_table_sequence;
+  o2scl::cli::parameter_bool p_store_rejects;
   o2scl::cli::parameter_double p_max_time;
   o2scl::cli::parameter_size_t p_max_iters;
   //o2scl::cli::parameter_int p_max_chain_size;
@@ -2377,6 +2409,16 @@ namespace o2scl {
     p_aff_inv.help=((std::string)"If true, then use affine-invariant ")+
       "sampling (default false).";
     cl.par_list.insert(std::make_pair("aff_inv",&p_aff_inv));
+    
+    p_table_sequence.b=&this->table_sequence;
+    p_table_sequence.help=((std::string)"If true, then ensure equal spacing ")+
+      "between walkers (default true).";
+    cl.par_list.insert(std::make_pair("table_sequence",&p_table_sequence));
+    
+    p_store_rejects.b=&this->store_rejects;
+    p_store_rejects.help=((std::string)"If true, then store MCMC rejections ")+
+      "(default false).";
+    cl.par_list.insert(std::make_pair("store_rejects",&p_store_rejects));
     
     return;
   }
