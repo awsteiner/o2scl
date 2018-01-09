@@ -1040,12 +1040,12 @@ int acol_manager::setup_options() {
        new o2scl::comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_none),
        both},
-      {0,"text","Plot text in the canvas coordinate system.",3,4,
+      {0,"text","Plot text in the axis coordinate system.",3,4,
        "<x> <y> <text> [kwargs]","",
        new o2scl::comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_none),
        both},
-      {0,"ttext","Plot text in the transformed coordinate system.",3,4,
+      {0,"ttext","Plot text in the canvas default coordinate system.",3,4,
        "<x> <y> <text> [kwargs]","",
        new o2scl::comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_none),
