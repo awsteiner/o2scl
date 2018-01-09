@@ -425,7 +425,14 @@ void acol_manager::command_add(std::string new_type) {
       comm_option_s options_arr2[narr2]={
 	{0,"den-plot","Create a density plot from a table3d object.",
 	 0,1,"<slice name for table3d>",
-	 ((std::string)"Creates a density plot from the specified slice. "),
+	 ((std::string)"Creates a density plot from the specified slice. ")+
+	 "Logarithmic x- or y-axes are handled by taking the base 10 log "+
+	 "of the x- or y-grids specified in the table3d object before "+
+	 "plotting. A z-axis density legend is print on the RHS if "+
+	 "colbar is set to 1 before plotting. If z-axis limits are "+
+	 "specified, then values larger than the upper limit are set "+
+	 "equal to the upper limit and values smaller than the lower "+
+	 "limit are set equal to the lower limit before plotting.",
 	 new o2scl::comm_option_mfptr<acol_manager>
 	 (this,&acol_manager::comm_none),
 	 both}
@@ -539,7 +546,14 @@ void acol_manager::command_add(std::string new_type) {
 	 0,1,"<slice name for table3d>",
 	 ((std::string)"Create ")+
 	 "a density plot from the current histogram (assuming equally-"+
-	 "spaced bins).",
+	 "spaced bins). "+
+	 "Logarithmic x- or y-axes are handled by taking the base 10 log "+
+	 "of the x- or y-grids specified in the table3d object before "+
+	 "plotting. A z-axis density legend is print on the RHS if "+
+	 "colbar is set to 1 before plotting. If z-axis limits are "+
+	 "specified, then values larger than the upper limit are set "+
+	 "equal to the upper limit and values smaller than the lower "+
+	 "limit are set equal to the lower limit before plotting.",
 	 new o2scl::comm_option_mfptr<acol_manager>
 	 (this,&acol_manager::comm_none),
 	 both},
