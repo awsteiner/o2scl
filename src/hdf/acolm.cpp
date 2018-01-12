@@ -23,6 +23,7 @@
 #include "acolm.h"
 
 #include <o2scl/cloud_file.h>
+#include <o2scl/vector_derint.h>
 
 /*
   Todos: 
@@ -4144,29 +4145,29 @@ int acol_manager::comm_deriv(std::vector<std::string> &sv, bool itive_com) {
     
   } else if (type=="double[]") {
     
-    std::vector deriv(doublev_obj.size());
-    o2scl::vector_deriv_interp(doublev_obj.size(),doublev_obj,deriv,
+    std::vector<double> vderiv(doublev_obj.size());
+    o2scl::vector_deriv_interp(doublev_obj.size(),doublev_obj,vderiv,
 			       interp_type);
-    doublev_obj=deriv;
+    doublev_obj=vderiv;
     
   } else if (type=="int[]") {
 
     doublev_obj.resize(intv_obj.size());
     o2scl::vector_copy(intv_obj,doublev_obj);
-    std::vector deriv(doublev_obj.size());
-    o2scl::vector_deriv_interp(doublev_obj.size(),doublev_obj,deriv,
+    std::vector<double> vderiv(doublev_obj.size());
+    o2scl::vector_deriv_interp(doublev_obj.size(),doublev_obj,vderiv,
 			       interp_type);
-    o2scl::vector_copy(deriv,intv_obj);
+    o2scl::vector_copy(vderiv,intv_obj);
     doublev_obj.resize(0);
     
   } else if (type=="size_t[]") {
     
     doublev_obj.resize(size_tv_obj.size());
     o2scl::vector_copy(size_tv_obj,doublev_obj);
-    std::vector deriv(doublev_obj.size());
-    o2scl::vector_deriv_interp(doublev_obj.size(),doublev_obj,deriv,
+    std::vector<double> vderiv(doublev_obj.size());
+    o2scl::vector_deriv_interp(doublev_obj.size(),doublev_obj,vderiv,
 			       interp_type);
-    o2scl::vector_copy(deriv,size_tv_obj);
+    o2scl::vector_copy(vderiv,size_tv_obj);
     doublev_obj.resize(0);
     
   } else {

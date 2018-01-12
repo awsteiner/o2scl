@@ -56,7 +56,7 @@ void eos_tov::check_nb(double &avg_abs_dev, double &max_abs_dev) {
     nbv.push_back(nb);
   }
   dedn.resize(edv.size());
-  vector_deriv_interp(edv.size(),nbv,edv,dedn,itp_linear);
+  vector_deriv_xy_interp(edv.size(),nbv,edv,dedn,itp_linear);
   avg_abs_dev=0.0;
   max_abs_dev=0.0;
   for(size_t i=0;i<edv.size();i++) {

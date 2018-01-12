@@ -171,7 +171,7 @@ namespace o2scl {
   /** \brief Derivative from interpolation object
    */
   template<class vec_t, class vec2_t, class vec3_t>
-    void vector_deriv_interp(size_t n, vec_t &vx, vec2_t &vy, vec3_t &dv, 
+    void vector_deriv_xy_interp(size_t n, vec_t &vx, vec2_t &vy, vec3_t &dv, 
 			     size_t interp_type=itp_cspline) {
     interp_vec<vec_t,vec2_t> oi(n,vx,vy,interp_type);
     for(size_t i=0;i<n;i++) dv[i]=oi.deriv(vx[i]);
