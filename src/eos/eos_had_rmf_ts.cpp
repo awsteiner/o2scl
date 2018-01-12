@@ -148,62 +148,73 @@ int main(void) {
   re.def_mroot.def_jac.set_epsmin(1.0e-15);
   rmf.def_mroot.def_jac.set_epsmin(1.0e-15);
 
-  /*
-      hdf_file hf;
-      string reference=((string)"A.W. Steiner, M. Hempel, and ")+
-	"T. Fischer, Astrophys. J. 774 (2013) 17.";
-      hf.open_or_create("SFHo.o2");
-      hf.setd("mnuc",939.0);
-      hf.setd("cs",3.1779513953e+00);
-      hf.setd("cw",2.2726316467e+00);
-      hf.setd("cr",2.4046909990e+00);
-      hf.setd("b",7.4653053799e-03);
-      hf.setd("c",-4.0886923929e-03);
-      hf.setd("zeta",-1.7012891507e-03);
-      hf.setd("xi",3.4525258045e-03);
-      hf.setd("a1",-2.3016226128e-01);
-      hf.setd("a2",5.7971539528e-01);
-      hf.setd("a3",3.4445916782e-01);
-      hf.setd("a4",3.4592930416e+00);
-      hf.setd("a5",1.3473386997e+00);
-      hf.setd("a6",6.6060528185e-01);
-      hf.setd("b1",5.8728801209e+00);
-      hf.setd("b2",-1.6442371737e+00);
-      hf.setd("b3",3.1463607432e+02);
-      hf.setd("ms",2.3713858313e+00*hc_mev_fm);
-      hf.setd("mw",3.9655047020e+00*hc_mev_fm);
-      hf.setd("mr",3.8666788766e+00*hc_mev_fm);
-      hf.sets("reference",reference);
-      hf.close();
-      hf.open_or_create("SFHx.o2");
-      hf.setd("mnuc",939.0);
-      hf.setd("cs",3.4016465287e+00);
-      hf.setd("cw",2.5729981136e+00);
-      hf.setd("cr",2.4199222266e+00);
-      hf.setd("b",4.8156875316e-03);
-      hf.setd("c",-4.3984076971e-03);
-      hf.setd("zeta",4.4217618208e-03);
-      hf.setd("xi",2.0534508621e-04);
-      hf.setd("a1",-4.6241414145e-01);
-      hf.setd("a2",1.6603719814e+00);
-      hf.setd("a3",1.1791682535e-02);
-      hf.setd("a4",2.1595082351e+01);
-      hf.setd("a5",1.5478310711e+00);
-      hf.setd("a6",8.5506496249e-01);
-      hf.setd("b1",8.4605711080e+00);
-      hf.setd("b2",-2.3628893126e+00);
-      hf.setd("b3",4.0622317843e+01);
-      hf.setd("ms",2.3844258439e+00*hc_mev_fm);
-      hf.setd("mw",3.9655047020e+00*hc_mev_fm);
-      hf.setd("mr",3.8666788766e+00*hc_mev_fm);
-      hf.sets("reference",reference);
-      hf.close();
-   */
-
   nferm.non_interacting=false;
   p.non_interacting=false;
   double sig, ome, rho, f1, f2, f3, barn;
   thermo th;
+
+  if (false) {
+    o2scl_hdf::rmf_load(re,"SFHo_old");
+    re.set_n_and_p(nferm,p);
+    re.set_thermo(th);
+    nferm.mu=4.8;
+    p.mu=4.8;
+    re.saturation();
+    cout << "SFHo_old: " << endl;
+    cout << "a1: " << re.a1 << endl;
+    cout << "  Saturation density: " << re.n0 << endl;
+    cout << "  Effective mass: " << re.msom << " " << nferm.ms/nferm.m << endl;
+    cout << "  Zero pressure: " << th.pr << endl;
+    cout << "  Energy per baryon: " << re.eoa*hc_mev_fm << " " 
+	 << (th.ed/re.n0-re.mnuc)*hc_mev_fm << endl;
+    cout << endl;
+    
+    o2scl_hdf::rmf_load(re,"SFHx_old");
+    re.set_n_and_p(nferm,p);
+    re.set_thermo(th);
+    nferm.mu=4.8;
+    p.mu=4.8;
+    re.saturation();
+    cout << "SFHx_old: " << endl;
+    cout << "a1: " << re.a1 << endl;
+    cout << "  Saturation density: " << re.n0 << endl;
+    cout << "  Effective mass: " << re.msom << " " << nferm.ms/nferm.m << endl;
+    cout << "  Zero pressure: " << th.pr << endl;
+    cout << "  Energy per baryon: " << re.eoa*hc_mev_fm << " " 
+	 << (th.ed/re.n0-re.mnuc)*hc_mev_fm << endl;
+    cout << endl;
+    
+    o2scl_hdf::rmf_load(re,"SFHo");
+    re.set_n_and_p(nferm,p);
+    re.set_thermo(th);
+    nferm.mu=4.8;
+    p.mu=4.8;
+    re.saturation();
+    cout << "SFHo: " << endl;
+    cout << "a1: " << re.a1 << endl;
+    cout << "  Saturation density: " << re.n0 << endl;
+    cout << "  Effective mass: " << re.msom << " " << nferm.ms/nferm.m << endl;
+    cout << "  Zero pressure: " << th.pr << endl;
+    cout << "  Energy per baryon: " << re.eoa*hc_mev_fm << " " 
+	 << (th.ed/re.n0-re.mnuc)*hc_mev_fm << endl;
+    cout << endl;
+    
+    o2scl_hdf::rmf_load(re,"SFHx");
+    re.set_n_and_p(nferm,p);
+    re.set_thermo(th);
+    nferm.mu=4.8;
+    p.mu=4.8;
+    re.saturation();
+    cout << "SFHx: " << endl;
+    cout << "a1: " << re.a1 << endl;
+    cout << "  Saturation density: " << re.n0 << endl;
+    cout << "  Effective mass: " << re.msom << " " << nferm.ms/nferm.m << endl;
+    cout << "  Zero pressure: " << th.pr << endl;
+    cout << "  Energy per baryon: " << re.eoa*hc_mev_fm << " " 
+	 << (th.ed/re.n0-re.mnuc)*hc_mev_fm << endl;
+    cout << endl;
+    exit(-1);
+  }
 
   /*
     This was an attempt to use check_den(), but it fails
