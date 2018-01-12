@@ -74,8 +74,32 @@ void acol_manager::command_add(std::string new_type) {
     };
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="char") {
+    static const size_t narr=1;
+    comm_option_s options_arr[narr]={
+      {0,"value","",
+       0,1,"[value]","Get or set the value of the char object",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
+       both}
+    };
+    cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="size_t") {
+    static const size_t narr=1;
+    comm_option_s options_arr[narr]={
+      {0,"value","",
+       0,1,"[value]","Get or set the value of the size_t object",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
+       both}
+    };
+    cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="string") {
+    static const size_t narr=1;
+    comm_option_s options_arr[narr]={
+      {0,"value","",
+       0,1,"[value]","Get or set the value of the string object",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
+       both}
+    };
+    cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="table") {
     static const size_t narr=32;
     comm_option_s options_arr[narr]={
@@ -478,6 +502,17 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="double[]") {
 
+    static const size_t narr=1;
+    comm_option_s options_arr[narr]={
+      {'D',"deriv",
+       "Replace the array with its derivative.",0,0,"",
+       ((string)"Replace the array with its derivative using the ")+
+       "current interpolation type.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv),
+       both}
+    };
+    cl->set_comm_option_vec(narr,options_arr);
+    
     if (o2graph_mode) {
       static const size_t narr2=1;
       comm_option_s options_arr2[narr2]={
@@ -497,6 +532,17 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="int[]") {
 
+    static const size_t narr=1;
+    comm_option_s options_arr[narr]={
+      {'D',"deriv",
+       "Replace the array with its derivative.",0,0,"",
+       ((string)"Replace the array with its derivative using the ")+
+       "current interpolation type.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv),
+       both}
+    };
+    cl->set_comm_option_vec(narr,options_arr);
+    
     if (o2graph_mode) {
       static const size_t narr2=1;
       comm_option_s options_arr2[narr2]={
@@ -516,6 +562,17 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="size_t[]") {
 
+    static const size_t narr=1;
+    comm_option_s options_arr[narr]={
+      {'D',"deriv",
+       "Replace the array with its derivative.",0,0,"",
+       ((string)"Replace the array with its derivative using the ")+
+       "current interpolation type.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv),
+       both}
+    };
+    cl->set_comm_option_vec(narr,options_arr);
+    
     if (o2graph_mode) {
       static const size_t narr2=1;
       comm_option_s options_arr2[narr2]={
@@ -626,8 +683,11 @@ void acol_manager::command_del() {
   } else if (type=="double") {
     cl->remove_comm_option("value");
   } else if (type=="char") {
+    cl->remove_comm_option("value");
   } else if (type=="size_t") {
+    cl->remove_comm_option("value");
   } else if (type=="string") {
+    cl->remove_comm_option("value");
   } else if (type=="table") {
     cl->remove_comm_option("assign");
     cl->remove_comm_option("delete-col");
@@ -743,13 +803,14 @@ void acol_manager::command_del() {
     }
     
   } else if (type=="double[]" || type=="int[]" || type=="size_t[]") {
+
+    cl->remove_comm_option("deriv");
     
     if (o2graph_mode) {
       cl->remove_comm_option("plot1");
     }
 
-    /*cl->remove_comm_option("deriv");
-      cl->remove_comm_option("deriv2");
+    /*cl->remove_comm_option("deriv2");
       cl->remove_comm_option("integ");
       cl->remove_comm_option("max");
       cl->remove_comm_option("min");
@@ -4056,33 +4117,64 @@ int acol_manager::comm_rename(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_deriv(std::vector<std::string> &sv, bool itive_com) {
 
-  if (type!="table") {
+  if (type=="table") {
+    
+    if (table_obj.get_nlines()==0) {
+      cerr << "No table with columns to take derivatives of." << endl;
+      return exc_efailed;
+    }
+    
+    vector<string> pr, in;
+    pr.push_back("Enter 'x' column");
+    pr.push_back("Enter 'y' column");
+    pr.push_back("Enter name of new column");
+    int ret=get_input(sv,pr,in,"deriv",itive_com);
+    if (ret!=0) return ret;
+    
+    if (table_obj.is_column(in[0])==false) {
+      cerr << "Could not find column named '" << in[0] << "'." << endl;
+      return exc_efailed;
+    }
+    if (table_obj.is_column(in[1])==false) {
+      cerr << "Could not find column named '" << in[1] << "'." << endl;
+      return exc_efailed;
+    }
+    
+    table_obj.deriv(in[0],in[1],in[2]);
+    
+  } else if (type=="double[]") {
+    
+    std::vector deriv(doublev_obj.size());
+    o2scl::vector_deriv_interp(doublev_obj.size(),doublev_obj,deriv,
+			       interp_type);
+    doublev_obj=deriv;
+    
+  } else if (type=="int[]") {
+
+    doublev_obj.resize(intv_obj.size());
+    o2scl::vector_copy(intv_obj,doublev_obj);
+    std::vector deriv(doublev_obj.size());
+    o2scl::vector_deriv_interp(doublev_obj.size(),doublev_obj,deriv,
+			       interp_type);
+    o2scl::vector_copy(deriv,intv_obj);
+    doublev_obj.resize(0);
+    
+  } else if (type=="size_t[]") {
+    
+    doublev_obj.resize(size_tv_obj.size());
+    o2scl::vector_copy(size_tv_obj,doublev_obj);
+    std::vector deriv(doublev_obj.size());
+    o2scl::vector_deriv_interp(doublev_obj.size(),doublev_obj,deriv,
+			       interp_type);
+    o2scl::vector_copy(deriv,size_tv_obj);
+    doublev_obj.resize(0);
+    
+  } else {
+    
     cerr << "Not implemented for type " << type << " ." << endl;
     return exc_efailed;
+    
   }
-  
-  if (table_obj.get_nlines()==0) {
-    cerr << "No table with columns to take derivatives of." << endl;
-    return exc_efailed;
-  }
-  
-  vector<string> pr, in;
-  pr.push_back("Enter 'x' column");
-  pr.push_back("Enter 'y' column");
-  pr.push_back("Enter name of new column");
-  int ret=get_input(sv,pr,in,"deriv",itive_com);
-  if (ret!=0) return ret;
-  
-  if (table_obj.is_column(in[0])==false) {
-    cerr << "Could not find column named '" << in[0] << "'." << endl;
-    return exc_efailed;
-  }
-  if (table_obj.is_column(in[1])==false) {
-    cerr << "Could not find column named '" << in[1] << "'." << endl;
-    return exc_efailed;
-  }
-  
-  table_obj.deriv(in[0],in[1],in[2]);
 
   return 0;
 }
@@ -4532,6 +4624,12 @@ int acol_manager::comm_value(std::vector<std::string> &sv, bool itive_com) {
       int_obj=o2scl::stoi(sv[1]);
     } else if (type=="double") {
       double_obj=o2scl::function_to_double(sv[1]);
+    } else if (type=="char") {
+      char_obj=sv[1][0];
+    } else if (type=="size_t") {
+      size_t_obj=o2scl::stoszt(sv[1]);
+    } else if (type=="string") {
+      string_obj=sv[1];
     }
   }
   
@@ -4539,6 +4637,12 @@ int acol_manager::comm_value(std::vector<std::string> &sv, bool itive_com) {
     cout << "Value of " << obj_name << " is " << int_obj << endl;
   } else if (type=="double") {
     cout << "Value of " << obj_name << " is " << double_obj << endl;
+  } else if (type=="char") {
+    cout << "Value of " << obj_name << " is " << char_obj << endl;
+  } else if (type=="size_t") {
+    cout << "Value of " << obj_name << " is " << size_t_obj << endl;
+  } else if (type=="string") {
+    cout << "Value of " << obj_name << " is " << string_obj << endl;
   }
   
   return 0;
