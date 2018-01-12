@@ -4536,9 +4536,9 @@ int acol_manager::comm_value(std::vector<std::string> &sv, bool itive_com) {
   }
   
   if (type=="int") {
-    cout << "Value is " << int_obj << endl;
+    cout << "Value of " << name << " is " << int_obj << endl;
   } else if (type=="double") {
-    cout << "Value is " << double_obj << endl;
+    cout << "Value of " << name << " is " << double_obj << endl;
   }
   
   return 0;
@@ -6271,7 +6271,7 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     int ret=get_input_one(sv2,"Enter double",tval,"create",
 			  itive_com);
     if (ret!=0) return ret;
-    double_obj=o2scl::stod(tval);
+    double_obj=o2scl::function_to_double(tval);
     type="double";
     command_add("double");
     obj_name="double";
