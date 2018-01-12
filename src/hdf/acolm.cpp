@@ -4536,9 +4536,9 @@ int acol_manager::comm_value(std::vector<std::string> &sv, bool itive_com) {
   }
   
   if (type=="int") {
-    cout << "Value of " << name << " is " << int_obj << endl;
+    cout << "Value of " << obj_name << " is " << int_obj << endl;
   } else if (type=="double") {
-    cout << "Value of " << name << " is " << double_obj << endl;
+    cout << "Value of " << obj_name << " is " << double_obj << endl;
   }
   
   return 0;
