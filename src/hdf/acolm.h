@@ -391,6 +391,7 @@ namespace o2scl_acol {
 
     /// Preview the table
     virtual int comm_preview(std::vector<std::string> &sv, bool itive_com);
+    virtual int comm_value(std::vector<std::string> &sv, bool itive_com);
 
     /// Concatenate two table/table3d objects
     virtual int comm_cat(std::vector<std::string> &sv, bool itive_com);

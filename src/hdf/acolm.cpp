@@ -56,7 +56,23 @@ void acol_manager::command_add(std::string new_type) {
   const int both=cli::comm_option_both;
   
   if (new_type=="int") {
+    static const size_t narr=1;
+    comm_option_s options_arr[narr]={
+      {0,"value","",
+       0,1,"[value]","Get or set the value of the int object",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
+       both}
+    };
+    cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="double") {
+    static const size_t narr=1;
+    comm_option_s options_arr[narr]={
+      {0,"value","",
+       0,1,"[value]","Get or set the value of the double object",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
+       both}
+    };
+    cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="char") {
   } else if (new_type=="size_t") {
   } else if (new_type=="string") {
@@ -606,7 +622,9 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
 void acol_manager::command_del() {
 
   if (type=="int") {
+    cl->remove_comm_option("value");
   } else if (type=="double") {
+    cl->remove_comm_option("value");
   } else if (type=="char") {
   } else if (type=="size_t") {
   } else if (type=="string") {
@@ -4507,6 +4525,25 @@ int acol_manager::comm_html(std::vector<std::string> &sv, bool itive_com) {
 }
 #endif
 
+int acol_manager::comm_value(std::vector<std::string> &sv, bool itive_com) {
+
+  if (sv.size()>1) {
+    if (type=="int") {
+      int_obj=o2scl::stoi(sv[1]);
+    } else if (type=="double") {
+      double_obj=o2scl::function_to_double(sv[1]);
+    }
+  }
+  
+  if (type=="int") {
+    cout << "Value is " << int_obj << endl;
+  } else if (type=="double") {
+    cout << "Value is " << double_obj << endl;
+  }
+  
+  return 0;
+}
+  
 int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 
   if (type.length()==0) {
