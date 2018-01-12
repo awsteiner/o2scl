@@ -526,6 +526,8 @@ void o2scl_hdf::eos_had_strings_list() {
   list.push_back("rmf S271");
   list.push_back("rmf SFHo");
   list.push_back("rmf SFHx");
+  list.push_back("rmf SFHo_old");
+  list.push_back("rmf SFHx_old");
   list.push_back("rmf SR1");
   list.push_back("rmf SR2");
   list.push_back("rmf SR3");
