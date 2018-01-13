@@ -272,7 +272,7 @@ namespace o2scl_acol {
      */
     virtual int comm_help(std::vector<std::string> &sv, bool itive_com);
     
-    /** \brief Desc
+    /** \brief List commands, with an optional type argument
      */
     virtual int comm_commands(std::vector<std::string> &sv, bool itive_com);
     
@@ -290,6 +290,10 @@ namespace o2scl_acol {
 
     /// Create a column which is the derivative of another
     virtual int comm_deriv(std::vector<std::string> &sv, bool itive_com);
+
+    /** \brief Desc
+     */
+    virtual int comm_autocorr(std::vector<std::string> &sv, bool itive_com);
 
     /// Create a slice which is the derivative wrt x of another
     virtual int comm_deriv_x(std::vector<std::string> &sv, bool itive_com);

@@ -102,7 +102,7 @@ void acol_manager::command_add(std::string new_type) {
     };
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="table") {
-    static const size_t narr=32;
+    static const size_t narr=33;
     comm_option_s options_arr[narr]={
       {'a',"assign","Assign a constant, e.g. assign pi acos(-1) .",
        0,2,"<name> [val]",
@@ -313,6 +313,11 @@ void acol_manager::command_add(std::string new_type) {
        "using N1 bins in the x direction and N2 bins in the y direction, "+
        "optionally weighting the entries by the column 'wgts'.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_to_hist),
+       both},
+      {0,"autocorr","Compute the autocorrelation vector and length.",0,3,
+       "<col> <ac> <ftom>",
+       "Compute the autocorrelation vector and length.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_autocorr),
        both}
     };
     cl->set_comm_option_vec(narr,options_arr);
@@ -503,14 +508,36 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="double[]") {
 
-    static const size_t narr=1;
+    static const size_t narr=6;
     comm_option_s options_arr[narr]={
+      {0,"sort","Sort the vector.",0,0,"",
+       ((string)"Sorts the vector."),
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sort),
+       both},
+      {0,"max","Find the maximum value and index.",0,0,"",
+       "Compute the maximum value of column <col>.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_max),
+       both},
+      {0,"min","Find the minimum value of and index.",0,0,"",
+       "Compute the minimum value of column <col>.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
+       both},
       {'D',"deriv",
        "Replace the array with its derivative.",0,0,"",
        ((string)"Replace the array with its derivative using the ")+
        "current interpolation type.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv),
-       both}
+       both},
+      {0,"interp","Interpolate an index into the array.",0,1,
+       "<x value>",
+       ((string)"Interpolate <x value> in the array."),
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_interp),
+       both},
+      {0,"autocorr","Compute the autocorrelation vector and length.",0,3,
+       "<col> <ac> <ftom>",
+       "Compute the autocorrelation vector and length.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_autocorr),
+       both}      
     };
     cl->set_comm_option_vec(narr,options_arr);
     
@@ -533,13 +560,35 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="int[]") {
 
-    static const size_t narr=1;
+    static const size_t narr=6;
     comm_option_s options_arr[narr]={
+      {0,"sort","Sort the vector.",0,0,"",
+       ((string)"Sorts the vector."),
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sort),
+       both},
+      {0,"max","Find the maximum value and index.",0,0,"",
+       "Compute the maximum value of column <col>.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_max),
+       both},
+      {0,"min","Find the minimum value of and index.",0,0,"",
+       "Compute the minimum value of column <col>.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
+       both},
       {'D',"deriv",
        "Replace the array with its derivative.",0,0,"",
        ((string)"Replace the array with its derivative using the ")+
        "current interpolation type.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv),
+       both},
+      {0,"interp","Interpolate an index into the array.",0,1,
+       "<x value>",
+       ((string)"Interpolate <x value> in the array."),
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_interp),
+       both},
+      {0,"autocorr","Compute the autocorrelation vector and length.",0,3,
+       "<col> <ac> <ftom>",
+       "Compute the autocorrelation vector and length.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_autocorr),
        both}
     };
     cl->set_comm_option_vec(narr,options_arr);
@@ -563,13 +612,35 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="size_t[]") {
 
-    static const size_t narr=1;
+    static const size_t narr=6;
     comm_option_s options_arr[narr]={
+      {0,"sort","Sort the vector.",0,0,"",
+       ((string)"Sorts the vector."),
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sort),
+       both},
+      {0,"max","Find the maximum value and index.",0,0,"",
+       "Compute the maximum value of column <col>.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_max),
+       both},
+      {0,"min","Find the minimum value of and index.",0,0,"",
+       "Compute the minimum value of column <col>.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
+       both},
       {'D',"deriv",
        "Replace the array with its derivative.",0,0,"",
        ((string)"Replace the array with its derivative using the ")+
        "current interpolation type.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv),
+       both},
+      {0,"interp","Interpolate an index into the array.",0,1,
+       "<x value>",
+       ((string)"Interpolate <x value> in the array."),
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_interp),
+       both},
+      {0,"autocorr","Compute the autocorrelation vector and length.",0,3,
+       "<col> <ac> <ftom>",
+       "Compute the autocorrelation vector and length.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_autocorr),
        both}
     };
     cl->set_comm_option_vec(narr,options_arr);
@@ -722,6 +793,7 @@ void acol_manager::command_del() {
     cl->remove_comm_option("sum");
     cl->remove_comm_option("nlines");
     cl->remove_comm_option("to-hist");
+    cl->remove_comm_option("autocorr");
 
     if (o2graph_mode) {
       cl->remove_comm_option("plot");
@@ -806,17 +878,19 @@ void acol_manager::command_del() {
   } else if (type=="double[]" || type=="int[]" || type=="size_t[]") {
 
     cl->remove_comm_option("deriv");
+    cl->remove_comm_option("interp");
+    cl->remove_comm_option("max");
+    cl->remove_comm_option("min");
+    cl->remove_comm_option("sort");
+    cl->remove_comm_option("autocorr");
     
     if (o2graph_mode) {
       cl->remove_comm_option("plot1");
     }
 
-    /*cl->remove_comm_option("deriv2");
+    /*
       cl->remove_comm_option("integ");
-      cl->remove_comm_option("max");
-      cl->remove_comm_option("min");
       cl->remove_comm_option("set-data");
-      cl->remove_comm_option("sort");
       cl->remove_comm_option("stats");
       cl->remove_comm_option("sum");
       cl->remove_comm_option("to-hist");
@@ -3290,29 +3364,152 @@ int acol_manager::comm_max(std::vector<std::string> &sv, bool itive_com) {
 	 << "point (" << table3d_obj.get_grid_x(i) << ","
 	 << table3d_obj.get_grid_y(j) << ")." << endl;
 
-    return 0;
-  }
-  
-  if (table_obj.get_nlines()==0) {
-    cerr << "No table with columns to find the maximum value of." << endl;
-    return exc_efailed;
+  } else if (type=="table") {
+    
+    if (table_obj.get_nlines()==0) {
+      cerr << "No table with columns to find the maximum value of." << endl;
+      return exc_efailed;
+    }
+    
+    std::string i1;
+    int ret=get_input_one(sv,"Enter column to find maximum value of",
+			  i1,"max",itive_com);
+    if (ret!=0) return ret;
+    
+    if (table_obj.is_column(i1)==false) {
+      cerr << "Could not find column named '" << i1 << "'." << endl;
+      return exc_efailed;
+    }
+    
+    double max;
+    size_t ix;
+    vector_max(table_obj.get_nlines(),(table_obj)[i1],ix,max);
+    cout << "Maximum value of column '" << i1 << "' is: " 
+	 << max << " at row with index " << ix << "." << endl;
+
+  } else if (type=="double[]") {
+
+    double val;
+    size_t loc;
+    o2scl::vector_max<vector<double>,double>(doublev_obj.size(),
+					     doublev_obj,loc,val);
+    cout << "Maximum value is " << val << " at index "
+	 << loc << endl;
+    
+  } else if (type=="int[]") {
+    
+    int val;
+    size_t loc;
+    o2scl::vector_max<vector<int>,int>(intv_obj.size(),
+				       intv_obj,loc,val);
+    cout << "Maximum value is " << val << " at index "
+	 << loc << endl;
+    
+  } else if (type=="size_t[]") {
+    
+    size_t val;
+    size_t loc;
+    o2scl::vector_max<vector<size_t>,size_t>(size_tv_obj.size(),
+					     size_tv_obj,loc,val);
+    cout << "Maximum value is " << val << " at index "
+	 << loc << endl;
+    
   }
 
-  std::string i1;
-  int ret=get_input_one(sv,"Enter column to find maximum value of",
-			i1,"max",itive_com);
-  if (ret!=0) return ret;
   
-  if (table_obj.is_column(i1)==false) {
-    cerr << "Could not find column named '" << i1 << "'." << endl;
-    return exc_efailed;
-  }
+  return 0;
+}
 
-  double max;
-  size_t ix;
-  vector_max(table_obj.get_nlines(),(table_obj)[i1],ix,max);
-  cout << "Maximum value of column '" << i1 << "' is: " 
-       << max << " at row with index " << ix << "." << endl;
+int acol_manager::comm_autocorr(std::vector<std::string> &sv, bool itive_com) {
+
+  if (type=="table") {
+    
+    if (table_obj.get_nlines()==0) {
+      cerr << "No table with columns to compute autocorrelations with." << endl;
+      return exc_efailed;
+    }
+
+    vector<string> in, pr;
+    pr.push_back("Enter data column name");
+    pr.push_back("Enter output for autocorrelations");
+    pr.push_back("Enter output for 5*tau/m");
+    int ret=get_input(sv,pr,in,"autocorr",itive_com);
+    if (ret!=0) return ret;
+    
+    if (table_obj.is_column(in[0])==false) {
+      cerr << "Could not find column named '" << in[0] << "'." << endl;
+      return exc_efailed;
+    }
+
+    if (!table_obj.is_column(in[1])) {
+      table_obj.new_column(in[1]);
+    }
+    if (!table_obj.is_column(in[2])) {
+      table_obj.new_column(in[2]);
+    }
+
+    // Compute autocorrelation length and sample size
+    vector<double> ac_vec, ftom;
+    vector_autocorr_vector(table_obj[in[0]],ac_vec);
+    size_t len=vector_autocorr_tau(table_obj[in[0]],ac_vec,ftom);
+    cout << "Autocorrelation length: " << len << " sample size: "
+	 << table_obj.get_nlines()/len << endl;
+
+    // Add autocorrelation and ftom data to table
+    for(size_t i=0;i<table_obj.get_nlines();i++) {
+      if (i<ac_vec.size()) {
+	table_obj.set(in[1],i,ac_vec[i]);
+      } else {
+	table_obj.set(in[1],i,0.0);
+      }
+      if (i<ftom.size()) {
+	table_obj.set(in[2],i,ftom[i]);
+      } else {
+	table_obj.set(in[2],i,0.0);
+      }
+    }
+
+  } else if (type=="double[]") {
+
+    vector<double> ac_vec, ftom;
+    vector_autocorr_vector(doublev_obj,ac_vec);
+    size_t len=vector_autocorr_tau(doublev_obj,ac_vec,ftom);
+    cout << "Autocorrelation length: " << len << " sample size: "
+	 << doublev_obj.size()/len << endl;
+
+    doublev_obj=ac_vec;
+
+  } else if (type=="int[]") {
+
+    vector_copy(intv_obj,doublev_obj);
+    vector<double> ac_vec, ftom;
+    vector_autocorr_vector(doublev_obj,ac_vec);
+    size_t len=vector_autocorr_tau(doublev_obj,ac_vec,ftom);
+    cout << "Autocorrelation length: " << len << " sample size: "
+	 << doublev_obj.size()/len << endl;
+
+    command_del();
+    clear_obj();
+    doublev_obj=ac_vec;
+    command_add("double[]");
+    type="double[]";
+    
+  } else if (type=="size_t[]") {
+    
+    vector_copy(size_tv_obj,doublev_obj);
+    vector<double> ac_vec, ftom;
+    vector_autocorr_vector(doublev_obj,ac_vec);
+    size_t len=vector_autocorr_tau(doublev_obj,ac_vec,ftom);
+    cout << "Autocorrelation length: " << len << " sample size: "
+	 << doublev_obj.size()/len << endl;
+
+    command_del();
+    clear_obj();
+    doublev_obj=ac_vec;
+    command_add("double[]");
+    type="double[]";
+    
+  }
   
   return 0;
 }
@@ -3401,29 +3598,57 @@ int acol_manager::comm_min(std::vector<std::string> &sv, bool itive_com) {
 	 << "point (" << table3d_obj.get_grid_x(i) << ","
 	 << table3d_obj.get_grid_y(j) << ")." << endl;
 
-    return 0;
-  }
-  
-  if (table_obj.get_nlines()==0) {
-    cerr << "No table with columns to find the minimum value of." << endl;
-    return exc_efailed;
-  }
+  } else if (type=="table") {
+    
+    if (table_obj.get_nlines()==0) {
+      cerr << "No table with columns to find the minimum value of." << endl;
+      return exc_efailed;
+    }
+    
+    std::string i1;
+    int ret=get_input_one(sv,"Enter column to find minimum of",
+			  i1,"min",itive_com);
+    if (ret!=0) return ret;
+    
+    if (table_obj.is_column(i1)==false) {
+      cerr << "Could not find column named '" << i1 << "'." << endl;
+      return exc_efailed;
+    }
+    
+    double min;
+    size_t ix;
+    vector_min(table_obj.get_nlines(),(table_obj)[i1],ix,min);
+    cout << "Minimum value of column '" << i1 << "' is: " 
+	 << min << " at row with index " << ix << "." << endl;
+    
+  } else if (type=="double[]") {
 
-  std::string i1;
-  int ret=get_input_one(sv,"Enter column to find minimum of",
-			i1,"min",itive_com);
-  if (ret!=0) return ret;
-  
-  if (table_obj.is_column(i1)==false) {
-    cerr << "Could not find column named '" << i1 << "'." << endl;
-    return exc_efailed;
+    double val;
+    size_t loc;
+    o2scl::vector_min<vector<double>,double>(doublev_obj.size(),
+					     doublev_obj,loc,val);
+    cout << "Minimum value is " << val << " at index "
+	 << loc << endl;
+    
+  } else if (type=="int[]") {
+    
+    int val;
+    size_t loc;
+    o2scl::vector_min<vector<int>,int>(intv_obj.size(),
+				       intv_obj,loc,val);
+    cout << "Minimum value is " << val << " at index "
+	 << loc << endl;
+    
+  } else if (type=="size_t[]") {
+    
+    size_t val;
+    size_t loc;
+    o2scl::vector_min<vector<size_t>,size_t>(size_tv_obj.size(),
+					     size_tv_obj,loc,val);
+    cout << "Minimum value is " << val << " at index "
+	 << loc << endl;
+    
   }
-
-  double min;
-  size_t ix;
-  vector_min(table_obj.get_nlines(),(table_obj)[i1],ix,min);
-  cout << "Minimum value of column '" << i1 << "' is: " 
-       << min << " at row with index " << ix << "." << endl;
   
   return 0;
 }
@@ -4240,32 +4465,34 @@ int acol_manager::comm_deriv_y(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_deriv2(std::vector<std::string> &sv, bool itive_com) {
 
-  if (type!="table") {
+  if (type=="table") {
+    
+    if (table_obj.get_nlines()==0) {
+      cout << "No table with columns to take derivatives of." << endl;
+      return exc_efailed;
+    }
+    vector<string> pr, in;
+    pr.push_back("Enter 'x' column");
+    pr.push_back("Enter 'y' column");
+    pr.push_back("Enter name of new column");
+    int ret=get_input(sv,pr,in,"deriv2",itive_com);
+    if (ret!=0) return ret;
+    
+    if (table_obj.is_column(in[0])==false) {
+      cerr << "Could not find column named '" << in[0] << "'." << endl;
+      return exc_efailed;
+    }
+    if (table_obj.is_column(in[1])==false) {
+      cerr << "Could not find column named '" << in[1] << "'." << endl;
+      return exc_efailed;
+    }
+    
+    table_obj.deriv2(in[0],in[1],in[2]);
+    
+  } else {
     cerr << "Not implemented for type " << type << " ." << endl;
     return exc_efailed;
-  }
-
-  if (table_obj.get_nlines()==0) {
-    cout << "No table with columns to take derivatives of." << endl;
-    return exc_efailed;
-  }
-  vector<string> pr, in;
-  pr.push_back("Enter 'x' column");
-  pr.push_back("Enter 'y' column");
-  pr.push_back("Enter name of new column");
-  int ret=get_input(sv,pr,in,"deriv2",itive_com);
-  if (ret!=0) return ret;
-
-  if (table_obj.is_column(in[0])==false) {
-    cerr << "Could not find column named '" << in[0] << "'." << endl;
-    return exc_efailed;
-  }
-  if (table_obj.is_column(in[1])==false) {
-    cerr << "Could not find column named '" << in[1] << "'." << endl;
-    return exc_efailed;
-  }
-
-  table_obj.deriv2(in[0],in[1],in[2]);
+  }    
 
   return 0;
 }
@@ -5627,53 +5854,78 @@ int acol_manager::comm_list(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_sort(std::vector<std::string> &sv, bool itive_com) {
 
-  if (type!="table") {
-    cout << "Not implemented for type " << type << endl;
-    return 0;
-  }
+  if (type=="table") {
   
-  std::string i1, i2;
-
-  if (table_obj.get_nlines()==0) {
-    cerr << "No table to sort." << endl;
-    return exc_efailed;
-  }
-
-  if (sv.size()>2) {
-    i1=sv[1];
-    i2=sv[2];
-  } else if (sv.size()>1) {
-    i1=sv[1];
-  } else {
-    if (itive_com) {
-      i1=cl->cli_gets("Enter column to sort by (or blank to stop): ");
-      if (i1.length()==0) {
-	cout << "Command 'sort' cancelled." << endl;
-	return 0;
-      }
-    } else {
-      cerr << "Not enough arguments for 'sort'." << endl;
+    std::string i1, i2;
+    
+    if (table_obj.get_nlines()==0) {
+      cerr << "No table to sort." << endl;
       return exc_efailed;
     }
-  }
+    
+    if (sv.size()>2) {
+      i1=sv[1];
+      i2=sv[2];
+    } else if (sv.size()>1) {
+      i1=sv[1];
+    } else {
+      if (itive_com) {
+	i1=cl->cli_gets("Enter column to sort by (or blank to stop): ");
+	if (i1.length()==0) {
+	  cout << "Command 'sort' cancelled." << endl;
+	  return 0;
+	}
+      } else {
+	cerr << "Not enough arguments for 'sort'." << endl;
+	return exc_efailed;
+      }
+    }
+    
+    bool unique=false;
+    if (i2==((std::string)"unique")) unique=true;
+    
+    if (table_obj.is_column(i1)==false) {
+      cerr << "Could not find column named '" << i1 << "'." << endl;
+      return exc_efailed;
+    }
+    
+    if (verbose>1) {
+      cout << "Sorting by column " << i1 << endl; 
+    }
+    table_obj.sort_table(i1);
+    
+    if (unique) {
+      std::cout << "Going to dir." << std::endl;
+      table_obj.delete_idadj_rows();
+      std::cout << "Done in dir." << std::endl;
+    }
 
-  bool unique=false;
-  if (i2==((std::string)"unique")) unique=true;
-  
-  if (table_obj.is_column(i1)==false) {
-    cerr << "Could not find column named '" << i1 << "'." << endl;
-    return exc_efailed;
-  }
+  } else if (type=="double[]") {
 
-  if (verbose>1) {
-    cout << "Sorting by column " << i1 << endl; 
-  }
-  table_obj.sort_table(i1);
+    vector_sort<vector<double>,double>(doublev_obj.size(),doublev_obj);
+    if (verbose>0) {
+      cout << "Object of type double[] sorted." << endl;
+    }
+    
+  } else if (type=="int[]") {
 
-  if (unique) {
-    std::cout << "Going to dir." << std::endl;
-    table_obj.delete_idadj_rows();
-    std::cout << "Done in dir." << std::endl;
+    vector_sort<vector<int>,int>(intv_obj.size(),intv_obj);
+    if (verbose>0) {
+      cout << "Object of type double[] sorted." << endl;
+    }
+    
+  } else if (type=="size_t[]") {
+
+    vector_sort<vector<size_t>,size_t>(size_tv_obj.size(),size_tv_obj);
+    if (verbose>0) {
+      cout << "Object of type double[] sorted." << endl;
+    }
+
+  } else {
+
+    cout << "Not implemented for type " << type << endl;
+    return 1;
+    
   }
   
   return 0;
@@ -6713,13 +6965,8 @@ int acol_manager::comm_insert_full(std::vector<std::string> &sv,
 
 int acol_manager::comm_interp(std::vector<std::string> &sv, bool itive_com) {
 
-  if (type!="table" && type!="table3d") {
-    cout << "Not implemented for type " << type << endl;
-    return 0;
-  }
-
   if (type=="table3d") {
-
+    
     // --------------------------------------------------------------
     // 3d table interpolation
     
@@ -6761,55 +7008,98 @@ int acol_manager::comm_interp(std::vector<std::string> &sv, bool itive_com) {
     }
 
     return 0;
-  }
 
-  // --------------------------------------------------------------
-  // 2d table interpolation
+  } else if (type=="table") {
 
-  if (table_obj.get_nlines()==0) {
-    cerr << "No table to interpolate into." << endl;
-    return exc_efailed;
-  }
-
-  std::string in[3], pr[3]=
-    {"Enter column name of independent variable (or blank to stop): ",
-     "Enter value of independent variable (or blank to stop): ",
-     "Enter column name of dependent variable (or blank to stop): "};
-  if (sv.size()>=3) {
-    in[0]=sv[1];
-    in[1]=sv[2];
-    in[2]=sv[3];
-  } else {
-    if (itive_com) {
-      for(size_t is=0;is<3;is++) {
-	in[is]=cl->cli_gets(pr[is].c_str());
-	if (in[is].length()==0) {
-	  cout << "Command 'interp' cancelled." << endl;
-	  return 0;
-	}
-      }
-    } else {
-      cerr << "Not enough arguments to 'interp'" << endl;
+    // --------------------------------------------------------------
+    // 2d table interpolation
+    
+    if (table_obj.get_nlines()==0) {
+      cerr << "No table to interpolate into." << endl;
       return exc_efailed;
     }
-  }
-  
-  if (table_obj.is_column(in[0])==false) {
-    cerr << "Could not find column named '" << in[0] << "'." << endl;
-    return exc_efailed;
-  }
-  if (table_obj.is_column(in[2])==false) {
-    cerr << "Could not find column named '" << in[2] << "'." << endl;
-    return exc_efailed;
-  }
+    
+    std::string in[3], pr[3]=
+      {"Enter column name of independent variable (or blank to stop): ",
+       "Enter value of independent variable (or blank to stop): ",
+       "Enter column name of dependent variable (or blank to stop): "};
+    if (sv.size()>=3) {
+      in[0]=sv[1];
+      in[1]=sv[2];
+      in[2]=sv[3];
+    } else {
+      if (itive_com) {
+	for(size_t is=0;is<3;is++) {
+	  in[is]=cl->cli_gets(pr[is].c_str());
+	  if (in[is].length()==0) {
+	    cout << "Command 'interp' cancelled." << endl;
+	    return 0;
+	  }
+	}
+      } else {
+	cerr << "Not enough arguments to 'interp'" << endl;
+	return exc_efailed;
+      }
+    }
+    
+    if (table_obj.is_column(in[0])==false) {
+      cerr << "Could not find column named '" << in[0] << "'." << endl;
+      return exc_efailed;
+    }
+    if (table_obj.is_column(in[2])==false) {
+      cerr << "Could not find column named '" << in[2] << "'." << endl;
+      return exc_efailed;
+    }
+    
+    double ret=table_obj.interp(in[0],function_to_double(in[1]),in[2]);
+    if (err_hnd->get_errno()!=0) {
+      cerr << "Interpolation failed." << endl;
+      return exc_efailed;
+    } else {
+      cout << "Interpolation result: " << ret << endl;
+    }
 
-  double ret=table_obj.interp(in[0],function_to_double(in[1]),in[2]);
-  if (err_hnd->get_errno()!=0) {
-    cerr << "Interpolation failed." << endl;
-    return exc_efailed;
+    // --------------------------------------------------------------
+    
+  } else if (type=="double[]") {
+
+    size_t n=doublev_obj.size();
+    std::vector<double> index(n);
+    for(size_t i=0;i<n;i++) index[i]=((double)i);
+
+    o2scl::interp<vector<double> > it(interp_type);
+    double x=o2scl::stod(sv[1]);
+    cout << "Interpolation result: "
+	 << it.eval(x,n,index,doublev_obj) << endl;
+
+  } else if (type=="int[]") {
+
+    size_t n=intv_obj.size();
+    std::vector<double> index(n), value(n);
+    o2scl::vector_copy(intv_obj,value);
+    for(size_t i=0;i<n;i++) index[i]=((double)i);
+
+    o2scl::interp<vector<double> > it(interp_type);
+    double x=o2scl::stod(sv[1]);
+    cout << "Interpolation result: "
+	 << it.eval(x,n,index,value) << endl;
+
+  } else if (type=="size_t[]") {
+
+    size_t n=size_tv_obj.size();
+    std::vector<double> index(n), value(n);
+    o2scl::vector_copy(size_tv_obj,value);
+    for(size_t i=0;i<n;i++) index[i]=((double)i);
+
+    o2scl::interp<vector<double> > it(interp_type);
+    double x=o2scl::stod(sv[1]);
+    cout << "Interpolation result: "
+	 << it.eval(x,n,index,value) << endl;
+
   } else {
-    cout << "Interpolation result: " << ret << endl;
-  }
+    cout << "Not implemented for type " << type << endl;
+    return 1;
+  }    
   
   return 0;
 }
