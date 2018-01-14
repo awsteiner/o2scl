@@ -27,7 +27,6 @@
 
 /*
   Todos: 
-  - to-table for array types
   - sum/max/min/output/interp/deriv/integ/deriv2 for hist, hist_2d, and v<c>
   - xindex and yindex for table3d
   - create table3d output that can be read by gen3-list?
