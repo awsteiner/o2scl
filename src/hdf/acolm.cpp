@@ -37,7 +37,6 @@
   - Make sure preview, output, internal, generic, and create work for 
   all types.
   - Add matrix types?
-
 */
 
 #include <boost/numeric/ublas/vector.hpp>
@@ -314,9 +313,14 @@ void acol_manager::command_add(std::string new_type) {
        "optionally weighting the entries by the column 'wgts'.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_to_hist),
        both},
-      {0,"autocorr","Compute the autocorrelation vector and length.",0,3,
+      {0,"autocorr","Compute the autocorrelation vectors.",0,3,
        "<col> <ac> <ftom>",
-       "Compute the autocorrelation vector and length.",
+       ((std::string)"Given a column <col>, this stores a vector of ")+
+       "autocorrelation coefficients in column <ac> and the quantity "+
+       "'5*tau/M' in column <ftom>. Columns <ac> and <ftom> are created "+
+       "if they are not already present and overwritten if they "+
+       "already contain data. Also, the autocorrelation length and "+
+       "estimated sample size are output to the screen.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_autocorr),
        both}
     };
@@ -508,7 +512,7 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="double[]") {
 
-    static const size_t narr=6;
+    static const size_t narr=7;
     comm_option_s options_arr[narr]={
       {0,"sort","Sort the vector.",0,0,"",
        ((string)"Sorts the vector."),
@@ -537,6 +541,11 @@ void acol_manager::command_add(std::string new_type) {
        "<col> <ac> <ftom>",
        "Compute the autocorrelation vector and length.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_autocorr),
+       both},      
+      {0,"to-table","Convert to a table given a column name",0,1,
+       "<column name>",
+       "Convert to a table given a column name.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_to_table),
        both}      
     };
     cl->set_comm_option_vec(narr,options_arr);
@@ -560,7 +569,7 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="int[]") {
 
-    static const size_t narr=6;
+    static const size_t narr=7;
     comm_option_s options_arr[narr]={
       {0,"sort","Sort the vector.",0,0,"",
        ((string)"Sorts the vector."),
@@ -589,7 +598,12 @@ void acol_manager::command_add(std::string new_type) {
        "<col> <ac> <ftom>",
        "Compute the autocorrelation vector and length.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_autocorr),
-       both}
+       both},
+      {0,"to-table","Convert to a table given a column name",0,1,
+       "<column name>",
+       "Convert to a table given a column name.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_to_table),
+       both}      
     };
     cl->set_comm_option_vec(narr,options_arr);
     
@@ -612,7 +626,7 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="size_t[]") {
 
-    static const size_t narr=6;
+    static const size_t narr=7;
     comm_option_s options_arr[narr]={
       {0,"sort","Sort the vector.",0,0,"",
        ((string)"Sorts the vector."),
@@ -641,7 +655,12 @@ void acol_manager::command_add(std::string new_type) {
        "<col> <ac> <ftom>",
        "Compute the autocorrelation vector and length.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_autocorr),
-       both}
+       both},
+      {0,"to-table","Convert to a table given a column name",0,1,
+       "<column name>",
+       "Convert to a table given a column name.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_to_table),
+       both}      
     };
     cl->set_comm_option_vec(narr,options_arr);
     
@@ -683,6 +702,19 @@ void acol_manager::command_add(std::string new_type) {
     }
     
   } else if (new_type=="hist_2d") {
+
+    static const size_t narr=2;
+    comm_option_s options_arr[narr]={
+      {0,"max","Find the maximum weight.",0,0,"",
+       "Find the maximum weight",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_max),
+       both},
+      {0,"min","Find the minimum weight.",0,0,"",
+       "Find the minimum weight.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
+       both}
+    };
+    cl->set_comm_option_vec(narr,options_arr);
 
     if (o2graph_mode) {
       static const size_t narr2=2;
@@ -826,12 +858,14 @@ void acol_manager::command_del() {
     }
     
   } else if (type=="hist_2d") {
+
+    cl->remove_comm_option("max");
+    cl->remove_comm_option("min");
+    
     /*
       cl->remove_comm_option("deriv-x");
       cl->remove_comm_option("deriv-y");
       cl->remove_comm_option("interp");
-      cl->remove_comm_option("max");
-      cl->remove_comm_option("min");
       cl->remove_comm_option("set-data");
       cl->remove_comm_option("sum");
       
@@ -883,6 +917,7 @@ void acol_manager::command_del() {
     cl->remove_comm_option("min");
     cl->remove_comm_option("sort");
     cl->remove_comm_option("autocorr");
+    cl->remove_comm_option("to-table");
     
     if (o2graph_mode) {
       cl->remove_comm_option("plot1");
@@ -3338,8 +3373,8 @@ int acol_manager::comm_max(std::vector<std::string> &sv, bool itive_com) {
 
   if (type=="table3d") {
 
-    if (type!="table3d" || table3d_obj.get_nslices()==0) {
-      cerr << "No table3d with slices to find the maximum value of." << endl;
+    if (table3d_obj.get_nslices()==0) {
+      cerr << "No slices to find the maximum value of." << endl;
       return exc_efailed;
     }
     
@@ -3360,6 +3395,18 @@ int acol_manager::comm_max(std::vector<std::string> &sv, bool itive_com) {
     matrix_max_index(mat,i,j,max);
 
     cout << "Maximum value of slice '" << i1 << "' is: " 
+	 << max << " at indices (" << i << "," << j << ")\n  and grid "
+	 << "point (" << table3d_obj.get_grid_x(i) << ","
+	 << table3d_obj.get_grid_y(j) << ")." << endl;
+
+  } else if (type=="hist_2d") {
+    
+    const ubmatrix &mat=hist_2d_obj.get_wgts();
+    size_t i, j;
+    double max;
+    matrix_max_index(mat,i,j,max);
+    
+    cout << "Maximum weight is: "
 	 << max << " at indices (" << i << "," << j << ")\n  and grid "
 	 << "point (" << table3d_obj.get_grid_x(i) << ","
 	 << table3d_obj.get_grid_y(j) << ")." << endl;
@@ -3415,7 +3462,6 @@ int acol_manager::comm_max(std::vector<std::string> &sv, bool itive_com) {
 	 << loc << endl;
     
   }
-
   
   return 0;
 }
@@ -3514,6 +3560,67 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
 
+int acol_manager::comm_to_table(std::vector<std::string> &sv, bool itive_com) {
+
+  if (type=="double[]") {
+
+    std::string i1;
+    int ret=get_input_one(sv,"Enter column name",i1,"to-table",itive_com);
+    if (ret!=0) return ret;
+    
+    table_obj.clear();
+    table_obj.new_column(i1);
+    table_obj.set_nlines(doublev_obj.size());
+    for(size_t i=0;i<doublev_obj.size();i++) {
+      table_obj.set(i1,i,doublev_obj[i]);
+    }
+
+    command_del();
+    clear_obj();
+    command_add("table");
+    type="table";
+    
+  } else if (type=="int[]") {
+
+    std::string i1;
+    int ret=get_input_one(sv,"Enter column name",i1,"to-table",itive_com);
+    if (ret!=0) return ret;
+    
+    table_obj.clear();
+    table_obj.new_column(i1);
+    table_obj.set_nlines(intv_obj.size());
+    for(size_t i=0;i<intv_obj.size();i++) {
+      table_obj.set(i1,i,intv_obj[i]);
+    }
+
+    command_del();
+    clear_obj();
+    command_add("table");
+    type="table";
+
+  } else if (type=="size_t[]") {
+    
+    std::string i1;
+    int ret=get_input_one(sv,"Enter column name",i1,"to-table",itive_com);
+    if (ret!=0) return ret;
+    
+    table_obj.clear();
+    table_obj.new_column(i1);
+    table_obj.set_nlines(size_tv_obj.size());
+    for(size_t i=0;i<size_tv_obj.size();i++) {
+      table_obj.set(i1,i,size_tv_obj[i]);
+    }
+
+    command_del();
+    clear_obj();
+    command_add("table");
+    type="table";
+    
+  }
+  
+  return 0;
+}
+
 int acol_manager::comm_download(std::vector<std::string> &sv, bool itive_com) {
 
   vector<string> in, pr;
@@ -3594,6 +3701,18 @@ int acol_manager::comm_min(std::vector<std::string> &sv, bool itive_com) {
     matrix_min_index(mat,i,j,min);
 
     cout << "Minimum value of slice '" << i1 << "' is: " 
+	 << min << " at indices (" << i << "," << j << ")\n  and grid "
+	 << "point (" << table3d_obj.get_grid_x(i) << ","
+	 << table3d_obj.get_grid_y(j) << ")." << endl;
+
+  } else if (type=="hist_2d") {
+    
+    const ubmatrix &mat=hist_2d_obj.get_wgts();
+    size_t i, j;
+    double min;
+    matrix_min_index(mat,i,j,min);
+    
+    cout << "Minimum weight is: "
 	 << min << " at indices (" << i << "," << j << ")\n  and grid "
 	 << "point (" << table3d_obj.get_grid_x(i) << ","
 	 << table3d_obj.get_grid_y(j) << ")." << endl;
