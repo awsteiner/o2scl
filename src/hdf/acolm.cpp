@@ -1391,7 +1391,12 @@ int acol_manager::setup_parameters() {
     colbar=false;
     logx=false;
     logy=false;
-    
+    right_margin=0.04;
+    left_margin=0.014;
+    top_margin=0.04;
+    bottom_margin=0.012;
+    font=16.0;
+
     p_xtitle.str=&xtitle;
     p_xtitle.help=((std::string)"X-axis title. Latex ")+
       "works, e.g. '$\\phi$' and '$\\hat{x}$'";
@@ -1463,19 +1468,19 @@ int acol_manager::setup_parameters() {
     cl->par_list.insert(make_pair("font",&p_font));
 
     p_left_margin.d=&left_margin;
-    p_left_margin.help="Size of left canvas margin.";
+    p_left_margin.help="Size of left margin for a new canvas.";
     cl->par_list.insert(make_pair("left_margin",&p_left_margin));
 
     p_right_margin.d=&right_margin;
-    p_right_margin.help="Size of right canvas margin.";
+    p_right_margin.help="Size of right margin for a new canvas.";
     cl->par_list.insert(make_pair("right_margin",&p_right_margin));
 
     p_bottom_margin.d=&bottom_margin;
-    p_bottom_margin.help="Size of bottom canvas margin.";
+    p_bottom_margin.help="Size of bottom margin for a new canvas.";
     cl->par_list.insert(make_pair("bottom_margin",&p_bottom_margin));
 
     p_top_margin.d=&top_margin;
-    p_top_margin.help="Size of top canvas margin.";
+    p_top_margin.help="Size of top margin for a new canvas.";
     cl->par_list.insert(make_pair("top_margin",&p_top_margin));
 
   }    
