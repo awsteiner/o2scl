@@ -510,10 +510,17 @@ namespace o2scl_acol {
     o2scl::cli::parameter_bool p_colbar;
     o2scl::cli::parameter_bool p_logx;
     o2scl::cli::parameter_bool p_logy;
+    o2scl::cli::parameter_int p_font;
+    o2scl::cli::parameter_double p_left_margin;
+    o2scl::cli::parameter_double p_right_margin;
+    o2scl::cli::parameter_double p_bottom_margin;
+    o2scl::cli::parameter_double p_top_margin;
 
     std::string cmap, xtitle, ytitle;
     double xlo, xhi, ylo, yhi, zlo, zhi;
     bool xset, yset, zset, colbar, logx, logy;
+    int font;
+    double left_margin, right_margin, top_margin, bottom_margin;
     //@}
     
   };

@@ -1350,19 +1350,19 @@ int acol_manager::setup_parameters() {
   p_pretty.b=&pretty;
   p_names_out.b=&names_out;
   
-  p_obj_name.help="The current object name";
-  p_unit_fname.help="The unit filename";
-  p_def_args.help="The default arguments from the environment";
-  p_prec.help="The numerical precision";
-  p_verbose.help="Control the amount of output";
-  p_compress.help="Compression";
-  p_ncols.help="The number of output columns";
+  p_obj_name.help="The current object name.";
+  p_unit_fname.help="The unit filename.";
+  p_def_args.help="The default arguments from the environment.";
+  p_prec.help="The numerical precision.";
+  p_verbose.help="Control the amount of output.";
+  p_compress.help="If true, enable compression.";
+  p_ncols.help="The number of output columns.";
   p_interp_type.help=((std::string)"The interpolation type ")+
     "(1=linear, 2=cubic spline, 3=periodic cubic spline, 4=Akima, "+
-    "5=periodic Akima, 6=monotonic, 7=Steffen's monotonic)";
-  p_names_out.help="If true, output column names at top";
-  p_pretty.help="If true, align the columns using spaces";
-  p_scientific.help="If true, output in scientific mode";
+    "5=periodic Akima, 6=monotonic, 7=Steffen's monotonic).";
+  p_names_out.help="If true, output column names at top.";
+  p_pretty.help="If true, align the columns using spaces.";
+  p_scientific.help="If true, output in scientific mode.";
   
   cl->par_list.insert(make_pair("obj_name",&p_obj_name));
   cl->par_list.insert(make_pair("unit_fname",&p_unit_fname));
@@ -1394,7 +1394,7 @@ int acol_manager::setup_parameters() {
     
     p_xtitle.str=&xtitle;
     p_xtitle.help=((std::string)"X-axis title. Latex ")+
-      "works, e.g. '$\\phi$' and '$\\hat{x}$'.";
+      "works, e.g. '$\\phi$' and '$\\hat{x}$'";
     cl->par_list.insert(make_pair("xtitle",&p_xtitle));
     
     p_ytitle.str=&ytitle;
@@ -1457,6 +1457,26 @@ int acol_manager::setup_parameters() {
     p_logy.b=&logy;
     p_logy.help="If true, use a logarithmic y-axis.";
     cl->par_list.insert(make_pair("logy",&p_logy));
+
+    p_font.i=&font;
+    p_font.help="Font scaling parameter.";
+    cl->par_list.insert(make_pair("font",&p_font));
+
+    p_left_margin.d=&left_margin;
+    p_left_margin.help="Size of left canvas margin.";
+    cl->par_list.insert(make_pair("left_margin",&p_left_margin));
+
+    p_right_margin.d=&right_margin;
+    p_right_margin.help="Size of right canvas margin.";
+    cl->par_list.insert(make_pair("right_margin",&p_right_margin));
+
+    p_bottom_margin.d=&bottom_margin;
+    p_bottom_margin.help="Size of bottom canvas margin.";
+    cl->par_list.insert(make_pair("bottom_margin",&p_bottom_margin));
+
+    p_top_margin.d=&top_margin;
+    p_top_margin.help="Size of top canvas margin.";
+    cl->par_list.insert(make_pair("top_margin",&p_top_margin));
 
   }    
   
