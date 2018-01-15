@@ -1459,7 +1459,7 @@ int acol_manager::setup_parameters() {
     cl->par_list.insert(make_pair("logy",&p_logy));
 
     p_font.i=&font;
-    p_font.help="Font scaling parameter.";
+    p_font.help="Font scaling for text objects (default 16).";
     cl->par_list.insert(make_pair("font",&p_font));
 
     p_left_margin.d=&left_margin;
