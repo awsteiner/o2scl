@@ -273,6 +273,17 @@
     readline support should be included in <tt>acol</tt>. The end-user
     should not need to use this.
 
+    - O2SCL_UBUNTU_HDF5 - If true, assume HDF5 include statements should
+    include subdirectory named hdf5/serial in order to match the
+    Ubuntu HDF5 package convention (used in src/eos/hdf_eos_io.h,
+    src/hdf/hdf_file.h and src/nuclei/hdf_nucmass_io.h). The end-user
+    should not need to use this macro.
+ 
+    - O2SCL_UBUNTU_PKG - If true, don't use current date and time
+    macros to avoid Ubuntu packaging errors (used in
+    src/base/lib_settings.cpp and src/hdf/acolm.cpp). The end-user
+    should not need to use this macro.
+
     - O2SCL_USE_BOOST_FILESYSTEM - Doesn't do anything (yet).
 
     - O2SCL_USE_GSL_HANDLER - If this is defined, then an object
