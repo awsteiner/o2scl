@@ -4140,7 +4140,7 @@ int acol_manager::comm_get_conv
   vector<string> in, pr;
   pr.push_back("Old unit");
   pr.push_back("New unit");
-  int ret=get_input(sv,pr,in,"convert-unit",itive_com);
+  int ret=get_input(sv,pr,in,"get-conv",itive_com);
   if (ret!=0) return ret;
   
   if (unit_fname.length()>0) {
