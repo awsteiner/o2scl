@@ -301,24 +301,20 @@ namespace o2scl {
     // Find coordinate with largest relative variation
     size_t max_ip=0;
     double max_var=fabs(v[0]-m(h.inside[0],0))/(h.high[0]-h.low[0]);
-    if (verbose>1) {
-      std::cout << "Coordinate " << max_ip << " with variance "
-		<< max_var << std::endl;
-      std::cout << v[0] << " " << m(h.inside[0],0) << " "
-		<< h.high[0] << " " << h.low[0] << std::endl;
-    }
     for(size_t ip=1;ip<ndim;ip++) {
       double var=fabs(v[ip]-m(h.inside[0],ip))/(h.high[ip]-h.low[ip]);
       if (var>max_var) {
 	max_ip=ip;
 	max_var=var;
 	if (verbose>1) {
-	  std::cout << "Found coordinate " << max_ip << " with variance "
-		    << max_var << std::endl;
-	  std::cout << v[ip] << " " << m(h.inside[0],ip) << " "
-		    << h.high[ip] << " " << h.low[ip] << std::endl;
 	}
       }
+    }
+    if (verbose>1) {
+      std::cout << "Found coordinate " << max_ip << " with variance "
+      << max_var << std::endl;
+      std::cout << v[max_ip] << " " << m(h.inside[0],max_ip) << " "
+      << h.high[max_ip] << " " << h.low[max_ip] << std::endl;
     }
    
     // Slice the mesh in coordinate max_ip
