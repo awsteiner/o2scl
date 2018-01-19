@@ -1321,7 +1321,7 @@ int acol_manager::setup_help() {
     dsc+="ceil(x) floor(x) int(x) max(x,y) min(x,y)\n";
   */
   
-#ifdef O2SCL_UBUNTU_PKG
+#ifndef O2SCL_UBUNTU_PKG
   dsc+=((string)"Compiled at ")+((string)__TIME__)+" on "+
     ((string)__DATE__)+" for "+((string)PACKAGE)+", version "+
     ((string)VERSION)+".\n";
