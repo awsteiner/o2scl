@@ -277,7 +277,7 @@ double fermion_eval_thermo::calibrate
   // Read data file
 
   if (fname=="") {
-    fname=o2scl_settings.get_data_dir()+"fermion_cal.o2";
+    fname=o2scl_settings.get_data_dir()+"fermion_cal2.o2";
   }
 
   if (verbose>1) {
@@ -293,6 +293,9 @@ double fermion_eval_thermo::calibrate
 #endif
   hf.close();
 
+  tab.function_column("ed_mot*mot","ed");
+  tab.function_column("pair_ed_mot*mot","pair_ed");
+  
   table<> tab2;
   hf.open(fname);
 #ifndef O2SCL_NO_HDF_INPUT  
