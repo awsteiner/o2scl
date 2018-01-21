@@ -294,7 +294,7 @@ double fermion_eval_thermo::calibrate
   hf.close();
 
   table<> tab2;
-  hf.open(o2scl_settings.get_data_dir()+"fermion_cal2.o2");
+  hf.open(fname);
 #ifndef O2SCL_NO_HDF_INPUT  
   hdf_input(hf,tab2,name);
 #endif
