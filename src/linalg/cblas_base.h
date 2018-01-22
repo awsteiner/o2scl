@@ -74,6 +74,33 @@ namespace o2scl_cblas {
   /// Left or right sided operation
   enum o2cblas_side {o2cblas_Left=141, o2cblas_Right=142};
 
+  /// \name Test if matrix elements are finite
+  //@{
+  /** \brief Test if the first \c n elements of a matrix are finite
+
+      If \c n is zero, this will return true without throwing
+      an exception.
+  */
+  template<class mat_t>
+    bool matrix_is_finite(size_t m, size_t n, mat_t &data) {
+    for(size_t i=0;i<m;i++) {
+      for(size_t j=0;j<n;j++) {
+	if (!std::isfinite(O2SCL_IX2(data,i,j))) return false;
+      }
+    }
+    return true;
+  }
+
+  /** \brief Test if a matrix is finite
+
+      If \c n is zero, this will return true without throwing
+      an exception.
+  */
+  template<class mat_t> bool matrix_is_finite(mat_t &data) {
+    return matrix_is_finite(data.size1(),data.size2(),data);
+  }
+  //@}
+
   /// \name Level-1 BLAS functions
   //@{
   /** \brief Compute the absolute sum of vector elements

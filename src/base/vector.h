@@ -1957,6 +1957,175 @@ namespace o2scl {
   }
   //@}
 
+  /// \name Ordering and finite tests
+  //@{
+  /** \brief Test if the first \c n elements of a vector are 
+      monotonic and increasing or decreasing
+
+      If \c n is zero or one, this function will return 0 without
+      calling the error handler. If all the vector's elements are equal,
+      this function will return 3. Otherwise, if the vector is not
+      monotonic, then this function will return 0. Finally, if the
+      vector is nondecreasing (increasing or equal intervals), this
+      function will return 1, and if the vector is nonincreasing
+      (decreasing or equal intervals), this function will return 2.
+      This function assumes that simple comparison operators have been
+      defined for the type of each vector element.
+  */
+  template<class vec_t>
+    int vector_is_monotonic(size_t n, vec_t &data) {
+
+    if (n<1) return 0;
+    if (n<2) {
+      if (data[0]==data[1]) {
+	return 3;
+      } else if (data[0]<data[1]) {
+	return 1;
+      } else {
+	return 2;
+      }
+    }
+    
+    // Find first non-flat interval
+    size_t start=0;
+    bool done=false;
+    for(size_t i=0;i<n-1 && done==false;i++) {
+      if (data[i]!=data[i+1]) {
+	done=true;
+      } else {
+	start++;
+      }
+    }
+
+    // If all elements in the vector are equal, or if the only
+    // distinct element is at the end, then return true.
+    if (done==false) {
+      return 3;
+    } 
+    
+    if (start==n-2) {
+      if (data[start]<data[start+1]) return 1;
+      else return 2;
+    }
+
+    // Determine if the vector is increasing (inc=true) or decreasing
+    // (inc=false)
+    bool inc=true;
+    if (data[start]>data[start+1]) inc=false;
+
+    if (inc) {
+      for(size_t i=start+1;i<n-1;i++) {
+	// If there is one decreasing interval, return false
+	if (data[i]>data[i+1]) return 0;
+      }
+      return 1;
+    }
+    
+    // If there is one increasing interval, return false
+    for(size_t i=start+1;i<n-1;i++) {
+      if (data[i]<data[i+1]) return 0;
+    }
+    return 2;
+  }
+
+  /** \brief Test if the first \c n elements of a vector are 
+      monotonic and increasing or decreasing
+
+      If \c n is zero or one, this function will return 0 without
+      calling the error handler. If all the vector's elements are equal,
+      this function will return 3. Otherwise, if the vector is not
+      monotonic, then this function will return 0. Finally, if the
+      vector is nondecreasing (increasing or equal intervals), this
+      function will return 1, and if the vector is nonincreasing
+      (decreasing or equal intervals), this function will return 2.
+      This function assumes that simple comparison operators have been
+      defined for the type of each vector element.
+  */
+  template<class vec_t> int vector_is_monotonic(vec_t &data) {
+    return vector_is_monotonic(data.size(),data);
+  }
+
+  /** \brief Test if the first \c n elements of a vector are 
+      strictly monotonic and determine if they are increasing or decreasing
+
+      If \c n is zero this function will return 0 without calling the
+      error handler. Also, if the vector is not monotonic, this
+      function will return 0. If the vector is strictly 
+      monotonic, then this function will return 1 if it is 
+      increasing and 2 if it is decreasing.
+  */
+  template<class vec_t>
+    int vector_is_strictly_monotonic(size_t n, vec_t &data) {
+    
+    if (n<1) return 0;
+    
+    // Determine if the vector is increasing (inc=true) or decreasing
+    // (inc=false)
+    bool inc=true;
+    if (data[0]==data[1]) {
+      return 0;
+    } else if (data[0]>data[1]) {
+      inc=false;
+    }
+
+    if (inc) {
+      for(size_t i=1;i<n-1;i++) {
+	// If there is one nonincreasing interval, return 0
+	if (data[i]>=data[i+1]) return 0;
+      }
+      return 1;
+    } 
+
+    // If there is one increasing interval, return 0
+    for(size_t i=1;i<n-1;i++) {
+      if (data[i]<=data[i+1]) return 0;
+    }
+    return 2;
+  }
+
+  /** \brief Test if the first \c n elements of a vector are 
+      strictly monotonic and determine if they are increasing or decreasing
+
+      If \c n is zero this function will return 0 without calling the
+      error handler. Also, if the vector is not monotonic, this
+      function will return 0. If the vector is strictly 
+      monotonic, then this function will return 1 if it is 
+      increasing and 2 if it is decreasing.
+  */
+  template<class vec_t>
+    int vector_is_strictly_monotonic(vec_t &data) {
+    return vector_is_strictly_monotonic(data.size(),data);
+  }
+
+  /** \brief Test if the first \c n elements of a vector are finite
+
+      If \c n is zero, this will return true without throwing
+      an exception.
+
+      The corresponding tests for matrix functions are
+      in clbas_base.h .
+  */
+  template<class vec_t>
+    bool vector_is_finite(size_t n, vec_t &data) {
+    for(size_t i=0;i<n;i++) {
+      if (!std::isfinite(data[i])) return false;
+    }
+    return true;
+  }
+
+  /** \brief Test if a vector is finite
+
+      If \c n is zero, this will return true without throwing
+      an exception.
+
+      The corresponding tests for matrix functions are
+      in clbas_base.h .
+  */
+  template<class vec_t> bool vector_is_finite(vec_t &data) {
+    return vector_is_finite(data.size(),data);
+  }
+  //@}
+
   /// \name Miscellaneous mathematical functions
   //@{
   /** \brief Compute the sum of the first \c n elements of a vector
@@ -1977,7 +2146,7 @@ namespace o2scl {
   /** \brief Compute the sum of all the elements of a vector
 
       If the vector has zero size, this will return 0 without
-      throwing an exception.
+      calling the error handler.
   */
   template<class vec_t, class data_t> data_t vector_sum(vec_t &data) {
     data_t sum=0.0;
@@ -2005,7 +2174,7 @@ namespace o2scl {
       of double-precision numbers
 
       If the vector has zero size, this will return 0 without
-      throwing an exception.
+      calling the error handler.
   */
   template<class vec_t> double vector_sum_double(vec_t &data) {
     double sum=0.0;
