@@ -978,7 +978,9 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
 	  split_string(clist[ix].help,desc2);
 	  string bufx;
 	  for(size_t j=0;j<desc2.size();j++) {
-	    if (j!=0 && bufx.length()+desc2[j].length()>79) {
+	    // AWS: 1/21/18: changed to >=79 because of line wrapping
+	    // problems with standard 80-character terminal windows
+	    if (j!=0 && bufx.length()+desc2[j].length()>=79) {
 	      cout << bufx << endl;
 	      bufx="";
 	    }

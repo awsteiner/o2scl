@@ -3684,12 +3684,14 @@ int acol_manager::comm_slice(std::vector<std::string> &sv, bool itive_com) {
   
   if (sv[1]=="x") {
     table3d_obj.extract_x(std::stod(sv[2]),table_obj);
-    table3d_obj.clear();
+    command_del();
+    clear_obj();
     command_add("table");
     type="table";
   } else if (sv[1]=="y") {
     table3d_obj.extract_y(std::stod(sv[2]),table_obj);
-    table3d_obj.clear();
+    command_del();
+    clear_obj();
     command_add("table");
     type="table";
   } else {

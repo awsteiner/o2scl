@@ -1020,7 +1020,8 @@ void table3d::extract_x(double x, table<> &t) {
     t.set(yname,i,yval[i]);
     for(size_t j=0;j<tree.size();j++) {
       string tmp=get_slice_name(j);
-      t.set(tmp,i,interp(x,yval[i],tmp));
+      double val=interp(x,yval[i],tmp);
+      t.set(tmp,i,val);
     }
   }
   
