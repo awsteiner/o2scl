@@ -1221,6 +1221,8 @@ namespace o2scl {
       If the distance between \f$ x \f$ and \f$ x^{\prime} \f$ is
       unreachable in a step, then the PDF is zero.
 
+      \note This class is experimental.
+
       \comment
       If we do not include the g ratio, then the edges
       will be undersampled because we don't properly include

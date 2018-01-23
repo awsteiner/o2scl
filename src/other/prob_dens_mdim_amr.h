@@ -110,6 +110,8 @@ namespace o2scl {
 
   /** \brief Probability distribution from an adaptive mesh
       created using a matrix of points
+
+      \note This class is experimental.
   */
   template<class vec_t, class mat_t=matrix_view_table<vec_t> >
     class prob_dens_mdim_amr : public o2scl::prob_dens_mdim<vec_t> {

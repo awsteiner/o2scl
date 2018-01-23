@@ -236,23 +236,34 @@ namespace o2scl {
 
   public:
 
-  /** \brief The MPI starting time
+  /** \brief The MPI starting time (defaults to 0.0)
 
-      This must be set by the user before mcmc() is called.
-      This isn't set by mcmc() because otherwise there would
-      no accounting for any possible initializations before
-      the MCMC starts.
+      This can be set by the user before mcmc() is called, so
+      that the time required for initializations before
+      the MCMC starts can be counted.
   */
   double mpi_start_time;
 
-  /// If non-zero, the maximum number of MCMC iterations (default 0)
+  /** \brief If non-zero, the maximum number of MCMC iterations 
+      (default 0)
+
+      If both \ref max_iters and \ref max_time are nonzero, the
+      MCMC will stop when either the number of iterations 
+      exceeds \ref max_iters or the time exceeds \ref max_time,
+      whichever occurs first.
+  */
   size_t max_iters;
   
   /** \brief Time in seconds (default is 0)
+
+      If both \ref max_iters and \ref max_time are nonzero, the
+      MCMC will stop when either the number of iterations 
+      exceeds \ref max_iters or the time exceeds \ref max_time,
+      whichever occurs first.
    */
   double max_time;
 
-  /** \brief Prefix for output filenames
+  /** \brief Prefix for output filenames (default "mcmc")
    */
   std::string prefix;
 
@@ -291,12 +302,16 @@ namespace o2scl {
       iterations) (default 0)
 	
       \note Not to be confused with <tt>warm_up</tt>, which is 
-      a boolean local variable in some functions not an int.
+      a protected boolean local variable in some functions which
+      indicates whether we're in warm up mode or not.
   */
   size_t n_warm_up;
 
   /** \brief If non-zero, use as the seed for the random number 
       generator (default 0)
+
+      The random number generator is modified so that each thread and
+      each rank has a different set of random numbers.
   */
   int user_seed;
 
@@ -411,12 +426,15 @@ namespace o2scl {
       n_threads=meas.size();
     }
 
-    // Set start time
+    // Set start time if necessary
+    if (mpi_start_time==0.0) {
 #ifdef O2SCL_MPI
-    mpi_start_time=MPI_Wtime();
+      mpi_start_time=MPI_Wtime();
 #else
-    mpi_start_time=time(0);
+      mpi_start_time=time(0);
 #endif
+      std::cout << "Set start time to: " << mpi_start_time << std::endl;
+    }
     
     if (initial_points.size()==0) {
       // Setup initial guess if not specified
@@ -591,7 +609,7 @@ namespace o2scl {
 	scr_out << "mcmc: Affine-invariant step, n_params="
 		<< n_params << ", n_walk=" << n_walk
 		<< ", n_chains_per_rank=" << n_chains_per_rank
-		<< ", n_walk_per_thread=" << n_walk_per_thread
+		<< ",\n\tn_walk_per_thread=" << n_walk_per_thread
 		<< ", n_threads=" << n_threads << ", rank="
 		<< mpi_rank << ", n_ranks="
 		<< mpi_size << std::endl;
@@ -1485,7 +1503,9 @@ namespace o2scl {
     for(size_t i=0;i<pars.size();i++) {
       line.push_back(pars[i]);
     }
+    std::cout << "Here0 " << pars.size() << std::endl;
     int tempi=fill(pars,log_weight,line,dat);
+    std::cout << "Here3." << std::endl;
     return tempi;
   }
   
@@ -1929,7 +1949,7 @@ namespace o2scl {
 
     // Determine the next row
     int next_row;
-    if (mcmc_accept && walker_accept_rows[windex]<0) {
+    if ((mcmc_accept || store_rejects) && walker_accept_rows[windex]<0) {
       next_row=windex;
     } else {
       if (table_sequence) {
