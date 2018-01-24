@@ -3667,36 +3667,40 @@ int acol_manager::comm_download(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_slice(std::vector<std::string> &sv, bool itive_com) {
 
-  if (type=="table") {
-    cerr << "Slice does not work with table objects." << endl;
-  }
+  if (type=="table3d") {
   
-  if (type!="table3d" || table3d_obj.get_nslices()==0) {
-    cerr << "No table3d with slices to find the maximum value of." << endl;
+    if (table3d_obj.get_nslices()==0) {
+      cerr << "No data in current table3d object." << endl;
     return exc_efailed;
-  }
+    }
+    
+    vector<string> in, pr;
+    pr.push_back("Slice in 'x' or 'y' direction");
+    pr.push_back("Value to interpolate in for slice");
+    int ret=get_input(sv,pr,in,"slice",itive_com);
+    if (ret!=0) return ret;
+    
+    if (sv[1]=="x") {
+      table3d_obj.extract_x(std::stod(sv[2]),table_obj);
+      command_del();
+      clear_obj();
+      command_add("table");
+      type="table";
+    } else if (sv[1]=="y") {
+      table3d_obj.extract_y(std::stod(sv[2]),table_obj);
+      command_del();
+      clear_obj();
+      command_add("table");
+      type="table";
+    } else {
+      cerr << "Invalid first argument to 'slice' must be either 'x' or 'y'."
+	   << endl;
+    }
 
-  vector<string> in, pr;
-  pr.push_back("Slice in 'x' or 'y' direction");
-  pr.push_back("Value to interpolate in for slice");
-  int ret=get_input(sv,pr,in,"slice",itive_com);
-  if (ret!=0) return ret;
-  
-  if (sv[1]=="x") {
-    table3d_obj.extract_x(std::stod(sv[2]),table_obj);
-    command_del();
-    clear_obj();
-    command_add("table");
-    type="table";
-  } else if (sv[1]=="y") {
-    table3d_obj.extract_y(std::stod(sv[2]),table_obj);
-    command_del();
-    clear_obj();
-    command_add("table");
-    type="table";
   } else {
-    cerr << "Invalid first argument to 'slice'." << endl;
+    cerr << "Slice does not work with " << type << " objects." << endl;
   }
+    
   
   return 0;
 }
@@ -6157,7 +6161,15 @@ int acol_manager::comm_stats(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_set(std::vector<std::string> &sv, bool itive_com) {
 
-  // This is currently taken care of inside cli
+  // Make sure the object interpolation types coincide with the
+  // variable setting
+  if (type=="table") {
+    table_obj.set_interp_type(interp_type);
+  } else if (type=="table3d") {
+    table3d_obj.set_interp_type(interp_type);
+  } else if (type=="hist") {
+    hist_obj.set_interp_type(interp_type);
+  }
 
   return 0;
 }

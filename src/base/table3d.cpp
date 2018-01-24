@@ -1007,7 +1007,7 @@ void table3d::extract_x(double x, table<> &t) {
 	       "in table3d::extract_x().",exc_einval);
   }
   
-  t.clear_table();
+  t.clear();
   
   string s=yname+" ";
   for(size_t i=0;i<tree.size();i++) {
@@ -1052,7 +1052,7 @@ void table3d::extract_y(double y, table<> &t) {
     t.set(xname,i,xval[i]);
     for(size_t j=0;j<tree.size();j++) {
       string tmp=get_slice_name(j);
-      t.set(tmp,i,interp(y,xval[i],tmp));
+      t.set(tmp,i,interp(xval[i],y,tmp));
     }
   }
   
