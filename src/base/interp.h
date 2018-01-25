@@ -2152,10 +2152,10 @@ namespace o2scl {
 		 "vector_invert_enclosed_sum().",exc_einval);
     }
 
-    if (y[0]!=y[n-1]) {
-      O2SCL_ERR2("The first and last y-values must be equal in ",
-		 "vector_invert_enclosed_sum().",exc_einval);
-    }
+    //if (y[0]!=y[n-1]) {
+    //O2SCL_ERR2("The first and last y-values must be equal in ",
+    //"vector_invert_enclosed_sum().",exc_einval);
+    //}
 
     // Construct a sorted list of function values 
     typedef boost::numeric::ublas::vector<double> ubvector;
@@ -2221,28 +2221,28 @@ namespace o2scl {
   
   /** \brief Find the region enclosing a partial integral
    */
-  template<class vec_t, class vec2_t> void vector_region_parint
+  template<class vec_t, class vec2_t> void vector_region_fracint
     (size_t n, vec_t &x, vec2_t &y, double frac, std::vector<double> &locs,
      int verbose=0) {
 
-    if (frac<0.0 || frac>1.0) {
-      O2SCL_ERR2("Fraction must be between 0 and 1 (exclusive) in ",
-		 "vector_region_parint().",exc_efailed);
-    }
+    //if (frac<0.0 || frac>1.0) {
+    //O2SCL_ERR2("Fraction must be between 0 and 1 (exclusive) in ",
+    //"vector_region_fracint().",exc_efailed);
+    //}
 
     // Total integral
     double total=vector_integ_linear(n,x,y);
     if (verbose>0) {
       std::cout << "Total integral: " << total << std::endl;
     }
-    // Specified partial integral
-    double partial=frac*total;
+    // Specified fractional integral
+    double fractional=frac*total;
     if (verbose>0) {
-      std::cout << "Partial integral: " << partial << std::endl;
+      std::cout << "Fractional integral: " << fractional << std::endl;
     }
     // Find correct level
     double lev;
-    vector_invert_enclosed_sum(partial,n,x,y,lev,verbose);
+    vector_invert_enclosed_sum(fractional,n,x,y,lev,verbose);
     if (verbose>0) {
       std::cout << "Level from vector_invert: " << lev << std::endl;
     }
@@ -2261,13 +2261,17 @@ namespace o2scl {
     return;
   }
 
-  /** \brief Find the boundaries of the region enclosing a partial integral
+  /** \brief Find the boundaries of the region enclosing a integral
+
+      This function finds the boundaries of the region which
+      has integral equal to <tt>frac</tt> times the full
+      integral from the lower x limit to the upper x limit.
    */
-  template<class vec_t, class vec2_t> void vector_bound_parint
+  template<class vec_t, class vec2_t> void vector_bound_fracint
     (size_t n, vec_t &x, vec2_t &y, double frac, double &low, double &high) {
     
     std::vector<double> locs;
-    vector_region_parint(n,x,y,frac,locs);
+    vector_region_fracint(n,x,y,frac,locs);
     if (locs.size()==0) {
       O2SCL_ERR("Zero level crossings in vector_bound_sigma().",
 		exc_efailed);
