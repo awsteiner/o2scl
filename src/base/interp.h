@@ -1920,7 +1920,7 @@ namespace o2scl {
 
       This function counts the number of times the function \f$ y(x) =
       \mathrm{level} \f$ where the function is defined by the vectors
-      \c x and \c y. 
+      \c x and \c y.
 
       The value returned is exactly the same as the size of the
       \c locs vector computed by \ref vector_find_level().
@@ -1929,11 +1929,13 @@ namespace o2scl {
       less than two. 
 
       If one of the entries in \c y is either larger or smaller than
-      it's neighbors (i.e. if the function \f$ y(x) \f$ has an
+      its neighbors (i.e. if the function \f$ y(x) \f$ has an
       extremum), and if the value of \c level is exactly equal to the
       extremum, then this is counted as 1 level crossing. The same
       applies if either the first or last entry in \c y is exactly
-      equal to \c level . 
+      equal to \c level .  Finite-precision errors may affect
+      the result of this function when \c level is nearly
+      equal to one of the value in the vector \c y.
   */
   template<class vec_t, class vec2_t> size_t vector_level_count
     (double level, size_t n, vec_t &x, vec2_t &y) {
@@ -2013,7 +2015,55 @@ namespace o2scl {
     return;
   }
 
-  /** \brief Compute the integral over <tt>y(x)</tt> using linear 
+  /** \brief Compute derivative at all points from an 
+      interpolation object
+   */
+  template<class ovec_t, class vec2_t>
+    void vector_deriv_interp(size_t n, ovec_t &v, vec2_t &dv, 
+			     size_t interp_type=itp_linear) {
+    ovec_t grid(n);
+    for(size_t i=0;i<n;i++) grid[i]=((double)i);
+    interp_vec<ovec_t,ovec_t> oi(n,grid,v,interp_type);
+    for(size_t i=0;i<n;i++) dv[i]=oi.deriv(((double)i));
+    return;
+  }
+
+  /** \brief Compute second derivative at all points from an 
+      interpolation object
+   */
+  template<class ovec_t, class vec2_t>
+    void vector_deriv2_interp(size_t n, ovec_t &v, vec2_t &dv, 
+			     size_t interp_type=itp_linear) {
+    ovec_t grid(n);
+    for(size_t i=0;i<n;i++) grid[i]=((double)i);
+    interp_vec<ovec_t,ovec_t> oi(n,grid,v,interp_type);
+    for(size_t i=0;i<n;i++) dv[i]=oi.deriv2(((double)i));
+    return;
+  }
+
+  /** \brief Compute derivative at all points from an 
+      interpolation object
+   */
+  template<class vec_t, class vec2_t, class vec3_t>
+    void vector_deriv_xy_interp(size_t n, vec_t &vx, vec2_t &vy, vec3_t &dv, 
+				size_t interp_type=itp_linear) {
+    interp_vec<vec_t,vec2_t> oi(n,vx,vy,interp_type);
+    for(size_t i=0;i<n;i++) dv[i]=oi.deriv(vx[i]);
+    return;
+  }
+
+  /** \brief Compute second derivative at all points from an 
+      interpolation object
+   */
+  template<class vec_t, class vec2_t, class vec3_t>
+    void vector_deriv2_xy_interp(size_t n, vec_t &vx, vec2_t &vy, vec3_t &dv, 
+				size_t interp_type=itp_linear) {
+    interp_vec<vec_t,vec2_t> oi(n,vx,vy,interp_type);
+    for(size_t i=0;i<n;i++) dv[i]=oi.deriv(vx[i]);
+    return;
+  }
+
+  /** \brief Compute the integral over <tt>y(x)</tt> using 
       interpolation
 
       Assuming vectors \c y and \c x define a function \f$ y(x) \f$
@@ -2021,19 +2071,39 @@ namespace o2scl {
       \f[
       \int_{x_0}^{x^{n-1}} y(x)~dx
       \f]
-      using the trapezoidal rule implied by linear interpolation.
+      using interpolation to approximate the result.
 
-      \future It might be faster to compute the sum directly rather
-      than going through an \ref o2scl::interp object .
+      See also \ref vector_deriv_interp() and 
+      \ref vector_deriv2_interp() in \ref vector_derint.h .
   */
   template<class vec_t, class vec2_t> 
-    double vector_integ_linear(size_t n, vec_t &x, vec2_t &y) {
+    double vector_integ_interp(size_t n, const vec_t &x, const vec2_t &y,
+			       size_t interp_type=itp_linear) {
     
     // Interpolation object
-    interp<vec_t,vec2_t> si(itp_linear);
+    interp<vec_t,vec2_t> si(interp_type);
 
     // Compute full integral
     double total=si.integ(x[0],x[n-1],n,x,y);
+
+    return total;
+  }
+
+  /** \brief Compute integral over all intervals and store result
+      in a vector using interpolation
+   */
+  template<class vec_t, class vec2_t> 
+    void vector_integ_all_interp(size_t n, const vec_t &x, const vec2_t &y,
+				 vec3_t &iy, size_t interp_type=itp_linear) {
+    
+    // Interpolation object
+    interp<vec_t,vec2_t> si(interp_type);
+    
+    // Compute full integral
+    iy[0]=0.0;
+    for(size_t i=1;i<n;i++) {
+      iy[i]=si.integ(x[0],x[i],n,x,y);
+    }
 
     return total;
   }

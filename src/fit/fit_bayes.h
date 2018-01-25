@@ -271,7 +271,8 @@ namespace o2scl {
 	    edge_y[1]/=2.0;
 	    edge_y[edge_y.size()-2]/=2.0;
 
-	    double total=vector_integ_linear(hsize+2,edge_x,edge_y);
+	    double total=vector_integ_interp(hsize+2,edge_x,edge_y,
+					     itp_linear);
 	    
 	    double lev;
 	    std::vector<double> locs;
