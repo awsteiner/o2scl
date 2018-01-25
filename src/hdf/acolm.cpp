@@ -3656,6 +3656,18 @@ int acol_manager::comm_download(std::vector<std::string> &sv, bool itive_com) {
 
   std::string file=in[0];
   std::string hash=in[1];
+  if (hash[0]=='f' && hash[1]=='i' && hash[2]=='l' && hash[3]=='e' &&
+      hash[4]==':') {
+    string fname=hash.substr(5,hash.size()-5);
+    ifstream fin;
+    fin.open(fname.c_str());
+    fin >> hash;
+    fin.close();
+    if (verbose>0) {
+      cout << "Obtained hash " << hash << " from file " << fname << endl;
+    }
+  }
+      
   std::string url=in[2];
   std::string fname;
   
@@ -3671,7 +3683,7 @@ int acol_manager::comm_slice(std::vector<std::string> &sv, bool itive_com) {
   
     if (table3d_obj.get_nslices()==0) {
       cerr << "No data in current table3d object." << endl;
-    return exc_efailed;
+      return exc_efailed;
     }
     
     vector<string> in, pr;
