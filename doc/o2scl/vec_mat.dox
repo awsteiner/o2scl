@@ -183,12 +183,18 @@
     \ref o2scl::interp2_direct) use 'x' to denote the row index and
     'y' to denote the column index by convention.
 
-    \section genvec_subsection Generic vector functions
+    \section genvec_subsection Generic vector and matrix functions
     
     There are a couple functions which operate on generic vectors of
-    any type in \ref vector.h . They perform sorting, summing,
-    rotating, copying, and computations of minima and maxima. For
-    more statistically-oriented operations, see also \ref vec_stats.h .
+    any type in \ref vector.h . This header contains functions for
+    sorting, summing, searching, swapping, reversing, monotonicity
+    testing, rotating, copying, constructing ranges, and computations
+    of minima and maxima. This header also contains similar operations
+    for matrices. For more statistically-oriented operations, see also
+    \ref vec_stats.h . For generic functions which compute derivatives
+    and integrals of data specified in vectors, see \ref
+    vector_derint.h . There are a few generic vector functions related
+    to interpolation in \ref interp.h .
     
     \section vmout_subsect Vector and matrix output
 
