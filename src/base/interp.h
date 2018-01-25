@@ -2063,6 +2063,16 @@ namespace o2scl {
     return;
   }
 
+  /** \brief Integral from interpolation object
+   */
+  template<class ovec_t>
+    double vector_integ_interp(size_t n, ovec_t &v, size_t interp_type) {
+    ovec_t grid(n);
+    for(size_t i=0;i<n;i++) grid[i]=((double)i);
+    interp_vec<ovec_t> oi(n,grid,v,interp_type);
+    return oi.integ(0.0,((double)(n-1)));
+  }
+
   /** \brief Compute the integral over <tt>y(x)</tt> using 
       interpolation
 
@@ -2077,8 +2087,8 @@ namespace o2scl {
       \ref vector_deriv2_interp() in \ref vector_derint.h .
   */
   template<class vec_t, class vec2_t> 
-    double vector_integ_interp(size_t n, const vec_t &x, const vec2_t &y,
-			       size_t interp_type=itp_linear) {
+    double vector_integ_xy_interp(size_t n, const vec_t &x, const vec2_t &y,
+				  size_t interp_type=itp_linear) {
     
     // Interpolation object
     interp<vec_t,vec2_t> si(interp_type);
@@ -2092,9 +2102,9 @@ namespace o2scl {
   /** \brief Compute integral over all intervals and store result
       in a vector using interpolation
    */
-  template<class vec_t, class vec2_t> 
-    void vector_integ_all_interp(size_t n, const vec_t &x, const vec2_t &y,
-				 vec3_t &iy, size_t interp_type=itp_linear) {
+  template<class vec_t, class vec2_t, class vec3_t> 
+    void vector_integ_xy_interp(size_t n, const vec_t &x, const vec2_t &y,
+				vec3_t &iy, size_t interp_type=itp_linear) {
     
     // Interpolation object
     interp<vec_t,vec2_t> si(interp_type);
@@ -2105,7 +2115,7 @@ namespace o2scl {
       iy[i]=si.integ(x[0],x[i],n,x,y);
     }
 
-    return total;
+    return;
   }
 
   /** \brief Compute the endpoints which enclose the regions whose
@@ -2143,19 +2153,14 @@ namespace o2scl {
       same in order to use o2scl_interp.
       \endcomment
   */
-  template<class vec_t, class vec2_t> void vector_invert_enclosed_sum
+  template<class vec_t, class vec2_t> int vector_invert_enclosed_sum
     (double sum, size_t n, vec_t &x, vec2_t &y, double &lev,
-     int verbose=0) {
+     int verbose=0, bool err_on_fail=true) {
     
     if (n<=1) {
       O2SCL_ERR2("Need at least two data points in ",
 		 "vector_invert_enclosed_sum().",exc_einval);
     }
-
-    //if (y[0]!=y[n-1]) {
-    //O2SCL_ERR2("The first and last y-values must be equal in ",
-    //"vector_invert_enclosed_sum().",exc_einval);
-    //}
 
     // Construct a sorted list of function values 
     typedef boost::numeric::ublas::vector<double> ubvector;
@@ -2191,6 +2196,10 @@ namespace o2scl {
       vector_find_level(lev_tmp,n,x,y,locs);
       if ((locs.size()%2)!=0) {
 	nfail++;
+	if (verbose>0) {
+	  std::cout << lev_tmp << " " << 0.0 << " "
+		    << locs.size() << " (fail)" << std::endl;
+	}
       } else {
 	double sum_temp=0.0;
 	for(size_t i=0;i<locs.size()/2;i++) {
@@ -2200,52 +2209,59 @@ namespace o2scl {
 	}
 	xi.push_back(sum_temp);
 	yi.push_back(lev_tmp);
+	if (verbose>0) {
+	  std::cout << lev_tmp << " " << sum_temp << " "
+		    << locs.size() << " ";
+	  for(size_t i=0;i<locs.size();i++) {
+	    std::cout << locs[i] << " ";
+	  }
+	  std::cout << std::endl;
+	}
       }
     }
     if (nfail>10) {
-      O2SCL_ERR2("More than 10 failures in ",
-		 "vector_invert_enclosed_sum().",exc_einval);
-    }
-
-    if (verbose>1) {
-      std::cout << "i, xi, yi: " << std::endl;
-      for(size_t i=0;i<xi.size();i++) {
-	std::cout << i << " " << xi[i] << " " << yi[i] << std::endl;
+      if (err_on_fail) {
+	O2SCL_ERR2("More than 10 failures in ",
+		   "vector_invert_enclosed_sum().",o2scl::exc_efailed);
       }
+      return o2scl::exc_efailed;
     }
 
     lev=itp2.eval(sum,xi.size(),xi,yi);
     
-    return;
+    return 0;
   }
   
-  /** \brief Find the region enclosing a partial integral
+  /** \brief Find the region enclosing an integral
    */
-  template<class vec_t, class vec2_t> void vector_region_fracint
-    (size_t n, vec_t &x, vec2_t &y, double frac, std::vector<double> &locs,
-     int verbose=0) {
-
-    //if (frac<0.0 || frac>1.0) {
-    //O2SCL_ERR2("Fraction must be between 0 and 1 (exclusive) in ",
-    //"vector_region_fracint().",exc_efailed);
-    //}
+  template<class vec_t, class vec2_t> int vector_region_int
+    (size_t n, vec_t &x, vec2_t &y, double intl, std::vector<double> &locs,
+     int verbose=0, bool err_on_fail=true) {
 
     // Total integral
-    double total=vector_integ_linear(n,x,y);
+    double total=vector_integ_interp(n,x,y,itp_linear);
     if (verbose>0) {
       std::cout << "Total integral: " << total << std::endl;
     }
     // Specified fractional integral
-    double fractional=frac*total;
     if (verbose>0) {
-      std::cout << "Fractional integral: " << fractional << std::endl;
+      std::cout << "Target integral: " << intl << std::endl;
     }
     // Find correct level
     double lev;
-    vector_invert_enclosed_sum(fractional,n,x,y,lev,verbose);
+    int ret=vector_invert_enclosed_sum(intl,n,x,y,lev,verbose,err_on_fail);
+    if (ret!=0) {
+      if (err_on_fail) {
+	O2SCL_ERR2("Failed to find a level which enclosed the ",
+		   "specified integral in vector_region_int().",
+		   o2scl::exc_efailed);
+      }
+      return o2scl::exc_efailed;
+    }
     if (verbose>0) {
       std::cout << "Level from vector_invert: " << lev << std::endl;
     }
+
     // Inverse interpolate to find locations corresponding to level
     vector_find_level(lev,n,x,y,locs);
     if (verbose>0) {
@@ -2258,29 +2274,68 @@ namespace o2scl {
       }
       std::cout << std::endl;
     }
-    return;
+    return 0;
+  }
+
+  /** \brief Find the region enclosing a partial integral
+   */
+  template<class vec_t, class vec2_t> int vector_region_fracint
+    (size_t n, vec_t &x, vec2_t &y, double frac, std::vector<double> &locs,
+     int verbose=0, bool err_on_fail=true) {
+    double total=vector_integ_linear(n,x,y);
+    return vector_region_int(n,x,y,frac*total,locs,verbose,err_on_fail);
   }
 
   /** \brief Find the boundaries of the region enclosing a integral
-
+      
       This function finds the boundaries of the region which
       has integral equal to <tt>frac</tt> times the full
       integral from the lower x limit to the upper x limit.
    */
-  template<class vec_t, class vec2_t> void vector_bound_fracint
-    (size_t n, vec_t &x, vec2_t &y, double frac, double &low, double &high) {
+  template<class vec_t, class vec2_t> int vector_bound_fracint
+    (size_t n, vec_t &x, vec2_t &y, double frac, double &low, double &high,
+     int verbose=0, bool err_on_fail=true) {
     
     std::vector<double> locs;
-    vector_region_fracint(n,x,y,frac,locs);
-    if (locs.size()==0) {
-      O2SCL_ERR("Zero level crossings in vector_bound_sigma().",
-		exc_efailed);
+    int ret=vector_region_fracint(n,x,y,frac,locs,verbose,err_on_fail);
+    if (locs.size()==0 || ret!=0) {
+      if (err_on_fail) {
+	O2SCL_ERR2("Zero level crossings or vector_region_fracint() ",
+		   "failed in vector_bound_sigma().",exc_efailed);
+      }
+      return o2scl::exc_efailed;
     }
     // Return min and max location
     size_t ix;
     vector_min(locs.size(),locs,ix,low);
     vector_max(locs.size(),locs,ix,high);
-    return;
+    return 0;
+  }
+  
+  /** \brief Find the boundaries of the region enclosing a integral
+      
+      This function finds the boundaries of the region which
+      has integral equal to <tt>frac</tt> times the full
+      integral from the lower x limit to the upper x limit.
+   */
+  template<class vec_t, class vec2_t> int vector_bound_int
+    (size_t n, vec_t &x, vec2_t &y, double frac, double &low, double &high,
+     int verbose=0, bool err_on_fail=true) {
+    
+    std::vector<double> locs;
+    int ret=vector_region_int(n,x,y,frac,locs,verbose,err_on_fail);
+    if (locs.size()==0 || ret!=0) {
+      if (err_on_fail) {
+	O2SCL_ERR2("Zero level crossings or vector_region_int() ",
+		   "failed in vector_bound_sigma().",exc_efailed);
+      }
+      return o2scl::exc_efailed;
+    }
+    // Return min and max location
+    size_t ix;
+    vector_min(locs.size(),locs,ix,low);
+    vector_max(locs.size(),locs,ix,high);
+    return 0;
   }
   
 #ifndef DOXYGEN_NO_O2NS

@@ -275,16 +275,6 @@ namespace o2scl {
     }
     return res;
   }
-
-  /** \brief Integral from interpolation object
-   */
-  template<class ovec_t>
-    double vector_integ_interp(size_t n, ovec_t &v, size_t interp_type) {
-    ovec_t grid(n);
-    for(size_t i=0;i<n;i++) grid[i]=((double)i);
-    interp_vec<ovec_t> oi(n,grid,v,interp_type);
-    return oi.integ(0.0,((double)(n-1)));
-  }
   //@}
 
 #ifndef DOXYGEN_NO_O2NS

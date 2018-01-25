@@ -1503,9 +1503,7 @@ namespace o2scl {
     for(size_t i=0;i<pars.size();i++) {
       line.push_back(pars[i]);
     }
-    std::cout << "Here0 " << pars.size() << std::endl;
     int tempi=fill(pars,log_weight,line,dat);
-    std::cout << "Here3." << std::endl;
     return tempi;
   }
   

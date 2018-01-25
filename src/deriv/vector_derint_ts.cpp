@@ -21,6 +21,7 @@
   -------------------------------------------------------------------
 */
 #include <o2scl/vector_derint.h>
+#include <o2scl/interp.h>
 #include <o2scl/columnify.h>
 #include <o2scl/test_mgr.h>
 

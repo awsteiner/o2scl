@@ -218,7 +218,7 @@ int main(int argc, char *argv[]) {
   tm.test_gen(mpc.mc.n_accept[0]+mpc.mc.n_reject[0]==mpc.mc.max_iters,
 	      "aff_inv n_iters 0");
   if (n_threads>1) {
-    tm.test_gen(mpc.mc.n_accept[1]+mpc.mc.n_reject[1]!=mpc.mc.max_iters,
+    tm.test_gen(mpc.mc.n_accept[1]+mpc.mc.n_reject[1]==mpc.mc.max_iters,
 		"aff_inc n_iters 1");
   }
 
