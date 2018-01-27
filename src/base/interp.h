@@ -2057,13 +2057,13 @@ namespace o2scl {
    */
   template<class vec_t, class vec2_t, class vec3_t>
     void vector_deriv2_xy_interp(size_t n, vec_t &vx, vec2_t &vy, vec3_t &dv, 
-				size_t interp_type=itp_linear) {
+				 size_t interp_type=itp_linear) {
     interp_vec<vec_t,vec2_t> oi(n,vx,vy,interp_type);
     for(size_t i=0;i<n;i++) dv[i]=oi.deriv(vx[i]);
     return;
   }
 
-  /** \brief Integral from interpolation object
+  /** \brief Integral of a vector from interpolation object
    */
   template<class ovec_t>
     double vector_integ_interp(size_t n, ovec_t &v, size_t interp_type) {
@@ -2099,7 +2099,7 @@ namespace o2scl {
     return total;
   }
 
-  /** \brief Compute integral over all intervals and store result
+  /** \brief Compute integral over <tt>y(x)</tt> and store result
       in a vector using interpolation
    */
   template<class vec_t, class vec2_t, class vec3_t> 
@@ -2116,6 +2116,34 @@ namespace o2scl {
     }
 
     return;
+  }
+
+  /** \brief Compute the integral of a vector using
+      interpolation up to a specified upper limit
+  */
+  template<class ovec_t>
+    double vector_integ_ul_interp(size_t n, double x2,
+				  ovec_t &v, size_t interp_type) {
+    ovec_t grid(n);
+    for(size_t i=0;i<n;i++) grid[i]=((double)i);
+    interp_vec<ovec_t> oi(n,grid,v,interp_type);
+    return oi.integ(0.0,x2);
+  }
+
+  /** \brief Compute the integral over <tt>y(x)</tt> using 
+      interpolation up to a specified upper limit
+  */
+  template<class vec_t, class vec2_t> 
+    double vector_integ_ul_xy_interp(size_t n, const vec_t &x, const vec2_t &y,
+				     double x2, size_t interp_type=itp_linear) {
+    
+    // Interpolation object
+    interp<vec_t,vec2_t> si(interp_type);
+
+    // Compute full integral
+    double total=si.integ(x[0],x2,n,x,y);
+
+    return total;
   }
 
   /** \brief Compute the endpoints which enclose the regions whose
@@ -2155,17 +2183,63 @@ namespace o2scl {
   */
   template<class vec_t, class vec2_t> int vector_invert_enclosed_sum
     (double sum, size_t n, vec_t &x, vec2_t &y, double &lev,
-     int verbose=0, bool err_on_fail=true) {
+     int boundaries=0, int verbose=0, bool err_on_fail=true) {
     
     if (n<=1) {
       O2SCL_ERR2("Need at least two data points in ",
 		 "vector_invert_enclosed_sum().",exc_einval);
     }
 
-    // Construct a sorted list of function values 
     typedef boost::numeric::ublas::vector<double> ubvector;
-    ubvector ysort(n);
-    vector_copy(n,y,ysort);
+
+    // Handle boundaries
+    ubvector x2, y2;
+    size_t n2;
+    if (boundaries==1) {
+      x2.resize(n+1);
+      y2.resize(n+1);
+      x2[0]=x[0]-(x[1]-x[0])/1.0e6;
+      y2[0]=0.0;
+      for(size_t i=0;i<n;i++) {
+	x2[i+1]=x[i];
+	y2[i+1]=y[i];
+      }
+      n2=n+1;
+    } else if (boundaries==2) {
+      x2.resize(n+1);
+      y2.resize(n+1);
+      for(size_t i=0;i<n;i++) {
+	x2[i]=x[i];
+	y2[i]=y[i];
+      }
+      x2[n]=x[n-1]+(x[n-1]-x[n-2])/1.0e6;
+      y2[n]=0.0;
+      n2=n+1;
+    } else if (boundaries==3) {
+      x2.resize(n+2);
+      y2.resize(n+2);
+      x2[0]=x[0]-(x[1]-x[0])/1.0e6;
+      y2[0]=0.0;
+      for(size_t i=0;i<n;i++) {
+	x2[i+1]=x[i];
+	y2[i+1]=y[i];
+      }
+      x2[n+1]=x[n-1]+(x[n-1]-x[n-2])/1.0e6;
+      y2[n+1]=0.0;
+      n2=n+2;
+    } else {
+      x2.resize(n);
+      y2.resize(n);
+      for(size_t i=0;i<n;i++) {
+	x2[i]=x[i];
+	y2[i]=y[i];
+      }
+      n2=n;
+    }
+
+    // Construct a sorted list of function values 
+    ubvector ysort(n2);
+    vector_copy(n2,y2,ysort);
     vector_sort<ubvector,double>(ysort.size(),ysort);
 
     // Create list of y-values to perform y-value and integral
@@ -2193,7 +2267,7 @@ namespace o2scl {
     for(size_t k=0;k<ylist.size();k++) {
       double lev_tmp=ylist[k];
       std::vector<double> locs;
-      vector_find_level(lev_tmp,n,x,y,locs);
+      vector_find_level(lev_tmp,n2,x2,y2,locs);
       if ((locs.size()%2)!=0) {
 	nfail++;
 	if (verbose>0) {
@@ -2205,7 +2279,7 @@ namespace o2scl {
 	for(size_t i=0;i<locs.size()/2;i++) {
 	  double x0=locs[2*i];
 	  double x1=locs[2*i+1];
-	  sum_temp+=itp.integ(x0,x1,n,x,y);
+	  sum_temp+=itp.integ(x0,x1,n2,x2,y2);
 	}
 	xi.push_back(sum_temp);
 	yi.push_back(lev_tmp);
@@ -2236,7 +2310,7 @@ namespace o2scl {
    */
   template<class vec_t, class vec2_t> int vector_region_int
     (size_t n, vec_t &x, vec2_t &y, double intl, std::vector<double> &locs,
-     int verbose=0, bool err_on_fail=true) {
+     int boundaries=0, int verbose=0, bool err_on_fail=true) {
 
     // Total integral
     double total=vector_integ_interp(n,x,y,itp_linear);
@@ -2249,7 +2323,8 @@ namespace o2scl {
     }
     // Find correct level
     double lev;
-    int ret=vector_invert_enclosed_sum(intl,n,x,y,lev,verbose,err_on_fail);
+    int ret=vector_invert_enclosed_sum(intl,n,x,y,lev,
+				       boundaries,verbose,err_on_fail);
     if (ret!=0) {
       if (err_on_fail) {
 	O2SCL_ERR2("Failed to find a level which enclosed the ",
@@ -2281,9 +2356,10 @@ namespace o2scl {
    */
   template<class vec_t, class vec2_t> int vector_region_fracint
     (size_t n, vec_t &x, vec2_t &y, double frac, std::vector<double> &locs,
-     int verbose=0, bool err_on_fail=true) {
+     int boundaries=0, int verbose=0, bool err_on_fail=true) {
     double total=vector_integ_linear(n,x,y);
-    return vector_region_int(n,x,y,frac*total,locs,verbose,err_on_fail);
+    return vector_region_int(n,x,y,frac*total,locs,boundaries,
+			     verbose,err_on_fail);
   }
 
   /** \brief Find the boundaries of the region enclosing a integral
@@ -2294,10 +2370,11 @@ namespace o2scl {
    */
   template<class vec_t, class vec2_t> int vector_bound_fracint
     (size_t n, vec_t &x, vec2_t &y, double frac, double &low, double &high,
-     int verbose=0, bool err_on_fail=true) {
+     int boundaries=0, int verbose=0, bool err_on_fail=true) {
     
     std::vector<double> locs;
-    int ret=vector_region_fracint(n,x,y,frac,locs,verbose,err_on_fail);
+    int ret=vector_region_fracint(n,x,y,frac,locs,boundaries,
+				  verbose,err_on_fail);
     if (locs.size()==0 || ret!=0) {
       if (err_on_fail) {
 	O2SCL_ERR2("Zero level crossings or vector_region_fracint() ",
@@ -2320,10 +2397,11 @@ namespace o2scl {
    */
   template<class vec_t, class vec2_t> int vector_bound_int
     (size_t n, vec_t &x, vec2_t &y, double frac, double &low, double &high,
-     int verbose=0, bool err_on_fail=true) {
+     int boundaries=0, int verbose=0, bool err_on_fail=true) {
     
     std::vector<double> locs;
-    int ret=vector_region_int(n,x,y,frac,locs,verbose,err_on_fail);
+    int ret=vector_region_int(n,x,y,frac,locs,boundaries,
+			      verbose,err_on_fail);
     if (locs.size()==0 || ret!=0) {
       if (err_on_fail) {
 	O2SCL_ERR2("Zero level crossings or vector_region_int() ",
