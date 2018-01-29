@@ -339,7 +339,6 @@ namespace o2scl {
     double max_var=fabs(v[0]-m(h.inside[0],0))/scale[0];
     for(size_t ip=1;ip<ndim;ip++) {
       double var=fabs(v[ip]-m(h.inside[0],ip))/scale[ip];
-	scale[i];
       if (var>max_var) {
 	max_ip=ip;
 	max_var=var;
