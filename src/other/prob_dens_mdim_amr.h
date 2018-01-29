@@ -21,7 +21,8 @@
   -------------------------------------------------------------------
 */
 /** \file prob_dens_mdim_amr.h
-    \brief Desc
+    \brief File defining \ref o2scl::matrix_view, 
+    \ref o2scl::matrix_view_table, and \ref o2scl::prob_dens_mdim_amr
 */
 #ifndef O2SCL_PROB_DENS_MDIM_AMR_H
 #define O2SCL_PROB_DENS_MDIM_AMR_H
@@ -229,6 +230,10 @@ namespace o2scl {
    */
   vec_t high;
 
+  /** \brief Vector of length scales
+   */
+  vec_t scale;
+
   /** \brief Mesh stored as an array of hypercubes
    */
   std::vector<hypercube> mesh;
@@ -236,24 +241,52 @@ namespace o2scl {
   /** \brief Verbosity parameter
    */
   int verbose;
- 
+
+  prob_dens_mdim_amr() {
+    ndim=0;
+  }
+  
   /** \brief Initialize a probability distribution from the corners
    */
-  prob_dens_mdim_amr(vec_t &l, vec_t &h) {
+  prob_dens_mdim_amr(vec_t &l, vec_t &h, vec_t &s) {
+    set(l,h,s);
+  }
+
+  /** \brief Set the mesh limits
+
+      This function is called by the constructor
+   */
+  int set(vec_t &l, vec_t &h, vec_t &s) {
+    mesh.clear();
+    if (h.size()<l.size() || s.size()<l.size()) {
+      O2SCL_ERR2("Vector sizes not correct in ",
+		"prob_dens_mdim_amr::set().",o2scl::exc_einval);
+    }
     low.resize(l.size());
     high.resize(h.size());
+    scale.resize(s.size());
     for(size_t i=0;i<l.size();i++) {
       low[i]=l[i];
       high[i]=h[i];
+      scale[i]=s[i];
+      if (s[i]<=0.0) {
+	O2SCL_ERR2("Scale parameter zero or negative in ",
+		   "prob_dens_mdim_amr::set().",o2scl::exc_einval);
+      }
     }
     ndim=low.size();
     verbose=1;
     return;
   }
  
-  /** \brief Insert point at row \c ir 
+  /** \brief Insert point at row \c ir, creating a new hypercube 
+      for the new point
    */
   void insert(size_t ir, mat_t &m) {
+    if (ndim==0) {
+      O2SCL_ERR2("Region limits and scales not set in ",
+		 "prob_dens_mdim_amr::insert().",o2scl::exc_einval);
+    }
 
     if (mesh.size()==0) {
       if (verbose>1) {
@@ -293,7 +326,8 @@ namespace o2scl {
       }
     }
     if (found==false) {
-      O2SCL_ERR("Error 1.",o2scl::exc_esanity);
+      O2SCL_ERR2("Couldn't find point inside mesh in ",
+		 "prob_dens_mdim_amr::insert().",o2scl::exc_efailed);
     }
     hypercube &h=mesh[jm];
     if (verbose>1) {
@@ -302,14 +336,13 @@ namespace o2scl {
    
     // Find coordinate with largest relative variation
     size_t max_ip=0;
-    double max_var=fabs(v[0]-m(h.inside[0],0))/(h.high[0]-h.low[0]);
+    double max_var=fabs(v[0]-m(h.inside[0],0))/scale[i];
     for(size_t ip=1;ip<ndim;ip++) {
-      double var=fabs(v[ip]-m(h.inside[0],ip))/(h.high[ip]-h.low[ip]);
+      double var=fabs(v[ip]-m(h.inside[0],ip))/scale[i];
+	scale[i];
       if (var>max_var) {
 	max_ip=ip;
 	max_var=var;
-	if (verbose>1) {
-	}
       }
     }
     if (verbose>1) {
@@ -381,7 +414,8 @@ namespace o2scl {
     return;
   }
  
-  /** \brief Desc
+  /** \brief Parse the matrix \c m, creating a new hypercube
+      for every point 
    */
   void initial_parse(mat_t &m) {
    
@@ -392,9 +426,14 @@ namespace o2scl {
     return;
   }
 
-  /** \brief Desc
+  /** \brief Check the total volume by adding up the fractional
+      part of the volume in each hypercube
    */
   double total_volume() {
+    if (mesh.size()==0) {
+      O2SCL_ERR2("Mesh empty in ",
+		 "prob_dens_mdim_amr::total_volume().",o2scl::exc_einval);
+    }
     double ret=0.0;
     for(size_t i=0;i<mesh.size();i++) {
       ret+=mesh[i].frac_vol;
@@ -404,7 +443,12 @@ namespace o2scl {
  
   /// The normalized density 
   virtual double pdf(const vec_t &x) const {
-   
+
+    if (mesh.size()==0) {
+      O2SCL_ERR2("Mesh empty in ",
+		 "prob_dens_mdim_amr::pdf().",o2scl::exc_einval);
+    }
+
     // Find the right hypercube
     bool found=false;
     size_t jm=0;
@@ -420,9 +464,37 @@ namespace o2scl {
     return mesh[jm].weight;
   }
 
+  /// Select a random point in the largest weighted box
+  virtual void select_in_largest(vec_t &x) const {
+   
+    if (mesh.size()==0) {
+      O2SCL_ERR2("Mesh empty in ",
+		 "prob_dens_mdim_amr::operator()().",o2scl::exc_einval);
+    }
+
+    size_t im=0;
+    double wgt=mesh[0].frac_vol*mesh[0].weight;
+    for(size_t i=1;i<mesh.size();i++) {
+      if (mesh[i].frac_vol*mesh[i].weight>wgt) {
+	im=i;
+	wgt=mesh[i].frac_vol*mesh[i].weight;
+      }
+    }
+    for(size_t j=0;j<ndim;j++) {
+      x[j]=rg.random()*(mesh[im].high[j]-mesh[im].low[j])+mesh[im].low[j];
+    }
+
+    return;
+  }
+
   /// Sample the distribution
   virtual void operator()(vec_t &x) const {
    
+    if (mesh.size()==0) {
+      O2SCL_ERR2("Mesh empty in ",
+		 "prob_dens_mdim_amr::operator()().",o2scl::exc_einval);
+    }
+
     double total_weight=0.0;
     for(size_t i=0;i<mesh.size();i++) {
       total_weight+=mesh[i].weight*mesh[i].frac_vol;

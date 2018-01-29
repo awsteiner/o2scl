@@ -2099,6 +2099,17 @@ namespace o2scl {
    */
   virtual void post_pointmeas() {
 
+    if (true) {
+      size_t total_accept=0;
+      for(size_t it=0;it<this->n_chains_per_rank;it++) {
+	total_accept+=this->n_accept[it];
+      }
+      this->scr_out << "In post_pointmeas()."
+      << total_accept << " file_update_iters: "
+      << file_update_iters << " last_write: "
+      << last_write << std::endl;
+    }
+    
     // If necessary, output to files
     if (file_update_iters>0) {
       size_t total_accept=0;
