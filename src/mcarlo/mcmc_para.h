@@ -679,7 +679,8 @@ namespace o2scl {
 		  ret_value_counts[it][func_ret[it]]++;
 		}
 		meas_ret[it]=meas[it](current[sindex],w_current[sindex],
-				      curr_walker[it],true,data_arr[sindex]);
+				      curr_walker[it],func_ret[it],
+				      true,data_arr[sindex]);
 		if (meas_ret[it]==mcmc_done) {
 		  mcmc_done_flag[it]=true;
 		}
@@ -721,7 +722,7 @@ namespace o2scl {
 		  }
 		  if (meas_ret[it]!=mcmc_done) {
 		    meas_ret[it]=meas[it](current[sindex],w_current[sindex],
-					  curr_walker[it],true,
+					  curr_walker[it],func_ret[it],true,
 					  data_arr[sindex]);
 		  } else {
 		    mcmc_done_flag[it]=true;
@@ -876,7 +877,7 @@ namespace o2scl {
 	  }
 	  // Call the measurement function	  
 	  meas_ret[it]=meas[it](current[it],w_current[it],0,
-				true,data_arr[it]);
+				func_ret[it],true,data_arr[it]);
 	  if (meas_ret[it]==mcmc_done) {
 	    mcmc_done_flag[it]=true;
 	  }
@@ -1164,11 +1165,11 @@ namespace o2scl {
 	    if (!warm_up) {
 	      if (switch_arr[sindex]==false) {
 		meas_ret[it]=meas[it](next[it],w_next[it],
-				      curr_walker[it],true,
+				      curr_walker[it],func_ret[it],true,
 				      data_arr[sindex+n_threads*n_walk]);
 	      } else {
 		meas_ret[it]=meas[it](next[it],w_next[it],
-				      curr_walker[it],true,
+				      curr_walker[it],func_ret[it],true,
 				      data_arr[sindex]);
 	      }
 	    }
@@ -1186,12 +1187,13 @@ namespace o2scl {
 	    // Repeat measurement of old point
 	    if (!warm_up) {
 	      if (switch_arr[sindex]==false) {
-		meas_ret[it]=meas[it](next[sindex],w_next[sindex],
-				      curr_walker[it],false,data_arr[sindex]);
+		meas_ret[it]=meas[it](next[it],w_next[it],
+				      curr_walker[it],func_ret[it],false,
+				      data_arr[sindex+n_threads*n_walk]);
 	      } else {
-		meas_ret[it]=meas[it](next[sindex],w_next[sindex],
-				      curr_walker[it],false,
-				      data_arr[sindex+n_walk*n_threads]);
+		meas_ret[it]=meas[it](next[it],w_next[it],
+				      curr_walker[it],func_ret[it],false,
+				      data_arr[sindex]);
 	      }
 	    }
 
@@ -1408,13 +1410,13 @@ namespace o2scl {
   */
   template<class func_t, class fill_t, class data_t, class vec_t=ubvector>
     class mcmc_para_table : public mcmc_para_base<func_t,
-    std::function<int(const vec_t &,double,size_t,bool,data_t &)>,
+    std::function<int(const vec_t &,double,size_t,int,bool,data_t &)>,
     data_t,vec_t> {
     
   protected:
   
   /// Measurement functor type for the parent
-  typedef std::function<int(const vec_t &,double,size_t,bool,data_t &)>
+  typedef std::function<int(const vec_t &,double,size_t,int,bool,data_t &)>
   internal_measure_t;
   
   /// Type of parent class
@@ -1882,11 +1884,12 @@ namespace o2scl {
     std::vector<internal_measure_t> meas(this->n_threads);
     for(size_t it=0;it<this->n_threads;it++) {
       meas[it]=std::bind
-	(std::mem_fn<int(const vec_t &,double,size_t,bool,
+	(std::mem_fn<int(const vec_t &,double,size_t,int,bool,
 			 data_t &, size_t, fill_t &)>
 	 (&mcmc_para_table::add_line),this,std::placeholders::_1,
-	 std::placeholders::_2,std::placeholders::_3,std::placeholders::_4,
-	 std::placeholders::_5,it,std::ref(fill[it]));
+	 std::placeholders::_2,std::placeholders::_3,
+	 std::placeholders::_4,std::placeholders::_5,
+	 std::placeholders::_6,it,std::ref(fill[it]));
     }
     
     return parent_t::mcmc(n_params,low,high,func,meas);
@@ -1934,7 +1937,8 @@ namespace o2scl {
       table
   */
   virtual int add_line(const vec_t &pars, double log_weight,
-		       size_t walker_ix, bool mcmc_accept, data_t &dat,
+		       size_t walker_ix, int func_ret,
+		       bool mcmc_accept, data_t &dat,
 		       size_t i_thread, fill_t &fill) {
 
     // The combined walker/thread index 
@@ -1999,7 +2003,7 @@ namespace o2scl {
       }
 
       // If needed, add the line to the next row
-      if (mcmc_accept || store_rejects) {
+      if (func_ret==0 && (mcmc_accept || store_rejects)) {
 	
 	if (next_row>=((int)(table->get_nlines()))) {
 	  O2SCL_ERR("Not enough space in table.",o2scl::exc_esanity);
@@ -2061,7 +2065,7 @@ namespace o2scl {
 
 	// End of 'if (mcmc_accept || store_rejects)'
       }
-
+      
       // If necessary, increment the multiplier on the previous point
       if (ret_value==o2scl::success && mcmc_accept==false) {
 	double mult_old=table->get("mult",walker_accept_rows[windex]);
@@ -2082,7 +2086,7 @@ namespace o2scl {
     if (ret_value==o2scl::success) {
       if (mcmc_accept) {
 	walker_accept_rows[windex]=next_row;
-      } else if (store_rejects) {
+      } else if (store_rejects && func_ret==0) {
 	walker_reject_rows[windex]=next_row;
       }
     }

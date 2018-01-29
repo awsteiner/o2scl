@@ -44,6 +44,7 @@
 #include <o2scl/hdf_io.h>
 #include <o2scl/lib_settings.h>
 #include <o2scl/contour.h>
+#include <o2scl/tensor_grid.h>
 
 #ifdef O2SCL_READLINE
 #include <o2scl/cli_readline.h>
@@ -210,6 +211,8 @@ namespace o2scl_acol {
     std::vector<double> doublev_obj;
     std::vector<size_t> size_tv_obj;
     std::vector<std::string> stringv_obj;
+
+    o2scl::tensor_grid<> tensor_grid_obj;
     //@}
     
     /** \brief True if we should run interactive mode after parsing

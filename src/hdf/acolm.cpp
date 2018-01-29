@@ -489,6 +489,39 @@ void acol_manager::command_add(std::string new_type) {
       cl->set_comm_option_vec(narr2,options_arr2);
     }
 
+  } else if (new_type=="tensor_grid") {
+    
+    static const size_t narr=1;
+    comm_option_s options_arr[narr]={
+      {'l',"list","List the slice names and print out grid info.",
+       0,0,"","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
+       both}
+    };
+    cl->set_comm_option_vec(narr,options_arr);
+
+    /*
+    if (o2graph_mode) {
+      static const size_t narr2=1;
+      comm_option_s options_arr2[narr2]={
+	{0,"den-plot","Create a density plot from a table3d object.",
+	 0,1,"<slice name for table3d>",
+	 ((std::string)"Creates a density plot from the specified slice. ")+
+	 "Logarithmic x- or y-axes are handled by taking the base 10 log "+
+	 "of the x- or y-grids specified in the table3d object before "+
+	 "plotting. A z-axis density legend is print on the RHS if "+
+	 "colbar is set to 1 before plotting. If z-axis limits are "+
+	 "specified, then values larger than the upper limit are set "+
+	 "equal to the upper limit and values smaller than the lower "+
+	 "limit are set equal to the lower limit before plotting.",
+	 new o2scl::comm_option_mfptr<acol_manager>
+	 (this,&acol_manager::comm_none),
+	 both}
+      };
+      cl->set_comm_option_vec(narr2,options_arr2);
+    }
+    */
+
   } else if (new_type=="hist") {
 
     if (o2graph_mode) {
@@ -856,6 +889,14 @@ void acol_manager::command_del() {
       cl->remove_comm_option("den-plot");
     }
     
+  } else if (type=="tensor_grid") {
+    
+    cl->remove_comm_option("list");
+
+    //if (o2graph_mode) {
+    //cl->remove_comm_option("den-plot");
+    //}
+    
   } else if (type=="hist_2d") {
 
     cl->remove_comm_option("max");
@@ -1010,7 +1051,7 @@ int acol_manager::setup_options() {
      both},
     {0,"download","Download file from specified URL.",
      0,3,"<file> <hash file> <URL>",
-     ((string)"Check if a file matches a specified hash, and if not,")+
+     ((string)"Check if a file matches a specified hash, and if not, ")+
      "attempt to download a fresh copy from the specified URL.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_download),
      both},
@@ -3146,6 +3187,15 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       command_add("table3d");
       type="table3d";
       return 0;
+    } else if (ip.type=="tensor_grid") {
+      if (verbose>2) {
+	cout << "Reading tensor_grid." << endl;
+      }
+      hdf_input(hf,tensor_grid_obj,i2);
+      obj_name=i2;
+      command_add("tensor_grid");
+      type="tensor_grid";
+      return 0;
     } else if (ip.type=="hist") {
       if (verbose>2) {
 	cout << "Reading hist." << endl;
@@ -3647,6 +3697,21 @@ int acol_manager::comm_to_table(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_download(std::vector<std::string> &sv, bool itive_com) {
 
+  cloud_file cf;
+  std::string file, hash, url, fname;
+
+  if (sv.size()==3) {
+    
+    file=sv[1];
+    url=sv[2];
+    if (verbose>0) {
+      cout << "No hash specified, so download is not verified." << endl;
+    }
+    cf.get_file(file,url,fname);
+    return 0;
+    
+  } 
+  
   vector<string> in, pr;
   pr.push_back("Destination filename");
   pr.push_back("Hash");
@@ -3654,24 +3719,25 @@ int acol_manager::comm_download(std::vector<std::string> &sv, bool itive_com) {
   int ret=get_input(sv,pr,in,"download",itive_com);
   if (ret!=0) return ret;
 
-  std::string file=in[0];
-  std::string hash=in[1];
-  if (hash[0]=='f' && hash[1]=='i' && hash[2]=='l' && hash[3]=='e' &&
+  file=in[0];
+  hash=in[1];
+  url=in[2];
+
+  if ((hash[0]=='f' || hash[0]=='F') &&
+      (hash[1]=='i' || hash[1]=='I') &&
+      (hash[2]=='l' || hash[2]=='L') &&
+      (hash[3]=='e' || hash[3]=='E') &&
       hash[4]==':') {
-    string fname=hash.substr(5,hash.size()-5);
+    string hash_file=hash.substr(5,hash.size()-5);
     ifstream fin;
-    fin.open(fname.c_str());
+    fin.open(hash_file.c_str());
     fin >> hash;
     fin.close();
     if (verbose>0) {
-      cout << "Obtained hash " << hash << " from file " << fname << endl;
+      cout << "Obtained hash " << hash << " from file " << hash_file << endl;
     }
   }
-      
-  std::string url=in[2];
-  std::string fname;
   
-  cloud_file cf;
   cf.get_file_hash(file,hash,url,fname);
   
   return 0;
@@ -4743,6 +4809,10 @@ int acol_manager::comm_internal(std::vector<std::string> &sv, bool itive_com) {
   } else if (type=="table3d") {
     
     hdf_output(hf,table3d_obj,obj_name);
+    
+  } else if (type=="tensor_grid") {
+    
+    hdf_output(hf,tensor_grid_obj,obj_name);
     
   } else if (type=="table") {
     
@@ -5997,17 +6067,40 @@ int acol_manager::comm_assign(std::vector<std::string> &sv, bool itive_com) {
 int acol_manager::comm_list(std::vector<std::string> &sv, bool itive_com) {
   cout.precision(prec);
   if (type=="table3d") {
-    cout << "Table3d name: " << obj_name << endl;
+    cout << "table3d name: " << obj_name << endl;
     table3d_obj.summary(&cout,ncols);
   } else if (type=="table") {
-    cout << "Table name: " << obj_name << endl;
+    cout << "table name: " << obj_name << endl;
     if (table_obj.get_nunits()>0) {
       table_obj.summary(&cout,ncols);
     } else {
       table_obj.table<std::vector<double> >::summary(&cout,ncols);
     }
+  } else if (type=="tensor_grid") {
+    cout << "tensor_grid name: " << obj_name << endl;
+    size_t rk=tensor_grid_obj.get_rank();
+    cout << "Rank: " << rk << endl;
+    const std::vector<size_t> &sarr=tensor_grid_obj.get_size_arr();
+    if (tensor_grid_obj.is_grid_set()==false) {
+      for(size_t j=0;j<rk;j++) {
+	cout << "Size of rank " << j << " is " << sarr[j] << endl;
+      }
+      cout << "Grid not set." << endl;
+    } else {
+      for(size_t j=0;j<rk;j++) {
+	cout << "Grid j (" << sarr[j] << "): ";
+	cout << tensor_grid_obj.get_grid(j,0) << " ";
+	if (sarr[j]>1) {
+	  cout << tensor_grid_obj.get_grid(j,1) << " ";
+	}
+	if (sarr[j]>2) {
+	  cout << "... " << tensor_grid_obj.get_grid(j,sarr[j]-1);
+	}
+	cout << endl;
+      }
+    }
   } else {
-    cerr << "No table to list columns for." << endl;
+    cerr << "Cannot 'list' for type " << type << "." << endl;
     return exc_efailed;
   }
   return 0;
@@ -6901,6 +6994,30 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     command_add("table");
     type="table";
     
+  } else if (ctype=="tensor_grid") {
+    
+    std::string i1;
+    int ret=get_input_one(sv,"Enter rank",i1,"create",itive_com);
+    if (ret!=0) return ret;
+    size_t rank=o2scl::stoszt(sv[1]);
+
+    if (sv.size()<2+rank) {
+      vector<string> pr, in;
+      for(size_t k=0;k<rank;k++) {
+	pr.push_back(((std::string)"Enter size for rank ")+
+		     o2scl::szttos(rank));
+      }
+      int ret=get_input(sv,pr,in,"create",itive_com);
+      if (ret!=0) return ret;
+    }
+    
+    vector<size_t> sarr(rank);
+    for(size_t k=0;k<rank;k++) {
+      sarr[k]=o2scl::stoszt(sv[2+k]);
+    }
+
+    tensor_grid_obj.resize(rank,sarr);
+
   } else if (ctype=="table3d") {
     
     vector<string> in;
