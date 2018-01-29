@@ -491,11 +491,14 @@ void acol_manager::command_add(std::string new_type) {
 
   } else if (new_type=="tensor_grid") {
     
-    static const size_t narr=1;
+    static const size_t narr=2;
     comm_option_s options_arr[narr]={
       {'l',"list","List the slice names and print out grid info.",
        0,0,"","",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
+       both},
+      {0,"set-grid","Set grid",-1,-1,"","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_set_grid),
        both}
     };
     cl->set_comm_option_vec(narr,options_arr);
@@ -892,6 +895,7 @@ void acol_manager::command_del() {
   } else if (type=="tensor_grid") {
     
     cl->remove_comm_option("list");
+    cl->remove_comm_option("set-grid");
 
     //if (o2graph_mode) {
     //cl->remove_comm_option("den-plot");
@@ -6995,28 +6999,30 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     type="table";
     
   } else if (ctype=="tensor_grid") {
-    
-    std::string i1;
-    int ret=get_input_one(sv,"Enter rank",i1,"create",itive_com);
-    if (ret!=0) return ret;
-    size_t rank=o2scl::stoszt(sv[1]);
 
-    if (sv.size()<2+rank) {
+    std::string i1;
+    int ret=get_input_one(sv2,"Enter rank",i1,"create",itive_com);
+    if (ret!=0) return ret;
+    size_t rank=o2scl::stoszt(sv2[1]);
+
+    if (sv2.size()<2+rank) {
       vector<string> pr, in;
       for(size_t k=0;k<rank;k++) {
 	pr.push_back(((std::string)"Enter size for rank ")+
 		     o2scl::szttos(rank));
       }
-      int ret=get_input(sv,pr,in,"create",itive_com);
+      int ret=get_input(sv2,pr,in,"create",itive_com);
       if (ret!=0) return ret;
     }
     
     vector<size_t> sarr(rank);
     for(size_t k=0;k<rank;k++) {
-      sarr[k]=o2scl::stoszt(sv[2+k]);
+      sarr[k]=o2scl::stoszt(sv2[2+k]);
     }
 
     tensor_grid_obj.resize(rank,sarr);
+    command_add("tensor_grid");
+    type="tensor_grid";
 
   } else if (ctype=="table3d") {
     
@@ -7388,6 +7394,42 @@ int acol_manager::comm_interp(std::vector<std::string> &sv, bool itive_com) {
   }    
   
   return 0;
+}
+
+int acol_manager::comm_set_grid(std::vector<std::string> &sv, bool itive_com) {
+
+  if (type=="tensor_grid") {
+
+    size_t rank=tensor_grid_obj.get_rank();
+    
+    vector<string> pr, in;
+    for(size_t k=0;k<rank;k++) {
+      pr.push_back(((std::string)"Function defining grid for rank ")+
+		   o2scl::szttos(rank));
+    }
+    int ret=get_input(sv,pr,in,"create",itive_com);
+    if (ret!=0) return ret;
+
+    vector<double> grid;
+      
+    for(size_t k=0;k<rank;k++) {
+      calculator calc;
+      std::map<std::string,double> vars;
+      for(size_t i=0;i<tensor_grid_obj.get_size(k);i++) {
+	vars["i"]=((double)i);
+	calc.compile(in[k].c_str(),&vars);
+	double gi=calc.eval(&vars);
+	grid.push_back(gi);
+      }
+    }
+    
+    tensor_grid_obj.set_grid_packed(grid);
+    
+    return 0;
+  }
+
+  cout << "Not implemented for type " << type << endl;
+  return 1;
 }
 
 int acol_manager::comm_fit(std::vector<std::string> &sv, bool itive_com) {

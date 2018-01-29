@@ -282,6 +282,8 @@ namespace o2scl_acol {
     /// Create a table from a column of equally spaced values
     virtual int comm_create(std::vector<std::string> &sv, bool itive_com);
 
+    virtual int comm_set_grid(std::vector<std::string> &sv, bool itive_com);
+
     /// Download a file from a specified URL
     virtual int comm_download(std::vector<std::string> &sv, bool itive_com);
 
