@@ -256,7 +256,7 @@ namespace o2scl {
 
       This function is called by the constructor
    */
-  int set(vec_t &l, vec_t &h, vec_t &s) {
+  void set(vec_t &l, vec_t &h, vec_t &s) {
     mesh.clear();
     if (h.size()<l.size() || s.size()<l.size()) {
       O2SCL_ERR2("Vector sizes not correct in ",
@@ -338,7 +338,7 @@ namespace o2scl {
     size_t max_ip=0;
     double max_var=fabs(v[0]-m(h.inside[0],0))/scale[0];
     for(size_t ip=1;ip<ndim;ip++) {
-      double var=fabs(v[ip]-m(h.inside[0],ip))/scale[i];
+      double var=fabs(v[ip]-m(h.inside[0],ip))/scale[ip];
 	scale[i];
       if (var>max_var) {
 	max_ip=ip;
