@@ -253,9 +253,12 @@ int nstar_cold::calc_eos(double np_0) {
     well_formed=false;
   }
   for(size_t i=0;i<eost->get_nlines()-1;i++) {
-    if (eost->get("ed",i)>eost->get("ed",i+1) || eost->get("pr",i)<0.0) {
+    if (eost->get("ed",i)>eost->get("ed",i+1) ||
+	eost->get("pr",i)>eost->get("pr",i+1) ||
+	eost->get("pr",i)<0.0) {
       if (verbose>0) {
-	cout << "Pressure is negative or energy density is decreasing" << endl;
+	cout << "Pressure is negative, the energy density is decreasing, "
+	     << "or the pressure is decreasing" << endl;
 	cout << " near a baryon density of " << eost->get("nb",i) 
 	     << " 1/fm^3." << endl;
       }

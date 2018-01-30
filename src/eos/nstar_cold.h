@@ -227,7 +227,8 @@ namespace o2scl {
 
     /// \name Output 
     //@{
-    /** \brief If true, the energy density of the EOS is monotonically 
+    /** \brief If true, the energy density and pressure 
+	of the EOS is monotonically 
 	increasing and the pressure is always positive
     */
     bool well_formed;

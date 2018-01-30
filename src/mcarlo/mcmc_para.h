@@ -1772,12 +1772,11 @@ namespace o2scl {
   /** \brief Read initial points from the best points recorded in file
       named \c fname
   */
-  virtual void initial_points_file_best(std::string fname) {
+  virtual void initial_points_file_best(std::string fname,
+					double thresh=1.0e-6) {
 
     table=std::shared_ptr<o2scl::table_units<> >(new o2scl::table_units<>);
     
-    size_t n_walk_loc, n_threads_loc;
-
 #ifdef O2SCL_MPI
     // Ensure that multiple threads aren't reading from the
     // filesystem at the same time
@@ -1792,8 +1791,6 @@ namespace o2scl {
     hf.open(fname);
     hdf_input(hf,*table,"markov_chain_0");
     hf.get_szt("n_params",this->n_params);
-    hf.get_szt("n_walk",n_walk_loc);
-    hf.get_szt("n_threads",n_threads_loc);
     hf.close();
     
 #ifdef O2SCL_MPI
@@ -1804,51 +1801,68 @@ namespace o2scl {
 #endif
 
     // Determine number of points
-    size_t n_points=n_walk_loc*n_threads_loc;
+    size_t n_points=this->n_walk*this->n_threads;
 
     if (this->verbose>0) {
-      std::cout << "Initial points: best " << n_points
-		<< " points from file: " << fname << std::endl;
+      std::cout << "Initial points: Finding best " << n_points
+		<< " unique points from file named "
+		<< fname << " ." << std::endl;
     }
 
-    // It seems like a lot of effort to copy the column, but this is
-    // likely faster than trying to reorganize the table
-    std::vector<double> lws;
-    std::vector<size_t> rows;
+    typedef std::map<double,int,std::greater<double> > map_t;
+    map_t m;    
+
+    // Sort by inserting into a map
     for(size_t k=0;k<table->get_nlines();k++) {
       if (table->get("mult",k)>0.5) {
-	lws.push_back(-table->get("log_wgt",k));
-	rows.push_back(k);
+	m.insert(std::make_pair(table->get("log_wgt",k),k));
       }
     }
 
+    // Remove near duplicates
+    bool found;
+    do {
+      found=false;
+      for(map_t::iterator mit=m.begin();mit!=m.end();mit++) {
+	map_t::iterator mit2=mit;
+	mit2++;
+	if (mit2!=m.end()) {
+	  if (fabs(mit->first-mit2->first)<thresh) {
+	    if (this->verbose>0) {
+	      std::cout << "Removing duplicate weights: "
+			<< mit->first << " " << mit2->first << std::endl;
+		
+	    }
+	    m.erase(mit2);
+	    mit=m.begin();
+	    found=true;
+	  }
+	}
+      }
+    } while (found==true);
+
     // Check to see if we have enough
-    if (lws.size()<n_points) {
+    if (m.size()<n_points) {
       O2SCL_ERR2("Could not find enough points in file in ",
 		 "mcmc_para::initial_points_file_best().",
 		 o2scl::exc_efailed);
     }
 
-    // Find the smallest entries in the -log_wgt vector
-    std::vector<size_t> smallest;
-    o2scl::vector_smallest_index<std::vector<double>,double>
-    (lws.size(),lws,n_points,smallest);
-    if (this->verbose>0) {
-      for(size_t k=0;k<n_points;k++) {
-	std::cout << "Choosing row " << rows[smallest[k]] 
-		  << " from table with log_wgt: "
-		  << table->get("log_wgt",rows[smallest[k]])
-		  << std::endl;
-      }
-    }
-    
     // Copy the entries from this row into the initial_points object
     this->initial_points.resize(n_points);
+    map_t::iterator mit=m.begin();
     for(size_t k=0;k<n_points;k++) {
+      int row=mit->second;
+      if (this->verbose>0) {
+	std::cout << "Initial point " << k << " at row "
+		  << row << " has log_weight= "
+		  << table->get("log_wgt",row) << std::endl;
+      }
       this->initial_points[k].resize(this->n_params);
       for(size_t ip=0;ip<this->n_params;ip++) {
-	this->initial_points[k][ip]=table->get(ip+5,rows[smallest[k]]);
+	this->initial_points[k][ip]=table->get(ip+5,row);
       }
+      mit++;
     }
 
     return;
@@ -2099,17 +2113,6 @@ namespace o2scl {
    */
   virtual void post_pointmeas() {
 
-    if (true) {
-      size_t total_accept=0;
-      for(size_t it=0;it<this->n_chains_per_rank;it++) {
-	total_accept+=this->n_accept[it];
-      }
-      this->scr_out << "In post_pointmeas()."
-      << total_accept << " file_update_iters: "
-      << file_update_iters << " last_write: "
-      << last_write << std::endl;
-    }
-    
     // If necessary, output to files
     if (file_update_iters>0) {
       size_t total_accept=0;
