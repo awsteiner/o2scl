@@ -2193,7 +2193,7 @@ namespace o2scl {
     typedef boost::numeric::ublas::vector<double> ubvector;
 
     // Handle boundaries
-    ubvector x2, y2;
+    std::vector<double> x2, y2;
     size_t n2;
     if (boundaries==1) {
       x2.resize(n+1);
@@ -2357,7 +2357,7 @@ namespace o2scl {
   template<class vec_t, class vec2_t> int vector_region_fracint
     (size_t n, vec_t &x, vec2_t &y, double frac, std::vector<double> &locs,
      int boundaries=0, int verbose=0, bool err_on_fail=true) {
-    double total=vector_integ_interp(n,x,y,itp_linear);
+    double total=vector_integ_xy_interp(n,x,y,itp_linear);
     return vector_region_int(n,x,y,frac*total,locs,boundaries,
 			     verbose,err_on_fail);
   }
