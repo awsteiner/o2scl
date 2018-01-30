@@ -2313,7 +2313,7 @@ namespace o2scl {
      int boundaries=0, int verbose=0, bool err_on_fail=true) {
 
     // Total integral
-    double total=vector_integ_interp(n,x,y,itp_linear);
+    double total=vector_integ_xy_interp(n,x,y,itp_linear);
     if (verbose>0) {
       std::cout << "Total integral: " << total << std::endl;
     }
@@ -2357,7 +2357,7 @@ namespace o2scl {
   template<class vec_t, class vec2_t> int vector_region_fracint
     (size_t n, vec_t &x, vec2_t &y, double frac, std::vector<double> &locs,
      int boundaries=0, int verbose=0, bool err_on_fail=true) {
-    double total=vector_integ_linear(n,x,y);
+    double total=vector_integ_interp(n,x,y,itp_linear);
     return vector_region_int(n,x,y,frac*total,locs,boundaries,
 			     verbose,err_on_fail);
   }
