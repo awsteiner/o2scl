@@ -1771,8 +1771,11 @@ namespace o2scl {
   
   /** \brief Read initial points from the best points recorded in file
       named \c fname
+
+      The values of \ref mcmc_para::n_walk and \ref mcmc_para::n_threads
+      must be set to their correct values before calling this function.
   */
-  virtual void initial_points_file_best(std::string fname,
+  virtual void initial_points_file_best(std::string fname, size_t n_params,
 					double thresh=1.0e-6) {
 
     table=std::shared_ptr<o2scl::table_units<> >(new o2scl::table_units<>);
