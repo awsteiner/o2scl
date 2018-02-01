@@ -1772,10 +1772,12 @@ namespace o2scl {
   /** \brief Read initial points from the best points recorded in file
       named \c fname
 
-      The values of \ref mcmc_para::n_walk and \ref mcmc_para::n_threads
-      must be set to their correct values before calling this function.
+      The values of \ref mcmc_para::n_walk, \ref mcmc_para::n_threads,
+      and \ref mcmc_para_table::n_params must be set to their correct
+      values before calling this function.
   */
-  virtual void initial_points_file_best(std::string fname, size_t n_params,
+  virtual void initial_points_file_best(std::string fname,
+					size_t n_param_loc,
 					double thresh=1.0e-6) {
 
     table=std::shared_ptr<o2scl::table_units<> >(new o2scl::table_units<>);
@@ -1793,7 +1795,6 @@ namespace o2scl {
     o2scl_hdf::hdf_file hf;
     hf.open(fname);
     hdf_input(hf,*table,"markov_chain_0");
-    hf.get_szt("n_params",this->n_params);
     hf.close();
     
 #ifdef O2SCL_MPI
@@ -1861,8 +1862,8 @@ namespace o2scl {
 		  << row << " has log_weight= "
 		  << table->get("log_wgt",row) << std::endl;
       }
-      this->initial_points[k].resize(this->n_params);
-      for(size_t ip=0;ip<this->n_params;ip++) {
+      this->initial_points[k].resize(n_param_loc);
+      for(size_t ip=0;ip<n_param_loc;ip++) {
 	this->initial_points[k][ip]=table->get(ip+5,row);
       }
       mit++;
