@@ -144,10 +144,17 @@ namespace o2scl {
      */
     double weight;
 
+  /// \name Dimension choice setting
+  int dim_choice;
+  static const int max_variance=1;
+  static const int user_scale=2;
+  static const int random=3;
+
     /** \brief Create an empty hypercube
      */
     hypercube() {
       ndim=0;
+      dim_choice=max_variance;
     }
 
     /** \brief Set the hypercube information
@@ -334,21 +341,35 @@ namespace o2scl {
       std::cout << "Found cube " << jm << std::endl;
     }
    
-    // Find coordinate with largest relative variation
+    // Find coordinate to separate
     size_t max_ip=0;
-    double max_var=fabs(v[0]-m(h.inside[0],0))/scale[0];
-    for(size_t ip=1;ip<ndim;ip++) {
-      double var=fabs(v[ip]-m(h.inside[0],ip))/scale[ip];
-      if (var>max_var) {
-	max_ip=ip;
-	max_var=var;
+    if (dim_choice==random) {
+      max_ip=rg.random_int() % ndim;
+    } else {
+      double max_var;
+      if (dim_choice==max_variance) {
+	max_var=fabs(v[0]-m(h.inside[0],0))/(h.high[0]-h.low[0]);
+      } else {
+	max_var=fabs(v[0]-m(h.inside[0],0))/scale[0];
       }
-    }
-    if (verbose>1) {
-      std::cout << "Found coordinate " << max_ip << " with variance "
-      << max_var << std::endl;
-      std::cout << v[max_ip] << " " << m(h.inside[0],max_ip) << " "
-      << h.high[max_ip] << " " << h.low[max_ip] << std::endl;
+      for(size_t ip=1;ip<ndim;ip++) {
+	double var;
+	if (dim_choice==max_variance) {
+	  var=fabs(v[ip]-m(h.inside[0],ip))/(h.high[ip]-h.low[ip]);
+	} else {
+	  var=fabs(v[ip]-m(h.inside[0],ip))/scale[ip];
+	}
+	if (var>max_var) {
+	  max_ip=ip;
+	  max_var=var;
+	}
+      }
+      if (verbose>1) {
+	std::cout << "Found coordinate " << max_ip << " with variance "
+	<< max_var << std::endl;
+	std::cout << v[max_ip] << " " << m(h.inside[0],max_ip) << " "
+	<< h.high[max_ip] << " " << h.low[max_ip] << std::endl;
+      }
     }
    
     // Slice the mesh in coordinate max_ip
