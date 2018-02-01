@@ -1696,9 +1696,18 @@ namespace o2scl {
 
   /** \brief Read initial points from the last points recorded in file
       named \c fname
-  */
-  virtual void initial_points_file_last(std::string fname) {
 
+      The values of \ref mcmc_para::n_walk and \ref
+      mcmc_para::n_threads, must be set to their correct values before
+      calling this function. This function requires that a table is
+      present in \c fname which stores parameters in a block of
+      columns and has columns named \c mult, \c thread, 
+      \c walker, and \c log_wgt.
+  */
+  virtual void initial_points_file_last(std::string fname,
+					size_t n_param_loc,
+					size_t offset=5) {
+    
     table=std::shared_ptr<o2scl::table_units<> >(new o2scl::table_units<>);
 
 #ifdef O2SCL_MPI
@@ -1713,10 +1722,8 @@ namespace o2scl {
     
     o2scl_hdf::hdf_file hf;
     hf.open(fname);
-    hdf_input(hf,*table,"markov_chain_0");
-    hf.get_szt("n_threads",this->n_threads);
-    hf.get_szt("n_walk",this->n_walk);
-    hf.get_szt("n_params",this->n_params);
+    std::string tname;
+    hdf_input(hf,*table,tname);
     hf.close();
     
 #ifdef O2SCL_MPI
@@ -1726,59 +1733,140 @@ namespace o2scl {
     }
 #endif
 
+    // Determine number of points
+    size_t n_points=this->n_walk*this->n_threads;
+
     if (this->verbose>0) {
-      std::cout << "Initial point last from file: " << fname << std::endl;
+      std::cout << "Initial points: Finding last " << n_points
+		<< " points from file named "
+		<< fname << " ." << std::endl;
     }
     
-    // The total number of walkers * threads
-    size_t ntot=this->n_threads*this->n_walk;
-
-    // Obtain the size of each chain from the table
-    std::vector<size_t> chain_sizes;
-    get_chain_sizes(chain_sizes);
-
-    this->initial_points.resize(ntot);
+    this->initial_points.resize(n_points);
+	
     for(size_t it=0;it<this->n_threads;it++) {
       for(size_t iw=0;iw<this->n_walk;iw++) {
 	
 	// The combined walker/thread index 
 	size_t windex=it*this->n_walk+iw;
 
-	// Ensure chain_size is nonzero
-	if (chain_sizes[windex]==0) {
-	  O2SCL_ERR2("Chain size zero in mcmc_para_table::",
-		     "initial_points_file_last().",o2scl::exc_einval);
-	}
-	
-	// Find the last row for this chain
-	size_t row=ntot*(chain_sizes[windex]-1)+windex;
+	bool found=false;
+	for(int row=table->get_nlines()-1;row>=0 && found==false;row--) {
+	  if (table->get("walker",row)==iw &&
+	      table->get("thread",row)==it &&
+	      table->get("mult",row)>0.5) {
 
-	std::cout << "it: " << it << "," << this->mpi_rank << " iw: " << iw
-		  << " chain size: " << chain_sizes[windex] << " row: "
-		  << row << " log_wgt: " << table->get("log_wgt",row)
-		  << " n_params: " << this->n_params << std::endl;
-	
-	// Copy the entries from this row into the initial_points object
-	this->initial_points[windex].resize(this->n_params);
-	for(size_t ip=0;ip<this->n_params;ip++) {
-	  this->initial_points[windex][ip]=table->get(ip+5,row);
+	    found=true;
+	    
+	    std::cout << "Function initial_point_file_last():\n\tit: "
+		      << it << "," << this->mpi_rank
+		      << " iw: " << iw << " row: "
+		      << row << " log_wgt: " << table->get("log_wgt",row)
+		      << std::endl;
+	    
+	    // Copy the entries from this row into the initial_points object
+	    this->initial_points[windex].resize(n_param_loc);
+	    for(size_t ip=0;ip<n_param_loc;ip++) {
+	      this->initial_points[windex][ip]=table->get(ip+offset,row);
+	    }
+	  }
+	}
+	if (found==false) {
+	  O2SCL_ERR("Function initial_points_file_last() failed.",
+		    o2scl::exc_einval);
 	}
       }
     }
+    
+    return;
+  }
+  
+  /** \brief Read initial points from file
+      named \c fname, distributing across the chain if necessary
 
+      The values of \ref mcmc_para::n_walk and \ref
+      mcmc_para::n_threads, must be set to their correct values before
+      calling this function. This function requires that a table is
+      present in \c fname which stores parameters in a block of
+      columns.
+  */
+  virtual void initial_points_file_dist(std::string fname,
+					size_t n_param_loc,
+					size_t offset=5) {
+
+    table=std::shared_ptr<o2scl::table_units<> >(new o2scl::table_units<>);
+
+#ifdef O2SCL_MPI
+    // Ensure that multiple threads aren't reading from the
+    // filesystem at the same time
+    int tag=0, buffer=0;
+    if (this->mpi_size>1 && this->mpi_rank>0) {
+      MPI_Recv(&buffer,1,MPI_INT,this->mpi_rank-1,
+	       tag,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+    }
+#endif
+    
+    o2scl_hdf::hdf_file hf;
+    hf.open(fname);
+    std::string tname;
+    hdf_input(hf,*table,tname);
+    hf.close();
+    
+#ifdef O2SCL_MPI
+    if (this->mpi_size>1 && this->mpi_rank<this->mpi_size-1) {
+      MPI_Send(&buffer,1,MPI_INT,this->mpi_rank+1,
+	       tag,MPI_COMM_WORLD);
+    }
+#endif
+
+    // Determine number of points
+    size_t n_points=this->n_walk*this->n_threads;
+
+    if (this->verbose>0) {
+      std::cout << "Initial points: Finding last " << n_points
+		<< " points from file named "
+		<< fname << " ." << std::endl;
+    }
+    
+    this->initial_points.resize(n_points);
+	
+    size_t nlines=table->get_nlines();
+    size_t decrement=nlines/n_points;
+    if (decrement<1) decrement=1;
+
+    int row=nlines-1;
+    for(size_t k=0;k<n_points;k++) {
+      row-=decrement;
+      if (row<0) row=0;
+      
+      std::cout << "Function initial_point_file_dist():\n\trow: "
+		<< row << " log_wgt: " << table->get("log_wgt",row)
+		<< std::endl;
+    
+      // Copy the entries from this row into the initial_points object
+      this->initial_points[k].resize(n_param_loc);
+      for(size_t ip=0;ip<n_param_loc;ip++) {
+	this->initial_points[k][ip]=table->get(ip+offset,row);
+      }
+      
+    }
+    
     return;
   }
   
   /** \brief Read initial points from the best points recorded in file
       named \c fname
 
-      The values of \ref mcmc_para::n_walk, \ref mcmc_para::n_threads,
-      and \ref mcmc_para_table::n_params must be set to their correct
-      values before calling this function.
+      The values of \ref mcmc_para::n_walk and \ref
+      mcmc_para::n_threads, must be set to their correct values before
+      calling this function. This function requires that a table is
+      present in \c fname which stores parameters in a block of
+      columns and contains a separate column named \c log_wgt .
   */
   virtual void initial_points_file_best(std::string fname,
 					size_t n_param_loc,
-					double thresh=1.0e-6) {
+					double thresh=1.0e-6,
+					size_t offset=5) {
 
     table=std::shared_ptr<o2scl::table_units<> >(new o2scl::table_units<>);
     
@@ -1794,7 +1882,8 @@ namespace o2scl {
     
     o2scl_hdf::hdf_file hf;
     hf.open(fname);
-    hdf_input(hf,*table,"markov_chain_0");
+    std::string tname;
+    hdf_input(hf,*table,tname);
     hf.close();
     
 #ifdef O2SCL_MPI
@@ -1816,9 +1905,11 @@ namespace o2scl {
     typedef std::map<double,int,std::greater<double> > map_t;
     map_t m;    
 
+    bool has_mult=table->is_column("mult");
+    
     // Sort by inserting into a map
     for(size_t k=0;k<table->get_nlines();k++) {
-      if (table->get("mult",k)>0.5) {
+      if (!has_mult || table->get("mult",k)>0.5) {
 	m.insert(std::make_pair(table->get("log_wgt",k),k));
       }
     }
@@ -1864,7 +1955,7 @@ namespace o2scl {
       }
       this->initial_points[k].resize(n_param_loc);
       for(size_t ip=0;ip<n_param_loc;ip++) {
-	this->initial_points[k][ip]=table->get(ip+5,row);
+	this->initial_points[k][ip]=table->get(ip+offset,row);
       }
       mit++;
     }
