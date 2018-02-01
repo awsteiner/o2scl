@@ -144,17 +144,10 @@ namespace o2scl {
      */
     double weight;
 
-  /// \name Dimension choice setting
-  int dim_choice;
-  static const int max_variance=1;
-  static const int user_scale=2;
-  static const int random=3;
-
     /** \brief Create an empty hypercube
      */
     hypercube() {
       ndim=0;
-      dim_choice=max_variance;
     }
 
     /** \brief Set the hypercube information
@@ -221,6 +214,12 @@ namespace o2scl {
 
   public:
 
+  /// \name Dimension choice setting
+  int dim_choice;
+  static const int max_variance=1;
+  static const int user_scale=2;
+  static const int random=3;
+
   /** \brief Internal random number generator
    */
   mutable o2scl::rng_gsl rg;
@@ -251,38 +250,43 @@ namespace o2scl {
 
   prob_dens_mdim_amr() {
     ndim=0;
+    dim_choice=max_variance;
   }
   
   /** \brief Initialize a probability distribution from the corners
    */
-  prob_dens_mdim_amr(vec_t &l, vec_t &h, vec_t &s) {
-    set(l,h,s);
+  prob_dens_mdim_amr(vec_t &l, vec_t &h) {
+    dim_choice=max_variance;
+    set(l,h);
   }
 
   /** \brief Set the mesh limits
 
       This function is called by the constructor
    */
-  void set(vec_t &l, vec_t &h, vec_t &s) {
+  void set(vec_t &l, vec_t &h) {
     mesh.clear();
-    if (h.size()<l.size() || s.size()<l.size()) {
+    if (h.size()<l.size()) {
       O2SCL_ERR2("Vector sizes not correct in ",
 		"prob_dens_mdim_amr::set().",o2scl::exc_einval);
     }
     low.resize(l.size());
     high.resize(h.size());
-    scale.resize(s.size());
     for(size_t i=0;i<l.size();i++) {
       low[i]=l[i];
       high[i]=h[i];
-      scale[i]=s[i];
-      if (s[i]<=0.0) {
-	O2SCL_ERR2("Scale parameter zero or negative in ",
-		   "prob_dens_mdim_amr::set().",o2scl::exc_einval);
-      }
     }
     ndim=low.size();
     verbose=1;
+    return;
+  }
+
+  /** \brief Set scales for dimension choice
+   */
+  template<class vec2_t>
+  void set_scale(vec2_t &v) {
+    scale.resize(v.size());
+    o2scl::vector_copy(v,scale);
     return;
   }
  
@@ -350,6 +354,10 @@ namespace o2scl {
       if (dim_choice==max_variance) {
 	max_var=fabs(v[0]-m(h.inside[0],0))/(h.high[0]-h.low[0]);
       } else {
+	if (scale.size()==0) {
+	  O2SCL_ERR2("Scales not set in ",
+		     "prob_dens_mdim_amr::insert().",o2scl::exc_einval);
+	}
 	max_var=fabs(v[0]-m(h.inside[0],0))/scale[0];
       }
       for(size_t ip=1;ip<ndim;ip++) {
@@ -357,7 +365,7 @@ namespace o2scl {
 	if (dim_choice==max_variance) {
 	  var=fabs(v[ip]-m(h.inside[0],ip))/(h.high[ip]-h.low[ip]);
 	} else {
-	  var=fabs(v[ip]-m(h.inside[0],ip))/scale[ip];
+	  var=fabs(v[ip]-m(h.inside[0],ip))/scale[ip%scale.size()];
 	}
 	if (var>max_var) {
 	  max_ip=ip;
