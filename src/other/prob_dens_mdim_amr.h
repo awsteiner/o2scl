@@ -348,7 +348,13 @@ namespace o2scl {
     // Find coordinate to separate
     size_t max_ip=0;
     if (dim_choice==random) {
+      std::cout << "X: " << ndim << std::endl;
       max_ip=rg.random_int() % ndim;
+      if (verbose>1) {
+	std::cout << "Randomly chose coordinate " << max_ip
+		  << std::endl;
+      }
+      
     } else {
       double max_var;
       if (dim_choice==max_variance) {
