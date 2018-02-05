@@ -750,6 +750,8 @@ int fermion_rel::pair_density(fermion &f, double temper) {
 
   double density_temp=f.n;
   if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
+
+  double initial_guess=f.nu;
   
   double nex=f.nu/temper;
 
@@ -817,6 +819,10 @@ int fermion_rel::pair_density(fermion &f, double temper) {
   density_root->err_nonconv=drec;
 
   if (ret!=0) {
+    cout.precision(14);
+    cout << "m,ms,n,T: " << f.m << " " << f.ms << " "
+	 << f.n << " " << temper << endl;
+    cout << "nu: " << initial_guess << endl;
     O2SCL_CONV2_RET("Density solver failed in fermion_rel::",
 		    "pair_density().",exc_efailed,this->err_nonconv);
   }
