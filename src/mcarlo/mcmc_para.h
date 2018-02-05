@@ -1478,6 +1478,13 @@ namespace o2scl {
       }
     }
     
+    last_write_iters=0;
+#ifdef O2SCL_MPI
+    last_write_time=MPI_Wtime();
+#else
+    last_write_time=time(0);
+#endif
+
     return parent_t::mcmc_init();
   }
   
@@ -1539,7 +1546,12 @@ namespace o2scl {
   /** \brief Total number of MCMC acceptances over all threads at last
       file write() (default 0)
   */
-  size_t last_write;
+  size_t last_write_iters;
+  
+  /** \brief Time at last
+      file write() (default 0.0)
+  */
+  double last_write_time;
   
   public:
 
@@ -1552,6 +1564,10 @@ namespace o2scl {
   /** \brief Iterations between file updates (default 0 for no file updates)
    */
   size_t file_update_iters;
+  
+  /** \brief Time between file updates (default 0.0 for no file updates)
+   */
+  double file_update_time;
   
   /** \brief The number of tables to combine before I/O (default 1)
    */
@@ -1678,7 +1694,8 @@ namespace o2scl {
     allow_estimates=false;
     table_io_chunk=1;
     file_update_iters=0;
-    last_write=0;
+    file_update_time=0.0;
+    last_write_iters=0;
     store_rejects=false;
     table_sequence=true;
   }
@@ -2209,18 +2226,39 @@ namespace o2scl {
   virtual void post_pointmeas() {
 
     // If necessary, output to files
+    bool updated=false;
     if (file_update_iters>0) {
-      size_t total_accept=0;
+      size_t total_iters=0;
       for(size_t it=0;it<this->n_chains_per_rank;it++) {
-	total_accept+=this->n_accept[it];
+	total_iters+=this->n_accept[it]+this->n_reject[it];
       }
-      if (total_accept>=last_write+file_update_iters) {
-	this->scr_out << "mcmc: Writing to file. total_accept: "
-	<< total_accept << " file_update_iters: "
-	<< file_update_iters << " last_write: "
-	<< last_write << std::endl;
+      if (total_iters>=last_write_iters+file_update_iters) {
+	this->scr_out << "mcmc: Writing to file. total_iters: "
+	<< total_iters << " file_update_iters: "
+	<< file_update_iters << " last_write_iters: "
+	<< last_write_iters << std::endl;
 	write_files(false);
-	last_write=total_accept;
+	last_write_iters=total_iters;
+	updated=true;
+      }
+    }
+    if (updated==false && file_update_time>0.0) {
+#ifdef O2SCL_MPI
+      double elapsed=MPI_Wtime()-last_write_time;
+#else
+      double elapsed=time(0)-last_write_time;
+#endif
+      if (elapsed>file_update_time) {
+	this->scr_out << "mcmc: Writing to file. elapsed: "
+		      << elapsed << " file_update_time: "
+		      << file_update_time << " last_write_time: "
+		      << last_write_time << std::endl;
+	write_files(false);
+#ifdef O2SCL_MPI
+	last_write_time=MPI_Wtime();
+#else
+	last_write_time=time(0);
+#endif
       }
     }
     
@@ -2410,6 +2448,7 @@ namespace o2scl {
   o2scl::cli::parameter_size_t p_max_iters;
   //o2scl::cli::parameter_int p_max_chain_size;
   o2scl::cli::parameter_size_t p_file_update_iters;
+  o2scl::cli::parameter_double p_file_update_time;
   //o2scl::cli::parameter_bool p_output_meas;
   o2scl::cli::parameter_string p_prefix;
   o2scl::cli::parameter_int p_verbose;
@@ -2468,9 +2507,15 @@ namespace o2scl {
     
     p_file_update_iters.s=&this->file_update_iters;
     p_file_update_iters.help=((std::string)"Number of MCMC successes ")+
-      "between file upates (default 0 for no file updates).";
+      "between file updates (default 0 for no file updates).";
     cl.par_list.insert(std::make_pair("file_update_iters",
 				      &p_file_update_iters));
+    
+    p_file_update_time.d=&this->file_update_time;
+    p_file_update_time.help=((std::string)"Time ")+
+      "between file updates (default 0.0 for no file updates).";
+    cl.par_list.insert(std::make_pair("file_update_time",
+				      &p_file_update_time));
     
     /*
       p_max_chain_size.i=&this->max_chain_size;
