@@ -252,6 +252,11 @@ namespace o2scl {
     */
     virtual void compute_eg();
 
+    /** \brief Compute lepton contribution at one point
+     */
+    virtual void compute_eg_point(double nB, double Ye, double T,
+				  thermo &th);
+
     /** \brief Check electrons and photons
 	
 	This checks that the electron and photon thermodynamics

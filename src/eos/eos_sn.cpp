@@ -281,6 +281,47 @@ void eos_sn_base::set_interp_type(size_t interp_type) {
   return;
 }
 
+void eos_sn_base::compute_eg_point(double nB, double Ye, double T,
+				   thermo &th) {
+  
+  photon.massless_calc(T/hc_mev_fm);
+  electron.n=nB*Ye;
+  
+  // AWS: 11/1/16: I had problems with the electron calculation
+  // not working, presumably because of a bad initial guess for the
+  // chemical potential. It would be better if the initial guess
+  // code is implemented in the fermion_rel class.
+  {
+    electron.mu=electron.m;
+    
+    double deg=nB/pow(T/hc_mev_fm,3.0);
+    if (deg>10.0) {
+      // If it's very degenerate, start with a guess
+      // without positrons
+      relf.calc_density(electron,T/hc_mev_fm);
+    }
+  }
+  
+  relf.pair_density(electron,T/hc_mev_fm);
+  
+  if (include_muons) {
+    muon.mu=electron.mu;
+    relf.pair_mu(muon,T/hc_mev_fm);
+  }
+
+  th.ed=electron.ed+photon.ed;
+  th.pr=electron.pr+photon.pr;
+  th.en=electron.en+photon.en;
+  
+  if (include_muons) {
+    th.ed+=muon.ed;
+    th.en+=muon.en;
+    th.pr+=muon.pr;
+  }
+
+  return;
+}
+
 void eos_sn_base::compute_eg() {
 
   if (verbose>0) {
@@ -304,42 +345,13 @@ void eos_sn_base::compute_eg() {
 	ye1=E.get_grid(1,j);
 	T1=E.get_grid(2,k);
 
-	photon.massless_calc(T1/hc_mev_fm);
-	electron.n=nb1*ye1;
-
-	// AWS: 11/1/16: I had problems with the electron calculation
-	// not working, presumably because of a bad initial guess for the
-	// chemical potential. It would be better if the initial guess
-	// code is implemented in the fermion_rel class.
-	{
-	  electron.mu=electron.m;
-	  
-	  double deg=nb1/pow(T1/hc_mev_fm,3.0);
-	  if (deg>10.0) {
-	    // If it's very degenerate, start with a guess
-	    // without positrons
-	    relf.calc_density(electron,T1/hc_mev_fm);
-	  }
-	}
+	thermo th;
+	compute_eg_point(nb1,ye1,T1,th);
 	
-	relf.pair_density(electron,T1/hc_mev_fm);
-
-	if (include_muons) {
-	  muon.mu=electron.mu;
-	  relf.pair_mu(muon,T1/hc_mev_fm);
-	}
-	
-	double E_eg=(electron.ed+photon.ed)/nb1*hc_mev_fm;
-	double P_eg=(electron.pr+photon.pr)*hc_mev_fm;
-	double S_eg=(electron.en+photon.en)/nb1;
+	double E_eg=th.ed/nb1*hc_mev_fm;
+	double P_eg=th.pr*hc_mev_fm;
+	double S_eg=th.en/nb1;
 	double F_eg=E_eg-T1*S_eg;
-
-	if (include_muons) {
-	  E_eg+=muon.ed/nb1*hc_mev_fm;
-	  P_eg+=muon.pr*hc_mev_fm;
-	  S_eg+=muon.en/nb1;
-	  F_eg+=muon.ed/nb1*hc_mev_fm-T1*muon.en/nb1;
-	}
 
 	if (baryons_only_loaded==true) {
 	  E.set(i,j,k,Eint.get(i,j,k)+E_eg);
