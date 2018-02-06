@@ -161,10 +161,14 @@ int fermion_deriv_nr::pair_mu(fermion_deriv &f, double temper) {
   calc_mu(f,temper);
 
   calc_mu(antip,temper);
+
   f.n-=antip.n;
   f.pr+=antip.pr;
   f.ed+=antip.ed;
   f.en+=antip.en;
+  f.dsdT+=antip.dsdT;
+  f.dndT+=antip.dndT;
+  f.dndmu+=antip.dndmu;
   
   return 0;
 }

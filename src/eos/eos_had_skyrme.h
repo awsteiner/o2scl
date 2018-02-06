@@ -35,11 +35,30 @@
 #include <o2scl/eos_had_base.h>
 #include <o2scl/part.h>
 #include <o2scl/fermion_nonrel.h>
+#include <o2scl/fermion_deriv_nr.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
 #endif
-
+  
+  /** \brief Object to store second derivatives of \f$ P(\mu,T) \f$
+   */
+  class thermo_np_deriv {
+  public:
+    /// The quantity \f$ (\partial^2 P)/(\partial T^2) \f$
+    double dsdT;
+    /// The quantity \f$ (\partial^2 P)/(\partial T \partial \mu_n) \f$
+    double dnndT;
+    /// The quantity \f$ (\partial^2 P)/(\partial T \partial \mu_p) \f$
+    double dnpdT;
+    /// The quantity \f$ (\partial^2 P)/(\partial \mu_n^2) \f$
+    double dnndmun;
+    /// The quantity \f$ (\partial^2 P)/(\partial \mu_n \partial \mu_p) \f$
+    double dndmu_mixed;
+    /// The quantity \f$ (\partial^2 P)/(\partial \mu_p^2) \f$
+    double dnpdmup;
+  };
+  
   /** \brief Skyrme hadronic equation of state 
 
       Equation of state of nucleonic matter based on 
@@ -250,6 +269,10 @@ namespace o2scl {
     virtual int calc_temp_e(fermion &ne, fermion &pr, double temper, 
 			    thermo &th);
 
+    virtual int calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
+				  double temper, thermo &th,
+				  thermo_np_deriv &thd);
+    
     /// Equation of state as a function of density.
     virtual int calc_e(fermion &ne, fermion &pr, thermo &lt);
     //@}
@@ -518,6 +541,9 @@ namespace o2scl {
  
     /// Thermodynamics of non-relativistic fermions
     fermion_nonrel nrf;
+    
+    /// Thermodynamics of non-relativistic fermions
+    fermion_deriv_nr nrfd;
     
 #ifndef DOXYGEN_NO_O2NS
     

@@ -296,7 +296,13 @@ namespace o2scl_acol {
     /// Create a column which is the derivative of another
     virtual int comm_deriv(std::vector<std::string> &sv, bool itive_com);
 
+    /** \brief Desc
+     */
     virtual int comm_to_table(std::vector<std::string> &sv, bool itive_com);
+
+    /** \brief Desc
+     */
+    virtual int comm_to_table3d(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Desc
      */

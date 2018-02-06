@@ -3699,6 +3699,32 @@ int acol_manager::comm_to_table(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
 
+int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
+				  bool itive_com) {
+
+  if (type=="tensor_grid") {
+
+    /*
+      vector<string> in, pr;
+      pr.push_back("First index to vary");
+      pr.push_back("Second index to vary");
+      pr.push_back("Grid value for fixed index");
+      pr.push_back("Slice name");
+      int ret=get_input(sv,pr,in,"slice",itive_com);
+      if (ret!=0) return ret;
+      
+      table3d_obj.clear();
+      table3d_obj
+      //template<class size_vec2_t> 
+      //void copy_slice_interp(size_t ix_x, size_t ix_y, size_vec2_t &index, 
+      //table3d &tab, std::string slice_name) {
+      */
+    
+  }
+  
+  return 0;
+}
+
 int acol_manager::comm_download(std::vector<std::string> &sv, bool itive_com) {
 
   cloud_file cf;
