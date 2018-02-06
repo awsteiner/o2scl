@@ -357,7 +357,7 @@ namespace o2scl {
     step_fac=10.0;
     n_walk=1;
     err_nonconv=true;
-    verbose=0;
+    verbose=1;
     warm_up=false;
     max_bad_steps=1000;
 
@@ -1282,9 +1282,11 @@ namespace o2scl {
       // Stop if iterations greater than max
       if (main_done==false && warm_up==false && max_iters>0 &&
 	  mcmc_iters==max_iters) {
-	scr_out << "mcmc: Stopping because number of iterations ("
-		<< mcmc_iters << ") equal to max_iters (" << max_iters
-		<< ")." << std::endl;
+	if (verbose>=1) {
+	  scr_out << "mcmc: Stopping because number of iterations ("
+		  << mcmc_iters << ") equal to max_iters (" << max_iters
+		  << ")." << std::endl;
+	}
 	main_done=true;
       }
       
@@ -1296,7 +1298,7 @@ namespace o2scl {
 	double elapsed=time(0)-mpi_start_time;
 #endif
 	if (max_time>0.0 && elapsed>max_time) {
-	  if (verbose>=0) {
+	  if (verbose>=1) {
 	    scr_out << "mcmc: Stopping because elapsed (" << elapsed
 		    << ") > max_time (" << max_time << ")."
 		    << std::endl;
@@ -2233,10 +2235,12 @@ namespace o2scl {
 	total_iters+=this->n_accept[it]+this->n_reject[it];
       }
       if (total_iters>=last_write_iters+file_update_iters) {
-	this->scr_out << "mcmc: Writing to file. total_iters: "
-	<< total_iters << " file_update_iters: "
-	<< file_update_iters << " last_write_iters: "
-	<< last_write_iters << std::endl;
+	if (this->verbose>=1) {
+	  this->scr_out << "mcmc: Writing to file. total_iters: "
+			<< total_iters << " file_update_iters: "
+			<< file_update_iters << " last_write_iters: "
+			<< last_write_iters << std::endl;
+	}
 	write_files(false);
 	last_write_iters=total_iters;
 	updated=true;
@@ -2249,10 +2253,12 @@ namespace o2scl {
       double elapsed=time(0)-last_write_time;
 #endif
       if (elapsed>file_update_time) {
-	this->scr_out << "mcmc: Writing to file. elapsed: "
-		      << elapsed << " file_update_time: "
-		      << file_update_time << " last_write_time: "
-		      << last_write_time << std::endl;
+	if (this->verbose>=1) {
+	  this->scr_out << "mcmc: Writing to file. elapsed: "
+			<< elapsed << " file_update_time: "
+			<< file_update_time << " last_write_time: "
+			<< last_write_time << std::endl;
+	}
 	write_files(false);
 #ifdef O2SCL_MPI
 	last_write_time=MPI_Wtime();
