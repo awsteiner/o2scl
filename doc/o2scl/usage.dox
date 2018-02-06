@@ -188,7 +188,8 @@
 
     - O2SCL_ARMA - Flag for Armadillo support. The end-user will
     also need to define this for code based on \o2 functions which
-    use Armadillo routines.
+    use Armadillo routines. The command <tt>acol -v</tt> reports
+    whether or not Armadillo support was enabled during compilation.
 
     - O2SCL_CBLAS_NAMESPACE - This flag is internally used by some of
     the headers in the \c src/linalg directory to select between \ref
@@ -199,15 +200,16 @@
     with or without Armadillo or Eigen support. The end-user should not
     need to use this.
 
-    - O2SCL_DATA_DIR - Used by \o2 classes during installation to refer
-    to the directory where data is stored. After installation, this
-    is accessible through the global object named 
-    \ref o2scl::o2scl_settings. The end-user should not
-    need to use this.
+    - O2SCL_DATA_DIR - Used by \o2 classes during installation to
+    refer to the directory where data is stored. After installation,
+    this is accessible through the global object named \ref
+    o2scl::o2scl_settings and the command <tt>acol -v</tt>. In a
+    typical installation, the end-user should not need to use this.
 
     - O2SCL_EIGEN - Flag for Eigen support. The end-user will
     also need to define this for code based on \o2 functions which
-    use Eigen routines.
+    use Eigen routines. The command <tt>acol -v</tt> reports
+    whether or not Eigen support was enabled during compilation.
 
     - O2SCL_ENABLE_ACOL - Internal flag to tell the makefiles if
     <tt>acol</tt> is to be compiled. This is set by default unless the
@@ -217,12 +219,19 @@
     library is to be included. The end-user should not
     need to use this.
 
+    - O2SCL_GSL2 - Flag to allow functionality from later GSL versions
+    in \ref o2scl::fit_linear and \ref o2scl::fit_nonlin . This flag
+    is set during compilation if <tt>--enable-gsl2</tt> is passed to
+    the configure script. The command <tt>acol -v</tt> reports on
+    whether or not GSL V2.0+ support was enabled during installation.
+
     - O2SCL_HDF - Internal flag to tell the makefiles if HDF5 support
     is to be included. The end-user should not need to use this.
 
-    - O2SCL_HDF5_COMP - Define this flag when \o2 is compiled and
-    for code which uses \o2 to include support for HDF5
-    compression. 
+    - O2SCL_HDF5_COMP - Define this flag when \o2 is compiled and for
+    code which uses \o2 to include support for HDF5 compression. The
+    command <tt>acol -v</tt> reports whether or not HDF5 compression
+    support was enabled during compilation.
 
     - O2SCL_MPI - Flag to allow MPI functionality in O2scl classes
     which contain MPI code (see also O2SCL_OPENMP). All current
@@ -245,8 +254,8 @@
     turned off where it is used in \ref o2scl::table, \ref
     o2scl::tensor, \ref o2scl::permutation and the functions in \ref
     o2scl_cblas. Some \o2 header files use this define constant and so
-    range checking can be turned off or on separate from what was done
-    at installation.
+    range checking can be turned off or on separately from the setting
+    that was used during installation.
 
     - O2SCL_OLDER_COMPILER - A flag which can be defined both during
     compilation of \o2 and compilation of code using \o2 for compilers
@@ -259,7 +268,8 @@
     the configure script. The end-user must also define this flag to
     enable OpenMP support in their code. While all current OpenMP
     functionality in \o2 is header only, this may change in the
-    future.
+    future. The command <tt>acol -v</tt> reports on whether or not
+    OpenMP was enabled during installation.
 
     - O2SCL_PART - Internal flag to tell the makefiles if the \o2p
     library is to be included. This constant is automatically set by the
