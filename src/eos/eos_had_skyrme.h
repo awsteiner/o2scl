@@ -269,6 +269,9 @@ namespace o2scl {
     virtual int calc_temp_e(fermion &ne, fermion &pr, double temper, 
 			    thermo &th);
 
+    /** \brief Equation of state including second derivatives
+	as a function of the densities
+    */
     virtual int calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
 				  double temper, thermo &th,
 				  thermo_np_deriv &thd);
@@ -305,7 +308,6 @@ namespace o2scl {
 	the neutron and proton masses are equal.
     */
     //@{
-  
     /** \brief Calculate binding energy
       
 	\f[

@@ -180,8 +180,9 @@ namespace o2scl {
       \frac{3 k^2}{2 m^{*}} d k 
       \f]
 
-      <b> New section</b>
+      <b>Conversion to unitless variables:</b>
 
+      After integrating by parts 
       \f$ u = k^2/2/m^{*}/T \f$ and \f$ y=\mu/T \f$, so
       \f[
       k d k = m^{*} T d u 
