@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([o2scl],[1.0],[awsteiner@mykolab.com])
+AC_INIT([o2scl],[0.921],[awsteiner@mykolab.com])
 AC_CONFIG_SRCDIR(config.h.in)
 AC_CONFIG_HEADER(config.h)
 AC_CONFIG_MACRO_DIR([m4])
