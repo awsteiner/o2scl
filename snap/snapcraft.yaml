@@ -15,7 +15,8 @@
   confinement: devmode
   
   parts:
-    my-part:
+    o2scl:
+      source: https://github.com/awsteiner/o2scl.git
       plugin: autotools
       source: .
       build-packages: 
@@ -24,4 +25,6 @@
       - libncurses-dev
       - libhdf5-dev
       - libgsl0-dev
+      build: |
+      mkdir -p m4 && CXXFLAGS="-DO2SCL_UBUNTU_HDF5 -DO2SCL_UBUNTU_PKG" && ./configure
   

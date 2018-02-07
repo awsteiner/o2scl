@@ -1,3 +1,6 @@
+parts
+snap/.snapcraft
+
 # Distributions
 o2scl-0.9*.tar.gz
 
