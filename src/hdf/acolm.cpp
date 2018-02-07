@@ -3704,21 +3704,50 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
 
   if (type=="tensor_grid") {
 
-    /*
-      vector<string> in, pr;
-      pr.push_back("First index to vary");
-      pr.push_back("Second index to vary");
-      pr.push_back("Grid value for fixed index");
-      pr.push_back("Slice name");
-      int ret=get_input(sv,pr,in,"slice",itive_com);
-      if (ret!=0) return ret;
-      
-      table3d_obj.clear();
-      table3d_obj
-      //template<class size_vec2_t> 
-      //void copy_slice_interp(size_t ix_x, size_t ix_y, size_vec2_t &index, 
-      //table3d &tab, std::string slice_name) {
-      */
+    size_t rank=tensor_grid_obj.get_rank();
+    if (rank==2) {
+      return 0;
+    }
+
+    vector<string> in, pr;
+    pr.push_back("First index to vary");
+    pr.push_back("Second index to vary");
+    pr.push_back("Slice name");
+    int ret=get_input(sv,pr,in,"to-table3d",itive_com);
+    if (ret!=0) return ret;
+
+    size_t ix_x=o2scl::stoszt(in[0]);
+    size_t ix_y=o2scl::stoszt(in[1]);
+    if (ix_x>=rank || ix_y>=rank) {
+      cerr << "Index larger than rank." << endl;
+      return 1;
+    }
+
+    for(size_t i=0;i<2;i++) {
+      std::vector<std::string>::iterator it=sv.begin();
+      it++;
+      sv.erase(it);
+    }
+    
+    vector<string> in2, pr2;
+    for(size_t i=0;i<rank;i++) {
+      pr2.push_back(((std::string)"Value for index ")+o2scl::szttos(i));
+    }
+    int ret2=get_input(sv,pr2,in2,"to-table3d",itive_com);
+    if (ret2!=0) return ret2;
+
+    vector<double> values(rank);
+    size_t i2=0;
+    for(size_t i=0;i<rank;i++) {
+      if (i!=ix_x && i!=ix_y) {
+	values[i]=o2scl::stod(in2[i2]);
+	i2++;
+      }
+    }
+
+    table3d_obj.clear();
+    tensor_grid_obj.copy_slice_interp_values<vector<double> >
+      (ix_x,ix_y,values,table3d_obj,in[2]);
     
   }
   

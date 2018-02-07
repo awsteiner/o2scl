@@ -575,8 +575,11 @@ namespace o2scl {
 	grid
 
 	This function uses the grid associated with indices \c ix_x
-	and \c ix_y, and the tensor interpolation function to copy to
-	the slice named \c slice_name in the table3d object \c tab .
+	and \c ix_y, to copy data to a slice named \c slice_name in
+	the table3d object \c tab . All other indices are fixed
+	to values specified by the user in \c index and the values
+	of <tt>index[ix_x]</tt> and <tt>index[ix_y]</tt> are
+	used for temporary storage.
 
 	If the table3d object does not currently have a grid set, then
 	the grid is automatically set to be the same as that stored in
@@ -584,10 +587,13 @@ namespace o2scl {
 	iy_y. If the \ref o2scl::table3d object does have a grid set,
 	then the values returned by \ref o2scl::table3d::get_nx() and
 	\ref o2scl::table3d::get_ny() must be equal to the size of the
-	tensor in indices \c ix_x and ix_y, respectively.
+	tensor in indices \c ix_x and ix_y, respectively. If a
+	slice named \c slice_name is not already present in 
+	\c tab, then a new slice with that name is created.
 
-	This currently requires a copy of all the tensor data
-	into the table3d object.
+	The error handler is called if \c ix_x is the same as 
+	\c ix_y, or if either of these two values is greater
+	than or equal to the tensor rank.
     */
     template<class size_vec2_t> 
       void copy_slice_align(size_t ix_x, size_t ix_y, size_vec2_t &index, 
@@ -646,8 +652,18 @@ namespace o2scl {
 	This function uses the grid associated with indices \c ix_x
 	and \c ix_y, and the tensor interpolation function to copy the
 	tensor information to the slice named \c slice_name in the
-	table3d object \c tab .
+	table3d object \c tab . All other indices are fixed
+	to values specified by the user in \c index and the values
+	of <tt>index[ix_x]</tt> and <tt>index[ix_y]</tt> are
+	used for temporary storage.
 	
+	If a slice named \c slice_name is not already present in \c
+	tab, then a new slice with that name is created.
+
+	The error handler is called if \c ix_x is the same as 
+	\c ix_y, or if either of these two values is greater
+	than or equal to the tensor rank.
+
 	\note This function uses the \ref tensor_grid::interp_linear() 
 	for the interpolation.
     */
@@ -686,6 +702,49 @@ namespace o2scl {
 	  vals[ix_x]=tab.get_grid_x(i);
 	  vals[ix_y]=tab.get_grid_y(j);
 	  tab.set(i,j,slice_name,this->interp_linear(vals));
+	}
+      }
+
+      return;
+    }
+    
+    /** \brief Copy to a slice in a table3d object using interpolation
+     */
+    template<class vec2_t> 
+      void copy_slice_interp_values(size_t ix_x, size_t ix_y,
+				    vec2_t &values, table3d &tab,
+				    std::string slice_name) {
+				    
+      if (ix_x>=this->rk || ix_y>=this->rk || ix_x==ix_y) {
+	O2SCL_ERR2("Either indices greater than rank or x and y ",
+		   "indices equal in tensor_grid::copy_slice_interp().",
+		   exc_efailed);
+      }
+      if (values.size()!=this->rk) {
+	O2SCL_ERR2("Values array not equal to rank ",
+		   "in tensor_grid::copy_slice_interp_values().",
+		   exc_efailed);
+      }
+
+      // Get current table3d grid
+      size_t nx, ny;
+      tab.get_size(nx,ny);
+
+      //if (nx==0 && ny==0) {
+      // If there's no grid, then just use the aligned version
+      //return copy_slice_align(ix_x,ix_y,index,tab,slice_name);
+      //}
+
+      // Create slice if not already present
+      size_t is;
+      if (!tab.is_slice(slice_name,is)) tab.new_slice(slice_name);
+
+      // Loop through the table grid to perform the interpolation
+      for(size_t i=0;i<nx;i++) {
+	for(size_t j=0;j<ny;j++) {
+	  values[ix_x]=tab.get_grid_x(i);
+	  values[ix_y]=tab.get_grid_y(j);
+	  tab.set(i,j,slice_name,this->interp_linear(values));
 	}
       }
 
