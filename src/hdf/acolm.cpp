@@ -332,7 +332,7 @@ void acol_manager::command_add(std::string new_type) {
 	 ((std::string)"If the current object is a table, then plot ")+
 	 "column <y> versus column <x>. If the current object is a "+
 	 "one-dimensional histogram, then plot the histogram weights "+
-	 "as a function of the bin representative valus. If the "+
+	 "as a function of the bin representative values. If the "+
 	 "current object is a set of contour lines, then plot the "+
 	 "full set of contour lines. "+
 	 "Some useful kwargs (which apply for all three object types) "+
