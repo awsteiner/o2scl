@@ -1,0 +1,27 @@
+
+  name: o2scl
+  version: '0.921'
+  summary: Object-oriented Scientific Computing Library
+  description: |
+    O2scl is a C++ library for object-oriented numerical programming. 
+    It includes interpolation, differentiation, integration, roots of 
+    polynomials, equation solving, minimization, constrained 
+    minimization, Monte Carlo integration, simulated annealing, 
+    least-squares fitting, solution of ordinary differential equations, 
+    two-dimensional interpolation, Chebyshev approximation, 
+    unit conversions, and file I/O with HDF5.
+
+  grade: devel
+  confinement: devmode
+  
+  parts:
+    my-part:
+      plugin: autotools
+      source: .
+      build-packages: 
+      - libboost-all-dev
+      - libreadline-dev
+      - libncurses-dev
+      - libhdf5-dev
+      - libgsl0-dev
+  
