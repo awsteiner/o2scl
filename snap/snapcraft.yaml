@@ -26,5 +26,5 @@
       - libhdf5-dev
       - libgsl0-dev
       build: |
-        mkdir -p m4 && ./autogen.sh && CXXFLAGS="-DO2SCL_UBUNTU_HDF5 -DO2SCL_UBUNTU_PKG" ./configure && make blank-doc && make && make install
+        mkdir -p m4 && ./autogen.sh && CXXFLAGS="-DO2SCL_UBUNTU_HDF5 -DO2SCL_UBUNTU_PKG" ./configure --prefix=../install && make blank-doc && make && make install
   
