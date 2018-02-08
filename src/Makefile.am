@@ -154,8 +154,8 @@ endif
 # We look first for the libraries in the distribution directory.
 # However, homebrew's superenv appears to move the libraries around,
 # so we look for them in pkglibdir
-if O2SCL_STATIC_ACOL
-acol_LDFLAGS = -L. -Lhdf -L${pkglibdir} -static
+if O2SCL_SNAP
+acol_LDFLAGS = -L. -Lhdf -L${pkglibdir} -Wl,-rpath -Wl,/snap/o2scl/current/lib
 else
 acol_LDFLAGS = -L. -Lhdf -L${pkglibdir}
 endif

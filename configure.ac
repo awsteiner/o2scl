@@ -271,18 +271,18 @@ AC_ARG_ENABLE(acol,
 AM_CONDITIONAL(O2SCL_ENABLE_ACOL, test x$acol = xtrue)
 
 # ----------------------------------------------
-# Enable or disable support for acol
+# Enable or disable snap configurations
 # ----------------------------------------------
 
-AC_ARG_ENABLE(staticacol,
-[  --enable-staticacol    Ensure acol is static @<:@default=no@:>@],
+AC_ARG_ENABLE(snap,
+[  --enable-snap           Enable snap features @<:@default=no@:>@],
    [case "${enableval}" in
-   yes) staticacol=true ;;
-   no)  staticacol=false ;;
-   *) AC_MSG_ERROR(bad value ${enableval} for --enable-staticacol) ;;
-   esac],[staticacol=false])
+   yes) snap=true ;;
+   no)  snap=false ;;
+   *) AC_MSG_ERROR(bad value ${enableval} for --enable-snap) ;;
+   esac],[snap=false])
 
-AM_CONDITIONAL(O2SCL_STATIC_ACOL, test x$staticacol = xtrue)
+AM_CONDITIONAL(O2SCL_SNAP, test x$snap = xtrue)
 
 # ----------------------------------------------
 # Enable or disable armadillo support
