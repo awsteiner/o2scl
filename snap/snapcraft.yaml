@@ -18,7 +18,7 @@
     o2scl:
       source: https://github.com/awsteiner/o2scl.git
       plugin: autotools
-      source: .
+      install-via: prefix
       build-packages: 
       - libboost-all-dev
       - libreadline-dev
@@ -26,5 +26,5 @@
       - libhdf5-dev
       - libgsl0-dev
       build: |
-        mkdir -p m4 && ./autogen.sh && CXXFLAGS="-DO2SCL_UBUNTU_HDF5 -DO2SCL_UBUNTU_PKG" ./configure && make && make install
+        mkdir -p m4 && ./autogen.sh && CXXFLAGS="-DO2SCL_UBUNTU_HDF5 -DO2SCL_UBUNTU_PKG" ./configure && make blank-doc && make && make install
   
