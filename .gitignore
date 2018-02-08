@@ -1,8 +1,12 @@
+# snap files
+*.snap
+prime
+stage
 parts
 snap/.snapcraft
 
 # Distributions
-o2scl-0.9*.tar.gz
+o2scl*.tar.gz
 
 # Compiled Object files
 *.slo
