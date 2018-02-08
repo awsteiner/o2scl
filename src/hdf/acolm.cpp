@@ -680,12 +680,15 @@ void acol_manager::command_add(std::string new_type) {
 
   } else if (new_type=="tensor_grid") {
     
-    static const size_t narr=2;
+    static const size_t narr=3;
     comm_option_s options_arr[narr]={
       {'l',"list","List the slice names and print out grid info.",
        0,0,"","",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
        both},
+      {0,"to-table3d","Select two indices and convert to a table3d object.",
+       0,0,"","",new comm_option_mfptr<acol_manager>
+       (this,&acol_manager::comm_to_table3d),both},
       {0,"set-grid","Set grid",-1,-1,"","",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_set_grid),
        both}
@@ -1084,6 +1087,7 @@ void acol_manager::command_del() {
   } else if (type=="tensor_grid") {
     
     cl->remove_comm_option("list");
+    cl->remove_comm_option("to-table3d");
     cl->remove_comm_option("set-grid");
 
     //if (o2graph_mode) {
@@ -3894,9 +3898,6 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
   if (type=="tensor_grid") {
 
     size_t rank=tensor_grid_obj.get_rank();
-    if (rank==2) {
-      return 0;
-    }
 
     vector<string> in, pr;
     pr.push_back("First index to vary");
@@ -3912,7 +3913,7 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
       return 1;
     }
 
-    for(size_t i=0;i<2;i++) {
+    for(size_t i=0;i<3;i++) {
       std::vector<std::string>::iterator it=sv.begin();
       it++;
       sv.erase(it);
@@ -3920,7 +3921,9 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
     
     vector<string> in2, pr2;
     for(size_t i=0;i<rank;i++) {
-      pr2.push_back(((std::string)"Value for index ")+o2scl::szttos(i));
+      if (i!=ix_x && i!=ix_y) {
+	pr2.push_back(((std::string)"Value for index ")+o2scl::szttos(i));
+      }
     }
     int ret2=get_input(sv,pr2,in2,"to-table3d",itive_com);
     if (ret2!=0) return ret2;
@@ -3938,6 +3941,10 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
     tensor_grid_obj.copy_slice_interp_values<vector<double> >
       (ix_x,ix_y,values,table3d_obj,in[2]);
     
+    command_del();
+    clear_obj();
+    command_add("table3d");
+    type="table3d";
   }
   
   return 0;
