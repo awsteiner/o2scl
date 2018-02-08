@@ -1922,18 +1922,17 @@ namespace o2scl {
     }
 
     typedef std::map<double,int,std::greater<double> > map_t;
-    map_t m;    
+    map_t m;
 
-    bool has_mult=table->is_column("mult");
-    
     // Sort by inserting into a map
     for(size_t k=0;k<table->get_nlines();k++) {
-      if (!has_mult || table->get("mult",k)>0.5) {
-	m.insert(std::make_pair(table->get("log_wgt",k),k));
-      }
+      m.insert(std::make_pair(table->get("log_wgt",k),k));
     }
 
-    // Remove near duplicates
+    // Remove near duplicates. The map insert function will 
+    // just overwrite duplicate key entries, but we also
+    // want to avoid near duplicates, so we have to search
+    // manually for those. 
     bool found;
     do {
       found=false;

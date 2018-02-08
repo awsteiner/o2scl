@@ -271,6 +271,20 @@ AC_ARG_ENABLE(acol,
 AM_CONDITIONAL(O2SCL_ENABLE_ACOL, test x$acol = xtrue)
 
 # ----------------------------------------------
+# Enable or disable support for acol
+# ----------------------------------------------
+
+AC_ARG_ENABLE(staticacol,
+[  --enable-staticacol    Ensure acol is static @<:@default=no@:>@],
+   [case "${enableval}" in
+   yes) staticacol=true ;;
+   no)  staticacol=false ;;
+   *) AC_MSG_ERROR(bad value ${enableval} for --enable-staticacol) ;;
+   esac],[staticacol=false])
+
+AM_CONDITIONAL(O2SCL_STATIC_ACOL, test x$staticacol = xtrue)
+
+# ----------------------------------------------
 # Enable or disable armadillo support
 # ----------------------------------------------
 

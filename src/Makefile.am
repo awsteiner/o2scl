@@ -154,7 +154,11 @@ endif
 # We look first for the libraries in the distribution directory.
 # However, homebrew's superenv appears to move the libraries around,
 # so we look for them in pkglibdir
+if O2SCL_STATIC_ACOL
+acol_LDFLAGS = -L. -Lhdf -L${pkglibdir} -static
+else
 acol_LDFLAGS = -L. -Lhdf -L${pkglibdir}
+endif
 
 acol_LDADD = -lo2scl_hdf -lo2scl -lgsl -lgslcblas $(RLIB)
 
