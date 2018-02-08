@@ -550,11 +550,7 @@ extern "C" {
       operator and then calls the function
       \ref o2scl_acol::acol_manager::run() .
    */
-  void *o2scl_create_acol_manager() {
-    o2scl_acol::acol_manager *amp=new o2scl_acol::acol_manager;
-    amp->run(0,0,true);
-    return amp;
-  }
+  void *o2scl_create_acol_manager();
   
   /** \brief Free memory associated with a \ref
       o2scl_acol::acol_manager object
@@ -563,144 +559,56 @@ extern "C" {
       memory associated with an object of type
       \ref o2scl_acol::acol_manager .
   */
-  void o2scl_free_acol_manager(void *vp) {
-    o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
-    delete amp;
-    return;
-  }
+  void o2scl_free_acol_manager(void *vp);
 
   /** \brief Construct a string vector from the data in 
       \c n_entries, \c sizes, and \c str
   */
   std::vector<std::string> o2scl_acol_parse_arrays
-  (int n_entries, int *sizes, char *str) {
-    std::vector<std::string> list;
-    size_t ix=0;
-    for(int i=0;i<n_entries;i++) {
-      std::string tmp;
-      for(int j=0;j<sizes[i];j++) {
-	tmp+=str[ix];
-	ix++;
-      }
-      list.push_back(tmp);
-    }
-    return list;
-  }
+  (int n_entries, int *sizes, char *str);
   
   /** \brief Parse the set of commands in \c n_entries, \c sizes
       and \c str
    */
   void o2scl_acol_parse(void *vp, int n_entries, int *sizes, 
-			char *str) {
-    std::vector<std::string> args=o2scl_acol_parse_arrays(n_entries,sizes,str);
-    o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
-    std::vector<o2scl::cmd_line_arg> ca;
-    amp->cl->process_args(args,ca,0);
-    amp->cl->call_args(ca);
-    return;
-  }
+			char *str);
 
   /** \brief Return the size and a pointer to the column
       named \c col_name in a table object
    */
   int o2scl_acol_get_column(void *vp, char *col_name,
-			    int &n, double *&ptr) {
-    o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
-    if (amp->type!="table") {
-      return 1;
-    }
-    n=amp->table_obj.get_nlines();
-    std::string stmp=col_name;
-    if (amp->table_obj.is_column(stmp)==false) {
-      return 2;
-    }
-    const std::vector<double> &col=amp->table_obj.get_column(stmp);
-    ptr=(double *)&col[0];
-    return 0;
-  }
+			    int &n, double *&ptr);
 
   /** \brief Return the size and a pointer to the column
       named \c col_name in a table object
    */
-  int o2scl_acol_get_double_arr(void *vp, int &n, double *&ptr) {
-    o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
-    if (amp->type=="double[]") {
-      n=amp->doublev_obj.size();
-    } else if (amp->type=="int[]") {
-      n=amp->intv_obj.size();
-      amp->doublev_obj.resize(n);
-      for(int i=0;i<n;i++) {
-	amp->doublev_obj[i]=amp->intv_obj[i];
-      }
-    } else if (amp->type=="size_t[]") {
-      n=amp->size_tv_obj.size();
-      amp->doublev_obj.resize(n);
-      for(int i=0;i<n;i++) {
-	amp->doublev_obj[i]=amp->size_tv_obj[i];
-      }
-    }
-    ptr=&(amp->doublev_obj[0]);
-    return 0;
-  }
+  int o2scl_acol_get_double_arr(void *vp, int &n, double *&ptr);
+  
+  /** \brief Return the size and a pointer to the column
+      named \c col_name in a table object
+   */
+  int o2scl_acol_get_hist_reps(void *vp, int &n, double *&ptr);
 
   /** \brief Return the size and a pointer to the column
       named \c col_name in a table object
    */
-  int o2scl_acol_get_hist_reps(void *vp, int &n, double *&ptr) {
-    o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
-    n=amp->hist_obj.size();
-    amp->xtemp.resize(n);
-    for(int i=0;i<n;i++) amp->xtemp[i]=amp->hist_obj.get_rep_i(i);
-    ptr=&(amp->xtemp[0]);
-    return 0;
-  }
-
-  /** \brief Return the size and a pointer to the column
-      named \c col_name in a table object
-   */
-  int o2scl_acol_get_hist_wgts(void *vp, int &n, double *&ptr) {
-    o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
-    n=amp->hist_obj.size();
-    amp->ytemp.resize(n);
-    for(int i=0;i<n;i++) amp->ytemp[i]=amp->hist_obj.get_wgt_i(i);
-    ptr=&(amp->ytemp[0]);
-    return 0;
-  }
+  int o2scl_acol_get_hist_wgts(void *vp, int &n, double *&ptr);
 
   /** \brief Return the number of contour lines associated with
       the current contour line vector object
    */
-  int o2scl_acol_contours_n(void *vp) {
-    o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
-    return amp->cont_obj.size();
-  }
-
+  int o2scl_acol_contours_n(void *vp);
+  
   /** \brief For the current contour line vector object, set the
       pointers to the x- and y-values in the contour lines and return
       the contour level
   */
   double o2scl_acol_contours_line(void *vp, int i, int &n, double *&ptrx,
-				  double *&ptry) {
-    o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
-    double lev=amp->cont_obj[i].level;
-    n=amp->cont_obj[i].x.size();
-    ptrx=&(amp->cont_obj[i].x[0]);
-    ptry=&(amp->cont_obj[i].y[0]);
-    return lev;
-  }
+				  double *&ptry);
 
   /** \brief Return the type of the current object 
    */
-  void o2scl_acol_get_type(void *vp, int &n, char *&str) {
-    o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
-    n=amp->type.length();
-    if (n>0) {
-      str=(char *)(amp->type.c_str());
-    } else {
-      str=0;
-    }
-    return;
-  }
+  void o2scl_acol_get_type(void *vp, int &n, char *&str);
 
   /** \brief Return the size and a pointer to the column
       named \c col_name in a table object
@@ -708,38 +616,7 @@ extern "C" {
   int o2scl_acol_get_slice(void *vp, char *slice_name,
 			   int &nx, double *&xptr,
 			   int &ny, double *&yptr,
-			   double *&data) {
-    o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
-    if (amp->type!="table3d") {
-      return 1;
-    }
-
-    nx=amp->table3d_obj.get_nx();
-    amp->xtemp.resize(nx);
-    o2scl::vector_copy(amp->table3d_obj.get_x_data(),amp->xtemp);
-    xptr=(double *)&amp->xtemp[0];
-
-    ny=amp->table3d_obj.get_ny();
-    amp->ytemp.resize(ny);
-    o2scl::vector_copy(amp->table3d_obj.get_y_data(),amp->ytemp);
-    yptr=(double *)&amp->ytemp[0];
-
-    amp->stemp.resize(nx*ny);
-    std::string stmp=slice_name;
-    size_t itmp;
-    if (!amp->table3d_obj.is_slice(stmp,itmp)) {
-      return 2;
-    }
-    typedef boost::numeric::ublas::matrix<double> ubmatrix;
-    const ubmatrix &m=amp->table3d_obj.get_slice(stmp);
-    for(int i=0;i<nx;i++) {
-      for(int j=0;j<ny;j++) {
-	amp->stemp[i*ny+j]=m(i,j);
-      }
-    }
-    data=(double *)&amp->stemp[0];
-    return 0;
-  }
+			   double *&data);
   
   /** \brief For a two-dimensional histogram, return the bin edges,
       number of bins in both directions, and the weights in each bin
@@ -747,37 +624,7 @@ extern "C" {
   int o2scl_acol_get_hist_2d(void *vp, 
 			     int &nx, double *&xptr,
 			     int &ny, double *&yptr,
-			     double *&data) {
-    o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
-    if (amp->type!="hist_2d") {
-      return 1;
-    }
-
-    nx=amp->hist_2d_obj.size_x();
-    amp->xtemp.resize(nx);
-    for(int i=0;i<nx;i++) {
-      amp->xtemp[i]=amp->hist_2d_obj.get_x_rep_i(i);
-    }
-    xptr=(double *)&amp->xtemp[0];
-
-    ny=amp->hist_2d_obj.size_y();
-    amp->ytemp.resize(ny);
-    for(int i=0;i<ny;i++) {
-      amp->ytemp[i]=amp->hist_2d_obj.get_y_rep_i(i);
-    }
-    yptr=(double *)&amp->ytemp[0];
-
-    amp->stemp.resize(nx*ny);
-    typedef boost::numeric::ublas::matrix<double> ubmatrix;
-    const ubmatrix &m=amp->hist_2d_obj.get_wgts();
-    for(int i=0;i<nx;i++) {
-      for(int j=0;j<ny;j++) {
-	amp->stemp[i*ny+j]=m(i,j);
-      }
-    }
-    data=(double *)&amp->stemp[0];
-    return 0;
-  }
+			     double *&data);
   //@}
   
 }
