@@ -36,12 +36,12 @@ emacs-clean:
 	rm -f */*/*/*/*~
 
 utk-sync-doc:
-	cp -r /usr/local/share/doc/o2scl $(STATIC_DOC_DIR)/o2scl
-	cp extras/index.html $(STATIC_DOC_DIR)/o2scl
-	cp extras/bootstrap.css $(STATIC_DOC_DIR)/o2scl
-	cp extras/bootstrap.js $(STATIC_DOC_DIR)/o2scl
-	cp extras/bootstrap-responsive.css $(STATIC_DOC_DIR)/o2scl
-	cp extras/jquery-2.0.3.min.js $(STATIC_DOC_DIR)/o2scl
+	sudo cp -r /usr/local/share/doc/o2scl/* $(STATIC_DOC_DIR)/o2scl
+	sudo cp extras/index.html $(STATIC_DOC_DIR)/o2scl
+	sudo cp extras/bootstrap.css $(STATIC_DOC_DIR)/o2scl
+	sudo cp extras/bootstrap.js $(STATIC_DOC_DIR)/o2scl
+	sudo cp extras/bootstrap-responsive.css $(STATIC_DOC_DIR)/o2scl
+	sudo cp extras/jquery-2.0.3.min.js $(STATIC_DOC_DIR)/o2scl
 
 prerelease-sync-doc:
 	cp -r /usr/local/share/doc/o2scl $(HOME)/data
