@@ -1716,8 +1716,8 @@ namespace o2scl {
   /** \brief Read initial points from the last points recorded in file
       named \c fname
 
-      The values of \ref mcmc_para::n_walk and \ref
-      mcmc_para::n_threads, must be set to their correct values before
+      The values of \ref o2scl::mcmc_para_base::n_walk and \ref
+      o2scl::mcmc_para_base::n_threads, must be set to their correct values before
       calling this function. This function requires that a table is
       present in \c fname which stores parameters in a block of
       columns and has columns named \c mult, \c thread, 
@@ -1803,11 +1803,11 @@ namespace o2scl {
   /** \brief Read initial points from file
       named \c fname, distributing across the chain if necessary
 
-      The values of \ref mcmc_para::n_walk and \ref
-      mcmc_para::n_threads, must be set to their correct values before
-      calling this function. This function requires that a table is
-      present in \c fname which stores parameters in a block of
-      columns.
+      The values of \ref o2scl::mcmc_para_base::n_walk and \ref
+      o2scl::mcmc_para_base::n_threads, must be set to their correct values
+      before calling this function. This function requires that a
+      table is present in \c fname which stores parameters in a block
+      of columns.
   */
   virtual void initial_points_file_dist(std::string fname,
 					size_t n_param_loc,
@@ -1876,11 +1876,11 @@ namespace o2scl {
   /** \brief Read initial points from the best points recorded in file
       named \c fname
 
-      The values of \ref mcmc_para::n_walk and \ref
-      mcmc_para::n_threads, must be set to their correct values before
-      calling this function. This function requires that a table is
-      present in \c fname which stores parameters in a block of
-      columns and contains a separate column named \c log_wgt .
+      The values of \ref o2scl::mcmc_para_base::n_walk and \ref
+      o2scl::mcmc_para_base::n_threads, must be set to their correct values
+      before calling this function. This function requires that a
+      table is present in \c fname which stores parameters in a block
+      of columns and contains a separate column named \c log_wgt .
   */
   virtual void initial_points_file_best(std::string fname,
 					size_t n_param_loc,

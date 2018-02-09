@@ -113,11 +113,11 @@
     confidence limits surrounding the peak of a 1-dimensional data set
     using linear interpolation. To count level crossings in a
     function, use \ref o2scl::vector_level_count(). The function \ref
-    o2scl::vector_integ_linear() uses linear interpolation to compute
+    o2scl::vector_integ_interp() uses interpolation to compute
     the integral defined by a set of vectors, and the function \ref
-    o2scl::vector_region_parint() finds the set of regions which gives
+    o2scl::vector_region_fracint() finds the set of regions which gives
     a fraction of the integral reported by \ref
-    o2scl::vector_integ_linear().
+    o2scl::vector_integ_interp().
 
     \section fixedgrid_subsect Derivatives and integrals on a fixed grid
     

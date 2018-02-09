@@ -48,7 +48,7 @@ typedef boost::numeric::ublas::matrix<double> ubmatrix;
 typedef std::function<int(size_t,const ubvector &,double &,
 			  std::array<double,1> &)> point_funct;
 
-typedef std::function<int(const ubvector &,double,size_t,bool,
+typedef std::function<int(const ubvector &,double,size_t,int,bool,
 			  std::array<double,1> &)> measure_funct;
 
 typedef std::function<int(const ubvector &,double,std::vector<double> &,
@@ -84,7 +84,7 @@ public:
   }
 
   int measure(const ubvector &pars, double log_weight, size_t ix,
-	      bool new_meas, std::array<double,1> &dat) {
+	      int ret, bool new_meas, std::array<double,1> &dat) {
     /*
       sev_x.add(pars[0]);
       sev_x2.add(dat[0]);
@@ -152,10 +152,10 @@ int main(int argc, char *argv[]) {
      &mpc,std::placeholders::_1,std::placeholders::_2,std::placeholders::_3,
      std::placeholders::_4);
   measure_funct mf=std::bind
-    (std::mem_fn<int(const ubvector &,double,size_t,bool,
+    (std::mem_fn<int(const ubvector &,double,size_t,int,bool,
 		     std::array<double,1> &)>(&mcmc_para_class::measure),&mpc,
      std::placeholders::_1,std::placeholders::_2,std::placeholders::_3,
-     std::placeholders::_4,std::placeholders::_5);
+     std::placeholders::_4,std::placeholders::_5,std::placeholders::_6);
 
   size_t n_threads=1;
 #ifdef O2SCL_OPENMP

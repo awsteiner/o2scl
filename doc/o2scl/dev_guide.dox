@@ -27,15 +27,15 @@
     - Create the new distribution and copy to internal svn repo.
     - Create github release, tagging the recent commit and uploading
     the distribution.
-    - Compute hashes and update dl_page.dox wish hashes and github
+    - Compute hashes and update dl_page.dox with hashes and github
     release hash.
     - Update internal svn web file storing sha256 hash.
     - Regenerate documentation and copy dl_page.html to internal
     svn repo.
-    - Run "make utk-sync-doc" in doc/o2scl in order to move new docs
-    to the internal svn repo.
-    - Go to the internal web page copy and run "make puto" to publish
-    web docs, new distribution, and new sha256 hash.
+    - Run "make utk-sync-doc" in doc/o2scl in order to copy the new
+    docs to their location on the werb server.
+    - Copy the new distribution and the new sha256 hash to the web 
+    server.
     - Update homebrew recipe.
     - Check installation using homebrew directly.
     - Turn on build pushes in travis-ci.org and commit again since
