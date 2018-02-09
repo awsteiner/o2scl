@@ -29,14 +29,14 @@
     the distribution.
     - Compute hashes and update dl_page.dox with hashes and github
     release hash.
-    - Update internal svn web file storing sha256 hash.
-    - Regenerate documentation and copy dl_page.html to internal
-    svn repo.
-    - Run "make utk-sync-doc" in doc/o2scl in order to copy the new
-    docs to their location on the werb server.
+    - Do a 'make install' on isospin so that 'make utk-sync-doc'
+    can copy docs from the post-installation directory
+    - Run "make utk-sync-doc" (already has sudo implemented) 
+    in doc/o2scl in order to copy the new
+    docs to their location on the web server.
     - Copy the new distribution and the new sha256 hash to the web 
     server.
-    - Update homebrew recipe.
+    - Update homebrew recipe with the new hash.
     - Check installation using homebrew directly.
     - Turn on build pushes in travis-ci.org and commit again since
     dl_page.dox has changed. 
