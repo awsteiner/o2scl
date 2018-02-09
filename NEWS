@@ -1,3 +1,54 @@
+Notes for 0.921 release:
+
+New vector_autocorr() functions were created to analyze
+autocorrelations.
+
+The class serach_vec now has improved thread safety.
+
+Kriging classes interpm_krige_nn, interpm_krige, and interp_krige were
+created. These are still a bit experimental.
+
+A new Robbins-Monro iteration root-finding class has been created. A
+class smooth_func for smoothing multivariate functions by averaging in
+a neighborhood has been created. These should help dealing with noisy
+functions.
+
+All 'funct11' classes have been renamed to 'funct'.
+
+New vector bin size functions have been created. 
+
+The 'acol' command has been reworked to handle HDF5 I/O for more
+types. It can now manipulate vectors, matrices, and tensors
+in several new ways. The interaction with o2graph in o2sclpy
+has also been improved.
+
+The Markov chain Monte Carlo classes have been updated, but
+are still experimental. Similarly with the probability
+density distribution classes where new bivariate gaussian
+and AMR-like probability densities were created. 
+
+The internal bibliography mechanics have been improved.
+
+Error handling in nucleus_rmf has been improved.
+
+Updates to eos_tov_vectors, eos_had_rmf, eos_tov_vectors,
+eos_had_skyrme.
+
+Created an eos_cs2_poly class and anneal_para_ts. 
+
+Nuclear masses were updated for the 2016 AME data set.
+
+The calculation of dndT, dndmu, and dsdT for relativistic
+fermions has been improved. 
+
+The SFHo and SFHx EOSs were updated.
+
+Several internal changes have been made to allow Ubuntu-style
+packages. The 'make check' target now works without 'make install'. A
+snapcraft snap has also been created. These are still in progress.
+
+------------------------------------------------------------------------
+
 Notes for 0.920 release:
 
 A new set of Markov chain Monte Carlo classes has been created.
