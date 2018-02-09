@@ -13,7 +13,7 @@ Create a new object of type <type>. For types char, double, int, size_t, and
 string, this takes one additional argument which holds the value. For type 
 table, create a new table with one column whose entries are an evenly-spaced 
 grid. This takes four arguments, the name of the column, the first value, the 
-increment between successive values and the maximum possible value. Note that 
+maximum possible value, and the increment between successive values. Note that 
 finite precision arithmetic may cause small deviations from the expected 
 result. If a table is currently in memory, it is deallocated beforehand. 
 # -----------------------------------------------------------------

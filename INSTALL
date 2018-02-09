@@ -1,9 +1,9 @@
 The text below contains some generic installation constructions for
 libraries built on GNU Autotools (like O2scl). For detailed
 installation instructions on O2scl and a list of dependencies, see the
-User's Guide at http://web.utk.edu/~asteine1/o2scl . Alternatively, if
-you obtained O2scl from a release distribution, then the documentation
-can be found in doc/o2scl/html/index.html .
+User's Guide at https://isospin.roam.utk.edu/static/o2scl .
+Alternatively, if you obtained O2scl from a release distribution, then
+the documentation can be found in doc/o2scl/html/index.html .
 
 ---------------------------------------------------------------------
 
