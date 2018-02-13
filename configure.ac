@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([o2scl],[0.921],[awsteiner@mykolab.com])
+AC_INIT([o2scl],[0.922],[awsteiner@mykolab.com])
 AC_CONFIG_SRCDIR(config.h.in)
 AC_CONFIG_HEADER(config.h)
 AC_CONFIG_MACRO_DIR([m4])
@@ -40,9 +40,9 @@ AC_CHECK_FUNC([popen],[AC_DEFINE([HAVE_POPEN],[1],
 # Take care of library version numbers
 # ----------------------------------------------
 
-OLIB_CURRENT=11
+OLIB_CURRENT=12
 OLIB_REVISION=0
-OLIB_AGE=11
+OLIB_AGE=12
 
 OLIB_LT_VERSION="${OLIB_CURRENT}:${OLIB_REVISION}:${OLIB_AGE}"
 AC_SUBST(OLIB_LT_VERSION)
