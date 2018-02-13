@@ -2134,8 +2134,9 @@ namespace o2scl {
       interpolation up to a specified upper limit
   */
   template<class vec_t, class vec2_t> 
-    double vector_integ_ul_xy_interp(size_t n, const vec_t &x, const vec2_t &y,
-				     double x2, size_t interp_type=itp_linear) {
+    double vector_integ_ul_xy_interp(size_t n, const vec_t &x,
+				     const vec2_t &y, double x2,
+				     size_t interp_type=itp_linear) {
     
     // Interpolation object
     interp<vec_t,vec2_t> si(interp_type);
@@ -2157,24 +2158,26 @@ namespace o2scl {
       of an integral as input, and returns the corresponding y-value
       in the variable \c lev. 
 
-      In order to make sure that the intepretation of the integral is
-      unambiguous, this function requires that the first and last values
-      of \c y are equal, i.e. <tt>y[0]==y[n-1]</tt>. This function
-      also requires at least two data points, i.e. \c n cannot be
-      0 or 1. 
-
       This function is particularly useful, for example, in computing 
       the region which defines 68\% around a peak of data, thus 
       providing \f$ 1~\sigma \f$ confidence limits. 
 
-      Linear interpolation is used to describe the function \f$ g \f$,
-      and the precision of this function is limited by this assumption.
-      This function may also sometimes fail if \c sum is very close to
-      the minimum or maximum value of the function \f$ g \f$. 
+      By default, this function does not allow any enclosed regions to
+      go beyond the x region specified by the data. In some cases, it
+      is useful to fix the boundaries to zero to ensure the integral
+      is well-defined. If \c boundaries is set to 1, then the LHS
+      boundary is set to zero, if \c boundaries is set to 2, then the
+      RHS boundary is set to zero, and if \c boundaries is set to 3,
+      then both boundaries are set to zero.
 
-      \todo This function may also require that all of the
-      y-vector values have the same sign or are all positive.
-      Check this.
+      Even if the boundaries are set to zero, the region enclosing a
+      particular integral may not be well-defined, and this function
+      can fail to find a region given a specified value of \c sum.
+      Linear interpolation is used to describe the function \f$ g \f$,
+      and the precision of this function is limited by this
+      assumption. This function may also sometimes fail if \c sum is
+      very close to the minimum or maximum value of the function \f$ g
+      \f$.
 
       \comment
       Note that the two vector types for x and y must be the
@@ -2197,7 +2200,7 @@ namespace o2scl {
     size_t n2;
     if (boundaries==1) {
       if (verbose>0) {
-	std::cout << "Extrapolate left boundary." << std::endl;
+	std::cout << "Fix left boundary to zero." << std::endl;
       }
       x2.resize(n+1);
       y2.resize(n+1);
@@ -2210,7 +2213,7 @@ namespace o2scl {
       n2=n+1;
     } else if (boundaries==2) {
       if (verbose>0) {
-	std::cout << "Extrapolate right boundary." << std::endl;
+	std::cout << "Fix right boundary to zero." << std::endl;
       }
       x2.resize(n+1);
       y2.resize(n+1);
@@ -2223,7 +2226,7 @@ namespace o2scl {
       n2=n+1;
     } else if (boundaries==3) {
       if (verbose>0) {
-	std::cout << "Extrapolate both boundaries." << std::endl;
+	std::cout << "Fix both boundaries to zero." << std::endl;
       }
       x2.resize(n+2);
       y2.resize(n+2);
