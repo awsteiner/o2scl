@@ -2196,6 +2196,9 @@ namespace o2scl {
     std::vector<double> x2, y2;
     size_t n2;
     if (boundaries==1) {
+      if (verbose>0) {
+	std::cout << "Extrapolate left boundary." << std::endl;
+      }
       x2.resize(n+1);
       y2.resize(n+1);
       x2[0]=x[0]-(x[1]-x[0])/1.0e6;
@@ -2206,6 +2209,9 @@ namespace o2scl {
       }
       n2=n+1;
     } else if (boundaries==2) {
+      if (verbose>0) {
+	std::cout << "Extrapolate right boundary." << std::endl;
+      }
       x2.resize(n+1);
       y2.resize(n+1);
       for(size_t i=0;i<n;i++) {
@@ -2216,6 +2222,9 @@ namespace o2scl {
       y2[n]=0.0;
       n2=n+1;
     } else if (boundaries==3) {
+      if (verbose>0) {
+	std::cout << "Extrapolate both boundaries." << std::endl;
+      }
       x2.resize(n+2);
       y2.resize(n+2);
       x2[0]=x[0]-(x[1]-x[0])/1.0e6;
@@ -2228,6 +2237,9 @@ namespace o2scl {
       y2[n+1]=0.0;
       n2=n+2;
     } else {
+      if (verbose>0) {
+	std::cout << "No boundary extrapolation." << std::endl;
+      }
       x2.resize(n);
       y2.resize(n);
       for(size_t i=0;i<n;i++) {
@@ -2271,7 +2283,7 @@ namespace o2scl {
       if ((locs.size()%2)!=0) {
 	nfail++;
 	if (verbose>0) {
-	  std::cout << lev_tmp << " " << 0.0 << " "
+	  std::cout << k << " " << lev_tmp << " " << 0.0 << " "
 		    << locs.size() << " (fail)" << std::endl;
 	}
       } else {
@@ -2284,7 +2296,7 @@ namespace o2scl {
 	xi.push_back(sum_temp);
 	yi.push_back(lev_tmp);
 	if (verbose>0) {
-	  std::cout << lev_tmp << " " << sum_temp << " "
+	  std::cout << k << " " << lev_tmp << " " << sum_temp << " "
 		    << locs.size() << " ";
 	  for(size_t i=0;i<locs.size();i++) {
 	    std::cout << locs[i] << " ";
