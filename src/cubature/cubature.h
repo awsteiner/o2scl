@@ -1161,10 +1161,10 @@ namespace o2scl {
       }
 
       {
-	size_t i, fdim = h.fdim;
-	for (i = 0; i < fdim; ++i) {
-	  h.ee[i].val -= ret.ee[i].val;
-	  h.ee[i].err -= ret.ee[i].err;
+	size_t ii, fdim = h.fdim;
+	for (ii = 0; ii < fdim; ++ii) {
+	  h.ee[ii].val -= ret.ee[ii].val;
+	  h.ee[ii].err -= ret.ee[ii].err;
 	}
       }
       return ret;
@@ -1752,7 +1752,7 @@ namespace o2scl {
     /* error estimates along each dimension by comparing val with
        lower-order rule in that dimension; overall (conservative)
        error estimate from maximum error of lower-order rules. */
-    for(size_t j=0;j<fdim;j++) {
+    for(j=0;j<fdim;j++) {
       err[j]=0.0;
     }
     mi = 0;

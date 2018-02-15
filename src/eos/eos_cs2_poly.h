@@ -149,6 +149,66 @@ namespace o2scl {
 
   };
 
+  /** \brief EOS with a constant speed of sound
+   */
+  class eos_cs2_const {
+    
+  protected:
+
+    /** \brief Chemical potential integration constant
+     */
+    double C1;
+    /** \brief Energy density integration constant
+     */
+    double C2;
+  
+  public:
+
+    /** \brief Speed of sound
+     */
+    double cs2;
+
+    eos_cs2_poly() {
+      cs2=1.0;
+      C1=0.0;
+      C2=0.0;
+    }
+  
+    /** \brief Fix the integration constants by specifying the
+	energy density and pressure at some baryon density
+    */
+    void fix_integ_consts(double nb1, double ed1, double pr1) {
+      C1=pow(nb1,-1.0-cs2)*(ed1+pr1);
+      C2=(ed1*cs2-pr1)/(1.0+cs2);
+      return;
+    }
+
+    /** \brief Return the chemical potential in \f$ \mathrm{fm}^{-1}
+	\f$, including the rest mass, given the baryon density in \f$
+	\mathrm{fm}^{-3} \f$
+    */
+    double mu_from_nb(double nb) {
+      return C1*pow(nb,cs2);
+    }
+
+    /** \brief Return the energy density in \f$ \mathrm{fm}^{-4} \f$,
+	including the rest mass energy density, given the baryon density
+	in \f$ \mathrm{fm}^{-3} \f$
+    */
+    double ed_from_nb(double nb) {
+      return C1*pow(nb,cs2+1.0)/(1.0+cs2)+C2;
+    }
+
+    /** \brief Return the pressure in \f$ \mathrm{fm}^{-4} \f$ 
+	given the baryon density 
+	in \f$ \mathrm{fm}^{-3} \f$
+    */
+    double pr_from_nb(double nb) {
+      return C1*cs2*pow(nb,cs2+1.0)/(1.0+cs2)-C2;
+    }
+
+  };
+
 }
  
 #endif

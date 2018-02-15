@@ -1601,11 +1601,13 @@ int acol_manager::setup_parameters() {
   
   p_obj_name.help="The current object name.";
   p_unit_fname.help="The unit filename.";
-  p_def_args.help="The default arguments from the environment.";
+  p_def_args.help=((std::string)"The default arguments from the ")+
+    "environment varable ACOL_DEFAULTS.";
   p_prec.help="The numerical precision.";
   p_verbose.help="Control the amount of output.";
-  p_compress.help="If true, enable compression.";
-  p_ncols.help="The number of output columns.";
+  p_compress.help=((std::string)"If true, enable compression ")+
+    "(defaults to true if compression was enabled in O2scl).";
+  p_ncols.help="The number of columns for screen output.";
   p_interp_type.help=((std::string)"The interpolation type ")+
     "(1=linear, 2=cubic spline, 3=periodic cubic spline, 4=Akima, "+
     "5=periodic Akima, 6=monotonic, 7=Steffen's monotonic).";
