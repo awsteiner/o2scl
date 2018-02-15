@@ -67,8 +67,7 @@ list
 # -----------------------------------------------------------------
 function x*pi/2 x2
 # -----------------------------------------------------------------
-# Columns can be renamed. Legal column names contain letters
-# numbers and underscores, and begin with a letter.
+# Columns can be renamed. 
 # -----------------------------------------------------------------
 rename x2 x_2
 output

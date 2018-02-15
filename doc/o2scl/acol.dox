@@ -1,11 +1,33 @@
 /** \page acol_section The 'acol' Command-line Utility
 
     \o2 contains a command-line utility, \c acol, designed to
-    facilitate the manipulation of two-dimensional data tables, either
-    stored in a generic text-file, or objects (of type \ref
-    o2scl::table, \ref o2scl::hist, \ref o2scl::table3d, \ref
-    o2scl::hist_2d, and \ref o2scl::contour_line) stored using the
-    HDF5 I/O facilities in \o2.
+    facilitate the manipulation of various objects stored in HDF5
+    files. It can handle integers, characters, double-precision
+    floating point numbers, size_t objects, arrays of any of these
+    types, or \o2 objects of type \ref o2scl::table, \ref o2scl::hist,
+    \ref o2scl::table3d, \ref o2scl::hist_2d, \ref o2scl::tensor_grid
+    and \ref o2scl::contour_line .
+
+    \c acol can only operate with one object at a time. The
+    basic workflow is:
+    - create an object from scratch or read it from an HDF5 file
+    - perform operations on that object
+    - output the object to the screen or write it to an HDF5 file
+
+    The available command list can be obtained using 'help' or
+    'commands' and changes depending on what type of object is
+    currently in memory. In order to list the commands which would be
+    available given a particular type, give 'commands' the type as an
+    argument, i.e. <code>acol -commands table</code> . In order to
+    get detailed help on how a command operates on a particular type,
+    give the type and the command as arguments to help, e.g.
+    <code>acol -help table interp</code>. There are some commands
+    which are available for all types, and obtaining the help
+    information for these commands does not require a type argument,
+    i.e. <code>acol -commands</code> or <code>acol -help read</code>.
+
+    \c acol can sometimes, but not always read and write HDF5
+    files generated outside of \o2.
 
     \c acol has a command, \c run, which allows you to run
     a set of commands which are given in a separate file. An example
