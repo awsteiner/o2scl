@@ -24,7 +24,8 @@
 #define NUCMASS_FRDM_H
 
 /** \file nucmass_frdm.h
-    \brief File defining \ref o2scl::nucmass_frdm
+    \brief File defining \ref o2scl::nucmass_frdm, \ref o2scl::nucmass_mnmsk,
+    and \ref o2scl::nucmass_mnmsk_exp
 */
 
 #include <cmath>

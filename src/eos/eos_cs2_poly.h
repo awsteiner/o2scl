@@ -167,17 +167,18 @@ namespace o2scl {
     /** \brief Speed of sound
      */
     double cs2;
-
-    eos_cs2_poly() {
+    
+    eos_cs2_const() {
       cs2=1.0;
       C1=0.0;
       C2=0.0;
     }
   
     /** \brief Fix the integration constants by specifying the
-	energy density and pressure at some baryon density
+	energy density and pressure at some baryon chemical potential
     */
-    void fix_integ_consts(double nb1, double ed1, double pr1) {
+    void fix_integ_consts(double mub1, double ed1, double pr1) {
+      double nb1=pow(mub1,1.0/cs2)/C1;
       C1=pow(nb1,-1.0-cs2)*(ed1+pr1);
       C2=(ed1*cs2-pr1)/(1.0+cs2);
       return;

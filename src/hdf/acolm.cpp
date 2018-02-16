@@ -6903,7 +6903,7 @@ int acol_manager::comm_delete_rows(std::vector<std::string> &sv,
     return exc_efailed;
   }
   
-  table_obj.delete_rows(i1);
+  table_obj.delete_rows_func(i1);
 
   return 0;
 }

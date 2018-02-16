@@ -1170,7 +1170,7 @@ namespace o2scl {
       If no rows match the delete condition, this function silently
       performs no changes to the table.
   */
-  void delete_rows(std::string func) {
+  void delete_rows_func(std::string func) {
     size_t new_nlines=0;
     for(size_t i=0;i<nlines;i++) {
       double val=row_function(func,i);
@@ -1246,10 +1246,10 @@ namespace o2scl {
       end of the table (greater than or equal to the value given by
       \ref get_nlines() ), an exception is thrown.
   */
-  void delete_rows(size_t row_start, size_t row_end) {
+  void delete_rows_ends(size_t row_start, size_t row_end) {
     if (row_start>=nlines || row_end>=nlines) {
       O2SCL_ERR2("Row specifications beyond end of table in ",
-		 "table::delete_rows(size_t,size_t).",exc_einval);
+		 "table::delete_rows_ends(size_t,size_t).",exc_einval);
     }
     size_t new_nlines=0;
     for(size_t i=0;i<nlines;i++) {
@@ -1276,12 +1276,12 @@ namespace o2scl {
       in the list, the error handler is called.
    */
   template<class vec_size_t> 
-  void delete_rows(vec_size_t &row_list) {
+  void delete_rows_list(vec_size_t &row_list) {
 
     // First, check that they're all valid rows
     for(size_t j=0;j<row_list.size();j++) {
       if (row_list[j]>nlines) {
-	O2SCL_ERR("Invalid row in table<>::delete_rows(vec_size_t &)",
+	O2SCL_ERR("Invalid row in table<>::delete_rows_list(vec_size_t &)",
 		  o2scl::exc_einval);
       }
     }
@@ -1330,7 +1330,7 @@ namespace o2scl {
 	if (match) row_list.push_back(i+1);
       }
       // Delete duplicates
-      delete_rows(row_list);
+      delete_rows_list(row_list);
     }
     return;
   }
