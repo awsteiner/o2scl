@@ -43,6 +43,7 @@
 #include <o2scl/search_vec.h>
 #include <o2scl/cholesky.h>
 #include <o2scl/lu.h>
+#include <o2scl/vec_stats.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -961,6 +962,40 @@ namespace o2scl {
     ndim=0;
   }
 
+  /** \brief Create a distribution from a set of samples from a 
+      multidimensional Gaussian
+   */
+  template<class mat2_t, class vec2_t,
+  class mat_col_t=matrix_column_gen<mat2_t> >
+  prob_dens_mdim_gaussian(size_t p_mdim, size_t n_pts, const mat2_t &pts,
+			  const vec2_t &vals) {
+    
+    vec_t peak(p_mdim);
+    mat_t covar(p_mdim,p_mdim);
+
+    // Set peak with average and diagonal elements in covariance
+    // matrix with variance
+    for(size_t i=0;i<p_mdim;i++) {
+      mat_col_t col(pts,i);
+      peak[i]=o2scl::wvector_mean<mat_col_t>(n_pts,col,vals);
+      // Square standard deviation
+      covar(i,i)=o2scl::wvector_stddev<mat_col_t>(n_pts,col,vals);
+      covar(i,i)*=covar(i,i);
+    }
+    // Setup off-diagonal covariance matrix
+    for(size_t i=0;i<p_mdim;i++) {
+      mat_col_t col_i(pts,i);
+      for(size_t j=i+1;j<p_mdim;j++) {
+	mat_col_t col_j(pts,j);
+	double cov=o2scl::vector_covariance(n_pts,col_i,col_j,peak[i],
+					    peak[j],vals);
+	covar(i,j)=cov;
+	covar(j,i)=cov;
+      }
+    }
+    set(p_mdim,peak,covar);
+  }
+  
   /** \brief Create a distribution from the covariance matrix
    */
   prob_dens_mdim_gaussian(size_t p_ndim, vec_t &p_peak, mat_t &covar) {
@@ -968,6 +1003,9 @@ namespace o2scl {
   }
 
   /** \brief Set the peak and covariance matrix for the distribution
+
+      \note This function is called in constructors and thus 
+      should not be virtual.
    */
   void set(size_t p_ndim, vec_t &p_peak, mat_t &covar) {
     if (p_ndim==0) {
