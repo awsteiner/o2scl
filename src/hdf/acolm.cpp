@@ -541,8 +541,15 @@ void acol_manager::command_add(std::string new_type) {
 	 "first point from (x1,y1) to the end to ensure a closed region.",
 	 new o2scl::comm_option_mfptr<acol_manager>
 	 (this,&acol_manager::comm_none),both},
-	{0,"scatter","",
-	 2,5,"<x> <y> [s] [c] [kwargs]","",
+	{0,"scatter","Create a scatter plot from 2-4 columns",
+	 2,5,"<x> <y> [s] [c] [kwargs]",((std::string)"This command ")+
+	 "creates a scatter plot form columns <x> and <y>, optionally "+
+	 "using column [s] to choose the marker size and optionally "+
+	 "using column [c] to choose the marker color. To vary the "+
+	 "marker colors while choosing the default marker size just "+
+	 "specify 'None' as the argument for [s]. Or, to "+
+	 "specify keyword arguments while using the default size and "+
+	 "color, specify 'None' as the argument for both [s] and [c].",
 	 new o2scl::comm_option_mfptr<acol_manager>
 	 (this,&acol_manager::comm_none),both},
 	{0,"errorbar","Plot the specified columns with errobars.",4,5,
