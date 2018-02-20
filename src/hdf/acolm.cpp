@@ -515,7 +515,7 @@ void acol_manager::command_add(std::string new_type) {
     cl->set_comm_option_vec(narr,options_arr);
 
     if (o2graph_mode) {
-      static const size_t narr2=6;
+      static const size_t narr2=7;
       comm_option_s options_arr2[narr2]={
 	{0,"plot","Plot two columns from the table.",0,3,"<x> <y> [kwargs]",
 	 ((std::string)"If the current object is a table, then plot ")+
@@ -532,13 +532,17 @@ void acol_manager::command_add(std::string new_type) {
 	 new o2scl::comm_option_mfptr<acol_manager>
 	 (this,&acol_manager::comm_none),both},
 	{0,"rplot","Plot a region inside a column or in between two columns",
-	 0,5,"<x1> <y1> [x2 y2] [kwargs]",((std::string)"If either 2 or ")+
+	 2,5,"<x1> <y1> [x2 y2] [kwargs]",((std::string)"If either 2 or ")+
 	 "3 arguments are specified, this command plots the region inside "+
 	 "the curve defined by the specified set of x and y values. The "+
 	 "first point is copied at the end to ensure a closed region. "+
 	 "If 4 or 5 arguments are specified, then this command plots the "+
 	 "region in between two sets of x and y values, again adding the "+
 	 "first point from (x1,y1) to the end to ensure a closed region.",
+	 new o2scl::comm_option_mfptr<acol_manager>
+	 (this,&acol_manager::comm_none),both},
+	{0,"scatter","",
+	 2,5,"<x> <y> [s] [c] [kwargs]","",
 	 new o2scl::comm_option_mfptr<acol_manager>
 	 (this,&acol_manager::comm_none),both},
 	{0,"errorbar","Plot the specified columns with errobars.",4,5,
@@ -1066,6 +1070,7 @@ void acol_manager::command_del() {
     if (o2graph_mode) {
       cl->remove_comm_option("plot");
       cl->remove_comm_option("rplot");
+      cl->remove_comm_option("scatter");
       cl->remove_comm_option("plot1");
       cl->remove_comm_option("errorbar");
       cl->remove_comm_option("histplot");
