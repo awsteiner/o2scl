@@ -336,7 +336,7 @@ void acol_manager::command_add(std::string new_type) {
        "all entries in that column by the appropriate factor.",
        new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_convert_unit),both},
-      {0,"find-row","Find a row which maximizes a function (table only).",
+      {0,"find-row","Find a row which maximizes a function.",
        0,2,"<func> or find-row <col> <val>",
        ((string)"If one argument is given, then find-row finds the row ")+
        "which maximizes the value of the "+
@@ -346,7 +346,7 @@ void acol_manager::command_add(std::string new_type) {
        "See command 'get-row' to get a row by it's index.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_find_row),
        both},
-      {0,"fit","Fit two columns to a function (experimental, table only).",0,7,
+      {0,"fit","Fit two columns to a function (experimental).",0,7,
        "<x> <y> <yerr> <ynew> <par names> <func> <vals>","",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_fit),
        both},
@@ -442,14 +442,14 @@ void acol_manager::command_add(std::string new_type) {
        "named using '='. ",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_select),
        both},
-      {0,"select-rows","Select rows for a new table (table only).",
+      {0,"select-rows","Select rows for a new table.",
        0,1,"<row_spec>",((std::string)"Select the rows from a table for ")+
        "which the row specification in <row_spec> evaluates to a number "+
        "greater than 0.5",
        new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_select_rows),both},
       {0,"select-rows2",
-       "Select rows, with explicit column specification (table only).",
+       "Select rows, with explicit column specification.",
        0,-1,"<row_spec> [col1] [col2] ...",
        ((std::string)"Select the rows from a table for ")+
        "which the row specification in <row_spec> evaluates to a number "+
@@ -493,7 +493,7 @@ void acol_manager::command_add(std::string new_type) {
       {0,"to-hist","Convert a table to a histogram.",0,6,
        "[\"2d\"] <col 1> <col_2 (2d only)> <x_bins> <y_bins (2d only)> [wgts]",
        ((std::string)"The 'to-hist' command takes two forms: 'to-hist ")+
-       "col1 N1 wgts' or 'to-hist col2 N1 N2 wgts'. The first creates "+
+       "col1 N1 wgts' or 'to-hist 2d col1 col2 N1 N2 wgts'. The first creates "+
        "a 1D histogram from 'col1' using exactly 'N1' bins and "+
        "(optionally) weighting the entries by the values in column 'wgts'. "+
        "The second form creates a 2D histogram from 'col1' and 'col2' "+
