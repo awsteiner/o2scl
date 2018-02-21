@@ -2094,7 +2094,7 @@ namespace o2scl {
 	  next_row=walker_reject_rows[windex]+1;
 	}
 	while (next_row<((int)table->get_nlines()) &&
-	       table->get("mult",next_row)>0.0) {
+	       fabs(table->get("mult",next_row))>0.1) {
 	  next_row++;
 	}
       }
@@ -2280,7 +2280,7 @@ namespace o2scl {
     bool done=false;
     for(i=table->get_nlines()-1;i>=0 && done==false;i--) {
       done=true;
-      if (table->get("mult",i)<1.0e-10) {
+      if (fabs(table->get("mult",i))<1.0e-10) {
 	done=false;
       } 
     }
