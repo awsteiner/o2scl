@@ -2275,12 +2275,12 @@ namespace o2scl {
   virtual void mcmc_cleanup() {
 
     // This section removes empty rows at the end of the
-    // table that were allocated but not used
+    // table that were allocated but not used.
     int i;
     bool done=false;
     for(i=table->get_nlines()-1;i>=0 && done==false;i--) {
       done=true;
-      if (fabs(table->get("mult",i))<1.0e-10) {
+      if (fabs(table->get("mult",i))<0.1) {
 	done=false;
       } 
     }
