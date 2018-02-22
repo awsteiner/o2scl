@@ -408,7 +408,11 @@ namespace o2scl {
     // Doxygen seems to have trouble reading the code, so we
     // ensure it doesn't see it. 
 #ifndef DOXYGEN
-    
+
+    if (func.size()==0 || meas.size()==0) {
+      O2SCL_ERR2("Size of 'func' or 'meas' array is zero in ",
+		 "mcmc_para::mcmc().",o2scl::exc_einval);
+    }
     if (func.size()<n_threads) {
       if (verbose>0) {
 	std::cout << "mcmc_para::mcmc(): Not enough functions for "
@@ -433,7 +437,6 @@ namespace o2scl {
 #else
       mpi_start_time=time(0);
 #endif
-      std::cout << "Set start time to: " << mpi_start_time << std::endl;
     }
     
     if (initial_points.size()==0) {
@@ -602,7 +605,8 @@ namespace o2scl {
     }
 
     // ---------------------------------------------------
-    // Initial verbose output
+    // Initial verbose output (note that scr_out isn't
+    // created until the mcmc_init() function call above.
     
     if (verbose>=1) {
       if (aff_inv) {
@@ -624,6 +628,7 @@ namespace o2scl {
 		<< mpi_rank << ", n_ranks="
 		<< mpi_size << std::endl;
       }
+      scr_out << "Set start time to: " << mpi_start_time << std::endl;
     }
     
     // --------------------------------------------------------

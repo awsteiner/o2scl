@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2017, Andrew W. Steiner
+  Copyright (C) 2017-2018, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -34,6 +34,7 @@
 
 using namespace std;
 using namespace o2scl;
+using namespace o2scl_hdf;
 
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
@@ -51,43 +52,55 @@ class exc {
 
 public:
   
-/** \brief The objective function for the MCMC
+  /** \brief The objective function for the MCMC
 
-    Here, the variable 'log_weight' stores the natural logarithm of
-    the objective function based on the parameters stored in \c pars.
-    The object 'dat' stores any auxillary quantities which can be
-    computed at every point in parameter space.
-*/
-int point(size_t nv, const ubvector &pars, double &log_weight,
-	  std::array<double,2> &dat) {
+      Here, the variable 'log_weight' stores the natural logarithm of
+      the objective function based on the parameters stored in \c pars.
+      The object 'dat' stores any auxillary quantities which can be
+      computed at every point in parameter space.
+  */
+  int point(size_t nv, const ubvector &pars, double &log_weight,
+	    std::array<double,2> &dat) {
   
-  log_weight=-((pars[0]-0.2)*(pars[0]-0.2)+
-	   (pars[1]-0.5)*(pars[1]-0.5));
+    log_weight=-((pars[0]-0.2)*(pars[0]-0.2)+
+		 (pars[1]-0.5)*(pars[1]-0.5));
+    cout << "Here" << endl;
+    exit(-1);
   
-  dat[0]=pars[0]*pars[0];
-  dat[1]=pars[0]*pars[0]*pars[1]*pars[1];
-  return 0;
-}
-
-/** \brief Add auxillary quantities to 'line' so they can be
-    stored in the table
-*/
-int fill_line(const ubvector &pars, double log_weight, 
-	      std::vector<double> &line, std::array<double,2> &dat) {
-  line.push_back(dat[0]);
-  line.push_back(dat[1]);
-  if (mct.get_table()->get_nlines()==100000) {
-    return mcmc_para_base<point_funct,fill_funct,int,ubvector>::mcmc_done;
+    dat[0]=pars[0]*pars[0];
+    dat[1]=pars[0]*pars[0]*pars[1]*pars[1];
+    return 0;
   }
-  return 0;
-}
 
-  exc(int i) {
+  /** \brief The objective function for the MCMC
+
+      Here, the variable 'log_weight' stores the natural logarithm of
+      the objective function based on the parameters stored in \c pars.
+      The object 'dat' stores any auxillary quantities which can be
+      computed at every point in parameter space.
+  */
+  int point2(size_t nv, const ubvector &pars, double &log_weight,
+	     std::array<double,2> &dat) {
+    
+    double x=pars[0];
+    log_weight=log(exp(-x*x)*(sin(x-1.4)+1.0));
+    dat[0]=0.0;
+    dat[1]=1.0;
+    return 0;
   }
-  
-private:
 
-  exc();
+  /** \brief Add auxillary quantities to 'line' so they can be
+      stored in the table
+  */
+  int fill_line(const ubvector &pars, double log_weight, 
+		std::vector<double> &line, std::array<double,2> &dat) {
+    line.push_back(dat[0]);
+    line.push_back(dat[1]);
+    return 0;
+  }
+
+  exc() {
+  }
   
 };
 
@@ -112,7 +125,7 @@ int main(int argc, char *argv[]) {
   
   cout.setf(ios::scientific);
   
-  exc e(2);
+  exc e;
   
   test_mgr tm;
   tm.set_output_level(1);
@@ -152,17 +165,51 @@ int main(int argc, char *argv[]) {
 		     std::array<double,2> &)>(&exc::point),&e,
      std::placeholders::_1,std::placeholders::_2,std::placeholders::_3,
      std::placeholders::_4);
+  point_funct pf2=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,double &,
+		     std::array<double,2> &)>(&exc::point2),&e,
+     std::placeholders::_1,std::placeholders::_2,std::placeholders::_3,
+     std::placeholders::_4);
   fill_funct ff=std::bind
     (std::mem_fn<int(const ubvector &,double,std::vector<double> &,
-			  std::array<double,2> &)>(&exc::fill_line),&e,
+		     std::array<double,2> &)>(&exc::fill_line),&e,
      std::placeholders::_1,std::placeholders::_2,std::placeholders::_3,
      std::placeholders::_4);
 
   vector<point_funct> vpf;
   vpf.push_back(pf);
+  vector<point_funct> vpf2;
+  vpf2.push_back(pf2);
   vector<fill_funct> vff;
   vff.push_back(ff);
 
+  if (true) {
+    vector<string> pnames={"x","0","1"};
+    vector<string> punits={"","",""};
+    mct.set_names_units(pnames,punits);
+    mct.step_fac=2.0;
+    mct.max_iters=100000;
+    ubvector low2(1), high2(1);
+    low2[0]=-5.0;
+    high2[0]=5.0;
+    mct.mcmc(1,low2,high2,vpf2,vff);
+    shared_ptr<table_units<> > t=mct.get_table();
+    std::vector<double> ac, ftom;
+    o2scl::vector_autocorr_vector((*t)["log_wgt"],ac);
+    size_t ac_len=o2scl::vector_autocorr_tau((*t)["log_wgt"],ac,ftom);
+    cout << "ac_len,samp_size: " << ac_len << " "
+	 << t->get_nlines()/ac_len << endl;
+    mct.reblock(t->get_nlines()/ac_len);
+    hist h;
+    h.from_table(*t,"x",40);
+    hdf_file hf;
+    hf.open_or_create("temp.o2");
+    hdf_output(hf,h,"hist");
+    hdf_output(hf,*t,"table");
+    hf.close();
+    exit(-1);
+  }
+  
   // Table column names and units. We must specify first the names for
   // the parameters first and then the names of the auxillary
   // parameters.
