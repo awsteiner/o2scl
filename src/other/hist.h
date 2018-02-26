@@ -166,7 +166,15 @@ namespace o2scl {
     /// Copy constructor
     hist &operator=(const hist &h);
 
-    /// Create from a vectors of data
+    /** \brief Create a histogram from the first \c nv entries in 
+	a vector of data 
+
+	This function creates a histogram with \c n_bins equally
+	spaced bins from the minimum element to the maximum element in
+	\c v . The values of \ref extend_lhs and \ref extend_rhs are
+	set to true, so the first and last bin are guaranteed to be at
+	least 1.
+    */
     template<class vec_t> hist(size_t nv, const vec_t &v, size_t n_bins) {
 			       
       itype=1;
@@ -186,10 +194,17 @@ namespace o2scl {
       return;
     }
     
-    /// Create from a vectors of data
+    /** \brief Create a histogram from the first \c nv entries in 
+	a vector of data and a vector of weights
+
+	This function creates a histogram with \c n_bins equally
+	spaced bins from the minimum element to the maximum element in
+	\c v . The values of \ref extend_lhs and \ref extend_rhs are
+	set to true, so the first and last bin are guaranteed to be at
+	least 1.
+    */
     template<class vec_t, class vec2_t>
-      hist(size_t nv, const vec_t &v,
-	   const vec2_t &v2, size_t n_bins) {
+      hist(size_t nv, const vec_t &v, const vec2_t &w, size_t n_bins) {
       
       itype=1;
       rmode=rmode_avg;
@@ -203,35 +218,54 @@ namespace o2scl {
       set_bin_edges(ug);
 
       for(size_t i=0;i<nv;i++) {
-	update(v[i],v2[i]);
+	update(v[i],w[i]);
       }
       return;
     }
     
-    /// Create from vectors of data
+    /** \brief Create a histogram from a vector of data 
+
+	This function creates a histogram with \c n_bins equally
+	spaced bins from the minimum element to the maximum element in
+	\c v . The values of \ref extend_lhs and \ref extend_rhs are
+	set to true, so the first and last bin are guaranteed to be at
+	least 1.
+    */
     template<class vec_t> hist(const vec_t &v, size_t n_bins) {
       size_t nv=v.size();
       hist(nv,v,n_bins);
       return;
     }
 
-    /// Create from vectors of data
+    /** \brief Create a histogram from a vector of data and a vector
+	of weights
+
+	This function creates a histogram with \c n_bins equally
+	spaced bins from the minimum element to the maximum element in
+	\c v . The values of \ref extend_lhs and \ref extend_rhs are
+	set to true, so the first and last bin are guaranteed to be at
+	least 1.
+    */
     template<class vec_t, class vec2_t> hist
-      (const vec_t &v, const vec2_t &v2, size_t n_bins) {
+      (const vec_t &v, const vec2_t &w, size_t n_bins) {
 					     
       size_t nv=v.size();
-      hist(nv,v,v2,n_bins);
+      hist(nv,v,w,n_bins);
       return;
     }
 
-    // Create a histogram from a \ref o2scl::table object
+    /** \brief Create a histogram from a column in a \ref o2scl::table
+	object
+     */
     void from_table(o2scl::table<> &t, std::string colx, 
 		    size_t n_bins) {
       *this=hist(t.get_nlines(),t.get_column(colx),n_bins);
       return;
     }
     
-    // Create a histogram from a \ref o2scl::table object
+    /** \brief Create a histogram from a column of data and a column
+	of weights in a \ref o2scl::table object
+     */
     void from_table(o2scl::table<> &t, std::string colx, std::string coly,
 		    size_t n_bins) {
       *this=hist(t.get_nlines(),t.get_column(colx),t.get_column(coly),
@@ -247,9 +281,9 @@ namespace o2scl {
     /** \brief If true, allow abcissae beyond the last bin (default false)
 
 	If this is true, the histogram will allow data with
-	corresponding to bins larger than the largest bin 
-	(for increasing bin settings) or smaller than the 
-	smallest bin (for decreasing bin settings). 
+	corresponding to bins larger than the largest bin (for
+	increasing bin edges) or smaller than the smallest bin (for
+	decreasing bin edges).
     */
     bool extend_rhs;
 
@@ -261,11 +295,11 @@ namespace o2scl {
     //@{
     /** \brief Set bins from a \ref uniform_grid object
 
-	If the current histogram is not empty, then the 
-	number of bins reported by \ref uniform_grid<>::get_nbins()
-	should be equal to the current histogram size so that the
-	number of bins is equal and we can use the same weights.
-
+	If the current histogram is not empty, then the number of bins
+	reported by \ref uniform_grid<>::get_nbins() should be equal
+	to the current histogram size so that the number of bins is
+	equal and we can use the same weights.
+	
 	If either the histogram is empty, or the current
 	representative mode is not \ref rmode_user, then the
 	representative mode is automatically set to \ref rmode_avg (or
@@ -527,10 +561,11 @@ namespace o2scl {
 
     /** \brief Return the integral under the histogram 
 	
-	This function returns the sum of
+	This function returns 
 	\f[
-	w_i ( \mathrm{high}_i - \mathrm{low}_i) \, .
+	\sum_{i=0}^{N-1} w_i ( \mathrm{high}_i - \mathrm{low}_i) \, .
 	\f]
+	where \f$ N \f$ is the size of the histogram.
      */
     double integ_wgts();
 
@@ -570,9 +605,13 @@ namespace o2scl {
 	action of this function depends on the interpolation type.
 	If the histogram is empty, an exception is thrown. 
     */
-    void normalize(double new_sum);
+    void normalize(double new_sum=1.0);
 
-    /// Internal consistency check
+    /** \brief Internal consistency check
+
+	This function principally checks that the sizes of
+	the internal vectors match up.
+     */
     void is_valid() const;
     
     /** \brief Copy histogram data to a table

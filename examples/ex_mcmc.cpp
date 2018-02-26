@@ -199,7 +199,7 @@ int main(int argc, char *argv[]) {
     size_t ac_len=o2scl::vector_autocorr_tau((*t)["log_wgt"],ac,ftom);
     cout << "ac_len,samp_size: " << ac_len << " "
 	 << t->get_nlines()/ac_len << endl;
-    mct.reblock(t->get_nlines()/ac_len);
+    //mct.reblock(t->get_nlines()/ac_len);
     hist h;
     h.from_table(*t,"x",40);
     hdf_file hf;
