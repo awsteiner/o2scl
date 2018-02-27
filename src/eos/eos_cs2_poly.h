@@ -175,15 +175,15 @@ namespace o2scl {
     }
   
     /** \brief Fix the integration constants by specifying the
-	energy density and pressure at some baryon chemical potential
+	pressure, baryon chemical potential, and energy density
     */
     void fix_integ_consts(double mub1, double ed1, double pr1) {
-      double nb1=pow(mub1,1.0/cs2)/C1;
-      C1=pow(nb1,-1.0-cs2)*(ed1+pr1);
+      double nb1=(ed1+pr1)/mub1;
+      C1=mub1*pow(nb1,-cs2);
       C2=(ed1*cs2-pr1)/(1.0+cs2);
       return;
     }
-
+    
     /** \brief Return the chemical potential in \f$ \mathrm{fm}^{-1}
 	\f$, including the rest mass, given the baryon density in \f$
 	\mathrm{fm}^{-3} \f$
@@ -198,6 +198,14 @@ namespace o2scl {
     */
     double ed_from_nb(double nb) {
       return C1*pow(nb,cs2+1.0)/(1.0+cs2)+C2;
+    }
+
+    /** \brief Return the energy density in \f$ \mathrm{fm}^{-4} \f$,
+	including the rest mass energy density, given the baryon density
+	in \f$ \mathrm{fm}^{-3} \f$
+    */
+    double nb_from_ed(double ed) {
+      return pow((ed-C2)*(1.0+cs2)/C1,1.0/(1.0+cs2));
     }
 
     /** \brief Return the pressure in \f$ \mathrm{fm}^{-4} \f$ 
