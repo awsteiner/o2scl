@@ -620,6 +620,11 @@ namespace o2scl {
     void set_units(std::string eunits="", std::string punits="", 
 		   std::string nunits="");
 
+    /** \brief Get output units for the table
+    */
+    void get_units(std::string &eunits, std::string &punits, 
+		   std::string &nunits);
+
     /// Calculate the mass vs. radius curve
     virtual int mvsr();
 

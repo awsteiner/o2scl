@@ -140,6 +140,14 @@ void tov_solve::set_units(double s_efactor, double s_pfactor,
   return;
 }
 
+void tov_solve::get_units(std::string &leunits, 
+			  std::string &lpunits, std::string &lnunits) {
+  leunits=eunits;
+  lpunits=punits;
+  lnunits=nunits;
+  return;
+}
+
 void tov_solve::set_units(std::string leunits, 
 			      std::string lpunits, std::string lnunits) {
   eunits=leunits;
