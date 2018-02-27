@@ -637,11 +637,20 @@ namespace o2scl {
 	unstable branch. If \c pmax is greater than or equal to the
 	default value (\ref pmax_default), then the maximum mass star
 	will be explicitly computed first.
+
+	Note that this function will likely fail when the 
+	mass-radius curve has two central pressures with the
+	same gravitational mass.
     */
     virtual int fixed(double target_mass, double pmax=1.0e20);
 
     /** \brief Calculate the profile of a star with a specified
 	central pressure
+
+	The central pressure, \c pcent, should be in the unit system
+	specified by the user which defaults to solar masses per cubic
+	kilometer "Msun/km^3" but can be changed with a call to one of
+	the <tt>set_units()</tt> functions.
     */
     virtual int fixed_pr(double pcent);
     
