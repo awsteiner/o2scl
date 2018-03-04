@@ -707,7 +707,8 @@ void acol_manager::command_add(std::string new_type) {
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
        both},
       {0,"to-table3d","Select two indices and convert to a table3d object.",
-       0,0,"","",new comm_option_mfptr<acol_manager>
+       -1,-1,"<x index> <y index> <new slice name> [values of fixed indices]",
+       "",new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_to_table3d),both},
       {0,"set-grid","Set grid",-1,-1,"","",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_set_grid),
@@ -3958,8 +3959,16 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
     for(size_t i=0;i<rank;i++) {
       if (i!=ix_x && i!=ix_y) {
 	values[i]=o2scl::stod(in2[i2]);
+	if (verbose>0) {
+	  cout << "Fixing value for index " << i << " to " << in2[i2] << endl;
+	}
 	i2++;
       }
+    }
+
+    if (verbose>0) {
+      cout << "Indices " << ix_x << " and " << ix_y << " are free. "
+	   << "New slice name is: " << in[2] << endl;
     }
 
     table3d_obj.clear();
@@ -5450,9 +5459,11 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 	// and lmar for the left margin which has the x label
 	if (ncols<=prec+lmar+12) ncls=1;
 	else ncls=(ncols-prec-12-lmar)/(prec+8);
-	std::cout << "Screen width: " << ncols << " prec: " << prec
-		  << " lmar: " << lmar << " flag: " << (ncols<=prec+lmar+12)
-		  << " ncols: " << ncls << endl;
+	if (verbose>1) {
+	  std::cout << "Screen width: " << ncols << " prec: " << prec
+		    << " lmar: " << lmar << " flag: " << (ncols<=prec+lmar+12)
+		    << " ncols: " << ncls << endl;
+	}
       }
       if (((size_t)ncls)>ny) ncls=ny;
       int dx=nx/ncls;
@@ -5621,9 +5632,11 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 	// 8+prec for the grid point, 3 for extra spacing,
 	if (ncols<=prec+11) ncls=1;
 	else ncls=(ncols-prec-11)/(prec+8);
-	std::cout << "Screen width: " << ncols << " prec: " << prec
-		  << " flag: " << (ncols<=prec+11)
-		  << " ncols: " << ncls << endl;
+	if (verbose>1) {
+	  std::cout << "Screen width: " << ncols << " prec: " << prec
+		    << " flag: " << (ncols<=prec+11)
+		    << " ncols: " << ncls << endl;
+	}
       }
       if (((size_t)ncls)>ny) ncls=ny;
       size_t dx=nx/ncls;
@@ -6049,11 +6062,39 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     return 0;
 
   } else if (type=="uniform_grid<double>") {
+    
     cout << "Uniform grid " << obj_name << endl;
     cout << "Number of bins: " << ug_obj.get_nbins() << endl;
     cout << "Start: " << ug_obj.get_start() << endl;
     cout << "End: " << ug_obj.get_end() << endl;
     cout << "Width: " << ug_obj.get_width() << endl;
+    
+    return 0;
+    
+  } else if (type=="tensor_grid") {
+    
+    size_t rk=tensor_grid_obj.get_rank();
+    cout << "Rank: " << rk << endl;
+    for(size_t i=0;i<rk;i++) {
+      size_t sz=tensor_grid_obj.get_size(i);
+      cout << i << " : ";
+      vector<double> grid(sz);
+      tensor_grid_obj.copy_grid(i,grid);
+      if (grid.size()==4) {
+	cout << grid[0] << " " << grid[1] << " " << grid[2] << " "
+	     << grid[3] << endl;
+      } if (grid.size()==3) {
+	cout << grid[0] << " " << grid[1] << " " << grid[2] << endl;
+      } else if (grid.size()==2) {
+	cout << grid[0] << " " << grid[1] << endl;
+      } else if (grid.size()==1) {
+	cout << grid[0] << endl;
+      } else {
+	cout << grid[0] << " " << grid[1] << " ... "
+	     << grid[sz-2] << " " << grid[sz-1] << endl;
+      }
+    }
+    
     return 0;
   }
 

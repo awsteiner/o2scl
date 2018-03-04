@@ -730,14 +730,31 @@ namespace o2scl {
       size_t nx, ny;
       tab.get_size(nx,ny);
 
-      //if (nx==0 && ny==0) {
-      // If there's no grid, then just use the aligned version
-      //return copy_slice_align(ix_x,ix_y,index,tab,slice_name);
-      //}
+      if (nx==0 && ny==0) {
+	// If there's no grid, then create a grid in the table3d
+	// object that is the same as that in the tensor_grid object
+	std::vector<double> grid_x, grid_y;
+	copy_grid(ix_x,grid_x);
+	copy_grid(ix_y,grid_y);
+	/*
+	std::cout << "Here: " << std::endl;
+	std::cout << grid_x[0] << " " << grid_x[1] << std::endl;
+	std::cout << grid_x[grid_x.size()-2] << " "
+		  << grid_x[grid_x.size()-1] << std::endl;
+	std::cout << grid_y[0] << " " << grid_y[1] << std::endl;
+	std::cout << grid_y[grid_y.size()-2] << " "
+		  << grid_y[grid_y.size()-1] << std::endl;
+	*/
+	tab.set_xy("x",grid_x.size(),grid_x,
+		   "y",grid_y.size(),grid_y);
+	// Now that the grid is set, get nx and ny
+	tab.get_size(nx,ny);
+      }
 
       // Create slice if not already present
       size_t is;
       if (!tab.is_slice(slice_name,is)) tab.new_slice(slice_name);
+      //std::cout << "Here2: " << slice_name << std::endl;
 
       // Loop through the table grid to perform the interpolation
       for(size_t i=0;i<nx;i++) {
@@ -745,6 +762,17 @@ namespace o2scl {
 	  values[ix_x]=tab.get_grid_x(i);
 	  values[ix_y]=tab.get_grid_y(j);
 	  tab.set(i,j,slice_name,this->interp_linear(values));
+	  /*
+	  std::cout << "At location values: ";
+	  for(size_t k=0;k<values.size();k++) {
+	    std::cout << values[k] << " ";
+	  }
+	  std::cout << "Interpolated to get: "
+		    << i << " " << j << " " << slice_name << " "
+		    << this->interp_linear(values) << std::endl;
+	  char ch;
+	  std::cin >> ch;
+	  */
 	}
       }
 
