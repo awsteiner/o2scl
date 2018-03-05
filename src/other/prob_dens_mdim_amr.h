@@ -31,83 +31,11 @@
 #include <o2scl/err_hnd.h>
 #include <o2scl/prob_dens_func.h>
 #include <o2scl/rng_gsl.h>
+#include <o2scl/vector.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
 #endif
-
-  /** \brief A simple matrix view object
-   */
-  class matrix_view {
-  
-  public:
-  
-    /** \brief Return a reference to the element at row \c row
-	and column \c col
-    */
-    const double &operator()(size_t row, size_t col) const;
-    /** \brief Return the number of rows
-     */
-    size_t size1();
-    /** \brief Return the number of columns
-     */
-    size_t size2();
-  
-  };
-
-  /** \brief View a o2scl::table object as a matrix
-
-      \note This stores a pointer to the table and the user must ensure
-      that the pointer is valid with the matrix view is accessed.
-  */
-  template<class vec_t> 
-    class matrix_view_table : public matrix_view {
-  
-  protected:
-  
-    /// The number of columns
-    size_t nc;
-    /// Pointers to each column
-    std::vector<const vec_t *> col_ptrs;
-    /// Pointer to the table
-    o2scl::table<vec_t> *tp;
-
-  public:
-
-    /** \brief Create a matrix view object from the specified 
-	table and list of columns
-    */
-    matrix_view_table(o2scl::table<vec_t> &t,
-		      std::vector<std::string> cols) {
-      nc=cols.size();
-      col_ptrs.resize(nc);
-      for(size_t i=0;i<nc;i++) {
-	col_ptrs[i]=&t[cols[i]];
-      }
-      tp=&t;
-    }
-  
-    /** \brief Return the number of rows
-     */
-    size_t size1() {
-      return tp->get_nlines();
-    }
-  
-    /** \brief Return the number of columns
-     */
-    size_t size2() {
-      return nc;
-    }
-  
-    /** \brief Return a reference to the element at row \c row
-	and column \c col
-    */
-    const double &operator()(size_t row, size_t col) const {
-      const vec_t *cp=col_ptrs[col];
-      return (*cp)[row];
-    }
-    
-  };
 
   /** \brief Probability distribution from an adaptive mesh
       created using a matrix of points

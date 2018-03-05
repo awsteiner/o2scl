@@ -2466,6 +2466,25 @@ namespace o2scl {
     }
   };
 
+  /** \brief A simple matrix view object
+   */
+  class matrix_view {
+  
+  public:
+  
+    /** \brief Return a reference to the element at row \c row
+	and column \c col
+    */
+    const double &operator()(size_t row, size_t col) const;
+    /** \brief Return the number of rows
+     */
+    size_t size1();
+    /** \brief Return the number of columns
+     */
+    size_t size2();
+  
+  };
+
   /** \brief Construct a column of a matrix
 
       This class template works with combinations of ublas

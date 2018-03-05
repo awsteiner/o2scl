@@ -1360,6 +1360,19 @@ namespace o2scl {
     return;
   }
 
+  /** \brief Set pointers to proposal distributions
+   */
+  template<class prob_vec_t> void set_proposal_ptrs(prob_vec_t &pv) {
+    prop_dist.resize(pv.size());
+    for(size_t i=0;i<pv.size();i++) {
+      prop_dist[i]=pv[i];
+    }
+    pd_mode=true;
+    aff_inv=false;
+    n_walk=1;
+    return;
+  }
+
   /** \brief Go back to random-walk Metropolis with a uniform distribution
    */
   virtual void unset_proposal() {

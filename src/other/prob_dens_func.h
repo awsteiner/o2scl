@@ -255,7 +255,7 @@ namespace o2scl {
       return gsl_cdf_gaussian_Pinv(in_cdf,sigma_)+cent_;
     }
 
-    /// The inverse cumulative distribution function
+    /// Entropy of the distribution (\f$ - \int f \ln f \f$ )
     virtual double entropy() const {
       if (sigma_<0.0) {
 	O2SCL_ERR2("Width not set in prob_dens_gaussian::",
@@ -436,7 +436,7 @@ namespace o2scl {
       return gsl_cdf_flat_Pinv(in_cdf,ll,ul);
     }
 
-    /// The inverse cumulative distribution function
+    /// Entropy of the distribution (\f$ - \int f \ln f \f$ )
     virtual double entropy() const {
       if (ll>ul) {
 	O2SCL_ERR2("Limits not set in prob_dens_uniform::",
@@ -582,7 +582,7 @@ namespace o2scl {
       return gsl_cdf_lognormal_Pinv(in_cdf,mu_,sigma_);
     }
 
-    /// The inverse cumulative distribution function
+    /// Entropy of the distribution (\f$ - \int f \ln f \f$ )
     virtual double entropy() const {
       if (sigma_<0.0) {
 	O2SCL_ERR2("Parameters not set in prob_dens_lognormal::",
@@ -595,7 +595,7 @@ namespace o2scl {
   
   /** \brief Probability density function based on a histogram
 
-      This class is experimental.
+      \note This class is experimental.
   */
   class prob_dens_hist : public prob_dens_frange {
     
@@ -662,7 +662,7 @@ namespace o2scl {
     /// Inverse cumulative distribution function (from the lower tail)
     virtual double invert_cdf(double x) const;
 
-    /// Inverse cumulative distribution function (from the lower tail)
+    /// Entropy of the distribution (\f$ - \int f \ln f \f$ )
     virtual double entropy() const {
       return 0.0;
     }
@@ -715,6 +715,21 @@ namespace o2scl {
     
   prob_dens_mdim_factor(std::vector<prob_dens_func> &p_list) {
     list=p_list;
+  }
+  
+  /// Copy constructor
+  prob_dens_mdim_factor(const prob_dens_mdim_factor &pdmf) {
+    list=pdmf.list;
+  }
+  
+  /// Copy constructor with operator=
+  prob_dens_mdim_factor &operator=
+  (const prob_dens_mdim_factor &pdmf) {
+    // Check for self-assignment
+    if (this!=&pdmf) {
+      list=pdmf.list;
+    }
+    return *this;
   }
   
   /// Return the dimensionality
@@ -821,6 +836,29 @@ namespace o2scl {
   prob_dens_mdim_biv_gaussian() {
   }
   
+  /// Copy constructor
+  prob_dens_mdim_biv_gaussian(const prob_dens_mdim_biv_gaussian &pdmbg) {
+    x0=pdmbg.x0;
+    y0=pdmbg.y0;
+    sig_x=pdmbg.sig_x;
+    sig_y=pdmbg.sig_y;
+    rho=pdmbg.rho;
+  }
+  
+  /// Copy constructor with operator=
+  prob_dens_mdim_biv_gaussian &operator=
+  (const prob_dens_mdim_biv_gaussian &pdmbg) {
+    // Check for self-assignment
+    if (this!=&pdmbg) {
+      x0=pdmbg.x0;
+      y0=pdmbg.y0;
+      sig_x=pdmbg.sig_x;
+      sig_y=pdmbg.sig_y;
+      rho=pdmbg.rho;
+    }
+    return *this;
+  }
+  
   /** \brief Set the properties of the distribution
 
       \note If \f$ |\rho|\geq 1 \f$ this function will
@@ -917,6 +955,9 @@ namespace o2scl {
       A separate class for the two-dimensional case is \ref
       prob_dens_mdim_biv_gaussian .
       
+      \note Const functions are not thread-safe because
+      mutable storage is used.
+
       \future Create alternate versions based on other
       matrix decompositions?
   */
@@ -947,11 +988,16 @@ namespace o2scl {
   /// Temporary storage 2
   mutable vec_t vtmp;
 
-  /// Standard normal
-  o2scl::prob_dens_gaussian pdg;
-    
   public:
   
+  /** \brief Standard normal
+      \comment
+      This has to be public so the user can set the random seed,
+      or we have to create a new set_seed() function.
+      \endcomment
+   */
+  o2scl::prob_dens_gaussian pdg;
+    
   /// The dimensionality
   virtual size_t dim() const {
     return ndim;
@@ -962,6 +1008,30 @@ namespace o2scl {
     ndim=0;
   }
 
+  /// Copy constructor
+  prob_dens_mdim_gaussian(const prob_dens_mdim_gaussian &pdmg) {
+    ndim=pdmg.ndim;
+    chol=pdmg.chol;
+    covar_inv=pdmg.covar_inv;
+    norm=pdmg.norm;
+    q.resize(ndim);
+    vtmp.resize(ndim);
+  }
+  
+  /// Copy constructor with operator=
+  prob_dens_mdim_gaussian &operator=(const prob_dens_mdim_gaussian &pdmg) {
+    // Check for self-assignment
+    if (this!=&pdmg) {
+      ndim=pdmg.ndim;
+      chol=pdmg.chol;
+      covar_inv=pdmg.covar_inv;
+      norm=pdmg.norm;
+      q.resize(ndim);
+      vtmp.resize(ndim);
+    }
+    return *this;
+  }
+  
   /** \brief Create a distribution from a set of samples from a 
       multidimensional Gaussian
    */
@@ -1261,6 +1331,10 @@ namespace o2scl {
 
       \note This class is experimental.
 
+      \note Const functions are not thread-safe because the
+      class contains an internal mutable random number generator
+      object.
+
       \comment
       If we do not include the g ratio, then the edges
       will be undersampled because we don't properly include
@@ -1328,6 +1402,25 @@ namespace o2scl {
   prob_cond_mdim_fixed_step() {
   }
 
+  /// Copy constructor
+  prob_cond_mdim_fixed_step(const prob_cond_mdim_fixed_step &pcmfs) {
+    u_step=pcmfs.u_step;
+    u_low=pcmfs.u_low;
+    u_high=pcmfs.u_high;
+  }
+  
+  /// Copy constructor with operator=
+  prob_cond_mdim_fixed_step &operator=(const prob_cond_mdim_fixed_step &pcmfs)
+  {
+    // Check for self-assignment
+    if (this!=&pcmfs) {
+      u_step=pcmfs.u_step;
+      u_low=pcmfs.u_low;
+      u_high=pcmfs.u_high;
+    }
+    return *this;
+  }
+  
   /** \brief Set the random number generator seed
    */
   void set_seed(unsigned long int s) {
@@ -1454,6 +1547,20 @@ namespace o2scl {
   prob_cond_mdim_indep(prob_dens_mdim<vec_t> &out) : base(out) {
   }
   
+  /// Copy constructor
+  prob_cond_mdim_indep(const prob_cond_mdim_indep &pcmi) {
+    base=pcmi.base;
+  }
+  
+  /// Copy constructor with operator=
+  prob_cond_mdim_indep &operator=(const prob_cond_mdim_indep &pcmi) {
+    // Check for self-assignment
+    if (this!=&pcmi) {
+      base=pcmi.base;
+    }
+    return *this;
+  }
+  
   /// The dimensionality
   virtual size_t dim() const {
     return base.dim();
@@ -1483,6 +1590,9 @@ namespace o2scl {
 
       \todo This should be a symmetric conditional probability, 
       i.e. \f$ P(x|y) = P(y|x) \f$. Test this.
+
+      \note Const functions are not thread-safe because
+      mutable storage is used.
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
     class mat_t=boost::numeric::ublas::matrix<double> >
@@ -1517,6 +1627,30 @@ namespace o2scl {
    */
   prob_cond_mdim_gaussian() {
     ndim=0;
+  }
+  
+  /// Copy constructor
+  prob_cond_mdim_gaussian(const prob_cond_mdim_gaussian &pcmg) {
+    ndim=pcmg.ndim;
+    chol=pcmg.chol;
+    covar_inv=pcmg.covar_inv;
+    norm=pcmg.norm;
+    q.resize(ndim);
+    vtmp.resize(ndim);
+  }
+  
+  /// Copy constructor with operator=
+  prob_cond_mdim_gaussian &operator=(const prob_cond_mdim_gaussian &pcmg) {
+    // Check for self-assignment
+    if (this!=&pcmg) {
+      ndim=pcmg.ndim;
+      chol=pcmg.chol;
+      covar_inv=pcmg.covar_inv;
+      norm=pcmg.norm;
+      q.resize(ndim);
+      vtmp.resize(ndim);
+    }
+    return *this;
   }
   
   /** \brief Create a distribution from the covariance matrix
