@@ -245,7 +245,7 @@ int main(void) {
     
     t.test_rel(par_31[0],par_32[0],1.0e-9,"par_31/32 1");
     t.test_rel(par_31[1],par_32[1],1.0e-9,"par_31/32 2");
-    if (k==0) t.test_rel_mat(2,2,covar_31,covar_32,1.0e-9,"covar_31/32");
+    if (k==0) t.test_rel_mat(2,2,covar_31,covar_32,1.0e-7,"covar_31/32");
     t.test_rel(chi2_31,chi2_32,1.0e-9,"chi2_31/32");
 
   }
