@@ -40,30 +40,38 @@ typedef boost::numeric::ublas::matrix<double> ubmatrix;
 int main(void) {
 
   cout.setf(ios::scientific);
-  t.set_output_level(2);
-
   test_mgr t;
+  t.set_output_level(1);
 
   eos_had_rmf_hyp re;
-  re.cs=9.927;
-  re.cw=4.820;
-  re.cr=4.791;
+  re.cs=sqrt(9.927);
+  re.cw=sqrt(4.820);
+  re.cr=sqrt(4.791);
   re.b=0.008659;
   re.c=-0.00241;
-  
+  re.mnuc=(re.def_neutron.m+re.def_proton.m)/2.0;
+
+  cout << "GM91: " << endl;
   re.saturation();
   cout << "  Saturation density: " << re.n0 << endl;
-  //t.test_rel(re.n0,0.148,1.0e-2,"sat density");
-  cout << "  Effective mass: " << re.msom << " " << nferm.ms/nferm.m << endl;
-  //t.test_rel(re.msom,nferm.ms/nferm.m,1.0e-6,"msom");
-  cout << "  Zero pressure: " << th.pr << endl;
-  //t.test_rel(th.pr,0.0,1.0e-8,"zero press");
+  t.test_rel(re.n0,0.153,1.0e-3,"sat density");
+  cout << "  Effective mass: " << re.msom << " "
+       << re.def_neutron.ms/re.def_neutron.m << endl;
+  t.test_rel(re.msom,re.def_neutron.ms/re.def_neutron.m,1.0e-6,"msom");
+  t.test_rel(re.msom,0.78,1.0e-2,"msom 2");
+  cout << "  Zero pressure: " << re.def_thermo.pr << endl;
+  t.test_rel(re.def_thermo.pr,0.0,1.0e-8,"zero press");
   cout << "  Energy per baryon: " << re.eoa*hc_mev_fm << " " 
-       << (th.ed/re.n0-re.mnuc)*hc_mev_fm << endl;
-  //t.test_rel(re.eoa,th.ed/re.n0-re.mnuc,1.0e-6,"eoa");
-  cout << "  Thermodynamic identity: " 
-       << th.ed+th.pr-nferm.n*nferm.mu-p.n*p.mu << endl;
-  //t.test_rel(th.ed+th.pr-nferm.n*nferm.mu-p.n*p.mu,0.0,1.0e-9,"TI");
+       << (re.def_thermo.ed/re.n0-re.mnuc)*hc_mev_fm << endl;
+  t.test_rel(re.eoa,re.def_thermo.ed/re.n0-re.mnuc,1.0e-6,"eoa");
+  t.test_rel(re.eoa,-16.3/hc_mev_fm,0.1/hc_mev_fm,"eoa");
+  cout << "  Thermomodynamic identity: " 
+       << re.def_thermo.ed+re.def_thermo.pr-
+    re.def_neutron.n*re.def_neutron.mu-
+    re.def_proton.n*re.def_proton.mu << endl;
+  t.test_rel(re.def_thermo.ed+re.def_thermo.pr-
+	     re.def_neutron.n*re.def_neutron.mu-
+	     re.def_proton.n*re.def_proton.mu,0.0,1.0e-9,"TI");
   cout << endl;
 
   t.report();
