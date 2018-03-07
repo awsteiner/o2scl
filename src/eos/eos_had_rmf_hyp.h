@@ -39,24 +39,12 @@ namespace o2scl {
   
   /** \brief Relativistic mean field theory EOS with hyperons
       
-      Based on \ref Glendenning91, but generalized for higher-order
+      Based on \ref Glendenning91ro, but generalized for higher-order
       couplings as in \ref eos_had_rmf .
-      
-      \anchor Glendenning91 Glendenning91:
-      \htmlonly
-      <a href="http://dx.doi.org/">
-      N.K. Glendenni and S.A. Moszkowski</a>,
-      \endhtmlonly
-      \latexonly
-      \href{http://dx.doi.org/}{
-      N.K. Glendenni and S.A. Moszkowski},
-      \endlatexonly
-      Phys. Rev. Lett. \b 67, 1805 (1991).
-      
-   */
+  */
   class eos_had_rmf_hyp : public eos_had_rmf {
-
-  public:
+    
+  protected:
 
     /// The neutron object
     fermion *lambda;
@@ -76,23 +64,34 @@ namespace o2scl {
     /// The proton object
     fermion *cascade_m;
 
-    /// The neutron object
+    /// The function for calc_e()
+    virtual int calc_e_solve_fun(size_t nv, const ubvector &ex, 
+			 ubvector &ey);
+
+  public:
+
+    eos_had_rmf_hyp();
+
+    /// \name Hyperon objects
+    //@{
+    /// The default Lambda hyperon
     fermion def_lambda;
 
-    /// The proton object
+    /// The default Sigma plus hyperon
     fermion def_sigma_p;
 
-    /// The neutron object
+    /// The default Sigma zero hyperon
     fermion def_sigma_z;
 
-    /// The proton object
+    /// The default Sigma minus hyperon
     fermion def_sigma_m;
 
-    /// The neutron object
+    /// The default Xi zero hyperon
     fermion def_cascade_z;
 
-    /// The proton object
+    /// The default Xi minus hyperon
     fermion def_cascade_m;
+    //@}
 
     /// \name Hyperon-meson couplings
     //@{
@@ -104,12 +103,10 @@ namespace o2scl {
     /// If true, include cascade hyperons (default true)
     bool inc_cascade;
     
-    eos_had_rmf_hyp();
-    
     /** \brief Equation of state and meson field equations 
 	as a function of chemical potentials
     */
-    int calc_eq_p
+    virtual int calc_eq_p
       (fermion &ne, fermion &pr, fermion &lam, fermion &sigp, fermion &sigz, 
        fermion &sigm, fermion &casz, fermion &casm, double sig, double ome, 
        double lrho, double &f1, double &f2, double &f3, thermo &lth);
@@ -124,10 +121,15 @@ namespace o2scl {
      */
     void calc_xw(double lam_be);
 
-    int calc_e_solve_fun(size_t nv, const ubvector &ex, 
-			 ubvector &ey);
+    /** \brief Equation of state as a function of density
 
-    int calc_e(fermion &ne, fermion &pr, thermo &lth);
+	Initial guesses for the chemical potentials are taken
+	from the user-given values. Initial guesses for the fields
+	can be set by set_fields(), or default values will be used.
+	After the call to calc_e(), the final values of the fields
+	can be accessed through get_fields(). 
+    */
+    virtual int calc_e(fermion &ne, fermion &pr, thermo &lth);
     
 #ifndef DOXYGEN_INTERNAL
 

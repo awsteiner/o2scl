@@ -6,15 +6,24 @@
     articles or <tt>worldcat.org</tt> for books.
 
     \anchor Akmal98eo Akmal98eo:
-    <a href="http://dx.doi.org/10.1103/PhysRevC.58.1805">
+    <a href="https://doi.org/10.1103/PhysRevC.58.1805">
     A. Akmal, V. R. Pandharipande, and D. G. Ravenhall</a>,
     Phys. Rev. C \b 58 (1998) 1804.
     \comment
     Title: Equation of state of nucleon matter and neutron star structure
     \endcomment
 
+    \anchor Glendenning91ro Glendenning91ro:
+    <a href="https://doi.org/10.1103/PhysRevLett.67.2414">
+    N. K. Glendenning and S. A. Moszkowski</a>,
+    Phys. Rev. Lett. \b 67 (1991) 2414.
+    \comment
+    Title: Reconciliation of Neutron-Star Masses and Binding of the $\Lambda$ in
+    Hypernuclei
+    \endcomment
+
     \anchor Bartel79 Bartel79:
-    <a href="http://dx.doi.org/10.1016/0375-9474(82)90403-1">
+    <a href="https://doi.org/10.1016/0375-9474(82)90403-1">
     J. Bartel, P. Quentin, M. Brack, C. Guet, and J.-B. H&aring;kansson</a>,
     Nucl. Phys. A \b 386 (1982) 79.
     \comment
@@ -23,7 +32,7 @@
     \endcomment
 
     \anchor Baym71tg Baym71tg:
-    <a href="http://dx.doi.org/10.1086/151216">
+    <a href="https://doi.org/10.1086/151216">
     G. Baym, C. J. Pethick, and P. Sutherland</a>,
     Astrophys. J. \b 170 (1971) 299.
     \comment
@@ -32,12 +41,12 @@
     \endcomment
 
     \anchor Beiner75 Beiner75:
-    <a href="http://dx.doi.org/10.1016/0375-9474(75)90338-3">
+    <a href="https://doi.org/10.1016/0375-9474(75)90338-3">
     M. Beiner, H. Flocard, N. van Giai, and P. Quentin</a>,
     Nucl. Phys. A \b 238 (1975) 29.
 
     \anchor Bender03 Bender03:
-    <a href="http://dx.doi.org/10.1103/RevModPhys.75.121">
+    <a href="https://doi.org/10.1103/RevModPhys.75.121">
     M. Bender, P.-H. Heenen, and P.-G. Reinhard</a>,
     Rev. Mod. Phys. \b 75 (2003) 121.
     \comment
@@ -45,7 +54,7 @@
     \endcomment
 
     \anchor Bernard88 Bernard88:
-    <a href="http://dx.doi.org/10.1016/0550-3213(88)90127-7">
+    <a href="https://doi.org/10.1016/0550-3213(88)90127-7">
     V. Bernard, R. L. Jaffe, and U.-G. Meissner</a>,
     Nucl. Phys. B \b 308 (1988) 753.
 
@@ -60,7 +69,7 @@
     \anchor Bombaci01 Bombaci01:
     I. Bombaci, "Isospin physics in heavy-ion collisions at
                   intermediate energies" in
-    <a href="http://www.worldcat.org/isbn/1560728884">
+    <a href="https://www.worldcat.org/isbn/1560728884">
     Isospin physics in heavy-ion collisions at
                   intermediate energies</a>,
     (2001) Nova Science and New York, p. 1.
@@ -76,7 +85,7 @@
     Class. Quantum Grav. \b 11 (1994) 1775.
 
     \anchor Brack85 Brack85:
-    <a href="http://dx.doi.org/10.1016/0370-1573(86)90078-5">
+    <a href="https://doi.org/10.1016/0370-1573(86)90078-5">
     M. Brack, C. Guet, and H.-B. H&aring;kansso</a>,
     Phys. Rep. \b 123 (1985) 275.
     \comment
@@ -85,17 +94,17 @@
     \endcomment
 
     \anchor Buballa04 Buballa04:
-    <a href="http://dx.doi.org/10.1016/j.physrep.2004.11.004">
+    <a href="https://doi.org/10.1016/j.physrep.2004.11.004">
     M. Buballa</a>,
     Phys. Rep. \b 407 (2005) 205.
 
     \anchor Buballa99 Buballa99:
-    <a href="http://dx.doi.org/10.1016/S0370-2693(99)00533-X">
+    <a href="https://doi.org/10.1016/S0370-2693(99)00533-X">
     M. Buballa and M. Oertel</a>,
     Phys. Lett. B \b 457 (1999) 261.
 
     \anchor Chabanat95 Chabanat95:
-    <a href="http://dx.doi.org/10.1088/0031-8949/1995/T56/034">
+    <a href="https://doi.org/10.1088/0031-8949/1995/T56/034">
     E. Chabanat, P. Bonche, P. Haensel, and R. Meyer J. and Schaeffer</a>,
     Phys. Scr. \b T56 (1995) 231.
     \comment
@@ -103,17 +112,17 @@
     \endcomment
 
     \anchor Chabanat97 Chabanat97:
-    <a href="http://dx.doi.org/10.1016/S0375-9474(97)00596-4">
+    <a href="https://doi.org/10.1016/S0375-9474(97)00596-4">
     E. Chabanat, J. Meyer, P. Bonche, R. Schaeffer, and P. Haensel</a>,
     Nucl. Phys. A \b 627 (1997) 710.
 
     \anchor Chappert08 Chappert08:
-    <a href="http://dx.doi.org/10.1016/j.physletb.2008.09.017">
+    <a href="https://doi.org/10.1016/j.physletb.2008.09.017">
     F. Chappert, M. Girod, and S. Hilaire</a>,
     Phys. Lett. B \b 668 (2008) 420.
 
     \anchor Chen05 Chen05:
-    <a href="http://dx.doi.org/10.1103/PhysRevLett.94.032701">
+    <a href="https://doi.org/10.1103/PhysRevLett.94.032701">
     L.-W. Chen, C. M. Ko, and B.-A. Li</a>,
     Phys. Rev. Lett. \b 94 (2005) 032701.
     \comment
@@ -149,7 +158,7 @@
     \endcomment
 
     \anchor Danielewicz09 Danielewicz09:
-    <a href="http://dx.doi.org/10.1016/j.nuclphysa.2008.11.007">
+    <a href="https://doi.org/10.1016/j.nuclphysa.2008.11.007">
     P. Danielewicz and J. Lee</a>,
     Nucl. Phys. A \b 818 (2009) 36.
     \comment
@@ -157,22 +166,22 @@
     \endcomment
 
     \anchor Das03 Das03:
-    <a href="http://dx.doi.org/10.1103/PhysRevC.67.034611">
+    <a href="https://doi.org/10.1103/PhysRevC.67.034611">
     C. B. Das, S. Das Gupta, C. Gale, and B.-A. Li</a>,
     Phys. Rev. C \b 67 (2003) 034611.
 
     \anchor Dieperink09 Dieperink09:
-    <a href="http://dx.doi.org/10.1140/epja/i2009-10869-3">
+    <a href="https://doi.org/10.1140/epja/i2009-10869-3">
     A. E. L. Dieperink and P. van Isacker</a>,
     Eur. Phys. J. A \b 42 (2009) 269.
 
     \anchor Dobaczewski94 Dobaczewski94:
-    <a href="http://dx.doi.org/10.1016/0375-9474(84)90433-0">
+    <a href="https://doi.org/10.1016/0375-9474(84)90433-0">
     J. Dobaczewski, H. Flocard, and J. Treiner</a>,
     Nucl. Phys. A \b 422 (1984) 103.
 
     \anchor Dutta86 Dutta86:
-    <a href="http://dx.doi.org/10.1016/0375-9474(86)90283-6">
+    <a href="https://doi.org/10.1016/0375-9474(86)90283-6">
     A. K. Dutta, J.-P. Arcoragi, J. M. Pearson, R. Behrman, and F. Tondeur</a>,
     Nucl. Phys. A \b 458 (1986) 77.
 
@@ -187,22 +196,22 @@
     Astrophys. J \b 325 (1988) 722.
 
     \anchor Friedrich86 Friedrich86:
-    <a href="http://dx.doi.org/10.1103/PhysRevC.33.335">
+    <a href="https://doi.org/10.1103/PhysRevC.33.335">
     J. Friedrich and P.-G. Reinhard</a>,
     Phys. Rev. C \b 33 (1986) 335.
 
     \anchor Gaitanos04 Gaitanos04:
-    <a href="http://dx.doi.org/10.1016/j.nuclphysa.2003.12.001">
+    <a href="https://doi.org/10.1016/j.nuclphysa.2003.12.001">
     T. Gaitanos, M. Di Toro, S. Typel, V. Barana, C. Fuchs, V. Greco, and H. H. Wolter</a>,
     Nucl. Phys. A \b 732 (2004) 24.
 
     \anchor Gale87 Gale87:
-    <a href="http://dx.doi.org/10.1103/PhysRevC.35.1666">
+    <a href="https://doi.org/10.1103/PhysRevC.35.1666">
     C. Gale, G. Bertsch, and S. Das Gupta</a>,
     Phys. Rev. C \b 35 (1986) 1666.
 
     \anchor Goriely10 Goriely10:
-    <a href="http://dx.doi.org/10.1103/PhysRevC.82.035804">
+    <a href="https://doi.org/10.1103/PhysRevC.82.035804">
     S. Goriely, N. Chamel, and J. M. Pearson</a>,
     Phys. Rev. C \b 82 (2010) 035804.
 
@@ -212,12 +221,12 @@
     Class. Quantum Grav. \b 11 (1994) 443.
 
     \anchor Hatsuda94 Hatsuda94:
-    <a href="http://dx.doi.org/10.1016/0370-1573(94)90022-1">
+    <a href="https://doi.org/10.1016/0370-1573(94)90022-1">
     T. Hatsuda and T. Kunihiro</a>,
     Phys. Rep. \b 247 (1994) 221.
 
     \anchor Hebeler13eo Hebeler13eo:
-    <a href="http://dx.doi.org/10.1088/0004-637X/773/1/11">
+    <a href="https://doi.org/10.1088/0004-637X/773/1/11">
     K. Hebeler, J. M. Lattimer, C. J. Pethick, and A. Schwenk</a>,
     Astrophys. J. \b 773 (2013) 11.
     \comment
@@ -226,12 +235,12 @@
     \endcomment
 
     \anchor Heide94 Heide94:
-    <a href="http://dx.doi.org/10.1016/0375-9474(94)90717-X">
+    <a href="https://doi.org/10.1016/0375-9474(94)90717-X">
     E. K. Heide, S. Rudaz, and P. J. Ellis</a>,
     Nucl. Phys. A \b 571 (1994) 713.
 
     \anchor Hempel10 Hempel10:
-    <a href="http://dx.doi.org/10.1016/j.nuclphysa.2010.02.010">
+    <a href="https://doi.org/10.1016/j.nuclphysa.2010.02.010">
     M. Hempel and J. Schaffner-Bielich</a>,
     Nucl. Phys. A \b 837 (2010) 210.
     \comment
@@ -239,7 +248,7 @@
     \endcomment
 
     \anchor Hempel12 Hempel12:
-    <a href="http://dx.doi.org/10.1088/0004-637X/748/1/70">
+    <a href="https://doi.org/10.1088/0004-637X/748/1/70">
     M. Hempel, T. Fischer, J. Schaffner-Bielich, and M. Liebendorfer</a>,
     Astrophys. J. \b 748 (2012) 70.
     \comment
@@ -252,7 +261,7 @@
     Phys. Rev. D \b 81 (2010) 123016.
 
     \anchor Horowitz01 Horowitz01:
-    <a href="http://dx.doi.org/10.1103/PhysRevLett.86.5647">
+    <a href="https://doi.org/10.1103/PhysRevLett.86.5647">
     C. J. Horowitz and J. Piekarewicz</a>,
     Phys. Rev. Lett. \b 86 (2001) 5647.
 
@@ -265,12 +274,12 @@
     \endcomment
 
     \anchor Horowitz06b Horowitz06b:
-    <a href="http://dx.doi.org/10.1016/j.nuclphysa.2006.05.009">
+    <a href="https://doi.org/10.1016/j.nuclphysa.2006.05.009">
     C. J. Horowitz and A. Schwenk</a>,
     Nucl. Phys. A \b 776 (2006) 55.
 
     \anchor Horowitz81 Horowitz81:
-    <a href="http://dx.doi.org/10.1016/0375-9474(81)90770-3">
+    <a href="https://doi.org/10.1016/0375-9474(81)90770-3">
     C. J. Horowitz and B. D. Serot</a>,
     Nucl. Phys. A \b 368 (1981) 503.
 
@@ -288,7 +297,7 @@
     \endcomment
 
     \anchor Kortelainen14 Kortelainen14:
-    <a href="http://dx.doi.org/10.1103/PhysRevC.89.054314">
+    <a href="https://doi.org/10.1103/PhysRevC.89.054314">
     M. Kortelainen, J. McDonnell, W. Nazarewicz, E. Olsen, P.-G. Reinhard, J. Sarich, N. Schunck, S. M. Wild, D. Davesne, J. Erler, and A. Pastore</a>,
     Phys. Rev. C \b 89 (2014) 054314.
     \comment
@@ -296,7 +305,7 @@
     \endcomment
 
     \anchor Kubis97 Kubis97:
-    <a href="http://dx.doi.org/10.1016/S0370-2693(97)00306-7">
+    <a href="https://doi.org/10.1016/S0370-2693(97)00306-7">
     S. Kubis and M. Kutschera</a>,
     Phys. Lett. B \b 399 (1997) 191.
 
@@ -306,38 +315,38 @@
     Astrophys. J. \b 512 (1999) 282.
 
     \anchor Lattimer01 Lattimer01:
-    <a href="http://dx.doi.org/10.1086/319702">
+    <a href="https://doi.org/10.1086/319702">
     J. M. Lattimer and M. Prakash</a>,
     Astrophys. J. \b 550 (2001) 426.
 
     \anchor Lattimer85 Lattimer85:
-    <a href="http://dx.doi.org/10.1016/0375-9474(85)90006-5">
+    <a href="https://doi.org/10.1016/0375-9474(85)90006-5">
     J. M. Lattimer, C. J. Pethick, D. G. Ravenhall, and D. Q. Lamb</a>,
     Nucl. Phys. A \b 432 (1985) 646.
 
     \anchor Lattimer91 Lattimer91:
-    <a href="http://dx.doi.org/10.1016/0375-9474(91)90452-C">
+    <a href="https://doi.org/10.1016/0375-9474(91)90452-C">
     J. M. Lattimer and F. D. Swesty</a>,
     Nucl. Phys. A \b 535 (1991) 331.
 
     \anchor Li01 Li01:
-    <a href="http://www.worldcat.org/isbn/1560728884">
+    <a href="https://www.worldcat.org/isbn/1560728884">
     Isospin physics in heavy-ion collisions at
                   intermediate energies</a>,
     (2001) Nova Science and New York.
 
     \anchor Margueron02 Margueron02:
-    <a href="http://dx.doi.org/10.1103/PhysRevC.66.014303">
+    <a href="https://doi.org/10.1103/PhysRevC.66.014303">
     J. Margueron, J. Navarro, and N. van Giai</a>,
     Phys. Rev. C \b 66 (2002) 014303.
 
     \anchor Muller96 Muller96:
-    <a href="http://dx.doi.org/10.1016/0375-9474(96)00187-X">
+    <a href="https://doi.org/10.1016/0375-9474(96)00187-X">
     H. Muller and B. D. Serot</a>,
     Nucl. Phys. A \b 606 (1996) 508.
 
     \anchor Negele73 Negele73:
-    <a href="http://dx.doi.org/10.1016/0375-9474(73)90349-7">
+    <a href="https://doi.org/10.1016/0375-9474(73)90349-7">
     J. W. Negele and D. Vautherin</a>,
     Nucl. Phys. A \b 207 (1973) 298.
     \comment
@@ -359,12 +368,12 @@
     Astrophys. J. Supp. \b 132 (1998) 431.
 
     \anchor OConnor10 OConnor10:
-    <a href="http://dx.doi.org/10.1088/0264-9381/27/11/114103">
+    <a href="https://doi.org/10.1088/0264-9381/27/11/114103">
     E. O'Connor and C. D. Ott</a>,
     Class. Quantum Grav. \b 27 (2010) 114103.
 
     \anchor Onsi94 Onsi94:
-    <a href="http://dx.doi.org/10.1103/PhysRevC.50.460">
+    <a href="https://doi.org/10.1103/PhysRevC.50.460">
     M. Onsi, H. Przysiezniak, and J. M. Pearson</a>,
     Phys. Rev. C \b 50 (1994) 460.
 
@@ -374,22 +383,22 @@
     Nucl. Phys. A \b 237 (1975) 507.
 
     \anchor Pearson11 Pearson11:
-    <a href="http://dx.doi.org/10.1103/PhysRevC.83.065810">
+    <a href="https://doi.org/10.1103/PhysRevC.83.065810">
     J. M. Pearson, S. Goriely, and N. Chamel</a>,
     Phys. Rev. C \b 83 (2011) 065810.
 
     \anchor Pearson12 Pearson12:
-    <a href="http://dx.doi.org/10.1103/PhysRevC.85.065803">
+    <a href="https://doi.org/10.1103/PhysRevC.85.065803">
     J. M. Pearson, N. Chamel, S. Goriely, and C. Ducoin</a>,
     Phys. Rev. C \b 85 (2012) 065803.
 
     \anchor Pethick95 Pethick95:
-    <a href="http://dx.doi.org/10.1016/0375-9474(94)00506-I">
+    <a href="https://doi.org/10.1016/0375-9474(94)00506-I">
     C. J. Pethick, D. G. Ravenhall, and C. P. Lorenz</a>,
     Nucl. Phys. A \b 584 (1995) 675.
 
     \anchor Piekarewicz09 Piekarewicz09:
-    <a href="http://dx.doi.org/10.1103/PhysRevC.79.054311">
+    <a href="https://doi.org/10.1103/PhysRevC.79.054311">
     J. Piekarewicz and M. Centelles</a>,
     Phys. Rev. C \b 79 (2009) 054311.
 
@@ -404,49 +413,49 @@
     (1987) Elsevier, p. 357.
 
     \anchor Prakash88 Prakash88:
-    <a href="http://dx.doi.org/10.1103/PhysRevLett.61.2518">
+    <a href="https://doi.org/10.1103/PhysRevLett.61.2518">
     M. Prakash, T. L. Ainsworth, and J. M. Lattimer</a>,
     Phys. Rev. Lett. \b 61 (1988) 2518.
 
     \anchor Prakash94 Prakash94:
-    <a href="http://dx.doi.org/10.1016/0375-9474(94)90376-X">
+    <a href="https://doi.org/10.1016/0375-9474(94)90376-X">
     M. Prakash, P. J. Ellis, E. K. Heide, and S. Rudaz</a>,
     Nucl. Phys. A \b 575 (1994) 583.
 
     \anchor Prakash97 Prakash97:
-    <a href="http://dx.doi.org/10.1016/S0370-1573(96)00023-3">
+    <a href="https://doi.org/10.1016/S0370-1573(96)00023-3">
     M. Prakash, I. Bombaci, M. Prakash, P. J. Ellis, J. M. Lattimer, and R. Knorren</a>,
     Phys. Rep. \b 280 (1997) 1.
 
     \anchor Ravenhall83 Ravenhall83:
-    <a href="http://dx.doi.org/10.1103/PhysRevLett.50.2066">
+    <a href="https://doi.org/10.1103/PhysRevLett.50.2066">
     D. G. Ravenhall, C. J. Pethick, and J. R. Wilson</a>,
     Phys. Rev. Lett. \b 50 (1983) 2066.
 
     \anchor Reinhard95 Reinhard95:
-    <a href="http://dx.doi.org/10.1016/0375-9474(94)00770-N">
+    <a href="https://doi.org/10.1016/0375-9474(94)00770-N">
     P.-G. Reinhard and H. Flocard</a>,
     Nucl. Phys. A \b 584 (1995) 467.
 
     \anchor Reinhard99 Reinhard99:
-    <a href="http://dx.doi.org/10.1103/PhysRevC.60.014316">
+    <a href="https://doi.org/10.1103/PhysRevC.60.014316">
     P.-G. Reinhard, D. J. Dean, W. Nazrewicz, J. Dobaczewski, J. A. Maruhn, and M. R. Strayer</a>,
     Phys. Rev. C \b 60 (1999) 014316.
 
     \anchor Shapiro83 Shapiro83:
     S. L. Shapiro and S. A. Teukolsky,
-    <a href="http://www.worldcat.org/isbn/0471873179">
+    <a href="https://www.worldcat.org/isbn/0471873179">
     Black Holes and White Dwarfs and Neutron Stars: The
                   Physics of Compact Objects</a>,
     (1983) John Wiley and Sons.
 
     \anchor Shen10a Shen10a:
-    <a href="http://dx.doi.org/10.1103/PhysRevC.82.015806">
+    <a href="https://doi.org/10.1103/PhysRevC.82.015806">
     G. Shen, C. J. Horowitz, and S. Teige</a>,
     Phys. Rev. C \b 82 (2010) 015806.
 
     \anchor Shen10b Shen10b:
-    <a href="http://dx.doi.org/10.1103/PhysRevC.82.045802">
+    <a href="https://doi.org/10.1103/PhysRevC.82.045802">
     G. Shen, C. J. Horowitz, and S. Teige</a>,
     Phys. Rev. C \b 82 (2010) 045802.
     \comment
@@ -455,67 +464,67 @@
     \endcomment
 
     \anchor Shen11 Shen11:
-    <a href="http://dx.doi.org/10.1103/PhysRevC.83.035802">
+    <a href="https://doi.org/10.1103/PhysRevC.83.035802">
     G. Shen, C. J. Horowitz, and S. Teige</a>,
     Phys. Rev. C \b 83 (2011) 035802.
 
     \anchor Shen11b Shen11b:
-    <a href="http://dx.doi.org/10.1103/PhysRevC.83.065808">
+    <a href="https://doi.org/10.1103/PhysRevC.83.065808">
     G. Shen, C. J. Horowitz, and E. O'Connor</a>,
     Phys. Rev. C \b 83 (2011) 065808.
 
     \anchor Shen98 Shen98:
-    <a href="http://dx.doi.org/10.1016/S0375-9474(98)00236-X">
+    <a href="https://doi.org/10.1016/S0375-9474(98)00236-X">
     H. Shen, H. Toki, K. Oyamatsu, and K. Sumiyoshi</a>,
     Nucl. Phys. A \b 637 (1998) 435.
 
     \anchor Shen98b Shen98b:
-    <a href="http://dx.doi.org/10.1143/PTP.100.1013">
+    <a href="https://doi.org/10.1143/PTP.100.1013">
     H. Shen, H. Toki, K. Oyamatsu, and K. Sumiyoshi</a>,
     Prog. Theor. Phys. \b 100 (1998) 1013.
 
     \anchor Skyrme59 Skyrme59:
-    <a href="http://dx.doi.org/10.1016/0029-5582(58)90345-6">
+    <a href="https://doi.org/10.1016/0029-5582(58)90345-6">
     T. H. R. Skyrme</a>,
     Nucl. Phys. \b 9 (1959) 615.
 
     \anchor Souza09 Souza09:
-    <a href="http://dx.doi.org/10.1088/0004-637X/707/2/1495">
+    <a href="https://doi.org/10.1088/0004-637X/707/2/1495">
     S. R. Souza, A. W. Steiner, W. G. Lynch, R. Donangelo, and M. A. Famiano</a>,
     Astrophys. J. \b 707 (2009) 1495.
 
     \anchor Steiner00 Steiner00:
-    <a href="http://dx.doi.org/10.1016/S0370-2693(00)00780-2">
+    <a href="https://doi.org/10.1016/S0370-2693(00)00780-2">
     A. W. Steiner, M. Prakash, and J. M. Lattimer</a>,
     Phys. Lett. B \b 486 (2000) 239.
 
     \anchor Steiner02 Steiner02:
-    <a href="http://dx.doi.org/10.1103/PhysRevD.66.094007">
+    <a href="https://doi.org/10.1103/PhysRevD.66.094007">
     A. W. Steiner, S. Reddy, and M. Prakash</a>,
     Phys. Rev. D \b 66 (2002) 094007.
 
     \anchor Steiner05 Steiner05:
-    <a href="http://dx.doi.org/10.1103/PhysRevD.72.054024">
+    <a href="https://doi.org/10.1103/PhysRevD.72.054024">
     A. W. Steiner</a>,
     Phys. Rev. D \b 72 (2005) 054024.
 
     \anchor Steiner05b Steiner05b:
-    <a href="http://dx.doi.org/10.1016/j.physrep.2005.02.004">
+    <a href="https://doi.org/10.1016/j.physrep.2005.02.004">
     A. W. Steiner, M. Prakash, J. M. Lattimer, and P. J. Ellis</a>,
     Phys. Rep. \b 411 (2005) 325.
 
     \anchor Steiner06 Steiner06:
-    <a href="http://dx.doi.org/10.1103/PhysRevC.74.045808">
+    <a href="https://doi.org/10.1103/PhysRevC.74.045808">
     A. W. Steiner</a>,
     Phys. Rev. C \b 74 (2006) 045808.
 
     \anchor Steiner08 Steiner08:
-    <a href="http://dx.doi.org/10.1103/PhysRevC.77.035805">
+    <a href="https://doi.org/10.1103/PhysRevC.77.035805">
     A. W. Steiner</a>,
     Phys. Rev. C \b 77 (2008) 035805.
 
     \anchor Steiner12 Steiner12:
-    <a href="http://dx.doi.org/10.1103/PhysRevC.85.055804">
+    <a href="https://doi.org/10.1103/PhysRevC.85.055804">
     A. W. Steiner</a>,
     Phys. Rev. C \b 85 (2012) 055804.
 
@@ -530,22 +539,22 @@
     Astrophys. J. \b 444 (1995) 306.
 
     \anchor Tondeur84 Tondeur84:
-    <a href="http://dx.doi.org/10.1016/0375-9474(84)90444-5">
+    <a href="https://doi.org/10.1016/0375-9474(84)90444-5">
     F. Tondeur, M. Brack, M. Farine, and J. M. Pearson</a>,
     Nucl. Phys. A \b 420 (1984) 297.
 
     \anchor Typel99 Typel99:
-    <a href="http://dx.doi.org/10.1016/S0375-9474(99)00310-3">
+    <a href="https://doi.org/10.1016/S0375-9474(99)00310-3">
     S. Typel and H. H. Wolter</a>,
     Nucl. Phys. A \b 656 (1999) 331.
 
     \anchor VanGiai81 VanGiai81:
-    <a href="http://dx.doi.org/10.1016/0370-2693(81)90646-8">
+    <a href="https://doi.org/10.1016/0370-2693(81)90646-8">
     N. van Giai and H. H. Sagawa</a>,
     Phys. Lett. B \b 106 (1981) 379.
 
     \anchor Zimanyi90 Zimanyi90:
-    <a href="http://dx.doi.org/10.1103/PhysRevC.42.1416">
+    <a href="https://doi.org/10.1103/PhysRevC.42.1416">
     J. Zimanyi and S. A. Moszkowski</a>,
     Phys. Rev. C \b 42 (1990) 1416.
 

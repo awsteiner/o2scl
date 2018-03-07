@@ -76,7 +76,7 @@ int main(void) {
 	     re.def_proton.n*re.def_proton.mu,0.0,1.0e-9,"TI");
   cout << endl;
 
-  // This corrects an apparent typo, 658 -> 568 in Table I of GM91
+  // This corrects an apparent typo, 568 -> 658 in Table I of GM91
   vector<double> xw_dat={0.091,0.233,0.375,0.517,0.658,0.800,
 			 0.942,1.08,1.23};
   size_t j=0;
@@ -91,8 +91,10 @@ int main(void) {
   }
   cout << endl;
 
+  re.inc_cascade=false;
   nstar_cold nc;
   nc.set_eos(re);
+  //nc.verbose=1;
   //nc.calc_eos();
   //nc.calc_nstar();
   

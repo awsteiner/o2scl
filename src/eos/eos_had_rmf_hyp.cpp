@@ -412,12 +412,8 @@ int eos_had_rmf_hyp::calc_e(fermion &ne, fermion &pr, thermo &lth) {
     ce_prot_matter=false;
   }
   
-  n_baryon=ne.n+pr.n+lambda->n+sigma_p->n+sigma_z->n+sigma_m->n;
-  n_charge=pr.n+sigma_p->n-sigma_m->n;
-  if (inc_cascade) {
-    n_baryon+=cascade_z->n+cascade_m->n;
-    n_charge-=cascade_m->n;
-  }
+  n_baryon=ne.n+pr.n;
+  n_charge=pr.n;
   
   mm_funct fmf=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
