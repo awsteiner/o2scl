@@ -245,16 +245,8 @@ int eos_had_rmf_hyp::calc_eq_p
 
 void eos_had_rmf_hyp::calc_xs(double lam_be) {
 
-  // Compute the saturation density
+  // Compute the fields at saturation
   saturation();
-
-  // Nuclear matter
-  def_neutron.n=n0/2.0;
-  def_proton.n=n0/2.0;
-
-  // Compute the fields at a fixed density
-  thermo th;
-  calc_e(def_neutron,def_proton,th);
 
   // Now compute the proper value of xs
   double gs=ms*cs;
@@ -266,16 +258,8 @@ void eos_had_rmf_hyp::calc_xs(double lam_be) {
 
 void eos_had_rmf_hyp::calc_xw(double lam_be) {
 
-  // Compute the saturation density
+  // Compute the fields at saturation
   saturation();
-
-  // Nuclear matter
-  def_neutron.n=n0/2.0;
-  def_proton.n=n0/2.0;
-
-  // Compute the fields at a fixed density
-  thermo th;
-  calc_e(def_neutron,def_proton,th);
 
   // Now compute the proper value of xw
   double gs=ms*cs;

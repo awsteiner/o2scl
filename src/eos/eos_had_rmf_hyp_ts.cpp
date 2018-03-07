@@ -28,7 +28,7 @@
 #include <o2scl/mroot_hybrids.h>
 #include <o2scl/deriv_gsl.h>
 #include <o2scl/eos_had_rmf_hyp.h>
-#include <o2scl/hdf_eos_io.h>
+#include <o2scl/nstar_cold.h>
 
 using namespace std;
 using namespace o2scl;
@@ -59,6 +59,8 @@ int main(void) {
        << re.def_neutron.ms/re.def_neutron.m << endl;
   t.test_rel(re.msom,re.def_neutron.ms/re.def_neutron.m,1.0e-6,"msom");
   t.test_rel(re.msom,0.78,1.0e-2,"msom 2");
+  cout << "  Symmetry energy: " << re.esym*hc_mev_fm << endl;
+  t.test_rel(re.esym*hc_mev_fm,32.5,0.1,"esym");
   cout << "  Zero pressure: " << re.def_thermo.pr << endl;
   t.test_rel(re.def_thermo.pr,0.0,1.0e-8,"zero press");
   cout << "  Energy per baryon: " << re.eoa*hc_mev_fm << " " 
@@ -74,6 +76,26 @@ int main(void) {
 	     re.def_proton.n*re.def_proton.mu,0.0,1.0e-9,"TI");
   cout << endl;
 
+  // This corrects an apparent typo, 658 -> 568 in Table I of GM91
+  vector<double> xw_dat={0.091,0.233,0.375,0.517,0.658,0.800,
+			 0.942,1.08,1.23};
+  size_t j=0;
+  for(re.xs=0.2;re.xs<1.0001;re.xs+=0.1,j++) {
+    re.calc_xw(-28.0/hc_mev_fm);
+    cout << "  " << j << " " << re.xs << " " << re.xw << endl;
+    if (j<7) {
+      t.test_rel(re.xw,xw_dat[j],0.002,"xw");
+    } else {
+      t.test_rel(re.xw,xw_dat[j],0.01,"xw");
+    }
+  }
+  cout << endl;
+
+  nstar_cold nc;
+  nc.set_eos(re);
+  //nc.calc_eos();
+  //nc.calc_nstar();
+  
   t.report();
 
   return 0;
