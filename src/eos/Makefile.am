@@ -36,7 +36,8 @@ TEST_VAR = eos_had_apr.scr eos_quark_bag.scr nstar_cold.scr \
 	eos_crust.scr eos_had_ddc.scr eos_had_base.scr nucleus_rmf.scr \
 	eos_crust_virial.scr eos_had_gogny.scr tov_solve.scr \
 	eos_quark_cfl6.scr eos_quark_cfl.scr nucmass_ldrop_shell.scr \
-	eos_nse_full.scr eos_had_hlps.scr nstar_rot.scr tov_love.scr
+	eos_nse_full.scr eos_had_hlps.scr nstar_rot.scr tov_love.scr \
+	eos_had_rmf_hyp.scr
 
 else
 
@@ -69,7 +70,8 @@ TEST_VAR = eos_had_apr.scr eos_quark_bag.scr eos_crust_virial.scr \
 	tov_solve.scr eos_quark_cfl6.scr eos_had_tabulated.scr eos_nse.scr \
 	eos_had_rmf_delta.scr eos_crust.scr eos_had_ddc.scr eos_quark_cfl.scr \
 	eos_had_base.scr eos_sn.scr nucmass_ldrop_shell.scr eos_nse_full.scr \
-	nstar_rot.scr tov_love.scr eos_cs2_poly.scr
+	nstar_rot.scr tov_love.scr eos_cs2_poly.scr \
+	eos_had_rmf_hyp.scr
 
 endif
 
@@ -146,7 +148,7 @@ check_PROGRAMS = eos_had_apr_ts eos_quark_bag_ts nucmass_ldrop_ts \
 	eos_had_rmf_delta_ts eos_crust_ts eos_had_ddc_ts eos_quark_cfl_ts \
 	nucleus_rmf_ts eos_nse_full_ts eos_had_hlps_ts \
 	nucmass_ldrop_shell_ts eos_had_gogny_ts eos_crust_virial_ts \
-	nstar_rot_ts tov_love_ts eos_cs2_poly_ts
+	nstar_rot_ts tov_love_ts eos_cs2_poly_ts eos_had_rmf_hyp_ts
 
 check_SCRIPTS = o2scl-test
 
@@ -170,6 +172,7 @@ eos_had_base_ts_LDADD = $(VCHECK_LIBS)
 eos_quark_njl_ts_LDADD = $(VCHECK_LIBS)
 eos_quark_ts_LDADD = $(VCHECK_LIBS)
 eos_had_rmf_ts_LDADD = $(VCHECK_LIBS)
+eos_had_rmf_hyp_ts_LDADD = $(VCHECK_LIBS)
 eos_had_schematic_ts_LDADD = $(VCHECK_LIBS)
 eos_had_skyrme_ts_LDADD = $(VCHECK_LIBS)
 eos_tov_ts_LDADD = $(VCHECK_LIBS)
@@ -216,6 +219,8 @@ eos_quark.scr: eos_quark_ts$(EXEEXT)
 	./eos_quark_ts$(EXEEXT) > eos_quark.scr
 eos_had_rmf.scr: eos_had_rmf_ts$(EXEEXT) 
 	./eos_had_rmf_ts$(EXEEXT) > eos_had_rmf.scr
+eos_had_rmf_hyp.scr: eos_had_rmf_hyp_ts$(EXEEXT) 
+	./eos_had_rmf_hyp_ts$(EXEEXT) > eos_had_rmf_hyp.scr
 eos_had_schematic.scr: eos_had_schematic_ts$(EXEEXT) 
 	./eos_had_schematic_ts$(EXEEXT) > eos_had_schematic.scr
 eos_had_skyrme.scr: eos_had_skyrme_ts$(EXEEXT) 
@@ -268,6 +273,7 @@ eos_had_base_ts_SOURCES = eos_had_base_ts.cpp
 eos_quark_njl_ts_SOURCES = eos_quark_njl_ts.cpp
 eos_quark_ts_SOURCES = eos_quark_ts.cpp
 eos_had_rmf_ts_SOURCES = eos_had_rmf_ts.cpp
+eos_had_rmf_hyp_ts_SOURCES = eos_had_rmf_hyp_ts.cpp
 eos_had_schematic_ts_SOURCES = eos_had_schematic_ts.cpp
 eos_had_skyrme_ts_SOURCES = eos_had_skyrme_ts.cpp
 eos_tov_ts_SOURCES = eos_tov_ts.cpp

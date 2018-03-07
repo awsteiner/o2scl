@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2012, Andrew W. Steiner
+  Copyright (C) 2006-2018, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -58,6 +58,42 @@ namespace o2scl {
 
   public:
 
+    /// The neutron object
+    fermion *lambda;
+
+    /// The proton object
+    fermion *sigma_p;
+
+    /// The neutron object
+    fermion *sigma_z;
+
+    /// The proton object
+    fermion *sigma_m;
+
+    /// The neutron object
+    fermion *cascade_z;
+
+    /// The proton object
+    fermion *cascade_m;
+
+    /// The neutron object
+    fermion def_lambda;
+
+    /// The proton object
+    fermion def_sigma_p;
+
+    /// The neutron object
+    fermion def_sigma_z;
+
+    /// The proton object
+    fermion def_sigma_m;
+
+    /// The neutron object
+    fermion def_cascade_z;
+
+    /// The proton object
+    fermion def_cascade_m;
+
     /// \name Hyperon-meson couplings
     //@{
     double xs;
@@ -88,6 +124,11 @@ namespace o2scl {
      */
     void calc_xw(double lam_be);
 
+    int calc_e_solve_fun(size_t nv, const ubvector &ex, 
+			 ubvector &ey);
+
+    int calc_e(fermion &ne, fermion &pr, thermo &lth);
+    
 #ifndef DOXYGEN_INTERNAL
 
   protected:
