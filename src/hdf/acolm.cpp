@@ -700,7 +700,7 @@ void acol_manager::command_add(std::string new_type) {
 
   } else if (new_type=="tensor_grid") {
     
-    static const size_t narr=3;
+    static const size_t narr=4;
     comm_option_s options_arr[narr]={
       {'l',"list","List the slice names and print out grid info.",
        0,0,"","",
@@ -710,6 +710,10 @@ void acol_manager::command_add(std::string new_type) {
        -1,-1,"<x index> <y index> <new slice name> [values of fixed indices]",
        "",new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_to_table3d),both},
+      {0,"to-table","Convert to a two-column table object.",
+       -1,-1,"<index> <grid name> <data name> [values of fixed indices]",
+       "",new comm_option_mfptr<acol_manager>
+       (this,&acol_manager::comm_to_table),both},
       {0,"set-grid","Set grid",-1,-1,"","",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_set_grid),
        both}
@@ -1111,6 +1115,7 @@ void acol_manager::command_del() {
     
     cl->remove_comm_option("list");
     cl->remove_comm_option("to-table3d");
+    cl->remove_comm_option("to-table");
     cl->remove_comm_option("set-grid");
 
     //if (o2graph_mode) {
@@ -3906,6 +3911,69 @@ int acol_manager::comm_to_table(std::vector<std::string> &sv, bool itive_com) {
     table_obj.set_nlines(size_tv_obj.size());
     for(size_t i=0;i<size_tv_obj.size();i++) {
       table_obj.set(i1,i,size_tv_obj[i]);
+    }
+
+    command_del();
+    clear_obj();
+    command_add("table");
+    type="table";
+    
+  } else if (type=="tensor_grid") {
+    
+    size_t rank=tensor_grid_obj.get_rank();
+
+    vector<string> in, pr;
+    pr.push_back("Index to vary");
+    pr.push_back("Grid name");
+    pr.push_back("Data name");
+    int ret=get_input(sv,pr,in,"to-table",itive_com);
+    if (ret!=0) return ret;
+
+    size_t ix=o2scl::stoszt(in[0]);
+    if (ix>=rank) {
+      cerr << "Index larger than rank." << endl;
+      return 1;
+    }
+
+    for(size_t i=0;i<3;i++) {
+      std::vector<std::string>::iterator it=sv.begin();
+      it++;
+      sv.erase(it);
+    }
+    
+    vector<string> in2, pr2;
+    for(size_t i=0;i<rank;i++) {
+      if (i!=ix) {
+	pr2.push_back(((std::string)"Value for index ")+o2scl::szttos(i));
+      }
+    }
+    int ret2=get_input(sv,pr2,in2,"to-table",itive_com);
+    if (ret2!=0) return ret2;
+
+    vector<double> values(rank);
+    size_t i2=0;
+    for(size_t i=0;i<rank;i++) {
+      if (i!=ix) {
+	values[i]=o2scl::stod(in2[i2]);
+	if (verbose>0) {
+	  cout << "Fixing value for index " << i << " to " << in2[i2] << endl;
+	}
+	i2++;
+      }
+    }
+
+    if (verbose>0) {
+      cout << "Index " << ix << " is free. "
+	   << "New columns are: " << in[1] << " and " << in[2] << endl;
+    }
+
+    table_obj.clear();
+    table_obj.new_column(in[1]);
+    table_obj.new_column(in[2]);
+    for(size_t i=0;i<tensor_grid_obj.get_size(ix);i++) {
+      values[ix]=tensor_grid_obj.get_grid(ix,i);
+      double line[2]={values[ix],tensor_grid_obj.interp_linear(values)};
+      table_obj.line_of_data(2,line);
     }
 
     command_del();
