@@ -487,22 +487,28 @@ namespace o2scl {
       int nc=result.get_ncolumns();
       
       for(i=0;i<nc;i++) {
+	std::string col_name=expected.get_column_name(i);
 	for(j=0;j<nr;j++) {
+	  std::string desc1=description+" col: "+col_name+" row: "+
+	    o2scl::itos(j);
 	  if (std::isnan(expected.get(i,j))) {
-	    ret=(ret && (std::isnan(expected.get(i,j))==
-			 std::isnan(result.get(i,j))));
+	    bool ret1=test_gen(std::isnan(expected.get(i,j))==
+			       std::isnan(result.get(i,j)),desc1);
+	    ret=(ret && ret1);
 	  } else if (std::isinf(expected.get(i,j))) {
-	    ret=(ret && (std::isinf(expected.get(i,j))==
-			 std::isinf(result.get(i,j))));
+	    bool ret1=test_gen(std::isinf(expected.get(i,j))==
+			       std::isinf(result.get(i,j)),desc1);
+	    ret=(ret && ret1);
 	  } else if (expected.get(i,j)<zero_tol) {
-	    ret=(ret && test_abs(result.get(i,j),expected.get(i,j),error,
-				 description));
+	    bool ret1=test_abs(result.get(i,j),expected.get(i,j),error,
+			       desc1);
 	    if (fabs(result.get(i,j)-expected.get(i,j))>max) {
 	      max=fabs(result.get(i,j)-expected.get(i,j));
 	    }
 	  } else {
-	    ret=(ret && ((fabs(expected.get(i,j)-result.get(i,j)))/
-			 fabs(expected.get(i,j))<error));
+	    bool ret1=test_rel(result.get(i,j),expected.get(i,j),error,
+			       desc1);
+	    ret=(ret && ret1);
 	    if (fabs(expected.get(i,j)-result.get(i,j))/
 		fabs(expected.get(i,j))>max) {
 	      max=fabs(expected.get(i,j)-result.get(i,j))/
