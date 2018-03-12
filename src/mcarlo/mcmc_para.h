@@ -456,6 +456,8 @@ namespace o2scl {
 	    O2SCL_ERR((((std::string)"Parameter ")+o2scl::szttos(ipar)+
 		       " of "+o2scl::szttos(n_params)+" out of range (value="+
 		       o2scl::dtos(initial_points[iip][ipar])+
+		       " low="+o2scl::dtos(low[ipar])+" high="+
+		       o2scl::dtos(high[ipar])+
 		       ") in mcmc_base::mcmc().").c_str(),
 		      o2scl::exc_einval);
 	  }
