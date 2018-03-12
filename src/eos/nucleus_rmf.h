@@ -203,14 +203,6 @@ namespace o2scl {
       replace sigma_rhs() and related functions by the associated
       field equation method of eos_had_rmf.
 
-      \todo Document hw=3.923+23.265/cbrt(atot);
-
-      \comment
-      the hw=blah blah term for the CM correction is discussed
-      a bit in Negele, PRC 1 (1970) 1260, esp. see Eq. 2.30 but
-      the numerical coefficients are different here.
-      \endcomment
-
       \todo I believe currently the center of mass correction
       for the binding energy per nucleon is not done and has
       to be added in after the fact
