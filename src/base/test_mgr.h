@@ -481,10 +481,10 @@ namespace o2scl {
 				  data_t error, data_t zero_tol,
 				  std::string description) {
       bool ret=true;
-      double max=0.0;
       int i, j;
       int nr=result.get_nlines();
       int nc=result.get_ncolumns();
+      std::vector<double> max(nc);
       
       for(i=0;i<nc;i++) {
 	std::string col_name=expected.get_column_name(i);
@@ -502,24 +502,28 @@ namespace o2scl {
 	  } else if (expected.get(i,j)<zero_tol) {
 	    bool ret1=test_abs(result.get(i,j),expected.get(i,j),error,
 			       desc1);
-	    if (fabs(result.get(i,j)-expected.get(i,j))>max) {
-	      max=fabs(result.get(i,j)-expected.get(i,j));
+	    if (fabs(result.get(i,j)-expected.get(i,j))>max[i]) {
+	      max[i]=fabs(result.get(i,j)-expected.get(i,j));
 	    }
 	  } else {
 	    bool ret1=test_rel(result.get(i,j),expected.get(i,j),error,
 			       desc1);
 	    ret=(ret && ret1);
 	    if (fabs(expected.get(i,j)-result.get(i,j))/
-		fabs(expected.get(i,j))>max) {
-	      max=fabs(expected.get(i,j)-result.get(i,j))/
+		fabs(expected.get(i,j))>max[i]) {
+	      max[i]=fabs(expected.get(i,j)-result.get(i,j))/
 		fabs(expected.get(i,j));
 	    }
 	  }
 	}
       }
-      
-      description=((std::string)"max=")+o2scl::dtos(max)+
-	"\n "+description;
+
+      if ((output_level>=1 && ret==false) || output_level>=2) {
+	for(i=0;i<nc;i++) {
+	  std::cout << "Max for " << expected.get_column_name(i) << " is "
+		    << max[i] << std::endl;
+	}
+      }
       process_test(ret,"rel_nonzero table",description);
       
       return ret;

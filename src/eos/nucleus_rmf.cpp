@@ -811,6 +811,9 @@ void nucleus_rmf::center_mass_corr(double atot) {
   // Does not work with nn!=100
   nn=100;
   xqmax=8.0;
+  // AWS: The harmonic-oscillator energy in inverse fm,
+  // see e.g. 2.30 in Negele (1970), but the coefficients
+  // here may have been updated by Paul Ellis
   hw=(3.923+23.265/cbrt(atot))/hc_mev_fm;
   b=hc_mev_fm/sqrt(mnuc*hw);
   factor=b*b/(4.0*atot);
@@ -826,7 +829,7 @@ void nucleus_rmf::center_mass_corr(double atot) {
     }
   }
   
-  // Correction e^{b^2 q^2/4/A}
+  // Correction e^{b^2 q^2/4/A}, see Tassie and Barker (1958)
   for (i=0;i<nn;i++) {
     fq[i]=exp(xq[i]*xq[i]*factor);
   }
