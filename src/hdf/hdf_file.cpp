@@ -1924,10 +1924,10 @@ int hdf_file::getc_arr(std::string name, size_t n, char *c) {
 
 int hdf_file::getd_arr(std::string name, size_t n, double *d) {
   int compr;
-  return getd_arr(name,n,d,compr);
+  return getd_arr_compr(name,n,d,compr);
 }
 
-int hdf_file::getd_arr(std::string name, size_t n, double *d,
+int hdf_file::getd_arr_compr(std::string name, size_t n, double *d,
 		       int &compr) {
 
   // See if the dataspace already exists first
@@ -1957,7 +1957,7 @@ int hdf_file::getd_arr(std::string name, size_t n, double *d,
   
   if (dims[0]!=n) {
     string str="Asked for size "+itos(n)+" but file has size "+
-      itos(dims[0])+" in hdf_file::getd_arr().";
+      itos(dims[0])+" in hdf_file::getd_arr_compr().";
     O2SCL_ERR(str.c_str(),exc_einval);
   }
 
@@ -1982,7 +1982,7 @@ int hdf_file::getf_arr(std::string name, size_t n, float *f) {
   int ndims=H5Sget_simple_extent_dims(space,dims,0);
   
   if (dims[0]!=n) {
-    O2SCL_ERR("Incompatible size in hdf_file::getd_arr().",
+    O2SCL_ERR("Incompatible size in hdf_file::getf_arr().",
 		  exc_einval);
   }
 
@@ -2919,6 +2919,40 @@ int hdf_file::getd_ten(std::string name,
 
   // Read the data
   int status=H5Dread(dset,H5T_NATIVE_DOUBLE,H5S_ALL,H5S_ALL,
+		     H5P_DEFAULT,start);
+  
+  status=H5Dclose(dset);
+
+  return 0;
+}
+
+int hdf_file::geti_ten(std::string name, 
+		       o2scl::tensor<int,std::vector<int>,
+				     std::vector<size_t> > &t) {
+  
+  // See if the dataspace already exists first
+  hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+  
+  // Get space requirements, to make sure they coincide
+  // with the size specified by the user
+  hid_t space=H5Dget_space(dset);  
+  hsize_t dims[100];
+  int ndims=H5Sget_simple_extent_dims(space,dims,0);
+  if (ndims<1 || ndims>100) {
+    O2SCL_ERR2("Dimensions less than 1 or greater than 100 ",
+		   "in hdf_file::getd_ten().",exc_efailed);
+  }
+  
+  // Allocate new data
+  t.resize(ndims,dims);
+  
+  // Get pointer to first element
+  vector<size_t> zero(ndims);
+  for(int k=0;k<ndims;k++) zero[k]=0;
+  int *start=&t.get(zero);
+  
+  // Read the data
+  int status=H5Dread(dset,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,start);
   
   status=H5Dclose(dset);
