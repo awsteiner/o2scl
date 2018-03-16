@@ -3484,8 +3484,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       command_add("tensor_grid");
       type="tensor_grid";
       return 0;
-    } else if (ip.type=="double[][]" || ip.type=="double[][][]" ||
-	       ip.type=="double[][][][]" || ip.type=="double[][][][][]") {
+    } else if (ip.type.substr(0,10)=="double[][]") {
       if (verbose>2) {
 	cout << "Reading tensor." << endl;
       }

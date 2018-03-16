@@ -106,7 +106,7 @@ namespace o2scl {
   */
   template<class vec_t=std::vector<double>, 
     class vec_size_t=std::vector<size_t> > class tensor_grid :
-    public tensor<vec_t,vec_size_t> {
+    public tensor<double,vec_t,vec_size_t> {
     
   public:
   
@@ -132,7 +132,7 @@ namespace o2scl {
   public:
     
   /// Create an empty tensor with zero rank
-  tensor_grid() : tensor<vec_t,vec_size_t>() {
+  tensor_grid() : tensor<double,vec_t,vec_size_t>() {
       grid_set=false;
       itype=itp_linear;
     }
@@ -145,7 +145,7 @@ namespace o2scl {
     */
     template<class size_vec_t> 
       tensor_grid(size_t rank, const size_vec_t &dim) : 
-    tensor<vec_t,vec_size_t>(rank,dim) {
+    tensor<double,vec_t,vec_size_t>(rank,dim) {
       grid_set=false;
       itype=itp_linear;
       // Note that the parent method sets rk to be equal to rank
@@ -786,7 +786,7 @@ namespace o2scl {
     void clear() {
       grid.resize(0);
       grid_set=false;
-      tensor<vec_t,vec_size_t>::clear();
+      tensor<double,vec_t,vec_size_t>::clear();
       return;
     }
     //@}

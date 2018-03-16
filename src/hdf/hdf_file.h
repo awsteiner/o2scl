@@ -778,7 +778,8 @@ namespace o2scl_hdf {
 	This version does not require a full copy of the tensor.
     */
     int getd_ten(std::string name, 
-		 o2scl::tensor<std::vector<double>,std::vector<size_t> > &t);
+		 o2scl::tensor<double,std::vector<double>,
+		 std::vector<size_t> > &t);
 
     /** \brief Get a tensor from an HDF file
 
@@ -786,8 +787,9 @@ namespace o2scl_hdf {
 	HDF5 file into the \ref o2scl::tensor object.
     */
     template<class vec_t, class vec_size_t>
-      int getd_ten_copy(std::string name, o2scl::tensor<vec_t,vec_size_t> &t) {
-      o2scl::tensor<std::vector<double>,std::vector<size_t> > t2;
+      int getd_ten_copy(std::string name,
+			o2scl::tensor<double,vec_t,vec_size_t> &t) {
+      o2scl::tensor<double,std::vector<double>,std::vector<size_t> > t2;
       int ret=getd_ten(name,t2);
       t=t2;
       return ret;
@@ -800,7 +802,11 @@ namespace o2scl_hdf {
 	does not require a full copy of the tensor.
     */
     int setd_ten(std::string name, 
-		 const o2scl::tensor<std::vector<double>,
+		 const o2scl::tensor<double,std::vector<double>,
+		 std::vector<size_t> > &t);
+
+    int seti_ten(std::string name, 
+		 const o2scl::tensor<int,std::vector<int>,
 		 std::vector<size_t> > &t);
 
     /** \brief Write a tensor to an HDF file
@@ -812,9 +818,9 @@ namespace o2scl_hdf {
     */
     template<class vec_t, class vec_size_t>
       int setd_ten_copy(std::string name, 
-			const o2scl::tensor<std::vector<double>,
+			const o2scl::tensor<double,std::vector<double>,
 			std::vector<size_t> > &t) {
-      o2scl::tensor<std::vector<double>,std::vector<size_t> > t2;
+      o2scl::tensor<double,std::vector<double>,std::vector<size_t> > t2;
       t2=t;
       int ret=getd_ten(name,t2);
       return ret;

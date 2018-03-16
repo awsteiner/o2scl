@@ -804,7 +804,7 @@ namespace o2scl {
 		   "expval_vector::reblock_avg_stats().",exc_einval);
       }
   
-      tensor3<> dat(nr,nc,new_blocks);
+      tensor3<double> dat(nr,nc,new_blocks);
       dat.set_all(0.0);
   
       // The ratio of the old to new block size
@@ -869,7 +869,7 @@ namespace o2scl {
     //@}
 
     /// Return the current data for all blocks
-    const tensor3<> &get_data() const;
+    const tensor3<double> &get_data() const;
 
     friend void o2scl_hdf::hdf_output
       (o2scl_hdf::hdf_file &hf, expval_matrix &t, std::string name);
