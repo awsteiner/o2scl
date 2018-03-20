@@ -238,13 +238,16 @@ namespace o2scl {
       solve for each central pressure. 
 
       The differential equation for \f$ \bar{\omega} \f$ (see the
-      section in the User's Guide called \ref tovtoc ) is
-      independent of the relative scale for \f$ \bar{\omega} \f$ and
-      \f$ j \f$ . First, one rescales \f$ \bar{\omega} \f$ and
-      rewrites everything in terms of \f$ f\equiv \bar{\omega}/\Omega
-      \f$ and \f$ g \equiv r^4 j~df/dr \f$ . Then, pick a central
-      pressure, \f$ m(r=0)=g(r=0)=0 \f$, arbitrary values for \f$
-      \Phi(r=0) \f$ and \f$ f(r=0) \f$, and integrate
+      section in the User's Guide called \ref tovtoc ) is independent
+      of the relative scale for \f$ \bar{\omega} \f$ and \f$ j \f$ .
+      (Note that \f$ j \f$ is a metric function not simply related to
+      the angular momentum, \f$ J \f$ .) First, one rescales \f$
+      \bar{\omega} \f$ and rewrites everything in terms of \f$ f\equiv
+      \bar{\omega}/\Omega \f$ and \f$ g \equiv r^4 j~df/dr \f$ . The
+      quantity \f$ f \f$ is unitless and \f$ g \f$ has units of \f$
+      \mathrm{km}^3 \f$ . Second, pick a central pressure, \f$
+      m(r=0)=g(r=0)=0 \f$, arbitrary values for \f$ \Phi(r=0) \f$ and
+      \f$ f(r=0) \f$, and integrate
       \f{eqnarray*}
       \frac{d P}{d r} &=& - \frac{G \varepsilon m}{r^2} 
       \left( 1+\frac{P}{\varepsilon}\right)
@@ -284,8 +287,23 @@ namespace o2scl {
       \ref fixed_pr(), the moment of inertia can be computed
       with, e.g. 
       \code
+      tov_solve ts;
+      ts.max();
       double schwarz_km=o2scl_cgs::schwarzchild_radius/1.0e5;
       double I=ts.domega_rat*pow(ts.rad,4.0)/3.0/schwarz_km;
+      \endcode
+
+      After a call to \ref mvsr(), the values of \f$ f(r=R) \f$
+      and \f$ g(r=R) \f$ are stored in columns labeled
+      <tt>"omega_rat"</tt> and <tt>"rjw"</tt>. The moment
+      of inertia of a 1.4 solar mass neutron star 
+      can be computed with, e.g. 
+      \code
+      tov_solve ts;
+      ts.mvsr();
+      std::shared_ptr<table_units<> > tab=ts.get_results();
+      double schwarz_km=o2scl_cgs::schwarzchild_radius/1.0e5;
+      double I_14=tab->interp("gm",1.4,"rjw")/3.0/schwarz_km;
       \endcode
       
       <b>Convergence details</b>
