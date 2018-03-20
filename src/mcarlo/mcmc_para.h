@@ -183,15 +183,19 @@ namespace o2scl {
   /** \brief Initializations before the MCMC 
    */
   virtual int mcmc_init() {
+
     if (verbose>1) {
       std::cout << "Prefix is: " << prefix << std::endl;
     }
+
     if (verbose>0) {
       // Open main output file for this rank
       scr_out.open((prefix+"_"+
 		    o2scl::itos(mpi_rank)+"_scr").c_str());
       scr_out.setf(std::ios::scientific);
     }
+    
+    // End of mcmc_init()
     return 0;
   }
 
@@ -440,13 +444,16 @@ namespace o2scl {
     }
     
     if (initial_points.size()==0) {
+      
       // Setup initial guess if not specified
       initial_points.resize(1);
       initial_points[0].resize(n_params);
       for(size_t k=0;k<n_params;k++) {
 	initial_points[0][k]=(low[k]+high[k])/2.0;
       }
+      
     } else {
+      
       // If initial points are specified, make sure they're within
       // the user-specified limits
       for(size_t iip=0;iip<initial_points.size();iip++) {
@@ -463,6 +470,29 @@ namespace o2scl {
 	  }
 	}
       }
+      
+      // Double check that the initial points are distinct and finite
+      for(size_t i=0;i<initial_points.size();i++) {
+	for(size_t k=0;k<initial_points[i][k];k++) {
+	  if (!std::isfinite(initial_points[i][k])) {
+	    O2SCL_ERR2("Initial point not finite in ",
+		       "mcmc_para::mcmc_init().",o2scl::exc_einval);
+	  }
+	}
+	for(size_t j=i+1;j<initial_points.size();j++) {
+	  bool vec_equal=true;
+	  for(size_t k=0;k<initial_points[i][k];k++) {
+	    if (initial_points[i][k]!=initial_points[j][k]) {
+	      vec_equal=false;
+	    }
+	  }
+	  if (vec_equal) {
+	    O2SCL_ERR2("Initial points not distinct in ",
+		       "mcmc_para::mcmc_init().",o2scl::exc_einval);
+	  }
+	}
+      }
+      
     }
     
     // Set number of threads
@@ -663,8 +693,10 @@ namespace o2scl {
 	    size_t init_iters=0;
 	    bool done=false;
 
-	    // If we already have a guess, try to use that
-	    if (initial_points.size()>0) {
+	    // If we already have a unique guess for this walker/thread,
+	    // try to use that
+	    
+	    if (sindex<initial_points.size()) {
 
 	      // Copy from the initial points array
 	      for(size_t ipar=0;ipar<n_params;ipar++) {
@@ -694,9 +726,12 @@ namespace o2scl {
 		done=true;
 	      }
 	    }
-
+	    
+	    // Otherwise, if the initial guess wasn't provided or
+	    // failed for some reason, try generating a new point
+	    
 	    while (!done && !mcmc_done_flag[it]) {
-	      
+
 	      // Make a perturbation from the initial point
 	      for(size_t ipar=0;ipar<n_params;ipar++) {
 		do {
