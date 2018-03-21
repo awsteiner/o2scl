@@ -3511,14 +3511,14 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       command_add("hist_2d");
       type="hist_2d";
       return 0;
-    } else if (ip.type=="vector<contour_lines>") {
+    } else if (ip.type=="vector<contour_line>") {
       if (verbose>2) {
-	cout << "Reading vector<contour_lines>." << endl;
+	cout << "Reading vector<contour_line>." << endl;
       }
       hdf_input(hf,cont_obj,i2);
       obj_name=i2;
-      command_add("vector<contour_lines>");
-      type="vector<contour_lines>";
+      command_add("vector<contour_line>");
+      type="vector<contour_line>";
       return 0;
     } else if (ip.type=="uniform_grid<double>") {
       if (verbose>2) {

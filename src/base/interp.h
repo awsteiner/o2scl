@@ -2294,7 +2294,7 @@ namespace o2scl {
 	for(size_t i=0;i<locs.size()/2;i++) {
 	  double x0=locs[2*i];
 	  double x1=locs[2*i+1];
-	  sum_temp+=itp.integ(x0,x1,n2,x2,y2);
+	  sum_temp+=itp2.integ(x0,x1,n2,x2,y2);
 	}
 	xi.push_back(sum_temp);
 	yi.push_back(lev_tmp);
