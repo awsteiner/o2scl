@@ -514,79 +514,6 @@ void acol_manager::command_add(std::string new_type) {
     };
     cl->set_comm_option_vec(narr,options_arr);
 
-    if (o2graph_mode) {
-      static const size_t narr2=7;
-      comm_option_s options_arr2[narr2]={
-	{0,"plot","Plot two columns from the table.",0,3,"<x> <y> [kwargs]",
-	 ((std::string)"If the current object is a table, then plot ")+
-	 "column <y> versus column <x>. If the current object is a "+
-	 "one-dimensional histogram, then plot the histogram weights "+
-	 "as a function of the bin representative values. If the "+
-	 "current object is a set of contour lines, then plot the "+
-	 "full set of contour lines. Some useful kwargs "+
-	 "are color (c), dashes, linestyle (ls), linewidth (lw), "+
-	 "marker, markeredgecolor (mec), markeredgewidth (mew), "+
-	 "markerfacecolor (mfc), markerfacecoloralt (mfcalt), markersize "+
-	 "(ms). For example: o2graph -create x 0 10 0.2 -function \"sin(x)\" "+
-	 "y -plot x y lw=0,marker='+' -show",
-	 new o2scl::comm_option_mfptr<acol_manager>
-	 (this,&acol_manager::comm_none),both},
-	{0,"rplot","Plot a region inside a column or in between two columns",
-	 2,5,"<x1> <y1> [x2 y2] [kwargs]",((std::string)"If either 2 or ")+
-	 "3 arguments are specified, this command plots the region inside "+
-	 "the curve defined by the specified set of x and y values. The "+
-	 "first point is copied at the end to ensure a closed region. "+
-	 "If 4 or 5 arguments are specified, then this command plots the "+
-	 "region in between two sets of x and y values, again adding the "+
-	 "first point from (x1,y1) to the end to ensure a closed region.",
-	 new o2scl::comm_option_mfptr<acol_manager>
-	 (this,&acol_manager::comm_none),both},
-	{0,"scatter","Create a scatter plot from 2-4 columns",
-	 2,5,"<x> <y> [s] [c] [kwargs]",((std::string)"This command ")+
-	 "creates a scatter plot form columns <x> and <y>, optionally "+
-	 "using column [s] to choose the marker size and optionally "+
-	 "using column [c] to choose the marker color. To vary the "+
-	 "marker colors while choosing the default marker size just "+
-	 "specify 'None' as the argument for [s]. Or, to "+
-	 "specify keyword arguments while using the default size and "+
-	 "color, specify 'None' as the argument for both [s] and [c].",
-	 new o2scl::comm_option_mfptr<acol_manager>
-	 (this,&acol_manager::comm_none),both},
-	{0,"errorbar","Plot the specified columns with errobars.",4,5,
-	 "<x> <y> <xerr> <yerr> [kwargs]",
-	 ((std::string)"Plot column <y> versus column <x> with symmetric ")+
-	 "error bars given in column <xerr> and <yerr>. For no uncertainty "
-	 "in either the x or y direction, just use \"0\" for <xerr> "+
-	 "or <yerr>, respectively. New kwargs for the errorbar command are "+
-	 "ecolor=None, elinewidth=None, capsize=None, barsabove=False, "+
-	 "lolims=False, uplims=False, xlolims=False, xuplims=False, "+
-	 "errorevery=1, capthick=None, hold=None",
-	 new o2scl::comm_option_mfptr<acol_manager>
-	 (this,&acol_manager::comm_none),both},
-	{0,"plot1","Plot the specified column.",1,2,"<y> [kwargs]",
-	 ((std::string)"Plot column <y> versus row number. Some useful ")+
-	 "kwargs are color (c), dashes, linestyle (ls), linewidth (lw), "+
-	 "marker, markeredgecolor (mec), markeredgewidth (mew), "+
-	 "markerfacecolor (mfc), markerfacecoloralt (mfcalt), markersize "+
-	 "(ms). For example: o2 -create x 0 10 0.2 -function \"sin(x)\" "+
-	 "y -plot1 y ls='--',marker='o' -show",
-	 new o2scl::comm_option_mfptr<acol_manager>
-	 (this,&acol_manager::comm_none),both},
-	{0,"histplot","Create a histogram plot from a table.",0,1,"<col>",
-	 ((std::string)"For a table, create a histogram plot from the ")+
-	 "specified column.",
-	 new o2scl::comm_option_mfptr<acol_manager>
-	 (this,&acol_manager::comm_none),both},
-	{0,"hist2dplot","Create a 2-D histogram plot.",0,2,"<col x> <col y>",
-	 ((std::string)"For a table, create a 2D histogram plot from the ")+
-	 "specified columns.",
-	 new o2scl::comm_option_mfptr<acol_manager>
-	 (this,&acol_manager::comm_none),
-	 both}
-      };
-      cl->set_comm_option_vec(narr2,options_arr2);
-    }
-    
   } else if (new_type=="table3d") {
     
     static const size_t narr=15;
@@ -678,26 +605,6 @@ void acol_manager::command_add(std::string new_type) {
     };
     cl->set_comm_option_vec(narr,options_arr);
 
-    if (o2graph_mode) {
-      static const size_t narr2=1;
-      comm_option_s options_arr2[narr2]={
-	{0,"den-plot","Create a density plot from a table3d object.",
-	 0,1,"<slice name for table3d>",
-	 ((std::string)"Creates a density plot from the specified slice. ")+
-	 "Logarithmic x- or y-axes are handled by taking the base 10 log "+
-	 "of the x- or y-grids specified in the table3d object before "+
-	 "plotting. A z-axis density legend is print on the RHS if "+
-	 "colbar is set to 1 before plotting. If z-axis limits are "+
-	 "specified, then values larger than the upper limit are set "+
-	 "equal to the upper limit and values smaller than the lower "+
-	 "limit are set equal to the lower limit before plotting.",
-	 new o2scl::comm_option_mfptr<acol_manager>
-	 (this,&acol_manager::comm_none),
-	 both}
-      };
-      cl->set_comm_option_vec(narr2,options_arr2);
-    }
-
   } else if (new_type=="tensor_grid") {
     
     static const size_t narr=4;
@@ -720,48 +627,8 @@ void acol_manager::command_add(std::string new_type) {
     };
     cl->set_comm_option_vec(narr,options_arr);
 
-    /*
-      if (o2graph_mode) {
-      static const size_t narr2=1;
-      comm_option_s options_arr2[narr2]={
-      {0,"den-plot","Create a density plot from a table3d object.",
-      0,1,"<slice name for table3d>",
-      ((std::string)"Creates a density plot from the specified slice. ")+
-      "Logarithmic x- or y-axes are handled by taking the base 10 log "+
-      "of the x- or y-grids specified in the table3d object before "+
-      "plotting. A z-axis density legend is print on the RHS if "+
-      "colbar is set to 1 before plotting. If z-axis limits are "+
-      "specified, then values larger than the upper limit are set "+
-      "equal to the upper limit and values smaller than the lower "+
-      "limit are set equal to the lower limit before plotting.",
-      new o2scl::comm_option_mfptr<acol_manager>
-      (this,&acol_manager::comm_none),
-      both}
-      };
-      cl->set_comm_option_vec(narr2,options_arr2);
-      }
-    */
-
   } else if (new_type=="hist") {
 
-    if (o2graph_mode) {
-      static const size_t narr2=1;
-      comm_option_s options_arr2[narr2]={
-	{0,"plot","Plot the histogram.",0,3,"[kwargs]",
-	 ((std::string)"Plot the histogram weights ")+
-	 "as a function of the bin representative values. "+
-	 "Some useful kwargs (which apply for all three object types) "+
-	 "are color (c), dashes, linestyle (ls), linewidth (lw), "+
-	 "marker, markeredgecolor (mec), markeredgewidth (mew), "+
-	 "markerfacecolor (mfc), markerfacecoloralt (mfcalt), markersize "+
-	 "(ms). For example: o2graph -create x 0 10 0.2 -function \"sin(x)\" "+
-	 "y -plot x y lw=0,marker='+' -show",
-	 new o2scl::comm_option_mfptr<acol_manager>
-	 (this,&acol_manager::comm_none),both},
-      };
-      cl->set_comm_option_vec(narr2,options_arr2);
-    }
-    
   } else if (new_type=="double[]") {
 
     static const size_t narr=7;
@@ -801,23 +668,6 @@ void acol_manager::command_add(std::string new_type) {
        both}      
     };
     cl->set_comm_option_vec(narr,options_arr);
-    
-    if (o2graph_mode) {
-      static const size_t narr2=1;
-      comm_option_s options_arr2[narr2]={
-	{0,"plot1",
-	 "Plot the array",0,1,"[kwargs]",
-	 ((std::string)"Plot the array. ")+
-	 "Some useful kwargs (which apply for all three object types) "+
-	 "are color (c), dashes, linestyle (ls), linewidth (lw), "+
-	 "marker, markeredgecolor (mec), markeredgewidth (mew), "+
-	 "markerfacecolor (mfc), markerfacecoloralt (mfcalt), markersize "+
-	 "(ms).",
-	 new o2scl::comm_option_mfptr<acol_manager>
-	 (this,&acol_manager::comm_none),both}
-      };
-      cl->set_comm_option_vec(narr2,options_arr2);
-    }
     
   } else if (new_type=="int[]") {
 
@@ -859,23 +709,6 @@ void acol_manager::command_add(std::string new_type) {
     };
     cl->set_comm_option_vec(narr,options_arr);
     
-    if (o2graph_mode) {
-      static const size_t narr2=1;
-      comm_option_s options_arr2[narr2]={
-	{0,"plot1",
-	 "Plot the array",0,1,"[kwargs]",
-	 ((std::string)"Plot the array. ")+
-	 "Some useful kwargs (which apply for all three object types) "+
-	 "are color (c), dashes, linestyle (ls), linewidth (lw), "+
-	 "marker, markeredgecolor (mec), markeredgewidth (mew), "+
-	 "markerfacecolor (mfc), markerfacecoloralt (mfcalt), markersize "+
-	 "(ms).",
-	 new o2scl::comm_option_mfptr<acol_manager>
-	 (this,&acol_manager::comm_none),both}
-      };
-      cl->set_comm_option_vec(narr2,options_arr2);
-    }
-    
   } else if (new_type=="size_t[]") {
 
     static const size_t narr=7;
@@ -916,43 +749,8 @@ void acol_manager::command_add(std::string new_type) {
     };
     cl->set_comm_option_vec(narr,options_arr);
     
-    if (o2graph_mode) {
-      static const size_t narr2=1;
-      comm_option_s options_arr2[narr2]={
-	{0,"plot1",
-	 "Plot the array",0,1,"[kwargs]",
-	 ((std::string)"Plot the array. ")+
-	 "Some useful kwargs (which apply for all three object types) "+
-	 "are color (c), dashes, linestyle (ls), linewidth (lw), "+
-	 "marker, markeredgecolor (mec), markeredgewidth (mew), "+
-	 "markerfacecolor (mfc), markerfacecoloralt (mfcalt), markersize "+
-	 "(ms).",
-	 new o2scl::comm_option_mfptr<acol_manager>
-	 (this,&acol_manager::comm_none),both}
-      };
-      cl->set_comm_option_vec(narr2,options_arr2);
-    }
-    
   } else if (new_type=="vector<contour_line>") {
 
-    if (o2graph_mode) {
-      static const size_t narr2=1;
-      comm_option_s options_arr2[narr2]={
-	{0,"plot",
-	 "Plot the contour lines",0,1,"[kwargs]",
-	 ((std::string)"Plot the set of contour lines. ")+
-	 "Some useful kwargs (which apply for all three object types) "+
-	 "are color (c), dashes, linestyle (ls), linewidth (lw), "+
-	 "marker, markeredgecolor (mec), markeredgewidth (mew), "+
-	 "markerfacecolor (mfc), markerfacecoloralt (mfcalt), markersize "+
-	 "(ms). For example: o2graph -create x 0 10 0.2 -function \"sin(x)\" "+
-	 "y -plot x y lw=0,marker='+' -show",
-	 new o2scl::comm_option_mfptr<acol_manager>
-	 (this,&acol_manager::comm_none),both}
-      };
-      cl->set_comm_option_vec(narr2,options_arr2);
-    }
-    
   } else if (new_type=="hist_2d") {
 
     static const size_t narr=2;
@@ -967,32 +765,6 @@ void acol_manager::command_add(std::string new_type) {
        both}
     };
     cl->set_comm_option_vec(narr,options_arr);
-
-    if (o2graph_mode) {
-      static const size_t narr2=2;
-      comm_option_s options_arr2[narr2]={
-	{0,"den-plot","Create a density plot from a hist_2d object.",
-	 0,1,"<slice name for table3d>",
-	 ((std::string)"Create ")+
-	 "a density plot from the current histogram (assuming equally-"+
-	 "spaced bins). "+
-	 "Logarithmic x- or y-axes are handled by taking the base 10 log "+
-	 "of the x- or y-grids specified in the table3d object before "+
-	 "plotting. A z-axis density legend is print on the RHS if "+
-	 "colbar is set to 1 before plotting. If z-axis limits are "+
-	 "specified, then values larger than the upper limit are set "+
-	 "equal to the upper limit and values smaller than the lower "+
-	 "limit are set equal to the lower limit before plotting.",
-	 new o2scl::comm_option_mfptr<acol_manager>
-	 (this,&acol_manager::comm_none),
-	 both},
-	{0,"contours","Create contour lines from a table3d or hist_2d object.",
-	 0,4,"[\"frac\"] <value> [output file] [output name]","",
-	 new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_contours),
-	 both}
-      };
-      cl->set_comm_option_vec(narr2,options_arr2);
-    }
 
   }
   
@@ -1079,16 +851,6 @@ void acol_manager::command_del() {
     cl->remove_comm_option("to-hist");
     cl->remove_comm_option("autocorr");
 
-    if (o2graph_mode) {
-      cl->remove_comm_option("plot");
-      cl->remove_comm_option("rplot");
-      cl->remove_comm_option("scatter");
-      cl->remove_comm_option("plot1");
-      cl->remove_comm_option("errorbar");
-      cl->remove_comm_option("histplot");
-      cl->remove_comm_option("hist2dplot");
-    }
-    
   } else if (type=="table3d") {
     
     cl->remove_comm_option("cat");
@@ -1107,10 +869,6 @@ void acol_manager::command_del() {
     cl->remove_comm_option("slice");
     cl->remove_comm_option("sum");
 
-    if (o2graph_mode) {
-      cl->remove_comm_option("den-plot");
-    }
-    
   } else if (type=="tensor_grid") {
     
     cl->remove_comm_option("list");
@@ -1118,10 +876,6 @@ void acol_manager::command_del() {
     cl->remove_comm_option("to-table");
     cl->remove_comm_option("set-grid");
 
-    //if (o2graph_mode) {
-    //cl->remove_comm_option("den-plot");
-    //}
-    
   } else if (type=="hist_2d") {
 
     cl->remove_comm_option("max");
@@ -1136,11 +890,6 @@ void acol_manager::command_del() {
       
       //cl->remove_comm_option("hist2d");
       */
-    if (o2graph_mode) {
-      cl->remove_comm_option("den-plot");
-      cl->remove_comm_option("contours");
-    }
-    
   } else if (type=="hist") {
     
     /*
@@ -1164,16 +913,8 @@ void acol_manager::command_del() {
       cl->remove_comm_option("hist");
     */
     
-    if (o2graph_mode) {
-      cl->remove_comm_option("plot");
-    }
-    
   } else if (type=="vector<contour_line>") {
 
-    if (o2graph_mode) {
-      cl->remove_comm_option("plot");
-    }
-    
   } else if (type=="double[]" || type=="int[]" || type=="size_t[]") {
 
     cl->remove_comm_option("deriv");
@@ -1184,10 +925,6 @@ void acol_manager::command_del() {
     cl->remove_comm_option("autocorr");
     cl->remove_comm_option("to-table");
     
-    if (o2graph_mode) {
-      cl->remove_comm_option("plot1");
-    }
-
     /*
       cl->remove_comm_option("integ");
       cl->remove_comm_option("set-data");
