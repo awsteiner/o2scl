@@ -2277,7 +2277,7 @@ namespace o2scl {
   /** \brief Set the first N entries in a vector to a particular value
    */
   template<class vec_t, class data_t> 
-    void vector_set_all(size_t N, vec_t &src, data_t &val) {
+    void vector_set_all(size_t N, vec_t &src, data_t val) {
     for(size_t i=0;i<N;i++) {
       src[i]=val;
     }
@@ -2287,7 +2287,7 @@ namespace o2scl {
   /** \brief Set all entries in a vector to a particular value
    */
   template<class vec_t, class data_t> 
-    void vector_set_all(vec_t &src, data_t &val) {
+    void vector_set_all(vec_t &src, data_t val) {
     o2scl::vector_set_all(src.size(),src,val);
     return;
   }
