@@ -329,11 +329,11 @@ namespace o2scl_acol {
     } iter_parms;
 
     /// HDF object iteration function
-    static herr_t iterate_func(hid_t loc, const char *name, 
-			       const H5L_info_t *inf, void *op_data);
+    //static herr_t iterate_func(hid_t loc, const char *name, 
+    //const H5L_info_t *inf, void *op_data);
     
     /// HDF object iteration function
-    static herr_t filelist_func(hid_t loc, const char *name, 
+    static herr_t iterate_new_func(hid_t loc, const char *name, 
 				const H5L_info_t *inf, void *op_data);
     
     /// Read a file and list the O2scl objects

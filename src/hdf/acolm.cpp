@@ -604,7 +604,22 @@ void acol_manager::command_add(std::string new_type) {
        both}
     };
     cl->set_comm_option_vec(narr,options_arr);
-
+    
+  } else if (new_type=="tensor") {
+    
+    static const size_t narr=2;
+    comm_option_s options_arr[narr]={
+      {'l',"list","List the rank and sizes.",
+       0,0,"","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
+       both},
+      {0,"to-table3d","Select two indices and convert to a table3d object.",
+       -1,-1,"<x name> <y name> <slice name>",
+       "",new comm_option_mfptr<acol_manager>
+       (this,&acol_manager::comm_to_table3d),both}
+    };
+    cl->set_comm_option_vec(narr,options_arr);
+    
   } else if (new_type=="tensor_grid") {
     
     static const size_t narr=4;
@@ -868,6 +883,11 @@ void acol_manager::command_del() {
     cl->remove_comm_option("set-data");
     cl->remove_comm_option("slice");
     cl->remove_comm_option("sum");
+
+  } else if (type=="tensor") {
+    
+    cl->remove_comm_option("list");
+    cl->remove_comm_option("to-table3d");
 
   } else if (type=="tensor_grid") {
     
@@ -2306,6 +2326,7 @@ int acol_manager::comm_sum(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
 
+/*
 herr_t acol_manager::iterate_func(hid_t loc, const char *name, 
 				  const H5L_info_t *inf, void *op_data) {
 
@@ -2376,8 +2397,9 @@ herr_t acol_manager::iterate_func(hid_t loc, const char *name,
   }
   return 0;
 }
+*/
 
-herr_t acol_manager::filelist_func(hid_t loc, const char *name, 
+herr_t acol_manager::iterate_new_func(hid_t loc, const char *name, 
 				   const H5L_info_t *inf, void *op_data) {
 
   // Arrange parameters
@@ -2392,6 +2414,9 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
   H5O_info_t infobuf;
   herr_t status=H5Oget_info_by_name(loc,name,&infobuf,H5P_DEFAULT);
 
+  static const int filelist_mode=0;
+  static const int read_mode=1;
+  
   ip->found=false;
   
   // If it's a group
@@ -2406,7 +2431,7 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
     hf.set_current_id(top);
 
     if (otype.length()!=0) {
-      if (mode==0) {
+      if (mode==filelist_mode) {
 	if (otype==((string)"string[]")) {
 	  cout << "O2scl object \"" << name << "\" of type " 
 	       << otype << "." << endl;
@@ -2415,20 +2440,24 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	       << otype << "." << endl;
 	}
       }
-      if (mode==1 && name==tname) {
+      if (mode==read_mode && name==tname) {
 	ip->type=otype;
 	ip->found=true;
 	return 1;
       }
     } else {
-      if (mode==0) {
+      if (mode==filelist_mode) {
 	cout << "Group \"" << name << "\"." << endl;
       }
     }
     
   } else if (infobuf.type==H5O_TYPE_DATASET) {
-    if (mode==0) {
+    if (mode==filelist_mode) {
       cout << "Dataset \"" << name << "\" of type ";
+    }
+
+    if (loc_verbose>1) {
+      cout << "Reading dataset named " << name << endl;
     }
 
     // Open data set
@@ -2454,7 +2483,17 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
       }
     }
 
-    if (mode==0) {
+    if (loc_verbose>1) {
+      if (compr==1) {
+	cout << "Compressed with deflate." << endl;
+      } else if (compr==2) {
+	cout << "Compressed with szip." << endl;
+      } else {
+	cout << "Uncompressed." << endl;
+      }
+    }
+
+    if (mode==filelist_mode) {
       if (compr==1) {
 	cout << "(1) ";
       } else if (compr==2) {
@@ -2471,20 +2510,20 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
     if (H5Tequal(nat_id,H5T_NATIVE_CHAR)) {
       if (ndims==1) {
 	if (max_dims[0]==H5S_UNLIMITED) {
-	  if (mode==0) {
+	  if (mode==filelist_mode) {
 	    cout << "char[" << dims[0] << "/inf] with value=\"";
 	  }
-	  if (mode==1 && name==tname) {
+	  if (mode==read_mode && name==tname) {
 	    ip->type="string";
 	    ip->found=true;
 	    return 1;
 	  }
 	} else {
-	  if (mode==0) {
+	  if (mode==filelist_mode) {
 	    cout << "char[" << dims[0] << "/" << max_dims[0]
 		 << "] with value=\"";
 	  }
-	  if (mode==1 && name==tname) {
+	  if (mode==read_mode && name==tname) {
 	    if (dims[0]==1) {
 	      ip->type="char";
 	      ip->found=true;
@@ -2496,7 +2535,7 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	    }
 	  }
 	}
-	if (mode==0) {
+	if (mode==filelist_mode) {
 	  std::string s;
 	  hf.gets(name,s);
 	  if (dims[0]<20) {
@@ -2510,7 +2549,7 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	  cout << "\".";
 	}
       } else {
-	if (mode==0) {
+	if (mode==filelist_mode) {
 	  cout << "char[";
 	  for(int i=0;i<ndims-1;i++) {
 	    if (max_dims[i]==H5S_UNLIMITED) {
@@ -2532,7 +2571,7 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	}
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_SHORT)) {
-      if (mode==0) {
+      if (mode==filelist_mode) {
 	cout << "short[";
 	for(int i=0;i<ndims-1;i++) {
 	  if (max_dims[i]==H5S_UNLIMITED) {
@@ -2555,20 +2594,20 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
     } else if (H5Tequal(nat_id,H5T_NATIVE_INT)) {
       if (ndims==1 && dims[0]>0) {
 	if (max_dims[0]==H5S_UNLIMITED) {
-	  if (mode==0) {
+	  if (mode==filelist_mode) {
 	    cout << "int[" << dims[0] << "/inf] with value=";
 	  }
-	  if (mode==1 && name==tname) {
+	  if (mode==read_mode && name==tname) {
 	    ip->type="int[]";
 	    ip->found=true;
 	    return 1;
 	  }
 	} else {
-	  if (mode==0) {
+	  if (mode==filelist_mode) {
 	    cout << "int[" << dims[0] << "/" << max_dims[0]
 		 << "] with value=";
 	  }
-	  if (mode==1 && name==tname) {
+	  if (mode==read_mode && name==tname) {
 	    if (dims[0]==1) {
 	      ip->type="int";
 	      ip->found=true;
@@ -2580,7 +2619,7 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	    }
 	  }
 	}
-	if (mode==0) {
+	if (mode==filelist_mode) {
 	  std::vector<int> iarr;
 	  hf.geti_vec(name,iarr);
 	  if (dims[0]==1) {
@@ -2595,7 +2634,7 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	  cout << ".";
 	}
       } else {
-	if (mode==0) {
+	if (mode==filelist_mode) {
 	  cout << "int[";
 	  for(int i=0;i<ndims-1;i++) {
 	    if (max_dims[i]==H5S_UNLIMITED) {
@@ -2617,7 +2656,7 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	}
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_LONG)) {
-      if (mode==0) {
+      if (mode==filelist_mode) {
 	cout << "long[";
 	for(int i=0;i<ndims-1;i++) {
 	  if (max_dims[i]==H5S_UNLIMITED) {
@@ -2638,7 +2677,7 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	}
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_LLONG)) {
-      if (mode==0) {
+      if (mode==filelist_mode) {
 	cout << "llong[";
 	for(int i=0;i<ndims-1;i++) {
 	  if (max_dims[i]==H5S_UNLIMITED) {
@@ -2659,7 +2698,7 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	}
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_UCHAR)) {
-      if (mode==0) {
+      if (mode==filelist_mode) {
 	cout << "uchar[";
 	for(int i=0;i<ndims-1;i++) {
 	  if (max_dims[i]==H5S_UNLIMITED) {
@@ -2680,7 +2719,7 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	}
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_USHORT)) {
-      if (mode==0) {
+      if (mode==filelist_mode) {
 	cout << "ushort[";
 	for(int i=0;i<ndims-1;i++) {
 	  if (max_dims[i]==H5S_UNLIMITED) {
@@ -2701,7 +2740,7 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	}
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_UINT)) {
-      if (mode==0) {
+      if (mode==filelist_mode) {
 	cout << "uint[";
 	for(int i=0;i<ndims-1;i++) {
 	  if (max_dims[i]==H5S_UNLIMITED) {
@@ -2719,20 +2758,20 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
     } else if (H5Tequal(nat_id,H5T_NATIVE_ULONG)) {
       if (ndims==1 && dims[0]>0) {
 	if (max_dims[0]==H5S_UNLIMITED) {
-	  if (mode==0) {
+	  if (mode==filelist_mode) {
 	    cout << "size_t[" << dims[0] << "/inf] with value=";
 	  }
-	  if (mode==1 && name==tname) {
+	  if (mode==read_mode && name==tname) {
 	    ip->type="size_t[]";
 	    ip->found=true;
 	    return 1;
 	  }
 	} else {
-	  if (mode==0) {
+	  if (mode==filelist_mode) {
 	    cout << "size_t[" << dims[0] << "/"
 		 << max_dims[0] << "] with value=";
 	  }
-	  if (mode==1 && name==tname) {
+	  if (mode==read_mode && name==tname) {
 	    if (dims[0]==1) {
 	      ip->type="size_t";
 	      ip->found=true;
@@ -2744,7 +2783,7 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	    }
 	  }
 	}
-	if (mode==0) {
+	if (mode==filelist_mode) {
 	  std::vector<size_t> sarr;
 	  hf.get_szt_vec(name,sarr);
 	  if (dims[0]==1) {
@@ -2759,7 +2798,7 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	  cout << ".";
 	}
       } else {
-	if (mode==0) {
+	if (mode==filelist_mode) {
 	  cout << "size_t[";
 	  for(int i=0;i<ndims-1;i++) {
 	    if (max_dims[i]==H5S_UNLIMITED) {
@@ -2781,7 +2820,7 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	}
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_ULLONG)) {
-      if (mode==0) {
+      if (mode==filelist_mode) {
 	cout << "ullong[";
 	for(int i=0;i<ndims-1;i++) {
 	  if (max_dims[i]==H5S_UNLIMITED) {
@@ -2802,7 +2841,7 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	}
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_FLOAT)) {
-      if (mode==0) {
+      if (mode==filelist_mode) {
 	cout << "float[";
 	for(int i=0;i<ndims-1;i++) {
 	  if (max_dims[i]==H5S_UNLIMITED) {
@@ -2823,23 +2862,31 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	}
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_DOUBLE)) {
+      // If it has only rank one, then treat it as an array
+      // or a single value
       if (ndims==1 && dims[0]>0) {
+	// Handle the case of a unlimited size vector
 	if (max_dims[0]==H5S_UNLIMITED) {
-	  if (mode==0) {
+	  if (mode==filelist_mode) {
 	    cout << "double[" << dims[0] << "/inf] with value=";
 	  }
-	  if (mode==1 && name==tname) {
+	  if (mode==read_mode && name==tname) {
 	    ip->type="double[]";
 	    ip->found=true;
 	    return 1;
 	  }
 	} else {
-	  if (mode==0) {
-	    cout << "double[" << dims[0] << "/"
-		 << max_dims[0] << "] with value=";
+	  // Determine if it is a fixed-size vector or single value
+	  if (mode==filelist_mode) {
+	    if (dims[0]==1 && max_dims[0]==1) {
+	      cout << "double with value=";
+	    } else {
+	      cout << "double[" << dims[0] << "/"
+		   << max_dims[0] << "] with value=";
+	    }
 	  }
-	  if (mode==1 && name==tname) {
-	    if (dims[0]==1) {
+	  if (mode==read_mode && name==tname) {
+	    if (dims[0]==1 && max_dims[0]==1) {
 	      ip->type="double";
 	      ip->found=true;
 	      return 1;
@@ -2850,7 +2897,7 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	    }
 	  }
 	}
-	if (mode==0) {
+	if (mode==filelist_mode) {
 	  std::vector<double> darr;
 	  hf.getd_vec(name,darr);
 	  if (dims[0]==1) {
@@ -2863,7 +2910,11 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	  cout << ".";
 	}
       } else {
-	if (mode==0) {
+	// Otherwise, if it has a rank of 2 or larger, then
+	// treat it as a tensor object,
+
+	// In filelist mode, report the size
+	if (mode==filelist_mode) {
 	  cout << "double[";
 	  for(int i=0;i<ndims-1;i++) {
 	    if (max_dims[i]==H5S_UNLIMITED) {
@@ -2878,14 +2929,17 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	    cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
 	  }
 	} else {
+	  // In 'read' mode, return the correct type
 	  ip->type="double";
 	  for(int i=0;i<ndims;i++) {
 	    ip->type+="[]";
 	  }
+	  ip->found=true;
+	  return 1;
 	}
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_LDOUBLE)) {
-      if (mode==0) {
+      if (mode==filelist_mode) {
 	cout << "ldouble[";
 	for(int i=0;i<ndims-1;i++) {
 	  if (max_dims[i]==H5S_UNLIMITED) {
@@ -2920,12 +2974,12 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	status=H5Tclose(memtype);
 	status=H5Sclose(space);
 	status=H5Tclose(filetype);
-	if (mode==1 && name==tname) {
+	if (mode==read_mode && name==tname) {
 	  ip->type="char[fixed]";
 	  ip->found=true;
 	  return 1;
 	}
-	if (mode==0) {
+	if (mode==filelist_mode) {
 	  if (str_size==0) {
 	    cout << "Error. Fixed length-string with no space for null.";
 	  } else {
@@ -2936,28 +2990,33 @@ herr_t acol_manager::filelist_func(hid_t loc, const char *name,
 	  }
 	}
       } else {
-	if (mode==0) {
+	if (mode==filelist_mode) {
 	  cout << "<unknown>.";
 	}
 	status=H5Sclose(space);
 	status=H5Tclose(filetype);
       }
     }
-    if (mode==0) {
+    if (mode==filelist_mode) {
       cout << endl;
     }
 
+    if (mode==read_mode && loc_verbose>1) {
+      cout << "Value of found " << ip->found << " and type "
+	   << ip->type << endl;
+    }
+    
     H5Sclose(space_id);
     H5Tclose(nat_id);
     H5Tclose(type_id);
     H5Dclose(dset);
     
   } else if (infobuf.type==H5O_TYPE_NAMED_DATATYPE) {
-    if (mode==0) {
+    if (mode==filelist_mode) {
       cout << "Named type \"" << name << "\"." << endl;
     }
   } else {
-    if (mode==0) {
+    if (mode==filelist_mode) {
       cout << "Unexpected HDF type. " << endl;
     }
   }
@@ -2999,7 +3058,7 @@ int acol_manager::comm_filelist(std::vector<std::string> &sv,
   iter_parms ip={"",&hf,false,"",verbose,0};
 
   H5Literate(hf.get_current_id(),H5_INDEX_NAME,H5_ITER_NATIVE,
-	     0,filelist_func,&ip);
+	     0,iterate_new_func,&ip);
   
   return 0;
 }
@@ -3044,15 +3103,19 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
   }
 
   if (i2.length()!=0) {
-    
-    //cout << "read2 name: " << i2 << endl;
+
+    if (verbose>1) {
+      cout << "Command read looking for object with name " << i2 << endl;
+    }
     
     iter_parms ip={i2,&hf,false,type,verbose,1};
     
     H5Literate(hf.get_current_id(),H5_INDEX_NAME,H5_ITER_NATIVE,
-	       0,filelist_func,&ip);
+	       0,iterate_new_func,&ip);
     
-    //cout << "read2 type: " << ip.type << endl;
+    if (verbose>1) {
+      cout << "Command read found object with type " << ip.type << endl;
+    }
 
     if (ip.found==false) {
       cerr << "Could not find readable object named " << i2
@@ -3089,7 +3152,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       command_add("tensor_grid");
       type="tensor_grid";
       return 0;
-    } else if (ip.type.substr(0,10)=="double[][]") {
+    } else if (ip.type.substr(0,10)==((string)"double[][]").substr(0,10)) {
       if (verbose>2) {
 	cout << "Reading tensor." << endl;
       }
@@ -3663,7 +3726,75 @@ int acol_manager::comm_to_table(std::vector<std::string> &sv, bool itive_com) {
 int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
 				  bool itive_com) {
 
-  if (type=="tensor_grid") {
+  if (type=="tensor") {
+
+    size_t rank=tensor_obj.get_rank();
+
+    vector<string> in, pr;
+    pr.push_back("First index name");
+    pr.push_back("First index to vary");
+    pr.push_back("Second index name");
+    pr.push_back("Second index to vary");
+    pr.push_back("Slice name");
+
+    int ret=get_input(sv,pr,in,"to-table3d",itive_com);
+    if (ret!=0) return ret;
+
+    size_t ix_x=o2scl::stoszt(in[1]);
+    size_t ix_y=o2scl::stoszt(in[3]);
+    if (ix_x>=rank || ix_y>=rank) {
+      cerr << "Index larger than rank." << endl;
+      return 1;
+    }
+
+    vector<string> in2, pr2;
+    if (rank>2) {
+      for(size_t i=0;i<5;i++) {
+	std::vector<std::string>::iterator it=sv.begin();
+	it++;
+	sv.erase(it);
+      }
+      
+      for(size_t i=0;i<rank;i++) {
+	if (i!=ix_x && i!=ix_y) {
+	  pr2.push_back(((std::string)"Fixed index for rank ")+
+			o2scl::szttos(i));
+	}
+      }
+      
+      int ret2=get_input(sv,pr,in,"to-table3d",itive_com);
+      if (ret!=0) return ret2;
+    }
+
+    uniform_grid_end<double> ugx(0,tensor_obj.get_size(ix_x)-1,
+				 tensor_obj.get_size(ix_x)-1);
+    uniform_grid_end<double> ugy(0,tensor_obj.get_size(ix_y)-1,
+				 tensor_obj.get_size(ix_y)-1);
+    table3d_obj.clear();
+    table3d_obj.set_xy(in[0],ugx,in[2],ugy);
+    table3d_obj.new_slice(in[4]);
+    vector<size_t> ix(rank);
+    size_t j=0;
+    for(size_t i=0;i<rank;i++) {
+      if (i!=ix_x && i!=ix_y) {
+	ix[i]=o2scl::stoszt(in2[j]);
+	j++;
+      }
+    }
+    for(size_t i=0;i<table3d_obj.get_nx();i++) {
+      for(size_t j=0;j<table3d_obj.get_ny();j++) {
+	ix[ix_x]=i;
+	ix[ix_y]=j;
+	table3d_obj.set(i,j,in[4],tensor_obj.get(ix));
+      }
+    }
+
+    command_del();
+    clear_obj();
+    command_add("table3d");
+    type="table3d";
+
+  } else if (type=="tensor_grid") {
 
     size_t rank=tensor_grid_obj.get_rank();
 
@@ -6143,6 +6274,14 @@ int acol_manager::comm_list(std::vector<std::string> &sv, bool itive_com) {
     } else {
       table_obj.table<std::vector<double> >::summary(&cout,ncols);
     }
+  } else if (type=="tensor") {
+    cout << "tensor name: " << obj_name << endl;
+    size_t rk=tensor_obj.get_rank();
+    cout << "Rank: " << rk << endl;
+    const std::vector<size_t> &sarr=tensor_obj.get_size_arr();
+    for(size_t j=0;j<rk;j++) {
+      cout << "Size of rank " << j << " is " << sarr[j] << endl;
+    }
   } else if (type=="tensor_grid") {
     cout << "tensor_grid name: " << obj_name << endl;
     size_t rk=tensor_grid_obj.get_rank();
@@ -6848,7 +6987,10 @@ int acol_manager::comm_select_rows2(std::vector<std::string> &sv,
   
   int new_lines=0;
   for(int i=0;i<((int)table_obj.get_nlines());i++) {
-    if (i%10000==0) std::cout << "I: " << i << endl;
+    if (verbose>0 && i%10000==0) {
+      std::cout << "Finished " << i << " of "
+		<< table_obj.get_nlines() << " lines." << endl;
+    }
     for(size_t j=0;j<cols.size();j++) {
       vars[cols[j]]=table_obj.get(cols[j],i);
     }

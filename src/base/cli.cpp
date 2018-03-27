@@ -729,11 +729,15 @@ int cli::call_args(vector<cmd_line_arg> &ca) {
 int cli::comm_option_get(vector<string> &sv, bool itive_com) {
   
   if (sv.size()>1) {
-    par_t it=par_list.find(sv[1]);
-    if (it!=par_list.end()) {
-      cout << "The value of '" << sv[1] << "' is: " << (it->second)->get() 
-	   << endl;
-    } else {
+    bool found=false;
+    for(par_t it=par_list.begin();it!=par_list.end() && found==false;it++) {
+      if (string_equal_dash(it->first,sv[1])) {
+	cout << "The value of '" << sv[1] << "' is: " << (it->second)->get() 
+	     << endl;
+	found=true;
+      }
+    }
+    if (found==false) {
       cout << "Parameter named '" << sv[1] << "' not found." << endl;
     }
 
@@ -752,10 +756,14 @@ int cli::comm_option_set(vector<string> &sv, bool itive_com) {
     
     if (sync_verbose && sv[1]=="verbose") verbose=o2scl::stoi(sv[2]);
 
-    par_t it=par_list.find(sv[1]);
-    if (it!=par_list.end()) {
-      (it->second)->set(sv[2]);
-    } else {
+    bool found=false;
+    for(par_t it=par_list.begin();it!=par_list.end() && found==false;it++) {
+      if (string_equal_dash(it->first,sv[1])) {
+	(it->second)->set(sv[2]);
+	found=true;
+      }
+    }
+    if (found==false) {
       cout << "Parameter named '" << sv[1] << "' not found." << endl;
     }
 
