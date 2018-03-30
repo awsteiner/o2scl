@@ -537,7 +537,7 @@ namespace o2scl_acol {
 
     std::string cmap, xtitle, ytitle;
     double xlo, xhi, ylo, yhi, zlo, zhi;
-    bool xset, yset, zset, colbar, logx, logy;
+    bool xset, yset, zset, colbar, logx, logy, logz;
     int font;
     double left_margin, right_margin, top_margin, bottom_margin;
     //@}
