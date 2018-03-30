@@ -790,6 +790,14 @@ namespace o2scl_hdf {
 		 o2scl::tensor<int,std::vector<int>,
 		 std::vector<size_t> > &t);
 
+    /** \brief Get a tensor of size_t from an HDF file
+
+	This version does not require a full copy of the tensor.
+    */
+    int get_szt_ten(std::string name, 
+		 o2scl::tensor<size_t,std::vector<size_t>,
+		 std::vector<size_t> > &t);
+
     /** \brief Get a tensor of double-precision numbers from an HDF file
 
 	This version requires a full copy of the tensor from the
@@ -837,6 +845,16 @@ namespace o2scl_hdf {
     int seti_ten(std::string name, 
 		 const o2scl::tensor<int,std::vector<int>,
 		 std::vector<size_t> > &t);
+
+    /** \brief Write a tensor of integers to an HDF file
+
+	You may overwrite a tensor already present in the
+	HDF file only if it has the same rank. This version
+	does not require a full copy of the tensor.
+    */
+    int set_szt_ten(std::string name, 
+		    const o2scl::tensor<size_t,std::vector<size_t>,
+		    std::vector<size_t> > &t);
 
     /** \brief Write a tensor of double-precision numbers to an HDF file
 

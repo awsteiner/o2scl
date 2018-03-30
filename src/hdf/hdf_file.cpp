@@ -2892,6 +2892,113 @@ int hdf_file::seti_ten(std::string name,
   return 0;
 }
 
+int hdf_file::set_szt_ten(std::string name, 
+			  const o2scl::tensor<size_t,std::vector<size_t>,
+			  std::vector<size_t> > &t) {
+  
+  if (write_access==false) {
+    O2SCL_ERR2("File not opened with write access ",
+	       "in hdf_file::setd_ten().",exc_efailed);
+  }
+
+  hid_t dset, space, dcpl=0;
+  bool chunk_alloc=false;
+
+  H5E_BEGIN_TRY
+    {
+      // See if the dataspace already exists first
+      dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+    } 
+  H5E_END_TRY 
+#ifdef O2SCL_NEVER_DEFINED
+    {
+    }
+#endif
+  
+  size_t ndims=t.get_rank();
+  hsize_t *dims=new hsize_t[ndims];
+  for(size_t k=0;k<ndims;k++) {
+    dims[k]=t.get_size(k);
+  }
+  
+  // If it doesn't exist, create it
+  if (dset<0) {
+
+    // Create dims, chunk, and max arrays
+    hsize_t *chunk=new hsize_t[ndims];
+    hsize_t *max=new hsize_t[ndims];
+    for(size_t k=0;k<ndims;k++) {
+      max[k]=H5S_UNLIMITED;
+      chunk[k]=def_chunk(t.get_size(k));
+    }
+    // Create the dataspace
+    space=H5Screate_simple(ndims,dims,max);
+    
+    // Set chunk with size determined by def_chunk()
+    dcpl=H5Pcreate(H5P_DATASET_CREATE);
+    int status2=H5Pset_chunk(dcpl,ndims,chunk);
+    
+#ifdef O2SCL_HDF5_COMP    
+    if (t.total_size()>=min_compr_size) {
+      // Compression part
+      if (compr_type==1) {
+	int status3=H5Pset_deflate(dcpl,6);
+      } else if (compr_type==2) {
+	int status3=H5Pset_szip(dcpl,H5_SZIP_NN_OPTION_MASK,16);
+      } else if (compr_type!=0) {
+	O2SCL_ERR2("Invalid compression type in ",
+		   "hdf_file::setd_ten().",exc_einval);
+      }
+    }
+#endif
+
+    // Create the dataset
+    dset=H5Dcreate(current,name.c_str(),H5T_STD_U64LE,space,H5P_DEFAULT,
+		   dcpl,H5P_DEFAULT);
+    chunk_alloc=true;
+
+    delete[] chunk;
+    delete[] max;
+
+  } else {
+    
+    // Get current dimensions
+    space=H5Dget_space(dset);  
+    hsize_t dims2[100];
+    int ndims2=H5Sget_simple_extent_dims(space,dims2,0);
+    if (ndims2!=((int)ndims)) {
+      O2SCL_ERR2("Tried to set a tensor on top of a tensor of ",
+		    "different rank in hdf_file::setd_ten().",exc_efailed);
+    }
+
+    // If necessary, extend the dataset
+    int status3=H5Dset_extent(dset,dims);
+    
+  }
+
+  // Write the data 
+  vector<size_t> zero(ndims);
+  for(size_t k=0;k<ndims;k++) zero[k]=0;
+  const size_t *ptr=&t.get(zero);
+  int status;
+  if (std::numeric_limits<size_t>::digits==64) {
+    status=H5Dwrite(dset,H5T_NATIVE_ULLONG,H5S_ALL,
+		    H5S_ALL,H5P_DEFAULT,ptr);
+  } else {
+    status=H5Dwrite(dset,H5T_NATIVE_ULONG,H5S_ALL,
+		    H5S_ALL,H5P_DEFAULT,ptr);
+  }
+  
+  status=H5Dclose(dset);
+  status=H5Sclose(space);
+  if (chunk_alloc) {
+    status=H5Pclose(dcpl);
+  }
+  delete[] dims;
+      
+  return 0;
+}
+
 int hdf_file::getd_ten(std::string name, 
 		       o2scl::tensor<double,std::vector<double>,
 				     std::vector<size_t> > &t) {
@@ -2953,6 +3060,40 @@ int hdf_file::geti_ten(std::string name,
   
   // Read the data
   int status=H5Dread(dset,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,
+		     H5P_DEFAULT,start);
+  
+  status=H5Dclose(dset);
+
+  return 0;
+}
+
+int hdf_file::get_szt_ten(std::string name, 
+		       o2scl::tensor<size_t,std::vector<size_t>,
+				     std::vector<size_t> > &t) {
+  
+  // See if the dataspace already exists first
+  hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
+  
+  // Get space requirements, to make sure they coincide
+  // with the size specified by the user
+  hid_t space=H5Dget_space(dset);  
+  hsize_t dims[100];
+  int ndims=H5Sget_simple_extent_dims(space,dims,0);
+  if (ndims<1 || ndims>100) {
+    O2SCL_ERR2("Dimensions less than 1 or greater than 100 ",
+		   "in hdf_file::getd_ten().",exc_efailed);
+  }
+  
+  // Allocate new data
+  t.resize(ndims,dims);
+  
+  // Get pointer to first element
+  vector<size_t> zero(ndims);
+  for(int k=0;k<ndims;k++) zero[k]=0;
+  size_t *start=&t.get(zero);
+  
+  // Read the data
+  int status=H5Dread(dset,H5T_NATIVE_HSIZE,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,start);
   
   status=H5Dclose(dset);

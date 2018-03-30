@@ -213,6 +213,8 @@ namespace o2scl_acol {
     std::vector<std::string> stringv_obj;
 
     o2scl::tensor<> tensor_obj;
+    o2scl::tensor<int> tensor_int_obj;
+    o2scl::tensor<size_t> tensor_size_t_obj;
     o2scl::tensor_grid<> tensor_grid_obj;
     //@}
     

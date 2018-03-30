@@ -620,6 +620,28 @@ void acol_manager::command_add(std::string new_type) {
     };
     cl->set_comm_option_vec(narr,options_arr);
     
+  } else if (new_type=="tensor<int>") {
+    
+    static const size_t narr=1;
+    comm_option_s options_arr[narr]={
+      {'l',"list","List the rank and sizes.",
+       0,0,"","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
+       both}
+    };
+    cl->set_comm_option_vec(narr,options_arr);
+    
+  } else if (new_type=="tensor<size_t>") {
+    
+    static const size_t narr=1;
+    comm_option_s options_arr[narr]={
+      {'l',"list","List the rank and sizes.",
+       0,0,"","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
+       both}
+    };
+    cl->set_comm_option_vec(narr,options_arr);
+    
   } else if (new_type=="tensor_grid") {
     
     static const size_t narr=4;
@@ -883,6 +905,14 @@ void acol_manager::command_del() {
     cl->remove_comm_option("set-data");
     cl->remove_comm_option("slice");
     cl->remove_comm_option("sum");
+
+  } else if (type=="tensor<int>") {
+    
+    cl->remove_comm_option("list");
+
+  } else if (type=="tensor<size_t>") {
+    
+    cl->remove_comm_option("list");
 
   } else if (type=="tensor") {
     
@@ -3160,6 +3190,24 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       obj_name=i2;
       command_add("tensor");
       type="tensor";
+      return 0;
+    } else if (ip.type.substr(0,10)==((string)"int[][]").substr(0,10)) {
+      if (verbose>2) {
+	cout << "Reading tensor<int>." << endl;
+      }
+      hf.geti_ten(i2,tensor_int_obj);
+      obj_name=i2;
+      command_add("tensor<int>");
+      type="tensor<int>";
+      return 0;
+    } else if (ip.type.substr(0,10)==((string)"size_t[][]").substr(0,10)) {
+      if (verbose>2) {
+	cout << "Reading tensor<size_t>." << endl;
+      }
+      hf.get_szt_ten(i2,tensor_size_t_obj);
+      obj_name=i2;
+      command_add("tensor<size_t>");
+      type="tensor<size_t>";
       return 0;
     } else if (ip.type=="hist") {
       if (verbose>2) {
@@ -6279,6 +6327,22 @@ int acol_manager::comm_list(std::vector<std::string> &sv, bool itive_com) {
     size_t rk=tensor_obj.get_rank();
     cout << "Rank: " << rk << endl;
     const std::vector<size_t> &sarr=tensor_obj.get_size_arr();
+    for(size_t j=0;j<rk;j++) {
+      cout << "Size of rank " << j << " is " << sarr[j] << endl;
+    }
+  } else if (type=="tensor<int>") {
+    cout << "tensor<int> name: " << obj_name << endl;
+    size_t rk=tensor_int_obj.get_rank();
+    cout << "Rank: " << rk << endl;
+    const std::vector<size_t> &sarr=tensor_int_obj.get_size_arr();
+    for(size_t j=0;j<rk;j++) {
+      cout << "Size of rank " << j << " is " << sarr[j] << endl;
+    }
+  } else if (type=="tensor<size_t>") {
+    cout << "tensor<size_t> name: " << obj_name << endl;
+    size_t rk=tensor_size_t_obj.get_rank();
+    cout << "Rank: " << rk << endl;
+    const std::vector<size_t> &sarr=tensor_size_t_obj.get_size_arr();
     for(size_t j=0;j<rk;j++) {
       cout << "Size of rank " << j << " is " << sarr[j] << endl;
     }
