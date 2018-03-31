@@ -622,23 +622,31 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="tensor<int>") {
     
-    static const size_t narr=1;
+    static const size_t narr=2;
     comm_option_s options_arr[narr]={
       {'l',"list","List the rank and sizes.",
        0,0,"","",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
-       both}
+       both},
+      {0,"to-table3d","Select two indices and convert to a table3d object.",
+       -1,-1,"<x name> <y name> <slice name>",
+       "",new comm_option_mfptr<acol_manager>
+       (this,&acol_manager::comm_to_table3d),both}
     };
     cl->set_comm_option_vec(narr,options_arr);
     
   } else if (new_type=="tensor<size_t>") {
     
-    static const size_t narr=1;
+    static const size_t narr=2;
     comm_option_s options_arr[narr]={
       {'l',"list","List the rank and sizes.",
        0,0,"","",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
-       both}
+       both},
+      {0,"to-table3d","Select two indices and convert to a table3d object.",
+       -1,-1,"<x name> <y name> <slice name>",
+       "",new comm_option_mfptr<acol_manager>
+       (this,&acol_manager::comm_to_table3d),both}
     };
     cl->set_comm_option_vec(narr,options_arr);
     
@@ -2101,6 +2109,51 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
       }
     }
 
+  } else if (type=="tensor") {
+
+    size_t rk=tensor_obj.get_rank();
+    (*fout) << rk << " ";
+    for(size_t i=0;i<rk;i++) {
+      (*fout) << tensor_obj.get_size(i) << " ";
+    }
+    (*fout) << endl;
+    const vector<double> &data=tensor_obj.get_data();
+    for(size_t i=0;i<tensor_obj.total_size();i++) {
+      (*fout) << data[i] << " ";
+      if (i%6==5) (*fout) << endl;
+    }
+    (*fout) << endl;
+    
+  } else if (type=="tensor<int>") {
+
+    size_t rk=tensor_int_obj.get_rank();
+    (*fout) << rk << " ";
+    for(size_t i=0;i<rk;i++) {
+      (*fout) << tensor_int_obj.get_size(i) << " ";
+    }
+    (*fout) << endl;
+    const vector<int> &data=tensor_int_obj.get_data();
+    for(size_t i=0;i<tensor_int_obj.total_size();i++) {
+      (*fout) << data[i] << " ";
+      if (i%6==5) (*fout) << endl;
+    }
+    (*fout) << endl;
+    
+  } else if (type=="tensor<size_t>") {
+
+    size_t rk=tensor_size_t_obj.get_rank();
+    (*fout) << rk << " ";
+    for(size_t i=0;i<rk;i++) {
+      (*fout) << tensor_size_t_obj.get_size(i) << " ";
+    }
+    (*fout) << endl;
+    const vector<size_t> &data=tensor_size_t_obj.get_data();
+    for(size_t i=0;i<tensor_size_t_obj.total_size();i++) {
+      (*fout) << data[i] << " ";
+      if (i%6==5) (*fout) << endl;
+    }
+    (*fout) << endl;
+    
   } else if (type=="uniform_grid<double>") {
 
     (*fout) << ug_obj.get_nbins() << " ";
