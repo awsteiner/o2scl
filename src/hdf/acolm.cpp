@@ -607,7 +607,7 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="tensor") {
     
-    static const size_t narr=2;
+    static const size_t narr=3;
     comm_option_s options_arr[narr]={
       {'l',"list","List the rank and sizes.",
        0,0,"","",
@@ -616,7 +616,11 @@ void acol_manager::command_add(std::string new_type) {
       {0,"to-table3d","Select two indices and convert to a table3d object.",
        -1,-1,"<x name> <y name> <slice name>",
        "",new comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_to_table3d),both}
+       (this,&acol_manager::comm_to_table3d),both},
+      {0,"diag","Get diagonal elements.",
+       -1,-1,"",
+       "",new comm_option_mfptr<acol_manager>
+       (this,&acol_manager::comm_diag),both}
     };
     cl->set_comm_option_vec(narr,options_arr);
     
@@ -925,6 +929,7 @@ void acol_manager::command_del() {
   } else if (type=="tensor") {
     
     cl->remove_comm_option("list");
+    cl->remove_comm_option("diag");
     cl->remove_comm_option("to-table3d");
 
   } else if (type=="tensor_grid") {
@@ -1018,6 +1023,12 @@ void acol_manager::clear_obj() {
     table_obj.clear();
   } else if (type=="table3d") {
     table3d_obj.clear();
+  } else if (type=="tensor") {
+    tensor_obj.clear();
+  } else if (type=="tensor<int>") {
+    tensor_int_obj.clear();
+  } else if (type=="tensor<size_t>") {
+    tensor_size_t_obj.clear();
   } else if (type=="hist") {
     hist_obj.clear();
   } else if (type=="hist_2d") {
@@ -1323,6 +1334,7 @@ int acol_manager::setup_parameters() {
     colbar=false;
     logx=false;
     logy=false;
+    logz=false;
     right_margin=0.04;
     left_margin=0.014;
     top_margin=0.04;
@@ -1394,6 +1406,10 @@ int acol_manager::setup_parameters() {
     p_logy.b=&logy;
     p_logy.help="If true, use a logarithmic y-axis.";
     cl->par_list.insert(make_pair("logy",&p_logy));
+
+    p_logz.b=&logz;
+    p_logz.help="If true, use a logarithmic z-axis.";
+    cl->par_list.insert(make_pair("logz",&p_logz));
 
     p_font.i=&font;
     p_font.help="Font scaling for text objects (default 16).";
@@ -3719,6 +3735,136 @@ int acol_manager::comm_to_table(std::vector<std::string> &sv, bool itive_com) {
     clear_obj();
     command_add("table");
     type="table";
+    
+  } else if (type=="int[]") {
+
+    std::string i1;
+    int ret=get_input_one(sv,"Enter column name",i1,"to-table",itive_com);
+    if (ret!=0) return ret;
+    
+    table_obj.clear();
+    table_obj.new_column(i1);
+    table_obj.set_nlines(intv_obj.size());
+    for(size_t i=0;i<intv_obj.size();i++) {
+      table_obj.set(i1,i,intv_obj[i]);
+    }
+
+    command_del();
+    clear_obj();
+    command_add("table");
+    type="table";
+
+  } else if (type=="size_t[]") {
+    
+    std::string i1;
+    int ret=get_input_one(sv,"Enter column name",i1,"to-table",itive_com);
+    if (ret!=0) return ret;
+    
+    table_obj.clear();
+    table_obj.new_column(i1);
+    table_obj.set_nlines(size_tv_obj.size());
+    for(size_t i=0;i<size_tv_obj.size();i++) {
+      table_obj.set(i1,i,size_tv_obj[i]);
+    }
+
+    command_del();
+    clear_obj();
+    command_add("table");
+    type="table";
+    
+  } else if (type=="tensor_grid") {
+    
+    size_t rank=tensor_grid_obj.get_rank();
+
+    vector<string> in, pr;
+    pr.push_back("Index to vary");
+    pr.push_back("Grid name");
+    pr.push_back("Data name");
+    int ret=get_input(sv,pr,in,"to-table",itive_com);
+    if (ret!=0) return ret;
+
+    size_t ix=o2scl::stoszt(in[0]);
+    if (ix>=rank) {
+      cerr << "Index larger than rank." << endl;
+      return 1;
+    }
+
+    for(size_t i=0;i<3;i++) {
+      std::vector<std::string>::iterator it=sv.begin();
+      it++;
+      sv.erase(it);
+    }
+    
+    vector<string> in2, pr2;
+    for(size_t i=0;i<rank;i++) {
+      if (i!=ix) {
+	pr2.push_back(((std::string)"Value for index ")+o2scl::szttos(i));
+      }
+    }
+    int ret2=get_input(sv,pr2,in2,"to-table",itive_com);
+    if (ret2!=0) return ret2;
+
+    vector<double> values(rank);
+    size_t i2=0;
+    for(size_t i=0;i<rank;i++) {
+      if (i!=ix) {
+	values[i]=o2scl::stod(in2[i2]);
+	if (verbose>0) {
+	  cout << "Fixing value for index " << i << " to " << in2[i2] << endl;
+	}
+	i2++;
+      }
+    }
+
+    if (verbose>0) {
+      cout << "Index " << ix << " is free. "
+	   << "New columns are: " << in[1] << " and " << in[2] << endl;
+    }
+
+    table_obj.clear();
+    table_obj.new_column(in[1]);
+    table_obj.new_column(in[2]);
+    for(size_t i=0;i<tensor_grid_obj.get_size(ix);i++) {
+      values[ix]=tensor_grid_obj.get_grid(ix,i);
+      double line[2]={values[ix],tensor_grid_obj.interp_linear(values)};
+      table_obj.line_of_data(2,line);
+    }
+
+    command_del();
+    clear_obj();
+    command_add("table");
+    type="table";
+    
+  }
+  
+  return 0;
+}
+
+int acol_manager::comm_diag(std::vector<std::string> &sv, bool itive_com) {
+
+  if (type=="tensor") {
+
+    size_t rk=tensor_obj.get_rank();
+    size_t n=tensor_obj.get_size(0);
+    for(size_t i=1;i<rk;i++) {
+      if (tensor_obj.get_size(i)<n) {
+	n=tensor_obj.get_size(i);
+      }
+    }
+
+    doublev_obj.clear();
+    vector<size_t> ix(rk);
+    for(size_t i=0;i<n;i++) {
+      for(size_t j=0;j<rk;j++) {
+	ix[j]=i;
+      }
+      doublev_obj.push_back(tensor_obj.get(ix));
+    }
+    
+    command_del();
+    clear_obj();
+    command_add("double[]");
+    type="double[]";
     
   } else if (type=="int[]") {
 
