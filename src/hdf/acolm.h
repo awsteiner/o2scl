@@ -274,7 +274,7 @@ namespace o2scl_acol {
     /// Compute a scalar value
     virtual int comm_calc(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief Desc
+    /** \brief Output the help text
      */
     virtual int comm_help(std::vector<std::string> &sv, bool itive_com);
     
@@ -299,19 +299,19 @@ namespace o2scl_acol {
     /// Create a column which is the derivative of another
     virtual int comm_deriv(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief Desc
+    /** \brief Convert object to a \ref o2scl::table object
      */
     virtual int comm_to_table(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief Desc
+    /** \brief For tensor object, get entries along the main diagonal
      */
     virtual int comm_diag(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief Desc
+    /** \brief Convert object to a \ref o2scl::table3d object
      */
     virtual int comm_to_table3d(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief Desc
+    /** \brief Compute the autocorrelation coefficient
      */
     virtual int comm_autocorr(std::vector<std::string> &sv, bool itive_com);
 
@@ -334,10 +334,6 @@ namespace o2scl_acol {
       int mode;
     } iter_parms;
 
-    /// HDF object iteration function
-    //static herr_t iterate_func(hid_t loc, const char *name, 
-    //const H5L_info_t *inf, void *op_data);
-    
     /// HDF object iteration function
     static herr_t iterate_new_func(hid_t loc, const char *name, 
 				const H5L_info_t *inf, void *op_data);
@@ -415,6 +411,9 @@ namespace o2scl_acol {
 
     /// Preview the table
     virtual int comm_preview(std::vector<std::string> &sv, bool itive_com);
+
+    /** \brief Get or set the value 
+     */
     virtual int comm_value(std::vector<std::string> &sv, bool itive_com);
 
     /// Concatenate two table/table3d objects
@@ -482,13 +481,6 @@ namespace o2scl_acol {
       return 0;
     }
 
-    /** \brief A placeholder function which is used for 
-	documenting <tt>o2graph</tt> commands
-     */
-    virtual int comm_none(std::vector<std::string> &sv, bool itive_com) {
-      return 0;
-    }
-
   protected:
     
     /// An internal command for prompting the user for command arguments
@@ -538,6 +530,12 @@ extern "C" {
   */
   void o2scl_free_acol_manager(void *vp);
 
+  /** \brief Desc
+   */
+  void o2scl_acol_set_names(void *vp, int &n1, char *cmd_name,
+			    int &n2, char *short_desc, int &n3,
+			    char *env_var);
+  
   /** \brief Construct a string vector from the data in 
       \c n_entries, \c sizes, and \c str
   */

@@ -76,7 +76,12 @@ std::vector<std::string> o2scl_acol_parse_arrays
   }
   return list;
 }
-  
+
+void o2scl_acol_set_names(void *vp, int &n1, char *cmd_name,
+			  int &n2, char *short_desc, int &n3,
+			  char *env_var) {
+}
+
 void o2scl_acol_parse(void *vp, int n_entries, int *sizes, 
 		      char *str) {
   std::vector<std::string> args=o2scl_acol_parse_arrays(n_entries,sizes,str);
@@ -2310,79 +2315,6 @@ int acol_manager::comm_sum(std::vector<std::string> &sv, bool itive_com) {
   
   return 0;
 }
-
-/*
-herr_t acol_manager::iterate_func(hid_t loc, const char *name, 
-				  const H5L_info_t *inf, void *op_data) {
-
-  // Arrange parameters
-  iter_parms *ip=(iter_parms *)op_data;
-  string tname=ip->tname;
-  hdf_file &hf=*(ip->hf);
-  int verbose=ip->verbose;
-
-  hid_t top=hf.get_current_id();
-
-  H5O_info_t infobuf;
-  herr_t status=H5Oget_info_by_name(loc,name,&infobuf,H5P_DEFAULT);
-  
-  // If it's a group
-  if (infobuf.type==H5O_TYPE_GROUP) {
-
-    // Open the group and see if it's an O2scl object
-    hid_t group=hf.open_group(name);
-    hf.set_current_id(group);
-    string otype;
-    hf.gets_def_fixed("o2scl_type","",otype);
-    hf.close_group(group);
-    hf.set_current_id(top);
-
-    if (otype.length()!=0 && 
-	(otype=="table" || otype=="table3d")) {
-      
-      if (verbose>1) {
-	cout << "Found O2scl group named: " << name << " of type: " 
-	     << otype << endl;
-      }
-
-      if (tname.size()>0 && tname==((string)name)) {
-	if (verbose>0) {
-	  cout << "Found table named '" << name << "'." << endl;
-	}
-	ip->found=true;
-	ip->type=otype;
-	return 1;
-      }
-      if (tname.size()==0) {
-	if (verbose>0) {
-	  cout << "Found table named '" << name << "'." << endl;
-	}
-	ip->tname=name;
-	ip->found=true;
-	ip->type=otype;
-	return 1;
-      }
-      
-    } else {
-      if (verbose>1) {
-	cout << "Non o2scl group named: " << name << endl;
-      }
-    }
-
-  } else if (infobuf.type==H5O_TYPE_DATASET) {
-    if (verbose>1) {
-      cout << "Dataset: " << name << endl;
-    }
-  } else if (infobuf.type==H5O_TYPE_NAMED_DATATYPE) {
-    if (verbose>1) {
-      cout << "Named type: " << name << endl;
-    }
-  } else {
-    cout << "Unexpected HDF type. " << endl;
-  }
-  return 0;
-}
-*/
 
 herr_t acol_manager::iterate_new_func(hid_t loc, const char *name, 
 				   const H5L_info_t *inf, void *op_data) {
