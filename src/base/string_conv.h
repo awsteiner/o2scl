@@ -144,8 +144,9 @@ namespace o2scl {
   /** \brief Find out if the number pointed to by \c x has a minus sign
       
       This function returns true if the number pointed to by \c x has
-      a minus sign using the GSL IEEE functions. It is useful, for
-      example, in distinguishing "-0.0" from "+0.0".
+      a minus sign, determining this by converting the number to a
+      string. It is useful, for example, in distinguishing "-0.0" from
+      "+0.0".
   */
   bool has_minus_sign(double *x);
 
@@ -186,7 +187,13 @@ namespace o2scl {
       the screen width in cli::comm_option_help(), to process lines
       read from a file in cli::comm_option_run(), and to process input
       in cli::run_interactive().
+
+      \note The parsing algorithm here is simple-minded and can
+      produce unexpected results in several ways. For example, it may
+      not properly handle nested quotes, like <tt>"""test" test2"
+      test3"</tt>.
       
+      \future Replace with a better algorithm
       \future Add user-specified delimiters?
   */
   void split_string(std::string str, std::vector<std::string> &sv);

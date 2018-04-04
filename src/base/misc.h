@@ -104,14 +104,14 @@ namespace o2scl {
       test_of_string4
       test5
       test_of_string6
-      test_of_string7
+      test_of_string77
       test_of_string8
       test_of_string9
       test_of_string10
       \endverbatim
       screenify() will create an array of 3 new strings:
       \verbatim
-      test1            test_of_string4  test_of_string7  test_of_string10
+      test1            test_of_string4  test_of_string77 test_of_string10
       test_of_string2  test5            test_of_string8
       test_of_string3  test_of_string6  test_of_string9
       \endverbatim
@@ -378,11 +378,11 @@ namespace o2scl {
   */
   template<class data_t>
     void quadratic_extremum_y_full(const data_t x1, const data_t x2, 
-				     const data_t x3, const data_t y1, 
-				     const data_t y2, const data_t y3,
-				     const data_t &xmin, const data_t &ymin,
-				     const data_t &a, const data_t &b,
-				     const data_t &c, const data_t &den) {
+				   const data_t x3, const data_t y1, 
+				   const data_t y2, const data_t y3,
+				   const data_t &xmin, const data_t &ymin,
+				   const data_t &a, const data_t &b,
+				   const data_t &c, const data_t &den) {
 
     if (x1==x2 || x2==x3 || x1==x3) {
       O2SCL_ERR2("Two abscissae cannot be equal in function ",
