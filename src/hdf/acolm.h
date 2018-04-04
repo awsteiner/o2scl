@@ -183,7 +183,7 @@ namespace o2scl_acol {
 
     /// String designating the current type
     std::string type;
-    
+
     /// Dummy cli object for cli::cli_gets()
 #ifdef DOXYGEN
     cli *cl;
@@ -254,7 +254,7 @@ namespace o2scl_acol {
 	the operating system via getenv(), instantiate and call the
 	acol_manager object.
     */
-    virtual int run(int argv, char *argc[], bool set_o2graph_mode=false);
+    virtual int run(int argv, char *argc[], bool full_process=true);
 
     /// Create the cli object (with readline support if available)
     virtual int setup_cli();
@@ -532,8 +532,8 @@ extern "C" {
 
   /** \brief Desc
    */
-  void o2scl_acol_set_names(void *vp, int &n1, char *cmd_name,
-			    int &n2, char *short_desc, int &n3,
+  void o2scl_acol_set_names(void *vp, int n1, char *cmd_name,
+			    int n2, char *short_desc, int n3,
 			    char *env_var);
   
   /** \brief Construct a string vector from the data in 

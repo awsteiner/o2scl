@@ -52,7 +52,7 @@ typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
 void *o2scl_create_acol_manager() {
   o2scl_acol::acol_manager *amp=new o2scl_acol::acol_manager;
-  amp->run(0,0,true);
+  amp->run(0,0,false);
   return amp;
 }
   
@@ -61,6 +61,23 @@ void o2scl_free_acol_manager(void *vp) {
   delete amp;
   return;
 }
+
+void o2scl_acol_set_names(void *vp, int n1, char *cmd_name,
+			  int n2, char *short_desc, int n3,
+			  char *env_var) {
+  o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
+  string str;
+  for(int i=0;i<n1;i++) str+=cmd_name[i];
+  amp->cl->cmd_name=str;
+  str.clear();
+  for(int i=0;i<n2;i++) str+=short_desc[i];
+  amp->cl->desc=str;
+  str.clear();
+  for(int i=0;i<n3;i++) str+=env_var[i];
+  amp->env_var_name=str;
+  return;
+}
+
 
 std::vector<std::string> o2scl_acol_parse_arrays
 (int n_entries, int *sizes, char *str) {
@@ -75,11 +92,6 @@ std::vector<std::string> o2scl_acol_parse_arrays
     list.push_back(tmp);
   }
   return list;
-}
-
-void o2scl_acol_set_names(void *vp, int &n1, char *cmd_name,
-			  int &n2, char *short_desc, int &n3,
-			  char *env_var) {
 }
 
 void o2scl_acol_parse(void *vp, int n_entries, int *sizes, 
@@ -847,8 +859,6 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   env_var_name="ACOL_DEFAULTS";
   interp_type=1;
 
-  o2graph_mode=false;
-
 #ifdef O2SCL_HDF5_COMP
   compress=1;
 #else
@@ -856,6 +866,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
 #endif
 
   cng.err_on_fail=false;
+
 }
 
 void acol_manager::command_del() {
@@ -1231,21 +1242,10 @@ int acol_manager::setup_cli() {
 
 int acol_manager::setup_help() {
 
-  if (o2graph_mode) {
-    
-    cl->cmd_name="o2graph";
-    
-    this->cl->desc=((string)"o2graph: A data viewing and ")+
-      "processing program for O2scl.\n";
-
-  } else {
-
-    cl->cmd_name="acol";
-
-    cl->desc=((string)"acol: A data viewing and ")+
-      "processing program for O2scl.\n";
-
-  }
+  cl->cmd_name="o2graph";
+  
+  cl->desc=((string)"o2graph: A data viewing and ")+
+    "processing program for O2scl.\n";
   
   string dsc="\nNotes:\n\n";
   dsc+="1. Help for individual commands may be obtained with 'help ";
@@ -1327,10 +1327,8 @@ int acol_manager::setup_parameters() {
   return 0;
 }
 
-int acol_manager::run(int argc, char *argv[], bool set_o2graph_mode) {
+int acol_manager::run(int argc, char *argv[], bool full_process) {
 
-  o2graph_mode=set_o2graph_mode;
-  
   //--------------------------------------------------------------------
   // Default to scientific mode
 
@@ -1422,7 +1420,7 @@ int acol_manager::run(int argc, char *argv[], bool set_o2graph_mode) {
     }
   }
   
-  if (!o2graph_mode) {
+  if (full_process) {
     
     //----------------------------------------------------------------
     // Process command-line options
