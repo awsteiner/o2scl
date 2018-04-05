@@ -1242,9 +1242,9 @@ int acol_manager::setup_cli() {
 
 int acol_manager::setup_help() {
 
-  cl->cmd_name="o2graph";
+  cl->cmd_name="acol";
   
-  cl->desc=((string)"o2graph: A data viewing and ")+
+  cl->desc=((string)"acol: A data viewing and ")+
     "processing program for O2scl.\n";
   
   string dsc="\nNotes:\n\n";
