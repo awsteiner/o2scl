@@ -771,8 +771,11 @@ namespace o2scl {
 		  }
 		  done=true;
 		} else if (init_iters>max_bad_steps) {
-		  O2SCL_ERR2("Initial walkers failed in ",
-			     "mcmc_para_base::mcmc().",o2scl::exc_einval);
+		  std::string err=((std::string)"In loop with thread ")+
+		    o2scl::szttos(it)+" iterations required to obtain an "+
+		    "initial point exceeded "+o2scl::szttos(max_bad_steps)+
+		    " in mcmc_para_base::mcmc().";
+		  O2SCL_ERR(err.c_str(),o2scl::exc_einval);
 		}
 	      }
 	    }
@@ -836,7 +839,6 @@ namespace o2scl {
       // --------------------------------------------------------
       // Initial point and weights when aff_inv is false.
 
-
 #ifdef O2SCL_OPENMP
 #pragma omp parallel default(shared)
 #endif
@@ -863,7 +865,14 @@ namespace o2scl {
 	    func_ret[it]=func[it](n_params,current[it],w_current[it],
 				  data_arr[it]);
 	  } else {
-	    func_ret[it]=0;
+	    // Otherwise copy the result already computed
+	    func_ret[it]=func_ret[it % ip_size];
+	    w_current[it]=w_current[it % ip_size];
+	    // This loop requires the data_arr to have a valid
+	    // copy constructor
+	    for(size_t j=0;j<data_arr.size();j++) {
+	      data_arr[it]=data_arr[it % ip_size];
+	    }
 	  }
 
 	}
@@ -1039,7 +1048,7 @@ namespace o2scl {
 	    
 	    // Use proposal distribution and compute associated weight
 	    q_prop[it]=prop_dist[it]->log_metrop_hast(current[it],next[it]);
-
+	    
 	    if (!std::isfinite(q_prop[it])) {
 	      O2SCL_ERR2("Proposal distribution not finite in ",
 			 "mcmc_para_base::mcmc().",o2scl::exc_efailed);
