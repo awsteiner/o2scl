@@ -451,7 +451,7 @@ namespace o2scl {
       mpi_start_time=time(0);
 #endif
     }
-    
+
     if (initial_points.size()==0) {
       
       // Setup initial guess if not specified
@@ -705,11 +705,6 @@ namespace o2scl {
 	    // If we already have a unique guess for this walker/thread,
 	    // try to use that
 	    
-	    scr_out << "thread: " << it << " curr_walker: "
-		    << curr_walker[it] << " sindex: " << sindex
-		    << " initial_points.size(): "
-		    << initial_points.size() << std::endl;
-	    
 	    if (sindex<initial_points.size()) {
 
 	      // Copy from the initial points array
@@ -721,8 +716,6 @@ namespace o2scl {
 	      func_ret[it]=func[it](n_params,current[sindex],
 				    w_current[sindex],data_arr[sindex]);
 
-	      scr_out << "func_ret: " << func_ret[it] << std::endl;
-	      
 	      if (func_ret[it]==mcmc_done) {
 		mcmc_done_flag[it]=true;
 	      } else if (func_ret[it]==o2scl::success) {
