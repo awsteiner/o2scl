@@ -121,6 +121,15 @@ namespace o2scl {
       during initialization.
 
       \note This class is experimental.
+
+      \note Currently, this class requires that the data_t 
+      has a good copy constructor. 
+
+      \future The copy constructor for the data_t type is used when
+      the user doesn't specify enough initial points for the
+      corresponding number of threads and walkers. This requirement
+      for a copy constructor could be removed by allowing threads and
+      walkers to share the data_t for the initial point as needed.
   */
   template<class func_t, class measure_t,
     class data_t, class vec_t=ubvector> class mcmc_para_base {
@@ -683,7 +692,7 @@ namespace o2scl {
 	  // Initialize each walker in turn
 	  for(curr_walker[it]=0;curr_walker[it]<n_walk_per_thread &&
 		mcmc_done_flag[it]==false;curr_walker[it]++) {
-	    
+
 	    // Index in storage
 	    size_t sindex=n_walk*it+curr_walker[it];
 
@@ -696,6 +705,11 @@ namespace o2scl {
 	    // If we already have a unique guess for this walker/thread,
 	    // try to use that
 	    
+	    scr_out << "thread: " << it << " curr_walker: "
+		    << curr_walker[it] << " sindex: " << sindex
+		    << " initial_points.size(): "
+		    << initial_points.size() << std::endl;
+	    
 	    if (sindex<initial_points.size()) {
 
 	      // Copy from the initial points array
@@ -706,6 +720,8 @@ namespace o2scl {
 	      // Compute the weight
 	      func_ret[it]=func[it](n_params,current[sindex],
 				    w_current[sindex],data_arr[sindex]);
+
+	      scr_out << "func_ret: " << func_ret[it] << std::endl;
 	      
 	      if (func_ret[it]==mcmc_done) {
 		mcmc_done_flag[it]=true;
