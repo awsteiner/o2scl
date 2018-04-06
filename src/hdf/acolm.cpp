@@ -1111,16 +1111,26 @@ int acol_manager::setup_options() {
      both},
     {'g',"generic","Read in a generic text file.",0,2,"<type> <file>",
      ((string)"Read an object of type <type> from a text file named ")+
-     "<file>. The first line of the file must either contain numeric "+
+     "<file>. The allowed text file formats depend on the particular "+
+     "type specified. For int, char, double, or size_t objects, "+
+     "the file is assumed to begin with the descired object and it is "+
+     "read using operator>>(). For string objects, the first line is "
+     "read using std::getline(). For array objects, it is assumed "+
+     "that all array entries are on the first line of the file and no "+
+     "carriage returns are present between entries. For table objects, "
+     "the first line of the file must either contain numeric "+
      "data or column names "+
      "separated by white space, without carriage returns, except for "+
-     "the one at the end of the line. All remaining lines are assumed "+
+     "the one at the end of the line. If the first line contains "+
+     "column names, the second line may optionally contain unit "+
+     "expressions for each column, enclosed by square brackets."+
+     "All remaining lines are assumed "+
      "to contain data with the same number of columns as the first line. "+
-     "The data must be stored in columns "+
-     "where the first entry in each column is the x-axis grid point, "+
-     "the second, entry in each column is the y-axis grid point, "+
-     "and the remaining columns give the data for each slice at that "+
-     "point. Each grid point must correspond to a line in the file, but "+
+     "For table3d objects, the data must be stored in columns "+
+     "with the first column specifying the x-axis grid point and "+
+     "the second column specifying the y-axis grid point. The "+
+     "remaining columns give the data for each slice at that point. "+
+     "Each grid point must correspond to a row in the file, but "+
      "the lines need not be in any particular order. The columns may "+
      "have one header line at top which specifies the names of the x- "+
      "and y-grids and the names of each slice (in order).",
