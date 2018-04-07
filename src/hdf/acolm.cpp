@@ -1084,7 +1084,7 @@ int acol_manager::setup_options() {
      "Results are given at the current precision.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_calc),
      both},
-    {'c',"create","Create an object",0,-1,"<type> [...]",
+    {'c',"create","Create an object.",0,-1,"<type> [...]",
      ((string)"Create a new object of type <type>. For types char, ")+
      "double, int, size_t, and string, this takes one additional "+
      "argument which holds the value. For type table, "+
@@ -1370,7 +1370,7 @@ int acol_manager::run(int argc, char *argv[], bool full_process) {
      "inside square brackets [].",
      new o2scl::comm_option_mfptr<acol_manager>
      (this,&acol_manager::comm_help),both},
-    {0,"commands","List commands",0,1,"[type]","",
+    {0,"commands","List available commands.",0,1,"[type]","",
      new o2scl::comm_option_mfptr<acol_manager>
      (this,&acol_manager::comm_commands),both}
   };
