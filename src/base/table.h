@@ -1123,7 +1123,12 @@ namespace o2scl {
     return;
   }
 
-  /** \brief Copy the data in row \c src  to row \c dest 
+  /** \brief Copy the data in row \c src to row \c dest 
+
+      \comment
+      AWS 4/12/18: No need to throw an exception here since get() and
+      set() will take care of that already.
+      \endcomment
    */
   void copy_row(size_t src, size_t dest) {
     for(int i=0;i<((int)atree.size());i++) {
@@ -1150,6 +1155,17 @@ namespace o2scl {
   /** \brief Delete the row of index \c irow \f$ {\cal O}(R C) \f$
    */
   void delete_row(size_t irow) {
+    if (nlines==0) {
+      O2SCL_ERR2("No lines in table in ",
+		 "table::delete_row(size_t).",o2scl::exc_einval);
+    }
+    if (irow>=nlines) {
+      std::string str=((std::string)"Cannot delete row ")+
+      o2scl::szttos(irow)+" since there are only "+
+      o2scl::szttos(nlines)+" lines in the table in "+
+      "table::delete_row(size_t).";
+      O2SCL_ERR(str.c_str(),o2scl::exc_einval);
+    }
     for(aiter it=atree.begin();it!=atree.end();it++) {
       // Can't do size_t because we have to compare to nlines-1
       for(int i=((int)irow);i<((int)nlines)-1;i++) {
@@ -2387,6 +2403,10 @@ namespace o2scl {
 
   /// Remove a constant
   virtual void remove_constant(std::string name) {
+    if (constants.find(name)==constants.end()) {
+      O2SCL_ERR2("Constant not present in ",
+		 "table::remove_constant().",o2scl::exc_einval);
+    }
     constants.erase(name);
     return;
   }
