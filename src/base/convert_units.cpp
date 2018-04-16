@@ -57,6 +57,18 @@ double convert_units::convert(std::string from, std::string to,
   return converted;
 }
 
+double convert_units::convert_const(std::string from, std::string to,
+			      double val) const {
+  double converted;
+  int ret=convert_ret_const(from,to,val,converted);
+  if (ret==exc_enotfound) {
+    string str=((string)"Conversion between ")+from+" and "+to+
+      " not found in convert_units::convert().";
+    O2SCL_ERR(str.c_str(),exc_enotfound);
+  }
+  return converted;
+}
+
 int convert_units::convert_ret(std::string from, std::string to, double val,
 			       double &converted) {
 
@@ -267,7 +279,125 @@ int convert_units::convert_ret(std::string from, std::string to, double val,
       
   if (err_on_fail) {
     string str=((string)"Conversion between ")+from+" and "+to+
-      " not found in convert_units::convert().";
+      " not found in convert_units::convert_ret().";
+    O2SCL_ERR(str.c_str(),exc_enotfound);
+  }
+  
+  return exc_enotfound;
+}
+
+int convert_units::convert_ret_const(std::string from, std::string to,
+				     double val, double &converted) const {
+				     
+
+  // Remove whitespace
+  remove_whitespace(from);
+  remove_whitespace(to);
+
+  // Look in cache for conversion
+  std::string both=from+","+to;
+  mciter m3=mcache.find(both);
+  if (m3!=mcache.end()) {
+    converted=val*m3->second.c;
+    return 0;
+  }
+
+  // Look in cache for reverse conversion
+  std::string both2=to+","+from;
+  m3=mcache.find(both2);
+  if (m3!=mcache.end()) {
+    converted=val/m3->second.c;
+    return 0;
+  }
+
+  if (combine_two_conv) {
+    
+    // Look for combined conversions
+    for(mciter m=mcache.begin();m!=mcache.end();m++) {
+      if (m->second.f==from) {
+	std::string b=m->second.t+","+to;
+	mciter m2=mcache.find(b);
+	if (m2!=mcache.end()) {
+	  if (verbose>0) {
+	    std::cout << "Using conversions: " << m->second.f << " , "
+		      << m->second.t << " " << m->second.c << std::endl;
+	    std::cout << " (1)          and: " << m2->second.f << " , "
+		      << m2->second.t << " " << m2->second.c << std::endl;
+	  }
+	  converted=val*m->second.c*m2->second.c;
+	  return 0;
+	}
+	std::string b2=to+","+m->second.t;
+	mciter m4=mcache.find(b2);
+	if (m4!=mcache.end()) {
+	  if (verbose>0) {
+	    std::cout << "Using conversions: " << m->second.f << " , "
+		      << m->second.t << std::endl;
+	    std::cout << " (2)          and: " << m4->second.f << " , "
+		      << m4->second.t << std::endl;
+	  }
+	  converted=val*m->second.c/m4->second.c;
+	  return 0;
+	}
+      } else if (m->second.t==from) {
+	std::string b=m->second.f+","+to;
+	mciter m2=mcache.find(b);
+	if (m2!=mcache.end()) {
+	  if (verbose>0) {
+	    std::cout << "Using conversions: " << m->second.f << " , "
+		      << m->second.t << std::endl;
+	    std::cout << " (3)          and: " << m2->second.f << " , "
+		      << m2->second.t << std::endl;
+	  }
+	  converted=val/m->second.c*m2->second.c;
+	  return 0;
+	}
+      } else if (m->second.f==to) {
+	std::string b=m->second.t+","+from;
+	mciter m2=mcache.find(b);
+	if (m2!=mcache.end()) {
+	  if (verbose>0) {
+	    std::cout << "Using conversions: " << m->second.f << " , "
+		      << m->second.t << std::endl;
+	    std::cout << " (4)          and: " << m2->second.f << " , "
+		      << m2->second.t << std::endl;
+	  }
+	  converted=val/m->second.c/m2->second.c;
+	  return 0;
+	}
+	std::string b2=from+","+m->second.t;
+	mciter m4=mcache.find(b2);
+	if (m4!=mcache.end()) {
+	  if (verbose>0) {
+	    std::cout << "Using conversions: " << m->second.f << " , "
+		      << m->second.t << std::endl;
+	    std::cout << " (5)          and: " << m4->second.f << " , "
+		      << m4->second.t << std::endl;
+	  }
+	  converted=val/m->second.c*m4->second.c;
+	  return 0;
+	}
+      } else if (m->second.t==to) {
+	std::string b=m->second.f+","+from;
+	mciter m2=mcache.find(b);
+	if (m2!=mcache.end()) {
+	  if (verbose>0) {
+	    std::cout << "Using conversions: " << m->second.f << " , "
+		      << m->second.t << std::endl;
+	    std::cout << " (6)          and: " << m2->second.f << " , "
+		      << m2->second.t << std::endl;
+	  }
+	  converted=val*m->second.c/m2->second.c;
+	  return 0;
+	}
+      }
+    }
+
+  }
+
+  if (err_on_fail) {
+    string str=((string)"Conversion between ")+from+" and "+to+
+      " not found in convert_units::convert_ret_const().";
     O2SCL_ERR(str.c_str(),exc_enotfound);
   }
   
@@ -327,8 +457,8 @@ void convert_units::insert_cache
   return;
 }
     
-void convert_units::print_cache() {
-  miter m;
+void convert_units::print_cache() const {
+  mciter m;
   if (mcache.size()==0) {
     cout << "No units in cache." << endl;
   } else {
@@ -348,7 +478,7 @@ void convert_units::print_cache() {
 }
 
 void convert_units::make_units_dat(std::string fname, bool c_1, 
-				   bool hbar_1, bool K_1) {
+				   bool hbar_1, bool K_1) const {
   
   std::ofstream fout(fname.c_str());
   fout.precision(14);

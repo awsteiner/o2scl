@@ -81,6 +81,10 @@ namespace o2scl {
       Alternatively, one can ensure that no combination is necessary
       by manually adding the desired combination conversion to the
       cache after it is first computed.
+      
+      \note Only the const versions, \ref convert_const and
+      \ref convert_ret_const are guaranteed to be thread-safe,
+      since they are not allowed to update the unit cache.
 
       \future Ideally, a real C++ API for the GNU units command
       would be better.
@@ -105,7 +109,12 @@ namespace o2scl {
     std::map<std::string,unit_t,std::greater<std::string> > mcache;
     
     /// The iterator type
-    typedef std::map<std::string,unit_t,std::greater<std::string> >::iterator miter;
+    typedef std::map<std::string,unit_t,
+      std::greater<std::string> >::iterator miter;
+      
+    /// The const iterator type
+    typedef std::map<std::string,unit_t,
+      std::greater<std::string> >::const_iterator mciter;
       
 #endif
 
@@ -140,11 +149,24 @@ namespace o2scl {
     virtual double convert(std::string from, std::string to, double val);
 
     /** \brief Return the value \c val after converting using units \c
+	from and \c to (const version)
+    */
+    virtual double convert_const(std::string from, std::string to,
+				 double val) const;
+
+    /** \brief Return the value \c val after converting using units \c
 	from and \c to, returning a non-zero value on failure
     */
     virtual int convert_ret(std::string from, std::string to, double val,
 			    double &converted);
 
+    /** \brief Return the value \c val after converting using units \c
+	from and \c to, returning a non-zero value on failure
+	(const version)
+    */
+    virtual int convert_ret_const(std::string from, std::string to,
+				  double val, double &converted) const;
+    
     /// Manually insert a unit conversion into the cache
     void insert_cache(std::string from, std::string to, double conv);
 
@@ -152,7 +174,7 @@ namespace o2scl {
     void remove_cache(std::string from, std::string to);
     
     /// Print the present unit cache to std::cout
-    void print_cache();
+    void print_cache() const;
 
     /** \brief Make a GNU \c units.dat file from the GSL constants
 
@@ -165,7 +187,7 @@ namespace o2scl {
 	conversions are given here.
     */
     void make_units_dat(std::string fname, bool c_1=false, 
-		       bool hbar_1=false, bool K_1=false);
+			bool hbar_1=false, bool K_1=false) const;
     
   };
 
