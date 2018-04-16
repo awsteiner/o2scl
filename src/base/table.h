@@ -215,14 +215,8 @@ namespace o2scl {
   /// Copy constructor
   table(const table &t) {
   
-    // Copy constants 
-    size_t nc=t.get_nconsts();
-    for(size_t i=0;i<nc;i++) {
-      std::string name;
-      double val;
-      t.get_constant(i,name,val);
-      constants.insert(make_pair(name,val));
-    }
+    // Copy constants
+    constants=t.constants;
 
     // Copy interpolation type
     itype=t.itype;
@@ -262,18 +256,11 @@ namespace o2scl {
   table &operator=(const table &t) {
 
     if (this!=&t) {
+
+      clear();
       
-      clear_table();
-      constants.clear();
-      
-      // Copy constants 
-      size_t nc=t.get_nconsts();
-      for(size_t i=0;i<nc;i++) {
-	std::string name;
-	double val;
-	t.get_constant(i,name,val);
-	constants.insert(make_pair(name,val));
-      }
+      // Copy constants
+      constants=t.constants;
       
       // Copy the columns and data
       nlines=t.get_nlines();
@@ -2163,7 +2150,7 @@ namespace o2scl {
 
   /** \brief Clear everything
    */
-  void clear() {
+  virtual void clear() {
     clear_table();
     clear_constants();
     return;
@@ -2171,7 +2158,7 @@ namespace o2scl {
 
   /** \brief Clear the table and the column names (but leave constants)
    */
-  void clear_table() {
+  virtual void clear_table() {
     atree.clear();
     alist.clear();
     nlines=0;

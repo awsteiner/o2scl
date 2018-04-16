@@ -73,7 +73,7 @@ int main(void) {
   t.test_gen(at4.get_ncolumns()==at.get_ncolumns(),"cc 2");
   t.test_gen(at5.get_nlines()==at.get_nlines(),"cc 3");
   t.test_gen(at5.get_ncolumns()==at.get_ncolumns(),"cc 4");
-
+  
   t.report();
 
   return 0;

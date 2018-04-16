@@ -149,13 +149,7 @@ namespace o2scl {
   table_units(const table<vec_t> &t) : table<vec_t>(t.get_nlines()) {
   
       // Copy constants 
-      size_t nc=t.get_nconsts();
-      for(size_t i=0;i<nc;i++) {
-	std::string name;
-	double val;
-	t.get_constant(i,name,val);
-	this->constants.insert(make_pair(name,val));
-      }
+      this->constants=t.constants;
   
       // Copy interpolation type
       this->itype=t.get_interp_type();
@@ -197,9 +191,7 @@ namespace o2scl {
 
       if (this!=&t) {
 
-	this->clear_table();
-	this->constants.clear();
-	utree.clear();
+	this->clear();
 
 	// Copy constants 
 	this->constants=t.constants;
@@ -252,18 +244,10 @@ namespace o2scl {
 
       if (this!=&t) {
   
-	this->clear_table();
-	this->constants.clear();
-	utree.clear();
+	this->clear();
 
 	// Copy constants 
-	size_t nc=t.get_nconsts();
-	for(size_t i=0;i<nc;i++) {
-	  std::string name;
-	  double val;
-	  t.get_constant(i,name,val);
-	  this->constants.insert(make_pair(name,val));
-	}
+	this->constants=t.constants;
   
 	// Copy interpolation type
 	this->itype=t.get_interp_type();
@@ -485,6 +469,22 @@ namespace o2scl {
 
     /// \name Virtual functions from \ref table
     //@{
+
+    /** \brief Clear the table and the column names and units 
+	(but leave constants)
+    */
+    virtual void clear_table() {
+      this->atree.clear();
+      utree.clear();
+      this->alist.clear();
+      this->nlines=0;
+      if (this->intp_set==true) {
+	delete this->si;
+	this->intp_set=false;
+      }
+      return;
+    }
+
     /// Delete column named \c scol
     virtual void delete_column(std::string scol) {
 
@@ -851,7 +851,7 @@ namespace o2scl {
 
   /** \brief Send a \ref o2scl::table_units object to
       MPI rank \c dest_rank
-   */
+  */
   template<class vec_t>
     void o2scl_table_mpi_send(o2scl::table_units<vec_t> &t, size_t dest_rank) {
 
@@ -955,7 +955,7 @@ namespace o2scl {
 
   /** \brief Receive a \ref o2scl::table_units object from
       MPI rank \c src_rank
-   */
+  */
   template<class vec_t>
     void o2scl_table_mpi_recv(size_t src_rank,
 			      o2scl::table_units<vec_t> &t) {
