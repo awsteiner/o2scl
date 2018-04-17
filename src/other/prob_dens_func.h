@@ -1097,18 +1097,35 @@ namespace o2scl {
     covar_inv=chol;
     o2scl_linalg::cholesky_invert<mat_t>(ndim,covar_inv);
 
-    // Force chol to be lower triangular and compute the determinant
-    double det=1.0;
+    // Force chol to be lower triangular and compute the square root
+    // of the determinant
+    double sqrt_det=1.0;
     for(size_t i=0;i<ndim;i++) {
-      det*=chol(i,i);
+      if (!std::isfinite(chol(i,i))) {
+	std::cout << "i,chol(i,i): " << i << " " << chol(i,i)
+		  << std::endl;
+	O2SCL_ERR2("An entry of the Cholesky decomposition was not finite ",
+		   "in prob_dens_mdim_gaussian::set().",o2scl::exc_einval);
+      }
+      sqrt_det*=chol(i,i);
       for(size_t j=0;j<ndim;j++) {
 	if (i<j) chol(i,j)=0.0;
       }
     }
-    det*=det;
+    std::cout << "sqrt_det: " << sqrt_det << std::endl;
 
     // Compute normalization
-    norm=pow(2.0*o2scl_const::pi,-((double)ndim)/2.0)/sqrt(det);
+    norm=pow(2.0*o2scl_const::pi,-((double)ndim)/2.0)/sqrt_det;
+    if (!std::isfinite(norm)) {
+      for(size_t i=0;i<ndim;i++) {
+	std::cout << "i,chol(i,i): " << i << " " << chol(i,i)
+		  << std::endl;
+      }
+      std::cout << "ndim,sqrt_det,norm: " << ndim << " " << sqrt_det << " "
+		<< norm << std::endl;
+      O2SCL_ERR2("Normalization not finite in ",
+		 "prob_dens_mdim_gaussian::set().",o2scl::exc_einval);
+    }
   }
   
   /** \brief Alternate set function for use when covariance matrix
@@ -1200,7 +1217,9 @@ namespace o2scl {
 		 "pdf().",o2scl::exc_einval);
     }
     double ret=norm;
-    for(size_t i=0;i<ndim;i++) q[i]=x[i]-peak[i];
+    for(size_t i=0;i<ndim;i++) {
+      q[i]=x[i]-peak[i];
+    }
     vtmp=prod(covar_inv,q);
     ret*=exp(-0.5*inner_prod(q,vtmp));
     return ret;
