@@ -1967,28 +1967,43 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
 
   } else if (type=="int[]") {
 
+    vector<string> sv, sv_out;
     for(size_t k=0;k<intv_obj.size();k++) {
-      (*fout) << intv_obj[k] << " ";
+      sv.push_back(o2scl::itos(intv_obj[k])+' ');
     }
-    (*fout) << endl;
+    screenify(intv_obj.size(),sv,sv_out);
+    for(size_t k=0;k<sv_out.size();k++) {
+      (*fout) << sv_out[k] << endl;
+    }
 
   } else if (type=="double[]") {
 
+    vector<string> sv, sv_out;
     for(size_t k=0;k<doublev_obj.size();k++) {
-      (*fout) << doublev_obj[k] << " ";
+      if (has_minus_sign(&doublev_obj[k])) {
+	sv.push_back(o2scl::dtos(doublev_obj[k])+' ');
+      } else {
+	sv.push_back(" "+o2scl::dtos(doublev_obj[k])+' ');
+      }
     }
-    (*fout) << endl;
+    screenify(doublev_obj.size(),sv,sv_out);
+    for(size_t k=0;k<sv_out.size();k++) {
+      (*fout) << sv_out[k] << endl;
+    }
 
   } else if (type=="size_t[]") {
 
+    vector<string> sv, sv_out;
     for(size_t k=0;k<size_tv_obj.size();k++) {
-      (*fout) << size_tv_obj[k] << " ";
+      sv.push_back(o2scl::szttos(size_tv_obj[k])+' ');
     }
-    (*fout) << endl;
-
+    screenify(size_tv_obj.size(),sv,sv_out);
+    for(size_t k=0;k<sv_out.size();k++) {
+      (*fout) << sv_out[k] << endl;
+    }
+    
   } else if (type=="string[]") {
-
-    (*fout) << stringv_obj.size() << endl;
+    
     for(size_t k=0;k<stringv_obj.size();k++) {
       (*fout) << stringv_obj[k] << endl;
     }
@@ -5707,27 +5722,6 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
       return exc_efailed;
     }
     
-    if (scientific) cout.setf(ios::scientific);
-    else cout.unsetf(ios::scientific);
-    
-    if (user_ncols<=0) {
-      char *ncstring=getenv("COLUMNS");
-      if (ncstring) {
-	int nc2;
-	int sret=o2scl::stoi_nothrow(ncstring,nc2);
-	if (sret==0 && nc2>0) {
-	  ncols=nc2;
-	} else {
-	  cerr << "Failed to interpret COLUMNS value " << ncstring
-	       << " as a positive number of columns." << endl;
-	}
-      }
-    } else {
-      ncols=user_ncols;
-    }
-    
-    cout.precision(prec);
-    
     if (table_obj.get_ncolumns()>0) {
       
       string nlast;
@@ -5925,11 +5919,16 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 
     vector<string> inc, outc;
     for(size_t i=0;i<doublev_obj.size();i++) {
-      string tmp=o2scl::szttos(i)+". "+o2scl::dtos(doublev_obj[i]);
+      string tmp;
+      if (has_minus_sign(&doublev_obj[i])) {
+	tmp=o2scl::szttos(i)+". "+o2scl::dtos(doublev_obj[i]);
+      } else {
+	tmp=o2scl::szttos(i)+".  "+o2scl::dtos(doublev_obj[i]);
+      }
       inc.push_back(tmp);
     }
     screenify(inc.size(),inc,outc);
-    
+
     int inr;
     if (sv.size()==2) {
       int nrows;
@@ -6044,6 +6043,219 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 	     << grid[sz-2] << " " << grid[sz-1] << endl;
       }
     }
+
+    int nrows=10;
+    if (sv.size()>=2) {
+      int sret=o2scl::stoi_nothrow(sv[1],nrows);
+      if (sret!=0 || nrows<=0) {
+	cerr << "Failed to interpret " << sv[1]
+	     << "as a positive number of rows." << endl;
+	return exc_einval;
+      }
+    }
+    
+    size_t total_size=tensor_grid_obj.total_size();
+
+    double x=tensor_grid_obj.get_data()[total_size-1];
+    vector<size_t> ix(rk);
+    tensor_grid_obj.unpack_indices(total_size-1,ix);
+    string test="(";
+    for(size_t i=0;i<rk-1;i++) {
+      test+=o2scl::dtos(tensor_grid_obj.get_grid(i,ix[i]))+",";
+    }
+    test+=o2scl::dtos(tensor_grid_obj.get_grid(rk-1,ix[rk-1]))+"): ";
+    test+=o2scl::dtos(x);
+    size_t maxwid=test.length();
+    if (!has_minus_sign(&x)) maxwid++;
+
+    // Number of 'columns' is equal to the number of columns
+    // in the screen 'ncols' divided by the maximum width
+    // of one column
+    size_t nct=ncols/maxwid;
+    size_t step=total_size/nrows/nct;
+    vector<string> svin, svout;
+    for(size_t i=0;i<total_size;i+=step) {
+      tensor_grid_obj.unpack_indices(i,ix);
+      string stemp="(";
+      for(size_t i=0;i<rk-1;i++) {
+	stemp+=o2scl::dtos(tensor_grid_obj.get_grid(i,ix[i]))+",";
+      }
+      stemp+=o2scl::dtos(tensor_grid_obj.get_grid(rk-1,ix[rk-1]))+"): ";
+      stemp+=o2scl::dtos(tensor_grid_obj.get_data()[i]);
+      svin.push_back(stemp);
+    }
+    screenify(svin.size(),svin,svout);
+    for(size_t i=0;i<svout.size();i++) {
+      cout << svout[i] << endl;
+    }
+    
+    return 0;
+    
+  } else if (type=="tensor") {
+    
+    int nrows=10;
+    if (sv.size()>=2) {
+      int sret=o2scl::stoi_nothrow(sv[1],nrows);
+      if (sret!=0 || nrows<=0) {
+	cerr << "Failed to interpret " << sv[1]
+	     << "as a positive number of rows." << endl;
+	return exc_einval;
+      }
+    }
+    
+    size_t rk=tensor_obj.get_rank();
+    cout << "Rank: " << rk << " sizes: (";
+    for(size_t i=0;i<rk-1;i++) {
+      cout << tensor_obj.get_size(i) << ",";
+    }
+    cout << tensor_obj.get_size(rk-1) << ")" << endl;
+    
+    size_t total_size=tensor_obj.total_size();
+
+    double x=tensor_obj.get_data()[total_size-1];
+    vector<size_t> ix(rk);
+    tensor_obj.unpack_indices(total_size-1,ix);
+    string test="(";
+    for(size_t i=0;i<rk-1;i++) {
+      test+=o2scl::szttos(ix[i])+",";
+    }
+    test+=o2scl::szttos(ix[rk-1])+"): ";
+    test+=o2scl::dtos(x);
+    size_t maxwid=test.length();
+    if (!has_minus_sign(&x)) maxwid++;
+
+    // Number of 'columns' is equal to the number of columns
+    // in the screen 'ncols' divided by the maximum width
+    // of one column
+    size_t nct=ncols/maxwid;
+    size_t step=total_size/nrows/nct;
+    vector<string> svin, svout;
+    for(size_t i=0;i<total_size;i+=step) {
+      tensor_obj.unpack_indices(i,ix);
+      string stemp="(";
+      for(size_t i=0;i<rk-1;i++) {
+	stemp+=o2scl::szttos(ix[i])+",";
+      }
+      stemp+=o2scl::szttos(ix[rk-1])+"): ";
+      stemp+=o2scl::dtos(tensor_obj.get_data()[i]);
+      svin.push_back(stemp);
+    }
+    screenify(svin.size(),svin,svout);
+    for(size_t i=0;i<svout.size();i++) {
+      cout << svout[i] << endl;
+    }
+    
+    return 0;
+
+  } else if (type=="tensor<int>") {
+    
+    int nrows=10;
+    if (sv.size()>=2) {
+      int sret=o2scl::stoi_nothrow(sv[1],nrows);
+      if (sret!=0 || nrows<=0) {
+	cerr << "Failed to interpret " << sv[1]
+	     << "as a positive number of rows." << endl;
+	return exc_einval;
+      }
+    }
+    
+    size_t rk=tensor_obj.get_rank();
+    cout << "Rank: " << rk << " sizes: (";
+    for(size_t i=0;i<rk-1;i++) {
+      cout << tensor_obj.get_size(i) << ",";
+    }
+    cout << tensor_obj.get_size(rk-1) << ")" << endl;
+    
+    size_t total_size=tensor_obj.total_size();
+
+    int x=tensor_obj.get_data()[total_size-1];
+    vector<size_t> ix(rk);
+    tensor_obj.unpack_indices(total_size-1,ix);
+    string test="(";
+    for(size_t i=0;i<rk-1;i++) {
+      test+=o2scl::szttos(ix[i])+",";
+    }
+    test+=o2scl::szttos(ix[rk-1])+"): ";
+    test+=o2scl::itos(x);
+    size_t maxwid=test.length();
+    if (x>=0) maxwid++;
+
+    // Number of 'columns' is equal to the number of columns
+    // in the screen 'ncols' divided by the maximum width
+    // of one column
+    size_t nct=ncols/maxwid;
+    size_t step=total_size/nrows/nct;
+    vector<string> svin, svout;
+    for(size_t i=0;i<total_size;i+=step) {
+      tensor_obj.unpack_indices(i,ix);
+      string stemp="(";
+      for(size_t i=0;i<rk-1;i++) {
+	stemp+=o2scl::szttos(ix[i])+",";
+      }
+      stemp+=o2scl::szttos(ix[rk-1])+"): ";
+      stemp+=o2scl::itos(tensor_obj.get_data()[i]);
+      svin.push_back(stemp);
+    }
+    screenify(svin.size(),svin,svout);
+    for(size_t i=0;i<svout.size();i++) {
+      cout << svout[i] << endl;
+    }
+    
+    return 0;
+
+  } else if (type=="tensor<size_t>") {
+    
+    int nrows=10;
+    if (sv.size()>=2) {
+      int sret=o2scl::stoi_nothrow(sv[1],nrows);
+      if (sret!=0 || nrows<=0) {
+	cerr << "Failed to interpret " << sv[1]
+	     << "as a positive number of rows." << endl;
+	return exc_einval;
+      }
+    }
+    
+    size_t rk=tensor_obj.get_rank();
+    cout << "Rank: " << rk << " sizes: (";
+    for(size_t i=0;i<rk-1;i++) {
+      cout << tensor_obj.get_size(i) << ",";
+    }
+    cout << tensor_obj.get_size(rk-1) << ")" << endl;
+    
+    size_t total_size=tensor_obj.total_size();
+
+    size_t x=tensor_obj.get_data()[total_size-1];
+    vector<size_t> ix(rk);
+    tensor_obj.unpack_indices(total_size-1,ix);
+    string test="(";
+    for(size_t i=0;i<rk-1;i++) {
+      test+=o2scl::szttos(ix[i])+",";
+    }
+    test+=o2scl::szttos(ix[rk-1])+"): ";
+    test+=o2scl::szttos(x);
+    size_t maxwid=test.length();
+    if (x>=0) maxwid++;
+
+    // Number of 'columns' is equal to the number of columns
+    // in the screen 'ncols' divided by the maximum width
+    // of one column
+    size_t nct=ncols/maxwid;
+    size_t step=total_size/nrows/nct;
+    vector<string> svin, svout;
+    for(size_t i=0;i<total_size;i+=step) {
+      tensor_obj.unpack_indices(i,ix);
+      string stemp="(";
+      for(size_t i=0;i<rk-1;i++) {
+	stemp+=o2scl::szttos(ix[i])+",";
+      }
+      stemp+=o2scl::szttos(ix[rk-1])+"): ";
+      stemp+=o2scl::szttos(tensor_obj.get_data()[i]);
+      svin.push_back(stemp);
+    }
+    screenify(svin.size(),svin,svout);
+    for(size_t i=0;i<svout.size();i++) {
+      cout << svout[i] << endl;
+    }
     
     return 0;
   }
@@ -6112,7 +6324,7 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
       return exc_efailed;
     }
   }
-    
+  
   if (ctype=="table") {
     
     if (sv2[1]!=((std::string)"cin")) {
@@ -6172,83 +6384,62 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
   } else if (ctype=="int[]") {
 
     if (sv2[1]!=((std::string)"cin")) {
-      getline(ifs,string_obj);
-      std::istringstream is(string_obj);
       int itmp;
       intv_obj.clear();
-      while (is >> itmp) {
+      while (ifs >> itmp) {
 	intv_obj.push_back(itmp);
       }
-      string_obj.clear();
     } else {
-      getline(cin,string_obj);
-      std::istringstream is(string_obj);
       int itmp;
       intv_obj.clear();
-      while (is >> itmp) {
+      while (cin >> itmp) {
 	intv_obj.push_back(itmp);
       }
-      string_obj.clear();
     }
     
   } else if (ctype=="double[]") {
 
     if (sv2[1]!=((std::string)"cin")) {
-      getline(ifs,string_obj);
-      std::istringstream is(string_obj);
       double dtmp;
       doublev_obj.clear();
-      while (is >> dtmp) {
+      while (ifs >> dtmp) {
 	doublev_obj.push_back(dtmp);
       }
-      string_obj.clear();
     } else {
-      getline(cin,string_obj);
-      std::istringstream is(string_obj);
       double dtmp;
       doublev_obj.clear();
-      while (is >> dtmp) {
+      while (cin >> dtmp) {
 	doublev_obj.push_back(dtmp);
       }
-      string_obj.clear();
     }
     
   } else if (ctype=="size_t[]") {
     
     if (sv2[1]!=((std::string)"cin")) {
-      getline(ifs,string_obj);
-      std::istringstream is(string_obj);
       size_t sttmp;
       size_tv_obj.clear();
-      while (is >> sttmp) {
+      while (ifs >> sttmp) {
 	size_tv_obj.push_back(sttmp);
       }
-      string_obj.clear();
     } else {
-      getline(cin,string_obj);
-      std::istringstream is(string_obj);
       size_t sttmp;
       size_tv_obj.clear();
-      while (is >> sttmp) {
+      while (cin >> sttmp) {
 	size_tv_obj.push_back(sttmp);
       }
-      string_obj.clear();
     }
     
   } else if (ctype=="string[]") {
 
-    size_t n;
     if (sv2[1]!=((std::string)"cin")) {
-      ifs >> n;
-      stringv_obj.resize(n);
-      for(size_t i=0;i<n;i++) {
-	getline(ifs,stringv_obj[i]);
+      std::string stmp;
+      while (getline(ifs,stmp)) {
+	stringv_obj.push_back(stmp);
       }
     } else {
-      cin >> n;
-      stringv_obj.resize(n);
-      for(size_t i=0;i<n;i++) {
-	getline(cin,stringv_obj[i]);
+      std::string stmp;
+      while (getline(cin,stmp)) {
+	stringv_obj.push_back(stmp);
       }
     }
     
