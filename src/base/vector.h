@@ -2292,6 +2292,26 @@ namespace o2scl {
     return;
   }
   
+  /** \brief Set the first (M,N) entries in a matrix to a particular value
+   */
+  template<class mat_t, class data_t> 
+    void matrix_set_all(size_t M, size_t N, mat_t &src, data_t val) {
+    for(size_t i=0;i<M;i++) {
+      for(size_t j=0;j<N;j++) {
+	src(i,j)=val;
+      }
+    }
+    return;
+  }
+  
+  /** \brief Set all entries in a matrix to a particular value
+   */
+  template<class mat_t, class data_t> 
+    void matrix_set_all(mat_t &src, data_t val) {
+    o2scl::matrix_set_all(src.size1(),src.size2(),src,val);
+    return;
+  }
+  
   /** \brief From a given vector, create a new vector by removing a
       specified element
    */
@@ -2598,6 +2618,14 @@ namespace o2scl {
 	else m(i,j)=0.0;
       }
     }
+    return;
+  }
+
+  /// Set a matrix to unity on the diagonal and zero otherwise
+  template<class mat_t> 
+    void matrix_set_identity(mat_t &m) {
+    matrix_set_identity(m.size1(),m.size2(),m);
+    return;
   }
   //@}
 

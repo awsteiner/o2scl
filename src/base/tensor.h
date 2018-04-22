@@ -103,9 +103,6 @@ namespace o2scl {
       \future Implement tensor contractions, i.e. tensor
       = tensor * tensor 
 
-      \future Consider making a template type to replace double,
-      e.g. <tt>value_t</tt>.
-
       \future Could be interesting to write an iterator for this class.
 
       \future Create an is_valid() function which checks sizes
