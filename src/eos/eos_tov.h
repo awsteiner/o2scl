@@ -847,13 +847,13 @@ namespace o2scl {
     void set_transition(double ptrans, double pw);
     //@}
 
-    /// \name User EOS
+    /// \name Full EOS arrays
     //@{
-    /// Energy densities from full EOS
+    /// Energy density
     std::vector<double> full_vece;
-    /// Pressures from full EOS
+    /// Pressure
     std::vector<double> full_vecp;
-    /// Baryon densities from full EOS
+    /// Baryon density
     std::vector<double> full_vecnb;
     //@}
 
