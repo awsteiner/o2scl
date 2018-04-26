@@ -847,7 +847,7 @@ namespace o2scl {
     void set_transition(double ptrans, double pw);
     //@}
 
-    /// \name Full EOS arrays
+    /// \name Full EOS arrays (in internal units)
     //@{
     /// Energy density
     std::vector<double> full_vece;
