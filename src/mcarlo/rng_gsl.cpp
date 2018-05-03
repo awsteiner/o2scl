@@ -82,11 +82,16 @@ unsigned long int rng_gsl::random_int(unsigned long int n) {
   unsigned long int scale = range / n;
   unsigned long int k;
   
+  std::cout << "A" << std::endl;
+  
   if (n > range) {
     O2SCL_ERR("n exceeds maximum value of generator",GSL_EINVAL);
     return 0;
   }
   
+  std::cout << "B " << offset << " " << range << " " << scale << " "
+	    << k << std::endl;
+
   do {
     k = (((this->type->get) (this->state)) - offset) / scale;
   } while (k >= n);

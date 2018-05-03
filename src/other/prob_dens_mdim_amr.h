@@ -42,7 +42,8 @@ namespace o2scl {
 
       \note This class is experimental.
   */
-  template<class vec_t, class mat_t=matrix_view_table<vec_t> >
+  template<class vec_t=std::vector<double>,
+    class mat_t=matrix_view_table<vec_t> >
     class prob_dens_mdim_amr : public o2scl::prob_dens_mdim<vec_t> {
 
   protected:
@@ -276,8 +277,10 @@ namespace o2scl {
     // Find coordinate to separate
     size_t max_ip=0;
     if (dim_choice==random) {
-      std::cout << "X: " << ndim << std::endl;
-      max_ip=rg.random_int() % ndim;
+      std::cout << "X: " << ndim << " " << verbose << std::endl;
+      unsigned long int uli=rg.random_int();
+      std::cout << "X2: " << ndim << " " << uli << " " << verbose << std::endl;
+      max_ip=uli % ndim;
       if (verbose>1) {
 	std::cout << "Randomly chose coordinate " << max_ip
 		  << std::endl;
