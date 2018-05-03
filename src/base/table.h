@@ -2913,7 +2913,7 @@ namespace o2scl {
       \note This stores a pointer to the table and the user must ensure
       that the pointer is valid with the matrix view is accessed.
   */
-  template<class vec_t> 
+  template<class vec_t=std::vector<double> > 
     class matrix_view_table : public matrix_view {
   
   protected:
