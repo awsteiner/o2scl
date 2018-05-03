@@ -6077,8 +6077,8 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     for(size_t i=0;i<total_size;i+=step) {
       tensor_grid_obj.unpack_indices(i,ix);
       string stemp="(";
-      for(size_t i=0;i<rk-1;i++) {
-	stemp+=o2scl::dtos(tensor_grid_obj.get_grid(i,ix[i]))+",";
+      for(size_t j=0;j<rk-1;j++) {
+	stemp+=o2scl::dtos(tensor_grid_obj.get_grid(j,ix[j]))+",";
       }
       stemp+=o2scl::dtos(tensor_grid_obj.get_grid(rk-1,ix[rk-1]))+"): ";
       stemp+=o2scl::dtos(tensor_grid_obj.get_data()[i]);
