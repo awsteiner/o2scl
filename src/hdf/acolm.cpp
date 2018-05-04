@@ -306,7 +306,7 @@ void acol_manager::command_add(std::string new_type) {
     };
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="table") {
-    static const size_t narr=33;
+    static const size_t narr=34;
     comm_option_s options_arr[narr]={
       {'a',"assign","Assign a constant, e.g. assign pi acos(-1) .",
        0,2,"<name> [val]",
@@ -507,16 +507,23 @@ void acol_manager::command_add(std::string new_type) {
       {0,"nlines","Add 'nlines' as a constant to a table object.",0,0,"",
        "",new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_nlines),
        both},
-      {0,"to-hist","Convert a table to a histogram.",0,6,
-       "[\"2d\"] <col 1> <col_2 (2d only)> <x_bins> <y_bins (2d only)> [wgts]",
-       ((std::string)"The 'to-hist' command takes two forms: 'to-hist ")+
-       "col1 N1 wgts' or 'to-hist 2d col1 col2 N1 N2 wgts'. The first creates "+
-       "a 1D histogram from 'col1' using exactly 'N1' bins and "+
+      {0,"to-hist","Convert a table to a histogram.",0,3,
+       "<col> <n_bins> [wgts]",
+       ((std::string)"The 'to-hist' command creates ")+
+       "a 1D histogram from 'col' using exactly 'n_bins' bins and "+
        "(optionally) weighting the entries by the values in column 'wgts'. "+
        "The second form creates a 2D histogram from 'col1' and 'col2' "+
        "using N1 bins in the x direction and N2 bins in the y direction, "+
        "optionally weighting the entries by the column 'wgts'.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_to_hist),
+       both},
+      {0,"to-hist-2d","Convert a table to a 2d histogram.",0,5,
+       "<col x> <col y> <n_x_bins> <n_y_bins> [wgts]",
+       ((std::string)"The 'to-hist-3d' creates a 2D histogram ")+
+       "from 'col x' and 'col y' using 'n_x_bins' bins in the x "+
+       "direction and 'n_y_bins' bins in the y direction, "+
+       "optionally weighting the entries by the column 'wgts'.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_to_hist_2d),
        both},
       {0,"autocorr","Compute the autocorrelation vectors.",0,3,
        "<col> <ac> <ftom>",
@@ -914,6 +921,7 @@ void acol_manager::command_del() {
     cl->remove_comm_option("sum");
     cl->remove_comm_option("nlines");
     cl->remove_comm_option("to-hist");
+    cl->remove_comm_option("to-hist-2d");
     cl->remove_comm_option("autocorr");
 
   } else if (type=="table3d") {
@@ -956,9 +964,10 @@ void acol_manager::command_del() {
     cl->remove_comm_option("set-grid");
 
   } else if (type=="hist_2d") {
-
+    cout << "H1." << endl;
     cl->remove_comm_option("max");
     cl->remove_comm_option("min");
+    cout << "H2." << endl;
     
     /*
       cl->remove_comm_option("deriv-x");
@@ -1541,24 +1550,13 @@ int acol_manager::comm_to_hist(std::vector<std::string> &sv,
 
   if (type=="table") {
 
-    bool twod_mode=false;
-    
-    if (sv.size()>=2 && sv[1]=="2d") {
-      twod_mode=true;
-      std::vector<std::string>::iterator it=sv.begin();
-      it++;
-      sv.erase(it);
-    }
     if (sv.size()<2 && itive_com) {
       int ret=get_input_one(sv,((string)"Enter \"2d\" for 2d histogram ")+
 			    +"and \"1d\" for 1d histogram",i1,"to-hist",
 			    itive_com);
       if (ret!=0) return ret;
-      if (i1=="2d") twod_mode=true;
     }
     
-    if (twod_mode==false) {
-      
       vector<string> in, pr;
       pr.push_back("Column name");
       pr.push_back("Number of bins");
@@ -1584,53 +1582,71 @@ int acol_manager::comm_to_hist(std::vector<std::string> &sv,
       } else {
 	hist_obj.from_table(table_obj,in[0],col2,nbins);
       }
+
+      command_del();
+      clear_obj();
       command_add("hist");
       type="hist";
 
+    return 0;
+  } 
+
+  cerr << "Cannot convert object of type " << type << " to histogram."
+       << endl;
+  
+  return 1;
+}
+
+int acol_manager::comm_to_hist_2d(std::vector<std::string> &sv, 
+				  bool itive_com) {
+
+  std::string i1;
+
+  if (type=="table") {
+    
+    vector<string> in, pr;
+    pr.push_back("Column name for x-axis");
+    pr.push_back("Column name for y-axis");
+    pr.push_back("Number of bins in x direction");
+    pr.push_back("Number of bins in y direction");
+    int ret=get_input(sv,pr,in,"to-hist-2d",itive_com);
+    if (ret!=0) return ret;
+    
+    std::string col2;
+    if (sv.size()>5) {
+      col2=sv[5];
+      // We don't want to prompt for weights if the user has given
+      // enough arguments to proceed, so we test for sv.size()<5
+    } else if (itive_com && sv.size()<5) {
+      col2=cl->cli_gets("Column for weights (or blank for none): ");
+    }
+    
+    size_t nbinsx, nbinsy;
+    int sret=o2scl::stoszt_nothrow(in[2],nbinsx);
+    if (sret!=0 || nbinsx==0) {
+      cerr << "Failed to interpret " << in[2]
+	   << " as a positive number of bins." << endl;
+      return exc_einval;
+    }
+    sret=o2scl::stoszt_nothrow(in[3],nbinsy);
+    if (sret!=0 || nbinsy==0) {
+      cerr << "Failed to interpret " << in[2]
+	   << " as a positive number of bins." << endl;
+      return exc_einval;
+    }
+    
+    if (col2.length()==0) {
+      hist_2d_obj.from_table(table_obj,in[0],in[1],nbinsx,nbinsy);
     } else {
-
-      vector<string> in, pr;
-      pr.push_back("Column name for x-axis");
-      pr.push_back("Column name for y-axis");
-      pr.push_back("Number of bins in x direction");
-      pr.push_back("Number of bins in y direction");
-      int ret=get_input(sv,pr,in,"to-hist-2d",itive_com);
-      if (ret!=0) return ret;
-      
-      std::string col2;
-      if (sv.size()>5) {
-	col2=sv[5];
-	// We don't want to prompt for weights if the user has given
-	// enough arguments to proceed, so we test for sv.size()<5
-      } else if (itive_com && sv.size()<5) {
-	col2=cl->cli_gets("Column for weights (or blank for none): ");
-      }
-
-      size_t nbinsx, nbinsy;
-      int sret=o2scl::stoszt_nothrow(in[2],nbinsx);
-      if (sret!=0 || nbinsx==0) {
-	cerr << "Failed to interpret " << in[2]
-	     << " as a positive number of bins." << endl;
-	return exc_einval;
-      }
-      sret=o2scl::stoszt_nothrow(in[3],nbinsy);
-      if (sret!=0 || nbinsy==0) {
-	cerr << "Failed to interpret " << in[2]
-	     << " as a positive number of bins." << endl;
-	return exc_einval;
-      }
-
-      if (col2.length()==0) {
-	hist_2d_obj.from_table(table_obj,in[0],in[1],nbinsx,nbinsy);
-      } else {
-	hist_2d_obj.from_table(table_obj,in[0],in[1],col2,
-			       nbinsx,nbinsy);
-      }
-      command_add("hist_2d");
-      type="hist_2d";
-      
+      hist_2d_obj.from_table(table_obj,in[0],in[1],col2,
+			     nbinsx,nbinsy);
     }
 
+    command_del();
+    clear_obj();
+    command_add("hist_2d");
+    type="hist_2d";
+    
     return 0;
   } 
 

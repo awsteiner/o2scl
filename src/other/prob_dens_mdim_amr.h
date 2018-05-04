@@ -299,7 +299,7 @@ namespace o2scl {
 	if (dim_choice==max_variance) {
 	  var=fabs(v[ip]-m(h.inside[0],ip))/(h.high[ip]-h.low[ip]);
 	} else {
-	  var=fabs(v[ip]-m(h.inside[0],ip))/scale[ip%scale.size()];
+	  var=fabs(v[ip]-m(h.inside[0],ip))/scale[ip % scale.size()];
 	}
 	if (var>max_var) {
 	  max_ip=ip;

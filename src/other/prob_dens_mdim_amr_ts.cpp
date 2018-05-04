@@ -75,10 +75,12 @@ int main(void) {
     t2.line_of_data(3,v2);
   }
 
-  hdf_file hf;
-  hf.open_or_create("amr.o2");
-  hdf_output(hf,t2,"amr");
-  hf.close();
+  if (false) {
+    hdf_file hf;
+    hf.open_or_create("amr.o2");
+    hdf_output(hf,t2,"amr");
+    hf.close();
+  }
 
   rng_gsl r;
 
@@ -104,21 +106,23 @@ int main(void) {
   tm.test_rel(amr2.total_volume(),1.0,1.0e-8,"total volume 2");
   cout << amr2.total_volume() << endl;
 
-  ofstream fout;
-  fout.open("temp.scr");
-  fout << "o2graph -set xlo 0 -set xhi 1 -set ylo 0 -set yhi 1 \\" << endl;
-  for(size_t i=0;i<N;i++) {
-    fout << "-point " << t3.get("x",i) << " "
-	 << t3.get("y",i) << " marker=x \\" << endl;
+  if (false) {
+    ofstream fout;
+    fout.open("temp.scr");
+    fout << "o2graph -set xlo 0 -set xhi 1 -set ylo 0 -set yhi 1 \\" << endl;
+    for(size_t i=0;i<N;i++) {
+      fout << "-point " << t3.get("x",i) << " "
+	   << t3.get("y",i) << " marker=x \\" << endl;
+    }
+    for(size_t i=0;i<N;i++) {
+      fout << "-rect " << amr2.mesh[i].low[0] << " "
+	   << amr2.mesh[i].low[1] << " "
+	   << amr2.mesh[i].high[0] << " "
+	   << amr2.mesh[i].high[1] << " \\" << endl;
+    }
+    fout << "-show" << endl;
+    fout.close();
   }
-  for(size_t i=0;i<N;i++) {
-    fout << "-rect " << amr2.mesh[i].low[0] << " "
-	 << amr2.mesh[i].low[1] << " "
-	 << amr2.mesh[i].high[0] << " "
-	 << amr2.mesh[i].high[1] << " \\" << endl;
-  }
-  fout << "-show" << endl;
-  fout.close();
   
   tm.report();
   

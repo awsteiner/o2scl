@@ -350,6 +350,9 @@ namespace o2scl_acol {
     /// Convert a \ref o2scl::table object to a \ref o2scl::hist object
     virtual int comm_to_hist(std::vector<std::string> &sv, bool itive_com);
 
+    /// Convert a \ref o2scl::table object to a \ref o2scl::hist object
+    virtual int comm_to_hist_2d(std::vector<std::string> &sv, bool itive_com);
+
     /// Output the type of the current object to the screen
     virtual int comm_type(std::vector<std::string> &sv, bool itive_com);
     
