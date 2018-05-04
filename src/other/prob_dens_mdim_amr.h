@@ -277,10 +277,7 @@ namespace o2scl {
     // Find coordinate to separate
     size_t max_ip=0;
     if (dim_choice==random) {
-      std::cout << "X: " << ndim << " " << verbose << std::endl;
-      unsigned long int uli=rg.random_int();
-      std::cout << "X2: " << ndim << " " << uli << " " << verbose << std::endl;
-      max_ip=uli % ndim;
+      max_ip=((size_t)(rg.random()*((double)ndim)));
       if (verbose>1) {
 	std::cout << "Randomly chose coordinate " << max_ip
 		  << std::endl;
@@ -434,7 +431,7 @@ namespace o2scl {
    
     if (mesh.size()==0) {
       O2SCL_ERR2("Mesh empty in ",
-		 "prob_dens_mdim_amr::operator()().",o2scl::exc_einval);
+		 "prob_dens_mdim_amr::select_in_largest().",o2scl::exc_einval);
     }
 
     size_t im=0;
