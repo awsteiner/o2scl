@@ -388,6 +388,16 @@ namespace o2scl {
     return;
   }
 
+  /** \brief Set the weight in each hypercube equal to the
+      inverse of the volume (the density)
+   */
+  void weight_is_inv_volume() {
+    for(size_t i=0;i<mesh.size();i++) {
+      mesh[i].weight=1.0/mesh[i].frac_vol;
+    }
+    return;
+  }
+  
   /** \brief Check the total volume by adding up the fractional
       part of the volume in each hypercube
    */
