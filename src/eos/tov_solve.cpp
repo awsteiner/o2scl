@@ -1080,7 +1080,7 @@ int tov_solve::max() {
   return info;
 }
 
-int tov_solve::fixed_pr(double pcent) {
+int tov_solve::fixed_pr(double pcent, double pmax) {
 
   int info=0;
 
@@ -1103,6 +1103,7 @@ int tov_solve::fixed_pr(double pcent) {
 	 << pcent*pfactor << " (Msun/km^3) mode." << endl;
   }
   pcent*=pfactor;
+  pcent_max=pmax;
   
   // --------------------------------------------------------------
 
@@ -1112,7 +1113,14 @@ int tov_solve::fixed_pr(double pcent) {
   x[0]=pcent;
   integ_star_final=true;
   int ret=integ_star(1,x,y);
-  if (ret!=0) {
+  if (ret==cent_press_large) {
+    O2SCL_ERR2("Central pressure larger than maximum mass star ",
+	      "in tov_solve::fixed_pr().",exc_einval);
+	      
+  } else if (ret==cent_press_neg) {
+    O2SCL_ERR2("Central pressure negative ",
+	      "in tov_solve::fixed_pr().",exc_efailed);
+  } else if (ret!=0) {
     info+=fixed_integ_star_failed+ret;
     O2SCL_CONV("Failed to integrate star in tov_solve::fixed_pr().",
 	       exc_efailed,err_nonconv);

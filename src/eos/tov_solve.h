@@ -386,7 +386,8 @@ namespace o2scl {
     
     /** \brief Target mass for integ_star()
 	
-	Has a value of zero, unless set to a non-zero value by \ref fixed(). 
+	Has a value of zero, unless set to a non-zero value 
+	by \ref fixed(). 
     */
     double tmass;
     
@@ -479,6 +480,15 @@ namespace o2scl {
     virtual int integ_star(size_t ndvar, const ubvector &ndx, 
 			ubvector &ndy);
     
+    /** \brief Maximum value for central pressure in 
+	\f$ \mathrm{M}_{\odot}/\mathrm{km}^3 \f$ (default \f$ 10^{20} \f$ )
+	
+	This variable is set by the <tt>mvsr()</tt>, <tt>max()</tt>,
+	<tt>fixed()</tt> and <tt>fixed_pr()</tt>
+	functions and used in \ref integ_star() .
+    */
+    double pcent_max;
+    
 #endif
 
   public:
@@ -511,13 +521,6 @@ namespace o2scl {
 	at the surface (when \ref ang_vel is true)
     */
     double domega_rat;
-    /** \brief Maximum value for central pressure in 
-	\f$ \mathrm{M}_{\odot}/\mathrm{km}^3 \f$ (default \f$ 10^{20} \f$ )
-	
-	This variable is set by the <tt>mvsr()</tt> and <tt>max()</tt>
-	functions and used in \ref integ_star() .
-    */
-    double pcent_max;
     //@}
 
     /** \name Solution parameters
@@ -654,12 +657,13 @@ namespace o2scl {
 	to 1.95 solar mass configuration.
 
 	The variable \c pmax is the maximum allowable central pressure
-	in \f$ \mathrm{M}_{\odot}/\mathrm{km}^3 \f$, i.e. the central
-	pressure of the maximum mass star. This ensures that the
+	in \f$ \mathrm{M}_{\odot}/\mathrm{km}^3 \f$ (This is the
+	central pressure of the maximum mass star as long as there
+	isn't a second branch of solutions.) This ensures that the
 	function does not unintentionally select a configuration on an
 	unstable branch. If \c pmax is greater than or equal to the
 	default value (\ref pmax_default), then the maximum mass star
-	will be explicitly computed first.
+	will be computed with \ref max() first. 
 
 	Note that this function will likely fail when the 
 	mass-radius curve has two central pressures with the
@@ -674,10 +678,24 @@ namespace o2scl {
 	specified by the user which defaults to solar masses per cubic
 	kilometer "Msun/km^3" but can be changed with a call to one of
 	the <tt>set_units()</tt> functions.
+
+	The variable \c pmax is the maximum allowable central pressure
+	in \f$ \mathrm{M}_{\odot}/\mathrm{km}^3 \f$, and must 
+	be larger than the value of \c pcent converted to to
+	\f$ \mathrm{M}_{\odot}/\mathrm{km}^3 \f$ .
     */
-    virtual int fixed_pr(double pcent);
+    virtual int fixed_pr(double pcent, double pmax=1.0e20);
     
     /** \brief Calculate the profile of the maximum mass star
+	
+	Note that this maximizes the gravitational mass, and
+	thus if the M-R curve has two branches does not
+	necessarily give the configuration with the largest
+	central pressure.
+
+	This function may also depend on the accuracy of the
+	initial interval determined by \ref max_begin and
+	\ref max_end.
      */
     virtual int max();
 

@@ -76,6 +76,37 @@ lib_settings_class::lib_settings_class() {
 		      o2scl_cgs::speed_of_light/o2scl_mks::solar_mass);
   def_cu.insert_cache("dyne/cm^2","Msun/km^3",1.0e12/o2scl_cgs::speed_of_light/
 		      o2scl_cgs::speed_of_light/o2scl_mks::solar_mass);
+
+  def_cu.insert_cache("1/fm^4","MeV/fm^3",o2scl_const::hc_mev_fm);
+  def_cu.insert_cache("MeV/fm^3","MeV^2/fm^2",o2scl_const::hc_mev_fm);
+  def_cu.insert_cache("MeV^2/fm^2","MeV^3/fm",o2scl_const::hc_mev_fm);
+  def_cu.insert_cache("MeV^3/fm","MeV^4",o2scl_const::hc_mev_fm);
+
+  def_cu.insert_cache("1/fm^4","MeV^2/fm^2",o2scl_const::hc_mev_fm*
+		      o2scl_const::hc_mev_fm);
+  def_cu.insert_cache("MeV/fm^3","MeV^3/fm",o2scl_const::hc_mev_fm*
+		      o2scl_const::hc_mev_fm);
+  def_cu.insert_cache("MeV^2/fm^2","MeV^4",o2scl_const::hc_mev_fm*
+		      o2scl_const::hc_mev_fm);
+  
+  def_cu.insert_cache("1/fm^4","MeV^3/fm",o2scl_const::hc_mev_fm*
+		      o2scl_const::hc_mev_fm*o2scl_const::hc_mev_fm);
+  def_cu.insert_cache("MeV/fm^3","MeV^4",o2scl_const::hc_mev_fm*
+		      o2scl_const::hc_mev_fm*o2scl_const::hc_mev_fm);
+  
+  def_cu.insert_cache("1/fm^4","MeV^4",pow(o2scl_const::hc_mev_fm,4.0));
+  
+  def_cu.insert_cache("1/fm^3","MeV/fm^2",o2scl_const::hc_mev_fm);
+  def_cu.insert_cache("MeV/fm^2","MeV^2/fm",o2scl_const::hc_mev_fm);
+  def_cu.insert_cache("MeV^2/fm","MeV^3",o2scl_const::hc_mev_fm);
+
+  def_cu.insert_cache("1/fm^3","MeV^2/fm",o2scl_const::hc_mev_fm*
+		      o2scl_const::hc_mev_fm);
+  def_cu.insert_cache("MeV/fm^2","MeV^3",o2scl_const::hc_mev_fm*
+		      o2scl_const::hc_mev_fm);
+
+  def_cu.insert_cache("1/fm^3","MeV^3",pow(o2scl_const::hc_mev_fm,3.0));
+  
   def_cu.insert_cache("MeV/fm^3","Msun/km^3",
 		      o2scl_cgs::electron_volt/o2scl_cgs::speed_of_light/
 		      o2scl_cgs::speed_of_light/o2scl_mks::solar_mass*1.0e57);
