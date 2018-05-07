@@ -979,7 +979,7 @@ public:
 };
 
 
-int main(int argv, char *argc[]) {
+int main(int argc, char *argc[]) {
 
   cout.setf(ios::scientific);
   
@@ -1125,7 +1125,7 @@ int main(int argv, char *argc[]) {
   // ---------------------------------------
   // Process command-line options
 
-  cl.run_auto(argv,argc);
+  cl.run_auto(argc,argv);
   
   return 0;
 }

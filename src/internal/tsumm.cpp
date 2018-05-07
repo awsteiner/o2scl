@@ -34,7 +34,7 @@
 
 using namespace std;
 
-int main(int argv, char *argc[]) {
+int main(int argc, char *argv[]) {
 
   ifstream fin("testlist");
   if (!fin) {
@@ -44,7 +44,7 @@ int main(int argv, char *argc[]) {
 
   vector<string> fns;
 
-  if (argv<2 || ((string)argc[1])!="summary") {
+  if (argc<2 || ((string)argv[1])!="summary") {
     
     while(!fin.eof()) {
       string tmp;

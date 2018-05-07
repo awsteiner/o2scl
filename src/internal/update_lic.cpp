@@ -55,8 +55,8 @@ std::string base[22]={
   "  -------------------------------------------------------------------",
   "*/"};
 
-int main(int argv, char *argc[]) {
-  std::string fn=argc[1];
+int main(int argc, char *argv[]) {
+  std::string fn=argv[1];
   ifstream fin(fn.c_str());
   std::string flist[llines];
   bool match=true;

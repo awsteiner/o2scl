@@ -39,20 +39,20 @@ int stoi(string s) {
   return 0;
 }
 
-int main(int argv, char *argc[]) {
+int main(int argc, char *argv[]) {
 
   string line, word;
   
-  if (argv<4) {
+  if (argc<4) {
     cout << "Usage: " << endl;
     cout << " verup 1 version Doxyfile outfile" << endl;
     cout << " verup 2 version header.tex outfile" << endl;
     exit(-1);
   }
 
-  ifstream fin(argc[3]);
-  ofstream fout(argc[4]);
-  if (stoi(argc[1])==1) {
+  ifstream fin(argv[3]);
+  ofstream fout(argv[4]);
+  if (stoi(argv[1])==1) {
 
     // Modify Doxyfile
     
@@ -60,7 +60,7 @@ int main(int argv, char *argc[]) {
       istringstream *ins=new istringstream(line);
       (*ins) >> word;
       if (line.length()>0 && word=="PROJECT_NUMBER") {
-	fout << "PROJECT_NUMBER = " << argc[2] << endl;
+	fout << "PROJECT_NUMBER = " << argv[2] << endl;
       } else {
 	fout << line << endl;
       }
@@ -75,7 +75,7 @@ int main(int argv, char *argc[]) {
       istringstream *ins=new istringstream(line);
       (*ins) >> word;
       if (line.length()>0 && word=="Version") {
-	fout << "Version\n" << argc[2] << endl;
+	fout << "Version\n" << argv[2] << endl;
 	delete ins;
 	getline(fin,line);
       } else {

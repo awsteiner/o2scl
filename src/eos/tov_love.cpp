@@ -38,6 +38,7 @@ tov_love::tov_love() {
     oisp->ntrial*=10;
   */
   delta=1.0e-4;
+  err_nonconv=true;
 }
 
 double tov_love::eval_k2(double beta, double yR) {
@@ -131,7 +132,7 @@ int tov_love::H_derivs(double r, size_t nv, const std::vector<double> &vals,
   return 0;
 }
 
-void tov_love::calc_y(double &yR, double &beta, double &k2, 
+int tov_love::calc_y(double &yR, double &beta, double &k2, 
 		      double &lambda_km5, double &lambda_cgs,
 		      bool tabulate) {
   
@@ -170,11 +171,16 @@ void tov_love::calc_y(double &yR, double &beta, double &k2,
      (&tov_love::y_derivs),
      this,std::placeholders::_1,std::placeholders::_2,
      std::placeholders::_3,std::placeholders::_4);
-  
+
   if (tabulate) {
     
     yt(0,0)=2.0;
-    oisp->solve_store(eps,R,h,1,n_sol,rt,yt,ye,dy,od,0);
+    int ois_ret=oisp->solve_store(eps,R,h,1,n_sol,rt,yt,ye,dy,od,0);
+    if (ois_ret!=0) {
+      O2SCL_CONV2_RET("ODE function solve_store() failed ",
+		      " in tov_love::calc_y().",
+		      o2scl::exc_efailed,err_nonconv);
+    }
     yR=yt(n_sol-1,0);
     
   } else {
@@ -208,7 +214,12 @@ void tov_love::calc_y(double &yR, double &beta, double &k2,
       }
 
       // Solve the ODE in this interval
-      oisp->solve_final_value(x0,x1,h,1,y,yout,od);
+      int ois_ret=oisp->solve_final_value(x0,x1,h,1,y,yout,od);
+      if (ois_ret!=0) {
+	O2SCL_CONV2_RET("ODE function solve_final_value() failed ",
+			" in tov_love::calc_y().",
+			o2scl::exc_efailed,err_nonconv);
+      }
 
       // Add the correction at the discontinuity
       if (j!=disc.size()) {
@@ -263,10 +274,10 @@ void tov_love::calc_y(double &yR, double &beta, double &k2,
     }
   }
 
-  return;
+  return 0;
 }
 
-void tov_love::calc_H(double &yR, double &beta, double &k2, 
+int tov_love::calc_H(double &yR, double &beta, double &k2, 
 			 double &lambda_km5, double &lambda_cgs) {
 
   if (disc.size()>0) {
@@ -315,5 +326,5 @@ void tov_love::calc_H(double &yR, double &beta, double &k2,
   // Convert to g*cm^2*s^2
   lambda_cgs*=o2scl_cgs::solar_mass*1.0e10;
 
-  return;
+  return 0;
 }

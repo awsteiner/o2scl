@@ -149,7 +149,7 @@ template<size_t MSIZE> int run() {
   return 0;
 }
 
-int main(int argv, char *argc[]) {
+int main(int argc, char *argv[]) {
   test_mgr t;
   t.set_output_level(1);
 

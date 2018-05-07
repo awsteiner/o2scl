@@ -155,12 +155,18 @@ namespace o2scl {
     astp=&gsl_astp;
     exit_on_fail=true;
     mem_size=0;
+    err_nonconv=true;
   }
       
   virtual ~ode_iv_solve() {
     free();
   }
 
+  /** \brief If true, call the error handler if the solution does 
+      not converge (default true)
+  */
+  bool err_nonconv;
+  
   /// \name Main solver functions
   //@{
   /** \brief Solve the initial-value problem to get the final value
@@ -316,9 +322,10 @@ namespace o2scl {
       // Check number of iterations
       nsteps++;
       if (nsteps>ntrial) {
-	std::string str="Too many steps required (ntrial="+itos(ntrial)+
+	std::string str="Too many steps required (nsteps="+
+	  szttos(nsteps)+", ntrial="+szttos(ntrial)+
 	  ", x="+o2scl::dtos(x)+") in ode_iv_solve::solve_final_value().";
-	O2SCL_ERR(str.c_str(),exc_emaxiter);
+	O2SCL_CONV_RET(str.c_str(),exc_emaxiter,err_nonconv);
       }
 
       if (ret!=0) {

@@ -208,6 +208,11 @@ namespace o2scl {
   public:
   
     tov_love();
+
+    /** \brief If true, call the error handler if the solution does 
+	not converge (default true)
+    */
+    bool err_nonconv;
     
     /// A table containing the solution to the differential equation(s)
     o2scl::table_units<> results;
@@ -234,7 +239,7 @@ namespace o2scl {
     
     /** \brief Compute the love number using y
      */
-    void calc_y(double &yR, double &beta, double &k2, double &lambda_km5,
+    int calc_y(double &yR, double &beta, double &k2, double &lambda_km5,
 		double &lambda_cgs, bool tabulate=false);
 
     /** \brief Add a discontinuity at radius \c rd (in km)
@@ -251,7 +256,7 @@ namespace o2scl {
     
     /** \brief Compute the love number using H
      */
-    void calc_H(double &yR, double &beta, double &k2, double &lambda_km5,
+    int calc_H(double &yR, double &beta, double &k2, double &lambda_km5,
 		double &lambda_cgs);
 
   };

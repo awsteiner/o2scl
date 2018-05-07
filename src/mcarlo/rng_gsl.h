@@ -108,6 +108,11 @@ namespace o2scl {
       gsl_rng_set(this,seed);
     }
 
+    /// Get the seed
+    unsigned long int get_seed() {
+      return seed;
+    }
+    
     /// Set the seed
     void clock_seed() {
       seed=time(0);

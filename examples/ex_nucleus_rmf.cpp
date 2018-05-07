@@ -41,7 +41,7 @@ using namespace o2scl_const;
 using namespace o2scl_hdf;
 #endif
 
-int main(int argv, char *argc[]) {
+int main(int argc, char *argv[]) {
 
   cout.setf(ios::scientific);
 

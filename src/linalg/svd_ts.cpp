@@ -881,7 +881,7 @@ gsl_linalg_SV_decomp (gsl_matrix * A, gsl_matrix * V, gsl_vector * S,
 
 };
 
-int main(int argv, char *argc[]) {
+int main(int argc, char *argv[]) {
 
   cout.setf(ios::scientific);
   cout.precision(6);
