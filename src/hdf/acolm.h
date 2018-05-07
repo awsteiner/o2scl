@@ -557,6 +557,12 @@ extern "C" {
   int o2scl_acol_get_column(void *vp, char *col_name,
 			    int &n, double *&ptr);
 
+  /** \brief Return the size and a pointer to the row
+      with index \c row_index in a table object
+   */
+  int o2scl_acol_get_row_ser(void *vp, char *parttern, int row_index,
+			     int &n, double *&ptr);
+  
   /** \brief Return the size and a pointer to the column
       named \c col_name in a table object
    */

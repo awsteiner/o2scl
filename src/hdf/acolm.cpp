@@ -104,6 +104,10 @@ void o2scl_acol_parse(void *vp, int n_entries, int *sizes,
   return;
 }
 
+//  template<class resize_vec_t>
+//void get_row(size_t irow, resize_vec_t &row) const {
+//template<class resize_vec_t>
+//void get_row(std::string scol, double val, resize_vec_t &row) const {
 int o2scl_acol_get_column(void *vp, char *col_name,
 			  int &n, double *&ptr) {
   o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
@@ -117,6 +121,23 @@ int o2scl_acol_get_column(void *vp, char *col_name,
   }
   const std::vector<double> &col=amp->table_obj.get_column(stmp);
   ptr=(double *)&col[0];
+  return 0;
+}
+
+int o2scl_acol_get_row_ser(void *vp, char *pattern, int row_index,
+			   int &n, double *&ptr) {
+  o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
+  if (amp->type!="table") {
+    return 1;
+  }
+  amp->doublev_obj.clear();
+  for(size_t j=0;j<amp->table_obj.get_ncolumns();j++) {
+    if (fnmatch(pattern,amp->table_obj.get_column_name(j).c_str(),0)==0) {
+      amp->doublev_obj.push_back(amp->table_obj.get(j,row_index));
+    }
+  }
+  n=amp->doublev_obj.size();
+  ptr=(double *)&amp->doublev_obj[0];
   return 0;
 }
 

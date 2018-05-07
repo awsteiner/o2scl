@@ -214,6 +214,11 @@ int tov_love::calc_y(double &yR, double &beta, double &k2,
       }
 
       // Solve the ODE in this interval
+      if (x0>x1) {
+	std::cout << "Ordering problem." << std::endl;
+	std::cout << x0 << " " << x1 << " " << h << " " << R << std::endl;
+	vector_out(std::cout,disc,true);
+      }
       int ois_ret=oisp->solve_final_value(x0,x1,h,1,y,yout,od);
       if (ois_ret!=0) {
 	O2SCL_CONV2_RET("ODE function solve_final_value() failed ",
