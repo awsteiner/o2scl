@@ -458,10 +458,10 @@ namespace o2scl {
 
     /// \name Numerical methods
     //@{
-    /// The solver
+    /// The solver for fixed gravitational masses
     mroot<mm_funct,ubvector,jac_funct> *mroot_ptr;
 
-    /// The minimizer
+    /// The minimizer for maximum masses
     min_base<> *min_ptr;
     
     /// The adaptive stepper
@@ -646,56 +646,58 @@ namespace o2scl {
     void get_units(std::string &eunits, std::string &punits, 
 		   std::string &nunits);
 
-    /// Calculate the mass vs. radius curve
+    /** \brief Calculate the mass vs. radius curve
+     */
     virtual int mvsr();
 
     /** \brief Calculate the profile of a star with fixed mass
 
-	If the target mass is negative, it is interpreted as
+	This function computes the profile for a star with a fixed
+	mass. If the target mass is negative, it is interpreted as
 	subtracting from the maximum mass configuration. For a 2.15
 	solar mass neutron star, <tt>target_mass=-0.2</tt> corresponds
 	to 1.95 solar mass configuration.
 
 	The variable \c pmax is the maximum allowable central pressure
-	in \f$ \mathrm{M}_{\odot}/\mathrm{km}^3 \f$ (This is the
-	central pressure of the maximum mass star as long as there
-	isn't a second branch of solutions.) This ensures that the
-	function does not unintentionally select a configuration on an
-	unstable branch. If \c pmax is greater than or equal to the
-	default value (\ref pmax_default), then the maximum mass star
-	will be computed with \ref max() first. 
+	in \f$ \mathrm{M}_{\odot}/\mathrm{km}^3 \f$ (This often, but
+	not always, equal to the central pressure of the maximum mass
+	star.) This ensures that the function does not unintentionally
+	select an unstable configuration. If \c pmax is greater than
+	or equal to the default value (\ref pmax_default), then the
+	maximum mass star will be computed with \ref max() first
+	in order to determine the maximum allowable central pressure.
 
-	Note that this function will likely fail when the 
-	mass-radius curve has two central pressures with the
-	same gravitational mass.
+	Note that this function will likely fail when the mass-radius
+	curve has two central pressures with the same gravitational
+	mass.
     */
     virtual int fixed(double target_mass, double pmax=1.0e20);
 
     /** \brief Calculate the profile of a star with a specified
 	central pressure
 
-	The central pressure, \c pcent, should be in the unit system
-	specified by the user which defaults to solar masses per cubic
-	kilometer "Msun/km^3" but can be changed with a call to one of
-	the <tt>set_units()</tt> functions.
+	This function computes the profile of a star with a fixed
+	central pressure. The central pressure, \c pcent, should be in
+	the unit system specified by the user which defaults to solar
+	masses per cubic kilometer "Msun/km^3" but can be changed with
+	a call to one of the <tt>set_units()</tt> functions.
 
 	The variable \c pmax is the maximum allowable central pressure
 	in \f$ \mathrm{M}_{\odot}/\mathrm{km}^3 \f$, and must 
 	be larger than the value of \c pcent converted to to
-	\f$ \mathrm{M}_{\odot}/\mathrm{km}^3 \f$ .
+	\f$ \mathrm{M}_{\odot}/\mathrm{km}^3 \f$ . 
     */
     virtual int fixed_pr(double pcent, double pmax=1.0e20);
     
     /** \brief Calculate the profile of the maximum mass star
 	
-	Note that this maximizes the gravitational mass, and
-	thus if the M-R curve has two branches does not
-	necessarily give the configuration with the largest
+	Note that this function maximizes the gravitational mass. If
+	the M-R curve has two stable branches, then this function does
+	not necessarily give the configuration with the largest
 	central pressure.
 
-	This function may also depend on the accuracy of the
-	initial interval determined by \ref max_begin and
-	\ref max_end.
+	This function may also depend on the accuracy of the initial
+	interval determined by \ref max_begin and \ref max_end.
      */
     virtual int max();
 

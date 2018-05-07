@@ -137,6 +137,10 @@ void tov_solve::set_units(double s_efactor, double s_pfactor,
   efactor=s_efactor;
   pfactor=s_pfactor;
   nfactor=s_nfactor;
+
+  eunits="user-spec";
+  punits="user-spec";
+  nunits="user-spec";
   return;
 }
 
@@ -242,11 +246,12 @@ int tov_solve::derivs(double r, size_t nv, const ubvector &y,
   }
 
   double term1, term2, term3;
-  dydx[0]=4.0*pi*r*r*ed;
+  double r2=r*r, r3=r*r2, fpr2=4.0*pi*r2;
+  dydx[0]=fpr2*ed;
   if (gen_rel) {
     term1=ed+pres;
-    if (gm<0.0) term2=4.0*pi*pow(r,3.0)*pres;
-    else term2=gm+4.0*pi*pow(r,3.0)*pres;
+    if (gm<0.0) term2=4.0*pi*r3*pres;
+    else term2=gm+4.0*pi*r3*pres;
     term3=r-schwarz_km*gm;
   } else {
     term1=ed;
@@ -256,6 +261,8 @@ int tov_solve::derivs(double r, size_t nv, const ubvector &y,
   }
   dydx[1]=-schwarz_km/2.0/r*term1*term2/term3/pres;
 
+  double term4=sqrt(1.0-schwarz_km*gm/r);
+  
   ix=2;
   double gp=0.0;
   if (calc_gpot) {
@@ -264,21 +271,22 @@ int tov_solve::derivs(double r, size_t nv, const ubvector &y,
     dydx[ix]=dgpdr;
     ix++;
     if (ang_vel) {
-      double j=sqrt(1.0-schwarz_km*gm/r)*exp(-gp);
-      double djdr=-sqrt(1.0-schwarz_km*gm/r)*exp(-gp)*dgpdr+
-	exp(-gp)/2.0/sqrt(1.0-schwarz_km*gm/r)*schwarz_km/r*(gm/r-dydx[0]);
-      dydx[ix]=-4.0*r*r*r*djdr*y[ix+1];
-      dydx[ix+1]=y[ix]/pow(r,4.0)/j;
+      double expmgp=exp(-gp);
+      double j=term4*expmgp;
+      double djdr=-term4*expmgp*dgpdr+
+	expmgp/2.0/term4*schwarz_km/r*(gm/r-dydx[0]);
+      dydx[ix]=-4.0*r3*djdr*y[ix+1];
+      dydx[ix+1]=y[ix]/r3/r/j;
       ix+=2;
     }
   }
   if (te->has_baryons()) {
     if (gm<0.0) {
-      dydx[ix]=4.0*pi*r*r*nb*baryon_mass/o2scl_mks::solar_mass*
+      dydx[ix]=fpr2*nb*baryon_mass/o2scl_mks::solar_mass*
 	1.0e54;
     } else {
-      dydx[ix]=4.0*pi*r*r*nb*baryon_mass/o2scl_mks::solar_mass*
-	1.0e54/sqrt(1.0-schwarz_km*gm/r);
+      dydx[ix]=fpr2*nb*baryon_mass/o2scl_mks::solar_mass*
+	1.0e54/term4;
     }
     ix++;
   }
@@ -1011,6 +1019,10 @@ int tov_solve::max() {
     O2SCL_ERR2("EOS not specified and/or memory not allocated in ",
 	       "tov_solve::max().",exc_efailed);
   }
+  if (max_begin>max_end) {
+    O2SCL_ERR2("Values of max_begin and max_end misordered ",
+	       "in tov_solve::max().",o2scl::exc_einval);
+  }
 
   // --------------------------------------------------------------
 
@@ -1040,6 +1052,16 @@ int tov_solve::max() {
 		       (&tov_solve::max_fun),
 		       this,std::placeholders::_1);
   if (min_ptr->min(x[0],y[0],mm)!=0) {
+    O2SCL_CONV("Maximizer failed in tov_solve::max().",exc_efailed,
+	       err_nonconv);
+    info+=max_minimizer_failed;
+  }
+
+  // Check that the maximum isn't at the boundaries of the interval
+  // which would indicate failure
+  if (x[0]<=max_begin || x[0]>=max_end) {
+    O2SCL_CONV2("Maximizer returned boundary ",
+	       "in tov_solve::max().",exc_efailed,err_nonconv);
     info+=max_minimizer_failed;
   }
 
@@ -1049,8 +1071,8 @@ int tov_solve::max() {
   integ_star_final=true;
   int ret=integ_star(1,x,y);
   if (ret!=0) {
-    O2SCL_CONV("Last call to integ_star() failed in max().",exc_efailed,
-	       err_nonconv);
+    O2SCL_CONV2("Last call to integ_star() failed ",
+		"in tov_solve::max().",exc_efailed,err_nonconv);
     info+=max_integ_star_failed+ret;
   }
   
