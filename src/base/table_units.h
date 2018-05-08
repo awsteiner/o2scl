@@ -142,6 +142,8 @@ namespace o2scl {
       this->intp_set=false;
       cup=&o2scl_settings.get_convert_units();
 
+      this->is_valid();
+
       return;
     }
 
@@ -181,6 +183,8 @@ namespace o2scl {
 
       this->intp_set=false;
       cup=&o2scl_settings.get_convert_units();
+
+      this->is_valid();
 
       return;
     
@@ -236,6 +240,8 @@ namespace o2scl {
 
       }
 
+      this->is_valid();
+
       return *this;
     }
 
@@ -285,6 +291,8 @@ namespace o2scl {
 	cup=&o2scl_settings.get_convert_units();
 
       }
+
+      this->is_valid();
 
       return *this;
     }

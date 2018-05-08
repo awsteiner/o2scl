@@ -39,6 +39,8 @@ tov_love::tov_love() {
   */
   delta=1.0e-4;
   err_nonconv=true;
+  addl_testing=false;
+  show_ode=0;
 }
 
 double tov_love::eval_k2(double beta, double yR) {
@@ -87,14 +89,23 @@ int tov_love::y_derivs(double r, size_t nv, const std::vector<double> &vals,
 
   } 
 
-  if (!gsl_finite(ders[0])) {
-    return 1;
-    std::cout << "Derivative not finite." << std::endl;
+  if (show_ode>0) {
     std::cout << "r,ed,pr,cs2,gm: " 
 	      << r << " " << ed << " " << pr << " " << cs2 << " " 
 	      << gm << std::endl;
-    std::cout << "y': " << ders[0] << std::endl;
-    exit(-1);
+    std::cout << "y, y': " << vals[0] << " " << ders[0] << std::endl;
+  }
+  
+  if (!gsl_finite(ders[0])) {
+    return 1;
+    /*
+      std::cout << "Derivative not finite." << std::endl;
+      std::cout << "r,ed,pr,cs2,gm: " 
+      << r << " " << ed << " " << pr << " " << cs2 << " " 
+      << gm << std::endl;
+      std::cout << "y': " << ders[0] << std::endl;
+      //exit(-1);
+      */
   }
   return 0;
 }
@@ -136,6 +147,8 @@ int tov_love::calc_y(double &yR, double &beta, double &k2,
 		      double &lambda_km5, double &lambda_cgs,
 		      bool tabulate) {
   
+  tab->is_valid();
+
   if (disc.size()>0 && tabulate) {
     O2SCL_ERR2("Function tov_love::calc_y() does not yet handle ",
 	       "discontinuities when tabulate is true.",
@@ -220,7 +233,19 @@ int tov_love::calc_y(double &yR, double &beta, double &k2,
 			o2scl::exc_etol,err_nonconv);
       }
       int ois_ret=oisp->solve_final_value(x0,x1,h,1,y,yout,od);
-      if (ois_ret!=0) {
+      if (ois_ret!=0 && addl_testing) {
+	cout << "H0: " << x0 << " " << x1 << " " << h << " "
+	     << y[0] << " " << yout[0] << endl;
+	cout << "H1: ";
+	vector_out(std::cout,disc,true);
+	cout << "H2: " << tab->get_nlines() << " "
+	     << tab->get("r",0) << " "
+	     << tab->get("r",tab->get_nlines()-1) << endl;
+	cout << "H3: " << tab->get_constant("rad") << " "
+	     << tab->get_constant("mass") << endl;
+	show_ode=1;
+	oisp->verbose=1;
+	oisp->solve_final_value(x0,x1,h,1,y,yout,od);
 	O2SCL_CONV2_RET("ODE function solve_final_value() failed ",
 			" in tov_love::calc_y().",
 			o2scl::exc_efailed,err_nonconv);

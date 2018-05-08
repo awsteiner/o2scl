@@ -209,6 +209,12 @@ namespace o2scl {
   
     tov_love();
 
+    int show_ode;
+    
+    /** \brief Additional testing
+     */
+    bool addl_testing;
+    
     /** \brief If true, call the error handler if the solution does 
 	not converge (default true)
     */

@@ -1726,8 +1726,8 @@ namespace o2scl {
     
   /// Create with base interpolation object \c it
   interp_vec(size_t n, const vec_t &x, 
-		   const vec2_t &y, size_t interp_type=itp_cspline) {
-
+	     const vec2_t &y, size_t interp_type=itp_cspline) {
+    
     if (x[0]==x[n-1]) {
       O2SCL_ERR((((std::string)"Vector endpoints equal (value=")+
 		 o2scl::dtos(x[0])+") in interp_vec()::"+

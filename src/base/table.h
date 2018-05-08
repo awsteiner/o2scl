@@ -249,6 +249,8 @@ namespace o2scl {
 
     intp_set=false;
 
+    is_valid();
+    
     return;
   }
 
@@ -298,6 +300,8 @@ namespace o2scl {
       
     }
 
+    is_valid();
+    
     return *this;
   }
   //@}
@@ -1888,7 +1892,8 @@ namespace o2scl {
     aiter itx=atree.find(sx), ity=atree.find(sy);
     if (itx==atree.end() || ity==atree.end()) {
       O2SCL_ERR((((std::string)"Columns '")+sx+"' or '"+sy+
-		 "' not found in table::integ(string,double,double,string).").c_str(),
+		 "' not found in table::integ"+
+		 "(string,double,double,string).").c_str(),
 		exc_enotfound);
       return 0.0;
     }
@@ -2492,7 +2497,7 @@ namespace o2scl {
     return 0;
   }
 
-  /** \brief Return 0 if the tree and list are properly synchronized
+  /** \brief Check if the tree and list are properly synchronized
    */
   void check_synchro() const {
     if (atree.size()!=alist.size()) {
@@ -2511,6 +2516,40 @@ namespace o2scl {
       if (alist[i]->second.index!=i) {
 	O2SCL_ERR((((std::string)"Problem with index of entry ")+
 		   itos(i)+" in list in table::check_synchro().").c_str(),
+		  exc_esanity);
+	return;
+      }
+    }
+    return;
+  }
+
+  /** \brief Check if the table object appears to be valid
+   */
+  void is_valid() const {
+    if (maxlines<nlines) {
+      O2SCL_ERR2("Value of maxlines smaller than nlines ",
+		 "in table::is_valid().",exc_esanity);
+    }
+    if (atree.size()!=alist.size()) {
+      O2SCL_ERR2("Size of table and list do not match in ",
+		 "table::is_valid().",exc_esanity);
+      return;
+    }
+    for(aciter it=atree.begin();it!=atree.end();it++) {
+      if (it->second.dat.size()!=maxlines) {
+	O2SCL_ERR2("Vector with size different than maxlines ",
+		   "in table::is_valid().",exc_esanity);
+      }
+      if (it->second.index!=alist[it->second.index]->second.index) {
+	O2SCL_ERR((((std::string)"Problem with iterator for entry '")+
+		   it->first+"' in list in table::is_valid().").c_str(),
+		  exc_esanity);
+      }
+    }
+    for(int i=0;i<((int)atree.size());i++) {
+      if (alist[i]->second.index!=i) {
+	O2SCL_ERR((((std::string)"Problem with index of entry ")+
+		   itos(i)+" in list in table::is_valid().").c_str(),
 		  exc_esanity);
 	return;
       }
@@ -2755,10 +2794,6 @@ namespace o2scl {
   
   protected:
   
-  /** \brief The list of constants 
-   */
-  std::map<std::string,double> constants;
-
   /** \brief Set the elements of alist with the appropriate 
       iterators from atree. \f$ {\cal O}(C) \f$
 
@@ -2816,6 +2851,10 @@ namespace o2scl {
     return;
   }
 
+  /** \brief The list of constants 
+   */
+  std::map<std::string,double> constants;
+
   /** \brief Column structure for \ref table [protected]
 
       This struct is used internally by \ref table to organize the
@@ -2823,23 +2862,27 @@ namespace o2scl {
   */
   class col {
   public:
-  /// Pointer to column
-  vec_t dat;
-  /// Column index
-  int index;
-  col() {
-  }
-  col(const col &c) {
-    dat=c.dat;
-    index=c.index;
-  }
-  col &operator=(const col &c) {
-    if (this!=&c) {
+    /// Pointer to column
+    vec_t dat;
+    /// Column index
+    int index;
+    col() {
+    }
+    /** \brief Copy constructor 
+     */
+    col(const col &c) {
       dat=c.dat;
       index=c.index;
     }
-    return *this;
-  }
+    /** \brief Copy constructor for assignment operator
+     */
+    col &operator=(const col &c) {
+      if (this!=&c) {
+	dat=c.dat;
+	index=c.index;
+      }
+      return *this;
+    }
   };
   
   /// \name Iterator types
