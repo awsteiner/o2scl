@@ -2827,6 +2827,19 @@ namespace o2scl {
   vec_t dat;
   /// Column index
   int index;
+  col() {
+  }
+  col(const col &c) {
+    dat=c.dat;
+    index=c.index;
+  }
+  col &operator=(const col &c) {
+    if (this!=&c) {
+      dat=c.dat;
+      index=c.index;
+    }
+    return *this;
+  }
   };
   
   /// \name Iterator types
