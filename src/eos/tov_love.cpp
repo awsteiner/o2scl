@@ -217,7 +217,7 @@ int tov_love::calc_y(double &yR, double &beta, double &k2,
       if (x0>x1) {
 	O2SCL_CONV2_RET("Discontinuities too close to resolve ",
 			" in tov_love::calc_y().",
-			o2scl::exc_efailed,err_nonconv);
+			o2scl::exc_etol,err_nonconv);
       }
       int ois_ret=oisp->solve_final_value(x0,x1,h,1,y,yout,od);
       if (ois_ret!=0) {
