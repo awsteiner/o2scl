@@ -7,7 +7,7 @@
 > help create
 Usage: create <type> [...]
 
-Create an object
+Create an object.
 
 Create a new object of type <type>. For types char, double, int, size_t, and 
 string, this takes one additional argument which holds the value. For type 

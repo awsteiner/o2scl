@@ -43,12 +43,10 @@ namespace o2scl {
   /** \brief Solve an initial-value ODE problems given an adaptive ODE
       stepper
 
-      This class is experimental.
-
       This class gives several functions which solve an initial
       value ODE problem. The functions \ref solve_final_value()
-      give only the final value of the functions at the end
-      of the ODE integration and are relatively fast. 
+      gives only the final value of the functions at the end
+      of the ODE integration and is relatively fast. 
 
       The function solve_store() stores the solution of the ODE over
       the full range into a set of vectors and matrices which are
@@ -75,6 +73,26 @@ namespace o2scl {
       There is an example for the usage of this class in
       <tt>examples/ex_ode.cpp</tt> documented in the \ref ex_ode_sect
       section.
+
+      <b>Convergence error handling</b>
+      
+      There are two different convergence errors which can 
+      be controlled separately in this class. 
+      - The adaptive stepper may require too many steps. If this
+      happens, then the solver immediately stops. The solver
+      calls the error handler if \ref err_nonconv is true, and
+      otherwise it returns a non-zero value.
+      - The adaptive stepper may fail. If \ref exit_on_fail
+      is true, then the error handler is called. Otherwise,
+      the solver proceeds to continue computing the whole solution.
+      So long as the number of adaptive steps required is less
+      than \ref ntrial, then the full solution is computed and
+      a non-zero value is returned to indicate the accuracy of 
+      the solution may be impacted. If the number of adaptive
+      steps required after a failure of the adaptive stepper
+      is larger than \ref ntrial, then the behavior of the
+      solver is controlled by \ref err_nonconv as described
+      above.
 
       Documentation links for default template arguments
       - \c func_t - \ref ode_funct
@@ -731,9 +749,6 @@ namespace o2scl {
 
   /** \brief If true, stop the solution if the adaptive stepper fails
       (default true)
-      
-      If this is false, then failures in the adaptive stepper are
-      ignored.
   */
   bool exit_on_fail;
 
