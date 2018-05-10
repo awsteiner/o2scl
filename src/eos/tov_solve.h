@@ -480,15 +480,6 @@ namespace o2scl {
     virtual int integ_star(size_t ndvar, const ubvector &ndx, 
 			ubvector &ndy);
     
-    /** \brief Maximum value for central pressure in 
-	\f$ \mathrm{M}_{\odot}/\mathrm{km}^3 \f$ (default \f$ 10^{20} \f$ )
-	
-	This variable is set by the <tt>mvsr()</tt>, <tt>max()</tt>,
-	<tt>fixed()</tt> and <tt>fixed_pr()</tt>
-	functions and used in \ref integ_star() .
-    */
-    double pcent_max;
-    
 #endif
 
   public:
@@ -521,6 +512,15 @@ namespace o2scl {
 	at the surface (when \ref ang_vel is true)
     */
     double domega_rat;
+
+    /** \brief Maximum value for central pressure in 
+	\f$ \mathrm{M}_{\odot}/\mathrm{km}^3 \f$ (default \f$ 10^{20} \f$ )
+	
+	This variable is set by the <tt>mvsr()</tt>, <tt>max()</tt>,
+	<tt>fixed()</tt> and <tt>fixed_pr()</tt>
+	functions and used in \ref integ_star() .
+    */
+    double pcent_max;
     //@}
 
     /** \name Solution parameters
