@@ -67,7 +67,7 @@ rng_gsl::rng_gsl(unsigned long int lseed, const gsl_rng_type *gtype) {
   {
     this->state=calloc(1,gtype->size);
     this->type=gtype;
-    gsl_rng_set(this,seed);
+    gsl_rng_set(this,lseed);
   }
   seed=lseed;
 }
