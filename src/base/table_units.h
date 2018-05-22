@@ -611,16 +611,16 @@ namespace o2scl {
       if (!this->is_column(dest)) this->new_column(dest);
 
       typedef typename std::map<std::string,
-	typename table<vec_t>::col,std::greater<std::string> >::iterator aiter;
+	typename table<vec_t>::col,std::greater<std::string> >::iterator aiter2;
 
-      aiter its=this->atree.find(src);
+      aiter2 its=this->atree.find(src);
       if (its==this->atree.end()) {
 	O2SCL_ERR((((std::string)"Column '")+src+
 		   " not found in table_units::copy_column().").c_str(),
 		  exc_enotfound);
 	return;
       }
-      aiter itd=this->atree.find(dest);
+      aiter2 itd=this->atree.find(dest);
       if (itd==this->atree.end()) {
 	O2SCL_ERR((((std::string)"Destination column '")+dest+
 		   " not found in table_units::copy_column().").c_str(),
