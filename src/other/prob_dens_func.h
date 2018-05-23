@@ -997,7 +997,31 @@ namespace o2scl {
       \endcomment
    */
   o2scl::prob_dens_gaussian pdg;
-    
+
+  /** \brief Get the Cholesky decomposition 
+   */
+  const mat_t &get_chol() {
+    return chol;
+  }
+
+  /** \brief Get the inverse of the covariance matrix
+   */
+  const mat_t &get_covar_inv() {
+    return covar_inv;
+  }
+
+  /** \brief Get the peak location
+   */
+  const vec_t &get_peak() {
+    return peak;
+  }
+
+  /** \brief Get the normalization
+   */
+  const double &get_norm() {
+    return norm;
+  }
+
   /// The dimensionality
   virtual size_t dim() const {
     return ndim;
