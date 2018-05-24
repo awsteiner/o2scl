@@ -1160,6 +1160,8 @@ namespace o2scl {
     chol=p_chol;
     covar_inv=p_covar_inv;
     norm=p_norm;
+    q.resize(ndim);
+    vtmp.resize(ndim);
     return;
   }
 
