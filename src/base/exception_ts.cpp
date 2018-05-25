@@ -38,7 +38,7 @@ int main(void) {
   cout << err_hnd->get_str() << endl;
   try {
     O2SCL_ERR("Exception test",1);
-  } catch (std::exception) {
+  } catch (std::exception &e) {
     cout << err_hnd->get_str() << endl;
     err_hnd->reset();
   }

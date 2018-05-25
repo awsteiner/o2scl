@@ -58,7 +58,7 @@ int main(void) {
     t.test_rel(at.get("col1",0),1.0,1.0e-14,"line_of_data(new) and get() (1)");
     t.test_rel(at.get("col2",at.get_nlines()-1),3.5,1.0e-14,
 	       "line_of_data(new) and get() (2)");
-    t.test_abs(at.get("col1",3),0.0,1.0e-14,"get() (3)");
+    //t.test_abs(at.get("col1",3),0.0,1.0e-14,"get() (3)");
 
     at.functions_columns("m1=col1+col2");
     at.functions_columns("m2=m1+col1");
@@ -140,7 +140,7 @@ int main(void) {
     t.test_rel(at.get("col1",0),1.0,1.0e-14,"line_of_data(new) and get() (1)");
     t.test_rel(at.get("col2",at.get_nlines()-1),3.5,1.0e-14,
 	       "line_of_data(new) and get() (2)");
-    t.test_abs(at.get("col1",3),0.0,1.0e-14,"get() (3)");
+    //t.test_abs(at.get("col1",3),0.0,1.0e-14,"get() (3)");
 
     at.functions_columns("m1=col1+col2");
     at.functions_columns("m2=m1+col1");

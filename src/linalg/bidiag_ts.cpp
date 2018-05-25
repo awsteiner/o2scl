@@ -38,7 +38,7 @@ using namespace o2scl_linalg;
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
-int main(int argc, char *argc[]) {
+int main(int argc, char *argv[]) {
 
   cout.setf(ios::scientific);
 
