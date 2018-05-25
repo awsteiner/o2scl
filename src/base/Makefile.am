@@ -270,5 +270,5 @@ o2scl-test-rec: $(TEST_VAR)
 	echo "src/base" $(TEST_VAR) >> ../../testlist
 
 test-clean:
-	-rm *_ts.o *_ts *.scr
+	-rm -f *_ts.o *_ts *.scr
 
