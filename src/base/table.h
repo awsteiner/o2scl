@@ -417,8 +417,18 @@ namespace o2scl {
       O2SCL_ERR((((std::string)"Column '")+scol+
 		 "' not found in table::get(string,size_t).").c_str(),
 		exc_enotfound);
-      tmp=0.0;
     } else {
+      if (row>=nlines) {
+	std::string err=((std::string)"Row out of range, ")+
+	itos(row)+">="+itos(nlines)+", in table::get(string,size_t).";
+	O2SCL_ERR(err.c_str(),exc_einval);
+      }
+#if !O2SCL_NO_RANGE_CHECK
+      if (row>=it->second.dat.size()) {
+	O2SCL_ERR("Vector size failure in table::get().",
+		  exc_esanity);
+      }
+#endif
       tmp=it->second.dat[row];
     }
     return tmp;
@@ -432,13 +442,11 @@ namespace o2scl {
       std::string err=((std::string)"Column out of range, ")+
       itos(icol)+">="+itos(atree.size())+", in table::get(size_t,size_t).";
       O2SCL_ERR(err.c_str(),exc_einval);
-      return 0.0;
     }
     if (row>=nlines) {
       std::string err=((std::string)"Row out of range, ")+
       itos(row)+">="+itos(nlines)+", in table::get(size_t,size_t).";
       O2SCL_ERR(err.c_str(),exc_einval);
-      return 0.0;
     }
     return alist[icol]->second.dat[row];
   }
@@ -538,7 +546,7 @@ namespace o2scl {
       
     int i;
     aciter it;
-    row.allocate(atree.size());
+    row.resize(atree.size());
     for(i=0,it=atree.begin();it!=atree.end();it++,i++) {
       row[i]=(it->second.dat)[irow];
     }
