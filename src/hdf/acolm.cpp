@@ -4399,7 +4399,7 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
 
       // Perform the interpolation
       bool found=false;
-      double level;
+      double level=0.0;
       for(size_t k=0;k<N-1;k++) {
 	if (integy[k]>target && integy[k+1]<target) {
 	  found=true;
@@ -4407,17 +4407,17 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
 	    (integy[k+1]-integy[k]);
 	}
       }
-      if (verbose>1) {
-	cout << "found: " << level << endl;
-      }
-
+      
       // Return if the interpolation failed
       if (found==false) {
 	cerr << "Failed to find a level matching requested fraction."
 	     << endl;
 	return 2;
       }
-
+      
+      if (verbose>1) {
+	cout << "Found: " << level << endl;
+      }
       // Set level from interpolated value
       levs[0]=level;
       

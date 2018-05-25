@@ -417,6 +417,7 @@ namespace o2scl {
       O2SCL_ERR((((std::string)"Column '")+scol+
 		 "' not found in table::get(string,size_t).").c_str(),
 		exc_enotfound);
+      return 0.0;
     } else {
       if (row>=nlines) {
 	std::string err=((std::string)"Row out of range, ")+
