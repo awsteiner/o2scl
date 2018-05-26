@@ -398,7 +398,7 @@ namespace o2scl {
   template<class size_vec_t> void set_row(size_t row, size_vec_t &v) {
     if (row>=get_nlines()) {
       std::string err=((std::string)"Row out of range, ")+
-      itos(row)+">="+itos(get_nlines())+", in table::set_row().";
+      szttos(row)+">="+szttos(get_nlines())+", in table::set_row().";
       O2SCL_ERR(err.c_str(),exc_einval);
     }
     for(size_t i=0;i<get_ncolumns() && i<v.size();i++) {
@@ -421,7 +421,7 @@ namespace o2scl {
     } else {
       if (row>=nlines) {
 	std::string err=((std::string)"Row out of range, ")+
-	itos(row)+">="+itos(nlines)+", in table::get(string,size_t).";
+	szttos(row)+">="+szttos(nlines)+", in table::get(string,size_t).";
 	O2SCL_ERR(err.c_str(),exc_einval);
       }
 #if !O2SCL_NO_RANGE_CHECK
@@ -441,12 +441,12 @@ namespace o2scl {
   double get(size_t icol, size_t row) const {
     if (icol>=atree.size()) {
       std::string err=((std::string)"Column out of range, ")+
-      itos(icol)+">="+itos(atree.size())+", in table::get(size_t,size_t).";
+      szttos(icol)+">="+szttos(atree.size())+", in table::get(size_t,size_t).";
       O2SCL_ERR(err.c_str(),exc_einval);
     }
     if (row>=nlines) {
       std::string err=((std::string)"Row out of range, ")+
-      itos(row)+">="+itos(nlines)+", in table::get(size_t,size_t).";
+      szttos(row)+">="+szttos(nlines)+", in table::get(size_t,size_t).";
       O2SCL_ERR(err.c_str(),exc_einval);
     }
     return alist[icol]->second.dat[row];
@@ -539,7 +539,7 @@ namespace o2scl {
   void get_row(size_t irow, resize_vec_t &row) const {
       
     if (irow+1>nlines) {
-      O2SCL_ERR((((std::string)"Row '")+ itos(irow)+
+      O2SCL_ERR((((std::string)"Row '")+ szttos(irow)+
 		 "' not found in table::get_row(size_t,vec_t).").c_str(),
 		exc_enotfound);
       return;
@@ -809,7 +809,7 @@ namespace o2scl {
    */
   std::string get_column_name(size_t icol) const {
     if (icol+1>atree.size()) {
-      O2SCL_ERR((((std::string)"Index '")+o2scl::itos(icol)+
+      O2SCL_ERR((((std::string)"Index '")+o2scl::szttos(icol)+
 		 " larger than number of "+
 		 "columns in table::get_column_name().").c_str(),
 		exc_enotfound);
