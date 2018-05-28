@@ -88,6 +88,16 @@ namespace o2scl {
       of data points) without a new call to \ref set_data(). Also, the
       automatically-determined length scales may need to be recomputed
       by calling \ref auto_scale().
+
+      Increasing the value of \c n_extra away from zero allows the
+      interpolation to ignore points in the data set which are
+      degenerate because they are too close to each other. Points with
+      a distance (normalized by the scales) less than \ref min_dist
+      are automatically considered degenerate and only the single
+      point closest to the requested coordinate is considered.
+      Increasing the value of \c n_extra increases the computational
+      time required to compute the nearest points which are
+      nondegenerate.
   */
   template<class vec_t> class interpm_idw {
 
@@ -105,12 +115,24 @@ namespace o2scl {
       scales[0]=1.0;
       order=3;
       verbose=0;
+      n_extra=0;
+      min_dist=1.0e-6;
     }
 
     /** \brief Verbosity parameter (default 0)
      */
     int verbose;
 
+    /** \brief The number of extra nearest neighbors
+	to include to avoid degeneracies (default 0)
+     */
+    size_t n_extra;
+
+    /** \brief The minimum distance to consider points as
+	non-degenerate (default \f$ 10^{-6} \f$ )
+    */
+    double min_dist;
+    
     /** \brief Set the number of closest points to use
 	for each interpolation (default 3)
     */
@@ -254,8 +276,26 @@ namespace o2scl {
       // Find closest points
       std::vector<size_t> index;
       o2scl::vector_smallest_index<std::vector<double>,double,
-	std::vector<size_t> >(dists,order,index);
+	std::vector<size_t> >(dists,order+n_extra,index);
 
+      if (n_extra>0) {
+	// Remove degenerate points to ensure accurate interpolation
+	bool found=true;
+	while (found==true) {
+	  found=false;
+	  // Find degenerate points and remove them
+	  for(size_t j=0;j<order+n_extra;j++) {
+	    for(size_t k=j;k<order+n_extra;k++) {
+	      double dist_jk=dist(j,k);
+	      if (index.size()>order && dist_jk<min_dist) {
+		found=true;
+		index.erase(index.begin()+j);
+	      }
+	    }
+	  }
+	}
+      }
+      
       // Check if the closest distance is zero
       if (dists[index[0]]<=0.0) {
 	return ptrs[nd_in][index[0]];
@@ -298,8 +338,26 @@ namespace o2scl {
       // Find closest points
       std::vector<size_t> index;
       o2scl::vector_smallest_index<std::vector<double>,double,
-	std::vector<size_t> >(dists,order+1,index);
+	std::vector<size_t> >(dists,order+1+n_extra,index);
 
+      if (n_extra>0) {
+	// Remove degenerate points to ensure accurate interpolation
+	bool found=true;
+	while (found==true) {
+	  found=false;
+	  // Find degenerate points and remove them
+	  for(size_t j=0;j<order+1+n_extra;j++) {
+	    for(size_t k=j;k<order+1+n_extra;k++) {
+	      double dist_jk=dist(j,k);
+	      if (index.size()>order+1 && dist_jk<min_dist) {
+		found=true;
+		index.erase(index.begin()+j);
+	      }
+	    }
+	  }
+	}
+      }
+      
       if (dists[index[0]]<=0.0) {
 
 	// If the closest distance is zero, just set the value
@@ -377,6 +435,24 @@ namespace o2scl {
 	}
       }
       
+      if (n_extra>0) {
+	// Remove degenerate points to ensure accurate interpolation
+	bool found=true;
+	while (found==true) {
+	  found=false;
+	  // Find degenerate points and remove them
+	  for(size_t j=0;j<order+n_extra;j++) {
+	    for(size_t k=j;k<order+n_extra;k++) {
+	      double dist_jk=dist(j,k);
+	      if (index.size()>order && dist_jk<min_dist) {
+		found=true;
+		index.erase(index.begin()+j);
+	      }
+	    }
+	  }
+	}
+      }
+      
       // Check if the closest distance is zero, if so, just
       // return the value
       if (dists[index[0]]<=0.0) {
@@ -434,6 +510,10 @@ namespace o2scl {
     
     /** \brief Perform the interpolation over all the functions
 	with uncertainties
+
+	The vector \c index is automatically resized to
+	a size equal to n_order+1+n_extra
+	be larger than 
     */
     template<class vec2_t, class vec3_t, class vec4_t>
       void eval_err_index(const vec2_t &x, vec3_t &val, vec4_t &err,
@@ -450,9 +530,28 @@ namespace o2scl {
 	dists[i]=dist(i,x);
       }
 
-      // Find closest points
+      // Find closest points, note that index is automatically resized
+      // by the vector_smallest_index function
       o2scl::vector_smallest_index<std::vector<double>,double,
-	std::vector<size_t> >(dists,order+1,index);
+	std::vector<size_t> >(dists,order+1+n_extra,index);
+
+      if (n_extra>0) {
+	// Remove degenerate points to ensure accurate interpolation
+	bool found=true;
+	while (found==true) {
+	  found=false;
+	  // Find degenerate points and remove them
+	  for(size_t j=0;j<order+1+n_extra;j++) {
+	    for(size_t k=j;k<order+1+n_extra;k++) {
+	      double dist_jk=dist(j,k);
+	      if (index.size()>order+1 && dist_jk<min_dist) {
+		found=true;
+		index.erase(index.begin()+j);
+	      }
+	    }
+	  }
+	}
+      }
 
       if (dists[index[0]]<=0.0) {
 
@@ -489,9 +588,9 @@ namespace o2scl {
 	    
 	  }
 
-	  // Instead of using the average, we report the
-	  // value as the last element in the array, which
-	  // is the interpolated value from the closest points
+	  // Instead of using the average, we report the value as the
+	  // last element in the array, which is the interpolated
+	  // value from the closest points
 	  val[k]=vals[order];
 	  
 	  err[k]=o2scl::vector_stddev(vals);
@@ -717,13 +816,27 @@ namespace o2scl {
     /// Number of points to include in each interpolation (default 3)
     size_t order;
     
-    /// Compute the distance between \c x and the point at index \c index
+    /** \brief Compute the distance between \c x and the point at
+	index \c index
+    */
     template<class vec2_t> double dist(size_t index,
 				       const vec2_t &x) const {
       double ret=0.0;
       size_t nscales=scales.size();
       for(size_t i=0;i<nd_in;i++) {
 	ret+=pow((x[i]-ptrs[i][index])/scales[i%nscales],2.0);
+      }
+      return sqrt(ret);
+    }
+
+    /** \brief Compute the distance between two points in the
+	data set
+     */
+    double dist(size_t j, size_t k) const {
+      double ret=0.0;
+      size_t nscales=scales.size();
+      for(size_t i=0;i<nd_in;i++) {
+	ret+=pow((ptrs[i][j]-ptrs[i][k])/scales[i%nscales],2.0);
       }
       return sqrt(ret);
     }

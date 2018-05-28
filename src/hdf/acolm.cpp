@@ -6672,9 +6672,16 @@ int acol_manager::comm_sort(std::vector<std::string> &sv, bool itive_com) {
     table_obj.sort_table(i1);
     
     if (unique) {
-      std::cout << "Going to dir." << std::endl;
+      if (verbose>0) {
+	std::cout << "Making sort unique by deleting identical rows. "
+		  << "Starting with " << table_obj.get_nlines() << " rows."
+		  << std::endl;
+      }
       table_obj.delete_idadj_rows();
-      std::cout << "Done in dir." << std::endl;
+      if (verbose>0) {
+	std::cout << "Done. Now " << table_obj.get_nlines() << " rows."
+		  << std::endl;
+      }
     }
 
   } else if (type=="double[]") {

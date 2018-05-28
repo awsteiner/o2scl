@@ -43,9 +43,9 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
-    rng_gsl rg;
-
-    // Construct the data
+  rng_gsl rg;
+  
+  // Construct the data
   ubvector x(8), y(8), dp(8);
   
   x[0]=1.04; y[0]=0.02; 
