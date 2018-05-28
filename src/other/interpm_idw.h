@@ -48,15 +48,22 @@ namespace o2scl {
   /** \brief Multi-dimensional interpolation by inverse distance
       weighting
 
+      This class is experimental, particularly the evaluation of
+      derivatives.
+
       This class performs interpolation on a multi-dimensional data
       set specified as a series of scattered points using the inverse
-      distance-weighted average of nearby points. The function \ref
-      set_data() takes as input: the number of input dimensions, the
-      number of output functions, the number of points which specify
-      the data, and a "vector of vectors" which contains the data for
-      all the points. The vector of vectors must be of a type which
-      allows std::swap on individual elements (which are of type
-      <tt>vec_t</tt>).
+      distance-weighted average of nearby points. This should be
+      superior to Gaussian process interpolation as the typical
+      distance betweeen samples becomes smaller than the correlation
+      length. (?)
+
+      The function \ref set_data() takes as input: the number of input
+      dimensions, the number of output functions, the number of points
+      which specify the data, and a "vector of vectors" which contains
+      the data for all the points. The vector of vectors must be of a
+      type which allows std::swap on individual elements (which are of
+      type <tt>vec_t</tt>).
 
       The "order" of the interpolation, i.e. the number of nearby
       points which are averaged, defaults to 3 and can be changed
@@ -619,6 +626,9 @@ namespace o2scl {
 	set_order() and always chooses to average derivative
 	calculations determined from \c n_in+1 combinations of \c n_in
 	points .
+
+	\todo Use the mechanism provided by <tt>n_extra</tt> above
+	to remove degenerate points. 
 
 	\future This function requires an extra copy from
 	"ders" to "ders2" which could be removed.

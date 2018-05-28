@@ -309,7 +309,6 @@ namespace o2scl {
     // Loop over all output functions
     for(size_t iout=0;iout<nd_out;iout++) {
 
-
       // Find points closest to requested point, as defined
       // by the negative covariance for this output function
       ubvector dists(np);
