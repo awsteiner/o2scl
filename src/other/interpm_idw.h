@@ -105,6 +105,8 @@ namespace o2scl {
       Increasing the value of \c n_extra increases the computational
       time required to compute the nearest points which are
       nondegenerate.
+
+      \future Share code between the various functions
   */
   template<class vec_t> class interpm_idw {
 
@@ -139,7 +141,9 @@ namespace o2scl {
 	non-degenerate (default \f$ 10^{-6} \f$ )
     */
     double min_dist;
-    
+
+    /// \name Get and set functions
+    //@{
     /** \brief Set the number of closest points to use
 	for each interpolation (default 3)
     */
@@ -258,7 +262,10 @@ namespace o2scl {
       set_data(n_in,1,n_points,vecs,auto_scale);
       return;
     }
+    //@}
 
+    /// \name Evaluate interpolation
+    //@{
     /** \brief Perform the interpolation over the first function
      */
     template<class vec2_t> double operator()(const vec2_t &x) const {
@@ -617,7 +624,10 @@ namespace o2scl {
       std::vector<size_t> index;
       return eval_err_index(x,val,err,index);
     }
-    
+    //@}
+
+    /// \name Evaluate derivatives
+    //@{
     /** \brief For one of the functions, compute the partial
 	derivatives (and uncertainties) with respect to all of the
 	inputs at one data point
@@ -805,14 +815,12 @@ namespace o2scl {
       
       return;
     }
+    //@}
     
 #ifndef DOXYGEN_INTERNAL
     
   protected:
     
-    /// Distance scales for each coordinate
-    ubvector scales;
-
     /// The number of points
     size_t np;
     /// The number of dimensions of the inputs
@@ -825,7 +833,12 @@ namespace o2scl {
     bool data_set;
     /// Number of points to include in each interpolation (default 3)
     size_t order;
-    
+
+    /// \name Distance determination [protected]
+    //@{
+    /// Distance scales for each coordinate
+    ubvector scales;
+
     /** \brief Compute the distance between \c x and the point at
 	index \c index
     */
@@ -850,6 +863,7 @@ namespace o2scl {
       }
       return sqrt(ret);
     }
+    //@}
     
 #endif
     
