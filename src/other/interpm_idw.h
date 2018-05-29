@@ -65,14 +65,12 @@ namespace o2scl {
       type which allows std::swap on individual elements (which are of
       type <tt>vec_t</tt>).
 
-      The "order" of the interpolation, i.e. the number of nearby
-      points which are averaged, defaults to 3 and can be changed
-      by \ref set_order(). To obtain interpolation uncertainties,
-      this class finds the nearest <tt>order+1</tt> points and 
-      returns the standard deviation of the interpolated value
-      over all of the subsets of <tt>order</tt> points.
-      The value <tt>order=1</tt> corresponds to nearest-neighbor
-      interpolation.
+      The number of nearby points which are averaged defaults to 3 and
+      can be changed by \ref set_points(). To obtain interpolation
+      uncertainties, this class finds one additional nearby point and
+      returns the standard deviation of the interpolated value for all
+      subsets which are missing one nearby point. One-point
+      interpolation corresponds to nearest-neighbor interpolation.
 
       This class requires a distance metric to weight the
       interpolation, and a Euclidean distance is used. By default, the
@@ -108,8 +106,9 @@ namespace o2scl {
 
       \future Share code between the various functions
   */
-  template<class vec_t> class interpm_idw {
-
+  template<class vec_t=boost::numeric::ublas::vector<double> >
+    class interpm_idw {
+    
   protected:
 
   public:
@@ -122,7 +121,7 @@ namespace o2scl {
       data_set=false;
       scales.resize(1);
       scales[0]=1.0;
-      order=3;
+      points=3;
       verbose=0;
       n_extra=0;
       min_dist=1.0e-6;
@@ -147,12 +146,12 @@ namespace o2scl {
     /** \brief Set the number of closest points to use
 	for each interpolation (default 3)
     */
-    void set_order(size_t n) {
+    void set_points(size_t n) {
       if (n==0) {
-	O2SCL_ERR("Order cannot be zero in interpm_idw.",
+	O2SCL_ERR("Points cannot be zero in interpm_idw.",
 		  o2scl::exc_einval);
       }
-      order=n;
+      points=n;
       return;
     }
 
@@ -290,7 +289,7 @@ namespace o2scl {
       // Find closest points
       std::vector<size_t> index;
       o2scl::vector_smallest_index<std::vector<double>,double,
-	std::vector<size_t> >(dists,order+n_extra,index);
+	std::vector<size_t> >(dists,points+n_extra,index);
 
       if (n_extra>0) {
 	// Remove degenerate points to ensure accurate interpolation
@@ -298,10 +297,10 @@ namespace o2scl {
 	while (found==true) {
 	  found=false;
 	  // Find degenerate points and remove them
-	  for(size_t j=0;j<order+n_extra;j++) {
-	    for(size_t k=j;k<order+n_extra;k++) {
+	  for(size_t j=0;j<points+n_extra;j++) {
+	    for(size_t k=j;k<points+n_extra;k++) {
 	      double dist_jk=dist(j,k);
-	      if (index.size()>order && dist_jk<min_dist) {
+	      if (index.size()>points && dist_jk<min_dist) {
 		found=true;
 		index.erase(index.begin()+j);
 	      }
@@ -317,13 +316,13 @@ namespace o2scl {
 
       // Compute normalization
       double norm=0.0;
-      for(size_t i=0;i<order;i++) {
+      for(size_t i=0;i<points;i++) {
 	norm+=1.0/dists[index[i]];
       }
 
       // Compute the inverse-distance weighted average
       double ret=0.0;
-      for(size_t i=0;i<order;i++) {
+      for(size_t i=0;i<points;i++) {
 	ret+=ptrs[nd_in][index[i]]/dists[index[i]];
       }
       ret/=norm;
@@ -352,7 +351,7 @@ namespace o2scl {
       // Find closest points
       std::vector<size_t> index;
       o2scl::vector_smallest_index<std::vector<double>,double,
-	std::vector<size_t> >(dists,order+1+n_extra,index);
+	std::vector<size_t> >(dists,points+1+n_extra,index);
 
       if (n_extra>0) {
 	// Remove degenerate points to ensure accurate interpolation
@@ -360,10 +359,10 @@ namespace o2scl {
 	while (found==true) {
 	  found=false;
 	  // Find degenerate points and remove them
-	  for(size_t j=0;j<order+1+n_extra;j++) {
-	    for(size_t k=j;k<order+1+n_extra;k++) {
+	  for(size_t j=0;j<points+1+n_extra;j++) {
+	    for(size_t k=j;k<points+1+n_extra;k++) {
 	      double dist_jk=dist(j,k);
-	      if (index.size()>order+1 && dist_jk<min_dist) {
+	      if (index.size()>points+1 && dist_jk<min_dist) {
 		found=true;
 		index.erase(index.begin()+j);
 	      }
@@ -381,19 +380,19 @@ namespace o2scl {
 
       } else {
 
-	std::vector<double> vals(order+1);
+	std::vector<double> vals(points+1);
 
-	for(size_t j=0;j<order+1;j++) {
+	for(size_t j=0;j<points+1;j++) {
 
 	  // Compute normalization
 	  double norm=0.0;
-	  for(size_t i=0;i<order+1;i++) {
+	  for(size_t i=0;i<points+1;i++) {
 	    if (i!=j) norm+=1.0/dists[index[i]];
 	  }
 	  
 	  // Compute the inverse-distance weighted average
 	  vals[j]=0.0;
-	  for(size_t i=0;i<order+1;i++) {
+	  for(size_t i=0;i<points+1;i++) {
 	    if (i!=j) {
 	      vals[j]+=ptrs[nd_in][index[i]]/dists[index[i]];
 	    }
@@ -402,7 +401,7 @@ namespace o2scl {
 
 	}
 
-	val=vals[order];
+	val=vals[points];
 	err=o2scl::vector_stddev(vals);
 
       }
@@ -438,9 +437,9 @@ namespace o2scl {
       // Find closest points
       std::vector<size_t> index;
       o2scl::vector_smallest_index<std::vector<double>,double,
-	std::vector<size_t> >(dists,order,index);
+	std::vector<size_t> >(dists,points,index);
       if (verbose>0) {
-	for(size_t i=0;i<order;i++) {
+	for(size_t i=0;i<points;i++) {
 	  std::cout << "interpm_idw: closest point: ";
 	  for(size_t k=0;k<nd_in;k++) {
 	    std::cout << ptrs[k][index[i]] << " ";
@@ -455,10 +454,10 @@ namespace o2scl {
 	while (found==true) {
 	  found=false;
 	  // Find degenerate points and remove them
-	  for(size_t j=0;j<order+n_extra;j++) {
-	    for(size_t k=j;k<order+n_extra;k++) {
+	  for(size_t j=0;j<points+n_extra;j++) {
+	    for(size_t k=j;k<points+n_extra;k++) {
 	      double dist_jk=dist(j,k);
-	      if (index.size()>order && dist_jk<min_dist) {
+	      if (index.size()>points && dist_jk<min_dist) {
 		found=true;
 		index.erase(index.begin()+j);
 	      }
@@ -484,7 +483,7 @@ namespace o2scl {
 
       // Compute normalization
       double norm=0.0;
-      for(size_t i=0;i<order;i++) {
+      for(size_t i=0;i<points;i++) {
 	norm+=1.0/dists[index[i]];
       }
       if (verbose>0) {
@@ -494,7 +493,7 @@ namespace o2scl {
       // Compute the inverse-distance weighted averages
       for(size_t j=0;j<nd_out;j++) {
 	y[j]=0.0;
-	for(size_t i=0;i<order;i++) {
+	for(size_t i=0;i<points;i++) {
 	  if (j==0 && verbose>0) {
 	    std::cout << "interpm_idw: Point: ";
 	    for(size_t k=0;k<nd_in;k++) {
@@ -504,7 +503,7 @@ namespace o2scl {
 	  }
 	  y[j]+=ptrs[nd_in+j][index[i]]/dists[index[i]];
 	  if (verbose>0) {
-	    std::cout << "interpm_idw: j,order,value,1/dist: "
+	    std::cout << "interpm_idw: j,points,value,1/dist: "
 		      << j << " " << i << " "
 		      << ptrs[nd_in+j][index[i]] << " "
 		      << 1.0/dists[index[i]] << std::endl;
@@ -526,7 +525,7 @@ namespace o2scl {
 	with uncertainties
 
 	The vector \c index is automatically resized to
-	a size equal to n_order+1+n_extra
+	a size equal to n_points+1+n_extra
 	be larger than 
     */
     template<class vec2_t, class vec3_t, class vec4_t>
@@ -547,7 +546,7 @@ namespace o2scl {
       // Find closest points, note that index is automatically resized
       // by the vector_smallest_index function
       o2scl::vector_smallest_index<std::vector<double>,double,
-	std::vector<size_t> >(dists,order+1+n_extra,index);
+	std::vector<size_t> >(dists,points+1+n_extra,index);
 
       if (n_extra>0) {
 	// Remove degenerate points to ensure accurate interpolation
@@ -555,10 +554,10 @@ namespace o2scl {
 	while (found==true) {
 	  found=false;
 	  // Find degenerate points and remove them
-	  for(size_t j=0;j<order+1+n_extra;j++) {
-	    for(size_t k=j;k<order+1+n_extra;k++) {
+	  for(size_t j=0;j<points+1+n_extra;j++) {
+	    for(size_t k=j;k<points+1+n_extra;k++) {
 	      double dist_jk=dist(j,k);
-	      if (index.size()>order+1 && dist_jk<min_dist) {
+	      if (index.size()>points+1 && dist_jk<min_dist) {
 		found=true;
 		index.erase(index.begin()+j);
 	      }
@@ -581,19 +580,19 @@ namespace o2scl {
 	
 	for(size_t k=0;k<nd_out;k++) {
 	  
-	  std::vector<double> vals(order+1);
+	  std::vector<double> vals(points+1);
 	  
-	  for(size_t j=0;j<order+1;j++) {
+	  for(size_t j=0;j<points+1;j++) {
 	    
 	    // Compute normalization
 	    double norm=0.0;
-	    for(size_t i=0;i<order+1;i++) {
+	    for(size_t i=0;i<points+1;i++) {
 	      if (i!=j) norm+=1.0/dists[index[i]];
 	    }
 	    
 	    // Compute the inverse-distance weighted average
 	    vals[j]=0.0;
-	    for(size_t i=0;i<order+1;i++) {
+	    for(size_t i=0;i<points+1;i++) {
 	      if (i!=j) {
 		vals[j]+=ptrs[nd_in+k][index[i]]/dists[index[i]];
 	      }
@@ -605,7 +604,7 @@ namespace o2scl {
 	  // Instead of using the average, we report the value as the
 	  // last element in the array, which is the interpolated
 	  // value from the closest points
-	  val[k]=vals[order];
+	  val[k]=vals[points];
 	  
 	  err[k]=o2scl::vector_stddev(vals);
 	  
@@ -632,8 +631,8 @@ namespace o2scl {
 	derivatives (and uncertainties) with respect to all of the
 	inputs at one data point
 
-	\note This function ignores the order chosen by \ref
-	set_order() and always chooses to average derivative
+	\note This function ignores the points chosen by \ref
+	set_points() and always chooses to average derivative
 	calculations determined from \c n_in+1 combinations of \c n_in
 	points .
 
@@ -832,7 +831,7 @@ namespace o2scl {
     /// True if the data has been specified
     bool data_set;
     /// Number of points to include in each interpolation (default 3)
-    size_t order;
+    size_t points;
 
     /// \name Distance determination [protected]
     //@{

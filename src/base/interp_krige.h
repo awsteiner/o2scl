@@ -55,8 +55,8 @@ namespace o2scl {
       See also the \ref intp_section section of the \o2 User's guide. 
 
       \note The function \ref set() stores a pointer to the covariance
-      function so it cannot go out of scope before any of the
-      interpolation functions are called.
+      function and its derivatives and integrals so they cannot go out
+      of scope before any of the interpolation functions are called.
 
       \note This class is experimental.
   */
@@ -113,7 +113,7 @@ namespace o2scl {
     }
 
     /** \brief Initialize interpolation routine, specifying derivatives
-	and integrals
+	and integrals [not yet implemented]
     */
     virtual void set_covar_di_noise(size_t n_dim, const vec_t &x,
 				    const vec_t &y, covar_func_t &fcovar,
@@ -121,6 +121,8 @@ namespace o2scl {
 				    covar_func_t &fderiv2,
 				    covar_func_t &finteg,
 				    double noise_var) {
+      O2SCL_ERR("Function set_covar_di_noise not yet implemented.",
+		o2scl::exc_eunimpl);
       return;
     }
     

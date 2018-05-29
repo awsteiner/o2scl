@@ -21,7 +21,7 @@
   -------------------------------------------------------------------
 */
 
-/* Example: ex_twod_intp.cpp
+/* Example: ex_interp2.cpp
    -------------------------------------------------------------------
    A simple example for two-dimensional interpolation using
    the interp_twod class.

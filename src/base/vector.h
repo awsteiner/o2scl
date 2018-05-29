@@ -2314,6 +2314,8 @@ namespace o2scl {
   
   /** \brief From a given vector, create a new vector by removing a
       specified element
+
+      This funciton is used in \ref o2scl::interp_krige_optim::qual_fun() .
    */
   template<class vec_t, class vec2_t> 
     void vector_copy_jackknife(const vec_t &src, size_t iout, vec2_t &dest) {
