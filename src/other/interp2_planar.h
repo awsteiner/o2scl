@@ -42,6 +42,8 @@ namespace o2scl {
 
   /** \brief Interpolate among two independent variables with planes
 
+      \note This class is experimental.
+
       This class performs planar interpolation when the data points
       are not arranged in a specified order (i.e. not on a grid). For
       a set of data \f$ {x_i,y_i,f_i} \f$, the value of \f$ f \f$ is
@@ -87,6 +89,11 @@ namespace o2scl {
       three closest points are colinear, then the data are sorted
       by distance [ \f$ {\cal O}(N \log N) \f$ ], and the closest
       triplets are enumerated until a non-colinear triplet is found.
+
+      \note I believe this interpolation is a bit unstable because it
+      doesn't ensure that the user-specified objective point is inside
+      the region determined by the three closest data points, and this
+      can lead to some strong extrapolation.
 
       \future Make a parent class for this and \ref o2scl::interp2_neigh.
   */
