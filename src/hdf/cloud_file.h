@@ -117,25 +117,24 @@ namespace o2scl_hdf {
     int hdf5_open_hash_subdir(hdf_file &hf, std::string file, std::string hash,
 			     std::string subdir, std::string url,
 			     std::string dir="");
-			     
 
     /** \brief Get file named \c file in directory \c dir 
 	from url \c url
     */
     int get_file(std::string file, std::string url,
-		 std::string &fname, std::string dir="");
+		 std::string &fname, std::string dir="./");
     
     /** \brief Get file named \c file in directory \c dir 
 	in subdirectory \c subdir from url \c url
      */
     int get_file_hash(std::string file, std::string hash, std::string url,
-		      std::string &fname, std::string dir="");
+		      std::string &fname, std::string dir="./");
     
     /** \brief Get file named \c file in directory \c dir 
 	in subdirectory \c subdir from url \c url
     */
     int get_file_subdir(std::string file, std::string subdir, std::string url,
-			std::string &fname, std::string dir="");
+			std::string &fname, std::string dir="./");
     
     /** \brief Get file named \c file in directory \c dir 
 	in subdirectory \c subdir from url \c url
@@ -153,7 +152,7 @@ namespace o2scl_hdf {
     */
     int get_file_hash_subdir(std::string file, std::string hash,
 			    std::string subdir, std::string url,
-			    std::string &fname, std::string dir="");
+			    std::string &fname, std::string dir="./");
 
   };
   

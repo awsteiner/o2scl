@@ -46,7 +46,6 @@
 #include <o2scl/prob_dens_func.h>
 #include <o2scl/vector.h>
 #include <o2scl/multi_funct.h>
-#include <o2scl/interpm_idw.h>
 #include <o2scl/vec_stats.h>
 #include <o2scl/cli.h>
 
@@ -1601,9 +1600,6 @@ namespace o2scl {
   */
   std::vector<int> walker_reject_rows;
 
-  /// Likelihood estimator
-  interpm_idw<double *> esti;
-
   /** \brief Initial write to HDF5 file 
    */
   virtual void file_header(o2scl_hdf::hdf_file &hf) {
@@ -1716,7 +1712,6 @@ namespace o2scl {
       hf.set_szt("n_threads",this->n_threads);
       hf.set_szt("n_params",this->n_params);
       hf.seti("always_accept",this->always_accept);
-      hf.seti("allow_estimates",allow_estimates);
       hf.setd_vec_copy("low",this->low_copy);
       hf.setd_vec_copy("high",this->high_copy);
       file_header(hf);
@@ -1758,15 +1753,11 @@ namespace o2scl {
     return;
   }
   
-  /// If true, allow estimates of the weight (default false)
-  bool allow_estimates;
-
   /** \brief If true, store MCMC rejections in the table
    */
   bool store_rejects;
   
   mcmc_para_table() {
-    allow_estimates=false;
     table_io_chunk=1;
     file_update_iters=0;
     file_update_time=0.0;

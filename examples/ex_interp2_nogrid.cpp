@@ -58,8 +58,17 @@ int main(void) {
   rng_gsl rg;
   rg.set_seed(10);
 
-  for(size_t k=0;k<2;k++) {
+  cout << "        "
+       << "i2n        "
+       << "i2p        "
+       << "imw1       "
+       << "imw3       "
+       << "imw5       "
+       << "amr1       "
+       << "amr2       " << endl;
   
+  for(size_t k=0;k<2;k++) {
+    
     // Create the sample data
     size_t N;
     if (k==0) N=100;
@@ -83,7 +92,7 @@ int main(void) {
 		      "interpm_idw1 interpm_idw3 "+
 		      "interpm_idw5 prob_dens_mdim_amr1 prob_dens_mdim_amr2");
   
-    // Initialize interpolation objects
+    // Various rearrangments of the data
 
     const double *dx=&(tdata["x"][0]);
     const double *dy=&(tdata["y"][0]);
@@ -91,7 +100,10 @@ int main(void) {
     vector<const double *> darr(3);
     std::vector<double> low={0.0,0.0};
     std::vector<double> high={4.0,4.0};
+    matrix_view_table<std::vector<double> > mvt(tdata,{"x","y","z"});
 
+    // Initialize interpolation objects
+    
     interp2_neigh<const double *> i2n;
     i2n.set_data(N,dx,dy,dz);
 
@@ -113,30 +125,16 @@ int main(void) {
 
     prob_dens_mdim_amr<> pdma1;
     pdma1.set(low,high);
-    matrix_view_table<std::vector<double> > mvt(tdata,{"x","y","z"});
     pdma1.initial_parse(mvt);
-    for(size_t j=0;j<100;j++) {
-      std::vector<double> arr={tdata.get("x",j),
-			       tdata.get("y",j)};
-      typedef prob_dens_mdim_amr<>::hypercube hc;
-      const hc &h=pdma1.find_hc(arr);
-      cout.width(2);
-      cout << j << " ";
-      cout.setf(ios::showpos);
-      cout << tdata.get("x",j) << " "
-	   << tdata.get("y",j) << " ";
-      cout << tdata.get("z",j) << " " << h.weight << endl;
-      cout.unsetf(ios::showpos);
-    }
-    //exit(-1);
 
     prob_dens_mdim_amr<> pdma2;
     pdma2.dim_choice=prob_dens_mdim_amr<>::random;
     pdma2.set(low,high);
     pdma2.initial_parse(mvt);
 
-    double qual[7];
-    for(size_t i=0;i<7;i++) qual[i]=0.0;
+    static const size_t n_methods=7;
+    double qual[n_methods];
+    for(size_t i=0;i<n_methods;i++) qual[i]=0.0;
 
     for(size_t i=0;i<t3d.get_nx();i++) {
       for(size_t j=0;j<t3d.get_ny();j++) {
@@ -173,7 +171,7 @@ int main(void) {
     if (k==0) cout << "N=100:  ";
     else cout << "N=1000: ";
     cout.precision(4);
-    vector_out(cout,6,qual,true);
+    vector_out(cout,n_methods,qual,true);
     cout.precision(6);
     
     hdf_file hf;

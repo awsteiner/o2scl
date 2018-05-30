@@ -4024,8 +4024,14 @@ int acol_manager::comm_download(std::vector<std::string> &sv, bool itive_com) {
       cout << "Obtained hash " << hash << " from file " << hash_file << endl;
     }
   }
-  
-  cf.get_file_hash(file,hash,url,fname);
+
+  cf.verbose=verbose;
+  if (hash==((std::string)"None") ||
+      hash==((std::string)"none")) {
+    cf.get_file(file,url,fname);
+  } else {
+    cf.get_file_hash(file,hash,url,fname);
+  }
   
   return 0;
 }

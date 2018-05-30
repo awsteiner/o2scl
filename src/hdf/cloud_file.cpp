@@ -88,6 +88,9 @@ int cloud_file::cloud_file::get_file_hash_subdir
   // Look for directory 
   bool dir_present=false;
   if (dir.length()>0) {
+    if (verbose>1) {
+      std::cout << "Using directory " << dir << std::endl;
+    }
     sret=stat(dir.c_str(),&sb);
     if (sret==0) {
       dir_present=S_ISDIR(sb.st_mode);
