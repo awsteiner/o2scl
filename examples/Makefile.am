@@ -4,6 +4,18 @@ snt:
 	ex_eos_sn -set directory ../../../../../pkgs/sht_eos/ \
 		-sht fsu17 -slices
 
+ein:
+	o2graph -set xlo 0 -set xhi 4 -set ylo 0 -set yhi 4 \
+		-read ex_interp2_nogrid_1000.o2 t3d -den-plot exact \
+		-read ex_interp2_nogrid_1000.o2 tdata \
+		-scatter x y None None color=black,marker=+ \
+		-save exact.pdf 
+	o2graph -read ex_interp2_nogrid_1000.o2 t3d \
+		-den-plot prob_dens_mdim_amr1 \
+		-read ex_interp2_nogrid_1000.o2 tdata \
+		-scatter x y None None color=black,marker=+ \
+		-save pdma.pdf 
+
 # -------------------------------------------------------------
 # Help
 # -------------------------------------------------------------

@@ -46,7 +46,7 @@ namespace o2scl {
     class mat_t=matrix_view_table<vec_t> >
     class prob_dens_mdim_amr : public o2scl::prob_dens_mdim<vec_t> {
 
-  protected:
+  public:
 
   /** \brief A hypercube class for \ref o2scl::prob_dens_mdim_amr
    */
@@ -140,8 +140,6 @@ namespace o2scl {
     }
   
   };
-
-  public:
 
   /// \name Dimension choice setting
   int dim_choice;
@@ -321,6 +319,7 @@ namespace o2scl {
     double old_high=h.high[max_ip];
 
     size_t old_inside=h.inside[0];
+    double old_weight=h.weight;
 
     if (verbose>1) {
       std::cout << "Old limits:" << std::endl;
@@ -352,9 +351,13 @@ namespace o2scl {
     if (h.is_inside(v)) {
       h.inside[0]=ir;
       h_new.inside[0]=old_inside;
+      h.weight=m(ir,ndim);
+      h_new.weight=old_weight;
     } else {
       h.inside[0]=old_inside;
       h_new.inside[0]=ir;
+      h.weight=old_weight;
+      h_new.weight=m(ir,ndim);
     }
 
     // --------------------------------------------------------------
@@ -412,7 +415,31 @@ namespace o2scl {
     }
     return ret;
   }
- 
+
+  /** \brief Return a reference to the hypercube containing the
+      specified point
+   */
+  const hypercube &find_hc(const vec_t &x) const {
+    if (mesh.size()==0) {
+      O2SCL_ERR2("Mesh has zero size in ",
+		 "prob_dens_mdim_amr::find_hc().",o2scl::exc_efailed);
+    }
+    for(size_t j=0;j<ndim;j++) {
+      if (x[j]<low[j] || x[j]>high[j]) {
+	O2SCL_ERR2("Point outside region in ",
+		   "prob_dens_mdim_amr::find_hc().",o2scl::exc_einval);
+      }
+    }
+    for(size_t j=0;j<mesh.size();j++) {
+      if (mesh[j].is_inside(x)) {
+	return mesh[j];
+      }
+    }
+    O2SCL_ERR2("Could not find hypercube in ",
+	       "prob_dens_mdim_amr::find_hc().",o2scl::exc_efailed);
+    return mesh[0];
+  }
+  
   /// The normalized density 
   virtual double pdf(const vec_t &x) const {
 

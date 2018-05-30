@@ -56,6 +56,7 @@ int main(void) {
   t.set_output_level(1);
 
   rng_gsl rg;
+  rg.set_seed(10);
 
   for(size_t k=0;k<2;k++) {
   
@@ -114,11 +115,24 @@ int main(void) {
     pdma1.set(low,high);
     matrix_view_table<std::vector<double> > mvt(tdata,{"x","y","z"});
     pdma1.initial_parse(mvt);
+    for(size_t j=0;j<100;j++) {
+      std::vector<double> arr={tdata.get("x",j),
+			       tdata.get("y",j)};
+      typedef prob_dens_mdim_amr<>::hypercube hc;
+      const hc &h=pdma1.find_hc(arr);
+      cout.width(2);
+      cout << j << " ";
+      cout.setf(ios::showpos);
+      cout << tdata.get("x",j) << " "
+	   << tdata.get("y",j) << " ";
+      cout << tdata.get("z",j) << " " << h.weight << endl;
+      cout.unsetf(ios::showpos);
+    }
+    //exit(-1);
 
     prob_dens_mdim_amr<> pdma2;
     pdma2.dim_choice=prob_dens_mdim_amr<>::random;
     pdma2.set(low,high);
-    matrix_view_table<std::vector<double> > mvt(tdata,{"x","y","z"});
     pdma2.initial_parse(mvt);
 
     double qual[7];
