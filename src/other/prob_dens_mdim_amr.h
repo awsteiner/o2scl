@@ -230,14 +230,14 @@ namespace o2scl {
       if (verbose>1) {
 	std::cout << "Creating cube with point ";
 	for(size_t k=0;k<ndim;k++) {
-	  std::cout << m(0,k) << " ";
+	  std::cout << m(ir,k) << " ";
 	}
 	std::cout << std::endl;
       }
       
       // Initialize the mesh with the first point
       mesh.resize(1);
-      mesh[0].set(low,high,0,1.0,m(0,ndim));
+      mesh[0].set(low,high,ir,1.0,m(ir,ndim));
       return;
     }
    
@@ -388,6 +388,94 @@ namespace o2scl {
       insert(ir,m);
     }
    
+    return;
+  }
+
+  /** \brief Parse the matrix \c m, creating a new hypercube for every
+      point, ensuring hypercubes are more optimally arranged
+
+      This algorithm is slower, but may result in more balanced
+      meshes, particularly when \ref dim_choice is not equal to
+      <tt>random</tt> .
+
+      \future This method computes distances twice, once here 
+      and once in the insert() function. There is likely a
+      faster approach.
+  */
+  void initial_parse_new(mat_t &m) {
+
+    size_t N=m.size1();
+    std::vector<bool> added(N);
+    for(size_t i=0;i<N;i++) added[i]=false;
+
+    std::vector<double> scale2(ndim);
+    for(size_t i=0;i<ndim;i++) {
+      scale2[i]=fabs(high[i]-low[i]);
+    }
+
+    // First, find the two furthest points
+    size_t p0, p1;
+    {
+      std::vector<size_t> iarr, jarr;
+      std::vector<double> distarr;
+      for(size_t i=0;i<N;i++) {
+	for(size_t j=i+1;j<N;j++) {
+	  iarr.push_back(i);
+	  jarr.push_back(j);
+	  double dist=0.0;
+	  for(size_t k=0;k<ndim;k++) {
+	    dist+=pow((m(i,k)-m(j,k))/scale2[k],2.0);
+	  }
+	  distarr.push_back(sqrt(dist));
+	}
+      }
+      std::vector<size_t> indexarr(iarr.size());
+      vector_sort_index(distarr,indexarr);
+      p0=iarr[indexarr[indexarr.size()-1]];
+      p1=jarr[indexarr[indexarr.size()-1]];
+    }
+
+    // Add them to the mesh
+    insert(p0,m);
+    added[p0]=true;
+    insert(p1,m);
+    added[p1]=true;
+
+    // Now loop through all points, find the point furthest from the
+    // point already in the hypercube in which it would lie
+    bool done=false;
+    while (done==false) {
+      done=true;
+
+      // First compute distances for all points not already added
+      std::vector<size_t> iarr;
+      std::vector<double> distarr;
+      for(size_t i=0;i<N;i++) {
+	if (added[i]==false) {
+	  done=false;
+	  std::vector<double> x(ndim);
+	  for(size_t k=0;k<ndim;k++) x[k]=m(i,k);
+	  const hypercube &h=find_hc(x);
+	  iarr.push_back(i);
+	  double dist=0.0;
+	  for(size_t k=0;k<ndim;k++) {
+	    dist+=pow((m(i,k)-m(h.inside[0],k))/(h.high[k]-h.low[k]),2.0);
+	  }
+	  distarr.push_back(dist);
+	}
+      }
+
+      // If we've found at least one point, add it to the mesh
+      if (done==false) {
+	std::vector<size_t> indexarr(iarr.size());
+	vector_sort_index(distarr,indexarr);
+	insert(iarr[indexarr[indexarr.size()-1]],m);
+	added[iarr[indexarr[indexarr.size()-1]]]=true;
+      }
+
+      // Proceed to the next point
+    }
+
     return;
   }
 

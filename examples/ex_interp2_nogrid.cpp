@@ -125,7 +125,7 @@ int main(void) {
 
     prob_dens_mdim_amr<> pdma1;
     pdma1.set(low,high);
-    pdma1.initial_parse(mvt);
+    pdma1.initial_parse_new(mvt);
 
     prob_dens_mdim_amr<> pdma2;
     pdma2.dim_choice=prob_dens_mdim_amr<>::random;

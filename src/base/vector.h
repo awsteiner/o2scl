@@ -839,6 +839,14 @@ namespace o2scl {
     return;
   }
 
+  /** \brief Desc
+   */
+  template<class vec_t, class vec_size_t> 
+    void vector_sort_index(const vec_t &data, vec_size_t &order) {
+    vector_sort_index(data.size(),data,order);
+    return;
+  }
+  
   /** \brief Sort a vector of doubles (in increasing order)
 
       This function is just a wrapper for
