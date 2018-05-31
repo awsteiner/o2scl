@@ -1495,11 +1495,10 @@ namespace o2scl {
     }
 
     // Beginning with that row, look for the closest value
-    double best=ov[i], bdiff=fabs(ov[i]-val);
+    double bdiff=fabs(ov[i]-val);
     for(;i<nlines;i++) {
       if (std::isfinite(ov[i]) && fabs(ov[i]-val)<bdiff) {
 	row=i;
-	best=ov[i];
 	bdiff=fabs(ov[i]-val);
       }
     }

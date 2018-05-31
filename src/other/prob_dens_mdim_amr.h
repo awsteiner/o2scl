@@ -228,7 +228,7 @@ namespace o2scl {
 
     if (mesh.size()==0) {
       if (verbose>1) {
-	std::cout << "Creating cube with point ";
+	std::cout << "Creating cube with point at index " << ir << ": ";
 	for(size_t k=0;k<ndim;k++) {
 	  std::cout << m(ir,k) << " ";
 	}

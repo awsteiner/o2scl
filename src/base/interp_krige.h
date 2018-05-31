@@ -284,7 +284,7 @@ namespace o2scl {
   /// Pointer to the user-specified minimizer
   mmin_base<> *mp;
   
-  /** \brief Function to optimize the covariance
+  /** \brief Function to optimize the covariance parameters
    */
   double qual_fun(size_t nv, const ubvector &x) {
 
