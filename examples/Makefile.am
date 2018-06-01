@@ -54,7 +54,7 @@ EXAMPLE_PRGS = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 	ex_stiff.scr ex_chebapp.scr ex_poly.scr ex_conmin.scr \
 	ex_nucleus_rmf.scr ex_methast.scr ex_eos_had_skyrme.scr \
 	ex_nucmass.scr ex_tensor.scr ex_mcmc.scr ex_nstar_rot.scr \
-	ex_interp2_nogrid.scr
+	ex_interp2_nogrid.scr ex_interp.scr
 
 # ex_ode_it.scr ex_eos_sn.scr 
 
@@ -68,7 +68,8 @@ EXAMPLE_PRGS = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 	ex_mroot.scr ex_mmin.scr ex_inte.scr ex_deriv.scr \
 	ex_ode.scr ex_anneal.scr ex_mcarlo.scr ex_string.scr ex_mmin_fix.scr \
 	ex_stiff.scr ex_tensor.scr ex_mcmc.scr ex_interp2_nogrid.scr \
-	ex_chebapp.scr ex_poly.scr ex_conmin.scr ex_methast.scr 
+	ex_chebapp.scr ex_poly.scr ex_conmin.scr ex_methast.scr \
+	ex_interp.scr
 
 # ex_ode_it.scr 
 
@@ -133,6 +134,7 @@ EXTRA_PROGRAMS = \
 	ex_fptr \
 	ex_mcmc \
 	ex_diff \
+	ex_interp \
 	ex_interp2 \
 	ex_interp2_nogrid \
 	ex_table \
@@ -185,6 +187,7 @@ else
 EXTRA_PROGRAMS = ex_fptr \
 	ex_diff \
 	ex_mcmc \
+	ex_interp \
 	ex_interp2 \
 	ex_interp2_nogrid \
 	ex_table \
@@ -251,6 +254,11 @@ ex_mcmc_LDADD = $(OOLIBS) $(OOLIBSTWO)
 ex_mcmc_SOURCES = ex_mcmc.cpp
 ex_mcmc.scr: ex_mcmc
 	./ex_mcmc > ex_mcmc.scr
+
+ex_interp_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_interp_SOURCES = ex_interp.cpp
+ex_interp.scr: ex_interp
+	./ex_interp > ex_interp.scr
 
 ex_interp2_LDADD = $(OOLIBS) $(OOLIBSTWO)
 ex_interp2_SOURCES = ex_interp2.cpp

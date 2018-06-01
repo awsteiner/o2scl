@@ -336,7 +336,7 @@ namespace o2scl {
 	    KXX(irow,icol)=KXX(icol,irow);
 	  } else {
 	    KXX(irow,icol)=fcovar[iout](ptrs_x[index[irow]],
-				      ptrs_x[index[icol]]);
+					ptrs_x[index[icol]]);
 	  }
 	}
       }

@@ -1179,7 +1179,6 @@ namespace o2scl {
       boost::numeric::ublas::matrix &lt; double &gt; &gt;</tt> .
       This matrix column type is needed for the LU 
       decomposition and inversion.
-      
   */
   template<class vec_vec_t, class mat_col_t, class func_t> 
   void set_gproc(size_t n_dim, size_t n_init, 
