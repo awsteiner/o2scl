@@ -255,7 +255,7 @@ namespace o2scl {
 
   /// The quality factor of the optimization
   double qual;
-  
+
   /// The covariance function
   double covar(double x1, double x2) {
     return var*exp(-(x1-x2)*(x1-x2)/len/len);
@@ -345,6 +345,9 @@ namespace o2scl {
   
   public:
 
+  /// Desc
+  int verbose;
+  
   /// Number of variance points to try
   size_t nvar;
 
@@ -365,6 +368,7 @@ namespace o2scl {
     nlen=20;
     full_min=false;
     mp=&def_mmin;
+    verbose=0;
   }
 
   /// Initialize interpolation routine
@@ -390,6 +394,11 @@ namespace o2scl {
       mp->mmin(2,p,qual,mf);
 
     } else {
+
+      if (verbose>1) {
+	std::cout << "interp_krige_optim: simple minimization"
+	<< std::endl;
+      }
       
       // Range of the coefficient parameter
       double var_min=o2scl::vector_variance(size,y);
@@ -465,6 +474,16 @@ namespace o2scl {
 	    len_opt=len;
 	    min_qual=qual;
 	  }
+	  
+	  if (verbose>1) {
+	    std::cout << "interp_krige_optim: ";
+	    std::cout.width(2);
+	    std::cout << i << " " << var << " ";
+	    std::cout.width(2);
+	    std::cout << j << " " << len << " " << qual << " "
+		      << min_qual << std::endl;
+	  }
+	  
 	}
       }
       

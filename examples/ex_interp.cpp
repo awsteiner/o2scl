@@ -76,6 +76,7 @@ int main(void) {
   interp_vec<ubvector> iv_mon(N,x,y,itp_monotonic);
   interp_vec<ubvector> iv_stef(N,x,y,itp_steffen);
   interp_krige_optim<ubvector> iko;
+  iko.verbose=2;
   iko.set(N,x,y);
 
   double max=x[x.size()-1];
