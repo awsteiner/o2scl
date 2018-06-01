@@ -35,6 +35,7 @@
 #include <boost/numeric/ublas/vector.hpp>
 
 #include <o2scl/shunting_yard.h>
+#include <o2scl/err_hnd.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -47,10 +48,8 @@ namespace o2scl {
       
       For example,
       \code
-      funct_string f("pi*r^2","r",1,"pi");
-      ubvector par(1);
-      par[0]=o2scl_const::pi;
-      f.set_parms(par);
+      funct_string f("pi*r^2","r");
+      f.set_parm("pi",o2scl_const::pi);
       for(double r=1.0;r<=2.0;r+=0.1) {
         cout << f(x) << endl;
       }
@@ -61,8 +60,6 @@ namespace o2scl {
     
   public:
     
-    typedef boost::numeric::ublas::vector<double> ubvector;
-
     /** \brief Specify the string and the parameters
      */
     funct_string(std::string expr, std::string var) {
@@ -88,6 +85,11 @@ namespace o2scl {
 	specified in \c parms in the constructor
     */
     int set_parm(std::string name, double val) {
+      if (name==st_var) {
+	O2SCL_ERR2("A parameter cannot have the same name as ",
+		   "the variable in funct_string::set_parm().",
+		   o2scl::exc_einval);
+      }
       vars[name]=val;
       return 0;
     }
@@ -151,6 +153,89 @@ namespace o2scl {
     
   };
 
+  /** \brief Two-dimensional function from a string
+  */
+  class funct2_string {
+    
+  public:
+    
+    /** \brief Specify the string and the parameters
+     */
+    funct2_string(std::string expr, std::string var1, std::string var2) {
+      calc.compile(expr.c_str(),&vars);
+      st_form=expr;
+      st_var1=var1;
+      st_var2=var2;
+    }
+
+    virtual ~funct2_string() {
+    };
+
+  
+    /** \brief Specify the string and the parameters
+     */
+    int set_function(std::string expr, std::string var1,
+		     std::string var2) {
+      calc.compile(expr.c_str(),&vars);
+      st_form=expr;
+      st_var1=var1;
+      st_var2=var2;
+      return 0;
+    }
+
+    /** \brief Set the values of the auxilliary parameters that were
+	specified in \c parms in the constructor
+    */
+    int set_parm(std::string name, double val) {
+      if (name==st_var1 || name==st_var2) {
+	O2SCL_ERR2("A parameter cannot have the same name as ",
+		   "a variable in funct_string::set_parm().",
+		   o2scl::exc_einval);
+      }
+      vars[name]=val;
+      return 0;
+    }
+    
+    /** \brief Compute the function at point \c x and return the result
+     */
+    virtual double operator()(double x, double y) const {
+      vars[st_var1]=x;
+      vars[st_var2]=y;
+      return calc.eval(&vars);
+    }
+
+#ifndef DOXYGEN_INTERNAL
+
+  protected:
+
+    /// The object for evaluating strings
+    mutable calculator calc;
+
+    /// Parameter map
+    mutable std::map<std::string,double> vars;
+    
+    /// The expr
+    std::string st_form;
+    /// The variable
+    std::string st_var1;
+    /// The variable
+    std::string st_var2;
+
+    funct2_string() {};
+
+#endif
+#ifndef DOXYGEN_NO_O2NS
+
+  private:
+
+    funct2_string(const funct2_string &);
+    funct2_string& operator=(const funct2_string&);
+
+#endif
+
+  };
+
+  
 
 #ifndef DOXYGEN_NO_O2NS
 }

@@ -955,7 +955,7 @@ namespace o2scl {
       function calls the error handler.
   */
   template<class vec_t, class data_t, class vec_size_t>
-    void vector_smallest_index(size_t n, vec_t &data, size_t k,
+    void vector_smallest_index(size_t n, const vec_t &data, size_t k,
 			       vec_size_t &index) {
     if (k>n) {
       O2SCL_ERR2("Subset length greater than size in ",
@@ -995,7 +995,7 @@ namespace o2scl {
   /** \brief Find the indexes of the k smallest entries of a vector
   */
   template<class vec_t, class data_t, class vec_size_t>
-    void vector_smallest_index(vec_t &data, size_t k,
+    void vector_smallest_index(const vec_t &data, size_t k,
 			       vec_size_t &index) {
     size_t n=data.size();
     if (index.size()<k) index.resize(k);

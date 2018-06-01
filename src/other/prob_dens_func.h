@@ -1060,7 +1060,7 @@ namespace o2scl {
       multidimensional Gaussian
    */
   template<class mat2_t, class vec2_t,
-  class mat_col_t=const_matrix_column_gen<mat2_t> >
+  class mat2_col_t=const_matrix_column_gen<mat2_t> >
   prob_dens_mdim_gaussian(size_t p_mdim, size_t n_pts, const mat2_t &pts,
 			  const vec2_t &vals) {
     
@@ -1070,17 +1070,17 @@ namespace o2scl {
     // Set peak with average and diagonal elements in covariance
     // matrix with variance
     for(size_t i=0;i<p_mdim;i++) {
-      const mat_col_t col(pts,i);
-      peak[i]=o2scl::wvector_mean<mat_col_t>(n_pts,col,vals);
+      const mat2_col_t col(pts,i);
+      peak[i]=o2scl::wvector_mean<mat2_col_t>(n_pts,col,vals);
       // Square standard deviation
-      covar(i,i)=o2scl::wvector_stddev<mat_col_t>(n_pts,col,vals);
+      covar(i,i)=o2scl::wvector_stddev<mat2_col_t>(n_pts,col,vals);
       covar(i,i)*=covar(i,i);
     }
     // Setup off-diagonal covariance matrix
     for(size_t i=0;i<p_mdim;i++) {
-      mat_col_t col_i(pts,i);
+      mat2_col_t col_i(pts,i);
       for(size_t j=i+1;j<p_mdim;j++) {
-	const mat_col_t col_j(pts,j);
+	const mat2_col_t col_j(pts,j);
 	double cov=o2scl::wvector_covariance(n_pts,col_i,col_j,vals);
 	covar(i,j)=cov;
 	covar(j,i)=cov;
@@ -1168,6 +1168,18 @@ namespace o2scl {
   /** \brief Given a data set and a covariance function, construct
       probability distribution based on a Gaussian process which
       includes noise
+
+      \note The type <tt>mat_col_t</tt> is a matrix column type
+      for the internal object matrix type <tt>mat_t</tt>, and
+      not associated with the data type <tt>vec_vec_t</tt>.
+      Since the default matrix type is 
+      <tt>boost::numeric::ublas::matrix &lt; double &gt; </tt>
+      a good matrix column type for this function is 
+      <tt>boost::numeric::ublas::matrix_column &lt; 
+      boost::numeric::ublas::matrix &lt; double &gt; &gt;</tt> .
+      This matrix column type is needed for the LU 
+      decomposition and inversion.
+      
   */
   template<class vec_vec_t, class mat_col_t, class func_t> 
   void set_gproc(size_t n_dim, size_t n_init, 
