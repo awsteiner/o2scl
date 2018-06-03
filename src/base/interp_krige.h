@@ -345,7 +345,7 @@ namespace o2scl {
   
   public:
 
-  /// Desc
+  /// Verbosity parameter
   int verbose;
   
   /// Number of variance points to try

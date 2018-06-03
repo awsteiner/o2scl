@@ -239,7 +239,7 @@ namespace o2scl_acol {
     */
     void clear_obj();
 
-    /** \brief Desc
+    /** \brief Remove the type-specific commands
      */
     void command_del();
     
@@ -533,7 +533,8 @@ extern "C" {
   */
   void o2scl_free_acol_manager(void *vp);
 
-  /** \brief Desc
+  /** \brief Set the command name, the short description,
+      and the environment variable name
    */
   void o2scl_acol_set_names(void *vp, int n1, char *cmd_name,
 			    int n2, char *short_desc, int n3,

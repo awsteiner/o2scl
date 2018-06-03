@@ -483,13 +483,6 @@ int eos_nse_full::bracket_mu_solve(double &mun_low, double &mun_high,
 				   double &mup_low, double &mup_high,
 				   dense_matter &dm) {
 
-  /*
-    double mup_low=dm.p.mu-0.02/hc_mev_fm;
-    double mup_high=dm.p.mu+0.02/hc_mev_fm;
-    double mun_low=dm.n.mu-0.02/hc_mev_fm;
-    double mun_high=dm.n.mu+0.02/hc_mev_fm;
-  */
-
   int iter;
 
   if (false) {

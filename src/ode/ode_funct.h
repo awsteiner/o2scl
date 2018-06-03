@@ -120,7 +120,7 @@ namespace o2scl {
     /// The function parser
     std::vector<calculator> calc;
       
-    /// Desc
+    /// List of variables and values
     std::map<std::string,double> vars;
 
     /// The number of variables

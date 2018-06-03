@@ -154,7 +154,8 @@ namespace o2scl {
   
   };
 
-  /** \brief Desc
+  /** \brief An alternative RNG type used to design templates 
+      for either GSL or STL random number generators
    */
   class rng_gsl_uniform_real {
   public:

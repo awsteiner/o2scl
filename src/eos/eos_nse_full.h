@@ -199,7 +199,8 @@ namespace o2scl {
     virtual int solve_fixnp(size_t n, const ubvector &x, ubvector &y,
 			    dense_matter &dm, bool from_densities=true);
     
-    /** \brief Desc
+    /** \brief Solve matter at fixed chemical potential by 
+	bracketing
      */
     virtual int bracket_mu_solve(double &mun_low, double &mun_high,
 				 double &mup_low, double &mup_high,

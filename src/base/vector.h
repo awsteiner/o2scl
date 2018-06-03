@@ -761,7 +761,8 @@ namespace o2scl {
     return;
   }
 
-  /** \brief Create a permutation which sorts a vector (in increasing order)
+  /** \brief Create a permutation which sorts 
+      the first \c n elements of a vector (in increasing order)
 
       This function takes a vector \c data and arranges a list of
       indices in \c order, which give a sorted version of the vector.
@@ -796,6 +797,7 @@ namespace o2scl {
       One possible type for \c vec_size_t is \ref o2scl::permutation.
 
       This works similarly to the GSL function <tt>gsl_sort_index()</tt>.
+
   */
   template<class vec_t, class vec_size_t> 
     void vector_sort_index(size_t n, const vec_t &data, vec_size_t &order) {
@@ -839,7 +841,43 @@ namespace o2scl {
     return;
   }
 
-  /** \brief Desc
+  /** \brief Create a permutation which sorts a vector 
+      (in increasing order)
+
+      This function takes a vector \c data and arranges a list of
+      indices in \c order, which give a sorted version of the vector.
+      The value <tt>order[i]</tt> gives the index of entry in in \c
+      data which corresponds to the <tt>i</tt>th value in the sorted
+      vector. The vector \c data is unchanged by this function, and
+      the initial values in \c order are ignored. Before calling this
+      function, \c order must already be allocated as a vector of size
+      \c n.
+
+      For example, after calling this function, a sorted version the
+      vector can be output with
+      \code
+      size_t n=5;
+      double data[5]={3.1,4.1,5.9,2.6,3.5};
+      permutation order(n);
+      vector_sort_index(n,data,order);
+      for(size_t i=0;i<n;i++) {
+      cout << data[order[i]] << endl;
+      }
+      \endcode
+
+      To create a permutation which stores as its <tt>i</tt>th element,
+      the index of <tt>data[i]</tt> in the sorted vector, you can
+      invert the permutation created by this function.
+
+      This is a generic sorting template function. It will work for
+      any types \c vec_t and \c vec_size_t for which
+      - \c vec_t has an <tt>operator[]</tt>, and
+      - \c vec_size_t has an <tt>operator[]</tt> which returns 
+      a \c size_t .
+      One possible type for \c vec_size_t is \ref o2scl::permutation.
+
+      This works similarly to the GSL function <tt>gsl_sort_index()</tt>.
+
    */
   template<class vec_t, class vec_size_t> 
     void vector_sort_index(const vec_t &data, vec_size_t &order) {
