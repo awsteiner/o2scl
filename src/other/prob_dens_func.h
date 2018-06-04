@@ -1286,6 +1286,115 @@ namespace o2scl {
   }
   
   };
+
+  /** \brief Gaussian distribution bounded by a hypercube
+
+      \note This class naively resamples the Gaussian until
+      a sample is within bounds. This is a temporary hack and
+      can be very slow depending on the size of the volume
+      excluded. 
+
+      \warning The PDF is not yet properly normalized
+   */
+  template<class vec_t=boost::numeric::ublas::vector<double>,
+    class mat_t=boost::numeric::ublas::matrix<double> >
+    class prob_dens_mdim_bound_gaussian :
+    public prob_dens_mdim_gaussian<vec_t,mat_t> {
+    
+  protected:
+  
+  /** \brief Lower limits
+   */
+  vec_t low;
+  
+  /** \brief Upper limits
+   */
+  vec_t high;
+  
+  public:
+
+  /** \brief Create an empty distribution
+   */
+  prob_dens_mdim_bound_gaussian() {
+  }
+  
+  /** \brief Create a distribution with the specified peak, covariance
+      matrix, lower limits, and upper limits
+   */
+  prob_dens_mdim_bound_gaussian(size_t p_ndim, vec_t &p_peak, mat_t &covar,
+				vec_t &p_low, vec_t &p_high) {
+    set(p_ndim,p_peak,covar,p_low,p_high);
+  }
+  
+  /** \brief Set the peak, covariance matrix, lower limits, and upper
+      limits
+
+      \note This function is called in constructors and thus 
+      should not be virtual.
+   */
+  void set(size_t p_ndim, vec_t &p_peak, mat_t &covar,
+	   vec_t &p_low, vec_t &p_high) {
+    prob_dens_mdim_gaussian<vec_t,mat_t>::set(p_ndim,p_peak,covar);
+    low=p_low;
+    high=p_high;
+    return;
+  }
+  
+  /** \brief Compute the probability density function (arbitrary
+      normalization)
+   */
+  virtual double pdf(const vec_t &x) const {
+    for(size_t i=0;i<this->ndim;i++) {
+      if (x[i]<low[i]) {
+	O2SCL_ERR("Parameter too small in pdf().",
+		  o2scl::exc_einval);
+      }
+      if (x[i]>high[i]) {
+	O2SCL_ERR("Parameter too large in pdf().",
+		  o2scl::exc_einval);
+      }
+    }
+    return prob_dens_mdim_gaussian<vec_t,mat_t>::pdf(x);
+  }
+  
+  /** \brief Compute the natural log of the probability density function
+      (arbitrary normalization)
+   */
+  virtual double log_pdf(const vec_t &x) const {
+    for(size_t i=0;i<this->ndim;i++) {
+      if (x[i]<low[i]) {
+	O2SCL_ERR("Parameter too small in log_pdf().",
+		  o2scl::exc_einval);
+      }
+      if (x[i]>high[i]) {
+	O2SCL_ERR("Parameter too large in log_pdf().",
+		  o2scl::exc_einval);
+      }
+    }
+    return prob_dens_mdim_gaussian<vec_t,mat_t>::log_pdf(x);
+  }
+  
+  /** \brief Sample the distribution
+   */
+  virtual void operator()(vec_t &x) const {
+    bool done=false;
+    while (done==false) {
+      done=true;
+      prob_dens_mdim_gaussian<vec_t,mat_t>::pdf(x);
+      for(size_t i=0;i<this->ndim;i++) {
+	if (x[i]<low[i]) {
+	  done=false;
+	  i=this->ndim;
+	} else if (x[i]>high[i]) {
+	  done=false;
+	  i=this->ndim;
+	}
+      }
+    }
+    return;
+  }
+  
+  };
   
   /** \brief A multi-dimensional conditional probability density function
 
