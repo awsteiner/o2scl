@@ -1380,7 +1380,7 @@ namespace o2scl {
     bool done=false;
     while (done==false) {
       done=true;
-      prob_dens_mdim_gaussian<vec_t,mat_t>::pdf(x);
+      prob_dens_mdim_gaussian<vec_t,mat_t>::operator()(x);
       for(size_t i=0;i<this->ndim;i++) {
 	if (x[i]<low[i]) {
 	  done=false;
