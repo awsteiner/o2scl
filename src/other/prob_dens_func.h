@@ -1386,17 +1386,17 @@ namespace o2scl {
       for(size_t i=0;i<this->ndim;i++) {
 	if (x[i]<low[i]) {
 	  done=false;
-	  std::cout << "Too small " << i << " " << x[i] << " "
-		    << low[i] << std::endl;
+	  //std::cout << "Too small " << i << " " << x[i] << " "
+	  //<< low[i] << std::endl;
 	  i=this->ndim;
 	} else if (x[i]>high[i]) {
 	  done=false;
-	  std::cout << "Too large " << i << " " << x[i] << " "
-		    << high[i] << std::endl;
+	  //std::cout << "Too large " << i << " " << x[i] << " "
+	  //<< high[i] << std::endl;
 	  i=this->ndim;
 	}
       }
-      if (j>1000) {
+      if (j>100000) {
 	O2SCL_ERR("Sampling failed.",o2scl::exc_einval);
       }
     }
