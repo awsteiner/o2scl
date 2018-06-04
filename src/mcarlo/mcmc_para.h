@@ -1138,6 +1138,10 @@ namespace o2scl {
 
       if (verbose>=1) {
 	for(size_t it=0;it<n_threads;it++) {
+	  if (pd_mode) {
+	    scr_out << "it: " << it << " q_prop[it]: "
+		    << q_prop[it] << std::endl;
+	  }
 	  if (func_ret[it]==mcmc_done) {
 	    scr_out << "mcmc (" << it << "," << mpi_rank
 		    << "): Returned mcmc_done." 
