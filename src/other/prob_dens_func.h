@@ -1378,19 +1378,21 @@ namespace o2scl {
    */
   virtual void operator()(vec_t &x) const {
     bool done=false;
-    std::cout << "Here." << std::endl;
     size_t j=0;
     while (done==false) {
       done=true;
       prob_dens_mdim_gaussian<vec_t,mat_t>::operator()(x);
-      std::cout << j << " " << x[0] << std::endl;
       j++;
       for(size_t i=0;i<this->ndim;i++) {
 	if (x[i]<low[i]) {
 	  done=false;
+	  std::cout << "Too small " << i << " " << x[i] << " "
+		    << low[i] << std::endl;
 	  i=this->ndim;
 	} else if (x[i]>high[i]) {
 	  done=false;
+	  std::cout << "Too large " << i << " " << x[i] << " "
+		    << high[i] << std::endl;
 	  i=this->ndim;
 	}
       }
