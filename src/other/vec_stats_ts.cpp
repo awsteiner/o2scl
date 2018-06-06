@@ -166,6 +166,30 @@ int main(void) {
   cout << vector_max_value<vector<double>,double>(btest) << endl;
   cout << vector_bin_size_scott(btest) << endl;
   cout << vector_bin_size_freedman(btest) << endl;
+
+  if (true) {
+    cout << "------------------------------------------------------------"
+	 << endl;
+    cout << "Testing vector_autocorr_vector_mult(): " << endl;
+    std::vector<double> x0, x02, mult;
+    rng_gsl r;
+    for(size_t i=0;i<20;i++) {
+      size_t m=((size_t)(r.random()*5))+1;
+      double v=r.random();
+      for(size_t j=0;j<m;j++) {
+	x0.push_back(v);
+      }
+      x02.push_back(v);
+      mult.push_back(m);
+    }
+    std::vector<double> ac, ac2, ftom, ftom2;
+    o2scl::vector_autocorr_vector(x0,ac);
+    o2scl::vector_autocorr_vector_mult(x02,mult,ac2);
+    size_t ac_len=o2scl::vector_autocorr_tau(ac,ftom);
+    size_t ac_len2=o2scl::vector_autocorr_tau(ac2,ftom2);
+    t.test_gen(ac_len==ac_len2,"vector_autocorr_vector.");
+    cout << ac_len << " " << ac_len2 << endl;
+  }
   
   t.report();
   

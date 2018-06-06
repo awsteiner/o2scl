@@ -1866,7 +1866,12 @@ namespace o2scl {
     
     size_t n2=0;
     for(size_t i=0;i<n;i++) {
-      n2+=((size_t)(mult[i]*(1.0+1.0e-10)));
+      size_t m=((size_t)(mult[i]*(1.0+1.0e-10)));
+      if (m==0) {
+	O2SCL_ERR2("Mult vector is zero ",
+		   "in vector_lagk_autocorr_mult().",exc_einval);
+      }
+      n2+=m;
     }
     
     if (n2<=k) {

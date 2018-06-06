@@ -182,6 +182,10 @@ int main(int argc, char *argv[]) {
   vff.push_back(ff);
 
   if (false) {
+    cout << "----------------------------------------------------------"
+	 << endl;
+    cout << "Plain MCMC example with bimodal distribution:" << endl;
+    // Bimodal distribution
     vector<string> pnames={"x","0","1"};
     vector<string> punits={"","",""};
     mct.set_names_units(pnames,punits);
@@ -206,31 +210,12 @@ int main(int argc, char *argv[]) {
     hdf_output(hf,*t,"table");
     hf.close();
   }
-
-  if (true) {
-    std::vector<double> x0, x02, mult;
-    rng_gsl r;
-    for(size_t i=0;i<20;i++) {
-      size_t m=((size_t)(r.random()*5));
-      double v=r.random();
-      for(size_t j=0;j<m;j++) {
-	x0.push_back(v);
-      }
-      x02.push_back(v);
-      mult.push_back(m);
-    }
-    std::vector<double> ac, ac2, ftom, ftom2;
-    o2scl::vector_autocorr_vector(x0,ac);
-    o2scl::vector_autocorr_vector_mult(x02,mult,ac2);
-    size_t ac_len=o2scl::vector_autocorr_tau(ac,ftom);
-    size_t ac_len2=o2scl::vector_autocorr_tau(ac2,ftom2);
-    cout << ac[0] << " " << ac[1] << " " << ac[2] << endl;
-    cout << ac2[0] << " " << ac2[1] << " " << ac2[2] << endl;
-    cout << ac_len << " " << ac_len2 << endl;
-    exit(-1);
-  }
   
   if (false) {
+    cout << "----------------------------------------------------------"
+	 << endl;
+    cout << "Plain MCMC example with Gaussian distribution:" << endl;
+    // Plain example with Gaussian
     vector<string> pnames={"x0","x1","0","1"};
     vector<string> punits={"","","",""};
     mct.set_names_units(pnames,punits);
@@ -243,6 +228,7 @@ int main(int argc, char *argv[]) {
 	 << mct.n_reject[0] << endl;
     t=mct.get_table();
     t->new_column("weight");
+    t->delete_rows_func("mult<0.5");
     for(size_t j=0;j<t->get_nlines();j++) {
       t->set("weight",j,exp(t->get("log_wgt",j)));
       for(size_t k=0;k<t->get("mult",j);k++) {
@@ -254,6 +240,14 @@ int main(int argc, char *argv[]) {
     {
       std::vector<double> ac, ftom;
       o2scl::vector_autocorr_vector(x02,ac);
+      size_t ac_len=o2scl::vector_autocorr_tau(ac,ftom);
+      cout << "ac_len,samp_size: " << ac_len << " "
+	   << x02.size()/ac_len << endl;
+      ss=x02.size()/ac_len;
+    }
+    {
+      std::vector<double> ac, ftom;
+      o2scl::vector_autocorr_vector_mult((*t)["x0"],(*t)["mult"],ac);
       size_t ac_len=o2scl::vector_autocorr_tau(ac,ftom);
       cout << "ac_len,samp_size: " << ac_len << " "
 	   << x02.size()/ac_len << endl;
@@ -321,6 +315,9 @@ int main(int argc, char *argv[]) {
   }
 
   if (false) {
+    cout << "----------------------------------------------------------"
+	 << endl;
+    cout << "MCMC with affine-invariant sampling:" << endl;
     vector<string> pnames={"x0","x1","0","1"};
     vector<string> punits={"","","",""};
     mct.set_names_units(pnames,punits);
@@ -373,6 +370,89 @@ int main(int argc, char *argv[]) {
   }
   
   if (true) {
+    cout << "----------------------------------------------------------"
+	 << endl;
+    cout << "MCMC with perfect Gaussian proposal distribution:"
+	 << endl;
+    vector<string> pnames={"x0","x1","0","1"};
+    vector<string> punits={"","","",""};
+
+    mct.set_names_units(pnames,punits);
+    mct.step_fac=2.0;
+    mct.max_iters=40000;
+
+    vector<prob_cond_mdim_indep<ubvector> *> pcmi;
+    ubvector peak(2);
+    peak[0]=0.2;
+    peak[1]=0.5;
+    ubmatrix covar(2,2);
+    covar(0,0)=0.75;
+    covar(1,1)=0.75;
+    covar(0,1)=0.0;
+    covar(1,0)=0.0;
+    prob_dens_mdim_gaussian<ubvector> pdmg(2,peak,covar);
+    
+    pcmi.resize(1);
+    pcmi[0]=new prob_cond_mdim_indep<ubvector>(pdmg);
+    ubvector step(2);
+    mct.set_proposal_ptrs(pcmi);
+    
+    std::vector<double> x02, x12;
+    shared_ptr<table_units<> > t;
+    low[0]=-5.0;
+    low[1]=-5.0;
+    high[0]=5.0;
+    high[1]=5.0;
+    std::cout << "Going to mcmc." << std::endl;
+    mct.mcmc(2,low,high,vpf,vff);
+    // Almost all steps should be accepted because the proposal
+    // distribution is so close to the true distribution.
+    // Only steps near the boundaries are rejected.
+    cout << "Steps accepted, rejected: " << mct.n_accept[0] << " "
+	 << mct.n_reject[0] << endl;
+    t=mct.get_table();
+    t->new_column("weight");
+    for(size_t j=0;j<t->get_nlines();j++) {
+      t->set("weight",j,exp(t->get("log_wgt",j)));
+      for(size_t k=0;k<t->get("mult",j);k++) {
+	x02.push_back(t->get("x0",j));
+	x12.push_back(t->get("x1",j));
+      }
+    }
+    size_t ss;
+    {
+      std::vector<double> ac, ftom;
+      o2scl::vector_autocorr_vector(x02,ac);
+      size_t ac_len=o2scl::vector_autocorr_tau(ac,ftom);
+      cout << "ac_len,samp_size: " << ac_len << " "
+	   << x02.size()/ac_len << endl;
+      ss=x02.size()/ac_len;
+    }
+    {
+      std::vector<double> ac, ftom;
+      o2scl::vector_autocorr_vector(x12,ac);
+      size_t ac_len=o2scl::vector_autocorr_tau(ac,ftom);
+      cout << "ac_len,samp_size: " << ac_len << " "
+	   << x12.size()/ac_len << endl;
+      if (x12.size()/ac_len<ss) ss=x12.size()/ac_len;
+    }
+    table_units<> t2(ss);
+    t2.line_of_names("x0 x1");
+    size_t ac_len=x02.size()/ss;
+    // Thinning
+    for(size_t j=0;j<ss;j++) {
+      t2.set("x0",j,x02[j*ac_len]);
+      t2.set("x1",j,x12[j*ac_len]);
+    }
+    hdf_file hf2;
+    hf2.open_or_create("ex_mcmc_pdgauss.o2");
+    hdf_output(hf2,t2,"table2");
+    hf2.close();
+    exit(-1);
+  }
+
+  if (true) {
+    // Try the fixed_step conditional probability
     vector<string> pnames={"x0","x1","0","1"};
     vector<string> punits={"","","",""};
 

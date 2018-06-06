@@ -1209,7 +1209,6 @@ namespace o2scl {
 	      if (r<exp(w_next[it]-w_current[sindex]+q_prop[it])) {
 		accept=true;
 	      }
-	      
 	    } else {
 	      // Metropolis algorithm
 	      if (r<exp(w_next[it]-w_current[sindex])) {
