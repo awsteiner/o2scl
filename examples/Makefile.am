@@ -1,3 +1,27 @@
+emt:
+	o2graph -read ex_mcmc_bimodal.o2 -histplot x bins=40 -create \
+		table x "(-4)" 4.001 0.1 \
+		-function "7800*exp(-x*x)*(sin(x-1.4)+1)" y \
+		-plot x y -show
+
+emt2:
+	o2graph -read ex_mcmc_gaussian.o2 table2 -histplot x0 bins=40 -create \
+		table x "(-1.5)" 1.5001 0.1 \
+		-function "135*exp(-(x-0.2)*(x-0.2))" y \
+		-plot x y -show
+
+emt2b:
+	o2graph -read ex_mcmc_gaussian.o2 table2 -histplot x0b bins=40 -create \
+		table x "(-2)" 2.001 0.1 \
+		-function "100*exp(-(x-0.2)*(x-0.2))" y \
+		-plot x y -show
+
+emt3:
+	o2graph -read ex_mcmc_gaussian.o2 -histplot x1 bins=40 -create \
+		table x "(-2)" 2.001 0.1 \
+		-function "270*exp(-(x-0.5)*(x-0.5))" y \
+		-plot x y -show
+
 snt:
 	ex_eos_sn -set directory ../../../../../pkgs/oo_eos/ \
 		-oo fsu17 -slices

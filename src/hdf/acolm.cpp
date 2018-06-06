@@ -3531,7 +3531,7 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv, bool itive_com) {
     // Compute autocorrelation length and sample size
     vector<double> ac_vec, ftom;
     vector_autocorr_vector(table_obj[in[0]],ac_vec);
-    size_t len=vector_autocorr_tau(table_obj[in[0]],ac_vec,ftom);
+    size_t len=vector_autocorr_tau(ac_vec,ftom);
     cout << "Autocorrelation length: " << len << " sample size: "
 	 << table_obj.get_nlines()/len << endl;
 
@@ -3553,7 +3553,7 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv, bool itive_com) {
 
     vector<double> ac_vec, ftom;
     vector_autocorr_vector(doublev_obj,ac_vec);
-    size_t len=vector_autocorr_tau(doublev_obj,ac_vec,ftom);
+    size_t len=vector_autocorr_tau(ac_vec,ftom);
     cout << "Autocorrelation length: " << len << " sample size: "
 	 << doublev_obj.size()/len << endl;
 
@@ -3564,7 +3564,7 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv, bool itive_com) {
     vector_copy(intv_obj,doublev_obj);
     vector<double> ac_vec, ftom;
     vector_autocorr_vector(doublev_obj,ac_vec);
-    size_t len=vector_autocorr_tau(doublev_obj,ac_vec,ftom);
+    size_t len=vector_autocorr_tau(ac_vec,ftom);
     cout << "Autocorrelation length: " << len << " sample size: "
 	 << doublev_obj.size()/len << endl;
 
@@ -3579,7 +3579,7 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv, bool itive_com) {
     vector_copy(size_tv_obj,doublev_obj);
     vector<double> ac_vec, ftom;
     vector_autocorr_vector(doublev_obj,ac_vec);
-    size_t len=vector_autocorr_tau(doublev_obj,ac_vec,ftom);
+    size_t len=vector_autocorr_tau(ac_vec,ftom);
     cout << "Autocorrelation length: " << len << " sample size: "
 	 << doublev_obj.size()/len << endl;
 

@@ -52,7 +52,7 @@ class exc {
 
 public:
   
-  /** \brief The objective function for the MCMC
+  /** \brief A simple two-dimensional Gaussian
 
       Here, the variable 'log_weight' stores the natural logarithm of
       the objective function based on the parameters stored in \c pars.
@@ -62,17 +62,15 @@ public:
   int point(size_t nv, const ubvector &pars, double &log_weight,
 	    std::array<double,2> &dat) {
   
-    log_weight=-((pars[0]-0.2)*(pars[0]-0.2)+
-		 (pars[1]-0.5)*(pars[1]-0.5));
-    cout << "Here" << endl;
-    exit(-1);
-  
+    log_weight=-(pars[0]-0.2)*(pars[0]-0.2)-
+      (pars[1]-0.5)*(pars[1]-0.5);
+    
     dat[0]=pars[0]*pars[0];
     dat[1]=pars[0]*pars[0]*pars[1]*pars[1];
     return 0;
   }
 
-  /** \brief The objective function for the MCMC
+  /** \brief A one-dimensional bimodal distribution
 
       Here, the variable 'log_weight' stores the natural logarithm of
       the objective function based on the parameters stored in \c pars.
@@ -104,7 +102,7 @@ public:
   
 };
 
-/** Function for exact integration
+/** Function for exact integration of the Gaussian
  */
 int f_cub(unsigned ndim, size_t npt, const double *x, unsigned fdim,
 	  double *fval) {
@@ -132,19 +130,19 @@ int main(int argc, char *argv[]) {
 
   // Parameter limits and initial point
   ubvector low(2), high(2), init(2);
-  low[0]=-2.0;
-  low[1]=-2.0;
-  high[0]=2.0;
-  high[1]=2.0;
+  low[0]=-1.5;
+  low[1]=-1.5;
+  high[0]=1.5;
+  high[1]=1.5;
   init[0]=0.2;
   init[1]=0.5;
 
   // Use cubature to compute integrals
   std::vector<double> dlow(2), dhigh(2);
-  dlow[0]=-2.0;
-  dlow[1]=-2.0;
-  dhigh[0]=2.0;
-  dhigh[1]=2.0;
+  dlow[0]=-1.5;
+  dlow[1]=-1.5;
+  dhigh[0]=1.5;
+  dhigh[1]=1.5;
   std::vector<double> dres(3), derr(3);
   typedef std::function<
     int(unsigned,size_t,const double *,unsigned,double *)> cub_funct_arr;
@@ -183,7 +181,7 @@ int main(int argc, char *argv[]) {
   vector<fill_funct> vff;
   vff.push_back(ff);
 
-  if (true) {
+  if (false) {
     vector<string> pnames={"x","0","1"};
     vector<string> punits={"","",""};
     mct.set_names_units(pnames,punits);
@@ -196,19 +194,246 @@ int main(int argc, char *argv[]) {
     shared_ptr<table_units<> > t=mct.get_table();
     std::vector<double> ac, ftom;
     o2scl::vector_autocorr_vector((*t)["log_wgt"],ac);
-    size_t ac_len=o2scl::vector_autocorr_tau((*t)["log_wgt"],ac,ftom);
+    size_t ac_len=o2scl::vector_autocorr_tau(ac,ftom);
     cout << "ac_len,samp_size: " << ac_len << " "
 	 << t->get_nlines()/ac_len << endl;
     //mct.reblock(t->get_nlines()/ac_len);
     hist h;
     h.from_table(*t,"x",40);
     hdf_file hf;
-    hf.open_or_create("temp.o2");
+    hf.open_or_create("ex_mcmc_bimodal.o2");
     hdf_output(hf,h,"hist");
     hdf_output(hf,*t,"table");
     hf.close();
+  }
+
+  if (true) {
+    std::vector<double> x0, x02, mult;
+    rng_gsl r;
+    for(size_t i=0;i<20;i++) {
+      size_t m=((size_t)(r.random()*5));
+      double v=r.random();
+      for(size_t j=0;j<m;j++) {
+	x0.push_back(v);
+      }
+      x02.push_back(v);
+      mult.push_back(m);
+    }
+    std::vector<double> ac, ac2, ftom, ftom2;
+    o2scl::vector_autocorr_vector(x0,ac);
+    o2scl::vector_autocorr_vector_mult(x02,mult,ac2);
+    size_t ac_len=o2scl::vector_autocorr_tau(ac,ftom);
+    size_t ac_len2=o2scl::vector_autocorr_tau(ac2,ftom2);
+    cout << ac[0] << " " << ac[1] << " " << ac[2] << endl;
+    cout << ac2[0] << " " << ac2[1] << " " << ac2[2] << endl;
+    cout << ac_len << " " << ac_len2 << endl;
     exit(-1);
   }
+  
+  if (false) {
+    vector<string> pnames={"x0","x1","0","1"};
+    vector<string> punits={"","","",""};
+    mct.set_names_units(pnames,punits);
+    mct.step_fac=2.0;
+    mct.max_iters=100000;
+    std::vector<double> x02, x12;
+    shared_ptr<table_units<> > t;
+    mct.mcmc(2,low,high,vpf,vff);
+    cout << "Steps accepted, rejected: " << mct.n_accept[0] << " "
+	 << mct.n_reject[0] << endl;
+    t=mct.get_table();
+    t->new_column("weight");
+    for(size_t j=0;j<t->get_nlines();j++) {
+      t->set("weight",j,exp(t->get("log_wgt",j)));
+      for(size_t k=0;k<t->get("mult",j);k++) {
+	x02.push_back(t->get("x0",j));
+	x12.push_back(t->get("x1",j));
+      }
+    }
+    size_t ss;
+    {
+      std::vector<double> ac, ftom;
+      o2scl::vector_autocorr_vector(x02,ac);
+      size_t ac_len=o2scl::vector_autocorr_tau(ac,ftom);
+      cout << "ac_len,samp_size: " << ac_len << " "
+	   << x02.size()/ac_len << endl;
+      ss=x02.size()/ac_len;
+    }
+    {
+      std::vector<double> ac, ftom;
+      o2scl::vector_autocorr_vector(x12,ac);
+      size_t ac_len=o2scl::vector_autocorr_tau(ac,ftom);
+      cout << "ac_len,samp_size: " << ac_len << " "
+	   << x12.size()/ac_len << endl;
+      if (x12.size()/ac_len<ss) ss=x12.size()/ac_len;
+    }
+    table_units<> t2(ss);
+    t2.line_of_names("x0 x1 x0b x1b");
+    size_t ac_len=x02.size()/ss;
+    if (true) {
+      // Block averaging
+      for(size_t j=0;j<ss;j++) {
+	t2.set("x0b",j,0.0);
+	t2.set("x1b",j,0.0);
+	for(size_t k=0;k<ac_len;k++) {
+	  t2.set("x0b",j,t2.get("x0b",j)+x02[j*ac_len+k]/ac_len);
+	  t2.set("x1b",j,t2.get("x1b",j)+x12[j*ac_len+k]/ac_len);
+	}
+      }
+    }
+    if (true) {
+      // Thinning
+      for(size_t j=0;j<ss;j++) {
+	t2.set("x0",j,x02[j*ac_len]);
+	t2.set("x1",j,x12[j*ac_len]);
+      }
+    }
+    hdf_file hf2;
+    hf2.open_or_create("ex_mcmc_gaussian.o2");
+    hf2.setd_vec("x0",x02);
+    hdf_output(hf2,t2,"table2");
+    hf2.close();
+    if (false) {
+      {
+	std::vector<double> ac, ftom;
+	o2scl::vector_autocorr_vector((*t)["log_wgt"],ac);
+	size_t ac_len=o2scl::vector_autocorr_tau(ac,ftom);
+	cout << "ac_len,samp_size: " << ac_len << " "
+	     << t->get_nlines()/ac_len << endl;
+      }
+      {
+	std::vector<double> ac, ftom;
+	o2scl::vector_autocorr_vector((*t)["weight"],ac);
+	size_t ac_len=o2scl::vector_autocorr_tau(ac,ftom);
+	cout << "ac_len,samp_size: " << ac_len << " "
+	     << t->get_nlines()/ac_len << endl;
+      }
+      //mct.reblock(t->get_nlines()/ac_len);
+      hist h;
+      h.from_table(*t,"x0",40);
+      hdf_file hf;
+      hf.open_or_create("ex_mcmc_gaussian.o2");
+      hf.setd_vec("x0",x02);
+      hdf_output(hf,h,"hist");
+      hdf_output(hf,*t,"table");
+      hf.close();
+    }
+  }
+
+  if (false) {
+    vector<string> pnames={"x0","x1","0","1"};
+    vector<string> punits={"","","",""};
+    mct.set_names_units(pnames,punits);
+    mct.step_fac=2.0;
+    mct.aff_inv=true;
+    mct.n_walk=5;
+    mct.max_iters=100000;
+    std::vector<double> x0[5], x1[5];
+    shared_ptr<table_units<> > t;
+    mct.mcmc(2,low,high,vpf,vff);
+    cout << "Steps accepted, rejected: " << mct.n_accept[0] << " "
+	 << mct.n_reject[0] << endl;
+    t=mct.get_table();
+    for(size_t j=0;j<t->get_nlines();j++) {
+      size_t walk=((size_t)(t->get("walker",j)+1.0e-6));
+      for(size_t k=0;k<t->get("mult",j);k++) {
+	x0[walk].push_back(t->get("x0",j));
+	x1[walk].push_back(t->get("x1",j));
+      }
+    }
+    size_t ac_len_all;
+    {
+      std::vector<double> ac, ftom;
+      o2scl::vector_autocorr_vector(x0[0],ac);
+      size_t ac_len=o2scl::vector_autocorr_tau(ac,ftom);
+      ac_len_all=ac_len;
+      cout << "ac_len,samp_size: " << ac_len << " "
+	   << x0[0].size()/ac_len << endl;
+    }
+    {
+      std::vector<double> ac, ftom;
+      o2scl::vector_autocorr_vector(x1[0],ac);
+      size_t ac_len=o2scl::vector_autocorr_tau(ac,ftom);
+      if (ac_len_all<ac_len) ac_len_all=ac_len;
+      cout << "ac_len,samp_size: " << ac_len << " "
+	   << x1[0].size()/ac_len << endl;
+    }
+    table_units<> t2;
+    t2.line_of_names("x0 x1");
+    for(size_t k=0;k<mct.n_walk;k++) {
+      for(size_t j=0;j<x0[k].size();j+=ac_len_all) {
+	double line[2]={x0[k][j],x0[k][j]};
+	t2.line_of_data(2,line);
+      }
+    }
+    hdf_file hf2;
+    hf2.open_or_create("ex_mcmc_affinv.o2");
+    hdf_output(hf2,t2,"table2");
+    hf2.close();
+  }
+  
+  if (true) {
+    vector<string> pnames={"x0","x1","0","1"};
+    vector<string> punits={"","","",""};
+
+    mct.set_names_units(pnames,punits);
+    mct.step_fac=2.0;
+    mct.max_iters=100000;
+
+    vector<prob_cond_mdim_fixed_step<ubvector> > pcmrw;
+    pcmrw.resize(1);
+    ubvector step(2);
+    step[0]=(high[0]-low[0])/mct.step_fac;
+    step[1]=(high[1]-low[1])/mct.step_fac;
+    pcmrw[0].set(step,low,high);
+    mct.set_proposal(pcmrw);
+    
+    std::vector<double> x02, x12;
+    shared_ptr<table_units<> > t;
+    mct.mcmc(2,low,high,vpf,vff);
+    cout << "Steps accepted, rejected: " << mct.n_accept[0] << " "
+	 << mct.n_reject[0] << endl;
+    t=mct.get_table();
+    t->new_column("weight");
+    for(size_t j=0;j<t->get_nlines();j++) {
+      t->set("weight",j,exp(t->get("log_wgt",j)));
+      for(size_t k=0;k<t->get("mult",j);k++) {
+	x02.push_back(t->get("x0",j));
+	x12.push_back(t->get("x1",j));
+      }
+    }
+    size_t ss;
+    {
+      std::vector<double> ac, ftom;
+      o2scl::vector_autocorr_vector(x02,ac);
+      size_t ac_len=o2scl::vector_autocorr_tau(ac,ftom);
+      cout << "ac_len,samp_size: " << ac_len << " "
+	   << x02.size()/ac_len << endl;
+      ss=x02.size()/ac_len;
+    }
+    {
+      std::vector<double> ac, ftom;
+      o2scl::vector_autocorr_vector(x12,ac);
+      size_t ac_len=o2scl::vector_autocorr_tau(ac,ftom);
+      cout << "ac_len,samp_size: " << ac_len << " "
+	   << x12.size()/ac_len << endl;
+      if (x12.size()/ac_len<ss) ss=x12.size()/ac_len;
+    }
+    table_units<> t2(ss);
+    t2.line_of_names("x0 x1");
+    size_t ac_len=x02.size()/ss;
+    // Thinning
+    for(size_t j=0;j<ss;j++) {
+      t2.set("x0",j,x02[j*ac_len]);
+      t2.set("x1",j,x12[j*ac_len]);
+    }
+    hdf_file hf2;
+    hf2.open_or_create("ex_mcmc_propdist.o2");
+    hdf_output(hf2,t2,"table2");
+    hf2.close();
+  }
+
+  exit(-1);
   
   // Table column names and units. We must specify first the names for
   // the parameters first and then the names of the auxillary
