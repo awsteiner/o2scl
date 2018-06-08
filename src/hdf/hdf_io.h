@@ -38,10 +38,97 @@
 #include <o2scl/expval.h>
 #include <o2scl/contour.h>
 #include <o2scl/uniform_grid.h>
+#include <o2scl/prob_dens_mdim_amr.h>
 
 /** \brief The \o2 namespace for I/O with HDF
  */
 namespace o2scl_hdf {
+
+  /** \brief Input a \ref o2scl::prob_dens_mdim_amr object from a 
+      \ref hdf_file
+   */
+  template<class vec_t, class mat_t> 
+    void hdf_input(hdf_file &hf,
+		   o2scl::prob_dens_mdim_amr<vec_t,mat_t> &p,
+		   std::string name) {
+      
+    // If no name specified, find name of first group of specified type
+    if (name.length()==0) {
+      hf.find_group_by_type("prob_dens_mdim_amr",name);
+      if (name.length()==0) {
+	O2SCL_ERR2("No object of type prob_dens_mdim_amr found in ",
+		   "o2scl_hdf::hdf_input().",o2scl::exc_efailed);
+      }
+    }
+
+    // Open main group
+    hid_t top=hf.get_current_id();
+    hid_t group=hf.open_group(name);
+    hf.set_current_id(group);
+
+    size_t nd, dc, ms;
+    std::vector<double> data;
+    std::vector<size_t> insides;
+    
+    hf.get_szt("n_dim",nd);
+    hf.get_szt("dim_choice",dc);
+    hf.get_szt("mesh_size",ms);
+    hf.getd_vec("data",data);
+    hf.get_szt_vec("insides",insides);
+
+    p.set_from_vectors(nd,dc,ms,data,insides);
+
+    // Close group
+    hf.close_group(group);
+
+    // Return location to previous value
+    hf.set_current_id(top);
+
+    return;
+  }
+  
+  /** \brief Output a \ref o2scl::prob_dens_mdim_amr 
+      object to a \ref hdf_file
+   */
+  template<class vec_t, class mat_t> 
+    void hdf_output(hdf_file &hf,
+		   o2scl::prob_dens_mdim_amr<vec_t,mat_t> &p,
+		   std::string name) {
+    
+    if (hf.has_write_access()==false) {
+      O2SCL_ERR2("File not opened with write access in hdf_output",
+		 "(hdf_file,prob_dens_mdim_amr<>,string).",
+		 o2scl::exc_efailed);
+    }
+    
+    // Start group
+    hid_t top=hf.get_current_id();
+    hid_t group=hf.open_group(name);
+    hf.set_current_id(group);
+    
+    // Add typename
+    hf.sets_fixed("o2scl_type","prob_dens_mdim_amr");
+    
+    size_t nd, dc, ms;
+    std::vector<double> data;
+    std::vector<size_t> insides;
+    
+    p.copy_to_vectors(nd,dc,ms,data,insides);
+
+    hf.set_szt("n_dim",nd);
+    hf.set_szt("dim_choice",dc);
+    hf.set_szt("mesh_size",ms);
+    hf.setd_vec("data",data);
+    hf.set_szt_vec("insides",insides);
+
+    // Close table_units group
+    hf.close_group(group);
+    
+    // Return location to previous value
+    hf.set_current_id(top);
+    
+    return;
+  }
   
   /** \brief Output a \ref o2scl::table object to a \ref hdf_file
    */
