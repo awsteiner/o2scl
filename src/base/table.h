@@ -1290,6 +1290,9 @@ namespace o2scl {
       Given a list of rows in \c row_list, this function deletes all
       of the specified rows. If a row beyond the end of the table is
       in the list, the error handler is called.
+
+      \note This function will proceed normally if a row is specified
+      more than once in <tt>row_list</tt>.
    */
   template<class vec_size_t> 
   void delete_rows_list(vec_size_t &row_list) {
@@ -1328,6 +1331,31 @@ namespace o2scl {
     return;
   }
 
+  /** \brief Exaustively search for groups of rows which match within a
+      specified tolerance and remove all but one of each group
+
+      This function returns the number of rows deleted.
+  */
+  size_t delete_rows_tolerance(double tol_rel=1.0e-12,
+			       double tol_abs=1.0e-12) {
+    std::vector<size_t> list;
+    for(size_t i=0;i<nlines;i++) {
+      for(size_t j=i+1;j<nlines;j++) {
+	bool match=true;
+	if (i<nlines && j<nlines && j>i) {
+	  for(aiter it=atree.begin();it!=atree.end() && match==true;it++) {
+	    if (it->second.dat[i]!=it->second.dat[j]) match=false;
+	  }
+	}
+	if (match==true) {
+	  list.push_back(j);
+	}
+      }
+    }
+    delete_rows_list(list);
+    return list.size();
+  }
+  
   /** \brief Delete all rows which are identical to
       adjacent rows
 

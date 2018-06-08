@@ -56,7 +56,7 @@ namespace o2scl {
 
     /** \brief The number of dimensions
      */
-    size_t ndim;
+    size_t n_dim;
     /** \brief The corner of smallest values 
      */
     std::vector<double> low;
@@ -76,14 +76,14 @@ namespace o2scl {
     /** \brief Create an empty hypercube
      */
     hypercube() {
-      ndim=0;
+      n_dim=0;
     }
 
     /** \brief Set the hypercube information
      */
     template<class vec2_t>
       void set(vec2_t &l, vec2_t &h, size_t in, double fvol, double wgt) {
-      ndim=l.size();
+      n_dim=l.size();
       low.resize(l.size());
       high.resize(h.size());
       inside.resize(1);
@@ -105,7 +105,7 @@ namespace o2scl {
     /** \brief Copy constructor
      */
     hypercube(const hypercube &h) {
-      ndim=h.ndim;
+      n_dim=h.n_dim;
       low=h.low;
       high=h.high;
       inside=h.inside;
@@ -118,7 +118,7 @@ namespace o2scl {
      */
     hypercube &operator=(const hypercube &h) {
       if (this!=&h) {
-	ndim=h.ndim;
+	n_dim=h.n_dim;
 	low=h.low;
 	high=h.high;
 	inside=h.inside;
@@ -131,7 +131,7 @@ namespace o2scl {
     /** \brief Test if point \c v is inside this hypercube
      */
     template<class vec2_t> bool is_inside(const vec2_t &v) const {
-      for(size_t i=0;i<ndim;i++) {
+      for(size_t i=0;i<n_dim;i++) {
 	if (high[i]<v[i] || v[i]<low[i]) {
 	  return false;
 	}
@@ -153,7 +153,7 @@ namespace o2scl {
  
   /** \brief Number of dimensions
    */
-  size_t ndim;
+  size_t n_dim;
 
   /** \brief Corner of smallest values
    */
@@ -182,7 +182,7 @@ namespace o2scl {
     low.clear();
     high.clear();
     scale.clear();
-    ndim=0;
+    n_dim=0;
     return;
   }
   
@@ -194,7 +194,7 @@ namespace o2scl {
   }
   
   prob_dens_mdim_amr() {
-    ndim=0;
+    n_dim=0;
     dim_choice=max_variance;
   }
   
@@ -204,7 +204,100 @@ namespace o2scl {
     dim_choice=max_variance;
     set(l,h);
   }
+  
+  /** \brief Copy the object data to a few numbers and two vectors
+   */
+  void copy_to_vectors(size_t &nd, size_t &dc, size_t &ms,
+		       std::vector<double> &data,
+		       std::vector<size_t> &insides) {
+    nd=n_dim;
+    dc=dim_choice;
+    ms=mesh.size();
+    data.clear();
+    for(size_t k=0;k<nd;k++) {
+      data.push_back(low[k]);
+    }
+    for(size_t k=0;k<nd;k++) {
+      data.push_back(high[k]);
+    }
+    if (dim_choice==user_scale) {
+      for(size_t k=0;k<nd;k++) {
+	data.push_back(scale[k]);
+      }
+    }
+    for(size_t k=0;k<ms;k++) {
+      data.push_back(mesh[k].weight);
+      data.push_back(mesh[k].frac_vol);
+      for(size_t k2=0;k2<n_dim;k2++) {
+	data.push_back(mesh[k].low[k2]);
+	data.push_back(mesh[k].high[k2]);
+      }
+    }
+    insides.clear();
+    for(size_t k=0;k<ms;k++) {
+      insides.push_back(mesh[k].inside.size());
+      for(size_t k2=0;k2<mesh[k].inside.size();k2++) {
+	insides.push_back(mesh[k].inside[k2]);
+      }
+    }
+    return;
+  }
 
+  /** \brief Set the object from data specified as a set
+      of two vectors
+   */
+  void set_from_vectors(size_t &nd, size_t &dc, size_t &ms,
+			const std::vector<double> &data,
+			const std::vector<size_t> &insides) {
+    n_dim=nd;
+    dim_choice=dc;
+    low.resize(n_dim);
+    high.resize(n_dim);
+    size_t ix=0;
+    for(size_t k=0;k<nd;k++) {
+      low[k]=data[ix];
+      ix++;
+    }
+    for(size_t k=0;k<nd;k++) {
+      high[k]=data[ix];
+      ix++;
+    }
+    if (dim_choice==user_scale) {
+      scale.resize(n_dim);
+      for(size_t k=0;k<nd;k++) {
+	scale[k]=data[ix];
+	ix++;
+      }
+    }
+    mesh.resize(ms);
+    for(size_t k=0;k<ms;k++) {
+      mesh[k].n_dim=n_dim;
+      mesh[k].weight=data[ix];
+      ix++;
+      mesh[k].frac_vol=data[ix];
+      ix++;
+      mesh[k].low.resize(n_dim);
+      mesh[k].high.resize(n_dim);
+      for(size_t k2=0;k2<n_dim;k2++) {
+	mesh[k].low[k2]=data[ix];
+	ix++;
+	mesh[k].high[k2]=data[ix];
+	ix++;
+      }
+    }
+    ix=0;
+    for(size_t k=0;k<ms;k++) {
+      size_t isize=insides[ix];
+      ix++;
+      mesh[k].inside.resize(isize);
+      for(size_t k2=0;k2<isize;k2++) {
+	mesh[k].inside[k2]=insides[ix];
+	ix++;
+      }
+    }
+    return;
+  }
+  
   /** \brief Set the mesh limits
 
       This function is called by the constructor
@@ -221,7 +314,7 @@ namespace o2scl {
       low[i]=l[i];
       high[i]=h[i];
     }
-    ndim=low.size();
+    n_dim=low.size();
     verbose=1;
     return;
   }
@@ -239,7 +332,7 @@ namespace o2scl {
       for the new point
    */
   void insert(size_t ir, mat_t &m) {
-    if (ndim==0) {
+    if (n_dim==0) {
       O2SCL_ERR2("Region limits and scales not set in ",
 		 "prob_dens_mdim_amr::insert().",o2scl::exc_einval);
     }
@@ -247,7 +340,7 @@ namespace o2scl {
     if (mesh.size()==0) {
       if (verbose>1) {
 	std::cout << "Creating cube with point at index " << ir << ": ";
-	for(size_t k=0;k<ndim;k++) {
+	for(size_t k=0;k<n_dim;k++) {
 	  std::cout << m(ir,k) << " ";
 	}
 	std::cout << std::endl;
@@ -255,18 +348,18 @@ namespace o2scl {
       
       // Initialize the mesh with the first point
       mesh.resize(1);
-      mesh[0].set(low,high,ir,1.0,m(ir,ndim));
+      mesh[0].set(low,high,ir,1.0,m(ir,n_dim));
       return;
     }
    
     // Convert the row to a vector
     std::vector<double> v;
-    for(size_t k=0;k<ndim;k++) {
+    for(size_t k=0;k<n_dim;k++) {
       v.push_back(m(ir,k));
     }
     if (verbose>1) {
       std::cout << "Finding cube with point ";
-      for(size_t k=0;k<ndim;k++) {
+      for(size_t k=0;k<n_dim;k++) {
 	std::cout << v[k] << " ";
       }
       std::cout << std::endl;
@@ -282,7 +375,7 @@ namespace o2scl {
       }
     }
     if (found==false) {
-      for(size_t k=0;k<ndim;k++) {
+      for(size_t k=0;k<n_dim;k++) {
 	std::cerr << k << " " << low[k] << " " << v[k] << " "
 	<< high[k] << std::endl;
       }
@@ -297,7 +390,7 @@ namespace o2scl {
     // Find coordinate to separate
     size_t max_ip=0;
     if (dim_choice==random) {
-      max_ip=((size_t)(rg.random()*((double)ndim)));
+      max_ip=((size_t)(rg.random()*((double)n_dim)));
       if (verbose>1) {
 	std::cout << "Randomly chose coordinate " << max_ip
 		  << std::endl;
@@ -314,7 +407,7 @@ namespace o2scl {
 	}
 	max_var=fabs(v[0]-m(h.inside[0],0))/scale[0];
       }
-      for(size_t ip=1;ip<ndim;ip++) {
+      for(size_t ip=1;ip<n_dim;ip++) {
 	double var;
 	if (dim_choice==max_variance) {
 	  var=fabs(v[ip]-m(h.inside[0],ip))/(h.high[ip]-h.low[ip]);
@@ -345,7 +438,7 @@ namespace o2scl {
 
     if (verbose>1) {
       std::cout << "Old limits:" << std::endl;
-      for(size_t i=0;i<ndim;i++) {
+      for(size_t i=0;i<n_dim;i++) {
 	std::cout << h.low[i] << " " << h.high[i] << std::endl;
       }
     }
@@ -363,7 +456,7 @@ namespace o2scl {
     low_new[max_ip]=old_low;
     high_new[max_ip]=loc;
     double new_vol=old_vol*(loc-old_low)/(old_high-old_low);
-    h_new.set(low_new,high_new,ir,new_vol,m(ir,ndim));
+    h_new.set(low_new,high_new,ir,new_vol,m(ir,n_dim));
 
     // --------------------------------------------------------------
     // Todo: this test is unnecessarily slow, and can be replaced by a
@@ -373,24 +466,24 @@ namespace o2scl {
     if (h.is_inside(v)) {
       h.inside[0]=ir;
       h_new.inside[0]=old_inside;
-      h.weight=m(ir,ndim);
+      h.weight=m(ir,n_dim);
       h_new.weight=old_weight;
     } else {
       h.inside[0]=old_inside;
       h_new.inside[0]=ir;
       h.weight=old_weight;
-      h_new.weight=m(ir,ndim);
+      h_new.weight=m(ir,n_dim);
     }
 
     // --------------------------------------------------------------
     
     if (verbose>1) {
       std::cout << "New limits:" << std::endl;
-      for(size_t i=0;i<ndim;i++) {
+      for(size_t i=0;i<n_dim;i++) {
 	std::cout << h.low[i] << " " << h.high[i] << std::endl;
       }
       std::cout << "New cube " << mesh.size() << std::endl;
-      for(size_t i=0;i<ndim;i++) {
+      for(size_t i=0;i<n_dim;i++) {
 	std::cout << h_new.low[i] << " " << h_new.high[i] << std::endl;
       }
     }
@@ -432,8 +525,8 @@ namespace o2scl {
     std::vector<bool> added(N);
     for(size_t i=0;i<N;i++) added[i]=false;
 
-    std::vector<double> scale2(ndim);
-    for(size_t i=0;i<ndim;i++) {
+    std::vector<double> scale2(n_dim);
+    for(size_t i=0;i<n_dim;i++) {
       scale2[i]=fabs(high[i]-low[i]);
     }
 
@@ -447,7 +540,7 @@ namespace o2scl {
 	  iarr.push_back(i);
 	  jarr.push_back(j);
 	  double dist=0.0;
-	  for(size_t k=0;k<ndim;k++) {
+	  for(size_t k=0;k<n_dim;k++) {
 	    dist+=pow((m(i,k)-m(j,k))/scale2[k],2.0);
 	  }
 	  distarr.push_back(sqrt(dist));
@@ -477,12 +570,12 @@ namespace o2scl {
       for(size_t i=0;i<N;i++) {
 	if (added[i]==false) {
 	  done=false;
-	  std::vector<double> x(ndim);
-	  for(size_t k=0;k<ndim;k++) x[k]=m(i,k);
+	  std::vector<double> x(n_dim);
+	  for(size_t k=0;k<n_dim;k++) x[k]=m(i,k);
 	  const hypercube &h=find_hc(x);
 	  iarr.push_back(i);
 	  double dist=0.0;
-	  for(size_t k=0;k<ndim;k++) {
+	  for(size_t k=0;k<n_dim;k++) {
 	    dist+=pow((m(i,k)-m(h.inside[0],k))/(h.high[k]-h.low[k]),2.0);
 	  }
 	  distarr.push_back(dist);
@@ -528,6 +621,22 @@ namespace o2scl {
     return ret;
   }
 
+  /** \brief Check the total volume by adding up the fractional
+      part of the volume in each hypercube
+   */
+  double total_weighted_volume() {
+    if (mesh.size()==0) {
+      O2SCL_ERR2("Mesh empty in ",
+		 "prob_dens_mdim_amr::total_weighted_volume().",
+		 o2scl::exc_einval);
+    }
+    double ret=0.0;
+    for(size_t i=0;i<mesh.size();i++) {
+      ret+=mesh[i].frac_vol*mesh[i].weight;
+    }
+    return ret;
+  }
+
   /** \brief Return a reference to the hypercube containing the
       specified point
    */
@@ -536,7 +645,7 @@ namespace o2scl {
       O2SCL_ERR2("Mesh has zero size in ",
 		 "prob_dens_mdim_amr::find_hc().",o2scl::exc_efailed);
     }
-    for(size_t j=0;j<ndim;j++) {
+    for(size_t j=0;j<n_dim;j++) {
       if (x[j]<low[j] || x[j]>high[j]) {
 	O2SCL_ERR2("Point outside region in ",
 		   "prob_dens_mdim_amr::find_hc().",o2scl::exc_einval);
@@ -591,7 +700,7 @@ namespace o2scl {
 	wgt=mesh[i].frac_vol*mesh[i].weight;
       }
     }
-    for(size_t j=0;j<ndim;j++) {
+    for(size_t j=0;j<n_dim;j++) {
       x[j]=rg.random()*(mesh[im].high[j]-mesh[im].low[j])+mesh[im].low[j];
     }
 
@@ -616,7 +725,7 @@ namespace o2scl {
     for(size_t j=0;j<mesh.size();j++) {
       cml_wgt+=mesh[j].frac_vol*mesh[j].weight;
       if (this_weight<cml_wgt || j==mesh.size()-1) {
-	for(size_t i=0;i<ndim;i++) {
+	for(size_t i=0;i<n_dim;i++) {
 	  x[i]=mesh[j].low[i]+rg.random()*
 	    (mesh[j].high[i]-mesh[j].low[i]);
 	}
