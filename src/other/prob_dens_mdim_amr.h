@@ -405,11 +405,13 @@ namespace o2scl {
       for every point 
    */
   void initial_parse(mat_t &m) {
-   
+
     for(size_t ir=0;ir<m.size1();ir++) {
       insert(ir,m);
     }
-   
+    if (verbose>0) {
+      std::cout << "Inserted " << m.size1() << " points." << std::endl;
+    }
     return;
   }
 
