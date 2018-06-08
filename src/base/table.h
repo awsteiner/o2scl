@@ -2994,15 +2994,31 @@ namespace o2scl {
     /** \brief Create a matrix view object from the specified 
 	table and list of columns
     */
-    matrix_view_table(o2scl::table<vec_t> &t,
-		      std::vector<std::string> cols) {
-      nc=cols.size();
-      col_ptrs.resize(nc);
-      for(size_t i=0;i<nc;i++) {
-	col_ptrs[i]=&t[cols[i]];
-      }
-      tp=&t;
+  matrix_view_table() {
+    nc=0;
+    tp=0;
+  }
+
+    /** \brief Create a matrix view object from the specified 
+	table and list of columns
+    */
+  matrix_view_table(o2scl::table<vec_t> &t,
+		    std::vector<std::string> cols) {
+    set(t,cols);
+  }
+  
+    /** \brief Create a matrix view object from the specified 
+	table and list of columns
+    */
+  void set(o2scl::table<vec_t> &t,
+	   std::vector<std::string> cols) {
+    nc=cols.size();
+    col_ptrs.resize(nc);
+    for(size_t i=0;i<nc;i++) {
+      col_ptrs[i]=&t[cols[i]];
     }
+    tp=&t;
+  }
   
     /** \brief Return the number of rows
      */

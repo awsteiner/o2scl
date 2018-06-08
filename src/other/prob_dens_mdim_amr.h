@@ -175,6 +175,24 @@ namespace o2scl {
    */
   int verbose;
 
+  /** \brief Desc
+   */
+  void clear() {
+    mesh.clear();
+    low.clear();
+    high.clear();
+    scale.clear();
+    ndim=0;
+    return;
+  }
+  
+  /** \brief Desc
+   */
+  void clear_mesh() {
+    mesh.clear();
+    return;
+  }
+  
   prob_dens_mdim_amr() {
     ndim=0;
     dim_choice=max_variance;
@@ -192,7 +210,7 @@ namespace o2scl {
       This function is called by the constructor
    */
   void set(vec_t &l, vec_t &h) {
-    mesh.clear();
+    clear_mesh();
     if (h.size()<l.size()) {
       O2SCL_ERR2("Vector sizes not correct in ",
 		"prob_dens_mdim_amr::set().",o2scl::exc_einval);
@@ -264,6 +282,10 @@ namespace o2scl {
       }
     }
     if (found==false) {
+      for(size_t k=0;k<ndim;k++) {
+	std::cerr << k << " " << low[k] << " " << v[k] << " "
+	<< high[k] << std::endl;
+      }
       O2SCL_ERR2("Couldn't find point inside mesh in ",
 		 "prob_dens_mdim_amr::insert().",o2scl::exc_efailed);
     }
