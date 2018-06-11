@@ -1337,14 +1337,20 @@ namespace o2scl {
       This function returns the number of rows deleted.
   */
   size_t delete_rows_tolerance(double tol_rel=1.0e-12,
-			       double tol_abs=1.0e-12) {
+			       double tol_abs=1.0e-20) {
     std::vector<size_t> list;
     for(size_t i=0;i<nlines;i++) {
       for(size_t j=i+1;j<nlines;j++) {
 	bool match=true;
 	if (i<nlines && j<nlines && j>i) {
 	  for(aiter it=atree.begin();it!=atree.end() && match==true;it++) {
-	    if (it->second.dat[i]!=it->second.dat[j]) match=false;
+	    if (fabs(it->second.dat[i])>tol_abs ||
+		fabs(it->second.dat[j])>tol_abs) {
+	      if (fabs(it->second.dat[i]-it->second.dat[j])/
+		  fabs(it->second.dat[i]+it->second.dat[j])>tol_rel) {
+		match=false;
+	      }
+	    }
 	  }
 	}
 	if (match==true) {

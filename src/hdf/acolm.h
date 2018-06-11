@@ -295,6 +295,9 @@ namespace o2scl_acol {
 
     /// Delete rows specified by a function
     virtual int comm_delete_rows(std::vector<std::string> &sv, bool itive_com);
+    
+    virtual int comm_delete_rows_tol(std::vector<std::string> &sv,
+				     bool itive_com);
 
     /// Create a column which is the derivative of another
     virtual int comm_deriv(std::vector<std::string> &sv, bool itive_com);

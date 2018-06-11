@@ -104,10 +104,6 @@ void o2scl_acol_parse(void *vp, int n_entries, int *sizes,
   return;
 }
 
-//  template<class resize_vec_t>
-//void get_row(size_t irow, resize_vec_t &row) const {
-//template<class resize_vec_t>
-//void get_row(std::string scol, double val, resize_vec_t &row) const {
 int o2scl_acol_get_column(void *vp, char *col_name,
 			  int &n, double *&ptr) {
   o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
@@ -327,7 +323,7 @@ void acol_manager::command_add(std::string new_type) {
     };
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="table") {
-    static const size_t narr=34;
+    static const size_t narr=35;
     comm_option_s options_arr[narr]={
       {'a',"assign","Assign a constant, e.g. assign pi acos(-1) .",
        0,2,"<name> [val]",
@@ -346,6 +342,10 @@ void acol_manager::command_add(std::string new_type) {
        "For example, 'delete-rows if(col1+col2>10,1,0)' will delete "+
        "all columns where the sum of the entries in 'col1' and 'col2' "+
        "is larger than 10. See also 'select-rows'.",
+       new comm_option_mfptr<acol_manager>
+       (this,&acol_manager::comm_delete_rows),both},
+      {'d',"delete-rows-tol","Delete rows within a tolerance.",
+       0,2,"[relative tol.] [absolute tol.]","",
        new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_delete_rows),both},
       {'D',"deriv",
@@ -7158,20 +7158,55 @@ int acol_manager::comm_delete_rows(std::vector<std::string> &sv,
   }
 
   std::string i1;
-  if (sv.size()>=2) {
-    i1=sv[1];
-  } else if (itive_com==true) {
-    i1=cl->cli_gets("Function to specify rows (or blank to quit): ");
-    if (i1.length()==0) {
-      if (verbose>0) cout << "Command 'delete_rows' cancelled." << endl;
-      return 0;
-    }
-  } else {
-    cerr << "No rows to delete." << endl;
-    return exc_efailed;
-  }
+  int ret=get_input_one(sv,"Function to specify rows",
+			i1,"delete-rows",itive_com);
+  if (ret!=0) return ret;
   
   table_obj.delete_rows_func(i1);
+
+  return 0;
+}
+
+int acol_manager::comm_delete_rows_tol(std::vector<std::string> &sv, 
+				       bool itive_com) {
+
+  if (type!="table") {
+    cout << "Not implemented for type " << type << endl;
+    return 0;
+  }
+
+  if (table_obj.get_nlines()==0) {
+    cerr << "No table to delete rows from." << endl;
+    return exc_efailed;
+  }
+
+  double tr, ta;
+  if (itive_com || sv.size()>=3) {
+    vector<string> in, pr;
+    pr.push_back("Relative tolerance");
+    pr.push_back("Absolute tolerance");
+    int ret=get_input(sv,pr,in,"to-hist",itive_com);
+    if (ret!=0) return ret;
+    if (o2scl::stod_nothrow(in[0],tr)!=0) {
+      cerr << "Failed to convert " << in[0] << " to number." << endl;
+      return 1;
+    }
+    if (o2scl::stod_nothrow(in[1],ta)!=0) {
+      cerr << "Failed to convert " << in[1] << " to number." << endl;
+      return 2;
+    }
+  } else if (sv.size()>=2) {
+    if (o2scl::stod_nothrow(sv[1],tr)!=0) {
+      cerr << "Failed to convert " << sv[1] << " to number." << endl;
+      return 3;
+    }
+    ta=1.0e-20;
+  } else {
+    tr=1.0e-12;
+    ta=1.0e-20;
+  }
+  
+  table_obj.delete_rows_tolerance(tr,ta);
 
   return 0;
 }
