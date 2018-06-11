@@ -216,6 +216,8 @@ namespace o2scl_acol {
     o2scl::tensor<int> tensor_int_obj;
     o2scl::tensor<size_t> tensor_size_t_obj;
     o2scl::tensor_grid<> tensor_grid_obj;
+
+    o2scl::prob_dens_mdim_amr<> pdma_obj;
     //@}
     
     /** \brief True if we should run interactive mode after parsing
@@ -371,7 +373,7 @@ namespace o2scl_acol {
     /// Print out an entire row
     virtual int comm_get_row(std::vector<std::string> &sv, bool itive_com);
 
-    /// Extract a slice from a table3d object to generate a table object
+    /// Extract a slice from a table3d object to generate a \ref o2scl::table object
     virtual int comm_slice(std::vector<std::string> &sv, bool itive_com);
 
     /// Fit two columns to a function
@@ -556,31 +558,46 @@ extern "C" {
 			char *str);
 
   /** \brief Return the size and a pointer to the column
-      named \c col_name in a table object
+      named \c col_name in a \ref o2scl::table object
    */
   int o2scl_acol_get_column(void *vp, char *col_name,
 			    int &n, double *&ptr);
 
   /** \brief Return the size and a pointer to the row
-      with index \c row_index in a table object
+      with index \c row_index in a \ref o2scl::table object
    */
   int o2scl_acol_get_row_ser(void *vp, char *parttern, int row_index,
 			     int &n, double *&ptr);
   
   /** \brief Return the size and a pointer to the column
-      named \c col_name in a table object
+      named \c col_name in a \ref o2scl::table object
    */
   int o2scl_acol_get_double_arr(void *vp, int &n, double *&ptr);
   
   /** \brief Return the size and a pointer to the column
-      named \c col_name in a table object
+      named \c col_name in a \ref o2scl::table object
    */
   int o2scl_acol_get_hist_reps(void *vp, int &n, double *&ptr);
 
   /** \brief Return the size and a pointer to the column
-      named \c col_name in a table object
+      named \c col_name in a \ref o2scl::table object
    */
   int o2scl_acol_get_hist_wgts(void *vp, int &n, double *&ptr);
+
+  /** \brief Return the dimensionality, mesh size, and 
+      lower and upper limits for a \ref o2scl::prob_dens_mdim_amr 
+      object.
+   */
+  int o2scl_acol_pdma_get_base(void *vp, int &ndim, int &n, 
+			       double *&low, double *&high);
+
+  /** \brief Return the lower and upper limits, fractional volume, and
+      weight for the \ref o2scl::prob_dens_mdim_amr::hypercube object
+      of index \c ix
+   */
+  int o2scl_acol_pdma_get_cube(void *vp, int ix, 
+			       double *&low, double *&high,
+			       double &frac_vol, double &weight);
 
   /** \brief Return the number of contour lines associated with
       the current contour line vector object
@@ -599,7 +616,7 @@ extern "C" {
   void o2scl_acol_get_type(void *vp, int &n, char *&str);
 
   /** \brief Return the size and a pointer to the column
-      named \c col_name in a table object
+      named \c col_name in a \ref o2scl::table object
    */
   int o2scl_acol_get_slice(void *vp, char *slice_name,
 			   int &nx, double *&xptr,

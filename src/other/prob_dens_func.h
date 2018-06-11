@@ -1064,14 +1064,14 @@ namespace o2scl {
   prob_dens_mdim_gaussian(size_t p_mdim, size_t n_pts, const mat2_t &pts,
 			  const vec2_t &vals) {
     
-    vec_t peak(p_mdim);
+    vec_t peak2(p_mdim);
     mat_t covar(p_mdim,p_mdim);
 
     // Set peak with average and diagonal elements in covariance
     // matrix with variance
     for(size_t i=0;i<p_mdim;i++) {
       const mat2_col_t col(pts,i);
-      peak[i]=o2scl::wvector_mean<mat2_col_t>(n_pts,col,vals);
+      peak2[i]=o2scl::wvector_mean<mat2_col_t>(n_pts,col,vals);
       // Square standard deviation
       covar(i,i)=o2scl::wvector_stddev<mat2_col_t>(n_pts,col,vals);
       covar(i,i)*=covar(i,i);
@@ -1086,7 +1086,7 @@ namespace o2scl {
 	covar(j,i)=cov;
       }
     }
-    set(p_mdim,peak,covar);
+    set(p_mdim,peak2,covar);
   }
   
   /** \brief Create a distribution from the covariance matrix

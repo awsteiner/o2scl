@@ -707,6 +707,8 @@ namespace o2scl {
     static const int match_line=1;
     //@}
 
+    bool err_nonconv;
+    
     /// \name Basic EOS functions
     //@{
     /** \brief From the pressure, return the energy density

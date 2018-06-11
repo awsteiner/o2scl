@@ -120,6 +120,35 @@ int o2scl_acol_get_column(void *vp, char *col_name,
   return 0;
 }
 
+int o2scl_acol_pdma_get_base(void *vp, int &n, int &ndim,
+			     double *&low, double *&high) {
+  o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
+  if (amp->type!="prob_dens_mdim_amr") {
+    return 1;
+  }
+  prob_dens_mdim_amr<> &pdma=amp->pdma_obj;
+  ndim=pdma.n_dim;
+  n=pdma.mesh.size();
+  low=&(pdma.low[0]);
+  high=&(pdma.high[0]);
+  return 0;
+}
+
+int o2scl_acol_pdma_get_cube(void *vp, int ix, 
+			     double *&low, double *&high,
+			     double &frac_vol, double &weight) {
+  o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
+  if (amp->type!="prob_dens_mdim_amr") {
+    return 1;
+  }
+  prob_dens_mdim_amr<> &pdma=amp->pdma_obj;
+  low=&(pdma.mesh[ix].low[0]);
+  high=&(pdma.mesh[ix].high[0]);
+  frac_vol=pdma.mesh[ix].frac_vol;
+  weight=pdma.mesh[ix].weight;
+  return 0;
+}
+
 int o2scl_acol_get_row_ser(void *vp, char *pattern, int row_index,
 			   int &n, double *&ptr) {
   o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
@@ -344,7 +373,7 @@ void acol_manager::command_add(std::string new_type) {
        "is larger than 10. See also 'select-rows'.",
        new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_delete_rows),both},
-      {'d',"delete-rows-tol","Delete rows within a tolerance.",
+      {0,"delete-rows-tol","Delete rows within a tolerance.",
        0,2,"[relative tol.] [absolute tol.]","",
        new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_delete_rows),both},
@@ -913,6 +942,7 @@ void acol_manager::command_del() {
     cl->remove_comm_option("assign");
     cl->remove_comm_option("delete-col");
     cl->remove_comm_option("delete-rows");
+    cl->remove_comm_option("delete-rows-tol");
     cl->remove_comm_option("deriv");
     cl->remove_comm_option("deriv2");
     cl->remove_comm_option("cat");
@@ -3128,6 +3158,15 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       obj_name=i2;
       command_add("tensor_grid");
       type="tensor_grid";
+      return 0;
+    } else if (ip.type=="prob_dens_mdim_amr") {
+      if (verbose>2) {
+	cout << "Reading prob_dens_mdim_amr." << endl;
+      }
+      hdf_input(hf,pdma_obj,i2);
+      obj_name=i2;
+      command_add("prob_dens_mdim_amr");
+      type="prob_dens_mdim_amr";
       return 0;
     } else if (ip.type.substr(0,10)==((string)"double[][]").substr(0,10)) {
       if (verbose>2) {

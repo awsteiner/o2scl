@@ -352,6 +352,8 @@ eos_tov_interp::eos_tov_interp() {
   transition_mode=smooth_trans;
 
   gen_int.set_type(itp_linear);
+
+  err_nonconv=true;
 }
 
 eos_tov_interp::~eos_tov_interp() {
@@ -1266,10 +1268,12 @@ void eos_tov_interp::ed_nb_from_pr(double pr, double &ed, double &nb) {
     nb=pnb_int.eval(pr);
   }
 
-  if (!std::isfinite(ed) || (baryon_column && !std::isfinite(nb))) {
-    string s="Energy density or baryon density not finite at pressure ";
-    s+=dtos(pr)+" in eos_tov_interp::ed_nb_from_pr().";
-    O2SCL_ERR(s.c_str(),exc_efailed);
+  if (err_nonconv) {
+    if (!std::isfinite(ed) || (baryon_column && !std::isfinite(nb))) {
+      string s="Energy density or baryon density not finite at pressure ";
+      s+=dtos(pr)+" in eos_tov_interp::ed_nb_from_pr().";
+      O2SCL_ERR(s.c_str(),exc_efailed);
+    }
   }
   
   return;
