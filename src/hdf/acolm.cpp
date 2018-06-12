@@ -120,7 +120,7 @@ int o2scl_acol_get_column(void *vp, char *col_name,
   return 0;
 }
 
-int o2scl_acol_pdma_get_base(void *vp, int &n, int &ndim,
+int o2scl_acol_pdma_get_base(void *vp, int &ndim, int &n,
 			     double *&low, double *&high) {
   o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
   if (amp->type!="prob_dens_mdim_amr") {
