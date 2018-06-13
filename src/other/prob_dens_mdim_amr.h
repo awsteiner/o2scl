@@ -361,6 +361,14 @@ namespace o2scl {
       } else {
 	mesh[0].set(low,high,ir,1.0,m(ir,n_dim));
       }
+      if (!std::isfinite(mesh[0].frac_vol)) {
+	O2SCL_ERR2("Mesh has non finite fractional volume",
+		   "in prob_dens_mdim_amr::insert().",o2scl::exc_esanity);
+      }
+      if (!std::isfinite(mesh[0].weight)) {
+	O2SCL_ERR2("Mesh has non finite weight ",
+		   "in prob_dens_mdim_amr::insert().",o2scl::exc_einval);
+      }
       return;
     }
    
@@ -459,6 +467,10 @@ namespace o2scl {
     h.low[max_ip]=loc;
     h.high[max_ip]=old_high;
     h.frac_vol=old_vol*(old_high-loc)/(old_high-old_low);
+    if (!std::isfinite(h.frac_vol)) {
+      O2SCL_ERR2("Mesh has non finite fractional volume",
+		 "in prob_dens_mdim_amr::insert().",o2scl::exc_esanity);
+    }
    
     // Set values for new hypercube
     hypercube h_new;
@@ -476,6 +488,10 @@ namespace o2scl {
       }
     } else {
       h_new.set(low_new,high_new,ir,new_vol,m(ir,n_dim));
+    }
+    if (!std::isfinite(h_new.weight)) {
+      O2SCL_ERR2("Mesh has non finite weight ",
+		 "in prob_dens_mdim_amr::insert().",o2scl::exc_einval);
     }
 
     // --------------------------------------------------------------
@@ -509,6 +525,22 @@ namespace o2scl {
       } else {
 	h_new.weight=m(ir,n_dim);
       }
+    }
+    if (!std::isfinite(h.weight)) {
+      O2SCL_ERR2("Mesh has non finite weight ",
+		 "in prob_dens_mdim_amr::insert().",o2scl::exc_einval);
+    }
+    if (!std::isfinite(h_new.weight)) {
+      O2SCL_ERR2("Mesh has non finite weight ",
+		 "in prob_dens_mdim_amr::insert().",o2scl::exc_einval);
+    }
+    if (!std::isfinite(h.frac_vol)) {
+      O2SCL_ERR2("Mesh has non finite fractional volume",
+		 "in prob_dens_mdim_amr::insert().",o2scl::exc_esanity);
+    }
+    if (!std::isfinite(h_new.frac_vol)) {
+      O2SCL_ERR2("Mesh has non finite fractional volume",
+		 "in prob_dens_mdim_amr::insert().",o2scl::exc_esanity);
     }
 
     // --------------------------------------------------------------
@@ -650,6 +682,10 @@ namespace o2scl {
     }
     double ret=0.0;
     for(size_t i=0;i<mesh.size();i++) {
+      if (!std::isfinite(mesh[i].frac_vol)) {
+	O2SCL_ERR2("Mesh has non finite fractional volume",
+		   "in prob_dens_mdim_amr::insert().",o2scl::exc_esanity);
+      }
       ret+=mesh[i].frac_vol;
     }
     return ret;
