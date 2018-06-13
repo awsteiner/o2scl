@@ -3057,7 +3057,9 @@ namespace o2scl {
     /** \brief Return the number of rows
      */
     size_t size1() {
-      return tp->get_nlines();
+      if (nc!=0) {
+	return tp->get_nlines();
+      }
     }
   
     /** \brief Return the number of columns
