@@ -2160,10 +2160,6 @@ namespace o2scl {
 	} else {
 	  next_row=walker_reject_rows[windex]+1;
 	}
-	while (next_row<((int)table->get_nlines()) &&
-	       fabs(table->get("mult",next_row))>0.1) {
-	  next_row++;
-	}
       }
     }
     
@@ -2175,6 +2171,14 @@ namespace o2scl {
 #endif
     {
 
+      // AWS 6/13/18: Moved this to the critical section to ensure
+      // that next row is computed properly when multiple threads are
+      // writing to the table.
+      while (next_row<((int)table->get_nlines()) &&
+	     fabs(table->get("mult",next_row))>0.1) {
+	next_row++;
+      }
+      
       // If there's not enough space in the table for this iteration,
       // then create it. There is not enough space if any of the
       // walker_accept_rows array entries is -1, if we have an
