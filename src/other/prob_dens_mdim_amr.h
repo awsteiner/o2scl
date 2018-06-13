@@ -331,9 +331,13 @@ namespace o2scl {
   /** \brief Insert point at row \c ir, creating a new hypercube 
       for the new point
    */
-  void insert(size_t ir, mat_t &m) {
+  void insert(size_t ir, mat_t &m, bool log_mode=false) {
     if (n_dim==0) {
       O2SCL_ERR2("Region limits and scales not set in ",
+		 "prob_dens_mdim_amr::insert().",o2scl::exc_einval);
+    }
+    if (log_mode==false && m(ir,n_dim)<0.0) {
+      O2SCL_ERR2("Weight negative in ",
 		 "prob_dens_mdim_amr::insert().",o2scl::exc_einval);
     }
 
@@ -348,7 +352,15 @@ namespace o2scl {
       
       // Initialize the mesh with the first point
       mesh.resize(1);
-      mesh[0].set(low,high,ir,1.0,m(ir,n_dim));
+      if (log_mode) {
+	if (m(ir,n_dim)>-800.0) {
+	  mesh[0].set(low,high,ir,1.0,exp(m(ir,n_dim)));
+	} else {
+	  mesh[0].set(low,high,ir,1.0,0.0);
+	}
+      } else {
+	mesh[0].set(low,high,ir,1.0,m(ir,n_dim));
+      }
       return;
     }
    
@@ -456,7 +468,15 @@ namespace o2scl {
     low_new[max_ip]=old_low;
     high_new[max_ip]=loc;
     double new_vol=old_vol*(loc-old_low)/(old_high-old_low);
-    h_new.set(low_new,high_new,ir,new_vol,m(ir,n_dim));
+    if (log_mode) {
+      if (m(ir,n_dim)>-800.0) {
+	h_new.set(low_new,high_new,ir,new_vol,exp(m(ir,n_dim)));
+      } else {
+	h_new.set(low_new,high_new,ir,new_vol,0.0);
+      }
+    } else {
+      h_new.set(low_new,high_new,ir,new_vol,m(ir,n_dim));
+    }
 
     // --------------------------------------------------------------
     // Todo: this test is unnecessarily slow, and can be replaced by a
@@ -466,13 +486,29 @@ namespace o2scl {
     if (h.is_inside(v)) {
       h.inside[0]=ir;
       h_new.inside[0]=old_inside;
-      h.weight=m(ir,n_dim);
+      if (log_mode) {
+	if (m(ir,n_dim)>-800.0) {
+	  h.weight=exp(m(ir,n_dim));
+	} else {
+	  h.weight=0.0;
+	}
+      } else {
+	h.weight=m(ir,n_dim);
+      }
       h_new.weight=old_weight;
     } else {
       h.inside[0]=old_inside;
       h_new.inside[0]=ir;
       h.weight=old_weight;
-      h_new.weight=m(ir,n_dim);
+      if (log_mode) {
+	if (m(ir,n_dim)>-800.0) {
+	  h_new.weight=exp(m(ir,n_dim));
+	} else {
+	  h_new.weight=0.0;
+	}
+      } else {
+	h_new.weight=m(ir,n_dim);
+      }
     }
 
     // --------------------------------------------------------------
@@ -497,14 +533,12 @@ namespace o2scl {
   /** \brief Parse the matrix \c m, creating a new hypercube
       for every point 
    */
-  void initial_parse(mat_t &m) {
+  void initial_parse(mat_t &m, bool log_mode=false) {
 
     for(size_t ir=0;ir<m.size1();ir++) {
-      insert(ir,m);
+      insert(ir,m,log_mode);
     }
-    if (verbose>0) {
-      std::cout << "Inserted " << m.size1() << " points." << std::endl;
-    }
+    
     return;
   }
 

@@ -3060,6 +3060,7 @@ namespace o2scl {
       if (nc!=0) {
 	return tp->get_nlines();
       }
+      return 0;
     }
   
     /** \brief Return the number of columns
