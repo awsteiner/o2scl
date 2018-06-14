@@ -780,7 +780,7 @@ namespace o2scl {
       }
     }
     if (found==false) {
-      O2SCL_ERR("Error 2.",o2scl::exc_esanity);
+      O2SCL_ERR("Point not found inside mesh in pdf().",o2scl::exc_esanity);
     }
     return mesh[jm].weight;
   }

@@ -68,31 +68,37 @@ namespace o2scl {
     
     /// Sample from the specified density
     virtual double operator()() const {
+      O2SCL_ERR("Executing blank parent function.",o2scl::exc_eunimpl);
       return 0.0;
     }
     
     /// The normalized density 
     virtual double pdf(double x) const {
+      O2SCL_ERR("Executing blank parent function.",o2scl::exc_eunimpl);
       return 0.0;
     }
     
     /// The log of the normalized density 
     virtual double log_pdf(double x) const {
+      O2SCL_ERR("Executing blank parent function.",o2scl::exc_eunimpl);
       return 0.0;
     }
     
     /// The cumulative distribution function (from the lower tail)
     virtual double cdf(double x) const {
+      O2SCL_ERR("Executing blank parent function.",o2scl::exc_eunimpl);
       return 0.0;
     }
     
     /// The inverse cumulative distribution function
     virtual double invert_cdf(double cdf) const {
+      O2SCL_ERR("Executing blank parent function.",o2scl::exc_eunimpl);
       return 0.0;
     }
 
     /// Entropy of the distribution (\f$ - \int f \ln f \f$ )
     virtual double entropy() const {
+      O2SCL_ERR("Executing blank parent function.",o2scl::exc_eunimpl);
       return 0.0;
     }
     
@@ -664,6 +670,7 @@ namespace o2scl {
 
     /// Entropy of the distribution (\f$ - \int f \ln f \f$ )
     virtual double entropy() const {
+      O2SCL_ERR("Executing blank parent function.",o2scl::exc_eunimpl);
       return 0.0;
     }
     
@@ -680,21 +687,24 @@ namespace o2scl {
   
   /// Return the dimensionality
   virtual size_t dim() const {
+    O2SCL_ERR("Executing blank parent function.",o2scl::exc_eunimpl);
     return 0;
   }
   
   /// The normalized density 
   virtual double pdf(const vec_t &x) const {
+    O2SCL_ERR("Executing blank parent function.",o2scl::exc_eunimpl);
     return 0.0;
   }
   
   /// The log of the normalized density 
   virtual double log_pdf(const vec_t &x) const {
-    return 0.0;
+    return log(pdf(x));
   }
   
   /// Sample the distribution
   virtual void operator()(vec_t &x) const {
+    O2SCL_ERR("Executing blank parent function.",o2scl::exc_eunimpl);
     return;
   }
   
@@ -810,7 +820,7 @@ namespace o2scl {
       pdf(x,y) = \left(2 \pi \sigma_x \sigma_y
       \sqrt{1-\rho^2}\right)^{-1} \exp (-\chi^2/2) \f$ .
       
-   */
+  */
   template<class vec_t=boost::numeric::ublas::vector<double> >
     class prob_dens_mdim_biv_gaussian : public prob_dens_mdim<vec_t> {
 
@@ -863,7 +873,7 @@ namespace o2scl {
 
       \note If \f$ |\rho|\geq 1 \f$ this function will
       call the error handler.
-   */
+  */
   void set(double x_cent, double y_cent, double x_std, double y_std,
 	   double covar) {
     if (fabs(covar)>=1.0) {
@@ -995,7 +1005,7 @@ namespace o2scl {
       This has to be public so the user can set the random seed,
       or we have to create a new set_seed() function.
       \endcomment
-   */
+  */
   o2scl::prob_dens_gaussian pdg;
 
   /** \brief Get the Cholesky decomposition 
@@ -1058,7 +1068,7 @@ namespace o2scl {
   
   /** \brief Create a distribution from a set of samples from a 
       multidimensional Gaussian
-   */
+  */
   template<class mat2_t, class vec2_t,
   class mat2_col_t=const_matrix_column_gen<mat2_t> >
   prob_dens_mdim_gaussian(size_t p_mdim, size_t n_pts, const mat2_t &pts,
@@ -1099,7 +1109,7 @@ namespace o2scl {
 
       \note This function is called in constructors and thus 
       should not be virtual.
-   */
+  */
   void set(size_t p_ndim, vec_t &p_peak, mat_t &covar) {
     if (p_ndim==0) {
       O2SCL_ERR("Zero dimension in prob_dens_mdim_gaussian::set().",
@@ -1295,7 +1305,7 @@ namespace o2scl {
       excluded. 
 
       \warning The PDF is not yet properly normalized
-   */
+  */
   template<class vec_t=boost::numeric::ublas::vector<double>,
     class mat_t=boost::numeric::ublas::matrix<double> >
     class prob_dens_mdim_bound_gaussian :
@@ -1320,7 +1330,7 @@ namespace o2scl {
   
   /** \brief Create a distribution with the specified peak, covariance
       matrix, lower limits, and upper limits
-   */
+  */
   prob_dens_mdim_bound_gaussian(size_t p_ndim, vec_t &p_peak, mat_t &covar,
 				vec_t &p_low, vec_t &p_high) {
     set(p_ndim,p_peak,covar,p_low,p_high);
@@ -1331,7 +1341,7 @@ namespace o2scl {
 
       \note This function is called in constructors and thus 
       should not be virtual.
-   */
+  */
   void set(size_t p_ndim, vec_t &p_peak, mat_t &covar,
 	   vec_t &p_low, vec_t &p_high) {
     prob_dens_mdim_gaussian<vec_t,mat_t>::set(p_ndim,p_peak,covar);
@@ -1342,7 +1352,7 @@ namespace o2scl {
   
   /** \brief Compute the probability density function (arbitrary
       normalization)
-   */
+  */
   virtual double pdf(const vec_t &x) const {
     for(size_t i=0;i<this->ndim;i++) {
       if (x[i]<low[i]) {
@@ -1359,7 +1369,7 @@ namespace o2scl {
   
   /** \brief Compute the natural log of the probability density function
       (arbitrary normalization)
-   */
+  */
   virtual double log_pdf(const vec_t &x) const {
     for(size_t i=0;i<this->ndim;i++) {
       if (x[i]<low[i]) {
@@ -1408,15 +1418,13 @@ namespace o2scl {
   /** \brief A multi-dimensional conditional probability density function
 
       Note that conditional probabilities are typically written \f$
-      P(A|B) \f$, i.e. the probability of \f$ A \f$ given \f$ B \f$ ,
-      so when sampling the conditional probability density you specify
-      a vector in \f$ B \f$ (the "input") and get a randomly chosen
-      vector in \f$ A \f$ (the "output") . \o2 arranges
-      function parameters so that input parameters are first and
-      output parameters are last, thus
-      the first argument to the functions \ref
+      P(A|B) \f$, i.e. the probability of \f$ A \f$ given \f$ B \f$.
+      \o2 arranges the function parameters for the functions \ref
       o2scl::prob_cond_mdim::pdf, \ref o2scl::prob_cond_mdim::log_pdf
-      \ref o2scl::prob_cond_mdim::operator()(), and \ref
+      \ref o2scl::prob_cond_mdim::operator()(), so that \f$ B \f$ is
+      given first, and \f$ A \f$ is second.
+
+      \ref
       o2scl::prob_cond_mdim::log_metrop_hast is a vector from \f$ B
       \f$ as denoted above.
       
@@ -1432,10 +1440,14 @@ namespace o2scl {
     return 0;
   }
   
-  /// The conditional probability
+  /** \brief The conditional probability of x_A given x_B, 
+      i.e. \f$ P(A|B) \f$
+  */
   virtual double pdf(const vec_t &x_B, const vec_t &x_A) const=0;
   
-  /// The log of the conditional probability
+  /** \brief The log of the conditional probability of x_A given x_B
+      i.e. \f$ \log [P(A|B)] \f$
+  */
   virtual double log_pdf(const vec_t &x_B, const vec_t &x_A) const=0;
   
   /// Sample the distribution
@@ -1450,27 +1462,36 @@ namespace o2scl {
       \f[
       \frac{P(x^{\prime})g(x|x^{\prime})}{P(x)g(x^{\prime}|x)}
       \f]
-      thus this function computes 
+      taking the log, this gives 
       \f[
+      \log[P(x^{\prime})] - \log[P(x)] + 
       \log \left[ \frac{g(x|x^{\prime})}{g(x^{\prime}|x)} \right]
       \f]
-      and thus this function takes <tt>x_B</tt> as input, obtains
-      a sample <tt>x_A</tt> and returns the value
+      thus this function computes 
+      \f[
+      \log \left[ g(x|x^{\prime}) \right]
+      - \log \left[ g(x^{\prime}|x) \right]
+      \f]
+      and thus, to keep a similar notation to 
+      \ref prob_cond_mdim::pdf() where \f$ g(x^{\prime}|x) \f$
+      is obtained from 
       \code
-      log_pdf(x_A,x_B)-log_pdf(x_B,x_A);
+      pdf(x,x_prime)
+      \endcode
+      this function computes
+      \code
+      h(x,x_prime) = log_pdf(x_prime,x)-log_pdf(x,x_prime);
       \endcode
 
-      To check this, imagine that \f$ g \f$ is independent
-      of the "input" argument, so we have
+      To check this, in the limit that \f$ g(x|x^{\prime}) 
+      \rightarrow P(x) \f$ this function returns
       \f[
-      \log \left[ \frac{g(x)}{g(x^{\prime})} \right]
+      \log \left[ \frac{P(x)}{P(x^{\prime})} \right]
       \f]
-      and then a Metropolis-Hastings step is more likely accepted
-      if \f$ g(x^{\prime}) \f$ is an underestimate. 
+
   */
-  virtual double log_metrop_hast(const vec_t &x_B, vec_t &x_A) const {
-    operator()(x_B,x_A);
-    return log_pdf(x_A,x_B)-log_pdf(x_B,x_A);
+  virtual double log_metrop_hast(const vec_t &x, const vec_t &x_prime) const {
+    return log_pdf(x_prime,x)-log_pdf(x,x_prime);
   }
   
   };
@@ -1602,7 +1623,7 @@ namespace o2scl {
 
   /** \brief Create a conditional probability object
       with specified step sizes and limits
-   */
+  */
   template<class=vec_t> prob_cond_mdim_fixed_step
   (vec_t &step, vec_t &low, vec_t &high) {
     if (step.size()!=low.size()) {
@@ -1640,25 +1661,27 @@ namespace o2scl {
     return u_step.size();
   }
   
-  /// The conditional probability
-  virtual double pdf(const vec_t &x, const vec_t &x2) const {
+  /** \brief The conditional probability of x_A given x_B, 
+      i.e. \f$ P(A|B) \f$
+  */
+  virtual double pdf(const vec_t &x_B, const vec_t &x_A) const {
     double vol1=1.0;
     for(size_t i=0;i<u_step.size();i++) {
 
-      if (fabs(x2[i]-x[i])>u_step[i]) return 0.0;
+      if (fabs(x_A[i]-x_B[i])>u_step[i]) return 0.0;
       
-      if (x[i]-u_step[i]<u_low[i]) {
-	if (x[i]+u_step[i]>u_high[i]) {
+      if (x_B[i]-u_step[i]<u_low[i]) {
+	if (x_B[i]+u_step[i]>u_high[i]) {
 	  // If x+step is too large and x-step is too small
 	  vol1*=u_high[i]-u_low[i];
 	} else {
 	  // If x-step is too small
-	  vol1*=x[i]+u_step[i]-u_low[i];
+	  vol1*=x_B[i]+u_step[i]-u_low[i];
 	}
       } else {
-	if (x[i]+u_step[i]>u_high[i]) {
+	if (x_B[i]+u_step[i]>u_high[i]) {
 	  // If x+step is too large
-	  vol1*=u_high[i]-(x[i]-u_step[i]);
+	  vol1*=u_high[i]-(x_B[i]-u_step[i]);
 	} else {
 	  // The normal case, where the volumes are both inside
 	  // of the boundaries
@@ -1669,24 +1692,27 @@ namespace o2scl {
     return 1.0/vol1;
   }
   
-  /// The log of the conditional probability 
-  virtual double log_pdf(const vec_t &x, const vec_t &x2) const {
-    return log(pdf(x,x2));
+  /** \brief The log of the conditional probability of x_A given x_B
+      i.e. \f$ \log [P(A|B)] \f$
+  */
+  virtual double log_pdf(const vec_t &x_B, const vec_t &x_A) const {
+    return log(pdf(x_B,x_A));
   }
   
   /// Sample the distribution
-  virtual void operator()(const vec_t &x, vec_t &x2) const {
+  virtual void operator()(const vec_t &x_B, vec_t &x_A) const {
     size_t nv=u_step.size();
     for(size_t i=0;i<nv;i++) {
-      if (x[i]<u_low[i] || x[i]>u_high[i]) {
-	std::cout << "Herex: " << i << " " << x[i] << " "
+      if (x_B[i]<u_low[i] || x_B[i]>u_high[i]) {
+	std::cout << "Input out of bounds in fixed_step::operator(): "
+		  << i << " " << x_B[i] << " "
 		  << u_low[i] << " " << u_high[i] << std::endl;
 	O2SCL_ERR("Input out of bounds in fixed_step::operator().",
 		  o2scl::exc_einval);
       }
       do {
-	x2[i]=x[i]+u_step[i]*(rg.random()*2.0-1.0);
-      } while (x2[i]<u_low[i] || x2[i]>u_high[i]);
+	x_A[i]=x_B[i]+u_step[i]*(rg.random()*2.0-1.0);
+      } while (x_A[i]<u_low[i] || x_A[i]>u_high[i]);
     }
     return;
   }
@@ -1738,19 +1764,23 @@ namespace o2scl {
     return base.dim();
   }
   
-  /// The conditional probability 
-  virtual double pdf(const vec_t &x, const vec_t &x2) const {
-    return base.pdf(x2);
+  /** \brief The conditional probability of x_A given x_B, 
+      i.e. \f$ P(A|B) \f$
+  */
+  virtual double pdf(const vec_t &x_B, const vec_t &x_A) const {
+    return base.pdf(x_A);
   }
   
-  /// The log of the conditional probability 
-  virtual double log_pdf(const vec_t &x, const vec_t &x2) const {
-    return base.log_pdf(x2);
+  /** \brief The log of the conditional probability of x_A given x_B
+      i.e. \f$ \log [P(A|B)] \f$
+  */
+  virtual double log_pdf(const vec_t &x_B, const vec_t &x_A) const {
+    return base.log_pdf(x_A);
   }
   
   /// Sample the distribution
-  virtual void operator()(const vec_t &x, vec_t &x2) const {
-    return base(x2);
+  virtual void operator()(const vec_t &x_B, vec_t &x_A) const {
+    return base(x_A);
   }
   
   };
@@ -1870,45 +1900,49 @@ namespace o2scl {
     norm=pow(2.0*o2scl_const::pi,-((double)ndim)/2.0)/sqrt(det);
   }
 
-  /// The conditional probability 
-  virtual double pdf(const vec_t &x, const vec_t &x2) const {
+  /** \brief The conditional probability of x_A given x_B, 
+      i.e. \f$ P(A|B) \f$
+  */
+  virtual double pdf(const vec_t &x_B, const vec_t &x_A) const {
     if (ndim==0) {
       O2SCL_ERR2("Distribution not set in prob_cond_mdim_gaussian::",
 		 "pdf().",o2scl::exc_einval);
     }
     double ret=norm;
-    for(size_t i=0;i<ndim;i++) q[i]=x2[i]-x[i];
+    for(size_t i=0;i<ndim;i++) q[i]=x_A[i]-x_B[i];
     vtmp=prod(covar_inv,q);
     ret*=exp(-0.5*inner_prod(q,vtmp));
     return ret;
   }
 
-  /// The log of the conditional probability 
-  virtual double log_pdf(const vec_t &x, const vec_t &x2) const {
+  /** \brief The log of the conditional probability of x_A given x_B
+      i.e. \f$ \log [P(A|B)] \f$
+  */
+  virtual double log_pdf(const vec_t &x_B, const vec_t &x_A) const {
     if (ndim==0) {
       O2SCL_ERR2("Distribution not set in prob_cond_mdim_gaussian::",
 		 "pdf().",o2scl::exc_einval);
     }
     double ret=log(norm);
-    for(size_t i=0;i<ndim;i++) q[i]=x2[i]-x[i];
+    for(size_t i=0;i<ndim;i++) q[i]=x_A[i]-x_B[i];
     vtmp=prod(covar_inv,q);
     ret+=-0.5*inner_prod(q,vtmp);
     return ret;
   }
 
   /// Sample the distribution
-  virtual void operator()(const vec_t &x, vec_t &x2) const {
+  virtual void operator()(const vec_t &x_B, vec_t &x_A) const {
     if (ndim==0) {
       O2SCL_ERR2("Distribution not set in prob_cond_mdim_gaussian::",
 		 "operator().",o2scl::exc_einval);
     }
     for(size_t i=0;i<ndim;i++) q[i]=pdg();
     vtmp=prod(chol,q);
-    for(size_t i=0;i<ndim;i++) x2[i]=x[i]+vtmp[i];
+    for(size_t i=0;i<ndim;i++) x_A[i]=x_B[i]+vtmp[i];
     return;
   }
 
-    };
+  };
 
 #ifdef O2SCL_NEVER_DEFINED  
   /** \brief A multidimensional normal distribution from
@@ -1925,7 +1959,7 @@ namespace o2scl {
     
   public:
   
-    };
+  };
 #endif
   
 #ifndef DOXYGEN_NO_O2NS
