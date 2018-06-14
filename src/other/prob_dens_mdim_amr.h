@@ -361,14 +361,6 @@ namespace o2scl {
       } else {
 	mesh[0].set(low,high,ir,1.0,m(ir,n_dim));
       }
-      if (!std::isfinite(mesh[0].frac_vol)) {
-	O2SCL_ERR2("Mesh has non finite fractional volume",
-		   "in prob_dens_mdim_amr::insert().",o2scl::exc_esanity);
-      }
-      if (!std::isfinite(mesh[0].weight)) {
-	O2SCL_ERR2("Mesh has non finite weight ",
-		   "in prob_dens_mdim_amr::insert().",o2scl::exc_einval);
-      }
       return;
     }
    
