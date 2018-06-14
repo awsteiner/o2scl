@@ -41,6 +41,10 @@ namespace o2scl {
       created using a matrix of points
 
       \note This class is experimental.
+
+      \future The storage required by the mesh is larger
+      than necessary, and could be replaced by a tree-like
+      structure which uses less storage.
   */
   template<class vec_t=std::vector<double>,
     class mat_t=matrix_view_table<vec_t> >
@@ -327,7 +331,7 @@ namespace o2scl {
     o2scl::vector_copy(v,scale);
     return;
   }
- 
+  
   /** \brief Insert point at row \c ir, creating a new hypercube 
       for the new point
    */
@@ -342,14 +346,6 @@ namespace o2scl {
     }
 
     if (mesh.size()==0) {
-      if (verbose>1) {
-	std::cout << "Creating cube with point at index " << ir << ": ";
-	for(size_t k=0;k<n_dim;k++) {
-	  std::cout << m(ir,k) << " ";
-	}
-	std::cout << std::endl;
-      }
-
       // Initialize the mesh with the first point
       mesh.resize(1);
       if (log_mode) {
@@ -361,6 +357,25 @@ namespace o2scl {
       } else {
 	mesh[0].set(low,high,ir,1.0,m(ir,n_dim));
       }
+      if (verbose>1) {
+	std::cout << "First hypercube from index "
+	<< ir << "." << std::endl;
+	for(size_t k=0;k<n_dim;k++) {
+	  std::cout.width(3);
+	  std::cout << k << " ";
+	  std::cout.setf(std::ios::showpos);
+	  std::cout << low[k] << " "
+		    << m(ir,k) << " " << high[k] << std::endl;
+	  std::cout.unsetf(std::ios::showpos);
+	}
+	std::cout << "weight: " << mesh[0].weight << std::endl;
+	if (verbose>2) {
+	  std::cout << "Press a character and enter to continue: " << std::endl;
+	  char ch;
+	  std::cin >> ch;
+	}
+      }
+
       return;
     }
    
@@ -431,16 +446,18 @@ namespace o2scl {
 	  max_var=var;
 	}
       }
-      if (verbose>1) {
-	std::cout << "Found coordinate " << max_ip << " with variance "
-	<< max_var << std::endl;
-	std::cout << v[max_ip] << " " << m(h.inside[0],max_ip) << " "
-	<< h.high[max_ip] << " " << h.low[max_ip] << std::endl;
-      }
     }
    
     // Slice the mesh in coordinate max_ip
     double loc=(v[max_ip]+m(h.inside[0],max_ip))/2.0;
+    if (verbose>1) {
+      std::cout << "Chose coordinate " << max_ip << "."
+		<< std::endl;
+      std::cout << "Point, between, previous, low, high:\n\t"
+		<< v[max_ip] << " " << loc << " "
+		<< m(h.inside[0],max_ip) << " "
+		<< h.low[max_ip] << " " << h.high[max_ip] << std::endl;
+    }
     double old_vol=h.frac_vol;
     double old_low=h.low[max_ip];
     double old_high=h.high[max_ip];
@@ -448,19 +465,13 @@ namespace o2scl {
     size_t old_inside=h.inside[0];
     double old_weight=h.weight;
 
-    if (verbose>1) {
-      std::cout << "Old limits:" << std::endl;
-      for(size_t i=0;i<n_dim;i++) {
-	std::cout << h.low[i] << " " << h.high[i] << std::endl;
-      }
-    }
-    
     // Set values for hypercube currently in mesh
     h.low[max_ip]=loc;
     h.high[max_ip]=old_high;
     h.frac_vol=old_vol*(old_high-loc)/(old_high-old_low);
     if (!std::isfinite(h.frac_vol)) {
-      std::cout << "Here: " << old_vol << " " << old_high << " "
+      std::cout << "Mesh has non-finite fractional volume: "
+		<< old_vol << " " << old_high << " "
 		<< loc << " " << old_low << std::endl;
       O2SCL_ERR2("Mesh has non finite fractional volume",
 		 "in prob_dens_mdim_amr::insert().",o2scl::exc_esanity);
@@ -540,13 +551,29 @@ namespace o2scl {
     // --------------------------------------------------------------
     
     if (verbose>1) {
-      std::cout << "New limits:" << std::endl;
-      for(size_t i=0;i<n_dim;i++) {
-	std::cout << h.low[i] << " " << h.high[i] << std::endl;
+      std::cout << "Modifying hypercube with index "
+      << jm << " and inserting new hypercube for row " << ir
+      << "." << std::endl;
+      for(size_t k=0;k<n_dim;k++) {
+	if (k==max_ip) std::cout << "*";
+	else std::cout << " ";
+	std::cout.width(3);
+	std::cout << k << " ";
+	std::cout.setf(std::ios::showpos);
+	std::cout << h.low[k] << " "
+		  << h.high[k] << " "
+		  << h_new.low[k] << " " << m(ir,k) << " "
+		  << h_new.high[k] << std::endl;
+	std::cout.unsetf(std::ios::showpos);
       }
-      std::cout << "New cube " << mesh.size() << std::endl;
-      for(size_t i=0;i<n_dim;i++) {
-	std::cout << h_new.low[i] << " " << h_new.high[i] << std::endl;
+      std::cout << "Weights: " << h.weight << " " << h_new.weight
+      << std::endl;
+      std::cout << "Frac. volumes: " << h.frac_vol << " "
+      << h_new.frac_vol << std::endl;
+      if (verbose>2) {
+	std::cout << "Press a character and enter to continue: " << std::endl;
+	char ch;
+	std::cin >> ch;
       }
     }
 
@@ -555,7 +582,7 @@ namespace o2scl {
    
     return;
   }
- 
+  
   /** \brief Parse the matrix \c m, creating a new hypercube
       for every point 
    */
@@ -563,13 +590,16 @@ namespace o2scl {
 
     for(size_t ir=0;ir<m.size1();ir++) {
       insert(ir,m,log_mode);
-      if (verbose>2) {
-	std::cout << "Volumes: " << total_volume() << " "
-		  << total_weighted_volume() << std::endl;
-	std::cout << "Ch: " << std::endl;
-	char ch;
-	std::cin >> ch;
-      }
+    }
+    if (verbose>0) {
+      std::cout << "Done in initial_parse(). "
+      << "Volumes: " << total_volume() << " "
+      << total_weighted_volume() << std::endl;
+    }
+    if (verbose>2) {
+      std::cout << "Press a character and enter to continue: " << std::endl;
+      char ch;
+      std::cin >> ch;
     }
     
     return;

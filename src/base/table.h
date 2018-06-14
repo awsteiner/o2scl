@@ -3073,6 +3073,14 @@ namespace o2scl {
 	and column \c col
     */
     const double &operator()(size_t row, size_t col) const {
+      if (row>=tp->get_nlines()) {
+	O2SCL_ERR("Row exceeds max in matrix_view_table::operator().",
+		  o2scl::exc_einval);
+      }
+      if (col>=nc) {
+	O2SCL_ERR("Column exceeds max in matrix_view_table::operator().",
+		  o2scl::exc_einval);
+      }
       const vec_t *cp=col_ptrs[col];
       return (*cp)[row];
     }
