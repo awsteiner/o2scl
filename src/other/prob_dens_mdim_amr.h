@@ -349,7 +349,7 @@ namespace o2scl {
 	}
 	std::cout << std::endl;
       }
-      
+
       // Initialize the mesh with the first point
       mesh.resize(1);
       if (log_mode) {
@@ -468,6 +468,8 @@ namespace o2scl {
     h.high[max_ip]=old_high;
     h.frac_vol=old_vol*(old_high-loc)/(old_high-old_low);
     if (!std::isfinite(h.frac_vol)) {
+      std::cout << "Here: " << old_vol << " " << old_high << " "
+		<< loc << " " << old_low << std::endl;
       O2SCL_ERR2("Mesh has non finite fractional volume",
 		 "in prob_dens_mdim_amr::insert().",o2scl::exc_esanity);
     }
@@ -569,6 +571,13 @@ namespace o2scl {
 
     for(size_t ir=0;ir<m.size1();ir++) {
       insert(ir,m,log_mode);
+      if (verbose>2) {
+	std::cout << "Volumes: " << total_volume() << " "
+		  << total_weighted_volume() << std::endl;
+	std::cout << "Ch: " << std::endl;
+	char ch;
+	std::cin >> ch;
+      }
     }
     
     return;
