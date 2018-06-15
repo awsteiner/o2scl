@@ -780,8 +780,16 @@ namespace o2scl {
       }
     }
     if (found==false) {
-      O2SCL_ERR("Error 2.",o2scl::exc_esanity);
+      for(size_t k=0;k<n_dim;k++) {
+	std::cout << low[k] << " " << x[k] << " " << high[k] << " ";
+	if (x[k]<low[k]) std::cout << "<";
+	else if (x[k]>high[k]) std::cout << ">";
+	std::cout << std::endl;
+      }
+      O2SCL_ERR("Point not found inside mesh in pdf().",o2scl::exc_esanity);
     }
+    std::cout << "pdma pdf: " << jm << " "
+    << mesh.size() << " " << x[0] << " " << mesh[jm].weight << std::endl;
     return mesh[jm].weight;
   }
 
