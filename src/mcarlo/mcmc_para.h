@@ -489,7 +489,7 @@ namespace o2scl {
 	}
 	for(size_t j=i+1;j<initial_points.size();j++) {
 	  bool vec_equal=true;
-	  for(size_t k=0;k<initial_points[i][k];k++) {
+	  for(size_t k=0;k<initial_points[i].size();k++) {
 	    if (initial_points[i][k]!=initial_points[j][k]) {
 	      vec_equal=false;
 	    }
