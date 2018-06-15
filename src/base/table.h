@@ -1337,7 +1337,8 @@ namespace o2scl {
       This function returns the number of rows deleted.
   */
   size_t delete_rows_tolerance(double tol_rel=1.0e-12,
-			       double tol_abs=1.0e-20) {
+			       double tol_abs=1.0e-20,
+			       int verbose=0) {
     std::vector<size_t> list;
     for(size_t i=0;i<nlines;i++) {
       for(size_t j=i+1;j<nlines;j++) {
@@ -1355,6 +1356,16 @@ namespace o2scl {
 	}
 	if (match==true) {
 	  list.push_back(j);
+	  if (verbose>0) {
+	    std::cout << "Match between rows " << i << " and " << j
+		      << std::endl;
+	    if (verbose>1) {
+	      for(size_t k=0;k<get_ncolumns();k++) {
+		std::cout << k << " " << get(k,i) << " " << get(k,j)
+			  << std::endl;
+	      }
+	    }
+	  }
 	}
       }
     }

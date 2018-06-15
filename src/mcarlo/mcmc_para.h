@@ -1522,37 +1522,67 @@ namespace o2scl {
   */
   virtual int mcmc_init() {
 
-    // -----------------------------------------------------------
-    // Init tables
+    if (!table) {
+      
+      // -----------------------------------------------------------
+      // Initialize table, walker_accept_rows, and walker_reject_rows
     
-    table=std::shared_ptr<o2scl::table_units<> >(new o2scl::table_units<>);
-    table->new_column("rank");
-    table->new_column("thread");
-    table->new_column("walker");
-    table->new_column("mult");
-    table->new_column("log_wgt");
-    for(size_t i=0;i<col_names.size();i++) {
-      table->new_column(col_names[i]);
-      if (col_units[i].length()>0) {
-	table->set_unit(col_names[i],col_units[i]);
+      table=std::shared_ptr<o2scl::table_units<> >(new o2scl::table_units<>);
+      table->new_column("rank");
+      table->new_column("thread");
+      table->new_column("walker");
+      table->new_column("mult");
+      table->new_column("log_wgt");
+      for(size_t i=0;i<col_names.size();i++) {
+	table->new_column(col_names[i]);
+	if (col_units[i].length()>0) {
+	  table->set_unit(col_names[i],col_units[i]);
+	}
       }
-    }
-    
-    walker_accept_rows.resize(this->n_walk*this->n_threads);
-    for(size_t i=0;i<this->n_walk*this->n_threads;i++) {
-      walker_accept_rows[i]=-1;
-    }
-    walker_reject_rows.resize(this->n_walk*this->n_threads);
-    for(size_t i=0;i<this->n_walk*this->n_threads;i++) {
-      walker_reject_rows[i]=-1;
-    }
+      
+      walker_accept_rows.resize(this->n_walk*this->n_threads);
+      for(size_t i=0;i<this->n_walk*this->n_threads;i++) {
+	walker_accept_rows[i]=-1;
+      }
+      walker_reject_rows.resize(this->n_walk*this->n_threads);
+      for(size_t i=0;i<this->n_walk*this->n_threads;i++) {
+	walker_reject_rows[i]=-1;
+      }
+      
+      if (this->verbose>=2) {
+	std::cout << "mcmc: Table column names and units: " << std::endl;
+	for(size_t i=0;i<table->get_ncolumns();i++) {
+	  std::cout << table->get_column_name(i) << " "
+		    << table->get_unit(table->get_column_name(i)) << std::endl;
+	}
+      }
+      
+    } else {
+      
+      // -----------------------------------------------------------
+      // Presume previous results are already present
 
-    if (this->verbose>=2) {
-      std::cout << "mcmc: Table column names and units: " << std::endl;
-      for(size_t i=0;i<table->get_ncolumns();i++) {
-	std::cout << table->get_column_name(i) << " "
-		  << table->get_unit(table->get_column_name(i)) << std::endl;
+      if (table->get_ncolumns()!=5+col_names.size()) {
+	O2SCL_ERR2("Table does not have the correct number of columns ",
+		  "in mcmc_para_table::mcmc_init().",o2scl::exc_einval);
       }
+      if (!table->is_column("rank") ||
+	  !table->is_column("thread") ||
+	  !table->is_column("walker") ||
+	  !table->is_column("mult") ||
+	  !table->is_column("log_wgt")) {
+	O2SCL_ERR2("Table does not have the correct internal columns ",
+		  "in mcmc_para_table::mcmc_init().",o2scl::exc_einval);
+      }
+      if (walker_accept_rows.size()!=this->n_walk*this->n_threads) {
+	O2SCL_ERR2("Array walker_accept_rows does not have correct size ",
+		  "in mcmc_para_table::mcmc_init().",o2scl::exc_einval);
+      }
+      if (walker_reject_rows.size()!=this->n_walk*this->n_threads) {
+	O2SCL_ERR2("Array walker_reject_rows does not have correct size ",
+		  "in mcmc_para_table::mcmc_init().",o2scl::exc_einval);
+      }
+      
     }
     
     last_write_iters=0;
@@ -1775,6 +1805,10 @@ namespace o2scl {
    */
   virtual void set_names_units(std::vector<std::string> names,
 			       std::vector<std::string> units) {
+    if (names.size()!=units.size()) {
+      O2SCL_ERR2("Size of names and units arrays don't match in ",
+		 "mcmc_para_table::set_names_units().",o2scl::exc_einval);
+    }
     col_names=names;
     col_units=units;
     return;
@@ -1793,8 +1827,8 @@ namespace o2scl {
   virtual void initial_points_file_last(std::string fname,
 					size_t n_param_loc,
 					size_t offset=5) {
-    
-    table=std::shared_ptr<o2scl::table_units<> >(new o2scl::table_units<>);
+
+    o2scl::table_units<> tip;
 
 #ifdef O2SCL_MPI
     // Ensure that multiple threads aren't reading from the
@@ -1809,7 +1843,7 @@ namespace o2scl {
     o2scl_hdf::hdf_file hf;
     hf.open(fname);
     std::string tname;
-    hdf_input(hf,*table,tname);
+    hdf_input(hf,tip,tname);
     hf.close();
     
 #ifdef O2SCL_MPI
@@ -1837,23 +1871,23 @@ namespace o2scl {
 	size_t windex=it*this->n_walk+iw;
 
 	bool found=false;
-	for(int row=table->get_nlines()-1;row>=0 && found==false;row--) {
-	  if (table->get("walker",row)==iw &&
-	      table->get("thread",row)==it &&
-	      table->get("mult",row)>0.5) {
+	for(int row=tip.get_nlines()-1;row>=0 && found==false;row--) {
+	  if (tip.get("walker",row)==iw &&
+	      tip.get("thread",row)==it &&
+	      tip.get("mult",row)>0.5) {
 
 	    found=true;
 	    
 	    std::cout << "Function initial_point_file_last():\n\tit: "
 		      << it << "," << this->mpi_rank
 		      << " iw: " << iw << " row: "
-		      << row << " log_wgt: " << table->get("log_wgt",row)
+		      << row << " log_wgt: " << tip.get("log_wgt",row)
 		      << std::endl;
 	    
 	    // Copy the entries from this row into the initial_points object
 	    this->initial_points[windex].resize(n_param_loc);
 	    for(size_t ip=0;ip<n_param_loc;ip++) {
-	      this->initial_points[windex][ip]=table->get(ip+offset,row);
+	      this->initial_points[windex][ip]=tip.get(ip+offset,row);
 	    }
 	  }
 	}
@@ -1880,7 +1914,7 @@ namespace o2scl {
 					size_t n_param_loc,
 					size_t offset=5) {
 
-    table=std::shared_ptr<o2scl::table_units<> >(new o2scl::table_units<>);
+    o2scl::table_units<> tip;
 
 #ifdef O2SCL_MPI
     // Ensure that multiple threads aren't reading from the
@@ -1916,7 +1950,7 @@ namespace o2scl {
     
     this->initial_points.resize(n_points);
 	
-    size_t nlines=table->get_nlines();
+    size_t nlines=tip.get_nlines();
     size_t decrement=nlines/n_points;
     if (decrement<1) decrement=1;
 
@@ -1926,13 +1960,13 @@ namespace o2scl {
       if (row<0) row=0;
       
       std::cout << "Function initial_point_file_dist():\n\trow: "
-		<< row << " log_wgt: " << table->get("log_wgt",row)
+		<< row << " log_wgt: " << tip.get("log_wgt",row)
 		<< std::endl;
     
       // Copy the entries from this row into the initial_points object
       this->initial_points[k].resize(n_param_loc);
       for(size_t ip=0;ip<n_param_loc;ip++) {
-	this->initial_points[k][ip]=table->get(ip+offset,row);
+	this->initial_points[k][ip]=tip.get(ip+offset,row);
       }
       
     }
@@ -1954,7 +1988,7 @@ namespace o2scl {
 					double thresh=1.0e-6,
 					size_t offset=5) {
 
-    table=std::shared_ptr<o2scl::table_units<> >(new o2scl::table_units<>);
+    o2scl::table_units<> tip;
     
 #ifdef O2SCL_MPI
     // Ensure that multiple threads aren't reading from the
@@ -1969,7 +2003,7 @@ namespace o2scl {
     o2scl_hdf::hdf_file hf;
     hf.open(fname);
     std::string tname;
-    hdf_input(hf,*table,tname);
+    hdf_input(hf,tip,tname);
     hf.close();
     
 #ifdef O2SCL_MPI
@@ -1992,8 +2026,8 @@ namespace o2scl {
     map_t m;
 
     // Sort by inserting into a map
-    for(size_t k=0;k<table->get_nlines();k++) {
-      m.insert(std::make_pair(table->get("log_wgt",k),k));
+    for(size_t k=0;k<tip.get_nlines();k++) {
+      m.insert(std::make_pair(tip.get("log_wgt",k),k));
     }
 
     // Remove near duplicates. The map insert function will 
@@ -2036,11 +2070,11 @@ namespace o2scl {
       if (this->verbose>0) {
 	std::cout << "Initial point " << k << " at row "
 		  << row << " has log_weight= "
-		  << table->get("log_wgt",row) << std::endl;
+		  << tip.get("log_wgt",row) << std::endl;
       }
       this->initial_points[k].resize(n_param_loc);
       for(size_t ip=0;ip<n_param_loc;ip++) {
-	this->initial_points[k][ip]=table->get(ip+offset,row);
+	this->initial_points[k][ip]=tip.get(ip+offset,row);
       }
       mit++;
     }
@@ -2124,6 +2158,59 @@ namespace o2scl {
       }
     }
     
+    return;
+  }
+
+  /** \brief Read previous results (number of threads and 
+      walkers must be set first)
+  */
+  virtual void read_prev_results(o2scl_hdf::hdf_file &hf,
+				 std::string name) {
+
+    // Create the table object
+    table=std::shared_ptr<o2scl::table_units<> >(new o2scl::table_units<>);
+
+    // Read the table data from the HDF5 file
+    hdf_input(hf,*table,name);
+    
+    if (!table->is_column("rank") ||
+	!table->is_column("thread") ||
+	!table->is_column("walker") ||
+	!table->is_column("mult") ||
+	!table->is_column("log_wgt")) {
+      O2SCL_ERR2("Table does not have the correct internal columns ",
+		 "in mcmc_para_table::read_prev_results().",
+		 o2scl::exc_einval);
+    }
+    
+    // -----------------------------------------------------------
+    // Set the values of walker_accept_rows and walker_reject_rows
+    
+    // The total number of walkers * threads
+    size_t ntot=this->n_threads*this->n_walk;
+    
+    walker_accept_rows.resize(ntot);
+    walker_reject_rows.resize(ntot);
+
+    for(size_t j=0;j<ntot;j++) {
+      walker_accept_rows[j]=-1;
+      walker_reject_rows[j]=-1;
+    }
+    
+    for(size_t j=0;j<table->get_nlines();j++) {
+      
+      size_t i_thread=((size_t)(table->get("thread",j)+1.0e-12));
+      size_t i_walker=((size_t)(table->get("walker",j)+1.0e-12));
+
+      // The combined walker/thread index 
+      size_t windex=i_thread*this->n_walk+i_walker;
+
+      if (table->get("mult",j)>0.5) {
+	walker_accept_rows[windex]=j;
+      }
+      walker_reject_rows[windex]=j;
+
+    }
     return;
   }
   
@@ -2266,7 +2353,16 @@ namespace o2scl {
       
       // If necessary, increment the multiplier on the previous point
       if (ret_value==o2scl::success && mcmc_accept==false) {
+	if (walker_accept_rows[windex]<0 ||
+	    walker_accept_rows[windex]>=table->get_nlines()) {
+	  O2SCL_ERR2("Invalid row for incrementing multiplier in ",
+		     "mcmc_para_table::add_line().",o2scl::exc_efailed);
+	}
 	double mult_old=table->get("mult",walker_accept_rows[windex]);
+	if (mult_old<0.5) {
+	  O2SCL_ERR2("Old multiplier less than 1 in ",
+		     "mcmc_para_table::add_line().",o2scl::exc_efailed);
+	}
 	table->set("mult",walker_accept_rows[windex],mult_old+1.0);
 	if (this->verbose>=2) {
 	  this->scr_out << "mcmc: Updating mult of row "

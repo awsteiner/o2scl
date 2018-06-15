@@ -7245,7 +7245,7 @@ int acol_manager::comm_delete_rows_tol(std::vector<std::string> &sv,
     ta=1.0e-20;
   }
   
-  table_obj.delete_rows_tolerance(tr,ta);
+  table_obj.delete_rows_tolerance(tr,ta,verbose);
 
   return 0;
 }

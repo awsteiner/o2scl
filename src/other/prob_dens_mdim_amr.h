@@ -417,7 +417,26 @@ namespace o2scl {
     // Find coordinate to separate
     size_t max_ip=0;
     if (dim_choice==random) {
+      
       max_ip=((size_t)(rg.random()*((double)n_dim)));
+
+      // Double check that we're not choosing a coordinate
+      // where the point is on the boundary
+      double loct=(v[max_ip]+m(h.inside[0],max_ip))/2.0;
+      double diff1=fabs(loct-h.low[max_ip])/fabs(h.low[max_ip]);
+      double diff2=fabs(loct-h.high[max_ip])/fabs(h.high[max_ip]);
+      int icnt=0;
+      while (icnt<n_dim && (diff1<1.0e-13 || diff2<1.0e-13)) {
+	max_ip=(max_ip+1)%n_dim;
+	loct=(v[max_ip]+m(h.inside[0],max_ip))/2.0;
+	diff1=fabs(loct-h.low[max_ip])/fabs(h.low[max_ip]);
+	diff2=fabs(loct-h.high[max_ip])/fabs(h.high[max_ip]);
+	icnt++;
+      }
+      if (icnt>0) {
+	std::cout << "Chose new coordinate." << std::endl;
+      }
+      
       if (verbose>1) {
 	std::cout << "Randomly chose coordinate " << max_ip
 		  << std::endl;
@@ -469,11 +488,20 @@ namespace o2scl {
     h.low[max_ip]=loc;
     h.high[max_ip]=old_high;
     h.frac_vol=old_vol*(old_high-loc)/(old_high-old_low);
+    if (h.frac_vol<1.0e-14) {
+      std::cout << "Skipping hypercube with vanishing volume."
+		<< std::endl;
+      std::cout << "coordinate, point, between, previous, low, high:\n\t"
+		<< max_ip << " " << v[max_ip] << " " << loc << " "
+		<< m(h.inside[0],max_ip) << " "
+		<< h.low[max_ip] << " " << h.high[max_ip] << std::endl;
+      return;
+    }
     if (!std::isfinite(h.frac_vol)) {
       std::cout << "Mesh has non-finite fractional volume: "
 		<< old_vol << " " << old_high << " "
 		<< loc << " " << old_low << std::endl;
-      O2SCL_ERR2("Mesh has non finite fractional volume",
+      O2SCL_ERR2("Mesh has non finite fractional volume ",
 		 "in prob_dens_mdim_amr::insert().",o2scl::exc_esanity);
     }
    
@@ -485,6 +513,15 @@ namespace o2scl {
     low_new[max_ip]=old_low;
     high_new[max_ip]=loc;
     double new_vol=old_vol*(loc-old_low)/(old_high-old_low);
+    if (new_vol<1.0e-14) {
+      std::cout << "Skipping hypercube with vanishing volume (2)."
+		<< std::endl;
+      std::cout << "coordinate, point, between, previous, low, high:\n\t"
+		<< max_ip << " " << v[max_ip] << " " << loc << " "
+		<< m(h.inside[0],max_ip) << " "
+		<< h.low[max_ip] << " " << h.high[max_ip] << std::endl;
+      return;
+    }
     if (log_mode) {
       if (m(ir,n_dim)>-800.0) {
 	h_new.set(low_new,high_new,ir,new_vol,exp(m(ir,n_dim)));
