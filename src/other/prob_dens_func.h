@@ -1492,9 +1492,7 @@ namespace o2scl {
   */
   virtual double log_metrop_hast(const vec_t &x, vec_t &x_prime) const {
     operator()(x,x_prime);
-    std::cout << "lmh: " << x[0] << " " << x_prime[0] << std::endl;
     double val=log_pdf(x_prime,x)-log_pdf(x,x_prime);
-    std::cout << "val: " << val << std::endl;
     return val;
   }
   

@@ -788,8 +788,6 @@ namespace o2scl {
       }
       O2SCL_ERR("Point not found inside mesh in pdf().",o2scl::exc_esanity);
     }
-    std::cout << "pdma pdf: " << jm << " "
-    << mesh.size() << " " << x[0] << " " << mesh[jm].weight << std::endl;
     return mesh[jm].weight;
   }
 

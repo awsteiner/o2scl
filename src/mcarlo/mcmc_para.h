@@ -1056,7 +1056,6 @@ namespace o2scl {
 	    
 	    // Use proposal distribution and compute associated weight
 	    q_prop[it]=prop_dist[it]->log_metrop_hast(current[it],next[it]);
-	    std::cout << "Here1: " << q_prop[it] << std::endl;
 	    
 	    if (!std::isfinite(q_prop[it])) {
 	      O2SCL_ERR2("Proposal distribution not finite in ",
@@ -1207,8 +1206,6 @@ namespace o2scl {
 		accept=true;
 	      }
 	    } else if (pd_mode) {
-	      std::cout << "Here2: " << w_next[it] << " "
-			<< w_current[it] << " " << q_prop[it] << std::endl;
 	      if (r<exp(w_next[it]-w_current[sindex]+q_prop[it])) {
 		accept=true;
 	      }
