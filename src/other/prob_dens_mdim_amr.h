@@ -423,15 +423,36 @@ namespace o2scl {
       // Double check that we're not choosing a coordinate
       // where the point is on the boundary
       double loct=(v[max_ip]+m(h.inside[0],max_ip))/2.0;
-      double diff1=fabs(loct-h.low[max_ip])/fabs(h.low[max_ip]);
-      double diff2=fabs(loct-h.high[max_ip])/fabs(h.high[max_ip]);
+      double diff1, diff2;
+      if (fabs(h.low[max_ip])<1.0e-13) {
+	diff1=fabs(loct-h.low[max_ip]);
+      } else {
+	diff1=fabs(loct-h.low[max_ip])/fabs(h.low[max_ip]);
+      }
+      if (fabs(h.high[max_ip])<1.0e-13) {
+	diff2=fabs(loct-h.high[max_ip]);
+      } else {
+	diff2=fabs(loct-h.high[max_ip])/fabs(h.high[max_ip]);
+      }
+      std::cout << max_ip << " " << loct << " " << diff1 << " " << diff2
+		<< std::endl;
       int icnt=0;
       while (icnt<n_dim && (diff1<1.0e-13 || diff2<1.0e-13)) {
 	max_ip=(max_ip+1)%n_dim;
 	loct=(v[max_ip]+m(h.inside[0],max_ip))/2.0;
-	diff1=fabs(loct-h.low[max_ip])/fabs(h.low[max_ip]);
-	diff2=fabs(loct-h.high[max_ip])/fabs(h.high[max_ip]);
+	if (fabs(h.low[max_ip])<1.0e-13) {
+	  diff1=fabs(loct-h.low[max_ip]);
+	} else {
+	  diff1=fabs(loct-h.low[max_ip])/fabs(h.low[max_ip]);
+	}
+	if (fabs(h.high[max_ip])<1.0e-13) {
+	  diff2=fabs(loct-h.high[max_ip]);
+	} else {
+	  diff2=fabs(loct-h.high[max_ip])/fabs(h.high[max_ip]);
+	}
 	icnt++;
+	std::cout << max_ip << " " << loct << " " << diff1 << " " << diff2
+		  << " " << icnt << std::endl;
       }
       if (icnt>0) {
 	std::cout << "Chose new coordinate." << std::endl;
@@ -495,6 +516,7 @@ namespace o2scl {
 		<< max_ip << " " << v[max_ip] << " " << loc << " "
 		<< m(h.inside[0],max_ip) << " "
 		<< h.low[max_ip] << " " << h.high[max_ip] << std::endl;
+      //exit(-1);
       return;
     }
     if (!std::isfinite(h.frac_vol)) {
@@ -520,6 +542,7 @@ namespace o2scl {
 		<< max_ip << " " << v[max_ip] << " " << loc << " "
 		<< m(h.inside[0],max_ip) << " "
 		<< h.low[max_ip] << " " << h.high[max_ip] << std::endl;
+      //exit(-1);
       return;
     }
     if (log_mode) {
@@ -877,6 +900,9 @@ namespace o2scl {
       }
     }
 
+    O2SCL_ERR2("Sampling distribution failed in ",
+	       "prob_dens_mdim_amr::operator()().",o2scl::exc_einval);
+    
     return;
   }
  

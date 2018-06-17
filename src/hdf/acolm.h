@@ -476,6 +476,7 @@ namespace o2scl_acol {
 
     /// Get column stats
     virtual int comm_stats(std::vector<std::string> &sv, bool itive_com);
+    virtual int comm_wstats(std::vector<std::string> &sv, bool itive_com);
 
     /// Print version
     virtual int comm_version(std::vector<std::string> &sv, bool itive_com);

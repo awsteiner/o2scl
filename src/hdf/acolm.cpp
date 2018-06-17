@@ -352,7 +352,7 @@ void acol_manager::command_add(std::string new_type) {
     };
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="table") {
-    static const size_t narr=35;
+    static const size_t narr=36;
     comm_option_s options_arr[narr]={
       {'a',"assign","Assign a constant, e.g. assign pi acos(-1) .",
        0,2,"<name> [val]",
@@ -547,6 +547,10 @@ void acol_manager::command_add(std::string new_type) {
       {0,"stats","Show column statistics.",0,1,"<col>",
        "Output the average, std. dev, max and min of <col>. ",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_stats),
+       both},
+      {0,"wstats","Show weighted column statistics.",0,2,"<col> <weights>",
+       "Output the average, std. dev, max and min of <col>. ",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_wstats),
        both},
       {0,"sum","Add data from a second table object to current table.",
        0,2,"<file> [name]",((string)"Add all columns ")+
@@ -939,7 +943,9 @@ void acol_manager::command_del() {
   } else if (type=="string") {
     cl->remove_comm_option("value");
   } else if (type=="table") {
+    
     cl->remove_comm_option("assign");
+    cl->remove_comm_option("autocorr");
     cl->remove_comm_option("delete-col");
     cl->remove_comm_option("delete-rows");
     cl->remove_comm_option("delete-rows-tol");
@@ -961,6 +967,7 @@ void acol_manager::command_del() {
     cl->remove_comm_option("list");
     cl->remove_comm_option("max");
     cl->remove_comm_option("min");
+    cl->remove_comm_option("nlines");
     cl->remove_comm_option("rename");
     cl->remove_comm_option("select");
     cl->remove_comm_option("select-rows");
@@ -970,10 +977,9 @@ void acol_manager::command_del() {
     cl->remove_comm_option("sort");
     cl->remove_comm_option("stats");
     cl->remove_comm_option("sum");
-    cl->remove_comm_option("nlines");
     cl->remove_comm_option("to-hist");
     cl->remove_comm_option("to-hist-2d");
-    cl->remove_comm_option("autocorr");
+    cl->remove_comm_option("wstats");
 
   } else if (type=="table3d") {
     
@@ -1608,36 +1614,36 @@ int acol_manager::comm_to_hist(std::vector<std::string> &sv,
       if (ret!=0) return ret;
     }
     
-      vector<string> in, pr;
-      pr.push_back("Column name");
-      pr.push_back("Number of bins");
-      int ret=get_input(sv,pr,in,"to-hist",itive_com);
-      if (ret!=0) return ret;
+    vector<string> in, pr;
+    pr.push_back("Column name");
+    pr.push_back("Number of bins");
+    int ret=get_input(sv,pr,in,"to-hist",itive_com);
+    if (ret!=0) return ret;
       
-      std::string col2;
-      if (sv.size()>3) {
-	col2=sv[3];
-      } else if (itive_com) {
-	col2=cl->cli_gets("Column for weights (or blank for none): ");
-      }
+    std::string col2;
+    if (sv.size()>3) {
+      col2=sv[3];
+    } else if (itive_com) {
+      col2=cl->cli_gets("Column for weights (or blank for none): ");
+    }
 
-      size_t nbins;
-      int sret=o2scl::stoszt_nothrow(in[1],nbins);
-      if (sret!=0 || nbins==0) {
-	cerr << "Failed to interpret " << in[1]
-	     << " as a positive number of bins." << endl;
-	return exc_einval;
-      }
-      if (col2.length()==0) {
-	hist_obj.from_table(table_obj,in[0],nbins);
-      } else {
-	hist_obj.from_table(table_obj,in[0],col2,nbins);
-      }
+    size_t nbins;
+    int sret=o2scl::stoszt_nothrow(in[1],nbins);
+    if (sret!=0 || nbins==0) {
+      cerr << "Failed to interpret " << in[1]
+	   << " as a positive number of bins." << endl;
+      return exc_einval;
+    }
+    if (col2.length()==0) {
+      hist_obj.from_table(table_obj,in[0],nbins);
+    } else {
+      hist_obj.from_table(table_obj,in[0],col2,nbins);
+    }
 
-      command_del();
-      clear_obj();
-      command_add("hist");
-      type="hist";
+    command_del();
+    clear_obj();
+    command_add("hist");
+    type="hist";
 
     return 0;
   } 
@@ -2407,7 +2413,7 @@ int acol_manager::comm_sum(std::vector<std::string> &sv, bool itive_com) {
 }
 
 herr_t acol_manager::iterate_new_func(hid_t loc, const char *name, 
-				   const H5L_info_t *inf, void *op_data) {
+				      const H5L_info_t *inf, void *op_data) {
 
   // Arrange parameters
   iter_parms *ip=(iter_parms *)op_data;
@@ -3032,22 +3038,13 @@ herr_t acol_manager::iterate_new_func(hid_t loc, const char *name,
 
 int acol_manager::comm_filelist(std::vector<std::string> &sv, 
 				bool itive_com) {
-  
+
   std::string i1;
-  if (sv.size()==1) {
-    if (itive_com) {
-      i1=cl->cli_gets("Enter filename (or blank to quit): ");
-      if (i1.length()==0) {
-        if (verbose>0) cout << "Command 'filelist' cancelled." << endl;
-        return 0;
-      } 
-    } else {
-      cout << "Filename not given for command 'filelist'." << endl;
-      return exc_efailed;
-    }
-  } else {
-    i1=sv[1];
-  }
+  int ret=get_input_one(sv,"Enter filename",i1,"filelist",
+			itive_com);
+  if (ret!=0) return ret;
+
+  i1=sv[1];
 
   // Use hdf_file to open the file
   hdf_file hf;
@@ -3073,26 +3070,20 @@ int acol_manager::comm_filelist(std::vector<std::string> &sv,
 int acol_manager::comm_read(std::vector<std::string> &sv, 
 			    bool itive_com) {
 
-  std::string i1, i2;
-  if (sv.size()==1) {
-    if (itive_com) {
-      i1=cl->cli_gets("Enter filename (or blank to quit): ");
-      if (i1.length()==0) {
-        if (verbose>0) cout << "Command 'read' cancelled." << endl;
-        return 0;
-      } 
-      i2=cl->cli_gets("Enter object name (or blank for first table): ");
-    } else {
-      cout << "Filename not given for command 'read'." << endl;
-      return exc_efailed;
-    }
+  vector<string> in, pr;
+  if (sv.size()<2 || (sv.size()<3 && itive_com)) {
+    pr.push_back("Enter filename");
+    pr.push_back("Enter object name");
+    int ret=get_input(sv,pr,in,"table",itive_com);
+    if (ret!=0) return ret;
   } else {
-    i1=sv[1];
-    if (sv.size()>2) {
-      i2=sv[2];
-    }
+    in.resize(2);
+    in[0]=sv[1];
+    if (sv.size()>=3) {
+      in[1]=sv[2];
+    } 
   }
-
+  
   // Delete previous object
   command_del();
   clear_obj();
@@ -3102,20 +3093,20 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
   string type2;
   int ret;
 
-  ret=hf.open(i1.c_str(),false,false);
+  ret=hf.open(in[0].c_str(),false,false);
   if (ret!=0) {
-    cerr << "Could not find file named '" << i1 << "'. Wrong file name?" 
+    cerr << "Could not find file named '" << in[0] << "'. Wrong file name?" 
 	 << endl;
     return exc_efailed;
   }
 
-  if (i2.length()!=0) {
+  if (in[1].length()!=0) {
 
     if (verbose>1) {
-      cout << "Command read looking for object with name " << i2 << endl;
+      cout << "Command read looking for object with name " << in[1] << endl;
     }
     
-    iter_parms ip={i2,&hf,false,type,verbose,1};
+    iter_parms ip={in[1],&hf,false,type,verbose,1};
     
     H5Literate(hf.get_current_id(),H5_INDEX_NAME,H5_ITER_NATIVE,
 	       0,iterate_new_func,&ip);
@@ -3125,8 +3116,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     }
 
     if (ip.found==false) {
-      cerr << "Could not find readable object named " << i2
-	   << " in file " << i1 << endl;
+      cerr << "Could not find readable object named " << in[1]
+	   << " in file " << in[0] << endl;
       return 1;
     }
     
@@ -3134,8 +3125,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       if (verbose>2) {
 	cout << "Reading table." << endl;
       }
-      hdf_input(hf,table_obj,i2);
-      obj_name=i2;
+      hdf_input(hf,table_obj,in[1]);
+      obj_name=in[1];
       interp_type=table_obj.get_interp_type();
       command_add("table");
       type="table";
@@ -3144,8 +3135,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       if (verbose>2) {
 	cout << "Reading table3d." << endl;
       }
-      hdf_input(hf,table3d_obj,i2);
-      obj_name=i2;
+      hdf_input(hf,table3d_obj,in[1]);
+      obj_name=in[1];
       interp_type=table3d_obj.get_interp_type();
       command_add("table3d");
       type="table3d";
@@ -3154,8 +3145,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       if (verbose>2) {
 	cout << "Reading tensor_grid." << endl;
       }
-      hdf_input(hf,tensor_grid_obj,i2);
-      obj_name=i2;
+      hdf_input(hf,tensor_grid_obj,in[1]);
+      obj_name=in[1];
       command_add("tensor_grid");
       type="tensor_grid";
       return 0;
@@ -3163,8 +3154,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       if (verbose>2) {
 	cout << "Reading prob_dens_mdim_amr." << endl;
       }
-      hdf_input(hf,pdma_obj,i2);
-      obj_name=i2;
+      hdf_input(hf,pdma_obj,in[1]);
+      obj_name=in[1];
       command_add("prob_dens_mdim_amr");
       type="prob_dens_mdim_amr";
       return 0;
@@ -3172,8 +3163,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       if (verbose>2) {
 	cout << "Reading tensor." << endl;
       }
-      hf.getd_ten(i2,tensor_obj);
-      obj_name=i2;
+      hf.getd_ten(in[1],tensor_obj);
+      obj_name=in[1];
       command_add("tensor");
       type="tensor";
       return 0;
@@ -3181,8 +3172,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       if (verbose>2) {
 	cout << "Reading tensor<int>." << endl;
       }
-      hf.geti_ten(i2,tensor_int_obj);
-      obj_name=i2;
+      hf.geti_ten(in[1],tensor_int_obj);
+      obj_name=in[1];
       command_add("tensor<int>");
       type="tensor<int>";
       return 0;
@@ -3190,8 +3181,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       if (verbose>2) {
 	cout << "Reading tensor<size_t>." << endl;
       }
-      hf.get_szt_ten(i2,tensor_size_t_obj);
-      obj_name=i2;
+      hf.get_szt_ten(in[1],tensor_size_t_obj);
+      obj_name=in[1];
       command_add("tensor<size_t>");
       type="tensor<size_t>";
       return 0;
@@ -3199,8 +3190,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       if (verbose>2) {
 	cout << "Reading hist." << endl;
       }
-      hdf_input(hf,hist_obj,i2);
-      obj_name=i2;
+      hdf_input(hf,hist_obj,in[1]);
+      obj_name=in[1];
       command_add("hist");
       type="hist";
       return 0;
@@ -3208,8 +3199,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       if (verbose>2) {
 	cout << "Reading hist_2d." << endl;
       }
-      hdf_input(hf,hist_2d_obj,i2);
-      obj_name=i2;
+      hdf_input(hf,hist_2d_obj,in[1]);
+      obj_name=in[1];
       command_add("hist_2d");
       type="hist_2d";
       return 0;
@@ -3217,8 +3208,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       if (verbose>2) {
 	cout << "Reading vector<contour_line>." << endl;
       }
-      hdf_input(hf,cont_obj,i2);
-      obj_name=i2;
+      hdf_input(hf,cont_obj,in[1]);
+      obj_name=in[1];
       command_add("vector<contour_line>");
       type="vector<contour_line>";
       return 0;
@@ -3226,8 +3217,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       if (verbose>2) {
 	cout << "Reading uniform_grid<double>." << endl;
       }
-      hdf_input(hf,ug_obj,i2);
-      obj_name=i2;
+      hdf_input(hf,ug_obj,in[1]);
+      obj_name=in[1];
       command_add("uniform_grid<double>");
       type="uniform_grid<double>";
       return 0;
@@ -3235,8 +3226,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       if (verbose>2) {
 	cout << "Reading string[]." << endl;
       }
-      hf.gets_vec(i2,stringv_obj);
-      obj_name=i2;
+      hf.gets_vec(in[1],stringv_obj);
+      obj_name=in[1];
       command_add("string[]");
       type="string[]";
       return 0;
@@ -3244,8 +3235,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       if (verbose>2) {
 	cout << "Reading int." << endl;
       }
-      hf.geti(i2,int_obj);
-      obj_name=i2;
+      hf.geti(in[1],int_obj);
+      obj_name=in[1];
       command_add("int");
       type="int";
       return 0;
@@ -3253,8 +3244,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       if (verbose>2) {
 	cout << "Reading char." << endl;
       }
-      hf.getc(i2,char_obj);
-      obj_name=i2;
+      hf.getc(in[1],char_obj);
+      obj_name=in[1];
       command_add("char");
       type="char";
       return 0;
@@ -3262,8 +3253,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       if (verbose>2) {
 	cout << "Reading string." << endl;
       }
-      hf.gets(i2,string_obj);
-      obj_name=i2;
+      hf.gets(in[1],string_obj);
+      obj_name=in[1];
       command_add("string");
       type="string";
       return 0;
@@ -3271,8 +3262,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       if (verbose>2) {
 	cout << "Reading double." << endl;
       }
-      hf.getd(i2,double_obj);
-      obj_name=i2;
+      hf.getd(in[1],double_obj);
+      obj_name=in[1];
       command_add("double");
       type="double";
       return 0;
@@ -3280,8 +3271,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       if (verbose>2) {
 	cout << "Reading size_t." << endl;
       }
-      hf.get_szt(i2,size_t_obj);
-      obj_name=i2;
+      hf.get_szt(in[1],size_t_obj);
+      obj_name=in[1];
       command_add("size_t");
       type="size_t";
       return 0;
@@ -3289,8 +3280,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       if (verbose>2) {
 	cout << "Reading int[]." << endl;
       }
-      hf.geti_vec(i2,intv_obj);
-      obj_name=i2;
+      hf.geti_vec(in[1],intv_obj);
+      obj_name=in[1];
       command_add("int[]");
       type="int[]";
       return 0;
@@ -3298,8 +3289,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       if (verbose>2) {
 	cout << "Reading double[]." << endl;
       }
-      hf.getd_vec(i2,doublev_obj);
-      obj_name=i2;
+      hf.getd_vec(in[1],doublev_obj);
+      obj_name=in[1];
       command_add("double[]");
       type="double[]";
       return 0;
@@ -3307,39 +3298,39 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       if (verbose>2) {
 	cout << "Reading size_t[]." << endl;
       }
-      hf.get_szt_vec(i2,size_tv_obj);
-      obj_name=i2;
+      hf.get_szt_vec(in[1],size_tv_obj);
+      obj_name=in[1];
       command_add("size_t[]");
       type="size_t[]";
       return 0;
     }
 
-    cerr << "Found object with name " << i2
-	 << " in file " << i1 << " but type " << ip.type
+    cerr << "Found object with name " << in[1]
+	 << " in file " << in[0] << " but type " << ip.type
 	 << " is not readable." << endl;
     return 2;
   }
   
-  ret=hf.find_group_by_type("table",i2,verbose);
+  ret=hf.find_group_by_type("table",in[1],verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, reading first table object." << endl;
     }
-    hdf_input(hf,table_obj,i2);
-    obj_name=i2;
+    hdf_input(hf,table_obj,in[1]);
+    obj_name=in[1];
     command_add("table");
     type="table";
     interp_type=table_obj.get_interp_type();
     return 0;
   }
     
-  ret=hf.find_group_by_type("table3d",i2,verbose);
+  ret=hf.find_group_by_type("table3d",in[1],verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, reading first table3d object." << endl;
     }
-    hdf_input(hf,table3d_obj,i2);
-    obj_name=i2;
+    hdf_input(hf,table3d_obj,in[1]);
+    obj_name=in[1];
     interp_type=table3d_obj.get_interp_type();
       
     command_add("table3d");
@@ -3348,31 +3339,31 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
     
-  ret=hf.find_group_by_type("hist",i2,verbose);
+  ret=hf.find_group_by_type("hist",in[1],verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, reading first hist object." << endl;
     }
-    hdf_input(hf,hist_obj,i2);
-    obj_name=i2;
+    hdf_input(hf,hist_obj,in[1]);
+    obj_name=in[1];
     command_add("hist");
     type="hist";
     return 0;
   }
     
-  ret=hf.find_group_by_type("hist_2d",i2,verbose);
+  ret=hf.find_group_by_type("hist_2d",in[1],verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, reading first hist_2d object." << endl;
     }
-    hdf_input(hf,hist_2d_obj,i2);
-    obj_name=i2;
+    hdf_input(hf,hist_2d_obj,in[1]);
+    obj_name=in[1];
     command_add("hist_2d");
     type="hist_2d";
     return 0;
   }
   
-  cout << "Could not find object of any readable type in file '" << i1
+  cout << "Could not find object of any readable type in file '" << in[0]
        << "'." << endl;
   
   return exc_efailed;
@@ -6767,27 +6758,15 @@ int acol_manager::comm_stats(std::vector<std::string> &sv, bool itive_com) {
     return 0;
   }
   
-  std::string i1;
-
   if (table_obj.get_nlines()==0) {
     cerr << "No table to analyze." << endl;
     return exc_efailed;
   }
   
-  if (sv.size()>1) {
-    i1=sv[1];
-  } else {
-    if (itive_com) {
-      i1=cl->cli_gets("Enter column to get info on (or blank to stop): ");
-      if (i1.length()==0) {
-	cout << "Command 'stats' cancelled." << endl;
-	return 0;
-      }
-    } else {
-      cerr << "Not enough arguments for 'stats'." << endl;
-      return exc_efailed;
-    }
-  }
+  std::string i1;
+  int ret=get_input_one(sv,"Enter column to get info on",i1,"stats",
+			itive_com);
+  if (ret!=0) return ret;
 
   if (table_obj.is_column(i1)==false) {
     cerr << "Could not find column named '" << i1 << "'." << endl;
@@ -6835,6 +6814,46 @@ int acol_manager::comm_stats(std::vector<std::string> &sv, bool itive_com) {
     cout << "Counting mismatch from non-finite values or signed zeros." << endl;
   }
   
+  
+  return 0;
+}
+
+int acol_manager::comm_wstats(std::vector<std::string> &sv, bool itive_com) {
+
+  if (type!="table") {
+    cout << "Not implemented for type " << type << endl;
+    return 0;
+  }
+  
+  if (table_obj.get_nlines()==0) {
+    cerr << "No table to analyze." << endl;
+    return exc_efailed;
+  }
+  
+  vector<std::string> in, pr;
+  pr.push_back("Enter column to get info on");
+  pr.push_back("Enter column for weights");
+  int ret=get_input(sv,pr,in,"wstats",itive_com);
+  if (ret!=0) return ret;
+  
+  if (table_obj.is_column(in[0])==false) {
+    cerr << "Could not find column named '" << in[0]
+	 << "' in acol command wstats." << endl;
+    return exc_efailed;
+  }
+  if (table_obj.is_column(in[1])==false) {
+    cerr << "Could not find column named '" << in[1]
+	 << "' in acol command wstats." << endl;
+    return exc_efailed;
+  }
+
+  const vector<double> &cref=table_obj.get_column(in[0]);
+  const vector<double> &wref=table_obj.get_column(in[1]);
+  cout << "N        : " << table_obj.get_nlines() << endl;
+  cout << "Mean     : "
+       << wvector_mean(table_obj.get_nlines(),cref,wref) << endl;
+  cout << "Std. dev.: "
+       << wvector_stddev(table_obj.get_nlines(),cref,wref) << endl;
   
   return 0;
 }
@@ -7264,19 +7283,10 @@ int acol_manager::comm_select_rows(std::vector<std::string> &sv,
   }
 
   std::string i1;
-  if (sv.size()>=2) {
-    i1=sv[1];
-  } else if (itive_com==true) {
-    i1=cl->cli_gets("Function to specify rows (or blank to quit): ");
-    if (i1.length()==0) {
-      if (verbose>0) cout << "Command 'select_rows' cancelled." << endl;
-      return 0;
-    }
-  } else {
-    cerr << "No rows to delete." << endl;
-    return exc_efailed;
-  }
-    
+  int ret=get_input_one(sv,"Function specify rows",i1,"select-rows",
+			itive_com);
+  if (ret!=0) return ret;
+  
   // ---------------------------------------------------------------------
   // Create new table
   // ---------------------------------------------------------------------
@@ -7430,18 +7440,9 @@ int acol_manager::comm_delete_col(std::vector<std::string> &sv,
   }
 
   std::string i1;
-  if (sv.size()>=2) {
-    i1=sv[1];
-  } else if (itive_com==true) {
-    i1=cl->cli_gets("Column to delete: ");
-    if (i1.length()==0) {
-      if (verbose>0) cout << "Command 'delete_col' cancelled." << endl;
-      return 0;
-    }
-  } else {
-    cerr << "No rows to delete." << endl;
-    return exc_efailed;
-  }
+  int ret=get_input_one(sv,"Column to delete",i1,"delete-col",
+			itive_com);
+  if (ret!=0) return ret;
     
   if (table_obj.is_column(i1)==false) {
     cerr << "Could not find column named '" << i1 << "'." << endl;
@@ -7818,7 +7819,8 @@ int acol_manager::comm_insert_full(std::vector<std::string> &sv,
   }
 
   if (table_obj.get_nlines()==0) {
-    cerr << "No table to insert columns into in command 'insert-full'." << endl;
+    cerr << "No table to insert columns into in command 'insert-full'."
+	 << endl;
     return exc_efailed;
   }
 
