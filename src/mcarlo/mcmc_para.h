@@ -1580,7 +1580,7 @@ namespace o2scl {
       }
       if (walker_reject_rows.size()!=this->n_walk*this->n_threads) {
 	O2SCL_ERR2("Array walker_reject_rows does not have correct size ",
-		  "in mcmc_para_table::mcmc_init().",o2scl::exc_einval);
+		   "in mcmc_para_table::mcmc_init().",o2scl::exc_einval);
       }
       
     }
@@ -2165,7 +2165,7 @@ namespace o2scl {
       walkers must be set first)
   */
   virtual void read_prev_results(o2scl_hdf::hdf_file &hf,
-				 std::string name) {
+				 std::string name="") {
 
     // Create the table object
     table=std::shared_ptr<o2scl::table_units<> >(new o2scl::table_units<>);
