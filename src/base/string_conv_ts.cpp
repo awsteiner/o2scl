@@ -75,6 +75,22 @@ int main(void) {
 	     "string which occupies several lines in a","ss6");
   ss.clear();
 
+  vector<size_t> list;
+  o2scl::string_to_uint_list("1-3,7-9,2-5",list);
+  t.test_gen(list.size()==10,"list1");
+  o2scl::string_to_uint_list("1-3,2",list);
+  t.test_gen(list.size()==4,"list2");
+  o2scl::string_to_uint_list("1,3-5",list);
+  t.test_gen(list.size()==4,"list3");
+  o2scl::string_to_uint_list("4",list);
+  t.test_gen(list.size()==1,"list4");
+  o2scl::string_to_uint_list("4,10",list);
+  t.test_gen(list.size()==2,"list5");
+  o2scl::string_to_uint_list("4-11,10",list);
+  t.test_gen(list.size()==9,"list6");
+  o2scl::string_to_uint_list("4,10-11",list);
+  t.test_gen(list.size()==3,"list7");
+  
   t.report();
   return 0;
 }

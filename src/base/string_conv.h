@@ -203,6 +203,52 @@ namespace o2scl {
    */
   void rewrap(std::string str, std::vector<std::string> &sv,
 	      size_t ncol=79);
+
+  /** \brief Convert a string-based list of unsigned integers
+      to a list
+   */
+  template<class size_vec_t>
+    int string_to_uint_list(const std::string &x,
+			    size_vec_t &list) {
+
+    list.clear();
+    std::vector<std::string> ranges;
+    size_t k=0;
+    while (k<x.length()) {
+      size_t loc=x.find(',',k);
+      if (loc!=std::string::npos) {
+	std::string stemp=x.substr(k,loc-k);
+	ranges.push_back(stemp);
+	k+=stemp.length()+1;
+      } else {
+	if (k<x.length()) {
+	  ranges.push_back(x.substr(k,x.length()-k));
+	}
+	k=x.length();
+      }
+    }
+    size_t uitmp, uitmp2;
+    for(size_t j=0;j<ranges.size();j++) {
+      if (ranges[j].find('-')==std::string::npos) {
+	int ret=stoszt_nothrow(ranges[j],uitmp);
+	if (ret!=0) return ret;
+	list.push_back(uitmp);
+      } else {
+	size_t loc=ranges[j].find('-');
+	std::string sstart=ranges[j].substr(0,loc);
+	std::string send=ranges[j].substr(loc+1,ranges[j].size()-loc);
+	int ret=stoszt_nothrow(sstart,uitmp);
+	if (ret!=0) return ret;
+	ret=stoszt_nothrow(send,uitmp2);
+	if (ret!=0) return ret;
+	for(size_t j=uitmp;j<=uitmp2;j++) {
+	  list.push_back(j);
+	}
+      }
+    }
+    
+    return 0;
+  }
   //@}
 
 #ifndef DOXYGEN_NO_O2NS
