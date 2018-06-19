@@ -434,10 +434,10 @@ namespace o2scl {
       } else {
 	diff2=fabs(loct-h.high[max_ip])/fabs(h.high[max_ip]);
       }
-      std::cout << max_ip << " " << loct << " " << diff1 << " " << diff2
-		<< std::endl;
+      //std::cout << max_ip << " " << loct << " " << diff1 << " " << diff2
+      //<< std::endl;
       int icnt=0;
-      while (icnt<n_dim && (diff1<1.0e-13 || diff2<1.0e-13)) {
+      while (icnt<((int)n_dim) && (diff1<1.0e-13 || diff2<1.0e-13)) {
 	max_ip=(max_ip+1)%n_dim;
 	loct=(v[max_ip]+m(h.inside[0],max_ip))/2.0;
 	if (fabs(h.low[max_ip])<1.0e-13) {
@@ -451,12 +451,12 @@ namespace o2scl {
 	  diff2=fabs(loct-h.high[max_ip])/fabs(h.high[max_ip]);
 	}
 	icnt++;
-	std::cout << max_ip << " " << loct << " " << diff1 << " " << diff2
-		  << " " << icnt << std::endl;
+	//std::cout << max_ip << " " << loct << " " << diff1 << " " << diff2
+	//<< " " << icnt << std::endl;
       }
-      if (icnt>0) {
-	std::cout << "Chose new coordinate." << std::endl;
-      }
+      //if (icnt>0) {
+      //std::cout << "Chose new coordinate." << std::endl;
+      //}
       
       if (verbose>1) {
 	std::cout << "Randomly chose coordinate " << max_ip

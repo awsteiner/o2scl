@@ -174,15 +174,8 @@ int main(int argc, char *argv[]) {
   ubvector init(1);
   init[0]=-0.01;
 
-  /*
-  // Set up expectation value objects
-  sev_x.set_blocks(40,niters/40);
-  sev_x2.set_blocks(40,niters/40);
-  double avg, std_dev, avg_err;
-  size_t m_block, m_per_block;
-  */
-  
   cout << "n_threads: " << n_threads << endl;
+  cout << endl;
 
   // ----------------------------------------------------------------
   // Plain MCMC
@@ -201,6 +194,7 @@ int main(int argc, char *argv[]) {
     tm.test_gen(mpc.mc.n_accept[1]+mpc.mc.n_reject[1]==mpc.mc.max_iters,
 	      "plain n_iters 1");
   }
+  cout << endl;
 
   // ----------------------------------------------------------------
   // Affine-invariant MCMC
@@ -221,6 +215,7 @@ int main(int argc, char *argv[]) {
     tm.test_gen(mpc.mc.n_accept[1]+mpc.mc.n_reject[1]==mpc.mc.max_iters,
 		"aff_inc n_iters 1");
   }
+  cout << endl;
 
   // ----------------------------------------------------------------
   // Plain MCMC with a table
@@ -304,7 +299,61 @@ int main(int argc, char *argv[]) {
   hf.set_szt_vec("n_accept",mpc.mct.n_accept);
   hf.set_szt_vec("n_reject",mpc.mct.n_reject);
   hf.close();
+  cout << endl;
 
+  // ----------------------------------------------------------------
+  // Affine-invariant MCMC with a table and previously read results
+  
+  cout << "Affine-invariant MCMC with a table and previous results: "
+       << endl;
+  
+  mpc.mct.aff_inv=true;
+  mpc.mct.n_walk=10;
+  mpc.mct.step_fac=-1.0;
+  
+  mpc.mct.max_iters=40;
+  mpc.mct.prefix="mcmct_aiprev";
+  
+  fname="mcmct_ai_0_out";
+  hf.open(fname);
+  mpc.mct.read_prev_results(hf,1);
+  hf.close();
+
+  cout << "Going to mcmc." << endl;
+  mpc.mct.verbose=1;
+  mpc.mct.mcmc(1,low,high,vpf,vff);
+
+  // Get results
+  table=mpc.mct.get_table();
+  std::vector<size_t> chain_sizes2;
+  mpc.mct.get_chain_sizes(chain_sizes2);
+
+  // This testing code doesn't work yet, possibly because it is
+  // not yet written correctly
+  for(size_t it=0;it<n_threads;it++) {
+    size_t sum1=0, sum2=0;
+    for(size_t i=0;i<10;i++) {
+      sum1+=chain_sizes[it*10+i];
+    }
+    for(size_t i=0;i<10;i++) {
+      sum2+=chain_sizes2[it*10+i];
+    }
+    cout << sum1 << " " << sum2 << " " << sum2-sum1 << " " 
+	 << mpc.mct.n_accept[it] << " "
+	 << mpc.mct.n_reject[it] << endl;
+    //tm.test_gen(sum2-sum1==mpc.mct.n_accept[it],"Test chain size");
+  }
+
+  // Write results to file
+  fname="mcmct_aiprev_0_out";
+  hf.open_or_create(fname);
+  hdf_output(hf,*table,"mcmct");
+  hf.set_szt_vec("chain_sizes",chain_sizes);
+  hf.set_szt_vec("n_accept",mpc.mct.n_accept);
+  hf.set_szt_vec("n_reject",mpc.mct.n_reject);
+  hf.close();
+  cout << endl;
+  
   tm.report();
   
   return 0;

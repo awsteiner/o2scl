@@ -35,7 +35,10 @@
     MCMC simulations and the child class \ref o2scl::mcmc_para_table 
     performs MCMC simulations and stores the results in
     a \ref o2scl::table_units object. These classes contain
-    support for OpenMP and MPI (or both).
+    support for OpenMP and MPI (or both). The class 
+    \ref o2scl::mcmc_para_cli is a specialized class which 
+    automatically handles the command-line interface when
+    using MCMC.
 
     \comment
     --------------------------------------------------------------

@@ -159,6 +159,11 @@ namespace o2scl {
   /// If true, we are in the warm up phase
   bool warm_up;
 
+  /** \brief If true, call the measurement function for the
+      initial point
+   */
+  bool meas_for_initial;
+  
   /** \brief Current points in parameter space for each walker and 
       each OpenMP thread
 
@@ -192,6 +197,12 @@ namespace o2scl {
    */
   virtual int mcmc_init() {
 
+    if (pd_mode && aff_inv) {
+      O2SCL_ERR2("Using a proposal distribution with affine-invariant ",
+		 "sampling not implemented in mcmc_para::mcmc_init().",
+		 o2scl::exc_eunimpl);
+    }
+    
     if (verbose>1) {
       std::cout << "Prefix is: " << prefix << std::endl;
     }
@@ -248,6 +259,31 @@ namespace o2scl {
 
   public:
 
+  /// Integer to indicate completion
+  static const int mcmc_done=-10;
+
+  /// Integer to indicate rejection
+  static const int mcmc_skip=-20;
+
+  /// \name Output quantities
+  //@{
+  /** \brief The number of Metropolis steps which were accepted in 
+      each independent chain (summed over all walkers)
+
+      This vector has a size equal to \ref n_chains_per_rank .
+  */
+  std::vector<size_t> n_accept;
+  
+  /** \brief The number of Metropolis steps which were rejected in 
+      each independent chain (summed over all walkers)
+
+      This vector has a size equal to \ref n_chains_per_rank .
+  */
+  std::vector<size_t> n_reject;
+  //@}
+
+  /// \name Settings
+  //@{
   /** \brief The MPI starting time (defaults to 0.0)
 
       This can be set by the user before mcmc() is called, so
@@ -279,31 +315,6 @@ namespace o2scl {
    */
   std::string prefix;
 
-  /// Integer to indicate completion
-  static const int mcmc_done=-10;
-
-  /// Integer to indicate rejection
-  static const int mcmc_skip=-20;
-
-  /// \name Output quantities
-  //@{
-  /** \brief The number of Metropolis steps which were accepted in 
-      each independent chain (summed over all walkers)
-
-      This vector has a size equal to \ref n_chains_per_rank .
-  */
-  std::vector<size_t> n_accept;
-  
-  /** \brief The number of Metropolis steps which were rejected in 
-      each independent chain (summed over all walkers)
-
-      This vector has a size equal to \ref n_chains_per_rank .
-  */
-  std::vector<size_t> n_reject;
-  //@}
-
-  /// \name Settings
-  //@{
   /// If true, use affine-invariant Monte Carlo
   bool aff_inv;
   
@@ -393,6 +404,7 @@ namespace o2scl {
     prefix="mcmc";
     max_time=0.0;
     max_iters=0;
+    meas_for_initial=true;
   }
 
   /// Number of OpenMP threads
@@ -481,7 +493,7 @@ namespace o2scl {
       
       // Double check that the initial points are distinct and finite
       for(size_t i=0;i<initial_points.size();i++) {
-	for(size_t k=0;k<initial_points[i][k];k++) {
+	for(size_t k=0;k<initial_points[i].size();k++) {
 	  if (!std::isfinite(initial_points[i][k])) {
 	    O2SCL_ERR2("Initial point not finite in ",
 		       "mcmc_para::mcmc_init().",o2scl::exc_einval);
@@ -502,7 +514,7 @@ namespace o2scl {
       }
       
     }
-    
+
     // Set number of threads
 #ifdef O2SCL_OPENMP
     omp_set_num_threads(n_threads);
@@ -558,7 +570,7 @@ namespace o2scl {
     if (step_fac<=0.0) {
       if (aff_inv) {
 	std::cout << "mcmc_para::mcmc(): Requested negative or zero "
-		  << "step_fac with aff_inv=true. Setting to 2.0."
+		  << "step_fac with aff_inv=true.\nSetting to 2.0."
 		  << std::endl;
 	step_fac=2.0;
       } else {
@@ -672,9 +684,6 @@ namespace o2scl {
     }
     
     // --------------------------------------------------------
-    // Compute initial point and initial weights
-
-    // --------------------------------------------------------
     // Initial point and weights for affine-invariant sampling
     
     if (aff_inv) {
@@ -725,9 +734,13 @@ namespace o2scl {
 		    func_ret[it]<((int)ret_value_counts[it].size())) {
 		  ret_value_counts[it][func_ret[it]]++;
 		}
-		meas_ret[it]=meas[it](current[sindex],w_current[sindex],
-				      curr_walker[it],func_ret[it],
-				      true,data_arr[sindex]);
+		if (meas_for_initial) {
+		  meas_ret[it]=meas[it](current[sindex],w_current[sindex],
+					curr_walker[it],func_ret[it],
+					true,data_arr[sindex]);
+		} else {
+		  meas_ret[it]=0;
+		}
 		if (meas_ret[it]==mcmc_done) {
 		  mcmc_done_flag[it]=true;
 		}
@@ -771,9 +784,13 @@ namespace o2scl {
 		    ret_value_counts[it][func_ret[it]]++;
 		  }
 		  if (meas_ret[it]!=mcmc_done) {
-		    meas_ret[it]=meas[it](current[sindex],w_current[sindex],
-					  curr_walker[it],func_ret[it],true,
-					  data_arr[sindex]);
+		    if (meas_for_initial) {
+		      meas_ret[it]=meas[it](current[sindex],w_current[sindex],
+					    curr_walker[it],func_ret[it],true,
+					    data_arr[sindex]);
+		    } else {
+		      meas_ret[it]=0;
+		    }
 		  } else {
 		    mcmc_done_flag[it]=true;
 		  }
@@ -845,7 +862,7 @@ namespace o2scl {
     } else {
 
       // --------------------------------------------------------
-      // Initial point and weights when aff_inv is false.
+      // Initial point evaluation when aff_inv is false.
 
 #ifdef O2SCL_OPENMP
 #pragma omp parallel default(shared)
@@ -910,6 +927,9 @@ namespace o2scl {
 	}
       }
 
+      // --------------------------------------------------------
+      // Post-processing initial point when aff_inv is false.
+
 #ifdef O2SCL_OPENMP
 #pragma omp parallel default(shared)
 #endif
@@ -934,16 +954,19 @@ namespace o2scl {
 	      func_ret[it]<((int)ret_value_counts[it].size())) {
 	    ret_value_counts[it][func_ret[it]]++;
 	  }
-	  // Call the measurement function	  
-	  meas_ret[it]=meas[it](current[it],w_current[it],0,
-				func_ret[it],true,data_arr[it]);
+	  if (meas_for_initial) {
+	    // Call the measurement function	  
+	    meas_ret[it]=meas[it](current[it],w_current[it],0,
+				  func_ret[it],true,data_arr[it]);
+	  } else {
+	    meas_ret[it]=0;
+	  }
 	  if (meas_ret[it]==mcmc_done) {
 	    mcmc_done_flag[it]=true;
 	  }
 
 	  // End of loop over threads
 	}
-
 	
       }
       // End of parallel region
@@ -987,9 +1010,12 @@ namespace o2scl {
 	scr_out << " (initial)" << std::endl;
 	scr_out.precision(6);
       }
-
+  
       // End of initial point region for 'aff_inv=false'
     }
+
+    // Set meas_for_initial back to true if necessary
+    meas_for_initial=true;
 
     // --------------------------------------------------------
     // Require keypress after initial point if verbose is
@@ -1376,13 +1402,15 @@ namespace o2scl {
     // --------------------------------------------------------------
     
     mcmc_cleanup();
-      
+
+    // End of ifdef DOXYGEN
 #endif
 
     return 0;
   }
     
   /** \brief Perform a MCMC simulation with a thread-safe function
+      or with only one OpenMP thread
    */
   virtual int mcmc(size_t n_params, vec_t &low, vec_t &high,
 		   func_t &func, measure_t &meas) {
@@ -1405,6 +1433,9 @@ namespace o2scl {
   /// \name Proposal distribution
   //@{
   /** \brief Set the proposal distribution
+
+      \note This function automatically sets \ref aff_inv
+      to false and \ref n_walk to 1.
    */
   template<class prob_vec_t> void set_proposal(prob_vec_t &pv) {
     prop_dist.resize(pv.size());
@@ -1418,6 +1449,9 @@ namespace o2scl {
   }
 
   /** \brief Set pointers to proposal distributions
+
+      \note This function automatically sets \ref aff_inv
+      to false and \ref n_walk to 1.
    */
   template<class prob_vec_t> void set_proposal_ptrs(prob_vec_t &pv) {
     prop_dist.resize(pv.size());
@@ -1521,8 +1555,8 @@ namespace o2scl {
       This function sets the column names and units.
   */
   virtual int mcmc_init() {
-
-    if (!table) {
+    
+    if (!prev_read) {
       
       // -----------------------------------------------------------
       // Initialize table, walker_accept_rows, and walker_reject_rows
@@ -1560,7 +1594,7 @@ namespace o2scl {
     } else {
       
       // -----------------------------------------------------------
-      // Presume previous results are already present
+      // Previous results are already present
 
       if (table->get_ncolumns()!=5+col_names.size()) {
 	O2SCL_ERR2("Table does not have the correct number of columns ",
@@ -1582,6 +1616,10 @@ namespace o2scl {
 	O2SCL_ERR2("Array walker_reject_rows does not have correct size ",
 		   "in mcmc_para_table::mcmc_init().",o2scl::exc_einval);
       }
+
+      // Set prev_read to false so that next call to mcmc()
+      // doesn't use the previously read results.
+      prev_read=false;
       
     }
     
@@ -1656,9 +1694,18 @@ namespace o2scl {
       file write() (default 0.0)
   */
   double last_write_time;
+
+  /** \brief If true, previous results have been read
+      
+      This is set to <tt>true</tt> by \ref read_prev_results()
+      and set back to <tt>false</tt> after mcmc_init() is called.
+   */
+  bool prev_read;
   
   public:
 
+  /// \name Settings
+  //@{
   /** \brief If true, ensure sure walkers and OpenMP threads are
       written to the table with equal spacing between rows (default
       true)
@@ -1676,6 +1723,11 @@ namespace o2scl {
   /** \brief The number of tables to combine before I/O (default 1)
    */
   int table_io_chunk;
+
+  /** \brief If true, store MCMC rejections in the table
+   */
+  bool store_rejects;
+  //@}
   
   /** \brief Write MCMC tables to files
    */
@@ -1728,25 +1780,28 @@ namespace o2scl {
     hf.open_or_create(fname);
 
     if (first_write==false) {
-      hf.set_szt("max_iters",this->max_iters);
-      hf.sets("prefix",this->prefix);
-      hf.seti("aff_inv",this->aff_inv);
-      hf.setd("step_fac",this->step_fac);
       hf.setd("ai_initial_step",this->ai_initial_step);
-      hf.set_szt("n_warm_up",this->n_warm_up);
-      hf.seti("user_seed",this->user_seed);
+      hf.seti("aff_inv",this->aff_inv);
+      hf.seti("always_accept",this->always_accept);
+      hf.setd_vec_copy("high",this->high_copy);
+      hf.setd_vec_copy("low",this->low_copy);
+      hf.set_szt("max_bad_steps",this->max_bad_steps);
+      hf.set_szt("max_iters",this->max_iters);
       hf.seti("mpi_rank",this->mpi_rank);
       hf.seti("mpi_size",this->mpi_size);
-      hf.seti("verbose",this->verbose);
-      hf.set_szt("max_bad_steps",this->max_bad_steps);
+      hf.set_szt("n_chains_per_rank",this->n_chains_per_rank);
+      hf.set_szt("n_params",this->n_params);
+      hf.set_szt("n_threads",this->n_threads);
       hf.set_szt("n_walk",this->n_walk);
       hf.set_szt("n_walk_per_thread",this->n_walk_per_thread);
-      hf.set_szt("n_chains_per_rank",this->n_chains_per_rank);
-      hf.set_szt("n_threads",this->n_threads);
-      hf.set_szt("n_params",this->n_params);
-      hf.seti("always_accept",this->always_accept);
-      hf.setd_vec_copy("low",this->low_copy);
-      hf.setd_vec_copy("high",this->high_copy);
+      hf.set_szt("n_warm_up",this->n_warm_up);
+      hf.seti("pd_mode",this->pd_mode);
+      hf.sets("prefix",this->prefix);
+      hf.setd("step_fac",this->step_fac);
+      hf.seti("store_rejects",this->store_rejects);
+      hf.seti("table_sequence",this->table_sequence);
+      hf.seti("user_seed",this->user_seed);
+      hf.seti("verbose",this->verbose);
       file_header(hf);
       first_write=true;
     }
@@ -1786,10 +1841,6 @@ namespace o2scl {
     return;
   }
   
-  /** \brief If true, store MCMC rejections in the table
-   */
-  bool store_rejects;
-  
   mcmc_para_table() {
     table_io_chunk=1;
     file_update_iters=0;
@@ -1797,6 +1848,7 @@ namespace o2scl {
     last_write_iters=0;
     store_rejects=false;
     table_sequence=true;
+    prev_read=false;
   }
   
   /// \name Basic usage
@@ -2163,8 +2215,16 @@ namespace o2scl {
 
   /** \brief Read previous results (number of threads and 
       walkers must be set first)
+
+      \note By default, this tries to obtain the initial points
+      for the next call to \ref mcmc() by the previously 
+      accepted point in the table. 
+
+      \note This function requires a table correctly stored with
+      the right column order
   */
   virtual void read_prev_results(o2scl_hdf::hdf_file &hf,
+				 size_t n_param_loc,
 				 std::string name="") {
 
     // Create the table object
@@ -2172,6 +2232,9 @@ namespace o2scl {
 
     // Read the table data from the HDF5 file
     hdf_input(hf,*table,name);
+
+    // Obtain the number of parameters
+    hf.get_szt("n_params",n_param_loc);
     
     if (!table->is_column("rank") ||
 	!table->is_column("thread") ||
@@ -2185,6 +2248,8 @@ namespace o2scl {
     
     // -----------------------------------------------------------
     // Set the values of walker_accept_rows and walker_reject_rows
+    // by finding the last accepted row and the last rejected row
+    // for each walker and each thread.
     
     // The total number of walkers * threads
     size_t ntot=this->n_threads*this->n_walk;
@@ -2207,10 +2272,37 @@ namespace o2scl {
 
       if (table->get("mult",j)>0.5) {
 	walker_accept_rows[windex]=j;
+      } else if (table->get("mult",j)<-0.5) {
+	walker_reject_rows[windex]=j;
       }
-      walker_reject_rows[windex]=j;
 
     }
+
+    // Only set initial points if we found an acceptance for
+    // all walkers and threads
+    bool found=true;
+    for(size_t j=0;j<ntot;j++) {
+      if (walker_accept_rows[j]<0) found=false;
+    }
+
+    if (found) {
+      // Set up initial points
+      this->initial_points.clear();
+      this->initial_points.resize(ntot);
+      for(size_t j=0;j<ntot;j++) {
+	this->initial_points[j].resize(n_param_loc);
+	for(size_t k=0;k<n_param_loc;k++) {
+	  this->initial_points[j][k]=table->get(k+5,walker_accept_rows[j]);
+	}
+      }
+    } else {
+      std::cout << "Previous table was read, but initial points not set."
+      << std::endl;
+    }
+    
+    prev_read=true;
+    this->meas_for_initial=false;
+    
     return;
   }
   
@@ -2354,7 +2446,7 @@ namespace o2scl {
       // If necessary, increment the multiplier on the previous point
       if (ret_value==o2scl::success && mcmc_accept==false) {
 	if (walker_accept_rows[windex]<0 ||
-	    walker_accept_rows[windex]>=table->get_nlines()) {
+	    walker_accept_rows[windex]>=((int)table->get_nlines())) {
 	  O2SCL_ERR2("Invalid row for incrementing multiplier in ",
 		     "mcmc_para_table::add_line().",o2scl::exc_efailed);
 	}
@@ -2384,7 +2476,7 @@ namespace o2scl {
 	walker_reject_rows[windex]=next_row;
       }
     }
-    
+
     return ret_value;
   }
   //@}
@@ -2604,6 +2696,8 @@ namespace o2scl {
     
   protected:
   
+  /** \brief The parent typedef
+   */
   typedef o2scl::mcmc_para_table<func_t,fill_t,data_t,vec_t> parent_t;
 
   /// \name Parameter objects for the 'set' command
