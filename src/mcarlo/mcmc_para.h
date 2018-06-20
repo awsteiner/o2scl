@@ -2233,9 +2233,6 @@ namespace o2scl {
     // Read the table data from the HDF5 file
     hdf_input(hf,*table,name);
 
-    // Obtain the number of parameters
-    hf.get_szt("n_params",n_param_loc);
-    
     if (!table->is_column("rank") ||
 	!table->is_column("thread") ||
 	!table->is_column("walker") ||
