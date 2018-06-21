@@ -885,6 +885,7 @@ namespace o2scl {
       }
       O2SCL_ERR("Point not found inside mesh in pdf().",o2scl::exc_esanity);
     }
+
     double pdf_ret=mesh[jm].weight;
     if (!std::isfinite(pdf_ret)) {
       std::cout << "Density not finite: " << jm << " " << pdf_ret << " "
