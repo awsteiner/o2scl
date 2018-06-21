@@ -702,6 +702,17 @@ void acol_manager::command_add(std::string new_type) {
     };
     cl->set_comm_option_vec(narr,options_arr);
     
+  } else if (new_type=="prob_dens_mdim_amr") {
+    
+    static const size_t narr=1;
+    comm_option_s options_arr[narr]={
+      {0,"to-table3d","Select two indices and convert to a table3d object.",
+       -1,-1,"<x index> <y index> <x name> <y name> <slice name>",
+       "",new comm_option_mfptr<acol_manager>
+       (this,&acol_manager::comm_to_table3d),both}
+    };
+    cl->set_comm_option_vec(narr,options_arr);
+    
   } else if (new_type=="tensor<int>") {
     
     static const size_t narr=2;
@@ -1011,6 +1022,10 @@ void acol_manager::command_del() {
     
     cl->remove_comm_option("list");
     cl->remove_comm_option("diag");
+    cl->remove_comm_option("to-table3d");
+
+  } else if (type=="prob_dens_mdim_amr") {
+    
     cl->remove_comm_option("to-table3d");
 
   } else if (type=="tensor_grid") {
@@ -4007,6 +4022,40 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
     clear_obj();
     command_add("table3d");
     type="table3d";
+
+  } else if (type=="prob_dens_mdim_amr") {
+
+    vector<string> in, pr;
+    pr.push_back("First index to vary");
+    pr.push_back("Second index to vary");
+    pr.push_back("x coordinate name");
+    pr.push_back("y coordinate name");
+    pr.push_back("Slice name");
+    int ret=get_input(sv,pr,in,"to-table3d",itive_com);
+    if (ret!=0) return ret;
+    
+    table3d_obj.clear();
+    size_t i, j;
+    o2scl::stoszt_nothrow(in[0],i);
+    o2scl::stoszt_nothrow(in[1],j);
+    string slice=in[4];
+    cout << "Converting pdma to table3d, using index "
+	 << in[0] << ", index " << in[1] << ", and slice "
+	 << in[4] << endl;
+    pdma_obj.two_indices_to_density(i,j,table3d_obj,slice);
+    table3d_obj.set_x_name(in[2]);
+    table3d_obj.set_y_name(in[3]);
+    
+    command_del();
+    clear_obj();
+    command_add("table3d");
+    type="table3d";
+
+  } else {
+    
+    cerr << "Cannot use command 'to-table3d' for type "
+	 << type << "." << endl;
+    return exc_efailed;
   }
   
   return 0;
