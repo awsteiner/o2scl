@@ -402,7 +402,8 @@ namespace o2scl {
 	}
 	std::cout << "weight: " << mesh[0].weight << std::endl;
 	if (verbose>2) {
-	  std::cout << "Press a character and enter to continue: " << std::endl;
+	  std::cout << "Press a character and enter to continue: "
+		    << std::endl;
 	  char ch;
 	  std::cin >> ch;
 	}
@@ -542,12 +543,14 @@ namespace o2scl {
     h.high[max_ip]=old_high;
     h.frac_vol=old_vol*(old_high-loc)/(old_high-old_low);
     if (h.frac_vol<1.0e-14) {
-      std::cout << "Skipping hypercube with vanishing volume."
-		<< std::endl;
-      std::cout << "coordinate, point, between, previous, low, high:\n\t"
-		<< max_ip << " " << v[max_ip] << " " << loc << " "
-		<< m(h.inside[0],max_ip) << " "
-		<< h.low[max_ip] << " " << h.high[max_ip] << std::endl;
+      if (verbose>0) {
+	std::cout << "Skipping hypercube with vanishing volume."
+		  << std::endl;
+	std::cout << "coordinate, point, between, previous, low, high:\n\t"
+		  << max_ip << " " << v[max_ip] << " " << loc << " "
+		  << m(h.inside[0],max_ip) << " "
+		  << h.low[max_ip] << " " << h.high[max_ip] << std::endl;
+      }
       //exit(-1);
       return;
     }
@@ -568,12 +571,14 @@ namespace o2scl {
     high_new[max_ip]=loc;
     double new_vol=old_vol*(loc-old_low)/(old_high-old_low);
     if (new_vol<1.0e-14) {
-      std::cout << "Skipping hypercube with vanishing volume (2)."
-		<< std::endl;
-      std::cout << "coordinate, point, between, previous, low, high:\n\t"
-		<< max_ip << " " << v[max_ip] << " " << loc << " "
-		<< m(h.inside[0],max_ip) << " "
-		<< h.low[max_ip] << " " << h.high[max_ip] << std::endl;
+      if (verbose>0) {
+	std::cout << "Skipping hypercube with vanishing volume (2)."
+		  << std::endl;
+	std::cout << "coordinate, point, between, previous, low, high:\n\t"
+		  << max_ip << " " << v[max_ip] << " " << loc << " "
+		  << m(h.inside[0],max_ip) << " "
+		  << h.low[max_ip] << " " << h.high[max_ip] << std::endl;
+      }
       //exit(-1);
       return;
     }
@@ -880,7 +885,18 @@ namespace o2scl {
       }
       O2SCL_ERR("Point not found inside mesh in pdf().",o2scl::exc_esanity);
     }
-    return mesh[jm].weight;
+    double pdf_ret=mesh[jm].weight;
+    if (!std::isfinite(pdf_ret)) {
+      std::cout << "Density not finite: " << jm << " " << pdf_ret << " "
+		<< mesh[jm].frac_vol << std::endl;
+      exit(-1);
+    }
+    if (pdf_ret<0.0) {
+      std::cout << "Density negative: " << jm << " " << pdf_ret << " "
+		<< mesh[jm].frac_vol << std::endl;
+      exit(-1);
+    }
+    return pdf_ret;
   }
 
   /// Select a random point in the largest weighted box

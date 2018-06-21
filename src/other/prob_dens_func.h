@@ -699,7 +699,18 @@ namespace o2scl {
   
   /// The log of the normalized density 
   virtual double log_pdf(const vec_t &x) const {
-    return log(pdf(x));
+    double val=pdf(x);
+    if (!std::isfinite(val) || val<0.0) {
+      O2SCL_ERR2("PDF not finite or negative in ",
+		 "prob_dens_mdim::log_pdf().",o2scl::exc_efailed);
+    }
+    double val2=log(pdf(x));
+    if (!std::isfinite(val2) || val2<0.0) {
+      std::cout << val << " " << val2 << std::endl;
+      O2SCL_ERR2("Log of PDF not finite or negative in ",
+		 "prob_dens_mdim::log_pdf().",o2scl::exc_efailed);
+    }
+    return val2;
   }
   
   /// Sample the distribution
@@ -1492,8 +1503,19 @@ namespace o2scl {
   */
   virtual double log_metrop_hast(const vec_t &x, vec_t &x_prime) const {
     operator()(x,x_prime);
-    double val=log_pdf(x_prime,x)-log_pdf(x,x_prime);
-    return val;
+    double val1=log_pdf(x_prime,x);
+    double val2=log_pdf(x,x_prime);
+    if (!std::isfinite(val1)) {
+      std::cout << "val1: " << val1 << std::endl;
+      O2SCL_ERR("Log pdf not finite in log_metrop_hast 1.",
+		o2scl::exc_efailed);
+    }
+    if (!std::isfinite(val2)) {
+      std::cout << "val2: " << val2 << std::endl;
+      O2SCL_ERR("Log pdf not finite in log_metrop_hast 2.",
+		o2scl::exc_efailed);
+    }
+    return val1-val2;
   }
   
   };
