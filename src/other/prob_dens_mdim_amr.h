@@ -202,7 +202,8 @@ namespace o2scl {
       O2SCL_ERR("Grid not commensurate in two_indices().",
 		o2scl::exc_einval);
     }
-    if (!t3d.is_slice(slice)) {
+    size_t szt_temp;
+    if (!t3d.is_slice(slice,szt_temp)) {
       t3d.new_slice(slice);
     }
     t3d.set_slice_all(slice,0.0);
