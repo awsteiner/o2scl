@@ -189,6 +189,37 @@ namespace o2scl {
     n_dim=0;
     return;
   }
+
+  /** \brief Desc
+   */
+  void two_indices_to_density(size_t i, size_t j, table3d &t3d,
+			      std::string slice, size_t ni=40,
+			      size_t nj=40) {
+    if (t3d.get_nx()==0 && t3d.get_ny()==0) {
+      t3d.set_xy("x",uniform_grid_end<double>(low[i],high[i],ni-1),
+		 "y",uniform_grid_end<double>(low[j],high[j],nj-1));
+    } else if (t3d.get_nx()!=ni || t3d.get_ny()!=nj) {
+      O2SCL_ERR("Grid not commensurate in two_indices().",
+		o2scl::exc_einval);
+    }
+    if (!t3d.is_slice(slice)) {
+      t3d.new_slice(slice);
+    }
+    t3d.set_slice_all(slice,0.0);
+    for(size_t i=0;i<t3d.get_nx();i++) {
+      for(size_t j=0;j<t3d.get_ny();j++) {
+	for(size_t k=0;k<mesh.size();k++) {
+	  double x=t3d.get_grid_x(i);
+	  double y=t3d.get_grid_y(j);
+	  if (mesh[k].low[i]<x && mesh[k].high[i]>x &&
+	      mesh[k].low[j]<y && mesh[k].high[j]>y) {
+	    t3d.set(i,j,slice,t3d.get(i,j,slice)+mesh[k].weight);
+	  }
+	}
+      }
+    }
+    return;
+  }
   
   /** \brief Desc
    */
