@@ -1369,7 +1369,11 @@ namespace o2scl {
 	}
       }
     }
-    delete_rows_list(list);
+    if (list.size()>0) {
+      delete_rows_list(list);
+    } else if (verbose>0) {
+      std::cout << "No matches found." << std::endl;
+    }
     return list.size();
   }
   
