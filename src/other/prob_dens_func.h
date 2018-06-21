@@ -705,9 +705,9 @@ namespace o2scl {
 		 "prob_dens_mdim::log_pdf().",o2scl::exc_efailed);
     }
     double val2=log(pdf(x));
-    if (!std::isfinite(val2) || val2<0.0) {
+    if (!std::isfinite(val2)) {
       std::cout << val << " " << val2 << std::endl;
-      O2SCL_ERR2("Log of PDF not finite or negative in ",
+      O2SCL_ERR2("Log of PDF not finite in ",
 		 "prob_dens_mdim::log_pdf().",o2scl::exc_efailed);
     }
     return val2;

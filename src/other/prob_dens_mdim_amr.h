@@ -887,6 +887,9 @@ namespace o2scl {
     }
 
     double pdf_ret=mesh[jm].weight;
+    if (pdf_ret==0.0) {
+      return 1.0e-300;
+    }
     if (!std::isfinite(pdf_ret)) {
       std::cout << "Density not finite: " << jm << " " << pdf_ret << " "
 		<< mesh[jm].frac_vol << std::endl;
