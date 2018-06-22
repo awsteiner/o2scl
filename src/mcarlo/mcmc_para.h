@@ -507,6 +507,10 @@ namespace o2scl {
 	    }
 	  }
 	  if (vec_equal) {
+	    std::cerr << i << " ";
+	    o2scl::vector_out(std::cerr,initial_points[i],true);
+	    std::cerr << j << " ";
+	    o2scl::vector_out(std::cerr,initial_points[j],true);
 	    O2SCL_ERR2("Initial points not distinct in ",
 		       "mcmc_para::mcmc_init().",o2scl::exc_einval);
 	  }
