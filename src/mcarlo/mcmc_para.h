@@ -2301,6 +2301,21 @@ namespace o2scl {
       std::cout << "Previous table was read, but initial points not set."
       << std::endl;
     }
+
+    if (verbose>0) {
+      std::cout << "mcmc_para_table::read_prev_results()" << std::endl;
+      std::cout << "\tindex walker_accept_rows walker_reject_rows"
+      << std::endl;
+      for(size_t j=0;j<ntot;j++) {
+	std::cout << "\t";
+	std::cout.width(3);
+	std::cout << j << " ";
+	std::cout.width(5);
+	std::cout << walker_accept_rows[j] << " ";
+	std::cout.width(5);
+	std::cout << walker_reject_rows[j] << std::endl;
+      }
+    }
     
     prev_read=true;
     this->meas_for_initial=false;
