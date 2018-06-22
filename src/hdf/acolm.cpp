@@ -2480,6 +2480,7 @@ herr_t acol_manager::iterate_new_func(hid_t loc, const char *name,
     }
     
   } else if (infobuf.type==H5O_TYPE_DATASET) {
+    
     if (mode==filelist_mode) {
       cout << "Dataset \"" << name << "\" of type ";
     }
@@ -2591,11 +2592,13 @@ herr_t acol_manager::iterate_new_func(hid_t loc, const char *name,
 	  } else {
 	    cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
 	  }
-	} else {
+	} else if (name==tname) {
 	  ip->type="char";
 	  for(int i=0;i<ndims;i++) {
 	    ip->type+="[]";
 	  }
+	  ip->found=true;
+	  return 1;
 	}
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_SHORT)) {
@@ -2613,11 +2616,13 @@ herr_t acol_manager::iterate_new_func(hid_t loc, const char *name,
 	} else {
 	  cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
 	}
-      } else {
+      } else if (name==tname) {
 	ip->type="short";
 	for(int i=0;i<ndims;i++) {
 	  ip->type+="[]";
 	}
+	ip->found=true;
+	return 1;
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_INT)) {
       if (ndims==1 && dims[0]>0) {
@@ -2676,11 +2681,13 @@ herr_t acol_manager::iterate_new_func(hid_t loc, const char *name,
 	  } else {
 	    cout << dims[ndims-1] << "/" << max_dims[ndims-1] << ").";
 	  }
-	} else {
+	} else if (name==tname) {
 	  ip->type="int";
 	  for(int i=0;i<ndims;i++) {
 	    ip->type+="[]";
 	  }
+	  ip->found=true;
+	  return 1;
 	}
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_LONG)) {
@@ -2698,11 +2705,13 @@ herr_t acol_manager::iterate_new_func(hid_t loc, const char *name,
 	} else {
 	  cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
 	}
-      } else {
+      } else if (name==tname) {
 	ip->type="long";
 	for(int i=0;i<ndims;i++) {
 	  ip->type+="[]";
 	}
+	ip->found=true;
+	return 1;
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_LLONG)) {
       if (mode==filelist_mode) {
@@ -2719,11 +2728,13 @@ herr_t acol_manager::iterate_new_func(hid_t loc, const char *name,
 	} else {
 	  cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
 	}
-      } else {
+      } else if (name==tname) {
 	ip->type="llong";
 	for(int i=0;i<ndims;i++) {
 	  ip->type+="[]";
 	}
+	ip->found=true;
+	return 1;
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_UCHAR)) {
       if (mode==filelist_mode) {
@@ -2740,11 +2751,13 @@ herr_t acol_manager::iterate_new_func(hid_t loc, const char *name,
 	} else {
 	  cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
 	}
-      } else {
+      } else if (name==tname) {
 	ip->type="uchar";
 	for(int i=0;i<ndims;i++) {
 	  ip->type+="[]";
 	}
+	ip->found=true;
+	return 1;
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_USHORT)) {
       if (mode==filelist_mode) {
@@ -2761,11 +2774,13 @@ herr_t acol_manager::iterate_new_func(hid_t loc, const char *name,
 	} else {
 	  cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
 	}
-      } else {
+      } else if (name==tname) {
 	ip->type="ushort";
 	for(int i=0;i<ndims;i++) {
 	  ip->type+="[]";
 	}
+	ip->found=true;
+	return 1;
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_UINT)) {
       if (mode==filelist_mode) {
@@ -2840,11 +2855,13 @@ herr_t acol_manager::iterate_new_func(hid_t loc, const char *name,
 	  } else {
 	    cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
 	  }
-	} else {
+	} else if (name==tname) {
 	  ip->type="size_t";
 	  for(int i=0;i<ndims;i++) {
 	    ip->type+="[]";
 	  }
+	  ip->found=true;
+	  return 1;
 	}
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_ULLONG)) {
@@ -2862,11 +2879,13 @@ herr_t acol_manager::iterate_new_func(hid_t loc, const char *name,
 	} else {
 	  cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
 	}
-      } else {
+      } else if (name==tname) {
 	ip->type="ullong";
 	for(int i=0;i<ndims;i++) {
 	  ip->type+="[]";
 	}
+	ip->found=true;
+	return 1;
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_FLOAT)) {
       if (mode==filelist_mode) {
@@ -2883,11 +2902,13 @@ herr_t acol_manager::iterate_new_func(hid_t loc, const char *name,
 	} else {
 	  cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
 	}
-      } else {
+      } else if (name==tname) {
 	ip->type="float";
 	for(int i=0;i<ndims;i++) {
 	  ip->type+="[]";
 	}
+	ip->found=true;
+	return 1;
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_DOUBLE)) {
       // If it has only rank one, then treat it as an array
@@ -2956,7 +2977,7 @@ herr_t acol_manager::iterate_new_func(hid_t loc, const char *name,
 	  } else {
 	    cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
 	  }
-	} else {
+	} else if (name==tname) {
 	  // In 'read' mode, return the correct type
 	  ip->type="double";
 	  for(int i=0;i<ndims;i++) {
@@ -2981,11 +3002,13 @@ herr_t acol_manager::iterate_new_func(hid_t loc, const char *name,
 	} else {
 	  cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
 	}
-      } else {
+      } else if (name==tname) {
 	ip->type="ldouble";
 	for(int i=0;i<ndims;i++) {
 	  ip->type+="[]";
 	}
+	ip->found=true;
+	return 1;
       }
     } else {
       hid_t filetype=H5Dget_type(dset);
@@ -3126,16 +3149,16 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     H5Literate(hf.get_current_id(),H5_INDEX_NAME,H5_ITER_NATIVE,
 	       0,iterate_new_func,&ip);
     
-    if (verbose>1) {
-      cout << "Command read found object with type " << ip.type << endl;
-    }
-
     if (ip.found==false) {
       cerr << "Could not find readable object named " << in[1]
 	   << " in file " << in[0] << endl;
       return 1;
     }
     
+    if (verbose>1) {
+      cout << "Command read found object with type " << ip.type << endl;
+    }
+
     if (ip.type=="table") {
       if (verbose>2) {
 	cout << "Reading table." << endl;
