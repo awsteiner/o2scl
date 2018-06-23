@@ -435,12 +435,23 @@ namespace o2scl {
       }
     }
     if (found==false) {
+      /*
       for(size_t k=0;k<n_dim;k++) {
-	std::cerr << k << " " << low[k] << " " << v[k] << " "
+	if (v[k]<low[k] || v[k]>high[k]) std::cout << "*";
+	std::cout << k << " " << low[k] << " " << v[k] << " "
 	<< high[k] << std::endl;
+      }
+      for(size_t ell=0;ell<mesh.size();ell++) {
+	int cnt=0;
+	for(size_t k=0;k<n_dim;k++) {
+	  if (v[k]>=mesh[ell].low[k] && v[k]<=mesh[ell].high[k]) cnt++;
+	}
+	std::cout << ell << " " << cnt << std::endl;
       }
       O2SCL_ERR2("Couldn't find point inside mesh in ",
 		 "prob_dens_mdim_amr::insert().",o2scl::exc_efailed);
+      */
+      return;
     }
     hypercube &h=mesh[jm];
     if (verbose>1) {
@@ -947,6 +958,15 @@ namespace o2scl {
 	for(size_t i=0;i<n_dim;i++) {
 	  x[i]=mesh[j].low[i]+rg.random()*
 	    (mesh[j].high[i]-mesh[j].low[i]);
+	}
+	if (mesh[j].is_inside(x)==false) {
+	  std::cout << "Not inside in operator()." << std::endl;
+	  for(size_t i=0;i<n_dim;i++) {
+	    std::cout << low[i] << " " << mesh[j].low[i] << " "
+		      << x[i] << " " << mesh[j].high[i] << " "
+		      << high[i] << std::endl;
+	  }
+	  exit(-1);
 	}
 	return;
       }

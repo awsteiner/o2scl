@@ -159,11 +159,6 @@ namespace o2scl {
   /// If true, we are in the warm up phase
   bool warm_up;
 
-  /** \brief If true, call the measurement function for the
-      initial point
-   */
-  bool meas_for_initial;
-  
   /** \brief Current points in parameter space for each walker and 
       each OpenMP thread
 
@@ -259,6 +254,11 @@ namespace o2scl {
 
   public:
 
+  /** \brief If true, call the measurement function for the
+      initial point
+   */
+  bool meas_for_initial;
+  
   /// Integer to indicate completion
   static const int mcmc_done=-10;
 
@@ -2302,12 +2302,12 @@ namespace o2scl {
       << std::endl;
     }
 
-    if (verbose>0) {
-      std::cout << "mcmc_para_table::read_prev_results()" << std::endl;
-      std::cout << "\tindex walker_accept_rows walker_reject_rows"
+    if (this->verbose>0) {
+      std::cout << "mcmc_para_table::read_prev_results():" << std::endl;
+      std::cout << "  index walker_accept_rows walker_reject_rows"
       << std::endl;
       for(size_t j=0;j<ntot;j++) {
-	std::cout << "\t";
+	std::cout << "  ";
 	std::cout.width(3);
 	std::cout << j << " ";
 	std::cout.width(5);
@@ -2379,7 +2379,7 @@ namespace o2scl {
       // then create it. There is not enough space if any of the
       // walker_accept_rows array entries is -1, if we have an
       // acceptance but there isn't room to store it, or if
-      // we have a rejection and there isn't room to store it. 
+      // we have a rejection and there isn't room to store it.
       if (next_row>=((int)table->get_nlines())) {
 	size_t istart=table->get_nlines();
 	// Create enough space
