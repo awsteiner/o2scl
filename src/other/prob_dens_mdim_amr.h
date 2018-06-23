@@ -44,7 +44,8 @@ namespace o2scl {
 
       \future The storage required by the mesh is larger
       than necessary, and could be replaced by a tree-like
-      structure which uses less storage.
+      structure which uses less storage, but that might 
+      demand longer lookup times. 
   */
   template<class vec_t=std::vector<double>,
     class mat_t=matrix_view_table<vec_t> >
@@ -52,6 +53,20 @@ namespace o2scl {
 
   public:
 
+  /** \brief Create an empty probability distribution
+   */
+  prob_dens_mdim_amr() {
+    n_dim=0;
+    dim_choice=max_variance;
+  }
+  
+  /** \brief Initialize a probability distribution from the corners
+   */
+  prob_dens_mdim_amr(vec_t &l, vec_t &h) {
+    dim_choice=max_variance;
+    set(l,h);
+  }
+  
   /** \brief A hypercube class for \ref o2scl::prob_dens_mdim_amr
    */
   class hypercube {
@@ -179,18 +194,8 @@ namespace o2scl {
    */
   int verbose;
 
-  /** \brief Desc
-   */
-  void clear() {
-    mesh.clear();
-    low.clear();
-    high.clear();
-    scale.clear();
-    n_dim=0;
-    return;
-  }
-
-  /** \brief Desc
+  /** \brief Convert two indices to a density in a \ref o2scl::table3d 
+      object
    */
   void two_indices_to_density(size_t i, size_t j, table3d &t3d,
 			      std::string slice, size_t ni=40,
@@ -222,26 +227,28 @@ namespace o2scl {
     return;
   }
   
-  /** \brief Desc
+  /** \brief Clear everything and set the dimensionality to zero
    */
+  void clear() {
+    mesh.clear();
+    low.clear();
+    high.clear();
+    scale.clear();
+    n_dim=0;
+    return;
+  }
+  
+  /** \brief Clear the mesh, leaving the lower and upper limits
+      and the scales unchanged.
+  */
   void clear_mesh() {
     mesh.clear();
     return;
   }
-  
-  prob_dens_mdim_amr() {
-    n_dim=0;
-    dim_choice=max_variance;
-  }
-  
-  /** \brief Initialize a probability distribution from the corners
-   */
-  prob_dens_mdim_amr(vec_t &l, vec_t &h) {
-    dim_choice=max_variance;
-    set(l,h);
-  }
-  
-  /** \brief Copy the object data to a few numbers and two vectors
+
+  /** \brief Copy the object data to three size_t numbers and two vectors
+
+      \note This function is used for HDF5 I/O
    */
   void copy_to_vectors(size_t &nd, size_t &dc, size_t &ms,
 		       std::vector<double> &data,
@@ -279,9 +286,11 @@ namespace o2scl {
     return;
   }
 
-  /** \brief Set the object from data specified as a set
-      of two vectors
-   */
+  /** \brief Set the object from data specified as three size_t 
+      numbers and a set of two vectors
+      
+      \note This function is used for HDF5 I/O
+  */
   void set_from_vectors(size_t &nd, size_t &dc, size_t &ms,
 			const std::vector<double> &data,
 			const std::vector<size_t> &insides) {
@@ -334,12 +343,16 @@ namespace o2scl {
     return;
   }
   
-  /** \brief Set the mesh limits
+  /** \brief Set the mesh limits.
 
-      This function is called by the constructor
+      \note Calling this function automatically clears the mesh
+      and the scales.
+      
+      This function is called by the constructor.
    */
   void set(vec_t &l, vec_t &h) {
     clear_mesh();
+    scale.clear();
     if (h.size()<l.size()) {
       O2SCL_ERR2("Vector sizes not correct in ",
 		"prob_dens_mdim_amr::set().",o2scl::exc_einval);
@@ -373,7 +386,7 @@ namespace o2scl {
 		 "prob_dens_mdim_amr::insert().",o2scl::exc_einval);
     }
     if (log_mode==false && m(ir,n_dim)<0.0) {
-      O2SCL_ERR2("Weight negative in ",
+      O2SCL_ERR2("Weight negative when log_mode is false in ",
 		 "prob_dens_mdim_amr::insert().",o2scl::exc_einval);
     }
 
@@ -416,6 +429,10 @@ namespace o2scl {
     std::vector<double> v;
     for(size_t k=0;k<n_dim;k++) {
       v.push_back(m(ir,k));
+      if (v[k]<low[k] || v[k]>high[k]) {
+	O2SCL_ERR2("Point outside limits in ",
+		   "prob_dens_mdim_amr::insert().",o2scl::exc_einval);
+      }
     }
     if (verbose>1) {
       std::cout << "Finding cube with point ";
@@ -888,12 +905,14 @@ namespace o2scl {
       }
     }
     if (found==false) {
+      std::cout.setf(std::ios::showpos);
       for(size_t k=0;k<n_dim;k++) {
 	std::cout << low[k] << " " << x[k] << " " << high[k] << " ";
 	if (x[k]<low[k]) std::cout << "<";
 	else if (x[k]>high[k]) std::cout << ">";
 	std::cout << std::endl;
       }
+      std::cout.unsetf(std::ios::showpos);
       O2SCL_ERR("Point not found inside mesh in pdf().",o2scl::exc_esanity);
     }
 
@@ -959,6 +978,8 @@ namespace o2scl {
 	  x[i]=mesh[j].low[i]+rg.random()*
 	    (mesh[j].high[i]-mesh[j].low[i]);
 	}
+	std::cout << "op: ";
+	o2scl::vector_out(std::cout,x,true);
 	if (mesh[j].is_inside(x)==false) {
 	  std::cout << "Not inside in operator()." << std::endl;
 	  for(size_t i=0;i<n_dim;i++) {
