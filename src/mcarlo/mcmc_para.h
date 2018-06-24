@@ -2319,7 +2319,7 @@ namespace o2scl {
     
     prev_read=true;
     this->meas_for_initial=false;
-    
+
     return;
   }
   

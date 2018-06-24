@@ -452,22 +452,20 @@ namespace o2scl {
       }
     }
     if (found==false) {
-      /*
       for(size_t k=0;k<n_dim;k++) {
 	if (v[k]<low[k] || v[k]>high[k]) std::cout << "*";
 	std::cout << k << " " << low[k] << " " << v[k] << " "
 	<< high[k] << std::endl;
       }
       for(size_t ell=0;ell<mesh.size();ell++) {
-	int cnt=0;
+	size_t cnt=0;
 	for(size_t k=0;k<n_dim;k++) {
 	  if (v[k]>=mesh[ell].low[k] && v[k]<=mesh[ell].high[k]) cnt++;
 	}
-	std::cout << ell << " " << cnt << std::endl;
+	std::cout << ell << " " << cnt << " " << (cnt==n_dim) << std::endl;
       }
       O2SCL_ERR2("Couldn't find point inside mesh in ",
 		 "prob_dens_mdim_amr::insert().",o2scl::exc_efailed);
-      */
       return;
     }
     hypercube &h=mesh[jm];
