@@ -58,6 +58,7 @@ namespace o2scl {
   prob_dens_mdim_amr() {
     n_dim=0;
     dim_choice=max_variance;
+    allow_resampling=true;
   }
   
   /** \brief Initialize a probability distribution from the corners
@@ -65,6 +66,7 @@ namespace o2scl {
   prob_dens_mdim_amr(vec_t &l, vec_t &h) {
     dim_choice=max_variance;
     set(l,h);
+    allow_resampling=true;
   }
   
   /** \brief A hypercube class for \ref o2scl::prob_dens_mdim_amr
@@ -169,7 +171,11 @@ namespace o2scl {
   /** \brief Internal random number generator
    */
   mutable o2scl::rng_gsl rg;
- 
+
+  /** \brief Desc
+   */
+  bool allow_resampling;
+  
   /** \brief Number of dimensions
    */
   size_t n_dim;
@@ -921,11 +927,14 @@ namespace o2scl {
     if (!std::isfinite(pdf_ret)) {
       std::cout << "Density not finite: " << jm << " " << pdf_ret << " "
 		<< mesh[jm].frac_vol << std::endl;
-      exit(-1);
+      O2SCL_ERR2("Density not finite in ",
+		 "prob_dens_mdim_amr::pdf().",o2scl::exc_efailed);
     }
     if (pdf_ret<0.0) {
       std::cout << "Density negative: " << jm << " " << pdf_ret << " "
-		<< mesh[jm].frac_vol << std::endl;
+      << mesh[jm].frac_vol << std::endl;
+      O2SCL_ERR2("Probability density negative in ",
+		 "prob_dens_mdim_amr::pdf().",o2scl::exc_efailed);
       exit(-1);
     }
     return pdf_ret;
@@ -957,39 +966,71 @@ namespace o2scl {
   /// Sample the distribution
   virtual void operator()(vec_t &x) const {
    
-    if (mesh.size()==0) {
-      O2SCL_ERR2("Mesh empty in ",
+    if (n_dim==0) {
+      O2SCL_ERR2("Distribution empty in ",
 		 "prob_dens_mdim_amr::operator()().",o2scl::exc_einval);
+    }
+    
+    if (mesh.size()==0) {
+      // We have no mesh, so just treat as a uniform distribution
+      // over the hypercube
+      for(size_t i=0;i<n_dim;i++) {
+	x[i]=low[i]+rg.random()*(high[i]-low[i]);
+      }
+      return;
     }
 
     double total_weight=0.0;
     for(size_t i=0;i<mesh.size();i++) {
       total_weight+=mesh[i].weight*mesh[i].frac_vol;
     }
-   
-    double this_weight=rg.random()*total_weight;
-    double cml_wgt=0.0;
-    for(size_t j=0;j<mesh.size();j++) {
-      cml_wgt+=mesh[j].frac_vol*mesh[j].weight;
-      if (this_weight<cml_wgt || j==mesh.size()-1) {
-	for(size_t i=0;i<n_dim;i++) {
-	  x[i]=mesh[j].low[i]+rg.random()*
-	    (mesh[j].high[i]-mesh[j].low[i]);
-	}
-	std::cout << "op: ";
-	o2scl::vector_out(std::cout,x,true);
-	if (mesh[j].is_inside(x)==false) {
-	  std::cout << "Not inside in operator()." << std::endl;
+
+    bool failed=false;
+    int cnt=0;
+
+    do {
+
+      double r=rg.random();
+      double this_weight=r*total_weight;
+      double cml_wgt=0.0;
+      for(size_t j=0;j<mesh.size();j++) {
+	cml_wgt+=mesh[j].frac_vol*mesh[j].weight;
+	if (this_weight<cml_wgt || j==mesh.size()-1) {
 	  for(size_t i=0;i<n_dim;i++) {
-	    std::cout << low[i] << " " << mesh[j].low[i] << " "
-		      << x[i] << " " << mesh[j].high[i] << " "
-		      << high[i] << std::endl;
+	    x[i]=mesh[j].low[i]+rg.random()*
+	      (mesh[j].high[i]-mesh[j].low[i]);
 	  }
-	  exit(-1);
+	  std::cout << "op: " << " " << j << " "
+		    << log(mesh[j].weight) << " " << mesh[j].weight << " "
+		    << mesh[j].frac_vol << std::endl;
+	  //o2scl::vector_out(std::cout,x,true);
+	  if (mesh[j].is_inside(x)==false) {
+	    if (allow_resampling) {
+	      failed=true;
+	      cnt++;
+	      if (cnt==100) {
+		O2SCL_ERR2("One hundred resamples failed in ",
+			   "prob_dens_mdim_amr::operator().",
+			   o2scl::exc_efailed);
+	      }
+	    } else {
+	      std::cout << "Not inside in operator()." << std::endl;
+	      for(size_t i=0;i<n_dim;i++) {
+		std::cout << low[i] << " " << mesh[j].low[i] << " "
+			  << x[i] << " " << mesh[j].high[i] << " "
+			  << high[i] << std::endl;
+	      }
+	      O2SCL_ERR2("Not inside in operator() in ",
+			 "prob_dens_mdim_amr::operator().",
+			 o2scl::exc_efailed);
+	      exit(-1);
+	    }
+	  }
+	  return;
 	}
-	return;
       }
-    }
+
+    } while (failed==true);
 
     O2SCL_ERR2("Sampling distribution failed in ",
 	       "prob_dens_mdim_amr::operator()().",o2scl::exc_einval);
