@@ -507,6 +507,7 @@ namespace o2scl {
 	    }
 	  }
 	  if (vec_equal) {
+	    std::cerr.setf(std::ios::scientific);
 	    std::cerr << i << " ";
 	    o2scl::vector_out(std::cerr,initial_points[i],true);
 	    std::cerr << j << " ";

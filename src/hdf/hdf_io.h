@@ -168,6 +168,8 @@ namespace o2scl_hdf {
     // Return location to previous value
     hf.set_current_id(top);
 
+    t.check_synchro();
+
     return;
   }
 #endif
@@ -291,6 +293,8 @@ namespace o2scl_hdf {
     // Return location to previous value
     hf.set_current_id(top);
 
+    t.check_synchro();
+    
     return;
   }
 
