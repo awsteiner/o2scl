@@ -202,16 +202,24 @@ namespace o2scl {
 
   /** \brief Convert two indices to a density in a \ref o2scl::table3d 
       object
-   */
+  */
   void two_indices_to_density(size_t i, size_t j, table3d &t3d,
 			      std::string slice, size_t ni=40,
 			      size_t nj=40) {
     if (t3d.get_nx()==0 && t3d.get_ny()==0) {
+      if (ni==0 || nj==0) {
+	O2SCL_ERR2("Grid not set and ni or nj zero in prob_dens_mdim_amr::",
+		   "two_indices_to_density().",o2scl::exc_einval);
+      }
       t3d.set_xy("x",uniform_grid_end<double>(low[i],high[i],ni-1),
 		 "y",uniform_grid_end<double>(low[j],high[j],nj-1));
-    } else if (t3d.get_nx()!=ni || t3d.get_ny()!=nj) {
-      O2SCL_ERR("Grid not commensurate in two_indices().",
-		o2scl::exc_einval);
+    } else if ((ni>0 || nj>0) && (t3d.get_nx()!=ni || t3d.get_ny()!=nj)) {
+      O2SCL_ERR2("Specified grid does not match table3d in prob_dens_mdim_",
+		 "amr::two_indices_to_density().",o2scl::exc_einval);
+    }
+    if (ni==0 && nj==0) {
+      ni=t3d.get_nx();
+      nj=t3d.get_ny();
     }
     size_t szt_temp;
     if (!t3d.is_slice(slice,szt_temp)) {
@@ -956,6 +964,9 @@ namespace o2scl {
 	wgt=mesh[i].frac_vol*mesh[i].weight;
       }
     }
+    std::cout << "sil: " << " " << im << " "
+    << log(mesh[im].weight) << " " << mesh[im].weight << " "
+    << mesh[im].frac_vol << " " << wgt << std::endl;
     for(size_t j=0;j<n_dim;j++) {
       x[j]=rg.random()*(mesh[im].high[j]-mesh[im].low[j])+mesh[im].low[j];
     }
