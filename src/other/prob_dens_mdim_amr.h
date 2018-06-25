@@ -470,8 +470,8 @@ namespace o2scl {
 	}
 	std::cout << ell << " " << cnt << " " << (cnt==n_dim) << std::endl;
       }
-      O2SCL_ERR2("Couldn't find point inside mesh in ",
-		 "prob_dens_mdim_amr::insert().",o2scl::exc_efailed);
+      //O2SCL_ERR2("Couldn't find point inside mesh in ",
+      //"prob_dens_mdim_amr::insert().",o2scl::exc_efailed);
       return;
     }
     hypercube &h=mesh[jm];
