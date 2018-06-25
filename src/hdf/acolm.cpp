@@ -309,7 +309,7 @@ void acol_manager::command_add(std::string new_type) {
   if (new_type=="int") {
     static const size_t narr=1;
     comm_option_s options_arr[narr]={
-      {0,"value","",
+      {0,"value","Get or set the value of the int object",
        0,1,"[value]","Get or set the value of the int object",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
        both}
@@ -318,7 +318,7 @@ void acol_manager::command_add(std::string new_type) {
   } else if (new_type=="double") {
     static const size_t narr=1;
     comm_option_s options_arr[narr]={
-      {0,"value","",
+      {0,"value","Get or set the value of the double object",
        0,1,"[value]","Get or set the value of the double object",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
        both}
@@ -327,7 +327,7 @@ void acol_manager::command_add(std::string new_type) {
   } else if (new_type=="char") {
     static const size_t narr=1;
     comm_option_s options_arr[narr]={
-      {0,"value","",
+      {0,"value","Get or set the value of the char object",
        0,1,"[value]","Get or set the value of the char object",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
        both}
@@ -336,7 +336,7 @@ void acol_manager::command_add(std::string new_type) {
   } else if (new_type=="size_t") {
     static const size_t narr=1;
     comm_option_s options_arr[narr]={
-      {0,"value","",
+      {0,"value","Get or set the value of the size_t object",
        0,1,"[value]","Get or set the value of the size_t object",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
        both}
@@ -345,7 +345,7 @@ void acol_manager::command_add(std::string new_type) {
   } else if (new_type=="string") {
     static const size_t narr=1;
     comm_option_s options_arr[narr]={
-      {0,"value","",
+      {0,"value","Get or set the value of the string object",
        0,1,"[value]","Get or set the value of the string object",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
        both}
@@ -374,7 +374,10 @@ void acol_manager::command_add(std::string new_type) {
        new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_delete_rows),both},
       {0,"delete-rows-tol","Delete rows within a tolerance.",
-       0,2,"[relative tol.] [absolute tol.]","",
+       0,2,"[relative tol.] [absolute tol.]",
+       ((std::string)("This command deletes all rows which match "))+
+       "within the specified tolerances. If verbose is larger than zero "+
+       "then information about how many rows were deleted is provided.",
        new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_delete_rows),both},
       {'D',"deriv",
@@ -435,11 +438,13 @@ void acol_manager::command_add(std::string new_type) {
        "a specified function, use 'find-row'.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_row),
        both},
-      {0,"get-unit","Get the units for a specified column.",0,1,"<column>","",
+      {0,"get-unit","Get the units for a specified column.",0,1,"<column>",
+       "Obtains the units for the specified column.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_unit),
        both},
       {0,"entry","Get a single entry in a table.",0,3,
-       "<column> <index> [index2]","",
+       "<column> <row index> [value]",((std::string)"This command ")+
+       "gets or sets the value in the specified column and row.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_entry),
        both},
       {'N',"index","Add a column containing the row numbers.",0,1,
@@ -483,7 +488,7 @@ void acol_manager::command_add(std::string new_type) {
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_interp),
        both},
       {'l',"list","List the constants, column names and other info.",
-       0,0,"","",
+       0,0,"","List the constants, column names and other info.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
        both},
       {0,"max","Find the maximum value of a column.",0,1,"<col>",
@@ -534,7 +539,7 @@ void acol_manager::command_add(std::string new_type) {
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_set_data),
        both},
       {0,"set-unit","Set the units for a specified column.",0,2,
-       "<column> <unit>","",
+       "<column> <unit>","Set the units for a specified column.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_set_unit),
        both},
       {'S',"sort","Sort the entire table by a column.",0,2,
@@ -558,8 +563,10 @@ void acol_manager::command_add(std::string new_type) {
        "current table, creating new columns if necessary.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sum),
        both},
-      {0,"nlines","Add 'nlines' as a constant to a table object.",0,0,"",
-       "",new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_nlines),
+      {0,"nlines","Add 'nlines' as a constant to a table object.",0,0,
+       "",((std::string)"Add a constant called 'nlines' to the table and ")+
+       "set it equal to the number of lines (rows) in the table",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_nlines),
        both},
       {0,"to-hist","Convert a table to a histogram.",0,3,
        "<col> <n_bins> [wgts]",
@@ -642,7 +649,7 @@ void acol_manager::command_add(std::string new_type) {
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_interp),
        both},
       {'l',"list","List the slice names and print out grid info.",
-       0,0,"","",
+       0,0,"","List the slice names and print out grid info.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
        both},
       {0,"max","Find the maximum value of a slice.",0,1,"<slice>",
@@ -688,7 +695,7 @@ void acol_manager::command_add(std::string new_type) {
     static const size_t narr=3;
     comm_option_s options_arr[narr]={
       {'l',"list","List the rank and sizes.",
-       0,0,"","",
+       0,0,"","List the rank and sizes.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
        both},
       {0,"to-table3d","Select two indices and convert to a table3d object.",
@@ -707,8 +714,10 @@ void acol_manager::command_add(std::string new_type) {
     static const size_t narr=1;
     comm_option_s options_arr[narr]={
       {0,"to-table3d","Select two indices and convert to a table3d object.",
-       -1,-1,"<x index> <y index> <x name> <y name> <slice name>",
-       "",new comm_option_mfptr<acol_manager>
+       -1,-1,((std::string)"<x index> <y index> ")+
+       "<x name> <x points> <y name> <y points> <slice name>",
+       "Select two indices and convert to a table3d object.",
+       new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_to_table3d),both}
     };
     cl->set_comm_option_vec(narr,options_arr);
@@ -718,7 +727,7 @@ void acol_manager::command_add(std::string new_type) {
     static const size_t narr=2;
     comm_option_s options_arr[narr]={
       {'l',"list","List the rank and sizes.",
-       0,0,"","",
+       0,0,"","List the rank and sizes.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
        both},
       {0,"to-table3d","Select two indices and convert to a table3d object.",
@@ -733,7 +742,7 @@ void acol_manager::command_add(std::string new_type) {
     static const size_t narr=2;
     comm_option_s options_arr[narr]={
       {'l',"list","List the rank and sizes.",
-       0,0,"","",
+       0,0,"","List the rank and sizes.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
        both},
       {0,"to-table3d","Select two indices and convert to a table3d object.",
@@ -748,7 +757,7 @@ void acol_manager::command_add(std::string new_type) {
     static const size_t narr=4;
     comm_option_s options_arr[narr]={
       {'l',"list","List the slice names and print out grid info.",
-       0,0,"","",
+       0,0,"","List the slice names and print out grid info.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
        both},
       {0,"to-table3d","Select two indices and convert to a table3d object.",
@@ -759,7 +768,13 @@ void acol_manager::command_add(std::string new_type) {
        -1,-1,"<index> <grid name> <data name> [values of fixed indices]",
        "",new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_to_table),both},
-      {0,"set-grid","Set grid",-1,-1,"","",
+      {0,"set-grid","Set the tensor grid.",-1,-1,
+       ((std::string)"<function for rank 0> ")+
+       "<function for rank 1> ... <function for rank n-1>",
+       ((std::string)"Given a function which specifies the grid ")+
+       "value as a function of the variable 'i' for each rank, "+
+       "this command sets the tensor grid. The value of 'i' ranges "+
+       "from 0 to m-1, where 'm' is the tensor size for each rank.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_set_grid),
        both}
     };
@@ -894,11 +909,11 @@ void acol_manager::command_add(std::string new_type) {
     static const size_t narr=2;
     comm_option_s options_arr[narr]={
       {0,"max","Find the maximum weight.",0,0,"",
-       "Find the maximum weight",
+       "Find the maximum weight and print out the location.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_max),
        both},
       {0,"min","Find the minimum weight.",0,0,"",
-       "Find the minimum weight.",
+       "Find the minimum weight and print out the location.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
        both}
     };
@@ -1036,10 +1051,8 @@ void acol_manager::command_del() {
     cl->remove_comm_option("set-grid");
 
   } else if (type=="hist_2d") {
-    cout << "H1." << endl;
     cl->remove_comm_option("max");
     cl->remove_comm_option("min");
-    cout << "H2." << endl;
     
     /*
       cl->remove_comm_option("deriv-x");
@@ -4051,23 +4064,30 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
     vector<string> in, pr;
     pr.push_back("First index to vary");
     pr.push_back("Second index to vary");
-    pr.push_back("x coordinate name");
-    pr.push_back("y coordinate name");
+    pr.push_back("Name of x coordinate");
+    pr.push_back("Number of x grid points");
+    pr.push_back("Name of y coordinate");
+    pr.push_back("Number of y grid points");
     pr.push_back("Slice name");
     int ret=get_input(sv,pr,in,"to-table3d",itive_com);
     if (ret!=0) return ret;
     
     table3d_obj.clear();
-    size_t i, j;
+    size_t i, j, ni, nj;
     o2scl::stoszt_nothrow(in[0],i);
     o2scl::stoszt_nothrow(in[1],j);
-    string slice=in[4];
+    o2scl::stoszt_nothrow(in[3],ni);
+    o2scl::stoszt_nothrow(in[5],nj);
+    
+    table3d_obj.set_xy(in[2],uniform_grid_end<double>(pdma_obj.low[i],
+						      pdma_obj.high[i],ni-1),
+		       in[4],uniform_grid_end<double>(pdma_obj.low[j],
+						      pdma_obj.high[j],nj-1));
+    
     cout << "Converting pdma to table3d, using index "
 	 << in[0] << ", index " << in[1] << ", and slice "
-	 << in[4] << endl;
-    pdma_obj.two_indices_to_density(i,j,table3d_obj,slice);
-    table3d_obj.set_x_name(in[2]);
-    table3d_obj.set_y_name(in[3]);
+	 << in[6] << endl;
+    pdma_obj.two_indices_to_density(i,j,table3d_obj,in[6]);
     
     command_del();
     clear_obj();
@@ -5380,100 +5400,6 @@ int acol_manager::comm_index(std::vector<std::string> &sv, bool itive_com) {
 
   return 0;
 }
-
-#ifdef O2SCL_NEVER_DEFINED
-int acol_manager::comm_html(std::vector<std::string> &sv, bool itive_com) {
-
-  if (type=="table3d") {
-    cout << "Not implemented for table3d." << endl;
-    return 0;
-  }
-
-  if (table_obj.get_nlines()==0) {
-    cerr << "No table to output." << endl;
-    return exc_efailed;
-  }
-
-  ostream *fout;
-  ofstream ffout;
-
-  std::string i1;
-  if (sv.size()==1) {
-    if (itive_com) {
-      i1=cl->cli_gets("Enter filename (or blank to quit): ");
-      if (i1.length()==0) {
-	if (verbose>0) cout << "Command 'html' cancelled." << endl;
-	return 0;
-      }
-    } else {
-      cout << "Filename not given for 'html'." << endl;
-      return exc_efailed;
-    }
-  } else {
-    i1=sv[1];
-  }
-   
-  ffout.open(i1.c_str());
-  fout=&ffout;
-  
-  if (scientific) fout->setf(ios::scientific);
-  else fout->unsetf(ios::scientific);
-
-  string nlast;
-  
-  (*fout) << "<html><head></head><body>" << endl;
-  
-  //--------------------------------------------------------------------
-  // Output constants
-  
-  for(size_t i=0;i<table_obj.get_nconsts();i++) {
-    if (i==0) (*fout) << "<b>Constants:</b><br />" << endl;
-    string tnam;
-    double tval;
-    table_obj.get_constant(i,tnam,tval);
-    (*fout) << tnam << " = " << tval << "<br />" << endl;
-  }
-  
-  if (table_obj.get_ncolumns()>0) {
-    
-    (*fout) << "<table border=\"0\">" << endl;
-    
-    //--------------------------------------------------------------------
-    // Output column names
-    
-    (*fout) << "<tr bgcolor=\"#dddddd\">";
-    for(size_t i=0;i<table_obj.get_ncolumns();i++) {
-      (*fout) << "<td><b>" << table_obj.get_column_name(i) << "</b></td>";
-    }
-    (*fout) << "</tr>" << endl;
-      
-    //--------------------------------------------------------------------
-    // Output data
-      
-    for(int i=0;i<((int)table_obj.get_nlines());i++) {
-      if (i%5==4) (*fout) << "<tr bgcolor=\"#dddddd\">";
-      else (*fout) << "<tr>";
-      for(size_t j=0;j<table_obj.get_ncolumns();j++) {
-	(*fout) << "<td>" << ffl.convert(table_obj.get(j,i)) << "</td>";
-      }
-      (*fout) << "</tr>" << endl;
-    }
-
-    (*fout) << "</table>" << endl;
-
-  } else {
-
-    (*fout) << "(no data)" << endl;
-
-  }
-  
-  (*fout) << "</body></html>" << endl;
-
-  ffout.close();
-  
-  return 0;
-}
-#endif
 
 int acol_manager::comm_value(std::vector<std::string> &sv, bool itive_com) {
 

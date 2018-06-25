@@ -58,6 +58,10 @@ namespace o2scl_acol {
   /** \brief The driver for 'acol' command-line utility
       \nothing
 
+      \todo Find a way to reorganize the source code into
+      smaller files. Separate out the global functions for
+      o2graph into their own file.
+
       \comment
       There was some concern about the confusion b/w the commands
       "get row by index" (get-row) and "get row by function"
@@ -287,6 +291,8 @@ namespace o2scl_acol {
     /// Create a table from a column of equally spaced values
     virtual int comm_create(std::vector<std::string> &sv, bool itive_com);
 
+    /** \brief Set the grid for a \ref o2scl::tensor_grid object
+     */
     virtual int comm_set_grid(std::vector<std::string> &sv, bool itive_com);
 
     /// Download a file from a specified URL
@@ -298,6 +304,7 @@ namespace o2scl_acol {
     /// Delete rows specified by a function
     virtual int comm_delete_rows(std::vector<std::string> &sv, bool itive_com);
     
+    /// Delete rows which match to within a specified tolerance
     virtual int comm_delete_rows_tol(std::vector<std::string> &sv,
 				     bool itive_com);
 
@@ -373,16 +380,13 @@ namespace o2scl_acol {
     /// Print out an entire row
     virtual int comm_get_row(std::vector<std::string> &sv, bool itive_com);
 
-    /// Extract a slice from a table3d object to generate a \ref o2scl::table object
+    /** \brief Extract a slice from a table3d object to generate a 
+	\ref o2scl::table object
+    */
     virtual int comm_slice(std::vector<std::string> &sv, bool itive_com);
 
     /// Fit two columns to a function
     virtual int comm_fit(std::vector<std::string> &sv, bool itive_com);
-
-#ifdef O2SCL_NEVER_DEFINED
-    // Create an html file
-    //virtual int comm_html(std::vector<std::string> &sv, bool itive_com);
-#endif
 
     /// Insert a column from an external table using interpolation
     virtual int comm_insert(std::vector<std::string> &sv, bool itive_com);
@@ -476,6 +480,8 @@ namespace o2scl_acol {
 
     /// Get column stats
     virtual int comm_stats(std::vector<std::string> &sv, bool itive_com);
+
+    /// Get column stats with weights specified in a second column
     virtual int comm_wstats(std::vector<std::string> &sv, bool itive_com);
 
     /// Print version
@@ -484,7 +490,7 @@ namespace o2scl_acol {
     /// Get a conversion factor
     virtual int comm_get_conv(std::vector<std::string> &sv, bool itive_com);
 
-    /// Set screen witdth
+    /// Set screen width
     int set_swidth(int ncol) {
       ncols=ncol;
       return 0;
@@ -505,7 +511,7 @@ namespace o2scl_acol {
     
   public:
     
-    /// \name Temporary storage for get slice
+    /// \name Temporary storage for \ref o2scl_acol_get_slice()
     //@{
     std::vector<double> xtemp;
     std::vector<double> ytemp;
