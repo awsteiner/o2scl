@@ -202,6 +202,12 @@ namespace o2scl {
 
   /** \brief Convert two indices to a density in a \ref o2scl::table3d 
       object
+
+      This function presumes that the table3d grid has already been
+      created and uses it to create the density. Note that this
+      function will not warn you if the grid refers to points outside
+      the limits of the \ref o2scl::prob_dens_mdim_amr object, instead
+      it will just give zero for those points.
   */
   void two_indices_to_density(size_t i, size_t j, table3d &t3d,
 			      std::string slice) {
@@ -211,18 +217,20 @@ namespace o2scl {
       t3d.new_slice(slice);
     }
     t3d.set_slice_all(slice,0.0);
-    for(size_t i=0;i<t3d.get_nx();i++) {
-      for(size_t j=0;j<t3d.get_ny();j++) {
+
+    for(size_t ii=0;ii<t3d.get_nx();ii++) {
+      for(size_t jj=0;jj<t3d.get_ny();jj++) {
+	double x=t3d.get_grid_x(ii);
+	double y=t3d.get_grid_y(jj);
 	for(size_t k=0;k<mesh.size();k++) {
-	  double x=t3d.get_grid_x(i);
-	  double y=t3d.get_grid_y(j);
 	  if (mesh[k].low[i]<x && mesh[k].high[i]>x &&
 	      mesh[k].low[j]<y && mesh[k].high[j]>y) {
-	    t3d.set(i,j,slice,t3d.get(i,j,slice)+mesh[k].weight);
+	    t3d.set(ii,jj,slice,t3d.get(ii,jj,slice)+mesh[k].weight);
 	  }
 	}
       }
     }
+
     return;
   }
   
@@ -933,6 +941,59 @@ namespace o2scl {
     return pdf_ret;
   }
 
+  /// Desc
+  virtual double max_weight() const {
+   
+    if (mesh.size()==0) {
+      O2SCL_ERR2("Mesh empty in ",
+		 "prob_dens_mdim_amr::max_weight().",o2scl::exc_einval);
+    }
+
+    double wgt=mesh[0].weight;
+    for(size_t i=1;i<mesh.size();i++) {
+      if (mesh[i].weight>wgt) {
+	wgt=mesh[i].weight;
+      }
+    }
+    return wgt;
+  }
+  
+  /// Desc
+  virtual double max_frac_vol() const {
+   
+    if (mesh.size()==0) {
+      O2SCL_ERR2("Mesh empty in ",
+		 "prob_dens_mdim_amr::max_frac_vol().",o2scl::exc_einval);
+    }
+
+    size_t im=0;
+    double fv=mesh[0].frac_vol;
+    for(size_t i=1;i<mesh.size();i++) {
+      if (mesh[i].frac_vol>fv) {
+	fv=mesh[i].frac_vol;
+      }
+    }
+    return fv;
+  }
+  
+  /// Desc
+  virtual double max_weighted_vol() const {
+   
+    if (mesh.size()==0) {
+      O2SCL_ERR2("Mesh empty in ",
+		 "prob_dens_mdim_amr::max_weighted_vol().",
+		 o2scl::exc_einval);
+    }
+
+    double wgt=mesh[0].frac_vol*mesh[0].weight;
+    for(size_t i=1;i<mesh.size();i++) {
+      if (mesh[i].frac_vol*mesh[i].weight>wgt) {
+	wgt=mesh[i].frac_vol*mesh[i].weight;
+      }
+    }
+    return wgt;
+  }
+  
   /// Select a random point in the largest weighted box
   virtual void select_in_largest(vec_t &x) const {
    
