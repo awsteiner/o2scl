@@ -203,11 +203,11 @@ namespace o2scl {
   /** \brief Convert two indices to a density in a \ref o2scl::table3d 
       object
 
-      This function presumes that the table3d grid has already been
-      created and uses it to create the density. Note that this
-      function will not warn you if the grid refers to points outside
-      the limits of the \ref o2scl::prob_dens_mdim_amr object, instead
-      it will just give zero for those points.
+      This function presumes that the \ref o2scl::table3d grid has
+      already been created and uses it to create the density. Note
+      that this function will not warn you if the grid refers to
+      points outside the limits of the \ref o2scl::prob_dens_mdim_amr
+      object, instead it will just give zero for those points.
   */
   void two_indices_to_density(size_t i, size_t j, table3d &t3d,
 			      std::string slice) {
@@ -225,7 +225,12 @@ namespace o2scl {
 	for(size_t k=0;k<mesh.size();k++) {
 	  if (mesh[k].low[i]<x && mesh[k].high[i]>x &&
 	      mesh[k].low[j]<y && mesh[k].high[j]>y) {
-	    t3d.set(ii,jj,slice,t3d.get(ii,jj,slice)+mesh[k].weight);
+	    // Divide out the part of the volume associated with
+	    // indices i and j.
+	    double vol=mesh[k].frac_vol*(high[i]-low[i])*
+	      (high[j]-low[j])/(mesh[k].high[i]-mesh[k].low[i])/
+	      (mesh[k].high[j]-mesh[k].low[j]);
+	    t3d.set(ii,jj,slice,t3d.get(ii,jj,slice)+mesh[k].weight*vol);
 	  }
 	}
       }
