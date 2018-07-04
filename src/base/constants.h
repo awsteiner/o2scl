@@ -1074,6 +1074,18 @@ namespace o2scl_const {
       Value from PDG live (5/1/14).
    */
   const double mass_lambda_MeV=1115.683;
+
+  /** \brief \f$ \Sigma \f$ hyperon mass in \f$ \mathrm{MeV} \f$
+   */
+  const double mass_sigma_minus_MeV=1197.449;
+
+  /** \brief \f$ \Sigma \f$ hyperon mass in \f$ \mathrm{MeV} \f$
+   */
+  const double mass_sigma_zero_MeV=1192.642;
+
+  /** \brief \f$ \Sigma \f$ hyperon mass in \f$ \mathrm{MeV} \f$
+   */
+  const double mass_sigma_plus_MeV=1189.37;
 }
 
 
