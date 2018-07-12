@@ -104,6 +104,9 @@ namespace o2scl {
       time required to compute the nearest points which are
       nondegenerate.
 
+      \todo Make verbose output consistent between the various
+      eval() functions.
+
       \future Share code between the various functions
   */
   template<class vec_t=boost::numeric::ublas::vector<double> >
@@ -522,7 +525,7 @@ namespace o2scl {
     }
     
     /** \brief Perform the interpolation over all the functions
-	with uncertainties
+	giving uncertainties and the sorted index vector 
 
 	The vector \c index is automatically resized to
 	a size equal to n_points+1+n_extra
