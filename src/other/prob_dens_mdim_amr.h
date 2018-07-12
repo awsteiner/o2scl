@@ -464,17 +464,23 @@ namespace o2scl {
       }
     }
     if (found==false) {
-      for(size_t k=0;k<n_dim;k++) {
-	if (v[k]<low[k] || v[k]>high[k]) std::cout << "*";
-	std::cout << k << " " << low[k] << " " << v[k] << " "
-	<< high[k] << std::endl;
+      if (verbose>0) {
+	std::cout << "Skipping insert for row " << ir
+	<< " because the point is not in a hypercube." << std::endl;
       }
-      for(size_t ell=0;ell<mesh.size();ell++) {
-	size_t cnt=0;
+      if (false) {
 	for(size_t k=0;k<n_dim;k++) {
-	  if (v[k]>=mesh[ell].low[k] && v[k]<=mesh[ell].high[k]) cnt++;
+	  if (v[k]<low[k] || v[k]>high[k]) std::cout << "*";
+	  std::cout << k << " " << low[k] << " " << v[k] << " "
+	  << high[k] << std::endl;
 	}
-	std::cout << ell << " " << cnt << " " << (cnt==n_dim) << std::endl;
+	for(size_t ell=0;ell<mesh.size();ell++) {
+	  size_t cnt=0;
+	  for(size_t k=0;k<n_dim;k++) {
+	    if (v[k]>=mesh[ell].low[k] && v[k]<=mesh[ell].high[k]) cnt++;
+	  }
+	  std::cout << ell << " " << cnt << " " << (cnt==n_dim) << std::endl;
+	}
       }
       //O2SCL_ERR2("Couldn't find point inside mesh in ",
       //"prob_dens_mdim_amr::insert().",o2scl::exc_efailed);
@@ -582,7 +588,10 @@ namespace o2scl {
     h.frac_vol=old_vol*(old_high-loc)/(old_high-old_low);
     if (h.frac_vol<1.0e-14) {
       if (verbose>0) {
-	std::cout << "Skipping hypercube with vanishing volume."
+	std::cout << "Skipping hypercube for row " << ir
+		  << " with vanishing volume."
+		  << std::endl;
+	std::cout << "Old, new volume: " << old_vol << " " << h.frac_vol
 		  << std::endl;
 	std::cout << "coordinate, point, between, previous, low, high:\n\t"
 		  << max_ip << " " << v[max_ip] << " " << loc << " "
@@ -610,7 +619,10 @@ namespace o2scl {
     double new_vol=old_vol*(loc-old_low)/(old_high-old_low);
     if (new_vol<1.0e-14) {
       if (verbose>0) {
-	std::cout << "Skipping hypercube with vanishing volume (2)."
+	std::cout << "Skipping hypercube for row " << ir
+		  << " with vanishing volume (2)."
+		  << std::endl;
+	std::cout << "Old, new volume: " << old_vol << " " << new_vol
 		  << std::endl;
 	std::cout << "coordinate, point, between, previous, low, high:\n\t"
 		  << max_ip << " " << v[max_ip] << " " << loc << " "
@@ -1064,7 +1076,8 @@ namespace o2scl {
 	  }
 	  std::cout << "op: " << " " << j << " "
 		    << log(mesh[j].weight) << " " << mesh[j].weight << " "
-		    << mesh[j].frac_vol << std::endl;
+		    << mesh[j].frac_vol << " "
+		    << mesh[j].weight*mesh[j].frac_vol << std::endl;
 	  //o2scl::vector_out(std::cout,x,true);
 	  if (mesh[j].is_inside(x)==false) {
 	    if (allow_resampling) {
