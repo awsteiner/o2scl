@@ -1055,7 +1055,6 @@ namespace o2scl {
 	      q_prop[it]=prop_dist[it]->log_metrop_hast(current[it],next[it]);
 	    
 	      if (!std::isfinite(q_prop[it])) {
-		std::cout << "Here: " << q_prop[it] << std::endl;
 		O2SCL_ERR2("Proposal distribution not finite in ",
 			   "mcmc_para_base::mcmc().",o2scl::exc_efailed);
 	      }

@@ -1331,12 +1331,17 @@ namespace o2scl {
   /** \brief Upper limits
    */
   vec_t high;
-  
+
   public:
 
+  /** \brief Maximum number of samples
+   */
+  size_t samp_max;
+  
   /** \brief Create an empty distribution
    */
   prob_dens_mdim_bound_gaussian() {
+    samp_max=100000;
   }
   
   /** \brief Create a distribution with the specified peak, covariance
@@ -1345,6 +1350,7 @@ namespace o2scl {
   prob_dens_mdim_bound_gaussian(size_t p_ndim, vec_t &p_peak, mat_t &covar,
 				vec_t &p_low, vec_t &p_high) {
     set(p_ndim,p_peak,covar,p_low,p_high);
+    samp_max=100000;
   }
   
   /** \brief Set the peak, covariance matrix, lower limits, and upper
@@ -1417,8 +1423,10 @@ namespace o2scl {
 	  i=this->ndim;
 	}
       }
-      if (j>100000) {
-	O2SCL_ERR("Sampling failed.",o2scl::exc_einval);
+      if (j>samp_max) {
+	O2SCL_ERR2("Sampling failed in ",
+		   "prob_dens_mdim_bound_gaussian::operator().",
+		   o2scl::exc_einval);
       }
     }
     return;
