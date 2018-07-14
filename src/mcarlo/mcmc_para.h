@@ -501,11 +501,11 @@ namespace o2scl {
 	    }
 	  }
 	  if (vec_equal) {
-	    std::cerr.setf(std::ios::scientific);
-	    std::cerr << i << " ";
-	    o2scl::vector_out(std::cerr,initial_points[i],true);
-	    std::cerr << j << " ";
-	    o2scl::vector_out(std::cerr,initial_points[j],true);
+	    std::cout.setf(std::ios::scientific);
+	    std::cout << i << " ";
+	    o2scl::vector_out(std::cout,initial_points[i],true);
+	    std::cout << j << " ";
+	    o2scl::vector_out(std::cout,initial_points[j],true);
 	    O2SCL_ERR2("Initial points not distinct in ",
 		       "mcmc_para::mcmc_init().",o2scl::exc_einval);
 	  }
