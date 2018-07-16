@@ -1360,6 +1360,8 @@ int acol_manager::setup_help() {
   dsc+="3. Long options may be preceeded by two dashes.\n";
   dsc+="4. In order to avoid confusion between arguments and functions,\n";
   dsc+="   use \"(-x*2)\" not \"-x*2\"\n\n";
+  dsc+="5. Don't use unary minus next to a binary operator,\n";
+  dsc+="   use \"a>(-1)\" not \"a>-1\"\n\n";
   dsc+="Known operators:\n() ^ * / % + - == != < > && || << >> >= <=\n\n";
   dsc+="Known functions:\n";
   dsc+="exp(x) log(x) log10(x) sin(x) cos(x) tan(x) sqrt(x) abs(x)\n";
