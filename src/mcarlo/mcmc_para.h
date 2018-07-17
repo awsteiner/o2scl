@@ -110,7 +110,7 @@ namespace o2scl {
       threads, or if more than one thread was requested but
       O2SCL_OPENMP was not defined, or if a negative value for \ref
       step_fac was requested. When verbose is 1, a couple messages are
-      written to \ref scr_out: a summary of the number
+      written to \ref scr_out : a summary of the number
       of walkers, chains, and threads at the beginning of the MCMC
       simulation, a message indicating why the MCMC simulation
       stopped, a message when the warm up iterations are completed, a
