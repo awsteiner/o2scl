@@ -163,10 +163,16 @@ namespace o2scl {
   };
 
   /// \name Dimension choice setting
+  //@{
+  /// Method for choosing dimension to slice
   int dim_choice;
+  /// Choose dimension with maximum variance
   static const int max_variance=1;
+  /// Choose dimension with maximum variance with user-specified scale
   static const int user_scale=2;
+  /// Choose randomly
   static const int random=3;
+  //@}
 
   /** \brief Internal random number generator
    */

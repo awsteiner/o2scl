@@ -35,21 +35,21 @@
     \endcode
 
     You can test to see if OpenMP support was enabled during
-    installation in the \ref o2scl_settings object of type
-    \ref lib_settings_class or with <tt>acol -v</tt>.
+    installation in the \ref o2scl::o2scl_settings object of type
+    \ref o2scl::lib_settings_class or with <tt>acol -v</tt>.
 
     \section para_openmp_subsect MPI and O2scl
 
     Currently, all MPI calls are in header classes, 
     except for some support for parallel HDF5 which is
     currently being developed and not yet enabled. 
-    MPI functions are used in \ref anneal_para, 
-    \ref mcmc_para_base, \ref mcmc_para_table and
-    for some functi
+    MPI functions are used in \ref o2scl::anneal_para, 
+    \ref o2scl::mcmc_para_base, 
+    and \ref o2scl::mcmc_para_table .
     
     You can test to see if MPI support was enabled during
-    installation in the \ref o2scl_settings object of type
-    \ref lib_settings_class or with <tt>acol -v</tt>.
+    installation in the \ref o2scl::o2scl_settings object of type
+    \ref o2scl::lib_settings_class or with <tt>acol -v</tt>.
 
 
 */
