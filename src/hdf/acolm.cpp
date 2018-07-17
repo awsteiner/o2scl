@@ -1233,13 +1233,13 @@ int acol_manager::setup_options() {
     {0,"get-conv","Get a unit conversion factor.",0,2,
      "<old unit> <new unit>",((string)"This command gets a unit ")+
      "conversion factor. It only works if the conversion is one of the "
-     "hard-coded O2scl conversions or if "+
-     "the GNU 'units' command is installed and available in the current "+
-     "path. For example, 'get-conv MeV erg' returns 1.782662e-23 and 1 MeV "+
-     "is equivalent to 1.782662e-23 erg. The conversion factor is output "+
+     "hard-coded O2scl conversions or if HAVE_POPEN is defined and "+
+     "the 'units' command is available in the current "+
+     "path. For example, 'get-conv MeV erg' returns 1.602177e-6 and 1 MeV "+
+     "is equivalent to 1.602177e-6 erg. The conversion factor is output "+
      "at the current precision, but is always internally stored with "+
-     "full double precision. (Note that the 'units' command shipped on OSX "+
-     "is not the same as the GNU version.)",
+     "full double precision. O2scl has several unit conversions which "+
+     "implicitly assume hbar=c=1.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_conv),
      both},
     /*    
@@ -1293,8 +1293,9 @@ int acol_manager::setup_options() {
     {0,"type","Show current object type.",0,0,"",
      ((string)"Show the current object type, either table, ")+
      "table3d, hist, hist_2d, vector<contour_line>, int, double, "+
-     "char, string, int[], double[], string[], size_t, size_t[], or "+
-     "uniform_grid<double>.",
+     "char, string, int[], double[], string[], size_t, size_t[], "+
+     "uniform_grid<double>, tensor_grid, tensor, tensor<int>, "+
+     "tensor<size_t>, or prob_dens_mdim_amr.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_type),
      both},
     {'v',"version","Print version information and O2scl settings.",0,0,"",
@@ -1352,16 +1353,19 @@ int acol_manager::setup_help() {
     "processing program for O2scl.\n";
   
   string dsc="\nNotes:\n\n";
-  dsc+="1. Help for individual commands may be obtained with 'help ";
-  dsc+="command'.\n   Required arguments are surrounded by <>'s and ";
-  dsc+="optional arguments are\n   surrounded by []'s.\n";
+  dsc+="1. Help for general commands may be obtained with 'help ";
+  dsc+="<command>'. Help for \n   object-specific commands can be obtained ";
+  dsc+="by 'help <type> <command>'. A \n   list of commands for each type ";
+  dsc+="can be obtained with 'commands <type>'.\n  Required arguments ";
+  dsc+="are surrounded by ";
+  dsc+="<>'s and optional arguments are\n   surrounded by []'s.\n";
   dsc+="2. Options may also be specified in the environment variable ";
   dsc+="ACOL_DEFAULTS.\n";
   dsc+="3. Long options may be preceeded by two dashes.\n";
   dsc+="4. In order to avoid confusion between arguments and functions,\n";
-  dsc+="   use \"(-x*2)\" not \"-x*2\"\n\n";
-  dsc+="5. Don't use unary minus next to a binary operator,\n";
-  dsc+="   use \"a>(-1)\" not \"a>-1\"\n\n";
+  dsc+="   use parenthesis and quotes, i.e. \"(-x*2)\" instead of -x*2.\n";
+  dsc+="5. Also, do not use a unary minus next to a binary operator,";
+  dsc+=" i.e. use\n   \"a>(-1)\" instead of \"a>-1\".\n\n";
   dsc+="Known operators:\n() ^ * / % + - == != < > && || << >> >= <=\n\n";
   dsc+="Known functions:\n";
   dsc+="exp(x) log(x) log10(x) sin(x) cos(x) tan(x) sqrt(x) abs(x)\n";
@@ -3124,7 +3128,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
 			    bool itive_com) {
 
   vector<string> in, pr;
-  if (sv.size()<2 || (sv.size()<3 && itive_com)) {
+  if (sv.size()<2) {
+    //|| (sv.size()<3 && itive_com)) {
     pr.push_back("Enter filename");
     pr.push_back("Enter object name");
     int ret=get_input(sv,pr,in,"table",itive_com);

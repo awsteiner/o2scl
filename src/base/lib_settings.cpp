@@ -51,8 +51,8 @@ lib_settings_class::lib_settings_class() {
   def_cu.insert_cache("MeV","eV",1.0e6);
   def_cu.insert_cache("keV","eV",1.0e3);
   def_cu.insert_cache("Msun","kg",o2scl_mks::solar_mass);
-  def_cu.insert_cache("erg","kg",o2scl_mks::erg);
-
+  def_cu.insert_cache("erg","kg",o2scl_mks::erg/
+		      pow(o2scl_mks::speed_of_light,2.0));
 
   // Joules and Kelvin
   
@@ -340,6 +340,11 @@ void lib_settings_class::config_h_report() {
   cout << "HAVE_MEMORY_H: " << HAVE_MEMORY_H << endl;
 #else
   cout << "HAVE_MEMORY_H: <not defined>" << endl;
+#endif
+#ifdef HAVE_POPEN
+  cout << "HAVE_POPEN: " << HAVE_POPEN << endl;
+#else
+  cout << "HAVE_POPEN: <not defined>" << endl;
 #endif
 #ifdef HAVE_POW
   cout << "HAVE_POW: " << HAVE_POW << endl;

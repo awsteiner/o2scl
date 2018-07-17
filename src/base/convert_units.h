@@ -47,23 +47,26 @@ namespace o2scl {
       automatically combine two conversion factors to create a new
       unit conversion (but it cannot combine more than two).
 
-      Conversions are performed by the \ref convert() function and the
-      conversion factors must be specified beforehand using the \ref
-      insert_cache() function.
+      Conversions are performed by the \ref convert() function. The
+      run-time unit cache is initially filled with hard-coded
+      conversions, and \ref convert() searches this cache is searched
+      for the requested conversion first. If the conversion is not
+      found and if \ref use_gnu_units is true, then \ref convert()
+      tries to open a pipe to open a shell to get the conversion
+      factor from <tt>'units'</tt>. If this is successful, then the
+      conversion factor is returned and the conversion is added to the
+      cache.
 
       If the GNU units command is not in the local path, the user may
       modify \ref units_cmd_string to specify the full pathname. One
       can also modify \ref units_cmd_string to specify a different
       <tt>units.dat</tt> file.
 
-      \future A remove_cache() and in_cache() function to test
-      to see if a conversion is currently in the cache. 
-      
       Example:
       \code
       convert_units cu;
-      cu.insert_cache("in","cm",2.54);
-      cout << "12 in is " << cu.convert("in","cm",12.0) << " cm. " << endl;
+      cout << "A solar mass is " << cu.convert("Msun","g",1.0) 
+           << " g. " << endl;
       \endcode
 
       An object of this type is created by \ref o2scl_settings
@@ -81,11 +84,21 @@ namespace o2scl {
       Alternatively, one can ensure that no combination is necessary
       by manually adding the desired combination conversion to the
       cache after it is first computed.
+
+      \note \o2 uses some unit aliases which are not used the the GNU
+      or OSX units commands, like "Msun" for the solar mass and adds
+      some units not present like "Rschwarz" for the Schwarzchild
+      radius of a 1 solar mass black hole.
       
       \note Only the const versions, \ref convert_const and
       \ref convert_ret_const are guaranteed to be thread-safe,
       since they are not allowed to update the unit cache.
 
+      \future Add G=1. 
+
+      \future An in_cache() function to test
+      to see if a conversion is currently in the cache. 
+      
       \future Ideally, a real C++ API for the GNU units command
       would be better.
   */
@@ -120,6 +133,27 @@ namespace o2scl {
 
   public:
 
+    /// Create a unit-conversion object
+    convert_units();
+
+    virtual ~convert_units() {}
+
+    /// \name Basic usage
+    //@{
+    /** \brief Return the value \c val after converting using units \c
+	from and \c to
+    */
+    virtual double convert(std::string from, std::string to, double val);
+
+    /** \brief Return the value \c val after converting using units \c
+	from and \c to (const version)
+    */
+    virtual double convert_const(std::string from, std::string to,
+				 double val) const;
+    //@}
+
+    /// \name User settings
+    //@{
     /// Verbosity (default 0)
     int verbose;
 
@@ -138,22 +172,10 @@ namespace o2scl {
 
     /// Command string to call units (default "units")
     std::string units_cmd_string;
+    //@}
 
-    convert_units();
-
-    virtual ~convert_units() {}
-
-    /** \brief Return the value \c val after converting using units \c
-	from and \c to
-    */
-    virtual double convert(std::string from, std::string to, double val);
-
-    /** \brief Return the value \c val after converting using units \c
-	from and \c to (const version)
-    */
-    virtual double convert_const(std::string from, std::string to,
-				 double val) const;
-
+    /// \name Conversions which don't throw exceptions
+    //@{
     /** \brief Return the value \c val after converting using units \c
 	from and \c to, returning a non-zero value on failure
     */
@@ -166,7 +188,10 @@ namespace o2scl {
     */
     virtual int convert_ret_const(std::string from, std::string to,
 				  double val, double &converted) const;
-    
+    //@}
+
+    /// \name Manipulate cache and create units.dat files
+    //@{
     /// Manually insert a unit conversion into the cache
     void insert_cache(std::string from, std::string to, double conv);
 
@@ -183,11 +208,16 @@ namespace o2scl {
 	true, then the kilogram is defined in terms of <tt>s/m^2</tt>
 	so that \f$ \hbar \f$ is unitless.
 
+	\note While convert() generally works with the OSX version
+	of 'units', the OSX version can't read units.dat files 
+	created by this function.
+
 	\note Not all of the GSL constants or the canonical GNU units 
 	conversions are given here.
     */
     void make_units_dat(std::string fname, bool c_1=false, 
 			bool hbar_1=false, bool K_1=false) const;
+    //@}
     
   };
 
