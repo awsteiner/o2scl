@@ -470,13 +470,15 @@ namespace o2scl {
       }
     }
     if (found==false) {
-      if (verbose>0) {
-	std::cout << "Skipping insert for row " << ir
-	<< " because the point is not in a hypercube." << std::endl;
-      }
       if (false) {
+	std::cout.setf(std::ios::showpos);
 	for(size_t k=0;k<n_dim;k++) {
-	  if (v[k]<low[k] || v[k]>high[k]) std::cout << "*";
+	  if (v[k]<low[k] || v[k]>high[k]) {
+	    std::cout << "* ";
+	  } else {
+	    std::cout << "  ";
+	  }
+	  std::cout.width(2);
 	  std::cout << k << " " << low[k] << " " << v[k] << " "
 	  << high[k] << std::endl;
 	}
@@ -485,11 +487,29 @@ namespace o2scl {
 	  for(size_t k=0;k<n_dim;k++) {
 	    if (v[k]>=mesh[ell].low[k] && v[k]<=mesh[ell].high[k]) cnt++;
 	  }
-	  std::cout << ell << " " << cnt << " " << (cnt==n_dim) << std::endl;
+	  std::cout << ell << " " << cnt << " " << mesh[ell].frac_vol
+	  << std::endl;
+	  if (cnt==n_dim-1) {
+	    for(size_t k=0;k<n_dim;k++) {
+	      if (v[k]<mesh[ell].low[k] || v[k]>mesh[ell].high[k]) {
+		std::cout << "* ";
+	      } else {
+		std::cout << "  ";
+	      }
+	      std::cout.width(2);
+	      std::cout << k << " " << low[k] << " "
+			<< mesh[ell].low[k] << " " << v[k]
+			<< " " << mesh[ell].high[k] << " "
+			<< high[k] << std::endl;
+	    }
+	  }
 	}
+	O2SCL_ERR2("Couldn't find point inside mesh in ",
+		   "prob_dens_mdim_amr::insert().",o2scl::exc_efailed);
+      } else if (verbose>0) {
+	std::cout << "Skipping insert for row " << ir
+	<< " because the point is not in a hypercube." << std::endl;
       }
-      //O2SCL_ERR2("Couldn't find point inside mesh in ",
-      //"prob_dens_mdim_amr::insert().",o2scl::exc_efailed);
       return;
     }
     hypercube &h=mesh[jm];
@@ -584,6 +604,13 @@ namespace o2scl {
     double old_vol=h.frac_vol;
     double old_low=h.low[max_ip];
     double old_high=h.high[max_ip];
+
+    if (loc>old_high || loc<old_low) {
+      std::cout << "Location misordered: "
+		<< old_low << " " << loc << " " << " "
+		<< v[max_ip] << " " << m(h.inside[0],max_ip) << " "
+		<< old_high << std::endl;
+    }
 
     size_t old_inside=h.inside[0];
     double old_weight=h.weight;
