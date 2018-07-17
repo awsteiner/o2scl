@@ -1027,10 +1027,15 @@ namespace o2scl {
     }
 
     // End of initial point and weight section
-    // ---------------------------------------------------
-    // Start of main loop
+    // --------------------------------------------------------
 
+    // The main section split into two parts, aff_inv=false and
+    // aff_inv=true.
+    
     if (aff_inv==false) {
+
+      // ---------------------------------------------------
+      // Start of main loop over threads for aff_inv=false
 
 #ifdef O2SCL_OPENMP
 #pragma omp parallel default(shared)
@@ -1047,7 +1052,7 @@ namespace o2scl {
 	  while (!main_done) {
 	    
 	    // ---------------------------------------------------
-	    // Select next point
+	    // Select next point for aff_inv=false
 	  
 	    if (pd_mode) {
 	    
@@ -1070,9 +1075,10 @@ namespace o2scl {
 	    }	  
 	  
 	    // ---------------------------------------------------
-	    // Compute next weight
+	    // Compute next weight for aff_inv=false
 	  
 	    func_ret[it]=o2scl::success;
+
 	    // If the next point out of bounds, ensure that the point is
 	    // rejected without attempting to evaluate the function
 	    for(size_t k=0;k<n_params;k++) {
@@ -1123,8 +1129,9 @@ namespace o2scl {
 	      }
 	    }
 	    
-	    // ---------------------------------------------------
-	    // Accept or reject
+	    // ------------------------------------------------------
+	    // Accept or reject and call the measurement function for
+	    // aff_inv=false
 	    
 	    // Index in storage
 	    size_t sindex=n_walk*it+curr_walker[it];
@@ -1192,6 +1199,9 @@ namespace o2scl {
 	      }
 
 	    }
+
+	    // ---------------------------------------------------
+	    // Best point, update iteration counts, and check if done
 
 	    // Collect best point
 	    if (func_ret[it]==o2scl::success && w_best>w_next[it]) {
@@ -1274,10 +1284,10 @@ namespace o2scl {
 	      }
 	    }
 	    
-	    // End of 'main_done' while 
+	    // End of 'main_done' while loop for aff_inv=false
 	  }
 	  
-	  // Loop over threads
+	  // Loop over threads for aff_inv=false
 	}
 	  
 	// End of new parallel region for aff_inv=false
@@ -1285,6 +1295,9 @@ namespace o2scl {
       
     } else {
     
+      // ---------------------------------------------------
+      // Start of main loop for aff_inv=true
+
       bool main_done=false;
       size_t mcmc_iters=0;
 
