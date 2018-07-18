@@ -3372,7 +3372,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
   ret=hf.find_group_by_type("table",in[1],verbose);
   if (ret==success) {
     if (verbose>0) {
-      cout << "No name specified, reading first table object." << endl;
+      cout << "No name specified, found first table object named '"
+	   << in[1] << "'." << endl;
     }
     hdf_input(hf,table_obj,in[1]);
     obj_name=in[1];
@@ -3385,7 +3386,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
   ret=hf.find_group_by_type("table3d",in[1],verbose);
   if (ret==success) {
     if (verbose>0) {
-      cout << "No name specified, reading first table3d object." << endl;
+      cout << "No name specified, found first table3d object named '"
+	   << in[1] << "'." << endl;
     }
     hdf_input(hf,table3d_obj,in[1]);
     obj_name=in[1];
@@ -3400,7 +3402,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
   ret=hf.find_group_by_type("hist",in[1],verbose);
   if (ret==success) {
     if (verbose>0) {
-      cout << "No name specified, reading first hist object." << endl;
+      cout << "No name specified, found first hist object named '"
+	   << in[1] << "'." << endl;
     }
     hdf_input(hf,hist_obj,in[1]);
     obj_name=in[1];
@@ -3412,12 +3415,40 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
   ret=hf.find_group_by_type("hist_2d",in[1],verbose);
   if (ret==success) {
     if (verbose>0) {
-      cout << "No name specified, reading first hist_2d object." << endl;
+      cout << "No name specified, found first hist_2d object named '"
+	   << in[1] << "'." << endl;
     }
     hdf_input(hf,hist_2d_obj,in[1]);
     obj_name=in[1];
     command_add("hist_2d");
     type="hist_2d";
+    return 0;
+  }
+  
+  ret=hf.find_group_by_type("tensor",in[1],verbose);
+  if (ret==success) {
+    if (verbose>0) {
+      cout << "No name specified, found first tensor object named '"
+	   << in[1] << "'." << endl;
+    }
+    hf.getd_ten(in[1],tensor_obj);
+    obj_name=in[1];
+    command_add("tensor");
+    type="tensor";
+    return 0;
+  }
+  
+  ret=hf.find_group_by_type("vector<contour_line>",in[1],verbose);
+  if (ret==success) {
+    if (verbose>0) {
+      cout << "No name specified, found first vector<contour_line> "
+	   << "object named '"
+	   << in[1] << "'." << endl;
+    }
+    hdf_input(hf,cont_obj,in[1]);
+    obj_name=in[1];
+    command_add("vector<contour_line>");
+    type="vector<contour_line>";
     return 0;
   }
   
@@ -7324,7 +7355,9 @@ int acol_manager::comm_select_rows(std::vector<std::string> &sv,
   int new_lines=0;
   for(int i=0;i<((int)table_obj.get_nlines());i++) {
     if (table_obj.row_function(i1,i)>0.5) {
-      new_table->set_nlines(new_lines+1);
+      // It is important to use set_nlines_auto() here because it
+      // increases the table size fast enough to avoid poor scaling
+      new_table->set_nlines_auto(new_lines+1);
       for(int j=0;j<((int)table_obj.get_ncolumns());j++) {
 	new_table->set(j,new_lines,table_obj.get(j,i));
       }
@@ -7415,7 +7448,9 @@ int acol_manager::comm_select_rows2(std::vector<std::string> &sv,
     }
     calc.compile(i1.c_str(),&vars);
     if (calc.eval(&vars)>0.5) {
-      new_table->set_nlines(new_lines+1);
+      // It is important to use set_nlines_auto() here because it
+      // increases the table size fast enough to avoid poor scaling
+      new_table->set_nlines_auto(new_lines+1);
       for(int j=0;j<((int)table_obj.get_ncolumns());j++) {
 	new_table->set(j,new_lines,table_obj.get(j,i));
       }
