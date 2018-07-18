@@ -1058,7 +1058,7 @@ namespace o2scl {
 	    
 	      // Use proposal distribution and compute associated weight
 	      q_prop[it]=prop_dist[it]->log_metrop_hast(current[it],next[it]);
-	    
+	      
 	      if (!std::isfinite(q_prop[it])) {
 		O2SCL_ERR2("Proposal distribution not finite in ",
 			   "mcmc_para_base::mcmc().",o2scl::exc_efailed);
@@ -1143,6 +1143,19 @@ namespace o2scl {
 	      double r=rg[it].random();
 	    
 	      if (pd_mode) {
+		/*
+		  std::cout.setf(std::ios::showpos);
+		  std::cout.precision(4);
+		  std::cout << "PD: " << w_current[it] << " "
+		  << w_next[it] << " "
+		  << prop_dist[it]->log_pdf(next[it],current[it]) << " "
+		  << prop_dist[it]->log_pdf(current[it],next[it]) << " "
+		  << q_prop[it] << " "
+		  << w_next[it]-w_current[sindex]+q_prop[it]
+		  << std::endl;
+		  std::cout.precision(6);
+		  std::cout.unsetf(std::ios::showpos);
+		*/
 		if (r<exp(w_next[it]-w_current[sindex]+q_prop[it])) {
 		  accept=true;
 		}
