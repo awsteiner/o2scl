@@ -412,7 +412,7 @@ namespace o2scl {
       // Initialize the mesh with the first point
       mesh.resize(1);
       if (log_mode) {
-	if (m(ir,n_dim)>-800.0) {
+	if (m(ir,n_dim)>-700.0) {
 	  mesh[0].set(low,high,ir,1.0,exp(m(ir,n_dim)));
 	} else {
 	  mesh[0].set(low,high,ir,1.0,0.0);
@@ -607,7 +607,7 @@ namespace o2scl {
 
     if (loc>old_high || loc<old_low) {
       std::cout << "Location misordered: "
-		<< old_low << " " << loc << " " << " "
+		<< old_low << " " << loc << " " 
 		<< v[max_ip] << " " << m(h.inside[0],max_ip) << " "
 		<< old_high << std::endl;
     }
@@ -619,7 +619,7 @@ namespace o2scl {
     h.low[max_ip]=loc;
     h.high[max_ip]=old_high;
     h.frac_vol=old_vol*(old_high-loc)/(old_high-old_low);
-    if (h.frac_vol<1.0e-14) {
+    if (h.frac_vol<1.0e-20) {
       if (verbose>0) {
 	std::cout << "Skipping hypercube for row " << ir
 		  << " with vanishing volume."
@@ -650,7 +650,7 @@ namespace o2scl {
     low_new[max_ip]=old_low;
     high_new[max_ip]=loc;
     double new_vol=old_vol*(loc-old_low)/(old_high-old_low);
-    if (new_vol<1.0e-14) {
+    if (new_vol<1.0e-20) {
       if (verbose>0) {
 	std::cout << "Skipping hypercube for row " << ir
 		  << " with vanishing volume (2)."
@@ -972,6 +972,8 @@ namespace o2scl {
     }
 
     double pdf_ret=mesh[jm].weight;
+    //std::cout << "pdma::pdf: " << jm << " " << x[0] << " " << pdf_ret << " "
+    //<< log(pdf_ret) << std::endl;
     if (pdf_ret==0.0) {
       return 1.0e-300;
     }
