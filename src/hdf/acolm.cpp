@@ -2330,6 +2330,11 @@ int acol_manager::comm_cat(std::vector<std::string> &sv, bool itive_com) {
 	table_obj.set(col_name,i+n1,tab2.get(col_name,i));
       }
     }
+
+    if (verbose>0) {
+      cout << "Table with " << n1 << " lines now has "
+	   << n1+n2 << " lines." << endl;
+    }
     
   } else {
 
