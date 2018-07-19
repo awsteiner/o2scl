@@ -1109,12 +1109,10 @@ namespace o2scl {
 	    x[i]=mesh[j].low[i]+rg.random()*
 	      (mesh[j].high[i]-mesh[j].low[i]);
 	  }
-	  /*
-	    std::cout << "op: " << " " << j << " "
-	    << log(mesh[j].weight) << " " << mesh[j].weight << " "
-	    << mesh[j].frac_vol << " "
-	    << mesh[j].weight*mesh[j].frac_vol << std::endl;
-	  */
+	  std::cout << "op: " << " " << j << " "
+		    << log(mesh[j].weight) << " " << mesh[j].weight << " "
+		    << mesh[j].frac_vol << " "
+		    << mesh[j].weight*mesh[j].frac_vol << std::endl;
 	  //o2scl::vector_out(std::cout,x,true);
 	  if (mesh[j].is_inside(x)==false) {
 	    if (allow_resampling) {
