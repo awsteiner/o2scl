@@ -3425,6 +3425,19 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
   
+  ret=hf.find_group_by_type("tensor_grid",in[1],verbose);
+  if (ret==success) {
+    if (verbose>0) {
+      cout << "No name specified, found first tensor_grid object named '"
+	   << in[1] << "'." << endl;
+    }
+    hf.getd_ten(in[1],tensor_grid_obj);
+    obj_name=in[1];
+    command_add("tensor_grid");
+    type="tensor_grid";
+    return 0;
+  }
+  
   ret=hf.find_group_by_type("tensor",in[1],verbose);
   if (ret==success) {
     if (verbose>0) {
@@ -3435,6 +3448,32 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     obj_name=in[1];
     command_add("tensor");
     type="tensor";
+    return 0;
+  }
+  
+  ret=hf.find_group_by_type("tensor<size_t>",in[1],verbose);
+  if (ret==success) {
+    if (verbose>0) {
+      cout << "No name specified, found first tensor<size_t> object named '"
+	   << in[1] << "'." << endl;
+    }
+    hf.get_szt_ten(in[1],tensor_size_t_obj);
+    obj_name=in[1];
+    command_add("tensor<size_t>");
+    type="tensor<size_t>";
+    return 0;
+  }
+  
+  ret=hf.find_group_by_type("tensor<int>",in[1],verbose);
+  if (ret==success) {
+    if (verbose>0) {
+      cout << "No name specified, found first tensor<int> object named '"
+	   << in[1] << "'." << endl;
+    }
+    hf.geti_ten(in[1],tensor_int_obj);
+    obj_name=in[1];
+    command_add("tensor<int>");
+    type="tensor<int>";
     return 0;
   }
   
@@ -3449,6 +3488,146 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     obj_name=in[1];
     command_add("vector<contour_line>");
     type="vector<contour_line>";
+    return 0;
+  }
+  
+  ret=hf.find_group_by_type("uniform_grid<double>",in[1],verbose);
+  if (ret==success) {
+    if (verbose>0) {
+      cout << "No name specified, found first uniform_grid<double> "
+	   << "object named '"
+	   << in[1] << "'." << endl;
+    }
+    hdf_input(hf,ug_obj,in[1]);
+    obj_name=in[1];
+    command_add("uniform_grid<double>");
+    type="uniform_grid<double>";
+    return 0;
+  }
+  
+  ret=hf.find_group_by_type("double[]",in[1],verbose);
+  if (ret==success) {
+    if (verbose>0) {
+      cout << "No name specified, found first double[] "
+	   << "object named '"
+	   << in[1] << "'." << endl;
+    }
+    hf.getd_vec(in[1],doublev_obj);
+    obj_name=in[1];
+    command_add("double[]");
+    type="double[]";
+    return 0;
+  }
+  
+  ret=hf.find_group_by_type("int[]",in[1],verbose);
+  if (ret==success) {
+    if (verbose>0) {
+      cout << "No name specified, found first int[] "
+	   << "object named '"
+	   << in[1] << "'." << endl;
+    }
+    hf.geti_vec(in[1],intv_obj);
+    obj_name=in[1];
+    command_add("int[]");
+    type="int[]";
+    return 0;
+  }
+  
+  ret=hf.find_group_by_type("string[]",in[1],verbose);
+  if (ret==success) {
+    if (verbose>0) {
+      cout << "No name specified, found first string[] "
+	   << "object named '"
+	   << in[1] << "'." << endl;
+    }
+    hf.gets_vec(in[1],stringv_obj);
+    obj_name=in[1];
+    command_add("string[]");
+    type="string[]";
+    return 0;
+  }
+  
+  ret=hf.find_group_by_type("size_t[]",in[1],verbose);
+  if (ret==success) {
+    if (verbose>0) {
+      cout << "No name specified, found first size_t[] "
+	   << "object named '"
+	   << in[1] << "'." << endl;
+    }
+    hf.get_szt_vec(in[1],size_tv_obj);
+    obj_name=in[1];
+    command_add("size_t[]");
+    type="size_t[]";
+    return 0;
+  }
+  
+  ret=hf.find_group_by_type("double",in[1],verbose);
+  if (ret==success) {
+    if (verbose>0) {
+      cout << "No name specified, found first double "
+	   << "object named '"
+	   << in[1] << "'." << endl;
+    }
+    hf.getd(in[1],double_obj);
+    obj_name=in[1];
+    command_add("double");
+    type="double";
+    return 0;
+  }
+  
+  ret=hf.find_group_by_type("int",in[1],verbose);
+  if (ret==success) {
+    if (verbose>0) {
+      cout << "No name specified, found first int "
+	   << "object named '"
+	   << in[1] << "'." << endl;
+    }
+    hf.geti(in[1],int_obj);
+    obj_name=in[1];
+    command_add("int");
+    type="int";
+    return 0;
+  }
+  
+  ret=hf.find_group_by_type("string",in[1],verbose);
+  if (ret==success) {
+    if (verbose>0) {
+      cout << "No name specified, found first string "
+	   << "object named '"
+	   << in[1] << "'." << endl;
+    }
+    hf.gets(in[1],string_obj);
+    obj_name=in[1];
+    command_add("string");
+    type="string";
+    return 0;
+  }
+  
+  ret=hf.find_group_by_type("size_t",in[1],verbose);
+  if (ret==success) {
+    if (verbose>0) {
+      cout << "No name specified, found first size_t "
+	   << "object named '"
+	   << in[1] << "'." << endl;
+    }
+    hf.get_szt(in[1],size_t_obj);
+    obj_name=in[1];
+    command_add("size_t");
+    type="size_t";
+    return 0;
+  }
+  
+  ret=hf.find_group_by_type("char",in[1],verbose);
+  if (ret==success) {
+    if (verbose>0) {
+      cout << "No name specified, found first char "
+	   << "object named '"
+	   << in[1] << "'." << endl;
+    }
+    hf.getc(in[1],char_obj);
+    obj_name=in[1];
+    command_add("char");
+    type="char";
     return 0;
   }
   
