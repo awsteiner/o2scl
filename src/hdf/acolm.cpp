@@ -3505,6 +3505,20 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
   
+  ret=hf.find_group_by_type("prob_dens_mdim_amr",in[1],verbose);
+  if (ret==success) {
+    if (verbose>0) {
+      cout << "No name specified, found first prob_dens_mdim_amr "
+	   << "object named '"
+	   << in[1] << "'." << endl;
+    }
+    hdf_input(hf,pdma_obj,in[1]);
+    obj_name=in[1];
+    command_add("prob_dens_mdim_amr");
+    type="prob_dens_mdim_amr";
+    return 0;
+  }
+
   ret=hf.find_group_by_type("double[]",in[1],verbose);
   if (ret==success) {
     if (verbose>0) {
