@@ -357,6 +357,22 @@ namespace o2scl {
       return it->second;
     }
 
+    /** \brief Specify the units as a string separated by spaces
+     */
+    void line_of_units(std::string unit_line) {
+      std::string unitval;
+      
+      std::istringstream is(unit_line);
+      int icol=0;
+      while(is >> unitval) {
+	if (unitval!=std::string(".")) {
+	  this->set_unit(this->get_column_name(icol),unitval);
+	}
+	icol++;
+      } 
+      return;
+    }
+
     /** \brief Get the unit for column with index i
 	
 	\future Is there a way to make this function have O(1) time

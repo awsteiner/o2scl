@@ -241,8 +241,8 @@ namespace o2scl {
 	if (ret!=0) return ret;
 	ret=stoszt_nothrow(send,uitmp2);
 	if (ret!=0) return ret;
-	for(size_t j=uitmp;j<=uitmp2;j++) {
-	  list.push_back(j);
+	for(size_t jk=uitmp;jk<=uitmp2;jk++) {
+	  list.push_back(jk);
 	}
       }
     }
