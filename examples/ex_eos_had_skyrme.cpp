@@ -979,7 +979,7 @@ public:
 };
 
 
-int main(int argc, char *argc[]) {
+int main(int argc, char *argv[]) {
 
   cout.setf(ios::scientific);
   
