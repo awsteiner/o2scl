@@ -24,6 +24,7 @@
 #include <o2scl/fermion_eff.h>
 #include <o2scl/test_mgr.h>
 #include <o2scl/inte_qag_gsl.h>
+#include <o2scl/eos_sn.h>
 
 using namespace std;
 using namespace o2scl;
@@ -753,7 +754,7 @@ int main(void) {
   cout << endl;
   
   double v1=rf.calibrate(e,1,0,"../../data/o2scl/fermion_cal2.o2");
-  t.test_rel(v1,0.0,1.0e-6,"calibrate");
+  t.test_rel(v1,0.0,4.0e-6,"calibrate");
 
   /* 
      This doesn't work yet
@@ -789,9 +790,7 @@ int main(void) {
 
   inte_qag_gsl<> *qag=dynamic_cast<inte_qag_gsl<> *>(rf.dit.get());
   cout << qag->type() << " " << qag->get_rule() << endl;
-  
-  // -----------------------------------------------------------------
-  
+    
   t.report();
 
   return 0;

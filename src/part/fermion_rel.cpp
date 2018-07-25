@@ -46,6 +46,8 @@ fermion_rel::fermion_rel() : nit(new inte_qagiu_gsl<>),
   min_psi=-4.0;
   err_nonconv=true;
   use_expansions=true;
+  density_root->tol_rel=4.0e-7;
+
 }
 
 fermion_rel::~fermion_rel() {
@@ -735,10 +737,14 @@ void fermion_rel::pair_mu(fermion &f, double temper) {
 
 int fermion_rel::pair_density(fermion &f, double temper) {
 
-  if (f.n==0.0) {
-    O2SCL_ERR("Zero density sent to fermion_rel::pair_density().",
-	      exc_einval);
-  }
+  // AWS: 7/25/18: Zero density is ok, it means equal numbers
+  // of electrons and positrons, so we remove this call to the
+  // error handler
+  
+  //if (f.n==0.0) {
+  //O2SCL_ERR("Zero density sent to fermion_rel::pair_density().",
+  //exc_einval);
+  //}
 
   // -----------------------------------------------------------------
   // Handle T<=0
@@ -758,10 +764,10 @@ int fermion_rel::pair_density(fermion &f, double temper) {
   // -----------------------------------------------------------------
   // If the chemical potential is too small, then the solver
   // will fail
-  
+
   // Find the larger of either the temperature or the mass
   double lg=temper;
-  if (f.ms>lg) lg=temper;
+  if (f.ms>lg) lg=f.ms;
   // Try increasing the chemical potential
   double y=pair_fun(nex,f,temper,false);
   for(size_t i=0;i<10 && fabs(y+1.0)<1.0e-6;i++) {
@@ -771,7 +777,7 @@ int fermion_rel::pair_density(fermion &f, double temper) {
 
   funct mf=std::bind(std::mem_fn<double(double,fermion &,double,bool)>
 		       (&fermion_rel::pair_fun),
-		       this,std::placeholders::_1,std::ref(f),temper,false);
+		       this,std::placeholders::_1,std::ref(f),temper,0);
 
   bool drec=density_root->err_nonconv;
   density_root->err_nonconv=false;
@@ -788,13 +794,16 @@ int fermion_rel::pair_density(fermion &f, double temper) {
     nit->tol_abs/=1.0e2;
     ret=density_root->solve(nex,mf);
 
+    if (nex<0.0) nex=1.0e-10;
+    
+    // If that failed, try working in log units
+
     // Function in log units
     funct lmf=std::bind(std::mem_fn<double(double,fermion &,double,bool)>
 			  (&fermion_rel::pair_fun),
-			  this,std::placeholders::_1,std::ref(f),temper,true);
+			this,std::placeholders::_1,std::ref(f),temper,true);
     
     if (ret!=0) {
-      // If that failed, try working in log units
       nex=log(nex);
       ret=density_root->solve(nex,lmf);
       nex=exp(nex);
@@ -845,37 +854,42 @@ double fermion_rel::pair_fun(double x, fermion &f, double T, bool log_mode) {
 
   // Temporary storage for density to match
   double nn_match=f.n;
-  // Temporary storage for integration results
-  double nden;
-  // The return value, n/(n') -1
-  double yy;
+  // Number density of particles and antiparticles
+  double nden_p, nden_ap;
 
   // -----------------------------------------------------------------
 
   f.nu=T*x;
-  if (log_mode) f.nu=T*exp(x);
+  if (log_mode) {
+    f.nu=T*exp(x);
+  }
 
-  //if (!std::isfinite(f.nu)) {
-  //O2SCL_ERR("Chemical potential not finite in fermion_rel::pair_fun().",
-  //exc_einval);
-  //}
+  // Sometimes the exp() call above causes an overflow, so
+  // we avoid extreme values
+  if (!std::isfinite(f.nu)) return 3;
 
   if (f.non_interacting) f.mu=f.nu;
 
   // -----------------------------------------------------------------
   // First, try the non-degenerate expansion with both particles and
   // antiparticles together
-  
-  if (use_expansions) {
+
+  // AWS: 7/25/18: I'm taking this section out because it doesn't seem
+  // to make sense to me, it apparently uses calc_mu_ndeg() which is
+  // for particles only, and I'm not sure that's sufficient here. This
+  // section also caused problems for the n=0, T!=0 case.
+
+  if (false && use_expansions) {
     if (calc_mu_ndeg(f,T,1.0e-8,true) && std::isfinite(f.n)) {
-      yy=f.n;
-      f.n=nn_match;
-      yy=yy/nn_match-1.0;
-      if (!std::isfinite(yy)) {
-	O2SCL_ERR("Value 'yy' not finite (10) in fermion_rel::pair_fun().",
+      double y1=f.n/nn_match-1.0;
+      if (!std::isfinite(y1)) {
+	O2SCL_ERR("Value 'y1' not finite (10) in fermion_rel::pair_fun().",
 		  exc_einval);
       }
-      return yy;
+      // Make sure to restore the value of f.n to it's original value,
+      // nn_match
+      f.n=nn_match;
+      return y1;
     }
   }
 
@@ -898,9 +912,9 @@ double fermion_rel::pair_fun(double x, fermion &f, double T, bool log_mode) {
   if (use_expansions && psi<min_psi) {
     if (calc_mu_ndeg(f,T,1.0e-8) && std::isfinite(f.n)) {
       particles_done=true;
-      yy=f.n;
-      if (!std::isfinite(yy)) {
-	O2SCL_ERR("Value 'yy' not finite (1) in fermion_rel::pair_fun().",
+      nden_p=f.n;
+      if (!std::isfinite(nden_p)) {
+	O2SCL_ERR("Value 'nden_p' not finite (1) in fermion_rel::pair_fun().",
 		  exc_einval);
       }
     }
@@ -910,9 +924,9 @@ double fermion_rel::pair_fun(double x, fermion &f, double T, bool log_mode) {
   if (use_expansions && particles_done==false && psi>20.0) {
     if (calc_mu_deg(f,T,1.0e-8) && std::isfinite(f.n)) {
       particles_done=true;
-      yy=f.n;
-      if (!std::isfinite(yy)) {
-	O2SCL_ERR("Value 'yy' not finite (2) in fermion_rel::pair_fun().",
+      nden_p=f.n;
+      if (!std::isfinite(nden_p)) {
+	O2SCL_ERR("Value 'nden_p' not finite (2) in fermion_rel::pair_fun().",
 		  exc_einval);
       }
     }
@@ -929,11 +943,10 @@ double fermion_rel::pair_fun(double x, fermion &f, double T, bool log_mode) {
 			    (&fermion_rel::density_fun),
 			    this,std::placeholders::_1,std::ref(f),T);
       
-      nden=nit->integ(mfe,0.0,0.0);
-      nden*=f.g*pow(T,3.0)/2.0/pi2;
-      yy=nden;
-      if (!std::isfinite(yy)) {
-	O2SCL_ERR("Value 'yy' not finite (3) in fermion_rel::pair_fun().",
+      nden_p=nit->integ(mfe,0.0,0.0);
+      nden_p*=f.g*pow(T,3.0)/2.0/pi2;
+      if (!std::isfinite(nden_p)) {
+	O2SCL_ERR("Value 'nden_p' not finite (3) in fermion_rel::pair_fun().",
 		  exc_einval);
       }
       
@@ -955,15 +968,14 @@ double fermion_rel::pair_fun(double x, fermion &f, double T, bool log_mode) {
       double ul;
       if (arg>0.0) {
 	ul=sqrt(arg);
-	nden=dit->integ(mfe,0.0,ul);
-	nden*=f.g/2.0/pi2;
+	nden_p=dit->integ(mfe,0.0,ul);
+	nden_p*=f.g/2.0/pi2;
       } else {
-	nden=0.0;
+	nden_p=0.0;
       }
       
-      yy=nden;
-      if (!std::isfinite(yy)) {
-	O2SCL_ERR("Value 'yy' not finite (4) in fermion_rel::pair_fun().",
+      if (!std::isfinite(nden_p)) {
+	O2SCL_ERR("Value 'nden_p' not finite (4) in fermion_rel::pair_fun().",
 		  exc_einval);
       }
 
@@ -996,9 +1008,9 @@ double fermion_rel::pair_fun(double x, fermion &f, double T, bool log_mode) {
   if (use_expansions && psi<min_psi) {
     if (calc_mu_ndeg(f,T,1.0e-8)) {
       antiparticles_done=true;
-      yy-=f.n;
-      if (!std::isfinite(yy)) {
-	O2SCL_ERR("Value 'yy' not finite (5) in fermion_rel::pair_fun().",
+      nden_ap=f.n;
+      if (!std::isfinite(nden_ap)) {
+	O2SCL_ERR("Value 'nden_ap' not finite (5) in fermion_rel::pair_fun().",
 		  exc_einval);
       }
     }
@@ -1008,9 +1020,9 @@ double fermion_rel::pair_fun(double x, fermion &f, double T, bool log_mode) {
   if (use_expansions && antiparticles_done==false && psi>20.0) {
     if (calc_mu_deg(f,T,1.0e-8)) {
       antiparticles_done=true;
-      yy-=f.n;
-      if (!std::isfinite(yy)) {
-	O2SCL_ERR("Value 'yy' not finite (6) in fermion_rel::pair_fun().",
+      nden_ap=f.n;
+      if (!std::isfinite(nden_ap)) {
+	O2SCL_ERR("Value 'nden_ap' not finite (6) in fermion_rel::pair_fun().",
 		  exc_einval);
       }
     }
@@ -1027,11 +1039,10 @@ double fermion_rel::pair_fun(double x, fermion &f, double T, bool log_mode) {
 			   (&fermion_rel::density_fun),
 			   this,std::placeholders::_1,std::ref(f),T);
       
-      nden=nit->integ(mf,0.0,0.0);
-      nden*=f.g*pow(T,3.0)/2.0/pi2;
-      yy-=nden;
-      if (!std::isfinite(yy)) {
-	O2SCL_ERR("Value 'yy' not finite (7) in fermion_rel::pair_fun().",
+      nden_ap=nit->integ(mf,0.0,0.0);
+      nden_ap*=f.g*pow(T,3.0)/2.0/pi2;
+      if (!std::isfinite(nden_ap)) {
+	O2SCL_ERR("Value 'nden_ap' not finite (7) in fermion_rel::pair_fun().",
 		  exc_einval);
       }
       
@@ -1053,14 +1064,13 @@ double fermion_rel::pair_fun(double x, fermion &f, double T, bool log_mode) {
       double ul;
       if (arg>0.0) {
 	ul=sqrt(arg);
-	nden=dit->integ(mf,0.0,ul);
-	nden*=f.g/2.0/pi2;
+	nden_ap=dit->integ(mf,0.0,ul);
+	nden_ap*=f.g/2.0/pi2;
       } else {
-	nden=0.0;
+	nden_ap=0.0;
       }
-      yy-=nden;
-      if (!std::isfinite(yy)) {
-	O2SCL_ERR("Value 'yy' not finite (8) in fermion_rel::pair_fun().",
+      if (!std::isfinite(nden_ap)) {
+	O2SCL_ERR("Value 'nden_ap' not finite (8) in fermion_rel::pair_fun().",
 		  exc_einval);
       }
 
@@ -1069,15 +1079,22 @@ double fermion_rel::pair_fun(double x, fermion &f, double T, bool log_mode) {
     antiparticles_done=true;
   }
 
+  double y2;
   // Finish computing the function value
-  f.n=nn_match;
-  yy=yy/nn_match-1.0;
-
-  if (!std::isfinite(yy)) {
-    O2SCL_ERR("Value 'yy' not finite (9) in fermion_rel::pair_fun().",
-	      exc_einval);
+  if (nn_match==0.0) {
+    y2=fabs(nden_p-nden_ap)/fabs(nden_p);
+  } else {
+    y2=(nden_p-nden_ap)/nn_match-1.0;
   }
 
-  return yy;
+  if (!std::isfinite(y2)) {
+    O2SCL_ERR("Value 'y2' not finite (9) in fermion_rel::pair_fun().",
+	      exc_einval);
+  }
+  
+  // Make sure to restore the value of f.n to it's original value,
+  // nn_match
+  f.n=nn_match;
+  return y2;
 }
 
