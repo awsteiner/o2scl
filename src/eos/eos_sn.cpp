@@ -294,7 +294,7 @@ void eos_sn_base::compute_eg_point(double nB, double Ye, double T,
   {
     electron.mu=electron.m;
     
-    double deg=nB/pow(T/hc_mev_fm,3.0);
+    double deg=electron.n/pow(T/hc_mev_fm,3.0);
     if (deg>10.0) {
       // If it's very degenerate, start with a guess
       // without positrons

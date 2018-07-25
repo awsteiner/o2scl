@@ -30,57 +30,38 @@ cloud_file::cloud_file() {
   allow_curl=true;
   verbose=1;
   throw_on_fail=true;
-  env_var="";
   hash_type=sha256;
 }
 
-int cloud_file::hdf5_open_hash_subdir
-(o2scl_hdf::hdf_file &hf, std::string file, std::string hash,
- std::string subdir, std::string url, std::string dir) {
+int cloud_file::hdf5_open_hash
+(o2scl_hdf::hdf_file &hf, std::string file, 
+ std::string url, std::string hash, std::string dir) {
   std::string fname;
-  get_file_hash_subdir(file,hash,subdir,url,fname,dir);
+  get_file_hash(file,url,hash,fname,dir);
   hf.open(fname);
   return 0;
 }
     
 int cloud_file::hdf5_open(o2scl_hdf::hdf_file &hf, std::string file,
 			  std::string url, std::string dir) {
-  return hdf5_open_hash_subdir(hf,file,"","",url,dir);
+  return hdf5_open_hash(hf,file,url,"",dir);
 }
   
-int cloud_file::hdf5_open_hash
-(o2scl_hdf::hdf_file &hf, std::string file, std::string hash,
- std::string url, std::string dir) {
-  return hdf5_open_hash_subdir(hf,file,hash,"",url,dir);
+int cloud_file::get_file(std::string file, std::string url, 
+			 std::string &fname, std::string dir) {
+  return get_file_hash(file,url,"",fname,dir);
 }
-  
-int cloud_file::hdf5_open_subdir
-(o2scl_hdf::hdf_file &hf, std::string file, std::string subdir,
- std::string url, std::string dir) {
-  return hdf5_open_hash_subdir(hf,file,"",subdir,url,dir);
-}
-
-int cloud_file::cloud_file::get_file_hash_subdir
-(std::string file, std::string hash, std::string subdir,
- std::string url, std::string &fname, std::string dir) {
-
-  if (dir=="" && env_var.length()>0) {
-    char *dir_ptr=getenv(env_var.c_str());
-    if (dir_ptr!=0) {
-      dir=dir_ptr;
-    }
-    if (verbose>1) {
-      std::cout << "Obtained directory from environment variable '"
-		<< env_var << "':\n\t" << dir << std::endl;
-    }
-  }
+    
+int cloud_file::get_file_hash
+(std::string file, std::string url,
+ std::string hash, std::string &fname, std::string dir) {
 
 #ifndef O2SCL_USE_BOOST_FILESYSTEM
 
   // File status object
   struct stat sb;
   // Return value of stat()
-  int sret=1;
+  int sret=0;
 
   // -------------------------------------------------------
   // Main directory section
@@ -96,6 +77,10 @@ int cloud_file::cloud_file::get_file_hash_subdir
       dir_present=S_ISDIR(sb.st_mode);
     }
     if (dir_present==false) {
+      if (verbose>0) {
+	std::cout << "Directory '" << dir
+		  << "' not present. Trying to create it." << std::endl;
+      }
       // If not found, try to make it with 'mkdir'
       std::string cmd=((std::string)"mkdir -p ")+dir;
       if (verbose>1) {
@@ -117,98 +102,44 @@ int cloud_file::cloud_file::get_file_hash_subdir
 	}
       }
     }
-  } 
-  if (dir.length()==0 || sret!=0 || dir_present==false) {
-    // If not found, prompt user for it
-    std::cout << "No directory specified or could not create "
-	      << "directory. Please enter directory name."
-	      << std::endl;
-    std::cin >> dir;
-    // Check again
-    dir_present=false;
-    if (dir.length()>0) {
-      sret=stat(dir.c_str(),&sb);
-      if (sret==0) {
-	dir_present=S_ISDIR(sb.st_mode);
-      }
-    }
-    // If that failed, then give up
-    if (dir.length()==0 || sret!=0 || dir_present==false) {
-      if (throw_on_fail) {
-	O2SCL_ERR("Could not find correct directory.",
-		  o2scl::exc_efilenotfound);
-      } else {
-	return o2scl::exc_efilenotfound;
-      }
-    }
-  } 
-
-  if (verbose>1) {
-    std::cout << "Directory " << dir << " found." << std::endl;
-  }
-
-  // End of main directory section
-  // -------------------------------------------------------
-
-  // The full local directory and subdirectory
-  std::string full_dir=dir;
-
-  // -------------------------------------------------------
-  // Subdirectory section
-    
-  if (subdir.length()>0) {
-    // Subdirectory was specified, so look for it on the filesystem
-    std::string full_dir=dir+"/"+subdir;
-    if (verbose>1) {
-      std::cout << "Set full_dir to: " << full_dir << std::endl;
-    }
-    bool full_dir_present=false;
-    sret=stat(full_dir.c_str(),&sb);
-    if (sret==0) {
-      full_dir_present=S_ISDIR(sb.st_mode);
-    }
-      
-    if (full_dir.length()==0 || sret!=0 || full_dir_present==false) {
-      // If not found, try to make it with 'mkdir'
-      std::string cmd=((std::string)"mkdir -p ")+full_dir;
-      if (verbose>0) {
-	std::cout << "Directory did not exist. Trying mkdir with "
-		  << "command:\n\t" << cmd << std::endl;
-      }
-      int ret=system(cmd.c_str());
-      if (ret!=0) {
-	if (throw_on_fail) {
-	  O2SCL_ERR("Failed to create directory.",o2scl::exc_efilenotfound);
-	} else {
-	  return o2scl::exc_efilenotfound;
+    if (sret!=0 || dir_present==false) {
+      // If not found, prompt user for it
+      std::cout << "Could not find or create directory '" << dir 
+		<< ". Please enter new directory name."
+		<< std::endl;
+      std::cin >> dir;
+      // Check again
+      dir_present=false;
+      if (dir.length()>0) {
+	sret=stat(dir.c_str(),&sb);
+	if (sret==0) {
+	  dir_present=S_ISDIR(sb.st_mode);
 	}
       }
-      // Check again
-      full_dir_present=false;
-      sret=stat(full_dir.c_str(),&sb);
-      if (sret==0) {
-	full_dir_present=S_ISDIR(sb.st_mode);
-      }
       // If that failed, then give up
-      if (full_dir.length()==0 || sret!=0 || full_dir_present==false) {
+      if (dir.length()==0 || sret!=0 || dir_present==false) {
 	if (throw_on_fail) {
-	  O2SCL_ERR("Could not create full directory.",
+	  O2SCL_ERR("Could not find correct directory.",
 		    o2scl::exc_efilenotfound);
 	} else {
 	  return o2scl::exc_efilenotfound;
 	}
       }
-    } else if (verbose>1) {
-      std::cout << "Full directory " << full_dir << " found." << std::endl;
     }
   }
+  
+  // End of directory section
+  // -------------------------------------------------------
 
-  // End of subdirectory section
   // -------------------------------------------------------
   // Start of file section
     
   // Now look for the full data file
-  fname=full_dir+"/"+file;
+  if (dir.length()>0) {
+    fname=dir+"/"+file;
+  } else {
+    fname=file;
+  }
   bool file_present=false;
   bool valid_hash=false;
   sret=stat(fname.c_str(),&sb);
@@ -245,7 +176,8 @@ int cloud_file::cloud_file::get_file_hash_subdir
       }
     } else {
       if (verbose>1) {
-	std::cout << "Invalid hash." << std::endl;
+	std::cout << "File hash " << hash2 << " does not match "
+		  << hash << "." << std::endl;
       }
     }
   }
@@ -254,18 +186,16 @@ int cloud_file::cloud_file::get_file_hash_subdir
     // If it couldn't be found, try to download it
     int ret=1;
     if (allow_curl) {
-      std::string cmd=((std::string)"cd ")+full_dir+"; curl -o "+
+      std::string cmd=((std::string)"cd ")+dir+"; curl -o "+
 	file+" "+url;
       if (verbose>0) {
-	std::cout << "File did not exist or read failed or invalid hash."
-		  << std::endl;
 	std::cout << "Trying curl command:\n\t"
 		  << cmd << std::endl;
       }
       ret=system(cmd.c_str());
     }
     if (allow_wget && ret!=0) {
-      std::string cmd=((std::string)"cd ")+full_dir+"; wget -O "+file+
+      std::string cmd=((std::string)"cd ")+dir+"; wget -O "+file+
 	" "+url;
       if (verbose>0) {
 	std::cout << "File did not exist or read failed or invalid hash."
@@ -351,22 +281,5 @@ int cloud_file::cloud_file::get_file_hash_subdir
 #endif      
       
   return o2scl::success;
-}
-
-int cloud_file::get_file(std::string file, std::string url,
-			 std::string &fname, std::string dir) {
-  return get_file_hash_subdir(file,"","",url,fname,dir);
-}
-    
-int cloud_file::get_file_hash(std::string file, std::string hash,
-			      std::string url, std::string &fname,
-			      std::string dir) {
-  return get_file_hash_subdir(file,hash,"",url,fname,dir);
-}
-      
-int cloud_file::get_file_subdir(std::string file, std::string subdir,
-				std::string url,
-				std::string &fname, std::string dir) {
-  return get_file_hash_subdir(file,"",subdir,url,fname,dir);
 }
 

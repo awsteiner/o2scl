@@ -285,12 +285,14 @@ namespace o2scl {
 
 	This function just does a simple hard-coded linear
 	interpolation.
+
+	The temperature is returned in units of MeV.
     */
     virtual void beta_eq_sfixed
       (double nB, double entr, double &Ye, double &T);
 
     /** \brief Compute the electron fraction for beta-equilibrium
-	at fixed density and temperature temperature
+	at fixed density and temperature 
 	
 	This function just uses linear interpolation to 
 	interpolate in baryon density and temperature and 
@@ -449,7 +451,6 @@ namespace o2scl {
     /// Allocate memory
     void alloc();
     //@}
-
 
   };
 

@@ -75,10 +75,7 @@ namespace o2scl_hdf {
     /** \brief If true, throw an exception on failure (default true)
      */
     bool throw_on_fail;
-    /** \brief The environment variable which stores the directory
-	(default "")
-     */
-    std::string env_var;
+    
     /// \name Specify hash type
     //@{
     /// Current hash type (default sha256)
@@ -100,60 +97,34 @@ namespace o2scl_hdf {
 	with hash \c hash, downloading from URL \c url if
 	necessary
     */
-    int hdf5_open_hash(hdf_file &hf, std::string file, std::string hash,
-		      std::string url, std::string dir="");
-
-    /** \brief Open an HDF file named \c file in directory \c dir
-	in subdirectory \c subdir, downloading from URL \c url if
-	necessary
-    */
-    int hdf5_open_subdir(hdf_file &hf, std::string file, std::string subdir,
-			 std::string url, std::string dir="");
-
-    /** \brief Open an HDF file named \c file in directory \c dir
-	in subdirectory \c subdir with hash \c hash, 
-	downloading from URL \c url if necessary
-    */
-    int hdf5_open_hash_subdir(hdf_file &hf, std::string file, std::string hash,
-			     std::string subdir, std::string url,
-			     std::string dir="");
+    int hdf5_open_hash(hdf_file &hf, std::string file, std::string url,
+		      std::string hash, std::string dir="");
 
     /** \brief Get file named \c file in directory \c dir 
 	from url \c url
     */
     int get_file(std::string file, std::string url,
-		 std::string &fname, std::string dir="./");
-    
-    /** \brief Get file named \c file in directory \c dir 
-	in subdirectory \c subdir from url \c url
-     */
-    int get_file_hash(std::string file, std::string hash, std::string url,
-		      std::string &fname, std::string dir="./");
-    
-    /** \brief Get file named \c file in directory \c dir 
-	in subdirectory \c subdir from url \c url
-    */
-    int get_file_subdir(std::string file, std::string subdir, std::string url,
-			std::string &fname, std::string dir="./");
+		 std::string &fname, std::string dir="");
     
     /** \brief Get file named \c file in directory \c dir 
 	in subdirectory \c subdir from url \c url
 	
-	This function attempts to find a file named \c file in
-	subdirectory \c subdir of the data directory \c dir. If \c dir
-	is empty, it attempts to set it equal to the value of the
-	environment variable \ref env_var. If that environment
-	variable is not present, the user is prompted for the correct
-	data directory. If the file is not found, then this function
-	uses curl (or wget if curl was unsuccessful) to download the
-	file from \c url. If this process was successful at finding or
-	downloading the file, then the full filename is returned.
-	Otherwise, an exception is thrown.
+	This function begins with the directory \c dir. If \c dir is
+	not present and cannot be created, the user is prompted for
+	the correct data directory. This function then searches for
+	file \c file in the directory. If it is found, it is compared
+	with the specified hash. If the hash matches, then the full
+	filename is returned. If the hash does not match or if the
+	file is not found, then this function uses curl (or wget if
+	curl was unsuccessful) to download the file from \c url. The
+	file is then compared with the hash again, and the full
+	filename is returned if the hash matches. Otherwise the error
+	handler is called.
     */
-    int get_file_hash_subdir(std::string file, std::string hash,
-			    std::string subdir, std::string url,
-			    std::string &fname, std::string dir="./");
-
+    int get_file_hash(std::string file, 
+		      std::string url, std::string hash,
+		      std::string &fname, std::string dir="");
+    
   };
   
 #ifndef DOXYGEN_NO_O2NS
