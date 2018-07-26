@@ -777,7 +777,7 @@ int fermion_rel::pair_density(fermion &f, double temper) {
     if (yhigh>0.0 && ylow<0.0) {
       root_brent_gsl<> rbg;
       rbg.err_nonconv=false;
-      ret=rbg.solve_bkt(ylow,yhigh,mf);
+      ret=rbg.solve_bkt(blow,bhigh,mf);
       if (ret==0) nex=ylow;
     }
   }
