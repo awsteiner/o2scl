@@ -194,7 +194,7 @@ namespace o2scl {
       \endcomment
       \future There is also a closed form for the derivatives
       of massless fermions with pairs at finite temperature
-      in Constantiou et al. 2014 which could be implemented here.
+      in Constantinou et al. 2014 which could be implemented here.
   */
   class fermion_deriv_thermo {
 

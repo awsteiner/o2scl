@@ -746,8 +746,6 @@ int main(void) {
 
   }
 
-  // -----------------------------------------------------------------
-
   cout << "----------------------------------------------------" << endl;
   cout << "Function calibrate()." << endl;
   cout << "----------------------------------------------------" << endl;
@@ -756,18 +754,13 @@ int main(void) {
   double v1=rf.calibrate(e,1,0,"../../data/o2scl/fermion_cal2.o2");
   t.test_rel(v1,0.0,4.0e-6,"calibrate");
 
-  /* 
-     This doesn't work yet
-     
-     cout << "----------------------------------------------------" << endl;
-     cout << "Function calibrate() including antiparticles." << endl;
-     cout << "----------------------------------------------------" << endl;
-     cout << endl;
-     
-     double v1x=rf.calibrate(e,1,1,"../../data/o2scl/fermion_cal2.o2");
-     
-  */
-
+  cout << "----------------------------------------------------" << endl;
+  cout << "Function calibrate() including antiparticles." << endl;
+  cout << "----------------------------------------------------" << endl;
+  cout << endl;
+  
+  double v1x=rf.calibrate(e,1,1,"../../data/o2scl/fermion_cal2.o2");
+  
   cout << "----------------------------------------------------" << endl;
   cout << "Function calibrate() with better limits." << endl;
   cout << "----------------------------------------------------" << endl;
@@ -787,10 +780,11 @@ int main(void) {
 
   // -----------------------------------------------------------------
   // Downcast the shared_ptr to the default integration type 
-
+  
   inte_qag_gsl<> *qag=dynamic_cast<inte_qag_gsl<> *>(rf.dit.get());
   cout << qag->type() << " " << qag->get_rule() << endl;
-    
+  cout << endl;
+  
   t.report();
 
   return 0;

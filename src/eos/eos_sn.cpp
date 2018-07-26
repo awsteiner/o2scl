@@ -305,7 +305,7 @@ void eos_sn_base::compute_eg_point(double nB, double Ye, double T,
     }
   }
   
-  relf.pair_mu(electron,T/hc_mev_fm);
+  relf.pair_density(electron,T/hc_mev_fm);
   
   if (include_muons) {
     muon.mu=electron.mu;
