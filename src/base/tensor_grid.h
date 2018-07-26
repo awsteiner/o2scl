@@ -647,6 +647,78 @@ namespace o2scl {
       return;
     }
 
+    /** \brief Copy an abitrary slice by fixing 1 or more indices
+	and return a new \ref tensor_grid object
+     */
+    template<class size_vec2_t, class vec2_t> 
+      tensor_grid<> copy_slice_interp(size_vec2_t &ifix, vec2_t &vals) {
+
+      if (this->rk<1+ifix.size()) {
+	O2SCL_ERR2("Fixed too many indices in ",
+		   "tensor_grid::copy_slice_interp().",
+		   o2scl::exc_einval);
+      }
+      if (ifix.size()!=vals.size()) {
+	O2SCL_ERR2("Mismatch between indices and values in ",
+		   "tensor_grid::copy_slice_interp().",
+		   o2scl::exc_einval);
+      }
+      
+      // Determine new rank
+      size_t rank_new=this->rk-ifix.size();
+
+      // Determine the new sizes and new grid
+      std::vector<size_t> sz_new;
+      std::vector<std::vector<double> > grid_new;
+      for(size_t i=0;i<this->rk;i++) {
+	bool found=false;
+	for(size_t j=0;j<ifix.size();j++) {
+	  if (ifix[j]==i) found=true;
+	}
+	if (found==false) {
+	  sz_new.push_back(this->get_size(i));
+	  std::vector<double> grid_temp;
+	  for(size_t j=0;j<this->get_size(i);j++) {
+	    grid_temp.push_back(this->get_grid(i,j));
+	  }
+	  grid_new.push_back(grid_temp);
+	}
+      }
+
+      // Create the new tensor_grid object and set the new grid
+      tensor_grid<> tg_new(rank_new,sz_new);
+      tg_new.set_grid(grid_new);
+
+      // Interpolate the data into the new tensor_grid object
+      std::vector<size_t> ix_new(rank_new);
+      std::vector<double> point_old(this->rk);
+
+      // Loop over the new tensor_grid object
+      for(size_t i=0;i<tg_new.total_size();i++) {
+
+	// Find the location in the new tensor_grid object
+	tg_new.unpack_indices(i,ix_new);
+
+	// Find the point in the old tensor object to interpolate
+	for(size_t j=0;j<this->rk;j++) {
+	  int ix_found=-1;
+	  for(size_t k=0;k<ifix.size();k++) {
+	    if (ifix[k]==j) ix_found=k;
+	  }
+	  if (ix_found==-1) {
+	    point_old[j]=this->get_grid(j,ix_new[j]);
+	  } else {
+	    point_old[j]=vals[ix_found];
+	  }
+	}
+	
+	// Set the new point by performing the linear interpolation
+	tg_new.set(ix_new,this->interp_linear(point_old));
+      }
+
+      return tg_new;
+    }
+    
     /** \brief Copy to a slice in a table3d object using interpolation
 
 	This function uses the grid associated with indices \c ix_x

@@ -754,7 +754,7 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="tensor_grid") {
     
-    static const size_t narr=4;
+    static const size_t narr=5;
     comm_option_s options_arr[narr]={
       {'l',"list","List the slice names and print out grid info.",
        0,0,"","List the slice names and print out grid info.",
@@ -768,6 +768,10 @@ void acol_manager::command_add(std::string new_type) {
        -1,-1,"<index> <grid name> <data name> [values of fixed indices]",
        "",new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_to_table),both},
+      {0,"slice","Slice to a smaller rank tensor_grid object.",
+       -1,-1,"<index 1> <value 1> <index 2> <value 2> ...",
+       "",new comm_option_mfptr<acol_manager>
+       (this,&acol_manager::comm_slice),both},
       {0,"set-grid","Set the tensor grid.",-1,-1,
        ((std::string)"<function for rank 0> ")+
        "<function for rank 1> ... <function for rank n-1>",
@@ -1047,6 +1051,7 @@ void acol_manager::command_del() {
     
     cl->remove_comm_option("list");
     cl->remove_comm_option("to-table3d");
+    cl->remove_comm_option("slice");
     cl->remove_comm_option("to-table");
     cl->remove_comm_option("set-grid");
 
@@ -4426,6 +4431,55 @@ int acol_manager::comm_slice(std::vector<std::string> &sv, bool itive_com) {
 	   << endl;
     }
 
+  } else if (type=="tensor_grid") {
+
+    size_t rank=tensor_grid_obj.get_rank();
+    size_t nfix=(sv.size()-1)/2;
+
+    vector<size_t> ifix;
+    vector<double> vals;
+    
+    if (nfix==0) {
+      std::string i1;
+      int ret=get_input_one(sv,"Number of indices to fix",i1,"slice",
+			    itive_com);
+      if (ret!=0) return ret;
+
+      nfix=o2scl::stoszt(i1);
+      if (nfix==0) {
+	cerr << "User specified zero indices to fix." << endl;
+	return 1;
+      }
+
+      vector<string> sv2;
+      vector<string> in(nfix*2), pr(nfix*2);
+      for(size_t j=0;j<nfix;j++) {
+	pr.push_back("Index to fix");
+	pr.push_back("Value to fix it at");
+      }
+      ret=get_input(sv2,pr,in,"slice",itive_com);
+      if (ret!=0) return ret;
+
+      for(size_t j=0;j<nfix;j++) {
+	ifix.push_back(o2scl::stoszt(in[2*j+0]));
+	vals.push_back(o2scl::stod(in[2*j+1]));
+      }
+      
+    } else {
+
+      for(size_t j=0;j<nfix;j++) {
+	ifix.push_back(o2scl::stoszt(sv[2*j+1]));
+	vals.push_back(o2scl::stod(sv[2*j+2]));
+      }
+
+    }
+
+    tensor_grid<> tg_old=tensor_grid_obj;
+    tensor_grid_obj=tg_old.copy_slice_interp(ifix,vals);
+
+    cout << "Old rank is " << rank << " and new rank is "
+	 << tensor_grid_obj.get_rank() << endl;
+    
   } else {
     cerr << "Slice does not work with " << type << " objects." << endl;
   }
