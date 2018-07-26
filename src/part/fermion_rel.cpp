@@ -289,6 +289,27 @@ int fermion_rel::nu_from_n(fermion &f, double temper) {
     nit->tol_abs/=1.0e2;
     ret=density_root->solve(nex,mf);
 
+    if (ret!=0) {
+      double lg=std::max(fabs(f.nu),f.ms);
+      double bhigh=lg/temper, blow=-bhigh;
+      double yhigh=mf(bhigh), ylow=mf(blow);
+      for(size_t j=0;j<5 && yhigh<0.0;j++) {
+	bhigh*=1.0e2;
+	yhigh=mf(bhigh);
+      }
+      for(size_t j=0;j<5 && ylow>0.0;j++) {
+	blow*=1.0e2;
+	ylow=mf(blow);
+      }
+      if (yhigh>0.0 && ylow<0.0) {
+	root_brent_gsl<> rbg;
+	rbg.verbose=2;
+	rbg.err_nonconv=false;
+	ret=rbg.solve_bkt(blow,bhigh,mf);
+	if (ret==0) nex=ylow;
+      }
+    }
+
     // Return tolerances to their original values
     dit->tol_rel=tol1;
     dit->tol_abs=tol2;

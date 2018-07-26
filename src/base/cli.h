@@ -588,7 +588,7 @@ namespace o2scl {
     virtual char *cli_gets(const char *c);
     
     /// Call functions corresponding to command-line args
-    int call_args(std::vector<cmd_line_arg> &ca);
+    int call_args(std::vector<cmd_line_arg> &ca, int debug=0);
 
     /** \brief Process command-line arguments from a const char array
 	

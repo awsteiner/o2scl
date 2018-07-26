@@ -708,7 +708,7 @@ int cli::process_args(int argc, char *argv[],
   return retval;
 }
 
-int cli::call_args(vector<cmd_line_arg> &ca) {
+int cli::call_args(vector<cmd_line_arg> &ca, int debug) {
   for(size_t i=0;i<ca.size();i++) {
     if (ca[i].is_option && ca[i].is_valid) {
       vector<string> sv;
@@ -718,9 +718,20 @@ int cli::call_args(vector<cmd_line_arg> &ca) {
       }
       if (ca[i].arg=="-quit" || ca[i].arg=="-exit" ||
 	  ca[i].arg=="--quit" || ca[i].arg=="--exit") {
+	if (debug>0) {
+	  cout << "In cli::call_args(), quitting." << endl;
+	}
 	return 0;
       }
+      if (debug>0) {
+	cout << "In cli::call_args(), calling function for '"
+	     << ca[i].arg << "'." << endl;
+      }
       (*(ca[i].cop->func))(sv,false);
+      if (debug>0) {
+	cout << "In cli::call_args(), done calling function for '"
+	     << ca[i].arg << "'." << endl;
+      }
     }
   }
   return 0;
@@ -1445,7 +1456,7 @@ int cli::run_auto(int argc, char *argv[], int debug) {
     
   } else {
     
-    ret=call_args(ca);
+    ret=call_args(ca,debug);
     if (ret!=0) {
       O2SCL_ERR("Function call_args() failed in cli::run_auto().",
 		    exc_efailed);
