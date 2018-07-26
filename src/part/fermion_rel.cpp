@@ -737,15 +737,6 @@ void fermion_rel::pair_mu(fermion &f, double temper) {
 
 int fermion_rel::pair_density(fermion &f, double temper) {
 
-  // AWS: 7/25/18: Zero density is ok, it means equal numbers
-  // of electrons and positrons, so we remove this call to the
-  // error handler
-  
-  //if (f.n==0.0) {
-  //O2SCL_ERR("Zero density sent to fermion_rel::pair_density().",
-  //exc_einval);
-  //}
-
   // -----------------------------------------------------------------
   // Handle T<=0
 
@@ -761,31 +752,39 @@ int fermion_rel::pair_density(fermion &f, double temper) {
   
   double nex=f.nu/temper;
 
-  // -----------------------------------------------------------------
-  // If the chemical potential is too small, then the solver
-  // will fail
-
-  // Find the larger of either the temperature or the mass
-  double lg=temper;
-  if (f.ms>lg) lg=f.ms;
-  // Try increasing the chemical potential
-  double y=pair_fun(nex,f,temper,false);
-  for(size_t i=0;i<10 && fabs(y+1.0)<1.0e-6;i++) {
-    nex+=lg/temper;
-    y=pair_fun(nex,f,temper,false);
-  }
-
   funct mf=std::bind(std::mem_fn<double(double,fermion &,double,bool)>
 		       (&fermion_rel::pair_fun),
-		       this,std::placeholders::_1,std::ref(f),temper,0);
+		       this,std::placeholders::_1,std::ref(f),temper,false);
 
+  // Begin by trying the user-specified guess
   bool drec=density_root->err_nonconv;
   density_root->err_nonconv=false;
   int ret=density_root->solve(nex,mf);
 
+  // If that doesn't work, try bracketing the root
+  if (ret!=0) {
+    double lg=std::max(fabs(f.nu),f.ms);
+    double bhigh=lg/temper, blow=-bhigh;
+    double yhigh=mf(bhigh), ylow=mf(blow);
+    for(size_t j=0;j<5 && yhigh<0.0;j++) {
+      bhigh*=1.0e2;
+      yhigh=mf(bhigh);
+    }
+    for(size_t j=0;j<5 && ylow>0.0;j++) {
+      blow*=1.0e2;
+      ylow=mf(blow);
+    }
+    if (yhigh>0.0 && ylow<0.0) {
+      root_brent_gsl<> rbg;
+      rbg.err_nonconv=false;
+      ret=rbg.solve_bkt(ylow,yhigh,mf);
+      if (ret==0) nex=ylow;
+    }
+  }
+  
   if (ret!=0) {
 
-    // If it fails, try to make the integrators more accurate
+    // If that fails, try to make the integrators more accurate
     double tol1=dit->tol_rel, tol2=dit->tol_abs;
     double tol3=nit->tol_rel, tol4=nit->tol_abs;
     dit->tol_rel/=1.0e2;
@@ -793,7 +792,9 @@ int fermion_rel::pair_density(fermion &f, double temper) {
     nit->tol_rel/=1.0e2;
     nit->tol_abs/=1.0e2;
     ret=density_root->solve(nex,mf);
-
+    
+    // AWS: 7/25/18: We work in log units below, so we ensure the
+    // chemical potential is not negative
     if (nex<0.0) nex=1.0e-10;
     
     // If that failed, try working in log units
@@ -825,6 +826,7 @@ int fermion_rel::pair_density(fermion &f, double temper) {
     nit->tol_abs=tol4;
   }
 
+  // Restore value of err_nonconv
   density_root->err_nonconv=drec;
 
   if (ret!=0) {
@@ -839,10 +841,12 @@ int fermion_rel::pair_density(fermion &f, double temper) {
   f.nu=nex*temper;
   
   if (f.non_interacting==true) { f.mu=f.nu; }
-  
+
+  // Finally, now that we have the chemical potential, use pair_mu()
+  // to evaluate the energy density, pressure, and entropy
   pair_mu(f,temper);
 
-  // The function pair_mu() can modify the density, which is
+  // The function pair_mu() can modify the density, which would be
   // confusing to the user, so we return it to the user-specified
   // value.
   f.n=density_temp;

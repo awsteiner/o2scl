@@ -169,8 +169,8 @@ void fermion_eval_thermo::massless_calc_density(fermion &f, double temper) {
   
   x=f.ms+temper;
   funct mf2=std::bind(std::mem_fn<double(double,fermion &,double)>
-			(&fermion_eval_thermo::massless_solve_fun),
-			this,std::placeholders::_1,std::ref(f),temper);
+		      (&fermion_eval_thermo::massless_solve_fun),
+		      this,std::placeholders::_1,std::ref(f),temper);
   massless_root->solve(x,mf2);
   f.nu=x;
 
@@ -737,313 +737,313 @@ double fermion_eval_thermo::calibrate
 
   if (test_pair) {
   
-  // ----------------------------------------------------------------
-  // Third pass, test pair_mu() 
+    // ----------------------------------------------------------------
+    // Third pass, test pair_mu() 
 
-  // k=0 is with rest mass, k=1 is without
-  for(size_t k=0;k<2;k++) {
+    // k=0 is with rest mass, k=1 is without
+    for(size_t k=0;k<2;k++) {
 
-    // Initialize storage
-    dev.n=0.0; dev.ed=0.0; dev.pr=0.0; dev.en=0.0;
-    bad.n=0.0; bad.ed=0.0; bad.pr=0.0; bad.en=0.0;
+      // Initialize storage
+      dev.n=0.0; dev.ed=0.0; dev.pr=0.0; dev.en=0.0;
+      bad.n=0.0; bad.ed=0.0; bad.pr=0.0; bad.en=0.0;
     
-    // Temperature loop
-    for(double T=1.0e-2;T<=1.001e2;T*=1.0e2) {
+      // Temperature loop
+      for(double T=1.0e-2;T<=1.001e2;T*=1.0e2) {
 
-      // Loop over each point in the data file
-      for(size_t i=0;i<tab.get_nlines();i++) {
+	// Loop over each point in the data file
+	for(size_t i=0;i<tab.get_nlines();i++) {
 	
-	double mot=tab.get("mot",i);
-	double psi=tab.get("psi",i);
-	exact.n=tab2.get("pair_n",i);
-	exact.ed=tab2.get("pair_ed",i);
-	exact.pr=tab2.get("pair_pr",i);
-	exact.en=tab2.get("pair_en",i);
+	  double mot=tab.get("mot",i);
+	  double psi=tab.get("psi",i);
+	  exact.n=tab2.get("pair_n",i);
+	  exact.ed=tab2.get("pair_ed",i);
+	  exact.pr=tab2.get("pair_pr",i);
+	  exact.en=tab2.get("pair_en",i);
       
-	if (k==0) {
+	  if (k==0) {
 	  
-	  f.inc_rest_mass=true;
+	    f.inc_rest_mass=true;
           
-	  f.m=mot*T;
-	  f.mu=f.m+T*psi;
+	    f.m=mot*T;
+	    f.mu=f.m+T*psi;
 	  
-	} else {
+	  } else {
 	  
-	  f.inc_rest_mass=false;
+	    f.inc_rest_mass=false;
 	  
-	  f.m=mot*T;
-	  f.mu=T*psi;
+	    f.m=mot*T;
+	    f.mu=T*psi;
 	  
+	  }
+	
+	  pair_mu(f,T);
+	
+	  exact.n*=pow(T,3.0);
+	  if (k==0) {
+	    exact.ed*=pow(T,4.0);
+	  } else {
+	    exact.ed=exact.ed*pow(T,4.0)-exact.n*f.m;
+	  }
+	  exact.pr*=pow(T,4.0);
+	  exact.en*=pow(T,3.0);
+	
+	  dev.n+=fabs((f.n-exact.n)/exact.n);
+	  dev.ed+=fabs((f.ed-exact.ed)/exact.ed);
+	  dev.pr+=fabs((f.pr-exact.pr)/exact.pr);
+	  dev.en+=fabs((f.en-exact.en)/exact.en);
+	
+	  cnt++;
+	  if (fabs((f.n-exact.n)/exact.n)>bad.n) {
+	    bad.n=fabs((f.n-exact.n)/exact.n);
+	    if (bad.n>ret) {
+	      mu_bad=f.mu;
+	      m_bad=f.m;
+	      T_bad=T;
+	      mot_bad=mot;
+	      psi_bad=psi;
+	      ret=bad.n;
+	    }
+	  }
+	  if (fabs((f.ed-exact.ed)/exact.ed)>bad.ed) {
+	    bad.ed=fabs((f.ed-exact.ed)/exact.ed);
+	    if (bad.ed>ret) {
+	      mu_bad=f.mu;
+	      m_bad=f.m;
+	      T_bad=T;
+	      mot_bad=mot;
+	      psi_bad=psi;
+	      ret=bad.ed;
+	    }
+	  }
+	  if (fabs((f.pr-exact.pr)/exact.pr)>bad.pr) {
+	    bad.pr=fabs((f.pr-exact.pr)/exact.pr);
+	    if (bad.pr>ret) {
+	      mu_bad=f.mu;
+	      m_bad=f.m;
+	      T_bad=T;
+	      mot_bad=mot;
+	      psi_bad=psi;
+	      ret=bad.pr;
+	    }
+	  }
+	  if (fabs((f.en-exact.en)/exact.en)>bad.en) {
+	    bad.en=fabs((f.en-exact.en)/exact.en);
+	    if (bad.en>ret) {
+	      mu_bad=f.mu;
+	      m_bad=f.m;
+	      T_bad=T;
+	      mot_bad=mot;
+	      psi_bad=psi;
+	      ret=bad.en;
+	    }
+	  }
+
+	  if (verbose>1) {
+	    cout.precision(5);
+	    cout << "T,m,mu,psi,mot: " << T << " " << f.m << " " << f.mu
+		 << " " << psi << " " << mot << endl;
+	    cout.precision(6);
+	    cout << "n,ed,pr,en: " << endl;
+	    cout << "approx: " << f.n << " " << f.ed << " " << f.pr << " " 
+		 << f.en << endl;
+	    cout << "exact : " << exact.n << " " << exact.ed << " " 
+		 << exact.pr << " " << exact.en << endl;
+	    cout << "bad   : " << bad.n << " " << bad.ed << " " 
+		 << bad.pr << " " << bad.en << endl;
+	    cout << endl;
+	    if (verbose>2) {
+	      char ch;
+	      cin >> ch;
+	    }
+	  }
+
+	  // End of loop over points in data file
 	}
-	
-	pair_mu(f,T);
-	
-	exact.n*=pow(T,3.0);
+	// End of temperature loop
+      }
+
+      dev.n/=cnt;
+      dev.ed/=cnt;
+      dev.pr/=cnt;
+      dev.en/=cnt;
+
+      if (verbose>0) {
 	if (k==0) {
-	  exact.ed*=pow(T,4.0);
+	  cout << "Function pair_mu(), include rest mass:" << endl;
 	} else {
-	  exact.ed=exact.ed*pow(T,4.0)-exact.n*f.m;
-	}
-	exact.pr*=pow(T,4.0);
-	exact.en*=pow(T,3.0);
-	
-	dev.n+=fabs((f.n-exact.n)/exact.n);
-	dev.ed+=fabs((f.ed-exact.ed)/exact.ed);
-	dev.pr+=fabs((f.pr-exact.pr)/exact.pr);
-	dev.en+=fabs((f.en-exact.en)/exact.en);
-	
-	cnt++;
-	if (fabs((f.n-exact.n)/exact.n)>bad.n) {
-	  bad.n=fabs((f.n-exact.n)/exact.n);
-	  if (bad.n>ret) {
-	    mu_bad=f.mu;
-	    m_bad=f.m;
-	    T_bad=T;
-	    mot_bad=mot;
-	    psi_bad=psi;
-	    ret=bad.n;
-	  }
-	}
-	if (fabs((f.ed-exact.ed)/exact.ed)>bad.ed) {
-	  bad.ed=fabs((f.ed-exact.ed)/exact.ed);
-	  if (bad.ed>ret) {
-	    mu_bad=f.mu;
-	    m_bad=f.m;
-	    T_bad=T;
-	    mot_bad=mot;
-	    psi_bad=psi;
-	    ret=bad.ed;
-	  }
-	}
-	if (fabs((f.pr-exact.pr)/exact.pr)>bad.pr) {
-	  bad.pr=fabs((f.pr-exact.pr)/exact.pr);
-	  if (bad.pr>ret) {
-	    mu_bad=f.mu;
-	    m_bad=f.m;
-	    T_bad=T;
-	    mot_bad=mot;
-	    psi_bad=psi;
-	    ret=bad.pr;
-	  }
-	}
-	if (fabs((f.en-exact.en)/exact.en)>bad.en) {
-	  bad.en=fabs((f.en-exact.en)/exact.en);
-	  if (bad.en>ret) {
-	    mu_bad=f.mu;
-	    m_bad=f.m;
-	    T_bad=T;
-	    mot_bad=mot;
-	    psi_bad=psi;
-	    ret=bad.en;
-	  }
+	  cout << "Function pair_mu(), without rest mass:" << endl;
 	}
 
-	if (verbose>1) {
-	  cout.precision(5);
-	  cout << "T,m,mu,psi,mot: " << T << " " << f.m << " " << f.mu
-	       << " " << psi << " " << mot << endl;
-	  cout.precision(6);
-	  cout << "n,ed,pr,en: " << endl;
-	  cout << "approx: " << f.n << " " << f.ed << " " << f.pr << " " 
-	       << f.en << endl;
-	  cout << "exact : " << exact.n << " " << exact.ed << " " 
-	       << exact.pr << " " << exact.en << endl;
-	  cout << "bad   : " << bad.n << " " << bad.ed << " " 
-	       << bad.pr << " " << bad.en << endl;
-	  cout << endl;
-	  if (verbose>2) {
-	    char ch;
-	    cin >> ch;
-	  }
+	cout << "Average performance: " << endl;
+	cout << "n: " << dev.n << " ed: " << dev.ed << " pr: " 
+	     << dev.pr << " en: " << dev.en << endl;
+	cout << "Worst case: " << endl;
+	cout << "n: " << bad.n << " ed: " << bad.ed << " pr: " 
+	     << bad.pr << " en: " << bad.en << endl;
+	cout << "mu: " << mu_bad << " m: " << m_bad << " T: " << T_bad 
+	     << " mot: " << mot_bad << "\n\tpsi: " << psi_bad << endl;
+	cout << endl;
+	if (verbose>2) {
+	  char ch;
+	  cin >> ch;
 	}
-
-	// End of loop over points in data file
       }
-      // End of temperature loop
+
+      // End of k loop
     }
 
-    dev.n/=cnt;
-    dev.ed/=cnt;
-    dev.pr/=cnt;
-    dev.en/=cnt;
+    // ----------------------------------------------------------------
+    // Fourth pass, test pair_density()
 
-    if (verbose>0) {
-      if (k==0) {
-	cout << "Function pair_mu(), include rest mass:" << endl;
-      } else {
-	cout << "Function pair_mu(), without rest mass:" << endl;
-      }
+    // k=0 is with rest mass, k=1 is without
+    for(size_t k=0;k<2;k++) {
 
-      cout << "Average performance: " << endl;
-      cout << "n: " << dev.n << " ed: " << dev.ed << " pr: " 
-	   << dev.pr << " en: " << dev.en << endl;
-      cout << "Worst case: " << endl;
-      cout << "n: " << bad.n << " ed: " << bad.ed << " pr: " 
-	   << bad.pr << " en: " << bad.en << endl;
-      cout << "mu: " << mu_bad << " m: " << m_bad << " T: " << T_bad 
-	   << " mot: " << mot_bad << "\n\tpsi: " << psi_bad << endl;
-      cout << endl;
-      if (verbose>2) {
-	char ch;
-	cin >> ch;
-      }
-    }
-
-    // End of k loop
-  }
-
-  // ----------------------------------------------------------------
-  // Fourth pass, test pair_density()
-
-  // k=0 is with rest mass, k=1 is without
-  for(size_t k=0;k<2;k++) {
-
-    // Initialize storage
-    dev.mu=0.0; dev.ed=0.0; dev.pr=0.0; dev.en=0.0;
-    bad.mu=0.0; bad.ed=0.0; bad.pr=0.0; bad.en=0.0;
+      // Initialize storage
+      dev.mu=0.0; dev.ed=0.0; dev.pr=0.0; dev.en=0.0;
+      bad.mu=0.0; bad.ed=0.0; bad.pr=0.0; bad.en=0.0;
     
-    // Temperature loop
-    for(double T=1.0e-2;T<=1.001e2;T*=1.0e2) {
+      // Temperature loop
+      for(double T=1.0e-2;T<=1.001e2;T*=1.0e2) {
       
-      // Loop over each point in the data file
-      for(size_t i=0;i<tab.get_nlines();i++) {
+	// Loop over each point in the data file
+	for(size_t i=0;i<tab.get_nlines();i++) {
 	
-	double mot=tab.get("mot",i);
-	double psi=tab.get("psi",i);
-	f.n=tab2.get("pair_n",i);	
-	exact.ed=tab2.get("pair_ed",i);
-	exact.pr=tab2.get("pair_pr",i);
-	exact.en=tab2.get("pair_en",i);
+	  double mot=tab.get("mot",i);
+	  double psi=tab.get("psi",i);
+	  f.n=tab2.get("pair_n",i);	
+	  exact.ed=tab2.get("pair_ed",i);
+	  exact.pr=tab2.get("pair_pr",i);
+	  exact.en=tab2.get("pair_en",i);
 
-	f.m=mot*T;
-	if (k==0) {
-	  f.inc_rest_mass=true;
-	  exact.mu=f.m+T*psi;
-	} else {
-	  f.inc_rest_mass=false;
-	  exact.mu=T*psi;
-	}
+	  f.m=mot*T;
+	  if (k==0) {
+	    f.inc_rest_mass=true;
+	    exact.mu=f.m+T*psi;
+	  } else {
+	    f.inc_rest_mass=false;
+	    exact.mu=T*psi;
+	  }
 
-	f.n*=pow(T,3.0);
-	if (k==0) {
-	  exact.ed*=pow(T,4.0);
-	} else {
-	  exact.ed=exact.ed*pow(T,4.0)-f.n*f.m;
-	}
-	exact.pr*=pow(T,4.0);
-	exact.en*=pow(T,3.0);
+	  f.n*=pow(T,3.0);
+	  if (k==0) {
+	    exact.ed*=pow(T,4.0);
+	  } else {
+	    exact.ed=exact.ed*pow(T,4.0)-f.n*f.m;
+	  }
+	  exact.pr*=pow(T,4.0);
+	  exact.en*=pow(T,3.0);
 
-	// Give it a guess for the chemical potential
-	f.mu=f.m;
+	  // Give it a guess for the chemical potential
+	  f.mu=f.m;
 
-	pair_density(f,T);
+	  pair_density(f,T);
 	
-	dev.mu+=fabs((f.mu-exact.mu)/exact.mu);
-	dev.ed+=fabs((f.ed-exact.ed)/exact.ed);
-	dev.pr+=fabs((f.pr-exact.pr)/exact.pr);
-	dev.en+=fabs((f.en-exact.en)/exact.en);
+	  dev.mu+=fabs((f.mu-exact.mu)/exact.mu);
+	  dev.ed+=fabs((f.ed-exact.ed)/exact.ed);
+	  dev.pr+=fabs((f.pr-exact.pr)/exact.pr);
+	  dev.en+=fabs((f.en-exact.en)/exact.en);
 	
-	cnt++;
-	if (fabs((f.mu-exact.mu)/exact.mu)>bad.mu) {
-	  bad.mu=fabs((f.mu-exact.mu)/exact.mu);
-	  if (bad.n>ret) {
-	    mu_bad=f.mu;
-	    m_bad=f.m;
-	    T_bad=T;
-	    mot_bad=mot;
-	    psi_bad=psi;
-	    ret=bad.n;
+	  cnt++;
+	  if (fabs((f.mu-exact.mu)/exact.mu)>bad.mu) {
+	    bad.mu=fabs((f.mu-exact.mu)/exact.mu);
+	    if (bad.n>ret) {
+	      mu_bad=f.mu;
+	      m_bad=f.m;
+	      T_bad=T;
+	      mot_bad=mot;
+	      psi_bad=psi;
+	      ret=bad.n;
+	    }
 	  }
-	}
-	if (fabs((f.ed-exact.ed)/exact.ed)>bad.ed) {
-	  bad.ed=fabs((f.ed-exact.ed)/exact.ed);
-	  if (bad.ed>ret) {
-	    mu_bad=f.mu;
-	    m_bad=f.m;
-	    T_bad=T;
-	    mot_bad=mot;
-	    psi_bad=psi;
-	    ret=bad.ed;
+	  if (fabs((f.ed-exact.ed)/exact.ed)>bad.ed) {
+	    bad.ed=fabs((f.ed-exact.ed)/exact.ed);
+	    if (bad.ed>ret) {
+	      mu_bad=f.mu;
+	      m_bad=f.m;
+	      T_bad=T;
+	      mot_bad=mot;
+	      psi_bad=psi;
+	      ret=bad.ed;
+	    }
 	  }
-	}
-	if (fabs((f.pr-exact.pr)/exact.pr)>bad.pr) {
-	  bad.pr=fabs((f.pr-exact.pr)/exact.pr);
-	  if (bad.pr>ret) {
-	    mu_bad=f.mu;
-	    m_bad=f.m;
-	    T_bad=T;
-	    mot_bad=mot;
-	    psi_bad=psi;
-	    ret=bad.pr;
+	  if (fabs((f.pr-exact.pr)/exact.pr)>bad.pr) {
+	    bad.pr=fabs((f.pr-exact.pr)/exact.pr);
+	    if (bad.pr>ret) {
+	      mu_bad=f.mu;
+	      m_bad=f.m;
+	      T_bad=T;
+	      mot_bad=mot;
+	      psi_bad=psi;
+	      ret=bad.pr;
+	    }
 	  }
-	}
-	if (fabs((f.en-exact.en)/exact.en)>bad.en) {
-	  bad.en=fabs((f.en-exact.en)/exact.en);
-	  if (bad.en>ret) {
-	    mu_bad=f.mu;
-	    m_bad=f.m;
-	    T_bad=T;
-	    mot_bad=mot;
-	    psi_bad=psi;
-	    ret=bad.en;
+	  if (fabs((f.en-exact.en)/exact.en)>bad.en) {
+	    bad.en=fabs((f.en-exact.en)/exact.en);
+	    if (bad.en>ret) {
+	      mu_bad=f.mu;
+	      m_bad=f.m;
+	      T_bad=T;
+	      mot_bad=mot;
+	      psi_bad=psi;
+	      ret=bad.en;
+	    }
 	  }
-	}
 
-	if (verbose>1) {
-	  cout.precision(5);
-	  cout << "T,m,n,psi,mot: " << T << " " << f.m << " " << f.n
-	       << " " << psi << " " << mot << endl;
-	  cout.precision(6);
-	  cout << "mu,ed,pr,en: " << endl;
-	  cout << "approx: " << f.mu << " " << f.ed << " " << f.pr << " " 
-	       << f.en << endl;
-	  cout << "exact : " << exact.mu << " " << exact.ed << " " 
-	       << exact.pr << " " << exact.en << endl;
-	  cout << "bad   : " << bad.mu << " " << bad.ed << " " 
-	       << bad.pr << " " << bad.en << endl;
-	  cout << endl;
-	  if (verbose>2) {
-	    char ch;
-	    cin >> ch;
+	  if (verbose>1) {
+	    cout.precision(5);
+	    cout << "T,m,n,psi,mot: " << T << " " << f.m << " " << f.n
+		 << " " << psi << " " << mot << endl;
+	    cout.precision(6);
+	    cout << "mu,ed,pr,en: " << endl;
+	    cout << "approx: " << f.mu << " " << f.ed << " " << f.pr << " " 
+		 << f.en << endl;
+	    cout << "exact : " << exact.mu << " " << exact.ed << " " 
+		 << exact.pr << " " << exact.en << endl;
+	    cout << "bad   : " << bad.mu << " " << bad.ed << " " 
+		 << bad.pr << " " << bad.en << endl;
+	    cout << endl;
+	    if (verbose>2) {
+	      char ch;
+	      cin >> ch;
+	    }
 	  }
-	}
 
-	// End of loop over points in data file
+	  // End of loop over points in data file
+	}
+	// End of temperature loop
       }
-      // End of temperature loop
+
+      dev.mu/=cnt;
+      dev.ed/=cnt;
+      dev.pr/=cnt;
+      dev.en/=cnt;
+
+      if (verbose>0) {
+	if (k==0) {
+	  cout << "Function pair_density(), include rest mass:" << endl;
+	} else {
+	  cout << "Function pair_density(), without rest mass:" << endl;
+	}
+
+	cout << "Average performance: " << endl;
+	cout << "mu: " << dev.mu << " ed: " << dev.ed << " pr: " 
+	     << dev.pr << " en: " << dev.en << endl;
+	cout << "Worst case: " << endl;
+	cout << "mu: " << bad.mu << " ed: " << bad.ed << " pr: " 
+	     << bad.pr << " en: " << bad.en << endl;
+	cout << "mu: " << mu_bad << " m: " << m_bad << " T: " << T_bad 
+	     << " mot: " << mot_bad << "\n\tpsi: " << psi_bad << endl;
+	cout << endl;
+	if (verbose>2) {
+	  char ch;
+	  cin >> ch;
+	}
+      }
+
+      // End of k loop
     }
 
-    dev.mu/=cnt;
-    dev.ed/=cnt;
-    dev.pr/=cnt;
-    dev.en/=cnt;
-
-    if (verbose>0) {
-      if (k==0) {
-	cout << "Function pair_density(), include rest mass:" << endl;
-      } else {
-	cout << "Function pair_density(), without rest mass:" << endl;
-      }
-
-      cout << "Average performance: " << endl;
-      cout << "mu: " << dev.mu << " ed: " << dev.ed << " pr: " 
-	   << dev.pr << " en: " << dev.en << endl;
-      cout << "Worst case: " << endl;
-      cout << "mu: " << bad.mu << " ed: " << bad.ed << " pr: " 
-	   << bad.pr << " en: " << bad.en << endl;
-      cout << "mu: " << mu_bad << " m: " << m_bad << " T: " << T_bad 
-	   << " mot: " << mot_bad << "\n\tpsi: " << psi_bad << endl;
-      cout << endl;
-      if (verbose>2) {
-	char ch;
-	cin >> ch;
-      }
-    }
-
-    // End of k loop
-  }
-
-  // End of 'if (test_pair)'
+    // End of 'if (test_pair)'
   }
 
   // ----------------------------------------------------------------
@@ -1109,7 +1109,7 @@ bool fermion_eval_thermo::calc_mu_deg(fermion &f, double temper,
     pterm1=x2*sx*(29568.0+15840.0*x+1540.0*x2-105.0*x3)/55440.0/sqrt(2.0);
   }
   double pterm4=-31.0*pow(pi*tt,6.0)/1008.0*(1.0+x)*
-    sx*s2x/pow(x*(2.0+x),4.0);
+	     sx*s2x/pow(x*(2.0+x),4.0);
 
   // Check if we're going to succeed
   if (fabs(pterm4)/fabs(pterm1)>prec) {
