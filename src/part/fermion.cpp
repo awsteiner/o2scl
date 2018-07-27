@@ -265,13 +265,7 @@ double fermion_eval_thermo::calibrate
   // ----------------------------------------------------------------
   // Will return to these original values afterwards
 
-  part orig;
-  orig.mu=f.mu;
-  orig.m=f.m;
-  orig.ms=f.ms;
-  orig.g=f.g;
-  orig.non_interacting=f.non_interacting;
-  orig.inc_rest_mass=f.inc_rest_mass;
+  fermion orig=f;
 
   // ----------------------------------------------------------------
   // Read data file
@@ -1049,12 +1043,7 @@ double fermion_eval_thermo::calibrate
   // ----------------------------------------------------------------
   // Return to the original values 
 
-  f.mu=orig.mu;
-  f.m=orig.m;
-  f.ms=orig.ms;
-  f.g=orig.g;
-  f.non_interacting=orig.non_interacting;
-  f.inc_rest_mass=orig.inc_rest_mass;
+  f=orig;
 
   cout << "Calibration result: " << ret << "\n" << endl;
   
