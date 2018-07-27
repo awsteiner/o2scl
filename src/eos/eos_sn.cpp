@@ -287,23 +287,26 @@ void eos_sn_base::compute_eg_point(double nB, double Ye, double T,
   photon.massless_calc(T/hc_mev_fm);
   electron.n=nB*Ye;
   
-  electron.mu=electron.m;
-  
   // AWS: 11/1/16: I had problems with the electron calculation
   // not working, presumably because of a bad initial guess for the
   // chemical potential. It would be better if the initial guess
   // code is implemented in the fermion_rel class.
+
+  // AWS: 07/25/18: I removed this because the fermion_rel class
+  // now has better convergence properties
   if (false) {
     
     double deg=electron.n/pow(T/hc_mev_fm,3.0);
-    if (deg>100.0) {
-      std::cout << "to cd " << electron.n << " " << T << std::endl;
+    if (deg>10.0) {
       // If it's very degenerate, start with a guess
       // without positrons
       relf.calc_density(electron,T/hc_mev_fm);
-      std::cout << "done in cd." << std::endl;
     }
   }
+
+  // Provide a consistent initial guess for the electron
+  // chemical potential
+  electron.mu=electron.m;
   
   relf.pair_density(electron,T/hc_mev_fm);
   
