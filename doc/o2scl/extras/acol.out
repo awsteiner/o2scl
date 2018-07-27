@@ -122,7 +122,7 @@ acol: Done with system command (returned 0).
 # Files in the internal format can be read with 'read'
 # -----------------------------------------------------------------
 > read test.o2
-No name specified, reading first table object.
+No name specified, found first table object named 'acol'.
 > output
  x             s             c             c2           
  0.000000e+00  0.000000e+00  1.000000e+00  9.999995e-01 

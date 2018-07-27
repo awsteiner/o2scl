@@ -6,7 +6,7 @@
     articles or <tt>worldcat.org</tt> for books.
 
     \anchor Bader83 Bader83:
-    <a href="https://dx.doi.org/10.1007/BF01418331">
+    <a href="https://doi.org/10.1007/BF01418331">
     G. Bader and P. Deuflhard</a>,
     Numer. Math.  \b 41 (1983) 373.
 
@@ -19,7 +19,7 @@
     \endcomment
 
     \anchor Birgin00 Birgin00:
-    <a href="https://dx.doi.org/10.1137/S1052623497330963">
+    <a href="https://doi.org/10.1137/S1052623497330963">
     E. G. Birgin, J. M. Martinez, and M. Raydan</a>,
     SIAM J. Optim \b 10 (2000) 1196.
     \comment
@@ -27,7 +27,7 @@
     \endcomment
 
     \anchor Brest06 Brest06:
-    <a href="https://dx.doi.org/10.1109/TEVC.2006.872133">
+    <a href="https://doi.org/10.1109/TEVC.2006.872133">
     J. Brest, S. Greiner, B. Boskovic, M. Mernik, and V. Zumer</a>,
     IEEE Trans. on Evol. Comp. \b 10 (2006) 646.
     \comment
@@ -36,7 +36,7 @@
     \endcomment
 
     \anchor Broyden65 Broyden65:
-    <a href="https://dx.doi.org/10.1090/S0025-5718-1965-0198670-6">
+    <a href="https://doi.org/10.1090/S0025-5718-1965-0198670-6">
     C. G. Broyden</a>,
     Math. Comp. \b 19 (1965) 577.
     \comment
@@ -44,12 +44,12 @@
     \endcomment
 
     \anchor Bus75 Bus75:
-    <a href="https://dx.doi.org/10.1145/355656.355659">
+    <a href="https://doi.org/10.1145/355656.355659">
     J. C. P. Bus and T. J. Dekker</a>,
     ACM Trans. Math. Soft. \b 1 (1975) 330.
 
     \anchor Cash90 Cash90:
-    <a href="https://dx.doi.org/10.1145/79505.79507">
+    <a href="https://doi.org/10.1145/79505.79507">
     J. R. Cash and A. H. Karp</a>,
     ACM Trans. Math. Soft.  \b 16 (1990) 201.
 
@@ -72,7 +72,7 @@
     (1987) John Wiley & Sons, Chichester, p. 39.
 
     \anchor Freedman81 Freedman81:
-    <a href="https://dx.doi.org/10.1007/BF01025868">
+    <a href="https://doi.org/10.1007/BF01025868">
     D. Freedman and P. Diaconis</a>,
     Probability Theory and Related Fields \b 57 (1981) 453.
     \comment
@@ -96,7 +96,7 @@
     (1980) Argonne Natl. Lab.
 
     \anchor Genz80 Genz80:
-    <a href="https://dx.doi.org/10.1016/0771-050X(80)90039-X">
+    <a href="https://doi.org/10.1016/0771-050X(80)90039-X">
     A. C. Genz and A. A. Malik</a>,
     J. Comp. Appl. Math. \b 6 (1980) 295.
     \comment
@@ -105,7 +105,7 @@
     \endcomment
 
     \anchor Genz83 Genz83:
-    <a href="https://dx.doi.org/10.1137/0720038">
+    <a href="https://doi.org/10.1137/0720038">
     A. C. Genz and A. A. Malik</a>,
     SIAM J. Numer. Anal. \b 20 (1983) 580.
     \comment
@@ -139,7 +139,7 @@
     (1983) Teubner, Stuttgart, p. 84.
 
     \anchor Lepage78 Lepage78:
-    <a href="https://dx.doi.org/10.1016/0021-9991(78)90004-9">
+    <a href="https://doi.org/10.1016/0021-9991(78)90004-9">
     G. P. Lepage</a>,
     J. Comp. Phys. \b 27 (1978) 192.
 
@@ -150,27 +150,27 @@
     (1981) North Holland, New York.
 
     \anchor Longman58 Longman58:
-    <a href="https://dx.doi.org/10.2307/2002022">
+    <a href="https://doi.org/10.2307/2002022">
     I. M. Longman</a>,
     Math. Tables Other Aids Comput. \b 12 (1958) 205.
 
     \anchor Luzum11 Luzum11:
-    <a href="https://dx.doi.org/10.1007/s10569-011-9352-4">
+    <a href="https://doi.org/10.1007/s10569-011-9352-4">
     B. Luzum and (none) et al.</a>,
     Celest. Mech. and Dyn. Astron. \b 110 (2011) 293.
 
     \anchor Mohr12 Mohr12:
-    <a href="https://dx.doi.org/10.1103/RevModPhys.84.1527">
+    <a href="https://doi.org/10.1103/RevModPhys.84.1527">
     P. J. Mohr, B. N. Taylor, and D. B. Newell</a>,
     Rev. Mod. Phys. \b 84 (2012) 1527.
 
     \anchor More79 More79:
-    <a href="https://dx.doi.org/10.1145/355815.355820">
+    <a href="https://doi.org/10.1145/355815.355820">
     M. Mor\'{e} J. and Cosnard</a>,
     ACM Trans. Math. Software \b 5 (1979) 64.
 
     \anchor More80 More80:
-    <a href="https://dx.doi.org/10.1145/355887.355898">
+    <a href="https://doi.org/10.1145/355887.355898">
     J. Mor\'{e} and M. Cosnard</a>,
     ACM Trans. Math. Software \b 6 (1980) 240.
 
@@ -194,12 +194,12 @@
     \endcomment
 
     \anchor Prince81 Prince81:
-    <a href="https://dx.doi.org/10.1016/0771-050X(81)90010-3">
+    <a href="https://doi.org/10.1016/0771-050X(81)90010-3">
     P. J. Prince and J. R. Dormand</a>,
     J. Comp. Appl. Math. \b 7 (1981) 67.
 
     \anchor Rutishauser63 Rutishauser63:
-    <a href="https://dx.doi.org/10.1007/BF01385877">
+    <a href="https://doi.org/10.1007/BF01385877">
     H. Rutishauser</a>,
     Numer. Math. \b 5 (1963) 48.
     \comment
@@ -208,7 +208,7 @@
     \endcomment
 
     \anchor Scott79 Scott79:
-    <a href="https://dx.doi.org/10.1093/biomet/66.3.605">
+    <a href="https://doi.org/10.1093/biomet/66.3.605">
     D. W. Scott</a>,
     Biometrika \b 66 (1979) 605.
     \comment
@@ -221,7 +221,7 @@
     Astron. Astrophys. \b 239 (1990) 443.
 
     \anchor Storn97 Storn97:
-    <a href="https://dx.doi.org/10.1023/A:1008202821328">
+    <a href="https://doi.org/10.1023/A:1008202821328">
     R. Storn and K. Price</a>,
     Jour. of Global Optim. \b 11 (1997) 341.
     \comment
@@ -238,7 +238,7 @@
                   https://www.worldcat.org/isbn/9780486633176).
 
     \anchor Wynn56 Wynn56:
-    <a href="https://dx.doi.org/10.2307/2002183">
+    <a href="https://doi.org/10.2307/2002183">
     P. Wynn</a>,
     Math. Tables Other Aids \b 10 (1956) 91.
     \comment

@@ -43,13 +43,41 @@
     o2scl::part::mu or \ref o2scl::part::nu including the rest mass.
     Note that it is assumed that \ref o2scl::part::m contains the rest
     mass even if the particle is interacting and an effective mass is
-    stored in \ref o2scl::part::ms .
+    stored in \ref o2scl::part::ms . 
     
     When \ref o2scl::part::inc_rest_mass is true, antiparticles are
     implemented by choosing the antiparticle chemical potential to be
-    \f$ - \mu \f$, and when \ref o2scl::part::inc_rest_mass is false,
-    antiparticles are implemented by choosing the chemical potential
-    of the antiparticles to be \f$ - \mu - 2 m \f$.
+    \f$ - \mu \f$. When \ref o2scl::part::inc_rest_mass is false,
+    there is an ambiguity in the relative definitions of the rest mass
+    contribution for the antiparticles and the combination of both
+    particles and antiparticles. Define energy density for particles
+    including the rest mass contribution as \f$ \varepsilon_+ \f$, and
+    the energy density without the rest mass contribution as \f$
+    \tilde{\varepsilon}_{+} = \varepsilon_{+} - n_{+} m \f$ .
+    Similarly, for antiparticles, we have \f$ \tilde{\varepsilon}_- =
+    \varepsilon_- - n_- m \f$. The total energy density including the
+    rest mass contribution is then \f$ \varepsilon = \varepsilon_{+} +
+    \varepsilon_- \f$ and without the rest mass contribution \f$
+    \tilde{\varepsilon} \equiv \varepsilon - (n_{+}-n_-) m \f$. Then,
+    \f{eqnarray}
+    \tilde{\varepsilon} & = & 
+    \varepsilon_+ - n_{+} m + \varepsilon_- + n_- m \nonumber \\
+    & = & \varepsilon_+ - n_{+} m + \varepsilon_- - n_- m + 
+    2 n_- m \nonumber \\
+    & = & \tilde{\varepsilon}_+ + \tilde{\varepsilon}_- + 2 n_- m 
+    \nonumber
+    \f}
+    Similarly, for the chemical potentials, we have 
+    \f[
+    \tilde{\mu}_+ \equiv \frac{\partial \tilde{\varepsilon}_+}{n_+} = 
+    \mu_+ - m \quad \mathrm{and} \quad 
+    \tilde{\mu}_- \equiv \frac{\partial \tilde{\varepsilon}_-}{n_-} = 
+    \mu_- - m 
+    \f]
+    thus \f$ \tilde{\mu}_- = - \tilde{\mu}_+ - 2 m \f$ . This
+    bookkeeping is handled by \ref o2scl::part::anti(), the \ref
+    o2scl::fermion_eval_thermo::pair_mu(), and the \ref
+    o2scl::fermion_eval_thermo::pair_density(), functions.
 
     The thermodynamic identity used to compute the pressure for
     interacting particles is
