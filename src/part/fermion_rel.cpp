@@ -742,9 +742,13 @@ void fermion_rel::pair_mu(fermion &f, double temper) {
   calc_mu(antip,temper);
 
   // Add up thermodynamic quantities
+  if (f.inc_rest_mass) {
+    f.ed+=antip.ed;
+  } else {
+    f.ed=f.ed+antip.ed+2.0*antip.n*f.m;
+  }
   f.n-=antip.n;
   f.pr+=antip.pr;
-  f.ed+=antip.ed;
   f.en+=antip.en;
 
   // Add up uncertainties
@@ -766,7 +770,9 @@ int fermion_rel::pair_density(fermion &f, double temper) {
     return success;
   }
 
+  // Storage the input density
   double density_temp=f.n;
+  
   if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
 
   double initial_guess=f.nu;
