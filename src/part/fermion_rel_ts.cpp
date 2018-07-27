@@ -776,7 +776,7 @@ int main(void) {
   rf.density_root->tol_rel=1.0e-10;
 
   double v2=rf.calibrate(e,1,0,"../../data/o2scl/fermion_cal2.o2");
-  t.test_rel(v2,0.0,1.0e-10,"calibrate 2");
+  t.test_rel(v2,0.0,4.0e-10,"calibrate 2");
 
   // -----------------------------------------------------------------
   // Downcast the shared_ptr to the default integration type 

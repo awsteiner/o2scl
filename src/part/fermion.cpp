@@ -838,8 +838,7 @@ double fermion_eval_thermo::calibrate
 	    }
 	  }
 
-	  if (verbose>1 || (fabs(T-1.0)<1.0e-6 && fabs(f.m-1.0)<1.0e-6 &&
-			    fabs(mot-1.0)<1.0e-6) && fabs(psi-1.0)<1.0e-6) {
+	  if (verbose>1) {
 	    cout.precision(5);
 	    cout << "T,m,mu,psi,mot: " << T << " " << f.m << " " << f.mu
 		 << " " << psi << " " << mot << endl;
