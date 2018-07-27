@@ -1014,8 +1014,13 @@ double fermion_rel::pair_fun(double x, fermion &f, double T, bool log_mode) {
   // -----------------------------------------------------------------
   // Compute the contribution from the antiparticles
 
-  f.nu=-T*x;
-  if (log_mode) f.nu=-T*exp(x);
+  if (f.inc_rest_mass) {
+    f.nu=-T*x;
+    if (log_mode) f.nu=-T*exp(x);
+  } else {
+    f.nu=-T*x-2.0*f.m;
+    if (log_mode) f.nu=-T*exp(x)-2.0*f.m;
+  }
   if (f.non_interacting) f.mu=f.nu;
 
   bool antiparticles_done=false;
@@ -1025,10 +1030,10 @@ double fermion_rel::pair_fun(double x, fermion &f, double T, bool log_mode) {
   if (f.inc_rest_mass) {
     psi=(f.nu-f.ms)/T;
   } else {
-    psi=(f.nu+(f.m-f.ms))/T;
+    psi=(f.nu+f.m-f.ms)/T;
   }
   if (psi<deg_limit) deg=false;
-  
+
   // Try the non-degenerate expansion if psi is small enough
   if (use_expansions && psi<min_psi) {
     if (calc_mu_ndeg(f,T,1.0e-8)) {
