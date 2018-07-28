@@ -320,7 +320,7 @@ double fermion_eval_thermo::calibrate
 
   // k=0,2 are with rest mass, k=1,3 are without
   // k=0,1 are non-interacting, k=2,3 are interacting
-  for(size_t k=0;k<2;k++) {
+  for(size_t k=0;k<4;k++) {
 
     // Initialize storage
     dev.n=0.0; dev.ed=0.0; dev.pr=0.0; dev.en=0.0;
@@ -346,8 +346,8 @@ double fermion_eval_thermo::calibrate
 	  if (k>=2) {
 	    f.non_interacting=false;
 	    f.ms=mot*T;
-	    f.nu=f.m+T*psi;
 	    f.m=f.ms*1.5;
+	    f.nu=f.ms+T*psi;
 	    f.mu=0.0;
 	  } else {
 	    f.non_interacting=true;
@@ -528,7 +528,8 @@ double fermion_eval_thermo::calibrate
   // ----------------------------------------------------------------
   // Second pass, test calc_density()
 
-  // k=0 is with rest mass, k=1 is without
+  // k=0,2 are with rest mass, k=1,3 are without
+  // k=0,1 are non-interacting, k=2,3 are interacting
   for(size_t k=0;k<2;k++) {
 
     // Initialize storage
@@ -734,7 +735,8 @@ double fermion_eval_thermo::calibrate
     // ----------------------------------------------------------------
     // Third pass, test pair_mu() 
 
-    // k=0 is with rest mass, k=1 is without
+    // k=0,2 are with rest mass, k=1,3 are without
+    // k=0,1 are non-interacting, k=2,3 are interacting
     for(size_t k=0;k<2;k++) {
 
       // Initialize storage
@@ -754,19 +756,41 @@ double fermion_eval_thermo::calibrate
 	  exact.pr=tab2.get("pair_pr",i);
 	  exact.en=tab2.get("pair_en",i);
       
-	  if (k==0) {
-	  
+	  if (k%2==0) {
+
 	    f.inc_rest_mass=true;
-          
-	    f.m=mot*T;
-	    f.mu=f.m+T*psi;
+
+	    if (k>=2) {
+	      f.non_interacting=false;
+	      f.ms=mot*T;
+	      f.m=f.ms*1.5;
+	      f.nu=f.m+T*psi;
+	      f.mu=0.0;
+	    } else {
+	      f.non_interacting=true;
+	      f.m=mot*T;
+	      f.mu=f.m+T*psi;
+	      f.nu=0.0;
+	      f.ms=0.0;
+	    }
 	  
 	  } else {
 	  
 	    f.inc_rest_mass=false;
 	  
-	    f.m=mot*T;
-	    f.mu=T*psi;
+	    if (k>=2) {
+	      f.non_interacting=false;
+	      f.ms=mot*T;
+	      f.m=f.ms*1.5;
+	      f.nu=f.ms+T*psi-f.m;
+	      f.mu=0.0;
+	    } else {
+	      f.non_interacting=true;
+	      f.m=mot*T;
+	      f.mu=T*psi;
+	      f.nu=0.0;
+	      f.ms=0.0;
+	    }
 	  
 	  }
 	
@@ -889,7 +913,8 @@ double fermion_eval_thermo::calibrate
     // ----------------------------------------------------------------
     // Fourth pass, test pair_density()
 
-    // k=0 is with rest mass, k=1 is without
+    // k=0,2 are with rest mass, k=1,3 are without
+    // k=0,1 are non-interacting, k=2,3 are interacting
     for(size_t k=0;k<2;k++) {
 
       // Initialize storage
@@ -908,14 +933,34 @@ double fermion_eval_thermo::calibrate
 	  exact.ed=tab2.get("pair_ed",i);
 	  exact.pr=tab2.get("pair_pr",i);
 	  exact.en=tab2.get("pair_en",i);
-
-	  f.m=mot*T;
-	  if (k==0) {
+	  
+	  if (k>=2) {
+	    f.non_interacting=false;
+	    f.ms=mot*T;
+	    f.m=f.ms*1.5;
+	  } else {
+	    f.non_interacting=true;
+	    f.m=mot*T;
+	    f.ms=0.0;
+	  }
+	  if (k%2==0) {
 	    f.inc_rest_mass=true;
-	    exact.mu=f.m+T*psi;
+	    if (k>=2) {
+	      exact.nu=f.m+T*psi;
+	      exact.mu=0.0;
+	    } else {
+	      exact.mu=f.m+T*psi;
+	      exact.nu=0.0;
+	    }
 	  } else {
 	    f.inc_rest_mass=false;
-	    exact.mu=T*psi;
+	    if (k>=2) {
+	      exact.nu=T*psi-f.m+f.ms;
+	      exact.mu=0.0;
+	    } else {
+	      exact.mu=T*psi;
+	      exact.nu=0.0;
+	    }
 	  }
 
 	  f.n*=pow(T,3.0);
