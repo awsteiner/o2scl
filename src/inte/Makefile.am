@@ -5,17 +5,19 @@
 INTE_SRCS = inte_kronrod_gsl.cpp 
 
 HEADER_VAR = inte.h inte_multi.h inte_gen.h inte_qng_gsl.h inte_qag_gsl.h \
-	inte_qags_gsl.h inte_qagi_gsl.h inte_qagil_gsl.h inte_qagiu_gsl.h \
-	inte_gsl.h inte_gauss56_cern.h inte_gauss_cern.h \
 	inte_cauchy_cern.h inte_adapt_cern.h \
+	inte_gsl.h inte_gauss56_cern.h inte_gauss_cern.h \
 	inte_kronrod_gsl.h inte_qawc_gsl.h \
-	inte_qawo_gsl.h inte_qawf_gsl.h inte_qaws_gsl.h inte_singular_gsl.h
+	inte_ld.h inte_ld_gauss56_cern.h inte_ld_gauss_cern.h \
+	inte_qags_gsl.h inte_qagi_gsl.h inte_qagil_gsl.h inte_qagiu_gsl.h \
+	inte_qawo_gsl.h inte_qawf_gsl.h inte_qaws_gsl.h inte_singular_gsl.h 
 
 TEST_VAR = inte_adapt_cern.scr inte_cauchy_cern.scr inte_gauss_cern.scr \
 	inte_gauss56_cern.scr inte_qawc_gsl.scr \
 	inte_qng_gsl.scr inte_qag_gsl.scr inte_qags_gsl.scr \
 	inte_qagi_gsl.scr inte_qagil_gsl.scr inte_qagiu_gsl.scr \
-	inte_qawo_gsl.scr inte_qawf_gsl.scr inte_qaws_gsl.scr
+	inte_qawo_gsl.scr inte_qawf_gsl.scr inte_qaws_gsl.scr \
+	inte_ld_gauss_cern.scr
 
 # ------------------------------------------------------------
 # Includes
@@ -86,7 +88,7 @@ check_PROGRAMS = inte_adapt_cern_ts inte_cauchy_cern_ts inte_gauss_cern_ts \
 	inte_qng_gsl_ts inte_qag_gsl_ts inte_qags_gsl_ts \
 	inte_qagi_gsl_ts inte_qagil_gsl_ts inte_qagiu_gsl_ts \
 	inte_qawo_gsl_ts inte_qawf_gsl_ts inte_gauss56_cern_ts \
-	inte_qaws_gsl_ts inte_qawc_gsl_ts 
+	inte_qaws_gsl_ts inte_qawc_gsl_ts inte_ld_gauss_cern_ts
 
 check_SCRIPTS = o2scl-test
 
@@ -99,6 +101,7 @@ endif
 inte_adapt_cern_ts_LDADD = $(VCHECK_LIBS)
 inte_cauchy_cern_ts_LDADD = $(VCHECK_LIBS)
 inte_gauss_cern_ts_LDADD = $(VCHECK_LIBS)
+inte_ld_gauss_cern_ts_LDADD = $(VCHECK_LIBS)
 inte_qng_gsl_ts_LDADD = $(VCHECK_LIBS)
 inte_qag_gsl_ts_LDADD = $(VCHECK_LIBS)
 inte_qags_gsl_ts_LDADD = $(VCHECK_LIBS)
@@ -117,6 +120,8 @@ inte_cauchy_cern.scr: inte_cauchy_cern_ts$(EXEEXT)
 	./inte_cauchy_cern_ts$(EXEEXT) > inte_cauchy_cern.scr
 inte_gauss_cern.scr: inte_gauss_cern_ts$(EXEEXT) 
 	./inte_gauss_cern_ts$(EXEEXT) > inte_gauss_cern.scr
+inte_ld_gauss_cern.scr: inte_ld_gauss_cern_ts$(EXEEXT) 
+	./inte_ld_gauss_cern_ts$(EXEEXT) > inte_ld_gauss_cern.scr
 inte_qng_gsl.scr: inte_qng_gsl_ts$(EXEEXT) 
 	./inte_qng_gsl_ts$(EXEEXT) > inte_qng_gsl.scr
 inte_qag_gsl.scr: inte_qag_gsl_ts$(EXEEXT) 
@@ -143,6 +148,7 @@ inte_gauss56_cern.scr: inte_gauss56_cern_ts$(EXEEXT)
 inte_adapt_cern_ts_SOURCES = inte_adapt_cern_ts.cpp
 inte_cauchy_cern_ts_SOURCES = inte_cauchy_cern_ts.cpp
 inte_gauss_cern_ts_SOURCES = inte_gauss_cern_ts.cpp
+inte_ld_gauss_cern_ts_SOURCES = inte_ld_gauss_cern_ts.cpp
 inte_qng_gsl_ts_SOURCES = inte_qng_gsl_ts.cpp
 inte_qag_gsl_ts_SOURCES = inte_qag_gsl_ts.cpp
 inte_qags_gsl_ts_SOURCES = inte_qags_gsl_ts.cpp

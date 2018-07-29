@@ -44,6 +44,9 @@ namespace o2scl {
   /// One-dimensional function typedef
   typedef std::function<double(double)> funct;
 
+  /// One-dimensional function typedef
+  typedef std::function<long double(long double)> funct_ld;
+
   /** \brief One-dimensional function from a string
       
       For example,
