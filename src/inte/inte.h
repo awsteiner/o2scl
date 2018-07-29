@@ -41,7 +41,7 @@ namespace o2scl {
       classes report the number of function evaluations used
       in addition to the number of iterations which were taken
   */
-  template<class func_t=funct> class inte {
+  template<class func_t=funct, class fp_t=double> class inte {
     
   public:
   
@@ -65,12 +65,12 @@ namespace o2scl {
   /** \brief The maximum relative uncertainty 
       in the value of the integral (default \f$ 10^{-8} \f$)
   */
-  double tol_rel;
+  fp_t tol_rel;
     
   /** \brief The maximum absolute uncertainty 
       in the value of the integral (default \f$ 10^{-8} \f$)
   */
-  double tol_abs;
+  fp_t tol_abs;
   
   /** \brief If true, call the error handler if the routine does not 
       converge or reach the desired tolerance (default true)
@@ -82,8 +82,8 @@ namespace o2scl {
   
   /** \brief Integrate function \c func from \c a to \c b.
    */
-  virtual double integ(func_t &func, double a, double b) {
-    double res;
+  virtual fp_t integ(func_t &func, fp_t a, fp_t b) {
+    fp_t res;
     int ret=integ_err(func,a,b,res,this->interror);
     if (ret!=0) {
       O2SCL_ERR2("Integration failed in inte::integ(), ",
@@ -95,8 +95,8 @@ namespace o2scl {
   /** \brief Integrate function \c func from \c a to \c b and place
       the result in \c res and the error in \c err
   */
-  virtual int integ_err(func_t &func, double a, double b, 
-			double &res, double &err)=0;
+  virtual int integ_err(func_t &func, fp_t a, fp_t b, 
+			fp_t &res, fp_t &err)=0;
   
   /** \brief Return the numerically estimated error in the result from
       the last call to integ()
@@ -104,7 +104,7 @@ namespace o2scl {
       This will quietly return zero if no integrations have been
       performed or if the integrator does not estimate the error.
   */
-  double get_error() { return interror; }
+  fp_t get_error() { return interror; }
   
   /// Return string denoting type ("inte")
   virtual const char *type() { return "inte"; }
@@ -114,7 +114,7 @@ namespace o2scl {
   protected:
   
   /// The uncertainty for the last integration computation
-  double interror;
+  fp_t interror;
   
 #endif
   

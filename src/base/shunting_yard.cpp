@@ -364,7 +364,7 @@ double calculator::calculate(TokenQueue_t rpn,
       } else if (!str.compare("exp")) {
 	evaluation.push(exp(right));
       } else if (!str.compare("abs")) {
-	evaluation.push(fabs(right));
+	evaluation.push(std::abs(right));
       } else if (!str.compare("log10")) {
 	evaluation.push(log10(right));
       } else if (!str.compare("asin")) {

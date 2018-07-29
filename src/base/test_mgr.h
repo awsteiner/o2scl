@@ -139,7 +139,7 @@ namespace o2scl {
 	ret=test_abs(result,expected,rel_error,description);
 	return ret;
       } else {
-	double obs_err=fabs(expected-result)/fabs(expected);
+	double obs_err=std::abs(expected-result)/std::abs(expected);
 	ret=(obs_err<rel_error);
 	if (ret) {
 	  description=dtos(result)+" vs. "+dtos(expected)+
@@ -172,14 +172,14 @@ namespace o2scl {
 	description=dtos(result)+" vs. "+ dtos(expected)+
 	  "\n "+description;
       } else {
-	ret=(fabs(expected-result)<abs_error);
+	ret=(std::abs(expected-result)<abs_error);
 	if (ret) {
 	  description=dtos(result)+" vs. "+ dtos(expected)+" : "
-	    +dtos(fabs(expected-result))+" < "+dtos(abs_error)+
+	    +dtos(std::abs(expected-result))+" < "+dtos(abs_error)+
 	    "\n "+description;
 	} else {
 	  description=dtos(result)+" vs. "+ dtos(expected)+" : "
-	    +dtos(fabs(expected-result))+" > "+dtos(abs_error)+
+	    +dtos(std::abs(expected-result))+" > "+dtos(abs_error)+
 	    "\n "+description;
 	}
       }
@@ -241,14 +241,14 @@ namespace o2scl {
 	  ret=(ret && (std::isinf(expected[i])==std::isinf(result[i])));
 	} else if (expected[i]==0.0) {
 	  ret=(ret && test_abs(result[i],expected[i],rel_error,description));
-	  if (fabs(result[i]-expected[i])>max) {
-	    max=fabs(result[i]-expected[i]);
+	  if (std::abs(result[i]-expected[i])>max) {
+	    max=std::abs(result[i]-expected[i]);
 	  }
 	} else {
-	  ret=(ret && ((fabs(expected[i]-result[i]))/
-		       fabs(expected[i])<rel_error));
-	  if (fabs(expected[i]-result[i])/fabs(expected[i])>max) {
-	    max=fabs(expected[i]-result[i])/fabs(expected[i]);
+	  ret=(ret && ((std::abs(expected[i]-result[i]))/
+		       std::abs(expected[i])<rel_error));
+	  if (std::abs(expected[i]-result[i])/std::abs(expected[i])>max) {
+	    max=std::abs(expected[i]-result[i])/std::abs(expected[i]);
 	  }
 	}
       }
@@ -276,7 +276,7 @@ namespace o2scl {
 	} else if (std::isinf(expected[i])) {
 	  ret=(ret && (std::isinf(expected[i])==std::isinf(result[i])));
 	} else {
-	  ret=(ret && (fabs(expected[i]-result[i])<abs_error));
+	  ret=(ret && (std::abs(expected[i]-result[i])<abs_error));
 	}
       }
   
@@ -356,14 +356,14 @@ namespace o2scl {
 	  } else if (expected(i,j)==0.0) {
 	    ret=(ret && test_abs(result(i,j),expected(i,j),rel_error,
 				 description));
-	    if (fabs(result(i,j)-expected(i,j))>max) {
-	      max=fabs(result(i,j)-expected(i,j));
+	    if (std::abs(result(i,j)-expected(i,j))>max) {
+	      max=std::abs(result(i,j)-expected(i,j));
 	    }
 	  } else {
-	    ret=(ret && ((fabs(expected(i,j)-result(i,j)))/
-			 fabs(expected(i,j))<rel_error));
-	    if (fabs(expected(i,j)-result(i,j))/fabs(expected(i,j))>max) {
-	      max=fabs(expected(i,j)-result(i,j))/fabs(expected(i,j));
+	    ret=(ret && ((std::abs(expected(i,j)-result(i,j)))/
+			 std::abs(expected(i,j))<rel_error));
+	    if (std::abs(expected(i,j)-result(i,j))/std::abs(expected(i,j))>max) {
+	      max=std::abs(expected(i,j)-result(i,j))/std::abs(expected(i,j));
 	    }
 	  }
 	}
@@ -401,14 +401,16 @@ namespace o2scl {
 	  } else if (expected(i,j)<zero_tol) {
 	    ret=(ret && test_abs(result(i,j),expected(i,j),error,
 				 description));
-	    if (fabs(result(i,j)-expected(i,j))>max) {
-	      max=fabs(result(i,j)-expected(i,j));
+	    if (std::abs(result(i,j)-expected(i,j))>max) {
+	      max=std::abs(result(i,j)-expected(i,j));
 	    }
 	  } else {
-	    ret=(ret && ((fabs(expected(i,j)-result(i,j)))/
-			 fabs(expected(i,j))<error));
-	    if (fabs(expected(i,j)-result(i,j))/fabs(expected(i,j))>max) {
-	      max=fabs(expected(i,j)-result(i,j))/fabs(expected(i,j));
+	    ret=(ret && ((std::abs(expected(i,j)-result(i,j)))/
+			 std::abs(expected(i,j))<error));
+	    if (std::abs(expected(i,j)-result(i,j))/
+		std::abs(expected(i,j))>max) {
+	      max=std::abs(expected(i,j)-result(i,j))/
+		std::abs(expected(i,j));
 	    }
 	  }
 	}
@@ -445,13 +447,13 @@ namespace o2scl {
 	  } else if (expected(i,j)==0.0) {
 	    ret=(ret && test_abs(result(i,j),expected(i,j),abs_error,
 				 description));
-	    if (fabs(result(i,j)-expected(i,j))>max) {
-	      max=fabs(result(i,j)-expected(i,j));
+	    if (std::abs(result(i,j)-expected(i,j))>max) {
+	      max=std::abs(result(i,j)-expected(i,j));
 	    }
 	  } else {
-	    ret=(ret && ((fabs(expected(i,j)-result(i,j)))<abs_error));
-	    if (fabs(expected(i,j)-result(i,j))>max) {
-	      max=fabs(expected(i,j)-result(i,j));
+	    ret=(ret && ((std::abs(expected(i,j)-result(i,j)))<abs_error));
+	    if (std::abs(expected(i,j)-result(i,j))>max) {
+	      max=std::abs(expected(i,j)-result(i,j));
 	    }
 	  }
 	}
@@ -502,17 +504,17 @@ namespace o2scl {
 	  } else if (expected.get(i,j)<zero_tol) {
 	    bool ret1=test_abs(result.get(i,j),expected.get(i,j),error,
 			       desc1);
-	    if (fabs(result.get(i,j)-expected.get(i,j))>max[i]) {
-	      max[i]=fabs(result.get(i,j)-expected.get(i,j));
+	    if (std::abs(result.get(i,j)-expected.get(i,j))>max[i]) {
+	      max[i]=std::abs(result.get(i,j)-expected.get(i,j));
 	    }
 	  } else {
 	    bool ret1=test_rel(result.get(i,j),expected.get(i,j),error,
 			       desc1);
 	    ret=(ret && ret1);
-	    if (fabs(expected.get(i,j)-result.get(i,j))/
-		fabs(expected.get(i,j))>max[i]) {
-	      max[i]=fabs(expected.get(i,j)-result.get(i,j))/
-		fabs(expected.get(i,j));
+	    if (std::abs(expected.get(i,j)-result.get(i,j))/
+		std::abs(expected.get(i,j))>max[i]) {
+	      max[i]=std::abs(expected.get(i,j)-result.get(i,j))/
+		std::abs(expected.get(i,j));
 	    }
 	  }
 	}

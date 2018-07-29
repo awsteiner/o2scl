@@ -21,6 +21,7 @@
   -------------------------------------------------------------------
 */
 #include <iostream>
+#include <boost/math/constants/constants.hpp>
 #include <o2scl/funct.h>
 #include <o2scl/inte_gauss_cern.h>
 #include <o2scl/test_mgr.h>
@@ -34,22 +35,58 @@ double testfun(double tx, double &a) {
   return (a*sin(tx)/(tx+0.01));
 }
 
+double testfun2(double tx) {
+  return 4.0*std::sqrt(1.0-tx*tx);
+}
+
+long double testfun2_ld(long double tx) {
+  return 4.0*std::sqrt(1.0-tx*tx);
+}
+
 int main(void) {
-  double a=3.0, calc, exact, diff;
-  inte_gauss_cern<funct> cg;
   test_mgr t;
   t.set_output_level(2);
 
-  funct tf=std::bind(testfun,std::placeholders::_1,a);
-
-  cout.setf(ios::scientific);
-  cout.precision(10);
+  {
+    inte_gauss_cern<funct> cg;
+    double a=3.0, calc, exact, diff;
   
-  calc=cg.integ(tf,0.0,1.0);
-  exact=a*(0.900729064796877177);
-  t.test_rel(calc,exact,1.0e-8,"inte_gauss_cern");
-  diff=fabs(calc-exact);
-  cout << calc << " " << exact << " " << diff << endl;
+    funct tf=std::bind(testfun,std::placeholders::_1,a);
+
+    cout.setf(ios::scientific);
+    cout.precision(10);
+  
+    calc=cg.integ(tf,0.0,1.0);
+    exact=a*(0.900729064796877177);
+    t.test_rel(calc,exact,1.0e-8,"inte_gauss_cern 1");
+    diff=fabs(calc-exact);
+    cout << calc << " " << exact << " " << diff << endl;
+
+    funct tf2=testfun2;
+
+    calc=cg.integ(tf2,0.0,1.0);
+    exact=boost::math::constants::pi<double>();
+    t.test_rel(calc,exact,1.0e-8,"inte_gauss_cern 2");
+    diff=fabs(calc-exact);
+    cout << calc << " " << exact << " " << diff << endl;
+  }
+
+  {
+    inte_gauss_cern<funct_ld,long double,
+		    o2scl::inte_gauss_cern_x_long_double,
+		    o2scl::inte_gauss_cern_w_long_double> cg_ld;
+    cg_ld.tol_rel=1.0e-20;
+    cg_ld.tol_abs=1.0e-20;
+    long double a=3.0, calc, exact, diff;
+
+    funct_ld tf2=testfun2_ld;
+    
+    calc=cg_ld.integ(tf2,0.0,1.0);
+    exact=boost::math::constants::pi<long double>();
+    t.test_rel(calc,exact,1.0e-16L,"inte_gauss_cern ld");
+    diff=fabs(calc-exact);
+    cout << calc << " " << exact << " " << diff << endl;
+  }
   
   t.report();
   return 0;

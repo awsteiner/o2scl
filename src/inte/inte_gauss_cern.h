@@ -32,6 +32,46 @@
 namespace o2scl {
 #endif
 
+  static const double inte_gauss_cern_x_double[12]=
+    {0.96028985649753623,0.79666647741362674,0.52553240991632899,
+     0.18343464249564980,0.98940093499164993,0.94457502307323258,
+     0.86563120238783175,0.75540440835500303,0.61787624440264375,
+     0.45801677765722739,0.28160355077925891,0.95012509837637440e-1};
+
+  static const double inte_gauss_cern_w_double[12]=
+    {0.10122853629037626,0.22238103445337447,0.31370664587788729,
+     0.36268378337836198,0.27152459411754095e-1,0.62253523938647893e-1,
+     0.95158511682492785e-1,0.12462897125553387,0.14959598881657673,
+     0.16915651939500254,0.18260341504492359,0.18945061045506850};
+
+  static const long double inte_gauss_cern_x_long_double[12]=
+    {0.96028985649753623168356086856947299L,
+     0.79666647741362673959155393647583044L,
+     0.52553240991632898581773904918924635L,
+     0.18343464249564980493947614236018398L,
+     0.98940093499164993259615417345033263L,
+     0.94457502307323257607798841553460835L,
+     0.86563120238783174388046789771239313L,
+     0.75540440835500303389510119484744227L,
+     0.61787624440264374844667176404879102L,
+     0.45801677765722738634241944298357757L,
+     0.28160355077925891323046050146049611L,
+     0.095012509837637440185319335424958063L};
+  
+  static const long double inte_gauss_cern_w_long_double[12]=
+    {0.10122853629037625915253135430996219L,
+     0.22238103445337447054435599442624088L,
+     0.31370664587788728733796220198660131L,
+     0.36268378337836198296515044927719561L,
+     0.027152459411754094851780572456018104L,
+     0.062253523938647892862843836994377694L,
+     0.095158511682492784809925107602246226L,
+     0.12462897125553387205247628219201642L,
+     0.14959598881657673208150173054747855L,
+     0.16915651939500253818931207903035996L,
+     0.18260341504492358886676366796921994L,
+     0.18945061045506849628539672320828311L};
+  
   /** \brief Gaussian quadrature (CERNLIB)
  
       For any interval \f$ (a,b) \f$, we define \f$ g_8(a,b) \f$ and
@@ -93,76 +133,57 @@ namespace o2scl {
 
       \future Allow user to change \c cst?
   */
-  template<class func_t=funct> class inte_gauss_cern : public inte<func_t> {
+  template<class func_t=funct, class fp_t=double,
+    const fp_t x[]=inte_gauss_cern_x_double,
+    const fp_t w[]=inte_gauss_cern_w_double>
+    class inte_gauss_cern : public inte<func_t,fp_t> {
 
     public:
   
     inte_gauss_cern() {
-      x[0]=0.96028985649753623;
-      x[1]=0.79666647741362674;
-      x[2]=0.52553240991632899;
-      x[3]=0.18343464249564980;
-      x[4]=0.98940093499164993;
-      x[5]=0.94457502307323258;
-      x[6]=0.86563120238783175;
-      x[7]=0.75540440835500303;
-      x[8]=0.61787624440264375;
-      x[9]=0.45801677765722739;
-      x[10]=0.28160355077925891;
-      x[11]=0.95012509837637440e-1;
-      
-      w[0]=0.10122853629037626;
-      w[1]=0.22238103445337447;
-      w[2]=0.31370664587788729;
-      w[3]=0.36268378337836198;
-      w[4]=0.27152459411754095e-1;
-      w[5]=0.62253523938647893e-1;
-      w[6]=0.95158511682492785e-1;
-      w[7]=0.12462897125553387;
-      w[8]=0.14959598881657673;
-      w[9]=0.16915651939500254;
-      w[10]=0.18260341504492359;
-      w[11]=0.18945061045506850;
+    }
+
+    virtual ~inte_gauss_cern() {
     }
 
     /** \brief Integrate function \c func from \c a to \c b.
     */
-    virtual int integ_err(func_t &func, double a, double b, 
-			  double &res, double &err) {
+    virtual int integ_err(func_t &func, fp_t a, fp_t b, 
+			  fp_t &res, fp_t &err) {
 
-      double y1, y2;
+      fp_t y1, y2;
       err=0.0;
 
       size_t itx=0;
 
       int i;
       bool loop=true, loop2=false;
-      static const double cst=0.005;
-      double h=0.0;
+      static const fp_t cst=0.005;
+      fp_t h=0.0;
       if (b==a) {
 	res=0.0;
 	return o2scl::success;
       }
-      double cnst=cst/(b-a);
-      double aa=0.0, bb=a;
+      fp_t cnst=cst/(b-a);
+      fp_t aa=0.0, bb=a;
       while (loop==true || loop2==true) {
 	itx++;
 	if (loop==true) {
 	  aa=bb;
 	  bb=b;
 	}
-	double c1=(bb+aa)/2.0;
-	double c2=(bb-aa)/2.0;
-	double s8=0.0;
+	fp_t c1=(bb+aa)/2.0;
+	fp_t c2=(bb-aa)/2.0;
+	fp_t s8=0.0;
 	for(i=0;i<4;i++) {
-	  double u=c2*x[i];
+	  fp_t u=c2*x[i];
 	  y1=func(c1+u);
 	  y2=func(c1-u);
 	  s8+=w[i]*(y1+y2);
 	}
-	double s16=0.0;
+	fp_t s16=0.0;
 	for(i=4;i<12;i++) {
-	  double u=c2*x[i];
+	  fp_t u=c2*x[i];
 	  y1=func(c1+u);
 	  y2=func(c1-u);
 	  s16+=w[i]*(y1+y2);
@@ -171,12 +192,12 @@ namespace o2scl {
  
 	loop=false;
 	loop2=false;
-	if (fabs(s16-c2*s8)<this->tol_rel*(1.0+fabs(s16))) {
+	if (std::abs(s16-c2*s8)<this->tol_rel*(1.0+std::abs(s16))) {
 	  h+=s16;
 	  if (bb!=b) loop=true;
 	} else {
 	  bb=c1;
-	  if (1.0+cnst*fabs(c2)!=1.0) {
+	  if (1.0+cnst*std::abs(c2)!=1.0) {
 	    loop2=true;
 	  } else {
 	    this->last_iter=itx;
@@ -197,7 +218,8 @@ namespace o2scl {
     /** \name Integration constants (Set in the constructor)
     */
     //@{
-    double x[12], w[12];
+    //fp_t x[12];
+    //fp_t w[12];
     //@}
 
 #endif
