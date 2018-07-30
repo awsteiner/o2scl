@@ -71,30 +71,30 @@ namespace o2scl {
       - There is a fixme entry in the code which could be resolved.
       - Output the point where most subdividing was required?
   */
-  template<class func_t=funct, size_t nsub=100> 
-    class inte_adapt_cern : public inte<func_t> {
+  template<class func_t=funct, size_t nsub=100, class fp_t=double> 
+    class inte_adapt_cern : public inte<func_t,fp_t> {
 
 #ifndef DOXYGEN_INTERNAL
 
       protected:
 
       /// Lower end of subdivision
-      double xlo[nsub];
+      fp_t xlo[nsub];
 
       /// High end of subdivision
-      double xhi[nsub];
+      fp_t xhi[nsub];
 
       /// Value of integral for subdivision
-      double tval[nsub];
+      fp_t tval[nsub];
 
       /// Squared error for subdivision
-      double ters[nsub];
+      fp_t ters[nsub];
       
       /// Previous number of subdivisions
       int prev_subdiv;
 
       /// The base integration object
-      inte<func_t> *it;
+      inte<func_t,fp_t> *it;
       
 #endif
       
@@ -112,10 +112,10 @@ namespace o2scl {
       /** \brief Integrate function \c func from \c a to \c b
 	  giving result \c res and error \c err
       */
-      virtual int integ_err(func_t &func, double a, double b,
-			    double &res, double &err) {
+      virtual int integ_err(func_t &func, fp_t a, fp_t b,
+			    fp_t &res, fp_t &err) {
 	
-	double tvals=0.0, terss, xlob, xhib, yhib=0.0, te, root=0.0;
+	fp_t tvals=0.0, terss, xlob, xhib, yhib=0.0, te, root=0.0;
 	int i, nsubdivd;
 
 	if (nsubdiv==0) {
@@ -148,7 +148,7 @@ namespace o2scl {
 
 	// Compute the initial set of intervals and integral values
 	xhib=a;
-	double bin=(b-a)/((double)nsubdivd);
+	fp_t bin=(b-a)/((fp_t)nsubdivd);
 	for(i=0;i<nsubdivd;i++) {
 	  xlo[i]=xhib;
 	  xlob=xlo[i];
@@ -178,10 +178,11 @@ namespace o2scl {
 	    std::cout << " Res: " << tvals;
 	    std::cout.unsetf(std::ios::showpos);
 	    std::cout << " Err: " << sqrt(2.0*terss);
-	    if (this->tol_abs>this->tol_rel*fabs(tvals)) {
+	    if (this->tol_abs>this->tol_rel*std::abs(tvals)) {
 	      std::cout << " Tol: " << this->tol_abs << std::endl;
 	    } else {
-	      std::cout << " Tol: " << this->tol_rel*fabs(tvals) << std::endl;
+	      std::cout << " Tol: " << this->tol_rel*std::abs(tvals)
+			<< std::endl;
 	    }
 	    if (this->verbose>1) {
 	      char ch;
@@ -192,7 +193,7 @@ namespace o2scl {
 
 	  // See if we're finished
 	  root=sqrt(2.0*terss);
-	  if (root<=this->tol_abs || root<=this->tol_rel*fabs(tvals)) {
+	  if (root<=this->tol_abs || root<=this->tol_rel*std::abs(tvals)) {
 	    res=tvals;
 	    err=root;
 	    this->last_iter=iter;
@@ -210,7 +211,7 @@ namespace o2scl {
 	  }
 
 	  // Find the subdivision with the largest error
-	  double bige=ters[0];
+	  fp_t bige=ters[0];
 	  int ibig=0;
 	  for(i=1;i<prev_subdiv;i++) {
 	    if (ters[i]>bige) {
@@ -221,7 +222,7 @@ namespace o2scl {
 
 	  // Subdivide that subdivision further
 	  xhi[prev_subdiv]=xhi[ibig];
-	  double xnew=(xlo[ibig]+xhi[ibig])/2.0;
+	  fp_t xnew=(xlo[ibig]+xhi[ibig])/2.0;
 	  xhi[ibig]=xnew;
 	  xlo[prev_subdiv]=xnew;
 	  it->integ_err(func,xlo[ibig],xhi[ibig],tval[ibig],te);
@@ -245,13 +246,13 @@ namespace o2scl {
       /// \name Integration object
       //@{
       /// Set the base integration object to use
-      int set_inte(inte<func_t> &i) {
+      int set_inte(inte<func_t,fp_t> &i) {
 	it=&i;
 	return 0;
       }
       
       /// Default integration object
-      inte_gauss56_cern<func_t> def_inte;
+      inte_gauss56_cern<func_t,fp_t> def_inte;
       //@}
       
       /// \name Subdivisions
@@ -272,8 +273,8 @@ namespace o2scl {
       }
 
       /// Return the ith subdivision
-      int get_ith_subdivision(size_t i, double &xlow, double &xhigh, 
-			      double &value, double &errsq) {
+      int get_ith_subdivision(size_t i, fp_t &xlow, fp_t &xhigh, 
+			      fp_t &value, fp_t &errsq) {
 	if (i<prev_subdiv) {
 	  xlow=xlo[i];
 	  xhigh=xhi[i];

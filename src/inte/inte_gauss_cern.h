@@ -31,7 +31,7 @@
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
 #endif
-
+  
   static const double inte_gauss_cern_x_double[12]=
     {0.96028985649753623,0.79666647741362674,0.52553240991632899,
      0.18343464249564980,0.98940093499164993,0.94457502307323258,

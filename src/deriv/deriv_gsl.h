@@ -120,8 +120,8 @@ namespace o2scl {
       These would be useful for EOS classes which run in to 
       trouble for negative densities.
   */
-  template<class func_t=funct> class deriv_gsl : 
-  public deriv_base<func_t> {
+  template<class func_t=funct, class fp_t=double> class deriv_gsl : 
+    public deriv_base<func_t,fp_t> {
     
   public:
   
@@ -140,24 +140,24 @@ namespace o2scl {
       10^{-4} \f$ will used, or if \c x is zero, then \f$ 10^{-4} \f$
       will be used.
   */
-  double h;
+  fp_t h;
 
   /** \brief Maximum absolute value of function, or 
       a negative value for no maximum (default -1)
   */
-  double func_max;
+  fp_t func_max;
 
   /** \brief The last value of the optimized stepsize
 
       This is initialized to zero in the constructor and set by
       deriv_err() to the most recent value of the optimized stepsize.
   */
-  double h_opt;
+  fp_t h_opt;
   
   /** \brief Calculate the first derivative of \c func  w.r.t. x and 
       uncertainty
   */
-  virtual int deriv_err(double x, func_t &func, double &dfdx, double &err) {
+  virtual int deriv_err(fp_t x, func_t &func, fp_t &dfdx, fp_t &err) {
     return deriv_tlate<func_t>(x,func,dfdx,err);
   }
 
@@ -170,17 +170,17 @@ namespace o2scl {
 
   /** \brief Internal template version of the derivative function
    */
-  template<class func2_t> int deriv_tlate(double x, func2_t &func, 
-					double &dfdx, double &err) {
-    double hh;
+  template<class func2_t> int deriv_tlate(fp_t x, func2_t &func, 
+					  fp_t &dfdx, fp_t &err) {
+    fp_t hh;
     if (h<=0.0) {
       if (x==0.0) hh=1.0e-4;
-      else hh=1.0e-4*fabs(x);
+      else hh=1.0e-4*std::abs(x);
     } else {
       hh=h;
     }
 
-    double r_0, round, trunc, error;
+    fp_t r_0, round, trunc, error;
       
     size_t it_count=0;
     bool fail=true;
@@ -194,7 +194,7 @@ namespace o2scl {
       error=round+trunc;
       
       if (fail==false && round < trunc && (round > 0 && trunc > 0)) {
-	double r_opt, round_opt, trunc_opt, error_opt;
+	fp_t r_opt, round_opt, trunc_opt, error_opt;
 	
 	/* Compute an optimised stepsize to minimize the total error,
 	   using the scaling of the truncation error (O(h^2)) and
@@ -209,7 +209,7 @@ namespace o2scl {
 	   is consistent with the error bounds of the original estimate. */
 	
 	if (fail==false && error_opt < error &&
-	    fabs (r_opt-r_0) < 4.0*error) {
+	    std::abs (r_opt-r_0) < 4.0*error) {
 	  r_0=r_opt;
 	  error=error_opt;
 	}
@@ -243,7 +243,7 @@ namespace o2scl {
       and third derivatives
   */
   virtual int deriv_err_int
-  (double x, funct &func, double &dfdx, double &err) {
+  (fp_t x, funct &func, fp_t &dfdx, fp_t &err) {
     return deriv_tlate<>(x,func,dfdx,err);
   }
     
@@ -258,13 +258,13 @@ namespace o2scl {
       both deriv_err() and deriv_err_int().
   */
   template<class func2_t> 
-  int central_deriv(double x, double hh, double &result, 
-		    double &abserr_round, double &abserr_trunc, 
+  int central_deriv(fp_t x, fp_t hh, fp_t &result, 
+		    fp_t &abserr_round, fp_t &abserr_trunc, 
 		    func2_t &func) {
       
-    double fm1, fp1, fmh, fph;
+    fp_t fm1, fp1, fmh, fph;
 
-    double eps=std::numeric_limits<double>::epsilon();
+    fp_t eps=std::numeric_limits<fp_t>::epsilon();
       
     fm1=func(x-hh);
     fp1=func(x+hh);
@@ -285,22 +285,22 @@ namespace o2scl {
 	!std::isfinite(fp1) ||
 	!std::isfinite(fmh) ||
 	!std::isfinite(fph) ||
-	(func_max>0.0 && (fabs(fm1)>func_max ||
-			  fabs(fp1)>func_max ||
-			  fabs(fmh)>func_max ||
-			  fabs(fph)>func_max))) {
+	(func_max>0.0 && (std::abs(fm1)>func_max ||
+			  std::abs(fp1)>func_max ||
+			  std::abs(fmh)>func_max ||
+			  std::abs(fph)>func_max))) {
       return 1;
     }
 
-    double r3=0.5*(fp1-fm1);
-    double r5=(4.0/3.0)*(fph-fmh)-(1.0/3.0)*r3;
+    fp_t r3=0.5*(fp1-fm1);
+    fp_t r5=(4.0/3.0)*(fph-fmh)-(1.0/3.0)*r3;
       
-    double e3=(fabs(fp1)+fabs(fm1))*eps;
-    double e5=2.0*(fabs(fph)+fabs(fmh))*eps+e3;
+    fp_t e3=(std::abs(fp1)+std::abs(fm1))*eps;
+    fp_t e5=2.0*(std::abs(fph)+std::abs(fmh))*eps+e3;
       
     /* The next term is due to finite precision in x+h=O (eps*x) */
       
-    double dy=GSL_MAX(fabs(r3/hh),fabs(r5/hh))*fabs(x/hh)*eps;
+    fp_t dy=std::max(std::abs(r3/hh),std::abs(r5/hh))*std::abs(x/hh)*eps;
       
     /* The truncation error in the r5 approximation itself is O(h^4).
        However, for safety, we estimate the error from r5-r3, which is
@@ -310,9 +310,9 @@ namespace o2scl {
       
     result=r5/hh;
     /* Estimated truncation error O(h^2) */
-    abserr_trunc=fabs((r5-r3)/hh); 
+    abserr_trunc=std::abs((r5-r3)/hh); 
     /* Rounding error (cancellations) */
-    abserr_round=fabs(e5/hh)+dy;   
+    abserr_round=std::abs(e5/hh)+dy;   
       
     if (this->verbose>0) {
       std::cout << "res: " << result << " trc: " << abserr_trunc 

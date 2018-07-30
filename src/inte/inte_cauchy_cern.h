@@ -63,57 +63,33 @@ namespace o2scl {
       DCAUCH which are documented at
       http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/d104/top.html
   */
-  template<class func_t> class inte_cauchy_cern : 
-    public inte<func_t> {
+  template<class func_t, class fp_t=double,
+    const fp_t x[]=inte_gauss_cern_x_double,
+    const fp_t w[]=inte_gauss_cern_w_double>
+    class inte_cauchy_cern : public inte<func_t,fp_t> {
 
     public:
   
     inte_cauchy_cern() {
-      x[0]=0.96028985649753623;
-      x[1]=0.79666647741362674;
-      x[2]=0.52553240991632899;
-      x[3]=0.18343464249564980;
-      x[4]=0.98940093499164993;
-      x[5]=0.94457502307323258;
-      x[6]=0.86563120238783175;
-      x[7]=0.75540440835500303;
-      x[8]=0.61787624440264375;
-      x[9]=0.45801677765722739;
-      x[10]=0.28160355077925891;
-      x[11]=0.95012509837637440e-1;
-      
-      w[0]=0.10122853629037626;
-      w[1]=0.22238103445337447;
-      w[2]=0.31370664587788729;
-      w[3]=0.36268378337836198;
-      w[4]=0.27152459411754095e-1;
-      w[5]=0.62253523938647893e-1;
-      w[6]=0.95158511682492785e-1;
-      w[7]=0.12462897125553387;
-      w[8]=0.14959598881657673;
-      w[9]=0.16915651939500254;
-      w[10]=0.18260341504492359;
-      w[11]=0.18945061045506850;
-
       it=&def_inte;
     }
 
     /// The singularity (must be set before calling integ() or integ_err())
-    double s;
+    fp_t s;
 
     /** \brief Set the base integration object to use (default is \ref
 	inte_cauchy_cern::def_inte of type \ref inte_gauss_cern)
     */
-    int set_inte(inte<func_t> &i) {
+    int set_inte(inte<func_t,fp_t> &i) {
       it=&i;
       return 0;
     }
 
     /** \brief Integrate function \c func from \c a to \c b
      */
-    virtual int integ_err(func_t &func, double a, double b,
-			  double &res, double &err) {
-      double y1, y2, y3, y4;
+    virtual int integ_err(func_t &func, fp_t a, fp_t b,
+			  fp_t &res, fp_t &err) {
+      fp_t y1, y2, y3, y4;
       size_t itx=0;
       
       err=0.0;
@@ -125,7 +101,7 @@ namespace o2scl {
       } else if ((s<a && s<b) || (s>a && s>b)) {
 	return it->integ_err(func,a,b,res,err);
       }
-      double h, b0;
+      fp_t h, b0;
       if (2.0*s<a+b) {
 	h=it->integ(func,2.0*s-a,b);
 	b0=s-a;
@@ -133,24 +109,24 @@ namespace o2scl {
 	h=it->integ(func,a,2.0*s-b);
 	b0=b-s;
       }
-      double c=0.005/b0;
-      double bb=0.0;
+      fp_t c=0.005/b0;
+      fp_t bb=0.0;
       bool loop1=true;
       while(loop1==true) {
 	itx++;
-	double s8, s16;
-	double aa=bb;
+	fp_t s8, s16;
+	fp_t aa=bb;
 	bb=b0;
 	bool loop2=true;
 	while(loop2==true) {
-	  double c1=(bb+aa)/2.0;
-	  double c2=(bb-aa)/2.0;
-	  double c3=s+c1;
-	  double c4=s-c1;
+	  fp_t c1=(bb+aa)/2.0;
+	  fp_t c2=(bb-aa)/2.0;
+	  fp_t c3=s+c1;
+	  fp_t c4=s-c1;
 	  s8=0.0;
 	  s16=0.0;
 	  for(int i=0;i<4;i++) {
-	    double u=c2*x[i];
+	    fp_t u=c2*x[i];
 	    y1=func(c3+u);
 	    y2=func(c4-u);
 	    y3=func(c3-u);
@@ -159,7 +135,7 @@ namespace o2scl {
 	  }
 	  s8*=c2;
 	  for(int i=4;i<12;i++) {
-	    double u=c2*x[i];
+	    fp_t u=c2*x[i];
 	    y1=func(c3+u);
 	    y2=func(c4-u);
 	    y3=func(c3-u);
@@ -168,11 +144,11 @@ namespace o2scl {
 	  }
 	  s16*=c2;
 
-	  if (fabs(s16-s8)<=this->tol_rel*(1.0+fabs(s16))) {
+	  if (std::abs(s16-s8)<=this->tol_rel*(1.0+std::abs(s16))) {
 	    loop2=false;
 	  } else {
 	    bb=c1;
-	    if ((1.0+fabs(c*c2))==1.0) {
+	    if ((1.0+std::abs(c*c2))==1.0) {
 	      loop2=false;
 	    } else {
 	      this->last_iter=itx;
@@ -190,20 +166,14 @@ namespace o2scl {
     }
 
     /// Default integration object
-    inte_gauss_cern<func_t> def_inte;
+    inte_gauss_cern<func_t,fp_t> def_inte;
 
     protected:
 
 #ifndef DOXYGEN_INTERNAL
 
-    /** \name Integration constants
-    */
-    //@{
-    double x[12], w[12];
-    //@}
-
     /// The base integration object
-    inte<func_t> *it;
+    inte<func_t,fp_t> *it;
 
 #endif
 

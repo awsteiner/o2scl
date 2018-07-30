@@ -60,7 +60,7 @@ namespace o2scl {
       
       \future Improve the methods for second and third derivatives
   */
-  template<class func_t=funct> class deriv_base {
+  template<class func_t=funct, class fp_t=double> class deriv_base {
     
 #ifndef DOXYGEN_INTERNAL
     
@@ -101,10 +101,10 @@ namespace o2scl {
 	After calling deriv(), the error may be obtained from 
 	\ref get_err().
     */
-    virtual double deriv(double x, func_t &func) {
+    virtual fp_t deriv(fp_t x, func_t &func) {
       // There were some uninitialized variable warnings on OSX, so we
       // prevent those by setting the derivative equal to zero.
-      double dx=0.0;
+      fp_t dx=0.0;
       from_deriv=true;
       deriv_err(x,func,dx,derr);
       from_deriv=false;
@@ -113,11 +113,11 @@ namespace o2scl {
 
     /** \brief Calculate the second derivative of \c func w.r.t. x
      */
-    virtual double deriv2(double x, func_t &func) {
-      double val;
+    virtual fp_t deriv2(fp_t x, func_t &func) {
+      fp_t val;
 
       funct mf=
-      std::bind(std::mem_fn<double(double,func_t *)>(&deriv_base::derivfun),
+      std::bind(std::mem_fn<fp_t(fp_t,func_t *)>(&deriv_base::derivfun),
 		this,std::placeholders::_1,&func);
       
       val=deriv_int(x,mf);
@@ -128,11 +128,11 @@ namespace o2scl {
   
     /** \brief Calculate the third derivative of \c func w.r.t. x
      */
-    virtual double deriv3(double x, func_t &func) {
-      double val;
+    virtual fp_t deriv3(fp_t x, func_t &func) {
+      fp_t val;
 
       funct mf=
-      std::bind(std::mem_fn<double(double,func_t *)>(&deriv_base::derivfun2),
+      std::bind(std::mem_fn<fp_t(fp_t,func_t *)>(&deriv_base::derivfun2),
 		this,std::placeholders::_1,&func);
 
       val=deriv_int(x,mf);
@@ -143,7 +143,7 @@ namespace o2scl {
 
     /** \brief Get uncertainty of last calculation
      */
-    virtual double get_err() {
+    virtual fp_t get_err() {
       return derr;
     }
 
@@ -154,16 +154,16 @@ namespace o2scl {
     /** \brief Calculate the first derivative of \c func w.r.t. x and the
 	uncertainty
     */
-    virtual int deriv_err(double x, func_t &func, double &dfdx, 
-			 double &err)=0;
+    virtual int deriv_err(fp_t x, func_t &func, fp_t &dfdx, 
+			 fp_t &err)=0;
 
     /** \brief Calculate the second derivative of \c func w.r.t. x and the
 	uncertainty
     */
-    virtual int deriv2_err(double x, func_t &func, 
-			  double &d2fdx2, double &err) {
+    virtual int deriv2_err(fp_t x, func_t &func, 
+			  fp_t &d2fdx2, fp_t &err) {
       funct mf=
-      std::bind(std::mem_fn<double(double,func_t *)>(&deriv_base::derivfun),
+      std::bind(std::mem_fn<fp_t(fp_t,func_t *)>(&deriv_base::derivfun),
 		this,std::placeholders::_1,&func);
 
       int ret=deriv_err_int(x,mf,d2fdx2,err);
@@ -175,10 +175,10 @@ namespace o2scl {
     /** \brief Calculate the third derivative of \c func w.r.t. x and the
 	uncertainty
     */
-    virtual int deriv3_err(double x, func_t &func, 
-			  double &d3fdx3, double &err) {
+    virtual int deriv3_err(fp_t x, func_t &func, 
+			  fp_t &d3fdx3, fp_t &err) {
       funct mf=
-      std::bind(std::mem_fn<double(double,func_t *)>(&deriv_base::derivfun2),
+      std::bind(std::mem_fn<fp_t(fp_t,func_t *)>(&deriv_base::derivfun2),
 		this,std::placeholders::_1,&func);
       
       int ret=deriv_err_int(x,mf,d3fdx3,err);
@@ -203,8 +203,8 @@ namespace o2scl {
 	This is an internal version of deriv() which is used in
 	computing second and third derivatives
     */
-    virtual double deriv_int(double x, funct &func) {
-      double dx;
+    virtual fp_t deriv_int(fp_t x, funct &func) {
+      fp_t dx;
       from_deriv=true;
       deriv_err_int(x,func,dx,derr);
       from_deriv=false;
@@ -217,23 +217,23 @@ namespace o2scl {
 	This is an internal version of deriv_err() which is used in
 	computing second and third derivatives
     */
-    virtual int deriv_err_int(double x, funct &func, 
-			      double &dfdx, double &err)=0;
+    virtual int deriv_err_int(fp_t x, funct &func, 
+			      fp_t &dfdx, fp_t &err)=0;
     
     /// The uncertainity in the most recent derivative computation
-    double derr;
+    fp_t derr;
     
     /// The function for the second derivative
-    double derivfun(double x, func_t *fp) {
+    fp_t derivfun(fp_t x, func_t *fp) {
       return deriv(x,*fp);
     }
     
     /// The function for the third derivative
-    double derivfun2(double x, func_t *fp) {
+    fp_t derivfun2(fp_t x, func_t *fp) {
       funct mf=
-	std::bind(std::mem_fn<double(double,func_t *)>(&deriv_base::derivfun),
+	std::bind(std::mem_fn<fp_t(fp_t,func_t *)>(&deriv_base::derivfun),
 		  this,std::placeholders::_1,fp);
-      double val=deriv_int(x,mf);
+      fp_t val=deriv_int(x,mf);
       return val;
     }
     
