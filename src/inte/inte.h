@@ -37,9 +37,16 @@ namespace o2scl {
 
   /** \brief Base integration class [abstract base]
 
+      \note Currently \o2 supports only types \c double and, for some
+      integration methods, \c long \c double for the floating point
+      type \c fp_t . Also, the default values of \ref tol_rel 
+      and \ref tol_abs are designed for double precision and
+      likely need to be decreased for long double precision
+      integration.
+
       \future It might be useful to have all of the integration
       classes report the number of function evaluations used
-      in addition to the number of iterations which were taken
+      in addition to the number of iterations which were taken.
   */
   template<class func_t=funct, class fp_t=double> class inte {
     

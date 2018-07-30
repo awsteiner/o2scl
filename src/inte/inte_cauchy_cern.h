@@ -56,9 +56,12 @@ namespace o2scl {
     
       Possible errors for integ() and integ_err():
       - exc_einval - Singularity is on an endpoint
-      - exc_efailed - Couldn't reach requested accuracy 
+      - exc_efailed - Could not reach requested accuracy 
       (occurs only if inte::err_nonconv is true)
       
+      \note Currently \o2 supports only types \c double and
+      \c long \c double for the floating point type \c fp_t .
+
       This function is based on the CERNLIB routines RCAUCH and
       DCAUCH which are documented at
       http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/d104/top.html
@@ -152,7 +155,7 @@ namespace o2scl {
 	      loop2=false;
 	    } else {
 	      this->last_iter=itx;
-	      O2SCL_CONV2_RET("Couldn't reach required accuracy in cern_",
+	      O2SCL_CONV2_RET("Could not reach required accuracy in cern_",
 			      "cauchy::integ()",exc_efailed,this->err_nonconv);
 	    }
 	  }

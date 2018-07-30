@@ -31,19 +31,28 @@
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
 #endif
-  
+
+  /** \brief Integration abscissas for \ref o2scl::inte_gauss_cern and 
+      \ref o2scl::inte_cauchy_cern in double precision
+   */
   static const double inte_gauss_cern_x_double[12]=
     {0.96028985649753623,0.79666647741362674,0.52553240991632899,
      0.18343464249564980,0.98940093499164993,0.94457502307323258,
      0.86563120238783175,0.75540440835500303,0.61787624440264375,
      0.45801677765722739,0.28160355077925891,0.95012509837637440e-1};
 
+  /** \brief Integration weights for \ref o2scl::inte_gauss_cern and 
+      \ref o2scl::inte_cauchy_cern in double precision
+   */
   static const double inte_gauss_cern_w_double[12]=
     {0.10122853629037626,0.22238103445337447,0.31370664587788729,
      0.36268378337836198,0.27152459411754095e-1,0.62253523938647893e-1,
      0.95158511682492785e-1,0.12462897125553387,0.14959598881657673,
      0.16915651939500254,0.18260341504492359,0.18945061045506850};
 
+  /** \brief Integration abscissas for \ref o2scl::inte_gauss_cern and 
+      \ref o2scl::inte_cauchy_cern in long double precision
+   */
   static const long double inte_gauss_cern_x_long_double[12]=
     {0.96028985649753623168356086856947299L,
      0.79666647741362673959155393647583044L,
@@ -58,6 +67,9 @@ namespace o2scl {
      0.28160355077925891323046050146049611L,
      0.095012509837637440185319335424958063L};
   
+  /** \brief Integration weights for \ref o2scl::inte_gauss_cern and 
+      \ref o2scl::inte_cauchy_cern in long double precision
+   */
   static const long double inte_gauss_cern_w_long_double[12]=
     {0.10122853629037625915253135430996219L,
      0.22238103445337447054435599442624088L,
@@ -130,6 +142,9 @@ namespace o2scl {
       This function is based on the CERNLIB routines GAUSS and
       DGAUSS which are documented at
       http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/d103/top.html
+      
+      \note Currently \o2 supports only types \c double and
+      \c long \c double for the floating point type \c fp_t .
 
       \future Allow user to change \c cst?
   */
@@ -210,19 +225,6 @@ namespace o2scl {
       res=h;
       return o2scl::success;
     }
-
-    protected:
-
-#ifndef DOXYGEN_INTERNAL
-
-    /** \name Integration constants (Set in the constructor)
-    */
-    //@{
-    //fp_t x[12];
-    //fp_t w[12];
-    //@}
-
-#endif
 
   };
 

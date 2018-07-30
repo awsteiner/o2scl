@@ -33,26 +33,41 @@
 namespace o2scl {
 #endif
 
+  /** \brief Fifth order integration abscissas for 
+      \ref o2scl::inte_gauss56_cern in double precision
+   */
   static const double inte_gauss56_cern_x5_double[5]=
     {4.6910077030668004e-02,2.3076534494715846e-01,
      5.0000000000000000e-01,7.6923465505284154e-01,
      9.5308992296933200e-01};
 
+  /** \brief Fifth order integration weights for 
+      \ref o2scl::inte_gauss56_cern in double precision
+   */
   static const double inte_gauss56_cern_w5_double[5]=
     {1.1846344252809454e-01,2.3931433524968324e-01,
      2.8444444444444444e-01,2.3931433524968324e-01,
      1.1846344252809454e-01};
      
+  /** \brief Sixth order integration abscissas for 
+      \ref o2scl::inte_gauss56_cern in double precision
+   */
   static const double inte_gauss56_cern_x6_double[6]=
     {3.3765242898423989e-02,1.6939530676686775e-01,
      3.8069040695840155e-01,6.1930959304159845e-01,
      8.3060469323313225e-01,9.6623475710157601e-01};
       
+  /** \brief Sixth order integration weights for 
+      \ref o2scl::inte_gauss56_cern in double precision
+   */
   static const double inte_gauss56_cern_w6_double[6]=
     {8.5662246189585178e-02,1.8038078652406930e-01,
      2.3395696728634552e-01,2.3395696728634552e-01,
      1.8038078652406930e-01,8.5662246189585178e-02};
     
+  /** \brief Fifth order integration abscissas for 
+      \ref o2scl::inte_gauss56_cern in long double precision
+   */
   static const long double inte_gauss56_cern_x5_long_double[5]=
     {0.04691007703066800360118656085030352L,
      0.23076534494715845448184278964989560L,
@@ -60,6 +75,9 @@ namespace o2scl {
      0.76923465505284154551815721035010440L,
      0.95308992296933199639881343914969648L};
   
+  /** \brief Fifth order integration weights for 
+      \ref o2scl::inte_gauss56_cern in long double precision
+   */
   static const long double inte_gauss56_cern_w5_long_double[5]=
     {0.11846344252809454375713202035995868L,
      0.23931433524968323402064575741781910L,
@@ -67,6 +85,9 @@ namespace o2scl {
      0.23931433524968323402064575741781910L,
      0.11846344252809454375713202035995868L};
   
+  /** \brief Sixth order integration abscissas for 
+      \ref o2scl::inte_gauss56_cern in long double precision
+   */
   static const long double inte_gauss56_cern_x6_long_double[6]=
     {0.03376524289842398609384922275300270L,
      0.16939530676686774316930020249004733L,
@@ -75,6 +96,9 @@ namespace o2scl {
      0.83060469323313225683069979750995267L,
      0.96623475710157601390615077724699730L};
   
+  /** \brief Sixth order integration weights for 
+      \ref o2scl::inte_gauss56_cern in long double precision
+   */
   static const long double inte_gauss56_cern_w6_long_double[6]=
     {0.08566224618958517252014807108636645L,
      0.18038078652406930378491675691885806L,
@@ -94,6 +118,8 @@ namespace o2scl {
       DGS56P which are documented at
       http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/d106/top.html
 
+      \note Currently \o2 supports only types \c double and
+      \c long \c double for the floating point type \c fp_t .
   */
   template<class func_t=funct, class fp_t=double,
     const fp_t x5[]=inte_gauss56_cern_x5_double,
