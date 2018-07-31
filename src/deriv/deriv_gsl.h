@@ -200,7 +200,7 @@ namespace o2scl {
 	   using the scaling of the truncation error (O(h^2)) and
 	   rounding error (O(1/h)). */
 	
-	h_opt=hh*pow(round/(2.0*trunc),1.0/3.0);
+	h_opt=hh*std::pow(round/(2.0*trunc),1.0/3.0);
 	cret=central_deriv(x,h_opt,r_opt,round_opt,trunc_opt,func);
 	if (cret!=0) fail=true;
 	error_opt=round_opt+trunc_opt;
@@ -209,7 +209,7 @@ namespace o2scl {
 	   is consistent with the error bounds of the original estimate. */
 	
 	if (fail==false && error_opt < error &&
-	    std::abs (r_opt-r_0) < 4.0*error) {
+	    std::abs(r_opt-r_0) < 4.0*error) {
 	  r_0=r_opt;
 	  error=error_opt;
 	}
@@ -269,14 +269,14 @@ namespace o2scl {
     fm1=func(x-hh);
     fp1=func(x+hh);
 
-    fmh=func(x-hh/2);
-    fph=func(x+hh/2);
+    fmh=func(x-hh/2.0);
+    fph=func(x+hh/2.0);
 
     if (this->verbose>0) {
       std::cout << "deriv_gsl: " << std::endl;
       std::cout << "step: " << hh << std::endl;
-      std::cout << "abscissas: " << x-hh/2 << " " << x-hh << " " 
-		<< x+hh/2 << " " << x+hh << std::endl;
+      std::cout << "abscissas: " << x-hh/2.0 << " " << x-hh << " " 
+		<< x+hh/2.0 << " " << x+hh << std::endl;
       std::cout << "ordinates: " << fm1 << " " << fmh << " " << fph << " " 
 		<< fp1 << std::endl;
     }

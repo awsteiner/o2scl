@@ -31,22 +31,25 @@ using namespace std;
 using namespace o2scl;
 
 double testfun(double x) {
-  return sin(x);
+  return std::sin(x);
 }
 
 double testfun2(double x) {
-  return sqrt(x);
+  return std::sqrt(x);
+}
+
+long double testfun_ld(long double x) {
+  return std::sin(x);
 }
 
 class tempc {
 public:
   double operator()(double x) {
-    return sin(x);
+    return std::sin(x);
   }
 };
 
 int main(void) {
-  int vp=0;
   double res;
   test_mgr t;
   t.set_output_level(2);
@@ -68,8 +71,8 @@ int main(void) {
   res=de.deriv(0.5,tf);
   cout << "First derivative: " << endl;
   cout << res << " " << de.get_err() 
-       << " " << cos(0.5) << endl;
-  t.test_rel(res,cos(0.5),1.0e-11,"simple derivative");
+       << " " << std::cos(0.5) << endl;
+  t.test_rel(res,std::cos(0.5),1.0e-11,"simple derivative");
 
   cout << "Second derivative: " << endl;
   res=de.deriv2(0.5,tf);
@@ -80,8 +83,8 @@ int main(void) {
   cout << "Third derivative: " << endl;
   res=de.deriv3(0.5,tf);
   cout << res << " " 
-  << de.get_err() << " " << -cos(0.5) << endl;
-  t.test_rel(res,-cos(0.5),1.0e-2,"third derivative");
+  << de.get_err() << " " << -std::cos(0.5) << endl;
+  t.test_rel(res,-std::cos(0.5),1.0e-2,"third derivative");
   cout << endl;
 
   // Test a derivative where the step size initially
@@ -90,8 +93,20 @@ int main(void) {
   res=de.deriv(1.0e-6,tf2);
   cout << "First derivative: " << endl;
   cout << res << " " << de.get_err() 
-       << " " << 1.0/2.0/sqrt(1.0e-6) << endl;
-  t.test_rel(res,1.0/2.0/sqrt(1.0e-6),1.0e-7,"first, non-finite");
+       << " " << 1.0/2.0/std::sqrt(1.0e-6) << endl;
+  t.test_rel(res,1.0/2.0/std::sqrt(1.0e-6),1.0e-7,"first, non-finite");
+  cout << endl;
+
+  // Try a long double derivative
+  deriv_gsl<funct_ld,long double> de_ld;
+  funct_ld tf_ld=testfun_ld;
+  long double ld_res;
+
+  ld_res=de_ld.deriv(0.5L,tf_ld);
+  cout << "First derivative: " << endl;
+  cout << ld_res << " " << de.get_err() 
+       << " " << std::cos(0.5L) << endl;
+  t.test_rel(ld_res,std::cos(0.5L),4.0e-14L,"simple derivative");
   
   t.report();
   return 0;
