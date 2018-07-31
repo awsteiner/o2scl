@@ -3854,10 +3854,16 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv, bool itive_com) {
     vector<double> ac_vec, ftom;
     vector_autocorr_vector(table_obj[in[0]],ac_vec);
     size_t len=vector_autocorr_tau(ac_vec,ftom);
-    cout << "Autocorrelation length: " << len << " sample size: "
-	 << table_obj.get_nlines()/len << endl;
+    if (len>0) {
+      cout << "Autocorrelation length: " << len << " sample size: "
+	   << table_obj.get_nlines()/len << endl;
+    } else {
+      cout << "Autocorrelation length determination failed." << endl;
+    }
 
-    // Add autocorrelation and ftom data to table
+    // Add autocorrelation and ftom data to table, replacing the
+    // values with zero when we reach the end of the vectors given by
+    // vector_autocorr_tau() .
     for(size_t i=0;i<table_obj.get_nlines();i++) {
       if (i<ac_vec.size()) {
 	table_obj.set(in[1],i,ac_vec[i]);
@@ -3876,8 +3882,12 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv, bool itive_com) {
     vector<double> ac_vec, ftom;
     vector_autocorr_vector(doublev_obj,ac_vec);
     size_t len=vector_autocorr_tau(ac_vec,ftom);
-    cout << "Autocorrelation length: " << len << " sample size: "
-	 << doublev_obj.size()/len << endl;
+    if (len>0) {
+      cout << "Autocorrelation length: " << len << " sample size: "
+	   << doublev_obj.size()/len << endl;
+    } else {
+      cout << "Autocorrelation length determination failed." << endl;
+    }
 
     doublev_obj=ac_vec;
 
@@ -3887,8 +3897,12 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv, bool itive_com) {
     vector<double> ac_vec, ftom;
     vector_autocorr_vector(doublev_obj,ac_vec);
     size_t len=vector_autocorr_tau(ac_vec,ftom);
-    cout << "Autocorrelation length: " << len << " sample size: "
-	 << doublev_obj.size()/len << endl;
+    if (len>0) {
+      cout << "Autocorrelation length: " << len << " sample size: "
+	   << doublev_obj.size()/len << endl;
+    } else {
+      cout << "Autocorrelation length determination failed." << endl;
+    }
 
     command_del();
     clear_obj();
@@ -3902,8 +3916,12 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv, bool itive_com) {
     vector<double> ac_vec, ftom;
     vector_autocorr_vector(doublev_obj,ac_vec);
     size_t len=vector_autocorr_tau(ac_vec,ftom);
-    cout << "Autocorrelation length: " << len << " sample size: "
-	 << doublev_obj.size()/len << endl;
+    if (len>0) {
+      cout << "Autocorrelation length: " << len << " sample size: "
+	   << doublev_obj.size()/len << endl;
+    } else {
+      cout << "Autocorrelation length determination failed." << endl;
+    }
 
     command_del();
     clear_obj();

@@ -812,10 +812,11 @@ namespace o2scl {
 
       This function computes the value of \f$ 5 \hat{\tau}(M)/M \f$
       and stores it in the <tt>five_tau_over_M</tt> vector and then
-      returns the first value of \f$ M \f$ for which the vector
-      is less than or equal to 1.0. If this function returns 0,
-      then all values are greater than 1.0 (this can be a sign that
-      the autocorrelation length is too long to accurately resolve).
+      returns the first value of \f$ M \f$ for which the vector is
+      less than or equal to 1.0. If this function returns 0, then \f$
+      5 \hat{\tau}(M)/M \f$ is greater than 1.0 for all \f$ M \F$, and
+      this can be a sign that the autocorrelation length is too long
+      to accurately resolve.
 
       On completion, the vector \c five_tau_over_m will have
       one less element than the vector \c ac_vec .
