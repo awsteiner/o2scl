@@ -709,7 +709,7 @@ namespace o2scl {
 
     bool err_nonconv;
     
-    /// \name Basic EOS functions
+    /// \name Basic EOS functions (internal unit system)
     //@{
     /** \brief From the pressure, return the energy density
      */
