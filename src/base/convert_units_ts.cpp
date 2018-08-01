@@ -131,6 +131,15 @@ int main(void) {
     t.test_rel(res,1.0/(12.0*2.540),1.0e-10,"1");
   }
 
+  // This is an exhaustive check not for the end-user
+  // and is thus commented out
+  if (false) {
+    convert_units &cu=o2scl_settings.get_convert_units();
+    //cu.units_cmd_string=((std::string)"units -f /home/awsteiner")+
+    ///wcs/int4/misc/units_hck.dat ";
+    cu.test_cache();
+  }
+  
   t.report();
   return 0;
 }

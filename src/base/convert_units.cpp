@@ -72,233 +72,34 @@ double convert_units::convert_const(std::string from, std::string to,
 int convert_units::convert_ret(std::string from, std::string to, double val,
 			       double &converted) {
 
-  // Remove whitespace
-  remove_whitespace(from);
-  remove_whitespace(to);
+  double factor;
+  bool new_conv;
+  
+  int ret=convert_internal(from,to,val,converted,factor,new_conv);
 
-  // Look in cache for conversion
-  std::string both=from+","+to;
-  miter m3=mcache.find(both);
-  if (m3!=mcache.end()) {
-    converted=val*m3->second.c;
-    return 0;
-  }
-
-  // Look in cache for reverse conversion
-  std::string both2=to+","+from;
-  m3=mcache.find(both2);
-  if (m3!=mcache.end()) {
-    converted=val/m3->second.c;
-    return 0;
-  }
-
-  if (combine_two_conv) {
-    
-    // Look for combined conversions
-    for(miter m=mcache.begin();m!=mcache.end();m++) {
-      if (m->second.f==from) {
-	std::string b=m->second.t+","+to;
-	miter m2=mcache.find(b);
-	if (m2!=mcache.end()) {
-	  if (verbose>0) {
-	    std::cout << "Using conversions: " << m->second.f << " , "
-		      << m->second.t << " " << m->second.c << std::endl;
-	    std::cout << " (1)          and: " << m2->second.f << " , "
-		      << m2->second.t << " " << m2->second.c << std::endl;
-	  }
-	  converted=val*m->second.c*m2->second.c;
-	  return 0;
-	}
-	std::string b2=to+","+m->second.t;
-	miter m4=mcache.find(b2);
-	if (m4!=mcache.end()) {
-	  if (verbose>0) {
-	    std::cout << "Using conversions: " << m->second.f << " , "
-		      << m->second.t << std::endl;
-	    std::cout << " (2)          and: " << m4->second.f << " , "
-		      << m4->second.t << std::endl;
-	  }
-	  converted=val*m->second.c/m4->second.c;
-	  return 0;
-	}
-      } else if (m->second.t==from) {
-	std::string b=m->second.f+","+to;
-	miter m2=mcache.find(b);
-	if (m2!=mcache.end()) {
-	  if (verbose>0) {
-	    std::cout << "Using conversions: " << m->second.f << " , "
-		      << m->second.t << std::endl;
-	    std::cout << " (3)          and: " << m2->second.f << " , "
-		      << m2->second.t << std::endl;
-	  }
-	  converted=val/m->second.c*m2->second.c;
-	  return 0;
-	}
-      } else if (m->second.f==to) {
-	std::string b=m->second.t+","+from;
-	miter m2=mcache.find(b);
-	if (m2!=mcache.end()) {
-	  if (verbose>0) {
-	    std::cout << "Using conversions: " << m->second.f << " , "
-		      << m->second.t << std::endl;
-	    std::cout << " (4)          and: " << m2->second.f << " , "
-		      << m2->second.t << std::endl;
-	  }
-	  converted=val/m->second.c/m2->second.c;
-	  return 0;
-	}
-	std::string b2=from+","+m->second.t;
-	miter m4=mcache.find(b2);
-	if (m4!=mcache.end()) {
-	  if (verbose>0) {
-	    std::cout << "Using conversions: " << m->second.f << " , "
-		      << m->second.t << std::endl;
-	    std::cout << " (5)          and: " << m4->second.f << " , "
-		      << m4->second.t << std::endl;
-	  }
-	  converted=val/m->second.c*m4->second.c;
-	  return 0;
-	}
-      } else if (m->second.t==to) {
-	std::string b=m->second.f+","+from;
-	miter m2=mcache.find(b);
-	if (m2!=mcache.end()) {
-	  if (verbose>0) {
-	    std::cout << "Using conversions: " << m->second.f << " , "
-		      << m->second.t << std::endl;
-	    std::cout << " (6)          and: " << m2->second.f << " , "
-		      << m2->second.t << std::endl;
-	  }
-	  converted=val*m->second.c/m2->second.c;
-	  return 0;
-	}
-      }
-    }
-
-  }
-
-#ifdef HAVE_POPEN
-  if (verbose>0) {
-    std::cout << "convert_units::convert(): "
-	      << "Define constant popen is defined." << std::endl;
-  }
-
-  if (use_gnu_units) {
-
-    if (verbose>0) {
-      std::cout << "convert_units::convert(): "
-		<< "Value of use_gnu_units is true." << std::endl;
-    }
-    
-    // Run the GNU 'units' command
-    std::string cmd=units_cmd_string+" '"+from+"' '"+to+"'";
-    if (verbose>0) {
-      std::cout << "convert_units::convert(): "
-		<< "Units command is " << cmd << std::endl;
-    }
-    
-    FILE *ps_pipe=popen(cmd.c_str(),"r");
-    if (!ps_pipe) {
-      if (err_on_fail) {
-	O2SCL_ERR("Pipe could not be opened in convert_units::convert().",
-		  exc_efilenotfound);
-      }
-      return exc_efilenotfound;
-    }
-
-    char line1[80];
-    int size=80;
-
-    // Variable 'cret' is unused, but put here to avoid
-    // unused return value errors
-    char *cret=fgets(line1,80,ps_pipe);
-    if (verbose>0) {
-      std::cout << "convert_units::convert(): "
-		<< "Units output is " << line1 << std::endl;
-    }
-
-    // Read the output from the 'units' command and compute the 
-    // conversion factor
-    std::string s=line1, t1, t2;
-    std::istringstream *ins=new std::istringstream(s);
-    (*ins) >> t1 >> t2;
-    delete ins;
-    if (verbose>0) {
-      std::cout << "convert_units::convert(): "
-		<< "Units string to convert is "
-		<< t2 << std::endl;
-    }
-    double conv;
-    int sret=o2scl::stod_nothrow(t2,conv);
-    if (sret!=0) {
-      if (err_on_fail) {
-	string str=((string)"Conversion between ")+from+" and "+to+
-	  " not found in convert_units::convert().";
-	O2SCL_ERR(str.c_str(),exc_enotfound);
-      }
-      return exc_enotfound;
-    }
-    if (verbose>0) {
-      std::cout << "convert_units::convert(): "
-		<< "Converted value is "
-		<< conv << std::endl;
-    }
-      
-    // Cleanup
-    if (pclose(ps_pipe)!=0) {
-      if (err_on_fail) {
-	O2SCL_ERR("Pipe could not be closed in convert_units::convert().",
-		  exc_efailed);
-      }
-      return exc_efailed;
-    }
-      
+  if (ret==0 && new_conv) {
     // Add the newly computed conversion to the table
     unit_t ut;
     ut.f=from;
     ut.t=to;
-    ut.c=conv;
+    ut.c=factor;
+    std::string both=from+","+to;
     mcache.insert(make_pair(both,ut));
-
-    converted=conv*val;
-    return 0;
-
-  } else {
-    if (verbose>0) {
-      std::cout << "convert_units::convert(): "
-		<< "Value of use_gnu_units is false." << std::endl;
-    }
-  }    
-  
-#else
-  if (verbose>0) {
-    std::cout << "convert_units::convert(): "
-	      << "Define constant popen is not defined." << std::endl;
   }
-#endif
-      
-  if (err_on_fail) {
-    string str=((string)"Conversion between ")+from+" and "+to+
-      " not found in convert_units::convert_ret().";
-    O2SCL_ERR(str.c_str(),exc_enotfound);
-  }
-  
-  return exc_enotfound;
+
+  return ret;
 }
 
-int convert_units::convert_ret_const(std::string from, std::string to,
-				     double val, double &converted) const {
-				     
-
-  // Remove whitespace
-  remove_whitespace(from);
-  remove_whitespace(to);
-
+int convert_units::convert_cache(std::string from, std::string to,
+				 double val, double &converted,
+				 double &factor) const {
+  
   // Look in cache for conversion
   std::string both=from+","+to;
   mciter m3=mcache.find(both);
   if (m3!=mcache.end()) {
-    converted=val*m3->second.c;
+    factor=m3->second.c;
+    converted=val*factor;
     return 0;
   }
 
@@ -306,7 +107,8 @@ int convert_units::convert_ret_const(std::string from, std::string to,
   std::string both2=to+","+from;
   m3=mcache.find(both2);
   if (m3!=mcache.end()) {
-    converted=val/m3->second.c;
+    factor=1.0/m3->second.c;
+    converted=val*factor;
     return 0;
   }
 
@@ -324,7 +126,8 @@ int convert_units::convert_ret_const(std::string from, std::string to,
 	    std::cout << " (1)          and: " << m2->second.f << " , "
 		      << m2->second.t << " " << m2->second.c << std::endl;
 	  }
-	  converted=val*m->second.c*m2->second.c;
+	  factor=m->second.c*m2->second.c;
+	  converted=val*factor;
 	  return 0;
 	}
 	std::string b2=to+","+m->second.t;
@@ -336,7 +139,8 @@ int convert_units::convert_ret_const(std::string from, std::string to,
 	    std::cout << " (2)          and: " << m4->second.f << " , "
 		      << m4->second.t << std::endl;
 	  }
-	  converted=val*m->second.c/m4->second.c;
+	  factor=m->second.c/m4->second.c;
+	  converted=val*factor;
 	  return 0;
 	}
       } else if (m->second.t==from) {
@@ -349,7 +153,8 @@ int convert_units::convert_ret_const(std::string from, std::string to,
 	    std::cout << " (3)          and: " << m2->second.f << " , "
 		      << m2->second.t << std::endl;
 	  }
-	  converted=val/m->second.c*m2->second.c;
+	  factor=m2->second.c/m->second.c;
+	  converted=val*factor;
 	  return 0;
 	}
       } else if (m->second.f==to) {
@@ -362,7 +167,8 @@ int convert_units::convert_ret_const(std::string from, std::string to,
 	    std::cout << " (4)          and: " << m2->second.f << " , "
 		      << m2->second.t << std::endl;
 	  }
-	  converted=val/m->second.c/m2->second.c;
+	  factor=1.0/m->second.c/m2->second.c;
+	  converted=val*factor;
 	  return 0;
 	}
 	std::string b2=from+","+m->second.t;
@@ -374,7 +180,8 @@ int convert_units::convert_ret_const(std::string from, std::string to,
 	    std::cout << " (5)          and: " << m4->second.f << " , "
 		      << m4->second.t << std::endl;
 	  }
-	  converted=val/m->second.c*m4->second.c;
+	  factor=m4->second.c/m->second.c;
+	  converted=val*factor;
 	  return 0;
 	}
       } else if (m->second.t==to) {
@@ -387,7 +194,8 @@ int convert_units::convert_ret_const(std::string from, std::string to,
 	    std::cout << " (6)          and: " << m2->second.f << " , "
 		      << m2->second.t << std::endl;
 	  }
-	  converted=val*m->second.c/m2->second.c;
+	  factor=m->second.c/m2->second.c;
+	  converted=val*factor;
 	  return 0;
 	}
       }
@@ -395,13 +203,205 @@ int convert_units::convert_ret_const(std::string from, std::string to,
 
   }
 
+  return exc_efailed;
+}
+
+int convert_units::convert_gnu_units(std::string from, std::string to,
+				     double val, double &converted,
+				     double &factor, bool &new_conv) const {
+  
+  // Run the GNU 'units' command
+  std::string cmd=units_cmd_string+" '"+from+"' '"+to+"'";
+  if (verbose>0) {
+    std::cout << "convert_units::convert_gnu_units(): "
+	      << "Units command is " << cmd << std::endl;
+  }
+  
+#ifdef HAVE_POPEN
+  
+  if (verbose>0) {
+    std::cout << "convert_units::convert_gnu_units(): "
+	      << "Define constant popen is defined." << std::endl;
+  }
+
+  FILE *ps_pipe=popen(cmd.c_str(),"r");
+  if (!ps_pipe) {
+    if (err_on_fail) {
+      O2SCL_ERR2("Pipe could not be opened in ",
+		 "convert_units::convert_gnu_units().",exc_efilenotfound);
+    }
+    return exc_efilenotfound;
+  }
+  
+  char line1[80];
+  int size=80;
+  
+  // Variable 'cret' is unused, but put here to avoid
+  // unused return value errors
+  char *cret=fgets(line1,80,ps_pipe);
+  if (verbose>0) {
+    std::cout << "convert_units::convert_gnu_units(): "
+	      << "Units output is " << line1 << std::endl;
+  }
+  
+  // Read the output from the 'units' command and compute the 
+  // conversion factor
+  std::string s=line1, t1, t2;
+  std::istringstream *ins=new std::istringstream(s);
+  (*ins) >> t1 >> t2;
+  delete ins;
+  if (verbose>0) {
+    std::cout << "convert_units::convert_gnu_units(): "
+	      << "Units string to convert is "
+	      << t2 << std::endl;
+  }
+  int sret=o2scl::stod_nothrow(t2,factor);
+  if (sret!=0) {
+    if (err_on_fail) {
+      string str=((string)"Conversion between ")+from+" and "+to+
+	" not found in convert_units::convert_gnu_units().";
+      O2SCL_ERR(str.c_str(),exc_enotfound);
+    }
+    return exc_enotfound;
+  }
+  if (verbose>0) {
+    std::cout << "convert_units::convert_gnu_units(): "
+	      << "Converted value is "
+	      << factor*val << std::endl;
+  }
+  
+  // Cleanup
+  if (pclose(ps_pipe)!=0) {
+    if (err_on_fail) {
+      O2SCL_ERR2("Pipe could not be closed in ",
+		 "convert_units::convert_gnu_units().",exc_efailed);
+    }
+    return exc_efailed;
+  }
+
+  converted=factor*val;
+  
+#else
+  
+  if (verbose>0) {
+    std::cout << "convert_units::convert_gnu_units(): "
+	      << "Define constant popen is not defined." << std::endl;
+  }
+  return exc_efailed;
+  
+#endif
+      
+  return 0;
+}
+
+int convert_units::convert_internal(std::string from, std::string to,
+				    double val, double &converted,
+				    double &factor, bool &new_conv) const {
+
+  // Remove whitespace
+  remove_whitespace(from);
+  remove_whitespace(to);
+
+  int ret_cache=convert_cache(from,to,val,converted,factor);
+
+  if (ret_cache==0) {
+    new_conv=false;
+    return 0;
+  }
+  
+  if (use_gnu_units) {
+
+    if (verbose>0) {
+      std::cout << "convert_units::convert(): "
+		<< "Value of use_gnu_units is true." << std::endl;
+    }
+
+    int ret_gnu=convert_gnu_units(from,to,val,converted,factor,new_conv);
+
+    if (ret_gnu==0) {
+      new_conv=true;
+      return 0;
+    }
+
+  } else {
+    
+    if (verbose>0) {
+      std::cout << "convert_units::convert(): "
+		<< "Value of use_gnu_units is false." << std::endl;
+    }
+    
+  }    
+  
   if (err_on_fail) {
     string str=((string)"Conversion between ")+from+" and "+to+
-      " not found in convert_units::convert_ret_const().";
+      " not found in convert_units::convert_ret().";
     O2SCL_ERR(str.c_str(),exc_enotfound);
   }
   
   return exc_enotfound;
+}
+
+int convert_units::test_cache() {
+  err_on_fail=false;
+  mciter m, m2;
+  cout << "units_cmd_string: " << units_cmd_string << endl;
+  for (m=mcache.begin();m!=mcache.end();m++) {
+    for (m2=m;m2!=mcache.end();m2++) {
+      string from=m->second.f;
+      string to=m2->second.t;
+      if (from!=to) {
+	double v=1.0, c, f1, f2;
+	int cret=convert_cache(from,to,v,c,f1);
+	if (cret==0) {
+	  bool new_conv;
+	  int gret=convert_gnu_units(from,to,v,c,f2,new_conv);
+	  if (gret==0) {
+	    if (fabs(f1-f2)/f1>1.0e-6) {
+	      cout << "* ";
+	    } else {
+	      cout << "  ";
+	    }
+	    cout.width(10);
+	    cout << from << " ";
+	    cout.width(10);
+	    cout << to << " " << f1 << " " << f2 << " "
+		 << fabs(f1-f2)/f1 << endl;
+	  }
+	}
+      }
+      to=m2->second.f;
+      if (from!=to) {
+	double v=1.0, c, f1, f2;
+	int cret=convert_cache(from,to,v,c,f1);
+	if (cret==0) {
+	  bool new_conv;
+	  int gret=convert_gnu_units(from,to,v,c,f2,new_conv);
+	  if (gret==0) {
+	    if (fabs(f1-f2)/f1>1.0e-6) {
+	      cout << "* ";
+	    } else {
+	      cout << "  ";
+	    }
+	    cout.width(10);
+	    cout << from << " ";
+	    cout.width(10);
+	    cout << to << " " << f1 << " " << f2 << " "
+		 << fabs(f1-f2)/f1 << endl;
+	  }
+	}
+      }
+    }
+  }
+  return 0;
+}
+
+int convert_units::convert_ret_const(std::string from, std::string to,
+				     double val, double &converted) const {
+				    
+  double factor;
+  bool new_conv;
+  
+  return convert_internal(from,to,val,converted,factor,new_conv);
 }
 
 void convert_units::remove_cache(std::string from, std::string to) {

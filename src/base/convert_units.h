@@ -128,11 +128,33 @@ namespace o2scl {
     /// The const iterator type
     typedef std::map<std::string,unit_t,
       std::greater<std::string> >::const_iterator mciter;
-      
+
+    /** \brief Desc
+     */
+    int convert_internal(std::string from, std::string to,
+			 double val, double &converted,
+			 double &factor, bool &new_conv) const;
+
+    /** \brief Desc
+     */
+    int convert_gnu_units(std::string from, std::string to,
+			 double val, double &converted,
+			 double &factor, bool &new_conv) const;
+
+    /** \brief Desc
+     */
+    int convert_cache(std::string from, std::string to,
+			 double val, double &converted,
+			 double &factor) const;
+
 #endif
 
   public:
 
+    /** \brief Desc
+     */
+    int test_cache();
+    
     /// Create a unit-conversion object
     convert_units();
 
