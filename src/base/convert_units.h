@@ -129,19 +129,21 @@ namespace o2scl {
     typedef std::map<std::string,unit_t,
       std::greater<std::string> >::const_iterator mciter;
 
-    /** \brief Desc
-     */
+    /** \brief The internal conversion function which tries the
+	cache first and, if that failed, tries GNU units
+    */
     int convert_internal(std::string from, std::string to,
 			 double val, double &converted,
 			 double &factor, bool &new_conv) const;
 
-    /** \brief Desc
+    /** \brief Attempt to use GNU units to perform a conversion
      */
     int convert_gnu_units(std::string from, std::string to,
 			 double val, double &converted,
 			 double &factor, bool &new_conv) const;
 
-    /** \brief Desc
+    /** \brief Attempt to construct a conversion from the internal
+	unit cache
      */
     int convert_cache(std::string from, std::string to,
 			 double val, double &converted,
@@ -151,10 +153,6 @@ namespace o2scl {
 
   public:
 
-    /** \brief Desc
-     */
-    int test_cache();
-    
     /// Create a unit-conversion object
     convert_units();
 
@@ -239,6 +237,10 @@ namespace o2scl {
     */
     void make_units_dat(std::string fname, bool c_1=false, 
 			bool hbar_1=false, bool K_1=false) const;
+
+    /** \brief Exhaustive test the cache against GNU units
+     */
+    int test_cache();
     //@}
     
   };
