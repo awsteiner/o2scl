@@ -287,6 +287,7 @@ int convert_units::convert_gnu_units(std::string from, std::string to,
     std::cout << "convert_units::convert_gnu_units(): "
 	      << "Define constant popen is not defined." << std::endl;
   }
+  
   return exc_efailed;
   
 #endif

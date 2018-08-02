@@ -707,9 +707,12 @@ namespace o2scl {
     static const int match_line=1;
     //@}
 
+    /** \brief If true, call the error handler if the EOS
+	reports a non-finite value (default true)
+    */
     bool err_nonconv;
     
-    /// \name Basic EOS functions (internal unit system)
+    /// \name Basic EOS functions (all in the internal unit system)
     //@{
     /** \brief From the pressure, return the energy density
      */
@@ -753,14 +756,14 @@ namespace o2scl {
 	This function copies the needed information from the
 	table so if it is modified then this function
 	needs to be called again to read a new table.
-     */
+    */
     void read_table(table_units<> &eosat, std::string s_cole, 
 		    std::string s_colp, std::string s_colnb="");
     //@}
     
     /// \name Crust EOS functions
     //@{
-    /// Default crust EOS from \ref Negele73 and \ref Baym71tg
+    /// Standard crust EOS from \ref Negele73 and \ref Baym71tg
     void default_low_dens_eos();
 
     /// Crust EOS from \ref Shen11b
@@ -804,7 +807,7 @@ namespace o2scl {
     void ngl13_low_dens_eos2(double S, double L, double nt,
 			     std::string fname="");
     
-    /// Compute with no crust EOS
+    /// Compute with no crust EOS (this is the default)
     void no_low_dens_eos() {
       use_crust=false;
       return;
