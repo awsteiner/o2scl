@@ -79,10 +79,10 @@ namespace o2scl {
       \f]
       In this case the distance between two elements \f$(i_0,i_1,
       i_2,i_3)\f$ and \f$ (i_0+1,i_1,i_2,i_3) \f$ is \f$ s_1 s_2 s_3
-      \f$,the distance between two elements \f$(i_0,i_1,i_2,
-      i_3)\f$ and \f$ (i_0,i_1+1,i_2,i_3) \f$ is \f$ s_2 s_3 \f$, and
-      the distance between two elements \f$(i_0,i_1,i_2,i_3)\f$ and
-      \f$ (i_0,i_1,i_2,i_3+1) \f$ is just unity.
+      \f$, the distance between two elements \f$(i_0,i_1,i_2, i_3)\f$
+      and \f$ (i_0,i_1+1,i_2,i_3) \f$ is \f$ s_2 s_3 \f$, and the
+      elements \f$(i_0,i_1,i_2,i_3)\f$ and \f$ (i_0,i_1,i_2,i_3+1) \f$
+      are adjacent.
 
       \note Slices of tensors are subsets obtained from fixing the
       index of several dimensions, while letting other dimensions

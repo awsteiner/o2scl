@@ -107,6 +107,9 @@ namespace o2scl {
       \future A swap function for the data object might be helpful. 
 
       \future Only allocate space for grid if it is set.
+
+      \future As with \ref o2scl::tensor, generalize to other
+      types.
   */
   template<class vec_t=std::vector<double>, 
     class vec_size_t=std::vector<size_t> > class tensor_grid :
@@ -608,7 +611,7 @@ namespace o2scl {
     */
     template<class size_vec2_t> 
       void copy_slice_align(size_t ix_x, size_t ix_y, size_vec2_t &index, 
-			    table3d &tab, std::string slice_name) {
+			    table3d &tab, std::string slice_name="z") {
       
       if (ix_x>=this->rk || ix_y>=this->rk || ix_x==ix_y) {
 	O2SCL_ERR2("Either indices greater than rank or x and y ind",
@@ -619,21 +622,6 @@ namespace o2scl {
       // Get current table3d grid
       size_t nx, ny;
       tab.get_size(nx,ny);
-
-      if (nx==0 && ny==0) {
-
-	// If there's no grid, just create it
-	std::vector<double> gx, gy;
-	for(size_t i=0;i<this->size[ix_x];i++) {
-	  gx.push_back(this->get_grid(ix_x,i));
-	}
-	for(size_t i=0;i<this->size[ix_y];i++) {
-	  gy.push_back(this->get_grid(ix_y,i));
-	}
-	nx=gx.size();
-	ny=gy.size();
-	tab.set_xy("x",nx,gx,"y",ny,gy);
-      }
 
       // Check that the grids are commensurate
       if (nx!=this->size[ix_x] || ny!=this->size[ix_y]) {
@@ -658,6 +646,40 @@ namespace o2scl {
       return;
     }
 
+    /** \brief Create a slice in a table3d object with a new aligned
+	grid
+    */
+    template<class size_vec2_t> 
+      void copy_slice_align_newxy
+      (size_t ix_x, size_t ix_y, size_vec2_t &index, 
+       table3d &tab, std::string x_name="x", std::string y_name="y",
+       std::string slice_name="z") {
+
+      // Get current table3d grid
+      size_t nx, ny;
+      tab.get_size(nx,ny);
+
+      if (nx==0 && ny==0) {
+
+	if (x_name.length()==0) x_name="x";
+	if (y_name.length()==0) y_name="y";
+	
+	// If there's no grid, then create a grid in the table3d
+	// object that is the same as that in the tensor_grid object
+	std::vector<double> grid_x, grid_y;
+	copy_grid(ix_x,grid_x);
+	copy_grid(ix_y,grid_y);
+	tab.set_xy("x",grid_x.size(),grid_x,
+		   "y",grid_y.size(),grid_y);
+	// Now that the grid is set, get nx and ny
+	tab.get_size(nx,ny);
+      }
+      
+      copy_slice_align(ix_x,ix_y,index,tab,slice_name);
+      
+      return;
+    }
+    
     /** \brief Copy an abitrary slice by fixing 1 or more indices
 	and return a new \ref tensor_grid object
      */
@@ -752,7 +774,7 @@ namespace o2scl {
     */
     template<class size_vec2_t> 
       void copy_slice_interp(size_t ix_x, size_t ix_y, size_vec2_t &index, 
-			     table3d &tab, std::string slice_name) {
+			     table3d &tab, std::string slice_name="z") {
 
       if (ix_x>=this->rk || ix_y>=this->rk || ix_x==ix_y) {
 	O2SCL_ERR2("Either indices greater than rank or x and y ",
@@ -849,6 +871,7 @@ namespace o2scl {
     }
 
     /** \brief Copy to a slice in a table3d object using interpolation
+	creating a new table3d grid
      */
     template<class vec2_t> 
       void copy_slice_interp_values_setxy
@@ -861,6 +884,10 @@ namespace o2scl {
       tab.get_size(nx,ny);
 
       if (nx==0 && ny==0) {
+
+	if (x_name.length()==0) x_name="x";
+	if (y_name.length()==0) y_name="y";
+	
 	// If there's no grid, then create a grid in the table3d
 	// object that is the same as that in the tensor_grid object
 	std::vector<double> grid_x, grid_y;
