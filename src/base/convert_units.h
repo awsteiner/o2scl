@@ -130,13 +130,32 @@ namespace o2scl {
       std::greater<std::string> >::const_iterator mciter;
 
     /** \brief The internal conversion function which tries the
-	cache first and, if that failed, tries GNU units
+	cache first and, if that failed, tries GNU units.
+
+	This function returns 0 if the conversion was successful. If
+	the conversion fails and \ref err_on_fail is \c true, then the
+	error handler is called. If the conversion fails and \ref
+	err_on_fail is \c false, then the value \ref
+	o2scl::exc_enotfound is returned.
+
+	The public conversion functions in this class are
+	basically just wrappers around this internal function.
     */
     int convert_internal(std::string from, std::string to,
 			 double val, double &converted,
 			 double &factor, bool &new_conv) const;
 
     /** \brief Attempt to use GNU units to perform a conversion
+
+	This function attempts to open a pipe to GNU units independent
+	of the value of \ref use_gnu_units. However, it will always
+	return a non-zero valeu if \c HAVE_POPEN is not defined
+	signaling that the <tt>popen()</tt> function is not available
+	(but does not call the error handler in this case). The
+	function returns 0 if the conversion was successful. If
+	HAVE_POPEN is defined but the call to GNU units fails
+	for some reason, then the error handler is called if
+	\ref err_on_fail is true.
      */
     int convert_gnu_units(std::string from, std::string to,
 			 double val, double &converted,
@@ -144,6 +163,10 @@ namespace o2scl {
 
     /** \brief Attempt to construct a conversion from the internal
 	unit cache
+
+	This function returns 0 if the conversion was successful and
+	\ref o2scl::exc_efailed otherwise. This function
+	does not call the error handler.
      */
     int convert_cache(std::string from, std::string to,
 			 double val, double &converted,
