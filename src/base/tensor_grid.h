@@ -97,12 +97,16 @@ namespace o2scl {
       tensor::resize() to resize the tensor, failing to resize the
       grid. This probably needs fixing.
 
-      \future Is it really necessary that get_data() is public?
-      \future Only allocate space for grid if it is set
-      \future Consider creating a new set_grid() function which
-      takes grids from an object like uniform_grid. Maybe make a 
-      constructor for a tensor_grid object which just takes 
-      as input a set of grids?
+      \future Is it really necessary that get_data() is public and not
+      const? This is used in HDF5 I/O, but the HDF5 output function
+      already appears to be a friend and it conflicts with the parent
+      version from tensor which is non-const. Also, there are some
+      applications for which it's really helpful to have access to the
+      base data object. I'm not sure what to do here.
+
+      \future A swap function for the data object might be helpful. 
+
+      \future Only allocate space for grid if it is set.
   */
   template<class vec_t=std::vector<double>, 
     class vec_size_t=std::vector<size_t> > class tensor_grid :
@@ -136,7 +140,7 @@ namespace o2scl {
       grid_set=false;
       itype=itp_linear;
     }
-    
+
     /** \brief Create a tensor of rank \c rank with sizes given in \c dim
 	
 	The parameter \c dim must be a vector of sizes with length \c
@@ -159,6 +163,22 @@ namespace o2scl {
       }
     }
 
+    /** \brief Create a tensor with a grid defined by a set
+	of \ref o2scl::uniform_grid objects
+    */
+  tensor_grid(std::vector<uniform_grid<double> > &ugs) :
+    tensor<double,vec_t,vec_size_t>() {    
+      this->rk=ugs.size();
+      itype=itp_linear;
+      size_t tot=1;
+      for(size_t j=0;j<this->rk;j++) {
+	this->size.push_back(ugs[j].get_npoints());
+	tot*=ugs[j].get_npoints();
+      }
+      this->data.resize(tot);
+      set_grid(ugs);
+    }
+    
     virtual ~tensor_grid() {
     }
 
@@ -263,6 +283,11 @@ namespace o2scl {
 
       // Set value
       return this->data[ix];
+    }
+
+    /// Return a reference to the data (for HDF I/O)
+    vec_t &get_data() {
+      return this->data;
     }
     //@}
     
@@ -378,6 +403,29 @@ namespace o2scl {
       return;
     }
 
+    /** \brief Set grid from a vector of uniform grid objects
+
+	\note This is called by one of the constructors.
+     */
+    void set_grid(std::vector<uniform_grid<double> > &ugs) {
+      if (this->rk==0) {
+	O2SCL_ERR2("Tried to set grid for empty tensor in ",
+		   "tensor_grid::set_grid().",exc_einval);
+      }
+      size_t ngrid=0;
+      for(size_t i=0;i<this->rk;i++) ngrid+=ugs[i].get_npoints();
+      grid.resize(ngrid);
+      size_t k=0;
+      for(size_t i=0;i<this->rk;i++) {
+	for(size_t j=0;j<ugs[i].get_npoints();j++) {
+	  grid[k]=ugs[i][j];
+	  k++;
+	}
+      }
+      grid_set=true;
+      return;
+    }
+
     /** \brief Copy grid for index \c i to vector \c v
 	
 	The type \c rvec_t must be a vector with a resize
@@ -428,52 +476,6 @@ namespace o2scl {
       return;
     }
 
-    /// Lookup index for grid closest to \c val
-    size_t lookup_grid(size_t i, double val) {
-      if (!grid_set) {
-	O2SCL_ERR("Grid not set in tensor_grid::lookup_grid().",
-		  exc_einval);
-      }
-      if (i>=this->rk) {
-	O2SCL_ERR((((std::string)"Index ")+szttos(i)+
-		   " greater than or equal to rank, "+szttos(this->rk)+
-		   ", in tensor_grid::lookup_grid().").c_str(),
-		  exc_einval);
-      }
-      size_t istart=0;
-      
-      for(size_t j=0;j<i;j++) {
-	istart+=this->size[j];
-      }
-      size_t best=istart;
-      double min=fabs(grid[istart]-val);
-      for(size_t j=istart;j<istart+this->size[i];j++) {
-	if (fabs(grid[j]-val)<min) {
-	  best=j;
-	  min=fabs(grid[j]-val);
-	}
-      }
-      return best-istart;
-    }
-
-    /** \brief Lookup indices for grid closest point to \c vals
-
-        The values in \c vals are not modified by this function.
-	
-	\comment
-	This function must have a different name than 
-	lookup_grid() because the template types cause
-	confusion between the two functions.
-	\endcomment
-    */
-    template<class vec2_t, class size_vec2_t>
-      void lookup_grid_vec(const vec2_t &vals, size_vec2_t &indices) const {
-      for(size_t k=0;k<this->rk;k++) {
-	indices[k]=lookup_grid(k,vals[k]);
-      }
-      return;
-    }
-
     /** \brief Lookup index for grid closest to \c val, returning the 
 	grid point
 
@@ -512,40 +514,46 @@ namespace o2scl {
     }
 
     /// Lookup index for grid closest to \c val
-    size_t lookup_grid_packed(size_t i, double val) {
-      if (!grid_set) {
-	O2SCL_ERR("Grid not set in tensor_grid::lookup_grid_packed().",
-		  exc_einval);
-      }
-      if (i>=this->rk) {
-	O2SCL_ERR((((std::string)"Index ")+szttos(i)+" greater than rank, "+
-		   szttos(this->rk)+
-		   ", in tensor_grid::lookup_grid_packed().").c_str(),
-		  exc_einval);
-      }
-      size_t istart=0;
-      for(size_t j=0;j<i;j++) istart+=this->size[j];
-      size_t best=istart;
-      double min=fabs(grid[istart]-val);
-      for(size_t j=istart;j<istart+this->size[i];j++) {
-	if (fabs(grid[j]-val)<min) {
-	  best=j;
-	  min=fabs(grid[j]-val);
-	}
-      }
-      return best;
+    size_t lookup_grid(size_t i, double val) {
+      double val2;
+      return lookup_grid(i,val,val2);
     }
 
-    /// Lookup index for grid closest to \c val
+    /** \brief Lookup indices for grid closest point to \c vals
+
+        The values in \c vals are not modified by this function.
+	
+	\comment
+	This function must have a different name than 
+	lookup_grid() because the template types cause
+	confusion between the two functions.
+	\endcomment
+    */
+    template<class vec2_t, class size_vec2_t>
+      void lookup_grid_vec(const vec2_t &vals, size_vec2_t &indices) const {
+      for(size_t k=0;k<this->rk;k++) {
+	indices[k]=lookup_grid(k,vals[k]);
+      }
+      return;
+    }
+
+    /** \brief Lookup internal packed grid index for point closest 
+	to \c val and store closest value in \c val2
+
+	This version, rather than \ref
+	o2scl::tensor_grid::lookup_grid_val() can be useful because it
+	gives the index of the grid point in the internal grid vector
+	object.
+    */
     size_t lookup_grid_packed_val(size_t i, double val, double &val2) {
       if (!grid_set) {
-	O2SCL_ERR("Grid not set in tensor_grid::lookup_grid_packed().",
+	O2SCL_ERR("Grid not set in tensor_grid::lookup_grid_packed_val().",
 		  exc_einval);
       }
       if (i>=this->rk) {
 	O2SCL_ERR((((std::string)"Index ")+szttos(i)+" greater than rank, "+
 		   szttos(this->rk)+
-		   ", in tensor_grid::lookup_grid_packed().").c_str(),
+		   ", in tensor_grid::lookup_grid_packed_val().").c_str(),
 		  exc_einval);
       }
       size_t istart=0;
@@ -562,13 +570,16 @@ namespace o2scl {
       }
       return best;
     }
+    
+    /** \brief Lookup internal packed grid index for point closest 
+	to \c val
+    */
+    size_t lookup_grid_packed(size_t i, double val) {
+      double val2;
+      return lookup_grid_packed_val(i,val,val2);
+    }
     //@}
 
-    /// Return a reference to the data (for HDF I/O)
-    vec_t &get_data() {
-      return this->data;
-    }
-    
     /// \name Slicing
     //@{
     /** \brief Create a slice in a table3d object with an aligned
@@ -785,8 +796,9 @@ namespace o2scl {
     template<class vec2_t> 
       void copy_slice_interp_values(size_t ix_x, size_t ix_y,
 				    vec2_t &values, table3d &tab,
-				    std::string slice_name) {
-				    
+				    std::string slice_name="z",
+				    int verbose=0) {
+      
       if (ix_x>=this->rk || ix_y>=this->rk || ix_x==ix_y) {
 	O2SCL_ERR2("Either indices greater than rank or x and y ",
 		   "indices equal in tensor_grid::copy_slice_interp().",
@@ -798,6 +810,52 @@ namespace o2scl {
 		   exc_efailed);
       }
 
+      if (tab.is_size_set()==false || tab.is_xy_set()==false) {
+	O2SCL_ERR2("Grid not set in tensor_grid::",
+		   "copy_slice_interp_value().",o2scl::exc_einval);
+      }
+
+      // Get current table3d grid
+      size_t nx, ny;
+      tab.get_size(nx,ny);
+
+      // Create slice if not already present
+      size_t is;
+      if (!tab.is_slice(slice_name,is)) tab.new_slice(slice_name);
+
+      // Loop through the table grid to perform the interpolation
+      for(size_t i=0;i<nx;i++) {
+	for(size_t j=0;j<ny;j++) {
+	  values[ix_x]=tab.get_grid_x(i);
+	  values[ix_y]=tab.get_grid_y(j);
+	  tab.set(i,j,slice_name,this->interp_linear(values));
+	  if (verbose>0) {
+	    std::cout << "At location values: ";
+	    for(size_t k=0;k<values.size();k++) {
+	      std::cout << values[k] << " ";
+	    }
+	    std::cout << "Interpolated to get: "
+		      << i << " " << j << " " << slice_name << " "
+		      << this->interp_linear(values) << std::endl;
+	    if (verbose>1) {
+	      char ch;
+	      std::cin >> ch;
+	    }
+	  }
+	}
+      }
+
+      return;
+    }
+
+    /** \brief Copy to a slice in a table3d object using interpolation
+     */
+    template<class vec2_t> 
+      void copy_slice_interp_values_setxy
+      (size_t ix_x, size_t ix_y, vec2_t &values, table3d &tab,
+       std::string x_name="x", std::string y_name="y",
+       std::string slice_name="z") {
+
       // Get current table3d grid
       size_t nx, ny;
       tab.get_size(nx,ny);
@@ -808,46 +866,13 @@ namespace o2scl {
 	std::vector<double> grid_x, grid_y;
 	copy_grid(ix_x,grid_x);
 	copy_grid(ix_y,grid_y);
-	/*
-	std::cout << "Here: " << std::endl;
-	std::cout << grid_x[0] << " " << grid_x[1] << std::endl;
-	std::cout << grid_x[grid_x.size()-2] << " "
-		  << grid_x[grid_x.size()-1] << std::endl;
-	std::cout << grid_y[0] << " " << grid_y[1] << std::endl;
-	std::cout << grid_y[grid_y.size()-2] << " "
-		  << grid_y[grid_y.size()-1] << std::endl;
-	*/
 	tab.set_xy("x",grid_x.size(),grid_x,
 		   "y",grid_y.size(),grid_y);
 	// Now that the grid is set, get nx and ny
 	tab.get_size(nx,ny);
       }
-
-      // Create slice if not already present
-      size_t is;
-      if (!tab.is_slice(slice_name,is)) tab.new_slice(slice_name);
-      //std::cout << "Here2: " << slice_name << std::endl;
-
-      // Loop through the table grid to perform the interpolation
-      for(size_t i=0;i<nx;i++) {
-	for(size_t j=0;j<ny;j++) {
-	  values[ix_x]=tab.get_grid_x(i);
-	  values[ix_y]=tab.get_grid_y(j);
-	  tab.set(i,j,slice_name,this->interp_linear(values));
-	  /*
-	  std::cout << "At location values: ";
-	  for(size_t k=0;k<values.size();k++) {
-	    std::cout << values[k] << " ";
-	  }
-	  std::cout << "Interpolated to get: "
-		    << i << " " << j << " " << slice_name << " "
-		    << this->interp_linear(values) << std::endl;
-	  char ch;
-	  std::cin >> ch;
-	  */
-	}
-      }
-
+      
+      copy_slice_interp_values(ix_x,ix_y,values,tab,slice_name);
       return;
     }
     //@}

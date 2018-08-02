@@ -65,15 +65,15 @@ namespace o2scl_hdf {
 namespace o2scl {
 #endif
   
-  /** \brief A data structure containing many slices of two-dimensional
-      data points defined on a grid
+  /** \brief A data structure containing one or more slices of
+      two-dimensional data points defined on a grid
 
       \future Improve interpolation and derivative caching, possibly
       through non-const versions of the interpolation functions.
       \future Should there be a clear_grid() function separate from
-      clear_data() and clear_table()?
+      clear_data() and clear()?
       \future Allow the user to more clearly probe 'size_set' vs.
-      'xy_set'?
+      'xy_set'? (AWS 07/18: This is apparently resolved.)
   */
   class table3d {
     
@@ -892,6 +892,9 @@ namespace o2scl {
 
     /// True if the table has at least one slice
     bool has_slice;
+
+    /// The interpolation type
+    size_t itype;
     //@}
   
     /// \name Tree iterator boundaries
@@ -905,8 +908,6 @@ namespace o2scl {
     /// Return the end of the slice tree
     map_const_iter const_end() const {return tree.end();};
     //@}
-
-    size_t itype;
 
 #endif
 

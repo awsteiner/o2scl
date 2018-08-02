@@ -814,7 +814,7 @@ namespace o2scl {
       and stores it in the <tt>five_tau_over_M</tt> vector and then
       returns the first value of \f$ M \f$ for which the vector is
       less than or equal to 1.0. If this function returns 0, then \f$
-      5 \hat{\tau}(M)/M \f$ is greater than 1.0 for all \f$ M \F$, and
+      5 \hat{\tau}(M)/M \f$ is greater than 1.0 for all \f$ M \f$, and
       this can be a sign that the autocorrelation length is too long
       to accurately resolve.
 
