@@ -66,7 +66,8 @@
     You can then install \o2 from one of the
     release distributions by using the standard GNU
     <tt>./configure</tt> script and then invoking <tt>make</tt> and
-    <tt>make install</tt>.
+    <tt>make install</tt>. This installation method is tested by the 
+    Travis CI script. 
     
     In some recent Ubuntu versions, the HDF5 package installs its
     header files in a slightly different location than on other
@@ -116,8 +117,15 @@
     directly from the repository using the <tt>--HEAD</tt> option
     to <tt>brew install</tt>.
 
-    Alternatively, it is also possible to install directly from source
-    with the <tt>./configure</tt> script as described above.
+    By default, a homebrew installation of \o2 uses the OSX LLVM
+    compiler. However, a homebrew installation of \o2 will also
+    install \c gcc because \o2 requires \c hdf5, and the homebrew \c
+    hdf5 package requires gcc. The homebrew installation of 
+    \o2 is tested by Travis CI.
+
+    Alternatively, it is also possible to install \o2 on OSX directly
+    from source with the <tt>./configure</tt> script as described
+    above. 
 
     \section installopt_subsect Optional linear algebra libraries
 
