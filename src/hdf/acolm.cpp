@@ -235,6 +235,7 @@ int o2scl_acol_get_slice(void *vp, char *slice_name,
 			 int &nx, double *&xptr,
 			 int &ny, double *&yptr,
 			 double *&data) {
+
   o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
   if (amp->type!="table3d") {
     return 1;
@@ -264,6 +265,7 @@ int o2scl_acol_get_slice(void *vp, char *slice_name,
     }
   }
   data=(double *)&amp->stemp[0];
+  
   return 0;
 }
   

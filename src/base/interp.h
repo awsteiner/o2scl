@@ -58,6 +58,7 @@
 
 #include <o2scl/search_vec.h>
 #include <o2scl/tridiag.h>
+#include <o2scl/vector.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -79,7 +80,9 @@ namespace o2scl {
     /// Monotonicity-preserving interpolation (unfinished)
     itp_monotonic=6,
     /// Steffen's monotonic method
-    itp_steffen=7
+    itp_steffen=7,
+    /// Nearest-neighbor lookup
+    itp_nearest_neigh=8
   };
 
   /** \brief Base low-level interpolation class [abstract base]
@@ -331,6 +334,80 @@ namespace o2scl {
 
     interp_linear<vec_t,vec2_t>(const interp_linear<vec_t,vec2_t> &);
     interp_linear<vec_t,vec2_t>& operator=(const interp_linear<vec_t,vec2_t>&);
+
+#endif
+
+  };
+  
+  /** \brief Nearest-neighbor interpolation
+
+      Nearest interpolation requires no calls to allocate() or free()
+      as there is no internal storage required.
+  */
+  template<class vec_t, class vec2_t=vec_t> class interp_nearest_neigh : 
+  public interp_base<vec_t,vec2_t> {
+    
+#ifdef O2SCL_NEVER_DEFINED
+  }{
+#endif
+
+  public:
+    
+    interp_nearest_neigh() {
+      this->min_size=1;
+    }
+    
+    virtual ~interp_nearest_neigh() {}
+    
+    /// Initialize interpolation routine
+    virtual void set(size_t size, const vec_t &x, const vec2_t &y) {
+      if (size<this->min_size) {
+	O2SCL_ERR((((std::string)"Vector size, ")+szttos(size)+", is less"+
+		   " than "+szttos(this->min_size)+" in interp_nearest_neigh::"+
+		   "set().").c_str(),exc_einval);
+      }
+      this->svx.set_vec(size,x);
+      this->px=&x;
+      this->py=&y;
+      this->sz=size;
+      return;
+    }
+    
+    /// Give the value of the function \f$ y(x=x_0) \f$ .
+    virtual double eval(double x0) const {
+
+      size_t index=this->svx.ordered_lookup(x0);
+      return (*this->py)[index];
+    }
+    
+    /// Give the value of the derivative \f$ y^{\prime}(x=x_0) \f$ .
+    virtual double deriv(double x0) const {
+      return 0.0;
+    }
+
+    /** \brief Give the value of the second derivative  
+	\f$ y^{\prime \prime}(x=x_0) \f$ (always zero)
+    */
+    virtual double deriv2(double x0) const {
+      return 0.0;
+    }
+
+    /// Give the value of the integral \f$ \int_a^{b}y(x)~dx \f$ .
+    virtual double integ(double a, double b) const {
+      return 0.0;
+    }
+
+    /// Return the type, \c "interp_nearest_neigh".
+    virtual const char *type() const { return "interp_nearest_neigh"; }
+
+#ifndef DOXYGEN_INTERNAL
+
+  private:
+
+    interp_nearest_neigh<vec_t,vec2_t>
+      (const interp_nearest_neigh<vec_t,vec2_t> &);
+    interp_nearest_neigh<vec_t,vec2_t>& operator=
+      (const interp_nearest_neigh<vec_t,vec2_t>&);
 
 #endif
 
@@ -1603,6 +1680,8 @@ namespace o2scl {
       itp=new interp_monotonic<vec_t,vec2_t>;
     } else if (interp_type==itp_steffen) {
       itp=new interp_steffen<vec_t,vec2_t>;
+    } else if (interp_type==itp_nearest_neigh) {
+      itp=new interp_nearest_neigh<vec_t,vec2_t>;
     } else {
       O2SCL_ERR((((std::string)"Invalid interpolation type, ")+
 		 o2scl::szttos(interp_type)+", in "+
@@ -1661,6 +1740,8 @@ namespace o2scl {
       itp=new interp_monotonic<vec_t,vec2_t>;
     } else if (interp_type==itp_steffen) {
       itp=new interp_steffen<vec_t,vec2_t>;
+    } else if (interp_type==itp_nearest_neigh) {
+      itp=new interp_nearest_neigh<vec_t,vec2_t>;
     } else {
       O2SCL_ERR((((std::string)"Invalid interpolation type, ")+
 		 o2scl::szttos(interp_type)+", in "+
@@ -1748,6 +1829,8 @@ namespace o2scl {
       itp=new interp_monotonic<vec_t,vec2_t>;
     } else if (interp_type==itp_steffen) {
       itp=new interp_steffen<vec_t,vec2_t>;
+    } else if (interp_type==itp_nearest_neigh) {
+      itp=new interp_nearest_neigh<vec_t,vec2_t>;
     } else {
       O2SCL_ERR((((std::string)"Invalid interpolation type, ")+
 		 o2scl::szttos(interp_type)+", in "+
@@ -1797,6 +1880,8 @@ namespace o2scl {
       itp=new interp_monotonic<vec_t,vec2_t>;
     } else if (interp_type==itp_steffen) {
       itp=new interp_steffen<vec_t,vec2_t>;
+    } else if (interp_type==itp_nearest_neigh) {
+      itp=new interp_nearest_neigh<vec_t,vec2_t>;
     } else {
       O2SCL_ERR((((std::string)"Invalid interpolation type, ")+
 		 o2scl::szttos(interp_type)+", in "+
@@ -2429,6 +2514,216 @@ namespace o2scl {
     vector_min(locs.size(),locs,ix,low);
     vector_max(locs.size(),locs,ix,high);
     return 0;
+  }
+
+  /** \brief From an (x,y) pair, create a new (x,y) pair using
+      interpolation where the new x vector is uniformly spaced
+  */
+  template<class vec_t, class vec2_t, class vec3_t, class vec4_t>
+    void rebin_xy(const vec_t &x, const vec2_t &y,
+		  vec3_t &new_x, vec4_t &new_y, size_t n_pts,
+		  size_t interp_type) {
+    
+    if (x.size()!=y.size()) {
+      O2SCL_ERR2("The x and y vectors must have the same size ",
+		 "in rebin_xy().",o2scl::exc_einval);
+    }
+    if (n_pts<2) {
+      O2SCL_ERR2("Number of points must be at least 2 ",
+		 "in rebin_xy().",o2scl::exc_einval);
+    }
+
+    // Vector sizes
+    size_t n=x.size();
+    
+    // Create the grid and setup new_x
+    uniform_grid_end<double> ugx(x[0],x[n-1],n_pts-1);
+    ugx.vector(new_x);
+    
+    // Allocate space and interpolate into new_y
+    new_y.resize(n_pts);
+    interp_vec<vec3_t,vec4_t> itp(n,x,y,interp_type);
+    for(size_t i=0;i<n_pts;i++) {
+      new_y[i]=itp.eval(new_x[i]);
+    }
+    
+    return;
+  }
+
+  /** \brief From an (x,y) pair, create a new (x,y) pair using
+      interpolation where the new x vector is uniformly spaced and
+      test accuracy
+  */
+  template<class vec_t, class vec2_t, class vec3_t, class vec4_t>
+    int rebin_xy(const vec_t &x, const vec2_t &y,
+		 vec3_t &new_x, vec4_t &new_y, size_t n_pts,
+		 size_t interp_type1, size_t interp_type2,
+		 double acc=1.0e-4) {
+    
+    if (x.size()!=y.size()) {
+      O2SCL_ERR2("The x and y vectors must have the same size ",
+		 "in rebin_xy().",o2scl::exc_einval);
+    }
+    if (n_pts<2) {
+      O2SCL_ERR2("Number of points must be at least 2 ",
+		 "in rebin_xy().",o2scl::exc_einval);
+    }
+
+    // Vector sizes
+    size_t n=x.size();
+    
+    // Create the grid and setup new_x
+    uniform_grid_end<double> ugx(x[0],x[n-1],n_pts-1);
+    ugx.vector(new_x);
+    
+    // Allocate space and interpolate into new_y
+    std::vector<double> new_y2(n_pts);
+    new_y.resize(n_pts);
+    interp_vec<vec3_t,vec4_t> itp1(n,x,y,interp_type1);
+    interp_vec<vec3_t,vec4_t> itp2(n,x,y,interp_type2);
+    for(size_t i=0;i<n_pts;i++) {
+      new_y[i]=itp1.eval(new_x[i]);
+      new_y2[i]=itp2.eval(new_x[i]);
+    }
+
+    double max_y, min_y;
+    vector_minmax_value(n_pts,new_y,min_y,max_y);
+    for(size_t i=0;i<n_pts;i++) {
+      if (fabs(new_y2[i]-new_y[i])/(max_y-min_y)>acc) {
+	return 1;
+      }
+    }
+    
+    return 0;
+  }
+
+  /** \brief Rebin, rescale, sort, and match to \f$ y=x \f$
+
+      Principally used by \ref linear_or_log() .
+   */
+  template<class vec_t, class vec2_t>
+    double linear_or_log_chi2(const vec_t &x, const vec2_t &y) {
+
+    static const size_t n2=11;
+    
+    // Rebin into vectors of length 11
+    std::vector<double> xn, yn;
+    rebin_xy(x,y,xn,yn,n2,itp_linear);
+    
+    // Rescale to [0,1]
+    double min_y, max_y;
+    vector_minmax_value(n2,yn,min_y,max_y);
+    for(size_t i=0;i<n2;i++) {
+      yn[i]=(yn[i]-min_y)/(max_y-min_y);
+    }
+    
+    // Sort and match to line
+    vector_sort_double(n2,yn);
+    double chi2=0.0;
+    for(size_t i=0;i<n2;i++) {
+      double ty=((double)i)/10.0;
+      chi2+=pow(yn[i]-ty,2.0);
+    }
+
+    return chi2;
+  }
+
+  /** \brief Attempt to determine if data represented by (x,y) 
+      would be better plotted on a semi-log or log-log plot
+
+      \note Experimental.
+
+      This function attempts to guess whether the data stored in \c x
+      and \c y might be best plotted on a log scale. This algorithm
+      will fail for poorly sampled or highly oscillatory data.
+  */
+  template<class vec_t, class vec2_t>
+    void linear_or_log(vec_t &x, vec2_t &y, bool &log_x, bool &log_y) {
+    if (x.size()!=y.size()) {
+      O2SCL_ERR2("The x and y vectors must have the same size ",
+		 "in linear_or_log().",o2scl::exc_einval);
+    }
+    
+    // Vector sizes
+    size_t n=x.size();
+    if (n<2) {
+      O2SCL_ERR2("Vector size must be at least 2 ",
+		 "in linear_or_log().",o2scl::exc_einval);
+    }
+    
+    // Initial values of log_x and log_y
+    log_x=false;
+    log_y=false;
+
+    // Check if vectors are positive
+    bool x_positive=true;
+    bool y_positive=true;
+    for(size_t i=0;i<n;i++) {
+      if (x[i]<=0.0) x_positive=false;
+      if (y[i]<=0.0) y_positive=false;
+    }
+
+    if (x_positive==false && y_positive==false) return;
+
+    double chi2=linear_or_log_chi2(x,y);
+    
+    // Take the log
+    std::vector<double> lx(n), ly(n);
+    if (x_positive) {
+      for(size_t i=0;i<n;i++) {
+	lx[i]=log(x[i]);
+      }
+    }
+    if (y_positive) {
+      for(size_t i=0;i<n;i++) {
+	ly[i]=log(y[i]);
+      }
+    }
+
+    // Depending on whether or not they are positive, find the best match
+    if (x_positive) {
+      if (y_positive) {
+	double chi2_x=linear_or_log_chi2(lx,y);
+	double chi2_y=linear_or_log_chi2(x,ly);
+	double chi2_xy=linear_or_log_chi2(lx,ly);
+	if (chi2_xy<chi2_x && chi2_xy<chi2_y && chi2_xy<chi2) {
+	  log_x=true;
+	  log_y=true;
+	} else if (chi2_x<chi2_xy && chi2_x<chi2_y && chi2_x<chi2) {
+	  log_x=true;
+	} else if (chi2_y<chi2_xy && chi2_y<chi2_x && chi2_y<chi2) {
+	  log_y=true;
+	}
+      } else {
+	double chi2_x=linear_or_log_chi2(lx,y);
+	if (chi2_x<chi2) log_x=true;
+      }
+    } else {
+      double chi2_y=linear_or_log_chi2(x,ly);
+      if (chi2_y<chi2) log_y=true;
+    }
+
+    return;
+  }
+
+  /** \brief Attempt to determine if data stored in \c y
+      would be better plotted on a semi-log or log-log plot
+      
+      \note Experimental.
+
+      \future There is a bit of extra calculation because the
+      rebin function creates a second new x vector with a 
+      uniform grid, so this could be streamlined.
+  */
+  template<class vec_t>
+    void linear_or_log(vec_t &y, bool &log_y) {
+    std::vector<double> x(y.size());
+    for(size_t i=0;i<y.size();i++) {
+      x[i]=((double)i);
+    }
+    bool log_x;
+    linear_or_log(x,y,log_x,log_y);
+    return;
   }
   
 #ifndef DOXYGEN_NO_O2NS

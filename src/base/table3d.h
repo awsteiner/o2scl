@@ -646,14 +646,13 @@ namespace o2scl {
 	derivative of \c fname with respect to the y coordinate
      */
     void deriv_y(std::string fname, std::string fpname);
-    
     //@}
 
     // --------------------------------------------------------
     /// \name Extract 2-dimensional tables
     //@{
     /** \brief Extract a table at a fixed x grid point 
-
+	
 	\note All of the information previously stored in \c t will
 	be lost.
      */
@@ -843,6 +842,50 @@ namespace o2scl {
     void function_slice(std::string function, std::string col);
     //@}
 
+#ifdef O2SCL_NEVER_DEFINED
+    
+    /** \brief Desc
+     */
+    template<class vec_t> 
+      void force_uniform_grid(std::string slice, bool &log_x, bool &log_y,
+			      vec_t &x, vec_t &y, vec_t &s) {
+      vector<double> dev_x;
+      for(size_t i=0;i<numx-1;i++) {
+	dev_x.push_back(xval[i+1]-xval[i]);
+      }
+      double avg=vector_mean(dev_x.size(),dev_x);
+      double stddev=vector_stddev(dev_x.size(),dev_x);
+      bool x_set=false;
+      log_x=false;
+      if (stddev<1.0e-8*fabs(avg)) {
+	x.resize(numx);
+	for(size_t i=0;i<numx;i++) {
+	  x[i]=xval[i];
+	}
+	x_set=true;
+      } else {
+	dev_x.clear();
+	for(size_t i=0;i<numx-1;i++) {
+	  dev_x.push_back(xval[i+1]/xval[i]);
+	}
+	avg=vector_mean(dev_x.size(),dev_x);
+	stddev=vector_stddev(dev_x.size(),dev_x);
+	if (stddev<1.0e-8*fabs(avg)) {
+	  x.resize(numx);
+	  for(size_t i=0;i<numx;i++) {
+	    x[i]=xval[i];
+	  }
+	  x_set=true;
+	  log_x=true;
+	}
+      }
+      if (x_set==false) {
+	uniform_grid_end
+      }
+      return;
+    }
+#endif
+    
   protected:
 
 #ifndef DOXYGEN_INTERNAL

@@ -700,6 +700,55 @@ int main(void) {
     if (debug) cout.precision(6);
   }
 
+  if (true) {
+    vector<double> x[3];
+    for(size_t i=0;i<100;i++) {
+      x[0].push_back(((double)(i+1))/100.0);
+      x[1].push_back(1.0*pow(0.9,((double)i)));
+      x[2].push_back(1.0-1.0*pow(0.9,((double)(i+1))));
+    }
+    for(size_t j=0;j<2;j++) {
+      vector<double> y;
+      for(size_t i=0;i<100;i++) {
+	y.push_back(x[j][i]);
+      }
+      bool lx, ly;
+      linear_or_log(x[j],y,lx,ly);
+      t.test_gen(lx==0 && ly==0,"linear_or_log 1.");
+      //cout << j << " " << lx << " " << ly << endl;
+    }
+    for(size_t j=0;j<3;j++) {
+      vector<double> y;
+      for(size_t i=0;i<100;i++) {
+	y.push_back(log(x[j][i]));
+      }
+      bool lx, ly;
+      linear_or_log(x[j],y,lx,ly);
+      t.test_gen(lx==1 && ly==0,"linear_or_log 1.");
+      //cout << j << " " << lx << " " << ly << endl;
+    }
+    for(size_t j=0;j<3;j++) {
+      vector<double> y;
+      for(size_t i=0;i<100;i++) {
+	y.push_back(exp(x[j][i]));
+      }
+      bool lx, ly;
+      linear_or_log(x[j],y,lx,ly);
+      t.test_gen(lx==0 && ly==1,"linear_or_log 1.");
+      //cout << j << " " << lx << " " << ly << endl;
+    }
+    for(size_t j=0;j<3;j++) {
+      vector<double> y;
+      for(size_t i=0;i<100;i++) {
+	y.push_back(pow(x[j][i],4.0));
+      }
+      bool lx, ly;
+      linear_or_log(x[j],y,lx,ly);
+      t.test_gen(lx==1 && ly==1,"linear_or_log 1.");
+      //cout << j << " " << lx << " " << ly << endl;
+    }
+  }
+  
   t.report();
 
   return 0;
