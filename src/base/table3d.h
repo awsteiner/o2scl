@@ -95,7 +95,7 @@ namespace o2scl {
 
     /** \brief Create a table3d object from a table, assuming \c scolx
 	and \c scoly store the x- and y-grid data, respectively.
-     */
+    */
     table3d(o2scl::table_units<> &t, std::string colx, std::string coly);
     
     /// Copy constructor
@@ -207,7 +207,7 @@ namespace o2scl {
 	point nearest to a user-specified location. For
 	interpolation into a point off the grid, use 
 	\ref table3d::interp().
-     */
+    */
     //@{
 
     /** \brief Set element in slice \c name at the nearest location to
@@ -433,11 +433,11 @@ namespace o2scl {
     void set_slice_all(std::string name, double val);
 
     /** \brief Find the index for slice named \c name
-    */
+     */
     size_t lookup_slice(std::string name) const;
     
     /** \brief Return true if slice is already present
-    */
+     */
     bool is_slice(std::string name, size_t &ix) const;
     
     /** \brief Rename slice named \c olds to \c news
@@ -450,14 +450,14 @@ namespace o2scl {
     
     /** \brief Make a new slice named \c dest which is a copy 
 	of the slice with name given in \c src. 
-     */
+    */
     void copy_slice(std::string src, std::string dest);
     
     /** \brief Initialize all values of slice named \c scol to \c val 
 
 	\note This will call the error handler if the value \c val is
 	not finite (i.e. either <tt>Inf</tt> or <tt>NaN</tt>).
-     */
+    */
     void init_slice(std::string scol, double val);
 
     /// Return a constant reference to a slice
@@ -480,7 +480,7 @@ namespace o2scl {
 	because it would then have to be 
 	const std::vector<const ubmatrix> &get_data() const;
 	\endcomment
-     */
+    */
     const std::vector<ubmatrix> &get_data();
 
     /** \brief Copy to a slice from a generic matrix object
@@ -503,15 +503,15 @@ namespace o2scl {
     /// \name Lookup and search methods
     //@{
     /** \brief Look for a value in the x grid
-    */
+     */
     void lookup_x(double val, size_t &ix) const;
   
     /** \brief Look for a value in the y grid
-    */
+     */
     void lookup_y(double val, size_t &iy) const;
 
     /** \brief Look for a value in a specified slice
-    */
+     */
     void lookup(double val, std::string slice, size_t &ix,
 		size_t &iy) const;
     //@}
@@ -521,11 +521,11 @@ namespace o2scl {
     //@{
 
     /** \brief Specify the interpolation type
-    */
+     */
     void set_interp_type(size_t interp_type);
 
     /** \brief Get the interpolation type
-    */
+     */
     size_t get_interp_type() const;
     
     /** \brief Interpolate \c x and \c y in slice named \c name
@@ -559,7 +559,7 @@ namespace o2scl {
 
     /** \brief Fill a vector of interpolated values from each slice at the
 	point <tt>x,y</tt>
-     */
+    */
     template<class vec_t>
       void interp_slices(double x, double y, size_t nv, vec_t &v) {
       
@@ -573,12 +573,12 @@ namespace o2scl {
 
     /** \brief Create a new slice, named \c fpname, containing the 
 	derivative of \c fname with respect to the x coordinate
-     */
+    */
     void deriv_x(std::string fname, std::string fpname);
 
     /** \brief Create a new slice, named \c fpname, containing the 
 	derivative of \c fname with respect to the y coordinate
-     */
+    */
     void deriv_y(std::string fname, std::string fpname);
     //@}
 
@@ -589,14 +589,14 @@ namespace o2scl {
 	
 	\note All of the information previously stored in \c t will
 	be lost.
-     */
+    */
     void extract_x(double x, table<> &t);
     
     /** \brief Extract a table at a fixed y grid point 
 
 	\note All of the information previously stored in \c t will
 	be lost.
-     */
+    */
     void extract_y(double y, table<> &t);
     //@}
 
@@ -650,7 +650,7 @@ namespace o2scl {
 	This uses \ref contour to compute contour lines (stored in \c
 	clines) from slice \c name given \c nlev contour levels in \c
 	levs .
-     */
+    */
     template<class vec_t> 
       void slice_contours(std::string name, size_t nlev, vec_t &levs,
 			  std::vector<contour_line> &clines) {
@@ -720,7 +720,7 @@ namespace o2scl {
 
 	\future It would be great to add a function which generates
 	a text file in this format as well. 
-     */
+    */
     int read_gen3_list(std::istream &fin, int verbose=0);
     
     /// Return the type, \c "table3d".
@@ -733,18 +733,18 @@ namespace o2scl {
 	Note that doxygen doesn't format the documentation propertly
 	if the \name specification covers more than one line
 	\endcomment
-     */
+    */
     //@{
     /** \brief Fill a matrix from the function specified in \c function
 
-      \comment
-      This function must return an int rather than void because
-      of the presence of the 'throw_on_err' mechanism
-      \endcomment
+	\comment
+	This function must return an int rather than void because
+	of the presence of the 'throw_on_err' mechanism
+	\endcomment
     */
     template<class resize_mat_t>
       int function_matrix(std::string function, resize_mat_t &mat,
-			   bool throw_on_err=true) {
+			  bool throw_on_err=true) {
       
       calculator calc;
       std::map<std::string,double> vars;
@@ -836,7 +836,7 @@ namespace o2scl {
       }
       if (x_set==false) {
 	uniform_grid_end
-      }
+	  }
       return;
     }
 #endif

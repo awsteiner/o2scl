@@ -1274,9 +1274,19 @@ void table3d::function_slice(string function, string scol) {
 }
 
 table3d table3d::slice_to_uniform_grid(std::string slice, size_t xpts,
-				       bool &log_x, size_t ypts, bool &log_y) {
-  uniform_grid_end<double> ugx(xval[0],xval[numx-1],xpts-1);
-  uniform_grid_end<double> ugy(yval[0],yval[numy-1],ypts-1);
+				       bool &log_x, size_t ypts,
+				       bool &log_y) {
+  uniform_grid<double> ugx, ugy;
+  if (log_x) {
+    ugx=uniform_grid_log_end<double>(xval[0],xval[numx-1],xpts-1);
+  } else {
+    ugx=uniform_grid_end<double>(xval[0],xval[numx-1],xpts-1);
+  }
+  if (log_y) {
+    ugy=uniform_grid_log_end<double>(yval[0],yval[numy-1],ypts-1);
+  } else {
+    ugy=uniform_grid_end<double>(yval[0],yval[numy-1],ypts-1);
+  }
   table3d t3d;
   t3d.set_xy(xname,ugx,yname,ugy);
   t3d.new_slice(slice);
@@ -1291,8 +1301,19 @@ table3d table3d::slice_to_uniform_grid(std::string slice, size_t xpts,
 
 table3d table3d::table_to_uniform_grid(size_t xpts, bool &log_x, 
 				       size_t ypts, bool &log_y) {
-  uniform_grid_end<double> ugx(xval[0],xval[numx-1],xpts-1);
-  uniform_grid_end<double> ugy(yval[0],yval[numy-1],ypts-1);
+
+  uniform_grid<double> ugx, ugy;
+  if (log_x) {
+    ugx=uniform_grid_log_end<double>(xval[0],xval[numx-1],xpts-1);
+  } else {
+    ugx=uniform_grid_end<double>(xval[0],xval[numx-1],xpts-1);
+  }
+  if (log_y) {
+    ugy=uniform_grid_log_end<double>(yval[0],yval[numy-1],ypts-1);
+  } else {
+    ugy=uniform_grid_end<double>(yval[0],yval[numy-1],ypts-1);
+  }
+
   table3d t3d;
   t3d.set_xy(xname,ugx,yname,ugy);
   for(size_t k=0;k<this->get_nslices();k++) {
