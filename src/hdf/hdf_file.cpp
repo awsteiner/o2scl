@@ -2197,11 +2197,10 @@ int hdf_file::set_szt_vec(std::string name, const std::vector<size_t> &v) {
 
 int hdf_file::getd_vec(std::string name, std::vector<double> &v) {
       
-  // See if the dataspace already exists first
+  // Get the dataset with the specified name
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
   
-  // Get space requirements, to make sure they coincide
-  // with the size specified by the user
+  // Get the dimension of the dataset
   hid_t space=H5Dget_space(dset);  
   hsize_t dims[1];
   int ndims=H5Sget_simple_extent_dims(space,dims,0);
@@ -2210,9 +2209,10 @@ int hdf_file::getd_vec(std::string name, std::vector<double> &v) {
 
   if (dims[0]>0) {
     
+    // Resize the vector
     v.resize(dims[0]);
     
-    // Read the data
+    // Read the data directly into the pointer
     status=H5Dread(dset,H5T_NATIVE_DOUBLE,H5S_ALL,H5S_ALL,
 		   H5P_DEFAULT,&v[0]);
     
@@ -2225,11 +2225,10 @@ int hdf_file::getd_vec(std::string name, std::vector<double> &v) {
 
 int hdf_file::geti_vec(std::string name, std::vector<int> &v) {
       
-  // See if the dataspace already exists first
+  // Get the dataset with the specified name
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
   
-  // Get space requirements, to make sure they coincide
-  // with the size specified by the user
+  // Get the dimension of the dataset
   hid_t space=H5Dget_space(dset);  
   hsize_t dims[1];
   int ndims=H5Sget_simple_extent_dims(space,dims,0);
@@ -2238,9 +2237,10 @@ int hdf_file::geti_vec(std::string name, std::vector<int> &v) {
 
   if (dims[0]>0) {
     
+    // Resize the vector
     v.resize(dims[0]);
     
-    // Read the data
+    // Read the data directly into the pointer
     status=H5Dread(dset,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,
 		   H5P_DEFAULT,&v[0]);
     
@@ -3001,7 +3001,7 @@ int hdf_file::set_szt_ten(std::string name,
 
 int hdf_file::getd_ten(std::string name, 
 		       o2scl::tensor<double,std::vector<double>,
-				     std::vector<size_t> > &t) {
+		       std::vector<size_t> > &t) {
   
   // See if the dataspace already exists first
   hid_t dset=H5Dopen(current,name.c_str(),H5P_DEFAULT);
@@ -3295,8 +3295,9 @@ int o2scl_hdf::iterate_match_name(hid_t loc, const char *name,
   return 0;
 }
 
-int hdf_file::find_group_by_type(std::string type,
+int hdf_file::find_object_by_type(std::string type,
 				 std::string &group_name, int verbose) {
+  /*
   iterate_parms ip={this,type,"",false,verbose};
   H5Literate(get_current_id(),H5_INDEX_NAME,H5_ITER_NATIVE,
              0,iterate_match_type,&ip);
@@ -3305,10 +3306,20 @@ int hdf_file::find_group_by_type(std::string type,
     return success;
   }
   return exc_enotfound;
+  */
+  iter_parms ip={"",this,false,type,verbose,ip_name_from_type};
+  H5Literate(get_current_id(),H5_INDEX_NAME,H5_ITER_NATIVE,
+             0,iterate_func,&ip);
+  if (ip.found) {
+    group_name=ip.tname;
+    return success;
+  }
+  return exc_enotfound;
 }
 
-int hdf_file::find_group_by_name(std::string name,
+int hdf_file::find_object_by_name(std::string name,
 				 std::string &type, int verbose) {
+  /*
   iterate_parms ip={this,"",name,false,verbose};
   H5Literate(get_current_id(),H5_INDEX_NAME,H5_ITER_NATIVE,
              0,iterate_match_name,&ip);
@@ -3317,5 +3328,664 @@ int hdf_file::find_group_by_name(std::string name,
     return success;
   }
   return exc_enotfound;
+  */
+  iter_parms ip={name,this,false,"",verbose,ip_type_from_name};
+  H5Literate(get_current_id(),H5_INDEX_NAME,H5_ITER_NATIVE,
+             0,iterate_func,&ip);
+  if (ip.found) {
+    type=ip.type;
+    return success;
+  }
+  return exc_enotfound;
+}
+
+herr_t hdf_file::iterate_func(hid_t loc, const char *name, 
+			      const H5L_info_t *inf, void *op_data) {
+
+  // Arrange parameters
+  iter_parms *ip=(iter_parms *)op_data;
+  hdf_file &hf=*(ip->hf);
+  int loc_verbose=ip->verbose;
+  int mode=ip->mode;
+
+  hid_t top=hf.get_current_id();
+
+  H5O_info_t infobuf;
+  herr_t status=H5Oget_info_by_name(loc,name,&infobuf,H5P_DEFAULT);
+
+  ip->found=false;
+  
+  // If it's a group
+  if (infobuf.type==H5O_TYPE_GROUP) {
+
+    // Open the group and see if it's an O2scl object
+    hid_t group=hf.open_group(name);
+    hf.set_current_id(group);
+    string otype;
+    hf.gets_def_fixed("o2scl_type","",otype);
+    hf.close_group(group);
+    hf.set_current_id(top);
+
+    if (otype.length()!=0) {
+      if (mode==ip_filelist) {
+	if (otype==((string)"string[]")) {
+	  cout << "O2scl object \"" << name << "\" of type " 
+	       << otype << "." << endl;
+	} else {
+	  cout << "O2scl object \"" << name << "\" of type " 
+	       << otype << "." << endl;
+	}
+      } else if (mode==ip_type_from_name && name==ip->tname) {
+	ip->type=otype;
+	ip->found=true;
+	return 1;
+      } else if (mode==ip_name_from_type && otype==ip->type) {
+	ip->tname=name;
+	ip->found=true;
+	return 1;
+      }
+    } else {
+      // Non-O2scl group
+      if (mode==ip_filelist) {
+	cout << "Group \"" << name << "\"." << endl;
+      }
+    }
+    
+  } else if (infobuf.type==H5O_TYPE_DATASET) {
+    
+    if (mode==ip_filelist) {
+      cout << "Dataset \"" << name << "\" of type ";
+    }
+
+    if (loc_verbose>1) {
+      cout << "Reading dataset named " << name << endl;
+    }
+
+    // Open data set
+    hid_t dset=H5Dopen(loc,name,H5P_DEFAULT);
+
+    // Get type information
+    hid_t type_id=H5Dget_type(dset);
+    hid_t nat_id=H5Tget_native_type(type_id,H5T_DIR_ASCEND);
+
+    // Get filter information
+    int compr=0;
+    hid_t plist_id=H5Dget_create_plist(dset);
+    int num_filters=H5Pget_nfilters(plist_id);
+    for(int i=0;i<num_filters;i++) {
+      size_t n_elements=0;
+      unsigned flags, filter_info;
+      H5Z_filter_t filter_type=H5Pget_filter2
+	(plist_id,0,&flags,&n_elements,0,0,0,&filter_info);
+      if (filter_type==H5Z_FILTER_DEFLATE) {
+	compr=1;
+      } else if (filter_type==H5Z_FILTER_SZIP) {
+	compr=2;
+      }
+    }
+
+    if (loc_verbose>1) {
+      if (compr==1) {
+	cout << "Compressed with deflate." << endl;
+      } else if (compr==2) {
+	cout << "Compressed with szip." << endl;
+      } else {
+	cout << "Uncompressed." << endl;
+      }
+    }
+
+    if (mode==ip_filelist) {
+      if (compr==1) {
+	cout << "(1) ";
+      } else if (compr==2) {
+	cout << "(2) ";
+      }
+    }
+    
+    // Get dataspace information
+    hid_t space_id = H5Dget_space(dset);
+    hsize_t dims[100];
+    hsize_t max_dims[100];
+    int ndims=H5Sget_simple_extent_dims(space_id,dims,max_dims);
+    
+    if (H5Tequal(nat_id,H5T_NATIVE_CHAR)) {
+      if (ndims==1) {
+	if (max_dims[0]==H5S_UNLIMITED) {
+	  if (mode==ip_filelist) {
+	    cout << "char[" << dims[0] << "/inf] with value=\"";
+	  }
+	  if (mode==ip_type_from_name && name==ip->tname) {
+	    ip->type="string";
+	    ip->found=true;
+	    return 1;
+	  }
+	} else {
+	  if (mode==ip_filelist) {
+	    cout << "char[" << dims[0] << "/" << max_dims[0]
+		 << "] with value=\"";
+	  }
+	  if (mode==ip_type_from_name && name==ip->tname) {
+	    if (dims[0]==1) {
+	      ip->type="char";
+	      ip->found=true;
+	      return 1;
+	    } else {
+	      ip->type="string";
+	      ip->found=true;
+	      return 1;
+	    }
+	  }
+	}
+	if (mode==ip_filelist) {
+	  std::string s;
+	  hf.gets(name,s);
+	  if (dims[0]<20) {
+	    cout << s;
+	  } else {
+	    cout << s[0] << s[1] << s[2] << s[3] << s[4] << s[5]
+		 << " ... "
+		 << s[dims[0]-6] << s[dims[0]-5] << s[dims[0]-4]
+		 << s[dims[0]-3] << s[dims[0]-2] << s[dims[0]-1];
+	  }
+	  cout << "\".";
+	}
+      } else {
+	if (mode==ip_filelist) {
+	  cout << "char[";
+	  for(int i=0;i<ndims-1;i++) {
+	    if (max_dims[i]==H5S_UNLIMITED) {
+	      cout << dims[i] << "/inf,";
+	    } else {
+	      cout << dims[i] << "/" << max_dims[i] << ",";
+	    }
+	  }
+	  if (max_dims[ndims-1]==H5S_UNLIMITED) {
+	    cout << dims[ndims-1] << "/inf].";
+	  } else {
+	    cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
+	  }
+	} else if (name==ip->tname) {
+	  ip->type="char";
+	  for(int i=0;i<ndims;i++) {
+	    ip->type+="[]";
+	  }
+	  ip->found=true;
+	  return 1;
+	}
+      }
+    } else if (H5Tequal(nat_id,H5T_NATIVE_SHORT)) {
+      if (mode==ip_filelist) {
+	cout << "short[";
+	for(int i=0;i<ndims-1;i++) {
+	  if (max_dims[i]==H5S_UNLIMITED) {
+	    cout << dims[i] << "/inf],";
+	  } else {
+	    cout << dims[i] << "/" << max_dims[i] << ",";
+	  }
+	}
+	if (max_dims[ndims-1]==H5S_UNLIMITED) {
+	  cout << dims[ndims-1] << "/inf].";
+	} else {
+	  cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
+	}
+      } else if (name==ip->tname) {
+	ip->type="short";
+	for(int i=0;i<ndims;i++) {
+	  ip->type+="[]";
+	}
+	ip->found=true;
+	return 1;
+      }
+    } else if (H5Tequal(nat_id,H5T_NATIVE_INT)) {
+      if (ndims==1 && dims[0]>0) {
+	if (max_dims[0]==H5S_UNLIMITED) {
+	  if (mode==ip_filelist) {
+	    cout << "int[" << dims[0] << "/inf] with value=";
+	  }
+	  if (mode==ip_type_from_name && name==ip->tname) {
+	    ip->type="int[]";
+	    ip->found=true;
+	    return 1;
+	  }
+	} else {
+	  if (mode==ip_filelist) {
+	    cout << "int[" << dims[0] << "/" << max_dims[0]
+		 << "] with value=";
+	  }
+	  if (mode==ip_type_from_name && name==ip->tname) {
+	    if (dims[0]==1) {
+	      ip->type="int";
+	      ip->found=true;
+	      return 1;
+	    } else {
+	      ip->type="int[]";
+	      ip->found=true;
+	      return 1;
+	    }
+	  }
+	}
+	if (mode==ip_filelist) {
+	  std::vector<int> iarr;
+	  hf.geti_vec(name,iarr);
+	  if (dims[0]==1) {
+	    cout << iarr[0];
+	  } else if (dims[0]==2) {
+	    cout << iarr[0] << ", " << iarr[1];
+	  } else if (dims[0]==3) {
+	    cout << iarr[0] << ", " << iarr[1] << ", " << iarr[2];
+	  } else {
+	    cout << iarr[0] << ", " << iarr[1] << ", ..., "
+		 << iarr[dims[0]-1];
+	  }
+	  cout << ".";
+	}
+      } else {
+	if (mode==ip_filelist) {
+	  cout << "int[";
+	  for(int i=0;i<ndims-1;i++) {
+	    if (max_dims[i]==H5S_UNLIMITED) {
+	      cout << dims[i] << "/inf,";
+	    } else {
+	      cout << dims[i] << "/" << max_dims[i] << ",";
+	    }
+	  }
+	  if (max_dims[ndims-1]==H5S_UNLIMITED) {
+	    cout << dims[ndims-1] << "/inf].";
+	  } else {
+	    cout << dims[ndims-1] << "/" << max_dims[ndims-1] << ").";
+	  }
+	} else if (name==ip->tname) {
+	  ip->type="int";
+	  for(int i=0;i<ndims;i++) {
+	    ip->type+="[]";
+	  }
+	  ip->found=true;
+	  return 1;
+	}
+      }
+    } else if (H5Tequal(nat_id,H5T_NATIVE_LONG)) {
+      if (mode==ip_filelist) {
+	cout << "long[";
+	for(int i=0;i<ndims-1;i++) {
+	  if (max_dims[i]==H5S_UNLIMITED) {
+	    cout << dims[i] << "/inf],";
+	  } else {
+	    cout << dims[i] << "/" << max_dims[i] << ",";
+	  }
+	}
+	if (max_dims[ndims-1]==H5S_UNLIMITED) {
+	  cout << dims[ndims-1] << "/inf].";
+	} else {
+	  cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
+	}
+      } else if (name==ip->tname) {
+	ip->type="long";
+	for(int i=0;i<ndims;i++) {
+	  ip->type+="[]";
+	}
+	ip->found=true;
+	return 1;
+      }
+    } else if (H5Tequal(nat_id,H5T_NATIVE_LLONG)) {
+      if (mode==ip_filelist) {
+	cout << "llong[";
+	for(int i=0;i<ndims-1;i++) {
+	  if (max_dims[i]==H5S_UNLIMITED) {
+	    cout << dims[i] << "/inf],";
+	  } else {
+	    cout << dims[i] << "/" << max_dims[i] << ",";
+	  }
+	}
+	if (max_dims[ndims-1]==H5S_UNLIMITED) {
+	  cout << dims[ndims-1] << "/inf].";
+	} else {
+	  cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
+	}
+      } else if (name==ip->tname) {
+	ip->type="llong";
+	for(int i=0;i<ndims;i++) {
+	  ip->type+="[]";
+	}
+	ip->found=true;
+	return 1;
+      }
+    } else if (H5Tequal(nat_id,H5T_NATIVE_UCHAR)) {
+      if (mode==ip_filelist) {
+	cout << "uchar[";
+	for(int i=0;i<ndims-1;i++) {
+	  if (max_dims[i]==H5S_UNLIMITED) {
+	    cout << dims[i] << "/inf],";
+	  } else {
+	    cout << dims[i] << "/" << max_dims[i] << ",";
+	  }
+	}
+	if (max_dims[ndims-1]==H5S_UNLIMITED) {
+	  cout << dims[ndims-1] << "/inf].";
+	} else {
+	  cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
+	}
+      } else if (name==ip->tname) {
+	ip->type="uchar";
+	for(int i=0;i<ndims;i++) {
+	  ip->type+="[]";
+	}
+	ip->found=true;
+	return 1;
+      }
+    } else if (H5Tequal(nat_id,H5T_NATIVE_USHORT)) {
+      if (mode==ip_filelist) {
+	cout << "ushort[";
+	for(int i=0;i<ndims-1;i++) {
+	  if (max_dims[i]==H5S_UNLIMITED) {
+	    cout << dims[i] << "/inf],";
+	  } else {
+	    cout << dims[i] << "/" << max_dims[i] << ",";
+	  }
+	}
+	if (max_dims[ndims-1]==H5S_UNLIMITED) {
+	  cout << dims[ndims-1] << "/inf].";
+	} else {
+	  cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
+	}
+      } else if (name==ip->tname) {
+	ip->type="ushort";
+	for(int i=0;i<ndims;i++) {
+	  ip->type+="[]";
+	}
+	ip->found=true;
+	return 1;
+      }
+    } else if (H5Tequal(nat_id,H5T_NATIVE_UINT)) {
+      if (mode==ip_filelist) {
+	cout << "uint[";
+	for(int i=0;i<ndims-1;i++) {
+	  if (max_dims[i]==H5S_UNLIMITED) {
+	    cout << dims[i] << "/inf],";
+	  } else {
+	    cout << dims[i] << "/" << max_dims[i] << ",";
+	  }
+	}
+	if (max_dims[ndims-1]==H5S_UNLIMITED) {
+	  cout << dims[ndims-1] << "/inf].";
+	} else {
+	  cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
+	}
+      }
+    } else if (H5Tequal(nat_id,H5T_NATIVE_ULONG)) {
+      if (ndims==1 && dims[0]>0) {
+	if (max_dims[0]==H5S_UNLIMITED) {
+	  if (mode==ip_filelist) {
+	    cout << "size_t[" << dims[0] << "/inf] with value=";
+	  }
+	  if (mode==ip_type_from_name && name==ip->tname) {
+	    ip->type="size_t[]";
+	    ip->found=true;
+	    return 1;
+	  }
+	} else {
+	  if (mode==ip_filelist) {
+	    cout << "size_t[" << dims[0] << "/"
+		 << max_dims[0] << "] with value=";
+	  }
+	  if (mode==ip_type_from_name && name==ip->tname) {
+	    if (dims[0]==1) {
+	      ip->type="size_t";
+	      ip->found=true;
+	      return 1;
+	    } else {
+	      ip->type="size_t[]";
+	      ip->found=true;
+	      return 1;
+	    }
+	  }
+	}
+	if (mode==ip_filelist) {
+	  std::vector<size_t> sarr;
+	  hf.get_szt_vec(name,sarr);
+	  if (dims[0]==1) {
+	    cout << sarr[0];
+	  } else if (dims[0]==2) {
+	    cout << sarr[0] << ", " << sarr[1];
+	  } else if (dims[0]==3) {
+	    cout << sarr[0] << ", " << sarr[1] << ", " << sarr[2];
+	  } else {
+	    cout << sarr[0] << ", " << sarr[1] << ", ..., "
+		 << sarr[dims[0]-1];
+	  }
+	  cout << ".";
+	}
+      } else {
+	if (mode==ip_filelist) {
+	  cout << "size_t[";
+	  for(int i=0;i<ndims-1;i++) {
+	    if (max_dims[i]==H5S_UNLIMITED) {
+	      cout << dims[i] << "/inf,";
+	    } else {
+	      cout << dims[i] << "/" << max_dims[i] << ",";
+	    }
+	  }
+	  if (max_dims[ndims-1]==H5S_UNLIMITED) {
+	    cout << dims[ndims-1] << "/inf].";
+	  } else {
+	    cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
+	  }
+	} else if (name==ip->tname) {
+	  ip->type="size_t";
+	  for(int i=0;i<ndims;i++) {
+	    ip->type+="[]";
+	  }
+	  ip->found=true;
+	  return 1;
+	}
+      }
+    } else if (H5Tequal(nat_id,H5T_NATIVE_ULLONG)) {
+      if (mode==ip_filelist) {
+	cout << "ullong[";
+	for(int i=0;i<ndims-1;i++) {
+	  if (max_dims[i]==H5S_UNLIMITED) {
+	    cout << dims[i] << "/inf],";
+	  } else {
+	    cout << dims[i] << "/" << max_dims[i] << ",";
+	  }
+	}
+	if (max_dims[ndims-1]==H5S_UNLIMITED) {
+	  cout << dims[ndims-1] << "/inf].";
+	} else {
+	  cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
+	}
+      } else if (name==ip->tname) {
+	ip->type="ullong";
+	for(int i=0;i<ndims;i++) {
+	  ip->type+="[]";
+	}
+	ip->found=true;
+	return 1;
+      }
+    } else if (H5Tequal(nat_id,H5T_NATIVE_FLOAT)) {
+      if (mode==ip_filelist) {
+	cout << "float[";
+	for(int i=0;i<ndims-1;i++) {
+	  if (max_dims[i]==H5S_UNLIMITED) {
+	    cout << dims[i] << "/inf],";
+	  } else {
+	    cout << dims[i] << "/" << max_dims[i] << ",";
+	  }
+	}
+	if (max_dims[ndims-1]==H5S_UNLIMITED) {
+	  cout << dims[ndims-1] << "/inf].";
+	} else {
+	  cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
+	}
+      } else if (name==ip->tname) {
+	ip->type="float";
+	for(int i=0;i<ndims;i++) {
+	  ip->type+="[]";
+	}
+	ip->found=true;
+	return 1;
+      }
+    } else if (H5Tequal(nat_id,H5T_NATIVE_DOUBLE)) {
+      // If it has only rank one, then treat it as an array
+      // or a single value
+      if (ndims==1 && dims[0]>0) {
+	// Handle the case of a unlimited size vector
+	if (max_dims[0]==H5S_UNLIMITED) {
+	  if (mode==ip_filelist) {
+	    cout << "double[" << dims[0] << "/inf] with value=";
+	  }
+	  if (mode==ip_type_from_name && name==ip->tname) {
+	    ip->type="double[]";
+	    ip->found=true;
+	    return 1;
+	  }
+	} else {
+	  // Determine if it is a fixed-size vector or single value
+	  if (mode==ip_filelist) {
+	    if (dims[0]==1 && max_dims[0]==1) {
+	      cout << "double with value=";
+	    } else {
+	      cout << "double[" << dims[0] << "/"
+		   << max_dims[0] << "] with value=";
+	    }
+	  }
+	  if (mode==ip_type_from_name && name==ip->tname) {
+	    if (dims[0]==1 && max_dims[0]==1) {
+	      ip->type="double";
+	      ip->found=true;
+	      return 1;
+	    } else {
+	      ip->type="double[]";
+	      ip->found=true;
+	      return 1;
+	    }
+	  }
+	}
+	if (mode==ip_filelist) {
+	  std::vector<double> darr;
+	  hf.getd_vec(name,darr);
+	  if (dims[0]==1) {
+	    cout << darr[0];
+	  } else if (dims[0]==2) {
+	    cout << darr[0] << ", " << darr[1];
+	  } else {
+	    cout << "\n\t" << darr[0] << ", ..., " << darr[dims[0]-1];
+	  }
+	  cout << ".";
+	}
+      } else {
+	// Otherwise, if it has a rank of 2 or larger, then
+	// treat it as a tensor object,
+
+	// In filelist mode, report the size
+	if (mode==ip_filelist) {
+	  cout << "double[";
+	  for(int i=0;i<ndims-1;i++) {
+	    if (max_dims[i]==H5S_UNLIMITED) {
+	      cout << dims[i] << "/inf,";
+	    } else {
+	      cout << dims[i] << "/" << max_dims[i] << ",";
+	    }
+	  }
+	  if (max_dims[ndims-1]==H5S_UNLIMITED) {
+	    cout << dims[ndims-1] << "/inf].";
+	  } else {
+	    cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
+	  }
+	} else if (name==ip->tname) {
+	  // In 'read' mode, return the correct type
+	  ip->type="double";
+	  for(int i=0;i<ndims;i++) {
+	    ip->type+="[]";
+	  }
+	  ip->found=true;
+	  return 1;
+	}
+      }
+    } else if (H5Tequal(nat_id,H5T_NATIVE_LDOUBLE)) {
+      if (mode==ip_filelist) {
+	cout << "ldouble[";
+	for(int i=0;i<ndims-1;i++) {
+	  if (max_dims[i]==H5S_UNLIMITED) {
+	    cout << dims[i] << "/inf]";
+	  } else {
+	    cout << dims[i] << "/" << max_dims[i] << ",";
+	  }
+	}
+	if (max_dims[ndims-1]==H5S_UNLIMITED) {
+	  cout << dims[ndims-1] << "/inf].";
+	} else {
+	  cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "].";
+	}
+      } else if (name==ip->tname) {
+	ip->type="ldouble";
+	for(int i=0;i<ndims;i++) {
+	  ip->type+="[]";
+	}
+	ip->found=true;
+	return 1;
+      }
+    } else {
+      hid_t filetype=H5Dget_type(dset);
+      size_t str_size=H5Tget_size(filetype);
+      
+      hsize_t dims[3];
+      hid_t space=H5Dget_space(dset);
+      int ndims=H5Sget_simple_extent_dims(space,dims,0);
+      hid_t memtype=-1;
+      if (ndims==1 && dims[0]==1) {
+	memtype=H5Tcopy(H5T_C_S1);
+      }
+      if (memtype>0) {
+	status=H5Tclose(memtype);
+	status=H5Sclose(space);
+	status=H5Tclose(filetype);
+	if (mode==ip_type_from_name && name==ip->tname) {
+	  ip->type="char[fixed]";
+	  ip->found=true;
+	  return 1;
+	}
+	if (mode==ip_filelist) {
+	  if (str_size==0) {
+	    cout << "Error. Fixed length-string with no space for null.";
+	  } else {
+	    cout << "fixed-length (" << str_size-1
+		 << ") string with value \"";
+	    std::string s;
+	    hf.gets_fixed(name,s);
+	    cout << s << "\".";
+	  }
+	}
+      } else {
+	if (mode==ip_filelist) {
+	  cout << "<unknown>.";
+	}
+	status=H5Sclose(space);
+	status=H5Tclose(filetype);
+      }
+    }
+    if (mode==ip_filelist) {
+      cout << endl;
+    }
+
+    if (mode==ip_type_from_name && loc_verbose>1) {
+      cout << "Value of found " << ip->found << " and type "
+	   << ip->type << endl;
+    }
+    
+    H5Sclose(space_id);
+    H5Tclose(nat_id);
+    H5Tclose(type_id);
+    H5Dclose(dset);
+    
+  } else if (infobuf.type==H5O_TYPE_NAMED_DATATYPE) {
+    if (mode==ip_filelist) {
+      cout << "Named type \"" << name << "\"." << endl;
+    }
+  } else {
+    if (mode==ip_filelist) {
+      cout << "Unexpected HDF type. " << endl;
+    }
+  }
+  return 0;
 }
 

@@ -583,7 +583,7 @@ namespace o2scl {
     }
     //@}
 
-    /// \name Slicing to \ref o2scl::tensor_grid objects
+    /// \name Slicing to o2scl::tensor_grid objects
     //@{
     /** \brief Copy an abitrary slice by fixing 1 or more indices
 	and return a new \ref tensor_grid object
@@ -658,7 +658,7 @@ namespace o2scl {
     }
     //@}
 
-    /// \name Slicing to \ref o2scl::table3d objects
+    /// \name Slicing to o2scl::table3d objects
     //@{
     /** \brief Create a slice in a table3d object with an aligned
 	grid
@@ -725,7 +725,7 @@ namespace o2scl {
 	grid
     */
     template<class size_vec2_t> 
-      void copy_slice_align_newxy
+      void copy_slice_align_setxy
       (size_t ix_x, size_t ix_y, size_vec2_t &index, 
        table3d &tab, std::string x_name="x", std::string y_name="y",
        std::string slice_name="z") {

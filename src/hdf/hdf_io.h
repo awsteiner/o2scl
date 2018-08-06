@@ -54,7 +54,7 @@ namespace o2scl_hdf {
       
     // If no name specified, find name of first group of specified type
     if (name.length()==0) {
-      hf.find_group_by_type("prob_dens_mdim_amr",name);
+      hf.find_object_by_type("prob_dens_mdim_amr",name);
       if (name.length()==0) {
 	O2SCL_ERR2("No object of type prob_dens_mdim_amr found in ",
 		   "o2scl_hdf::hdf_input().",o2scl::exc_efailed);
@@ -147,7 +147,7 @@ namespace o2scl_hdf {
       
     // If no name specified, find name of first group of specified type
     if (name.length()==0) {
-      hf.find_group_by_type("table",name);
+      hf.find_object_by_type("table",name);
       if (name.length()==0) {
 	O2SCL_ERR2("No object of type table found in ",
 		   "o2scl_hdf::hdf_input().",o2scl::exc_efailed);
@@ -272,7 +272,7 @@ namespace o2scl_hdf {
       
     // If no name specified, find name of first group of specified type
     if (name.length()==0) {
-      hf.find_group_by_type("table",name);
+      hf.find_object_by_type("table",name);
       if (name.length()==0) {
 	O2SCL_ERR2("No object of type table found in ",
 		   "o2scl_hdf::hdf_input().",o2scl::exc_efailed);

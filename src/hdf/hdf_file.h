@@ -1053,7 +1053,7 @@ namespace o2scl_hdf {
 	This function returns 0 if an object of type \c type is found
 	and \ref o2scl::exc_enoprog if it fails.
     */
-    int find_group_by_type(std::string type,
+    int find_object_by_type(std::string type,
 			   std::string &group_name, int verbose=0);
 
     /** \brief Look in hdf_file \c hf for an \o2 object with name 
@@ -1062,10 +1062,31 @@ namespace o2scl_hdf {
 	This function returns 0 if an object with name \c name is
 	found and \ref o2scl::exc_enoprog if it fails.
     */
-    int find_group_by_name(std::string name,
+    int find_object_by_name(std::string name,
 			   std::string &type, int verbose=0);
     //@}
+    
+    /// Parameters for iterate_func()
+    typedef struct {
+      std::string tname;
+      o2scl_hdf::hdf_file *hf;
+      bool found;
+      std::string type;
+      int verbose;
+      int mode;
+    } iter_parms;
 
+    /// \name Mode values for \ref iter_parms
+    //@{
+    static const int ip_filelist=1;
+    static const int ip_name_from_type=2;
+    static const int ip_type_from_name=3;
+    //@}
+    
+    /// HDF object iteration function
+    static herr_t iterate_func(hid_t loc, const char *name, 
+			       const H5L_info_t *inf, void *op_data);
+    
 #ifndef DOXYGEN_INTERNAL
 
   private:
@@ -1098,7 +1119,7 @@ namespace o2scl_hdf {
   /** \brief Look at location \c loc in an HDF file for an \o2 object
       of a specified type
      
-      This is used by \ref hdf_file::find_group_by_type() where \c
+      This is used by \ref hdf_file::find_object_by_type() where \c
       op_data is a pointer to an object of type \ref iterate_parms to
       look for \o2 objects of a specified type without knowing the
       group name.
@@ -1109,7 +1130,7 @@ namespace o2scl_hdf {
   /** \brief Look at location \c loc in an HDF file for an \o2 object
       with a specified name
      
-      This is used by \ref hdf_file::find_group_by_name() where \c
+      This is used by \ref hdf_file::find_object_by_name() where \c
       op_data is a pointer to an object of type \ref iterate_parms to
       look for \o2 objects with a specified name without knowing the
       type.

@@ -2458,8 +2458,8 @@ int acol_manager::comm_sum(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
 
-herr_t acol_manager::iterate_new_func(hid_t loc, const char *name, 
-				      const H5L_info_t *inf, void *op_data) {
+herr_t acol_manager::iterate_func(hid_t loc, const char *name, 
+				  const H5L_info_t *inf, void *op_data) {
 
   // Arrange parameters
   iter_parms *ip=(iter_parms *)op_data;
@@ -3131,7 +3131,7 @@ int acol_manager::comm_filelist(std::vector<std::string> &sv,
   iter_parms ip={"",&hf,false,"",verbose,0};
 
   H5Literate(hf.get_current_id(),H5_INDEX_NAME,H5_ITER_NATIVE,
-	     0,iterate_new_func,&ip);
+	     0,iterate_func,&ip);
   
   return 0;
 }
@@ -3179,10 +3179,10 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     iter_parms ip={in[1],&hf,false,type,verbose,1};
     
     H5Literate(hf.get_current_id(),H5_INDEX_NAME,H5_ITER_NATIVE,
-	       0,iterate_new_func,&ip);
+	       0,iterate_func,&ip);
     
     if (ip.found==false) {
-      cerr << "Could not find readable object named " << in[1]
+      cerr << "Could not find object named " << in[1]
 	   << " in file " << in[0] << endl;
       return 1;
     }
@@ -3380,8 +3380,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
 	 << " is not readable." << endl;
     return 2;
   }
-  
-  ret=hf.find_group_by_type("table",in[1],verbose);
+
+  ret=hf.find_object_by_type("table",in[1],verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first table object named '"
@@ -3395,7 +3395,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
     
-  ret=hf.find_group_by_type("table3d",in[1],verbose);
+  ret=hf.find_object_by_type("table3d",in[1],verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first table3d object named '"
@@ -3411,7 +3411,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
     
-  ret=hf.find_group_by_type("hist",in[1],verbose);
+  ret=hf.find_object_by_type("hist",in[1],verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first hist object named '"
@@ -3424,7 +3424,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
     
-  ret=hf.find_group_by_type("hist_2d",in[1],verbose);
+  ret=hf.find_object_by_type("hist_2d",in[1],verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first hist_2d object named '"
@@ -3437,20 +3437,20 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
   
-  ret=hf.find_group_by_type("tensor_grid",in[1],verbose);
+  ret=hf.find_object_by_type("tensor_grid",in[1],verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first tensor_grid object named '"
 	   << in[1] << "'." << endl;
     }
-    hf.getd_ten(in[1],tensor_grid_obj);
+    hdf_input(hf,tensor_grid_obj,in[1]);
     obj_name=in[1];
     command_add("tensor_grid");
     type="tensor_grid";
     return 0;
   }
   
-  ret=hf.find_group_by_type("tensor",in[1],verbose);
+  ret=hf.find_object_by_type("tensor",in[1],verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first tensor object named '"
@@ -3463,7 +3463,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
   
-  ret=hf.find_group_by_type("tensor<size_t>",in[1],verbose);
+  ret=hf.find_object_by_type("tensor<size_t>",in[1],verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first tensor<size_t> object named '"
@@ -3476,7 +3476,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
   
-  ret=hf.find_group_by_type("tensor<int>",in[1],verbose);
+  ret=hf.find_object_by_type("tensor<int>",in[1],verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first tensor<int> object named '"
@@ -3489,7 +3489,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
   
-  ret=hf.find_group_by_type("vector<contour_line>",in[1],verbose);
+  ret=hf.find_object_by_type("vector<contour_line>",in[1],verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first vector<contour_line> "
@@ -3503,7 +3503,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
   
-  ret=hf.find_group_by_type("uniform_grid<double>",in[1],verbose);
+  ret=hf.find_object_by_type("uniform_grid<double>",in[1],verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first uniform_grid<double> "
@@ -3517,7 +3517,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
   
-  ret=hf.find_group_by_type("prob_dens_mdim_amr",in[1],verbose);
+  ret=hf.find_object_by_type("prob_dens_mdim_amr",in[1],verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first prob_dens_mdim_amr "
@@ -3531,7 +3531,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
 
-  ret=hf.find_group_by_type("double[]",in[1],verbose);
+  ret=hf.find_object_by_type("double[]",in[1],verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first double[] "
@@ -3545,7 +3545,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
   
-  ret=hf.find_group_by_type("int[]",in[1],verbose);
+  ret=hf.find_object_by_type("int[]",in[1],verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first int[] "
@@ -3559,7 +3559,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
   
-  ret=hf.find_group_by_type("string[]",in[1],verbose);
+  ret=hf.find_object_by_type("string[]",in[1],verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first string[] "
@@ -3573,7 +3573,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
   
-  ret=hf.find_group_by_type("size_t[]",in[1],verbose);
+  ret=hf.find_object_by_type("size_t[]",in[1],verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first size_t[] "
@@ -3587,7 +3587,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
   
-  ret=hf.find_group_by_type("double",in[1],verbose);
+  ret=hf.find_object_by_type("double",in[1],verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first double "
@@ -3601,7 +3601,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
   
-  ret=hf.find_group_by_type("int",in[1],verbose);
+  ret=hf.find_object_by_type("int",in[1],verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first int "
@@ -3615,7 +3615,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
   
-  ret=hf.find_group_by_type("string",in[1],verbose);
+  ret=hf.find_object_by_type("string",in[1],verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first string "
@@ -3629,7 +3629,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
   
-  ret=hf.find_group_by_type("size_t",in[1],verbose);
+  ret=hf.find_object_by_type("size_t",in[1],verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first size_t "
@@ -3643,7 +3643,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
   
-  ret=hf.find_group_by_type("char",in[1],verbose);
+  ret=hf.find_object_by_type("char",in[1],verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first char "
@@ -4312,8 +4312,8 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
     }
 
     table3d_obj.clear();
-    tensor_grid_obj.copy_slice_interp_values<vector<double> >
-      (ix_x,ix_y,values,table3d_obj,in[2]);
+    tensor_grid_obj.copy_slice_interp_values_setxy<vector<double> >
+      (ix_x,ix_y,values,table3d_obj,"x","y",in[2]);
     
     command_del();
     clear_obj();
@@ -6955,7 +6955,7 @@ int acol_manager::comm_list(std::vector<std::string> &sv, bool itive_com) {
       cout << "Grid not set." << endl;
     } else {
       for(size_t j=0;j<rk;j++) {
-	cout << "Grid j (" << sarr[j] << "): ";
+	cout << "Grid " << j << " (" << sarr[j] << "): ";
 	cout << tensor_grid_obj.get_grid(j,0) << " ";
 	if (sarr[j]>1) {
 	  cout << tensor_grid_obj.get_grid(j,1) << " ";

@@ -347,8 +347,8 @@ namespace o2scl_acol {
     } iter_parms;
 
     /// HDF object iteration function
-    static herr_t iterate_new_func(hid_t loc, const char *name, 
-				const H5L_info_t *inf, void *op_data);
+    static herr_t iterate_func(hid_t loc, const char *name, 
+			       const H5L_info_t *inf, void *op_data);
     
     /// Read a file and list the O2scl objects
     virtual int comm_filelist(std::vector<std::string> &sv, bool itive_com);
