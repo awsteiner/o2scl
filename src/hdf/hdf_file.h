@@ -1082,6 +1082,11 @@ namespace o2scl_hdf {
     static const int ip_name_from_type=2;
     static const int ip_type_from_name=3;
     //@}
+
+    /// Process a type for \ref iterate_func() 
+    static void type_process(iter_parms &ip, int mode, size_t ndims, 
+			     hsize_t dims[100], hsize_t max_dims[100],
+			     std::string base_type, std::string name);
     
     /// HDF object iteration function
     static herr_t iterate_func(hid_t loc, const char *name, 
@@ -1102,42 +1107,6 @@ namespace o2scl_hdf {
 #endif
 
   };
-  
-  /// \name Helper functions
-  //@{
-  /** \brief An internal structure to pass information to and 
-      from \ref iterate_match_type() and \ref iterate_match_name()
-  */
-  typedef struct {
-    hdf_file *hf;
-    std::string type;
-    std::string group_name;
-    bool found;
-    int verbose;
-  } iterate_parms;
-  
-  /** \brief Look at location \c loc in an HDF file for an \o2 object
-      of a specified type
-     
-      This is used by \ref hdf_file::find_object_by_type() where \c
-      op_data is a pointer to an object of type \ref iterate_parms to
-      look for \o2 objects of a specified type without knowing the
-      group name.
-  */
-  int iterate_match_type(hid_t loc, const char *name, 
-			 const H5L_info_t *inf, void *op_data);
-
-  /** \brief Look at location \c loc in an HDF file for an \o2 object
-      with a specified name
-     
-      This is used by \ref hdf_file::find_object_by_name() where \c
-      op_data is a pointer to an object of type \ref iterate_parms to
-      look for \o2 objects with a specified name without knowing the
-      type.
-  */
-  int iterate_match_name(hid_t loc, const char *name, 
-			 const H5L_info_t *inf, void *op_data);
-  //@}
 
 }
 
