@@ -50,6 +50,7 @@
     of Fritsch and Carlson (unfinished)
     - \ref o2scl::itp_steffen - Monotonicity-preserving method of
     \ref Steffen90
+    - \ref o2scl::itp_nearest_neigh - Nearest neighbor interpolation
 
     Integrals are always computed assuming that if the limits are
     ordered so that if the upper limit appears earlier in the array \c

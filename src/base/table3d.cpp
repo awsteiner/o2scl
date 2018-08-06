@@ -29,6 +29,8 @@
 using namespace std;
 using namespace o2scl;
 
+typedef boost::numeric::ublas::vector<double> ubvector;
+
 table3d::table3d() {
   xy_set=false;
   size_set=false;
@@ -131,6 +133,114 @@ table3d::table3d(table_units<> &t, std::string colx, std::string coly) {
     set_constant(cname,cval);
   }
 
+}
+
+table3d::table3d(const table3d &t) {
+      
+  // Copy constants
+  constants=t.constants;
+      
+  // Copy interpolation type
+  itype=t.itype;
+      
+  // Copy grid
+  numx=t.numx;
+  numy=t.numy;
+  xname=t.xname;
+  yname=t.yname;
+  xval=t.xval;
+  yval=t.yval;
+  xy_set=t.xy_set;
+  size_set=t.size_set;
+  has_slice=t.has_slice;
+      
+  for(size_t i=0;i<t.get_nslices();i++) {
+	
+    // Slice name
+    std::string sl_name=t.get_slice_name(i);
+	
+    new_slice(sl_name);
+	
+    // Fill the data
+    for(size_t j=0;j<t.get_nx();j++) {
+      for(size_t k=0;k<t.get_ny();k++) {
+	set(j,k,sl_name,t.get(j,k,sl_name));
+      }
+    }
+	
+  }
+      
+  return;
+}
+    
+table3d &table3d::operator=(const table3d &t) {
+      
+  if (this!=&t) {
+	
+    clear();
+	
+    // Copy constants
+    constants=t.constants;
+	
+    // Copy interpolation type
+    itype=t.itype;
+	
+    // Copy grid
+    numx=t.numx;
+    numy=t.numy;
+    xname=t.xname;
+    yname=t.yname;
+    xval=t.xval;
+    yval=t.yval;
+    xy_set=t.xy_set;
+    size_set=t.size_set;
+    has_slice=t.has_slice;
+	
+    for(size_t i=0;i<t.get_nslices();i++) {
+	  
+      // Slice name
+      std::string sl_name=t.get_slice_name(i);
+	  
+      new_slice(sl_name);
+	  
+      // Fill the data
+      for(size_t j=0;j<t.get_nx();j++) {
+	for(size_t k=0;k<t.get_ny();k++) {
+	  set(j,k,sl_name,t.get(j,k,sl_name));
+	}
+      }
+	  
+    }
+	
+  }
+      
+  return *this;
+}
+
+void table3d::set_xy(std::string x_name, uniform_grid<double> gx, 
+		     std::string y_name, uniform_grid<double> gy) {
+
+  if (has_slice && (size_set || xy_set) && 
+      (gx.get_npoints()!=numx || gy.get_npoints()!=numy)) {
+    O2SCL_ERR("Size cannot be reset in table3d::set_xy().",
+	      o2scl::exc_einval);
+    return;
+  }
+
+  if (xy_set) {
+    xval.clear();
+    yval.clear();
+  }
+  numx=gx.get_npoints();
+  numy=gy.get_npoints();
+  xname=x_name;
+  yname=y_name;
+  xval.resize(numx);
+  yval.resize(numy);
+  gx.vector(xval);
+  gy.vector(yval);
+  size_set=true;
+  xy_set=true;
 }
 
 int table3d::read_gen3_list(std::istream &fin, int verbose) {
@@ -289,6 +399,75 @@ int table3d::read_gen3_list(std::istream &fin, int verbose) {
   return 0;
 }
 
+std::string table3d::get_x_name() const {
+  return xname;
+}
+
+std::string table3d::get_y_name() const {
+  return yname;
+}
+
+void table3d::set_x_name(std::string name) {
+  xname=name;
+  return;
+}
+    
+void table3d::set_y_name(std::string name) {
+  yname=name;
+  return;
+}
+
+const ubvector &table3d::get_x_data() const {
+  return xval;
+}
+
+const ubvector &table3d::get_y_data() const {
+  return yval;
+}
+
+size_t table3d::get_nx() const {
+  return numx;
+}
+    
+size_t table3d::get_ny() const {
+  return numy;
+}
+
+bool table3d::is_size_set() const {
+  return size_set;
+}
+
+bool table3d::is_xy_set() const {
+  return xy_set;
+}
+
+void table3d::add_slice_from_table(table3d &source, std::string slice,
+				   std::string dest_slice) {
+      
+  if (dest_slice.length()==0) dest_slice=slice;
+
+  if (xy_set==false) {
+    set_xy(source.get_x_name(),source.get_nx(),source.get_x_data(),
+	   source.get_y_name(),source.get_ny(),source.get_y_data());
+    new_slice(dest_slice);
+    for(size_t i=0;i<numx;i++) {
+      for(size_t j=0;j<numx;j++) {
+	set(i,j,dest_slice,source.get(i,j,slice));
+      }
+    }
+    return;
+  }
+
+  size_t szt_tmp;
+  if (!is_slice(dest_slice,szt_tmp)) new_slice(dest_slice);
+  for(size_t i=0;i<numx;i++) {
+    for(size_t j=0;j<numx;j++) {
+      set(i,j,dest_slice,source.interp(get_grid_x(i),get_grid_y(j),
+				       slice));
+    }
+  }
+  return;
+}
 
 void table3d::set_size(size_t nx, size_t ny) {
   if ((has_slice && size_set) || xy_set) {
@@ -974,7 +1153,7 @@ void table3d::remove_constant(std::string name) {
 }
 
 int table3d::set_constant(std::string name, double val,
-			   bool err_on_notfound) {
+			  bool err_on_notfound) {
   if (constants.find(name)!=constants.end()) {
     constants.find(name)->second=val;
     return 0;
@@ -1092,4 +1271,39 @@ void table3d::function_slice(string function, string scol) {
   function_matrix(function,list[ic]);
 
   return;
+}
+
+table3d table3d::slice_to_uniform_grid(std::string slice, size_t xpts,
+				       bool &log_x, size_t ypts, bool &log_y) {
+  uniform_grid_end<double> ugx(xval[0],xval[numx-1],xpts-1);
+  uniform_grid_end<double> ugy(yval[0],yval[numy-1],ypts-1);
+  table3d t3d;
+  t3d.set_xy(xname,ugx,yname,ugy);
+  t3d.new_slice(slice);
+  for(size_t i=0;i<t3d.get_nx();i++) {
+    for(size_t j=0;j<t3d.get_ny();j++) {
+      t3d.set(i,j,slice,this->interp(t3d.get_grid_x(i),
+				     t3d.get_grid_y(j),slice));
+    }
+  }
+  return t3d;
+}
+
+table3d table3d::table_to_uniform_grid(size_t xpts, bool &log_x, 
+				       size_t ypts, bool &log_y) {
+  uniform_grid_end<double> ugx(xval[0],xval[numx-1],xpts-1);
+  uniform_grid_end<double> ugy(yval[0],yval[numy-1],ypts-1);
+  table3d t3d;
+  t3d.set_xy(xname,ugx,yname,ugy);
+  for(size_t k=0;k<this->get_nslices();k++) {
+    std::string sl_name=this->get_slice_name(k);
+    t3d.new_slice(sl_name);
+    for(size_t i=0;i<t3d.get_nx();i++) {
+      for(size_t j=0;j<t3d.get_ny();j++) {
+	t3d.set(i,j,sl_name,this->interp(t3d.get_grid_x(i),
+					 t3d.get_grid_y(j),sl_name));
+      }
+    }
+  }
+  return t3d;
 }

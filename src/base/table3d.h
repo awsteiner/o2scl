@@ -97,21 +97,12 @@ namespace o2scl {
 	and \c scoly store the x- and y-grid data, respectively.
      */
     table3d(o2scl::table_units<> &t, std::string colx, std::string coly);
-
-    /** \brief Read a generic table3d object specified as a 
-	text file
-
-	This function reads a set of columns of numerical values,
-	presuming that the first column is the x-grid value, the
-	second column is the y-grid value, and the remaining columns
-	are slices to be added. 
-
-	\todo A bit more documentation needs to be added here.
-
-	\future It would be great to add a function which generates
-	a text file in this format as well. 
-     */
-    int read_gen3_list(std::istream &fin, int verbose=0);
+    
+    /// Copy constructor
+    table3d(const table3d &t);
+    
+    /// Copy constructor
+    table3d &operator=(const table3d &t);
     
     /// \name Initialization
     //@{
@@ -162,30 +153,7 @@ namespace o2scl {
 	set_grid_y().
     */
     void set_xy(std::string x_name, uniform_grid<double> gx, 
-		std::string y_name, uniform_grid<double> gy) {
-
-      if (has_slice && (size_set || xy_set) && 
-	  (gx.get_npoints()!=numx || gy.get_npoints()!=numy)) {
-	O2SCL_ERR("Size cannot be reset in table3d::set_xy().",
-		  o2scl::exc_einval);
-	return;
-      }
-
-      if (xy_set) {
-	xval.clear();
-	yval.clear();
-      }
-      numx=gx.get_npoints();
-      numy=gy.get_npoints();
-      xname=x_name;
-      yname=y_name;
-      xval.resize(numx);
-      yval.resize(numy);
-      gx.vector(xval);
-      gy.vector(yval);
-      size_set=true;
-      xy_set=true;
-    }
+		std::string y_name, uniform_grid<double> gy);
 
     /** \brief Initialize \table size
 
@@ -349,33 +317,8 @@ namespace o2scl {
 	table3d object
     */
     void add_slice_from_table(table3d &source, std::string slice,
-			      std::string dest_slice="") {
-      
-      if (dest_slice.length()==0) dest_slice=slice;
-
-      if (xy_set==false) {
-	set_xy(source.get_x_name(),source.get_nx(),source.get_x_data(),
-	       source.get_y_name(),source.get_ny(),source.get_y_data());
-	new_slice(dest_slice);
-	for(size_t i=0;i<numx;i++) {
-	  for(size_t j=0;j<numx;j++) {
-	    set(i,j,dest_slice,source.get(i,j,slice));
-	  }
-	}
-	return;
-      }
-
-      size_t szt_tmp;
-      if (!is_slice(dest_slice,szt_tmp)) new_slice(dest_slice);
-      for(size_t i=0;i<numx;i++) {
-	for(size_t j=0;j<numx;j++) {
-	  set(i,j,dest_slice,source.interp(get_grid_x(i),get_grid_y(j),
-					   slice));
-	}
-      }
-      return;
-    }
-
+			      std::string dest_slice="");
+    
     /** \brief Set elements in the first <tt>nv</tt> slices at the
 	nearest location to <tt>x,y</tt> to values \c vals
     */
@@ -430,54 +373,44 @@ namespace o2scl {
     double get_grid_y(size_t iy);
 
     /// Get the name of the x grid variable
-    std::string get_x_name() const {
-      return xname;
-    }
-
+    std::string get_x_name() const;
+    
     /// Get the name of the y grid variable
-    std::string get_y_name() const {
-      return yname;
-    }
+    std::string get_y_name() const;
 
     /// Set the name of the x grid variable
-    void set_x_name(std::string name) {
-      xname=name;
-      return;
-    }
+    void set_x_name(std::string name);
     
     /// Set the name of the y grid variable
-    void set_y_name(std::string name) {
-      yname=name;
-      return;
-    }
+    void set_y_name(std::string name);
 
     /// Get a const reference to the full x grid
-    const ubvector &get_x_data() const { return xval; }
+    const ubvector &get_x_data() const;
 
     /// Get a const reference to the full y grid
-    const ubvector &get_y_data() const { return yval; }
-
+    const ubvector &get_y_data() const;
     //@}
 
     // --------------------------------------------------------
     /// \name Size get methods
     //@{
-
     /// Get the size of the slices
     void get_size(size_t &nx, size_t &ny) const;
 
     /// Get the x size
-    size_t get_nx() const {
-      return numx;
-    }
+    size_t get_nx() const;
     
     /// Get the y size
-    size_t get_ny() const {
-      return numy;
-    }
+    size_t get_ny() const;
 
     /// Get the number of slices
     size_t get_nslices() const;
+
+    /// True if the size of the table has been set
+    bool is_size_set() const;
+
+    /// True if the grid has been set
+    bool is_xy_set() const;
     //@}
 
     // --------------------------------------------------------
@@ -499,7 +432,7 @@ namespace o2scl {
      */
     void set_slice_all(std::string name, double val);
 
-    /** \brief Find the index for column named \c name
+    /** \brief Find the index for slice named \c name
     */
     size_t lookup_slice(std::string name) const;
     
@@ -556,10 +489,10 @@ namespace o2scl {
 	<tt>operator(,)</tt> method.
     */
     template<class mat_t> 
-      void copy_to_slice(mat_t &m, std::string scol) {
+      void copy_to_slice(mat_t &m, std::string slice_name) {
       for(size_t i=0;i<numx;i++) {
 	for(size_t j=0;j<numy;j++) {
-	  this->set(i,j,scol,m(i,j));
+	  this->set(i,j,slice_name,m(i,j));
 	}
       }
       return;
@@ -579,7 +512,8 @@ namespace o2scl {
 
     /** \brief Look for a value in a specified slice
     */
-    void lookup(double val, std::string slice, size_t &ix, size_t &iy) const;
+    void lookup(double val, std::string slice, size_t &ix,
+		size_t &iy) const;
     //@}
 
     // --------------------------------------------------------
@@ -698,16 +632,6 @@ namespace o2scl {
     void summary(std::ostream *out, int ncol=79) const;
     //@}
 
-    /// True if the size of the table has been set
-    bool is_size_set() const {
-      return size_set;
-    }
-
-    /// True if the grid has been set
-    bool is_xy_set() const {
-      return xy_set;
-    }
-  
     // ---------
     // Allow HDF I/O functions to access table3d data
 
@@ -773,7 +697,8 @@ namespace o2scl {
     virtual double get_constant(std::string name);
 
     /// Get a constant by index
-    virtual void get_constant(size_t ix, std::string &name, double &val) const;
+    virtual void get_constant(size_t ix, std::string &name,
+			      double &val) const;
 
     /// Get the number of constants
     virtual size_t get_nconsts() const {
@@ -781,8 +706,26 @@ namespace o2scl {
     }
     //@}
 
+    /// \name Miscellaneous methods
+    //@{
+    /** \brief Read a generic table3d object specified as a 
+	text file
+
+	This function reads a set of columns of numerical values,
+	presuming that the first column is the x-grid value, the
+	second column is the y-grid value, and the remaining columns
+	are slices to be added. 
+
+	\todo A bit more documentation needs to be added here.
+
+	\future It would be great to add a function which generates
+	a text file in this format as well. 
+     */
+    int read_gen3_list(std::istream &fin, int verbose=0);
+    
     /// Return the type, \c "table3d".
     virtual const char *type() { return "table3d"; }
+    //@}
 
     /** \name Parsing mathematical functions specified as strings
 	
@@ -842,13 +785,25 @@ namespace o2scl {
     void function_slice(std::string function, std::string col);
     //@}
 
+    /** \brief Copy slice named \c slice to a new \ref o2scl::table3d
+	object with a uniform grid using the current interpolation type
+    */
+    table3d slice_to_uniform_grid(std::string slice, size_t xpts,
+				  bool &log_x, size_t ypts, bool &log_y);
+    
+    /** \brief Copy entire table to a new \ref o2scl::table3d
+	object with a uniform grid using the current interpolation type
+    */
+    table3d table_to_uniform_grid(size_t xpts, bool &log_x, 
+				  size_t ypts, bool &log_y);
+    
 #ifdef O2SCL_NEVER_DEFINED
     
     /** \brief Desc
      */
     template<class vec_t> 
-      void force_uniform_grid(std::string slice, bool &log_x, bool &log_y,
-			      vec_t &x, vec_t &y, vec_t &s) {
+      void test_uniform_grid_log(std::string slice, bool &log_x, bool &log_y,
+				 vec_t &x, vec_t &y, vec_t &s) {
       vector<double> dev_x;
       for(size_t i=0;i<numx-1;i++) {
 	dev_x.push_back(xval[i+1]-xval[i]);
