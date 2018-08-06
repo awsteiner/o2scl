@@ -789,13 +789,13 @@ namespace o2scl {
 	object with a uniform grid using the current interpolation type
     */
     table3d slice_to_uniform_grid(std::string slice, size_t xpts,
-				  bool &log_x, size_t ypts, bool &log_y);
+				  bool log_x, size_t ypts, bool log_y);
     
     /** \brief Copy entire table to a new \ref o2scl::table3d
 	object with a uniform grid using the current interpolation type
     */
-    table3d table_to_uniform_grid(size_t xpts, bool &log_x, 
-				  size_t ypts, bool &log_y);
+    table3d table_to_uniform_grid(size_t xpts, bool log_x, 
+				  size_t ypts, bool log_y);
     
 #ifdef O2SCL_NEVER_DEFINED
     

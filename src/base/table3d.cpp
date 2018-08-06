@@ -1274,8 +1274,8 @@ void table3d::function_slice(string function, string scol) {
 }
 
 table3d table3d::slice_to_uniform_grid(std::string slice, size_t xpts,
-				       bool &log_x, size_t ypts,
-				       bool &log_y) {
+				       bool log_x, size_t ypts,
+				       bool log_y) {
   uniform_grid<double> ugx, ugy;
   if (log_x) {
     ugx=uniform_grid_log_end<double>(xval[0],xval[numx-1],xpts-1);
@@ -1299,8 +1299,8 @@ table3d table3d::slice_to_uniform_grid(std::string slice, size_t xpts,
   return t3d;
 }
 
-table3d table3d::table_to_uniform_grid(size_t xpts, bool &log_x, 
-				       size_t ypts, bool &log_y) {
+table3d table3d::table_to_uniform_grid(size_t xpts, bool log_x, 
+				       size_t ypts, bool log_y) {
 
   uniform_grid<double> ugx, ugy;
   if (log_x) {
