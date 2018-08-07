@@ -1054,7 +1054,7 @@ namespace o2scl_hdf {
 	and \ref o2scl::exc_enoprog if it fails.
     */
     int find_object_by_type(std::string type,
-			   std::string &group_name, int verbose=0);
+			   std::string &name, int verbose=0);
 
     /** \brief Look in hdf_file \c hf for an \o2 object with name 
 	\c name and if found, set \c type to the associated type

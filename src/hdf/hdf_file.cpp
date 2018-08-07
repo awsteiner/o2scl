@@ -3212,12 +3212,12 @@ int hdf_file::geti_mat_prealloc(std::string name, size_t n,
 }
 
 int hdf_file::find_object_by_type(std::string type,
-				 std::string &group_name, int verbose) {
+				 std::string &name, int verbose) {
   iterate_parms ip={"",this,false,type,verbose,ip_name_from_type};
   H5Literate(get_current_id(),H5_INDEX_NAME,H5_ITER_NATIVE,
              0,iterate_func,&ip);
   if (ip.found) {
-    group_name=ip.tname;
+    name=ip.tname;
     return success;
   }
   return exc_enotfound;
