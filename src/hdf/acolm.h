@@ -336,20 +336,6 @@ namespace o2scl_acol {
     /// Create a column which is the second derivative of another
     virtual int comm_deriv2(std::vector<std::string> &sv, bool itive_com);
 
-    /// Parameters for iterate_func()
-    typedef struct {
-      std::string tname;
-      o2scl_hdf::hdf_file *hf;
-      bool found;
-      std::string type;
-      int verbose;
-      int mode;
-    } iter_parms;
-
-    /// HDF object iteration function
-    static herr_t iterate_func(hid_t loc, const char *name, 
-			       const H5L_info_t *inf, void *op_data);
-    
     /// Read a file and list the O2scl objects
     virtual int comm_filelist(std::vector<std::string> &sv, bool itive_com);
 

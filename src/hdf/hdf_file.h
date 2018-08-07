@@ -1066,6 +1066,8 @@ namespace o2scl_hdf {
 			   std::string &type, int verbose=0);
     //@}
     
+    void file_list(int verbose);
+    
     /// Parameters for iterate_func()
     typedef struct {
       std::string tname;
@@ -1074,9 +1076,9 @@ namespace o2scl_hdf {
       std::string type;
       int verbose;
       int mode;
-    } iter_parms;
+    } iterate_parms;
 
-    /// \name Mode values for \ref iter_parms
+    /// \name Mode values for \ref iterate_parms
     //@{
     static const int ip_filelist=1;
     static const int ip_name_from_type=2;
@@ -1084,7 +1086,7 @@ namespace o2scl_hdf {
     //@}
 
     /// Process a type for \ref iterate_func() 
-    static void type_process(iter_parms &ip, int mode, size_t ndims, 
+    static void type_process(iterate_parms &ip, int mode, size_t ndims, 
 			     hsize_t dims[100], hsize_t max_dims[100],
 			     std::string base_type, std::string name);
     

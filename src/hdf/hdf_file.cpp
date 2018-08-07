@@ -3213,7 +3213,7 @@ int hdf_file::geti_mat_prealloc(std::string name, size_t n,
 
 int hdf_file::find_object_by_type(std::string type,
 				 std::string &group_name, int verbose) {
-  iter_parms ip={"",this,false,type,verbose,ip_name_from_type};
+  iterate_parms ip={"",this,false,type,verbose,ip_name_from_type};
   H5Literate(get_current_id(),H5_INDEX_NAME,H5_ITER_NATIVE,
              0,iterate_func,&ip);
   if (ip.found) {
@@ -3225,7 +3225,7 @@ int hdf_file::find_object_by_type(std::string type,
 
 int hdf_file::find_object_by_name(std::string name,
 				 std::string &type, int verbose) {
-  iter_parms ip={name,this,false,"",verbose,ip_type_from_name};
+  iterate_parms ip={name,this,false,"",verbose,ip_type_from_name};
   H5Literate(get_current_id(),H5_INDEX_NAME,H5_ITER_NATIVE,
              0,iterate_func,&ip);
   if (ip.found) {
@@ -3235,7 +3235,7 @@ int hdf_file::find_object_by_name(std::string name,
   return exc_enotfound;
 }
 
-void hdf_file::type_process(iter_parms &ip, int mode, size_t ndims, 
+void hdf_file::type_process(iterate_parms &ip, int mode, size_t ndims, 
 			    hsize_t dims[100], hsize_t max_dims[100],
 			    std::string base_type, std::string name) {
   
@@ -3332,12 +3332,22 @@ void hdf_file::type_process(iter_parms &ip, int mode, size_t ndims,
   }
   return;
 }
+
+void hdf_file::file_list(int verbose) {
   
+  iterate_parms ip={"",this,false,"",verbose,
+		    ip_filelist};
+  
+  H5Literate(get_current_id(),H5_INDEX_NAME,H5_ITER_NATIVE,
+	     0,iterate_func,&ip);
+  return;
+}
+
 herr_t hdf_file::iterate_func(hid_t loc, const char *name, 
 			      const H5L_info_t *inf, void *op_data) {
 
   // Arrange parameters
-  iter_parms *ip=(iter_parms *)op_data;
+  iterate_parms *ip=(iterate_parms *)op_data;
   hdf_file &hf=*(ip->hf);
   int loc_verbose=ip->verbose;
   int mode=ip->mode;
@@ -3460,6 +3470,7 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_SHORT)) {
       type_process(*ip,mode,ndims,dims,max_dims,"short",name);
+      if (ip->found==true) return 1;
     } else if (H5Tequal(nat_id,H5T_NATIVE_INT)) {
       type_process(*ip,mode,ndims,dims,max_dims,"int",name);
       if (ndims==1 && mode==ip_filelist) {
@@ -3478,16 +3489,22 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
 	}
 	cout << ".";
       }
+      if (ip->found==true) return 1;
     } else if (H5Tequal(nat_id,H5T_NATIVE_LONG)) {
       type_process(*ip,mode,ndims,dims,max_dims,"long",name);
+      if (ip->found==true) return 1;
     } else if (H5Tequal(nat_id,H5T_NATIVE_LLONG)) {
       type_process(*ip,mode,ndims,dims,max_dims,"llong",name);
+      if (ip->found==true) return 1;
     } else if (H5Tequal(nat_id,H5T_NATIVE_UCHAR)) {
       type_process(*ip,mode,ndims,dims,max_dims,"uchar",name);
+      if (ip->found==true) return 1;
     } else if (H5Tequal(nat_id,H5T_NATIVE_USHORT)) {
       type_process(*ip,mode,ndims,dims,max_dims,"ushort",name);
+      if (ip->found==true) return 1;
     } else if (H5Tequal(nat_id,H5T_NATIVE_UINT)) {
       type_process(*ip,mode,ndims,dims,max_dims,"uint",name);
+      if (ip->found==true) return 1;
     } else if (H5Tequal(nat_id,H5T_NATIVE_ULONG)) {
       type_process(*ip,mode,ndims,dims,max_dims,"size_t",name);
       if (ndims==1 && mode==ip_filelist) {
@@ -3506,10 +3523,13 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
 	}
 	cout << ".";
       }
+      if (ip->found==true) return 1;
     } else if (H5Tequal(nat_id,H5T_NATIVE_ULLONG)) {
       type_process(*ip,mode,ndims,dims,max_dims,"ullong",name);
+      if (ip->found==true) return 1;
     } else if (H5Tequal(nat_id,H5T_NATIVE_FLOAT)) {
       type_process(*ip,mode,ndims,dims,max_dims,"float",name);
+      if (ip->found==true) return 1;
     } else if (H5Tequal(nat_id,H5T_NATIVE_DOUBLE)) {
       type_process(*ip,mode,ndims,dims,max_dims,"double",name);
       if (ndims==1 && mode==ip_filelist) {
@@ -3525,8 +3545,10 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
 	}
 	cout << ".";
       }
+      if (ip->found==true) return 1;
     } else if (H5Tequal(nat_id,H5T_NATIVE_LDOUBLE)) {
       type_process(*ip,mode,ndims,dims,max_dims,"ldouble",name);
+      if (ip->found==true) return 1;
     } else {
       hid_t filetype=H5Dget_type(dset);
       size_t str_size=H5Tget_size(filetype);
