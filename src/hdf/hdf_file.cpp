@@ -3242,6 +3242,8 @@ void hdf_file::type_process(iterate_parms &ip, int mode, size_t ndims,
   if (ndims==1) {
     if (dims[0]==0) {
       cout << "Found ndims=1 with dims[0]=0." << endl;
+      cout << "  " << name << " " << base_type << " " <<
+	ip.type << " " << ip.tname << " " << ip.mode << endl;
     }
     if (max_dims[0]==H5S_UNLIMITED) {
       if (mode==ip_filelist) {
