@@ -3663,7 +3663,7 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
     }
 
     table3d_obj.clear();
-    tensor_grid_obj.copy_slice_interp_values_setxy<vector<double> >
+    tensor_grid_obj.copy_table3d_interp_values_setxy<vector<double> >
       (ix_x,ix_y,values,table3d_obj,"x","y",in[2]);
     
     command_del();

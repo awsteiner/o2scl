@@ -88,6 +88,28 @@ namespace o2scl {
       behave this way.)
       \endcomment
 
+      \b Slicing
+
+      New \ref o2scl::tensor_grid objects can be obtained
+      by fixing any set of indices using \ref copy_slice_interp().
+
+      Fixing all but two indices also results in a \ref o2scl::table3d
+      object, and five functions perform this task in different ways.
+      The function \ref copy_table3d_align() copies a two-dimensional
+      slice to a \ref o2scl::table3d object presuming that the grid in
+      the \ref o2scl::table3d object has already been set and exactly
+      matches the corresponding sizes for the selected tensor indices.
+      This function does not check that the grids between the two
+      objects match, it only ensures that they have the same size. In
+      order to copy to a \ref o2scl::table3d object and set its grid
+      to match that from the unfixed indices in the \ref
+      o2scl::tensor_grid object, the function \ref
+      copy_table3d_align_setxy() can be used. The function
+      \ref copy_table3d_interp() uses interpolation to extract the
+      value of the tensor_grid 
+
+      \b Notes and Todos
+
       \note Currently, HDF5 I/O is only allowed if the tensor is
       allocated with std::vector-based types, and the \ref
       interpolate() function only works with ublas-based vector types.
@@ -95,7 +117,9 @@ namespace o2scl {
       \todo It is possible for the user to create a tensor_grid
       object, upcast it to a tensor object, and then use
       tensor::resize() to resize the tensor, failing to resize the
-      grid. This probably needs fixing.
+      grid. This can be fixed by ensuring that resize functions
+      are virtual and have a version in tensor_grid which ensure
+      that the grid and tensor data are matched.
 
       \future Is it really necessary that get_data() is public and not
       const? This is used in HDF5 I/O, but the HDF5 output function
@@ -109,7 +133,7 @@ namespace o2scl {
       \future Only allocate space for grid if it is set.
 
       \future As with \ref o2scl::tensor, generalize to other
-      types.
+      base data types.
   */
   template<class vec_t=std::vector<double>, 
     class vec_size_t=std::vector<size_t> > class tensor_grid :
@@ -685,12 +709,12 @@ namespace o2scl {
 	than or equal to the tensor rank.
     */
     template<class size_vec2_t> 
-      void copy_slice_align(size_t ix_x, size_t ix_y, size_vec2_t &index, 
+      void copy_table3d_align(size_t ix_x, size_t ix_y, size_vec2_t &index, 
 			    table3d &tab, std::string slice_name="z") {
       
       if (ix_x>=this->rk || ix_y>=this->rk || ix_x==ix_y) {
 	O2SCL_ERR2("Either indices greater than rank or x and y ind",
-		   "ices equal in tensor_grid::copy_slice_align().",
+		   "ices equal in tensor_grid::copy_table3d_align().",
 		   exc_efailed);
       }
 
@@ -701,7 +725,7 @@ namespace o2scl {
       // Check that the grids are commensurate
       if (nx!=this->size[ix_x] || ny!=this->size[ix_y]) {
 	O2SCL_ERR2("Grids not commensurate in ",
-		   "tensor_grid::copy_slice_align().",exc_einval);
+		   "tensor_grid::copy_table3d_align().",exc_einval);
       }
 
       // Create slice if not already present
@@ -725,7 +749,7 @@ namespace o2scl {
 	grid
     */
     template<class size_vec2_t> 
-      void copy_slice_align_setxy
+      void copy_table3d_align_setxy
       (size_t ix_x, size_t ix_y, size_vec2_t &index, 
        table3d &tab, std::string x_name="x", std::string y_name="y",
        std::string slice_name="z") {
@@ -750,7 +774,7 @@ namespace o2scl {
 	tab.get_size(nx,ny);
       }
       
-      copy_slice_align(ix_x,ix_y,index,tab,slice_name);
+      copy_table3d_align(ix_x,ix_y,index,tab,slice_name);
       
       return;
     }
@@ -776,12 +800,12 @@ namespace o2scl {
 	for the interpolation.
     */
     template<class size_vec2_t> 
-      void copy_slice_interp(size_t ix_x, size_t ix_y, size_vec2_t &index, 
+      void copy_table3d_interp(size_t ix_x, size_t ix_y, size_vec2_t &index, 
 			     table3d &tab, std::string slice_name="z") {
 
       if (ix_x>=this->rk || ix_y>=this->rk || ix_x==ix_y) {
 	O2SCL_ERR2("Either indices greater than rank or x and y ",
-		   "indices equal in tensor_grid::copy_slice_interp().",
+		   "indices equal in tensor_grid::copy_table3d_interp().",
 		   exc_efailed);
       }
 
@@ -791,7 +815,7 @@ namespace o2scl {
 
       if (nx==0 && ny==0) {
 	// If there's no grid, then just use the aligned version
-	return copy_slice_align(ix_x,ix_y,index,tab,slice_name);
+	return copy_table3d_align(ix_x,ix_y,index,tab,slice_name);
       }
 
       // Create vector of values to interpolate with
@@ -819,25 +843,25 @@ namespace o2scl {
     /** \brief Copy to a slice in a table3d object using interpolation
      */
     template<class vec2_t> 
-      void copy_slice_interp_values(size_t ix_x, size_t ix_y,
+      void copy_table3d_interp_values(size_t ix_x, size_t ix_y,
 				    vec2_t &values, table3d &tab,
 				    std::string slice_name="z",
 				    int verbose=0) {
       
       if (ix_x>=this->rk || ix_y>=this->rk || ix_x==ix_y) {
 	O2SCL_ERR2("Either indices greater than rank or x and y ",
-		   "indices equal in tensor_grid::copy_slice_interp().",
+		   "indices equal in tensor_grid::copy_table3d_interp().",
 		   exc_efailed);
       }
       if (values.size()!=this->rk) {
 	O2SCL_ERR2("Values array not equal to rank ",
-		   "in tensor_grid::copy_slice_interp_values().",
+		   "in tensor_grid::copy_table3d_interp_values().",
 		   exc_efailed);
       }
 
       if (tab.is_size_set()==false || tab.is_xy_set()==false) {
 	O2SCL_ERR2("Grid not set in tensor_grid::",
-		   "copy_slice_interp_value().",o2scl::exc_einval);
+		   "copy_table3d_interp_value().",o2scl::exc_einval);
       }
 
       // Get current table3d grid
@@ -877,7 +901,7 @@ namespace o2scl {
 	creating a new table3d grid
      */
     template<class vec2_t> 
-      void copy_slice_interp_values_setxy
+      void copy_table3d_interp_values_setxy
       (size_t ix_x, size_t ix_y, vec2_t &values, table3d &tab,
        std::string x_name="x", std::string y_name="y",
        std::string slice_name="z") {
@@ -902,7 +926,7 @@ namespace o2scl {
 	tab.get_size(nx,ny);
       }
       
-      copy_slice_interp_values(ix_x,ix_y,values,tab,slice_name);
+      copy_table3d_interp_values(ix_x,ix_y,values,tab,slice_name);
       return;
     }
     //@}
