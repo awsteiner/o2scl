@@ -1146,8 +1146,6 @@ namespace o2scl {
     double sqrt_det=1.0;
     for(size_t i=0;i<ndim;i++) {
       if (!std::isfinite(chol(i,i))) {
-	std::cout << "i,chol(i,i): " << i << " " << chol(i,i)
-		  << std::endl;
 	O2SCL_ERR2("An entry of the Cholesky decomposition was not finite ",
 		   "in prob_dens_mdim_gaussian::set().",o2scl::exc_einval);
       }
@@ -1160,12 +1158,6 @@ namespace o2scl {
     // Compute normalization
     norm=pow(2.0*o2scl_const::pi,-((double)ndim)/2.0)/sqrt_det;
     if (!std::isfinite(norm)) {
-      for(size_t i=0;i<ndim;i++) {
-	std::cout << "i,chol(i,i): " << i << " " << chol(i,i)
-		  << std::endl;
-      }
-      std::cout << "ndim,sqrt_det,norm: " << ndim << " " << sqrt_det << " "
-		<< norm << std::endl;
       O2SCL_ERR2("Normalization not finite in ",
 		 "prob_dens_mdim_gaussian::set().",o2scl::exc_einval);
     }
@@ -1898,6 +1890,12 @@ namespace o2scl {
     return ndim;
   }
 
+  /// Set the seed
+  void set_seed(unsigned long int s) {
+    pdg.set_seed(s);
+    return;
+  }
+  
   /** \brief Set the covariance matrix for the distribution
    */
   void set(size_t p_ndim, mat_t &covar) {
@@ -1919,17 +1917,24 @@ namespace o2scl {
     o2scl_linalg::cholesky_invert<mat_t>(ndim,covar_inv);
       
     // Force chol to be lower triangular and compute the determinant
-    double det=1.0;
+    double sqrt_det=1.0;
     for(size_t i=0;i<ndim;i++) {
-      det*=chol(i,i);
+      if (!std::isfinite(chol(i,i))) {
+	O2SCL_ERR2("An entry of the Cholesky decomposition was not finite ",
+		   "in prob_cond_mdim_gaussian::set().",o2scl::exc_einval);
+      }
+      sqrt_det*=chol(i,i);
       for(size_t j=0;j<ndim;j++) {
 	if (i<j) chol(i,j)=0.0;
       }
     }
-    det*=det;
-
+    
     // Compute normalization
-    norm=pow(2.0*o2scl_const::pi,-((double)ndim)/2.0)/sqrt(det);
+    norm=pow(2.0*o2scl_const::pi,-((double)ndim)/2.0)/sqrt_det;
+    if (!std::isfinite(norm)) {
+      O2SCL_ERR2("Normalization not finite in ",
+		 "prob_dens_mdim_gaussian::set().",o2scl::exc_einval);
+    }
   }
 
   /** \brief The conditional probability of x_A given x_B, 
@@ -1959,6 +1964,13 @@ namespace o2scl {
     for(size_t i=0;i<ndim;i++) q[i]=x_A[i]-x_B[i];
     vtmp=prod(covar_inv,q);
     ret+=-0.5*inner_prod(q,vtmp);
+    /*
+      std::cout << "pdmg lp: ";
+      for (size_t i=0;i<ndim;i++) std::cout << x_A[i] << " ";
+      for (size_t i=0;i<ndim;i++) std::cout << q[i] << " ";
+      for (size_t i=0;i<ndim;i++) std::cout << vtmp[i] << " ";
+      std::cout << ret << std::endl;
+    */
     return ret;
   }
 
@@ -1968,9 +1980,14 @@ namespace o2scl {
       O2SCL_ERR2("Distribution not set in prob_cond_mdim_gaussian::",
 		 "operator().",o2scl::exc_einval);
     }
-    for(size_t i=0;i<ndim;i++) q[i]=pdg();
+    for (size_t i=0;i<ndim;i++) q[i]=pdg();
     vtmp=prod(chol,q);
-    for(size_t i=0;i<ndim;i++) x_A[i]=x_B[i]+vtmp[i];
+    for (size_t i=0;i<ndim;i++) x_A[i]=x_B[i]+vtmp[i];
+    /*
+      std::cout << "pdmg op: ";
+      for (size_t i=0;i<ndim;i++) std::cout << x_A[i] << " ";
+      std::cout << std::endl;
+    */
     return;
   }
 
