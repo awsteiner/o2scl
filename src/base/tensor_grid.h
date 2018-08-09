@@ -104,9 +104,19 @@ namespace o2scl {
       order to copy to a \ref o2scl::table3d object and set its grid
       to match that from the unfixed indices in the \ref
       o2scl::tensor_grid object, the function \ref
-      copy_table3d_align_setxy() can be used. The function
-      \ref copy_table3d_interp() uses interpolation to extract the
-      value of the tensor_grid 
+      copy_table3d_align_setxy() can be used. The function \ref
+      copy_table3d_interp() uses interpolation to extract values from
+      the \ref o2scl::tensor_grid object. It allows the user to select
+      indices to be fixed and then uses the values in the grid in the
+      \ref o2scl::table3d object for the indices which vary.
+      Alternatively \ref copy_table3d_interp_values() allows the user
+      to specify values on the grid for the indices to be fixed and
+      uses the grid in the \ref o2scl::table3d object for the indices
+      which vary. Finally, \ref copy_table3d_interp_value_setxy() acts
+      like \ref copy_table3d_interp_values() except that it sets the
+      \ref o2scl::table3d grid to be the same as the grid in the \ref
+      o2scl::tensor_grid object which corresponds to the indices which
+      are being varied.
 
       \b Notes and Todos
 
@@ -119,7 +129,7 @@ namespace o2scl {
       tensor::resize() to resize the tensor, failing to resize the
       grid. This can be fixed by ensuring that resize functions
       are virtual and have a version in tensor_grid which ensure
-      that the grid and tensor data are matched.
+      that the grid and tensor data are matched. 
 
       \future Is it really necessary that get_data() is public and not
       const? This is used in HDF5 I/O, but the HDF5 output function
