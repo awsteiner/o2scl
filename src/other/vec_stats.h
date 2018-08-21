@@ -1517,7 +1517,8 @@ namespace o2scl {
       \note Experimental
   */
   template<class vec_t, class vec2_t, class vec3_t>
-    double wvector_covariance(size_t n, const vec_t &data1, const vec2_t &data2,
+    double wvector_covariance(size_t n, const vec_t &data1,
+			      const vec2_t &data2,
 			      const vec3_t &weights) {
     double mean1=wvector_mean(n,data1,weights);
     double mean2=wvector_mean(n,data2,weights);
