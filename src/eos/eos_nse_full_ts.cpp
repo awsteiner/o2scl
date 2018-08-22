@@ -92,6 +92,11 @@ int main(void) {
 
   nse.inc_prot_coul=false;
 
+  // Specify a guess for the electron chemical potential. A good guess
+  // isn't necessary, but this ensures that the test behaves
+  // consistently across platforms.
+  dm.e.mu=0.0;
+  
   nse.calc_density_noneq(dm);
   fr1=dm.th.ed-dm.T*dm.th.en;
   dm.n.n*=(1.0+eps);
@@ -120,7 +125,7 @@ int main(void) {
   
   ret=nse.calc_density_noneq(dm);
   t.test_gen(ret==0,"ret 1");
-  t.test_rel(dm.eta_n,eta_n,1.0e-6,"eta_n");
+  t.test_rel(dm.eta_n,eta_n,1.0e-6,"eta_n 1");
   t.test_rel(dm.eta_p,eta_p,1.0e-6,"eta_p");
   t.test_rel(dm.eta_nuc[0],eta_nuc[0],1.0e-6,"eta_nuc[0]");
   t.test_rel(dm.eta_nuc[1],eta_nuc[1],1.0e-6,"eta_nuc[1]");
@@ -159,7 +164,7 @@ int main(void) {
   
   ret=nse.calc_density_noneq(dm);
   t.test_gen(ret==0,"ret 1");
-  t.test_rel(dm.eta_n,eta_n,1.0e-6,"eta_n");
+  t.test_rel(dm.eta_n,eta_n,1.0e-6,"eta_n 2");
   t.test_rel(dm.eta_p,eta_p,1.0e-6,"eta_p");
   t.test_rel(dm.eta_nuc[0],eta_nuc[0],1.0e-6,"eta_nuc[0]");
   t.test_rel(dm.eta_nuc[1],eta_nuc[1],1.0e-6,"eta_nuc[1]");
