@@ -336,6 +336,12 @@ namespace o2scl {
       intp_set=false;
     }
 
+#if !O2SCL_NO_RANGE_CHECK
+    if (row>=it->second.dat.size()) {
+      O2SCL_ERR("Vector size failure in table::set(string,size_t,double).",
+		exc_esanity);
+    }
+#endif
     it->second.dat[row]=val;
     
     return;
@@ -364,14 +370,24 @@ namespace o2scl {
       intp_set=false;
     }
 
+#if !O2SCL_NO_RANGE_CHECK
+    if (row>=alist[icol]->second.dat.size()) {
+      O2SCL_ERR("Vector size failure in table::set(size_t,size_t,double).",
+		exc_esanity);
+    }
+#endif
     alist[icol]->second.dat[row]=val;
     return;
   }
 
   /** \brief Set an entire row of data
 
+      This function goes through \c v copying data until it runs out
+      of columns in the table or it runs out of entries in \c v,
+      whichever comes first.
+
       The type <tt>size_vec_t</tt> must be a type which has a
-      <tt>size()</tt> method.
+      <tt>size()</tt> method. 
    */
   template<class size_vec_t> void set_row(size_t row, size_vec_t &v) {
     if (row>=get_nlines()) {
