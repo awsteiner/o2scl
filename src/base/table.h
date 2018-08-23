@@ -312,44 +312,32 @@ namespace o2scl {
   /** \brief Set row \c row of column named \c col to value \c val .
       \f$ {\cal O}(\log(C)) \f$
 
-      This function adds the column \c col if it does not already
-      exist and adds rows using inc_maxlines() and set_nlines() to
-      create at least <tt>row+1</tt> rows if they do not already
-      exist.
+      This function calls the error handler if the row is beyond
+      the end of the table or if the specified column is not found.
   */
   void set(std::string scol, size_t row, double val) {
-    /*
-      if (!std::isfinite(val)) {
-      O2SCL_ERR((((std::string)"Value '")+dtos(val)+
-      "' not finite for column '"+
-      scol+"' in table::set(string,size_t,double)").c_str(),
-      exc_einval);
+
+    if (row>=nlines) {
+      O2SCL_ERR2("Specified row beyond end of table in ",
+		 "table::set(string,size_t,double).",exc_einval);
       return;
-      }
-    */
-    
-    if (maxlines==0) inc_maxlines(row+1);
-    while(row>maxlines-1) inc_maxlines(maxlines);
-    if (row>=nlines) set_nlines_auto(row+1);
+    }
+
+    aiter it=atree.find(scol);
+    if (it==atree.end()) {
+      O2SCL_ERR((((std::string)"Column '")+scol+
+		 "' not found in table::set(string,size_t,double).").c_str(),
+		exc_enotfound);
+      return;
+    }
 
     if ((intp_colx==scol || intp_coly==scol) && intp_set==true) {
       delete si;
       intp_set=false;
     }
 
-    aiter it=atree.find(scol);
-    if (it==atree.end()) {
-      new_column(scol);
-      it=atree.find(scol);
-    }
-    if (it==atree.end()) {
-      O2SCL_ERR((((std::string)"Refused to add column '")+scol+
-		 "' in table::set(string,size_t,double).").c_str(),
-		exc_enotfound);
-      return;
-    }
-
     it->second.dat[row]=val;
+    
     return;
   }
 
@@ -357,29 +345,19 @@ namespace o2scl {
       \f$ {\cal O}(1) \f$
   */
   void set(size_t icol, size_t row, double val) {
-    /*
-    if (!std::isfinite(val)) {
-      if (icol>=get_ncolumns()) {
-	O2SCL_ERR((((std::string)"Value '")+dtos(val)+
-		   "' not finite and index "+szttos(icol)+
-		   " too large in table::set(size_t,size_t,double)").c_str(),
-		  exc_einval);
-      }
-      O2SCL_ERR((((std::string)"Value '")+dtos(val)+
-		 "' not finite for column '"+get_column_name(icol)+
-		 "' in table::set(size_t,size_t,double)").c_str(),
-		exc_einval);
+    
+    if (row>=nlines) {
+      O2SCL_ERR2("Specified row beyond end of table in ",
+		 "table::set(size_t,size_t,double).",exc_einval);
+      return;
     }
-    */
+  
     if (icol>=atree.size()) {
-      std::string err=((std::string)"Column out of range, ")+szttos(icol)+
+      std::string err=((std::string)"Column index ")+szttos(icol)+
       ">="+szttos(atree.size())+", in table::set(size_t,size_t,double).";
       O2SCL_ERR(err.c_str(),exc_einval);
     }
-  
-    while(row>maxlines-1) inc_maxlines(maxlines);
-    if (row>=nlines) set_nlines_auto(row+1);
-  
+
     std::string scol=get_column_name(icol);
     if ((intp_colx==scol || intp_coly==scol) && intp_set==true) {
       delete si;
