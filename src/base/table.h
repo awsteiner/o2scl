@@ -93,16 +93,6 @@ namespace o2scl {
       columns, finding data points, and several other manipulations
       of the data. 
 
-      \b Column \b size \n 
-
-      The columns grow automatically (similar to the STL \<vector\>)
-      in reponse to an attempt to call set() for a row that does not
-      presently exist or in a call to line_of_data() when the table is
-      already full. However, this forces memory rearrangments that are
-      expensive, O(R*C). If the user has a good estimate of the number
-      of rows beforehand, it is best to either specify this in the
-      constructor, or in an explicit call to inc_maxlines().
-
       <B> Lookup, differentiation, integration, and 
       interpolation </b> \n
 
@@ -1433,6 +1423,10 @@ namespace o2scl {
       verify that \c nv is equal to the number of columns, so some of
       the columns may be uninitialized in the new row which is
       created.
+
+      Similar to <tt>std::vector</tt>'s <tt>push_back()</tt> method,
+      this function now internally increases the maximum table size
+      geometrically to help avoid excessive memory rearrangements.
   */
   template<class vec2_t> void line_of_data(size_t nv, const vec2_t &v) {
     if (maxlines==0) inc_maxlines(1);
@@ -1445,7 +1439,7 @@ namespace o2scl {
       
     if (nlines<maxlines && nv<=(atree.size())) {
 
-      set_nlines(nlines+1);
+      set_nlines_auto(nlines+1);
       for(size_t i=0;i<nv;i++) {
 	(*this).set(i,nlines-1,v[i]);
       }
