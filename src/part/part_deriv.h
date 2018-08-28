@@ -245,6 +245,22 @@ namespace o2scl {
     */
     virtual bool calc_mu_ndeg(fermion_deriv &f, double temper,
 			      double prec, bool inc_antip=false);
+
+#ifdef O2SCL_NEVER_DEFINED
+    
+    /** \brief The specific heat at constant volume (unitless)
+     */
+    double spec_heat_vol(part_deriv &p, double temper) {
+      return (p.dsdT-p.dndT*p.dndT/p.dndmu)*temper/p.n;
+    }
+    
+    /** \brief The specific heat at constant pressure (unitless)
+     */
+    double spec_heat_press(part_deriv &p, double temper) {
+      return temper/p.n*p.dsdT+p.en*p.en*temper/p.n/p.n/p.n*p.dndmu-
+	2.0*p.en*temper/p.n/p.n*p.dndT;
+    }
+#endif
     
   };
 
