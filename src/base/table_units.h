@@ -699,6 +699,7 @@ namespace o2scl {
 	}
 
 	// Add first row of data
+	this->set_nlines_auto(irow+1);
 	for(size_t i=0;i<onames.size();i++) {
 	  this->set(i,irow,o2scl::stod(onames[i]));
 	}
@@ -766,6 +767,7 @@ namespace o2scl {
 	} else {
 
 	  // Otherwise, assume this is a row of data
+	  this->set_nlines_auto(1);
 	  for(size_t i=0;i<units.size();i++) {
 	    this->set(i,0,o2scl::stod(units[i]));
 	  }
@@ -777,6 +779,7 @@ namespace o2scl {
 
       // Read remaining rows
       while ((fin) >> data) {
+	this->set_nlines_auto(irow+1);
 	this->set(0,irow,data);
 	for(size_t i=1;i<this->get_ncolumns();i++) {
 	  (fin) >> data;

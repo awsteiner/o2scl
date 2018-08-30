@@ -2498,6 +2498,7 @@ namespace o2scl {
       }
 
       // Add first row of data
+      set_nlines_auto(irow+1);
       for(size_t i=0;i<onames.size();i++) {
 	set(i,irow,o2scl::stod(onames[i]));
       }
@@ -2526,6 +2527,7 @@ namespace o2scl {
 
     // Read remaining rows
     while ((fin) >> data) {
+      set_nlines_auto(irow+1);
       set(0,irow,data);
       for(size_t i=1;i<get_ncolumns();i++) {
 	(fin) >> data;
