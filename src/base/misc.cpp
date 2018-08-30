@@ -265,3 +265,18 @@ void o2scl::HSVtoRGB(double h, double s, double v,
   return;
 }
 
+int o2scl::glob_wrapper(std::string pattern,
+			std::vector<std::string> &matches) {
+  glob_t pglob;
+    pglob.gl_offs=0;
+    pglob.gl_pathc=0;
+    matches.clear();
+    int ret=glob(pattern.c_str(),GLOB_MARK | GLOB_TILDE,NULL,&pglob);
+    if (ret==0) {
+      for(size_t i=0;i<pglob.gl_pathc;i++) {
+	matches.push_back(pglob.gl_pathv[i]);
+      }
+    }
+    globfree(&pglob);
+    return ret;
+  }

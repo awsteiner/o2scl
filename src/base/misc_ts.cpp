@@ -104,6 +104,10 @@ int main(void) {
   t.test_gen(vi2("b1")==2,"vec_index 8");
   
 #endif
+
+  vector<std::string> matches;
+  glob_wrapper("../anneal/*.h",matches);
+  t.test_gen(matches.size()==4,"glob test");
   
   t.report();
   return 0;

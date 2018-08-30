@@ -38,6 +38,9 @@
 #include <map>
 #include <initializer_list>
 
+// For glob()
+#include <glob.h>
+
 #include <o2scl/err_hnd.h>
 
 extern "C" {
@@ -586,8 +589,14 @@ namespace o2scl {
 	ix++;
       }
     }
+
   };
 
+  /** \brief Desc
+   */
+  int glob_wrapper(std::string pattern,
+			  std::vector<std::string> &matches);
+  
 #endif
 
 #ifndef DOXYGEN_NO_O2NS
