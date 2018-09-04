@@ -47,12 +47,12 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
-  // Create a table with two columns. It is usually best to
-  // specify in the constructor, the number of rows you will 
-  // need before hand, i.e. table dat(100), but we do not
-  // do so here for demonstration purposes.
+  // Create a table with two columns. 
   table<> dat;
   dat.line_of_names("x y");
+
+  // Increase the number of lines
+  dat.set_nlines(11);
   
   for(int i=0;i<11;i++) {
     dat.set("x",i,((double)i)/10.0);
