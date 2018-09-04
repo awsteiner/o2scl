@@ -404,8 +404,10 @@ namespace o2scl {
 		 "prob_dens_mdim_amr::insert().",o2scl::exc_einval);
     }
     if (log_mode==false && m(ir,n_dim)<0.0) {
-      O2SCL_ERR2("Weight negative when log_mode is false in ",
-		 "prob_dens_mdim_amr::insert().",o2scl::exc_einval);
+      std::string str="Weight negative ("+o2scl::dtos(m(ir,n_dim))+
+      ") for row "+o2scl::szttos(ir)+" when log_mode is false in "+
+      "prob_dens_mdim_amr::insert().";
+      O2SCL_ERR(str.c_str(),o2scl::exc_einval);
     }
 
     if (mesh.size()==0) {

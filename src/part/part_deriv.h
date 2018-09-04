@@ -248,18 +248,43 @@ namespace o2scl {
 
 #ifdef O2SCL_NEVER_DEFINED
     
-    /** \brief The specific heat at constant volume (unitless)
-     */
-    double spec_heat_vol(part_deriv &p, double temper) {
+    /** \brief The heat capacity per particle at 
+	constant volume (unitless)
+
+	This function returns 
+	\f[
+	\frac{T}{N} \frac{\partial S}{\partial T}_{V,N} =
+	\frac{T}{n} \frac{\partial S}{\partial T}_{V,n} =
+	\frac{T}{N} \frac{\partial E}{\partial T}_{V,N} 
+	\f]
+    */
+    double heat_cap_ppart_const_vol(part_deriv &p, double temper) {
       return (p.dsdT-p.dndT*p.dndT/p.dndmu)*temper/p.n;
     }
     
-    /** \brief The specific heat at constant pressure (unitless)
+    /** \brief The heat capacity per particle 
+	at constant pressure (unitless)
      */
-    double spec_heat_press(part_deriv &p, double temper) {
+    double heat_cap_ppart_const_press(part_deriv &p, double temper) {
       return temper/p.n*p.dsdT+p.en*p.en*temper/p.n/p.n/p.n*p.dndmu-
 	2.0*p.en*temper/p.n/p.n*p.dndT;
     }
+
+    /** \brief The adiabatic compressibility
+     */
+    double compress_adiabatic(part_deriv &p, double temper) {
+    }
+    
+    /** \brief The isothermal compressibility
+     */
+    double compress_const_tptr(part_deriv &p, double temper) {
+    }
+
+    /** \brief The coefficient of thermal expansion
+     */
+    double coeff_thermal_exp(part_deriv &p, double temper) {
+    }
+    
 #endif
     
   };

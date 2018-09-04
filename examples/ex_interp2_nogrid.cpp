@@ -46,7 +46,7 @@ using namespace o2scl_hdf;
 
 // A function for filling the data and comparing results
 double f(double x, double y) {
-  return sin(x)*sin(1.0/(y+0.1));
+  return fabs(sin(x)*sin(1.0/(y+0.1)));
 }
 
 int main(void) {
@@ -125,11 +125,13 @@ int main(void) {
 
     prob_dens_mdim_amr<> pdma1;
     pdma1.set(low,high);
+    pdma1.verbose=0;
     pdma1.initial_parse_new(mvt);
 
     prob_dens_mdim_amr<> pdma2;
     pdma2.dim_choice=prob_dens_mdim_amr<>::random;
     pdma2.set(low,high);
+    pdma2.verbose=0;
     pdma2.initial_parse(mvt);
 
     static const size_t n_methods=7;

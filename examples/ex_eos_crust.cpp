@@ -200,6 +200,7 @@ int main(void) {
   double ed, nb;
 
   cout << "NVBPS crust." << endl;
+  crust_comp.set_nlines(200);
   for(size_t i=0;i<200;i++) {
     crust_comp.set("pr",i,pr_grid[i]);
     te.ed_nb_from_pr(cu.convert("1/fm^4","Msun/km^3",pr_grid[i]),ed,nb);

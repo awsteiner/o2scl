@@ -112,7 +112,7 @@ namespace o2scl {
       Alternatively \ref copy_table3d_interp_values() allows the user
       to specify values on the grid for the indices to be fixed and
       uses the grid in the \ref o2scl::table3d object for the indices
-      which vary. Finally, \ref copy_table3d_interp_value_setxy() acts
+      which vary. Finally, \ref copy_table3d_interp_values_setxy() acts
       like \ref copy_table3d_interp_values() except that it sets the
       \ref o2scl::table3d grid to be the same as the grid in the \ref
       o2scl::tensor_grid object which corresponds to the indices which
