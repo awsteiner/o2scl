@@ -3241,11 +3241,27 @@ void hdf_file::type_process(iterate_parms &ip, int mode, size_t ndims,
   
   if (ndims==1) {
     if (dims[0]==0) {
-      cout << "Found ndims=1 with dims[0]=0." << endl;
-      cout << "  " << name << " " << base_type << " " <<
+      // This case can occur, as it means there is space allocated for
+      // the object but it currently holds no data.
+      if (mode==ip_filelist) {
+	cout << base_type << " ";
+      } else {
+	if (mode==ip_type_from_name && name==ip.tname) {
+	  ip.type=base_type;
+	  ip.found=true;
+	  return;
+	} else if (mode==ip_name_from_type && base_type==ip.type) {
+	  ip.tname=name;
+	  ip.found=true;
+	  return;
+	}
+      }
+      /*
+	cout << "Found ndims=1 with dims[0]=0." << endl;
+	cout << "  " << name << " " << base_type << " " <<
 	ip.type << " " << ip.tname << " " << ip.mode << endl;
-    }
-    if (max_dims[0]==H5S_UNLIMITED) {
+      */
+    } else if (max_dims[0]==H5S_UNLIMITED) {
       if (mode==ip_filelist) {
 	cout << base_type << "[" << dims[0] << "/inf]";
       } else {
@@ -3459,16 +3475,18 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
       if (ndims==1 && mode==ip_filelist) {
 	std::string s;
 	hf.gets(name,s);
-	if (dims[0]<20) {
-	  cout << " with value \"" << s;
+	if (dims[0]==0) {
+	  cout << "is empty.";
+	} else if (dims[0]<20) {
+	  cout << " with value \"" << s << "\".";
 	} else {
 	  cout << " with value \""
 	       << s[0] << s[1] << s[2] << s[3] << s[4] << s[5]
 	       << " ... "
 	       << s[dims[0]-6] << s[dims[0]-5] << s[dims[0]-4]
-	       << s[dims[0]-3] << s[dims[0]-2] << s[dims[0]-1];
+	       << s[dims[0]-3] << s[dims[0]-2] << s[dims[0]-1]
+	       << "\".";
 	}
-	cout << "\".";
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_SHORT)) {
       type_process(*ip,mode,ndims,dims,max_dims,"short",name);
@@ -3537,13 +3555,15 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
       if (ndims==1 && mode==ip_filelist) {
 	std::vector<double> darr;
 	hf.getd_vec(name,darr);
-	cout << " with value ";
-	if (dims[0]==1) {
-	  cout << darr[0];
+	if (dims[0]==0) {
+	  cout << "is empty";
+	} else if (dims[0]==1) {
+	  cout << " with value " << darr[0];
 	} else if (dims[0]==2) {
-	  cout << darr[0] << ", " << darr[1];
+	  cout << " with value " << darr[0] << ", " << darr[1];
 	} else {
-	  cout << "\n\t" << darr[0] << ", ..., " << darr[dims[0]-1];
+	  cout << " with value \n\t" << darr[0] << ", ..., "
+	       << darr[dims[0]-1];
 	}
 	cout << ".";
       }
