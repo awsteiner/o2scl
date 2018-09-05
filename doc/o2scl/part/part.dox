@@ -159,9 +159,9 @@
     o2scl::fermion_deriv_nr handles nonrelativistic fermions. These
     classes compute the derivatives
     \f[
-    \left(\frac{d n}{d \mu}\right)_{T}, \quad
-    \left(\frac{d n}{d T}\right)_{\mu}, \quad \mathrm{and} \quad
-    \left(\frac{d s}{d T}\right)_{\mu} \quad .
+    \left(\frac{\partial n}{\partial \mu}\right)_{T}, \quad
+    \left(\frac{\partial n}{\partial T}\right)_{\mu}, \quad \mathrm{and} \quad
+    \left(\frac{\partial s}{\partial T}\right)_{\mu} \quad .
     \f]
     All other first derivatives of the thermodynamic functions can
     be written in terms of these three. 
@@ -173,25 +173,27 @@
     
     There is a Maxwell relation
     \f[
-    \left(\frac{d s}{d \mu}\right)_{T,V} =
-    \left(\frac{d n}{d T}\right)_{\mu,V}
+    \left(\frac{\partial s}{\partial \mu}\right)_{T,V} =
+    \left(\frac{d^2 P}{\partial \mu \partial T}\right)_{V} =
+    \left(\frac{d^2 P}{\partial T \partial \mu}\right)_{T,V} =
+    \left(\frac{\partial n}{\partial T}\right)_{\mu,V}
     \f]
     The pressure derivatives are trivial
     \f[
-    \left(\frac{d P}{d \mu}\right)_{T,V}=n, \quad
-    \left(\frac{d P}{d T}\right)_{\mu,V}=s
+    \left(\frac{\partial P}{\partial \mu}\right)_{T,V}=n, \quad
+    \left(\frac{\partial P}{\partial T}\right)_{\mu,V}=s
     \f]
     The energy density derivatives are related through the 
     thermodynamic identity:
     \f[
-    \left(\frac{d \varepsilon}{d \mu}\right)_{T,V}=
-    \mu \left(\frac{d n}{d \mu}\right)_{T,V}+
-    T \left(\frac{d s}{d \mu}\right)_{T,V}
+    \left(\frac{\partial \varepsilon}{\partial \mu}\right)_{T,V}=
+    \mu \left(\frac{\partial n}{\partial \mu}\right)_{T,V}+
+    T \left(\frac{\partial s}{\partial \mu}\right)_{T,V}
     \f]
     \f[
-    \left(\frac{d \varepsilon}{d T}\right)_{\mu,V}=
-    \mu \left(\frac{d n}{d T}\right)_{\mu,V}+
-    T \left(\frac{d s}{d T}\right)_{\mu,V}
+    \left(\frac{\partial \varepsilon}{\partial T}\right)_{\mu,V}=
+    \mu \left(\frac{\partial n}{\partial T}\right)_{\mu,V}+
+    T \left(\frac{\partial s}{\partial T}\right)_{\mu,V}
     \f]
     
     \hline
@@ -200,9 +202,30 @@
 
     \todo These expressions need work.
     
-    Note that the derivative of the entropy with respect to the
-    temperature above is not the heat capacity per particle
-    at constant volume, \f$ c_V \f$, which is defined by
+    Most of the other common derivatives which are used 
+    are those which can be obtained by second derivatives
+    of the Gibbs free energy, \f$ G = F + P V \f$. 
+    \f{eqnarray}
+    \left(\frac{d^2 G}{\partial T^2}\right)_{P,\{N_i\}} &=&
+    -\left( \frac{\partial S}{\partial T} \right)_{P,\{N_i\}}
+    = - \frac{N c_P}{T} 
+    \nonumber \\
+    \left(\frac{d^2 G}{\partial T \partial P}\right)_{\{N_i\}} &=&
+    \left( \frac{\partial V}{\partial T} \right)_{P,\{N_i\}}
+    = V \alpha
+    \nonumber \\
+    \left(\frac{d^2 g}{\partial P^2}\right)_{T,\{N_i\}} &=&
+    \left( \frac{\partial V}{\partial P} \right)_{T,\{N_i\}}
+    = - V \kappa_T
+    \nonumber
+    \f}
+    Other common derivatives are the heat capacity per particle
+    at constant volume, \f$ c_V \f$, and the speed of sound,
+    \f$ ( d P / d \varepsilon)_{\{N_i\},S} \f$.
+
+    It is useful to write these derivatives in terms of the three
+    derivatives determined above. The heat capacity per particle at
+    constant volume is defined by
     \f[
     c_V = \frac{T}{N} \left( \frac{\partial S}{\partial T} \right)_{V,N}
     = \frac{T}{n} \left( \frac{\partial s}{\partial T} \right)_{V,n}
@@ -253,34 +276,43 @@
     The isothermal compressibility is 
     \f[
     \kappa_T \equiv -\frac{1}{V} 
-    \left( \frac{\partial V}{\partial P}\right)_{T,N} 
-    = -n
+    \left( \frac{\partial V}{\partial P}\right)_{T,\{N_i\}} 
+    \f]
+    In a single-component system, this can also be written as
+    \f[
+    \kappa_T = -\frac{1}{V} 
+    \left( \frac{\partial V}{\partial P}\right)_{T,N} = -n
     \left[ \frac{\partial (1/n)}{\partial P}\right]_{T,N} 
     = \frac{1}{n}
     \left( \frac{\partial n}{\partial P}\right)_{T,N} 
     \f] 
-    can be computed from the function \f$ P = P[\mu(N,V,T),V,T] \f$
+    This quantity can be computed from 
+    \f$ F = - P V + \sum_i \mu_i N_i \f$ :
     \f[
-    \left( \frac{\partial P}{\partial V} \right)_{N,T} = 
-    \left( \frac{\partial P}{\partial \mu} \right)_{T,V} 
-    \left( \frac{\partial \mu}{\partial V} \right)_{N,T} +
-    \left( \frac{\partial P}{\partial V} \right)_{\mu,T} 
+    \left( \frac{\partial F}{\partial V}\right)_{T,\{N_i\}} = 
+    - P + V 
+    \left( \frac{\partial P}{\partial V}\right)_{T,\{N_i\}} = 
+    \sum_j N_j
+    \left( \frac{\partial \mu_j}{\partial V}\right)_{T,\{N_i\}} 
     \f]
-    where the chemical potential derivative can be computed
+    The chemical potential derivative can be computed
     from a Maxwell relation
     \f[
-    \left( \frac{\partial \mu}{\partial V} \right)_{N,T} =
-    -\left( \frac{\partial P}{\partial N} \right)_{T,V} \, .
+    \left( \frac{\partial \mu_j}{\partial V} \right)_{T,\{N_i\}} =
+    \left(\frac{d^2 F}{\partial V \partial N_j}\right)_{T,\{N_{i\neq j}\}} =
+    \left(\frac{d^2 F}{\partial N_j \partial V}\right)_{T,\{N_{i\neq j}\}} =
+    -\left( \frac{\partial P}{\partial N_j} \right)_{T,\{N_{i\neq j}\},V} \, .
     \f]
-    and then using
+    Using
     \f[
-    \left( \frac{\partial P}{\partial N} \right)_{T,V} =
-    n \left( \frac{\partial N}{\partial \mu} \right)_{T,V}^{-1} \, .
+    \left( \frac{\partial P}{\partial N_j} \right)_{T,\{N_{i\neq j}\},V} =
+    n_j \left( \frac{\partial N}
+    {\partial \mu_j} \right)_{T,\{N_{i\neq j}\},V}^{-1} \, .
     \f]
     we obtain the result
     \f[
-    \kappa_T = n^2 \left( \frac{\partial n}
-    {\partial \mu} \right)_{T,V} 
+    \kappa_T = \sum_j n_j^2 \left( \frac{\partial n_j}
+    {\partial \mu_j} \right)_{T,\{N_{i\neq j}\},V}^{-1}
     \f]
 
     The coefficient of thermal expansion is
