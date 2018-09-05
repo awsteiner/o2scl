@@ -197,10 +197,12 @@
     \hline
     
     <b>Other derivatives:</b>
+
+    \todo These expressions need work.
     
     Note that the derivative of the entropy with respect to the
-    temperature above is not the heat capacity per particle, \f$ c_V \f$.
-    The heat capacity per particle is
+    temperature above is not the heat capacity per particle
+    at constant volume, \f$ c_V \f$, which is defined by
     \f[
     c_V = \frac{T}{N} \left( \frac{\partial S}{\partial T} \right)_{V,N}
     = \frac{T}{n} \left( \frac{\partial s}{\partial T} \right)_{V,n}
@@ -210,7 +212,7 @@
     c_V=\frac{T}{N} \left( \frac{\partial E}{\partial T} \right)_{V,N}
     \f]
     but these definitions are identical as can be seen by taking the
-    derivative of \f$ F = E - T S \f$ . As noted in \ref part_section
+    derivative of \f$ E = F + T S \f$ . As noted in \ref part_section
     in the User's Guide for \o2p, we work in units so that \f$ \hbar =
     c = k_B = 1 \f$, so \f$ c_V \f$ is unitless. To compute \f$ c_V
     \f$ in terms of the derivatives above, note that the descendants
@@ -248,7 +250,40 @@
     which expresses the heat capacity in terms of the three
     derivatives which are given.
 
-    To compute the coefficient of thermal expansion,
+    The isothermal compressibility is 
+    \f[
+    \kappa_T \equiv -\frac{1}{V} 
+    \left( \frac{\partial V}{\partial P}\right)_{T,N} 
+    = -n
+    \left[ \frac{\partial (1/n)}{\partial P}\right]_{T,N} 
+    = \frac{1}{n}
+    \left( \frac{\partial n}{\partial P}\right)_{T,N} 
+    \f] 
+    can be computed from the function \f$ P = P[\mu(N,V,T),V,T] \f$
+    \f[
+    \left( \frac{\partial P}{\partial V} \right)_{N,T} = 
+    \left( \frac{\partial P}{\partial \mu} \right)_{T,V} 
+    \left( \frac{\partial \mu}{\partial V} \right)_{N,T} +
+    \left( \frac{\partial P}{\partial V} \right)_{\mu,T} 
+    \f]
+    where the chemical potential derivative can be computed
+    from a Maxwell relation
+    \f[
+    \left( \frac{\partial \mu}{\partial V} \right)_{N,T} =
+    -\left( \frac{\partial P}{\partial N} \right)_{T,V} \, .
+    \f]
+    and then using
+    \f[
+    \left( \frac{\partial P}{\partial N} \right)_{T,V} =
+    n \left( \frac{\partial N}{\partial \mu} \right)_{T,V}^{-1} \, .
+    \f]
+    we obtain the result
+    \f[
+    \kappa_T = n^2 \left( \frac{\partial n}
+    {\partial \mu} \right)_{T,V} 
+    \f]
+
+    The coefficient of thermal expansion is
     \f[
     \alpha \equiv \frac{1}{V}
     \left( \frac{\partial V}{\partial T} \right)_{N,P} \, .
@@ -259,12 +294,13 @@
     -\left( \frac{\partial P}{\partial T} \right)_{N,V} 
     \left( \frac{\partial P}{\partial V} \right)_{N,T}^{-1} \, .
     \f]
-    The first term can be computed from the Maxwell relation
+    The second derivative was already computed above, 
+    and the first derivative can be computed from the Maxwell relation
     \f[
     \left( \frac{\partial P}{\partial T} \right)_{N,V} = 
     \left( \frac{\partial S}{\partial V} \right)_{N,T} \, ,
     \f]
-    The entropy derivative can be computed using
+    In turn, the entropy derivative can be computed using
     \f[
     S=S[\mu(N,T,V),T,V]
     \f]
@@ -282,24 +318,29 @@
     \left( \frac{\partial \mu}{\partial V} \right)_{N,T} +
     \left( \frac{\partial S}{\partial V} \right)_{\mu,T} \, .
     \f]
-    and the derivative of the pressure with respect to the
-    volume can be computed with \f$ P = P[\mu(N,V,T),V,T] \f$
+    The result is 
     \f[
-    \left( \frac{\partial P}{\partial V} \right)_{N,T} = 
-    \left( \frac{\partial P}{\partial \mu} \right)_{T,V} 
-    \left( \frac{\partial \mu}{\partial V} \right)_{N,T} +
-    \left( \frac{\partial P}{\partial V} \right)_{\mu,T} 
+    \alpha = -\frac{1}{V}\left[n 
+    \left( \frac{\partial n}
+    {\partial T} \right)_{\mu,V}
+    \left( \frac{\partial n}
+    {\partial \mu} \right)_{T,V}^{-1} + s \right]
+    \left[n ^2 \left( \frac{\partial n}
+    {\partial \mu} \right)_{T,V}^{-1}\right]
     \f]
     
     The heat capacity per particle at constant pressure, 
     \f$ c_P \f$, is defined as
     \f[
-    c_P = \frac{T}{N} \left( \frac{\partial S}{\partial T} 
+    c_P \equiv \frac{T}{N} \left( \frac{\partial S}{\partial T} 
     \right)_{N,P} = \frac{T}{N} \left( \frac{\partial H}{\partial T} 
     \right)_{N,P} 
     \f] 
-    
-    In \o2, the quantity \f$ c_P \f$ is also unitless.
+    The equivalence of these two derivatives
+    can be obtained either from 
+    \f$ dH = V dP + T dS + \mu d N \f$ or by taking the
+    derivative of the function \f$ H = H[ N,P,S(N,P,T) ] \f$.
+    In \o2, the quantity \f$ c_P \f$ is unitless.
     (which is also unitless) we can write functions
     \f[
     S=S(N,T,V) \qquad \mathrm{and} \qquad V=V(N,P,T)
