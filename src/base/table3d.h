@@ -367,10 +367,10 @@ namespace o2scl {
     void set_grid_y(size_t iy, double val);
     
     /// Get x grid point at index \c ix
-    double get_grid_x(size_t ix);
+    double get_grid_x(size_t ix) const;
 
     /// Get y grid point at index \c iy
-    double get_grid_y(size_t iy);
+    double get_grid_y(size_t iy) const;
 
     /// Get the name of the x grid variable
     std::string get_x_name() const;

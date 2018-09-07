@@ -655,7 +655,7 @@ void table3d::set_grid_y(size_t iy, double val) {
   return;
 }
     
-double table3d::get_grid_x(size_t ix) {
+double table3d::get_grid_x(size_t ix) const {
   if (ix<numx) {
     return (xval)[ix];
   }
@@ -664,7 +664,7 @@ double table3d::get_grid_x(size_t ix) {
   return 0.0;
 }
     
-double table3d::get_grid_y(size_t iy) {
+double table3d::get_grid_y(size_t iy) const {
   if (iy<numy) {
     return (yval)[iy];
   }
