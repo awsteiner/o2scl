@@ -304,6 +304,95 @@ int o2scl_acol_get_hist_2d(void *vp,
   return 0;
 }
 
+acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
+			       cng(o2scl_settings.get_convert_units()) {
+  
+  obj_name="acol";
+  verbose=1;
+  pretty=true;
+  names_out=true;
+  scientific=true;
+  prec=6;
+  user_ncols=-1;
+  unit_fname="";
+  def_args="";
+  
+  post_interactive=false;
+
+  ffl.html_mode();
+
+  type="";
+
+  env_var_name="ACOL_DEFAULTS";
+  interp_type=1;
+
+#ifdef O2SCL_HDF5_COMP
+  compress=1;
+#else
+  compress=0;
+#endif
+
+  cng.err_on_fail=false;
+
+  {
+    vector<std::string> itmp={"value"};
+    type_comm_list.insert(std::make_pair("int",itmp));
+    type_comm_list.insert(std::make_pair("double",itmp));
+    type_comm_list.insert(std::make_pair("char",itmp));
+    type_comm_list.insert(std::make_pair("size_t",itmp));
+    type_comm_list.insert(std::make_pair("string",itmp));
+  }
+  {
+    vector<std::string> itmp={"assign","autocorr","delete-col","delete-rows",
+			      "delete-rows-tol","deriv","deriv2","cat",
+			      "convert-unit","find-row","fit","function",
+			      "get-row","get-unit","entry","index",
+			      "insert","insert-full","integ","interp",
+			      "list","max","min","nlines","rename",
+			      "select","select-rows","select-rows2",
+			      "set-data","set-unit","sort","stats","sum",
+			      "to-hist","to-hist-2d","wstats"};
+    type_comm_list.insert(std::make_pair("table",itmp));
+  }
+  {
+    vector<std::string> itmp={"cat","contours","deriv-x","deriv-y",
+			      "function","entry","insert","interp",
+			      "list","max","min","rename","set-data",
+			      "slice","sum"};
+    type_comm_list.insert(std::make_pair("table3d",itmp));
+  }
+  {
+    vector<std::string> itmp={"list"};
+    type_comm_list.insert(std::make_pair("tensor<int>",itmp));
+    type_comm_list.insert(std::make_pair("tensor<size_t>",itmp));
+  }
+  {
+    vector<std::string> itmp={"list","diag","to-table3d"};
+    type_comm_list.insert(std::make_pair("tensor",itmp));
+  }
+  {
+    vector<std::string> itmp={"to-table3d"};
+    type_comm_list.insert(std::make_pair("prob_dens_mdim_amr",itmp));
+  }
+  {
+    vector<std::string> itmp={"list","to-table3d","slice","to-table",
+			      "set-grid"};
+    type_comm_list.insert(std::make_pair("tensor_grid",itmp));
+  }
+  {
+    vector<std::string> itmp={"max","min"};
+    type_comm_list.insert(std::make_pair("hist_2d",itmp));
+  }
+  {
+    vector<std::string> itmp={"deriv","interp","max","min","sort",
+			      "autocorr","to-table"};
+    type_comm_list.insert(std::make_pair("double[]",itmp));
+    type_comm_list.insert(std::make_pair("int[]",itmp));
+    type_comm_list.insert(std::make_pair("size_t[]",itmp));
+  }
+
+}
+
 void acol_manager::command_add(std::string new_type) {
 
   const int both=cli::comm_option_both;
@@ -930,38 +1019,6 @@ void acol_manager::command_add(std::string new_type) {
   return;
 }
 
-acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
-			       cng(o2scl_settings.get_convert_units()) {
-  
-  obj_name="acol";
-  verbose=1;
-  pretty=true;
-  names_out=true;
-  scientific=true;
-  prec=6;
-  user_ncols=-1;
-  unit_fname="";
-  def_args="";
-  
-  post_interactive=false;
-
-  ffl.html_mode();
-
-  type="";
-
-  env_var_name="ACOL_DEFAULTS";
-  interp_type=1;
-
-#ifdef O2SCL_HDF5_COMP
-  compress=1;
-#else
-  compress=0;
-#endif
-
-  cng.err_on_fail=false;
-
-}
-
 void acol_manager::command_del() {
 
   if (type=="int") {
@@ -1361,9 +1418,9 @@ int acol_manager::setup_help() {
   
   string dsc="\nNotes:\n\n";
   dsc+="1. Help for general commands may be obtained with 'help ";
-  dsc+="<command>'. Help for \n   object-specific commands can be obtained ";
+  dsc+="<command>'. Help for \n   type-specific commands can be obtained ";
   dsc+="by 'help <type> <command>'. A \n   list of commands for each type ";
-  dsc+="can be obtained with 'commands <type>'.\n  Required arguments ";
+  dsc+="can be obtained with 'commands <type>'.\n   Required arguments ";
   dsc+="are surrounded by ";
   dsc+="<>'s and optional arguments are\n   surrounded by []'s.\n";
   dsc+="2. Options may also be specified in the environment variable ";
@@ -1383,6 +1440,28 @@ int acol_manager::setup_help() {
     dsc+="cot(x) csc(x) sec(x)\n";
     dsc+="ceil(x) floor(x) int(x) max(x,y) min(x,y)\n";
   */
+  
+  dsc+="List of additional type-specific commands\n";
+  dsc+="  (use 'help <type> <command>' for more info):\n\n";
+  std::map<std::string,std::vector<std::string> >::iterator it;
+  for(it=type_comm_list.begin();it!=type_comm_list.end();it++) {
+    std::vector<std::string> &clist=it->second;
+    string stempx=it->first+": ";
+    for(size_t j=0;j<clist.size()-1;j++) {
+      stempx+=clist[j]+", ";
+    }
+    stempx+=clist[clist.size()-1]+"\n";
+    std::vector<std::string> stempy;
+    rewrap(stempx,stempy,77);
+    for(size_t j=0;j<stempy.size();j++) {
+      if (j>0) {
+	dsc+=((std::string)"  ")+stempy[j]+"\n";
+      } else {
+	dsc+=stempy[j]+"\n";
+      }
+    }
+  }
+  dsc+="\n";
   
 #ifndef O2SCL_UBUNTU_PKG
   dsc+=((string)"Compiled at ")+((string)__TIME__)+" on "+

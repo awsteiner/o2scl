@@ -174,8 +174,8 @@
     There is a Maxwell relation
     \f[
     \left(\frac{\partial s}{\partial \mu}\right)_{T,V} =
-    \left(\frac{d^2 P}{\partial \mu \partial T}\right)_{V} =
-    \left(\frac{d^2 P}{\partial T \partial \mu}\right)_{T,V} =
+    \left(\frac{\partial^2 P}{\partial \mu \partial T}\right)_{V} =
+    \left(\frac{\partial^2 P}{\partial T \partial \mu}\right)_{T,V} =
     \left(\frac{\partial n}{\partial T}\right)_{\mu,V}
     \f]
     The pressure derivatives are trivial
@@ -206,15 +206,15 @@
     are those which can be obtained by second derivatives
     of the Gibbs free energy, \f$ G = F + P V \f$. 
     \f{eqnarray}
-    \left(\frac{d^2 G}{\partial T^2}\right)_{P,\{N_i\}} &=&
+    \left(\frac{\partial^2 G}{\partial T^2}\right)_{P,\{N_i\}} &=&
     -\left( \frac{\partial S}{\partial T} \right)_{P,\{N_i\}}
     = - \frac{N c_P}{T} 
     \nonumber \\
-    \left(\frac{d^2 G}{\partial T \partial P}\right)_{\{N_i\}} &=&
+    \left(\frac{\partial^2 G}{\partial T \partial P}\right)_{\{N_i\}} &=&
     \left( \frac{\partial V}{\partial T} \right)_{P,\{N_i\}}
     = V \alpha
     \nonumber \\
-    \left(\frac{d^2 g}{\partial P^2}\right)_{T,\{N_i\}} &=&
+    \left(\frac{\partial^2 G}{\partial P^2}\right)_{T,\{N_i\}} &=&
     \left( \frac{\partial V}{\partial P} \right)_{T,\{N_i\}}
     = - V \kappa_T
     \nonumber

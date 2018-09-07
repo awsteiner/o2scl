@@ -101,6 +101,8 @@ namespace o2scl_acol {
 
   protected:
 
+    std::map<std::string,std::vector<std::string> > type_comm_list;
+    
     /** \brief If true, then run in o2graph mode
      */
     bool o2graph_mode;
