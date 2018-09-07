@@ -553,7 +553,7 @@ namespace o2scl {
     /// Lookup index for grid closest to \c val
     size_t lookup_grid(size_t i, double val) {
       double val2;
-      return lookup_grid(i,val,val2);
+      return lookup_grid_val(i,val,val2);
     }
 
     /** \brief Lookup indices for grid closest point to \c vals

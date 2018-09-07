@@ -358,7 +358,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
     vector<std::string> itmp={"cat","contours","deriv-x","deriv-y",
 			      "function","entry","insert","interp",
 			      "list","max","min","rename","set-data",
-			      "slice","sum"};
+			      "slice","sum","x-name","y-name"};
     type_comm_list.insert(std::make_pair("table3d",itmp));
   }
   {
@@ -692,7 +692,7 @@ void acol_manager::command_add(std::string new_type) {
 
   } else if (new_type=="table3d") {
     
-    static const size_t narr=15;
+    static const size_t narr=17;
     comm_option_s options_arr[narr]={
       {0,"cat",
        "Concatenate data from a second table3d onto current table3d.",0,2,
@@ -777,6 +777,14 @@ void acol_manager::command_add(std::string new_type) {
        "corresponding slices in the current table3d, creating new slices "+
        "if necessary.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sum),
+       both},
+      {0,"x-name","Get or set the 'x' grid name",
+       0,1,"[name]","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_x_name),
+       both},
+      {0,"y-name","Get or set the 'y' grid name",
+       0,1,"[name]","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_y_name),
        both}
     };
     cl->set_comm_option_vec(narr,options_arr);
@@ -853,7 +861,8 @@ void acol_manager::command_add(std::string new_type) {
        both},
       {0,"to-table3d","Select two indices and convert to a table3d object.",
        -1,-1,"<x index> <y index> <new slice name> [values of fixed indices]",
-       "",new comm_option_mfptr<acol_manager>
+       ((string)"To set the x- or y- grid names afterwards, ")+
+       "use 'x-name' or 'y-name'.",new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_to_table3d),both},
       {0,"to-table","Convert to a two-column table object.",
        -1,-1,"<index> <grid name> <data name> [values of fixed indices]",
@@ -1087,6 +1096,8 @@ void acol_manager::command_del() {
     cl->remove_comm_option("set-data");
     cl->remove_comm_option("slice");
     cl->remove_comm_option("sum");
+    cl->remove_comm_option("x-name");
+    cl->remove_comm_option("y-name");
 
   } else if (type=="tensor<int>") {
     
@@ -3934,6 +3945,58 @@ int acol_manager::comm_slice(std::vector<std::string> &sv, bool itive_com) {
     cerr << "Slice does not work with " << type << " objects." << endl;
   }
     
+  
+  return 0;
+}
+
+int acol_manager::comm_x_name(std::vector<std::string> &sv, bool itive_com) {
+
+  if (type=="table3d") {
+
+    if (type!="table3d" || table3d_obj.is_xy_set()==false) {
+      cerr << "No table3d object or no grid." << endl;
+      return exc_efailed;
+    }
+
+    if (sv.size()==1) {
+      cout << "X grid is named " << table3d_obj.get_x_name() << endl;
+    } else {
+      table3d_obj.set_x_name(sv[1]);
+      cout << "X grid is now named " << table3d_obj.get_x_name() << endl;
+    }
+
+  } else {
+    
+    cerr << "Command 'x-name' not implemented for " << type
+	 << " objects." << endl;
+    return exc_efailed;
+  }
+  
+  return 0;
+}
+
+int acol_manager::comm_y_name(std::vector<std::string> &sv, bool itive_com) {
+
+  if (type=="table3d") {
+
+    if (type!="table3d" || table3d_obj.is_xy_set()==false) {
+      cerr << "No table3d object or no grid." << endl;
+      return exc_efailed;
+    }
+
+    if (sv.size()==1) {
+      cout << "Y grid is named " << table3d_obj.get_y_name() << endl;
+    } else {
+      table3d_obj.set_y_name(sv[1]);
+      cout << "Y grid is now named " << table3d_obj.get_y_name() << endl;
+    }
+
+  } else {
+    
+    cerr << "Command 'y-name' not implemented for " << type
+	 << " objects." << endl;
+    return exc_efailed;
+  }
   
   return 0;
 }

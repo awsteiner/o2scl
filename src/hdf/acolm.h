@@ -402,6 +402,12 @@ namespace o2scl_acol {
     
     /// Compute the minimum value of a colum
     virtual int comm_min(std::vector<std::string> &sv, bool itive_com);
+
+    /// Set the name of the x grid
+    virtual int comm_x_name(std::vector<std::string> &sv, bool itive_com);
+
+    /// Set the name of the y grid
+    virtual int comm_y_name(std::vector<std::string> &sv, bool itive_com);
     
     /// Add a column for line numbers
     virtual int comm_index(std::vector<std::string> &sv, bool itive_com);
