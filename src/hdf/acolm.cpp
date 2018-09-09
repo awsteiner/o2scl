@@ -1441,8 +1441,8 @@ int acol_manager::setup_help() {
   dsc+="   use parenthesis and quotes, i.e. \"(-x*2)\" instead of -x*2.\n";
   dsc+="5. Also, do not use a unary minus next to a binary operator,";
   dsc+=" i.e. use\n   \"a>(-1)\" instead of \"a>-1\".\n\n";
-  dsc+="Known operators:\n() ^ * / % + - == != < > && || << >> >= <=\n\n";
-  dsc+="Known functions:\n";
+  dsc+="Known operators:\n\n() ^ * / % + - == != < > && || << >> >= <=\n\n";
+  dsc+="Known functions:\n\n";
   dsc+="exp(x) log(x) log10(x) sin(x) cos(x) tan(x) sqrt(x) abs(x)\n";
   dsc+="asin(x) acos(x) atan(x) sinh(x) cosh(x) tanh(x)\n";
   dsc+="asinh(x) acosh(x) atanh(x)\n\n";
@@ -6347,8 +6347,17 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << "Range checking: " << o2scl_settings.range_check() << endl;
   cout << "EOS library: " << o2scl_settings.eos_installed() << endl;
   cout << "Particle library: " << o2scl_settings.part_installed() << endl;
-  cout << "HDF support: " << o2scl_settings.hdf_support() << endl;
-  cout << "HDF5 compression support: "
+  cout << "HDF5 support: " << o2scl_settings.hdf_support() << endl;
+  if (o2scl_settings.hdf_support()) {
+    unsigned maj, min, rel;
+    o2scl_settings.hdf5_header_version(maj,min,rel);
+    cout << "  HDF5 version numbers during O2scl compilation: "
+	 << maj << " " << min << " " << rel << endl;
+    o2scl_settings.hdf5_lib_version(maj,min,rel);
+    cout << "  HDF5 version numbers in libraries currently linked: "
+	 << maj << " " << min << " " << rel << endl;
+  }
+  cout << "  HDF5 compression support: "
        << o2scl_settings.hdf5_compression_support() << endl;
   cout << "Armadillo support: " << o2scl_settings.armadillo_support() << endl;
   cout << "Eigen support: " << o2scl_settings.eigen_support() << endl;

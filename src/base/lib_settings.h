@@ -133,6 +133,12 @@ namespace o2scl {
     /// Report some of the settings from config.h
     void config_h_report();
 
+    /// Obtain HDF5 version
+    void hdf5_lib_version(unsigned &maj, unsigned &min, unsigned &rel);
+    
+    /// Obtain HDF5 version
+    void hdf5_header_version(unsigned &maj, unsigned &min, unsigned &rel);
+    
     /// \name Miscellaneous config.h string properties
     //@{
     std::string o2scl_name();
