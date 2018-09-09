@@ -1863,8 +1863,11 @@ namespace o2scl {
       // Previous results are already present
 
       if (table->get_ncolumns()!=5+col_names.size()) {
-	O2SCL_ERR2("Table does not have the correct number of columns ",
-		   "in mcmc_para_table::mcmc_init().",o2scl::exc_einval);
+	std::string str=((std::string)"Table does not have correct ")+
+	  "number of columns in mcmc_para_table::mcmc_init()."+
+	  o2scl::szttos(table->get_ncolumns())+" columns and "+
+	  o2scl::szttos(col_names.size())+" entries in col_names.";
+	O2SCL_ERR(str.c_str(),o2scl::exc_einval);
       }
       if (!table->is_column("rank") ||
 	  !table->is_column("thread") ||
