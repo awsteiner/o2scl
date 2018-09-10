@@ -35,7 +35,7 @@ namespace o2scl {
   /** \brief Integration abscissas for \ref o2scl::inte_gauss_cern and 
       \ref o2scl::inte_cauchy_cern in double precision
    */
-  static const double inte_gauss_cern_x_double[12]=
+  static constexpr double inte_gauss_cern_x_double[12]=
     {0.96028985649753623,0.79666647741362674,0.52553240991632899,
      0.18343464249564980,0.98940093499164993,0.94457502307323258,
      0.86563120238783175,0.75540440835500303,0.61787624440264375,
@@ -44,7 +44,7 @@ namespace o2scl {
   /** \brief Integration weights for \ref o2scl::inte_gauss_cern and 
       \ref o2scl::inte_cauchy_cern in double precision
    */
-  static const double inte_gauss_cern_w_double[12]=
+  static constexpr double inte_gauss_cern_w_double[12]=
     {0.10122853629037626,0.22238103445337447,0.31370664587788729,
      0.36268378337836198,0.27152459411754095e-1,0.62253523938647893e-1,
      0.95158511682492785e-1,0.12462897125553387,0.14959598881657673,
@@ -53,7 +53,7 @@ namespace o2scl {
   /** \brief Integration abscissas for \ref o2scl::inte_gauss_cern and 
       \ref o2scl::inte_cauchy_cern in long double precision
    */
-  static const long double inte_gauss_cern_x_long_double[12]=
+  static constexpr long double inte_gauss_cern_x_long_double[12]=
     {0.96028985649753623168356086856947299L,
      0.79666647741362673959155393647583044L,
      0.52553240991632898581773904918924635L,
@@ -70,7 +70,7 @@ namespace o2scl {
   /** \brief Integration weights for \ref o2scl::inte_gauss_cern and 
       \ref o2scl::inte_cauchy_cern in long double precision
    */
-  static const long double inte_gauss_cern_w_long_double[12]=
+  static constexpr long double inte_gauss_cern_w_long_double[12]=
     {0.10122853629037625915253135430996219L,
      0.22238103445337447054435599442624088L,
      0.31370664587788728733796220198660131L,
