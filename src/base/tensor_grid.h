@@ -671,10 +671,10 @@ namespace o2scl {
     }
     //@}
 
-    /// \name Slicing to o2scl::tensor_grid objects
+    /// \name Slicing to tensor_grid objects
     //@{
-    /** \brief Copy an abitrary slice by fixing 1 or more indices
-	and return a new \ref tensor_grid object
+    /** \brief Copy an abitrary slice by fixing 1 or more indices and
+	use interpolation to return a new \ref tensor_grid object
      */
     template<class size_vec2_t, class vec2_t> 
       tensor_grid<> copy_slice_interp(size_vec2_t &ifix, vec2_t &vals) {

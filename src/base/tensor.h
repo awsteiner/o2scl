@@ -678,26 +678,156 @@ namespace o2scl {
   }
   //@}
 
-#ifdef O2SCL_NEVER_DEFINED
-  /** \brief 
+  /// \name Slicing and summing to create tensor_grid objects
+  //@{
+  /** \brief Sum over some (but not all) tensor indices to obtain
+      a smaller rank tensor
    */
   template<class size_vec2_t, class vec2_t> 
   tensor<> sum_slice(size_vec2_t &isum) {
-    
+
+    if (isum.size()==0) {
+      O2SCL_ERR2("Specified empty vector in ",
+		 "tensor::copy_slice_interp().",
+		 o2scl::exc_einval);
+    }
     if (this->rk<1+isum.size()) {
       O2SCL_ERR2("Summed too many indices in ",
 		 "tensor::copy_slice_interp().",
 		 o2scl::exc_einval);
     }
     
-    tensor<> tg_new;
+    // Determine new rank
+    size_t rank_new=this->rk-isum.size();
+    
+    // Determine the mapping between indices and the new size array
+    std::vector<size_t> mapping;
+    std::vector<size_t> sz_new;
+    
+    for(size_t i=0;i<this->rk;i++) {
+      bool found=false;
+      for(size_t j=0;j<isum.size();j++) {
+	if (isum[j]==i) found=true;
+      }
+      if (found==false) {
+	sz_new.push_back(this->get_size(i));
+	mapping.push_back(i);
+      }
+    }
+    
+    // Create the new tensor object
+    tensor<> tg_new(rank_new,sz_new);
+    
+    // Set all to zero
+    tg_new.set_all(0.0);
+    
+    // Loop over the old tensor object
+    for(size_t i=0;i<total_size();i++) {
+      
+      std::vector<size_t> ix_old(this->rk), ix_new(rank_new);
+      this->unpack_index(i,ix_old);
+      for(size_t j=0;j<rank_new;j++) {
+	ix_new=ix_old[mapping[j]];
+      }
+
+      size_t k=tg_new.pack_indices(ix_new);
+      
+      tg_new.set(ix_new,tg_new.get(ix_new)+this->data[k]);
+    }
     
     return tg_new;
   }
+
+#ifdef O2SCL_NEVER_DEFINED
+
+  // AWS: I'm waiting on this function because I would like
+  // to generalize it by creating a new index_spec class
+  // which allows for more general contractions, sums, and
+  // index rearrangements, etc.
+  
+  /** \brief Copy an abitrary slice by fixing 1 or more indices
+      and return a new \ref tensor object
+  */
+  template<class size_vec2_t, class size_vec3_t> 
+  tensor_grid<> copy_slice(size_vec2_t &list_to_fix,
+			   size_vec3_t &index_of_fixed) {
+
+    if (this->rk<1+list_to_fix.size()) {
+      O2SCL_ERR2("Fixed too many indices in ",
+		 "tensor_grid::copy_slice_interp().",
+		 o2scl::exc_einval);
+    }
+    if (list_to_fix.size()!=index_of_fixed.size()) {
+      O2SCL_ERR2("Mismatch between indices and values in ",
+		 "tensor_grid::copy_slice_interp().",
+		 o2scl::exc_einval);
+    }
+    
+    // Determine new rank
+    size_t rank_new=this->rk-list_to_fix.size();
+    
+    // Determine the new sizes and the mapping. The mapping vector
+    // has a size equal to the rank of the original tensor. If
+    // the index is in the 
+    std::vector<size_t> sz_new;
+    std::vector<size_t> mapping;
+    std::vector<bool> foundv;
+    for(size_t i=0;i<this->rk;i++) {
+      foundv[i]=false;
+      for(size_t j=0;j<list_to_fix.size();j++) {
+	if (list_to_fix[j]==i) {
+	  foundv[i]=true;
+	  mapping.push_back(index_of_fixed[j]);
+	}
+      }
+      if (foundv[i]==false) {
+	sz_new.push_back(this->get_size(i));
+	mapping.push_back(i);
+      }
+    }
+    
+    // Create the new tensor_grid object and set the new grid
+    tensor_grid<> tg_new(rank_new,sz_new);
+    
+    // Interpolate the data into the new tensor_grid object
+    std::vector<size_t> ix_new(rank_new);
+    std::vector<size_t> ix_old(this->rk);
+    
+    // Loop over the new tensor_grid object
+    for(size_t i=0;i<tg_new.total_size();i++) {
+      
+      // Find the location in the new tensor_grid object
+      tg_new.unpack_index(i,ix_new);
+      
+      // Find the point in the old tensor object to interpolate
+      for(size_t j=0;j<this->rk;j++) {
+	if (foundv[j]==false) {
+	  ix_old[j]=ix_new[mapping[j]];
+	} else {
+	  ix_old[j]=index_of_fixed[j];
+	}
+	int ix_found=-1;
+	for(size_t k=0;k<list_to_fix.size();k++) {
+	  if (list_to_fix[k]==j) ix_found=k;
+	}
+	if (ix_found==-1) {
+	  point_old[j]=this->get_grid(j,ix_new[j]);
+	} else {
+	  point_old[j]=vals[ix_found];
+	}
+      }
+      
+      // Set the new point by performing the linear interpolation
+      tg_new.set(ix_new,this->interp_linear(point_old));
+    }
+    
+    return tg_new;
+  }
+  //@}
 #endif
   
-    };
-
+  };
+  
   /** \brief Rank 1 tensor
    */
   template<class data_t=double, class vec_t=std::vector<data_t>, 
