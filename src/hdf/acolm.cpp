@@ -367,7 +367,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
     type_comm_list.insert(std::make_pair("tensor<size_t>",itmp));
   }
   {
-    vector<std::string> itmp={"list","diag","to-table3d"};
+    vector<std::string> itmp={"list","diag","to-table3d","to-table3d-sum"};
     type_comm_list.insert(std::make_pair("tensor",itmp));
   }
   {
@@ -791,7 +791,7 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="tensor") {
     
-    static const size_t narr=3;
+    static const size_t narr=4;
     comm_option_s options_arr[narr]={
       {'l',"list","List the rank and sizes.",
        0,0,"","List the rank and sizes.",
@@ -801,6 +801,10 @@ void acol_manager::command_add(std::string new_type) {
        -1,-1,"<x name> <y name> <slice name>",
        "",new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_to_table3d),both},
+      {0,"to-table3d-sum","Select two indices and convert to a table3d object.",
+       -1,-1,"<x name> <y name> <slice name>",
+       "",new comm_option_mfptr<acol_manager>
+       (this,&acol_manager::comm_to_table3d_sum),both},
       {0,"diag","Get diagonal elements.",
        -1,-1,"",
        "",new comm_option_mfptr<acol_manager>
@@ -1112,6 +1116,7 @@ void acol_manager::command_del() {
     cl->remove_comm_option("list");
     cl->remove_comm_option("diag");
     cl->remove_comm_option("to-table3d");
+    cl->remove_comm_option("to-table3d-sum");
 
   } else if (type=="prob_dens_mdim_amr") {
     
@@ -3631,6 +3636,68 @@ int acol_manager::comm_diag(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
 
+int acol_manager::comm_to_table3d_sum(std::vector<std::string> &sv,
+				      bool itive_com) {
+
+  if (type=="tensor") {
+
+    size_t rank=tensor_obj.get_rank();
+
+    vector<string> in, pr;
+    pr.push_back("First index name");
+    pr.push_back("First index to vary");
+    pr.push_back("Second index name");
+    pr.push_back("Second index to vary");
+    pr.push_back("Slice name");
+
+    int ret=get_input(sv,pr,in,"to-table3d-sum",itive_com);
+    if (ret!=0) return ret;
+
+    size_t ix_x=o2scl::stoszt(in[1]);
+    size_t ix_y=o2scl::stoszt(in[3]);
+    if (ix_x>=rank || ix_y>=rank) {
+      cerr << "Index larger than rank." << endl;
+      return 1;
+    }
+
+    vector<string> in2, pr2;
+    if (rank>2) {
+      for(size_t i=0;i<5;i++) {
+	std::vector<std::string>::iterator it=sv.begin();
+	it++;
+	sv.erase(it);
+      }
+      
+      for(size_t i=0;i<rank;i++) {
+	if (i!=ix_x && i!=ix_y) {
+	  pr2.push_back(((std::string)"Fixed index for rank ")+
+			o2scl::szttos(i));
+	}
+      }
+      
+      int ret2=get_input(sv,pr,in,"to-table3d-sum",itive_com);
+      if (ret!=0) return ret2;
+    }
+
+    table3d_obj.clear();
+    tensor_obj.convert_table3d_sum(ix_x,ix_y,table3d_obj,in[0],
+				   in[2],in[4]);
+
+    command_del();
+    clear_obj();
+    command_add("table3d");
+    type="table3d";
+
+  } else {
+    
+    cerr << "Cannot use command 'to-table3d-sum' for type "
+	 << type << "." << endl;
+    return exc_efailed;
+  }
+
+  return 0;
+}
+
 int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
 				  bool itive_com) {
 
@@ -5932,7 +5999,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 
     double x=tensor_grid_obj.get_data()[total_size-1];
     vector<size_t> ix(rk);
-    tensor_grid_obj.unpack_indices(total_size-1,ix);
+    tensor_grid_obj.unpack_index(total_size-1,ix);
     string test="(";
     for(size_t i=0;i<rk-1;i++) {
       test+=o2scl::dtos(tensor_grid_obj.get_grid(i,ix[i]))+",";
@@ -5949,7 +6016,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     size_t step=total_size/nrows/nct;
     vector<string> svin, svout;
     for(size_t i=0;i<total_size;i+=step) {
-      tensor_grid_obj.unpack_indices(i,ix);
+      tensor_grid_obj.unpack_index(i,ix);
       string stemp="(";
       for(size_t j=0;j<rk-1;j++) {
 	stemp+=o2scl::dtos(tensor_grid_obj.get_grid(j,ix[j]))+",";
@@ -5988,7 +6055,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 
     double x=tensor_obj.get_data()[total_size-1];
     vector<size_t> ix(rk);
-    tensor_obj.unpack_indices(total_size-1,ix);
+    tensor_obj.unpack_index(total_size-1,ix);
     string test="(";
     for(size_t i=0;i<rk-1;i++) {
       test+=o2scl::szttos(ix[i])+",";
@@ -6005,7 +6072,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     size_t step=total_size/nrows/nct;
     vector<string> svin, svout;
     for(size_t i=0;i<total_size;i+=step) {
-      tensor_obj.unpack_indices(i,ix);
+      tensor_obj.unpack_index(i,ix);
       string stemp="(";
       for(size_t j=0;j<rk-1;i++) {
 	stemp+=o2scl::szttos(ix[j])+",";
@@ -6044,7 +6111,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 
     int x=tensor_obj.get_data()[total_size-1];
     vector<size_t> ix(rk);
-    tensor_obj.unpack_indices(total_size-1,ix);
+    tensor_obj.unpack_index(total_size-1,ix);
     string test="(";
     for(size_t i=0;i<rk-1;i++) {
       test+=o2scl::szttos(ix[i])+",";
@@ -6061,7 +6128,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     size_t step=total_size/nrows/nct;
     vector<string> svin, svout;
     for(size_t i=0;i<total_size;i+=step) {
-      tensor_obj.unpack_indices(i,ix);
+      tensor_obj.unpack_index(i,ix);
       string stemp="(";
       for(size_t j=0;j<rk-1;j++) {
 	stemp+=o2scl::szttos(ix[j])+",";
@@ -6100,7 +6167,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 
     size_t x=tensor_obj.get_data()[total_size-1];
     vector<size_t> ix(rk);
-    tensor_obj.unpack_indices(total_size-1,ix);
+    tensor_obj.unpack_index(total_size-1,ix);
     string test="(";
     for(size_t i=0;i<rk-1;i++) {
       test+=o2scl::szttos(ix[i])+",";
@@ -6117,7 +6184,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     size_t step=total_size/nrows/nct;
     vector<string> svin, svout;
     for(size_t i=0;i<total_size;i+=step) {
-      tensor_obj.unpack_indices(i,ix);
+      tensor_obj.unpack_index(i,ix);
       string stemp="(";
       for(size_t j=0;j<rk-1;j++) {
 	stemp+=o2scl::szttos(ix[j])+",";

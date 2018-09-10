@@ -669,7 +669,7 @@ namespace o2scl {
       for(size_t i=0;i<tg_new.total_size();i++) {
 
 	// Find the location in the new tensor_grid object
-	tg_new.unpack_indices(i,ix_new);
+	tg_new.unpack_index(i,ix_new);
 
 	// Find the point in the old tensor object to interpolate
 	for(size_t j=0;j<this->rk;j++) {
@@ -692,10 +692,57 @@ namespace o2scl {
     }
     //@}
 
-    /// \name Slicing to o2scl::table3d objects
+    /// \name Slicing and converting to \ref o2scl::table3d objects
     //@{
-    /** \brief Create a slice in a table3d object with an aligned
-	grid
+
+    /** \brief Convert to a \ref o2scl::table3d object by
+	summing over all but two indices
+    */
+    void convert_table3d_sum
+      (size_t ix_x, size_t ix_y, table3d &tab, std::string x_name="x",
+       std::string y_name="y", std::string slice_name="z") {
+      
+      // Get current table3d grid
+      size_t nx, ny;
+      tab.get_size(nx,ny);
+      
+      if (nx==0 && ny==0) {
+	
+	if (x_name.length()==0) x_name="x";
+	if (y_name.length()==0) y_name="y";
+	
+	// If there's no grid, then create a grid in the table3d
+	// object that is the same as that in the tensor_grid object
+	std::vector<double> grid_x, grid_y;
+	copy_grid(ix_x,grid_x);
+	copy_grid(ix_y,grid_y);
+	tab.set_xy("x",grid_x.size(),grid_x,
+		   "y",grid_y.size(),grid_y);
+	// Now that the grid is set, get nx and ny
+	tab.get_size(nx,ny);
+      }
+      
+      // Check that the grids are commensurate
+      if (nx!=this->size[ix_x] || ny!=this->size[ix_y]) {
+	O2SCL_ERR2("Grids not commensurate in ",
+		   "tensor_grid::convert_table3d_sum().",exc_einval);
+      }
+      
+      tab.set_slice_all(slice_name,0.0);
+      
+      std::vector<size_t> ix;
+      for(size_t i=0;i<this->total_size();i++) {
+	this->unpack_index(i,ix);
+	tab.set(ix[ix_x],ix[ix_y],slice_name,
+		tab.get(ix[ix_x],ix[ix_y],slice_name)+
+		this->data[i]);
+      }
+      
+      return;
+    }
+
+    /** \brief Create a slice in a \ref o2scl::table3d object with an
+	aligned grid
 
 	This function uses the grid associated with indices \c ix_x
 	and \c ix_y, to copy data to a slice named \c slice_name in
@@ -754,7 +801,7 @@ namespace o2scl {
       
       return;
     }
-
+    
     /** \brief Create a slice in a table3d object with a new aligned
 	grid
     */
@@ -1116,7 +1163,7 @@ namespace o2scl {
       // Copy over the relevant data
       for(size_t i=0;i<tnew.total_size();i++) {
 	std::vector<size_t> index_new(this->rk), index_old(this->rk);
-	tnew.unpack_indices(i,index_new);
+	tnew.unpack_index(i,index_new);
 	for(size_t j=0;j<this->rk;j++) index_old[j]=index_new[j]+loc[j];
 	tnew.set(index_new,this->get(index_old));
       }
@@ -1156,7 +1203,7 @@ namespace o2scl {
       // linear interpolation
       for(size_t i=0;i<tnew.total_size();i++) {
 	std::vector<size_t> index(this->rk);
-	tnew.unpack_indices(i,index);
+	tnew.unpack_index(i,index);
 	index[this->rk-1]=0;
 	double val_lo=this->get(index);
 	index[this->rk-1]=1;
@@ -1216,7 +1263,7 @@ namespace o2scl {
       // Copy over the relevant data
       for(size_t i=0;i<tnew.total_size();i++) {
 	std::vector<size_t> index_new(this->rk), index_old(this->rk);
-	tnew.unpack_indices(i,index_new);
+	tnew.unpack_index(i,index_new);
 	for(size_t j=0;j<this->rk;j++) {
 	  index_old[j]=index_new[j]+loc[j];
 	}
@@ -1270,7 +1317,7 @@ namespace o2scl {
       // linear interpolation
       for(size_t i=0;i<tnew.total_size();i++) {
 	std::vector<size_t> index(this->rk);
-	tnew.unpack_indices(i,index);
+	tnew.unpack_index(i,index);
 	index[this->rk-1]=0;
 	double val_lo=this->get(index);
 	index[this->rk-1]=1;
@@ -1362,7 +1409,7 @@ namespace o2scl {
       // Copy over the relevant data
       for(size_t i=0;i<tnew.total_size();i++) {
 	std::vector<size_t> index_new(this->rk), index_old(this->rk);
-	tnew.unpack_indices(i,index_new);
+	tnew.unpack_index(i,index_new);
 	for(size_t j=0;j<this->rk;j++) {
 	  index_old[map[j]]=index_new[j]+loc[map[j]];
 	}

@@ -42,6 +42,7 @@
 
 #include <o2scl/err_hnd.h>
 #include <o2scl/interp.h>
+#include <o2scl/table3d.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -109,7 +110,11 @@ namespace o2scl {
       \comment
       A tensor is defined to be empty if it's rank is zero. A tensor's
       rank should be zero if and only if no memory has been allocated
-      for it.
+      for it. 
+      AWS 9/10/18: Also, data.size() should always be 
+      equal to the product of all the elements in the 
+      vec_size_t size vector and size.size() should always be
+      equal to rank. 
       \endcomment
 
   */
@@ -427,6 +432,17 @@ namespace o2scl {
     for(size_t i=0;i<rk;i++) tot*=size[i];
     return tot;
   }
+
+  /** \brief Return the sum over every element in the tensor
+  */
+  double total_sum() const { 
+    if (rk==0) return 0.0;
+    double tot=0.0;
+    for(size_t i=0;i<data.size();i++) {
+      tot+=data[i];
+    }
+    return tot;
+  }
   //@}
 
   /// \name Index manipulation
@@ -460,12 +476,12 @@ namespace o2scl {
     
   /// Unpack the single vector index into indices
   template<class size_vec_t> 
-  void unpack_indices(size_t ix, size_vec_t &index) {
+  void unpack_index(size_t ix, size_vec_t &index) {
     if (ix>=total_size()) {
       O2SCL_ERR((((std::string)"Value of index ")+szttos(ix)+
 		 " greater than or equal to total size"+
 		 szttos(total_size())+
-		 " in tensor::unpack_indices().").c_str(),
+		 " in tensor::unpack_index().").c_str(),
 		exc_eindex);
       return;
     }
@@ -497,7 +513,7 @@ namespace o2scl {
    */
   void min_index(vec_size_t &index) {
     size_t ix=o2scl::vector_min_index<vec_t,data_t>(total_size(),data);
-    unpack_indices(ix,index);
+    unpack_index(ix,index);
     return;
   }
 
@@ -507,7 +523,7 @@ namespace o2scl {
   void min(vec_size_t &index, data_t &val) {
     size_t ix;
     o2scl::vector_min<vec_t,data_t>(total_size(),data,ix,val);
-    unpack_indices(ix,index);
+    unpack_index(ix,index);
     return; 
   }
 
@@ -521,7 +537,7 @@ namespace o2scl {
    */
   void max_index(vec_size_t &index) {
     size_t ix=o2scl::vector_max_index<vec_t,data_t>(total_size(),data);
-    unpack_indices(ix,index);
+    unpack_index(ix,index);
     return; 
   }
 
@@ -531,7 +547,7 @@ namespace o2scl {
   void max(vec_size_t &index, data_t &val) {
     size_t ix;
     o2scl::vector_max<vec_t,data_t>(total_size(),data,ix,val);
-    unpack_indices(ix,index);
+    unpack_index(ix,index);
     return;
   }
 
@@ -547,8 +563,8 @@ namespace o2scl {
     size_t ix_min, ix_max;
     o2scl::vector_minmax_index<vec_t,data_t>
     (total_size(),data,ix_min,ix_max);
-    unpack_indices(ix_min,index_min);
-    unpack_indices(ix_max,index_max);
+    unpack_index(ix_min,index_min);
+    unpack_index(ix_max,index_max);
     return;
   }
 
@@ -560,11 +576,79 @@ namespace o2scl {
     size_t ix_min, ix_max;
     o2scl::vector_minmax<vec_t,data_t>(total_size(),data,ix_min,min,
 				ix_max,max);
-    unpack_indices(ix_min,index_min);
-    unpack_indices(ix_max,index_max);
+    unpack_index(ix_min,index_min);
+    unpack_index(ix_max,index_max);
     return;
   }
   //@}
+  
+  /** \brief Convert to a \ref o2scl::table3d object by
+      summing over all but two indices
+  */
+  void convert_table3d_sum
+  (size_t ix_x, size_t ix_y, table3d &tab, std::string x_name="x",
+   std::string y_name="y", std::string slice_name="z") {
+    
+    // Get current table3d grid
+    size_t nx, ny;
+    tab.get_size(nx,ny);
+    
+    if (nx==0 && ny==0) {
+      
+      if (x_name.length()==0) x_name="x";
+      if (y_name.length()==0) y_name="y";
+      
+      // If there's no grid, then create a grid in the table3d
+      // object which just enumerates the indices
+      std::vector<double> grid_x(size[ix_x]), grid_y(size[ix_y]);
+      for(size_t i=0;i<size[ix_x];i++) {
+	grid_x[i]=((double)i);
+      }
+      for(size_t i=0;i<size[ix_y];i++) {
+	grid_y[i]=((double)i);
+      }
+      tab.set_xy("x",grid_x.size(),grid_x,
+		 "y",grid_y.size(),grid_y);
+      // Now that the grid is set, get nx and ny
+      tab.get_size(nx,ny);
+    }
+    
+    // Check that the grids are commensurate
+    if (nx!=this->size[ix_x] || ny!=this->size[ix_y]) {
+      O2SCL_ERR2("Grids not commensurate in ",
+		 "tensor_grid::convert_table3d_sum().",exc_einval);
+    }
+    
+    tab.set_slice_all(slice_name,0.0);
+    
+    std::vector<size_t> ix;
+    for(size_t i=0;i<this->total_size();i++) {
+      this->unpack_index(i,ix);
+      tab.set(ix[ix_x],ix[ix_y],slice_name,
+	      tab.get(ix[ix_x],ix[ix_y],slice_name)+
+	      this->data[i]);
+    }
+    
+    return;
+  }
+
+#ifdef O2SCL_NEVER_DEFINED
+  /** \brief 
+   */
+  template<class size_vec2_t, class vec2_t> 
+  tensor<> sum_slice(size_vec2_t &isum) {
+    
+    if (this->rk<1+isum.size()) {
+      O2SCL_ERR2("Summed too many indices in ",
+		 "tensor::copy_slice_interp().",
+		 o2scl::exc_einval);
+    }
+    
+    tensor<> tg_new;
+    
+    return tg_new;
+  }
+#endif
   
   };
 

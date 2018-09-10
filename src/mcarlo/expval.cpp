@@ -458,7 +458,7 @@ expval_matrix::expval_matrix
     // Set all values in vals to zero
     size_t tot=vals.total_size();
     for(size_t ii=0;ii<tot;ii++) {
-      vals.unpack_indices(ii,dim);
+      vals.unpack_index(ii,dim);
       vals.set(dim,0.0);
     }
   }
@@ -517,7 +517,7 @@ void expval_matrix::set_blocks(size_t nrows, size_t ncols, size_t n_blocks,
   // Set all values in vals to zero
   size_t tot=vals.total_size();
   for(size_t ii=0;ii<tot;ii++) {
-    vals.unpack_indices(ii,dim);
+    vals.unpack_index(ii,dim);
     vals.set(dim,0.0);
   }
   return;

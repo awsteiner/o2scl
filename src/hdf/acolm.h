@@ -325,6 +325,12 @@ namespace o2scl_acol {
      */
     virtual int comm_to_table3d(std::vector<std::string> &sv, bool itive_com);
 
+    /** \brief Convert object to a \ref o2scl::table3d object
+	by summing over tensor indices
+     */
+    virtual int comm_to_table3d_sum(std::vector<std::string> &sv,
+				    bool itive_com);
+
     /** \brief Compute the autocorrelation coefficient
      */
     virtual int comm_autocorr(std::vector<std::string> &sv, bool itive_com);

@@ -87,7 +87,7 @@ int main(void) {
 	j3[2]=k;
 	m3.set(j3,((double)i)+j+k);
 	size_t jp=m3.pack_indices(j3);
-	m3.unpack_indices(jp,k3);
+	m3.unpack_index(jp,k3);
 	t.test_rel(m3.get(j3),((double)i+j+k),1.0e-12,"R2 element.");
 	t.test_gen(j3[0]==k3[0],"R3 pack/unpack.");
 	t.test_gen(j3[1]==k3[1],"R3 pack/unpack.");
@@ -123,7 +123,7 @@ int main(void) {
 	m3.set(j3,2.0*x*x-y-3.0*z*z);
 	size_t ix;
 	ix=m3.pack_indices(j3);
-	m3.unpack_indices(ix,j4);
+	m3.unpack_index(ix,j4);
 	t.test_gen(j4[0]==i,"pack/unpack 1");
 	t.test_gen(j4[1]==j,"pack/unpack 2");
 	t.test_gen(j4[2]==k,"pack/unpack 3");
