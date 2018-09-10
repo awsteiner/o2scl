@@ -219,6 +219,60 @@ namespace o2scl {
     virtual ~tensor_grid() {
     }
 
+    /** \brief Check that the \ref o2scl::tensor_grid object is valid
+     */
+    void is_valid() const {
+      
+      tensor<double,vec_t,vec_size_t>::is_valid();
+      
+      if (this->rk>0 && grid_set) {
+	size_t tot2=0;
+	for(size_t i=0;i<this->rk;i++) {
+	  tot2+=this->size[i];
+	}
+	
+	if (tot2!=grid.size()) {
+	  O2SCL_ERR2("Value grid_set is true but grid vector size ",
+		     "is wrong in tensor_grid::is_valid().",
+		     o2scl::exc_esanity);
+	}
+      }
+
+      if (!grid_set && grid.size()>0) {
+	  O2SCL_ERR2("Value grid_set is false but grid vector size ",
+		     "is not zero in tensor_grid::is_valid().",
+		     o2scl::exc_esanity);
+      }
+      
+      return;
+    }
+    
+    /// \name Copy constructors
+    //@{
+    tensor_grid<vec_t,vec_size_t>
+      (const tensor_grid<vec_t,vec_size_t> &t) {
+      this->rk=t.rk;
+      this->data=t.data;
+      this->size=t.size;
+      grid=t.grid;
+      grid_set=t.grid_set;
+      itype=t.itype;
+    }
+    
+    tensor_grid<vec_t,vec_size_t> &operator=
+      (const tensor_grid<vec_t,vec_size_t> &t) {
+      if (this!=&t) {
+	this->rk=t.rk;
+	this->data=t.data;
+	this->size=t.size;
+	grid=t.grid;
+	grid_set=t.grid_set;
+	itype=t.itype;
+      }
+      return *this;
+    }
+    //@}
+  
     /// \name Set functions
     //@{
     /// Set the element closest to grid point \c grdp to value \c val
@@ -692,7 +746,7 @@ namespace o2scl {
     }
     //@}
 
-    /// \name Slicing and converting to \ref o2scl::table3d objects
+    /// \name Slicing and converting to table3d objects
     //@{
 
     /** \brief Convert to a \ref o2scl::table3d object by

@@ -106,21 +106,10 @@ namespace o2scl {
 
       \future Could be interesting to write an iterator for this class.
 
-      \future Create an is_valid() function which checks sizes
-      \comment
-      A tensor is defined to be empty if it's rank is zero. A tensor's
-      rank should be zero if and only if no memory has been allocated
-      for it. 
-      AWS 9/10/18: Also, data.size() should always be 
-      equal to the product of all the elements in the 
-      vec_size_t size vector and size.size() should always be
-      equal to rank. 
-      \endcomment
-
   */
   template<class data_t=double, class vec_t=std::vector<data_t>, 
     class vec_size_t=std::vector<size_t> > class tensor {
-    
+
   public:
   
 #ifndef DOXYGEN_INTERNAL
@@ -180,9 +169,63 @@ namespace o2scl {
   ~tensor() {
   }
 
-    /// \name Clear method
-    //@{
-    /// Clear the tensor of all data and free allocated memory
+  /// \name Method to check for valid object
+  //@{
+  /** \brief Check that the \ref o2scl::tensor object is valid
+   */
+  void is_valid() const {
+    if (rk==0) {
+      if (data.size()!=0) {
+	O2SCL_ERR2("Rank is zero but the data vector has non-zero size ",
+		   "in tensor::is_valid().",o2scl::exc_esanity);
+      }
+    }
+    
+    if (rk!=size.size()) {
+      O2SCL_ERR2("Rank does not match size vector size ",
+		 "in tensor::is_valid().",o2scl::exc_esanity);
+    }
+
+    if (rk>0) {
+      size_t tot=1;
+      for(size_t i=0;i<rk;i++) tot*=size[i];
+      if (tot==0) {
+	O2SCL_ERR2("One entry in the size vector is zero ",
+		   "in tensor::is_valid().",o2scl::exc_esanity);
+      }
+      if (tot!=data.size()) {
+	O2SCL_ERR2("Product of size vector entries does not match data ",
+		   "vector size in tensor::is_valid().",o2scl::exc_esanity);
+      }
+    }
+    
+    return;
+  }
+  //@}
+  
+  /// \name Copy constructors
+  //@{
+  tensor<data_t,vec_t,vec_size_t>
+  (const tensor<data_t,vec_t,vec_size_t> &t) {
+    rk=t.rk;
+    data=t.data;
+    size=t.size;
+  }
+
+  tensor<data_t,vec_t,vec_size_t> &operator=
+  (const tensor<data_t,vec_t,vec_size_t> &t) {
+    if (this!=&t) {
+      rk=t.rk;
+      data=t.data;
+      size=t.size;
+    }
+    return *this;
+  }
+  //@}
+  
+  /// \name Clear method
+  //@{
+  /// Clear the tensor of all data and free allocated memory
   void clear() {
     rk=0;
     data.resize(0);
@@ -434,7 +477,7 @@ namespace o2scl {
   }
 
   /** \brief Return the sum over every element in the tensor
-  */
+   */
   double total_sum() const { 
     if (rk==0) return 0.0;
     double tot=0.0;
@@ -519,7 +562,7 @@ namespace o2scl {
 
   /** \brief Compute the index of the minimum value in the tensor
       and return the minimum
-   */
+  */
   void min(vec_size_t &index, data_t &val) {
     size_t ix;
     o2scl::vector_min<vec_t,data_t>(total_size(),data,ix,val);
@@ -543,7 +586,7 @@ namespace o2scl {
 
   /** \brief Compute the index and value of the maximum value in the tensor
       and return the maximum
-   */
+  */
   void max(vec_size_t &index, data_t &val) {
     size_t ix;
     o2scl::vector_max<vec_t,data_t>(total_size(),data,ix,val);
@@ -551,7 +594,7 @@ namespace o2scl {
     return;
   }
 
-    /** \brief Compute the minimum and maximum values in the tensor
+  /** \brief Compute the minimum and maximum values in the tensor
    */
   void minmax_value(data_t &min, data_t &max) {
     return o2scl::vector_minmax_value<vec_t,data_t>(total_size(),data,min,max);
@@ -570,18 +613,20 @@ namespace o2scl {
 
   /** \brief Compute the indices and values of the maximum and minimum
       in the tensor
-   */
+  */
   void minmax(vec_size_t &index, size_t &index_min, data_t &min,
-		     size_t &index_max, data_t &max) {
+	      size_t &index_max, data_t &max) {
     size_t ix_min, ix_max;
     o2scl::vector_minmax<vec_t,data_t>(total_size(),data,ix_min,min,
-				ix_max,max);
+				       ix_max,max);
     unpack_index(ix_min,index_min);
     unpack_index(ix_max,index_max);
     return;
   }
   //@}
   
+  /// \name Slicing and converting to table3d objects
+  //@{
   /** \brief Convert to a \ref o2scl::table3d object by
       summing over all but two indices
   */
@@ -631,6 +676,7 @@ namespace o2scl {
     
     return;
   }
+  //@}
 
 #ifdef O2SCL_NEVER_DEFINED
   /** \brief 
@@ -650,61 +696,84 @@ namespace o2scl {
   }
 #endif
   
-  };
+    };
 
   /** \brief Rank 1 tensor
    */
   template<class data_t=double, class vec_t=std::vector<data_t>, 
     class vec_size_t=std::vector<size_t> > class tensor1 : 
     public tensor<data_t,vec_t,vec_size_t> {
-
-  public:
     
-    /// Create an empty tensor
+  public:
+  
+  /// Create an empty tensor
   tensor1() : tensor<data_t,vec_t,vec_size_t>() {}
-
-    /// Create a rank 1 tensory of size \c sz
+  
+  /// Create a rank 1 tensory of size \c sz
   tensor1(size_t sz) : tensor<data_t,vec_t,vec_size_t>() {
       vec_size_t sizex(1);
       sizex[0]=sz;
       this->resize(1,sizex);
     }
-	
-    /// Get the element indexed by \c ix
-    data_t &get(size_t ix) { 
-      return tensor<data_t,vec_t,vec_size_t>::get(&ix); 
+  
+  /// \name Method to check for valid object
+  //@{
+  /** \brief Check that the \ref o2scl::tensor1 object is valid
+   */
+  void is_valid() const {
+    tensor<double,vec_t,vec_size_t>::is_valid();
+    if (this->rk>1) {
+      O2SCL_ERR2("Rank is neither 0 nor 1 in ",
+		 "tensor1::is_valid().",
+		 o2scl::exc_esanity);
+      
     }
+    return;
+  }
+  //@}
 
-    /// Get the element indexed by \c ix
-    const data_t &get(size_t ix) const { 
-      return tensor<data_t,vec_t,vec_size_t>::get(&ix); 
-    }
-	
-    /// Set the element indexed by \c index to value \c val
-    void set(size_t index, data_t val) 
-    { tensor<data_t,vec_t,vec_size_t>::set(&index,val); }
-    
-    /** \brief Set the element indexed by \c index to value \c val
-
-	(We have to explicitly provide this version since the set()
-	function is overloaded in this child of \ref tensor.)
-    */
-    template<class size_vec_t>
-      void set(const size_vec_t &index, data_t val) {
-      tensor<data_t,vec_t,vec_size_t>::set(index,val);
-    }
-
-    /// Get an element using array-like indexing
-    data_t &operator[](size_t ix) { return this->data[ix]; }
-
-    /// Get an element using array-like indexing (const version)
-    const data_t &operator[](size_t ix) const { return this->data[ix]; }
-    
-    /// Get an element using operator()
-    data_t &operator()(size_t ix) { return this->data[ix]; }
-
-    /// Get an element using operator() (const version)
-    const data_t &operator()(size_t ix) const { return this->data[ix]; }
+  /// \name Specialized get and set functions
+  //@{
+  /// Get the element indexed by \c ix
+  data_t &get(size_t ix) { 
+    return tensor<data_t,vec_t,vec_size_t>::get(&ix); 
+  }
+  
+  /// Get the element indexed by \c ix
+  const data_t &get(size_t ix) const { 
+    return tensor<data_t,vec_t,vec_size_t>::get(&ix); 
+  }
+  
+  /// Set the element indexed by \c index to value \c val
+  void set(size_t index, data_t val) 
+  { tensor<data_t,vec_t,vec_size_t>::set(&index,val); }
+  
+  /** \brief Set the element indexed by \c index to value \c val
+      
+      (We have to explicitly provide this version since the set()
+      function is overloaded in this child of \ref tensor.)
+  */
+  template<class size_vec_t>
+  void set(const size_vec_t &index, data_t val) {
+    tensor<data_t,vec_t,vec_size_t>::set(index,val);
+  }
+  //@}
+  
+  /// \name Specialized operator functions
+  //@{
+  /// Get an element using array-like indexing
+  data_t &operator[](size_t ix) { return this->data[ix]; }
+  
+  /// Get an element using array-like indexing (const version)
+  const data_t &operator[](size_t ix) const { return this->data[ix]; }
+  
+  /// Get an element using operator()
+  data_t &operator()(size_t ix) { return this->data[ix]; }
+  
+  /// Get an element using operator() (const version)
+  const data_t &operator()(size_t ix) const { return this->data[ix]; }
+  //@}
+  
   };
 
   /** \brief Rank 2 tensor
@@ -715,10 +784,10 @@ namespace o2scl {
 
   public:
 
-    /// Create an empty tensor
+  /// Create an empty tensor
   tensor2() : tensor<data_t,vec_t,vec_size_t>() {}
 
-    /// Create a rank 2 tensor of size \c (sz,sz2)
+  /// Create a rank 2 tensor of size \c (sz,sz2)
   tensor2(size_t sz, size_t sz2) : tensor<data_t,vec_t,vec_size_t>() {
       this->rk=2;
       this->size.resize(2);
@@ -728,43 +797,62 @@ namespace o2scl {
       this->data.resize(tot);
     }
 	
-    /// Get the element indexed by \c (ix1,ix2)
-    data_t &get(size_t ix1, size_t ix2) { 
-      size_t sz[2]={ix1,ix2};
-      return tensor<data_t,vec_t,vec_size_t>::get(sz); 
+  /// \name Method to check for valid object
+  //@{
+  /** \brief Check that the \ref o2scl::tensor2 object is valid
+   */
+  void is_valid() const {
+    tensor<double,vec_t,vec_size_t>::is_valid();
+    if (this->rk!=0 && this->rk!=2) {
+      O2SCL_ERR2("Rank is neither 0 nor 2 in ",
+		 "tensor2::is_valid().",
+		 o2scl::exc_esanity);
+      
     }
+    return;
+  }
+  //@}
+  
+  /// \name Specialized get and set functions
+  //@{
+  /// Get the element indexed by \c (ix1,ix2)
+  data_t &get(size_t ix1, size_t ix2) { 
+    size_t sz[2]={ix1,ix2};
+    return tensor<data_t,vec_t,vec_size_t>::get(sz); 
+  }
 
-    /// Get the element indexed by \c (ix1,ix2)
-    const data_t &get(size_t ix1, size_t ix2) const { 
-      size_t sz[2]={ix1,ix2};
-      return tensor<data_t,vec_t,vec_size_t>::get(sz); 
-    }
+  /// Get the element indexed by \c (ix1,ix2)
+  const data_t &get(size_t ix1, size_t ix2) const { 
+    size_t sz[2]={ix1,ix2};
+    return tensor<data_t,vec_t,vec_size_t>::get(sz); 
+  }
 
-    /// Set the element indexed by \c (ix1,ix2) to value \c val
-    void set(size_t ix1, size_t ix2, data_t val) {
-      size_t sz[2]={ix1,ix2};
-      tensor<data_t,vec_t,vec_size_t>::set(sz,val); 
-      return;
-    }
+  /// Set the element indexed by \c (ix1,ix2) to value \c val
+  void set(size_t ix1, size_t ix2, data_t val) {
+    size_t sz[2]={ix1,ix2};
+    tensor<data_t,vec_t,vec_size_t>::set(sz,val); 
+    return;
+  }
 
-    /** \brief Set the element indexed by \c index to value \c val
+  /** \brief Set the element indexed by \c index to value \c val
 
-	(We have to explicitly provide this version since the set()
-	function is overloaded in this child of \ref tensor.)
-    */
-    template<class size_vec_t>
-      void set(const size_vec_t &index, data_t val) {
-      tensor<data_t,vec_t,vec_size_t>::set(index,val);
-      return;
-    }
+      (We have to explicitly provide this version since the set()
+      function is overloaded in this child of \ref tensor.)
+  */
+  template<class size_vec_t>
+  void set(const size_vec_t &index, data_t val) {
+    tensor<data_t,vec_t,vec_size_t>::set(index,val);
+    return;
+  }
 
-    /// Get the element indexed by \c (ix1,ix2)
-    data_t &operator()(size_t ix, size_t iy) 
-    { return this->data[ix*this->size[1]+iy]; }
+  /// Get the element indexed by \c (ix1,ix2)
+  data_t &operator()(size_t ix, size_t iy) 
+  { return this->data[ix*this->size[1]+iy]; }
 
-    /// Get the element indexed by \c (ix1,ix2) (const version)
-    const data_t &operator()(size_t ix, size_t iy) const
-    { return this->data[ix*this->size[1]+iy]; }
+  /// Get the element indexed by \c (ix1,ix2) (const version)
+  const data_t &operator()(size_t ix, size_t iy) const
+  { return this->data[ix*this->size[1]+iy]; }
+  //@}
   };
   
   /** \brief Rank 3 tensor
@@ -775,50 +863,69 @@ namespace o2scl {
 
   public:
 
-    /// Create an empty tensor
+  /// Create an empty tensor
   tensor3() : tensor<data_t,vec_t,vec_size_t>() {}
 
-    /// Create a rank 3 tensor of size \c (sz,sz2,sz3)
+  /// Create a rank 3 tensor of size \c (sz,sz2,sz3)
   tensor3(size_t sz, size_t sz2, size_t sz3) : 
   tensor<data_t,vec_t,vec_size_t>() {
-      this->rk=3;
-      this->size.resize(3);
-      this->size[0]=sz;
-      this->size[1]=sz2;
-      this->size[2]=sz3;
-      size_t tot=sz*sz2*sz3;
-      this->data.resize(tot);
-    }
+    this->rk=3;
+    this->size.resize(3);
+    this->size[0]=sz;
+    this->size[1]=sz2;
+    this->size[2]=sz3;
+    size_t tot=sz*sz2*sz3;
+    this->data.resize(tot);
+  }
 
-    /// Get the element indexed by \c (ix1,ix2,ix3)
-    data_t &get(size_t ix1, size_t ix2, size_t ix3) { 
-      size_t sz[3]={ix1,ix2,ix3};
-      return tensor<data_t,vec_t,vec_size_t>::get(sz); 
+  /// \name Method to check for valid object
+  //@{
+  /** \brief Check that the \ref o2scl::tensor3 object is valid
+   */
+  void is_valid() const {
+    tensor<double,vec_t,vec_size_t>::is_valid();
+    if (this->rk!=0 && this->rk!=3) {
+      O2SCL_ERR2("Rank is neither 0 nor 3 in ",
+		 "tensor3::is_valid().",
+		 o2scl::exc_esanity);
+      
     }
+    return;
+  }
+  //@}
+  
+  /// \name Specialized get and set functions
+  //@{
+  /// Get the element indexed by \c (ix1,ix2,ix3)
+  data_t &get(size_t ix1, size_t ix2, size_t ix3) { 
+    size_t sz[3]={ix1,ix2,ix3};
+    return tensor<data_t,vec_t,vec_size_t>::get(sz); 
+  }
 
-    /// Get the element indexed by \c (ix1,ix2,ix3)
-    const data_t &get(size_t ix1, size_t ix2, size_t ix3) const { 
-      size_t sz[3]={ix1,ix2,ix3};
-      return tensor<data_t,vec_t,vec_size_t>::get(sz); 
-    }
+  /// Get the element indexed by \c (ix1,ix2,ix3)
+  const data_t &get(size_t ix1, size_t ix2, size_t ix3) const { 
+    size_t sz[3]={ix1,ix2,ix3};
+    return tensor<data_t,vec_t,vec_size_t>::get(sz); 
+  }
 
-    /// Set the element indexed by \c (ix1,ix2,ix3) to value \c val
-    void set(size_t ix1, size_t ix2, size_t ix3, data_t val) {
-      size_t sz[3]={ix1,ix2,ix3};
-      tensor<data_t,vec_t,vec_size_t>::set(sz,val); 
-      return;
-    }
+  /// Set the element indexed by \c (ix1,ix2,ix3) to value \c val
+  void set(size_t ix1, size_t ix2, size_t ix3, data_t val) {
+    size_t sz[3]={ix1,ix2,ix3};
+    tensor<data_t,vec_t,vec_size_t>::set(sz,val); 
+    return;
+  }
 
-    /** \brief Set the element indexed by \c index to value \c val
+  /** \brief Set the element indexed by \c index to value \c val
 
-	(We have to explicitly provide this version since the set()
-	function is overloaded in this child of \ref tensor.)
-    */
-    template<class size_vec_t>
-      void set(const size_vec_t &index, data_t val) {
-      tensor<data_t,vec_t,vec_size_t>::set(index,val);
-      return;
-    }
+      (We have to explicitly provide this version since the set()
+      function is overloaded in this child of \ref tensor.)
+  */
+  template<class size_vec_t>
+  void set(const size_vec_t &index, data_t val) {
+    tensor<data_t,vec_t,vec_size_t>::set(index,val);
+    return;
+  }
+  //@}
 
   };
   
@@ -830,53 +937,72 @@ namespace o2scl {
 
   public:
 
-    /// Create an empty tensor
+  /// Create an empty tensor
   tensor4() : tensor<data_t,vec_t,vec_size_t>() {}
 
-    /// Create a rank 4 tensor of size \c (sz,sz2,sz3,sz4)
+  /// Create a rank 4 tensor of size \c (sz,sz2,sz3,sz4)
   tensor4(size_t sz, size_t sz2, size_t sz3, size_t sz4) : 
-    tensor<data_t,vec_t,vec_size_t>() {
-      this->rk=4;
-      this->size.resize(4);
-      this->size[0]=sz;
-      this->size[1]=sz2;
-      this->size[2]=sz3;
-      this->size[3]=sz4;
-      size_t tot=sz*sz2*sz3*sz4;
-      this->data.resize(tot);
-    }
+  tensor<data_t,vec_t,vec_size_t>() {
+    this->rk=4;
+    this->size.resize(4);
+    this->size[0]=sz;
+    this->size[1]=sz2;
+    this->size[2]=sz3;
+    this->size[3]=sz4;
+    size_t tot=sz*sz2*sz3*sz4;
+    this->data.resize(tot);
+  }
 	
-    /// Get the element indexed by \c (ix1,ix2,ix3,ix4)
-    data_t &get(size_t ix1, size_t ix2, size_t ix3, size_t ix4) { 
-      size_t sz[4]={ix1,ix2,ix3,ix4};
-      return tensor<data_t,vec_t,vec_size_t>::get(sz); 
+  /// \name Method to check for valid object
+  //@{
+  /** \brief Check that the \ref o2scl::tensor4 object is valid
+   */
+  void is_valid() const {
+    tensor<double,vec_t,vec_size_t>::is_valid();
+    if (this->rk!=0 && this->rk!=4) {
+      O2SCL_ERR2("Rank is neither 0 nor 4 in ",
+		 "tensor4::is_valid().",
+		 o2scl::exc_esanity);
+      
     }
+    return;
+  }
+  //@}
+  
+  /// \name Specialized get and set functions
+  //@{
+  /// Get the element indexed by \c (ix1,ix2,ix3,ix4)
+  data_t &get(size_t ix1, size_t ix2, size_t ix3, size_t ix4) { 
+    size_t sz[4]={ix1,ix2,ix3,ix4};
+    return tensor<data_t,vec_t,vec_size_t>::get(sz); 
+  }
 
-    /// Get the element indexed by \c (ix1,ix2,ix3,ix4)
-    const data_t &get(size_t ix1, size_t ix2, size_t ix3, 
-		      size_t ix4) const { 
-      size_t sz[4]={ix1,ix2,ix3,ix4};
-      return tensor<data_t,vec_t,vec_size_t>::get(sz); 
-    }
+  /// Get the element indexed by \c (ix1,ix2,ix3,ix4)
+  const data_t &get(size_t ix1, size_t ix2, size_t ix3, 
+		    size_t ix4) const { 
+    size_t sz[4]={ix1,ix2,ix3,ix4};
+    return tensor<data_t,vec_t,vec_size_t>::get(sz); 
+  }
 
-    /// Set the element indexed by \c (ix1,ix2,ix3,ix4) to value \c val
-    void set(size_t ix1, size_t ix2, size_t ix3, size_t ix4, 
-	     data_t val) {
-      size_t sz[4]={ix1,ix2,ix3,ix4};
-      tensor<data_t,vec_t,vec_size_t>::set(sz,val); 
-      return;
-    }
+  /// Set the element indexed by \c (ix1,ix2,ix3,ix4) to value \c val
+  void set(size_t ix1, size_t ix2, size_t ix3, size_t ix4, 
+	   data_t val) {
+    size_t sz[4]={ix1,ix2,ix3,ix4};
+    tensor<data_t,vec_t,vec_size_t>::set(sz,val); 
+    return;
+  }
 
-    /** \brief Set the element indexed by \c index to value \c val
+  /** \brief Set the element indexed by \c index to value \c val
 
-	(We have to explicitly provide this version since the set()
-	function is overloaded in this child of \ref tensor.)
-    */
-    template<class size_vec_t>
-      void set(const size_vec_t &index, data_t val) {
-      tensor<data_t,vec_t,vec_size_t>::set(index,val);
-      return;
-    }
+      (We have to explicitly provide this version since the set()
+      function is overloaded in this child of \ref tensor.)
+  */
+  template<class size_vec_t>
+  void set(const size_vec_t &index, data_t val) {
+    tensor<data_t,vec_t,vec_size_t>::set(index,val);
+    return;
+  }
+  //@}
   };
   
 #ifndef DOXYGEN_NO_O2NS

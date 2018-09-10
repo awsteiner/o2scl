@@ -1097,6 +1097,9 @@ void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, vector<edge_crossings> &ec,
 
 void o2scl_hdf::hdf_output(hdf_file &hf, o2scl::tensor_grid<std::vector<double>,
 			   std::vector<size_t>> &t, std::string name) {
+
+  // Check that tensor_grid object is valid
+  t.is_valid();
   
   if (hf.has_write_access()==false) {
     O2SCL_ERR2("File not opened with write access in hdf_output(hdf_file,",
@@ -1218,6 +1221,9 @@ void o2scl_hdf::hdf_input(hdf_file &hf, o2scl::tensor_grid<std::vector<double>,
       
   // Return location to previous value
   hf.set_current_id(top);
-      
+
+  // Check that tensor_grid object is valid
+  t.is_valid();
+  
   return;
 }

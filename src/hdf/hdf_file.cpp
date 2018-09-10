@@ -2691,6 +2691,9 @@ int hdf_file::geti_mat_copy(std::string name, ubmatrix_int &m) {
 int hdf_file::setd_ten(std::string name, 
 		       const o2scl::tensor<double,std::vector<double>,
 					   std::vector<size_t> > &t) {
+
+  // Check if the tensor object is valid
+  t.is_valid();
   
   if (write_access==false) {
     O2SCL_ERR2("File not opened with write access ",
@@ -2794,6 +2797,9 @@ int hdf_file::seti_ten(std::string name,
 		       const o2scl::tensor<int,std::vector<int>,
 					   std::vector<size_t> > &t) {
   
+  // Check if the tensor object is valid
+  t.is_valid();
+  
   if (write_access==false) {
     O2SCL_ERR2("File not opened with write access ",
 	       "in hdf_file::setd_ten().",exc_efailed);
@@ -2895,6 +2901,9 @@ int hdf_file::seti_ten(std::string name,
 int hdf_file::set_szt_ten(std::string name, 
 			  const o2scl::tensor<size_t,std::vector<size_t>,
 			  std::vector<size_t> > &t) {
+  
+  // Check if the tensor object is valid
+  t.is_valid();
   
   if (write_access==false) {
     O2SCL_ERR2("File not opened with write access ",
@@ -3030,6 +3039,9 @@ int hdf_file::getd_ten(std::string name,
   
   status=H5Dclose(dset);
 
+  // Check if the tensor object is valid
+  t.is_valid();
+
   return 0;
 }
 
@@ -3064,6 +3076,9 @@ int hdf_file::geti_ten(std::string name,
   
   status=H5Dclose(dset);
 
+  // Check if the tensor object is valid
+  t.is_valid();
+
   return 0;
 }
 
@@ -3097,6 +3112,9 @@ int hdf_file::get_szt_ten(std::string name,
 		     H5P_DEFAULT,start);
   
   status=H5Dclose(dset);
+
+  // Check if the tensor object is valid
+  t.is_valid();
 
   return 0;
 }
