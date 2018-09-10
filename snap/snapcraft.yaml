@@ -23,7 +23,7 @@
       - libboost-all-dev
       - libreadline-dev
       - libncurses-dev
-      - libhdf5-dev
+      - libhdf5-serial-dev
       - libgsl0-dev
       stage-packages:
       - libc6
