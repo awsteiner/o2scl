@@ -324,7 +324,7 @@ namespace o2scl {
 	if (nier8==4) {
 	  info=8;
 	  std::string s2="Variable tol_abs too small, J singular, ";
-	  s2+="or bad scaling in cerm_mroot_root::solve().";
+	  s2+="or bad scaling in root_cern::solve().";
 	  O2SCL_CONV(s2.c_str(),exc_efailed,this->err_nonconv);
 	}
 	

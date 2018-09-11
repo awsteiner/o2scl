@@ -740,11 +740,6 @@ namespace o2scl {
 
 #ifdef O2SCL_NEVER_DEFINED
 
-  // AWS: I'm waiting on this function because I would like
-  // to generalize it by creating a new index_spec class
-  // which allows for more general contractions, sums, and
-  // index rearrangements, etc.
-
   class index_spec {
     
   public:
@@ -759,7 +754,11 @@ namespace o2scl {
   static const size_t sum=3;
   static const size_t contract=4;
   static const size_t reverse=5;
-  static const size_t interp=6;
+  static const size_t range=6;
+
+  // When a grid is available
+  static const size_t interp=7;
+  static const size_t grid=8;
   
   index_spec(size_t typ, size_t i1, size_t i2, double v) {
     type=typ;
@@ -794,6 +793,19 @@ namespace o2scl {
     return index_spec(index_spec::interp,ix,0,v);
   }
   
+  index_spec &ix_range(size_t ix, double v) {
+    return index_spec(index_spec::range,ix,0,v);
+  }
+  
+  index_spec &ix_grid(size_t ix, double v) {
+    return index_spec(index_spec::grid,ix,0,v);
+  }
+  
+  // AWS: I'm waiting on this function because I would like
+  // to generalize it by creating a new index_spec class
+  // which allows for more general contractions, sums, and
+  // index rearrangements, etc.
+
   /** \brief Create a copy by contracting, summing over, fixing, 
       and rearranging tensor indices
   */
