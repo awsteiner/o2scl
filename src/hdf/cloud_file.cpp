@@ -252,7 +252,7 @@ int cloud_file::get_file_hash
     std::string hash2=o2scl::pipe_cmd_string(cmd);
     o2scl::remove_whitespace(hash2);
     if (hash2!=hash) {
-      O2SCL_ERR("Invalid hash after download in cloud_file.",
+      O2SCL_ERR("Invalid hash after download in cloud_file. Wrong URL?",
 		o2scl::exc_efailed);
     }
   }

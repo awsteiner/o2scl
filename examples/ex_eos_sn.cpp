@@ -70,31 +70,31 @@ protected:
 
     // For Ye=0.5
     index[1]=genp->A.lookup_grid(1,0.5);
-    genp->A.copy_slice_align(0,2,index,tab,"A_Ye0.5");
-    genp->mun.copy_slice_align(0,2,index,tab,"mun_Ye0.5");
-    genp->mup.copy_slice_align(0,2,index,tab,"mup_Ye0.5");
-    genp->Eint.copy_slice_align(0,2,index,tab,"Eint_Ye0.5");
-    genp->E.copy_slice_align(0,2,index,tab,"E_Ye0.5");
-    genp->Sint.copy_slice_align(0,2,index,tab,"Sint_Ye0.5");
-    genp->S.copy_slice_align(0,2,index,tab,"S_Ye0.5");
-    genp->Xn.copy_slice_align(0,2,index,tab,"Xn_Ye0.5");
-    genp->Xp.copy_slice_align(0,2,index,tab,"Xp_Ye0.5");
-    genp->Xalpha.copy_slice_align(0,2,index,tab,"Xalpha_Ye0.5");
-    genp->Xnuclei.copy_slice_align(0,2,index,tab,"Xnuclei_Ye0.5");
+    genp->A.copy_table3d_align(0,2,index,tab,"A_Ye0.5");
+    genp->mun.copy_table3d_align(0,2,index,tab,"mun_Ye0.5");
+    genp->mup.copy_table3d_align(0,2,index,tab,"mup_Ye0.5");
+    genp->Eint.copy_table3d_align(0,2,index,tab,"Eint_Ye0.5");
+    genp->E.copy_table3d_align(0,2,index,tab,"E_Ye0.5");
+    genp->Sint.copy_table3d_align(0,2,index,tab,"Sint_Ye0.5");
+    genp->S.copy_table3d_align(0,2,index,tab,"S_Ye0.5");
+    genp->Xn.copy_table3d_align(0,2,index,tab,"Xn_Ye0.5");
+    genp->Xp.copy_table3d_align(0,2,index,tab,"Xp_Ye0.5");
+    genp->Xalpha.copy_table3d_align(0,2,index,tab,"Xalpha_Ye0.5");
+    genp->Xnuclei.copy_table3d_align(0,2,index,tab,"Xnuclei_Ye0.5");
 
     // For Ye=0.1
     index[1]=genp->A.lookup_grid(1,0.1);
-    genp->A.copy_slice_align(0,2,index,tab,"A_Ye0.1");
-    genp->mun.copy_slice_align(0,2,index,tab,"mun_Ye0.1");
-    genp->mup.copy_slice_align(0,2,index,tab,"mup_Ye0.1");
-    genp->Eint.copy_slice_align(0,2,index,tab,"Eint_Ye0.1");
-    genp->E.copy_slice_align(0,2,index,tab,"E_Ye0.1");
-    genp->Sint.copy_slice_align(0,2,index,tab,"Sint_Ye0.1");
-    genp->S.copy_slice_align(0,2,index,tab,"S_Ye0.1");
-    genp->Xn.copy_slice_align(0,2,index,tab,"Xn_Ye0.1");
-    genp->Xp.copy_slice_align(0,2,index,tab,"Xp_Ye0.1");
-    genp->Xalpha.copy_slice_align(0,2,index,tab,"Xalpha_Ye0.1");
-    genp->Xnuclei.copy_slice_align(0,2,index,tab,"Xnuclei_Ye0.1");
+    genp->A.copy_table3d_align(0,2,index,tab,"A_Ye0.1");
+    genp->mun.copy_table3d_align(0,2,index,tab,"mun_Ye0.1");
+    genp->mup.copy_table3d_align(0,2,index,tab,"mup_Ye0.1");
+    genp->Eint.copy_table3d_align(0,2,index,tab,"Eint_Ye0.1");
+    genp->E.copy_table3d_align(0,2,index,tab,"E_Ye0.1");
+    genp->Sint.copy_table3d_align(0,2,index,tab,"Sint_Ye0.1");
+    genp->S.copy_table3d_align(0,2,index,tab,"S_Ye0.1");
+    genp->Xn.copy_table3d_align(0,2,index,tab,"Xn_Ye0.1");
+    genp->Xp.copy_table3d_align(0,2,index,tab,"Xp_Ye0.1");
+    genp->Xalpha.copy_table3d_align(0,2,index,tab,"Xalpha_Ye0.1");
+    genp->Xnuclei.copy_table3d_align(0,2,index,tab,"Xnuclei_Ye0.1");
 
     // Output to file
     string outfile=name+"_slices.o2";
@@ -305,7 +305,8 @@ protected:
   int oo_fun(std::vector<std::string> &sv, bool itive_com) {
 
     string fname=directory;
-    size_t mode;
+    // Initialize to zero to prevent uninitialized variable errors
+    size_t mode=0;
 
     if (sv[1]=="fsu17") {
       cloud_file cf;
@@ -314,10 +315,11 @@ protected:
       std::string sha=((std::string)"57aec0f5011caf0333fc93ea818c786b0e2")+
 	"180e975425e1f4d90a3458b46f131";
       cf.hash_type=cloud_file::sha256;
-      cf.get_file_hash("LS180_234r_136t_50y_analmu_20091212_SVNr26.h5",
-		       sha,((string)"https://isospin.roam.utk.edu/")+
-		       "public/eos_tables/scollapse/LS180_234r_136t_50y_"+
-		       "analmu_20091212_SVNr26.h5",fname,".o2scl_data");
+      cf.get_file_hash
+	("LS180_234r_136t_50y_analmu_20091212_SVNr26.h5",
+	 ((string)"https://isospin.roam.utk.edu/")+
+	 "public_data/eos_tables/scollapse/LS180_234r_136t_50y_"+
+	 "analmu_20091212_SVNr26.h5",sha,fname,".o2scl_data");
       name="fsu17";
     } else if (sv[1]=="fsu21") {
       cloud_file cf;
@@ -328,7 +330,7 @@ protected:
       cf.hash_type=cloud_file::sha256;
       cf.get_file_hash("LS180_234r_136t_50y_analmu_20091212_SVNr26.h5",
 		       sha,((string)"https://isospin.roam.utk.edu/")+
-		       "public/eos_tables/scollapse/LS180_234r_136t_50y_"+
+		       "public_data/eos_tables/scollapse/LS180_234r_136t_50y_"+
 		       "analmu_20091212_SVNr26.h5",fname,".o2scl_data");
       name="fsu21";
     } else if (sv[1]=="sht_nl3") {
@@ -340,7 +342,7 @@ protected:
       cf.hash_type=cloud_file::sha256;
       cf.get_file_hash("LS180_234r_136t_50y_analmu_20091212_SVNr26.h5",
 		       sha,((string)"https://isospin.roam.utk.edu/")+
-		       "public/eos_tables/scollapse/LS180_234r_136t_50y_"+
+		       "public_data/eos_tables/scollapse/LS180_234r_136t_50y_"+
 		       "analmu_20091212_SVNr26.h5",fname,".o2scl_data");
       name="sht_nl3";
     } else if (sv[1]=="stos") {
@@ -352,7 +354,7 @@ protected:
       cf.hash_type=cloud_file::sha256;
       cf.get_file_hash("LS180_234r_136t_50y_analmu_20091212_SVNr26.h5",
 		       sha,((string)"https://isospin.roam.utk.edu/")+
-		       "public/eos_tables/scollapse/LS180_234r_136t_50y_"+
+		       "public_data/eos_tables/scollapse/LS180_234r_136t_50y_"+
 		       "analmu_20091212_SVNr26.h5",fname,".o2scl_data");
       name="stos";
       mode=eos_sn_oo::stos_mode;
@@ -396,7 +398,7 @@ protected:
       cf.hash_type=cloud_file::sha256;
       cf.get_file_hash("LS180_234r_136t_50y_analmu_20091212_SVNr26.h5",
 		       sha,((string)"https://isospin.roam.utk.edu/")+
-		       "public/eos_tables/scollapse/LS180_234r_136t_50y_"+
+		       "public_data/eos_tables/scollapse/LS180_234r_136t_50y_"+
 		       "analmu_20091212_SVNr26.h5",fname,".o2scl_data");
       name="ls180";
       mode=eos_sn_oo::ls_mode;
@@ -407,9 +409,9 @@ protected:
 	"87f283e0ed552c8141d1ddba34c19";
       cf.hash_type=cloud_file::sha256;
       cf.get_file_hash("LS220_234r_136t_50y_analmu_20091212_SVNr26.h5",
-		       sha,((string)"https://isospin.roam.utk.edu/")+
-		       "public/eos_tables/scollapse/LS220_234r_136t_50y_"+
-		       "analmu_20091212_SVNr26.h5",fname,".o2scl_data");
+		       ((string)"https://isospin.roam.utk.edu/")+
+		       "public_data/eos_tables/scollapse/LS220_234r_136t_50y_"+
+		       "analmu_20091212_SVNr26.h5",sha,fname,".o2scl_data");
       name="ls220";
       mode=eos_sn_oo::ls_mode;
     } else if (sv[1]=="ls375") {
@@ -420,7 +422,7 @@ protected:
       cf.hash_type=cloud_file::sha256;
       cf.get_file_hash("LS375_234r_136t_50y_analmu_20091212_SVNr26.h5",
 		       sha,((string)"https://isospin.roam.utk.edu/")+
-		       "public/eos_tables/scollapse/LS375_234r_136t_50y_"+
+		       "public_data/eos_tables/scollapse/LS375_234r_136t_50y_"+
 		       "analmu_20091212_SVNr26.h5",fname,".o2scl_data");
       name="ls375";
       mode=eos_sn_oo::ls_mode;
