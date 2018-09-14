@@ -300,7 +300,7 @@ protected:
     return 0;
   }
 
-  /** \brief Desc
+  /** \brief Load an EOS in the O'Connor-Ott format
    */
   int oo_fun(std::vector<std::string> &sv, bool itive_com) {
 
@@ -329,9 +329,9 @@ protected:
 	"48e51bb14a5fab89872df5ed834f6";
       cf.hash_type=cloud_file::sha256;
       cf.get_file_hash("LS180_234r_136t_50y_analmu_20091212_SVNr26.h5",
-		       sha,((string)"https://isospin.roam.utk.edu/")+
+		       ((string)"https://isospin.roam.utk.edu/")+
 		       "public_data/eos_tables/scollapse/LS180_234r_136t_50y_"+
-		       "analmu_20091212_SVNr26.h5",fname,".o2scl_data");
+		       "analmu_20091212_SVNr26.h5",sha,fname,".o2scl_data");
       name="fsu21";
     } else if (sv[1]=="sht_nl3") {
       cloud_file cf;
@@ -341,9 +341,9 @@ protected:
 	"d1d7ce4464e946c18f9950edb7bfe";
       cf.hash_type=cloud_file::sha256;
       cf.get_file_hash("LS180_234r_136t_50y_analmu_20091212_SVNr26.h5",
-		       sha,((string)"https://isospin.roam.utk.edu/")+
+		       ((string)"https://isospin.roam.utk.edu/")+
 		       "public_data/eos_tables/scollapse/LS180_234r_136t_50y_"+
-		       "analmu_20091212_SVNr26.h5",fname,".o2scl_data");
+		       "analmu_20091212_SVNr26.h5",sha,fname,".o2scl_data");
       name="sht_nl3";
     } else if (sv[1]=="stos") {
       cloud_file cf;
@@ -353,9 +353,9 @@ protected:
 	"8f59849c5f65c4f9f72dd292b177c";
       cf.hash_type=cloud_file::sha256;
       cf.get_file_hash("LS180_234r_136t_50y_analmu_20091212_SVNr26.h5",
-		       sha,((string)"https://isospin.roam.utk.edu/")+
+		       ((string)"https://isospin.roam.utk.edu/")+
 		       "public_data/eos_tables/scollapse/LS180_234r_136t_50y_"+
-		       "analmu_20091212_SVNr26.h5",fname,".o2scl_data");
+		       "analmu_20091212_SVNr26.h5",sha,fname,".o2scl_data");
       name="stos";
       mode=eos_sn_oo::stos_mode;
     } else if (sv[1]=="stos_hyp") {
@@ -397,9 +397,9 @@ protected:
 	"0d9a979e546902ad3f3b6285e27ca";
       cf.hash_type=cloud_file::sha256;
       cf.get_file_hash("LS180_234r_136t_50y_analmu_20091212_SVNr26.h5",
-		       sha,((string)"https://isospin.roam.utk.edu/")+
+		       ((string)"https://isospin.roam.utk.edu/")+
 		       "public_data/eos_tables/scollapse/LS180_234r_136t_50y_"+
-		       "analmu_20091212_SVNr26.h5",fname,".o2scl_data");
+		       "analmu_20091212_SVNr26.h5",sha,fname,".o2scl_data");
       name="ls180";
       mode=eos_sn_oo::ls_mode;
     } else if (sv[1]=="ls220") {
@@ -421,9 +421,9 @@ protected:
 	"8cd3f2d3bc14648698661cef35bdd";
       cf.hash_type=cloud_file::sha256;
       cf.get_file_hash("LS375_234r_136t_50y_analmu_20091212_SVNr26.h5",
-		       sha,((string)"https://isospin.roam.utk.edu/")+
+		       ((string)"https://isospin.roam.utk.edu/")+
 		       "public_data/eos_tables/scollapse/LS375_234r_136t_50y_"+
-		       "analmu_20091212_SVNr26.h5",fname,".o2scl_data");
+		       "analmu_20091212_SVNr26.h5",sha,fname,".o2scl_data");
       name="ls375";
       mode=eos_sn_oo::ls_mode;
     } else {
@@ -450,7 +450,7 @@ public:
     genp=0;
   }
 
-  /** \brief Desc<
+  /** \brief Main executable wrapper
    */
   void run(int argc, char *argv[]) {
 
@@ -466,35 +466,35 @@ public:
     
     static const int nopt=8;
     comm_option_s options[nopt]={
-      {0,"ls","short desc",
+      {0,"ls","Load an EOS in the Lattimer-Swesty format",
        1,1,"",((string)"long ")+"desc.",
        new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::ls_fun),
        cli::comm_option_both},
-      {0,"oo","short desc",
+      {0,"oo","Load an EOS in the O'Connor-Ott format",
        1,1,"",((string)"long ")+"desc.",
        new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::oo_fun),
        cli::comm_option_both},
-      {0,"sht","short desc",
+      {0,"sht","Load an EOS in the Shen-Horowitz-Teige format",
        1,1,"",((string)"long ")+"desc.",
        new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::sht_fun),
        cli::comm_option_both},
-      {0,"stos","short desc",
+      {0,"stos","Load an EOS in the Shen et al. format",
        1,1,"",((string)"long ")+"desc.",
        new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::stos_fun),
        cli::comm_option_both},
-      {0,"hfsl","short desc",
+      {0,"hfsl","Load an EOS in the Hempel et al. format",
        1,1,"",((string)"long ")+"desc.",
        new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::hfsl_fun),
        cli::comm_option_both},
-      {0,"slices","short desc",
+      {0,"slices","Construct slices",
        0,0,"",((string)"long ")+"desc.",
        new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::slices),
        cli::comm_option_both},
-      {0,"interp","short desc",
+      {0,"interp","Interpolate the EOS at a specified point",
        3,3,"",((string)"long ")+"desc.",
        new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::interp),
        cli::comm_option_both},
-      {0,"eg","short desc",
+      {0,"eg","Compute the electron-photon part of the EOS",
        0,0,"",((string)"long ")+"desc.",
        new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::eg),
        cli::comm_option_both}
@@ -506,12 +506,12 @@ public:
 
     cli::parameter_int p_verbose;
     p_verbose.i=&verbose;
-    p_verbose.help=((string)"Desc.");
+    p_verbose.help=((string)"Verbosity parameter");
     cl.par_list.insert(make_pair("verbose",&p_verbose));
 
     cli::parameter_string p_directory;
     p_directory.str=&directory;
-    p_directory.help=((string)"Desc.");
+    p_directory.help=((string)"Directory for EOS table storage");
     cl.par_list.insert(make_pair("directory",&p_directory));
 
     // ---------------------------------------

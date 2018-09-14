@@ -798,11 +798,11 @@ void acol_manager::command_add(std::string new_type) {
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
        both},
       {0,"to-table3d","Select two indices and convert to a table3d object.",
-       -1,-1,"<x name> <y name> <slice name>",
+       -1,-1,"<x index> <y index> <slice name> [fixed 1] [fixed 2] ...",
        "",new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_to_table3d),both},
       {0,"to-table3d-sum","Select two indices and convert to a table3d object.",
-       -1,-1,"<x name> <y name> <slice name>",
+       -1,-1,"<x name> <y name> <slice name> [fixed 1] [fixed 2] ...",
        "",new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_to_table3d_sum),both},
       {0,"diag","Get diagonal elements.",
@@ -3706,17 +3706,15 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
     size_t rank=tensor_obj.get_rank();
 
     vector<string> in, pr;
-    pr.push_back("First index name");
     pr.push_back("First index to vary");
-    pr.push_back("Second index name");
     pr.push_back("Second index to vary");
     pr.push_back("Slice name");
 
     int ret=get_input(sv,pr,in,"to-table3d",itive_com);
     if (ret!=0) return ret;
 
-    size_t ix_x=o2scl::stoszt(in[1]);
-    size_t ix_y=o2scl::stoszt(in[3]);
+    size_t ix_x=o2scl::stoszt(in[0]);
+    size_t ix_y=o2scl::stoszt(in[1]);
     if (ix_x>=rank || ix_y>=rank) {
       cerr << "Index larger than rank." << endl;
       return 1;
@@ -3724,7 +3722,7 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
 
     vector<string> in2, pr2;
     if (rank>2) {
-      for(size_t i=0;i<5;i++) {
+      for(size_t i=0;i<3;i++) {
 	std::vector<std::string>::iterator it=sv.begin();
 	it++;
 	sv.erase(it);
@@ -3740,13 +3738,13 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
       int ret2=get_input(sv,pr,in,"to-table3d",itive_com);
       if (ret!=0) return ret2;
     }
-
+    
     uniform_grid_end<double> ugx(0,tensor_obj.get_size(ix_x)-1,
 				 tensor_obj.get_size(ix_x)-1);
     uniform_grid_end<double> ugy(0,tensor_obj.get_size(ix_y)-1,
 				 tensor_obj.get_size(ix_y)-1);
     table3d_obj.clear();
-    table3d_obj.set_xy(in[0],ugx,in[2],ugy);
+    table3d_obj.set_xy("x",ugx,"y",ugy);
     table3d_obj.new_slice(in[4]);
     vector<size_t> ix(rank);
     size_t j=0;
@@ -3833,9 +3831,7 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
     vector<string> in, pr;
     pr.push_back("First index to vary");
     pr.push_back("Second index to vary");
-    pr.push_back("Name of x coordinate");
     pr.push_back("Number of x grid points");
-    pr.push_back("Name of y coordinate");
     pr.push_back("Number of y grid points");
     pr.push_back("Slice name");
     int ret=get_input(sv,pr,in,"to-table3d",itive_com);
@@ -3845,18 +3841,18 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
     size_t i, j, ni, nj;
     o2scl::stoszt_nothrow(in[0],i);
     o2scl::stoszt_nothrow(in[1],j);
-    o2scl::stoszt_nothrow(in[3],ni);
-    o2scl::stoszt_nothrow(in[5],nj);
+    o2scl::stoszt_nothrow(in[2],ni);
+    o2scl::stoszt_nothrow(in[3],nj);
     
-    table3d_obj.set_xy(in[2],uniform_grid_end<double>(pdma_obj.low[i],
-						      pdma_obj.high[i],ni-1),
-		       in[4],uniform_grid_end<double>(pdma_obj.low[j],
-						      pdma_obj.high[j],nj-1));
+    table3d_obj.set_xy("x",uniform_grid_end<double>(pdma_obj.low[i],
+						    pdma_obj.high[i],ni-1),
+		       "y",uniform_grid_end<double>(pdma_obj.low[j],
+						    pdma_obj.high[j],nj-1));
     
     cout << "Converting pdma to table3d, using index "
 	 << in[0] << ", index " << in[1] << ", and slice "
-	 << in[6] << endl;
-    pdma_obj.two_indices_to_density(i,j,table3d_obj,in[6]);
+	 << in[4] << endl;
+    pdma_obj.two_indices_to_density(i,j,table3d_obj,in[4]);
     
     command_del();
     clear_obj();
