@@ -36,9 +36,12 @@ cloud_file::cloud_file() {
 int cloud_file::hdf5_open_hash
 (o2scl_hdf::hdf_file &hf, std::string file, 
  std::string url, std::string hash, std::string dir) {
-  std::string fname;
-  get_file_hash(file,url,hash,fname,dir);
-  hf.open(fname);
+  get_file_hash(file,url,hash,dir);
+  if (dir.length()>0) {
+    hf.open(dir+"/"+file);
+  } else {
+    hf.open(file);
+  }
   return 0;
 }
     
@@ -48,13 +51,13 @@ int cloud_file::hdf5_open(o2scl_hdf::hdf_file &hf, std::string file,
 }
   
 int cloud_file::get_file(std::string file, std::string url, 
-			 std::string &fname, std::string dir) {
-  return get_file_hash(file,url,"",fname,dir);
+			 std::string dir) {
+  return get_file_hash(file,url,"",dir);
 }
     
 int cloud_file::get_file_hash
 (std::string file, std::string url,
- std::string hash, std::string &fname, std::string dir) {
+ std::string hash, std::string dir) {
 
 #ifndef O2SCL_USE_BOOST_FILESYSTEM
 
@@ -135,6 +138,7 @@ int cloud_file::get_file_hash
   // Start of file section
     
   // Now look for the full data file
+  std::string fname;
   if (dir.length()>0) {
     fname=dir+"/"+file;
   } else {

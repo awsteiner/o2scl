@@ -1272,7 +1272,7 @@ int acol_manager::setup_options() {
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_create),
      both},
     {0,"download","Download file from specified URL.",
-     0,3,"<file> <hash file> <URL>",
+     0,3,"<file> <URL> <hash or \"file:\"hash_filename>",
      ((string)"Check if a file matches a specified hash, and if not, ")+
      "attempt to download a fresh copy from the specified URL.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_download),
@@ -1855,7 +1855,7 @@ int acol_manager::comm_type(std::vector<std::string> &sv,
     cerr << "No current object to display type of." << endl;
     return 1;
   }
-  cout << "Type is " << type << endl;
+  cout << "Type is " << type << " ." << endl;
   return 0;
 }
 
@@ -3719,7 +3719,7 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
       cerr << "Index larger than rank." << endl;
       return 1;
     }
-
+    
     vector<string> in2, pr2;
     if (rank>2) {
       for(size_t i=0;i<3;i++) {
@@ -3881,21 +3881,21 @@ int acol_manager::comm_download(std::vector<std::string> &sv, bool itive_com) {
     if (verbose>0) {
       cout << "No hash specified, so download is not verified." << endl;
     }
-    cf.get_file(file,url,fname);
+    cf.get_file(file,url,"");
     return 0;
     
   } 
   
   vector<string> in, pr;
   pr.push_back("Destination filename");
-  pr.push_back("Hash");
   pr.push_back("URL");
+  pr.push_back("Hash");
   int ret=get_input(sv,pr,in,"download",itive_com);
   if (ret!=0) return ret;
 
   file=in[0];
-  hash=in[1];
-  url=in[2];
+  url=in[1];
+  hash=in[2];
 
   if ((hash[0]=='f' || hash[0]=='F') &&
       (hash[1]=='i' || hash[1]=='I') &&
@@ -3914,10 +3914,10 @@ int acol_manager::comm_download(std::vector<std::string> &sv, bool itive_com) {
 
   cf.verbose=verbose;
   if (hash==((std::string)"None") ||
-      hash==((std::string)"none")) {
-    cf.get_file(file,url,fname);
+      hash==((std::string)"none") || hash.length()==0) {
+    cf.get_file(file,url,"");
   } else {
-    cf.get_file_hash(file,hash,url,fname);
+    cf.get_file_hash(file,hash,url,"");
   }
   
   return 0;

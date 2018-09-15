@@ -319,7 +319,7 @@ protected:
 	("LS180_234r_136t_50y_analmu_20091212_SVNr26.h5",
 	 ((string)"https://isospin.roam.utk.edu/")+
 	 "public_data/eos_tables/scollapse/LS180_234r_136t_50y_"+
-	 "analmu_20091212_SVNr26.h5",sha,fname,".o2scl_data");
+	 "analmu_20091212_SVNr26.h5",sha,directory);
       name="fsu17";
     } else if (sv[1]=="fsu21") {
       cloud_file cf;
@@ -331,7 +331,7 @@ protected:
       cf.get_file_hash("LS180_234r_136t_50y_analmu_20091212_SVNr26.h5",
 		       ((string)"https://isospin.roam.utk.edu/")+
 		       "public_data/eos_tables/scollapse/LS180_234r_136t_50y_"+
-		       "analmu_20091212_SVNr26.h5",sha,fname,".o2scl_data");
+		       "analmu_20091212_SVNr26.h5",sha,directory);
       name="fsu21";
     } else if (sv[1]=="sht_nl3") {
       cloud_file cf;
@@ -343,7 +343,7 @@ protected:
       cf.get_file_hash("LS180_234r_136t_50y_analmu_20091212_SVNr26.h5",
 		       ((string)"https://isospin.roam.utk.edu/")+
 		       "public_data/eos_tables/scollapse/LS180_234r_136t_50y_"+
-		       "analmu_20091212_SVNr26.h5",sha,fname,".o2scl_data");
+		       "analmu_20091212_SVNr26.h5",sha,directory);
       name="sht_nl3";
     } else if (sv[1]=="stos") {
       cloud_file cf;
@@ -355,7 +355,7 @@ protected:
       cf.get_file_hash("LS180_234r_136t_50y_analmu_20091212_SVNr26.h5",
 		       ((string)"https://isospin.roam.utk.edu/")+
 		       "public_data/eos_tables/scollapse/LS180_234r_136t_50y_"+
-		       "analmu_20091212_SVNr26.h5",sha,fname,".o2scl_data");
+		       "analmu_20091212_SVNr26.h5",sha,directory);
       name="stos";
       mode=eos_sn_oo::stos_mode;
     } else if (sv[1]=="stos_hyp") {
@@ -399,7 +399,7 @@ protected:
       cf.get_file_hash("LS180_234r_136t_50y_analmu_20091212_SVNr26.h5",
 		       ((string)"https://isospin.roam.utk.edu/")+
 		       "public_data/eos_tables/scollapse/LS180_234r_136t_50y_"+
-		       "analmu_20091212_SVNr26.h5",sha,fname,".o2scl_data");
+		       "analmu_20091212_SVNr26.h5",sha,directory);
       name="ls180";
       mode=eos_sn_oo::ls_mode;
     } else if (sv[1]=="ls220") {
@@ -411,7 +411,7 @@ protected:
       cf.get_file_hash("LS220_234r_136t_50y_analmu_20091212_SVNr26.h5",
 		       ((string)"https://isospin.roam.utk.edu/")+
 		       "public_data/eos_tables/scollapse/LS220_234r_136t_50y_"+
-		       "analmu_20091212_SVNr26.h5",sha,fname,".o2scl_data");
+		       "analmu_20091212_SVNr26.h5",sha,directory);
       name="ls220";
       mode=eos_sn_oo::ls_mode;
     } else if (sv[1]=="ls375") {
@@ -423,7 +423,7 @@ protected:
       cf.get_file_hash("LS375_234r_136t_50y_analmu_20091212_SVNr26.h5",
 		       ((string)"https://isospin.roam.utk.edu/")+
 		       "public_data/eos_tables/scollapse/LS375_234r_136t_50y_"+
-		       "analmu_20091212_SVNr26.h5",sha,fname,".o2scl_data");
+		       "analmu_20091212_SVNr26.h5",sha,directory);
       name="ls375";
       mode=eos_sn_oo::ls_mode;
     } else {
@@ -445,7 +445,7 @@ protected:
 public:
   
   ex_eos_sn() {
-    directory=".";
+    directory=".o2scl_data";
     verbose=1;
     genp=0;
   }
@@ -466,35 +466,35 @@ public:
     
     static const int nopt=8;
     comm_option_s options[nopt]={
-      {0,"ls","Load an EOS in the Lattimer-Swesty format",
+      {0,"ls","Load an EOS in the Lattimer-Swesty format.",
        1,1,"",((string)"long ")+"desc.",
        new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::ls_fun),
        cli::comm_option_both},
-      {0,"oo","Load an EOS in the O'Connor-Ott format",
+      {0,"oo","Load an EOS in the O'Connor-Ott format.",
        1,1,"",((string)"long ")+"desc.",
        new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::oo_fun),
        cli::comm_option_both},
-      {0,"sht","Load an EOS in the Shen-Horowitz-Teige format",
+      {0,"sht","Load an EOS in the Shen-Horowitz-Teige format.",
        1,1,"",((string)"long ")+"desc.",
        new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::sht_fun),
        cli::comm_option_both},
-      {0,"stos","Load an EOS in the Shen et al. format",
+      {0,"stos","Load an EOS in the Shen et al. format.",
        1,1,"",((string)"long ")+"desc.",
        new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::stos_fun),
        cli::comm_option_both},
-      {0,"hfsl","Load an EOS in the Hempel et al. format",
+      {0,"hfsl","Load an EOS in the Hempel et al. format.",
        1,1,"",((string)"long ")+"desc.",
        new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::hfsl_fun),
        cli::comm_option_both},
-      {0,"slices","Construct slices",
+      {0,"slices","Construct slices.",
        0,0,"",((string)"long ")+"desc.",
        new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::slices),
        cli::comm_option_both},
-      {0,"interp","Interpolate the EOS at a specified point",
+      {0,"interp","Interpolate the EOS at a specified (n_B,Y_e,T) point.",
        3,3,"",((string)"long ")+"desc.",
        new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::interp),
        cli::comm_option_both},
-      {0,"eg","Compute the electron-photon part of the EOS",
+      {0,"eg","Compute the electron-photon part of the EOS.",
        0,0,"",((string)"long ")+"desc.",
        new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::eg),
        cli::comm_option_both}
