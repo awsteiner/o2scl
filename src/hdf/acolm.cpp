@@ -3735,7 +3735,7 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
 	}
       }
       
-      int ret2=get_input(sv,pr,in,"to-table3d",itive_com);
+      int ret2=get_input(sv,pr2,in2,"to-table3d",itive_com);
       if (ret!=0) return ret2;
     }
     
@@ -3745,7 +3745,7 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
 				 tensor_obj.get_size(ix_y)-1);
     table3d_obj.clear();
     table3d_obj.set_xy("x",ugx,"y",ugy);
-    table3d_obj.new_slice(in[4]);
+    table3d_obj.new_slice(in[2]);
     vector<size_t> ix(rank);
     size_t j=0;
     for(size_t i=0;i<rank;i++) {
@@ -3758,7 +3758,7 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
       for(size_t j=0;j<table3d_obj.get_ny();j++) {
 	ix[ix_x]=i;
 	ix[ix_y]=j;
-	table3d_obj.set(i,j,in[4],tensor_obj.get(ix));
+	table3d_obj.set(i,j,in[2],tensor_obj.get(ix));
       }
     }
 
