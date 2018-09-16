@@ -5093,7 +5093,7 @@ int acol_manager::comm_internal(std::vector<std::string> &sv, bool itive_com) {
     
   } else if (type=="table3d") {
     
-    hdf_output(hf,table3d_obj,obj_name);
+    hdf_output(hf,((const table3d &)(table3d_obj)),obj_name);
     
   } else if (type=="tensor_grid") {
     
@@ -5109,7 +5109,7 @@ int acol_manager::comm_internal(std::vector<std::string> &sv, bool itive_com) {
     
   } else if (type=="hist_2d") {
 
-    hdf_output(hf,hist_2d_obj,obj_name);
+    hdf_output(hf,((const hist_2d &)(hist_2d_obj)),obj_name);
     
   } else if (type=="vector<contour_line>") {
 
