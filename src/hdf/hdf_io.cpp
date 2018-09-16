@@ -175,7 +175,6 @@ void o2scl_hdf::hdf_output_data(hdf_file &hf, o2scl::table<> &t) {
   return;
 }
 
-
 void o2scl_hdf::hdf_output(hdf_file &hf, hist &h, std::string name) {
   
   if (hf.has_write_access()==false) {
@@ -192,7 +191,7 @@ void o2scl_hdf::hdf_output(hdf_file &hf, hist &h, std::string name) {
   hf.sets_fixed("o2scl_type","hist");
 
   // Add histogram
-  hf.set_szt("size",h.hsize);
+  hf.set_szt("size",h.size());
   hf.set_szt("rmode",h.get_rep_mode());
   hf.seti("extend_rhs",h.extend_rhs);
   hf.seti("extend_lhs",h.extend_lhs);
@@ -299,7 +298,7 @@ void o2scl_hdf::hdf_input(hdf_file &hf, hist &h, std::string name) {
   return;
 }
 
-void o2scl_hdf::hdf_output(hdf_file &hf, hist_2d &h, std::string name) {
+void o2scl_hdf::hdf_output(hdf_file &hf, const hist_2d &h, std::string name) {
   
   if (hf.has_write_access()==false) {
     O2SCL_ERR2("File not opened with write access in hdf_output",
@@ -423,7 +422,7 @@ void o2scl_hdf::hdf_input(hdf_file &hf, hist_2d &h, std::string name) {
   return;
 }
 
-void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf, table3d &t, 
+void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf, const table3d &t, 
 			   std::string name) {
 
   if (hf.has_write_access()==false) {
@@ -824,7 +823,8 @@ void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, expval_matrix &mev,
   return;
 }
 
-void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf, uniform_grid<double> &ug, 
+void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf,
+			   uniform_grid<double> &ug, 
 			   std::string hdf_name) {
 
   if (hf.has_write_access()==false) {
@@ -899,7 +899,8 @@ void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, uniform_grid<double> &ug,
   return;
 }
 
-void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf, vector<contour_line> &cl, 
+void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf,
+			   const vector<contour_line> &cl, 
 			   std::string hdf_name) {
 
   if (hf.has_write_access()==false) {
@@ -998,7 +999,8 @@ void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, vector<contour_line> &cl,
   return;
 }
 
-void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf, vector<edge_crossings> &ec, 
+void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf,
+			   const vector<edge_crossings> &ec, 
 			   std::string hdf_name) {
 
   if (hf.has_write_access()==false) {
@@ -1095,7 +1097,8 @@ void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, vector<edge_crossings> &ec,
   return;
 }
 
-void o2scl_hdf::hdf_output(hdf_file &hf, o2scl::tensor_grid<std::vector<double>,
+void o2scl_hdf::hdf_output(hdf_file &hf,
+			   o2scl::tensor_grid<std::vector<double>,
 			   std::vector<size_t>> &t, std::string name) {
 
   // Check that tensor_grid object is valid
