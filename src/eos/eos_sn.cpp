@@ -1011,25 +1011,12 @@ void eos_sn_oo::load(std::string fname, size_t mode) {
   } else if (mode==hfsl_mode) {
     m_neut=939.565346;
     m_prot=938.272013;
+  } else if (mode==ls_mode) {
+    m_neut=939.0;
+    m_prot=939.0;
   } else {
-    // (ls_mode)
-    m_neut=939.0;
-    m_prot=939.0;
-  }
-
-  if (sht_mode) {
-    m_neut=939.0;
-    m_prot=939.0;
-  } else if (stos_mode) {
-    m_neut=938.0;
-    m_prot=938.0;
-  } else if (hfsl_mode) {
-    m_neut=939.565346;
-    m_prot=938.272013;
-  } else {
-    // (ls_mode)
-    m_neut=939.0;
-    m_prot=939.0;
+    O2SCL_ERR2("Invalid value of 'mode' in ",
+	       "eos_sn_oo::load().",exc_einval);
   }
 
   alloc();

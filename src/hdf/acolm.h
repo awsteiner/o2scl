@@ -58,21 +58,26 @@ namespace o2scl_acol {
   /** \brief The driver for 'acol' command-line utility
       \nothing
 
-      \todo Find a way to reorganize the source code into
+      \future Find a way to reorganize the source code into
       smaller files. Separate out the global functions for
       o2graph into their own file.
 
-      \comment
-      There was some concern about the confusion b/w the commands
-      "get row by index" (get-row) and "get row by function"
-      (find-row) and "select rows by function" (select-rows),
-      but it might be ok.
-      \endcomment
+      \future sum/max/min/output/interp/deriv/integ/deriv2 
+      for hist, hist_2d, and v<c>
+
+      \future xindex and yindex for table3d
+
+      \future fix fit for table
+
+      \future use swap instead of copy in 'select' for table objects
+
+      \future Make sure get_input() is used more consistently
+
+      \future Make sure preview, output, internal, generic, and create
+      work consistently across all types.
 
       \future Stack-like operations (push, pop, swap, 
       stack-list, etc.)?
-
-      \future Use get_input() in comm_create?
 
       \future Add functionality to ensure that three digit exponents
       are still handled gracefully (do this by creating a new boolean
@@ -90,8 +95,8 @@ namespace o2scl_acol {
       Function cli::expand_tilde() is written but not yet
       implemented.)
       
-      \future New 3d commands: transpose (for table3d), contours, 
-      find_grid_x, find_grid_y.
+      \future New table3d commands: transpose, 
+      find_grid_x, and find_grid_y.
 
       \hline
   */

@@ -25,19 +25,6 @@
 #include <o2scl/cloud_file.h>
 #include <o2scl/vector_derint.h>
 
-/*
-  Todos: 
-  - sum/max/min/output/interp/deriv/integ/deriv2 for hist, hist_2d, and v<c>
-  - xindex and yindex for table3d
-  - create table3d output that can be read by gen3-list?
-  - fix fit for table
-  - use swap instead of copy in 'select' for table objects
-  - Make sure get_input() is used more consistently
-  - Make sure preview, output, internal, generic, and create work for 
-  all types.
-  - Add matrix types?
-*/
-
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/vector_proxy.hpp>
 #include <boost/numeric/ublas/matrix.hpp>

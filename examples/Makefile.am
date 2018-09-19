@@ -22,12 +22,6 @@ emt3:
 		-function "270*exp(-(x-0.5)*(x-0.5))" y \
 		-plot x y -show
 
-snt:
-	ex_eos_sn -set directory ../../../../../pkgs/oo_eos/ \
-		-oo fsu17 -slices
-	ex_eos_sn -set directory ../../../../../pkgs/sht_eos/ \
-		-sht fsu17 -slices
-
 ein:
 	o2graph -set xlo 0 -set xhi 4 -set ylo 0 -set yhi 4 \
 		-read ex_interp2_nogrid_1000.o2 t3d -den-plot exact \
