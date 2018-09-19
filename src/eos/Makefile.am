@@ -69,7 +69,7 @@ TEST_VAR = eos_had_apr.scr eos_quark_bag.scr eos_crust_virial.scr \
 	eos_had_rmf.scr eos_had_schematic.scr eos_had_skyrme.scr eos_tov.scr \
 	tov_solve.scr eos_quark_cfl6.scr eos_had_tabulated.scr eos_nse.scr \
 	eos_had_rmf_delta.scr eos_crust.scr eos_had_ddc.scr eos_quark_cfl.scr \
-	eos_had_base.scr eos_sn.scr nucmass_ldrop_shell.scr eos_nse_full.scr \
+	eos_had_base.scr nucmass_ldrop_shell.scr eos_nse_full.scr \
 	nstar_rot.scr tov_love.scr eos_cs2_poly.scr \
 	eos_had_rmf_hyp.scr
 
@@ -188,7 +188,6 @@ eos_had_ddc_ts_LDADD = $(VCHECK_LIBS)
 eos_quark_cfl_ts_LDADD = $(VCHECK_LIBS)
 eos_nse_ts_LDADD = $(VCHECK_LIBS)
 eos_nse_full_ts_LDADD = $(VCHECK_LIBS)
-# eos_sn_ts_LDADD = $(VCHECK_LIBS)
 nucleus_rmf_ts_LDADD = $(VCHECK_LIBS)
 eos_had_gogny_ts_LDADD = $(VCHECK_LIBS)
 eos_crust_virial_ts_LDADD = $(VCHECK_LIBS)
@@ -251,8 +250,6 @@ eos_nse.scr: eos_nse_ts$(EXEEXT)
 	./eos_nse_ts$(EXEEXT) > eos_nse.scr
 eos_nse_full.scr: eos_nse_full_ts$(EXEEXT) 
 	./eos_nse_full_ts$(EXEEXT) > eos_nse_full.scr
-# eos_sn.scr: eos_sn_ts$(EXEEXT) 
-# 	./eos_sn_ts$(EXEEXT) > eos_sn.scr
 nucleus_rmf.scr: nucleus_rmf_ts$(EXEEXT) 
 	./nucleus_rmf_ts$(EXEEXT) > nucleus_rmf.scr
 eos_had_gogny.scr: eos_had_gogny_ts$(EXEEXT) 
@@ -289,7 +286,6 @@ eos_had_ddc_ts_SOURCES = eos_had_ddc_ts.cpp
 eos_quark_cfl_ts_SOURCES = eos_quark_cfl_ts.cpp
 eos_nse_ts_SOURCES = eos_nse_ts.cpp
 eos_nse_full_ts_SOURCES = eos_nse_full_ts.cpp
-# eos_sn_ts_SOURCES = eos_sn_ts.cpp
 nucleus_rmf_ts_SOURCES = nucleus_rmf_ts.cpp
 eos_had_gogny_ts_SOURCES = eos_had_gogny_ts.cpp
 eos_crust_virial_ts_SOURCES = eos_crust_virial_ts.cpp

@@ -100,7 +100,7 @@ protected:
     string outfile=name+"_slices.o2";
     hdf_file hf;
     hf.open_or_create(outfile);
-    hdf_output(hf,tab,"Atab");
+    hdf_output(hf,(const table3d &)tab,"Atab");
     hf.close();
 
     return 0;
@@ -139,6 +139,20 @@ protected:
     
     return 0;
 
+  }
+
+  /** \brief Desc
+   */
+  int output(std::vector<std::string> &sv, bool itive_com) {
+
+    if (sv.size()<2) {
+      cerr << "Output needs a filename." << endl;
+      return 1;
+    }
+    
+    genp->output(directory+"/"+sv[1]);
+    
+    return 0;
   }
 
   /** \brief Desc
@@ -402,6 +416,7 @@ protected:
 		       "analmu_20091212_SVNr26.h5",sha,directory);
       name="ls180";
       mode=eos_sn_oo::ls_mode;
+      fname=directory+"/LS180_234r_136t_50y_analmu_20091212_SVNr26.h5";
     } else if (sv[1]=="ls220") {
       cloud_file cf;
       cf.verbose=2;
@@ -414,6 +429,7 @@ protected:
 		       "analmu_20091212_SVNr26.h5",sha,directory);
       name="ls220";
       mode=eos_sn_oo::ls_mode;
+      fname=directory+"/LS220_234r_136t_50y_analmu_20091212_SVNr26.h5";
     } else if (sv[1]=="ls375") {
       cloud_file cf;
       cf.verbose=2;
@@ -426,6 +442,7 @@ protected:
 		       "analmu_20091212_SVNr26.h5",sha,directory);
       name="ls375";
       mode=eos_sn_oo::ls_mode;
+      fname=directory+"/LS375_234r_136t_50y_analmu_20091212_SVNr26.h5";
     } else {
       O2SCL_ERR("Need EOS type.",exc_efailed);
     }
@@ -464,7 +481,7 @@ public:
     // ---------------------------------------
     // Set options
     
-    static const int nopt=8;
+    static const int nopt=9;
     comm_option_s options[nopt]={
       {0,"ls","Load an EOS in the Lattimer-Swesty format.",
        1,1,"",((string)"long ")+"desc.",
@@ -497,6 +514,10 @@ public:
       {0,"eg","Compute the electron-photon part of the EOS.",
        0,0,"",((string)"long ")+"desc.",
        new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::eg),
+       cli::comm_option_both},
+      {0,"output","Output to a file.",
+       1,1,"",((string)"long ")+"desc.",
+       new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::output),
        cli::comm_option_both}
     };
     cl.set_comm_option_vec(nopt,options);

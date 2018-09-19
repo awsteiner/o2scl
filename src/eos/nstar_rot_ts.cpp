@@ -145,8 +145,8 @@ int main(void) {
     // Write both tables to a file
     o2scl_hdf::hdf_file hf;
     hf.open_or_create("nstar_rot.o2");
-    o2scl_hdf::hdf_output(hf,t,"nstar_rot");
-    o2scl_hdf::hdf_output(hf,t2,"nstar_rot2");
+    o2scl_hdf::hdf_output(hf,(const table3d &)t,"nstar_rot");
+    o2scl_hdf::hdf_output(hf,(const table3d &)t2,"nstar_rot2");
     hf.close();
   }
 
