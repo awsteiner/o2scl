@@ -362,7 +362,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
     type_comm_list.insert(std::make_pair("table3d",itmp));
   }
   {
-    vector<std::string> itmp={"list"};
+    vector<std::string> itmp={"list","min","max","to-table3d"};
     type_comm_list.insert(std::make_pair("tensor<int>",itmp));
     type_comm_list.insert(std::make_pair("tensor<size_t>",itmp));
   }
@@ -836,7 +836,7 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="tensor<int>") {
     
-    static const size_t narr=2;
+    static const size_t narr=4;
     comm_option_s options_arr[narr]={
       {'l',"list","List the rank and sizes.",
        0,0,"","List the rank and sizes.",
@@ -845,13 +845,21 @@ void acol_manager::command_add(std::string new_type) {
       {0,"to-table3d","Select two indices and convert to a table3d object.",
        -1,-1,"<x name> <y name> <slice name>",
        "",new comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_to_table3d),both}
+       (this,&acol_manager::comm_to_table3d),both},
+      {0,"max","Find the maximum value and index.",0,0,"",
+       "Compute the maximum value.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_max),
+       both},
+      {0,"min","Find the minimum value of and index.",0,0,"",
+       "Compute the minimum value.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
+       both}
     };
     cl->set_comm_option_vec(narr,options_arr);
     
   } else if (new_type=="tensor<size_t>") {
     
-    static const size_t narr=2;
+    static const size_t narr=4;
     comm_option_s options_arr[narr]={
       {'l',"list","List the rank and sizes.",
        0,0,"","List the rank and sizes.",
@@ -860,7 +868,15 @@ void acol_manager::command_add(std::string new_type) {
       {0,"to-table3d","Select two indices and convert to a table3d object.",
        -1,-1,"<x name> <y name> <slice name>",
        "",new comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_to_table3d),both}
+       (this,&acol_manager::comm_to_table3d),both},
+      {0,"max","Find the maximum value and index.",0,0,"",
+       "Compute the maximum value.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_max),
+       both},
+      {0,"min","Find the minimum value of and index.",0,0,"",
+       "Compute the minimum value.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
+       both}
     };
     cl->set_comm_option_vec(narr,options_arr);
     
@@ -1123,10 +1139,16 @@ void acol_manager::command_del() {
   } else if (type=="tensor<int>") {
     
     cl->remove_comm_option("list");
+    cl->remove_comm_option("to-table3d");
+    cl->remove_comm_option("min");
+    cl->remove_comm_option("max");
 
   } else if (type=="tensor<size_t>") {
     
     cl->remove_comm_option("list");
+    cl->remove_comm_option("to-table3d");
+    cl->remove_comm_option("min");
+    cl->remove_comm_option("max");
 
   } else if (type=="tensor") {
     
@@ -3279,16 +3301,44 @@ int acol_manager::comm_max(std::vector<std::string> &sv, bool itive_com) {
     cout << "Maximum value is " << val << " at indices ";
     vector_out(cout,ix,true);
     
+  } else if (type=="tensor<size_t>") {
+
+    size_t val;
+    size_t loc;
+    const vector<size_t> &v=tensor_size_t_obj.get_data();
+    o2scl::vector_max<vector<size_t>,size_t>(v.size(),v,loc,val);
+    vector<size_t> ix(tensor_size_t_obj.get_rank());
+    tensor_size_t_obj.unpack_index(loc,ix);
+    cout << "Maximum value is " << val << " at indices ";
+    vector_out(cout,ix,true);
+    
+  } else if (type=="tensor<int>") {
+
+    int val;
+    size_t loc;
+    const vector<int> &v=tensor_int_obj.get_data();
+    o2scl::vector_max<vector<int>,int>(v.size(),v,loc,val);
+    vector<size_t> ix(tensor_int_obj.get_rank());
+    tensor_int_obj.unpack_index(loc,ix);
+    cout << "Maximum value is " << val << " at indices ";
+    vector_out(cout,ix,true);
+    
   } else if (type=="tensor_grid") {
 
     double val;
     size_t loc;
-    const vector<double> &v=tensor_obj.get_data();
+    const vector<double> &v=tensor_grid_obj.get_data();
     o2scl::vector_max<vector<double>,double>(v.size(),v,loc,val);
-    vector<size_t> ix(tensor_obj.get_rank());
-    tensor_obj.unpack_index(loc,ix);
+    vector<size_t> ix(tensor_grid_obj.get_rank());
+    vector<double> dx(tensor_grid_obj.get_rank());
+    tensor_grid_obj.unpack_index(loc,ix);
+    for(size_t j=0;j<tensor_grid_obj.get_rank();j++) {
+      dx[j]=tensor_grid_obj.get_grid(j,ix[j]);
+    }
     cout << "Maximum value is " << val << " at indices ";
     vector_out(cout,ix,true);
+    cout << "  and grid point ";
+    vector_out(cout,dx,true);
     
   } else if (type=="int[]") {
     
@@ -4192,16 +4242,44 @@ int acol_manager::comm_min(std::vector<std::string> &sv, bool itive_com) {
     cout << "Minimum value is " << val << " at indices ";
     vector_out(cout,ix,true);
     
+  } else if (type=="tensor<size_t>") {
+
+    size_t val;
+    size_t loc;
+    const vector<size_t> &v=tensor_size_t_obj.get_data();
+    o2scl::vector_max<vector<size_t>,size_t>(v.size(),v,loc,val);
+    vector<size_t> ix(tensor_size_t_obj.get_rank());
+    tensor_size_t_obj.unpack_index(loc,ix);
+    cout << "Maximum value is " << val << " at indices ";
+    vector_out(cout,ix,true);
+    
+  } else if (type=="tensor<int>") {
+
+    int val;
+    size_t loc;
+    const vector<int> &v=tensor_int_obj.get_data();
+    o2scl::vector_max<vector<int>,int>(v.size(),v,loc,val);
+    vector<size_t> ix(tensor_int_obj.get_rank());
+    tensor_int_obj.unpack_index(loc,ix);
+    cout << "Maximum value is " << val << " at indices ";
+    vector_out(cout,ix,true);
+    
   } else if (type=="tensor_grid") {
 
     double val;
     size_t loc;
-    const vector<double> &v=tensor_obj.get_data();
+    const vector<double> &v=tensor_grid_obj.get_data();
     o2scl::vector_min<vector<double>,double>(v.size(),v,loc,val);
-    vector<size_t> ix(tensor_obj.get_rank());
-    tensor_obj.unpack_index(loc,ix);
+    vector<size_t> ix(tensor_grid_obj.get_rank());
+    vector<double> dx(tensor_grid_obj.get_rank());
+    tensor_grid_obj.unpack_index(loc,ix);
+    for(size_t j=0;j<tensor_grid_obj.get_rank();j++) {
+      dx[j]=tensor_grid_obj.get_grid(j,ix[j]);
+    }
     cout << "Minimum value is " << val << " at indices ";
     vector_out(cout,ix,true);
+    cout << "  and grid point ";
+    vector_out(cout,dx,true);
     
   } else if (type=="int[]") {
     
