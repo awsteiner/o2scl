@@ -2200,7 +2200,7 @@ namespace o2scl {
 	    found=true;
 	    
 	    std::cout << "Function initial_point_file_last():\n\tit: "
-		      << it << "," << this->mpi_rank
+		      << it << " rank: " << this->mpi_rank
 		      << " iw: " << iw << " row: "
 		      << row << " log_wgt: " << tip.get("log_wgt",row)
 		      << std::endl;
