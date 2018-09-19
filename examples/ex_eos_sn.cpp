@@ -34,7 +34,9 @@ using namespace o2scl;
 using namespace o2scl_hdf;
 using namespace o2scl_const;
 
-/** \brief Desc
+/** \brief A class for manipulating EOS tables 
+
+    \note Highly experimental.
  */
 class ex_eos_sn {
 
@@ -108,7 +110,7 @@ protected:
 
   /// \name Functions to load the EOSs
   //@{
-  /** \brief Desc
+  /** \brief Load a Lattimer-Swesty EOS
    */
   int ls_fun(std::vector<std::string> &sv, bool itive_com) {
 
@@ -133,15 +135,11 @@ protected:
     ls.verbose=verbose;
     ls.load(fname);
     genp=&ls;
-    //test_mgr t;
-    //ls.check_eg(t);
-    //ls.check_free_energy();
-    
     return 0;
 
   }
 
-  /** \brief Desc
+  /** \brief Output to a file in native format
    */
   int output(std::vector<std::string> &sv, bool itive_com) {
 
@@ -155,7 +153,19 @@ protected:
     return 0;
   }
 
-  /** \brief Desc
+  /** \brief Check the EOS
+   */
+  int check(std::vector<std::string> &sv, bool itive_com) {
+
+    double v1=genp->check_eg();
+    double v2;
+    genp->check_free_energy(v2);
+    cout << v1 << " " << v2 << endl;
+    
+    return 0;
+  }
+
+  /** \brief Load an H. Shen et al. EOS
    */
   int stos_fun(std::vector<std::string> &sv, bool itive_com) {
 
@@ -182,7 +192,7 @@ protected:
 
   }
 
-  /** \brief Desc
+  /** \brief Load a G. Shen et al. EOS
    */
   int sht_fun(std::vector<std::string> &sv, bool itive_com) {
 
@@ -195,13 +205,7 @@ protected:
       fname2+="FSU1.7eosb1.01.dat";
       name="sht_fsu17";
       sht.load(fname,eos_sn_sht::mode_17);
-      //cout << sht.A.interp(0.02,0.5,1.0) << " ";
-      //cout << sht.E.interp(0.02,0.5,1.0) << endl;
       sht.load(fname2,eos_sn_sht::mode_17b);
-      //cout << sht.A.interp(0.02,0.5,1.0) << " ";
-      //cout << sht.E.interp(0.02,0.5,1.0) << " ";
-      //cout << sht.Eint.interp(0.02,0.5,1.0) << endl;
-      exit(-1);
     } else if (sv[1]=="fsu21") {
       fname+="FSU2.1eos1.01.dat";
       fname2+="FSU2.1eosb1.01.dat";
@@ -224,7 +228,7 @@ protected:
 
   }
 
-  /** \brief Desc
+  /** \brief Load a Hempel et al. EOS
    */
   int hfsl_fun(std::vector<std::string> &sv, bool itive_com) {
 
@@ -248,23 +252,26 @@ protected:
 
   }
 
-  /** \brief Desc
+  /** \brief Compute the leptonic part of the EOS
    */
   int eg(std::vector<std::string> &sv, bool itive_com) {
+
     if (true) {
+      // Make the electron EOS a bit more accurate
       genp->relf.upper_limit_fac=40.0;
       genp->relf.dit->tol_abs=1.0e-11;
       genp->relf.dit->tol_rel=1.0e-11;
       genp->relf.nit->tol_abs=1.0e-11;
       genp->relf.nit->tol_rel=1.0e-11;
+      genp->relf.density_root->tol_rel=1.0e-10;
     }
     genp->compute_eg();
     return 0;
   }
   
-  /** \brief Desc
+  /** \brief Compute the EOS at one point
    */
-  int interp(std::vector<std::string> &sv, bool itive_com) {
+  int point(std::vector<std::string> &sv, bool itive_com) {
     
     if (sv.size()<4) {
       cerr << "Not enough arguments specified in 'interp'." << endl;
@@ -542,9 +549,6 @@ protected:
     oo.verbose=verbose;
     oo.load(fname,mode);
     genp=&oo;
-    //test_mgr t;
-    //ls.check_eg(t);
-    //ls.check_free_energy();
     
     return 0;
 
@@ -573,35 +577,40 @@ public:
     // ---------------------------------------
     // Set options
     
-    static const int nopt=9;
+    static const int nopt=10;
     comm_option_s options[nopt]={
       {0,"ls","Load an EOS in the Lattimer-Swesty format.",
-       1,1,"",((string)"long ")+"desc.",
+       1,1,"<model>",((string)"Models \"ls\", \"skm\", \"ska\", ")+
+       "or \"sk1\".",
        new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::ls_fun),
        cli::comm_option_both},
       {0,"oo","Load an EOS in the O'Connor-Ott format.",
-       1,1,"",((string)"long ")+"desc.",
+       1,1,"<model>",((string)"Models \"fsu17\", \"fsu21\", \"sht_nl3\", ")+
+       "\"stos\", \"stos_hyp\", \"dd2\", \"fsg\", \"hfsl_nl3\", "+
+       "\"sfho\", \"sfhx\", \"tm1\", \"tma\", \"ls180\", \"ls220\", "+
+       "or \"ls375\".",
        new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::oo_fun),
        cli::comm_option_both},
       {0,"sht","Load an EOS in the Shen-Horowitz-Teige format.",
-       1,1,"",((string)"long ")+"desc.",
+       1,1,"<model>",((string)"Models \"fsu17\", \"fsu21\", ")+
+       "or \"nl3\".",
        new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::sht_fun),
        cli::comm_option_both},
       {0,"stos","Load an EOS in the Shen et al. format.",
-       1,1,"",((string)"long ")+"desc.",
+       1,1,"<model>","Models are \"stos1\", \"stos2\" or \"stos3\".",
        new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::stos_fun),
        cli::comm_option_both},
       {0,"hfsl","Load an EOS in the Hempel et al. format.",
-       1,1,"",((string)"long ")+"desc.",
+       1,1,"<model>","Models are \"sfho\" and \"sfhx\"",
        new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::hfsl_fun),
        cli::comm_option_both},
       {0,"slices","Construct slices.",
        0,0,"",((string)"long ")+"desc.",
        new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::slices),
        cli::comm_option_both},
-      {0,"interp","Interpolate the EOS at a specified (n_B,Y_e,T) point.",
+      {0,"point","Interpolate the EOS at a specified (n_B,Y_e,T) point.",
        3,3,"",((string)"long ")+"desc.",
-       new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::interp),
+       new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::point),
        cli::comm_option_both},
       {0,"eg","Compute the electron-photon part of the EOS.",
        0,0,"",((string)"long ")+"desc.",
@@ -610,6 +619,10 @@ public:
       {0,"output","Output to a file.",
        1,1,"",((string)"long ")+"desc.",
        new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::output),
+       cli::comm_option_both},
+      {0,"check","",
+       0,0,"",((string)"long ")+"desc.",
+       new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::check),
        cli::comm_option_both}
     };
     cl.set_comm_option_vec(nopt,options);

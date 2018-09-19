@@ -589,8 +589,11 @@ void eos_sn_base::beta_eq_Tfixed(double nB, double T, double &Ye) {
 
 double eos_sn_base::check_eg() {
   
-  if (!baryons_only_loaded || !with_leptons_loaded) {
-    O2SCL_ERR("Not enough data loaded in check_eg().",exc_efailed);
+  if (!baryons_only_loaded) {
+    O2SCL_ERR("Baryons only EOS not loaded in check_eg().",exc_efailed);
+  }
+  if (!with_leptons_loaded) {
+    O2SCL_ERR("With leptons EOS not loaded in check_eg().",exc_efailed);
   }
 
   // Double check lepton and photon contribution
