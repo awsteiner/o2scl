@@ -680,6 +680,11 @@ namespace o2scl {
 
   /// \name Slicing and summing to create tensor_grid objects
   //@{
+#ifdef O2SCL_NEVER_DEFINED
+  // commenting this function out because clang
+  // had a problem with ix_new=ix_old[mapping[j]];
+
+  
   /** \brief Sum over some (but not all) tensor indices to obtain
       a smaller rank tensor
    */
@@ -737,6 +742,7 @@ namespace o2scl {
     
     return tg_new;
   }
+#endif
 
 #ifdef O2SCL_NEVER_DEFINED
 
