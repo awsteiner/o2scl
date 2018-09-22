@@ -615,9 +615,12 @@ namespace o2scl {
       w_current[i]=0.0;
     }
 
-    // Allocate ret_value_counts and curr_walker
-    ret_value_counts.resize(n_chains_per_rank);
+    // Allocate curr_walker
     curr_walker.resize(n_threads);
+
+    // Allocation of ret_value_counts should be handled by the
+    // user in mcmc_init()
+    //ret_value_counts.resize(n_chains_per_rank);
 
     // Initialize data and switch arrays
     data_arr.resize(2*ssize);
@@ -729,7 +732,7 @@ namespace o2scl {
 
 		// If we have a good point, update ret_value_counts
 		// and call the measurement function 
-		if (func_ret[it]>=0 &&
+		if (func_ret[it]>=0 && ret_value_counts.size()>=it && 
 		    func_ret[it]<((int)ret_value_counts[it].size())) {
 		  ret_value_counts[it][func_ret[it]]++;
 		}
@@ -778,7 +781,7 @@ namespace o2scl {
 		// If we have a good point, update ret_value_counts,
 		// call the measurement function and stop the loop
 		if (func_ret[it]==o2scl::success) {
-		  if (func_ret[it]>=0 &&
+		  if (func_ret[it]>=0 && ret_value_counts.size()>=it && 
 		      func_ret[it]<((int)ret_value_counts[it].size())) {
 		    ret_value_counts[it][func_ret[it]]++;
 		  }
@@ -949,7 +952,7 @@ namespace o2scl {
 	  }
 	  
 	  // Update the return value count
-	  if (func_ret[it]>=0 &&
+	  if (func_ret[it]>=0 && ret_value_counts.size()>=it && 
 	      func_ret[it]<((int)ret_value_counts[it].size())) {
 	    ret_value_counts[it][func_ret[it]]++;
 	  }
@@ -1122,7 +1125,7 @@ namespace o2scl {
 	      if (func_ret[it]==mcmc_done) {
 		mcmc_done_flag[it]=true;
 	      } else {
-		if (func_ret[it]>=0 &&
+		if (func_ret[it]>=0 && ret_value_counts.size()>=it && 
 		    func_ret[it]<((int)ret_value_counts[it].size())) {
 		  ret_value_counts[it][func_ret[it]]++;
 		}
@@ -1410,7 +1413,7 @@ namespace o2scl {
 	      if (func_ret[it]==mcmc_done) {
 		mcmc_done_flag[it]=true;
 	      } else {
-		if (func_ret[it]>=0 &&
+		if (func_ret[it]>=0 && ret_value_counts.size()>=it && 
 		    func_ret[it]<((int)ret_value_counts[it].size())) {
 		  ret_value_counts[it][func_ret[it]]++;
 		}
