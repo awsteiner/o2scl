@@ -373,7 +373,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   }
   {
     vector<std::string> itmp={"deriv","interp","max","min","sort",
-			      "autocorr","to-table"};
+			      "autocorr","to-table","function"};
     type_comm_list.insert(std::make_pair("double[]",itmp));
     type_comm_list.insert(std::make_pair("int[]",itmp));
     type_comm_list.insert(std::make_pair("size_t[]",itmp));
@@ -912,7 +912,7 @@ void acol_manager::command_add(std::string new_type) {
 
   } else if (new_type=="double[]") {
 
-    static const size_t narr=7;
+    static const size_t narr=8;
     comm_option_s options_arr[narr]={
       {0,"sort","Sort the vector.",0,0,"",
        ((string)"Sorts the vector."),
@@ -946,13 +946,19 @@ void acol_manager::command_add(std::string new_type) {
        "<column name>",
        "Convert to a table given a column name.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_to_table),
+       both},      
+      {0,"function","Set the values of the array given a function",0,1,
+       "<function.",((string)"Set the values of the array ")+
+       "given a user-specified function of 'i'. For example, "+
+       "\"(sin(i)>1)*4\".",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_function),
        both}      
     };
     cl->set_comm_option_vec(narr,options_arr);
     
   } else if (new_type=="int[]") {
 
-    static const size_t narr=7;
+    static const size_t narr=8;
     comm_option_s options_arr[narr]={
       {0,"sort","Sort the vector.",0,0,"",
        ((string)"Sorts the vector."),
@@ -986,13 +992,19 @@ void acol_manager::command_add(std::string new_type) {
        "<column name>",
        "Convert to a table given a column name.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_to_table),
-       both}      
+       both},
+      {0,"function","Set the values of the array given a function",0,1,
+       "<function.",((string)"Set the values of the array ")+
+       "given a user-specified function of 'i'. For example, "+
+       "\"(sin(i)>1)*4\".",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_function),
+       both}     
     };
     cl->set_comm_option_vec(narr,options_arr);
     
   } else if (new_type=="size_t[]") {
 
-    static const size_t narr=7;
+    static const size_t narr=8;
     comm_option_s options_arr[narr]={
       {0,"sort","Sort the vector.",0,0,"",
        ((string)"Sorts the vector."),
@@ -1026,7 +1038,13 @@ void acol_manager::command_add(std::string new_type) {
        "<column name>",
        "Convert to a table given a column name.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_to_table),
-       both}      
+       both},
+      {0,"function","Set the values of the array given a function",0,1,
+       "<function.",((string)"Set the values of the array ")+
+       "given a user-specified function of 'i'. For example, "+
+       "\"(sin(i)>1)*4\".",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_function),
+       both}
     };
     cl->set_comm_option_vec(narr,options_arr);
     
@@ -1161,6 +1179,7 @@ void acol_manager::command_del() {
     cl->remove_comm_option("min");
 
   } else if (type=="hist_2d") {
+
     cl->remove_comm_option("max");
     cl->remove_comm_option("min");
     
@@ -1170,9 +1189,7 @@ void acol_manager::command_del() {
       cl->remove_comm_option("interp");
       cl->remove_comm_option("set-data");
       cl->remove_comm_option("sum");
-      
-      //cl->remove_comm_option("hist2d");
-      */
+    */
   } else if (type=="hist") {
     
     /*
@@ -1190,10 +1207,6 @@ void acol_manager::command_del() {
       cl->remove_comm_option("stats");
       cl->remove_comm_option("sum");
       cl->remove_comm_option("to-table");
-
-      cl->remove_comm_option("plot");
-      cl->remove_comm_option("plot1");
-      cl->remove_comm_option("hist");
     */
     
   } else if (type=="vector<contour_line>") {
@@ -1207,6 +1220,7 @@ void acol_manager::command_del() {
     cl->remove_comm_option("sort");
     cl->remove_comm_option("autocorr");
     cl->remove_comm_option("to-table");
+    cl->remove_comm_option("function");
     
     /*
       cl->remove_comm_option("integ");
@@ -1219,7 +1233,6 @@ void acol_manager::command_del() {
     /*
       } else if (type=="int[]" || type=="size_t[]") {
       
-      //cl->remove_comm_option("plot1");
       cl->remove_comm_option("deriv");
       cl->remove_comm_option("deriv2");
       cl->remove_comm_option("integ");
@@ -1775,17 +1788,15 @@ int acol_manager::comm_to_hist(std::vector<std::string> &sv,
 
   if (type=="table") {
 
-    if (sv.size()<2 && itive_com) {
-      int ret=get_input_one(sv,((string)"Enter \"2d\" for 2d histogram ")+
-			    +"and \"1d\" for 1d histogram",i1,"to-hist",
-			    itive_com);
-      if (ret!=0) return ret;
-    }
+    int ret=get_input_one(sv,((string)"Enter \"2d\" for 2d histogram ")+
+			  +"and \"1d\" for 1d histogram",i1,"to-hist",
+			  itive_com);
+    if (ret!=0) return ret;
     
     vector<string> in, pr;
     pr.push_back("Column name");
     pr.push_back("Number of bins");
-    int ret=get_input(sv,pr,in,"to-hist",itive_com);
+    ret=get_input(sv,pr,in,"to-hist",itive_com);
     if (ret!=0) return ret;
       
     std::string col2;
@@ -2208,39 +2219,51 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
 
   } else if (type=="int[]") {
 
-    vector<string> sv, sv_out;
-    for(size_t k=0;k<intv_obj.size();k++) {
-      sv.push_back(o2scl::itos(intv_obj[k])+' ');
-    }
-    screenify(intv_obj.size(),sv,sv_out);
-    for(size_t k=0;k<sv_out.size();k++) {
-      (*fout) << sv_out[k] << endl;
+    if (pretty) {
+      vector<string> sv, sv_out;
+      for(size_t k=0;k<intv_obj.size();k++) {
+	sv.push_back(o2scl::itos(intv_obj[k])+' ');
+      }
+      screenify(intv_obj.size(),sv,sv_out);
+      for(size_t k=0;k<sv_out.size();k++) {
+	(*fout) << sv_out[k] << endl;
+      }
+    } else {
+      vector_out(cout,intv_obj,true);
     }
 
   } else if (type=="double[]") {
 
-    vector<string> sv, sv_out;
-    for(size_t k=0;k<doublev_obj.size();k++) {
-      if (has_minus_sign(&doublev_obj[k])) {
-	sv.push_back(o2scl::dtos(doublev_obj[k])+' ');
-      } else {
-	sv.push_back(" "+o2scl::dtos(doublev_obj[k])+' ');
+    if (pretty) {
+      vector<string> sv, sv_out;
+      for(size_t k=0;k<doublev_obj.size();k++) {
+	if (has_minus_sign(&doublev_obj[k])) {
+	  sv.push_back(o2scl::dtos(doublev_obj[k])+' ');
+	} else {
+	  sv.push_back(" "+o2scl::dtos(doublev_obj[k])+' ');
+	}
       }
-    }
-    screenify(doublev_obj.size(),sv,sv_out);
-    for(size_t k=0;k<sv_out.size();k++) {
-      (*fout) << sv_out[k] << endl;
+      screenify(doublev_obj.size(),sv,sv_out);
+      for(size_t k=0;k<sv_out.size();k++) {
+	(*fout) << sv_out[k] << endl;
+      }
+    } else {
+      vector_out(cout,doublev_obj,true);
     }
 
   } else if (type=="size_t[]") {
 
-    vector<string> sv, sv_out;
-    for(size_t k=0;k<size_tv_obj.size();k++) {
-      sv.push_back(o2scl::szttos(size_tv_obj[k])+' ');
-    }
-    screenify(size_tv_obj.size(),sv,sv_out);
-    for(size_t k=0;k<sv_out.size();k++) {
-      (*fout) << sv_out[k] << endl;
+    if (pretty) {
+      vector<string> sv, sv_out;
+      for(size_t k=0;k<size_tv_obj.size();k++) {
+	sv.push_back(o2scl::szttos(size_tv_obj[k])+' ');
+      }
+      screenify(size_tv_obj.size(),sv,sv_out);
+      for(size_t k=0;k<sv_out.size();k++) {
+	(*fout) << sv_out[k] << endl;
+      }
+    } else {
+      vector_out(cout,size_tv_obj,true);
     }
     
   } else if (type=="string[]") {
@@ -2592,8 +2615,6 @@ int acol_manager::comm_filelist(std::vector<std::string> &sv,
   int ret=get_input_one(sv,"Enter filename",i1,"filelist",
 			itive_com);
   if (ret!=0) return ret;
-
-  i1=sv[1];
 
   // Use hdf_file to open the file
   hdf_file hf;
@@ -5347,6 +5368,57 @@ int acol_manager::comm_function(std::vector<std::string> &sv, bool itive_com) {
       return exc_efailed;
     }
 
+  } else if (type=="double[]") {
+
+    std::string function;
+    int ret=get_input_one(sv,"Enter function of index 'i'",
+			  function,"function",itive_com);
+    if (ret!=0) return ret;
+
+    // Parse function
+    calculator calc;
+    std::map<std::string,double> vars;
+    calc.compile(function.c_str(),&vars);
+
+    // Create column from function
+    for(size_t j=0;j<doublev_obj.size();j++) {
+      doublev_obj[j]=calc.eval(&vars);
+    }
+    
+  } else if (type=="int[]") {
+
+    std::string function;
+    int ret=get_input_one(sv,"Enter function of index 'i'",
+			  function,"function",itive_com);
+    if (ret!=0) return ret;
+
+    // Parse function
+    calculator calc;
+    std::map<std::string,double> vars;
+    calc.compile(function.c_str(),&vars);
+
+    // Create column from function
+    for(size_t j=0;j<intv_obj.size();j++) {
+      intv_obj[j]=(int)calc.eval(&vars);
+    }
+    
+  } else if (type=="size_t[]") {
+
+    std::string function;
+    int ret=get_input_one(sv,"Enter function of index 'i'",
+			  function,"function",itive_com);
+    if (ret!=0) return ret;
+
+    // Parse function
+    calculator calc;
+    std::map<std::string,double> vars;
+    calc.compile(function.c_str(),&vars);
+
+    // Create column from function
+    for(size_t j=0;j<size_tv_obj.size();j++) {
+      size_tv_obj[j]=(size_t)calc.eval(&vars);
+    }
+    
   } else {
     cerr << "Not implemented for type " << type << " ." << endl;
     return exc_efailed;
