@@ -1566,7 +1566,7 @@ int acol_manager::setup_parameters() {
     "(1=linear, 2=cubic spline, 3=periodic cubic spline, 4=Akima, "+
     "5=periodic Akima, 6=monotonic, 7=Steffen's monotonic).";
   p_names_out.help="If true, output column names at top.";
-  p_pretty.help="If true, align the columns using spaces.";
+  p_pretty.help="If true, make the output more readable.";
   p_scientific.help="If true, output in scientific mode.";
   
   cl->par_list.insert(make_pair("obj_name",&p_obj_name));
@@ -2229,7 +2229,7 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
 	(*fout) << sv_out[k] << endl;
       }
     } else {
-      vector_out(cout,intv_obj,true);
+      vector_out((*fout),intv_obj,true);
     }
 
   } else if (type=="double[]") {
@@ -2248,7 +2248,7 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
 	(*fout) << sv_out[k] << endl;
       }
     } else {
-      vector_out(cout,doublev_obj,true);
+      vector_out((*fout),doublev_obj,true);
     }
 
   } else if (type=="size_t[]") {
@@ -2263,7 +2263,7 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
 	(*fout) << sv_out[k] << endl;
       }
     } else {
-      vector_out(cout,size_tv_obj,true);
+      vector_out((*fout),size_tv_obj,true);
     }
     
   } else if (type=="string[]") {
@@ -2305,48 +2305,113 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
 
   } else if (type=="tensor") {
 
-    size_t rk=tensor_obj.get_rank();
-    (*fout) << rk << " ";
-    for(size_t i=0;i<rk;i++) {
-      (*fout) << tensor_obj.get_size(i) << " ";
+    if (pretty) {
+      size_t rk=tensor_obj.get_rank();
+      (*fout) << "rank: " << rk << " sizes: ";
+      for(size_t i=0;i<rk;i++) {
+	(*fout) << tensor_obj.get_size(i) << " ";
+      }
+      (*fout) << endl;
+      const vector<double> &data=tensor_obj.get_data();
+      vector<size_t> ix(rk);
+      for(size_t i=0;i<tensor_obj.total_size();i++) {
+	tensor_obj.unpack_index(i,ix);
+	(*fout) << "(";
+	for(size_t j=0;j<rk;j++) {
+	  if (j!=rk-1) {
+	    (*fout) << ix[j] << ",";
+	  } else {
+	    (*fout) << ix[j];
+	  }
+	}
+	(*fout) << "): " << data[i] << " ";
+	if (i%6==5) (*fout) << endl;
+      }
+      (*fout) << endl;
+    } else {
+      size_t rk=tensor_obj.get_rank();
+      (*fout) << rk << " ";
+      for(size_t i=0;i<rk;i++) {
+	(*fout) << tensor_obj.get_size(i) << " ";
+      }
+      (*fout) << endl;
+      const vector<double> &data=tensor_obj.get_data();
+      for(size_t i=0;i<tensor_obj.total_size();i++) {
+	(*fout) << data[i] << " ";
+	if (i%6==5) (*fout) << endl;
+      }
+      (*fout) << endl;
     }
-    (*fout) << endl;
-    const vector<double> &data=tensor_obj.get_data();
-    for(size_t i=0;i<tensor_obj.total_size();i++) {
-      (*fout) << data[i] << " ";
-      if (i%6==5) (*fout) << endl;
-    }
-    (*fout) << endl;
     
   } else if (type=="tensor<int>") {
 
-    size_t rk=tensor_int_obj.get_rank();
-    (*fout) << rk << " ";
-    for(size_t i=0;i<rk;i++) {
-      (*fout) << tensor_int_obj.get_size(i) << " ";
+    if (pretty) {
+      size_t rk=tensor_int_obj.get_rank();
+      (*fout) << "rank: " << rk << " sizes: ";
+      for(size_t i=0;i<rk;i++) {
+	(*fout) << tensor_int_obj.get_size(i) << " ";
+      }
+      (*fout) << endl;
+      const vector<int> &data=tensor_int_obj.get_data();
+      for(size_t i=0;i<tensor_int_obj.total_size();i++) {
+	(*fout) << data[i] << " ";
+	if (i%6==5) (*fout) << endl;
+      }
+      (*fout) << endl;
+    } else {
+      size_t rk=tensor_int_obj.get_rank();
+      (*fout) << rk << " ";
+      for(size_t i=0;i<rk;i++) {
+	(*fout) << tensor_int_obj.get_size(i) << " ";
+      }
+      (*fout) << endl;
+      const vector<int> &data=tensor_int_obj.get_data();
+      for(size_t i=0;i<tensor_int_obj.total_size();i++) {
+	(*fout) << data[i] << " ";
+	if (i%6==5) (*fout) << endl;
+      }
+      (*fout) << endl;
     }
-    (*fout) << endl;
-    const vector<int> &data=tensor_int_obj.get_data();
-    for(size_t i=0;i<tensor_int_obj.total_size();i++) {
-      (*fout) << data[i] << " ";
-      if (i%6==5) (*fout) << endl;
-    }
-    (*fout) << endl;
     
   } else if (type=="tensor<size_t>") {
 
-    size_t rk=tensor_size_t_obj.get_rank();
-    (*fout) << rk << " ";
-    for(size_t i=0;i<rk;i++) {
-      (*fout) << tensor_size_t_obj.get_size(i) << " ";
+    if (pretty) {
+      size_t rk=tensor_size_t_obj.get_rank();
+      (*fout) << "rank: " << rk << " sizes: ";
+      for(size_t i=0;i<rk;i++) {
+	(*fout) << tensor_size_t_obj.get_size(i) << " ";
+      }
+      (*fout) << endl;
+      const vector<size_t> &data=tensor_size_t_obj.get_data();
+      vector<size_t> ix(rk);
+      for(size_t i=0;i<tensor_size_t_obj.total_size();i++) {
+	tensor_size_t_obj.unpack_index(i,ix);
+	(*fout) << "(";
+	for(size_t j=0;j<rk;j++) {
+	  if (j!=rk-1) {
+	    (*fout) << ix[j] << ",";
+	  } else {
+	    (*fout) << ix[j];
+	  }
+	}
+	(*fout) << "): " << data[i] << " ";
+	if (i%6==5) (*fout) << endl;
+      }
+      (*fout) << endl;
+    } else {
+      size_t rk=tensor_size_t_obj.get_rank();
+      (*fout) << rk << " ";
+      for(size_t i=0;i<rk;i++) {
+	(*fout) << tensor_size_t_obj.get_size(i) << " ";
+      }
+      (*fout) << endl;
+      const vector<size_t> &data=tensor_size_t_obj.get_data();
+      for(size_t i=0;i<tensor_size_t_obj.total_size();i++) {
+	(*fout) << data[i] << " ";
+	if (i%6==5) (*fout) << endl;
+      }
+      (*fout) << endl;
     }
-    (*fout) << endl;
-    const vector<size_t> &data=tensor_size_t_obj.get_data();
-    for(size_t i=0;i<tensor_size_t_obj.total_size();i++) {
-      (*fout) << data[i] << " ";
-      if (i%6==5) (*fout) << endl;
-    }
-    (*fout) << endl;
     
   } else if (type=="uniform_grid<double>") {
 
