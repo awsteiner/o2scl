@@ -1292,13 +1292,15 @@ int acol_manager::setup_options() {
      ((string)"Create a new object of type <type>. For types char, ")+
      "double, int, size_t, and string, this takes one additional "+
      "argument which holds the value. For type table, "+
-     "create a new table with one column whose entries "+
-     "are an evenly-spaced grid. This takes four arguments, the name of "+
+     "this option creates a new table with one column whose entries "+
+     "are an evenly-spaced grid. In this case four additional arguments "+
+     "are needed: the name of "+
      "the column, the first value, the maximum possible value, and the "+
-     "increment between successive values. "+
-     "Note that finite precision "+
-     "arithmetic may cause small deviations from the expected result. "+
-     "If a table is currently in memory, it is deallocated beforehand. ",
+     "increment between successive values. For array types double[] "+
+     "int[], and size_t[], the user must specify the size of the array "+
+     "and a function of the array index 'i' to fill the array. "+
+     "If an object is currently in memory, it is deallocated before "+
+     "creating the new object.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_create),
      both},
     {0,"download","Download file from specified URL.",
