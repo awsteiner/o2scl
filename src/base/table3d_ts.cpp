@@ -169,7 +169,7 @@ int main(void) {
 
     hdf_file hf;
     hf.open_or_create("table3d.o2");
-    hdf_output(hf,bt,"table3d_test");
+    hdf_output(hf,(const table3d &)bt,"table3d_test");
     hf.close();
     hf.open("table3d.o2");
     hdf_input(hf,bt2,"table3d_test");

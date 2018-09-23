@@ -46,7 +46,6 @@
 #include <o2scl/interp.h>
 #include <o2scl/table_units.h>
 #include <o2scl/contour.h>
-
 #include <o2scl/shunting_yard.h>
 
 // Forward definition of the table3d class for HDF I/O
@@ -635,7 +634,8 @@ namespace o2scl {
     // ---------
     // Allow HDF I/O functions to access table3d data
 
-    friend void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf, table3d &t, 
+    friend void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf,
+				      table3d &t, 
 				      std::string name);
     
     friend void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, table3d &t, 
