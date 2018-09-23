@@ -43,6 +43,7 @@
 #include <o2scl/err_hnd.h>
 #include <o2scl/interp.h>
 #include <o2scl/table3d.h>
+#include <o2scl/misc.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -404,6 +405,13 @@ namespace o2scl {
 
 #endif
 
+  /** \brief Swap data
+   */
+  void swap_data(vec_t &dat) {
+    std::swap(dat,data);
+    return;
+  }
+  
   /// \name Resize method
   //@{
   /** \brief Resize the tensor to rank \c rank with sizes
@@ -1195,6 +1203,60 @@ namespace o2scl {
   }
   //@}
   };
+
+  /** \brief Output a tensor to a stream
+   */
+  template<class tensor_t>
+    void tensor_out(std::ostream &os, tensor_t &t, bool pretty=true) {
+
+    if (pretty) {
+      
+      size_t rk=t.get_rank();
+      os << "rank: " << rk << " sizes: ";
+      for(size_t i=0;i<rk;i++) {
+	os << t.get_size(i) << " ";
+      }
+      os << std::endl;
+      auto &data=t.get_data();
+      std::vector<size_t> ix(rk);
+      std::vector<std::string> sv, sv_out;
+      for(size_t i=0;i<t.total_size();i++) {
+	t.unpack_index(i,ix);
+	std::string tmp="(";
+	for(size_t j=0;j<rk;j++) {
+	  if (j!=rk-1) {
+	    tmp+=o2scl::szttos(ix[j])+",";
+	  } else {
+	    tmp+=o2scl::szttos(ix[j]);
+	  }
+	}
+	tmp+="): "+o2scl::dtos(data[i]);
+	sv.push_back(tmp);
+      }
+      screenify(sv.size(),sv,sv_out);
+      for(size_t k=0;k<sv_out.size();k++) {
+	os << sv_out[k] << std::endl;
+      }
+
+    } else {
+      
+      size_t rk=t.get_rank();
+      os << rk << " ";
+      for(size_t i=0;i<rk;i++) {
+	os << t.get_size(i) << " ";
+      }
+      os << std::endl;
+      auto &data=t.get_data();
+      for(size_t i=0;i<t.total_size();i++) {
+	os << data[i] << " ";
+	if (i%10==9) os << std::endl;
+      }
+      os << std::endl;
+      
+    }
+    
+    return;
+  }
   
 #ifndef DOXYGEN_NO_O2NS
 }

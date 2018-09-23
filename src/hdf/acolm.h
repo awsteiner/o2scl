@@ -330,6 +330,11 @@ namespace o2scl_acol {
      */
     virtual int comm_to_table3d(std::vector<std::string> &sv, bool itive_com);
 
+    /** \brief Convert object to a \ref o2scl::tensor_grid object
+     */
+    virtual int comm_to_tensor_grid(std::vector<std::string> &sv,
+				    bool itive_com);
+
     /** \brief Convert object to a \ref o2scl::table3d object
 	by summing over tensor indices
      */

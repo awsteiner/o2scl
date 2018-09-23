@@ -355,7 +355,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   }
   {
     vector<std::string> itmp={"list","diag","to-table3d","to-table3d-sum",
-			      "max","min"};
+			      "max","min","to-tensor-grid"};
     type_comm_list.insert(std::make_pair("tensor",itmp));
   }
   {
@@ -779,7 +779,7 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="tensor") {
     
-    static const size_t narr=6;
+    static const size_t narr=7;
     comm_option_s options_arr[narr]={
       {'l',"list","List the rank and sizes.",
        0,0,"","List the rank and sizes.",
@@ -789,7 +789,8 @@ void acol_manager::command_add(std::string new_type) {
        -1,-1,"<x index> <y index> <slice name> [fixed 1] [fixed 2] ...",
        "",new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_to_table3d),both},
-      {0,"to-table3d-sum","Select two indices and convert to a table3d object.",
+      {0,"to-table3d-sum",
+       "Select two indices and convert to a table3d object.",
        -1,-1,"<x name> <y name> <slice name> [fixed 1] [fixed 2] ...",
        "",new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_to_table3d_sum),both},
@@ -804,7 +805,9 @@ void acol_manager::command_add(std::string new_type) {
       {0,"min","Find the minimum value of and index.",0,0,"",
        "Compute the minimum value.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
-       both}
+       both},
+      {0,"to-tensor-grid","",0,0,"","",new comm_option_mfptr<acol_manager>
+       (this,&acol_manager::comm_to_tensor_grid),both}
     };
     cl->set_comm_option_vec(narr,options_arr);
     
@@ -1163,6 +1166,7 @@ void acol_manager::command_del() {
     cl->remove_comm_option("to-table3d-sum");
     cl->remove_comm_option("max");
     cl->remove_comm_option("min");
+    cl->remove_comm_option("to-tensor-grid");
 
   } else if (type=="prob_dens_mdim_amr") {
     
@@ -2305,113 +2309,15 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
 
   } else if (type=="tensor") {
 
-    if (pretty) {
-      size_t rk=tensor_obj.get_rank();
-      (*fout) << "rank: " << rk << " sizes: ";
-      for(size_t i=0;i<rk;i++) {
-	(*fout) << tensor_obj.get_size(i) << " ";
-      }
-      (*fout) << endl;
-      const vector<double> &data=tensor_obj.get_data();
-      vector<size_t> ix(rk);
-      for(size_t i=0;i<tensor_obj.total_size();i++) {
-	tensor_obj.unpack_index(i,ix);
-	(*fout) << "(";
-	for(size_t j=0;j<rk;j++) {
-	  if (j!=rk-1) {
-	    (*fout) << ix[j] << ",";
-	  } else {
-	    (*fout) << ix[j];
-	  }
-	}
-	(*fout) << "): " << data[i] << " ";
-	if (i%6==5) (*fout) << endl;
-      }
-      (*fout) << endl;
-    } else {
-      size_t rk=tensor_obj.get_rank();
-      (*fout) << rk << " ";
-      for(size_t i=0;i<rk;i++) {
-	(*fout) << tensor_obj.get_size(i) << " ";
-      }
-      (*fout) << endl;
-      const vector<double> &data=tensor_obj.get_data();
-      for(size_t i=0;i<tensor_obj.total_size();i++) {
-	(*fout) << data[i] << " ";
-	if (i%6==5) (*fout) << endl;
-      }
-      (*fout) << endl;
-    }
+    tensor_out(*fout,tensor_obj,pretty);
     
   } else if (type=="tensor<int>") {
 
-    if (pretty) {
-      size_t rk=tensor_int_obj.get_rank();
-      (*fout) << "rank: " << rk << " sizes: ";
-      for(size_t i=0;i<rk;i++) {
-	(*fout) << tensor_int_obj.get_size(i) << " ";
-      }
-      (*fout) << endl;
-      const vector<int> &data=tensor_int_obj.get_data();
-      for(size_t i=0;i<tensor_int_obj.total_size();i++) {
-	(*fout) << data[i] << " ";
-	if (i%6==5) (*fout) << endl;
-      }
-      (*fout) << endl;
-    } else {
-      size_t rk=tensor_int_obj.get_rank();
-      (*fout) << rk << " ";
-      for(size_t i=0;i<rk;i++) {
-	(*fout) << tensor_int_obj.get_size(i) << " ";
-      }
-      (*fout) << endl;
-      const vector<int> &data=tensor_int_obj.get_data();
-      for(size_t i=0;i<tensor_int_obj.total_size();i++) {
-	(*fout) << data[i] << " ";
-	if (i%6==5) (*fout) << endl;
-      }
-      (*fout) << endl;
-    }
+    tensor_out(*fout,tensor_int_obj,pretty);
     
   } else if (type=="tensor<size_t>") {
 
-    if (pretty) {
-      size_t rk=tensor_size_t_obj.get_rank();
-      (*fout) << "rank: " << rk << " sizes: ";
-      for(size_t i=0;i<rk;i++) {
-	(*fout) << tensor_size_t_obj.get_size(i) << " ";
-      }
-      (*fout) << endl;
-      const vector<size_t> &data=tensor_size_t_obj.get_data();
-      vector<size_t> ix(rk);
-      for(size_t i=0;i<tensor_size_t_obj.total_size();i++) {
-	tensor_size_t_obj.unpack_index(i,ix);
-	(*fout) << "(";
-	for(size_t j=0;j<rk;j++) {
-	  if (j!=rk-1) {
-	    (*fout) << ix[j] << ",";
-	  } else {
-	    (*fout) << ix[j];
-	  }
-	}
-	(*fout) << "): " << data[i] << " ";
-	if (i%6==5) (*fout) << endl;
-      }
-      (*fout) << endl;
-    } else {
-      size_t rk=tensor_size_t_obj.get_rank();
-      (*fout) << rk << " ";
-      for(size_t i=0;i<rk;i++) {
-	(*fout) << tensor_size_t_obj.get_size(i) << " ";
-      }
-      (*fout) << endl;
-      const vector<size_t> &data=tensor_size_t_obj.get_data();
-      for(size_t i=0;i<tensor_size_t_obj.total_size();i++) {
-	(*fout) << data[i] << " ";
-	if (i%6==5) (*fout) << endl;
-      }
-      (*fout) << endl;
-    }
+    tensor_out(*fout,tensor_size_t_obj,pretty);
     
   } else if (type=="uniform_grid<double>") {
 
@@ -4037,6 +3943,69 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
   return 0;
 }
 
+int acol_manager::comm_to_tensor_grid(std::vector<std::string> &sv,
+				      bool itive_com) {
+
+  if (type=="tensor") {
+
+    // Get rank
+    size_t rank=tensor_obj.get_rank();
+
+    // Get sizes and functions
+    vector<string> funcs(rank);
+    vector<size_t> sz(rank);
+    for(size_t j=0;j<rank;j++) {
+      if (sv.size()>j+1) {
+	funcs[j]=sv[j+1];
+      } else {
+	funcs[j]='i';
+      }
+      sz[j]=tensor_obj.get_size(j);
+    }
+
+    // Resize tensor_grid object
+    tensor_grid_obj.resize(rank,sz);
+
+    // Create grids
+    std::vector<std::vector<double> > grid(rank);
+
+    for(size_t j=0;j<rank;j++) {
+      vector<double> grid_tmp;
+      
+      calculator calc;
+      std::map<std::string,double> vars;
+      calc.compile(funcs[j].c_str(),&vars);
+      
+      for(size_t k=0;k<sz[j];k++) {
+	vars["i"]=((double)k);
+	grid_tmp.push_back(calc.eval(&vars));
+      }
+
+      grid.push_back(grid_tmp);
+    }
+
+    tensor_grid_obj.set_grid(grid);
+
+    // Swap data from tensor into tensor_grid
+    vector<double> d;
+    tensor_obj.swap_data(d);
+    tensor_grid_obj.swap_data(d);
+
+    command_del();
+    clear_obj();
+    command_add("tensor_grid");
+    type="tensor_grid";
+
+  } else {
+    
+    cerr << "Cannot use command 'to-tensor-grid' for type "
+	 << type << "." << endl;
+    return exc_efailed;
+  }
+  
+  return 0;
+}
+
 int acol_manager::comm_download(std::vector<std::string> &sv, bool itive_com) {
 
   cloud_file cf;
@@ -5447,6 +5416,7 @@ int acol_manager::comm_function(std::vector<std::string> &sv, bool itive_com) {
 
     // Create column from function
     for(size_t j=0;j<doublev_obj.size();j++) {
+      vars["i"]=((double)j);
       doublev_obj[j]=calc.eval(&vars);
     }
     
@@ -5464,6 +5434,7 @@ int acol_manager::comm_function(std::vector<std::string> &sv, bool itive_com) {
 
     // Create column from function
     for(size_t j=0;j<intv_obj.size();j++) {
+      vars["i"]=((double)j);
       intv_obj[j]=(int)calc.eval(&vars);
     }
     
@@ -5481,6 +5452,7 @@ int acol_manager::comm_function(std::vector<std::string> &sv, bool itive_com) {
 
     // Create column from function
     for(size_t j=0;j<size_tv_obj.size();j++) {
+      vars["i"]=((double)j);
       size_tv_obj[j]=(size_t)calc.eval(&vars);
     }
     
