@@ -1100,7 +1100,7 @@ int acol_manager::setup_options() {
      "separated by white space, without carriage returns, except for "+
      "the one at the end of the line. If the first line contains "+
      "column names, the second line may optionally contain unit "+
-     "expressions for each column, enclosed by square brackets."+
+     "expressions for each column, enclosed by square brackets. "+
      "All remaining lines are assumed "+
      "to contain data with the same number of columns as the first line. "+
      "For table3d objects, the data must be stored in columns "+
