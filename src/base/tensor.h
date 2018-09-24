@@ -206,6 +206,8 @@ namespace o2scl {
   
   /// \name Copy constructors
   //@{
+  /** \brief Copy using <tt>operator()</tt>
+   */
   tensor<data_t,vec_t,vec_size_t>
   (const tensor<data_t,vec_t,vec_size_t> &t) {
     rk=t.rk;
@@ -213,6 +215,8 @@ namespace o2scl {
     size=t.size;
   }
 
+  /** \brief Copy using <tt>operator=()</tt>
+   */
   tensor<data_t,vec_t,vec_size_t> &operator=
   (const tensor<data_t,vec_t,vec_size_t> &t) {
     if (this!=&t) {
@@ -273,6 +277,17 @@ namespace o2scl {
   /// Set all elements in a tensor to some fixed value
   void set_all(data_t x) {
     for(size_t i=0;i<total_size();i++) data[i]=x;
+    return;
+  }
+  
+  /** \brief Swap the data vector
+   */
+  void swap_data(vec_t &dat) {
+    if (data.size()!=dat.size()) {
+      O2SCL_ERR2("Size of new vector does not equal tensor size in ",
+		"tensor::swap_data().",o2scl::exc_einval);
+    }
+    std::swap(dat,data);
     return;
   }
   //@}
@@ -405,13 +420,6 @@ namespace o2scl {
 
 #endif
 
-  /** \brief Swap data
-   */
-  void swap_data(vec_t &dat) {
-    std::swap(dat,data);
-    return;
-  }
-  
   /// \name Resize method
   //@{
   /** \brief Resize the tensor to rank \c rank with sizes
@@ -483,17 +491,6 @@ namespace o2scl {
     for(size_t i=0;i<rk;i++) tot*=size[i];
     return tot;
   }
-
-  /** \brief Return the sum over every element in the tensor
-   */
-  double total_sum() const { 
-    if (rk==0) return 0.0;
-    double tot=0.0;
-    for(size_t i=0;i<data.size();i++) {
-      tot+=data[i];
-    }
-    return tot;
-  }
   //@}
 
   /// \name Index manipulation
@@ -552,7 +549,7 @@ namespace o2scl {
   }
   //@}
 
-  /// \name Minimum and maximum
+  /// \name Minimum, maximum, and sum
   //@{
   /** \brief Compute the minimum value in the tensor
    */
@@ -630,6 +627,17 @@ namespace o2scl {
     unpack_index(ix_min,index_min);
     unpack_index(ix_max,index_max);
     return;
+  }
+
+  /** \brief Return the sum over every element in the tensor
+   */
+  double total_sum() const { 
+    if (rk==0) return 0.0;
+    double tot=0.0;
+    for(size_t i=0;i<data.size();i++) {
+      tot+=data[i];
+    }
+    return tot;
   }
   //@}
   

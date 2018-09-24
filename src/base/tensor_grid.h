@@ -71,8 +71,8 @@ namespace o2scl {
       
       This tensor class allows one to assign the indexes to numerical
       scales, effectively defining a data set on an n-dimensional
-      grid. To set the grid, use \ref set_grid() or \ref
-      set_grid_packed().
+      grid. To set the grid, use \ref default_grid(), \ref set_grid()
+      or \ref set_grid_packed().
       
       By convention, member functions ending in the <tt>_val</tt>
       suffix return the closest grid-point to some user-specified
@@ -171,13 +171,15 @@ namespace o2scl {
 #endif
     
   public:
-    
-  /// Create an empty tensor with zero rank
+
+    /// \name Constructors and Destructors
+    //@{
+    /// Create an empty tensor with zero rank
   tensor_grid() : tensor<double,vec_t,vec_size_t>() {
       grid_set=false;
       itype=itp_linear;
     }
-
+    
     /** \brief Create a tensor of rank \c rank with sizes given in \c dim
 	
 	The parameter \c dim must be a vector of sizes with length \c
@@ -199,7 +201,7 @@ namespace o2scl {
 	}
       }
     }
-
+    
     /** \brief Create a tensor with a grid defined by a set
 	of \ref o2scl::uniform_grid objects
     */
@@ -215,10 +217,15 @@ namespace o2scl {
       this->data.resize(tot);
       set_grid(ugs);
     }
-    
+
+    /** \brief Destructor
+     */
     virtual ~tensor_grid() {
     }
+    //@}
 
+    /// \name Method to check for valid object
+    //@{
     /** \brief Check that the \ref o2scl::tensor_grid object is valid
      */
     void is_valid() const {
@@ -246,9 +253,12 @@ namespace o2scl {
       
       return;
     }
+    //@}
     
     /// \name Copy constructors
     //@{
+    /** \brief Copy using <tt>operator()</tt>
+     */
     tensor_grid<vec_t,vec_size_t>
       (const tensor_grid<vec_t,vec_size_t> &t) {
       this->rk=t.rk;
@@ -259,6 +269,8 @@ namespace o2scl {
       itype=t.itype;
     }
     
+    /** \brief Copy using <tt>operator=()</tt>
+     */
     tensor_grid<vec_t,vec_size_t> &operator=
       (const tensor_grid<vec_t,vec_size_t> &t) {
       if (this!=&t) {
@@ -491,6 +503,78 @@ namespace o2scl {
 	}
       }
       grid_set=true;
+      return;
+    }
+
+    /** \brief Use a default grid which just uses the index
+     */
+    void default_grid() {
+      size_t ngrid=0;
+      for(size_t i=0;i<this->rk;i++) ngrid+=this->size[i];
+      grid.resize(ngrid);
+      size_t k=0;
+      for(size_t i=0;i<this->rk;i++) {
+	for(size_t j=0;j<this->size[i];j++) {
+	  grid[k]=((double)j);
+	  k++;
+	}
+      }
+      grid_set=true;
+      return;
+    }
+    
+    /** \brief Set grid for one index from a vector
+     */
+    template<class vec2_t>
+      void set_grid_i_vec(size_t ix, const vec2_t &grid_vec) {
+      if (grid_set==false) {
+	O2SCL_ERR2("Grid not already set in ",
+		   "tensor_grid::set_grid_i_vec().",exc_einval);
+      }
+      if (this->rk==0) {
+	O2SCL_ERR2("Tried to set grid for empty tensor in ",
+		   "tensor_grid::set_grid_i_vec().",exc_einval);
+      }
+      size_t k=0;
+      for(size_t i=0;i<this->rk;i++) {
+	for(size_t j=0;j<this->size[i];j++) {
+	  if (j==ix) {
+	    grid[k]=grid_vec[j];
+	  }
+	  k++;
+	}
+      }
+      return;
+    }
+
+    /** \brief Set grid for one index from a function
+     */
+    template<class vec2_t>
+      void set_grid_i_func(size_t ix, std::string func) {
+      if (grid_set==false) {
+	O2SCL_ERR2("Grid not already set in ",
+		   "tensor_grid::set_grid_i_func().",exc_einval);
+      }
+      if (this->rk==0) {
+	O2SCL_ERR2("Tried to set grid for empty tensor in ",
+		   "tensor_grid::set_grid_i_func().",exc_einval);
+      }
+
+      calculator calc;
+      std::map<std::string,double> vars;
+      calc.compile(func.c_str(),&vars);
+      
+      size_t k=0;
+      for(size_t i=0;i<this->rk;i++) {
+	for(size_t j=0;j<this->size[i];j++) {
+	  if (j==ix) {
+	    vars["i"]=((double)j);
+	    grid[k]=calc.eval(&vars);
+	  }
+	  k++;
+	}
+      }
+      
       return;
     }
 
