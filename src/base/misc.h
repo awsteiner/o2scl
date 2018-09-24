@@ -592,8 +592,9 @@ namespace o2scl {
 
   };
 
-  /** \brief Desc
-   */
+  /** \brief Wrapper for the glob() function which
+      finds files which match a pattern
+  */
   int glob_wrapper(std::string pattern,
 			  std::vector<std::string> &matches);
   
