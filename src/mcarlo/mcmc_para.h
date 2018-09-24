@@ -490,7 +490,7 @@ namespace o2scl {
 	for(size_t k=0;k<initial_points[i].size();k++) {
 	  if (!std::isfinite(initial_points[i][k])) {
 	    O2SCL_ERR2("Initial point not finite in ",
-		       "mcmc_para::mcmc_init().",o2scl::exc_einval);
+		       "mcmc_para::mcmc().",o2scl::exc_einval);
 	  }
 	}
 	for(size_t j=i+1;j<initial_points.size();j++) {
@@ -507,7 +507,7 @@ namespace o2scl {
 	    std::cout << j << " ";
 	    o2scl::vector_out(std::cout,initial_points[j],true);
 	    O2SCL_ERR2("Initial points not distinct in ",
-		       "mcmc_para::mcmc_init().",o2scl::exc_einval);
+		       "mcmc_para::mcmc().",o2scl::exc_einval);
 	  }
 	}
       }
@@ -731,8 +731,8 @@ namespace o2scl {
 	      } else if (func_ret[it]==o2scl::success) {
 
 		// If we have a good point, update ret_value_counts
-		// and call the measurement function 
-		if (func_ret[it]>=0 && ret_value_counts.size()>=it && 
+		// and call the measurement function
+		if (func_ret[it]>=0 && ret_value_counts.size()>it && 
 		    func_ret[it]<((int)ret_value_counts[it].size())) {
 		  ret_value_counts[it][func_ret[it]]++;
 		}
@@ -781,7 +781,7 @@ namespace o2scl {
 		// If we have a good point, update ret_value_counts,
 		// call the measurement function and stop the loop
 		if (func_ret[it]==o2scl::success) {
-		  if (func_ret[it]>=0 && ret_value_counts.size()>=it && 
+		  if (func_ret[it]>=0 && ret_value_counts.size()>it && 
 		      func_ret[it]<((int)ret_value_counts[it].size())) {
 		    ret_value_counts[it][func_ret[it]]++;
 		  }
@@ -952,7 +952,7 @@ namespace o2scl {
 	  }
 	  
 	  // Update the return value count
-	  if (func_ret[it]>=0 && ret_value_counts.size()>=it && 
+	  if (func_ret[it]>=0 && ret_value_counts.size()>it && 
 	      func_ret[it]<((int)ret_value_counts[it].size())) {
 	    ret_value_counts[it][func_ret[it]]++;
 	  }
@@ -1125,7 +1125,7 @@ namespace o2scl {
 	      if (func_ret[it]==mcmc_done) {
 		mcmc_done_flag[it]=true;
 	      } else {
-		if (func_ret[it]>=0 && ret_value_counts.size()>=it && 
+		if (func_ret[it]>=0 && ret_value_counts.size()>it && 
 		    func_ret[it]<((int)ret_value_counts[it].size())) {
 		  ret_value_counts[it][func_ret[it]]++;
 		}
@@ -1302,7 +1302,7 @@ namespace o2scl {
 		main_done=true;
 	      }
 	    }
-	    
+
 	    // End of 'main_done' while loop for aff_inv=false
 	  }
 	  
@@ -1413,7 +1413,7 @@ namespace o2scl {
 	      if (func_ret[it]==mcmc_done) {
 		mcmc_done_flag[it]=true;
 	      } else {
-		if (func_ret[it]>=0 && ret_value_counts.size()>=it && 
+		if (func_ret[it]>=0 && ret_value_counts.size()>it && 
 		    func_ret[it]<((int)ret_value_counts[it].size())) {
 		  ret_value_counts[it][func_ret[it]]++;
 		}
@@ -2035,7 +2035,7 @@ namespace o2scl {
       }
     }
 #endif
-    
+
 #ifdef O2SCL_MPI
     // Ensure that multiple threads aren't writing to the
     // filesystem at the same time
@@ -2080,9 +2080,11 @@ namespace o2scl {
     
     hf.set_szt_vec("n_accept",this->n_accept);
     hf.set_szt_vec("n_reject",this->n_reject);
-    hf.set_szt_arr2d_copy("ret_value_counts",this->ret_value_counts.size(),
-			  this->ret_value_counts[0].size(),
-			  this->ret_value_counts);
+    if (this->ret_value_counts.size()>0) {
+      hf.set_szt_arr2d_copy("ret_value_counts",this->ret_value_counts.size(),
+			    this->ret_value_counts[0].size(),
+			    this->ret_value_counts);
+    }
     hf.setd_arr2d_copy("initial_points",this->initial_points.size(),
 		       this->initial_points[0].size(),
 		       this->initial_points);
@@ -2833,7 +2835,7 @@ namespace o2scl {
     }
 
     write_files(true);
-    
+
     return parent_t::mcmc_cleanup();
   }
 

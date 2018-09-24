@@ -27,6 +27,7 @@ using namespace std;
 using namespace o2scl;
 #ifdef O2SCL_HDF
 #include <o2scl/hdf_file.h>
+#include <o2scl/hdf_io.h>
 using namespace o2scl_hdf;
 #endif
 
