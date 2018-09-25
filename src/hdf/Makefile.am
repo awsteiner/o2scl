@@ -5,7 +5,8 @@
 HEADER_VAR = hdf_file.h hdf_io.h cloud_file.h acolm.h
 
 HDF_SRCS = hdf_file.cpp hdf_io.cpp cloud_file.cpp acolm.cpp acolm_ac.cpp \
-	acolm_o2graph.cpp acolm_df.cpp
+	acolm_o2graph.cpp acolm_df.cpp acolm_gi.cpp acolm_jo.cpp \
+	acolm_ps.cpp acolm_tz.cpp
 
 TEST_VAR = hdf_file.scr hdf_io.scr
 
