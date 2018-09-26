@@ -2059,6 +2059,9 @@ namespace o2scl {
       hf.setd_vec_copy("low",this->low_copy);
       hf.set_szt("max_bad_steps",this->max_bad_steps);
       hf.set_szt("max_iters",this->max_iters);
+      hf.set_szt("max_time",this->max_time);
+      hf.set_szt("file_update_iters",this->file_update_iters);
+      hf.set_szt("file_update_time",this->file_update_time);
       hf.seti("mpi_rank",this->mpi_rank);
       hf.seti("mpi_size",this->mpi_size);
       hf.set_szt("n_chains_per_rank",this->n_chains_per_rank);
