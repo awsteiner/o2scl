@@ -167,7 +167,7 @@ namespace o2scl {
     /// Initialize interpolation routine
     virtual void set(size_t size, const vec_t &x, const vec2_t &y)=0;
     
-    /// Give the value of the function \f$ y(x=x_0) \f$ .
+    /// Give the value of the function \f$ y(x=x_0) \f$  
     virtual double eval(double x0) const=0;
     
     /// Give the value of the function \f$ y(x=x_0) \f$ .
@@ -1693,30 +1693,40 @@ namespace o2scl {
     delete itp;
   }
 
-  /// Give the value of the function \f$ y(x=x_0) \f$ .
+  /** \brief Give the value of the function, \f$ y(x=x_0) \f$ , as
+      specified as the first \c n elements of vectors \c x and \c y
+   */
   virtual double eval(const double x0, size_t n, const vec_t &x, 
 			const vec2_t &y) {
     itp->set(n,x,y);
     return itp->eval(x0);
   }		      
     
-  /// Give the value of the derivative \f$ y^{\prime}(x=x_0) \f$ .
+  /** \brief Give the value of the derivative, \f$ y^{\prime}(x=x_0)
+      \f$ , where \f$ y(x) \f$ is specified in the first 
+      \c n elements of vectors \c x and
+      \c y
+   */
   virtual double deriv(const double x0, size_t n, const vec_t &x, 
 		       const vec2_t &y) {
     itp->set(n,x,y);
     return itp->deriv(x0);
   }		      
     
-  /** \brief Give the value of the second derivative  
-      \f$ y^{\prime \prime}(x=x_0) \f$ .
-  */
+  /** \brief Give the value of the second derivative, \f$
+      y^{\prime\prime}(x=x_0) \f$ , where \f$ y(x) \f$ is specified in
+      the first \c n elements of vectors \c x and \c y
+   */
   virtual double deriv2(const double x0, size_t n, const vec_t &x, 
 			const vec2_t &y) {
     itp->set(n,x,y);
     return itp->deriv2(x0);
   }		      
     
-  /// Give the value of the integral \f$ \int_a^{b}y(x)~dx \f$ .
+  /** \brief Give the value of the integral \f$ \int_a^{b}y(x)~dx \f$
+      , where \f$ y(x) \f$ is specified in the first \c n elements of
+      vectors \c x and \c y
+  */
   virtual double integ(const double x1, const double x2, size_t n, 
 		       const vec_t &x, const vec2_t &y) {
     itp->set(n,x,y);
@@ -1751,9 +1761,9 @@ namespace o2scl {
   }
       
 #ifndef DOXYGEN_INTERNAL
-
+  
   private:
-
+  
   interp<vec_t,vec2_t>(const interp<vec_t,vec2_t> &);
   interp<vec_t,vec2_t>& operator=(const interp<vec_t,vec2_t>&);
 
@@ -1805,7 +1815,10 @@ namespace o2scl {
     itype=itp_cspline;
   }
     
-  /// Create with base interpolation object \c it
+  /** \brief Create an interpolation object with interpolation type
+      \c itp_cspline based on the first \c n entries of vectors
+      \c x and \c y
+  */
   interp_vec(size_t n, const vec_t &x, 
 	     const vec2_t &y, size_t interp_type=itp_cspline) {
     
@@ -1847,8 +1860,9 @@ namespace o2scl {
     }
   }
 
-  /** \brief Set a new vector to interpolate
-   */
+  /** \brief Modify the interpolation object to operate on the first
+      \c n entries of vectors \c x and \c y
+  */
   void set(size_t n, const vec_t &x, const vec2_t &y) {
     set(n,x,y,itype);
     return;
