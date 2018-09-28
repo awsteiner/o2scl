@@ -199,7 +199,7 @@ double eos_had_base::feta(double nb) {
   neutron->n=nb*0.75;
   proton->n=nb*0.25;
   calc_e(*neutron,*proton,*eos_thermo);
-  eoa_mixed=eos_thermo->ed/nb-(neutron->m+proton->m)/2.0;
+  eoa_mixed=eos_thermo->ed/nb-(3.0*neutron->m+proton->m)/4.0;
   
   return (eoa_neut-eoa_mixed)/3.0/(eoa_mixed-eoa_nuc);
 }
