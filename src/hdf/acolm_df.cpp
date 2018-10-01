@@ -455,17 +455,7 @@ int acol_manager::comm_function(std::vector<std::string> &sv, bool itive_com) {
       in[0]=in[0].substr(1,in[0].size()-2);
     }
     
-    if (table_obj.is_column(in[1])==true) {
-      cerr << "Already a column named '" << in[1] << "'." << endl;
-      return exc_efailed;
-    }
-    
     table_obj.function_column(in[0],in[1]);
-    
-    if (ret!=0) {
-      cerr << "Function make_col() failed." << endl;
-      return exc_efailed;
-    }
 
   } else if (type=="double[]") {
 
