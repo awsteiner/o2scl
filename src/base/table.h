@@ -308,8 +308,10 @@ namespace o2scl {
   void set(std::string scol, size_t row, double val) {
 
     if (row>=nlines) {
-      O2SCL_ERR2("Specified row beyond end of table in ",
-		 "table::set(string,size_t,double).",exc_einval);
+      std::string str=((std::string)"Row ")+o2scl::szttos(row)+
+      " beyond end of table (nlines="+o2scl::szttos(nlines)+") in "+
+      "table::set(string,size_t,double).";
+      O2SCL_ERR(str.c_str(),exc_einval);
       return;
     }
 

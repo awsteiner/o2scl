@@ -252,10 +252,11 @@ void acol_manager::command_add(std::string new_type) {
        "<x> <y> <yerr> <ynew> <par names> <func> <vals>","",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_fit),
        both},
-      {'f',"function","Create a new column from a function.",0,2,
+      {'f',"function","Set a column from a function.",0,2,
        "<func> <name>",
-       ((string)"Create a new column named <name> from a function (in ")+
-       "<func>) in terms of the other columns. For example, for "+
+       ((string)"Set the column named <name> to the result of a function, ")+
+       "<func>, in terms of the other columns. If the column does not "+
+       "already exist, a new one is added to the table. For example, for "+
        "a table containing columns named 'c1' and 'c2', 'function "+
        "c1-c2 c3' would create a new column c3 which contains the "+
        "difference of columns 'c1' and 'c2'.",
@@ -460,8 +461,9 @@ void acol_manager::command_add(std::string new_type) {
        both},
       {'f',"function","Create a new slice from a function.",0,2,
        "<func> <name>",
-       ((string)"Create a new slice named <name> from a function (in ")+
-       "<func>) in terms of the other slices. For example, for "+
+       ((string)"Set the slice named <name> to the result of a function, ")+
+       "<func>, in terms of the other slices. If the slice does not "+
+       "already exist, a new one is created. For example, for "+
        "a table3d containing slices named 's1' and 's2', 'function "+
        "s1-s2 s3' would create a new column 's3' which contains the "+
        "difference of columns 's1' and 's2'.",
