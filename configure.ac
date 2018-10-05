@@ -390,7 +390,8 @@ AC_CONFIG_FILES([Makefile
                  src/root/arma/Makefile	
                  src/root/both/Makefile	
                  src/root/eigen/Makefile	
-                 src/root/neither/Makefile	
+                 src/root/neither/Makefile
+		 acol/Makefile
 		 include/Makefile
 		 include/o2scl/Makefile	
                  data/Makefile
