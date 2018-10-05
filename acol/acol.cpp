@@ -24,7 +24,7 @@
 #include <config.h>
 #endif
 
-#include "hdf/acolm.h"
+#include "../src/hdf/acolm.h"
 
 using namespace std;
 using namespace o2scl;
