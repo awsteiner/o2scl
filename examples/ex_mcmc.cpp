@@ -36,6 +36,8 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_hdf;
 
+/// Several convenient typedefs
+
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
@@ -59,7 +61,7 @@ public:
       The object 'dat' stores any auxillary quantities which can be
       computed at every point in parameter space.
   */
-  int point(size_t nv, const ubvector &pars, double &log_weight,
+  int gauss2d(size_t nv, const ubvector &pars, double &log_weight,
 	    std::array<double,2> &dat) {
   
     log_weight=-(pars[0]-0.2)*(pars[0]-0.2)-
@@ -77,7 +79,7 @@ public:
       The object 'dat' stores any auxillary quantities which can be
       computed at every point in parameter space.
   */
-  int point2(size_t nv, const ubvector &pars, double &log_weight,
+  int bimodal(size_t nv, const ubvector &pars, double &log_weight,
 	     std::array<double,2> &dat) {
     
     double x=pars[0];
@@ -128,14 +130,19 @@ int main(int argc, char *argv[]) {
   test_mgr tm;
   tm.set_output_level(1);
 
-  // Parameter limits and initial point
-  ubvector low(2), high(2), init(2);
-  low[0]=-1.5;
-  low[1]=-1.5;
-  high[0]=1.5;
-  high[1]=1.5;
-  init[0]=0.2;
-  init[1]=0.5;
+  // Parameter limits and initial points
+
+  ubvector low_gauss2d(2), high_gauss2d(2), init_gauss2d(2);
+  low_gauss2d[0]=-1.5;
+  low_gauss2d[1]=-1.5;
+  high_gauss2d[0]=1.5;
+  high_gauss2d[1]=1.5;
+  init_gauss2d[0]=0.2;
+  init_gauss2d[1]=0.5;
+  
+  ubvector low_bimodal(1), high_bimodal(1);
+  low_bimodal[0]=-5.0;
+  high_bimodal[0]=5.0;
 
   // Use cubature to compute integrals
   std::vector<double> dlow(2), dhigh(2);
@@ -158,49 +165,55 @@ int main(int argc, char *argv[]) {
   exact_res[0]=dres[1]/dres[0];
   exact_res[1]=dres[2]/dres[0];
 
-  point_funct pf=std::bind
+  // Function objects for the MCMC object
+  point_funct gauss2d_func=std::bind
     (std::mem_fn<int(size_t,const ubvector &,double &,
-		     std::array<double,2> &)>(&exc::point),&e,
+		     std::array<double,2> &)>(&exc::gauss2d),&e,
      std::placeholders::_1,std::placeholders::_2,std::placeholders::_3,
      std::placeholders::_4);
-  point_funct pf2=std::bind
+  point_funct bimodal_func=std::bind
     (std::mem_fn<int(size_t,const ubvector &,double &,
-		     std::array<double,2> &)>(&exc::point2),&e,
+		     std::array<double,2> &)>(&exc::bimodal),&e,
      std::placeholders::_1,std::placeholders::_2,std::placeholders::_3,
      std::placeholders::_4);
-  fill_funct ff=std::bind
+  fill_funct fill_func=std::bind
     (std::mem_fn<int(const ubvector &,double,std::vector<double> &,
 		     std::array<double,2> &)>(&exc::fill_line),&e,
      std::placeholders::_1,std::placeholders::_2,std::placeholders::_3,
      std::placeholders::_4);
 
-  vector<point_funct> vpf;
-  vpf.push_back(pf);
-  vector<point_funct> vpf2;
-  vpf2.push_back(pf2);
-  vector<fill_funct> vff;
-  vff.push_back(ff);
+  vector<point_funct> gauss2d_vec;
+  gauss2d_vec.push_back(gauss2d_func);
+  vector<point_funct> bimodal_vec;
+  bimodal_vec.push_back(bimodal_func);
+  vector<fill_funct> fill_vec;
+  fill_vec.push_back(fill_func);
 
-  if (false) {
+  if (true) {
+
     cout << "----------------------------------------------------------"
 	 << endl;
-    cout << "Plain MCMC example with bimodal distribution:" << endl;
-    // Bimodal distribution
+    cout << "Plain MCMC example with a bimodal distribution:" << endl;
+    
+    // Set parameter names and units
     vector<string> pnames={"x","0","1"};
     vector<string> punits={"","",""};
     mct.set_names_units(pnames,punits);
+
+    // Set MCMC parameters
     mct.step_fac=2.0;
     mct.max_iters=100000;
-    ubvector low2(1), high2(1);
-    low2[0]=-5.0;
-    high2[0]=5.0;
-    mct.mcmc(1,low2,high2,vpf2,vff);
+
+    // Perform MCMC
+    mct.mcmc(1,low_bimodal,high_bimodal,bimodal_vec,fill_vec);
+
+    // Compute autocorrelation length and effective sample size
     shared_ptr<table_units<> > t=mct.get_table();
     std::vector<double> ac, ftom;
     o2scl::vector_autocorr_vector((*t)["log_wgt"],ac);
     size_t ac_len=o2scl::vector_autocorr_tau(ac,ftom);
-    cout << "ac_len,samp_size: " << ac_len << " "
-	 << t->get_nlines()/ac_len << endl;
+    cout << "Autocorrelation length, effective sample size: "
+	 << ac_len << " " << t->get_nlines()/ac_len << endl;
     //mct.reblock(t->get_nlines()/ac_len);
     hist h;
     h.from_table(*t,"x",40);
@@ -209,23 +222,32 @@ int main(int argc, char *argv[]) {
     hdf_output(hf,h,"hist");
     hdf_output(hf,*t,"table");
     hf.close();
+
   }
   
-  if (false) {
+  if (true) {
+    
     cout << "----------------------------------------------------------"
 	 << endl;
     cout << "Plain MCMC example with Gaussian distribution:" << endl;
-    // Plain example with Gaussian
+
+    // Parameter names and units
     vector<string> pnames={"x0","x1","0","1"};
     vector<string> punits={"","","",""};
     mct.set_names_units(pnames,punits);
+
+    // MCMC parameters
     mct.step_fac=2.0;
     mct.max_iters=100000;
-    std::vector<double> x02, x12;
-    shared_ptr<table_units<> > t;
-    mct.mcmc(2,low,high,vpf,vff);
+
+    mct.verbose=2;
+    mct.mcmc(2,low_gauss2d,high_gauss2d,gauss2d_vec,fill_vec);
+
+    // Analyze results
     cout << "Steps accepted, rejected: " << mct.n_accept[0] << " "
 	 << mct.n_reject[0] << endl;
+    std::vector<double> x02, x12;
+    shared_ptr<table_units<> > t;
     t=mct.get_table();
     t->new_column("weight");
     t->delete_rows_func("mult<0.5");
@@ -314,7 +336,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  if (false) {
+  if (true) {
     cout << "----------------------------------------------------------"
 	 << endl;
     cout << "MCMC with affine-invariant sampling:" << endl;
@@ -327,7 +349,7 @@ int main(int argc, char *argv[]) {
     mct.max_iters=100000;
     std::vector<double> x0[5], x1[5];
     shared_ptr<table_units<> > t;
-    mct.mcmc(2,low,high,vpf,vff);
+    mct.mcmc(2,low_gauss2d,high_gauss2d,gauss2d_vec,fill_vec);
     cout << "Steps accepted, rejected: " << mct.n_accept[0] << " "
 	 << mct.n_reject[0] << endl;
     t=mct.get_table();
@@ -399,12 +421,12 @@ int main(int argc, char *argv[]) {
     
     std::vector<double> x02, x12;
     shared_ptr<table_units<> > t;
-    low[0]=-5.0;
-    low[1]=-5.0;
-    high[0]=5.0;
-    high[1]=5.0;
+    low_gauss2d[0]=-5.0;
+    low_gauss2d[1]=-5.0;
+    high_gauss2d[0]=5.0;
+    high_gauss2d[1]=5.0;
     std::cout << "Going to mcmc." << std::endl;
-    mct.mcmc(2,low,high,vpf,vff);
+    mct.mcmc(2,low_gauss2d,high_gauss2d,gauss2d_vec,fill_vec);
     // Almost all steps should be accepted because the proposal
     // distribution is so close to the true distribution.
     // Only steps near the boundaries are rejected.
@@ -463,14 +485,14 @@ int main(int argc, char *argv[]) {
     vector<prob_cond_mdim_fixed_step<ubvector> > pcmrw;
     pcmrw.resize(1);
     ubvector step(2);
-    step[0]=(high[0]-low[0])/mct.step_fac;
-    step[1]=(high[1]-low[1])/mct.step_fac;
-    pcmrw[0].set(step,low,high);
+    step[0]=(high_gauss2d[0]-low_gauss2d[0])/mct.step_fac;
+    step[1]=(high_gauss2d[1]-low_gauss2d[1])/mct.step_fac;
+    pcmrw[0].set(step,low_gauss2d,high_gauss2d);
     mct.set_proposal(pcmrw);
     
     std::vector<double> x02, x12;
     shared_ptr<table_units<> > t;
-    mct.mcmc(2,low,high,vpf,vff);
+    mct.mcmc(2,low_gauss2d,high_gauss2d,gauss2d_vec,fill_vec);
     cout << "Steps accepted, rejected: " << mct.n_accept[0] << " "
 	 << mct.n_reject[0] << endl;
     t=mct.get_table();
@@ -513,136 +535,138 @@ int main(int argc, char *argv[]) {
     hf2.close();
   }
 
-  exit(-1);
+  if (false) {
+    
+    // Table column names and units. We must specify first the names for
+    // the parameters first and then the names of the auxillary
+    // parameters.
+    vector<string> pnames={"x0","x1","x0sq","x0sq_x1sq"};
+    vector<string> punits={"MeV","MeV","MeV^2","MeV^4"};
+    mct.set_names_units(pnames,punits);
+
+    // MCMC with a random walk of a fixed length
+    cout << "MCMC with random walk:\n" << endl;
+    // This step factor is chosen to give approximately equal number of
+    // accept/reject steps but will be different for different problems
+    mct.step_fac=3.0;
+    mct.max_iters=1000;
+    mct.mcmc(2,low_gauss2d,high_gauss2d,gauss2d_vec,fill_vec);
+
+    // Get a pointer to the results table
+    shared_ptr<table_units<> > t=mct.get_table();
+
+    // Output table and other information
+    cout << "n_accept, n_reject, table lines: "
+	 << mct.n_accept[0] << " " << mct.n_reject[0] << " "
+	 << t->get_nlines() << endl;
+    cout << "    i mult        log_wgt     x0          x1          "
+	 << "x0sq        x0sq_x1sq" << endl;
+    cout.precision(4);
+    for(size_t i=0;i<t->get_nlines();i+=t->get_nlines()/10) {
+      cout.width(5);
+      cout << i << " " << t->get("mult",i) << " ";
+      cout.setf(ios::showpos);
+      cout << t->get("log_wgt",i) << " " << t->get("x0",i) << " ";
+      cout << t->get("x1",i) << " " << t->get("x0sq",i) << " "
+	   << t->get("x0sq_x1sq",i) << endl;
+      cout.unsetf(ios::showpos);
+    }
+    cout.precision(6);
+    cout << endl;
+
+    /*
+      This function averages the table into 40 blocks to remove
+      autocorrelations. The autocorrelation length is not computed here
+      (but is small enough for this example).
+    */
+    mct.reblock(40);
+
+    // Compute and test the average values
+    size_t n=t->get_nlines();
+    double t_avg=wvector_mean(n,t->get_column("x0sq"),
+			      t->get_column("mult"));
+    double t_stddev=wvector_stddev(n,t->get_column("x0sq"),
+				   t->get_column("mult"));
+    double t_avgerr=t_stddev/sqrt((double)n);
   
-  // Table column names and units. We must specify first the names for
-  // the parameters first and then the names of the auxillary
-  // parameters.
-  vector<string> pnames={"x0","x1","x0sq","x0sq_x1sq"};
-  vector<string> punits={"MeV","MeV","MeV^2","MeV^4"};
-  mct.set_names_units(pnames,punits);
-
-  // MCMC with a random walk of a fixed length
-  cout << "MCMC with random walk:\n" << endl;
-  // This step factor is chosen to give approximately equal number of
-  // accept/reject steps but will be different for different problems
-  mct.step_fac=3.0;
-  mct.max_iters=1000;
-  mct.mcmc(2,low,high,vpf,vff);
-
-  // Get a pointer to the results table
-  shared_ptr<table_units<> > t=mct.get_table();
-
-  // Output table and other information
-  cout << "n_accept, n_reject, table lines: "
-       << mct.n_accept[0] << " " << mct.n_reject[0] << " "
-       << t->get_nlines() << endl;
-  cout << "    i mult        log_wgt     x0          x1          "
-       << "x0sq        x0sq_x1sq" << endl;
-  cout.precision(4);
-  for(size_t i=0;i<t->get_nlines();i+=t->get_nlines()/10) {
-    cout.width(5);
-    cout << i << " " << t->get("mult",i) << " ";
     cout.setf(ios::showpos);
-    cout << t->get("log_wgt",i) << " " << t->get("x0",i) << " ";
-    cout << t->get("x1",i) << " " << t->get("x0sq",i) << " "
-	 << t->get("x0sq_x1sq",i) << endl;
+    cout << t_avg << " " << t_stddev << " " << t_avgerr << endl;
     cout.unsetf(ios::showpos);
-  }
-  cout.precision(6);
-  cout << endl;
 
-  /*
-    This function averages the table into 40 blocks to remove
-    autocorrelations. The autocorrelation length is not computed here
-    (but is small enough for this example).
-  */
-  mct.reblock(40);
+    tm.test_abs(t_avg,exact_res[0],t_avgerr*10.0,"tab 1");
 
-  // Compute and test the average values
-  size_t n=t->get_nlines();
-  double t_avg=wvector_mean(n,t->get_column("x0sq"),
+    t_avg=wvector_mean(n,t->get_column("x0sq_x1sq"),
+		       t->get_column("mult"));
+    t_stddev=wvector_stddev(n,t->get_column("x0sq_x1sq"),
 			    t->get_column("mult"));
-  double t_stddev=wvector_stddev(n,t->get_column("x0sq"),
-				 t->get_column("mult"));
-  double t_avgerr=t_stddev/sqrt((double)n);
+    t_avgerr=t_stddev/sqrt((double)n);
   
-  cout.setf(ios::showpos);
-  cout << t_avg << " " << t_stddev << " " << t_avgerr << endl;
-  cout.unsetf(ios::showpos);
-
-  tm.test_abs(t_avg,exact_res[0],t_avgerr*10.0,"tab 1");
-
-  t_avg=wvector_mean(n,t->get_column("x0sq_x1sq"),
-		     t->get_column("mult"));
-  t_stddev=wvector_stddev(n,t->get_column("x0sq_x1sq"),
-			  t->get_column("mult"));
-  t_avgerr=t_stddev/sqrt((double)n);
-  
-  cout.setf(ios::showpos);
-  cout << t_avg << " " << t_stddev << " " << t_avgerr << endl;
-  cout.unsetf(ios::showpos);
-  tm.test_abs(t_avg,exact_res[1],t_avgerr*10.0,"tab 2");
-  cout << endl;
-
-  // MCMC with affine-invariant sampling
-  cout << "MCMC with affine-invariant sampling:\n" << endl;
-
-  mct.aff_inv=true;
-  mct.n_walk=10;
-  // This step factor is chosen to give approximately equal number
-  // of accept/reject steps but will be different for
-  // different problems
-  mct.step_fac=5.0;
-  mct.mcmc(2,low,high,vpf,vff);
-
-  // Output table and other information
-  cout << "n_accept, n_reject, table lines: "
-       << mct.n_accept[0] << " " << mct.n_reject[0] << " "
-       << t->get_nlines() << endl;
-  cout << "    i mult        log_wgt     x0          x1          "
-       << "x0sq        x0sq_x1sq" << endl;
-  cout.precision(4);
-  for(size_t i=0;i<t->get_nlines();i+=t->get_nlines()/10) {
-    cout.width(5);
-    cout << i << " " << t->get("mult",i) << " ";
     cout.setf(ios::showpos);
-    cout << t->get("log_wgt",i) << " " << t->get("x0",i) << " ";
-    cout << t->get("x1",i) << " " << t->get("x0sq",i) << " "
-	 << t->get("x0sq_x1sq",i) << endl;
+    cout << t_avg << " " << t_stddev << " " << t_avgerr << endl;
     cout.unsetf(ios::showpos);
+    tm.test_abs(t_avg,exact_res[1],t_avgerr*10.0,"tab 2");
+    cout << endl;
+
+    // MCMC with affine-invariant sampling
+    cout << "MCMC with affine-invariant sampling:\n" << endl;
+
+    mct.aff_inv=true;
+    mct.n_walk=10;
+    // This step factor is chosen to give approximately equal number
+    // of accept/reject steps but will be different for
+    // different problems
+    mct.step_fac=5.0;
+    mct.mcmc(2,low_gauss2d,high_gauss2d,gauss2d_vec,fill_vec);
+
+    // Output table and other information
+    cout << "n_accept, n_reject, table lines: "
+	 << mct.n_accept[0] << " " << mct.n_reject[0] << " "
+	 << t->get_nlines() << endl;
+    cout << "    i mult        log_wgt     x0          x1          "
+	 << "x0sq        x0sq_x1sq" << endl;
+    cout.precision(4);
+    for(size_t i=0;i<t->get_nlines();i+=t->get_nlines()/10) {
+      cout.width(5);
+      cout << i << " " << t->get("mult",i) << " ";
+      cout.setf(ios::showpos);
+      cout << t->get("log_wgt",i) << " " << t->get("x0",i) << " ";
+      cout << t->get("x1",i) << " " << t->get("x0sq",i) << " "
+	   << t->get("x0sq_x1sq",i) << endl;
+      cout.unsetf(ios::showpos);
+    }
+    cout.precision(6);
+    cout << endl;
+
+    // Perform block averaging
+    mct.reblock(40);
+
+    // Compute and test the average values
+    n=t->get_nlines();
+
+    t_avg=wvector_mean(n,t->get_column("x0sq"),
+		       t->get_column("mult"));
+    t_stddev=wvector_stddev(n,t->get_column("x0sq"),
+			    t->get_column("mult"));
+    t_avgerr=t_stddev/sqrt((double)n);
+  
+    cout.setf(ios::showpos);
+    cout << t_avg << " " << t_stddev << " " << t_avgerr << endl;
+    cout.unsetf(ios::showpos);
+    tm.test_abs(t_avg,exact_res[0],t_avgerr*10.0,"tab 1");
+
+    t_avg=wvector_mean(n,t->get_column("x0sq_x1sq"),
+		       t->get_column("mult"));
+    t_stddev=wvector_stddev(n,t->get_column("x0sq_x1sq"),
+			    t->get_column("mult"));
+    t_avgerr=t_stddev/sqrt((double)n);
+  
+    cout.setf(ios::showpos);
+    cout << t_avg << " " << t_stddev << " " << t_avgerr << endl;
+    cout.unsetf(ios::showpos);
+    tm.test_abs(t_avg,exact_res[1],t_avgerr*10.0,"tab 2");
+    cout << endl;
+
   }
-  cout.precision(6);
-  cout << endl;
-
-  // Perform block averaging
-  mct.reblock(40);
-
-  // Compute and test the average values
-  n=t->get_nlines();
-
-  t_avg=wvector_mean(n,t->get_column("x0sq"),
-		     t->get_column("mult"));
-  t_stddev=wvector_stddev(n,t->get_column("x0sq"),
-			  t->get_column("mult"));
-  t_avgerr=t_stddev/sqrt((double)n);
-  
-  cout.setf(ios::showpos);
-  cout << t_avg << " " << t_stddev << " " << t_avgerr << endl;
-  cout.unsetf(ios::showpos);
-  tm.test_abs(t_avg,exact_res[0],t_avgerr*10.0,"tab 1");
-
-  t_avg=wvector_mean(n,t->get_column("x0sq_x1sq"),
-		     t->get_column("mult"));
-  t_stddev=wvector_stddev(n,t->get_column("x0sq_x1sq"),
-			  t->get_column("mult"));
-  t_avgerr=t_stddev/sqrt((double)n);
-  
-  cout.setf(ios::showpos);
-  cout << t_avg << " " << t_stddev << " " << t_avgerr << endl;
-  cout.unsetf(ios::showpos);
-  tm.test_abs(t_avg,exact_res[1],t_avgerr*10.0,"tab 2");
-  cout << endl;
   
   tm.report();
   

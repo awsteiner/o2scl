@@ -58,16 +58,29 @@ class mcmc_para_class {
 
 public:
 
+  int count;
+  
   mcmc_para_base<point_funct,measure_funct,std::array<double,1>,ubvector> mc;
 
   mcmc_para_table<point_funct,fill_funct,std::array<double,1>,ubvector> mct;
 
   expval_scalar sev_x, sev_x2;
 
-  int point(size_t nv, const ubvector &pars, double &ret,
+  int gauss(size_t nv, const ubvector &pars, double &ret,
 	    std::array<double,1> &dat) {
     dat[0]=pars[0]*pars[0];
     ret=-pars[0]*pars[0]/2.0;
+    return o2scl::success;
+  }
+
+  int flat(size_t nv, const ubvector &pars, double &ret,
+	    std::array<double,1> &dat) {
+    dat[0]=pars[0]*pars[0];
+    ret=0.0;
+    if (count>0 && count%10000==0) {
+      cout << "Count: " << count << endl;
+    }
+    count++;
     return o2scl::success;
   }
 
@@ -76,11 +89,11 @@ public:
   }
 
   double f1(size_t nv, const ubvector &pars) {
-    return exp(-pars[0]*pars[0]/2.0)*pars[0];
+    return exp(-pars[0]*pars[0]/2.0)*pars[0]*pars[0];
   }
 
-  double f2(size_t nv, const ubvector &pars) {
-    return exp(-pars[0]*pars[0]/2.0)*pars[0]*pars[0];
+  double f3(size_t nv, const ubvector &pars) {
+    return 1.0;
   }
 
   int measure(const ubvector &pars, double log_weight, size_t ix,
@@ -99,7 +112,7 @@ public:
 
   int fill_func(const ubvector &pars, double log_weight,
 		std::vector<double> &line, std::array<double,1> &dat) {
-    line.push_back(dat[0]);
+    line.push_back(dat[0]*dat[0]);
     return 0;
   }
   
@@ -123,27 +136,31 @@ int main(int argc, char *argv[]) {
   // Compute exact results
   mcarlo_miser<> mm;
   mm.n_points=100000;
-  double res[3], err[3];
-  /*
-    multi_funct mf0=f0;
-    multi_funct mf1=f1;
-    multi_funct mf2=f2;
-
-    mm.minteg_err(mf0,1,low,high,res[0],err[0]);
-    mm.minteg_err(mf1,1,low,high,res[1],err[1]);
-    mm.minteg_err(mf2,1,low,high,res[2],err[2]);
-    res[1]/=res[0];
-    res[2]/=res[0];
-    cout << "Exact results:" << endl;
-    cout << res[1] << endl;
-    cout << res[2] << endl;
-    cout << endl;
-  */
+  double res[2], err[2];
+  
+  multi_funct mf0=std::bind
+    (std::mem_fn<double(size_t,const ubvector &)>(&mcmc_para_class::f0),
+     &mpc,std::placeholders::_1,std::placeholders::_2);
+  multi_funct mf1=std::bind
+    (std::mem_fn<double(size_t,const ubvector &)>(&mcmc_para_class::f1),
+     &mpc,std::placeholders::_1,std::placeholders::_2);
+  
+  mm.minteg_err(mf0,1,low,high,res[0],err[0]);
+  mm.minteg_err(mf1,1,low,high,res[1],err[1]);
+  res[1]/=res[0];
+  cout << "Exact results:" << endl;
+  cout << res[1] << endl;
+  cout << endl;
   
   // Set up MCMC
-  point_funct pf=std::bind
+  point_funct gauss_func=std::bind
     (std::mem_fn<int(size_t,const ubvector &,double &,
-		     std::array<double,1> &)>(&mcmc_para_class::point),
+		     std::array<double,1> &)>(&mcmc_para_class::gauss),
+     &mpc,std::placeholders::_1,std::placeholders::_2,std::placeholders::_3,
+     std::placeholders::_4);
+  point_funct flat_func=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,double &,
+		     std::array<double,1> &)>(&mcmc_para_class::flat),
      &mpc,std::placeholders::_1,std::placeholders::_2,std::placeholders::_3,
      std::placeholders::_4);
   fill_funct ff=std::bind
@@ -162,11 +179,13 @@ int main(int argc, char *argv[]) {
   n_threads=2;
 #endif
 
-  vector<point_funct> vpf(n_threads);
+  vector<point_funct> gauss_vec(n_threads);
+  vector<point_funct> flat_vec(n_threads);
   vector<measure_funct> vmf(n_threads);
   vector<fill_funct> vff(n_threads);
   for(size_t i=0;i<n_threads;i++) {
-    vpf[i]=pf;
+    gauss_vec[i]=gauss_func;
+    flat_vec[i]=flat_func;
     vmf[i]=mf;
     vff[i]=ff;
   }
@@ -186,7 +205,7 @@ int main(int argc, char *argv[]) {
   mpc.mc.verbose=2;
   mpc.mc.n_threads=n_threads;
   mpc.mc.max_iters=40;
-  mpc.mc.mcmc(1,low,high,vpf,vmf);
+  mpc.mc.mcmc(1,low,high,gauss_vec,vmf);
   
   tm.test_gen(mpc.mc.n_accept[0]+mpc.mc.n_reject[0]==mpc.mc.max_iters,
 	      "plain n_iters 0");
@@ -204,10 +223,12 @@ int main(int argc, char *argv[]) {
   mpc.mc.aff_inv=true;
   mpc.mc.n_walk=10;
   mpc.mc.step_fac=-1.0;
+  mpc.mc.verbose=2;
+  mpc.mc.n_threads=n_threads;
   
   mpc.mc.max_iters=40;
   mpc.mc.prefix="mcmc_ai";
-  mpc.mc.mcmc(1,low,high,vpf,vmf);
+  mpc.mc.mcmc(1,low,high,gauss_vec,vmf);
 
   tm.test_gen(mpc.mc.n_accept[0]+mpc.mc.n_reject[0]==mpc.mc.max_iters,
 	      "aff_inv n_iters 0");
@@ -231,7 +252,7 @@ int main(int argc, char *argv[]) {
   mpc.mct.n_threads=n_threads;
   mpc.mct.max_iters=40;
   mpc.mct.prefix="mcmct";
-  mpc.mct.mcmc(1,low,high,vpf,vff);
+  mpc.mct.mcmc(1,low,high,gauss_vec,vff);
 
   std::vector<size_t> chain_sizes;
   std::shared_ptr<o2scl::table_units<> > table=mpc.mct.get_table();
@@ -248,17 +269,6 @@ int main(int argc, char *argv[]) {
 		"plain table n_iters 1");
   }
     
-  std::string fname;
-  hdf_file hf;
-  
-  fname="mcmct_0_out";
-  hf.open_or_create(fname);
-  hdf_output(hf,*table,"mcmct");
-  hf.set_szt_vec("chain_sizes",chain_sizes);
-  hf.set_szt_vec("n_accept",mpc.mct.n_accept);
-  hf.set_szt_vec("n_reject",mpc.mct.n_reject);
-  hf.close();
-  
   // ----------------------------------------------------------------
   // Affine-invariant MCMC with a table
   
@@ -270,7 +280,7 @@ int main(int argc, char *argv[]) {
   
   mpc.mct.max_iters=40;
   mpc.mct.prefix="mcmct_ai";
-  mpc.mct.mcmc(1,low,high,vpf,vff);
+  mpc.mct.mcmc(1,low,high,gauss_vec,vff);
 
   // Get results
   table=mpc.mct.get_table();
@@ -291,15 +301,36 @@ int main(int argc, char *argv[]) {
 		"aff_inv table n_iters 1");
   }
 
-  // Write results to file
-  fname="mcmct_ai_0_out";
-  hf.open_or_create(fname);
-  hdf_output(hf,*table,"mcmct");
-  hf.set_szt_vec("chain_sizes",chain_sizes);
-  hf.set_szt_vec("n_accept",mpc.mct.n_accept);
-  hf.set_szt_vec("n_reject",mpc.mct.n_reject);
-  hf.close();
-  cout << endl;
+  // ----------------------------------------------------------------
+  // Plain MCMC with a table and a flat distribution
+  
+  cout << "Plain MCMC with a table and a flat distribution: "
+       << endl;
+
+  mpc.count=0;
+  mpc.mct.aff_inv=false;
+  mpc.mct.n_walk=1;
+  mpc.mct.step_fac=10.0;
+  mpc.mct.verbose=2;
+  
+  mpc.mct.max_iters=10000;
+  mpc.mct.prefix="mcmct_flat";
+  mpc.mct.mcmc(1,low,high,flat_vec,vff);
+
+  // ----------------------------------------------------------------
+  // Affine-invariant MCMC with a table and a flat distribution
+  
+  cout << "Affine-invariant MCMC with a table and a flat distribution: "
+       << endl;
+  
+  mpc.mct.aff_inv=true;
+  mpc.mct.n_walk=10;
+  mpc.mct.step_fac=-1.0;
+  mpc.mct.verbose=2;
+  
+  mpc.mct.max_iters=10000;
+  mpc.mct.prefix="mcmct_ai_flat";
+  mpc.mct.mcmc(1,low,high,flat_vec,vff);
 
   // ----------------------------------------------------------------
   // Affine-invariant MCMC with a table and previously read results
@@ -313,15 +344,16 @@ int main(int argc, char *argv[]) {
   
   mpc.mct.max_iters=40;
   mpc.mct.prefix="mcmct_aiprev";
-  
-  fname="mcmct_ai_0_out";
+
+  hdf_file hf;
+  string fname="mcmct_ai_0_out";
   hf.open(fname);
   mpc.mct.read_prev_results(hf,1);
   hf.close();
 
   cout << "Going to mcmc." << endl;
   mpc.mct.verbose=1;
-  mpc.mct.mcmc(1,low,high,vpf,vff);
+  mpc.mct.mcmc(1,low,high,gauss_vec,vff);
 
   // Get results
   table=mpc.mct.get_table();
@@ -343,15 +375,6 @@ int main(int argc, char *argv[]) {
 	 << mpc.mct.n_reject[it] << endl;
     //tm.test_gen(sum2-sum1==mpc.mct.n_accept[it],"Test chain size");
   }
-
-  // Write results to file
-  fname="mcmct_aiprev_0_out";
-  hf.open_or_create(fname);
-  hdf_output(hf,*table,"mcmct");
-  hf.set_szt_vec("chain_sizes",chain_sizes);
-  hf.set_szt_vec("n_accept",mpc.mct.n_accept);
-  hf.set_szt_vec("n_reject",mpc.mct.n_reject);
-  hf.close();
   cout << endl;
   
   tm.report();
