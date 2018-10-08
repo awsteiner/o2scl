@@ -1938,14 +1938,15 @@ namespace o2scl {
     return vector_lagk_autocorr_mult(data.size(),data,mult,k);
   }
   
-  /** \brief Desc
+  /** \brief Construct an autocorrelation vector using a multiplier
+      using the first \c n2 elements of vectors \c data and \c mult
    */
   template<class vec_t, class vec2_t, class resize_vec_t>
     void vector_autocorr_vector_mult
-    (const vec_t &data, const vec2_t &mult, resize_vec_t &ac_vec) {
-    
+    (size_t n2, const vec_t &data, const vec2_t &mult, resize_vec_t &ac_vec) {
+
     size_t n=0;
-    for(size_t i=0;i<data.size();i++) {
+    for(size_t i=0;i<n2;i++) {
       n+=((size_t)(mult[i]*(1.0+1.0e-10)));
     }
     
@@ -1954,8 +1955,19 @@ namespace o2scl {
     ac_vec.resize(kmax);
     ac_vec[0]=1.0;
     for(size_t k=1;k<kmax;k++) {
-      ac_vec[k]=vector_lagk_autocorr_mult(data.size(),data,mult,k,mean);
+      ac_vec[k]=vector_lagk_autocorr_mult(n2,data,mult,k,mean);
     }
+    return;
+  }
+
+  /** \brief Construct an autocorrelation vector using a multiplier
+   */
+  template<class vec_t, class vec2_t, class resize_vec_t>
+    void vector_autocorr_vector_mult
+    (const vec_t &data, const vec2_t &mult, resize_vec_t &ac_vec) {
+
+    vector_autocorr_vector_mult(data.size(),data,mult,ac_vec);
+    
     return;
   }
 
