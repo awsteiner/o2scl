@@ -1,11 +1,11 @@
 /** 
     \page dl_page Download O2scl
 
-    This documentation is from pre-release version 0.921.
+    This documentation is from version 0.922.
 
-    The current version is 0.921. The source distribution can 
+    The current version is 0.922. The source distribution can 
     be obtained from \n
-    - \c https://github.com/awsteiner/o2scl/releases/download/v0.921/o2scl-0.921.tar.gz
+    - \c https://github.com/awsteiner/o2scl/releases/download/v0.922/o2scl-0.922.tar.gz
 
     You may also download \o2 from the Github
     repository. To obtain the most recent development version, 
@@ -49,6 +49,7 @@
     o2scl-0.919.tar.gz | 3bf931cd743f58a7fdf2e8af8044848b
     o2scl-0.920.tar.gz | 9796a74f5e3d8eda13b7d55f5871941b
     o2scl-0.921.tar.gz | bc58909f869cd2931b03cec1d8bb85ea
+    o2scl-0.922.tar.gz | not yet set
 
     Release tarball    | SHA256 digest
     -------------------|-----------------------------------------------------------------
@@ -81,6 +82,7 @@
     o2scl-0.919.tar.gz | 0b9e27c4cbc353e56c71b05456cb9ca3226758f74402736da5c90b71b920c32d
     o2scl-0.920.tar.gz | dd08c0cb0ab13b9d63ae0cc83f026f69076166877a76661aa5059b7cce29e712
     o2scl-0.921.tar.gz | 972ede93a694d0273230da6b57d73b5e04c4007fd883fcf330e866d7da9bf1f9
+    o2scl-0.921.tar.gz | not yet set
 
     Version | Date     | Rev. in Sourceforge SVN | Github repo hash                        
     --------|----------|-------------------------|-----------------------------------------
@@ -112,4 +114,5 @@
     0.919   | 03/26/16 | N/A                     | 91d4d0ba74f91ac3e349c66b7aecbe858b9d4f59
     0.920   | 03/03/17 | N/A                     | 93ba903ae8b06315cea0716b9151ebc1bc3c5e93
     0.921   | 02/09/18 | N/A                     | 2e90c9c372d4d736cf40ce88837f326e5985cdfd
+    0.921   | not set  | N/A                     | not yet set
 */

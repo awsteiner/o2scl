@@ -183,7 +183,7 @@ int main(void) {
       hf.open_or_create("ex_interp2_nogrid_1000.o2");
     }
     hdf_output(hf,tdata,"tdata");
-    hdf_output(hf,t3d,"t3d");
+    hdf_output(hf,(const table3d &)t3d,"t3d");
     hf.close();
     
   }

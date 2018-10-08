@@ -470,6 +470,7 @@ int main(void) {
     
   // -------------------------------------------------------
 
+#ifdef O2SCL_NEVER_DEFINED  
   {
     // Construct a sample rank-3 tensor
     tensor3<> temp;
@@ -502,7 +503,8 @@ int main(void) {
     t.test_rel(column[0],36.0,1.0e-12,"mat column 1");
     t.test_rel(column[1],64.0,1.0e-12,"mat column 2");
   }
-
+#endif
+  
   t.report();
 
   return 0;
