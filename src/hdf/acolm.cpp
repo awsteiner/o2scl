@@ -126,7 +126,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   }
   {
     vector<std::string> itmp={"deriv","interp","max","min","sort",
-			      "autocorr","to-table","function"};
+			      "autocorr","to-table","function","sum"};
     type_comm_list.insert(std::make_pair("double[]",itmp));
     type_comm_list.insert(std::make_pair("int[]",itmp));
     type_comm_list.insert(std::make_pair("size_t[]",itmp));
@@ -678,11 +678,15 @@ void acol_manager::command_add(std::string new_type) {
 
   } else if (new_type=="double[]") {
 
-    static const size_t narr=8;
+    static const size_t narr=9;
     comm_option_s options_arr[narr]={
       {0,"sort","Sort the vector.",0,0,"",
        ((string)"Sorts the vector."),
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sort),
+       both},
+      {0,"sum","Compute the vector sum.",0,0,"",
+       ((string)"Compute the vector sum."),
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sum),
        both},
       {0,"max","Find the maximum value and index.",0,0,"",
        "Compute the maximum value of column <col>.",
@@ -724,11 +728,15 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="int[]") {
 
-    static const size_t narr=8;
+    static const size_t narr=9;
     comm_option_s options_arr[narr]={
       {0,"sort","Sort the vector.",0,0,"",
        ((string)"Sorts the vector."),
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sort),
+       both},
+      {0,"sum","Compute the vector sum.",0,0,"",
+       ((string)"Compute the vector sum."),
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sum),
        both},
       {0,"max","Find the maximum value and index.",0,0,"",
        "Compute the maximum value of column <col>.",
@@ -770,11 +778,15 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="size_t[]") {
 
-    static const size_t narr=8;
+    static const size_t narr=9;
     comm_option_s options_arr[narr]={
       {0,"sort","Sort the vector.",0,0,"",
        ((string)"Sorts the vector."),
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sort),
+       both},
+      {0,"sum","Compute the vector sum.",0,0,"",
+       ((string)"Compute the vector sum."),
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sum),
        both},
       {0,"max","Find the maximum value and index.",0,0,"",
        "Compute the maximum value of column <col>.",
@@ -988,6 +1000,7 @@ void acol_manager::command_del() {
     cl->remove_comm_option("autocorr");
     cl->remove_comm_option("to-table");
     cl->remove_comm_option("function");
+    cl->remove_comm_option("sum");
     
     /*
       cl->remove_comm_option("integ");

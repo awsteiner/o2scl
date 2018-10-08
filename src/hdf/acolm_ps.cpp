@@ -2433,6 +2433,15 @@ int acol_manager::comm_sum(std::vector<std::string> &sv, bool itive_com) {
       }
     }
     
+  } else if (type=="double[]") {
+    cout << "Sum of " << doublev_obj.size() << " elements is: "
+	 << o2scl::vector_sum<vector<double>,double>(doublev_obj) << endl;
+  } else if (type=="int[]") {
+    cout << "Sum of " << intv_obj.size() << " elements is: "
+	 << o2scl::vector_sum<vector<int>,int>(intv_obj) << endl;
+  } else if (type=="size_t[]") {
+    cout << "Sum of " << size_tv_obj.size() << " elements is: "
+	 << o2scl::vector_sum<vector<size_t>,size_t>(size_tv_obj) << endl;
   } else {
 
     cerr << "Cannot 'sum' with object of type " << type << endl;
