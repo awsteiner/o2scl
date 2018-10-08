@@ -1,3 +1,50 @@
+Notes for 0.922 release:
+
+In the table class, the set() function no longer automatically adds
+rows or columns. This prevents some behavior which was not intuitive for
+users. 
+
+Several tensor functions have been added, including
+tensor::swap_data(), tensor_out(), tensor::min(), tensor::max(),
+tensor::copy(), tensor::is_valid(). Slicing for tensor_grid objects
+has been improved. Copy constructors for tensor and tensor_grid have
+been created.
+
+A few long double integration classes have been added when higher
+accuracy is required.
+
+The MCMC classes have been completely reworked, offering better
+support for OpenMP and MPI parallelism.
+
+The acol command has been expanded and improved in several ways.
+Code for o2graph has been moved out and the documentation has
+been improved.
+
+The conversion functions in convert_units now has a const version
+
+The documentation has been improved everywhere.
+
+A new nearest neighbor interpolation type has been added.
+
+A seed bug in rng_gsl has been fixed.
+
+HDF5 I/0 for table3d types now allows const references.
+
+The cloud_file class is updated and simplified.
+
+The prob_dens_func_amr class has been updated.
+
+Some work has been done on heat capacity functions for particle
+objects.
+
+The fermion_rel::calc_mu() and pair_mu() functions work better
+now with bad initial guesses.
+
+The tov_solve, eos_tov, eos_cs2_const, and eos_had_rmf_hyp classes
+are improved.
+
+------------------------------------------------------------------------
+
 Notes for 0.921 release:
 
 New vector_autocorr() functions were created to analyze
