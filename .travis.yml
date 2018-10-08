@@ -14,8 +14,6 @@ os:
   - linux
   - osx
 
-osx_image: xcode10
-
 dist: trusty
 sudo: required
 
