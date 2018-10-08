@@ -83,10 +83,6 @@ public:
 	   std::array<double,1> &dat) {
     dat[0]=pars[0]*pars[0];
     ret=0.0;
-    if (count>0 && count%10000==0) {
-      cout << "Count: " << count << endl;
-    }
-    count++;
     return o2scl::success;
   }
 
@@ -236,7 +232,7 @@ int main(int argc, char *argv[]) {
     
     mpc.sev_x.current_avg(avg,std,avg_err);
     cout << avg << " " << avg_err << endl;
-    tm.test_rel(avg,res[1],20.0*sqrt(avg_err*avg_err+err[1]*err[1]),
+    tm.test_rel(avg,res[1],100.0*sqrt(avg_err*avg_err+err[1]*err[1]),
 		"plain mcmc 1");
     mpc.sev_x2.current_avg(avg,std,avg_err);
     cout << avg << " " << avg_err << endl;
@@ -298,7 +294,6 @@ int main(int argc, char *argv[]) {
 		  "aff_inc n_iters 1");
     }
     cout << endl;
-    exit(-1);
   }
 
   // ----------------------------------------------------------------
@@ -316,11 +311,12 @@ int main(int argc, char *argv[]) {
   mpc.mct.n_threads=n_threads;
   mpc.mct.max_iters=N;
   mpc.mct.prefix="mcmct";
-  
+  mpc.mct.table_prealloc=N*n_threads;
+
   mpc.mct.mcmc(1,low,high,gauss_vec,fill_vec);
 
   std::shared_ptr<o2scl::table_units<> > table=mpc.mct.get_table();
-
+  
   mpc.sev_x.free();
   mpc.sev_x2.free();
   mpc.sev_x.set_blocks(40,1);
@@ -334,7 +330,7 @@ int main(int argc, char *argv[]) {
   
   mpc.sev_x.current_avg_stats(avg,std,avg_err,i1,i2);
   cout << avg << " " << avg_err << " " << i1 << " " << i2 << endl;
-  tm.test_rel(avg,res[1],20.0*sqrt(avg_err*avg_err+err[1]*err[1]),
+  tm.test_rel(avg,res[1],100.0*sqrt(avg_err*avg_err+err[1]*err[1]),
 	      "plain table mcmc 1");
   mpc.sev_x2.current_avg_stats(avg,std,avg_err,i1,i2);
   cout << avg << " " << avg_err << " " << i1 << " " << i2 << endl;
@@ -353,6 +349,7 @@ int main(int argc, char *argv[]) {
     tm.test_gen(mpc.mct.n_accept[1]+mpc.mct.n_reject[1]==mpc.mct.max_iters,
 		"plain table n_iters 1");
   }
+  cout << endl;
     
   // ----------------------------------------------------------------
   // Affine-invariant MCMC with a table
@@ -366,6 +363,8 @@ int main(int argc, char *argv[]) {
   mpc.mct.n_threads=n_threads;
   mpc.mct.max_iters=N;
   mpc.mct.prefix="mcmct_ai";
+  mpc.mct.table_prealloc=N*n_threads;
+
   mpc.mct.mcmc(1,low,high,gauss_vec,fill_vec);
 
   // Get results
@@ -385,7 +384,7 @@ int main(int argc, char *argv[]) {
   
   mpc.sev_x.current_avg_stats(avg,std,avg_err,i1,i2);
   cout << avg << " " << avg_err << " " << i1 << " " << i2 << endl;
-  tm.test_rel(avg,res[1],20.0*sqrt(avg_err*avg_err+err[1]*err[1]),
+  tm.test_rel(avg,res[1],100.0*sqrt(avg_err*avg_err+err[1]*err[1]),
 	      "aff_inv table mcmc 1");
   mpc.sev_x2.current_avg_stats(avg,std,avg_err,i1,i2);
   cout << avg << " " << avg_err << " " << i1 << " " << i2 << endl;
@@ -407,8 +406,10 @@ int main(int argc, char *argv[]) {
     tm.test_gen(mpc.mct.n_accept[1]+mpc.mct.n_reject[1]==mpc.mct.max_iters,
 		"aff_inv table n_iters 1");
   }
+  cout << endl;
 
-  if (false) {
+  if (true) {
+    
     // ----------------------------------------------------------------
     // Plain MCMC with a table and a flat distribution
   
@@ -420,11 +421,50 @@ int main(int argc, char *argv[]) {
     mpc.mct.n_walk=1;
     mpc.mct.step_fac=10.0;
     mpc.mct.verbose=2;
-  
-    mpc.mct.max_iters=10000;
+    mpc.mct.max_iters=N;
+    mpc.mct.n_threads=n_threads;
     mpc.mct.prefix="mcmct_flat";
+    mpc.mct.table_prealloc=N*n_threads;
+    
     mpc.mct.mcmc(1,low,high,flat_vec,fill_vec);
 
+    uniform_grid_end<double> ug(low[0],high[0],20);
+    size_t hist_ix=0;
+    hist h;
+    h.set_bin_edges(ug);
+    expval_vector ev(20,1,20);
+    size_t count=0;
+    std::shared_ptr<o2scl::table_units<> > table=mpc.mct.get_table();
+    bool done=false;
+    for (size_t j=0;j<table->get_nlines() && done==false;j++) {
+      for(size_t k=0;k<((size_t)(table->get("mult",j)+1.0e-8));k++) {
+	if (count/(mpc.mct.max_iters*n_threads/20)>hist_ix) {
+	  ev.add(h.get_wgts());
+	  h.clear_wgts();
+	  hist_ix++;
+	}
+	if (hist_ix==20) done=true;
+	h.update(table->get("x",j));
+	count++;
+      }
+    }
+    if (done==false) {
+      ev.add(h.get_wgts());
+    }
+
+    ubvector vavg(20), vstd(20), vavge(20);
+    ev.current_avg_stats(vavg,vstd,vavge,i1,i2);
+    cout << vavg[0] << endl;
+    for(size_t j=1;j<20;j++) {
+      cout << vavg[j] << endl;
+      tm.test_rel(vavg[j],vavg[0],sqrt(vavg[0]+vavg[j]),"flat dist");
+    }
+    cout << endl;
+
+  }
+
+  if (true) {
+    
     // ----------------------------------------------------------------
     // Affine-invariant MCMC with a table and a flat distribution
   
@@ -433,13 +473,51 @@ int main(int argc, char *argv[]) {
   
     mpc.mct.aff_inv=true;
     mpc.mct.n_walk=10;
-    mpc.mct.step_fac=-1.0;
+    mpc.mct.step_fac=2.0;
     mpc.mct.verbose=2;
-  
-    mpc.mct.max_iters=10000;
+    mpc.mct.max_iters=N;
+    mpc.mct.n_threads=n_threads;
     mpc.mct.prefix="mcmct_ai_flat";
+    mpc.mct.table_prealloc=N*n_threads;
+    
     mpc.mct.mcmc(1,low,high,flat_vec,fill_vec);
 
+    uniform_grid_end<double> ug(low[0],high[0],20);
+    size_t hist_ix=0;
+    hist h;
+    h.set_bin_edges(ug);
+    expval_vector ev(20,1,20);
+    size_t count=0;
+    std::shared_ptr<o2scl::table_units<> > table=mpc.mct.get_table();
+    bool done=false;
+    for (size_t j=0;j<table->get_nlines() && done==false;j++) {
+      for(size_t k=0;k<((size_t)(table->get("mult",j)+1.0e-8));k++) {
+	if (count/(mpc.mct.max_iters*n_threads/20)>hist_ix) {
+	  ev.add(h.get_wgts());
+	  h.clear_wgts();
+	  hist_ix++;
+	}
+	if (hist_ix==20) done=true;
+	h.update(table->get("x",j));
+	count++;
+      }
+    }
+    if (done==false) {
+      ev.add(h.get_wgts());
+    }
+
+    ubvector vavg(20), vstd(20), vavge(20);
+    ev.current_avg_stats(vavg,vstd,vavge,i1,i2);
+    cout << vavg[0] << endl;
+    for(size_t j=1;j<20;j++) {
+      cout << vavg[j] << endl;
+      tm.test_rel(vavg[j],vavg[0],sqrt(vavg[0]+vavg[j]),"flat dist");
+    }
+
+  }
+
+  if (false) {
+    
     // ----------------------------------------------------------------
     // Affine-invariant MCMC with a table and previously read results
   

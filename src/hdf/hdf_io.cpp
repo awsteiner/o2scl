@@ -129,14 +129,14 @@ void o2scl_hdf::hdf_output_data(hdf_file &hf, o2scl::table<> &t) {
     cvalues.push_back(val);
   }
       
+  // Output constants
+  hf.sets_vec("con_names",cnames);
+  hf.setd_vec("con_values",cvalues);
+      
   // Restructure column names
   for(size_t i=0;i<t.get_ncolumns();i++) {
     cols.push_back(t.get_column_name(i));
   }
-      
-  // Output constants
-  hf.sets_vec("con_names",cnames);
-  hf.setd_vec("con_values",cvalues);
       
   // Output column names
   hf.sets_vec("col_names",cols);

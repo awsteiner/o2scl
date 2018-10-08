@@ -1829,8 +1829,16 @@ namespace o2scl {
       
       // -----------------------------------------------------------
       // Initialize table, walker_accept_rows, and walker_reject_rows
-    
-      table=std::shared_ptr<o2scl::table_units<> >(new o2scl::table_units<>);
+
+      if (table==0) {
+	table=std::shared_ptr<o2scl::table_units<> >
+	  (new o2scl::table_units<>);
+      } else {
+	table->clear();
+      }
+      if (table_prealloc>0) {
+	table->set_maxlines(table_prealloc);
+      }
       table->new_column("rank");
       table->new_column("thread");
       table->new_column("walker");
@@ -1861,6 +1869,11 @@ namespace o2scl {
       }
       
     } else {
+
+      if (table==0) {
+	O2SCL_ERR2("Flag 'prev_read' is true but table pointer is 0 ",
+		   "in mcmc_para_table::mcmc_init().",o2scl::exc_esanity);
+      }
       
       // -----------------------------------------------------------
       // Previous results are already present
@@ -1991,6 +2004,10 @@ namespace o2scl {
   /** \brief Time between file updates (default 0.0 for no file updates)
    */
   double file_update_time;
+
+  /** \brief Desc
+   */
+  size_t table_prealloc;
   
   /** \brief The number of tables to combine before I/O (default 1)
    */
@@ -2126,6 +2143,7 @@ namespace o2scl {
     store_rejects=false;
     table_sequence=true;
     prev_read=false;
+    table_prealloc=0;
   }
   
   /// \name Basic usage
