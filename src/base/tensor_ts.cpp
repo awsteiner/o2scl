@@ -470,7 +470,6 @@ int main(void) {
     
   // -------------------------------------------------------
 
-#ifdef O2SCL_NEVER_DEFINED  
   {
     // Construct a sample rank-3 tensor
     tensor3<> temp;
@@ -488,7 +487,7 @@ int main(void) {
     // First fix first index to one and output the corresponding matrix
     typedef std::function<double &(size_t,size_t)> data_t;
     data_t temp2=std::bind(std::mem_fn<double &(size_t,size_t,size_t)>
-			   (&tensor3<>::get),temp,
+			   (&tensor3<>::get),&temp,
 			   1,std::placeholders::_1,std::placeholders::_2);
     /*
     t.test_rel(temp2(0,0),25.0,1.0e-12,"mat part 1");
@@ -505,7 +504,6 @@ int main(void) {
     t.test_rel(column[1],64.0,1.0e-12,"mat column 2");
     */
   }
-#endif
   
   t.report();
 

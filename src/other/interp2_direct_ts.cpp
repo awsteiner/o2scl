@@ -307,7 +307,6 @@ int main(void) {
 
   }
 
-#ifdef O2SCL_NEVER_DEFINED
   {
     // Show how to slice a tensor
     tensor_grid3<> tg(3,2,1);
@@ -323,10 +322,9 @@ int main(void) {
     std::function<double &(size_t,size_t)> slice=
       std::bind(std::mem_fn<double &(size_t,size_t,size_t)>
 		(&tensor_grid3<>::get),
-		tg,std::placeholders::_1,0,std::placeholders::_2);
+		&tg,std::placeholders::_1,0,std::placeholders::_2);
     
   }
-#endif
 
   t.report();
   return 0;
