@@ -307,6 +307,7 @@ int main(void) {
 
   }
 
+#ifdef O2SCL_NEVER_DEFINED
   {
     // Show how to slice a tensor
     tensor_grid3<> tg(3,2,1);
@@ -325,7 +326,7 @@ int main(void) {
 		tg,std::placeholders::_1,0,std::placeholders::_2);
     
   }
-
+#endif
 
   t.report();
   return 0;

@@ -236,8 +236,8 @@ namespace o2scl {
     // Transformed function object for inte_cheb_series()
     funct fmp=
     std::bind(std::mem_fn<double(double,func_t &)>
-	      (&inte_transform_gsl<func_t>::transform),
-	      this,std::placeholders::_1,func);
+	      (&inte_qaws_gsl<func_t>::transform),
+	      this,std::placeholders::_1,std::ref(func));
 
     this->left_endpoint = a;
     this->right_endpoint = b;
