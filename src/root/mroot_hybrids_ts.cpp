@@ -307,7 +307,7 @@ int main(void) {
   // 1a - Member function with new C++11 extensions
   mm_funct f_new=
     std::bind(std::mem_fn<int(size_t,const ubvector &,ubvector &)>(&cl::mfn),
-	      acl,std::placeholders::_1,std::placeholders::_2,
+	      &acl,std::placeholders::_1,std::placeholders::_2,
 	      std::placeholders::_3);
 
 #ifdef O2SCL_NEVER_DEFINED
@@ -341,10 +341,10 @@ int main(void) {
   jac_funct df_new=
     std::bind(std::mem_fn<int(size_t,ubvector &,size_t,
 			      ubvector &,ubmatrix &)>(&cl::mfnd),
-    acl,std::placeholders::_1,std::placeholders::_2,
-    std::placeholders::_3,std::placeholders::_4,
-    std::placeholders::_5);
-    
+	      &acl,std::placeholders::_1,std::placeholders::_2,
+	      std::placeholders::_3,std::placeholders::_4,
+	      std::placeholders::_5);
+  
 #ifdef O2SCL_NEVER_DEFINED
 } {
 #endif
