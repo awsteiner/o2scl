@@ -489,7 +489,6 @@ int main(void) {
     data_t temp2=std::bind(std::mem_fn<double &(size_t,size_t,size_t)>
 			   (&tensor3<>::get),&temp,
 			   1,std::placeholders::_1,std::placeholders::_2);
-    /*
     t.test_rel(temp2(0,0),25.0,1.0e-12,"mat part 1");
     t.test_rel(temp2(0,1),36.0,1.0e-12,"mat part 2");
     t.test_rel(temp2(1,0),49.0,1.0e-12,"mat part 3");
@@ -502,7 +501,7 @@ int main(void) {
       o2scl::matrix_column<data_t,matrix_column_gen<data_t> >(temp2,1);
     t.test_rel(column[0],36.0,1.0e-12,"mat column 1");
     t.test_rel(column[1],64.0,1.0e-12,"mat column 2");
-    */
+
   }
   
   t.report();
