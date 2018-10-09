@@ -82,9 +82,9 @@ int main(void) {
   // expense of a little overhead. We need to provide the address of
   // an instantiated object and the address of the member function.
   funct function=std::bind(std::mem_fn<double(double,double &)>
-			     (&my_class::function_to_solve),
-			     &c,std::placeholders::_1,p);
-
+			   (&my_class::function_to_solve),
+			   &c,std::placeholders::_1,std::ref(p));
+  
   double x1=-1;
   double x2=2;
   

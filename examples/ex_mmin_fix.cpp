@@ -64,7 +64,7 @@ int main(void) {
   */
   multi_funct f1c11=
     std::bind(std::mem_fn<double(size_t,const ubvector &)>(&cl::mfn),
-              acl,std::placeholders::_1,std::placeholders::_2);
+              &acl,std::placeholders::_1,std::placeholders::_2);
   mmin_simp2<> gm1;
     
   x[0]=0.5;

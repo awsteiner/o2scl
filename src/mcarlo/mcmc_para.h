@@ -1695,7 +1695,7 @@ namespace o2scl {
       vf[i]=func;
       vm[i]=meas;
     }
-    return mcmc(n_params,low,high,func,meas);
+    return mcmc(n_params,low,high,vf,vm);
   }
   //@}
 
