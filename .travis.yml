@@ -78,7 +78,9 @@ script:
   # homebrew errors when installing gcc.
   # 
   - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
-      brew update && brew install gcc; brew link --overwrite gcc; brew install eigen && brew install hdf5 && brew tap awsteiner/science && which autoconf && brew install o2scl --with-eigen --with-check --with-examples --HEAD -v && acol --version ;
+      # 10/11/18: I removed --with-examples from this line because
+      # the travis.ci runs were taking too long
+      brew update && brew install gcc; brew link --overwrite gcc; brew install eigen && brew install hdf5 && brew tap awsteiner/science && which autoconf && brew install o2scl --with-eigen --with-check --HEAD -v && acol --version ;
     fi
 
 notifications:
