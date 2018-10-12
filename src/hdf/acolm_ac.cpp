@@ -472,7 +472,7 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
     }
 
     ubvector levs(1);
-    levs[0]=o2scl::stod(svalue);
+    levs[0]=o2scl::function_to_double(svalue);
     size_t nlev=1;
     
     if (frac_mode) {
@@ -517,7 +517,7 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
 
     
     ubvector levs(1);
-    levs[0]=o2scl::stod(svalue);
+    levs[0]=o2scl::function_to_double(svalue);
     size_t nlev=1;
 
     if (frac_mode) {
