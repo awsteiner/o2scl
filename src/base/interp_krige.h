@@ -39,10 +39,11 @@
 
 #include <o2scl/interp.h>
 #include <o2scl/cholesky.h>
+#include <o2scl/lu.h>
 #include <o2scl/columnify.h>
 #include <o2scl/vector.h>
 #include <o2scl/vec_stats.h>
-#include <o2scl/mmin_bfgs2.h>
+#include <o2scl/min_brent_gsl.h>
 #include <o2scl/constants.h>
 
 #ifndef DOXYGEN_NO_O2NS
@@ -152,20 +153,46 @@ namespace o2scl {
 	  }
 	}
       }
-      
-      // Construct the inverse of KXX
-      o2scl_linalg::cholesky_decomp(n_dim,KXX);
-      ubmatrix &inv_KXX=KXX;
-      o2scl_linalg::cholesky_invert<ubmatrix>(n_dim,inv_KXX);
-      
-      // Inverse covariance matrix times function vector
-      Kinvf.resize(n_dim);
-      boost::numeric::ublas::axpy_prod(inv_KXX,y,Kinvf,true);
 
+      // Construct the inverse of KXX
+      if (false) {
+	
+	ubmatrix inv_KXX(n_dim,n_dim);
+	o2scl::permutation p(n_dim);
+	int signum;
+	o2scl_linalg::LU_decomp(n_dim,KXX,p,signum);
+	if (o2scl_linalg::diagonal_has_zero(n_dim,KXX)) {
+	  O2SCL_ERR("KXX matrix is singular in interp_krige::set().",
+		    o2scl::exc_efailed);
+	}
+	o2scl_linalg::LU_invert<ubmatrix,ubmatrix,ubmatrix_column>
+	  (n_dim,KXX,p,inv_KXX);
+	
+	// Inverse covariance matrix times function vector
+	Kinvf.resize(n_dim);
+	boost::numeric::ublas::axpy_prod(inv_KXX,y,Kinvf,true);
+
+      } else {
+	
+	int cret=o2scl_linalg::cholesky_decomp(n_dim,KXX);
+	if (cret!=0) {
+	  std::cout << "X1." << std::endl;
+	  exit(-1);
+	}
+	ubmatrix inv_KXX=KXX;
+	o2scl_linalg::cholesky_invert<ubmatrix>(n_dim,inv_KXX);
+
+	// Inverse covariance matrix times function vector
+	Kinvf.resize(n_dim);
+	boost::numeric::ublas::axpy_prod(inv_KXX,y,Kinvf,true);
+	
+      }
+      
       // Set parent data members
       this->px=&x;
       this->py=&y;
       this->sz=n_dim;
+      
       return;
     }
     
@@ -243,31 +270,28 @@ namespace o2scl {
   /// The covariance function length scale
   double len;
 
-  /// The covariance function coefficient
-  double var;
-
   /// The quality factor of the optimization
   double qual;
 
   /// The covariance function
   double covar(double x1, double x2) {
-    return var*exp(-(x1-x2)*(x1-x2)/len/len);
+    return exp(-(x1-x2)*(x1-x2)/len/len);
   }
 
   /// The derivative of the covariance function
   double deriv(double x1, double x2) {
-    return -2.0*var*exp(-(x1-x2)*(x1-x2)/len/len)/len/len*(x1-x2);
+    return -2.0*exp(-(x1-x2)*(x1-x2)/len/len)/len/len*(x1-x2);
   }
 
   /// The second derivative of the covariance function
   double deriv2(double x1, double x2) {
     return (4.0*(x1-x2)*(x1-x2)-2.0*len*len)*
-    var*exp(-(x1-x2)*(x1-x2)/len/len)/len/len/len/len;
+    exp(-(x1-x2)*(x1-x2)/len/len)/len/len/len/len;
   }
 
   /// The integral of the covariance function
   double integ(double x, double x1, double x2) {
-    return 0.5*len*sqrt(o2scl_const::pi)*var*
+    return 0.5*len*sqrt(o2scl_const::pi)*
     (gsl_sf_erf((x2-x)/len)+gsl_sf_erf((x-x1)/len));
   }
 
@@ -275,14 +299,13 @@ namespace o2scl {
   std::function<double(double,double)> ff;
 
   /// Pointer to the user-specified minimizer
-  mmin_base<> *mp;
+  min_base<> *mp;
   
   /** \brief Function to optimize the covariance parameters
    */
-  double qual_fun(size_t nv, const ubvector &x) {
+  double qual_fun(double x) {
 
-    var=x[0];
-    len=x[1];
+    len=x;
 
     size_t size=this->sz;
     
@@ -302,14 +325,17 @@ namespace o2scl {
 	  if (irow>icol) {
 	    KXX(irow,icol)=KXX(icol,irow);
 	  } else {
-	    KXX(irow,icol)=exp(-var*pow(((*this->px)[irow]-
-					 (*this->px)[icol])/len,2.0));
+	    KXX(irow,icol)=exp(-pow((x2[irow]-x2[icol])/len,2.0));
 	  }
 	}
       }
       
       // Construct the inverse of KXX
-      o2scl_linalg::cholesky_decomp(size-1,KXX);
+      int cret=o2scl_linalg::cholesky_decomp(size-1,KXX);
+      if (cret!=0) {
+	std::cout << "X2." << std::endl;
+	exit(-1);
+      }
       ubmatrix &inv_KXX=KXX;
       o2scl_linalg::cholesky_invert<ubmatrix>(size-1,inv_KXX);
       
@@ -320,7 +346,7 @@ namespace o2scl {
       double ypred=0.0;
       double yact=(*this->py)[k];
       for(size_t i=0;i<size-1;i++) {
-	ypred+=exp(-var*pow(((*this->px)[k]-x2[i])/len,2.0))*this->Kinvf[i];
+	ypred+=exp(-pow(((*this->px)[k]-x2[i])/len,2.0))*this->Kinvf[i];
       }
 
       // Measure the quality with a chi-squared like function
@@ -336,14 +362,11 @@ namespace o2scl {
   /// Verbosity parameter
   int verbose;
   
-  /// Number of variance points to try
-  size_t nvar;
-
   /// Number of length scale points to try
   size_t nlen;
 
   /// Default minimizer
-  mmin_bfgs2<> def_mmin;
+  min_brent_gsl<> def_min;
 
   /// If true, use the full minimizer
   bool full_min;
@@ -352,10 +375,9 @@ namespace o2scl {
     ff=std::bind(std::mem_fn<double(double,double)>
 		 (&interp_krige_optim<vec_t,vec2_t>::covar),this,
 		 std::placeholders::_1,std::placeholders::_2);
-    nvar=20;
     nlen=20;
     full_min=false;
-    mp=&def_mmin;
+    mp=&def_min;
     verbose=0;
   }
 
@@ -370,16 +392,14 @@ namespace o2scl {
       this->py=&y;
       this->sz=size;
 
-      ubvector p(2);
-      p[0]=o2scl::vector_variance(size,y);
-      p[1]=x[1]-x[0];
+      double p=x[1]-x[0];
       
-      multi_funct mf=std::bind
-      (std::mem_fn<double(size_t, const ubvector &)>
+      funct mf=std::bind
+      (std::mem_fn<double(double)>
        (&interp_krige_optim<vec_t,vec2_t>::qual_fun),this,
-       std::placeholders::_1,std::placeholders::_2);
+       std::placeholders::_1);
 
-      mp->mmin(2,p,qual,mf);
+      mp->min(p,qual,mf);
 
     } else {
 
@@ -388,25 +408,17 @@ namespace o2scl {
 	<< std::endl;
       }
       
-      // Range of the coefficient parameter
-      double var_min=o2scl::vector_variance(size,y);
+      // Range of the length parameter
       std::vector<double> diff(size-1);
       for(size_t i=0;i<size-1;i++) {
 	diff[i]=fabs(x[i+1]-x[i]);
       }
-      double var_ratio=1.0e2;
-      
-      // Range of the length parameter
       double len_min=o2scl::vector_min_value
       <std::vector<double>,double>(size-1,diff)/3.0;
       double len_max=fabs(x[size-1]-x[0])*3.0;
       double len_ratio=len_max/len_min;
 
       if (verbose>1) {
-	std::cout << "var: " << var_min << " "
-		  << var_ratio*var_min << " "
-		  << pow(var_ratio,((double)1)/((double)nvar-1))
-		  << std::endl;
 	std::cout << "len: " << len_min << " "
 		  << len_max << " "
 		  << pow(len_ratio,((double)1)/((double)nlen-1))
@@ -414,83 +426,78 @@ namespace o2scl {
       }
 	
       // Initialize to zero to prevent uninit'ed var. warnings
-      double min_qual=0.0, var_opt=0.0, len_opt=0.0;
+      double min_qual=0.0, len_opt=0.0;
       
       if (verbose>1) {
-	std::cout << "ivar var ilen len qual min_qual" << std::endl;
+	std::cout << "ilen len qual fail min_qual" << std::endl;
       }
-      
-      // Loop over the full range, finding the optimum 
-      for(size_t i=0;i<nvar;i++) {
-	var=var_min*pow(var_ratio,((double)i)/((double)nvar-1));
-	for(size_t j=0;j<nlen;j++) {
-	  len=len_min*pow(len_ratio,((double)j)/((double)nlen-1));
-	  
-	  qual=0.0;
-	  bool cholesky_failed=false;
-	  for(size_t k=0;k<size;k++) {
-	    
-	    ubvector x2(size-1);
-	    o2scl::vector_copy_jackknife(x,k,x2);
-	    ubvector y2(size-1);
-	    o2scl::vector_copy_jackknife(y,k,y2);
-	    
-	    // Construct the KXX matrix
-	    ubmatrix KXX(size-1,size-1);
-	    for(size_t irow=0;irow<size-1;irow++) {
-	      for(size_t icol=0;icol<size-1;icol++) {
-		if (irow>icol) {
-		  KXX(irow,icol)=KXX(icol,irow);
-		} else {
-		  KXX(irow,icol)=exp(-var*pow((x[irow]-x[icol])/len,2.0));
-		}
-	      }
-	    }
-	    
-	    // Construct the inverse of KXX
-	    int cret=o2scl_linalg::cholesky_decomp(size-1,KXX,false);
-	    if (cret!=0) cholesky_failed=true;
 
-	    if (cholesky_failed==false) {
-	      ubmatrix &inv_KXX=KXX;
-	      o2scl_linalg::cholesky_invert<ubmatrix>(size-1,inv_KXX);
-	      
-	      // Inverse covariance matrix times function vector
-	      this->Kinvf.resize(size-1);
-	      boost::numeric::ublas::axpy_prod(inv_KXX,y2,this->Kinvf,true);
-	      
-	      double ypred=0.0;
-	      double yact=y[k];
-	      for(size_t i=0;i<size-1;i++) {
-		ypred+=exp(-var*pow((x[k]-x2[i])/len,2.0))*this->Kinvf[i];
+      // Loop over the full range, finding the optimum 
+      for(size_t j=0;j<nlen;j++) {
+	len=len_min*pow(len_ratio,((double)j)/((double)nlen-1));
+	if (j==65) len=0.15;
+	
+	qual=0.0;
+	bool cholesky_failed=false;
+	for(size_t k=0;k<size;k++) {
+	  
+	  ubvector x2(size-1);
+	  o2scl::vector_copy_jackknife(x,k,x2);
+	  ubvector y2(size-1);
+	  o2scl::vector_copy_jackknife(y,k,y2);
+	  
+	  // Construct the KXX matrix
+	  ubmatrix KXX(size-1,size-1);
+	  for(size_t irow=0;irow<size-1;irow++) {
+	    for(size_t icol=0;icol<size-1;icol++) {
+	      if (irow>icol) {
+		KXX(irow,icol)=KXX(icol,irow);
+	      } else {
+		KXX(irow,icol)=exp(-pow((x2[irow]-x2[icol])/len,2.0));
 	      }
-	      
-	      qual+=pow(yact-ypred,2.0);
 	    }
+	  }
+	  
+	  // Construct the inverse of KXX
+	  int cret=o2scl_linalg::cholesky_decomp(size-1,KXX,false);
+	  if (cret!=0) cholesky_failed=true;
+	  
+	  if (cholesky_failed==false) {
+	    ubmatrix &inv_KXX=KXX;
+	    o2scl_linalg::cholesky_invert<ubmatrix>(size-1,inv_KXX);
 	    
-	  }
-	  
-	  if (cholesky_failed==false && ((i==0 && j==0) || qual<min_qual)) {
-	    var_opt=var;
-	    len_opt=len;
-	    min_qual=qual;
-	  }
-	  
-	  if (verbose>1) {
-	    std::cout << "interp_krige_optim: ";
-	    std::cout.width(2);
-	    std::cout << i << " " << var << " ";
-	    std::cout.width(2);
-	    std::cout << j << " " << len << " " << qual << " "
-		      << min_qual << std::endl;
+	    // Inverse covariance matrix times function vector
+	    this->Kinvf.resize(size-1);
+	    boost::numeric::ublas::axpy_prod(inv_KXX,y2,this->Kinvf,true);
+	    
+	    double ypred=0.0;
+	    double yact=y[k];
+	    for(size_t i=0;i<size-1;i++) {
+	      ypred+=exp(-pow((x[k]-x2[i])/len,2.0))*this->Kinvf[i];
+	    }
+
+	    qual+=pow(yact-ypred,2.0);
 	  }
 	  
 	}
+	
+	if (cholesky_failed==false && ((j==0) || qual<min_qual)) {
+	  len_opt=len;
+	  min_qual=qual;
+	}
+	
+	if (verbose>1) {
+	  std::cout << "interp_krige_optim: ";
+	  std::cout.width(2);
+	  std::cout << j << " " << len << " " << qual << " "
+	  << cholesky_failed << " " << min_qual << " "
+	  << len_opt << std::endl;
+	}
+	  
       }
       
       // Now that we've optimized the covariance function,
       // just use the parent class to interpolate
-      var=var_opt;
       len=len_opt;
 
     }

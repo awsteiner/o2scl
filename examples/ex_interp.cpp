@@ -43,7 +43,13 @@ typedef boost::numeric::ublas::vector<double> ubvector;
 
 // A function for filling the data and comparing results
 double f(double x) {
-  return sin(1.0/(0.1+x));
+  return sin(1.0/(0.3+x));
+}
+
+double covar(double x1, double x2) {
+  //return 1.0*exp(-(x1-x2)*(x1-x2)/0.15/0.15);
+  //return 1.0*exp(-(x1-x2)*(x1-x2)/0.13455555/0.1345555);
+  return 1.0*exp(-(x1-x2)*(x1-x2)/0.05/0.05);
 }
 
 int main(void) {
@@ -76,20 +82,30 @@ int main(void) {
   interp_vec<ubvector> iv_mon(N,x,y,itp_monotonic);
   interp_vec<ubvector> iv_stef(N,x,y,itp_steffen);
   interp_krige_optim<ubvector> iko;
+
   iko.verbose=2;
+  iko.nlen=100;
   iko.set(N,x,y);
+
+  interp_krige<ubvector> ik;
+  std::function<double(double,double)> fc=covar;
+  ik.set_covar_noise(N,x,y,fc,0.0);
 
   double max=x[x.size()-1];
 
   size_t N2=N*100;
   table<> tresult;
-  tresult.line_of_names("x y ylin ycsp yaki ymon ystef yiko"); 
+  tresult.line_of_names("x y ylin ycsp yaki ymon ystef yiko yik"); 
   for(size_t i=0;i<=N2;i++) {
     double x=((double)i)/((double)N2)*max;
-    double line[8]={x,f(x),iv_lin.eval(x),iv_csp.eval(x),
+    double line[9]={x,f(x),iv_lin.eval(x),iv_csp.eval(x),
 		    iv_aki.eval(x),iv_mon.eval(x),iv_stef.eval(x),
-		    iko.eval(x)};
-    tresult.line_of_data(8,line);
+		    iko.eval(x),ik.eval(x)};
+    tresult.line_of_data(9,line);
+    if (i%50==0) {
+      cout << x << " " << f(x) << " " << iko.eval(x) << " "
+	   << ik.eval(x) << endl;
+    }
   }
 
   hdf_file hf;

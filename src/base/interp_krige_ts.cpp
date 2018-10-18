@@ -165,10 +165,10 @@ int main(void) {
 
   exact=sin(1.01);
   res=iko.eval(1.01);
-  t.test_rel(exact,res,1.0e-2,"iko 7");
+  t.test_rel(exact,res,1.0e-1,"iko 7");
   exact=sin(1.0);
   res=iko.eval(1.0);
-  t.test_rel(exact,res,1.0e-2,"iko 8");
+  t.test_rel(exact,res,1.0e-1,"iko 8");
   exact=sin(o2scl_const::pi);
   res=iko.eval(o2scl_const::pi);
   t.test_rel(exact,res,2.0,"iko 9");

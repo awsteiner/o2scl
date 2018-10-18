@@ -42,6 +42,7 @@
 #include <o2scl/vec_stats.h>
 #include <o2scl/linear_solver.h>
 #include <o2scl/columnify.h>
+#include <o2scl/cholesky.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -139,24 +140,10 @@ namespace o2scl {
 	  }
 	}
       }
-	
-      // Construct the inverse of KXX
-      ubmatrix inv_KXX(n_points,n_points);
-      o2scl::permutation p(n_points);
-      int signum;
-      if (verbose>0) {
-	std::cout << "interpm_krige::set_data() : "
-		  << "LU decompose and invert " << iout+1 << " of " << n_out
-		  << std::endl;
-      }
-      o2scl_linalg::LU_decomp(n_points,KXX,p,signum);
-      if (o2scl_linalg::diagonal_has_zero(n_points,KXX)) {
-	O2SCL_ERR2("KXX matrix is singular in ",
-		   "interpm_krige::set_data().",
-		   o2scl::exc_efailed);
-      }
-      o2scl_linalg::LU_invert<ubmatrix,ubmatrix,mat_col_t>
-	(n_points,KXX,p,inv_KXX);
+
+      o2scl_linalg::cholesky_decomp(n_points,KXX);
+      ubmatrix &inv_KXX=KXX;
+      o2scl_linalg::cholesky_invert<ubmatrix>(n_points,inv_KXX);
 
       // Inverse covariance matrix times function vector
       Kinvf[iout].resize(n_points);
@@ -342,17 +329,9 @@ namespace o2scl {
       }
       
       // Construct the inverse of KXX
-      ubmatrix inv_KXX(n_order,n_order);
-      o2scl::permutation p(n_order);
-      int signum;
-      o2scl_linalg::LU_decomp(n_order,KXX,p,signum);
-      if (o2scl_linalg::diagonal_has_zero(n_order,KXX)) {
-	O2SCL_ERR2("KXX matrix is singular in ",
-		   "interpm_krige_nn::eval().",
-		   o2scl::exc_efailed);
-      }
-      o2scl_linalg::LU_invert<ubmatrix,ubmatrix,mat_col_t>
-	(n_order,KXX,p,inv_KXX);
+      o2scl_linalg::cholesky_decomp(n_order,KXX);
+      ubmatrix &inv_KXX=KXX;
+      o2scl_linalg::cholesky_invert<ubmatrix>(n_order,inv_KXX);
       
       // Inverse covariance matrix times function vector
       ubvector Kinvf(n_order);
@@ -416,10 +395,8 @@ namespace o2scl {
       }
       
       // Construct the inverse of KXX
-      o2scl::permutation p(n_order);
-      int signum;
-      o2scl_linalg::LU_decomp(n_order,KXX,p,signum);
-      if (!o2scl_linalg::diagonal_has_zero(n_order,KXX)) {
+      int cret=o2scl_linalg::cholesky_decomp(n_order,KXX);
+      if (cret==0) {
 	done=true;
       } else {
 	if (verbose>1) {
@@ -511,17 +488,9 @@ namespace o2scl {
     }
 	
     // Construct the inverse of KXX
-    ubmatrix inv_KXX(n_order,n_order);
-    o2scl::permutation p(n_order);
-    int signum;
-    o2scl_linalg::LU_decomp(n_order,KXX,p,signum);
-    if (o2scl_linalg::diagonal_has_zero(n_order,KXX)) {
-      O2SCL_ERR2("KXX matrix is singular in ",
-		 "interpm_krige_nn::eval().",
-		 o2scl::exc_efailed);
-    }
-    o2scl_linalg::LU_invert<ubmatrix,ubmatrix,mat_col_t>
-    (n_order,KXX,p,inv_KXX);
+    o2scl_linalg::cholesky_decomp(n_order,KXX);
+    ubmatrix &inv_KXX=KXX;
+    o2scl_linalg::cholesky_invert<ubmatrix>(n_order,inv_KXX);
       
     // Inverse covariance matrix times function vector
     ubvector Kinvf(n_order);
@@ -612,25 +581,9 @@ namespace o2scl {
       }
 	  
       // Construct the inverse of KXX
-      o2scl::permutation p(n_order-1);
-      ubmatrix inv_KXX(n_order-1,n_order-1);
-      int signum;
-      o2scl_linalg::LU_decomp(n_order-1,KXX,p,signum);
-      int cnt=0;
-      while (o2scl_linalg::diagonal_has_zero(n_order-1,KXX)) {
-	std::cout << "Second fli run starting." << std::endl;
-	find_lin_indep(x,iout,fcovar,index,indep);
-	std::cout << "Second fli run done." << std::endl;
-	cnt++;
-	if (cnt==10) {
-	  O2SCL_ERR3("Failed to find set of independent points ",
-		     "in interpm_krige_nn::eval_jackknife()",
-		     "(const vec2_t &, size_t).",
-		     o2scl::exc_efailed);
-	}
-      }
-      o2scl_linalg::LU_invert<ubmatrix,ubmatrix,mat_col_t>
-	(n_order-1,KXX,p,inv_KXX);
+      o2scl_linalg::cholesky_decomp(n_order-1,KXX);
+      ubmatrix &inv_KXX=KXX;
+      o2scl_linalg::cholesky_invert<ubmatrix>(n_order-1,inv_KXX);
       
       // Inverse covariance matrix times function vector
       ubvector Kinvf(n_order-1);
