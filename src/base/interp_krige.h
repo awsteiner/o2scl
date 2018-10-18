@@ -38,7 +38,7 @@
 #include <boost/numeric/ublas/vector_proxy.hpp>
 
 #include <o2scl/interp.h>
-#include <o2scl/lu.h>
+#include <o2scl/cholesky.h>
 #include <o2scl/columnify.h>
 #include <o2scl/vector.h>
 #include <o2scl/vec_stats.h>
@@ -154,16 +154,9 @@ namespace o2scl {
       }
       
       // Construct the inverse of KXX
-      ubmatrix inv_KXX(n_dim,n_dim);
-      o2scl::permutation p(n_dim);
-      int signum;
-      o2scl_linalg::LU_decomp(n_dim,KXX,p,signum);
-      if (o2scl_linalg::diagonal_has_zero(n_dim,KXX)) {
-	O2SCL_ERR("KXX matrix is singular in interp_krige::set().",
-		  o2scl::exc_efailed);
-      }
-      o2scl_linalg::LU_invert<ubmatrix,ubmatrix,ubmatrix_column>
-	(n_dim,KXX,p,inv_KXX);
+      o2scl_linalg::cholesky_decomp(n_dim,KXX);
+      ubmatrix &inv_KXX=KXX;
+      o2scl_linalg::cholesky_invert<ubmatrix>(n_dim,inv_KXX);
       
       // Inverse covariance matrix times function vector
       Kinvf.resize(n_dim);
@@ -295,7 +288,8 @@ namespace o2scl {
     
     qual=0.0;
     for(size_t k=0;k<size;k++) {
-      
+
+      // Leave one observation out
       ubvector x2(size-1);
       o2scl::vector_copy_jackknife((*this->px),k,x2);
       ubvector y2(size-1);
@@ -315,16 +309,9 @@ namespace o2scl {
       }
       
       // Construct the inverse of KXX
-      ubmatrix inv_KXX(size-1,size-1);
-      o2scl::permutation p(size-1);
-      int signum;
-      o2scl_linalg::LU_decomp(size-1,KXX,p,signum);
-      if (o2scl_linalg::diagonal_has_zero(size-1,KXX)) {
-	O2SCL_ERR("KXX matrix is singular in interp_krige::set().",
-		  o2scl::exc_efailed);
-      }
-      o2scl_linalg::LU_invert<ubmatrix,ubmatrix,ubmatrix_column>
-	(size-1,KXX,p,inv_KXX);
+      o2scl_linalg::cholesky_decomp(size-1,KXX);
+      ubmatrix &inv_KXX=KXX;
+      o2scl_linalg::cholesky_invert<ubmatrix>(size-1,inv_KXX);
       
       // Inverse covariance matrix times function vector
       this->Kinvf.resize(size-1);
@@ -335,7 +322,8 @@ namespace o2scl {
       for(size_t i=0;i<size-1;i++) {
 	ypred+=exp(-var*pow(((*this->px)[k]-x2[i])/len,2.0))*this->Kinvf[i];
       }
-      
+
+      // Measure the quality with a chi-squared like function
       qual+=pow(yact-ypred,2.0);
       
     }
@@ -390,7 +378,7 @@ namespace o2scl {
       (std::mem_fn<double(size_t, const ubvector &)>
        (&interp_krige_optim<vec_t,vec2_t>::qual_fun),this,
        std::placeholders::_1,std::placeholders::_2);
-      
+
       mp->mmin(2,p,qual,mf);
 
     } else {
@@ -413,9 +401,24 @@ namespace o2scl {
       <std::vector<double>,double>(size-1,diff)/3.0;
       double len_max=fabs(x[size-1]-x[0])*3.0;
       double len_ratio=len_max/len_min;
-      
+
+      if (verbose>1) {
+	std::cout << "var: " << var_min << " "
+		  << var_ratio*var_min << " "
+		  << pow(var_ratio,((double)1)/((double)nvar-1))
+		  << std::endl;
+	std::cout << "len: " << len_min << " "
+		  << len_max << " "
+		  << pow(len_ratio,((double)1)/((double)nlen-1))
+		  << std::endl;
+      }
+	
       // Initialize to zero to prevent uninit'ed var. warnings
       double min_qual=0.0, var_opt=0.0, len_opt=0.0;
+      
+      if (verbose>1) {
+	std::cout << "ivar var ilen len qual min_qual" << std::endl;
+      }
       
       // Loop over the full range, finding the optimum 
       for(size_t i=0;i<nvar;i++) {
@@ -424,6 +427,7 @@ namespace o2scl {
 	  len=len_min*pow(len_ratio,((double)j)/((double)nlen-1));
 	  
 	  qual=0.0;
+	  bool cholesky_failed=false;
 	  for(size_t k=0;k<size;k++) {
 	    
 	    ubvector x2(size-1);
@@ -444,32 +448,29 @@ namespace o2scl {
 	    }
 	    
 	    // Construct the inverse of KXX
-	    ubmatrix inv_KXX(size-1,size-1);
-	    o2scl::permutation p(size-1);
-	    int signum;
-	    o2scl_linalg::LU_decomp(size-1,KXX,p,signum);
-	    if (o2scl_linalg::diagonal_has_zero(size-1,KXX)) {
-	      O2SCL_ERR("KXX matrix is singular in interp_krige::set().",
-			o2scl::exc_efailed);
+	    int cret=o2scl_linalg::cholesky_decomp(size-1,KXX,false);
+	    if (cret!=0) cholesky_failed=true;
+
+	    if (cholesky_failed==false) {
+	      ubmatrix &inv_KXX=KXX;
+	      o2scl_linalg::cholesky_invert<ubmatrix>(size-1,inv_KXX);
+	      
+	      // Inverse covariance matrix times function vector
+	      this->Kinvf.resize(size-1);
+	      boost::numeric::ublas::axpy_prod(inv_KXX,y2,this->Kinvf,true);
+	      
+	      double ypred=0.0;
+	      double yact=y[k];
+	      for(size_t i=0;i<size-1;i++) {
+		ypred+=exp(-var*pow((x[k]-x2[i])/len,2.0))*this->Kinvf[i];
+	      }
+	      
+	      qual+=pow(yact-ypred,2.0);
 	    }
-	    o2scl_linalg::LU_invert<ubmatrix,ubmatrix,ubmatrix_column>
-	      (size-1,KXX,p,inv_KXX);
-	    
-	    // Inverse covariance matrix times function vector
-	    this->Kinvf.resize(size-1);
-	    boost::numeric::ublas::axpy_prod(inv_KXX,y2,this->Kinvf,true);
-	    
-	    double ypred=0.0;
-	    double yact=y[k];
-	    for(size_t i=0;i<size-1;i++) {
-	      ypred+=exp(-var*pow((x[k]-x2[i])/len,2.0))*this->Kinvf[i];
-	    }
-	    
-	    qual+=pow(yact-ypred,2.0);
 	    
 	  }
 	  
-	  if ((i==0 && j==0) || qual<min_qual) {
+	  if (cholesky_failed==false && ((i==0 && j==0) || qual<min_qual)) {
 	    var_opt=var;
 	    len_opt=len;
 	    min_qual=qual;

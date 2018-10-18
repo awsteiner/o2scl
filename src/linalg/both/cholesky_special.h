@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2015-2017, Andrew W. Steiner
+  Copyright (C) 2015-2018, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -30,8 +30,8 @@ namespace o2scl_linalg {
   
   // (Eigen specialization)
   template<>
-    void cholesky_decomp<Eigen::MatrixXd>
-    (const size_t M, Eigen::MatrixXd &A);
+    int cholesky_decomp<Eigen::MatrixXd>
+    (const size_t M, Eigen::MatrixXd &A, bool err_on_fail);
      
 }
 

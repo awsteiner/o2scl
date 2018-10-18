@@ -56,9 +56,11 @@ namespace o2scl_linalg {
       and the upper triangular part contains L^T. 
     
       If the matrix is not positive-definite, the error handler 
-      will be called. 
+      will be called, unless \c err_on_fail is false, in which
+      case a non-zero value will be returned.
   */
-  template<class mat_t> void cholesky_decomp(const size_t M, mat_t &A) {
+  template<class mat_t> int cholesky_decomp(const size_t M, mat_t &A,
+					    bool err_on_fail=true) {
   
     size_t i,j,k;
 
@@ -72,9 +74,13 @@ namespace o2scl_linalg {
     // an error if A_00 <= 0. We throw the error first and then
     // the square root should always be safe?
 
-    if (A_00<=0) {
-      O2SCL_ERR2("Matrix not positive definite (A[0][0]<=0) in ",
-		 "cholesky_decomp().",o2scl::exc_einval);
+    if (A_00<=0.0) {
+      if (err_on_fail) {
+	O2SCL_ERR2("Matrix not positive definite (A[0][0]<=0) in ",
+		   "cholesky_decomp().",o2scl::exc_einval);
+      } else {
+	return 1;
+      }
     }
   
     double L_00=sqrt(A_00);
@@ -87,9 +93,13 @@ namespace o2scl_linalg {
       double L_10=A_10/L_00;
       double diag=A_11-L_10*L_10;
     
-      if (diag<=0) {
-	O2SCL_ERR2("Matrix not positive definite (diag<=0 for 2x2) in ",
-		   "cholesky_decomp().",o2scl::exc_einval);
+      if (diag<=0.0) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("Matrix not positive definite (diag<=0 for 2x2) in ",
+		     "cholesky_decomp().",o2scl::exc_einval);
+	} else {
+	  return 2;
+	}
       }
       double L_11=sqrt(diag);
 
@@ -122,9 +132,13 @@ namespace o2scl_linalg {
 	double sum=dnrm2_subrow(A,k,0,k);
 	double diag=A_kk-sum*sum;
 
-	if(diag<=0) {
-	  O2SCL_ERR2("Matrix not positive definite (diag<=0) in ",
-		     "cholesky_decomp().",o2scl::exc_einval);
+	if (diag<=0.0) {
+	  if (err_on_fail) {
+	    O2SCL_ERR2("Matrix not positive definite (diag<=0) in ",
+		       "cholesky_decomp().",o2scl::exc_einval);
+	  } else {
+	    return 3;
+	  }
 	}
 
 	double L_kk=sqrt(diag);
@@ -144,7 +158,7 @@ namespace o2scl_linalg {
       }
     } 
   
-    return;
+    return 0;
   }
 
   /** \brief Solve a symmetric positive-definite linear system after a 

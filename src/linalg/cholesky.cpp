@@ -30,8 +30,8 @@ void blank_func2() {
   
 // (Eigen specialization)
 template<>
-void o2scl_linalg::cholesky_decomp<Eigen::MatrixXd>
-(const size_t M, Eigen::MatrixXd &A) {
+int o2scl_linalg::cholesky_decomp<Eigen::MatrixXd>
+(const size_t M, Eigen::MatrixXd &A, bool err_on_fail) {
   
   Eigen::LLT<Eigen::MatrixXd> llt(A);
   A=llt.matrixL();
@@ -40,7 +40,7 @@ void o2scl_linalg::cholesky_decomp<Eigen::MatrixXd>
       A(i,j)=A(j,i);
     }
   }
-  return;
+  return 0;
 }
   
 #endif
