@@ -36,20 +36,32 @@ emacs-clean:
 	rm -f */*/*/*/*~
 
 utk-sync-doc:
-	sudo cp -r /usr/local/share/doc/o2scl/* $(STATIC_DOC_DIR)/o2scl
-	sudo cp extras/index.html $(STATIC_DOC_DIR)/o2scl
-	sudo cp extras/bootstrap.css $(STATIC_DOC_DIR)/o2scl
-	sudo cp extras/bootstrap.js $(STATIC_DOC_DIR)/o2scl
-	sudo cp extras/bootstrap-responsive.css $(STATIC_DOC_DIR)/o2scl
-	sudo cp extras/jquery-2.0.3.min.js $(STATIC_DOC_DIR)/o2scl
+	sudo rsync -Cavzu /usr/local/share/doc/o2scl/* \
+		$(STATIC_DOC_DIR)/o2scl
+	sudo rsync -Cavzu extras/index.html \
+		$(STATIC_DOC_DIR)/o2scl
+	sudo rsync -Cavzu extras/bootstrap.css \
+		$(STATIC_DOC_DIR)/o2scl
+	sudo rsync -Cavzu extras/bootstrap.js \
+		$(STATIC_DOC_DIR)/o2scl
+	sudo rsync -Cavzu extras/bootstrap-responsive.css \
+		$(STATIC_DOC_DIR)/o2scl
+	sudo rsync -Cavzu extras/jquery-2.0.3.min.js \
+		$(STATIC_DOC_DIR)/o2scl
 
 prerelease-sync-doc:
-	sudo cp -r /usr/local/share/doc/o2scl/* $(STATIC_DOC_DIR)/o2scl-dev
-	sudo cp extras/index.html $(STATIC_DOC_DIR)/o2scl-dev
-	sudo cp extras/bootstrap.css $(STATIC_DOC_DIR)/o2scl-dev
-	sudo cp extras/bootstrap.js $(STATIC_DOC_DIR)/o2scl-dev
-	sudo cp extras/bootstrap-responsive.css $(STATIC_DOC_DIR)/o2scl-dev
-	sudo cp extras/jquery-2.0.3.min.js $(STATIC_DOC_DIR)/o2scl-dev
+	sudo rsync -Cavzu -r /usr/local/share/doc/o2scl/* \
+		$(STATIC_DOC_DIR)/o2scl-dev
+	sudo rsync -Cavzu extras/index.html \
+		$(STATIC_DOC_DIR)/o2scl-dev
+	sudo rsync -Cavzu extras/bootstrap.css \
+		$(STATIC_DOC_DIR)/o2scl-dev
+	sudo rsync -Cavzu extras/bootstrap.js \
+		$(STATIC_DOC_DIR)/o2scl-dev
+	sudo rsync -Cavzu extras/bootstrap-responsive.css \
+		$(STATIC_DOC_DIR)/o2scl-dev
+	sudo rsync -Cavzu extras/jquery-2.0.3.min.js \
+		$(STATIC_DOC_DIR)/o2scl-dev
 
 o2scl-doc-recursive: refs o2scl-doc
 	cd eos && $(MAKE) refs o2scl-doc
