@@ -49,7 +49,7 @@ double f(double x) {
 double covar(double x1, double x2) {
   //return 1.0*exp(-(x1-x2)*(x1-x2)/0.15/0.15);
   //return 1.0*exp(-(x1-x2)*(x1-x2)/0.13455555/0.1345555);
-  return 1.0*exp(-(x1-x2)*(x1-x2)/0.05/0.05);
+  return exp(-(x1-x2)*(x1-x2)/0.131226/0.131226/2.0);
 }
 
 int main(void) {
@@ -85,13 +85,17 @@ int main(void) {
 
   iko.verbose=2;
   iko.nlen=100;
-  iko.set(N,x,y);
+  iko.set_noise(N,x,y,1.0e-10);
 
   interp_krige<ubvector> ik;
   std::function<double(double,double)> fc=covar;
-  ik.set_covar_noise(N,x,y,fc,0.0);
+  ik.set_covar_noise(N,x,y,fc,1.0e-10);
 
   double max=x[x.size()-1];
+
+  for(size_t i=0;i<N;i++) {
+    cout << x[i] << " " << f(x[i]) << " " << iko.eval(x[i]) << endl;
+  }
 
   size_t N2=N*100;
   table<> tresult;
