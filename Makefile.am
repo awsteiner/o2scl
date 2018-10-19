@@ -44,11 +44,11 @@ help:
 	@echo "o2scl-benchmarks: Compile and run benchmarks (not working)"
 	@echo 
 
-latest:
-	cp o2scl-0.921.tar.gz ~/wcs/int4/web/utk/o2scl
-	openssl dgst -sha256 o2scl-0.921.tar.gz > \
-		~/wcs/int4/web/utk/o2scl/o2scl-0.921.sha256
-	cd ~/wcs/int4/web; $(MAKE) puto
+# latest:
+# 	cp o2scl-0.923.tar.gz ~/wcs/int4/web/utk/o2scl
+# 	openssl dgst -sha256 o2scl-0.921.tar.gz > \
+# 		~/wcs/int4/web/utk/o2scl/o2scl-0.921.sha256
+# 	cd ~/wcs/int4/web; $(MAKE) puto
 
 move-doc:
 	cd doc/o2scl/html; mkdir ../htdir; mv -i *.html *.png ../htdir; 
