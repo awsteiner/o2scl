@@ -102,7 +102,7 @@ int main(void) {
   t.test_rel(exact,res,1.0e-8,"io 2");
   exact=sin(o2scl_const::pi);
   res=io.eval(o2scl_const::pi);
-  t.test_rel(exact,res,2.0,"io 3");
+  t.test_abs(exact,res,1.0e-3,"io 3");
   cout << endl;
   
   interp_krige_optim<ubvector> iko;
@@ -110,30 +110,30 @@ int main(void) {
 
   exact=sin(1.01);
   res=iko.eval(1.01);
-  t.test_rel(exact,res,1.0e-1,"iko 1");
+  t.test_rel(exact,res,1.0e-4,"iko 1");
   exact=sin(1.0);
   res=iko.eval(1.0);
-  t.test_rel(exact,res,1.0e-1,"iko 2");
+  t.test_rel(exact,res,1.0e-4,"iko 2");
   exact=sin(o2scl_const::pi);
   res=iko.eval(o2scl_const::pi);
-  t.test_rel(exact,res,2.0,"iko 3");
+  t.test_abs(exact,res,1.0e-4,"iko 3");
   cout << endl;
 
-  /*
   iko.full_min=true;
   iko.set(10,x2,y2);
 
   exact=sin(1.01);
   res=iko.eval(1.01);
-  t.test_rel(exact,res,1.0e-2,"iko 4");
+  t.test_rel(exact,res,1.0e-4,"iko 4");
   exact=sin(1.0);
   res=iko.eval(1.0);
-  t.test_rel(exact,res,1.0e-8,"iko 5");
+  t.test_rel(exact,res,1.0e-4,"iko 5");
   exact=sin(o2scl_const::pi);
   res=iko.eval(o2scl_const::pi);
-  t.test_rel(exact,res,2.0,"iko 6");
+  t.test_abs(exact,res,1.0e-5,"iko 6");
   cout << endl;
-  */
+
+  iko.full_min=false;
   
   // ---------------------------------------------------------------
   // Third set of test data
@@ -151,13 +151,13 @@ int main(void) {
   io.set(30,x3,y3);
   exact=sin(1.01);
   res=iko.eval(1.01);
-  t.test_rel(exact,res,1.0e-1,"io 4");
+  t.test_rel(exact,res,1.0e-4,"io 4");
   exact=sin(1.0);
   res=iko.eval(1.0);
-  t.test_rel(exact,res,1.0e-1,"io 5");
+  t.test_rel(exact,res,1.0e-4,"io 5");
   exact=sin(o2scl_const::pi);
   res=iko.eval(o2scl_const::pi);
-  t.test_rel(exact,res,2.0,"io 6");
+  t.test_abs(exact,res,1.0e-5,"io 6");
   cout << endl;
   
   iko.full_min=false;
@@ -165,13 +165,13 @@ int main(void) {
 
   exact=sin(1.01);
   res=iko.eval(1.01);
-  t.test_rel(exact,res,3.0e-1,"iko 7");
+  t.test_rel(exact,res,1.0e-1,"iko 7");
   exact=sin(1.0);
   res=iko.eval(1.0);
-  t.test_rel(exact,res,3.0e-1,"iko 8");
+  t.test_rel(exact,res,1.0e-1,"iko 8");
   exact=sin(o2scl_const::pi);
   res=iko.eval(o2scl_const::pi);
-  t.test_rel(exact,res,2.0,"iko 9");
+  t.test_abs(exact,res,1.0e-2,"iko 9");
   cout << endl;
   
   t.report();

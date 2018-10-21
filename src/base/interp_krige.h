@@ -125,7 +125,7 @@ namespace o2scl {
 				   covar_func_t &fderiv,
 				   covar_func_t &fderiv2,
 				   covar_func_t &finteg,
-				   double noise_var) {
+				   double noise_var, bool err_on_fail=true) {
       O2SCL_ERR("Function set_covar_di_noise not yet implemented.",
 		o2scl::exc_eunimpl);
       return 0;
@@ -212,8 +212,8 @@ namespace o2scl {
     
     /// Initialize interpolation routine
     virtual int set_covar(size_t n_dim, const vec_t &x, const vec_t &y,
-			   covar_func_t &fcovar) {
-      return set_covar_noise(n_dim,x,y,fcovar,0.0);
+			  covar_func_t &fcovar, bool err_on_fail=true) {
+      return set_covar_noise(n_dim,x,y,fcovar,0.0,err_on_fail);
     }
 
     /// Give the value of the function \f$ y(x=x_0) \f$ .
@@ -279,7 +279,8 @@ namespace o2scl {
   typedef boost::numeric::ublas::matrix_column<ubmatrix> ubmatrix_column;
 
   protected:
-  
+
+  /// Function object for the covariance
   std::function<double(double,double)> ff;
   
   /// The covariance function length scale
@@ -307,7 +308,7 @@ namespace o2scl {
   /// The integral of the covariance function
   double integ(double x, double x1, double x2) {
     exit(-1);
-    // This is wrong
+    // This is probably wrong
     //return 0.5*len*sqrt(o2scl_const::pi)*
     //(gsl_sf_erf((x2-x)/len)+gsl_sf_erf((x-x1)/len));
   }
@@ -324,13 +325,7 @@ namespace o2scl {
 
     size_t size=this->sz;
 
-    // Leave-one-out cross validation
-    static const size_t loo_cv=1;
-    // Log-marginal-likelihood
-    static const size_t lml=2;
-    size_t mode=lml;
-    
-    if (mode==loo_cv) {
+    if (mode==mode_loo_cv) {
       
       qual=0.0;
       for(size_t k=0;k<size;k++) {
@@ -400,7 +395,7 @@ namespace o2scl {
 	
       }
       
-    } else if (mode==lml) {
+    } else if (mode==mode_max_lml) {
 
       // Construct the KXX matrix
       ubmatrix KXX(size,size);
@@ -440,9 +435,9 @@ namespace o2scl {
       // Compute the log of the marginal likelihood, without
       // the constant term
       for(size_t i=0;i<size;i++) {
-	qual+=-0.5*(*this->py)[i]*this->Kinvf[i];
+	qual+=0.5*(*this->py)[i]*this->Kinvf[i];
       }
-      qual-=0.5*lndet;
+      qual+=0.5*lndet;
     }
 
     return qual;
@@ -450,10 +445,30 @@ namespace o2scl {
   
   public:
 
+  interp_krige_optim() {
+    nlen=20;
+    full_min=false;
+    mp=&def_min;
+    verbose=0;
+    mode=mode_loo_cv;
+  }
+
+  /// \name Function to minimize and various option
+  //@{
+  /// Leave-one-out cross validation
+  static const size_t mode_loo_cv=1;
+  /// Minus Log-marginal-likelihood
+  static const size_t mode_max_lml=2;
+  /// Function to minimize
+  size_t mode;
+  ///@}
+    
   /// Verbosity parameter
   int verbose;
   
-  /// Number of length scale points to try
+  /** \brief Number of length scale points to try when full minimizer 
+      is not used (default 20)
+  */
   size_t nlen;
 
   /// Default minimizer
@@ -462,53 +477,64 @@ namespace o2scl {
   /// If true, use the full minimizer
   bool full_min;
 
-  interp_krige_optim() {
-    nlen=20;
-    full_min=false;
-    mp=&def_min;
-    verbose=0;
-  }
-
   /// Initialize interpolation routine
   virtual int set_noise(size_t size, const vec_t &x, const vec2_t &y,
-			 double noise_var) {
+			double noise_var, bool err_on_fail=true) {
 
     // Set parent data members
     this->px=&x;
     this->py=&y;
     this->sz=size;
 
+    int success=0;
+      
     if (full_min) {
 
-      double p=x[1]-x[0];
+      if (verbose>1) {
+	std::cout << "interp_krige_optim: full minimization"
+		  << std::endl;
+      }
+      
+      // Choose first interval as initial guess
+      double len_opt=x[1]-x[0];
 
-      int success=0;
       funct mf=std::bind
       (std::mem_fn<double(double,double,int &)>
        (&interp_krige_optim<vec_t,vec2_t>::qual_fun),this,
        std::placeholders::_1,noise_var,std::ref(success));
       
-      mp->min(p,qual,mf);
+      mp->min(len_opt,qual,mf);
+      len=len_opt;
+
+      if (success!=0) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("Minimization failed in ",
+		     "interp_krige_optim::set_noise().",
+		     o2scl::exc_efailed);
+	}
+      }
 
     } else {
 
       if (verbose>1) {
 	std::cout << "interp_krige_optim: simple minimization"
-	<< std::endl;
+		  << std::endl;
       }
-      
-      // Range of the length parameter
+
+      // Compute a finite-difference array
       std::vector<double> diff(size-1);
       for(size_t i=0;i<size-1;i++) {
 	diff[i]=fabs(x[i+1]-x[i]);
       }
+      
+      // Range of the length parameter
       double len_min=o2scl::vector_min_value
       <std::vector<double>,double>(size-1,diff)/3.0;
       double len_max=fabs(x[size-1]-x[0])*3.0;
       double len_ratio=len_max/len_min;
 
       if (verbose>1) {
-	std::cout << "len: " << len_min << " "
+	std::cout << "len (min,max,ratio): " << len_min << " "
 		  << len_max << " "
 		  << pow(len_ratio,((double)1)/((double)nlen-1))
 		  << std::endl;
@@ -562,12 +588,16 @@ namespace o2scl {
 
   /// Initialize interpolation routine
   virtual void set(size_t size, const vec_t &x, const vec2_t &y) {
+
+    // Use the mean absolute value to determine noise
     double mean_abs=0.0;
     for(size_t j=0;j<size;j++) {
       mean_abs+=fabs(y[j]);
     }
     mean_abs/=size;
-    set_noise(size,x,y,mean_abs/1.0e8);
+
+    set_noise(size,x,y,mean_abs/1.0e8,true);
+    
     return;
   }
   
