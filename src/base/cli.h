@@ -390,12 +390,6 @@ namespace o2scl {
     /// Output the parameter list
     int output_param_list();
 
-    /** \brief Attempt to expand a tilde to a user's home directory
-
-        Experimental and currently unused.
-     */
-    int expand_tilde(std::vector<std::string> &sv);
-
     /// Replace all occurences of \c sold with \c snew in \c sv
     int apply_alias(std::vector<std::string> &sv, 
 		    std::string sold, std::string snew);

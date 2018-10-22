@@ -251,16 +251,6 @@ bool cli::string_equal_dash(string s1, string s2) {
   return false;
 }
 
-int cli::expand_tilde(vector<string> &sv) {
-  if (tilde_string=="") return 0;
-  for(size_t i=0;i<sv.size();i++) {
-    if (sv[i][0]=='~') {
-      sv[i]=tilde_string+"/"+sv[i].substr(1,sv[i].size()-1);
-    }
-  }
-  return 0;
-}
-
 int cli::set_verbose(int v) {
   verbose=v;
   return 0;
