@@ -295,13 +295,32 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
   vector<string> sv2=sv;
   vector<string>::iterator it=sv2.begin();
   sv2.erase(it+1);
+
+  string fname;
+  if (sv2[1]!=((std::string)"cin")) {
+    string fname_old=sv2[1];
+    std::vector<std::string> matches;
+    int wret=wordexp_wrapper(fname_old,matches);
+    if (matches.size()>1 || matches.size()==0 || wret!=0) {
+      cerr << "Function wordexp_wrapper() returned non-zero value. "
+	   << "Bad filename?" << endl;
+      return 1;
+    }
+    fname=matches[0];
+    if (verbose>1) {
+      cout << "Function wordexp() converted "
+	   << fname_old << " to " << fname << endl;
+    }
+  } else {
+    fname="cin";
+  }
   
   // Open the file 
   ifstream ifs;
-  if (sv2[1]!=((std::string)"cin")) {
-    ifs.open(sv2[1].c_str());
+  if (fname!=((std::string)"cin")) {
+    ifs.open(fname.c_str());
     if (!(ifs)) {
-      cerr << "Read of file named '" << sv2[1]
+      cerr << "Read of file named '" << fname
 	   << "' failed. Non-existent file?" << endl;
       return exc_efailed;
     }
@@ -309,7 +328,7 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
   
   if (ctype=="table") {
     
-    if (sv2[1]!=((std::string)"cin")) {
+    if (fname!=((std::string)"cin")) {
       table_obj.read_generic(ifs,verbose);
     } else {
       table_obj.read_generic(std::cin,verbose);
@@ -317,7 +336,7 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
 
   } else if (ctype=="table3d") {
     
-    if (sv2[1]!=((std::string)"cin")) {
+    if (fname!=((std::string)"cin")) {
       table3d_obj.read_gen3_list(ifs,verbose);
     } else {
       table3d_obj.read_gen3_list(std::cin,verbose);
@@ -325,7 +344,7 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
     
   } else if (ctype=="int") {
 
-    if (sv2[1]!=((std::string)"cin")) {
+    if (fname!=((std::string)"cin")) {
       ifs >> int_obj;
     } else {
       cin >> int_obj;
@@ -333,7 +352,7 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
     
   } else if (ctype=="char") {
 
-    if (sv2[1]!=((std::string)"cin")) {
+    if (fname!=((std::string)"cin")) {
       ifs >> char_obj;
     } else {
       cin >> char_obj;
@@ -341,7 +360,7 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
     
   } else if (ctype=="double") {
 
-    if (sv2[1]!=((std::string)"cin")) {
+    if (fname!=((std::string)"cin")) {
       ifs >> double_obj;
     } else {
       cin >> double_obj;
@@ -349,7 +368,7 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
     
   } else if (ctype=="size_t") {
 
-    if (sv2[1]!=((std::string)"cin")) {
+    if (fname!=((std::string)"cin")) {
       ifs >> size_t_obj;
     } else {
       cin >> size_t_obj;
@@ -357,7 +376,7 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
     
   } else if (ctype=="string") {
 
-    if (sv2[1]!=((std::string)"cin")) {
+    if (fname!=((std::string)"cin")) {
       getline(ifs,string_obj);
     } else {
       getline(cin,string_obj);
@@ -365,7 +384,7 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
     
   } else if (ctype=="int[]") {
 
-    if (sv2[1]!=((std::string)"cin")) {
+    if (fname!=((std::string)"cin")) {
       int itmp;
       intv_obj.clear();
       while (ifs >> itmp) {
@@ -381,7 +400,7 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
     
   } else if (ctype=="double[]") {
 
-    if (sv2[1]!=((std::string)"cin")) {
+    if (fname!=((std::string)"cin")) {
       double dtmp;
       doublev_obj.clear();
       while (ifs >> dtmp) {
@@ -397,7 +416,7 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
     
   } else if (ctype=="size_t[]") {
     
-    if (sv2[1]!=((std::string)"cin")) {
+    if (fname!=((std::string)"cin")) {
       size_t sttmp;
       size_tv_obj.clear();
       while (ifs >> sttmp) {
@@ -413,7 +432,7 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
     
   } else if (ctype=="string[]") {
 
-    if (sv2[1]!=((std::string)"cin")) {
+    if (fname!=((std::string)"cin")) {
       std::string stmp;
       while (getline(ifs,stmp)) {
 	stringv_obj.push_back(stmp);
@@ -436,7 +455,7 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
   command_add(ctype);
   type=ctype;
   
-  if (sv2[1]!=((std::string)"cin")) {
+  if (fname!=((std::string)"cin")) {
     ifs.close();
   }
 

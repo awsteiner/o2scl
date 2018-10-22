@@ -1837,9 +1837,23 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
   string type2;
   int ret;
 
-  ret=hf.open(in[0].c_str(),false,false);
+  string fname_old=in[0];
+  std::vector<std::string> matches;
+  int wret=wordexp_wrapper(fname_old,matches);
+  if (matches.size()>1 || matches.size()==0 || wret!=0) {
+    cerr << "Function wordexp_wrapper() returned non-zero value. "
+	 << "Bad filename?" << endl;
+    return 1;
+  }
+  string fname=matches[0];
+  if (verbose>1) {
+    cout << "Function wordexp() converted "
+	 << fname_old << " to " << fname << endl;
+  }
+  
+  ret=hf.open(fname.c_str(),false,false);
   if (ret!=0) {
-    cerr << "Could not find file named '" << in[0] << "'. Wrong file name?" 
+    cerr << "Could not find file named '" << fname << "'. Wrong file name?" 
 	 << endl;
     return exc_efailed;
   }
@@ -1858,7 +1872,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     
     if (ip.found==false) {
       cerr << "Could not find object named " << in[1]
-	   << " in file " << in[0] << endl;
+	   << " in file " << fname << endl;
       return 1;
     }
     
@@ -2051,7 +2065,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     }
 
     cerr << "Found object with name " << in[1]
-	 << " in file " << in[0] << " but type " << ip.type
+	 << " in file " << fname << " but type " << ip.type
 	 << " is not readable." << endl;
     return 2;
   }
@@ -2332,7 +2346,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
   
-  cout << "Could not find object of any readable type in file '" << in[0]
+  cout << "Could not find object of any readable type in file '" << fname
        << "'." << endl;
   
   return exc_efailed;

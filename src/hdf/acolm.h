@@ -90,11 +90,6 @@ namespace o2scl_acol {
       \future Allow "insert" commands to be restrictive, avoiding
       extrapolation
       
-      \future Replace ~ with $HOME in filenames (this might be best
-      done inside the \ref o2scl::cli class). (Some progress made.
-      Function cli::expand_tilde() is written but not yet
-      implemented.)
-      
       \future New table3d commands: transpose, 
       find_grid_x, and find_grid_y.
 
