@@ -105,9 +105,39 @@ int main(void) {
   
 #endif
 
+#ifdef O2SCL_NEVER_DEFINED
+
+  // This appears not to be sufficiently platform independent,
+  // see 
+  // vec_index doesn't work in older compilers, so
+  // we comment this out for now.
+  
+  vec_index vi;
+  vi.append("a1");
+  vi.append("c1");
+  vi.append("b1");
+  t.test_gen(vi(1)==((string)"c1"),"vec_index 1");
+  t.test_gen(vi[2]==((string)"b1"),"vec_index 2");
+  t.test_gen(vi("a1")==0,"vec_index 3");
+  t.test_gen(vi("b1")==2,"vec_index 4");
+  vec_index vi2={"a1","c1","b1"};
+  t.test_gen(vi2(1)==((string)"c1"),"vec_index 5");
+  t.test_gen(vi2[2]==((string)"b1"),"vec_index 6");
+  t.test_gen(vi2("a1")==0,"vec_index 7");
+  t.test_gen(vi2("b1")==2,"vec_index 8");
+  
+#endif
+
+#ifdef O2SCL_NEVER_DEFINED
+
+  // This appears not to be sufficiently platform independent, see
+  // https://github.com/awsteiner/o2scl/issues/8 for problem with
+  // openSUSE.
   vector<std::string> matches;
   glob_wrapper("../anneal/*.h",matches);
   t.test_gen(matches.size()==4,"glob test");
+  
+#endif
   
   t.report();
   return 0;
