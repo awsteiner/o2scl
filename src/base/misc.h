@@ -594,9 +594,15 @@ namespace o2scl {
 
   /** \brief Wrapper for the glob() function which
       finds files which match a pattern
+
+      \warning This function may not work on all operating 
+      systems. 
+      
+      \future Fix for openSUSE (see
+      https://github.com/awsteiner/o2scl/issues/8 )
   */
   int glob_wrapper(std::string pattern,
-			  std::vector<std::string> &matches);
+		   std::vector<std::string> &matches);
   
 #endif
 
