@@ -43,7 +43,7 @@
 namespace o2scl {
 #endif
 
-  /// \name Vector functions
+  /// \name Vector mean, standard deviation, and variance
   //@{
   /** \brief Compute the mean of the first \c n elements of a vector
 
@@ -348,7 +348,10 @@ namespace o2scl {
     }
     return sum/n;
   }
+  //@}
 
+  /// \name Vector absolute deviation, skewness, and kurtosis
+  //@{
   /** \brief Absolute deviation from the specified mean
 
       This function computes
@@ -588,7 +591,10 @@ namespace o2scl {
   template<class vec_t> double vector_kurtosis(const vec_t &data) {
     return vector_kurtosis(data.size(),data);
   }
+  //@}
 
+  /// \name Vector autocorrelation
+  //@{
   /** \brief Lag-1 autocorrelation
 
       This function computes
@@ -841,6 +847,123 @@ namespace o2scl {
     return len;
   }
   
+  /** \brief Lag-k autocorrelation for the first
+      \c n elements with a vector multiplier given 
+      the mean
+   */
+  template<class vec_t, class vec2_t>
+    double vector_lagk_autocorr_mult(size_t n, const vec_t &data,
+				     const vec2_t &mult, size_t k,
+				     double mean) {
+    
+    size_t n2=0;
+    for(size_t i=0;i<n;i++) {
+      size_t m=((size_t)(mult[i]*(1.0+1.0e-10)));
+      if (m==0) {
+	O2SCL_ERR2("Mult vector is zero ",
+		   "in vector_lagk_autocorr_mult().",exc_einval);
+      }
+      n2+=m;
+    }
+    
+    if (n2<=k) {
+      O2SCL_ERR2("Not enough elements ",
+		 "in vector_lagk_autocorr_mult().",exc_einval);
+    }
+
+    long double q=0.0, v=0.0;
+    size_t im=0, ix=0, im2=0, ix2=0;
+    for(size_t i=0;i<k;i++) {
+      v+=(data[ix]-mean)*(data[ix]-mean)/(i+1);
+      im++;
+      if (im>=((size_t)(mult[ix]*(1.0+1.0e-10)))) {
+	im=0;
+	ix++;
+      }
+    }
+    for(size_t i=k;i<n2;i++) {
+      long double delta0=data[ix2]-mean;
+      long double delta1=data[ix]-mean;
+      q+=(delta0*delta1-q)/(i+1);
+      v+=(delta1*delta1-v)/(i+1);
+      im++;
+      if (im>=((size_t)(mult[ix]*(1.0+1.0e-10)))) {
+	im=0;
+	ix++;
+      }
+      im2++;
+      if (im2>=((size_t)(mult[ix2]*(1.0+1.0e-10)))) {
+	im2=0;
+	ix2++;
+      }
+    }
+    return q/v;
+  }
+
+  /** \brief Lag-k autocorrelation for the first
+      \c n elements with a vector multiplier
+   */
+  template<class vec_t, class vec2_t>
+    double vector_lagk_autocorr_mult(size_t n, const vec_t &data,
+				     const vec2_t &mult, size_t k) {
+    double mean=wvector_mean(n,mult,data);
+    return vector_lagk_autocorr_mult(n,data,mult,k,mean);
+  }
+
+  /** \brief Lag-k autocorrelation with a vector multiplier
+      given the mean
+   */
+  template<class vec_t, class vec2_t>
+    double vector_lagk_autocorr_mult(const vec_t &data,
+				     const vec2_t &mult, size_t k,
+				     double mean) {
+    return vector_lagk_autocorr_mult(data.size(),data,mult,k,mean);
+  }
+  
+  /** \brief Lag-k autocorrelation with a vector multiplier
+   */
+  template<class vec_t, class vec2_t>
+    double vector_lagk_autocorr_mult(const vec_t &data,
+				     const vec2_t &mult, size_t k) {
+    return vector_lagk_autocorr_mult(data.size(),data,mult,k);
+  }
+  
+  /** \brief Construct an autocorrelation vector using a multiplier
+      using the first \c n2 elements of vectors \c data and \c mult
+   */
+  template<class vec_t, class vec2_t, class resize_vec_t>
+    void vector_autocorr_vector_mult
+    (size_t n2, const vec_t &data, const vec2_t &mult, resize_vec_t &ac_vec) {
+
+    size_t n=0;
+    for(size_t i=0;i<n2;i++) {
+      n+=((size_t)(mult[i]*(1.0+1.0e-10)));
+    }
+    
+    size_t kmax=n/2;
+    double mean=wvector_mean(data,mult);
+    ac_vec.resize(kmax);
+    ac_vec[0]=1.0;
+    for(size_t k=1;k<kmax;k++) {
+      ac_vec[k]=vector_lagk_autocorr_mult(n2,data,mult,k,mean);
+    }
+    return;
+  }
+
+  /** \brief Construct an autocorrelation vector using a multiplier
+   */
+  template<class vec_t, class vec2_t, class resize_vec_t>
+    void vector_autocorr_vector_mult
+    (const vec_t &data, const vec2_t &mult, resize_vec_t &ac_vec) {
+
+    vector_autocorr_vector_mult(data.size(),data,mult,ac_vec);
+    
+    return;
+  }
+  //@}
+
+  /// \name Other vector functions
+  //@{
   /** \brief Compute the covariance of two vectors
       
       This function computes
@@ -1322,7 +1445,7 @@ namespace o2scl {
   }
   //@}
 
-  /// \name Weighted vector functions
+  /// \name Weighted vector mean, standard deviation, and variance
   //@{
   /** \brief Compute the mean of weighted data
 
@@ -1512,42 +1635,6 @@ namespace o2scl {
     return wvector_variance(data.size(),data,weights);
   }
 
-  /** \brief The weighted covariance of two vectors
-
-      \note Experimental
-  */
-  template<class vec_t, class vec2_t, class vec3_t>
-    double wvector_covariance(size_t n, const vec_t &data1,
-			      const vec2_t &data2,
-			      const vec3_t &weights) {
-    double mean1=wvector_mean(n,data1,weights);
-    double mean2=wvector_mean(n,data2,weights);
-    double covar=0.0;
-    double W=0.0;
-    for(size_t i=0;i<n;i++) {
-      double wi=weights[i];
-      if (wi>0.0) {
-	W+=wi;
-	double delta1=(data1[i]-mean1);
-	double delta2=(data2[i]-mean2);
-	covar+=(wi/W)*(delta1*delta2-covar);
-      }
-    }
-    double scale=wvector_factor(n,weights);
-    return covar*scale;
-  }
-
-  /** \brief The weighted covariance of two vectors
-
-      \note Experimental
-  */
-  template<class vec_t, class vec2_t, class vec3_t>
-    double wvector_covariance(const vec_t &data1, const vec2_t &data2,
-			      const vec3_t &weights) {
-    return wvector_covariance<vec_t,vec2_t,vec3_t>
-      (data1.size(),data1,data2,weights);
-  }
-
   /** \brief Compute the standard deviation of a weighted vector 
       with a mean known in advance
 
@@ -1623,6 +1710,45 @@ namespace o2scl {
     double wvector_stddev(const vec_t &data,
 			  const vec2_t &weights, double wmean) {
     return wvector_stddev<vec_t,vec2_t>(data.size(),data,weights,wmean);
+  }
+  //@}
+
+  /// \name Other weighted vector functions
+  //@{
+  /** \brief The weighted covariance of two vectors
+
+      \note Experimental
+  */
+  template<class vec_t, class vec2_t, class vec3_t>
+    double wvector_covariance(size_t n, const vec_t &data1,
+			      const vec2_t &data2,
+			      const vec3_t &weights) {
+    double mean1=wvector_mean(n,data1,weights);
+    double mean2=wvector_mean(n,data2,weights);
+    double covar=0.0;
+    double W=0.0;
+    for(size_t i=0;i<n;i++) {
+      double wi=weights[i];
+      if (wi>0.0) {
+	W+=wi;
+	double delta1=(data1[i]-mean1);
+	double delta2=(data2[i]-mean2);
+	covar+=(wi/W)*(delta1*delta2-covar);
+      }
+    }
+    double scale=wvector_factor(n,weights);
+    return covar*scale;
+  }
+
+  /** \brief The weighted covariance of two vectors
+
+      \note Experimental
+  */
+  template<class vec_t, class vec2_t, class vec3_t>
+    double wvector_covariance(const vec_t &data1, const vec2_t &data2,
+			      const vec3_t &weights) {
+    return wvector_covariance<vec_t,vec2_t,vec3_t>
+      (data1.size(),data1,data2,weights);
   }
 
   /** \brief Compute the weighted sum of squares of data about the 
@@ -1856,120 +1982,6 @@ namespace o2scl {
     return wvector_kurtosis<vec_t,vec2_t>(data,weights);
   }
   //@}
-
-  /** \brief Lag-k autocorrelation for the first
-      \c n elements with a vector multiplier given 
-      the mean
-   */
-  template<class vec_t, class vec2_t>
-    double vector_lagk_autocorr_mult(size_t n, const vec_t &data,
-				     const vec2_t &mult, size_t k,
-				     double mean) {
-    
-    size_t n2=0;
-    for(size_t i=0;i<n;i++) {
-      size_t m=((size_t)(mult[i]*(1.0+1.0e-10)));
-      if (m==0) {
-	O2SCL_ERR2("Mult vector is zero ",
-		   "in vector_lagk_autocorr_mult().",exc_einval);
-      }
-      n2+=m;
-    }
-    
-    if (n2<=k) {
-      O2SCL_ERR2("Not enough elements ",
-		 "in vector_lagk_autocorr_mult().",exc_einval);
-    }
-
-    long double q=0.0, v=0.0;
-    size_t im=0, ix=0, im2=0, ix2=0;
-    for(size_t i=0;i<k;i++) {
-      v+=(data[ix]-mean)*(data[ix]-mean)/(i+1);
-      im++;
-      if (im>=((size_t)(mult[ix]*(1.0+1.0e-10)))) {
-	im=0;
-	ix++;
-      }
-    }
-    for(size_t i=k;i<n2;i++) {
-      long double delta0=data[ix2]-mean;
-      long double delta1=data[ix]-mean;
-      q+=(delta0*delta1-q)/(i+1);
-      v+=(delta1*delta1-v)/(i+1);
-      im++;
-      if (im>=((size_t)(mult[ix]*(1.0+1.0e-10)))) {
-	im=0;
-	ix++;
-      }
-      im2++;
-      if (im2>=((size_t)(mult[ix2]*(1.0+1.0e-10)))) {
-	im2=0;
-	ix2++;
-      }
-    }
-    return q/v;
-  }
-
-  /** \brief Lag-k autocorrelation for the first
-      \c n elements with a vector multiplier
-   */
-  template<class vec_t, class vec2_t>
-    double vector_lagk_autocorr_mult(size_t n, const vec_t &data,
-				     const vec2_t &mult, size_t k) {
-    double mean=wvector_mean(n,mult,data);
-    return vector_lagk_autocorr_mult(n,data,mult,k,mean);
-  }
-
-  /** \brief Lag-k autocorrelation with a vector multiplier
-      given the mean
-   */
-  template<class vec_t, class vec2_t>
-    double vector_lagk_autocorr_mult(const vec_t &data,
-				     const vec2_t &mult, size_t k,
-				     double mean) {
-    return vector_lagk_autocorr_mult(data.size(),data,mult,k,mean);
-  }
-  
-  /** \brief Lag-k autocorrelation with a vector multiplier
-   */
-  template<class vec_t, class vec2_t>
-    double vector_lagk_autocorr_mult(const vec_t &data,
-				     const vec2_t &mult, size_t k) {
-    return vector_lagk_autocorr_mult(data.size(),data,mult,k);
-  }
-  
-  /** \brief Construct an autocorrelation vector using a multiplier
-      using the first \c n2 elements of vectors \c data and \c mult
-   */
-  template<class vec_t, class vec2_t, class resize_vec_t>
-    void vector_autocorr_vector_mult
-    (size_t n2, const vec_t &data, const vec2_t &mult, resize_vec_t &ac_vec) {
-
-    size_t n=0;
-    for(size_t i=0;i<n2;i++) {
-      n+=((size_t)(mult[i]*(1.0+1.0e-10)));
-    }
-    
-    size_t kmax=n/2;
-    double mean=wvector_mean(data,mult);
-    ac_vec.resize(kmax);
-    ac_vec[0]=1.0;
-    for(size_t k=1;k<kmax;k++) {
-      ac_vec[k]=vector_lagk_autocorr_mult(n2,data,mult,k,mean);
-    }
-    return;
-  }
-
-  /** \brief Construct an autocorrelation vector using a multiplier
-   */
-  template<class vec_t, class vec2_t, class resize_vec_t>
-    void vector_autocorr_vector_mult
-    (const vec_t &data, const vec2_t &mult, resize_vec_t &ac_vec) {
-
-    vector_autocorr_vector_mult(data.size(),data,mult,ac_vec);
-    
-    return;
-  }
 
 #ifndef DOXYGEN_NO_O2NS
 }

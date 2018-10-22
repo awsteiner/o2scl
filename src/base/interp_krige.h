@@ -94,7 +94,7 @@ namespace o2scl {
      */
     covar_func_t *df2;
     
-    /** \brief Pointer to user-specified second derivative
+    /** \brief Pointer to user-specified integral
      */
     covar_integ_t *intp;
     
@@ -106,8 +106,9 @@ namespace o2scl {
     }
     
     virtual ~interp_krige() {}
-
-    /// Method for matrix inversion
+    
+    /** \brief Method for matrix inversion 
+     */
     int matrix_mode;
     
     /// Initialize interpolation routine
@@ -234,7 +235,7 @@ namespace o2scl {
     }
 
     /** \brief Give the value of the second derivative  
-	\f$ y^{\prime \prime}(x=x_0) \f$ (always zero)
+	\f$ y^{\prime \prime}(x=x_0) \f$
     */
     virtual double deriv2(double x0) const {
       return 0.0;
@@ -245,7 +246,7 @@ namespace o2scl {
       return 0.0;
     }
 
-    /// Return the type, \c "interp_linear".
+    /// Return the type, \c "interp_krige".
     virtual const char *type() const { return "interp_krige"; }
 
 #ifndef DOXYGEN_INTERNAL

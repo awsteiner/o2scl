@@ -44,9 +44,6 @@
     For functions which search for a value in an ordered (either
     increasing or decreasing) vector, see the class \ref
     o2scl::search_vec .
-
-    \future Create a matrix transpose copy function?
-    \future Create matrix swap row and column functions
 */
 #include <iostream>
 #include <cmath>
@@ -251,7 +248,7 @@ namespace o2scl {
     }
   }
 
-  /** \brief Simple transpose in-place
+  /** \brief Simple in-place transpose 
       
       Transpose the matrix \c src . If the matrix is not square,
       only the upper-left square part of the matrix will be
@@ -2534,7 +2531,7 @@ namespace o2scl {
     }
   };
 
-  /** \brief Generic object which represents a row of a matrix
+  /** \brief Generic object which represents a row of a const matrix
 
       \note This class is experimental.
 

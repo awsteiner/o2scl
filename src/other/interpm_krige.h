@@ -144,7 +144,7 @@ namespace o2scl {
       o2scl_linalg::cholesky_decomp(n_points,KXX);
       ubmatrix &inv_KXX=KXX;
       o2scl_linalg::cholesky_invert<ubmatrix>(n_points,inv_KXX);
-
+      
       // Inverse covariance matrix times function vector
       Kinvf[iout].resize(n_points);
       boost::numeric::ublas::axpy_prod(inv_KXX,y[iout],Kinvf[iout],true);
