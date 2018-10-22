@@ -38,9 +38,6 @@
 #include <map>
 #include <initializer_list>
 
-// For glob()
-#include <glob.h>
-
 #include <o2scl/err_hnd.h>
 
 extern "C" {
@@ -603,6 +600,11 @@ namespace o2scl {
   */
   int glob_wrapper(std::string pattern,
 		   std::vector<std::string> &matches);
+
+  /** \brief Desc
+   */
+  int wordexp_wrapper(std::string word,
+		      std::vector<std::string> &matches);
   
 #endif
 

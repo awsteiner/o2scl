@@ -22,6 +22,7 @@
 */
 #include <o2scl/cloud_file.h>
 
+using namespace std;
 using namespace o2scl;
 using namespace o2scl_hdf;
 
@@ -69,6 +70,19 @@ int cloud_file::get_file_hash
   // -------------------------------------------------------
   // Main directory section
 
+  // First use wordexp to do tilde expansion
+  string dir_old=dir;
+  std::vector<std::string> matches;
+  int wret=wordexp_wrapper(dir,matches);
+  if (matches.size()>1 || matches.size()==0 || wret!=0) {
+    return 10;
+  }
+  dir=matches[0];
+  if (verbose>1) {
+    cout << "Function wordexp() converted "
+	 << dir_old << " to " << dir << endl;
+  }
+  
   // Look for directory 
   bool dir_present=false;
   if (dir.length()>0) {
@@ -144,6 +158,19 @@ int cloud_file::get_file_hash
   } else {
     fname=file;
   }
+
+  // First use wordexp to do tilde expansion
+  string fname_old=fname;
+  wret=wordexp_wrapper(fname,matches);
+  if (matches.size()>1 || matches.size()==0 || wret!=0) {
+    return 10;
+  }
+  fname=matches[0];
+  if (verbose>1) {
+    cout << "Function wordexp() converted "
+	 << fname_old << " to " << fname << endl;
+  }
+  
   bool file_present=false;
   bool valid_hash=false;
   sret=stat(fname.c_str(),&sb);
@@ -271,15 +298,15 @@ int cloud_file::get_file_hash
 
 #else
 
-  std::cout << "Here6 " << dir << std::endl;
+  std::cout << "Here0 " << dir << std::endl;
   boost::filesystem::path p(dir.c_str());
-  std::cout << "Here7." << std::endl;
+  std::cout << "Here1." << std::endl;
   std::cout << boost::filesystem::exists(p) << std::endl;
-  std::cout << "Here7b." << std::endl;
+  std::cout << "Here2." << std::endl;
   std::cout << boost::filesystem::is_directory(p) << std::endl;
-  std::cout << "Here8." << std::endl;
+  std::cout << "Here3." << std::endl;
   std::cout << boost::filesystem::is_regular_file(p) << std::endl;
-  std::cout << "Here9." << std::endl;
+  std::cout << "Here4." << std::endl;
   exit(-1);
       
 #endif      

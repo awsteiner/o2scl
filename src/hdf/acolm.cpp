@@ -1096,8 +1096,8 @@ int acol_manager::setup_options() {
      "creating the new object.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_create),
      both},
-    {0,"download","Download file from specified URL.",
-     0,3,"<file> <URL> [hash or \"file:\"hash_filename] [directory]",
+    {0,"download","Download file from specified URL.",0,4,
+     "<file> <URL> [hash, \"file:\"hash_filename, or \"none\"] [directory]",
      ((string)"Check if a file matches a specified hash, and if not, ")+
      "attempt to download a fresh copy from the specified URL.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_download),

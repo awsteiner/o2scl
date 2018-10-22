@@ -27,6 +27,12 @@
 // For gsl_finite()
 #include <gsl/gsl_sys.h>
 
+// For glob()
+#include <glob.h>
+
+// For wordexp()
+#include <wordexp.h>
+
 #include <o2scl/misc.h>
 
 using namespace std;
@@ -278,5 +284,21 @@ int o2scl::glob_wrapper(std::string pattern,
     }
   }
   globfree(&pglob);
+  return ret;
+}
+
+int o2scl::wordexp_wrapper(std::string word,
+			   std::vector<std::string> &matches) {
+  wordexp_t pwordexp;
+  char **w;
+  matches.clear();
+  int ret=wordexp(word.c_str(),&pwordexp,0);
+  if (ret==0) {
+    w=pwordexp.we_wordv;
+    for(size_t i=0;i<pwordexp.we_wordc;i++) {
+      matches.push_back(w[i]);
+    }
+  }
+  wordfree(&pwordexp);
   return ret;
 }
