@@ -593,375 +593,6 @@ namespace o2scl {
   }
   //@}
 
-  /// \name Vector autocorrelation
-  //@{
-  /** \brief Lag-1 autocorrelation
-
-      This function computes
-      \f[
-      \left[
-      \sum_i \left(x_i - \mu\right) \left(x_{i-1} - \mu \right)
-      \right] \left[ 
-      \sum_i \left(x_i - \mu\right)^2 
-      \right]^{-1}
-      \f]
-
-      This function produces the same results
-      as <tt>gsl_stats_lag1_autocorrelation_m()</tt>.
-
-      If \c n is less than 2, this function will call the error handler.
-  */
-  template<class vec_t>
-    double vector_lag1_autocorr(size_t n, const vec_t &data, double mean) {
-    
-    if (n<2) {
-      O2SCL_ERR2("Cannot compute lag1 with less than 2 elements",
-		     " in vector_lag1_autocorr().",exc_einval);
-    }
-
-    long double q=0.0;
-    long double v=(data[0]-mean)*(data[0]-mean);
-    for(size_t i=1;i<n;i++) {
-      long double delta0=data[i-1]-mean;
-      long double delta1=data[i]-mean;
-      q+=(delta0*delta1-q)/(i+1);
-      v+=(delta1*delta1-v)/(i+1);
-    }
-
-    return q/v;
-  }
-
-  /** \brief Lag-1 autocorrelation
-
-      This function computes
-      \f[
-      \left[
-      \sum_i \left(x_i - \mu\right) \left(x_{i-1} - \mu \right)
-      \right] \left[ 
-      \sum_i \left(x_i - \mu\right)^2 
-      \right]^{-1}
-      \f]
-
-      This function produces the same results
-      as <tt>gsl_stats_lag1_autocorrelation_m()</tt>.
-
-      If \c n is less than 2, this function will call the error handler.
-  */
-  template<class vec_t>
-    double vector_lag1_autocorr(const vec_t &data, double mean) {
-    return vector_lag1_autocorr(data.size(),data,mean);
-  }
-
-  /** \brief Lag-1 autocorrelation
-
-      This function computes
-      \f[
-      \left[
-      \sum_i \left(x_i - \mu\right) \left(x_{i-1} - \mu \right)
-      \right] \left[ 
-      \sum_i \left(x_i - \mu\right)^2 
-      \right]^{-1}
-      \f]
-      
-      This function produces the same results
-      as <tt>gsl_stats_lag1_autocorrelation()</tt>.
-
-      If \c n is less than 2, this function will call the error handler.
-  */
-  template<class vec_t> double vector_lag1_autocorr
-    (size_t n, const vec_t &data) {
-    double mean=vector_mean<vec_t>(n,data);
-    return vector_lag1_autocorr(n,data,mean);
-  }
-
-  /** \brief Lag-1 autocorrelation
-
-      This function computes
-      \f[
-      \left[
-      \sum_i \left(x_i - \mu\right) \left(x_{i-1} - \mu \right)
-      \right] \left[ 
-      \sum_i \left(x_i - \mu\right)^2 
-      \right]^{-1}
-      \f]
-      
-      This function produces the same results
-      as <tt>gsl_stats_lag1_autocorrelation()</tt>.
-
-      If \c n is less than 2, this function will call the error handler.
-  */
-  template<class vec_t> double vector_lag1_autocorr(const vec_t &data) {
-    return vector_lag1_autocorr(data.size(),data);
-  }
-
-  /** \brief Lag-k autocorrelation
-
-      This function computes
-      \f[
-      \left[
-      \sum_i \left(x_i - \mu\right) \left(x_{i-k} - \mu \right)
-      \right] \left[ 
-      \sum_i \left(x_i - \mu\right)^2 
-      \right]^{-1}
-      \f]
-
-      If <tt>n<=k</tt>, this function will call the error handler.
-  */
-  template<class vec_t>
-    double vector_lagk_autocorr(size_t n, const vec_t &data, size_t k,
-				double mean) {
-    
-    if (n<=k) {
-      O2SCL_ERR2("Not enough elements ",
-		 "in vector_lagk_autocorr().",exc_einval);
-    }
-
-    long double q=0.0, v=0.0;
-    for(size_t i=0;i<k;i++) {
-      v+=(data[i]-mean)*(data[i]-mean)/(i+1);
-    }
-    for(size_t i=k;i<n;i++) {
-      long double delta0=data[i-k]-mean;
-      long double delta1=data[i]-mean;
-      q+=(delta0*delta1-q)/(i+1);
-      v+=(delta1*delta1-v)/(i+1);
-    }
-    return q/v;
-  }
-
-  /** \brief Lag-k autocorrelation
-
-      This function computes
-      \f[
-      \left[
-      \sum_i \left(x_i - \mu\right) \left(x_{i-k} - \mu \right)
-      \right] \left[ 
-      \sum_i \left(x_i - \mu\right)^2 
-      \right]^{-1}
-      \f]
-
-      If <tt>n<=k</tt>, this function will call the error handler.
-  */
-  template<class vec_t>
-    double vector_lagk_autocorr(const vec_t &data, size_t k,
-				double mean) {
-    return vector_lagk_autocorr(data.size(),k,mean);
-  }
-
-  /** \brief Lag-k autocorrelation
-
-      This function computes
-      \f[
-      \left[
-      \sum_i \left(x_i - \mu\right) \left(x_{i-k} - \mu \right)
-      \right] \left[ 
-      \sum_i \left(x_i - \mu\right)^2 
-      \right]^{-1}
-      \f]
-
-      If <tt>n<=k</tt>, this function will call the error handler.
-  */
-  template<class vec_t> double vector_lagk_autocorr
-    (size_t n, const vec_t &data, size_t k) {
-    double mean=vector_mean<vec_t>(n,data);
-    return vector_lagk_autocorr(n,data,k,mean);
-  }
-
-  /** \brief Lag-k autocorrelation
-
-      This function computes
-      \f[
-      \left[
-      \sum_i \left(x_i - \mu\right) \left(x_{i-k} - \mu \right)
-      \right] \left[ 
-      \sum_i \left(x_i - \mu\right)^2 
-      \right]^{-1}
-      \f]
-
-      If <tt>n<=k</tt>, this function will call the error handler.
-  */
-  template<class vec_t> double vector_lagk_autocorr
-    (const vec_t &data, size_t k) {
-    return vector_lagk_autocorr(data.size(),data,k);
-  }
-
-  /** \brief Construct an autocorrelation vector
-
-      This constructs a vector \c ac_vec for which
-      the kth entry stores the lag-k autocorrelation.
-  */
-  template<class vec_t, class resize_vec_t> void vector_autocorr_vector
-    (const vec_t &data, resize_vec_t &ac_vec) {
-    size_t kmax=data.size()/2;
-    double mean=vector_mean(data);
-    ac_vec.resize(kmax);
-    ac_vec[0]=1.0;
-    for(size_t k=1;k<kmax;k++) {
-      ac_vec[k]=vector_lagk_autocorr(data.size(),data,k,mean);
-    }
-    return;
-  }
-
-  /** \brief Use the Goodman method to compute the
-      autocorrelation length
-
-      Representing the lag-k correlation coefficient by
-      \f$ \hat{C}(k) \f$, Goodman defines
-      \f[
-      \hat{\tau}(M) = 1 + 2 \sum_{s=1}^{M} \frac{\hat{C}(k)}{\hat{C}(0)}
-      \f]
-      Then the autocorrelation length is the value of 
-      \f$ \hat{\tau}(M) \f$ for which 
-      \f[
-      5 \hat{\tau}(M)/M \leq 1
-      \f]
-
-      This function computes the value of \f$ 5 \hat{\tau}(M)/M \f$
-      and stores it in the <tt>five_tau_over_M</tt> vector and then
-      returns the first value of \f$ M \f$ for which the vector is
-      less than or equal to 1.0. If this function returns 0, then \f$
-      5 \hat{\tau}(M)/M \f$ is greater than 1.0 for all \f$ M \f$, and
-      this can be a sign that the autocorrelation length is too long
-      to accurately resolve.
-
-      On completion, the vector \c five_tau_over_m will have
-      one less element than the vector \c ac_vec .
-  */
-  template<class vec_t, class resize_vec_t> size_t vector_autocorr_tau
-    (const vec_t &ac_vec, resize_vec_t &five_tau_over_M) {
-    five_tau_over_M.resize(0);
-    size_t len=0;
-    bool len_set=false;
-    for (size_t M=1;M<ac_vec.size();M++) {
-      double sum=0.0;
-      for(size_t s=1;s<=M;s++) {
-	sum+=ac_vec[s];
-      }
-      double val=(1.0+2.0*sum)/((double)M)*5.0;
-      if (len_set==false && val<=1.0) {
-	len=M;
-	len_set=true;
-      }
-      five_tau_over_M.push_back(val);
-    }
-    return len;
-  }
-  
-  /** \brief Lag-k autocorrelation for the first
-      \c n elements with a vector multiplier given 
-      the mean
-   */
-  template<class vec_t, class vec2_t>
-    double vector_lagk_autocorr_mult(size_t n, const vec_t &data,
-				     const vec2_t &mult, size_t k,
-				     double mean) {
-    
-    size_t n2=0;
-    for(size_t i=0;i<n;i++) {
-      size_t m=((size_t)(mult[i]*(1.0+1.0e-10)));
-      if (m==0) {
-	O2SCL_ERR2("Mult vector is zero ",
-		   "in vector_lagk_autocorr_mult().",exc_einval);
-      }
-      n2+=m;
-    }
-    
-    if (n2<=k) {
-      O2SCL_ERR2("Not enough elements ",
-		 "in vector_lagk_autocorr_mult().",exc_einval);
-    }
-
-    long double q=0.0, v=0.0;
-    size_t im=0, ix=0, im2=0, ix2=0;
-    for(size_t i=0;i<k;i++) {
-      v+=(data[ix]-mean)*(data[ix]-mean)/(i+1);
-      im++;
-      if (im>=((size_t)(mult[ix]*(1.0+1.0e-10)))) {
-	im=0;
-	ix++;
-      }
-    }
-    for(size_t i=k;i<n2;i++) {
-      long double delta0=data[ix2]-mean;
-      long double delta1=data[ix]-mean;
-      q+=(delta0*delta1-q)/(i+1);
-      v+=(delta1*delta1-v)/(i+1);
-      im++;
-      if (im>=((size_t)(mult[ix]*(1.0+1.0e-10)))) {
-	im=0;
-	ix++;
-      }
-      im2++;
-      if (im2>=((size_t)(mult[ix2]*(1.0+1.0e-10)))) {
-	im2=0;
-	ix2++;
-      }
-    }
-    return q/v;
-  }
-
-  /** \brief Lag-k autocorrelation for the first
-      \c n elements with a vector multiplier
-   */
-  template<class vec_t, class vec2_t>
-    double vector_lagk_autocorr_mult(size_t n, const vec_t &data,
-				     const vec2_t &mult, size_t k) {
-    double mean=wvector_mean(n,mult,data);
-    return vector_lagk_autocorr_mult(n,data,mult,k,mean);
-  }
-
-  /** \brief Lag-k autocorrelation with a vector multiplier
-      given the mean
-   */
-  template<class vec_t, class vec2_t>
-    double vector_lagk_autocorr_mult(const vec_t &data,
-				     const vec2_t &mult, size_t k,
-				     double mean) {
-    return vector_lagk_autocorr_mult(data.size(),data,mult,k,mean);
-  }
-  
-  /** \brief Lag-k autocorrelation with a vector multiplier
-   */
-  template<class vec_t, class vec2_t>
-    double vector_lagk_autocorr_mult(const vec_t &data,
-				     const vec2_t &mult, size_t k) {
-    return vector_lagk_autocorr_mult(data.size(),data,mult,k);
-  }
-  
-  /** \brief Construct an autocorrelation vector using a multiplier
-      using the first \c n2 elements of vectors \c data and \c mult
-   */
-  template<class vec_t, class vec2_t, class resize_vec_t>
-    void vector_autocorr_vector_mult
-    (size_t n2, const vec_t &data, const vec2_t &mult, resize_vec_t &ac_vec) {
-
-    size_t n=0;
-    for(size_t i=0;i<n2;i++) {
-      n+=((size_t)(mult[i]*(1.0+1.0e-10)));
-    }
-    
-    size_t kmax=n/2;
-    double mean=wvector_mean(data,mult);
-    ac_vec.resize(kmax);
-    ac_vec[0]=1.0;
-    for(size_t k=1;k<kmax;k++) {
-      ac_vec[k]=vector_lagk_autocorr_mult(n2,data,mult,k,mean);
-    }
-    return;
-  }
-
-  /** \brief Construct an autocorrelation vector using a multiplier
-   */
-  template<class vec_t, class vec2_t, class resize_vec_t>
-    void vector_autocorr_vector_mult
-    (const vec_t &data, const vec2_t &mult, resize_vec_t &ac_vec) {
-
-    vector_autocorr_vector_mult(data.size(),data,mult,ac_vec);
-    
-    return;
-  }
-  //@}
-
   /// \name Other vector functions
   //@{
   /** \brief Compute the covariance of two vectors
@@ -1983,6 +1614,376 @@ namespace o2scl {
   }
   //@}
 
+  // This section has to appear after wvector_mean()
+  /// \name Vector autocorrelation
+  //@{
+  /** \brief Lag-1 autocorrelation
+
+      This function computes
+      \f[
+      \left[
+      \sum_i \left(x_i - \mu\right) \left(x_{i-1} - \mu \right)
+      \right] \left[ 
+      \sum_i \left(x_i - \mu\right)^2 
+      \right]^{-1}
+      \f]
+
+      This function produces the same results
+      as <tt>gsl_stats_lag1_autocorrelation_m()</tt>.
+
+      If \c n is less than 2, this function will call the error handler.
+  */
+  template<class vec_t>
+    double vector_lag1_autocorr(size_t n, const vec_t &data, double mean) {
+    
+    if (n<2) {
+      O2SCL_ERR2("Cannot compute lag1 with less than 2 elements",
+		     " in vector_lag1_autocorr().",exc_einval);
+    }
+
+    long double q=0.0;
+    long double v=(data[0]-mean)*(data[0]-mean);
+    for(size_t i=1;i<n;i++) {
+      long double delta0=data[i-1]-mean;
+      long double delta1=data[i]-mean;
+      q+=(delta0*delta1-q)/(i+1);
+      v+=(delta1*delta1-v)/(i+1);
+    }
+
+    return q/v;
+  }
+
+  /** \brief Lag-1 autocorrelation
+
+      This function computes
+      \f[
+      \left[
+      \sum_i \left(x_i - \mu\right) \left(x_{i-1} - \mu \right)
+      \right] \left[ 
+      \sum_i \left(x_i - \mu\right)^2 
+      \right]^{-1}
+      \f]
+
+      This function produces the same results
+      as <tt>gsl_stats_lag1_autocorrelation_m()</tt>.
+
+      If \c n is less than 2, this function will call the error handler.
+  */
+  template<class vec_t>
+    double vector_lag1_autocorr(const vec_t &data, double mean) {
+    return vector_lag1_autocorr(data.size(),data,mean);
+  }
+
+  /** \brief Lag-1 autocorrelation
+
+      This function computes
+      \f[
+      \left[
+      \sum_i \left(x_i - \mu\right) \left(x_{i-1} - \mu \right)
+      \right] \left[ 
+      \sum_i \left(x_i - \mu\right)^2 
+      \right]^{-1}
+      \f]
+      
+      This function produces the same results
+      as <tt>gsl_stats_lag1_autocorrelation()</tt>.
+
+      If \c n is less than 2, this function will call the error handler.
+  */
+  template<class vec_t> double vector_lag1_autocorr
+    (size_t n, const vec_t &data) {
+    double mean=vector_mean<vec_t>(n,data);
+    return vector_lag1_autocorr(n,data,mean);
+  }
+
+  /** \brief Lag-1 autocorrelation
+
+      This function computes
+      \f[
+      \left[
+      \sum_i \left(x_i - \mu\right) \left(x_{i-1} - \mu \right)
+      \right] \left[ 
+      \sum_i \left(x_i - \mu\right)^2 
+      \right]^{-1}
+      \f]
+      
+      This function produces the same results
+      as <tt>gsl_stats_lag1_autocorrelation()</tt>.
+
+      If \c n is less than 2, this function will call the error handler.
+  */
+  template<class vec_t> double vector_lag1_autocorr(const vec_t &data) {
+    return vector_lag1_autocorr(data.size(),data);
+  }
+
+  /** \brief Lag-k autocorrelation
+
+      This function computes
+      \f[
+      \left[
+      \sum_i \left(x_i - \mu\right) \left(x_{i-k} - \mu \right)
+      \right] \left[ 
+      \sum_i \left(x_i - \mu\right)^2 
+      \right]^{-1}
+      \f]
+
+      If <tt>n<=k</tt>, this function will call the error handler.
+  */
+  template<class vec_t>
+    double vector_lagk_autocorr(size_t n, const vec_t &data, size_t k,
+				double mean) {
+    
+    if (n<=k) {
+      O2SCL_ERR2("Not enough elements ",
+		 "in vector_lagk_autocorr().",exc_einval);
+    }
+
+    long double q=0.0, v=0.0;
+    for(size_t i=0;i<k;i++) {
+      v+=(data[i]-mean)*(data[i]-mean)/(i+1);
+    }
+    for(size_t i=k;i<n;i++) {
+      long double delta0=data[i-k]-mean;
+      long double delta1=data[i]-mean;
+      q+=(delta0*delta1-q)/(i+1);
+      v+=(delta1*delta1-v)/(i+1);
+    }
+    return q/v;
+  }
+
+  /** \brief Lag-k autocorrelation
+
+      This function computes
+      \f[
+      \left[
+      \sum_i \left(x_i - \mu\right) \left(x_{i-k} - \mu \right)
+      \right] \left[ 
+      \sum_i \left(x_i - \mu\right)^2 
+      \right]^{-1}
+      \f]
+
+      If <tt>n<=k</tt>, this function will call the error handler.
+  */
+  template<class vec_t>
+    double vector_lagk_autocorr(const vec_t &data, size_t k,
+				double mean) {
+    return vector_lagk_autocorr(data.size(),k,mean);
+  }
+
+  /** \brief Lag-k autocorrelation
+
+      This function computes
+      \f[
+      \left[
+      \sum_i \left(x_i - \mu\right) \left(x_{i-k} - \mu \right)
+      \right] \left[ 
+      \sum_i \left(x_i - \mu\right)^2 
+      \right]^{-1}
+      \f]
+
+      If <tt>n<=k</tt>, this function will call the error handler.
+  */
+  template<class vec_t> double vector_lagk_autocorr
+    (size_t n, const vec_t &data, size_t k) {
+    double mean=vector_mean<vec_t>(n,data);
+    return vector_lagk_autocorr(n,data,k,mean);
+  }
+
+  /** \brief Lag-k autocorrelation
+
+      This function computes
+      \f[
+      \left[
+      \sum_i \left(x_i - \mu\right) \left(x_{i-k} - \mu \right)
+      \right] \left[ 
+      \sum_i \left(x_i - \mu\right)^2 
+      \right]^{-1}
+      \f]
+
+      If <tt>n<=k</tt>, this function will call the error handler.
+  */
+  template<class vec_t> double vector_lagk_autocorr
+    (const vec_t &data, size_t k) {
+    return vector_lagk_autocorr(data.size(),data,k);
+  }
+
+  /** \brief Construct an autocorrelation vector
+
+      This constructs a vector \c ac_vec for which
+      the kth entry stores the lag-k autocorrelation.
+  */
+  template<class vec_t, class resize_vec_t> void vector_autocorr_vector
+    (const vec_t &data, resize_vec_t &ac_vec) {
+    size_t kmax=data.size()/2;
+    double mean=vector_mean(data);
+    ac_vec.resize(kmax);
+    ac_vec[0]=1.0;
+    for(size_t k=1;k<kmax;k++) {
+      ac_vec[k]=vector_lagk_autocorr(data.size(),data,k,mean);
+    }
+    return;
+  }
+
+  /** \brief Use the Goodman method to compute the
+      autocorrelation length
+
+      Representing the lag-k correlation coefficient by
+      \f$ \hat{C}(k) \f$, Goodman defines
+      \f[
+      \hat{\tau}(M) = 1 + 2 \sum_{s=1}^{M} \frac{\hat{C}(k)}{\hat{C}(0)}
+      \f]
+      Then the autocorrelation length is the value of 
+      \f$ \hat{\tau}(M) \f$ for which 
+      \f[
+      5 \hat{\tau}(M)/M \leq 1
+      \f]
+
+      This function computes the value of \f$ 5 \hat{\tau}(M)/M \f$
+      and stores it in the <tt>five_tau_over_M</tt> vector and then
+      returns the first value of \f$ M \f$ for which the vector is
+      less than or equal to 1.0. If this function returns 0, then \f$
+      5 \hat{\tau}(M)/M \f$ is greater than 1.0 for all \f$ M \f$, and
+      this can be a sign that the autocorrelation length is too long
+      to accurately resolve.
+
+      On completion, the vector \c five_tau_over_m will have
+      one less element than the vector \c ac_vec .
+  */
+  template<class vec_t, class resize_vec_t> size_t vector_autocorr_tau
+    (const vec_t &ac_vec, resize_vec_t &five_tau_over_M) {
+    five_tau_over_M.resize(0);
+    size_t len=0;
+    bool len_set=false;
+    for (size_t M=1;M<ac_vec.size();M++) {
+      double sum=0.0;
+      for(size_t s=1;s<=M;s++) {
+	sum+=ac_vec[s];
+      }
+      double val=(1.0+2.0*sum)/((double)M)*5.0;
+      if (len_set==false && val<=1.0) {
+	len=M;
+	len_set=true;
+      }
+      five_tau_over_M.push_back(val);
+    }
+    return len;
+  }
+  
+  /** \brief Lag-k autocorrelation for the first
+      \c n elements with a vector multiplier given 
+      the mean
+   */
+  template<class vec_t, class vec2_t>
+    double vector_lagk_autocorr_mult(size_t n, const vec_t &data,
+				     const vec2_t &mult, size_t k,
+				     double mean) {
+    
+    size_t n2=0;
+    for(size_t i=0;i<n;i++) {
+      size_t m=((size_t)(mult[i]*(1.0+1.0e-10)));
+      if (m==0) {
+	O2SCL_ERR2("Mult vector is zero ",
+		   "in vector_lagk_autocorr_mult().",exc_einval);
+      }
+      n2+=m;
+    }
+    
+    if (n2<=k) {
+      O2SCL_ERR2("Not enough elements ",
+		 "in vector_lagk_autocorr_mult().",exc_einval);
+    }
+
+    long double q=0.0, v=0.0;
+    size_t im=0, ix=0, im2=0, ix2=0;
+    for(size_t i=0;i<k;i++) {
+      v+=(data[ix]-mean)*(data[ix]-mean)/(i+1);
+      im++;
+      if (im>=((size_t)(mult[ix]*(1.0+1.0e-10)))) {
+	im=0;
+	ix++;
+      }
+    }
+    for(size_t i=k;i<n2;i++) {
+      long double delta0=data[ix2]-mean;
+      long double delta1=data[ix]-mean;
+      q+=(delta0*delta1-q)/(i+1);
+      v+=(delta1*delta1-v)/(i+1);
+      im++;
+      if (im>=((size_t)(mult[ix]*(1.0+1.0e-10)))) {
+	im=0;
+	ix++;
+      }
+      im2++;
+      if (im2>=((size_t)(mult[ix2]*(1.0+1.0e-10)))) {
+	im2=0;
+	ix2++;
+      }
+    }
+    return q/v;
+  }
+
+  /** \brief Lag-k autocorrelation for the first
+      \c n elements with a vector multiplier
+   */
+  template<class vec_t, class vec2_t>
+    double vector_lagk_autocorr_mult(size_t n, const vec_t &data,
+				     const vec2_t &mult, size_t k) {
+    double mean=wvector_mean(n,mult,data);
+    return vector_lagk_autocorr_mult(n,data,mult,k,mean);
+  }
+
+  /** \brief Lag-k autocorrelation with a vector multiplier
+      given the mean
+   */
+  template<class vec_t, class vec2_t>
+    double vector_lagk_autocorr_mult(const vec_t &data,
+				     const vec2_t &mult, size_t k,
+				     double mean) {
+    return vector_lagk_autocorr_mult(data.size(),data,mult,k,mean);
+  }
+  
+  /** \brief Lag-k autocorrelation with a vector multiplier
+   */
+  template<class vec_t, class vec2_t>
+    double vector_lagk_autocorr_mult(const vec_t &data,
+				     const vec2_t &mult, size_t k) {
+    return vector_lagk_autocorr_mult(data.size(),data,mult,k);
+  }
+  
+  /** \brief Construct an autocorrelation vector using a multiplier
+      using the first \c n2 elements of vectors \c data and \c mult
+   */
+  template<class vec_t, class vec2_t, class resize_vec_t>
+    void vector_autocorr_vector_mult
+    (size_t n2, const vec_t &data, const vec2_t &mult, resize_vec_t &ac_vec) {
+
+    size_t n=0;
+    for(size_t i=0;i<n2;i++) {
+      n+=((size_t)(mult[i]*(1.0+1.0e-10)));
+    }
+    
+    size_t kmax=n/2;
+    double mean=wvector_mean(data,mult);
+    ac_vec.resize(kmax);
+    ac_vec[0]=1.0;
+    for(size_t k=1;k<kmax;k++) {
+      ac_vec[k]=vector_lagk_autocorr_mult(n2,data,mult,k,mean);
+    }
+    return;
+  }
+
+  /** \brief Construct an autocorrelation vector using a multiplier
+   */
+  template<class vec_t, class vec2_t, class resize_vec_t>
+    void vector_autocorr_vector_mult
+    (const vec_t &data, const vec2_t &mult, resize_vec_t &ac_vec) {
+
+    vector_autocorr_vector_mult(data.size(),data,mult,ac_vec);
+    
+    return;
+  }
+  //@}
+  
 #ifndef DOXYGEN_NO_O2NS
 }
 #endif

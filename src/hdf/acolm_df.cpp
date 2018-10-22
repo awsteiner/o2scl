@@ -76,31 +76,50 @@ int acol_manager::comm_diag(std::vector<std::string> &sv, bool itive_com) {
 int acol_manager::comm_download(std::vector<std::string> &sv, bool itive_com) {
 
   cloud_file cf;
-  std::string file, hash, url, fname;
+  std::string file, hash="", url, fname, dir="";
 
-  if (sv.size()==3) {
-    
-    file=sv[1];
-    url=sv[2];
-    if (verbose>0) {
-      cout << "No hash specified, so download is not verified." << endl;
-    }
-    cf.get_file(file,url,"");
-    return 0;
-    
-  } 
-  
   vector<string> in, pr;
-  pr.push_back("Destination filename");
-  pr.push_back("URL");
-  pr.push_back("Hash");
-  int ret=get_input(sv,pr,in,"download",itive_com);
-  if (ret!=0) return ret;
 
-  file=in[0];
-  url=in[1];
-  hash=in[2];
+  // If there aren't enough arguments then prompt the user
+  if (sv.size()<3) {
+    pr.push_back("Destination filename");
+    pr.push_back("URL");
+    pr.push_back("Hash");
+    pr.push_back("Directory");
+    int ret=get_input(sv,pr,in,"download",itive_com);
+    if (ret!=0) return ret;
+  } else {
+    for(size_t j=1;j<sv.size();j++) {
+      in.push_back(sv[j]);
+    }
+  }
 
+  // If a file and URL were specified with no hash, then proceed
+  if (in.size()==2) {
+    
+    file=in[0];
+    url=in[1];
+    if (verbose>0) {
+      cout << "No hash specified, so download will not be verified."
+	   << endl;
+    }
+
+  } else if (in.size()==3) {
+    
+    file=in[0];
+    url=in[1];
+    hash=in[2];
+
+  } else {
+    
+    file=in[0];
+    url=in[1];
+    hash=in[2];
+    dir=in[3];
+
+  }
+
+  // If requested, obtain hash from file
   if ((hash[0]=='f' || hash[0]=='F') &&
       (hash[1]=='i' || hash[1]=='I') &&
       (hash[2]=='l' || hash[2]=='L') &&
@@ -119,9 +138,9 @@ int acol_manager::comm_download(std::vector<std::string> &sv, bool itive_com) {
   cf.verbose=verbose;
   if (hash==((std::string)"None") ||
       hash==((std::string)"none") || hash.length()==0) {
-    cf.get_file(file,url,"");
+    cf.get_file(file,url,dir);
   } else {
-    cf.get_file_hash(file,hash,url,"");
+    cf.get_file_hash(file,hash,url,dir);
   }
   
   return 0;
