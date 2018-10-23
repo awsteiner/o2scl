@@ -733,6 +733,13 @@ namespace o2scl_acol {
 	  for(size_t i=0;i<t.get_nlines();i++) {
 	    v[i]=t.get(addl_spec,i);
 	  }
+	} else if (type=="double[]") {
+	  hf.getd_vec(obj_name,doublev_obj);
+	  v.resize(doublev_obj.size());
+	  for(size_t i=0;i<v.size();i++) {
+	    v[i]=doublev_obj[i];
+	    std::cout << "X: " << i << " " << v[i] << std::endl;
+	  }
 	}
 	hf.close();
 	
