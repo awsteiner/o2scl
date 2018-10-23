@@ -198,6 +198,11 @@ namespace o2scl {
   */
   void split_string(std::string str, std::vector<std::string> &sv);
 
+  /** \brief Split a string into parts using a delimiter
+   */
+  int split_string_delim(std::string str, std::vector<std::string> &list,
+			 char delim);
+  
   /** \brief Rewrap a string into a single column, avoiding
       strings less than a particular number of characters
    */

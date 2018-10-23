@@ -300,6 +300,29 @@ void o2scl::split_string(string str, vector<string> &sv) {
   return;
 }
 
+int o2scl::split_string_delim(string str, vector<string> &list,
+			      char delim) {
+  
+  list.clear();
+  size_t k=0;
+  while (k<str.length()) {
+    size_t loc=str.find(delim,k);
+    if (loc!=std::string::npos) {
+      std::string stemp=str.substr(k,loc-k);
+      list.push_back(stemp);
+      k+=stemp.length()+1;
+    } else {
+      if (k<str.length()) {
+	list.push_back(str.substr(k,str.length()-k));
+      }
+      k=str.length();
+    }
+  }
+  
+  return 0;
+}
+
+  
 void o2scl::rewrap(std::string str, std::vector<std::string> &sv,
 		   size_t ncol) {
   

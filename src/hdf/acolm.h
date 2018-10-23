@@ -45,6 +45,7 @@
 #include <o2scl/lib_settings.h>
 #include <o2scl/contour.h>
 #include <o2scl/tensor_grid.h>
+#include <o2scl/uniform_grid.h>
 
 #ifdef O2SCL_READLINE
 #include <o2scl/cli_readline.h>
@@ -513,6 +514,183 @@ namespace o2scl_acol {
     int get_input_one(std::vector<std::string> &sv, std::string directions,
 		      std::string &in, std::string comm_name,
 		      bool itive_com);
+    
+    /** \brief Generic vector specification
+	
+	Formats:
+	- single value: <value>
+	- list of values: <entry 0>,<entry 1>, ...,<entry n-1>
+	- function: func:<N>:<function of i>
+	- grid: grid:<begin>:<end>:<width>:["log"]
+	- HDF5 object in file: 
+	file:<file name>:<object name>:[additional specification]
+	
+	Additional specifications
+	- table: <column>
+    */
+    template<class vec_t> int vector_spec(std::string spec, vec_t &v,
+					  bool err_on_fail=true) {
+      
+      if (spec.find(':')==std::string::npos) {
+	
+	if (spec.find(',')==std::string::npos) {
+	  // No commas and no colons, so just presume a single value
+	  v.resize(1);
+	  v[0]=o2scl::function_to_double(spec);
+	} else {
+	  // Has a comma, so presume a list
+	  std::vector<std::string> sv;
+	  o2scl::split_string_delim(spec,sv,',');
+	  size_t n=sv.size();
+	  for(size_t i=0;i<n;i++) {
+	    v[i]=o2scl::function_to_double(sv[i]);
+	  }
+	}
+	
+      } else if (spec.find("func:")==0) {
+	
+	// Function
+	std::string temp=spec.substr(5,spec.length()-5);
+	size_t ncolon=temp.find(':');
+	if (ncolon==std::string::npos) {
+	  if (err_on_fail) {
+	    O2SCL_ERR2("Function specified but no array length specified ",
+		       "in vector_spec().",o2scl::exc_einval);
+	  } else {
+	    return 1;
+	  }
+	}
+	size_t n;
+	int cret=o2scl::stoszt_nothrow(temp.substr(0,ncolon),n);
+	if (cret!=0) {
+	  if (err_on_fail) {
+	    O2SCL_ERR2("Conversion to size_t failed ",
+		       "in vector_spec().",o2scl::exc_einval);
+	  } else {
+	    return 2;
+	  }
+	}
+	if (temp.length()<ncolon+1) {
+	  if (err_on_fail) {
+	    O2SCL_ERR2("No apparent function specified ",
+		       "in vector_spec().",o2scl::exc_einval);
+	  } else {
+	    return 3;
+	  }
+	}
+	std::string func=temp.substr(ncolon+1,temp.length()-ncolon-1);
+	o2scl::calculator calc;
+	std::map<std::string,double> vars;
+	vars["i"]=0.0;
+	calc.compile(func.c_str(),&vars);
+	v.resize(n);
+	for(size_t i=0;i<n;i++) {
+	  vars["i"]=((double)i);
+	  v[i]=calc.eval(&vars);
+	}
+	
+      } else if (spec.find("grid:")==0) {
+	
+	// Grid
+	std::vector<std::string> sv;
+	o2scl::split_string_delim(spec,sv,':');
+	if (sv.size()<4) {
+	  if (err_on_fail) {
+	    O2SCL_ERR2("Not enough information for grid ",
+		       "in vector_spec().",o2scl::exc_einval);
+	  } else {
+	    return 7;
+	  }
+	}
+	if (sv.size()>=5 && sv[4]=="log") {
+	  o2scl::uniform_grid_log_end<double> ug(o2scl::stod(sv[1]),
+						 o2scl::stod(sv[2]),
+						 o2scl::stod(sv[3]));
+	  ug.vector(v);
+	} else {
+	  o2scl::uniform_grid_end<double> ug(o2scl::stod(sv[1]),
+					     o2scl::stod(sv[2]),
+					     o2scl::stod(sv[3]));
+	  ug.vector(v);
+	}
+	
+      } else if (spec.find("file:")==0) {
+	
+	// HDF5 object in a file
+	std::string temp=spec.substr(5,spec.length()-5);
+	size_t ncolon=temp.find(':');
+	if (ncolon==std::string::npos) {
+	  if (err_on_fail) {
+	    O2SCL_ERR2("No apparent object name specified ",
+		       "in vector_spec().",o2scl::exc_einval);
+	  } else {
+	    return 4;
+	  }
+	}
+	std::string fname=temp.substr(0,ncolon);
+	if (temp.length()<ncolon+1) {
+	  if (err_on_fail) {
+	    O2SCL_ERR2("No apparent object name specified ",
+		       "in vector_spec().",o2scl::exc_einval);
+	  } else {
+	    return 5;
+	  }
+	}
+	std::string obj_name=temp.substr(ncolon+1,temp.length()-ncolon-1);
+	std::string addl_spec;
+	ncolon=obj_name.find(':');
+	if (ncolon!=std::string::npos) {
+	  addl_spec=obj_name.substr(ncolon+1,obj_name.length()-ncolon-1);
+	  obj_name=obj_name.substr(0,ncolon);
+	} 
+	o2scl_hdf::hdf_file hf;
+	
+	std::string fname_old=fname;
+	std::vector<std::string> matches;
+	int wret=o2scl::wordexp_wrapper(fname_old,matches);
+	if (matches.size()>1 || matches.size()==0 || wret!=0) {
+	  if (err_on_fail) {
+	    O2SCL_ERR2("Function wordexp_wrapper() failed ",
+		       "in vector_spec().",o2scl::exc_einval);
+	  } else {
+	    return 9;
+	  }
+	}
+	fname=matches[0];
+	
+	hf.open(fname);
+	std::string type;
+	hf.find_object_by_name(obj_name,type);
+	if (type=="table") {
+	  if (addl_spec.length()==0) {
+	    if (err_on_fail) {
+	      O2SCL_ERR2("No table column name specified ",
+			 "in vector_spec().",o2scl::exc_einval);
+	    } else {
+	      return 6;
+	    }
+	  }
+	  o2scl::table_units<> t;
+	  o2scl_hdf::hdf_input(hf,t,obj_name);
+	  v.resize(t.get_nlines());
+	  for(size_t i=0;i<t.get_nlines();i++) {
+	    v[i]=t.get(addl_spec,i);
+	  }
+	}
+	hf.close();
+	
+      } else {
+	
+	if (err_on_fail) {
+	  O2SCL_ERR2("Could not parse specification ",
+		     "in vector_spec().",o2scl::exc_einval);
+	} else {
+	  return 8;
+	}
+	
+      }
+      return 0;
+    }
     
   public:
     
