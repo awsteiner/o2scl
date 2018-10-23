@@ -103,7 +103,7 @@ int cloud_file::get_file_hash
       if (verbose>1) {
 	std::cout << "Directory specified but not present in filesystem."
 		  << std::endl;
-	std::cout << "Trying to create with command:\n\t"
+	std::cout << "Trying to create with command:\n  "
 		  << cmd << std::endl;
       }
       int mret=system(cmd.c_str());
@@ -195,7 +195,7 @@ int cloud_file::get_file_hash
 	" | awk '{print $4}'";
     }
     if (verbose>1) {
-      std::cout << "Checking hash with command:\n\t" << cmd
+      std::cout << "Checking hash with command:\n  " << cmd
 		<< std::endl;
     }
     std::string hash2=o2scl::pipe_cmd_string(cmd);
@@ -220,7 +220,7 @@ int cloud_file::get_file_hash
       std::string cmd=((std::string)"cd ")+dir+"; curl -o "+
 	file+" "+url;
       if (verbose>0) {
-	std::cout << "Trying curl command:\n\t"
+	std::cout << "Trying curl command:\n  "
 		  << cmd << std::endl;
       }
       ret=system(cmd.c_str());
@@ -231,7 +231,7 @@ int cloud_file::get_file_hash
       if (verbose>0) {
 	std::cout << "File did not exist or read failed or invalid hash."
 		  << std::endl;
-	std::cout << "Trying wget command:\n\t"
+	std::cout << "Trying wget command:\n  "
 		  << cmd << std::endl;
       }
       ret=system(cmd.c_str());
@@ -277,7 +277,7 @@ int cloud_file::get_file_hash
 	" | awk '{print $4}'";
     }
     if (verbose>1) {
-      std::cout << "Checking hash with command:\n\t" << cmd
+      std::cout << "Checking hash with command:\n  " << cmd
 		<< std::endl;
     }
     std::string hash2=o2scl::pipe_cmd_string(cmd);

@@ -529,11 +529,16 @@ namespace o2scl_acol {
 	- table: <column>
     */
     template<class vec_t> int vector_spec(std::string spec, vec_t &v,
+					  int verbose=0,
 					  bool err_on_fail=true) {
       
       if (spec.find(':')==std::string::npos) {
-	
+
 	if (spec.find(',')==std::string::npos) {
+	  if (verbose>1) {
+	    std::cout << "vector_spec(): single value " << spec
+		      << std::endl;;
+	  }
 	  // No commas and no colons, so just presume a single value
 	  v.resize(1);
 	  v[0]=o2scl::function_to_double(spec);
@@ -542,6 +547,18 @@ namespace o2scl_acol {
 	  std::vector<std::string> sv;
 	  o2scl::split_string_delim(spec,sv,',');
 	  size_t n=sv.size();
+	  if (n==0) {
+	    if (err_on_fail) {
+	      O2SCL_ERR2("String split failed, spec empty? ",
+			 "in vector_spec().",o2scl::exc_einval);
+	    } else {
+	      return 10;
+	    }
+	  }
+	  if (verbose>1) {
+	    std::cout << "vector_spec(): List " << spec << std::endl;
+	    std::cout << n << " " << sv[0] << " " << sv[n-1] << std::endl;
+	  }
 	  for(size_t i=0;i<n;i++) {
 	    v[i]=o2scl::function_to_double(sv[i]);
 	  }
@@ -550,6 +567,9 @@ namespace o2scl_acol {
       } else if (spec.find("func:")==0) {
 	
 	// Function
+	if (verbose>1) {
+	  std::cout << "vector_spec(): Function " << spec << std::endl;
+	}
 	std::string temp=spec.substr(5,spec.length()-5);
 	size_t ncolon=temp.find(':');
 	if (ncolon==std::string::npos) {
@@ -570,6 +590,9 @@ namespace o2scl_acol {
 	    return 2;
 	  }
 	}
+	if (verbose>1) {
+	  std::cout << "Size " << n << std::endl;
+	}
 	if (temp.length()<ncolon+1) {
 	  if (err_on_fail) {
 	    O2SCL_ERR2("No apparent function specified ",
@@ -579,9 +602,11 @@ namespace o2scl_acol {
 	  }
 	}
 	std::string func=temp.substr(ncolon+1,temp.length()-ncolon-1);
+	if (verbose>1) {
+	  std::cout << "Function " << func << std::endl;
+	}
 	o2scl::calculator calc;
 	std::map<std::string,double> vars;
-	vars["i"]=0.0;
 	calc.compile(func.c_str(),&vars);
 	v.resize(n);
 	for(size_t i=0;i<n;i++) {
@@ -592,6 +617,9 @@ namespace o2scl_acol {
       } else if (spec.find("grid:")==0) {
 	
 	// Grid
+	if (verbose>1) {
+	  std::cout << "vector_spec(): Grid " << spec << std::endl;
+	}
 	std::vector<std::string> sv;
 	o2scl::split_string_delim(spec,sv,':');
 	if (sv.size()<4) {
@@ -601,6 +629,10 @@ namespace o2scl_acol {
 	  } else {
 	    return 7;
 	  }
+	}
+	if (verbose>1) {
+	  std::cout << "Begin,end,width "
+		    << sv[1] << " " << sv[2] << " " << sv[3] << std::endl;
 	}
 	if (sv.size()>=5 && sv[4]=="log") {
 	  o2scl::uniform_grid_log_end<double> ug(o2scl::stod(sv[1]),
@@ -617,6 +649,9 @@ namespace o2scl_acol {
       } else if (spec.find("file:")==0) {
 	
 	// HDF5 object in a file
+	if (verbose>1) {
+	  std::cout << "vector_spec(): File " << spec << std::endl;
+	}
 	std::string temp=spec.substr(5,spec.length()-5);
 	size_t ncolon=temp.find(':');
 	if (ncolon==std::string::npos) {
@@ -628,6 +663,9 @@ namespace o2scl_acol {
 	  }
 	}
 	std::string fname=temp.substr(0,ncolon);
+	if (verbose>1) {
+	  std::cout << "Filename " << fname << std::endl;
+	}
 	if (temp.length()<ncolon+1) {
 	  if (err_on_fail) {
 	    O2SCL_ERR2("No apparent object name specified ",
@@ -643,6 +681,10 @@ namespace o2scl_acol {
 	  addl_spec=obj_name.substr(ncolon+1,obj_name.length()-ncolon-1);
 	  obj_name=obj_name.substr(0,ncolon);
 	} 
+	if (verbose>1) {
+	  std::cout << "Object name " << obj_name << std::endl;
+	  std::cout << "Additional specification " << addl_spec << std::endl;
+	}
 	o2scl_hdf::hdf_file hf;
 	
 	std::string fname_old=fname;
@@ -657,10 +699,25 @@ namespace o2scl_acol {
 	  }
 	}
 	fname=matches[0];
+	if (verbose>1) {
+	  std::cout << "Filename after wordexp() " << fname << std::endl;
+	}
 	
 	hf.open(fname);
 	std::string type;
-	hf.find_object_by_name(obj_name,type);
+	int find_ret=hf.find_object_by_name(obj_name,type);
+	if (find_ret!=0) {
+	  if (err_on_fail) {
+	    O2SCL_ERR2("Object not found in file ",
+		       "in vector_spec().",o2scl::exc_einval);
+	  } else {
+	    return 11;
+	  }
+	}
+	if (verbose>1) {
+	  std::cout << "Object type from file: " << type << std::endl;
+	}
+	
 	if (type=="table") {
 	  if (addl_spec.length()==0) {
 	    if (err_on_fail) {

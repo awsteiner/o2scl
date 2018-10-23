@@ -119,6 +119,14 @@ int acol_manager::comm_download(std::vector<std::string> &sv, bool itive_com) {
 
   }
 
+  if (verbose>1) {
+    cout << "acolm 'download' (file,url,hash,dir): " << endl;
+    cout << "  file: " << file << endl;
+    cout << "  url: " << url << endl;
+    cout << "  hash: " << hash << endl;
+    cout << "  dir: " << dir << endl;
+  }
+
   // If requested, obtain hash from file
   if ((hash[0]=='f' || hash[0]=='F') &&
       (hash[1]=='i' || hash[1]=='I') &&
@@ -140,7 +148,7 @@ int acol_manager::comm_download(std::vector<std::string> &sv, bool itive_com) {
       hash==((std::string)"none") || hash.length()==0) {
     cf.get_file(file,url,dir);
   } else {
-    cf.get_file_hash(file,hash,url,dir);
+    cf.get_file_hash(file,url,hash,dir);
   }
   
   return 0;

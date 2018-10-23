@@ -423,7 +423,25 @@ int acol_manager::comm_to_tensor_grid(std::vector<std::string> &sv,
 
     for(size_t j=0;j<rank;j++) {
 
-      int vs_ret=vector_spec(funcs[j],grid[j],false);
+      // If it's a function, automatically put in the size parameter
+      if (funcs[j].find("func:")==0) {
+	std::vector<std::string> sv;
+	split_string_delim(funcs[j],sv,':');
+	if (sv.size()==1) {
+	  cerr << "Function specification incomplete." << endl;
+	  return 2;
+	} else if (sv.size()==2) {
+	  sv.push_back(sv[1]);
+	}
+	sv[1]=o2scl::szttos(sz[j]);
+	funcs[j]=sv[0]+':'+sv[1]+':'+sv[2];
+	if (verbose>1) {
+	  cout << "Added size to function specification: "
+	       << funcs[j] << endl;
+	}
+      }
+
+      int vs_ret=vector_spec(funcs[j],grid[j],verbose,false);
       if (vs_ret!=0) {
 	cerr << "Function vector_spec() failed." << endl;
 	return 1;
@@ -431,9 +449,9 @@ int acol_manager::comm_to_tensor_grid(std::vector<std::string> &sv,
     }
 
     tensor_grid_obj.set_grid(grid);
-
+    
     // Swap data from tensor into tensor_grid
-    vector<double> d;
+    vector<double> d(tensor_obj.total_size());
     tensor_obj.swap_data(d);
     tensor_grid_obj.swap_data(d);
 
