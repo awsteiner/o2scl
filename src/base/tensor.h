@@ -104,47 +104,32 @@ namespace o2scl {
 
   /** \brief Desc
    */
-  index_spec ix_index(size_t ix) {
-    index_spec is(index_spec::index,ix,0,0.0);
-    return is;
-  }
+  index_spec ix_index(size_t ix);
   
   /** \brief Desc
    */
-  index_spec ix_fixed(size_t ix, size_t ix2) {
-    return index_spec(index_spec::fixed,ix,ix2,0.0);
-  }
+  index_spec ix_fixed(size_t ix, size_t ix2);
   
   /** \brief Desc
    */
-  index_spec ix_sum(size_t ix) {
-    return index_spec(index_spec::sum,ix,0,0.0);
-  }
+  index_spec ix_sum(size_t ix);
   
   /** \brief Desc
    */
-  index_spec ix_trace(size_t ix, size_t ix2) {
-    return index_spec(index_spec::trace,ix,ix2,0.0);
-  }
+  index_spec ix_trace(size_t ix, size_t ix2);
   
   /** \brief Desc
    */
-  index_spec ix_reverse(size_t ix) {
-    return index_spec(index_spec::reverse,ix,0,0.0);
-  }
+  index_spec ix_reverse(size_t ix);
   
   /** \brief Desc
    */
-  index_spec ix_interp(size_t ix, double v) {
-    return index_spec(index_spec::interp,ix,0,v);
-  }
+  index_spec ix_interp(size_t ix, double v);
   
   /** \brief Desc
    */
-  index_spec ix_range(size_t ix, double v) {
-    return index_spec(index_spec::range,ix,0,v);
-  }
-  
+  index_spec ix_range(size_t ix, double v);
+
   /** \brief Tensor class with arbitrary dimensions
 
       The elements of a tensor are typically specified as a list of
