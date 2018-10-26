@@ -826,9 +826,9 @@ namespace o2scl {
 					 spec[i].ix1,
 					 spec[i].ix2,
 					 spec[i].val);
-	spec_old[spec[i].ix1]=index_spec(spec[i].type,
-					 spec[i].ix1,
+	spec_old[spec[i].ix2]=index_spec(spec[i].type,
 					 spec[i].ix2,
+					 spec[i].ix1,
 					 spec[i].val);
       } else if (spec[i].type==index_spec::sum) {
 	n_sum_loop*=size[spec[i].ix1];
@@ -859,9 +859,11 @@ namespace o2scl {
     }
 
     // Verbose output if necessary
-    if (verbose>1) {
+    if (verbose>0) {
       std::cout << "Using a " << rank_old << " rank tensor to create a new "
-      << rank_new << " rank tensor" << std::endl;
+      << rank_new << " rank tensor." << std::endl;
+    }
+    if (verbose>1) {
       for(size_t i=0;i<rank_old;i++) {
 	std::cout << "Old index " << i;
 	if (spec_old[i].type==index_spec::index) {
@@ -877,7 +879,7 @@ namespace o2scl {
 	  std::cout << " is being summed." << std::endl;
 	} else if (spec_old[i].type==index_spec::fixed) {
 	  std::cout << " is being fixed to " << spec_old[i].ix2
-		    << std::endl;
+		    << "." << std::endl;
 	}
       }
       for(size_t i=0;i<rank_new;i++) {
@@ -934,26 +936,26 @@ namespace o2scl {
 	    j2-=sub_size*(j2/sub_size);
 	  }
 	}
-	std::cout << "sum_sizes: ";
-	vector_out(std::cout,sum_sizes,true);
-	std::cout << "j: " << j << " sum_ix: ";
-	vector_out(std::cout,sum_ix,true);
+	//std::cout << "sum_sizes: ";
+	//vector_out(std::cout,sum_sizes,true);
+	//std::cout << "j: " << j << " sum_ix: ";
+	//vector_out(std::cout,sum_ix,true);
 
 	// Remap from sum_ix to ix_old
 	size_t cnt=0;
 	for(size_t k=0;k<rank_old;k++) {
 	  if (spec_old[k].type==index_spec::trace ||
 	      spec_old[k].type==index_spec::sum) {
-	    std::cout << "Here2: " << k << std::endl;
+	    //std::cout << "Here2: " << k << std::endl;
 	    ix_old[k]=sum_ix[cnt];
 	    cnt++;
 	  }
 	}
 	
-	std::cout << "Here old: ";
-	vector_out(std::cout,ix_old,true);
-	std::cout << "Here new: ";
-	vector_out(std::cout,ix_new,true);
+	//std::cout << "Here old: ";
+	//vector_out(std::cout,ix_old,true);
+	//std::cout << "Here new: ";
+	//vector_out(std::cout,ix_new,true);
 	val+=get(ix_old);
       
       }
