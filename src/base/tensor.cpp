@@ -1,0 +1,54 @@
+/*
+  -------------------------------------------------------------------
+  
+  Copyright (C) 2006-2018, Andrew W. Steiner
+  
+  This file is part of O2scl.
+  
+  O2scl is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 3 of the License, or
+  (at your option) any later version.
+  
+  O2scl is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with O2scl. If not, see <http://www.gnu.org/licenses/>.
+
+  -------------------------------------------------------------------
+*/
+#include <tensor.h>
+
+using namespace std;
+using namespace o2scl;
+
+index_spec o2scl::ix_index(size_t ix) {
+  return index_spec(index_spec::index,ix,0,0.0);
+}
+
+index_spec o2scl::ix_fixed(size_t ix, size_t ix2) {
+  return index_spec(index_spec::fixed,ix,ix2,0.0);
+}
+  
+index_spec o2scl::ix_sum(size_t ix) {
+  return index_spec(index_spec::sum,ix,0,0.0);
+}
+  
+index_spec o2scl::ix_trace(size_t ix, size_t ix2) {
+  return index_spec(index_spec::trace,ix,ix2,0.0);
+}
+  
+index_spec o2scl::ix_reverse(size_t ix) {
+  return index_spec(index_spec::reverse,ix,0,0.0);
+}
+  
+index_spec o2scl::ix_interp(size_t ix, double v) {
+  return index_spec(index_spec::interp,ix,0,v);
+}
+  
+index_spec o2scl::ix_range(size_t ix, double v) {
+  return index_spec(index_spec::range,ix,0,v);
+}
