@@ -49,6 +49,102 @@
 namespace o2scl {
 #endif
   
+  /** \brief Index specification 
+   */
+  class index_spec {
+    
+  public:
+  
+  /// Type of specification
+  size_t type;
+  /// First argument
+  size_t ix1;
+  /// Second argument
+  size_t ix2;
+  /// Value argument
+  double val;
+
+  /// \name Possible values for type
+  //@{
+  /// Empty specification
+  static const size_t empty=0;
+  /// Retain an index
+  static const size_t index=1;
+  /// Fix the value of an index
+  static const size_t fixed=2;
+  /// Sum over an index
+  static const size_t sum=3;
+  /// Perform a trace (sum over two indices)
+  static const size_t trace=4;
+  /// Reverse an index
+  static const size_t reverse=5;
+  /// Choose a new range for an index
+  static const size_t range=6;
+  /// Interpolate a value to fix an index
+  static const size_t interp=7;
+  //@}
+
+  /// Default constructor
+  index_spec() {
+    type=0;
+    ix1=0;
+    ix2=0;
+    val=0.0;
+  }
+
+  /// Explicit full constructor
+  index_spec(size_t typ, size_t i1, size_t i2, double v) {
+    type=typ;
+    ix1=i1;
+    ix2=i2;
+    val=v;
+  }
+  
+  };
+
+  /** \brief Desc
+   */
+  index_spec ix_index(size_t ix) {
+    index_spec is(index_spec::index,ix,0,0.0);
+    return is;
+  }
+  
+  /** \brief Desc
+   */
+  index_spec ix_fixed(size_t ix, size_t ix2) {
+    return index_spec(index_spec::fixed,ix,ix2,0.0);
+  }
+  
+  /** \brief Desc
+   */
+  index_spec ix_sum(size_t ix) {
+    return index_spec(index_spec::sum,ix,0,0.0);
+  }
+  
+  /** \brief Desc
+   */
+  index_spec ix_trace(size_t ix, size_t ix2) {
+    return index_spec(index_spec::trace,ix,ix2,0.0);
+  }
+  
+  /** \brief Desc
+   */
+  index_spec ix_reverse(size_t ix) {
+    return index_spec(index_spec::reverse,ix,0,0.0);
+  }
+  
+  /** \brief Desc
+   */
+  index_spec ix_interp(size_t ix, double v) {
+    return index_spec(index_spec::interp,ix,0,v);
+  }
+  
+  /** \brief Desc
+   */
+  index_spec ix_range(size_t ix, double v) {
+    return index_spec(index_spec::range,ix,0,v);
+  }
+  
   /** \brief Tensor class with arbitrary dimensions
 
       The elements of a tensor are typically specified as a list of
@@ -285,7 +381,7 @@ namespace o2scl {
   void swap_data(vec_t &dat) {
     if (data.size()!=dat.size()) {
       O2SCL_ERR2("Size of new vector does not equal tensor size in ",
-		"tensor::swap_data().",o2scl::exc_einval);
+		 "tensor::swap_data().",o2scl::exc_einval);
     }
     std::swap(dat,data);
     return;
@@ -694,214 +790,195 @@ namespace o2scl {
   }
   //@}
 
-  /// \name Slicing and summing to create tensor_grid objects
-  //@{
-#ifdef O2SCL_NEVER_DEFINED
-  // commenting this function out because clang
-  // had a problem with ix_new=ix_old[mapping[j]];
+  /** \brief Rearrange, sum and copy current tensor to a new tensor
 
+      \note Not yet working.
+  */
+  tensor<> rearrange_and_copy(std::vector<index_spec> spec,
+			      int verbose=0) {
+
+    // Old rank and new rank (computed later)
+    size_t rank_old=this->rk;
+    size_t rank_new=0;
+
+    // Size of the new indices
+    std::vector<size_t> size_new;
+
+    // Reorganize the index specifications by both the old
+    // and new indexing system
+    std::vector<index_spec> spec_old(rank_old);
+    std::vector<index_spec> spec_new;
   
-  /** \brief Sum over some (but not all) tensor indices to obtain
-      a smaller rank tensor
-   */
-  template<class size_vec2_t, class vec2_t> 
-  tensor<> sum_slice(size_vec2_t &isum) {
+    // Number of elements to sum over
+    size_t n_sum_loop=1;
 
-    if (isum.size()==0) {
-      O2SCL_ERR2("Specified empty vector in ",
-		 "tensor::copy_slice_interp().",
-		 o2scl::exc_einval);
-    }
-    if (this->rk<1+isum.size()) {
-      O2SCL_ERR2("Summed too many indices in ",
-		 "tensor::copy_slice_interp().",
-		 o2scl::exc_einval);
-    }
-    
-    // Determine new rank
-    size_t rank_new=this->rk-isum.size();
-    
-    // Determine the mapping between indices and the new size array
-    std::vector<size_t> mapping;
-    std::vector<size_t> sz_new;
-    
-    for(size_t i=0;i<this->rk;i++) {
-      bool found=false;
-      for(size_t j=0;j<isum.size();j++) {
-	if (isum[j]==i) found=true;
+    // Size of sums
+    std::vector<size_t> sum_sizes;
+  
+    // Collect the statistics on the transformation
+    for(size_t i=0;i<spec.size();i++) {
+      if (spec[i].type==index_spec::index ||
+	  spec[i].type==index_spec::reverse) {
+	size_new.push_back(this->size[spec[i].ix1]);
+	spec_old[spec[i].ix1]=index_spec(spec[i].type,
+					 rank_new,
+					 spec[i].ix2,
+					 spec[i].val);
+	spec_new.push_back(index_spec(spec[i].type,
+				      spec[i].ix1,
+				      spec[i].ix2,
+				      spec[i].val));
+	rank_new++;
+      } else if (spec[i].type==index_spec::trace) {
+	if (size[spec[i].ix1]<size[spec[i].ix2]) {
+	  n_sum_loop*=size[spec[i].ix1];
+	  sum_sizes.push_back(size[spec[i].ix1]);
+	} else {
+	  n_sum_loop*=size[spec[i].ix2];
+	  sum_sizes.push_back(size[spec[i].ix2]);
+	}
+	spec_old[spec[i].ix1]=index_spec(spec[i].type,
+					 spec[i].ix1,
+					 spec[i].ix2,
+					 spec[i].val);
+	spec_old[spec[i].ix1]=index_spec(spec[i].type,
+					 spec[i].ix1,
+					 spec[i].ix2,
+					 spec[i].val);
+      } else if (spec[i].type==index_spec::sum) {
+	n_sum_loop*=size[spec[i].ix1];
+	sum_sizes.push_back(size[spec[i].ix1]);
+	spec_old[spec[i].ix1]=index_spec(spec[i].type,
+					 spec[i].ix1,
+					 spec[i].ix2,
+					 spec[i].val);
+      } else if (spec[i].type==index_spec::fixed) {
+	spec_old[spec[i].ix1]=index_spec(spec[i].type,
+					 rank_new,
+					 spec[i].ix2,
+					 spec[i].val);
       }
-      if (found==false) {
-	sz_new.push_back(this->get_size(i));
-	mapping.push_back(i);
+    }
+    size_t n_sums=sum_sizes.size();
+
+    // Call the error handler if the input is invalid
+    if (rank_new==0) {
+      O2SCL_ERR("Zero new indices in tensor::copy().",
+		o2scl::exc_einval);
+    }
+    for(size_t i=0;i<rank_old;i++) {
+      if (spec_old[i].type==index_spec::empty) {
+	O2SCL_ERR("Not all indices accounted for in tensor::copy().",
+		  o2scl::exc_einval);
+      }
+    }
+
+    // Verbose output if necessary
+    if (verbose>1) {
+      std::cout << "Using a " << rank_old << " rank tensor to create a new "
+      << rank_new << " rank tensor" << std::endl;
+      for(size_t i=0;i<rank_old;i++) {
+	std::cout << "Old index " << i;
+	if (spec_old[i].type==index_spec::index) {
+	  std::cout << " is being remapped to new index " << spec_old[i].ix1
+		    << "." << std::endl;
+	} else if (spec_old[i].type==index_spec::reverse) {
+	  std::cout << " is being reversed and remapped to new index "
+		    << spec_old[i].ix1 << "." << std::endl;
+	} else if (spec_old[i].type==index_spec::trace) {
+	  std::cout << " is being traced with index "
+		    << spec_old[i].ix2 << "." << std::endl;
+	} else if (spec_old[i].type==index_spec::sum) {
+	  std::cout << " is being summed." << std::endl;
+	} else if (spec_old[i].type==index_spec::fixed) {
+	  std::cout << " is being fixed to " << spec_old[i].ix2
+		    << std::endl;
+	}
+      }
+      for(size_t i=0;i<rank_new;i++) {
+	std::cout << "New index " << i;
+	if (spec_new[i].type==index_spec::index) {
+	  std::cout << " was remapped from old index " << spec_new[i].ix1
+		    << "." << std::endl;
+	} else if (spec_new[i].type==index_spec::reverse) {
+	  std::cout << " was reversed and remapped from old index "
+	  << spec_new[i].ix1 << "." << std::endl;
+	}
       }
     }
     
     // Create the new tensor object
-    tensor<> tg_new(rank_new,sz_new);
-    
-    // Set all to zero
-    tg_new.set_all(0.0);
-    
-    // Loop over the old tensor object
-    for(size_t i=0;i<total_size();i++) {
-      
-      std::vector<size_t> ix_old(this->rk), ix_new(rank_new);
-      this->unpack_index(i,ix_old);
-      for(size_t j=0;j<rank_new;j++) {
-	ix_new=ix_old[mapping[j]];
-      }
-
-      size_t k=tg_new.pack_indices(ix_new);
-      
-      tg_new.set(ix_new,tg_new.get(ix_new)+this->data[k]);
-    }
-    
-    return tg_new;
-  }
-#endif
-
-#ifdef O2SCL_NEVER_DEFINED
-
-  class index_spec {
-    
-  public:
-  
-  size_t type;
-  size_t ix1;
-  size_t ix2;
-  double val;
-  
-  static const size_t index=1;
-  static const size_t fixed=2;
-  static const size_t sum=3;
-  static const size_t contract=4;
-  static const size_t reverse=5;
-  static const size_t range=6;
-
-  // When a grid is available
-  static const size_t interp=7;
-  static const size_t grid=8;
-  
-  index_spec(size_t typ, size_t i1, size_t i2, double v) {
-    type=typ;
-    ix1=i1;
-    ix2=i2;
-    val=v;
-  }
-  
-  };
-
-  index_spec &ix_index(size_t ix) {
-    return index_spec(index_spec::index,ix,0,0.0);
-  }
-  
-  index_spec &ix_fixed(size_t ix, size_t ix2) {
-    return index_spec(index_spec::fixed,ix,ix2,0.0);
-  }
-  
-  index_spec &ix_sum(size_t ix) {
-    return index_spec(index_spec::sum,ix,0,0.0);
-  }
-  
-  index_spec &ix_contract(size_t ix, size_t ix2) {
-    return index_spec(index_spec::contract,ix,ix2,0.0);
-  }
-  
-  index_spec &ix_reverse(size_t ix) {
-    return index_spec(index_spec::reverse,ix,0,0.0);
-  }
-  
-  index_spec &ix_interp(size_t ix, double v) {
-    return index_spec(index_spec::interp,ix,0,v);
-  }
-  
-  index_spec &ix_range(size_t ix, double v) {
-    return index_spec(index_spec::range,ix,0,v);
-  }
-  
-  index_spec &ix_grid(size_t ix, double v) {
-    return index_spec(index_spec::grid,ix,0,v);
-  }
-  
-  // AWS: I'm waiting on this function because I would like
-  // to generalize it by creating a new index_spec class
-  // which allows for more general contractions, sums, and
-  // index rearrangements, etc.
-
-  /** \brief Create a copy by contracting, summing over, fixing, 
-      and rearranging tensor indices
-  */
-  tensor<> copy(std::vector<index_spec> &spec) {
-
-    size_t rank_old=this->rk;
-    size_t rank_new=0;
-    permutation p(rank_old);
-    std::vector<size_t> size_new;
-    size_t ip=0;
-    size_t n_inner_loop=1;
-    
-    for(size_t i=0;i<spec.size();i++) {
-      if (spec[i].type==index_spec::index ||
-	  spec[i].type==index_spec::reverse) {
-	rank_new++;
-	p[ip]=spec[i].ix1;
-	ip++;
-	size_new.push_back(this->size[spec[i].ix1]);
-      } else if (spec_type==index_spec::contract) {
-	p[ip]=spec[i].ix1;
-	ip++;
-	p[ip]=spec[i].ix2;
-	ip++;
-	if (size[spec[i].ix1]<size[spec[i].ix2]) {
-	  n_inner_loop*=size[spec[i].ix1];
-	} else {
-	  n_inner_loop*=size[spec[i].ix2];
-	}
-      } else if (spec[i].type==index_spec::sum) {
-	p[ip]=spec[i].ix1;
-	ip++;
-	n_inner_loop*=size[spec[i].ix1];
-      } else if (spec[i].type==index_spec::fixed) {
-	p[ip]=spec[i].ix1;
-	ip++;
-      }
-    }
-    
-    if (rank_new==0) {
-      O2SCL_ERR("Zero new indices in tensor::copy().",
-		 o2scl::exc_einval);
-    }
-    if (p.valid()==false) {
-      O2SCL_ERR("Not all indices accounted for in tensor::copy().",
-		 o2scl::exc_einval);
-    }
-    
-    // Create the new tensor_grid object and set the new grid
     tensor<> t_new(rank_new,size_new);
     
     // Index arrays
     std::vector<size_t> ix_new(rank_new);
     std::vector<size_t> ix_old(rank_old);
+    std::vector<size_t> sum_ix(n_sums);
     
     // Loop over the new tensor object
     for(size_t i=0;i<t_new.total_size();i++) {
       
-      // Find the location in the new tensor_grid object
+      // Find the location in the new tensor object
       t_new.unpack_index(i,ix_new);
+
+      // Determine the location in the old tensor object
+      for(size_t j=0;j<rank_old;j++) {
+	if (spec_old[j].type==index_spec::index) {
+	  ix_old[j]=ix_new[spec_old[j].ix1];
+	} else if (spec_old[j].type==index_spec::reverse) {
+	  ix_old[j]=get_size(j)-1-ix_new[spec_old[j].ix1];
+	} else if (spec_old[j].type==index_spec::fixed) {
+	  ix_old[j]=spec_old[j].ix2;
+	}
+      }
 
       double val=0.0;
       
-      for(size_t j=0;j<n_inner_loop;j++) {
+      for(size_t j=0;j<n_sum_loop;j++) {
+
+	// This code is similar to tensor::unpack_index(), it unpacks
+	// the index j to the indices which we are summing over.
+	size_t j2=j, sub_size;
+	for(size_t k=0;k<n_sums;k++) {
+	  if (k==n_sums-1) {
+	    sum_ix[k]=j2;
+	  } else {
+	    sub_size=1;
+	    for(size_t kk=k+1;kk<n_sums;kk++) sub_size*=sum_sizes[kk];
+	    sum_ix[k]=j2/sub_size;
+	    j2-=sub_size*(j2/sub_size);
+	  }
+	}
+	std::cout << "sum_sizes: ";
+	vector_out(std::cout,sum_sizes,true);
+	std::cout << "j: " << j << " sum_ix: ";
+	vector_out(std::cout,sum_ix,true);
+
+	// Remap from sum_ix to ix_old
+	size_t cnt=0;
+	for(size_t k=0;k<rank_old;k++) {
+	  if (spec_old[k].type==index_spec::trace ||
+	      spec_old[k].type==index_spec::sum) {
+	    std::cout << "Here2: " << k << std::endl;
+	    ix_old[k]=sum_ix[cnt];
+	    cnt++;
+	  }
+	}
+	
+	std::cout << "Here old: ";
+	vector_out(std::cout,ix_old,true);
+	std::cout << "Here new: ";
+	vector_out(std::cout,ix_new,true);
+	val+=get(ix_old);
+      
       }
       
       // Set the new point by performing the linear interpolation
-      tg_new.set(ix_new,val);
+      t_new.set(ix_new,val);
     }
     
-    return tg_new;
+    return t_new;
   }
-  //@}
-#endif
   
   };
   

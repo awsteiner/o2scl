@@ -504,6 +504,26 @@ int main(void) {
 
   }
   
+  if (false) {
+    // Construct a rank 5 tensor for testing
+    tensor<> tx, tx2;
+    size_t sz[5]={3,3,3,3,3};
+    tx.resize(5,sz);
+    vector<double> data(243);
+    for(size_t i=0;i<243;i++) {
+      data[i]=((double)i);
+    }
+    tx.swap_data(data);
+    size_t ix[5]={0,1,2,1,0};
+    cout << tx.get(ix) << endl;
+    size_t ix2[5]={1,1,2,0,0};
+    cout << tx.get(ix2) << endl;
+    exit(-1);
+    cout << endl;
+    tx2=tx.rearrange_and_copy({ix_index(1),ix_reverse(4),
+	  ix_fixed(3,2),ix_sum(0),ix_sum(2)},2);
+  }
+  
   t.report();
 
   return 0;
