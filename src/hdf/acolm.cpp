@@ -102,13 +102,14 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
     type_comm_list.insert(std::make_pair("table3d",itmp));
   }
   {
-    vector<std::string> itmp={"list","min","max","to-table3d"};
+    vector<std::string> itmp={"list","min","max","to-table3d",
+			      "rearrange"};
     type_comm_list.insert(std::make_pair("tensor<int>",itmp));
     type_comm_list.insert(std::make_pair("tensor<size_t>",itmp));
   }
   {
     vector<std::string> itmp={"list","diag","to-table3d","to-table3d-sum",
-			      "max","min","to-tensor-grid"};
+			      "max","min","to-tensor-grid","rearrange"};
     type_comm_list.insert(std::make_pair("tensor",itmp));
   }
   {
@@ -534,11 +535,15 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="tensor") {
     
-    static const size_t narr=7;
+    static const size_t narr=8;
     comm_option_s options_arr[narr]={
       {'l',"list","List the tensor rank and index sizes.",
        0,0,"","List the tensor rank and index sizes.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
+       both},
+      {0,"rearrange","Rearrange the tensor.",
+       0,0,"","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_rearrange),
        both},
       {0,"to-table3d","Select two indices and convert to a table3d object.",
        -1,-1,"<x index> <y index> <slice name> [fixed 1] [fixed 2] ...",
@@ -589,8 +594,12 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="tensor<int>") {
     
-    static const size_t narr=4;
+    static const size_t narr=5;
     comm_option_s options_arr[narr]={
+      {0,"rearrange","Rearrange the tensor.",
+       0,0,"","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_rearrange),
+       both},
       {'l',"list","List the rank and sizes.",
        0,0,"","List the rank and sizes.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
@@ -612,8 +621,12 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="tensor<size_t>") {
     
-    static const size_t narr=4;
+    static const size_t narr=5;
     comm_option_s options_arr[narr]={
+      {0,"rearrange","Rearrange the tensor.",
+       0,0,"","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_rearrange),
+       both},
       {'l',"list","List the rank and sizes.",
        0,0,"","List the rank and sizes.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
@@ -925,6 +938,7 @@ void acol_manager::command_del() {
     cl->remove_comm_option("to-table3d");
     cl->remove_comm_option("min");
     cl->remove_comm_option("max");
+    cl->remove_comm_option("rearrange");
 
   } else if (type=="tensor<size_t>") {
     
@@ -932,6 +946,7 @@ void acol_manager::command_del() {
     cl->remove_comm_option("to-table3d");
     cl->remove_comm_option("min");
     cl->remove_comm_option("max");
+    cl->remove_comm_option("rearrange");
 
   } else if (type=="tensor") {
     
@@ -942,6 +957,7 @@ void acol_manager::command_del() {
     cl->remove_comm_option("max");
     cl->remove_comm_option("min");
     cl->remove_comm_option("to-tensor-grid");
+    cl->remove_comm_option("rearrange");
 
   } else if (type=="prob_dens_mdim_amr") {
     

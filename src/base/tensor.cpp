@@ -26,29 +26,29 @@ using namespace std;
 using namespace o2scl;
 
 index_spec o2scl::ix_index(size_t ix) {
-  return index_spec(index_spec::index,ix,0,0.0);
+  return index_spec(index_spec::index,ix,0,0,0.0);
 }
 
-index_spec o2scl::ix_fixed(size_t ix, size_t ix2) {
-  return index_spec(index_spec::fixed,ix,ix2,0.0);
+index_spec o2scl::ix_fixed(size_t ix, size_t fix) {
+  return index_spec(index_spec::fixed,ix,fix,0,0.0);
 }
   
 index_spec o2scl::ix_sum(size_t ix) {
-  return index_spec(index_spec::sum,ix,0,0.0);
+  return index_spec(index_spec::sum,ix,0,0,0.0);
 }
   
 index_spec o2scl::ix_trace(size_t ix, size_t ix2) {
-  return index_spec(index_spec::trace,ix,ix2,0.0);
+  return index_spec(index_spec::trace,ix,ix2,0,0.0);
 }
   
 index_spec o2scl::ix_reverse(size_t ix) {
-  return index_spec(index_spec::reverse,ix,0,0.0);
+  return index_spec(index_spec::reverse,ix,0,0,0.0);
 }
   
 index_spec o2scl::ix_interp(size_t ix, double v) {
-  return index_spec(index_spec::interp,ix,0,v);
+  return index_spec(index_spec::interp,ix,0,0,v);
 }
   
-index_spec o2scl::ix_range(size_t ix, double v) {
-  return index_spec(index_spec::range,ix,0,v);
+index_spec o2scl::ix_range(size_t ix, size_t start, size_t end) {
+  return index_spec(index_spec::range,ix,start,end,0.0);
 }

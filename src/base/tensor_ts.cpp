@@ -504,20 +504,45 @@ int main(void) {
 
   }
   
-  if (false) {
-    // Construct a rank 5 tensor for testing
-    tensor<> tx, tx2, tx3;
+  if (true) {
+    
+    // Test rearrange_and_copy()
+    tensor<> tx, tx2, tx3, tx2b, tx3b;
     size_t sz[5]={3,3,3,3,3};
+    vector<size_t> ix_old, ix_new;
+
+    // Create the test data
     tx.resize(5,sz);
     vector<double> data(243);
     for(size_t i=0;i<243;i++) {
       data[i]=((double)i);
     }
     tx.swap_data(data);
+
+    // First test
     tx2=tx.rearrange_and_copy({ix_index(1),ix_reverse(4),
 	  ix_fixed(3,2),ix_sum(0),ix_sum(2)},1);
+    size_t sz2b[2]={3,3};
+    tx2b.resize(2,sz2b);
+    for(size_t i1=0;i1<3;i1++) {
+      for(size_t i2=0;i2<3;i2++) {
+	double val=0.0;
+	for(size_t i3=0;i3<3;i3++) {
+	  for(size_t i4=0;i4<3;i4++) {
+	    ix_old={i3,i1,i4,2,3-i2};
+	    val+=tx2.get(ix_old);
+	  }
+	}
+	ix_new={i1,i2};
+	tx2b.set(ix_new,val);
+      }
+    }
+    
+    // Second test
     tx3=tx.rearrange_and_copy({ix_index(1),ix_reverse(4),
 	  ix_fixed(3,2),ix_trace(0,2)},2);
+    size_t sz3b[2]={3,3};
+    tx3b.resize(2,sz3b);
   }
   
   t.report();
