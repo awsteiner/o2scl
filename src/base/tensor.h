@@ -131,6 +131,7 @@ namespace o2scl {
   index_spec ix_range(size_t ix, size_t start, size_t end);
 
   /** \brief Interpolate value \c v into index \c ix
+      (for \ref o2scl::tensor_grid only)
    */
   index_spec ix_interp(size_t ix, double v);
   
@@ -780,8 +781,6 @@ namespace o2scl {
   //@}
 
   /** \brief Rearrange, sum and copy current tensor to a new tensor
-
-      \note Not yet working.
   */
   tensor<data_t> rearrange_and_copy(std::vector<index_spec> spec,
 				    int verbose=0, bool err_on_fail=true) {
@@ -834,7 +833,7 @@ namespace o2scl {
 	  size_new.push_back(spec[i].ix2-spec[i].ix3+1);
 	}
 	spec_old[spec[i].ix1]=
-	  index_spec(spec[i].type,spec[i].ix1,spec[i].ix2,
+	  index_spec(spec[i].type,rank_new,spec[i].ix2,
 		     spec[i].ix3,spec[i].val);
 	spec_new.push_back
 	  (index_spec(spec[i].type,spec[i].ix1,
@@ -868,6 +867,13 @@ namespace o2scl {
 					 rank_new,
 					 spec[i].ix2,0,
 					 spec[i].val);
+      } else {
+	if (err_on_fail) {
+	  O2SCL_ERR2("Index specification type not allowed in ",
+		     "tensor::rearrange_and_copy()",o2scl::exc_einval);
+	} else {
+	  return tensor<data_t>();
+	}
       }
     }
     size_t n_sums=sum_sizes.size();
@@ -925,6 +931,10 @@ namespace o2scl {
 	if (spec_new[i].type==index_spec::index) {
 	  std::cout << " was remapped from old index " << spec_new[i].ix1
 		    << "." << std::endl;
+	} else if (spec_new[i].type==index_spec::range) {
+	  std::cout << " was remapped from old index " << spec_new[i].ix1
+	  << " using range from " << spec_new[i].ix2 << " to "
+	  << spec_new[i].ix3 << "." << std::endl;
 	} else if (spec_new[i].type==index_spec::reverse) {
 	  std::cout << " was reversed and remapped from old index "
 	  << spec_new[i].ix1 << "." << std::endl;
@@ -951,9 +961,11 @@ namespace o2scl {
 	if (spec_old[j].type==index_spec::index) {
 	  ix_old[j]=ix_new[spec_old[j].ix1];
 	} else if (spec_old[j].type==index_spec::range) {
-	  // This part isn't working yet
-	  exit(-1);
-	  //ix_old[j]=ix_new[spec_old[j].ix1];
+	  if (spec_old[j].ix2<spec_old[j].ix3) {
+	    ix_old[j]=ix_new[spec_old[j].ix1]+spec_old[i].ix2;
+	  } else {
+	    ix_old[j]=spec_old[j].ix2-ix_new[spec_old[j].ix1];
+	  }
 	} else if (spec_old[j].type==index_spec::reverse) {
 	  ix_old[j]=get_size(j)-1-ix_new[spec_old[j].ix1];
 	} else if (spec_old[j].type==index_spec::fixed) {

@@ -37,76 +37,6 @@ using namespace o2scl_acol;
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
-int acol_manager::comm_rearrange(std::vector<std::string> &sv,
-				 bool itive_com) {
-
-  if (type=="tensor" || type=="tensor<int>" || type=="tensor<size_t>" ) {
-
-    vector<o2scl::index_spec> vis;
-    for(size_t j=1;j<sv.size();j++) {
-      vector<string> args;
-      if (sv[j].find("index(")==0 && sv[j][sv[j].size()-1]==')') {
-	string spec=sv[j].substr(6,sv[j].length()-7);
-	split_string_delim(spec,args,',');
-	cout << spec << " ";
-	vector_out(cout,args,true);
-	vis.push_back(ix_index(o2scl::stoszt(args[0])));
-      } else if (sv[j].find("fixed(")==0 && sv[j][sv[j].size()-1]==')') {
-	string spec=sv[j].substr(6,sv[j].length()-7);
-	split_string_delim(spec,args,',');
-	cout << spec << " ";
-	vector_out(cout,args,true);
-	vis.push_back(ix_fixed(o2scl::stoszt(args[0]),o2scl::stoszt(args[1])));
-      } else if (sv[j].find("sum(")==0 && sv[j][sv[j].size()-1]==')') {
-	string spec=sv[j].substr(4,sv[j].length()-5);
-	split_string_delim(spec,args,',');
-	cout << spec << " ";
-	vector_out(cout,args,true);
-	vis.push_back(ix_sum(o2scl::stoszt(args[0])));
-      } else if (sv[j].find("trace(")==0 && sv[j][sv[j].size()-1]==')') {
-	string spec=sv[j].substr(6,sv[j].length()-7);
-	split_string_delim(spec,args,',');
-	cout << spec << " ";
-	vector_out(cout,args,true);
-	vis.push_back(ix_trace(o2scl::stoszt(args[0]),o2scl::stoszt(args[1])));
-      } else if (sv[j].find("reverse(")==0 && sv[j][sv[j].size()-1]==')') {
-	string spec=sv[j].substr(8,sv[j].length()-9);
-	split_string_delim(spec,args,',');
-	cout << spec << " ";
-	vector_out(cout,args,true);
-	vis.push_back(ix_reverse(o2scl::stoszt(args[0])));
-      } else if (sv[j].find("range(")==0 && sv[j][sv[j].size()-1]==')') {
-	string spec=sv[j].substr(6,sv[j].length()-7);
-	split_string_delim(spec,args,',');
-	cout << spec << " ";
-	vector_out(cout,args,true);
-	vis.push_back(ix_range(o2scl::stoszt(args[0]),
-			       o2scl::stoszt(args[1]),
-			       o2scl::stoszt(args[2])));
-      }
-    }
-
-    if (type=="tensor") {
-      tensor<> t;
-      t=tensor_obj.rearrange_and_copy(vis);
-      tensor_obj=t;
-    } else if (type=="tensor<int>") {
-      tensor<int> t;
-      t=tensor_int_obj.rearrange_and_copy(vis);
-      tensor_int_obj=t;
-    } else {
-      tensor<size_t> t;
-      t=tensor_size_t_obj.rearrange_and_copy(vis);
-      tensor_size_t_obj=t;
-    }
-
-  } else {
-    cerr << "Rearrange does not work with " << type << " objects." << endl;
-  }
-    
-  return 0;
-}
-
 int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 
   if (type.length()==0) {
@@ -2420,6 +2350,88 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
        << "'." << endl;
   
   return exc_efailed;
+}
+
+int acol_manager::comm_rearrange(std::vector<std::string> &sv,
+				 bool itive_com) {
+
+  if (type=="tensor" || type=="tensor<int>" || type=="tensor<size_t>" ) {
+
+    vector<o2scl::index_spec> vis;
+    for(size_t j=1;j<sv.size();j++) {
+      vector<string> args;
+      if (sv[j].find("index(")==0 && sv[j][sv[j].size()-1]==')') {
+	string spec=sv[j].substr(6,sv[j].length()-7);
+	split_string_delim(spec,args,',');
+	if (verbose>1) {
+	  cout << "rearrange, index: ";
+	  vector_out(cout,args,true);
+	}
+	vis.push_back(ix_index(o2scl::stoszt(args[0])));
+      } else if (sv[j].find("fixed(")==0 && sv[j][sv[j].size()-1]==')') {
+	string spec=sv[j].substr(6,sv[j].length()-7);
+	split_string_delim(spec,args,',');
+	if (verbose>1) {
+	  cout << "rearrange, fixed: ";
+	  vector_out(cout,args,true);
+	}
+	vis.push_back(ix_fixed(o2scl::stoszt(args[0]),o2scl::stoszt(args[1])));
+      } else if (sv[j].find("sum(")==0 && sv[j][sv[j].size()-1]==')') {
+	string spec=sv[j].substr(4,sv[j].length()-5);
+	split_string_delim(spec,args,',');
+	if (verbose>1) {
+	  cout << "rearrange, sum: ";
+	  vector_out(cout,args,true);
+	}
+	vis.push_back(ix_sum(o2scl::stoszt(args[0])));
+      } else if (sv[j].find("trace(")==0 && sv[j][sv[j].size()-1]==')') {
+	string spec=sv[j].substr(6,sv[j].length()-7);
+	split_string_delim(spec,args,',');
+	if (verbose>1) {
+	  cout << "rearrange, trace: ";
+	  vector_out(cout,args,true);
+	}
+	vis.push_back(ix_trace(o2scl::stoszt(args[0]),o2scl::stoszt(args[1])));
+      } else if (sv[j].find("reverse(")==0 && sv[j][sv[j].size()-1]==')') {
+	string spec=sv[j].substr(8,sv[j].length()-9);
+	split_string_delim(spec,args,',');
+	if (verbose>1) {
+	  cout << "rearrange, reverse: ";
+	  vector_out(cout,args,true);	
+	}
+	vis.push_back(ix_reverse(o2scl::stoszt(args[0])));
+      } else if (sv[j].find("range(")==0 && sv[j][sv[j].size()-1]==')') {
+	string spec=sv[j].substr(6,sv[j].length()-7);
+	split_string_delim(spec,args,',');
+	if (verbose>1) {
+	  cout << "rearrange, range: ";
+	  vector_out(cout,args,true);
+	}
+	vis.push_back(ix_range(o2scl::stoszt(args[0]),
+			       o2scl::stoszt(args[1]),
+			       o2scl::stoszt(args[2])));
+      }
+    }
+
+    if (type=="tensor") {
+      tensor<> t;
+      t=tensor_obj.rearrange_and_copy(vis);
+      tensor_obj=t;
+    } else if (type=="tensor<int>") {
+      tensor<int> t;
+      t=tensor_int_obj.rearrange_and_copy(vis);
+      tensor_int_obj=t;
+    } else {
+      tensor<size_t> t;
+      t=tensor_size_t_obj.rearrange_and_copy(vis);
+      tensor_size_t_obj=t;
+    }
+
+  } else {
+    cerr << "Rearrange does not work with " << type << " objects." << endl;
+  }
+    
+  return 0;
 }
 
 int acol_manager::comm_sum(std::vector<std::string> &sv, bool itive_com) {

@@ -542,7 +542,7 @@ void acol_manager::command_add(std::string new_type) {
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
        both},
       {0,"rearrange","Rearrange the tensor.",
-       0,0,"","",
+       -1,-1,"","",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_rearrange),
        both},
       {0,"to-table3d","Select two indices and convert to a table3d object.",
@@ -597,7 +597,7 @@ void acol_manager::command_add(std::string new_type) {
     static const size_t narr=5;
     comm_option_s options_arr[narr]={
       {0,"rearrange","Rearrange the tensor.",
-       0,0,"","",
+       -1,-1,"","",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_rearrange),
        both},
       {'l',"list","List the rank and sizes.",
@@ -624,7 +624,7 @@ void acol_manager::command_add(std::string new_type) {
     static const size_t narr=5;
     comm_option_s options_arr[narr]={
       {0,"rearrange","Rearrange the tensor.",
-       0,0,"","",
+       -1,-1,"","",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_rearrange),
        both},
       {'l',"list","List the rank and sizes.",

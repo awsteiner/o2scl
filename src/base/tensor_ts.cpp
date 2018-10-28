@@ -545,15 +545,15 @@ int main(void) {
     t.test_gen(tx2==tx2b,"rearrange 1");
     
     // Second test
-    tx3=tx.rearrange_and_copy({ix_index(1),ix_reverse(4),
+    tx3=tx.rearrange_and_copy({ix_index(1),ix_range(4,1,0),
 	  ix_fixed(3,2),ix_trace(0,2)},2);
-    size_t sz3b[2]={3,3};
+    size_t sz3b[2]={3,2};
     tx3b.resize(2,sz3b);
     for(size_t i1=0;i1<3;i1++) {
-      for(size_t i2=0;i2<3;i2++) {
+      for(size_t i2=0;i2<2;i2++) {
 	double val=0.0;
 	for(size_t i3=0;i3<3;i3++) {
-	  ix_old={i3,i1,i3,2,2-i2};
+	  ix_old={i3,i1,i3,2,1-i2};
 	  val+=tx.get(ix_old);
 	}
 	ix_new={i1,i2};
