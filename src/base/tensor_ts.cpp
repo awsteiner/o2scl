@@ -519,6 +519,11 @@ int main(void) {
     }
     tx.swap_data(data);
 
+    hdf_file hf;
+    hf.open_or_create("tensor_ts.o2");
+    hf.setd_ten("rk5",tx);
+    hf.close();
+
     // First test
     tx2=tx.rearrange_and_copy({ix_index(1),ix_reverse(4),
 	  ix_fixed(3,2),ix_sum(0),ix_sum(2)},1);
@@ -529,20 +534,34 @@ int main(void) {
 	double val=0.0;
 	for(size_t i3=0;i3<3;i3++) {
 	  for(size_t i4=0;i4<3;i4++) {
-	    ix_old={i3,i1,i4,2,3-i2};
-	    val+=tx2.get(ix_old);
+	    ix_old={i3,i1,i4,2,2-i2};
+	    val+=tx.get(ix_old);
 	  }
 	}
 	ix_new={i1,i2};
 	tx2b.set(ix_new,val);
       }
     }
+    t.test_gen(tx2==tx2b,"rearrange 1");
     
     // Second test
     tx3=tx.rearrange_and_copy({ix_index(1),ix_reverse(4),
 	  ix_fixed(3,2),ix_trace(0,2)},2);
     size_t sz3b[2]={3,3};
     tx3b.resize(2,sz3b);
+    for(size_t i1=0;i1<3;i1++) {
+      for(size_t i2=0;i2<3;i2++) {
+	double val=0.0;
+	for(size_t i3=0;i3<3;i3++) {
+	  ix_old={i3,i1,i3,2,2-i2};
+	  val+=tx.get(ix_old);
+	}
+	ix_new={i1,i2};
+	tx3b.set(ix_new,val);
+      }
+    }
+    t.test_gen(tx3==tx3b,"rearrange 2");
+    
   }
   
   t.report();

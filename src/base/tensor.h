@@ -1389,6 +1389,23 @@ namespace o2scl {
     
     return;
   }
+
+  /** \brief Compare two tensors for equality
+   */
+  template<class data_t, class vec_t, class vec_size_t>
+    bool operator==(const tensor<data_t,vec_t,vec_size_t> &t1,
+		    const tensor<data_t,vec_t,vec_size_t> &t2) {
+    if (t1.get_rank()!=t2.get_rank()) return false;
+    for(size_t i=0;i<t1.get_rank();i++) {
+      if (t1.get_size(i)!=t2.get_size(i)) return false;
+    }
+    const vec_t &v1=t1.get_data();
+    const vec_t &v2=t2.get_data();
+    for(size_t i=0;i<t1.total_size();i++) {
+      if (v1[i]!=v2[i]) return false;
+    }
+    return true;
+  }
   
 #ifndef DOXYGEN_NO_O2NS
 }

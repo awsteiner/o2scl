@@ -48,26 +48,38 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
       if (sv[j].find("index(")==0 && sv[j][sv[j].size()-1]==')') {
 	string spec=sv[j].substr(6,sv[j].length()-7);
 	split_string_delim(spec,args,',');
+	cout << spec << " ";
+	vector_out(cout,args,true);
 	vis.push_back(ix_index(o2scl::stoszt(args[0])));
       } else if (sv[j].find("fixed(")==0 && sv[j][sv[j].size()-1]==')') {
 	string spec=sv[j].substr(6,sv[j].length()-7);
 	split_string_delim(spec,args,',');
+	cout << spec << " ";
+	vector_out(cout,args,true);
 	vis.push_back(ix_fixed(o2scl::stoszt(args[0]),o2scl::stoszt(args[1])));
       } else if (sv[j].find("sum(")==0 && sv[j][sv[j].size()-1]==')') {
 	string spec=sv[j].substr(4,sv[j].length()-5);
 	split_string_delim(spec,args,',');
+	cout << spec << " ";
+	vector_out(cout,args,true);
 	vis.push_back(ix_sum(o2scl::stoszt(args[0])));
       } else if (sv[j].find("trace(")==0 && sv[j][sv[j].size()-1]==')') {
 	string spec=sv[j].substr(6,sv[j].length()-7);
 	split_string_delim(spec,args,',');
+	cout << spec << " ";
+	vector_out(cout,args,true);
 	vis.push_back(ix_trace(o2scl::stoszt(args[0]),o2scl::stoszt(args[1])));
       } else if (sv[j].find("reverse(")==0 && sv[j][sv[j].size()-1]==')') {
 	string spec=sv[j].substr(8,sv[j].length()-9);
 	split_string_delim(spec,args,',');
+	cout << spec << " ";
+	vector_out(cout,args,true);
 	vis.push_back(ix_reverse(o2scl::stoszt(args[0])));
       } else if (sv[j].find("range(")==0 && sv[j][sv[j].size()-1]==')') {
 	string spec=sv[j].substr(6,sv[j].length()-7);
 	split_string_delim(spec,args,',');
+	cout << spec << " ";
+	vector_out(cout,args,true);
 	vis.push_back(ix_range(o2scl::stoszt(args[0]),
 			       o2scl::stoszt(args[1]),
 			       o2scl::stoszt(args[2])));
