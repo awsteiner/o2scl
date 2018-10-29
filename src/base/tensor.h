@@ -63,8 +63,12 @@ namespace o2scl {
   size_t ix2;
   /// Third argument
   size_t ix3;
-  /// Value argument
-  double val;
+  /// First double argument
+  double val1;
+  /// Second double argument
+  double val2;
+  /// Third double argument
+  double val3;
 
   /// \name Possible values for type
   //@{
@@ -84,6 +88,8 @@ namespace o2scl {
   static const size_t range=6;
   /// Interpolate a value to fix an index
   static const size_t interp=7;
+  /// Interpolate a value to set a new grid
+  static const size_t grid=8;
   //@}
 
   /// Default constructor
@@ -92,16 +98,21 @@ namespace o2scl {
     ix1=0;
     ix2=0;
     ix3=0;
-    val=0.0;
+    val1=0.0;
+    val2=0.0;
+    val3=0.0;
   }
 
   /// Explicit full constructor
-  index_spec(size_t typ, size_t i1, size_t i2, size_t i3, double v) {
+  index_spec(size_t typ, size_t i1, size_t i2, size_t i3, double v1,
+	     double v2=0.0, double v3=0.0) {
     type=typ;
     ix1=i1;
     ix2=i2;
     ix3=i3;
-    val=v;
+    val1=v1;
+    val2=v2;
+    val3=v3;
   }
   
   };
@@ -134,6 +145,12 @@ namespace o2scl {
       (for \ref o2scl::tensor_grid only)
    */
   index_spec ix_interp(size_t ix, double v);
+  
+  /** \brief Interpolate grid \c v into index \c ix
+      (for \ref o2scl::tensor_grid only)
+   */
+  index_spec ix_grid(size_t ix, double begin, double end, double width,
+		     bool log);
   
   /** \brief Tensor class with arbitrary dimensions
 
@@ -811,11 +828,11 @@ namespace o2scl {
 	spec_old[spec[i].ix1]=index_spec(spec[i].type,
 					 rank_new,
 					 spec[i].ix2,0,
-					 spec[i].val);
+					 spec[i].val1);
 	spec_new.push_back(index_spec(spec[i].type,
 				      spec[i].ix1,
 				      spec[i].ix2,0,
-				      spec[i].val));
+				      spec[i].val1));
 	rank_new++;
       } else if (spec[i].type==index_spec::range) {
 	if (spec[i].ix2>=this->size[spec[i].ix1] ||
@@ -834,10 +851,10 @@ namespace o2scl {
 	}
 	spec_old[spec[i].ix1]=
 	  index_spec(spec[i].type,rank_new,spec[i].ix2,
-		     spec[i].ix3,spec[i].val);
+		     spec[i].ix3,spec[i].val1);
 	spec_new.push_back
 	  (index_spec(spec[i].type,spec[i].ix1,
-		      spec[i].ix2,spec[i].ix3,spec[i].val));
+		      spec[i].ix2,spec[i].ix3,spec[i].val1));
 	rank_new++;
       } else if (spec[i].type==index_spec::trace) {
 	if (size[spec[i].ix1]<size[spec[i].ix2]) {
@@ -850,23 +867,23 @@ namespace o2scl {
 	spec_old[spec[i].ix1]=index_spec(spec[i].type,
 					 spec[i].ix1,
 					 spec[i].ix2,0,
-					 spec[i].val);
+					 spec[i].val1);
 	spec_old[spec[i].ix2]=index_spec(spec[i].type,
 					 spec[i].ix2,
 					 spec[i].ix1,0,
-					 spec[i].val);
+					 spec[i].val1);
       } else if (spec[i].type==index_spec::sum) {
 	n_sum_loop*=size[spec[i].ix1];
 	sum_sizes.push_back(size[spec[i].ix1]);
 	spec_old[spec[i].ix1]=index_spec(spec[i].type,
 					 spec[i].ix1,
 					 spec[i].ix2,0,
-					 spec[i].val);
+					 spec[i].val1);
       } else if (spec[i].type==index_spec::fixed) {
 	spec_old[spec[i].ix1]=index_spec(spec[i].type,
 					 rank_new,
 					 spec[i].ix2,0,
-					 spec[i].val);
+					 spec[i].val1);
       } else {
 	if (err_on_fail) {
 	  O2SCL_ERR2("Index specification type not allowed in ",
