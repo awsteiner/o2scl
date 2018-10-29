@@ -1253,6 +1253,52 @@ namespace o2scl {
       }
     }
 
+#ifdef O2SCL_NEVER_DEFINED
+    
+    template<class vec2_size_t, class vec3_size_t, class vec2_t>
+      double interp_linear_partial
+      (const vec2_size_t &ix_to_interp,
+       const vec3_size_t &ix, const vec2_t &val) {
+
+      // Find the the corner of the hypercube containing val for all
+      // the indices to be interpolated
+      std::vector<size_t> loc(ix_to_interp.size());
+      std::vector<double> gnew;
+      for(size_t i=0;i<ix_to_interp.size();i++) {
+	size_t ix1=ix_to_interp[i];
+	std::vector<double> grid_one(this->size[ix1]);
+	for(size_t j=0;j<this->size[ix1];j++) {
+	  grid_one[j]=this->get_grid(ix1,j);
+	}
+	search_vec<std::vector<double> > sv(this->size[ix1],grid_one);
+	loc[i]=sv.find(val[i]);
+	gnew.push_back(grid_unpacked[loc[i]]);
+	gnew.push_back(grid_unpacked[loc[i]+1]);
+      }
+
+      // Now construct a 2^{rk}-sized tensor containing only that 
+      // hypercube
+      size_t sz_new=this->rk-ix_to_interp.size();
+      std::vector<size_t> snew(sz_new);
+      for(size_t i=0;i<this->rk;i++) {
+	snew[i]=2;
+      }
+      tensor_grid tnew(this->rk,snew);
+      tnew.set_grid_packed(gnew);
+      
+      // Copy over the relevant data
+      for(size_t i=0;i<tnew.total_size();i++) {
+	std::vector<size_t> index_new(sz_new), index_old(this->rk);
+	tnew.unpack_index(i,index_new);
+	for(size_t j=0;j<this->rk;j++) index_old[j]=index_new[j]+loc[j];
+	tnew.set(index_new,this->get(index_old));
+      }
+      
+      // Now use interp_power_two()
+      return tnew.interp_linear_power_two(v);
+    }
+#endif
+    
     /** \brief Perform a linear interpolation of \c v into the 
 	function implied by the tensor and grid
 	
@@ -1271,7 +1317,7 @@ namespace o2scl {
 	don't need to be offset because the tensor has to be
 	created from the previous interpolation round.
     */
-    template<class vec2_size_t> double interp_linear(vec2_size_t &v) {
+    template<class vec2_t> double interp_linear(vec2_t &v) {
 
       // Find the the corner of the hypercube containing v
       size_t rgs=0;
@@ -1321,8 +1367,8 @@ namespace o2scl {
 	\note This is principally a function for internal use
 	by \ref interp_linear().
     */
-    template<class vec2_size_t>
-      double interp_linear_power_two(vec2_size_t &v) {
+    template<class vec2_t>
+      double interp_linear_power_two(vec2_t &v) {
 
       if (this->rk==1) {
 	return this->data[0]+(this->data[1]-this->data[0])/
@@ -1364,8 +1410,8 @@ namespace o2scl {
 	rank-<tt>n</tt> tensor leaving the first index free and places
 	the results in the vector \c res.
     */
-    template<class vec2_size_t, class vec2_t>
-      void interp_linear_vec0(vec2_size_t &v, vec2_t &res) {
+    template<class vec2_t, class vec3_t>
+      void interp_linear_vec0(vec2_t &v, vec3_t &res) {
 
       // Find the the corner of the hypercube containing v
       size_t rgs=0;
@@ -1425,8 +1471,8 @@ namespace o2scl {
  	must have a <tt>resize()</tt> method. This is principally a
  	function for internal use by \ref interp_linear_vec0().
     */
-    template<class vec2_size_t, class vec2_t>
-      void interp_linear_power_two_vec0(vec2_size_t &v, vec2_t &res) {
+    template<class vec2_t, class vec3_t>
+      void interp_linear_power_two_vec0(vec2_t &v, vec3_t &res) {
       
       if (this->rk==2) {
 	size_t n=this->size[0];
@@ -1479,8 +1525,8 @@ namespace o2scl {
 
 	\future This function could be more efficient.
     */
-    template<class vec2_size_t, class vec2_t>
-      void interp_linear_vec(vec2_size_t &v, size_t ifree, vec2_t &res) {
+    template<class vec2_t, class vec3_t>
+      void interp_linear_vec(vec2_t &v, size_t ifree, vec3_t &res) {
 
       size_t n=this->size[ifree];
 
@@ -1589,6 +1635,8 @@ namespace o2scl {
   
       // Number of elements to sum over
       size_t n_sum_loop=1;
+      // Number of interpolations to perform
+      size_t n_interps=0;
 
       // Size of sums
       std::vector<size_t> sum_sizes;
@@ -1663,6 +1711,7 @@ namespace o2scl {
 					   rank_new,
 					   spec[i].ix2,0,
 					   spec[i].val1);
+	  n_interps++;
 	} else if (spec[i].type==index_spec::grid) {
 	  spec_old[spec[i].ix1]=index_spec(spec[i].type,
 					   rank_new,
@@ -1670,6 +1719,7 @@ namespace o2scl {
 					   spec[i].val1,
 					   spec[i].val2,
 					   spec[i].val3);
+	  n_interps++;
 	} else {
 	  if (err_on_fail) {
 	    O2SCL_ERR2("Index specification type not allowed in ",
