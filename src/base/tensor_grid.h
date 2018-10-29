@@ -1253,51 +1253,83 @@ namespace o2scl {
       }
     }
 
-#ifdef O2SCL_NEVER_DEFINED
-    
+    /** \brief Obtain a value by looking up some indices and
+	interpolating the others
+
+	To call this function, the arguments should be
+	of the following form
+	- The vector \c ix_to_interp should be a list of indices to
+	interpolate. The size of \c ix_to_interp must be at least 1
+	or larger but smaller than or equal to the full tensor rank.
+	All entries in \c ix_to_interp should be smaller than the
+	full tensor rank.
+	- The vector \c ix should have a size equal to the tensor 
+	rank, but values stored in entries corresponding to the
+	indices in \c ix_to_interp will be ignored
+	- The vector \c val should be a list of values to be
+	interpolated and should have a size equal to that of 
+	\c ix_to_interp .
+    */
     template<class vec2_size_t, class vec3_size_t, class vec2_t>
       double interp_linear_partial
       (const vec2_size_t &ix_to_interp,
        const vec3_size_t &ix, const vec2_t &val) {
+
+      if (val.size()!=ix_to_interp.size()) {
+	O2SCL_ERR2("Index and value list don't match in ",
+		   "tensor_grid::interp_linear_partial().",
+		   o2scl::exc_einval);
+      }
+      if (ix_to_interp.size()>this->get_rank() ||
+	  ix_to_interp.size()==0) {
+	O2SCL_ERR2("Index list too large or too small in ",
+		   "tensor_grid::interp_linear_partial().",
+		   o2scl::exc_einval);
+      }
 
       // Find the the corner of the hypercube containing val for all
       // the indices to be interpolated
       std::vector<size_t> loc(ix_to_interp.size());
       std::vector<double> gnew;
       for(size_t i=0;i<ix_to_interp.size();i++) {
-	size_t ix1=ix_to_interp[i];
-	std::vector<double> grid_one(this->size[ix1]);
-	for(size_t j=0;j<this->size[ix1];j++) {
-	  grid_one[j]=this->get_grid(ix1,j);
+	size_t ixi=ix_to_interp[i];
+	if (ixi>=this->get_rank()) {
+	  O2SCL_ERR2("Index to interpolate larger than tensor rank in ",
+		     "tensor_grid::interp_linear_partial().",
+		     o2scl::exc_einval);
 	}
-	search_vec<std::vector<double> > sv(this->size[ix1],grid_one);
+	std::vector<double> grid_one(this->size[ixi]);
+	for(size_t j=0;j<this->size[ixi];j++) {
+	  grid_one[j]=this->get_grid(ixi,j);
+	}
+	search_vec<std::vector<double> > sv(this->size[ixi],grid_one);
 	loc[i]=sv.find(val[i]);
-	gnew.push_back(grid_unpacked[loc[i]]);
-	gnew.push_back(grid_unpacked[loc[i]+1]);
+	gnew.push_back(grid_one[loc[i]]);
+	gnew.push_back(grid_one[loc[i]+1]);
       }
 
       // Now construct a 2^{rk}-sized tensor containing only that 
       // hypercube
-      size_t sz_new=this->rk-ix_to_interp.size();
-      std::vector<size_t> snew(sz_new);
-      for(size_t i=0;i<this->rk;i++) {
+      std::vector<size_t> snew(ix_to_interp.size());
+      for(size_t i=0;i<ix_to_interp.size();i++) {
 	snew[i]=2;
       }
-      tensor_grid tnew(this->rk,snew);
+      tensor_grid tnew(ix_to_interp.size(),snew);
       tnew.set_grid_packed(gnew);
       
       // Copy over the relevant data
       for(size_t i=0;i<tnew.total_size();i++) {
-	std::vector<size_t> index_new(sz_new), index_old(this->rk);
+	std::vector<size_t> index_new(ix_to_interp.size());
 	tnew.unpack_index(i,index_new);
-	for(size_t j=0;j<this->rk;j++) index_old[j]=index_new[j]+loc[j];
-	tnew.set(index_new,this->get(index_old));
+	for(size_t j=0;j<ix_to_interp.size();j++) {
+	  ix[ix_to_interp[j]]=index_new[j]+loc[j];
+	}
+	tnew.set(index_new,this->get(ix));
       }
       
       // Now use interp_power_two()
-      return tnew.interp_linear_power_two(v);
+      return tnew.interp_linear_power_two(val);
     }
-#endif
     
     /** \brief Perform a linear interpolation of \c v into the 
 	function implied by the tensor and grid
