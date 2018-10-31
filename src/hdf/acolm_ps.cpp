@@ -2533,7 +2533,7 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
 	vis.push_back(ix_grid(o2scl::stoszt(args[0]),
 			      o2scl::function_to_double(args[1]),
 			      o2scl::function_to_double(args[2]),
-			      o2scl::function_to_double(args[3])),false);
+			      o2scl::function_to_double(args[3]),false));
       }
     }
     
