@@ -1649,7 +1649,7 @@ namespace o2scl {
     
     /** \brief Rearrange, sum and copy current tensor to a new tensor
      */
-    tensor_grid<double> rearrange_and_copy(std::vector<index_spec> spec,
+    tensor_grid<> rearrange_and_copy(std::vector<index_spec> spec,
 					   int verbose=0,
 					   bool err_on_fail=true) {
       
@@ -1672,6 +1672,7 @@ namespace o2scl {
 
       // Size of sums
       std::vector<size_t> sum_sizes;
+      std::vector<size_t> ix_to_interp;
   
       // Collect the statistics on the transformation
       for(size_t i=0;i<spec.size();i++) {
@@ -1695,7 +1696,7 @@ namespace o2scl {
 			 "in tensor_grid::rearrange_and_copy()",
 			 o2scl::exc_einval);
 	    } else {
-	      return tensor_grid<double>();
+	      return tensor_grid<>();
 	    }
 	  }
 	  if (spec[i].ix3>spec[i].ix2) {
@@ -1744,6 +1745,7 @@ namespace o2scl {
 					   spec[i].ix2,0,
 					   spec[i].val1);
 	  n_interps++;
+	  ix_to_interp.push_back(spec[i].ix1);
 	} else if (spec[i].type==index_spec::grid) {
 	  spec_old[spec[i].ix1]=index_spec(spec[i].type,
 					   rank_new,
@@ -1752,13 +1754,21 @@ namespace o2scl {
 					   spec[i].val2,
 					   spec[i].val3);
 	  n_interps++;
+	  rank_new++;
+	  if (spec[i].ix3==1) {
+	    size_new.push_back(pow(spec[i].val2/spec[i].val1,
+				   1.0/spec[i].val3));
+	  } else {
+	    size_new.push_back((spec[i].val2-spec[i].val1)/spec[i].val3);
+	  }
+	  ix_to_interp.push_back(spec[i].ix1);
 	} else {
 	  if (err_on_fail) {
 	    O2SCL_ERR2("Index specification type not allowed in ",
 		       "tensor_grid::rearrange_and_copy()",
 		       o2scl::exc_einval);
 	  } else {
-	    return tensor_grid<double>();
+	    return tensor_grid<>();
 	  }
 	}
       }
@@ -1771,7 +1781,7 @@ namespace o2scl {
 		     "tensor_grid::rearrange_and_copy()",
 		     o2scl::exc_einval);
 	} else {
-	  return tensor_grid<double>();
+	  return tensor_grid<>();
 	}
       }
       for(size_t i=0;i<rank_old;i++) {
@@ -1782,7 +1792,7 @@ namespace o2scl {
 		       o2scl::exc_einval);
 	  }
 	} else {
-	  return tensor_grid<double>();
+	  return tensor_grid<>();
 	}
       }
 
@@ -1856,7 +1866,7 @@ namespace o2scl {
       }
     
       // Create the new tensor object
-      tensor_grid<double> t_new(rank_new,size_new);
+      tensor_grid<> t_new(rank_new,size_new);
     
       // Index arrays
       std::vector<size_t> ix_new(rank_new);
@@ -1869,6 +1879,9 @@ namespace o2scl {
 	// Find the location in the new tensor object
 	t_new.unpack_index(i,ix_new);
 
+	// List of interpolated values
+	std::vector<double> interp_vals(n_interps);
+	
 	// Determine the location in the old tensor object
 	for(size_t j=0;j<rank_old;j++) {
 	  if (spec_old[j].type==index_spec::index) {
@@ -1884,8 +1897,19 @@ namespace o2scl {
 	  } else if (spec_old[j].type==index_spec::fixed) {
 	    ix_old[j]=spec_old[j].ix2;
 	  } else if (spec_old[j].type==index_spec::interp) {
-	    //ix_old[j]=spec_old[j].val1;
+	    interp_vals.push_back(spec_old[j].val1);
+	  } else if (spec_old[j].type==index_spec::grid) {
+	    if (spec_old[j].ix3==1) {
+	      double val=spec_old[j].val1*
+		pow(spec_old[j].val3,ix_new[spec_old[j].ix1]);
+	      interp_vals.push_back(val);
+	    } else {
+	      double val=spec_old[j].val1+
+		ix_new[spec_old[j].ix1]*spec_old[j].val3;
+	      interp_vals.push_back(val);
+	    }
 	  }
+	  
 	}
 
 	double val=0;
@@ -1947,7 +1971,15 @@ namespace o2scl {
 	    std::cout << "Here new: ";
 	    vector_out(std::cout,ix_new,true);
 	  }
-	  val+=this->get(ix_old);
+	  if (n_interps>0) {
+	    val+=this->interp_linear_partial(ix_to_interp,ix_old,interp_vals);
+	  } else {
+	    val+=this->get(ix_old);
+	  }
+	  //template<class vec2_size_t, class vec3_size_t, class vec2_t>
+	  //double interp_linear_partial
+	  //(const vec2_size_t &ix_to_interp,
+	  //const vec3_size_t &ix, const vec2_t &val) {
       
 	}
       

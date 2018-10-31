@@ -2454,6 +2454,93 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
       tensor_size_t_obj=t;
     }
 
+  } else if (type=="tensor_grid") {
+
+    vector<string> sv2;
+    for(size_t j=1;j<sv.size();j++) {
+      rearrange_arg_process(sv[j],sv2);
+    }
+    
+    vector<o2scl::index_spec> vis;
+    for(size_t j=0;j<sv2.size();j++) {
+      vector<string> args;
+      if (sv2[j].find("index(")==0 && sv2[j][sv2[j].size()-1]==')') {
+	string spec=sv2[j].substr(6,sv2[j].length()-7);
+	split_string_delim(spec,args,',');
+	if (verbose>1) {
+	  cout << "rearrange, index: ";
+	  vector_out(cout,args,true);
+	}
+	vis.push_back(ix_index(o2scl::stoszt(args[0])));
+      } else if (sv2[j].find("fixed(")==0 && sv2[j][sv2[j].size()-1]==')') {
+	string spec=sv2[j].substr(6,sv2[j].length()-7);
+	split_string_delim(spec,args,',');
+	if (verbose>1) {
+	  cout << "rearrange, fixed: ";
+	  vector_out(cout,args,true);
+	}
+	vis.push_back(ix_fixed(o2scl::stoszt(args[0]),o2scl::stoszt(args[1])));
+      } else if (sv2[j].find("sum(")==0 && sv2[j][sv2[j].size()-1]==')') {
+	string spec=sv2[j].substr(4,sv2[j].length()-5);
+	split_string_delim(spec,args,',');
+	if (verbose>1) {
+	  cout << "rearrange, sum: ";
+	  vector_out(cout,args,true);
+	}
+	vis.push_back(ix_sum(o2scl::stoszt(args[0])));
+      } else if (sv2[j].find("trace(")==0 && sv2[j][sv2[j].size()-1]==')') {
+	string spec=sv2[j].substr(6,sv2[j].length()-7);
+	split_string_delim(spec,args,',');
+	if (verbose>1) {
+	  cout << "rearrange, trace: ";
+	  vector_out(cout,args,true);
+	}
+	vis.push_back(ix_trace(o2scl::stoszt(args[0]),o2scl::stoszt(args[1])));
+      } else if (sv2[j].find("reverse(")==0 && sv2[j][sv2[j].size()-1]==')') {
+	string spec=sv2[j].substr(8,sv2[j].length()-9);
+	split_string_delim(spec,args,',');
+	if (verbose>1) {
+	  cout << "rearrange, reverse: ";
+	  vector_out(cout,args,true);	
+	}
+	vis.push_back(ix_reverse(o2scl::stoszt(args[0])));
+      } else if (sv2[j].find("range(")==0 && sv2[j][sv2[j].size()-1]==')') {
+	string spec=sv2[j].substr(6,sv2[j].length()-7);
+	split_string_delim(spec,args,',');
+	if (verbose>1) {
+	  cout << "rearrange, range: ";
+	  vector_out(cout,args,true);
+	}
+	vis.push_back(ix_range(o2scl::stoszt(args[0]),
+			       o2scl::stoszt(args[1]),
+			       o2scl::stoszt(args[2])));
+      } else if (sv2[j].find("interp(")==0 && sv2[j][sv2[j].size()-1]==')') {
+	string spec=sv2[j].substr(7,sv2[j].length()-8);
+	split_string_delim(spec,args,',');
+	if (verbose>1) {
+	  cout << "interp, value: ";
+	  vector_out(cout,args,true);
+	}
+	vis.push_back(ix_interp(o2scl::stoszt(args[0]),
+				o2scl::function_to_double(args[1])));
+      } else if (sv2[j].find("grid(")==0 && sv2[j][sv2[j].size()-1]==')') {
+	string spec=sv2[j].substr(5,sv2[j].length()-6);
+	split_string_delim(spec,args,',');
+	if (verbose>1) {
+	  cout << "rearrange, begin, end, width [log]: ";
+	  vector_out(cout,args,true);
+	}
+	vis.push_back(ix_grid(o2scl::stoszt(args[0]),
+			      o2scl::function_to_double(args[1]),
+			      o2scl::function_to_double(args[2]),
+			      o2scl::function_to_double(args[3])),false);
+      }
+    }
+    
+    tensor_grid<> t;
+    t=tensor_grid_obj.rearrange_and_copy(vis);
+    tensor_grid_obj=t;
+    
   } else {
     cerr << "Rearrange does not work with " << type << " objects." << endl;
   }
