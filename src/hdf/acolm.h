@@ -427,6 +427,10 @@ namespace o2scl_acol {
     /// Output to screen or file
     virtual int comm_output(std::vector<std::string> &sv, bool itive_com);
 
+    /// Desc
+    void rearrange_arg_process(std::string str,
+			       std::vector<std::string> &sv);
+    
     /// Rearrange a tensor
     virtual int comm_rearrange(std::vector<std::string> &sv, bool itive_com);
 
