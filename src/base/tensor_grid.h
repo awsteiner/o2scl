@@ -1273,7 +1273,7 @@ namespace o2scl {
     template<class vec2_size_t, class vec3_size_t, class vec2_t>
       double interp_linear_partial
       (const vec2_size_t &ix_to_interp,
-       const vec3_size_t &ix, const vec2_t &val) {
+       vec3_size_t &ix, const vec2_t &val) {
 
       if (val.size()!=ix_to_interp.size()) {
 	O2SCL_ERR2("Index and value list don't match in ",
