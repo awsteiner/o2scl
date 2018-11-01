@@ -76,51 +76,100 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
   if (type=="table") {
     
     if (table_obj.get_nlines()==0) {
-      cerr << "No table with columns to compute autocorrelations with." << endl;
+      cerr << "No table with columns to compute "
+	   << "autocorrelations with." << endl;
       return exc_efailed;
     }
 
     vector<string> in, pr;
-    pr.push_back("Enter data column name");
-    pr.push_back("Enter output for autocorrelations");
-    pr.push_back("Enter output for 5*tau/m");
-    int ret=get_input(sv,pr,in,"autocorr",itive_com);
-    if (ret!=0) return ret;
-    
-    if (table_obj.is_column(in[0])==false) {
-      cerr << "Could not find column named '" << in[0] << "'." << endl;
-      return exc_efailed;
-    }
-
-    if (!table_obj.is_column(in[1])) {
-      table_obj.new_column(in[1]);
-    }
-    if (!table_obj.is_column(in[2])) {
-      table_obj.new_column(in[2]);
-    }
-
-    // Compute autocorrelation length and sample size
-    vector<double> ac_vec, ftom;
-    vector_autocorr_vector(table_obj[in[0]],ac_vec);
-    size_t len=vector_autocorr_tau(ac_vec,ftom);
-    if (len>0) {
-      cout << "Autocorrelation length: " << len << " sample size: "
-	   << table_obj.get_nlines()/len << endl;
+    if (sv.size()<4) {
+      pr.push_back("Enter output column for autocorrelations");
+      pr.push_back("Enter output column for 5*tau/m");
+      pr.push_back("Enter vector specification for data");
+      int ret=get_input(sv,pr,in,"autocorr",itive_com);
+      if (ret!=0) return ret;
     } else {
-      cout << "Autocorrelation length determination failed." << endl;
+      for(size_t i=1;i<sv.size();i++) in.push_back(sv[i]);
     }
 
+    vector<vector<double> > v_all, ac_all, ftom_all;
+    size_t max_ftom_size=0;
+    
+    for(size_t ix=2;ix<in.size();ix++) {
+      
+      vector<double> v, ac, ftom;
+      
+      if (in[2].find(':')==std::string::npos &&
+	  table_obj.is_column(in[2])==false) {
+	cerr << "Could not find column named '" << in[2] << "'." << endl;
+	return exc_efailed;
+      }
+      
+      if (!table_obj.is_column(in[0])) {
+	table_obj.new_column(in[0]);
+      }
+      if (!table_obj.is_column(in[1])) {
+	table_obj.new_column(in[1]);
+      }
+      
+      if (in[2].find(':')==std::string::npos) {
+	v.resize(table_obj.get_nlines());
+	for(size_t i=0;i<table_obj.get_nlines();i++) {
+	  v[i]=table_obj.get(in[2],i);
+	}
+      } else {
+	int vs_ret=vector_spec(in[2],v,verbose,false);
+	if (vs_ret!=0) {
+	  cout << "Vector specification failed." << endl;
+	  return 1;
+	}
+      }
+      
+      // Compute autocorrelation length and sample size
+      vector_autocorr_vector(v,ac);
+      size_t len=vector_autocorr_tau(ac,ftom);
+      if (len>0) {
+	cout << "Autocorrelation length: " << len << " sample size: "
+	     << table_obj.get_nlines()/len << endl;
+      } else {
+	cout << "Autocorrelation length determination failed." << endl;
+      }
+
+      if (ftom.size()>max_ftom_size) {
+	max_ftom_size=ftom.size();
+      }
+      v_all.push_back(v);
+      ac_all.push_back(ac);
+      ftom_all.push_back(ftom);
+    }
+    
+    vector<double> ac_avg(max_ftom_size), ftom_avg(max_ftom_size);
+    for(size_t i=0;i<max_ftom_size;i++) {
+      size_t n;
+      ac_avg[i]=0.0;
+      ftom_avg[i]=0.0;
+      for(size_t j=0;j<ac_all.size();j++) {
+	if (i<ac_all[j].size() && i<ftom_all[j].size()) {
+	  n++;
+	  ac_avg[i]+=ac_all[j][i];
+	  ftom_avg[i]+=ftom_all[j][i];
+	}
+      }
+      ac_avg[i]/=((double)n);
+      ftom_avg[i]/=((double)n);
+    }
+    
     // Add autocorrelation and ftom data to table, replacing the
     // values with zero when we reach the end of the vectors given by
     // vector_autocorr_tau() .
     for(size_t i=0;i<table_obj.get_nlines();i++) {
-      if (i<ac_vec.size()) {
-	table_obj.set(in[1],i,ac_vec[i]);
+      if (i<ac_avg.size()) {
+	table_obj.set(in[1],i,ac_avg[i]);
       } else {
 	table_obj.set(in[1],i,0.0);
       }
-      if (i<ftom.size()) {
-	table_obj.set(in[2],i,ftom[i]);
+      if (i<ftom_avg.size()) {
+	table_obj.set(in[2],i,ftom_avg[i]);
       } else {
 	table_obj.set(in[2],i,0.0);
       }
@@ -178,7 +227,74 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
     command_add("double[]");
     type="double[]";
     
-  }
+  } else {
+    
+    vector<string> in, pr;
+    if (sv.size()<2) {
+      pr.push_back("Enter vector specification for data");
+      int ret=get_input(sv,pr,in,"autocorr",itive_com);
+      if (ret!=0) return ret;
+    } else {
+      for(size_t i=1;i<sv.size();i++) in.push_back(sv[i]);
+    }
+
+    vector<vector<double> > v_all, ac_all, ftom_all;
+    size_t max_ftom_size=0;
+    
+    for(size_t ix=0;ix<in.size();ix++) {
+      
+      vector<double> v, ac, ftom;
+      
+      if (in[0].find(':')==std::string::npos) {
+	v.resize(table_obj.get_nlines());
+	for(size_t i=0;i<table_obj.get_nlines();i++) {
+	  v[i]=table_obj.get(in[0],i);
+	}
+      } else {
+	int vs_ret=vector_spec(in[0],v,verbose,false);
+	if (vs_ret!=0) {
+	  cout << "Vector specification failed." << endl;
+	  return 1;
+	}
+      }
+      
+      // Compute autocorrelation length and sample size
+      vector_autocorr_vector(v,ac);
+      size_t len=vector_autocorr_tau(ac,ftom);
+      if (len>0) {
+	cout << "Autocorrelation length: " << len << " sample size: "
+	     << table_obj.get_nlines()/len << endl;
+      } else {
+	cout << "Autocorrelation length determination failed." << endl;
+      }
+
+      if (ftom.size()>max_ftom_size) {
+	max_ftom_size=ftom.size();
+      }
+      v_all.push_back(v);
+      ac_all.push_back(ac);
+      ftom_all.push_back(ftom);
+    }
+    
+    command_del();
+    clear_obj();
+    
+    doublev_obj.resize(max_ftom_size);
+    for(size_t i=0;i<max_ftom_size;i++) {
+      size_t n;
+      doublev_obj[i]=0.0;
+      for(size_t j=0;j<ac_all.size();j++) {
+	if (i<ac_all[j].size() && i<ftom_all[j].size()) {
+	  n++;
+	  doublev_obj[i]+=ac_all[j][i];
+	}
+      }
+      doublev_obj[i]/=((double)n);
+    }
+    
+    command_add("double[]");
+    type="double[]";
+  }    
   
   return 0;
 }

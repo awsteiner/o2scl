@@ -1809,8 +1809,12 @@ namespace o2scl {
 
   /** \brief Construct an autocorrelation vector
 
-      This constructs a vector \c ac_vec for which
-      the kth entry stores the lag-k autocorrelation.
+      This constructs a vector \c ac_vec for which the kth entry
+      stores the lag-k autocorrelation. This function chooses \f$
+      k_{\mathrm{max}} =n/2 \f$ where \f$ n \f$ is the length of the
+      \c data vector. The vector \c ac_vec is resized to accomodate
+      exactly \f$ k_{\mathrm{max}} \f$ values, from 0 to 
+      \f$ k_{\mathrm{max}}-1 \f$.
   */
   template<class vec_t, class resize_vec_t> void vector_autocorr_vector
     (const vec_t &data, resize_vec_t &ac_vec) {

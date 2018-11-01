@@ -525,8 +525,8 @@ namespace o2scl_acol {
     /** \brief Generic vector specification
 	
 	Formats:
-	- single value: <value>
-	- list of values: <entry 0>,<entry 1>, ...,<entry n-1>
+	- single value: val:<value>
+	- list of values: list:<entry 0>,<entry 1>, ...,<entry n-1>
 	- function: func:<N>:<function of i>
 	- grid: grid:<begin>:<end>:<width>:["log"]
 	- HDF5 object in file: 
@@ -539,36 +539,37 @@ namespace o2scl_acol {
 					  int verbose=0,
 					  bool err_on_fail=true) {
       
-      if (spec.find(':')==std::string::npos) {
+      if (spec.find("val:")==0) {
 
-	if (spec.find(',')==std::string::npos) {
-	  if (verbose>1) {
-	    std::cout << "vector_spec(): single value " << spec
-		      << std::endl;;
+	std::string temp=spec.substr(4,spec.length()-4);
+	if (verbose>1) {
+	  std::cout << "vector_spec(): single value " << temp
+		    << std::endl;
+	}
+	v.resize(1);
+	v[0]=o2scl::function_to_double(temp);
+	
+      } else if (spec.find("list:")==0) {
+	
+	// List
+	std::string list=spec.substr(5,spec.length()-5);
+	std::vector<std::string> sv;
+	o2scl::split_string_delim(list,sv,',');
+	size_t n=sv.size();
+	if (n==0) {
+	  if (err_on_fail) {
+	    O2SCL_ERR2("String split failed, spec empty? ",
+		       "in vector_spec().",o2scl::exc_einval);
+	  } else {
+	    return 10;
 	  }
-	  // No commas and no colons, so just presume a single value
-	  v.resize(1);
-	  v[0]=o2scl::function_to_double(spec);
-	} else {
-	  // Has a comma, so presume a list
-	  std::vector<std::string> sv;
-	  o2scl::split_string_delim(spec,sv,',');
-	  size_t n=sv.size();
-	  if (n==0) {
-	    if (err_on_fail) {
-	      O2SCL_ERR2("String split failed, spec empty? ",
-			 "in vector_spec().",o2scl::exc_einval);
-	    } else {
-	      return 10;
-	    }
-	  }
-	  if (verbose>1) {
-	    std::cout << "vector_spec(): List " << spec << std::endl;
-	    std::cout << n << " " << sv[0] << " " << sv[n-1] << std::endl;
-	  }
-	  for(size_t i=0;i<n;i++) {
-	    v[i]=o2scl::function_to_double(sv[i]);
-	  }
+	}
+	if (verbose>1) {
+	  std::cout << "vector_spec(): List " << list << std::endl;
+	  std::cout << n << " " << sv[0] << " " << sv[n-1] << std::endl;
+	}
+	for(size_t i=0;i<n;i++) {
+	  v[i]=o2scl::function_to_double(sv[i]);
 	}
 	
       } else if (spec.find("func:")==0) {
