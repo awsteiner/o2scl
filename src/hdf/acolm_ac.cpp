@@ -99,9 +99,9 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
       
       vector<double> v, ac, ftom;
       
-      if (in[2].find(':')==std::string::npos &&
-	  table_obj.is_column(in[2])==false) {
-	cerr << "Could not find column named '" << in[2] << "'." << endl;
+      if (in[ix].find(':')==std::string::npos &&
+	  table_obj.is_column(in[ix])==false) {
+	cerr << "Could not find column named '" << in[ix] << "'." << endl;
 	return exc_efailed;
       }
       
@@ -112,13 +112,13 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
 	table_obj.new_column(in[1]);
       }
       
-      if (in[2].find(':')==std::string::npos) {
+      if (in[ix].find(':')==std::string::npos) {
 	v.resize(table_obj.get_nlines());
 	for(size_t i=0;i<table_obj.get_nlines();i++) {
-	  v[i]=table_obj.get(in[2],i);
+	  v[i]=table_obj.get(in[ix],i);
 	}
       } else {
-	int vs_ret=vector_spec(in[2],v,verbose,false);
+	int vs_ret=vector_spec(in[ix],v,verbose,false);
 	if (vs_ret!=0) {
 	  cout << "Vector specification failed." << endl;
 	  return 1;
@@ -142,10 +142,10 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
       ac_all.push_back(ac);
       ftom_all.push_back(ftom);
     }
-    
+
     vector<double> ac_avg(max_ftom_size), ftom_avg(max_ftom_size);
     for(size_t i=0;i<max_ftom_size;i++) {
-      size_t n;
+      size_t n=0;
       ac_avg[i]=0.0;
       ftom_avg[i]=0.0;
       for(size_t j=0;j<ac_all.size();j++) {
@@ -154,6 +154,10 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
 	  ac_avg[i]+=ac_all[j][i];
 	  ftom_avg[i]+=ftom_all[j][i];
 	}
+      }
+      if (n==0) {
+	cerr << "Failed to find any data in 'autocorr'." << endl;
+	return 1;
       }
       ac_avg[i]/=((double)n);
       ftom_avg[i]/=((double)n);
@@ -164,14 +168,14 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
     // vector_autocorr_tau() .
     for(size_t i=0;i<table_obj.get_nlines();i++) {
       if (i<ac_avg.size()) {
-	table_obj.set(in[1],i,ac_avg[i]);
+	table_obj.set(in[0],i,ac_avg[i]);
       } else {
-	table_obj.set(in[1],i,0.0);
+	table_obj.set(in[0],i,0.0);
       }
       if (i<ftom_avg.size()) {
-	table_obj.set(in[2],i,ftom_avg[i]);
+	table_obj.set(in[1],i,ftom_avg[i]);
       } else {
-	table_obj.set(in[2],i,0.0);
+	table_obj.set(in[1],i,0.0);
       }
     }
 
@@ -281,13 +285,17 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
     
     doublev_obj.resize(max_ftom_size);
     for(size_t i=0;i<max_ftom_size;i++) {
-      size_t n;
+      size_t n=0;
       doublev_obj[i]=0.0;
       for(size_t j=0;j<ac_all.size();j++) {
 	if (i<ac_all[j].size() && i<ftom_all[j].size()) {
 	  n++;
 	  doublev_obj[i]+=ac_all[j][i];
 	}
+      }
+      if (n==0) {
+	cerr << "Failed to find any data in 'autocorr'." << endl;
+	return 2;
       }
       doublev_obj[i]/=((double)n);
     }
