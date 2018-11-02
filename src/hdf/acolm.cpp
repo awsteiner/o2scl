@@ -420,14 +420,18 @@ void acol_manager::command_add(std::string new_type) {
        "optionally weighting the entries by the column 'wgts'.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_to_hist_2d),
        both},
-      {0,"autocorr","Compute the autocorrelation vectors.",0,3,
-       "<col> <ac> <ftom>",
-       ((std::string)"Given a column <col>, this stores a vector of ")+
+      {0,"autocorr","Compute the autocorrelation vectors.",-1,-1,
+       "<ac> <ftom> <column or vector spec.> [col or vector spec. 2] ...",
+       ((std::string)"Store a vector of ")+
        "autocorrelation coefficients in column <ac> and the quantity "+
-       "'5*tau/M' in column <ftom>. Columns <ac> and <ftom> are created "+
+       "'5*tau/M' in column <ftom> using data from either a column "+
+       "in the table or a vector specification. "+
+       "Columns <ac> and <ftom> are created "+
        "if they are not already present and overwritten if they "+
        "already contain data. Also, the autocorrelation length and "+
-       "estimated sample size are output to the screen.",
+       "estimated sample size are output to the screen. If multiple "+
+       "data sources are given, then the autocorrelation coefficients "+
+       "are averaged together.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_autocorr),
        both}
     };
