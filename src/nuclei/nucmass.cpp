@@ -55,9 +55,8 @@ nucmass_info::nucmass_info() {
      "Md","No","Lr","Rf","Db","Sg","Bh","Hs","Mt","Ds",
      // 111-118
      "Rg","Cn","Nj","Fl","Mc","Lv","Ts","Og"};
-
-#ifdef O2SCL_NEVER_DEFINED
-  std::string namelist[119]={
+  
+  name_list={
     "neutron",
     // 1-10
     "Hydrogen","Helium","Lithium","Beryllium","Boron",
@@ -95,7 +94,6 @@ nucmass_info::nucmass_info() {
     // 111-118
     "Roentgenium","Copernicium","Nihonium","Flerovium","Moscovium",
     "Livermorium","Tennessine","Oganesson"};
-#endif
     
   for(int i=0;i<nelements;i++) {
     element_list[i]=tlist[i];
@@ -212,6 +210,14 @@ std::string nucmass_info::Ztoel(size_t Z) {
   if (((int)Z)>=nelements) {
     O2SCL_ERR2("Invalid element in ",
 	       "nucmass_info::Ztoel().",exc_einval);
+  }
+  return element_list[Z];
+}
+
+std::string nucmass_info::Ztoname(size_t Z) {
+  if (((int)Z)>=nelements) {
+    O2SCL_ERR2("Invalid element in ",
+	       "nucmass_info::Ztoname().",exc_einval);
   }
   return element_list[Z];
 }

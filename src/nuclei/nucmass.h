@@ -104,6 +104,10 @@ namespace o2scl {
     */
     std::string Ztoel(size_t Z);
 
+    /** \brief Return the element name given Z
+     */
+    std::string Ztoname(size_t Z);
+
     /** \brief Return a string of the form "Pb208" for a given Z and N
 
         Note that if \c Z is zero, then and \c 'n' is 
@@ -117,6 +121,9 @@ namespace o2scl {
 
   protected:
 
+    /// Element names
+    std::vector<std::string> name_list;
+    
     /// The number of elements (proton number)
     static const int nelements=119;
     

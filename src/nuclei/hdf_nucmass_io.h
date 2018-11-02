@@ -75,7 +75,7 @@ namespace o2scl_hdf {
       - "16" - (default) Data from \ref Huang17 and \ref Wang17 (ame16.o2)
       - "16round" - Data from \ref Huang17 and \ref Wang17 (ame16round.o2)
       
-      If any string other than these five is used, the error handler
+      If any string other than these seven is used, the error handler
       is called. If a data file has not been loaded, then
       nucmass_ame::is_loaded() returns false.
       
