@@ -100,7 +100,7 @@ bool nucmass_hfb::is_included(int l_Z, int l_N) {
       if (mid==0) return false;
       mid--;
     } else {
-      if (mid==n-1) return false;
+      if (mid==((int)n-1)) return false;
       mid++;
     }
 
@@ -243,7 +243,7 @@ bool nucmass_hfb_sp::is_included(int l_Z, int l_N) {
       if (mid==0) return false;
       mid--;
     } else {
-      if (mid==n-1) return false;
+      if (mid==((int)n-1)) return false;
       mid++;
     }
 

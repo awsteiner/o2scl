@@ -51,9 +51,11 @@ namespace o2scl {
     
   public:
     
-    nucmass_wlw(std::string model="", bool external=false);
+    nucmass_wlw();
 
     ~nucmass_wlw();
+
+    int load(std::string model="", bool external=false);
     
     /** \brief Entry structure
      */
@@ -89,17 +91,11 @@ namespace o2scl {
     /// Return the type, \c "nucmass_wlw".
     virtual const char *type() { return "nucmass_wlw"; }
 
-    /// Returns true if data has been loaded
-    bool is_loaded() { return (n>0); }
-
     /** \brief Return false if the mass formula does not include 
 	specified nucleus
     */
     virtual bool is_included(int Z, int N);
 
-    /// Return number of entries
-    int get_nentries() { return n; }
-    
     /// Given \c Z and \c N, return the mass excess in MeV
     virtual double mass_excess(int Z, int N);
     
@@ -107,12 +103,6 @@ namespace o2scl {
 
   protected:
 
-    /// The number of entries (about 3000).
-    int n;
-    
-    /// The reference for the original data
-    std::string reference;
-    
     /// The array containing the mass data of length n
     entry *mass;
 

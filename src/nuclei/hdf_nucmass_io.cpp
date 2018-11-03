@@ -27,8 +27,8 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-void o2scl_hdf::ame_load(o2scl::nucmass_ame &ame, std::string file_name, 
-			 std::string table_name) {
+void o2scl_hdf::ame_load_ext(o2scl::nucmass_ame &ame, std::string file_name, 
+			     std::string table_name, bool exp_only) {
 
   size_t offset[23]={HOFFSET(o2scl::nucmass_ame::entry,NMZ),
 		     HOFFSET(o2scl::nucmass_ame::entry,N),
@@ -94,17 +94,41 @@ void o2scl_hdf::ame_load(o2scl::nucmass_ame &ame, std::string file_name,
   herr_t status=H5TBread_table(file,table_name.c_str(),
 			       sizeof(o2scl::nucmass_ame::entry),
 			       offset,sizes,m);
+
   ame.n=nrecords;
   ame.mass=m;
   ame.reference=reference;
   ame.last=nrecords/2;
     
+  if (exp_only) {
+
+    size_t n_exp=0;
+    for(int i=0;i<nrecords;i++) {
+      if (m[i].mass_acc==0) n_exp++;
+    }
+    o2scl::nucmass_ame::entry *m2=new o2scl::nucmass_ame::entry[n_exp];
+    size_t i_exp=0;
+    for(int i=0;i<nrecords;i++) {
+      if (m[i].mass_acc==0) {
+	m2[i_exp]=m[i];
+	i_exp++;
+      }
+    }
+    delete[] m;
+
+    ame.n=n_exp;
+    ame.mass=m2;
+    ame.reference=reference;
+    ame.last=n_exp/2;
+  }
+      
   hf.close();
 
   return;
 }
 
-void o2scl_hdf::ame_load(o2scl::nucmass_ame &ame, std::string name) {
+void o2scl_hdf::ame_load(o2scl::nucmass_ame &ame, std::string name,
+			 bool exp_only) {
   
   std::string file_name, table_name;
   file_name=o2scl::o2scl_settings.get_data_dir()+"/nucmass";
@@ -135,7 +159,7 @@ void o2scl_hdf::ame_load(o2scl::nucmass_ame &ame, std::string name) {
     O2SCL_ERR(s.c_str(),exc_einval);
   }
   
-  ame_load(ame,file_name,table_name);
+  ame_load_ext(ame,file_name,table_name,exp_only);
   return;
 }
 

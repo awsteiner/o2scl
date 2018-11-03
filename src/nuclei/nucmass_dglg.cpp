@@ -52,7 +52,7 @@ nucmass_dglg::nucmass_dglg(std::string model, bool external) {
   n=data.get_nlines();
   
   mass=new nucmass_dglg::entry[n];
-  for(int i=0;i<n;i++) {
+  for(size_t i=0;i<n;i++) {
     nucmass_dglg::entry nde={((int)(data.get("Z",i)+1.0e-6)),
 			     ((int)(data.get("N",i)+1.0e-6)),
 			     data.get("EHFB",i),data.get("BMIN",i),
@@ -125,7 +125,7 @@ bool nucmass_dglg::is_included(int l_Z, int l_N) {
       if (mid==0) return false;
       mid--;
     } else {
-      if (mid==n-1) return false;
+      if (mid==((int)n-1)) return false;
       mid++;
     }
   }
@@ -182,7 +182,7 @@ double nucmass_dglg::mass_excess(int l_Z, int l_N) {
       }
       mid--;
     } else {
-      if (mid==n-1) {
+      if (mid==((int)n-1)) {
 	O2SCL_ERR((((string)"Nucleus with Z=")+itos(l_Z)+" and N="+itos(l_N)+
 		   " not found in nucmass_dglg::mass_excess().").c_str(),
 		  exc_enotfound);

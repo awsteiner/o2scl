@@ -52,9 +52,11 @@ namespace o2scl {
     
   public:
     
-    nucmass_sdnp(std::string model="", bool external=false);
+    nucmass_sdnp();
 
     ~nucmass_sdnp();
+
+    int load(std::string model="", bool external=false);
     
     /** \brief Entry structure
 	
@@ -114,7 +116,7 @@ namespace o2scl {
     virtual bool is_included(int Z, int N);
 
     /// Return number of entries
-    int get_nentries() { return n; }
+    virtual size_t get_nentries() { return n; }
     
     /// Given \c Z and \c N, return the mass excess in MeV
     virtual double mass_excess(int Z, int N);
@@ -124,7 +126,7 @@ namespace o2scl {
   protected:
 
     /// The number of entries (about 3000).
-    int n;
+    size_t n;
     
     /// The reference for the original data
     std::string reference;

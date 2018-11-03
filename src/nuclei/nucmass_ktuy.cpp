@@ -30,9 +30,11 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-nucmass_ktuy::nucmass_ktuy(std::string model, bool external) {
-  
+nucmass_ktuy::nucmass_ktuy() {
   n=0;
+}
+
+int nucmass_ktuy::load(std::string model, bool external) {
   
   std::string fname;
   std::string dir=o2scl::o2scl_settings.get_data_dir();
@@ -58,7 +60,7 @@ nucmass_ktuy::nucmass_ktuy(std::string model, bool external) {
   n=data.get_nlines();
 
   mass=new nucmass_ktuy::entry[n];
-  for(int i=0;i<n;i++) {
+  for(size_t i=0;i<n;i++) {
     nucmass_ktuy::entry kme={((int)(data.get("NN",i)+1.0e-6)),
 			 ((int)(data.get("ZZ",i)+1.0e-6)),
 			 ((int)(data.get("NN",i)+data.get("ZZ",i)+1.0e-6)),
@@ -69,6 +71,8 @@ nucmass_ktuy::nucmass_ktuy(std::string model, bool external) {
   }
 
   last=n/2;
+  
+  return 0;
 }
 
 nucmass_ktuy::~nucmass_ktuy() {
@@ -126,7 +130,7 @@ bool nucmass_ktuy::is_included(int l_Z, int l_N) {
       if (mid==0) return false;
       mid--;
     } else {
-      if (mid==n-1) return false;
+      if (mid==((int)n-1)) return false;
       mid++;
     }
 

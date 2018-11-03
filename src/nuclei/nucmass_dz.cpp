@@ -71,7 +71,7 @@ bool nucmass_dz_table::is_included(int l_Z, int l_N) {
       if (mid==0) return false;
       mid--;
     } else {
-      if (mid==n-1) return false;
+      if (mid==((int)(n-1))) return false;
       mid++;
     }
   }
@@ -127,7 +127,7 @@ double nucmass_dz_table::mass_excess(int l_Z, int l_N) {
       }
       mid--;
     } else {
-      if (mid==n-1) {
+      if (mid==((int)(n-1))) {
 	O2SCL_ERR((((string)"Nucleus with Z=")+itos(l_Z)+" and N="+itos(l_N)+
 		   " not found in nucmass_dz_table::mass_excess().").c_str(),
 		  exc_enotfound);

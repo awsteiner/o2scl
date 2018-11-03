@@ -29,8 +29,11 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-nucmass_wlw::nucmass_wlw(std::string model, bool external) {
+nucmass_wlw::nucmass_wlw() {
   n=0;
+}
+  
+int nucmass_wlw::load(std::string model, bool external) {
   
   std::string fname;
   std::string dir=o2scl::o2scl_settings.get_data_dir();
@@ -65,7 +68,7 @@ nucmass_wlw::nucmass_wlw(std::string model, bool external) {
   
   mass=new nucmass_wlw::entry[n];
   if (model=="WS3_RBF") {
-    for(int i=0;i<n;i++) {
+    for(size_t i=0;i<n;i++) {
       nucmass_wlw::entry nde={((int)(data.get("Z",i)+1.0e-6)),
 			      ((int)(data.get("A",i)+1.0e-6))-
 			      ((int)(data.get("Z",i))),
@@ -73,7 +76,7 @@ nucmass_wlw::nucmass_wlw(std::string model, bool external) {
       mass[i]=nde;
     }
   } else if (model=="WS4_RBF") {
-    for(int i=0;i<n;i++) {
+    for(size_t i=0;i<n;i++) {
       nucmass_wlw::entry nde={((int)(data.get("Z",i)+1.0e-6)),
 			      ((int)(data.get("A",i)+1.0e-6))-
 			      ((int)(data.get("Z",i))),
@@ -81,7 +84,7 @@ nucmass_wlw::nucmass_wlw(std::string model, bool external) {
       mass[i]=nde;
     }
   } else {
-    for(int i=0;i<n;i++) {
+    for(size_t i=0;i<n;i++) {
       nucmass_wlw::entry nde={((int)(data.get("Z",i)+1.0e-6)),
 			      ((int)(data.get("A",i)+1.0e-6))-
 			      ((int)(data.get("Z",i))),
@@ -91,6 +94,7 @@ nucmass_wlw::nucmass_wlw(std::string model, bool external) {
   }
 
   last=n/2;
+  return 0;
 }
 
 nucmass_wlw::~nucmass_wlw() {
@@ -137,7 +141,7 @@ bool nucmass_wlw::is_included(int l_Z, int l_N) {
       if (mid==0) return false;
       mid--;
     } else {
-      if (mid==n-1) return false;
+      if (mid==((int)n-1)) return false;
       mid++;
     }
   }
@@ -194,7 +198,7 @@ double nucmass_wlw::mass_excess(int l_Z, int l_N) {
       }
       mid--;
     } else {
-      if (mid==n-1) {
+      if (mid==((int)n-1)) {
 	O2SCL_ERR((((string)"Nucleus with Z=")+itos(l_Z)+" and N="+itos(l_N)+
 		   " not found in nucmass_wlw::mass_excess().").c_str(),
 		  exc_enotfound);

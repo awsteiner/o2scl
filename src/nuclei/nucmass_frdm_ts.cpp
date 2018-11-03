@@ -41,7 +41,8 @@ int main(void) {
   nucmass_ame au;
   nucmass_semi_empirical sm;
 
-  o2scl_hdf::ame_load(au,"../../data/o2scl/nucmass/ame12.o2","ame12.o2");
+  o2scl_hdf::ame_load_ext(au,"../../data/o2scl/nucmass/ame12.o2",
+			  "ame12.o2");
 
   // Show that the nucmass_frdm gives reasonable (but not great)
   // values for the binding energy of Lead 208

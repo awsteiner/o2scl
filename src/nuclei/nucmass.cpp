@@ -219,7 +219,7 @@ std::string nucmass_info::Ztoname(size_t Z) {
     O2SCL_ERR2("Invalid element in ",
 	       "nucmass_info::Ztoname().",exc_einval);
   }
-  return element_list[Z];
+  return name_list[Z];
 }
 
 std::string nucmass_info::tostring(size_t Z, size_t N) {

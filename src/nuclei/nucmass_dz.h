@@ -66,21 +66,12 @@ namespace o2scl {
     /// Given \c Z and \c N, return the mass excess in MeV
     virtual double mass_excess(int Z, int N);
     
-    /// Verify that the constructor properly loaded the table
-    bool is_loaded() { return (n>0); }
-    
     /// Return the type, \c "nucmass_dz_table".
     virtual const char *type() { return "nucmass_dz_table"; }
 
-    /// Return number of entries
-    int get_nentries() { return n; }
-    
 #ifndef DOXYGEN_INTERNAL
 
   protected:
-    
-    /// The reference for the original data
-    std::string reference;
     
     /// Table containing the data
     table<> data;
@@ -88,9 +79,6 @@ namespace o2scl {
     /// The last table index for caching
     int last;
 
-    /// The total number of entries
-    int n;
-    
 #endif
     
   };

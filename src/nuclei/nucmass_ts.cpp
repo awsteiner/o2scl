@@ -122,18 +122,18 @@ int main(void) {
   // Create an instance of all the various mass formulae
 
   nucmass_ame ame;
-  o2scl_hdf::ame_load(ame,"../../data/o2scl/nucmass/ame03.o2","ame03.o2");
+  o2scl_hdf::ame_load_ext(ame,"../../data/o2scl/nucmass/ame03.o2","ame03.o2");
   nucmass_ame ame95rmd;
-  o2scl_hdf::ame_load(ame95rmd,"../../data/o2scl/nucmass/ame95rmd.o2",
+  o2scl_hdf::ame_load_ext(ame95rmd,"../../data/o2scl/nucmass/ame95rmd.o2",
 		      "ame95rmd.o2");
   nucmass_ame ame03round;
-  o2scl_hdf::ame_load(ame03round,"../../data/o2scl/nucmass/ame03round.o2",
+  o2scl_hdf::ame_load_ext(ame03round,"../../data/o2scl/nucmass/ame03round.o2",
 		      "ame03round.o2");
   nucmass_ame ame95exp;
-  o2scl_hdf::ame_load(ame95exp,"../../data/o2scl/nucmass/ame95exp.o2",
+  o2scl_hdf::ame_load_ext(ame95exp,"../../data/o2scl/nucmass/ame95exp.o2",
 		      "ame95exp.o2");
   nucmass_ame ame12;
-  o2scl_hdf::ame_load(ame12,"../../data/o2scl/nucmass/ame12.o2","ame12.o2");
+  o2scl_hdf::ame_load_ext(ame12,"../../data/o2scl/nucmass/ame12.o2","ame12.o2");
 
   // Output the references
   cout << "References: " << endl;
@@ -149,24 +149,32 @@ int main(void) {
   o2scl_hdf::mnmsk_load(m95,"../../data/o2scl/nucmass/");
   cout << "Here2." << endl;
   
-  nucmass_ktuy kt("../../data/o2scl/nucmass/ktuy04.o2",1);
-  nucmass_ktuy kt2("../../data/o2scl/nucmass/ktuy05.o2",1);
+  nucmass_ktuy kt;
+  kt.load("../../data/o2scl/nucmass/ktuy04.o2",1);
+  nucmass_ktuy kt2;
+  kt2.load("../../data/o2scl/nucmass/ktuy05.o2",1);
 
   cout << "Here2b1." << endl;
-  nucmass_wlw wlw1("../../data/o2scl/nucmass/wlw10.o2",1);
+  nucmass_wlw wlw1;
+  wlw1.load("../../data/o2scl/nucmass/wlw10.o2",1);
   cout << "Here2b2." << endl;
-  nucmass_wlw wlw2("../../data/o2scl/nucmass/wllw10.o2",1);
+  nucmass_wlw wlw2;
+  wlw2.load("../../data/o2scl/nucmass/wllw10.o2",1);
   cout << "Here2b3." << endl;
-  nucmass_wlw wlw3("../../data/o2scl/nucmass/lwdw11.o2",1);
+  nucmass_wlw wlw3;
+  wlw3.load("../../data/o2scl/nucmass/lwdw11.o2",1);
   cout << "Here2b4." << endl;
   //nucmass_wlw wlw4("../../data/o2scl/nucmass/wl11.o2",1);
   cout << "Here2b5." << endl;
   //  nucmass_wlw wlw5("../../data/o2scl/nucmass/wlwm14.o2",1);
   
   cout << "Here3." << endl;
-  nucmass_sdnp sdnp1("../../data/o2scl/nucmass/sdnp03.o2",1);
-  nucmass_sdnp sdnp2("../../data/o2scl/nucmass/sd_skp_04.o2",1);
-  nucmass_sdnp sdnp3("../../data/o2scl/nucmass/sd_sly4_04.o2",1);
+  nucmass_sdnp sdnp1;
+  sdnp1.load("../../data/o2scl/nucmass/sdnp03.o2",1);
+  nucmass_sdnp sdnp2;
+  sdnp2.load("../../data/o2scl/nucmass/sd_skp_04.o2",1);
+  nucmass_sdnp sdnp3;
+  sdnp3.load("../../data/o2scl/nucmass/sd_sly4_04.o2",1);
   
   cout << "Here4." << endl;
   nucmass_hfb hfb2;

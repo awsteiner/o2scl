@@ -615,7 +615,7 @@ int hdf_file::getc(std::string name, char &c) {
   }
 
   // Read the data
-  int status=H5Dread(dset,H5T_NATIVE_CHAR,H5S_ALL,H5S_ALL,
+  herr_t status=H5Dread(dset,H5T_NATIVE_CHAR,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,&c);
   if (status<0) {
     O2SCL_ERR("Could not read dataspace in hdf_file::getc().",
@@ -637,7 +637,7 @@ int hdf_file::getd(std::string name, double &d) {
   }
 
   // Read the data
-  int status=H5Dread(dset,H5T_NATIVE_DOUBLE,H5S_ALL,H5S_ALL,
+  herr_t status=H5Dread(dset,H5T_NATIVE_DOUBLE,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,&d);
   if (status<0) {
     O2SCL_ERR("Could not read dataspace in hdf_file::getd().",
@@ -659,7 +659,7 @@ int hdf_file::getf(std::string name, float &f) {
   }
 
   // Read the data
-  int status=H5Dread(dset,H5T_NATIVE_FLOAT,H5S_ALL,H5S_ALL,
+  herr_t status=H5Dread(dset,H5T_NATIVE_FLOAT,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,&f);
   if (status<0) {
     O2SCL_ERR("Could not read dataspace in hdf_file::getf().",
@@ -681,7 +681,7 @@ int hdf_file::geti(std::string name, int &i) {
   }
 
   // Read the data
-  int status=H5Dread(dset,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,
+  herr_t status=H5Dread(dset,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,&i);
   if (status<0) {
     O2SCL_ERR("Could not read dataspace in hdf_file::geti().",
@@ -777,7 +777,7 @@ int hdf_file::gets(std::string name, std::string &s) {
   char *c=new char[dims[0]];
 
   // Read the data
-  int status=H5Dread(dset,H5T_NATIVE_CHAR,H5S_ALL,H5S_ALL,
+  herr_t status=H5Dread(dset,H5T_NATIVE_CHAR,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,c);
   if (status<0) {
     O2SCL_ERR("Could not read dataspace in hdf_file::gets().",
@@ -820,7 +820,7 @@ int hdf_file::gets_var(std::string name, std::string &s) {
   char *c=new char[dims[0]];
 
   // Read the data
-  int status=H5Dread(dset,H5T_NATIVE_CHAR,H5S_ALL,H5S_ALL,
+  herr_t status=H5Dread(dset,H5T_NATIVE_CHAR,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,c);
   if (status<0) {
     O2SCL_ERR("Could not read dataspace in hdf_file::gets().",
@@ -861,7 +861,7 @@ int hdf_file::getc_def(std::string name, char def, char &c) {
   }
 
   // Read the data
-  int status=H5Dread(dset,H5T_NATIVE_CHAR,H5S_ALL,H5S_ALL,
+  herr_t status=H5Dread(dset,H5T_NATIVE_CHAR,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,&c);
   if (status<0) {
     O2SCL_ERR("Could not read dataspace in hdf_file::getc_def().",
@@ -894,7 +894,7 @@ int hdf_file::getd_def(std::string name, double def, double &d) {
   }
 
   // Read the data
-  int status=H5Dread(dset,H5T_NATIVE_DOUBLE,H5S_ALL,H5S_ALL,
+  herr_t status=H5Dread(dset,H5T_NATIVE_DOUBLE,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,&d);
   if (status<0) {
     O2SCL_ERR("Could not read dataspace in hdf_file::getd_def().",
@@ -927,7 +927,7 @@ int hdf_file::getf_def(std::string name, float def, float &f) {
   }
 
   // Read the data
-  int status=H5Dread(dset,H5T_NATIVE_FLOAT,H5S_ALL,H5S_ALL,
+  herr_t status=H5Dread(dset,H5T_NATIVE_FLOAT,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,&f);
   if (status<0) {
     O2SCL_ERR("Could not read dataspace in hdf_file::getf_def().",
@@ -1006,7 +1006,7 @@ int hdf_file::geti_def(std::string name, int def, int &i) {
   }
 
   // Read the data
-  int status=H5Dread(dset,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,
+  herr_t status=H5Dread(dset,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,&i);
   if (status<0) {
     O2SCL_ERR("Could not read dataspace in hdf_file::geti_def().",
@@ -1084,7 +1084,7 @@ int hdf_file::gets_def(std::string name, std::string def, std::string &s) {
   char *c=new char[dims[0]];
 
   // Read the data
-  int status=H5Dread(dset,H5T_NATIVE_CHAR,H5S_ALL,H5S_ALL,
+  herr_t status=H5Dread(dset,H5T_NATIVE_CHAR,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,c);
   if (status<0) {
     O2SCL_ERR("Could not read dataspace in hdf_file::gets_def().",
@@ -1138,7 +1138,7 @@ int hdf_file::gets_var_def(std::string name, std::string def, std::string &s) {
   char *c=new char[dims[0]];
 
   // Read the data
-  int status=H5Dread(dset,H5T_NATIVE_CHAR,H5S_ALL,H5S_ALL,
+  herr_t status=H5Dread(dset,H5T_NATIVE_CHAR,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,c);
   if (status<0) {
     O2SCL_ERR("Could not read dataspace in hdf_file::gets_def().",
@@ -1914,7 +1914,7 @@ int hdf_file::getc_arr(std::string name, size_t n, char *c) {
   }
 
   // Read the data
-  int status=H5Dread(dset,H5T_NATIVE_CHAR,H5S_ALL,H5S_ALL,
+  herr_t status=H5Dread(dset,H5T_NATIVE_CHAR,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,c);
 
   status=H5Dclose(dset);
@@ -1962,7 +1962,7 @@ int hdf_file::getd_arr_compr(std::string name, size_t n, double *d,
   }
 
   // Read the data
-  int status=H5Dread(dset,H5T_NATIVE_DOUBLE,H5S_ALL,H5S_ALL,
+  herr_t status=H5Dread(dset,H5T_NATIVE_DOUBLE,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,d);
 
   status=H5Dclose(dset);
@@ -1987,7 +1987,7 @@ int hdf_file::getf_arr(std::string name, size_t n, float *f) {
   }
 
   // Read the data
-  int status=H5Dread(dset,H5T_NATIVE_FLOAT,H5S_ALL,H5S_ALL,
+  herr_t status=H5Dread(dset,H5T_NATIVE_FLOAT,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,f);
 
   status=H5Dclose(dset);
@@ -2012,7 +2012,7 @@ int hdf_file::geti_arr(std::string name, size_t n, int *i) {
   }
 
   // Read the data
-  int status=H5Dread(dset,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,
+  herr_t status=H5Dread(dset,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,i);
 
   status=H5Dclose(dset);
@@ -2034,7 +2034,7 @@ int hdf_file::getc_arr_alloc(std::string name, size_t &n, char *c) {
   c=new char[n];
 
   // Read the data
-  int status=H5Dread(dset,H5T_NATIVE_CHAR,H5S_ALL,H5S_ALL,
+  herr_t status=H5Dread(dset,H5T_NATIVE_CHAR,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,c);
 
   status=H5Dclose(dset);
@@ -2056,7 +2056,7 @@ int hdf_file::getd_arr_alloc(std::string name, size_t &n, double *d) {
   d=new double[n];
 
   // Read the data
-  int status=H5Dread(dset,H5T_NATIVE_DOUBLE,H5S_ALL,H5S_ALL,
+  herr_t status=H5Dread(dset,H5T_NATIVE_DOUBLE,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,d);
 
   status=H5Dclose(dset);
@@ -2078,7 +2078,7 @@ int hdf_file::getf_arr_alloc(std::string name, size_t &n, float *f) {
   f=new float[n];
 
   // Read the data
-  int status=H5Dread(dset,H5T_NATIVE_FLOAT,H5S_ALL,H5S_ALL,
+  herr_t status=H5Dread(dset,H5T_NATIVE_FLOAT,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,f);
 
   status=H5Dclose(dset);
@@ -2100,7 +2100,7 @@ int hdf_file::geti_arr_alloc(std::string name, size_t &n, int *i) {
   i=new int[n];
 
   // Read the data
-  int status=H5Dread(dset,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,
+  herr_t status=H5Dread(dset,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,i);
 
   status=H5Dclose(dset);
@@ -2215,6 +2215,10 @@ int hdf_file::getd_vec(std::string name, std::vector<double> &v) {
     // Read the data directly into the pointer
     status=H5Dread(dset,H5T_NATIVE_DOUBLE,H5S_ALL,H5S_ALL,
 		   H5P_DEFAULT,&v[0]);
+    if (status<0) {
+      O2SCL_ERR("Could not read dataspace in hdf_file::getd_vec().",
+		exc_einval);
+    }
     
   }
   
@@ -2243,6 +2247,10 @@ int hdf_file::geti_vec(std::string name, std::vector<int> &v) {
     // Read the data directly into the pointer
     status=H5Dread(dset,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,
 		   H5P_DEFAULT,&v[0]);
+    if (status<0) {
+      O2SCL_ERR("Could not read dataspace in hdf_file::geti_vec().",
+		exc_einval);
+    }
     
   }
   
@@ -2272,10 +2280,18 @@ int hdf_file::get_szt_vec(std::string name, std::vector<size_t> &v) {
     if (std::numeric_limits<size_t>::digits==64) {
       status=H5Dread(dset,H5T_NATIVE_HSIZE,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,&v[0]);
+      if (status<0) {
+	O2SCL_ERR("Could not read dataspace in hdf_file::get_szt_vec().",
+		  exc_einval);
+      }
     } else {
       o2_u64_t *tmp_arr=new o2_u64_t[dims[0]];
       status=H5Dread(dset,H5T_NATIVE_HSIZE,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,&tmp_arr[0]);
+      if (status<0) {
+	O2SCL_ERR("Could not read dataspace in hdf_file::get_szt_vec().",
+		  exc_einval);
+      }
       for(size_t i=0;i<dims[0];i++) {
 	if (tmp_arr[i]>((o2_u64_t)std::numeric_limits<size_t>::max())) {
 	  O2SCL_ERR2("Not enough space in native size_t type in ",
@@ -2541,8 +2557,12 @@ int hdf_file::getd_mat_copy(std::string name, ubmatrix &m) {
   double *d=new double[m.size1()*m.size2()];
 
   // Read the data
-  int status=H5Dread(dset,H5T_NATIVE_DOUBLE,H5S_ALL,H5S_ALL,
+  herr_t status=H5Dread(dset,H5T_NATIVE_DOUBLE,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,d);
+  if (status<0) {
+    O2SCL_ERR("Could not read dataspace in hdf_file::getd_mat_copy().",
+	      exc_einval);
+  }
 
   for(size_t i=0;i<m.size1();i++) {
     for(size_t j=0;j<m.size2();j++) {
@@ -2673,8 +2693,12 @@ int hdf_file::geti_mat_copy(std::string name, ubmatrix_int &m) {
   int *d=new int[m.size1()*m.size2()];
 
   // Read the data
-  int status=H5Dread(dset,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,
+  herr_t status=H5Dread(dset,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,d);
+  if (status<0) {
+    O2SCL_ERR("Could not read dataspace in hdf_file::geti_mat_copy().",
+	      exc_einval);
+  }
 
   for(size_t i=0;i<m.size1();i++) {
     for(size_t j=0;j<m.size2();j++) {
@@ -3034,8 +3058,12 @@ int hdf_file::getd_ten(std::string name,
   double *start=&t.get(zero);
 
   // Read the data
-  int status=H5Dread(dset,H5T_NATIVE_DOUBLE,H5S_ALL,H5S_ALL,
+  herr_t status=H5Dread(dset,H5T_NATIVE_DOUBLE,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,start);
+  if (status<0) {
+    O2SCL_ERR("Could not read dataspace in hdf_file::getd_ten().",
+	      exc_einval);
+  }
   
   status=H5Dclose(dset);
 
@@ -3071,8 +3099,12 @@ int hdf_file::geti_ten(std::string name,
   int *start=&t.get(zero);
   
   // Read the data
-  int status=H5Dread(dset,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,
+  herr_t status=H5Dread(dset,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,start);
+  if (status<0) {
+    O2SCL_ERR("Could not read dataspace in hdf_file::geti_ten().",
+	      exc_einval);
+  }
   
   status=H5Dclose(dset);
 
@@ -3108,8 +3140,12 @@ int hdf_file::get_szt_ten(std::string name,
   size_t *start=&t.get(zero);
   
   // Read the data
-  int status=H5Dread(dset,H5T_NATIVE_HSIZE,H5S_ALL,H5S_ALL,
+  herr_t status=H5Dread(dset,H5T_NATIVE_HSIZE,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,start);
+  if (status<0) {
+    O2SCL_ERR("Could not read dataspace in hdf_file::get_szt_ten().",
+	      exc_einval);
+  }
   
   status=H5Dclose(dset);
 
@@ -3138,8 +3174,12 @@ int hdf_file::getd_vec_prealloc(std::string name, size_t n, double *d) {
   }
       
   // Read the data
-  int status=H5Dread(dset,H5T_NATIVE_DOUBLE,H5S_ALL,H5S_ALL,
+  herr_t status=H5Dread(dset,H5T_NATIVE_DOUBLE,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,d);
+  if (status<0) {
+    O2SCL_ERR("Could not read dataspace in hdf_file::getd_vec_prealloc().",
+	      exc_einval);
+  }
 
   status=H5Dclose(dset);
       
@@ -3165,7 +3205,7 @@ int hdf_file::geti_vec_prealloc(std::string name, size_t n, int *i) {
   }
       
   // Read the data
-  int status=H5Dread(dset,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,
+  herr_t status=H5Dread(dset,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,i);
       
   status=H5Dclose(dset);
@@ -3193,7 +3233,7 @@ int hdf_file::getd_mat_prealloc(std::string name, size_t n,
   }
       
   // Read the data
-  int status=H5Dread(dset,H5T_NATIVE_DOUBLE,H5S_ALL,H5S_ALL,
+  herr_t status=H5Dread(dset,H5T_NATIVE_DOUBLE,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,d);
 
   status=H5Dclose(dset);
@@ -3221,7 +3261,7 @@ int hdf_file::geti_mat_prealloc(std::string name, size_t n,
   }
       
   // Read the data
-  int status=H5Dread(dset,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,
+  herr_t status=H5Dread(dset,H5T_NATIVE_INT,H5S_ALL,H5S_ALL,
 		     H5P_DEFAULT,i);
       
   status=H5Dclose(dset);

@@ -39,20 +39,21 @@ namespace o2scl {
     
   public:
     
-    /** \brief Create a new mass formula object using the specified model
-	number
-    */
-    nucmass_ktuy(std::string model="05", bool external=false);
-
+    nucmass_ktuy();
+    
     virtual ~nucmass_ktuy();
 
-  /** \brief Mass formula entry structure for KTUY mass formula
-
-      Nuclear masses from \ref Koura00 and \ref Koura05
-      as originally specified in the files <tt>KTUY04_m246.dat</tt>
-      and <tt>KTUY05_m246.dat</tt> obtained from
-      http://wwwndc.jaea.go.jp/nucldata/mass/KTUY04_E.html
-   */
+    /** \brief Load masses using the specified model number
+     */
+    int load(std::string model="05", bool external=false);
+    
+    /** \brief Mass formula entry structure for KTUY mass formula
+	
+	Nuclear masses from \ref Koura00 and \ref Koura05
+	as originally specified in the files <tt>KTUY04_m246.dat</tt>
+	and <tt>KTUY05_m246.dat</tt> obtained from
+	http://wwwndc.jaea.go.jp/nucldata/mass/KTUY04_E.html
+    */
     struct entry {
     
     /// Neutron number
@@ -104,17 +105,11 @@ namespace o2scl {
     virtual const char *type() { return "nucmass_ktuy"; }
 
     /// Return number of entries
-    int get_nentries() { return n; }
+    virtual size_t get_nentries() { return n; }
     
 #ifndef DOXYGEN_INTERNAL
 
   protected:
-    
-    /// The number of entries (about 3000).
-    int n;
-    
-    /// The reference for the original data
-    std::string reference;
     
     /// The array containing the mass data of length ame::n
     entry *mass;

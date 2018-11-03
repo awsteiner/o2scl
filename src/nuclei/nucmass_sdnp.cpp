@@ -29,8 +29,11 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-nucmass_sdnp::nucmass_sdnp(std::string model, bool external) {
+nucmass_sdnp::nucmass_sdnp() {
   n=0;
+}
+  
+int nucmass_sdnp::load(std::string model, bool external) {
   
   std::string fname;
   std::string dir=o2scl::o2scl_settings.get_data_dir();
@@ -60,7 +63,7 @@ nucmass_sdnp::nucmass_sdnp(std::string model, bool external) {
   n=data.get_nlines();
   
   mass=new nucmass_sdnp::entry[n];
-  for(int i=0;i<n;i++) {
+  for(size_t i=0;i<n;i++) {
     nucmass_sdnp::entry nde={((int)(data.get("Z",i)+1.0e-6)),
 			     ((int)(data.get("N",i)+1.0e-6)),
 			     data.get("ENERGY",i)};
@@ -68,6 +71,7 @@ nucmass_sdnp::nucmass_sdnp(std::string model, bool external) {
   }
 
   last=n/2;
+  return 0;
 }
 
 nucmass_sdnp::~nucmass_sdnp() {
@@ -114,7 +118,7 @@ bool nucmass_sdnp::is_included(int l_Z, int l_N) {
       if (mid==0) return false;
       mid--;
     } else {
-      if (mid==n-1) return false;
+      if (mid==((int)n-1)) return false;
       mid++;
     }
   }
@@ -171,7 +175,7 @@ double nucmass_sdnp::mass_excess(int l_Z, int l_N) {
       }
       mid--;
     } else {
-      if (mid==n-1) {
+      if (mid==((int)n-1)) {
 	O2SCL_ERR((((string)"Nucleus with Z=")+itos(l_Z)+" and N="+itos(l_N)+
 		   " not found in nucmass_sdnp::mass_excess().").c_str(),
 		  exc_enotfound);

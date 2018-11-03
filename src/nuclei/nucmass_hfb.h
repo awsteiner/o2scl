@@ -114,9 +114,6 @@ namespace o2scl {
     */
     nucmass_hfb::entry get_ZN(int l_Z, int l_N);
     
-    /// Verify that the constructor properly loaded the table
-    bool is_loaded() { return (n>0); }
-    
     /// The value which corresponds to a blank entry
     double blank() { return 1.0e99; };
 
@@ -129,18 +126,9 @@ namespace o2scl {
     */
     int set_data(int n_mass, nucmass_hfb::entry *m, std::string ref);
 
-    /// Return number of entries
-    int get_nentries() { return n; }
-    
 #ifndef DOXYGEN_INTERNAL
 
   protected:
-    
-    /// The number of entries (about 3000).
-    int n;
-    
-    /// The reference for the original data
-    std::string reference;
     
     /// The array containing the mass data of length ame::n
     nucmass_hfb::entry *mass;
@@ -253,12 +241,6 @@ namespace o2scl {
     /// The array containing the mass data of length ame::n
     nucmass_hfb_sp::entry *mass;
 
-    /// The number of entries (about 3000).
-    int n;
-    
-    /// The reference for the original data
-    std::string reference;
-    
     /// The last table index for caching
     int last;
     

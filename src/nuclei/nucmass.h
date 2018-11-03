@@ -331,11 +331,34 @@ namespace o2scl {
       
   */
   class nucmass_table : public nucmass {
+
+  protected:
     
   public:
+
+    nucmass_table() {
+      n=0;
+    }
     
+    /// The number of entries
+    size_t n;
+    
+    /// The reference for the original data
+    std::string reference;
+    
+    /// Return the type, \c "nucmass_table".
+    virtual const char *type() { return "nucmass_table"; }
+
+    /// Returns true if data has been loaded
+    virtual bool is_loaded() { return (n>0); }
+
     /// Given \c Z and \c N, return the mass excess in MeV
     virtual double mass_excess_d(double Z, double N);
+
+    /// Output the number of masses in the table
+    virtual size_t get_nentries() {
+      return n;
+    }
     
   };
   

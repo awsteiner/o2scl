@@ -44,9 +44,10 @@ namespace o2scl {
 // Forward definition of HDF I/O to extend friendship
 namespace o2scl_hdf { 
   class hdf_file; 
-  void ame_load(o2scl::nucmass_ame &ame, std::string file_name, 
-		std::string table_name);
-  void ame_load(o2scl::nucmass_ame &ame, std::string name);
+  void ame_load_ext(o2scl::nucmass_ame &ame, std::string file_name, 
+		    std::string table_name, bool exp_only);
+  void ame_load(o2scl::nucmass_ame &ame, std::string name,
+		bool exp_only);
 }
   
 #ifndef DOXYGEN_NO_O2NS
@@ -124,9 +125,12 @@ namespace o2scl {
     
   public:
 
-    friend void o2scl_hdf::ame_load(nucmass_ame &ame, std::string file_name, 
-				    std::string table_name);
-    friend void o2scl_hdf::ame_load(nucmass_ame &ame, std::string name);
+    friend void o2scl_hdf::ame_load_ext(nucmass_ame &ame,
+					std::string file_name, 
+					std::string table_name,
+					bool exp_only);
+    friend void o2scl_hdf::ame_load(nucmass_ame &ame, std::string name,
+				    bool exp_only);
 
     /// Create an AME mass object
     nucmass_ame();
@@ -254,7 +258,7 @@ namespace o2scl {
     bool is_loaded() { return (n>0); }
 
     /// Return number of entries
-    int get_nentries() { return n; }
+    size_t get_nentries() { return n; }
 
     /// Return the reference
     std::string get_reference() { return reference; }
@@ -263,12 +267,6 @@ namespace o2scl {
 
   protected:
 
-    /// The number of entries (about 3000).
-    int n;
-    
-    /// The reference for the original data
-    std::string reference;
-    
     /** \brief The array containing the mass data of length ame::n
 	
 	\comment
@@ -286,26 +284,6 @@ namespace o2scl {
 
   };
   
-  /** \brief Measured masses from the Atomic Mass Evaluation 
-      (no estimated masses)
-      
-      \note This class requires data stored in an HDF file and
-      thus requires HDF support for normal usage.
-
-      \todo The function nucmass_ame::get_nentries() doesn't work
-      for this child class. 
-  */
-  class nucmass_ame_exp : public nucmass_ame {
-
-  public:
-
-    /** \brief Return false if the mass formula does not include 
-	specified nucleus
-    */
-    virtual bool is_included(int Z, int N);
-    
-  };
-
 #ifndef DOXYGEN_NO_O2NS
 }
 #endif

@@ -108,7 +108,7 @@ bool nucmass_ame::is_included(int l_Z, int l_N) {
 	if (mid==0) return false;
 	mid--;
       } else {
-	if (mid==n-1) return false;
+	if (mid==((int)(n-1))) return false;
 	mid++;
       }
     }
@@ -116,7 +116,7 @@ bool nucmass_ame::is_included(int l_Z, int l_N) {
     return false;
   }
 
-  for(int i=0;i<n;i++) {
+  for(size_t i=0;i<n;i++) {
     if (mass[i].Z==l_Z && mass[i].N==l_N) {
       return true;
     }
@@ -124,18 +124,20 @@ bool nucmass_ame::is_included(int l_Z, int l_N) {
   return false;
 }
 
+/*
 bool nucmass_ame_exp::is_included(int l_Z, int l_N) {
   if (n==0) {
     O2SCL_ERR("No masses loaded in nucmass_ame_exp::is_included().",
-		  exc_einval);
+	      exc_einval);
   }
-  for(int i=0;i<n;i++) {
+  for(size_t i=0;i<n;i++) {
     if (mass[i].Z==l_Z && mass[i].N==l_N && mass[i].mass_acc==0) {
       return true;
     }
   }
   return false;
 }
+*/
 
 nucmass_ame::entry nucmass_ame::get_ZN(int l_Z, int l_N) {
   nucmass_ame::entry ret;
@@ -147,7 +149,7 @@ nucmass_ame::entry nucmass_ame::get_ZN(int l_Z, int l_N) {
 	      exc_einval);
     return ret;
   }
-  for(int i=0;i<n;i++) {
+  for(size_t i=0;i<n;i++) {
     if (mass[i].Z==l_Z && mass[i].N==l_N) {
       ret=mass[i];
     }
@@ -165,7 +167,7 @@ nucmass_ame::entry nucmass_ame::get_ZA(int l_Z, int l_A) {
 	      exc_einval);
     return ret;
   }
-  for(int i=0;i<n;i++) {
+  for(size_t i=0;i<n;i++) {
     if (mass[i].Z==l_Z && mass[i].A==l_A) {
       ret=mass[i];
     }
@@ -183,7 +185,7 @@ nucmass_ame::entry nucmass_ame::get_elA(string l_el, int l_A) {
 	      exc_einval);
     return ret;
   }
-  for(int i=0;i<n;i++) {
+  for(size_t i=0;i<n;i++) {
     if (mass[i].el==l_el && mass[i].A==l_A) {
       ret=mass[i];
     }
