@@ -71,7 +71,7 @@ int nucmass_ktuy::load(std::string model, bool external) {
   }
 
   last=n/2;
-  
+
   return 0;
 }
 

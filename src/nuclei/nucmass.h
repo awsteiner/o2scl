@@ -50,14 +50,11 @@ namespace o2scl {
       nuclei to nuclear mass classes which are children of
       \ref nucmass. 
       
-      Elements 113, 115, 117 and 118 are named "Uut", "Uup", "Uus",
-      and "Uuo", respectively, until the IUPAC decides on their names.
       Note that some of the nuclear mass tables use older or
       alternative names for the heavier elements, so \ref Ztoel() may
       return something different than is stored in, e.g., \ref
       nucmass_ame::entry::el.
 
-      \future Add the full names for each element.
   */
   class nucmass_info {
   public:

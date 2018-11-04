@@ -365,7 +365,7 @@ bool nucmass_mnmsk::is_included(int l_Z, int l_N) {
       if (mid==0) return false;
       mid--;
     } else {
-      if (mid==n-1) return false;
+      if (mid==((int)n-1)) return false;
       mid++;
     }
   }
@@ -423,7 +423,7 @@ bool nucmass_mnmsk_exp::is_included(int l_Z, int l_N) {
       if (mid==0) return false;
       mid--;
     } else {
-      if (mid==n-1) return false;
+      if (mid==((int)n-1)) return false;
       mid++;
     }
   }

@@ -448,9 +448,6 @@ namespace o2scl {
 
   protected:
     
-    /// The number of entries (about 3000).
-    int n;
-    
     /// The reference for the original data
     std::string reference;
     
