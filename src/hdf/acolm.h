@@ -525,15 +525,15 @@ namespace o2scl_acol {
     /** \brief Generic vector specification
 	
 	Formats:
-	- single value: val:<value>
-	- list of values: list:<entry 0>,<entry 1>, ...,<entry n-1>
-	- function: func:<N>:<function of i>
-	- grid: grid:<begin>:<end>:<width>:["log"]
+	- single value: val:\<value\>
+	- list of values: list:\<entry 0\>,\<entry 1\>, ...,\<entry n-1\>
+	- function: func:\<N\>:\<function of i\>
+	- grid: grid:\<begin\>:\<end\>:\<width\>:["log"]
 	- HDF5 object in file: 
-	file:<file name>:<object name>:[additional specification]
+	file:\<file name\>:\<object name\>:[additional specification]
 	
 	Additional specifications
-	- table: <column>
+	- table: \<column\>
     */
     template<class vec_t> int vector_spec(std::string spec, vec_t &v,
 					  int verbose=0,

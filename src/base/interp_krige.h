@@ -102,14 +102,21 @@ namespace o2scl {
     
     interp_krige() {
       this->min_size=2;
-      matrix_mode=0;
+      matrix_mode=matrix_cholesky;
     }
     
     virtual ~interp_krige() {}
     
+    /// \name Select matrix inversion method
+    //@{
     /** \brief Method for matrix inversion 
      */
-    int matrix_mode;
+    size_t matrix_mode;
+    /// Use Cholesky decomposition
+    static const size_t matrix_cholesky=0;
+    /// Use LU decomposition
+    static const size_t matrix_LU=1;
+    //@}
     
     /// Initialize interpolation routine
     virtual void set(size_t size, const vec_t &x, const vec2_t &y) {
@@ -160,7 +167,7 @@ namespace o2scl {
 	}
       }
       
-      if (matrix_mode!=0) {
+      if (matrix_mode==matrix_LU) {
 	
 	// Construct the inverse of KXX
 	ubmatrix inv_KXX(n_dim,n_dim);
@@ -194,7 +201,7 @@ namespace o2scl {
 	  }
 	  return 2;
 	}
-	ubmatrix inv_KXX=KXX;
+	ubmatrix &inv_KXX=KXX;
 	o2scl_linalg::cholesky_invert<ubmatrix>(n_dim,inv_KXX);
 	
 	// Inverse covariance matrix times function vector
@@ -350,7 +357,7 @@ namespace o2scl {
 	  }
 	}
 	
-	if (this->matrix_mode!=0) {
+	if (this->matrix_mode==this->matrix_LU) {
 	  
 	  // Construct the inverse of KXX
 	  ubmatrix inv_KXX(size-1,size-1);
@@ -460,7 +467,7 @@ namespace o2scl {
   static const size_t mode_loo_cv=1;
   /// Minus Log-marginal-likelihood
   static const size_t mode_max_lml=2;
-  /// Function to minimize
+  /// Function to minimize (default \ref mode_loo_cv)
   size_t mode;
   ///@}
     
