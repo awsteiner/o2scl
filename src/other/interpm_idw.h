@@ -53,10 +53,7 @@ namespace o2scl {
 
       This class performs interpolation on a multi-dimensional data
       set specified as a series of scattered points using the inverse
-      distance-weighted average of nearby points. This should be
-      superior to Gaussian process interpolation as the typical
-      distance betweeen samples becomes smaller than the correlation
-      length. (?)
+      distance-weighted average of nearby points. 
 
       The function \ref set_data() takes as input: the number of input
       dimensions, the number of output functions, the number of points
@@ -190,8 +187,8 @@ namespace o2scl {
       void set_data(size_t n_in, size_t n_out, size_t n_points,
 		    vec_vec_t &vecs, bool auto_scale_flag=true) {
 
-      if (n_points<3) {
-	O2SCL_ERR2("Must provide at least three points in ",
+      if (n_points<points) {
+	O2SCL_ERR2("Not enough points provided in ",
 		   "interpm_idw::set_data()",exc_efailed);
       }
       if (n_in<1) {
