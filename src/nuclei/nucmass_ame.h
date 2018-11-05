@@ -24,8 +24,7 @@
 #define O2SCL_AME_MASS_H
 
 /** \file nucmass_ame.h
-    \brief File defining \ref o2scl::nucmass_ame and 
-    \ref o2scl::nucmass_ame_exp
+    \brief File defining \ref o2scl::nucmass_ame
 */
 
 #include <cmath>

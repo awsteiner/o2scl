@@ -47,7 +47,7 @@ int main(void) {
 
   double d1, d2, qual;
   nucmass_ame au;
-  o2scl_hdf::ame_load(au,"../../data/o2scl/nucmass/ame03.o2","ame03.o2");
+  o2scl_hdf::ame_load_ext(au,"../../data/o2scl/nucmass/ame03.o2","ame03.o2");
   nucmass_ldrop_pair ld;
   nucmass_ldrop_shell ld2;
 
@@ -178,8 +178,9 @@ int main(void) {
   nucmass_dvi dvi;
   dvi.guess_fun(10,xdvi);
     
-  nucmass_ame_exp ame13;
-  o2scl_hdf::ame_load(ame13,"../../data/o2scl/nucmass/ame12.o2","ame12.o2");
+  nucmass_ame ame13;
+  o2scl_hdf::ame_load_ext(ame13,"../../data/o2scl/nucmass/ame12.o2",
+			  "ame12.o2",true);
   nucdist_set(mf.dist,ame13);
   mf.eval(dvi,qual);
   cout << "Parameters before: ";

@@ -42,8 +42,9 @@ int main(void) {
   int ret;
 
   // Nuclear masses
-  nucmass_ame_exp ame;
-  o2scl_hdf::ame_load(ame,"../../data/o2scl/nucmass/ame12.o2","ame12.o2");
+  nucmass_ame ame;
+  o2scl_hdf::ame_load_ext(ame,"../../data/o2scl/nucmass/ame12.o2",
+			  "ame12.o2",true);
 
   // Load Skyrme EOS
   eos_had_skyrme sk;
