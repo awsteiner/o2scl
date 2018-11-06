@@ -43,6 +43,7 @@
 #include <o2scl/linear_solver.h>
 #include <o2scl/columnify.h>
 #include <o2scl/cholesky.h>
+#include <o2scl/min_brent_gsl.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -111,7 +112,7 @@ namespace o2scl {
       \note This function works differently than 
       \ref o2scl::interpm_idw::set_data() . See this
       class description for more details.
-   */
+  */
   template<class vec_vec_t, class vec_vec2_t>
   int set_data_noise(size_t n_in, size_t n_out, size_t n_points,
 		     vec_vec_t &x, vec_vec2_t &y, 
@@ -327,11 +328,9 @@ namespace o2scl {
   ubvector max;
   
 #endif
-    
-    };
-
-#ifdef O2SCL_NEVER_DEFINED  
-
+  
+  };
+  
   /** \brief One-dimensional interpolation using an 
       optimized covariance function
       
@@ -341,7 +340,7 @@ namespace o2scl {
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
     class mat_col_t=boost::numeric::ublas::matrix_column<
-    boost::numeric::ublas::matrix<double> >,
+    boost::numeric::ublas::matrix<double> > >
     class interpm_krige_optim :
     public interpm_krige<vec_t,mat_col_t> {    
     
@@ -356,14 +355,14 @@ namespace o2scl {
   /// Function object for the covariance
   std::function<double(double,double)> ff;
   
-  /// The covariance function length scale
-  double len;
-
-  /// The quality factor of the optimization
-  double qual;
+  /// The covariance function length scale for each output function
+  vector<double> len;
+  
+  /// The quality factor of the optimization for each output function
+  vector<double> qual;
 
   /// The covariance function
-  double covar(double x1, double x2) {
+  double covar(double x1, double x2, double len) {
     return exp(-(x1-x2)*(x1-x2)/len/len/2.0);
   }
 
@@ -373,11 +372,12 @@ namespace o2scl {
   /// Pointer to the user-specified minimizer
   min_base<> *mp;
   
+#ifdef O2SCL_NEVER_DEFINED  
+
   /** \brief Function to optimize the covariance parameters
    */
   double qual_fun(double x, double noise_var, size_t &iout, int &success) {
 
-    len=x;
     success=0;
 
     size_t size=this->sz;
@@ -394,7 +394,7 @@ namespace o2scl {
 	    KXX(irow,icol)=KXX(icol,irow);
 	  } else {
 	    KXX(irow,icol)=exp(-pow((ptrs_x[iout][irow]-
-				     ptrs_x[iout][icol])/len,2.0)/2.0);
+				     ptrs_x[iout][icol])/x,2.0)/2.0);
 	    if (irow==icol) KXX(irow,icol)+=noise_var;
 	  }
 	}
@@ -431,7 +431,9 @@ namespace o2scl {
 
     return qual;
   }
-  
+
+#endif  
+
   public:
 
   interpm_krige_optim() {
@@ -494,10 +496,10 @@ namespace o2scl {
     }
    
     // Set parent data members
-    np=n_points;
-    nd_in=n_in;
-    nd_out=n_out;
-    ptrs_x.resize(n_points);
+    this->np=n_points;
+    this->nd_in=n_in;
+    this->nd_out=n_out;
+    this->ptrs_x.resize(n_points);
     rescaled=rescale;
     for(size_t i=0;i<n_points;i++) {
       if (x[i].size()!=n_in) {
@@ -505,34 +507,35 @@ namespace o2scl {
 		   "interpm_krige_optim::set_data_noise().",
 		   o2scl::exc_efailed);
       }
-      std::swap(ptrs_x[i],x[i]);
+      std::swap(this->ptrs_x[i],x[i]);
     }
-    data_set=true;
+    this->data_set=true;
        
     if (verbose>0) {
       std::cout << "interpm_krige_optim::set_data_noise() : Using "
 		<< n_points
-		<< " points with " << nd_in << " input variables and\n\t"
-		<< nd_out << " output variables." << std::endl;
+		<< " points with " << n_in << " input variables and\n\t"
+		<< this->nd_out << " output variables." << std::endl;
     }
 
     // Get max and min of all parameters
-    min.resize(n_in);
-    max.resize(n_in);
+    this->min.resize(n_in);
+    this->max.resize(n_in);
     for(size_t j=0;j<n_in;j++) {
-      min[j]=ptrs_x[j][0];
-      max[j]=ptrs_x[j][0];
+      this->min[j]=(this->ptrs_x)[j][0];
+      this->max[j]=(this->ptrs_x)[j][0];
       for(size_t i=1;i<n_points;i++) {
-	double val=ptrs_x[j][i];
-	if (val>max[j]) max[j]=val;
-	if (val<min[j]) min[j]=val;
+	double val=(this->ptrs_x)[j][i];
+	if (val>this->max[j]) this->max[j]=val;
+	if (val<this->min[j]) this->min[j]=val;
       }
     }
     
     if (rescale==true) {
       for(size_t j=0;j<n_in;j++) {
 	for(size_t i=1;i<n_points;i++) {
-	  ptrs_x[j][i]=(ptrs_x[j][i]-min[j])/(max[j]-min[j])*2.0-0.5;
+	  (this->ptrs_x)[j][i]=((this->ptrs_x)[j][i]-this->min[j])/
+	    (this->max[j]-this->min[j])*2.0-0.5;
 	}
       }
       if (verbose>1) {
@@ -543,7 +546,7 @@ namespace o2scl {
 
     int success=0;
 
-    Kinvf.resize(n_out);
+    this->Kinvf.resize(n_out);
 
     if (full_min) {
      
@@ -558,18 +561,18 @@ namespace o2scl {
 	double len_opt;
 	// Choose average distance for first guess
 	if (rescaled) {
-	  len_opt=(max[iout]-min[iout])/((double)np);
+	  len_opt=(this->max[iout]-this->min[iout])/((double)this->np);
 	} else {
-	  len_opt=2.0/((double)np);
+	  len_opt=2.0/((double)this->np);
 	}
 	
 	funct mf=std::bind
 	  (std::mem_fn<double(double,double,int &)>
-	   (&interp_krige_optim<vec_t,vec2_t>::qual_fun),this,
+	   (&interpm_krige_optim<vec_t,mat_col_t>::qual_fun),this,
 	   std::placeholders::_1,noise_var,std::ref(success));
 	
 	mp->min(len_opt,qual,mf);
-	len=len_opt;
+	len[iout]=len_opt;
 	
 	if (success!=0) {
 	  if (err_on_fail) {
@@ -579,12 +582,16 @@ namespace o2scl {
 	  }
 	}
 	
-      } else {
+      }
+      
+    } else {
+      
+      if (verbose>1) {
+	std::cout << "interp_krige_optim: simple minimization"
+		  << std::endl;
+      }
 	
-	if (verbose>1) {
-	  std::cout << "interp_krige_optim: simple minimization"
-		    << std::endl;
-	}
+      for(size_t iout=0;iout<n_out;iout++) {
 	
 	double len_avg;
 	// Choose average distance for first guess
@@ -615,61 +622,45 @@ namespace o2scl {
 	// Loop over the full range, finding the optimum
 	bool min_set=false;
 	for(size_t j=0;j<nlen;j++) {
-	  len=len_min*pow(len_ratio,((double)j)/((double)nlen-1));
+	  double xlen=len_min*pow(len_ratio,((double)j)/((double)nlen-1));
 	  
 	  int success=0;
-	  qual=qual_fun(len,noise_var,success);
+	  qual[iout]=qual_fun(xlen,noise_var,success);
 	
-	if (success==0 && (min_set==false || qual<min_qual)) {
-	  len_opt=len;
-	  min_qual=qual;
-	  min_set=true;
-	}
+	  if (success==0 && (min_set==false || qual[iout]<min_qual)) {
+	    len_opt=xlen;
+	    min_qual=qual[iout];
+	    min_set=true;
+	  }
 	
-	if (verbose>1) {
-	  std::cout << "interp_krige_optim: ";
-	  std::cout.width(2);
-	  std::cout << j << " " << len << " " << qual << " "
-		    << success << " " << min_qual << " "
-		    << len_opt << std::endl;
-	}
+	  if (verbose>1) {
+	    std::cout << "interp_krige_optim: ";
+	    std::cout.width(2);
+	    std::cout << j << " " << xlen << " " << qual[iout] << " "
+		      << success << " " << min_qual << " "
+		      << len_opt << std::endl;
+	  }
 	  
+	}
+      
+	// Now that we've optimized the covariance function,
+	// just use the parent class to interpolate
+	len[i]=len_opt;
+
       }
-      
-      // Now that we've optimized the covariance function,
-      // just use the parent class to interpolate
-      len=len_opt;
 
-    }
-
-    ff=std::bind(std::mem_fn<double(double,double)>
-		 (&interp_krige_optim<vec_t,vec2_t>::covar),this,
-		 std::placeholders::_1,std::placeholders::_2);
+      ff=std::bind(std::mem_fn<double(double,double,double)>
+		   (&interp_krige_optim<vec_t,vec2_t>::covar),this,
+		   std::placeholders::_1,std::placeholders::_2,len[i]);
     
-    this->set_covar_noise(size,x,y,ff,noise_var);
+      this->set_covar_noise(size,x,y,ff,noise_var);
       
+    }
+    
     return 0;
   }
-
-  /// Initialize interpolation routine
-  virtual void set(size_t size, const vec_t &x, const vec2_t &y) {
-
-    // Use the mean absolute value to determine noise
-    double mean_abs=0.0;
-    for(size_t j=0;j<size;j++) {
-      mean_abs+=fabs(y[j]);
-    }
-    mean_abs/=size;
-
-    set_noise(size,x,y,mean_abs/1.0e8,true);
-    
-    return;
-  }
-  
   
   };
-
-#endif  
 
   /** \brief Multi-dimensional interpolation by kriging with 
       nearest-neighbor 
@@ -684,11 +675,11 @@ namespace o2scl {
   template<class vec_t=boost::numeric::ublas::vector<double>,
     class mat_col_t=boost::numeric::ublas::matrix_column<
     boost::numeric::ublas::matrix<double> >,
-    class covar_func_t=std::function<double(const vec_t &,const vec_t &)> >
+    class covar_func_t=std::function<double(const vec_t &,const vec_t &)> > >
     class interpm_krige_nn {
     
   public:
-    
+  
   typedef boost::numeric::ublas::vector<double> ubvector;
   typedef boost::numeric::ublas::matrix<double> ubmatrix;
   typedef boost::numeric::ublas::vector<size_t> ubvector_size_t;
@@ -722,7 +713,7 @@ namespace o2scl {
 		 "interpm_krige_nn::set_data()",exc_efailed);
     }
     np=n_points;
-    nd_in=n_in;
+    this->nd_in=n_in;
     nd_out=n_out;
     ptrs_x.resize(n_points);
     n_order=order;
@@ -1106,7 +1097,7 @@ namespace o2scl {
     
 #endif
     
-    };
+  };
     
 #ifndef DOXYGEN_NO_O2NS
 }
