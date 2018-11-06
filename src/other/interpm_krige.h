@@ -56,6 +56,7 @@ namespace o2scl {
       vector arguments to the covariance function and the linear
       algebra routines. The x and y objects should be of the form
       <tt>x[n_points][n_in]</tt> and <tt>y[n_out][n_points]</tt>.
+      A separate covariance function is required for each output.
 
       \note This class assumes that the function specified in the
       call to set_data() is the same as that passed to the
@@ -106,7 +107,7 @@ namespace o2scl {
    */
   int verbose;
 
-  /** \brief Initialize the data for the interpolation
+    /** \brief Initialize the data for the interpolation
 
       \note This function works differently than 
       \ref o2scl::interpm_idw::set_data() . See this
@@ -184,9 +185,13 @@ namespace o2scl {
     }
 
     Kinvf.resize(n_out);
+    size_t n_covar=fcovar.size();
 
     // Loop over all output functions
     for(size_t iout=0;iout<n_out;iout++) {
+
+      size_t icovar=iout % n_covar;
+      size_t inoise=iout & noise_var.size();
 	
       // Construct the KXX matrix
       ubmatrix KXX(n_points,n_points);
@@ -195,10 +200,10 @@ namespace o2scl {
 	  if (irow>icol) {
 	    KXX(irow,icol)=KXX(icol,irow);
 	  } else if (irow==icol) {
-	    KXX(irow,icol)=fcovar[iout](ptrs_x[irow],ptrs_x[icol])+
-	      noise_var[iout % noise_var.size()];
+	    KXX(irow,icol)=fcovar[icovar](ptrs_x[irow],ptrs_x[icol])+
+	      noise_var[inoise];
 	  } else {
-	    KXX(irow,icol)=fcovar[iout](ptrs_x[irow],ptrs_x[icol]);
+	    KXX(irow,icol)=fcovar[icovar](ptrs_x[irow],ptrs_x[icol]);
 	  }
 	}
       }
@@ -260,6 +265,22 @@ namespace o2scl {
     return 0;
   }
 
+  /** \brief Initialize the data for the interpolation
+      
+      \note This function works differently than 
+      \ref o2scl::interpm_idw::set_data() . See this
+      class description for more details.
+  */
+  template<class vec_vec_t, class vec_vec2_t>
+  int set_data(size_t n_in, size_t n_out, size_t n_points,
+	       vec_vec_t &x, vec_vec2_t &y, 
+	       std::vector<covar_func_t> &fcovar,
+	       bool rescale=false,
+	       bool err_on_fail=true) {
+    return set_data_noise(n_in,n_out,n_points,x,y,fcovar,0.0,
+			  rescale,err_on_fail);
+  }
+
   /** \brief Given covariance function \c fcovar and input vector \c x
       store the result of the interpolation in \c y
   */
@@ -272,6 +293,7 @@ namespace o2scl {
 		exc_einval);
     }
 
+      size_t icovar=iout % n_covar;
     if (min.size()>0) {
 
       // If necessary, rescale before evaluating the interpolated

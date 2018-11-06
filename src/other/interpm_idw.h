@@ -60,7 +60,9 @@ namespace o2scl {
       which specify the data, and a "vector of vectors" which contains
       the data for all the points. The vector of vectors must be of a
       type which allows std::swap on individual elements (which are of
-      type <tt>vec_t</tt>).
+      type <tt>vec_t</tt>). The vector of vectors should be structured
+      so that the first index selects the input or output function
+      and the second index selects the data point. 
 
       The number of nearby points which are averaged defaults to 3 and
       can be changed by \ref set_points(). To obtain interpolation
