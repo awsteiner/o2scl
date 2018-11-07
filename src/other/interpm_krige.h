@@ -67,7 +67,10 @@ namespace o2scl {
       \note Experimental.
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
+    class mat_t=boost::numeric::ublas::vector<double>,
     class mat_col_t=boost::numeric::ublas::matrix_column<
+    boost::numeric::ublas::matrix<double> >,
+    class mat_row_t=boost::numeric::ublas::matrix_row<
     boost::numeric::ublas::matrix<double> >,
     class covar_func_t=std::function<double(const vec_t &,const vec_t &)> >
     class interpm_krige {    
@@ -78,6 +81,7 @@ namespace o2scl {
   typedef boost::numeric::ublas::matrix<double> ubmatrix;
   typedef boost::numeric::ublas::vector<size_t> ubvector_size_t;
   typedef boost::numeric::ublas::matrix_column<ubmatrix> ubmatrix_column;
+  typedef boost::numeric::ublas::matrix_row<ubmatrix> ubmatrix_row;
     
   protected:
 
@@ -116,7 +120,7 @@ namespace o2scl {
   */
   template<class vec_vec_t, class vec_vec2_t>
   int set_data_noise(size_t n_in, size_t n_out, size_t n_points,
-		     vec_vec_t &x, vec_vec2_t &y, 
+		     mat_t &user_x, mat_t &user_y,
 		     std::vector<covar_func_t> &fcovar,
 		     const vec_t &noise_var, bool rescale=false,
 		     bool err_on_fail=true) {
@@ -140,21 +144,16 @@ namespace o2scl {
     np=n_points;
     nd_in=n_in;
     nd_out=n_out;
-    ptrs_x.resize(n_points);
-    for(size_t i=0;i<n_points;i++) {
-      if (x[i].size()!=n_in) {
-	O2SCL_ERR2("Size of x not correct in ",
-		   "interpm_krige::set_data_noise().",o2scl::exc_efailed);
-      }
-      std::swap(ptrs_x[i],x[i]);
+    std::swap(user_x,x);
+    if (x.size1()!=n_points || x.size2()!=n_in) {
+      O2SCL_ERR2("Size of x not correct in ",
+		 "interpm_krige::set_data_noise().",o2scl::exc_efailed);
     }
     // We don't need to copy the 'y' data, but we double check
     // that it is properly sized
-    for(size_t i=0;i<n_out;i++) {
-      if (y[i].size()!=n_points) {
-	O2SCL_ERR2("Size of y not correct in ",
-		   "interpm_krige::set_data_noise().",o2scl::exc_efailed);
-      }
+    if (y.size2()!=n_points || y.size1()!=n_out) {
+      O2SCL_ERR2("Size of x not correct in ",
+		 "interpm_krige::set_data_noise().",o2scl::exc_efailed);
     }
     data_set=true;
     
@@ -168,15 +167,15 @@ namespace o2scl {
       min.resize(n_in);
       max.resize(n_in);
       for(size_t j=0;j<n_in;j++) {
-	min[j]=ptrs_x[0][j];
-	max[j]=ptrs_x[0][j];
+	min[j]=x(0,j);
+	max[j]=x(0,j);
 	for(size_t i=1;i<n_points;i++) {
-	  double val=ptrs_x[i][j];
+	  double val=x(i,j);
 	  if (val>max[j]) max[j]=val;
 	  if (val<min[j]) min[j]=val;
 	}
 	for(size_t i=1;i<n_points;i++) {
-	  ptrs_x[i][j]=(ptrs_x[i][j]-min[j])/(max[j]-min[j])*2.0-0.5;
+	  x(i,j)=(x(i,j)-min[j])/(max[j]-min[j])*2.0-0.5;
 	}
       }
       if (verbose>1) {
@@ -197,14 +196,16 @@ namespace o2scl {
       // Construct the KXX matrix
       ubmatrix KXX(n_points,n_points);
       for(size_t irow=0;irow<n_points;irow++) {
+	mat_row_t xrow(x,irow);
 	for(size_t icol=0;icol<n_points;icol++) {
+	  mat_row_t xcol(x,icol);
 	  if (irow>icol) {
 	    KXX(irow,icol)=KXX(icol,irow);
 	  } else if (irow==icol) {
-	    KXX(irow,icol)=fcovar[icovar](ptrs_x[irow],ptrs_x[icol])+
+	    KXX(irow,icol)=fcovar[icovar](xrow,xcol)+
 	      noise_var[inoise];
 	  } else {
-	    KXX(irow,icol)=fcovar[icovar](ptrs_x[irow],ptrs_x[icol]);
+	    KXX(irow,icol)=fcovar[icovar](xrow,xcol);
 	  }
 	}
       }
@@ -294,7 +295,8 @@ namespace o2scl {
 		exc_einval);
     }
 
-      size_t icovar=iout % n_covar;
+    size_t icovar=iout % n_covar;
+    
     if (min.size()>0) {
 
       // If necessary, rescale before evaluating the interpolated
@@ -308,7 +310,7 @@ namespace o2scl {
       for(size_t iout=0;iout<nd_out;iout++) {
 	y[iout]=0.0;
 	for(size_t ipoints=0;ipoints<np;ipoints++) {
-	  y[iout]+=fcovar[iout](x2,ptrs_x[ipoints])*Kinvf[iout][ipoints];
+	  y[iout]+=fcovar[icovar](x2,x[ipoints])*Kinvf[iout][ipoints];
 	}
       }
 
@@ -318,7 +320,7 @@ namespace o2scl {
       for(size_t iout=0;iout<nd_out;iout++) {
 	y[iout]=0.0;
 	for(size_t ipoints=0;ipoints<np;ipoints++) {
-	  y[iout]+=fcovar[iout](x,ptrs_x[ipoints])*Kinvf[iout][ipoints];
+	  y[iout]+=fcovar[icovar](x,x[ipoints])*Kinvf[iout][ipoints];
 	}
       }
 
@@ -339,9 +341,9 @@ namespace o2scl {
   /// The number of dimensions of the outputs
   size_t nd_out;
   /// The user-specified data
-  std::vector<vec_t> ptrs_x;
+  std::vector<vec_t> x;
   /// The user-specified data
-  std::vector<vec_t> ptrs_y;
+  std::vector<vec_t> y;
   /// True if the data has been specified
   bool data_set;
   /// Minimum values for rescaling
@@ -398,7 +400,9 @@ namespace o2scl {
 
   /** \brief Function to optimize the covariance parameters
    */
-  double qual_fun(double x, double noise_var, size_t &iout, int &success) {
+  template<class vec3_t> 
+  double qual_fun(double x, double noise_var, 
+		  const vec3_t &y, int &success) {
 
     success=0;
 
@@ -411,12 +415,13 @@ namespace o2scl {
       // Construct the KXX matrix
       ubmatrix KXX(size,size);
       for(size_t irow=0;irow<size;irow++) {
+	mat_row_t xrow(x,irow);
 	for(size_t icol=0;icol<size;icol++) {
+	  mat_row_t xcol(x,icol);
 	  if (irow>icol) {
 	    KXX(irow,icol)=KXX(icol,irow);
 	  } else {
-	    KXX(irow,icol)=exp(-pow((ptrs_x[iout][irow]-
-				     ptrs_x[iout][icol])/x,2.0)/2.0);
+	    KXX(irow,icol)=exp(-pow((xrow-xcol)/x,2.0)/2.0);
 	    if (irow==icol) KXX(irow,icol)+=noise_var;
 	  }
 	}
@@ -441,20 +446,18 @@ namespace o2scl {
       
       // Inverse covariance matrix times function vector
       this->Kinvf.resize(size);
-      boost::numeric::ublas::axpy_prod(inv_KXX,*this->py,this->Kinvf,true);
+      boost::numeric::ublas::axpy_prod(inv_KXX,y,this->Kinvf,true);
 
       // Compute the log of the marginal likelihood, without
       // the constant term
       for(size_t i=0;i<size;i++) {
-	qual+=0.5*(*this->py)[i]*this->Kinvf[i];
+	qual+=0.5*y[i]*this->Kinvf[i];
       }
       qual+=0.5*lndet;
     }
 
     return qual;
   }
-
-#endif  
 
   public:
 
@@ -521,7 +524,7 @@ namespace o2scl {
     this->np=n_points;
     this->nd_in=n_in;
     this->nd_out=n_out;
-    this->ptrs_x.resize(n_points);
+    this->x.resize(n_points);
     rescaled=rescale;
     for(size_t i=0;i<n_points;i++) {
       if (x[i].size()!=n_in) {
@@ -529,7 +532,7 @@ namespace o2scl {
 		   "interpm_krige_optim::set_data_noise().",
 		   o2scl::exc_efailed);
       }
-      std::swap(this->ptrs_x[i],x[i]);
+      std::swap(this->x[i],x[i]);
     }
     this->data_set=true;
        
@@ -544,10 +547,10 @@ namespace o2scl {
     this->min.resize(n_in);
     this->max.resize(n_in);
     for(size_t j=0;j<n_in;j++) {
-      this->min[j]=(this->ptrs_x)[j][0];
-      this->max[j]=(this->ptrs_x)[j][0];
+      this->min[j]=(this->x)[j][0];
+      this->max[j]=(this->x)[j][0];
       for(size_t i=1;i<n_points;i++) {
-	double val=(this->ptrs_x)[j][i];
+	double val=(this->x)[j][i];
 	if (val>this->max[j]) this->max[j]=val;
 	if (val<this->min[j]) this->min[j]=val;
       }
@@ -556,7 +559,7 @@ namespace o2scl {
     if (rescale==true) {
       for(size_t j=0;j<n_in;j++) {
 	for(size_t i=1;i<n_points;i++) {
-	  (this->ptrs_x)[j][i]=((this->ptrs_x)[j][i]-this->min[j])/
+	  (this->x)[j][i]=((this->x)[j][i]-this->min[j])/
 	    (this->max[j]-this->min[j])*2.0-0.5;
 	}
       }
@@ -591,7 +594,7 @@ namespace o2scl {
 	funct mf=std::bind
 	  (std::mem_fn<double(double,double,int &)>
 	   (&interpm_krige_optim<vec_t,mat_col_t>::qual_fun),this,
-	   std::placeholders::_1,noise_var,std::ref(success));
+	   std::placeholders::_1,noise_var[iout],y[iout],std::ref(success));
 	
 	mp->min(len_opt,qual,mf);
 	len[iout]=len_opt;
@@ -737,22 +740,22 @@ namespace o2scl {
     np=n_points;
     this->nd_in=n_in;
     nd_out=n_out;
-    ptrs_x.resize(n_points);
+    x.resize(n_points);
     n_order=order;
     for(size_t i=0;i<n_points;i++) {
       if (x[i].size()!=n_in) {
 	O2SCL_ERR2("Size of x not correct in ",
 		   "interpm_krige_nn::set_data().",o2scl::exc_efailed);
       }
-      std::swap(ptrs_x[i],x[i]);
+      std::swap(x[i],x[i]);
     }
-    ptrs_y.resize(n_out);
+    y.resize(n_out);
     for(size_t i=0;i<n_out;i++) {
       if (y[i].size()!=n_points) {
 	O2SCL_ERR2("Size of y not correct in ",
 		   "interpm_krige_nn::set_data().",o2scl::exc_efailed);
       }
-      std::swap(ptrs_y[i],y[i]);
+      std::swap(y[i],y[i]);
     }
     data_set=true;
       
@@ -787,7 +790,7 @@ namespace o2scl {
       // by the negative covariance for this output function
       ubvector dists(np);
       for(size_t ip=0;ip<np;ip++) {
-	dists[ip]=-fcovar[iout](x,ptrs_x[ip]);
+	dists[ip]=-fcovar[iout](x,x[ip]);
       }
       
       // Empty index vector (resized by the vector_smallest_index
@@ -799,7 +802,7 @@ namespace o2scl {
       // Construct subset of function values for nearest neighbors
       ubvector func(n_order);
       for(size_t io=0;io<n_order;io++) {
-	func[io]=ptrs_y[iout][index[io]];
+	func[io]=y[iout][index[io]];
       }
       
       // Construct the nearest neighbor KXX matrix
@@ -809,8 +812,8 @@ namespace o2scl {
 	  if (irow>icol) {
 	    KXX(irow,icol)=KXX(icol,irow);
 	  } else {
-	    KXX(irow,icol)=fcovar[iout](ptrs_x[index[irow]],
-					ptrs_x[index[icol]]);
+	    KXX(irow,icol)=fcovar[iout](x[index[irow]],
+					x[index[icol]]);
 	  }
 	}
       }
@@ -865,7 +868,7 @@ namespace o2scl {
       // Construct subset of function values for nearest neighbors
       ubvector func(n_order);
       for(size_t io=0;io<n_order;io++) {
-	func[io]=ptrs_y[iout][index[indep[io]]];
+	func[io]=y[iout][index[indep[io]]];
       }
       
       // Construct the nearest neighbor KXX matrix
@@ -875,8 +878,8 @@ namespace o2scl {
 	  if (irow>icol) {
 	    KXX(irow,icol)=KXX(icol,irow);
 	  } else {
-	    KXX(irow,icol)=fcovar[iout](ptrs_x[index[indep[irow]]],
-					ptrs_x[index[indep[icol]]]);
+	    KXX(irow,icol)=fcovar[iout](x[index[indep[irow]]],
+					x[index[indep[icol]]]);
 	  }
 	}
       }
@@ -939,7 +942,7 @@ namespace o2scl {
     // by the negative covariance for this output function
     ubvector dists(np);
     for(size_t ip=0;ip<np;ip++) {
-      dists[ip]=-fcovar[iout](x,ptrs_x[ip]);
+      dists[ip]=-fcovar[iout](x,x[ip]);
     }
       
     ubvector_size_t index(np);
@@ -958,7 +961,7 @@ namespace o2scl {
     // Construct subset of function values for nearest neighbors
     ubvector func(n_order);
     for(size_t io=0;io<n_order;io++) {
-      func[io]=ptrs_y[iout][index[indep[io]]];
+      func[io]=y[iout][index[indep[io]]];
     }
       
     // Construct the nearest neighbor KXX matrix
@@ -968,8 +971,8 @@ namespace o2scl {
 	if (irow>icol) {
 	  KXX(irow,icol)=KXX(icol,irow);
 	} else {
-	  KXX(irow,icol)=fcovar[iout](ptrs_x[index[indep[irow]]],
-				      ptrs_x[index[indep[icol]]]);
+	  KXX(irow,icol)=fcovar[iout](x[index[indep[irow]]],
+				      x[index[indep[icol]]]);
 	}
       }
     }
@@ -1014,7 +1017,7 @@ namespace o2scl {
     // covariance for this output function
     ubvector dists(np);
     for(size_t ip=0;ip<np;ip++) {
-      dists[ip]=-fcovar[iout](x,ptrs_x[ip]);
+      dists[ip]=-fcovar[iout](x,x[ip]);
     }
     
     // Create an index array which sorts by distance
@@ -1042,7 +1045,7 @@ namespace o2scl {
 
       if (verbose>0) {
 	std::cout << "Jackknife: " << jk << " matching function value "
-		  << ptrs_y[iout][index[jk]] << std::endl;
+		  << y[iout][index[jk]] << std::endl;
       }
       
       ubvector_size_t indep_jk;
@@ -1051,7 +1054,7 @@ namespace o2scl {
       // Construct subset of function values for nearest neighbors
       ubvector func(n_order-1);
       for(size_t io=0;io<n_order-1;io++) {
-	func[io]=ptrs_y[iout][index[indep_jk[io]]];
+	func[io]=y[iout][index[indep_jk[io]]];
       }
       
       // Construct the nearest neighbor KXX matrix
@@ -1061,8 +1064,8 @@ namespace o2scl {
 	  if (irow>icol) {
 	    KXX(irow,icol)=KXX(icol,irow);
 	  } else {
-	    KXX(irow,icol)=fcovar[iout](ptrs_x[index[indep_jk[irow]]],
-					ptrs_x[index[indep_jk[icol]]]);
+	    KXX(irow,icol)=fcovar[iout](x[index[indep_jk[irow]]],
+					x[index[indep_jk[icol]]]);
 	  }
 	}
       }
@@ -1083,11 +1086,11 @@ namespace o2scl {
       }
       
       // Add the squared deviation to y[iout]
-      qual+=pow(ptrs_y[iout][index[jk]]-ytmp,2.0);
+      qual+=pow(y[iout][index[jk]]-ytmp,2.0);
 
       if (verbose>0) {
 	std::cout << "Original value: "
-		  << ptrs_y[iout][index[jk]] << " interpolated: "
+		  << y[iout][index[jk]] << " interpolated: "
 		  << ytmp << std::endl;
       }
       
@@ -1111,9 +1114,9 @@ namespace o2scl {
   /// The number of dimensions of the outputs
   size_t nd_out;
   /// A vector of pointers holding the data
-  std::vector<vec_t> ptrs_x;
+  std::vector<vec_t> x;
   /// A vector of pointers holding the data
-  std::vector<vec_t> ptrs_y;
+  std::vector<vec_t> y;
   /// True if the data has been specified
   bool data_set;
     

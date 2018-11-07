@@ -66,13 +66,14 @@ int main(void) {
   dat[0]=x;
   dat[1]=y;
   dat[2]=dp;
-
+  matrix_view_vec_vec<ubvector> mv3(dat);
+  
   // Specify the data in the interpolation objects
   interp2_neigh<ubvector> i2n;
   interp2_planar<ubvector> i2p;
   interpm_idw<ubvector> imi;
 
-  imi.set_data(2,1,8,dat);
+  imi.set_data(2,1,8,mv3);
   i2n.set_data(8,x,y,dp);
   i2p.set_data(8,x,y,dp);
 

@@ -380,7 +380,7 @@ namespace o2scl {
 
       The type <tt>size_vec_t</tt> must be a type which has a
       <tt>size()</tt> method. 
-   */
+  */
   template<class size_vec_t> void set_row(size_t row, size_vec_t &v) {
     if (row>=get_nlines()) {
       std::string err=((std::string)"Row out of range, ")+
@@ -608,7 +608,7 @@ namespace o2scl {
       \note This function will call the error handler if
       the argument <tt>llines</tt> is smaller than the
       current number of lines in the table.
-   */
+  */
   void set_maxlines(size_t llines) {
 
     if (llines==maxlines) return;
@@ -770,8 +770,8 @@ namespace o2scl {
     
     if (sz==0) {
       O2SCL_ERR2("Sent column of zero size in ",
-		     "table::new_column(string,size_t,vec2_t)",
-		     exc_einval);
+		 "table::new_column(string,size_t,vec2_t)",
+		 exc_einval);
     }
     
     // Create the space
@@ -792,7 +792,7 @@ namespace o2scl {
 
       This will throw if \c icol is larger than or equal to
       the number of columns.
-   */
+  */
   std::string get_column_name(size_t icol) const {
     if (icol+1>atree.size()) {
       O2SCL_ERR((((std::string)"Index '")+o2scl::szttos(icol)+
@@ -960,7 +960,7 @@ namespace o2scl {
   /** \brief Copy data from column named \c src to column 
       named \c dest, creating a new column if necessary
       \f$ {\cal O}(R \log(C)) \f$
-   */
+  */
   virtual void copy_column(std::string src, std::string dest) {
     if (!is_column(dest)) new_column(dest);
     aiter its=atree.find(src);
@@ -987,7 +987,7 @@ namespace o2scl {
 
       \note It is assumed that the vector type is one that can be
       resized with <tt>resize()</tt>.
-   */
+  */
   template<class resize_vec_t> 
   void column_to_vector(std::string scol, resize_vec_t &v) const {
     v.resize(nlines);
@@ -1001,7 +1001,7 @@ namespace o2scl {
 
       The type <tt>vec2_t</tt> can be any type with an
       <tt>operator[]</tt> method.
-   */
+  */
   template<class vec2_t> 
   void copy_to_column(vec2_t &v, std::string scol) {
     for(size_t i=0;i<nlines;i++) {
@@ -1041,7 +1041,7 @@ namespace o2scl {
 
   /** \brief Insert columns from a source table into the new
       table by interpolation (or extrapolation)
-   */
+  */
   template<class vec2_t>
   void insert_table(table<vec2_t> &source, std::string src_index,
 		    bool allow_extrap=true, std::string dest_index="") {
@@ -1115,7 +1115,7 @@ namespace o2scl {
       AWS 4/12/18: No need to throw an exception here since get() and
       set() will take care of that already.
       \endcomment
-   */
+  */
   void copy_row(size_t src, size_t dest) {
     for(int i=0;i<((int)atree.size());i++) {
       set(i,dest,get(i,src));
@@ -1279,7 +1279,7 @@ namespace o2scl {
 
       \note This function will proceed normally if a row is specified
       more than once in <tt>row_list</tt>.
-   */
+  */
   template<class vec_size_t> 
   void delete_rows_list(vec_size_t &row_list) {
 
@@ -1461,7 +1461,7 @@ namespace o2scl {
       verify that the vector size is equal to the number of columns,
       so some of the columns may be uninitialized in the new row which
       is created.
-   */
+  */
   template<class vec2_t> void line_of_data(const vec2_t &v) {
     line_of_data(v.size(),v);
     return;
@@ -1652,7 +1652,7 @@ namespace o2scl {
 	intp_set=true;
       }
       si=new interp_vec<vec_t>(nlines,itx->second.dat,
-				     ity->second.dat,itype);
+			       ity->second.dat,itype);
       intp_colx=sx;
       intp_coly=sy;
     }
@@ -2283,7 +2283,7 @@ namespace o2scl {
   }
 
   /** \brief Individually sort the column \c scol
-  */
+   */
   void sort_column(std::string scol) {
     int i;
     aiter it=atree.find(scol);
@@ -2388,7 +2388,7 @@ namespace o2scl {
       <tt>false</tt>, then if a constant with name \c name
       is not found this function just silently returns
       \ref o2scl::exc_enotfound.
-   */
+  */
   virtual int set_constant(std::string name, double val,
 			   bool err_on_notfound=true) {
     if (constants.find(name)!=constants.end()) {
@@ -2516,7 +2516,7 @@ namespace o2scl {
 	nnames.push_back(temps);
 	if (temps!=onames[i] && verbose>0) {
 	  std::cout << "Converted column named '" << onames[i] << "' to '" 
-	       << temps << "'." << std::endl;
+		    << temps << "'." << std::endl;
 	}
       }
 
@@ -2790,7 +2790,7 @@ namespace o2scl {
   }
 
   /** \brief Find a row which maximizes a function
-  */
+   */
   size_t function_find_row(std::string function) const {
 
     // Parse function
@@ -3019,38 +3019,38 @@ namespace o2scl {
       that the pointer is valid with the matrix view is accessed.
   */
   template<class vec_t=std::vector<double> > 
-    class matrix_view_table : public matrix_view {
+    class const_matrix_view_table : public const_matrix_view {
   
   protected:
   
-    /// The number of columns
-    size_t nc;
-    /// Pointers to each column
-    std::vector<const vec_t *> col_ptrs;
-    /// Pointer to the table
-    o2scl::table<vec_t> *tp;
-
+  /// The number of columns
+  size_t nc;
+  /// The number of lines in the table
+  size_t nlines;
+  /// Pointers to each column
+  std::vector<const vec_t *> col_ptrs;
+    
   public:
-
-    /** \brief Create a matrix view object from the specified 
-	table and list of columns
-    */
-  matrix_view_table() {
+    
+  /** \brief Create a matrix view object from the specified 
+      table and list of columns
+  */
+  const_matrix_view_table() {
     nc=0;
-    tp=0;
+    nlines=0;
   }
-
-    /** \brief Create a matrix view object from the specified 
-	table and list of columns
-    */
-  matrix_view_table(o2scl::table<vec_t> &t,
-		    std::vector<std::string> cols) {
+    
+  /** \brief Create a matrix view object from the specified 
+      table and list of columns
+  */
+  const_matrix_view_table(o2scl::table<vec_t> &t,
+			  std::vector<std::string> cols) {
     set(t,cols);
   }
   
-    /** \brief Create a matrix view object from the specified 
-	table and list of columns
-    */
+  /** \brief Create a matrix view object from the specified 
+      table and list of columns
+  */
   void set(o2scl::table<vec_t> &t,
 	   std::vector<std::string> cols) {
     nc=cols.size();
@@ -3058,39 +3058,144 @@ namespace o2scl {
     for(size_t i=0;i<nc;i++) {
       col_ptrs[i]=&t[cols[i]];
     }
-    tp=&t;
+    nlines=t.get_nlines();
   }
   
-    /** \brief Return the number of rows
-     */
-    size_t size1() {
-      if (nc!=0) {
-	return tp->get_nlines();
-      }
-      return 0;
-    }
+  /** \brief Return the number of rows
+   */
+  size_t size1() {
+    return nlines;
+  }
   
-    /** \brief Return the number of columns
-     */
-    size_t size2() {
-      return nc;
-    }
+  /** \brief Return the number of columns
+   */
+  size_t size2() {
+    if (nlines==0) return 0;
+    return nc;
+  }
   
-    /** \brief Return a reference to the element at row \c row
-	and column \c col
-    */
-    const double &operator()(size_t row, size_t col) const {
-      if (row>=tp->get_nlines()) {
-	O2SCL_ERR("Row exceeds max in matrix_view_table::operator().",
-		  o2scl::exc_einval);
-      }
-      if (col>=nc) {
-	O2SCL_ERR("Column exceeds max in matrix_view_table::operator().",
-		  o2scl::exc_einval);
-      }
-      const vec_t *cp=col_ptrs[col];
-      return (*cp)[row];
+  /** \brief Return a reference to the element at row \c row
+      and column \c col
+  */
+  const double &operator()(size_t row, size_t col) const {
+    if (row>=nlines) {
+      O2SCL_ERR("Row exceeds max in const_matrix_view_table::operator().",
+		o2scl::exc_einval);
     }
+    if (col>=nc) {
+      O2SCL_ERR("Column exceeds max in const_matrix_view_table::operator().",
+		o2scl::exc_einval);
+    }
+    const vec_t *cp=col_ptrs[col];
+    return (*cp)[row];
+  }
+
+  /** \brief Swap method
+   */
+  friend void swap(const_matrix_view_table &t1,
+		   const_matrix_view_table &t2) {
+    using std::swap;
+    swap(t1.nc,t2.nc);
+    swap(t1.nlines,t2.nlines);
+    swap(t1.col_ptrs,t2.col_ptrs);
+    return;
+  }
+  
+  };
+  
+  /** \brief View a o2scl::table object as a matrix
+
+      \note This stores a pointer to the table and the user must ensure
+      that the pointer is valid with the matrix view is accessed.
+  */
+  template<class vec_t=std::vector<double> > 
+    class const_matrix_view_table_transpose :
+    public const_matrix_view {
+  
+  protected:
+  
+  /** \brief The number of rows in the matrix (equal to the number of 
+      pointers to table columns)
+  */
+  size_t nr;
+  /// Pointers to each row
+  std::vector<const vec_t *> col_ptrs;
+  /// Number of lines in the table
+  size_t nlines;
+  
+  public:
+
+  /** \brief Create a matrix view object from the specified 
+      table and list of rows
+  */
+  const_matrix_view_table_transpose() {
+    nr=0;
+    nlines=0;
+  }
+
+  /** \brief Create a matrix view object from the specified 
+      table and list of rows
+  */
+  const_matrix_view_table_transpose(o2scl::table<vec_t> &t,
+				    std::vector<std::string> rows) {
+    set(t,rows);
+  }
+  
+  /** \brief Create a matrix view object from the specified 
+      table and list of columns
+  */
+  void set(o2scl::table<vec_t> &t,
+	   std::vector<std::string> rows) {
+    nr=rows.size();
+    col_ptrs.resize(nr);
+    for(size_t i=0;i<nr;i++) {
+      col_ptrs[i]=&t[rows[i]];
+    }
+    nlines=t.get_nlines();
+  }
+  
+  /** \brief Return the number of rows
+   */
+  size_t size1() {
+    if (nlines==0) return 0;
+    return nr;
+  }
+  
+  /** \brief Return the number of columns
+   */
+  size_t size2() {
+    return nlines;
+    return 0;
+  }
+  
+  /** \brief Swap method
+   */
+  friend void swap(const_matrix_view_table_transpose &t1,
+		   const_matrix_view_table_transpose &t2) {
+    using std::swap;
+    swap(t1.nr,t2.nr);
+    swap(t1.nlines,t2.nlines);
+    swap(t1.col_ptrs,t2.col_ptrs);
+    return;
+  }
+  
+  /** \brief Return a reference to the element at row \c row
+      and column \c col
+  */
+  const double &operator()(size_t row, size_t col) const {
+    if (col>=nlines) {
+      O2SCL_ERR2("Column exceeds number of table rows in ",
+		 "const_matrix_view_table_transpose::operator().",
+		 o2scl::exc_einval);
+    }
+    if (row>=nr) {
+      O2SCL_ERR2("Row exceeds max in ",
+		 "const_matrix_view_table_transpose::operator().",
+		 o2scl::exc_einval);
+    }
+    const vec_t *rp=col_ptrs[row];
+    return (*rp)[col];
+  }
     
   };
 

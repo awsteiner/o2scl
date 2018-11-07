@@ -21,8 +21,7 @@
   -------------------------------------------------------------------
 */
 /** \file prob_dens_mdim_amr.h
-    \brief File defining \ref o2scl::matrix_view, 
-    \ref o2scl::matrix_view_table, and \ref o2scl::prob_dens_mdim_amr
+    \brief File defining \ref o2scl::prob_dens_mdim_amr
 */
 #ifndef O2SCL_PROB_DENS_MDIM_AMR_H
 #define O2SCL_PROB_DENS_MDIM_AMR_H
@@ -48,7 +47,7 @@ namespace o2scl {
       demand longer lookup times. 
   */
   template<class vec_t=std::vector<double>,
-    class mat_t=matrix_view_table<vec_t> >
+    class mat_t=const_matrix_view_table<vec_t> >
     class prob_dens_mdim_amr : public o2scl::prob_dens_mdim<vec_t> {
 
   public:

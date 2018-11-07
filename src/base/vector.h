@@ -875,7 +875,7 @@ namespace o2scl {
 
       This works similarly to the GSL function <tt>gsl_sort_index()</tt>.
 
-   */
+  */
   template<class vec_t, class vec_size_t> 
     void vector_sort_index(const vec_t &data, vec_size_t &order) {
     vector_sort_index(data.size(),data,order);
@@ -1028,7 +1028,7 @@ namespace o2scl {
   }
 
   /** \brief Find the indexes of the k smallest entries of a vector
-  */
+   */
   template<class vec_t, class data_t, class vec_size_t>
     void vector_smallest_index(const vec_t &data, size_t k,
 			       vec_size_t &index) {
@@ -2359,7 +2359,7 @@ namespace o2scl {
       specified element
 
       This funciton is used in \ref o2scl::interp_krige_optim::qual_fun() .
-   */
+  */
   template<class vec_t, class vec2_t> 
     void vector_copy_jackknife(const vec_t &src, size_t iout, vec2_t &dest) {
     if (src.size()==0) {
@@ -2552,13 +2552,34 @@ namespace o2scl {
   public:
 
     /// Create a row object from row \c row of matrix \c m 
-    const_matrix_row_gen(const mat_t &m, size_t row) : m_(m), row_(row) {
+  const_matrix_row_gen(const mat_t &m, size_t row) : m_(m), row_(row) {
     }
     
     /// Return a const reference to the ith column of the selected row
     const double &operator[](size_t i) const {
       return m_(row_,i);
     }
+  };
+
+  /** \brief A simple matrix view object
+   */
+  class const_matrix_view {
+  
+  public:
+  
+    /** \brief Return a reference to the element at row \c row
+	and column \c col
+    */
+    const double &operator()(size_t row, size_t col) const;
+    
+    /** \brief Return the number of rows
+     */
+    size_t size1();
+    
+    /** \brief Return the number of columns
+     */
+    size_t size2();
+  
   };
 
   /** \brief A simple matrix view object
@@ -2571,13 +2592,128 @@ namespace o2scl {
 	and column \c col
     */
     const double &operator()(size_t row, size_t col) const;
+    
+    /** \brief Return a reference to the element at row \c row
+	and column \c col
+    */
+    double &operator()(size_t row, size_t col);
+    
     /** \brief Return the number of rows
      */
     size_t size1();
+    
     /** \brief Return the number of columns
      */
     size_t size2();
   
+  };
+
+  /** \brief View a o2scl::table object as a matrix
+
+      \note This stores a pointer to the table and the user must ensure
+      that the pointer is valid with the matrix view is accessed.
+  */
+  template<class vec1_t, class vec2_t=std::vector<vec1_t> > 
+    class matrix_view_vec_vec : public matrix_view {
+  
+  protected:
+  
+  /// Pointer to the table
+  vec2_t *vvp;
+
+  public:
+
+  /** \brief Swap method
+   */
+  friend void swap(matrix_view_vec_vec &t1,
+		   matrix_view_vec_vec &t2) {
+    /// Just swap the pointer
+    std::swap(t1.vvp,t2.vvp);
+    return;
+  }
+  
+  /** \brief Create a matrix view object from the specified 
+      table and list of rows
+  */
+  matrix_view_vec_vec() {
+    vvp=0;
+  }
+
+  /** \brief Create a matrix view object from the specified 
+      table and list of rows
+  */
+  matrix_view_vec_vec(vec2_t &vv) {
+    vvp=&vv;
+  }
+  
+  /** \brief Create a matrix view object from the specified 
+      table and list of columns
+  */
+  void set(vec2_t &vv) {
+    vvp=&vv;
+  }
+  
+  /** \brief Return the number of rows
+   */
+  size_t size1() {
+    if (vvp==0) return 0;
+    return vvp->size();
+  }
+  
+  /** \brief Return the number of columns
+   */
+  size_t size2() {
+    if (vvp==0) return 0;
+    if (vvp->size()==0) return 0;
+    return (*vvp)[0].size();
+  }
+  
+  /** \brief Return a reference to the element at row \c row
+      and column \c col
+  */
+  const double &operator()(size_t row, size_t col) const {
+    if (vvp==0) {
+      O2SCL_ERR2("Object empty in ",
+		 "matrix_view_vec_vec::operator().",
+		 o2scl::exc_einval);
+    }
+    
+    if (row>=vvp->size()) {
+      O2SCL_ERR2("Row exceeds max in ",
+		 "matrix_view_vec_vec::operator().",
+		 o2scl::exc_einval);
+    }
+    if (col>=(*vvp)[row].size()) {
+      O2SCL_ERR2("Column exceeds max in ",
+		 "matrix_view_vec_vec::operator().",
+		 o2scl::exc_einval);
+    }
+    return (*vvp)[row][col];
+  }
+    
+  /** \brief Return a reference to the element at row \c row
+      and column \c col
+  */
+  double &operator()(size_t row, size_t col) {
+    if (vvp==0) {
+      O2SCL_ERR2("Object empty in ",
+		 "matrix_view_vec_vec::operator().",
+		 o2scl::exc_einval);
+    }
+    
+    if (row>=vvp->size()) {
+      O2SCL_ERR2("Row exceeds max in ",
+		 "matrix_view_vec_vec::operator().",
+		 o2scl::exc_einval);
+    }
+    if (col>=(*vvp)[row].size()) {
+      O2SCL_ERR2("Column exceeds max in ",
+		 "matrix_view_vec_vec::operator().",
+		 o2scl::exc_einval);
+    }
+    return (*vvp)[row][col];
+  }
+    
   };
 
   /** \brief Construct a column of a matrix
@@ -2646,7 +2782,7 @@ namespace o2scl {
     const mat_t &m_;
     size_t column_;
   public:
-    const_matrix_column_gen(const mat_t &m, size_t column) :
+  const_matrix_column_gen(const mat_t &m, size_t column) :
     m_(m), column_(column) {
     }
     const double &operator[](size_t i) const {
@@ -2803,7 +2939,7 @@ namespace o2scl {
   template<class dat_t> const boost::numeric::ublas::vector_range
     <const boost::numeric::ublas::vector<dat_t> >
     const_vector_range(const boost::numeric::ublas::vector<dat_t> &v,
-		 size_t start, size_t last) {
+		       size_t start, size_t last) {
     return boost::numeric::ublas::vector_range
       <const boost::numeric::ublas::vector<dat_t> >
       (v,boost::numeric::ublas::range(start,last));
