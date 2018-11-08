@@ -71,7 +71,7 @@ int main(void) {
   // Specify the data in the interpolation objects
   interp2_neigh<ubvector> i2n;
   interp2_planar<ubvector> i2p;
-  interpm_idw<matrix_view_table<> > imi;
+  interpm_idw<matrix_view_vec_vec<ubvector> > imi;
 
   imi.set_data(2,1,8,mv3);
   i2n.set_data(8,x,y,dp);
@@ -104,6 +104,7 @@ int main(void) {
   t.test_rel(imi.eval(point),i2p.eval(0.03,1.0),1.0e-2,"imi vs. i2p 2");
   cout << endl;
 
+#ifdef O2SCL_NEVER_DEFINED
   // Show how to swap a pointer instead
   std::vector<double> x2, y2, dp2;
   o2scl::vector_copy(x,x2);
@@ -122,11 +123,12 @@ int main(void) {
   imi.eval_err(point,val,err);
   cout << imi.eval(point) << " " << val << " " << err << endl;
   cout << endl;
+#endif
   
   cout << "Show that interpolation gets better with more points." << endl;
   for(size_t N=10;N<1000000;N*=10) {
     // Create a random data set
-    interpm_idw<std::vector<double> > imi3;
+    interpm_idw<matrix_view_vec_vec<vector<double> > > imi3;
     std::vector<double> x3, y3, z3, f3;
     double scale=10.0;
     for(size_t i=0;i<N;i++) {
@@ -145,7 +147,8 @@ int main(void) {
     dat3[2]=z3;
     dat3[3]=f3;
     //imi3.verbose=1;
-    imi3.set_data(3,1,N,dat3);
+    matrix_view_vec_vec<vector<double> > mv3b(dat3);
+    imi3.set_data(3,1,N,mv3b);
     imi3.eval_err(p3,val,err);
     cout.width(6);
     cout << N << " " << val << " " << err << " " << fabs(val-3.0) << endl;
@@ -157,7 +160,7 @@ int main(void) {
        << endl;
   for(size_t N=10;N<1000000;N*=10) {
     // Create a random data set
-    interpm_idw<std::vector<double> > imi3;
+    interpm_idw<matrix_view_vec_vec<vector<double> > > imi3;
     std::vector<double> x3, y3, z3, f3;
     double scale=10.0;
     x3.push_back(0.2);
@@ -180,7 +183,8 @@ int main(void) {
     dat3[2]=z3;
     dat3[3]=f3;
     imi3.verbose=2;
-    imi3.set_data(3,1,N,dat3);
+    matrix_view_vec_vec<vector<double> > mv3b(dat3);
+    imi3.set_data(3,1,N,mv3b);
     cout.width(6);
     imi3.derivs_err(0,0,derivs,errs);
     cout << N << endl;

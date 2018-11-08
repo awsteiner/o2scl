@@ -67,12 +67,7 @@ namespace o2scl {
       \note Experimental.
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
-    class mat_t=boost::numeric::ublas::vector<double>,
-    class mat_col_t=boost::numeric::ublas::matrix_column<
-    boost::numeric::ublas::matrix<double> >,
-    class mat_row_t=boost::numeric::ublas::matrix_row<
-    boost::numeric::ublas::matrix<double> >,
-    class covar_func_t=std::function<double(const vec_t &,const vec_t &)> >
+    class mat_t=boost::numeric::ublas::vector<double> >
     class interpm_krige {    
     
   public:
@@ -118,10 +113,10 @@ namespace o2scl {
       \ref o2scl::interpm_idw::set_data() . See this
       class description for more details.
   */
-  template<class vec_vec_t, class vec_vec2_t>
+  template<class mat_row_t, class func_vec_t>
   int set_data_noise(size_t n_in, size_t n_out, size_t n_points,
 		     mat_t &user_x, mat_t &user_y,
-		     std::vector<covar_func_t> &fcovar,
+		     func_vec_t &fcovar,
 		     const vec_t &noise_var, bool rescale=false,
 		     bool err_on_fail=true) {
     
@@ -279,21 +274,25 @@ namespace o2scl {
       \ref o2scl::interpm_idw::set_data() . See this
       class description for more details.
   */
+  template<class mat_row_t, class func_vec_t>
   int set_data(size_t n_in, size_t n_out, size_t n_points,
 	       mat_t &user_x, mat_t &user_y,
-	       std::vector<covar_func_t> &fcovar,
+	       func_vec_t &fcovar,
 	       bool rescale=false,
 	       bool err_on_fail=true) {
-    return set_data_noise(n_in,n_out,n_points,user_x,user_y,fcovar,0.0,
-			  rescale,err_on_fail);
+    vec_t noise_vec;
+    noise_vec.resize(1);
+    noise_vec[0]=0.0;
+    return set_data_noise<mat_row_t,func_vec_t>
+    (n_in,n_out,n_points,user_x,user_y,fcovar,
+     noise_vec,rescale,err_on_fail);
   }
 
   /** \brief Given covariance function \c fcovar and input vector \c x
       store the result of the interpolation in \c y
   */
-  template<class vec2_t, class vec3_t>
-  void eval(const vec2_t &x, vec3_t &y,
-	    std::vector<covar_func_t> &fcovar) const {
+  template<class vec2_t, class vec3_t, class mat_row_t, class vec_func_t>
+  void eval(const vec2_t &x0, vec3_t &y0, vec_func_t &fcovar) {
     
     if (data_set==false) {
       O2SCL_ERR("Data not set in interpm_krige::eval().",
@@ -304,17 +303,18 @@ namespace o2scl {
 
       // If necessary, rescale before evaluating the interpolated
       // result
-      vec_t x2(nd_in);
+      vec2_t x0p(nd_in);
       for(size_t iin=0;iin<nd_in;iin++) {
-	x2[iin]=(x[iin]-min[iin])/(max[iin]-min[iin])*2.0-0.5;
+	x0p[iin]=(x0[iin]-min[iin])/(max[iin]-min[iin])*2.0-0.5;
       }
 
       // Evaluate the interpolated result
       for(size_t iout=0;iout<nd_out;iout++) {
 	size_t icovar=iout % fcovar.size();
-	y[iout]=0.0;
+	y0[iout]=0.0;
 	for(size_t ipoints=0;ipoints<np;ipoints++) {
-	  y[iout]+=fcovar[icovar](x2,x[ipoints])*Kinvf[iout][ipoints];
+	  mat_row_t xrow(x,ipoints);
+	  y0[iout]+=fcovar[icovar](xrow,x0p)*Kinvf[iout][ipoints];
 	}
       }
 
@@ -323,9 +323,10 @@ namespace o2scl {
       // Evaluate the interpolated result
       for(size_t iout=0;iout<nd_out;iout++) {
 	size_t icovar=iout % fcovar.size();
-	y[iout]=0.0;
+	y0[iout]=0.0;
 	for(size_t ipoints=0;ipoints<np;ipoints++) {
-	  y[iout]+=fcovar[icovar](x,x[ipoints])*Kinvf[iout][ipoints];
+	  mat_row_t xrow(x,ipoints);
+	  y0[iout]+=fcovar[icovar](xrow,x0)*Kinvf[iout][ipoints];
 	}
       }
 
@@ -366,13 +367,8 @@ namespace o2scl {
       \note This class is experimental.
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
-    class mat_t=boost::numeric::ublas::matrix<double>,
-    class mat_col_t=boost::numeric::ublas::matrix_column<
-    boost::numeric::ublas::matrix<double> >,
-    class mat_row_t=boost::numeric::ublas::matrix_row<
-    boost::numeric::ublas::matrix<double> > >
-    class interpm_krige_optim :
-    public interpm_krige<vec_t,mat_t,mat_col_t,mat_row_t> {    
+    class mat_t=boost::numeric::ublas::matrix<double> >
+    class interpm_krige_optim : public interpm_krige<vec_t,mat_t> {    
 
   public:
 
@@ -392,8 +388,14 @@ namespace o2scl {
   std::vector<double> qual;
 
   /// The covariance function
-  double covar(double x1, double x2, double len) {
-    return exp(-(x1-x2)*(x1-x2)/len/len/2.0);
+  template<class vec2_t, class vec3_t>
+  double covar(const vec2_t &x1, const vec3_t &x2, double len) {
+    double ret=0.0;
+    for(size_t i=0;i<x1.size();i++) {
+      ret+=pow(x1[i]-x2[i],2.0);
+    }
+    ret=exp(-ret/len/len/2.0);
+    return ret;
   }
 
   /// If true, data was rescaled
@@ -404,7 +406,7 @@ namespace o2scl {
   
   /** \brief Function to optimize the covariance parameters
    */
-  template<class vec3_t> 
+  template<class vec3_t, class mat_row_t> 
   double qual_fun(double x, double noise_var, 
 		  const vec3_t &y, int &success) {
 
@@ -503,9 +505,9 @@ namespace o2scl {
   bool full_min;
 
   /// Initialize interpolation routine
-  template<class vec_vec_t, class vec_vec2_t>
+  template<class mat_row_t>
   void set_data_noise(size_t n_in, size_t n_out, size_t n_points,
-		      vec_vec_t &user_x, vec_vec2_t &user_y, 
+		      mat_t &user_x, mat_t &user_y, 
 		      const vec_t &noise_var, bool rescale=false,
 		      bool err_on_fail=true) {
 
@@ -594,7 +596,7 @@ namespace o2scl {
 	
 	funct mf=std::bind
 	  (std::mem_fn<double(double,double,mat_row_t &,int &)>
-	   (&interpm_krige_optim<vec_t,mat_col_t>::qual_fun),this,
+	   (&interpm_krige_optim<vec_t,mat_t>::qual_fun),this,
 	   std::placeholders::_1,noise_var[iout],yiout,std::ref(success));
 	
 	mp->min(len_opt,qual[iout],mf);
@@ -674,8 +676,7 @@ namespace o2scl {
 	len[iout]=len_opt;
 	
 	ff[iout]=std::bind(std::mem_fn<double(double,double,double)>
-			   (&interpm_krige_optim<vec_t,mat_t,mat_col_t,
-			    mat_row_t>::covar),this,
+			   (&interpm_krige_optim<vec_t,mat_t>::covar),this,
 			   std::placeholders::_1,std::placeholders::_2,
 			   len[iout]);
       }
@@ -702,14 +703,8 @@ namespace o2scl {
       \note Experimental.
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
-    class mat_t=boost::numeric::ublas::vector<double>,
-    class mat_col_t=boost::numeric::ublas::matrix_column<
-    boost::numeric::ublas::matrix<double> >,
-    class mat_row_t=boost::numeric::ublas::matrix_row<
-    boost::numeric::ublas::matrix<double> >,
-    class covar_func_t=std::function<double(const vec_t &,const vec_t &)> >
-    class interpm_krige_nn : public
-    interpm_krige<vec_t,mat_t,mat_col_t,mat_row_t,covar_func_t> {    
+    class mat_t=boost::numeric::ublas::vector<double> >
+    class interpm_krige_nn : public interpm_krige<vec_t,mat_t> {    
     
   public:
   
@@ -728,10 +723,10 @@ namespace o2scl {
 
   /** \brief Initialize the data for the interpolation
    */
-  template<class vec_vec_t, class vec_vec2_t>
+  template<class vec_func_t>
   void set_data(size_t n_in, size_t n_out, size_t n_points,
-		vec_vec_t &x, vec_vec2_t &y, 
-		std::vector<covar_func_t> &fcovar, size_t order) {
+		mat_t &user_x, mat_t &user_y,
+		vec_func_t &fcovar, size_t order) {
 
     if (n_points<2) {
       O2SCL_ERR2("Must provide at least two points in ",
@@ -780,16 +775,16 @@ namespace o2scl {
   /** \brief Given covariance function \c fcovar and input vector \c x
       store the result of the interpolation in \c y
   */
-  template<class vec2_t, class vec3_t>
-  void eval(const vec2_t &x, vec3_t &y,
-	    std::vector<covar_func_t> &fcovar) const {
+  template<class vec2_t, class vec3_t, class vec_func_t>
+  void eval(const vec2_t &x0, vec3_t &y0,
+	    vec_func_t &fcovar) const {
       
     if (data_set==false) {
       O2SCL_ERR("Data not set in interpm_krige_nn::eval().",
 		exc_einval);
     }
       
-    y.resize(nd_out);
+    y0.resize(nd_out);
     
     // Loop over all output functions
     for(size_t iout=0;iout<nd_out;iout++) {
@@ -798,7 +793,7 @@ namespace o2scl {
       // by the negative covariance for this output function
       ubvector dists(np);
       for(size_t ip=0;ip<np;ip++) {
-	dists[ip]=-fcovar[iout](x,x[ip]);
+	dists[ip]=-fcovar[iout](x0,x[ip]);
       }
       
       // Empty index vector (resized by the vector_smallest_index
@@ -836,9 +831,9 @@ namespace o2scl {
       boost::numeric::ublas::axpy_prod(inv_KXX,func,Kinvf,true);
 
       // Comput the final result
-      y[iout]=0.0;
+      y0[iout]=0.0;
       for(size_t ipoints=0;ipoints<n_order;ipoints++) {
-	y[iout]+=-dists[index[ipoints]]*Kinvf[ipoints];
+	y0[iout]+=-dists[index[ipoints]]*Kinvf[ipoints];
       }
       
     }

@@ -35,8 +35,14 @@ typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 typedef boost::numeric::ublas::matrix_column<ubmatrix> ubmatrix_column;
 typedef boost::numeric::ublas::matrix_row<ubmatrix> ubmatrix_row;
+typedef o2scl::matrix_view_vec_vec<ubvector> mat_t;
+typedef vector<function<double(const matrix_row_gen<mat_t> &,
+			       const matrix_row_gen<mat_t> &) > > f1_t;
+typedef vector<function<double(const matrix_row_gen<mat_t> &,
+			       const matrix_row_gen<mat_t> &) > > f2_t;
 
-double covar(const ubvector &x, const ubvector &y) {
+template<class vec_t, class vec2_t>
+double covar(const vec_t &x, const vec_t &y) {
   return exp(-2.0*(x[0]-y[0])*(x[0]-y[0])-2.0*(x[1]-y[1])*(x[1]-y[1]));
 }
 
@@ -70,6 +76,7 @@ int main(void) {
     x.push_back(tmp);
     tmp[0]=0.03; tmp[1]=1.02; 
     x.push_back(tmp);
+    mat_t x2(x);
 
     vector<ubvector> y;
     tmp.resize(8);
@@ -77,26 +84,28 @@ int main(void) {
       tmp[i]=ft(x[i][0],x[i][1]);
     }
     y.push_back(tmp);
+    mat_t y2(y);
 
-    interpm_krige<ubvector,ubmatrix,ubmatrix_column,ubmatrix_row> ik;
-    vector<function<double(const ubvector &,const ubvector &)> > fa={covar};
-    //ik.set_data_noise(2,1,8,x,y,fa);
+    interpm_krige<ubvector,mat_t> ik;
+    f1_t fa1={covar};
+    f2_t fa2={covar};
+    ik.set_data<matrix_row_gen<mat_t>,f1_t>(2,1,8,x2,y2,fa1);
   
     cout << "Interpolate at a point and compare the three methods:" << endl;
     ubvector point(2);
     ubvector out(1);
     point[0]=0.4;
     point[1]=0.5;
-    ik.eval(point,out,fa);
+    ik.eval<ubvector,ubvector,matrix_row_gen<mat_t>,f2_t>(point,out,fa2);
     cout << out[0] << " " << ft(point[0],point[1]) << endl;
     point[0]=0.0301;
     point[1]=0.9901;
-    ik.eval(point,out,fa);
+    ik.eval<ubvector,ubvector,matrix_row_gen<mat_t>,f2_t>eval(point,out,fa2);
     cout << out[0] << " " << ft(point[0],point[1]) << endl;
 
   }
 
-  {
+  if (false) {
     // Construct the data
     vector<ubvector> x;
     ubvector tmp(2);
@@ -116,6 +125,7 @@ int main(void) {
     x.push_back(tmp);
     tmp[0]=0.03; tmp[1]=1.02; 
     x.push_back(tmp);
+    mat_t x2(x);
 
     vector<ubvector> y;
     tmp.resize(8);
@@ -123,10 +133,12 @@ int main(void) {
       tmp[i]=ft(x[i][0],x[i][1]);
     }
     y.push_back(tmp);
+    mat_t y2(y);
 
-    interpm_krige_nn<ubvector,ubmatrix,ubmatrix_column,ubmatrix_row> ik;
+    interpm_krige_nn<ubvector,mat_t,matrix_column_gen<mat_t>,
+		  matrix_row_gen<mat_t> > ik;
     vector<function<double(const ubvector &,const ubvector &)> > fa={covar};
-    ik.set_data(2,1,8,x,y,fa,4);
+    ik.set_data(2,1,8,x2,y2,fa,4);
   
     cout << "Interpolate at a point and compare the three methods:" << endl;
     ubvector point(2);
