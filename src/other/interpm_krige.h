@@ -382,8 +382,8 @@ namespace o2scl {
 
   protected:
 
-  /// Function object for the covariance
-  std::function<double(double,double)> ff;
+  /// Function objects for the covariance
+  std::vector<std::function<double(double,double)> > ff;
   
   /// The covariance function length scale for each output function
   std::vector<double> len;
@@ -408,6 +408,8 @@ namespace o2scl {
   double qual_fun(double x, double noise_var, 
 		  const vec3_t &y, int &success) {
 
+    double ret=0.0;
+    
     success=0;
 
     size_t size=this->sz;
@@ -455,12 +457,12 @@ namespace o2scl {
       // Compute the log of the marginal likelihood, without
       // the constant term
       for(size_t i=0;i<size;i++) {
-	qual+=0.5*y[i]*this->Kinvf[i];
+	ret+=0.5*y[i]*this->Kinvf[i];
       }
-      qual+=0.5*lndet;
+      ret+=0.5*lndet;
     }
 
-    return qual;
+    return ret;
   }
 
   public:
@@ -503,7 +505,7 @@ namespace o2scl {
   /// Initialize interpolation routine
   template<class vec_vec_t, class vec_vec2_t>
   void set_data_noise(size_t n_in, size_t n_out, size_t n_points,
-		      vec_vec_t &x, vec_vec2_t &y, 
+		      vec_vec_t &user_x, vec_vec2_t &user_y, 
 		      const vec_t &noise_var, bool rescale=false,
 		      bool err_on_fail=true) {
 
@@ -528,16 +530,8 @@ namespace o2scl {
     this->np=n_points;
     this->nd_in=n_in;
     this->nd_out=n_out;
-    this->x.resize(n_points);
+    std::swap(this->x,user_x);
     rescaled=rescale;
-    for(size_t i=0;i<n_points;i++) {
-      if (x[i].size()!=n_in) {
-	O2SCL_ERR2("Size of x not correct in ",
-		   "interpm_krige_optim::set_data_noise().",
-		   o2scl::exc_efailed);
-      }
-      std::swap(this->x[i],x[i]);
-    }
     this->data_set=true;
        
     if (verbose>0) {
@@ -587,6 +581,9 @@ namespace o2scl {
       // Loop over all output functions
       for(size_t iout=0;iout<n_out;iout++) {
 	
+	// Select the row of the data matrix
+	mat_row_t yiout(user_y,iout);
+	
 	double len_opt;
 	// Choose average distance for first guess
 	if (rescaled) {
@@ -596,11 +593,11 @@ namespace o2scl {
 	}
 	
 	funct mf=std::bind
-	  (std::mem_fn<double(double,double,int &)>
+	  (std::mem_fn<double(double,double,mat_row_t &,int &)>
 	   (&interpm_krige_optim<vec_t,mat_col_t>::qual_fun),this,
-	   std::placeholders::_1,noise_var[iout],y[iout],std::ref(success));
+	   std::placeholders::_1,noise_var[iout],yiout,std::ref(success));
 	
-	mp->min(len_opt,qual,mf);
+	mp->min(len_opt,qual[iout],mf);
 	len[iout]=len_opt;
 	
 	if (success!=0) {
@@ -625,9 +622,9 @@ namespace o2scl {
 	double len_avg;
 	// Choose average distance for first guess
 	if (rescaled) {
-	  len_avg=(max[iout]-min[iout])/((double)np);
+	  len_avg=(this->max[iout]-this->min[iout])/((double)this->np);
 	} else {
-	  len_avg=2.0/((double)np);
+	  len_avg=2.0/((double)this->np);
 	}
 
 	double len_min=len_avg/100.0;
@@ -674,19 +671,22 @@ namespace o2scl {
       
 	// Now that we've optimized the covariance function,
 	// just use the parent class to interpolate
-	len[i]=len_opt;
-
+	len[iout]=len_opt;
+	
+	ff[iout]=std::bind(std::mem_fn<double(double,double,double)>
+			   (&interpm_krige_optim<vec_t,mat_t,mat_col_t,
+			    mat_row_t>::covar),this,
+			   std::placeholders::_1,std::placeholders::_2,
+			   len[iout]);
       }
 
-      ff=std::bind(std::mem_fn<double(double,double,double)>
-		   (&interp_krige_optim<vec_t,vec2_t>::covar),this,
-		   std::placeholders::_1,std::placeholders::_2,len[i]);
     
-      this->set_covar_noise(size,x,y,ff,noise_var);
-      
     }
     
-    return 0;
+    this->set_data_noise(n_in,n_out,n_points,user_x,user_y,ff,noise_var,
+			 rescale,err_on_fail);
+      
+    return;
   }
   
   };
@@ -702,10 +702,14 @@ namespace o2scl {
       \note Experimental.
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
+    class mat_t=boost::numeric::ublas::vector<double>,
     class mat_col_t=boost::numeric::ublas::matrix_column<
     boost::numeric::ublas::matrix<double> >,
-    class covar_func_t=std::function<double(const vec_t &,const vec_t &)> > >
-    class interpm_krige_nn {
+    class mat_row_t=boost::numeric::ublas::matrix_row<
+    boost::numeric::ublas::matrix<double> >,
+    class covar_func_t=std::function<double(const vec_t &,const vec_t &)> >
+    class interpm_krige_nn : public
+    interpm_krige<vec_t,mat_t,mat_col_t,mat_row_t,covar_func_t> {    
     
   public:
   

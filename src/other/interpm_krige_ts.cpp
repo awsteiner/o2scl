@@ -34,6 +34,7 @@ using namespace o2scl;
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 typedef boost::numeric::ublas::matrix_column<ubmatrix> ubmatrix_column;
+typedef boost::numeric::ublas::matrix_row<ubmatrix> ubmatrix_row;
 
 double covar(const ubvector &x, const ubvector &y) {
   return exp(-2.0*(x[0]-y[0])*(x[0]-y[0])-2.0*(x[1]-y[1])*(x[1]-y[1]));
@@ -77,7 +78,7 @@ int main(void) {
     }
     y.push_back(tmp);
 
-    interpm_krige<ubvector,ubmatrix_column> ik;
+    interpm_krige<ubvector,ubmatrix,ubmatrix_column,ubmatrix_row> ik;
     vector<function<double(const ubvector &,const ubvector &)> > fa={covar};
     //ik.set_data_noise(2,1,8,x,y,fa);
   
@@ -123,7 +124,7 @@ int main(void) {
     }
     y.push_back(tmp);
 
-    interpm_krige_nn<ubvector,ubmatrix_column> ik;
+    interpm_krige_nn<ubvector,ubmatrix,ubmatrix_column,ubmatrix_row> ik;
     vector<function<double(const ubvector &,const ubvector &)> > fa={covar};
     ik.set_data(2,1,8,x,y,fa,4);
   
