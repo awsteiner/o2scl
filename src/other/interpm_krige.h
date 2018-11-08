@@ -144,17 +144,20 @@ namespace o2scl {
     np=n_points;
     nd_in=n_in;
     nd_out=n_out;
-    std::swap(user_x,x);
-    if (x.size1()!=n_points || x.size2()!=n_in) {
+    
+    if (user_x.size1()!=n_points || user_x.size2()!=n_in) {
       O2SCL_ERR2("Size of x not correct in ",
 		 "interpm_krige::set_data_noise().",o2scl::exc_efailed);
     }
+    std::swap(user_x,x);
+    
     // We don't need to copy the 'y' data, but we double check
     // that it is properly sized
-    if (y.size2()!=n_points || y.size1()!=n_out) {
+    if (user_y.size2()!=n_points || user_y.size1()!=n_out) {
       O2SCL_ERR2("Size of x not correct in ",
 		 "interpm_krige::set_data_noise().",o2scl::exc_efailed);
     }
+    
     data_set=true;
     
     if (verbose>0) {
@@ -192,7 +195,10 @@ namespace o2scl {
 
       size_t icovar=iout % n_covar;
       size_t inoise=iout & noise_var.size();
-	
+
+      // Select the row of the data matrix
+      mat_row_t yiout(user_y,iout);
+      
       // Construct the KXX matrix
       ubmatrix KXX(n_points,n_points);
       for(size_t irow=0;irow<n_points;irow++) {
@@ -230,7 +236,7 @@ namespace o2scl {
 	
 	// Inverse covariance matrix times function vector
 	Kinvf[iout].resize(n_points);
-	boost::numeric::ublas::axpy_prod(inv_KXX,y[iout],Kinvf[iout],true);
+	boost::numeric::ublas::axpy_prod(inv_KXX,yiout,Kinvf[iout],true);
 	
       } else {
 	
@@ -249,7 +255,7 @@ namespace o2scl {
 	
 	// Inverse covariance matrix times function vector
 	Kinvf[iout].resize(n_points);
-	boost::numeric::ublas::axpy_prod(inv_KXX,y[iout],Kinvf[iout],true);
+	boost::numeric::ublas::axpy_prod(inv_KXX,yiout,Kinvf[iout],true);
 	
       }
       
@@ -273,13 +279,12 @@ namespace o2scl {
       \ref o2scl::interpm_idw::set_data() . See this
       class description for more details.
   */
-  template<class vec_vec_t, class vec_vec2_t>
   int set_data(size_t n_in, size_t n_out, size_t n_points,
-	       vec_vec_t &x, vec_vec2_t &y, 
+	       mat_t &user_x, mat_t &user_y,
 	       std::vector<covar_func_t> &fcovar,
 	       bool rescale=false,
 	       bool err_on_fail=true) {
-    return set_data_noise(n_in,n_out,n_points,x,y,fcovar,0.0,
+    return set_data_noise(n_in,n_out,n_points,user_x,user_y,fcovar,0.0,
 			  rescale,err_on_fail);
   }
 
@@ -295,8 +300,6 @@ namespace o2scl {
 		exc_einval);
     }
 
-    size_t icovar=iout % n_covar;
-    
     if (min.size()>0) {
 
       // If necessary, rescale before evaluating the interpolated
@@ -308,6 +311,7 @@ namespace o2scl {
 
       // Evaluate the interpolated result
       for(size_t iout=0;iout<nd_out;iout++) {
+	size_t icovar=iout % fcovar.size();
 	y[iout]=0.0;
 	for(size_t ipoints=0;ipoints<np;ipoints++) {
 	  y[iout]+=fcovar[icovar](x2,x[ipoints])*Kinvf[iout][ipoints];
@@ -318,6 +322,7 @@ namespace o2scl {
       
       // Evaluate the interpolated result
       for(size_t iout=0;iout<nd_out;iout++) {
+	size_t icovar=iout % fcovar.size();
 	y[iout]=0.0;
 	for(size_t ipoints=0;ipoints<np;ipoints++) {
 	  y[iout]+=fcovar[icovar](x,x[ipoints])*Kinvf[iout][ipoints];
@@ -340,10 +345,8 @@ namespace o2scl {
   size_t nd_in;
   /// The number of dimensions of the outputs
   size_t nd_out;
-  /// The user-specified data
-  std::vector<vec_t> x;
-  /// The user-specified data
-  std::vector<vec_t> y;
+  /// The data
+  mat_t x;
   /// True if the data has been specified
   bool data_set;
   /// Minimum values for rescaling
@@ -363,11 +366,14 @@ namespace o2scl {
       \note This class is experimental.
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
+    class mat_t=boost::numeric::ublas::matrix<double>,
     class mat_col_t=boost::numeric::ublas::matrix_column<
+    boost::numeric::ublas::matrix<double> >,
+    class mat_row_t=boost::numeric::ublas::matrix_row<
     boost::numeric::ublas::matrix<double> > >
     class interpm_krige_optim :
-    public interpm_krige<vec_t,mat_col_t> {    
-    
+    public interpm_krige<vec_t,mat_t,mat_col_t,mat_row_t> {    
+
   public:
 
   typedef boost::numeric::ublas::vector<double> ubvector;
@@ -380,10 +386,10 @@ namespace o2scl {
   std::function<double(double,double)> ff;
   
   /// The covariance function length scale for each output function
-  vector<double> len;
+  std::vector<double> len;
   
   /// The quality factor of the optimization for each output function
-  vector<double> qual;
+  std::vector<double> qual;
 
   /// The covariance function
   double covar(double x1, double x2, double len) {
@@ -396,8 +402,6 @@ namespace o2scl {
   /// Pointer to the user-specified minimizer
   min_base<> *mp;
   
-#ifdef O2SCL_NEVER_DEFINED  
-
   /** \brief Function to optimize the covariance parameters
    */
   template<class vec3_t> 

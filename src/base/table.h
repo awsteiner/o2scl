@@ -3103,6 +3103,109 @@ namespace o2scl {
   
   };
   
+  /** \brief Swap part of a o2scl::table object into a matrix
+  */
+  class matrix_swap_table : public matrix_view {
+  
+  protected:
+  
+  /// The number of columns
+  size_t nc;
+  /// The number of lines in the table
+  size_t nlines;
+  /// Array of columns
+  std::vector<std::vector<double> > cols;
+    
+  public:
+    
+  /** \brief Create a matrix view object from the specified 
+      table and list of columns
+  */
+  matrix_swap_table() {
+    nc=0;
+    nlines=0;
+  }
+    
+  /** \brief Create a matrix view object from the specified 
+      table and list of columns
+  */
+  matrix_swap_table(o2scl::table<std::vector<double> > &t,
+		    const std::vector<std::string> &col_names) {
+    set(t,col_names);
+  }
+  
+  /** \brief Create a matrix view object from the specified 
+      table and list of columns
+  */
+  void set(o2scl::table<std::vector<double> > &t,
+	   const std::vector<std::string> &col_names) {
+    nc=cols.size();
+    nlines=t.get_nlines();
+    cols.resize(nc);
+    for(size_t i=0;i<nc;i++) {
+      // We have to make space for the vector before we use
+      // table::swap_column_data()
+      cols[i].resize(nlines);
+      t.swap_column_data(col_names[i],cols[i]);
+    }
+  }
+  
+  /** \brief Return the number of rows
+   */
+  size_t size1() const {
+    return nlines;
+  }
+  
+  /** \brief Return the number of columns
+   */
+  size_t size2() const {
+    if (nlines==0) return 0;
+    return nc;
+  }
+  
+  /** \brief Return a reference to the element at row \c row
+      and column \c col
+  */
+  const double &operator()(size_t row, size_t col) const {
+    if (row>=nlines) {
+      O2SCL_ERR("Row exceeds max in matrix_swap_table::operator().",
+		o2scl::exc_einval);
+    }
+    if (col>=nc) {
+      O2SCL_ERR("Column exceeds max in matrix_swap_table::operator().",
+		o2scl::exc_einval);
+    }
+    return cols[col][row];
+  }
+  
+  /** \brief Return a reference to the element at row \c row
+      and column \c col
+  */
+  double &operator()(size_t row, size_t col) {
+    if (row>=nlines) {
+      O2SCL_ERR("Row exceeds max in matrix_swap_table::operator().",
+		o2scl::exc_einval);
+    }
+    if (col>=nc) {
+      O2SCL_ERR("Column exceeds max in matrix_swap_table::operator().",
+		o2scl::exc_einval);
+    }
+    return cols[col][row];
+  }
+
+  /** \brief Swap method
+   */
+  friend void swap(matrix_swap_table &t1,
+		   matrix_swap_table &t2) {
+    using std::swap;
+    swap(t1.nc,t2.nc);
+    swap(t1.nlines,t2.nlines);
+    swap(t1.cols,t2.cols);
+    return;
+  }
+  
+  };
+  
   /** \brief View a o2scl::table object as a matrix
 
       \note This stores a pointer to the table and the user must ensure

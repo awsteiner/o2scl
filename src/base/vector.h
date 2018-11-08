@@ -101,10 +101,10 @@ namespace o2scl {
     double operator()(size_t i, size_t j) const {
       return *(d+i*tda+j);
     }
-    size_t size1() {
+    size_t size1() const {
       return sz1;
     }
-    size_t size2() {
+    size_t size2() const {
       return sz2;
     }
   };
@@ -2574,11 +2574,11 @@ namespace o2scl {
     
     /** \brief Return the number of rows
      */
-    size_t size1();
+    size_t size1() const;
     
     /** \brief Return the number of columns
      */
-    size_t size2();
+    size_t size2() const;
   
   };
 
@@ -2600,11 +2600,11 @@ namespace o2scl {
     
     /** \brief Return the number of rows
      */
-    size_t size1();
+    size_t size1() const;
     
     /** \brief Return the number of columns
      */
-    size_t size2();
+    size_t size2() const;
   
   };
 
@@ -2655,14 +2655,14 @@ namespace o2scl {
   
   /** \brief Return the number of rows
    */
-  size_t size1() {
+  size_t size1() const {
     if (vvp==0) return 0;
     return vvp->size();
   }
   
   /** \brief Return the number of columns
    */
-  size_t size2() {
+  size_t size2() const {
     if (vvp==0) return 0;
     if (vvp->size()==0) return 0;
     return (*vvp)[0].size();

@@ -187,7 +187,7 @@ namespace o2scl {
   */
   void set_data(size_t n_in, size_t n_out, size_t n_points,
 		mat_t &dat, bool auto_scale_flag=true) {
-
+    
     if (n_points<points) {
       O2SCL_ERR2("Not enough points provided in ",
 		 "interpm_idw::set_data()",exc_efailed);
@@ -235,7 +235,7 @@ namespace o2scl {
     scales.resize(nd_in);
     for(size_t i=0;i<nd_in;i++) {
       double min=data(i,0), max=min;
-      for(size_t j=1;j<n_points;j++) {
+      for(size_t j=1;j<np;j++) {
 	double val=data(i,j);
 	if (val>max) max=val;
 	if (val<min) min=val;
@@ -748,122 +748,122 @@ namespace o2scl {
 	for(size_t i=0;i<nd_in;i++) {
 	  std::cout << data(i,index2[j]) << " ";
 	}
-	std::cout << data(nd_in+func_index,index2[j])] << " "
-      << diff_norms[j] << std::endl;
+	std::cout << data(nd_in+func_index,index2[j]) << " "
+		  << diff_norms[j] << std::endl;
+      }
+      for(size_t j=0;j<nd_in+1;j++) {
+	std::cout << "diff_norm: " << j << " " << diff_norms[j]
+	<< std::endl;
+      }
+      // End of verbose output
     }
-    for(size_t j=0;j<nd_in+1;j++) {
-      std::cout << "diff_norm: " << j << " " << diff_norms[j]
-      << std::endl;
-    }
-    // End of verbose output
-  }
+    
+    // Go through each set of points
+    for(size_t i=0;i<nd_in+1;i++) {
 
-  // Go through each set of points
-  for(size_t i=0;i<nd_in+1;i++) {
+      ders[i].resize(nd_in);
 
-    ders[i].resize(nd_in);
-
-    // Construct the matrix and vector for the solver
-    size_t jj=0;
-    for(size_t j=0;j<nd_in+1;j++) {
-      if (j!=i) {
-	for(size_t k=0;k<nd_in;k++) {
-	  m(jj,k)=units[j][k];
+      // Construct the matrix and vector for the solver
+      size_t jj=0;
+      for(size_t j=0;j<nd_in+1;j++) {
+	if (j!=i) {
+	  for(size_t k=0;k<nd_in;k++) {
+	    m(jj,k)=units[j][k];
+	  }
+	  v[jj]=(data(nd_in+func_index,index2[j])-f)/diff_norms[j];
+	  jj++;
 	}
-	v[jj]=(data(nd_in+func_index,index2[j])]-f)/diff_norms[j];
-      jj++;
-    }
-  }
+      }
 
-  // Solve to compute the derivatives
-  if (verbose>0) {
-    std::cout << "m:" << std::endl;
-    o2scl::matrix_out(std::cout,nd_in,nd_in,m);
-    std::cout << "v:" << std::endl;
-    o2scl::vector_out(std::cout,nd_in,v,true);
-  }
-  lshh.solve(nd_in,m,v,ders[i]);
-  if (verbose>0) {
-    std::cout << "Derivs:  " << i << " ";
-    std::cout.setf(std::ios::showpos);
-    for(size_t j=0;j<nd_in;j++) {
-      std::cout << ders[i][j] << " ";
-    }
-    std::cout.unsetf(std::ios::showpos);
-    std::cout << std::endl;
-  }
+      // Solve to compute the derivatives
+      if (verbose>0) {
+	std::cout << "m:" << std::endl;
+	o2scl::matrix_out(std::cout,nd_in,nd_in,m);
+	std::cout << "v:" << std::endl;
+	o2scl::vector_out(std::cout,nd_in,v,true);
+      }
+      lshh.solve(nd_in,m,v,ders[i]);
+      if (verbose>0) {
+	std::cout << "Derivs:  " << i << " ";
+	std::cout.setf(std::ios::showpos);
+	for(size_t j=0;j<nd_in;j++) {
+	  std::cout << ders[i][j] << " ";
+	}
+	std::cout.unsetf(std::ios::showpos);
+	std::cout << std::endl;
+      }
 
-  // Go to next derivative estimate
-  }
+      // Go to next derivative estimate
+    }
       
-  for(size_t i=0;i<nd_in;i++) {
+    for(size_t i=0;i<nd_in;i++) {
 
-    // Rearrange derivatives
-    ders2[i].resize(nd_in+1);
-    for(size_t j=0;j<nd_in+1;j++) {
-      ders2[i][j]=ders[j][i];
+      // Rearrange derivatives
+      ders2[i].resize(nd_in+1);
+      for(size_t j=0;j<nd_in+1;j++) {
+	ders2[i][j]=ders[j][i];
+      }
+
+      // Compute mean and standard deviation
+      derivs[i]=o2scl::vector_mean(ders2[i]);
+      errs[i]=o2scl::vector_stddev(ders2[i]);
     }
-
-    // Compute mean and standard deviation
-    derivs[i]=o2scl::vector_mean(ders2[i]);
-    errs[i]=o2scl::vector_stddev(ders2[i]);
-  }
       
-  return;
-}
-//@}
+    return;
+  }
+  //@}
     
 #ifndef DOXYGEN_INTERNAL
     
-protected:
+  protected:
     
-/// The number of points
-size_t np;
-/// The number of dimensions of the inputs
-size_t nd_in;
-/// The number of dimensions of the outputs
-size_t nd_out;
-/// The copy of the data
-mat_t data;
-/// True if the data has been specified
-bool data_set;
-/// Number of points to include in each interpolation (default 3)
-size_t points;
+  /// The number of points
+  size_t np;
+  /// The number of dimensions of the inputs
+  size_t nd_in;
+  /// The number of dimensions of the outputs
+  size_t nd_out;
+  /// The copy of the data
+  mat_t data;
+  /// True if the data has been specified
+  bool data_set;
+  /// Number of points to include in each interpolation (default 3)
+  size_t points;
 
-/// \name Distance determination [protected]
-//@{
-/// Distance scales for each coordinate
-ubvector scales;
+  /// \name Distance determination [protected]
+  //@{
+  /// Distance scales for each coordinate
+  ubvector scales;
 
-/** \brief Compute the distance between \c x and the point at
-    index \c index
-*/
-template<class vec2_t> double dist(size_t index,
-				   const vec2_t &x) const {
-  double ret=0.0;
-  size_t nscales=scales.size();
-  for(size_t i=0;i<nd_in;i++) {
-    ret+=pow((x[i]-data(i,index))/scales[i%nscales],2.0);
+  /** \brief Compute the distance between \c x and the point at
+      index \c index
+  */
+  template<class vec2_t> double dist(size_t index,
+				     const vec2_t &x) const {
+    double ret=0.0;
+    size_t nscales=scales.size();
+    for(size_t i=0;i<nd_in;i++) {
+      ret+=pow((x[i]-data(i,index))/scales[i%nscales],2.0);
+    }
+    return sqrt(ret);
   }
-  return sqrt(ret);
-}
 
-/** \brief Compute the distance between two points in the
-    data set
-*/
-double dist(size_t j, size_t k) const {
-  double ret=0.0;
-  size_t nscales=scales.size();
-  for(size_t i=0;i<nd_in;i++) {
-    ret+=pow((data(i,j)-data(i,k))/scales[i%nscales],2.0);
+  /** \brief Compute the distance between two points in the
+      data set
+  */
+  double dist(size_t j, size_t k) const {
+    double ret=0.0;
+    size_t nscales=scales.size();
+    for(size_t i=0;i<nd_in;i++) {
+      ret+=pow((data(i,j)-data(i,k))/scales[i%nscales],2.0);
+    }
+    return sqrt(ret);
   }
-  return sqrt(ret);
-}
-//@}
+  //@}
     
 #endif
     
-};
+  };
     
 #ifndef DOXYGEN_NO_O2NS
 }

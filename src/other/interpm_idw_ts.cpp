@@ -71,7 +71,7 @@ int main(void) {
   // Specify the data in the interpolation objects
   interp2_neigh<ubvector> i2n;
   interp2_planar<ubvector> i2p;
-  interpm_idw<ubvector> imi;
+  interpm_idw<matrix_view_table<> > imi;
 
   imi.set_data(2,1,8,mv3);
   i2n.set_data(8,x,y,dp);
