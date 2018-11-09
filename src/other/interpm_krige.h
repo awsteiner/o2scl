@@ -44,6 +44,7 @@
 #include <o2scl/columnify.h>
 #include <o2scl/cholesky.h>
 #include <o2scl/min_brent_gsl.h>
+#include <o2scl/cblas.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -67,7 +68,11 @@ namespace o2scl {
       \note Experimental.
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
-    class mat_t=boost::numeric::ublas::vector<double> >
+    class mat_t=boost::numeric::ublas::vector<double>,
+    class mat_col_t=boost::numeric::ublas::matrix_column
+    <boost::numeric::ublas::vector<double> >,
+    class mat_row_t=boost::numeric::ublas::matrix_row
+    <boost::numeric::ublas::vector<double> > >
     class interpm_krige {    
     
   public:
@@ -113,7 +118,7 @@ namespace o2scl {
       \ref o2scl::interpm_idw::set_data() . See this
       class description for more details.
   */
-  template<class mat_row_t, class func_vec_t>
+  template<class func_vec_t>
   int set_data_noise(size_t n_in, size_t n_out, size_t n_points,
 		     mat_t &user_x, mat_t &user_y,
 		     func_vec_t &fcovar,
@@ -231,7 +236,11 @@ namespace o2scl {
 	
 	// Inverse covariance matrix times function vector
 	Kinvf[iout].resize(n_points);
-	boost::numeric::ublas::axpy_prod(inv_KXX,yiout,Kinvf[iout],true);
+	o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+			   o2scl_cblas::o2cblas_NoTrans,
+			   n_points,n_points,1.0,inv_KXX,
+			   yiout,0.0,Kinvf[iout]);
+	//boost::numeric::ublas::axpy_prod(inv_KXX,yiout,Kinvf[iout],true);
 	
       } else {
 	
@@ -250,7 +259,11 @@ namespace o2scl {
 	
 	// Inverse covariance matrix times function vector
 	Kinvf[iout].resize(n_points);
-	boost::numeric::ublas::axpy_prod(inv_KXX,yiout,Kinvf[iout],true);
+	o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+			   o2scl_cblas::o2cblas_NoTrans,
+			   n_points,n_points,1.0,inv_KXX,
+			   yiout,0.0,Kinvf[iout]);
+	//boost::numeric::ublas::axpy_prod(inv_KXX,yiout,Kinvf[iout],true);
 	
       }
       
@@ -274,7 +287,7 @@ namespace o2scl {
       \ref o2scl::interpm_idw::set_data() . See this
       class description for more details.
   */
-  template<class mat_row_t, class func_vec_t>
+  template<class func_vec_t>
   int set_data(size_t n_in, size_t n_out, size_t n_points,
 	       mat_t &user_x, mat_t &user_y,
 	       func_vec_t &fcovar,
@@ -283,7 +296,7 @@ namespace o2scl {
     vec_t noise_vec;
     noise_vec.resize(1);
     noise_vec[0]=0.0;
-    return set_data_noise<mat_row_t,func_vec_t>
+    return set_data_noise<func_vec_t>
     (n_in,n_out,n_points,user_x,user_y,fcovar,
      noise_vec,rescale,err_on_fail);
   }
@@ -291,7 +304,7 @@ namespace o2scl {
   /** \brief Given covariance function \c fcovar and input vector \c x
       store the result of the interpolation in \c y
   */
-  template<class vec2_t, class vec3_t, class mat_row_t, class vec_func_t>
+  template<class vec2_t, class vec3_t, class vec_func_t>
   void eval(const vec2_t &x0, vec3_t &y0, vec_func_t &fcovar) {
     
     if (data_set==false) {
@@ -367,8 +380,13 @@ namespace o2scl {
       \note This class is experimental.
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
-    class mat_t=boost::numeric::ublas::matrix<double> >
-    class interpm_krige_optim : public interpm_krige<vec_t,mat_t> {    
+    class mat_t=boost::numeric::ublas::vector<double>,
+    class mat_col_t=boost::numeric::ublas::matrix_column
+    <boost::numeric::ublas::vector<double> >,
+    class mat_row_t=boost::numeric::ublas::matrix_row
+    <boost::numeric::ublas::vector<double> > >
+    class interpm_krige_optim :
+    public interpm_krige<vec_t,mat_t,mat_col_t,mat_row_t> {    
 
   public:
 
@@ -406,7 +424,7 @@ namespace o2scl {
   
   /** \brief Function to optimize the covariance parameters
    */
-  template<class vec3_t, class mat_row_t> 
+  template<class vec3_t> 
   double qual_fun(double x, double noise_var, 
 		  const vec3_t &y, int &success) {
 
@@ -505,7 +523,6 @@ namespace o2scl {
   bool full_min;
 
   /// Initialize interpolation routine
-  template<class mat_row_t>
   void set_data_noise(size_t n_in, size_t n_out, size_t n_points,
 		      mat_t &user_x, mat_t &user_y, 
 		      const vec_t &noise_var, bool rescale=false,
@@ -849,9 +866,9 @@ namespace o2scl {
       \c iout, and an array specifying the closest points 
       \c index, this function produces a list of 
   */
-  template<class vec2_t>
+  template<class vec2_t, class vec_func_t>
   void find_lin_indep(const vec2_t &x, size_t iout,
-		      std::vector<covar_func_t> &fcovar,
+		      vec_func_t &fcovar,
 		      ubvector_size_t &index,
 		      ubvector_size_t &indep) const {
     
@@ -930,9 +947,9 @@ namespace o2scl {
       return the result of the interpolation for function with 
       index \c iout
   */
-  template<class vec2_t>
+  template<class vec2_t, class vec_func_t>
   double eval(const vec2_t &x, size_t iout,
-	      std::vector<covar_func_t> &fcovar) const {
+	      vec_func_t &fcovar) const {
       
     if (data_set==false) {
       O2SCL_ERR("Data not set in interpm_krige_nn::eval().",
@@ -1002,9 +1019,9 @@ namespace o2scl {
   /** \brief Compute a quality factor for interpolation
       using jackknife resampling
   */
-  template<class vec2_t>
+  template<class vec2_t, class func_vec_t>
   double eval_jackknife(const vec2_t &x, size_t iout,
-			std::vector<covar_func_t> &fcovar) const {
+			func_vec_t &fcovar) const {
     
     if (data_set==false) {
       O2SCL_ERR("Data not set in interpm_krige_nn::eval_jackknife().",
