@@ -124,6 +124,8 @@ namespace o2scl {
 		     func_vec_t &fcovar,
 		     const vec_t &noise_var, bool rescale=false,
 		     bool err_on_fail=true) {
+
+    std::cout << "Here." << std::endl;
     
     if (n_points<2) {
       O2SCL_ERR2("Must provide at least two points in ",
@@ -397,7 +399,12 @@ namespace o2scl {
   protected:
 
   /// Function objects for the covariance
-  std::vector<std::function<double(double,double)> > ff;
+  std::vector<std::function<double(const mat_row_t &, const mat_row_t &)> >
+  ff1;
+  
+  /// Function objects for the covariance
+  std::vector<std::function<double(const mat_row_t &, const vec_t &)> >
+  ff2;
   
   /// The covariance function length scale for each output function
   std::vector<double> len;
@@ -425,14 +432,14 @@ namespace o2scl {
   /** \brief Function to optimize the covariance parameters
    */
   template<class vec3_t> 
-  double qual_fun(double x, double noise_var, 
-		  const vec3_t &y, int &success) {
+  double qual_fun(double xlen, double noise_var, 
+		  vec3_t &y, int &success) {
 
     double ret=0.0;
     
     success=0;
 
-    size_t size=this->sz;
+    size_t size=this->x.size1();
 
     if (mode==mode_loo_cv) {
       
@@ -441,13 +448,13 @@ namespace o2scl {
       // Construct the KXX matrix
       ubmatrix KXX(size,size);
       for(size_t irow=0;irow<size;irow++) {
-	mat_row_t xrow(x,irow);
+	mat_row_t xrow(this->x,irow);
 	for(size_t icol=0;icol<size;icol++) {
-	  mat_row_t xcol(x,icol);
+	  mat_row_t xcol(this->x,icol);
 	  if (irow>icol) {
 	    KXX(irow,icol)=KXX(icol,irow);
 	  } else {
-	    KXX(irow,icol)=exp(-pow((xrow-xcol)/x,2.0)/2.0);
+	    KXX(irow,icol)=covar<mat_row_t,mat_row_t>(xrow,xcol,xlen);
 	    if (irow==icol) KXX(irow,icol)+=noise_var;
 	  }
 	}
@@ -472,7 +479,11 @@ namespace o2scl {
       
       // Inverse covariance matrix times function vector
       this->Kinvf.resize(size);
-      boost::numeric::ublas::axpy_prod(inv_KXX,y,this->Kinvf,true);
+      o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+			 o2scl_cblas::o2cblas_NoTrans,
+			 size,size,1.0,inv_KXX,
+			 y,0.0,this->Kinvf);
+      //boost::numeric::ublas::axpy_prod(inv_KXX,y,this->Kinvf,true);
 
       // Compute the log of the marginal likelihood, without
       // the constant term
@@ -523,11 +534,13 @@ namespace o2scl {
   bool full_min;
 
   /// Initialize interpolation routine
-  void set_data_noise(size_t n_in, size_t n_out, size_t n_points,
-		      mat_t &user_x, mat_t &user_y, 
-		      const vec_t &noise_var, bool rescale=false,
-		      bool err_on_fail=true) {
+  int set_data_noise(size_t n_in, size_t n_out, size_t n_points,
+		     mat_t &user_x, mat_t &user_y, 
+		     const vec_t &noise_var, bool rescale=false,
+		     bool err_on_fail=true) {
 
+    std::cout << "Here2." << std::endl;
+    
     if (n_points<2) {
       O2SCL_ERR2("Must provide at least two points in ",
 		 "interpm_krige_optim::set_data_noise()",exc_efailed);
@@ -564,10 +577,10 @@ namespace o2scl {
     this->min.resize(n_in);
     this->max.resize(n_in);
     for(size_t j=0;j<n_in;j++) {
-      this->min[j]=(this->x)[j][0];
-      this->max[j]=(this->x)[j][0];
+      this->min[j]=(this->x)(j,0);
+      this->max[j]=(this->x)(j,0);
       for(size_t i=1;i<n_points;i++) {
-	double val=(this->x)[j][i];
+	double val=(this->x)(j,i);
 	if (val>this->max[j]) this->max[j]=val;
 	if (val<this->min[j]) this->min[j]=val;
       }
@@ -576,7 +589,7 @@ namespace o2scl {
     if (rescale==true) {
       for(size_t j=0;j<n_in;j++) {
 	for(size_t i=1;i<n_points;i++) {
-	  (this->x)[j][i]=((this->x)[j][i]-this->min[j])/
+	  (this->x)(j,i)=((this->x)(j,i)-this->min[j])/
 	    (this->max[j]-this->min[j])*2.0-0.5;
 	}
       }
@@ -613,8 +626,9 @@ namespace o2scl {
 	
 	funct mf=std::bind
 	  (std::mem_fn<double(double,double,mat_row_t &,int &)>
-	   (&interpm_krige_optim<vec_t,mat_t>::qual_fun),this,
-	   std::placeholders::_1,noise_var[iout],yiout,std::ref(success));
+	   (&interpm_krige_optim<vec_t,mat_t,
+	    mat_col_t,mat_row_t>::qual_fun<mat_row_t>),
+	   this,std::placeholders::_1,noise_var[iout],yiout,std::ref(success));
 	
 	mp->min(len_opt,qual[iout],mf);
 	len[iout]=len_opt;
@@ -637,6 +651,9 @@ namespace o2scl {
       }
 	
       for(size_t iout=0;iout<n_out;iout++) {
+	
+	// Select the row of the data matrix
+	mat_row_t yiout(user_y,iout);
 	
 	double len_avg;
 	// Choose average distance for first guess
@@ -670,7 +687,7 @@ namespace o2scl {
 	  double xlen=len_min*pow(len_ratio,((double)j)/((double)nlen-1));
 	  
 	  int success=0;
-	  qual[iout]=qual_fun(xlen,noise_var,success);
+	  qual[iout]=qual_fun(xlen,noise_var[iout],yiout,success);
 	
 	  if (success==0 && (min_set==false || qual[iout]<min_qual)) {
 	    len_opt=xlen;
@@ -692,19 +709,48 @@ namespace o2scl {
 	// just use the parent class to interpolate
 	len[iout]=len_opt;
 	
-	ff[iout]=std::bind(std::mem_fn<double(double,double,double)>
-			   (&interpm_krige_optim<vec_t,mat_t>::covar),this,
-			   std::placeholders::_1,std::placeholders::_2,
-			   len[iout]);
+	ff1[iout]=std::bind(std::mem_fn<double(const mat_row_t &,
+					       const mat_row_t &,double)>
+			    (&interpm_krige_optim<vec_t,mat_t,
+			     mat_col_t,mat_row_t>::covar<mat_row_t,
+			     mat_row_t>),this,
+			    std::placeholders::_1,std::placeholders::_2,
+			    len[iout]);
+	ff2[iout]=std::bind(std::mem_fn<double(const mat_row_t &,
+					       const vec_t &,double)>
+			    (&interpm_krige_optim<vec_t,mat_t,
+			     mat_col_t,mat_row_t>::covar<mat_row_t,
+			     vec_t>),this,
+			    std::placeholders::_1,std::placeholders::_2,
+			    len[iout]);
       }
 
     
     }
-    
-    this->set_data_noise(n_in,n_out,n_points,user_x,user_y,ff,noise_var,
-			 rescale,err_on_fail);
+
+    exit(-1);
+    //interpm_krige<vec_t,mat_t,mat_col_t,mat_row_t>::set_data_noise
+    //(n_in,n_out,n_points,user_x,user_y,
+    //ff1,noise_var,rescale,err_on_fail);
       
-    return;
+    return 0;
+  }
+
+  /** \brief Initialize the data for the interpolation
+      
+      \note This function works differently than 
+      \ref o2scl::interpm_idw::set_data() . See this
+      class description for more details.
+  */
+  int set_data(size_t n_in, size_t n_out, size_t n_points,
+	       mat_t &user_x, mat_t &user_y,
+	       bool rescale=false,
+	       bool err_on_fail=true) {
+    vec_t noise_vec;
+    noise_vec.resize(1);
+    noise_vec[0]=0.0;
+    return set_data_noise(n_in,n_out,n_points,user_x,
+			  user_y,noise_vec,rescale,err_on_fail);
   }
   
   };

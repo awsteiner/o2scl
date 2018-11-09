@@ -103,7 +103,44 @@ int main(void) {
     point[1]=0.9901;
     ik.eval<ubvector,ubvector,f2_t>(point,out,fa2);
     cout << out[0] << " " << ft(point[0],point[1]) << endl;
+  }
 
+  {
+    // Construct the data
+    vector<ubvector> x;
+    ubvector tmp(2);
+    tmp[0]=1.04; tmp[1]=0.02;
+    x.push_back(tmp);
+    tmp[0]=0.03; tmp[1]=1.01; 
+    x.push_back(tmp);
+    tmp[0]=0.81; tmp[1]=0.23; 
+    x.push_back(tmp);
+    tmp[0]=0.03; tmp[1]=0.83; 
+    x.push_back(tmp);
+    tmp[0]=0.03; tmp[1]=0.99; 
+    x.push_back(tmp);
+    tmp[0]=0.82; tmp[1]=0.84; 
+    x.push_back(tmp);
+    tmp[0]=0.03; tmp[1]=0.24; 
+    x.push_back(tmp);
+    tmp[0]=0.03; tmp[1]=1.02; 
+    x.push_back(tmp);
+    mat_t x2(x);
+
+    vector<ubvector> y;
+    tmp.resize(8);
+    for(size_t i=0;i<8;i++) {
+      tmp[i]=ft(x[i][0],x[i][1]);
+    }
+    y.push_back(tmp);
+    mat_t y2(y);
+
+    interpm_krige_optim<ubvector,mat_t,matrix_column_gen<mat_t>,
+			matrix_row_gen<mat_t> > iko;
+    iko.verbose=2;
+
+    iko.set_data(2,1,8,x2,y2);
+    
   }
 
   /*
