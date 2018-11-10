@@ -2707,6 +2707,8 @@ namespace o2scl {
 		 o2scl::exc_einval);
     }
     if (col>=(*vvp)[row].size()) {
+      std::cout << row << " " << col << " "
+      << (*vvp)[row].size() << std::endl;
       O2SCL_ERR2("Column exceeds max in ",
 		 "matrix_view_vec_vec::operator().",
 		 o2scl::exc_einval);
