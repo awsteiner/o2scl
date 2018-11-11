@@ -27,6 +27,7 @@
 #include <o2scl/interp2_neigh.h>
 #include <o2scl/interp2_planar.h>
 #include <o2scl/rng_gsl.h>
+#include <o2scl/table.h>
 
 using namespace std;
 using namespace o2scl;
@@ -67,6 +68,23 @@ int main(void) {
   dat[1]=y;
   dat[2]=dp;
   matrix_view_vec_vec<ubvector> mv3(dat);
+
+  // Try a table representation
+  table<> tab;
+  tab.line_of_names("x y z");
+  tab.line_of_data(2,vector<double>({1.04,0.02}));
+  tab.line_of_data(2,vector<double>({0.03,1.01}));
+  tab.line_of_data(2,vector<double>({0.81,0.23}));
+  tab.line_of_data(2,vector<double>({0.03,0.83}));
+  tab.line_of_data(2,vector<double>({0.03,0.99}));
+  tab.line_of_data(2,vector<double>({0.82,0.84}));
+  tab.line_of_data(2,vector<double>({0.03,0.24}));
+  tab.line_of_data(2,vector<double>({0.03,1.02}));
+  for(size_t i=0;i<8;i++) {
+    tab.set("z",i,1.0-pow(x[i]-0.5,2.0)-pow(y[i]-0.5,2.0));
+  }
+  const_matrix_view_table<> cmvtx(tab,{"x","y"});
+  const_matrix_view_table<> cmvty(tab,{"z"});
   
   // Specify the data in the interpolation objects
   interp2_neigh<ubvector> i2n;

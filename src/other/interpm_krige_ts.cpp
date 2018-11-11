@@ -34,10 +34,15 @@ using namespace o2scl;
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 typedef o2scl::matrix_view_vec_vec<ubvector> mat_t;
+typedef o2scl::matrix_view_table<> mat2_t;
 typedef vector<function<double(const matrix_row_gen<mat_t> &,
 			       const matrix_row_gen<mat_t> &) > > f1_t;
 typedef vector<function<double(const matrix_row_gen<mat_t> &,
 			       const ubvector &) > > f2_t;
+typedef vector<function<double(const matrix_row_gen<mat2_t> &,
+			       const matrix_row_gen<mat2_t> &) > > f3_t;
+typedef vector<function<double(const matrix_row_gen<mat2_t> &,
+			       const ubvector &) > > f4_t;
 
 template<class vec_t, class vec2_t>
 double covar(const vec_t &x, const vec2_t &y, double len) {
@@ -156,6 +161,46 @@ int main(void) {
     point[0]=0.0301;
     point[1]=0.9901;
     ik.eval(point,out,fa2);
+    cout << out[0] << " " << ft(point[0],point[1]) << endl;
+  }
+
+  {
+    // Try a table representation
+    table<> tab;
+    tab.line_of_names("x y z");
+    tab.line_of_data(2,vector<double>({1.04,0.02}));
+    tab.line_of_data(2,vector<double>({0.03,1.01}));
+    tab.line_of_data(2,vector<double>({0.81,0.23}));
+    tab.line_of_data(2,vector<double>({0.03,0.83}));
+    tab.line_of_data(2,vector<double>({0.03,0.99}));
+    tab.line_of_data(2,vector<double>({0.82,0.84}));
+    tab.line_of_data(2,vector<double>({0.03,0.24}));
+    tab.line_of_data(2,vector<double>({0.03,1.02}));
+    for(size_t i=0;i<8;i++) {
+      tab.set("z",i,1.0-pow(tab.get("x",i)-0.5,2.0)-
+	      pow(tab.get("y",i)-0.5,2.0));
+    }
+    matrix_view_table<> cmvtx(tab,{"x","y"});
+    matrix_view_table<> cmvty(tab,{"z"});
+  
+    interpm_krige<ubvector,mat2_t,matrix_column_gen<mat2_t>,
+		  matrix_row_gen<mat2_t> > ik;
+    ik.verbose=2;
+    f3_t fa1={std::bind(&covar<matrix_row_gen<mat2_t>,matrix_row_gen<mat2_t> >,
+			std::placeholders::_1,std::placeholders::_2,1.118407)};
+    f4_t fa2={std::bind(&covar<matrix_row_gen<mat2_t>,ubvector>,
+			std::placeholders::_1,std::placeholders::_2,1.118407)};
+    ik.set_data<f3_t>(2,1,8,cmvtx,cmvty,fa1,true);
+  
+    ubvector point(2);
+    ubvector out(1);
+    point[0]=0.4;
+    point[1]=0.5;
+    //ik.eval(point,out,fa2);
+    cout << out[0] << " " << ft(point[0],point[1]) << endl;
+    point[0]=0.0301;
+    point[1]=0.9901;
+    //ik.eval(point,out,fa2);
     cout << out[0] << " " << ft(point[0],point[1]) << endl;
   }
 
