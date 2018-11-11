@@ -700,10 +700,6 @@ namespace o2scl {
       memory and refereces previously returned by this function will
       be incorrect.
 
-      Unlike set(), this function will not automatically result in
-      an increase in the size of the table if the user attempts to
-      set an element beyond the current column range.
-
       This function will throw an exception if \c icol is out
       of range unless <tt>O2SCL_NO_RANGE_CHECK</tt> is defined.
   */

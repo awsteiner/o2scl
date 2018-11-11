@@ -407,10 +407,10 @@ namespace o2scl {
   }
     
   /** \brief Perform the interpolation over all the functions,
-      storing the result in \c y
+      at point \c x, storing the result in \c y
   */
   template<class vec2_t, class vec3_t>
-  void eval(vec2_t &x, vec3_t &y) const {
+  void eval(const vec2_t &x, vec3_t &y) const {
       
     if (data_set==false) {
       O2SCL_ERR("Data not set in interpm_idw::eval().",
@@ -512,8 +512,6 @@ namespace o2scl {
 		  << std::endl;
       }
     }
-
-      
 
     return;
   }

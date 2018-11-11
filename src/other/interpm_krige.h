@@ -125,8 +125,6 @@ namespace o2scl {
 		     const vec_t &noise_var, bool rescale=false,
 		     bool err_on_fail=true) {
 
-    std::cout << "Here " << rescale << std::endl;
-    
     if (n_points<2) {
       O2SCL_ERR2("Must provide at least two points in ",
 		 "interpm_krige::set_data_noise()",exc_efailed);
@@ -148,8 +146,6 @@ namespace o2scl {
     nd_out=n_out;
     
     if (user_x.size1()!=n_points || user_x.size2()!=n_in) {
-      std::cout << user_x.size1() << " " << user_x.size2() << std::endl;
-      std::cout << n_points << " " << n_in << std::endl;
       O2SCL_ERR2("Size of x not correct in ",
 		 "interpm_krige::set_data_noise().",o2scl::exc_efailed);
     }
@@ -324,21 +320,16 @@ namespace o2scl {
       // result
       vec2_t x0p(nd_in);
       for(size_t iin=0;iin<nd_in;iin++) {
-	std::cout << "Hx: " << iin << std::endl;
 	x0p[iin]=((x0[iin]-min[iin])/(max[iin]-min[iin])-0.5)*2.0;
       }
 
       // Evaluate the interpolated result
       for(size_t iout=0;iout<nd_out;iout++) {
-	std::cout << "Hy: " << iout << std::endl;
 	size_t icovar=iout % fcovar.size();
 	y0[iout]=0.0;
 	for(size_t ipoints=0;ipoints<np;ipoints++) {
-	  std::cout << "Hz: " << ipoints << std::endl;
 	  mat_row_t xrow(x,ipoints);
-	  std::cout << "Ha: " << ipoints << std::endl;
 	  y0[iout]+=fcovar[icovar](xrow,x0p)*Kinvf[iout][ipoints];
-	  std::cout << "Hb: " << ipoints << std::endl;
 	}
       }
 
@@ -431,10 +422,10 @@ namespace o2scl {
       ret+=pow(x1[i]-x2[i],2.0);
     }
     ret=exp(-ret/len/len/2.0);
-    if (len>0.5 && len<1.0) {
-      std::cout << len << " " << x1[0] << " " << x2[0] << " "
-		<< x1[1] << " " << x2[1] << " " << ret << std::endl;
-    }
+    //if (len>0.5 && len<1.0) {
+    //std::cout << len << " " << x1[0] << " " << x2[0] << " "
+    //<< x1[1] << " " << x2[1] << " " << ret << std::endl;
+    //}
     return ret;
   }
 
@@ -553,8 +544,6 @@ namespace o2scl {
 		     const vec_t &noise_var, bool rescale=false,
 		     bool err_on_fail=true) {
 
-    std::cout << "Here2." << std::endl;
-    
     if (n_points<2) {
       O2SCL_ERR2("Must provide at least two points in ",
 		 "interpm_krige_optim::set_data_noise()",exc_efailed);
@@ -735,7 +724,7 @@ namespace o2scl {
 			     mat_col_t,mat_row_t>::covar<mat_row_t,
 			     mat_row_t>),this,
 			    std::placeholders::_1,std::placeholders::_2,
-			    n_points,len[iout]);
+			    n_in,len[iout]);
 	ff2[iout]=std::bind(std::mem_fn<double(const mat_row_t &,
 					       const vec_t &,
 					       size_t,double)>
@@ -743,7 +732,7 @@ namespace o2scl {
 			     mat_col_t,mat_row_t>::covar<mat_row_t,
 			     vec_t>),this,
 			    std::placeholders::_1,std::placeholders::_2,
-			    n_points,len[iout]);
+			    n_in,len[iout]);
       }
       
     

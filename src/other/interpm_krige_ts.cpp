@@ -42,8 +42,8 @@ typedef vector<function<double(const matrix_row_gen<mat_t> &,
 template<class vec_t, class vec2_t>
 double covar(const vec_t &x, const vec2_t &y, double len) {
   double ret=exp(-(pow(x[0]-y[0],2.0)+pow(x[1]-y[1],2.0))/len/len/2.0);
-  cout << len << " " << x[0] << " " << y[0] << " "
-       << x[1] << " " << y[1] << " " << ret << endl;
+  //cout << len << " " << x[0] << " " << y[0] << " "
+  //<< x[1] << " " << y[1] << " " << ret << endl;
   return ret;
 }
 
@@ -96,7 +96,6 @@ int main(void) {
 			std::placeholders::_1,std::placeholders::_2,0.70)};
     ik.set_data<f1_t>(2,1,8,x2,y2,fa1);
   
-    cout << "Interpolate at a point and compare the three methods:" << endl;
     ubvector point(2);
     ubvector out(1);
     point[0]=0.4;
@@ -143,12 +142,11 @@ int main(void) {
 		  matrix_row_gen<mat_t> > ik;
     ik.verbose=2;
     f1_t fa1={std::bind(&covar<matrix_row_gen<mat_t>,matrix_row_gen<mat_t> >,
-			std::placeholders::_1,std::placeholders::_2,0.70)};
+			std::placeholders::_1,std::placeholders::_2,1.118407)};
     f2_t fa2={std::bind(&covar<matrix_row_gen<mat_t>,ubvector>,
-			std::placeholders::_1,std::placeholders::_2,0.70)};
+			std::placeholders::_1,std::placeholders::_2,1.118407)};
     ik.set_data<f1_t>(2,1,8,x2,y2,fa1,true);
   
-    cout << "Interpolate at a point and compare the three methods:" << endl;
     ubvector point(2);
     ubvector out(1);
     point[0]=0.4;
@@ -197,7 +195,6 @@ int main(void) {
     
     iko.set_data(2,1,8,x2,y2,true);
     
-    cout << "Interpolate at a point and compare the three methods:" << endl;
     ubvector point(2);
     ubvector out(1);
     point[0]=0.4;

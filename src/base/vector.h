@@ -2510,8 +2510,10 @@ namespace o2scl {
 
   protected:
 
+    /// A reference to the original matrix
     mat_t &m_;
 
+    /// The selected row
     size_t row_;
 
   public:
@@ -2545,8 +2547,10 @@ namespace o2scl {
 
   protected:
 
+    /// A reference to the original matrix
     const mat_t &m_;
 
+    /// The selected row
     size_t row_;
 
   public:
@@ -2612,6 +2616,9 @@ namespace o2scl {
 
       \note This stores a pointer to the table and the user must ensure
       that the pointer is valid with the matrix view is accessed.
+
+      \future It would be nice to store a reference rather than a
+      pointer, but this causes problems with \ref o2scl::interpm_idw .
   */
   template<class vec1_t, class vec2_t=std::vector<vec1_t> > 
     class matrix_view_vec_vec : public matrix_view {
@@ -2631,25 +2638,15 @@ namespace o2scl {
     std::swap(t1.vvp,t2.vvp);
     return;
   }
-  
-  /** \brief Create a matrix view object from the specified 
-      table and list of rows
-  */
+
   matrix_view_vec_vec() {
     vvp=0;
   }
-
+  
   /** \brief Create a matrix view object from the specified 
       table and list of rows
   */
   matrix_view_vec_vec(vec2_t &vv) {
-    vvp=&vv;
-  }
-  
-  /** \brief Create a matrix view object from the specified 
-      table and list of columns
-  */
-  void set(vec2_t &vv) {
     vvp=&vv;
   }
   
@@ -2677,7 +2674,6 @@ namespace o2scl {
 		 "matrix_view_vec_vec::operator().",
 		 o2scl::exc_einval);
     }
-    
     if (row>=vvp->size()) {
       O2SCL_ERR2("Row exceeds max in ",
 		 "matrix_view_vec_vec::operator().",
@@ -2695,12 +2691,11 @@ namespace o2scl {
       and column \c col
   */
   double &operator()(size_t row, size_t col) {
-    if (vvp==0) {
+      if (vvp==0) {
       O2SCL_ERR2("Object empty in ",
-		 "matrix_view_vec_vec::operator().",
-		 o2scl::exc_einval);
+                "matrix_view_vec_vec::operator().",
+                o2scl::exc_einval);
     }
-    
     if (row>=vvp->size()) {
       O2SCL_ERR2("Row exceeds max in ",
 		 "matrix_view_vec_vec::operator().",
@@ -2754,18 +2749,31 @@ namespace o2scl {
       \endcode
   */
   template<class mat_t> class matrix_column_gen {
+    
   protected:
+
+    /// A reference to the original matrix
     mat_t &m_;
+
+    /// The selected column
     size_t column_;
+    
   public:
+    
+    /// Create a column object from column \c column of matrix \c m 
   matrix_column_gen(mat_t &m, size_t column) : m_(m), column_(column) {
     }
+    
+    /// Return a reference to the ith row of the selected column
     double &operator[](size_t i) {
       return m_(i,column_);
     }
+    
+    /// Return a const reference to the ith row of the selected column
     const double &operator[](size_t i) const {
       return m_(i,column_);
     }
+    
   };
 
   /** \brief Generic object which represents a column of a const matrix
@@ -2780,16 +2788,27 @@ namespace o2scl {
       the \ref o2scl::prob_dens_mdim_gaussian constructors.
   */
   template<class mat_t> class const_matrix_column_gen {
+
   protected:
+    
+    /// A reference to the original matrix
     const mat_t &m_;
+    
+    /// The selected column
     size_t column_;
+    
   public:
+    
+    /// Create a column object from column \c column of matrix \c m 
   const_matrix_column_gen(const mat_t &m, size_t column) :
     m_(m), column_(column) {
     }
+    
+    /// Return a const reference to the ith row of the selected column
     const double &operator[](size_t i) const {
       return m_(i,column_);
     }
+    
   };
   
   /** \brief Output the first \c n elements of a vector to a stream,
