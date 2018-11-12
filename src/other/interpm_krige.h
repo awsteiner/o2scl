@@ -69,8 +69,6 @@ namespace o2scl {
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
     class mat_t=boost::numeric::ublas::vector<double>,
-    class mat_col_t=boost::numeric::ublas::matrix_column
-    <boost::numeric::ublas::vector<double> >,
     class mat_row_t=boost::numeric::ublas::matrix_row
     <boost::numeric::ublas::vector<double> > >
     class interpm_krige {    
@@ -118,9 +116,9 @@ namespace o2scl {
       \ref o2scl::interpm_idw::set_data() . See this
       class description for more details.
   */
-  template<class func_vec_t>
+  template<class mat2_row_t, class mat2_t, class func_vec_t>
   int set_data_noise(size_t n_in, size_t n_out, size_t n_points,
-		     mat_t &user_x, mat_t &user_y,
+		     mat_t &user_x, mat2_t &user_y,
 		     func_vec_t &fcovar,
 		     const vec_t &noise_var, bool rescale=false,
 		     bool err_on_fail=true) {
@@ -199,7 +197,7 @@ namespace o2scl {
       size_t inoise=iout & noise_var.size();
 
       // Select the row of the data matrix
-      mat_row_t yiout(user_y,iout);
+      mat2_row_t yiout(user_y,iout);
 
       // Construct the KXX matrix
       ubmatrix KXX(n_points,n_points);
@@ -290,15 +288,15 @@ namespace o2scl {
       \ref o2scl::interpm_idw::set_data() . See this
       class description for more details.
   */
-  template<class func_vec_t>
+  template<class mat2_row_t, class mat2_t, class func_vec_t>
   int set_data(size_t n_in, size_t n_out, size_t n_points,
-	       mat_t &user_x, mat_t &user_y,
+	       mat_t &user_x, mat2_t &user_y,
 	       func_vec_t &fcovar, bool rescale=false,
 	       bool err_on_fail=true) {
     vec_t noise_vec;
     noise_vec.resize(1);
     noise_vec[0]=0.0;
-    return set_data_noise<func_vec_t>
+    return set_data_noise<mat2_row_t,mat2_t,func_vec_t>
     (n_in,n_out,n_points,user_x,user_y,fcovar,
      noise_vec,rescale,err_on_fail);
   }
@@ -385,12 +383,10 @@ namespace o2scl {
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
     class mat_t=boost::numeric::ublas::vector<double>,
-    class mat_col_t=boost::numeric::ublas::matrix_column
-    <boost::numeric::ublas::vector<double> >,
     class mat_row_t=boost::numeric::ublas::matrix_row
     <boost::numeric::ublas::vector<double> > >
     class interpm_krige_optim :
-    public interpm_krige<vec_t,mat_t,mat_col_t,mat_row_t> {    
+    public interpm_krige<vec_t,mat_t,mat_row_t> {    
 
   public:
 
@@ -539,8 +535,9 @@ namespace o2scl {
   bool full_min;
 
   /// Initialize interpolation routine
+  template<class mat2_row_t, class mat2_t>
   int set_data_noise(size_t n_in, size_t n_out, size_t n_points,
-		     mat_t &user_x, mat_t &user_y, 
+		     mat_t &user_x, mat2_t &user_y, 
 		     const vec_t &noise_var, bool rescale=false,
 		     bool err_on_fail=true) {
 
@@ -621,7 +618,7 @@ namespace o2scl {
       for(size_t iout=0;iout<n_out;iout++) {
 	
 	// Select the row of the data matrix
-	mat_row_t yiout(user_y,iout);
+	mat2_row_t yiout(user_y,iout);
 	
 	double len_opt;
 	// Choose average distance for first guess
@@ -634,7 +631,7 @@ namespace o2scl {
 	funct mf=std::bind
 	  (std::mem_fn<double(double,double,size_t,mat_row_t &,int &)>
 	   (&interpm_krige_optim<vec_t,mat_t,
-	    mat_col_t,mat_row_t>::qual_fun<mat_row_t>),
+	    mat_row_t>::qual_fun<mat_row_t>),
 	   this,std::placeholders::_1,noise_var[iout],iout,yiout,
 	   std::ref(success));
 	
@@ -661,7 +658,7 @@ namespace o2scl {
       for(size_t iout=0;iout<n_out;iout++) {
 	
 	// Select the row of the data matrix
-	mat_row_t yiout(user_y,iout);
+	mat2_row_t yiout(user_y,iout);
 	
 	double len_avg;
 	// Choose average distance for first guess
@@ -721,7 +718,7 @@ namespace o2scl {
 					       const mat_row_t &,
 					       size_t,double)>
 			    (&interpm_krige_optim<vec_t,mat_t,
-			     mat_col_t,mat_row_t>::covar<mat_row_t,
+			     mat_row_t>::covar<mat_row_t,
 			     mat_row_t>),this,
 			    std::placeholders::_1,std::placeholders::_2,
 			    n_in,len[iout]);
@@ -729,7 +726,7 @@ namespace o2scl {
 					       const vec_t &,
 					       size_t,double)>
 			    (&interpm_krige_optim<vec_t,mat_t,
-			     mat_col_t,mat_row_t>::covar<mat_row_t,
+			     mat_row_t>::covar<mat_row_t,
 			     vec_t>),this,
 			    std::placeholders::_1,std::placeholders::_2,
 			    n_in,len[iout]);
@@ -748,14 +745,15 @@ namespace o2scl {
       \ref o2scl::interpm_idw::set_data() . See this
       class description for more details.
   */
+  template<class mat2_row_t, class mat2_t>
   int set_data(size_t n_in, size_t n_out, size_t n_points,
-	       mat_t &user_x, mat_t &user_y,
+	       mat_t &user_x, mat2_t &user_y,
 	       bool rescale=false,
 	       bool err_on_fail=true) {
     vec_t noise_vec;
     noise_vec.resize(1);
     noise_vec[0]=0.0;
-    return set_data_noise(n_in,n_out,n_points,user_x,
+    return set_data_noise<mat2_row_t,mat2_t>(n_in,n_out,n_points,user_x,
 			  user_y,noise_vec,rescale,err_on_fail);
   }
   
@@ -792,7 +790,7 @@ namespace o2scl {
 
   /** \brief Initialize the data for the interpolation
    */
-  template<class vec_func_t>
+  template<class mat2_t, class vec_func_t>
   void set_data(size_t n_in, size_t n_out, size_t n_points,
 		mat_t &user_x, mat_t &user_y,
 		vec_func_t &fcovar, size_t order) {

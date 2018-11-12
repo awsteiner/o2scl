@@ -35,14 +35,12 @@ typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 typedef o2scl::matrix_view_vec_vec<ubvector> mat_t;
 typedef o2scl::matrix_view_table<> mat2_t;
-typedef vector<function<double(const matrix_row_gen<mat_t> &,
-			       const matrix_row_gen<mat_t> &) > > f1_t;
-typedef vector<function<double(const matrix_row_gen<mat_t> &,
-			       const ubvector &) > > f2_t;
-typedef vector<function<double(const matrix_row_gen<mat2_t> &,
-			       const matrix_row_gen<mat2_t> &) > > f3_t;
-typedef vector<function<double(const matrix_row_gen<mat2_t> &,
-			       const ubvector &) > > f4_t;
+typedef const matrix_row_gen<mat_t> row_t;
+typedef const matrix_row_gen<mat2_t> row2_t;
+typedef vector<function<double(row_t &, row_t &) > > f1_t;
+typedef vector<function<double(row_t &, const ubvector &) > > f2_t;
+typedef vector<function<double(row2_t &, row2_t &) > > f3_t;
+typedef vector<function<double(row2_t &, const ubvector &) > > f4_t;
 
 template<class vec_t, class vec2_t>
 double covar(const vec_t &x, const vec2_t &y, double len) {
@@ -63,6 +61,7 @@ int main(void) {
   cout.setf(ios::scientific);
 
   {
+    cout << "interpm_krige, unscaled" << endl;
     // Construct the data
     vector<ubvector> x;
     ubvector tmp(2);
@@ -92,14 +91,13 @@ int main(void) {
     y.push_back(tmp);
     mat_t y2(y);
 
-    interpm_krige<ubvector,mat_t,matrix_column_gen<mat_t>,
-		  matrix_row_gen<mat_t> > ik;
+    interpm_krige<ubvector,mat_t,matrix_row_gen<mat_t> > ik;
     ik.verbose=2;
     f1_t fa1={std::bind(&covar<matrix_row_gen<mat_t>,matrix_row_gen<mat_t> >,
 			std::placeholders::_1,std::placeholders::_2,0.70)};
     f2_t fa2={std::bind(&covar<matrix_row_gen<mat_t>,ubvector>,
 			std::placeholders::_1,std::placeholders::_2,0.70)};
-    ik.set_data<f1_t>(2,1,8,x2,y2,fa1);
+    ik.set_data<matrix_row_gen<mat_t> >(2,1,8,x2,y2,fa1);
   
     ubvector point(2);
     ubvector out(1);
@@ -111,9 +109,11 @@ int main(void) {
     point[1]=0.9901;
     ik.eval(point,out,fa2);
     cout << out[0] << " " << ft(point[0],point[1]) << endl;
+    cout << endl;
   }
 
   {
+    cout << "interpm_krige, rescaled" << endl;
     // Construct the data
     vector<ubvector> x;
     ubvector tmp(2);
@@ -143,14 +143,13 @@ int main(void) {
     y.push_back(tmp);
     mat_t y2(y);
 
-    interpm_krige<ubvector,mat_t,matrix_column_gen<mat_t>,
-		  matrix_row_gen<mat_t> > ik;
+    interpm_krige<ubvector,mat_t,matrix_row_gen<mat_t> > ik;
     ik.verbose=2;
     f1_t fa1={std::bind(&covar<matrix_row_gen<mat_t>,matrix_row_gen<mat_t> >,
 			std::placeholders::_1,std::placeholders::_2,1.118407)};
     f2_t fa2={std::bind(&covar<matrix_row_gen<mat_t>,ubvector>,
 			std::placeholders::_1,std::placeholders::_2,1.118407)};
-    ik.set_data<f1_t>(2,1,8,x2,y2,fa1,true);
+    ik.set_data<matrix_row_gen<mat_t> >(2,1,8,x2,y2,fa1,true);
   
     ubvector point(2);
     ubvector out(1);
@@ -162,9 +161,11 @@ int main(void) {
     point[1]=0.9901;
     ik.eval(point,out,fa2);
     cout << out[0] << " " << ft(point[0],point[1]) << endl;
+    cout << endl;
   }
 
   {
+    cout << "interpm_krige, rescaled, with data in a table" << endl;
     // Try a table representation
     table<> tab;
     tab.line_of_names("x y z");
@@ -181,16 +182,16 @@ int main(void) {
 	      pow(tab.get("y",i)-0.5,2.0));
     }
     matrix_view_table<> cmvtx(tab,{"x","y"});
-    matrix_view_table<> cmvty(tab,{"z"});
+    matrix_view_table_transpose<> cmvty(tab,{"z"});
   
-    interpm_krige<ubvector,mat2_t,matrix_column_gen<mat2_t>,
-		  matrix_row_gen<mat2_t> > ik;
+    interpm_krige<ubvector,mat2_t,matrix_row_gen<mat2_t> > ik;
     ik.verbose=2;
     f3_t fa1={std::bind(&covar<matrix_row_gen<mat2_t>,matrix_row_gen<mat2_t> >,
 			std::placeholders::_1,std::placeholders::_2,1.118407)};
     f4_t fa2={std::bind(&covar<matrix_row_gen<mat2_t>,ubvector>,
 			std::placeholders::_1,std::placeholders::_2,1.118407)};
-    ik.set_data<f3_t>(2,1,8,cmvtx,cmvty,fa1,true);
+    ik.set_data<matrix_row_gen<matrix_view_table_transpose<> > >
+      (2,1,8,cmvtx,cmvty,fa1,true);
   
     ubvector point(2);
     ubvector out(1);
@@ -202,9 +203,11 @@ int main(void) {
     point[1]=0.9901;
     //ik.eval(point,out,fa2);
     cout << out[0] << " " << ft(point[0],point[1]) << endl;
+    cout << endl;
   }
 
   {
+    cout << "interpm_krige_optim, rescaled" << endl;
     // Construct the data
     vector<ubvector> x;
     ubvector tmp(2);
@@ -234,11 +237,11 @@ int main(void) {
     y.push_back(tmp);
     mat_t y2(y);
 
-    interpm_krige_optim<ubvector,mat_t,matrix_column_gen<mat_t>,
+    interpm_krige_optim<ubvector,mat_t,
 			matrix_row_gen<mat_t> > iko;
     iko.verbose=2;
     
-    iko.set_data(2,1,8,x2,y2,true);
+    iko.set_data<matrix_row_gen<mat_t> >(2,1,8,x2,y2,true);
     
     ubvector point(2);
     ubvector out(1);
@@ -283,7 +286,7 @@ int main(void) {
     y.push_back(tmp);
     mat_t y2(y);
 
-    interpm_krige_nn<ubvector,mat_t,matrix_column_gen<mat_t>,
+    interpm_krige_nn<ubvector,mat_t,
 		     matrix_row_gen<mat_t> > ik;
     vector<function<double(const ubvector &,const ubvector &)> > fa={covar};
     ik.set_data(2,1,8,x2,y2,fa,4);

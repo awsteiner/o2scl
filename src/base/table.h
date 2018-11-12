@@ -50,6 +50,9 @@ namespace o2scl {
   // Forward definition of matrix_view_table to extend
   // friendship
   template<class vec_t> class matrix_view_table;
+  // Forward definition of matrix_view_table_transpose to extend
+  // friendship
+  template<class vec_t> class matrix_view_table_transpose;
 }
 
 // Forward definition of HDF5 I/O to extend friendship in table
@@ -2841,9 +2844,10 @@ namespace o2scl {
   (o2scl_hdf::hdf_file &hf, table<vecf_t> &t);
   
   // --------------------------------------------------------
-  // Allow matrix_view_table access
+  // Allow matrix_view_table and matrix_view_table_transpose access
   
   template<typename vecf_t> friend class matrix_view_table;
+  template<typename vecf_t> friend class matrix_view_table_transpose;
 
   // --------------------------------------------------------
   
@@ -2855,7 +2859,7 @@ namespace o2scl {
       \f$ {\cal O}(\log(C)) \f$
   */
   vec_t &get_column_no_const(std::string scol) {
-    aciter it=atree.find(scol);
+    aiter it=atree.find(scol);
     if (it==atree.end()) {
       O2SCL_ERR((((std::string)"Column '")+scol+
 		 "' not found in table::get_column() const.").c_str(),
@@ -3201,6 +3205,22 @@ namespace o2scl {
     return (*cp)[row];
   }
 
+  /** \brief Return a reference to the element at row \c row
+      and column \c col
+  */
+  double &operator()(size_t row, size_t col) {
+    if (row>=nlines) {
+      O2SCL_ERR("Row exceeds max in matrix_view_table::operator().",
+		o2scl::exc_einval);
+    }
+    if (col>=nc) {
+      O2SCL_ERR("Column exceeds max in matrix_view_table::operator().",
+		o2scl::exc_einval);
+    }
+    vec_t *cp=col_ptrs[col];
+    return (*cp)[row];
+  }
+
   /** \brief Swap method
    */
   friend void swap(matrix_view_table &t1,
@@ -3290,6 +3310,24 @@ namespace o2scl {
 		 o2scl::exc_einval);
     }
     const vec_t *cp=col_ptrs[row];
+    return (*cp)[col];
+  }
+
+  /** \brief Return a reference to the element at row \c row
+      and column \c col
+  */
+  double &operator()(size_t row, size_t col) {
+    if (row>=nr) {
+      O2SCL_ERR2("Row exceeds max in ",
+		 "matrix_view_table_transpose::operator().",
+		 o2scl::exc_einval);
+    }
+    if (col>=nlines) {
+      O2SCL_ERR2("Column exceeds max in ",
+		 "matrix_view_table_transpose::operator().",
+		 o2scl::exc_einval);
+    }
+    vec_t *cp=col_ptrs[row];
     return (*cp)[col];
   }
 
