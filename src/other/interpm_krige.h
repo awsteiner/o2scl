@@ -263,7 +263,6 @@ namespace o2scl {
 			   o2scl_cblas::o2cblas_NoTrans,
 			   n_points,n_points,1.0,inv_KXX,
 			   yiout,0.0,Kinvf[iout]);
-	//boost::numeric::ublas::axpy_prod(inv_KXX,yiout,Kinvf[iout],true);
 	
       }
       
@@ -327,7 +326,8 @@ namespace o2scl {
 	y0[iout]=0.0;
 	for(size_t ipoints=0;ipoints<np;ipoints++) {
 	  mat_row_t xrow(x,ipoints);
-	  y0[iout]+=fcovar[icovar](xrow,x0p)*Kinvf[iout][ipoints];
+	  double covar_val=fcovar[icovar](xrow,x0p);
+	  y0[iout]+=covar_val*Kinvf[iout][ipoints];
 	}
       }
 
@@ -483,7 +483,6 @@ namespace o2scl {
 			 o2scl_cblas::o2cblas_NoTrans,
 			 size,size,1.0,inv_KXX,
 			 y,0.0,this->Kinvf[iout]);
-      //boost::numeric::ublas::axpy_prod(inv_KXX,y,this->Kinvf,true);
 
       // Compute the log of the marginal likelihood, without
       // the constant term
@@ -629,9 +628,9 @@ namespace o2scl {
 	}
 	
 	funct mf=std::bind
-	  (std::mem_fn<double(double,double,size_t,mat_row_t &,int &)>
+	  (std::mem_fn<double(double,double,size_t,mat2_row_t &,int &)>
 	   (&interpm_krige_optim<vec_t,mat_t,
-	    mat_row_t>::qual_fun<mat_row_t>),
+	    mat_row_t>::qual_fun<mat2_row_t>),
 	   this,std::placeholders::_1,noise_var[iout],iout,yiout,
 	   std::ref(success));
 	

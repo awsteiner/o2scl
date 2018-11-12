@@ -178,8 +178,7 @@ int main(void) {
     tab.line_of_data(2,vector<double>({0.03,0.24}));
     tab.line_of_data(2,vector<double>({0.03,1.02}));
     for(size_t i=0;i<8;i++) {
-      tab.set("z",i,1.0-pow(tab.get("x",i)-0.5,2.0)-
-	      pow(tab.get("y",i)-0.5,2.0));
+      tab.set("z",i,ft(tab.get("x",i),tab.get("y",i)));
     }
     matrix_view_table<> cmvtx(tab,{"x","y"});
     matrix_view_table_transpose<> cmvty(tab,{"z"});
@@ -197,11 +196,11 @@ int main(void) {
     ubvector out(1);
     point[0]=0.4;
     point[1]=0.5;
-    //ik.eval(point,out,fa2);
+    ik.eval(point,out,fa2);
     cout << out[0] << " " << ft(point[0],point[1]) << endl;
     point[0]=0.0301;
     point[1]=0.9901;
-    //ik.eval(point,out,fa2);
+    ik.eval(point,out,fa2);
     cout << out[0] << " " << ft(point[0],point[1]) << endl;
     cout << endl;
   }
@@ -242,6 +241,45 @@ int main(void) {
     iko.verbose=2;
     
     iko.set_data<matrix_row_gen<mat_t> >(2,1,8,x2,y2,true);
+    
+    ubvector point(2);
+    ubvector out(1);
+    point[0]=0.4;
+    point[1]=0.5;
+    iko.eval(point,out,iko.ff2);
+    cout << out[0] << " " << ft(point[0],point[1]) << endl;
+    point[0]=0.0301;
+    point[1]=0.9901;
+    iko.eval(point,out,iko.ff2);
+    cout << out[0] << " " << ft(point[0],point[1]) << endl;
+    cout << endl;
+  }
+
+  {
+    cout << "interpm_krige_optim, rescaled, with data in a table" << endl;
+    // Try a table representation
+    table<> tab;
+    tab.line_of_names("x y z");
+    tab.line_of_data(2,vector<double>({1.04,0.02}));
+    tab.line_of_data(2,vector<double>({0.03,1.01}));
+    tab.line_of_data(2,vector<double>({0.81,0.23}));
+    tab.line_of_data(2,vector<double>({0.03,0.83}));
+    tab.line_of_data(2,vector<double>({0.03,0.99}));
+    tab.line_of_data(2,vector<double>({0.82,0.84}));
+    tab.line_of_data(2,vector<double>({0.03,0.24}));
+    tab.line_of_data(2,vector<double>({0.03,1.02}));
+    for(size_t i=0;i<8;i++) {
+      tab.set("z",i,ft(tab.get("x",i),tab.get("y",i)));
+    }
+    matrix_view_table<> cmvtx(tab,{"x","y"});
+    matrix_view_table_transpose<> cmvty(tab,{"z"});
+  
+    interpm_krige_optim<ubvector,mat2_t,
+			matrix_row_gen<mat2_t> > iko;
+    iko.verbose=2;
+    
+    iko.set_data<matrix_row_gen<matrix_view_table_transpose<> > >
+      (2,1,8,cmvtx,cmvty,true);
     
     ubvector point(2);
     ubvector out(1);

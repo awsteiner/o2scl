@@ -3309,8 +3309,8 @@ namespace o2scl {
 		 "matrix_view_table_transpose::operator().",
 		 o2scl::exc_einval);
     }
-    const vec_t *cp=col_ptrs[row];
-    return (*cp)[col];
+    const vec_t *rp=col_ptrs[row];
+    return (*rp)[col];
   }
 
   /** \brief Return a reference to the element at row \c row
@@ -3327,8 +3327,8 @@ namespace o2scl {
 		 "matrix_view_table_transpose::operator().",
 		 o2scl::exc_einval);
     }
-    vec_t *cp=col_ptrs[row];
-    return (*cp)[col];
+    vec_t *rp=col_ptrs[row];
+    return (*rp)[col];
   }
 
   /** \brief Swap method
