@@ -83,17 +83,18 @@ int main(void) {
   for(size_t i=0;i<8;i++) {
     tab.set("z",i,1.0-pow(x[i]-0.5,2.0)-pow(y[i]-0.5,2.0));
   }
-  const_matrix_view_table<> cmvtx(tab,{"x","y"});
-  const_matrix_view_table<> cmvty(tab,{"z"});
+  const_matrix_view_table_transpose<> cmvt(tab,{"x","y","z"});
   
   // Specify the data in the interpolation objects
   interp2_neigh<ubvector> i2n;
   interp2_planar<ubvector> i2p;
   interpm_idw<matrix_view_vec_vec<ubvector> > imi;
+  interpm_idw<const_matrix_view_table_transpose<> > imi2;
 
   imi.set_data(2,1,8,mv3);
   i2n.set_data(8,x,y,dp);
   i2p.set_data(8,x,y,dp);
+  imi2.set_data(2,1,8,cmvt);
 
   // Temporary storage
   double val, err;
@@ -108,6 +109,7 @@ int main(void) {
   cout << i2p.eval(0.4,0.5) << endl;
   t.test_rel(imi.eval(point),i2n.eval(0.4,0.5),8.0e-2,"imi vs. i2n 1");
   t.test_rel(imi.eval(point),i2p.eval(0.4,0.5),4.0e-2,"imi vs. i2p 1");
+  t.test_rel(imi2.eval(point),i2p.eval(0.4,0.5),4.0e-2,"imi2 vs. i2p 1");
   cout << endl;
 
   cout << "Interpolate at another point and compare the three methods:"
