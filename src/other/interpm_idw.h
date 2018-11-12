@@ -127,8 +127,13 @@ namespace o2scl {
     verbose=0;
     n_extra=0;
     min_dist=1.0e-6;
+    dist_expo=2.0;
   }
 
+  /** \brief Exponent in computing distance (default 2.0)
+   */
+  double dist_expo;
+  
   /** \brief Verbosity parameter (default 0)
    */
   int verbose;
@@ -841,7 +846,7 @@ namespace o2scl {
     double ret=0.0;
     size_t nscales=scales.size();
     for(size_t i=0;i<nd_in;i++) {
-      ret+=pow((x[i]-data(i,index))/scales[i%nscales],2.0);
+      ret+=pow((x[i]-data(i,index))/scales[i%nscales],dist_expo);
     }
     return sqrt(ret);
   }
@@ -853,7 +858,7 @@ namespace o2scl {
     double ret=0.0;
     size_t nscales=scales.size();
     for(size_t i=0;i<nd_in;i++) {
-      ret+=pow((data(i,j)-data(i,k))/scales[i%nscales],2.0);
+      ret+=pow((data(i,j)-data(i,k))/scales[i%nscales],dist_expo);
     }
     return sqrt(ret);
   }
