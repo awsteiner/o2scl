@@ -1146,21 +1146,23 @@ namespace o2scl {
 	      double r=rg[it].random();
 	    
 	      if (pd_mode) {
+		/*
 		if (mcmc_iters%100==0) {
-		  std::cout.setf(std::ios::showpos);
-		  std::cout.precision(4);
-		  double v1=prop_dist[it]->log_pdf(next[it],current[it]);
-		  double v2=prop_dist[it]->log_pdf(current[it],next[it]);
-		  std::cout << "PD: " << w_current[it] << " "
-			    << w_next[it] << " "
-			    << v1 << " " << v2 << " " << q_prop[it] << " "
-			    << w_next[it]-w_current[sindex]+q_prop[it]
-			    << std::endl;
-		  //std::cout << current[it][0] << " " << next[it][0]
-		  //<< std::endl;
-		  std::cout.precision(6);
-		  std::cout.unsetf(std::ios::showpos);
+		std::cout.setf(std::ios::showpos);
+		std::cout.precision(4);
+		double v1=prop_dist[it]->log_pdf(next[it],current[it]);
+		double v2=prop_dist[it]->log_pdf(current[it],next[it]);
+		std::cout << "PD: " << w_current[it] << " "
+		<< w_next[it] << " "
+		<< v1 << " " << v2 << " " << q_prop[it] << " "
+		<< w_next[it]-w_current[sindex]+q_prop[it]
+		<< std::endl;
+		//std::cout << current[it][0] << " " << next[it][0]
+		//<< std::endl;
+		std::cout.precision(6);
+		std::cout.unsetf(std::ios::showpos);
 		}
+		*/
 		if (r<exp(w_next[it]-w_current[sindex]+q_prop[it])) {
 		  accept=true;
 		}
