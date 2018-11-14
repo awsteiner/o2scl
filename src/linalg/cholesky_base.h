@@ -161,6 +161,36 @@ namespace o2scl_linalg {
     return 0;
   }
 
+  /** \brief Compute the determinant of a matrix from its Cholesky decomposition
+      
+  */
+  template<class mat_t> 
+    double cholesky_det(const size_t M, const mat_t &A) {
+
+    double det=1.0;
+  
+    for (size_t i=0;i<M;i++) {
+      det*=O2SCL_IX2(A,i,i);
+    }
+  
+    return det;
+  }
+
+  /** \brief Compute the logarithm of the absolute value of the
+      determinant of a matrix from its Cholesky decomposition
+  */
+  template<class mat_t> 
+    double cholesky_lndet(const size_t M, const mat_t &A) {
+  
+    double lndet = 0.0;
+  
+    for (size_t i = 0; i < M; i++) {
+      lndet+=log(fabs(O2SCL_IX2(A,i,i)));
+    }
+  
+    return lndet;
+  }
+
   /** \brief Solve a symmetric positive-definite linear system after a 
       Cholesky decomposition
 

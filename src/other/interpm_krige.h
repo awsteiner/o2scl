@@ -454,6 +454,9 @@ namespace o2scl {
 	mat_row_t xrow(this->x,irow);
 	for(size_t icol=0;icol<size;icol++) {
 	  mat_row_t xcol(this->x,icol);
+	  //std::cout << xlen << std::endl;
+	  //o2scl::vector_out(std::cout,this->nd_in,xrow,true);
+	  //o2scl::vector_out(std::cout,this->nd_in,xcol,true);
 	  if (irow>icol) {
 	    KXX(irow,icol)=KXX(icol,irow);
 	  } else {
@@ -461,40 +464,88 @@ namespace o2scl {
 						      this->nd_in,xlen);
 	    if (irow==icol) KXX(irow,icol)+=noise_var;
 	  }
+	  //std::cout << KXX(irow,icol) << std::endl;
+	  //char ch;
+	  //std::cin >> ch;
 	}
       }
-
+      std::cout << xlen << " " << KXX(0,0) << " " << KXX(0,1)
+		<< " " << KXX(0,2) << " " << KXX(0,3) << std::endl;
+      
       // Note: We have to use LU here because O2scl doesn't yet
       // have a lndet() function for Cholesky decomp
-      
-      // Construct the inverse of KXX
-      ubmatrix inv_KXX(size,size);
-      o2scl::permutation p(size);
-      int signum;
-      if (verbose>2) {
-	std::cout << "Performing LU decomposition with size "
-		  << size << std::endl;
+
+      double lndet;
+      if (false && this->matrix_mode==this->matrix_cholesky) {
+	
+	// Construct the inverse of KXX
+	if (verbose>2) {
+	  std::cout << "Performing Cholesky decomposition with size "
+		    << size << std::endl;
+	}
+	int cret=o2scl_linalg::cholesky_decomp(size,KXX,false);
+	std::cout << KXX(0,0) << " " << KXX(0,1)
+		  << " " << KXX(0,2) << " " << KXX(0,3) << std::endl;
+	if (cret!=0) {
+	  success=1;
+	  return 1.0e99;
+	}
+	if (verbose>2) {
+	  std::cout << "Performing matrix inversion with size "
+		    << size << std::endl;
+	}
+	o2scl_linalg::cholesky_invert<ubmatrix>(size,KXX);
+	
+	lndet=o2scl_linalg::cholesky_lndet<ubmatrix>(size,KXX);
+	std::cout << "lndet0: " << lndet << std::endl;
+	
+	// Inverse covariance matrix times function vector
+	this->Kinvf[iout].resize(size);
+	o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+			   o2scl_cblas::o2cblas_NoTrans,
+			   size,size,1.0,KXX,
+			   y,0.0,this->Kinvf[iout]);
+	
+      } else {
+	
+	// Construct the inverse of KXX
+	ubmatrix inv_KXX(size,size);
+	o2scl::permutation p(size);
+	int signum;
+	if (verbose>2) {
+	  std::cout << "Performing LU decomposition with size "
+		    << size << std::endl;
+	}
+	o2scl_linalg::LU_decomp(size,KXX,p,signum);
+	for(size_t j=0;j<size;j+=size/100) {
+	  std::cout << j << " " << KXX(j,j) << std::endl;
+	}
+	if (o2scl_linalg::diagonal_has_zero(size,KXX)) {
+	  success=1;
+	  return 1.0e99;
+	}
+	if (verbose>2) {
+	  std::cout << "Performing matrix inversion with size "
+		    << size << std::endl;
+	}
+	o2scl_linalg::LU_invert<ubmatrix,ubmatrix,ubmatrix_column>
+	  (size,KXX,p,inv_KXX);
+
+	lndet=o2scl_linalg::LU_lndet<ubmatrix>(size,KXX);
+	for(size_t j=0;j<size;j+=size/100) {
+	  std::cout << j << " " << KXX(j,j) << std::endl;
+	}
+	std::cout << "lndet1: " << KXX(0,0) << " " << KXX(1,1) << " "
+		  << KXX(2,2) << " " << lndet << std::endl;
+	
+	// Inverse covariance matrix times function vector
+	this->Kinvf[iout].resize(size);
+	o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+			   o2scl_cblas::o2cblas_NoTrans,
+			   size,size,1.0,inv_KXX,
+			   y,0.0,this->Kinvf[iout]);
+	
       }
-      o2scl_linalg::LU_decomp(size,KXX,p,signum);
-      if (o2scl_linalg::diagonal_has_zero(size,KXX)) {
-	success=1;
-	return 1.0e99;
-      }
-      if (verbose>2) {
-	std::cout << "Performing matrix inversion with size "
-		  << size << std::endl;
-      }
-      o2scl_linalg::LU_invert<ubmatrix,ubmatrix,ubmatrix_column>
-	(size,KXX,p,inv_KXX);
-      
-      double lndet=o2scl_linalg::LU_lndet<ubmatrix>(size,KXX);
-      
-      // Inverse covariance matrix times function vector
-      this->Kinvf[iout].resize(size);
-      o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
-			 o2scl_cblas::o2cblas_NoTrans,
-			 size,size,1.0,inv_KXX,
-			 y,0.0,this->Kinvf[iout]);
 
       // Compute the log of the marginal likelihood, without
       // the constant term
@@ -679,8 +730,8 @@ namespace o2scl {
 	  len_avg=2.0/((double)this->np);
 	}
 
-	double len_min=len_avg/100.0;
-	double len_max=len_avg*100.0;
+	double len_min=len_avg*10.0;
+	double len_max=len_avg*1000.0;
 	double len_ratio=len_max/len_min;
 	
 	if (verbose>1) {
@@ -701,7 +752,7 @@ namespace o2scl {
 	bool min_set=false;
 	for(size_t j=0;j<nlen;j++) {
 	  double xlen=len_min*pow(len_ratio,((double)j)/((double)nlen-1));
-	  
+
 	  int success=0;
 	  qual[iout]=qual_fun(xlen,noise_var[iout],iout,yiout,success);
 	

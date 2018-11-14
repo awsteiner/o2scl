@@ -1078,6 +1078,41 @@ namespace o2scl {
   }
   
   /** \brief Create a distribution from a set of samples from a 
+      multidimensional Gaussian, returning the peak values and
+      covariance matrix
+      
+      The matrix \c pts should have a size of \c n_pts in the first
+      index and \c p_mdim in the second index
+  */
+  template<class mat2_t, class vec2_t,
+  class mat2_col_t=const_matrix_column_gen<mat2_t> >
+  int set(size_t p_mdim, size_t n_pts, const mat2_t &pts,
+	  const vec2_t &vals, vec_t &peak_arg, mat_t &covar_arg) {
+    
+    // Set peak with average and diagonal elements in covariance
+    // matrix with variance
+    for(size_t i=0;i<p_mdim;i++) {
+      const mat2_col_t col(pts,i);
+      peak_arg[i]=o2scl::wvector_mean<mat2_col_t>(n_pts,col,vals);
+      // Square standard deviation
+      covar_arg(i,i)=o2scl::wvector_stddev<mat2_col_t>(n_pts,col,vals);
+      covar_arg(i,i)*=covar_arg(i,i);
+    }
+    // Setup off-diagonal covariance matrix
+    for(size_t i=0;i<p_mdim;i++) {
+      mat2_col_t col_i(pts,i);
+      for(size_t j=i+1;j<p_mdim;j++) {
+	const mat2_col_t col_j(pts,j);
+	double cov=o2scl::wvector_covariance(n_pts,col_i,col_j,vals);
+	covar_arg(i,j)=cov;
+	covar_arg(j,i)=cov;
+      }
+    }
+    set(p_mdim,peak_arg,covar_arg);
+    return 0;
+  }
+  
+  /** \brief Create a distribution from a set of samples from a 
       multidimensional Gaussian
       
       The matrix \c pts should have a size of \c n_pts in the first
@@ -1086,34 +1121,15 @@ namespace o2scl {
   template<class mat2_t, class vec2_t,
   class mat2_col_t=const_matrix_column_gen<mat2_t> >
   int set(size_t p_mdim, size_t n_pts, const mat2_t &pts,
-			  const vec2_t &vals) {
+	  const vec2_t &vals) {
     
-    vec_t peak2(p_mdim);
-    mat_t covar(p_mdim,p_mdim);
+    vec_t peak_arg(p_mdim);
+    mat_t covar_arg(p_mdim,p_mdim);
 
-    // Set peak with average and diagonal elements in covariance
-    // matrix with variance
-    for(size_t i=0;i<p_mdim;i++) {
-      const mat2_col_t col(pts,i);
-      peak2[i]=o2scl::wvector_mean<mat2_col_t>(n_pts,col,vals);
-      // Square standard deviation
-      covar(i,i)=o2scl::wvector_stddev<mat2_col_t>(n_pts,col,vals);
-      covar(i,i)*=covar(i,i);
-    }
-    // Setup off-diagonal covariance matrix
-    for(size_t i=0;i<p_mdim;i++) {
-      mat2_col_t col_i(pts,i);
-      for(size_t j=i+1;j<p_mdim;j++) {
-	const mat2_col_t col_j(pts,j);
-	double cov=o2scl::wvector_covariance(n_pts,col_i,col_j,vals);
-	covar(i,j)=cov;
-	covar(j,i)=cov;
-      }
-    }
-    set(p_mdim,peak2,covar);
+    set<mat2_t,vec2_t,mat2_col_t>(p_mdim,n_pts,pts,vals,peak_arg,covar_arg);
+
     return 0;
   }
-  
   /** \brief Create a distribution from the covariance matrix
    */
   prob_dens_mdim_gaussian(size_t p_ndim, vec_t &p_peak, mat_t &covar) {
