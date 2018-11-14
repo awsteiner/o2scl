@@ -3198,12 +3198,16 @@ namespace o2scl {
   */
   const double &operator()(size_t row, size_t col) const {
     if (row>=nlines) {
-      O2SCL_ERR("Row exceeds max in matrix_view_table::operator().",
-		o2scl::exc_einval);
+      std::string str=((std::string)"Row ")+o2scl::szttos(row)+
+      " >= "+o2scl::szttos(nlines)+" in matrix_view_table"+
+      "::operator().";
+      O2SCL_ERR(str.c_str(),o2scl::exc_einval);
     }
     if (col>=nc) {
-      O2SCL_ERR("Column exceeds max in matrix_view_table::operator().",
-		o2scl::exc_einval);
+      std::string str=((std::string)"Column ")+o2scl::szttos(col)+
+      " >= "+o2scl::szttos(nc)+" in matrix_view_table"+
+      "::operator().";
+      O2SCL_ERR(str.c_str(),o2scl::exc_einval);
     }
     const vec_t *cp=col_ptrs[col];
     return (*cp)[row];
@@ -3214,12 +3218,16 @@ namespace o2scl {
   */
   double &operator()(size_t row, size_t col) {
     if (row>=nlines) {
-      O2SCL_ERR("Row exceeds max in matrix_view_table::operator().",
-		o2scl::exc_einval);
+      std::string str=((std::string)"Row ")+o2scl::szttos(row)+
+      " >= "+o2scl::szttos(nlines)+" in matrix_view_table"+
+      "::operator().";
+      O2SCL_ERR(str.c_str(),o2scl::exc_einval);
     }
     if (col>=nc) {
-      O2SCL_ERR("Column exceeds max in matrix_view_table::operator().",
-		o2scl::exc_einval);
+      std::string str=((std::string)"Column ")+o2scl::szttos(col)+
+      " >= "+o2scl::szttos(nc)+" in matrix_view_table"+
+      "::operator().";
+      O2SCL_ERR(str.c_str(),o2scl::exc_einval);
     }
     vec_t *cp=col_ptrs[col];
     return (*cp)[row];
@@ -3304,14 +3312,16 @@ namespace o2scl {
   */
   const double &operator()(size_t row, size_t col) const {
     if (row>=nr) {
-      O2SCL_ERR2("Row exceeds max in ",
-		 "matrix_view_table_transpose::operator().",
-		 o2scl::exc_einval);
+      std::string str=((std::string)"Row ")+o2scl::szttos(row)+
+      " >= "+o2scl::szttos(nr)+" in matrix_view_table_transpose"+
+      "::operator().";
+      O2SCL_ERR(str.c_str(),o2scl::exc_einval);
     }
     if (col>=nlines) {
-      O2SCL_ERR2("Column exceeds max in ",
-		 "matrix_view_table_transpose::operator().",
-		 o2scl::exc_einval);
+      std::string str=((std::string)"Column ")+o2scl::szttos(col)+
+      " >= "+o2scl::szttos(nlines)+" in matrix_view_table_transpose"+
+      "::operator().";
+      O2SCL_ERR(str.c_str(),o2scl::exc_einval);
     }
     const vec_t *rp=col_ptrs[row];
     return (*rp)[col];
@@ -3322,14 +3332,16 @@ namespace o2scl {
   */
   double &operator()(size_t row, size_t col) {
     if (row>=nr) {
-      O2SCL_ERR2("Row exceeds max in ",
-		 "matrix_view_table_transpose::operator().",
-		 o2scl::exc_einval);
+      std::string str=((std::string)"Row ")+o2scl::szttos(row)+
+      " >= "+o2scl::szttos(nr)+" in matrix_view_table_transpose"+
+      "::operator().";
+      O2SCL_ERR(str.c_str(),o2scl::exc_einval);
     }
     if (col>=nlines) {
-      O2SCL_ERR2("Column exceeds max in ",
-		 "matrix_view_table_transpose::operator().",
-		 o2scl::exc_einval);
+      std::string str=((std::string)"Column ")+o2scl::szttos(col)+
+      " >= "+o2scl::szttos(nlines)+" in matrix_view_table_transpose"+
+      "::operator().";
+      O2SCL_ERR(str.c_str(),o2scl::exc_einval);
     }
     vec_t *rp=col_ptrs[row];
     return (*rp)[col];
@@ -3413,12 +3425,16 @@ namespace o2scl {
   */
   const double &operator()(size_t row, size_t col) const {
     if (row>=nlines) {
-      O2SCL_ERR("Row exceeds max in matrix_swap_table::operator().",
-		o2scl::exc_einval);
+      std::string str=((std::string)"Row ")+o2scl::szttos(row)+
+      " >= "+o2scl::szttos(nlines)+" in matrix_swap_table"+
+      "::operator().";
+      O2SCL_ERR(str.c_str(),o2scl::exc_einval);
     }
     if (col>=nc) {
-      O2SCL_ERR("Column exceeds max in matrix_swap_table::operator().",
-		o2scl::exc_einval);
+      std::string str=((std::string)"Column ")+o2scl::szttos(col)+
+      " >= "+o2scl::szttos(nc)+" in matrix_swap_table"+
+      "::operator().";
+      O2SCL_ERR(str.c_str(),o2scl::exc_einval);
     }
     return cols[col][row];
   }
@@ -3428,12 +3444,16 @@ namespace o2scl {
   */
   double &operator()(size_t row, size_t col) {
     if (row>=nlines) {
-      O2SCL_ERR("Row exceeds max in matrix_swap_table::operator().",
-		o2scl::exc_einval);
+      std::string str=((std::string)"Row ")+o2scl::szttos(row)+
+      " >= "+o2scl::szttos(nlines)+" in matrix_swap_table"+
+      "::operator().";
+      O2SCL_ERR(str.c_str(),o2scl::exc_einval);
     }
     if (col>=nc) {
-      O2SCL_ERR("Column exceeds max in matrix_swap_table::operator().",
-		o2scl::exc_einval);
+      std::string str=((std::string)"Column ")+o2scl::szttos(col)+
+      " >= "+o2scl::szttos(nc)+" in matrix_swap_table"+
+      "::operator().";
+      O2SCL_ERR(str.c_str(),o2scl::exc_einval);
     }
     return cols[col][row];
   }
@@ -3531,14 +3551,16 @@ namespace o2scl {
   */
   const double &operator()(size_t row, size_t col) const {
     if (col>=nlines) {
-      O2SCL_ERR2("Column exceeds number of table rows in ",
-		 "const_matrix_view_table_transpose::operator().",
-		 o2scl::exc_einval);
+      std::string str=((std::string)"Column ")+o2scl::szttos(col)+
+      " >= "+o2scl::szttos(nlines)+" in const_matrix_view_table_transpose"+
+      "::operator().";
+      O2SCL_ERR(str.c_str(),o2scl::exc_einval);
     }
     if (row>=nr) {
-      O2SCL_ERR2("Row exceeds max in ",
-		 "const_matrix_view_table_transpose::operator().",
-		 o2scl::exc_einval);
+      std::string str=((std::string)"Row ")+o2scl::szttos(row)+
+      " >= "+o2scl::szttos(nr)+" in const_matrix_view_table_transpose"+
+      "::operator().";
+      O2SCL_ERR(str.c_str(),o2scl::exc_einval);
     }
     const vec_t *rp=col_ptrs[row];
     return (*rp)[col];

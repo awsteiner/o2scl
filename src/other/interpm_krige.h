@@ -444,6 +444,10 @@ namespace o2scl {
       
     } else if (mode==mode_max_lml) {
 
+      if (verbose>2) {
+	std::cout << "Creating covariance matrix with size "
+		  << size << std::endl;
+      }
       // Construct the KXX matrix
       ubmatrix KXX(size,size);
       for(size_t irow=0;irow<size;irow++) {
@@ -467,10 +471,18 @@ namespace o2scl {
       ubmatrix inv_KXX(size,size);
       o2scl::permutation p(size);
       int signum;
+      if (verbose>2) {
+	std::cout << "Performing LU decomposition with size "
+		  << size << std::endl;
+      }
       o2scl_linalg::LU_decomp(size,KXX,p,signum);
       if (o2scl_linalg::diagonal_has_zero(size,KXX)) {
 	success=1;
 	return 1.0e99;
+      }
+      if (verbose>2) {
+	std::cout << "Performing matrix inversion with size "
+		  << size << std::endl;
       }
       o2scl_linalg::LU_invert<ubmatrix,ubmatrix,ubmatrix_column>
 	(size,KXX,p,inv_KXX);
