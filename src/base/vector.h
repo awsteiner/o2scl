@@ -2533,6 +2533,48 @@ namespace o2scl {
     }
   };
 
+  /** \brief Desc
+
+      \note This class is experimental.
+  */
+  template<class mat_t> class matrix_view_transpose {
+
+  protected:
+
+    /// A reference to the original matrix
+    mat_t &m_;
+
+  public:
+
+    /// Create a row object from row \c row of matrix \c m 
+  matrix_view_transpose(mat_t &m) : m_(m) {
+    }
+    
+    /// Return a reference to the ith column of the selected row
+    double &operator()(size_t i, size_t j) {
+      return m_(j,i);
+    }
+    
+    /// Return a const reference to the ith column of the selected row
+    const double &operator()(size_t i, size_t j) const {
+      return m_(j,i);
+    }
+
+    /** \brief Return the number of rows
+     */
+    size_t size1() const {
+      return m_.size2();
+    }
+    
+    /** \brief Return the number of columns
+     */
+    size_t size2() const {
+      return m_.size1();
+    }
+  
+    
+  };
+
   /** \brief Generic object which represents a row of a const matrix
 
       \note This class is experimental.

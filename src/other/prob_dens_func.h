@@ -1079,10 +1079,13 @@ namespace o2scl {
   
   /** \brief Create a distribution from a set of samples from a 
       multidimensional Gaussian
+      
+      The matrix \c pts should have a size of \c n_pts in the first
+      index and \c p_mdim in the second index
   */
   template<class mat2_t, class vec2_t,
   class mat2_col_t=const_matrix_column_gen<mat2_t> >
-  prob_dens_mdim_gaussian(size_t p_mdim, size_t n_pts, const mat2_t &pts,
+  int set(size_t p_mdim, size_t n_pts, const mat2_t &pts,
 			  const vec2_t &vals) {
     
     vec_t peak2(p_mdim);
@@ -1108,6 +1111,7 @@ namespace o2scl {
       }
     }
     set(p_mdim,peak2,covar);
+    return 0;
   }
   
   /** \brief Create a distribution from the covariance matrix

@@ -3104,12 +3104,16 @@ namespace o2scl {
   */
   const double &operator()(size_t row, size_t col) const {
     if (row>=nlines) {
-      O2SCL_ERR("Row exceeds max in const_matrix_view_table::operator().",
-		o2scl::exc_einval);
+      std::string str=((std::string)"Row ")+o2scl::szttos(row)+
+      " >= "+o2scl::szttos(nlines)+" in const_matrix_view_table"+
+      "::operator().";
+      O2SCL_ERR(str.c_str(),o2scl::exc_einval);
     }
     if (col>=nc) {
-      O2SCL_ERR("Column exceeds max in const_matrix_view_table::operator().",
-		o2scl::exc_einval);
+      std::string str=((std::string)"Column ")+o2scl::szttos(col)+
+      " >= "+o2scl::szttos(nc)+" in const_matrix_view_table"+
+      "::operator().";
+      O2SCL_ERR(str.c_str(),o2scl::exc_einval);
     }
     const vec_t *cp=col_ptrs[col];
     return (*cp)[row];

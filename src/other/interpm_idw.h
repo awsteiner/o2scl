@@ -185,10 +185,11 @@ namespace o2scl {
     
   /** \brief Initialize the data for the interpolation
 
-      The object \c vecs should be a vector (of size <tt>n_in+n_out</tt>)
-      of vectors (all of size <tt>n_points</tt>). It may have be
-      any time which allows the use of <tt>std::swap</tt> for
-      each vector in the list. 
+      The object \c vecs should be a matrix with a
+      first index of size <tt>n_in+n_out</tt> and a second 
+      index of size <tt>n_points</tt>. It may have be
+      any type which allows the use of <tt>operator(,)</tt>
+      and <tt>std::swap</tt>.
   */
   void set_data(size_t n_in, size_t n_out, size_t n_points,
 		mat_t &dat, bool auto_scale_flag=true) {
