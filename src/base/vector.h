@@ -2379,6 +2379,32 @@ namespace o2scl {
     return;
   }
 
+  /** \brief From a given vector, create a new vector by removing a
+      specified element
+
+      This funciton is used in \ref o2scl::interp_krige_optim::qual_fun() .
+  */
+  template<class vec_t, class vec2_t> 
+    void vector_copy_jackknife(size_t sz, const vec_t &src,
+			       size_t iout, vec2_t &dest) {
+			       
+    if (sz==0) {
+      O2SCL_ERR("Empty source vector.",o2scl::exc_einval);
+    }
+    if (iout>=sz) {
+      O2SCL_ERR("Requested element beyond end.",o2scl::exc_einval);
+    }
+    dest.resize(sz-1);
+    size_t j=0;
+    for(size_t i=0;i<sz;i++) {
+      if (i!=iout) {
+	dest[j]=src[i];
+	j++;
+      }
+    }
+    return;
+  }
+
   /** \brief "Rotate" a vector so that the kth element is now the beginning
 
       This is a generic template function which will work for
@@ -2570,6 +2596,108 @@ namespace o2scl {
      */
     size_t size2() const {
       return m_.size1();
+    }
+  
+    
+  };
+
+  /** \brief Desc
+
+      \note This class is experimental.
+  */
+  template<class mat_t> class matrix_view_omit_row {
+
+  protected:
+
+    /// A reference to the original matrix
+    mat_t &m_;
+
+    size_t ro;
+
+  public:
+
+    /// Create
+  matrix_view_omit_row(mat_t &m, size_t row_omit) : m_(m) {
+      ro=row_omit;
+    }
+    
+    /// Return a reference
+    double &operator()(size_t i, size_t j) {
+      if (i>=ro) {
+	return m_(i+1,j);
+      }
+      return m_(i,j);
+    }
+    
+    /// Return a const reference
+    const double &operator()(size_t i, size_t j) const {
+      if (i>=ro) {
+	return m_(i+1,j);
+      }
+      return m_(i,j);
+    }
+
+    /** \brief Return the number of rows
+     */
+    size_t size1() const {
+      return m_.size1()-1;
+    }
+    
+    /** \brief Return the number of columns
+     */
+    size_t size2() const {
+      return m_.size2();
+    }
+  
+    
+  };
+
+  /** \brief Desc
+
+      \note This class is experimental.
+  */
+  template<class mat_t> class matrix_view_omit_column {
+
+  protected:
+
+    /// A reference to the original matrix
+    mat_t &m_;
+
+    size_t co;
+
+  public:
+
+    /// Create
+  matrix_view_omit_column(mat_t &m, size_t column_omit) : m_(m) {
+      co=column_omit;
+    }
+    
+    /// Return a reference
+    double &operator()(size_t i, size_t j) {
+      if (j>=co) {
+	return m_(i,j+1);
+      }
+      return m_(i,j);
+    }
+    
+    /// Return a const reference
+    const double &operator()(size_t i, size_t j) const {
+      if (j>=co) {
+	return m_(i,j+1);
+      }
+      return m_(i,j);
+    }
+
+    /** \brief Return the number of rows
+     */
+    size_t size1() const {
+      return m_.size1();
+    }
+    
+    /** \brief Return the number of columns
+     */
+    size_t size2() const {
+      return m_.size2()-1;
     }
   
     

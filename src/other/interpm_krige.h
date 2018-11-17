@@ -410,6 +410,15 @@ namespace o2scl {
   /// The quality factor of the optimization for each output function
   std::vector<double> qual;
 
+  /// If true, min and max has been set for the length parameter
+  bool len_guess_set;
+
+  /// Minimum for length parameter range
+  double len_min;
+
+  /// Maximum for length parameter range
+  double len_max;
+  
   /// The covariance function
   template<class vec2_t, class vec3_t>
   double covar(const vec2_t &x1, const vec3_t &x2, size_t sz, double len) {
@@ -418,10 +427,6 @@ namespace o2scl {
       ret+=pow(x1[i]-x2[i],2.0);
     }
     ret=exp(-ret/len/len/2.0);
-    //if (len>0.5 && len<1.0) {
-    //std::cout << len << " " << x1[0] << " " << x2[0] << " "
-    //<< x1[1] << " " << x2[1] << " " << ret << std::endl;
-    //}
     return ret;
   }
 
@@ -441,6 +446,111 @@ namespace o2scl {
     size_t size=this->x.size1();
 
     if (mode==mode_loo_cv) {
+
+      for(size_t ell=0;ell<loo_npts;ell++) {
+
+	// Create the new data objects, x_jk and y_jk
+	size_t row=ell*size/loo_npts;
+	matrix_view_omit_row<mat_t> x_jk(this->x,row);
+	ubvector y_jk(size-1);
+	vector_copy_jackknife(size,y,row,y_jk);
+
+	// Now perform the matrix analysis with those objects
+
+	// Construct the KXX matrix
+	ubmatrix KXX(size-1,size-1);
+	for(size_t irow=0;irow<size-1;irow++) {
+	  matrix_row_gen<matrix_view_omit_row<mat_t> > xrow(x_jk,irow);
+	  for(size_t icol=0;icol<size-1;icol++) {
+	    matrix_row_gen<matrix_view_omit_row<mat_t> > xcol(x_jk,icol);
+	    if (irow>icol) {
+	      KXX(irow,icol)=KXX(icol,irow);
+	    } else {
+	      KXX(irow,icol)=covar<
+		matrix_row_gen<matrix_view_omit_row<mat_t> >,
+		matrix_row_gen<matrix_view_omit_row<mat_t> > >
+		(xrow,xcol,this->nd_in,xlen);
+	      if (irow==icol) KXX(irow,icol)+=noise_var;
+	    }
+	  }
+	}
+	
+	if (this->matrix_mode==this->matrix_cholesky) {
+	  
+	  // Construct the inverse of KXX
+	  if (verbose>2) {
+	    std::cout << "Performing Cholesky decomposition with size "
+		      << size-1 << std::endl;
+	  }
+	  int cret=o2scl_linalg::cholesky_decomp(size-1,KXX,false);
+	  if (cret!=0) {
+	    success=1;
+	    return 1.0e99;
+	  }
+	  if (verbose>2) {
+	    std::cout << "Performing matrix inversion with size "
+		      << size-1 << std::endl;
+	  }
+
+	  o2scl_linalg::cholesky_invert<ubmatrix>(size-1,KXX);
+	  
+	  // Inverse covariance matrix times function vector
+	  this->Kinvf[iout].resize(size-1);
+	  o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+			     o2scl_cblas::o2cblas_NoTrans,
+			     size-1,size-1,1.0,KXX,
+			     y,0.0,this->Kinvf[iout]);
+
+	} else {
+	  
+	  // Construct the inverse of KXX
+	  ubmatrix inv_KXX(size-1,size-1);
+	  o2scl::permutation p(size-1);
+	  int signum;
+	  if (verbose>2) {
+	    std::cout << "Performing LU decomposition with size "
+		      << size-1 << std::endl;
+	  }
+	  o2scl_linalg::LU_decomp(size-1,KXX,p,signum);
+	  if (o2scl_linalg::diagonal_has_zero(size-1,KXX)) {
+	    success=1;
+	    return 1.0e99;
+	  }
+	  if (verbose>2) {
+	    std::cout << "Performing matrix inversion with size "
+		      << size-1 << std::endl;
+	  }
+	  o2scl_linalg::LU_invert<ubmatrix,ubmatrix,ubmatrix_column>
+	    (size-1,KXX,p,inv_KXX);
+	  
+	  // Inverse covariance matrix times function vector
+	  this->Kinvf[iout].resize(size-1);
+	  o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+			     o2scl_cblas::o2cblas_NoTrans,
+			     size-1,size-1,1.0,inv_KXX,
+			     y,0.0,this->Kinvf[iout]);
+	  
+	}
+
+	double ypred=0.0;
+        double yact=y[row];
+        for(size_t i=0;i<size-1;i++) {
+	  matrix_row_gen<matrix_view_omit_row<mat_t> > xrow(x_jk,i);
+	  mat_row_t xcol(this->x,row);
+          ypred+=covar<matrix_row_gen<matrix_view_omit_row<mat_t> >,
+	    mat_row_t>(xrow,xcol,this->nd_in,xlen)*
+	    this->Kinvf[iout][i];
+        }
+
+	std::cout << "act,pred: " << yact << " " << ypred << std::endl;
+        
+        // Measure the quality with a chi-squared like function
+        ret+=pow(yact-ypred,2.0);
+
+	
+	// Proceed to next point to omit
+      }
+      std::cout << "ret: " << ret << std::endl;
       
     } else if (mode==mode_max_lml) {
 
@@ -448,15 +558,13 @@ namespace o2scl {
 	std::cout << "Creating covariance matrix with size "
 		  << size << std::endl;
       }
+
       // Construct the KXX matrix
       ubmatrix KXX(size,size);
       for(size_t irow=0;irow<size;irow++) {
 	mat_row_t xrow(this->x,irow);
 	for(size_t icol=0;icol<size;icol++) {
 	  mat_row_t xcol(this->x,icol);
-	  //std::cout << xlen << std::endl;
-	  //o2scl::vector_out(std::cout,this->nd_in,xrow,true);
-	  //o2scl::vector_out(std::cout,this->nd_in,xcol,true);
 	  if (irow>icol) {
 	    KXX(irow,icol)=KXX(icol,irow);
 	  } else {
@@ -464,19 +572,14 @@ namespace o2scl {
 						      this->nd_in,xlen);
 	    if (irow==icol) KXX(irow,icol)+=noise_var;
 	  }
-	  //std::cout << KXX(irow,icol) << std::endl;
-	  //char ch;
-	  //std::cin >> ch;
 	}
       }
-      std::cout << xlen << " " << KXX(0,0) << " " << KXX(0,1)
-		<< " " << KXX(0,2) << " " << KXX(0,3) << std::endl;
       
       // Note: We have to use LU here because O2scl doesn't yet
       // have a lndet() function for Cholesky decomp
 
       double lndet;
-      if (false && this->matrix_mode==this->matrix_cholesky) {
+      if (this->matrix_mode==this->matrix_cholesky) {
 	
 	// Construct the inverse of KXX
 	if (verbose>2) {
@@ -484,8 +587,6 @@ namespace o2scl {
 		    << size << std::endl;
 	}
 	int cret=o2scl_linalg::cholesky_decomp(size,KXX,false);
-	std::cout << KXX(0,0) << " " << KXX(0,1)
-		  << " " << KXX(0,2) << " " << KXX(0,3) << std::endl;
 	if (cret!=0) {
 	  success=1;
 	  return 1.0e99;
@@ -497,7 +598,6 @@ namespace o2scl {
 	o2scl_linalg::cholesky_invert<ubmatrix>(size,KXX);
 	
 	lndet=o2scl_linalg::cholesky_lndet<ubmatrix>(size,KXX);
-	std::cout << "lndet0: " << lndet << std::endl;
 	
 	// Inverse covariance matrix times function vector
 	this->Kinvf[iout].resize(size);
@@ -517,9 +617,6 @@ namespace o2scl {
 		    << size << std::endl;
 	}
 	o2scl_linalg::LU_decomp(size,KXX,p,signum);
-	for(size_t j=0;j<size;j+=size/100) {
-	  std::cout << j << " " << KXX(j,j) << std::endl;
-	}
 	if (o2scl_linalg::diagonal_has_zero(size,KXX)) {
 	  success=1;
 	  return 1.0e99;
@@ -532,11 +629,6 @@ namespace o2scl {
 	  (size,KXX,p,inv_KXX);
 
 	lndet=o2scl_linalg::LU_lndet<ubmatrix>(size,KXX);
-	for(size_t j=0;j<size;j+=size/100) {
-	  std::cout << j << " " << KXX(j,j) << std::endl;
-	}
-	std::cout << "lndet1: " << KXX(0,0) << " " << KXX(1,1) << " "
-		  << KXX(2,2) << " " << lndet << std::endl;
 	
 	// Inverse covariance matrix times function vector
 	this->Kinvf[iout].resize(size);
@@ -566,8 +658,9 @@ namespace o2scl {
     full_min=false;
     mp=&def_min;
     verbose=0;
-    mode=mode_max_lml;
+    mode=mode_loo_cv;
     loo_npts=100;
+    len_guess_set=false;
   }
 
   /// \name Function to minimize and various option
@@ -595,13 +688,23 @@ namespace o2scl {
 
   /// If true, use the full minimizer
   bool full_min;
-
+  
+  /** \brief Set the range for the length parameter
+   */
+  void set_len_range(double min, double max) {
+    len_guess_set=true;
+    len_min=min;
+    len_max=max;
+    return;
+  }
+  
   /// Initialize interpolation routine
-  template<class mat2_row_t, class mat2_t>
+  template<class mat2_row_t, class mat2_t, class vec2_t,
+  class vec3_t>
   int set_data_noise(size_t n_in, size_t n_out, size_t n_points,
 		     mat_t &user_x, mat2_t &user_y, 
-		     const vec_t &noise_var, bool rescale=false,
-		     bool err_on_fail=true) {
+		     const vec2_t &noise_var, const vec3_t &len_precompute,
+		     bool rescale=false, bool err_on_fail=true) {
 
     if (n_points<2) {
       O2SCL_ERR2("Must provide at least two points in ",
@@ -669,15 +772,23 @@ namespace o2scl {
     ff1.resize(n_out);
     ff2.resize(n_out);
 
-    if (full_min) {
-     
-      if (verbose>1) {
-	std::cout << "interp_krige_optim: full minimization"
-		  << std::endl;
-      }
-     
-      // Loop over all output functions
-      for(size_t iout=0;iout<n_out;iout++) {
+    // Loop over all output functions
+    for(size_t iout=0;iout<n_out;iout++) {
+      
+      if (iout<len_precompute.size()) {
+	
+	if (verbose>1) {
+	  std::cout << "interp_krige_optim: precomputed length "
+		    << len_precompute[iout] << std::endl;
+	}
+	len[iout]=len_precompute[iout];
+	
+      } else if (full_min) {
+	
+	if (verbose>1) {
+	  std::cout << "interp_krige_optim: full minimization"
+		    << std::endl;
+	}
 	
 	// Select the row of the data matrix
 	mat2_row_t yiout(user_y,iout);
@@ -708,32 +819,30 @@ namespace o2scl {
 	  }
 	}
 	
-      }
-      
-    } else {
-      
-      if (verbose>1) {
-	std::cout << "interp_krige_optim::set_data_noise() : "
-		  << "simple minimization" << std::endl;
-      }
+      } else {
 	
-      for(size_t iout=0;iout<n_out;iout++) {
+	if (verbose>1) {
+	  std::cout << "interp_krige_optim::set_data_noise() : "
+		    << "simple minimization" << std::endl;
+	}
 	
 	// Select the row of the data matrix
 	mat2_row_t yiout(user_y,iout);
 	
-	double len_avg;
-	// Choose average distance for first guess
-	if (this->rescaled) {
-	  len_avg=(this->max[iout]-this->min[iout])/((double)this->np);
-	} else {
-	  len_avg=2.0/((double)this->np);
-	}
+	if (len_guess_set==false) {
+	  double len_avg;
+	  // Choose average distance for first guess
+	  if (this->rescaled) {
+	    len_avg=(this->max[iout]-this->min[iout])/((double)this->np);
+	  } else {
+	    len_avg=2.0/((double)this->np);
+	  }
 
-	double len_min=len_avg*10.0;
-	double len_max=len_avg*1000.0;
+	  len_min=len_avg/1.0e2;
+	  len_max=len_avg*1.0e2;
+	}
 	double len_ratio=len_max/len_min;
-	
+
 	if (verbose>1) {
 	  std::cout << "iout, len (min,max,step): " << iout
 		    << " " << len_min << " " << len_max << " "
@@ -772,31 +881,35 @@ namespace o2scl {
 	  
 	}
       
+	if (verbose>1) {
+	  std::cout << "interp_krige_optim: ";
+	  std::cout.width(2);
+	  std::cout << "   " << len_opt << " " << min_qual << std::endl;
+	}
 	qual[iout]=qual_fun(len_opt,noise_var[iout],iout,yiout,success);
-
+	
 	len[iout]=len_opt;
 	
-	ff1[iout]=std::bind(std::mem_fn<double(const mat_row_t &,
-					       const mat_row_t &,
-					       size_t,double)>
-			    (&interpm_krige_optim<vec_t,mat_t,
-			     mat_row_t>::covar<mat_row_t,
-			     mat_row_t>),this,
-			    std::placeholders::_1,std::placeholders::_2,
-			    n_in,len[iout]);
-	ff2[iout]=std::bind(std::mem_fn<double(const mat_row_t &,
-					       const vec_t &,
-					       size_t,double)>
-			    (&interpm_krige_optim<vec_t,mat_t,
-			     mat_row_t>::covar<mat_row_t,
-			     vec_t>),this,
-			    std::placeholders::_1,std::placeholders::_2,
-			    n_in,len[iout]);
+	
       }
       
-    
+      ff1[iout]=std::bind(std::mem_fn<double(const mat_row_t &,
+					     const mat_row_t &,
+					     size_t,double)>
+			  (&interpm_krige_optim<vec_t,mat_t,
+			   mat_row_t>::covar<mat_row_t,
+			   mat_row_t>),this,
+			  std::placeholders::_1,std::placeholders::_2,
+			  n_in,len[iout]);
+      ff2[iout]=std::bind(std::mem_fn<double(const mat_row_t &,
+					     const vec_t &,
+					     size_t,double)>
+			  (&interpm_krige_optim<vec_t,mat_t,
+			   mat_row_t>::covar<mat_row_t,
+			   vec_t>),this,
+			  std::placeholders::_1,std::placeholders::_2,
+			  n_in,len[iout]);
     }
-
     
     return 0;
   }
@@ -807,16 +920,17 @@ namespace o2scl {
       \ref o2scl::interpm_idw::set_data() . See this
       class description for more details.
   */
-  template<class mat2_row_t, class mat2_t>
+  template<class mat2_row_t, class mat2_t, class vec2_t>
   int set_data(size_t n_in, size_t n_out, size_t n_points,
 	       mat_t &user_x, mat2_t &user_y,
-	       bool rescale=false,
-	       bool err_on_fail=true) {
+	       const vec2_t &len_precompute,
+	       bool rescale=false, bool err_on_fail=true) {
     vec_t noise_vec;
     noise_vec.resize(1);
     noise_vec[0]=0.0;
-    return set_data_noise<mat2_row_t,mat2_t>(n_in,n_out,n_points,user_x,
-			  user_y,noise_vec,rescale,err_on_fail);
+    return set_data_noise<mat2_row_t,mat2_t,vec_t,vec2_t>
+    (n_in,n_out,n_points,user_x,
+     user_y,noise_vec,len_precompute,rescale,err_on_fail);
   }
   
   };
