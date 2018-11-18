@@ -310,6 +310,10 @@ namespace o2scl {
       O2SCL_ERR("Data not set in interpm_krige::eval().",
 		exc_einval);
     }
+    if (fcovar.size()==0) {
+      O2SCL_ERR("No covariance functions in interpm_krige::eval().",
+		exc_einval);
+    }
 
     if (rescaled) {
 
@@ -552,7 +556,7 @@ namespace o2scl {
       }
       std::cout << "ret: " << ret << std::endl;
       
-    } else if (mode==mode_max_lml) {
+    } else if (mode==mode_max_lml || mode==mode_final) {
 
       if (verbose>2) {
 	std::cout << "Creating covariance matrix with size "
@@ -639,12 +643,14 @@ namespace o2scl {
 	
       }
 
-      // Compute the log of the marginal likelihood, without
-      // the constant term
-      for(size_t i=0;i<size;i++) {
-	ret+=0.5*y[i]*this->Kinvf[iout][i];
+      if (mode==mode_max_lml) {
+	// Compute the log of the marginal likelihood, without
+	// the constant term
+	for(size_t i=0;i<size;i++) {
+	  ret+=0.5*y[i]*this->Kinvf[iout][i];
+	}
+	ret+=0.5*lndet;
       }
-      ret+=0.5*lndet;
 
     }
 
@@ -669,6 +675,8 @@ namespace o2scl {
   static const size_t mode_loo_cv=1;
   /// Minus Log-marginal-likelihood
   static const size_t mode_max_lml=2;
+  /// No optimization (for internal use)
+  static const size_t mode_final=10;
   /// Function to minimize (default \ref mode_loo_cv)
   size_t mode;
   /// Number of points to test for cross validation (default 100)
@@ -775,6 +783,9 @@ namespace o2scl {
     // Loop over all output functions
     for(size_t iout=0;iout<n_out;iout++) {
       
+      // Select the row of the data matrix
+      mat2_row_t yiout(user_y,iout);
+      
       if (iout<len_precompute.size()) {
 	
 	if (verbose>1) {
@@ -782,6 +793,10 @@ namespace o2scl {
 		    << len_precompute[iout] << std::endl;
 	}
 	len[iout]=len_precompute[iout];
+	size_t mode_temp=mode;
+	mode=mode_final;
+	qual[iout]=qual_fun(len[iout],noise_var[iout],iout,yiout,success);
+	mode=mode_temp;
 	
       } else if (full_min) {
 	
@@ -789,9 +804,6 @@ namespace o2scl {
 	  std::cout << "interp_krige_optim: full minimization"
 		    << std::endl;
 	}
-	
-	// Select the row of the data matrix
-	mat2_row_t yiout(user_y,iout);
 	
 	double len_opt;
 	// Choose average distance for first guess
@@ -825,9 +837,6 @@ namespace o2scl {
 	  std::cout << "interp_krige_optim::set_data_noise() : "
 		    << "simple minimization" << std::endl;
 	}
-	
-	// Select the row of the data matrix
-	mat2_row_t yiout(user_y,iout);
 	
 	if (len_guess_set==false) {
 	  double len_avg;
