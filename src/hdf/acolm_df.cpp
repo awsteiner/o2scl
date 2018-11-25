@@ -462,6 +462,21 @@ int acol_manager::comm_function(std::vector<std::string> &sv, bool itive_com) {
     }
     
     return 0;
+    
+  } else if (type=="hist") {
+    
+    std::string i1;
+    int ret=get_input_one(sv,"Function",
+			  i1,"function",itive_com);
+    if (ret!=0) return ret;
+
+    ret=hist_obj.function(i1);
+    if (ret!=0) {
+      cerr << "Function hist::function() failed." << endl;
+      return exc_efailed;
+    }
+    
+    return 0;
 
   } else if (type=="table") {
     

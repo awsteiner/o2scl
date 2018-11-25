@@ -60,6 +60,31 @@ hist::hist(const hist &h) {
 #endif
 }
 
+int hist::function(std::string func) {
+
+  // Parse function
+  calculator calc;
+  std::map<std::string,double> vars;
+  calc.compile(func.c_str(),&vars);
+  
+  // Create column from function
+  for(size_t j=0;j<hsize;j++) {
+    double lv=get_bin_low_i(j);
+    double hv=get_bin_high_i(j);
+    double wv=get_wgt_i(j);
+    double rv=get_rep_i(j);
+    vars["i"]=((double)j);
+    vars["n"]=((double)hsize);
+    vars["l"]=lv;
+    vars["h"]=lv;
+    vars["w"]=wv;
+    vars["r"]=rv;
+    uwgt[j]=calc.eval(&vars);
+  }
+
+  return 0;
+}
+
 hist &hist::operator=(const hist &h) {
 #if !O2SCL_NO_RANGE_CHECK
   is_valid();

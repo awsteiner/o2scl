@@ -427,6 +427,19 @@ namespace o2scl {
     const ubvector &get_bins() const {
       return ubin;
     }
+
+    /** \brief Apply a function
+
+	This function sets the weights equal to a function of
+	five variables:
+	- i: the bin index
+	- n: the total number of bins
+	- l: the lower edge of the bin
+	- h: the upper edge of the bin
+	- r: the bin representative value
+	- w: the original weight
+     */
+    int function(std::string func);
     //@}
 
     /// \name Max and min functions

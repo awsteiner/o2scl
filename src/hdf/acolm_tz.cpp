@@ -93,6 +93,15 @@ int acol_manager::comm_to_table(std::vector<std::string> &sv, bool itive_com) {
     command_add("table");
     type="table";
     
+  } else if (type=="hist") {
+    
+    table_obj.clear();
+    hist_obj.copy_to_table(table_obj,"rep","low","high","wgt");
+    command_del();
+    clear_obj();
+    command_add("table");
+    type="table";
+    
   } else if (type=="tensor_grid") {
     
     size_t rank=tensor_grid_obj.get_rank();

@@ -126,6 +126,10 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
     type_comm_list.insert(std::make_pair("hist_2d",itmp));
   }
   {
+    vector<std::string> itmp={"to-table","function"};
+    type_comm_list.insert(std::make_pair("hist",itmp));
+  }
+  {
     vector<std::string> itmp={"deriv","interp","max","min","sort",
 			      "autocorr","to-table","function","sum"};
     type_comm_list.insert(std::make_pair("double[]",itmp));
@@ -693,8 +697,21 @@ void acol_manager::command_add(std::string new_type) {
 
   } else if (new_type=="hist") {
 
+    static const size_t narr=2;
+    comm_option_s options_arr[narr]={
+      {0,"to-table","Convert to a table object.",0,0,"",
+       ((string)"Convert to a table object."),
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_to_table),
+       both},
+      {0,"function","Apply a function to the weights.",0,1,"",
+       ((string)"Apply a function to the weights."),
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_function),
+       both}
+    };
+    cl->set_comm_option_vec(narr,options_arr);
+    
   } else if (new_type=="double[]") {
-
+    
     static const size_t narr=9;
     comm_option_s options_arr[narr]={
       {0,"sort","Sort the vector.",0,0,"",
@@ -988,8 +1005,10 @@ void acol_manager::command_del() {
     */
   } else if (type=="hist") {
     
+    cl->remove_comm_option("to-table");
+    cl->remove_comm_option("function");
     /*
-      cl->remove_comm_option("assign");
+    cl->remove_comm_option("assign");
       cl->remove_comm_option("deriv");
       cl->remove_comm_option("deriv2");
       cl->remove_comm_option("find-row");
