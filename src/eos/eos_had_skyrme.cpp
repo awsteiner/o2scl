@@ -52,7 +52,7 @@ void eos_had_skyrme::eff_mass(fermion &ne, fermion &pr) {
 
 int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
 				      double ltemper, thermo &locth,
-				      thermo_np_deriv &locthd) {
+				      thermo_np_f_deriv &locthd) {
   
   double n, x, hamk, ham, ham1, ham2, ham3, ham4, ham5, ham6;
   double dhdnn, dhdnp, na, npa, nna, term, term2, common, gn, gp;
@@ -218,12 +218,19 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
   locth.en=ne.en+pr.en;
   locth.pr=ltemper*locth.en+ne.mu*ne.n+pr.mu*pr.n-locth.ed;
 
-  locthd.dsdT=ne.dsdT+pr.dsdT;
-  locthd.dnndT=ne.dndT;
-  locthd.dnpdT=pr.dndT;
-  locthd.dnndmun=ne.dndmu;
-  locthd.dnpdmup=pr.dndmu;
-  locthd.dndmu_mixed=0.0;
+  // For the kinetic part, convert from (mu,T) to (n,T)
+  double n_dsdT_f=0.0, p_dsdT_f=0.0;
+  double n_dmudT_f=0.0, p_dmudT_f=0.0;
+  double n_dmudn_f=0.0, p_dmudn_f=0.0;
+
+  // Now combine all the derivatives in the (n,T) representation
+  // for the final result
+  locthd.dsdT=n_dsdT_f+p_dsdT_f;
+  locthd.dmundT=n_dmudT_f;
+  locthd.dmupdT=p_dmudT_f;
+  locthd.dmundnn=n_dmudn_f;
+  locthd.dmupdnp=p_dmudn_f;
+  locthd.dmudn_mixed=n_dmudn_f+p_dmudn_f;
   
   return success;
 }

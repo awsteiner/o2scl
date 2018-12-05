@@ -41,7 +41,8 @@
 namespace o2scl {
 #endif
   
-  /** \brief Object to store second derivatives of \f$ P(\mu,T) \f$
+  /** \brief Object to store second derivatives of 
+      \f$ P(\mu_n,\mu_p,T) \f$
    */
   class thermo_np_deriv {
   public:
@@ -57,6 +58,25 @@ namespace o2scl {
     double dndmu_mixed;
     /// The quantity \f$ (\partial^2 P)/(\partial \mu_p^2) \f$
     double dnpdmup;
+  };
+  
+  /** \brief Object to store second derivatives of 
+      \f$ f(n_n,n_p,T) \f$
+  */
+  class thermo_np_f_deriv {
+  public:
+    /// The quantity \f$ (\partial^2 P)/(\partial T^2) \f$
+    double dsdT;
+    /// The quantity \f$ (\partial^2 P)/(\partial T \partial n_n) \f$
+    double dmundT;
+    /// The quantity \f$ (\partial^2 P)/(\partial T \partial n_p) \f$
+    double dmupdT;
+    /// The quantity \f$ (\partial^2 P)/(\partial n_n^2) \f$
+    double dmundnn;
+    /// The quantity \f$ (\partial^2 P)/(\partial n_n \partial n_p) \f$
+    double dmudn_mixed;
+    /// The quantity \f$ (\partial^2 P)/(\partial n_p^2) \f$
+    double dmupdnp;
   };
   
   /** \brief Skyrme hadronic equation of state 
@@ -274,7 +294,7 @@ namespace o2scl {
     */
     virtual int calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
 				  double temper, thermo &th,
-				  thermo_np_deriv &thd);
+				  thermo_np_f_deriv &thd);
     
     /// Equation of state as a function of density.
     virtual int calc_e(fermion &ne, fermion &pr, thermo &lt);
