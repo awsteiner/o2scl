@@ -53,7 +53,14 @@ void eos_had_skyrme::eff_mass(fermion &ne, fermion &pr) {
 int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
 				      double ltemper, thermo &locth,
 				      thermo_np_f_deriv &locthd) {
-  
+
+  /* Check that 
+     - the densities and temperature are finite and positive
+     - the spin denegeracies are correct
+     - the masses are sensible
+     - the values of 'non_interacting' are false
+     - the alpha parameter is positive
+  */
 #if !O2SCL_NO_RANGE_CHECK
   if (!std::isfinite(ne.n) || !std::isfinite(pr.n) ||
       !std::isfinite(ltemper)) {
@@ -87,16 +94,7 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
   }
 #endif
 
-  //---------------------------------------
-  // Some local variables of interest:
-  //
-  // hamk is just the kinetic part of the hamiltonian 
-  //   hbar^2 tau / (2 m^{star})
-  // ham{1-6} are remaining parts of the hamiltonian, modulo
-  //   factors of density
-  // dhdn{n,p} are the partial derivatives of the hamiltonian wrt the 
-  //   neutron and proton densities (hold energy densities constant)
-
+  /// Handle the zero density case
   if (ne.n==0.0 && pr.n==0.0) {
     ne.ms=ne.m;
     pr.ms=pr.m;
@@ -121,11 +119,11 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
   }
 
   // If the temperature is too small, just use the zero-temperature
-  // code
-  //if (ltemper<=0.0) {
-  //calc_e(ne,pr,locth);
-  //return 0;
-  //}
+  // code (but keep in mind this doesn't do second derivatives yet)
+  if (ltemper<=0.0) {
+    calc_e(ne,pr,locth);
+    return 0;
+  }
 
   double n=ne.n+pr.n;
   double x=pr.n/n;
@@ -175,7 +173,12 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
   double npa=pow(fabs(pr.n),alpha);
   double nna=pow(fabs(ne.n),alpha);
 
+  // Variable 'hamk' is just the kinetic part of the Hamiltonian,
+  // hbar^2 tau / (2 m^{star})
   double hamk=ne.ed+pr.ed;
+
+  // Variables ham{1-6} are remaining parts of the hamiltonian, modulo
+  // factors of density
   double ham1=0.5*t0*(1.0+0.5*x0);
   double ham2=-0.5*t0*(0.5+x0);
   double ham3=a*t3/6.0*(1.0+0.5*x3);
@@ -198,6 +201,9 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
   } else {
     gp=2.0*pr.ms*pr.ed;
   }
+
+  // Variables dhdn{n,p} are the partial derivatives of the
+  // Hamiltonian wrt the neutron and proton densities
   double common=2.0*ham1*n+ham5*(2.0+alpha)*n*na;
   double dhdnn=common+2.0*ham2*ne.n+ham3*na*pr.n*(alpha*ne.n/n+1.0)+
     ham4*(nna*ne.n*(2.0+alpha))+
@@ -205,7 +211,8 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
   double dhdnp=common+2.0*ham2*pr.n+ham3*na*ne.n*(alpha*pr.n/n+1.0)+
     ham4*(npa*pr.n*(2.0+alpha))+
     ham6*(2.0*pr.n*na+(ne.n*ne.n+pr.n*pr.n)*alpha*na/n);
-  
+
+  // Compute the chemical potentials
   ne.mu=ne.nu+dhdnn+(gn+gp)*term+gn*term2;
   pr.mu=pr.nu+dhdnp+(gn+gp)*term+gp*term2;
 
@@ -234,15 +241,21 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
   double n_dsdT_f=0.0, p_dsdT_f=0.0;
   double n_dmudT_f=0.0, p_dmudT_f=0.0;
   double n_dmudn_f=0.0, p_dmudn_f=0.0;
+  ne.deriv_f(n_dmudn_f,n_dmudT_f,n_dsdT_f);
+  pr.deriv_f(p_dmudn_f,p_dmudT_f,p_dsdT_f);
 
-  // Now combine all the derivatives in the (n,T) representation
-  // for the final result
+  // Now combine to compute the six derivatives
   locthd.dsdT=n_dsdT_f+p_dsdT_f;
-  locthd.dmundT=n_dmudT_f;
-  locthd.dmupdT=p_dmudT_f;
-  locthd.dmundnn=n_dmudn_f;
-  locthd.dmupdnp=p_dmudn_f;
-  locthd.dmudn_mixed=n_dmudn_f+p_dmudn_f;
+  locthd.dmundT=2.0*ltemper*ne.ms*(term+term2)*n_dsdT_f+
+    2.0*ltemper*pr.ms*term*p_dsdT_f;
+  locthd.dmupdT=2.0*ltemper*pr.ms*(term+term2)*p_dsdT_f+
+    2.0*ltemper*ne.ms*term*n_dsdT_f;
+  locthd.dmundnn=-5.0*ne.ms*ne.ms*pow(term+term2,2.0)*ne.ed-
+    5.0*term*term*pr.ms*pr.ms*pr.ed+n_dmudn_f+dhdnn2;
+  locthd.dmupdnp=-5.0*pr.ms*pr.ms*pow(term+term2,2.0)*pr.ed-
+    5.0*term*term*ne.ms*ne.ms*ne.ed+p_dmudn_f+dhdnp2;
+  locthd.dmudn_mixed=-10.0*ne.ms*pr.ms*(term+term2)*term*ne.ed+
+    dhdnndnp;
   
   return success;
 }

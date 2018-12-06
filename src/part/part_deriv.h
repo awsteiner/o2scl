@@ -127,6 +127,16 @@ namespace o2scl {
       return *this;
     }
 
+    /** \brief Compute derivatives in the Helmholtz free energy
+	representation from the derivatives in the pressure
+	representation
+    */
+    void deriv_f(double &dmudn, double &dmudT, double &dsdT) {
+      dmudn=1.0/dndmu;
+      dmudT=-dndT/dndmu;
+      dsdT=dndT*dndT/dndmu-dsdT;
+      return;
+    }
   };
   
   /** \brief A fermion with derivative information

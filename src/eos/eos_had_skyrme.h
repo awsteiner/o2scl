@@ -41,44 +41,6 @@
 namespace o2scl {
 #endif
   
-  /** \brief Object to store second derivatives of 
-      \f$ P(\mu_n,\mu_p,T) \f$
-   */
-  class thermo_np_deriv {
-  public:
-    /// The quantity \f$ (\partial^2 P)/(\partial T^2) \f$
-    double dsdT;
-    /// The quantity \f$ (\partial^2 P)/(\partial T \partial \mu_n) \f$
-    double dnndT;
-    /// The quantity \f$ (\partial^2 P)/(\partial T \partial \mu_p) \f$
-    double dnpdT;
-    /// The quantity \f$ (\partial^2 P)/(\partial \mu_n^2) \f$
-    double dnndmun;
-    /// The quantity \f$ (\partial^2 P)/(\partial \mu_n \partial \mu_p) \f$
-    double dndmu_mixed;
-    /// The quantity \f$ (\partial^2 P)/(\partial \mu_p^2) \f$
-    double dnpdmup;
-  };
-  
-  /** \brief Object to store second derivatives of 
-      \f$ f(n_n,n_p,T) \f$
-  */
-  class thermo_np_f_deriv {
-  public:
-    /// The quantity \f$ (\partial^2 P)/(\partial T^2) \f$
-    double dsdT;
-    /// The quantity \f$ (\partial^2 P)/(\partial T \partial n_n) \f$
-    double dmundT;
-    /// The quantity \f$ (\partial^2 P)/(\partial T \partial n_p) \f$
-    double dmupdT;
-    /// The quantity \f$ (\partial^2 P)/(\partial n_n^2) \f$
-    double dmundnn;
-    /// The quantity \f$ (\partial^2 P)/(\partial n_n \partial n_p) \f$
-    double dmudn_mixed;
-    /// The quantity \f$ (\partial^2 P)/(\partial n_p^2) \f$
-    double dmupdnp;
-  };
-  
   /** \brief Skyrme hadronic equation of state 
 
       Equation of state of nucleonic matter based on 
