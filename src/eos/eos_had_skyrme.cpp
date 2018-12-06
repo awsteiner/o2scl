@@ -54,9 +54,6 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
 				      double ltemper, thermo &locth,
 				      thermo_np_f_deriv &locthd) {
   
-  double n, x, hamk, ham, ham1, ham2, ham3, ham4, ham5, ham6;
-  double dhdnn, dhdnp, na, npa, nna, term, term2, common, gn, gp;
- 
 #if !O2SCL_NO_RANGE_CHECK
   if (!std::isfinite(ne.n) || !std::isfinite(pr.n) ||
       !std::isfinite(ltemper)) {
@@ -130,12 +127,12 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
   //return 0;
   //}
 
-  n=ne.n+pr.n;
-  x=pr.n/n;
+  double n=ne.n+pr.n;
+  double x=pr.n/n;
 
   // Landau effective masses
-  term=0.25*(t1*(1.0+x1/2.0)+t2*(1.0+x2/2.0));
-  term2=0.25*(t2*(0.5+x2)-t1*(0.5+x1));
+  double term=0.25*(t1*(1.0+x1/2.0)+t2*(1.0+x2/2.0));
+  double term2=0.25*(t2*(0.5+x2)-t1*(0.5+x1));
   ne.ms=ne.m/(1.0+2.0*(n*term+ne.n*term2)*ne.m);
   pr.ms=pr.m/(1.0+2.0*(n*term+pr.n*term2)*pr.m);
 
@@ -174,22 +171,23 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
   
   // Single particle potentials and energy density
 
-  na=pow(fabs(n),alpha);
-  npa=pow(fabs(pr.n),alpha);
-  nna=pow(fabs(ne.n),alpha);
+  double na=pow(fabs(n),alpha);
+  double npa=pow(fabs(pr.n),alpha);
+  double nna=pow(fabs(ne.n),alpha);
 
-  hamk=ne.ed+pr.ed;
-  ham1=0.5*t0*(1.0+0.5*x0);
-  ham2=-0.5*t0*(0.5+x0);
-  ham3=a*t3/6.0*(1.0+0.5*x3);
-  ham4=a*t3*pow(2.0,alpha)/96.0*(1.0-x3);
-  ham5=b*t3/12.0*(1.0+0.5*x3);
-  ham6=-b*t3/12.0*(0.5+x3);
+  double hamk=ne.ed+pr.ed;
+  double ham1=0.5*t0*(1.0+0.5*x0);
+  double ham2=-0.5*t0*(0.5+x0);
+  double ham3=a*t3/6.0*(1.0+0.5*x3);
+  double ham4=a*t3*pow(2.0,alpha)/96.0*(1.0-x3);
+  double ham5=b*t3/12.0*(1.0+0.5*x3);
+  double ham6=-b*t3/12.0*(0.5+x3);
 
-  ham=hamk+ham1*n*n+ham2*(ne.n*ne.n+pr.n*pr.n)+
+  double ham=hamk+ham1*n*n+ham2*(ne.n*ne.n+pr.n*pr.n)+
     ham3*na*ne.n*pr.n+ham4*(nna*ne.n*ne.n+npa*pr.n*pr.n)+
     ham5*n*n*na+ham6*(ne.n*ne.n+pr.n*pr.n)*na;
-  
+
+  double gn, gp;
   if (ne.inc_rest_mass) {
     gn=2.0*ne.ms*(ne.ed-ne.n*ne.m);
   } else {
@@ -200,18 +198,32 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
   } else {
     gp=2.0*pr.ms*pr.ed;
   }
-  common=(gn+gp)*term+2.0*ham1*n+ham5*(2.0+alpha)*n*na;
-  dhdnn=common+ne.nu+gn*term2+
-    2.0*ham2*ne.n+ham3*na*pr.n*(alpha*ne.n/n+1.0)+
+  double common=2.0*ham1*n+ham5*(2.0+alpha)*n*na;
+  double dhdnn=common+2.0*ham2*ne.n+ham3*na*pr.n*(alpha*ne.n/n+1.0)+
     ham4*(nna*ne.n*(2.0+alpha))+
     ham6*(2.0*ne.n*na+(ne.n*ne.n+pr.n*pr.n)*alpha*na/n);
-  dhdnp=common+pr.nu+gp*term2+
-    2.0*ham2*pr.n+ham3*na*ne.n*(alpha*pr.n/n+1.0)+
+  double dhdnp=common+2.0*ham2*pr.n+ham3*na*ne.n*(alpha*pr.n/n+1.0)+
     ham4*(npa*pr.n*(2.0+alpha))+
     ham6*(2.0*pr.n*na+(ne.n*ne.n+pr.n*pr.n)*alpha*na/n);
+  
+  ne.mu=ne.nu+dhdnn+(gn+gp)*term+gn*term2;
+  pr.mu=pr.nu+dhdnp+(gn+gp)*term+gp*term2;
 
-  ne.mu=dhdnn;
-  pr.mu=dhdnp;
+  double opatpa=(1.0+alpha)*(2.0+alpha);
+  double common2=2.0*ham1+2.0*ham2;
+  double dhdnn2=common2+4.0*nna*opatpa+
+    na/n/n*(ham5*n*n*opatpa+ham3*pr.n*alpha*(ne.n+2.0*pr.n+ne.n*alpha)+
+	    ham6*(4.0*ne.n*pr.n*(1.0+alpha)+ne.n*ne.n*opatpa+
+		  pr.n*pr.n*(2.0+alpha*(alpha-1.0))));
+  double dhdnp2=common2+4.0*npa*opatpa+
+    na/n/n*(ham5*n*n*opatpa+ham3*ne.n*alpha*(pr.n+2.0*ne.n+pr.n*alpha)+
+	    ham6*(4.0*ne.n*pr.n*(1.0+alpha)+pr.n*pr.n*opatpa+
+		  ne.n*ne.n*(2.0+alpha*(alpha-1.0))));
+  double dhdnndnp=2.0*ham1+na/n/n*
+    (ham5*n*n*opatpa+ham6*alpha*    
+     (4.0*ne.n*pr.n+ne.n*ne.n*(1.0+alpha)+pr.n*pr.n*(1.0+alpha))+
+     ham3*(ne.n*ne.n*(1.0+alpha)+pr.n*pr.n*(1.0+alpha)+
+	   ne.n*pr.n*(2.0+alpha+alpha*alpha)));
   
   // Thermodynamics
   locth.ed=ham;
