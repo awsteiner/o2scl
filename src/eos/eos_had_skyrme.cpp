@@ -65,28 +65,28 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
   if (!std::isfinite(ne.n) || !std::isfinite(pr.n) ||
       !std::isfinite(ltemper)) {
     O2SCL_ERR2("Nucleon densities or temperature not finite in ",
-	       "eos_had_skyrme::calc_temp_e().",exc_einval);
+	       "eos_had_skyrme::calc_deriv_temp_e().",exc_einval);
   }
   if (ne.n<0.0 || pr.n<0.0) {
     string str=((string)"Nucleon densities negative, n_n=")+
       std::to_string(ne.n)+", n_p="+std::to_string(pr.n)+", in "+
-      "eos_had_skyrme::calc_temp_e().";
+      "eos_had_skyrme::calc_deriv_temp_e().";
     O2SCL_ERR(str.c_str(),exc_einval);
   }
   if (fabs(ne.g-2.0)>1.0e-10 || fabs(pr.g-2.0)>1.0e-10) {
     O2SCL_ERR((((std::string)"Neutron (")+std::to_string(ne.g)+
 	       ") or proton ("+std::to_string(pr.g)+") spin deg"+
 	       "eneracies wrong in "+
-	       "eos_had_skyrme::calc_temp_e().").c_str(),exc_einval);
+	       "eos_had_skyrme::calc_deriv_temp_e().").c_str(),exc_einval);
   }
   if (fabs(ne.m-4.5)>1.0 || fabs(pr.m-4.5)>1.0) {
     O2SCL_ERR((((std::string)"Neutron (")+std::to_string(ne.m)+
 	       ") or proton ("+std::to_string(pr.m)+") masses wrong "+
-	       "in eos_had_skyrme::calc_temp_e().").c_str(),exc_einval);
+	       "in eos_had_skyrme::calc_deriv_temp_e().").c_str(),exc_einval);
   }
   if (ne.non_interacting==true || pr.non_interacting==true) {
     O2SCL_ERR2("Neutron or protons non-interacting in ",
-	       "eos_had_skyrme::calc_temp_e().",exc_einval);
+	       "eos_had_skyrme::calc_deriv_temp_e().",exc_einval);
   }
   if (alpha<=0.0) {
     O2SCL_ERR2("Parameter alpha negative in ",
@@ -120,10 +120,16 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
 
   // If the temperature is too small, just use the zero-temperature
   // code (but keep in mind this doesn't do second derivatives yet)
-  if (ltemper<=0.0) {
-    calc_e(ne,pr,locth);
+  /*
+    if (ltemper<=0.0) {
+    thermo th2;
+    calc_e(ne,pr,th2);
+    locth.ed=th2.ed;
+    locth.pr=th2.pr;
+    locth.en=th2.en;
     return 0;
-  }
+    }
+  */
 
   double n=ne.n+pr.n;
   double x=pr.n/n;
@@ -136,7 +142,7 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
 
   if (ne.ms<0.0 || pr.ms<0.0) {
     O2SCL_CONV2_RET("Effective masses negative in ",
-		    "eos_had_skyrme::calc_temp_e().",
+		    "eos_had_skyrme::calc_deriv_temp_e().",
 		    exc_einval,this->err_nonconv);
   }
 
@@ -638,7 +644,7 @@ double eos_had_skyrme::fkprime(double nb) {
 }
 
 int eos_had_skyrme::calpar(double gt0, double gt3, double galpha,
-		       double gt1, double gt2) {
+			   double gt1, double gt2) {
 
   ubvector x(3);
 
@@ -706,7 +712,7 @@ int eos_had_skyrme::calparfun(size_t nv, const ubvector &x, ubvector &y) {
 }
 
 int eos_had_skyrme::calparfun2(size_t nv, const ubvector &x, 
-			   ubvector &y) {
+			       ubvector &y) {
   double kr23, beta;
   double mnuc=(neutron->m+proton->m)/2.0;
   
