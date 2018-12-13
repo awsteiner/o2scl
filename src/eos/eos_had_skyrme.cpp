@@ -146,7 +146,6 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
 		    exc_einval,this->err_nonconv);
   }
 
-  std::cout << "Hereaa." << std::endl;
   if (ne.n>0.0) {
     nrfd.calc_density(ne,ltemper);
   } else {
@@ -160,7 +159,6 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
     ne.dndmu=0.0;
     ne.dsdT=0.0;
   }
-  std::cout << "Hereab." << std::endl;
   if (pr.n>0.0) {
     nrfd.calc_density(pr,ltemper);
   } else {
@@ -174,7 +172,6 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
     pr.dndmu=0.0;
     pr.dsdT=0.0;
   }
-  std::cout << "Hereac." << std::endl;
   
   // Single particle potentials and energy density
 

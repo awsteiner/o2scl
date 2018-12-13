@@ -222,6 +222,9 @@ namespace o2scl {
       \int_0^{\infty} u^{1/2} f d u
       \f]
 
+      \todo Make a calc_density_zerot function
+      \todo There is a lot of code duplication with fermion_nonrel
+      which needs to be fixed.
   */
   class fermion_deriv_nr : public fermion_deriv_thermo {
 
@@ -241,11 +244,6 @@ namespace o2scl {
     
     /// Storage for the most recently calculated uncertainties 
     fermion_deriv unc;
-    
-    /** \brief If true, use the present value of the chemical potential as
-	a guess for the new chemical potential
-    */
-    bool guess_from_nu;
     
     /** \brief Calculate properties as function of chemical potential
     */
@@ -289,7 +287,7 @@ namespace o2scl {
     root<> *density_root;
     
     /// Function to compute chemical potential from density
-    double solve_fun(double x, fermion_deriv &f, double T);
+    double solve_fun(double x, double nog, double msT);
 
     /** \brief Function to compute chemical potential from density
 	when antiparticles are included

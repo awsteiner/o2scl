@@ -25,6 +25,8 @@
 #endif
 
 #include <o2scl/fermion_deriv_nr.h>
+// Used to get initial guesses for chemical potential if necessary
+#include <o2scl/classical.h>
 
 using namespace std;
 using namespace o2scl;
@@ -36,7 +38,6 @@ using namespace o2scl_const;
 fermion_deriv_nr::fermion_deriv_nr() {
   
   flimit=20.0;
-  guess_from_nu=true;
 
   density_root=&def_density_root;
 }
@@ -98,28 +99,75 @@ int fermion_deriv_nr::calc_mu(fermion_deriv &f, double temper) {
 }
 
 int fermion_deriv_nr::nu_from_n(fermion_deriv &f, double temper) {
+
+  // Use initial value of nu for initial guess
   double nex;
-  
-  if (guess_from_nu) {
-    nex=f.nu/temper;
+  if (f.inc_rest_mass) {
+    nex=-(f.nu-f.m)/temper;
   } else {
-    O2SCL_ERR("guess_from_nu==false not implemented in fermion_deriv_nr.",
-	      exc_eunimpl);
+    nex=f.nu/temper;
   }
-  funct mf=std::bind(std::mem_fn<double(double,fermion_deriv &,double)>
-		       (&fermion_deriv_nr::solve_fun),
-		       this,std::placeholders::_1,std::ref(f),temper);
+
+  // Make a correction if nex is too small and negative
+  // (Note GSL_LOG_DBL_MIN is about -708)
+  if (nex>-GSL_LOG_DBL_MIN*0.9) nex=-GSL_LOG_DBL_MIN/2.0;
+  
+  funct mf=std::bind(std::mem_fn<double(double,double,double)>
+		     (&fermion_deriv_nr::solve_fun),
+		     this,std::placeholders::_1,f.n/f.g,f.ms*temper);
     
-  density_root->solve(nex,mf);
-  f.nu=nex*temper;
+  // Turn off convergence errors temporarily, since we'll
+  // try again if it fails
+  bool enc=density_root->err_nonconv;
+  density_root->err_nonconv=false;
+  int ret=density_root->solve(nex,mf);
+  density_root->err_nonconv=enc;
+
+  if (ret!=0) {
+
+    // If it failed, try to get a guess from classical particle
+    
+    classical cl;
+    cl.calc_density(f,temper);
+    if (f.inc_rest_mass) {
+      nex=-(f.nu-f.m)/temper;
+    } else {
+      nex=-f.nu/temper;
+    } 
+    ret=density_root->solve(nex,mf);
+    
+    // If it failed again, add error information
+    if (ret!=0) {
+      O2SCL_ERR("Solver failed in fermion_nonrel::nu_from_n().",ret);
+    }
+  }
+
+  if (f.inc_rest_mass) {
+    f.nu=-nex*temper+f.m;
+  } else {
+    f.nu=-nex*temper;
+  }
 
   return 0;
 }
 
 int fermion_deriv_nr::calc_density(fermion_deriv &f, double temper) {
 
-  if (f.non_interacting==true) { f.ms=f.m; f.nu=f.mu; }
+  if (f.m<0.0 || (f.non_interacting==false && f.ms<0.0)) {
+    O2SCL_ERR2("Mass negative in ",
+	       "fermion_deriv_nr::calc_density().",exc_einval);
+  }
+  if (temper<0.0) {
+    O2SCL_ERR2("Temperature less than zero in ",
+	       "fermion_deriv_nr::calc_density().",exc_einval);
+  }
+  if (f.n<=0.0) {
+    O2SCL_ERR2("Density less than or equal to zero in ",
+	       "fermion_deriv_nr::calc_density().",exc_einval);
+  }
   
+  if (f.non_interacting==true) { f.ms=f.m; f.nu=f.mu; }
+
   nu_from_n(f,temper);
   
   if (f.non_interacting) { f.mu=f.nu; }
@@ -129,26 +177,20 @@ int fermion_deriv_nr::calc_density(fermion_deriv &f, double temper) {
   return 0;
 }
 
-double fermion_deriv_nr::solve_fun(double x, fermion_deriv &f, double T) {
-  double nden, y, yy;
-  
-  f.nu=T*x;
-  
-  // 6/6/03 - I think this should this be included.
-  if (f.non_interacting) f.mu=f.nu;
+double fermion_deriv_nr::solve_fun(double x, double nog, double msT) {
 
-  if (f.inc_rest_mass) {
-    y=(f.nu-f.m)/T;
-  } else {
-    y=f.nu/T;
-  }
-
-  nden=gsl_sf_fermi_dirac_half(y)*sqrt(pi)/2.0;
-  nden*=f.g*pow(2.0*f.ms*T,1.5)/4.0/pi2;
-
-  yy=(f.n-nden)/f.n;
+  double nden;
   
-  return yy;
+  // If the argument to gsl_sf_fermi_dirac_half() is less
+  // than GSL_LOG_DBL_MIN (which is about -708), then 
+  // an underflow occurs. We just set nden to zero in this 
+  // case, as this helps the solver find the right root.
+  
+  if (((-x)<GSL_LOG_DBL_MIN) || !std::isfinite(x)) nden=0.0;
+  else nden=gsl_sf_fermi_dirac_half(-x)*sqrt(pi)/2.0;
+  
+  nden*=pow(2.0*msT,1.5)/4.0/pi2;
+  return nden/nog-1.0;
 }
 
 int fermion_deriv_nr::pair_mu(fermion_deriv &f, double temper) {

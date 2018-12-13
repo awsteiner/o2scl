@@ -195,7 +195,7 @@ void fermion_nonrel::nu_from_n(fermion &f, double temper) {
 
 int fermion_nonrel::calc_density(fermion &f, double temper) {
 
-  if (f.ms<0.0) {
+  if (f.m<0.0 || (f.non_interacting==false && f.ms<0.0)) {
     O2SCL_ERR2("Mass negative in ",
 	       "fermion_nonrel::calc_density().",exc_einval);
   }
@@ -215,9 +215,8 @@ int fermion_nonrel::calc_density(fermion &f, double temper) {
   
   if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
   
-  double guess=f.nu;
   nu_from_n(f,temper);
-  
+
   if (f.non_interacting) { f.mu=f.nu; }
 
   double y, spi, ey, sy;
@@ -254,8 +253,6 @@ int fermion_nonrel::calc_density(fermion &f, double temper) {
     f.pr=2.0*f.ed/3.0;
     
   }
-  
-  if (f.non_interacting==true) { f.mu=f.nu; }
   
   return 0;
 }

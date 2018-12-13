@@ -239,7 +239,8 @@ int main(void) {
     interpm_krige_optim<ubvector,mat_t,
 			matrix_row_gen<mat_t> > iko;
     iko.verbose=2;
-    
+
+    /*
     iko.set_data<matrix_row_gen<mat_t> >(2,1,8,x2,y2,true);
     
     ubvector point(2);
@@ -253,6 +254,7 @@ int main(void) {
     iko.eval(point,out,iko.ff2);
     cout << out[0] << " " << ft(point[0],point[1]) << endl;
     cout << endl;
+    */
   }
 
   {
@@ -277,7 +279,8 @@ int main(void) {
     interpm_krige_optim<ubvector,mat2_t,
 			matrix_row_gen<mat2_t> > iko;
     iko.verbose=2;
-    
+
+    /*
     iko.set_data<matrix_row_gen<matrix_view_table_transpose<> > >
       (2,1,8,cmvtx,cmvty,true);
     
@@ -291,6 +294,7 @@ int main(void) {
     point[1]=0.9901;
     iko.eval(point,out,iko.ff2);
     cout << out[0] << " " << ft(point[0],point[1]) << endl;
+    */
   }
 
   /*

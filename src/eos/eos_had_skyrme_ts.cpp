@@ -488,22 +488,11 @@ int main(void) {
   ne.non_interacting=false;
   pr.non_interacting=false;
   
-  n.n=0.25;
-  p.n=0.35;
-  sk.calc_temp_e(n,p,4.0/hc_mev_fm,th);
-  cout << n.mu << " " << p.mu << endl;
-  ne.mu=n.mu;
-  pr.mu=p.mu;
-  ne.nu=n.nu;
-  pr.nu=p.nu;
-  
   ne.n=0.25;
   pr.n=0.35;
   thermo_np_f_deriv tnfd;
 
-  cout << "Here." << endl;
   sk.calc_deriv_temp_e(ne,pr,4.0/hc_mev_fm,th,tnfd);
-  cout << "Here2." << endl;
   double dmundnn1=ne.mu;
   double dmupdnp1=pr.mu;
   double dmundnp1=ne.mu;

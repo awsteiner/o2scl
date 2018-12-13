@@ -526,7 +526,7 @@ namespace o2scl {
     /// Thermodynamics of non-relativistic fermions
     fermion_nonrel nrf;
     
-    /// Thermodynamics of non-relativistic fermions
+    /// Thermodynamics of non-relativistic fermions with derivatives
     fermion_deriv_nr nrfd;
     
 #ifndef DOXYGEN_NO_O2NS
