@@ -19,13 +19,12 @@
       source: https://github.com/awsteiner/o2scl.git
       plugin: autotools
       install-via: prefix
-      build-packages: 
+      stage-packages:
       - libboost-all-dev
       - libreadline-dev
       - libncurses-dev
       - libhdf5-serial-dev
       - libgsl0-dev
-      stage-packages:
       - libc6
       build: |
         mkdir -p m4 && ./autogen.sh && CXXFLAGS="-DO2SCL_UBUNTU_HDF5 -DO2SCL_UBUNTU_PKG" ./configure --prefix=$PWD/../install --enable-snap && make blank-doc && make && make install
