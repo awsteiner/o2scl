@@ -146,6 +146,7 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
 		    exc_einval,this->err_nonconv);
   }
 
+  std::cout << "Hereaa." << std::endl;
   if (ne.n>0.0) {
     nrfd.calc_density(ne,ltemper);
   } else {
@@ -159,6 +160,7 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
     ne.dndmu=0.0;
     ne.dsdT=0.0;
   }
+  std::cout << "Hereab." << std::endl;
   if (pr.n>0.0) {
     nrfd.calc_density(pr,ltemper);
   } else {
@@ -172,6 +174,7 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
     pr.dndmu=0.0;
     pr.dsdT=0.0;
   }
+  std::cout << "Hereac." << std::endl;
   
   // Single particle potentials and energy density
 
@@ -249,19 +252,22 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
   double n_dmudn_f=0.0, p_dmudn_f=0.0;
   ne.deriv_f(n_dmudn_f,n_dmudT_f,n_dsdT_f);
   pr.deriv_f(p_dmudn_f,p_dmudT_f,p_dsdT_f);
-
+  
+  double X_n=2.5*ne.ed-4.5*ne.ms*ne.n*ne.n/ltemper/ne.dndmu;
+  double X_p=2.5*pr.ed-4.5*pr.ms*pr.n*pr.n/ltemper/pr.dndmu;
+  
   // Now combine to compute the six derivatives
   locthd.dsdT=n_dsdT_f+p_dsdT_f;
   locthd.dmundT=2.0*ltemper*ne.ms*(term+term2)*n_dsdT_f+
     2.0*ltemper*pr.ms*term*p_dsdT_f;
   locthd.dmupdT=2.0*ltemper*pr.ms*(term+term2)*p_dsdT_f+
     2.0*ltemper*ne.ms*term*n_dsdT_f;
-  locthd.dmundnn=-5.0*ne.ms*ne.ms*pow(term+term2,2.0)*ne.ed-
-    5.0*term*term*pr.ms*pr.ms*pr.ed+n_dmudn_f+dhdnn2;
-  locthd.dmupdnp=-5.0*pr.ms*pr.ms*pow(term+term2,2.0)*pr.ed-
-    5.0*term*term*ne.ms*ne.ms*ne.ed+p_dmudn_f+dhdnp2;
-  locthd.dmudn_mixed=-10.0*ne.ms*pr.ms*(term+term2)*term*ne.ed+
-    dhdnndnp;
+  locthd.dmundnn=-4.0*ne.ms*ne.ms*pow(term+term2,2.0)*X_n-
+    4.0*term*term*pr.ms*pr.ms*X_p+n_dmudn_f+dhdnn2;
+  locthd.dmupdnp=-4.0*pr.ms*pr.ms*pow(term+term2,2.0)*X_p-
+    4.0*term*term*ne.ms*ne.ms*X_p+p_dmudn_f+dhdnp2;
+  locthd.dmudn_mixed=-4.0*(term+term2)*term*
+    (ne.ms*ne.ms*X_n+pr.ms*pr.ms*X_p)+dhdnndnp;
   
   return success;
 }

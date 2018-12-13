@@ -480,9 +480,69 @@ int main(void) {
   t.test_rel(sk.fesym_slope(sk.n0)*hc_mev_fm,40.0,1.0e-4,"L");
   t.test_rel(sk.f_effm_vector(sk.n0),1.0/1.249,1.0e-4,"Mv*");
 
+  // -----------------------------------------------------------
+  // Test calc_deriv_temp_e
+  // -----------------------------------------------------------
+
+  fermion_deriv ne(939.0/hc_mev_fm,2.0), pr(938.0/hc_mev_fm,2.0);
+  ne.non_interacting=false;
+  pr.non_interacting=false;
+  
+  n.n=0.25;
+  p.n=0.35;
+  sk.calc_temp_e(n,p,4.0/hc_mev_fm,th);
+  cout << n.mu << " " << p.mu << endl;
+  ne.mu=n.mu;
+  pr.mu=p.mu;
+  ne.nu=n.nu;
+  pr.nu=p.nu;
+  
+  ne.n=0.25;
+  pr.n=0.35;
+  thermo_np_f_deriv tnfd;
+
+  cout << "Here." << endl;
+  sk.calc_deriv_temp_e(ne,pr,4.0/hc_mev_fm,th,tnfd);
+  cout << "Here2." << endl;
+  double dmundnn1=ne.mu;
+  double dmupdnp1=pr.mu;
+  double dmundnp1=ne.mu;
+  double dmupdnn1=pr.mu;
+  double dmundT1=ne.mu;
+  double dmupdT1=pr.mu;
+  double dsdT1=th.en;
+
+  ne.n+=1.0e-4;
+  sk.calc_deriv_temp_e(ne,pr,4.0/hc_mev_fm,th,tnfd);
+  double dmundnn2=ne.mu;
+  double dmupdnn2=pr.mu;
+  ne.n-=1.0e-4;
+
+  pr.n+=1.0e-4;
+  sk.calc_deriv_temp_e(ne,pr,4.0/hc_mev_fm,th,tnfd);
+  double dmundnp2=ne.mu;
+  double dmupdnp2=pr.mu;
+  pr.n-=1.0e-4;
+
+  sk.calc_deriv_temp_e(ne,pr,(4.0+1.0e-3)/hc_mev_fm,th,tnfd);
+  double dmundT2=ne.mu;
+  double dmupdT2=pr.mu;
+  double dsdT2=th.en;
+
+  sk.calc_deriv_temp_e(ne,pr,4.0/hc_mev_fm,th,tnfd);
+
+  // Test the six derivatives
+  cout << tnfd.dsdT << " " << (dsdT2-dsdT1)/(1.0e-3/hc_mev_fm) << endl;
+  cout << tnfd.dmundT << " " << (dmundT2-dmundT1)/(1.0e-3/hc_mev_fm) << endl;
+  cout << tnfd.dmupdT << " " << (dmupdT2-dmupdT1)/(1.0e-3/hc_mev_fm) << endl;
+  cout << tnfd.dmundnn << " " << (dmundnn2-dmundnn1)/1.0e-4 << endl;
+  cout << tnfd.dmupdnp << " " << (dmupdnp2-dmupdnp1)/1.0e-4 << endl;
+  cout << tnfd.dmudn_mixed << " "
+       << (dmundnp2-dmundnp1)/1.0e-4 << " " 
+       << (dmupdnn2-dmupdnn1)/1.0e-4 << endl;
+
   t.report();
 
   return 0;
 }
-
 
