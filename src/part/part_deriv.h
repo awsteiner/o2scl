@@ -183,6 +183,27 @@ namespace o2scl {
       return *this;
     }
     
+    /// Copy construction with operator=()
+    fermion_deriv &operator=(const fermion &p) {
+      if (this!=&p) {
+	g=p.g;
+	m=p.m;
+	ms=p.ms;
+	n=p.n;
+	ed=p.ed;
+	pr=p.pr;
+	mu=p.mu;
+	en=p.en;
+	nu=p.nu;
+	dndmu=0.0;
+	dndT=0.0;
+	dsdT=0.0;
+	inc_rest_mass=p.inc_rest_mass;
+	non_interacting=p.non_interacting;
+      }
+      return *this;
+    }
+    
   };
   
   /** \brief A part with derivative information

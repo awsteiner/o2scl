@@ -490,7 +490,7 @@ int main(void) {
   
   ne.n=0.25;
   pr.n=0.35;
-  thermo_np_f_deriv tnfd;
+  thermo_np_deriv_helm tnfd;
 
   sk.calc_deriv_temp_e(ne,pr,4.0/hc_mev_fm,th,tnfd);
   double dmundnn1=ne.mu;

@@ -256,7 +256,7 @@ namespace o2scl {
     */
     virtual int calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
 				  double temper, thermo &th,
-				  thermo_np_f_deriv &thd);
+				  thermo_np_deriv_helm &thd);
     
     /// Equation of state as a function of density.
     virtual int calc_e(fermion &ne, fermion &pr, thermo &lt);

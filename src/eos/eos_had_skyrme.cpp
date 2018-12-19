@@ -52,7 +52,7 @@ void eos_had_skyrme::eff_mass(fermion &ne, fermion &pr) {
 
 int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
 				      double ltemper, thermo &locth,
-				      thermo_np_f_deriv &locthd) {
+				      thermo_np_deriv_helm &locthd) {
 
   /* Check that 
      - the densities and temperature are finite and positive
@@ -277,6 +277,24 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
 
 int eos_had_skyrme::calc_temp_e(fermion &ne, fermion &pr, 
 				double ltemper, thermo &locth) {
+
+  if (true) {
+    fermion_deriv ne2=ne;
+    fermion_deriv pr2=pr;
+    thermo_np_deriv_helm tndh;
+    int ret=calc_deriv_temp_e(ne2,pr2,ltemper,locth,tndh);
+    ne.nu=ne2.nu;
+    ne.mu=ne2.mu;
+    ne.pr=ne2.pr;
+    ne.ed=ne2.ed;
+    ne.en=ne2.en;
+    pr.nu=pr2.nu;
+    pr.mu=pr2.mu;
+    pr.pr=pr2.pr;
+    pr.ed=pr2.ed;
+    pr.en=pr2.en;
+    return ret;
+  }
   
   double n, x, hamk, ham, ham1, ham2, ham3, ham4, ham5, ham6;
   double dhdnn, dhdnp, na, npa, nna, term, term2, common, gn, gp;
@@ -433,6 +451,24 @@ int eos_had_skyrme::calc_temp_e(fermion &ne, fermion &pr,
 
 int eos_had_skyrme::calc_e(fermion &ne, fermion &pr, thermo &locth) {
 
+  if (true) {
+    fermion_deriv ne2=ne;
+    fermion_deriv pr2=pr;
+    thermo_np_deriv_helm tndh;
+    int ret=calc_deriv_temp_e(ne2,pr2,0.0,locth,tndh);
+    ne.nu=ne2.nu;
+    ne.mu=ne2.mu;
+    ne.pr=ne2.pr;
+    ne.ed=ne2.ed;
+    ne.en=ne2.en;
+    pr.nu=pr2.nu;
+    pr.mu=pr2.mu;
+    pr.pr=pr2.pr;
+    pr.ed=pr2.ed;
+    pr.en=pr2.en;
+    return ret;
+  }
+  
 #if !O2SCL_NO_RANGE_CHECK
   if (!std::isfinite(ne.n) || !std::isfinite(ne.n)) {
     O2SCL_ERR2("Nucleon densities not finite in ",

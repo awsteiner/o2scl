@@ -1242,7 +1242,7 @@ namespace o2scl {
   /** \brief Object to store second derivatives of 
       \f$ P(\mu_n,\mu_p,T) \f$
    */
-  class thermo_np_deriv {
+  class thermo_np_deriv_press {
   public:
     /// The quantity \f$ (\partial^2 P)/(\partial T^2) \f$
     double dsdT;
@@ -1261,7 +1261,7 @@ namespace o2scl {
   /** \brief Object to store second derivatives of 
       \f$ f(n_n,n_p,T) \f$
   */
-  class thermo_np_f_deriv {
+  class thermo_np_deriv_helm {
   public:
     /// The quantity \f$ (\partial^2 P)/(\partial T^2) \f$
     double dsdT;
