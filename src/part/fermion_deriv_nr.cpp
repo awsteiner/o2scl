@@ -45,6 +45,53 @@ fermion_deriv_nr::fermion_deriv_nr() {
 fermion_deriv_nr::~fermion_deriv_nr() {
 }
 
+void fermion_deriv_nr::calc_mu_zerot(fermion_deriv &f) {
+  if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
+  if (f.inc_rest_mass) {
+    f.kf=sqrt(2.0*f.ms*(f.nu-f.m));
+  } else {
+    f.kf=sqrt(2.0*f.ms*f.nu);
+  }
+  f.n=f.kf*f.kf*f.kf*f.g/6.0/pi2;
+  f.ed=f.g*pow(f.kf,5.0)/20.0/pi2/f.ms;
+  if (f.inc_rest_mass) f.ed+=f.n*f.m;
+  f.pr=-f.ed+f.n*f.nu;
+  f.en=0.0;
+
+  f.dndT=0.0;
+  if (f.inc_rest_mass) {
+    f.dndmu=3.0*f.n/2.0/(f.nu-f.m);
+  } else {
+    f.dndmu=3.0*f.n/2.0/f.nu;
+  }
+  f.dsdT=0.0;
+  return;
+}
+
+void fermion_deriv_nr::calc_density_zerot(fermion_deriv &f) {
+  if (f.non_interacting) { f.ms=f.m; }
+  f.kf=cbrt(6.0*pi2/f.g*f.n);
+  f.nu=f.kf*f.kf/2.0/f.ms;
+  f.ed=f.g*pow(f.kf,5.0)/20.0/pi2/f.ms;
+  if (f.inc_rest_mass) {
+    f.ed+=f.n*f.m;
+    f.nu+=f.m;
+  }
+  f.pr=-f.ed+f.n*f.nu;
+  f.en=0.0;
+  
+  if (f.non_interacting) { f.mu=f.nu; }
+
+  f.dndT=0.0;
+  if (f.inc_rest_mass) {
+    f.dndmu=3.0*f.n/2.0/(f.nu-f.m);
+  } else {
+    f.dndmu=3.0*f.n/2.0/f.nu;
+  }
+  f.dsdT=0.0;
+  return;
+}
+
 int fermion_deriv_nr::calc_mu(fermion_deriv &f, double temper) {
   
   if (temper<=0.0) {

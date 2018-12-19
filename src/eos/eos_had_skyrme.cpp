@@ -60,6 +60,7 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
      - the masses are sensible
      - the values of 'non_interacting' are false
      - the alpha parameter is positive
+     - the temperature is not negative
   */
 #if !O2SCL_NO_RANGE_CHECK
   if (!std::isfinite(ne.n) || !std::isfinite(pr.n) ||
@@ -92,6 +93,10 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
     O2SCL_ERR2("Parameter alpha negative in ",
 	       "eos_had_skyrme::calc_e().",exc_einval);
   }
+  if (ltemper<0.0) {
+    O2SCL_ERR2("Temperature negative in ",
+	       "eos_had_skyrme::calc_e().",exc_einval);
+  }
 #endif
 
   /// Handle the zero density case
@@ -118,19 +123,6 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
     return success;
   }
 
-  // If the temperature is too small, just use the zero-temperature
-  // code (but keep in mind this doesn't do second derivatives yet)
-  /*
-    if (ltemper<=0.0) {
-    thermo th2;
-    calc_e(ne,pr,th2);
-    locth.ed=th2.ed;
-    locth.pr=th2.pr;
-    locth.en=th2.en;
-    return 0;
-    }
-  */
-
   double n=ne.n+pr.n;
   double x=pr.n/n;
 
@@ -147,7 +139,11 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
   }
 
   if (ne.n>0.0) {
-    nrfd.calc_density(ne,ltemper);
+    if (ltemper==0.0) {
+      nrfd.calc_density_zerot(ne);
+    } else {
+      nrfd.calc_density(ne,ltemper);
+    }
   } else {
     // If the neutron density is zero, we just assume we're 
     // computing pure proton matter
@@ -160,7 +156,11 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
     ne.dsdT=0.0;
   }
   if (pr.n>0.0) {
-    nrfd.calc_density(pr,ltemper);
+    if (ltemper==0.0) {
+      nrfd.calc_density_zerot(pr);
+    } else {
+      nrfd.calc_density(pr,ltemper);
+    }
   } else {
     // If the proton density is zero, we just assume we're 
     // computing pure neutron matter
@@ -249,9 +249,15 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
   double n_dmudn_f=0.0, p_dmudn_f=0.0;
   ne.deriv_f(n_dmudn_f,n_dmudT_f,n_dsdT_f);
   pr.deriv_f(p_dmudn_f,p_dmudT_f,p_dsdT_f);
-  
-  double X_n=2.5*ne.ed-4.5*ne.ms*ne.n*ne.n/ltemper/ne.dndmu;
-  double X_p=2.5*pr.ed-4.5*pr.ms*pr.n*pr.n/ltemper/pr.dndmu;
+
+  double X_n, X_p;
+  if (ltemper>0.0) {
+    X_n=2.5*ne.ed-4.5*ne.ms*ne.n*ne.n/ltemper/ne.dndmu;
+    X_p=2.5*pr.ed-4.5*pr.ms*pr.n*pr.n/ltemper/pr.dndmu;
+  } else {
+    X_n=2.5*ne.ed-3.75*ne.n/ne.dndmu*ne.ed/ne.nu;
+    X_p=2.5*pr.ed-3.75*pr.n/pr.dndmu*pr.ed/pr.nu;
+  }
   
   // Now combine to compute the six derivatives
   locthd.dsdT=n_dsdT_f+p_dsdT_f;

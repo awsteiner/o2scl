@@ -244,9 +244,19 @@ namespace o2scl {
     
     /// Storage for the most recently calculated uncertainties 
     fermion_deriv unc;
+
+    /** \brief Calculate properties as function of density
+	at \f$ T=0 \f$
+     */
+    virtual void calc_density_zerot(fermion_deriv &f);
     
     /** \brief Calculate properties as function of chemical potential
-    */
+	at \f$ T=0 \f$
+     */
+    virtual void calc_mu_zerot(fermion_deriv &f);
+    
+    /** \brief Calculate properties as function of chemical potential
+     */
     virtual int calc_mu(fermion_deriv &f, double temper);
 
     /** \brief Calculate properties as function of density

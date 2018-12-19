@@ -207,7 +207,7 @@ namespace o2scl {
 
     /** \brief Non-degenerate expansion for fermions
 
-	Attempts to evaulate thermodynamics of a non-degenerate
+	Attempts to evaluate thermodynamics of a non-degenerate
 	fermion. If the result is accurate to within the requested
 	precision, this function returns <tt>true</tt>, and otherwise
 	this function returns <tt>false</tt> and the values in stored
