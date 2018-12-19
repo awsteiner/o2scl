@@ -24,7 +24,7 @@
 #define O2SCL_CLASSICAL_H
 
 /** \file classical.h
-    \brief File defining \ref o2scl::classical
+    \brief File defining \ref o2scl::classical_eval_thermo
 */
 
 #include <string>
@@ -41,11 +41,11 @@ namespace o2scl {
 #endif
 
   /** \brief Classical particle class
-      
-      \future Write a calc_density_zerot() function for 
-      completeness?
+
+      \note Note that it makes no sense to include
+      \f$ T=0 \f$ functions here
   */
-  class classical {
+  class classical_eval_thermo {
 
   public:
 
@@ -56,9 +56,9 @@ namespace o2scl {
 	somewhat gracefully, even though the classical limit doesn't
 	necessarily make physical sense there.
     */
-    classical();
+    classical_eval_thermo();
 
-    virtual ~classical() {
+    virtual ~classical_eval_thermo() {
     }
 
     /** \brief Calculate properties as function of chemical potential
@@ -79,8 +79,8 @@ namespace o2scl {
      */
     virtual void calc_density(part &p, double temper);
 
-    /// Return string denoting type ("classical")
-    virtual const char *type() { return "classical"; }
+    /// Return string denoting type ("classical_eval_thermo")
+    virtual const char *type() { return "classical_eval_thermo"; }
     
   };
 

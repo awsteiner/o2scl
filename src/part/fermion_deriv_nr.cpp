@@ -172,9 +172,9 @@ int fermion_deriv_nr::nu_from_n(fermion_deriv &f, double temper) {
 
   if (ret!=0) {
 
-    // If it failed, try to get a guess from classical particle
+    // If it failed, try to get a guess from classical_eval_thermo particle
     
-    classical cl;
+    classical_eval_thermo cl;
     cl.calc_density(f,temper);
     if (f.inc_rest_mass) {
       nex=-(f.nu-f.m)/temper;

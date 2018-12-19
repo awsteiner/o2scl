@@ -38,7 +38,7 @@
 namespace o2scl {
 #endif
 
-  /** \brief A particle data class with derivatives
+  /** \brief Particle derivatives in the pressure representation
 
       This class adds the derivatives \ref dndmu, \ref dndT, and
       \ref dsdT, which correspond to
@@ -71,14 +71,10 @@ namespace o2scl {
       \endcomment
 
   */
-  class part_deriv : public part {
+  class part_deriv_press {
     
   public:
     
-    /// Make a particle of mass \c mass and degeneracy \c dof.
-  part_deriv(double mass=0.0, double dof=0.0) : part(mass,dof) {
-    }
-
     /// Derivative of number density with respect to chemical potential
     double dndmu;
     
@@ -88,6 +84,117 @@ namespace o2scl {
     /// Derivative of entropy density with respect to temperature
     double dsdT;
 
+    part_deriv_press() {
+    }
+    
+    /// Copy constructor
+    part_deriv_press(const part_deriv_press &p) {
+      dndmu=p.dndmu;
+      dndT=p.dndT;
+      dsdT=p.dsdT;
+    }
+
+    /// Copy construction with operator=()
+    part_deriv_press &operator=(const part_deriv_press &p) {
+      if (this!=&p) {
+	dndmu=p.dndmu;
+	dndT=p.dndT;
+	dsdT=p.dsdT;
+      }
+      return *this;
+    }
+
+    /** \brief Compute derivatives in the Helmholtz free energy
+	representation from the derivatives in the pressure
+	representation
+    */
+    void deriv_f(double &dmudn, double &dmudT, double &dsdT) {
+      dmudn=1.0/dndmu;
+      dmudT=-dndT/dndmu;
+      dsdT=dndT*dndT/dndmu-dsdT;
+      return;
+    }
+  };
+  
+  /** \brief A fermion with derivative information
+   */
+  class fermion_deriv : public fermion, public part_deriv_press {
+    
+  public:
+
+    /// Make a particle of mass \c mass and degeneracy \c dof.
+  fermion_deriv(double mass=0.0, double dof=0.0) : fermion(mass,dof) {
+    }
+    
+    /// Copy constructor
+    fermion_deriv(const fermion_deriv &p) {
+      g=p.g;
+      m=p.m;
+      ms=p.ms;
+      n=p.n;
+      ed=p.ed;
+      pr=p.pr;
+      mu=p.mu;
+      en=p.en;
+      nu=p.nu;
+      dndmu=p.dndmu;
+      dndT=p.dndT;
+      dsdT=p.dsdT;
+      inc_rest_mass=p.inc_rest_mass;
+      non_interacting=p.non_interacting;
+    }
+
+    /// Copy constructor
+    fermion_deriv(const fermion &p) {
+      g=p.g;
+      m=p.m;
+      ms=p.ms;
+      n=p.n;
+      ed=p.ed;
+      pr=p.pr;
+      mu=p.mu;
+      en=p.en;
+      nu=p.nu;
+      dndmu=0.0;
+      dndT=0.0;
+      dsdT=0.0;
+      inc_rest_mass=p.inc_rest_mass;
+      non_interacting=p.non_interacting;
+    }
+
+    /// Copy construction with operator=()
+    fermion_deriv &operator=(const fermion_deriv &p) {
+      if (this!=&p) {
+	g=p.g;
+	m=p.m;
+	ms=p.ms;
+	n=p.n;
+	ed=p.ed;
+	pr=p.pr;
+	mu=p.mu;
+	en=p.en;
+	nu=p.nu;
+	dndmu=p.dndmu;
+	dndT=p.dndT;
+	dsdT=p.dsdT;
+	inc_rest_mass=p.inc_rest_mass;
+	non_interacting=p.non_interacting;
+      }
+      return *this;
+    }
+    
+  };
+  
+  /** \brief A part with derivative information
+   */
+  class part_deriv : public part, public part_deriv_press {
+    
+  public:
+
+    /// Make a particle of mass \c mass and degeneracy \c dof.
+  part_deriv(double mass=0.0, double dof=0.0) : part(mass,dof) {
+    }
+    
     /// Copy constructor
     part_deriv(const part_deriv &p) {
       g=p.g;
@@ -126,70 +233,6 @@ namespace o2scl {
       }
       return *this;
     }
-
-    /** \brief Compute derivatives in the Helmholtz free energy
-	representation from the derivatives in the pressure
-	representation
-    */
-    void deriv_f(double &dmudn, double &dmudT, double &dsdT) {
-      dmudn=1.0/dndmu;
-      dmudT=-dndT/dndmu;
-      dsdT=dndT*dndT/dndmu-dsdT;
-      return;
-    }
-  };
-  
-  /** \brief A fermion with derivative information
-   */
-  class fermion_deriv : public part_deriv {
-    
-  public:
-    
-    /// Make a particle of mass \c mass and degeneracy \c dof.
-  fermion_deriv(double mass=0.0, double dof=0.0) : part_deriv(mass,dof) {
-    }
-    
-    /// Fermi momentum
-    double kf;
-
-    /// Copy constructor
-    fermion_deriv(const fermion_deriv &p) {
-      g=p.g;
-      m=p.m;
-      ms=p.ms;
-      n=p.n;
-      ed=p.ed;
-      pr=p.pr;
-      mu=p.mu;
-      en=p.en;
-      nu=p.nu;
-      dndmu=p.dndmu;
-      dndT=p.dndT;
-      dsdT=p.dsdT;
-      inc_rest_mass=p.inc_rest_mass;
-      non_interacting=p.non_interacting;
-    }
-
-    /// Copy construction with operator=()
-    fermion_deriv &operator=(const fermion_deriv &p) {
-      if (this!=&p) {
-	g=p.g;
-	m=p.m;
-	ms=p.ms;
-	n=p.n;
-	ed=p.ed;
-	pr=p.pr;
-	mu=p.mu;
-	en=p.en;
-	nu=p.nu;
-	dndmu=p.dndmu;
-	dndT=p.dndT;
-	dsdT=p.dsdT;
-	inc_rest_mass=p.inc_rest_mass;
-	non_interacting=p.non_interacting;
-      }
-      return *this;
-    }
     
   };
   
@@ -206,11 +249,11 @@ namespace o2scl {
       of massless fermions with pairs at finite temperature
       in Constantinou et al. 2014 which could be implemented here.
   */
-  class fermion_deriv_thermo {
+  class fermion_deriv_eval_thermo {
 
   public:
 
-    virtual ~fermion_deriv_thermo() {
+    virtual ~fermion_deriv_eval_thermo() {
     }
 
     /** \brief Calculate properties as function of chemical potential

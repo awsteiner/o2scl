@@ -258,7 +258,7 @@ namespace o2scl {
       \future Create a more intelligent method for dealing with bad 
       initial guesses for the chemical potential in calc_density().
   */
-  class fermion_deriv_rel : public fermion_deriv_thermo {
+  class fermion_deriv_rel : public fermion_deriv_eval_thermo {
     
   public:
 

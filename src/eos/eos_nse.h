@@ -110,7 +110,7 @@ namespace o2scl {
     mmin_base<> *mmin_ptr;
 
     /// Compute particle properties assuming classical thermodynamics
-    classical cla;
+    classical_eval_thermo cla;
 
 #endif
 
