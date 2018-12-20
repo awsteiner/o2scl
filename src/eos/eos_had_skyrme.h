@@ -241,7 +241,101 @@ namespace o2scl {
     /** \brief Evaluate the effective masses for neutrons and
 	protons
     */
-    void eff_mass(fermion &ne, fermion &pr);
+    template<class fermion_t>
+      void eff_mass(fermion_t &ne, fermion_t &pr, double &term,
+		    double &term2) {
+      
+      // Landau effective masses
+      double nb=ne.n+pr.n;
+      term=0.25*(t1*(1.0+x1/2.0)+t2*(1.0+x2/2.0));
+      term2=0.25*(t2*(0.5+x2)-t1*(0.5+x1));
+      ne.ms=ne.m/(1.0+2.0*(nb*term+ne.n*term2)*ne.m);
+      pr.ms=pr.m/(1.0+2.0*(nb*term+pr.n*term2)*pr.m);
+      return;
+    }
+
+    /** \brief
+     */
+    template<class fermion_t>
+      void zero_density(fermion_t &ne, fermion_t &pr,
+			thermo &th) {
+
+      ne.ms=ne.m;
+      pr.ms=pr.m;
+      if (ne.inc_rest_mass) {
+	ne.mu=ne.m;
+	ne.nu=ne.m;
+      } else {
+	ne.mu=0.0;
+	ne.nu=0.0;
+      }
+      if (pr.inc_rest_mass) {
+	pr.mu=pr.m;
+	pr.nu=pr.m;
+      } else {
+	pr.mu=0.0;
+	pr.nu=0.0;
+      }
+      ne.pr=0.0;
+      pr.pr=0.0;
+      ne.ed=0.0;
+      pr.ed=0.0;
+      ne.en=0.0;
+      pr.en=0.0;
+      th.pr=0.0;
+      th.ed=0.0;
+      th.en=0.0;
+      return;
+    }
+
+    /* Check that 
+       - the densities and temperature are finite and positive
+       - the spin denegeracies are correct
+       - the masses are sensible
+       - the values of 'non_interacting' are false
+       - the alpha parameter is positive
+       - the temperature is not negative
+    */
+    template<class fermion_t>
+      void check_input(fermion_t &ne, fermion_t &pr, double T) {
+      if (!std::isfinite(ne.n) || !std::isfinite(pr.n) ||
+	  !std::isfinite(T)) {
+	O2SCL_ERR2("Nucleon densities or temperature not finite in ",
+		   "eos_had_skyrme::calc_deriv_temp_e().",exc_einval);
+      }
+      if (ne.n<0.0 || pr.n<0.0) {
+	std::string str=((std::string)"Nucleon densities negative, n_n=")+
+	  std::to_string(ne.n)+", n_p="+std::to_string(pr.n)+", in "+
+	  "eos_had_skyrme::calc_deriv_temp_e().";
+	O2SCL_ERR(str.c_str(),exc_einval);
+      }
+      if (fabs(ne.g-2.0)>1.0e-10 || fabs(pr.g-2.0)>1.0e-10) {
+	O2SCL_ERR((((std::string)"Neutron (")+std::to_string(ne.g)+
+		   ") or proton ("+std::to_string(pr.g)+") spin deg"+
+		   "eneracies wrong in "+
+		   "eos_had_skyrme::calc_deriv_temp_e().").c_str(),
+		  exc_einval);
+      }
+      if (fabs(ne.m-4.5)>1.0 || fabs(pr.m-4.5)>1.0) {
+	O2SCL_ERR((((std::string)"Neutron (")+std::to_string(ne.m)+
+		   ") or proton ("+std::to_string(pr.m)+") masses wrong "+
+		   "in eos_had_skyrme::calc_deriv_temp_e().").c_str(),
+		  exc_einval);
+      }
+      if (ne.non_interacting==true || pr.non_interacting==true) {
+	O2SCL_ERR2("Neutron or protons non-interacting in ",
+		   "eos_had_skyrme::calc_deriv_temp_e().",exc_einval);
+      }
+      if (alpha<=0.0) {
+	O2SCL_ERR2("Parameter alpha negative in ",
+		   "eos_had_skyrme::calc_e().",exc_einval);
+      }
+      if (T<0.0) {
+	O2SCL_ERR2("Temperature negative in ",
+		   "eos_had_skyrme::calc_e().",exc_einval);
+      }
+      return;
+    }
     
     /** \brief Equation of state as a function of densities
 

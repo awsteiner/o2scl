@@ -40,97 +40,25 @@ eos_had_skyrme::eos_had_skyrme() {
   fet=&nrf;
 }
 
-void eos_had_skyrme::eff_mass(fermion &ne, fermion &pr) {
-  // Landau effective masses
-  double nb=ne.n+pr.n;
-  double term=0.25*(t1*(1.0+x1/2.0)+t2*(1.0+x2/2.0));
-  double term2=0.25*(t2*(0.5+x2)-t1*(0.5+x1));
-  ne.ms=ne.m/(1.0+2.0*(nb*term+ne.n*term2)*ne.m);
-  pr.ms=pr.m/(1.0+2.0*(nb*term+pr.n*term2)*pr.m);
-  return;
-}
-
 int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
 				      double ltemper, thermo &locth,
 				      thermo_np_deriv_helm &locthd) {
-
-  /* Check that 
-     - the densities and temperature are finite and positive
-     - the spin denegeracies are correct
-     - the masses are sensible
-     - the values of 'non_interacting' are false
-     - the alpha parameter is positive
-     - the temperature is not negative
-  */
+  
 #if !O2SCL_NO_RANGE_CHECK
-  if (!std::isfinite(ne.n) || !std::isfinite(pr.n) ||
-      !std::isfinite(ltemper)) {
-    O2SCL_ERR2("Nucleon densities or temperature not finite in ",
-	       "eos_had_skyrme::calc_deriv_temp_e().",exc_einval);
-  }
-  if (ne.n<0.0 || pr.n<0.0) {
-    string str=((string)"Nucleon densities negative, n_n=")+
-      std::to_string(ne.n)+", n_p="+std::to_string(pr.n)+", in "+
-      "eos_had_skyrme::calc_deriv_temp_e().";
-    O2SCL_ERR(str.c_str(),exc_einval);
-  }
-  if (fabs(ne.g-2.0)>1.0e-10 || fabs(pr.g-2.0)>1.0e-10) {
-    O2SCL_ERR((((std::string)"Neutron (")+std::to_string(ne.g)+
-	       ") or proton ("+std::to_string(pr.g)+") spin deg"+
-	       "eneracies wrong in "+
-	       "eos_had_skyrme::calc_deriv_temp_e().").c_str(),exc_einval);
-  }
-  if (fabs(ne.m-4.5)>1.0 || fabs(pr.m-4.5)>1.0) {
-    O2SCL_ERR((((std::string)"Neutron (")+std::to_string(ne.m)+
-	       ") or proton ("+std::to_string(pr.m)+") masses wrong "+
-	       "in eos_had_skyrme::calc_deriv_temp_e().").c_str(),exc_einval);
-  }
-  if (ne.non_interacting==true || pr.non_interacting==true) {
-    O2SCL_ERR2("Neutron or protons non-interacting in ",
-	       "eos_had_skyrme::calc_deriv_temp_e().",exc_einval);
-  }
-  if (alpha<=0.0) {
-    O2SCL_ERR2("Parameter alpha negative in ",
-	       "eos_had_skyrme::calc_e().",exc_einval);
-  }
-  if (ltemper<0.0) {
-    O2SCL_ERR2("Temperature negative in ",
-	       "eos_had_skyrme::calc_e().",exc_einval);
-  }
+  check_input(ne,pr,ltemper);
 #endif
 
   /// Handle the zero density case
   if (ne.n==0.0 && pr.n==0.0) {
-    ne.ms=ne.m;
-    pr.ms=pr.m;
-    ne.mu=ne.m;
-    pr.mu=pr.m;
-    ne.pr=0.0;
-    pr.pr=0.0;
-    ne.ed=0.0;
-    pr.ed=0.0;
-    locth.pr=0.0;
-    locth.ed=0.0;
-    locth.en=0.0;
-
-    ne.dndT=0.0;
-    ne.dndmu=0.0;
-    ne.dsdT=0.0;
-    pr.dndT=0.0;
-    pr.dndmu=0.0;
-    pr.dsdT=0.0;
-    
+    zero_density(ne,pr,locth);
     return success;
   }
 
   double n=ne.n+pr.n;
   double x=pr.n/n;
 
-  // Landau effective masses
-  double term=0.25*(t1*(1.0+x1/2.0)+t2*(1.0+x2/2.0));
-  double term2=0.25*(t2*(0.5+x2)-t1*(0.5+x1));
-  ne.ms=ne.m/(1.0+2.0*(n*term+ne.n*term2)*ne.m);
-  pr.ms=pr.m/(1.0+2.0*(n*term+pr.n*term2)*pr.m);
+  double term, term2;
+  eff_mass(ne,pr,term,term2);
 
   if (ne.ms<0.0 || pr.ms<0.0) {
     O2SCL_CONV2_RET("Effective masses negative in ",
@@ -138,40 +66,9 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
 		    exc_einval,this->err_nonconv);
   }
 
-  if (ne.n>0.0) {
-    if (ltemper==0.0) {
-      nrfd.calc_density_zerot(ne);
-    } else {
-      nrfd.calc_density(ne,ltemper);
-    }
-  } else {
-    // If the neutron density is zero, we just assume we're 
-    // computing pure proton matter
-    ne.ed=0.0;
-    ne.en=0.0;
-    ne.pr=0.0;
-    ne.nu=0.0;
-    ne.dndT=0.0;
-    ne.dndmu=0.0;
-    ne.dsdT=0.0;
-  }
-  if (pr.n>0.0) {
-    if (ltemper==0.0) {
-      nrfd.calc_density_zerot(pr);
-    } else {
-      nrfd.calc_density(pr,ltemper);
-    }
-  } else {
-    // If the proton density is zero, we just assume we're 
-    // computing pure neutron matter
-    pr.ed=0.0;
-    pr.en=0.0;
-    pr.pr=0.0;
-    pr.nu=0.0;
-    pr.dndT=0.0;
-    pr.dndmu=0.0;
-    pr.dsdT=0.0;
-  }
+  // These automatically handle n=0 and T=0 limits
+  nrfd.calc_density(ne,ltemper);
+  nrfd.calc_density(pr,ltemper);
   
   // Single particle potentials and energy density
 
@@ -278,6 +175,7 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
 int eos_had_skyrme::calc_temp_e(fermion &ne, fermion &pr, 
 				double ltemper, thermo &locth) {
 
+  /*
   if (true) {
     fermion_deriv ne2=ne;
     fermion_deriv pr2=pr;
@@ -295,6 +193,7 @@ int eos_had_skyrme::calc_temp_e(fermion &ne, fermion &pr,
     pr.en=pr2.en;
     return ret;
   }
+  */
   
   double n, x, hamk, ham, ham1, ham2, ham3, ham4, ham5, ham6;
   double dhdnn, dhdnp, na, npa, nna, term, term2, common, gn, gp;
@@ -451,6 +350,7 @@ int eos_had_skyrme::calc_temp_e(fermion &ne, fermion &pr,
 
 int eos_had_skyrme::calc_e(fermion &ne, fermion &pr, thermo &locth) {
 
+  /*
   if (true) {
     fermion_deriv ne2=ne;
     fermion_deriv pr2=pr;
@@ -468,6 +368,7 @@ int eos_had_skyrme::calc_e(fermion &ne, fermion &pr, thermo &locth) {
     pr.en=pr2.en;
     return ret;
   }
+  */
   
 #if !O2SCL_NO_RANGE_CHECK
   if (!std::isfinite(ne.n) || !std::isfinite(ne.n)) {

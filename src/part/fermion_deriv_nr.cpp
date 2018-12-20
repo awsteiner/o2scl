@@ -93,9 +93,13 @@ void fermion_deriv_nr::calc_density_zerot(fermion_deriv &f) {
 }
 
 int fermion_deriv_nr::calc_mu(fermion_deriv &f, double temper) {
-  
-  if (temper<=0.0) {
-    O2SCL_ERR("T=0 not implemented in fermion_deriv_nr().",exc_eunimpl);
+
+  if (temper<0.0) {
+    O2SCL_ERR("T<0 in fermion_deriv_nr::calc_mu().",exc_einval);
+  }
+  if (temper==0.0) {
+    calc_mu_zerot(f);
+    return 0;
   }
   if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
   
@@ -208,9 +212,30 @@ int fermion_deriv_nr::calc_density(fermion_deriv &f, double temper) {
     O2SCL_ERR2("Temperature less than zero in ",
 	       "fermion_deriv_nr::calc_density().",exc_einval);
   }
-  if (f.n<=0.0) {
-    O2SCL_ERR2("Density less than or equal to zero in ",
+  if (f.n<0.0) {
+    O2SCL_ERR2("Density less than zero in ",
 	       "fermion_deriv_nr::calc_density().",exc_einval);
+  }
+
+  if (temper==0.0) {
+    calc_density_zerot(f);
+    return 0;
+  }
+  if (f.n==0.0) {
+    if (f.inc_rest_mass) {
+      f.nu=f.m;
+      f.mu=f.m;
+    } else {
+      f.nu=0.0;
+      f.mu=0.0;
+    }
+    f.ed=0.0;
+    f.en=0.0;
+    f.pr=0.0;
+    f.nu=0.0;
+    f.dndT=0.0;
+    f.dndmu=0.0;
+    f.dsdT=0.0;
   }
   
   if (f.non_interacting==true) { f.ms=f.m; f.nu=f.mu; }
