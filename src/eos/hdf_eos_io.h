@@ -74,6 +74,41 @@ namespace o2scl_hdf {
       suffix <tt>.o2</tt>. Otherwise, the parameter \c model is 
       taken to be the full pathname of the HDF5 file containing 
       the EOS model data to be loaded.
+
+      The parameters <tt>b4</tt>, <tt>b4p</tt> and the reference
+      are directly read from the file. 
+      
+      If the file does not contain an integer named <tt>dpfix</tt>,
+      or the value of <tt>dpfix</tt> is false, then 
+      - the parameters named <tt>x0</tt>, <tt>x1</tt>, <tt>x2</tt>, 
+      <tt>x3</tt>, <tt>a</tt>, <tt>b</tt>, and <tt>alpha</tt>
+      are directly read from the file,
+      - and the parameters named <tt>t0</tt>, <tt>t1</tt>, <tt>t2</tt>, 
+      and <tt>t3</tt> are presumed to be stored in the file with
+      an extra factor of \f$ \hbar c \f$ and stored in fields named
+      <tt>t0hc</tt>, <tt>t1hc</tt>, <tt>t2hc</tt>, and
+      <tt>t3hc</tt> . 
+      
+      Alternatively if <tt>dpfix</tt> is present and greater than
+      zero, then the values \f$ t_1=-t_2/3(5+4 x_2) \f$, \f$ x_1 =
+      -(4+5 x_2)/ (5+4 x_2) \f$, \f$ \alpha=1/3 \f$, \f$ a=1 \f$ and
+      \f$ b=0 \f$ are assumed. The values <tt>x0</tt>, <tt>x2</tt>,
+      and <tt>x3</tt> are directly read and the values <tt>t0</tt>,
+      <tt>t2</tt>, and <tt>t3</tt> are computed from fields named
+      <tt>t0hc</tt>, <tt>t2hc</tt>, and <tt>t3hc</tt> .
+
+
+      If the file contains an integer named <tt>pdmode</tt>
+      and that integer is greater than zero, then 
+      the parameter named <tt>W0</tt> is taken from
+      the numbers named <tt>pairfn</tt> and <tt>pairfp</tt>
+      using the relation
+      \f[
+      W_0 = \frac{(\mathrm{pairfn}+\mathrm{pairfp})}{4 \hbar c}
+      \f]
+      Otherwise, it is assumed that the file contains a 
+      field named <tt>W0hc</tt> which stores the value of
+      <tt>W0</tt> times \f$ \hbar c \f$ .
   */
   void skyrme_load(o2scl::eos_had_skyrme &sk, std::string model, 
 		   bool external=false);

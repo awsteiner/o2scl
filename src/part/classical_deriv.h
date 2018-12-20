@@ -24,7 +24,7 @@
 #define O2SCL_CLASSICAL_DERIV_H
 
 /** \file classical_deriv.h
-    \brief File defining \ref o2scl::classical_deriv
+    \brief File defining \ref o2scl::classical_deriv_eval_thermo
 */
 
 #include <string>

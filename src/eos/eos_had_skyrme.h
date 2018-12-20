@@ -419,22 +419,25 @@ namespace o2scl {
     virtual ~eos_had_skyrme() {};
 
     /** \brief Equation of state as a function of densities
-
-	\note Runs the zero temperature code if \c temper is less
-	than or equal to zero.
-     */
+	at finite temperature
+    */
     virtual int calc_temp_e(fermion &ne, fermion &pr, double temper, 
 			    thermo &th);
 
-    /** \brief Equation of state including second derivatives
-	as a function of the densities
+    /** \brief Equation of state as a function of the densities at
+	finite temperature and including second derivatives
     */
     virtual int calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
 				  double temper, thermo &th,
 				  thermo_np_deriv_helm &thd);
     
-    /// Equation of state as a function of density.
+    /** \brief Equation of state as a function of densities at 
+	zero temperature
+    */
     virtual int calc_e(fermion &ne, fermion &pr, thermo &lt);
+
+    /// Return string denoting type ("eos_had_skyrme")
+    virtual const char *type() { return "eos_had_skyrme"; }
     //@}
 
     /// \name Basic Skyrme model parameters
@@ -442,6 +445,8 @@ namespace o2scl {
     double t0, t1, t2, t3, x0, x1, x2, x3, alpha, a, b;
     //@}
 
+    /// \name Other parameters
+    //@{
     /** \brief Spin-orbit splitting (in \f$ \mathrm{fm}^{-1} \f$)
 
 	This is unused, but included for possible future use and
@@ -457,6 +462,15 @@ namespace o2scl {
 
     /// Bibliographic reference
     std::string reference;
+    
+    /** \brief Use eos_had_base methods for saturation properties
+	
+	This can be set to true to check the difference between
+	the exact expressions and the numerical values from
+	class eos_had_base.
+    */
+    bool parent_method;
+    //@}
 
     /** \name Saturation properties
 
@@ -520,6 +534,44 @@ namespace o2scl {
     virtual double fkprime(double nb);
     //@}
 
+    /// \name Compute and test Landau parameters
+    //@{
+    /** \brief Check the Landau parameters for instabilities
+
+	This returns zero if there are no instabilities.
+     */
+    int check_landau(double nb, double m);
+
+    /** \brief Calculate the Landau parameters for nuclear matter
+
+	Given \c n0 and \c m, this calculates the Landau parameters in
+	nuclear matter as given in \ref Margueron02
+     
+	\todo This needs to be checked.
+	
+	(Checked once on 11/05/03)
+    */
+    void landau_nuclear(double n0, double m,
+		       double &f0, double &g0, double &f0p,
+		       double &g0p, double &f1, double &g1,
+		       double &f1p, double &g1p);
+
+    /** \brief Calculate the Landau parameters for neutron matter
+	    
+	Given 'n0' and 'm', this calculates the Landau parameters in
+	neutron matter as given in \ref Margueron02
+	
+	\todo This needs to be checked
+	
+	(Checked once on 11/05/03)
+    */
+    void landau_neutron(double n0, double m, double &f0, double &g0, 
+			double &f1, double &g1);
+
+    //@}
+    
+    /// \name Other functions
+    //@{
     /** \brief Evaluate the effective masses for neutrons and
 	protons
     */
@@ -574,49 +626,6 @@ namespace o2scl {
 	From \ref Margueron02
     */
     //  int calpar_new(double m);
-
-    /** \brief Use eos_had_base methods for saturation properties
-      
-	This can be set to true to check the difference between
-	the exact expressions and the numerical values from
-	class eos_had_base.
-    */
-    bool parent_method;
-  
-    /** \brief Check the Landau parameters for instabilities
-
-	This returns zero if there are no instabilities.
-     */
-    int check_landau(double nb, double m);
-
-    /** \brief Calculate the Landau parameters for nuclear matter
-
-	Given \c n0 and \c m, this calculates the Landau parameters in
-	nuclear matter as given in \ref Margueron02
-     
-	\todo This needs to be checked.
-	
-	(Checked once on 11/05/03)
-    */
-    void landau_nuclear(double n0, double m,
-		       double &f0, double &g0, double &f0p,
-		       double &g0p, double &f1, double &g1,
-		       double &f1p, double &g1p);
-
-    /** \brief Calculate the Landau parameters for neutron matter
-	    
-	Given 'n0' and 'm', this calculates the Landau parameters in
-	neutron matter as given in \ref Margueron02
-	
-	\todo This needs to be checked
-	
-	(Checked once on 11/05/03)
-    */
-    void landau_neutron(double n0, double m, double &f0, double &g0, 
-			double &f1, double &g1);
-
-    /// Return string denoting type ("eos_had_skyrme")
-    virtual const char *type() { return "eos_had_skyrme"; }
 
     /** \brief Set using alternate parameterization
 
@@ -713,7 +722,8 @@ namespace o2scl {
     void alt_params_saturation
       (double n0, double EoA, double K, double Ms_star, double a, double L,
        double Mv_star, double CrDr0, double CrDr1, double CrnJ0, double CrnJ1);
-
+    //@}
+    
     /// \name Particle classes
     //@{
     /// Thermodynamics of non-relativistic fermions

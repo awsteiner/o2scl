@@ -120,8 +120,8 @@
 
     At zero temperature, the thermodynamic properties of fermions can
     be computed using \ref o2scl::fermion_zerot. The class \ref
-    o2scl::classical computes the properties of particles in the
-    classical limit.
+    o2scl::classical_eval_thermo computes the properties of particles
+    in the classical limit.
 
     At finite temperature, there are different classes corresponding
     to different approaches to computing the integrals over the
@@ -154,17 +154,15 @@
     addition to the energy and pressure. The new data classes are
     children of \ref o2scl::part_deriv . The three classes which
     compute these derivatives for fermions and classical particles.
-    The class \ref o2scl::classical_deriv handles the nondegenerate
-    limit, \ref o2scl::fermion_deriv_rel handles fermions and \ref
-    o2scl::fermion_deriv_nr handles nonrelativistic fermions. These
-    classes compute the derivatives
-    \f[
+    The class \ref o2scl::classical_deriv_eval_thermo handles the
+    nondegenerate limit, \ref o2scl::fermion_deriv_rel handles
+    fermions and \ref o2scl::fermion_deriv_nr handles nonrelativistic
+    fermions. These classes compute the derivatives \f[
     \left(\frac{\partial n}{\partial \mu}\right)_{T}, \quad
-    \left(\frac{\partial n}{\partial T}\right)_{\mu}, \quad \mathrm{and} \quad
-    \left(\frac{\partial s}{\partial T}\right)_{\mu} \quad .
-    \f]
-    All other first derivatives of the thermodynamic functions can
-    be written in terms of these three. 
+    \left(\frac{\partial n}{\partial T}\right)_{\mu}, \quad
+    \mathrm{and} \quad \left(\frac{\partial s}{\partial
+    T}\right)_{\mu} \quad . \f] All other first derivatives of the
+    thermodynamic functions can be written in terms of these three.
 
     \hline
     

@@ -421,7 +421,7 @@
 
     These expansions are used in 
     \ref o2scl::fermion_eval_thermo::calc_mu_deg() and
-    \ref o2scl::fermion_deriv_thermo::calc_mu_deg() .
+    \ref o2scl::fermion_deriv_eval_thermo::calc_mu_deg() .
 
     \subsection ferm_ndeg_subsect Nondegenerate Expansion
 
