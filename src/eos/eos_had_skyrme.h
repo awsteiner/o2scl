@@ -177,7 +177,7 @@ namespace o2scl {
       - \f$t_2\f$ - \f$\mathrm{fm}^4\f$
       - \f$t_3\f$ - \f$\mathrm{fm}^{2+3 \alpha}\f$
       
-      \b Other notes
+      \b Other \b Notes
 
       The functions for the usual saturation properties are based 
       partly on \ref Brack85.

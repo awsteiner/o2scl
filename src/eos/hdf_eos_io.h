@@ -97,7 +97,6 @@ namespace o2scl_hdf {
       <tt>t2</tt>, and <tt>t3</tt> are computed from fields named
       <tt>t0hc</tt>, <tt>t2hc</tt>, and <tt>t3hc</tt> .
 
-
       If the file contains an integer named <tt>pdmode</tt>
       and that integer is greater than zero, then 
       the parameter named <tt>W0</tt> is taken from
