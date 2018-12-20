@@ -34,7 +34,7 @@ int main(void) {
   cout.setf(ios::scientific);
 
   part n(5.0,2.0);
-  classical cl;
+  classical_eval_thermo cl;
   t.test_rel(n.m,5.0,1.0e-6,"mass inheritance");
   double temper=0.1;
   n.n=0.1;

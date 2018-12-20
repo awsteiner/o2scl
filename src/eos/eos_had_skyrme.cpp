@@ -40,6 +40,20 @@ eos_had_skyrme::eos_had_skyrme() {
   fet=&nrf;
 }
 
+void eos_had_skyrme::hamiltonian_coeffs(double &ham1, double &ham2,
+					double &ham3, double &ham4,
+					double &ham5, double &ham6) {
+  
+  ham1=0.5*t0*(1.0+0.5*x0);
+  ham2=-0.5*t0*(0.5+x0);
+  ham3=a*t3/6.0*(1.0+0.5*x3);
+  ham4=a*t3*pow(2.0,alpha)/96.0*(1.0-x3);
+  ham5=b*t3/12.0*(1.0+0.5*x3);
+  ham6=-b*t3/12.0*(0.5+x3);
+  
+  return;
+}
+
 int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
 				      double ltemper, thermo &locth,
 				      thermo_np_deriv_helm &locthd) {
@@ -54,9 +68,6 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
     return success;
   }
 
-  double n=ne.n+pr.n;
-  double x=pr.n/n;
-
   double term, term2;
   eff_mass(ne,pr,term,term2);
 
@@ -69,132 +80,26 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
   // These automatically handle n=0 and T=0 limits
   nrfd.calc_density(ne,ltemper);
   nrfd.calc_density(pr,ltemper);
+
+  // Compute the coefficients of different powers of density
+  // in the hamiltonian
+  double ham1, ham2, ham3, ham4, ham5, ham6;
+  hamiltonian_coeffs(ham1,ham2,ham3,ham4,ham5,ham6);
   
-  // Single particle potentials and energy density
-
-  double na=pow(fabs(n),alpha);
-  double npa=pow(fabs(pr.n),alpha);
-  double nna=pow(fabs(ne.n),alpha);
-
-  // Variable 'hamk' is just the kinetic part of the Hamiltonian,
-  // hbar^2 tau / (2 m^{star})
-  double hamk=ne.ed+pr.ed;
-
-  // Variables ham{1-6} are remaining parts of the hamiltonian, modulo
-  // factors of density
-  double ham1=0.5*t0*(1.0+0.5*x0);
-  double ham2=-0.5*t0*(0.5+x0);
-  double ham3=a*t3/6.0*(1.0+0.5*x3);
-  double ham4=a*t3*pow(2.0,alpha)/96.0*(1.0-x3);
-  double ham5=b*t3/12.0*(1.0+0.5*x3);
-  double ham6=-b*t3/12.0*(0.5+x3);
-
-  double ham=hamk+ham1*n*n+ham2*(ne.n*ne.n+pr.n*pr.n)+
-    ham3*na*ne.n*pr.n+ham4*(nna*ne.n*ne.n+npa*pr.n*pr.n)+
-    ham5*n*n*na+ham6*(ne.n*ne.n+pr.n*pr.n)*na;
-
-  double gn, gp;
-  if (ne.inc_rest_mass) {
-    gn=2.0*ne.ms*(ne.ed-ne.n*ne.m);
-  } else {
-    gn=2.0*ne.ms*ne.ed;
-  }
-  if (pr.inc_rest_mass) {
-    gp=2.0*pr.ms*(pr.ed-pr.n*pr.m);
-  } else {
-    gp=2.0*pr.ms*pr.ed;
-  }
-
-  // Variables dhdn{n,p} are the partial derivatives of the
-  // Hamiltonian wrt the neutron and proton densities
-  double common=2.0*ham1*n+ham5*(2.0+alpha)*n*na;
-  double dhdnn=common+2.0*ham2*ne.n+ham3*na*pr.n*(alpha*ne.n/n+1.0)+
-    ham4*(nna*ne.n*(2.0+alpha))+
-    ham6*(2.0*ne.n*na+(ne.n*ne.n+pr.n*pr.n)*alpha*na/n);
-  double dhdnp=common+2.0*ham2*pr.n+ham3*na*ne.n*(alpha*pr.n/n+1.0)+
-    ham4*(npa*pr.n*(2.0+alpha))+
-    ham6*(2.0*pr.n*na+(ne.n*ne.n+pr.n*pr.n)*alpha*na/n);
-
-  // Compute the chemical potentials
-  ne.mu=ne.nu+dhdnn+(gn+gp)*term+gn*term2;
-  pr.mu=pr.nu+dhdnp+(gn+gp)*term+gp*term2;
-
-  double opatpa=(1.0+alpha)*(2.0+alpha);
-  double common2=2.0*ham1+2.0*ham2;
-  double dhdnn2=common2+4.0*nna*opatpa+
-    na/n/n*(ham5*n*n*opatpa+ham3*pr.n*alpha*(ne.n+2.0*pr.n+ne.n*alpha)+
-	    ham6*(4.0*ne.n*pr.n*(1.0+alpha)+ne.n*ne.n*opatpa+
-		  pr.n*pr.n*(2.0+alpha*(alpha-1.0))));
-  double dhdnp2=common2+4.0*npa*opatpa+
-    na/n/n*(ham5*n*n*opatpa+ham3*ne.n*alpha*(pr.n+2.0*ne.n+pr.n*alpha)+
-	    ham6*(4.0*ne.n*pr.n*(1.0+alpha)+pr.n*pr.n*opatpa+
-		  ne.n*ne.n*(2.0+alpha*(alpha-1.0))));
-  double dhdnndnp=2.0*ham1+na/n/n*
-    (ham5*n*n*opatpa+ham6*alpha*    
-     (4.0*ne.n*pr.n+ne.n*ne.n*(1.0+alpha)+pr.n*pr.n*(1.0+alpha))+
-     ham3*(ne.n*ne.n*(1.0+alpha)+pr.n*pr.n*(1.0+alpha)+
-	   ne.n*pr.n*(2.0+alpha+alpha*alpha)));
+  // Compute the base thermodynamic properties
+  base_thermo(ne,pr,ltemper,locth,term,term2,
+	      ham1,ham2,ham3,ham4,ham5,ham6);
   
-  // Thermodynamics
-  locth.ed=ham;
-  locth.en=ne.en+pr.en;
-  locth.pr=ltemper*locth.en+ne.mu*ne.n+pr.mu*pr.n-locth.ed;
+  // Compute the second derivatives
+  second_deriv(ne,pr,ltemper,locth,locthd,term,term2,
+	       ham1,ham2,ham3,ham4,ham5,ham6);
 
-  // For the kinetic part, convert from (mu,T) to (n,T)
-  double n_dsdT_f=0.0, p_dsdT_f=0.0;
-  double n_dmudT_f=0.0, p_dmudT_f=0.0;
-  double n_dmudn_f=0.0, p_dmudn_f=0.0;
-  ne.deriv_f(n_dmudn_f,n_dmudT_f,n_dsdT_f);
-  pr.deriv_f(p_dmudn_f,p_dmudT_f,p_dsdT_f);
-
-  double X_n, X_p;
-  if (ltemper>0.0) {
-    X_n=2.5*ne.ed-4.5*ne.ms*ne.n*ne.n/ltemper/ne.dndmu;
-    X_p=2.5*pr.ed-4.5*pr.ms*pr.n*pr.n/ltemper/pr.dndmu;
-  } else {
-    X_n=2.5*ne.ed-3.75*ne.n/ne.dndmu*ne.ed/ne.nu;
-    X_p=2.5*pr.ed-3.75*pr.n/pr.dndmu*pr.ed/pr.nu;
-  }
-  
-  // Now combine to compute the six derivatives
-  locthd.dsdT=n_dsdT_f+p_dsdT_f;
-  locthd.dmundT=2.0*ltemper*ne.ms*(term+term2)*n_dsdT_f+
-    2.0*ltemper*pr.ms*term*p_dsdT_f;
-  locthd.dmupdT=2.0*ltemper*pr.ms*(term+term2)*p_dsdT_f+
-    2.0*ltemper*ne.ms*term*n_dsdT_f;
-  locthd.dmundnn=-4.0*ne.ms*ne.ms*pow(term+term2,2.0)*X_n-
-    4.0*term*term*pr.ms*pr.ms*X_p+n_dmudn_f+dhdnn2;
-  locthd.dmupdnp=-4.0*pr.ms*pr.ms*pow(term+term2,2.0)*X_p-
-    4.0*term*term*ne.ms*ne.ms*X_p+p_dmudn_f+dhdnp2;
-  locthd.dmudn_mixed=-4.0*(term+term2)*term*
-    (ne.ms*ne.ms*X_n+pr.ms*pr.ms*X_p)+dhdnndnp;
-  
   return success;
 }
 
 int eos_had_skyrme::calc_temp_e(fermion &ne, fermion &pr, 
 				double ltemper, thermo &locth) {
 
-  /*
-  if (true) {
-    fermion_deriv ne2=ne;
-    fermion_deriv pr2=pr;
-    thermo_np_deriv_helm tndh;
-    int ret=calc_deriv_temp_e(ne2,pr2,ltemper,locth,tndh);
-    ne.nu=ne2.nu;
-    ne.mu=ne2.mu;
-    ne.pr=ne2.pr;
-    ne.ed=ne2.ed;
-    ne.en=ne2.en;
-    pr.nu=pr2.nu;
-    pr.mu=pr2.mu;
-    pr.pr=pr2.pr;
-    pr.ed=pr2.ed;
-    pr.en=pr2.en;
-    return ret;
-  }
-  */
-  
   double n, x, hamk, ham, ham1, ham2, ham3, ham4, ham5, ham6;
   double dhdnn, dhdnp, na, npa, nna, term, term2, common, gn, gp;
  
@@ -345,31 +250,15 @@ int eos_had_skyrme::calc_temp_e(fermion &ne, fermion &pr,
   locth.en=ne.en+pr.en;
   locth.pr=ltemper*locth.en+ne.mu*ne.n+pr.mu*pr.n-locth.ed;
 
+  // Compute the base thermodynamic properties
+  base_thermo(ne,pr,ltemper,locth,term,term2,
+	      ham1,ham2,ham3,ham4,ham5,ham6);
+  
   return success;
 }
 
 int eos_had_skyrme::calc_e(fermion &ne, fermion &pr, thermo &locth) {
 
-  /*
-  if (true) {
-    fermion_deriv ne2=ne;
-    fermion_deriv pr2=pr;
-    thermo_np_deriv_helm tndh;
-    int ret=calc_deriv_temp_e(ne2,pr2,0.0,locth,tndh);
-    ne.nu=ne2.nu;
-    ne.mu=ne2.mu;
-    ne.pr=ne2.pr;
-    ne.ed=ne2.ed;
-    ne.en=ne2.en;
-    pr.nu=pr2.nu;
-    pr.mu=pr2.mu;
-    pr.pr=pr2.pr;
-    pr.ed=pr2.ed;
-    pr.en=pr2.en;
-    return ret;
-  }
-  */
-  
 #if !O2SCL_NO_RANGE_CHECK
   if (!std::isfinite(ne.n) || !std::isfinite(ne.n)) {
     O2SCL_ERR2("Nucleon densities not finite in ",
@@ -496,6 +385,10 @@ int eos_had_skyrme::calc_e(fermion &ne, fermion &pr, thermo &locth) {
   locth.pr=-locth.ed+ne.mu*ne.n+pr.mu*pr.n;
   locth.en=0.0;
 
+  // Compute the base thermodynamic properties
+  base_thermo(ne,pr,0.0,locth,term,term2,
+	      ham1,ham2,ham3,ham4,ham5,ham6);
+  
   if (!std::isfinite(locth.pr)) {
     std::cout << locth.ed << " " << common << " " << dhdnn << " "
 	      << dhdnp << " " << gn << " " << gp << " "
