@@ -46,8 +46,7 @@ namespace o2scl {
       Equation of state of nucleonic matter based on 
       the Skryme interaction from \ref Skyrme59 .
 
-      \hline
-      \b Background:
+      \b Hamiltonian
 
       The Hamiltonian is defined (using the notation of 
       \ref Steiner05b ) as
@@ -104,6 +103,8 @@ namespace o2scl {
       \left( n_n^2+n_p^2 \right) \right]
       \f]
       
+      \b Gradient \b and \b Spin-Orbit \b Terms
+
       The gradient terms are displayed here for completeness even though
       they are not computed in the code:
       \f[
@@ -143,21 +144,23 @@ namespace o2scl {
       b_4^{\prime} = W_0/2 \f$. For example, for SLy4, 
       \f$ b_4 = b_4^{\prime} = W_0/2 = 61.5~\mathrm{MeV} \f$.
 
-      Also, couple useful definitions
+      Three quantities are defined in \ref Steiner05b for
+      use in computing the properties of matter at saturation
       \f[
       t_3^{\prime} = \left(a + b\right) t_3 \, ,
       \f]
       \f[
-      C = \frac{3 }{10 m} \left( \frac{3 \pi^2 }{2} \right)^{2/3}  \, ,
+      C = \frac{3 }{10 m} \left( \frac{3 \pi^2 }
+      {2} \right)^{2/3}  \, ,
       \f]
       and
       \f[
-      \beta = \frac{M}{2} \left[ \frac{1}{4} \left( 3 t_1 + 5 t_2 \right) \, .
-      + t_2 x_2 \right] \\
+      \beta = \frac{M}{2} \left[ \frac{1}{4} 
+      \left( 3 t_1 + 5 t_2 \right)
+      + t_2 x_2 \right] \, . \\
       \f]
       
-      \hline
-      \b Units:
+      \b Units
 
       Quantities which have units containing powers of energy are
       divided by \f$\hbar c\f$ to ensure all quantities are in units
@@ -174,8 +177,7 @@ namespace o2scl {
       - \f$t_2\f$ - \f$\mathrm{fm}^4\f$
       - \f$t_3\f$ - \f$\mathrm{fm}^{2+3 \alpha}\f$
       
-      \hline
-      \b Misc:
+      \b Other notes
 
       The functions for the usual saturation properties are based 
       partly on \ref Brack85.
@@ -185,29 +187,28 @@ namespace o2scl {
       \ref Dobaczewski94, \ref Dutta86, \ref Friedrich86, \ref Onsi94,
       \ref Reinhard95, and \ref Tondeur84, and \ref VanGiai81 .
       
-      The variables \f$ \nu_n\f$ and \f$ \nu_p\f$ contain the
+      The variables \f$ \nu_n \f$ and \f$ \nu_p \f$ contain the
       expressions \f$ (-\mu_n+V_n)/T \f$ and \f$ (-\mu_p+V_p)/T \f$
       respectively, where \f$ V \f$ is the potential part of the
       single particle energy for particle i (i.e. the derivative of
       the Hamiltonian w.r.t. density while energy density held
       constant). Equivalently, \f$ \nu_n\f$ is just \f$ -k_{F_n}^2/ 2
-      m^{*} \f$.
+      m_n^{*} \f$.
 
-      \note The finite temperature code does not include attempt to
-      include antiparticles and uses \ref
+      \note The finite temperature code does not attempt to include
+      antiparticles and uses \ref
       o2scl::fermion_nonrel::calc_density(). At finite temperature,
       pure neutron matter implies a zero proton number density which
       would imply that the proton chemical potential is \f$ - \infty
       \f$ . This class handles this situation by just setting \f$
       \nu_p \f$ to zero. The case of pure proton matter is handled
       similarly.
-      
-      \note Since this EOS uses the effective masses and chemical
-      potentials in the fermion class, the values of
-      <tt>part::non_interacting</tt> for neutrons and protons are set
-      to false in many of the functions.
 
-      \hline
+      Skyrme models are loaded using \ref o2scl_hdf::skyrme_load() .
+      The full list is given in the \o2 repository in 
+      <tt>o2scl/data/o2scl/skdata/model_list</tt>.
+
+      \b Todos
       
       \todo
       - Convert W0 to b4 and b4p everywhere
@@ -216,93 +217,35 @@ namespace o2scl {
       - Update reference list.
 
       \future
-      - There is some code duplication between calc_e() and
-      calc_temp_e() which could be simplified.
       - This EOS typically converges very well. One exception seems
       to be using <tt>calc_temp_p()</tt> at very low densities. I have
       had problems, for example, with <tt>mun=5.0, mup=6.5</tt>
       at <tt>T=1.0/197.33</tt>. 
 
-      \hline
-      
   */
   class eos_had_skyrme : public eos_had_temp_eden_base {
 
-  public:
-
-    /// \name Basic usage
-    //@{
-    /// Create a blank Skyrme EOS
-    eos_had_skyrme();
-
-    /// Destructor
-    virtual ~eos_had_skyrme() {};
-
-    /** \brief Evaluate the effective masses for neutrons and
-	protons
-    */
-    template<class fermion_t>
-      void eff_mass(fermion_t &ne, fermion_t &pr, double &term,
-		    double &term2) {
-      
-      // Landau effective masses
-      double nb=ne.n+pr.n;
-      term=0.25*(t1*(1.0+x1/2.0)+t2*(1.0+x2/2.0));
-      term2=0.25*(t2*(0.5+x2)-t1*(0.5+x1));
-      ne.ms=ne.m/(1.0+2.0*(nb*term+ne.n*term2)*ne.m);
-      pr.ms=pr.m/(1.0+2.0*(nb*term+pr.n*term2)*pr.m);
-      return;
-    }
-
   protected:
-    
+
+    /// \name EOS helper functions
+    //@{
+    /** \brief Compute the coefficients of the potential energy which
+	have unique dependence on the densities
+     */
     void hamiltonian_coeffs(double &ham1, double &ham2,
 			    double &ham3, double &ham4,
 			    double &ham5, double &ham6);
     
-    /** \brief Handle the zero density limit
-     */
-    template<class fermion_t>
-      void zero_density(fermion_t &ne, fermion_t &pr,
-			thermo &th) {
-
-      ne.ms=ne.m;
-      pr.ms=pr.m;
-      if (ne.inc_rest_mass) {
-	ne.mu=ne.m;
-	ne.nu=ne.m;
-      } else {
-	ne.mu=0.0;
-	ne.nu=0.0;
-      }
-      if (pr.inc_rest_mass) {
-	pr.mu=pr.m;
-	pr.nu=pr.m;
-      } else {
-	pr.mu=0.0;
-	pr.nu=0.0;
-      }
-      ne.pr=0.0;
-      pr.pr=0.0;
-      ne.ed=0.0;
-      pr.ed=0.0;
-      ne.en=0.0;
-      pr.en=0.0;
-      th.pr=0.0;
-      th.ed=0.0;
-      th.en=0.0;
-      
-      return;
-    }
-
     /** \brief Compute the base thermodynamic quantities
+
+	This function computes the energy density, pressure,
+	entropy, and chemical potentials
      */
     template<class fermion_t>
       void base_thermo
       (fermion_t &ne, fermion_t &pr, double ltemper, thermo &locth,
-       double term, double term2,
-       double ham1, double ham2, double ham3, double ham4, double ham5,
-       double ham6) {
+       double term, double term2, double ham1, double ham2,
+       double ham3, double ham4, double ham5, double ham6) {
       
       double nb=ne.n+pr.n;
       double na=pow(nb,alpha);
@@ -463,9 +406,18 @@ namespace o2scl {
       
       return;
     }
+    //@}
     
   public:
-    
+
+    /// \name Basic usage
+    //@{
+    /// Create a blank Skyrme EOS
+    eos_had_skyrme();
+
+    /// Destructor
+    virtual ~eos_had_skyrme() {};
+
     /** \brief Equation of state as a function of densities
 
 	\note Runs the zero temperature code if \c temper is less
@@ -487,7 +439,7 @@ namespace o2scl {
 
     /// \name Basic Skyrme model parameters
     //@{
-    double t0,t1,t2,t3,x0,x1,x2,x3,alpha,a,b;
+    double t0, t1, t2, t3, x0, x1, x2, x3, alpha, a, b;
     //@}
 
     /** \brief Spin-orbit splitting (in \f$ \mathrm{fm}^{-1} \f$)
@@ -567,6 +519,22 @@ namespace o2scl {
     */
     virtual double fkprime(double nb);
     //@}
+
+    /** \brief Evaluate the effective masses for neutrons and
+	protons
+    */
+    template<class fermion_t>
+      void eff_mass(fermion_t &ne, fermion_t &pr, double &term,
+		    double &term2) {
+      
+      // Landau effective masses
+      double nb=ne.n+pr.n;
+      term=0.25*(t1*(1.0+x1/2.0)+t2*(1.0+x2/2.0));
+      term2=0.25*(t2*(0.5+x2)-t1*(0.5+x1));
+      ne.ms=ne.m/(1.0+2.0*(nb*term+ne.n*term2)*ne.m);
+      pr.ms=pr.m/(1.0+2.0*(nb*term+pr.n*term2)*pr.m);
+      return;
+    }
 
     /** \brief Calculate \f$ t_0,t_1,t_2,t_3 \f$ and \f$ \alpha \f$ from 
 	the saturation properties.
@@ -745,12 +713,15 @@ namespace o2scl {
     void alt_params_saturation
       (double n0, double EoA, double K, double Ms_star, double a, double L,
        double Mv_star, double CrDr0, double CrDr1, double CrnJ0, double CrnJ1);
- 
+
+    /// \name Particle classes
+    //@{
     /// Thermodynamics of non-relativistic fermions
     fermion_nonrel nrf;
     
     /// Thermodynamics of non-relativistic fermions with derivatives
     fermion_deriv_nr nrfd;
+    //@}
     
 #ifndef DOXYGEN_NO_O2NS
     

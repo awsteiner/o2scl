@@ -47,7 +47,7 @@ void eos_had_skyrme::hamiltonian_coeffs(double &ham1, double &ham2,
   ham1=0.5*t0*(1.0+0.5*x0);
   ham2=-0.5*t0*(0.5+x0);
   ham3=a*t3/6.0*(1.0+0.5*x3);
-  ham4=a*t3*pow(2.0,alpha)/96.0*(1.0-x3);
+  ham4=a*t3*pow(2.0,alpha-2.0)/6.0*(1.0-x3);
   ham5=b*t3/12.0*(1.0+0.5*x3);
   ham6=-b*t3/12.0*(0.5+x3);
   
@@ -61,12 +61,6 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
 #if !O2SCL_NO_RANGE_CHECK
   check_input(ne,pr,ltemper);
 #endif
-
-  /// Handle the zero density case
-  if (ne.n==0.0 && pr.n==0.0) {
-    zero_density(ne,pr,locth);
-    return success;
-  }
 
   double term, term2;
   eff_mass(ne,pr,term,term2);
@@ -100,82 +94,12 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
 int eos_had_skyrme::calc_temp_e(fermion &ne, fermion &pr, 
 				double ltemper, thermo &locth) {
 
-  double n, x, hamk, ham, ham1, ham2, ham3, ham4, ham5, ham6;
-  double dhdnn, dhdnp, na, npa, nna, term, term2, common, gn, gp;
- 
 #if !O2SCL_NO_RANGE_CHECK
-  if (!std::isfinite(ne.n) || !std::isfinite(pr.n) ||
-      !std::isfinite(ltemper)) {
-    O2SCL_ERR2("Nucleon densities or temperature not finite in ",
-	       "eos_had_skyrme::calc_temp_e().",exc_einval);
-  }
-  if (ne.n<0.0 || pr.n<0.0) {
-    string str=((string)"Nucleon densities negative, n_n=")+
-      std::to_string(ne.n)+", n_p="+std::to_string(pr.n)+", in "+
-      "eos_had_skyrme::calc_temp_e().";
-    O2SCL_ERR(str.c_str(),exc_einval);
-  }
-  if (fabs(ne.g-2.0)>1.0e-10 || fabs(pr.g-2.0)>1.0e-10) {
-    O2SCL_ERR((((std::string)"Neutron (")+std::to_string(ne.g)+
-	       ") or proton ("+std::to_string(pr.g)+") spin deg"+
-	       "eneracies wrong in "+
-	       "eos_had_skyrme::calc_temp_e().").c_str(),exc_einval);
-  }
-  if (fabs(ne.m-4.5)>1.0 || fabs(pr.m-4.5)>1.0) {
-    O2SCL_ERR((((std::string)"Neutron (")+std::to_string(ne.m)+
-	       ") or proton ("+std::to_string(pr.m)+") masses wrong "+
-	       "in eos_had_skyrme::calc_temp_e().").c_str(),exc_einval);
-  }
-  if (ne.non_interacting==true || pr.non_interacting==true) {
-    O2SCL_ERR2("Neutron or protons non-interacting in ",
-	       "eos_had_skyrme::calc_temp_e().",exc_einval);
-  }
-  if (alpha<=0.0) {
-    O2SCL_ERR2("Parameter alpha negative in ",
-	       "eos_had_skyrme::calc_e().",exc_einval);
-  }
+  check_input(ne,pr,ltemper);
 #endif
 
-  //---------------------------------------
-  // Some local variables of interest:
-  //
-  // hamk is just the kinetic part of the hamiltonian 
-  //   hbar^2 tau / (2 m^{star})
-  // ham{1-6} are remaining parts of the hamiltonian, modulo
-  //   factors of density
-  // dhdn{n,p} are the partial derivatives of the hamiltonian wrt the 
-  //   neutron and proton densities (hold energy densities constant)
-
-  if (ne.n==0.0 && pr.n==0.0) {
-    ne.ms=ne.m;
-    pr.ms=pr.m;
-    ne.mu=ne.m;
-    pr.mu=pr.m;
-    ne.pr=0.0;
-    pr.pr=0.0;
-    ne.ed=0.0;
-    pr.ed=0.0;
-    locth.pr=0.0;
-    locth.ed=0.0;
-    locth.en=0.0;
-    return success;
-  }
-
-  // If the temperature is too small, just use the zero-temperature
-  // code
-  if (ltemper<=0.0) {
-    calc_e(ne,pr,locth);
-    return 0;
-  }
-
-  n=ne.n+pr.n;
-  x=pr.n/n;
-
-  // Landau effective masses
-  term=0.25*(t1*(1.0+x1/2.0)+t2*(1.0+x2/2.0));
-  term2=0.25*(t2*(0.5+x2)-t1*(0.5+x1));
-  ne.ms=ne.m/(1.0+2.0*(n*term+ne.n*term2)*ne.m);
-  pr.ms=pr.m/(1.0+2.0*(n*term+pr.n*term2)*pr.m);
+  double term, term2;
+  eff_mass(ne,pr,term,term2);
 
   if (ne.ms<0.0 || pr.ms<0.0) {
     O2SCL_CONV2_RET("Effective masses negative in ",
@@ -183,73 +107,14 @@ int eos_had_skyrme::calc_temp_e(fermion &ne, fermion &pr,
 		    exc_einval,this->err_nonconv);
   }
 
-  if (ne.n>0.0) {
-    nrf.calc_density(ne,ltemper);
-  } else {
-    // If the neutron density is zero, we just assume we're 
-    // computing pure proton matter
-    ne.ed=0.0;
-    ne.en=0.0;
-    ne.pr=0.0;
-    ne.nu=0.0;
-  }
-  if (pr.n>0.0) {
-    nrf.calc_density(pr,ltemper);
-  } else {
-    // If the proton density is zero, we just assume we're 
-    // computing pure neutron matter
-    pr.ed=0.0;
-    pr.en=0.0;
-    pr.pr=0.0;
-    pr.nu=0.0;
-  }
+  nrf.calc_density(ne,ltemper);
+  nrf.calc_density(pr,ltemper);
+
+  // Compute the coefficients of different powers of density
+  // in the hamiltonian
+  double ham1, ham2, ham3, ham4, ham5, ham6;
+  hamiltonian_coeffs(ham1,ham2,ham3,ham4,ham5,ham6);
   
-  // Single particle potentials and energy density
-
-  na=pow(fabs(n),alpha);
-  npa=pow(fabs(pr.n),alpha);
-  nna=pow(fabs(ne.n),alpha);
-
-  hamk=ne.ed+pr.ed;
-  ham1=0.5*t0*(1.0+0.5*x0);
-  ham2=-0.5*t0*(0.5+x0);
-  ham3=a*t3/6.0*(1.0+0.5*x3);
-  ham4=a*t3*pow(2.0,alpha)/96.0*(1.0-x3);
-  ham5=b*t3/12.0*(1.0+0.5*x3);
-  ham6=-b*t3/12.0*(0.5+x3);
-
-  ham=hamk+ham1*n*n+ham2*(ne.n*ne.n+pr.n*pr.n)+
-    ham3*na*ne.n*pr.n+ham4*(nna*ne.n*ne.n+npa*pr.n*pr.n)+
-    ham5*n*n*na+ham6*(ne.n*ne.n+pr.n*pr.n)*na;
-  
-  if (ne.inc_rest_mass) {
-    gn=2.0*ne.ms*(ne.ed-ne.n*ne.m);
-  } else {
-    gn=2.0*ne.ms*ne.ed;
-  }
-  if (pr.inc_rest_mass) {
-    gp=2.0*pr.ms*(pr.ed-pr.n*pr.m);
-  } else {
-    gp=2.0*pr.ms*pr.ed;
-  }
-  common=(gn+gp)*term+2.0*ham1*n+ham5*(2.0+alpha)*n*na;
-  dhdnn=common+ne.nu+gn*term2+
-    2.0*ham2*ne.n+ham3*na*pr.n*(alpha*ne.n/n+1.0)+
-    ham4*(nna*ne.n*(2.0+alpha))+
-    ham6*(2.0*ne.n*na+(ne.n*ne.n+pr.n*pr.n)*alpha*na/n);
-  dhdnp=common+pr.nu+gp*term2+
-    2.0*ham2*pr.n+ham3*na*ne.n*(alpha*pr.n/n+1.0)+
-    ham4*(npa*pr.n*(2.0+alpha))+
-    ham6*(2.0*pr.n*na+(ne.n*ne.n+pr.n*pr.n)*alpha*na/n);
-
-  ne.mu=dhdnn;
-  pr.mu=dhdnp;
-  
-  // Thermodynamics
-  locth.ed=ham;
-  locth.en=ne.en+pr.en;
-  locth.pr=ltemper*locth.en+ne.mu*ne.n+pr.mu*pr.n-locth.ed;
-
   // Compute the base thermodynamic properties
   base_thermo(ne,pr,ltemper,locth,term,term2,
 	      ham1,ham2,ham3,ham4,ham5,ham6);
@@ -258,149 +123,7 @@ int eos_had_skyrme::calc_temp_e(fermion &ne, fermion &pr,
 }
 
 int eos_had_skyrme::calc_e(fermion &ne, fermion &pr, thermo &locth) {
-
-#if !O2SCL_NO_RANGE_CHECK
-  if (!std::isfinite(ne.n) || !std::isfinite(ne.n)) {
-    O2SCL_ERR2("Nucleon densities not finite in ",
-	       "eos_had_skyrme::calc_e().",exc_einval);
-  }
-  if (ne.n<0.0 || pr.n<0.0) {
-    string str=((string)"Nucleon densities negative, n_n=")+
-      std::to_string(ne.n)+", n_p="+std::to_string(pr.n)+", in "+
-      "eos_had_skyrme::calc_e().";
-  }
-  if (fabs(ne.g-2.0)>1.0e-10 || fabs(pr.g-2.0)>1.0e-10) {
-    O2SCL_ERR((((std::string)"Neutron (")+std::to_string(ne.g)+
-	       ") or proton ("+std::to_string(pr.g)+") spin deg"+
-	       "eneracies wrong in "+
-	       "eos_had_skyrme::calc_e().").c_str(),exc_einval);
-  }
-  if (fabs(ne.m-4.5)>1.0 || fabs(pr.m-4.5)>1.0) {
-    O2SCL_ERR((((std::string)"Neutron (")+std::to_string(ne.m)+
-	       ") or proton ("+std::to_string(pr.m)+") masses wrong "+
-	       "in eos_had_skyrme::calc_e().").c_str(),exc_einval);
-  }
-  if (ne.non_interacting==true || pr.non_interacting==true) {
-    O2SCL_ERR2("Neutron or protons non-interacting in ",
-	       "eos_had_skyrme::calc_e().",exc_einval);
-  }
-  if (alpha<=0.0) {
-    O2SCL_ERR2("Parameter alpha negative in ",
-	       "eos_had_skyrme::calc_e().",exc_einval);
-  }
-#endif
-
-  double x, n, hamk, ham, ham1, ham2, ham3, ham4, ham5, ham6;
-  double dhdnn, dhdnp, na, npa, nna, term, term2, common, gn, gp;
-
-  ne.non_interacting=false;
-  pr.non_interacting=false;
-
-  //---------------------------------------
-  // Some local variables of interest:
-  //
-  // hamk is just the kinetic part of the hamiltonian 
-  //   hbar^2 tau / (2 m^{star})
-  // ham{1-6} are remaining parts of the hamiltonian, modulo
-  //   factors of density
-  // dhdn{n,p} are the total derivatives of the hamiltonian wrt the 
-  //   neutron and proton densities (takes into account chain rule
-  //   contributions from energy density)
-
-  if (ne.n==0.0 && pr.n==0.0) {
-    ne.ms=ne.m;
-    pr.ms=pr.m;
-    ne.mu=ne.m;
-    pr.mu=pr.m;
-    ne.pr=0.0;
-    pr.pr=0.0;
-    ne.ed=0.0;
-    pr.ed=0.0;
-    locth.pr=0.0;
-    locth.ed=0.0;
-    locth.en=0.0;
-    return success;
-  }
-
-  n=ne.n+pr.n;
-  x=pr.n/n;
-
-  na=pow(fabs(n),alpha);
-  npa=pow(fabs(pr.n),alpha);
-  nna=pow(fabs(ne.n),alpha);
-
-  term=0.25*(t1*(1.0+x1/2.0)+t2*(1.0+x2/2.0));
-  term2=0.25*(t2*(0.5+x2)-t1*(0.5+x1));
-  ne.ms=ne.m/(1.0+2.0*(n*term+ne.n*term2)*ne.m);
-  pr.ms=pr.m/(1.0+2.0*(n*term+pr.n*term2)*pr.m);
-
-  if (ne.ms<0.0 || pr.ms<0.0) {
-    O2SCL_CONV2_RET("Effective masses negative in ",
-		    "eos_had_skyrme::calc_temp_e().",exc_einval,
-		    this->err_nonconv);
-  }
-
-  // We don't record error values, since these functions usually
-  // always succeed
-  nrf.calc_density_zerot(ne);
-  nrf.calc_density_zerot(pr);
-
-  hamk=ne.ed+pr.ed;
-
-  ham1=0.5*t0*(1.0+0.5*x0);
-  ham2=-0.5*t0*(0.5+x0);
-  ham3=a*t3/6.0*(1.0+0.5*x3);
-  ham4=a*t3*pow(2.0,alpha-2.0)/6.0*(1.0-x3);
-  ham5=b*t3/12.0*(1.0+0.5*x3);
-  ham6=-b*t3/12.0*(0.5+x3);
-
-  ham=hamk+ham1*n*n+ham2*(ne.n*ne.n+pr.n*pr.n)+
-    ham3*na*ne.n*pr.n+ham4*(nna*ne.n*ne.n+npa*pr.n*pr.n)+
-    ham5*n*n*na+ham6*(ne.n*ne.n+pr.n*pr.n)*na;
-
-  if (ne.inc_rest_mass) {
-    gn=2.0*ne.ms*(ne.ed-ne.n*ne.m);
-  } else {
-    gn=2.0*ne.ms*ne.ed;
-  }
-  if (pr.inc_rest_mass) {
-    gp=2.0*pr.ms*(pr.ed-pr.n*pr.m);
-  } else {
-    gp=2.0*pr.ms*pr.ed;
-  }
-  common=(gn+gp)*term+2.0*ham1*n+ham5*(2.0+alpha)*n*na;
-  dhdnn=common+ne.nu+gn*term2+
-    2.0*ham2*ne.n+ham3*na*pr.n*(alpha*ne.n/n+1.0)+
-    ham4*(nna*ne.n*(2.0+alpha))+
-    ham6*(2.0*ne.n*na+(ne.n*ne.n+pr.n*pr.n)*alpha*na/n);
-  dhdnp=common+pr.nu+gp*term2+
-    2.0*ham2*pr.n+ham3*na*ne.n*(alpha*pr.n/n+1.0)+
-    ham4*(npa*pr.n*(2.0+alpha))+
-    ham6*(2.0*pr.n*na+(ne.n*ne.n+pr.n*pr.n)*alpha*na/n);
-    
-  ne.mu=dhdnn;
-  pr.mu=dhdnp;
-  
-  locth.ed=ham;
-  locth.pr=-locth.ed+ne.mu*ne.n+pr.mu*pr.n;
-  locth.en=0.0;
-
-  // Compute the base thermodynamic properties
-  base_thermo(ne,pr,0.0,locth,term,term2,
-	      ham1,ham2,ham3,ham4,ham5,ham6);
-  
-  if (!std::isfinite(locth.pr)) {
-    std::cout << locth.ed << " " << common << " " << dhdnn << " "
-	      << dhdnp << " " << gn << " " << gp << " "
-	      << ne.ed << " " << ne.n << " " << pr.ed << " "
-	      << pr.m << std::endl;
-    std::cout << alpha << " " << na << " " << n << " " << ham1 << " "
-	      << ham2 << " " << ham3 << " " << ham4 << " "
-	      << ham5 << " " << ham6 << endl;
-    O2SCL_ERR("Pressure not finite in calc_e()",exc_efailed);
-  }
-
-  return success;
+  return calc_temp_e(ne,pr,0.0,locth);
 }
 
 double eos_had_skyrme::feoa(double nb) {
