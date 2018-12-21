@@ -80,7 +80,7 @@ namespace o2scl {
 
       If \f$ \psi \f$ is less than \ref min_psi (which defaults to -4)
       then the non-dengenerate approximation from \ref
-      fermion_eval_thermo::calc_mu_ndeg() is used. The value of \ref
+      fermion_thermo::calc_mu_ndeg() is used. The value of \ref
       min_psi can be decreased to ensure that the expansion is not
       used, but values of \f$ \psi \f$ less than about -200 can cause
       the \ref Johns96 procedure outlined above to fail. Values of
@@ -102,7 +102,7 @@ namespace o2scl {
 
       \future Use bracketing to speed up one-dimensional root finding.
   */
-  class fermion_eff : public fermion_eval_thermo {
+  class fermion_eff : public fermion_thermo {
 
   protected:
 

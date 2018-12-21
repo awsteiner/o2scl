@@ -108,7 +108,7 @@ namespace o2scl {
     bool inc_lept_phot;
 
     /// Compute particle properties assuming classical thermodynamics
-    o2scl::classical_eval_thermo cla;
+    o2scl::classical_thermo cla;
 
     /// Relativistic fermions with derivatives
     o2scl::fermion_deriv_rel snf;

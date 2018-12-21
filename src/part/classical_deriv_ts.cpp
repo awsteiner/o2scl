@@ -36,8 +36,8 @@ int main(void) {
   
   cout.setf(ios::scientific);
   
-  classical_deriv_eval_thermo snc;
-  classical_eval_thermo cla;
+  classical_deriv_thermo snc;
+  classical_thermo cla;
 
   part_deriv sf(5.0,2.0);
   part ef(5.0,2.0);

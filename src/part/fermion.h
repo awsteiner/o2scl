@@ -110,7 +110,7 @@ namespace o2scl {
 
       This is a base class for the computation of fermionic statistics
       at zero temperature. The more general case of finite temperature
-      is taken care of by \ref fermion_eval_thermo objects. The
+      is taken care of by \ref fermion_thermo objects. The
       primary functions are calc_mu_zerot() and calc_density_zerot()
       which compute all the thermodynamic quantities as a function of
       the chemical potential, or the density, respectively.
@@ -196,13 +196,13 @@ namespace o2scl {
       \future Create a Chebyshev approximation for inverting the 
       the Fermi functions for massless_calc_density() functions?
   */
-  class fermion_eval_thermo : public fermion_zerot {
+  class fermion_thermo : public fermion_zerot {
 
   public:
     
-    fermion_eval_thermo();
+    fermion_thermo();
 
-    virtual ~fermion_eval_thermo() {
+    virtual ~fermion_thermo() {
     }
 
     /** \brief Non-degenerate expansion for fermions
@@ -397,8 +397,8 @@ namespace o2scl {
     */
     root_cern<> def_massless_root;
 
-    /// Return string denoting type ("fermion_eval_thermo")
-    virtual const char *type() { return "fermion_eval_thermo"; }
+    /// Return string denoting type ("fermion_thermo")
+    virtual const char *type() { return "fermion_thermo"; }
 
     /** \brief Test the thermodynamics of calc_density() and 
 	calc_mu()

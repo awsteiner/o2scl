@@ -31,16 +31,16 @@ using namespace o2scl;
 using namespace o2scl_const;
 
 //--------------------------------------------
-// classical_eval_thermo class
+// classical_thermo class
 
-classical_eval_thermo::classical_eval_thermo() {
+classical_thermo::classical_thermo() {
 }
 
-void classical_eval_thermo::calc_mu(part &p, double temper) {
+void classical_thermo::calc_mu(part &p, double temper) {
 
   if (temper<0.0) {
     O2SCL_ERR2("Temperature less than zero in ",
-	       "classical_eval_thermo::calc_mu().",exc_einval);
+	       "classical_thermo::calc_mu().",exc_einval);
   }
 
   if (p.non_interacting==true) { p.nu=p.mu; p.ms=p.m; }
@@ -79,11 +79,11 @@ void classical_eval_thermo::calc_mu(part &p, double temper) {
   return;
 }
 
-void classical_eval_thermo::calc_density(part &p, double temper) {
+void classical_thermo::calc_density(part &p, double temper) {
 
   if (p.n<0.0 || temper<0.0) {
     O2SCL_ERR2("Density or temperature less than zero in ",
-	       "classical_eval_thermo::calc_density().",exc_einval);
+	       "classical_thermo::calc_density().",exc_einval);
   }
     
   if (p.non_interacting==true) { p.ms=p.m; }

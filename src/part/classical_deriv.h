@@ -24,7 +24,7 @@
 #define O2SCL_CLASSICAL_DERIV_H
 
 /** \file classical_deriv.h
-    \brief File defining \ref o2scl::classical_deriv_eval_thermo
+    \brief File defining \ref o2scl::classical_deriv_thermo
 */
 
 #include <string>
@@ -42,18 +42,18 @@ namespace o2scl {
 
   /** \brief Equation of state for a classical particle with derivatives
    */
-  class classical_deriv_eval_thermo {
+  class classical_deriv_thermo {
 
   protected:
     
     /// For computing non-derivative properties
-    classical_eval_thermo cl;
+    classical_thermo cl;
 
   public:
 
-    classical_deriv_eval_thermo();
+    classical_deriv_thermo();
 
-    virtual ~classical_deriv_eval_thermo();
+    virtual ~classical_deriv_thermo();
     
     /** \brief Compute the properties of particle \c p at temperature 
 	\c temper from its chemical potential
@@ -65,8 +65,8 @@ namespace o2scl {
     */
     virtual void calc_density(part_deriv &p, double temper);
 
-    /// Return string denoting type ("classical_deriv_eval_thermo")
-    virtual const char *type() { return "classical_deriv_eval_thermo"; };
+    /// Return string denoting type ("classical_deriv_thermo")
+    virtual const char *type() { return "classical_deriv_thermo"; };
 
   };
 

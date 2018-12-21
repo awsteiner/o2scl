@@ -167,9 +167,9 @@ void fermion_nonrel::nu_from_n(fermion &f, double temper) {
 
   if (ret!=0) {
 
-    // If it failed, try to get a guess from classical_eval_thermo particle
+    // If it failed, try to get a guess from classical_thermo particle
     
-    classical_eval_thermo cl;
+    classical_thermo cl;
     cl.calc_density(f,temper);
     if (f.inc_rest_mass) {
       nex=-(f.nu-f.m)/temper;

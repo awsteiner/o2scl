@@ -30,12 +30,12 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-bool fermion_deriv_eval_thermo::calc_mu_deg
+bool fermion_deriv_thermo::calc_mu_deg
 (fermion_deriv &f, double temper, double prec) {
 
   // Double check to ensure T and mass are positive
   if (temper<0.0 || f.ms<0.0) {
-    O2SCL_ERR2("Temperature or mass negative in fermion_deriv_eval_thermo",
+    O2SCL_ERR2("Temperature or mass negative in fermion_deriv_thermo",
 	       "::calc_mu_deg().",exc_einval);
   }
       
@@ -132,7 +132,7 @@ bool fermion_deriv_eval_thermo::calc_mu_deg
   return true;
 }
 
-bool fermion_deriv_eval_thermo::calc_mu_ndeg
+bool fermion_deriv_thermo::calc_mu_ndeg
 (fermion_deriv &f, double temper, double prec, bool inc_antip) {
 
   if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }

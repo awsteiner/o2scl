@@ -65,7 +65,7 @@ namespace o2scl {
     virtual const char *type() { return "eos_quark"; }
 
     /// Object for computing fermion thermodynamics
-    fermion_eval_thermo *fet;
+    fermion_thermo *fet;
 
     /// Default fermion thermodynamics
     fermion_eff def_fet;

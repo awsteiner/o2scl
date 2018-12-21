@@ -65,7 +65,7 @@ namespace o2scl {
       the rest mass) and \f$
       m^{*} \f$ is the effective mass. For \f$ \psi \f$ smaller than
       \ref min_psi, the non-degenerate expansion in \ref
-      fermion_eval_thermo::calc_mu_ndeg() is attempted first. If that
+      fermion_thermo::calc_mu_ndeg() is attempted first. If that
       fails, then integration is used. For \f$ \psi \f$ greater than
       \ref deg_limit (degenerate regime), a finite interval integrator
       is used and for \f$ \psi \f$ less than \ref deg_limit
@@ -213,7 +213,7 @@ namespace o2scl {
       \future The function pair_mu() should set the antiparticle
       integrators as done in fermion_deriv_rel.
   */
-  class fermion_rel : public fermion_eval_thermo {
+  class fermion_rel : public fermion_thermo {
 
   public:
 

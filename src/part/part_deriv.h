@@ -38,6 +38,44 @@
 namespace o2scl {
 #endif
 
+  /** \brief Object to store second derivatives of 
+      \f$ P(\mu_n,\mu_p,T) \f$
+   */
+  class thermo_np_deriv_press {
+  public:
+    /// The quantity \f$ (\partial^2 P)/(\partial T^2) \f$
+    double dsdT;
+    /// The quantity \f$ (\partial^2 P)/(\partial T \partial \mu_n) \f$
+    double dnndT;
+    /// The quantity \f$ (\partial^2 P)/(\partial T \partial \mu_p) \f$
+    double dnpdT;
+    /// The quantity \f$ (\partial^2 P)/(\partial \mu_n^2) \f$
+    double dnndmun;
+    /// The quantity \f$ (\partial^2 P)/(\partial \mu_n \partial \mu_p) \f$
+    double dndmu_mixed;
+    /// The quantity \f$ (\partial^2 P)/(\partial \mu_p^2) \f$
+    double dnpdmup;
+  };
+  
+  /** \brief Object to store second derivatives of 
+      \f$ f(n_n,n_p,T) \f$
+  */
+  class thermo_np_deriv_helm {
+  public:
+    /// The quantity \f$ (\partial^2 P)/(\partial T^2) \f$
+    double dsdT;
+    /// The quantity \f$ (\partial^2 P)/(\partial T \partial n_n) \f$
+    double dmundT;
+    /// The quantity \f$ (\partial^2 P)/(\partial T \partial n_p) \f$
+    double dmupdT;
+    /// The quantity \f$ (\partial^2 P)/(\partial n_n^2) \f$
+    double dmundnn;
+    /// The quantity \f$ (\partial^2 P)/(\partial n_n \partial n_p) \f$
+    double dmudn_mixed;
+    /// The quantity \f$ (\partial^2 P)/(\partial n_p^2) \f$
+    double dmupdnp;
+  };
+  
   /** \brief Particle derivatives in the pressure representation
 
       This class adds the derivatives \ref dndmu, \ref dndT, and
@@ -69,7 +107,6 @@ namespace o2scl {
       the effective mass to the bare mass.
 
       \endcomment
-
   */
   class part_deriv_press {
     
@@ -270,11 +307,11 @@ namespace o2scl {
       of massless fermions with pairs at finite temperature
       in Constantinou et al. 2014 which could be implemented here.
   */
-  class fermion_deriv_eval_thermo {
+  class fermion_deriv_thermo {
 
   public:
 
-    virtual ~fermion_deriv_eval_thermo() {
+    virtual ~fermion_deriv_thermo() {
     }
 
     /** \brief Calculate properties as function of chemical potential
@@ -303,7 +340,7 @@ namespace o2scl {
 
 	\future There is some repetition of the code
 	for this function and the function
-	\ref o2scl::fermion_eval_thermo::calc_mu_deg() .
+	\ref o2scl::fermion_thermo::calc_mu_deg() .
 	which could be avoided.
     */
     virtual bool calc_mu_deg(fermion_deriv &f, double temper,
@@ -314,7 +351,7 @@ namespace o2scl {
 
 	\future There is some repetition of the code
 	for this function and the function
-	\ref o2scl::fermion_eval_thermo::calc_mu_ndeg() .
+	\ref o2scl::fermion_thermo::calc_mu_ndeg() .
 	which could be avoided.
     */
     virtual bool calc_mu_ndeg(fermion_deriv &f, double temper,

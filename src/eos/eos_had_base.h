@@ -971,7 +971,7 @@ namespace o2scl {
   protected:
 
     /// Fermion thermodynamics (default is \ref def_fet)
-    fermion_eval_thermo *fet;
+    fermion_thermo *fet;
 
     /// Solve for nuclear matter at finite temperature given density
     int nuc_matter_temp_e(size_t nv, const ubvector &x, 
@@ -1054,7 +1054,7 @@ namespace o2scl {
     /** \brief Set the object for computing finite-temperature fermions
 	(default is \ref def_fet)
      */
-    virtual void set_fermion_eval_thermo(fermion_eval_thermo &f) {
+    virtual void set_fermion_thermo(fermion_thermo &f) {
       fet=&f;
     }
 
@@ -1238,45 +1238,6 @@ namespace o2scl {
     virtual int calc_temp_e(fermion &n, fermion &p, double T, 
 			    thermo &th);
   };
-
-  /** \brief Object to store second derivatives of 
-      \f$ P(\mu_n,\mu_p,T) \f$
-   */
-  class thermo_np_deriv_press {
-  public:
-    /// The quantity \f$ (\partial^2 P)/(\partial T^2) \f$
-    double dsdT;
-    /// The quantity \f$ (\partial^2 P)/(\partial T \partial \mu_n) \f$
-    double dnndT;
-    /// The quantity \f$ (\partial^2 P)/(\partial T \partial \mu_p) \f$
-    double dnpdT;
-    /// The quantity \f$ (\partial^2 P)/(\partial \mu_n^2) \f$
-    double dnndmun;
-    /// The quantity \f$ (\partial^2 P)/(\partial \mu_n \partial \mu_p) \f$
-    double dndmu_mixed;
-    /// The quantity \f$ (\partial^2 P)/(\partial \mu_p^2) \f$
-    double dnpdmup;
-  };
-  
-  /** \brief Object to store second derivatives of 
-      \f$ f(n_n,n_p,T) \f$
-  */
-  class thermo_np_deriv_helm {
-  public:
-    /// The quantity \f$ (\partial^2 P)/(\partial T^2) \f$
-    double dsdT;
-    /// The quantity \f$ (\partial^2 P)/(\partial T \partial n_n) \f$
-    double dmundT;
-    /// The quantity \f$ (\partial^2 P)/(\partial T \partial n_p) \f$
-    double dmupdT;
-    /// The quantity \f$ (\partial^2 P)/(\partial n_n^2) \f$
-    double dmundnn;
-    /// The quantity \f$ (\partial^2 P)/(\partial n_n \partial n_p) \f$
-    double dmudn_mixed;
-    /// The quantity \f$ (\partial^2 P)/(\partial n_p^2) \f$
-    double dmupdnp;
-  };
-  
   
 #ifndef DOXYGEN_NO_O2NS
 }

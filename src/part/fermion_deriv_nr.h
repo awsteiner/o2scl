@@ -226,7 +226,7 @@ namespace o2scl {
       \todo There is a lot of code duplication with fermion_nonrel
       which needs to be fixed.
   */
-  class fermion_deriv_nr : public fermion_deriv_eval_thermo {
+  class fermion_deriv_nr : public fermion_deriv_thermo {
 
   public:
 

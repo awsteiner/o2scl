@@ -81,7 +81,7 @@ namespace o2scl {
       approximation (for example) to invert the density integral so
       that we don't need to use a solver.
   */
-  class fermion_nonrel : public fermion_eval_thermo {
+  class fermion_nonrel : public fermion_thermo {
 
   public:
 

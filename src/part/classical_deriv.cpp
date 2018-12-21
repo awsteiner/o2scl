@@ -31,15 +31,15 @@ using namespace o2scl;
 using namespace o2scl_const;
 
 //--------------------------------------------
-// classical_deriv_eval_thermo class
+// classical_deriv_thermo class
 
-classical_deriv_eval_thermo::classical_deriv_eval_thermo() {
+classical_deriv_thermo::classical_deriv_thermo() {
 }
 
-classical_deriv_eval_thermo::~classical_deriv_eval_thermo() {
+classical_deriv_thermo::~classical_deriv_thermo() {
 }
 
-void classical_deriv_eval_thermo::calc_mu(part_deriv &p, double temper) {
+void classical_deriv_thermo::calc_mu(part_deriv &p, double temper) {
   
   cl.calc_mu(p,temper);
 
@@ -57,7 +57,7 @@ void classical_deriv_eval_thermo::calc_mu(part_deriv &p, double temper) {
   return;
 }
 
-void classical_deriv_eval_thermo::calc_density(part_deriv &p, double temper) {
+void classical_deriv_thermo::calc_density(part_deriv &p, double temper) {
 
   cl.calc_density(p,temper);
 

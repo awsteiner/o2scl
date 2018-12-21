@@ -83,7 +83,7 @@ void fermion_zerot::pressure_zerot(fermion &f) {
   return;
 }
 
-fermion_eval_thermo::fermion_eval_thermo() {
+fermion_thermo::fermion_thermo() {
   massless_root=&def_massless_root;
 }
 
@@ -141,7 +141,7 @@ void fermion_zerot::calc_density_zerot(fermion &f) {
   return;
 }
 
-void fermion_eval_thermo::massless_calc_mu(fermion &f, double temper) {
+void fermion_thermo::massless_calc_mu(fermion &f, double temper) {
   
   double fm2, fm3;
 
@@ -158,18 +158,18 @@ void fermion_eval_thermo::massless_calc_mu(fermion &f, double temper) {
   return;
 }
 
-double fermion_eval_thermo::massless_solve_fun
+double fermion_thermo::massless_solve_fun
 (double x, fermion &f, double temper) {
   double fm2=gsl_sf_fermi_dirac_int(2,x/(temper));
   return f.g*pow(temper,3.0)*fm2/pi2/f.n-1.0;
 }
 
-void fermion_eval_thermo::massless_calc_density(fermion &f, double temper) {
+void fermion_thermo::massless_calc_density(fermion &f, double temper) {
   double x, T=temper;
   
   x=f.ms+temper;
   funct mf2=std::bind(std::mem_fn<double(double,fermion &,double)>
-		      (&fermion_eval_thermo::massless_solve_fun),
+		      (&fermion_thermo::massless_solve_fun),
 		      this,std::placeholders::_1,std::ref(f),temper);
   massless_root->solve(x,mf2);
   f.nu=x;
@@ -183,7 +183,7 @@ void fermion_eval_thermo::massless_calc_density(fermion &f, double temper) {
   return;
 }
 
-void fermion_eval_thermo::massless_pair_mu(fermion &f, double temper) {
+void fermion_thermo::massless_pair_mu(fermion &f, double temper) {
   double pitmu, pitmu2, nu2;
 
   if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
@@ -211,7 +211,7 @@ void fermion_eval_thermo::massless_pair_mu(fermion &f, double temper) {
   return;
 }
 
-void fermion_eval_thermo::massless_pair_density(fermion &f, double temper) {
+void fermion_thermo::massless_pair_density(fermion &f, double temper) {
 
   double t2=temper*temper,pitmu,pitmu2,nu2;
   double cbt, alpha, two13, alpha16;
@@ -257,7 +257,7 @@ void fermion_eval_thermo::massless_pair_density(fermion &f, double temper) {
   return;
 }
 
-double fermion_eval_thermo::calibrate
+double fermion_thermo::calibrate
 (fermion &f, int verbose, bool test_pair, std::string fname) {
 
   double ret=0;
@@ -1095,7 +1095,7 @@ double fermion_eval_thermo::calibrate
   return ret;
 }
 
-bool fermion_eval_thermo::calc_mu_deg(fermion &f, double temper, 
+bool fermion_thermo::calc_mu_deg(fermion &f, double temper, 
 				      double prec) {
   
   // Handle the zero-temperature limit
@@ -1106,7 +1106,7 @@ bool fermion_eval_thermo::calc_mu_deg(fermion &f, double temper,
 
   // Double check to ensure T and mass are positive
   if (temper<0.0 || f.ms<0.0) {
-    O2SCL_ERR2("Temperature or mass negative in fermion_eval_thermo",
+    O2SCL_ERR2("Temperature or mass negative in fermion_thermo",
 	       "::calc_mu_deg().",exc_einval);
   }
   
@@ -1181,7 +1181,7 @@ bool fermion_eval_thermo::calc_mu_deg(fermion &f, double temper,
   return true;
 }
 
-bool fermion_eval_thermo::calc_mu_ndeg(fermion &f, double temper, 
+bool fermion_thermo::calc_mu_ndeg(fermion &f, double temper, 
 				       double prec, bool inc_antip) {
 
   if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
