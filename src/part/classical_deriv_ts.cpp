@@ -264,6 +264,17 @@ int main(void) {
   cout << "sf: " << sf.n << " " << sf.ed << " " << sf.en << " " 
        << sf.pr << " " << sf.nu << endl;
 
+  if (true) {
+    double T=1.0;
+    sf.non_interacting=true;
+    sf.inc_rest_mass=false;
+    sf.m=2.5;
+    
+    snc.calc_density(sf,T);
+    cout << snc.heat_cap_ppart_const_vol(sf,T) << endl;
+    cout << snc.heat_cap_ppart_const_press(sf,T) << endl;
+  }    
+  
   t.report();
   return 0;
 }

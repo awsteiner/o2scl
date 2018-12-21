@@ -76,8 +76,8 @@
     \f]
     thus \f$ \tilde{\mu}_- = - \tilde{\mu}_+ - 2 m \f$ . This
     bookkeeping is handled by \ref o2scl::part::anti(), the \ref
-    o2scl::fermion_eval_thermo::pair_mu(), and the \ref
-    o2scl::fermion_eval_thermo::pair_density(), functions.
+    o2scl::fermion_thermo::pair_mu(), and the \ref
+    o2scl::fermion_thermo::pair_density(), functions.
 
     The thermodynamic identity used to compute the pressure for
     interacting particles is
@@ -120,7 +120,7 @@
 
     At zero temperature, the thermodynamic properties of fermions can
     be computed using \ref o2scl::fermion_zerot. The class \ref
-    o2scl::classical_eval_thermo computes the properties of particles
+    o2scl::classical_thermo computes the properties of particles
     in the classical limit.
 
     At finite temperature, there are different classes corresponding
@@ -154,7 +154,7 @@
     addition to the energy and pressure. The new data classes are
     children of \ref o2scl::part_deriv . The three classes which
     compute these derivatives for fermions and classical particles.
-    The class \ref o2scl::classical_deriv_eval_thermo handles the
+    The class \ref o2scl::classical_deriv_thermo handles the
     nondegenerate limit, \ref o2scl::fermion_deriv_rel handles
     fermions and \ref o2scl::fermion_deriv_nr handles nonrelativistic
     fermions. These classes compute the derivatives \f[

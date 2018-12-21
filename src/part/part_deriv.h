@@ -42,7 +42,9 @@ namespace o2scl {
       \f$ P(\mu_n,\mu_p,T) \f$
    */
   class thermo_np_deriv_press {
+    
   public:
+    
     /// The quantity \f$ (\partial^2 P)/(\partial T^2) \f$
     double dsdT;
     /// The quantity \f$ (\partial^2 P)/(\partial T \partial \mu_n) \f$
@@ -55,13 +57,16 @@ namespace o2scl {
     double dndmu_mixed;
     /// The quantity \f$ (\partial^2 P)/(\partial \mu_p^2) \f$
     double dnpdmup;
+    
   };
   
   /** \brief Object to store second derivatives of 
       \f$ f(n_n,n_p,T) \f$
   */
   class thermo_np_deriv_helm {
+    
   public:
+    
     /// The quantity \f$ (\partial^2 P)/(\partial T^2) \f$
     double dsdT;
     /// The quantity \f$ (\partial^2 P)/(\partial T \partial n_n) \f$
@@ -294,6 +299,96 @@ namespace o2scl {
     
   };
   
+  /** \brief Base quantities for thermodynamic derivatives
+   */
+  class deriv_thermo_base {
+    
+  public:
+    
+    /** \brief The heat capacity per particle at 
+	constant volume (unitless)
+
+	This function returns 
+	\f[
+	c_V = \frac{T}{N} \frac{\partial S}{\partial T}_{V,N} =
+	\frac{T}{n} \frac{\partial s}{\partial T}_{V,n} =
+	\frac{1}{N} \frac{\partial E}{\partial T}_{V,N} 
+	\f]
+
+	This is \f$ 3/2 \f$ for an ideal gas.
+    */
+    template<class part_deriv_t> 
+    double heat_cap_ppart_const_vol(part_deriv_t &p, double temper) {
+      return (p.dsdT-p.dndT*p.dndT/p.dndmu)*temper/p.n;
+    }
+    
+    /** \brief The heat capacity per particle 
+	at constant pressure (unitless)
+
+	This function computes
+	\f[
+	c_P \equiv \frac{\partial H}{\partial T}_{P,N}
+	\f]
+	
+	This is \f$ 5/2 \f$ for an ideal gas.
+    */
+    template<class part_deriv_t> 
+    double heat_cap_ppart_const_press(part_deriv_t &p, double temper) {
+      return temper/p.n*p.dsdT+p.en*p.en*temper/p.n/p.n/p.n*p.dndmu-
+	2.0*p.en*temper/p.n/p.n*p.dndT;
+    }
+
+    /** \brief The adiabatic compressibility
+
+	This function computes
+	\f[
+	\beta_S \equiv - \frac{1}{V} \frac{\partial V}{\partial P}_{S,N}
+	\f]
+    */
+    template<class part_deriv_t> 
+    double compress_adiabatic(part_deriv_t &p, double temper) {
+      return 0.0;
+    }
+    
+    /** \brief The isothermal compressibility
+
+	This function computes
+	\f[
+	\beta_T \equiv - \frac{1}{V} \frac{\partial V}{\partial P}_{T,N}
+	\f]
+     */
+    template<class part_deriv_t> 
+    double compress_const_tptr(part_deriv_t &p, double temper) {
+      return 0.0;
+    }
+
+    /** \brief The coefficient of thermal expansion
+
+	This function computes
+	\f[
+	\frac{1}{V} \frac{\partial V}{\partial T}_{P,N}
+	\f]
+	In units of an inverse length. 
+     */
+    template<class part_deriv_t> 
+      double coeff_thermal_exp(part_deriv_t &p, double temper) {
+      return 0.0;
+    }
+
+    /** \brief The squared sound speed (unitless)
+
+	This function computes
+	\f[
+	c_s^2 = \frac{\partial P}{\partial \varepsilon}_{S,N}
+	\f]
+    */
+    template<class part_deriv_t> 
+      double squared_sound_speed(part_deriv_t &p, double temper) {
+      return 0.0;
+    }
+    
+  };
+  
   /** \brief Compute properties of a fermion including derivatives
       [abstract base]
 
@@ -307,7 +402,7 @@ namespace o2scl {
       of massless fermions with pairs at finite temperature
       in Constantinou et al. 2014 which could be implemented here.
   */
-  class fermion_deriv_thermo {
+  class fermion_deriv_thermo : public deriv_thermo_base {
 
   public:
 
@@ -357,47 +452,6 @@ namespace o2scl {
     virtual bool calc_mu_ndeg(fermion_deriv &f, double temper,
 			      double prec, bool inc_antip=false);
 
-#ifdef O2SCL_NEVER_DEFINED
-    
-    /** \brief The heat capacity per particle at 
-	constant volume (unitless)
-
-	This function returns 
-	\f[
-	\frac{T}{N} \frac{\partial S}{\partial T}_{V,N} =
-	\frac{T}{n} \frac{\partial S}{\partial T}_{V,n} =
-	\frac{T}{N} \frac{\partial E}{\partial T}_{V,N} 
-	\f]
-    */
-    double heat_cap_ppart_const_vol(part_deriv &p, double temper) {
-      return (p.dsdT-p.dndT*p.dndT/p.dndmu)*temper/p.n;
-    }
-    
-    /** \brief The heat capacity per particle 
-	at constant pressure (unitless)
-     */
-    double heat_cap_ppart_const_press(part_deriv &p, double temper) {
-      return temper/p.n*p.dsdT+p.en*p.en*temper/p.n/p.n/p.n*p.dndmu-
-	2.0*p.en*temper/p.n/p.n*p.dndT;
-    }
-
-    /** \brief The adiabatic compressibility
-     */
-    double compress_adiabatic(part_deriv &p, double temper) {
-    }
-    
-    /** \brief The isothermal compressibility
-     */
-    double compress_const_tptr(part_deriv &p, double temper) {
-    }
-
-    /** \brief The coefficient of thermal expansion
-     */
-    double coeff_thermal_exp(part_deriv &p, double temper) {
-    }
-    
-#endif
-    
   };
 
 

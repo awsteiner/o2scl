@@ -42,7 +42,7 @@ namespace o2scl {
 
   /** \brief Equation of state for a classical particle with derivatives
    */
-  class classical_deriv_thermo {
+  class classical_deriv_thermo : public deriv_thermo_base {
 
   protected:
     
