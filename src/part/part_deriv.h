@@ -310,9 +310,10 @@ namespace o2scl {
 
 	This function returns 
 	\f[
-	c_V = \frac{T}{N} \frac{\partial S}{\partial T}_{V,N} =
-	\frac{T}{n} \frac{\partial s}{\partial T}_{V,n} =
-	\frac{1}{N} \frac{\partial E}{\partial T}_{V,N} 
+	c_V = \frac{T}{N} 
+	\left(\frac{\partial S}{\partial T}\right)_{V,N} =
+	\frac{T}{n} \left(\frac{\partial s}{\partial T}\right)_{V,n} =
+	\frac{1}{N} \left(\frac{\partial E}{\partial T}\right)_{V,N} 
 	\f]
 
 	This is \f$ 3/2 \f$ for an ideal gas.
@@ -327,7 +328,7 @@ namespace o2scl {
 
 	This function computes
 	\f[
-	c_P \equiv \frac{\partial H}{\partial T}_{P,N}
+	c_P \equiv \left(\frac{\partial H}{\partial T}\right)_{P,N}
 	\f]
 	
 	This is \f$ 5/2 \f$ for an ideal gas.
@@ -342,7 +343,17 @@ namespace o2scl {
 
 	This function computes
 	\f[
-	\beta_S \equiv - \frac{1}{V} \frac{\partial V}{\partial P}_{S,N}
+	\beta_S \equiv - \frac{1}{V} 
+	\left(\frac{\partial V}{\partial P}\right)_{S,N}
+	\f]
+
+	To write this in terms of the three derivatives in 
+	\ref o2scl::part_deriv_press, 
+	\f[
+	\left(\frac{\partial V}{\partial P}\right)_{S,N} = 
+	\frac{\partial (V,S,N)}{\partial (P,S,N)} =
+	\frac{\partial (V,S,N)}{\partial (V,\mu,T)}
+	\left[ \frac{\partial (P,S,N)}{\partial (V,\mu,T)}\right]^{-1}
 	\f]
     */
     template<class part_deriv_t> 
@@ -354,33 +365,97 @@ namespace o2scl {
 
 	This function computes
 	\f[
-	\beta_T \equiv - \frac{1}{V} \frac{\partial V}{\partial P}_{T,N}
+	\beta_T \equiv - \frac{1}{V} 
+	\left(\frac{\partial V}{\partial P}\right)_{T,N}
+	\f]
+	in units of inverse length to the fourth power.
+
+	To write this in terms of the three derivatives in 
+	\ref o2scl::part_deriv_press, 
+	\f[
+	- \frac{1}{V} \left(\frac{\partial V}{\partial P}\right)_{T,N} = 
+	\frac{\partial (V,T,N)}{\partial (P,T,N)} =
+	\frac{1}{V}
+	\frac{\partial (V,T,N)}{\partial (V,T,\mu)} 
+	\left[\frac{\partial (N,P,T)}{\partial (V,\mu,T)}\right]^{-1}
+	\f]
+	\f[
+	= \left(\frac{\partial n}{\partial \mu}\right)_{T,V} 
+	\left[
+	\left(\frac{\partial N}{\partial V}\right)_{\mu,T} 
+	\left(\frac{\partial P}{\partial \mu}\right)_{V,T} 
+	- \left(\frac{\partial P}{\partial V}\right)_{\mu,T} 
+	\left(\frac{\partial N}{\partial \mu}\right)_{V,T} 
+	\right]^{-1} = 
+	\frac{1}{n^2} \left(\frac{\partial n}{\partial \mu}\right)_{T} 
 	\f]
      */
     template<class part_deriv_t> 
     double compress_const_tptr(part_deriv_t &p, double temper) {
-      return 0.0;
+      return p.dndmu/p.n/p.n;
     }
 
     /** \brief The coefficient of thermal expansion
 
 	This function computes
 	\f[
-	\frac{1}{V} \frac{\partial V}{\partial T}_{P,N}
+	\alpha_V = 
+	\frac{1}{V} \left(\frac{\partial V}{\partial T}\right)_{P,N}
 	\f]
-	In units of an inverse length. 
+	in units of length. 
+
+	\f[
+	\left(\frac{\partial V}{\partial T}\right)_{P,N} =
+	\frac{\partial (V,P,N)}{\partial (T,P,N)} =
+	-\frac{\partial (V,P,N)}{\partial (V,T,\mu)} 
+	\left[ \frac{\partial (T,P,N)}{\partial (T,V,\mu)} \right]^{-1}
+	\f]
+	\f[
+	= 
+	- \left[ 
+	\left(\frac{\partial P}{\partial T}\right)_{\mu,V} 
+	\left(\frac{\partial N}{\partial \mu}\right)_{T,V} -
+	\left(\frac{\partial N}{\partial T}\right)_{\mu,V} 
+	\left(\frac{\partial P}{\partial \mu}\right)_{T,V} 
+	\right]
+	\left[ 
+	\left(\frac{\partial P}{\partial V}\right)_{\mu,T} 
+	\left(\frac{\partial N}{\partial \mu}\right)_{V,T} -
+	\left(\frac{\partial P}{\partial \mu}\right)_{V,T} 
+	\left(\frac{\partial N}{\partial V}\right)_{\mu,T} 
+	\right]^{-1}
+	\f]
+	\f[
+	= \frac{s}{n^2} 
+	\left(\frac{\partial n}{\partial \mu}\right)_{T} -
+	\frac{1}{n} \left(\frac{\partial n}{\partial T}\right)_{\mu}
+	\f]
      */
     template<class part_deriv_t> 
       double coeff_thermal_exp(part_deriv_t &p, double temper) {
-      return 0.0;
+      return p.en/p.n/p.n*p.dndmu-p.dndT/p.n;
     }
 
     /** \brief The squared sound speed (unitless)
 
 	This function computes
 	\f[
-	c_s^2 = \frac{\partial P}{\partial \varepsilon}_{S,N}
+	c_s^2 = \left(\frac{\partial P}
+	{\partial \varepsilon}\right)_{S,N}
 	\f]
+	
+	The result is unitless. To get the units of a squared velocity, 
+	one must multiply by \f$ c^2 \f$ .
+
+	\f[
+	\left(\frac{\partial P}
+	{\partial \varepsilon}\right)_{S,N} =
+	\frac{\partial (P,S,N)}{\partial (\varepsilon,S,N)} =
+	\frac{\partial (P,S,N)}{\partial (V,T,\mu)} 
+	\left[ \frac{\partial (\varepsilon,S,N)}
+	{\partial (V,T,\mu)} \right]^{-1}
+	\f]
+
     */
     template<class part_deriv_t> 
       double squared_sound_speed(part_deriv_t &p, double temper) {
