@@ -300,6 +300,21 @@ namespace o2scl {
   };
   
   /** \brief Base quantities for thermodynamic derivatives
+
+      The quantities \f$ c_P \f$ computed by 
+      \ref heat_cap_ppart_const_press(), \f$ c_V \f$
+      computed by \ref heat_cap_ppart_const_vol(), 
+      \f$ \beta_T \f$ computed by \ref compress_const_tptr(),
+      \f$ \beta_S \f$ computed by \ref compress_adiabatic(),
+      and \f$ \alpha_V \f$ computed by \ref coeff_thermal_exp
+      are related by 
+      \f[
+      c_P - c_V = \frac{T \alpha_V^2}{n \beta_T}
+      \f]
+      and 
+      \f[
+      \beta_T - \beta_S = \frac{T \alpha_V^2}{n c_P}
+      \f]
    */
   class deriv_thermo_base {
     
@@ -346,6 +361,8 @@ namespace o2scl {
 	\beta_S \equiv - \frac{1}{V} 
 	\left(\frac{\partial V}{\partial P}\right)_{S,N}
 	\f]
+	(sometimes referred to as \f$ \kappa_S \f$ or 
+	\f$ \chi_S \f$)
 
 	To write this in terms of the three derivatives in 
 	\ref o2scl::part_deriv_press, 
@@ -368,7 +385,9 @@ namespace o2scl {
 	\beta_T \equiv - \frac{1}{V} 
 	\left(\frac{\partial V}{\partial P}\right)_{T,N}
 	\f]
-	in units of inverse length to the fourth power.
+	(sometimes referred to as \f$ \kappa_T \f$ or 
+	\f$ \chi_T \f$) in units of inverse length to the fourth 
+	power.
 
 	To write this in terms of the three derivatives in 
 	\ref o2scl::part_deriv_press, 
@@ -438,14 +457,17 @@ namespace o2scl {
 
     /** \brief The squared sound speed (unitless)
 
-	This function computes
+	This function computes the sqaured sound speed
+	(including relativistic effects)
 	\f[
 	c_s^2 = \left(\frac{\partial P}
 	{\partial \varepsilon}\right)_{S,N}
 	\f]
-	
 	The result is unitless. To get the units of a squared velocity, 
-	one must multiply by \f$ c^2 \f$ .
+	one must multiply by \f$ c^2 \f$ . To get the 
+	nonrelativistic squared sound speed, you can use
+	\f$ c^2 = 1/(n \beta_S) \f$ where \f$ \beta_S \f$
+	is computed in \ref compress_adiabatic() .
 
 	\f[
 	\left(\frac{\partial P}

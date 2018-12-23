@@ -1022,6 +1022,13 @@ int main(void) {
     cout << dndm2 << endl;
     cout << endl;
 
+    // Test the relation between specific heats
+    double cp=snf.heat_cap_ppart_const_press(sf,T);
+    double cv=snf.heat_cap_ppart_const_vol(sf,T);
+    double alpha=snf.coeff_thermal_exp(sf,T);
+    double beta=snf.compress_const_tptr(sf,T);
+    t.test_rel(cp-cv,alpha*alpha/sf.n*T/beta,1.0e-10,"cp-cv");
+
   }
 
   t.report();
