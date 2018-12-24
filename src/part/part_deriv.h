@@ -315,6 +315,37 @@ namespace o2scl {
       \f[
       \beta_T - \beta_S = \frac{T \alpha_V^2}{n c_P}
       \f]
+
+      For two of the derivatives, the following
+      Jacobian is useful
+      \f{eqnarray*}
+      \left[ \frac{\partial (P,S,N)}{\partial (V,\mu,T)}\right]
+      &=& -n \left[ 
+      \left(\frac{\partial S}{\partial V}\right)_{\mu,T}
+      \left(\frac{\partial N}{\partial T}\right)_{\mu,V}
+      - \left(\frac{\partial S}{\partial T}\right)_{\mu,V}
+      \left(\frac{\partial N}{\partial V}\right)_{\mu,T}
+      \right] + 
+      s \left[ 
+      \left(\frac{\partial S}{\partial V}\right)_{\mu,T}
+      \left(\frac{\partial N}{\partial \mu}\right)_{V,T}
+      - \left(\frac{\partial S}{\partial \mu}\right)_{V,T}
+      \left(\frac{\partial N}{\partial V}\right)_{\mu,T}
+      \right] 
+      \nonumber \\
+      &=& - V n \left[ 
+      s 
+      \left(\frac{\partial n}{\partial T}\right)_{\mu,V}
+      - n \left(\frac{\partial s}{\partial T}\right)_{\mu,V}
+      \right] + V s \left[ s
+      \left(\frac{\partial n}{\partial \mu}\right)_{V,T}
+      - n \left(\frac{\partial n}{\partial T}\right)_{V,T}
+      \right] 
+      = V n^2 \left(\frac{\partial s}{\partial T}\right)_{\mu,V}
+      - 2 V n s \left(\frac{\partial n}{\partial T}\right)_{\mu,V}
+      + V s^2 \left(\frac{\partial n}{\partial \mu}\right)_{T,V}
+      \f}
+      
    */
   class deriv_thermo_base {
     
@@ -331,6 +362,23 @@ namespace o2scl {
 	\frac{1}{N} \left(\frac{\partial E}{\partial T}\right)_{V,N} 
 	\f]
 
+	To write this in terms of the three derivatives in 
+	\ref o2scl::part_deriv_press, 
+	\f[
+	\frac{T}{n} \left(\frac{\partial s}{\partial T}\right)_{V,n}
+	= \frac{T}{n} \frac{\partial(s,n,V)}{\partial(T,n,V)} = 
+	\frac{T}{n} \left[\frac{\partial(s,n,V)}{\partial(T,\mu,V)}\right]
+	\left[\frac{\partial(T,n,V)}{\partial(T,\mu,V)}\right]^{-1}
+	\f]
+	\f[
+	= \frac{T}{n} 
+	\left[
+	\left(\frac{\partial s}{\partial T}\right)_{\mu} -
+	\left(\frac{\partial n}{\partial T}\right)_{\mu}^2
+	\left(\frac{\partial n}{\partial \mu}\right)_{T}^{-1}  
+	\right]
+	\f]
+
 	This is \f$ 3/2 \f$ for an ideal gas.
     */
     template<class part_deriv_t> 
@@ -341,9 +389,20 @@ namespace o2scl {
     /** \brief The heat capacity per particle 
 	at constant pressure (unitless)
 
-	This function computes
+	This function returns 
 	\f[
-	c_P \equiv \left(\frac{\partial H}{\partial T}\right)_{P,N}
+	c_P = \frac{T}{N} 
+	\left(\frac{\partial S}{\partial T}\right)_{P,N} =
+	\frac{1}{N} \left(\frac{\partial H}{\partial T}\right)_{P,N} 
+	\f]
+
+	To write this in terms of the three derivatives in 
+	\ref o2scl::part_deriv_press, 
+	\f[
+	\frac{T}{N} \left(\frac{\partial S}{\partial T}\right)_{P,N}
+	= \frac{T}{N} \frac{\partial(S,N,P)}{\partial(T,N,P)} = 
+	\frac{T}{N} \left[\frac{\partial(S,N,P)}{\partial(T,\mu,V)}\right]
+	\left[\frac{\partial(T,N,P)}{\partial(T,\mu,V)}\right]^{-1}
 	\f]
 	
 	This is \f$ 5/2 \f$ for an ideal gas.
@@ -372,10 +431,21 @@ namespace o2scl {
 	\frac{\partial (V,S,N)}{\partial (V,\mu,T)}
 	\left[ \frac{\partial (P,S,N)}{\partial (V,\mu,T)}\right]^{-1}
 	\f]
+	The former term is
+	\f[
+	\frac{\partial (V,S,N)}{\partial (V,\mu,T)} = V^2
+	\left[
+	\left(\frac{\partial s}{\partial T}\right)_{\mu,V}
+	\left(\frac{\partial n}{\partial \mu}\right)_{T,V}
+	- \left(\frac{\partial n}{\partial T}\right)_{\mu,V}^2
+	\right]
+	\f]
+	The latter term was computed above. 
     */
     template<class part_deriv_t> 
     double compress_adiabatic(part_deriv_t &p, double temper) {
-      return 0.0;
+      return (p.dndT*p.dndT-p.dndmu*p.dsdT)/
+	(p.n*p.n*p.dsdT-2.0*p.n*p.en*p.dndT+p.en*p.en*p.dndmu);
     }
     
     /** \brief The isothermal compressibility
@@ -391,15 +461,14 @@ namespace o2scl {
 
 	To write this in terms of the three derivatives in 
 	\ref o2scl::part_deriv_press, 
-	\f[
-	- \frac{1}{V} \left(\frac{\partial V}{\partial P}\right)_{T,N} = 
+	\f{eqnarray*}
+	- \frac{1}{V} \left(\frac{\partial V}{\partial P}\right)_{T,N} &=& 
 	\frac{\partial (V,T,N)}{\partial (P,T,N)} =
 	\frac{1}{V}
 	\frac{\partial (V,T,N)}{\partial (V,T,\mu)} 
 	\left[\frac{\partial (N,P,T)}{\partial (V,\mu,T)}\right]^{-1}
-	\f]
-	\f[
-	= \left(\frac{\partial n}{\partial \mu}\right)_{T,V} 
+	\nonumber \\ 
+	&=& \left(\frac{\partial n}{\partial \mu}\right)_{T,V} 
 	\left[
 	\left(\frac{\partial N}{\partial V}\right)_{\mu,T} 
 	\left(\frac{\partial P}{\partial \mu}\right)_{V,T} 
@@ -407,7 +476,7 @@ namespace o2scl {
 	\left(\frac{\partial N}{\partial \mu}\right)_{V,T} 
 	\right]^{-1} = 
 	\frac{1}{n^2} \left(\frac{\partial n}{\partial \mu}\right)_{T} 
-	\f]
+	\f}
      */
     template<class part_deriv_t> 
     double compress_const_tptr(part_deriv_t &p, double temper) {
@@ -423,14 +492,13 @@ namespace o2scl {
 	\f]
 	in units of length. 
 
-	\f[
-	\left(\frac{\partial V}{\partial T}\right)_{P,N} =
+	\f{eqnarray*}
+	\left(\frac{\partial V}{\partial T}\right)_{P,N} &=&
 	\frac{\partial (V,P,N)}{\partial (T,P,N)} =
 	-\frac{\partial (V,P,N)}{\partial (V,T,\mu)} 
 	\left[ \frac{\partial (T,P,N)}{\partial (T,V,\mu)} \right]^{-1}
-	\f]
-	\f[
-	= 
+	\nonumber \\
+	& = & 
 	- \left[ 
 	\left(\frac{\partial P}{\partial T}\right)_{\mu,V} 
 	\left(\frac{\partial N}{\partial \mu}\right)_{T,V} -
@@ -443,12 +511,11 @@ namespace o2scl {
 	\left(\frac{\partial P}{\partial \mu}\right)_{V,T} 
 	\left(\frac{\partial N}{\partial V}\right)_{\mu,T} 
 	\right]^{-1}
-	\f]
-	\f[
-	= \frac{s}{n^2} 
+	\nonumber \\
+	&=& \frac{s}{n^2} 
 	\left(\frac{\partial n}{\partial \mu}\right)_{T} -
 	\frac{1}{n} \left(\frac{\partial n}{\partial T}\right)_{\mu}
-	\f]
+	\f}
      */
     template<class part_deriv_t> 
       double coeff_thermal_exp(part_deriv_t &p, double temper) {
