@@ -316,10 +316,10 @@ namespace o2scl {
       \beta_T - \beta_S = \frac{T \alpha_V^2}{n c_P}
       \f]
 
-      For two of the derivatives, the following
+      For the derivatives below, the following
       Jacobian is useful
       \f{eqnarray*}
-      \left[ \frac{\partial (P,S,N)}{\partial (V,\mu,T)}\right]
+      \frac{\partial (P,S,N)}{\partial (V,\mu,T)}
       &=& -n \left[ 
       \left(\frac{\partial S}{\partial V}\right)_{\mu,T}
       \left(\frac{\partial N}{\partial T}\right)_{\mu,V}
@@ -335,16 +335,27 @@ namespace o2scl {
       \nonumber \\
       &=& - V n \left[ 
       s 
-      \left(\frac{\partial n}{\partial T}\right)_{\mu,V}
-      - n \left(\frac{\partial s}{\partial T}\right)_{\mu,V}
+      \left(\frac{\partial n}{\partial T}\right)_{\mu}
+      - n \left(\frac{\partial s}{\partial T}\right)_{\mu}
       \right] + V s \left[ s
-      \left(\frac{\partial n}{\partial \mu}\right)_{V,T}
-      - n \left(\frac{\partial n}{\partial T}\right)_{V,T}
+      \left(\frac{\partial n}{\partial \mu}\right)_{T}
+      - n \left(\frac{\partial n}{\partial T}\right)_{T}
       \right] 
-      = V n^2 \left(\frac{\partial s}{\partial T}\right)_{\mu,V}
-      - 2 V n s \left(\frac{\partial n}{\partial T}\right)_{\mu,V}
-      + V s^2 \left(\frac{\partial n}{\partial \mu}\right)_{T,V}
+      = V n^2 \left(\frac{\partial s}{\partial T}\right)_{\mu}
+      - 2 V n s \left(\frac{\partial n}{\partial T}\right)_{\mu}
+      + V s^2 \left(\frac{\partial n}{\partial \mu}\right)_{T}
       \f}
+      For convenience, we define the quantity
+      \f[
+      X \equiv \frac{1}{V}
+      \frac{\partial (P,S,N)}{\partial (V,\mu,T)}
+      \f]
+      Another common combination of derivatives is
+      \f[
+      Y \equiv \left(\frac{\partial n}{\partial T}\right)_{\mu}^2 -
+      \left(\frac{\partial s}{\partial T}\right)_{\mu}
+      \left(\frac{\partial n}{\partial \mu}\right)_{T}
+      \f]
       
    */
   class deriv_thermo_base {
@@ -404,11 +415,33 @@ namespace o2scl {
 	\frac{T}{N} \left[\frac{\partial(S,N,P)}{\partial(T,\mu,V)}\right]
 	\left[\frac{\partial(T,N,P)}{\partial(T,\mu,V)}\right]^{-1}
 	\f]
+	The first Jacobian was computed above since
+	\f[
+	\frac{\partial(S,N,P)}{\partial(T,\mu,V)} = -
+	\frac{\partial(P,S,N)}{\partial(V,\mu,T)}
+	\f]
+	The second is
+	\f[
+	\frac{\partial(T,N,P)}{\partial(T,\mu,V)}
+	=
+	\left[
+	\left(\frac{\partial N}{\partial \mu}\right)_{T,V}
+	\left(\frac{\partial P}{\partial V}\right)_{\mu,T}
+	- \left(\frac{\partial N}{\partial V}\right)_{\mu,T}
+	\left(\frac{\partial P}{\partial \mu}\right)_{T,V}
+	\right] = - n^2
+	\f]
+	The final result is
+	\f[
+	c_P = \frac{T}{n} \left(\frac{\partial s}{\partial T}\right)_{\mu}
+	+ \frac{s^2 T}{n^3} \left(\frac{\partial n}{\partial \mu}\right)_{T}
+	- \frac{2 s T}{n^2} \left(\frac{\partial n}{\partial T}\right)_{\mu}
+	\f]
 	
 	This is \f$ 5/2 \f$ for an ideal gas.
     */
     template<class part_deriv_t> 
-    double heat_cap_ppart_const_press(part_deriv_t &p, double temper) {
+      double heat_cap_ppart_const_press(part_deriv_t &p, double temper) {
       return temper/p.n*p.dsdT+p.en*p.en*temper/p.n/p.n/p.n*p.dndmu-
 	2.0*p.en*temper/p.n/p.n*p.dndT;
     }
@@ -431,7 +464,7 @@ namespace o2scl {
 	\frac{\partial (V,S,N)}{\partial (V,\mu,T)}
 	\left[ \frac{\partial (P,S,N)}{\partial (V,\mu,T)}\right]^{-1}
 	\f]
-	The former term is
+	The first Jacobian
 	\f[
 	\frac{\partial (V,S,N)}{\partial (V,\mu,T)} = V^2
 	\left[
@@ -440,7 +473,20 @@ namespace o2scl {
 	- \left(\frac{\partial n}{\partial T}\right)_{\mu,V}^2
 	\right]
 	\f]
-	The latter term was computed above. 
+	and the second Jacobian was computed above.
+	The result is
+	\f[
+	\beta_S = \left[
+	\left(\frac{\partial n}{\partial T}\right)_{\mu}^2 -
+	\left(\frac{\partial s}{\partial T}\right)_{\mu}
+	\left(\frac{\partial n}{\partial \mu}\right)_{T}
+	\right]
+	\left[
+	n^2 \left(\frac{\partial s}{\partial T}\right)_{\mu,V}
+	- 2 n s \left(\frac{\partial n}{\partial T}\right)_{\mu,V}
+	+ s^2 \left(\frac{\partial n}{\partial \mu}\right)_{T,V}
+	\right]^{-1}
+	\f]
     */
     template<class part_deriv_t> 
     double compress_adiabatic(part_deriv_t &p, double temper) {
@@ -492,6 +538,8 @@ namespace o2scl {
 	\f]
 	in units of length. 
 
+	To write this in terms of the three derivatives in 
+	\ref o2scl::part_deriv_press, 
 	\f{eqnarray*}
 	\left(\frac{\partial V}{\partial T}\right)_{P,N} &=&
 	\frac{\partial (V,P,N)}{\partial (T,P,N)} =
@@ -533,9 +581,11 @@ namespace o2scl {
 	The result is unitless. To get the units of a squared velocity, 
 	one must multiply by \f$ c^2 \f$ . To get the 
 	nonrelativistic squared sound speed, you can use
-	\f$ c^2 = 1/(n \beta_S) \f$ where \f$ \beta_S \f$
+	\f$ c_{s,\mathrm{NR}}^2 = 1/(n \beta_S) \f$ where \f$ \beta_S \f$
 	is computed in \ref compress_adiabatic() .
 
+	To write this in terms of the three derivatives in 
+	\ref o2scl::part_deriv_press, 
 	\f[
 	\left(\frac{\partial P}
 	{\partial \varepsilon}\right)_{S,N} =
@@ -543,6 +593,59 @@ namespace o2scl {
 	\frac{\partial (P,S,N)}{\partial (V,T,\mu)} 
 	\left[ \frac{\partial (\varepsilon,S,N)}
 	{\partial (V,T,\mu)} \right]^{-1}
+	\f]
+	The first Jacobian was computed above (up to a sign).
+	The second is the determinant of
+	\f[
+	\left(
+	\begin{array}{ccc}
+	0 
+	& \frac{\partial \varepsilon}{\partial T} 
+	& \frac{\partial \varepsilon}{\partial \mu} \\
+	s & V \frac{\partial s}{\partial T} 
+	& V \frac{\partial n}{\partial T} \\
+	n & V \frac{\partial n}{\partial T} 
+	& V \frac{\partial n}{\partial \mu} 
+	\end{array}
+	\right)
+	\f]
+	with					
+	\f[
+	\frac{\partial \varepsilon}{\partial T} =
+	-s + T \frac{\partial s}{\partial T}  
+	+ \mu \frac{\partial n}{\partial T} 
+	\quad \mathrm{and} \quad
+	\frac{\partial \varepsilon}{\partial \mu} =
+	-n + T \frac{\partial n}{\partial T}  
+	+ \mu \frac{\partial n}{\partial \mu} 
+	\f]
+	giving 
+	\f[
+	\frac{\partial (\varepsilon,S,N)}
+	{\partial (V,T,\mu)} = V 
+	\left\{ (P + \varepsilon)
+	\left[ \left(\frac{\partial n}{\partial T}\right)^2
+	- \left(\frac{\partial n}{\partial \mu}\right)
+	\left(\frac{\partial s}{\partial T}\right)
+	\right] + n^2
+	\left(\frac{\partial s}{\partial T}\right)
+	- 2 n s \left(\frac{\partial n}{\partial T}\right)
+	+ s^2 \left(\frac{\partial n}{\partial \mu}\right)
+	\right\}
+	\f]
+	The final result is 
+	\f[
+	c_s^2 = \left\{ \frac{
+	\left(P + \varepsilon\right)
+	\left[ 
+	\left(\frac{\partial n}{\partial \mu}\right)
+	\left(\frac{\partial s}{\partial T}\right) -
+	\left(\frac{\partial n}{\partial T}\right)^2
+	\right]
+	}{n^2 \left(\frac{\partial s}{\partial T}\right)
+	- 2 n s \left(\frac{\partial n}{\partial T}\right)
+	+ s^2 \left(\frac{\partial n}{\partial \mu}\right)}
+	-1 \right\}^{-1}
 	\f]
 
     */
