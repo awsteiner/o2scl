@@ -487,6 +487,8 @@ int main(void) {
   fermion_deriv ne(939.0/hc_mev_fm,2.0), pr(938.0/hc_mev_fm,2.0);
   ne.non_interacting=false;
   pr.non_interacting=false;
+  ne.inc_rest_mass=false;
+  pr.inc_rest_mass=false;
   
   ne.n=0.25;
   pr.n=0.35;

@@ -348,7 +348,7 @@ namespace o2scl {
       For convenience, we define the quantity
       \f[
       X \equiv \frac{1}{V}
-      \frac{\partial (P,S,N)}{\partial (V,\mu,T)}
+      \left[ \frac{\partial (P,S,N)}{\partial (V,\mu,T)} \right]
       \f]
       Another common combination of derivatives is
       \f[
@@ -433,7 +433,8 @@ namespace o2scl {
 	\f]
 	The final result is
 	\f[
-	c_P = \frac{T}{n} \left(\frac{\partial s}{\partial T}\right)_{\mu}
+	c_P = \frac{T X}{n^3} = 
+	\frac{T}{n} \left(\frac{\partial s}{\partial T}\right)_{\mu}
 	+ \frac{s^2 T}{n^3} \left(\frac{\partial n}{\partial \mu}\right)_{T}
 	- \frac{2 s T}{n^2} \left(\frac{\partial n}{\partial T}\right)_{\mu}
 	\f]
@@ -476,7 +477,7 @@ namespace o2scl {
 	and the second Jacobian was computed above.
 	The result is
 	\f[
-	\beta_S = \left[
+	\beta_S = Y/X = \left[
 	\left(\frac{\partial n}{\partial T}\right)_{\mu}^2 -
 	\left(\frac{\partial s}{\partial T}\right)_{\mu}
 	\left(\frac{\partial n}{\partial \mu}\right)_{T}
@@ -572,19 +573,28 @@ namespace o2scl {
 
     /** \brief The squared sound speed (unitless)
 
-	This function computes the sqaured sound speed
+	This function computes the squared sound speed
 	(including relativistic effects)
 	\f[
 	c_s^2 = \left(\frac{\partial P}
 	{\partial \varepsilon}\right)_{S,N}
 	\f]
 	The result is unitless. To get the units of a squared velocity, 
-	one must multiply by \f$ c^2 \f$ . To get the 
-	nonrelativistic squared sound speed, you can use
-	\f$ c_{s,\mathrm{NR}}^2 = 1/(n \beta_S) \f$ where \f$ \beta_S \f$
+	one must multiply by \f$ c^2 \f$ . 
+
+	The 
+	nonrelativistic squared sound speed
+	is 
+	\f[
+	c_{s,\mathrm{NR}}^2 = \left[\frac{\partial P}
+	{\partial (N/V)}\right]_{S,N} = 
+	- \frac{V^2}{N} \left(\frac{\partial P}
+	{\partial V}\right)_{S,N} = \frac{1}{n \beta_S}
+	\f]
+	where \f$ \beta_S \f$
 	is computed in \ref compress_adiabatic() .
 
-	To write this in terms of the three derivatives in 
+	To write \f$ c_s^2 \f$ in terms of the three derivatives in 
 	\ref o2scl::part_deriv_press, 
 	\f[
 	\left(\frac{\partial P}
@@ -631,12 +641,16 @@ namespace o2scl {
 	\left(\frac{\partial s}{\partial T}\right)
 	- 2 n s \left(\frac{\partial n}{\partial T}\right)
 	+ s^2 \left(\frac{\partial n}{\partial \mu}\right)
-	\right\}
+	\right\} = V\left[(P+\varepsilon)Y+X\right]
 	\f]
 	The final result is 
 	\f[
-	c_s^2 = \left\{ \frac{
-	\left(P + \varepsilon\right)
+	c_s^2 = 
+	- \frac{X}{(P+\varepsilon)Y+X}
+	= \frac{1}{-(P+\varepsilon) Y/X - 1}
+	= 
+	\left\{ \frac{
+	-\left(P + \varepsilon\right)
 	\left[ 
 	\left(\frac{\partial n}{\partial \mu}\right)
 	\left(\frac{\partial s}{\partial T}\right) -
@@ -651,7 +665,9 @@ namespace o2scl {
     */
     template<class part_deriv_t> 
       double squared_sound_speed(part_deriv_t &p, double temper) {
-      return 0.0;
+      return 1.0/(-(p.ed+p.pr)*(p.dndT*p.dndT-p.dndmu*p.dsdT)/
+		  (p.n*p.n*p.dsdT-2.0*p.n*p.en*p.dndT+
+		   p.en*p.en*p.dndmu)-1.0);
     }
     
   };

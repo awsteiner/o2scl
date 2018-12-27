@@ -277,7 +277,7 @@ namespace o2scl {
       double dhdnp=common+2.0*ham2*pr.n+ham3*na*ne.n*(alpha*pr.n/nb+1.0)+
 	ham4*(npa*pr.n*(2.0+alpha))+
 	ham6*(2.0*pr.n*na+(ne.n*ne.n+pr.n*pr.n)*alpha*na/nb);
-      
+
       // Compute the chemical potentials
       ne.mu=ne.nu+dhdnn+(gn+gp)*term+gn*term2;
       pr.mu=pr.nu+dhdnp+(gn+gp)*term+gp*term2;
@@ -306,16 +306,16 @@ namespace o2scl {
       
       double opatpa=(1.0+alpha)*(2.0+alpha);
       double common2=2.0*ham1+2.0*ham2;
-      double dhdnn2=common2+4.0*nna*opatpa+
-	na/nb/nb*(ham5*nb*nb*opatpa+ham3*pr.n*alpha*
-		  (ne.n+2.0*pr.n+ne.n*alpha)+
-		  ham6*(4.0*ne.n*pr.n*(1.0+alpha)+ne.n*ne.n*opatpa+
-			pr.n*pr.n*(2.0+alpha*(alpha-1.0))));
-      double dhdnp2=common2+4.0*npa*opatpa+
-	na/nb/nb*(ham5*nb*nb*opatpa+ham3*ne.n*alpha*
-		  (pr.n+2.0*ne.n+pr.n*alpha)+
-		  ham6*(4.0*ne.n*pr.n*(1.0+alpha)+pr.n*pr.n*opatpa+
-			ne.n*ne.n*(2.0+alpha*(alpha-1.0))));
+      double dhdnn2=common2+ham4*nna*opatpa+ham5*na*opatpa+
+	ham3*(2.0*pr.n/nb*na*alpha+
+	      ne.n*pr.n*na/nb/nb*(-1.0+alpha)*alpha)+
+	ham6*(2.0*na+4.0*ne.n/nb*na*alpha+na/nb/nb*
+	      (ne.n*ne.n+pr.n*pr.n)*(-1.0+alpha)*alpha);
+      double dhdnp2=common2+ham4*npa*opatpa+ham5*na*opatpa+
+	ham3*(2.0*ne.n/nb*na*alpha+
+	      ne.n*pr.n*na/nb/nb*(-1.0+alpha)*alpha)+
+	ham6*(2.0*na+4.0*pr.n/nb*na*alpha+na/nb/nb*
+	      (ne.n*ne.n+pr.n*pr.n)*(-1.0+alpha)*alpha);
       double dhdnndnp=2.0*ham1+na/nb/nb*
 	(ham5*nb*nb*opatpa+ham6*alpha*    
 	 (4.0*ne.n*pr.n+ne.n*ne.n*(1.0+alpha)+pr.n*pr.n*(1.0+alpha))+
@@ -350,7 +350,7 @@ namespace o2scl {
 	4.0*term*term*ne.ms*ne.ms*X_p+p_dmudn_f+dhdnp2;
       locthd.dmudn_mixed=-4.0*(term+term2)*term*
 	(ne.ms*ne.ms*X_n+pr.ms*pr.ms*X_p)+dhdnndnp;
-      
+
       return;
     }
 
