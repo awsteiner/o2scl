@@ -982,20 +982,13 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
 	cout << endl;
 
 	{
-	  // Output description
+	  // Rewrap to 79 columns before writing additional
+	  // help text
 	  vector<string> desc2;
-	  split_string(clist[ix].help,desc2);
-	  string bufx;
+	  rewrap_keep_endlines(clist[ix].help,desc2);
 	  for(size_t j=0;j<desc2.size();j++) {
-	    // AWS: 1/21/18: changed to >=79 because of line wrapping
-	    // problems with standard 80-character terminal windows
-	    if (j!=0 && bufx.length()+desc2[j].length()>=79) {
-	      cout << bufx << endl;
-	      bufx="";
-	    }
-	    bufx+=desc2[j]+" ";
+	    cout << desc2[j] << endl;
 	  }
-	  if (bufx.length()>0) cout << bufx << endl;
 	}
 
       }

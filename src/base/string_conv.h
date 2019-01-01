@@ -209,6 +209,15 @@ namespace o2scl {
   void rewrap(std::string str, std::vector<std::string> &sv,
 	      size_t ncol=79);
 
+  /** \brief Rewrap a string into a single column, avoiding
+      strings less than a particular number of characters
+
+      This function is used to format the help output 
+      in \ref o2scl::cli .
+  */
+  void rewrap_keep_endlines(std::string str, std::vector<std::string> &sv,
+			    size_t ncol=79);
+
   /** \brief Convert a string-based list of unsigned integers
       to a list
    */
