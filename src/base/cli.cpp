@@ -917,7 +917,11 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
     //output_param_list();
 
     if (addl_help_cmd.length()>0) {
-      cout << addl_help_cmd << endl;
+      vector<string> str_rewrap;
+      rewrap_keep_endlines(addl_help_cmd,str_rewrap);
+      for(size_t j=0;j<str_rewrap.size();j++) {
+	cout << str_rewrap[j] << endl;
+      }
     }
 
     return 0;
@@ -1038,7 +1042,11 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
     }
 
     if (addl_help_cmd.length()>0) {
-      cout << addl_help_cmd << endl;
+      vector<string> str_rewrap;
+      rewrap_keep_endlines(addl_help_cmd,str_rewrap);
+      for(size_t j=0;j<str_rewrap.size();j++) {
+	cout << str_rewrap[j] << endl;
+      }
     }
     
   }
