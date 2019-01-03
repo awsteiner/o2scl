@@ -150,10 +150,10 @@ namespace o2scl {
 	representation from the derivatives in the pressure
 	representation
     */
-    void deriv_f(double &dmudn, double &dmudT, double &dsdT) {
+    void deriv_f(double &dmudn, double &dmudT, double &dsdT_n) {
       dmudn=1.0/dndmu;
       dmudT=-dndT/dndmu;
-      dsdT=dndT*dndT/dndmu-dsdT;
+      dsdT_n=dndT*dndT/dndmu-dsdT;
       return;
     }
   };
