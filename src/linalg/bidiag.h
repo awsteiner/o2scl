@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, Andrew W. Steiner
+  Copyright (C) 2006-2019, Andrew W. Steiner
   
   This file is part of O2scl.
   

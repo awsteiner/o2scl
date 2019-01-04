@@ -20,7 +20,7 @@
 
   -------------------------------------------------------------------
 */
-/*
+ /*
   This code generates the O2scl HDF files for the Moller et al. mass
   formula from the previous O2scl formatted files
 */
