@@ -208,9 +208,24 @@ int fermion_nonrel::calc_density(fermion &f, double temper) {
     return 0;
   }
 
-  if (f.n<=0.0) {
-    O2SCL_ERR2("Density less than or equal to zero in ",
-	       "fermion_nonrel::calc_density().",exc_einval);
+  if (f.n==0.0) {
+    if (f.inc_rest_mass) {
+      f.mu=f.m;
+      f.nu=f.m;
+    } else {
+      f.mu=0.0;
+      f.nu=0.0;
+    }
+    f.ed=0.0;
+    f.pr=0.0;
+    f.en=0.0;
+    return 0;
+  }
+  
+  if (f.n<0.0) {
+    string str=((string)"Density, ")+o2scl::dtos(f.n)+
+      ", less than zero in fermion_nonrel::calc_density().";
+    O2SCL_ERR(str.c_str(),exc_einval);
   }
   
   if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
