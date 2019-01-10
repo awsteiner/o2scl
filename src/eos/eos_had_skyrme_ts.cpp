@@ -523,6 +523,7 @@ int main(void) {
   sk.calc_deriv_temp_e(ne,pr,4.0/hc_mev_fm,th,tnfd);
 
   // Test the six derivatives
+  cout << "code vs. numerical result" << endl;
   cout << tnfd.dsdT << " " << (dsdT2-dsdT1)/(1.0e-3/hc_mev_fm) << endl;
   cout << tnfd.dmundT << " " << (dmundT2-dmundT1)/(1.0e-3/hc_mev_fm) << endl;
   cout << tnfd.dmupdT << " " << (dmupdT2-dmupdT1)/(1.0e-3/hc_mev_fm) << endl;

@@ -153,7 +153,7 @@ namespace o2scl {
     void deriv_f(double &dmudn, double &dmudT, double &dsdT_n) {
       dmudn=1.0/dndmu;
       dmudT=-dndT/dndmu;
-      dsdT_n=dndT*dndT/dndmu-dsdT;
+      dsdT_n=dsdT-dndT*dndT/dndmu;
       return;
     }
   };
