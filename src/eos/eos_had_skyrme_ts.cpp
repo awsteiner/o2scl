@@ -524,12 +524,18 @@ int main(void) {
 
   // Test the six derivatives
   cout << "code vs. numerical result" << endl;
-  cout << tnfd.dsdT << " " << (dsdT2-dsdT1)/(1.0e-3/hc_mev_fm) << endl;
-  cout << tnfd.dmundT << " " << (dmundT2-dmundT1)/(1.0e-3/hc_mev_fm) << endl;
-  cout << tnfd.dmupdT << " " << (dmupdT2-dmupdT1)/(1.0e-3/hc_mev_fm) << endl;
-  cout << tnfd.dmundnn << " " << (dmundnn2-dmundnn1)/1.0e-4 << endl;
-  cout << tnfd.dmupdnp << " " << (dmupdnp2-dmupdnp1)/1.0e-4 << endl;
-  cout << tnfd.dmudn_mixed << " "
+  cout << "dsdT: "
+       << tnfd.dsdT << " " << (dsdT2-dsdT1)/(1.0e-3/hc_mev_fm) << endl;
+  cout << "dmundT: "
+       << tnfd.dmundT << " " << (dmundT2-dmundT1)/(1.0e-3/hc_mev_fm) << endl;
+  cout << "dmupdT: " << tnfd.dmupdT << " "
+       << (dmupdT2-dmupdT1)/(1.0e-3/hc_mev_fm) << endl;
+  cout << "dmundnn: " << tnfd.dmundnn << " "
+       << (dmundnn2-dmundnn1)/1.0e-4 << endl;
+  cout << "dmupdnp: " << tnfd.dmupdnp << " "
+       << (dmupdnp2-dmupdnp1)/1.0e-4 << endl;
+  cout << "code vs. numerical 1 vs. numerical 2." << endl;
+  cout << "dmudn_mixed: " << tnfd.dmudn_mixed << " "
        << (dmundnp2-dmundnp1)/1.0e-4 << " " 
        << (dmupdnn2-dmupdnn1)/1.0e-4 << endl;
 

@@ -329,21 +329,15 @@ namespace o2scl {
       ne.deriv_f(n_dmudn_f,n_dmudT_f,n_dsdT_f);
       pr.deriv_f(p_dmudn_f,p_dmudT_f,p_dsdT_f);
       
-      double X_n, X_p;
-      if (ltemper>0.0) {
-	X_n=2.5*ne.ed-4.5*ne.ms*ne.n*ne.n/ltemper/ne.dndmu;
-	X_p=2.5*pr.ed-4.5*pr.ms*pr.n*pr.n/ltemper/pr.dndmu;
-      } else {
-	X_n=2.5*ne.ed-3.75*ne.n/ne.dndmu*ne.ed/ne.nu;
-	X_p=2.5*pr.ed-3.75*pr.n/pr.dndmu*pr.ed/pr.nu;
-      }
+      double X_n=2.5*ne.ed-2.25*ne.n*ne.n/ne.dndmu;
+      double X_p=2.5*pr.ed-2.25*pr.n*pr.n/pr.dndmu;
       
       // Now combine to compute the six derivatives
       locthd.dsdT=n_dsdT_f+p_dsdT_f;
       locthd.dmundT=2.0*ltemper*ne.ms*(term+term2)*n_dsdT_f+
-	2.0*ltemper*pr.ms*term*p_dsdT_f;
+	2.0*ltemper*pr.ms*term*p_dsdT_f+n_dmudT_f;
       locthd.dmupdT=2.0*ltemper*pr.ms*(term+term2)*p_dsdT_f+
-	2.0*ltemper*ne.ms*term*n_dsdT_f;
+	2.0*ltemper*ne.ms*term*n_dsdT_f+p_dmudT_f;
       locthd.dmundnn=-4.0*ne.ms*ne.ms*pow(term+term2,2.0)*X_n-
 	4.0*term*term*pr.ms*pr.ms*X_p+n_dmudn_f+dhdnn2;
       locthd.dmupdnp=-4.0*pr.ms*pr.ms*pow(term+term2,2.0)*X_p-
