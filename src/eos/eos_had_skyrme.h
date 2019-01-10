@@ -345,6 +345,15 @@ namespace o2scl {
       locthd.dmudn_mixed=-4.0*(term+term2)*term*
 	(ne.ms*ne.ms*X_n+pr.ms*pr.ms*X_p)+dhdnndnp;
 
+      /*
+	locth.ed=ham1*nb*nb+ham2*(ne.n*ne.n+pr.n*pr.n)+
+	ham3*na*ne.n*pr.n+ham4*(nna*ne.n*ne.n+npa*pr.n*pr.n)+
+	ham5*nb*nb*na+ham6*(ne.n*ne.n+pr.n*pr.n)*na;
+	locthd.dmundnn=dhdnn2;
+	locthd.dmupdnp=dhdnp2;
+	locthd.dmudn_mixed=dhdnndnp;
+      */
+      
       return;
     }
 
