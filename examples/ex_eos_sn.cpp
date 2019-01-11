@@ -450,13 +450,15 @@ protected:
     } else if (sv[1]=="sfho") {
       cloud_file cf;
       cf.verbose=2;
-      std::string sha=((std::string)"3172f0f7b542fa1bd2e7a46f1b2e62c848f")+
-	"0d9a979e546902ad3f3b6285e27ca";
+      std::string sha=((std::string)"82a4acd670189917800567f6b75bb2a")+
+	"3605f6ae7f9068215a1eec0acf924cb3d";
       cf.hash_type=cloud_file::sha256;
-      cf.get_file_hash("LS180_234r_136t_50y_analmu_20091212_SVNr26.h5",
+      cf.get_file_hash(((string)"Hempel_SFHoEOS_rho222_temp180_")+
+		       "ye60_version_1.1_20120817.h5",
 		       ((string)"https://isospin.roam.utk.edu/")+
-		       "public_data/eos_tables/scollapse/LS180_234r_136t_50y_"+
-		       "analmu_20091212_SVNr26.h5",sha,directory);
+		       "public_data/eos_tables/scollapse/Hempel_SFHo"+
+		       "EOS_rho222_temp180_ye60_version_1.1_20120817.h5",
+		       sha,directory);
       name="sfho";
       mode=eos_sn_oo::hfsl_mode;
       fname=directory+
