@@ -162,6 +162,8 @@ void eos_sn_base::output(std::string fname) {
 
 void eos_sn_base::load(std::string fname) {
 
+  wordexp_single_file(fname);
+  
   if (verbose>0) {
     cout << "In eos_sn_base::load(), loading EOS from file\n\t'"
 	 << fname << "'." << endl;
@@ -727,6 +729,8 @@ double eos_sn_base::check_eg() {
 
 void eos_sn_ls::load(std::string fname) {
   
+  wordexp_single_file(fname);
+
   if (verbose>0) {
     cout << "In eos_sn_ls::load(), loading EOS from file\n\t'" 
 	 << fname << "'." << endl;
@@ -973,6 +977,8 @@ double eos_sn_ls::check_eg() {
 
 void eos_sn_oo::load(std::string fname, size_t mode) {
   
+  wordexp_single_file(fname);
+
   if (verbose>0) {
     cout << "In eos_sn_oo::load(), loading EOS from file\n\t'" 
 	 << fname << "'." << endl;
@@ -1228,6 +1234,8 @@ void eos_sn_oo::load(std::string fname, size_t mode) {
 
 void eos_sn_stos::load(std::string fname, size_t mode) {
 
+  wordexp_single_file(fname);
+
   if (verbose>0) {
     cout << "In eos_sn_stos::load(), loading EOS from file\n\t'" 
 	 << fname << "'." << endl;
@@ -1465,6 +1473,8 @@ void eos_sn_stos::load(std::string fname, size_t mode) {
 
 void eos_sn_sht::load(std::string fname, size_t mode) {
 
+  wordexp_single_file(fname);
+
   if (verbose>0) {
     cout << "In eos_sn_sht::load(), loading EOS from file\n\t'" 
 	 << fname << "'." << endl;
@@ -1677,6 +1687,8 @@ void eos_sn_sht::load(std::string fname, size_t mode) {
 }
 
 void eos_sn_hfsl::load(std::string fname) {
+
+  wordexp_single_file(fname);
 
   if (verbose>0) {
     cout << "In eos_sn_hfsl::load(), loading EOS from file\n\t'" 

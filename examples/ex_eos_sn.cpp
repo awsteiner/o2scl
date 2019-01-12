@@ -560,7 +560,7 @@ protected:
 public:
   
   ex_eos_sn() {
-    directory=".o2scl_data";
+    directory="~/.o2scl_data";
     verbose=1;
     genp=0;
   }

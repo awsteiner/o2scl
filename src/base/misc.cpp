@@ -302,3 +302,23 @@ int o2scl::wordexp_wrapper(std::string word,
   wordfree(&pwordexp);
   return ret;
 }
+
+void wordexp_single_file(std::string &fname) {
+  std::vector<std::string> matches;
+  int wret=wordexp_wrapper(fname,matches);
+  if (wret!=0) {
+    O2SCL_ERR2("Function wordexp_wrapper() failed in ",
+	       "wordexp_single_file().",o2scl::exc_einval);
+  }
+  if (matches.size()>1) {
+    O2SCL_ERR2("More than one match found for ",
+	       "wordexp_single_file().",o2scl::exc_einval);
+  }
+  if (matches.size()==0) {
+    O2SCL_ERR2("Zero matches in ",
+	       "wordexp_single_file().",o2scl::exc_einval);
+  }
+  fname=matches[0];
+  return;
+}
+

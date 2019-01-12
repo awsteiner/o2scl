@@ -601,10 +601,14 @@ namespace o2scl {
   int glob_wrapper(std::string pattern,
 		   std::vector<std::string> &matches);
 
-  /** \brief Desc
+  /** \brief Wrapper for the wordexp() function
    */
   int wordexp_wrapper(std::string word,
 		      std::vector<std::string> &matches);
+  
+  /** \brief Use wordexp() to obtain a single file
+   */
+  void wordexp_single_file(std::string &fname);
   
 #endif
 
