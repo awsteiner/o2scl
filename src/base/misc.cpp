@@ -303,7 +303,7 @@ int o2scl::wordexp_wrapper(std::string word,
   return ret;
 }
 
-void wordexp_single_file(std::string &fname) {
+void o2scl::wordexp_single_file(std::string &fname) {
   std::vector<std::string> matches;
   int wret=wordexp_wrapper(fname,matches);
   if (wret!=0) {
