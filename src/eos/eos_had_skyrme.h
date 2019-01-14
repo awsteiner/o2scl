@@ -339,14 +339,11 @@ namespace o2scl {
       locthd.dmupdT=2.0*ltemper*pr.ms*(term+term2)*p_dsdT_f+
 	2.0*ltemper*ne.ms*term*n_dsdT_f+p_dmudT_f;
       locthd.dmundnn=-4.0*ne.ms*ne.ms*pow(term+term2,2.0)*X_n-
-	4.0*term*term*pr.ms*pr.ms*X_p+n_dmudn_f+dhdnn2-
-	3.0*ne.ms*ne.n*(term+term2)/ne.dndmu;
+	4.0*term*term*pr.ms*pr.ms*X_p+n_dmudn_f+dhdnn2;
       locthd.dmupdnp=-4.0*pr.ms*pr.ms*pow(term+term2,2.0)*X_p-
-	4.0*term*term*ne.ms*ne.ms*X_p+p_dmudn_f+dhdnp2-
-	3.0*pr.ms*pr.n*term/pr.dndmu;
+	4.0*term*term*ne.ms*ne.ms*X_p+p_dmudn_f+dhdnp2;
       locthd.dmudn_mixed=-4.0*(term+term2)*term*
-	(ne.ms*ne.ms*X_n+pr.ms*pr.ms*X_p)+dhdnndnp-
-	3.0*ne.ms*ne.n*term/ne.dndmu;
+	(ne.ms*ne.ms*X_n+pr.ms*pr.ms*X_p)+dhdnndnp;
 
       return;
     }
