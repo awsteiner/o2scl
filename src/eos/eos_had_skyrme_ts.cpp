@@ -492,9 +492,14 @@ int main(void) {
   
   ne.n=0.25;
   pr.n=0.35;
+  cout << ne.m << " " << pr.m << " " << 4.0/hc_mev_fm << endl;
   thermo_np_deriv_helm tnfd;
 
   sk.calc_deriv_temp_e(ne,pr,4.0/hc_mev_fm,th,tnfd);
+  cout << "nu: " << ne.nu << " " << pr.nu << endl;
+  cout << "ms: " << ne.ms << " " << pr.ms << endl;
+  double dfdnn1=th.ed-4.0/hc_mev_fm*th.en;
+  double dfdnp1=th.ed-4.0/hc_mev_fm*th.en;
   double dmundnn1=ne.mu;
   double dmupdnp1=pr.mu;
   double dmundnp1=ne.mu;
@@ -504,13 +509,17 @@ int main(void) {
   double dsdT1=th.en;
 
   ne.n+=1.0e-4;
+  cout << "nu: " << ne.nu << " " << pr.nu << endl;
   sk.calc_deriv_temp_e(ne,pr,4.0/hc_mev_fm,th,tnfd);
+  double dfdnn2=th.ed-4.0/hc_mev_fm*th.en;
   double dmundnn2=ne.mu;
   double dmupdnn2=pr.mu;
   ne.n-=1.0e-4;
 
   pr.n+=1.0e-4;
+  cout << "nu: " << ne.nu << " " << pr.nu << endl;
   sk.calc_deriv_temp_e(ne,pr,4.0/hc_mev_fm,th,tnfd);
+  double dfdnp2=th.ed-4.0/hc_mev_fm*th.en;
   double dmundnp2=ne.mu;
   double dmupdnp2=pr.mu;
   pr.n-=1.0e-4;
@@ -524,6 +533,8 @@ int main(void) {
 
   // Test the six derivatives
   cout << "code vs. numerical result" << endl;
+  cout << "dfdnn: " << ne.mu << " " << (dfdnn2-dfdnn1)/1.0e-4 << endl;
+  cout << "dfdnp: " << pr.mu << " " << (dfdnp2-dfdnp1)/1.0e-4 << endl;
   cout << "dsdT: "
        << tnfd.dsdT << " " << (dsdT2-dsdT1)/(1.0e-3/hc_mev_fm) << endl;
   cout << "dmundT: "

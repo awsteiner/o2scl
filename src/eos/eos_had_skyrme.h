@@ -299,6 +299,8 @@ namespace o2scl {
        double ham1, double ham2, double ham3,
        double ham4, double ham5, double ham6) {
 
+      std::cout << term << " " << term2 << std::endl;
+      
       double nb=ne.n+pr.n;
       double na=pow(nb,alpha);
       double npa=pow(pr.n,alpha);
@@ -345,6 +347,7 @@ namespace o2scl {
       locthd.dmudn_mixed=-4.0*(term+term2)*term*
 	(ne.ms*ne.ms*X_n+pr.ms*pr.ms*X_p)+dhdnndnp;
 
+      locth.ed=ne.ed+pr.ed;
       double gn, gp;
       if (ne.inc_rest_mass) {
 	gn=2.0*ne.ms*(ne.ed-ne.n*ne.m);
