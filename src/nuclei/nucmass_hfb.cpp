@@ -186,7 +186,8 @@ double nucmass_hfb_sp::mass_excess(int Z, int N) {
   return ret.Mcal;
 }
 
-int nucmass_hfb_sp::set_data(int n_mass, nucmass_hfb_sp::entry *m, std::string ref) {
+int nucmass_hfb_sp::set_data(int n_mass, nucmass_hfb_sp::entry *m,
+			     std::string ref) {
   n=n_mass;
   mass=m;
   reference=ref;
