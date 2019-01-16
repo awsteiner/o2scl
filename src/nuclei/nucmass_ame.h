@@ -128,6 +128,7 @@ namespace o2scl {
 					std::string file_name, 
 					std::string table_name,
 					bool exp_only);
+    
     friend void o2scl_hdf::ame_load(nucmass_ame &ame, std::string name,
 				    bool exp_only);
 

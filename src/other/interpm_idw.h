@@ -40,6 +40,7 @@
 #include <o2scl/vec_stats.h>
 #include <o2scl/linear_solver.h>
 #include <o2scl/columnify.h>
+#include <o2scl/table.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {

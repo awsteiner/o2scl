@@ -47,7 +47,7 @@ int main(void) {
   // particle, to compare to the nondegenerate approximation.
   fermion_eff eff;
   fermion_rel relf;
-  classical cla;
+  classical_thermo cla;
   
   // Ensure that this example works without GNU units in case O2scl
   // was installed on a system where GNU units is not installed.
@@ -58,7 +58,9 @@ int main(void) {
   fermion e2(e.m,2.0);
   fermion e3(e.m,2.0);
 
-  // We provide an initial guess to the chemical potential
+  // We provide an initial guess to the chemical potential. This
+  // is not a great guess for nondegenerate matter, but O2scl
+  // aims to be successful even with bad guesses.
   e.mu=e.m;
   e2.mu=e2.m;
   e3.mu=e3.m;

@@ -53,13 +53,15 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
 
-  // ------------------------------------------------------
-  // The most recent experimental masses from the 2012 AME as a baseline
+  // ---------------------------------------------------------------
+  // The most recent experimental masses from the 2016 AME as a
+  // baseline. The flag 'true' at the end ensures only experimentally
+  // measured masses are included.
 
-  nucmass_ame_exp ame;
-  o2scl_hdf::ame_load(ame,"12");
+  nucmass_ame ame;
+  o2scl_hdf::ame_load(ame,"16",true);
 
-  // ------------------------------------------------------
+  // ---------------------------------------------------------------
   // Instantiate and load all of the nuclear mass objects. Some of
   // them require a separate HDF5 file
 
@@ -72,15 +74,18 @@ int main(void) {
   o2scl_hdf::hfb_sp_load(hfb21,21);
   nucmass_hfb_sp hfb27;
   o2scl_hdf::hfb_sp_load(hfb27,27);
-  nucmass_ame_exp ame03;
-  o2scl_hdf::ame_load(ame03,"03");
+  nucmass_ame ame03;
+  o2scl_hdf::ame_load(ame03,"03",true);
   nucmass_dz_table dz;
   nucmass_ktuy ktuy05;
+  ktuy05.load("05");
   nucmass_dvi dvi;
-  nucmass_wlw ws32("WS3.2");
-  nucmass_wlw ws36("WS3.6");
+  nucmass_wlw ws32;
+  ws32.load("WS3.2");
+  nucmass_wlw ws36;
+  ws36.load("WS3.6");
 
-  // ------------------------------------------------------
+  // ---------------------------------------------------------------
   // List of pointers to all masses for convenience
 
   static const size_t n_tables=11;
