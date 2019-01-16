@@ -111,11 +111,16 @@ int main(void) {
     i2p.set_data(N,dx,dy,dz);
 
     interpm_idw<const_matrix_view_table_transpose<> > imw1, imw3, imw5;
-    const_matrix_view_table_transpose<> cmvt(tdata,{"x","y","z"});
-    
-    imw1.set_data(2,1,N,cmvt);
-    imw3.set_data(2,1,N,cmvt);
-    imw5.set_data(2,1,N,cmvt);
+
+    // These objects just store pointers to the table, but
+    // interpm_idw objects use swap, so we have to create a new
+    // matrix view for each interpolation object.
+    const_matrix_view_table_transpose<> cmvt1(tdata,{"x","y","z"});
+    imw1.set_data(2,1,N,cmvt1);
+    const_matrix_view_table_transpose<> cmvt2(tdata,{"x","y","z"});
+    imw3.set_data(2,1,N,cmvt2);
+    const_matrix_view_table_transpose<> cmvt3(tdata,{"x","y","z"});
+    imw5.set_data(2,1,N,cmvt3);
     imw1.set_points(1);
     imw3.set_points(3);
     imw5.set_points(5);
@@ -123,16 +128,19 @@ int main(void) {
     interpm_krige<> imk;
 
     prob_dens_mdim_amr<> pdma1;
-    const_matrix_view_table<> cmv(tdata,{"x","y","z"});
     pdma1.set(low,high);
     pdma1.verbose=0;
+    // Similar to the interpm_idw object obve, we have to create
+    // a new matrix view for each prob_dens_mdim_amr object.
+    const_matrix_view_table<> cmv(tdata,{"x","y","z"});
     pdma1.initial_parse_new(cmv);
 
     prob_dens_mdim_amr<> pdma2;
     pdma2.dim_choice=prob_dens_mdim_amr<>::random;
     pdma2.set(low,high);
     pdma2.verbose=0;
-    pdma2.initial_parse(cmv);
+    const_matrix_view_table<> cmv2(tdata,{"x","y","z"});
+    pdma2.initial_parse(cmv2);
 
     static const size_t n_methods=7;
     double qual[n_methods];
