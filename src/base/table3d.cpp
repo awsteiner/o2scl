@@ -243,15 +243,13 @@ void table3d::set_xy(std::string x_name, uniform_grid<double> gx,
   xy_set=true;
 }
 
-int table3d::read_gen3_list(std::istream &fin, int verbose) {
+int table3d::read_gen3_list(std::istream &fin, int verbose, double eps) {
       
   double data;
   std::string line;
   std::string cname, xname="x", yname="y";
-      
-  std::vector<std::vector<double> > odata;
-      
-  // Read first line and into list
+
+  // Read first line and into object called 'onames'
   std::vector<std::string> onames, nnames;
   getline(fin,line);
   std::istringstream is(line);
@@ -262,12 +260,18 @@ int table3d::read_gen3_list(std::istream &fin, int verbose) {
     }
   }
 
+  // Return error if there aren't enough columns
   if (onames.size()<3) {
     std::cout << "Not enough columns of data." << std::endl;
     return o2scl::exc_efailed;
   }
       
-  // Create odata vectors
+  // We store a full copy of the entire data set. This is required
+  // because we don't know the X-Y grid until the full data file is
+  // read. Here, we make space for all of the columns so we can
+  // fill them later
+
+  std::vector<std::vector<double> > odata;
   std::vector<double> empty;
   for(size_t i=0;i<onames.size();i++) {
     odata.push_back(empty);
@@ -278,9 +282,11 @@ int table3d::read_gen3_list(std::istream &fin, int verbose) {
   for(size_t i=0;i<onames.size();i++) {
     if (is_number(onames[i])) n_nums++;
   }
-      
+
+  // Count rows of data
   int irow=0;
-      
+
+  // All of the entries appear to be numbers
   if (n_nums==onames.size()) {
 	
     if (verbose>0) {
@@ -301,30 +307,30 @@ int table3d::read_gen3_list(std::istream &fin, int verbose) {
       std::cout << "Adding: " << o2scl::stod(onames[i]) << std::endl;
       odata[i].push_back(o2scl::stod(onames[i]));
     }
+    
     irow++;
 
   } else {
 
-    // Ensure good names
-    for(size_t i=0;i<onames.size();i++) {
-      std::string temps=onames[i];
-      //make_fp_varname(onames[i]);
-      //make_unique_name(onames[i],onames);
-      if (temps!=onames[i] && verbose>0) {
-	std::cout << "Converted slice named '" << onames[i] << "' to '" 
-		  << temps << "'." << std::endl;
-      }
-    }
+    // Presume the first row contains column names
 
     // Grid names
     xname=onames[0];
     yname=onames[1];
+    if (verbose>0) {
+      std::cout << "X grid name: " << onames[0] << endl;
+      std::cout << "Y grid name: " << onames[1] << endl;
+    }
 	
     // Make slices
     for(size_t i=2;i<onames.size();i++) {
       nnames.push_back(onames[i]);
+      if (verbose>0) {
+	std::cout << "Slice " << i-2 << " named " << onames[i]
+		  << std::endl;
+      }
     }
-	
+    
   }
       
   // Read remaining rows
@@ -348,7 +354,7 @@ int table3d::read_gen3_list(std::istream &fin, int verbose) {
   for(size_t i=0;i<odata[0].size();i++) {
     bool found=false;
     for(size_t j=0;j<xgrid.size();j++) {
-      if (fabs(odata[0][i]-xgrid[j])/fabs(xgrid[j])<1.0e-12) {
+      if (fabs(odata[0][i]-xgrid[j])/fabs(xgrid[j])<eps) {
 	found=true;
       }
     }
@@ -357,7 +363,7 @@ int table3d::read_gen3_list(std::istream &fin, int verbose) {
     }
     found=false;
     for(size_t j=0;j<ygrid.size();j++) {
-      if (fabs(odata[1][i]-ygrid[j])/fabs(ygrid[j])<1.0e-12) {
+      if (fabs(odata[1][i]-ygrid[j])/fabs(ygrid[j])<eps) {
 	found=true;
       }
     }

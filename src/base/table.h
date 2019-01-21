@@ -662,6 +662,12 @@ namespace o2scl {
   //@{
   /** \brief Returns a reference to the column named \c col.
       \f$ {\cal O}(\log(C)) \f$
+
+      Note also that the vector object returned by this function may
+      be larger than the number of rows in the table, as the table
+      resizes these vectors automatically to make room for more data.
+      To get the number of valid data entries in the object, 
+      use \ref get_nlines() instead of <tt>get_column().size()</tt>.
   */
   const vec_t &get_column(std::string scol) const {
     aciter it=atree.find(scol);
@@ -681,6 +687,12 @@ namespace o2scl {
       memory and refereces previously returned by this function will
       be incorrect.
 
+      Note also that the vector object returned by this function may
+      be larger than the number of rows in the table, as the table
+      resizes these vectors automatically to make room for more data.
+      To get the number of valid data entries in the object, 
+      use \ref get_nlines() instead of <tt>operator[].size()</tt>.
+
       Unlike set(), this function will not automatically result in
       an increase in the size of the table if the user attempts to
       set an element beyond the current column range.
@@ -688,7 +700,7 @@ namespace o2scl {
       This function will throw an exception if \c icol is out
       of range unless <tt>O2SCL_NO_RANGE_CHECK</tt> is defined.
   */
-  const vec_t &operator[] (size_t icol) const {
+  const vec_t &operator[](size_t icol) const {
 #if !O2SCL_NO_RANGE_CHECK
     if (icol>=atree.size()) {
       O2SCL_ERR((((std::string)"Array index ")+szttos(icol)+
@@ -708,6 +720,12 @@ namespace o2scl {
       Note that several of the methods require reallocation of
       memory and refereces previously returned by this function will
       be incorrect.
+
+      Note also that the vector object returned by this function may
+      be larger than the number of rows in the table, as the table
+      resizes these vectors automatically to make room for more data.
+      To get the number of valid data entries in the object, 
+      use \ref get_nlines() instead of <tt>operator[].size()</tt>.
 
       This function will throw an exception if \c icol is out
       of range unless <tt>O2SCL_NO_RANGE_CHECK</tt> is defined.

@@ -91,7 +91,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
 			      "list","max","min","nlines","rename",
 			      "select","select-rows","select-rows2",
 			      "set-data","set-unit","sort","stats","sum",
-			      "to-hist","to-hist-2d","wstats"};
+			      "to-hist","to-hist-2d","to-table3d","wstats"};
     type_comm_list.insert(std::make_pair("table",itmp));
   }
   {
@@ -189,8 +189,22 @@ void acol_manager::command_add(std::string new_type) {
     };
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="table") {
-    static const size_t narr=36;
+    static const size_t narr=37;
     comm_option_s options_arr[narr]={
+      {0,"autocorr","Compute the autocorrelation vectors.",0,-1,
+       "<ac> <ftom> <column or vector spec.> [col or vector spec. 2] ...",
+       ((std::string)"Store a vector of ")+
+       "autocorrelation coefficients in column <ac> and the quantity "+
+       "'5*tau/M' in column <ftom> using data from either a column "+
+       "in the table or a vector specification. "+
+       "Columns <ac> and <ftom> are created "+
+       "if they are not already present and overwritten if they "+
+       "already contain data. Also, the autocorrelation length and "+
+       "estimated sample size are output to the screen. If multiple "+
+       "data sources are given, then the autocorrelation coefficients "+
+       "are averaged together.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_autocorr),
+       both},
       {'a',"assign","Assign a constant, e.g. assign pi acos(-1) .",
        0,2,"<name> [val]",
        ((string)"Assign a constant value to a name for the present table. ")+
@@ -418,25 +432,20 @@ void acol_manager::command_add(std::string new_type) {
        both},
       {0,"to-hist-2d","Convert a table to a 2d histogram.",0,5,
        "<col x> <col y> <n_x_bins> <n_y_bins> [wgts]",
-       ((std::string)"The 'to-hist-3d' creates a 2D histogram ")+
+       ((std::string)"The 'to-hist-2d' command creates a 2D histogram ")+
        "from 'col x' and 'col y' using 'n_x_bins' bins in the x "+
        "direction and 'n_y_bins' bins in the y direction, "+
        "optionally weighting the entries by the column 'wgts'.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_to_hist_2d),
        both},
-      {0,"autocorr","Compute the autocorrelation vectors.",0,-1,
-       "<ac> <ftom> <column or vector spec.> [col or vector spec. 2] ...",
-       ((std::string)"Store a vector of ")+
-       "autocorrelation coefficients in column <ac> and the quantity "+
-       "'5*tau/M' in column <ftom> using data from either a column "+
-       "in the table or a vector specification. "+
-       "Columns <ac> and <ftom> are created "+
-       "if they are not already present and overwritten if they "+
-       "already contain data. Also, the autocorrelation length and "+
-       "estimated sample size are output to the screen. If multiple "+
-       "data sources are given, then the autocorrelation coefficients "+
-       "are averaged together.",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_autocorr),
+      {0,"to-table3d","Convert a table to a table3d object.",0,4,
+       "<x column> <y column> [empty value] [eps]",
+       ((std::string)"The 'to-table3d' creates a table3d object using ")+
+       "'x column' and 'y column' as the data for the x and y grids. "+
+       "If 'empty value', then this value is used for points not given "+
+       "by the table. If 'eps' is specified, then use that value as the "+
+       "minimum value between grid points.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_to_hist_2d),
        both}
     };
     cl->set_comm_option_vec(narr,options_arr);
@@ -928,6 +937,7 @@ void acol_manager::command_del() {
     cl->remove_comm_option("sum");
     cl->remove_comm_option("to-hist");
     cl->remove_comm_option("to-hist-2d");
+    cl->remove_comm_option("to-table3d");
     cl->remove_comm_option("wstats");
 
   } else if (type=="table3d") {

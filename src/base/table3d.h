@@ -721,7 +721,112 @@ namespace o2scl {
 	\future It would be great to add a function which generates
 	a text file in this format as well. 
     */
-    int read_gen3_list(std::istream &fin, int verbose=0);
+    int read_gen3_list(std::istream &fin, int verbose=0, double eps=1.0e-12);
+
+    /** \brief Desc
+     */
+    template<class vec_t>
+      int read_table(const o2scl::table<vec_t> &tab, 
+		     std::string xname="", std::string yname="",
+		     double empty_value=0.0, int verbose=0,
+		     bool err_on_fail=true, double eps=1.0e-12) {
+
+      clear();
+      
+      if (tab.get_ncolumns()<3) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("Not enough columns of data in ",
+		     "table3d::read_table().",o2scl::exc_einval);
+	} else {
+	  return o2scl::exc_einval;
+	}
+      }
+
+      // Set up xname and yname if unspecified
+      if (xname.length()==0) {
+	if (yname==tab.get_column_name(0)) {
+	  xname=tab.get_column_name(1);
+	} else {
+	  xname=tab.get_column_name(0);
+	  yname=tab.get_column_name(1);
+	}
+      }
+      if (yname.length()==0) {
+	if (xname==tab.get_column_name(1)) {
+	  yname=tab.get_column_name(0);
+	} else {
+	  yname=tab.get_column_name(1);
+	}
+      }
+      
+      // Setup x and y grid vectors from data
+      const vec_t &xdata=tab[xname];
+      const vec_t &ydata=tab[yname];
+      std::vector<double> xgrid, ygrid;
+      // Note it is important that this go up to tab.get_nlines()
+      // rather than xdata.size() because the internal vector storage
+      // can be larger than the actual table size
+      for(size_t i=0;i<tab.get_nlines();i++) {
+	bool found=false;
+	for(size_t j=0;j<xgrid.size();j++) {
+	  if (fabs(xdata[i]-xgrid[j])/fabs(xgrid[j])<eps) {
+	    found=true;
+	  }
+	}
+	if (found==false) {
+	  xgrid.push_back(xdata[i]);
+	}
+	found=false;
+	for(size_t j=0;j<ygrid.size();j++) {
+	  if (fabs(ydata[i]-ygrid[j])/fabs(ygrid[j])<eps) {
+	    found=true;
+	  }
+	}
+	if (found==false) {
+	  ygrid.push_back(ydata[i]);
+	}
+      }
+      
+      if (verbose>1) {
+	std::cout << "X grid: " << std::endl;
+	for(size_t k=0;k<xgrid.size();k++) {
+	  std::cout << k << " " << xgrid[k] << std::endl;
+	}
+	std::cout << "Y grid: " << std::endl;
+	for(size_t k=0;k<ygrid.size();k++) {
+	  std::cout << k << " " << ygrid[k] << std::endl;
+	}
+      }
+      
+      // Set grid from x and y vectors
+      set_xy(xname,xgrid.size(),xgrid,yname,ygrid.size(),ygrid);
+      
+      // Create new slices
+      std::vector<std::string> sl_names;
+      for(size_t i=0;i<tab.get_ncolumns();i++) {
+	if (tab.get_column_name(i)!=xname && tab.get_column_name(i)!=yname) {
+	  std::string sl=tab.get_column_name(i);
+	  if (verbose>0) {
+	    std::cout << "New slice: " << sl << std::endl;
+	  }
+	  sl_names.push_back(sl);
+	  new_slice(sl);
+	  set_slice_all(sl,empty_value);
+	}
+      }
+      
+      // Set the data
+      for(size_t i=0;i<tab.get_ncolumns();i++) {
+	if (tab.get_column_name(i)!=xname && tab.get_column_name(i)!=yname) {
+	  std::string sl=tab.get_column_name(i);
+	  for(size_t j=0;j<tab.get_nlines();j++) {
+	    set_val(xdata[j],ydata[j],sl,tab.get(i,j));
+	  }
+	}
+      }
+      
+      return 0;
+    }
     
     /// Return the type, \c "table3d".
     virtual const char *type() { return "table3d"; }

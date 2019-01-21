@@ -235,7 +235,41 @@ int acol_manager::comm_to_table3d_sum(std::vector<std::string> &sv,
 int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
 				  bool itive_com) {
 
-  if (type=="tensor") {
+  if (type=="table") {
+
+    vector<string> in, pr;
+    pr.push_back("Column for x grid");
+    pr.push_back("Column for y grid");
+
+    int ret=get_input(sv,pr,in,"to-table3d",itive_com);
+    if (ret!=0) return ret;
+
+    std::string xname=in[0];
+    std::string yname=in[1];
+
+    double empty_value=0.0;
+    double eps=1.0e-12;
+    if (in.size()>2) {
+      empty_value=o2scl::stod(in[2]);
+    }
+    if (in.size()>3) {
+      eps=o2scl::stod(in[3]);
+    }
+    
+    table3d_obj.clear();
+    int cret=table3d_obj.read_table(table_obj,xname,yname,empty_value,
+				    verbose,false,eps);
+    if (cret!=0) {
+      cerr << "Convert 'table' to 'table3d' failed." << endl;
+      return 1;
+    }
+
+    command_del();
+    clear_obj();
+    command_add("table3d");
+    type="table3d";
+    
+  } else if (type=="tensor") {
 
     size_t rank=tensor_obj.get_rank();
 
