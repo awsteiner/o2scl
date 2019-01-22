@@ -59,7 +59,7 @@
     rest mass contribution is then \f$ \varepsilon = \varepsilon_{+} +
     \varepsilon_- \f$ and without the rest mass contribution \f$
     \tilde{\varepsilon} \equiv \varepsilon - (n_{+}-n_-) m \f$. Then,
-    \f{eqnarray}
+    \f{eqnarray*}
     \tilde{\varepsilon} & = & 
     \varepsilon_+ - n_{+} m + \varepsilon_- + n_- m \nonumber \\
     & = & \varepsilon_+ - n_{+} m + \varepsilon_- - n_- m + 
@@ -203,7 +203,7 @@
     Most of the other common derivatives which are used 
     are those which can be obtained by second derivatives
     of the Gibbs free energy, \f$ G = F + P V \f$. 
-    \f{eqnarray}
+    \f{eqnarray*}
     \left(\frac{\partial^2 G}{\partial T^2}\right)_{P,\{N_i\}} &=&
     -\left( \frac{\partial S}{\partial T} \right)_{P,\{N_i\}}
     = - \frac{N c_P}{T} 

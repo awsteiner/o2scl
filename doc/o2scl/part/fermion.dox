@@ -337,7 +337,7 @@
     \subsection ferm_deg_subsect Degenerate expansion
 
     The Sommerfeld expansion for \f$t \rightarrow 0\f$ is
-    \f{eqnarray}
+    \f{eqnarray*}
     \int_0^{\infty} dz~\frac{f(z)}{1 + e^{(z-x)/t}} &=&
     \int_0^{x} f(z) + \frac{\pi^2 t^2}{6} f^{\prime}(x) +
     \frac{7 \pi^4 t^4}{360} f^{(3)}(x) +
@@ -359,7 +359,7 @@
     where \f$ x = \psi t\f$ . This expression cannot be used when
     \f$x\f$ is small, but a Taylor series expansion can be used
     instead. A few terms are
-    \f{eqnarray}
+    \f{eqnarray*}
     \frac{2 \pi^2 P}{g m^4} = P_0 + \frac{\pi^2 t^2}{6} \sqrt{x(2+x)}(1 + x) +
     \frac{7 \pi^4 t^4}{360} \left\{\frac{(1+x)(2
     x^2+4x-1)}{[x(2+x)]^{3/2}} \right\}
@@ -402,7 +402,7 @@
     \f]
     Finally, the derivative of the number density with respect to the mass
     is more involved because of the mass-dependent prefactor. 
-    \f{eqnarray}
+    \f{eqnarray*}
     \frac{d n}{d m} &=& \frac{4 n}{m}+
     \left(\frac{g m^4}{2 \pi^2}\right) \frac{d}{d m}
     \left(\frac{1}{m}\frac{d \tilde{P}}{d x} \right) =
