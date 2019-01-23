@@ -283,6 +283,11 @@ int fermion_rel::nu_from_n(fermion &f, double temper) {
 		       (&fermion_rel::solve_fun),
 		       this,std::placeholders::_1,std::ref(f),temper);
 
+  // The default o2scl::root object is of type root_cern,
+  // and this solver has problems when the root is near 0.
+  // Below, we switch to a root_brent_gsl object in the case
+  // that the default solver fails.
+  
   bool drec=density_root->err_nonconv;
   density_root->err_nonconv=false;
   int ret=density_root->solve(nex,mf);
@@ -314,22 +319,13 @@ int fermion_rel::nu_from_n(fermion &f, double temper) {
       double lg=std::max(fabs(f.nu),f.ms);
       double bhigh=lg/temper, blow=-bhigh;
       double yhigh=mf(bhigh), ylow=mf(blow);
-      if (verbose>1) {
-	cout << blow << " " << ylow << " " << bhigh << " " << yhigh << endl;
-      }
       for(size_t j=0;j<5 && yhigh>0.0;j++) {
 	bhigh*=1.0e2;
 	yhigh=mf(bhigh);
-	if (verbose>1) {
-	  cout << blow << " " << ylow << " " << bhigh << " " << yhigh << endl;
-	}
       }
       for(size_t j=0;j<5 && ylow<0.0;j++) {
 	blow*=1.0e2;
 	ylow=mf(blow);
-	if (verbose>1) {
-	  cout << blow << " " << ylow << " " << bhigh << " " << yhigh << endl;
-	}
       }
       if (yhigh<0.0 && ylow>0.0) {
 	root_brent_gsl<> rbg;
@@ -361,6 +357,7 @@ int fermion_rel::nu_from_n(fermion &f, double temper) {
     O2SCL_CONV2_RET("Density solver failed in ",
 		    "fermion_rel::nu_from_n().",exc_efailed,this->err_nonconv);
   }
+
   f.nu=nex*temper;
 
   return success;

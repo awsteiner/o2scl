@@ -66,7 +66,7 @@ double boson_thermo::calibrate(boson &b, int verbose, bool test_pair,
   // Read data file
 
   if (fname=="") {
-    fname=o2scl_settings.get_data_dir()+"boson_cal2.o2";
+    fname=o2scl_settings.get_data_dir()+"boson_cal.o2";
   }
 
   if (verbose>1) {
@@ -83,7 +83,7 @@ double boson_thermo::calibrate(boson &b, int verbose, bool test_pair,
   hf.close();
 
   tab.function_column("ed_mot*mot","ed");
-  tab.function_column("pair_ed_mot*mot","pair_ed");
+  //tab.function_column("pair_ed_mot*mot","pair_ed");
   
   table<> tab2;
   hf.open(fname);
@@ -93,7 +93,7 @@ double boson_thermo::calibrate(boson &b, int verbose, bool test_pair,
   hf.close();
   
   tab2.function_column("ed_mot*mot","ed");
-  tab2.function_column("pair_ed_mot*mot","pair_ed");
+  //tab2.function_column("pair_ed_mot*mot","pair_ed");
   
   if (tab.get_nlines()==0) {
     string str="Failed to load data from file '"+fname+

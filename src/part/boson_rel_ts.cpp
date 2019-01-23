@@ -170,6 +170,8 @@ int main(void) {
     t.test_rel(b.en,t5,1.0e-10,"entropy");
     cout << endl;
   */
+
+  //rb.calibrate(b,2,0,"../../data/o2scl/boson_cal.o2");
   
   t.report();
   return 0;

@@ -194,6 +194,8 @@ int main(void) {
   //  t.test_rel(b.pr,tpr,2.0e-6,"pressure");
   //  t.test_rel(b.en,ten,2.0e-6,"entropy");
 
+  //eb.calibrate(b,2,0,"../../data/o2scl/boson_cal.o2");
+  
   t.report();
   return 0;
 }

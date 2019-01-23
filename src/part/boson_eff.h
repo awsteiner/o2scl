@@ -83,7 +83,7 @@ namespace o2scl {
       
       \todo Improve documentation
   */
-  class boson_eff {
+  class boson_eff : public boson_thermo {
 
   public:
     

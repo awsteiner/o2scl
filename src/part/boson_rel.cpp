@@ -56,22 +56,68 @@ void boson_rel::calc_mu(boson &b, double temper) {
   }
   if (b.non_interacting==true) { b.nu=b.mu; b.ms=b.m; }
 
-  funct fd=std::bind(std::mem_fn<double(double,boson &,double)>
+  bool deg=true;
+  double deg_limit=2.0;
+  double psi;
+  if (b.inc_rest_mass) {
+    psi=(b.nu-b.ms)/temper;
+  } else {
+    psi=(b.nu+(b.m-b.ms))/temper;
+  }
+  if (psi<deg_limit) deg=false;
+  
+  if (deg) {
+    
+    funct fd=std::bind(std::mem_fn<double(double,boson &,double)>
 		       (&boson_rel::deg_density_fun),
 		       this,std::placeholders::_1,std::ref(b),temper);
-  funct fe=std::bind(std::mem_fn<double(double,boson &,double)>
+    funct fe=std::bind(std::mem_fn<double(double,boson &,double)>
 		       (&boson_rel::deg_energy_fun),
 		       this,std::placeholders::_1,std::ref(b),temper);
-  funct fs=std::bind(std::mem_fn<double(double,boson &,double)>
+    funct fs=std::bind(std::mem_fn<double(double,boson &,double)>
 		       (&boson_rel::deg_entropy_fun),
 		       this,std::placeholders::_1,std::ref(b),temper);
+    
+    b.n=dit->integ(fd,0.0,sqrt(pow(15.0*temper+b.nu,2.0)-b.ms*b.ms));
+    b.n*=b.g/2.0/pi2;
+    b.ed=dit->integ(fe,0.0,sqrt(pow(15.0*temper+b.nu,2.0)-b.ms*b.ms));
+    b.ed*=b.g/2.0/pi2;
+    b.en=dit->integ(fs,0.0,sqrt(pow(15.0*temper+b.nu,2.0)-b.ms*b.ms));
+    b.en*=b.g/2.0/pi2;
+    
+  } else {
+    
+    // If the temperature is large enough, perform the full integral
+    
+    funct mfd=std::bind(std::mem_fn<double(double,boson &,double)>
+			  (&boson_rel::density_fun),
+			  this,std::placeholders::_1,std::ref(b),temper);
+    funct mfe=std::bind(std::mem_fn<double(double,boson &,double)>
+			  (&boson_rel::energy_fun),
+			  this,std::placeholders::_1,std::ref(b),temper);
+    funct mfs=std::bind(std::mem_fn<double(double,boson &,double)>
+			  (&boson_rel::entropy_fun),
+			  this,std::placeholders::_1,std::ref(b),temper);
+      
+    double prefac=b.g*pow(temper,3.0)/2.0/pi2;
 
-  b.n=dit->integ(fd,0.0,sqrt(pow(15.0*temper+b.nu,2.0)-b.ms*b.ms));
-  b.n*=b.g/2.0/pi2;
-  b.ed=dit->integ(fe,0.0,sqrt(pow(15.0*temper+b.nu,2.0)-b.ms*b.ms));
-  b.ed*=b.g/2.0/pi2;
-  b.en=dit->integ(fs,0.0,sqrt(pow(15.0*temper+b.nu,2.0)-b.ms*b.ms));
-  b.en*=b.g/2.0/pi2;
+    // Compute the number density
+    
+    b.n=nit->integ(mfd,0.0,0.0);
+    b.n*=prefac;
+
+    // Compute the energy density
+
+    b.ed=nit->integ(mfe,0.0,0.0);
+    b.ed*=prefac*temper;
+    if (!b.inc_rest_mass) b.ed-=b.n*b.m;
+    
+    // Compute the entropy
+
+    b.en=nit->integ(mfs,0.0,0.0);
+    b.en*=prefac;
+    
+  }
 
   b.pr=-b.ed+temper*b.en+b.mu*b.n;
 
@@ -124,6 +170,11 @@ double boson_rel::deg_density_fun(double k, boson &b, double T) {
 
   ret=k*k/(exp(E/T-b.nu/T)-1.0);
 
+  if (!std::isfinite(ret)) {
+    cout << "1: " << k << " " << b.ms << " " << b.nu << " " << T << endl;
+    exit(-1);
+  }
+  
   return ret;
 }
   
@@ -133,6 +184,11 @@ double boson_rel::deg_energy_fun(double k, boson &b, double T) {
 
   ret=k*k*E/(exp(E/T-b.nu/T)-1.0);
   
+  if (!std::isfinite(ret)) {
+    cout << "2: " << k << " " << b.ms << " " << b.nu << " " << T << endl;
+    exit(-1);
+  }
+
   return ret;
 }
   
@@ -142,6 +198,11 @@ double boson_rel::deg_entropy_fun(double k, boson &b, double T) {
   nx=1.0/(exp(E/T-b.nu/T)-1.0);
   ret=-k*k*(nx*log(nx)-(1.0+nx)*log(1.0+nx));
   
+  if (!std::isfinite(ret)) {
+    cout << "3: " << k << " " << b.ms << " " << b.nu << " " << T << endl;
+    exit(-1);
+  }
+
   return ret;
 }
   
@@ -150,8 +211,15 @@ double boson_rel::density_fun(double u, boson &b, double T) {
 
   y=b.nu/T;
   mx=b.ms/T;
-  
+
   ret=(mx+u)*sqrt(u*u+2.0*mx*u)*exp(u+y)/(exp(y)-exp(mx+u));
+  ret=(mx+u)*sqrt(u*u+2.0*mx*u)*exp(u+y)/(exp(y)-exp(mx+u));
+
+  if (!std::isfinite(ret)) {
+    cout << "4: " << u << " " << y << " " << mx << " " 
+	 << b.ms << " " << b.nu << " " << T << endl;
+    exit(-1);
+  }
 
   return ret;
 }
@@ -164,6 +232,11 @@ double boson_rel::energy_fun(double u, boson &b, double T) {
   
   ret=(mx+u)*(mx+u)*sqrt(u*u+2.0*mx*u)*exp(u+y)/(exp(y)-exp(mx+u));
   
+  if (!std::isfinite(ret)) {
+    cout << "5: " << u << " " << b.ms << " " << b.nu << " " << T << endl;
+    exit(-1);
+  }
+
   return ret;
 }
 
@@ -177,6 +250,11 @@ double boson_rel::entropy_fun(double u, boson &b, double T) {
   term2=log(1.0-exp(mx+u-y))/(1.0-exp(mx+u-y));
   ret=(mx+u)*exp(u)*sqrt(u*u+2.0*mx*u)*(term1+term2);
   
+  if (!std::isfinite(ret)) {
+    cout << "6: " << u << " " << b.ms << " " << b.nu << " " << T << endl;
+    exit(-1);
+  }
+
   return ret;
 }
 
