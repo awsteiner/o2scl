@@ -49,7 +49,7 @@ namespace o2scl {
       
       \todo Testing not completely finished.
   */
-  class boson_rel {
+  class boson_rel : public boson_thermo {
 
   public:
 

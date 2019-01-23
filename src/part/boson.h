@@ -69,6 +69,39 @@ namespace o2scl {
 
   };
 
+  /** \brief Desc
+   */
+  class boson_thermo {
+    
+  public:
+    
+    /** \brief Calculate thermodynamic 
+	properties as function of chemical potential
+    */
+    virtual void calc_mu(boson &b, double temper)=0;
+
+    /** \brief Calculate thermodynamic 
+	properties as function of density
+    */
+    virtual void calc_density(boson &b, double temper)=0;
+
+    /** \brief Calculate thermodynamic properties with antiparticles
+	as function of chemical potential
+    */
+    virtual void pair_mu(boson &b, double temper)=0;
+
+    /** \brief Calculate thermodynamic properties with antiparticles
+	as function of density
+    */
+    virtual void pair_density(boson &b, double temper)=0;
+
+    /** \brief Desc
+     */
+    virtual double calibrate(boson &b, int verbose=0, bool test_pair=false,
+			     std::string fname="");
+    
+  };
+  
 #ifndef DOXYGEN_NO_O2NS
 }
 #endif
