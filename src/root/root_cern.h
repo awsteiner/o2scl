@@ -54,6 +54,9 @@ namespace o2scl {
       2:\quad \mathrm{max} |x_i-x^{\prime}_i| \leq
       \mathrm{tol\_abs} \times \mathrm{max} | x_i |
       \f]
+
+      \note This class has difficulty finding the root when
+      the desired root is near 0 (AWS 1/22/19)
       
       \note This code has not been checked to ensure that it cannot
       fail to solve the equations without calling the error handler

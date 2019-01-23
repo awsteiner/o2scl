@@ -244,6 +244,9 @@ namespace o2scl {
 
     /// A factor for the degenerate entropy integration (default 30)
     double deg_entropy_fac;
+
+    /// Verbosity parameter (default 0)
+    int verbose;
     //@}
 
     /// Storage for the uncertainty

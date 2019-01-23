@@ -47,7 +47,7 @@ fermion_rel::fermion_rel() : nit(new inte_qagiu_gsl<>),
   err_nonconv=true;
   use_expansions=true;
   density_root->tol_rel=4.0e-7;
-
+  verbose=0;
 }
 
 fermion_rel::~fermion_rel() {
@@ -241,6 +241,9 @@ int fermion_rel::nu_from_n(fermion &f, double temper) {
 
   nex=f.nu/temper;
   double y=solve_fun(nex,f,temper);
+  if (verbose>1) {
+    cout << "nu_from_n(): initial guess " << nex << endl;
+  }
 
   if (y>1.0-1.0e-6) {
     double scale=f.ms;
@@ -250,6 +253,9 @@ int fermion_rel::nu_from_n(fermion &f, double temper) {
       else nex*=10.0;
       y=solve_fun(nex,f,temper);
       if (y<1.0-1.0e-6) i=10;
+    }
+    if (verbose>1) {
+      cout << "nu_from_n(): adjusted guess to " << nex << endl;
     }
   }
 
@@ -261,6 +267,9 @@ int fermion_rel::nu_from_n(fermion &f, double temper) {
       nex=(f.ms-f.m)/temper;
     }
     y=solve_fun(nex,f,temper);
+    if (verbose>1) {
+      cout << "nu_from_n(): adjusted guess (try 2) to " << nex << endl;
+    }
   }
   
   // If neither worked, call the error handler
@@ -279,6 +288,11 @@ int fermion_rel::nu_from_n(fermion &f, double temper) {
   int ret=density_root->solve(nex,mf);
 
   if (ret!=0) {
+    
+    if (verbose>1) {
+      cout << "nu_from_n(): density_root failed x=" << nex << " ." << endl;
+      cout << "\tTrying to make integrators more accurate." << endl;
+    }
 
     // If it fails, try to make the integrators more accurate
     double tol1=dit->tol_rel, tol2=dit->tol_abs;
@@ -290,23 +304,47 @@ int fermion_rel::nu_from_n(fermion &f, double temper) {
     ret=density_root->solve(nex,mf);
 
     if (ret!=0) {
+
+      if (verbose>1) {
+	cout << "nu_from_n(): density_root failed again x=" << nex
+	     << " ." << endl;
+	cout << "Trying to bracket root." << endl;
+      }
+      
       double lg=std::max(fabs(f.nu),f.ms);
       double bhigh=lg/temper, blow=-bhigh;
       double yhigh=mf(bhigh), ylow=mf(blow);
-      for(size_t j=0;j<5 && yhigh<0.0;j++) {
+      if (verbose>1) {
+	cout << blow << " " << ylow << " " << bhigh << " " << yhigh << endl;
+      }
+      for(size_t j=0;j<5 && yhigh>0.0;j++) {
 	bhigh*=1.0e2;
 	yhigh=mf(bhigh);
+	if (verbose>1) {
+	  cout << blow << " " << ylow << " " << bhigh << " " << yhigh << endl;
+	}
       }
-      for(size_t j=0;j<5 && ylow>0.0;j++) {
+      for(size_t j=0;j<5 && ylow<0.0;j++) {
 	blow*=1.0e2;
 	ylow=mf(blow);
+	if (verbose>1) {
+	  cout << blow << " " << ylow << " " << bhigh << " " << yhigh << endl;
+	}
       }
-      if (yhigh>0.0 && ylow<0.0) {
+      if (yhigh<0.0 && ylow>0.0) {
 	root_brent_gsl<> rbg;
-	rbg.verbose=2;
 	rbg.err_nonconv=false;
 	ret=rbg.solve_bkt(blow,bhigh,mf);
-	if (ret==0) nex=ylow;
+	if (ret==0) {
+	  nex=blow;
+	} else {
+	  if (verbose>1) {
+	    cout << "nu_from_n(): density_root failed fourth solver "
+		 << blow << endl;
+	  }
+	}
+      } else if (verbose>1) {
+	cout << "nu_from_n(): Failed to bracket." << endl;
       }
     }
 
