@@ -703,6 +703,12 @@ int main(void) {
   cout << "Deriv_Calibrate: " << val2 << endl;
   t.test_rel(val2,0.0,8.0e-6,"deriv_calibrate direct");
 
+  double val2x=part_calibrate<fermion_deriv,fermion_deriv_rel>
+    (sfx,snf,1,"../../data/o2scl/fermion_cal2.o2",1,1);
+  double val2y=part_deriv_calibrate<fermion_deriv,fermion_deriv_rel>
+    (sfx,snf,1,"../../data/o2scl/fermion_cal2.o2",1,1);
+  cout << val2 << " " << val2x << " " << val2y << endl;
+
   cout << "----------------------------------------------------" << endl;
   cout << "Function deriv_calibrate() method=by_parts." << endl;
   cout << "----------------------------------------------------" << endl;

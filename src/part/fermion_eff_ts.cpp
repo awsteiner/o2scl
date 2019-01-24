@@ -569,7 +569,7 @@ int main(void) {
 
   fermion ec;
   double q=part_calibrate<fermion,fermion_eff>
-    (ec,ef2,1,"../../data/o2scl/fermion_cal2.o2",2,1);
+    (ec,ef2,1,"../../data/o2scl/fermion_cal2.o2",1,1);
   t.test_rel(q,0.0,0.5,"calibrate");
   
   // -----------------------------------------------------------------
