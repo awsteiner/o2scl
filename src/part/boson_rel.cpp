@@ -68,6 +68,23 @@ void boson_rel::calc_mu(boson &b, double temper) {
   
   if (deg) {
     
+    // Compute the upper limit for degenerate integrals
+
+    double arg, upper_limit_fac=20.0;
+    if (b.inc_rest_mass) {
+      arg=pow(upper_limit_fac*temper+b.nu,2.0)-b.ms*b.ms;
+    } else {
+      arg=pow(upper_limit_fac*temper+b.nu+b.m,2.0)-b.ms*b.ms;
+    }
+    double ul;
+    if (arg>0.0) {
+      ul=sqrt(arg);
+    } else {
+      O2SCL_ERR2("Zero density in degenerate limit in boson_rel::",
+		 "calc_mu().",exc_efailed);
+      return;
+    }
+    
     funct fd=std::bind(std::mem_fn<double(double,boson &,double)>
 		       (&boson_rel::deg_density_fun),
 		       this,std::placeholders::_1,std::ref(b),temper);
@@ -78,11 +95,13 @@ void boson_rel::calc_mu(boson &b, double temper) {
 		       (&boson_rel::deg_entropy_fun),
 		       this,std::placeholders::_1,std::ref(b),temper);
     
-    b.n=dit->integ(fd,0.0,sqrt(pow(15.0*temper+b.nu,2.0)-b.ms*b.ms));
+    b.n=dit->integ(fd,0.0,ul);
     b.n*=b.g/2.0/pi2;
-    b.ed=dit->integ(fe,0.0,sqrt(pow(15.0*temper+b.nu,2.0)-b.ms*b.ms));
+    
+    b.ed=dit->integ(fe,0.0,ul);
     b.ed*=b.g/2.0/pi2;
-    b.en=dit->integ(fs,0.0,sqrt(pow(15.0*temper+b.nu,2.0)-b.ms*b.ms));
+    
+    b.en=dit->integ(fs,0.0,ul);
     b.en*=b.g/2.0/pi2;
     
   } else {
@@ -207,16 +226,27 @@ double boson_rel::deg_entropy_fun(double k, boson &b, double T) {
 }
   
 double boson_rel::density_fun(double u, boson &b, double T) {
-  double ret, y, mx;
+  double ret, y, eta;
 
-  y=b.nu/T;
-  mx=b.ms/T;
+  if (b.inc_rest_mass) {
+    y=b.nu/T;
+  } else {
+    y=(b.nu+b.m)/T;
+  }
+  eta=b.ms/T;
 
-  ret=(mx+u)*sqrt(u*u+2.0*mx*u)*exp(u+y)/(exp(y)-exp(mx+u));
-  ret=(mx+u)*sqrt(u*u+2.0*mx*u)*exp(u+y)/(exp(y)-exp(mx+u));
+  if (y-u>200.0 && eta-u>200.0) {
+    if (eta+u+y>100.0) {
+      ret=0.0;
+    } else {
+      ret=(eta+u)*sqrt(u*u+2.0*eta*u)/(exp(eta+u-y)-1.0);
+    }
+  } else {
+    ret=(eta+u)*sqrt(u*u+2.0*eta*u)*exp(y)/(exp(eta+u)-exp(y));
+  }
 
   if (!std::isfinite(ret)) {
-    cout << "4: " << u << " " << y << " " << mx << " " 
+    cout << "4: " << u << " " << y << " " << eta << " " 
 	 << b.ms << " " << b.nu << " " << T << endl;
     exit(-1);
   }
@@ -225,12 +255,24 @@ double boson_rel::density_fun(double u, boson &b, double T) {
 }
 
 double boson_rel::energy_fun(double u, boson &b, double T) {
-  double ret, y, mx;
+  double ret, y, eta;
 
-  y=b.nu/T;
-  mx=b.ms/T;
+  if (b.inc_rest_mass) {
+    y=b.nu/T;
+  } else {
+    y=(b.nu+b.m)/T;
+  }
+  eta=b.ms/T;
   
-  ret=(mx+u)*(mx+u)*sqrt(u*u+2.0*mx*u)*exp(u+y)/(exp(y)-exp(mx+u));
+  if (y-u>200.0 && eta-u>200.0) {
+    if (eta+u+y>100.0) {
+      ret=0.0;
+    } else {
+      ret=(eta+u)*(eta+u)*sqrt(u*u+2.0*eta*u)/(exp(eta+u-y)-1.0);
+    }
+  } else {
+    ret=(eta+u)*(eta+u)*sqrt(u*u+2.0*eta*u)*exp(y)/(exp(eta+u)-exp(y));
+  }
   
   if (!std::isfinite(ret)) {
     cout << "5: " << u << " " << b.ms << " " << b.nu << " " << T << endl;
@@ -241,19 +283,43 @@ double boson_rel::energy_fun(double u, boson &b, double T) {
 }
 
 double boson_rel::entropy_fun(double u, boson &b, double T) {
-  double ret, y, mx, term1, term2;
+  double ret, y, eta, term1, term2;
 
-  y=b.mu/T;
-  mx=b.ms/T;
+  if (b.inc_rest_mass) {
+    y=b.nu/T;
+  } else {
+    y=(b.nu+b.m)/T;
+  }
+  eta=b.ms/T;
 
-  term1=log(exp(y-mx-u)-1.0)/(exp(y-mx-u)-1.0);
-  term2=log(1.0-exp(mx+u-y))/(1.0-exp(mx+u-y));
-  ret=(mx+u)*exp(u)*sqrt(u*u+2.0*mx*u)*(term1+term2);
-  
+  if (u-eta>200.0 && u-y>200.0) {
+    ret=0.0;
+  } else {
+    term1=exp(eta+u)*log(1.0/1.0-exp(y-eta-u));
+    term2=exp(y)*log(1.0/(exp(eta+u-y)-1.0));
+    ret=(eta+u)*sqrt(u*u+2.0*eta*u)*(term1+term2)/
+      (exp(eta+u)-exp(y));
+  }
+
   if (!std::isfinite(ret)) {
-    cout << "6: " << u << " " << b.ms << " " << b.nu << " " << T << endl;
+    return 0.0;
+  }
+
+  /*
+  if (false) {
+    cout << "6: " << u << " " << eta << " " << y << endl;
+    cout << b.ms << " " << b.nu << " " << T << endl;
+
+    u=200.0;
+    term1=exp(eta+u)*log(1.0/1.0-exp(y-eta-u));
+    term2=exp(y)*log(1.0/(exp(eta+u-y)-1.0));
+    ret=(eta+u)*sqrt(u*u+2.0*eta*u)*(term1+term2)/
+      (exp(eta+u)-exp(y));
+    cout << ret << endl;
+    
     exit(-1);
   }
+  */
 
   return ret;
 }

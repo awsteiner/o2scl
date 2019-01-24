@@ -69,19 +69,19 @@ namespace o2scl {
 
   };
 
-  /** \brief Desc
+  /** \brief Compute the thermodynamic properties of a boson
    */
   class boson_thermo {
     
   public:
     
-    /** \brief Calculate thermodynamic 
-	properties as function of chemical potential
+    /** \brief Calculate thermodynamic properties as function of
+	chemical potential
     */
     virtual void calc_mu(boson &b, double temper)=0;
 
-    /** \brief Calculate thermodynamic 
-	properties as function of density
+    /** \brief Calculate thermodynamic properties as function of
+	density
     */
     virtual void calc_density(boson &b, double temper)=0;
 
@@ -95,8 +95,9 @@ namespace o2scl {
     */
     virtual void pair_density(boson &b, double temper)=0;
 
-    /** \brief Desc
-     */
+    /** \brief Test the thermodynamics of calc_density(),
+	calc_mu(), pair_density() and pair_mu()
+    */
     virtual double calibrate(boson &b, int verbose=0, bool test_pair=false,
 			     std::string fname="");
     

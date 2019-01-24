@@ -171,7 +171,7 @@ int main(void) {
     cout << endl;
   */
 
-  //rb.calibrate(b,2,0,"../../data/o2scl/boson_cal.o2");
+  rb.calibrate(b,1,0,"../../data/o2scl/boson_cal.o2");
   
   t.report();
   return 0;

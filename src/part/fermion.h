@@ -400,8 +400,8 @@ namespace o2scl {
     /// Return string denoting type ("fermion_thermo")
     virtual const char *type() { return "fermion_thermo"; }
 
-    /** \brief Test the thermodynamics of calc_density() and 
-	calc_mu()
+    /** \brief Test the thermodynamics of calc_density(),
+	calc_mu(), pair_density() and pair_mu()
 
 	This compares the approximation to the exact results over a
 	grid with \f$ T = \left\{10^{-2},1,10^{2}\right\} \f$, \f$

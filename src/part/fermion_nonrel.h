@@ -70,8 +70,9 @@ namespace o2scl {
       calc_density_zerot() which gives the proper chemical potential
       of \f$ mu = m \f$ without calling the error handler.
 
-      \todo Implement \ref o2scl::fermion_nonrel::pair_density() and 
-      \ref o2scl::fermion_nonrel::pair_mu().
+      \future Implement \ref o2scl::fermion_nonrel::pair_density() and
+      \ref o2scl::fermion_nonrel::pair_mu(). AWS, 1/23/19: it is not
+      entirely clear to me that this antiparticles will be useful.
 
       \todo Make sure to test with non-interacting equal to 
       true or false, and document whether or not it works
