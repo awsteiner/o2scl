@@ -98,9 +98,10 @@ namespace o2scl {
       solved for the effective chemical potential instead. The initial
       guess is just taken from the present value of part::nu .
 
-      \todo Fix higher densities in fermion_eff_ts.cpp.
-
       \future Use bracketing to speed up one-dimensional root finding.
+      \future Implement the same method of allowing the user to 
+      turn on or off the degenerate and nondegenerate expansions
+      as in \ref o2scl::fermion_rel .
   */
   class fermion_eff : public fermion_thermo {
 
@@ -154,9 +155,6 @@ namespace o2scl {
 	the case of interacting particles) is less than -200, then
 	this quietly sets the density, the scalar density, the energy
 	density, the pressure and the entropy to zero and exits.
-
-	\todo Should see if the function actually works if 
-	\f$ (\mu-m)/T = -199 \f$ .
     */
     virtual void calc_mu(fermion &f, double temper);
 

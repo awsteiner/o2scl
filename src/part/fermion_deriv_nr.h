@@ -221,10 +221,6 @@ namespace o2scl {
       \frac{3 g m{* 1/2} T^{3/2}}{2^{3/2} \pi^2} 
       \int_0^{\infty} u^{1/2} f d u
       \f]
-
-      \todo Make a calc_density_zerot function
-      \todo There is a lot of code duplication with fermion_nonrel
-      which needs to be fixed.
   */
   class fermion_deriv_nr : public fermion_deriv_thermo {
 

@@ -95,7 +95,7 @@ namespace o2scl {
       nucmass::m_prot are adjusted to make sure that the mass
       excesses match the values given in the original.
       
-      \todo This appears to be limited for large nuclei because 'i'
+      \future This appears to be limited for large nuclei because 'i'
       becomes larger than imax and then statements like
       noc[i][j]=moc-ju and noc[i+1][j]=ju become invalid. This needs
       to be more carefully understood and documented. For now,

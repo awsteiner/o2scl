@@ -55,10 +55,7 @@ int main(void) {
     cout << "----------------------------------------------------" << endl;
     cout << endl;
 
-    // Higher densities are commented out because they were
-    // causing problems. These need to be fixed.
-    //for(den=1.0e-6;den<=1.01e2;den*=1.0e2) {
-    for(den=1.0e-6;den<=1.01e-3;den*=1.0e2) {
+    for(den=1.0e-6;den<=1.01e2;den*=1.0e2) {
 
       cout << "density: " << den << endl;
 
@@ -571,8 +568,9 @@ int main(void) {
   // -----------------------------------------------------------------
 
   fermion ec;
-  t.test_rel(ef2.calibrate(ec,1,0,"../../data/o2scl/fermion_cal2.o2"),
-	     0.0,0.5,"calibrate");
+  double q=part_calibrate<fermion,fermion_eff>
+    (ec,ef2,1,"../../data/o2scl/fermion_cal2.o2",2,1);
+  t.test_rel(q,0.0,0.5,"calibrate");
   
   // -----------------------------------------------------------------
 

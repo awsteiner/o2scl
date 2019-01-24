@@ -246,14 +246,16 @@ namespace o2scl {
       to perform the integration. The value of the integrand
       at k=0 also looks like it might be causing difficulties.
 
-      \todo err_nonconv=false not implemented yet.
+      \future The option err_nonconv=false is not really implemented
+      yet.
 
       \future It might be worth coding up direct differentiation, or
       differentiating the eff results, as these may succeed more
       generally.
 
       \future This class will have difficulty with extremely degenerate
-      or extremely non-degnerate systems. Fix this.
+      or extremely non-degnerate systems. Fix this by using the
+      expansions similar to the method used in \ref o2scl::fermion_rel .
 
       \future Create a more intelligent method for dealing with bad 
       initial guesses for the chemical potential in calc_density().

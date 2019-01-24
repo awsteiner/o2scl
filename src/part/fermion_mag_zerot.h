@@ -91,8 +91,8 @@ namespace o2scl {
       e B = 1.5~\times~10^{-19}~\mathrm{fm}^{-2}
       \f]
       This conversion factor is given in \ref o2scl_const::ec_gauss_fm2 .
-
-      \todo Comment on Gaussian vs. Heaviside-Lorentz units.
+      See the documentation of that quantity for a 
+      brief comparison of various E&M unit systems.
 
   */
   class fermion_mag_zerot : public fermion_zerot {

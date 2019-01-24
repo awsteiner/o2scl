@@ -79,9 +79,8 @@ namespace o2scl {
       produces spurious solutions) even though it might be less time
       consuming. In this class, the density is solved for the
       effective chemical potential instead. The initial guess is just
-      taken from the present value of part::nu .
-      
-      \todo Improve documentation
+      taken from the present value of part::mu or, if 
+      part::non_interacting is false, from part::nu .
   */
   class boson_eff : public boson_thermo {
 

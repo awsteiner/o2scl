@@ -257,6 +257,7 @@ void fermion_thermo::massless_pair_density(fermion &f, double temper) {
   return;
 }
 
+#ifdef O2SCL_NEVER_DEFINED
 double fermion_thermo::calibrate
 (fermion &f, int verbose, bool test_pair, std::string fname) {
 
@@ -1094,6 +1095,8 @@ double fermion_thermo::calibrate
   
   return ret;
 }
+
+#endif
 
 bool fermion_thermo::calc_mu_deg(fermion &f, double temper, 
 				      double prec) {

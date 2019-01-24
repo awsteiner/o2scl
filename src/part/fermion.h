@@ -400,6 +400,7 @@ namespace o2scl {
     /// Return string denoting type ("fermion_thermo")
     virtual const char *type() { return "fermion_thermo"; }
 
+#ifdef O2SCL_NEVER_DEFINED
     /** \brief Test the thermodynamics of calc_density(),
 	calc_mu(), pair_density() and pair_mu()
 
@@ -420,6 +421,7 @@ namespace o2scl {
     */
     virtual double calibrate(fermion &f, int verbose=0, bool test_pair=false,
 			     std::string fname="");
+#endif
 
 #ifndef DOXYGEN_NO_O2NS
 
