@@ -16,7 +16,7 @@
     <b>Multi-dimensional minimizers</b>
 
     Multi-dimensional minimization is performed by descendants of \ref
-    o2scl::mmin_base. \o2 includes a simplex minimizer (\ref
+    o2scl::mmin_base . \o2 includes a simplex minimizer (\ref
     o2scl::mmin_simp2), traditional minimizers which use gradient
     information (\ref o2scl::mmin_conp, \ref o2scl::mmin_conf, and
     \ref o2scl::mmin_bfgs2), and differential evolution minimizers

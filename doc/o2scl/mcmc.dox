@@ -40,10 +40,6 @@
     automatically handles the command-line interface when
     using MCMC.
 
-    \comment
-    --------------------------------------------------------------
-    \endcomment
-
     \section ex_mcmc_sect MCMC example
 
     \dontinclude ex_mcmc.cpp

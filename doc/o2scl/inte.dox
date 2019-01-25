@@ -1,8 +1,5 @@
 /** \page inte_section Integration
 
-    \comment
-    \endcomment
-
     \section onedinte_subsect One-dimensional integration
 
     Several classes integrate arbitrary one-dimensional functions
@@ -89,10 +86,6 @@
 
     \section gsl_inte_err_subsect GSL-based integration error messages
 
-    \comment
-    --------------------------------------------------------------
-    \endcomment
-      
     The error messages given by the adaptive GSL integration routines
     tend to follow a standard form and are documented here. There are
     several error messages which indicate improper usage and cause the
@@ -121,10 +114,6 @@
     o2scl::inte_qawc_gsl cannot handle the case when a singularity is one of
     the endpoints of the integration.
 
-    \comment
-    --------------------------------------------------------------
-    \endcomment
-      
     There are also convergence errors which will call
     the error handler unless \ref o2scl::inte::err_nonconv is false
     (see \ref errorhand2_subsect) for more discussion on
@@ -180,10 +169,6 @@
     occurs if the maximum <b>level</b> of the table of Chebyshev
     moments is reached.
 
-    \comment
-    --------------------------------------------------------------
-    \endcomment
-      
     \section multiinte_subsect Multi-dimensional integration routines
 
     \o2 reimplements the Cubature library for multi-dimensional
@@ -212,10 +197,6 @@
     each variable to be integrated over.
     \endcomment
 
-    \comment
-    --------------------------------------------------------------
-    \endcomment
-
     \section integ_example_sect One-dimensional integration example
 
     This example computes the integral
@@ -232,10 +213,6 @@
     \dontinclude ex_inte.cpp
     \skip Example:
     \until End of example
-
-    \comment
-    --------------------------------------------------------------
-    \endcomment
 
     \comment
     \section minteg_example_sect Multi-dimensional integration example

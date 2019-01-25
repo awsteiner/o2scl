@@ -6,10 +6,6 @@
     direct methods for integrals over regions with large numbers of
     spatial dimensions.
 
-    \comment
-    --------------------------------------------------------------
-    \endcomment
-
     \section mcarlo_example_sect Monte Carlo integration example
 
     This example computes the integral
@@ -22,10 +18,6 @@
     \dontinclude ex_mcarlo.cpp
     \skip Example:
     \until End of example
-
-    \comment
-    --------------------------------------------------------------
-    \endcomment
 
     \section expval_subsect Analysis of results from numerical simulations
     
