@@ -727,7 +727,7 @@ namespace o2scl {
      */
     template<class vec_t>
       int read_table(const o2scl::table<vec_t> &tab, 
-		     std::string xname="", std::string yname="",
+		     std::string xname2="", std::string yname2="",
 		     double empty_value=0.0, int verbose=0,
 		     bool err_on_fail=true, double eps=1.0e-12) {
 
@@ -743,25 +743,25 @@ namespace o2scl {
       }
 
       // Set up xname and yname if unspecified
-      if (xname.length()==0) {
-	if (yname==tab.get_column_name(0)) {
-	  xname=tab.get_column_name(1);
+      if (xname2.length()==0) {
+	if (yname2==tab.get_column_name(0)) {
+	  xname2=tab.get_column_name(1);
 	} else {
-	  xname=tab.get_column_name(0);
-	  yname=tab.get_column_name(1);
+	  xname2=tab.get_column_name(0);
+	  yname2=tab.get_column_name(1);
 	}
       }
-      if (yname.length()==0) {
-	if (xname==tab.get_column_name(1)) {
-	  yname=tab.get_column_name(0);
+      if (yname2.length()==0) {
+	if (xname2==tab.get_column_name(1)) {
+	  yname2=tab.get_column_name(0);
 	} else {
-	  yname=tab.get_column_name(1);
+	  yname2=tab.get_column_name(1);
 	}
       }
       
       // Setup x and y grid vectors from data
-      const vec_t &xdata=tab[xname];
-      const vec_t &ydata=tab[yname];
+      const vec_t &xdata=tab[xname2];
+      const vec_t &ydata=tab[yname2];
       std::vector<double> xgrid, ygrid;
       // Note it is important that this go up to tab.get_nlines()
       // rather than xdata.size() because the internal vector storage
@@ -799,12 +799,12 @@ namespace o2scl {
       }
       
       // Set grid from x and y vectors
-      set_xy(xname,xgrid.size(),xgrid,yname,ygrid.size(),ygrid);
+      set_xy(xname2,xgrid.size(),xgrid,yname2,ygrid.size(),ygrid);
       
       // Create new slices
       std::vector<std::string> sl_names;
       for(size_t i=0;i<tab.get_ncolumns();i++) {
-	if (tab.get_column_name(i)!=xname && tab.get_column_name(i)!=yname) {
+	if (tab.get_column_name(i)!=xname2 && tab.get_column_name(i)!=yname2) {
 	  std::string sl=tab.get_column_name(i);
 	  if (verbose>0) {
 	    std::cout << "New slice: " << sl << std::endl;
@@ -817,7 +817,7 @@ namespace o2scl {
       
       // Set the data
       for(size_t i=0;i<tab.get_ncolumns();i++) {
-	if (tab.get_column_name(i)!=xname && tab.get_column_name(i)!=yname) {
+	if (tab.get_column_name(i)!=xname2 && tab.get_column_name(i)!=yname2) {
 	  std::string sl=tab.get_column_name(i);
 	  for(size_t j=0;j<tab.get_nlines();j++) {
 	    set_val(xdata[j],ydata[j],sl,tab.get(i,j));
