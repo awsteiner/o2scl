@@ -257,7 +257,9 @@ namespace o2scl {
 
     if (!tab.is_column("ed")) {
       tab.function_column("ed_mot*mot","ed");
-      tab.function_column("pair_ed_mot*mot","pair_ed");
+      if (test_pair) {
+	tab.function_column("pair_ed_mot*mot","pair_ed");
+      }
     }
     
     // ----------------------------------------------------------------

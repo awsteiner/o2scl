@@ -66,6 +66,8 @@ namespace o2scl {
   */
   double fermi_function(double E, double mu, double T, double limit=40.0);
 
+  double bose_function(double E, double mu, double T, double limit=40.0);
+
   /** \brief Store the first line from the output of the shell
       command \c cmd up to \c nmax characters in \c result
       

@@ -69,7 +69,8 @@ namespace o2scl {
 
   };
 
-  /** \brief Compute the thermodynamic properties of a boson
+  /** \brief Compute the thermodynamic properties of a boson 
+      [abstract base]
    */
   class boson_thermo {
     
@@ -95,12 +96,6 @@ namespace o2scl {
     */
     virtual void pair_density(boson &b, double temper)=0;
 
-    /** \brief Test the thermodynamics of calc_density(),
-	calc_mu(), pair_density() and pair_mu()
-    */
-    virtual double calibrate(boson &b, int verbose=0, bool test_pair=false,
-			     std::string fname="");
-    
   };
   
 #ifndef DOXYGEN_NO_O2NS

@@ -25,6 +25,7 @@
 #endif
 
 #include <o2scl/boson_rel.h>
+#include <o2scl/root_brent_gsl.h>
 
 using namespace std;
 using namespace o2scl;
@@ -37,6 +38,7 @@ boson_rel::boson_rel() {
   density_root=&def_density_root;
   nit=&def_nit;
   dit=&def_dit;
+
 }
 
 boson_rel::~boson_rel() {
@@ -56,14 +58,20 @@ void boson_rel::calc_mu(boson &b, double temper) {
   }
   if (b.non_interacting==true) { b.nu=b.mu; b.ms=b.m; }
 
-  bool deg=true;
-  double deg_limit=2.0;
   double psi;
   if (b.inc_rest_mass) {
     psi=(b.nu-b.ms)/temper;
   } else {
     psi=(b.nu+(b.m-b.ms))/temper;
   }
+
+  if (psi>0.0) {
+    O2SCL_ERR2("Chemical potential must be smaller than mass in ",
+	      "boson_rel::calc_mu().",o2scl::exc_einval);
+  }
+  
+  bool deg=true;
+  double deg_limit=-0.5;
   if (psi<deg_limit) deg=false;
   
   if (deg) {
@@ -94,7 +102,7 @@ void boson_rel::calc_mu(boson &b, double temper) {
     funct fs=std::bind(std::mem_fn<double(double,boson &,double)>
 		       (&boson_rel::deg_entropy_fun),
 		       this,std::placeholders::_1,std::ref(b),temper);
-    
+
     b.n=dit->integ(fd,0.0,ul);
     b.n*=b.g/2.0/pi2;
     
@@ -150,7 +158,23 @@ void boson_rel::nu_from_n(boson &b, double temper) {
   funct mf=std::bind(std::mem_fn<double(double,boson &,double)>
 		       (&boson_rel::solve_fun),
 		       this,std::placeholders::_1,std::ref(b),temper);
-  density_root->solve(nex,mf);
+  bool ec=density_root->err_nonconv;
+  density_root->err_nonconv=false;
+  int ret1=density_root->solve(nex,mf);
+  density_root->err_nonconv=ec;
+
+  if (ret1!=0) {
+
+    root_brent_gsl<> rbg;
+    rbg.err_nonconv=false;
+    int ret2=rbg.solve(nex,mf);
+
+    if (ret2!=0) {
+      O2SCL_ERR("Solvers failed in boson_rel::nu_from_n().",
+		o2scl::exc_efailed);
+    }
+  }
+  
   b.nu=nex*temper;
   
   return;
@@ -185,13 +209,18 @@ void boson_rel::calc_density(boson &b, double temper) {
 
 double boson_rel::deg_density_fun(double k, boson &b, double T) {
 
-  double E=sqrt(k*k+b.ms*b.ms), ret;
-
-  ret=k*k/(exp(E/T-b.nu/T)-1.0);
+  double E=gsl_hypot(k,b.ms);
+  double nx=o2scl::bose_function(E,b.nu,T);
+  double ret=k*k*nx;
 
   if (!std::isfinite(ret)) {
-    cout << "1: " << k << " " << b.ms << " " << b.nu << " " << T << endl;
-    exit(-1);
+    return 0.0;
+    /*
+      cout << "1: " << k << " " << b.ms << " " << b.nu << " " << T << endl;
+      cout << exp(E/T-b.nu/T)-1.0 << " " << E/T-b.nu/T << endl;
+      cout << b.nu-b.ms << endl;
+      exit(-1);
+    */
   }
   
   return ret;
@@ -199,13 +228,14 @@ double boson_rel::deg_density_fun(double k, boson &b, double T) {
   
 double boson_rel::deg_energy_fun(double k, boson &b, double T) {
 
-  double E=sqrt(k*k+b.ms*b.ms), ret;
-
-  ret=k*k*E/(exp(E/T-b.nu/T)-1.0);
+  double E=gsl_hypot(k,b.ms);
+  double nx=o2scl::bose_function(E,b.nu,T);
+  double ret=k*k*E*nx;
   
   if (!std::isfinite(ret)) {
-    cout << "2: " << k << " " << b.ms << " " << b.nu << " " << T << endl;
-    exit(-1);
+    return 0.0;
+    //cout << "2: " << k << " " << b.ms << " " << b.nu << " " << T << endl;
+    //exit(-1);
   }
 
   return ret;
@@ -213,28 +243,43 @@ double boson_rel::deg_energy_fun(double k, boson &b, double T) {
   
 double boson_rel::deg_entropy_fun(double k, boson &b, double T) {
 
-  double E=sqrt(k*k+b.ms*b.ms), nx, ret;
-  nx=1.0/(exp(E/T-b.nu/T)-1.0);
+  double E=gsl_hypot(k,b.ms);
+  double nx=o2scl::bose_function(E,b.nu,T);
+  double ret;
   ret=-k*k*(nx*log(nx)-(1.0+nx)*log(1.0+nx));
   
   if (!std::isfinite(ret)) {
+    return 0.0;
+    /*
+    double psi;
+    if (b.inc_rest_mass) {
+      psi=(b.nu-b.ms)/T;
+    } else {
+      psi=(b.nu+(b.m-b.ms))/T;
+    }
     cout << "3: " << k << " " << b.ms << " " << b.nu << " " << T << endl;
+    cout << "psi: " << psi << endl;
+    cout << exp(E/T-b.nu/T)-1.0 << " " << E/T-b.nu/T << endl;
+    cout << b.nu-b.ms << " " << nx << endl;
+    cout << ret << endl;
     exit(-1);
+    */
   }
 
   return ret;
 }
   
 double boson_rel::density_fun(double u, boson &b, double T) {
-  double ret, y, eta;
 
+  double y;
   if (b.inc_rest_mass) {
     y=b.nu/T;
   } else {
     y=(b.nu+b.m)/T;
   }
-  eta=b.ms/T;
+  double eta=b.ms/T;
 
+  double ret;
   if (y-u>200.0 && eta-u>200.0) {
     if (eta+u+y>100.0) {
       ret=0.0;
@@ -255,15 +300,16 @@ double boson_rel::density_fun(double u, boson &b, double T) {
 }
 
 double boson_rel::energy_fun(double u, boson &b, double T) {
-  double ret, y, eta;
 
+  double y;
   if (b.inc_rest_mass) {
     y=b.nu/T;
   } else {
     y=(b.nu+b.m)/T;
   }
-  eta=b.ms/T;
-  
+  double eta=b.ms/T;
+
+  double ret;
   if (y-u>200.0 && eta-u>200.0) {
     if (eta+u+y>100.0) {
       ret=0.0;
@@ -283,20 +329,21 @@ double boson_rel::energy_fun(double u, boson &b, double T) {
 }
 
 double boson_rel::entropy_fun(double u, boson &b, double T) {
-  double ret, y, eta, term1, term2;
 
+  double y;
   if (b.inc_rest_mass) {
     y=b.nu/T;
   } else {
     y=(b.nu+b.m)/T;
   }
-  eta=b.ms/T;
+  double eta=b.ms/T;
 
+  double ret;
   if (u-eta>200.0 && u-y>200.0) {
     ret=0.0;
   } else {
-    term1=exp(eta+u)*log(1.0/1.0-exp(y-eta-u));
-    term2=exp(y)*log(1.0/(exp(eta+u-y)-1.0));
+    double term1=exp(eta+u)*log(1.0/1.0-exp(y-eta-u));
+    double term2=exp(y)*log(1.0/(exp(eta+u-y)-1.0));
     ret=(eta+u)*sqrt(u*u+2.0*eta*u)*(term1+term2)/
       (exp(eta+u)-exp(y));
   }
@@ -325,16 +372,55 @@ double boson_rel::entropy_fun(double u, boson &b, double T) {
 }
 
 double boson_rel::solve_fun(double x, boson &b, double T) {
-  double nden, yy;
+  double nden;
   
-  funct fd=std::bind(std::mem_fn<double(double,boson &b,double)>
-		       (&boson_rel::deg_density_fun),
-		       this,std::placeholders::_1,std::ref(b),T);
+  double psi;
+  if (b.inc_rest_mass) {
+    psi=(b.nu-b.ms)/T;
+  } else {
+    psi=(b.nu+(b.m-b.ms))/T;
+  }
+
+  bool deg=true;
+  double deg_limit=-0.5;
+  if (psi<deg_limit) deg=false;
   
-  b.nu=T*x;
-  nden=dit->integ(fd,0.0,sqrt(pow(20.0*T+b.nu,2.0)-b.ms*b.ms));
-  nden*=b.g/2.0/pi2;
-  yy=nden/b.n-1.0;
+  if (deg) {
+
+      // Compute the upper limit for degenerate integrals
+
+    double arg, upper_limit_fac=20.0;
+    if (b.inc_rest_mass) {
+      arg=pow(upper_limit_fac*T+b.nu,2.0)-b.ms*b.ms;
+    } else {
+      arg=pow(upper_limit_fac*T+b.nu+b.m,2.0)-b.ms*b.ms;
+    }
+    double ul=sqrt(arg);
+    
+    funct fd=std::bind(std::mem_fn<double(double,boson &,double)>
+                       (&boson_rel::deg_density_fun),
+                       this,std::placeholders::_1,std::ref(b),T);
+    nden=dit->integ(fd,0.0,ul);
+    nden*=b.g/2.0/pi2;
+
+  } else {
+
+    // If the temperature is large enough, perform the full integral
+    
+    funct mfd=std::bind(std::mem_fn<double(double,boson &,double)>
+			(&boson_rel::density_fun),
+			this,std::placeholders::_1,std::ref(b),T);
+    
+    double prefac=b.g*pow(T,3.0)/2.0/pi2;
+    
+    // Compute the number density
+    
+    nden=nit->integ(mfd,0.0,0.0);
+    nden*=prefac;
+
+  }
+
+  double yy=nden/b.n-1.0;
 
   return yy;
 }
