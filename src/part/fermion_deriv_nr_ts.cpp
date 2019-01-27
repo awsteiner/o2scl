@@ -319,6 +319,11 @@ int main(void) {
   ef.n=3.0e-4;
   ef.nu=0.1;
   sf.nu=0.1;
+
+  // Third argument is false because we don't want to test pairs
+  double v1=part_deriv_calibrate<fermion_deriv,fermion_deriv_nr>
+    (sf,snf,false,"../../data/o2scl/fermion_nr_cal.o2",1,true);
+  cout << v1 << endl;
   
   t.report();
   return 0;

@@ -308,6 +308,11 @@ int main(void) {
   t.test_rel(e2.en,t4,5.0e-9,"entropy");
   cout << endl;
 
+  // Third argument is false because we don't want to test pairs
+  double v1=part_calibrate<fermion,fermion_nonrel>
+    (e2,nrf,false,"../../data/o2scl/fermion_nr_cal.o2",1,true);
+  cout << v1 << endl;
+  
   t.set_output_level(2);
   t.report();
 
