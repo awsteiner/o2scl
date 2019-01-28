@@ -38,6 +38,7 @@
 #include <o2scl/inte_qagiu_gsl.h>
 
 #include <o2scl/part_deriv.h>
+#include <o2scl/fermion_rel.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -288,7 +289,10 @@ namespace o2scl {
     
     /// Storage for the most recently calculated uncertainties 
     fermion_deriv unc;
-    
+
+    /// Object for computing non-derivative quantities
+    fermion_rel fr;
+
     /** \name Method of computing derivatives
      */
     //@{

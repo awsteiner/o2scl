@@ -31,7 +31,7 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-int main(void) {
+int main(int argc, char *argv[]) {
 
   cout.setf(ios::scientific);
   
@@ -697,17 +697,34 @@ int main(void) {
   cout << "Function deriv_calibrate() method=direct." << endl;
   cout << "----------------------------------------------------" << endl;
   cout << endl;
+
+  if (false) {
+    
+    fermion_rel fr;
+    
+    if (argc==1) {
+      double val2x=part_calibrate<fermion,fermion_rel>
+	(ef,fr,true,"../../data/o2scl/fermion_cal2.o2",2,true);
+      cout << val2x << endl;
+    } else {
+      double val2z=part_calibrate<fermion_deriv,fermion_deriv_rel>
+	(sfx,snf,true,"../../data/o2scl/fermion_cal2.o2",2,true);
+      cout << val2z << endl;
+    }
+    exit(-1);
+  }
   
   snf.method=fermion_deriv_rel::direct;
   double val2=snf.deriv_calibrate(sfx,1,"../../data/o2scl/fermion_cal2.o2");
   cout << "Deriv_Calibrate: " << val2 << endl;
   t.test_rel(val2,0.0,8.0e-6,"deriv_calibrate direct");
 
-  double val2x=part_calibrate<fermion_deriv,fermion_deriv_rel>
+  /*
+    double val2y=part_deriv_calibrate<fermion_deriv,fermion_deriv_rel>
     (sfx,snf,1,"../../data/o2scl/fermion_cal2.o2",1,1);
-  double val2y=part_deriv_calibrate<fermion_deriv,fermion_deriv_rel>
-    (sfx,snf,1,"../../data/o2scl/fermion_cal2.o2",1,1);
-  cout << val2 << " " << val2x << " " << val2y << endl;
+    cout << val2 << " " << val2x << " " << val2y << endl;
+    exit(-1);
+  */
 
   cout << "----------------------------------------------------" << endl;
   cout << "Function deriv_calibrate() method=by_parts." << endl;
@@ -856,60 +873,60 @@ int main(void) {
   cout << endl;
 
   if (false) {
-  cout << "pair direct" << endl;
+    cout << "pair direct" << endl;
 
-  snf.method=fermion_deriv_rel::direct;
+    snf.method=fermion_deriv_rel::direct;
     
-  snf.pair_mu(sf,1.0);
-  cout << sf.mu << " " << sf.m << " " << sf.ms << endl;
-  cout << sf.n << " " << sf.ed+sf.n*sf.m << " " 
-       << sf.pr << " " << sf.en << endl;
-  cout << sf.dndT << " " << sf.dndmu << " " << sf.dsdT << endl;
+    snf.pair_mu(sf,1.0);
+    cout << sf.mu << " " << sf.m << " " << sf.ms << endl;
+    cout << sf.n << " " << sf.ed+sf.n*sf.m << " " 
+	 << sf.pr << " " << sf.en << endl;
+    cout << sf.dndT << " " << sf.dndmu << " " << sf.dsdT << endl;
     
-  snf.pair_mu(sf2,1.0);
-  cout << sf2.mu << " " << sf2.m << " " << sf2.ms << endl;
-  cout << sf2.n << " " << sf2.ed << " " << sf2.pr << " " << sf2.en << endl;
-  cout << sf2.dndT << " " << sf2.dndmu << " " << sf2.dsdT << endl;
+    snf.pair_mu(sf2,1.0);
+    cout << sf2.mu << " " << sf2.m << " " << sf2.ms << endl;
+    cout << sf2.n << " " << sf2.ed << " " << sf2.pr << " " << sf2.en << endl;
+    cout << sf2.dndT << " " << sf2.dndmu << " " << sf2.dsdT << endl;
 
-  t.test_rel(sf.n,sf2.n,1.0e-8,"n direct pair");
-  t.test_rel(sf.ed+sf.n*sf.m,sf2.ed,1.0e-5,"ed direct pair");
-  t.test_rel(sf.en,sf2.en,1.0e-8,"en direct pair");
-  t.test_rel(sf.pr,sf2.pr,1.0e-8,"pr direct pair");
-  t.test_rel(sf.dndT,sf2.dndT,1.0e-8,"dndT direct pair");
-  t.test_rel(sf.dndmu,sf2.dndmu,1.0e-8,"dndmu direct pair");
-  t.test_rel(sf.dsdT,sf2.dsdT,1.0e-8,"dsdT direct pair");
+    t.test_rel(sf.n,sf2.n,1.0e-8,"n direct pair");
+    t.test_rel(sf.ed+sf.n*sf.m,sf2.ed,1.0e-5,"ed direct pair");
+    t.test_rel(sf.en,sf2.en,1.0e-8,"en direct pair");
+    t.test_rel(sf.pr,sf2.pr,1.0e-8,"pr direct pair");
+    t.test_rel(sf.dndT,sf2.dndT,1.0e-8,"dndT direct pair");
+    t.test_rel(sf.dndmu,sf2.dndmu,1.0e-8,"dndmu direct pair");
+    t.test_rel(sf.dsdT,sf2.dsdT,1.0e-8,"dsdT direct pair");
   
-  snf.pair_density(sf,1.0);
-  snf.pair_density(sf2,1.0);
-  t.test_rel(sf.mu+sf.m,sf2.mu,1.0e-8,"pair_density direct pair");
-  cout << endl;
+    snf.pair_density(sf,1.0);
+    snf.pair_density(sf2,1.0);
+    t.test_rel(sf.mu+sf.m,sf2.mu,1.0e-8,"pair_density direct pair");
+    cout << endl;
 
-  cout << "pair by parts" << endl;
-  snf.method=fermion_deriv_rel::by_parts;
+    cout << "pair by parts" << endl;
+    snf.method=fermion_deriv_rel::by_parts;
     
-  snf.pair_mu(sf,1.0);
-  cout << sf.mu << " " << sf.m << " " << sf.ms << endl;
-  cout << sf.n << " " << sf.ed+sf.n*sf.m << " " 
-       << sf.pr << " " << sf.en << endl;
-  cout << sf.dndT << " " << sf.dndmu << " " << sf.dsdT << endl;
+    snf.pair_mu(sf,1.0);
+    cout << sf.mu << " " << sf.m << " " << sf.ms << endl;
+    cout << sf.n << " " << sf.ed+sf.n*sf.m << " " 
+	 << sf.pr << " " << sf.en << endl;
+    cout << sf.dndT << " " << sf.dndmu << " " << sf.dsdT << endl;
     
-  snf.pair_mu(sf2,1.0);
-  cout << sf2.mu << " " << sf2.m << " " << sf2.ms << endl;
-  cout << sf2.n << " " << sf2.ed << " " << sf2.pr << " " << sf2.en << endl;
-  cout << sf2.dndT << " " << sf2.dndmu << " " << sf2.dsdT << endl;
+    snf.pair_mu(sf2,1.0);
+    cout << sf2.mu << " " << sf2.m << " " << sf2.ms << endl;
+    cout << sf2.n << " " << sf2.ed << " " << sf2.pr << " " << sf2.en << endl;
+    cout << sf2.dndT << " " << sf2.dndmu << " " << sf2.dsdT << endl;
 
-  t.test_rel(sf.n,sf2.n,1.0e-7,"n by_parts pair");
-  t.test_rel(sf.ed+sf.n*sf.m,sf2.ed,1.0e-5,"ed by_parts pair");
-  t.test_rel(sf.en,sf2.en,1.0e-7,"en by_parts pair");
-  t.test_rel(sf.pr,sf2.pr,1.0e-7,"pr by_parts pair");
-  t.test_rel(sf.dndT,sf2.dndT,1.0e-7,"dndT by_parts pair");
-  t.test_rel(sf.dndmu,sf2.dndmu,1.0e-7,"dndmu by_parts pair");
-  t.test_rel(sf.dsdT,sf2.dsdT,1.0e-7,"dsdT by_parts pair");
+    t.test_rel(sf.n,sf2.n,1.0e-7,"n by_parts pair");
+    t.test_rel(sf.ed+sf.n*sf.m,sf2.ed,1.0e-5,"ed by_parts pair");
+    t.test_rel(sf.en,sf2.en,1.0e-7,"en by_parts pair");
+    t.test_rel(sf.pr,sf2.pr,1.0e-7,"pr by_parts pair");
+    t.test_rel(sf.dndT,sf2.dndT,1.0e-7,"dndT by_parts pair");
+    t.test_rel(sf.dndmu,sf2.dndmu,1.0e-7,"dndmu by_parts pair");
+    t.test_rel(sf.dsdT,sf2.dsdT,1.0e-7,"dsdT by_parts pair");
     
-  snf.pair_density(sf,1.0);
-  snf.pair_density(sf2,1.0);
-  t.test_rel(sf.mu+sf.m,sf2.mu,1.0e-7,"calc_density by_parts pair");
-  cout << endl;
+    snf.pair_density(sf,1.0);
+    snf.pair_density(sf2,1.0);
+    t.test_rel(sf.mu+sf.m,sf2.mu,1.0e-7,"calc_density by_parts pair");
+    cout << endl;
   }
 
   cout << "------------------------------------------------------" << endl;

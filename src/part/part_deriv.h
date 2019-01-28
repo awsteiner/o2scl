@@ -885,22 +885,6 @@ namespace o2scl {
 	  dev.dsdT+=fabs((p.dsdT-exact.dsdT)/exact.dsdT);
 	
 	  cnt++;
-	  if (fabs((p.n-exact.n)/exact.n)>bad.n) {
-	    bad.n=fabs((p.n-exact.n)/exact.n);
-	    if (bad.n>ret) {
-	      if (k>=2) {
-		mu_bad=p.nu;
-		m_bad=p.ms;
-	      } else {
-		mu_bad=p.mu;
-		m_bad=p.m;
-	      }
-	      T_bad=T;
-	      mot_bad=mot;
-	      psi_bad=psi;
-	      ret=bad.n;
-	    }
-	  }
 	  if (fabs((p.dndmu-exact.dndmu)/exact.dndmu)>bad.dndmu) {
 	    bad.dndmu=fabs((p.dndmu-exact.dndmu)/exact.dndmu);
 	    if (bad.dndmu>ret) {
@@ -1102,31 +1086,6 @@ namespace o2scl {
 	  dev.dsdT+=fabs((p.dsdT-exact.dsdT)/exact.dsdT);
 	
 	  cnt++;
-	  if (k>=2) {
-	    if (fabs((p.nu-exact.nu)/exact.nu)>bad.mu) {
-	      bad.mu=fabs((p.nu-exact.nu)/exact.nu);
-	      if (bad.mu>ret) {
-		mu_bad=p.nu;
-		m_bad=p.ms;
-		T_bad=T;
-		mot_bad=mot;
-		psi_bad=psi;
-		ret=bad.n;
-	      }
-	    }
-	  } else {
-	    if (fabs((p.mu-exact.mu)/exact.mu)>bad.mu) {
-	      bad.mu=fabs((p.mu-exact.mu)/exact.mu);
-	      if (bad.mu>ret) {
-		mu_bad=p.mu;
-		m_bad=p.m;
-		T_bad=T;
-		mot_bad=mot;
-		psi_bad=psi;
-		ret=bad.n;
-	      }
-	    }
-	  }
 	  if (fabs((p.dndmu-exact.dndmu)/exact.dndmu)>bad.dndmu) {
 	    bad.dndmu=fabs((p.dndmu-exact.dndmu)/exact.dndmu);
 	    if (bad.dndmu>ret) {
@@ -1314,17 +1273,6 @@ namespace o2scl {
 	    dev.dsdT+=fabs((p.dsdT-exact.dsdT)/exact.dsdT);
 	
 	    cnt++;
-	    if (fabs((p.n-exact.n)/exact.n)>bad.n) {
-	      bad.n=fabs((p.n-exact.n)/exact.n);
-	      if (bad.n>ret) {
-		mu_bad=p.mu;
-		m_bad=p.m;
-		T_bad=T;
-		mot_bad=mot;
-		psi_bad=psi;
-		ret=bad.n;
-	      }
-	    }
 	    if (fabs((p.dndmu-exact.dndmu)/exact.dndmu)>bad.dndmu) {
 	      bad.dndmu=fabs((p.dndmu-exact.dndmu)/exact.dndmu);
 	      if (bad.dndmu>ret) {
@@ -1489,17 +1437,6 @@ namespace o2scl {
 	    dev.dsdT+=fabs((p.dsdT-exact.dsdT)/exact.dsdT);
 	
 	    cnt++;
-	    if (fabs((p.mu-exact.mu)/exact.mu)>bad.mu) {
-	      bad.mu=fabs((p.mu-exact.mu)/exact.mu);
-	      if (bad.n>ret) {
-		mu_bad=p.mu;
-		m_bad=p.m;
-		T_bad=T;
-		mot_bad=mot;
-		psi_bad=psi;
-		ret=bad.n;
-	      }
-	    }
 	    if (fabs((p.dndmu-exact.dndmu)/exact.dndmu)>bad.dndmu) {
 	      bad.dndmu=fabs((p.dndmu-exact.dndmu)/exact.dndmu);
 	      if (bad.dndmu>ret) {

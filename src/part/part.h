@@ -343,6 +343,13 @@ namespace o2scl {
 	  }
 	  exact.pr*=pow(T,4.0);
 	  exact.en*=pow(T,3.0);
+	  /*
+	    std::cout.precision(10);
+	    std::cout << "X: " << p.mu << " " << " " << p.n << " "
+	    << p.ed << " " << p.en << std::endl;
+	    std::cout << "\t" << p.pr << " " << exact.pr << std::endl;
+	    std::cout.precision(6);
+	  */
 	
 	  dev.n+=fabs((p.n-exact.n)/exact.n);
 	  dev.ed+=fabs((p.ed-exact.ed)/exact.ed);
