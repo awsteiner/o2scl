@@ -398,9 +398,6 @@ namespace o2scl {
 	non-degenerate integrals
     */
     //@{
-    double density_fun(double u, fermion_deriv &f, double T);
-    double energy_fun(double u, fermion_deriv &f, double T);
-    double entropy_fun(double u, fermion_deriv &f, double T);
     double density_T_fun(double k, fermion_deriv &f, double T);
     double density_mu_fun(double k, fermion_deriv &f, double T);
     double entropy_T_fun(double k, fermion_deriv &f, double T);
@@ -411,24 +408,11 @@ namespace o2scl {
 	degenerate integrals
     */
     //@{
-    double deg_density_fun(double u, fermion_deriv &f, double T);
-    double deg_energy_fun(double u, fermion_deriv &f, double T);
-    double deg_entropy_fun(double u, fermion_deriv &f, double T);
     double deg_density_T_fun(double k, fermion_deriv &f, double T);
     double deg_density_mu_fun(double k, fermion_deriv &f, double T);
     double deg_entropy_T_fun(double k, fermion_deriv &f, double T);
     double deg_density_ms_fun(double k, fermion_deriv &f, double T);
     //@}
-
-    /** \brief Solve for the chemical potential from the density 
-	for calc_density()
-    */
-    double solve_fun(double x, fermion_deriv &f, double T);
-
-    /** \brief Solve for the chemical potential from the density 
-	for pair_density()
-    */
-    double pair_fun(double x, fermion_deriv &f, double T);
 
 #endif
 

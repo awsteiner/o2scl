@@ -278,11 +278,11 @@ int fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
 }
 
 int fermion_deriv_rel::nu_from_n(fermion_deriv &f, double temper) {
-  return fr.nu_from_n_tlate<fermion_deriv>(f,temper)
+  return fr.nu_from_n_tlate<fermion_deriv>(f,temper);
 }
 
 int fermion_deriv_rel::calc_density(fermion_deriv &f, double temper) {
-
+  
   if (f.non_interacting==true) { f.ms=f.m; f.nu=f.mu; }
   
   nu_from_n(f,temper);
@@ -292,18 +292,6 @@ int fermion_deriv_rel::calc_density(fermion_deriv &f, double temper) {
   calc_mu(f,temper);
 
   return 0;
-}
-
-double fermion_deriv_rel::deg_density_fun(double k, fermion_deriv &f, 
-					  double T) {
-  double E, ret;
-  if (f.inc_rest_mass) {
-    E=gsl_hypot(k,f.ms);
-  } else {
-    E=gsl_hypot(k,f.ms)-f.m;
-  }
-  ret=k*k*fermi_function(E,f.nu,T,exp_limit);
-  return ret;
 }
 
 double fermion_deriv_rel::deg_density_T_fun(double k, fermion_deriv &f, 
@@ -356,46 +344,6 @@ double fermion_deriv_rel::deg_density_mu_fun(double k, fermion_deriv &f,
   return ret;
 }
 
-double fermion_deriv_rel::deg_energy_fun(double k, fermion_deriv &f, 
-					 double T) {
-  double E, ret;
-  if (f.inc_rest_mass) {
-    E=gsl_hypot(k,f.ms);
-  } else {
-    E=gsl_hypot(k,f.ms)-f.m;
-  }
-  ret=k*k*E*fermi_function(E,f.nu,T,exp_limit);
-  return ret;
-}
-
-double fermion_deriv_rel::deg_entropy_fun(double k, fermion_deriv &f, 
-					  double T) {
-
-  double E, ret, nx, nm1;
-  if (f.inc_rest_mass) {
-    E=gsl_hypot(k,f.ms);
-  } else {
-    E=gsl_hypot(k,f.ms)-f.m;
-  }
-  
-  // If the argument to the exponential is really small, then the
-  // value of the integrand is just zero
-  if (((E-f.nu)/(T))<-exp_limit) {
-    ret=0.0;
-  } else {
-    nx=fermi_function(E,f.nu,T,exp_limit);
-    if (nx==0.0) ret=0.0;
-    else ret=-k*k*(nx*log(nx)+(1.0-nx)*log(1.0-nx));
-  }
-  if (!std::isfinite(ret)) {
-    ret=0.0;
-    //O2SCL_ERR("Entropy not finite in fermion_deriv_rel::deg_entropy_fun().",
-    //exc_efailed);
-  }
-
-  return ret;
-}
-  
 double fermion_deriv_rel::deg_entropy_T_fun(double k, fermion_deriv &f, 
 					    double T) {
   double E, ret;
@@ -441,18 +389,6 @@ double fermion_deriv_rel::deg_density_ms_fun(double k, fermion_deriv &f,
       ret=-f.ms*fermi_function(E-f.m,f.nu,T,exp_limit);
     }
   }
-  return ret;
-}
-
-double fermion_deriv_rel::density_fun(double u, fermion_deriv &f, 
-				      double T) {
-  double k=u*(T), E, ret;
-  if (f.inc_rest_mass) {
-    E=gsl_hypot(k,f.ms);
-  } else {
-    E=gsl_hypot(k,f.ms)-f.m;
-  }
-  ret=T*k*k*fermi_function(E,f.nu,T,exp_limit);
   return ret;
 }
 
@@ -503,44 +439,6 @@ double fermion_deriv_rel::density_mu_fun(double u, fermion_deriv &f,
       ret=T*(E*E+k*k)/E*fermi_function(E-f.m,f.nu,T,exp_limit);
     }
   }
-  return ret;
-}
-
-double fermion_deriv_rel::energy_fun(double u, fermion_deriv &f, double T) {
-  double k=u*(T), E, ret;
-  if (f.inc_rest_mass) {
-    E=gsl_hypot(k,f.ms);
-  } else {
-    E=gsl_hypot(k,f.ms)-f.m;
-  }
-  ret=u*u*E*fermi_function(E,f.nu,T,exp_limit)/T;
-  return ret;
-}
-
-double fermion_deriv_rel::entropy_fun(double u, fermion_deriv &f, double T) {
-  double k=u*(T), E, ret, nx, nm1;
-  if (f.inc_rest_mass) {
-    E=gsl_hypot(k,f.ms);
-  } else {
-    E=gsl_hypot(k,f.ms)-f.m;
-  }
-
-  // If the argument to the exponential is really small, then the
-  // value of the integrand is just zero
-  if (((E-f.nu)/(T))<-200.0) {
-    ret=0.0;
-    // Otherwise, if the argument to the exponential is still small,
-    // then addition of 1 makes us lose precision, so we use an
-    // alternative:
-  } else if (((E-f.nu)/T)<-30.0) {
-    nm1=-exp(E/(T)-f.nu/(T));
-    ret=k*k*nm1*log(-nm1)*(T);
-  } else {
-    nx=fermi_function(E,f.nu,T,exp_limit);
-    if (nx==0.0) ret=0.0;
-    else ret=-k*k*(nx*log(nx)+(1.0-nx)*log(1.0-nx))*T;
-  }
-
   return ret;
 }
 
@@ -597,76 +495,6 @@ double fermion_deriv_rel::density_ms_fun(double u, fermion_deriv &f,
   return ret;
 }
 
-double fermion_deriv_rel::solve_fun(double x, fermion_deriv &f, double T) {
-  double nden, yy;
-  
-  f.nu=T*x;
-  
-  // 6/6/03 - Should this be included? I think yes!
-  if (f.non_interacting) f.mu=f.nu;
-  
-  bool deg=true;
-  if (f.inc_rest_mass) {
-    if ((f.nu-f.ms)/T<deg_limit) deg=false;
-  } else {
-    if ((f.nu+f.m-f.ms)/T<deg_limit) deg=false;
-  }
-  
-  funct density_fun_f=
-    std::bind(std::mem_fn<double(double,fermion_deriv &,double)>
-	      (&fermion_deriv_rel::density_fun),
-	      this,std::placeholders::_1,std::ref(f),T);
-  funct deg_density_fun_f=
-    std::bind(std::mem_fn<double(double,fermion_deriv &,double)>
-	      (&fermion_deriv_rel::deg_density_fun),
-	      this,std::placeholders::_1,std::ref(f),T);
-  
-  // Set integration method
-  if (method==automatic) {
-    if ((!f.inc_rest_mass && (f.nu+f.m-f.ms)/T>1.0e3) ||
-	(f.inc_rest_mass && (f.nu-f.ms)/T>1.0e3)) {
-      intl_method=direct;
-    } else {
-      intl_method=by_parts;
-    }
-  } else {
-    intl_method=method;
-  }
-  
-  if (!deg) {
-    
-    nden=nit->integ(density_fun_f,0.0,0.0);
-    nden*=f.g/2.0/pi2;
-    
-    yy=(f.n-nden)/f.n;
-
-  } else {
-    
-    double arg;
-    if (f.inc_rest_mass) {
-      arg=pow(upper_limit_fac*T+f.nu,2.0)-f.ms*f.ms;
-    } else {
-      arg=pow(upper_limit_fac*T+f.nu+f.m,2.0)-f.ms*f.ms;
-    }
-
-    double ul;
-
-    if (arg>0.0) {
-      
-      ul=sqrt(arg);
-      nden=dit->integ(deg_density_fun_f,0.0,ul);
-      nden*=f.g/2.0/pi2;
-
-    } else {
-      nden=0.0;
-    }
-    
-    yy=(f.n-nden)/f.n;
-  }
-
-  return yy;
-}
-
 int fermion_deriv_rel::pair_mu(fermion_deriv &f, double temper) {
 
   if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
@@ -689,101 +517,9 @@ int fermion_deriv_rel::pair_mu(fermion_deriv &f, double temper) {
 }
 
 int fermion_deriv_rel::pair_density(fermion_deriv &f, double temper) {
-  double nex;
-  int ret;
-  
-  if (temper<=0.0) {
-    O2SCL_ERR("T=0 not implemented in fermion_deriv_rel().",exc_eunimpl);
-  }
-
-  if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
-  
-  nex=f.nu/temper;
-  funct mf=std::bind(std::mem_fn<double(double,fermion_deriv &,double)>
-		     (&fermion_deriv_rel::pair_fun),
-		     this,std::placeholders::_1,std::ref(f),temper);
-  ret=density_root->solve(nex,mf);
-  f.nu=nex*temper;
-
-  if (f.non_interacting==true) { f.mu=f.nu; }
-  
+  fr.pair_density_tlate<fermion_deriv>(f,temper);
   pair_mu(f,temper);
-
   return 0;
-}
-
-double fermion_deriv_rel::pair_fun(double x, fermion_deriv &f, double T) {
-  double nden, yy;
-  
-  f.nu=T*x;
-  
-  if (f.non_interacting) f.mu=f.nu;
-  
-  // Set integration method
-  if (method==automatic) {
-    if ((!f.inc_rest_mass && (f.nu+f.m-f.ms)/T>1.0e3) ||
-	(f.inc_rest_mass && (f.nu-f.ms)/T>1.0e3)) {
-      intl_method=direct;
-    } else {
-      intl_method=by_parts;
-    }
-  } else {
-    intl_method=method;
-  }
-
-  funct density_fun_f=
-    std::bind(std::mem_fn<double(double,fermion_deriv &,double)>
-	      (&fermion_deriv_rel::density_fun),
-	      this,std::placeholders::_1,std::ref(f),T);
-  funct deg_density_fun_f=
-    std::bind(std::mem_fn<double(double,fermion_deriv &,double)>
-	      (&fermion_deriv_rel::deg_density_fun),
-	      this,std::placeholders::_1,std::ref(f),T);
-  
-  if (f.nu/T<deg_limit) {
-    
-    nden=nit->integ(density_fun_f,0.0,0.0);
-    nden*=f.g/2.0/pi2;
-    yy=nden;
-
-  } else {
-    
-    double ulimit;
-    if (f.inc_rest_mass) {
-      ulimit=sqrt(pow(upper_limit_fac*T+f.nu,2.0)-f.ms*f.ms);
-    } else {
-      ulimit=sqrt(pow(upper_limit_fac*T+f.nu+f.m,2.0)-f.ms*f.ms);
-    }
-    nden=dit->integ(deg_density_fun_f,0.0,ulimit);
-    nden*=f.g/2.0/pi2;
-    yy=nden;
-  }
-  
-  if (f.inc_rest_mass) f.nu=-T*x;
-  else f.nu=-T*x-2.0*f.m;
-  
-  if (f.nu/T < deg_limit) {
-    
-    nden=nit->integ(density_fun_f,0.0,0.0);
-    nden*=f.g/2.0/pi2;
-    yy-=nden;
-    
-  } else {
-    
-    double ulimit;
-    if (f.inc_rest_mass) {
-      ulimit=sqrt(pow(upper_limit_fac*T+f.nu,2.0)-f.ms*f.ms);
-    } else {
-      ulimit=sqrt(pow(upper_limit_fac*T+f.nu+f.m,2.0)-f.ms*f.ms);
-    }
-    nden=dit->integ(deg_density_fun_f,0.0,ulimit);
-    nden*=f.g/2.0/pi2;
-    yy-=nden;
-  }
-  
-  yy=yy/f.n-1.0;
-
-  return yy;
 }
 
 double fermion_deriv_rel::deriv_calibrate(fermion_deriv &f, int verbose, 

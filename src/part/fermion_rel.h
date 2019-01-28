@@ -305,6 +305,8 @@ namespace o2scl {
     /// Return string denoting type ("fermion_rel")
     virtual const char *type() { return "fermion_rel"; }
 
+    /// \name Template versions of base functions
+    //@{
     /** \brief Desc
      */
     template<class fermion_t>
@@ -343,14 +345,16 @@ namespace o2scl {
 	}
 	y=solve_fun(nex,f,temper);
 	if (verbose>1) {
-	  std::cout << "nu_from_n(): adjusted guess (try 2) to " << nex << std::endl;
+	  std::cout << "nu_from_n(): adjusted guess (try 2) to "
+		    << nex << std::endl;
 	}
       }
   
       // If neither worked, call the error handler
       if (y==1.0 || !std::isfinite(y)) {
 	O2SCL_CONV2_RET("Couldn't find reasonable initial guess in ",
-			"fermion_rel::nu_from_n().",exc_einval,this->err_nonconv);
+			"fermion_rel::nu_from_n().",exc_einval,
+			this->err_nonconv);
       }
 
       // Perform full solution
@@ -370,8 +374,10 @@ namespace o2scl {
       if (ret!=0) {
     
 	if (verbose>1) {
-	  std::cout << "nu_from_n(): density_root failed x=" << nex << " ." << std::endl;
-	  std::cout << "\tTrying to make integrators more accurate." << std::endl;
+	  std::cout << "nu_from_n(): density_root failed x="
+		    << nex << " ." << std::endl;
+	  std::cout << "\tTrying to make integrators more accurate."
+		    << std::endl;
 	}
 
 	// If it fails, try to make the integrators more accurate
@@ -387,7 +393,7 @@ namespace o2scl {
 
 	  if (verbose>1) {
 	    std::cout << "nu_from_n(): density_root failed again x=" << nex
-		 << " ." << std::endl;
+		      << " ." << std::endl;
 	    std::cout << "Trying to bracket root." << std::endl;
 	  }
       
@@ -411,7 +417,7 @@ namespace o2scl {
 	    } else {
 	      if (verbose>1) {
 		std::cout << "nu_from_n(): density_root failed fourth solver "
-		     << blow << std::endl;
+			  << blow << std::endl;
 	      }
 	    }
 	  } else if (verbose>1) {
@@ -430,7 +436,8 @@ namespace o2scl {
 
       if (ret!=0) {
 	O2SCL_CONV2_RET("Density solver failed in ",
-			"fermion_rel::nu_from_n().",exc_efailed,this->err_nonconv);
+			"fermion_rel::nu_from_n().",exc_efailed,
+			this->err_nonconv);
       }
 
       f.nu=nex*temper;
@@ -622,7 +629,355 @@ namespace o2scl {
 
       return;
     }
+
+    /** \brief Desc
+     */
+    template<class fermion_t>
+      int calc_density_tlate(fermion_t &f, double temper) {
+
+      // The function pair_mu() can modify the density, which is
+      // confusing to the user, so we return it to the user-specified
+      // value.
+      double density_temp=f.n;
+  
+      // -----------------------------------------------------------------
+      // Handle T<=0
+
+      if (temper<0.0) {
+	O2SCL_ERR("Temperature less than zero in fermion_rel::calc_density().",
+		  exc_einval);
+      }
+      if (temper==0.0) {
+	calc_density_zerot(f);
+	return 0;
+      }
+
+#if !O2SCL_NO_RANGE_CHECK
+      // This may not be strictly necessary, because it should be clear
+      // that this function will produce gibberish if the density is not
+      // finite, but I've found this extra checking of the inputs useful
+      // for debugging.
+      if (!std::isfinite(f.n)) {
+	O2SCL_ERR2("Density not finite in ",
+		   "fermion_rel::calc_density().",exc_einval);
+      }
+#endif
+
+      // -----------------------------------------------------------------
+      // First determine the chemical potential by solving for the density
+
+      if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
+  
+      int ret=nu_from_n(f,temper);
+      if (ret!=0) {
+	O2SCL_CONV2_RET("Function calc_density() failed in fermion_rel::",
+			"calc_density().",exc_efailed,this->err_nonconv);
+      }
+
+      if (f.non_interacting) { f.mu=f.nu; }
+
+      // -----------------------------------------------------------------
+      // Now use the chemical potential to compute the energy density,
+      // pressure, and entropy
+
+      bool deg=true;
+      double psi;
+      if (f.inc_rest_mass) {
+	psi=(f.nu-f.ms)/temper;
+      } else {
+	psi=(f.nu+(f.m-f.ms))/temper;
+      }
+      if (psi<deg_limit) deg=false;
+
+      // Try the non-degenerate expansion if psi is small enough
+      if (use_expansions && psi<min_psi) {
+	bool acc=calc_mu_ndeg(f,temper,1.0e-14);
+	if (acc) {
+	  unc.ed=f.ed*1.0e-14;
+	  unc.pr=f.pr*1.0e-14;
+	  unc.en=f.en*1.0e-14;
+	  f.n=density_temp;
+	  return 0;
+	}
+      }
+  
+      // Try the degenerate expansion if psi is large enough
+      if (use_expansions && psi>20.0) {
+	bool acc=calc_mu_deg(f,temper,1.0e-14);
+	if (acc) {
+	  unc.n=f.n*1.0e-14;
+	  unc.ed=f.ed*1.0e-14;
+	  unc.pr=f.pr*1.0e-14;
+	  unc.en=f.en*1.0e-14;
+	  f.n=density_temp;
+	  return 0;
+	}
+      }
+
+      if (!deg) {
     
+	funct mfe=std::bind(std::mem_fn<double(double,fermion &,double)>
+			    (&fermion_rel::energy_fun),
+			    this,std::placeholders::_1,std::ref(f),temper);
+	funct mfs=std::bind(std::mem_fn<double(double,fermion &,double)>
+			    (&fermion_rel::entropy_fun),
+			    this,std::placeholders::_1,std::ref(f),temper);
+    
+	f.ed=nit->integ(mfe,0.0,0.0);
+	f.ed*=f.g*pow(temper,4.0)/2.0/o2scl_const::pi2;
+	if (!f.inc_rest_mass) f.ed-=f.n*f.m;
+	unc.ed=nit->get_error()*f.g*pow(temper,4.0)/2.0/o2scl_const::pi2;
+    
+	f.en=nit->integ(mfs,0.0,0.0);
+	f.en*=f.g*pow(temper,3.0)/2.0/o2scl_const::pi2;
+	unc.en=nit->get_error()*f.g*pow(temper,3.0)/2.0/o2scl_const::pi2;
+
+      } else {
+
+	funct mfe=std::bind(std::mem_fn<double(double,fermion &,double)>
+			    (&fermion_rel::deg_energy_fun),
+			    this,std::placeholders::_1,std::ref(f),temper);
+	funct mfs=std::bind(std::mem_fn<double(double,fermion &,double)>
+			    (&fermion_rel::deg_entropy_fun),
+			    this,std::placeholders::_1,std::ref(f),temper);
+      
+	double arg;
+	if (f.inc_rest_mass) {
+	  arg=pow(upper_limit_fac*temper+f.nu,2.0)-f.ms*f.ms;
+	} else {
+	  arg=pow(upper_limit_fac*temper+f.nu+f.m,2.0)-f.ms*f.ms;
+	}
+	double ul;
+	if (arg>0.0) {
+      
+	  ul=sqrt(arg);
+      
+	  double ll;
+	  if (f.inc_rest_mass) {
+	    arg=pow(-upper_limit_fac*temper+f.nu,2.0)-f.ms*f.ms;
+	    if (arg>0.0 && (f.ms-f.nu)/temper<-upper_limit_fac) {
+	      ll=sqrt(arg);
+	    } else {
+	      ll=-1.0;
+	    }
+	  } else {
+	    arg=pow(-upper_limit_fac*temper+f.nu+f.m,2.0)-f.ms*f.ms;
+	    if (arg>0.0 && (f.ms-f.nu-f.m)/temper<-upper_limit_fac) {
+	      ll=sqrt(arg);
+	    } else {
+	      ll=-1.0;
+	    }
+	  }
+      
+	  f.ed=dit->integ(mfe,0.0,ul);
+	  f.ed*=f.g/2.0/o2scl_const::pi2;
+	  unc.ed=dit->get_error()*f.g/2.0/o2scl_const::pi2;
+      
+	  if (ll>0.0) {
+	    f.en=dit->integ(mfs,ll,ul);
+	  } else {
+	    f.en=dit->integ(mfs,0.0,ul);
+	  }
+	  f.en*=f.g/2.0/o2scl_const::pi2;
+	  unc.en=dit->get_error()*f.g/2.0/o2scl_const::pi2;
+      
+	} else {
+
+	  f.ed=0.0;
+	  f.en=0.0;
+	  unc.ed=0.0;
+	  unc.en=0.0;
+	  O2SCL_ERR2("Zero density in degenerate limit in fermion_rel::",
+		     "calc_mu(). Variable deg_limit set improperly?",
+		     exc_efailed);
+      
+	}
+      }
+
+      f.n=density_temp;
+      f.pr=-f.ed+temper*f.en+f.mu*f.n;
+      unc.pr=sqrt(unc.ed*unc.ed+temper*unc.en*temper*unc.en+
+		  f.mu*unc.n*f.mu*unc.n);
+  
+      return 0;
+    }
+
+    /** \brief Desc
+     */
+    template<class fermion_t>
+      void pair_mu_tlate(fermion_t &f, double temper) {
+
+      if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
+
+      if (use_expansions) {
+	if (calc_mu_ndeg(f,temper,1.0e-14,true)) {
+	  unc.n=1.0e-14*f.n;
+	  unc.ed=1.0e-14*f.ed;
+	  unc.en=1.0e-14*f.en;
+	  unc.pr=1.0e-14*f.pr;
+	  return;
+	}
+      }
+
+      fermion antip(f.ms,f.g);
+      f.anti(antip);
+
+      // Particles
+      calc_mu(f,temper);
+      double unc_n=unc.n;
+      double unc_pr=unc.pr;
+      double unc_ed=unc.ed;
+      double unc_en=unc.en;
+
+      // Antiparticles
+      calc_mu(antip,temper);
+
+      // Add up thermodynamic quantities
+      if (f.inc_rest_mass) {
+	f.ed+=antip.ed;
+      } else {
+	f.ed=f.ed+antip.ed+2.0*antip.n*f.m;
+      }
+      f.n-=antip.n;
+      f.pr+=antip.pr;
+      f.en+=antip.en;
+
+      // Add up uncertainties
+      unc.n=gsl_hypot(unc.n,unc_n);
+      unc.ed=gsl_hypot(unc.ed,unc_ed);
+      unc.pr=gsl_hypot(unc.pr,unc_pr);
+      unc.en=gsl_hypot(unc.ed,unc_en);
+
+      return;
+    }
+
+    /** \brief Desc
+     */
+    template<class fermion_t>
+      int pair_density_tlate(fermion_t &f, double temper) {
+
+      // -----------------------------------------------------------------
+      // Handle T<=0
+
+      if (temper<=0.0) {
+	calc_density_zerot(f);
+	return success;
+      }
+
+      // Storage the input density
+      double density_temp=f.n;
+  
+      if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
+
+      double initial_guess=f.nu;
+  
+      double nex=f.nu/temper;
+
+      funct mf=std::bind(std::mem_fn<double(double,fermion &,double,bool)>
+			 (&fermion_rel::pair_fun),
+			 this,std::placeholders::_1,std::ref(f),temper,false);
+
+      // Begin by trying the user-specified guess
+      bool drec=density_root->err_nonconv;
+      density_root->err_nonconv=false;
+      int ret=density_root->solve(nex,mf);
+
+      // If that doesn't work, try bracketing the root
+      if (ret!=0) {
+	double lg=std::max(fabs(f.nu),f.ms);
+	double bhigh=lg/temper, blow=-bhigh;
+	double yhigh=mf(bhigh), ylow=mf(blow);
+	for(size_t j=0;j<5 && yhigh<0.0;j++) {
+	  bhigh*=1.0e2;
+	  yhigh=mf(bhigh);
+	}
+	for(size_t j=0;j<5 && ylow>0.0;j++) {
+	  blow*=1.0e2;
+	  ylow=mf(blow);
+	}
+	if (yhigh>0.0 && ylow<0.0) {
+	  root_brent_gsl<> rbg;
+	  rbg.err_nonconv=false;
+	  ret=rbg.solve_bkt(blow,bhigh,mf);
+	  if (ret==0) nex=blow;
+	}
+      }
+  
+      if (ret!=0) {
+
+	// If that fails, try to make the integrators more accurate
+	double tol1=dit->tol_rel, tol2=dit->tol_abs;
+	double tol3=nit->tol_rel, tol4=nit->tol_abs;
+	dit->tol_rel/=1.0e2;
+	dit->tol_abs/=1.0e2;
+	nit->tol_rel/=1.0e2;
+	nit->tol_abs/=1.0e2;
+	ret=density_root->solve(nex,mf);
+    
+	// AWS: 7/25/18: We work in log units below, so we ensure the
+	// chemical potential is not negative
+	if (nex<0.0) nex=1.0e-10;
+    
+	// If that failed, try working in log units
+
+	// Function in log units
+	funct lmf=std::bind(std::mem_fn<double(double,fermion &,
+					       double,bool)>
+			    (&fermion_rel::pair_fun),
+			    this,std::placeholders::_1,std::ref(f),
+			    temper,true);
+    
+	if (ret!=0) {
+	  nex=log(nex);
+	  ret=density_root->solve(nex,lmf);
+	  nex=exp(nex);
+	}
+    
+	if (ret!=0) {
+	  // If that failed, try a different solver
+	  root_brent_gsl<> rbg;
+	  rbg.err_nonconv=false;
+	  nex=log(nex);
+	  ret=rbg.solve(nex,lmf);
+	  nex=exp(nex);
+	}
+
+	// Return tolerances to their original values
+	dit->tol_rel=tol1;
+	dit->tol_abs=tol2;
+	nit->tol_rel=tol3;
+	nit->tol_abs=tol4;
+      }
+
+      // Restore value of err_nonconv
+      density_root->err_nonconv=drec;
+
+      if (ret!=0) {
+	std::cout.precision(14);
+	std::cout << "m,ms,n,T: " << f.m << " " << f.ms << " "
+	     << f.n << " " << temper << std::endl;
+	std::cout << "nu: " << initial_guess << std::endl;
+	O2SCL_CONV2_RET("Density solver failed in fermion_rel::",
+			"pair_density().",exc_efailed,this->err_nonconv);
+      }
+
+      f.nu=nex*temper;
+  
+      if (f.non_interacting==true) { f.mu=f.nu; }
+
+      // Finally, now that we have the chemical potential, use pair_mu()
+      // to evaluate the energy density, pressure, and entropy
+      pair_mu(f,temper);
+
+      // The function pair_mu() can modify the density, which would be
+      // confusing to the user, so we return it to the user-specified
+      // value.
+      f.n=density_temp;
+
+      return success;
+    }
+    //@}
+
   protected:
     
 #ifndef DOXYGEN_INTERNAL
