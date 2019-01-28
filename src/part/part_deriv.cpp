@@ -32,8 +32,8 @@ using namespace o2scl_const;
 
 bool fermion_deriv_thermo::calc_mu_deg
 (fermion_deriv &f, double temper, double prec) {
-
-  if (ft.calc_mu_deg<fermion_deriv>(f,temper,prec)==false) {
+  
+  if (fr.calc_mu_deg_tlate<fermion_deriv>(f,temper,prec)==false) {
     return false;
   }
   
@@ -92,7 +92,10 @@ bool fermion_deriv_thermo::calc_mu_deg
 bool fermion_deriv_thermo::calc_mu_ndeg
 (fermion_deriv &f, double temper, double prec, bool inc_antip) {
 
-  if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
+  if (fr.calc_mu_ndeg_tlate<fermion_deriv>(f,temper,prec,
+					   inc_antip)==false) {
+    return false;
+  }
 
   // Compute psi and tt
   double psi, psi_num;
@@ -105,9 +108,6 @@ bool fermion_deriv_thermo::calc_mu_ndeg
   double tt=temper/f.ms;
   double xx=psi*tt;
 
-  // Return false immediately if we're degenerate
-  if (inc_antip==false && psi>-1.0) return false;
-
   // Prefactor 'd' in Johns96
   double prefac=f.g/2.0/pi2*pow(f.ms,4.0);
 
@@ -115,52 +115,7 @@ bool fermion_deriv_thermo::calc_mu_ndeg
   // 0 are useful.
   static const size_t max_term=200;
   
-  // Maximum argument for exponential
-  // double log_dbl_max=709.78;
-
-  // Return zero if psi+1/t is too small
-  if (psi+1.0/tt<-700.0) {
-    f.n=0.0;
-    f.ed=0.0;
-    f.pr=0.0;
-    f.en=0.0;
-    return true;
-  }
-
-  // -----------------------------------------------------
-  // Return early if the last term is going to be too large.
-  
-  // Ratio of last term to first term in the pressure expansion
-  double rat;
-  double dj1=((double)max_term), jot1=max_term/tt;
-  double dj2=1.0, jot2=1.0/tt;
-  if (inc_antip==false) {
-    rat=exp(dj1*psi)/jot1/jot1*gsl_sf_bessel_Kn_scaled(2.0,jot1);
-    rat/=exp(dj2*psi)/jot2/jot2*gsl_sf_bessel_Kn_scaled(2.0,jot2);
-  } else {
-    if (f.inc_rest_mass) {
-      rat=exp(-jot1)*2.0*cosh(dj1*f.nu/temper)/jot1/jot1*
-	gsl_sf_bessel_Kn_scaled(2.0,jot1);
-      rat/=exp(-jot2)*2.0*cosh(dj2*f.nu/temper)/jot2/jot2*
-	gsl_sf_bessel_Kn_scaled(2.0,jot2);
-    } else {
-      rat=exp(-jot1)*2.0*cosh(dj1*(f.nu+f.m)/temper)/jot1/jot1*
-	gsl_sf_bessel_Kn_scaled(2.0,jot1);
-      rat/=exp(-jot2)*2.0*cosh(dj2*(f.nu+f.m)/temper)/jot2/jot2*
-	gsl_sf_bessel_Kn_scaled(2.0,jot2);
-    }
-  }
-
-  // If the ratio between the last term and the first term is 
-  // not small enough, return false
-  if (std::isfinite(rat) && rat>prec) {
-    return false;
-  }
-  
   double first_term=0.0;
-  f.pr=0.0;
-  f.n=0.0;
-  f.en=0.0;
 
   double nu2=f.nu;
   if (f.inc_rest_mass==false) nu2+=f.m;
@@ -181,7 +136,7 @@ bool fermion_deriv_thermo::calc_mu_ndeg
 		exp(dj*psi)/2.0/dj*(gsl_sf_bessel_Kn_scaled(1.0,jot)+
 				    gsl_sf_bessel_Kn_scaled(3.0,jot)))/f.ms-
 	  pterm*dj*psi_num/temper/temper;
-      } else {
+     } else {
 	enterm=(pterm*2.0/tt-pterm/tt/tt*dj+
 		exp(dj*psi)/2.0/dj*(gsl_sf_bessel_Kn_scaled(1.0,jot)+
 				    gsl_sf_bessel_Kn_scaled(3.0,jot)))/f.ms-
@@ -210,32 +165,6 @@ bool fermion_deriv_thermo::calc_mu_ndeg
       dsdT_term+=(2.0*dj*(xx+1.0)-2.0*tt)/tt/temper/temper*pterm+
 	(2.0*tt-dj*(xx+1.0))/tt/temper*enterm;
     } else {
-      if (f.inc_rest_mass) {
-	pterm=exp(-jot)*2.0*cosh(dj*f.nu/temper)/jot/jot*
-	  gsl_sf_bessel_Kn_scaled(2.0,jot);
-	if (j%2==0) {
-	  pterm*=-1.0;
-	}
-	nterm=pterm*tanh(dj*f.nu/temper)*dj/temper;
-      } else {
-	pterm=exp(-jot)*2.0*cosh(dj*(f.nu+f.m)/temper)/jot/jot*
-	  gsl_sf_bessel_Kn_scaled(2.0,jot);
-	if (j%2==0) {
-	  pterm*=-1.0;
-	}
-	nterm=pterm*tanh(dj*(f.nu+f.m)/temper)*dj/temper;
-      }
-      if (j%2==0) {
-	enterm=(pterm*2.0/tt-cosh(dj*nu2/temper)/dj*exp(-jot)*
-		(gsl_sf_bessel_Kn_scaled(1.0,jot)+
-		 gsl_sf_bessel_Kn_scaled(3.0,jot))+2.0*pterm*nu2*dj/tt/tt*
-		tanh(dj*nu2/temper)/f.ms)/f.ms;
-      } else {
-	enterm=(pterm*2.0/tt+cosh(dj*nu2/temper)/dj*exp(-jot)*
-		(gsl_sf_bessel_Kn_scaled(1.0,jot)+
-		 gsl_sf_bessel_Kn_scaled(3.0,jot))+2.0*pterm*nu2*dj/tt/tt*
-		tanh(dj*nu2/temper)/f.ms)/f.ms;
-      }
       dndmu_term=pterm*dj*dj/temper/temper;
       dndT_term=(dj/temper*enterm-dj/temper/temper*pterm)*
 	tanh(dj*(xx+1.0)/tt)-dj*dj*(xx+1.0)/temper/temper*pterm/
@@ -264,34 +193,13 @@ bool fermion_deriv_thermo::calc_mu_ndeg
       dsdT_term/=f.ms;
     }
     
-    if (j==1) first_term=pterm;
-    f.pr+=pterm;
-    f.n+=nterm;
-    f.en+=enterm;
     f.dndmu+=dndmu_term;
     f.dndT+=dndT_term;
     f.dsdT+=dsdT_term;
 
-    // If the first term is zero, then the rest of the terms
-    // will be zero so just return early
-    if (first_term==0.0) {
-      f.pr=0.0;
-      f.n=0.0;
-      f.ed=0.0;
-      f.en=0.0;
-      f.dndmu=0.0;
-      f.dndT=0.0;
-      f.dsdT=0.0;
-      return true;
-    }
-
     // Stop if the last term is sufficiently small compared to
     // the first term
     if (j>1 && fabs(pterm)<prec*fabs(first_term)) {
-      f.pr*=prefac;
-      f.n*=prefac;
-      f.en*=prefac;
-      f.ed=-f.pr+f.nu*f.n+temper*f.en;
       f.dndT*=prefac;
       f.dndmu*=prefac;
       f.dsdT*=prefac;

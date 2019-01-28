@@ -33,6 +33,7 @@
 #include <cmath>
 #include <o2scl/part.h>
 #include <o2scl/fermion.h>
+#include <o2scl/fermion_rel.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -739,7 +740,7 @@ namespace o2scl {
 
   /** \brief For non-derivative parts of expansions
    */
-  fermion_thermo ft;
+  fermion_rel fr;
   
   /** \brief Calibrate a particle thermodynamics class with
       derivatives with results stored in a table
