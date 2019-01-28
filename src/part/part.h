@@ -307,10 +307,10 @@ namespace o2scl {
 	      p.mu=0.0;
 	    } else {
 	      p.non_interacting=true;
-	      p.m=mot*T;
-	      p.mu=p.m+T*psi;
-	      p.nu=0.0;
 	      p.ms=0.0;
+	      p.m=mot*T;
+	      p.nu=0.0;
+	      p.mu=p.m+T*psi;
 	    }
 	  
 	  } else {
@@ -325,10 +325,10 @@ namespace o2scl {
 	      p.mu=0.0;
 	    } else {
 	      p.non_interacting=true;
-	      p.m=mot*T;
-	      p.mu=T*psi;
-	      p.nu=0.0;
 	      p.ms=0.0;
+	      p.m=mot*T;
+	      p.nu=0.0;
+	      p.mu=T*psi;
 	    }
 	  
 	  }
@@ -498,7 +498,7 @@ namespace o2scl {
 
     // k=0,2 are with rest mass, k=1,3 are without
     // k=0,1 are non-interacting, k=2,3 are interacting
-    for(size_t k=0;k<2;k++) {
+    for(size_t k=0;k<4;k++) {
 
       // Initialize storage
       dev.mu=0.0; dev.ed=0.0; dev.pr=0.0; dev.en=0.0;
@@ -529,11 +529,11 @@ namespace o2scl {
 	  if (k%2==0) {
 	    p.inc_rest_mass=true;
 	    if (k>=2) {
-	      exact.nu=p.m+T*psi;
+	      exact.nu=p.ms+T*psi;
 	      exact.mu=0.0;
 	    } else {
-	      exact.mu=p.m+T*psi;
 	      exact.nu=0.0;
+	      exact.mu=p.m+T*psi;
 	    }
 	  } else {
 	    p.inc_rest_mass=false;
@@ -541,8 +541,8 @@ namespace o2scl {
 	      exact.nu=T*psi-p.m+p.ms;
 	      exact.mu=0.0;
 	    } else {
-	      exact.mu=T*psi;
 	      exact.nu=0.0;
+	      exact.mu=T*psi;
 	    }
 	  }
 
@@ -711,7 +711,7 @@ namespace o2scl {
 
       // k=0,2 are with rest mass, k=1,3 are without
       // k=0,1 are non-interacting, k=2,3 are interacting
-      for(size_t k=0;k<2;k++) {
+      for(size_t k=0;k<4;k++) {
 
 	// Initialize storage
 	dev.n=0.0; dev.ed=0.0; dev.pr=0.0; dev.en=0.0;
@@ -742,10 +742,10 @@ namespace o2scl {
 		p.mu=0.0;
 	      } else {
 		p.non_interacting=true;
+		p.ms=0.0;
 		p.m=mot*T;
 		p.mu=p.m+T*psi;
 		p.nu=0.0;
-		p.ms=0.0;
 	      }
 	  
 	    } else {
@@ -760,10 +760,10 @@ namespace o2scl {
 		p.mu=0.0;
 	      } else {
 		p.non_interacting=true;
-		p.m=mot*T;
-		p.mu=T*psi;
-		p.nu=0.0;
 		p.ms=0.0;
+		p.m=mot*T;
+		p.nu=0.0;
+		p.mu=T*psi;
 	      }
 	  
 	    }
@@ -890,7 +890,7 @@ namespace o2scl {
 
       // k=0,2 are with rest mass, k=1,3 are without
       // k=0,1 are non-interacting, k=2,3 are interacting
-      for(size_t k=0;k<2;k++) {
+      for(size_t k=0;k<4;k++) {
 
 	// Initialize storage
 	dev.mu=0.0; dev.ed=0.0; dev.pr=0.0; dev.en=0.0;
@@ -915,28 +915,28 @@ namespace o2scl {
 	      p.m=p.ms*1.5;
 	    } else {
 	      p.non_interacting=true;
-	      p.m=mot*T;
 	      p.ms=0.0;
+	      p.m=mot*T;
 	    }
-	    if (k%2==0) {
-	      p.inc_rest_mass=true;
-	      if (k>=2) {
-		exact.nu=p.m+T*psi;
-		exact.mu=0.0;
-	      } else {
-		exact.mu=p.m+T*psi;
-		exact.nu=0.0;
-	      }
+	  if (k%2==0) {
+	    p.inc_rest_mass=true;
+	    if (k>=2) {
+	      exact.nu=p.ms+T*psi;
+	      exact.mu=0.0;
 	    } else {
-	      p.inc_rest_mass=false;
-	      if (k>=2) {
-		exact.nu=T*psi-p.m+p.ms;
-		exact.mu=0.0;
-	      } else {
-		exact.mu=T*psi;
-		exact.nu=0.0;
-	      }
+	      exact.nu=0.0;
+	      exact.mu=p.m+T*psi;
 	    }
+	  } else {
+	    p.inc_rest_mass=false;
+	    if (k>=2) {
+	      exact.nu=T*psi-p.m+p.ms;
+	      exact.mu=0.0;
+	    } else {
+	      exact.nu=0.0;
+	      exact.mu=T*psi;
+	    }
+	  }
 
 	    p.n*=pow(T,3.0);
 	    if (k==0) {
