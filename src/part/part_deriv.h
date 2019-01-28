@@ -737,6 +737,10 @@ namespace o2scl {
 
   };
 
+  /** \brief For non-derivative parts of expansions
+   */
+  fermion_thermo ft;
+  
   /** \brief Calibrate a particle thermodynamics class with
       derivatives with results stored in a table
 
