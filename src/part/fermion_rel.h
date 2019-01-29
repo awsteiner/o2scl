@@ -838,11 +838,6 @@ namespace o2scl {
       } else {
 	f.ed=f.ed+antip.ed+2.0*antip.n*f.m;
       }
-      std::cout << "Here n: " << f.n << " " << antip.n << std::endl;
-      std::cout << "Here nu: " << f.nu << " " << antip.nu << std::endl;
-      std::cout << "Here mu: " << f.mu << " " << antip.mu << std::endl;
-      std::cout << "Here m: " << f.m << " " << antip.m << std::endl;
-      std::cout << "Here ms: " << f.ms << " " << antip.ms << std::endl;
       f.n-=antip.n;
       f.pr+=antip.pr;
       f.en+=antip.en;

@@ -754,7 +754,7 @@ namespace o2scl {
 		p.non_interacting=false;
 		p.ms=mot*T;
 		p.m=p.ms*1.5;
-		p.nu=p.m+T*psi;
+		p.nu=p.ms+T*psi;
 		p.mu=0.0;
 	      } else {
 		p.non_interacting=true;
@@ -866,11 +866,13 @@ namespace o2scl {
 	      }
 	    }
 
-	    if (verbose>1 || k==2) {
+	    if (verbose>1) {
 	      std::cout.precision(5);
 	      std::cout << "T,m,mu,psi,mot: " << T << " " << p.m << " "
 			<< p.mu << " " << psi << " " << mot << std::endl;
 	      std::cout.precision(6);
+	      std::cout << i << " " << exact.m << " " << exact.ms << " "
+			<< exact.mu << " " << exact.nu << std::endl;
 	      std::cout << "n,ed,pr,en: " << std::endl;
 	      std::cout << "approx: " << p.n << " " << p.ed << " "
 			<< p.pr << " " << p.en << std::endl;
