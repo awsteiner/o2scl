@@ -457,17 +457,17 @@ namespace o2scl {
 
       if (verbose>0) {
 	if (k==0) {
-	  std::cout << "Function calc_mu(), include rest mass:"
-		    << std::endl;
+	  std::cout << "Function calc_mu(), include rest mass"
+		   << std::endl;
 	} else if (k==1) {
-	  std::cout << "Function calc_mu(), without rest mass:"
-		    << std::endl;
+	  std::cout << "Function calc_mu(), without rest mass"
+		   << std::endl;
 	} else if (k==2) {
 	  std::cout << "Function calc_mu(), include rest mass, "
-		    << "interacting:" << std::endl;
+		    << "interacting" << std::endl;
 	} else {
 	  std::cout << "Function calc_mu(), without rest mass, "
-		    << "interacting:" << std::endl;
+		    << "interacting" << std::endl;
 	}
 
 	std::cout << "Average performance: " << std::endl;
@@ -519,7 +519,7 @@ namespace o2scl {
 	
 	  double mot=tab.get("mot",i);
 	  double psi=tab.get("psi",i);
-	  p.n=tab.get("n",i);	
+	  p.n=tab.get("n",i)*pow(T,3.0);
 	  exact.ed=tab.get("ed",i);
 	  exact.pr=tab.get("pr",i);
 	  exact.en=tab.get("en",i);
@@ -552,12 +552,12 @@ namespace o2scl {
 	      exact.mu=T*psi;
 	    }
 	  }
-
-	  p.n*=pow(T,3.0);
+	  
+	  exact.n=p.n;
 	  if (k%2==0) {
 	    exact.ed*=pow(T,4.0);
 	  } else {
-	    exact.ed=exact.ed*pow(T,4.0)-exact.n*pow(T,3.0)*p.m;
+	    exact.ed=exact.ed*pow(T,4.0)-exact.n*p.m;
 	  }
 	  exact.pr*=pow(T,4.0);
 	  exact.en*=pow(T,3.0);
@@ -580,13 +580,6 @@ namespace o2scl {
 	  dev.pr+=fabs((p.pr-exact.pr)/exact.pr);
 	  dev.en+=fabs((p.en-exact.en)/exact.en);
 
-	  if (fabs((p.ed-exact.ed)/exact.ed)>0.1) {
-	    std::cout << k << " " << p.ed << " " << p.n*p.m << " "
-		      << exact.ed << " " << exact.n*exact.m << " "
-		      << psi << " " << mot << std::endl;
-	    exit(-1);
-	  }
-	  
 	  cnt++;
 	  if (k>=2) {
 	    if (fabs((p.nu-exact.nu)/exact.nu)>bad.mu) {
@@ -687,17 +680,17 @@ namespace o2scl {
       
       if (verbose>0) {
 	if (k==0) {
-	  std::cout << "Function calc_density(), include rest mass:"
-		    << std::endl;
+	  std::cout << "Function calc_density(), include rest mass"
+		   << std::endl;
 	} else if (k==1) {
-	  std::cout << "Function calc_density(), without rest mass:"
-		    << std::endl;
+	  std::cout << "Function calc_density(), without rest mass"
+		   << std::endl;
 	} else if (k==2) {
 	  std::cout << "Function calc_density(), include rest mass, "
-		    << "interacting:" << std::endl;
+		    << "interacting" << std::endl;
 	} else {
 	  std::cout << "Function calc_density(), without rest mass, "
-		    << "interacting:" << std::endl;
+		    << "interacting" << std::endl;
 	}
 	
 	std::cout << "Average performance: " << std::endl;
@@ -806,13 +799,18 @@ namespace o2scl {
 	    dev.ed+=fabs((p.ed-exact.ed)/exact.ed);
 	    dev.pr+=fabs((p.pr-exact.pr)/exact.pr);
 	    dev.en+=fabs((p.en-exact.en)/exact.en);
-	
+
 	    cnt++;
 	    if (fabs((p.n-exact.n)/exact.n)>bad.n) {
 	      bad.n=fabs((p.n-exact.n)/exact.n);
 	      if (bad.n>ret_local) {
-		mu_bad=p.mu;
-		m_bad=p.m;
+		if (k>=2) {
+		  mu_bad=p.mu;
+		  m_bad=p.ms;
+		} else {
+		  mu_bad=p.mu;
+		  m_bad=p.m;
+		}
 		T_bad=T;
 		mot_bad=mot;
 		psi_bad=psi;
@@ -822,8 +820,13 @@ namespace o2scl {
 	    if (fabs((p.ed-exact.ed)/exact.ed)>bad.ed) {
 	      bad.ed=fabs((p.ed-exact.ed)/exact.ed);
 	      if (bad.ed>ret_local) {
-		mu_bad=p.mu;
-		m_bad=p.m;
+		if (k>=2) {
+		  mu_bad=p.mu;
+		  m_bad=p.ms;
+		} else {
+		  mu_bad=p.mu;
+		  m_bad=p.m;
+		}
 		T_bad=T;
 		mot_bad=mot;
 		psi_bad=psi;
@@ -833,8 +836,13 @@ namespace o2scl {
 	    if (fabs((p.pr-exact.pr)/exact.pr)>bad.pr) {
 	      bad.pr=fabs((p.pr-exact.pr)/exact.pr);
 	      if (bad.pr>ret_local) {
-		mu_bad=p.mu;
-		m_bad=p.m;
+		if (k>=2) {
+		  mu_bad=p.mu;
+		  m_bad=p.ms;
+		} else {
+		  mu_bad=p.mu;
+		  m_bad=p.m;
+		}
 		T_bad=T;
 		mot_bad=mot;
 		psi_bad=psi;
@@ -844,8 +852,13 @@ namespace o2scl {
 	    if (fabs((p.en-exact.en)/exact.en)>bad.en) {
 	      bad.en=fabs((p.en-exact.en)/exact.en);
 	      if (bad.en>ret_local) {
-		mu_bad=p.mu;
-		m_bad=p.m;
+		if (k>=2) {
+		  mu_bad=p.mu;
+		  m_bad=p.ms;
+		} else {
+		  mu_bad=p.mu;
+		  m_bad=p.m;
+		}
 		T_bad=T;
 		mot_bad=mot;
 		psi_bad=psi;
@@ -853,7 +866,7 @@ namespace o2scl {
 	      }
 	    }
 
-	    if (verbose>1) {
+	    if (verbose>1 || k==2) {
 	      std::cout.precision(5);
 	      std::cout << "T,m,mu,psi,mot: " << T << " " << p.m << " "
 			<< p.mu << " " << psi << " " << mot << std::endl;
@@ -868,7 +881,7 @@ namespace o2scl {
 	      std::cout << "ret_local,ret: " << ret_local << " "
 			<< ret << std::endl;
 	      std::cout << std::endl;
-	      if (verbose>2) {
+	      if (verbose>2 || k==2) {
 		char ch;
 		std::cin >> ch;
 	      }
@@ -886,11 +899,17 @@ namespace o2scl {
 
 	if (verbose>0) {
 	  if (k==0) {
-	    std::cout << "Function pair_mu(), include rest mass:"
-		      << std::endl;
+	    std::cout << "Function pair_mu(), include rest mass"
+		     << std::endl;
+	  } else if (k==1) {
+	    std::cout << "Function pair_mu(), without rest mass"
+		     << std::endl;
+	  } else if (k==2) {
+	    std::cout << "Function pair_mu(), include rest mass, "
+		      << "interacting" << std::endl;
 	  } else {
-	    std::cout << "Function pair_mu(), without rest mass:"
-		      << std::endl;
+	    std::cout << "Function pair_mu(), without rest mass, "
+		      << "interacting" << std::endl;
 	  }
 
 	  std::cout << "Average performance: " << std::endl;
@@ -939,7 +958,7 @@ namespace o2scl {
 	
 	    double mot=tab.get("mot",i);
 	    double psi=tab.get("psi",i);
-	    p.n=tab.get("pair_n",i);	
+	    p.n=tab.get("pair_n",i)*pow(T,3.0);	
 	    exact.ed=tab.get("pair_ed",i);
 	    exact.pr=tab.get("pair_pr",i);
 	    exact.en=tab.get("pair_en",i);
@@ -973,11 +992,11 @@ namespace o2scl {
 	      }
 	    }
 
-	    p.n*=pow(T,3.0);
+	    exact.n=p.n;
 	    if (k%2==0) {
 	      exact.ed*=pow(T,4.0);
 	    } else {
-	      exact.ed=exact.ed*pow(T,4.0)-p.n*p.m;
+	      exact.ed=exact.ed*pow(T,4.0)-exact.n*p.m;
 	    }
 	    exact.pr*=pow(T,4.0);
 	    exact.en*=pow(T,3.0);
@@ -1071,11 +1090,17 @@ namespace o2scl {
 
 	if (verbose>0) {
 	  if (k==0) {
-	    std::cout << "Function pair_density(), "
-		      << "include rest mass:" << std::endl;
+	    std::cout << "Function pair_density(), include rest mass"
+		     << std::endl;
+	  } else if (k==1) {
+	    std::cout << "Function pair_density(), without rest mass"
+		     << std::endl;
+	  } else if (k==2) {
+	    std::cout << "Function pair_density(), include rest mass, "
+		      << "interacting" << std::endl;
 	  } else {
-	    std::cout << "Function pair_density(), "
-		      << "without rest mass:" << std::endl;
+	    std::cout << "Function pair_density(), without rest mass, "
+		      << "interacting" << std::endl;
 	  }
 
 	  std::cout << "Average performance: " << std::endl;

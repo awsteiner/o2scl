@@ -808,7 +808,7 @@ namespace o2scl {
       void pair_mu_tlate(fermion_t &f, double temper) {
 
       if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
-
+      
       if (use_expansions) {
 	if (calc_mu_ndeg(f,temper,1.0e-14,true)) {
 	  unc.n=1.0e-14*f.n;
@@ -819,7 +819,7 @@ namespace o2scl {
 	}
       }
 
-      fermion antip(f.ms,f.g);
+      fermion antip(f.m,f.g);
       f.anti(antip);
 
       // Particles
@@ -838,6 +838,11 @@ namespace o2scl {
       } else {
 	f.ed=f.ed+antip.ed+2.0*antip.n*f.m;
       }
+      std::cout << "Here n: " << f.n << " " << antip.n << std::endl;
+      std::cout << "Here nu: " << f.nu << " " << antip.nu << std::endl;
+      std::cout << "Here mu: " << f.mu << " " << antip.mu << std::endl;
+      std::cout << "Here m: " << f.m << " " << antip.m << std::endl;
+      std::cout << "Here ms: " << f.ms << " " << antip.ms << std::endl;
       f.n-=antip.n;
       f.pr+=antip.pr;
       f.en+=antip.en;

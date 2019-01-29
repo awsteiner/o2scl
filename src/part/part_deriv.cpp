@@ -167,6 +167,32 @@ bool fermion_deriv_thermo::calc_mu_ndeg
       dsdT_term+=(2.0*dj*(xx+1.0)-2.0*tt)/tt/temper/temper*pterm+
 	(2.0*tt-dj*(xx+1.0))/tt/temper*enterm;
     } else {
+      if (f.inc_rest_mass) {
+	pterm=exp(-jot)*2.0*cosh(dj*f.nu/temper)/jot/jot*
+	  gsl_sf_bessel_Kn_scaled(2.0,jot);
+	if (j%2==0) {
+	  pterm*=-1.0;
+	}
+	nterm=pterm*tanh(dj*f.nu/temper)*dj/temper;
+      } else {
+	pterm=exp(-jot)*2.0*cosh(dj*(f.nu+f.m)/temper)/jot/jot*
+	  gsl_sf_bessel_Kn_scaled(2.0,jot);
+	if (j%2==0) {
+	  pterm*=-1.0;
+	}
+	nterm=pterm*tanh(dj*(f.nu+f.m)/temper)*dj/temper;
+      }
+      if (j%2==0) {
+	enterm=(pterm*2.0/tt-cosh(dj*nu2/temper)/dj*exp(-jot)*
+		(gsl_sf_bessel_Kn_scaled(1.0,jot)+
+		 gsl_sf_bessel_Kn_scaled(3.0,jot))+2.0*pterm*nu2*dj/tt/tt*
+		tanh(dj*nu2/temper)/f.ms)/f.ms;
+      } else {
+	enterm=(pterm*2.0/tt+cosh(dj*nu2/temper)/dj*exp(-jot)*
+		(gsl_sf_bessel_Kn_scaled(1.0,jot)+
+		 gsl_sf_bessel_Kn_scaled(3.0,jot))+2.0*pterm*nu2*dj/tt/tt*
+		tanh(dj*nu2/temper)/f.ms)/f.ms;
+      }
       dndmu_term=pterm*dj*dj/temper/temper;
       dndT_term=(dj/temper*enterm-dj/temper/temper*pterm)*
 	tanh(dj*(xx+1.0)/tt)-dj*dj*(xx+1.0)/temper/temper*pterm/
