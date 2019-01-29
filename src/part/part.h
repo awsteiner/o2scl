@@ -278,6 +278,8 @@ namespace o2scl {
     // k=0,1 are non-interacting, k=2,3 are interacting
     for(size_t k=0;k<4;k++) {
 
+      double ret_local=0.0;
+      
       // Initialize storage
       dev.n=0.0; dev.ed=0.0; dev.pr=0.0; dev.en=0.0;
       bad.n=0.0; bad.ed=0.0; bad.pr=0.0; bad.en=0.0;
@@ -343,13 +345,6 @@ namespace o2scl {
 	  }
 	  exact.pr*=pow(T,4.0);
 	  exact.en*=pow(T,3.0);
-	  /*
-	    std::cout.precision(10);
-	    std::cout << "X: " << p.mu << " " << " " << p.n << " "
-	    << p.ed << " " << p.en << std::endl;
-	    std::cout << "\t" << p.pr << " " << exact.pr << std::endl;
-	    std::cout.precision(6);
-	  */
 	
 	  dev.n+=fabs((p.n-exact.n)/exact.n);
 	  dev.ed+=fabs((p.ed-exact.ed)/exact.ed);
@@ -359,7 +354,7 @@ namespace o2scl {
 	  cnt++;
 	  if (fabs((p.n-exact.n)/exact.n)>bad.n) {
 	    bad.n=fabs((p.n-exact.n)/exact.n);
-	    if (bad.n>ret) {
+	    if (bad.n>ret_local) {
 	      if (k>=2) {
 		mu_bad=p.nu;
 		m_bad=p.ms;
@@ -370,12 +365,12 @@ namespace o2scl {
 	      T_bad=T;
 	      mot_bad=mot;
 	      psi_bad=psi;
-	      ret=bad.n;
+	      ret_local=bad.n;
 	    }
 	  }
 	  if (fabs((p.ed-exact.ed)/exact.ed)>bad.ed) {
 	    bad.ed=fabs((p.ed-exact.ed)/exact.ed);
-	    if (bad.ed>ret) {
+	    if (bad.ed>ret_local) {
 	      if (k>=2) {
 		mu_bad=p.nu;
 		m_bad=p.ms;
@@ -386,12 +381,12 @@ namespace o2scl {
 	      T_bad=T;
 	      mot_bad=mot;
 	      psi_bad=psi;
-	      ret=bad.ed;
+	      ret_local=bad.ed;
 	    }
 	  }
 	  if (fabs((p.pr-exact.pr)/exact.pr)>bad.pr) {
 	    bad.pr=fabs((p.pr-exact.pr)/exact.pr);
-	    if (bad.pr>ret) {
+	    if (bad.pr>ret_local) {
 	      if (k>=2) {
 		mu_bad=p.nu;
 		m_bad=p.ms;
@@ -402,12 +397,12 @@ namespace o2scl {
 	      T_bad=T;
 	      mot_bad=mot;
 	      psi_bad=psi;
-	      ret=bad.pr;
+	      ret_local=bad.pr;
 	    }
 	  }
 	  if (fabs((p.en-exact.en)/exact.en)>bad.en) {
 	    bad.en=fabs((p.en-exact.en)/exact.en);
-	    if (bad.en>ret) {
+	    if (bad.en>ret_local) {
 	      if (k>=2) {
 		mu_bad=p.nu;
 		m_bad=p.ms;
@@ -418,7 +413,7 @@ namespace o2scl {
 	      T_bad=T;
 	      mot_bad=mot;
 	      psi_bad=psi;
-	      ret=bad.en;
+	      ret_local=bad.en;
 	    }
 	  }
 
@@ -441,6 +436,8 @@ namespace o2scl {
 		      << exact.pr << " " << exact.en << std::endl;
 	    std::cout << "bad   : " << bad.n << " " << bad.ed << " " 
 		      << bad.pr << " " << bad.en << std::endl;
+	    std::cout << "ret_local,ret: " << ret_local << " "
+		      << ret << std::endl;
 	    std::cout << std::endl;
 	    if (verbose>2) {
 	      char ch;
@@ -460,9 +457,11 @@ namespace o2scl {
 
       if (verbose>0) {
 	if (k==0) {
-	  std::cout << "Function calc_mu(), include rest mass:" << std::endl;
+	  std::cout << "Function calc_mu(), include rest mass:"
+		    << std::endl;
 	} else if (k==1) {
-	  std::cout << "Function calc_mu(), without rest mass:" << std::endl;
+	  std::cout << "Function calc_mu(), without rest mass:"
+		    << std::endl;
 	} else if (k==2) {
 	  std::cout << "Function calc_mu(), include rest mass, "
 		    << "interacting:" << std::endl;
@@ -477,9 +476,11 @@ namespace o2scl {
 	std::cout << "Worst case: " << std::endl;
 	std::cout << "n: " << bad.n << " ed: " << bad.ed << " pr: " 
 		  << bad.pr << " en: " << bad.en << std::endl;
-	std::cout << "mu: " << mu_bad << " m: " << m_bad << " T: " << T_bad 
-		  << " mot: " << mot_bad
+	std::cout << "mu: " << mu_bad << " m: " << m_bad 
+		  << " T: " << T_bad << " mot: " << mot_bad
 		  << "\n\tpsi: " << psi_bad << std::endl;
+	std::cout << "ret_local,ret: " << ret_local << " "
+		  << ret << std::endl;
 	std::cout << std::endl;
 	if (verbose>2) {
 	  char ch;
@@ -489,10 +490,14 @@ namespace o2scl {
 
       // Reset p.non_interacting
       p.non_interacting=true;
+
+      if (ret_local>ret) {
+	ret=ret_local;
+      }
     
       // End of k loop
     }
-
+    
     // ----------------------------------------------------------------
     // Second pass, test calc_density()
 
@@ -500,6 +505,8 @@ namespace o2scl {
     // k=0,1 are non-interacting, k=2,3 are interacting
     for(size_t k=0;k<4;k++) {
 
+      double ret_local=0.0;
+      
       // Initialize storage
       dev.mu=0.0; dev.ed=0.0; dev.pr=0.0; dev.en=0.0;
       bad.mu=0.0; bad.ed=0.0; bad.pr=0.0; bad.en=0.0;
@@ -547,10 +554,10 @@ namespace o2scl {
 	  }
 
 	  p.n*=pow(T,3.0);
-	  if (k==0) {
+	  if (k%2==0) {
 	    exact.ed*=pow(T,4.0);
 	  } else {
-	    exact.ed=exact.ed*pow(T,4.0)-p.n*p.m;
+	    exact.ed=exact.ed*pow(T,4.0)-exact.n*pow(T,3.0)*p.m;
 	  }
 	  exact.pr*=pow(T,4.0);
 	  exact.en*=pow(T,3.0);
@@ -572,64 +579,71 @@ namespace o2scl {
 	  dev.ed+=fabs((p.ed-exact.ed)/exact.ed);
 	  dev.pr+=fabs((p.pr-exact.pr)/exact.pr);
 	  dev.en+=fabs((p.en-exact.en)/exact.en);
-	
+
+	  if (fabs((p.ed-exact.ed)/exact.ed)>0.1) {
+	    std::cout << k << " " << p.ed << " " << p.n*p.m << " "
+		      << exact.ed << " " << exact.n*exact.m << " "
+		      << psi << " " << mot << std::endl;
+	    exit(-1);
+	  }
+	  
 	  cnt++;
 	  if (k>=2) {
 	    if (fabs((p.nu-exact.nu)/exact.nu)>bad.mu) {
 	      bad.mu=fabs((p.nu-exact.nu)/exact.nu);
-	      if (bad.mu>ret) {
+	      if (bad.mu>ret_local) {
 		mu_bad=p.nu;
 		m_bad=p.ms;
 		T_bad=T;
 		mot_bad=mot;
 		psi_bad=psi;
-		ret=bad.n;
+		ret_local=bad.n;
 	      }
 	    }
 	  } else {
 	    if (fabs((p.mu-exact.mu)/exact.mu)>bad.mu) {
 	      bad.mu=fabs((p.mu-exact.mu)/exact.mu);
-	      if (bad.mu>ret) {
+	      if (bad.mu>ret_local) {
 		mu_bad=p.mu;
 		m_bad=p.m;
 		T_bad=T;
 		mot_bad=mot;
 		psi_bad=psi;
-		ret=bad.n;
+		ret_local=bad.n;
 	      }
 	    }
 	  }
 	  if (fabs((p.ed-exact.ed)/exact.ed)>bad.ed) {
 	    bad.ed=fabs((p.ed-exact.ed)/exact.ed);
-	    if (bad.ed>ret) {
+	    if (bad.ed>ret_local) {
 	      mu_bad=p.mu;
 	      m_bad=p.m;
 	      T_bad=T;
 	      mot_bad=mot;
 	      psi_bad=psi;
-	      ret=bad.ed;
+	      ret_local=bad.ed;
 	    }
 	  }
 	  if (fabs((p.pr-exact.pr)/exact.pr)>bad.pr) {
 	    bad.pr=fabs((p.pr-exact.pr)/exact.pr);
-	    if (bad.pr>ret) {
+	    if (bad.pr>ret_local) {
 	      mu_bad=p.mu;
 	      m_bad=p.m;
 	      T_bad=T;
 	      mot_bad=mot;
 	      psi_bad=psi;
-	      ret=bad.pr;
+	      ret_local=bad.pr;
 	    }
 	  }
 	  if (fabs((p.en-exact.en)/exact.en)>bad.en) {
 	    bad.en=fabs((p.en-exact.en)/exact.en);
-	    if (bad.en>ret) {
+	    if (bad.en>ret_local) {
 	      mu_bad=p.mu;
 	      m_bad=p.m;
 	      T_bad=T;
 	      mot_bad=mot;
 	      psi_bad=psi;
-	      ret=bad.en;
+	      ret_local=bad.en;
 	    }
 	  }
 
@@ -648,11 +662,12 @@ namespace o2scl {
 	    std::cout << "mu,ed,pr,en: " << std::endl;
 	    std::cout << "approx: " << p.mu << " " << p.ed << " "
 		      << p.pr << " " << p.en << std::endl;
-		      
 	    std::cout << "exact : " << exact.mu << " " << exact.ed << " " 
 		      << exact.pr << " " << exact.en << std::endl;
 	    std::cout << "bad   : " << bad.mu << " " << bad.ed << " " 
 		      << bad.pr << " " << bad.en << std::endl;
+	    std::cout << "ret_local,ret: " << ret_local << " "
+		      << ret << std::endl;
 	    std::cout << std::endl;
 	    if (verbose>2) {
 	      char ch;
@@ -669,7 +684,7 @@ namespace o2scl {
       dev.ed/=cnt;
       dev.pr/=cnt;
       dev.en/=cnt;
-
+      
       if (verbose>0) {
 	if (k==0) {
 	  std::cout << "Function calc_density(), include rest mass:"
@@ -684,16 +699,18 @@ namespace o2scl {
 	  std::cout << "Function calc_density(), without rest mass, "
 		    << "interacting:" << std::endl;
 	}
-
+	
 	std::cout << "Average performance: " << std::endl;
 	std::cout << "mu: " << dev.mu << " ed: " << dev.ed << " pr: " 
 		  << dev.pr << " en: " << dev.en << std::endl;
 	std::cout << "Worst case: " << std::endl;
 	std::cout << "mu: " << bad.mu << " ed: " << bad.ed << " pr: " 
 		  << bad.pr << " en: " << bad.en << std::endl;
-	std::cout << "mu: " << mu_bad << " m: " << m_bad << " T: " << T_bad 
-		  << " mot: " << mot_bad
+	std::cout << "mu: " << mu_bad << " m: " << m_bad
+		  << " T: " << T_bad << " mot: " << mot_bad
 		  << "\n\tpsi: " << psi_bad << std::endl;
+	std::cout << "ret_local,ret: " << ret_local << " "
+		  << ret << std::endl;
 	std::cout << std::endl;
 	if (verbose>2) {
 	  char ch;
@@ -701,6 +718,10 @@ namespace o2scl {
 	}
       }
 
+      if (ret_local>ret) {
+	ret=ret_local;
+      }
+    
       // End of k loop
     }
 
@@ -712,6 +733,8 @@ namespace o2scl {
       // k=0,2 are with rest mass, k=1,3 are without
       // k=0,1 are non-interacting, k=2,3 are interacting
       for(size_t k=0;k<4;k++) {
+
+	double ret_local=0.0;
 
 	// Initialize storage
 	dev.n=0.0; dev.ed=0.0; dev.pr=0.0; dev.en=0.0;
@@ -771,7 +794,7 @@ namespace o2scl {
 	    th.pair_mu(p,T);
 	
 	    exact.n*=pow(T,3.0);
-	    if (k==0) {
+	    if (k%2==0) {
 	      exact.ed*=pow(T,4.0);
 	    } else {
 	      exact.ed=exact.ed*pow(T,4.0)-exact.n*p.m;
@@ -787,46 +810,46 @@ namespace o2scl {
 	    cnt++;
 	    if (fabs((p.n-exact.n)/exact.n)>bad.n) {
 	      bad.n=fabs((p.n-exact.n)/exact.n);
-	      if (bad.n>ret) {
+	      if (bad.n>ret_local) {
 		mu_bad=p.mu;
 		m_bad=p.m;
 		T_bad=T;
 		mot_bad=mot;
 		psi_bad=psi;
-		ret=bad.n;
+		ret_local=bad.n;
 	      }
 	    }
 	    if (fabs((p.ed-exact.ed)/exact.ed)>bad.ed) {
 	      bad.ed=fabs((p.ed-exact.ed)/exact.ed);
-	      if (bad.ed>ret) {
+	      if (bad.ed>ret_local) {
 		mu_bad=p.mu;
 		m_bad=p.m;
 		T_bad=T;
 		mot_bad=mot;
 		psi_bad=psi;
-		ret=bad.ed;
+		ret_local=bad.ed;
 	      }
 	    }
 	    if (fabs((p.pr-exact.pr)/exact.pr)>bad.pr) {
 	      bad.pr=fabs((p.pr-exact.pr)/exact.pr);
-	      if (bad.pr>ret) {
+	      if (bad.pr>ret_local) {
 		mu_bad=p.mu;
 		m_bad=p.m;
 		T_bad=T;
 		mot_bad=mot;
 		psi_bad=psi;
-		ret=bad.pr;
+		ret_local=bad.pr;
 	      }
 	    }
 	    if (fabs((p.en-exact.en)/exact.en)>bad.en) {
 	      bad.en=fabs((p.en-exact.en)/exact.en);
-	      if (bad.en>ret) {
+	      if (bad.en>ret_local) {
 		mu_bad=p.mu;
 		m_bad=p.m;
 		T_bad=T;
 		mot_bad=mot;
 		psi_bad=psi;
-		ret=bad.en;
+		ret_local=bad.en;
 	      }
 	    }
 
@@ -842,6 +865,8 @@ namespace o2scl {
 			<< exact.pr << " " << exact.en << std::endl;
 	      std::cout << "bad   : " << bad.n << " " << bad.ed << " " 
 			<< bad.pr << " " << bad.en << std::endl;
+	      std::cout << "ret_local,ret: " << ret_local << " "
+			<< ret << std::endl;
 	      std::cout << std::endl;
 	      if (verbose>2) {
 		char ch;
@@ -861,9 +886,11 @@ namespace o2scl {
 
 	if (verbose>0) {
 	  if (k==0) {
-	    std::cout << "Function pair_mu(), include rest mass:" << std::endl;
+	    std::cout << "Function pair_mu(), include rest mass:"
+		      << std::endl;
 	  } else {
-	    std::cout << "Function pair_mu(), without rest mass:" << std::endl;
+	    std::cout << "Function pair_mu(), without rest mass:"
+		      << std::endl;
 	  }
 
 	  std::cout << "Average performance: " << std::endl;
@@ -872,9 +899,11 @@ namespace o2scl {
 	  std::cout << "Worst case: " << std::endl;
 	  std::cout << "n: " << bad.n << " ed: " << bad.ed << " pr: " 
 		    << bad.pr << " en: " << bad.en << std::endl;
-	  std::cout << "mu: " << mu_bad << " m: " << m_bad << " T: " << T_bad 
-		    << " mot: " << mot_bad
+	  std::cout << "mu: " << mu_bad << " m: " << m_bad
+		    << " T: " << T_bad << " mot: " << mot_bad
 		    << "\n\tpsi: " << psi_bad << std::endl;
+	  std::cout << "ret_local,ret: " << ret_local << " "
+		    << ret << std::endl;
 	  std::cout << std::endl;
 	  if (verbose>2) {
 	    char ch;
@@ -882,6 +911,10 @@ namespace o2scl {
 	  }
 	}
 
+	if (ret_local>ret) {
+	  ret=ret_local;
+	}
+    
 	// End of k loop
       }
 
@@ -892,6 +925,8 @@ namespace o2scl {
       // k=0,1 are non-interacting, k=2,3 are interacting
       for(size_t k=0;k<4;k++) {
 
+	double ret_local=0.0;
+	
 	// Initialize storage
 	dev.mu=0.0; dev.ed=0.0; dev.pr=0.0; dev.en=0.0;
 	bad.mu=0.0; bad.ed=0.0; bad.pr=0.0; bad.en=0.0;
@@ -918,28 +953,28 @@ namespace o2scl {
 	      p.ms=0.0;
 	      p.m=mot*T;
 	    }
-	  if (k%2==0) {
-	    p.inc_rest_mass=true;
-	    if (k>=2) {
-	      exact.nu=p.ms+T*psi;
-	      exact.mu=0.0;
+	    if (k%2==0) {
+	      p.inc_rest_mass=true;
+	      if (k>=2) {
+		exact.nu=p.ms+T*psi;
+		exact.mu=0.0;
+	      } else {
+		exact.nu=0.0;
+		exact.mu=p.m+T*psi;
+	      }
 	    } else {
-	      exact.nu=0.0;
-	      exact.mu=p.m+T*psi;
+	      p.inc_rest_mass=false;
+	      if (k>=2) {
+		exact.nu=T*psi-p.m+p.ms;
+		exact.mu=0.0;
+	      } else {
+		exact.nu=0.0;
+		exact.mu=T*psi;
+	      }
 	    }
-	  } else {
-	    p.inc_rest_mass=false;
-	    if (k>=2) {
-	      exact.nu=T*psi-p.m+p.ms;
-	      exact.mu=0.0;
-	    } else {
-	      exact.nu=0.0;
-	      exact.mu=T*psi;
-	    }
-	  }
 
 	    p.n*=pow(T,3.0);
-	    if (k==0) {
+	    if (k%2==0) {
 	      exact.ed*=pow(T,4.0);
 	    } else {
 	      exact.ed=exact.ed*pow(T,4.0)-p.n*p.m;
@@ -960,53 +995,53 @@ namespace o2scl {
 	    cnt++;
 	    if (fabs((p.mu-exact.mu)/exact.mu)>bad.mu) {
 	      bad.mu=fabs((p.mu-exact.mu)/exact.mu);
-	      if (bad.n>ret) {
+	      if (bad.n>ret_local) {
 		mu_bad=p.mu;
 		m_bad=p.m;
 		T_bad=T;
 		mot_bad=mot;
 		psi_bad=psi;
-		ret=bad.n;
+		ret_local=bad.n;
 	      }
 	    }
 	    if (fabs((p.ed-exact.ed)/exact.ed)>bad.ed) {
 	      bad.ed=fabs((p.ed-exact.ed)/exact.ed);
-	      if (bad.ed>ret) {
+	      if (bad.ed>ret_local) {
 		mu_bad=p.mu;
 		m_bad=p.m;
 		T_bad=T;
 		mot_bad=mot;
 		psi_bad=psi;
-		ret=bad.ed;
+		ret_local=bad.ed;
 	      }
 	    }
 	    if (fabs((p.pr-exact.pr)/exact.pr)>bad.pr) {
 	      bad.pr=fabs((p.pr-exact.pr)/exact.pr);
-	      if (bad.pr>ret) {
+	      if (bad.pr>ret_local) {
 		mu_bad=p.mu;
 		m_bad=p.m;
 		T_bad=T;
 		mot_bad=mot;
 		psi_bad=psi;
-		ret=bad.pr;
+		ret_local=bad.pr;
 	      }
 	    }
 	    if (fabs((p.en-exact.en)/exact.en)>bad.en) {
 	      bad.en=fabs((p.en-exact.en)/exact.en);
-	      if (bad.en>ret) {
+	      if (bad.en>ret_local) {
 		mu_bad=p.mu;
 		m_bad=p.m;
 		T_bad=T;
 		mot_bad=mot;
 		psi_bad=psi;
-		ret=bad.en;
+		ret_local=bad.en;
 	      }
 	    }
 
 	    if (verbose>1) {
 	      std::cout.precision(5);
-	      std::cout << "T,m,n,psi,mot: " << T << " " << p.m << " " << p.n
-			<< " " << psi << " " << mot << std::endl;
+	      std::cout << "T,m,n,psi,mot: " << T << " " << p.m << " " 
+			<< p.n << " " << psi << " " << mot << std::endl;
 	      std::cout.precision(6);
 	      std::cout << "mu,ed,pr,en: " << std::endl;
 	      std::cout << "approx: " << p.mu << " " << p.ed << " "
@@ -1015,6 +1050,8 @@ namespace o2scl {
 			<< exact.pr << " " << exact.en << std::endl;
 	      std::cout << "bad   : " << bad.mu << " " << bad.ed << " " 
 			<< bad.pr << " " << bad.en << std::endl;
+	      std::cout << "ret_local,ret: " << ret_local << " "
+			<< ret << std::endl;
 	      std::cout << std::endl;
 	      if (verbose>2) {
 		char ch;
@@ -1035,10 +1072,10 @@ namespace o2scl {
 	if (verbose>0) {
 	  if (k==0) {
 	    std::cout << "Function pair_density(), "
-	      << "include rest mass:" << std::endl;
+		      << "include rest mass:" << std::endl;
 	  } else {
 	    std::cout << "Function pair_density(), "
-	      << "without rest mass:" << std::endl;
+		      << "without rest mass:" << std::endl;
 	  }
 
 	  std::cout << "Average performance: " << std::endl;
@@ -1047,9 +1084,11 @@ namespace o2scl {
 	  std::cout << "Worst case: " << std::endl;
 	  std::cout << "mu: " << bad.mu << " ed: " << bad.ed << " pr: " 
 		    << bad.pr << " en: " << bad.en << std::endl;
-	  std::cout << "mu: " << mu_bad << " m: " << m_bad << " T: " << T_bad 
-		    << " mot: " << mot_bad
+	  std::cout << "mu: " << mu_bad << " m: " << m_bad
+		    << " T: " << T_bad << " mot: " << mot_bad
 		    << "\n\tpsi: " << psi_bad << std::endl;
+	  std::cout << "ret_local,ret: " << ret_local << " "
+		    << ret << std::endl;
 	  std::cout << std::endl;
 	  if (verbose>2) {
 	    char ch;
@@ -1057,6 +1096,10 @@ namespace o2scl {
 	  }
 	}
 
+	if (ret_local>ret) {
+	  ret=ret_local;
+	}
+    
 	// End of k loop
       }
 

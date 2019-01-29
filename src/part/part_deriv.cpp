@@ -33,6 +33,7 @@ using namespace o2scl_const;
 bool fermion_deriv_thermo::calc_mu_deg
 (fermion_deriv &f, double temper, double prec) {
   
+  fermion_rel fr;
   if (fr.calc_mu_deg_tlate<fermion_deriv>(f,temper,prec)==false) {
     return false;
   }
@@ -92,6 +93,7 @@ bool fermion_deriv_thermo::calc_mu_deg
 bool fermion_deriv_thermo::calc_mu_ndeg
 (fermion_deriv &f, double temper, double prec, bool inc_antip) {
 
+  fermion_rel fr;
   if (fr.calc_mu_ndeg_tlate<fermion_deriv>(f,temper,prec,
 					   inc_antip)==false) {
     return false;
@@ -136,7 +138,7 @@ bool fermion_deriv_thermo::calc_mu_ndeg
 		exp(dj*psi)/2.0/dj*(gsl_sf_bessel_Kn_scaled(1.0,jot)+
 				    gsl_sf_bessel_Kn_scaled(3.0,jot)))/f.ms-
 	  pterm*dj*psi_num/temper/temper;
-     } else {
+      } else {
 	enterm=(pterm*2.0/tt-pterm/tt/tt*dj+
 		exp(dj*psi)/2.0/dj*(gsl_sf_bessel_Kn_scaled(1.0,jot)+
 				    gsl_sf_bessel_Kn_scaled(3.0,jot)))/f.ms-

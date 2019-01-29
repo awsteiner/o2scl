@@ -795,9 +795,9 @@ namespace o2scl {
       }
 
       f.n=density_temp;
-      f.pr=-f.ed+temper*f.en+f.mu*f.n;
+      f.pr=-f.ed+temper*f.en+f.nu*f.n;
       unc.pr=sqrt(unc.ed*unc.ed+temper*unc.en*temper*unc.en+
-		  f.mu*unc.n*f.mu*unc.n);
+		  f.nu*unc.n*f.nu*unc.n);
   
       return 0;
     }
