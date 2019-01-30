@@ -25,7 +25,7 @@
 #endif
 
 #include <o2scl/fermion_eff.h>
-
+#include <o2scl/root_brent_gsl.h>
 #include <o2scl/hdf_file.h>
 
 using namespace std;
@@ -208,7 +208,7 @@ void fermion_eff::calc_mu(fermion &f, double temper) {
   }
 
   if (!std::isfinite(psi) || !std::isfinite(xx)) {
-    O2SCL_ERR("Psi or xx not finite in fermion_eff::calc_density().",
+    O2SCL_ERR("Psi or xx not finite in fermion_eff::calc_mu().",
 	      exc_efailed);
   }
 
@@ -216,7 +216,19 @@ void fermion_eff::calc_mu(fermion &f, double temper) {
   funct mfs=std::bind(std::mem_fn<double(double,double)>
 			(&fermion_eff::solve_fun),
 			this,std::placeholders::_1,psi);
-  psi_root->solve(xx,mfs);
+  bool psi_root_ec=psi_root->err_nonconv;
+  psi_root->err_nonconv=false;
+  int ret=psi_root->solve(xx,mfs);
+  if (ret!=0) {
+    o2scl::root_brent_gsl<> rbg;
+    rbg.err_nonconv=false;
+    int ret2=rbg.solve(xx,mfs);
+    if (ret2!=0) {
+      O2SCL_ERR("Psi solver failed in fermion_eff::calc_mu().",
+		o2scl::exc_efailed);
+    }
+  }
+  psi_root->err_nonconv=psi_root_ec;
   ff=xx;
 
   // Compute Eqs. 12 and 16 in Johns, et al. (1996)
@@ -404,12 +416,19 @@ int fermion_eff::pair_density(fermion &f, double temper) {
   funct pdf2=std::bind(std::mem_fn<double(double,fermion &,double)>
 			 (&fermion_eff::pair_density_fun),
 			 this,std::placeholders::_1,std::ref(f),temper);
-
+  bool density_root_ec=density_root->err_nonconv;
+  density_root->err_nonconv=false;
   int ret=density_root->solve(f.nu,pdf2);
   if (ret!=0) {
-    O2SCL_CONV2_RET("Function calc_density() failed in fermion_eff::",
-		    "calc_density().",exc_efailed,this->err_nonconv);
+    root_brent_gsl<> rbg;
+    rbg.err_nonconv=false;
+    int ret2=rbg.solve(f.nu,pdf2);
+    if (ret2!=0) {
+      O2SCL_CONV2_RET("Solvers failed in fermion_eff::",
+		      "pair_density().",exc_efailed,this->err_nonconv);
+    }
   }
+  density_root->err_nonconv=density_root_ec;
   pdf2(f.nu);
   
   if (f.non_interacting) { f.mu=f.nu; }

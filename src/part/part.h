@@ -652,11 +652,19 @@ namespace o2scl {
 			<< psi << " " << mot << std::endl;
 	    }
 	    std::cout.precision(6);
-	    std::cout << "mu,ed,pr,en: " << std::endl;
-	    std::cout << "approx: " << p.mu << " " << p.ed << " "
-		      << p.pr << " " << p.en << std::endl;
-	    std::cout << "exact : " << exact.mu << " " << exact.ed << " " 
-		      << exact.pr << " " << exact.en << std::endl;
+	    if (k>=2) {
+	      std::cout << "nu,ed,pr,en: " << std::endl;
+	      std::cout << "approx: " << p.nu << " " << p.ed << " "
+			<< p.pr << " " << p.en << std::endl;
+	      std::cout << "exact : " << exact.nu << " " << exact.ed << " " 
+			<< exact.pr << " " << exact.en << std::endl;
+	    } else {
+	      std::cout << "mu,ed,pr,en: " << std::endl;
+	      std::cout << "approx: " << p.mu << " " << p.ed << " "
+			<< p.pr << " " << p.en << std::endl;
+	      std::cout << "exact : " << exact.mu << " " << exact.ed << " " 
+			<< exact.pr << " " << exact.en << std::endl;
+	    }
 	    std::cout << "bad   : " << bad.mu << " " << bad.ed << " " 
 		      << bad.pr << " " << bad.en << std::endl;
 	    std::cout << "ret_local,ret: " << ret_local << " "
@@ -883,7 +891,7 @@ namespace o2scl {
 	      std::cout << "ret_local,ret: " << ret_local << " "
 			<< ret << std::endl;
 	      std::cout << std::endl;
-	      if (verbose>2 || k==2) {
+	      if (verbose>2) {
 		char ch;
 		std::cin >> ch;
 	      }
@@ -1007,22 +1015,40 @@ namespace o2scl {
 	    p.mu=p.m;
 
 	    th.pair_density(p,T);
-	
-	    dev.mu+=fabs((p.mu-exact.mu)/exact.mu);
+
+	    if (k>=2) {
+	      dev.nu+=fabs((p.nu-exact.nu)/exact.nu);
+	    } else {
+	      dev.mu+=fabs((p.mu-exact.mu)/exact.mu);
+	    }
 	    dev.ed+=fabs((p.ed-exact.ed)/exact.ed);
 	    dev.pr+=fabs((p.pr-exact.pr)/exact.pr);
 	    dev.en+=fabs((p.en-exact.en)/exact.en);
 	
 	    cnt++;
-	    if (fabs((p.mu-exact.mu)/exact.mu)>bad.mu) {
-	      bad.mu=fabs((p.mu-exact.mu)/exact.mu);
-	      if (bad.n>ret_local) {
-		mu_bad=p.mu;
-		m_bad=p.m;
-		T_bad=T;
-		mot_bad=mot;
-		psi_bad=psi;
-		ret_local=bad.n;
+	    if (k>=2) {
+	      if (fabs((p.nu-exact.nu)/exact.nu)>bad.mu) {
+		bad.mu=fabs((p.nu-exact.nu)/exact.nu);
+		if (bad.mu>ret_local) {
+		  mu_bad=p.nu;
+		  m_bad=p.ms;
+		  T_bad=T;
+		  mot_bad=mot;
+		  psi_bad=psi;
+		  ret_local=bad.n;
+		}
+	      }
+	    } else {
+	      if (fabs((p.mu-exact.mu)/exact.mu)>bad.mu) {
+		bad.mu=fabs((p.mu-exact.mu)/exact.mu);
+		if (bad.mu>ret_local) {
+		  mu_bad=p.mu;
+		  m_bad=p.m;
+		  T_bad=T;
+		  mot_bad=mot;
+		  psi_bad=psi;
+		  ret_local=bad.n;
+		}
 	      }
 	    }
 	    if (fabs((p.ed-exact.ed)/exact.ed)>bad.ed) {
@@ -1058,17 +1084,30 @@ namespace o2scl {
 		ret_local=bad.en;
 	      }
 	    }
-
+	    
 	    if (verbose>1) {
 	      std::cout.precision(5);
-	      std::cout << "T,m,n,psi,mot: " << T << " " << p.m << " " 
-			<< p.n << " " << psi << " " << mot << std::endl;
+	      if (k>=2) {
+		std::cout << "T,ms,n,psi,mot: " << T << " " << p.ms << " " 
+			  << p.n << " " << psi << " " << mot << std::endl;
+	      } else {
+		std::cout << "T,m,n,psi,mot: " << T << " " << p.m << " " 
+			  << p.n << " " << psi << " " << mot << std::endl;
+	      }
 	      std::cout.precision(6);
-	      std::cout << "mu,ed,pr,en: " << std::endl;
-	      std::cout << "approx: " << p.mu << " " << p.ed << " "
-			<< p.pr << " " << p.en << std::endl;
-	      std::cout << "exact : " << exact.mu << " " << exact.ed << " " 
-			<< exact.pr << " " << exact.en << std::endl;
+	      if (k>=2) {
+		std::cout << "nu,ed,pr,en: " << std::endl;
+		std::cout << "approx: " << p.nu << " " << p.ed << " "
+			  << p.pr << " " << p.en << std::endl;
+		std::cout << "exact : " << exact.nu << " " << exact.ed << " " 
+			  << exact.pr << " " << exact.en << std::endl;
+	      } else {
+		std::cout << "mu,ed,pr,en: " << std::endl;
+		std::cout << "approx: " << p.mu << " " << p.ed << " "
+			  << p.pr << " " << p.en << std::endl;
+		std::cout << "exact : " << exact.mu << " " << exact.ed << " " 
+			  << exact.pr << " " << exact.en << std::endl;
+	      }
 	      std::cout << "bad   : " << bad.mu << " " << bad.ed << " " 
 			<< bad.pr << " " << bad.en << std::endl;
 	      std::cout << "ret_local,ret: " << ret_local << " "
