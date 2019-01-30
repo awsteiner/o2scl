@@ -445,6 +445,10 @@ namespace o2scl {
 	    }
 	  }
 
+	  if (ret_local>ret) {
+	    ret=ret_local;
+	  }
+	  
 	  // End of loop over points in data file
 	}
 	// End of temperature loop
@@ -491,10 +495,6 @@ namespace o2scl {
       // Reset p.non_interacting
       p.non_interacting=true;
 
-      if (ret_local>ret) {
-	ret=ret_local;
-      }
-    
       // End of k loop
     }
     
@@ -676,6 +676,10 @@ namespace o2scl {
 	    }
 	  }
 
+	  if (ret_local>ret) {
+	    ret=ret_local;
+	  }
+    
 	  // End of loop over points in data file
 	}
 	// End of temperature loop
@@ -719,10 +723,6 @@ namespace o2scl {
 	}
       }
 
-      if (ret_local>ret) {
-	ret=ret_local;
-      }
-    
       // End of k loop
     }
 
@@ -897,6 +897,10 @@ namespace o2scl {
 	      }
 	    }
 
+	    if (ret_local>ret) {
+	      ret=ret_local;
+	    }
+	    
 	    // End of loop over points in data file
 	  }
 	  // End of temperature loop
@@ -940,10 +944,6 @@ namespace o2scl {
 	  }
 	}
 
-	if (ret_local>ret) {
-	  ret=ret_local;
-	}
-    
 	// End of k loop
       }
 
@@ -1117,6 +1117,10 @@ namespace o2scl {
 		char ch;
 		std::cin >> ch;
 	      }
+	    }
+
+	    if (ret_local>ret) {
+	      ret=ret_local;
 	    }
 
 	    // End of loop over points in data file
