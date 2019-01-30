@@ -25,6 +25,7 @@
 #endif
 
 #include <o2scl/fermion_eff.h>
+#include <o2scl/fermion_rel.h>
 #include <o2scl/root_brent_gsl.h>
 #include <o2scl/hdf_file.h>
 
@@ -420,12 +421,28 @@ int fermion_eff::pair_density(fermion &f, double temper) {
   density_root->err_nonconv=false;
   int ret=density_root->solve(f.nu,pdf2);
   if (ret!=0) {
-    root_brent_gsl<> rbg;
-    rbg.err_nonconv=false;
-    int ret2=rbg.solve(f.nu,pdf2);
-    if (ret2!=0) {
-      O2SCL_CONV2_RET("Solvers failed in fermion_eff::",
-		      "pair_density().",exc_efailed,this->err_nonconv);
+    // Bracket the root and use root_brent_gsl
+    double blow=f.nu*0.99;
+    double bhigh=f.nu*1.01;
+    double ylow=pdf2(blow);
+    double yhigh=pdf2(bhigh);
+    for(size_t j=0;j<5 && yhigh*ylow>0.0;j++) {
+      bhigh+=(bhigh-blow)*10.0;
+      yhigh=pdf2(bhigh);
+    }
+    for(size_t j=0;j<5 && yhigh*ylow>0.0;j++) {
+      blow-=(bhigh-blow)*10.0;
+      ylow=pdf2(blow);
+    }
+    if (ylow*yhigh<0.0) {
+      root_brent_gsl<> rbg;
+      rbg.err_nonconv=false;
+      int ret2=rbg.solve_bkt(blow,bhigh,pdf2);
+      if (ret2!=0) {
+	O2SCL_CONV2_RET("Solvers failed in fermion_eff::",
+			"pair_density().",exc_efailed,this->err_nonconv);
+      }
+      f.nu=blow;
     }
   }
   density_root->err_nonconv=density_root_ec;
