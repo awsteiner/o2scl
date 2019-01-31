@@ -93,7 +93,7 @@ void fermion_nonrel::calc_mu(fermion &f, double temper) {
     calc_mu_zerot(f);
     return;
   }
-
+  
   if (f.inc_rest_mass) {
     y=(f.nu-f.m)/temper;
   } else {
@@ -103,38 +103,38 @@ void fermion_nonrel::calc_mu(fermion &f, double temper) {
   // Number density
   f.n=gsl_sf_fermi_dirac_half(y)*sqrt(pi)/2.0;
   f.n*=f.g*pow(2.0*f.ms*temper,1.5)/4.0/pi2;
-
+    
   // Energy density:
   f.ed=gsl_sf_fermi_dirac_3half(y)*0.75*sqrt(pi);
-
-  if (f.inc_rest_mass) {
     
+  if (f.inc_rest_mass) {
+      
     // Finish energy density
     f.ed*=f.g*pow(2.0*f.ms*temper,2.5)/8.0/pi2/f.ms;
     f.ed+=f.n*f.m;
-    
+      
     // entropy density
     f.en=(5.0*(f.ed-f.n*f.m)/3.0-(f.nu-f.m)*f.n)/temper;
-    
+      
     // pressure
     f.pr=2.0*(f.ed-f.n*f.m)/3.0;
-    
+      
   } else {
-
+      
     // Finish energy density
     f.ed*=f.g*pow(2.0*f.ms*temper,2.5)/8.0/pi2/f.ms;
-
+      
     // entropy density
     f.en=(5.0*f.ed/3.0-f.nu*f.n)/temper;
-    
+      
     // pressure
     f.pr=2.0*f.ed/3.0;
-    
+      
   }
 
   if (!std::isfinite(f.nu) || !std::isfinite(f.n)) {
     O2SCL_ERR2("Chemical potential or density in ",
-		   "fermion_nonrel::calc_mu().",exc_efailed);
+	       "fermion_nonrel::calc_mu().",exc_efailed);
   }
   
   return;
@@ -155,8 +155,8 @@ void fermion_nonrel::nu_from_n(fermion &f, double temper) {
   if (nex>-GSL_LOG_DBL_MIN*0.9) nex=-GSL_LOG_DBL_MIN/2.0;
   
   funct mf=std::bind(std::mem_fn<double(double,double,double)>
-		       (&fermion_nonrel::solve_fun),
-		       this,std::placeholders::_1,f.n/f.g,f.ms*temper);
+		     (&fermion_nonrel::solve_fun),
+		     this,std::placeholders::_1,f.n/f.g,f.ms*temper);
   
   // Turn off convergence errors temporarily, since we'll
   // try again if it fails

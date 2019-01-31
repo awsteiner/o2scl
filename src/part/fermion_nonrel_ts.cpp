@@ -37,6 +37,19 @@ int main(void) {
   
   fermion_nonrel fnr;
   fermion f(1.0,2.0);
+
+  if (true) {
+    f.non_interacting=false;
+    f.inc_rest_mass=false;
+    f.ms=f.m*1.5;
+    f.mu=1.25;
+    f.nu=2.0;
+    fnr.calc_mu_zerot(f);
+    cout << f.n << endl;
+    fnr.calc_mu(f,1.0e-6);
+    cout << f.n << endl;
+    exit(-1);
+  }
   
   // Third argument is false because we don't want to test pairs
   double v1=part_calibrate<fermion,fermion_nonrel>

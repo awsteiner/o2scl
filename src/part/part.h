@@ -213,6 +213,22 @@ namespace o2scl {
       The <tt>verbose</tt> parameter controls the amount of output.
       
       \future Also calibrate massless fermions?
+
+      In this function, \f$ \psi \f$ for interacting fermions 
+      is defined to be,
+      \f[
+      \psi \equiv \left( \frac{\nu-m^{*}}{T} \right)
+      \f]
+      when \f$ \nu \f$ includes the rest mass. Thus to construct the
+      value of \f$ \nu \f$ from \f$ \psi \f$ when part::inc_rest_mass is
+      true, one uses
+      \f[
+      \nu = \psi T + m^{*}
+      \f]
+      If part::inc_rest_mass is false, then
+      \f[
+      \nu = \psi T + m^{*} - m
+      \f]
   */
   template<class part_t, class thermo_t>
     double part_calibrate(part_t &p, thermo_t &th, bool test_pair,
@@ -350,6 +366,21 @@ namespace o2scl {
 	  dev.ed+=fabs((p.ed-exact.ed)/exact.ed);
 	  dev.pr+=fabs((p.pr-exact.pr)/exact.pr);
 	  dev.en+=fabs((p.en-exact.en)/exact.en);
+	  if (fabs((p.pr-exact.pr)/exact.pr)>1.0e-2) {
+	    std::cout << "ni,icm: " << p.non_interacting << " "
+		      << p.inc_rest_mass << std::endl;
+	    std::cout << "psi,mot,T: "
+		      << psi << " " << mot << " " << T << std::endl;
+	    std::cout << "m,ms,mu,nu: " << p.m << " " << p.ms << " "
+		      << p.mu << " " << p.nu << std::endl;
+	    std::cout << "approx n,ed,pr,en: " << p.n << " " << p.ed << " "
+		      << p.pr << " " << p.en << std::endl;
+	    std::cout << "exact  n,ed,pr,en: "
+		      << exact.n << " " << exact.ed << " "
+		      << exact.pr << " " << exact.en
+		      << std::endl;
+	    exit(-1);
+	  }
 	
 	  cnt++;
 	  if (fabs((p.n-exact.n)/exact.n)>bad.n) {

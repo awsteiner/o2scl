@@ -1,5 +1,39 @@
 /** \page ferm_section Fermions
 
+    \section rel_vs_nonrel_sect Relativsitic and Non-relativistic
+    Fermions
+
+    For an interacting relativistic fermion, the 
+    effective mass, \f$ m^{*} \f$, and the effective
+    chemical potential, \f$ \nu \f$ are defined so that
+    the density is
+    \f[
+    n_{\mathrm{R}} = \frac{g}{2 \pi^2} \int k^2~dk
+    \left\{1+\exp\left[\left(\sqrt{k^2+m^{*2}}-
+    \nu_{\mathrm{R}}\right)/T\right]\right\}^{-1} 
+    \quad \mathrm{or} \quad
+    n_{\mathrm{R}} = \frac{g}{2 \pi^2} \int k^2~dk
+    \left\{1+\exp\left[\left(\sqrt{k^2+m^{*2}}-
+    \nu_{\mathrm{R}}-m\right)/T\right]\right\}^{-1} 
+    \f]
+    for a relativsitic fermion and
+    \f[
+    n_{\mathrm{NR}} = \frac{g}{2 \pi^2} \int k^2~dk
+    \left\{1+\exp\left[\left(\frac{k^2}{2 m^{*}}-
+    \nu_{\mathrm{NR}}\right)/T\right]\right\}^{-1}
+    \quad \mathrm{or} \quad
+    n_{\mathrm{NR}} = \frac{g}{2 \pi^2} \int k^2~dk
+    \left\{1+\exp\left[\left(\frac{k^2}{2 m^{*}}-
+    \nu_{\mathrm{NR}+m}\right)/T\right]\right\}^{-1}
+    \f]
+    for a non-relativistic fermion. 
+    This means that \f$ \nu_{\mathrm{R}} - m^{*} = 
+    \nu_{\mathrm{NR}} \f$ .
+
+    The Fermi momentum
+    is then \f$ k_{F,\mathrm{R}} = \sqrt{\nu^2-m^{* 2}} \f$ 
+    or \f$ k_{F,\mathrm{NR}} = \sqrt{2 \nu m^{*}} \f$ . 
+
     \section ferm_integ_sect Fermion integrations
 
     (Slowly moving the documentation from fermion_rel

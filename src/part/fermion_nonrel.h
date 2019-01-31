@@ -48,7 +48,7 @@ namespace o2scl {
       The rest mass energy density is given by <tt>n*m</tt> not
       <tt>n*ms</tt>. Note that the effective mass here is the Landau
       mass, not the Dirac mass.
-      
+
       Pressure is computed with
       \f[
       P = 2 \varepsilon/3
