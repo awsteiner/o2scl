@@ -7,42 +7,48 @@
     chemical potential, \f$ \nu \f$ are defined so that
     the energy density is
     \f[
-    {\varepsilon}_{\mathrm{R}} = \frac{g}{2 \pi^2} \int
+    {\varepsilon}_{R} = \frac{g}{2 \pi^2} \int
     dk~\frac{k^2 \sqrt{k^2+m^{* 2}}}
     { 1+\exp\left[\left(\sqrt{k^2+m^{*2}}-
-    \nu_{\mathrm{R}}\right)/T\right]}
-    \quad \mathrm{or} \quad
-    {\varepsilon}_{\mathrm{R}} = \frac{g}{2 \pi^2} \int
+    \nu_{R}\right)/T\right]}
+    = \frac{g}{2 \pi^2} \int
     dk~\frac{k^2 \sqrt{k^2+m^{* 2}} }
     {1+\exp\left[\left(\sqrt{k^2+m^{*2}}-
-    \bar{\nu}_{\mathrm{R}}-m\right)/T\right]}
+    \bar{\nu}_{R}-m\right)/T\right]}
     \f]
     for a relativistic fermion, where 
-    \f$ \bar{\nu}_{\mathrm{R}} \equiv \nu_{\mathrm{R}}-m \f$,
-    and 
+    \f$ \bar{\nu}_{R} \equiv \nu_{R}-m \f$.
+    If we define \f$ \psi = (\nu_R-m^{*})/T \f$, 
+    \f$ \phi = m^{*}/T \f$, 
+    \f$ u \equiv \sqrt{k^2 + m^{* 2}}/T \f$ then
+    the energy density is x
     \f[
-    {\varepsilon}_{\mathrm{NR}} = 
+    {\varepsilon}_{R} = \frac{g}{2 \pi^2} \int
+    dk~\frac{k^2 u T}
+    { 1+\exp\left[u - \psi - \phi \right]}
+    \f]
+    For a nonrelativistic fermion,
+    \f[
+    {\varepsilon}_{NR} = 
     \frac{g}{2 \pi^2} \int dk~
     \frac{\frac{k^4}{2 m^{*}}}
     { 1+\exp\left[\left(\frac{k^2}{2 m^{*}}-
-    \bar{\nu}_{\mathrm{NR}}\right)/T\right] }
-    \quad \mathrm{or} \quad
-    {\varepsilon}_{\mathrm{NR}} = 
-    \frac{g}{2 \pi^2} \int dk
+    \bar{\nu}_{NR}\right)/T\right] }
+    = \frac{g}{2 \pi^2} \int dk
     \frac{ \frac{k^4}{2 m^{*}} }
     { 1+\exp\left[\left(\frac{k^2}{2 m^{*}}-
-    \nu_{\mathrm{NR}}+m\right)/T\right] }
+    \nu_{NR}+m\right)/T\right] }
     \f]
-    for a non-relativistic fermion, where 
-    \f$ \bar{\nu}_{\mathrm{NR}} = \nu_{\mathrm{NR}} - m \f$ .
+    where \f$ \bar{\nu}_{NR} = \nu_{NR} - m \f$ .
     Note that the rest mass energy
     density is \f$ \varepsilon_{\mathrm{rest}} = n m \f$ (not \f$ n
-    m^{*} \f$) in both cases. These expressions show that \f$
-    \nu_{\mathrm{R}} - m^{*} = \bar{\nu}_{\mathrm{NR}} \f$ .
+    m^{*} \f$) in both cases. Taking the nonrelativsitic limit
+    of the relativistic energy density shows that 
+    \f$ \nu_{R} - m^{*} = \bar{\nu}_{NR} \f$ .
 
     The Fermi momentum
-    is then \f$ k_{F,\mathrm{R}} = \sqrt{\nu_{\mathrm{R}}^2-m^{* 2}} \f$ 
-    or \f$ k_{F,\mathrm{NR}} = \sqrt{2 \bar{\nu}_{\mathrm{NR}} m^{*}} \f$ . 
+    is then \f$ k_{F,\mathrm{R}} = \sqrt{\nu_{R}^2-m^{* 2}} \f$ 
+    or \f$ k_{F,\mathrm{NR}} = \sqrt{2 \bar{\nu}_{NR} m^{*}} \f$ . 
 
     \section ferm_integ_sect Fermion integrations
 
