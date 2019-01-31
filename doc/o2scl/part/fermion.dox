@@ -1,38 +1,48 @@
 /** \page ferm_section Fermions
 
-    \section rel_vs_nonrel_sect Relativsitic and Non-relativistic
-    Fermions
+    \section rel_vs_nonrel_sect Relativistic and Non-relativistic Fermions
 
     For an interacting relativistic fermion, the 
     effective mass, \f$ m^{*} \f$, and the effective
     chemical potential, \f$ \nu \f$ are defined so that
-    the density is
+    the energy density is
     \f[
-    n_{\mathrm{R}} = \frac{g}{2 \pi^2} \int k^2~dk
-    \left\{1+\exp\left[\left(\sqrt{k^2+m^{*2}}-
-    \nu_{\mathrm{R}}\right)/T\right]\right\}^{-1} 
+    {\varepsilon}_{\mathrm{R}} = \frac{g}{2 \pi^2} \int
+    dk~\frac{k^2 \sqrt{k^2+m^{* 2}}}
+    { 1+\exp\left[\left(\sqrt{k^2+m^{*2}}-
+    \nu_{\mathrm{R}}\right)/T\right]}
     \quad \mathrm{or} \quad
-    n_{\mathrm{R}} = \frac{g}{2 \pi^2} \int k^2~dk
-    \left\{1+\exp\left[\left(\sqrt{k^2+m^{*2}}-
-    \nu_{\mathrm{R}}-m\right)/T\right]\right\}^{-1} 
+    {\varepsilon}_{\mathrm{R}} = \frac{g}{2 \pi^2} \int
+    dk~\frac{k^2 \sqrt{k^2+m^{* 2}} }
+    {1+\exp\left[\left(\sqrt{k^2+m^{*2}}-
+    \bar{\nu}_{\mathrm{R}}-m\right)/T\right]}
     \f]
-    for a relativsitic fermion and
+    for a relativistic fermion, where 
+    \f$ \bar{\nu}_{\mathrm{R}} \equiv \nu_{\mathrm{R}}-m \f$,
+    and 
     \f[
-    n_{\mathrm{NR}} = \frac{g}{2 \pi^2} \int k^2~dk
-    \left\{1+\exp\left[\left(\frac{k^2}{2 m^{*}}-
-    \nu_{\mathrm{NR}}\right)/T\right]\right\}^{-1}
+    {\varepsilon}_{\mathrm{NR}} = 
+    \frac{g}{2 \pi^2} \int dk~
+    \frac{\frac{k^4}{2 m^{*}}}
+    { 1+\exp\left[\left(\frac{k^2}{2 m^{*}}-
+    \bar{\nu}_{\mathrm{NR}}\right)/T\right] }
     \quad \mathrm{or} \quad
-    n_{\mathrm{NR}} = \frac{g}{2 \pi^2} \int k^2~dk
-    \left\{1+\exp\left[\left(\frac{k^2}{2 m^{*}}-
-    \nu_{\mathrm{NR}+m}\right)/T\right]\right\}^{-1}
+    {\varepsilon}_{\mathrm{NR}} = 
+    \frac{g}{2 \pi^2} \int dk
+    \frac{ \frac{k^4}{2 m^{*}} }
+    { 1+\exp\left[\left(\frac{k^2}{2 m^{*}}-
+    \nu_{\mathrm{NR}}+m\right)/T\right] }
     \f]
-    for a non-relativistic fermion. 
-    This means that \f$ \nu_{\mathrm{R}} - m^{*} = 
-    \nu_{\mathrm{NR}} \f$ .
+    for a non-relativistic fermion, where 
+    \f$ \bar{\nu}_{\mathrm{NR}} = \nu_{\mathrm{NR}} - m \f$ .
+    Note that the rest mass energy
+    density is \f$ \varepsilon_{\mathrm{rest}} = n m \f$ (not \f$ n
+    m^{*} \f$) in both cases. These expressions show that \f$
+    \nu_{\mathrm{R}} - m^{*} = \bar{\nu}_{\mathrm{NR}} \f$ .
 
     The Fermi momentum
-    is then \f$ k_{F,\mathrm{R}} = \sqrt{\nu^2-m^{* 2}} \f$ 
-    or \f$ k_{F,\mathrm{NR}} = \sqrt{2 \nu m^{*}} \f$ . 
+    is then \f$ k_{F,\mathrm{R}} = \sqrt{\nu_{\mathrm{R}}^2-m^{* 2}} \f$ 
+    or \f$ k_{F,\mathrm{NR}} = \sqrt{2 \bar{\nu}_{\mathrm{NR}} m^{*}} \f$ . 
 
     \section ferm_integ_sect Fermion integrations
 
