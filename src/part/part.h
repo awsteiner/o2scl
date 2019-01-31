@@ -351,7 +351,8 @@ namespace o2scl {
 	  dev.pr+=fabs((p.pr-exact.pr)/exact.pr);
 	  dev.en+=fabs((p.en-exact.en)/exact.en);
 	  if (fabs((p.pr-exact.pr)/exact.pr)>1.0e-2) {
-	    std::cout << "ni,icm: " << p.non_interacting << " "
+	    std::cout << "nr,ni,icm: " << nr_mode << " "
+		      << p.non_interacting << " "
 		      << p.inc_rest_mass << std::endl;
 	    std::cout << "psi,mot,T: "
 		      << psi << " " << mot << " " << T << std::endl;
