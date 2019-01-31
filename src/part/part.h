@@ -478,10 +478,10 @@ namespace o2scl {
       if (verbose>0) {
 	if (k==0) {
 	  std::cout << "Function calc_mu(), include rest mass"
-		   << std::endl;
+		    << std::endl;
 	} else if (k==1) {
 	  std::cout << "Function calc_mu(), without rest mass"
-		   << std::endl;
+		    << std::endl;
 	} else if (k==2) {
 	  std::cout << "Function calc_mu(), include rest mass, "
 		    << "interacting" << std::endl;
@@ -552,20 +552,28 @@ namespace o2scl {
 	  if (k%2==0) {
 	    p.inc_rest_mass=true;
 	    if (k>=2) {
-	      exact.nu=p.ms+T*psi;
-	      exact.mu=0.0;
+	      if (nr_mode) {
+		p.nu=T*psi+p.m;
+	      } else {
+		p.nu=T*psi+p.ms;
+	      }
+	      p.mu=0.0;
 	    } else {
-	      exact.nu=0.0;
-	      exact.mu=p.m+T*psi;
+	      p.nu=0.0;
+	      p.mu=T*psi+p.m;
 	    }
 	  } else {
 	    p.inc_rest_mass=false;
 	    if (k>=2) {
-	      exact.nu=T*psi-p.m+p.ms;
-	      exact.mu=0.0;
+	      if (nr_mode) {
+		p.nu=T*psi;
+	      } else {
+		p.nu=T*psi-p.m+p.ms;
+	      }
+	      p.mu=0.0;
 	    } else {
-	      exact.nu=0.0;
-	      exact.mu=T*psi;
+	      p.nu=0.0;
+	      p.mu=T*psi;
 	    }
 	  }
 	  
@@ -709,10 +717,10 @@ namespace o2scl {
       if (verbose>0) {
 	if (k==0) {
 	  std::cout << "Function calc_density(), include rest mass"
-		   << std::endl;
+		    << std::endl;
 	} else if (k==1) {
 	  std::cout << "Function calc_density(), without rest mass"
-		   << std::endl;
+		    << std::endl;
 	} else if (k==2) {
 	  std::cout << "Function calc_density(), include rest mass, "
 		    << "interacting" << std::endl;
@@ -770,42 +778,41 @@ namespace o2scl {
 	    exact.pr=tab.get("pair_pr",i);
 	    exact.en=tab.get("pair_en",i);
       
-	    if (k%2==0) {
-
-	      p.inc_rest_mass=true;
-
-	      if (k>=2) {
-		p.non_interacting=false;
-		p.ms=mot*T;
-		p.m=p.ms*1.5;
-		p.nu=p.ms+T*psi;
-		p.mu=0.0;
-	      } else {
-		p.non_interacting=true;
-		p.ms=0.0;
-		p.m=mot*T;
-		p.mu=p.m+T*psi;
-		p.nu=0.0;
-	      }
-	  
+	    if (k>=2) {
+	      p.non_interacting=false;
+	      p.ms=mot*T;
+	      p.m=p.ms*1.5;
 	    } else {
-	  
-	      p.inc_rest_mass=false;
-	  
+	      p.non_interacting=true;
+	      p.m=mot*T;
+	      p.ms=0.0;
+	    }
+	    if (k%2==0) {
+	      p.inc_rest_mass=true;
 	      if (k>=2) {
-		p.non_interacting=false;
-		p.ms=mot*T;
-		p.m=p.ms*1.5;
-		p.nu=p.ms+T*psi-p.m;
+		if (nr_mode) {
+		  p.nu=T*psi+p.m;
+		} else {
+		  p.nu=T*psi+p.ms;
+		}
 		p.mu=0.0;
 	      } else {
-		p.non_interacting=true;
-		p.ms=0.0;
-		p.m=mot*T;
+		p.nu=0.0;
+		p.mu=T*psi+p.m;
+	      }
+	    } else {
+	      p.inc_rest_mass=false;
+	      if (k>=2) {
+		if (nr_mode) {
+		  p.nu=T*psi;
+		} else {
+		  p.nu=T*psi-p.m+p.ms;
+		}
+		p.mu=0.0;
+	      } else {
 		p.nu=0.0;
 		p.mu=T*psi;
 	      }
-	  
 	    }
 	
 	    th.pair_mu(p,T);
@@ -930,10 +937,10 @@ namespace o2scl {
 	if (verbose>0) {
 	  if (k==0) {
 	    std::cout << "Function pair_mu(), include rest mass"
-		     << std::endl;
+		      << std::endl;
 	  } else if (k==1) {
 	    std::cout << "Function pair_mu(), without rest mass"
-		     << std::endl;
+		      << std::endl;
 	  } else if (k==2) {
 	    std::cout << "Function pair_mu(), include rest mass, "
 		      << "interacting" << std::endl;
@@ -995,22 +1002,30 @@ namespace o2scl {
 	      p.m=p.ms*1.5;
 	    } else {
 	      p.non_interacting=true;
-	      p.ms=0.0;
 	      p.m=mot*T;
+	      p.ms=0.0;
 	    }
 	    if (k%2==0) {
 	      p.inc_rest_mass=true;
 	      if (k>=2) {
-		exact.nu=p.ms+T*psi;
+		if (nr_mode) {
+		  exact.nu=T*psi+p.m;
+		} else {
+		  exact.nu=T*psi+p.ms;
+		}
 		exact.mu=0.0;
 	      } else {
 		exact.nu=0.0;
-		exact.mu=p.m+T*psi;
+		exact.mu=T*psi+p.m;
 	      }
 	    } else {
 	      p.inc_rest_mass=false;
 	      if (k>=2) {
-		exact.nu=T*psi-p.m+p.ms;
+		if (nr_mode) {
+		  exact.nu=T*psi;
+		} else {
+		  exact.nu=T*psi-p.m+p.ms;
+		}
 		exact.mu=0.0;
 	      } else {
 		exact.nu=0.0;
@@ -1152,10 +1167,10 @@ namespace o2scl {
 	if (verbose>0) {
 	  if (k==0) {
 	    std::cout << "Function pair_density(), include rest mass"
-		     << std::endl;
+		      << std::endl;
 	  } else if (k==1) {
 	    std::cout << "Function pair_density(), without rest mass"
-		     << std::endl;
+		      << std::endl;
 	  } else if (k==2) {
 	    std::cout << "Function pair_density(), include rest mass, "
 		      << "interacting" << std::endl;
