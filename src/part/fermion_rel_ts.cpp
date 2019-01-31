@@ -46,7 +46,7 @@ int main(void) {
   cout << endl;
   
   double v1=part_calibrate<fermion,fermion_rel>
-    (f,fr,true,"../../data/o2scl/fermion_cal2.o2",1,true);
+    (f,fr,true,"../../data/o2scl/fermion_cal2.o2",false,1,true);
   t.test_rel(v1,0.0,4.0e-6,"calibrate");
   
   cout << "----------------------------------------------------" << endl;
@@ -64,7 +64,7 @@ int main(void) {
   fr.density_root->tol_rel=1.0e-10;
 
   double v2=part_calibrate<fermion,fermion_rel>
-    (f,fr,1,"../../data/o2scl/fermion_cal2.o2",1,1);
+    (f,fr,1,"../../data/o2scl/fermion_cal2.o2",false,1,1);
   t.test_rel(v2,0.0,4.0e-10,"calibrate 2");
 
   // -----------------------------------------------------------------
