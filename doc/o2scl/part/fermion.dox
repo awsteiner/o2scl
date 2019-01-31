@@ -2,53 +2,84 @@
 
     \section rel_vs_nonrel_sect Relativistic and Non-relativistic Fermions
 
-    For an interacting relativistic fermion, the 
+    There are a few distinctions between how relativistic 
+    and nonrelativistic fermions are handled in \o2 which
+    are worth noting. For an interacting relativistic fermion, the 
     effective mass, \f$ m^{*} \f$, and the effective
     chemical potential, \f$ \nu \f$ are defined so that
     the energy density is
     \f[
-    {\varepsilon}_{R} = \frac{g}{2 \pi^2} \int
+    {\varepsilon}_{\mathrm{R}} = \frac{g}{2 \pi^2} \int
     dk~\frac{k^2 \sqrt{k^2+m^{* 2}}}
     { 1+\exp\left[\left(\sqrt{k^2+m^{*2}}-
-    \nu_{R}\right)/T\right]}
+    \nu_{\mathrm{R}}\right)/T\right]}
     = \frac{g}{2 \pi^2} \int
     dk~\frac{k^2 \sqrt{k^2+m^{* 2}} }
     {1+\exp\left[\left(\sqrt{k^2+m^{*2}}-
-    \bar{\nu}_{R}-m\right)/T\right]}
+    \bar{\nu}_{\mathrm{R}}-m\right)/T\right]}
     \f]
     for a relativistic fermion, where 
-    \f$ \bar{\nu}_{R} \equiv \nu_{R}-m \f$.
-    If we define \f$ \psi = (\nu_R-m^{*})/T \f$, 
+    \f$ \bar{\nu}_{\mathrm{R}} \equiv \nu_{\mathrm{R}}-m \f$.
+    If we define \f$ \psi_{\mathrm{R}} = (\nu_{\mathrm{R}}-m^{*})/T \f$, 
     \f$ \phi = m^{*}/T \f$, 
-    \f$ u \equiv \sqrt{k^2 + m^{* 2}}/T \f$ then
-    the energy density is x
+    \f$ u \equiv k/T \f$ then
+    the energy density is 
     \f[
-    {\varepsilon}_{R} = \frac{g}{2 \pi^2} \int
-    dk~\frac{k^2 u T}
-    { 1+\exp\left[u - \psi - \phi \right]}
+    {\varepsilon}_{\mathrm{R}} = \frac{g T^4}{2 \pi^2} \int
+    du~\frac{u^2 \sqrt{u^2+\phi^2}}
+    { 1+\exp\left[\sqrt{u^2+\phi^2} - \psi_{\mathrm{R}} - \phi \right]}
     \f]
+    This expression is used for \ref o2scl::part::part_calibrate() 
+    because \f$ \varepsilon_{\mathrm{R}}/(g T^4) \f$ depends only on 
+    \f$ \psi_{\mathrm{R}} \f$ and \f$ \phi \f$.
     For a nonrelativistic fermion,
     \f[
-    {\varepsilon}_{NR} = 
+    {\varepsilon}_{\mathrm{NR}} = 
     \frac{g}{2 \pi^2} \int dk~
-    \frac{\frac{k^4}{2 m^{*}}}
-    { 1+\exp\left[\left(\frac{k^2}{2 m^{*}}-
-    \bar{\nu}_{NR}\right)/T\right] }
-    = \frac{g}{2 \pi^2} \int dk
-    \frac{ \frac{k^4}{2 m^{*}} }
-    { 1+\exp\left[\left(\frac{k^2}{2 m^{*}}-
-    \nu_{NR}+m\right)/T\right] }
+    \frac{k^4}{2 m^{*}}
+    \left\{ 1+\exp\left[\left(\frac{k^2}{2 m^{*}}-
+    \bar{\nu}_{\mathrm{NR}}\right)/T\right] \right\}^{-1}
+    = \frac{g}{2 \pi^2} \int dk~
+    \frac{k^4}{2 m^{*}} 
+    \left\{ 1+\exp\left[\left(\frac{k^2}{2 m^{*}}-
+    \nu_{\mathrm{NR}}+m\right)/T\right] \right\}^{-1}
     \f]
-    where \f$ \bar{\nu}_{NR} = \nu_{NR} - m \f$ .
-    Note that the rest mass energy
-    density is \f$ \varepsilon_{\mathrm{rest}} = n m \f$ (not \f$ n
-    m^{*} \f$) in both cases. Taking the nonrelativsitic limit
-    of the relativistic energy density shows that 
-    \f$ \nu_{R} - m^{*} = \bar{\nu}_{NR} \f$ .
+    where \f$ \bar{\nu}_{\mathrm{NR}} = \nu_{\mathrm{NR}} - m \f$ .
+    Note that the rest mass energy density is \f$
+    \varepsilon_{\mathrm{rest}} = n m \f$ (not \f$ n m^{*} \f$) in
+    both cases. Taking the nonrelativsitic limit of the relativistic
+    energy density shows that \f$ \nu_{\mathrm{R}} - m^{*} =
+    \bar{\nu}_{\mathrm{NR}} \f$ . Thus the class \ref
+    o2scl::fermion_nonrel uses the value stored in \ref
+    o2scl::part::nu slightly differently than does \ref
+    o2scl::fermion_rel and \ref o2scl::fermion_eff . The Fermi
+    momentum is also handled slightly differently, \f$
+    k_{F,\mathrm{R}} \equiv \sqrt{\nu_{\mathrm{R}}^2-m^{* 2}} \f$ and
+    \f$ k_{F,\mathrm{NR}} \equiv \sqrt{2 \bar{\nu}_{\mathrm{NR}}
+    m^{*}} \f$ .
 
-    The Fermi momentum
-    is then \f$ k_{F,\mathrm{R}} = \sqrt{\nu_{R}^2-m^{* 2}} \f$ 
-    or \f$ k_{F,\mathrm{NR}} = \sqrt{2 \bar{\nu}_{NR} m^{*}} \f$ . 
+    Now if we define \f$ u_{\mathrm{NR}} \equiv k^2/(2 m^{*} T) \f$ 
+    and \f$ \psi_{\mathrm{NR}} \equiv (\nu_{\mathrm{NR}}-m^{*})/T \f$
+    then the argument of the exponential is 
+    \f[
+    \frac{k^2}{2 m^{*} T } - \frac{\bar{\nu}_{\mathrm{NR}}}{T} = 
+    u_{\mathrm{NR}} - \psi_{\mathrm{NR}} + \frac{m}{T}- \phi
+    \f]
+    which is inconvenient because then \f$
+    \varepsilon_{\mathrm{NR}}/(g T^4) \f$ is no longer a function of
+    \f$ \psi_{\mathrm{NR}} \f$ and \f$ \phi \f$ alone. Thus we define
+    \f$ \psi_{\mathrm{NR}} \equiv \bar{\nu}_{\mathrm{NR}}/T \f$ and
+    then the energy density is
+    \f[
+    {\varepsilon}_{\mathrm{NR}} = \frac{g T^4}{2 \pi^2} \int
+    du_{\mathrm{NR}}~\frac{\sqrt{2}~u_{\mathrm{NR}}^{3/2} \phi^{3/2}}
+    { 1+\exp\left[u_{\mathrm{NR}} - \psi_{\mathrm{NR}} \right]}
+    \f]
+    which is now a function of \f$ \psi_{\mathrm{NR}} \f$ and \f$ \phi
+    \f$ alone. This is the form used to compute the energy density in
+    \ref o2scl::fermion_rel and the definition of \f$
+    \psi_{\mathrm{NR}} \f$ used for nonrelativistic fermions in \ref
+    o2scl::part::part_calibrate() .
 
     \section ferm_integ_sect Fermion integrations
 

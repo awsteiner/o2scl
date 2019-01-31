@@ -213,27 +213,11 @@ namespace o2scl {
       The <tt>verbose</tt> parameter controls the amount of output.
       
       \future Also calibrate massless fermions?
-
-      In this function, \f$ \psi \f$ for interacting fermions 
-      is defined to be,
-      \f[
-      \psi \equiv \left( \frac{\nu-m^{*}}{T} \right)
-      \f]
-      when \f$ \nu \f$ includes the rest mass. Thus to construct the
-      value of \f$ \nu \f$ from \f$ \psi \f$ when part::inc_rest_mass is
-      true, one uses
-      \f[
-      \nu = \psi T + m^{*}
-      \f]
-      If part::inc_rest_mass is false, then
-      \f[
-      \nu = \psi T + m^{*} - m
-      \f]
   */
   template<class part_t, class thermo_t>
     double part_calibrate(part_t &p, thermo_t &th, bool test_pair,
-			  std::string file, int verbose=0,
-			  bool external=false) {
+			  std::string file, bool nr_mode=false,
+			  int verbose=0, bool external=false) {
 			  
     double ret=0;
   

@@ -174,7 +174,7 @@ int main(void) {
   /*
     rb.def_dit.tol_rel*=1.0e2;
     rb.def_dit.tol_abs*=1.0e2;
-    part_calibrate(b,rb,0,"../../data/o2scl/boson_cal.o2",1,1);
+    part_calibrate(b,rb,0,"../../data/o2scl/boson_cal.o2",false,1,1);
   */
   
   t.report();

@@ -704,11 +704,11 @@ int main(int argc, char *argv[]) {
     
     if (argc==1) {
       double val2x=part_calibrate<fermion,fermion_rel>
-	(ef,fr,true,"../../data/o2scl/fermion_cal2.o2",2,true);
+	(ef,fr,true,"../../data/o2scl/fermion_cal2.o2",false,2,true);
       cout << val2x << endl;
     } else {
       double val2z=part_calibrate<fermion_deriv,fermion_deriv_rel>
-	(sfx,snf,true,"../../data/o2scl/fermion_cal2.o2",2,true);
+	(sfx,snf,true,"../../data/o2scl/fermion_cal2.o2",false,2,true);
       cout << val2z << endl;
     }
     exit(-1);
