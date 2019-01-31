@@ -297,51 +297,58 @@ namespace o2scl {
 	  exact.pr=tab.get("pr",i);
 	  exact.en=tab.get("en",i);
       
-	  if (k%2==0) {
-	  
-	    p.inc_rest_mass=true;
-
-	    if (k>=2) {
-	      p.non_interacting=false;
-	      p.ms=mot*T;
-	      p.m=p.ms*1.5;
-	      p.nu=p.ms+T*psi;
-	      p.mu=0.0;
-	    } else {
-	      p.non_interacting=true;
-	      p.ms=0.0;
-	      p.m=mot*T;
-	      p.nu=0.0;
-	      p.mu=p.m+T*psi;
-	    }
-	  
+	  if (k>=2) {
+	    p.non_interacting=false;
+	    p.ms=mot*T;
+	    p.m=p.ms*1.5;
 	  } else {
-	  
-	    p.inc_rest_mass=false;
-	  
+	    p.non_interacting=true;
+	    p.m=mot*T;
+	    p.ms=0.0;
+	  }
+	  if (k%2==0) {
+	    p.inc_rest_mass=true;
 	    if (k>=2) {
-	      p.non_interacting=false;
-	      p.ms=mot*T;
-	      p.m=p.ms*1.5;
-	      p.nu=T*psi-p.m+p.ms;
+	      if (nr_mode) {
+		p.nu=T*psi+p.m;
+	      } else {
+		p.nu=T*psi+p.ms;
+	      }
 	      p.mu=0.0;
 	    } else {
-	      p.non_interacting=true;
-	      p.ms=0.0;
-	      p.m=mot*T;
+	      p.nu=0.0;
+	      p.mu=T*psi+p.m;
+	    }
+	  } else {
+	    p.inc_rest_mass=false;
+	    if (k>=2) {
+	      if (nr_mode) {
+		p.nu=T*psi;
+	      } else {
+		p.nu=T*psi-p.m+p.ms;
+	      }
+	      p.mu=0.0;
+	    } else {
 	      p.nu=0.0;
 	      p.mu=T*psi;
 	    }
-	  
 	  }
 	
 	  th.calc_mu(p,T);
 	
 	  exact.n*=pow(T,3.0);
-	  if (k%2==0) {
-	    exact.ed*=pow(T,4.0);
+	  if (nr_mode) {
+	    if (k%2==0) {
+	      exact.ed*=pow(T,4.0);
+	    } else {
+	      exact.ed=exact.ed*pow(T,4.0)-exact.n*p.m;
+	    }
 	  } else {
-	    exact.ed=exact.ed*pow(T,4.0)-exact.n*p.m;
+	    if (k%2==0) {
+	      exact.ed*=pow(T,4.0)+exact.n*p.m;
+	    } else {
+	      exact.ed=exact.ed*pow(T,4.0);
+	    }
 	  }
 	  exact.pr*=pow(T,4.0);
 	  exact.en*=pow(T,3.0);
@@ -350,8 +357,10 @@ namespace o2scl {
 	  dev.ed+=fabs((p.ed-exact.ed)/exact.ed);
 	  dev.pr+=fabs((p.pr-exact.pr)/exact.pr);
 	  dev.en+=fabs((p.en-exact.en)/exact.en);
-	  if (fabs((p.pr-exact.pr)/exact.pr)>1.0e-2) {
-	    std::cout << "nr,ni,icm: " << nr_mode << " "
+	  if (fabs((p.pr-exact.pr)/exact.pr)>1.0e-2 ||
+	      fabs((p.ed-exact.ed)/exact.ed)>1.0e-2 ||
+	      fabs((p.en-exact.en)/exact.en)>1.0e-2) {
+	    std::cout << "nr,ni,irm: " << nr_mode << " "
 		      << p.non_interacting << " "
 		      << p.inc_rest_mass << std::endl;
 	    std::cout << "psi,mot,T: "
