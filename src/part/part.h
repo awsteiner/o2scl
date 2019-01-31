@@ -339,15 +339,15 @@ namespace o2scl {
 	  exact.n*=pow(T,3.0);
 	  if (nr_mode) {
 	    if (k%2==0) {
-	      exact.ed*=pow(T,4.0);
+	      exact.ed=exact.ed*pow(T,4.0)+exact.n*p.m;
 	    } else {
-	      exact.ed=exact.ed*pow(T,4.0)-exact.n*p.m;
+	      exact.ed=exact.ed*pow(T,4.0);
 	    }
 	  } else {
 	    if (k%2==0) {
-	      exact.ed*=pow(T,4.0)+exact.n*p.m;
+	      exact.ed*=pow(T,4.0);
 	    } else {
-	      exact.ed=exact.ed*pow(T,4.0);
+	      exact.ed=exact.ed*pow(T,4.0)-exact.n*p.m;
 	    }
 	  }
 	  exact.pr*=pow(T,4.0);
@@ -587,10 +587,18 @@ namespace o2scl {
 	  }
 	  
 	  exact.n=p.n;
-	  if (k%2==0) {
-	    exact.ed*=pow(T,4.0);
+	  if (nr_mode) {
+	    if (k%2==0) {
+	      exact.ed=exact.ed*pow(T,4.0)+exact.n*p.m;
+	    } else {
+	      exact.ed=exact.ed*pow(T,4.0);
+	    }
 	  } else {
-	    exact.ed=exact.ed*pow(T,4.0)-exact.n*p.m;
+	    if (k%2==0) {
+	      exact.ed*=pow(T,4.0);
+	    } else {
+	      exact.ed=exact.ed*pow(T,4.0)-exact.n*p.m;
+	    }
 	  }
 	  exact.pr*=pow(T,4.0);
 	  exact.en*=pow(T,3.0);
