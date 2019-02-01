@@ -200,14 +200,191 @@ namespace o2scl {
    */
   extern thermo operator-(const thermo &left, const part &right);
 
-  /** \brief Calibrate a particle thermodynamics class with results
-      stored in a table
+  class part_calibrate_class {
+    
+  public:
 
-      This compares the approximation to the exact results using
-      calc_density(), calc_mu(), pair_density() and pair_mu(). It
-      tries each function twelve times. It tries three different
-      temperatures, setting both <tt>inc_rest_mass</tt> and
-      <tt>non_interacting</tt> equal to <tt>true</tt> and
+    /** \brief Desc
+     */
+    template<class part_t>
+      void set_mass(part_t &p, double mot, double T, size_t k) {
+      if (k>=2) {
+	p.non_interacting=false;
+	p.ms=mot*T;
+	p.m=p.ms*1.5;
+      } else {
+	p.non_interacting=true;
+	p.m=mot*T;
+	p.ms=0.0;
+      }
+      return;
+    }
+    
+    /** \brief Desc
+     */
+    template<class part_t>
+      void set_chem_pot(part_t &p, double psi, double T, size_t k,
+			bool nr_mode) {
+      if (k%2==0) {
+	p.inc_rest_mass=true;
+	if (k>=2) {
+	  if (nr_mode) {
+	    p.nu=T*psi+p.m;
+	  } else {
+	    p.nu=T*psi+p.ms;
+	  }
+	  p.mu=0.0;
+	} else {
+	  p.nu=0.0;
+	  p.mu=T*psi+p.m;
+	}
+      } else {
+	p.inc_rest_mass=false;
+	if (k>=2) {
+	  if (nr_mode) {
+	    p.nu=T*psi;
+	  } else {
+	    p.nu=T*psi-p.m+p.ms;
+	  }
+	  p.mu=0.0;
+	} else {
+	  p.nu=0.0;
+	  p.mu=T*psi;
+	}
+      }
+      return;
+    }
+
+    /** \brief Desc
+     */
+    template<class part1_t, class part2_t, class part3_t>
+      void check_density(part1_t &p, part2_t &exact, part3_t &bad, size_t k,
+			 double T, double mot, double psi,
+			 double &mu_bad, double &m_bad,
+			 double &T_bad, double &mot_bad, double &psi_bad,
+			 double &ret_local) {
+      if (fabs((p.n-exact.n)/exact.n)>bad.n) {
+	bad.n=fabs((p.n-exact.n)/exact.n);
+	if (bad.n>ret_local) {
+	  if (k>=2) {
+	    mu_bad=p.nu;
+	    m_bad=p.ms;
+	  } else {
+	    mu_bad=p.mu;
+	    m_bad=p.m;
+	  }
+	  T_bad=T;
+	  mot_bad=mot;
+	  psi_bad=psi;
+	  ret_local=bad.n;
+	}
+      }
+      return;
+    }      
+    
+    /** \brief Desc
+     */
+    template<class part1_t, class part2_t, class part3_t>
+      void check_chem_pot(part1_t &p, part2_t &exact, part3_t &bad, size_t k,
+			  double T, double mot, double psi,
+			  double &mu_bad, double &m_bad,
+			  double &T_bad, double &mot_bad, double &psi_bad,
+			  double &ret_local) {
+      if (k>=2) {
+	if (fabs((p.nu-exact.nu)/exact.nu)>bad.mu) {
+	  bad.mu=fabs((p.nu-exact.nu)/exact.nu);
+	  if (bad.mu>ret_local) {
+	    mu_bad=p.nu;
+	    m_bad=p.ms;
+	    T_bad=T;
+	    mot_bad=mot;
+	    psi_bad=psi;
+	    ret_local=bad.n;
+	  }
+	}
+      } else {
+	if (fabs((p.mu-exact.mu)/exact.mu)>bad.mu) {
+	  bad.mu=fabs((p.mu-exact.mu)/exact.mu);
+	  if (bad.mu>ret_local) {
+	    mu_bad=p.mu;
+	    m_bad=p.m;
+	    T_bad=T;
+	    mot_bad=mot;
+	    psi_bad=psi;
+	    ret_local=bad.n;
+	  }
+	}
+      }
+      return;
+    }
+      
+    /** \brief Desc
+     */
+    template<class part1_t, class part2_t, class part3_t>
+      void check_eps(part1_t &p, part2_t &exact, part3_t &bad, size_t k,
+		     double T, double mot, double psi,
+		     double &mu_bad, double &m_bad,
+		     double &T_bad, double &mot_bad, double &psi_bad,
+		     double &ret_local) {
+      if (fabs((p.ed-exact.ed)/exact.ed)>bad.ed) {
+	bad.ed=fabs((p.ed-exact.ed)/exact.ed);
+	if (bad.ed>ret_local) {
+	  if (k>=2) {
+	    mu_bad=p.nu;
+	    m_bad=p.ms;
+	  } else {
+	    mu_bad=p.mu;
+	    m_bad=p.m;
+	  }
+	  T_bad=T;
+	  mot_bad=mot;
+	  psi_bad=psi;
+	  ret_local=bad.ed;
+	}
+      }
+      if (fabs((p.pr-exact.pr)/exact.pr)>bad.pr) {
+	bad.pr=fabs((p.pr-exact.pr)/exact.pr);
+	if (bad.pr>ret_local) {
+	  if (k>=2) {
+	    mu_bad=p.nu;
+	    m_bad=p.ms;
+	  } else {
+	    mu_bad=p.mu;
+	    m_bad=p.m;
+	  }
+	  T_bad=T;
+	  mot_bad=mot;
+	  psi_bad=psi;
+	  ret_local=bad.pr;
+	}
+      }
+      if (fabs((p.en-exact.en)/exact.en)>bad.en) {
+	bad.en=fabs((p.en-exact.en)/exact.en);
+	if (bad.en>ret_local) {
+	  if (k>=2) {
+	    mu_bad=p.nu;
+	    m_bad=p.ms;
+	  } else {
+	    mu_bad=p.mu;
+	    m_bad=p.m;
+	  }
+	  T_bad=T;
+	  mot_bad=mot;
+	  psi_bad=psi;
+	  ret_local=bad.en;
+	}
+      }
+      return;
+    }      
+    
+    /** \brief Calibrate a particle thermodynamics class with results
+	stored in a table
+	
+	This compares the approximation to the exact results using
+	calc_density(), calc_mu(), pair_density() and pair_mu(). It
+	tries each function twelve times. It tries three different
+	temperatures, setting both <tt>inc_rest_mass</tt> and
+	<tt>non_interacting</tt> equal to <tt>true</tt> and
       <tt>false</tt>.
       
       The <tt>verbose</tt> parameter controls the amount of output.
@@ -296,43 +473,9 @@ namespace o2scl {
 	  exact.ed=tab.get("ed",i);
 	  exact.pr=tab.get("pr",i);
 	  exact.en=tab.get("en",i);
-      
-	  if (k>=2) {
-	    p.non_interacting=false;
-	    p.ms=mot*T;
-	    p.m=p.ms*1.5;
-	  } else {
-	    p.non_interacting=true;
-	    p.m=mot*T;
-	    p.ms=0.0;
-	  }
-	  if (k%2==0) {
-	    p.inc_rest_mass=true;
-	    if (k>=2) {
-	      if (nr_mode) {
-		p.nu=T*psi+p.m;
-	      } else {
-		p.nu=T*psi+p.ms;
-	      }
-	      p.mu=0.0;
-	    } else {
-	      p.nu=0.0;
-	      p.mu=T*psi+p.m;
-	    }
-	  } else {
-	    p.inc_rest_mass=false;
-	    if (k>=2) {
-	      if (nr_mode) {
-		p.nu=T*psi;
-	      } else {
-		p.nu=T*psi-p.m+p.ms;
-	      }
-	      p.mu=0.0;
-	    } else {
-	      p.nu=0.0;
-	      p.mu=T*psi;
-	    }
-	  }
+
+	  set_mass(p,mot,T,k);
+	  set_chem_pot(p,psi,T,k,nr_mode);
 	
 	  th.calc_mu(p,T);
 	
@@ -357,90 +500,14 @@ namespace o2scl {
 	  dev.ed+=fabs((p.ed-exact.ed)/exact.ed);
 	  dev.pr+=fabs((p.pr-exact.pr)/exact.pr);
 	  dev.en+=fabs((p.en-exact.en)/exact.en);
-	  if (fabs((p.pr-exact.pr)/exact.pr)>1.0e-2 ||
-	      fabs((p.ed-exact.ed)/exact.ed)>1.0e-2 ||
-	      fabs((p.en-exact.en)/exact.en)>1.0e-2) {
-	    std::cout << "nr,ni,irm: " << nr_mode << " "
-		      << p.non_interacting << " "
-		      << p.inc_rest_mass << std::endl;
-	    std::cout << "psi,mot,T: "
-		      << psi << " " << mot << " " << T << std::endl;
-	    std::cout << "m,ms,mu,nu: " << p.m << " " << p.ms << " "
-		      << p.mu << " " << p.nu << std::endl;
-	    std::cout << "approx n,ed,pr,en: " << p.n << " " << p.ed << " "
-		      << p.pr << " " << p.en << std::endl;
-	    std::cout << "exact  n,ed,pr,en: "
-		      << exact.n << " " << exact.ed << " "
-		      << exact.pr << " " << exact.en
-		      << std::endl;
-	    exit(-1);
-	  }
 	
 	  cnt++;
-	  if (fabs((p.n-exact.n)/exact.n)>bad.n) {
-	    bad.n=fabs((p.n-exact.n)/exact.n);
-	    if (bad.n>ret_local) {
-	      if (k>=2) {
-		mu_bad=p.nu;
-		m_bad=p.ms;
-	      } else {
-		mu_bad=p.mu;
-		m_bad=p.m;
-	      }
-	      T_bad=T;
-	      mot_bad=mot;
-	      psi_bad=psi;
-	      ret_local=bad.n;
-	    }
-	  }
-	  if (fabs((p.ed-exact.ed)/exact.ed)>bad.ed) {
-	    bad.ed=fabs((p.ed-exact.ed)/exact.ed);
-	    if (bad.ed>ret_local) {
-	      if (k>=2) {
-		mu_bad=p.nu;
-		m_bad=p.ms;
-	      } else {
-		mu_bad=p.mu;
-		m_bad=p.m;
-	      }
-	      T_bad=T;
-	      mot_bad=mot;
-	      psi_bad=psi;
-	      ret_local=bad.ed;
-	    }
-	  }
-	  if (fabs((p.pr-exact.pr)/exact.pr)>bad.pr) {
-	    bad.pr=fabs((p.pr-exact.pr)/exact.pr);
-	    if (bad.pr>ret_local) {
-	      if (k>=2) {
-		mu_bad=p.nu;
-		m_bad=p.ms;
-	      } else {
-		mu_bad=p.mu;
-		m_bad=p.m;
-	      }
-	      T_bad=T;
-	      mot_bad=mot;
-	      psi_bad=psi;
-	      ret_local=bad.pr;
-	    }
-	  }
-	  if (fabs((p.en-exact.en)/exact.en)>bad.en) {
-	    bad.en=fabs((p.en-exact.en)/exact.en);
-	    if (bad.en>ret_local) {
-	      if (k>=2) {
-		mu_bad=p.nu;
-		m_bad=p.ms;
-	      } else {
-		mu_bad=p.mu;
-		m_bad=p.m;
-	      }
-	      T_bad=T;
-	      mot_bad=mot;
-	      psi_bad=psi;
-	      ret_local=bad.en;
-	    }
-	  }
+	  
+	  check_density<part_t>(p,exact,bad,k,T,mot,psi,mu_bad,m_bad,T_bad,
+			mot_bad,psi_bad,ret_local);
+	  
+	  check_eps<part_t>(p,exact,bad,k,T,mot,psi,mu_bad,m_bad,T_bad,
+			mot_bad,psi_bad,ret_local);
 
 	  if (verbose>1) {
 	    std::cout.precision(5);
@@ -1231,6 +1298,8 @@ namespace o2scl {
   
     return ret;
   }
+
+  };
   
 #ifndef DOXYGEN_NO_O2NS
 }

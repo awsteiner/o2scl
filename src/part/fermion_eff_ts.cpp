@@ -37,8 +37,9 @@ int main(void) {
 
   fermion_eff fe;
   fermion f;
+  part_calibrate_class pcc;
   
-  double q=part_calibrate<fermion,fermion_eff>
+  double q=pcc.part_calibrate<fermion,fermion_eff>
     (f,fe,true,"../../data/o2scl/fermion_cal2.o2",false,1,true);
   
   t.test_rel(q,0.0,0.5,"calibrate");

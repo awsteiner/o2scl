@@ -738,10 +738,6 @@ namespace o2scl {
 
   };
 
-  /** \brief For non-derivative parts of expansions
-   */
-  //fermion_rel fr;
-  
   /** \brief Calibrate a particle thermodynamics class with
       derivatives with results stored in a table
 
@@ -876,13 +872,9 @@ namespace o2scl {
 	  th.calc_mu(p,T);
 	
 	  exact.n*=pow(T,3.0);
-	  if (k%2==0) {
-	    exact.dndmu*=pow(T,4.0);
-	  } else {
-	    exact.dndmu=exact.dndmu*pow(T,4.0)-exact.n*p.m;
-	  }
-	  exact.dndT*=pow(T,4.0);
-	  exact.dsdT*=pow(T,3.0);
+	  exact.dndmu*=pow(T,2.0);
+	  exact.dndT*=pow(T,2.0);
+	  exact.dsdT*=pow(T,2.0);
 	
 	  dev.n+=fabs((p.n-exact.n)/exact.n);
 	  dev.dndmu+=fabs((p.dndmu-exact.dndmu)/exact.dndmu);

@@ -507,7 +507,11 @@ int fermion_deriv_rel::pair_mu(fermion_deriv &f, double temper) {
 
   f.n-=antip.n;
   f.pr+=antip.pr;
-  f.ed+=antip.ed;
+  if (f.inc_rest_mass) {
+    f.ed+=antip.ed;
+  } else {
+    f.ed=f.ed+antip.ed+2.0*antip.n*f.m;
+  }
   f.en+=antip.en;
   f.dsdT+=antip.dsdT;
   f.dndT+=antip.dndT;
