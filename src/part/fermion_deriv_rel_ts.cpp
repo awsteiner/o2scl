@@ -48,6 +48,7 @@ int main(int argc, char *argv[]) {
   fermion_deriv_rel snf;
   fermion_eff eff;
   part_calibrate_class pcc;
+  part_deriv_calibrate_class pdcc;
   
   // -----------------------------------------------------------------
   // Test the specific heat of degenerate fermions (As a reminder,
@@ -161,7 +162,7 @@ int main(int argc, char *argv[]) {
   cout << "------------------------------------------------------" << endl;
 
   // New function for derivative calibration
-  double val2y=part_deriv_calibrate<fermion_deriv,fermion_deriv_rel>
+  double val2y=pdcc.part_deriv_calibrate<fermion_deriv,fermion_deriv_rel>
     (sfx,snf,true,"../../data/o2scl/fermion_cal2.o2",1,true);
   cout << val2y << endl;
 

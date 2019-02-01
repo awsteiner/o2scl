@@ -738,6 +738,10 @@ namespace o2scl {
 
   };
 
+  class part_deriv_calibrate_class : public part_calibrate_class {
+    
+  public:
+  
   /** \brief Calibrate a particle thermodynamics class with
       derivatives with results stored in a table
 
@@ -1535,6 +1539,8 @@ namespace o2scl {
   
     return ret;
   }
+
+  };
   
 #ifndef DOXYGEN_NO_O2NS
 }
