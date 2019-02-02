@@ -321,8 +321,9 @@ int main(void) {
   sf.nu=0.1;
 
   // Third argument is false because we don't want to test pairs
-  double v1=part_deriv_calibrate<fermion_deriv,fermion_deriv_nr>
-    (sf,snf,false,"../../data/o2scl/fermion_nr_cal.o2",1,true);
+  part_deriv_calibrate_class pdcc;
+  double v1=pdcc.part_deriv_calibrate<fermion_deriv,fermion_deriv_nr>
+    (sf,snf,false,"../../data/o2scl/fermion_nr_cal.o2",true,1,true);
   cout << v1 << endl;
   
   t.report();

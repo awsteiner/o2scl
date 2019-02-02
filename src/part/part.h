@@ -200,6 +200,9 @@ namespace o2scl {
    */
   extern thermo operator-(const thermo &left, const part &right);
 
+  /** \brief Object to organize calibration of particle classes
+      to results stored in a table
+   */
   class part_calibrate_class {
     
   public:

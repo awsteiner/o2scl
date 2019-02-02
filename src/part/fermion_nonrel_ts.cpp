@@ -38,8 +38,10 @@ int main(void) {
   fermion_nonrel fnr;
   fermion f(1.0,2.0);
 
+  part_calibrate_class pcc;
+
   // Third argument is false because we don't want to test pairs
-  double v1=part_calibrate<fermion,fermion_nonrel>
+  double v1=pcc.part_calibrate<fermion,fermion_nonrel>
     (f,fnr,false,"../../data/o2scl/fermion_nr_cal.o2",true,1,true);
   t.test_abs(v1,0.0,1.0e-12,"calibrate");
   

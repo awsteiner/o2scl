@@ -738,6 +738,9 @@ namespace o2scl {
 
   };
 
+  /** \brief Object to organize calibration of derivative quantities
+      in particle classes to results stored in a table
+   */
   class part_deriv_calibrate_class : public part_calibrate_class {
     
   public:
