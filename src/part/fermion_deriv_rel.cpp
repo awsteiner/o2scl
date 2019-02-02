@@ -515,11 +515,6 @@ int fermion_deriv_rel::pair_mu(fermion_deriv &f, double temper) {
   f.en+=antip.en;
   f.dsdT+=antip.dsdT;
   f.dndT-=antip.dndT;
-  // AWS 2/1/19: I'm pretty sure this should be +=
-  // but it's not properly tested yet. The best way
-  // to fix this is to finish parthmath2.nb and then include
-  // pairs in fermion_deriv_rel_ts.cpp
-  O2SCL_ERR("pair_mu not finished",o2scl::exc_eunimpl);
   f.dndmu+=antip.dndmu;
   
   return 0;
