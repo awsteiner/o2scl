@@ -204,10 +204,10 @@ namespace o2scl {
     
   public:
 
-    /** \brief Desc
+    /** \brief Set mass and flags from mot, T, and the index k
      */
     template<class part_t>
-      void set_mass(part_t &p, double mot, double T, size_t k) {
+      void set_mass_flags(part_t &p, double mot, double T, size_t k) {
       if (k>=2) {
 	p.non_interacting=false;
 	p.ms=mot*T;
@@ -225,7 +225,8 @@ namespace o2scl {
       return;
     }
     
-    /** \brief Desc
+    /** \brief Set chemical potential from psi, T, the index k,
+	and the flag nr_mode
      */
     template<class part_t>
       void set_chem_pot(part_t &p, double psi, double T, size_t k,
@@ -258,7 +259,8 @@ namespace o2scl {
       return;
     }
 
-    /** \brief Desc
+    /** \brief Check the density against the exact result 
+	and update 
      */
     template<class part1_t, class part2_t, class part3_t>
       void check_density(part1_t &p, part2_t &exact, part3_t &bad, size_t k,
@@ -285,7 +287,8 @@ namespace o2scl {
       return;
     }      
     
-    /** \brief Desc
+    /** \brief Check the chemical potential against the exact result 
+	and update 
      */
     template<class part1_t, class part2_t, class part3_t>
       void check_chem_pot(part1_t &p, part2_t &exact, part3_t &bad, size_t k,
@@ -321,7 +324,8 @@ namespace o2scl {
       return;
     }
       
-    /** \brief Desc
+    /** \brief Check the energy density, pressure, and entropy against
+	the exact result and update
      */
     template<class part1_t, class part2_t, class part3_t>
       void check_eps(part1_t &p, part2_t &exact, part3_t &bad, size_t k,
@@ -375,6 +379,66 @@ namespace o2scl {
 	  mot_bad=mot;
 	  psi_bad=psi;
 	  ret_local=bad.en;
+	}
+      }
+      return;
+    }      
+    
+    /** \brief Check the energy density, pressure, and entropy against
+	the exact result and update
+     */
+    template<class part1_t, class part2_t, class part3_t>
+      void check_derivs(part1_t &p, part2_t &exact, part3_t &bad, size_t k,
+			double T, double mot, double psi,
+			double &mu_bad, double &m_bad,
+			double &T_bad, double &mot_bad, double &psi_bad,
+			double &ret_local) {
+      if (fabs((p.dndT-exact.dndT)/exact.dndT)>bad.dndT) {
+	bad.dndT=fabs((p.dndT-exact.dndT)/exact.dndT);
+	if (bad.dndT>ret_local) {
+	  if (k>=2) {
+	    mu_bad=p.nu;
+	    m_bad=p.ms;
+	  } else {
+	    mu_bad=p.mu;
+	    m_bad=p.m;
+	  }
+	  T_bad=T;
+	  mot_bad=mot;
+	  psi_bad=psi;
+	  ret_local=bad.dndT;
+	}
+      }
+      if (fabs((p.dndmu-exact.dndmu)/exact.dndmu)>bad.dndmu) {
+	bad.dndmu=fabs((p.dndmu-exact.dndmu)/exact.dndmu);
+	if (bad.dndmu>ret_local) {
+	  if (k>=2) {
+	    mu_bad=p.nu;
+	    m_bad=p.ms;
+	  } else {
+	    mu_bad=p.mu;
+	    m_bad=p.m;
+	  }
+	  T_bad=T;
+	  mot_bad=mot;
+	  psi_bad=psi;
+	  ret_local=bad.dndmu;
+	}
+      }
+      if (fabs((p.dsdT-exact.dsdT)/exact.dsdT)>bad.dsdT) {
+	bad.dsdT=fabs((p.dsdT-exact.dsdT)/exact.dsdT);
+	if (bad.dsdT>ret_local) {
+	  if (k>=2) {
+	    mu_bad=p.nu;
+	    m_bad=p.ms;
+	  } else {
+	    mu_bad=p.mu;
+	    m_bad=p.m;
+	  }
+	  T_bad=T;
+	  mot_bad=mot;
+	  psi_bad=psi;
+	  ret_local=bad.dsdT;
 	}
       }
       return;
@@ -477,7 +541,7 @@ namespace o2scl {
 	    exact.pr=tab.get("pr",i);
 	    exact.en=tab.get("en",i);
 
-	    set_mass(p,mot,T,k);
+	    set_mass_flags(p,mot,T,k);
 	    set_chem_pot(p,psi,T,k,nr_mode);
 	
 	    th.calc_mu(p,T);
@@ -619,9 +683,9 @@ namespace o2scl {
 	    exact.pr=tab.get("pr",i);
 	    exact.en=tab.get("en",i);
 
-	    set_mass(p,mot,T,k);
+	    set_mass_flags(p,mot,T,k);
 	    set_chem_pot(exact,psi,T,k,nr_mode);
-	  
+	    
 	    exact.n=p.n;
 	    if (nr_mode) {
 	      if (k%2==0) {
@@ -779,7 +843,7 @@ namespace o2scl {
 	      exact.pr=tab.get("pair_pr",i);
 	      exact.en=tab.get("pair_en",i);
 	    
-	      set_mass(p,mot,T,k);
+	      set_mass_flags(p,mot,T,k);
 	      set_chem_pot(p,psi,T,k,nr_mode);
 	
 	      th.pair_mu(p,T);
@@ -905,7 +969,7 @@ namespace o2scl {
 	      exact.pr=tab.get("pair_pr",i);
 	      exact.en=tab.get("pair_en",i);
 	  
-	      set_mass(p,mot,T,k);
+	      set_mass_flags(p,mot,T,k);
 	      set_chem_pot(exact,psi,T,k,nr_mode);
 
 	      exact.n=p.n;
