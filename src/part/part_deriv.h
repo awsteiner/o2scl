@@ -838,7 +838,7 @@ namespace o2scl {
 	    exact.n=tab.get("n",i);
 	    exact.dndmu=tab.get("dndmu",i);
 	    exact.dndT=tab.get("dndT",i);
-	    exact.dsdT=tab.get("dsdt",i);
+	    exact.dsdT=tab.get("dsdT",i);
       
 	    set_mass_flags(p,mot,T,k);
 	    set_chem_pot(p,psi,T,k,nr_mode);
@@ -959,7 +959,7 @@ namespace o2scl {
 	    p.n=tab.get("n",i);	
 	    exact.dndmu=tab.get("dndmu",i);
 	    exact.dndT=tab.get("dndT",i);
-	    exact.dsdT=tab.get("dsdt",i);
+	    exact.dsdT=tab.get("dsdT",i);
 
 	    set_mass_flags(p,mot,T,k);
 	    set_chem_pot(exact,psi,T,k,nr_mode);
