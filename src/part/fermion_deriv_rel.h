@@ -96,13 +96,6 @@ namespace o2scl {
 
       Uncertainties are given in \ref unc.
 
-      \future This class may need more corrections to ensure
-      quantities like \f$ \sqrt{k^2+m^{*2}}-m \f$ are computed
-      accurately when \f$ m^{*}\approx m \ll k \f$ .
-      
-      \todo Call error handler if inc_rest_mass is true or update
-      to properly treat the case when inc_rest_mass is true.
-      
       \b Evaluation \b of \b the \b derivatives
 
       The relevant
@@ -246,20 +239,13 @@ namespace o2scl {
       degenerate systems, an expansion may be better than trying
       to perform the integration. The value of the integrand
       at k=0 also looks like it might be causing difficulties.
-
+      
       \future The option err_nonconv=false is not really implemented
       yet.
 
-      \future It might be worth coding up direct differentiation, or
-      differentiating the eff results, as these may succeed more
-      generally.
-
-      \future This class will have difficulty with extremely degenerate
-      or extremely non-degnerate systems. Fix this by using the
-      expansions similar to the method used in \ref o2scl::fermion_rel .
-
-      \future Create a more intelligent method for dealing with bad 
-      initial guesses for the chemical potential in calc_density().
+      \future The \ref pair_density() function is a bit slow because
+      it computes the non-derivative thermodynamic quantities 
+      twice, and this could be improved.
   */
   class fermion_deriv_rel : public fermion_deriv_thermo {
     
@@ -306,6 +292,10 @@ namespace o2scl {
     static const int by_parts=2;
     //@}
 
+    /** \brief Last method used
+     */
+    int last_method;
+    
     /** \brief If true, call the error handler when convergence 
 	fails (default true)
     */

@@ -50,6 +50,8 @@ fermion_deriv_rel::fermion_deriv_rel() {
   exp_limit=200.0;
 
   err_nonconv=true;
+
+  last_method=0;
 }
 
 fermion_deriv_rel::~fermion_deriv_rel() {
@@ -94,6 +96,7 @@ int fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
       unc.dndT=f.dndT*1.0e-14;
       unc.dsdT=f.dsdT*1.0e-14;
       unc.dndmu=f.dndmu*1.0e-14;
+      last_method=1;
       return 0;
     }
   }
@@ -109,6 +112,7 @@ int fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
       unc.dndT=f.dndT*1.0e-14;
       unc.dsdT=f.dsdT*1.0e-14;
       unc.dndmu=f.dndmu*1.0e-14;
+      last_method=2;
       return 0;
     }
   }
@@ -118,8 +122,10 @@ int fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
     // Set integration method
     if (method==automatic) {
       intl_method=by_parts;
+      last_method=3;
     } else {
       intl_method=method;
+      last_method=4;
     }
 
     // The non-degenerate case
@@ -209,9 +215,15 @@ int fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
 	intl_method=direct;
       } else {
 	intl_method=by_parts;
+	last_method=6;
       }
     } else {
       intl_method=method;
+    }
+    if (intl_method==direct) {
+      last_method=5;
+    } else {
+      last_method=6;
     }
     
     funct deg_density_mu_fun_f=
@@ -503,7 +515,9 @@ int fermion_deriv_rel::pair_mu(fermion_deriv &f, double temper) {
   f.anti(antip);
   
   calc_mu(f,temper);
+  int lm=last_method*10;
   calc_mu(antip,temper);
+  last_method+=lm;
 
   f.n-=antip.n;
   f.pr+=antip.pr;
