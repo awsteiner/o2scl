@@ -48,6 +48,7 @@ fermion_rel::fermion_rel() : nit(new inte_qagiu_gsl<>),
   use_expansions=true;
   density_root->tol_rel=4.0e-7;
   verbose=0;
+  last_method=0;
 }
 
 fermion_rel::~fermion_rel() {

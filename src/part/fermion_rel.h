@@ -305,6 +305,9 @@ namespace o2scl {
     /// Return string denoting type ("fermion_rel")
     virtual const char *type() { return "fermion_rel"; }
 
+    /// Desc
+    int last_method;
+    
     /// \name Template versions of base functions
     //@{
     /** \brief Desc
@@ -312,6 +315,8 @@ namespace o2scl {
     template<class fermion_t>
       int nu_from_n_tlate(fermion_t &f, double temper) {
 
+      last_method=0;
+      
       double nex;
 
       // Try to ensure a good initial guess
@@ -413,6 +418,8 @@ namespace o2scl {
 	    rbg.err_nonconv=false;
 	    ret=rbg.solve_bkt(blow,bhigh,mf);
 	    if (ret==0) {
+	      // Bracketing solver worked
+	      last_method=3;
 	      nex=blow;
 	    } else {
 	      if (verbose>1) {
@@ -423,6 +430,9 @@ namespace o2scl {
 	  } else if (verbose>1) {
 	    std::cout << "nu_from_n(): Failed to bracket." << std::endl;
 	  }
+	} else {
+	  // Increasing tolerances worked
+	  last_method=2;
 	}
 
 	// Return tolerances to their original values
@@ -430,6 +440,10 @@ namespace o2scl {
 	dit->tol_abs=tol2;
 	nit->tol_rel=tol3;
 	nit->tol_abs=tol4;
+
+      } else {
+	// First solver worked
+	last_method=1;
       }
 
       density_root->err_nonconv=drec;
@@ -446,10 +460,13 @@ namespace o2scl {
       
     }
 
-    /** \brief Desc
+    /** \brief Calculate properties as function of chemical potential
+	(template version)
      */
     template<class fermion_t>
       void calc_mu_tlate(fermion_t &f, double temper) {
+
+      last_method=0;
       
       // -----------------------------------------------------------------
       // Handle T<=0
@@ -484,6 +501,7 @@ namespace o2scl {
 	  unc.ed=f.ed*1.0e-14;
 	  unc.pr=f.pr*1.0e-14;
 	  unc.en=f.en*1.0e-14;
+	  last_method=1;
 	  return;
 	}
       }
@@ -496,6 +514,7 @@ namespace o2scl {
 	  unc.ed=f.ed*1.0e-14;
 	  unc.pr=f.pr*1.0e-14;
 	  unc.en=f.en*1.0e-14;
+	  last_method=2;
 	  return;
 	}
       }
@@ -534,6 +553,8 @@ namespace o2scl {
 	f.en=nit->integ(mfs,0.0,0.0);
 	f.en*=prefac;
 	unc.en=nit->get_error()*prefac;
+
+	last_method=3;
 
       } else {
     
@@ -613,8 +634,10 @@ namespace o2scl {
 
 	if (ll>0.0) {
 	  f.en=dit->integ(mfs,ll,ul);
+	  last_method=4;
 	} else {
 	  f.en=dit->integ(mfs,0.0,ul);
+	  last_method=5;
 	}
 	f.en*=prefac;
 	unc.en=dit->get_error()*prefac;
@@ -630,7 +653,11 @@ namespace o2scl {
       return;
     }
 
-    /** \brief Desc
+    /** \brief Calculate properties as function of density
+	(template version)
+
+	\future There is still quite a bit of code duplication
+	between this function and \ref calc_mu_tlate() .
      */
     template<class fermion_t>
       int calc_density_tlate(fermion_t &f, double temper) {
@@ -644,8 +671,9 @@ namespace o2scl {
       // Handle T<=0
 
       if (temper<0.0) {
-	O2SCL_ERR("Temperature less than zero in fermion_rel::calc_density().",
-		  exc_einval);
+	O2SCL_ERR2("Temperature less than zero in ",
+		   "fermion_rel::calc_density().",
+		   exc_einval);
       }
       if (temper==0.0) {
 	calc_density_zerot(f);
@@ -669,6 +697,7 @@ namespace o2scl {
       if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
   
       int ret=nu_from_n(f,temper);
+      last_method*=10;
       if (ret!=0) {
 	O2SCL_CONV2_RET("Function calc_density() failed in fermion_rel::",
 			"calc_density().",exc_efailed,this->err_nonconv);
@@ -697,6 +726,7 @@ namespace o2scl {
 	  unc.pr=f.pr*1.0e-14;
 	  unc.en=f.en*1.0e-14;
 	  f.n=density_temp;
+	  last_method+=1;
 	  return 0;
 	}
       }
@@ -710,6 +740,7 @@ namespace o2scl {
 	  unc.pr=f.pr*1.0e-14;
 	  unc.en=f.en*1.0e-14;
 	  f.n=density_temp;
+	  last_method+=2;
 	  return 0;
 	}
       }
@@ -731,6 +762,7 @@ namespace o2scl {
 	f.en=nit->integ(mfs,0.0,0.0);
 	f.en*=f.g*pow(temper,3.0)/2.0/o2scl_const::pi2;
 	unc.en=nit->get_error()*f.g*pow(temper,3.0)/2.0/o2scl_const::pi2;
+	last_method+=3;
 
       } else {
 
@@ -775,8 +807,10 @@ namespace o2scl {
       
 	  if (ll>0.0) {
 	    f.en=dit->integ(mfs,ll,ul);
+	    last_method+=4;
 	  } else {
 	    f.en=dit->integ(mfs,0.0,ul);
+	    last_method+=5;
 	  }
 	  f.en*=f.g/2.0/o2scl_const::pi2;
 	  unc.en=dit->get_error()*f.g/2.0/o2scl_const::pi2;
@@ -802,11 +836,14 @@ namespace o2scl {
       return 0;
     }
 
-    /** \brief Desc
+    /** \brief Calculate properties with antiparticles as function of
+	chemical potential (template version)
      */
     template<class fermion_t>
       void pair_mu_tlate(fermion_t &f, double temper) {
 
+      last_method=0;
+      
       if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
       
       if (use_expansions) {
@@ -815,6 +852,7 @@ namespace o2scl {
 	  unc.ed=1.0e-14*f.ed;
 	  unc.en=1.0e-14*f.en;
 	  unc.pr=1.0e-14*f.pr;
+	  last_method=6;
 	  return;
 	}
       }
@@ -847,6 +885,7 @@ namespace o2scl {
       unc.ed=gsl_hypot(unc.ed,unc_ed);
       unc.pr=gsl_hypot(unc.pr,unc_pr);
       unc.en=gsl_hypot(unc.ed,unc_en);
+      last_method=7;
 
       return;
     }
@@ -856,6 +895,8 @@ namespace o2scl {
     template<class fermion_t>
       int pair_density_tlate(fermion_t &f, double temper) {
 
+      last_method=0;
+      
       // -----------------------------------------------------------------
       // Handle T<=0
 
@@ -913,6 +954,7 @@ namespace o2scl {
 	nit->tol_rel/=1.0e2;
 	nit->tol_abs/=1.0e2;
 	ret=density_root->solve(nex,mf);
+	if (ret==0) last_method=7;
     
 	// AWS: 7/25/18: We work in log units below, so we ensure the
 	// chemical potential is not negative
@@ -931,8 +973,9 @@ namespace o2scl {
 	  nex=log(nex);
 	  ret=density_root->solve(nex,lmf);
 	  nex=exp(nex);
+	  if (ret==0) last_method=8;
 	}
-    
+	
 	if (ret!=0) {
 	  // If that failed, try a different solver
 	  root_brent_gsl<> rbg;
@@ -940,6 +983,7 @@ namespace o2scl {
 	  nex=log(nex);
 	  ret=rbg.solve(nex,lmf);
 	  nex=exp(nex);
+	  if (ret==0) last_method=9;
 	}
 
 	// Return tolerances to their original values
@@ -947,6 +991,8 @@ namespace o2scl {
 	dit->tol_abs=tol2;
 	nit->tol_rel=tol3;
 	nit->tol_abs=tol4;
+      } else {
+	last_method=7;
       }
 
       // Restore value of err_nonconv
@@ -967,7 +1013,9 @@ namespace o2scl {
 
       // Finally, now that we have the chemical potential, use pair_mu()
       // to evaluate the energy density, pressure, and entropy
+      int lm=last_method*10;
       pair_mu(f,temper);
+      last_method+=lm;
 
       // The function pair_mu() can modify the density, which would be
       // confusing to the user, so we return it to the user-specified
