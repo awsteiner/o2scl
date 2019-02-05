@@ -35,7 +35,7 @@ help:
 # necessary to generate the documentation.
 # -------------------------------------------------------------------- 
 
-EXTRA_DIST = 
+EXTRA_DIST = *.eps *.png
 
 ../../src/other/graph.o:
 	cd ../../src/other; $(CXX) $(CPPFLAGS) -o graph.o -c graph.cpp
