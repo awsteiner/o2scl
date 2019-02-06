@@ -36,31 +36,31 @@ emacs-clean:
 	rm -f */*/*/*/*~
 
 utk-sync-doc:
-	sudo rsync -Cavzu /usr/local/share/doc/o2scl/* \
+	rsync -Cavzu /usr/local/share/doc/o2scl/* \
 		$(STATIC_DOC_DIR)/o2scl
-	sudo rsync -Cavzu extras/index.html \
+	rsync -Cavzu extras/index.html \
 		$(STATIC_DOC_DIR)/o2scl
-	sudo rsync -Cavzu extras/bootstrap.css \
+	rsync -Cavzu extras/bootstrap.css \
 		$(STATIC_DOC_DIR)/o2scl
-	sudo rsync -Cavzu extras/bootstrap.js \
+	rsync -Cavzu extras/bootstrap.js \
 		$(STATIC_DOC_DIR)/o2scl
-	sudo rsync -Cavzu extras/bootstrap-responsive.css \
+	rsync -Cavzu extras/bootstrap-responsive.css \
 		$(STATIC_DOC_DIR)/o2scl
-	sudo rsync -Cavzu extras/jquery-2.0.3.min.js \
+	rsync -Cavzu extras/jquery-2.0.3.min.js \
 		$(STATIC_DOC_DIR)/o2scl
 
 prerelease-sync-doc:
-	sudo rsync -Cavzu -r /usr/local/share/doc/o2scl/* \
+	rsync -Cavzu -r /usr/local/share/doc/o2scl/* \
 		$(STATIC_DOC_DIR)/o2scl-dev
-	sudo rsync -Cavzu extras/index.html \
+	rsync -Cavzu extras/index.html \
 		$(STATIC_DOC_DIR)/o2scl-dev
-	sudo rsync -Cavzu extras/bootstrap.css \
+	rsync -Cavzu extras/bootstrap.css \
 		$(STATIC_DOC_DIR)/o2scl-dev
-	sudo rsync -Cavzu extras/bootstrap.js \
+	rsync -Cavzu extras/bootstrap.js \
 		$(STATIC_DOC_DIR)/o2scl-dev
-	sudo rsync -Cavzu extras/bootstrap-responsive.css \
+	rsync -Cavzu extras/bootstrap-responsive.css \
 		$(STATIC_DOC_DIR)/o2scl-dev
-	sudo rsync -Cavzu extras/jquery-2.0.3.min.js \
+	rsync -Cavzu extras/jquery-2.0.3.min.js \
 		$(STATIC_DOC_DIR)/o2scl-dev
 
 o2scl-doc-recursive: refs o2scl-doc

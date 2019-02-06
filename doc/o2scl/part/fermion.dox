@@ -34,7 +34,8 @@
     du~\frac{u^2 \sqrt{u^2+\phi^2}}
     { 1+\exp\left[\sqrt{u^2+\phi^2} - \psi_{\mathrm{R}} - \phi \right]}
     \f]
-    This expression is used for \ref o2scl::part::part_calibrate() 
+    This expression is used for 
+    \ref o2scl::part_calibrate_class::part_calibrate() 
     because \f$ \varepsilon_{\mathrm{R}}/(g T^4) \f$ depends only on 
     \f$ \psi_{\mathrm{R}} \f$ and \f$ \phi \f$.
     For a nonrelativistic fermion,
@@ -86,7 +87,7 @@
     \f$ alone. This is the form used to compute the energy density in
     \ref o2scl::fermion_nonrel and the definition of \f$
     \psi_{\mathrm{NR}} \f$ used for nonrelativistic fermions in \ref
-    o2scl::part::part_calibrate() .
+    o2scl::part_calibrate_class::part_calibrate() .
 
     \section ferm_integ_sect Fermion integrations
 
