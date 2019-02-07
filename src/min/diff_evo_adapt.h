@@ -50,11 +50,11 @@ namespace o2scl {
       This is an adaptive version of \ref diff_evo as described in
       \ref Brest06 .
   */
-    template<class func_t=multi_funct, 
-      class vec_t=boost::numeric::ublas::vector<double>, 
-      class init_funct_t=mm_funct> 
-      class diff_evo_adapt :  public diff_evo<func_t, vec_t, init_funct_t> 
-      {
+  template<class func_t=multi_funct, 
+    class vec_t=boost::numeric::ublas::vector<double>, 
+    class init_funct_t=mm_funct> 
+    class diff_evo_adapt : public diff_evo<func_t, vec_t, init_funct_t> 
+    {
 
     public:
 
@@ -165,7 +165,7 @@ namespace o2scl {
 	    if (i == r || ri < cr_x) {
 	      agent_y[i] = this->population[others[0]*nvar+i] + 
 		f_x*(this->population[others[1]*nvar+i]-
-		   this->population[others[2]*nvar+i]);
+		     this->population[others[2]*nvar+i]);
 	    }
 	  }
 	  // If (f(y) < f(x)) then replace the agent in the 
@@ -248,7 +248,7 @@ namespace o2scl {
     virtual int initialize_population( size_t nvar, vec_t &x0 ) {
       if (this->rand_init_funct==NULL) {
 	O2SCL_ERR("No initialization function provided.",
-		      exc_ebadfunc );
+		  exc_ebadfunc );
 
       }
       this->population.resize(nvar*this->pop_size );
@@ -267,11 +267,11 @@ namespace o2scl {
       return 0;
     }
 
-  private:
+    private:
 
-  diff_evo_adapt<func_t,vec_t,init_funct_t>
+    diff_evo_adapt<func_t,vec_t,init_funct_t>
     (const diff_evo_adapt<func_t,vec_t,init_funct_t> &);
-  diff_evo_adapt<func_t,vec_t,init_funct_t> &operator=
+    diff_evo_adapt<func_t,vec_t,init_funct_t> &operator=
     (const diff_evo_adapt<func_t,vec_t,init_funct_t>&);
 
 #endif

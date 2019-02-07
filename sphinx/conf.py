@@ -38,7 +38,7 @@ extensions = ['sphinx.ext.autodoc',
               'breathe']
 
 #
-breathe_projects = { "o2scl": os.path.abspath('../doc/xml') }
+breathe_projects = { "o2scl": os.path.abspath('../doc/o2scl/xml') }
 breathe_default_project = "o2scl"
 #
 
