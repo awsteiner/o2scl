@@ -294,7 +294,7 @@ void acol_manager::command_add(std::string new_type) {
        "Obtains the units for the specified column.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_unit),
        both},
-      {0,"entry","Get a single entry in a table.",0,3,
+      {0,"entry","Get or set a single entry in a table.",0,3,
        "<column> <row index> [value]",((std::string)"This command ")+
        "gets or sets the value in the specified column and row.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_entry),
@@ -1580,7 +1580,7 @@ int acol_manager::get_input(vector<string> &sv, vector<string> &directions,
   // If there are enough arguments, then just fill the vector
   // 'in' with the correct values from 'sv'
   if (sv.size()>ni) {
-    for(size_t i=0;i<ni;i++) {
+    for(size_t i=0;i<sv.size()-1;i++) {
       in.push_back(sv[i+1]);
     }
     return 0;

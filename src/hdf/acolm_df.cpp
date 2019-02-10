@@ -412,6 +412,7 @@ int acol_manager::comm_entry(std::vector<std::string> &sv, bool itive_com) {
     vector<string> pr, in;
     pr.push_back("Enter column name");
     pr.push_back("Enter row index");
+    pr.push_back("Enter new value (or \"none\") to keep original value");
     int ret=get_input(sv,pr,in,"function",itive_com);
     if (ret!=0) return ret;
 
@@ -427,9 +428,19 @@ int acol_manager::comm_entry(std::vector<std::string> &sv, bool itive_com) {
 		<< " resulted in, " << row << ", a negative number." << endl;
       return exc_efailed;
     }
+
+    cout << "Here: " << sv.size() << " " << in.size() << endl;
     
-    cout << "Entry for column " << in[0] << " at row " << in[1] << " is "
-	 << table_obj.get(in[0],row) << endl;
+    if (in.size()<=2 || in[2]=="none") {
+      cout << "Entry for column " << in[0] << " at row " << in[1] << " is "
+	   << table_obj.get(in[0],row) << endl;
+    } else {
+      cout << "Entry for column " << in[0] << " at row " << in[1]
+	   << " is has been changed from "
+	   << table_obj.get(in[0],row);
+      table_obj.set(in[0],row,o2scl::function_to_double(in[2]));
+      cout << " to " << table_obj.get(in[0],row) << endl;
+    }
     
   } else {
     cerr << "Command 'entry' not implemented for type " << type << " ." << endl;
