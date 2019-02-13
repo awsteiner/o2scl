@@ -305,7 +305,34 @@ namespace o2scl {
     /// Return string denoting type ("fermion_rel")
     virtual const char *type() { return "fermion_rel"; }
 
-    /// Desc
+    /** \brief An integer indicating the last numerical method used
+
+	- 0: no previous calculation or last calculation failed
+	In \ref nu_from_n_tlate():
+	- 1: default solver
+	- 2: default solver with increased tolerances
+	- 3: bracketing solver
+	In \ref calc_mu_tlate():
+	- 4: non-degenerate expansion
+	- 5: degenerate expansion
+	- 6: exact integration, non-degenerate integrands
+	- 7: exact integration, degenerate integrands, lower limit
+	 on entropy integration
+	- 8: exact integration, degenerate integrands, full
+	entropy integration
+	In \ref calc_density_tlate(), the first digit (1 to 3)
+	is the method used by \ref nu_from_n_tlate() and the
+	last digit is one of 
+	- 1: nondegenerate expansion
+	- 2: degenerate expansion
+	- 3: exact integration, non-degenerate integrands
+	- 4: exact integration, degenerate integrands, lower limit
+	 on entropy integration
+	- 5: exact integration, degenerate integrands, full
+	In \ref pair_mu_tlate(), if a nondegenerate expansion
+	- 9: Non-degenerate expansion
+	- 10: Direct
+     */
     int last_method;
     
     /// \name Template versions of base functions
@@ -501,7 +528,7 @@ namespace o2scl {
 	  unc.ed=f.ed*1.0e-14;
 	  unc.pr=f.pr*1.0e-14;
 	  unc.en=f.en*1.0e-14;
-	  last_method=1;
+	  last_method=4;
 	  return;
 	}
       }
@@ -514,7 +541,7 @@ namespace o2scl {
 	  unc.ed=f.ed*1.0e-14;
 	  unc.pr=f.pr*1.0e-14;
 	  unc.en=f.en*1.0e-14;
-	  last_method=2;
+	  last_method=5;
 	  return;
 	}
       }
@@ -554,7 +581,7 @@ namespace o2scl {
 	f.en*=prefac;
 	unc.en=nit->get_error()*prefac;
 
-	last_method=3;
+	last_method=6;
 
       } else {
     
@@ -634,10 +661,10 @@ namespace o2scl {
 
 	if (ll>0.0) {
 	  f.en=dit->integ(mfs,ll,ul);
-	  last_method=4;
+	  last_method=7;
 	} else {
 	  f.en=dit->integ(mfs,0.0,ul);
-	  last_method=5;
+	  last_method=8;
 	}
 	f.en*=prefac;
 	unc.en=dit->get_error()*prefac;
@@ -852,7 +879,7 @@ namespace o2scl {
 	  unc.ed=1.0e-14*f.ed;
 	  unc.en=1.0e-14*f.en;
 	  unc.pr=1.0e-14*f.pr;
-	  last_method=6;
+	  last_method=9;
 	  return;
 	}
       }
@@ -868,7 +895,10 @@ namespace o2scl {
       double unc_en=unc.en;
 
       // Antiparticles
+      int lm=last_method*10;
       calc_mu(antip,temper);
+      last_method+=lm;
+      last_method*=10;
 
       // Add up thermodynamic quantities
       if (f.inc_rest_mass) {
@@ -885,7 +915,7 @@ namespace o2scl {
       unc.ed=gsl_hypot(unc.ed,unc_ed);
       unc.pr=gsl_hypot(unc.pr,unc_pr);
       unc.en=gsl_hypot(unc.ed,unc_en);
-      last_method=7;
+      last_method=10;
 
       return;
     }
