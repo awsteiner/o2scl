@@ -2241,6 +2241,8 @@ namespace o2scl {
 	  }
 	}
 	if (found==false) {
+	  std::cout << "No initial guess found for rank " << this->mpi_rank
+		    << " thread " << it << " and walker " << iw << std::endl;
 	  O2SCL_ERR("Function initial_points_file_last() failed.",
 		    o2scl::exc_einval);
 	}
