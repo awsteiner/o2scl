@@ -307,11 +307,14 @@ namespace o2scl {
 
     /** \brief An integer indicating the last numerical method used
 
+	In all functions
 	- 0: no previous calculation or last calculation failed
+
 	In \ref nu_from_n_tlate():
 	- 1: default solver
 	- 2: default solver with increased tolerances
 	- 3: bracketing solver
+
 	In \ref calc_mu_tlate():
 	- 4: non-degenerate expansion
 	- 5: degenerate expansion
@@ -320,6 +323,7 @@ namespace o2scl {
 	 on entropy integration
 	- 8: exact integration, degenerate integrands, full
 	entropy integration
+
 	In \ref calc_density_tlate(), the first digit (1 to 3)
 	is the method used by \ref nu_from_n_tlate() and the
 	last digit is one of 
@@ -329,10 +333,15 @@ namespace o2scl {
 	- 4: exact integration, degenerate integrands, lower limit
 	 on entropy integration
 	- 5: exact integration, degenerate integrands, full
-	In \ref pair_mu_tlate(), if a nondegenerate expansion
-	- 9: Non-degenerate expansion
-	- 10: Direct
-     */
+	entropy integration
+
+	In \ref pair_mu_tlate(), the third digit is always 0 (to
+	ensure a value of last_method which is unique from the other
+	values reported from other functions as described above), and
+	the first digit is the method used for particles from \ref
+	calc_mu_tlate() above and the second digit is the method used
+	for antiparticles.
+    */
     int last_method;
     
     /// \name Template versions of base functions
@@ -873,7 +882,9 @@ namespace o2scl {
       
       if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
       
-      if (use_expansions) {
+      // AWS: 2/12/19: I'm taking this out, similar to the removal
+      // of the code in fermion_rel::pair_fun().
+      if (false && use_expansions) {
 	if (calc_mu_ndeg(f,temper,1.0e-14,true)) {
 	  unc.n=1.0e-14*f.n;
 	  unc.ed=1.0e-14*f.ed;
@@ -915,7 +926,6 @@ namespace o2scl {
       unc.ed=gsl_hypot(unc.ed,unc_ed);
       unc.pr=gsl_hypot(unc.pr,unc_pr);
       unc.en=gsl_hypot(unc.ed,unc_en);
-      last_method=10;
 
       return;
     }

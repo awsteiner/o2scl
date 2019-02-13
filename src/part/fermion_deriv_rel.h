@@ -292,7 +292,7 @@ namespace o2scl {
     static const int by_parts=2;
     //@}
 
-    /** \brief Last method used
+    /** \brief An integer indicating the last numerical method used
      */
     int last_method;
     
