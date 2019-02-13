@@ -66,7 +66,7 @@ void fermion_deriv_rel::set_inte(inte<funct> &l_nit, inte<funct> &l_dit) {
 int fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
 
   fr.calc_mu_tlate<fermion_deriv>(f,temper);
-  last_method=fr.last_method*10;
+  last_method=fr.last_method*100;
   
   int iret;
 
@@ -211,21 +211,20 @@ int fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
 
     // Set integration method
     if (method==automatic) {
+      last_method+=7;
       if ((!f.inc_rest_mass && (f.nu+f.m-f.ms)/temper>1.0e3) ||
 	  (f.inc_rest_mass && (f.nu-f.ms)/temper>1.0e3)) {
 	intl_method=direct;
+	last_method+=5;
       } else {
 	intl_method=by_parts;
-	last_method+=7;
+	last_method+=6;
       }
     } else {
       intl_method=method;
+      last_method+=7;
     }
-    if (intl_method==direct) {
-      last_method+=5;
-    } else {
-      last_method+=6;
-    }
+      
     
     funct deg_density_mu_fun_f=
       std::bind(std::mem_fn<double(double,fermion_deriv &,double)>
@@ -292,7 +291,7 @@ int fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
 
 int fermion_deriv_rel::nu_from_n(fermion_deriv &f, double temper) {
   int ret=fr.nu_from_n_tlate<fermion_deriv>(f,temper);
-  last_method=fr.last_method;
+  last_method=fr.last_method*100;
   return ret;
 }
 
@@ -301,13 +300,10 @@ int fermion_deriv_rel::calc_density(fermion_deriv &f, double temper) {
   if (f.non_interacting==true) { f.ms=f.m; f.nu=f.mu; }
   
   nu_from_n(f,temper);
-  last_method*=10;
   
   if (f.non_interacting) { f.mu=f.nu; }
 
-  int lm=last_method;
   calc_mu(f,temper);
-  last_method+=lm;
 
   return 0;
 }

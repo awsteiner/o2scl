@@ -295,7 +295,8 @@ void acol_manager::command_add(std::string new_type) {
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_unit),
        both},
       {0,"entry","Get or set a single entry in a table.",0,3,
-       "<column> <row index> [value]",((std::string)"This command ")+
+       "<column> <row index> [value or \"none\"]",
+       ((std::string)"This command ")+
        "gets or sets the value in the specified column and row.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_entry),
        both},

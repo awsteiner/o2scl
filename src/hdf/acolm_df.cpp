@@ -429,7 +429,8 @@ int acol_manager::comm_entry(std::vector<std::string> &sv, bool itive_com) {
       return exc_efailed;
     }
 
-    cout << "Here: " << sv.size() << " " << in.size() << endl;
+    // Convert in[2] to lower case
+    std::transform(in[2].begin(),in[2].end(),in[2].begin(),::tolower);
     
     if (in.size()<=2 || in[2]=="none") {
       cout << "Entry for column " << in[0] << " at row " << in[1] << " is "
@@ -443,7 +444,8 @@ int acol_manager::comm_entry(std::vector<std::string> &sv, bool itive_com) {
     }
     
   } else {
-    cerr << "Command 'entry' not implemented for type " << type << " ." << endl;
+    cerr << "Command 'entry' not implemented for type " << type << " ."
+	 << endl;
     return exc_efailed;
   }
 
