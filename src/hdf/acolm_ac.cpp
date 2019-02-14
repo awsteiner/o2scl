@@ -118,7 +118,7 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
 	  v[i]=table_obj.get(in[ix],i);
 	}
       } else {
-	int vs_ret=vector_spec(in[ix],v,verbose,false);
+	int vs_ret=o2scl_hdf::vector_spec(in[ix],v,verbose,false);
 	if (vs_ret!=0) {
 	  cout << "Vector specification failed." << endl;
 	  return 1;
@@ -255,7 +255,7 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
 	  v[i]=table_obj.get(in[0],i);
 	}
       } else {
-	int vs_ret=vector_spec(in[0],v,verbose,false);
+	int vs_ret=o2scl_hdf::vector_spec(in[0],v,verbose,false);
 	if (vs_ret!=0) {
 	  cout << "Vector specification failed." << endl;
 	  return 1;

@@ -28,6 +28,8 @@
 */
 #include <boost/numeric/ublas/vector.hpp>
 
+#include <fnmatch.h>
+
 #include <o2scl/hdf_file.h>
 #include <o2scl/table.h>
 #include <o2scl/table_units.h>
@@ -46,7 +48,7 @@ namespace o2scl_hdf {
 
   /** \brief Input a \ref o2scl::prob_dens_mdim_amr object from a 
       \ref hdf_file
-   */
+  */
   template<class vec_t, class mat_t> 
     void hdf_input(hdf_file &hf,
 		   o2scl::prob_dens_mdim_amr<vec_t,mat_t> &p,
@@ -89,11 +91,11 @@ namespace o2scl_hdf {
   
   /** \brief Output a \ref o2scl::prob_dens_mdim_amr 
       object to a \ref hdf_file
-   */
+  */
   template<class vec_t, class mat_t> 
     void hdf_output(hdf_file &hf,
-		   o2scl::prob_dens_mdim_amr<vec_t,mat_t> &p,
-		   std::string name) {
+		    o2scl::prob_dens_mdim_amr<vec_t,mat_t> &p,
+		    std::string name) {
     
     if (hf.has_write_access()==false) {
       O2SCL_ERR2("File not opened with write access in hdf_output",
@@ -383,6 +385,455 @@ namespace o2scl_hdf {
   void hdf_input(hdf_file &hf, o2scl::tensor_grid<std::vector<double>,
 		 std::vector<size_t> > &t, std::string name="");
 
+  /** \brief A value specified by a string
+      
+      Formats:
+      - function: \<function\>
+      - HDF5 object in file: 
+      hdf5:\<file name\>:\<object name\>:[additional specification]
+  */
+  template<class vec_t> double value_spec(std::string spec, 
+					  int verbose=0,
+					  bool err_on_fail=true) {
+    return 0.0;
+  }
+  
+  /** \brief A vector specified by a string
+      
+      Formats:
+      - single value: val:\<value\>
+      - list of values: list:\<entry 0\>,\<entry 1\>, ...,\<entry n-1\>
+      - function: func:\<N\>:\<function of i\>
+      - grid: grid:\<begin\>:\<end\>:\<width\>:["log"]
+      - column in text file: text:\<column\> 
+      - HDF5 object in file: 
+      hdf5:\<file name\>:\<object name\>:[additional specification]
+      
+      Additional specifications
+      - table: \<column\>
+  */
+  template<class vec_t> int vector_spec(std::string spec, vec_t &v,
+					int verbose=0,
+					bool err_on_fail=true) {
+      
+    if (spec.find("val:")==0) {
+
+      std::string temp=spec.substr(4,spec.length()-4);
+      if (verbose>1) {
+	std::cout << "vector_spec(): single value " << temp
+		  << std::endl;
+      }
+      v.resize(1);
+      v[0]=o2scl::function_to_double(temp);
+	
+    } else if (spec.find("list:")==0) {
+	
+      // List
+      std::string list=spec.substr(5,spec.length()-5);
+      std::vector<std::string> sv;
+      o2scl::split_string_delim(list,sv,',');
+      size_t n=sv.size();
+      if (n==0) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("String split failed, spec empty? ",
+		     "in vector_spec().",o2scl::exc_einval);
+	} else {
+	  return 10;
+	}
+      }
+      if (verbose>1) {
+	std::cout << "vector_spec(): List " << list << std::endl;
+	std::cout << n << " " << sv[0] << " " << sv[n-1] << std::endl;
+      }
+      for(size_t i=0;i<n;i++) {
+	v[i]=o2scl::function_to_double(sv[i]);
+      }
+	
+    } else if (spec.find("func:")==0) {
+	
+      // Function
+      if (verbose>1) {
+	std::cout << "vector_spec(): Function " << spec << std::endl;
+      }
+      std::string temp=spec.substr(5,spec.length()-5);
+      size_t ncolon=temp.find(':');
+      if (ncolon==std::string::npos) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("Function specified but no array length specified ",
+		     "in vector_spec().",o2scl::exc_einval);
+	} else {
+	  return 1;
+	}
+      }
+      size_t n;
+      int cret=o2scl::stoszt_nothrow(temp.substr(0,ncolon),n);
+      if (cret!=0) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("Conversion to size_t failed ",
+		     "in vector_spec().",o2scl::exc_einval);
+	} else {
+	  return 2;
+	}
+      }
+      if (verbose>1) {
+	std::cout << "Size " << n << std::endl;
+      }
+      if (temp.length()<ncolon+1) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("No apparent function specified ",
+		     "in vector_spec().",o2scl::exc_einval);
+	} else {
+	  return 3;
+	}
+      }
+      std::string func=temp.substr(ncolon+1,temp.length()-ncolon-1);
+      if (verbose>1) {
+	std::cout << "Function " << func << std::endl;
+      }
+      o2scl::calculator calc;
+      std::map<std::string,double> vars;
+      calc.compile(func.c_str(),&vars);
+      v.resize(n);
+      for(size_t i=0;i<n;i++) {
+	vars["i"]=((double)i);
+	v[i]=calc.eval(&vars);
+      }
+	
+    } else if (spec.find("grid:")==0) {
+	
+      // Grid
+      if (verbose>1) {
+	std::cout << "vector_spec(): Grid " << spec << std::endl;
+      }
+      std::vector<std::string> sv;
+      o2scl::split_string_delim(spec,sv,':');
+      if (sv.size()<4) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("Not enough information for grid ",
+		     "in vector_spec().",o2scl::exc_einval);
+	} else {
+	  return 7;
+	}
+      }
+      if (verbose>1) {
+	std::cout << "Begin,end,width "
+		  << sv[1] << " " << sv[2] << " " << sv[3] << std::endl;
+      }
+      if (sv.size()>=5 && sv[4]=="log") {
+	o2scl::uniform_grid_log_end<double> ug(o2scl::stod(sv[1]),
+					       o2scl::stod(sv[2]),
+					       o2scl::stod(sv[3]));
+	ug.vector(v);
+      } else {
+	o2scl::uniform_grid_end<double> ug(o2scl::stod(sv[1]),
+					   o2scl::stod(sv[2]),
+					   o2scl::stod(sv[3]));
+	ug.vector(v);
+      }
+	
+    } else if (spec.find("hdf5:")==0) {
+	
+      // HDF5 object in a file
+      if (verbose>1) {
+	std::cout << "vector_spec(): HDF5 file " << spec << std::endl;
+      }
+      std::string temp=spec.substr(4,spec.length()-4);
+      size_t ncolon=temp.find(':');
+      if (ncolon==std::string::npos) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("No apparent object name specified ",
+		     "in vector_spec().",o2scl::exc_einval);
+	} else {
+	  return 4;
+	}
+      }
+      std::string fname=temp.substr(0,ncolon);
+      if (verbose>1) {
+	std::cout << "Filename " << fname << std::endl;
+      }
+      if (temp.length()<ncolon+1) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("No apparent object name specified ",
+		     "in vector_spec().",o2scl::exc_einval);
+	} else {
+	  return 5;
+	}
+      }
+      std::string obj_name=temp.substr(ncolon+1,temp.length()-ncolon-1);
+      std::string addl_spec;
+      ncolon=obj_name.find(':');
+      if (ncolon!=std::string::npos) {
+	addl_spec=obj_name.substr(ncolon+1,obj_name.length()-ncolon-1);
+	obj_name=obj_name.substr(0,ncolon);
+      } 
+      if (verbose>1) {
+	std::cout << "Object name " << obj_name << std::endl;
+	std::cout << "Additional specification " << addl_spec << std::endl;
+      }
+      o2scl_hdf::hdf_file hf;
+	
+      std::string fname_old=fname;
+      std::vector<std::string> matches;
+      int wret=o2scl::wordexp_wrapper(fname_old,matches);
+      if (matches.size()>1 || matches.size()==0 || wret!=0) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("Function wordexp_wrapper() failed ",
+		     "in vector_spec().",o2scl::exc_einval);
+	} else {
+	  return 9;
+	}
+      }
+      fname=matches[0];
+      if (verbose>1) {
+	std::cout << "Filename after wordexp() " << fname << std::endl;
+      }
+	
+      hf.open(fname);
+      std::string type;
+      int find_ret=hf.find_object_by_name(obj_name,type);
+      if (find_ret!=0) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("Object not found in file ",
+		     "in vector_spec().",o2scl::exc_einval);
+	} else {
+	  return 11;
+	}
+      }
+      if (verbose>1) {
+	std::cout << "Object type from file: " << type << std::endl;
+      }
+	
+      if (type=="table") {
+	if (addl_spec.length()==0) {
+	  if (err_on_fail) {
+	    O2SCL_ERR2("No table column name specified ",
+		       "in vector_spec().",o2scl::exc_einval);
+	  } else {
+	    return 6;
+	  }
+	}
+	o2scl::table_units<> t;
+	o2scl_hdf::hdf_input(hf,t,obj_name);
+	v.resize(t.get_nlines());
+	for(size_t i=0;i<t.get_nlines();i++) {
+	  v[i]=t.get(addl_spec,i);
+	}
+      } else if (type=="double[]") {
+	std::vector<double> vtemp;
+	hf.getd_vec(obj_name,vtemp);
+	v.resize(vtemp.size());
+	for(size_t i=0;i<v.size();i++) {
+	  v[i]=vtemp[i];
+	  std::cout << "X: " << i << " " << v[i] << std::endl;
+	}
+      }
+      hf.close();
+	
+    } else {
+	
+      if (err_on_fail) {
+	O2SCL_ERR2("Could not parse specification ",
+		   "in vector_spec().",o2scl::exc_einval);
+      } else {
+	return 8;
+      }
+	
+    }
+    return 0;
+  }
+  
+  /** \brief A list of vectors specified by a string
+
+      Formats:
+      - function: func:\<num\>:\<len(i)\>:\<function of j\>
+      - columns in text file: text:\<column list\> 
+      - HDF5 object(s) in file(s): 
+      hdf5:\<file name(s)\>:\<object name(s)\>:[additional specification]
+  */
+  template<class vec_t> int mult_vector_spec(std::string spec,
+					     std::vector<vec_t> &v,
+					     int verbose=0,
+					     bool err_on_fail=true) {
+    
+    if (spec.find("func:")==0) {
+	
+      // Function
+      if (verbose>1) {
+	std::cout << "mult_vector_spec(): Function " << spec << std::endl;
+      }
+      std::string temp=spec.substr(5,spec.length()-5);
+      size_t ncolon=temp.find(':');
+      if (ncolon==std::string::npos) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("Function specified but no array length specified ",
+		     "in mult_vector_spec().",o2scl::exc_einval);
+	} else {
+	  return 1;
+	}
+      }
+      size_t n;
+      int cret=o2scl::stoszt_nothrow(temp.substr(0,ncolon),n);
+      if (cret!=0) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("Conversion to size_t failed ",
+		     "in mult_vector_spec().",o2scl::exc_einval);
+	} else {
+	  return 2;
+	}
+      }
+      if (verbose>1) {
+	std::cout << "Size " << n << std::endl;
+      }
+      if (temp.length()<ncolon+1) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("No apparent function specified ",
+		     "in mult_vector_spec().",o2scl::exc_einval);
+	} else {
+	  return 3;
+	}
+      }
+      std::string func=temp.substr(ncolon+1,temp.length()-ncolon-1);
+      if (verbose>1) {
+	std::cout << "Function " << func << std::endl;
+      }
+      o2scl::calculator calc;
+      std::map<std::string,double> vars;
+      calc.compile(func.c_str(),&vars);
+      v.resize(n);
+      for(size_t i=0;i<n;i++) {
+	vars["i"]=((double)i);
+	v[i]=calc.eval(&vars);
+      }
+	
+    } else if (spec.find("hdf5:")==0) {
+	
+      // HDF5 object in a file
+      if (verbose>1) {
+	std::cout << "mult_vector_spec(): HDF5 file " << spec << std::endl;
+      }
+      std::string temp=spec.substr(5,spec.length()-5);
+      size_t ncolon=temp.find(':');
+      if (ncolon==std::string::npos) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("No apparent file name specified ",
+		     "in mult_vector_spec().",o2scl::exc_einval);
+	} else {
+	  return 4;
+	}
+      }
+      std::string fname=temp.substr(0,ncolon);
+      if (verbose>1) {
+	std::cout << "Filename " << fname << std::endl;
+      }
+      if (temp.length()<ncolon+1) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("No apparent object name specified ",
+		     "in mult_vector_spec().",o2scl::exc_einval);
+	} else {
+	  return 5;
+	}
+      }
+      std::string obj_name=temp.substr(ncolon+1,temp.length()-ncolon-1);
+      std::string addl_spec;
+      ncolon=obj_name.find(':');
+      if (ncolon!=std::string::npos) {
+	addl_spec=obj_name.substr(ncolon+1,obj_name.length()-ncolon-1);
+	obj_name=obj_name.substr(0,ncolon);
+      } 
+      if (verbose>1) {
+	std::cout << "Object name " << obj_name << std::endl;
+	std::cout << "Additional specification " << addl_spec << std::endl;
+      }
+      o2scl_hdf::hdf_file hf;
+      
+      std::string fname_old=fname;
+      std::vector<std::string> matches;
+      int wret=o2scl::wordexp_wrapper(fname_old,matches);
+      if (matches.size()==0 || wret!=0) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("Function wordexp_wrapper() failed ",
+		     "in mult_vector_spec().",o2scl::exc_einval);
+	} else {
+	  return 9;
+	}
+      }
+
+      size_t nfiles=matches.size();
+      if (verbose>1) {
+	std::cout << "Wordexp() found " << nfiles << " files."
+		  << std::endl;
+      }
+      
+      for(size_t ifile=0;ifile<nfiles;ifile++) {
+	fname=matches[0];
+	if (verbose>1) {
+	  std::cout << "Filename for index " << ifile << " is " << fname
+		    << std::endl;
+	}
+	
+	hf.open(fname);
+	std::string type;
+	int find_ret=hf.find_object_by_name(obj_name,type);
+	if (find_ret!=0) {
+	  if (err_on_fail) {
+	    O2SCL_ERR2("Object not found in file ",
+		       "in mult_vector_spec().",o2scl::exc_einval);
+	  } else {
+	    return 11;
+	  }
+	}
+	if (verbose>1) {
+	  std::cout << "Object type from file: " << type << std::endl;
+	}
+	
+	if (type=="table") {
+	  if (addl_spec.length()==0) {
+	    if (err_on_fail) {
+	      O2SCL_ERR2("No table column name specified ",
+			 "in mult_vector_spec().",o2scl::exc_einval);
+	    } else {
+	      return 6;
+	    }
+	  }
+	  o2scl::table_units<> t;
+	  o2scl_hdf::hdf_input(hf,t,obj_name);
+	  
+	  for(size_t j=0;j<t.get_ncolumns();j++) {
+	    if (fnmatch(addl_spec.c_str(),
+			t.get_column_name(j).c_str(),0)==0) {
+	      vec_t vtemp(t.get_nlines());
+	      for(size_t k=0;k<t.get_nlines();k++) {
+		vtemp[k]=t.get(j,k);
+	      }
+	      v.push_back(vtemp);
+	    }
+	  }
+	} else if (type=="double[]") {
+	  std::vector<double> vtemp;
+	  hf.getd_vec(obj_name,vtemp);
+	  v.resize(vtemp.size());
+	  for(size_t i=0;i<v.size();i++) {
+	    v[i]=vtemp[i];
+	    std::cout << "X: " << i << " " << v[i] << std::endl;
+	  }
+	}
+	hf.close();
+
+      }
+	
+    } else {
+	
+      if (err_on_fail) {
+	O2SCL_ERR2("Could not parse specification ",
+		   "in mult_vector_spec().",o2scl::exc_einval);
+      } else {
+	return 8;
+      }
+	
+    }
+    return 0;
+  }
+  
 }
 
 #endif

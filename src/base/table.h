@@ -3295,7 +3295,7 @@ namespace o2scl {
       table and list of columns
   */
   matrix_view_table_transpose(o2scl::table<vec_t> &t,
-		    std::vector<std::string> rows) {
+			      std::vector<std::string> rows) {
     set(t,rows);
   }
   
@@ -3379,113 +3379,113 @@ namespace o2scl {
   };
   
   /** \brief Swap part of a o2scl::table object into a matrix
-  */
+   */
   class matrix_swap_table : public matrix_view {
   
   protected:
   
-  /// The number of columns
-  size_t nc;
-  /// The number of lines in the table
-  size_t nlines;
-  /// Array of columns
-  std::vector<std::vector<double> > cols;
+    /// The number of columns
+    size_t nc;
+    /// The number of lines in the table
+    size_t nlines;
+    /// Array of columns
+    std::vector<std::vector<double> > cols;
     
   public:
     
-  /** \brief Create a matrix view object from the specified 
-      table and list of columns
-  */
-  matrix_swap_table() {
-    nc=0;
-    nlines=0;
-  }
+    /** \brief Create a matrix view object from the specified 
+	table and list of columns
+    */
+    matrix_swap_table() {
+      nc=0;
+      nlines=0;
+    }
     
-  /** \brief Create a matrix view object from the specified 
-      table and list of columns
-  */
-  matrix_swap_table(o2scl::table<std::vector<double> > &t,
-		    const std::vector<std::string> &col_names) {
-    set(t,col_names);
-  }
-  
-  /** \brief Create a matrix view object from the specified 
-      table and list of columns
-  */
-  void set(o2scl::table<std::vector<double> > &t,
-	   const std::vector<std::string> &col_names) {
-    nc=cols.size();
-    nlines=t.get_nlines();
-    cols.resize(nc);
-    for(size_t i=0;i<nc;i++) {
-      // We have to make space for the vector before we use
-      // table::swap_column_data()
-      cols[i].resize(nlines);
-      t.swap_column_data(col_names[i],cols[i]);
+    /** \brief Create a matrix view object from the specified 
+	table and list of columns
+    */
+    matrix_swap_table(o2scl::table<std::vector<double> > &t,
+		      const std::vector<std::string> &col_names) {
+      set(t,col_names);
     }
-  }
   
-  /** \brief Return the number of rows
-   */
-  size_t size1() const {
-    return nlines;
-  }
+    /** \brief Create a matrix view object from the specified 
+	table and list of columns
+    */
+    void set(o2scl::table<std::vector<double> > &t,
+	     const std::vector<std::string> &col_names) {
+      nc=cols.size();
+      nlines=t.get_nlines();
+      cols.resize(nc);
+      for(size_t i=0;i<nc;i++) {
+	// We have to make space for the vector before we use
+	// table::swap_column_data()
+	cols[i].resize(nlines);
+	t.swap_column_data(col_names[i],cols[i]);
+      }
+    }
   
-  /** \brief Return the number of columns
-   */
-  size_t size2() const {
-    if (nlines==0) return 0;
-    return nc;
-  }
+    /** \brief Return the number of rows
+     */
+    size_t size1() const {
+      return nlines;
+    }
   
-  /** \brief Return a reference to the element at row \c row
-      and column \c col
-  */
-  const double &operator()(size_t row, size_t col) const {
-    if (row>=nlines) {
-      std::string str=((std::string)"Row ")+o2scl::szttos(row)+
-      " >= "+o2scl::szttos(nlines)+" in matrix_swap_table"+
-      "::operator().";
-      O2SCL_ERR(str.c_str(),o2scl::exc_einval);
+    /** \brief Return the number of columns
+     */
+    size_t size2() const {
+      if (nlines==0) return 0;
+      return nc;
     }
-    if (col>=nc) {
-      std::string str=((std::string)"Column ")+o2scl::szttos(col)+
-      " >= "+o2scl::szttos(nc)+" in matrix_swap_table"+
-      "::operator().";
-      O2SCL_ERR(str.c_str(),o2scl::exc_einval);
-    }
-    return cols[col][row];
-  }
   
-  /** \brief Return a reference to the element at row \c row
-      and column \c col
-  */
-  double &operator()(size_t row, size_t col) {
-    if (row>=nlines) {
-      std::string str=((std::string)"Row ")+o2scl::szttos(row)+
-      " >= "+o2scl::szttos(nlines)+" in matrix_swap_table"+
-      "::operator().";
-      O2SCL_ERR(str.c_str(),o2scl::exc_einval);
+    /** \brief Return a reference to the element at row \c row
+	and column \c col
+    */
+    const double &operator()(size_t row, size_t col) const {
+      if (row>=nlines) {
+	std::string str=((std::string)"Row ")+o2scl::szttos(row)+
+	  " >= "+o2scl::szttos(nlines)+" in matrix_swap_table"+
+	  "::operator().";
+	O2SCL_ERR(str.c_str(),o2scl::exc_einval);
+      }
+      if (col>=nc) {
+	std::string str=((std::string)"Column ")+o2scl::szttos(col)+
+	  " >= "+o2scl::szttos(nc)+" in matrix_swap_table"+
+	  "::operator().";
+	O2SCL_ERR(str.c_str(),o2scl::exc_einval);
+      }
+      return cols[col][row];
     }
-    if (col>=nc) {
-      std::string str=((std::string)"Column ")+o2scl::szttos(col)+
-      " >= "+o2scl::szttos(nc)+" in matrix_swap_table"+
-      "::operator().";
-      O2SCL_ERR(str.c_str(),o2scl::exc_einval);
+  
+    /** \brief Return a reference to the element at row \c row
+	and column \c col
+    */
+    double &operator()(size_t row, size_t col) {
+      if (row>=nlines) {
+	std::string str=((std::string)"Row ")+o2scl::szttos(row)+
+	  " >= "+o2scl::szttos(nlines)+" in matrix_swap_table"+
+	  "::operator().";
+	O2SCL_ERR(str.c_str(),o2scl::exc_einval);
+      }
+      if (col>=nc) {
+	std::string str=((std::string)"Column ")+o2scl::szttos(col)+
+	  " >= "+o2scl::szttos(nc)+" in matrix_swap_table"+
+	  "::operator().";
+	O2SCL_ERR(str.c_str(),o2scl::exc_einval);
+      }
+      return cols[col][row];
     }
-    return cols[col][row];
-  }
 
-  /** \brief Swap method
-   */
-  friend void swap(matrix_swap_table &t1,
-		   matrix_swap_table &t2) {
-    using std::swap;
-    swap(t1.nc,t2.nc);
-    swap(t1.nlines,t2.nlines);
-    swap(t1.cols,t2.cols);
-    return;
-  }
+    /** \brief Swap method
+     */
+    friend void swap(matrix_swap_table &t1,
+		     matrix_swap_table &t2) {
+      using std::swap;
+      swap(t1.nc,t2.nc);
+      swap(t1.nlines,t2.nlines);
+      swap(t1.cols,t2.cols);
+      return;
+    }
   
   };
   
