@@ -493,21 +493,26 @@ namespace o2scl {
 		       "mcmc_para::mcmc().",o2scl::exc_einval);
 	  }
 	}
-	for(size_t j=i+1;j<initial_points.size();j++) {
-	  bool vec_equal=true;
-	  for(size_t k=0;k<initial_points[i].size();k++) {
-	    if (initial_points[i][k]!=initial_points[j][k]) {
-	      vec_equal=false;
+	// 2/14/19 - AWS: I waffle on whether or not this ought to be
+	// included, but it's too confusing and I'm having too much
+	// trouble with it right now so I'm taking it out for now.
+	if (false) {
+	  for(size_t j=i+1;j<initial_points.size();j++) {
+	    bool vec_equal=true;
+	    for(size_t k=0;k<initial_points[i].size();k++) {
+	      if (initial_points[i][k]!=initial_points[j][k]) {
+		vec_equal=false;
+	      }
 	    }
-	  }
-	  if (vec_equal) {
-	    std::cout.setf(std::ios::scientific);
-	    std::cout << i << " ";
-	    o2scl::vector_out(std::cout,initial_points[i],true);
-	    std::cout << j << " ";
-	    o2scl::vector_out(std::cout,initial_points[j],true);
-	    O2SCL_ERR2("Initial points not distinct in ",
-		       "mcmc_para::mcmc().",o2scl::exc_einval);
+	    if (vec_equal) {
+	      std::cout.setf(std::ios::scientific);
+	      std::cout << i << " ";
+	      o2scl::vector_out(std::cout,initial_points[i],true);
+	      std::cout << j << " ";
+	      o2scl::vector_out(std::cout,initial_points[j],true);
+	      O2SCL_ERR2("Initial points not distinct in ",
+			 "mcmc_para::mcmc().",o2scl::exc_einval);
+	    }
 	  }
 	}
       }
@@ -2240,6 +2245,19 @@ namespace o2scl {
 	    }
 	  }
 	}
+
+	// If we can't find a row with the proper thread and walker
+	// index, then just use one of the points from the end of
+	// the file
+	if (found==false && tip.get_nlines()>this->n_walk*this->n_threads) {
+	  int row=tip.get_nlines()-this->n_walk*this->n_threads+windex;
+	  this->initial_points[windex].resize(n_param_loc);
+	  for(size_t ip=0;ip<n_param_loc;ip++) {
+	    this->initial_points[windex][ip]=tip.get(ip+offset,row);
+	  }
+	  found=true;
+	}
+	
 	if (found==false) {
 	  std::cout << "No initial guess found for rank " << this->mpi_rank
 		    << " thread " << it << " and walker " << iw << std::endl;
