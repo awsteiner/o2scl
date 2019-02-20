@@ -25,7 +25,8 @@ BASE_TEST_VAR = err_hnd.scr funct.scr table3d.scr \
 	search_vec.scr table.scr vector.scr interp_krige.scr \
 	interp.scr columnify.scr convert_units.scr \
 	string_conv.scr tensor.scr shunting_yard.scr \
-	format_float.scr table_units.scr exception.scr uniform_grid.scr 
+	format_float.scr table_units.scr exception.scr uniform_grid.scr \
+	tensor_grid.scr
 
 TEST_VAR = $(BASE_TEST_VAR)
 
@@ -112,7 +113,7 @@ CPVAR = err_hnd_ts funct_ts convert_units_ts \
 	lib_settings_ts misc_ts mm_funct_ts \
 	multi_funct_ts search_vec_ts table_ts interp_ts \
 	columnify_ts shunting_yard_ts interp_krige_ts \
-	string_conv_ts tensor_ts vector_ts table3d_ts \
+	string_conv_ts tensor_ts tensor_grid_ts vector_ts table3d_ts \
 	format_float_ts table_units_ts exception_ts uniform_grid_ts 
 
 check_PROGRAMS = $(CPVAR)
@@ -143,6 +144,7 @@ interp_ts_LDFLAGS = -fopenmp
 columnify_ts_LDFLAGS = -fopenmp
 string_conv_ts_LDFLAGS = -fopenmp
 tensor_ts_LDFLAGS = -fopenmp
+tensor_grid_ts_LDFLAGS = -fopenmp
 table_units_ts_LDFLAGS = -fopenmp
 exception_ts_LDFLAGS = -fopenmp
 uniform_grid_ts_LDFLAGS = -fopenmp
@@ -166,6 +168,7 @@ interp_ts_LDADD = $(VCHECK_LIBS)
 columnify_ts_LDADD = $(VCHECK_LIBS)
 string_conv_ts_LDADD = $(VCHECK_LIBS)
 tensor_ts_LDADD = $(VCHECK_LIBS)
+tensor_grid_ts_LDADD = $(VCHECK_LIBS)
 table_units_ts_LDADD = $(VCHECK_LIBS)
 exception_ts_LDADD = $(VCHECK_LIBS)
 uniform_grid_ts_LDADD = $(VCHECK_LIBS)
@@ -205,6 +208,8 @@ string_conv.scr: string_conv_ts$(EXEEXT)
 	./string_conv_ts$(EXEEXT) > string_conv.scr
 tensor.scr: tensor_ts$(EXEEXT) 
 	./tensor_ts$(EXEEXT) > tensor.scr
+tensor_grid.scr: tensor_grid_ts$(EXEEXT) 
+	./tensor_grid_ts$(EXEEXT) > tensor_grid.scr
 table_units.scr: table_units_ts$(EXEEXT) 
 	./table_units_ts$(EXEEXT) > table_units.scr
 exception.scr: exception_ts$(EXEEXT) 
@@ -231,6 +236,7 @@ interp_ts_SOURCES = interp_ts.cpp
 columnify_ts_SOURCES = columnify_ts.cpp
 string_conv_ts_SOURCES = string_conv_ts.cpp
 tensor_ts_SOURCES = tensor_ts.cpp
+tensor_grid_ts_SOURCES = tensor_grid_ts.cpp
 table_units_ts_SOURCES = table_units_ts.cpp
 exception_ts_SOURCES = exception_ts.cpp
 uniform_grid_ts_SOURCES = uniform_grid_ts.cpp
