@@ -297,6 +297,7 @@ namespace o2scl_acol {
     /** \brief Set the grid for a \ref o2scl::tensor_grid object
      */
     virtual int comm_set_grid(std::vector<std::string> &sv, bool itive_com);
+    virtual int comm_get_grid(std::vector<std::string> &sv, bool itive_com);
 
     /// Download a file from a specified URL
     virtual int comm_download(std::vector<std::string> &sv, bool itive_com);

@@ -118,7 +118,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   }
   {
     vector<std::string> itmp={"list","to-table3d","slice","to-table",
-			      "set-grid","max","min","rearrange"};
+			      "set-grid","max","min","rearrange","get-grid"};
     type_comm_list.insert(std::make_pair("tensor_grid",itmp));
   }
   {
@@ -672,7 +672,7 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="tensor_grid") {
     
-    static const size_t narr=8;
+    static const size_t narr=9;
     comm_option_s options_arr[narr]={
       {'l',"list","List the slice names and print out grid info.",
        0,0,"","List the slice names and print out grid info.",
@@ -699,6 +699,10 @@ void acol_manager::command_add(std::string new_type) {
        "this command sets the tensor grid. The value of 'i' ranges "+
        "from 0 to m-1, where 'm' is the tensor size for each rank.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_set_grid),
+       both},
+      {0,"get-grid","Get the tensor grid.",0,0,"",
+       "Output the tensor grid.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_grid),
        both},
       {0,"max","Find the maximum value and index.",0,0,"",
        "Compute the maximum value.",
@@ -903,7 +907,24 @@ void acol_manager::command_add(std::string new_type) {
 }
 
 void acol_manager::command_del() {
+  
+  if (true) {
+    cout << "X" << endl;
+    std::map<std::string,std::vector<std::string> >::iterator it;
+    for(it=type_comm_list.begin();it!=type_comm_list.end();it++) {
+      if (it->first==type) {
+	std::vector<std::string> &clist=it->second;
+	for(size_t j=0;j<clist.size();j++) {
+	  cl->remove_comm_option(clist[j]);
+	  cout << "Removing command " << clist[j] << " for type "
+	       << type << endl;
+	}
+      }
+    }
+    cout << "Y" << endl;
+  }
 
+  if (false) {
   if (type=="int") {
     cl->remove_comm_option("value");
   } else if (type=="double") {
@@ -915,7 +936,7 @@ void acol_manager::command_del() {
   } else if (type=="string") {
     cl->remove_comm_option("value");
   } else if (type=="table") {
-    
+
     cl->remove_comm_option("assign");
     cl->remove_comm_option("autocorr");
     cl->remove_comm_option("delete-col");
@@ -1012,8 +1033,10 @@ void acol_manager::command_del() {
     cl->remove_comm_option("slice");
     cl->remove_comm_option("to-table");
     cl->remove_comm_option("set-grid");
+    cl->remove_comm_option("get-grid");
     cl->remove_comm_option("max");
     cl->remove_comm_option("min");
+    cl->remove_comm_option("rearrange");
 
   } else if (type=="hist_2d") {
 
@@ -1084,6 +1107,8 @@ void acol_manager::command_del() {
       cl->remove_comm_option("sum");
       cl->remove_comm_option("to-hist");
     */
+
+  }
 
   }
   

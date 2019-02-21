@@ -79,6 +79,49 @@ int acol_manager::comm_get_conv
   return 0;
 }
 
+int acol_manager::comm_get_grid(std::vector<std::string> &sv, bool itive_com) {
+
+  if (type=="tensor_grid") {
+
+    size_t rank=tensor_grid_obj.get_rank();
+
+    size_t max_size=0;
+    for(size_t k=0;k<rank;k++) {
+      if (tensor_grid_obj.get_size(k)>max_size) {
+	max_size=tensor_grid_obj.get_size(k);
+      }
+    }
+
+    vector<vector<string> > string_mat(rank);
+    vector<int> align_spec(rank);
+    for(size_t k=0;k<rank;k++) {
+      string_mat[k].resize(max_size+1);
+      align_spec[k]=columnify::align_right;
+      string_mat[k][0]=((string)"Grid ")+o2scl::szttos(k);
+    }
+    for(size_t ell=0;ell<max_size;ell++) {
+      for(size_t k=0;k<rank;k++) {
+	if (ell<tensor_grid_obj.get_size(k)) {
+	  string_mat[k][ell+1]=
+	    o2scl::dtos(tensor_grid_obj.get_grid(k,ell),prec);
+	}
+      }
+    }
+
+    columnify col;
+    vector<string> aligned(max_size+1);
+    col.align(string_mat,rank,max_size+1,aligned,align_spec);
+    for(size_t i=0;i<aligned.size();i++) {
+      cout << aligned[i] << endl;
+    }
+
+    return 0;
+  }
+
+  cout << "Not implemented for type " << type << endl;
+  return 1;
+}
+
 int acol_manager::comm_get_unit(std::vector<std::string> &sv, bool itive_com) {
 
   if (type!="table") {
