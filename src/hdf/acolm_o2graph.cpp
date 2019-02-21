@@ -218,15 +218,134 @@ void o2scl_acol_get_type(void *vp, int &n, char *&str) {
   return;
 }
 
+int o2scl_acol_tensor_to_table3d(void *vp, int i1, int i2) {
+
+  o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
+  
+  if (amp->type!="tensor" && amp->type!="tensor_grid" &&
+      amp->type!="tensor<size_t>" && amp->type!="tensor<int>") {
+    return 2;
+  }
+
+  if (i1*i2!=0 || i1+i2!=1) {
+    cerr << "Indices malformed in o2scl_acol_tensor_to_table3d." << endl;
+    return 3;
+  }
+  
+  amp->table3d_obj.clear();
+  
+  if (amp->type=="tensor") {
+    if (amp->tensor_obj.get_rank()!=2) {
+      cerr << "Can only autoconvert to table3d if rank is 2." << endl;
+      return 1;
+    }
+    vector<double> grid_x, grid_y;
+    for(size_t i=0;i<amp->tensor_obj.get_size(i1);i++) {
+      grid_x.push_back((double)i);
+    }
+    for(size_t i=0;i<amp->tensor_obj.get_size(i2);i++) {
+      grid_y.push_back((double)i);
+    }
+    amp->table3d_obj.set_xy("x",grid_x.size(),grid_x,
+		       "y",grid_y.size(),grid_y);
+    amp->table3d_obj.new_slice("tensor");
+    vector<size_t> ix(2);
+    for(size_t i=0;i<amp->table3d_obj.get_nx();i++) {
+      for(size_t j=0;j<amp->table3d_obj.get_nx();j++) {
+	ix[i1]=i;
+	ix[i2]=j;
+	amp->table3d_obj.set(i,j,"tensor",amp->tensor_obj.get(ix));
+      }
+    }
+  } else if (amp->type=="tensor<size_t>") {
+    if (amp->tensor_size_t_obj.get_rank()!=2) {
+      cerr << "Can only autoconvert to table3d if rank is 2." << endl;
+      return 1;
+    }
+    vector<double> grid_x, grid_y;
+    for(size_t i=0;i<amp->tensor_size_t_obj.get_size(i1);i++) {
+      grid_x.push_back((double)i);
+    }
+    for(size_t i=0;i<amp->tensor_size_t_obj.get_size(i2);i++) {
+      grid_y.push_back((double)i);
+    }
+    amp->table3d_obj.set_xy("x",grid_x.size(),grid_x,
+		       "y",grid_y.size(),grid_y);
+    amp->table3d_obj.new_slice("tensor");
+    vector<size_t> ix(2);
+    for(size_t i=0;i<amp->table3d_obj.get_nx();i++) {
+      for(size_t j=0;j<amp->table3d_obj.get_nx();j++) {
+	ix[i1]=i;
+	ix[i2]=j;
+	amp->table3d_obj.set(i,j,"tensor",amp->tensor_size_t_obj.get(ix));
+      }
+    }
+  } else if (amp->type=="tensor<int>") {
+    if (amp->tensor_int_obj.get_rank()!=2) {
+      cerr << "Can only autoconvert to table3d if rank is 2." << endl;
+      return 1;
+    }
+    vector<double> grid_x, grid_y;
+    for(size_t i=0;i<amp->tensor_int_obj.get_size(i1);i++) {
+      grid_x.push_back((double)i);
+    }
+    for(size_t i=0;i<amp->tensor_int_obj.get_size(i2);i++) {
+      grid_y.push_back((double)i);
+    }
+    amp->table3d_obj.set_xy("x",grid_x.size(),grid_x,
+		       "y",grid_y.size(),grid_y);
+    amp->table3d_obj.new_slice("tensor");
+    vector<size_t> ix(2);
+    for(size_t i=0;i<amp->table3d_obj.get_nx();i++) {
+      for(size_t j=0;j<amp->table3d_obj.get_nx();j++) {
+	ix[i1]=i;
+	ix[i2]=j;
+	amp->table3d_obj.set(i,j,"tensor",amp->tensor_int_obj.get(ix));
+      }
+    }
+  } else if (amp->type=="tensor_grid") {
+    if (amp->tensor_grid_obj.get_rank()!=2) {
+      cerr << "Can only autoconvert to table3d if rank is 2." << endl;
+      return 1;
+    }
+    vector<double> grid_x, grid_y;
+    for(size_t i=0;i<amp->tensor_grid_obj.get_size(i1);i++) {
+      grid_x.push_back(amp->tensor_grid_obj.get_grid(i1,i));
+    }
+    for(size_t i=0;i<amp->tensor_grid_obj.get_size(i2);i++) {
+      grid_y.push_back(amp->tensor_grid_obj.get_grid(i2,i));
+    }
+    amp->table3d_obj.set_xy("x",grid_x.size(),grid_x,
+		       "y",grid_y.size(),grid_y);
+    amp->table3d_obj.new_slice("tensor");
+    vector<size_t> ix(2);
+    for(size_t i=0;i<amp->table3d_obj.get_nx();i++) {
+      for(size_t j=0;j<amp->table3d_obj.get_nx();j++) {
+	ix[i1]=i;
+	ix[i2]=j;
+	amp->table3d_obj.set(i,j,"tensor",amp->tensor_grid_obj.get(ix));
+      }
+    }
+  }
+
+  return 0;
+}
+
 int o2scl_acol_get_slice(void *vp, char *slice_name,
 			 int &nx, double *&xptr,
 			 int &ny, double *&yptr,
 			 double *&data) {
 
   o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
-  if (amp->type!="table3d") {
+
+  // Comment this out because this function is used in
+  // den-plot to plot tensor types and table3d_obj is
+  // used for empty storage
+  /*
+    if (amp->type!="table3d") {
     return 1;
-  }
+    }
+  */
 
   nx=amp->table3d_obj.get_nx();
   amp->xtemp.resize(nx);

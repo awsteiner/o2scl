@@ -565,6 +565,10 @@ extern "C" {
   void o2scl_acol_set_names(void *vp, int n1, char *cmd_name,
 			    int n2, char *short_desc, int n3,
 			    char *env_var);
+
+  /** \brief Desc
+   */
+  int o2scl_acol_tensor_to_table3d(void *vp, int i1, int i2);
   
   /** \brief Construct a string vector from the data in 
       \c n_entries, \c sizes, and \c str
