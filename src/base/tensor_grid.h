@@ -1651,6 +1651,9 @@ namespace o2scl {
 
 	\note This function doesn't work yet. Most of all, it does
 	not yet properly construct the new grid.
+
+	\future Some code duplication between this function
+	and the one in the tensor class.
     */
     tensor_grid<> rearrange_and_copy(std::vector<index_spec> spec,
 				     int verbose=0,
@@ -1675,16 +1678,20 @@ namespace o2scl {
 
       // Size of sums
       std::vector<size_t> sum_sizes;
+
+      // List of indexes to interpolate
       std::vector<size_t> ix_to_interp;
 
       // New grid
       std::vector<double> new_grid;
   
-      // Collect the statistics on the transformation
+      // Collect the statistics on the transformationand set the new grid
       for(size_t i=0;i<spec.size();i++) {
 	if (spec[i].type==index_spec::index ||
 	    spec[i].type==index_spec::reverse) {
 	  size_new.push_back(this->size[spec[i].ix1]);
+	  // Use ix1 to store the destination index (which is
+	  // at this point equal to rank_new)
 	  spec_old[spec[i].ix1]=index_spec(spec[i].type,
 					   rank_new,
 					   spec[i].ix2,0,
@@ -1694,6 +1701,7 @@ namespace o2scl {
 					spec[i].ix2,0,
 					spec[i].val1));
 	  rank_new++;
+	  // Update the new grid
 	  if (spec[i].type==index_spec::index) {
 	    for(size_t k=0;k<this->get_size(spec[i].ix1);k++) {
 	      new_grid.push_back(this->get_grid(spec[i].ix1,k));
@@ -1720,6 +1728,8 @@ namespace o2scl {
 	  } else {
 	    size_new.push_back(spec[i].ix2-spec[i].ix3+1);
 	  }
+	  // Use ix1 to store the destination index (which is
+	  // at this point equal to rank_new)
 	  spec_old[spec[i].ix1]=
 	    index_spec(spec[i].type,rank_new,spec[i].ix2,
 		       spec[i].ix3,spec[i].val1);
@@ -1735,6 +1745,8 @@ namespace o2scl {
 	    n_sum_loop*=this->size[spec[i].ix2];
 	    sum_sizes.push_back(this->size[spec[i].ix2]);
 	  }
+	  // We set the values of ix1 and ix2 so that ix2
+	  // always refers to the other index being traced over
 	  spec_old[spec[i].ix1]=index_spec(spec[i].type,
 					   spec[i].ix1,
 					   spec[i].ix2,0,
@@ -1751,11 +1763,15 @@ namespace o2scl {
 					   spec[i].ix2,0,
 					   spec[i].val1);
 	} else if (spec[i].type==index_spec::fixed) {
+	  // Use ix1 to store the destination index (which is
+	  // at this point equal to rank_new)
 	  spec_old[spec[i].ix1]=index_spec(spec[i].type,
 					   rank_new,
 					   spec[i].ix2,0,
 					   spec[i].val1);
 	} else if (spec[i].type==index_spec::interp) {
+	  // Use ix1 to store the destination index (which is
+	  // at this point equal to rank_new)
 	  spec_old[spec[i].ix1]=index_spec(spec[i].type,
 					   rank_new,
 					   spec[i].ix2,0,
@@ -1770,35 +1786,46 @@ namespace o2scl {
 					   spec[i].val1,
 					   spec[i].val2,
 					   spec[i].val3);
-	  n_interps++;
-	  rank_new++;
 	  spec_new.push_back(index_spec(spec[i].type,
 					spec[i].ix1,0,
 					spec[i].ix3,
 					spec[i].val1,
 					spec[i].val2,
 					spec[i].val3));
-	  // Log or linear mode
+	  
+	  n_interps++;
+	  ix_to_interp.push_back(spec[i].ix1);
+	  
+	  rank_new++;
+	  
+	  // Setup new grid in log or linear mode
 	  if (spec[i].ix3==1) {
 	    // Log mode
 	    double rat=spec[i].val2/spec[i].val1;
-	    size_t temp_size=((size_t)pow(rat,1.0/spec[i].val3))+1;
+	    int temp_size=((size_t)pow(rat,1.0/spec[i].val3))+1;
 	    size_new.push_back(temp_size);
-	    for(size_t k=0;k<temp_size;k++) {
-	      new_grid.push_back(spec[i].val1*
-				 pow(rat,((double)k)/((double)temp_size)));
+	    if (temp_size==1) {
+	      new_grid.push_back(spec[i].val1);
+	    } else {
+	      for(int k=0;k<temp_size;k++) {
+		new_grid.push_back(spec[i].val1*
+				   pow(rat,((double)k)/((double)temp_size-1)));
+	      }
 	    }
 	  } else {
 	    // Linear mode
 	    double diff=(spec[i].val2-spec[i].val1);
-	    size_t temp_size=((size_t)diff/spec[i].val3)+1;
+	    int temp_size=((size_t)diff/spec[i].val3)+1;
 	    size_new.push_back(temp_size);
-	    for(size_t k=0;k<temp_size;k++) {
-	      new_grid.push_back(spec[i].val1+
-				 diff*((double)k)/((double)temp_size));
+	    if (temp_size==1) {
+	      new_grid.push_back(spec[i].val1);
+	    } else {
+	      for(int k=0;k<temp_size;k++) {
+		new_grid.push_back(spec[i].val1+
+				   diff*((double)k)/((double)(temp_size-1)));
+	      }
 	    }
 	  }
-	  ix_to_interp.push_back(spec[i].ix1);
 	} else {
 	  if (err_on_fail) {
 	    O2SCL_ERR2("Index specification type not allowed in ",
@@ -1865,7 +1892,7 @@ namespace o2scl {
 	    std::cout << " is being interpolated from value "
 		      << spec_old[i].val1 << "." << std::endl;
 	  } else if (spec_old[i].type==index_spec::grid) {
-	    std::cout << " is being reinterpolated based on grid "
+	    std::cout << " is being reinterpolated based on grid\n  "
 		      << spec_old[i].val1 << " "
 		      << spec_old[i].val2 << " "
 		      << spec_old[i].val3;
@@ -1889,7 +1916,7 @@ namespace o2scl {
 	    std::cout << " was reversed and remapped from old index "
 		      << spec_new[i].ix1 << "." << std::endl;
 	  } else if (spec_new[i].type==index_spec::grid) {
-	    std::cout << " was obtained from grid "
+	    std::cout << " was obtained from grid\n  "
 		      << spec_new[i].val1 << " "
 		      << spec_new[i].val2 << " "
 		      << spec_new[i].val3;
@@ -1908,7 +1935,7 @@ namespace o2scl {
       if (verbose>1) {
 	std::cout << "New grid is: " << std::endl;
 	for(size_t k=0;k<rank_new;k++) {
-	  std::cout << k << ": ";
+	  std::cout << k << " (" << t_new.get_size(k) << "): ";
 	  if (t_new.get_size(k)>3) {
 	    std::cout << t_new.get_grid(k,0) << ", ";
 	    std::cout << t_new.get_grid(k,1) << " ... ";
@@ -1919,6 +1946,9 @@ namespace o2scl {
 	  }
 	  std::cout << t_new.get_grid(k,t_new.get_size(k)-1) << std::endl;
 	}
+	std::cout << "Interpolations (" << n_interps << "): ";
+	o2scl::vector_out(std::cout,ix_to_interp,true);
+      }
     
       // Index arrays
       std::vector<size_t> ix_new(rank_new);
@@ -1932,7 +1962,7 @@ namespace o2scl {
 	t_new.unpack_index(i,ix_new);
 
 	// List of interpolated values
-	std::vector<double> interp_vals(n_interps);
+	std::vector<double> interp_vals;
 	
 	// Determine the location in the old tensor object
 	for(size_t j=0;j<rank_old;j++) {
@@ -1981,6 +2011,7 @@ namespace o2scl {
 	      j2-=sub_size*(j2/sub_size);
 	    }
 	  }
+	  
 	  if (verbose>2) {
 	    std::cout << "n_sum_loop: " << n_sum_loop << " n_sums: "
 		      << n_sums << " sum_sizes: ";
@@ -2028,10 +2059,6 @@ namespace o2scl {
 	  } else {
 	    val+=this->get(ix_old);
 	  }
-	  //template<class vec2_size_t, class vec3_size_t, class vec2_t>
-	  //double interp_linear_partial
-	  //(const vec2_size_t &ix_to_interp,
-	  //const vec3_size_t &ix, const vec2_t &val) {
       
 	}
       

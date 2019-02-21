@@ -798,6 +798,9 @@ namespace o2scl {
   //@}
 
   /** \brief Rearrange, sum and copy current tensor to a new tensor
+
+      \future Return a scalar if possible as a rank 1 tensor with
+      1 element.
   */
   tensor<data_t> rearrange_and_copy(std::vector<index_spec> spec,
 				    int verbose=0, bool err_on_fail=true) {
@@ -868,6 +871,8 @@ namespace o2scl {
 	  n_sum_loop*=size[spec[i].ix2];
 	  sum_sizes.push_back(size[spec[i].ix2]);
 	}
+	// We set the values of ix1 and ix2 so that ix2
+	// always refers to the other index being traced over
 	spec_old[spec[i].ix1]=index_spec(spec[i].type,
 					 spec[i].ix1,
 					 spec[i].ix2,0,
@@ -884,6 +889,8 @@ namespace o2scl {
 					 spec[i].ix2,0,
 					 spec[i].val1);
       } else if (spec[i].type==index_spec::fixed) {
+	// Use ix1 to store the destination index (which is
+	// at this point equal to rank_new)
 	spec_old[spec[i].ix1]=index_spec(spec[i].type,
 					 rank_new,
 					 spec[i].ix2,0,
