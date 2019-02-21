@@ -325,6 +325,8 @@ int o2scl::split_string_delim(string str, vector<string> &list,
   
 void o2scl::rewrap(std::string str, std::vector<std::string> &sv,
 		   size_t ncol) {
+
+  if (sv.size()>0) sv.clear();
   
   std::vector<std::string> sv_tmp;
   split_string(str,sv_tmp);
@@ -358,34 +360,42 @@ void o2scl::rewrap_keep_endlines(std::string str,
     
   std::vector<std::string> sv_endlines;
   split_string_delim(str,sv_endlines,'\n');
-  
+
   for(size_t k=0;k<sv_endlines.size();k++) {
-
-    std::vector<std::string> sv_tmp;
-    split_string(sv_endlines[k],sv_tmp);
-
-    string stmp;
     
-    if (sv_tmp.size()==0) {
-      sv.push_back(stmp);
+    if (sv_endlines[k].length()<ncol) {
+      
+      sv.push_back(sv_endlines[k]);
+      
     } else {
-      for(size_t old_ix=0;old_ix<sv_tmp.size();old_ix++) {
-	if (stmp.length()+sv_tmp[old_ix].length()+1<ncol) {
-	  if (stmp.length()==0) {
-	    stmp+=sv_tmp[old_ix];
+      
+      std::vector<std::string> sv_tmp;
+      split_string(sv_endlines[k],sv_tmp);
+      
+      string stmp;
+      
+      if (sv_tmp.size()==0) {
+	sv.push_back(stmp);
+      } else {
+	for(size_t old_ix=0;old_ix<sv_tmp.size();old_ix++) {
+	  if (stmp.length()+sv_tmp[old_ix].length()+1<ncol) {
+	    if (stmp.length()==0) {
+	      stmp+=sv_tmp[old_ix];
+	    } else {
+	      stmp+=((string)" ")+sv_tmp[old_ix];
+	    }
 	  } else {
-	    stmp+=((string)" ")+sv_tmp[old_ix];
+	    sv.push_back(stmp);
+	    stmp=sv_tmp[old_ix];
 	  }
-	} else {
+	}
+	if (stmp.size()>0) {
 	  sv.push_back(stmp);
-	  stmp=sv_tmp[old_ix];
 	}
       }
-      if (stmp.size()>0) {
-	sv.push_back(stmp);
-      }
+      
     }
-
+    
   }
   
   return;

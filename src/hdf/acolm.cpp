@@ -1307,26 +1307,59 @@ int acol_manager::setup_help() {
   
   cl->desc=((string)"acol: A data viewing and ")+
     "processing program for O2scl.\n";
+
+  string stemp;
+  string dsc="\nNotes:\n\n";
+  vector<std::string> sv;
   
-  string dsc="\nNotes:\n \n";
-  dsc+="1. Help for general commands may be obtained with 'help ";
-  dsc+="<command>'. Help for type-specific commands can be obtained ";
-  dsc+="by 'help <type> <command>'. A list of commands for each type ";
-  dsc+="can be obtained with 'commands <type>'. Required arguments ";
-  dsc+="are surrounded by ";
-  dsc+="<>'s and optional arguments are surrounded by []'s.\n";
-  dsc+="2. Options may also be specified in the environment variable ";
-  dsc+="ACOL_DEFAULTS.\n";
-  dsc+="3. Long options may be preceeded by two dashes.\n";
-  dsc+="4. In order to avoid confusion between arguments and functions, ";
-  dsc+="use parenthesis and quotes, i.e. \"(-x*2)\" instead of -x*2.\n";
-  dsc+="5. Also, do not use a unary minus next to a binary operator, ";
-  dsc+="i.e. use \"a>(-1)\" instead of \"a>-1\".\n \n";
-  dsc+="Known operators:\n \n() ^ * / % + - == != < > && || << >> >= <=\n \n";
-  dsc+="Known functions:\n \n";
+  stemp="1. Help for general commands may be obtained with 'help ";
+  stemp+="<command>'. Help for type-specific commands can be obtained ";
+  stemp+="by 'help <type> <command>'. A list of commands for each type ";
+  stemp+="can be obtained with 'commands <type>'. Required arguments ";
+  stemp+="are surrounded by ";
+  stemp+="<>'s and optional arguments are surrounded by []'s.\n";
+  rewrap(stemp,sv,76);
+  dsc+=sv[0]+"\n";
+  for(size_t j=1;j<sv.size();j++) {
+    dsc+="   "+sv[j]+"\n";
+  }
+  
+  stemp="2. Options may also be specified in the environment variable ";
+  stemp+="ACOL_DEFAULTS.\n";
+  rewrap(stemp,sv,76);
+  dsc+=sv[0]+"\n";
+  for(size_t j=1;j<sv.size();j++) {
+    dsc+="   "+sv[j]+"\n";
+  }
+
+  stemp="3. Long options may be preceeded by two dashes.\n";
+  rewrap(stemp,sv,76);
+  dsc+=sv[0]+"\n";
+  for(size_t j=1;j<sv.size();j++) {
+    dsc+="   "+sv[j]+"\n";
+  }
+
+  stemp="4. In order to avoid confusion between arguments and functions, ";
+  stemp+="use parenthesis and quotes, i.e. \"(-x*2)\" instead of -x*2.\n";
+  rewrap(stemp,sv,76);
+  dsc+=sv[0]+"\n";
+  for(size_t j=1;j<sv.size();j++) {
+    dsc+="   "+sv[j]+"\n";
+  }
+
+  stemp="5. Also, do not use a unary minus next to a binary operator, ";
+  stemp+="i.e. use \"a>(-1)\" instead of \"a>-1\".\n\n";
+  rewrap(stemp,sv,76);
+  dsc+=sv[0]+"\n";
+  for(size_t j=1;j<sv.size();j++) {
+    dsc+="   "+sv[j]+"\n";
+  }
+
+  dsc+="\nKnown operators:\n\n() ^ * / % + - == != < > && || << >> >= <=\n\n";
+  dsc+="Known functions:\n\n";
   dsc+="exp(x) log(x) log10(x) sin(x) cos(x) tan(x) sqrt(x) abs(x) ";
   dsc+="asin(x) acos(x) atan(x) sinh(x) cosh(x) tanh(x) ";
-  dsc+="asinh(x) acosh(x) atanh(x)\n \n";
+  dsc+="asinh(x) acosh(x) atanh(x)\n\n";
   /*
     dsc+="atan2(x,y) if(x,y,z)\n";
     dsc+="cot(x) csc(x) sec(x)\n";
@@ -1334,15 +1367,21 @@ int acol_manager::setup_help() {
   */
   
   dsc+="List of additional type-specific commands\n";
-  dsc+="(use 'help <type> <command>' for more info):\n \n";
+  dsc+="(use 'help <type> <command>' for more info):\n\n";
   std::map<std::string,std::vector<std::string> >::iterator it;
   for(it=type_comm_list.begin();it!=type_comm_list.end();it++) {
+    stemp=it->first+": ";
     std::vector<std::string> &clist=it->second;
-    dsc+=it->first+": ";
     for(size_t j=0;j<clist.size()-1;j++) {
-      dsc+=clist[j]+", ";
+      stemp+=clist[j]+", ";
     }
-    dsc+=clist[clist.size()-1]+"\n";
+    stemp+=clist[clist.size()-1];
+    vector<std::string> sv;
+    rewrap(stemp,sv,77);
+    dsc+=sv[0]+"\n";
+    for(size_t j=1;j<sv.size();j++) {
+      dsc+="  "+sv[j]+"\n";
+    }
   }
   dsc+=" \n";
   
