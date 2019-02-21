@@ -150,7 +150,7 @@ namespace o2scl {
       (for \ref o2scl::tensor_grid only)
    */
   index_spec ix_grid(size_t ix, double begin, double end, double width,
-		     bool log);
+		     bool log=false);
   
   /** \brief Tensor class with arbitrary dimensions
 
@@ -825,6 +825,8 @@ namespace o2scl {
       if (spec[i].type==index_spec::index ||
 	  spec[i].type==index_spec::reverse) {
 	size_new.push_back(this->size[spec[i].ix1]);
+	// Use ix1 to store the destination index (which is
+	// at this point equal to rank_new)
 	spec_old[spec[i].ix1]=index_spec(spec[i].type,
 					 rank_new,
 					 spec[i].ix2,0,
@@ -849,6 +851,8 @@ namespace o2scl {
 	} else {
 	  size_new.push_back(spec[i].ix2-spec[i].ix3+1);
 	}
+	// Use ix1 to store the destination index (which is
+	// at this point equal to rank_new)
 	spec_old[spec[i].ix1]=
 	  index_spec(spec[i].type,rank_new,spec[i].ix2,
 		     spec[i].ix3,spec[i].val1);

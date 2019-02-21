@@ -1648,10 +1648,13 @@ namespace o2scl {
        std::string name);
     
     /** \brief Rearrange, sum and copy current tensor to a new tensor
-     */
+
+	\note This function doesn't work yet. Most of all, it does
+	not yet properly construct the new grid.
+    */
     tensor_grid<> rearrange_and_copy(std::vector<index_spec> spec,
-					   int verbose=0,
-					   bool err_on_fail=true) {
+				     int verbose=0,
+				     bool err_on_fail=true) {
       
       // Old rank and new rank (computed later)
       size_t rank_old=this->rk;
@@ -1673,6 +1676,9 @@ namespace o2scl {
       // Size of sums
       std::vector<size_t> sum_sizes;
       std::vector<size_t> ix_to_interp;
+
+      // New grid
+      std::vector<double> new_grid;
   
       // Collect the statistics on the transformation
       for(size_t i=0;i<spec.size();i++) {
@@ -1688,6 +1694,16 @@ namespace o2scl {
 					spec[i].ix2,0,
 					spec[i].val1));
 	  rank_new++;
+	  if (spec[i].type==index_spec::index) {
+	    for(size_t k=0;k<this->get_size(spec[i].ix1);k++) {
+	      new_grid.push_back(this->get_grid(spec[i].ix1,k));
+	    }
+	  } else {
+	    size_t nt=this->get_size(spec[i].ix1);
+	    for(size_t k=0;k<nt;k++) {
+	      new_grid.push_back(this->get_grid(spec[i].ix1,nt-1-k));
+	    }
+	  }
 	} else if (spec[i].type==index_spec::range) {
 	  if (spec[i].ix2>=this->size[spec[i].ix1] ||
 	      spec[i].ix3>=this->size[spec[i].ix1]) {
@@ -1747,19 +1763,40 @@ namespace o2scl {
 	  n_interps++;
 	  ix_to_interp.push_back(spec[i].ix1);
 	} else if (spec[i].type==index_spec::grid) {
+	  // Use ix1 to store the destination index (which is
+	  // at this point equal to rank_new)
 	  spec_old[spec[i].ix1]=index_spec(spec[i].type,
-					   rank_new,
-					   spec[i].ix2,spec[i].ix3,
+					   rank_new,0,spec[i].ix3,
 					   spec[i].val1,
 					   spec[i].val2,
 					   spec[i].val3);
 	  n_interps++;
 	  rank_new++;
+	  spec_new.push_back(index_spec(spec[i].type,
+					spec[i].ix1,0,
+					spec[i].ix3,
+					spec[i].val1,
+					spec[i].val2,
+					spec[i].val3));
+	  // Log or linear mode
 	  if (spec[i].ix3==1) {
-	    size_new.push_back(pow(spec[i].val2/spec[i].val1,
-				   1.0/spec[i].val3));
+	    // Log mode
+	    double rat=spec[i].val2/spec[i].val1;
+	    size_t temp_size=((size_t)pow(rat,1.0/spec[i].val3))+1;
+	    size_new.push_back(temp_size);
+	    for(size_t k=0;k<temp_size;k++) {
+	      new_grid.push_back(spec[i].val1*
+				 pow(rat,((double)k)/((double)temp_size)));
+	    }
 	  } else {
-	    size_new.push_back((spec[i].val2-spec[i].val1)/spec[i].val3);
+	    // Linear mode
+	    double diff=(spec[i].val2-spec[i].val1);
+	    size_t temp_size=((size_t)diff/spec[i].val3)+1;
+	    size_new.push_back(temp_size);
+	    for(size_t k=0;k<temp_size;k++) {
+	      new_grid.push_back(spec[i].val1+
+				 diff*((double)k)/((double)temp_size));
+	    }
 	  }
 	  ix_to_interp.push_back(spec[i].ix1);
 	} else {
@@ -1867,6 +1904,21 @@ namespace o2scl {
     
       // Create the new tensor object
       tensor_grid<> t_new(rank_new,size_new);
+      t_new.set_grid_packed(new_grid);
+      if (verbose>1) {
+	std::cout << "New grid is: " << std::endl;
+	for(size_t k=0;k<rank_new;k++) {
+	  std::cout << k << ": ";
+	  if (t_new.get_size(k)>3) {
+	    std::cout << t_new.get_grid(k,0) << ", ";
+	    std::cout << t_new.get_grid(k,1) << " ... ";
+	  } else {
+	    for(int ell=0;ell<((int)t_new.get_size(k))-1;ell++) {
+	      std::cout << t_new.get_grid(k,ell) << ", ";
+	    }
+	  }
+	  std::cout << t_new.get_grid(k,t_new.get_size(k)-1) << std::endl;
+	}
     
       // Index arrays
       std::vector<size_t> ix_new(rank_new);

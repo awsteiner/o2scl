@@ -438,6 +438,79 @@ int main(void) {
 
 #endif
   
+  if (true) {
+    
+    // Test rearrange_and_copy()
+    tensor_grid<> tx, tx2, tx3, tx2b, tx3b;
+    size_t sz[5]={3,3,3,3,3};
+    vector<size_t> ix_old, ix_new;
+
+    // Create the test data
+    tx.resize(5,sz);
+    vector<double> grid;
+    for(size_t i=0;i<12;i++) {
+      grid.push_back(((double)i));
+    }
+    grid.push_back(0.1);
+    grid.push_back(0.01);
+    grid.push_back(0.001);
+    tx.set_grid_packed(grid);
+    vector<double> data(243);
+    for(size_t i=0;i<243;i++) {
+      data[i]=((double)i);
+    }
+    tx.swap_data(data);
+
+    hdf_file hf;
+    hf.open_or_create("tensor_ts.o2");
+    hf.setd_ten("rk5",tx);
+    hf.close();
+
+    // First test. ix_interp(1,3.0) has the same effect as
+    // ix_fixed(1,0) and ix_grid(4,...) has the same effect
+    // as ix_index(4)
+    tx2=tx.rearrange_and_copy({ix_interp(1,3.0),ix_grid(4,10.0,15.0,1.0),
+	  ix_fixed(3,2),ix_sum(0),ix_sum(2)},2);
+    cout << tx2.get_size(0) << " " << tx2.get_rank() << endl;
+
+    if (false) {
+      size_t sz2b[2]={3,3};
+      tx2b.resize(2,sz2b);
+      for(size_t i1=0;i1<3;i1++) {
+	for(size_t i2=0;i2<3;i2++) {
+	  double val=0.0;
+	  for(size_t i3=0;i3<3;i3++) {
+	    for(size_t i4=0;i4<3;i4++) {
+	      ix_old={i3,i1,i4,2,2-i2};
+	      val+=tx.get(ix_old);
+	    }
+	  }
+	  ix_new={i1,i2};
+	  tx2b.set(ix_new,val);
+	}
+      }
+      t.test_gen(tx2==tx2b,"rearrange 1");
+      
+      // Second test
+      tx3=tx.rearrange_and_copy({ix_index(1),ix_range(4,1,0),
+	    ix_interp(3,9.5),ix_trace(0,2)},2);
+      size_t sz3b[2]={3,2};
+      tx3b.resize(2,sz3b);
+      for(size_t i1=0;i1<3;i1++) {
+	for(size_t i2=0;i2<2;i2++) {
+	  double val=0.0;
+	  for(size_t i3=0;i3<3;i3++) {
+	    ix_old={i3,i1,i3,2,1-i2};
+	    val+=tx.get(ix_old);
+	  }
+	  ix_new={i1,i2};
+	  tx3b.set(ix_new,val);
+	}
+      }
+      t.test_gen(tx3==tx3b,"rearrange 2");
+    }
+  }
+  
   t.report();
 
   return 0;

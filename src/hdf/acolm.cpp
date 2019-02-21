@@ -118,7 +118,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   }
   {
     vector<std::string> itmp={"list","to-table3d","slice","to-table",
-			      "set-grid","max","min"};
+			      "set-grid","max","min","rearrange"};
     type_comm_list.insert(std::make_pair("tensor_grid",itmp));
   }
   {
@@ -666,7 +666,7 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="tensor_grid") {
     
-    static const size_t narr=7;
+    static const size_t narr=8;
     comm_option_s options_arr[narr]={
       {'l',"list","List the slice names and print out grid info.",
        0,0,"","List the slice names and print out grid info.",
@@ -701,6 +701,10 @@ void acol_manager::command_add(std::string new_type) {
       {0,"min","Find the minimum value of and index.",0,0,"",
        "Compute the minimum value.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
+       both},
+      {0,"rearrange","Rearrange the tensor_grid object.",
+       -1,-1,"","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_rearrange),
        both}
     };
     cl->set_comm_option_vec(narr,options_arr);
