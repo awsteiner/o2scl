@@ -1785,7 +1785,7 @@ int acol_manager::comm_set_grid(std::vector<std::string> &sv, bool itive_com) {
       pr.push_back(((std::string)"Function defining grid for rank ")+
 		   o2scl::szttos(rank));
     }
-    int ret=get_input(sv,pr,in,"create",itive_com);
+    int ret=get_input(sv,pr,in,"set-grid",itive_com);
     if (ret!=0) return ret;
 
     vector<double> grid;
@@ -1795,12 +1795,13 @@ int acol_manager::comm_set_grid(std::vector<std::string> &sv, bool itive_com) {
       std::map<std::string,double> vars;
       for(size_t i=0;i<tensor_grid_obj.get_size(k);i++) {
 	vars["i"]=((double)i);
+	vars["x"]=tensor_grid_obj.get_grid(k,i);
 	calc.compile(in[k].c_str(),&vars);
 	double gi=calc.eval(&vars);
 	grid.push_back(gi);
       }
     }
-    
+
     tensor_grid_obj.set_grid_packed(grid);
     
     return 0;
