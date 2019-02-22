@@ -692,8 +692,9 @@ void acol_manager::command_add(std::string new_type) {
        "",new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_slice),both},
       {0,"set-grid","Set the tensor grid.",-1,-1,
-       ((std::string)"<function for rank 0> ")+
-       "<function for rank 1> ... <function for rank n-1>",
+       ((std::string)"<func. or vector spec. for rank 0> ")+
+       "<func. or vector spec. for rank 1> ... "+
+       "<func. or vector spec. for rank n-1>",
        ((std::string)"Given a function which specifies the grid ")+
        "value as a function of the variables 'i' and 'x' for each rank, "+
        "this command sets the tensor grid. The value of 'i' ranges "+

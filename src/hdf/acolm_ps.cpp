@@ -1791,14 +1791,39 @@ int acol_manager::comm_set_grid(std::vector<std::string> &sv, bool itive_com) {
     vector<double> grid;
       
     for(size_t k=0;k<rank;k++) {
-      calculator calc;
-      std::map<std::string,double> vars;
-      for(size_t i=0;i<tensor_grid_obj.get_size(k);i++) {
-	vars["i"]=((double)i);
-	vars["x"]=tensor_grid_obj.get_grid(k,i);
-	calc.compile(in[k].c_str(),&vars);
-	double gi=calc.eval(&vars);
-	grid.push_back(gi);
+
+      if (in[k].find(':')==std::string::npos) {
+	
+	calculator calc;
+	std::map<std::string,double> vars;
+	for(size_t i=0;i<tensor_grid_obj.get_size(k);i++) {
+	  vars["i"]=((double)i);
+	  vars["x"]=tensor_grid_obj.get_grid(k,i);
+	  calc.compile(in[k].c_str(),&vars);
+	  double gi=calc.eval(&vars);
+	  grid.push_back(gi);
+	}
+	
+      } else {
+
+	std::vector<double> vtemp;
+	int ret=vector_spec(in[k],vtemp,3,false);
+	if (ret!=0) {
+	  cerr << "Interpretation of vector specification failed."
+	       << endl;
+	  return 3;
+	}
+
+	if (vtemp.size()<tensor_grid_obj.get_size(k)) {
+	  cerr << "Vector specification results in vector "
+	       << "smaller than tensor grid." << endl;
+	  return 2;
+	}
+	
+	for(size_t i=0;i<tensor_grid_obj.get_size(k);i++) {
+	  grid.push_back(vtemp[i]);
+	}
+	
       }
     }
 

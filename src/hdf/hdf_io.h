@@ -415,6 +415,10 @@ namespace o2scl_hdf {
   template<class vec_t> int vector_spec(std::string spec, vec_t &v,
 					int verbose=0,
 					bool err_on_fail=true) {
+
+    if (verbose>2) {
+      std::cout << "Function vector_spec is parsing: " << spec << std::endl;
+    }
       
     if (spec.find("val:")==0) {
 
@@ -630,6 +634,11 @@ namespace o2scl_hdf {
       hf.close();
 	
     } else {
+
+      if (verbose>0) {
+	std::cout << "Could not understand prefix in vector_spec()."
+		  << std::endl;
+      }
 	
       if (err_on_fail) {
 	O2SCL_ERR2("Could not parse specification ",

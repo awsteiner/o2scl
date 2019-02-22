@@ -92,17 +92,28 @@ int acol_manager::comm_get_grid(std::vector<std::string> &sv, bool itive_com) {
       }
     }
 
-    vector<vector<string> > string_mat(rank);
-    vector<int> align_spec(rank);
-    for(size_t k=0;k<rank;k++) {
-      string_mat[k].resize(max_size+1);
-      align_spec[k]=columnify::align_right;
-      string_mat[k][0]=((string)"Grid ")+o2scl::szttos(k);
+    vector<vector<string> > string_mat(rank+1);
+    vector<int> align_spec(rank+1);
+
+    // The first column which enumerates the grid points
+    align_spec[0]=columnify::align_left;
+    string_mat[0].resize(max_size+1);
+    for(size_t ell=0;ell<max_size;ell++) {
+      string_mat[0][ell+1]=o2scl::szttos(ell)+".";
     }
+
+    // The first row which labels the grids
+    for(size_t k=0;k<rank;k++) {
+      string_mat[k+1].resize(max_size+1);
+      align_spec[k+1]=columnify::align_right;
+      string_mat[k+1][0]=((string)"Grid ")+o2scl::szttos(k);
+    }
+
+    // Now the grid data
     for(size_t ell=0;ell<max_size;ell++) {
       for(size_t k=0;k<rank;k++) {
 	if (ell<tensor_grid_obj.get_size(k)) {
-	  string_mat[k][ell+1]=
+	  string_mat[k+1][ell+1]=
 	    o2scl::dtos(tensor_grid_obj.get_grid(k,ell),prec);
 	}
       }
@@ -110,7 +121,7 @@ int acol_manager::comm_get_grid(std::vector<std::string> &sv, bool itive_com) {
 
     columnify col;
     vector<string> aligned(max_size+1);
-    col.align(string_mat,rank,max_size+1,aligned,align_spec);
+    col.align(string_mat,rank+1,max_size+1,aligned,align_spec);
     for(size_t i=0;i<aligned.size();i++) {
       cout << aligned[i] << endl;
     }
