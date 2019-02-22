@@ -59,20 +59,18 @@ namespace o2scl_acol {
   /** \brief The driver for 'acol' command-line utility
       \nothing
 
-      \future Find a way to reorganize the source code into
-      smaller files. Separate out the global functions for
-      o2graph into their own file.
-
       \future sum/max/min/output/interp/deriv/integ/deriv2 
       for hist, hist_2d, and v<c>
 
-      \future xindex and yindex for table3d
+      \future Commands xindex and yindex for table3d.
 
-      \future fix fit for table
+      \future Enable set_grid() for table3d similar to tensor_grid.
 
-      \future use swap instead of copy in 'select' for table objects
+      \future Fix fit for table.
 
-      \future Make sure get_input() is used more consistently
+      \future Use swap instead of copy in 'select' for table objects.
+
+      \future Make sure get_input() is used more consistently.
 
       \future Make sure preview, output, internal, generic, and create
       work consistently across all types.
@@ -91,9 +89,6 @@ namespace o2scl_acol {
       \future Allow "insert" commands to be restrictive, avoiding
       extrapolation
       
-      \future New table3d commands: transpose, 
-      find_grid_x, and find_grid_y.
-
       \hline
   */
   class acol_manager {

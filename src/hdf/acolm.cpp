@@ -695,13 +695,14 @@ void acol_manager::command_add(std::string new_type) {
        ((std::string)"<function for rank 0> ")+
        "<function for rank 1> ... <function for rank n-1>",
        ((std::string)"Given a function which specifies the grid ")+
-       "value as a function of the variable 'i' for each rank, "+
+       "value as a function of the variables 'i' and 'x' for each rank, "+
        "this command sets the tensor grid. The value of 'i' ranges "+
-       "from 0 to m-1, where 'm' is the tensor size for each rank.",
+       "from 0 to m-1, where 'm' is the tensor size for each rank and the "+
+       "value of 'x' is equal to the previous grid value.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_set_grid),
        both},
       {0,"get-grid","Get the tensor grid.",0,0,"",
-       "Output the tensor grid.",
+       "Output the tensor grid as a series of columns.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_grid),
        both},
       {0,"max","Find the maximum value and index.",0,0,"",
@@ -908,204 +909,14 @@ void acol_manager::command_add(std::string new_type) {
 
 void acol_manager::command_del() {
   
-  if (true) {
-    std::map<std::string,std::vector<std::string> >::iterator it;
-    for(it=type_comm_list.begin();it!=type_comm_list.end();it++) {
-      if (it->first==type) {
-	std::vector<std::string> &clist=it->second;
-	for(size_t j=0;j<clist.size();j++) {
-	  cl->remove_comm_option(clist[j]);
-	}
+  std::map<std::string,std::vector<std::string> >::iterator it;
+  for(it=type_comm_list.begin();it!=type_comm_list.end();it++) {
+    if (it->first==type) {
+      std::vector<std::string> &clist=it->second;
+      for(size_t j=0;j<clist.size();j++) {
+	cl->remove_comm_option(clist[j]);
       }
     }
-  }
-
-  if (false) {
-    if (type=="int") {
-      cl->remove_comm_option("value");
-    } else if (type=="double") {
-      cl->remove_comm_option("value");
-    } else if (type=="char") {
-      cl->remove_comm_option("value");
-    } else if (type=="size_t") {
-      cl->remove_comm_option("value");
-    } else if (type=="string") {
-      cl->remove_comm_option("value");
-    } else if (type=="table") {
-
-      cl->remove_comm_option("assign");
-      cl->remove_comm_option("autocorr");
-      cl->remove_comm_option("delete-col");
-      cl->remove_comm_option("delete-rows");
-      cl->remove_comm_option("delete-rows-tol");
-      cl->remove_comm_option("deriv");
-      cl->remove_comm_option("deriv2");
-      cl->remove_comm_option("cat");
-      cl->remove_comm_option("convert-unit");
-      cl->remove_comm_option("find-row");
-      cl->remove_comm_option("fit");
-      cl->remove_comm_option("function");
-      cl->remove_comm_option("get-row");
-      cl->remove_comm_option("get-unit");
-      cl->remove_comm_option("entry");
-      cl->remove_comm_option("index");
-      cl->remove_comm_option("insert");
-      cl->remove_comm_option("insert-full");
-      cl->remove_comm_option("integ");
-      cl->remove_comm_option("interp");
-      cl->remove_comm_option("list");
-      cl->remove_comm_option("max");
-      cl->remove_comm_option("min");
-      cl->remove_comm_option("nlines");
-      cl->remove_comm_option("rename");
-      cl->remove_comm_option("select");
-      cl->remove_comm_option("select-rows");
-      cl->remove_comm_option("select-rows2");
-      cl->remove_comm_option("set-data");
-      cl->remove_comm_option("set-unit");
-      cl->remove_comm_option("sort");
-      cl->remove_comm_option("stats");
-      cl->remove_comm_option("sum");
-      cl->remove_comm_option("to-hist");
-      cl->remove_comm_option("to-hist-2d");
-      cl->remove_comm_option("to-table3d");
-      cl->remove_comm_option("wstats");
-
-    } else if (type=="table3d") {
-    
-      cl->remove_comm_option("cat");
-      cl->remove_comm_option("contours");
-      cl->remove_comm_option("deriv-x");
-      cl->remove_comm_option("deriv-y");
-      cl->remove_comm_option("function");
-      cl->remove_comm_option("entry");
-      cl->remove_comm_option("insert");
-      cl->remove_comm_option("interp");
-      cl->remove_comm_option("list");
-      cl->remove_comm_option("max");
-      cl->remove_comm_option("min");
-      cl->remove_comm_option("rename");
-      cl->remove_comm_option("set-data");
-      cl->remove_comm_option("slice");
-      cl->remove_comm_option("sum");
-      cl->remove_comm_option("x-name");
-      cl->remove_comm_option("y-name");
-
-    } else if (type=="tensor<int>") {
-    
-      cl->remove_comm_option("list");
-      cl->remove_comm_option("to-table3d");
-      cl->remove_comm_option("min");
-      cl->remove_comm_option("max");
-      cl->remove_comm_option("rearrange");
-
-    } else if (type=="tensor<size_t>") {
-    
-      cl->remove_comm_option("list");
-      cl->remove_comm_option("to-table3d");
-      cl->remove_comm_option("min");
-      cl->remove_comm_option("max");
-      cl->remove_comm_option("rearrange");
-
-    } else if (type=="tensor") {
-    
-      cl->remove_comm_option("list");
-      cl->remove_comm_option("diag");
-      cl->remove_comm_option("to-table3d");
-      cl->remove_comm_option("to-table3d-sum");
-      cl->remove_comm_option("max");
-      cl->remove_comm_option("min");
-      cl->remove_comm_option("to-tensor-grid");
-      cl->remove_comm_option("rearrange");
-
-    } else if (type=="prob_dens_mdim_amr") {
-    
-      cl->remove_comm_option("to-table3d");
-
-    } else if (type=="tensor_grid") {
-    
-      cl->remove_comm_option("list");
-      cl->remove_comm_option("to-table3d");
-      cl->remove_comm_option("slice");
-      cl->remove_comm_option("to-table");
-      cl->remove_comm_option("set-grid");
-      cl->remove_comm_option("get-grid");
-      cl->remove_comm_option("max");
-      cl->remove_comm_option("min");
-      cl->remove_comm_option("rearrange");
-
-    } else if (type=="hist_2d") {
-
-      cl->remove_comm_option("max");
-      cl->remove_comm_option("min");
-    
-      /*
-	cl->remove_comm_option("deriv-x");
-	cl->remove_comm_option("deriv-y");
-	cl->remove_comm_option("interp");
-	cl->remove_comm_option("set-data");
-	cl->remove_comm_option("sum");
-      */
-    } else if (type=="hist") {
-    
-      cl->remove_comm_option("to-table");
-      cl->remove_comm_option("function");
-      /*
-	cl->remove_comm_option("assign");
-	cl->remove_comm_option("deriv");
-	cl->remove_comm_option("deriv2");
-	cl->remove_comm_option("find-row");
-	cl->remove_comm_option("fit");
-	cl->remove_comm_option("entry");
-	cl->remove_comm_option("integ");
-	cl->remove_comm_option("max");
-	cl->remove_comm_option("min");
-	cl->remove_comm_option("rename");
-	cl->remove_comm_option("set-data");
-	cl->remove_comm_option("stats");
-	cl->remove_comm_option("sum");
-	cl->remove_comm_option("to-table");
-      */
-    
-    } else if (type=="vector<contour_line>") {
-
-    } else if (type=="double[]" || type=="int[]" || type=="size_t[]") {
-
-      cl->remove_comm_option("deriv");
-      cl->remove_comm_option("interp");
-      cl->remove_comm_option("max");
-      cl->remove_comm_option("min");
-      cl->remove_comm_option("sort");
-      cl->remove_comm_option("autocorr");
-      cl->remove_comm_option("to-table");
-      cl->remove_comm_option("function");
-      cl->remove_comm_option("sum");
-    
-      /*
-	cl->remove_comm_option("integ");
-	cl->remove_comm_option("set-data");
-	cl->remove_comm_option("stats");
-	cl->remove_comm_option("sum");
-	cl->remove_comm_option("to-hist");
-      */
-
-      /*
-	} else if (type=="int[]" || type=="size_t[]") {
-      
-	cl->remove_comm_option("deriv");
-	cl->remove_comm_option("deriv2");
-	cl->remove_comm_option("integ");
-	cl->remove_comm_option("max");
-	cl->remove_comm_option("min");
-	cl->remove_comm_option("set-data");
-	cl->remove_comm_option("sort");
-	cl->remove_comm_option("stats");
-	cl->remove_comm_option("sum");
-	cl->remove_comm_option("to-hist");
-      */
-
-    }
-
   }
   
   return;
