@@ -746,6 +746,10 @@ namespace o2scl_hdf {
     }
     return 0;
   }
+
+  /** \brief Return a std vector specified by a string
+   */
+  std::vector<double> vector_spec(std::string spec);
   
   /** \brief A list of vectors specified by a string
 

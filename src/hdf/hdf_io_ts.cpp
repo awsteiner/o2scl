@@ -94,11 +94,9 @@ int main(void) {
     t.test_gen(tab.get_unit("a")==tab2.get_unit("a"),"unit");
   }
 
-  // Future location of test for vector_spec()
-  if (false) {
-    std::vector<double> v;
-    vector_spec("",v);
-  }
+  // Test for vector_spec()
+  std::vector<double> v=vector_spec("list:1,2,3,4");
+  t.test_gen(v.size()==4,"vector_spec().");
   
   t.report();
 

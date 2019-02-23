@@ -537,7 +537,26 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   }
 
   if (sv.size()==2 && sv[1]=="vector-spec") {
-    cout << "Vector spec help." << endl;
+    
+    std::string str=((std::string)"Some acol commands take arguments ")+
+      "which are 'vector specifications', i.e. an "+
+      "array specified as a string. The different parts of the spec. "+
+      "are separated by a colon, and the first part specifes the type "+
+      "of spec. The different types of specs. and their various parts "+
+      "are:\n\n"+
+      "val:<value>\n"+
+      "list:<entry 0>,<entry 1>, ..., <entry n-1>\n"+
+      "func:<N>:<function of i>\n"+
+      "grid:<begin>:<end>:<width>:[\"log\"]\n"+
+      "text:<filename>:<column>\n"+
+      "hdf5:<file name>:<object name>:[additional spec.]";
+
+    std::vector<std::string> sv;
+    o2scl::rewrap_keep_endlines(str,sv);
+    for(size_t i=0;i<sv.size();i++) {
+      cout << sv[i] << endl;
+    }
+      
     return 0;
   }
   

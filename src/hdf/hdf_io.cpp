@@ -1230,3 +1230,9 @@ void o2scl_hdf::hdf_input(hdf_file &hf, o2scl::tensor_grid<std::vector<double>,
   
   return;
 }
+
+std::vector<double> o2scl_hdf::vector_spec(std::string spec) {
+  std::vector<double> v;
+  vector_spec<std::vector<double> >(spec,v);
+  return v;
+}
