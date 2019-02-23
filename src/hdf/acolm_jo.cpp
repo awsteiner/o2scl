@@ -122,6 +122,11 @@ int acol_manager::comm_nlines(std::vector<std::string> &sv,
 
 int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
 
+  if (type.length()==0) {
+    cerr << "No object to output." << endl;
+    return 3;
+  }
+
   //--------------------------------------------------------------------
   // Output formatting
   
@@ -424,7 +429,7 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
 
   } else {
 
-    cerr << "Cannot output type " << type << endl;
+    cerr << "Cannot output type " << type << "." << endl;
     return 2;
     
   }

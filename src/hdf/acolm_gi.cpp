@@ -538,18 +538,34 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 
   if (sv.size()==2 && sv[1]=="vector-spec") {
     
-    std::string str=((std::string)"Some acol commands take arguments ")+
+    std::string str=((std::string)"Vector specification ")+
+      "description:\n\nSome acol commands take arguments "+
       "which are 'vector specifications', i.e. an "+
-      "array specified as a string. The different parts of the spec. "+
+      "array specified as a string. The different parts of the string "+
       "are separated by a colon, and the first part specifes the type "+
-      "of spec. The different types of specs. and their various parts "+
-      "are:\n\n"+
-      "val:<value>\n"+
-      "list:<entry 0>,<entry 1>, ..., <entry n-1>\n"+
-      "func:<N>:<function of i>\n"+
-      "grid:<begin>:<end>:<width>:[\"log\"]\n"+
-      "text:<filename>:<column>\n"+
-      "hdf5:<file name>:<object name>:[additional spec.]";
+      "of vector specification. The different types are:\n\n"+
+      "  1. val:<value> - Create a vector with one element equal to "+
+      "<value>, which\nmay be a number or a simple function, e.g. "+
+      "'val:sin(0.5)'.\n\n"+
+      "  2. list:<entry 0>,<entry 1>, ..., <entry n-1> - Create a "+
+      "vector with a\nsimple list of numbers or functions, e.g. "+
+      "'list:3.0,1.0e-3,sqrt(2.0)'.\n\n"+
+      "  3. func:<N>:<function of i> - Create a vector by specifying "+
+      "the length of\nthe vector and a function used to fill the "+
+      "elements. For example: 'func:41:sin(i/20.0*acos(-1))'.\n\n"+
+      "  4. grid:<begin>:<end>:<width>:[\"log\"] - Create a "+
+      "vector equal to a\nuniform grid, e.g. use 'grid:1.0,10.0,1.0' "+
+      "for a 10-element vector filled with the numbers 1 to 10.\n\n"+
+      "  5. text:<filename>:<column> - Read a text file and extract "+
+      "a vector of\nnumbers from a column of the text file, ignoring "+
+      "any header rows which contain non-numeric values. For "+
+      "example 'text:~/temp.dat:2' will construct a vector from the "+
+      "second row of the file 'temp.dat' in the user's home directory.\n\n"+
+      "  6. hdf5:<file name>:<object name>:[additional spec.] - "+
+      "Read an HDF5 file\nand obtain a vector from the object with "+
+      "the specified name. The remaining parts of the string contain "+
+      "additional information which may be needed depending on the "+
+      "type of object stored in the HDF5 file.";
 
     std::vector<std::string> sv;
     o2scl::rewrap_keep_endlines(str,sv);
