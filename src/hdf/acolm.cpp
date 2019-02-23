@@ -695,9 +695,13 @@ void acol_manager::command_add(std::string new_type) {
        ((std::string)"<func. or vector spec. for rank 0> ")+
        "<func. or vector spec. for rank 1> ... "+
        "<func. or vector spec. for rank n-1>",
-       ((std::string)"Given a function which specifies the grid ")+
-       "value as a function of the variables 'i' and 'x' for each rank, "+
-       "this command sets the tensor grid. The value of 'i' ranges "+
+       ((std::string)"The set-grid command has an argument for each ")+
+       "rank in the tensor. If the argument contains a ':', it is assumed "+
+       "to be a vector specification (see 'help vector-spec'). "+
+       "Otherwise, the argument is assumed to be "
+       "a function which specifies the grid "+
+       "value as a function of the variables 'i' and 'x'. "+
+       "The value of 'i' ranges "+
        "from 0 to m-1, where 'm' is the tensor size for each rank and the "+
        "value of 'x' is equal to the previous grid value.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_set_grid),

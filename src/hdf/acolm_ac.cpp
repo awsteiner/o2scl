@@ -856,23 +856,45 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     obj_name="string";
     
   } else if (ctype=="double[]") {
-    
-    vector<string> in, pr;
-    pr.push_back("Size");
-    pr.push_back("Function of i (starting with zero)");
-    int ret=get_input(sv2,pr,in,"create",itive_com);
-    if (ret!=0) return ret;
 
-    calculator calc;
-    std::map<std::string,double> vars;
-    std::map<std::string,double>::const_iterator mit;
-    size_t nn=o2scl::stoszt(in[0]);
-    doublev_obj.clear();
-    calc.compile(in[1].c_str(),&vars);
-    for(size_t i=0;i<nn;i++) {
-      vars["i"]=((double)i);
-      doublev_obj.push_back(calc.eval(&vars));
+    std::string in1;
+    int ret1=get_input_one(sv2,"Size of vector or full vector specification",
+			   in1,"create",itive_com);
+    if (ret1!=0) return ret1;
+
+    if (in1.find(':')==std::string::npos) {
+
+      vector<string> sv3=sv2;
+      vector<string>::iterator it=sv3.begin();
+      sv3.erase(it+1);
+      
+      std::string in2;
+
+      int ret2=get_input_one(sv3,"Function of i (starting with zero)",
+			     in2,"create",itive_com);
+      if (ret2!=0) return ret2;
+      
+      calculator calc;
+      std::map<std::string,double> vars;
+      std::map<std::string,double>::const_iterator mit;
+      size_t nn=o2scl::stoszt(in1);
+      doublev_obj.clear();
+      calc.compile(in2.c_str(),&vars);
+      for(size_t i=0;i<nn;i++) {
+	vars["i"]=((double)i);
+	doublev_obj.push_back(calc.eval(&vars));
+      }
+      
+    } else {
+
+      int ret2=vector_spec(in1,doublev_obj,2,false);
+      if (ret2!=0) {
+	cerr << "Function vector_spec() failed." << endl;
+	return ret2;
+      }
+      
     }
+    
     command_add("double[]");
     type="double[]";
     

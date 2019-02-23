@@ -517,6 +517,7 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
 }
 
 int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
+  
   if (sv.size()==3) {
     string temp_type=sv[1];
     string cur_type=type;
@@ -533,6 +534,11 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     command_del();
     command_add(cur_type);
     return ret;
+  }
+
+  if (sv.size()==2 && sv[1]=="vector-spec") {
+    cout << "Vector spec help." << endl;
+    return 0;
   }
   
   return cl->comm_option_help(sv,itive_com);
