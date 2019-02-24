@@ -449,9 +449,7 @@ protected:
       std::string sha=((std::string)"82a4acd670189917800567f6b75bb2a")+
 	"3605f6ae7f9068215a1eec0acf924cb3d";
       cf.hash_type=cloud_file::sha256;
-      cf.get_file_hash(((string)"Hempel_SFHoEOS_rho222_temp180_")+
-		       "ye60_version_1.1_20120817.h5",
-		       ((string)"https://isospin.roam.utk.edu/")+
+      cf.get_file_hash("_",((string)"https://isospin.roam.utk.edu/")+
 		       "public_data/eos_tables/scollapse/Hempel_SFHo"+
 		       "EOS_rho222_temp180_ye60_version_1.1_20120817.h5",
 		       sha,directory);

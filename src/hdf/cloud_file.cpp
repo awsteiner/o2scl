@@ -62,6 +62,37 @@ int cloud_file::get_file_hash
 
 #ifndef O2SCL_USE_BOOST_FILESYSTEM
 
+  if (file=="_") {
+    if (url.length()<5) {
+      if (throw_on_fail) {
+	O2SCL_ERR("Could not extract filename.",
+		  o2scl::exc_einval);
+      } else {
+	return o2scl::exc_einval;
+      }
+    }
+    size_t loc=url.length()-1;
+    size_t it=0;
+    file="";
+    while (url[loc]!='/' && it<100 && loc>1) {
+      file=url[loc]+file;
+      it++;
+      loc--;
+    }
+    if (it>=100 || loc==1) {
+      if (throw_on_fail) {
+	O2SCL_ERR("Could not extract filename.",
+		  o2scl::exc_einval);
+      } else {
+	return o2scl::exc_einval;
+      }
+    }
+    if (verbose>0) {
+      cout << "Extracted filename " << file << " from URL\n  "
+	   << url << endl;
+    }
+  }
+  
   // File status object
   struct stat sb;
   // Return value of stat()
