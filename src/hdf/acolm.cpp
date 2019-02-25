@@ -83,7 +83,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
     type_comm_list.insert(std::make_pair("string",itmp));
   }
   {
-    vector<std::string> itmp={"assign","autocorr","delete-col","delete-rows",
+    vector<std::string> itmp={"assign","delete-col","delete-rows",
 			      "delete-rows-tol","deriv","deriv2","cat",
 			      "convert-unit","find-row","fit","function",
 			      "get-row","get-unit","entry","index",
@@ -131,7 +131,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   }
   {
     vector<std::string> itmp={"deriv","interp","max","min","sort",
-			      "autocorr","to-table","function","sum"};
+			      "to-table","function","sum"};
     type_comm_list.insert(std::make_pair("double[]",itmp));
     type_comm_list.insert(std::make_pair("int[]",itmp));
     type_comm_list.insert(std::make_pair("size_t[]",itmp));
@@ -189,22 +189,8 @@ void acol_manager::command_add(std::string new_type) {
     };
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="table") {
-    static const size_t narr=37;
+    static const size_t narr=36;
     comm_option_s options_arr[narr]={
-      {0,"autocorr","Compute the autocorrelation vectors.",0,-1,
-       "<ac> <ftom> <column or vector spec.> [col or vector spec. 2] ...",
-       ((std::string)"Store a vector of ")+
-       "autocorrelation coefficients in column <ac> and the quantity "+
-       "'5*tau/M' in column <ftom> using data from either a column "+
-       "in the table or a vector specification. "+
-       "Columns <ac> and <ftom> are created "+
-       "if they are not already present and overwritten if they "+
-       "already contain data. Also, the autocorrelation length and "+
-       "estimated sample size are output to the screen. If multiple "+
-       "data sources are given, then the autocorrelation coefficients "+
-       "are averaged together.",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_autocorr),
-       both},
       {'a',"assign","Assign a constant, e.g. assign pi acos(-1) .",
        0,2,"<name> [val]",
        ((string)"Assign a constant value to a name for the present table. ")+
@@ -745,7 +731,7 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="double[]") {
     
-    static const size_t narr=9;
+    static const size_t narr=8;
     comm_option_s options_arr[narr]={
       {0,"sort","Sort the vector.",0,0,"",
        ((string)"Sorts the vector."),
@@ -774,10 +760,6 @@ void acol_manager::command_add(std::string new_type) {
        ((string)"Interpolate <x value> in the array."),
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_interp),
        both},
-      {0,"autocorr","Compute the autocorrelation vector and length.",0,0,
-       "","Compute the autocorrelation vector and length.",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_autocorr),
-       both},      
       {0,"to-table","Convert to a table given a column name",0,1,
        "<column name>",
        "Convert to a table given a column name.",
@@ -794,7 +776,7 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="int[]") {
 
-    static const size_t narr=9;
+    static const size_t narr=8;
     comm_option_s options_arr[narr]={
       {0,"sort","Sort the vector.",0,0,"",
        ((string)"Sorts the vector."),
@@ -823,10 +805,6 @@ void acol_manager::command_add(std::string new_type) {
        ((string)"Interpolate <x value> in the array."),
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_interp),
        both},
-      {0,"autocorr","Compute the autocorrelation vector and length.",0,0,
-       "","Compute the autocorrelation vector and length.",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_autocorr),
-       both},      
       {0,"to-table","Convert to a table given a column name",0,1,
        "<column name>",
        "Convert to a table given a column name.",
@@ -843,7 +821,7 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="size_t[]") {
 
-    static const size_t narr=9;
+    static const size_t narr=8;
     comm_option_s options_arr[narr]={
       {0,"sort","Sort the vector.",0,0,"",
        ((string)"Sorts the vector."),
@@ -872,10 +850,6 @@ void acol_manager::command_add(std::string new_type) {
        ((string)"Interpolate <x value> in the array."),
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_interp),
        both},
-      {0,"autocorr","Compute the autocorrelation vector and length.",0,0,
-       "","Compute the autocorrelation vector and length.",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_autocorr),
-       both},      
       {0,"to-table","Convert to a table given a column name",0,1,
        "<column name>",
        "Convert to a table given a column name.",
@@ -967,11 +941,32 @@ int acol_manager::setup_options() {
   const int cl_param=cli::comm_option_cl_param;
   const int both=cli::comm_option_both;
 
-  static const int narr=14;
+  static const int narr=15;
 
   // Options, sorted by long name. We allow 0 parameters in many of these
   // options so they can be requested from the user in interactive mode. 
   comm_option_s options_arr[narr]={
+    {0,"autocorr","Compute the autocorrelation coefficients.",0,-1,
+     "[arguments depend on current object type.]",
+     ((std::string)"If the current object is a numerical array, then ")+
+     "\"autocorr\" requires no arguments and replaces the current "+
+     "object with a vector of doubles which contains the autocorrelation "+
+     "coefficient as a function of the step size. If the current object "+
+     "is a table, then \"autocorr\" requires at least three arguments: "+
+     "A column name <ac>, a column name <ftom>, and arguments which "+
+     "specify the data. The "
+     "autocorrelation coefficients are stored in column <ac> and "+
+     "the quantity '5*tau/M' is stored in "+
+     "column <ftom>. The data may be either a column "+
+     "in the table or a vector specification. "+
+     "Columns <ac> and <ftom> are created "+
+     "if they are not already present and overwritten if they "+
+     "already contain data. Also, the autocorrelation length and "+
+     "estimated sample size are output to the screen. If multiple "+
+     "data sources are given, then the autocorrelation coefficients "+
+     "are averaged together.",
+     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_autocorr),
+     both},
     {0,"calc","Compute the value of a constant expression.",0,1,"<expr>",
      ((string)"This computes the value of the constant expression ")+
      " <expr>. Examples are 'calc acos(-1)' or 'calc 2+1/sqrt(2.0e4)'. "+

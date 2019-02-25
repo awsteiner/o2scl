@@ -76,7 +76,7 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
   if (type=="table") {
     
     if (table_obj.get_nlines()==0) {
-      cerr << "No table with columns to compute "
+      cerr << "Table has no lines of data to compute "
 	   << "autocorrelations with." << endl;
       return exc_efailed;
     }
@@ -249,25 +249,17 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
       
       vector<double> v, ac, ftom;
       
-      if (in[0].find(':')==std::string::npos) {
-	v.resize(table_obj.get_nlines());
-	for(size_t i=0;i<table_obj.get_nlines();i++) {
-	  v[i]=table_obj.get(in[0],i);
-	}
-      } else {
-	int vs_ret=o2scl_hdf::vector_spec(in[0],v,verbose,false);
-	if (vs_ret!=0) {
-	  cout << "Vector specification failed." << endl;
-	  return 1;
-	}
+      int vs_ret=o2scl_hdf::vector_spec(in[0],v,verbose,false);
+      if (vs_ret!=0) {
+	cout << "Vector specification failed." << endl;
+	return 1;
       }
       
       // Compute autocorrelation length and sample size
       vector_autocorr_vector(v,ac);
       size_t len=vector_autocorr_tau(ac,ftom);
       if (len>0) {
-	cout << "Autocorrelation length: " << len << " sample size: "
-	     << table_obj.get_nlines()/len << endl;
+	cout << "Autocorrelation length: " << len << endl;
       } else {
 	cout << "Autocorrelation length determination failed." << endl;
       }
