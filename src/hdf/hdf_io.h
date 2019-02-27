@@ -986,7 +986,7 @@ namespace o2scl_hdf {
   /** \brief A list of vectors specified by a string
 
       Formats:
-      - function: func:\<num\>:\<len(i)\>:\<function of j\>
+      - function: func:\<num\>:\<len(i)\>:\<function of i and j\>
       - columns in text file: text:\<column list\> 
       - HDF5 object(s) in file(s): 
       hdf5:\<file name(s)\>:\<object name(s)\>:[additional specification]
@@ -1005,17 +1005,19 @@ namespace o2scl_hdf {
 	std::cout << "mult_vector_spec(): Function " << spec << std::endl;
       }
       std::string temp=spec.substr(5,spec.length()-5);
-      size_t ncolon=temp.find(':');
-      if (ncolon==std::string::npos) {
+      std::vector<std::string> sv;
+      o2scl::split_string_delim(temp,sv,':');
+      if (sv.size()<3) {
 	if (err_on_fail) {
-	  O2SCL_ERR2("Function specified but no array length specified ",
+	  O2SCL_ERR2("Less than three parts for function type ",
 		     "in mult_vector_spec().",o2scl::exc_einval);
 	} else {
 	  return 1;
 	}
       }
+
       size_t n;
-      int cret=o2scl::stoszt_nothrow(temp.substr(0,ncolon),n);
+      int cret=o2scl::stoszt_nothrow(sv[0],n);
       if (cret!=0) {
 	if (err_on_fail) {
 	  O2SCL_ERR2("Conversion to size_t failed ",
@@ -1027,27 +1029,44 @@ namespace o2scl_hdf {
       if (verbose>1) {
 	std::cout << "Size " << n << std::endl;
       }
-      if (temp.length()<ncolon+1) {
-	if (err_on_fail) {
-	  O2SCL_ERR2("No apparent function specified ",
-		     "in mult_vector_spec().",o2scl::exc_einval);
-	} else {
-	  return 3;
-	}
-      }
-      std::string func=temp.substr(ncolon+1,temp.length()-ncolon-1);
-      if (verbose>1) {
-	std::cout << "Function " << func << std::endl;
-      }
-      o2scl::calculator calc;
-      std::map<std::string,double> vars;
-      calc.compile(func.c_str(),&vars);
+      
       v.resize(n);
+      
       for(size_t i=0;i<n;i++) {
-	vars["i"]=((double)i);
-	v[i]=calc.eval(&vars);
+
+	size_t n2;
+	int cret2=o2scl::stoszt_nothrow(sv[1],n2);
+	if (cret2!=0) {
+	  if (err_on_fail) {
+	    O2SCL_ERR2("Conversion to size_t failed ",
+		       "in mult_vector_spec().",o2scl::exc_einval);
+	  } else {
+	    return 2;
+	  }
+	}
+	if (verbose>1) {
+	  std::cout << "Size of " << n << " is " << n2 << std::endl;
+	}
+	
+	if (verbose>1) {
+	  std::cout << "Function " << sv[2] << std::endl;
+	}
+	
+	o2scl::calculator calc;
+	std::map<std::string,double> vars;
+	calc.compile(sv[2].c_str(),&vars);
+	
+	v[i].resize(n2);
+	for(size_t j=0;j<n2;j++) {
+	  vars["i"]=((double)i);
+	  vars["j"]=((double)j);
+	  v[i][j]=calc.eval(&vars);
+	}
+	
       }
 	
+    } else if (spec.find("text:")==0) {
+      
     } else if (spec.find("hdf5:")==0) {
 	
       // HDF5 object in a file
@@ -1108,7 +1127,7 @@ namespace o2scl_hdf {
       }
       
       for(size_t ifile=0;ifile<nfiles;ifile++) {
-	fname=matches[0];
+	fname=matches[ifile];
 	if (verbose>1) {
 	  std::cout << "Filename for index " << ifile << " is " << fname
 		    << std::endl;
@@ -1144,6 +1163,11 @@ namespace o2scl_hdf {
 	  for(size_t j=0;j<t.get_ncolumns();j++) {
 	    if (fnmatch(addl_spec.c_str(),
 			t.get_column_name(j).c_str(),0)==0) {
+	      if (verbose>1) {
+		std::cout << "Column " << t.get_column_name(j)
+			  << " matches pattern " << addl_spec
+			  << "." << std::endl;
+	      }
 	      vec_t vtemp(t.get_nlines());
 	      for(size_t k=0;k<t.get_nlines();k++) {
 		vtemp[k]=t.get(j,k);
@@ -1154,11 +1178,7 @@ namespace o2scl_hdf {
 	} else if (type=="double[]") {
 	  std::vector<double> vtemp;
 	  hf.getd_vec(obj_name,vtemp);
-	  v.resize(vtemp.size());
-	  for(size_t i=0;i<v.size();i++) {
-	    v[i]=vtemp[i];
-	    std::cout << "X: " << i << " " << v[i] << std::endl;
-	  }
+	  v.push_back(vtemp);
 	}
 	hf.close();
 

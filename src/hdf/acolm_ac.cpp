@@ -247,29 +247,35 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
     
     for(size_t ix=0;ix<in.size();ix++) {
       
-      vector<double> v, ac, ftom;
+      vector<vector<double> > v;
       
-      int vs_ret=o2scl_hdf::vector_spec(in[0],v,verbose,false);
+      int vs_ret=o2scl_hdf::mult_vector_spec(in[0],v,verbose,false);
       if (vs_ret!=0) {
 	cout << "Vector specification failed." << endl;
 	return 1;
       }
-      
-      // Compute autocorrelation length and sample size
-      vector_autocorr_vector(v,ac);
-      size_t len=vector_autocorr_tau(ac,ftom);
-      if (len>0) {
-	cout << "Autocorrelation length: " << len << endl;
-      } else {
-	cout << "Autocorrelation length determination failed." << endl;
-      }
 
-      if (ftom.size()>max_ftom_size) {
-	max_ftom_size=ftom.size();
+      for(size_t j=0;j<v.size();j++) {
+	
+	vector<double> ac, ftom;
+	
+	// Compute autocorrelation length and sample size
+	vector_autocorr_vector(v[j],ac);
+	size_t len=vector_autocorr_tau(ac,ftom);
+	if (len>0) {
+	  cout << "Autocorrelation length: " << len << endl;
+	} else {
+	  cout << "Autocorrelation length determination failed." << endl;
+	}
+	
+	if (ftom.size()>max_ftom_size) {
+	  max_ftom_size=ftom.size();
+	}
+	
+	v_all.push_back(v[j]);
+	ac_all.push_back(ac);
+	ftom_all.push_back(ftom);
       }
-      v_all.push_back(v);
-      ac_all.push_back(ac);
-      ftom_all.push_back(ftom);
     }
     
     command_del();
@@ -879,7 +885,7 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
       
     } else {
 
-      int ret2=vector_spec(in1,doublev_obj,2,false);
+      int ret2=vector_spec(in1,doublev_obj,verbose,false);
       if (ret2!=0) {
 	cerr << "Function vector_spec() failed." << endl;
 	return ret2;
