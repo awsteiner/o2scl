@@ -199,10 +199,11 @@ namespace o2scl {
       antiparticles and uses \ref
       o2scl::fermion_nonrel::calc_density(). At finite temperature,
       pure neutron matter implies a zero proton number density which
-      would imply that the proton chemical potential is \f$ - \infty
-      \f$ . This class handles this situation by just setting \f$
-      \nu_p \f$ to zero. The case of pure proton matter is handled
-      similarly.
+      means the proton chemical potential is \f$ - \infty \f$ and thus
+      set to the result of <tt>numeric_limits<double>::infinity()</tt>
+      The case of pure proton matter is handled
+      similarly. Negative densities result in calling the error
+      handler.
 
       Skyrme models are loaded using \ref o2scl_hdf::skyrme_load() .
       The full list is given in the \o2 repository in 
@@ -213,7 +214,6 @@ namespace o2scl {
       \todo
       - Convert W0 to b4 and b4p everywhere
       - Remove use of mnuc in calparfun()?
-      - Document \ref o2scl_hdf::skyrme_load() file format.
       - Update reference list.
 
       \future
@@ -239,7 +239,7 @@ namespace o2scl {
     /** \brief Compute the base thermodynamic quantities
 
 	This function computes the energy density, pressure,
-	entropy, and chemical potentials
+	entropy, and chemical potentials.
      */
     template<class fermion_t>
       void base_thermo

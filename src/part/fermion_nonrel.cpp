@@ -208,23 +208,13 @@ int fermion_nonrel::calc_density(fermion &f, double temper) {
     return 0;
   }
 
-  if (f.n==0.0) {
-    if (f.inc_rest_mass) {
-      f.mu=f.m;
-      f.nu=f.m;
-    } else {
-      f.mu=0.0;
-      f.nu=0.0;
-    }
-    f.ed=0.0;
-    f.pr=0.0;
-    f.en=0.0;
-    return 0;
-  }
-  
-  if (f.n<0.0) {
+  // Note it is important to throw if n=0 because the correct chemical
+  // potential in that case is mu=-infty and we don't want encourage
+  // the user to use this code in that case.
+  if (f.n<=0.0) {
     string str=((string)"Density, ")+o2scl::dtos(f.n)+
-      ", less than zero in fermion_nonrel::calc_density().";
+      ", less than zero when temperature is positive in "+
+      "fermion_nonrel::calc_density().";
     O2SCL_ERR(str.c_str(),exc_einval);
   }
   
