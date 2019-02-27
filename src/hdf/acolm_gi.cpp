@@ -575,6 +575,41 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       
     return 0;
   }
+
+  if (sv.size()==2 && sv[1]=="mult-vector-spec") {
+    
+    std::string str=((std::string)"Multiple vector specification ")+
+      "description:\n\nSome acol commands take arguments "+
+      "which are 'multiple vector specifications', i.e. a set of "+
+      "arrays specified as a string. The different parts of the string "+
+      "are separated by a colon, and the first part specifes the type "+
+      "of multiple vector specification. The different types are:\n\n"+
+      "  1. func:<N>:<function of i>:<function of i and j> - "+
+      "Specify the\nnumber of vectors, a function of \"i\" which "+
+      "determines the length of the ith vector, and a function of "+
+      "\"i\" and \"j\" which specifies the jth element of the ith "+
+      "vector.\n\n"
+      "  2. text:<filename pattern>:<column list> - Read one or\nmore "+
+      "text files and extract "+
+      "vectors of numbers from columns of the text file, ignoring "+
+      "any header rows which contain non-numeric values. For "+
+      "example 'text:~/temp.dat:2' will construct a vector from the "+
+      "second row of the file 'temp.dat' in the user's home directory.\n\n"+
+      "  3. hdf5:<filename pattern>:<object name>:[additional spec.] - "+
+      "Read one or\nmore HDF5 files and obtain a vector from the object "+
+      "with "+
+      "the specified name. The remaining parts of the string contain "+
+      "additional information which may be needed depending on the "+
+      "type of object stored in the HDF5 file.";
+
+    std::vector<std::string> sv;
+    o2scl::rewrap_keep_endlines(str,sv);
+    for(size_t i=0;i<sv.size();i++) {
+      cout << sv[i] << endl;
+    }
+      
+    return 0;
+  }
   
   return cl->comm_option_help(sv,itive_com);
 }
