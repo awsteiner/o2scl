@@ -200,10 +200,10 @@ namespace o2scl {
       o2scl::fermion_nonrel::calc_density(). At finite temperature,
       pure neutron matter implies a zero proton number density which
       means the proton chemical potential is \f$ - \infty \f$ and thus
-      set to the result of <tt>numeric_limits<double>::infinity()</tt>
-      The case of pure proton matter is handled
-      similarly. Negative densities result in calling the error
-      handler.
+      set to the additive inverse of the return value of the function
+      <tt>numeric_limits<double>::infinity()</tt> The case of pure
+      proton matter is handled similarly. Negative densities result in
+      calling the error handler.
 
       Skyrme models are loaded using \ref o2scl_hdf::skyrme_load() .
       The full list is given in the \o2 repository in 
