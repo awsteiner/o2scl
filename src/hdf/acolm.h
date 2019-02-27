@@ -251,6 +251,12 @@ namespace o2scl_acol {
     //int make_unique_name(std::string &col, std::vector<std::string> &cnames);
 
   public:
+
+    /** \brief Desc
+     */
+    int get_verbose() {
+      return verbose;
+    }
     
     /** \brief Main run function
 
@@ -651,6 +657,12 @@ extern "C" {
 			     int &nx, double *&xptr,
 			     int &ny, double *&yptr,
 			     double *&data);
+
+  /** \brief Desc
+   */
+  int o2scl_acol_mult_vectors_to_conts(void *vp, char *str1,
+				       char *str2);
+  
   //@}
   
 }

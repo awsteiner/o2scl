@@ -183,6 +183,39 @@ int o2scl_acol_get_hist_reps(void *vp, int &n, double *&ptr) {
   return 0;
 }
 
+int o2scl_acol_mult_vectors_to_conts(void *vp, char *str1,
+				     char *str2) {
+  
+  o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
+  
+  vector<vector<double> > v1, v2;
+  string s1=str1, s2=str2;
+  
+  int ret1=mult_vector_spec(s1,v1,amp->get_verbose(),false);
+  if (ret1!=0) return ret1;
+  int ret2=mult_vector_spec(s2,v2,amp->get_verbose(),false);
+  if (ret2!=0) return ret2;
+  
+  amp->cont_obj.clear();
+  
+  for(size_t i=0;i<v1.size();i++) {
+    for(size_t j=0;j<v2.size();j++) {
+      size_t ntemp=v1[i].size();
+      if (v2[j].size()<ntemp) ntemp=v2[j].size();
+      contour_line cl;
+      cl.level=0.0;
+      cl.x.resize(ntemp);
+      cl.y.resize(ntemp);
+      for(size_t k=0;k<ntemp;k++) {
+	cl.x[k]=v1[i][k];
+	cl.y[k]=v2[j][k];
+      }
+      amp->cont_obj.push_back(cl);
+    }
+  }
+  return 0;
+}
+
 int o2scl_acol_get_hist_wgts(void *vp, int &n, double *&ptr) {
   o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
   n=amp->hist_obj.size();
