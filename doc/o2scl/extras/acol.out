@@ -24,11 +24,11 @@ deallocated before creating the new object.
 > commands
 Command list:
 
-alias       exit        help        output      set         
-calc        filelist    interactive preview     show-units  
+alias       create      get         license     read        version     
+autocorr    download    get-conv    no-intro    run         warranty    
+calc        exit        help        output      set         
+clear       filelist    interactive preview     show-units  
 commands    generic     internal    quit        type        
-create      get         license     read        version     
-download    get-conv    no-intro    run         warranty    
 
 # -----------------------------------------------------------------
 # Use 'create' to create a table with one column

@@ -383,6 +383,16 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
 
+int acol_manager::comm_clear(std::vector<std::string> &sv, bool itive_com) {
+
+  command_del();
+
+  // The clear_obj() function sets type to an empty string.
+  clear_obj();
+  
+  return 0;
+}
+
 int acol_manager::comm_cat(std::vector<std::string> &sv, bool itive_com) {
 
   if (sv.size()<2) {

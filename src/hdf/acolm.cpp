@@ -941,7 +941,7 @@ int acol_manager::setup_options() {
   const int cl_param=cli::comm_option_cl_param;
   const int both=cli::comm_option_both;
 
-  static const int narr=15;
+  static const int narr=16;
 
   // Options, sorted by long name. We allow 0 parameters in many of these
   // options so they can be requested from the user in interactive mode. 
@@ -972,6 +972,10 @@ int acol_manager::setup_options() {
      " <expr>. Examples are 'calc acos(-1)' or 'calc 2+1/sqrt(2.0e4)'. "+
      "Results are given at the current precision.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_calc),
+     both},
+    {0,"clear","Clear the current object.",0,0,"",
+     "Deallocate the memory associated with the current object.",
+     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_clear),
      both},
     {'c',"create","Create an object.",0,-1,"<type> [...]",
      ((string)"Create a new object of type <type>. For types char, ")+

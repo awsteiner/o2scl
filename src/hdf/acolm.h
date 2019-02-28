@@ -284,6 +284,8 @@ namespace o2scl_acol {
     /// Compute a scalar value
     virtual int comm_calc(std::vector<std::string> &sv, bool itive_com);
 
+    virtual int comm_clear(std::vector<std::string> &sv, bool itive_com);
+
     /** \brief Output the help text
      */
     virtual int comm_help(std::vector<std::string> &sv, bool itive_com);
@@ -568,7 +570,10 @@ extern "C" {
 			    int n2, char *short_desc, int n3,
 			    char *env_var);
 
-  /** \brief Desc
+  /** \brief Convert indices \c i1 and \c i2 to a table3d 
+      object for plotting as a density plot.
+
+      This function is used in o2graph_plotter::den_plot().
    */
   int o2scl_acol_tensor_to_table3d(void *vp, int i1, int i2);
   
@@ -580,40 +585,59 @@ extern "C" {
   
   /** \brief Parse the set of commands in \c n_entries, \c sizes
       and \c str
+
+      This function is used in o2graph_plotter::set_wrapper(),
+      o2graph_plotter::get_wrapper(), o2graph_plotter::gen(), 
+      o2graph_plotter::plotm(), and o2graph_plotter::plot1m().
    */
   void o2scl_acol_parse(void *vp, int n_entries, int *sizes, 
 			char *str);
 
   /** \brief Return the size and a pointer to the column
       named \c col_name in a \ref o2scl::table object
+
+      This function is used in o2graph_plotter::plot(),
+      o2graph_plotter::plot1(), o2graph_plotter::rplot(),
+      o2graph_plotter::scatter(), o2graph_plotter::histplot(),
+      o2graph_plotter::hist2dplot(), and o2graph_plotter::errorbar().
    */
   int o2scl_acol_get_column(void *vp, char *col_name,
 			    int &n, double *&ptr);
 
   /** \brief Return the size and a pointer to the row
       with index \c row_index in a \ref o2scl::table object
+
+      This function is apparently currently unused?
    */
   int o2scl_acol_get_row_ser(void *vp, char *parttern, int row_index,
 			     int &n, double *&ptr);
   
   /** \brief Return the size and a pointer to the column
       named \c col_name in a \ref o2scl::table object
+
+      This function is used in o2graph_plotter::plot1().
    */
   int o2scl_acol_get_double_arr(void *vp, int &n, double *&ptr);
   
   /** \brief Return the size and a pointer to the column
       named \c col_name in a \ref o2scl::table object
+
+      This function is used in o2graph_plotter::plot().
    */
   int o2scl_acol_get_hist_reps(void *vp, int &n, double *&ptr);
 
   /** \brief Return the size and a pointer to the column
       named \c col_name in a \ref o2scl::table object
+
+      This function is used in o2graph_plotter::plot().
    */
   int o2scl_acol_get_hist_wgts(void *vp, int &n, double *&ptr);
 
   /** \brief Return the dimensionality, mesh size, and 
       lower and upper limits for a \ref o2scl::prob_dens_mdim_amr 
       object.
+
+      This function is used in o2graph_plotter::plot().
    */
   int o2scl_acol_pdma_get_base(void *vp, int &ndim, int &n, 
 			       double *&low, double *&high);
@@ -621,6 +645,8 @@ extern "C" {
   /** \brief Return the lower and upper limits, fractional volume, and
       weight for the \ref o2scl::prob_dens_mdim_amr::hypercube object
       of index \c ix
+
+      This function is used in o2graph_plotter::plot().
    */
   int o2scl_acol_pdma_get_cube(void *vp, int ix, 
 			       double *&low, double *&high,
@@ -628,6 +654,9 @@ extern "C" {
 
   /** \brief Return the number of contour lines associated with
       the current contour line vector object
+
+      This function is used in o2graph_plotter::plot() and 
+      o2graph_plotter::plotv().
    */
   int o2scl_acol_contours_n(void *vp);
   
@@ -639,11 +668,20 @@ extern "C" {
 				  double *&ptry);
 
   /** \brief Return the type of the current object 
+
+      This function is used in o2graph_plotter::get_type(), 
+      o2graph_plotter::den_plot(), o2graph_plotter::plot(), 
+      o2graph_plotter::rplot(), o2graph_plotter::scatter(), 
+      o2graph_plotter::histplot(), o2graph_plotter::hist2dplot(), 
+      o2graph_plotter::errorbar(), o2graph_plotter::plot1(), 
+      and o2graph_plotter::parse_string_list().
    */
   void o2scl_acol_get_type(void *vp, int &n, char *&str);
 
-  /** \brief Return the size and a pointer to the column
-      named \c col_name in a \ref o2scl::table object
+  /** \brief Return the size and a pointer to the slice
+      named \c sl_name in a \ref o2scl::table object
+
+      This function is used in o2graph_plotter::den_plot().
    */
   int o2scl_acol_get_slice(void *vp, char *slice_name,
 			   int &nx, double *&xptr,
@@ -652,17 +690,21 @@ extern "C" {
   
   /** \brief For a two-dimensional histogram, return the bin edges,
       number of bins in both directions, and the weights in each bin
+
+      This function is used in o2graph_plotter::den_plot().
    */
   int o2scl_acol_get_hist_2d(void *vp, 
 			     int &nx, double *&xptr,
 			     int &ny, double *&yptr,
 			     double *&data);
 
-  /** \brief Desc
-   */
+  /** \brief Convert two multiple vector specifications to
+      the a list of \ref contour_lines objects
+
+      This function is used in o2graph_plotter::plotv().
+  */
   int o2scl_acol_mult_vectors_to_conts(void *vp, char *str1,
 				       char *str2);
-  
   //@}
   
 }
