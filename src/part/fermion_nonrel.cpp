@@ -163,7 +163,6 @@ void fermion_nonrel::nu_from_n(fermion &f, double temper) {
   bool enc=density_root->err_nonconv;
   density_root->err_nonconv=false;
   int ret=density_root->solve(nex,mf);
-  density_root->err_nonconv=enc;
 
   if (ret!=0) {
 
@@ -180,10 +179,18 @@ void fermion_nonrel::nu_from_n(fermion &f, double temper) {
     
     // If it failed again, add error information
     if (ret!=0) {
+      std::cout << "Function fermion_nonrel::nu_from_n() failed."
+		<< std::endl;
+      std::cout << "  n,m,ms,T,nu: " << f.n << " " << f.m << " "
+		<< f.ms << " " << temper << " " << f.nu << std::endl;
       O2SCL_ERR("Solver failed in fermion_nonrel::nu_from_n().",ret);
     }
   }
 
+  // Restore the value of density_root->err_nonconv
+  density_root->err_nonconv=enc;
+
+  
   if (f.inc_rest_mass) {
     f.nu=-nex*temper+f.m;
   } else {
