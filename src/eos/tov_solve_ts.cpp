@@ -345,10 +345,25 @@ int main(void) {
 
   // 1.4 solar mass star
   int info=at.fixed(1.4,1.0e-4);
+  tab=at.get_results();
   double beta=o2scl_mks::schwarzchild_radius/2.0e3*at.mass/at.rad;
   t.test_rel(36.0*buch.Pstar*beta*beta,tab->get("pr",0),1.0e-8,"Buch Pc");
   t.test_rel(72.0*buch.Pstar*beta*(1.0-2.5*beta),
 	     tab->get("ed",0),1.0e-8,"Buch rho_c");
+
+  t.test_rel(at.rad,buch.rad_from_gm(at.mass),1.0e-10,"Buch rad(gm)");
+  
+  // For now, don't test the point at r=0 and the points very
+  // close to r=R
+  for(size_t i=1;i<tab->get_nlines()-10;i+=10) {
+    t.test_rel(tab->get("pr",i),
+	       buch.pr_from_r_gm(tab->get("r",i),at.mass),1.0e-10,
+	       "Buch pr profile");
+    t.test_rel(tab->get("ed",i),
+	       buch.ed_from_r_gm(tab->get("r",i),at.mass),1.0e-10,
+	       "Buch ed profile");
+  }
+  
   cout << endl;
 
   // --------------------------------------------------------------

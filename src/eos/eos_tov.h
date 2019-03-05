@@ -37,6 +37,7 @@
 #include <o2scl/interp.h>
 #include <o2scl/table_units.h>
 #include <o2scl/vector_derint.h>
+#include <o2scl/root_brent_gsl.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -151,8 +152,8 @@ namespace o2scl {
 
       Based on \ref Lattimer01 .
 
-      \todo Fix base EOS functions
-      \future Figure out what to do with the buchfun() function
+      \future Solve for ed and pr as a function of nb (might not
+      be possible to do analytically)
   */
   class eos_tov_buchdahl : public eos_tov {
     
@@ -170,6 +171,10 @@ namespace o2scl {
      */
     double pr1;
 
+    /** \brief Solver
+     */
+    root_brent_gsl<> rbg;
+    
   public:
 
     eos_tov_buchdahl();
@@ -217,32 +222,37 @@ namespace o2scl {
     */
     virtual void ed_nb_from_pr(double pr, double &ed, double &nb);
 
-  protected:
+    /** \brief Given the gravitational mass, compute the radius
+     */
+    virtual double rad_from_gm(double gm);
     
-    /** \brief Solve to compute profiles
+    /** \brief Compute the energy density at radius
+	\c r for a fixed gravitational mass
 
-	After solving the two equations
-	\f{eqnarray*}
-	r^{\prime} &=& r \left(1-\beta+u\right)^{-1} 
-	\left(1 - 2 \beta\right) \nonumber \\
-	A^2 &=& 288 \pi p_{*} G \left( 1 - 2 \beta \right)^{-1}
-	\f}
-	for \f$ u = \beta/(A r^{\prime}) \sin A r^{\prime} \f$ 
-	and \f$ r^{\prime} \f$,
-	one can compute the pressure and energy density 
-	profiles
-	\f{eqnarray*}
-	8 \pi P &=& A^2 u^2 \left(1 - 2 \beta \right)
-	\left(1 - \beta + u \right)^{-2}
-	\nonumber \\
-	8 \pi \varepsilon &=& 2 A^2 u \left(1 - 2 \beta\right)
-	\left(1 - \beta - 3 u/2\right) \left(1 - \beta + u \right)^{-2}
-	\nonumber \\
-	\f}
+	\future This function is inefficient because it solves
+	for the radius each time. Improve this.
     */
-    int solve_u_rp_fun(size_t bv, const std::vector<double> &bx, 
-		       std::vector<double> &by);
+    virtual double ed_from_r_gm(double r, double gm);
+    
+    /** \brief Compute the pressure at radius
+	\c r for a fixed gravitational mass
+	
+	\future This function is inefficient because it solves
+	for the radius each time. Improve this.
+     */
+    virtual double pr_from_r_gm(double r, double gm);
+    
+  protected:
 
+    /** \brief Solve for the radius at fixed gravitational mass
+     */
+    virtual double solve_rad(double rad, double gm);
+
+    /** \brief Solve for \f$ r^{\prime} \f$ as a function of
+	\f$ r \f$ at fixed gravitational mass
+    */
+    virtual double solve_rp(double rp, double r, double gm, double rad);
+    
   };
 
   /** \brief Standard polytropic EOS \f$ P = K \varepsilon^{1+1/n} \f$
