@@ -111,25 +111,35 @@ namespace o2scl {
 
   /** \brief The Buchdahl EOS for the TOV solver
 
-      Given the EOS
+      The Buchdahl EOS is 
       \f[
-      \varepsilon = 12 \sqrt{p_{*} P}- 5 P
+      \varepsilon = 12 \sqrt{P_{*} P}- 5 P
       \f]
-      the TOV equation has an analytical solution
+      which can be inverted to give
       \f[
-      R=(1-\beta) \sqrt{\frac{\pi}{288 p_{*} G (1-2 \beta)}}
+      P = - \frac{\varepsilon}{5} + 
+      \frac{72 P^{*}}{25} \left[1+\sqrt{1-\frac{5 \varepsilon}{36 P^{*}}}
+      \right]
       \f]
-      where \f$ \beta = GM/R \f$.
+
+      Physical solutions are obtained only for \f$ P< 25 P_{*}/144 \f$
+      (ensuring that the argument to the square root is positive) and
+      \f$ \beta=G M/R<1/6 \f$ (ensuring that the EOS is not acausal).
 
       The baryon chemical potential is
       \f[
-      \mu = \mu_1 \left[ \frac{\left(9 p_{*}-P_1\right) \left(3+t_1\right)
-      \left(3-t_2\right)}{\left(9 p_{*}-P\right)\left(3-t_1\right)
-      \left(3+t_2\right)}\right]^{1/4}
+      \mu = \mu_1 
+      \left(\sqrt{P_1}-3\sqrt{P^{*}}\right)^{1/2}
+      \left(\sqrt{P}-3\sqrt{P^{*}}\right)^{-1/2}
       \f]
-      where \f$ t_1 = \sqrt{P}/\sqrt{p_{*}} \f$ and \f$ t_2 =
-      \sqrt{P_1/p_{*}} \f$ . The baryon density can then be obtained
-      directly from the thermodynamic identity. In the case that one
+      The baryon density is 
+      \f[
+      n_B = n_{B,1} + 12 \frac{\sqrt{P^{*} P}}{\mu_1}
+      \left(1 - \frac{\sqrt{P}}{3 \sqrt{P^{*}}} \right)^{3/2}
+      \left(1 - \frac{\sqrt{P_1}}{3 \sqrt{P^{*}}}\right)^{-1/2}
+      \f]
+
+      In the case that one
       assumes \f$ \mu_1 = m_n \f$ and \f$ P_1 = 0 \f$, the baryon
       density can be simplified to
       \f[
@@ -137,6 +147,16 @@ namespace o2scl {
       \right)^{3/2}
       \f]
       c.f. Eq. 10 in \ref Lattimer01. 
+
+      The mass-radius curve is the solution of the equation
+      \f[
+      R=\pi (1-\beta)(1-2 \beta)^{-1} A^{-1}
+      \f]
+      where \f$ \beta = GM/R \f$ and \f$ A \f$ (which
+      has units of inverse km) is defined by
+      \f[
+      A^2 = \frac{288 \pi G P^{*}}{1-2 \beta}
+      \f]
 
       The central pressure and energy density are
       \f[
@@ -146,14 +166,30 @@ namespace o2scl {
       {\varepsilon}_c = 72 p_{*} \beta (1-5 \beta/2) 
       \f]
 
-      Physical solutions are obtained only for \f$ P< 25 p_{*}/144 \f$
-      (ensuring that the argument to the square root is positive)
-      and \f$ \beta<1/6 \f$ (ensuring that the EOS is not acausal). 
+      To obtain energy density and pressure profiles can be obtained
+      by solving 
+      \f[
+      r=r^{\prime} \left(\frac{1-\beta+u}{1-2 \beta}\right)
+      \f]
+      for the new coordinate \f$ r^{\prime} \f$
+      where \f$ u \f$ is defined by
+      \f[
+      u = \beta \frac{\sin(A r^{\prime})}{A r^{\prime}}
+      \f]
+      Using these, the profiles are
+      \f[
+      P(r) = A^2 (1- 2 \beta) u^2 
+      \left[ 8 \pi \left(1 - \beta+u\right)^2\right]^{-1}
+      \f] 
+      and
+      \f[
+      \varepsilon(r) = 2 A^2 (1- 2 \beta) u 
+      \left( 1 - \beta + 3 u/2\right)
+      \left[ 8 \pi \left(1 - \beta+u\right)^2\right]^{-1}
+      \f]
 
       Based on \ref Lattimer01 .
 
-      \future Solve for ed and pr as a function of nb (might not
-      be possible to do analytically)
   */
   class eos_tov_buchdahl : public eos_tov {
     
