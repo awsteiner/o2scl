@@ -699,7 +699,7 @@ extern "C" {
 			     double *&data);
 
   /** \brief Convert two multiple vector specifications to
-      the a list of \ref contour_lines objects
+      the a list of \ref o2scl::contour_line objects
 
       This function is used in o2graph_plotter::plotv().
   */
