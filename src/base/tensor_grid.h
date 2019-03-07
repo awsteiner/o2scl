@@ -127,9 +127,12 @@ namespace o2scl {
       \todo It is possible for the user to create a tensor_grid
       object, upcast it to a tensor object, and then use
       tensor::resize() to resize the tensor, failing to resize the
-      grid. This can be fixed by ensuring that resize functions
-      are virtual and have a version in tensor_grid which ensure
-      that the grid and tensor data are matched. 
+      grid. Following this, grid access functions will access random
+      parts of memory or segfault. This can be fixed by ensuring that
+      resize functions are virtual and have a version in tensor_grid
+      which ensure that the grid and tensor data are matched. The
+      problem is that the resize functions are templates, so they
+      cannot be virtual.
 
       \future Is it really necessary that get_data() is public and not
       const? This is used in HDF5 I/O, but the HDF5 output function
@@ -138,12 +141,18 @@ namespace o2scl {
       applications for which it's really helpful to have access to the
       base data object. I'm not sure what to do here.
 
-      \future A swap function for the data object might be helpful. 
+      \future A swap function for the grid similar to the data swap
+      function in the parent \ref o2scl::tensor class?
 
       \future Only allocate space for grid if it is set.
 
       \future As with \ref o2scl::tensor, generalize to other
       base data types.
+
+      \future The function \ref interp_linear_partial() appears
+      to be a generalization of \ref copy_table3d_interp_values_setxy(),
+      so there may be some code duplication between the two that
+      can be avoided. 
   */
   template<class vec_t=std::vector<double>, 
     class vec_size_t=std::vector<size_t> > class tensor_grid :

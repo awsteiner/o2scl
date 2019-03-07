@@ -269,7 +269,7 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
     command_add("table3d");
     type="table3d";
     
-  } else if (type=="tensor") {
+  } else if (type=="tensor" || type=="tensor<size_t>" || type=="tensor<int>") {
 
     size_t rank=tensor_obj.get_rank();
 
@@ -306,11 +306,24 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
       int ret2=get_input(sv,pr2,in2,"to-table3d",itive_com);
       if (ret!=0) return ret2;
     }
-    
-    uniform_grid_end<double> ugx(0,tensor_obj.get_size(ix_x)-1,
-				 tensor_obj.get_size(ix_x)-1);
-    uniform_grid_end<double> ugy(0,tensor_obj.get_size(ix_y)-1,
-				 tensor_obj.get_size(ix_y)-1);
+
+    uniform_grid<double> ugx, ugy;
+    if (type=="tensor") {
+      ugx=uniform_grid_end<double>(0,tensor_obj.get_size(ix_x)-1,
+				   tensor_obj.get_size(ix_x)-1);
+      ugy=uniform_grid_end<double>(0,tensor_obj.get_size(ix_y)-1,
+				   tensor_obj.get_size(ix_y)-1);
+    } else if (type=="tensor<int>") {
+      ugx=uniform_grid_end<double>(0,tensor_int_obj.get_size(ix_x)-1,
+				   tensor_int_obj.get_size(ix_x)-1);
+      ugy=uniform_grid_end<double>(0,tensor_int_obj.get_size(ix_y)-1,
+				   tensor_int_obj.get_size(ix_y)-1);
+    } else {
+      ugx=uniform_grid_end<double>(0,tensor_size_t_obj.get_size(ix_x)-1,
+				   tensor_size_t_obj.get_size(ix_x)-1);
+      ugy=uniform_grid_end<double>(0,tensor_size_t_obj.get_size(ix_y)-1,
+				   tensor_size_t_obj.get_size(ix_y)-1);
+    }
     table3d_obj.clear();
     table3d_obj.set_xy("x",ugx,"y",ugy);
     table3d_obj.new_slice(in[2]);
@@ -322,12 +335,30 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
 	j++;
       }
     }
+    if (type=="tensor") {
     for(size_t i=0;i<table3d_obj.get_nx();i++) {
       for(size_t j=0;j<table3d_obj.get_ny();j++) {
 	ix[ix_x]=i;
 	ix[ix_y]=j;
 	table3d_obj.set(i,j,in[2],tensor_obj.get(ix));
       }
+    }
+    } else if (type=="tensor<int>") {
+    for(size_t i=0;i<table3d_obj.get_nx();i++) {
+      for(size_t j=0;j<table3d_obj.get_ny();j++) {
+	ix[ix_x]=i;
+	ix[ix_y]=j;
+	table3d_obj.set(i,j,in[2],tensor_int_obj.get(ix));
+      }
+    }
+    } else {
+    for(size_t i=0;i<table3d_obj.get_nx();i++) {
+      for(size_t j=0;j<table3d_obj.get_ny();j++) {
+	ix[ix_x]=i;
+	ix[ix_y]=j;
+	table3d_obj.set(i,j,in[2],tensor_size_t_obj.get(ix));
+      }
+    }
     }
 
     command_del();

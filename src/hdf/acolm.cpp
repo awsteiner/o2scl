@@ -146,8 +146,8 @@ void acol_manager::command_add(std::string new_type) {
   if (new_type=="int") {
     static const size_t narr=1;
     comm_option_s options_arr[narr]={
-      {0,"value","Get or set the value of the int object",
-       0,1,"[value]","Get or set the value of the int object",
+      {0,"value","Get or set the value of the int object.",
+       0,1,"[value]","Get or set the value of the int object.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
        both}
     };
@@ -156,7 +156,7 @@ void acol_manager::command_add(std::string new_type) {
     static const size_t narr=1;
     comm_option_s options_arr[narr]={
       {0,"value","Get or set the value of the double object",
-       0,1,"[value]","Get or set the value of the double object",
+       0,1,"[value]","Get or set the value of the double object.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
        both}
     };
@@ -165,7 +165,7 @@ void acol_manager::command_add(std::string new_type) {
     static const size_t narr=1;
     comm_option_s options_arr[narr]={
       {0,"value","Get or set the value of the char object",
-       0,1,"[value]","Get or set the value of the char object",
+       0,1,"[value]","Get or set the value of the char object.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
        both}
     };
@@ -173,8 +173,8 @@ void acol_manager::command_add(std::string new_type) {
   } else if (new_type=="size_t") {
     static const size_t narr=1;
     comm_option_s options_arr[narr]={
-      {0,"value","Get or set the value of the size_t object",
-       0,1,"[value]","Get or set the value of the size_t object",
+      {0,"value","Get or set the value of the size_t object.",
+       0,1,"[value]","Get or set the value of the size_t object.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
        both}
     };
@@ -182,8 +182,8 @@ void acol_manager::command_add(std::string new_type) {
   } else if (new_type=="string") {
     static const size_t narr=1;
     comm_option_s options_arr[narr]={
-      {0,"value","Get or set the value of the string object",
-       0,1,"[value]","Get or set the value of the string object",
+      {0,"value","Get or set the value of the string object.",
+       0,1,"[value]","Get or set the value of the string object.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
        both}
     };
@@ -553,7 +553,20 @@ void acol_manager::command_add(std::string new_type) {
        both},
       {0,"to-table3d","Select two indices and convert to a table3d object.",
        -1,-1,"<x index> <y index> <slice name> [fixed 1] [fixed 2] ...",
-       "",new comm_option_mfptr<acol_manager>
+       ((string)"This command uses two indices in the current ")+
+       "tensor_grid object to create a table3d object. The values for "+
+       "the remaining indices fixed to [fixed 1], "+
+       "[fixed 2], etc. in that order. For example, \"to-table3d 3 1 "+
+       "z 5 3\" uses index 3 for the "+
+       "x coordinate of the new table3d object, uses index 1 for "+
+       "the y coordinate of the new table3d object, uses 5 for index "+
+       "0, and uses 3 for index 2."+
+       "The x- and y-grids in "+
+       "the table3d object are named \"x\" and \"y\" and filled with "+
+       "the grid index by default."+
+       "To set the x- or y-grid names afterwards, "+
+       "use commands 'x-name' and 'y-name'.",
+       new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_to_table3d),both},
       {0,"to-table3d-sum",
        "Select two indices and convert to a table3d object.",
@@ -585,19 +598,6 @@ void acol_manager::command_add(std::string new_type) {
     };
     cl->set_comm_option_vec(narr,options_arr);
     
-  } else if (new_type=="prob_dens_mdim_amr") {
-    
-    static const size_t narr=1;
-    comm_option_s options_arr[narr]={
-      {0,"to-table3d","Select two indices and convert to a table3d object.",
-       -1,-1,((std::string)"<x index> <y index> ")+
-       "<x name> <x points> <y name> <y points> <slice name>",
-       "Select two indices and convert to a table3d object.",
-       new comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_to_table3d),both}
-    };
-    cl->set_comm_option_vec(narr,options_arr);
-    
   } else if (new_type=="tensor<int>") {
     
     static const size_t narr=5;
@@ -614,7 +614,20 @@ void acol_manager::command_add(std::string new_type) {
        both},
       {0,"to-table3d","Select two indices and convert to a table3d object.",
        -1,-1,"<x name> <y name> <slice name>",
-       "",new comm_option_mfptr<acol_manager>
+       ((string)"This command uses two indices in the current ")+
+       "tensor_grid object to create a table3d object. The values for "+
+       "the remaining indices fixed to [fixed 1], "+
+       "[fixed 2], etc. in that order. For example, \"to-table3d 3 1 "+
+       "z 5 3\" uses index 3 for the "+
+       "x coordinate of the new table3d object, uses index 1 for "+
+       "the y coordinate of the new table3d object, uses 5 for index "+
+       "0, and uses 3 for index 2."+
+       "The x- and y-grids in "+
+       "the table3d object are named \"x\" and \"y\" and filled with "+
+       "the grid index by default."+
+       "To set the x- or y-grid names afterwards, "+
+       "use commands 'x-name' and 'y-name'.",
+       new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_to_table3d),both},
       {0,"max","Find the maximum value and index.",0,0,"",
        "Compute the maximum value.",
@@ -643,7 +656,20 @@ void acol_manager::command_add(std::string new_type) {
        both},
       {0,"to-table3d","Select two indices and convert to a table3d object.",
        -1,-1,"<x name> <y name> <slice name>",
-       "",new comm_option_mfptr<acol_manager>
+       ((string)"This command uses two indices in the current ")+
+       "tensor_grid object to create a table3d object. The values for "+
+       "the remaining indices fixed to [fixed 1], "+
+       "[fixed 2], etc. in that order. For example, \"to-table3d 3 1 "+
+       "z 5 3\" uses index 3 for the "+
+       "x coordinate of the new table3d object, uses index 1 for "+
+       "the y coordinate of the new table3d object, uses 5 for index "+
+       "0, and uses 3 for index 2."+
+       "The x- and y-grids in "+
+       "the table3d object are named \"x\" and \"y\" and filled with "+
+       "the grid index by default."+
+       "To set the x- or y-grid names afterwards, "+
+       "use commands 'x-name' and 'y-name'.",
+       new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_to_table3d),both},
       {0,"max","Find the maximum value and index.",0,0,"",
        "Compute the maximum value.",
@@ -665,9 +691,20 @@ void acol_manager::command_add(std::string new_type) {
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
        both},
       {0,"to-table3d","Select two indices and convert to a table3d object.",
-       -1,-1,"<x index> <y index> <new slice name> [values of fixed indices]",
-       ((string)"To set the x- or y- grid names afterwards, ")+
-       "use 'x-name' or 'y-name'.",new comm_option_mfptr<acol_manager>
+       -1,-1,"<x index> <y index> <new slice> [value 1] [value 2] ...",
+       ((string)"This command uses two indices in the current ")+
+       "tensor_grid object to create a table3d object. The values for "+
+       "the remaining indices are by interpolation to [value 1], "+
+       "[value 2], etc. in that order. For example, \"to-table3d 3 1 "+
+       "z 0.5 2.0\" uses index 3 for the "+
+       "x coordinate of the new table3d object, uses index 1 for "+
+       "the y coordinate of the new table3d object, uses interpolation "+
+       "to set the value of the index 0 to 0.5, and uses interpolation "+
+       "to set the value of index 2 to to 2.0. The x- and y-grids in "+
+       "the table3d object are named \"x\" and \"y\" by default. "+
+       "To set the x- or y-grid names afterwards, "+
+       "use commands 'x-name' and 'y-name'.",
+       new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_to_table3d),both},
       {0,"to-table","Convert to a two-column table object.",
        -1,-1,"<index> <grid name> <data name> [values of fixed indices]",
@@ -714,6 +751,19 @@ void acol_manager::command_add(std::string new_type) {
     };
     cl->set_comm_option_vec(narr,options_arr);
 
+  } else if (new_type=="prob_dens_mdim_amr") {
+    
+    static const size_t narr=1;
+    comm_option_s options_arr[narr]={
+      {0,"to-table3d","Select two indices and convert to a table3d object.",
+       -1,-1,((std::string)"<x index> <y index> ")+
+       "<x name> <x points> <y name> <y points> <slice name>",
+       "Select two indices and convert to a table3d object.",
+       new comm_option_mfptr<acol_manager>
+       (this,&acol_manager::comm_to_table3d),both}
+    };
+    cl->set_comm_option_vec(narr,options_arr);
+    
   } else if (new_type=="hist") {
 
     static const size_t narr=2;
