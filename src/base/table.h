@@ -1727,15 +1727,23 @@ namespace o2scl {
   /** \brief Make a new column named \c yp which is the 
       derivative \f$ y^{\prime}(x) \f$ formed from columns
       named \c x and \c y \f$ {\cal O}(R \log(C)) \f$
+
+      If the column \c yp is not already in the table it is
+      automatically created.
   */
   void deriv(std::string x, std::string y, std::string yp) {
+
     aiter itx, ity, ityp;
-    new_column(yp);
 
     itx=atree.find(x);
     ity=atree.find(y);
     ityp=atree.find(yp);
 
+    if (ityp==atree.end()) {
+      new_column(yp);
+      ityp=atree.find(yp);
+    }
+    
     if (itx==atree.end() || ity==atree.end() || ityp==atree.end()) {
       O2SCL_ERR("Column not found in table::deriv(string,string,string).",
 		exc_enotfound);
@@ -1841,14 +1849,21 @@ namespace o2scl {
       x-values stored in column named \c x and y-values 
       stored in column named \c y, i.e.
       \f$ y^{\prime \prime}(x) \f$ - O(log(C)*R).
+
+      If the column \c yp is not already in the table it is
+      automatically created.
   */
   void deriv2(std::string x, std::string y, std::string yp) {
     aiter itx, ity, ityp;
-    new_column(yp);
 
     itx=atree.find(x);
     ity=atree.find(y);
     ityp=atree.find(yp);
+    
+    if (ityp==atree.end()) {
+      new_column(yp);
+      ityp=atree.find(yp);
+    }
 
     if (itx==atree.end() || ity==atree.end() || ityp==atree.end()) {
       O2SCL_ERR("Column not found in table::deriv2(string,string,string).",
@@ -2048,14 +2063,21 @@ namespace o2scl {
 
       This function is O(log(R)) but can be as bad as O(R) if the
       relevant columns are not well ordered.
+
+      If the column \c ynew is not already in the table it is
+      automatically created.
   */
   void integ(std::string x, std::string y, std::string ynew) {
     aiter itx, ity, itynew;
-    new_column(ynew);
 
     itx=atree.find(x);
     ity=atree.find(y);
-    itynew=atree.find(ynew);
+    ityp=atree.find(ynew);
+    
+    if (ityp==atree.end()) {
+      new_column(yp);
+      ityp=atree.find(ynew);
+    }
 
     if (itx==atree.end() || ity==atree.end() || itynew==atree.end()) {
       O2SCL_ERR("Column not found in table::integ(string,string,string).",
