@@ -2072,11 +2072,11 @@ namespace o2scl {
 
     itx=atree.find(x);
     ity=atree.find(y);
-    ityp=atree.find(ynew);
+    itynew=atree.find(ynew);
     
-    if (ityp==atree.end()) {
-      new_column(yp);
-      ityp=atree.find(ynew);
+    if (itynew==atree.end()) {
+      new_column(ynew);
+      itynew=atree.find(ynew);
     }
 
     if (itx==atree.end() || ity==atree.end() || itynew==atree.end()) {

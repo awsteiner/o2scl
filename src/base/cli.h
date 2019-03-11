@@ -639,7 +639,11 @@ namespace o2scl {
 	that version allows only one-word aliases. 
      */
     std::string get_alias(std::string alias);
-  
+
+    /** \brief Return true if \c str is a valid option
+     */
+    bool is_valid_option(std::string str);
+    
   };
 
 #ifndef DOXYGEN_NO_O2NS

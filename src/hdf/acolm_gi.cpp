@@ -517,7 +517,8 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
 }
 
 int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
-  
+
+  // Handle the 'help type command' case for type-specific commands
   if (sv.size()==3) {
     string temp_type=sv[1];
     string cur_type=type;
@@ -536,6 +537,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     return ret;
   }
 
+  // Handle the special case 'help vector-spec'
   if (sv.size()==2 && sv[1]=="vector-spec") {
     
     std::string str=((std::string)"Vector specification ")+
@@ -576,6 +578,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     return 0;
   }
 
+  // Handle the special case 'help mult-vector-spec'
   if (sv.size()==2 && sv[1]=="mult-vector-spec") {
     
     std::string str=((std::string)"Multiple vector specification ")+
@@ -610,7 +613,91 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       
     return 0;
   }
-  
+
+  // Handle the case 'help <type>' where <type> is an acol o2scl type
+  for(size_t i=0;i<type_list.size();i++) {
+    if (sv[1]==type_list[i]) {
+      std::string str="Type "+type_list[i]+" is one of the types of "+
+	"objects which can be read, written, or modified by "+
+	cl->cmd_name+".";
+      std::vector<std::string> svx;
+      o2scl::rewrap_keep_endlines(str,svx);
+      for(size_t i=0;i<svx.size();i++) {
+	cout << svx[i] << endl;
+      }
+      cout << endl;
+      svx.clear();
+      std::map<std::string,std::vector<std::string> >::iterator it;
+      for(it=type_comm_list.begin();it!=type_comm_list.end();it++) {
+	if (it->first==type_list[i]) {
+	  std::vector<std::string> &clist=it->second;
+	  if (clist.size()>1) {
+	    str=((string)"The type-specific commands for \"")+
+	      type_list[i]+"\" are: ";
+	    for(size_t j=0;j<clist.size()-1;j++) {
+	      str+=clist[j]+", ";
+	    }
+	    str+=" and "+clist[clist.size()-1]+".";
+	    o2scl::rewrap_keep_endlines(str,svx);
+	    for(size_t j=0;j<svx.size();j++) {
+	      cout << svx[j] << endl;
+	    }
+	  } else {
+	    cout << "The only type-specific command for \""
+		 << type_list[i] << " is " << clist[0] << "." << endl;
+	  }
+	}
+      }
+      
+      return 0;
+    }
+  }
+
+  // Handle the case 'help <command>' where <command> is a type-specific
+  // command
+  if (cl->is_valid_option(sv[1])==false) {
+
+    bool found=false;
+    
+    std::map<std::string,std::vector<std::string> >::iterator it;
+    for(it=type_comm_list.begin();it!=type_comm_list.end();it++) {
+      std::vector<std::string> &clist=it->second;
+      for(size_t j=0;j<clist.size();j++) {
+	if (clist[j]==sv[1]) {
+	  if (found==false) {
+	    cout << "Command \"" << sv[1] << "\" is a type specific "
+		 << "command. Below are "
+		 << "the various descriptions\nof its operation with "
+		 << "the relevant types.\n" << endl;
+	    found=true;
+	  }
+	  
+	  string cur_type=type;
+	  
+	  vector<string> sv2;
+	  
+	  sv2.push_back("help");
+	  sv2.push_back(sv[1]);
+	  
+	  command_del();
+	  command_add(it->first);
+	  type=it->first;
+
+	  cout << "Type " << it->first << ":" << endl;
+	  int ret=cl->comm_option_help(sv2,itive_com);
+	  cout << endl;
+	  
+	  command_del();
+	  command_add(cur_type);
+	  type=cur_type;
+	}
+      }
+    }
+
+    if (found) return 0;
+  }
+
+  // Handle the usual cli case
   return cl->comm_option_help(sv,itive_com);
 }
 

@@ -854,6 +854,17 @@ int cli::output_param_list() {
   return 0;
 }
 
+bool cli::is_valid_option(std::string str) {
+  // Look for the argument in the command list
+  for(size_t i=0;i<clist.size();i++) {
+    if (string_equal_dash(clist[i].lng,str)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+
 int cli::comm_option_help(vector<string> &sv, bool itive_com) {
 
   if (itive_com==false && sv.size()==1) {

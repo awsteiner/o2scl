@@ -74,6 +74,28 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
 
   cng.err_on_fail=false;
 
+  type_list.push_back("table");
+  type_list.push_back("table3d");
+  type_list.push_back("hist");
+  type_list.push_back("hist_2d");
+  type_list.push_back("vector<contour_line>");
+  type_list.push_back("int");
+  type_list.push_back("double");
+  type_list.push_back("char");
+  type_list.push_back("string");
+  type_list.push_back("int[]");
+  type_list.push_back("double[]");
+  type_list.push_back("string[]");
+  type_list.push_back("size_t");
+  type_list.push_back("size_t[]");
+  type_list.push_back("uniform_grid<double>");
+  type_list.push_back("tensor_grid");
+  type_list.push_back("tensor");
+  type_list.push_back("tensor<int>");
+  type_list.push_back("tensor<size_t>");
+  type_list.push_back("prob_dens_mdim_amr");
+  vector_sort<vector<string>,string>(type_list.size(),type_list);
+  
   {
     vector<std::string> itmp={"value"};
     type_comm_list.insert(std::make_pair("int",itmp));
@@ -937,7 +959,7 @@ void acol_manager::command_add(std::string new_type) {
 }
 
 void acol_manager::command_del() {
-  
+
   std::map<std::string,std::vector<std::string> >::iterator it;
   for(it=type_comm_list.begin();it!=type_comm_list.end();it++) {
     if (it->first==type) {
@@ -993,6 +1015,12 @@ int acol_manager::setup_options() {
 
   static const int narr=16;
 
+  string type_list_str;
+  for(size_t i=0;i<type_list.size()-1;i++) {
+    type_list_str+=type_list[i]+", ";
+  }
+  type_list_str+=" or "+type_list[type_list.size()-1];
+  
   // Options, sorted by long name. We allow 0 parameters in many of these
   // options so they can be requested from the user in interactive mode. 
   comm_option_s options_arr[narr]={
@@ -1143,10 +1171,7 @@ int acol_manager::setup_options() {
      both},
     {0,"type","Show current object type.",0,0,"",
      ((string)"Show the current object type, either table, ")+
-     "table3d, hist, hist_2d, vector<contour_line>, int, double, "+
-     "char, string, int[], double[], string[], size_t, size_t[], "+
-     "uniform_grid<double>, tensor_grid, tensor, tensor<int>, "+
-     "tensor<size_t>, or prob_dens_mdim_amr.",
+     type_list_str,
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_type),
      both},
     {'v',"version","Print version information and O2scl settings.",0,0,"",

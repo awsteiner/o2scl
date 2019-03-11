@@ -97,7 +97,13 @@ namespace o2scl_acol {
 
   protected:
 
+    /** \brief A list of all type-specific commands for each type
+     */
     std::map<std::string,std::vector<std::string> > type_comm_list;
+
+    /** \brief A list of all types
+     */
+    std::vector<std::string> type_list;
     
     /** \brief If true, then run in o2graph mode
      */
