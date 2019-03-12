@@ -223,7 +223,8 @@ int convert_units::convert_gnu_units(std::string from, std::string to,
     std::cout << "convert_units::convert_gnu_units(): "
 	      << "Define constant popen is defined." << std::endl;
   }
-
+  
+  cout << "Using GNU units: " << cmd << endl;
   FILE *ps_pipe=popen(cmd.c_str(),"r");
   if (!ps_pipe) {
     if (err_on_fail) {
