@@ -5,10 +5,11 @@
 # commands individually, e.g.
 # -----------------------------------------------------------------
 > help create
-Usage: create <type> [...]
+Usage: [1m[36mcreate[m <type> [...]
 
-Create an object.
+Short description: Create an object.
 
+Long description:
 Create a new object of type <type>. For types char, double, int, size_t, and
 string, this takes one additional argument which holds the value. For type
 table, this option creates a new table with one column whose entries are an
