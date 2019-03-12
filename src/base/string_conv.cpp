@@ -370,7 +370,7 @@ void o2scl::rewrap_keep_endlines(std::string str,
     } else {
       
       std::vector<std::string> sv_tmp;
-      split_string(sv_endlines[k],sv_tmp);
+      split_string_delim(sv_endlines[k],sv_tmp,' ');
       
       string stmp;
       

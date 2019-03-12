@@ -1010,6 +1010,8 @@ void acol_manager::clear_obj() {
 
 int acol_manager::setup_options() {
 
+  cl->cmd_name="acol";
+
   const int cl_param=cli::comm_option_cl_param;
   const int both=cli::comm_option_both;
 
@@ -1047,8 +1049,9 @@ int acol_manager::setup_options() {
      both},
     {0,"calc","Compute the value of a constant expression.",0,1,"<expr>",
      ((string)"This computes the value of the constant expression ")+
-     " <expr>. Examples are 'calc acos(-1)' or 'calc 2+1/sqrt(2.0e4)'. "+
-     "Results are given at the current precision.",
+     " <expr>. Examples are \"calc acos(-1)\" or \"calc 2+1/sqrt(2.0e4)\". "+
+     "Results are given at the current precision. To see valid "+
+     "expressions type \""+cl->cmd_name+" -help functions\".",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_calc),
      both},
     {0,"clear","Clear the current object.",0,0,"",
@@ -1058,7 +1061,8 @@ int acol_manager::setup_options() {
     {'c',"create","Create an object.",0,-1,"<type> [...]",
      ((string)"Create a new object of type <type>. For types char, ")+
      "double, int, size_t, and string, this takes one additional "+
-     "argument which holds the value. For type table, "+
+     "argument which is a mathematical expression (see \acol -help "+
+     "functions\" for more). For type table, "+
      "this option creates a new table with one column whose entries "+
      "are an evenly-spaced grid. In this case four additional arguments "+
      "are needed: the name of "+
@@ -1073,7 +1077,9 @@ int acol_manager::setup_options() {
     {0,"download","Download file from specified URL.",0,4,
      "<file> <URL> [hash, \"file:\"hash_filename, or \"none\"] [directory]",
      ((string)"Check if a file matches a specified hash, and if not, ")+
-     "attempt to download a fresh copy from the specified URL.",
+     "attempt to download a fresh copy from the specified URL. If the "+
+     "filename is \"_\", then the file is extracted from the end of "+
+     "the URL.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_download),
      both},
     {0,"filelist","List objects in a HDF5 file.",0,1,"<file>",
