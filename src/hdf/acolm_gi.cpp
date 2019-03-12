@@ -537,6 +537,29 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     return ret;
   }
 
+  // Handle the special case 'help functions'
+  if (sv.size()==2 && sv[1]=="functions") {
+    string str=((std::string)"Functions can be created using the ");
+    str+="following operators and functions:\n\n";
+    str+="\nKnown operators:\n\n() ^ * / % + - == != < > && || << >> >= <=\n\n";
+    str+="Known functions:\n\n";
+    str+="exp(x) log(x) log10(x) sin(x) cos(x) tan(x) sqrt(x) abs(x) ";
+    str+="asin(x) acos(x) atan(x) sinh(x) cosh(x) tanh(x) ";
+    str+="asinh(x) acosh(x) atanh(x)\n\n";
+    /*
+      dsc+="atan2(x,y) if(x,y,z)\n";
+      dsc+="cot(x) csc(x) sec(x)\n";
+      dsc+="ceil(x) floor(x) int(x) max(x,y) min(x,y)\n";
+    */
+    std::vector<std::string> sv;
+    o2scl::rewrap_keep_endlines(str,sv);
+    for(size_t i=0;i<sv.size();i++) {
+      cout << sv[i] << endl;
+    }
+      
+    return 0;
+  }
+  
   // Handle the special case 'help vector-spec'
   if (sv.size()==2 && sv[1]=="vector-spec") {
     
@@ -664,12 +687,23 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       std::vector<std::string> &clist=it->second;
       for(size_t j=0;j<clist.size();j++) {
 	if (clist[j]==sv[1]) {
+
 	  if (found==false) {
 	    cout << "Command \"" << sv[1] << "\" is a type specific "
 		 << "command. Below are "
 		 << "the various descriptions\nof its operation with "
 		 << "the relevant types.\n" << endl;
 	    found=true;
+	  }
+	  
+	  {
+	    // Draw a line
+	    ostringstream oss;
+	    oss << ((char)27) << '(' << '0';
+	    for(size_t i=0;i<78;i++) oss << 'q';
+	    oss << ((char)27) << '(' << 'B';
+	    string s=oss.str();
+	    cout << s << endl;
 	  }
 	  
 	  string cur_type=type;
@@ -686,7 +720,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 	  cout << "Type " << it->first << ":" << endl;
 	  int ret=cl->comm_option_help(sv2,itive_com);
 	  cout << endl;
-	  
+
 	  command_del();
 	  command_add(cur_type);
 	  type=cur_type;

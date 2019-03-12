@@ -1228,8 +1228,14 @@ int acol_manager::setup_help() {
   cl->desc=((string)"acol: A data viewing and ")+
     "processing program for O2scl.\n";
 
+  ostringstream oss;
+  oss << ((char)27) << '(' << '0';
+  for(size_t i=0;i<78;i++) oss << 'q';
+  oss << ((char)27) << '(' << 'B';
+  string line=oss.str();
+  
   string stemp;
-  string dsc="\nNotes:\n\n";
+  string dsc=line+"\nNotes:\n\n";
   vector<std::string> sv;
   
   stemp="1. Help for general commands may be obtained with 'help ";
@@ -1275,16 +1281,7 @@ int acol_manager::setup_help() {
     dsc+="   "+sv[j]+"\n";
   }
 
-  dsc+="\nKnown operators:\n\n() ^ * / % + - == != < > && || << >> >= <=\n\n";
-  dsc+="Known functions:\n\n";
-  dsc+="exp(x) log(x) log10(x) sin(x) cos(x) tan(x) sqrt(x) abs(x) ";
-  dsc+="asin(x) acos(x) atan(x) sinh(x) cosh(x) tanh(x) ";
-  dsc+="asinh(x) acosh(x) atanh(x)\n\n";
-  /*
-    dsc+="atan2(x,y) if(x,y,z)\n";
-    dsc+="cot(x) csc(x) sec(x)\n";
-    dsc+="ceil(x) floor(x) int(x) max(x,y) min(x,y)\n";
-  */
+  dsc+=line+"\n";
   
   dsc+="List of additional type-specific commands\n";
   dsc+="(use 'help <type> <command>' for more info):\n\n";
@@ -1303,7 +1300,7 @@ int acol_manager::setup_help() {
       dsc+="  "+sv[j]+"\n";
     }
   }
-  dsc+=" \n";
+  dsc+=line+"\n";
   
 #ifndef O2SCL_UBUNTU_PKG
   dsc+=((string)"Compiled at ")+((string)__TIME__)+" on "+

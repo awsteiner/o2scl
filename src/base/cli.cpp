@@ -968,18 +968,33 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
 
       // The user has given a command name as an parameter, so 
       // print out usage information for that command
-      
+
       if (clist[ix].parm_desc.length()==0) {
-	cout << "Usage: " << clist[ix].lng << " (no arguments)\n" << endl;
+	ostringstream oss;
+	oss << "Usage: ";
+	oss << ((char)27) << "[1m";
+	oss << ((char)27) << "[36m";
+	oss << clist[ix].lng;
+	oss << ((char)27) << "[m";
+	oss << " (no arguments)" << endl;
+	string s=oss.str();
+	cout << s << endl;
       } else {
-	cout << "Usage: " << clist[ix].lng << " " 
-	     << clist[ix].parm_desc << '\n' << endl;
+	ostringstream oss;
+	oss << "Usage: ";
+	oss << ((char)27) << "[1m";
+	oss << ((char)27) << "[36m";
+	oss << clist[ix].lng;
+	oss << ((char)27) << "[m";
+	oss << " " << clist[ix].parm_desc << endl;
+	string s=oss.str();
+	cout << s << endl;
       }
 
       if (clist[ix].desc.length()==0) {
 	cout << "(No description.)" << endl;
       } else {
-	cout << clist[ix].desc << endl;
+	cout << "Short description: " << clist[ix].desc << endl;
       }
       
       // If 'help set' or 'help get' was requested, output
@@ -996,6 +1011,7 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
       if (clist[ix].help.length()>0) {
 	cout << endl;
 
+	cout << "Long description:" << endl;
 	{
 	  // Rewrap to 79 columns before writing additional
 	  // help text
