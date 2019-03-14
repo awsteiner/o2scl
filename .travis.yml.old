@@ -14,24 +14,9 @@ os:
   - linux
   - osx
 
-dist: xenial
+dist: trusty
 sudo: required
 
-addons:
-  apt:
-    packages:
-    - libgsl0-dev
-    - libboost-all-dev
-    - libreadline-dev
-    - libncurses-dev
-    - libhdf5-dev
-  homebrew:
-    taps: awsteiner/science
-    packages:
-    - gcc
-    - eigen
-    - hdf5
-    
 # 
 # Prepare autotools and install dependencies before installation
 #
@@ -43,6 +28,30 @@ before_install:
       mkdir m4 ;
       autoreconf -i ;
     fi
+    
+  # 
+  # Install GSL, Boost, HDF5, readline, ncurses
+  # 
+  - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+      sudo apt-get install libgsl0-dev && sudo apt-get install libboost-all-dev  libreadline-dev libncurses-dev libhdf5-dev;
+    fi
+    
+  # The ubuntu HDF5 package cannot be used because it is configured to
+  # be compatibile only the with older API. Newer versions of the
+  # Ubuntu HDF5 package do not seem to have this problem. So we can
+  # now use the libhdf5-dev package. Note that even more recent Ubuntu
+  # distributions install HDF5 in a different location do distinguish
+  # between parallel and serial versions (which will require
+  # -DO2SCL_UBUNTU_HDF5), but trusty doesn't have this issue yet.
+  
+  #  - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+  #      wget https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/
+  # hdf5-1.10.0-patch1/src/hdf5-1.10.0-patch1.tar.gz ;
+  #      tar -xzf hdf5-1.10.0-patch1.tar.gz ;
+  #      cd hdf5-1.10.0-patch1 && ./configure
+  # --build=x86_64-unknown-linux-gnu --prefix=/usr && make >
+  # /dev/null 2> /dev/null && sudo make install && cd .. ;
+  #    fi
     
 #
 # Installation script
@@ -72,7 +81,7 @@ script:
   # the travis.ci runs were taking too long
   #
   - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
-      brew install o2scl --with-eigen --with-check --HEAD -v && acol --version ;
+      brew update && brew install gcc; brew link --overwrite gcc; brew install eigen && brew install hdf5 && brew tap awsteiner/science && which autoconf && brew install o2scl --with-eigen --with-check --HEAD -v && acol --version ;
     fi
 
 notifications:
