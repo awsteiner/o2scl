@@ -2409,6 +2409,12 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
     for(size_t j=1;j<sv.size();j++) {
       rearrange_arg_process(sv[j],sv2);
     }
+    if (verbose>1) {
+      cout << "Post-process: " << endl;
+      for(size_t j=0;j<sv2.size();j++) {
+	cout << j << " " << sv2[j] << endl;
+      }
+    }
     
     vector<o2scl::index_spec> vis;
     for(size_t j=0;j<sv2.size();j++) {
@@ -2486,6 +2492,12 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
     for(size_t j=1;j<sv.size();j++) {
       rearrange_arg_process(sv[j],sv2);
     }
+    if (verbose>1) {
+      cout << "Post-process: " << endl;
+      for(size_t j=0;j<sv2.size();j++) {
+	cout << j << " " << sv2[j] << endl;
+      }
+    }
     
     vector<o2scl::index_spec> vis;
     for(size_t j=0;j<sv2.size();j++) {
@@ -2553,18 +2565,25 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
 	string spec=sv2[j].substr(5,sv2[j].length()-6);
 	split_string_delim(spec,args,',');
 	if (verbose>1) {
-	  cout << "rearrange, begin, end, width [log]: ";
+	  cout << "rearrange, index, begin, end, n_points [log]: ";
 	  vector_out(cout,args,true);
 	}
-	vis.push_back(ix_grid(o2scl::stoszt(args[0]),
-			      o2scl::function_to_double(args[1]),
-			      o2scl::function_to_double(args[2]),
-			      o2scl::function_to_double(args[3]),false));
+	if (args.size()>4 && o2scl::stob(args[4])==true) {
+	  vis.push_back(ix_grid(o2scl::stoszt(args[0]),
+				o2scl::function_to_double(args[1]),
+				o2scl::function_to_double(args[2]),
+				o2scl::function_to_double(args[3]),false));
+	} else {
+	  vis.push_back(ix_grid(o2scl::stoszt(args[0]),
+				o2scl::function_to_double(args[1]),
+				o2scl::function_to_double(args[2]),
+				o2scl::function_to_double(args[3]),false));
+	}
       }
     }
     
     tensor_grid<> t;
-    t=tensor_grid_obj.rearrange_and_copy(vis);
+    t=tensor_grid_obj.rearrange_and_copy(vis,verbose);
     tensor_grid_obj=t;
     
   } else {
