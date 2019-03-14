@@ -679,10 +679,10 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 
   // Handle the case 'help <command>' where <command> is a type-specific
   // command
-  if (sv.size()>2 && cl->is_valid_option(sv[1])==false) {
+  if (sv.size()>=2 && cl->is_valid_option(sv[1])==false) {
 
     bool found=false;
-    
+
     std::map<std::string,std::vector<std::string> >::iterator it;
     for(it=type_comm_list.begin();it!=type_comm_list.end();it++) {
       std::vector<std::string> &clist=it->second;
