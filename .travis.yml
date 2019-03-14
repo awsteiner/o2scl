@@ -59,7 +59,7 @@ script:
   # trusty is 1.6, so we leave out --enable-gsl2
   # 
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-      ./configure && make blank-doc && make && sudo make install && make check && make o2scl-examples;
+      CXXFLAGS="-DO2SCL_UBUNTU_HDF5" ./configure && make blank-doc && make && sudo make install && make check && make o2scl-examples;
     fi
   #
   # Use homebrew to install the HEAD version on OSX. At the end, 'acol
