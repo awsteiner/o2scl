@@ -1789,28 +1789,16 @@ namespace o2scl {
 	  ix_to_interp.push_back(spec[i].ix1);
 	} else if (spec[i].type==index_spec::grid ||
 		   spec[i].type==index_spec::gridw) {
-	  // Use ix1 to store the destination index (which is
-	  // at this point equal to rank_new)
-	  spec_old[spec[i].ix1]=index_spec
-	    (spec[i].type,rank_new,spec[i].ix2,spec[i].ix3,
-	     spec[i].val1,spec[i].val2,spec[i].val3);
-	  spec_new.push_back(index_spec
-			     (spec[i].type,spec[i].ix1,spec[i].ix2,
-			      spec[i].ix3,spec[i].val1,
-			      spec[i].val2,spec[i].val3));
-	  
-	  n_interps++;
-	  ix_to_interp.push_back(spec[i].ix1);
-	  
-	  rank_new++;
-	  
-	  // Setup new grid in log or linear mode
+
+	  // Setup new grid in log or linear mode and determine
+	  // spacing between grid points for later use
 	  if (spec[i].ix3==1) {
 	    // Log mode
 	    double rat;
 	    int curr_grid_size;
 	    if (spec[i].type==index_spec::grid) {
 	      rat=pow(spec[i].val2/spec[i].val1,1.0/((double)spec[i].ix2));
+	      spec[i].val3=rat;
 	      curr_grid_size=spec[i].ix2+1;
 	    } else {
 	      rat=spec[i].val3;
@@ -1832,8 +1820,8 @@ namespace o2scl {
 	    double width;
 	    int curr_grid_size;
 	    if (spec[i].type==index_spec::grid) {
-	      width=(spec[i].val2-spec[i].val1)/
-		((double)spec[i].ix2);
+	      width=(spec[i].val2-spec[i].val1)/((double)spec[i].ix2);
+	      spec[i].val3=width;
 	      curr_grid_size=spec[i].ix2+1;
 	    } else {
 	      width=spec[i].val3;
@@ -1851,6 +1839,22 @@ namespace o2scl {
 	      }
 	    }
 	  }
+	  
+	  // Use ix1 to store the destination index (which is
+	  // at this point equal to rank_new)
+	  spec_old[spec[i].ix1]=index_spec
+	    (spec[i].type,rank_new,spec[i].ix2,spec[i].ix3,
+	     spec[i].val1,spec[i].val2,spec[i].val3);
+	  spec_new.push_back(index_spec
+			     (spec[i].type,spec[i].ix1,spec[i].ix2,
+			      spec[i].ix3,spec[i].val1,
+			      spec[i].val2,spec[i].val3));
+	  
+	  n_interps++;
+	  ix_to_interp.push_back(spec[i].ix1);
+	  
+	  rank_new++;
+	  
 	} else {
 	  if (err_on_fail) {
 	    O2SCL_ERR2("Index specification type not allowed in ",
@@ -1920,8 +1924,12 @@ namespace o2scl {
 		     spec_old[i].type==index_spec::gridw) {
 	    std::cout << " is being reinterpolated based on grid\n  "
 		      << spec_old[i].val1 << " "
-		      << spec_old[i].val2 << " "
-		      << spec_old[i].val3;
+		      << spec_old[i].val2 << " ";
+	    if (spec_old[i].type==index_spec::grid) {
+	      std::cout << spec_old[i].ix2;
+	    } else {
+	      std::cout << spec_old[i].val3;
+	    }
 	    if (spec_old[i].ix3==1) {
 	      std::cout << " (log)." << std::endl;
 	    } else {
@@ -1945,8 +1953,12 @@ namespace o2scl {
 		     spec_new[i].type==index_spec::gridw) {
 	    std::cout << " was obtained from grid\n  "
 		      << spec_new[i].val1 << " "
-		      << spec_new[i].val2 << " "
-		      << spec_new[i].val3;
+		      << spec_new[i].val2 << " ";
+	    if (spec_old[i].type==index_spec::grid) {
+	      std::cout << spec_new[i].ix2;
+	    } else {
+	      std::cout << spec_new[i].val3;
+	    }
 	    if (spec_new[i].ix3==1) {
 	      std::cout << " (log)." << std::endl;
 	    } else {
@@ -2008,6 +2020,16 @@ namespace o2scl {
 	  } else if (spec_old[j].type==index_spec::interp) {
 	    interp_vals.push_back(spec_old[j].val1);
 	  } else if (spec_old[j].type==index_spec::grid) {
+	    if (spec_old[j].ix3==1) {
+	      double val=spec_old[j].val1*
+		pow(spec_old[j].val3,ix_new[spec_old[j].ix1]);
+	      interp_vals.push_back(val);
+	    } else {
+	      double val=spec_old[j].val1+
+		ix_new[spec_old[j].ix1]*spec_old[j].val3;
+	      interp_vals.push_back(val);
+	    }
+	  } else if (spec_old[j].type==index_spec::gridw) {
 	    if (spec_old[j].ix3==1) {
 	      double val=spec_old[j].val1*
 		pow(spec_old[j].val3,ix_new[spec_old[j].ix1]);

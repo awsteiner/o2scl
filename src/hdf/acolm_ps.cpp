@@ -2565,7 +2565,7 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
 	string spec=sv2[j].substr(5,sv2[j].length()-6);
 	split_string_delim(spec,args,',');
 	if (verbose>1) {
-	  cout << "rearrange, index, begin, end, n_points [log]: ";
+	  cout << "rearrange, index, begin, end, n_bins [log]: ";
 	  vector_out(cout,args,true);
 	}
 	if (args.size()>4 && o2scl::stob(args[4])==true) {

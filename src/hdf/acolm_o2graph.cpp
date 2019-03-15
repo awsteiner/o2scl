@@ -349,11 +349,11 @@ int o2scl_acol_tensor_to_table3d(void *vp, int i1, int i2) {
       grid_y.push_back(amp->tensor_grid_obj.get_grid(i2,i));
     }
     amp->table3d_obj.set_xy("x",grid_x.size(),grid_x,
-		       "y",grid_y.size(),grid_y);
+			    "y",grid_y.size(),grid_y);
     amp->table3d_obj.new_slice("tensor");
     vector<size_t> ix(2);
     for(size_t i=0;i<amp->table3d_obj.get_nx();i++) {
-      for(size_t j=0;j<amp->table3d_obj.get_nx();j++) {
+      for(size_t j=0;j<amp->table3d_obj.get_ny();j++) {
 	ix[i1]=i;
 	ix[i2]=j;
 	amp->table3d_obj.set(i,j,"tensor",amp->tensor_grid_obj.get(ix));
