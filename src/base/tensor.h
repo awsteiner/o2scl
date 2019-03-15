@@ -88,8 +88,10 @@ namespace o2scl {
   static const size_t range=6;
   /// Interpolate a value to fix an index
   static const size_t interp=7;
-  /// Interpolate a value to set a new grid
+  /// Interpolate a value to set a new grid (fixed bin number)
   static const size_t grid=8;
+  /// Interpolate a value to set a new grid (fixed bin width)
+  static const size_t gridw=9;
   //@}
 
   /// Default constructor
@@ -146,12 +148,18 @@ namespace o2scl {
    */
   index_spec ix_interp(size_t ix, double v);
   
-  /** \brief Interpolate grid \c v into index \c ix
+  /** \brief Interpolate grid with fixed number of bins into index \c ix
       (for \ref o2scl::tensor_grid only)
    */
-  index_spec ix_grid(size_t ix, double begin, double end, double width,
+  index_spec ix_grid(size_t ix, double begin, double end, size_t n_bins,
 		     bool log=false);
   
+  /** \brief Interpolate grid with fixed bin width into index \c ix
+      (for \ref o2scl::tensor_grid only)
+  */
+  index_spec ix_gridw(size_t ix, double begin, double end, double width,
+		     bool log=false);
+
   /** \brief Tensor class with arbitrary dimensions
 
       The elements of a tensor are typically specified as a list of

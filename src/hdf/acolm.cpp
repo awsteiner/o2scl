@@ -767,7 +767,8 @@ void acol_manager::command_add(std::string new_type) {
        -1,-1,"<index spec. 1> [index spec. 2] ...",
        ((std::string)"Index specifications are: index(ix), fixed(ix), ")+
        "sum(ix), trace(ix1,ix2), reverse(ix), range(ix,start,end), "+
-       "interp(ix,value), and grid(ix,begin,end,n_points,log).",
+       "interp(ix,value), grid(ix,begin,end,n_points,log), and "+
+       "gridw(ix,begin,end,n_points,log).",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_rearrange),
        both}
     };

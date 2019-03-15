@@ -1787,20 +1787,17 @@ namespace o2scl {
 					   spec[i].val1);
 	  n_interps++;
 	  ix_to_interp.push_back(spec[i].ix1);
-	} else if (spec[i].type==index_spec::grid) {
+	} else if (spec[i].type==index_spec::grid ||
+		   spec[i].type==index_spec::gridw) {
 	  // Use ix1 to store the destination index (which is
 	  // at this point equal to rank_new)
-	  spec_old[spec[i].ix1]=index_spec(spec[i].type,
-					   rank_new,0,spec[i].ix3,
-					   spec[i].val1,
-					   spec[i].val2,
-					   spec[i].val3);
-	  spec_new.push_back(index_spec(spec[i].type,
-					spec[i].ix1,0,
-					spec[i].ix3,
-					spec[i].val1,
-					spec[i].val2,
-					spec[i].val3));
+	  spec_old[spec[i].ix1]=index_spec
+	    (spec[i].type,rank_new,spec[i].ix2,spec[i].ix3,
+	     spec[i].val1,spec[i].val2,spec[i].val3);
+	  spec_new.push_back(index_spec
+			     (spec[i].type,spec[i].ix1,spec[i].ix2,
+			      spec[i].ix3,spec[i].val1,
+			      spec[i].val2,spec[i].val3));
 	  
 	  n_interps++;
 	  ix_to_interp.push_back(spec[i].ix1);
@@ -1810,28 +1807,47 @@ namespace o2scl {
 	  // Setup new grid in log or linear mode
 	  if (spec[i].ix3==1) {
 	    // Log mode
-	    double rat=spec[i].val2/spec[i].val1;
-	    int temp_size=((size_t)pow(rat,1.0/spec[i].val3))+1;
-	    size_new.push_back(temp_size);
-	    if (temp_size==1) {
-	      new_grid.push_back(spec[i].val1);
+	    double rat;
+	    int curr_grid_size;
+	    if (spec[i].type==index_spec::grid) {
+	      rat=pow(spec[i].val2/spec[i].val1,1.0/((double)spec[i].ix2));
+	      curr_grid_size=spec[i].ix2+1;
 	    } else {
-	      for(int k=0;k<temp_size;k++) {
-		new_grid.push_back(spec[i].val1*
-				   pow(rat,((double)k)/((double)temp_size-1)));
+	      rat=spec[i].val3;
+	      curr_grid_size=((size_t)(log(spec[i].val2/spec[i].val1)/
+				       log(spec[i].val3)));
+	    }
+	    size_new.push_back(curr_grid_size);
+	    for(int k=0;k<curr_grid_size;k++) {
+	      if (k==0) {
+		new_grid.push_back(spec[i].val1);
+	      } else if (curr_grid_size>1 && k==curr_grid_size-1) {
+		new_grid.push_back(spec[i].val2);
+	      } else {
+		new_grid.push_back(spec[i].val1*pow(rat,((double)k)));
 	      }
 	    }
 	  } else {
 	    // Linear mode
-	    double diff=(spec[i].val2-spec[i].val1);
-	    int temp_size=((size_t)diff/spec[i].val3)+1;
-	    size_new.push_back(temp_size);
-	    if (temp_size==1) {
-	      new_grid.push_back(spec[i].val1);
+	    double width;
+	    int curr_grid_size;
+	    if (spec[i].type==index_spec::grid) {
+	      width=(spec[i].val2-spec[i].val1)/
+		((double)spec[i].ix2);
+	      curr_grid_size=spec[i].ix2+1;
 	    } else {
-	      for(int k=0;k<temp_size;k++) {
-		new_grid.push_back(spec[i].val1+
-				   diff*((double)k)/((double)(temp_size-1)));
+	      width=spec[i].val3;
+	      curr_grid_size=((size_t)(1+(spec[i].val2-
+					  spec[i].val1)/spec[i].val3));
+	    }
+	    size_new.push_back(curr_grid_size);
+	    for(int k=0;k<curr_grid_size;k++) {
+	      if (k==0) {
+		new_grid.push_back(spec[i].val1);
+	      } else if (curr_grid_size>1 && k==curr_grid_size-1) {
+		new_grid.push_back(spec[i].val2);
+	      } else {
+		new_grid.push_back(spec[i].val1+width*((double)k));
 	      }
 	    }
 	  }
@@ -1900,7 +1916,8 @@ namespace o2scl {
 	  } else if (spec_old[i].type==index_spec::interp) {
 	    std::cout << " is being interpolated from value "
 		      << spec_old[i].val1 << "." << std::endl;
-	  } else if (spec_old[i].type==index_spec::grid) {
+	  } else if (spec_old[i].type==index_spec::grid ||
+		     spec_old[i].type==index_spec::gridw) {
 	    std::cout << " is being reinterpolated based on grid\n  "
 		      << spec_old[i].val1 << " "
 		      << spec_old[i].val2 << " "
@@ -1924,7 +1941,8 @@ namespace o2scl {
 	  } else if (spec_new[i].type==index_spec::reverse) {
 	    std::cout << " was reversed and remapped from old index "
 		      << spec_new[i].ix1 << "." << std::endl;
-	  } else if (spec_new[i].type==index_spec::grid) {
+	  } else if (spec_new[i].type==index_spec::grid ||
+		     spec_new[i].type==index_spec::gridw) {
 	    std::cout << " was obtained from grid\n  "
 		      << spec_new[i].val1 << " "
 		      << spec_new[i].val2 << " "

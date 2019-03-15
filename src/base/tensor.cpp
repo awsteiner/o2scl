@@ -53,11 +53,19 @@ index_spec o2scl::ix_interp(size_t ix, double v) {
   return index_spec(index_spec::interp,ix,0,0,v,0.0,0.0);
 }
   
-index_spec o2scl::ix_grid(size_t ix, double begin, double end, double width,
-			  bool log) {
+index_spec o2scl::ix_grid(size_t ix, double begin, double end, 
+			  size_t n_bins, bool log) {
+  if (log) {
+    return index_spec(index_spec::grid,ix,n_bins,1,begin,end,0.0);
+  }
+  return index_spec(index_spec::grid,ix,n_bins,0,begin,end,0.0);
+}
+
+index_spec o2scl::ix_gridw(size_t ix, double begin, double end, 
+			   double width, bool log) {
   if (log) {
     return index_spec(index_spec::grid,ix,0,1,begin,end,width);
   }
   return index_spec(index_spec::grid,ix,0,0,begin,end,width);
 }
-  
+
