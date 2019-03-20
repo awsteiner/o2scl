@@ -289,13 +289,44 @@ protected:
     cout << "nB= " << nB << " 1/fm^3" << endl;
     cout << "Ye= " << Ye << endl;
     cout << "T= " << T << " MeV" << endl;
-    if (genp->data_with_leptons()) {
+
+    thermo th;
+    if (genp->data_with_leptons()==false ||
+	genp->data_baryons_only()==false) {
+      
+      genp->relf.upper_limit_fac=40.0;
+      genp->relf.dit->tol_abs=1.0e-11;
+      genp->relf.dit->tol_rel=1.0e-11;
+      genp->relf.nit->tol_abs=1.0e-11;
+      genp->relf.nit->tol_rel=1.0e-11;
+      genp->relf.density_root->tol_rel=1.0e-10;
+
+      genp->compute_eg_point(nB,Ye,T,th);
+    }
+
+    if (genp->data_with_leptons()==false) {
+      cout << "F= " << genp->Fint.interp_linear(nB,Ye,T)+
+	(th.ed*hc_mev_fm-T*th.en)/nB << " MeV" << endl;
+      cout << "E= " << genp->Eint.interp_linear(nB,Ye,T)+
+	th.ed/nB*hc_mev_fm << " MeV" << endl;
+      cout << "P= " << genp->Pint.interp_linear(nB,Ye,T)+th.pr*hc_mev_fm
+	   << " MeV/fm^3" << endl;
+      cout << "S= " << genp->Sint.interp_linear(nB,Ye,T)+th.en/nB << endl;
+    } else {
       cout << "F= " << genp->F.interp_linear(nB,Ye,T) << " MeV" << endl;
       cout << "E= " << genp->E.interp_linear(nB,Ye,T) << " MeV" << endl;
       cout << "P= " << genp->P.interp_linear(nB,Ye,T) << " MeV/fm^3" << endl;
       cout << "S= " << genp->S.interp_linear(nB,Ye,T) << endl;
     }
-    if (genp->data_baryons_only()) {
+    if (genp->data_baryons_only()==false) {
+      cout << "Fint= " << genp->F.interp_linear(nB,Ye,T)-
+	(th.ed*hc_mev_fm-T*th.en)/nB << " MeV" << endl;
+      cout << "Eint= " << genp->E.interp_linear(nB,Ye,T)-
+	th.ed/nB*hc_mev_fm << " MeV" << endl;
+      cout << "Pint= " << genp->P.interp_linear(nB,Ye,T)-th.pr*hc_mev_fm
+	   << " MeV/fm^3" << endl;
+      cout << "Sint= " << genp->S.interp_linear(nB,Ye,T)-th.en/nB << endl;
+    } else {
       cout << "Fint= " << genp->Fint.interp_linear(nB,Ye,T) << " MeV" << endl;
       cout << "Eint= " << genp->Eint.interp_linear(nB,Ye,T) << " MeV" << endl;
       cout << "Pint= " << genp->Pint.interp_linear(nB,Ye,T) << " MeV/fm^3" 

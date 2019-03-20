@@ -1065,7 +1065,10 @@ namespace o2scl_hdf {
     int find_object_by_name(std::string name,
 			   std::string &type, int verbose=0);
     //@}
-    
+
+    /** \brief List datasets and \o2 objects in the top-level
+	of the file 
+    */
     void file_list(int verbose);
     
     /// Parameters for iterate_func()
