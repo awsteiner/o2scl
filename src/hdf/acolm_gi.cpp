@@ -546,11 +546,11 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     str+="Functions:\n\n";
     str+="exp(x) log(x) log10(x) sin(x) cos(x) tan(x) sqrt(x) abs(x) ";
     str+="asin(x) acos(x) atan(x) sinh(x) cosh(x) tanh(x) ";
-    str+="asinh(x) acosh(x) atanh(x)\n\n";
+    str+="asinh(x) acosh(x) atanh(x) floor(x)\n\n";
     /*
       dsc+="atan2(x,y) if(x,y,z)\n";
       dsc+="cot(x) csc(x) sec(x)\n";
-      dsc+="ceil(x) floor(x) int(x) max(x,y) min(x,y)\n";
+      dsc+="ceil(x) int(x) max(x,y) min(x,y)\n";
     */
     std::vector<std::string> sv;
     o2scl::rewrap_keep_endlines(str,sv);
