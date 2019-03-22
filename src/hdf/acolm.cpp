@@ -140,7 +140,8 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   }
   {
     vector<std::string> itmp={"list","to-table3d","slice","to-table",
-			      "set-grid","max","min","rearrange","get-grid"};
+			      "set-grid","max","min","rearrange",
+			      "get-grid","interp"};
     type_comm_list.insert(std::make_pair("tensor_grid",itmp));
   }
   {
@@ -637,7 +638,7 @@ void acol_manager::command_add(std::string new_type) {
       {0,"to-table3d","Select two indices and convert to a table3d object.",
        -1,-1,"<x name> <y name> <slice name>",
        ((string)"This command uses two indices in the current ")+
-       "tensor_grid object to create a table3d object. The values for "+
+       "tensor<int> object to create a table3d object. The values for "+
        "the remaining indices fixed to [fixed 1], "+
        "[fixed 2], etc. in that order. For example, \"to-table3d 3 1 "+
        "z 5 3\" uses index 3 for the "+
@@ -679,7 +680,7 @@ void acol_manager::command_add(std::string new_type) {
       {0,"to-table3d","Select two indices and convert to a table3d object.",
        -1,-1,"<x name> <y name> <slice name>",
        ((string)"This command uses two indices in the current ")+
-       "tensor_grid object to create a table3d object. The values for "+
+       "tensor<size_t> object to create a table3d object. The values for "+
        "the remaining indices fixed to [fixed 1], "+
        "[fixed 2], etc. in that order. For example, \"to-table3d 3 1 "+
        "z 5 3\" uses index 3 for the "+
@@ -706,7 +707,7 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="tensor_grid") {
     
-    static const size_t narr=9;
+    static const size_t narr=10;
     comm_option_s options_arr[narr]={
       {'l',"list","List the slice names and print out grid info.",
        0,0,"","List the slice names and print out grid info.",
@@ -770,7 +771,11 @@ void acol_manager::command_add(std::string new_type) {
        "interp(ix,value), grid(ix,begin,end,n_bins,log), and "+
        "gridw(ix,begin,end,n_bins,log).",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_rearrange),
-       both}
+       both},
+      {0,"interp","Interpolate.",
+       -1,-1,"<value 1> <value 2> <value 3> ...",
+       "",new comm_option_mfptr<acol_manager>
+       (this,&acol_manager::comm_interp),both},
     };
     cl->set_comm_option_vec(narr,options_arr);
 

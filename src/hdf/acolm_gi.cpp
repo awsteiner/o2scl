@@ -1286,6 +1286,25 @@ int acol_manager::comm_interp(std::vector<std::string> &sv, bool itive_com) {
     cout << "Interpolation result: "
 	 << it.eval(x,n,index,doublev_obj) << endl;
 
+  } else if (type=="tensor_grid") {
+    
+    vector<string> in, pr;
+    for(size_t i=0;i<tensor_grid_obj.get_rank();i++) {
+      pr.push_back(((std::string)"Value for index ")+
+		   o2scl::szttos(i));
+    }
+    int ret=get_input(sv,pr,in,"interp",itive_com);
+    if (ret!=0) return ret;
+
+    vector<double> vals;
+    for(size_t i=0;i<tensor_grid_obj.get_rank();i++) {
+      vals.push_back(o2scl::stod(in[i]));
+      cout << "Interp val: " << vals[i] << endl;
+    }
+    
+    double res=tensor_grid_obj.interp_linear(vals);
+    cout << "Interpolation result: " << res << endl;
+
   } else if (type=="int[]") {
 
     size_t n=intv_obj.size();
