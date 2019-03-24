@@ -615,7 +615,7 @@ namespace o2scl {
 	The type \c rvec_t must be a vector with a resize
 	method. 
     */
-    template<class rvec_t> void copy_grid(size_t i, rvec_t &v) {
+    template<class rvec_t> void copy_grid(size_t i, rvec_t &v) const {
       v.resize(this->size[i]);
       size_t istart=0;
       for(size_t k=0;k<i;k++) istart+=this->size[k];
@@ -666,7 +666,7 @@ namespace o2scl {
 	The parameters \c val and \c val2 may refer to the
 	same object. 
     */
-    size_t lookup_grid_val(size_t i, const double &val, double &val2) {
+    size_t lookup_grid_val(size_t i, const double &val, double &val2) const {
       if (i>=this->rk) {
 	O2SCL_ERR((((std::string)"Index ")+szttos(i)+
 		   " greater than or equal to rank, "+szttos(this->rk)+
@@ -698,7 +698,7 @@ namespace o2scl {
     }
 
     /// Lookup index for grid closest to \c val
-    size_t lookup_grid(size_t i, double val) {
+    size_t lookup_grid(size_t i, double val) const {
       double val2;
       return lookup_grid_val(i,val,val2);
     }
@@ -729,7 +729,7 @@ namespace o2scl {
 	gives the index of the grid point in the internal grid vector
 	object.
     */
-    size_t lookup_grid_packed_val(size_t i, double val, double &val2) {
+    size_t lookup_grid_packed_val(size_t i, double val, double &val2) const {
       if (!grid_set) {
 	O2SCL_ERR("Grid not set in tensor_grid::lookup_grid_packed_val().",
 		  exc_einval);
@@ -758,7 +758,7 @@ namespace o2scl {
     /** \brief Lookup internal packed grid index for point closest 
 	to \c val
     */
-    size_t lookup_grid_packed(size_t i, double val) {
+    size_t lookup_grid_packed(size_t i, double val) const {
       double val2;
       return lookup_grid_packed_val(i,val,val2);
     }
@@ -770,7 +770,7 @@ namespace o2scl {
 	use interpolation to return a new \ref tensor_grid object
     */
     template<class size_vec2_t, class vec2_t> 
-      tensor_grid<> copy_slice_interp(size_vec2_t &ifix, vec2_t &vals) {
+      tensor_grid<> copy_slice_interp(size_vec2_t &ifix, vec2_t &vals) const {
 
       if (this->rk<1+ifix.size()) {
 	O2SCL_ERR2("Fixed too many indices in ",
@@ -847,7 +847,7 @@ namespace o2scl {
     */
     void convert_table3d_sum
       (size_t ix_x, size_t ix_y, table3d &tab, std::string x_name="x",
-       std::string y_name="y", std::string slice_name="z") {
+       std::string y_name="y", std::string slice_name="z") const {
       
       // Get current table3d grid
       size_t nx, ny;
@@ -914,7 +914,7 @@ namespace o2scl {
     */
     template<class size_vec2_t> 
       void copy_table3d_align(size_t ix_x, size_t ix_y, size_vec2_t &index, 
-			      table3d &tab, std::string slice_name="z") {
+			      table3d &tab, std::string slice_name="z") const {
       
       if (ix_x>=this->rk || ix_y>=this->rk || ix_x==ix_y) {
 	O2SCL_ERR2("Either indices greater than rank or x and y ind",
@@ -956,7 +956,7 @@ namespace o2scl {
       void copy_table3d_align_setxy
       (size_t ix_x, size_t ix_y, size_vec2_t &index, 
        table3d &tab, std::string x_name="x", std::string y_name="y",
-       std::string slice_name="z") {
+       std::string slice_name="z") const {
 
       // Get current table3d grid
       size_t nx, ny;
@@ -1005,7 +1005,7 @@ namespace o2scl {
     */
     template<class size_vec2_t> 
       void copy_table3d_interp(size_t ix_x, size_t ix_y, size_vec2_t &index, 
-			       table3d &tab, std::string slice_name="z") {
+			       table3d &tab, std::string slice_name="z") const {
 
       if (ix_x>=this->rk || ix_y>=this->rk || ix_x==ix_y) {
 	O2SCL_ERR2("Either indices greater than rank or x and y ",
@@ -1050,7 +1050,7 @@ namespace o2scl {
       void copy_table3d_interp_values(size_t ix_x, size_t ix_y,
 				      vec2_t &values, table3d &tab,
 				      std::string slice_name="z",
-				      int verbose=0) {
+				      int verbose=0) const {
       
       if (ix_x>=this->rk || ix_y>=this->rk || ix_x==ix_y) {
 	O2SCL_ERR2("Either indices greater than rank or x and y ",
@@ -1108,7 +1108,7 @@ namespace o2scl {
       void copy_table3d_interp_values_setxy
       (size_t ix_x, size_t ix_y, vec2_t &values, table3d &tab,
        std::string x_name="x", std::string y_name="y",
-       std::string slice_name="z") {
+       std::string slice_name="z") const {
 
       // Get current table3d grid
       size_t nx, ny;
@@ -1183,7 +1183,7 @@ namespace o2scl {
     template<class range_t=ub_range,
       class data_range_t=ubvector_range, 
       class index_range_t=ubvector_size_t_range> 
-      double interpolate(double *vals) {
+      double interpolate(double *vals) const {
 
       typedef interp_vec<vec_t> interp_t;
       
@@ -1282,7 +1282,7 @@ namespace o2scl {
     template<class vec2_size_t, class vec3_size_t, class vec2_t>
       double interp_linear_partial
       (const vec2_size_t &ix_to_interp,
-       vec3_size_t &ix, const vec2_t &val) {
+       vec3_size_t &ix, const vec2_t &val) const {
 
       if (val.size()!=ix_to_interp.size()) {
 	O2SCL_ERR2("Index and value list don't match in ",
@@ -1358,7 +1358,7 @@ namespace o2scl {
 	don't need to be offset because the tensor has to be
 	created from the previous interpolation round.
     */
-    template<class vec2_t> double interp_linear(vec2_t &v) {
+    template<class vec2_t> double interp_linear(vec2_t &v) const {
 
       // Find the the corner of the hypercube containing v
       size_t rgs=0;
@@ -1409,7 +1409,7 @@ namespace o2scl {
 	by \ref interp_linear().
     */
     template<class vec2_t>
-      double interp_linear_power_two(vec2_t &v) {
+      double interp_linear_power_two(vec2_t &v) const {
 
       if (this->rk==1) {
 	return this->data[0]+(this->data[1]-this->data[0])/
@@ -1452,7 +1452,7 @@ namespace o2scl {
 	the results in the vector \c res.
     */
     template<class vec2_t, class vec3_t>
-      void interp_linear_vec0(vec2_t &v, vec3_t &res) {
+      void interp_linear_vec0(vec2_t &v, vec3_t &res) const {
 
       // Find the the corner of the hypercube containing v
       size_t rgs=0;
@@ -1513,7 +1513,7 @@ namespace o2scl {
  	function for internal use by \ref interp_linear_vec0().
     */
     template<class vec2_t, class vec3_t>
-      void interp_linear_power_two_vec0(vec2_t &v, vec3_t &res) {
+      void interp_linear_power_two_vec0(vec2_t &v, vec3_t &res) const {
       
       if (this->rk==2) {
 	size_t n=this->size[0];
@@ -1567,7 +1567,7 @@ namespace o2scl {
 	\future This function could be more efficient.
     */
     template<class vec2_t, class vec3_t>
-      void interp_linear_vec(vec2_t &v, size_t ifree, vec3_t &res) {
+      void interp_linear_vec(vec2_t &v, size_t ifree, vec3_t &res) const {
 
       size_t n=this->size[ifree];
 
@@ -1666,7 +1666,7 @@ namespace o2scl {
     */
     tensor_grid<> rearrange_and_copy(std::vector<index_spec> spec,
 				     int verbose=0,
-				     bool err_on_fail=true) {
+				     bool err_on_fail=true) const {
       
       // Old rank and new rank (computed later)
       size_t rank_old=this->rk;

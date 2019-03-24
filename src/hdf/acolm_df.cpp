@@ -443,6 +443,70 @@ int acol_manager::comm_entry(std::vector<std::string> &sv, bool itive_com) {
       cout << " to " << table_obj.get(in[0],row) << endl;
     }
     
+  } else if (type=="tensor") {
+
+    // Handle arguments
+    vector<string> in, pr;
+    for(size_t i=0;i<tensor_obj.get_rank();i++) {
+      pr.push_back(((std::string)"Index ")+
+		   o2scl::szttos(i));
+    }
+    int ret=get_input(sv,pr,in,"entry",itive_com);
+    if (ret!=0) return ret;
+
+    // Parse to array
+    vector<size_t> ix;
+    for(size_t i=0;i<tensor_obj.get_rank();i++) {
+      ix.push_back(o2scl::stoszt(in[i]));
+    }
+
+    // Set value if necessary
+    if (in.size()>tensor_grid_obj.get_rank()) {
+      tensor_obj.set
+	(ix,o2scl::stod(in[tensor_grid_obj.get_rank()]));
+    }
+    
+    // Output indices and value
+    double value=tensor_obj.get(ix);
+    cout << "Indices, value: ";
+    vector_out(cout,ix,false);
+    cout << " " << value << endl;
+    
+  } else if (type=="tensor_grid") {
+
+    // Handle arguments
+    vector<string> in, pr;
+    for(size_t i=0;i<tensor_grid_obj.get_rank();i++) {
+      pr.push_back(((std::string)"Value for index ")+
+		   o2scl::szttos(i));
+    }
+    int ret=get_input(sv,pr,in,"entry",itive_com);
+    if (ret!=0) return ret;
+
+    // Parse to array
+    vector<double> vals;
+    for(size_t i=0;i<tensor_grid_obj.get_rank();i++) {
+      vals.push_back(o2scl::stod(in[i]));
+    }
+
+    // Set value if necessary
+    if (in.size()>tensor_grid_obj.get_rank()) {
+      tensor_grid_obj.set_val
+	(vals,o2scl::stod(in[tensor_grid_obj.get_rank()]));
+    }
+
+    // Lookup closest grid point
+    double value=tensor_grid_obj.get_val(vals,vals);
+    vector<size_t> ix(tensor_grid_obj.get_rank());
+    tensor_grid_obj.lookup_grid_vec(vals,ix);
+
+    // Output indices, grid point, value
+    cout << "Indices, grid point, value: ";
+    vector_out(cout,ix,false);
+    cout << " ";
+    vector_out(cout,vals,false);
+    cout << " " << value << endl;
+    
   } else {
     cerr << "Command 'entry' not implemented for type " << type << " ."
 	 << endl;

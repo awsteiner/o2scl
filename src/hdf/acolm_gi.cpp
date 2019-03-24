@@ -1299,7 +1299,6 @@ int acol_manager::comm_interp(std::vector<std::string> &sv, bool itive_com) {
     vector<double> vals;
     for(size_t i=0;i<tensor_grid_obj.get_rank();i++) {
       vals.push_back(o2scl::stod(in[i]));
-      cout << "Interp val: " << vals[i] << endl;
     }
     
     double res=tensor_grid_obj.interp_linear(vals);
