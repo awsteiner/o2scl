@@ -142,7 +142,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   {
     vector<std::string> itmp={"list","to-table3d","slice","to-table",
 			      "set-grid","max","min","rearrange",
-			      "get-grid","interp","entry"};
+			      "get-grid","interp","entry","to-tensor"};
     type_comm_list.insert(std::make_pair("tensor_grid",itmp));
   }
   {
@@ -712,7 +712,7 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="tensor_grid") {
     
-    static const size_t narr=11;
+    static const size_t narr=12;
     comm_option_s options_arr[narr]={
       {'l',"list","List the slice names and print out grid info.",
        0,0,"","List the slice names and print out grid info.",
@@ -784,7 +784,11 @@ void acol_manager::command_add(std::string new_type) {
       {0,"entry","Entry.",
        -1,-1,"<value 1> <value 2> <value 3> ...",
        "",new comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_entry),both}
+       (this,&acol_manager::comm_entry),both},
+      {0,"to-tensor","Convert to tensor",
+       0,0,"",
+       "",new comm_option_mfptr<acol_manager>
+       (this,&acol_manager::comm_to_tensor),both}
     };
     cl->set_comm_option_vec(narr,options_arr);
 

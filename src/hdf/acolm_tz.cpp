@@ -544,6 +544,28 @@ int acol_manager::comm_to_tensor_grid(std::vector<std::string> &sv,
   return 0;
 }
 
+int acol_manager::comm_to_tensor(std::vector<std::string> &sv,
+				 bool itive_com) {
+  
+  if (type=="tensor_grid") {
+
+    tensor_obj=tensor_grid_obj;
+
+    command_del();
+    clear_obj();
+    command_add("tensor");
+    type="tensor";
+
+  } else {
+    
+    cerr << "Cannot use command 'to-tensor' for type "
+	 << type << "." << endl;
+    return exc_efailed;
+  }
+  
+  return 0;
+}
+
 int acol_manager::comm_x_name(std::vector<std::string> &sv, bool itive_com) {
 
   if (type=="table3d") {
