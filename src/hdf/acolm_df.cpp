@@ -557,10 +557,8 @@ int acol_manager::comm_entry(std::vector<std::string> &sv, bool itive_com) {
     }
 
     // Set value if necessary
-    if (in.size()>rk &&
-	in[rk]!="none") {
-      tensor_grid_obj.set
-	(ix,o2scl::stod(in[rk]));
+    if (in.size()>rk && in[rk]!="none") {
+      tensor_grid_obj.set(ix,o2scl::stod(in[rk]));
     }
 
     // Get associated grid points
@@ -574,7 +572,7 @@ int acol_manager::comm_entry(std::vector<std::string> &sv, bool itive_com) {
     vector_out(cout,ix,false);
     cout << " ";
     vector_out(cout,vals,false);
-    cout << " " << value << endl;
+    cout << " " << tensor_grid_obj.get(ix) << endl;
     
   } else {
     cerr << "Command 'entry' not implemented for type " << type << " ."
