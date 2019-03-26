@@ -308,7 +308,7 @@ void acol_manager::command_add(std::string new_type) {
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_unit),
        both},
       {0,"entry","Get or set a single entry in a table.",0,3,
-       "<column> <row index> [value or \"none\"]",
+       "<column> <row> [value or \"none\"]",
        ((std::string)"This command ")+
        "gets or sets the value in the specified column and row. If "+
        "\"none\" is specified as the third argument, then \"entry\" "+
@@ -316,11 +316,14 @@ void acol_manager::command_add(std::string new_type) {
        "was not specified.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_entry),
        both},
-      {0,"entry-grid","Get or set a single entry in a table.",0,3,
-       "<column> <row index> [value or \"none\"]",
-       ((std::string)"This command ")+
-       "gets or sets the value in the specified column and row. If "+
-       "\"none\" is specified as the third argument, then \"entry\" "+
+      {0,"entry-grid","Get or set a single entry in a table.",0,4,
+       "<index column> <index value> <target column> [value or \"none\"]",
+       ((std::string)"The \"entry-grid\" command ")+
+       "first looks for the value closest to <index value> in the column "+
+       "<index column> to determine a row in the table. "+
+       "Next \"entry-grid\" gets or sets the value of the "+
+       "target column in that row. If "+
+       "\"none\" is specified as the fourth argument, then \"entry\" "+
        "just prints out the specified entry as if the third argument "+
        "was not specified.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_entry_grid),
@@ -513,12 +516,12 @@ void acol_manager::command_add(std::string new_type) {
        "difference of columns 's1' and 's2'.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_function),
        both},
-      {0,"entry","Get a single entry in a table3d.",0,4,
-       "<slice> <x index> <y index>","",
+      {0,"entry","Get a single entry in a table3d object.",0,4,
+       "<slice> <x index> <y index> [value or \"none\"]","",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_entry),
        both},
-      {0,"entry-grid","Get a single entry in a table3d.",0,4,
-       "<slice> <x value> <y value>","",
+      {0,"entry-grid","Get a single entry in a table3d object.",0,4,
+       "<slice> <x value> <y value> [value or \"none\"]","",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_entry_grid),
        both},
       {0,"insert","Interpolate a slice from another file.",0,6,
@@ -638,8 +641,8 @@ void acol_manager::command_add(std::string new_type) {
        "not enough functions are specified, then the function 'i' is "+
        "used.",new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_to_tensor_grid),both},
-      {0,"entry","Entry.",
-       -1,-1,"<value 1> <value 2> <value 3> ...",
+      {0,"entry","Get a single entry in a tensor object.",
+       -1,-1,"<value 1> <value 2> <value 3> ... [value or \"none\"]",
        "",new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_entry),both}
     };
@@ -800,12 +803,12 @@ void acol_manager::command_add(std::string new_type) {
        -1,-1,"<value 1> <value 2> <value 3> ...",
        "",new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_interp),both},
-      {0,"entry","Entry.",
-       -1,-1,"<index 1> <index 2> <index 3> ...",
+      {0,"entry","Get a single entry in a tensor_grid object.",
+       -1,-1,"<index 1> <index 2> <index 3> ... [value or \"none\"]",
        "",new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_entry),both},
-      {0,"entry-grid","Entry.",
-       -1,-1,"<value 1> <value 2> <value 3> ...",
+      {0,"entry-grid","Get a single entry in a tensor_grid object.",
+       -1,-1,"<value 1> <value 2> <value 3> ... [value or \"none\"]",
        "",new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_entry_grid),both},
       {0,"to-tensor","Convert to tensor",

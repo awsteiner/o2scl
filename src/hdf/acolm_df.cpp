@@ -591,27 +591,31 @@ int acol_manager::comm_entry_grid(std::vector<std::string> &sv,
     vector<string> pr, in;
     pr.push_back("Enter index column name");
     pr.push_back("Enter index column value");
+    pr.push_back("Enter target column name");
     pr.push_back("Enter new value (or \"none\") to keep original value");
     int ret=get_input(sv,pr,in,"entry-grid",itive_com);
     if (ret!=0) return ret;
 
     double val=o2scl::stod(in[1]);
     int row=table_obj.lookup(in[0],val);
+    cout << "Looking up value " << val << " in column " << in[0]
+	 << " results in row " << row << " with value "
+	 << table_obj.get(in[0],row) << endl;
     
-    if (in.size()>=3) {
-      // Convert in[2] to lower case
-      std::transform(in[2].begin(),in[2].end(),in[2].begin(),::tolower);
+    if (in.size()>=4) {
+      // Convert in[3] to lower case
+      std::transform(in[3].begin(),in[3].end(),in[3].begin(),::tolower);
     }
     
-    if (in.size()<=2 || in[2]=="none") {
-      cout << "Entry for column " << in[0] << " at row " << row << " is "
-	   << table_obj.get(in[0],row) << endl;
+    if (in.size()<=2 || in[3]=="none") {
+      cout << "Entry for column " << in[2] << " at row " << row << " is "
+	   << table_obj.get(in[2],row) << endl;
     } else {
-      cout << "Entry for column " << in[0] << " at row " << row
+      cout << "Entry for column " << in[2] << " at row " << row
 	   << " is has been changed from "
-	   << table_obj.get(in[0],row);
-      table_obj.set(in[0],row,o2scl::function_to_double(in[2]));
-      cout << " to " << table_obj.get(in[0],row) << endl;
+	   << table_obj.get(in[2],row);
+      table_obj.set(in[0],row,o2scl::function_to_double(in[3]));
+      cout << " to " << table_obj.get(in[2],row) << endl;
     }
     
   } else if (type=="table3d") {
