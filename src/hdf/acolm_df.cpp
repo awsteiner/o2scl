@@ -835,6 +835,52 @@ int acol_manager::comm_function(std::vector<std::string> &sv, bool itive_com) {
       size_tv_obj[j]=(size_t)calc.eval(&vars);
     }
     
+  } else if (type=="tensor") {
+
+    std::string function;
+    int ret=get_input_one(sv,"Enter function of indices 'i0,i1,...'",
+			  function,"function",itive_com);
+    if (ret!=0) return ret;
+
+    // Parse function
+    calculator calc;
+    std::map<std::string,double> vars;
+    calc.compile(function.c_str(),&vars);
+
+    // Set
+    size_t rk=tensor_obj.get_rank();
+    vector<size_t> ix(rk);
+    for(size_t i=0;i<tensor_obj.total_size();i++) {
+      tensor_obj.unpack_index(i,ix);
+      for(size_t j=0;j<rk;j++) {
+	vars[((string)"i")+szttos(j)]=ix[j];
+      }
+      tensor_obj.set(ix,calc.eval(&vars));
+    }
+    
+  } else if (type=="tensor_grid") {
+
+    std::string function;
+    int ret=get_input_one(sv,"Enter function of 'x0,x1,...'",
+			  function,"function",itive_com);
+    if (ret!=0) return ret;
+
+    // Parse function
+    calculator calc;
+    std::map<std::string,double> vars;
+    calc.compile(function.c_str(),&vars);
+
+    // Set
+    size_t rk=tensor_grid_obj.get_rank();
+    vector<size_t> ix(rk);
+    for(size_t i=0;i<tensor_grid_obj.total_size();i++) {
+      tensor_grid_obj.unpack_index(i,ix);
+      for(size_t j=0;j<rk;j++) {
+	vars[((string)"x")+szttos(j)]=tensor_grid_obj.get_grid(j,ix[j]);
+      }
+      tensor_grid_obj.set(ix,calc.eval(&vars));
+    }
+    
   } else {
     cerr << "Not implemented for type " << type << " ." << endl;
     return exc_efailed;

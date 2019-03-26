@@ -974,6 +974,33 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     command_add("table");
     type="table";
     
+  } else if (ctype=="tensor") {
+
+    std::string i1;
+    int ret=get_input_one(sv2,"Enter rank",i1,"create",itive_com);
+    if (ret!=0) return ret;
+    size_t rank=o2scl::stoszt(sv2[1]);
+
+    if (sv2.size()<2+rank) {
+      vector<string> pr, in;
+      for(size_t k=0;k<rank;k++) {
+	pr.push_back(((std::string)"Enter size for rank ")+
+		     o2scl::szttos(rank));
+      }
+      int ret=get_input(sv2,pr,in,"create",itive_com);
+      if (ret!=0) return ret;
+    }
+    
+    vector<size_t> sarr(rank);
+    for(size_t k=0;k<rank;k++) {
+      sarr[k]=o2scl::stoszt(sv2[2+k]);
+    }
+
+    tensor_obj.resize(rank,sarr);
+    tensor_obj.set_all(0.0);
+    command_add("tensor");
+    type="tensor";
+
   } else if (ctype=="tensor_grid") {
 
     std::string i1;
@@ -997,6 +1024,7 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     }
 
     tensor_grid_obj.resize(rank,sarr);
+    tensor_obj.set_all(0.0);
     command_add("tensor_grid");
     type="tensor_grid";
 

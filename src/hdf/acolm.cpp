@@ -134,7 +134,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   {
     vector<std::string> itmp={"list","diag","to-table3d","to-table3d-sum",
 			      "max","min","to-tensor-grid","rearrange",
-			      "entry"};
+			      "entry","function"};
     type_comm_list.insert(std::make_pair("tensor",itmp));
   }
   {
@@ -145,7 +145,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
     vector<std::string> itmp={"list","to-table3d","slice","to-table",
 			      "set-grid","max","min","rearrange",
 			      "get-grid","interp","entry","to-tensor",
-			      "entry-grid"};
+			      "entry-grid","function"};
     type_comm_list.insert(std::make_pair("tensor_grid",itmp));
   }
   {
@@ -585,7 +585,7 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="tensor") {
     
-    static const size_t narr=9;
+    static const size_t narr=10;
     comm_option_s options_arr[narr]={
       {'l',"list","List the tensor rank and index sizes.",
        0,0,"","List the tensor rank and index sizes.",
@@ -641,6 +641,10 @@ void acol_manager::command_add(std::string new_type) {
        "not enough functions are specified, then the function 'i' is "+
        "used.",new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_to_tensor_grid),both},
+      {'f',"function","Set tensor value from a function.",0,-1,
+       "","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_function),
+       both},
       {0,"entry","Get a single entry in a tensor object.",
        -1,-1,"<value 1> <value 2> <value 3> ... [value or \"none\"]",
        "",new comm_option_mfptr<acol_manager>
@@ -734,8 +738,12 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="tensor_grid") {
     
-    static const size_t narr=13;
+    static const size_t narr=14;
     comm_option_s options_arr[narr]={
+      {'f',"function","Set tensor value from a function.",0,-1,
+       "","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_function),
+       both},
       {'l',"list","List the slice names and print out grid info.",
        0,0,"","List the slice names and print out grid info.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
@@ -1106,7 +1114,7 @@ int acol_manager::setup_options() {
     {'c',"create","Create an object.",0,-1,"<type> [...]",
      ((string)"Create a new object of type <type>. For types char, ")+
      "double, int, size_t, and string, this takes one additional "+
-     "argument which is a mathematical expression (see \acol -help "+
+     "argument which is a mathematical expression (see \"acol -help "+
      "functions\" for more). For type table, "+
      "this option creates a new table with one column whose entries "+
      "are an evenly-spaced grid. In this case four additional arguments "+
