@@ -498,6 +498,7 @@ namespace o2scl_acol {
     
     /// Get an entry
     virtual int comm_entry(std::vector<std::string> &sv, bool itive_com);
+    virtual int comm_entry_grid(std::vector<std::string> &sv, bool itive_com);
     
     /// Convert units of a column
     virtual int comm_convert_unit(std::vector<std::string> &sv, 

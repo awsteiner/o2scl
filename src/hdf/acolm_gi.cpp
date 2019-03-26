@@ -547,6 +547,8 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     str+="exp(x) log(x) log10(x) sin(x) cos(x) tan(x) sqrt(x) abs(x) ";
     str+="asin(x) acos(x) atan(x) sinh(x) cosh(x) tanh(x) ";
     str+="asinh(x) acosh(x) atanh(x) floor(x)\n\n";
+    str+="Use \"help function\" to get more information on the ";
+    str+="type-specific command called \"function\".\n\n";
     /*
       dsc+="atan2(x,y) if(x,y,z)\n";
       dsc+="cot(x) csc(x) sec(x)\n";
@@ -692,8 +694,14 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 	  if (found==false) {
 	    cout << "Command \"" << sv[1] << "\" is a type specific "
 		 << "command. Below are "
-		 << "the various descriptions\nof its operation with "
-		 << "the relevant types.\n" << endl;
+		 << "the various\ndescriptions of its operation with "
+		 << "the relevant types." << endl;
+	    if (sv[1]=="function") {
+	      cout << "Type \"" << cl->cmd_name << " -help functions\" "
+		   << "for help on specifying functions as\ncommand "
+		   << "arguments." << endl;
+	    }
+	    cout << endl;
 	    found=true;
 	  }
 	  

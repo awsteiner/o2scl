@@ -107,7 +107,8 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   {
     vector<std::string> itmp={"assign","delete-col","delete-rows",
 			      "delete-rows-tol","deriv","deriv2","cat",
-			      "convert-unit","find-row","fit","function",
+			      "convert-unit","entry-grid",
+			      "find-row","fit","function",
 			      "get-row","get-unit","entry","index",
 			      "insert","insert-full","integ","interp",
 			      "list","max","min","nlines","rename",
@@ -118,7 +119,8 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   }
   {
     vector<std::string> itmp={"cat","contours","deriv-x","deriv-y",
-			      "function","entry","insert","interp",
+			      "function","entry","entry-grid","insert",
+			      "interp",
 			      "list","max","min","rename","set-data",
 			      "slice","sum","x-name","y-name"};
     type_comm_list.insert(std::make_pair("table3d",itmp));
@@ -142,7 +144,8 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   {
     vector<std::string> itmp={"list","to-table3d","slice","to-table",
 			      "set-grid","max","min","rearrange",
-			      "get-grid","interp","entry","to-tensor"};
+			      "get-grid","interp","entry","to-tensor",
+			      "entry-grid"};
     type_comm_list.insert(std::make_pair("tensor_grid",itmp));
   }
   {
@@ -213,7 +216,7 @@ void acol_manager::command_add(std::string new_type) {
     };
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="table") {
-    static const size_t narr=36;
+    static const size_t narr=37;
     comm_option_s options_arr[narr]={
       {'a',"assign","Assign a constant, e.g. assign pi acos(-1) .",
        0,2,"<name> [val]",
@@ -307,8 +310,20 @@ void acol_manager::command_add(std::string new_type) {
       {0,"entry","Get or set a single entry in a table.",0,3,
        "<column> <row index> [value or \"none\"]",
        ((std::string)"This command ")+
-       "gets or sets the value in the specified column and row.",
+       "gets or sets the value in the specified column and row. If "+
+       "\"none\" is specified as the third argument, then \"entry\" "+
+       "just prints out the specified entry as if the third argument "+
+       "was not specified.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_entry),
+       both},
+      {0,"entry-grid","Get or set a single entry in a table.",0,3,
+       "<column> <row index> [value or \"none\"]",
+       ((std::string)"This command ")+
+       "gets or sets the value in the specified column and row. If "+
+       "\"none\" is specified as the third argument, then \"entry\" "+
+       "just prints out the specified entry as if the third argument "+
+       "was not specified.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_entry_grid),
        both},
       {'N',"index","Add a column containing the row numbers.",0,1,
        "[column name]",
@@ -463,7 +478,7 @@ void acol_manager::command_add(std::string new_type) {
 
   } else if (new_type=="table3d") {
     
-    static const size_t narr=17;
+    static const size_t narr=18;
     comm_option_s options_arr[narr]={
       {0,"cat",
        "Concatenate data from a second table3d onto current table3d.",0,2,
@@ -498,9 +513,13 @@ void acol_manager::command_add(std::string new_type) {
        "difference of columns 's1' and 's2'.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_function),
        both},
-      {0,"entry","Get a single entry in a table3d.",0,3,
+      {0,"entry","Get a single entry in a table3d.",0,4,
        "<slice> <x index> <y index>","",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_entry),
+       both},
+      {0,"entry-grid","Get a single entry in a table3d.",0,4,
+       "<slice> <x value> <y value>","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_entry_grid),
        both},
       {0,"insert","Interpolate a slice from another file.",0,6,
        "<file> <table> <old> [new]","",
@@ -712,7 +731,7 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="tensor_grid") {
     
-    static const size_t narr=12;
+    static const size_t narr=13;
     comm_option_s options_arr[narr]={
       {'l',"list","List the slice names and print out grid info.",
        0,0,"","List the slice names and print out grid info.",
@@ -782,9 +801,13 @@ void acol_manager::command_add(std::string new_type) {
        "",new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_interp),both},
       {0,"entry","Entry.",
-       -1,-1,"<value 1> <value 2> <value 3> ...",
+       -1,-1,"<index 1> <index 2> <index 3> ...",
        "",new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_entry),both},
+      {0,"entry-grid","Entry.",
+       -1,-1,"<value 1> <value 2> <value 3> ...",
+       "",new comm_option_mfptr<acol_manager>
+       (this,&acol_manager::comm_entry_grid),both},
       {0,"to-tensor","Convert to tensor",
        0,0,"",
        "",new comm_option_mfptr<acol_manager>
@@ -857,7 +880,7 @@ void acol_manager::command_add(std::string new_type) {
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_to_table),
        both},      
       {0,"function","Set the values of the array given a function",0,1,
-       "<function.",((string)"Set the values of the array ")+
+       "<function>.",((string)"Set the values of the array ")+
        "given a user-specified function of 'i'. For example, "+
        "\"(sin(i)>1)*4\".",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_function),
@@ -902,7 +925,7 @@ void acol_manager::command_add(std::string new_type) {
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_to_table),
        both},
       {0,"function","Set the values of the array given a function",0,1,
-       "<function.",((string)"Set the values of the array ")+
+       "<function>.",((string)"Set the values of the array ")+
        "given a user-specified function of 'i'. For example, "+
        "\"(sin(i)>1)*4\".",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_function),
@@ -947,7 +970,7 @@ void acol_manager::command_add(std::string new_type) {
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_to_table),
        both},
       {0,"function","Set the values of the array given a function",0,1,
-       "<function.",((string)"Set the values of the array ")+
+       "<function>.",((string)"Set the values of the array ")+
        "given a user-specified function of 'i'. For example, "+
        "\"(sin(i)>1)*4\".",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_function),
