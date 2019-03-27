@@ -624,7 +624,11 @@ int acol_manager::comm_value(std::vector<std::string> &sv, bool itive_com) {
     if (type=="int") {
       int_obj=o2scl::stoi(sv[1]);
     } else if (type=="double") {
-      double_obj=o2scl::function_to_double(sv[1]);
+      int vsret=value_spec(sv[1],double_obj,verbose,false);
+      if (vsret!=0) {
+	cerr << "Function value_spec() failed." << endl;
+	return 1;
+      }
     } else if (type=="char") {
       char_obj=sv[1][0];
     } else if (type=="size_t") {

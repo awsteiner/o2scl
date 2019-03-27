@@ -848,7 +848,11 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     int ret=get_input_one(sv2,"Enter double",tval,"create",
 			  itive_com);
     if (ret!=0) return ret;
-    double_obj=o2scl::function_to_double(tval);
+    int vsret=value_spec(tval,double_obj,verbose,false);
+    if (vsret!=0) {
+      cerr << "Function value_spec() failed." << endl;
+      return 1;
+    }
     type="double";
     command_add("double");
     obj_name="double";

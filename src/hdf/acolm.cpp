@@ -183,7 +183,7 @@ void acol_manager::command_add(std::string new_type) {
     static const size_t narr=1;
     comm_option_s options_arr[narr]={
       {0,"value","Get or set the value of the double object",
-       0,1,"[value]","Get or set the value of the double object.",
+       0,1,"[value-spec]","Get or set the value of the double object.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
        both}
     };
@@ -225,6 +225,20 @@ void acol_manager::command_add(std::string new_type) {
        "To remove an assignment, call assign with a blank value.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_assign),
        both},
+      {0,"cat",
+       "Concatenate data from a second table object onto current table.",0,2,
+       "<file> [name]",((string)"For table objects, add a ")+
+       "second table to the end of the first, creating new columns "+
+       "if necessary.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_cat),
+       both},
+      {0,"convert-unit","Convert a column to a new unit.",0,2,
+       "<column> <new_unit>",((string)"(This command only works if ")+
+       "the GNU 'units' command is installed and available in the current "+
+       "path.) Convert the units of a column to <new unit>, multipliying "+
+       "all entries in that column by the appropriate factor.",
+       new comm_option_mfptr<acol_manager>
+       (this,&acol_manager::comm_convert_unit),both},
       {0,"delete-col","Delete a column.",0,1,"<name>",
        "Delete the entire column named <name>.",
        new comm_option_mfptr<acol_manager>
@@ -244,7 +258,7 @@ void acol_manager::command_add(std::string new_type) {
        "then information about how many rows were deleted is provided.",
        new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_delete_rows),both},
-      {'D',"deriv",
+      {0,"deriv",
        "Derivative of a function defined by two columns.",
        0,3,"<x> <y> <name>",
        ((string)"Create a new column named <name> filled with the ")+
@@ -255,57 +269,6 @@ void acol_manager::command_add(std::string new_type) {
        ((string)"Create a new column named <name> filled with the second ")+
        "derivative of the function y(x) obtained from columns <x> and <y>. ",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv2),
-       both},
-      {0,"cat",
-       "Concatenate data from a second table object onto current table.",0,2,
-       "<file> [name]",((string)"For table objects, add a ")+
-       "second table to the end of the first, creating new columns "+
-       "if necessary.",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_cat),
-       both},
-      {0,"convert-unit","Convert a column to a new unit.",0,2,
-       "<column> <new_unit>",((string)"(This command only works if ")+
-       "the GNU 'units' command is installed and available in the current "+
-       "path.) Convert the units of a column to <new unit>, multipliying "+
-       "all entries in that column by the appropriate factor.",
-       new comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_convert_unit),both},
-      {0,"find-row","Find a row which maximizes a function.",
-       0,2,"<func> or find-row <col> <val>",
-       ((string)"If one argument is given, then find-row finds the row ")+
-       "which maximizes the value of the "+
-       "expression given in <func>, and then output the entire row. "+
-       "Otherwise find-row finds the row for which the value in "+
-       "column named <col> is as close as possible to the value <val>. "+
-       "See command 'get-row' to get a row by it's index.",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_find_row),
-       both},
-      {0,"fit","Fit two columns to a function (experimental).",0,7,
-       "<x> <y> <yerr> <ynew> <par names> <func> <vals>","",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_fit),
-       both},
-      {'f',"function","Set a column from a function.",0,2,
-       "<func> <name>",
-       ((string)"Set the column named <name> to the result of a function, ")+
-       "<func>, in terms of the other columns. If the column does not "+
-       "already exist, a new one is added to the table. For example, for "+
-       "a table containing columns named 'c1' and 'c2', 'function "+
-       "c1-c2 c3' would create a new column c3 which contains the "+
-       "difference of columns 'c1' and 'c2'.",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_function),
-       both},
-      {0,"get-row","Get a row by index.",
-       0,1,"<index>",((string)"Get a row by index. The first row ")+
-       "has index 0, and the last row has index n-1, where n "+
-       "is the total number of rows as returned by the 'list' command. "+
-       "The 'index' command creates a column of row indexes. "+
-       "To find a row which contains a particular value or maximizes "+
-       "a specified function, use 'find-row'.",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_row),
-       both},
-      {0,"get-unit","Get the units for a specified column.",0,1,"<column>",
-       "Obtains the units for the specified column.",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_unit),
        both},
       {0,"entry","Get or set a single entry in a table.",0,3,
        "<column> <row> [value or \"none\"]",
@@ -327,6 +290,43 @@ void acol_manager::command_add(std::string new_type) {
        "just prints out the specified entry as if the third argument "+
        "was not specified.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_entry_grid),
+       both},
+      {0,"find-row","Find a row which maximizes a function.",
+       0,2,"<func> or find-row <col> <val>",
+       ((string)"If one argument is given, then find-row finds the row ")+
+       "which maximizes the value of the "+
+       "expression given in <func>, and then output the entire row. "+
+       "Otherwise find-row finds the row for which the value in "+
+       "column named <col> is as close as possible to the value <val>. "+
+       "See command 'get-row' to get a row by it's index.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_find_row),
+       both},
+      {0,"fit","Fit two columns to a function (experimental).",0,7,
+       "<x> <y> <yerr> <ynew> <par names> <func> <vals>","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_fit),
+       both},
+      {0,"function","Set a column from a function.",0,2,
+       "<func> <name>",
+       ((string)"Set the column named <name> to the result of a function, ")+
+       "<func>, in terms of the other columns. If the column does not "+
+       "already exist, a new one is added to the table. For example, for "+
+       "a table containing columns named 'c1' and 'c2', 'function "+
+       "c1-c2 c3' would create a new column c3 which contains the "+
+       "difference of columns 'c1' and 'c2'.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_function),
+       both},
+      {0,"get-row","Get a row by index.",
+       0,1,"<index>",((string)"Get a row by index. The first row ")+
+       "has index 0, and the last row has index n-1, where n "+
+       "is the total number of rows as returned by the 'list' command. "+
+       "The 'index' command creates a column of row indexes. "+
+       "To find a row which contains a particular value or maximizes "+
+       "a specified function, use 'find-row'.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_row),
+       both},
+      {0,"get-unit","Get the units for a specified column.",0,1,"<column>",
+       "Obtains the units for the specified column.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_unit),
        both},
       {'N',"index","Add a column containing the row numbers.",0,1,
        "[column name]",
@@ -355,7 +355,7 @@ void acol_manager::command_add(std::string new_type) {
        "The new column are given the same names as in the file. ",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
        both},
-      {'I',"integ",
+      {0,"integ",
        "Integrate a function specified by two columns.",
        0,3,"<x> <y> <name>",
        ((string)"Create a new column named <name> filled with the ")+
@@ -379,6 +379,11 @@ void acol_manager::command_add(std::string new_type) {
       {0,"min","Find the minimum value of a column.",0,1,"<col>",
        "Compute the minimum value of column <col>.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
+       both},
+      {0,"nlines","Add 'nlines' as a constant to a table object.",0,0,
+       "",((std::string)"Add a constant called 'nlines' to the table and ")+
+       "set it equal to the number of lines (rows) in the table",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_nlines),
        both},
       {0,"rename","Rename a column.",0,2,"<old> <new>",
        "Rename a column from <old> to <new>. ",
@@ -444,11 +449,6 @@ void acol_manager::command_add(std::string new_type) {
        "current table, creating new columns if necessary.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sum),
        both},
-      {0,"nlines","Add 'nlines' as a constant to a table object.",0,0,
-       "",((std::string)"Add a constant called 'nlines' to the table and ")+
-       "set it equal to the number of lines (rows) in the table",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_nlines),
-       both},
       {0,"to-hist","Convert a table to a histogram.",0,3,
        "<col> <n_bins> [wgts]",
        ((std::string)"The 'to-hist' command creates ")+
@@ -506,6 +506,14 @@ void acol_manager::command_add(std::string new_type) {
        "derivative of the function from the y grid and slice named <f>.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv_y),
        both},
+      {0,"entry","Get a single entry in a table3d object.",0,4,
+       "<slice> <x index> <y index> [value or \"none\"]","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_entry),
+       both},
+      {0,"entry-grid","Get a single entry in a table3d object.",0,4,
+       "<slice> <x value> <y value> [value or \"none\"]","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_entry_grid),
+       both},
       {'f',"function","Create a new slice from a function.",0,2,
        "<func> <name>",
        ((string)"Set the slice named <name> to the result of a function, ")+
@@ -515,14 +523,6 @@ void acol_manager::command_add(std::string new_type) {
        "s1-s2 s3' would create a new column 's3' which contains the "+
        "difference of columns 's1' and 's2'.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_function),
-       both},
-      {0,"entry","Get a single entry in a table3d object.",0,4,
-       "<slice> <x index> <y index> [value or \"none\"]","",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_entry),
-       both},
-      {0,"entry-grid","Get a single entry in a table3d object.",0,4,
-       "<slice> <x value> <y value> [value or \"none\"]","",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_entry_grid),
        both},
       {0,"insert","Interpolate a slice from another file.",0,6,
        "<file> <table> <old> [new]","",
@@ -587,9 +587,29 @@ void acol_manager::command_add(std::string new_type) {
     
     static const size_t narr=10;
     comm_option_s options_arr[narr]={
+      {0,"diag","Get diagonal elements.",-1,-1,"",
+       ((string)"Extract only the elements on the main diagonal ")+
+       "to create a double[] object.",new comm_option_mfptr<acol_manager>
+       (this,&acol_manager::comm_diag),both},
+      {0,"entry","Get a single entry in a tensor object.",
+       -1,-1,"<value 1> <value 2> <value 3> ... [value or \"none\"]",
+       "",new comm_option_mfptr<acol_manager>
+       (this,&acol_manager::comm_entry),both},
+      {'f',"function","Set tensor value from a function.",0,-1,
+       "","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_function),
+       both},
       {'l',"list","List the tensor rank and index sizes.",
        0,0,"","List the tensor rank and index sizes.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
+       both},
+      {0,"max","Find the maximum value and index.",0,0,"",
+       "Compute the maximum value.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_max),
+       both},
+      {0,"min","Find the minimum value of and index.",0,0,"",
+       "Compute the minimum value.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
        both},
       {0,"rearrange","Rearrange the tensor.",
        -1,-1,"<index spec. 1> [index spec. 2] ...",
@@ -619,18 +639,6 @@ void acol_manager::command_add(std::string new_type) {
        -1,-1,"<x name> <y name> <slice name> [fixed 1] [fixed 2] ...",
        "",new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_to_table3d_sum),both},
-      {0,"diag","Get diagonal elements.",-1,-1,"",
-       ((string)"Extract only the elements on the main diagonal ")+
-       "to create a double[] object.",new comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_diag),both},
-      {0,"max","Find the maximum value and index.",0,0,"",
-       "Compute the maximum value.",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_max),
-       both},
-      {0,"min","Find the minimum value of and index.",0,0,"",
-       "Compute the minimum value.",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
-       both},
       {0,"to-tensor-grid","Convert the tensor to a tensor_grid object.",
        -1,-1,"[function 1] [function 2] ...",
        ((string)"Convert a tensor to a tensor_grid object, using ")+
@@ -640,15 +648,7 @@ void acol_manager::command_add(std::string new_type) {
        "functions are used up to the rank of the tensor, and if "+
        "not enough functions are specified, then the function 'i' is "+
        "used.",new comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_to_tensor_grid),both},
-      {'f',"function","Set tensor value from a function.",0,-1,
-       "","",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_function),
-       both},
-      {0,"entry","Get a single entry in a tensor object.",
-       -1,-1,"<value 1> <value 2> <value 3> ... [value or \"none\"]",
-       "",new comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_entry),both}
+       (this,&acol_manager::comm_to_tensor_grid),both}
     };
     cl->set_comm_option_vec(narr,options_arr);
     
@@ -656,15 +656,23 @@ void acol_manager::command_add(std::string new_type) {
     
     static const size_t narr=5;
     comm_option_s options_arr[narr]={
+      {'l',"list","List the rank and sizes.",
+       0,0,"","List the rank and sizes.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
+       both},
+      {0,"max","Find the maximum value and index.",0,0,"",
+       "Compute the maximum value.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_max),
+       both},
+      {0,"min","Find the minimum value of and index.",0,0,"",
+       "Compute the minimum value.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
+       both},
       {0,"rearrange","Rearrange the tensor.",
        -1,-1,"<index spec. 1> [index spec. 2] ...",
        ((std::string)"Index specifications are: index(ix), fixed(ix), ")+
        "sum(ix), trace(ix1,ix2), reverse(ix), and range(ix,start,end).",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_rearrange),
-       both},
-      {'l',"list","List the rank and sizes.",
-       0,0,"","List the rank and sizes.",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
        both},
       {0,"to-table3d","Select two indices and convert to a table3d object.",
        -1,-1,"<x name> <y name> <slice name>",
@@ -682,15 +690,7 @@ void acol_manager::command_add(std::string new_type) {
        "To set the x- or y-grid names afterwards, "+
        "use commands 'x-name' and 'y-name'.",
        new comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_to_table3d),both},
-      {0,"max","Find the maximum value and index.",0,0,"",
-       "Compute the maximum value.",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_max),
-       both},
-      {0,"min","Find the minimum value of and index.",0,0,"",
-       "Compute the minimum value.",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
-       both}
+       (this,&acol_manager::comm_to_table3d),both}
     };
     cl->set_comm_option_vec(narr,options_arr);
     
@@ -740,13 +740,71 @@ void acol_manager::command_add(std::string new_type) {
     
     static const size_t narr=14;
     comm_option_s options_arr[narr]={
+      {0,"entry","Get a single entry in a tensor_grid object.",
+       -1,-1,"<index 1> <index 2> <index 3> ... [value or \"none\"]",
+       ((string)"The \"entry\" command gets or sets a value in the ")+
+       "tensor_grid object. The arguments are a list of indices and "+
+       "(optionally) a new value to store in that location.",
+       new comm_option_mfptr<acol_manager>
+       (this,&acol_manager::comm_entry),both},
+      {0,"entry-grid","Get a single entry in a tensor_grid object.",
+       -1,-1,"<value 1> <value 2> <value 3> ... [value or \"none\"]",
+       ((string)"The \"entry-grid\" command gets or sets a value in the ")+
+       "tensor_grid object. The arguments are a list of grid values and "+
+       "(optionally) a new value to store in the location closest to "+
+       "the specified grid values.",
+       new comm_option_mfptr<acol_manager>
+       (this,&acol_manager::comm_entry_grid),both},
       {'f',"function","Set tensor value from a function.",0,-1,
        "","",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_function),
        both},
+      {0,"get-grid","Get the tensor grid.",0,0,"",
+       "Output the tensor grid as a series of columns.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_grid),
+       both},
+      {0,"interp","Linearly interpolate in the grid.",
+       -1,-1,"<value 1> <value 2> <value 3> ...",
+       ((string)"The command \"interp\" uses linear interpolation to ")+
+       "interpolate an array with size equal to the tensor rank "+
+       "into the tensor grid and outputs the result.",
+       new comm_option_mfptr<acol_manager>
+       (this,&acol_manager::comm_interp),both},
       {'l',"list","List the slice names and print out grid info.",
        0,0,"","List the slice names and print out grid info.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
+       both},
+      {0,"max","Find the maximum value and indices.",0,0,"",
+       "Compute the maximum value.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_max),
+       both},
+      {0,"min","Find the minimum value and indices.",0,0,"",
+       "Compute the minimum value.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
+       both},
+      {0,"rearrange","Rearrange the tensor_grid object.",
+       -1,-1,"<index spec. 1> [index spec. 2] ...",
+       ((std::string)"Index specifications are: index(ix), fixed(ix), ")+
+       "sum(ix), trace(ix1,ix2), reverse(ix), range(ix,start,end), "+
+       "interp(ix,value), grid(ix,begin,end,n_bins,log), and "+
+       "gridw(ix,begin,end,n_bins,log).",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_rearrange),
+       both},
+      {0,"slice","Slice to a smaller rank tensor_grid object.",
+       -1,-1,"<index 1> <value 1> <index 2> <value 2> ...",
+       "",new comm_option_mfptr<acol_manager>
+       (this,&acol_manager::comm_slice),both},
+      {0,"set-grid","Set the tensor grid.",0,2,
+       "<index> <func. or vector spec> ",
+       ((std::string)"The first argument for the \"set-grid\" command ")+
+       "specifies the index for which grid to set. The second argument "+
+       "specifies the grid. If it contains a ':', it is assumed "+
+       "to be a vector specification (see 'help vector-spec'). Otherwise, "+
+       "the argument is assumed to be a function which specifies the grid "+
+       "value as a function of the variables 'i' and 'x'. The value of "+
+       "'i' ranges from 0 to m-1, where 'm' is the tensor size for each "+
+       "rank and the value of 'x' is equal to the previous grid value.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_set_grid),
        both},
       {0,"to-table3d","Select two indices and convert to a table3d object.",
        -1,-1,"<x index> <y index> <new slice> [value 1] [value 2] ...",
@@ -768,64 +826,6 @@ void acol_manager::command_add(std::string new_type) {
        -1,-1,"<index> <grid name> <data name> [values of fixed indices]",
        "",new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_to_table),both},
-      {0,"slice","Slice to a smaller rank tensor_grid object.",
-       -1,-1,"<index 1> <value 1> <index 2> <value 2> ...",
-       "",new comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_slice),both},
-      {0,"set-grid","Set the tensor grid.",0,2,
-       "<index> <func. or vector spec> ",
-       ((std::string)"The first argument for the \"set-grid\" command ")+
-       "specifies the index for which grid to set. The second argument "+
-       "specifies the grid. If it contains a ':', it is assumed "+
-       "to be a vector specification (see 'help vector-spec'). Otherwise, "+
-       "the argument is assumed to be a function which specifies the grid "+
-       "value as a function of the variables 'i' and 'x'. The value of "+
-       "'i' ranges from 0 to m-1, where 'm' is the tensor size for each "+
-       "rank and the value of 'x' is equal to the previous grid value.",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_set_grid),
-       both},
-      {0,"get-grid","Get the tensor grid.",0,0,"",
-       "Output the tensor grid as a series of columns.",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_grid),
-       both},
-      {0,"max","Find the maximum value and indices.",0,0,"",
-       "Compute the maximum value.",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_max),
-       both},
-      {0,"min","Find the minimum value and indices.",0,0,"",
-       "Compute the minimum value.",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
-       both},
-      {0,"rearrange","Rearrange the tensor_grid object.",
-       -1,-1,"<index spec. 1> [index spec. 2] ...",
-       ((std::string)"Index specifications are: index(ix), fixed(ix), ")+
-       "sum(ix), trace(ix1,ix2), reverse(ix), range(ix,start,end), "+
-       "interp(ix,value), grid(ix,begin,end,n_bins,log), and "+
-       "gridw(ix,begin,end,n_bins,log).",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_rearrange),
-       both},
-      {0,"interp","Linearly interpolate in the grid.",
-       -1,-1,"<value 1> <value 2> <value 3> ...",
-       ((string)"The command \"interp\" uses linear interpolation to ")+
-       "interpolate an array with size equal to the tensor rank "+
-       "into the tensor grid and outputs the result.",
-       new comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_interp),both},
-      {0,"entry","Get a single entry in a tensor_grid object.",
-       -1,-1,"<index 1> <index 2> <index 3> ... [value or \"none\"]",
-       ((string)"The \"entry\" command gets or sets a value in the ")+
-       "tensor_grid object. The arguments are a list of indices and "+
-       "(optionally) a new value to store in that location.",
-       new comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_entry),both},
-      {0,"entry-grid","Get a single entry in a tensor_grid object.",
-       -1,-1,"<value 1> <value 2> <value 3> ... [value or \"none\"]",
-       ((string)"The \"entry-grid\" command gets or sets a value in the ")+
-       "tensor_grid object. The arguments are a list of grid values and "+
-       "(optionally) a new value to store in the location closest to "+
-       "the specified grid values.",
-       new comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_entry_grid),both},
       {0,"to-tensor","Convert to a tensor object.",
        0,0,"Convert the tensor-grid object to a tensor object.",
        "",new comm_option_mfptr<acol_manager>
@@ -850,13 +850,13 @@ void acol_manager::command_add(std::string new_type) {
 
     static const size_t narr=2;
     comm_option_s options_arr[narr]={
-      {0,"to-table","Convert to a table object.",0,0,"",
-       ((string)"Convert to a table object."),
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_to_table),
-       both},
       {0,"function","Apply a function to the weights.",0,1,"",
        ((string)"Apply a function to the weights."),
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_function),
+       both},
+      {0,"to-table","Convert to a table object.",0,0,"",
+       ((string)"Convert to a table object."),
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_to_table),
        both}
     };
     cl->set_comm_option_vec(narr,options_arr);
@@ -865,23 +865,7 @@ void acol_manager::command_add(std::string new_type) {
     
     static const size_t narr=8;
     comm_option_s options_arr[narr]={
-      {0,"sort","Sort the vector.",0,0,"",
-       ((string)"Sorts the vector."),
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sort),
-       both},
-      {0,"sum","Compute the vector sum.",0,0,"",
-       ((string)"Compute the vector sum."),
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sum),
-       both},
-      {0,"max","Find the maximum value and index.",0,0,"",
-       "Compute the maximum value of column <col>.",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_max),
-       both},
-      {0,"min","Find the minimum value of and index.",0,0,"",
-       "Compute the minimum value of column <col>.",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
-       both},
-      {'D',"deriv",
+      {0,"deriv",
        "Replace the array with its derivative.",0,0,"",
        ((string)"Replace the array with its derivative using the ")+
        "current interpolation type.",
@@ -891,6 +875,22 @@ void acol_manager::command_add(std::string new_type) {
        "<x value>",
        ((string)"Interpolate <x value> in the array."),
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_interp),
+       both},
+      {0,"max","Find the maximum value and index.",0,0,"",
+       "Compute the maximum value of column <col>.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_max),
+       both},
+      {0,"min","Find the minimum value of and index.",0,0,"",
+       "Compute the minimum value of column <col>.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
+       both},
+      {0,"sort","Sort the vector.",0,0,"",
+       ((string)"Sorts the vector."),
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sort),
+       both},
+      {0,"sum","Compute the vector sum.",0,0,"",
+       ((string)"Compute the vector sum."),
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sum),
        both},
       {0,"to-table","Convert to a table given a column name",0,1,
        "<column name>",
@@ -926,7 +926,7 @@ void acol_manager::command_add(std::string new_type) {
        "Compute the minimum value of column <col>.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
        both},
-      {'D',"deriv",
+      {0,"deriv",
        "Replace the array with its derivative.",0,0,"",
        ((string)"Replace the array with its derivative using the ")+
        "current interpolation type.",
@@ -971,7 +971,7 @@ void acol_manager::command_add(std::string new_type) {
        "Compute the minimum value of column <col>.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
        both},
-      {'D',"deriv",
+      {0,"deriv",
        "Replace the array with its derivative.",0,0,"",
        ((string)"Replace the array with its derivative using the ")+
        "current interpolation type.",
@@ -1125,8 +1125,8 @@ int acol_manager::setup_options() {
      "\"create <type> <value>\": For types char, "+
      "int, size_t, and string, create an object and give it the "+
      "initial value specified.\n\n"+
-     "\"create double <function>\": Create a double object and set "+
-     "it equal to the result of a mathematical expression <function>. "+
+     "\"create double <value-spec>\": Create a double object and set "+
+     "it equal to the value specified by <value-spec>. "+
      "(See \"acol -help "+
      "functions\" for help on specifying functions.)\n\n"+
      "\"create <type> <size> <function of \"i\">\": For array types "+

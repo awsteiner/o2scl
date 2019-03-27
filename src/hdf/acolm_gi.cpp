@@ -566,6 +566,21 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   // Handle the special case 'help vector-spec'
   if (sv.size()==2 && sv[1]=="vector-spec") {
     
+    std::string str=((std::string)"Value specification ")+
+      "description:\n\nSome acol commands take arguments... ";
+    
+    std::vector<std::string> sv;
+    o2scl::rewrap_keep_endlines(str,sv);
+    for(size_t i=0;i<sv.size();i++) {
+      cout << sv[i] << endl;
+    }
+      
+    return 0;
+  }
+  
+  // Handle the special case 'help vector-spec'
+  if (sv.size()==2 && sv[1]=="vector-spec") {
+    
     std::string str=((std::string)"Vector specification ")+
       "description:\n\nSome acol commands take arguments "+
       "which are 'vector specifications', i.e. an "+
