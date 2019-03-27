@@ -149,7 +149,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
     type_comm_list.insert(std::make_pair("tensor_grid",itmp));
   }
   {
-    vector<std::string> itmp={"max","min"};
+    vector<std::string> itmp={"max","min","contours"};
     type_comm_list.insert(std::make_pair("hist_2d",itmp));
   }
   {
@@ -491,7 +491,7 @@ void acol_manager::command_add(std::string new_type) {
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_cat),
        both},
       {0,"contours","Create contour lines from a table3d slice.",
-       0,4,"[\"frac\"] <value> <slice_name> [output file] [output name]","",
+       0,5,"[\"frac\"] <value> <slice_name> [output file] [output name]","",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_contours),
        both},
       {0,"deriv-x","Derivative with respect to x.",0,2,
@@ -1000,7 +1000,7 @@ void acol_manager::command_add(std::string new_type) {
 
   } else if (new_type=="hist_2d") {
 
-    static const size_t narr=2;
+    static const size_t narr=3;
     comm_option_s options_arr[narr]={
       {0,"max","Find the maximum weight.",0,0,"",
        "Find the maximum weight and print out the location.",
@@ -1009,7 +1009,11 @@ void acol_manager::command_add(std::string new_type) {
       {0,"min","Find the minimum weight.",0,0,"",
        "Find the minimum weight and print out the location.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
-       both}
+       both},
+      {0,"contours","Create contour lines from a table3d slice.",
+       0,4,"[\"frac\"] <value> [output file] [output name]","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_contours),
+       both},
     };
     cl->set_comm_option_vec(narr,options_arr);
 
@@ -1081,7 +1085,7 @@ int acol_manager::setup_options() {
   for(size_t i=0;i<type_list.size()-1;i++) {
     type_list_str+=type_list[i]+", ";
   }
-  type_list_str+=" or "+type_list[type_list.size()-1];
+  type_list_str+="or "+type_list[type_list.size()-1]+'.';
   
   // Options, sorted by long name. We allow 0 parameters in many of these
   // options so they can be requested from the user in interactive mode. 
