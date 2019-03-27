@@ -1024,7 +1024,15 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     }
 
     tensor_grid_obj.resize(rank,sarr);
-    tensor_obj.set_all(0.0);
+    vector<double> grid;
+    for(size_t k=0;k<rank;k++) {
+      for(size_t j=0;j<sarr[k];j++) {
+	grid.push_back((double)j);
+      }
+    }
+    tensor_grid_obj.set_grid_packed(grid);
+    
+    tensor_grid_obj.set_all(0.0);
     command_add("tensor_grid");
     type="tensor_grid";
 

@@ -772,30 +772,27 @@ void acol_manager::command_add(std::string new_type) {
        -1,-1,"<index 1> <value 1> <index 2> <value 2> ...",
        "",new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_slice),both},
-      {0,"set-grid","Set the tensor grid.",-1,-1,
-       ((std::string)"<func. or vector spec. for rank 0> ")+
-       "<func. or vector spec. for rank 1> ... "+
-       "<func. or vector spec. for rank n-1>",
-       ((std::string)"The set-grid command has an argument for each ")+
-       "rank in the tensor. If the argument contains a ':', it is assumed "+
-       "to be a vector specification (see 'help vector-spec'). "+
-       "Otherwise, the argument is assumed to be "
-       "a function which specifies the grid "+
-       "value as a function of the variables 'i' and 'x'. "+
-       "The value of 'i' ranges "+
-       "from 0 to m-1, where 'm' is the tensor size for each rank and the "+
-       "value of 'x' is equal to the previous grid value.",
+      {0,"set-grid","Set the tensor grid.",0,2,
+       "<index> <func. or vector spec> ",
+       ((std::string)"The first argument for the \"set-grid\" command ")+
+       "specifies the index for which grid to set. The second argument "+
+       "specifies the grid. If it contains a ':', it is assumed "+
+       "to be a vector specification (see 'help vector-spec'). Otherwise, "+
+       "the argument is assumed to be a function which specifies the grid "+
+       "value as a function of the variables 'i' and 'x'. The value of "+
+       "'i' ranges from 0 to m-1, where 'm' is the tensor size for each "+
+       "rank and the value of 'x' is equal to the previous grid value.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_set_grid),
        both},
       {0,"get-grid","Get the tensor grid.",0,0,"",
        "Output the tensor grid as a series of columns.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_grid),
        both},
-      {0,"max","Find the maximum value and index.",0,0,"",
+      {0,"max","Find the maximum value and indices.",0,0,"",
        "Compute the maximum value.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_max),
        both},
-      {0,"min","Find the minimum value of and index.",0,0,"",
+      {0,"min","Find the minimum value and indices.",0,0,"",
        "Compute the minimum value.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
        both},
@@ -807,20 +804,30 @@ void acol_manager::command_add(std::string new_type) {
        "gridw(ix,begin,end,n_bins,log).",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_rearrange),
        both},
-      {0,"interp","Interpolate.",
+      {0,"interp","Linearly interpolate in the grid.",
        -1,-1,"<value 1> <value 2> <value 3> ...",
-       "",new comm_option_mfptr<acol_manager>
+       ((string)"The command \"interp\" uses linear interpolation to ")+
+       "interpolate an array with size equal to the tensor rank "+
+       "into the tensor grid and outputs the result.",
+       new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_interp),both},
       {0,"entry","Get a single entry in a tensor_grid object.",
        -1,-1,"<index 1> <index 2> <index 3> ... [value or \"none\"]",
-       "",new comm_option_mfptr<acol_manager>
+       ((string)"The \"entry\" command gets or sets a value in the ")+
+       "tensor_grid object. The arguments are a list of indices and "+
+       "(optionally) a new value to store in that location.",
+       new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_entry),both},
       {0,"entry-grid","Get a single entry in a tensor_grid object.",
        -1,-1,"<value 1> <value 2> <value 3> ... [value or \"none\"]",
-       "",new comm_option_mfptr<acol_manager>
+       ((string)"The \"entry-grid\" command gets or sets a value in the ")+
+       "tensor_grid object. The arguments are a list of grid values and "+
+       "(optionally) a new value to store in the location closest to "+
+       "the specified grid values.",
+       new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_entry_grid),both},
-      {0,"to-tensor","Convert to tensor",
-       0,0,"",
+      {0,"to-tensor","Convert to a tensor object.",
+       0,0,"Convert the tensor-grid object to a tensor object.",
        "",new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_to_tensor),both}
     };
@@ -1112,19 +1119,27 @@ int acol_manager::setup_options() {
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_clear),
      both},
     {'c',"create","Create an object.",0,-1,"<type> [...]",
-     ((string)"Create a new object of type <type>. For types char, ")+
-     "double, int, size_t, and string, this takes one additional "+
-     "argument which is a mathematical expression (see \"acol -help "+
-     "functions\" for more). For type table, "+
-     "this option creates a new table with one column whose entries "+
+     ((string)"Create a new object of type <type>. ")+
+     "If an object is currently in memory, it is deallocated before "+
+     "creating the new object.\n\n"+
+     "\"create <type> <value>\": For types char, "+
+     "int, size_t, and string, create an object and give it the "+
+     "initial value specified.\n\n"+
+     "\"create double <function>\": Create a double object and set "+
+     "it equal to the result of a mathematical expression <function>. "+
+     "(See \"acol -help "+
+     "functions\" for help on specifying functions.)\n\n"+
+     "\"create <type> <size> <function of \"i\">\": For array types "+
+     "double[], int[], and size_t[], the user must specify the size of "+
+     "the array and a function of the array index 'i' to fill the array.\n\n"+
+     "\"create table <col> <first> <max> <step>\": "+
+     "Create a new table object with one column whose entries "+
      "are an evenly-spaced grid. In this case four additional arguments "+
      "are needed: the name of "+
      "the column, the first value, the maximum possible value, and the "+
-     "increment between successive values. For array types double[] "+
-     "int[], and size_t[], the user must specify the size of the array "+
-     "and a function of the array index 'i' to fill the array. "+
-     "If an object is currently in memory, it is deallocated before "+
-     "creating the new object.",
+     "increment between successive values.\n\n"+
+     "\"create tensor <rank> <size 0> <size 1> ...\":\n\n"+
+     "\"create tensor_grid <rank> <size 0> <size 1> ...\":\n\n",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_create),
      both},
     {0,"download","Download file from specified URL.",0,4,

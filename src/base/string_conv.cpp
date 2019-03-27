@@ -164,6 +164,9 @@ size_t o2scl::stoszt(string s) {
   if (ins >> ret) {
     return ret;
   }
+  // AWS, 3/26/19: I've tried including the string parameter 's' in
+  // the error message, but it leads to badly formatted error messages
+  // so this version is better.
   O2SCL_ERR("Conversion from string to size_t failed in stoszt().",
 	    exc_einval);
   return 0;
@@ -199,6 +202,9 @@ bool o2scl::stob(string s, bool err_on_fail) {
   }
   // If the read into the istringstream failed
   if (err_on_fail) {
+    // AWS, 3/26/19: I've tried including the string parameter 's' in
+    // the error message, but it leads to badly formatted error messages
+    // so this version is better.
     O2SCL_ERR("Conversion from string to bool failed in stob().",
 	      exc_einval);
   }

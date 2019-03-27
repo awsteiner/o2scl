@@ -1781,54 +1781,49 @@ int acol_manager::comm_set_grid(std::vector<std::string> &sv, bool itive_com) {
     size_t rank=tensor_grid_obj.get_rank();
     
     vector<string> pr, in;
-    for(size_t k=0;k<rank;k++) {
-      pr.push_back(((std::string)"Function defining grid for rank ")+
-		   o2scl::szttos(rank));
-    }
+    pr.push_back("Index of grid to set");
+    pr.push_back("Function defining grid");
     int ret=get_input(sv,pr,in,"set-grid",itive_com);
     if (ret!=0) return ret;
 
     vector<double> grid;
+
+    size_t k=o2scl::stoszt(in[0]);
+    
+    if (in[1].find(':')==std::string::npos) {
       
-    for(size_t k=0;k<rank;k++) {
-
-      if (in[k].find(':')==std::string::npos) {
-	
-	calculator calc;
-	std::map<std::string,double> vars;
-	for(size_t i=0;i<tensor_grid_obj.get_size(k);i++) {
-	  vars["i"]=((double)i);
-	  vars["x"]=tensor_grid_obj.get_grid(k,i);
-	  calc.compile(in[k].c_str(),&vars);
-	  double gi=calc.eval(&vars);
-	  grid.push_back(gi);
-	}
-	
-      } else {
-
-	std::vector<double> vtemp;
-	int ret=vector_spec(in[k],vtemp,3,false);
-	if (ret!=0) {
-	  cerr << "Interpretation of vector specification failed."
-	       << endl;
-	  return 3;
-	}
-
-	if (vtemp.size()<tensor_grid_obj.get_size(k)) {
-	  cerr << "Vector specification results in vector "
-	       << "smaller than tensor grid." << endl;
-	  return 2;
-	}
-	
-	for(size_t i=0;i<tensor_grid_obj.get_size(k);i++) {
-	  grid.push_back(vtemp[i]);
-	}
-	
+      calculator calc;
+      std::map<std::string,double> vars;
+      for(size_t i=0;i<tensor_grid_obj.get_size(k);i++) {
+	vars["i"]=((double)i);
+	vars["x"]=tensor_grid_obj.get_grid(k,i);
+	calc.compile(in[1].c_str(),&vars);
+	double val=calc.eval(&vars);
+	tensor_grid_obj.set_grid(k,i,val);
       }
+      
+    } else {
+      
+      std::vector<double> vtemp;
+      int ret=vector_spec(in[1],vtemp,3,false);
+      if (ret!=0) {
+	cerr << "Interpretation of vector specification failed."
+	     << endl;
+	return 3;
+      }
+      
+      if (vtemp.size()<tensor_grid_obj.get_size(k)) {
+	cerr << "Vector specification results in vector "
+	     << "smaller than tensor grid." << endl;
+	return 2;
+      }
+      
+      for(size_t i=0;i<tensor_grid_obj.get_size(k);i++) {
+	tensor_grid_obj.set_grid(k,i,vtemp[i]);
+      }
+      
     }
 
-    tensor_grid_obj.set_grid_packed(grid);
-    
     return 0;
   }
 
@@ -2434,6 +2429,10 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
 	  cout << "rearrange, fixed: ";
 	  vector_out(cout,args,true);
 	}
+	if (args.size()<2) {
+	  cerr << "Not enough arguments in fixed()." << endl;
+	  return 1;
+	}
 	vis.push_back(ix_fixed(o2scl::stoszt(args[0]),o2scl::stoszt(args[1])));
       } else if (sv2[j].find("sum(")==0 && sv2[j][sv2[j].size()-1]==')') {
 	string spec=sv2[j].substr(4,sv2[j].length()-5);
@@ -2450,6 +2449,10 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
 	  cout << "rearrange, trace: ";
 	  vector_out(cout,args,true);
 	}
+	if (args.size()<2) {
+	  cerr << "Not enough arguments in trace()." << endl;
+	  return 1;
+	}
 	vis.push_back(ix_trace(o2scl::stoszt(args[0]),o2scl::stoszt(args[1])));
       } else if (sv2[j].find("reverse(")==0 && sv2[j][sv2[j].size()-1]==')') {
 	string spec=sv2[j].substr(8,sv2[j].length()-9);
@@ -2465,6 +2468,10 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
 	if (verbose>1) {
 	  cout << "rearrange, range: ";
 	  vector_out(cout,args,true);
+	}
+	if (args.size()<3) {
+	  cerr << "Not enough arguments in range()." << endl;
+	  return 1;
 	}
 	vis.push_back(ix_range(o2scl::stoszt(args[0]),
 			       o2scl::stoszt(args[1]),
@@ -2517,6 +2524,10 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
 	  cout << "rearrange, fixed: ";
 	  vector_out(cout,args,true);
 	}
+	if (args.size()<2) {
+	  cerr << "Not enough arguments in fixed()." << endl;
+	  return 1;
+	}
 	vis.push_back(ix_fixed(o2scl::stoszt(args[0]),o2scl::stoszt(args[1])));
       } else if (sv2[j].find("sum(")==0 && sv2[j][sv2[j].size()-1]==')') {
 	string spec=sv2[j].substr(4,sv2[j].length()-5);
@@ -2532,6 +2543,10 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
 	if (verbose>1) {
 	  cout << "rearrange, trace: ";
 	  vector_out(cout,args,true);
+	}
+	if (args.size()<2) {
+	  cerr << "Not enough arguments in trace()." << endl;
+	  return 1;
 	}
 	vis.push_back(ix_trace(o2scl::stoszt(args[0]),o2scl::stoszt(args[1])));
       } else if (sv2[j].find("reverse(")==0 && sv2[j][sv2[j].size()-1]==')') {
@@ -2549,6 +2564,10 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
 	  cout << "rearrange, range: ";
 	  vector_out(cout,args,true);
 	}
+	if (args.size()<3) {
+	  cerr << "Not enough arguments in range()." << endl;
+	  return 1;
+	}
 	vis.push_back(ix_range(o2scl::stoszt(args[0]),
 			       o2scl::stoszt(args[1]),
 			       o2scl::stoszt(args[2])));
@@ -2559,6 +2578,10 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
 	  cout << "interp, value: ";
 	  vector_out(cout,args,true);
 	}
+	if (args.size()<2) {
+	  cerr << "Not enough arguments in interp()." << endl;
+	  return 1;
+	}
 	vis.push_back(ix_interp(o2scl::stoszt(args[0]),
 				o2scl::function_to_double(args[1])));
       } else if (sv2[j].find("grid(")==0 && sv2[j][sv2[j].size()-1]==')') {
@@ -2567,6 +2590,10 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
 	if (verbose>1) {
 	  cout << "rearrange, index, begin, end, n_bins [log]: ";
 	  vector_out(cout,args,true);
+	}
+	if (args.size()<4) {
+	  cerr << "Not enough arguments in grid()." << endl;
+	  return 1;
 	}
 	if (args.size()>4 && o2scl::stob(args[4])==true) {
 	  vis.push_back(ix_grid(o2scl::stoszt(args[0]),
