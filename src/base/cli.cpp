@@ -22,8 +22,6 @@
 */
 #include <cstdlib>
 #include <o2scl/cli.h>
-// For value_spec
-#include <o2scl/hdf_io.h>
 
 using namespace std;
 using namespace o2scl;
@@ -76,8 +74,13 @@ string cmd_line::usage() {
 
 int cli::parameter_double::set(std::string s) {
   if (parse_strings) {
-    o2scl_hdf::value_spec(s,*d);
-    //*d=function_to_double(s);
+    
+    // This doesn't work because value_spec is in o2scl_hdf, which is
+    // currently a separate library.
+    //
+    // o2scl_hdf::value_spec(s,*d);
+    
+    *d=function_to_double(s);
   } else {
     *d=o2scl::stod(s);
   }

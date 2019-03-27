@@ -541,7 +541,9 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   if (sv.size()==2 && sv[1]=="functions") {
     string str=((std::string)"Functions can be created using the ");
     str+="operators and functions listed below. Examples are ";
-    str+="\"x==5 && y<1\", \"acos(-1)\", and \"sin(x>5)\".\n\n";
+    str+="\"x==5 && y<1\", \"acos(-1)\", and \"sin(x>5)\". ";
+    str+="Comparison operators result in either 1.0 (true) or ";
+    str+="0.0 (false).\n\n";
     str+="Operators:\n\n() ^ * / % + - == != < > && || << >> >= <=\n\n";
     str+="Functions:\n\n";
     str+="exp(x) log(x) log10(x) sin(x) cos(x) tan(x) sqrt(x) abs(x) ";
