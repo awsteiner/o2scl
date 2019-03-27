@@ -392,6 +392,8 @@ namespace o2scl_hdf {
       - HDF5 object in file: 
       hdf5:\<file name\>:\<object name\>:[additional specification]
 
+      \todo shell: option to use the result of a shell command
+
       \note unfinished.
   */
   int value_spec(std::string spec, double &d,

@@ -309,18 +309,11 @@ namespace o2scl {
       /// Parameter
       double *d;
 
-      /// If true, 
+      /// If true, use value_spec() to convert strings to doubles
       bool parse_strings;
 
       /// Set from string
-      virtual int set(std::string s) {
-	if (parse_strings) {
-	  *d=function_to_double(s);
-	} else {
-	  *d=o2scl::stod(s);
-	}
-	return 0;
-      }
+      virtual int set(std::string s);
 
       /// Convert to string
       virtual std::string get() {

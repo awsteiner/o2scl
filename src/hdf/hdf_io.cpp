@@ -62,6 +62,56 @@ int o2scl_hdf::value_spec(std::string spec, double &d,
     d=calc.eval(&vars);
     return 0;
 
+  } else if (spec.find("shell:")==0) {
+	
+    // Result from shell command
+
+#ifdef HAVE_POPEN
+    
+    std::string cmd=spec.substr(6,spec.length()-6);
+    cout << "Using shell command: " << cmd << endl;
+    FILE *ps_pipe=popen(cmd.c_str(),"r");
+    if (!ps_pipe) {
+      if (err_on_fail) {
+	O2SCL_ERR2("Pipe could not be opened in ",
+		   "convert_units::convert_gnu_units().",exc_efilenotfound);
+      }
+      return exc_efilenotfound;
+    }
+    
+    // Variable 'cret' is unused, but put here to avoid
+    // unused return value errors
+    char line1[80];
+    char *cret=fgets(line1,80,ps_pipe);
+    if (verbose>0) {
+      std::cout << "Shell command output is "
+		<< line1 << std::endl;
+    }
+    
+    if (pclose(ps_pipe)!=0) {
+      if (err_on_fail) {
+	O2SCL_ERR2("Pipe could not be closed in ",
+		   "value_spec().",exc_efailed);
+      }
+      return exc_efailed;
+    }
+  
+    // Read the output from the 'units' command and compute the 
+    // conversion factor
+    std::string s=line1, t1;
+    std::istringstream *ins=new std::istringstream(s);
+    if (!((*ins) >> t1)) {
+      return exc_efailed;
+    }
+    delete ins;
+
+    // Finally, take the result string and convert to a double
+    d=o2scl::function_to_double(t1);
+
+#endif
+    
+    return exc_efailed;
+
   } else if (spec.find("hdf5:")==0) {
 	
     // HDF5 object in a file

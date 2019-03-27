@@ -20,8 +20,10 @@
 
   -------------------------------------------------------------------
 */
-#include <o2scl/cli.h>
 #include <cstdlib>
+#include <o2scl/cli.h>
+// For value_spec
+#include <o2scl/hdf_io.h>
 
 using namespace std;
 using namespace o2scl;
@@ -71,6 +73,16 @@ string cmd_line::usage() {
 }
 
 #endif
+
+int cli::parameter_double::set(std::string s) {
+  if (parse_strings) {
+    o2scl_hdf::value_spec(s,*d);
+    //*d=function_to_double(s);
+  } else {
+    *d=o2scl::stod(s);
+  }
+  return 0;
+}
 
 cli::cli() {
 
