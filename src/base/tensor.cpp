@@ -64,8 +64,8 @@ index_spec o2scl::ix_grid(size_t ix, double begin, double end,
 index_spec o2scl::ix_gridw(size_t ix, double begin, double end, 
 			   double width, bool log) {
   if (log) {
-    return index_spec(index_spec::grid,ix,0,1,begin,end,width);
+    return index_spec(index_spec::gridw,ix,0,1,begin,end,width);
   }
-  return index_spec(index_spec::grid,ix,0,0,begin,end,width);
+  return index_spec(index_spec::gridw,ix,0,0,begin,end,width);
 }
 

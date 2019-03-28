@@ -1959,6 +1959,10 @@ namespace o2scl {
 		       "tensor_grid::rearrange_and_copy()",
 		       o2scl::exc_einval);
 	  } else {
+	    if (verbose>0) {
+	      std::cout << "Index specification type not allowed in "
+			<< "tensor_grid::rearrange_and_copy()." << std::endl;
+	    }
 	    return tensor_grid<>();
 	  }
 	}
@@ -1972,6 +1976,10 @@ namespace o2scl {
 		     "tensor_grid::rearrange_and_copy()",
 		     o2scl::exc_einval);
 	} else {
+	  if (verbose>0) {
+	    std::cout << "Zero new indices in " 
+		      << "tensor_grid::rearrange_and_copy()." << std::endl;
+	  }
 	  return tensor_grid<>();
 	}
       }
@@ -1982,6 +1990,10 @@ namespace o2scl {
 		       "tensor_grid::rearrange_and_copy()",
 		       o2scl::exc_einval);
 	  } else {
+	    if (verbose>0) {
+	      std::cout << "Index " << i << " not accounted for in "
+			<< "tensor_grid::rearrange_and_copy()." << std::endl;
+	    }
 	    return tensor_grid<>();
 	  }
 	}
@@ -2052,7 +2064,7 @@ namespace o2scl {
 	    std::cout << " was obtained from grid\n  "
 		      << spec_new[i].val1 << " "
 		      << spec_new[i].val2 << " ";
-	    if (spec_old[i].type==index_spec::grid) {
+	    if (spec_new[i].type==index_spec::grid) {
 	      std::cout << spec_new[i].ix2;
 	    } else {
 	      std::cout << spec_new[i].val3;

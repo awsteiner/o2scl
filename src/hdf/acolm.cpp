@@ -787,7 +787,7 @@ void acol_manager::command_add(std::string new_type) {
        ((std::string)"Index specifications are: index(ix), fixed(ix), ")+
        "sum(ix), trace(ix1,ix2), reverse(ix), range(ix,start,end), "+
        "interp(ix,value), grid(ix,begin,end,n_bins,log), and "+
-       "gridw(ix,begin,end,n_bins,log).",
+       "gridw(ix,begin,end,bin_width,log).",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_rearrange),
        both},
       {0,"slice","Slice to a smaller rank tensor_grid object.",
