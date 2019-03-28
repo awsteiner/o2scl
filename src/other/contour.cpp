@@ -873,6 +873,9 @@ void contour::calc_contours(std::vector<contour_line> &clines) {
   yed.clear();
   xed.clear();
 
+  // Clear contour lines object
+  clines.clear();
+  
   // The interpolation object (only works with linear interpolation
   // at the moment)
   interp<ubvector> oi(itp_linear);

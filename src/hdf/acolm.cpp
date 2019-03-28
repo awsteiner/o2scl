@@ -491,7 +491,15 @@ void acol_manager::command_add(std::string new_type) {
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_cat),
        both},
       {0,"contours","Create contour lines from a table3d slice.",
-       0,5,"[\"frac\"] <value> <slice_name> [output file] [output name]","",
+       0,5,"[\"frac\"] <value> <slice_name> [output_filename object_name]",
+       ((string)"If the argument \"frac\" is not present, the ")+
+       "\"contours\" command constructs a set of contour lines using "+
+       "the data in slice named <slice> at the fixed value given in "+
+       "<value>. If two additional arguments are given, then the "+
+       "contour lines are stored in the file named output_filename "+
+       "and the object is named object_name. If the file does not "+
+       "exist, it is created. If no contours are found, then no file "+
+       "I/O is performed and the current table3d object is unmodified.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_contours),
        both},
       {0,"deriv-x","Derivative with respect to x.",0,2,
@@ -1011,7 +1019,15 @@ void acol_manager::command_add(std::string new_type) {
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
        both},
       {0,"contours","Create contour lines from a table3d slice.",
-       0,4,"[\"frac\"] <value> [output file] [output name]","",
+       0,4,"[\"frac\"] <value> [output file] [output name]",
+       ((string)"If the argument \"frac\" is not present, the ")+
+       "\"contours\" command constructs a set of contour lines using "+
+       "at the fixed value given in "+
+       "<value>. If two additional arguments are given, then the "+
+       "contour lines are stored in the file named output_filename "+
+       "and the object is named object_name. If the file does not "+
+       "exist, it is created. If no contours are found, then no file "+
+       "I/O is performed and the current table3d object is unmodified.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_contours),
        both},
     };

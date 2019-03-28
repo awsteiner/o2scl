@@ -556,7 +556,8 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
   }
   
   bool frac_mode=false;
-  
+
+  /*
   if (sv.size()>=2 && sv[1]=="frac") {
     cout << "Fraction mode is true." << endl;
     frac_mode=true;
@@ -573,6 +574,7 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
     if (ret!=0) return ret;
     if (i1=="frac") frac_mode=true;
   }
+  */
     
   std::string svalue, file, name="contours";
 
@@ -581,73 +583,218 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
     std::string slice;
 
     if (sv.size()<3) {
-      svalue=cl->cli_gets("Contour value (or blank to cancel): ");
-      slice=cl->cli_gets("Slice (or blank to cancel): ");
-      if (svalue.length()==0) return 1;
-      file=cl->cli_gets("Filename (or blank to keep): ");
-      if (file.length()>0) {
+      // If not enough arguments were given, then prompt for them
+      vector<string> pr, in;
+      pr.push_back("Contour value or \"frac\" and contour value");
+      pr.push_back("Slice name");
+      pr.push_back("Filename (or \"none\")");
+      int ret=get_input(sv,pr,in,"contours",itive_com);
+      if (ret!=0) return ret;
+      
+      if (in[0].find("frac ")==0) {
+	in[0]=in[0].substr(5,in[0].length()-5);
+	frac_mode=true;
+      }
+
+      if (in[2]!="none") {
+	file=in[2];
 	name=cl->cli_gets("Object name (or blank for \"contours\"): ");
 	if (name.length()==0) name="contours";
       }
     } else if (sv.size()==3) {
+      if (sv[1].find("frac ")==0) {
+	sv[1]=sv[1].substr(5,sv[1].length()-5);
+	frac_mode=true;
+      }
       svalue=sv[1];
       slice=sv[2];
-    } else if (sv.size()==4) {
-      svalue=sv[1];
-      slice=sv[2];
-      file=sv[3];
     } else {
-      svalue=sv[1];
-      slice=sv[2];
-      file=sv[3];
-      name=sv[4];
+      if (sv[1]=="frac") {
+	svalue=sv[2];
+	slice=sv[3];
+	if (sv.size()>4) file=sv[4];
+	if (sv.size()>5) name=sv[5];
+      } else {
+	if (sv[1].find("frac ")==0) {
+	  sv[1]=sv[1].substr(5,sv[1].length()-5);
+	  frac_mode=true;
+	}
+	svalue=sv[1];
+	slice=sv[2];
+	file=sv[3];
+	if (sv.size()>4) name=sv[4];
+      }
     }
-
+    
     ubvector levs(1);
     levs[0]=o2scl::function_to_double(svalue);
     size_t nlev=1;
     
     if (frac_mode) {
       cout << "Fraction mode not implemented with table3d objects." << endl;
-    } else {
-      if (file.length()>0) {
-	std::vector<contour_line> clines;
-	table3d_obj.slice_contours(slice,1,levs,clines);
+      // Get references to the histogram data
+      size_t nx=table3d_obj.get_nx();
+      size_t ny=table3d_obj.get_ny();
+      const ubmatrix &m=table3d_obj.get_slice(slice);
+      const ubvector &xd=table3d_obj.get_x_data();
+      const ubvector &yd=table3d_obj.get_y_data();
+
+      // Construct bin vectors
+      ubvector xbins(nx+1);
+      if (xd[1]>xd[0]) {
+	xbins[0]=xd[0]-(xd[1]-xd[0])/2.0;
+	xbins[nx]=xd[nx-1]+(xd[nx-1]-xd[nx-2])/2.0;
+      } else {
+	xbins[0]=xd[0]+(xd[0]-xd[1])/2.0;
+	xbins[nx]=xd[nx-1]-(xd[nx-2]-xd[nx-1])/2.0;
+      }
+      for(size_t i=1;i<nx-1;i++) {
+	xbins[i]=(xd[i-1]+xd[i])/2.0;
+      }
+      ubvector ybins(ny+1);
+      if (yd[1]>yd[0]) {
+	ybins[0]=yd[0]-(yd[1]-yd[0])/2.0;
+	ybins[ny]=yd[ny-1]+(yd[ny-1]-yd[ny-2])/2.0;
+      } else {
+	ybins[0]=yd[0]+(yd[0]-yd[1])/2.0;
+	ybins[ny]=yd[ny-1]-(yd[ny-2]-yd[ny-1])/2.0;
+      }
+      for(size_t i=1;i<ny-1;i++) {
+	ybins[i]=(yd[i-1]+yd[i])/2.0;
+      }
+
+      // Compute the total integral and the target fraction
+      double min, max;
+      o2scl::matrix_minmax(m,min,max);
+      double sum=matrix_sum<ubmatrix,double>(nx,ny,m);
+      for(size_t i=0;i<nx;i++) {
+	for(size_t j=0;j<ny;j++) {
+	  sum-=min*(xbins[i+1]-xbins[i])*(ybins[j+1]-ybins[j]);
+	}
+      }
+      double target=levs[0]*sum;
+      if (verbose>1) {
+	cout << "sum,target: " << sum << " " << target << endl;
+      }
+
+      // Setup the vectors to interpolate the target integral
+      uniform_grid_end<double> ug(min,max,100);
+      ubvector integx, integy;
+      ug.vector(integx);
+      size_t N=integx.size();
+      if (verbose>1) {
+	cout << "N integx[0] integx[1]: " << N << " "
+	     << integx[0] << " " << integx[1] << endl;
+      }
+      integy.resize(N);
+
+      // Fill the interpolation vectors
+      for(size_t k=0;k<N;k++) {
+	integy[k]=0.0;
+	for(size_t i=0;i<nx;i++) {
+	  for(size_t j=0;j<ny;j++) {
+	    if (m(i,j)>integx[k]) {
+	      integy[k]+=(m(i,j)-min)*(xbins[i+1]-xbins[i])*
+		(ybins[j+1]-ybins[j]);
+	    }
+	  }
+	}
+	if (verbose>1) {
+	  cout << k << " " << integx[k] << " " << integy[k] << endl;
+	}
+      }
+
+      // Perform the interpolation
+      bool found=false;
+      double level=0.0;
+      for(size_t k=0;k<N-1;k++) {
+	if (integy[k]>target && integy[k+1]<target) {
+	  found=true;
+	  level=integx[k]+(integx[k+1]-integx[k])*(target-integy[k])/
+	    (integy[k+1]-integy[k]);
+	}
+      }
+      
+      // Return if the interpolation failed
+      if (found==false) {
+	cerr << "Failed to find a level matching requested fraction."
+	     << endl;
+	return 2;
+      }
+      
+      if (verbose>1) {
+	cout << "Found: " << level << endl;
+      }
+      // Set level from interpolated value
+      levs[0]=level;
+      
+    }
+    
+    if (file.length()>0) {
+      std::vector<contour_line> clines;
+      table3d_obj.slice_contours(slice,1,levs,clines);
+      if (clines.size()>0) {
 	hdf_file hf;
 	hf.open_or_create(file);
 	hdf_output(hf,clines,name);
 	hf.close();
-      } else {
-	table3d_obj.slice_contours(slice,1,levs,cont_obj);
+      }
+    } else {
+      table3d_obj.slice_contours(slice,1,levs,cont_obj);
+      if (cont_obj.size()>0) {
 	command_del();
 	clear_obj();
 	command_add("vector<contour_line>");
 	type="vector<contour_line>";
+      } else {
+	cout << "No contours found. Leaving table3d object unmodified."
+	     << endl;
+	return 1;
       }
     }
     
   } else if (type=="hist_2d") {
 
     if (sv.size()<2) {
-      svalue=cl->cli_gets("Contour value (or blank to cancel): ");
-      if (svalue.length()==0) return 1;
-      file=cl->cli_gets("Filename (or blank to keep): ");
-      if (file.length()>0) {
+      // If not enough arguments were given, then prompt for them
+      vector<string> pr, in;
+      pr.push_back("Contour value or \"frac\" and contour value");
+      pr.push_back("Filename (or \"none\")");
+      int ret=get_input(sv,pr,in,"contours",itive_com);
+      if (ret!=0) return ret;
+      
+      if (in[0].find("frac ")==0) {
+	in[0]=in[0].substr(5,in[0].length()-5);
+	frac_mode=true;
+      }
+      
+      if (in[1]!="none") {
+	file=in[1];
 	name=cl->cli_gets("Object name (or blank for \"contours\"): ");
 	if (name.length()==0) name="contours";
       }
     } else if (sv.size()==2) {
+      if (sv[1].find("frac ")==0) {
+	sv[1]=sv[1].substr(5,sv[1].length()-5);
+	frac_mode=true;
+      }
       svalue=sv[1];
-    } else if (sv.size()==3) {
-      svalue=sv[1];
-      file=sv[2];
     } else {
-      svalue=sv[1];
-      file=sv[2];
-      name=sv[3];
+      if (sv[1]=="frac") {
+	svalue=sv[2];
+	if (sv.size()>3) file=sv[3];
+	if (sv.size()>4) name=sv[4];
+      } else {
+	if (sv[1].find("frac ")==0) {
+	  sv[1]=sv[1].substr(5,sv[1].length()-5);
+	  frac_mode=true;
+	}
+	svalue=sv[1];
+	file=sv[2];
+	if (sv.size()>3) name=sv[3];
+      }
     }
 
-    
     ubvector levs(1);
     levs[0]=o2scl::function_to_double(svalue);
     size_t nlev=1;
@@ -745,17 +892,24 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
     if (file.length()>0) {
       std::vector<contour_line> clines;
       co.calc_contours(clines);
-      
-      hdf_file hf;
-      hf.open_or_create(file);
-      hdf_output(hf,clines,name);
-      hf.close();
+      if (clines.size()>0) {
+	hdf_file hf;
+	hf.open_or_create(file);
+	hdf_output(hf,clines,name);
+	hf.close();
+      }
     } else {
-      command_del();
-      clear_obj();
       co.calc_contours(cont_obj);
-      command_add("vector<contour_line>");
-      type="vector<contour_line>";
+      if (cont_obj.size()>0) {
+	command_del();
+	clear_obj();
+	command_add("vector<contour_line>");
+	type="vector<contour_line>";
+      } else {
+	cout << "No contours found. Leaving hist_2d object unmodified."
+	     << endl;
+	return 1;
+      }
     }
     
   }
