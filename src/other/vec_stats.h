@@ -1987,7 +1987,72 @@ namespace o2scl {
     return;
   }
   //@}
-  
+
+  /** \brief Take a vector of data and convert it to a vector
+      of bin edges automatically adjusting for increasing or
+      decreasing and linear or logarithmic spacing
+   */
+  template<class vec_t, class vec2_t>
+    void vector_to_bins(const vec_t &v_grid, vec2_t &v_bins,
+			int verbose=1) {
+
+    size_t n=v_grid.size();
+    v_bins.resize(n+1);
+
+    // Vector of differences
+    std::vector<double> diffs;
+
+    // Compute quality factor for linear bins (smaller number is
+    // better)
+    vector_diffs(v_grid,diffs);
+    double mean=vector_mean(diffs);
+    double std=vector_stddev(diffs);
+    double qual_lin=std/mean;
+
+    // Compute quality factor for logarithmic bins (smaller number is
+    // better)
+    std::vector<double> logs;
+    for(size_t i=0;i<n;i++) logs[i]=log(v_grid[i]);
+    vector_diffs(logs,diffs);
+    mean=vector_mean(diffs);
+    std=vector_stddev(diffs);
+    double qual_log=std/mean;
+
+    if (qual_log<qual_lin) {
+      if (verbose>0) {
+	std::cout << "Auto-detected log mode in vector_to_bins()."
+		  << std::endl;
+      }
+      if (logs[1]>logs[0]) {
+	// Increasing, log
+	v_bins[0]=exp(logs[0]-(logs[1]-logs[0])/2.0);
+	v_bins[n]=exp(logs[n-1]+(logs[n-1]-logs[n-2])/2.0);
+      } else {
+	// Decreasing, log
+	v_bins[0]=exp(logs[0]+(logs[0]-logs[1])/2.0);
+	v_bins[n]=exp(logs[n-1]-(logs[n-2]-logs[n-1])/2.0);
+      }
+      for(size_t i=1;i<n-1;i++) {
+	v_bins[i]=exp((logs[i-1]+logs[i])/2.0);
+      }
+    } else {
+      if (v_grid[1]>v_grid[0]) {
+	// Increasing, linear
+	v_bins[0]=v_grid[0]-(v_grid[1]-v_grid[0])/2.0;
+	v_bins[n]=v_grid[n-1]+(v_grid[n-1]-v_grid[n-2])/2.0;
+      } else {
+	// Decreasing, linear
+	v_bins[0]=v_grid[0]+(v_grid[0]-v_grid[1])/2.0;
+	v_bins[n]=v_grid[n-1]-(v_grid[n-2]-v_grid[n-1])/2.0;
+      }
+      for(size_t i=1;i<n-1;i++) {
+	v_bins[i]=(v_grid[i-1]+v_grid[i])/2.0;
+      }
+    }
+    
+    return;
+  }
+
 #ifndef DOXYGEN_NO_O2NS
 }
 #endif

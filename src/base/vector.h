@@ -2186,6 +2186,21 @@ namespace o2scl {
     return sum;
   }
 
+  /** \brief Create a new vector containing the differences between
+      adjacent entries
+  */
+  template<class vec_t, class rvec_t>
+    void vector_diffs(const vec_t &v_data, rvec_t &v_diffs) {
+
+    size_t n=v_data.size();
+    v_diffs.resize(n-1);
+    for(size_t i=0;i<n-1;i++) {
+      v_diffs[i]=v_data[i+1]-v_data[i];
+    }
+    
+    return;
+  }
+  
   /** \brief Compute the sum of all the elements of a vector
 
       If the vector has zero size, this will return 0 without
