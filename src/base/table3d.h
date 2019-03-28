@@ -723,7 +723,8 @@ namespace o2scl {
     */
     int read_gen3_list(std::istream &fin, int verbose=0, double eps=1.0e-12);
 
-    /** \brief Desc
+    /** \brief Set the current table3d object by reading a 
+	\ref o2scl::table 
      */
     template<class vec_t>
       int read_table(const o2scl::table<vec_t> &tab, 

@@ -499,7 +499,10 @@ void acol_manager::command_add(std::string new_type) {
        "contour lines are stored in the file named output_filename "+
        "and the object is named object_name. If the file does not "+
        "exist, it is created. If no contours are found, then no file "+
-       "I/O is performed and the current table3d object is unmodified.",
+       "I/O is performed and the current table3d object is unmodified. "+
+       "If the argument \"frac\" is present, then the operation is "+
+       "the same except that <value> is interpreted as a fraction of "+
+       "the total integral under the data.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_contours),
        both},
       {0,"deriv-x","Derivative with respect to x.",0,2,
@@ -1027,12 +1030,14 @@ void acol_manager::command_add(std::string new_type) {
        "contour lines are stored in the file named output_filename "+
        "and the object is named object_name. If the file does not "+
        "exist, it is created. If no contours are found, then no file "+
-       "I/O is performed and the current table3d object is unmodified.",
+       "I/O is performed and the current table3d object is unmodified."+
+       "If the argument \"frac\" is present, then the operation is "+
+       "the same except that <value> is interpreted as a fraction of "+
+       "the total integral under the data.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_contours),
        both},
     };
     cl->set_comm_option_vec(narr,options_arr);
-
   }
   
   return;

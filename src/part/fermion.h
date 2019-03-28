@@ -400,7 +400,8 @@ namespace o2scl {
     /// Return string denoting type ("fermion_thermo")
     virtual const char *type() { return "fermion_thermo"; }
 
-    /** \brief Desc
+    /** \brief Calculate thermodynamic properties from the chemical
+	potential using a degenerate expansion
      */
     template<class fermion_t>
       bool calc_mu_deg_tlate(fermion_t &f, double temper, 
@@ -415,7 +416,7 @@ namespace o2scl {
       // Double check to ensure T and mass are positive
       if (temper<0.0 || f.ms<0.0) {
 	O2SCL_ERR2("Temperature or mass negative in fermion_thermo",
-		   "::calc_mu_deg().",exc_einval);
+		   "::calc_mu_deg_tlate().",exc_einval);
       }
   
       if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
@@ -489,7 +490,8 @@ namespace o2scl {
       return true;
     }
 
-    /** \brief Desc
+    /** \brief Calculate thermodynamic properties from the chemical
+	potential using a nondegenerate expansion
      */
     template<class fermion_t>
       bool calc_mu_ndeg_tlate(fermion_t &f, double temper, 

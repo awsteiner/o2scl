@@ -236,9 +236,6 @@ namespace o2scl_acol {
     /// The environment variable to read from 
     std::string env_var_name;
 
-    /// String parameters
-    std::map<std::string,std::string *> str_params;
-
     /// Integer parameters
     std::map<std::string,int *> int_params;
 
@@ -258,7 +255,9 @@ namespace o2scl_acol {
 
   public:
 
-    /** \brief Desc
+    /** \brief Get the verbose parameter
+	
+	This function is used in \ref o2scl_acol_mult_vectors_to_conts() .
      */
     int get_verbose() {
       return verbose;
@@ -290,6 +289,7 @@ namespace o2scl_acol {
     /// Compute a scalar value
     virtual int comm_calc(std::vector<std::string> &sv, bool itive_com);
 
+    /// Clear the current object
     virtual int comm_clear(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Output the help text
@@ -306,6 +306,9 @@ namespace o2scl_acol {
     /** \brief Set the grid for a \ref o2scl::tensor_grid object
      */
     virtual int comm_set_grid(std::vector<std::string> &sv, bool itive_com);
+
+    /** \brief Get the grid for a \ref o2scl::tensor_grid object
+     */
     virtual int comm_get_grid(std::vector<std::string> &sv, bool itive_com);
 
     /// Download a file from a specified URL
@@ -340,8 +343,8 @@ namespace o2scl_acol {
      */
     virtual int comm_to_tensor_grid(std::vector<std::string> &sv,
 				    bool itive_com);
-
-    /** \brief Desc
+    
+    /** \brief Convert object to a \ref o2scl::tensor object
      */
     virtual int comm_to_tensor(std::vector<std::string> &sv,
 			       bool itive_com);
@@ -442,7 +445,7 @@ namespace o2scl_acol {
     /// Output to screen or file
     virtual int comm_output(std::vector<std::string> &sv, bool itive_com);
 
-    /// Desc
+    /// Process arguments for rearrange
     void rearrange_arg_process(std::string str,
 			       std::vector<std::string> &sv);
     
@@ -498,6 +501,8 @@ namespace o2scl_acol {
     
     /// Get an entry
     virtual int comm_entry(std::vector<std::string> &sv, bool itive_com);
+
+    /// Get an entry by grid point
     virtual int comm_entry_grid(std::vector<std::string> &sv, bool itive_com);
     
     /// Convert units of a column

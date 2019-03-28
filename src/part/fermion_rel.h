@@ -346,7 +346,8 @@ namespace o2scl {
     
     /// \name Template versions of base functions
     //@{
-    /** \brief Desc
+    /** \brief Calculate the chemical potential from the density
+	(template version)
      */
     template<class fermion_t>
       int nu_from_n_tlate(fermion_t &f, double temper) {
@@ -930,7 +931,8 @@ namespace o2scl {
       return;
     }
 
-    /** \brief Desc
+    /** \brief Calculate thermodynamic properties with antiparticles
+	from the density (template version)
      */
     template<class fermion_t>
       int pair_density_tlate(fermion_t &f, double temper) {

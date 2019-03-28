@@ -2574,7 +2574,7 @@ namespace o2scl {
     }
   };
 
-  /** \brief Desc
+  /** \brief Construct a view of the transpose of a matrix
 
       \note This class is experimental.
   */
@@ -2616,7 +2616,7 @@ namespace o2scl {
     
   };
 
-  /** \brief Desc
+  /** \brief Construct a view of a matrix omtting a specified row
 
       \note This class is experimental.
   */
@@ -2667,7 +2667,7 @@ namespace o2scl {
     
   };
 
-  /** \brief Desc
+  /** \brief Construct a view of a matrix omitting one specified column
 
       \note This class is experimental.
   */

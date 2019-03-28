@@ -2012,7 +2012,7 @@ namespace o2scl {
    */
   double file_update_time;
 
-  /** \brief Desc
+  /** \brief Number of rows to allocate for the table before the MCMC run
    */
   size_t table_prealloc;
   
