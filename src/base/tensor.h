@@ -106,8 +106,8 @@ namespace o2scl {
   }
 
   /// Explicit full constructor
-  index_spec(size_t typ, size_t i1, size_t i2, size_t i3, double v1,
-	     double v2=0.0, double v3=0.0) {
+  index_spec(size_t typ, size_t i1, size_t i2=0, size_t i3=0,
+	     double v1=0.0, double v2=0.0, double v3=0.0) {
     type=typ;
     ix1=i1;
     ix2=i2;
@@ -835,25 +835,45 @@ namespace o2scl {
     for(size_t i=0;i<spec.size();i++) {
       if (spec[i].type==index_spec::index ||
 	  spec[i].type==index_spec::reverse) {
+	if (spec[i].ix1>=rank_old) {
+	  if (err_on_fail) {
+	    O2SCL_ERR2("Index too large (index,reverse) in ",
+		       "tensor::rearrange_and_copy().",o2scl::exc_einval);
+	  } else {
+	    if (verbose>0) {
+	      std::cout << "Index " << spec[i].ix1
+			<< " too large (index,reverse) in "
+			<< "tensor in tensor::rearrange_and_copy()."
+			<< std::endl;
+	    }
+	    return tensor<data_t>();
+	  }
+	}
 	size_new.push_back(this->size[spec[i].ix1]);
 	// Use ix1 to store the destination index (which is
 	// at this point equal to rank_new)
-	spec_old[spec[i].ix1]=index_spec(spec[i].type,
-					 rank_new,
-					 spec[i].ix2,0,
-					 spec[i].val1);
-	spec_new.push_back(index_spec(spec[i].type,
-				      spec[i].ix1,
-				      spec[i].ix2,0,
-				      spec[i].val1));
+	spec_old[spec[i].ix1]=index_spec(spec[i].type,rank_new);
+	spec_new.push_back(index_spec(spec[i].type,spec[i].ix1));
 	rank_new++;
       } else if (spec[i].type==index_spec::range) {
-	if (spec[i].ix2>=this->size[spec[i].ix1] ||
+	if (verbose>2) {
+	  std::cout << "In range " << spec[i].ix1 << " "
+		    << spec[i].ix2 << " " << spec[i].ix3 << std::endl;
+	}
+	if (spec[i].ix1>=rank_old ||
+	    spec[i].ix2>=this->size[spec[i].ix1] ||
 	    spec[i].ix3>=this->size[spec[i].ix1]) {
 	  if (err_on_fail) {
-	    O2SCL_ERR2("Requested range beyond size of original tensor in ",
-		       "tensor::rearrange_and_copy()",o2scl::exc_einval);
+	    O2SCL_ERR2("Index too large (range) in ",
+		       "tensor::rearrange_and_copy().",o2scl::exc_einval);
 	  } else {
+	    if (verbose>0) {
+	      std::cout << "Index " << spec[i].ix1 << " "
+			<< spec[i].ix2 << " " << spec[i].ix3
+			<< " too large (range) in "
+			<< "tensor in tensor::rearrange_and_copy()."
+			<< std::endl;
+	    }
 	    return tensor<data_t>();
 	  }
 	}
@@ -865,13 +885,30 @@ namespace o2scl {
 	// Use ix1 to store the destination index (which is
 	// at this point equal to rank_new)
 	spec_old[spec[i].ix1]=
-	  index_spec(spec[i].type,rank_new,spec[i].ix2,
-		     spec[i].ix3,spec[i].val1);
+	  index_spec(spec[i].type,rank_new,spec[i].ix2,spec[i].ix3);
 	spec_new.push_back
 	  (index_spec(spec[i].type,spec[i].ix1,
-		      spec[i].ix2,spec[i].ix3,spec[i].val1));
+		      spec[i].ix2,spec[i].ix3));
 	rank_new++;
+	if (verbose>2) {
+	  std::cout << "Out range " << size_new[size_new.size()-1]
+		    << std::endl;
+	}
       } else if (spec[i].type==index_spec::trace) {
+	if (spec[i].ix1>=rank_old || spec[i].ix2>=rank_old) {
+	  if (err_on_fail) {
+	    O2SCL_ERR2("Index too large (trace) in ",
+		       "tensor::rearrange_and_copy().",o2scl::exc_einval);
+	  } else {
+	    if (verbose>0) {
+	      std::cout << "Indices " << spec[i].ix1 << " or "
+			<< spec[i].ix2 << " too large (trace) in "
+			<< "tensor in tensor::rearrange_and_copy()."
+			<< std::endl;
+	    }
+	    return tensor<data_t>();
+	  }
+	}
 	if (size[spec[i].ix1]<size[spec[i].ix2]) {
 	  n_sum_loop*=size[spec[i].ix1];
 	  sum_sizes.push_back(size[spec[i].ix1]);
@@ -882,32 +919,56 @@ namespace o2scl {
 	// We set the values of ix1 and ix2 so that ix2
 	// always refers to the other index being traced over
 	spec_old[spec[i].ix1]=index_spec(spec[i].type,
-					 spec[i].ix1,
-					 spec[i].ix2,0,
-					 spec[i].val1);
+					 spec[i].ix1,spec[i].ix2);
 	spec_old[spec[i].ix2]=index_spec(spec[i].type,
-					 spec[i].ix2,
-					 spec[i].ix1,0,
-					 spec[i].val1);
+					 spec[i].ix2,spec[i].ix1);
       } else if (spec[i].type==index_spec::sum) {
+	if (spec[i].ix1>=rank_old) {
+	  if (err_on_fail) {
+	    O2SCL_ERR2("Index too large (sum) in ",
+		       "tensor::rearrange_and_copy().",o2scl::exc_einval);
+	  } else {
+	    if (verbose>0) {
+	      std::cout << "Index " << spec[i].ix1
+			<< " too large (sum) in "
+			<< "tensor in tensor::rearrange_and_copy()."
+			<< std::endl;
+	    }
+	    return tensor<data_t>();
+	  }
+	}
 	n_sum_loop*=size[spec[i].ix1];
 	sum_sizes.push_back(size[spec[i].ix1]);
 	spec_old[spec[i].ix1]=index_spec(spec[i].type,
-					 spec[i].ix1,
-					 spec[i].ix2,0,
-					 spec[i].val1);
+					 spec[i].ix1,spec[i].ix2,0);
       } else if (spec[i].type==index_spec::fixed) {
+	if (spec[i].ix1>=rank_old ||
+	    spec[i].ix2>=this->size[spec[i].ix1]) {
+	  if (err_on_fail) {
+	    O2SCL_ERR2("Index too large (fixed) in ",
+		       "tensor::rearrange_and_copy().",o2scl::exc_einval);
+	  } else {
+	    if (verbose>0) {
+	      std::cout << "Index too large (fixed) in "
+			<< "tensor in tensor::rearrange_and_copy()."
+			<< std::endl;
+	    }
+	    return tensor<data_t>();
+	  }
+	}
 	// Use ix1 to store the destination index (which is
 	// at this point equal to rank_new)
 	spec_old[spec[i].ix1]=index_spec(spec[i].type,
-					 rank_new,
-					 spec[i].ix2,0,
-					 spec[i].val1);
+					 rank_new,spec[i].ix2);
       } else {
 	if (err_on_fail) {
 	  O2SCL_ERR2("Index specification type not allowed in ",
-		     "tensor::rearrange_and_copy()",o2scl::exc_einval);
+		     "tensor::rearrange_and_copy().",o2scl::exc_einval);
 	} else {
+	  if (verbose>0) {
+	    std::cout << "Index specification type not allowed in "
+		      << "tensor::rearrange_and_copy()." << std::endl;
+	  }
 	  return tensor<data_t>();
 	}
       }
@@ -918,19 +979,28 @@ namespace o2scl {
     if (rank_new==0) {
       if (err_on_fail) {
 	O2SCL_ERR2("Zero new indices in ",
-		   "tensor::rearrange_and_copy()",o2scl::exc_einval);
+		   "tensor::rearrange_and_copy().",o2scl::exc_einval);
       } else {
+	if (verbose>0) {
+	  std::cout << "Zero new indices in "
+		    << "tensor::rearrange_and_copy()." << std::endl;
+	}
 	return tensor<data_t>();
       }
     }
+
     for(size_t i=0;i<rank_old;i++) {
-      if (err_on_fail) {
-	if (spec_old[i].type==index_spec::empty) {
+      if (spec_old[i].type==index_spec::empty) {
+	if (err_on_fail) {
 	  O2SCL_ERR2("Not all indices accounted for in ",
-		     "tensor::rearrange_and_copy()",o2scl::exc_einval);
+		     "tensor::rearrange_and_copy().",o2scl::exc_einval);
+	} else {
+	  if (verbose>0) {
+	    std::cout << "Index " << i << " not accounted for in "
+		      << "tensor::rearrange_and_copy()." << std::endl;
+	  }
+	  return tensor<data_t>();
 	}
-      } else {
-	return tensor<data_t>();
       }
     }
 
@@ -998,7 +1068,7 @@ namespace o2scl {
 	  ix_old[j]=ix_new[spec_old[j].ix1];
 	} else if (spec_old[j].type==index_spec::range) {
 	  if (spec_old[j].ix2<spec_old[j].ix3) {
-	    ix_old[j]=ix_new[spec_old[j].ix1]+spec_old[i].ix2;
+	    ix_old[j]=ix_new[spec_old[j].ix1]+spec_old[j].ix2;
 	  } else {
 	    ix_old[j]=spec_old[j].ix2-ix_new[spec_old[j].ix1];
 	  }

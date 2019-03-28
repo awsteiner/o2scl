@@ -2998,7 +2998,10 @@ namespace o2scl {
 		    bool endline=false) {
     
     // This next line is important since n-1 is not well-defined if n=0
-    if (n==0) return;
+    if (n==0) {
+      if (endline) os << std::endl;
+      return;
+    }
 
     for(size_t i=0;i<n-1;i++) os << v[i] << " ";
     os << v[n-1];

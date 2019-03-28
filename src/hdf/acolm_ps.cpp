@@ -2481,15 +2481,27 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
 
     if (type=="tensor") {
       tensor<> t;
-      t=tensor_obj.rearrange_and_copy(vis);
+      t=tensor_obj.rearrange_and_copy(vis,verbose,false);
+      if (t.total_size()==0) {
+	cerr << "Function rearrange_and_copy() failed." << endl;
+	return 1;
+      }
       tensor_obj=t;
     } else if (type=="tensor<int>") {
       tensor<int> t;
-      t=tensor_int_obj.rearrange_and_copy(vis);
+      t=tensor_int_obj.rearrange_and_copy(vis,verbose,false);
+      if (t.total_size()==0) {
+	cerr << "Function rearrange_and_copy() failed." << endl;
+	return 1;
+      }
       tensor_int_obj=t;
     } else {
       tensor<size_t> t;
-      t=tensor_size_t_obj.rearrange_and_copy(vis);
+      t=tensor_size_t_obj.rearrange_and_copy(vis,verbose,false);
+      if (t.total_size()==0) {
+	cerr << "Function rearrange_and_copy() failed." << endl;
+	return 1;
+      }
       tensor_size_t_obj=t;
     }
 
@@ -2610,7 +2622,11 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
     }
     
     tensor_grid<> t;
-    t=tensor_grid_obj.rearrange_and_copy(vis,verbose);
+    t=tensor_grid_obj.rearrange_and_copy(vis,verbose,false);
+    if (t.total_size()==0) {
+      cerr << "Function rearrange_and_copy() failed." << endl;
+      return 1;
+    }
     tensor_grid_obj=t;
     
   } else {

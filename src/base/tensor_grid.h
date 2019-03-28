@@ -1698,6 +1698,20 @@ namespace o2scl {
       for(size_t i=0;i<spec.size();i++) {
 	if (spec[i].type==index_spec::index ||
 	    spec[i].type==index_spec::reverse) {
+	  if (spec[i].ix1>=rank_old) {
+	    if (err_on_fail) {
+	      O2SCL_ERR2("Index too large (index,reverse) in ",
+			 "tensor_grid::rearrange_and_copy().",
+			 o2scl::exc_einval);
+	    } else {
+	      if (verbose>0) {
+		std::cout << "Index too large (index,reverse) in "
+			  << "tensor_grid::rearrange_and_copy()."
+			  << std::endl;
+	      }
+	      return tensor_grid<>();
+	    }
+	  }
 	  size_new.push_back(this->size[spec[i].ix1]);
 	  // Use ix1 to store the destination index (which is
 	  // at this point equal to rank_new)
@@ -1722,13 +1736,18 @@ namespace o2scl {
 	    }
 	  }
 	} else if (spec[i].type==index_spec::range) {
-	  if (spec[i].ix2>=this->size[spec[i].ix1] ||
+	  if (spec[i].ix1>=rank_old ||
+	      spec[i].ix2>=this->size[spec[i].ix1] ||
 	      spec[i].ix3>=this->size[spec[i].ix1]) {
 	    if (err_on_fail) {
-	      O2SCL_ERR2("Requested range beyond size of original tensor ",
-			 "in tensor_grid::rearrange_and_copy()",
-			 o2scl::exc_einval);
+	      O2SCL_ERR2("Index too large (range) in ",
+			 "tensor::rearrange_and_copy().",o2scl::exc_einval);
 	    } else {
+	      if (verbose>0) {
+		std::cout << "Index too large (range) in "
+			  << "tensor in tensor::rearrange_and_copy()."
+			  << std::endl;
+	      }
 	      return tensor_grid<>();
 	    }
 	  }
@@ -1746,7 +1765,31 @@ namespace o2scl {
 	    (index_spec(spec[i].type,spec[i].ix1,
 			spec[i].ix2,spec[i].ix3,spec[i].val1));
 	  rank_new++;
+	  // Update the new grid
+	  if (spec[i].ix3>spec[i].ix2) {
+	    for(size_t k=0;k<spec[i].ix3-spec[i].ix2+1;k++) {
+	      new_grid.push_back(this->get_grid(spec[i].ix1,k+spec[i].ix2));
+	    }
+	  } else {
+	    for(size_t k=0;k<spec[i].ix2-spec[i].ix3+1;k++) {
+	      new_grid.push_back(this->get_grid(spec[i].ix1,k+spec[i].ix3));
+	    }
+	  }
 	} else if (spec[i].type==index_spec::trace) {
+	  if (spec[i].ix1>=rank_old || spec[i].ix2>=rank_old) {
+	    if (err_on_fail) {
+	      O2SCL_ERR2("Index too large (trace) in ",
+			 "tensor_grid::rearrange_and_copy().",
+			 o2scl::exc_einval);
+	    } else {
+	      if (verbose>0) {
+		std::cout << "Index too large (trace) in "
+			  << "tensor_grid::rearrange_and_copy()."
+			  << std::endl;
+	      }
+	      return tensor_grid<>();
+	    }
+	  }
 	  if (this->size[spec[i].ix1]<this->size[spec[i].ix2]) {
 	    n_sum_loop*=this->size[spec[i].ix1];
 	    sum_sizes.push_back(this->size[spec[i].ix1]);
@@ -1756,15 +1799,26 @@ namespace o2scl {
 	  }
 	  // We set the values of ix1 and ix2 so that ix2
 	  // always refers to the other index being traced over
-	  spec_old[spec[i].ix1]=index_spec(spec[i].type,
-					   spec[i].ix1,
-					   spec[i].ix2,0,
-					   spec[i].val1);
-	  spec_old[spec[i].ix2]=index_spec(spec[i].type,
-					   spec[i].ix2,
-					   spec[i].ix1,0,
-					   spec[i].val1);
+	  spec_old[spec[i].ix1]=index_spec(spec[i].type,spec[i].ix1,
+					   spec[i].ix2);
+	  spec_old[spec[i].ix2]=index_spec(spec[i].type,spec[i].ix2,
+					   spec[i].ix1);
 	} else if (spec[i].type==index_spec::sum) {
+	  if (spec[i].ix1>=rank_old) {
+	    if (err_on_fail) {
+	      O2SCL_ERR2("Index too large (sum) in ",
+			 "tensor_grid::rearrange_and_copy().",
+			 o2scl::exc_einval);
+	    } else {
+	      if (verbose>0) {
+		std::cout << "Index " << spec[i].ix1
+			  << " too large (sum) in "
+			  << "tensor_grid::rearrange_and_copy()."
+			  << std::endl;
+	      }
+	      return tensor_grid<>();
+	    }
+	  }
 	  n_sum_loop*=this->size[spec[i].ix1];
 	  sum_sizes.push_back(this->size[spec[i].ix1]);
 	  spec_old[spec[i].ix1]=index_spec(spec[i].type,
@@ -1772,13 +1826,42 @@ namespace o2scl {
 					   spec[i].ix2,0,
 					   spec[i].val1);
 	} else if (spec[i].type==index_spec::fixed) {
+	  if (spec[i].ix1>=rank_old ||
+	      spec[i].ix2>=this->size[spec[i].ix1]) {
+	    if (err_on_fail) {
+	      O2SCL_ERR2("Index too large (fixed) in ",
+			 "tensor_grid::rearrange_and_copy().",
+			 o2scl::exc_einval);
+	    } else {
+	      if (verbose>0) {
+		std::cout << "Index " << spec[i].ix1 << " or "
+			  << spec[i].ix2 << " too large (fixed) in "
+			  << "tensor_grid::rearrange_and_copy()."
+			  << std::endl;
+	      }
+	      return tensor_grid<>();
+	    }
+	  }
 	  // Use ix1 to store the destination index (which is
 	  // at this point equal to rank_new)
-	  spec_old[spec[i].ix1]=index_spec(spec[i].type,
-					   rank_new,
-					   spec[i].ix2,0,
-					   spec[i].val1);
+	  spec_old[spec[i].ix1]=index_spec(spec[i].type,rank_new,
+					   spec[i].ix2);
 	} else if (spec[i].type==index_spec::interp) {
+	  if (spec[i].ix1>=rank_old) {
+	    if (err_on_fail) {
+	      O2SCL_ERR2("Index too large (interp) in ",
+			 "tensor_grid::rearrange_and_copy().",
+			 o2scl::exc_einval);
+	    } else {
+	      if (verbose>0) {
+		std::cout << "Index " << spec[i].ix1
+			  << " too large (interp) in "
+			  << "tensor_grid::rearrange_and_copy()."
+			  << std::endl;
+	      }
+	      return tensor_grid<>();
+	    }
+	  }
 	  // Use ix1 to store the destination index (which is
 	  // at this point equal to rank_new)
 	  spec_old[spec[i].ix1]=index_spec(spec[i].type,
@@ -1789,6 +1872,21 @@ namespace o2scl {
 	  ix_to_interp.push_back(spec[i].ix1);
 	} else if (spec[i].type==index_spec::grid ||
 		   spec[i].type==index_spec::gridw) {
+	  if (spec[i].ix1>=rank_old) {
+	    if (err_on_fail) {
+	      O2SCL_ERR2("Index too large (grid) in ",
+			 "tensor_grid::rearrange_and_copy().",
+			 o2scl::exc_einval);
+	    } else {
+	      if (verbose>0) {
+		std::cout << "Index " << spec[i].ix1
+			  << " too large (grid) in "
+			  << "tensor_grid::rearrange_and_copy()."
+			  << std::endl;
+	      }
+	      return tensor_grid<>();
+	    }
+	  }
 
 	  // Setup new grid in log or linear mode and determine
 	  // spacing between grid points for later use
@@ -1878,14 +1976,14 @@ namespace o2scl {
 	}
       }
       for(size_t i=0;i<rank_old;i++) {
-	if (err_on_fail) {
-	  if (spec_old[i].type==index_spec::empty) {
+	if (spec_old[i].type==index_spec::empty) {
+	  if (err_on_fail) {
 	    O2SCL_ERR2("Not all indices accounted for in ",
 		       "tensor_grid::rearrange_and_copy()",
 		       o2scl::exc_einval);
+	  } else {
+	    return tensor_grid<>();
 	  }
-	} else {
-	  return tensor_grid<>();
 	}
       }
 
@@ -2009,7 +2107,7 @@ namespace o2scl {
 	    ix_old[j]=ix_new[spec_old[j].ix1];
 	  } else if (spec_old[j].type==index_spec::range) {
 	    if (spec_old[j].ix2<spec_old[j].ix3) {
-	      ix_old[j]=ix_new[spec_old[j].ix1]+spec_old[i].ix2;
+	      ix_old[j]=ix_new[spec_old[j].ix1]+spec_old[j].ix2;
 	    } else {
 	      ix_old[j]=spec_old[j].ix2-ix_new[spec_old[j].ix1];
 	    }
