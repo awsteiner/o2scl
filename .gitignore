@@ -1,3 +1,6 @@
+auto_refresh.out
+auto_refresh.err
+
 # snap files
 *.snap
 prime
