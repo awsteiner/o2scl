@@ -26,6 +26,7 @@
 
 #include <o2scl/fermion_nonrel.h>
 #include <o2scl/classical.h>
+#include <o2scl/root_brent_gsl.h>
 
 using namespace std;
 using namespace o2scl;
@@ -164,6 +165,26 @@ void fermion_nonrel::nu_from_n(fermion &f, double temper) {
   density_root->err_nonconv=false;
   int ret=density_root->solve(nex,mf);
 
+  // The root_cern class has a hard time when nex is near zero,
+  // so we try a bracketing solver
+  if (ret!=0) {
+    double blow=fabs(nex), bhigh=-blow;
+    double yhigh=mf(bhigh), ylow=mf(blow);
+    for(size_t j=0;j<10 && yhigh*ylow>0.0;j++) {
+      double delta=fabs(blow);
+      blow+=delta;
+      bhigh-=delta;
+      yhigh=mf(bhigh);
+      ylow=mf(blow);
+    }
+    if (yhigh*ylow<0.0) {
+      o2scl::root_brent_gsl<> rbg;
+      rbg.err_nonconv=false;
+      ret=rbg.solve_bkt(blow,bhigh,mf);
+      if (ret==0) nex=blow;
+    }
+  }
+  
   if (ret!=0) {
 
     // If it failed, try to get a guess from classical_thermo particle
@@ -179,6 +200,7 @@ void fermion_nonrel::nu_from_n(fermion &f, double temper) {
     
     // If it failed again, add error information
     if (ret!=0) {
+      std::cout.precision(12);
       std::cout << "Function fermion_nonrel::nu_from_n() failed."
 		<< std::endl;
       std::cout << "  n,m,ms,T,nu: " << f.n << " " << f.m << " "
@@ -189,7 +211,6 @@ void fermion_nonrel::nu_from_n(fermion &f, double temper) {
 
   // Restore the value of density_root->err_nonconv
   density_root->err_nonconv=enc;
-
   
   if (f.inc_rest_mass) {
     f.nu=-nex*temper+f.m;
@@ -272,7 +293,7 @@ int fermion_nonrel::calc_density(fermion &f, double temper) {
 double fermion_nonrel::solve_fun(double x, double nog, double msT) {
 
   double nden;
-  
+
   // If the argument to gsl_sf_fermi_dirac_half() is less
   // than GSL_LOG_DBL_MIN (which is about -708), then 
   // an underflow occurs. We just set nden to zero in this 
