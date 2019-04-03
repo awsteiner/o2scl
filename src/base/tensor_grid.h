@@ -1183,7 +1183,7 @@ namespace o2scl {
     template<class range_t=ub_range,
       class data_range_t=ubvector_range, 
       class index_range_t=ubvector_size_t_range> 
-      double interpolate(double *vals) const {
+      double interpolate(double *vals) {
 
       typedef interp_vec<vec_t> interp_t;
       
