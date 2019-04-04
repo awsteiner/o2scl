@@ -134,7 +134,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   {
     vector<std::string> itmp={"list","diag","to-table3d","to-table3d-sum",
 			      "max","min","to-tensor-grid","rearrange",
-			      "entry","function"};
+			      "entry","function","sum","stats"};
     type_comm_list.insert(std::make_pair("tensor",itmp));
   }
   {
@@ -145,7 +145,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
     vector<std::string> itmp={"list","to-table3d","slice","to-table",
 			      "set-grid","max","min","rearrange",
 			      "get-grid","interp","entry","to-tensor",
-			      "entry-grid","function"};
+			      "entry-grid","function","sum","stats"};
     type_comm_list.insert(std::make_pair("tensor_grid",itmp));
   }
   {
@@ -596,8 +596,16 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="tensor") {
     
-    static const size_t narr=10;
+    static const size_t narr=12;
     comm_option_s options_arr[narr]={
+      {0,"sum","Output the sum of all the tensor entries.",0,0,"",
+       ((string)"The \"sum\" command outputs the total tensor size ")+
+       "and the sum over all entries.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sum),
+       both},
+      {0,"stats","",0,0,"","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_stats),
+       both},
       {0,"diag","Get diagonal elements.",-1,-1,"",
        ((string)"Extract only the elements on the main diagonal ")+
        "to create a double[] object.",new comm_option_mfptr<acol_manager>
@@ -749,8 +757,16 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="tensor_grid") {
     
-    static const size_t narr=14;
+    static const size_t narr=16;
     comm_option_s options_arr[narr]={
+      {0,"sum","Output the sum of all the tensor entries.",0,0,"",
+       ((string)"The \"sum\" command outputs the total tensor size ")+
+       "and the sum over all entries.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sum),
+       both},
+      {0,"stats","",0,0,"","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_stats),
+       both},
       {0,"entry","Get a single entry in a tensor_grid object.",
        -1,-1,"<index 1> <index 2> <index 3> ... [value or \"none\"]",
        ((string)"The \"entry\" command gets or sets a value in the ")+

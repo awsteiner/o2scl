@@ -1247,67 +1247,111 @@ int acol_manager::comm_sort(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_stats(std::vector<std::string> &sv, bool itive_com) {
 
-  if (type!="table") {
-    cout << "Not implemented for type " << type << endl;
-    return 0;
-  }
-  
-  if (table_obj.get_nlines()==0) {
-    cerr << "No table to analyze." << endl;
-    return exc_efailed;
-  }
-  
-  std::string i1;
-  int ret=get_input_one(sv,"Enter column to get info on",i1,"stats",
-			itive_com);
-  if (ret!=0) return ret;
-
-  if (table_obj.is_column(i1)==false) {
-    cerr << "Could not find column named '" << i1 << "'." << endl;
-    return exc_efailed;
-  }
-
-  const vector<double> &cref=table_obj.get_column(i1);
-  cout << "N        : " << table_obj.get_nlines() << endl;
-  cout << "Sum      : " << vector_mean(table_obj.get_nlines(),cref)*
-    table_obj.get_nlines() << endl;
-  cout << "Mean     : " << vector_mean(table_obj.get_nlines(),cref) << endl;
-  cout << "Std. dev.: " << vector_stddev(table_obj.get_nlines(),cref) << endl;
-  size_t ix;
-  double val;
-  vector_min(table_obj.get_nlines(),cref,ix,val);
-  cout << "Min      : " << val << " at index: " << ix << endl;
-  vector_max(table_obj.get_nlines(),cref,ix,val);
-  cout << "Max      : " << val << " at index: " << ix << endl;
-
-  size_t dup=0, inc=0, dec=0;
-  for(size_t i=0;i<table_obj.get_nlines()-1;i++) {
-    if (cref[i+1]==cref[i]) dup++;
-    if (cref[i]<cref[i+1]) inc++;
-    if (cref[i]>cref[i+1]) dec++;
-  }
-  if (inc>0 && dec==0) {
-    if (dup>0) {
-      cout << "Increasing (" << dup << " duplicates)." << endl;
-    } else {
-      cout << "Strictly increasing. No duplicates." << endl;
+  if (type=="table") {
+    
+    if (table_obj.get_nlines()==0) {
+      cerr << "No table to analyze." << endl;
+      return exc_efailed;
     }
-  } else if (dec>0 && inc==0) {
-    if (dup>0) {
-      cout << "Decreasing (" << dup << " duplicates)." << endl;
-    } else {
-      cout << "Strictly decreasing. No duplicates." << endl;
+    
+    std::string i1;
+    int ret=get_input_one(sv,"Enter column to get info on",i1,"stats",
+			  itive_com);
+    if (ret!=0) return ret;
+    
+    if (table_obj.is_column(i1)==false) {
+      cerr << "Could not find column named '" << i1 << "'." << endl;
+      return exc_efailed;
     }
-  } else if (dec==0 && inc==0) {
-    cout << "Constant (" << dup << " duplicates)." << endl;
+    
+    const vector<double> &cref=table_obj.get_column(i1);
+    cout << "N        : " << table_obj.get_nlines() << endl;
+    cout << "Sum      : " << vector_mean(table_obj.get_nlines(),cref)*
+      table_obj.get_nlines() << endl;
+    cout << "Mean     : " << vector_mean(table_obj.get_nlines(),cref) << endl;
+    cout << "Std. dev.: " << vector_stddev(table_obj.get_nlines(),cref) << endl;
+    size_t ix;
+    double val;
+    vector_min(table_obj.get_nlines(),cref,ix,val);
+    cout << "Min      : " << val << " at index: " << ix << endl;
+    vector_max(table_obj.get_nlines(),cref,ix,val);
+    cout << "Max      : " << val << " at index: " << ix << endl;
+    
+    size_t dup=0, inc=0, dec=0;
+    for(size_t i=0;i<table_obj.get_nlines()-1;i++) {
+      if (cref[i+1]==cref[i]) dup++;
+      if (cref[i]<cref[i+1]) inc++;
+      if (cref[i]>cref[i+1]) dec++;
+    }
+    if (inc>0 && dec==0) {
+      if (dup>0) {
+	cout << "Increasing (" << dup << " duplicates)." << endl;
+      } else {
+	cout << "Strictly increasing. No duplicates." << endl;
+      }
+    } else if (dec>0 && inc==0) {
+      if (dup>0) {
+	cout << "Decreasing (" << dup << " duplicates)." << endl;
+      } else {
+	cout << "Strictly decreasing. No duplicates." << endl;
+      }
+    } else if (dec==0 && inc==0) {
+      cout << "Constant (" << dup << " duplicates)." << endl;
+    } else {
+      cout << "Non-monotonic (" << inc << " increasing, " << dec 
+	   << " decreasing, and " << dup << " duplicates)." << endl;
+    }
+    if ((dup+inc+dec)!=(table_obj.get_nlines()-1)) {
+      cout << "Counting mismatch from non-finite values or signed zeros."
+	   << endl;
+    }
+    
+  } else if (type=="tensor") {
+    
+    const std::vector<double> &data=tensor_obj.get_data();
+    size_t N=data.size();
+    cout << "N        : " << N << endl;
+    cout << "Sum      : " << vector_mean(N,data)*N << endl;
+    cout << "Mean     : " << vector_mean(N,data) << endl;
+    cout << "Std. dev.: " << vector_stddev(N,data) << endl;
+    size_t ix;
+    vector<size_t> ix2(tensor_obj.get_rank());
+    double val;
+    vector_min(N,data,ix,val);
+    tensor_obj.unpack_index(ix,ix2);
+    cout << "Min      : " << val << " at indices: ";
+    vector_out(cout,ix2,true);
+    vector_max(N,data,ix,val);
+    tensor_obj.unpack_index(ix,ix2);
+    cout << "Max      : " << val << " at indices: ";
+    vector_out(cout,ix2,true);
+  
+  } else if (type=="tensor_grid") {
+    
+    const std::vector<double> &data=tensor_grid_obj.get_data();
+    size_t N=data.size();
+    cout << "N        : " << N << endl;
+    cout << "Sum      : " << vector_mean(N,data)*N << endl;
+    cout << "Mean     : " << vector_mean(N,data) << endl;
+    cout << "Std. dev.: " << vector_stddev(N,data) << endl;
+    size_t ix;
+    vector<size_t> ix2(tensor_grid_obj.get_rank());
+    double val;
+    vector_min(N,data,ix,val);
+    tensor_grid_obj.unpack_index(ix,ix2);
+    cout << "Min      : " << val << " at indices: ";
+    vector_out(cout,ix2,true);
+    vector_max(N,data,ix,val);
+    tensor_grid_obj.unpack_index(ix,ix2);
+    cout << "Max      : " << val << " at indices: ";
+    vector_out(cout,ix2,true);
+    
   } else {
-    cout << "Non-monotonic (" << inc << " increasing, " << dec 
-	 << " decreasing, and " << dup << " duplicates)." << endl;
+    
+    cout << "Not implemented for type " << type << endl;
+    return 1;
+    
   }
-  if ((dup+inc+dec)!=(table_obj.get_nlines()-1)) {
-    cout << "Counting mismatch from non-finite values or signed zeros." << endl;
-  }
-  
   
   return 0;
 }
@@ -2753,6 +2797,14 @@ int acol_manager::comm_sum(std::vector<std::string> &sv, bool itive_com) {
       }
     }
     
+  } else if (type=="tensor_grid") {
+    const std::vector<double> &data=tensor_grid_obj.get_data();
+    cout << "Sum of all " << data.size() << " entries in the tensor is: "
+	 << o2scl::vector_sum<const vector<double>,double>(data) << endl;
+  } else if (type=="tensor") {
+    const std::vector<double> &data=tensor_obj.get_data();
+    cout << "Sum of all " << data.size() << " entries in the tensor is: "
+	 << o2scl::vector_sum<const vector<double>,double>(data) << endl;
   } else if (type=="double[]") {
     cout << "Sum of " << doublev_obj.size() << " elements is: "
 	 << o2scl::vector_sum<vector<double>,double>(doublev_obj) << endl;
