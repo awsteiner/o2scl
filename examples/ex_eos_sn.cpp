@@ -34,6 +34,152 @@ using namespace o2scl;
 using namespace o2scl_hdf;
 using namespace o2scl_const;
 
+class eos_sn_compose : public eos_sn_base {
+  
+public:
+  
+  eos_sn_compose() {
+  }
+  
+  /// Load table from filename \c fname with mode \c mode
+  virtual void load() {
+    
+    //wordexp_single_file(fname);
+
+    vector<double> grid;
+    
+    ifstream fin("eos.nb");
+    int n_nB;
+    // the first entry is ignored
+    fin >> n_nB >> n_nB;
+    nB_grid.resize(n_nB);
+    for(size_t j=0;j<n_nB;j++) {
+      fin >> nB_grid[j];
+      grid.push_back(nB_grid[j]);
+    }
+    fin.close();
+    
+    ifstream fin("eos.yq");
+    int n_Ye;
+    // the first entry is ignored
+    fin >> n_Ye >> n_Ye;
+    Ye_grid.resize(n_Ye);
+    for(size_t j=0;j<n_Ye;j++) {
+      fin >> Ye_grid[j];
+      grid.push_back(Ye_grid[j]);
+    }
+    fin.close();
+    
+    ifstream fin("eos.t");
+    int n_T;
+    // the first entry is ignored
+    fin >> n_T >> n_T;
+    T_grid.resize(n_T);
+    for(size_t j=0;j<n_T;j++) {
+      fin >> T_grid[j];
+      grid.push_back(T_grid[j]);
+    }
+    fin.close();
+
+    alloc();
+    
+    for(size_t i=0;i<n_base+n_oth;i++) {
+      arr[i]->set_grid_packed(grid);
+    }
+
+    ifstream fin("eos.thermo");
+    fin >> m_neut;
+    fin >> m_prot;
+    
+    double dtemp, dtemp2;
+    for(size_t m=0;m<n_T;m++) {
+      for(size_t k=0;k<n_Ye;k++) {
+	for(size_t j=0;j<n_nB;j++) {
+	  
+	  // Skip the grid points since we know them already
+	  fin >> dtemp;
+	  fin >> dtemp;
+	  fin >> dtemp;
+	  
+	  fin >> dtemp;
+	  P.set(i,j,k,dtemp*nB_grid[j]);
+	  fin >> dtemp;
+	  S.set(i,j,k,dtemp);
+	  
+	  fin >> dtemp;
+	  mun.set(i,j,k,(dtemp+1.0)*m_neut);
+	  fin >> dtemp2;
+	  mup.set(i,j,k,dtemp2*m_neut+(dtemp+1.0)*m_neut);
+	  // Skip the lepton chemical potential
+	  fin >> dtemp;
+	  
+	  fin >> dtemp;
+	  F.set(i,j,k,(dtemp+1.0)*nB_grid[j]*m_neut);
+	  fin >> dtemp;
+	  E.set(i,j,k,(dtemp+1.0)*nB_grid[j]*m_neut);
+
+	  // Skip the last column
+	  fin >> dtemp;
+	}
+      }
+    }
+    fin.close();
+
+    ifstream fin("eos.compo");
+    
+    for(size_t m=0;m<n_T;m++) {
+      for(size_t k=0;k<n_Ye;k++) {
+	for(size_t j=0;j<n_nB;j++) {
+	  
+	  // Skip the grid points since we know them already
+	  fin >> dtemp;
+	  fin >> dtemp;
+	  fin >> dtemp;
+
+	  fin >> dtemp;
+	  fin >> dtemp;
+	  fin >> dtemp;
+	  fin >> dtemp;
+	  fin >> dtemp;
+	  fin >> dtemp;
+	  
+	  // This isn't right yet
+	  fin >> dtemp;
+	  A.set(i,j,k,dtemp);
+	  fin >> dtemp;
+	  Z.set(i,j,k,dtemp);
+	  
+	  // Skip the last column
+	  fin >> dtemp;
+	}
+      }
+    }
+    fin.close();
+
+    // Loaded must be set to true before calling set_interp()
+    n_oth=0;
+    loaded=true;
+    with_leptons_loaded=true;
+    baryons_only_loaded=false;
+    
+    if (n_oth!=oth_names.size()) {
+      O2SCL_ERR2("Number of names does not match number of data sets ",
+		 "in eos_sn_oo::load().",exc_efailed);
+    }
+    
+    // It is important that 'loaded' is set to true before the call to
+    // set_interp_type().
+    set_interp_type(itp_linear);
+    
+    if (verbose>0) {
+      std::cout << "Done in eos_sn_compose::load()." << std::endl;
+    }
+    
+    return;
+  }
+  
+};
+
 /** \brief A class for manipulating EOS tables 
 
     \note Highly experimental.
