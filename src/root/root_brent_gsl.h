@@ -366,6 +366,7 @@ namespace o2scl {
 	
     if ((f_lower<0.0 && f_upper<0.0) || 
 	(f_lower>0.0 && f_upper>0.0)) {
+      std::cout << f_lower << " " << f_upper << std::endl;
       O2SCL_ERR2("Endpoints don't straddle y=0 in ",
 		     "root_brent_gsl::set().",o2scl::exc_einval);
     }

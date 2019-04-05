@@ -177,7 +177,7 @@ void fermion_nonrel::nu_from_n(fermion &f, double temper) {
       yhigh=mf(bhigh);
       ylow=mf(blow);
     }
-    if (yhigh*ylow<0.0) {
+    if ((yhigh<0.0 && ylow<0.0) || (yhigh>0.0 && ylow>0.0)) {
       o2scl::root_brent_gsl<> rbg;
       rbg.err_nonconv=false;
       ret=rbg.solve_bkt(blow,bhigh,mf);
