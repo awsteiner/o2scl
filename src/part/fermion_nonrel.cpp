@@ -177,7 +177,7 @@ void fermion_nonrel::nu_from_n(fermion &f, double temper) {
       yhigh=mf(bhigh);
       ylow=mf(blow);
     }
-    if ((yhigh<0.0 && ylow<0.0) || (yhigh>0.0 && ylow>0.0)) {
+    if ((yhigh<0.0 && ylow>0.0) || (yhigh>0.0 && ylow<0.0)) {
       o2scl::root_brent_gsl<> rbg;
       rbg.err_nonconv=false;
       ret=rbg.solve_bkt(blow,bhigh,mf);
@@ -303,6 +303,7 @@ double fermion_nonrel::solve_fun(double x, double nog, double msT) {
   else nden=gsl_sf_fermi_dirac_half(-x)*sqrt(pi)/2.0;
   
   nden*=pow(2.0*msT,1.5)/4.0/pi2;
-  return nden/nog-1.0;
+  double ret=nden/nog-1.0;
+  return ret;
 }
 
