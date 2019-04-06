@@ -837,15 +837,30 @@ int acol_manager::comm_function(std::vector<std::string> &sv, bool itive_com) {
     
   } else if (type=="tensor") {
 
-    std::string function;
-    int ret=get_input_one(sv,"Enter function of indices 'i0,i1,...'",
-			  function,"function",itive_com);
-    if (ret!=0) return ret;
+    std::string function, cond_func;
+    if (sv.size()==1) {
+      vector<string> pr, in;
+      pr.push_back("Enter function of indices i0, i1, ... or \"none\"");
+      pr.push_back("Enter function of indices i0, i1, ...");
+      int ret=get_input(sv,pr,in,"function",itive_com);
+      function=in[1];
+      if (in[0]!="none") {
+	cond_func=in[0];
+      }
+    } else if (sv.size()==2) {
+      function=sv[1];
+    } else {
+      function=sv[2];
+      if (sv[1]!="none") {
+	cond_func=sv[1];
+      }
+    }
 
-    // Parse function
-    calculator calc;
+    // Parse function(s)
+    calculator calc, calc_cond;
     std::map<std::string,double> vars;
     calc.compile(function.c_str(),&vars);
+    calc_cond.compile(cond_func.c_str(),&vars);
 
     // Set
     size_t rk=tensor_obj.get_rank();
@@ -855,20 +870,37 @@ int acol_manager::comm_function(std::vector<std::string> &sv, bool itive_com) {
       for(size_t j=0;j<rk;j++) {
 	vars[((string)"i")+szttos(j)]=ix[j];
       }
-      tensor_obj.set(ix,calc.eval(&vars));
+      if (cond_func.length()>0 && calc_cond.eval(&vars)>0.5) {
+	tensor_obj.set(ix,calc.eval(&vars));
+      }
     }
     
   } else if (type=="tensor_grid") {
 
-    std::string function;
-    int ret=get_input_one(sv,"Enter function of 'x0,x1,...'",
-			  function,"function",itive_com);
-    if (ret!=0) return ret;
+    std::string function, cond_func;
+    if (sv.size()==1) {
+      vector<string> pr, in;
+      pr.push_back("Enter function of i0,i1,... and x0,x1,... or \"none\"");
+      pr.push_back("Enter function of i0,i1,... and x0,x1,...");
+      int ret=get_input(sv,pr,in,"function",itive_com);
+      function=in[1];
+      if (in[0]!="none") {
+	cond_func=in[0];
+      }
+    } else if (sv.size()==2) {
+      function=sv[1];
+    } else {
+      function=sv[2];
+      if (sv[1]!="none") {
+	cond_func=sv[1];
+      }
+    }
 
-    // Parse function
-    calculator calc;
+    // Parse function(s)
+    calculator calc, calc_cond;
     std::map<std::string,double> vars;
     calc.compile(function.c_str(),&vars);
+    calc_cond.compile(cond_func.c_str(),&vars);
 
     // Set
     size_t rk=tensor_grid_obj.get_rank();
@@ -876,9 +908,12 @@ int acol_manager::comm_function(std::vector<std::string> &sv, bool itive_com) {
     for(size_t i=0;i<tensor_grid_obj.total_size();i++) {
       tensor_grid_obj.unpack_index(i,ix);
       for(size_t j=0;j<rk;j++) {
+	vars[((string)"i")+szttos(j)]=ix[j];
 	vars[((string)"x")+szttos(j)]=tensor_grid_obj.get_grid(j,ix[j]);
       }
-      tensor_grid_obj.set(ix,calc.eval(&vars));
+      if (cond_func.length()>0 && calc_cond.eval(&vars)>0.5) {
+	tensor_grid_obj.set(ix,calc.eval(&vars));
+      }
     }
     
   } else {

@@ -614,8 +614,15 @@ void acol_manager::command_add(std::string new_type) {
        -1,-1,"<value 1> <value 2> <value 3> ... [value or \"none\"]",
        "",new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_entry),both},
-      {'f',"function","Set tensor value from a function.",0,-1,
-       "","",
+      {'f',"function","Set tensor value from a function.",0,1,
+       "[cond. function] <function of i0, i1, ...>",
+       ((string)"The \"function\" command ")+
+       "sets all entries in a tensor equal to a user-specified "+
+       "mathematical function of the indices. When the conditional "+
+       "function evaluates to a number "+
+       "less than or equal to 0.5, then the tensor entry will be "
+       "unchanged. (For more help with "+
+       "functions, type \""+cl->cmd_name+" -help functions\".)",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_function),
        both},
       {'l',"list","List the tensor rank and index sizes.",
@@ -782,8 +789,18 @@ void acol_manager::command_add(std::string new_type) {
        "the specified grid values.",
        new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_entry_grid),both},
-      {'f',"function","Set tensor value from a function.",0,-1,
-       "","",
+      {'f',"function","Set tensor value from a function.",0,1,
+       "[conditional func.] <func. of i0, i1, ... and x0, x1, ...>",
+       ((string)"The \"function\" command sets ")+
+       "all the data entries in a tensor_grid equal to a user-specified "+
+       "mathematical function of the indices (i0, i1, ...) or grid "+
+       "points (x0, x1, ...). If two function arguments are given and "+
+       "if the first function argument is not \"none\", then "+
+       "the first function specifies which tensor entries are to be "+
+       "modified. When the conditional function evaluates to a number "+
+       "less than or equal to 0.5, then the tensor entry will be "
+       "unchanged. (For more help with "+
+       "functions, type \""+cl->cmd_name+" -help functions.\".)",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_function),
        both},
       {0,"get-grid","Get the tensor grid.",0,0,"",
