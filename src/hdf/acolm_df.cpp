@@ -503,14 +503,21 @@ int acol_manager::comm_entry(std::vector<std::string> &sv, bool itive_com) {
     size_t rk=tensor_obj.get_rank();
     
     // Handle arguments
-    vector<string> in, pr;
-    for(size_t i=0;i<rk;i++) {
-      pr.push_back(((std::string)"Index ")+
-		   o2scl::szttos(i));
+    vector<string> in;
+    if (sv.size()<rk+1) {
+      vector<string> pr;
+      for(size_t i=0;i<rk;i++) {
+	pr.push_back(((std::string)"Index ")+
+		     o2scl::szttos(i));
+      }
+      pr.push_back("Enter new value (or \"none\") to keep original value");
+      int ret=get_input(sv,pr,in,"entry",itive_com);
+      if (ret!=0) return ret;
+    } else {
+      for(size_t i=0;i<sv.size()-1;i++) {
+	in.push_back(sv[i+1]);
+      }
     }
-    pr.push_back("Enter new value (or \"none\") to keep original value");
-    int ret=get_input(sv,pr,in,"entry",itive_com);
-    if (ret!=0) return ret;
 
     // Parse to array
     vector<size_t> ix;
@@ -540,15 +547,22 @@ int acol_manager::comm_entry(std::vector<std::string> &sv, bool itive_com) {
 
     size_t rk=tensor_grid_obj.get_rank();
 
-    // Handle arguments
-    vector<string> in, pr;
-    for(size_t i=0;i<rk;i++) {
-      pr.push_back(((std::string)"Index ")+
-		   o2scl::szttos(i));
+    // Handle arguments if they weren't specified
+    vector<string> in;
+    if (sv.size()<rk+1) {
+      vector<string> pr;
+      for(size_t i=0;i<rk;i++) {
+	pr.push_back(((std::string)"Index ")+
+		     o2scl::szttos(i));
+      }
+      pr.push_back("Enter new value (or \"none\") to keep original value");
+      int ret=get_input(sv,pr,in,"entry",itive_com);
+      if (ret!=0) return ret;
+    } else {
+      for(size_t i=0;i<sv.size()-1;i++) {
+	in.push_back(sv[i+1]);
+      }
     }
-    pr.push_back("Enter new value (or \"none\") to keep original value");
-    int ret=get_input(sv,pr,in,"entry",itive_com);
-    if (ret!=0) return ret;
 
     // Parse to array
     vector<size_t> ix;
@@ -564,7 +578,7 @@ int acol_manager::comm_entry(std::vector<std::string> &sv, bool itive_com) {
     // Get associated grid points
     std::vector<double> vals(rk);
     for(size_t i=0;i<rk;i++) {
-      vals[i]=tensor_grid_obj.get_grid(i,ix[rk]);
+      vals[i]=tensor_grid_obj.get_grid(i,ix[i]);
     }
     
     // Output indices, grid point, value
