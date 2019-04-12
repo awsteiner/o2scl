@@ -1283,6 +1283,13 @@ int acol_manager::comm_stats(std::vector<std::string> &sv, bool itive_com) {
       if (cref[i]<cref[i+1]) inc++;
       if (cref[i]>cref[i+1]) dec++;
     }
+
+    size_t ninf=0, nnan=0;
+    for(size_t i=0;i<table_obj.get_nlines();i++) {
+      if (std::isinf(cref[i])) ninf++;
+      if (std::isnan(cref[i])) nnan++;
+    }
+    
     if (inc>0 && dec==0) {
       if (dup>0) {
 	cout << "Increasing (" << dup << " duplicates)." << endl;
@@ -1300,6 +1307,12 @@ int acol_manager::comm_stats(std::vector<std::string> &sv, bool itive_com) {
     } else {
       cout << "Non-monotonic (" << inc << " increasing, " << dec 
 	   << " decreasing, and " << dup << " duplicates)." << endl;
+    }
+    if (ninf>0) {
+      cout << ninf << " infinite values." << endl;
+    }
+    if (nnan>0) {
+      cout << nnan << " NaN values." << endl;
     }
     if ((dup+inc+dec)!=(table_obj.get_nlines()-1)) {
       cout << "Counting mismatch from non-finite values or signed zeros."
@@ -1325,6 +1338,18 @@ int acol_manager::comm_stats(std::vector<std::string> &sv, bool itive_com) {
     tensor_obj.unpack_index(ix,ix2);
     cout << "Max      : " << val << " at indices: ";
     vector_out(cout,ix2,true);
+    
+    size_t ninf=0, nnan=0;
+    for(size_t i=0;i<N;i++) {
+      if (std::isinf(data[i])) ninf++;
+      if (std::isnan(data[i])) nnan++;
+    }
+    if (ninf>0) {
+      cout << ninf << " infinite values." << endl;
+    }
+    if (nnan>0) {
+      cout << nnan << " NaN values." << endl;
+    }
   
   } else if (type=="tensor_grid") {
     
@@ -1346,6 +1371,18 @@ int acol_manager::comm_stats(std::vector<std::string> &sv, bool itive_com) {
     cout << "Max      : " << val << " at indices: ";
     vector_out(cout,ix2,true);
     
+    size_t ninf=0, nnan=0;
+    for(size_t i=0;i<N;i++) {
+      if (std::isinf(data[i])) ninf++;
+      if (std::isnan(data[i])) nnan++;
+    }
+    if (ninf>0) {
+      cout << ninf << " infinite values." << endl;
+    }
+    if (nnan>0) {
+      cout << nnan << " NaN values." << endl;
+    }
+  
   } else {
     
     cout << "Not implemented for type " << type << endl;
