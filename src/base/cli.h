@@ -431,6 +431,7 @@ namespace o2scl {
     int comm_option_license(std::vector<std::string> &sv, bool itive_com);
     int comm_option_no_intro(std::vector<std::string> &sv, bool itive_com);
     int comm_option_run(std::vector<std::string> &sv, bool itive_com);
+    int comm_option_shell(std::vector<std::string> &sv, bool itive_com);
     int comm_option_set(std::vector<std::string> &sv, bool itive_com);
     int comm_option_warranty(std::vector<std::string> &sv, bool itive_com);
     //@}
@@ -470,6 +471,7 @@ namespace o2scl {
     comm_option_s c_set;
     comm_option_s c_get;
     comm_option_s c_run;
+    comm_option_s c_shell;
     comm_option_s c_no_intro;
     comm_option_s c_alias;
     //@}

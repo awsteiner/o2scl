@@ -158,6 +158,16 @@ cli::cli() {
   c_run.func=new comm_option_mfptr<cli>(this,&cli::comm_option_run);
   c_run.type=comm_option_both;
       
+  c_shell.shrt=0;
+  c_shell.lng="shell";
+  c_shell.min_parms=1;
+  c_shell.max_parms=-1;
+  c_shell.parm_desc="<commands>";
+  c_shell.desc="Run a shell command.";
+  c_shell.help="";
+  c_shell.func=new comm_option_mfptr<cli>(this,&cli::comm_option_shell);
+  c_shell.type=comm_option_both;
+      
   c_set.shrt=0;
   c_set.lng="set";
   c_set.min_parms=2;
@@ -212,6 +222,7 @@ cli::cli() {
   clist.push_back(c_no_intro);
   clist.push_back(c_commands);
   clist.push_back(c_run);
+  clist.push_back(c_shell);
   clist.push_back(c_quit);
   clist.push_back(c_exit);
   clist.push_back(c_license);
@@ -241,6 +252,7 @@ cli::~cli() {
   delete c_alias.func;
   delete c_get.func;
   delete c_run.func;
+  delete c_shell.func;
   delete c_set.func;
   delete c_license.func;
   delete c_warranty.func;
@@ -1093,6 +1105,25 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
     
   }
 
+  return 0;
+}
+
+int cli::comm_option_shell(vector<string> &sv, bool itive_com) {
+
+  string cmd;
+  for(size_t i=1;i<sv.size();i++) {
+    cmd+=" "+sv[i];
+  }
+  if (verbose>0) {
+    cout << "Executing system command: " 
+	 << cmd << endl;
+  }
+  int sret=system(cmd.c_str());
+  if (verbose>0) {
+    cout << "Done with system command (returned " 
+	 << sret << ")." << endl;
+  }
+  
   return 0;
 }
 
