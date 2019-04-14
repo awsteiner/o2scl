@@ -26,7 +26,7 @@
 #ifndef O2SCL_SLACK_MESSENGER_H
 #define O2SCL_SLACK_MESSENGER_H
 
-/** \brief Object to send messages to slack
+/** \brief Object to send messages to Slack using curl
  */
 class slack_messenger {
 
@@ -54,7 +54,7 @@ class slack_messenger {
    */
   double min_time_between;
 
-  /** \brief Icon to use (default "computer")
+  /** \brief Icon to use (without colons; default "computer")
    */
   std::string icon;
 
@@ -66,8 +66,14 @@ class slack_messenger {
    */
   int verbose;
 
-  slack_message(std::string p_channel="", std::string p_username="", 
-		bool p_mpi_time=false, std::string p_url="",) {
+  /** \brief Create a messenger object with specified channel,
+      username, URL and time method
+
+      If the URL is not specified, this constructor tries to determine
+      it from the environment variable \c O2SCL_SLACK_URL .
+  */
+  slack_messenger(std::string p_channel="", std::string p_username="", 
+		  std::string p_url="", bool p_mpi_time=false) {
     
     if (p_url.length()==0) {
       set_url_from_env("O2SCL_SLACK_URL");
@@ -84,7 +90,7 @@ class slack_messenger {
       time_last_message=MPI_Wtime();
 #else
       O2SCL_ERR("Value mpi_time is true but O2SCL_MPI not defined ",
-		"in slack_message::slack_message().",
+		"in slack_messenger::slack_messenger().",
 		o2scl::exc_einval);
 #endif
     } else {
