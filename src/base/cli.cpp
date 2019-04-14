@@ -1110,18 +1110,27 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
 
 int cli::comm_option_shell(vector<string> &sv, bool itive_com) {
 
-  string cmd;
-  for(size_t i=1;i<sv.size();i++) {
-    cmd+=" "+sv[i];
-  }
-  if (verbose>0) {
-    cout << "Executing system command: " 
-	 << cmd << endl;
-  }
-  int sret=system(cmd.c_str());
-  if (verbose>0) {
-    cout << "Done with system command (returned " 
-	 << sret << ")." << endl;
+  if (shell_cmd_allowed) {
+    if (sv.size()==1) {
+      cerr << "Not enough arguments to shell." << endl;
+      return 1;
+    }
+    string cmd;
+    for(size_t i=1;i<sv.size();i++) {
+      cmd+=" "+sv[i];
+    }
+    if (verbose>0) {
+      cout << "Executing system command: " 
+	   << cmd << endl;
+    }
+    int sret=system(cmd.c_str());
+    if (verbose>0) {
+      cout << "Done with system command (returned " 
+	   << sret << ")." << endl;
+    }
+  } else {
+    cerr << "Shell commands not allowed." << endl;
+    return 1;
   }
   
   return 0;

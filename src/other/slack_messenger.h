@@ -1,0 +1,194 @@
+/*
+  -------------------------------------------------------------------
+
+  Copyright (C) 2019, Andrew W. Steiner
+
+  This file is part of O2scl.
+
+  O2scl is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 3 of the License, or
+  (at your option) any later version.
+
+  O2scl is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with O2scl. If not, see <http://www.gnu.org/licenses/>.
+
+  -------------------------------------------------------------------
+*/
+/** \file slack_messenger.h
+    \brief File defining \ref o2scl::slack_messenger
+*/
+#ifndef O2SCL_SLACK_MESSENGER_H
+#define O2SCL_SLACK_MESSENGER_H
+
+/** \brief Object to send messages to slack
+ */
+class slack_messenger {
+
+ protected:
+
+  /** \brief Time (in seconds) the last message was sent
+   */
+  double time_last_message;
+
+  /** \brief If true, use MPI to determine time
+   */
+  bool mpi_time;
+  
+ public:
+
+  /** \brief The URL for the Slack webhook
+   */
+  std::string url;
+
+  /** \brief The destination channel
+   */
+  std::string channel;
+
+  /** \brief Minimum time between messages in seconds (default 300)
+   */
+  double min_time_between;
+
+  /** \brief Icon to use (default "computer")
+   */
+  std::string icon;
+
+  /** \brief Slack username 
+   */
+  std::string username;
+
+  /** \brief Verbosity parameter (default 1)
+   */
+  int verbose;
+
+  slack_message(std::string p_channel="", std::string p_username="", 
+		bool p_mpi_time=false, std::string p_url="",) {
+    
+    if (p_url.length()==0) {
+      set_url_from_env("O2SCL_SLACK_URL");
+    } else {
+      url=p_url;
+    } 
+    channel=p_channel;
+    username=p_username;
+    min_time_between=300.0;
+    icon="computer";
+    verbose=1;
+    if (mpi_time) {
+#ifdef O2SCL_MPI
+      time_last_message=MPI_Wtime();
+#else
+      O2SCL_ERR("Value mpi_time is true but O2SCL_MPI not defined ",
+		"in slack_message::slack_message().",
+		o2scl::exc_einval);
+#endif
+    } else {
+      time_last_message=time();
+    }
+    mpi_time=p_mpi_time;
+  }
+
+  /** \brief Set the time mode (normal or MPI)
+   */
+  void set_time_mode(bool mpi_time) {
+    if (mpi_time) {
+#ifdef O2SCL_MPI
+      time_last_message=MPI_Wtime();
+#else
+      O2SCL_ERR("Value mpi_time is true but O2SCL_MPI not defined ",
+		"in slack_message::slack_message().",
+		o2scl::exc_einval);
+#endif
+    } else {
+      time_last_message=time();
+    }
+    loc_mpi_time=mpi_time;
+    return;
+  }
+  
+  /** \brief Set the Slack webhook URL from an environment variable
+   */
+  void set_url_from_env(std::string env_var) {
+    char *cstring=getenv(env_var.c_str());
+    if (cstring) {
+      loc_url=cstring;
+    }
+    return;
+  }
+  
+  /** \brief Send a message
+   */
+  void send(std::string message, bool err_on_fail=true) {
+
+    int iret;
+
+    if (url.length()>0) {
+
+      if (channel.length()==0) {
+	O2SCL_ERR2("No slack channel specified in ",
+		   "slack_messenger::send().",o2scl::exc_einval);
+      }
+      if (username.length()==0) {
+	O2SCL_ERR2("No slack username specified in ",
+		   "slack_messenger::send().",o2scl::exc_einval);
+      }
+      
+      double time_now=time_last_message;
+    if (mpi_time) {
+#ifdef O2SCL_MPI
+      time_now=MPI_Wtime();
+#else
+      O2SCL_ERR("Value mpi_time is true but O2SCL_MPI not defined ",
+		"in slack_message::slack_message().",
+		o2scl::exc_einval);
+#endif
+    } else {
+      time_now=time();
+    }
+      
+      if (time_now-last_message_time>min_time_between) {
+	
+	string scr;
+	if (icon.length()>0) {
+	  scr=((string)"curl -X POST --data-urlencode ")+
+	    "\"payload={\\\"channel\\\": \\\""+channel+"\\\", "+
+	    "\\\"username\\\": \\\""+username+"\\\", "+
+	    "\\\"text\\\": \\\""+message+"\\\", "+
+	    "\\\"icon_emoji\\\": \\\":"+icon+":\\\"}\" "+url;
+	} else {
+	  scr=((string)"curl -X POST --data-urlencode ")+
+	    "\"payload={\\\"channel\\\": \\\""+channel+"\\\", "+
+	    "\\\"username\\\": \\\""+username+"\\\", "+
+	    "\\\"text\\\": \\\""+message+"\\\"}\" "+url;
+	}
+
+	if (verbose>1) {
+	  cout << "Executing: " << scr << endl;
+	}
+	
+	iret=system(scr.c_str());
+	
+	if (iret!=0 && err_on_fail) {
+	  O2SCL_ERR2("System command failed in ",
+		    "slack_messenger::send().",o2scl::exc_efailed);
+	}
+	
+	last_message_time=time_now;
+	
+      }
+      
+    } else {
+      O2SCL_ERR2("No slack URL specified in ",
+		 "slack_messenger::send().",o2scl::exc_einval);
+    }
+    
+    return iret;
+  }
+  
+};
+
