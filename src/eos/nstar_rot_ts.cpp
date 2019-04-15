@@ -48,6 +48,7 @@ int main(void) {
 
   nstar_rot nst;
 
+#ifndef O2SCL_FAST_TEST
   if (true) {
     // Perform the RNS tests
     nst.constants_rns();
@@ -61,7 +62,9 @@ int main(void) {
     nst.test8(t);
     nst.constants_o2scl();
   }
+#endif
   
+#ifndef O2SCL_FAST_TEST
   if (true) {
 
     // Test running with SLy4
@@ -149,6 +152,7 @@ int main(void) {
     o2scl_hdf::hdf_output(hf,(const table3d &)t2,"nstar_rot2");
     hf.close();
   }
+#endif
 
   {
     eos_had_rmf rmf;

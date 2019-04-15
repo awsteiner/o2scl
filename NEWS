@@ -1,3 +1,24 @@
+Notes for 0.923 release:
+
+A new function "rearrange_and_copy()" was added to the tensor
+and tensor_grid classes for several kinds of tensor rearrangements.
+
+A new matrix_view_transpose class and a new wordexp() function were
+created.
+
+The classes cloud_file, boson_rel, eos_had_skyrme, eos_tov_buchdahl,
+fermion_deriv_rel, fermion_eff, fermion_nonrel, fermion_rel, hist,
+interpm_krige, and interp_krige_optim classes were improved improved.
+The particle calibration routines were improved.
+
+Several updates were made to acol. The handling of tensor and
+tensor_grid classes was improved. Vector and value specifications were
+added. The help text was reworked. The autocorr command was improved.
+
+A new class slack_messenger was created to send messages to Slack.
+
+------------------------------------------------------------------------
+
 Notes for 0.922 release:
 
 In the table class, the set() function no longer automatically adds
