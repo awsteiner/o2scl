@@ -72,7 +72,7 @@ EXAMPLE_PRGS = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 	ex_stiff.scr ex_chebapp.scr ex_poly.scr ex_conmin.scr \
 	ex_nucleus_rmf.scr ex_methast.scr ex_eos_had_skyrme.scr \
 	ex_nucmass.scr ex_tensor.scr ex_mcmc.scr ex_nstar_rot.scr \
-	ex_interp2_nogrid.scr ex_interp.scr
+	ex_interp2_nogrid.scr ex_interp.scr ex_eos_gibbs.scr
 
 # ex_ode_it.scr ex_eos_sn.scr 
 
@@ -164,6 +164,7 @@ EXTRA_PROGRAMS = \
 	ex_deriv \
 	ex_part \
 	ex_ode \
+	ex_eos_gibbs \
 	ex_ode_it \
 	ex_anneal \
 	ex_mcarlo \
@@ -257,6 +258,11 @@ ex_eos_sn_LDADD = $(OOLIBS) $(OOLIBSTWO)
 ex_eos_sn_SOURCES = ex_eos_sn.cpp
 ex_eos_sn.scr: ex_eos_sn
 	./ex_eos_sn -help > ex_eos_sn.scr
+
+ex_eos_gibbs_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_eos_gibbs_SOURCES = ex_eos_gibbs.cpp
+ex_eos_gibbs.scr: ex_eos_gibbs
+	./ex_eos_gibbs -help > ex_eos_gibbs.scr
 
 ex_hydrogen_LDADD = $(OOLIBS) $(OOLIBSTWO)
 ex_hydrogen_SOURCES = ex_hydrogen.cpp

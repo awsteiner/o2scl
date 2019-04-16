@@ -40,8 +40,9 @@ using namespace o2scl;
 using namespace o2scl_hdf;
 using namespace o2scl_const;
 
-/** \brief Desc
- */
+/** \brief Compute the equation of state of matter with a Gibbs phase
+    transition between hadronic and quark phase
+*/
 class ex_eos_gibbs {
 
 public:
@@ -281,8 +282,9 @@ public:
 
     if (chi<0.0 || p.n<0.0) return 1;
 
-    sk.eff_mass(n,p);
-
+    double t1, t2;
+    sk.eff_mass(n,p,t1,t2);
+    
     if (n.ms<0.0 || p.ms<0.0) return 2;
 
     sk.calc_e(n,p,hth);
@@ -563,9 +565,12 @@ public:
 
     ubvector x(2), y(2);
 
-    n.m=939.57/hc_mev_fm;
-    p.m=938.27/hc_mev_fm;
-    e.m=0.511/hc_mev_fm;
+    n.m=o2scl_settings.get_convert_units().convert
+      ("kg","1/fm",o2scl_mks::mass_neutron);
+    p.m=o2scl_settings.get_convert_units().convert
+      ("kg","1/fm",o2scl_mks::mass_proton);
+    e.m=o2scl_settings.get_convert_units().convert
+      ("kg","1/fm",o2scl_mks::mass_electron);
     cout << "Masses (n,p,e): " << n.m*hc_mev_fm << " "
 	 << p.m*hc_mev_fm << " " << e.m*hc_mev_fm << " MeV" << endl;
     cout << endl;
