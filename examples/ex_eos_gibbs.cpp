@@ -42,6 +42,31 @@ using namespace o2scl_const;
 
 /** \brief Compute the equation of state of matter with a Gibbs phase
     transition between hadronic and quark phase
+
+    Following \ref Spinella16, the surface and Coulomb energies can be
+    expressed in terms of \f$ \chi \f$ which is the volume fraction of
+    matter in the quark phase. The quantity \f$ x \equiv
+    \mathrm{min}(\chi,1-\chi) \f$ is the volume fraction in the rare
+    phase. The surface energy density is written as
+    \f[
+    \varepsilon_{\mathrm{surf}} = \frac{d x \sigma}{r}
+    \f]
+    where \f$ r \f$ is the radius of the structure in the
+    rare phase, \f$ d \f$ is the dimensionality, and \f$ \sigma \f$
+    is the surface tension. 
+    The Coulomb energy is written as
+    \f[
+    \varepsilon_{\mathrm{Coul}} = 2 \pi e^2 
+    \left[ q_H - q_Q \right]^2 r^2 x f_{d}(x) 
+    \f]
+    where 
+    \f[
+    f_d(x) = \frac{1}{d+2} \left[ \frac{1}{d-2} 
+    \left( 2-d x^{1-2/d}\right)+x\right] \, ,
+    \f]
+    \f$ q_H \f$ is the electric charge in the hadronic phase, and \f$
+    q_Q \f$ is the electric charge in the quark phase.
+
 */
 class ex_eos_gibbs {
 
@@ -68,13 +93,12 @@ public:
   double chi;
   double B;
   double nB;
-  double rnuc;
+  double r_rare;
   double sigma;
   double esurf;
   double ecoul;
   double dim;
-  bool new_quark_model;
-  bool inc_cas;
+  bool alt_quark_model;
   double c_quark;
   double mp_start;
   
@@ -83,11 +107,11 @@ public:
     p.n=nB-n.n;
     e.n=p.n;
     B=x[1];
-    
+
     sk.calc_e(n,p,hth);
     fzt.calc_density_zerot(e);
 
-    if (new_quark_model) {
+    if (alt_quark_model) {
       u.mu=n.mu/3.0-e.mu*2.0/3.0;
       d.mu=n.mu/3.0+e.mu/3.0;
       s.mu=d.mu;
@@ -145,7 +169,7 @@ public:
     e.mu=n.mu-p.mu;
     fzt.calc_mu_zerot(e);
 
-    if (new_quark_model) {
+    if (alt_quark_model) {
       u.mu=n.mu/3.0-e.mu*2.0/3.0;
       d.mu=n.mu/3.0+e.mu/3.0;
       s.mu=d.mu;
@@ -191,7 +215,7 @@ public:
     
     fzt.calc_mu_zerot(e);
     
-    if (new_quark_model) {
+    if (alt_quark_model) {
       u.mu=muQ-e.mu*2.0/3.0;
       d.mu=muQ+e.mu/3.0;
       s.mu=d.mu;
@@ -232,7 +256,7 @@ public:
     e.mu=n.mu-p.mu;
     fzt.calc_mu_zerot(e);
 
-    if (new_quark_model) {
+    if (alt_quark_model) {
       u.mu=n.mu/3.0-e.mu*2.0/3.0;
       d.mu=n.mu/3.0+e.mu/3.0;
       s.mu=d.mu;
@@ -291,7 +315,7 @@ public:
     e.mu=n.mu-p.mu;
     fzt.calc_mu_zerot(e);
     
-    if (new_quark_model) {
+    if (alt_quark_model) {
       u.mu=n.mu/3.0-e.mu*2.0/3.0;
       d.mu=n.mu/3.0+e.mu/3.0;
       s.mu=d.mu;
@@ -341,7 +365,7 @@ public:
     p.n=x2[1];
     f_min_densities(2,x2,y2);
     
-    if (new_quark_model) {
+    if (alt_quark_model) {
       u.mu=n.mu/3.0-e.mu*2.0/3.0;
       d.mu=n.mu/3.0+e.mu/3.0;
       s.mu=d.mu;
@@ -391,7 +415,7 @@ public:
 
   double f_mixed_phase_min_r(size_t nv, const ubvector &x) {
     n.n=x[0];
-    rnuc=x[1];
+    r_rare=x[1];
 
     // Set up the functor
     mm_funct fp_min_densities=std::bind
@@ -412,7 +436,7 @@ public:
     p.n=x2[1];
     f_min_densities(2,x2,y2);
 
-    if (new_quark_model) {
+    if (alt_quark_model) {
       u.mu=n.mu/3.0-e.mu*2.0/3.0;
       d.mu=n.mu/3.0+e.mu/3.0;
       s.mu=d.mu;
@@ -443,36 +467,20 @@ public:
     // Surface and Coulomb energy
     double xglen=chi;
     if (chi>0.5) xglen=1.0-chi;
-    bool andrew_mode=false;
+    bool andrew_mode=true;
     if (andrew_mode) {
-      esurf=dim*xglen*sigma/rnuc;
+      esurf=dim*xglen*sigma/r_rare;
       ecoul=2.0*pi*pow(p.n-quark_nqch,2.0)*
-	o2scl_const::fine_structure*rnuc*rnuc*xglen*fcoul(dim,xglen);
+	o2scl_const::fine_structure*r_rare*r_rare*xglen*fcoul(dim,xglen);
     } else {
-      esurf=dim*chi*sigma/rnuc;
+      esurf=dim*chi*sigma/r_rare;
       ecoul=2.0*pi*pow(p.n-quark_nqch,2.0)*
-	o2scl_const::fine_structure*rnuc*rnuc*chi*fcoul(dim,xglen);
-    }
-
-    // Casimir energy
-    double ecas=0.0;
-    if (inc_cas && dim<1.01 && rnuc>0.0) {
-      double rws=rnuc/pow(xglen,1.0/dim);
-      double a;
-      if (chi>0.5) {
-	a=rws-rnuc;
-      } else {
-	a=rnuc;
-      }
-      ecas=-pi2/720.0/pow(a,3.0)/rws;
-      cout << "Y: " << ecas << " " << a << " " << rnuc << " " << rws << endl;
+	o2scl_const::fine_structure*r_rare*r_rare*chi*fcoul(dim,xglen);
     }
 
     // Update the energy density and pressure
     tot.ed=hth.ed*chi+qth.ed*(1.0-chi)+e.ed+esurf+ecoul;
 
-    if (inc_cas) tot.ed+=ecas;
-    
     // Use the thermodynamic identity for the pressure
     tot.pr=-tot.ed+n.n*chi*n.mu+p.n*chi*p.mu+
       quark_nQ*(1.0-chi)*n.mu/3.0;
@@ -486,22 +494,13 @@ public:
       << fcoul(dim,chi) << " " 
       << tot.ed << endl;
     */
-    if (chi<0.0 || chi>1.0 || sret!=0 || rnuc>50.0 || rnuc<0.0) tot.ed+=1e6;
+    if (chi<0.0 || chi>1.0 || sret!=0 || r_rare>50.0 || r_rare<0.0) tot.ed+=1e6;
     return tot.ed;
   }
   
   ex_eos_gibbs() : n(sk.def_neutron), p(sk.def_proton) {
 
     skyrme_load(sk,"NRAPR");
-    sk.t0=-2719.7/hc_mev_fm;
-    sk.t1=417.64/hc_mev_fm;
-    sk.t2=-66.687/hc_mev_fm;
-    sk.t3=15042.0/hc_mev_fm;
-    sk.x0=0.16154;
-    sk.x1=-0.047986;
-    sk.x2=0.027170;
-    sk.x3=0.13611;
-    sk.alpha=0.14416;
     
     ms=150.0/hc_mev_fm;
 
@@ -524,10 +523,9 @@ public:
 
     dim=3.0;
     
-    new_quark_model=false;
-    inc_cas=false;
+    alt_quark_model=false;
     c_quark=0.0;
-    mp_start=0.23;
+    mp_start=0.24;
   }
 
   void run() {
@@ -569,8 +567,6 @@ public:
       ("kg","1/fm",o2scl_mks::mass_neutron);
     p.m=o2scl_settings.get_convert_units().convert
       ("kg","1/fm",o2scl_mks::mass_proton);
-    e.m=o2scl_settings.get_convert_units().convert
-      ("kg","1/fm",o2scl_mks::mass_electron);
     cout << "Masses (n,p,e): " << n.m*hc_mev_fm << " "
 	 << p.m*hc_mev_fm << " " << e.m*hc_mev_fm << " MeV" << endl;
     cout << endl;
@@ -582,7 +578,7 @@ public:
 	 << "beginning of the mixed phase to\n n_B=" << mp_start
 	 << " fm^{-3}:" << endl;
     nB=mp_start;
-    x[0]=0.281;
+    x[0]=0.22;
     x[1]=1.0;
     mh.msolve(2,x,fp_bag_constant);
     B=x[1];
@@ -643,7 +639,7 @@ public:
     cout << "Mixed phase at n_B=" << mp_start+0.01
 	 << " fm^{-3} from solver:" << endl;
     nB=mp_start+0.01;
-    x[0]=0.30;
+    x[0]=0.24;
     x[1]=0.02;
     mh.msolve(2,x,fp_mixed_phase);
     n.n=x[0];
@@ -847,7 +843,7 @@ public:
 	thad.line_of_data(line);
       }
       hdf_file hf;
-      hf.open_or_create("had.o2");
+      hf.open_or_create("ex_eos_gibbs.o2");
       hdf_output(hf,thad,"had");
       hf.close();
     }
@@ -870,7 +866,7 @@ public:
 	tq.line_of_data(line);
       }
       hdf_file hf;
-      hf.open_or_create("quark.o2");
+      hf.open_or_create("ex_eos_gibbs.o2");
       hdf_output(hf,tq,"quark");
       hf.close();
     }
@@ -948,7 +944,7 @@ public:
       
       hdf_file hf;
       t.sort_table("nB");
-      hf.open_or_create("mixed.o2");
+      hf.open_or_create("ex_eos_gibbs.o2");
       hdf_output(hf,t,"mixed");
       hf.close();
 
@@ -964,8 +960,8 @@ public:
       sigma=1.0/hc_mev_fm;
       for(size_t id=0;id<3;id++) {
 	t[id].line_of_names(((string)"nB nn np ede pre edt prt edh ")+
-			    "prh edq prq mun mup chi rnuc esurf ecoul "+
-			    "nqch ne rws");
+			    "prh edq prq mun mup chi r_rare esurf ecoul "+
+			    "nqch ne r_ws");
 	dim=((double)id)+1.0;
 
 	double nB_start=(mp_start+mp_end)/2.0;
@@ -985,7 +981,7 @@ public:
 	  //<< x[1] << " " << tot.ed << endl;
 	  double xglen=chi;
 	  if (chi>0.5) xglen=1.0-chi;
-	  double rws=rnuc/pow(xglen,1.0/dim);
+	  double r_ws=r_rare/pow(xglen,1.0/dim);
 	  std::vector<double> line={nB,n.n,p.n,e.ed*hc_mev_fm,
 				    e.pr*hc_mev_fm,tot.ed*hc_mev_fm,
 				    tot.pr*hc_mev_fm,hth.ed*hc_mev_fm,
@@ -993,7 +989,7 @@ public:
 				    qth.pr*hc_mev_fm,n.mu*hc_mev_fm,
 				    p.mu*hc_mev_fm,chi,x[1],
 				    esurf*hc_mev_fm,ecoul*hc_mev_fm,
-				    quark_nqch,e.n,rws};
+				    quark_nqch,e.n,r_ws};
 	  t[id].line_of_data(line);
 	  if (chi<0.05) high_done=true;
 	  
@@ -1014,7 +1010,7 @@ public:
 	  //<< x[1] << " " << tot.ed << endl;
 	  double xglen=chi;
 	  if (chi>0.5) xglen=1.0-chi;
-	  double rws=rnuc/pow(xglen,1.0/dim);
+	  double r_ws=r_rare/pow(xglen,1.0/dim);
 	  std::vector<double> line={nB,n.n,p.n,e.ed*hc_mev_fm,
 				    e.pr*hc_mev_fm,tot.ed*hc_mev_fm,
 				    tot.pr*hc_mev_fm,hth.ed*hc_mev_fm,
@@ -1022,7 +1018,7 @@ public:
 				    qth.pr*hc_mev_fm,n.mu*hc_mev_fm,
 				    p.mu*hc_mev_fm,chi,x[1],
 				    esurf*hc_mev_fm,ecoul*hc_mev_fm,
-				    quark_nqch,e.n,rws};
+				    quark_nqch,e.n,r_ws};
 	  t[id].line_of_data(line);
 	  if (chi>0.95) low_done=true;
 	  
@@ -1031,15 +1027,15 @@ public:
 	if (true) {
 	  t[id].sort_table("nB");
 	  hdf_file hf;
-	  hf.open_or_create(((std::string)"mixed")+o2scl::itos(id+1)+".o2");
-	  hdf_output(hf,t[id],"mixed");
+	  hf.open_or_create("ex_eos_gibbs.o2");
+	  hdf_output(hf,t[id],"mixed"+o2scl::itos(id+1));
 	  hf.close();
 	}
       }
       if (true) {
 	t[3].line_of_names(((string)"nB nn np ede pre edt prt edh ")+
-			   "prh edq prq mun mup chi rnuc esurf ecoul "+
-			   "nqch ne rws");
+			   "prh edq prq mun mup chi r_rare esurf ecoul "+
+			   "nqch ne r_ws");
 	size_t count=0;
 	double nB_start=t[0].min("nB");
 	if (t[1].min("nB")>nB_start) nB_start=t[1].min("nB");
@@ -1073,74 +1069,9 @@ public:
       }
       if (true) {
 	hdf_file hf;
-	hf.open_or_create("mixed_min.o2");
+	hf.open_or_create("ex_eos_gibbs.o2");
 	hdf_output(hf,t[3],"mixed_min");
 	hf.close();
-      }
-      
-    }
-
-    // -----------------------------------------------------------------
-    // Tabulate full mixed phase with Coulomb and surface with
-    // Casimir energy for lasagna
-
-    if (false) {
-      cout << "Here." << endl;
-      inc_cas=true;
-      sigma=1.0/hc_mev_fm;
-      table_units<> t2[4];
-      for(size_t id=0;id<3;id++) {
-	t[id].line_of_names(((string)"nB nn np ede pre edt prt edh ")+
-			    "prh edq prq mun mup chi rnuc esurf ecoul "+
-			    "nqch ne rws");
-	dim=((double)id)+1.0;
-
-	chi=0.98;
-	p.n=0.033;
-	x[0]=0.2;
-	x[1]=1.3;
-
-	for(nB=0.36;nB<1.08;nB+=0.001) {
-	  //for(nB=0.36;nB<0.901;nB+=0.001) {
-	  mmin.mmin(2,x,y[0],fp_mixed_phase_min_r);
-	  //cout << id << " " << nB << " " << n.n << " " << p.n << " "
-	  //<< x[1] << " " << tot.ed << endl;
-	  double xglen=chi;
-	  if (chi>0.5) xglen=1.0-chi;
-	  double rws=rnuc/pow(xglen,1.0/dim);
-	  std::vector<double> line={nB,n.n,p.n,e.ed*hc_mev_fm,
-				    e.pr*hc_mev_fm,tot.ed*hc_mev_fm,
-				    tot.pr*hc_mev_fm,hth.ed*hc_mev_fm,
-				    hth.pr*hc_mev_fm,qth.ed*hc_mev_fm,
-				    qth.pr*hc_mev_fm,n.mu*hc_mev_fm,
-				    p.mu*hc_mev_fm,chi,x[1],
-				    esurf*hc_mev_fm,ecoul*hc_mev_fm,
-				    quark_nqch,e.n,rws};
-	  t[id].line_of_data(line);
-	}
-	if (true) {
-	  hdf_file hf;
-	  hf.open_or_create(((std::string)"mixed_cas")+
-			    o2scl::itos(id+1)+".o2");
-	  hdf_output(hf,t[id],"mixed");
-	  hf.close();
-	}
-      }
-      if (true) {
-	t[3].line_of_names(((string)"nB nn np ede pre edt prt edh ")+
-			   "prh edq prq mun mup chi rnuc esurf ecoul "+
-			   "nqch ne rws");
-	for(nB=0.36;nB<1.08;nB+=0.01) {
-	  if (t[0].interp("nB",nB,"edt")<t[1].interp("nB",nB,"edt") &&
-	      t[0].interp("nB",nB,"edt")<t[2].interp("nB",nB,"edt")) {
-	    std::cout << nB << " d=1" << std::endl;
-	  } else if (t[1].interp("nB",nB,"edt")<t[0].interp("nB",nB,"edt") &&
-		     t[1].interp("nB",nB,"edt")<t[2].interp("nB",nB,"edt")) {
-	    std::cout << nB << " d=2" << std::endl;
-	  } else {
-	    std::cout << nB << " d=3" << std::endl;
-	  }
-	}
       }
       
     }
@@ -1151,7 +1082,7 @@ public:
     t[3].set_interp_type(itp_linear);
     double had_end=t[3].interp("chi",1.05,"nB");
     double quark_start=t[3].interp("chi",-0.05,"nB");
-    cout << had_end << " " << quark_start << endl;
+    cout << "H: " << had_end << " " << quark_start << endl;
 
     table_units<> ns;
     ns.line_of_names("ed pr");
@@ -1174,7 +1105,7 @@ public:
     }
 
     hdf_file hf;
-    hf.open_or_create("nstar.o2");
+    hf.open_or_create("ex_eos_gibbs.o2");
     hdf_output(hf,ns,"nstar");
     hf.close();
 
@@ -1182,6 +1113,7 @@ public:
     eos_tov_interp eti;
     eti.default_low_dens_eos();
     eti.read_table(ns,"ed","pr");
+    cout << "Going to tov_solve." << endl;
     tov_solve ts;
     ts.set_eos(eti);
     ts.mvsr();
