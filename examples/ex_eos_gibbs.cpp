@@ -1032,6 +1032,7 @@ public:
 	  hf.close();
 	}
       }
+      
       if (true) {
 	t[3].line_of_names(((string)"nB nn np ede pre edt prt edh ")+
 			   "prh edq prq mun mup chi r_rare esurf ecoul "+
@@ -1067,6 +1068,8 @@ public:
 	  count++;
 	}
       }
+
+      // Output the mixed phase with optimized dimensionality
       if (true) {
 	hdf_file hf;
 	hf.open_or_create("ex_eos_gibbs.o2");
@@ -1118,10 +1121,13 @@ public:
     ts.set_eos(eti);
     ts.mvsr();
     std::shared_ptr<table_units<> > tov=ts.get_results();
-    cout << tov->max("gm") << endl;
+    cout << "M_max: " << tov->max("gm") << endl;
     cout << tov->get_unit("ed") << endl;
     cout << tov->get("ed",tov->lookup("gm",tov->max("gm"))) << endl;
-		    
+
+    hf.open_or_create("ex_eos_gibbs.o2");
+    hdf_output(hf,*tov,"tov");
+    hf.close();
     
     return;
   }
